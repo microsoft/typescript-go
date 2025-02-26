@@ -1,6 +1,6 @@
 --- old.parameterPropertyOutsideConstructor.symbols
 +++ new.parameterPropertyOutsideConstructor.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(parameterPropertyOutsideConstructor.ts, 0, 0))
  
      foo(public x) {

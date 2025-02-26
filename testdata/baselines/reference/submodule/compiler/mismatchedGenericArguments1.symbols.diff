@@ -1,6 +1,6 @@
 --- old.mismatchedGenericArguments1.symbols
 +++ new.mismatchedGenericArguments1.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(mismatchedGenericArguments1.ts, 0, 15))
  
     foo<T>(x: T): T;
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(mismatchedGenericArguments1.ts, 1, 7))
  >x : Symbol(x, Decl(mismatchedGenericArguments1.ts, 1, 10))
  >T : Symbol(T, Decl(mismatchedGenericArguments1.ts, 1, 7))
-@@ -19,7 +19,7 @@
+@@= skipped -13, +13 lines =@@
  >T : Symbol(T, Decl(mismatchedGenericArguments1.ts, 3, 8))
  
     foo(x: string): number {
@@ -18,7 +18,7 @@
  >x : Symbol(x, Decl(mismatchedGenericArguments1.ts, 4, 7))
  
       return null;
-@@ -33,7 +33,7 @@
+@@= skipped -14, +14 lines =@@
  >T : Symbol(T, Decl(mismatchedGenericArguments1.ts, 9, 9))
  
     foo<U>(x: string): number {

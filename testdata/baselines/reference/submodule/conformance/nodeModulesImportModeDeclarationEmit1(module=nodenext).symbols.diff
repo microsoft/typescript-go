@@ -1,6 +1,6 @@
 --- old.nodeModulesImportModeDeclarationEmit1(module=nodenext).symbols
 +++ new.nodeModulesImportModeDeclarationEmit1(module=nodenext).symbols
-@@ -30,10 +30,6 @@
+@@= skipped -30, +30 lines =@@
  export type { ImportInterface } from "pkg" assert { "resolution-mode": "import" };
  >ImportInterface : Symbol(ImportInterface, Decl(index.ts, 10, 13))
  

@@ -1,6 +1,6 @@
 --- old.autoAccessor4(target=esnext).symbols
 +++ new.autoAccessor4(target=esnext).symbols
-@@ -5,15 +5,15 @@
+@@= skipped -5, +5 lines =@@
  >C1 : Symbol(C1, Decl(autoAccessor4.ts, 0, 0))
  
      accessor 0: any;

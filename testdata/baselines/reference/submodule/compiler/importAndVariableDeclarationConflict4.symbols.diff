@@ -1,6 +1,6 @@
 --- old.importAndVariableDeclarationConflict4.symbols
 +++ new.importAndVariableDeclarationConflict4.symbols
-@@ -14,5 +14,5 @@
+@@= skipped -14, +14 lines =@@
  import x = m.m;
  >x : Symbol(x, Decl(importAndVariableDeclarationConflict4.ts, 4, 3), Decl(importAndVariableDeclarationConflict4.ts, 4, 11))
  >m : Symbol(m, Decl(importAndVariableDeclarationConflict4.ts, 0, 0))

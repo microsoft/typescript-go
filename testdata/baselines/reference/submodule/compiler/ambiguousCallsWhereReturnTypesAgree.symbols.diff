@@ -1,6 +1,6 @@
 --- old.ambiguousCallsWhereReturnTypesAgree.symbols
 +++ new.ambiguousCallsWhereReturnTypesAgree.symbols
-@@ -5,35 +5,35 @@
+@@= skipped -5, +5 lines =@@
  >TestClass : Symbol(TestClass, Decl(ambiguousCallsWhereReturnTypesAgree.ts, 0, 0))
  
      public bar(x: string): void;
@@ -44,7 +44,7 @@
  >x : Symbol(x, Decl(ambiguousCallsWhereReturnTypesAgree.ts, 9, 15))
      }
  }
-@@ -42,36 +42,36 @@
+@@= skipped -37, +37 lines =@@
  >TestClass2 : Symbol(TestClass2, Decl(ambiguousCallsWhereReturnTypesAgree.ts, 12, 1))
  
      public bar(x: string): number;

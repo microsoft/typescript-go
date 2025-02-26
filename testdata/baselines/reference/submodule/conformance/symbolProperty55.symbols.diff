@@ -1,6 +1,6 @@
 --- old.symbolProperty55.symbols
 +++ new.symbolProperty55.symbols
-@@ -6,9 +6,6 @@
+@@= skipped -6, +6 lines =@@
  
      [Symbol.iterator]: 0
  >[Symbol.iterator] : Symbol([Symbol.iterator], Decl(symbolProperty55.ts, 0, 11))
@@ -10,7 +10,7 @@
  
  };
  
-@@ -17,13 +14,11 @@
+@@= skipped -11, +8 lines =@@
  
      var Symbol: SymbolConstructor;
  >Symbol : Symbol(Symbol, Decl(symbolProperty55.ts, 5, 7))

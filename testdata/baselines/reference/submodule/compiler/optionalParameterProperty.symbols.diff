@@ -1,6 +1,6 @@
 --- old.optionalParameterProperty.symbols
 +++ new.optionalParameterProperty.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(optionalParameterProperty.ts, 0, 0))
  
      p: number;
@@ -9,7 +9,7 @@
  }
  
  class D extends C { 
-@@ -13,7 +13,7 @@
+@@= skipped -8, +8 lines =@@
  >C : Symbol(C, Decl(optionalParameterProperty.ts, 0, 0))
  
      constructor(public p?: number) {

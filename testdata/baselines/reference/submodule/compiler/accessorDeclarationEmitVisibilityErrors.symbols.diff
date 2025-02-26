@@ -1,6 +1,6 @@
 --- old.accessorDeclarationEmitVisibilityErrors.symbols
 +++ new.accessorDeclarationEmitVisibilityErrors.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Q : Symbol(Q, Decl(accessorDeclarationEmitVisibilityErrors.ts, 0, 0))
  
      set bet(arg: DoesNotExist) {}

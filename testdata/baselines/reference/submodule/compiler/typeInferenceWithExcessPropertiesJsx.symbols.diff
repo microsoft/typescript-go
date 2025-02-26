@@ -1,6 +1,6 @@
 --- old.typeInferenceWithExcessPropertiesJsx.symbols
 +++ new.typeInferenceWithExcessPropertiesJsx.symbols
-@@ -54,15 +54,13 @@
+@@= skipped -54, +54 lines =@@
  >Entry : Symbol(Entry, Decl(typeInferenceWithExcessPropertiesJsx.tsx, 17, 19))
  
  ): JSX.Element;

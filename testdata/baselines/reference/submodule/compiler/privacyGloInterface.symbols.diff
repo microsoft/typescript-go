@@ -1,6 +1,6 @@
 --- old.privacyGloInterface.symbols
 +++ new.privacyGloInterface.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >C1_public : Symbol(C1_public, Decl(privacyGloInterface.ts, 0, 11))
  
          private f1() {
@@ -9,7 +9,7 @@
          }
      }
  
-@@ -59,37 +59,37 @@
+@@= skipped -51, +51 lines =@@
  >C2_private : Symbol(C2_private, Decl(privacyGloInterface.ts, 4, 5))
  
          x: C1_public;
@@ -55,7 +55,7 @@
  >C2_private : Symbol(C2_private, Decl(privacyGloInterface.ts, 4, 5))
  
      }
-@@ -136,37 +136,37 @@
+@@= skipped -77, +77 lines =@@
  >C2_private : Symbol(C2_private, Decl(privacyGloInterface.ts, 4, 5))
  
          x: C1_public;
@@ -101,7 +101,7 @@
  >C2_private : Symbol(C2_private, Decl(privacyGloInterface.ts, 4, 5))
  
      }
-@@ -176,7 +176,7 @@
+@@= skipped -40, +40 lines =@@
  >C5_public : Symbol(C5_public, Decl(privacyGloInterface.ts, 63, 1))
  
      private f1() {
@@ -110,7 +110,7 @@
      }
  }
  
-@@ -203,20 +203,20 @@
+@@= skipped -27, +27 lines =@@
  >C5_public : Symbol(C5_public, Decl(privacyGloInterface.ts, 63, 1))
  
      x: C5_public;
@@ -135,7 +135,7 @@
  >C5_public : Symbol(C5_public, Decl(privacyGloInterface.ts, 63, 1))
  }
  
-@@ -227,14 +227,14 @@
+@@= skipped -24, +24 lines =@@
  >m3_i_public : Symbol(m3_i_public, Decl(privacyGloInterface.ts, 88, 11))
  
          f1(): number;
@@ -152,7 +152,7 @@
      }
  
      interface m3_C1_private extends m3_i_public {
-@@ -270,7 +270,7 @@
+@@= skipped -43, +43 lines =@@
  >glo_i_public : Symbol(glo_i_public, Decl(privacyGloInterface.ts, 110, 1))
  
      f1(): number;

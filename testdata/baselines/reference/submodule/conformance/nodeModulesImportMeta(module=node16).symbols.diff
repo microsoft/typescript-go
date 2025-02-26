@@ -1,6 +1,6 @@
 --- old.nodeModulesImportMeta(module=node16).symbols
 +++ new.nodeModulesImportMeta(module=node16).symbols
-@@ -4,10 +4,7 @@
+@@= skipped -4, +4 lines =@@
  // cjs format file
  const x = import.meta.url;
  >x : Symbol(x, Decl(index.ts, 1, 5))
@@ -12,7 +12,7 @@
  
  export {x};
  >x : Symbol(x, Decl(index.ts, 2, 8))
-@@ -16,10 +13,7 @@
+@@= skipped -12, +9 lines =@@
  // esm format file
  const x = import.meta.url;
  >x : Symbol(x, Decl(index.ts, 1, 5))

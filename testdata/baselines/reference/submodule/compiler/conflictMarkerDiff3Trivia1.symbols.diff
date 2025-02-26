@@ -1,6 +1,6 @@
 --- old.conflictMarkerDiff3Trivia1.symbols
 +++ new.conflictMarkerDiff3Trivia1.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  
  <<<<<<< HEAD
      v = 1;

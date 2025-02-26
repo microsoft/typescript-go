@@ -1,6 +1,6 @@
 --- old.es2016IntlAPIs.symbols
 +++ new.es2016IntlAPIs.symbols
-@@ -4,38 +4,38 @@
+@@= skipped -4, +4 lines =@@
  // Sample from
  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/getCanonicalLocales
  console.log(Intl.getCanonicalLocales('EN-US'));

@@ -1,6 +1,6 @@
 --- old.checkJsdocTypeTag7.symbols
 +++ new.checkJsdocTypeTag7.symbols
-@@ -10,12 +10,12 @@
+@@= skipped -10, +10 lines =@@
  
      /** @type {Foo} */
      foo(a, b) {}

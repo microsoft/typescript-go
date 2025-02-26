@@ -1,6 +1,6 @@
 --- old.computedPropertyNames43_ES6.symbols
 +++ new.computedPropertyNames43_ES6.symbols
-@@ -3,12 +3,12 @@
+@@= skipped -3, +3 lines =@@
  === computedPropertyNames43_ES6.ts ===
  class Foo { x }
  >Foo : Symbol(Foo, Decl(computedPropertyNames43_ES6.ts, 0, 0))
@@ -16,7 +16,7 @@
  
  class C {
  >C : Symbol(C, Decl(computedPropertyNames43_ES6.ts, 1, 19))
-@@ -24,13 +24,13 @@
+@@= skipped -21, +21 lines =@@
  
      // Computed properties
      get ["get1"]() { return new Foo }

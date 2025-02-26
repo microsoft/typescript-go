@@ -1,6 +1,6 @@
 --- old.computedPropertyNames24_ES6.symbols
 +++ new.computedPropertyNames24_ES6.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Base : Symbol(Base, Decl(computedPropertyNames24_ES6.ts, 0, 0))
  
      bar() {
@@ -9,7 +9,7 @@
  
          return 0;
      }
-@@ -17,5 +17,5 @@
+@@= skipped -12, +12 lines =@@
      // Gets emitted as super, not _super, which is consistent with
      // use of super in static properties initializers.
      [super.bar()]() { }

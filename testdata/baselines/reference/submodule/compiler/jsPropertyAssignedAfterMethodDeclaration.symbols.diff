@@ -1,6 +1,6 @@
 --- old.jsPropertyAssignedAfterMethodDeclaration.symbols
 +++ new.jsPropertyAssignedAfterMethodDeclaration.symbols
-@@ -10,7 +10,7 @@
+@@= skipped -10, +10 lines =@@
          // Should not be treated as a declaration. Should be an error.
          this.a = 0;
  >this.a : Symbol(a, Decl(a.js, 0, 11))

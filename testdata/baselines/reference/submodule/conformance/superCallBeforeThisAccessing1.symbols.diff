@@ -1,6 +1,6 @@
 --- old.superCallBeforeThisAccessing1.symbols
 +++ new.superCallBeforeThisAccessing1.symbols
-@@ -15,7 +15,7 @@
+@@= skipped -15, +15 lines =@@
  >Base : Symbol(Base, Decl(superCallBeforeThisAccessing1.ts, 0, 24))
  
      private _t;
@@ -9,7 +9,7 @@
  
      constructor() {
          super(i);
-@@ -27,9 +27,9 @@
+@@= skipped -12, +12 lines =@@
  
              t: this._t
  >t : Symbol(t, Decl(superCallBeforeThisAccessing1.ts, 9, 17))

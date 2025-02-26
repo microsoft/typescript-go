@@ -1,6 +1,6 @@
 --- old.invalidStaticField.symbols
 +++ new.invalidStaticField.symbols
-@@ -3,11 +3,11 @@
+@@= skipped -3, +3 lines =@@
  === invalidStaticField.ts ===
  class A { foo() { return B.NULL; } }
  >A : Symbol(A, Decl(invalidStaticField.ts, 0, 0))

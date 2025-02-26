@@ -1,6 +1,6 @@
 --- old.stackDepthLimitCastingType.symbols
 +++ new.stackDepthLimitCastingType.symbols
-@@ -13,7 +13,7 @@
+@@= skipped -13, +13 lines =@@
  >E : Symbol(E, Decl(index.d.ts, 2, 24))
  
          initialize(attributes?: T, options?: CombinedModelConstructorOptions<E, this>): void;
@@ -9,7 +9,7 @@
  >attributes : Symbol(attributes, Decl(index.d.ts, 3, 19))
  >T : Symbol(T, Decl(index.d.ts, 2, 16))
  >options : Symbol(options, Decl(index.d.ts, 3, 34))
-@@ -21,7 +21,7 @@
+@@= skipped -8, +8 lines =@@
  >E : Symbol(E, Decl(index.d.ts, 2, 24))
  
          fetch(options?: any): JQueryXHR;
@@ -18,7 +18,7 @@
  >options : Symbol(options, Decl(index.d.ts, 4, 14))
  >JQueryXHR : Symbol(JQueryXHR, Decl(index.d.ts, 0, 16))
      }
-@@ -32,7 +32,7 @@
+@@= skipped -11, +11 lines =@@
  >Model : Symbol(Model, Decl(index.d.ts, 1, 27))
  
          collection?: Collection<TModel>;
@@ -27,7 +27,7 @@
  >Collection : Symbol(Collection, Decl(index.d.ts, 8, 5))
  >TModel : Symbol(TModel, Decl(index.d.ts, 6, 38))
      }
-@@ -43,7 +43,7 @@
+@@= skipped -11, +11 lines =@@
  >Model : Symbol(Model, Decl(index.d.ts, 1, 27))
  
          without(...values: TModel[]): TModel[];
@@ -36,7 +36,7 @@
  >values : Symbol(values, Decl(index.d.ts, 10, 16))
  >TModel : Symbol(TModel, Decl(index.d.ts, 9, 21))
  >TModel : Symbol(TModel, Decl(index.d.ts, 9, 21))
-@@ -73,14 +73,14 @@
+@@= skipped -30, +30 lines =@@
  >Backbone : Symbol(Backbone, Decl(index.d.ts, 0, 6))
  
  declare module "backbone" {
@@ -54,7 +54,7 @@
  >options : Symbol(options, Decl(index.d.ts, 3, 14))
  >JQueryXHR : Symbol(JQueryXHR, Decl(index.d.ts, 0, 16))
      }
-@@ -99,14 +99,14 @@
+@@= skipped -26, +26 lines =@@
  
  const hoge = new Backbone.Model() as Backbone.ModelWithCache;
  >hoge : Symbol(hoge, Decl(index.ts, 4, 5))

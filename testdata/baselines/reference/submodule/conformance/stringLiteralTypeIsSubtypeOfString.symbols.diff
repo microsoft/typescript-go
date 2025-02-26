@@ -1,6 +1,6 @@
 --- old.stringLiteralTypeIsSubtypeOfString.symbols
 +++ new.stringLiteralTypeIsSubtypeOfString.symbols
-@@ -122,88 +122,88 @@
+@@= skipped -122, +122 lines =@@
  >String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      toString(): string { return null; }
@@ -110,7 +110,7 @@
  
      [index: number]: string;
  >index : Symbol(index, Decl(stringLiteralTypeIsSubtypeOfString.ts, 63, 5))
-@@ -228,7 +228,7 @@
+@@= skipped -106, +106 lines =@@
  >String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      foo: string;
@@ -119,7 +119,7 @@
  }
  
  // BUG 831846
-@@ -282,7 +282,7 @@
+@@= skipped -54, +54 lines =@@
  
  enum E { A }
  >E : Symbol(E, Decl(stringLiteralTypeIsSubtypeOfString.ts, 86, 42))

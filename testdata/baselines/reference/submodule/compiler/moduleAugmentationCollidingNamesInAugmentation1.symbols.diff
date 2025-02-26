@@ -1,6 +1,6 @@
 --- old.moduleAugmentationCollidingNamesInAugmentation1.symbols
 +++ new.moduleAugmentationCollidingNamesInAugmentation1.symbols
-@@ -5,16 +5,16 @@
+@@= skipped -5, +5 lines =@@
  >Observable : Symbol(Observable, Decl(map1.ts, 0, 8))
  
  (<any>Observable.prototype).map = function() { }
@@ -21,7 +21,7 @@
  }
  
  === map2.ts ===
-@@ -22,16 +22,16 @@
+@@= skipped -17, +17 lines =@@
  >Observable : Symbol(Observable, Decl(map2.ts, 0, 8))
  
  (<any>Observable.prototype).map = function() { }
@@ -42,7 +42,7 @@
  }
  
  
-@@ -41,7 +41,7 @@
+@@= skipped -19, +19 lines =@@
  >T : Symbol(T, Decl(observable.ts, 0, 32))
  
      filter(pred: (e:T) => boolean): Observable<T>;

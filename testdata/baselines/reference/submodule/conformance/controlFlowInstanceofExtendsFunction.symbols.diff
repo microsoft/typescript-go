@@ -1,6 +1,6 @@
 --- old.controlFlowInstanceofExtendsFunction.symbols
 +++ new.controlFlowInstanceofExtendsFunction.symbols
-@@ -2,22 +2,22 @@
+@@= skipped -2, +2 lines =@@
  
  === controlFlowInstanceofExtendsFunction.ts ===
  declare global {
@@ -29,7 +29,7 @@
  
      return "now"
  }
-@@ -26,13 +26,13 @@
+@@= skipped -24, +24 lines =@@
  >X : Symbol(X, Decl(controlFlowInstanceofExtendsFunction.ts, 8, 1))
  
      static now() {
@@ -45,7 +45,7 @@
  
      }
  }
-@@ -43,27 +43,27 @@
+@@= skipped -17, +17 lines =@@
  }
  
  console.log(X.now()) // works as expected
@@ -83,7 +83,7 @@
  >X : Symbol(X, Decl(controlFlowInstanceofExtendsFunction.ts, 8, 1))
  
  if (x instanceof X) {
-@@ -71,7 +71,7 @@
+@@= skipped -28, +28 lines =@@
  >X : Symbol(X, Decl(controlFlowInstanceofExtendsFunction.ts, 8, 1))
  
      x.why() // should compile

@@ -1,6 +1,6 @@
 --- old.fixSignatureCaching.symbols
 +++ new.fixSignatureCaching.symbols
-@@ -19,599 +19,599 @@
+@@= skipped -19, +19 lines =@@
  >impl : Symbol(impl, Decl(fixSignatureCaching.ts, 6, 7))
  
      "phones": {
@@ -795,7 +795,7 @@
  
              "IEMobile\/[VER];",
              "IEMobile [VER]",
-@@ -619,13 +619,13 @@
+@@= skipped -600, +600 lines =@@
              "Trident\/[0-9.]+;.*rv:[VER]"
          ],
          "NetFront": "NetFront\/[VER]",
@@ -812,7 +812,7 @@
  
              " OPR\/[VER]",
              "Opera Mini\/[VER]",
-@@ -641,68 +641,68 @@
+@@= skipped -22, +22 lines =@@
  >"UC Browser" : Symbol("UC Browser", Decl(fixSignatureCaching.ts, 227, 39))
  
          "MQQBrowser": "MQQBrowser\/[VER]",
@@ -900,7 +900,7 @@
  
          "Windows Phone OS": [
  >"Windows Phone OS" : Symbol("Windows Phone OS", Decl(fixSignatureCaching.ts, 254, 30))
-@@ -720,41 +720,41 @@
+@@= skipped -79, +79 lines =@@
  >"Windows NT" : Symbol("Windows NT", Decl(fixSignatureCaching.ts, 260, 42))
  
          "Symbian": [
@@ -952,7 +952,7 @@
      }
  };
  
-@@ -775,11 +775,11 @@
+@@= skipped -55, +55 lines =@@
  
      var hasOwnProp = Object.prototype.hasOwnProperty,
  >hasOwnProp : Symbol(hasOwnProp, Decl(fixSignatureCaching.ts, 289, 7))
@@ -968,7 +968,7 @@
  
          isArray;
  >isArray : Symbol(isArray, Decl(fixSignatureCaching.ts, 289, 53))
-@@ -798,17 +798,17 @@
+@@= skipped -23, +23 lines =@@
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
          Array.isArray : function (value) { return Object.prototype.toString.call(value) === '[object Array]'; };
@@ -994,7 +994,7 @@
  >value : Symbol(value, Decl(fixSignatureCaching.ts, 297, 34))
  
      isArray = 'isArray' in Array
-@@ -817,13 +817,13 @@
+@@= skipped -19, +19 lines =@@
  
          ? function (value) { return Object.prototype.toString.call(value) === '[object Array]'; }
  >value : Symbol(value, Decl(fixSignatureCaching.ts, 299, 20))
@@ -1014,7 +1014,7 @@
  >value : Symbol(value, Decl(fixSignatureCaching.ts, 299, 20))
  
          : Array.isArray;
-@@ -888,9 +888,9 @@
+@@= skipped -71, +71 lines =@@
  >object : Symbol(object, Decl(fixSignatureCaching.ts, 320, 34))
  
              if (hasOwnProp.call(object, key)) {
@@ -1026,7 +1026,7 @@
  >object : Symbol(object, Decl(fixSignatureCaching.ts, 320, 34))
  >key : Symbol(key, Decl(fixSignatureCaching.ts, 321, 16))
  
-@@ -922,9 +922,9 @@
+@@= skipped -34, +34 lines =@@
  >mobileDetectRules : Symbol(mobileDetectRules, Decl(fixSignatureCaching.ts, 329, 47))
  
              if (hasOwnProp.call(mobileDetectRules.props, key)) {
@@ -1038,7 +1038,7 @@
  >mobileDetectRules : Symbol(mobileDetectRules, Decl(fixSignatureCaching.ts, 329, 47))
  >key : Symbol(key, Decl(fixSignatureCaching.ts, 329, 11))
  
-@@ -1034,9 +1034,9 @@
+@@= skipped -112, +112 lines =@@
  >rules : Symbol(rules, Decl(fixSignatureCaching.ts, 368, 30))
  
              if (hasOwnProp.call(rules, key)) {
@@ -1050,7 +1050,7 @@
  >rules : Symbol(rules, Decl(fixSignatureCaching.ts, 368, 30))
  >key : Symbol(key, Decl(fixSignatureCaching.ts, 369, 16))
  
-@@ -1073,9 +1073,9 @@
+@@= skipped -39, +39 lines =@@
  >rules : Symbol(rules, Decl(fixSignatureCaching.ts, 386, 32))
  
              if (hasOwnProp.call(rules, key)) {
@@ -1062,7 +1062,7 @@
  >rules : Symbol(rules, Decl(fixSignatureCaching.ts, 386, 32))
  >key : Symbol(key, Decl(fixSignatureCaching.ts, 388, 16))
  
-@@ -1085,9 +1085,9 @@
+@@= skipped -12, +12 lines =@@
  >userAgent : Symbol(userAgent, Decl(fixSignatureCaching.ts, 386, 38))
  
                      result.push(key);
@@ -1074,7 +1074,7 @@
  >key : Symbol(key, Decl(fixSignatureCaching.ts, 388, 16))
                  }
              }
-@@ -1119,9 +1119,9 @@
+@@= skipped -34, +34 lines =@@
  >match : Symbol(match, Decl(fixSignatureCaching.ts, 407, 67))
  
          if (hasOwnProp.call(props, propertyName)) {
@@ -1086,7 +1086,7 @@
  >props : Symbol(props, Decl(fixSignatureCaching.ts, 407, 11))
  >propertyName : Symbol(propertyName, Decl(fixSignatureCaching.ts, 406, 35))
  
-@@ -1319,9 +1319,9 @@
+@@= skipped -200, +200 lines =@@
  
              phoneSized = MobileDetect.isPhoneSized(maxPhoneWidth);
  >phoneSized : Symbol(phoneSized, Decl(fixSignatureCaching.ts, 470, 26))
@@ -1098,7 +1098,7 @@
  >maxPhoneWidth : Symbol(maxPhoneWidth, Decl(fixSignatureCaching.ts, 466, 60))
  
              if (phoneSized === undefined) {
-@@ -1606,30 +1606,30 @@
+@@= skipped -287, +287 lines =@@
  >impl : Symbol(impl, Decl(fixSignatureCaching.ts, 6, 7))
  
          return window.screen.width < window.screen.height ?
@@ -1137,7 +1137,7 @@
  
      };
  
-@@ -1675,9 +1675,9 @@
+@@= skipped -69, +69 lines =@@
      }
  
      MobileDetect.prototype = {
@@ -1149,7 +1149,7 @@
  
          constructor: MobileDetect,
  >constructor : Symbol(constructor, Decl(fixSignatureCaching.ts, 680, 30))
-@@ -2019,9 +2019,9 @@
+@@= skipped -344, +344 lines =@@
  >maxPhoneWidth : Symbol(maxPhoneWidth, Decl(fixSignatureCaching.ts, 942, 32))
  
              return MobileDetect.isPhoneSized(maxPhoneWidth || this.maxPhoneWidth);
@@ -1161,7 +1161,7 @@
  >maxPhoneWidth : Symbol(maxPhoneWidth, Decl(fixSignatureCaching.ts, 942, 32))
  
          },
-@@ -2053,9 +2053,9 @@
+@@= skipped -34, +34 lines =@@
  >screen : Symbol(screen, Decl(lib.dom.d.ts, --, --), Decl(lib.dom.d.ts, --, --))
  
          MobileDetect.isPhoneSized = function (maxPhoneWidth) {
@@ -1173,7 +1173,7 @@
  >maxPhoneWidth : Symbol(maxPhoneWidth, Decl(fixSignatureCaching.ts, 962, 46))
  
              return maxPhoneWidth < 0 ? undefined : impl.getDeviceSmallerSide() <= maxPhoneWidth;
-@@ -2067,22 +2067,22 @@
+@@= skipped -14, +14 lines =@@
          };
      } else {
          MobileDetect.isPhoneSized = function () {};

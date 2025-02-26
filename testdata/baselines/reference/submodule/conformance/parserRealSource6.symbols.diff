@@ -1,6 +1,6 @@
 --- old.parserRealSource6.symbols
 +++ new.parserRealSource6.symbols
-@@ -13,13 +13,13 @@
+@@= skipped -13, +13 lines =@@
  >TypeCollectionContext : Symbol(TypeCollectionContext, Decl(parserRealSource6.ts, 5, 19))
  
          public script: Script = null;
@@ -17,7 +17,7 @@
  >TypeChecker : Symbol(TypeChecker)
          }
      }
-@@ -28,25 +28,25 @@
+@@= skipped -15, +15 lines =@@
  >MemberScopeContext : Symbol(MemberScopeContext, Decl(parserRealSource6.ts, 11, 5))
  
          public type: Type = null;
@@ -50,7 +50,7 @@
  >ASTFlags : Symbol(ASTFlags)
          }
      }
-@@ -55,132 +55,132 @@
+@@= skipped -27, +27 lines =@@
  >EnclosingScopeContext : Symbol(EnclosingScopeContext, Decl(parserRealSource6.ts, 21, 5))
  
          public scopeGetter: () => SymbolScope = null;
@@ -221,7 +221,7 @@
  
                  var minChar = ast.minChar;
  >minChar : Symbol(minChar, Decl(parserRealSource6.ts, 70, 19))
-@@ -188,35 +188,35 @@
+@@= skipped -133, +133 lines =@@
  
                  var limChar = (this.isMemberCompletion ? this.pos : this.pos + 1);
  >limChar : Symbol(limChar, Decl(parserRealSource6.ts, 71, 19))
@@ -271,7 +271,7 @@
          }
      }
  
-@@ -236,48 +236,48 @@
+@@= skipped -48, +48 lines =@@
  
          if (hasFlag(ast.flags, memScope.matchFlag) && ((memScope.pos < 0) || (memScope.pos == ast.limChar))) {
  >ast : Symbol(ast, Decl(parserRealSource6.ts, 78, 39))
@@ -338,7 +338,7 @@
          }
          return ast;
  >ast : Symbol(ast, Decl(parserRealSource6.ts, 78, 39))
-@@ -332,9 +332,9 @@
+@@= skipped -96, +96 lines =@@
  >chain : Symbol(chain, Decl(parserRealSource6.ts, 101, 11))
  >ScopeChain : Symbol(ScopeChain)
  >container : Symbol(container, Decl(parserRealSource6.ts, 91, 44))
@@ -350,7 +350,7 @@
  >builder : Symbol(builder, Decl(parserRealSource6.ts, 100, 11))
  
          chain.thisType = thisType;
-@@ -350,9 +350,9 @@
+@@= skipped -18, +18 lines =@@
  >moduleDecl : Symbol(moduleDecl, Decl(parserRealSource6.ts, 98, 24))
  
          context.scopeChain = chain;
@@ -362,7 +362,7 @@
  >chain : Symbol(chain, Decl(parserRealSource6.ts, 101, 11))
      }
  
-@@ -362,12 +362,12 @@
+@@= skipped -12, +12 lines =@@
  >TypeCollectionContext : Symbol(TypeCollectionContext, Decl(parserRealSource6.ts, 5, 19))
  
          context.scopeChain = context.scopeChain.previous;
@@ -379,7 +379,7 @@
      }
  
      export function preFindEnclosingScope(ast: AST, parent: AST, walker: IAstWalker) {
-@@ -396,28 +396,28 @@
+@@= skipped -34, +34 lines =@@
          // is has not been fully re-parsed yet.
          if (ast.nodeType == NodeType.Script && context.pos > limChar)
  >ast : Symbol(ast, Decl(parserRealSource6.ts, 112, 42))
@@ -416,7 +416,7 @@
  
              switch (ast.nodeType) {
  >ast : Symbol(ast, Decl(parserRealSource6.ts, 112, 42))
-@@ -429,9 +429,9 @@
+@@= skipped -33, +33 lines =@@
  >ast : Symbol(ast, Decl(parserRealSource6.ts, 112, 42))
  
                      context.scopeGetter = function () {
@@ -428,7 +428,7 @@
  
                          return script.bod === null ? null : script.bod.enclosingScope;
  >script : Symbol(script, Decl(parserRealSource6.ts, 126, 23))
-@@ -439,18 +439,18 @@
+@@= skipped -10, +10 lines =@@
  
                      };
                      context.scopeStartAST = script;
@@ -451,7 +451,7 @@
  
                          return (ast.type === null || ast.type.instanceType.containedScope === null) ? null : ast.type.instanceType.containedScope;
  >ast : Symbol(ast, Decl(parserRealSource6.ts, 112, 42))
-@@ -459,15 +459,15 @@
+@@= skipped -20, +20 lines =@@
  
                      };
                      context.scopeStartAST = ast;
@@ -471,7 +471,7 @@
  >TypeDeclaration : Symbol(TypeDeclaration)
  >ast : Symbol(ast, Decl(parserRealSource6.ts, 112, 42))
  
-@@ -484,42 +484,42 @@
+@@= skipped -25, +25 lines =@@
  >objectLit : Symbol(objectLit, Decl(parserRealSource6.ts, 142, 23))
  
                          context.scopeGetter = function () {
@@ -524,7 +524,7 @@
  
                          return ast.type === null ? null : ast.type.containedScope;
  >ast : Symbol(ast, Decl(parserRealSource6.ts, 112, 42))
-@@ -527,18 +527,18 @@
+@@= skipped -43, +43 lines =@@
  
                      };
                      context.scopeStartAST = ast;
@@ -547,7 +547,7 @@
  
                          return (ast.type === null) ? null : ast.type.containedScope;
  >ast : Symbol(ast, Decl(parserRealSource6.ts, 112, 42))
-@@ -546,9 +546,9 @@
+@@= skipped -19, +19 lines =@@
  
                      };
                      context.scopeStartAST = ast;
@@ -559,7 +559,7 @@
  >ast : Symbol(ast, Decl(parserRealSource6.ts, 112, 42))
  
                      break;
-@@ -560,20 +560,20 @@
+@@= skipped -14, +14 lines =@@
  >ast : Symbol(ast, Decl(parserRealSource6.ts, 112, 42))
  
                      if (context.skipNextFuncDeclForClass) {
@@ -586,7 +586,7 @@
  
                              // The scope of a class constructor is hidden somewhere we don't expect :-S
                              if (funcDecl.isConstructor && hasFlag(funcDecl.fncFlags, FncFlags.ClassMethod)) {
-@@ -605,9 +605,9 @@
+@@= skipped -45, +45 lines =@@
                              return null;
                          };
                          context.scopeStartAST = ast;
@@ -598,7 +598,7 @@
  >ast : Symbol(ast, Decl(parserRealSource6.ts, 112, 42))
                      }
                  }
-@@ -657,9 +657,9 @@
+@@= skipped -52, +52 lines =@@
  >context : Symbol(context, Decl(parserRealSource6.ts, 212, 11))
  
          if (context.scopeStartAST === null)

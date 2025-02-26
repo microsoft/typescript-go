@@ -1,6 +1,6 @@
 --- old.overshifts.symbols
 +++ new.overshifts.symbols
-@@ -107,83 +107,83 @@
+@@= skipped -107, +107 lines =@@
  >One : Symbol(One, Decl(overshifts.ts, 53, 13))
  
      A = 1 << 1, // ok

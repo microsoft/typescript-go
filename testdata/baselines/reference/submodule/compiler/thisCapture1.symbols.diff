@@ -1,6 +1,6 @@
 --- old.thisCapture1.symbols
 +++ new.thisCapture1.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >X : Symbol(X, Decl(thisCapture1.ts, 0, 0))
  
      private y = 0;
@@ -13,7 +13,7 @@
  >keys : Symbol(keys, Decl(thisCapture1.ts, 2, 23))
  
          var ret: any;
-@@ -18,9 +18,9 @@
+@@= skipped -13, +13 lines =@@
  >ret : Symbol(ret, Decl(thisCapture1.ts, 3, 11))
  
              this.y = 0;

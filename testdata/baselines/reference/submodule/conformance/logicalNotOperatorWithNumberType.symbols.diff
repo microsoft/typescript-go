@@ -1,6 +1,6 @@
 --- old.logicalNotOperatorWithNumberType.symbols
 +++ new.logicalNotOperatorWithNumberType.symbols
-@@ -15,10 +15,10 @@
+@@= skipped -15, +15 lines =@@
  >A : Symbol(A, Decl(logicalNotOperatorWithNumberType.ts, 4, 36))
  
      public a: number;
@@ -13,7 +13,7 @@
  }
  module M {
  >M : Symbol(M, Decl(logicalNotOperatorWithNumberType.ts, 9, 1))
-@@ -59,15 +59,15 @@
+@@= skipped -44, +44 lines =@@
  // number type expressions
  var ResultIsBoolean6 = !objA.a;
  >ResultIsBoolean6 : Symbol(ResultIsBoolean6, Decl(logicalNotOperatorWithNumberType.ts, 26, 3))
@@ -33,7 +33,7 @@
  
  var ResultIsBoolean8 = !NUMBER1[0];
  >ResultIsBoolean8 : Symbol(ResultIsBoolean8, Decl(logicalNotOperatorWithNumberType.ts, 28, 3))
-@@ -79,9 +79,9 @@
+@@= skipped -20, +20 lines =@@
  
  var ResultIsBoolean10 = !A.foo();
  >ResultIsBoolean10 : Symbol(ResultIsBoolean10, Decl(logicalNotOperatorWithNumberType.ts, 30, 3))
@@ -45,7 +45,7 @@
  
  var ResultIsBoolean11 = !(NUMBER + NUMBER);
  >ResultIsBoolean11 : Symbol(ResultIsBoolean11, Decl(logicalNotOperatorWithNumberType.ts, 31, 3))
-@@ -110,20 +110,20 @@
+@@= skipped -31, +31 lines =@@
  >foo : Symbol(foo, Decl(logicalNotOperatorWithNumberType.ts, 2, 31))
  
  !objA.a;

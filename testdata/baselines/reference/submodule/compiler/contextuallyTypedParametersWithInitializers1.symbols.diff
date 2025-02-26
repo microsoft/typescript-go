@@ -1,6 +1,6 @@
 --- old.contextuallyTypedParametersWithInitializers1.symbols
 +++ new.contextuallyTypedParametersWithInitializers1.symbols
-@@ -303,9 +303,9 @@
+@@= skipped -303, +303 lines =@@
  >debug : Symbol(debug, Decl(contextuallyTypedParametersWithInitializers1.ts, 74, 38))
  
              root.innerHTML = '';

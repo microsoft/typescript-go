@@ -1,6 +1,6 @@
 --- old.enumWithInfinityProperty.symbols
 +++ new.enumWithInfinityProperty.symbols
-@@ -5,6 +5,6 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(enumWithInfinityProperty.ts, 0, 0))
  
      Infinity = 1

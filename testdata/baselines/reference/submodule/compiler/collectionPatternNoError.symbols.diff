@@ -1,6 +1,6 @@
 --- old.collectionPatternNoError.symbols
 +++ new.collectionPatternNoError.symbols
-@@ -15,7 +15,7 @@
+@@= skipped -15, +15 lines =@@
  >Message : Symbol(Message, Decl(collectionPatternNoError.ts, 2, 1))
  
    clone(): this {
@@ -9,7 +9,7 @@
  
      return this;
  >this : Symbol(Message, Decl(collectionPatternNoError.ts, 2, 1))
-@@ -28,7 +28,7 @@
+@@= skipped -13, +13 lines =@@
  >Message : Symbol(Message, Decl(collectionPatternNoError.ts, 2, 1))
  
    methodOnMessageList(): T[];
@@ -18,7 +18,7 @@
  >T : Symbol(T, Decl(collectionPatternNoError.ts, 8, 22))
  }
  
-@@ -54,31 +54,31 @@
+@@= skipped -26, +26 lines =@@
  
    constructor(
      private readonly message: MsgConstructor<T>,
@@ -57,7 +57,7 @@
    }
  }
  
-@@ -106,9 +106,9 @@
+@@= skipped -52, +52 lines =@@
  >U : Symbol(U, Decl(collectionPatternNoError.ts, 30, 11))
  
    fetchMsg(messageList).methodOnMessageList();

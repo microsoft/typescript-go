@@ -1,6 +1,6 @@
 --- old.binaryIntegerLiteralError.symbols
 +++ new.binaryIntegerLiteralError.symbols
-@@ -12,13 +12,13 @@
+@@= skipped -12, +12 lines =@@
  >obj1 : Symbol(obj1, Decl(binaryIntegerLiteralError.ts, 4, 3))
  
      0b11010: "hi",

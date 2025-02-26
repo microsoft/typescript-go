@@ -1,6 +1,6 @@
 --- old.pickOfLargeObjectUnionWorks.symbols
 +++ new.pickOfLargeObjectUnionWorks.symbols
-@@ -12,118 +12,118 @@
+@@= skipped -12, +12 lines =@@
  >Base : Symbol(Base, Decl(pickOfLargeObjectUnionWorks.ts, 2, 1))
  
      id: string;
@@ -157,7 +157,7 @@
    }
    
    interface A extends Base, HTMLDataAttributes {
-@@ -132,28 +132,28 @@
+@@= skipped -120, +120 lines =@@
  >HTMLDataAttributes : Symbol(HTMLDataAttributes, Decl(pickOfLargeObjectUnionWorks.ts, 0, 0))
  
      a1: string;
@@ -194,7 +194,7 @@
    }
    
    interface B extends Base, HTMLDataAttributes {
-@@ -162,28 +162,28 @@
+@@= skipped -30, +30 lines =@@
  >HTMLDataAttributes : Symbol(HTMLDataAttributes, Decl(pickOfLargeObjectUnionWorks.ts, 0, 0))
  
      b1: string;
@@ -231,7 +231,7 @@
    }
    
    interface C extends Base, HTMLDataAttributes {
-@@ -192,28 +192,28 @@
+@@= skipped -30, +30 lines =@@
  >HTMLDataAttributes : Symbol(HTMLDataAttributes, Decl(pickOfLargeObjectUnionWorks.ts, 0, 0))
  
      c1: string;

@@ -1,6 +1,6 @@
 --- old.moduleResolutionWithSymlinks_preserveSymlinks.symbols
 +++ new.moduleResolutionWithSymlinks_preserveSymlinks.symbols
-@@ -5,11 +5,9 @@
+@@= skipped -5, +5 lines =@@
  /// <reference types="linked" />
  
  import { C as C1 } from "linked";
@@ -12,7 +12,7 @@
  >C2 : Symbol(C2, Decl(app.ts, 4, 8))
  
  let x = new C1();
-@@ -21,7 +19,3 @@
+@@= skipped -16, +14 lines =@@
  >x : Symbol(x, Decl(app.ts, 6, 3))
  >C2 : Symbol(C2, Decl(app.ts, 4, 8))
  

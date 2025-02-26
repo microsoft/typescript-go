@@ -1,6 +1,6 @@
 --- old.nodeModulesTypesVersionPackageExports(module=nodenext).symbols
 +++ new.nodeModulesTypesVersionPackageExports(module=nodenext).symbols
-@@ -6,9 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >mod : Symbol(mod, Decl(index.ts, 1, 6))
  
  mod.correctVersionApplied;
@@ -10,7 +10,7 @@
  
  === index.mts ===
  // esm format file
-@@ -16,9 +14,7 @@
+@@= skipped -10, +8 lines =@@
  >mod : Symbol(mod, Decl(index.mts, 1, 6))
  
  mod.correctVersionApplied;
@@ -20,7 +20,7 @@
  
  === index.cts ===
  // cjs format file
-@@ -26,9 +22,7 @@
+@@= skipped -10, +8 lines =@@
  >mod : Symbol(mod, Decl(index.cts, 1, 6))
  
  mod.correctVersionApplied;

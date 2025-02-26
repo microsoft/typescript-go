@@ -1,6 +1,6 @@
 --- old.classExtendsItselfIndirectly.symbols
 +++ new.classExtendsItselfIndirectly.symbols
-@@ -4,24 +4,24 @@
+@@= skipped -4, +4 lines =@@
  class C extends E { foo: string; } // error
  >C : Symbol(C, Decl(classExtendsItselfIndirectly.ts, 0, 0))
  >E : Symbol(E, Decl(classExtendsItselfIndirectly.ts, 2, 34))
@@ -29,7 +29,7 @@
  >T : Symbol(T, Decl(classExtendsItselfIndirectly.ts, 6, 9))
  
  class D2<T> extends C2<T> { bar: T; }
-@@ -29,7 +29,7 @@
+@@= skipped -25, +25 lines =@@
  >T : Symbol(T, Decl(classExtendsItselfIndirectly.ts, 8, 9))
  >C2 : Symbol(C2, Decl(classExtendsItselfIndirectly.ts, 4, 34))
  >T : Symbol(T, Decl(classExtendsItselfIndirectly.ts, 8, 9))
@@ -38,7 +38,7 @@
  >T : Symbol(T, Decl(classExtendsItselfIndirectly.ts, 8, 9))
  
  class E2<T> extends D2<T> { baz: T; }
-@@ -37,6 +37,6 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(classExtendsItselfIndirectly.ts, 10, 9))
  >D2 : Symbol(D2, Decl(classExtendsItselfIndirectly.ts, 6, 37))
  >T : Symbol(T, Decl(classExtendsItselfIndirectly.ts, 10, 9))

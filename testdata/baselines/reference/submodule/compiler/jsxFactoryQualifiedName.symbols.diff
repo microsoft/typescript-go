@@ -1,6 +1,6 @@
 --- old.jsxFactoryQualifiedName.symbols
 +++ new.jsxFactoryQualifiedName.symbols
-@@ -8,31 +8,31 @@
+@@= skipped -8, +8 lines =@@
  >Element : Symbol(Element, Decl(Element.ts, 0, 23))
  
          name: string;
@@ -40,7 +40,7 @@
      }
  }
  export namespace Element {
-@@ -43,7 +43,7 @@
+@@= skipped -35, +35 lines =@@
  >el : Symbol(el, Decl(Element.ts, 13, 30))
  >el : Symbol(el, Decl(Element.ts, 13, 30))
  >JSX : Symbol(JSX, Decl(Element.ts, 0, 0))
@@ -49,7 +49,7 @@
  
          return el.markAsChildOfRootElement !== undefined;
  >el : Symbol(el, Decl(Element.ts, 13, 30))
-@@ -61,21 +61,17 @@
+@@= skipped -18, +18 lines =@@
  
  export let createElement = Element.createElement;
  >createElement : Symbol(createElement, Decl(Element.ts, 24, 10))
@@ -73,7 +73,7 @@
  }
  
  === test.tsx ===
-@@ -97,7 +93,7 @@
+@@= skipped -36, +32 lines =@@
  >A : Symbol(A, Decl(test.tsx, 6, 2))
  
  	view() {

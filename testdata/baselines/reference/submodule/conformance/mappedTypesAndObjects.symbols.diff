@@ -1,6 +1,6 @@
 --- old.mappedTypesAndObjects.symbols
 +++ new.mappedTypesAndObjects.symbols
-@@ -63,14 +63,14 @@
+@@= skipped -63, +63 lines =@@
  >Base : Symbol(Base, Decl(mappedTypesAndObjects.ts, 14, 1))
  
      foo: { [key: string]: any };
@@ -18,7 +18,7 @@
  }
  
  interface E1<T> extends Base {
-@@ -79,21 +79,21 @@
+@@= skipped -16, +16 lines =@@
  >Base : Symbol(Base, Decl(mappedTypesAndObjects.ts, 14, 1))
  
      foo: T;
@@ -44,7 +44,7 @@
  >Partial : Symbol(Partial, Decl(lib.es5.d.ts, --, --))
  >Something : Symbol(Something, Decl(mappedTypesAndObjects.ts, 26, 1))
  }
-@@ -104,7 +104,7 @@
+@@= skipped -25, +25 lines =@@
  >Base : Symbol(Base, Decl(mappedTypesAndObjects.ts, 14, 1))
  
      foo: Partial<T>; // or other mapped type
@@ -53,7 +53,7 @@
  >Partial : Symbol(Partial, Decl(lib.es5.d.ts, --, --))
  >T : Symbol(T, Decl(mappedTypesAndObjects.ts, 33, 13))
  }
-@@ -116,7 +116,7 @@
+@@= skipped -12, +12 lines =@@
  >T : Symbol(T, Decl(mappedTypesAndObjects.ts, 39, 11))
  
      private values: {[P in keyof T]?: T[P]} = {}

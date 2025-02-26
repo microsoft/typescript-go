@@ -1,6 +1,6 @@
 --- old.decoratorOnClassAccessor1.symbols
 +++ new.decoratorOnClassAccessor1.symbols
-@@ -17,5 +17,5 @@
+@@= skipped -17, +17 lines =@@
  
      @dec get accessor() { return 1; }
  >dec : Symbol(dec, Decl(decoratorOnClassAccessor1.ts, 0, 0))

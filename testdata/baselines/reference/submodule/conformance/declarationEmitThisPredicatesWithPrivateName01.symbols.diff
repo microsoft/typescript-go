@@ -1,6 +1,6 @@
 --- old.declarationEmitThisPredicatesWithPrivateName01.symbols
 +++ new.declarationEmitThisPredicatesWithPrivateName01.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(declarationEmitThisPredicatesWithPrivateName01.ts, 0, 0))
  
      m(): this is D {

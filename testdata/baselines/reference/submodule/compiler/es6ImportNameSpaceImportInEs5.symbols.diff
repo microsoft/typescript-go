@@ -1,6 +1,6 @@
 --- old.es6ImportNameSpaceImportInEs5.symbols
 +++ new.es6ImportNameSpaceImportInEs5.symbols
-@@ -10,9 +10,9 @@
+@@= skipped -10, +10 lines =@@
  
  var x = nameSpaceBinding.a;
  >x : Symbol(x, Decl(es6ImportNameSpaceImportInEs5_1.ts, 1, 3))

@@ -1,6 +1,6 @@
 --- old.vardecl.symbols
 +++ new.vardecl.symbols
-@@ -43,9 +43,9 @@
+@@= skipped -43, +43 lines =@@
  >y : Symbol(y, Decl(vardecl.ts, 18, 37))
  
  complicatedArrayVar.push({ x: 30, y : 'hello world' });
@@ -12,7 +12,7 @@
  >x : Symbol(x, Decl(vardecl.ts, 19, 26))
  >y : Symbol(y, Decl(vardecl.ts, 19, 33))
  
-@@ -152,7 +152,7 @@
+@@= skipped -109, +109 lines =@@
  >C : Symbol(C, Decl(vardecl.ts, 65, 11))
  
          constructor (public b) {
@@ -21,7 +21,7 @@
          }
      }
  
-@@ -160,7 +160,7 @@
+@@= skipped -8, +8 lines =@@
  >C2 : Symbol(C2, Decl(vardecl.ts, 70, 5))
  
          constructor (public b) {

@@ -1,6 +1,6 @@
 --- old.caseInsensitiveFileSystemWithCapsImportTypeDeclarations.symbols
 +++ new.caseInsensitiveFileSystemWithCapsImportTypeDeclarations.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >Broken : Symbol(Broken, Decl(index.ts, 0, 33))
  
      method () {

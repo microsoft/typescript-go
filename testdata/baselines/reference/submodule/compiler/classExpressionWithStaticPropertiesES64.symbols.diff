@@ -1,6 +1,6 @@
 --- old.classExpressionWithStaticPropertiesES64.symbols
 +++ new.classExpressionWithStaticPropertiesES64.symbols
-@@ -2,5 +2,5 @@
+@@= skipped -2, +2 lines =@@
  
  === classExpressionWithStaticPropertiesES64.ts ===
  (class { static x = 0; });

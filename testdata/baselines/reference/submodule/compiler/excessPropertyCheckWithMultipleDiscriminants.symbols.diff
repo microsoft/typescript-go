@@ -1,6 +1,6 @@
 --- old.excessPropertyCheckWithMultipleDiscriminants.symbols
 +++ new.excessPropertyCheckWithMultipleDiscriminants.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(excessPropertyCheckWithMultipleDiscriminants.ts, 2, 15))
  
      value: T;
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(excessPropertyCheckWithMultipleDiscriminants.ts, 2, 15))
  }
  
-@@ -17,10 +17,10 @@
+@@= skipped -9, +9 lines =@@
  >Base : Symbol(Base, Decl(excessPropertyCheckWithMultipleDiscriminants.ts, 0, 0))
  
      type: "integer";
@@ -22,7 +22,7 @@
  }
  
  interface Float extends Base<number> {
-@@ -28,7 +28,7 @@
+@@= skipped -11, +11 lines =@@
  >Base : Symbol(Base, Decl(excessPropertyCheckWithMultipleDiscriminants.ts, 0, 0))
  
      type: "number";
@@ -31,7 +31,7 @@
  }
  
  interface Str extends Base<string> {
-@@ -36,10 +36,10 @@
+@@= skipped -8, +8 lines =@@
  >Base : Symbol(Base, Decl(excessPropertyCheckWithMultipleDiscriminants.ts, 0, 0))
  
      type: "string";
@@ -44,7 +44,7 @@
  }
  
  interface Bool extends Base<boolean> {
-@@ -47,7 +47,7 @@
+@@= skipped -11, +11 lines =@@
  >Base : Symbol(Base, Decl(excessPropertyCheckWithMultipleDiscriminants.ts, 0, 0))
  
      type: "boolean";
@@ -53,7 +53,7 @@
  }
  
  type Primitive = Int | Float | Str | Bool;
-@@ -149,28 +149,28 @@
+@@= skipped -102, +102 lines =@@
  >Common : Symbol(Common, Decl(excessPropertyCheckWithMultipleDiscriminants.ts, 58, 2))
  
      type: "A" | "B" | "C" | "D";

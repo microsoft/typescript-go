@@ -1,6 +1,6 @@
 --- old.classFieldSuperAccessibleJs2.symbols
 +++ new.classFieldSuperAccessibleJs2.symbols
-@@ -6,24 +6,24 @@
+@@= skipped -6, +6 lines =@@
  
    constructor() {
      this.foo = () => {
@@ -32,7 +32,7 @@
    }
  }
  
-@@ -32,27 +32,27 @@
+@@= skipped -26, +26 lines =@@
  >C : Symbol(C, Decl(index.js, 0, 0))
  
    foo() {
@@ -69,7 +69,7 @@
    }
  }
  
-@@ -61,17 +61,17 @@
+@@= skipped -29, +29 lines =@@
  >D : Symbol(D, Decl(index.js, 9, 1))
  
  obj.foo();

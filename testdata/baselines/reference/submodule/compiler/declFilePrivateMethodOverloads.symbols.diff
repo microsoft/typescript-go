@@ -1,6 +1,6 @@
 --- old.declFilePrivateMethodOverloads.symbols
 +++ new.declFilePrivateMethodOverloads.symbols
-@@ -5,13 +5,13 @@
+@@= skipped -5, +5 lines =@@
  >IContext : Symbol(IContext, Decl(declFilePrivateMethodOverloads.ts, 0, 0))
  
      someMethod();
@@ -16,7 +16,7 @@
  >bindingContext : Symbol(bindingContext, Decl(declFilePrivateMethodOverloads.ts, 4, 35))
  >IContext : Symbol(IContext, Decl(declFilePrivateMethodOverloads.ts, 0, 0))
  >fn : Symbol(fn, Decl(declFilePrivateMethodOverloads.ts, 4, 60))
-@@ -19,7 +19,7 @@
+@@= skipped -14, +14 lines =@@
  >IContext : Symbol(IContext, Decl(declFilePrivateMethodOverloads.ts, 0, 0))
  
      private _forEachBindingContext(bindingContextArray: Array<IContext>, fn: (bindingContext: IContext) => void);
@@ -25,7 +25,7 @@
  >bindingContextArray : Symbol(bindingContextArray, Decl(declFilePrivateMethodOverloads.ts, 5, 35))
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  >IContext : Symbol(IContext, Decl(declFilePrivateMethodOverloads.ts, 0, 0))
-@@ -28,7 +28,7 @@
+@@= skipped -9, +9 lines =@@
  >IContext : Symbol(IContext, Decl(declFilePrivateMethodOverloads.ts, 0, 0))
  
      private _forEachBindingContext(context, fn: (bindingContext: IContext) => void): void {
@@ -34,7 +34,7 @@
  >context : Symbol(context, Decl(declFilePrivateMethodOverloads.ts, 6, 35))
  >fn : Symbol(fn, Decl(declFilePrivateMethodOverloads.ts, 6, 43))
  >bindingContext : Symbol(bindingContext, Decl(declFilePrivateMethodOverloads.ts, 6, 49))
-@@ -38,12 +38,12 @@
+@@= skipped -10, +10 lines =@@
      }
  
      private overloadWithArityDifference(bindingContext: IContext);
@@ -49,7 +49,7 @@
  >bindingContextArray : Symbol(bindingContextArray, Decl(declFilePrivateMethodOverloads.ts, 11, 40))
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  >IContext : Symbol(IContext, Decl(declFilePrivateMethodOverloads.ts, 0, 0))
-@@ -52,7 +52,7 @@
+@@= skipped -14, +14 lines =@@
  >IContext : Symbol(IContext, Decl(declFilePrivateMethodOverloads.ts, 0, 0))
  
      private overloadWithArityDifference(context): void {
@@ -58,7 +58,7 @@
  >context : Symbol(context, Decl(declFilePrivateMethodOverloads.ts, 12, 40))
  
          // Function here
-@@ -62,16 +62,16 @@
+@@= skipped -10, +10 lines =@@
  >c2 : Symbol(c2, Decl(declFilePrivateMethodOverloads.ts, 15, 1))
  
      private overload1(context, fn);

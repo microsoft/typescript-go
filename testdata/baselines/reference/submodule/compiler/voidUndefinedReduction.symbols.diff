@@ -1,6 +1,6 @@
 --- old.voidUndefinedReduction.symbols
 +++ new.voidUndefinedReduction.symbols
-@@ -25,11 +25,11 @@
+@@= skipped -25, +25 lines =@@
  >foo : Symbol(foo, Decl(voidUndefinedReduction.ts, 6, 13))
  
    console.log(foo.toUpperCase()); 

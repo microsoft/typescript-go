@@ -1,6 +1,6 @@
 --- old.commonJSAliasedExport.symbols
 +++ new.commonJSAliasedExport.symbols
-@@ -3,8 +3,6 @@
+@@= skipped -3, +3 lines =@@
  === bug43713.js ===
  const { funky } = require('./commonJSAliasedExport');
  >funky : Symbol(funky, Decl(bug43713.js, 0, 7))
@@ -9,7 +9,7 @@
  
  /** @type {boolean} */
  var diddy
-@@ -15,29 +13,3 @@
+@@= skipped -12, +10 lines =@@
  >funky : Symbol(funky, Decl(bug43713.js, 0, 7))
  
  

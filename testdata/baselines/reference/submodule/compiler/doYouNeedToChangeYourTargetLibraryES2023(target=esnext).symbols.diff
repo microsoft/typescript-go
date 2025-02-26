@@ -1,6 +1,6 @@
 --- old.doYouNeedToChangeYourTargetLibraryES2023(target=esnext).symbols
 +++ new.doYouNeedToChangeYourTargetLibraryES2023(target=esnext).symbols
-@@ -14,80 +14,80 @@
+@@= skipped -14, +14 lines =@@
  
  export let lastIndex1 = array.findLastIndex(v => v === 4);
  >lastIndex1 : Symbol(lastIndex1, Decl(doYouNeedToChangeYourTargetLibraryES2023.ts, 6, 10))

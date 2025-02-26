@@ -1,6 +1,6 @@
 --- old.unionTypeMembers.symbols
 +++ new.unionTypeMembers.symbols
-@@ -6,42 +6,42 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(unionTypeMembers.ts, 0, 13))
  
      commonMethodType(a: string): string;
@@ -52,7 +52,7 @@
  }
  
  interface I2<T> {
-@@ -49,42 +49,42 @@
+@@= skipped -43, +43 lines =@@
  >T : Symbol(T, Decl(unionTypeMembers.ts, 15, 13))
  
      commonMethodType(a: string): string;

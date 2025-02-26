@@ -1,6 +1,6 @@
 --- old.varRequireFromJavascript.symbols
 +++ new.varRequireFromJavascript.symbols
-@@ -3,20 +3,14 @@
+@@= skipped -3, +3 lines =@@
  === use.js ===
  var ex = require('./ex')
  >ex : Symbol(ex, Decl(use.js, 0, 3))
@@ -21,7 +21,7 @@
  
  
  // types work
-@@ -28,32 +22,6 @@
+@@= skipped -25, +19 lines =@@
  >wrap : Symbol(wrap, Decl(use.js, 11, 11))
  
      wrap.n

@@ -1,6 +1,6 @@
 --- old.acceptSymbolAsWeakType.symbols
 +++ new.acceptSymbolAsWeakType.symbols
-@@ -11,21 +11,21 @@
+@@= skipped -11, +11 lines =@@
  >s : Symbol(s, Decl(acceptSymbolAsWeakType.ts, 0, 5))
  
  ws.add(s);
@@ -28,7 +28,7 @@
  >s : Symbol(s, Decl(acceptSymbolAsWeakType.ts, 0, 5))
  
  const wm = new WeakMap([[s, false]]);
-@@ -34,27 +34,27 @@
+@@= skipped -23, +23 lines =@@
  >s : Symbol(s, Decl(acceptSymbolAsWeakType.ts, 0, 5))
  
  wm.set(s, true);
@@ -64,7 +64,7 @@
  >s : Symbol(s, Decl(acceptSymbolAsWeakType.ts, 0, 5))
  
  const wr = new WeakRef(s);
-@@ -63,23 +63,23 @@
+@@= skipped -29, +29 lines =@@
  >s : Symbol(s, Decl(acceptSymbolAsWeakType.ts, 0, 5))
  
  wr.deref();

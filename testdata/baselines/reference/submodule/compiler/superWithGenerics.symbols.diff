@@ -1,6 +1,6 @@
 --- old.superWithGenerics.symbols
 +++ new.superWithGenerics.symbols
-@@ -6,13 +6,13 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(superWithGenerics.ts, 0, 16))
  
      m<U>(): B<U>;

@@ -1,6 +1,6 @@
 --- old.parserAccessibilityAfterStatic1.symbols
 +++ new.parserAccessibilityAfterStatic1.symbols
-@@ -5,6 +5,6 @@
+@@= skipped -5, +5 lines =@@
  >Outer : Symbol(Outer, Decl(parserAccessibilityAfterStatic1.ts, 0, 0))
  {
  static public intI: number;

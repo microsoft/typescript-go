@@ -1,6 +1,6 @@
 --- old.typeGuardOfFormInstanceOf.symbols
 +++ new.typeGuardOfFormInstanceOf.symbols
-@@ -11,26 +11,26 @@
+@@= skipped -11, +11 lines =@@
  >C1 : Symbol(C1, Decl(typeGuardOfFormInstanceOf.ts, 0, 0))
  
      p1: string;
@@ -31,7 +31,7 @@
  }
  var str: string;
  >str : Symbol(str, Decl(typeGuardOfFormInstanceOf.ts, 18, 3))
-@@ -50,33 +50,33 @@
+@@= skipped -39, +39 lines =@@
  >str : Symbol(str, Decl(typeGuardOfFormInstanceOf.ts, 18, 3))
  >ctor1 : Symbol(ctor1, Decl(typeGuardOfFormInstanceOf.ts, 22, 3))
  >C1 : Symbol(C1, Decl(typeGuardOfFormInstanceOf.ts, 0, 0))
@@ -73,7 +73,7 @@
  
  var ctor2: C2 | D1;
  >ctor2 : Symbol(ctor2, Decl(typeGuardOfFormInstanceOf.ts, 28, 3))
-@@ -87,25 +87,25 @@
+@@= skipped -37, +37 lines =@@
  >num : Symbol(num, Decl(typeGuardOfFormInstanceOf.ts, 19, 3))
  >ctor2 : Symbol(ctor2, Decl(typeGuardOfFormInstanceOf.ts, 28, 3))
  >C2 : Symbol(C2, Decl(typeGuardOfFormInstanceOf.ts, 8, 1))
@@ -105,7 +105,7 @@
  
  var r2: D1 | C2 = ctor2 instanceof C1 && ctor2; // C2 | D1
  >r2 : Symbol(r2, Decl(typeGuardOfFormInstanceOf.ts, 32, 3))
-@@ -125,15 +125,15 @@
+@@= skipped -38, +38 lines =@@
  >C1 : Symbol(C1, Decl(typeGuardOfFormInstanceOf.ts, 0, 0))
  
      ctor3.p1; // C1
@@ -125,7 +125,7 @@
  }
  
  var ctor4: C1 | C2 | C3;
-@@ -147,24 +147,24 @@
+@@= skipped -22, +22 lines =@@
  >C1 : Symbol(C1, Decl(typeGuardOfFormInstanceOf.ts, 0, 0))
  
      ctor4.p1; // C1
@@ -156,7 +156,7 @@
  }
  
  var ctor5: C1 | D1 | C2;
-@@ -178,15 +178,15 @@
+@@= skipped -31, +31 lines =@@
  >C1 : Symbol(C1, Decl(typeGuardOfFormInstanceOf.ts, 0, 0))
  
      ctor5.p1; // C1
@@ -176,7 +176,7 @@
  }
  
  var ctor6: C1 | C2 | C3;
-@@ -203,7 +203,7 @@
+@@= skipped -25, +25 lines =@@
  }
  else {
      ctor6.p4; // C3

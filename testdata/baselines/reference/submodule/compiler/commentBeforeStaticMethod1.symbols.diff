@@ -1,6 +1,6 @@
 --- old.commentBeforeStaticMethod1.symbols
 +++ new.commentBeforeStaticMethod1.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
     * Returns bar
     */
    public static foo(): string {

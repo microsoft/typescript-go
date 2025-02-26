@@ -1,6 +1,6 @@
 --- old.mergedModuleDeclarationCodeGen5.symbols
 +++ new.mergedModuleDeclarationCodeGen5.symbols
-@@ -3,8 +3,8 @@
+@@= skipped -3, +3 lines =@@
  === mergedModuleDeclarationCodeGen5.ts ===
  module M.buz.plop {
  >M : Symbol(M, Decl(mergedModuleDeclarationCodeGen5.ts, 0, 0), Decl(mergedModuleDeclarationCodeGen5.ts, 3, 1))
@@ -11,7 +11,7 @@
  
      export function doom() { }
  >doom : Symbol(doom, Decl(mergedModuleDeclarationCodeGen5.ts, 0, 19))
-@@ -14,8 +14,8 @@
+@@= skipped -11, +11 lines =@@
  }
  module M.buz.plop {
  >M : Symbol(M, Decl(mergedModuleDeclarationCodeGen5.ts, 0, 0), Decl(mergedModuleDeclarationCodeGen5.ts, 3, 1))
@@ -22,7 +22,7 @@
  
      function gunk() { }
  >gunk : Symbol(gunk, Decl(mergedModuleDeclarationCodeGen5.ts, 4, 19))
-@@ -40,11 +40,10 @@
+@@= skipped -26, +26 lines =@@
  
      export var v3 = doom; // _plop.doom
  >v3 : Symbol(v3, Decl(mergedModuleDeclarationCodeGen5.ts, 13, 14))

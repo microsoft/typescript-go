@@ -1,6 +1,6 @@
 --- old.controlFlowArrays.symbols
 +++ new.controlFlowArrays.symbols
-@@ -30,19 +30,19 @@
+@@= skipped -30, +30 lines =@@
  >x : Symbol(x, Decl(controlFlowArrays.ts, 11, 7))
  
      x.push(5);
@@ -26,7 +26,7 @@
  
      return x;  // (string | number | boolean)[]
  >x : Symbol(x, Decl(controlFlowArrays.ts, 11, 7))
-@@ -58,9 +58,9 @@
+@@= skipped -28, +28 lines =@@
  >x : Symbol(x, Decl(controlFlowArrays.ts, 19, 7))
  
      x.push(5, "hello");
@@ -38,7 +38,7 @@
  
      return x;  // (string | number)[]
  >x : Symbol(x, Decl(controlFlowArrays.ts, 19, 7))
-@@ -76,15 +76,15 @@
+@@= skipped -18, +18 lines =@@
  >cond : Symbol(cond, Decl(controlFlowArrays.ts, 0, 0))
  
          x.push(5);
@@ -58,7 +58,7 @@
      }
      return x;  // (string | number)[]
  >x : Symbol(x, Decl(controlFlowArrays.ts, 26, 7))
-@@ -103,18 +103,18 @@
+@@= skipped -27, +27 lines =@@
  >x : Symbol(x, Decl(controlFlowArrays.ts, 37, 7))
  
          x.push(5);
@@ -81,7 +81,7 @@
      }
      return x;  // (string | number)[]
  >x : Symbol(x, Decl(controlFlowArrays.ts, 37, 7))
-@@ -137,9 +137,9 @@
+@@= skipped -34, +34 lines =@@
  >x : Symbol(x, Decl(controlFlowArrays.ts, 50, 7))
  
          x.push("hello");
@@ -93,7 +93,7 @@
      }
      return x;  // number | string[]
  >x : Symbol(x, Decl(controlFlowArrays.ts, 50, 7))
-@@ -161,9 +161,9 @@
+@@= skipped -24, +24 lines =@@
  >cond : Symbol(cond, Decl(controlFlowArrays.ts, 0, 0))
  
              x.push("hello");
@@ -105,7 +105,7 @@
          }
      }
      return x;  // string[] | null
-@@ -177,27 +177,27 @@
+@@= skipped -16, +16 lines =@@
  >x : Symbol(x, Decl(controlFlowArrays.ts, 73, 7))
  
      x.push(5);
@@ -139,7 +139,7 @@
  
      return x;  // (string | number | boolean)[]
  >x : Symbol(x, Decl(controlFlowArrays.ts, 73, 7))
-@@ -213,18 +213,18 @@
+@@= skipped -36, +36 lines =@@
  >cond : Symbol(cond, Decl(controlFlowArrays.ts, 0, 0))
  
          x.push(5);
@@ -162,7 +162,7 @@
  
          return x;  // string[]
  >x : Symbol(x, Decl(controlFlowArrays.ts, 83, 7))
-@@ -241,18 +241,18 @@
+@@= skipped -28, +28 lines =@@
  >cond : Symbol(cond, Decl(controlFlowArrays.ts, 0, 0))
  
          x.push(true);
@@ -185,7 +185,7 @@
  
          x;  // number[]
  >x : Symbol(x, Decl(controlFlowArrays.ts, 95, 7))
-@@ -261,17 +261,17 @@
+@@= skipped -20, +20 lines =@@
  >cond : Symbol(cond, Decl(controlFlowArrays.ts, 0, 0))
  
              x.push("hello");
@@ -207,7 +207,7 @@
  
      return x;  // (string | number | boolean)[]
  >x : Symbol(x, Decl(controlFlowArrays.ts, 95, 7))
-@@ -284,14 +284,14 @@
+@@= skipped -23, +23 lines =@@
  >x : Symbol(x, Decl(controlFlowArrays.ts, 113, 7))
  
      if (x.length === 0) {  // x.length ok on implicit any[]
@@ -226,7 +226,7 @@
      }
      return x;
  >x : Symbol(x, Decl(controlFlowArrays.ts, 113, 7))
-@@ -307,14 +307,14 @@
+@@= skipped -23, +23 lines =@@
  >x : Symbol(x, Decl(controlFlowArrays.ts, 121, 7))
  
      if (x.length === 0) {  // x.length ok on implicit any[]
@@ -245,7 +245,7 @@
      }
      return x;
  >x : Symbol(x, Decl(controlFlowArrays.ts, 121, 7))
-@@ -327,19 +327,19 @@
+@@= skipped -20, +20 lines =@@
  >x : Symbol(x, Decl(controlFlowArrays.ts, 130, 7))
  
      x.push(5);
@@ -271,7 +271,7 @@
  
      return x;  // (string | number | boolean)[]
  >x : Symbol(x, Decl(controlFlowArrays.ts, 130, 7))
-@@ -352,19 +352,19 @@
+@@= skipped -25, +25 lines =@@
  >x : Symbol(x, Decl(controlFlowArrays.ts, 138, 9))
  
      x.push(5);
@@ -297,7 +297,7 @@
  
      return x;  // (string | number | boolean)[]
  >x : Symbol(x, Decl(controlFlowArrays.ts, 138, 9))
-@@ -383,9 +383,9 @@
+@@= skipped -31, +31 lines =@@
  >cond : Symbol(cond, Decl(controlFlowArrays.ts, 0, 0))
  
          x.push("hello");
@@ -309,7 +309,7 @@
      }
      return x;  // string[]
  >x : Symbol(x, Decl(controlFlowArrays.ts, 146, 7))
-@@ -401,18 +401,18 @@
+@@= skipped -18, +18 lines =@@
  >y : Symbol(y, Decl(controlFlowArrays.ts, 156, 7))
  
      (x = [], x).push(5);
@@ -334,7 +334,7 @@
  
      ((x))[3] = { a: 1 };
  >x : Symbol(x, Decl(controlFlowArrays.ts, 155, 7))
-@@ -429,19 +429,19 @@
+@@= skipped -28, +28 lines =@@
  >x : Symbol(x, Decl(controlFlowArrays.ts, 164, 7))
  
      x.unshift(5);
@@ -360,7 +360,7 @@
  
      return x;  // (string | number | boolean)[]
  >x : Symbol(x, Decl(controlFlowArrays.ts, 164, 7))
-@@ -454,14 +454,14 @@
+@@= skipped -25, +25 lines =@@
  >x : Symbol(x, Decl(controlFlowArrays.ts, 172, 7))
  
      x.push(5);
@@ -379,7 +379,7 @@
  
      x[2] = true;
  >x : Symbol(x, Decl(controlFlowArrays.ts, 172, 7))
-@@ -481,9 +481,9 @@
+@@= skipped -27, +27 lines =@@
  >arr : Symbol(arr, Decl(controlFlowArrays.ts, 183, 3))
  
  arr.push({ val: 1, bar: 2 });

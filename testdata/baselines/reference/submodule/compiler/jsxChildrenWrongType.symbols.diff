@@ -1,6 +1,6 @@
 --- old.jsxChildrenWrongType.symbols
 +++ new.jsxChildrenWrongType.symbols
-@@ -9,14 +9,11 @@
+@@= skipped -9, +9 lines =@@
  >PropsType : Symbol(PropsType, Decl(other.tsx, 0, 0))
  
      children: [string, number?] | Iterable<boolean>;
@@ -16,7 +16,7 @@
  >PropsType : Symbol(PropsType, Decl(other.tsx, 0, 0))
  
  const b = (
-@@ -26,8 +23,6 @@
+@@= skipped -17, +14 lines =@@
  >Foo : Symbol(Foo, Decl(other.tsx, 6, 1))
  
          {<div/> as unknown}

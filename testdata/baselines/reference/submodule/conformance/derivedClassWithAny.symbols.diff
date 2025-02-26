@@ -1,6 +1,6 @@
 --- old.derivedClassWithAny.symbols
 +++ new.derivedClassWithAny.symbols
-@@ -5,27 +5,27 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(derivedClassWithAny.ts, 0, 0))
  
      x: number;
@@ -34,7 +34,7 @@
  
          return 1;
      }
-@@ -36,29 +36,29 @@
+@@= skipped -31, +31 lines =@@
  >C : Symbol(C, Decl(derivedClassWithAny.ts, 0, 0))
  
      x: any;
@@ -70,7 +70,7 @@
  
          return null;
      }
-@@ -70,27 +70,27 @@
+@@= skipped -34, +34 lines =@@
  >D : Symbol(D, Decl(derivedClassWithAny.ts, 14, 1))
  
      x: string;
@@ -104,7 +104,7 @@
  
          return '';
      }
-@@ -118,7 +118,7 @@
+@@= skipped -48, +48 lines =@@
  
  var r = c.foo(); // e.foo would return string
  >r : Symbol(r, Decl(derivedClassWithAny.ts, 57, 3))

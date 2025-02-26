@@ -1,6 +1,6 @@
 --- old.comparisonOperatorWithSubtypeObjectOnProperty.symbols
 +++ new.comparisonOperatorWithSubtypeObjectOnProperty.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Base : Symbol(Base, Decl(comparisonOperatorWithSubtypeObjectOnProperty.ts, 0, 0))
  
      public a: string;
@@ -9,7 +9,7 @@
  }
  
  class Derived extends Base {
-@@ -13,18 +13,18 @@
+@@= skipped -8, +8 lines =@@
  >Base : Symbol(Base, Decl(comparisonOperatorWithSubtypeObjectOnProperty.ts, 0, 0))
  
      public b: string;
@@ -31,7 +31,7 @@
  >Base : Symbol(Base, Decl(comparisonOperatorWithSubtypeObjectOnProperty.ts, 0, 0))
  }
  
-@@ -32,11 +32,11 @@
+@@= skipped -19, +19 lines =@@
  >B1 : Symbol(B1, Decl(comparisonOperatorWithSubtypeObjectOnProperty.ts, 11, 1))
  
      public a: Base;
@@ -45,7 +45,7 @@
  >Derived : Symbol(Derived, Decl(comparisonOperatorWithSubtypeObjectOnProperty.ts, 2, 1))
  }
  
-@@ -44,7 +44,7 @@
+@@= skipped -12, +12 lines =@@
  >A2 : Symbol(A2, Decl(comparisonOperatorWithSubtypeObjectOnProperty.ts, 16, 1))
  
      private a;
@@ -54,7 +54,7 @@
  }
  
  class B2 extends A2 {
-@@ -52,7 +52,7 @@
+@@= skipped -8, +8 lines =@@
  >A2 : Symbol(A2, Decl(comparisonOperatorWithSubtypeObjectOnProperty.ts, 16, 1))
  
      private b;

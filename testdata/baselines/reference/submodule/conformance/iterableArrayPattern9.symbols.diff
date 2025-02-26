@@ -1,6 +1,6 @@
 --- old.iterableArrayPattern9.symbols
 +++ new.iterableArrayPattern9.symbols
-@@ -9,18 +9,18 @@
+@@= skipped -9, +9 lines =@@
  
  class Bar { x }
  >Bar : Symbol(Bar, Decl(iterableArrayPattern9.ts, 0, 42))
@@ -22,7 +22,7 @@
  
          return {
              value: new Foo,
-@@ -34,10 +34,7 @@
+@@= skipped -25, +25 lines =@@
      }
  
      [Symbol.iterator]() {

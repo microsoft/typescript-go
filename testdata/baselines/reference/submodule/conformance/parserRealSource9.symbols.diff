@@ -1,6 +1,6 @@
 --- old.parserRealSource9.symbols
 +++ new.parserRealSource9.symbols
-@@ -13,11 +13,11 @@
+@@= skipped -13, +13 lines =@@
  >Binder : Symbol(Binder, Decl(parserRealSource9.ts, 5, 19))
  
          constructor (public checker: TypeChecker) { }
@@ -14,7 +14,7 @@
  >typeLinks : Symbol(typeLinks, Decl(parserRealSource9.ts, 8, 36))
  >TypeLink : Symbol(TypeLink)
  >scope : Symbol(scope, Decl(parserRealSource9.ts, 8, 58))
-@@ -36,9 +36,9 @@
+@@= skipped -23, +23 lines =@@
                  for (var i = 0, len = typeLinks.length; i < len; i++) {
  >i : Symbol(i, Decl(parserRealSource9.ts, 12, 24))
  >len : Symbol(len, Decl(parserRealSource9.ts, 12, 31))
@@ -26,7 +26,7 @@
  >i : Symbol(i, Decl(parserRealSource9.ts, 12, 24))
  >len : Symbol(len, Decl(parserRealSource9.ts, 12, 31))
  >i : Symbol(i, Decl(parserRealSource9.ts, 12, 24))
-@@ -49,21 +49,21 @@
+@@= skipped -13, +13 lines =@@
  >i : Symbol(i, Decl(parserRealSource9.ts, 12, 24))
  
                      this.checker.resolvingBases = true;
@@ -54,7 +54,7 @@
  
                      if (typeLink.type.isClass()) {
  >typeLink : Symbol(typeLink, Decl(parserRealSource9.ts, 13, 23))
-@@ -86,7 +86,7 @@
+@@= skipped -37, +37 lines =@@
          }
  
          public resolveBases(scope: SymbolScope, type: Type) {
@@ -63,7 +63,7 @@
  >scope : Symbol(scope, Decl(parserRealSource9.ts, 28, 28))
  >SymbolScope : Symbol(SymbolScope)
  >type : Symbol(type, Decl(parserRealSource9.ts, 28, 47))
-@@ -94,9 +94,9 @@
+@@= skipped -8, +8 lines =@@
  
              type.extendsList = this.resolveBaseTypeLinks(type.extendsTypeLinks, scope);
  >type : Symbol(type, Decl(parserRealSource9.ts, 28, 47))
@@ -75,7 +75,7 @@
  >type : Symbol(type, Decl(parserRealSource9.ts, 28, 47))
  >scope : Symbol(scope, Decl(parserRealSource9.ts, 28, 28))
  
-@@ -122,9 +122,9 @@
+@@= skipped -28, +28 lines =@@
                  if (type.extendsList[i] != this.checker.anyType) {
  >type : Symbol(type, Decl(parserRealSource9.ts, 28, 47))
  >i : Symbol(i, Decl(parserRealSource9.ts, 31, 15))
@@ -87,7 +87,7 @@
  
                      if (derivedIsClass) {
  >derivedIsClass : Symbol(derivedIsClass, Decl(parserRealSource9.ts, 32, 15))
-@@ -133,9 +133,9 @@
+@@= skipped -11, +11 lines =@@
  >baseIsClass : Symbol(baseIsClass, Decl(parserRealSource9.ts, 34, 19))
  
                              this.checker.errorReporter.simpleErrorFromSym(type.symbol,
@@ -99,7 +99,7 @@
  >type : Symbol(type, Decl(parserRealSource9.ts, 28, 47))
  
                                                                       "A export class may only extend other classes, " + type.extendsList[i].symbol.fullName() + " is an interface.");
-@@ -148,9 +148,9 @@
+@@= skipped -15, +15 lines =@@
  >baseIsClass : Symbol(baseIsClass, Decl(parserRealSource9.ts, 34, 19))
  
                              this.checker.errorReporter.simpleErrorFromSym(type.symbol,
@@ -111,7 +111,7 @@
  >type : Symbol(type, Decl(parserRealSource9.ts, 28, 47))
  
                                                                       "An interface may only extend other interfaces, " + type.extendsList[i].symbol.fullName() + " is a class.");
-@@ -163,9 +163,9 @@
+@@= skipped -15, +15 lines =@@
  
              type.implementsList = this.resolveBaseTypeLinks(type.implementsTypeLinks, scope);
  >type : Symbol(type, Decl(parserRealSource9.ts, 28, 47))
@@ -123,7 +123,7 @@
  >type : Symbol(type, Decl(parserRealSource9.ts, 28, 47))
  >scope : Symbol(scope, Decl(parserRealSource9.ts, 28, 28))
  
-@@ -192,9 +192,9 @@
+@@= skipped -29, +29 lines =@@
  >derivedIsClass : Symbol(derivedIsClass, Decl(parserRealSource9.ts, 32, 15))
  
                              this.checker.errorReporter.simpleErrorFromSym(type.symbol,
@@ -135,7 +135,7 @@
  >type : Symbol(type, Decl(parserRealSource9.ts, 28, 47))
  
                                                                       "A class may only implement an interface; " + iface.symbol.fullName() + " is a class.");
-@@ -206,7 +206,7 @@
+@@= skipped -14, +14 lines =@@
          }
  
          public resolveSignatureGroup(signatureGroup: SignatureGroup, scope: SymbolScope, instanceType: Type) {
@@ -144,7 +144,7 @@
  >signatureGroup : Symbol(signatureGroup, Decl(parserRealSource9.ts, 66, 37))
  >SignatureGroup : Symbol(SignatureGroup)
  >scope : Symbol(scope, Decl(parserRealSource9.ts, 66, 68))
-@@ -240,9 +240,9 @@
+@@= skipped -34, +34 lines =@@
                  }
                  else {
                      this.checker.resolveTypeLink(scope, signature.returnType, supplyVar);
@@ -156,7 +156,7 @@
  >scope : Symbol(scope, Decl(parserRealSource9.ts, 66, 68))
  >signature : Symbol(signature, Decl(parserRealSource9.ts, 69, 19))
  >supplyVar : Symbol(supplyVar, Decl(parserRealSource9.ts, 67, 15))
-@@ -258,9 +258,9 @@
+@@= skipped -18, +18 lines =@@
  >j : Symbol(j, Decl(parserRealSource9.ts, 77, 24))
  
                      this.bindSymbol(scope, signature.parameters[j]);
@@ -168,7 +168,7 @@
  >scope : Symbol(scope, Decl(parserRealSource9.ts, 66, 68))
  >signature : Symbol(signature, Decl(parserRealSource9.ts, 69, 19))
  >j : Symbol(j, Decl(parserRealSource9.ts, 77, 24))
-@@ -283,17 +283,17 @@
+@@= skipped -25, +25 lines =@@
  >lastParam : Symbol(lastParam, Decl(parserRealSource9.ts, 82, 23))
  
                          this.checker.errorReporter.simpleErrorFromSym(lastParam,
@@ -190,7 +190,7 @@
  >lastParam : Symbol(lastParam, Decl(parserRealSource9.ts, 82, 23))
                      }
                  }
-@@ -301,7 +301,7 @@
+@@= skipped -18, +18 lines =@@
          }
  
          public bindType(scope: SymbolScope, type: Type, instanceType: Type): void {
@@ -199,7 +199,7 @@
  >scope : Symbol(scope, Decl(parserRealSource9.ts, 93, 24))
  >SymbolScope : Symbol(SymbolScope)
  >type : Symbol(type, Decl(parserRealSource9.ts, 93, 43))
-@@ -313,9 +313,9 @@
+@@= skipped -12, +12 lines =@@
  >instanceType : Symbol(instanceType, Decl(parserRealSource9.ts, 93, 55))
  
                  this.bindType(scope, instanceType, null);
@@ -211,7 +211,7 @@
  >scope : Symbol(scope, Decl(parserRealSource9.ts, 93, 24))
  >instanceType : Symbol(instanceType, Decl(parserRealSource9.ts, 93, 55))
              }
-@@ -352,15 +352,15 @@
+@@= skipped -39, +39 lines =@@
  
                  var prevCurrentModDecl = this.checker.currentModDecl;
  >prevCurrentModDecl : Symbol(prevCurrentModDecl, Decl(parserRealSource9.ts, 104, 19))
@@ -231,7 +231,7 @@
  
                  agg.addParentScope(memberScope);
  >agg : Symbol(agg, Decl(parserRealSource9.ts, 103, 19))
-@@ -374,24 +374,24 @@
+@@= skipped -22, +22 lines =@@
  >type : Symbol(type, Decl(parserRealSource9.ts, 93, 43))
  
                      this.checker.currentModDecl = <ModuleDeclaration>type.symbol.declAST;
@@ -262,7 +262,7 @@
  >agg : Symbol(agg, Decl(parserRealSource9.ts, 103, 19))
  >type : Symbol(type, Decl(parserRealSource9.ts, 93, 43))
                  }
-@@ -399,9 +399,9 @@
+@@= skipped -25, +25 lines =@@
  >typeMembers : Symbol(typeMembers, Decl(parserRealSource9.ts, 100, 19))
  
                      this.bind(agg, typeMembers.allMembers);
@@ -274,7 +274,7 @@
  >agg : Symbol(agg, Decl(parserRealSource9.ts, 103, 19))
  >typeMembers : Symbol(typeMembers, Decl(parserRealSource9.ts, 100, 19))
                  }
-@@ -409,9 +409,9 @@
+@@= skipped -10, +10 lines =@@
  >ambientMembers : Symbol(ambientMembers, Decl(parserRealSource9.ts, 99, 19))
  
                      this.bind(agg, ambientMembers.allMembers);
@@ -286,7 +286,7 @@
  >agg : Symbol(agg, Decl(parserRealSource9.ts, 103, 19))
  >ambientMembers : Symbol(ambientMembers, Decl(parserRealSource9.ts, 99, 19))
                  }
-@@ -419,31 +419,31 @@
+@@= skipped -10, +10 lines =@@
  >ambientTypeMembers : Symbol(ambientTypeMembers, Decl(parserRealSource9.ts, 101, 19))
  
                      this.bind(agg, ambientTypeMembers.allMembers);
@@ -326,7 +326,7 @@
  >scope : Symbol(scope, Decl(parserRealSource9.ts, 93, 24))
  >type : Symbol(type, Decl(parserRealSource9.ts, 93, 43))
              }
-@@ -451,9 +451,9 @@
+@@= skipped -32, +32 lines =@@
  >type : Symbol(type, Decl(parserRealSource9.ts, 93, 43))
  
                  this.resolveSignatureGroup(type.construct, scope, instanceType);
@@ -338,7 +338,7 @@
  >type : Symbol(type, Decl(parserRealSource9.ts, 93, 43))
  >scope : Symbol(scope, Decl(parserRealSource9.ts, 93, 24))
  >instanceType : Symbol(instanceType, Decl(parserRealSource9.ts, 93, 55))
-@@ -462,9 +462,9 @@
+@@= skipped -11, +11 lines =@@
  >type : Symbol(type, Decl(parserRealSource9.ts, 93, 43))
  
                  this.resolveSignatureGroup(type.call, scope, null);
@@ -350,7 +350,7 @@
  >type : Symbol(type, Decl(parserRealSource9.ts, 93, 43))
  >scope : Symbol(scope, Decl(parserRealSource9.ts, 93, 24))
              }
-@@ -472,9 +472,9 @@
+@@= skipped -10, +10 lines =@@
  >type : Symbol(type, Decl(parserRealSource9.ts, 93, 43))
  
                  this.resolveSignatureGroup(type.index, scope, null);
@@ -362,7 +362,7 @@
  >type : Symbol(type, Decl(parserRealSource9.ts, 93, 43))
  >scope : Symbol(scope, Decl(parserRealSource9.ts, 93, 24))
              }
-@@ -482,16 +482,16 @@
+@@= skipped -10, +10 lines =@@
  >type : Symbol(type, Decl(parserRealSource9.ts, 93, 43))
  
                  this.bindType(scope, type.elementType, null);
@@ -382,7 +382,7 @@
  >scope : Symbol(scope, Decl(parserRealSource9.ts, 144, 26))
  >SymbolScope : Symbol(SymbolScope)
  >symbol : Symbol(symbol, Decl(parserRealSource9.ts, 144, 45))
-@@ -502,27 +502,27 @@
+@@= skipped -20, +20 lines =@@
  
                  var prevLocationInfo = this.checker.locationInfo;
  >prevLocationInfo : Symbol(prevLocationInfo, Decl(parserRealSource9.ts, 146, 19))
@@ -420,7 +420,7 @@
  >symbol : Symbol(symbol, Decl(parserRealSource9.ts, 144, 45))
                  }
                  switch (symbol.kind()) {
-@@ -561,13 +561,13 @@
+@@= skipped -59, +59 lines =@@
  
                              var modSym = this.checker.findSymbolForDynamicModule(modPath, this.checker.locationInfo.filename, (id) => scope.find(id, false, true));
  >modSym : Symbol(modSym, Decl(parserRealSource9.ts, 167, 31))
@@ -438,7 +438,7 @@
  >id : Symbol(id, Decl(parserRealSource9.ts, 167, 127))
  >scope : Symbol(scope, Decl(parserRealSource9.ts, 144, 26))
  >id : Symbol(id, Decl(parserRealSource9.ts, 167, 127))
-@@ -584,14 +584,14 @@
+@@= skipped -23, +23 lines =@@
                          if (typeSymbol.type && typeSymbol.type != this.checker.gloModType) {
  >typeSymbol : Symbol(typeSymbol, Decl(parserRealSource9.ts, 157, 27))
  >typeSymbol : Symbol(typeSymbol, Decl(parserRealSource9.ts, 157, 27))
@@ -457,7 +457,7 @@
  >scope : Symbol(scope, Decl(parserRealSource9.ts, 144, 26))
  >typeSymbol : Symbol(typeSymbol, Decl(parserRealSource9.ts, 157, 27))
  >typeSymbol : Symbol(typeSymbol, Decl(parserRealSource9.ts, 157, 27))
-@@ -607,9 +607,9 @@
+@@= skipped -23, +23 lines =@@
  >i : Symbol(i, Decl(parserRealSource9.ts, 178, 40))
  
                                      this.bindType(scope, typeSymbol.expansions[i], typeSymbol.instanceType);
@@ -469,7 +469,7 @@
  >scope : Symbol(scope, Decl(parserRealSource9.ts, 144, 26))
  >typeSymbol : Symbol(typeSymbol, Decl(parserRealSource9.ts, 157, 27))
  >i : Symbol(i, Decl(parserRealSource9.ts, 178, 40))
-@@ -620,9 +620,9 @@
+@@= skipped -13, +13 lines =@@
                          break;
                      case SymbolKind.Field:
                          this.checker.resolveTypeLink(scope, (<FieldSymbol>symbol).field.typeLink,
@@ -481,7 +481,7 @@
  >scope : Symbol(scope, Decl(parserRealSource9.ts, 144, 26))
  >FieldSymbol : Symbol(FieldSymbol)
  >symbol : Symbol(symbol, Decl(parserRealSource9.ts, 144, 45))
-@@ -631,9 +631,9 @@
+@@= skipped -11, +11 lines =@@
                          break;
                      case SymbolKind.Parameter:
                          this.checker.resolveTypeLink(scope,
@@ -493,7 +493,7 @@
  >scope : Symbol(scope, Decl(parserRealSource9.ts, 144, 26))
  
                                                  (<ParameterSymbol>symbol).parameter.typeLink,
-@@ -644,9 +644,9 @@
+@@= skipped -13, +13 lines =@@
                          break;
                  }
                  this.checker.locationInfo = prevLocationInfo;
@@ -505,7 +505,7 @@
  >prevLocationInfo : Symbol(prevLocationInfo, Decl(parserRealSource9.ts, 146, 19))
              }
              symbol.bound = true;
-@@ -654,7 +654,7 @@
+@@= skipped -10, +10 lines =@@
          }
  
          public bind(scope: SymbolScope, table: IHashTable) {

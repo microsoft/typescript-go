@@ -1,6 +1,6 @@
 --- old.instanceMemberWithComputedPropertyName2.symbols
 +++ new.instanceMemberWithComputedPropertyName2.symbols
-@@ -10,7 +10,7 @@
+@@= skipped -10, +10 lines =@@
  >C : Symbol(C, Decl(instanceMemberWithComputedPropertyName2.ts, 2, 12))
  
      [x]: string;

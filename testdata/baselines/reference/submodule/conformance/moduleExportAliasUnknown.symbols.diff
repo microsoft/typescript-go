@@ -1,6 +1,6 @@
 --- old.moduleExportAliasUnknown.symbols
 +++ new.moduleExportAliasUnknown.symbols
-@@ -2,12 +2,7 @@
+@@= skipped -2, +2 lines =@@
  
  === bug27025.js ===
  module.exports = window.nonprop;

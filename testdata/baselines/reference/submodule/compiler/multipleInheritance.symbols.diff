@@ -1,6 +1,6 @@
 --- old.multipleInheritance.symbols
 +++ new.multipleInheritance.symbols
-@@ -5,14 +5,14 @@
+@@= skipped -5, +5 lines =@@
  >B1 : Symbol(B1, Decl(multipleInheritance.ts, 0, 0))
  
      public x;
@@ -17,7 +17,7 @@
  }
  
  class C extends B1, B2 { // duplicate member
-@@ -41,7 +41,7 @@
+@@= skipped -36, +36 lines =@@
  >N : Symbol(N, Decl(multipleInheritance.ts, 18, 1))
  
      public y:number;
@@ -26,7 +26,7 @@
  }
  
  class ND extends N { // any is assignable to number
-@@ -49,17 +49,17 @@
+@@= skipped -8, +8 lines =@@
  >N : Symbol(N, Decl(multipleInheritance.ts, 18, 1))
  
      public y;
@@ -47,7 +47,7 @@
  }
  
  class Baad extends Good {
-@@ -67,10 +67,10 @@
+@@= skipped -18, +18 lines =@@
  >Good : Symbol(Good, Decl(multipleInheritance.ts, 26, 1))
  
      public f(): number { return 0; }

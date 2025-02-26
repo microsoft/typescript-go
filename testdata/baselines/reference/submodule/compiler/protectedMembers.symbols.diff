@@ -1,6 +1,6 @@
 --- old.protectedMembers.symbols
 +++ new.protectedMembers.symbols
-@@ -6,26 +6,26 @@
+@@= skipped -6, +6 lines =@@
  >C1 : Symbol(C1, Decl(protectedMembers.ts, 0, 0))
  
      protected x: number;
@@ -35,7 +35,7 @@
      }
  }
  
-@@ -35,26 +35,26 @@
+@@= skipped -29, +29 lines =@@
  >C1 : Symbol(C1, Decl(protectedMembers.ts, 0, 0))
  
      protected f() {
@@ -72,7 +72,7 @@
      }
  }
  
-@@ -64,26 +64,26 @@
+@@= skipped -29, +29 lines =@@
  >C2 : Symbol(C2, Decl(protectedMembers.ts, 10, 1))
  
      x: number;
@@ -107,7 +107,7 @@
      }
  }
  
-@@ -101,72 +101,72 @@
+@@= skipped -37, +37 lines =@@
  
  // All of these should be errors
  c1.x;
@@ -205,7 +205,7 @@
  }
  
  class B extends A {
-@@ -174,7 +174,7 @@
+@@= skipped -73, +73 lines =@@
  >A : Symbol(A, Decl(protectedMembers.ts, 54, 8))
  
      y;
@@ -214,7 +214,7 @@
  }
  
  class C extends A {
-@@ -182,10 +182,10 @@
+@@= skipped -8, +8 lines =@@
  >A : Symbol(A, Decl(protectedMembers.ts, 54, 8))
  
      z;
@@ -227,7 +227,7 @@
  >a : Symbol(a, Decl(protectedMembers.ts, 66, 15))
  >A : Symbol(A, Decl(protectedMembers.ts, 54, 8))
  >b : Symbol(b, Decl(protectedMembers.ts, 66, 20))
-@@ -198,29 +198,29 @@
+@@= skipped -16, +16 lines =@@
  >E : Symbol(E, Decl(protectedMembers.ts, 77, 1))
  
          a.x = 1;  // Error, access must be through C or type derived from C
@@ -267,7 +267,7 @@
      }
  }
  
-@@ -229,7 +229,7 @@
+@@= skipped -31, +31 lines =@@
  >C : Symbol(C, Decl(protectedMembers.ts, 62, 1))
  
      d;
@@ -276,7 +276,7 @@
  }
  
  interface E extends C {
-@@ -237,7 +237,7 @@
+@@= skipped -8, +8 lines =@@
  >C : Symbol(C, Decl(protectedMembers.ts, 62, 1))
  
      e;
@@ -285,7 +285,7 @@
  }
  
  class CC {
-@@ -251,13 +251,13 @@
+@@= skipped -14, +14 lines =@@
  >A1 : Symbol(A1, Decl(protectedMembers.ts, 86, 1))
  
      protected x;
@@ -301,7 +301,7 @@
  }
  var a1: A1;
  >a1 : Symbol(a1, Decl(protectedMembers.ts, 94, 3))
-@@ -279,21 +279,21 @@
+@@= skipped -28, +28 lines =@@
  >A2 : Symbol(A2, Decl(protectedMembers.ts, 97, 8))
  
      protected x;
@@ -326,7 +326,7 @@
  }
  // Error x is protected in B3 but public in A3
  class B3 extends A3 {
-@@ -301,7 +301,7 @@
+@@= skipped -22, +22 lines =@@
  >A3 : Symbol(A3, Decl(protectedMembers.ts, 104, 1))
  
      protected x;

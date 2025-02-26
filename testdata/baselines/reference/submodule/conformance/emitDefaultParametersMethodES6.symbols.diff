@@ -1,6 +1,6 @@
 --- old.emitDefaultParametersMethodES6.symbols
 +++ new.emitDefaultParametersMethodES6.symbols
-@@ -11,22 +11,22 @@
+@@= skipped -11, +11 lines =@@
  >y : Symbol(y, Decl(emitDefaultParametersMethodES6.ts, 1, 49))
  
      public foo(x: string, t = false) { }

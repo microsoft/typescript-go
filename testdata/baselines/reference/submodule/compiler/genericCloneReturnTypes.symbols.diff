@@ -1,6 +1,6 @@
 --- old.genericCloneReturnTypes.symbols
 +++ new.genericCloneReturnTypes.symbols
-@@ -6,32 +6,32 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(genericCloneReturnTypes.ts, 0, 10))
  
      public size: number;
@@ -40,7 +40,7 @@
  
      }
  
-@@ -43,9 +43,9 @@
+@@= skipped -37, +37 lines =@@
  
  var b2 = b.clone();
  >b2 : Symbol(b2, Decl(genericCloneReturnTypes.ts, 21, 3))

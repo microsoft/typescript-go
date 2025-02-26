@@ -1,6 +1,6 @@
 --- old.privateInstanceMemberAccessibility.symbols
 +++ new.privateInstanceMemberAccessibility.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Base : Symbol(Base, Decl(privateInstanceMemberAccessibility.ts, 0, 0))
  
      private foo: string;
@@ -9,7 +9,7 @@
  }
  
  class Derived extends Base {
-@@ -13,23 +13,23 @@
+@@= skipped -8, +8 lines =@@
  >Base : Symbol(Base, Decl(privateInstanceMemberAccessibility.ts, 0, 0))
  
      x = super.foo; // error

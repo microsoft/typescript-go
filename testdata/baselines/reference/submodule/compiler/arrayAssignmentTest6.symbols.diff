@@ -1,6 +1,6 @@
 --- old.arrayAssignmentTest6.symbols
 +++ new.arrayAssignmentTest6.symbols
-@@ -11,24 +11,24 @@
+@@= skipped -11, +11 lines =@@
  >IToken : Symbol(IToken, Decl(arrayAssignmentTest6.ts, 2, 5))
  
          startIndex: number;
@@ -29,7 +29,7 @@
  >line : Symbol(line, Decl(arrayAssignmentTest6.ts, 11, 17))
  >state : Symbol(state, Decl(arrayAssignmentTest6.ts, 11, 29))
  >IState : Symbol(IState, Decl(arrayAssignmentTest6.ts, 0, 13))
-@@ -40,7 +40,7 @@
+@@= skipped -29, +29 lines =@@
  >IMode : Symbol(IMode, Decl(arrayAssignmentTest6.ts, 9, 5))
  
          public tokenize(line:string, tokens:IToken[], includeStates:boolean):ILineTokens {

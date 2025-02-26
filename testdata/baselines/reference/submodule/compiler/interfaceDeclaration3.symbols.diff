@@ -1,6 +1,6 @@
 --- old.interfaceDeclaration3.symbols
 +++ new.interfaceDeclaration3.symbols
-@@ -3,61 +3,61 @@
+@@= skipped -3, +3 lines =@@
  === interfaceDeclaration3.ts ===
  interface I1 { item:number; }
  >I1 : Symbol(I1, Decl(interfaceDeclaration3.ts, 0, 0))
@@ -76,7 +76,7 @@
      }
  }
  
-@@ -66,39 +66,39 @@
+@@= skipped -63, +63 lines =@@
  
      export interface I1 { item:string; }
  >I1 : Symbol(I1, Decl(interfaceDeclaration3.ts, 24, 18))
@@ -122,7 +122,7 @@
      }
  }
  
-@@ -107,33 +107,33 @@
+@@= skipped -41, +41 lines =@@
  >I1 : Symbol(I1, Decl(interfaceDeclaration3.ts, 0, 0))
  
      public item:number;

@@ -1,6 +1,6 @@
 --- old.exportDefaultInterface.symbols
 +++ new.exportDefaultInterface.symbols
-@@ -2,19 +2,19 @@
+@@= skipped -2, +2 lines =@@
  
  === a.ts ===
  export default interface A { value: number; }
@@ -27,7 +27,7 @@
  
  === b.ts ===
  import A from './a';
-@@ -25,9 +25,9 @@
+@@= skipped -23, +23 lines =@@
  >A : Symbol(A, Decl(b.ts, 0, 6))
  
  a.value.toExponential();

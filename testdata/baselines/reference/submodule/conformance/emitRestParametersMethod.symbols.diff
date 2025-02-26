@@ -1,6 +1,6 @@
 --- old.emitRestParametersMethod.symbols
 +++ new.emitRestParametersMethod.symbols
-@@ -9,11 +9,11 @@
+@@= skipped -9, +9 lines =@@
  >rest : Symbol(rest, Decl(emitRestParametersMethod.ts, 1, 29))
  
      public bar(...rest) { }
@@ -14,7 +14,7 @@
  >x : Symbol(x, Decl(emitRestParametersMethod.ts, 4, 15))
  >rest : Symbol(rest, Decl(emitRestParametersMethod.ts, 4, 25))
  }
-@@ -25,11 +25,11 @@
+@@= skipped -16, +16 lines =@@
  >rest : Symbol(rest, Decl(emitRestParametersMethod.ts, 8, 16))
  
      public bar(...rest) { }

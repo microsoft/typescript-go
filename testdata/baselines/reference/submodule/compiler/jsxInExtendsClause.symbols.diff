@@ -1,6 +1,6 @@
 --- old.jsxInExtendsClause.symbols
 +++ new.jsxInExtendsClause.symbols
-@@ -21,21 +21,21 @@
+@@= skipped -21, +21 lines =@@
  >P : Symbol(P, Decl(jsxInExtendsClause.tsx, 5, 38))
  >factory : Symbol(factory, Decl(jsxInExtendsClause.tsx, 5, 41))
  >React : Symbol(React, Decl(jsxInExtendsClause.tsx, 0, 0))

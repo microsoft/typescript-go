@@ -1,6 +1,6 @@
 --- old.classAbstractCrashedOnce.symbols
 +++ new.classAbstractCrashedOnce.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >foo : Symbol(foo, Decl(classAbstractCrashedOnce.ts, 0, 0))
  
      protected abstract test();
@@ -9,7 +9,7 @@
  }
  
  class bar extends foo {
-@@ -13,7 +13,7 @@
+@@= skipped -8, +8 lines =@@
  >foo : Symbol(foo, Decl(classAbstractCrashedOnce.ts, 0, 0))
  
      test() {

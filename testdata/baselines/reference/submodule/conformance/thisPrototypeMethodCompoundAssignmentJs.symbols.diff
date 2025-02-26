@@ -1,6 +1,6 @@
 --- old.thisPrototypeMethodCompoundAssignmentJs.symbols
 +++ new.thisPrototypeMethodCompoundAssignmentJs.symbols
-@@ -2,18 +2,18 @@
+@@= skipped -2, +2 lines =@@
  
  === index.js ===
  Element.prototype.remove ??= function () {
@@ -25,7 +25,7 @@
  >this : Symbol(Element, Decl(lib.dom.d.ts, --, --), Decl(lib.dom.d.ts, --, --))
  
  };
-@@ -22,19 +22,19 @@
+@@= skipped -20, +20 lines =@@
   * @this Node
   */
  Element.prototype.remove ??= function () {

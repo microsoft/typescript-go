@@ -1,6 +1,6 @@
 --- old.typeName1.symbols
 +++ new.typeName1.symbols
-@@ -5,16 +5,16 @@
+@@= skipped -5, +5 lines =@@
  >I : Symbol(I, Decl(typeName1.ts, 0, 0))
  
      k;

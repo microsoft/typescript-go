@@ -1,6 +1,6 @@
 --- old.transitiveTypeArgumentInference1.symbols
 +++ new.transitiveTypeArgumentInference1.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >U : Symbol(U, Decl(transitiveTypeArgumentInference1.ts, 0, 15))
  
  	m(value: T): U;

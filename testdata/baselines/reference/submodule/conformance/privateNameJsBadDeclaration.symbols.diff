@@ -1,6 +1,6 @@
 --- old.privateNameJsBadDeclaration.symbols
 +++ new.privateNameJsBadDeclaration.symbols
-@@ -2,12 +2,12 @@
+@@= skipped -2, +2 lines =@@
  
  === privateNameJsPrototype.js ===
  function A() { }
@@ -17,7 +17,7 @@
  
    #x: 1,         // Error
  >#x : Symbol(#x, Decl(privateNameJsPrototype.js, 1, 15))
-@@ -19,12 +19,12 @@
+@@= skipped -17, +17 lines =@@
  >#p : Symbol(#p, Decl(privateNameJsPrototype.js, 3, 10))
  }
  class B { }

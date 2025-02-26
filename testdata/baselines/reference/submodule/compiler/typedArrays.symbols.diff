@@ -1,6 +1,6 @@
 --- old.typedArrays.symbols
 +++ new.typedArrays.symbols
-@@ -9,39 +9,30 @@
+@@= skipped -9, +9 lines =@@
  
      typedArrays[0] = Int8Array;
  >typedArrays : Symbol(typedArrays, Decl(typedArrays.ts, 1, 7))
@@ -40,7 +40,7 @@
  
      return typedArrays;
  >typedArrays : Symbol(typedArrays, Decl(typedArrays.ts, 1, 7))
-@@ -56,47 +47,38 @@
+@@= skipped -47, +38 lines =@@
  
      typedArrays[0] = new Int8Array(obj);
  >typedArrays : Symbol(typedArrays, Decl(typedArrays.ts, 16, 7))
@@ -88,7 +88,7 @@
  >obj : Symbol(obj, Decl(typedArrays.ts, 15, 45))
  
      return typedArrays;
-@@ -112,47 +94,38 @@
+@@= skipped -56, +47 lines =@@
  
      typedArrays[0] = new Int8Array(obj);
  >typedArrays : Symbol(typedArrays, Decl(typedArrays.ts, 31, 7))
@@ -136,7 +136,7 @@
  >obj : Symbol(obj, Decl(typedArrays.ts, 30, 44))
  
      return typedArrays;
-@@ -168,65 +141,38 @@
+@@= skipped -56, +47 lines =@@
  
      typedArrays[0] = Int8Array.from(obj);
  >typedArrays : Symbol(typedArrays, Decl(typedArrays.ts, 46, 7))
@@ -202,7 +202,7 @@
  >obj : Symbol(obj, Decl(typedArrays.ts, 45, 44))
  
      return typedArrays;
-@@ -236,72 +182,45 @@
+@@= skipped -68, +41 lines =@@
  function CreateIntegerTypedArraysFromArrayLike(obj:ArrayLike<number>) {
  >CreateIntegerTypedArraysFromArrayLike : Symbol(CreateIntegerTypedArraysFromArrayLike, Decl(typedArrays.ts, 58, 1))
  >obj : Symbol(obj, Decl(typedArrays.ts, 60, 47))
@@ -276,7 +276,7 @@
  >obj : Symbol(obj, Decl(typedArrays.ts, 60, 47))
  
      return typedArrays;
-@@ -317,65 +236,38 @@
+@@= skipped -81, +54 lines =@@
  
      typedArrays[0] = Int8Array.of(...obj);
  >typedArrays : Symbol(typedArrays, Decl(typedArrays.ts, 76, 7))
@@ -342,7 +342,7 @@
  >obj : Symbol(obj, Decl(typedArrays.ts, 75, 29))
  
      return typedArrays;
-@@ -390,57 +282,30 @@
+@@= skipped -73, +46 lines =@@
  
      typedArrays[0] = Int8Array.of(1,2,3,4);
  >typedArrays : Symbol(typedArrays, Decl(typedArrays.ts, 91, 7))
@@ -400,7 +400,7 @@
  
      return typedArrays;
  >typedArrays : Symbol(typedArrays, Decl(typedArrays.ts, 91, 7))
-@@ -450,7 +315,7 @@
+@@= skipped -60, +33 lines =@@
  >CreateTypedArraysFromMapFn2 : Symbol(CreateTypedArraysFromMapFn2, Decl(typedArrays.ts, 103, 1))
  >T : Symbol(T, Decl(typedArrays.ts, 105, 37))
  >obj : Symbol(obj, Decl(typedArrays.ts, 105, 40))
@@ -409,7 +409,7 @@
  >T : Symbol(T, Decl(typedArrays.ts, 105, 37))
  >mapFn : Symbol(mapFn, Decl(typedArrays.ts, 105, 57))
  >n : Symbol(n, Decl(typedArrays.ts, 105, 66))
-@@ -462,73 +327,46 @@
+@@= skipped -12, +12 lines =@@
  
      typedArrays[0] = Int8Array.from(obj, mapFn);
  >typedArrays : Symbol(typedArrays, Decl(typedArrays.ts, 106, 7))
@@ -483,7 +483,7 @@
  >obj : Symbol(obj, Decl(typedArrays.ts, 105, 40))
  >mapFn : Symbol(mapFn, Decl(typedArrays.ts, 105, 57))
  
-@@ -539,7 +377,7 @@
+@@= skipped -77, +50 lines =@@
  function CreateTypedArraysFromMapFn(obj:ArrayLike<number>, mapFn: (n:number, v:number)=> number) {
  >CreateTypedArraysFromMapFn : Symbol(CreateTypedArraysFromMapFn, Decl(typedArrays.ts, 118, 1))
  >obj : Symbol(obj, Decl(typedArrays.ts, 120, 36))
@@ -492,7 +492,7 @@
  >mapFn : Symbol(mapFn, Decl(typedArrays.ts, 120, 58))
  >n : Symbol(n, Decl(typedArrays.ts, 120, 67))
  >v : Symbol(v, Decl(typedArrays.ts, 120, 76))
-@@ -549,73 +387,46 @@
+@@= skipped -10, +10 lines =@@
  
      typedArrays[0] = Int8Array.from(obj, mapFn);
  >typedArrays : Symbol(typedArrays, Decl(typedArrays.ts, 121, 7))
@@ -566,7 +566,7 @@
  >obj : Symbol(obj, Decl(typedArrays.ts, 120, 36))
  >mapFn : Symbol(mapFn, Decl(typedArrays.ts, 120, 58))
  
-@@ -626,7 +437,7 @@
+@@= skipped -77, +50 lines =@@
  function CreateTypedArraysFromThisObj(obj:ArrayLike<number>, mapFn: (n:number, v:number)=> number, thisArg: {}) {
  >CreateTypedArraysFromThisObj : Symbol(CreateTypedArraysFromThisObj, Decl(typedArrays.ts, 133, 1))
  >obj : Symbol(obj, Decl(typedArrays.ts, 135, 38))
@@ -575,7 +575,7 @@
  >mapFn : Symbol(mapFn, Decl(typedArrays.ts, 135, 60))
  >n : Symbol(n, Decl(typedArrays.ts, 135, 69))
  >v : Symbol(v, Decl(typedArrays.ts, 135, 78))
-@@ -637,81 +448,54 @@
+@@= skipped -11, +11 lines =@@
  
      typedArrays[0] = Int8Array.from(obj, mapFn, thisArg);
  >typedArrays : Symbol(typedArrays, Decl(typedArrays.ts, 136, 7))
@@ -657,7 +657,7 @@
  >obj : Symbol(obj, Decl(typedArrays.ts, 135, 38))
  >mapFn : Symbol(mapFn, Decl(typedArrays.ts, 135, 60))
  >thisArg : Symbol(thisArg, Decl(typedArrays.ts, 135, 98))
-@@ -724,7 +508,7 @@
+@@= skipped -87, +60 lines =@@
  >CreateTypedArraysFromThisObj2 : Symbol(CreateTypedArraysFromThisObj2, Decl(typedArrays.ts, 148, 1))
  >T : Symbol(T, Decl(typedArrays.ts, 150, 39))
  >obj : Symbol(obj, Decl(typedArrays.ts, 150, 42))
@@ -666,7 +666,7 @@
  >T : Symbol(T, Decl(typedArrays.ts, 150, 39))
  >mapFn : Symbol(mapFn, Decl(typedArrays.ts, 150, 59))
  >n : Symbol(n, Decl(typedArrays.ts, 150, 68))
-@@ -737,81 +521,54 @@
+@@= skipped -13, +13 lines =@@
  
      typedArrays[0] = Int8Array.from(obj, mapFn, thisArg);
  >typedArrays : Symbol(typedArrays, Decl(typedArrays.ts, 151, 7))

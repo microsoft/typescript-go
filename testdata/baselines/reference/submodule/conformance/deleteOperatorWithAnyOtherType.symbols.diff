@@ -1,6 +1,6 @@
 --- old.deleteOperatorWithAnyOtherType.symbols
 +++ new.deleteOperatorWithAnyOtherType.symbols
-@@ -33,10 +33,10 @@
+@@= skipped -33, +33 lines =@@
  >A : Symbol(A, Decl(deleteOperatorWithAnyOtherType.ts, 10, 1))
  
      public a: any;
@@ -13,7 +13,7 @@
  
          var a;
  >a : Symbol(a, Decl(deleteOperatorWithAnyOtherType.ts, 14, 11))
-@@ -107,15 +107,15 @@
+@@= skipped -74, +74 lines =@@
  
  var ResultIsBoolean12 = delete objA.a;
  >ResultIsBoolean12 : Symbol(ResultIsBoolean12, Decl(deleteOperatorWithAnyOtherType.ts, 39, 3))
@@ -33,7 +33,7 @@
  
  var ResultIsBoolean14 = delete foo();
  >ResultIsBoolean14 : Symbol(ResultIsBoolean14, Decl(deleteOperatorWithAnyOtherType.ts, 41, 3))
-@@ -123,9 +123,9 @@
+@@= skipped -16, +16 lines =@@
  
  var ResultIsBoolean15 = delete A.foo();
  >ResultIsBoolean15 : Symbol(ResultIsBoolean15, Decl(deleteOperatorWithAnyOtherType.ts, 42, 3))
@@ -45,7 +45,7 @@
  
  var ResultIsBoolean16 = delete (ANY + ANY1);
  >ResultIsBoolean16 : Symbol(ResultIsBoolean16, Decl(deleteOperatorWithAnyOtherType.ts, 43, 3))
-@@ -179,12 +179,12 @@
+@@= skipped -56, +56 lines =@@
  >y : Symbol(y, Decl(deleteOperatorWithAnyOtherType.ts, 6, 19))
  
  delete objA.a;

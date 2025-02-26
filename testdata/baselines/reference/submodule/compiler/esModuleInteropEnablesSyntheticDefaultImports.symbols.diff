@@ -1,6 +1,6 @@
 --- old.esModuleInteropEnablesSyntheticDefaultImports.symbols
 +++ new.esModuleInteropEnablesSyntheticDefaultImports.symbols
-@@ -6,15 +6,15 @@
+@@= skipped -6, +6 lines =@@
  
  export var x = new Namespace.Foo();
  >x : Symbol(x, Decl(a.ts, 1, 10))

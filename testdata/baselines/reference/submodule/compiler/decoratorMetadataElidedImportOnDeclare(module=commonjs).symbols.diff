@@ -1,6 +1,6 @@
 --- old.decoratorMetadataElidedImportOnDeclare(module=commonjs).symbols
 +++ new.decoratorMetadataElidedImportOnDeclare(module=commonjs).symbols
-@@ -21,7 +21,7 @@
+@@= skipped -21, +21 lines =@@
  >whatever : Symbol(whatever, Decl(index.ts, 0, 42))
  
      declare prop: Observable<string>;

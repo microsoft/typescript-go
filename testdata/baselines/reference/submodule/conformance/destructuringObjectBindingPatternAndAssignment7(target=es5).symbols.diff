@@ -1,6 +1,6 @@
 --- old.destructuringObjectBindingPatternAndAssignment7(target=es5).symbols
 +++ new.destructuringObjectBindingPatternAndAssignment7(target=es5).symbols
-@@ -5,36 +5,36 @@
+@@= skipped -5, +5 lines =@@
  >K : Symbol(K, Decl(destructuringObjectBindingPatternAndAssignment7.ts, 0, 0))
  
      a = "a",

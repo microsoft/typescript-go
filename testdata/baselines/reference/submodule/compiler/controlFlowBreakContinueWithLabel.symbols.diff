@@ -1,6 +1,6 @@
 --- old.controlFlowBreakContinueWithLabel.symbols
 +++ new.controlFlowBreakContinueWithLabel.symbols
-@@ -3,36 +3,36 @@
+@@= skipped -3, +3 lines =@@
  === controlFlowBreakContinueWithLabel.ts ===
  enum User { A, B }
  >User : Symbol(User, Decl(controlFlowBreakContinueWithLabel.ts, 0, 0))

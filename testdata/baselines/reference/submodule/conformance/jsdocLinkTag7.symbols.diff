@@ -1,6 +1,6 @@
 --- old.jsdocLinkTag7.symbols
 +++ new.jsdocLinkTag7.symbols
-@@ -15,12 +15,12 @@
+@@= skipped -15, +15 lines =@@
       * {@linkplain this.#c}
       */
      a() { }

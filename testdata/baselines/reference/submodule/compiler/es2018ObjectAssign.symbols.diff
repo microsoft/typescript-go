@@ -1,6 +1,6 @@
 --- old.es2018ObjectAssign.symbols
 +++ new.es2018ObjectAssign.symbols
-@@ -3,9 +3,9 @@
+@@= skipped -3, +3 lines =@@
  === es2018ObjectAssign.ts ===
  const test = Object.assign({}, { test: true });
  >test : Symbol(test, Decl(es2018ObjectAssign.ts, 0, 5))
@@ -12,7 +12,7 @@
  >test : Symbol(test, Decl(es2018ObjectAssign.ts, 0, 32))
  
  declare const p: Promise<number>;
-@@ -13,7 +13,7 @@
+@@= skipped -10, +10 lines =@@
  >Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2018.promise.d.ts, --, --))
  
  p.finally();

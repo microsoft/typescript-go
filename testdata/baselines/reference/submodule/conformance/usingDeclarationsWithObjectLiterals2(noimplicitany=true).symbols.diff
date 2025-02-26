@@ -1,6 +1,6 @@
 --- old.usingDeclarationsWithObjectLiterals2(noimplicitany=true).symbols
 +++ new.usingDeclarationsWithObjectLiterals2(noimplicitany=true).symbols
-@@ -5,9 +5,9 @@
+@@= skipped -5, +5 lines =@@
    using _ = { [Symbol.dispose]() {}, value: null };
  >_ : Symbol(_, Decl(usingDeclarationsWithObjectLiterals2.ts, 1, 7))
  >[Symbol.dispose] : Symbol([Symbol.dispose], Decl(usingDeclarationsWithObjectLiterals2.ts, 1, 13))
@@ -12,7 +12,7 @@
  >value : Symbol(value, Decl(usingDeclarationsWithObjectLiterals2.ts, 1, 36))
  }
  
-@@ -17,9 +17,9 @@
+@@= skipped -12, +12 lines =@@
      await using _ = { async [Symbol.asyncDispose]() {}, value: null };
  >_ : Symbol(_, Decl(usingDeclarationsWithObjectLiterals2.ts, 6, 15))
  >[Symbol.asyncDispose] : Symbol([Symbol.asyncDispose], Decl(usingDeclarationsWithObjectLiterals2.ts, 6, 21))

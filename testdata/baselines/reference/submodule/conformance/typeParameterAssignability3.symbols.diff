@@ -1,6 +1,6 @@
 --- old.typeParameterAssignability3.symbols
 +++ new.typeParameterAssignability3.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  
  class Foo { foo: string; }
  >Foo : Symbol(Foo, Decl(typeParameterAssignability3.ts, 0, 0))
@@ -9,7 +9,7 @@
  
  function foo<T extends Foo, U extends Foo>(t: T, u: U) {
  >foo : Symbol(foo, Decl(typeParameterAssignability3.ts, 2, 26))
-@@ -59,30 +59,30 @@
+@@= skipped -54, +54 lines =@@
  >Foo : Symbol(Foo, Decl(typeParameterAssignability3.ts, 0, 0))
  
      t: T;

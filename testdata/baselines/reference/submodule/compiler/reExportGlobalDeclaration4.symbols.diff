@@ -1,6 +1,6 @@
 --- old.reExportGlobalDeclaration4.symbols
 +++ new.reExportGlobalDeclaration4.symbols
-@@ -5,13 +5,13 @@
+@@= skipped -5, +5 lines =@@
  >Cls1 : Symbol(Cls1, Decl(file1.d.ts, 0, 0))
  
      x: number

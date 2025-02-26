@@ -1,6 +1,6 @@
 --- old.autoAccessorExperimentalDecorators(target=es2015).symbols
 +++ new.autoAccessorExperimentalDecorators(target=es2015).symbols
-@@ -5,9 +5,9 @@
+@@= skipped -5, +5 lines =@@
  >dec : Symbol(dec, Decl(autoAccessorExperimentalDecorators.ts, 0, 11))
  >target : Symbol(target, Decl(autoAccessorExperimentalDecorators.ts, 0, 18))
  >key : Symbol(key, Decl(autoAccessorExperimentalDecorators.ts, 0, 30))
@@ -12,7 +12,7 @@
  
  class C1 {
  >C1 : Symbol(C1, Decl(autoAccessorExperimentalDecorators.ts, 0, 83))
-@@ -16,13 +16,13 @@
+@@= skipped -11, +11 lines =@@
  >dec : Symbol(dec, Decl(autoAccessorExperimentalDecorators.ts, 0, 11))
  
      accessor a: any;
@@ -28,7 +28,7 @@
  }
  
  class C2 {
-@@ -32,12 +32,12 @@
+@@= skipped -16, +16 lines =@@
  >dec : Symbol(dec, Decl(autoAccessorExperimentalDecorators.ts, 0, 11))
  
      accessor #a: any;

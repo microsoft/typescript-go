@@ -1,6 +1,6 @@
 --- old.classUpdateTests.symbols
 +++ new.classUpdateTests.symbols
-@@ -8,26 +8,26 @@
+@@= skipped -8, +8 lines =@@
  >A : Symbol(A, Decl(classUpdateTests.ts, 0, 0))
  
  	public p1 = 0;
@@ -33,7 +33,7 @@
  
  	constructor() {}
  }
-@@ -36,8 +36,8 @@
+@@= skipped -28, +28 lines =@@
  >C : Symbol(C, Decl(classUpdateTests.ts, 15, 1))
  
  	constructor(public p1=0, private p2=0, p3=0) {}
@@ -44,7 +44,7 @@
  >p3 : Symbol(p3, Decl(classUpdateTests.ts, 18, 39))
  }
  
-@@ -54,7 +54,7 @@
+@@= skipped -18, +18 lines =@@
  >D : Symbol(D, Decl(classUpdateTests.ts, 19, 1))
  
  	public p1 = 0;
@@ -53,7 +53,7 @@
  }
  
  class F extends E {
-@@ -69,7 +69,7 @@
+@@= skipped -15, +15 lines =@@
  >D : Symbol(D, Decl(classUpdateTests.ts, 19, 1))
  
  	public p1 = 0;
@@ -62,7 +62,7 @@
  
  	constructor() { super(); } // NO ERROR
  >super : Symbol(D, Decl(classUpdateTests.ts, 19, 1))
-@@ -94,7 +94,7 @@
+@@= skipped -25, +25 lines =@@
  >G : Symbol(G, Decl(classUpdateTests.ts, 34, 1))
  
  	constructor(public p1:number) {
@@ -71,7 +71,7 @@
  
  		super(); // NO ERROR
  >super : Symbol(G, Decl(classUpdateTests.ts, 34, 1))
-@@ -106,7 +106,7 @@
+@@= skipped -12, +12 lines =@@
  >G : Symbol(G, Decl(classUpdateTests.ts, 34, 1))
  
  	constructor(public p1:number) { // ERROR
@@ -80,7 +80,7 @@
  
  		var i = 0;
  >i : Symbol(i, Decl(classUpdateTests.ts, 57, 5))
-@@ -121,7 +121,7 @@
+@@= skipped -15, +15 lines =@@
  >G : Symbol(G, Decl(classUpdateTests.ts, 34, 1))
  
  	constructor(private p1:number) {
@@ -89,7 +89,7 @@
  
  		super(); // NO ERROR
  >super : Symbol(G, Decl(classUpdateTests.ts, 34, 1))
-@@ -133,7 +133,7 @@
+@@= skipped -12, +12 lines =@@
  >G : Symbol(G, Decl(classUpdateTests.ts, 34, 1))
  
  	constructor(private p1:number) { // ERROR
@@ -98,7 +98,7 @@
  
  		var i = 0;
  >i : Symbol(i, Decl(classUpdateTests.ts, 70, 5))
-@@ -150,19 +150,19 @@
+@@= skipped -17, +17 lines =@@
  >N : Symbol(N, Decl(classUpdateTests.ts, 73, 1))
  
  	public p1 = 0;
@@ -124,7 +124,7 @@
  	}
  }
  
-@@ -174,7 +174,7 @@
+@@= skipped -24, +24 lines =@@
  
  	constructor() {
  		public p1 = 0; // ERROR
@@ -133,7 +133,7 @@
  	}
  }
  
-@@ -183,7 +183,7 @@
+@@= skipped -9, +9 lines =@@
  
  	constructor() {
  		private p1 = 0; // ERROR
@@ -142,7 +142,7 @@
  	}
  }
  
-@@ -192,8 +192,8 @@
+@@= skipped -9, +9 lines =@@
  
  	constructor() {
  		public this.p1 = 0; // ERROR
@@ -153,7 +153,7 @@
  	}
  }
  
-@@ -202,7 +202,7 @@
+@@= skipped -10, +10 lines =@@
  
  	constructor() {
  		private this.p1 = 0; // ERROR

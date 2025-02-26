@@ -1,6 +1,6 @@
 --- old.plainJSRedeclare2.symbols
 +++ new.plainJSRedeclare2.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >orbitol : Symbol(orbitol, Decl(plainJSRedeclare.js, 1, 3))
  
  orbitol.toExponential()

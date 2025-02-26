@@ -1,6 +1,6 @@
 --- old.moduleAugmentationImportsAndExports1.symbols
 +++ new.moduleAugmentationImportsAndExports1.symbols
-@@ -9,7 +9,7 @@
+@@= skipped -9, +9 lines =@@
  >B : Symbol(B, Decl(f2.ts, 0, 0))
  
      n: number;
@@ -9,7 +9,7 @@
  }
  
  === f3.ts ===
-@@ -20,21 +20,21 @@
+@@= skipped -11, +11 lines =@@
  >B : Symbol(B, Decl(f3.ts, 1, 8))
  
  A.prototype.foo = function () { return undefined; }
@@ -37,7 +37,7 @@
  >B : Symbol(B, Decl(f3.ts, 1, 8))
      }
  }
-@@ -51,9 +51,9 @@
+@@= skipped -31, +31 lines =@@
  
  let b = a.foo().n;
  >b : Symbol(b, Decl(f4.ts, 4, 3))

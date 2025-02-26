@@ -1,6 +1,6 @@
 --- old.pathMappingBasedModuleResolution7_classic.symbols
 +++ new.pathMappingBasedModuleResolution7_classic.symbols
-@@ -13,47 +13,13 @@
+@@= skipped -13, +13 lines =@@
  
  use(x.toFixed());
  >use : Symbol(use, Decl(file1.ts, 1, 26))

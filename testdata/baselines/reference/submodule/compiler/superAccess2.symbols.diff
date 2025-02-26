@@ -1,6 +1,6 @@
 --- old.superAccess2.symbols
 +++ new.superAccess2.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >P : Symbol(P, Decl(superAccess2.ts, 0, 0))
  
      x() { }
@@ -13,7 +13,7 @@
  }
  
  class Q extends P {
-@@ -16,16 +16,16 @@
+@@= skipped -11, +11 lines =@@
  >P : Symbol(P, Decl(superAccess2.ts, 0, 0))
  
      xx = super;
@@ -33,7 +33,7 @@
  >zz : Symbol(zz, Decl(superAccess2.ts, 10, 33))
  >zzz : Symbol(zzz, Decl(superAccess2.ts, 10, 45))
  >super : Symbol(P, Decl(superAccess2.ts, 0, 0))
-@@ -35,21 +35,21 @@
+@@= skipped -19, +19 lines =@@
      }
  
      foo(zz = super) {
@@ -59,7 +59,7 @@
  >zz : Symbol(zz, Decl(superAccess2.ts, 19, 15))
  >super : Symbol(P, Decl(superAccess2.ts, 0, 0))
  
-@@ -57,8 +57,8 @@
+@@= skipped -22, +22 lines =@@
  >super : Symbol(P, Decl(superAccess2.ts, 0, 0))
  
          super.y();

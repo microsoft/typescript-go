@@ -1,6 +1,6 @@
 --- old.declarationEmitClassAccessorsJs1.symbols
 +++ new.declarationEmitClassAccessorsJs1.symbols
-@@ -10,7 +10,7 @@
+@@= skipped -10, +10 lines =@@
     * @returns {string}
     */
    get path() {
@@ -9,7 +9,7 @@
  
      return ''
    }
-@@ -19,7 +19,7 @@
+@@= skipped -9, +9 lines =@@
     * @param {URL | string} path
     */
    set path(path) {

@@ -1,6 +1,6 @@
 --- old.privacyTopLevelAmbientExternalModuleImportWithoutExport.symbols
 +++ new.privacyTopLevelAmbientExternalModuleImportWithoutExport.symbols
-@@ -19,92 +19,67 @@
+@@= skipped -19, +19 lines =@@
  // Usage of privacy error imports
  var privateUse_im_private_mi_private = new im_private_mi_private.c_private();
  >privateUse_im_private_mi_private : Symbol(privateUse_im_private_mi_private, Decl(privacyTopLevelAmbientExternalModuleImportWithoutExport_core.ts, 9, 3))

@@ -1,6 +1,6 @@
 --- old.controlFlowArrayErrors.symbols
 +++ new.controlFlowArrayErrors.symbols
-@@ -15,9 +15,9 @@
+@@= skipped -15, +15 lines =@@
  >x : Symbol(x, Decl(controlFlowArrayErrors.ts, 3, 7))
  
      x.push(5);
@@ -12,7 +12,7 @@
  
      let z = x;
  >z : Symbol(z, Decl(controlFlowArrayErrors.ts, 6, 7))
-@@ -38,9 +38,9 @@
+@@= skipped -23, +23 lines =@@
  >x : Symbol(x, Decl(controlFlowArrayErrors.ts, 10, 7))
  
      x.push(5);
@@ -24,7 +24,7 @@
  
      let z = x;
  >z : Symbol(z, Decl(controlFlowArrayErrors.ts, 14, 7))
-@@ -54,9 +54,9 @@
+@@= skipped -16, +16 lines =@@
  >x : Symbol(x, Decl(controlFlowArrayErrors.ts, 18, 7))
  
      x.push(5);
@@ -36,7 +36,7 @@
  
      function g() {
  >g : Symbol(g, Decl(controlFlowArrayErrors.ts, 19, 14))
-@@ -76,9 +76,9 @@
+@@= skipped -22, +22 lines =@@
  >x : Symbol(x, Decl(controlFlowArrayErrors.ts, 26, 7))
  
      x.push(true);      // Error
@@ -48,7 +48,7 @@
  }
  
  function f5() {
-@@ -88,9 +88,9 @@
+@@= skipped -12, +12 lines =@@
  >x : Symbol(x, Decl(controlFlowArrayErrors.ts, 32, 7))
  
      x.push(true);          // Error
@@ -60,7 +60,7 @@
  }
  
  function f6() {
-@@ -106,14 +106,14 @@
+@@= skipped -18, +18 lines =@@
  >x : Symbol(x, Decl(controlFlowArrayErrors.ts, 37, 7))
  
          x.push(5);
@@ -79,7 +79,7 @@
      }
      else {
          x = [true];  // Non-evolving array
-@@ -123,9 +123,9 @@
+@@= skipped -17, +17 lines =@@
  >x : Symbol(x, Decl(controlFlowArrayErrors.ts, 37, 7))
  
      x.push(99);  // Error
@@ -91,7 +91,7 @@
  }
  
  function f7() {
-@@ -135,23 +135,23 @@
+@@= skipped -12, +12 lines =@@
  >x : Symbol(x, Decl(controlFlowArrayErrors.ts, 51, 7))
  
      x.push(5);
@@ -121,7 +121,7 @@
  }
  
  function f8() {
-@@ -161,9 +161,9 @@
+@@= skipped -26, +26 lines =@@
  >x : Symbol(x, Decl(controlFlowArrayErrors.ts, 59, 9))
  
      x.push(5);

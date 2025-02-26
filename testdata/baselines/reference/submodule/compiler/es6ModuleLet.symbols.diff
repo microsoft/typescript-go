@@ -1,6 +1,6 @@
 --- old.es6ModuleLet.symbols
 +++ new.es6ModuleLet.symbols
-@@ -60,9 +60,9 @@
+@@= skipped -60, +60 lines =@@
  
      let n = m1.k;
  >n : Symbol(n, Decl(es6ModuleLet.ts, 13, 7))

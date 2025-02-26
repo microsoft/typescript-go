@@ -1,6 +1,6 @@
 --- old.declarationEmitPartialNodeReuseTypeReferences.symbols
 +++ new.declarationEmitPartialNodeReuseTypeReferences.symbols
-@@ -21,14 +21,14 @@
+@@= skipped -21, +21 lines =@@
  >PrivateSpecialString : Symbol(PrivateSpecialString, Decl(a.ts, 0, 35))
  >p3 : Symbol(p3, Decl(a.ts, 6, 62))
  >N : Symbol(N, Decl(a.ts, 1, 35))
@@ -17,7 +17,7 @@
  
  === b.ts ===
  import * as a from "./a";
-@@ -36,9 +36,9 @@
+@@= skipped -15, +15 lines =@@
  
  export const g = a.o
  >g : Symbol(g, Decl(b.ts, 1, 12))

@@ -1,6 +1,6 @@
 --- old.typeInferenceFBoundedTypeParams.symbols
 +++ new.typeInferenceFBoundedTypeParams.symbols
-@@ -45,9 +45,9 @@
+@@= skipped -45, +45 lines =@@
  >a : Symbol(a, Decl(typeInferenceFBoundedTypeParams.ts, 9, 16))
  
      values.push(value);

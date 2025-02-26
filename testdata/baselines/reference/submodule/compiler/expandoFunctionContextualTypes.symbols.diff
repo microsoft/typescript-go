@@ -1,6 +1,6 @@
 --- old.expandoFunctionContextualTypes.symbols
 +++ new.expandoFunctionContextualTypes.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >MyComponentProps : Symbol(MyComponentProps, Decl(expandoFunctionContextualTypes.ts, 0, 0))
  
      color: "red" | "blue"
@@ -9,7 +9,7 @@
  }
  
  interface StatelessComponent<P> {
-@@ -14,20 +14,20 @@
+@@= skipped -9, +9 lines =@@
  
      (): any;
      defaultProps?: Partial<P>;

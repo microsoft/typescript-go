@@ -1,6 +1,6 @@
 --- old.enumAssignmentCompat4.symbols
 +++ new.enumAssignmentCompat4.symbols
-@@ -8,16 +8,16 @@
+@@= skipped -8, +8 lines =@@
  >MyEnum : Symbol(MyEnum, Decl(enumAssignmentCompat4.ts, 0, 13))
  
          BAR
@@ -20,7 +20,7 @@
  
      };
  }
-@@ -29,7 +29,7 @@
+@@= skipped -21, +21 lines =@@
  >MyEnum : Symbol(MyEnum, Decl(enumAssignmentCompat4.ts, 9, 13))
  
          FOO
@@ -29,7 +29,7 @@
  
      };
      export var object1 = {
-@@ -37,9 +37,9 @@
+@@= skipped -8, +8 lines =@@
  
          foo: MyEnum.FOO
  >foo : Symbol(foo, Decl(enumAssignmentCompat4.ts, 13, 26))
@@ -41,7 +41,7 @@
  
      };
  }
-@@ -48,14 +48,14 @@
+@@= skipped -11, +11 lines =@@
  >broken : Symbol(broken, Decl(enumAssignmentCompat4.ts, 18, 3))
  
      N.object1,

@@ -1,6 +1,6 @@
 --- old.customAsyncIterator.symbols
 +++ new.customAsyncIterator.symbols
-@@ -10,11 +10,11 @@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(customAsyncIterator.ts, 1, 23))
  
      constructor(private constant: T) {
@@ -14,7 +14,7 @@
  >value : Symbol(value, Decl(customAsyncIterator.ts, 4, 15))
  >T : Symbol(T, Decl(customAsyncIterator.ts, 1, 23))
  >Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2018.promise.d.ts, --, --))
-@@ -29,9 +29,9 @@
+@@= skipped -19, +19 lines =@@
          }
          return { value: this.constant, done: false };
  >value : Symbol(value, Decl(customAsyncIterator.ts, 8, 16))

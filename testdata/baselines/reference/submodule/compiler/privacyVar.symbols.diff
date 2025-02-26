@@ -1,6 +1,6 @@
 --- old.privacyVar.symbols
 +++ new.privacyVar.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >C1_public : Symbol(C1_public, Decl(privacyVar.ts, 0, 18))
  
          private f1() {
@@ -9,7 +9,7 @@
          }
      }
  
-@@ -20,54 +20,54 @@
+@@= skipped -12, +12 lines =@@
  >C3_public : Symbol(C3_public, Decl(privacyVar.ts, 7, 5))
  
          private C3_v1_private: C1_public;
@@ -76,7 +76,7 @@
  >C2_private : Symbol(C2_private, Decl(privacyVar.ts, 4, 5))
  >C2_private : Symbol(C2_private, Decl(privacyVar.ts, 4, 5))
      }
-@@ -76,54 +76,54 @@
+@@= skipped -56, +56 lines =@@
  >C4_public : Symbol(C4_public, Decl(privacyVar.ts, 24, 5))
  
          private C4_v1_private: C1_public;
@@ -143,7 +143,7 @@
  >C2_private : Symbol(C2_private, Decl(privacyVar.ts, 4, 5))
  >C2_private : Symbol(C2_private, Decl(privacyVar.ts, 4, 5))
      }
-@@ -188,7 +188,7 @@
+@@= skipped -112, +112 lines =@@
  >m2_C1_public : Symbol(m2_C1_public, Decl(privacyVar.ts, 59, 11))
  
          private f1() {
@@ -152,7 +152,7 @@
          }
      }
  
-@@ -200,54 +200,54 @@
+@@= skipped -12, +12 lines =@@
  >m2_C3_public : Symbol(m2_C3_public, Decl(privacyVar.ts, 66, 5))
  
          private m2_C3_v1_private: m2_C1_public;
@@ -219,7 +219,7 @@
  >m2_C2_private : Symbol(m2_C2_private, Decl(privacyVar.ts, 63, 5))
  >m2_C2_private : Symbol(m2_C2_private, Decl(privacyVar.ts, 63, 5))
      }
-@@ -256,54 +256,54 @@
+@@= skipped -56, +56 lines =@@
  >m2_C4_public : Symbol(m2_C4_public, Decl(privacyVar.ts, 83, 5))
  
          private m2_C4_v1_private: m2_C1_public;
@@ -286,7 +286,7 @@
  >m2_C2_private : Symbol(m2_C2_private, Decl(privacyVar.ts, 63, 5))
  >m2_C2_private : Symbol(m2_C2_private, Decl(privacyVar.ts, 63, 5))
      }
-@@ -365,7 +365,7 @@
+@@= skipped -109, +109 lines =@@
  >glo_C1_public : Symbol(glo_C1_public, Decl(privacyVar.ts, 116, 1))
  
      private f1() {
@@ -295,7 +295,7 @@
      }
  }
  
-@@ -377,54 +377,54 @@
+@@= skipped -12, +12 lines =@@
  >glo_C3_public : Symbol(glo_C3_public, Decl(privacyVar.ts, 124, 1))
  
      private glo_C3_v1_private: glo_C1_public;
@@ -362,7 +362,7 @@
  >glo_C2_private : Symbol(glo_C2_private, Decl(privacyVar.ts, 121, 1))
  >glo_C2_private : Symbol(glo_C2_private, Decl(privacyVar.ts, 121, 1))
  }
-@@ -433,54 +433,54 @@
+@@= skipped -56, +56 lines =@@
  >glo_C4_public : Symbol(glo_C4_public, Decl(privacyVar.ts, 141, 1))
  
      private glo_C4_v1_private: glo_C1_public;

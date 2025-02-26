@@ -1,6 +1,6 @@
 --- old.mutuallyRecursiveInference.symbols
 +++ new.mutuallyRecursiveInference.symbols
-@@ -6,11 +6,11 @@
+@@= skipped -6, +6 lines =@@
  >A : Symbol(A, Decl(mutuallyRecursiveInference.ts, 0, 8))
  
      a: A;
@@ -14,7 +14,7 @@
  }
  class L<RT extends { a: 'a' | 'b', b: any }> extends T<RT[RT['a']]> {
  >L : Symbol(L, Decl(mutuallyRecursiveInference.ts, 3, 1))
-@@ -22,10 +22,10 @@
+@@= skipped -16, +16 lines =@@
  >RT : Symbol(RT, Decl(mutuallyRecursiveInference.ts, 4, 8))
  
      m() { this.a }
@@ -28,7 +28,7 @@
  }
  class X extends L<X> {
  >X : Symbol(X, Decl(mutuallyRecursiveInference.ts, 6, 1))
-@@ -33,18 +33,18 @@
+@@= skipped -11, +11 lines =@@
  >X : Symbol(X, Decl(mutuallyRecursiveInference.ts, 6, 1))
  
      a: 'a' | 'b'

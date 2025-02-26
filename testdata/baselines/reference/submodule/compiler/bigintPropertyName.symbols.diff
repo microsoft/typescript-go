@@ -1,6 +1,6 @@
 --- old.bigintPropertyName.symbols
 +++ new.bigintPropertyName.symbols
-@@ -47,26 +47,26 @@
+@@= skipped -47, +47 lines =@@
  >G : Symbol(G, Decl(g.ts, 0, 0))
  
      2n: string;

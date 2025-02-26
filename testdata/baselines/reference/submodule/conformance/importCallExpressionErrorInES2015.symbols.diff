@@ -1,6 +1,6 @@
 --- old.importCallExpressionErrorInES2015.symbols
 +++ new.importCallExpressionErrorInES2015.symbols
-@@ -6,16 +6,13 @@
+@@= skipped -6, +6 lines =@@
  
  === 1.ts ===
  import("./0");
@@ -19,7 +19,7 @@
  >zero : Symbol(zero, Decl(1.ts, 2, 8))
  
      return zero.foo();
-@@ -30,5 +27,4 @@
+@@= skipped -24, +21 lines =@@
  
      const p2 = import("./0");
  >p2 : Symbol(p2, Decl(1.ts, 7, 9))

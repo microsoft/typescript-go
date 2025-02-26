@@ -1,6 +1,6 @@
 --- old.collisionSuperAndLocalFunctionInAccessors.symbols
 +++ new.collisionSuperAndLocalFunctionInAccessors.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >Foo : Symbol(Foo, Decl(collisionSuperAndLocalFunctionInAccessors.ts, 1, 1))
  
      get prop1(): number {
@@ -9,7 +9,7 @@
  
          function _super() { // No error
  >_super : Symbol(_super, Decl(collisionSuperAndLocalFunctionInAccessors.ts, 3, 25))
-@@ -16,7 +16,7 @@
+@@= skipped -8, +8 lines =@@
          return 10;
      }
      set prop1(val: number) {
@@ -18,7 +18,7 @@
  >val : Symbol(val, Decl(collisionSuperAndLocalFunctionInAccessors.ts, 8, 14))
  
          function _super() { // No error
-@@ -29,7 +29,7 @@
+@@= skipped -13, +13 lines =@@
  >Foo : Symbol(Foo, Decl(collisionSuperAndLocalFunctionInAccessors.ts, 1, 1))
  
      get prop2(): number {
@@ -27,7 +27,7 @@
  
          function _super() { // Should be error
  >_super : Symbol(_super, Decl(collisionSuperAndLocalFunctionInAccessors.ts, 14, 25))
-@@ -37,7 +37,7 @@
+@@= skipped -8, +8 lines =@@
          return 10;
      }
      set prop2(val: number) {
@@ -36,7 +36,7 @@
  >val : Symbol(val, Decl(collisionSuperAndLocalFunctionInAccessors.ts, 19, 14))
  
          function _super() { // Should be error
-@@ -50,7 +50,7 @@
+@@= skipped -13, +13 lines =@@
  >Foo : Symbol(Foo, Decl(collisionSuperAndLocalFunctionInAccessors.ts, 1, 1))
  
      get prop2(): number {
@@ -45,7 +45,7 @@
  
          var x = () => {
  >x : Symbol(x, Decl(collisionSuperAndLocalFunctionInAccessors.ts, 26, 11))
-@@ -62,7 +62,7 @@
+@@= skipped -12, +12 lines =@@
          return 10;
      }
      set prop2(val: number) {

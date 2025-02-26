@@ -1,6 +1,6 @@
 --- old.typeofInternalModules.symbols
 +++ new.typeofInternalModules.symbols
-@@ -21,26 +21,26 @@
+@@= skipped -21, +21 lines =@@
  import importInst = Outer.instantiated;
  >importInst : Symbol(importInst, Decl(typeofInternalModules.ts, 7, 1))
  >Outer : Symbol(Outer, Decl(typeofInternalModules.ts, 0, 0))
@@ -34,7 +34,7 @@
  >x1 : Symbol(x1, Decl(typeofInternalModules.ts, 12, 3))
  
  var x3: typeof importUninst.P; // Error again
-@@ -61,9 +61,9 @@
+@@= skipped -40, +40 lines =@@
  
  x5 = Outer.instantiated;
  >x5 : Symbol(x5, Decl(typeofInternalModules.ts, 17, 3))

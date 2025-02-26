@@ -1,6 +1,6 @@
 --- old.mapOnTupleTypes02.symbols
 +++ new.mapOnTupleTypes02.symbols
-@@ -10,9 +10,9 @@
+@@= skipped -10, +10 lines =@@
  >Point : Symbol(Point, Decl(mapOnTupleTypes02.ts, 0, 0))
  
    return point.map(d => d + 1);

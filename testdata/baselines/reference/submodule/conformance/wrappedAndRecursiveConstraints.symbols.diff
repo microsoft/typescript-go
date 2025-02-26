@@ -1,6 +1,6 @@
 --- old.wrappedAndRecursiveConstraints.symbols
 +++ new.wrappedAndRecursiveConstraints.symbols
-@@ -9,11 +9,11 @@
+@@= skipped -9, +9 lines =@@
  >Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
  
      constructor(public data: T) { }
@@ -14,7 +14,7 @@
  >U : Symbol(U, Decl(wrappedAndRecursiveConstraints.ts, 4, 8))
  >T : Symbol(T, Decl(wrappedAndRecursiveConstraints.ts, 2, 8))
  >x : Symbol(x, Decl(wrappedAndRecursiveConstraints.ts, 4, 21))
-@@ -29,7 +29,7 @@
+@@= skipped -20, +20 lines =@@
  >Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
  
      foo: string;
@@ -23,7 +23,7 @@
  }
  
  var y: Foo = null;
-@@ -43,8 +43,8 @@
+@@= skipped -14, +14 lines =@@
  
  var r = c.foo(y);
  >r : Symbol(r, Decl(wrappedAndRecursiveConstraints.ts, 15, 3))

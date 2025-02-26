@@ -1,6 +1,6 @@
 --- old.propertyOrdering.symbols
 +++ new.propertyOrdering.symbols
-@@ -8,19 +8,19 @@
+@@= skipped -8, +8 lines =@@
  >store : Symbol(store, Decl(propertyOrdering.ts, 1, 16))
  
        public foo() {
@@ -25,7 +25,7 @@
  >this : Symbol(Foo, Decl(propertyOrdering.ts, 0, 0))
  
  }
-@@ -29,7 +29,7 @@
+@@= skipped -21, +21 lines =@@
  >Bar : Symbol(Bar, Decl(propertyOrdering.ts, 10, 1))
  
        public foo() {

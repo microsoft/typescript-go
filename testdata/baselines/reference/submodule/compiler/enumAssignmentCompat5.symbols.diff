@@ -1,6 +1,6 @@
 --- old.enumAssignmentCompat5.symbols
 +++ new.enumAssignmentCompat5.symbols
-@@ -5,21 +5,21 @@
+@@= skipped -5, +5 lines =@@
  >E : Symbol(E, Decl(enumAssignmentCompat5.ts, 0, 0))
  
      A, B, C
@@ -28,7 +28,7 @@
  }
  let n: number;
  >n : Symbol(n, Decl(enumAssignmentCompat5.ts, 8, 3))
-@@ -38,7 +38,7 @@
+@@= skipped -33, +33 lines =@@
  let a: E.A = 0; // ok, A === 0
  >a : Symbol(a, Decl(enumAssignmentCompat5.ts, 12, 3))
  >E : Symbol(E, Decl(enumAssignmentCompat5.ts, 0, 0))
@@ -37,7 +37,7 @@
  
  a = 2; // error, 2 !== 0
  >a : Symbol(a, Decl(enumAssignmentCompat5.ts, 12, 3))
-@@ -62,7 +62,7 @@
+@@= skipped -24, +24 lines =@@
  let ca: Computed.A = 1; // error, Computed.A isn't a literal type because Computed has no enum literals
  >ca : Symbol(ca, Decl(enumAssignmentCompat5.ts, 19, 3))
  >Computed : Symbol(Computed, Decl(enumAssignmentCompat5.ts, 2, 1))

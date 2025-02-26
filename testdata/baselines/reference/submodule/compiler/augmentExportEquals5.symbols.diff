@@ -1,6 +1,6 @@
 --- old.augmentExportEquals5.symbols
 +++ new.augmentExportEquals5.symbols
-@@ -20,7 +20,7 @@
+@@= skipped -20, +20 lines =@@
      function e(): e.Express;
  >e : Symbol(e, Decl(express.d.ts, 6, 26), Decl(express.d.ts, 7, 28), Decl(augmentation.ts, 1, 29))
  >e : Symbol(e, Decl(express.d.ts, 6, 26), Decl(express.d.ts, 7, 28), Decl(augmentation.ts, 1, 29))
@@ -9,7 +9,7 @@
  
      namespace e {
  >e : Symbol(e, Decl(express.d.ts, 6, 26), Decl(express.d.ts, 7, 28), Decl(augmentation.ts, 1, 29))
-@@ -29,7 +29,7 @@
+@@= skipped -9, +9 lines =@@
  >IRoute : Symbol(IRoute, Decl(express.d.ts, 8, 17))
  
              all(...handler: RequestHandler[]): IRoute;
@@ -18,7 +18,7 @@
  >handler : Symbol(handler, Decl(express.d.ts, 10, 16))
  >RequestHandler : Symbol(RequestHandler, Decl(express.d.ts, 38, 9))
  >IRoute : Symbol(IRoute, Decl(express.d.ts, 8, 17))
-@@ -53,7 +53,7 @@
+@@= skipped -24, +24 lines =@@
  >RequestHandler : Symbol(RequestHandler, Decl(express.d.ts, 38, 9))
  
              route(path: string): IRoute;
@@ -27,7 +27,7 @@
  >path : Symbol(path, Decl(express.d.ts, 18, 18))
  >IRoute : Symbol(IRoute, Decl(express.d.ts, 8, 17))
          }
-@@ -75,23 +75,23 @@
+@@= skipped -22, +22 lines =@@
  
          interface Request extends Express.Request {
  >Request : Symbol(Request, Decl(express.d.ts, 25, 49), Decl(augmentation.ts, 2, 26))
@@ -57,7 +57,7 @@
          }
  
          interface ErrorRequestHandler {
-@@ -140,12 +140,12 @@
+@@= skipped -65, +65 lines =@@
  >Application : Symbol(Application, Decl(express.d.ts, 48, 9))
  >IRouter : Symbol(IRouter, Decl(express.d.ts, 15, 9))
  >Application : Symbol(Application, Decl(express.d.ts, 48, 9))
@@ -73,7 +73,7 @@
          }
  
          interface Express extends Application {
-@@ -153,7 +153,7 @@
+@@= skipped -13, +13 lines =@@
  >Application : Symbol(Application, Decl(express.d.ts, 48, 9))
  
              createApplication(): Application;
@@ -82,7 +82,7 @@
  >Application : Symbol(Application, Decl(express.d.ts, 48, 9))
          }
  
-@@ -177,7 +177,7 @@
+@@= skipped -24, +24 lines =@@
  >Request : Symbol(Request, Decl(express.d.ts, 25, 49), Decl(augmentation.ts, 2, 26))
  
          id: number;
@@ -91,7 +91,7 @@
      }
  }
  
-@@ -192,7 +192,7 @@
+@@= skipped -15, +15 lines =@@
  
  const y = x.id;
  >y : Symbol(y, Decl(consumer.ts, 3, 5))

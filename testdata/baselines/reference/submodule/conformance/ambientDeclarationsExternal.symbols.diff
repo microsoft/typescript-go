@@ -1,6 +1,6 @@
 --- old.ambientDeclarationsExternal.symbols
 +++ new.ambientDeclarationsExternal.symbols
-@@ -12,9 +12,9 @@
+@@= skipped -12, +12 lines =@@
  
  var n = imp3.x;
  >n : Symbol(n, Decl(consumer.ts, 6, 3), Decl(consumer.ts, 7, 3))
@@ -12,7 +12,7 @@
  
  var n: number;
  >n : Symbol(n, Decl(consumer.ts, 6, 3), Decl(consumer.ts, 7, 3))
-@@ -22,7 +22,7 @@
+@@= skipped -10, +10 lines =@@
  === decls.ts ===
  // Ambient external module with export assignment
  declare module 'equ' {
@@ -21,7 +21,7 @@
  
      var x;
  >x : Symbol(x, Decl(decls.ts, 2, 7))
-@@ -32,7 +32,7 @@
+@@= skipped -10, +10 lines =@@
  }
  
  declare module 'equ2' {

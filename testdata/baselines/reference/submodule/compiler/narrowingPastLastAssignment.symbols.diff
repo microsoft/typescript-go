@@ -1,6 +1,6 @@
 --- old.narrowingPastLastAssignment.symbols
 +++ new.narrowingPastLastAssignment.symbols
-@@ -50,7 +50,7 @@
+@@= skipped -50, +50 lines =@@
  >C : Symbol(C, Decl(narrowingPastLastAssignment.ts, 18, 7))
  
          foo() { x /* number */ }
@@ -9,7 +9,7 @@
  >x : Symbol(x, Decl(narrowingPastLastAssignment.ts, 14, 7))
  
      };
-@@ -70,7 +70,7 @@
+@@= skipped -20, +20 lines =@@
  >A : Symbol(A, Decl(narrowingPastLastAssignment.ts, 24, 44))
  
          foo() { x /* string | number */ }
@@ -18,7 +18,7 @@
  >x : Symbol(x, Decl(narrowingPastLastAssignment.ts, 14, 7))
      }
  }
-@@ -342,9 +342,9 @@
+@@= skipped -272, +272 lines =@@
  
      let foo = fooMap.get("a");
  >foo : Symbol(foo, Decl(narrowingPastLastAssignment.ts, 147, 7))
@@ -30,7 +30,7 @@
  
      if (foo == null) {
  >foo : Symbol(foo, Decl(narrowingPastLastAssignment.ts, 147, 7))
-@@ -353,13 +353,13 @@
+@@= skipped -11, +11 lines =@@
  >foo : Symbol(foo, Decl(narrowingPastLastAssignment.ts, 147, 7))
      }
      values.forEach(v => foo.push(v));
@@ -48,7 +48,7 @@
  >v : Symbol(v, Decl(narrowingPastLastAssignment.ts, 151, 19))
  }
  
-@@ -375,8 +375,6 @@
+@@= skipped -22, +22 lines =@@
  
      return () => {
          foo.toLocaleLowerCase();

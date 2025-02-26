@@ -1,6 +1,6 @@
 --- old.thisTypeInBasePropertyAndDerivedContainerOfBase01.symbols
 +++ new.thisTypeInBasePropertyAndDerivedContainerOfBase01.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >Foo : Symbol(Foo, Decl(thisTypeInBasePropertyAndDerivedContainerOfBase01.ts, 2, 1))
  
      item: T
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(thisTypeInBasePropertyAndDerivedContainerOfBase01.ts, 0, 19))
  }
  
-@@ -15,7 +15,7 @@
+@@= skipped -8, +8 lines =@@
  >Foo : Symbol(Foo, Decl(thisTypeInBasePropertyAndDerivedContainerOfBase01.ts, 2, 1))
  
      self: this;
@@ -18,7 +18,7 @@
  }
  
  interface Bar extends Foo {
-@@ -23,6 +23,6 @@
+@@= skipped -8, +8 lines =@@
  >Foo : Symbol(Foo, Decl(thisTypeInBasePropertyAndDerivedContainerOfBase01.ts, 2, 1))
  
      other: BoxOfFoo<this>;

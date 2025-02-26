@@ -1,6 +1,6 @@
 --- old.assignments.symbols
 +++ new.assignments.symbols
-@@ -23,15 +23,15 @@
+@@= skipped -23, +23 lines =@@
  
  enum E { A }
  >E : Symbol(E, Decl(assignments.ts, 13, 9))

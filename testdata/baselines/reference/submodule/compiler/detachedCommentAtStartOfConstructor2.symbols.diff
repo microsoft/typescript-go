@@ -1,6 +1,6 @@
 --- old.detachedCommentAtStartOfConstructor2.symbols
 +++ new.detachedCommentAtStartOfConstructor2.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >TestFile : Symbol(TestFile, Decl(detachedCommentAtStartOfConstructor2.ts, 0, 0))
  
      public message: string;
@@ -13,7 +13,7 @@
  
      constructor(message: string) {
  >message : Symbol(message, Decl(detachedCommentAtStartOfConstructor2.ts, 3, 16))
-@@ -19,14 +19,14 @@
+@@= skipped -14, +14 lines =@@
          var getMessage = () => message + this.name;
  >getMessage : Symbol(getMessage, Decl(detachedCommentAtStartOfConstructor2.ts, 7, 11))
  >message : Symbol(message, Decl(detachedCommentAtStartOfConstructor2.ts, 3, 16))

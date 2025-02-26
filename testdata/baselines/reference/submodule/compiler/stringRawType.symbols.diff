@@ -1,6 +1,6 @@
 --- old.stringRawType.symbols
 +++ new.stringRawType.symbols
-@@ -2,8 +2,5 @@
+@@= skipped -2, +2 lines =@@
  
  === stringRawType.ts ===
  String.raw({ raw: ["foo", "bar", "baz"] }, 1, 2);

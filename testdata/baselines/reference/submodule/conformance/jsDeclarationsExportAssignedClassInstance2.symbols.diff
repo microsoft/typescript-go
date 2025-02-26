@@ -1,6 +1,6 @@
 --- old.jsDeclarationsExportAssignedClassInstance2.symbols
 +++ new.jsDeclarationsExportAssignedClassInstance2.symbols
-@@ -5,15 +5,12 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(index.js, 0, 0))
  
      static stat = 10;

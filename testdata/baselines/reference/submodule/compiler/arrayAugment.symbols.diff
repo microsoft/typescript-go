@@ -1,6 +1,6 @@
 --- old.arrayAugment.symbols
 +++ new.arrayAugment.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(lib.es5.d.ts, --, --), Decl(arrayAugment.ts, 0, 16))
  
      split: (parts: number) => T[][];
@@ -9,7 +9,7 @@
  >parts : Symbol(parts, Decl(arrayAugment.ts, 1, 12))
  >T : Symbol(T, Decl(lib.es5.d.ts, --, --), Decl(arrayAugment.ts, 0, 16))
  }
-@@ -16,9 +16,9 @@
+@@= skipped -10, +10 lines =@@
  
  var y = x.split(4);
  >y : Symbol(y, Decl(arrayAugment.ts, 5, 3), Decl(arrayAugment.ts, 6, 3))

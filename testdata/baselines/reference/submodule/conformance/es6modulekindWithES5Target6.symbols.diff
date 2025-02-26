@@ -1,6 +1,6 @@
 --- old.es6modulekindWithES5Target6.symbols
 +++ new.es6modulekindWithES5Target6.symbols
-@@ -12,7 +12,7 @@
+@@= skipped -12, +12 lines =@@
  }
  
  export default function f3(d = 0) {

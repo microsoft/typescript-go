@@ -1,6 +1,6 @@
 --- old.mergedModuleDeclarationCodeGen4.symbols
 +++ new.mergedModuleDeclarationCodeGen4.symbols
-@@ -9,10 +9,10 @@
+@@= skipped -9, +9 lines =@@
  
          export module my.buz {
  >my : Symbol(my, Decl(mergedModuleDeclarationCodeGen4.ts, 1, 27), Decl(mergedModuleDeclarationCodeGen4.ts, 6, 9))
@@ -13,7 +13,7 @@
  
                  export function foo() { }
  >foo : Symbol(foo, Decl(mergedModuleDeclarationCodeGen4.ts, 3, 32))
-@@ -20,10 +20,10 @@
+@@= skipped -11, +11 lines =@@
          }
          export module my.buz {
  >my : Symbol(my, Decl(mergedModuleDeclarationCodeGen4.ts, 1, 27), Decl(mergedModuleDeclarationCodeGen4.ts, 6, 9))
@@ -26,7 +26,7 @@
  
                  export function bar(contain, my, buz, data) {
  >bar : Symbol(bar, Decl(mergedModuleDeclarationCodeGen4.ts, 8, 32))
-@@ -33,7 +33,6 @@
+@@= skipped -13, +13 lines =@@
  >data : Symbol(data, Decl(mergedModuleDeclarationCodeGen4.ts, 9, 53))
  
                      foo();

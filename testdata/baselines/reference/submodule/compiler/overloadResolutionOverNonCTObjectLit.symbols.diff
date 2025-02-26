@@ -1,6 +1,6 @@
 --- old.overloadResolutionOverNonCTObjectLit.symbols
 +++ new.overloadResolutionOverNonCTObjectLit.symbols
-@@ -8,13 +8,13 @@
+@@= skipped -8, +8 lines =@@
  >IToken : Symbol(IToken, Decl(overloadResolutionOverNonCTObjectLit.ts, 0, 13))
  
                                  startIndex:number;
@@ -17,7 +17,7 @@
                  }
                  
                  export interface IState {
-@@ -26,11 +26,11 @@
+@@= skipped -18, +18 lines =@@
  >IToken : Symbol(IToken, Decl(overloadResolutionOverNonCTObjectLit.ts, 0, 13))
  
                                  state: IState;
@@ -31,7 +31,7 @@
                  }
                  
                  function bug3() {
-@@ -41,17 +41,17 @@
+@@= skipped -15, +15 lines =@@
  >IToken : Symbol(IToken, Decl(overloadResolutionOverNonCTObjectLit.ts, 0, 13))
  
                                  tokens.push({ startIndex: 1, type: '', bracket: 3 });

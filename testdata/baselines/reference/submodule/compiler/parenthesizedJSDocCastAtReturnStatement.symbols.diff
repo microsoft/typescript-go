@@ -1,6 +1,6 @@
 --- old.parenthesizedJSDocCastAtReturnStatement.symbols
 +++ new.parenthesizedJSDocCastAtReturnStatement.symbols
-@@ -16,9 +16,9 @@
+@@= skipped -16, +16 lines =@@
  
    return () => {
      return /** @type {string} */ (cache.get(key))

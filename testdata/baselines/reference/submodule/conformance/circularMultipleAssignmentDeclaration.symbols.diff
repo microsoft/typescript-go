@@ -1,6 +1,6 @@
 --- old.circularMultipleAssignmentDeclaration.symbols
 +++ new.circularMultipleAssignmentDeclaration.symbols
-@@ -2,16 +2,7 @@
+@@= skipped -2, +2 lines =@@
  
  === circularMultipleAssignmentDeclaration.js ===
  ns.next = ns.next || { shared: {} };

@@ -1,6 +1,6 @@
 --- old.checkJsxChildrenProperty2.symbols
 +++ new.checkJsxChildrenProperty2.symbols
-@@ -8,15 +8,15 @@
+@@= skipped -8, +8 lines =@@
  >Prop : Symbol(Prop, Decl(file.tsx, 0, 32))
  
      a: number,
@@ -21,7 +21,7 @@
  }
  
  function Comp(p: Prop) {
-@@ -25,11 +25,9 @@
+@@= skipped -17, +17 lines =@@
  >Prop : Symbol(Prop, Decl(file.tsx, 0, 32))
  
      return <div>{p.b}</div>;
@@ -35,7 +35,7 @@
  }
  
  // Error: missing children
-@@ -81,14 +79,9 @@
+@@= skipped -56, +54 lines =@@
  >b : Symbol(b, Decl(file.tsx, 30, 16))
  
          <div> My Div </div>
@@ -50,7 +50,7 @@
  
      </Comp>;
  >Comp : Symbol(Comp, Decl(file.tsx, 6, 1))
-@@ -102,9 +95,6 @@
+@@= skipped -21, +16 lines =@@
  >b : Symbol(b, Decl(file.tsx, 36, 16))
  
          <div> My Div </div>
@@ -60,7 +60,7 @@
          {1000000}
      </Comp>;
  >Comp : Symbol(Comp, Decl(file.tsx, 6, 1))
-@@ -118,9 +108,6 @@
+@@= skipped -16, +13 lines =@@
  >b : Symbol(b, Decl(file.tsx, 42, 16))
  
          <div> My Div </div>
@@ -70,7 +70,7 @@
          hi hi hi!
      </Comp>;
  >Comp : Symbol(Comp, Decl(file.tsx, 6, 1))
-@@ -134,13 +121,7 @@
+@@= skipped -16, +13 lines =@@
  >b : Symbol(b, Decl(file.tsx, 48, 16))
  
          <div> My Div </div>

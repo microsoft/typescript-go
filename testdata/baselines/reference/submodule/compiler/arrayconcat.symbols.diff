@@ -1,6 +1,6 @@
 --- old.arrayconcat.symbols
 +++ new.arrayconcat.symbols
-@@ -5,65 +5,65 @@
+@@= skipped -5, +5 lines =@@
  >IOptions : Symbol(IOptions, Decl(arrayconcat.ts, 0, 0))
  
      name?: string;

@@ -1,6 +1,6 @@
 --- old.emitDecoratorMetadata_restArgs.symbols
 +++ new.emitDecoratorMetadata_restArgs.symbols
-@@ -22,7 +22,7 @@
+@@= skipped -22, +22 lines =@@
  >MyMethodDecorator : Symbol(MyMethodDecorator, Decl(emitDecoratorMetadata_restArgs.ts, 1, 13))
  
      method(...args) {}
@@ -9,7 +9,7 @@
  >args : Symbol(args, Decl(emitDecoratorMetadata_restArgs.ts, 7, 11))
  }
  
-@@ -39,7 +39,7 @@
+@@= skipped -17, +17 lines =@@
  >MyMethodDecorator : Symbol(MyMethodDecorator, Decl(emitDecoratorMetadata_restArgs.ts, 1, 13))
  
      method(this: this, ...args: string[]) {}

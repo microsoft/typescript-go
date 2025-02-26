@@ -1,6 +1,6 @@
 --- old.derivedUninitializedPropertyDeclaration.symbols
 +++ new.derivedUninitializedPropertyDeclaration.symbols
-@@ -5,71 +5,71 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(derivedUninitializedPropertyDeclaration.ts, 0, 0))
  
      property = 'x';
@@ -84,7 +84,7 @@
  }
  
  
-@@ -77,20 +77,20 @@
+@@= skipped -72, +72 lines =@@
  >E : Symbol(E, Decl(derivedUninitializedPropertyDeclaration.ts, 30, 1))
  
      p1: string
@@ -109,7 +109,7 @@
  }
  
  class G extends E {
-@@ -98,16 +98,16 @@
+@@= skipped -21, +21 lines =@@
  >E : Symbol(E, Decl(derivedUninitializedPropertyDeclaration.ts, 30, 1))
  
      p1: 'z'
@@ -129,7 +129,7 @@
      }
  }
  
-@@ -116,17 +116,17 @@
+@@= skipped -18, +18 lines =@@
  >E : Symbol(E, Decl(derivedUninitializedPropertyDeclaration.ts, 30, 1))
  
      abstract p1: 'a' | 'b' | 'c'
@@ -150,7 +150,7 @@
  }
  interface J extends I { }
  >J : Symbol(J, Decl(derivedUninitializedPropertyDeclaration.ts, 57, 1), Decl(derivedUninitializedPropertyDeclaration.ts, 58, 25))
-@@ -136,17 +136,17 @@
+@@= skipped -20, +20 lines =@@
  >J : Symbol(J, Decl(derivedUninitializedPropertyDeclaration.ts, 57, 1), Decl(derivedUninitializedPropertyDeclaration.ts, 58, 25))
  
      r = 5
@@ -171,7 +171,7 @@
  }
  
  // #35327
-@@ -154,15 +154,15 @@
+@@= skipped -18, +18 lines =@@
  >L : Symbol(L, Decl(derivedUninitializedPropertyDeclaration.ts, 65, 1))
  
      a: any;
@@ -190,7 +190,7 @@
  >arg : Symbol(arg, Decl(derivedUninitializedPropertyDeclaration.ts, 70, 16))
      }
  }
-@@ -171,7 +171,7 @@
+@@= skipped -17, +17 lines =@@
  >L : Symbol(L, Decl(derivedUninitializedPropertyDeclaration.ts, 65, 1))
  
      declare a: number;
@@ -199,7 +199,7 @@
  
      constructor(arg: number) {
  >arg : Symbol(arg, Decl(derivedUninitializedPropertyDeclaration.ts, 76, 16))
-@@ -181,12 +181,12 @@
+@@= skipped -10, +10 lines =@@
  >arg : Symbol(arg, Decl(derivedUninitializedPropertyDeclaration.ts, 76, 16))
  
          console.log(this.a);  // should be OK, M.a is ambient

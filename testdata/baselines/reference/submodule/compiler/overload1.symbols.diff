@@ -1,6 +1,6 @@
 --- old.overload1.symbols
 +++ new.overload1.symbols
-@@ -24,40 +24,40 @@
+@@= skipped -24, +24 lines =@@
  >I : Symbol(I, Decl(overload1.ts, 10, 5))
  
          f(s:string):number;
@@ -49,7 +49,7 @@
  >s1 : Symbol(s1, Decl(overload1.ts, 20, 10))
  >s2 : Symbol(s2, Decl(overload1.ts, 20, 20))
      }
-@@ -66,75 +66,75 @@
+@@= skipped -42, +42 lines =@@
  declare var x:O.I;
  >x : Symbol(x, Decl(overload1.ts, 24, 11))
  >O : Symbol(O, Decl(overload1.ts, 0, 0))

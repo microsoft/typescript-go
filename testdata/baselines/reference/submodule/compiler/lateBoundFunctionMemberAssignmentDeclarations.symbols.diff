@@ -1,6 +1,6 @@
 --- old.lateBoundFunctionMemberAssignmentDeclarations.symbols
 +++ new.lateBoundFunctionMemberAssignmentDeclarations.symbols
-@@ -2,23 +2,22 @@
+@@= skipped -2, +2 lines =@@
  
  === index.ts ===
  export function foo() {}

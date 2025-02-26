@@ -1,6 +1,6 @@
 --- old.jsDeclarationsFunctionJSDoc.symbols
 +++ new.jsDeclarationsFunctionJSDoc.symbols
-@@ -30,9 +30,7 @@
+@@= skipped -30, +30 lines =@@
           * Field is always null
           */
          this.field = b;
@@ -10,7 +10,7 @@
  >b : Symbol(b, Decl(source.js, 16, 18))
      }
  
-@@ -41,7 +39,7 @@
+@@= skipped -11, +9 lines =@@
       * @returns {void}
       */
      doIt() {}

@@ -1,6 +1,6 @@
 --- old.symlinkedWorkspaceDependenciesNoDirectLinkGeneratesDeepNonrelativeName.symbols
 +++ new.symlinkedWorkspaceDependenciesNoDirectLinkGeneratesDeepNonrelativeName.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(foo.d.ts, 0, 0))
  
      private f: any;
@@ -9,7 +9,7 @@
  }
  === workspace/packageA/index.d.ts ===
  import { Foo } from "./foo.js";
-@@ -30,7 +30,5 @@
+@@= skipped -25, +25 lines =@@
  
  export const a = pkg.invoke();
  >a : Symbol(a, Decl(index.ts, 2, 12))

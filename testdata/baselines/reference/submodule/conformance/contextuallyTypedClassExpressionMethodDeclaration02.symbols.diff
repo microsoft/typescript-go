@@ -1,6 +1,6 @@
 --- old.contextuallyTypedClassExpressionMethodDeclaration02.symbols
 +++ new.contextuallyTypedClassExpressionMethodDeclaration02.symbols
-@@ -5,14 +5,14 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(contextuallyTypedClassExpressionMethodDeclaration02.ts, 0, 0))
  
      numProp: number;
@@ -17,7 +17,7 @@
  }
  
  interface Foo {
-@@ -26,12 +26,12 @@
+@@= skipped -21, +21 lines =@@
  >Bar : Symbol(Bar, Decl(contextuallyTypedClassExpressionMethodDeclaration02.ts, 10, 1))
  
      method1(arg: A): void;
@@ -32,7 +32,7 @@
  >arg : Symbol(arg, Decl(contextuallyTypedClassExpressionMethodDeclaration02.ts, 14, 12))
  >B : Symbol(B, Decl(contextuallyTypedClassExpressionMethodDeclaration02.ts, 2, 1))
  }
-@@ -42,14 +42,14 @@
+@@= skipped -16, +16 lines =@@
  
      return class {
          method1(arg) {
@@ -49,7 +49,7 @@
  >arg : Symbol(arg, Decl(contextuallyTypedClassExpressionMethodDeclaration02.ts, 22, 16))
  
              arg.strProp = "hello";
-@@ -64,14 +64,14 @@
+@@= skipped -22, +22 lines =@@
  
      return class {
          method1 = (arg) => {
@@ -66,7 +66,7 @@
  >arg : Symbol(arg, Decl(contextuallyTypedClassExpressionMethodDeclaration02.ts, 33, 19))
  
              arg.strProp = "hello";
-@@ -86,14 +86,14 @@
+@@= skipped -22, +22 lines =@@
  
      return class {
          method1 = function (arg) {

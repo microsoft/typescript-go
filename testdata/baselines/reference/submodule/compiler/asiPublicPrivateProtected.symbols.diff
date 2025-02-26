@@ -1,6 +1,6 @@
 --- old.asiPublicPrivateProtected.symbols
 +++ new.asiPublicPrivateProtected.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >NonPublicClass : Symbol(NonPublicClass, Decl(asiPublicPrivateProtected.ts, 0, 6))
  
      public s() {
@@ -9,7 +9,7 @@
      }
  }
  
-@@ -14,10 +14,10 @@
+@@= skipped -8, +8 lines =@@
  >NonPublicClass2 : Symbol(NonPublicClass2, Decl(asiPublicPrivateProtected.ts, 4, 1))
  
      public
@@ -22,7 +22,7 @@
      }
  }
  private
-@@ -25,7 +25,7 @@
+@@= skipped -11, +11 lines =@@
  >NonPrivateClass : Symbol(NonPrivateClass, Decl(asiPublicPrivateProtected.ts, 11, 7))
  
      private s() {
@@ -31,7 +31,7 @@
      }
  }
  
-@@ -33,10 +33,10 @@
+@@= skipped -8, +8 lines =@@
  >NonPrivateClass2 : Symbol(NonPrivateClass2, Decl(asiPublicPrivateProtected.ts, 15, 1))
  
      private
@@ -44,7 +44,7 @@
      }
  }
  protected
-@@ -44,7 +44,7 @@
+@@= skipped -11, +11 lines =@@
  >NonProtectedClass : Symbol(NonProtectedClass, Decl(asiPublicPrivateProtected.ts, 22, 9))
  
    protected s() {
@@ -53,7 +53,7 @@
    }
  }
  
-@@ -52,10 +52,10 @@
+@@= skipped -8, +8 lines =@@
  >NonProtectedClass2 : Symbol(NonProtectedClass2, Decl(asiPublicPrivateProtected.ts, 26, 1))
  
      protected
@@ -66,7 +66,7 @@
      }
  }
  
-@@ -63,12 +63,12 @@
+@@= skipped -11, +11 lines =@@
  >ClassWithThreeMembers : Symbol(ClassWithThreeMembers, Decl(asiPublicPrivateProtected.ts, 32, 1))
  
      public

@@ -1,6 +1,6 @@
 --- old.emitThisInSuperMethodCall.symbols
 +++ new.emitThisInSuperMethodCall.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >User : Symbol(User, Decl(emitThisInSuperMethodCall.ts, 0, 0))
  
      sayHello() {
@@ -9,7 +9,7 @@
      }
  }
  
-@@ -14,7 +14,7 @@
+@@= skipped -9, +9 lines =@@
  >User : Symbol(User, Decl(emitThisInSuperMethodCall.ts, 0, 0))
  
      f() {
@@ -18,7 +18,7 @@
  
          () => {
              function inner() {
-@@ -25,7 +25,7 @@
+@@= skipped -11, +11 lines =@@
          };
      }
      g() {
@@ -27,7 +27,7 @@
  
          function inner() {
  >inner : Symbol(inner, Decl(emitThisInSuperMethodCall.ts, 13, 9))
-@@ -36,7 +36,7 @@
+@@= skipped -11, +11 lines =@@
          }
      }
      h() {

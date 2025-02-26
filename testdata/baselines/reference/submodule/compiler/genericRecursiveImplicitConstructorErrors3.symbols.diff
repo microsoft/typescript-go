@@ -1,6 +1,6 @@
 --- old.genericRecursiveImplicitConstructorErrors3.symbols
 +++ new.genericRecursiveImplicitConstructorErrors3.symbols
-@@ -11,7 +11,7 @@
+@@= skipped -11, +11 lines =@@
  >C : Symbol(C, Decl(genericRecursiveImplicitConstructorErrors3.ts, 1, 33))
  
          static create<A,B,C>(arg1: any, arg2?: any, arg3?: any): MemberName {
@@ -9,7 +9,7 @@
  >A : Symbol(A, Decl(genericRecursiveImplicitConstructorErrors3.ts, 2, 22))
  >B : Symbol(B, Decl(genericRecursiveImplicitConstructorErrors3.ts, 2, 24))
  >C : Symbol(C, Decl(genericRecursiveImplicitConstructorErrors3.ts, 2, 26))
-@@ -33,7 +33,7 @@
+@@= skipped -22, +22 lines =@@
  >C : Symbol(C, Decl(genericRecursiveImplicitConstructorErrors3.ts, 8, 33))
  
          public type: PullTypeSymbol = null;
@@ -18,7 +18,7 @@
  >PullTypeSymbol : Symbol(PullTypeSymbol, Decl(genericRecursiveImplicitConstructorErrors3.ts, 10, 5))
      }
      export class PullTypeSymbol <A,B,C>extends PullSymbol {
-@@ -44,11 +44,11 @@
+@@= skipped -11, +11 lines =@@
  >PullSymbol : Symbol(PullSymbol, Decl(genericRecursiveImplicitConstructorErrors3.ts, 7, 19))
  
          private _elementType: PullTypeSymbol = null;
@@ -32,7 +32,7 @@
  >A : Symbol(A, Decl(genericRecursiveImplicitConstructorErrors3.ts, 13, 24))
  >B : Symbol(B, Decl(genericRecursiveImplicitConstructorErrors3.ts, 13, 26))
  >C : Symbol(C, Decl(genericRecursiveImplicitConstructorErrors3.ts, 13, 28))
-@@ -58,9 +58,9 @@
+@@= skipped -14, +14 lines =@@
  
              var s = this.getScopedNameEx(scopeSymbol, useConstraintInName).toString();
  >s : Symbol(s, Decl(genericRecursiveImplicitConstructorErrors3.ts, 14, 15))
@@ -44,7 +44,7 @@
  >scopeSymbol : Symbol(scopeSymbol, Decl(genericRecursiveImplicitConstructorErrors3.ts, 13, 31))
  >useConstraintInName : Symbol(useConstraintInName, Decl(genericRecursiveImplicitConstructorErrors3.ts, 13, 56))
  
-@@ -68,7 +68,7 @@
+@@= skipped -10, +10 lines =@@
  >s : Symbol(s, Decl(genericRecursiveImplicitConstructorErrors3.ts, 14, 15))
          }
          public getScopedNameEx<A,B,C>(scopeSymbol?: PullSymbol, useConstraintInName?: boolean, getPrettyTypeName?: boolean, getTypeParamMarkerInfo?: boolean) {
@@ -53,7 +53,7 @@
  >A : Symbol(A, Decl(genericRecursiveImplicitConstructorErrors3.ts, 17, 31))
  >B : Symbol(B, Decl(genericRecursiveImplicitConstructorErrors3.ts, 17, 33))
  >C : Symbol(C, Decl(genericRecursiveImplicitConstructorErrors3.ts, 17, 35))
-@@ -83,37 +83,37 @@
+@@= skipped -15, +15 lines =@@
  
                  var elementMemberName = this._elementType ?
  >elementMemberName : Symbol(elementMemberName, Decl(genericRecursiveImplicitConstructorErrors3.ts, 19, 19))

@@ -1,6 +1,6 @@
 --- old.privacyTypeParametersOfInterface.symbols
 +++ new.privacyTypeParametersOfInterface.symbols
-@@ -26,33 +26,33 @@
+@@= skipped -26, +26 lines =@@
  >privateClass : Symbol(privateClass, Decl(privacyTypeParametersOfInterface.ts, 0, 0))
  
      myMethod(val: T): T; // Error
@@ -40,7 +40,7 @@
  >publicClassT : Symbol(publicClassT, Decl(privacyTypeParametersOfInterface.ts, 7, 1))
  >publicClass : Symbol(publicClass, Decl(privacyTypeParametersOfInterface.ts, 1, 1))
  }
-@@ -63,33 +63,33 @@
+@@= skipped -37, +37 lines =@@
  >publicClass : Symbol(publicClass, Decl(privacyTypeParametersOfInterface.ts, 1, 1))
  
      myMethod(val: T): T; // No Error
@@ -80,7 +80,7 @@
  >publicClassT : Symbol(publicClassT, Decl(privacyTypeParametersOfInterface.ts, 7, 1))
  >publicClass : Symbol(publicClass, Decl(privacyTypeParametersOfInterface.ts, 1, 1))
  }
-@@ -100,33 +100,33 @@
+@@= skipped -37, +37 lines =@@
  >privateClass : Symbol(privateClass, Decl(privacyTypeParametersOfInterface.ts, 0, 0))
  
      myMethod(val: T): T; // No Error
@@ -120,7 +120,7 @@
  >publicClassT : Symbol(publicClassT, Decl(privacyTypeParametersOfInterface.ts, 7, 1))
  >publicClass : Symbol(publicClass, Decl(privacyTypeParametersOfInterface.ts, 1, 1))
  }
-@@ -137,33 +137,33 @@
+@@= skipped -37, +37 lines =@@
  >publicClass : Symbol(publicClass, Decl(privacyTypeParametersOfInterface.ts, 1, 1))
  
      myMethod(val: T): T; // No Error
@@ -160,7 +160,7 @@
  >publicClassT : Symbol(publicClassT, Decl(privacyTypeParametersOfInterface.ts, 7, 1))
  >publicClass : Symbol(publicClass, Decl(privacyTypeParametersOfInterface.ts, 1, 1))
  }
-@@ -173,13 +173,13 @@
+@@= skipped -36, +36 lines =@@
  >T : Symbol(T, Decl(privacyTypeParametersOfInterface.ts, 49, 71))
  
      myMethod(val: T): T; // No Error
@@ -176,7 +176,7 @@
  >publicClassT : Symbol(publicClassT, Decl(privacyTypeParametersOfInterface.ts, 7, 1))
  >T : Symbol(T, Decl(privacyTypeParametersOfInterface.ts, 49, 71))
  }
-@@ -189,13 +189,13 @@
+@@= skipped -16, +16 lines =@@
  >T : Symbol(T, Decl(privacyTypeParametersOfInterface.ts, 54, 65))
  
      myMethod(val: T): T; // No Error

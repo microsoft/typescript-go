@@ -1,6 +1,6 @@
 --- old.plusOperatorWithEnumType.symbols
 +++ new.plusOperatorWithEnumType.symbols
-@@ -8,9 +8,9 @@
+@@= skipped -8, +8 lines =@@
  
  enum ENUM1 { A, B, "" };
  >ENUM1 : Symbol(ENUM1, Decl(plusOperatorWithEnumType.ts, 2, 14))
@@ -13,7 +13,7 @@
  
  // enum type var
  var ResultIsNumber1 = +ENUM;
-@@ -25,13 +25,13 @@
+@@= skipped -17, +17 lines =@@
  var ResultIsNumber3 = +ENUM1["A"];
  >ResultIsNumber3 : Symbol(ResultIsNumber3, Decl(plusOperatorWithEnumType.ts, 10, 3))
  >ENUM1 : Symbol(ENUM1, Decl(plusOperatorWithEnumType.ts, 2, 14))
@@ -29,7 +29,7 @@
  
  // miss assignment operators
  +ENUM;
-@@ -41,9 +41,9 @@
+@@= skipped -16, +16 lines =@@
  >ENUM1 : Symbol(ENUM1, Decl(plusOperatorWithEnumType.ts, 2, 14))
  
  +ENUM1.B;

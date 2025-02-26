@@ -1,6 +1,6 @@
 --- old.subtypesOfTypeParameterWithConstraints4.symbols
 +++ new.subtypesOfTypeParameterWithConstraints4.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  
  class Foo { foo: number; }
  >Foo : Symbol(Foo, Decl(subtypesOfTypeParameterWithConstraints4.ts, 0, 0))
@@ -9,7 +9,7 @@
  
  function f<T extends Foo, U extends Foo, V>(t: T, u: U, v: V) {
  >f : Symbol(f, Decl(subtypesOfTypeParameterWithConstraints4.ts, 2, 26))
-@@ -94,7 +94,7 @@
+@@= skipped -89, +89 lines =@@
  >T : Symbol(T, Decl(subtypesOfTypeParameterWithConstraints4.ts, 30, 9))
  
      foo: T;
@@ -18,7 +18,7 @@
  >T : Symbol(T, Decl(subtypesOfTypeParameterWithConstraints4.ts, 30, 9))
  }
  
-@@ -113,7 +113,7 @@
+@@= skipped -19, +19 lines =@@
  >Foo : Symbol(Foo, Decl(subtypesOfTypeParameterWithConstraints4.ts, 0, 0))
  
      foo: T; // ok
@@ -27,7 +27,7 @@
  >T : Symbol(T, Decl(subtypesOfTypeParameterWithConstraints4.ts, 34, 9))
  }
  
-@@ -132,7 +132,7 @@
+@@= skipped -19, +19 lines =@@
  >Foo : Symbol(Foo, Decl(subtypesOfTypeParameterWithConstraints4.ts, 0, 0))
  
      foo: U; // ok
@@ -36,7 +36,7 @@
  >U : Symbol(U, Decl(subtypesOfTypeParameterWithConstraints4.ts, 39, 23))
  }
  
-@@ -151,7 +151,7 @@
+@@= skipped -19, +19 lines =@@
  >Foo : Symbol(Foo, Decl(subtypesOfTypeParameterWithConstraints4.ts, 0, 0))
  
      foo: V; // error
@@ -45,7 +45,7 @@
  >V : Symbol(V, Decl(subtypesOfTypeParameterWithConstraints4.ts, 44, 38))
  }
  
-@@ -170,7 +170,7 @@
+@@= skipped -19, +19 lines =@@
  >T : Symbol(T, Decl(subtypesOfTypeParameterWithConstraints4.ts, 49, 9))
  
      foo: T; // ok
@@ -54,7 +54,7 @@
  >T : Symbol(T, Decl(subtypesOfTypeParameterWithConstraints4.ts, 49, 9))
  }
  
-@@ -189,7 +189,7 @@
+@@= skipped -19, +19 lines =@@
  >T : Symbol(T, Decl(subtypesOfTypeParameterWithConstraints4.ts, 54, 9))
  
      foo: U; // error
@@ -63,7 +63,7 @@
  >U : Symbol(U, Decl(subtypesOfTypeParameterWithConstraints4.ts, 54, 23))
  }
  
-@@ -208,7 +208,7 @@
+@@= skipped -19, +19 lines =@@
  >T : Symbol(T, Decl(subtypesOfTypeParameterWithConstraints4.ts, 59, 9))
  
      foo: V; // error
@@ -72,7 +72,7 @@
  >V : Symbol(V, Decl(subtypesOfTypeParameterWithConstraints4.ts, 59, 38))
  }
  
-@@ -227,7 +227,7 @@
+@@= skipped -19, +19 lines =@@
  >U : Symbol(U, Decl(subtypesOfTypeParameterWithConstraints4.ts, 64, 23))
  
      foo: T; // error
@@ -81,7 +81,7 @@
  >T : Symbol(T, Decl(subtypesOfTypeParameterWithConstraints4.ts, 64, 9))
  }
  
-@@ -246,7 +246,7 @@
+@@= skipped -19, +19 lines =@@
  >U : Symbol(U, Decl(subtypesOfTypeParameterWithConstraints4.ts, 69, 23))
  
      foo: U; // ok
@@ -90,7 +90,7 @@
  >U : Symbol(U, Decl(subtypesOfTypeParameterWithConstraints4.ts, 69, 23))
  }
  
-@@ -265,6 +265,6 @@
+@@= skipped -19, +19 lines =@@
  >U : Symbol(U, Decl(subtypesOfTypeParameterWithConstraints4.ts, 74, 23))
  
      foo: V; // error

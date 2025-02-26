@@ -1,6 +1,6 @@
 --- old.decoratorOnClassProperty1.es6.symbols
 +++ new.decoratorOnClassProperty1.es6.symbols
-@@ -9,5 +9,5 @@
+@@= skipped -9, +9 lines =@@
  export default class {
      @dec prop;
  >dec : Symbol(dec, Decl(decoratorOnClassProperty1.es6.ts, 0, 0))

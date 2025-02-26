@@ -1,6 +1,6 @@
 --- old.privacyGloVar.symbols
 +++ new.privacyGloVar.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >C1_public : Symbol(C1_public, Decl(privacyGloVar.ts, 0, 11))
  
          private f1() {
@@ -9,7 +9,7 @@
          }
      }
  
-@@ -20,54 +20,54 @@
+@@= skipped -12, +12 lines =@@
  >C3_public : Symbol(C3_public, Decl(privacyGloVar.ts, 7, 5))
  
          private C3_v1_private: C1_public;
@@ -76,7 +76,7 @@
  >C2_private : Symbol(C2_private, Decl(privacyGloVar.ts, 4, 5))
  >C2_private : Symbol(C2_private, Decl(privacyGloVar.ts, 4, 5))
      }
-@@ -76,54 +76,54 @@
+@@= skipped -56, +56 lines =@@
  >C4_public : Symbol(C4_public, Decl(privacyGloVar.ts, 24, 5))
  
          private C4_v1_private: C1_public;
@@ -143,7 +143,7 @@
  >C2_private : Symbol(C2_private, Decl(privacyGloVar.ts, 4, 5))
  >C2_private : Symbol(C2_private, Decl(privacyGloVar.ts, 4, 5))
      }
-@@ -185,7 +185,7 @@
+@@= skipped -109, +109 lines =@@
  >glo_C1_public : Symbol(glo_C1_public, Decl(privacyGloVar.ts, 57, 1))
  
      private f1() {
@@ -152,7 +152,7 @@
      }
  }
  
-@@ -193,28 +193,28 @@
+@@= skipped -8, +8 lines =@@
  >glo_C3_public : Symbol(glo_C3_public, Decl(privacyGloVar.ts, 62, 1))
  
      private glo_C3_v1_private: glo_C1_public;

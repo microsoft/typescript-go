@@ -1,6 +1,6 @@
 --- old.controlFlowDestructuringLoop.symbols
 +++ new.controlFlowDestructuringLoop.symbols
-@@ -5,11 +5,11 @@
+@@= skipped -5, +5 lines =@@
  
  interface NumVal { val: number; }
  >NumVal : Symbol(NumVal, Decl(controlFlowDestructuringLoop.ts, 0, 0))
@@ -14,7 +14,7 @@
  
  type Val = NumVal | StrVal;
  >Val : Symbol(Val, Decl(controlFlowDestructuringLoop.ts, 3, 33))
-@@ -47,9 +47,9 @@
+@@= skipped -42, +42 lines =@@
  >thing : Symbol(thing, Decl(controlFlowDestructuringLoop.ts, 11, 14))
  
              val.toFixed(2);
@@ -26,7 +26,7 @@
          }
          else {
              const { val } = thing;
-@@ -57,9 +57,9 @@
+@@= skipped -10, +10 lines =@@
  >thing : Symbol(thing, Decl(controlFlowDestructuringLoop.ts, 11, 14))
  
              val.length;

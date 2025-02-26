@@ -1,6 +1,6 @@
 --- old.contextualTypingOfObjectLiterals2.symbols
 +++ new.contextualTypingOfObjectLiterals2.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(contextualTypingOfObjectLiterals2.ts, 0, 0))
  
      foo: (t: string) => string;

@@ -1,6 +1,6 @@
 --- old.controlFlowOuterVariable.symbols
 +++ new.controlFlowOuterVariable.symbols
-@@ -29,7 +29,7 @@
+@@= skipped -29, +29 lines =@@
  
      helper(t.slice(1));
  >helper : Symbol(helper, Decl(controlFlowOuterVariable.ts, 9, 5))

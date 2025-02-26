@@ -1,6 +1,6 @@
 --- old.destructureOptionalParameter.symbols
 +++ new.destructureOptionalParameter.symbols
-@@ -28,11 +28,11 @@
+@@= skipped -28, +28 lines =@@
  
  interface Type { t: void }
  >Type : Symbol(Type, Decl(destructureOptionalParameter.ts, 5, 1))

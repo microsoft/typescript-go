@@ -1,6 +1,6 @@
 --- old.exportsAndImportsWithContextualKeywordNames02.symbols
 +++ new.exportsAndImportsWithContextualKeywordNames02.symbols
-@@ -15,15 +15,15 @@
+@@= skipped -15, +15 lines =@@
  
  var x = as.as;
  >x : Symbol(x, Decl(t2.ts, 1, 3))

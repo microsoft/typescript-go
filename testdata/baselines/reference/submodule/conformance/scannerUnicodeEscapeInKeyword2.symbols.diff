@@ -1,6 +1,6 @@
 --- old.scannerUnicodeEscapeInKeyword2.symbols
 +++ new.scannerUnicodeEscapeInKeyword2.symbols
-@@ -2,7 +2,7 @@
+@@= skipped -2, +2 lines =@@
  
  === file1.ts ===
  var \u0061wait = 12; // ok
@@ -9,7 +9,7 @@
  
  async function main() {
  >main : Symbol(main, Decl(file1.ts, 0, 20))
-@@ -11,7 +11,7 @@
+@@= skipped -9, +9 lines =@@
  }
  
  var \u0079ield = 12; // ok
@@ -18,7 +18,7 @@
  
  function *gen() {
  >gen : Symbol(gen, Decl(file1.ts, 5, 20))
-@@ -20,7 +20,7 @@
+@@= skipped -9, +9 lines =@@
  }
  
  type typ\u0065 = 12; // ok
@@ -27,7 +27,7 @@
  
  typ\u0065 notok = 0; // not ok
  >notok : Symbol(notok, Decl(file1.ts, 10, 20))
-@@ -31,7 +31,7 @@
+@@= skipped -11, +11 lines =@@
  >x : Symbol(x, Decl(file2.ts, 0, 10))
  
  var \u{0061}wait = 12; // ok
@@ -36,7 +36,7 @@
  
  async function main() {
  >main : Symbol(main, Decl(file2.ts, 2, 22))
-@@ -40,7 +40,7 @@
+@@= skipped -9, +9 lines =@@
  }
  
  var \u{0079}ield = 12; // ok
@@ -45,7 +45,7 @@
  
  function *gen() {
  >gen : Symbol(gen, Decl(file2.ts, 7, 22))
-@@ -49,7 +49,7 @@
+@@= skipped -9, +9 lines =@@
  }
  
  type typ\u{0065} = 12; // ok
@@ -54,7 +54,7 @@
  
  typ\u{0065} notok = 0; // not ok
  >notok : Symbol(notok, Decl(file2.ts, 12, 22))
-@@ -58,7 +58,7 @@
+@@= skipped -9, +9 lines =@@
  
  const a = {def\u0061ult: 12}; // OK, `default` not in keyword position
  >a : Symbol(a, Decl(file2.ts, 18, 5))

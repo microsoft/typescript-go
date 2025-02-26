@@ -1,6 +1,6 @@
 --- old.paramsOnlyHaveLiteralTypesWhenAppropriatelyContextualized.symbols
 +++ new.paramsOnlyHaveLiteralTypesWhenAppropriatelyContextualized.symbols
-@@ -48,9 +48,9 @@
+@@= skipped -48, +48 lines =@@
  >array : Symbol(array, Decl(paramsOnlyHaveLiteralTypesWhenAppropriatelyContextualized.ts, 14, 7))
  
      array.push(value);

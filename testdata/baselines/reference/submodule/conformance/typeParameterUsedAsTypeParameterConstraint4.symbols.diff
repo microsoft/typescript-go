@@ -1,6 +1,6 @@
 --- old.typeParameterUsedAsTypeParameterConstraint4.symbols
 +++ new.typeParameterUsedAsTypeParameterConstraint4.symbols
-@@ -13,11 +13,11 @@
+@@= skipped -13, +13 lines =@@
  >U : Symbol(U, Decl(typeParameterUsedAsTypeParameterConstraint4.ts, 3, 10))
  
      z: W; // error
@@ -14,7 +14,7 @@
  >W : Symbol(W, Decl(typeParameterUsedAsTypeParameterConstraint4.ts, 5, 8))
  >V : Symbol(V, Decl(typeParameterUsedAsTypeParameterConstraint4.ts, 3, 23))
  >x : Symbol(x, Decl(typeParameterUsedAsTypeParameterConstraint4.ts, 5, 21))
-@@ -42,19 +42,19 @@
+@@= skipped -29, +29 lines =@@
  >U : Symbol(U, Decl(typeParameterUsedAsTypeParameterConstraint4.ts, 11, 14))
  
      x: T;

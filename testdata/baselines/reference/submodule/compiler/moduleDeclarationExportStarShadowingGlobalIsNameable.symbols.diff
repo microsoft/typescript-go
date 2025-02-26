@@ -1,6 +1,6 @@
 --- old.moduleDeclarationExportStarShadowingGlobalIsNameable.symbols
 +++ new.moduleDeclarationExportStarShadowingGlobalIsNameable.symbols
-@@ -9,13 +9,13 @@
+@@= skipped -9, +9 lines =@@
  >Account : Symbol(Account, Decl(account.ts, 0, 0))
  
      myAccNum: number;
@@ -16,7 +16,7 @@
  }
  export { Account2 as Acc };
  >Account2 : Symbol(Account2, Decl(account.ts, 2, 1))
-@@ -23,19 +23,19 @@
+@@= skipped -14, +14 lines =@@
  
  === index.ts ===
  declare global {
@@ -39,7 +39,7 @@
      }
  }
  import * as model from "./model";
-@@ -45,8 +45,8 @@
+@@= skipped -22, +22 lines =@@
  >func : Symbol(func, Decl(index.ts, 9, 12))
  >account : Symbol(account, Decl(index.ts, 9, 21))
  >model : Symbol(model, Decl(index.ts, 8, 6))

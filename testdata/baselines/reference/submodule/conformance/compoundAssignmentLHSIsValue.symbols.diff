@@ -1,6 +1,6 @@
 --- old.compoundAssignmentLHSIsValue.symbols
 +++ new.compoundAssignmentLHSIsValue.symbols
-@@ -19,7 +19,7 @@
+@@= skipped -19, +19 lines =@@
  >value : Symbol(value, Decl(compoundAssignmentLHSIsValue.ts, 1, 3))
      }
      foo() {
@@ -9,7 +9,7 @@
  
          this *= value;
  >this : Symbol(C, Decl(compoundAssignmentLHSIsValue.ts, 1, 15))
-@@ -30,7 +30,7 @@
+@@= skipped -11, +11 lines =@@
  >value : Symbol(value, Decl(compoundAssignmentLHSIsValue.ts, 1, 3))
      }
      static sfoo() {
@@ -18,7 +18,7 @@
  
          this *= value;
  >this : Symbol(C, Decl(compoundAssignmentLHSIsValue.ts, 1, 15))
-@@ -170,7 +170,7 @@
+@@= skipped -140, +140 lines =@@
      }
  
      foo() {
@@ -27,7 +27,7 @@
  
          super *= value;
  >super : Symbol(C, Decl(compoundAssignmentLHSIsValue.ts, 1, 15))
-@@ -182,7 +182,7 @@
+@@= skipped -12, +12 lines =@@
      }
  
      static sfoo() {

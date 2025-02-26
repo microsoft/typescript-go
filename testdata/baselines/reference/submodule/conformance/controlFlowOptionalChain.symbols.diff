@@ -1,6 +1,6 @@
 --- old.controlFlowOptionalChain.symbols
 +++ new.controlFlowOptionalChain.symbols
-@@ -24,9 +24,9 @@
+@@= skipped -24, +24 lines =@@
  >a : Symbol(a, Decl(controlFlowOptionalChain.ts, 7, 3))
  
  a.toString();
@@ -12,7 +12,7 @@
  
  let b: number;
  >b : Symbol(b, Decl(controlFlowOptionalChain.ts, 11, 3))
-@@ -36,9 +36,9 @@
+@@= skipped -12, +12 lines =@@
  >b : Symbol(b, Decl(controlFlowOptionalChain.ts, 11, 3))
  
  b.toString();
@@ -24,7 +24,7 @@
  
  let c: number;
  >c : Symbol(c, Decl(controlFlowOptionalChain.ts, 15, 3))
-@@ -48,9 +48,9 @@
+@@= skipped -12, +12 lines =@@
  >c : Symbol(c, Decl(controlFlowOptionalChain.ts, 15, 3))
  
  c.toString();
@@ -36,7 +36,7 @@
  
  let d: number;
  >d : Symbol(d, Decl(controlFlowOptionalChain.ts, 19, 3))
-@@ -60,9 +60,9 @@
+@@= skipped -12, +12 lines =@@
  >d : Symbol(d, Decl(controlFlowOptionalChain.ts, 19, 3))
  
  d.toString();
@@ -48,7 +48,7 @@
  
  // type predicates
  declare const f: undefined | ((x: any) => x is number);
-@@ -152,9 +152,7 @@
+@@= skipped -92, +92 lines =@@
  >f : Symbol(f, Decl(controlFlowOptionalChain.ts, 40, 19))
  
      o2.f;
@@ -58,7 +58,7 @@
  }
  x;
  >x : Symbol(x, Decl(controlFlowOptionalChain.ts, 25, 13))
-@@ -168,9 +166,7 @@
+@@= skipped -16, +14 lines =@@
  >f : Symbol(f, Decl(controlFlowOptionalChain.ts, 40, 19))
  
  o2.f;
@@ -68,7 +68,7 @@
  
  declare const o3: { x: 1, y: string } | { x: 2, y: number } | undefined;
  >o3 : Symbol(o3, Decl(controlFlowOptionalChain.ts, 58, 13))
-@@ -207,9 +203,7 @@
+@@= skipped -39, +37 lines =@@
  >x : Symbol(x, Decl(controlFlowOptionalChain.ts, 58, 41))
  
      o3.x;
@@ -78,7 +78,7 @@
  }
  o3;
  >o3 : Symbol(o3, Decl(controlFlowOptionalChain.ts, 58, 13))
-@@ -220,9 +214,7 @@
+@@= skipped -13, +11 lines =@@
  >x : Symbol(x, Decl(controlFlowOptionalChain.ts, 58, 19), Decl(controlFlowOptionalChain.ts, 58, 41))
  
  o3.x;
@@ -88,7 +88,7 @@
  
  declare const o4: { x?: { y: boolean } };
  >o4 : Symbol(o4, Decl(controlFlowOptionalChain.ts, 73, 13))
-@@ -269,11 +261,9 @@
+@@= skipped -49, +47 lines =@@
  >y : Symbol(y, Decl(controlFlowOptionalChain.ts, 73, 25))
  
      o4.x.y;
@@ -100,7 +100,7 @@
  }
  o4.x;
  >o4.x : Symbol(x, Decl(controlFlowOptionalChain.ts, 73, 19))
-@@ -288,11 +278,9 @@
+@@= skipped -19, +17 lines =@@
  >y : Symbol(y, Decl(controlFlowOptionalChain.ts, 73, 25))
  
  o4.x.y;
@@ -112,7 +112,7 @@
  
  declare const o5: { x?: { y: { z?: { w: boolean } } } };
  >o5 : Symbol(o5, Decl(controlFlowOptionalChain.ts, 88, 13))
-@@ -411,22 +399,14 @@
+@@= skipped -123, +121 lines =@@
  >w : Symbol(w, Decl(controlFlowOptionalChain.ts, 88, 36))
  
      o5.x.y;
@@ -135,7 +135,7 @@
  }
  o5.x;
  >o5.x : Symbol(x, Decl(controlFlowOptionalChain.ts, 88, 19))
-@@ -461,28 +441,20 @@
+@@= skipped -50, +42 lines =@@
  >w : Symbol(w, Decl(controlFlowOptionalChain.ts, 88, 36))
  
  o5.x.y;
@@ -165,7 +165,7 @@
  >Derived : Symbol(Derived, Decl(controlFlowOptionalChain.ts, 115, 1))
  }
  
-@@ -491,7 +463,7 @@
+@@= skipped -30, +22 lines =@@
  >Base : Symbol(Base, Decl(controlFlowOptionalChain.ts, 111, 11))
  
      x: number;
@@ -174,7 +174,7 @@
  }
  
  declare const o6: Base | undefined;
-@@ -499,44 +471,40 @@
+@@= skipped -8, +8 lines =@@
  >Base : Symbol(Base, Decl(controlFlowOptionalChain.ts, 111, 11))
  
  if (o6?.f()) {
@@ -227,7 +227,7 @@
  
  // asserts
  declare const isDefined: <T>(value: T) => asserts value is NonNullable<T>;
-@@ -757,9 +725,7 @@
+@@= skipped -258, +254 lines =@@
  >value : Symbol(value, Decl(controlFlowOptionalChain.ts, 205, 34))
  
          o.foo;  // Error
@@ -237,7 +237,7 @@
      }
      if (o?.["foo"] === value) {
  >o : Symbol(o, Decl(controlFlowOptionalChain.ts, 205, 13))
-@@ -775,9 +741,7 @@
+@@= skipped -18, +16 lines =@@
  >value : Symbol(value, Decl(controlFlowOptionalChain.ts, 205, 34))
  
          o.bar;  // Error
@@ -247,7 +247,7 @@
      }
      if (o?.foo == value) {
  >o?.foo : Symbol(foo, Decl(controlFlowOptionalChain.ts, 161, 14))
-@@ -786,9 +750,7 @@
+@@= skipped -11, +9 lines =@@
  >value : Symbol(value, Decl(controlFlowOptionalChain.ts, 205, 34))
  
          o.foo;  // Error
@@ -257,7 +257,7 @@
      }
      if (o?.["foo"] == value) {
  >o : Symbol(o, Decl(controlFlowOptionalChain.ts, 205, 13))
-@@ -804,9 +766,7 @@
+@@= skipped -18, +16 lines =@@
  >value : Symbol(value, Decl(controlFlowOptionalChain.ts, 205, 34))
  
          o.bar;  // Error
@@ -267,7 +267,7 @@
      }
  }
  
-@@ -853,9 +813,7 @@
+@@= skipped -49, +47 lines =@@
  >value : Symbol(value, Decl(controlFlowOptionalChain.ts, 226, 35))
  
          o.foo;  // Error
@@ -277,7 +277,7 @@
      }
      if (o?.["foo"] == value) {
  >o : Symbol(o, Decl(controlFlowOptionalChain.ts, 226, 14))
-@@ -871,9 +829,7 @@
+@@= skipped -18, +16 lines =@@
  >value : Symbol(value, Decl(controlFlowOptionalChain.ts, 226, 35))
  
          o.bar;  // Error
@@ -287,7 +287,7 @@
      }
  }
  
-@@ -955,9 +911,7 @@
+@@= skipped -84, +82 lines =@@
  >foo : Symbol(foo, Decl(controlFlowOptionalChain.ts, 161, 14))
  
          o.foo;  // Error
@@ -297,7 +297,7 @@
      }
      if (o?.["foo"] !== null) {
  >o : Symbol(o, Decl(controlFlowOptionalChain.ts, 268, 14))
-@@ -971,9 +925,7 @@
+@@= skipped -16, +14 lines =@@
  >bar : Symbol(bar, Decl(controlFlowOptionalChain.ts, 161, 36))
  
          o.bar;  // Error
@@ -307,7 +307,7 @@
      }
      if (o?.foo != null) {
  >o?.foo : Symbol(foo, Decl(controlFlowOptionalChain.ts, 161, 14))
-@@ -1060,9 +1012,7 @@
+@@= skipped -89, +87 lines =@@
      }
      else {
          o.foo;  // Error
@@ -317,7 +317,7 @@
      }
      if (o?.foo !== value) {
  >o?.foo : Symbol(foo, Decl(controlFlowOptionalChain.ts, 161, 14))
-@@ -1071,9 +1021,7 @@
+@@= skipped -11, +9 lines =@@
  >value : Symbol(value, Decl(controlFlowOptionalChain.ts, 301, 34))
  
          o.foo;  // Error
@@ -327,7 +327,7 @@
      }
      else {
          o.foo;
-@@ -1094,9 +1042,7 @@
+@@= skipped -23, +21 lines =@@
      }
      else {
          o.foo;  // Error
@@ -337,7 +337,7 @@
      }
      if (o?.foo != value) {
  >o?.foo : Symbol(foo, Decl(controlFlowOptionalChain.ts, 161, 14))
-@@ -1105,9 +1051,7 @@
+@@= skipped -11, +9 lines =@@
  >value : Symbol(value, Decl(controlFlowOptionalChain.ts, 301, 34))
  
          o.foo;  // Error
@@ -347,7 +347,7 @@
      }
      else {
          o.foo;
-@@ -1130,15 +1074,11 @@
+@@= skipped -25, +23 lines =@@
  >value : Symbol(value, Decl(controlFlowOptionalChain.ts, 328, 35))
  
          o.foo;  // Error
@@ -363,7 +363,7 @@
      }
      if (o?.foo !== value) {
  >o?.foo : Symbol(foo, Decl(controlFlowOptionalChain.ts, 161, 14))
-@@ -1147,15 +1087,11 @@
+@@= skipped -17, +13 lines =@@
  >value : Symbol(value, Decl(controlFlowOptionalChain.ts, 328, 35))
  
          o.foo;  // Error
@@ -379,7 +379,7 @@
      }
      if (o?.foo == value) {
  >o?.foo : Symbol(foo, Decl(controlFlowOptionalChain.ts, 161, 14))
-@@ -1164,15 +1100,11 @@
+@@= skipped -17, +13 lines =@@
  >value : Symbol(value, Decl(controlFlowOptionalChain.ts, 328, 35))
  
          o.foo;  // Error
@@ -395,7 +395,7 @@
      }
      if (o?.foo != value) {
  >o?.foo : Symbol(foo, Decl(controlFlowOptionalChain.ts, 161, 14))
-@@ -1181,15 +1113,11 @@
+@@= skipped -17, +13 lines =@@
  >value : Symbol(value, Decl(controlFlowOptionalChain.ts, 328, 35))
  
          o.foo;  // Error
@@ -411,7 +411,7 @@
      }
  }
  
-@@ -1205,9 +1133,7 @@
+@@= skipped -24, +20 lines =@@
  >undefined : Symbol(undefined)
  
          o.foo;  // Error
@@ -421,7 +421,7 @@
      }
      else {
          o.foo;
-@@ -1228,9 +1154,7 @@
+@@= skipped -23, +21 lines =@@
      }
      else {
          o.foo;  // Error
@@ -431,7 +431,7 @@
      }
      if (o?.foo == undefined) {
  >o?.foo : Symbol(foo, Decl(controlFlowOptionalChain.ts, 161, 14))
-@@ -1239,9 +1163,7 @@
+@@= skipped -11, +9 lines =@@
  >undefined : Symbol(undefined)
  
          o.foo;  // Error
@@ -441,7 +441,7 @@
      }
      else {
          o.foo;
-@@ -1262,9 +1184,7 @@
+@@= skipped -23, +21 lines =@@
      }
      else {
          o.foo;  // Error
@@ -451,7 +451,7 @@
      }
  }
  
-@@ -1375,9 +1295,7 @@
+@@= skipped -113, +111 lines =@@
      }
      else {
          o.foo;  // Error
@@ -461,7 +461,7 @@
      }
      if (typeof o?.foo !== "number") {
  >o?.foo : Symbol(foo, Decl(controlFlowOptionalChain.ts, 161, 14))
-@@ -1385,9 +1303,7 @@
+@@= skipped -10, +8 lines =@@
  >foo : Symbol(foo, Decl(controlFlowOptionalChain.ts, 161, 14))
  
          o.foo;  // Error
@@ -471,7 +471,7 @@
      }
      else {
          o.foo;
-@@ -1407,9 +1323,7 @@
+@@= skipped -22, +20 lines =@@
      }
      else {
          o.foo;  // Error
@@ -481,7 +481,7 @@
      }
      if (typeof o?.foo != "number") {
  >o?.foo : Symbol(foo, Decl(controlFlowOptionalChain.ts, 161, 14))
-@@ -1417,9 +1331,7 @@
+@@= skipped -10, +8 lines =@@
  >foo : Symbol(foo, Decl(controlFlowOptionalChain.ts, 161, 14))
  
          o.foo;  // Error
@@ -491,7 +491,7 @@
      }
      else {
          o.foo;
-@@ -1440,9 +1352,7 @@
+@@= skipped -23, +21 lines =@@
  >foo : Symbol(foo, Decl(controlFlowOptionalChain.ts, 161, 14))
  
          o.foo;  // Error
@@ -501,7 +501,7 @@
      }
      else {
          o.foo;
-@@ -1462,9 +1372,7 @@
+@@= skipped -22, +20 lines =@@
      }
      else {
          o.foo;  // Error
@@ -511,7 +511,7 @@
      }
      if (typeof o?.foo == "undefined") {
  >o?.foo : Symbol(foo, Decl(controlFlowOptionalChain.ts, 161, 14))
-@@ -1472,9 +1380,7 @@
+@@= skipped -10, +8 lines =@@
  >foo : Symbol(foo, Decl(controlFlowOptionalChain.ts, 161, 14))
  
          o.foo;  // Error
@@ -521,7 +521,7 @@
      }
      else {
          o.foo;
-@@ -1494,9 +1400,7 @@
+@@= skipped -22, +20 lines =@@
      }
      else {
          o.foo;  // Error
@@ -531,7 +531,7 @@
      }
  }
  
-@@ -1597,16 +1501,12 @@
+@@= skipped -103, +101 lines =@@
  >undefined : Symbol(undefined)
  
              o.foo;  // Error
@@ -548,7 +548,7 @@
  
              break;
      }
-@@ -1638,16 +1538,12 @@
+@@= skipped -41, +37 lines =@@
              break;
          case "undefined":
              o.foo;  // Error
@@ -565,7 +565,7 @@
  
              break;
      }
-@@ -1679,9 +1575,9 @@
+@@= skipped -41, +37 lines =@@
  
          case 'circle':
              return Math.PI * shape.radius ** 2
@@ -577,7 +577,7 @@
  >shape.radius : Symbol(radius, Decl(controlFlowOptionalChain.ts, 526, 23))
  >shape : Symbol(shape, Decl(controlFlowOptionalChain.ts, 528, 17))
  >radius : Symbol(radius, Decl(controlFlowOptionalChain.ts, 526, 23))
-@@ -1747,7 +1643,7 @@
+@@= skipped -68, +68 lines =@@
  >SomeObject : Symbol(SomeObject, Decl(controlFlowOptionalChain.ts, 553, 1))
  
      someProperty: unknown;
@@ -586,7 +586,7 @@
  }
  
  let lastSomeProperty: unknown | undefined;
-@@ -1759,30 +1655,28 @@
+@@= skipped -12, +12 lines =@@
  >SomeObject : Symbol(SomeObject, Decl(controlFlowOptionalChain.ts, 553, 1))
  
      if (someOptionalObject?.someProperty !== lastSomeProperty) {
@@ -625,7 +625,7 @@
      }
  }
  
-@@ -1828,9 +1722,9 @@
+@@= skipped -69, +67 lines =@@
  >tag : Symbol(tag, Decl(controlFlowOptionalChain.ts, 581, 20))
  
          console.log("I should ALSO be reachable");

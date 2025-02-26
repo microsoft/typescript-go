@@ -1,6 +1,6 @@
 --- old.bigintWithoutLib.symbols
 +++ new.bigintWithoutLib.symbols
-@@ -19,46 +19,46 @@
+@@= skipped -19, +19 lines =@@
  
  bigintVal = bigintVal.valueOf(); // should error - bigintVal inferred as {}
  >bigintVal : Symbol(bigintVal, Decl(bigintWithoutLib.ts, 3, 3))
@@ -61,7 +61,7 @@
  >style : Symbol(style, Decl(bigintWithoutLib.ts, 14, 47))
  >currency : Symbol(currency, Decl(bigintWithoutLib.ts, 14, 66))
  
-@@ -179,17 +179,17 @@
+@@= skipped -160, +160 lines =@@
  
  // Test Intl methods with new parameter type
  new Intl.NumberFormat("fr").format(3000n);

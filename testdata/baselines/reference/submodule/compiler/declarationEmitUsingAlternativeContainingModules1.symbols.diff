@@ -1,6 +1,6 @@
 --- old.declarationEmitUsingAlternativeContainingModules1.symbols
 +++ new.declarationEmitUsingAlternativeContainingModules1.symbols
-@@ -118,27 +118,27 @@
+@@= skipped -118, +118 lines =@@
  
  > {
    retry?: RetryValue<TError>;
@@ -33,7 +33,7 @@
  }
  
  interface QueryObserverOptions<
-@@ -187,13 +187,13 @@
+@@= skipped -69, +69 lines =@@
  
    > {
    enabled?: boolean;
@@ -50,7 +50,7 @@
  >data : Symbol(data, Decl(useQuery-CPqkvEsh.d.ts, 64, 12))
  >TQueryData : Symbol(TQueryData, Decl(useQuery-CPqkvEsh.d.ts, 51, 23))
  >TData : Symbol(TData, Decl(useQuery-CPqkvEsh.d.ts, 50, 24))
-@@ -304,70 +304,70 @@
+@@= skipped -117, +117 lines =@@
  >DefaultError : Symbol(DefaultError, Decl(useQuery-CPqkvEsh.d.ts, 2, 21))
  
    data: TData | undefined;
@@ -142,7 +142,7 @@
  }
  
  interface QueryObserverSuccessResult<TData = unknown, TError = DefaultError>
-@@ -382,29 +382,29 @@
+@@= skipped -78, +78 lines =@@
  >TError : Symbol(TError, Decl(useQuery-CPqkvEsh.d.ts, 122, 53))
  
    data: TData;
@@ -180,7 +180,7 @@
  }
  
  type DefinedQueryObserverResult<
-@@ -550,25 +550,25 @@
+@@= skipped -168, +168 lines =@@
  >IEntry : Symbol(IEntry, Decl(index.mts, 2, 45))
  
    API: string
@@ -213,7 +213,7 @@
  }
  
  const testApi = {
-@@ -580,30 +580,30 @@
+@@= skipped -30, +30 lines =@@
  >IEntry : Symbol(IEntry, Decl(index.mts, 2, 45))
  
      return fetch(baseUrl + 'entries')
@@ -254,7 +254,7 @@
  >err : Symbol(err, Decl(index.mts, 19, 14))
    }
  }
-@@ -644,9 +644,7 @@
+@@= skipped -64, +64 lines =@@
      select: (data) => data.slice(0, 10)
  >select : Symbol(select, Decl(index.mts, 31, 32))
  >data : Symbol(data, Decl(index.mts, 32, 13))

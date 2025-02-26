@@ -1,6 +1,6 @@
 --- old.moduleExportAssignment4.symbols
 +++ new.moduleExportAssignment4.symbols
-@@ -2,14 +2,8 @@
+@@= skipped -2, +2 lines =@@
  
  === async.js ===
  exports.default = { m: 1, a: 1 }

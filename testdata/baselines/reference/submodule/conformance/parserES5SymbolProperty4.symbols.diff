@@ -1,6 +1,6 @@
 --- old.parserES5SymbolProperty4.symbols
 +++ new.parserES5SymbolProperty4.symbols
-@@ -5,5 +5,5 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(parserES5SymbolProperty4.ts, 0, 0))
  
      [Symbol.isRegExp]: string;

@@ -1,6 +1,6 @@
 --- old.declarationEmitCrossFileCopiedGeneratedImportType.symbols
 +++ new.declarationEmitCrossFileCopiedGeneratedImportType.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >Number : Symbol(Number, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      private _;

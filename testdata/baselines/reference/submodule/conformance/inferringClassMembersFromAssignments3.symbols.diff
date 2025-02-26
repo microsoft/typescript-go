@@ -1,6 +1,6 @@
 --- old.inferringClassMembersFromAssignments3.symbols
 +++ new.inferringClassMembersFromAssignments3.symbols
-@@ -6,9 +6,7 @@
+@@= skipped -6, +6 lines =@@
  
      constructor() {
          this.p = 1
@@ -10,7 +10,7 @@
      }
  }
  class Derived extends Base {
-@@ -16,12 +14,10 @@
+@@= skipped -10, +8 lines =@@
  >Base : Symbol(Base, Decl(a.js, 0, 0))
  
      m() {

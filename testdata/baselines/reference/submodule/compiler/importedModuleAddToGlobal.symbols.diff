@@ -1,6 +1,6 @@
 --- old.importedModuleAddToGlobal.symbols
 +++ new.importedModuleAddToGlobal.symbols
-@@ -8,11 +8,11 @@
+@@= skipped -8, +8 lines =@@
  
      import b = B;
  >b : Symbol(b, Decl(importedModuleAddToGlobal.ts, 2, 10))
@@ -14,7 +14,7 @@
  }
  
  module B {
-@@ -20,7 +20,7 @@
+@@= skipped -12, +12 lines =@@
  
      import a = A;
  >a : Symbol(a, Decl(importedModuleAddToGlobal.ts, 7, 10))
@@ -23,7 +23,7 @@
  
      export class B { }
  >B : Symbol(B, Decl(importedModuleAddToGlobal.ts, 8, 17))
-@@ -31,10 +31,10 @@
+@@= skipped -11, +11 lines =@@
  
      import a = A;
  >a : Symbol(a, Decl(importedModuleAddToGlobal.ts, 12, 10))

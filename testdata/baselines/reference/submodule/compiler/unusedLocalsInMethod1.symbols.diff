@@ -1,6 +1,6 @@
 --- old.unusedLocalsInMethod1.symbols
 +++ new.unusedLocalsInMethod1.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >greeter : Symbol(greeter, Decl(unusedLocalsInMethod1.ts, 0, 0))
  
      public function1() {

@@ -1,6 +1,6 @@
 --- old.unicodeEscapesInJsxtags.symbols
 +++ new.unicodeEscapesInJsxtags.symbols
-@@ -5,19 +5,19 @@
+@@= skipped -5, +5 lines =@@
  >React : Symbol(React, Decl(file.tsx, 0, 6))
  
  declare global {
@@ -25,7 +25,7 @@
          }
      }
  }
-@@ -25,9 +25,7 @@
+@@= skipped -20, +20 lines =@@
  >Compa : Symbol(Compa, Decl(file.tsx, 9, 5))
  >x : Symbol(x, Decl(file.tsx, 9, 15))
  >x : Symbol(x, Decl(file.tsx, 9, 19))
@@ -35,7 +35,7 @@
  
  const x = { video: () => null }
  >x : Symbol(x, Decl(file.tsx, 10, 5))
-@@ -36,17 +34,8 @@
+@@= skipped -11, +9 lines =@@
  // unicode escape sequence is not allowed in tag name or JSX attribute name.
  // tag name:
  ; <\u0061></a>
@@ -53,7 +53,7 @@
  ; <Comp\u0061 x={12} />
  >Comp\u0061 : Symbol(Compa, Decl(file.tsx, 9, 5))
  >x : Symbol(x, Decl(file.tsx, 17, 13))
-@@ -57,27 +46,16 @@
+@@= skipped -21, +12 lines =@@
  >\u0076ideo : Symbol(video, Decl(file.tsx, 10, 11))
  
  ; <\u{0061}></a>

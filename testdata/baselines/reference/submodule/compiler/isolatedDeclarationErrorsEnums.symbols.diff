@@ -1,6 +1,6 @@
 --- old.isolatedDeclarationErrorsEnums.symbols
 +++ new.isolatedDeclarationErrorsEnums.symbols
-@@ -9,19 +9,19 @@
+@@= skipped -9, +9 lines =@@
  >E : Symbol(E, Decl(isolatedDeclarationErrorsEnums.ts, 0, 45))
  
      A = computed(0),
@@ -24,7 +24,7 @@
  >computed : Symbol(computed, Decl(isolatedDeclarationErrorsEnums.ts, 0, 0))
  }
  
-@@ -30,14 +30,14 @@
+@@= skipped -21, +21 lines =@@
  >F : Symbol(F, Decl(isolatedDeclarationErrorsEnums.ts, 7, 1))
  
      A = E.A,
@@ -44,7 +44,7 @@
  }
  
  
-@@ -45,31 +45,31 @@
+@@= skipped -15, +15 lines =@@
  >Flag : Symbol(Flag, Decl(isolatedDeclarationErrorsEnums.ts, 13, 1))
  
      A = 1 >> 1,
@@ -89,7 +89,7 @@
  }
  
  const EV = 1;
-@@ -79,24 +79,24 @@
+@@= skipped -34, +34 lines =@@
  >ExtFlags : Symbol(ExtFlags, Decl(isolatedDeclarationErrorsEnums.ts, 25, 13))
  
      D = 4 >> 1,
@@ -123,7 +123,7 @@
  }
  
  
-@@ -104,15 +104,15 @@
+@@= skipped -25, +25 lines =@@
  >Str : Symbol(Str, Decl(isolatedDeclarationErrorsEnums.ts, 31, 1))
  
      A = "A",
@@ -144,7 +144,7 @@
  }
  
  
-@@ -120,18 +120,18 @@
+@@= skipped -16, +16 lines =@@
  >StrExt : Symbol(StrExt, Decl(isolatedDeclarationErrorsEnums.ts, 38, 1))
  
      D = "D",

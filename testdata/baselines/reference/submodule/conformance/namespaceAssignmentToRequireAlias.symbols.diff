@@ -1,6 +1,6 @@
 --- old.namespaceAssignmentToRequireAlias.symbols
 +++ new.namespaceAssignmentToRequireAlias.symbols
-@@ -3,7 +3,6 @@
+@@= skipped -3, +3 lines =@@
  === bug40140.js ===
  const u = require('untyped');
  >u : Symbol(u, Decl(bug40140.js, 0, 5))

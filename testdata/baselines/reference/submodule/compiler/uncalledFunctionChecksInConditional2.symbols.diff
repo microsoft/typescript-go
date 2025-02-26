@@ -1,6 +1,6 @@
 --- old.uncalledFunctionChecksInConditional2.symbols
 +++ new.uncalledFunctionChecksInConditional2.symbols
-@@ -14,35 +14,35 @@
+@@= skipped -14, +14 lines =@@
  >perf : Symbol(perf, Decl(uncalledFunctionChecksInConditional2.ts, 1, 7))
  
      perf.measure &&
@@ -48,7 +48,7 @@
    }
  
    // With ||
-@@ -51,20 +51,20 @@
+@@= skipped -37, +37 lines =@@
  >perf : Symbol(perf, Decl(uncalledFunctionChecksInConditional2.ts, 1, 7))
  
      perf.mark &&
@@ -75,7 +75,7 @@
    }
  
    // With ??
-@@ -74,21 +74,21 @@
+@@= skipped -23, +23 lines =@@
  >perf : Symbol(perf, Decl(uncalledFunctionChecksInConditional2.ts, 1, 7))
  
        perf.mark &&
@@ -103,7 +103,7 @@
    }
  };
  
-@@ -115,32 +115,32 @@
+@@= skipped -41, +41 lines =@@
  >perf : Symbol(perf, Decl(uncalledFunctionChecksInConditional2.ts, 41, 7))
  
      perf.mark &&
@@ -146,7 +146,7 @@
  >tag : Symbol(tag, Decl(uncalledFunctionChecksInConditional2.ts, 50, 12))
  
      measure = (name, startTag, endTag) => {
-@@ -150,23 +150,23 @@
+@@= skipped -35, +35 lines =@@
  >endTag : Symbol(endTag, Decl(uncalledFunctionChecksInConditional2.ts, 51, 30))
  
        perf.measure(name, startTag, endTag)
@@ -176,7 +176,7 @@
  >endTag : Symbol(endTag, Decl(uncalledFunctionChecksInConditional2.ts, 51, 30))
  
        // perf.clearMeasures(name)
-@@ -203,9 +203,9 @@
+@@= skipped -53, +53 lines =@@
      _isMobile = isMobileMatch && isMobileMatch.matches;
  >_isMobile : Symbol(_isMobile, Decl(uncalledFunctionChecksInConditional2.ts, 60, 3))
  >isMobileMatch : Symbol(isMobileMatch, Decl(uncalledFunctionChecksInConditional2.ts, 63, 9))

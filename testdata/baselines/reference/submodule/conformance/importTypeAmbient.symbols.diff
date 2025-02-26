@@ -1,6 +1,6 @@
 --- old.importTypeAmbient.symbols
 +++ new.importTypeAmbient.symbols
-@@ -8,10 +8,10 @@
+@@= skipped -8, +8 lines =@@
  >Point : Symbol(Point, Decl(importTypeAmbient.ts, 0, 22))
  
          x: number;
@@ -13,7 +13,7 @@
      }
      export = Point;
  >Point : Symbol(Point, Decl(importTypeAmbient.ts, 0, 22))
-@@ -31,10 +31,10 @@
+@@= skipped -23, +23 lines =@@
  >I : Symbol(I, Decl(importTypeAmbient.ts, 10, 19))
  
              a: string;
@@ -26,7 +26,7 @@
          }
      }
  
-@@ -45,10 +45,10 @@
+@@= skipped -14, +14 lines =@@
  >J : Symbol(J, Decl(importTypeAmbient.ts, 17, 19))
  
              a: number;
@@ -39,7 +39,7 @@
          }
      }
  
-@@ -56,21 +56,21 @@
+@@= skipped -11, +11 lines =@@
  >Bar : Symbol(Bar, Decl(importTypeAmbient.ts, 9, 23), Decl(importTypeAmbient.ts, 22, 5))
  
          item: Bar.I;
@@ -65,7 +65,7 @@
  >a : Symbol(a, Decl(importTypeAmbient.ts, 30, 31))
  >b : Symbol(b, Decl(importTypeAmbient.ts, 30, 38))
  
-@@ -78,7 +78,7 @@
+@@= skipped -22, +22 lines =@@
  >Bar2 : Symbol(Bar2, Decl(importTypeAmbient.ts, 30, 46))
  
      item: {a: string, b: number, c: object};

@@ -1,6 +1,6 @@
 --- old.deeplyNestedCheck.symbols
 +++ new.deeplyNestedCheck.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >X : Symbol(X, Decl(deeplyNestedCheck.ts, 2, 23))
  
    child(path: string): DataSnapshot;
@@ -9,7 +9,7 @@
  >path : Symbol(path, Decl(deeplyNestedCheck.ts, 3, 8))
  >DataSnapshot : Symbol(DataSnapshot, Decl(deeplyNestedCheck.ts, 0, 0))
  }
-@@ -19,7 +19,7 @@
+@@= skipped -11, +11 lines =@@
  >DataSnapshot : Symbol(DataSnapshot, Decl(deeplyNestedCheck.ts, 0, 0))
  
    child<U extends Extract<keyof T, string>>(path: U): Snapshot<T[U]>;
@@ -18,7 +18,7 @@
  >U : Symbol(U, Decl(deeplyNestedCheck.ts, 7, 8))
  >Extract : Symbol(Extract, Decl(lib.es5.d.ts, --, --))
  >T : Symbol(T, Decl(deeplyNestedCheck.ts, 6, 19))
-@@ -34,42 +34,42 @@
+@@= skipped -15, +15 lines =@@
  
  interface A { b: B[] }
  >A : Symbol(A, Decl(deeplyNestedCheck.ts, 8, 1))

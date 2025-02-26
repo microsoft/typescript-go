@@ -1,6 +1,6 @@
 --- old.inheritedOverloadedSpecializedSignatures.symbols
 +++ new.inheritedOverloadedSpecializedSignatures.symbols
-@@ -22,9 +22,9 @@
+@@= skipped -22, +22 lines =@@
  
  // Should not error
  b('foo').charAt(0);

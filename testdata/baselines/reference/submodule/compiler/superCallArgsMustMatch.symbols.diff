@@ -1,6 +1,6 @@
 --- old.superCallArgsMustMatch.symbols
 +++ new.superCallArgsMustMatch.symbols
-@@ -6,11 +6,11 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(superCallArgsMustMatch.ts, 0, 9))
  
      public foo: T;
@@ -14,7 +14,7 @@
  >T : Symbol(T, Decl(superCallArgsMustMatch.ts, 0, 9))
  
  }
-@@ -30,9 +30,9 @@
+@@= skipped -24, +24 lines =@@
  
          var x: number = this.foo;
  >x : Symbol(x, Decl(superCallArgsMustMatch.ts, 18, 11))

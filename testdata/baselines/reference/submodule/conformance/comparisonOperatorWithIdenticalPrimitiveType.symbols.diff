@@ -1,6 +1,6 @@
 --- old.comparisonOperatorWithIdenticalPrimitiveType.symbols
 +++ new.comparisonOperatorWithIdenticalPrimitiveType.symbols
-@@ -3,9 +3,9 @@
+@@= skipped -3, +3 lines =@@
  === comparisonOperatorWithIdenticalPrimitiveType.ts ===
  enum E { a, b, c }
  >E : Symbol(E, Decl(comparisonOperatorWithIdenticalPrimitiveType.ts, 0, 0))

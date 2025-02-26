@@ -1,6 +1,6 @@
 --- old.overloadCrash.symbols
 +++ new.overloadCrash.symbols
-@@ -3,20 +3,20 @@
+@@= skipped -3, +3 lines =@@
  === overloadCrash.ts ===
  interface I1 {a:number; b:number;};
  >I1 : Symbol(I1, Decl(overloadCrash.ts, 0, 0))

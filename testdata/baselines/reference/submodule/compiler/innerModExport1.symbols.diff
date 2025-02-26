@@ -1,6 +1,6 @@
 --- old.innerModExport1.symbols
 +++ new.innerModExport1.symbols
-@@ -31,7 +31,7 @@
+@@= skipped -31, +31 lines =@@
  }
  
  Outer.ExportFunc();

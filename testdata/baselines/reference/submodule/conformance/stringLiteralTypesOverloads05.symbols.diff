@@ -1,6 +1,6 @@
 --- old.stringLiteralTypesOverloads05.symbols
 +++ new.stringLiteralTypesOverloads05.symbols
-@@ -3,22 +3,22 @@
+@@= skipped -3, +3 lines =@@
  === stringLiteralTypesOverloads05.ts ===
  interface Animal { animal: {} };
  >Animal : Symbol(Animal, Decl(stringLiteralTypesOverloads05.ts, 0, 0))

@@ -1,6 +1,6 @@
 --- old.nodeModulesTripleSlashReferenceModeDeclarationEmit7(module=nodenext).symbols
 +++ new.nodeModulesTripleSlashReferenceModeDeclarationEmit7(module=nodenext).symbols
-@@ -10,24 +10,9 @@
+@@= skipped -10, +10 lines =@@
  
  export default [obj1, obj2.default] as const;
  >obj1 : Symbol(obj1, Decl(index.ts, 1, 6))
@@ -25,7 +25,7 @@
  === /node_modules/pkg/require.d.ts ===
  export {};
  declare global {
-@@ -35,17 +20,16 @@
+@@= skipped -25, +10 lines =@@
  
      interface RequireInterface { _r: any; }
  >RequireInterface : Symbol(RequireInterface, Decl(require.d.ts, 1, 16))

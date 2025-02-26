@@ -1,6 +1,6 @@
 --- old.returnTypeTypeArguments.symbols
 +++ new.returnTypeTypeArguments.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(returnTypeTypeArguments.ts, 0, 10))
  
      value: T;
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(returnTypeTypeArguments.ts, 0, 10))
  }
  class Two<T, U>{
-@@ -15,11 +15,11 @@
+@@= skipped -9, +9 lines =@@
  >U : Symbol(U, Decl(returnTypeTypeArguments.ts, 3, 12))
  
      value: T;
@@ -23,7 +23,7 @@
  >U : Symbol(U, Decl(returnTypeTypeArguments.ts, 3, 12))
  }
  class Three<T, U, V>{
-@@ -29,15 +29,15 @@
+@@= skipped -14, +14 lines =@@
  >V : Symbol(V, Decl(returnTypeTypeArguments.ts, 7, 17))
  
      value: T;
@@ -42,7 +42,7 @@
  >V : Symbol(V, Decl(returnTypeTypeArguments.ts, 7, 17))
  }
  
-@@ -69,27 +69,27 @@
+@@= skipped -40, +40 lines =@@
  >C : Symbol(C, Decl(returnTypeTypeArguments.ts, 19, 53))
  
      A1(): One { return null; }
@@ -76,7 +76,7 @@
  >Three : Symbol(Three, Decl(returnTypeTypeArguments.ts, 6, 1))
  }
  
-@@ -98,27 +98,27 @@
+@@= skipped -29, +29 lines =@@
  >T : Symbol(T, Decl(returnTypeTypeArguments.ts, 31, 8))
  
      A2(): Two<T> { return null; }
@@ -109,7 +109,7 @@
  >Three : Symbol(Three, Decl(returnTypeTypeArguments.ts, 6, 1))
  >T : Symbol(T, Decl(returnTypeTypeArguments.ts, 31, 8))
  }
-@@ -128,7 +128,7 @@
+@@= skipped -30, +30 lines =@@
  >T : Symbol(T, Decl(returnTypeTypeArguments.ts, 40, 12))
  
      value: T;
@@ -118,7 +118,7 @@
  >T : Symbol(T, Decl(returnTypeTypeArguments.ts, 40, 12))
  }
  
-@@ -137,7 +137,7 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(returnTypeTypeArguments.ts, 44, 8))
  {
      value: T;
@@ -127,7 +127,7 @@
  >T : Symbol(T, Decl(returnTypeTypeArguments.ts, 44, 8))
  }
  
-@@ -146,47 +146,47 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(returnTypeTypeArguments.ts, 49, 8))
  {
      p1: () => X;

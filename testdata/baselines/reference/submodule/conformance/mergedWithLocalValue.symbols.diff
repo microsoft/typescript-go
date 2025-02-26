@@ -1,6 +1,6 @@
 --- old.mergedWithLocalValue.symbols
 +++ new.mergedWithLocalValue.symbols
-@@ -13,7 +13,7 @@
+@@= skipped -13, +13 lines =@@
  >A : Symbol(A, Decl(b.ts, 0, 13), Decl(b.ts, 1, 5))
  
  A.toUpperCase();

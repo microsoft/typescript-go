@@ -1,6 +1,6 @@
 --- old.chainedCallsWithTypeParameterConstrainedToOtherTypeParameter2.symbols
 +++ new.chainedCallsWithTypeParameterConstrainedToOtherTypeParameter2.symbols
-@@ -6,11 +6,11 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(chainedCallsWithTypeParameterConstrainedToOtherTypeParameter2.ts, 0, 12))
  
      constructor(public value: T) { }
@@ -14,7 +14,7 @@
  >S : Symbol(S, Decl(chainedCallsWithTypeParameterConstrainedToOtherTypeParameter2.ts, 2, 9))
  >T : Symbol(T, Decl(chainedCallsWithTypeParameterConstrainedToOtherTypeParameter2.ts, 0, 12))
  >cb : Symbol(cb, Decl(chainedCallsWithTypeParameterConstrainedToOtherTypeParameter2.ts, 2, 22))
-@@ -30,56 +30,56 @@
+@@= skipped -24, +24 lines =@@
  
          // Ok to go down the chain, but error to climb up the chain
          (new Chain(t)).then(tt => s).then(ss => t);
@@ -89,7 +89,7 @@
  >ss : Symbol(ss, Decl(chainedCallsWithTypeParameterConstrainedToOtherTypeParameter2.ts, 13, 56))
  >s : Symbol(s, Decl(chainedCallsWithTypeParameterConstrainedToOtherTypeParameter2.ts, 4, 11))
  
-@@ -92,7 +92,7 @@
+@@= skipped -62, +62 lines =@@
  >I : Symbol(I, Decl(chainedCallsWithTypeParameterConstrainedToOtherTypeParameter2.ts, 17, 1))
  
      x: number;
@@ -98,7 +98,7 @@
  }
  class Chain2<T extends I> {
  >Chain2 : Symbol(Chain2, Decl(chainedCallsWithTypeParameterConstrainedToOtherTypeParameter2.ts, 22, 1))
-@@ -100,11 +100,11 @@
+@@= skipped -8, +8 lines =@@
  >I : Symbol(I, Decl(chainedCallsWithTypeParameterConstrainedToOtherTypeParameter2.ts, 17, 1))
  
      constructor(public value: T) { }
@@ -112,7 +112,7 @@
  >S : Symbol(S, Decl(chainedCallsWithTypeParameterConstrainedToOtherTypeParameter2.ts, 25, 9))
  >T : Symbol(T, Decl(chainedCallsWithTypeParameterConstrainedToOtherTypeParameter2.ts, 23, 13))
  >cb : Symbol(cb, Decl(chainedCallsWithTypeParameterConstrainedToOtherTypeParameter2.ts, 25, 22))
-@@ -129,70 +129,70 @@
+@@= skipped -29, +29 lines =@@
          // Ok to go down the chain, check the constraint at the end.
          // Should get an error that we are assigning a string to a number
          (new Chain2(i)).then(ii => t).then(tt => s).value.x = "";

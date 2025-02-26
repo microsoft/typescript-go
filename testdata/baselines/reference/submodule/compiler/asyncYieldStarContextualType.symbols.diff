@@ -1,6 +1,6 @@
 --- old.asyncYieldStarContextualType.symbols
 +++ new.asyncYieldStarContextualType.symbols
-@@ -8,10 +8,10 @@
+@@= skipped -8, +8 lines =@@
  >E : Symbol(E, Decl(asyncYieldStarContextualType.ts, 1, 19))
  
      [Symbol.iterator](): Generator<E, T, unknown>
@@ -14,7 +14,7 @@
  >Generator : Symbol(Generator, Decl(lib.es2015.generator.d.ts, --, --))
  >E : Symbol(E, Decl(asyncYieldStarContextualType.ts, 1, 19))
  >T : Symbol(T, Decl(asyncYieldStarContextualType.ts, 1, 17))
-@@ -68,9 +68,9 @@
+@@= skipped -60, +60 lines =@@
      //   Result<Author, "NOT_FOUND_AUTHOR>
      const test1 = await authorPromise.then(mapper)
  >test1 : Symbol(test1, Decl(asyncYieldStarContextualType.ts, 16, 9))
@@ -26,7 +26,7 @@
  >mapper : Symbol(mapper, Decl(asyncYieldStarContextualType.ts, 10, 13))
  
      // With yield*, the type of test2 is
-@@ -78,9 +78,9 @@
+@@= skipped -10, +10 lines =@@
      // But this codepath has no way to produce BookWithAuthor
      const test2 = yield* await authorPromise.then(mapper)
  >test2 : Symbol(test2, Decl(asyncYieldStarContextualType.ts, 21, 9))

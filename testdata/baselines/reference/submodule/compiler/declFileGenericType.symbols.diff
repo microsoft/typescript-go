@@ -1,6 +1,6 @@
 --- old.declFileGenericType.symbols
 +++ new.declFileGenericType.symbols
-@@ -71,7 +71,7 @@
+@@= skipped -71, +71 lines =@@
  >T : Symbol(T, Decl(declFileGenericType.ts, 13, 19))
  
          constructor(public val: T) { }
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(declFileGenericType.ts, 13, 19))
  
      }
-@@ -80,88 +80,88 @@
+@@= skipped -9, +9 lines =@@
  export var a: C.A<C.B>;
  >a : Symbol(a, Decl(declFileGenericType.ts, 20, 10))
  >C : Symbol(C, Decl(declFileGenericType.ts, 0, 0))

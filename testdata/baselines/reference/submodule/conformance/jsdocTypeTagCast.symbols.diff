@@ -1,6 +1,6 @@
 --- old.jsdocTypeTagCast.symbols
 +++ new.jsdocTypeTagCast.symbols
-@@ -31,9 +31,7 @@
+@@= skipped -31, +31 lines =@@
  
      constructor() {
          this.p = 42;
@@ -10,7 +10,7 @@
      }
  }
  class SomeDerived extends SomeBase {
-@@ -45,9 +43,7 @@
+@@= skipped -14, +12 lines =@@
  >super : Symbol(SomeBase, Decl(b.js, 12, 33))
  
          this.x = 42;
@@ -20,7 +20,7 @@
      }
  }
  class SomeOther {
-@@ -55,9 +51,7 @@
+@@= skipped -10, +8 lines =@@
  
      constructor() {
          this.q = 42;
@@ -30,7 +30,7 @@
      }
  }
  
-@@ -66,9 +60,6 @@
+@@= skipped -11, +9 lines =@@
  
      /** @type {string|number} */
      this.p = "bar";

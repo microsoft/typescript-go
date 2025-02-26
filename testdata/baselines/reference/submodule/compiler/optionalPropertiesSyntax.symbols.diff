@@ -1,6 +1,6 @@
 --- old.optionalPropertiesSyntax.symbols
 +++ new.optionalPropertiesSyntax.symbols
-@@ -6,13 +6,13 @@
+@@= skipped -6, +6 lines =@@
  
      //functions signatures can be optional
      fn(): void;
@@ -17,7 +17,7 @@
  }
  
  interface callSig {
-@@ -21,7 +21,7 @@
+@@= skipped -15, +15 lines =@@
      //Call signatures can't be optional
      (): any;
      ()?: any; //err
@@ -26,7 +26,7 @@
  
      ?(): any; //err
  }
-@@ -32,10 +32,10 @@
+@@= skipped -11, +11 lines =@@
      //Construct signatures can't be optional
      new (): any;
      new ()?: any; //err
@@ -39,7 +39,7 @@
  }
  
  interface propertySig {
-@@ -43,13 +43,13 @@
+@@= skipped -11, +11 lines =@@
  
      //Property signatures can be optional
      prop: any;
@@ -56,7 +56,7 @@
  }
  
  interface indexSig {
-@@ -61,7 +61,7 @@
+@@= skipped -18, +18 lines =@@
  
      [idx: number]?: any; //err
  >idx : Symbol(idx, Decl(optionalPropertiesSyntax.ts, 31, 5))

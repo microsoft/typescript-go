@@ -1,6 +1,6 @@
 --- old.parserStatementIsNotAMemberVariableDeclaration1.symbols
 +++ new.parserStatementIsNotAMemberVariableDeclaration1.symbols
-@@ -4,7 +4,7 @@
+@@= skipped -4, +4 lines =@@
  return {
  
    "set": function (key, value) {

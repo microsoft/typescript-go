@@ -1,6 +1,6 @@
 --- old.fieldAndGetterWithSameName.symbols
 +++ new.fieldAndGetterWithSameName.symbols
-@@ -5,8 +5,8 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(fieldAndGetterWithSameName.ts, 0, 0))
  
      x: number;

@@ -1,6 +1,6 @@
 --- old.templateStringWithPropertyAccessES6.symbols
 +++ new.templateStringWithPropertyAccessES6.symbols
-@@ -1,7 +1,5 @@
+@@= skipped -1, +1 lines =@@
  //// [tests/cases/conformance/es6/templates/templateStringWithPropertyAccessES6.ts] ////
  
  === templateStringWithPropertyAccessES6.ts ===

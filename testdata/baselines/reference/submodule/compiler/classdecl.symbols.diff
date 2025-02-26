@@ -1,6 +1,6 @@
 --- old.classdecl.symbols
 +++ new.classdecl.symbols
-@@ -17,23 +17,23 @@
+@@= skipped -17, +17 lines =@@
      }
  
      public pgF() { }
@@ -29,7 +29,7 @@
  
          return { x: 30, y: 40 };
  >x : Symbol(x, Decl(classdecl.ts, 18, 16))
-@@ -41,26 +41,26 @@
+@@= skipped -24, +24 lines =@@
      }
  
      private static d2() {
@@ -62,7 +62,7 @@
  >ns : Symbol(ns, Decl(classdecl.ts, 30, 16))
  
          return ns.toString();
-@@ -101,25 +101,25 @@
+@@= skipped -60, +60 lines =@@
          }
          export class ib2 implements m1.ib {
  >ib2 : Symbol(ib2, Decl(classdecl.ts, 53, 9))
@@ -94,7 +94,7 @@
  }
  
  declare class aAmbient {
-@@ -132,30 +132,30 @@
+@@= skipped -31, +31 lines =@@
  >s : Symbol(s, Decl(classdecl.ts, 67, 17))
  
      public pgF(): void;
@@ -133,7 +133,7 @@
  >s : Symbol(s, Decl(classdecl.ts, 75, 16))
  }
  
-@@ -163,15 +163,15 @@
+@@= skipped -31, +31 lines =@@
  >d : Symbol(d, Decl(classdecl.ts, 76, 1))
  
      private foo(n: number): string;
@@ -152,7 +152,7 @@
  >ns : Symbol(ns, Decl(classdecl.ts, 81, 16))
  
          return ns.toString();
-@@ -183,15 +183,15 @@
+@@= skipped -20, +20 lines =@@
  >e : Symbol(e, Decl(classdecl.ts, 84, 1))
  
      private foo(s: string): string;

@@ -1,6 +1,6 @@
 --- old.variadicTuples2.symbols
 +++ new.variadicTuples2.symbols
-@@ -277,9 +277,9 @@
+@@= skipped -277, +277 lines =@@
  
      const values = args.slice(0, -1) as unknown as T;
  >values : Symbol(values, Decl(variadicTuples2.ts, 89, 9))
@@ -12,7 +12,7 @@
  >T : Symbol(T, Decl(variadicTuples2.ts, 87, 14))
  
      callback(...values);
-@@ -344,7 +344,7 @@
+@@= skipped -67, +67 lines =@@
      let ww = x[0]
  >ww : Symbol(ww, Decl(variadicTuples2.ts, 112, 7))
  >x : Symbol(x, Decl(variadicTuples2.ts, 109, 19))

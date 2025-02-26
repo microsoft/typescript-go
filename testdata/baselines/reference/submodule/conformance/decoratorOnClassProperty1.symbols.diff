@@ -1,6 +1,6 @@
 --- old.decoratorOnClassProperty1.symbols
 +++ new.decoratorOnClassProperty1.symbols
-@@ -11,5 +11,5 @@
+@@= skipped -11, +11 lines =@@
  
      @dec prop;
  >dec : Symbol(dec, Decl(decoratorOnClassProperty1.ts, 0, 0))

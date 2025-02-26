@@ -1,6 +1,6 @@
 --- old.typeOfThisInFunctionExpression.symbols
 +++ new.typeOfThisInFunctionExpression.symbols
-@@ -38,7 +38,7 @@
+@@= skipped -38, +38 lines =@@
  >C : Symbol(C, Decl(typeOfThisInFunctionExpression.ts, 15, 1))
  
      x = function () {
@@ -9,7 +9,7 @@
  
          var q: any;
  >q : Symbol(q, Decl(typeOfThisInFunctionExpression.ts, 19, 11), Decl(typeOfThisInFunctionExpression.ts, 20, 11))
-@@ -47,7 +47,7 @@
+@@= skipped -9, +9 lines =@@
  >q : Symbol(q, Decl(typeOfThisInFunctionExpression.ts, 19, 11), Decl(typeOfThisInFunctionExpression.ts, 20, 11))
      }
      y = function ff() {

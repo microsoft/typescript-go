@@ -1,6 +1,6 @@
 --- old.stringLiteralsWithEqualityChecks04.symbols
 +++ new.stringLiteralsWithEqualityChecks04.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Runnable : Symbol(Runnable, Decl(stringLiteralsWithEqualityChecks04.ts, 0, 0))
  
      isRunning: boolean;
@@ -9,7 +9,7 @@
  }
  
  interface Refrigerator extends Runnable {
-@@ -13,7 +13,7 @@
+@@= skipped -8, +8 lines =@@
  >Runnable : Symbol(Runnable, Decl(stringLiteralsWithEqualityChecks04.ts, 0, 0))
  
      makesFoodGoBrrr: boolean;

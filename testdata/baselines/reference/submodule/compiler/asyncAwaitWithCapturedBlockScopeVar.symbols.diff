@@ -1,6 +1,6 @@
 --- old.asyncAwaitWithCapturedBlockScopeVar.symbols
 +++ new.asyncAwaitWithCapturedBlockScopeVar.symbols
-@@ -14,9 +14,9 @@
+@@= skipped -14, +14 lines =@@
  
          await 1;
          ar.push(() => i);
@@ -12,7 +12,7 @@
  >i : Symbol(i, Decl(asyncAwaitWithCapturedBlockScopeVar.ts, 2, 12))
      }
  }
-@@ -34,9 +34,9 @@
+@@= skipped -20, +20 lines =@@
  
          await 1;
          ar.push(() => i);
@@ -24,7 +24,7 @@
  >i : Symbol(i, Decl(asyncAwaitWithCapturedBlockScopeVar.ts, 10, 12))
  
          break;
-@@ -56,9 +56,9 @@
+@@= skipped -22, +22 lines =@@
  
          await 1;
          ar.push(() => i);
@@ -36,7 +36,7 @@
  >i : Symbol(i, Decl(asyncAwaitWithCapturedBlockScopeVar.ts, 19, 12))
  
          continue;
-@@ -79,9 +79,9 @@
+@@= skipped -23, +23 lines =@@
  
          await 1;
          ar.push(() => i);

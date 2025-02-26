@@ -1,6 +1,6 @@
 --- old.infinitelyExpandingBaseTypes1.symbols
 +++ new.infinitelyExpandingBaseTypes1.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(infinitelyExpandingBaseTypes1.ts, 0, 12))
  {
      x : A<A<T>>
@@ -9,7 +9,7 @@
  >A : Symbol(A, Decl(infinitelyExpandingBaseTypes1.ts, 0, 0))
  >A : Symbol(A, Decl(infinitelyExpandingBaseTypes1.ts, 0, 0))
  >T : Symbol(T, Decl(infinitelyExpandingBaseTypes1.ts, 0, 12))
-@@ -17,7 +17,7 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(infinitelyExpandingBaseTypes1.ts, 5, 12))
  {
      x : B<T>

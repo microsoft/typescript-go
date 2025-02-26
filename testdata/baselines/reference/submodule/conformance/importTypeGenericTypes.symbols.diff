@@ -1,6 +1,6 @@
 --- old.importTypeGenericTypes.symbols
 +++ new.importTypeGenericTypes.symbols
-@@ -6,13 +6,13 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(foo.ts, 0, 16))
  
      x: number;
@@ -17,7 +17,7 @@
  >T : Symbol(T, Decl(foo.ts, 0, 16))
  }
  export = Point;
-@@ -27,13 +27,13 @@
+@@= skipped -21, +21 lines =@@
  >T : Symbol(T, Decl(foo2.ts, 1, 23))
  
          a: string;
@@ -34,7 +34,7 @@
  >T : Symbol(T, Decl(foo2.ts, 1, 23))
      }
  }
-@@ -46,13 +46,13 @@
+@@= skipped -19, +19 lines =@@
  >T : Symbol(T, Decl(foo2.ts, 9, 23))
  
          a: number;
@@ -51,7 +51,7 @@
  >T : Symbol(T, Decl(foo2.ts, 9, 23))
      }
  }
-@@ -62,15 +62,15 @@
+@@= skipped -16, +16 lines =@@
  >T : Symbol(T, Decl(foo2.ts, 16, 10))
  
      item: Bar.I<T>;
@@ -70,7 +70,7 @@
  >T : Symbol(T, Decl(foo2.ts, 16, 10))
  }
  export { Bar }
-@@ -88,7 +88,7 @@
+@@= skipped -26, +26 lines =@@
  export let y: import("./foo2").Bar.I<{x: number}> = { a: "", b: 0, data: {x: 12} };
  >y : Symbol(y, Decl(usage.ts, 1, 10))
  >Bar : Symbol(Bar, Decl(foo2.ts, 20, 8))
@@ -79,7 +79,7 @@
  >x : Symbol(x, Decl(usage.ts, 1, 38))
  >a : Symbol(a, Decl(usage.ts, 1, 53))
  >b : Symbol(b, Decl(usage.ts, 1, 60))
-@@ -100,7 +100,7 @@
+@@= skipped -12, +12 lines =@@
  >T : Symbol(T, Decl(usage.ts, 3, 18))
  
      item: {a: string, b: number, c: object, data: T};

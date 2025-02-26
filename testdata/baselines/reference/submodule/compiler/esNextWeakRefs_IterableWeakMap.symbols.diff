@@ -1,6 +1,6 @@
 --- old.esNextWeakRefs_IterableWeakMap.symbols
 +++ new.esNextWeakRefs_IterableWeakMap.symbols
-@@ -18,9 +18,9 @@
+@@= skipped -18, +18 lines =@@
  
  }) => {
      set.delete(ref);
@@ -12,7 +12,7 @@
  >ref : Symbol(ref, Decl(esNextWeakRefs_IterableWeakMap.ts, 1, 34))
  
  };
-@@ -35,13 +35,13 @@
+@@= skipped -17, +17 lines =@@
  >V : Symbol(V, Decl(esNextWeakRefs_IterableWeakMap.ts, 9, 46))
  
      declare readonly [Symbol.toStringTag]: "IterableWeakMap";
@@ -30,7 +30,7 @@
  >WeakMap : Symbol(WeakMap, Decl(lib.es2015.collection.d.ts, --, --), Decl(lib.es2015.collection.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
  >K : Symbol(K, Decl(esNextWeakRefs_IterableWeakMap.ts, 9, 29))
  >ref : Symbol(ref, Decl(esNextWeakRefs_IterableWeakMap.ts, 12, 31))
-@@ -51,13 +51,13 @@
+@@= skipped -16, +16 lines =@@
  >V : Symbol(V, Decl(esNextWeakRefs_IterableWeakMap.ts, 9, 46))
  
      #refSet = new Set<WeakRef<K>>();
@@ -46,7 +46,7 @@
  >FinalizationRegistry : Symbol(FinalizationRegistry, Decl(lib.es2021.weakref.d.ts, --, --), Decl(lib.es2021.weakref.d.ts, --, --))
  >IterableWeakMap_cleanup : Symbol(IterableWeakMap_cleanup, Decl(esNextWeakRefs_IterableWeakMap.ts, 1, 5))
  
-@@ -76,9 +76,9 @@
+@@= skipped -25, +25 lines =@@
  >iterable : Symbol(iterable, Decl(esNextWeakRefs_IterableWeakMap.ts, 16, 16))
  
                  this.set(key, value);
@@ -58,7 +58,7 @@
  >key : Symbol(key, Decl(esNextWeakRefs_IterableWeakMap.ts, 18, 24))
  >value : Symbol(value, Decl(esNextWeakRefs_IterableWeakMap.ts, 18, 32))
              }
-@@ -86,7 +86,7 @@
+@@= skipped -10, +10 lines =@@
      }
  
      set(key: K, value: V): this {
@@ -67,7 +67,7 @@
  >key : Symbol(key, Decl(esNextWeakRefs_IterableWeakMap.ts, 24, 8))
  >K : Symbol(K, Decl(esNextWeakRefs_IterableWeakMap.ts, 9, 29))
  >value : Symbol(value, Decl(esNextWeakRefs_IterableWeakMap.ts, 24, 15))
-@@ -94,10 +94,10 @@
+@@= skipped -8, +8 lines =@@
  
          const entry = this.#weakMap.get(key);
  >entry : Symbol(entry, Decl(esNextWeakRefs_IterableWeakMap.ts, 25, 13))
@@ -81,7 +81,7 @@
  >key : Symbol(key, Decl(esNextWeakRefs_IterableWeakMap.ts, 24, 8))
  
          if (entry !== undefined) {
-@@ -117,31 +117,31 @@
+@@= skipped -23, +23 lines =@@
  >key : Symbol(key, Decl(esNextWeakRefs_IterableWeakMap.ts, 24, 8))
  
              this.#weakMap.set(key, { ref, value });
@@ -123,7 +123,7 @@
  >this : Symbol(IterableWeakMap, Decl(esNextWeakRefs_IterableWeakMap.ts, 6, 2))
  
                  ref,
-@@ -155,45 +155,45 @@
+@@= skipped -38, +38 lines =@@
      }
  
      has(key: K): boolean {
@@ -181,7 +181,7 @@
  >key : Symbol(key, Decl(esNextWeakRefs_IterableWeakMap.ts, 49, 11))
  
          if (entry === undefined) {
-@@ -208,51 +208,51 @@
+@@= skipped -53, +53 lines =@@
  >entry : Symbol(entry, Decl(esNextWeakRefs_IterableWeakMap.ts, 50, 13))
  
          this.#weakMap.delete(key);
@@ -249,7 +249,7 @@
  
              if (key === undefined) continue;
  >key : Symbol(key, Decl(esNextWeakRefs_IterableWeakMap.ts, 65, 17))
-@@ -260,10 +260,10 @@
+@@= skipped -52, +52 lines =@@
  
              const { value } = this.#weakMap.get(key)!;
  >value : Symbol(value, Decl(esNextWeakRefs_IterableWeakMap.ts, 67, 19))
@@ -263,7 +263,7 @@
  >key : Symbol(key, Decl(esNextWeakRefs_IterableWeakMap.ts, 65, 17))
  
              yield [key, value];
-@@ -273,7 +273,7 @@
+@@= skipped -13, +13 lines =@@
      }
  
      *keys() {
@@ -272,7 +272,7 @@
  
          for (const { 0: key } of this) {
  >key : Symbol(key, Decl(esNextWeakRefs_IterableWeakMap.ts, 73, 20))
-@@ -285,7 +285,7 @@
+@@= skipped -12, +12 lines =@@
      }
  
      *values() {
@@ -281,7 +281,7 @@
  
          for (const { 1: value } of this) {
  >value : Symbol(value, Decl(esNextWeakRefs_IterableWeakMap.ts, 79, 20))
-@@ -298,18 +298,18 @@
+@@= skipped -13, +13 lines =@@
  }
  
  Object.defineProperties(IterableWeakMap.prototype, {
@@ -306,7 +306,7 @@
  
          configurable: true,
  >configurable : Symbol(configurable, Decl(esNextWeakRefs_IterableWeakMap.ts, 86, 24))
-@@ -322,26 +322,26 @@
+@@= skipped -24, +24 lines =@@
  
          value: Object.getOwnPropertyDescriptor(
  >value : Symbol(value, Decl(esNextWeakRefs_IterableWeakMap.ts, 89, 23))

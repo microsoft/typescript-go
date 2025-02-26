@@ -1,6 +1,6 @@
 --- old.controlFlowCaching.symbols
 +++ new.controlFlowCaching.symbols
-@@ -113,29 +113,29 @@
+@@= skipped -113, +113 lines =@@
  
          cosr = Math.abs(Math.cos(rotation * Math.PI / 180)),
  >cosr : Symbol(cosr, Decl(controlFlowCaching.ts, 20, 79))
@@ -42,7 +42,7 @@
  
          tsize = taTitleFont ? g.normalizedLength(g.splitFontString(taTitleFont).size) : 0;
  >tsize : Symbol(tsize, Decl(controlFlowCaching.ts, 22, 60))
-@@ -165,9 +165,9 @@
+@@= skipped -52, +52 lines =@@
  >cachedLabelW : Symbol(cachedLabelW, Decl(controlFlowCaching.ts, 27, 7))
  >sinr : Symbol(sinr, Decl(controlFlowCaching.ts, 21, 60))
  >labelGap : Symbol(labelGap, Decl(controlFlowCaching.ts, 7, 125))

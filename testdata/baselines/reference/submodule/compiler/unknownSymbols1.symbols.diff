@@ -1,6 +1,6 @@
 --- old.unknownSymbols1.symbols
 +++ new.unknownSymbols1.symbols
-@@ -31,11 +31,11 @@
+@@= skipped -31, +31 lines =@@
  >T : Symbol(T, Decl(unknownSymbols1.ts, 10, 8))
  
      foo: asdf;

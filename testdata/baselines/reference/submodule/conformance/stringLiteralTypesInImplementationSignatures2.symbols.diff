@@ -1,6 +1,6 @@
 --- old.stringLiteralTypesInImplementationSignatures2.symbols
 +++ new.stringLiteralTypesInImplementationSignatures2.symbols
-@@ -15,11 +15,11 @@
+@@= skipped -15, +15 lines =@@
  >C : Symbol(C, Decl(stringLiteralTypesInImplementationSignatures2.ts, 3, 25))
  
      foo(x: string);
@@ -14,7 +14,7 @@
  >x : Symbol(x, Decl(stringLiteralTypesInImplementationSignatures2.ts, 7, 8))
  }
  
-@@ -33,12 +33,12 @@
+@@= skipped -18, +18 lines =@@
  >x : Symbol(x, Decl(stringLiteralTypesInImplementationSignatures2.ts, 12, 5))
  
      foo(x: 'a', y: 'a');
@@ -29,7 +29,7 @@
  >x : Symbol(x, Decl(stringLiteralTypesInImplementationSignatures2.ts, 14, 8))
  >y : Symbol(y, Decl(stringLiteralTypesInImplementationSignatures2.ts, 14, 16))
  }
-@@ -65,11 +65,11 @@
+@@= skipped -32, +32 lines =@@
  >b : Symbol(b, Decl(stringLiteralTypesInImplementationSignatures2.ts, 24, 3))
  
      foo(x: 'hi') { },

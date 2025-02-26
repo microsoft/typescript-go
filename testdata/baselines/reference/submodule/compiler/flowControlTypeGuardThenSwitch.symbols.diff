@@ -1,6 +1,6 @@
 --- old.flowControlTypeGuardThenSwitch.symbols
 +++ new.flowControlTypeGuardThenSwitch.symbols
-@@ -5,17 +5,17 @@
+@@= skipped -5, +5 lines =@@
  >Kind : Symbol(Kind, Decl(flowControlTypeGuardThenSwitch.ts, 0, 0))
  
      A,
@@ -21,7 +21,7 @@
  >Kind : Symbol(Kind, Decl(flowControlTypeGuardThenSwitch.ts, 0, 0))
  }
  
-@@ -24,12 +24,12 @@
+@@= skipped -19, +19 lines =@@
  >Base : Symbol(Base, Decl(flowControlTypeGuardThenSwitch.ts, 3, 1))
  
      kind: Kind.A;
@@ -37,7 +37,7 @@
  }
  
  interface B extends Base {
-@@ -37,12 +37,12 @@
+@@= skipped -13, +13 lines =@@
  >Base : Symbol(Base, Decl(flowControlTypeGuardThenSwitch.ts, 3, 1))
  
      kind: Kind.B;
@@ -53,7 +53,7 @@
  }
  
  type Both = A | B;
-@@ -75,9 +75,9 @@
+@@= skipped -38, +38 lines =@@
  >kind : Symbol(kind, Decl(flowControlTypeGuardThenSwitch.ts, 9, 26), Decl(flowControlTypeGuardThenSwitch.ts, 14, 26))
  
          case Kind.A:
@@ -65,7 +65,7 @@
  
              const myA: A = foo; // Should not be an error
  >myA : Symbol(myA, Decl(flowControlTypeGuardThenSwitch.ts, 28, 17))
-@@ -86,9 +86,9 @@
+@@= skipped -11, +11 lines =@@
  
              break;
          case Kind.B:

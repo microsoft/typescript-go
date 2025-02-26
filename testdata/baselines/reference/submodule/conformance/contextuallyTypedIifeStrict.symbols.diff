@@ -1,6 +1,6 @@
 --- old.contextuallyTypedIifeStrict.symbols
 +++ new.contextuallyTypedIifeStrict.symbols
-@@ -49,25 +49,25 @@
+@@= skipped -49, +49 lines =@@
  // rest parameters
  ((...numbers) => numbers.every(n => n > 0))(5,6,7);
  >numbers : Symbol(numbers, Decl(contextuallyTypedIifeStrict.ts, 17, 2))
@@ -32,7 +32,7 @@
  >n : Symbol(n, Decl(contextuallyTypedIifeStrict.ts, 19, 34))
  >n : Symbol(n, Decl(contextuallyTypedIifeStrict.ts, 19, 34))
  
-@@ -75,9 +75,9 @@
+@@= skipped -26, +26 lines =@@
  >first : Symbol(first, Decl(contextuallyTypedIifeStrict.ts, 20, 2))
  >rest : Symbol(rest, Decl(contextuallyTypedIifeStrict.ts, 20, 8))
  >first : Symbol(first, Decl(contextuallyTypedIifeStrict.ts, 20, 2))

@@ -1,6 +1,6 @@
 --- old.declarationEmitPrivateNameCausesError.symbols
 +++ new.declarationEmitPrivateNameCausesError.symbols
-@@ -17,7 +17,7 @@
+@@= skipped -17, +17 lines =@@
  >ctor : Symbol(ctor, Decl(file.ts, 3, 77))
  
          [IGNORE_EXTRA_VARIABLES] = true; //An unexported constant is used

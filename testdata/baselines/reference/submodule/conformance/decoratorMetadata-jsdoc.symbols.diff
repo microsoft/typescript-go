@@ -1,6 +1,6 @@
 --- old.decoratorMetadata-jsdoc.symbols
 +++ new.decoratorMetadata-jsdoc.symbols
-@@ -11,17 +11,16 @@
+@@= skipped -11, +11 lines =@@
  >decorator : Symbol(decorator, Decl(decoratorMetadata-jsdoc.ts, 0, 11))
  
      a?: string?;

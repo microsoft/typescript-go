@@ -1,6 +1,6 @@
 --- old.parseErrorIncorrectReturnToken.symbols
 +++ new.parseErrorIncorrectReturnToken.symbols
-@@ -17,9 +17,9 @@
+@@= skipped -17, +17 lines =@@
  >f : Symbol(f, Decl(parseErrorIncorrectReturnToken.ts, 6, 3))
  >n : Symbol(n, Decl(parseErrorIncorrectReturnToken.ts, 6, 9))
  >string : Symbol(string, Decl(parseErrorIncorrectReturnToken.ts, 6, 22))

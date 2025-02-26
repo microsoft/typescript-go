@@ -1,6 +1,6 @@
 --- old.staticIndexSignature4.symbols
 +++ new.staticIndexSignature4.symbols
-@@ -42,12 +42,12 @@
+@@= skipped -42, +42 lines =@@
  >v : Symbol(v, Decl(staticIndexSignature4.ts, 15, 13))
  
      B.a = D.a
@@ -17,7 +17,7 @@
  
      B[2] = D[2]
  >B : Symbol(B, Decl(staticIndexSignature4.ts, 0, 0))
-@@ -57,12 +57,12 @@
+@@= skipped -15, +15 lines =@@
  >v : Symbol(v, Decl(staticIndexSignature4.ts, 15, 13))
  
      D.a = B.a
@@ -34,7 +34,7 @@
  
      D[2] = B[2]
  >D : Symbol(D, Decl(staticIndexSignature4.ts, 3, 1))
-@@ -72,24 +72,24 @@
+@@= skipped -15, +15 lines =@@
  >v : Symbol(v, Decl(staticIndexSignature4.ts, 15, 13))
  
      B.a = i.a
@@ -67,7 +67,7 @@
  
      D[2] = i [2]
  >D : Symbol(D, Decl(staticIndexSignature4.ts, 3, 1))
-@@ -99,12 +99,12 @@
+@@= skipped -27, +27 lines =@@
  >v : Symbol(v, Decl(staticIndexSignature4.ts, 15, 13))
  
      i.a = B.a
@@ -84,7 +84,7 @@
  
      i[2] = B[2]
  >i : Symbol(i, Decl(staticIndexSignature4.ts, 16, 13))
-@@ -114,12 +114,12 @@
+@@= skipped -15, +15 lines =@@
  >v : Symbol(v, Decl(staticIndexSignature4.ts, 15, 13))
  
      i.a = D.a

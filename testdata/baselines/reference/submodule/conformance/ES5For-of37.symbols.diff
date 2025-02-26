@@ -1,6 +1,6 @@
 --- old.ES5For-of37.symbols
 +++ new.ES5For-of37.symbols
-@@ -19,18 +19,18 @@
+@@= skipped -19, +19 lines =@@
              }
          }
          console.log(i);

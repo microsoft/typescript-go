@@ -1,6 +1,6 @@
 --- old.super1.symbols
 +++ new.super1.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >Base1 : Symbol(Base1, Decl(super1.ts, 0, 0))
  
      public foo() {
@@ -9,7 +9,7 @@
  
          return "base";
      }
-@@ -17,7 +17,7 @@
+@@= skipped -11, +11 lines =@@
  >Base1 : Symbol(Base1, Decl(super1.ts, 0, 0))
  
      public bar() {
@@ -18,7 +18,7 @@
  
          return "base";
      }
-@@ -28,7 +28,7 @@
+@@= skipped -11, +11 lines =@@
  >Sub1 : Symbol(Sub1, Decl(super1.ts, 5, 1))
  
      public bar() {
@@ -27,7 +27,7 @@
  
          return super.super.foo;
  >super : Symbol(Sub1, Decl(super1.ts, 5, 1))
-@@ -40,7 +40,7 @@
+@@= skipped -12, +12 lines =@@
  >Base2 : Symbol(Base2, Decl(super1.ts, 17, 1))
  
      public foo() {
@@ -36,7 +36,7 @@
  
          return "base";
      }
-@@ -51,7 +51,7 @@
+@@= skipped -11, +11 lines =@@
  >Base2 : Symbol(Base2, Decl(super1.ts, 17, 1))
  
      public bar() {
@@ -45,7 +45,7 @@
  
          return super.prototype.foo = null;
  >super : Symbol(Base2, Decl(super1.ts, 17, 1))
-@@ -63,7 +63,7 @@
+@@= skipped -12, +12 lines =@@
  >Base3 : Symbol(Base3, Decl(super1.ts, 30, 1))
  
      public foo() {
@@ -54,7 +54,7 @@
  
          return "base";
      }
-@@ -74,7 +74,7 @@
+@@= skipped -11, +11 lines =@@
  >Base3 : Symbol(Base3, Decl(super1.ts, 30, 1))
  
      public bar() {
@@ -63,7 +63,7 @@
  
          return super.bar();
  >super : Symbol(Base3, Decl(super1.ts, 30, 1))
-@@ -89,7 +89,7 @@
+@@= skipped -15, +15 lines =@@
  >Sub4 : Symbol(Sub4, Decl(super1.ts, 46, 14))
  
          public x(){
@@ -72,7 +72,7 @@
  
              return "hello";
          }
-@@ -100,12 +100,12 @@
+@@= skipped -11, +11 lines =@@
  >Sub4 : Symbol(Sub4, Decl(super1.ts, 46, 14))
  
          public x(){
@@ -88,7 +88,7 @@
          }
      }
      
-@@ -113,7 +113,7 @@
+@@= skipped -13, +13 lines =@@
  >Sub4E : Symbol(Sub4E, Decl(super1.ts, 57, 5))
  
          public x() {

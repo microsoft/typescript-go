@@ -1,6 +1,6 @@
 --- old.genericAndNonGenericInterfaceWithTheSameName2.symbols
 +++ new.genericAndNonGenericInterfaceWithTheSameName2.symbols
-@@ -11,7 +11,7 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(genericAndNonGenericInterfaceWithTheSameName2.ts, 3, 16))
  
          bar: T;
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(genericAndNonGenericInterfaceWithTheSameName2.ts, 3, 16))
      }
  }
-@@ -23,7 +23,7 @@
+@@= skipped -12, +12 lines =@@
  >A : Symbol(A, Decl(genericAndNonGenericInterfaceWithTheSameName2.ts, 8, 11))
  
          foo: string;
@@ -18,7 +18,7 @@
      }
  }
  
-@@ -38,7 +38,7 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(genericAndNonGenericInterfaceWithTheSameName2.ts, 16, 20))
  
              bar: T;
@@ -27,7 +27,7 @@
  >T : Symbol(T, Decl(genericAndNonGenericInterfaceWithTheSameName2.ts, 16, 20))
          }
      }
-@@ -50,7 +50,7 @@
+@@= skipped -12, +12 lines =@@
  >A : Symbol(A, Decl(genericAndNonGenericInterfaceWithTheSameName2.ts, 21, 15))
  
              foo: string;

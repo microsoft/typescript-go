@@ -1,6 +1,6 @@
 --- old.jsDeclarationsReactComponents.symbols
 +++ new.jsDeclarationsReactComponents.symbols
-@@ -9,33 +9,29 @@
+@@= skipped -9, +9 lines =@@
  >PropTypes : Symbol(PropTypes, Decl(jsDeclarationsReactComponents1.jsx, 2, 6))
  
  const TabbedShowLayout = ({
@@ -41,7 +41,7 @@
  
      tabs: undefined
  >tabs : Symbol(tabs, Decl(jsDeclarationsReactComponents1.jsx, 16, 33))
-@@ -44,7 +40,7 @@
+@@= skipped -35, +31 lines =@@
  };
  
  export default TabbedShowLayout;
@@ -50,7 +50,7 @@
  
  === jsDeclarationsReactComponents2.jsx ===
  import React from "react";
-@@ -54,25 +50,22 @@
+@@= skipped -10, +10 lines =@@
   * @type {React.SFC}
   */
  const TabbedShowLayout = () => {
@@ -80,7 +80,7 @@
  
      tabs: "default value"
  >tabs : Symbol(tabs, Decl(jsDeclarationsReactComponents2.jsx, 12, 33))
-@@ -80,7 +73,7 @@
+@@= skipped -26, +23 lines =@@
  };
  
  export default TabbedShowLayout;
@@ -89,7 +89,7 @@
  
  === jsDeclarationsReactComponents3.jsx ===
  import React from "react";
-@@ -90,25 +83,22 @@
+@@= skipped -10, +10 lines =@@
   * @type {{defaultProps: {tabs: string}} & ((props?: {elem: string}) => JSX.Element)}
   */
  const TabbedShowLayout = () => {
@@ -119,7 +119,7 @@
  
      tabs: "default value"
  >tabs : Symbol(tabs, Decl(jsDeclarationsReactComponents3.jsx, 12, 33))
-@@ -116,36 +106,31 @@
+@@= skipped -26, +23 lines =@@
  };
  
  export default TabbedShowLayout;
@@ -161,7 +161,7 @@
  
      tabs: "default value"
  >tabs : Symbol(tabs, Decl(jsDeclarationsReactComponents4.jsx, 9, 33))
-@@ -153,7 +138,7 @@
+@@= skipped -37, +32 lines =@@
  };
  
  export default TabbedShowLayout;
@@ -170,7 +170,7 @@
  
  === jsDeclarationsReactComponents5.jsx ===
  import React from 'react';
-@@ -163,30 +148,27 @@
+@@= skipped -10, +10 lines =@@
  >PropTypes : Symbol(PropTypes, Decl(jsDeclarationsReactComponents5.jsx, 1, 6))
  
  function Tree({ allowDropOnRoot }) {
@@ -208,7 +208,7 @@
  
      classes: {},
  >classes : Symbol(classes, Decl(jsDeclarationsReactComponents5.jsx, 11, 21))
-@@ -197,5 +179,5 @@
+@@= skipped -34, +31 lines =@@
  };
  
  export default Tree;

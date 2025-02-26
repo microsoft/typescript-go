@@ -1,6 +1,6 @@
 --- old.multipleDeclarations.symbols
 +++ new.multipleDeclarations.symbols
-@@ -5,44 +5,39 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(input.js, 0, 0))
  
      this.m = null;
@@ -57,7 +57,7 @@
      }
  }
  let x = new X();
-@@ -50,67 +45,67 @@
+@@= skipped -45, +40 lines =@@
  >X : Symbol(X, Decl(input.js, 5, 1))
  
  X.prototype.mistake = false;

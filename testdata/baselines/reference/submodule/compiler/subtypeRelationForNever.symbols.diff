@@ -1,6 +1,6 @@
 --- old.subtypeRelationForNever.symbols
 +++ new.subtypeRelationForNever.symbols
-@@ -23,9 +23,9 @@
+@@= skipped -23, +23 lines =@@
  >r : Symbol(r, Decl(subtypeRelationForNever.ts, 1, 19))
  
      return values.length > 0 ? haveFew(values) : haveNone('No values.');

@@ -1,6 +1,6 @@
 --- old.parserParameterList16.symbols
 +++ new.parserParameterList16.symbols
-@@ -5,11 +5,11 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(parserParameterList16.ts, 0, 0))
  
     foo(a = 4);

@@ -1,6 +1,6 @@
 --- old.keyofAndIndexedAccess2.symbols
 +++ new.keyofAndIndexedAccess2.symbols
-@@ -92,9 +92,9 @@
+@@= skipped -92, +92 lines =@@
  >x : Symbol(x, Decl(keyofAndIndexedAccess2.ts, 12, 53))
  
      b.x;
@@ -12,7 +12,7 @@
  
      c.x;
  >c : Symbol(c, Decl(keyofAndIndexedAccess2.ts, 12, 107))
-@@ -109,9 +109,9 @@
+@@= skipped -17, +17 lines =@@
  >x : Symbol(x, Decl(keyofAndIndexedAccess2.ts, 12, 53))
  
      b.x = 1;
@@ -24,7 +24,7 @@
  
      c.x = 1;  // Error, cannot write to index signature through constraint
  >c : Symbol(c, Decl(keyofAndIndexedAccess2.ts, 12, 107))
-@@ -289,7 +289,7 @@
+@@= skipped -180, +180 lines =@@
  >Entity : Symbol(Entity, Decl(keyofAndIndexedAccess2.ts, 68, 1))
  
      id: number | string;
@@ -33,7 +33,7 @@
  }
  
  export type IdOf<E extends Entity> = E['id'];
-@@ -304,12 +304,12 @@
+@@= skipped -15, +15 lines =@@
  >Entity : Symbol(Entity, Decl(keyofAndIndexedAccess2.ts, 68, 1))
  
      ids: IdOf<E>[];
@@ -48,7 +48,7 @@
  >key : Symbol(key, Decl(keyofAndIndexedAccess2.ts, 80, 17))
  >E : Symbol(E, Decl(keyofAndIndexedAccess2.ts, 78, 29))
  >key : Symbol(key, Decl(keyofAndIndexedAccess2.ts, 80, 35))
-@@ -332,9 +332,9 @@
+@@= skipped -28, +28 lines =@@
  >state : Symbol(state, Decl(keyofAndIndexedAccess2.ts, 84, 49))
  
      return ids.map(id => entities[id]);
@@ -60,7 +60,7 @@
  >id : Symbol(id, Decl(keyofAndIndexedAccess2.ts, 86, 19))
  >entities : Symbol(entities, Decl(keyofAndIndexedAccess2.ts, 85, 16))
  >id : Symbol(id, Decl(keyofAndIndexedAccess2.ts, 86, 19))
-@@ -358,9 +358,9 @@
+@@= skipped -26, +26 lines =@@
  >state : Symbol(state, Decl(keyofAndIndexedAccess2.ts, 89, 56))
  
      if (!ids.includes(id)) {
@@ -72,7 +72,7 @@
  >id : Symbol(id, Decl(keyofAndIndexedAccess2.ts, 89, 44))
  
          return undefined;
-@@ -378,10 +378,10 @@
+@@= skipped -20, +20 lines =@@
  >Type : Symbol(Type, Decl(keyofAndIndexedAccess2.ts, 97, 1))
  
      a: 123;

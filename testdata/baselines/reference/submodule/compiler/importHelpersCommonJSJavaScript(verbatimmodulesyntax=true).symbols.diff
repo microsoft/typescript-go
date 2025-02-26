@@ -1,6 +1,6 @@
 --- old.importHelpersCommonJSJavaScript(verbatimmodulesyntax=true).symbols
 +++ new.importHelpersCommonJSJavaScript(verbatimmodulesyntax=true).symbols
-@@ -2,7 +2,7 @@
+@@= skipped -2, +2 lines =@@
  
  === /node_modules/tslib/tslib.d.ts ===
  export declare var __extends: any;
@@ -9,7 +9,7 @@
  
  === /node_modules/tslib/modules/index.d.ts ===
  
-@@ -17,8 +17,5 @@
+@@= skipped -15, +15 lines =@@
  >Foo : Symbol(Foo, Decl(index.js, 0, 0))
  
  module.exports = Bar;

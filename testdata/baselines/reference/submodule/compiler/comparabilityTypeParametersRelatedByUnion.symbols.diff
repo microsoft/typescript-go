@@ -1,6 +1,6 @@
 --- old.comparabilityTypeParametersRelatedByUnion.symbols
 +++ new.comparabilityTypeParametersRelatedByUnion.symbols
-@@ -6,11 +6,11 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(comparabilityTypeParametersRelatedByUnion.ts, 0, 8))
  
    constructor(readonly x: T) {}
@@ -14,7 +14,7 @@
  >U : Symbol(U, Decl(comparabilityTypeParametersRelatedByUnion.ts, 3, 7))
  >T : Symbol(T, Decl(comparabilityTypeParametersRelatedByUnion.ts, 0, 8))
  >y : Symbol(y, Decl(comparabilityTypeParametersRelatedByUnion.ts, 3, 20))
-@@ -18,13 +18,13 @@
+@@= skipped -12, +12 lines =@@
  
        if (y === this.x) {}
  >y : Symbol(y, Decl(comparabilityTypeParametersRelatedByUnion.ts, 3, 20))
@@ -31,7 +31,7 @@
  >U : Symbol(U, Decl(comparabilityTypeParametersRelatedByUnion.ts, 7, 6))
  >T : Symbol(T, Decl(comparabilityTypeParametersRelatedByUnion.ts, 0, 8))
  >y : Symbol(y, Decl(comparabilityTypeParametersRelatedByUnion.ts, 7, 28))
-@@ -32,9 +32,9 @@
+@@= skipped -14, +14 lines =@@
  
        if (y === this.x) {}
  >y : Symbol(y, Decl(comparabilityTypeParametersRelatedByUnion.ts, 7, 28))

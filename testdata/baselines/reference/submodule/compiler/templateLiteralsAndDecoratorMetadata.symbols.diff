@@ -1,6 +1,6 @@
 --- old.templateLiteralsAndDecoratorMetadata.symbols
 +++ new.templateLiteralsAndDecoratorMetadata.symbols
-@@ -11,5 +11,5 @@
+@@= skipped -11, +11 lines =@@
  >format : Symbol(format, Decl(templateLiteralsAndDecoratorMetadata.ts, 0, 11))
  
    greeting: `boss` | `employee` = `employee`;  //template literals on this line cause the issue

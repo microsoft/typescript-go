@@ -1,6 +1,6 @@
 --- old.jsDeclarationsExportAssignedConstructorFunction.symbols
 +++ new.jsDeclarationsExportAssignedConstructorFunction.symbols
-@@ -3,26 +3,9 @@
+@@= skipped -3, +3 lines =@@
  === jsDeclarationsExportAssignedConstructorFunction.js ===
  /** @constructor */
  module.exports.MyClass = function() {

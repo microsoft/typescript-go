@@ -1,6 +1,6 @@
 --- old.internalAliasClassInsideLocalModuleWithExport.symbols
 +++ new.internalAliasClassInsideLocalModuleWithExport.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >c : Symbol(c, Decl(internalAliasClassInsideLocalModuleWithExport.ts, 0, 17))
  
          foo(a: number) {
@@ -9,7 +9,7 @@
  >a : Symbol(a, Decl(internalAliasClassInsideLocalModuleWithExport.ts, 2, 12))
  
              return a;
-@@ -34,17 +34,17 @@
+@@= skipped -26, +26 lines =@@
  
          var cReturnVal = cProp.foo(10);
  >cReturnVal : Symbol(cReturnVal, Decl(internalAliasClassInsideLocalModuleWithExport.ts, 12, 11))

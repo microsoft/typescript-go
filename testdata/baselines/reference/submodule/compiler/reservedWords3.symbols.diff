@@ -1,6 +1,6 @@
 --- old.reservedWords3.symbols
 +++ new.reservedWords3.symbols
-@@ -3,14 +3,14 @@
+@@= skipped -3, +3 lines =@@
  === reservedWords3.ts ===
  function f1(enum) {}
  >f1 : Symbol(f1, Decl(reservedWords3.ts, 0, 0))

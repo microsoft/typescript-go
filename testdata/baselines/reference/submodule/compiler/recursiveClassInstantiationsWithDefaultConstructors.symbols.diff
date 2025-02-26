@@ -1,6 +1,6 @@
 --- old.recursiveClassInstantiationsWithDefaultConstructors.symbols
 +++ new.recursiveClassInstantiationsWithDefaultConstructors.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >MemberName : Symbol(MemberName, Decl(recursiveClassInstantiationsWithDefaultConstructors.ts, 0, 20))
  
          public prefix: string = "";
@@ -9,7 +9,7 @@
      }
      export class MemberNameArray extends MemberName {
  >MemberNameArray : Symbol(MemberNameArray, Decl(recursiveClassInstantiationsWithDefaultConstructors.ts, 3, 5))
-@@ -18,7 +18,7 @@
+@@= skipped -10, +10 lines =@@
  
  var a = new TypeScript2.MemberNameArray()
  >a : Symbol(a, Decl(recursiveClassInstantiationsWithDefaultConstructors.ts, 8, 3))

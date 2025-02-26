@@ -1,6 +1,6 @@
 --- old.promisePermutations.symbols
 +++ new.promisePermutations.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(lib.es5.d.ts, --, --), Decl(promisePermutations.ts, 0, 18))
  
      then<U>(success?: (value: T) => Promise<U>, error?: (error: any) => Promise<U>, progress?: (progress: any) => void): Promise<U>;
@@ -9,7 +9,7 @@
  >U : Symbol(U, Decl(promisePermutations.ts, 1, 9))
  >success : Symbol(success, Decl(promisePermutations.ts, 1, 12))
  >value : Symbol(value, Decl(promisePermutations.ts, 1, 23))
-@@ -23,7 +23,7 @@
+@@= skipped -17, +17 lines =@@
  >U : Symbol(U, Decl(promisePermutations.ts, 1, 9))
  
      then<U>(success?: (value: T) => Promise<U>, error?: (error: any) => U, progress?: (progress: any) => void): Promise<U>;
@@ -18,7 +18,7 @@
  >U : Symbol(U, Decl(promisePermutations.ts, 2, 9))
  >success : Symbol(success, Decl(promisePermutations.ts, 2, 12))
  >value : Symbol(value, Decl(promisePermutations.ts, 2, 23))
-@@ -39,7 +39,7 @@
+@@= skipped -16, +16 lines =@@
  >U : Symbol(U, Decl(promisePermutations.ts, 2, 9))
  
      then<U>(success?: (value: T) => U, error?: (error: any) => Promise<U>, progress?: (progress: any) => void): Promise<U>;
@@ -27,7 +27,7 @@
  >U : Symbol(U, Decl(promisePermutations.ts, 3, 9))
  >success : Symbol(success, Decl(promisePermutations.ts, 3, 12))
  >value : Symbol(value, Decl(promisePermutations.ts, 3, 23))
-@@ -55,7 +55,7 @@
+@@= skipped -16, +16 lines =@@
  >U : Symbol(U, Decl(promisePermutations.ts, 3, 9))
  
      then<U>(success?: (value: T) => U, error?: (error: any) => U, progress?: (progress: any) => void): Promise<U>;
@@ -36,7 +36,7 @@
  >U : Symbol(U, Decl(promisePermutations.ts, 4, 9))
  >success : Symbol(success, Decl(promisePermutations.ts, 4, 12))
  >value : Symbol(value, Decl(promisePermutations.ts, 4, 23))
-@@ -70,7 +70,7 @@
+@@= skipped -15, +15 lines =@@
  >U : Symbol(U, Decl(promisePermutations.ts, 4, 9))
  
      done<U>(success?: (value: T) => any, error?: (error: any) => any, progress?: (progress: any) => void): void;
@@ -45,7 +45,7 @@
  >U : Symbol(U, Decl(promisePermutations.ts, 5, 9))
  >success : Symbol(success, Decl(promisePermutations.ts, 5, 12))
  >value : Symbol(value, Decl(promisePermutations.ts, 5, 23))
-@@ -86,7 +86,7 @@
+@@= skipped -16, +16 lines =@@
  >T : Symbol(T, Decl(promisePermutations.ts, 8, 19))
  
      then<U>(success?: (value: T) => IPromise<U>, error?: (error: any) => IPromise<U>, progress?: (progress: any) => void): IPromise<U>;
@@ -54,7 +54,7 @@
  >U : Symbol(U, Decl(promisePermutations.ts, 9, 9))
  >success : Symbol(success, Decl(promisePermutations.ts, 9, 12))
  >value : Symbol(value, Decl(promisePermutations.ts, 9, 23))
-@@ -103,7 +103,7 @@
+@@= skipped -17, +17 lines =@@
  >U : Symbol(U, Decl(promisePermutations.ts, 9, 9))
  
      then<U>(success?: (value: T) => IPromise<U>, error?: (error: any) => U, progress?: (progress: any) => void): IPromise<U>;
@@ -63,7 +63,7 @@
  >U : Symbol(U, Decl(promisePermutations.ts, 10, 9))
  >success : Symbol(success, Decl(promisePermutations.ts, 10, 12))
  >value : Symbol(value, Decl(promisePermutations.ts, 10, 23))
-@@ -119,7 +119,7 @@
+@@= skipped -16, +16 lines =@@
  >U : Symbol(U, Decl(promisePermutations.ts, 10, 9))
  
      then<U>(success?: (value: T) => U, error?: (error: any) => IPromise<U>, progress?: (progress: any) => void): IPromise<U>;
@@ -72,7 +72,7 @@
  >U : Symbol(U, Decl(promisePermutations.ts, 11, 9))
  >success : Symbol(success, Decl(promisePermutations.ts, 11, 12))
  >value : Symbol(value, Decl(promisePermutations.ts, 11, 23))
-@@ -135,7 +135,7 @@
+@@= skipped -16, +16 lines =@@
  >U : Symbol(U, Decl(promisePermutations.ts, 11, 9))
  
      then<U>(success?: (value: T) => U, error?: (error: any) => U, progress?: (progress: any) => void): IPromise<U>;
@@ -81,7 +81,7 @@
  >U : Symbol(U, Decl(promisePermutations.ts, 12, 9))
  >success : Symbol(success, Decl(promisePermutations.ts, 12, 12))
  >value : Symbol(value, Decl(promisePermutations.ts, 12, 23))
-@@ -150,7 +150,7 @@
+@@= skipped -15, +15 lines =@@
  >U : Symbol(U, Decl(promisePermutations.ts, 12, 9))
  
      done? <U>(success?: (value: T) => any, error?: (error: any) => any, progress?: (progress: any) => void): void;
@@ -90,7 +90,7 @@
  >U : Symbol(U, Decl(promisePermutations.ts, 13, 11))
  >success : Symbol(success, Decl(promisePermutations.ts, 13, 14))
  >value : Symbol(value, Decl(promisePermutations.ts, 13, 25))
-@@ -387,32 +387,32 @@
+@@= skipped -237, +237 lines =@@
  
  var r1a = r1.then(testFunction, testFunction, testFunction);
  >r1a : Symbol(r1a, Decl(promisePermutations.ts, 48, 3))
@@ -131,7 +131,7 @@
  >testFunctionP : Symbol(testFunctionP, Decl(promisePermutations.ts, 16, 50))
  >testFunctionP : Symbol(testFunctionP, Decl(promisePermutations.ts, 16, 50))
  >testFunctionP : Symbol(testFunctionP, Decl(promisePermutations.ts, 16, 50))
-@@ -423,41 +423,41 @@
+@@= skipped -36, +36 lines =@@
  
  var s1a = s1.then(testFunction, testFunction, testFunction);
  >s1a : Symbol(s1a, Decl(promisePermutations.ts, 52, 3))
@@ -183,7 +183,7 @@
  >testFunction : Symbol(testFunction, Decl(promisePermutations.ts, 14, 1))
  >testFunction : Symbol(testFunction, Decl(promisePermutations.ts, 14, 1))
  >testFunction : Symbol(testFunction, Decl(promisePermutations.ts, 14, 1))
-@@ -469,23 +469,23 @@
+@@= skipped -46, +46 lines =@@
  
  var r2a = r2.then(testFunction2, testFunction2, testFunction2);
  >r2a : Symbol(r2a, Decl(promisePermutations.ts, 58, 3))
@@ -213,7 +213,7 @@
  >testFunction2 : Symbol(testFunction2, Decl(promisePermutations.ts, 17, 50))
  >testFunction2 : Symbol(testFunction2, Decl(promisePermutations.ts, 17, 50))
  >testFunction2 : Symbol(testFunction2, Decl(promisePermutations.ts, 17, 50))
-@@ -497,41 +497,41 @@
+@@= skipped -28, +28 lines =@@
  
  var s2a = s2.then(testFunction2, testFunction2, testFunction2);
  >s2a : Symbol(s2a, Decl(promisePermutations.ts, 61, 3))
@@ -265,7 +265,7 @@
  >testFunction2 : Symbol(testFunction2, Decl(promisePermutations.ts, 17, 50))
  >testFunction2 : Symbol(testFunction2, Decl(promisePermutations.ts, 17, 50))
  >testFunction2 : Symbol(testFunction2, Decl(promisePermutations.ts, 17, 50))
-@@ -542,23 +542,23 @@
+@@= skipped -45, +45 lines =@@
  
  var r3a = r3.then(testFunction3, testFunction3, testFunction3);
  >r3a : Symbol(r3a, Decl(promisePermutations.ts, 67, 3))
@@ -295,7 +295,7 @@
  >testFunction3 : Symbol(testFunction3, Decl(promisePermutations.ts, 19, 58))
  >testFunction3 : Symbol(testFunction3, Decl(promisePermutations.ts, 19, 58))
  >testFunction3 : Symbol(testFunction3, Decl(promisePermutations.ts, 19, 58))
-@@ -569,41 +569,41 @@
+@@= skipped -27, +27 lines =@@
  
  var s3a = s3.then(testFunction3, testFunction3, testFunction3);
  >s3a : Symbol(s3a, Decl(promisePermutations.ts, 70, 3))
@@ -347,7 +347,7 @@
  >testFunction3 : Symbol(testFunction3, Decl(promisePermutations.ts, 19, 58))
  >testFunction3 : Symbol(testFunction3, Decl(promisePermutations.ts, 19, 58))
  >testFunction3 : Symbol(testFunction3, Decl(promisePermutations.ts, 19, 58))
-@@ -624,23 +624,23 @@
+@@= skipped -55, +55 lines =@@
  
  var r4a = r4.then(testFunction4, testFunction4, testFunction4); // error
  >r4a : Symbol(r4a, Decl(promisePermutations.ts, 78, 3))
@@ -377,7 +377,7 @@
  >sIPromise : Symbol(sIPromise, Decl(promisePermutations.ts, 76, 3))
  >testFunction4 : Symbol(testFunction4, Decl(promisePermutations.ts, 21, 60))
  >testFunction4 : Symbol(testFunction4, Decl(promisePermutations.ts, 21, 60))
-@@ -651,41 +651,41 @@
+@@= skipped -27, +27 lines =@@
  
  var s4a = s4.then(testFunction4, testFunction4, testFunction4); // error
  >s4a : Symbol(s4a, Decl(promisePermutations.ts, 81, 3))
@@ -429,7 +429,7 @@
  >sIPromise : Symbol(sIPromise, Decl(promisePermutations.ts, 76, 3))
  >testFunction4P : Symbol(testFunction4P, Decl(promisePermutations.ts, 22, 72))
  >testFunction4 : Symbol(testFunction4, Decl(promisePermutations.ts, 21, 60))
-@@ -696,23 +696,23 @@
+@@= skipped -45, +45 lines =@@
  
  var r5a = r5.then(testFunction5, testFunction5, testFunction5); // error
  >r5a : Symbol(r5a, Decl(promisePermutations.ts, 87, 3))
@@ -459,7 +459,7 @@
  >sIPromise : Symbol(sIPromise, Decl(promisePermutations.ts, 76, 3))
  >sIPromise : Symbol(sIPromise, Decl(promisePermutations.ts, 76, 3))
  >sIPromise : Symbol(sIPromise, Decl(promisePermutations.ts, 76, 3))
-@@ -723,41 +723,41 @@
+@@= skipped -27, +27 lines =@@
  
  var s5a = s5.then(testFunction5, testFunction5, testFunction5); // error
  >s5a : Symbol(s5a, Decl(promisePermutations.ts, 90, 3))
@@ -511,7 +511,7 @@
  >sIPromise : Symbol(sIPromise, Decl(promisePermutations.ts, 76, 3))
  >sIPromise : Symbol(sIPromise, Decl(promisePermutations.ts, 76, 3))
  >sIPromise : Symbol(sIPromise, Decl(promisePermutations.ts, 76, 3))
-@@ -768,23 +768,23 @@
+@@= skipped -45, +45 lines =@@
  
  var r6a = r6.then(testFunction6, testFunction6, testFunction6); // error
  >r6a : Symbol(r6a, Decl(promisePermutations.ts, 96, 3))
@@ -541,7 +541,7 @@
  >sIPromise : Symbol(sIPromise, Decl(promisePermutations.ts, 76, 3))
  >sIPromise : Symbol(sIPromise, Decl(promisePermutations.ts, 76, 3))
  >sIPromise : Symbol(sIPromise, Decl(promisePermutations.ts, 76, 3))
-@@ -795,41 +795,41 @@
+@@= skipped -27, +27 lines =@@
  
  var s6a = s6.then(testFunction6, testFunction6, testFunction6); // error
  >s6a : Symbol(s6a, Decl(promisePermutations.ts, 99, 3))
@@ -593,7 +593,7 @@
  >sIPromise : Symbol(sIPromise, Decl(promisePermutations.ts, 76, 3))
  >sIPromise : Symbol(sIPromise, Decl(promisePermutations.ts, 76, 3))
  >sIPromise : Symbol(sIPromise, Decl(promisePermutations.ts, 76, 3))
-@@ -840,23 +840,23 @@
+@@= skipped -45, +45 lines =@@
  
  var r7a = r7.then(testFunction7, testFunction7, testFunction7); // error
  >r7a : Symbol(r7a, Decl(promisePermutations.ts, 105, 3))
@@ -623,7 +623,7 @@
  >sIPromise : Symbol(sIPromise, Decl(promisePermutations.ts, 76, 3))
  >sIPromise : Symbol(sIPromise, Decl(promisePermutations.ts, 76, 3))
  >sIPromise : Symbol(sIPromise, Decl(promisePermutations.ts, 76, 3))
-@@ -867,41 +867,41 @@
+@@= skipped -27, +27 lines =@@
  
  var s7a = r7.then(testFunction7, testFunction7, testFunction7); // error
  >s7a : Symbol(s7a, Decl(promisePermutations.ts, 108, 3))
@@ -675,7 +675,7 @@
  >sPromise : Symbol(sPromise, Decl(promisePermutations.ts, 77, 3))
  >sPromise : Symbol(sPromise, Decl(promisePermutations.ts, 77, 3))
  >sPromise : Symbol(sPromise, Decl(promisePermutations.ts, 77, 3))
-@@ -922,23 +922,23 @@
+@@= skipped -55, +55 lines =@@
  
  var r8a = r8.then(testFunction8, testFunction8, testFunction8); // error
  >r8a : Symbol(r8a, Decl(promisePermutations.ts, 116, 3))
@@ -705,7 +705,7 @@
  >nIPromise : Symbol(nIPromise, Decl(promisePermutations.ts, 114, 3))
  >nIPromise : Symbol(nIPromise, Decl(promisePermutations.ts, 114, 3))
  >nIPromise : Symbol(nIPromise, Decl(promisePermutations.ts, 114, 3))
-@@ -949,41 +949,41 @@
+@@= skipped -27, +27 lines =@@
  
  var s8a = s8.then(testFunction8, testFunction8, testFunction8); // error
  >s8a : Symbol(s8a, Decl(promisePermutations.ts, 119, 3))
@@ -757,7 +757,7 @@
  >nIPromise : Symbol(nIPromise, Decl(promisePermutations.ts, 114, 3))
  >nIPromise : Symbol(nIPromise, Decl(promisePermutations.ts, 114, 3))
  >nIPromise : Symbol(nIPromise, Decl(promisePermutations.ts, 114, 3))
-@@ -994,50 +994,50 @@
+@@= skipped -45, +45 lines =@@
  
  var r9a = r9.then(testFunction9, testFunction9, testFunction9); // error
  >r9a : Symbol(r9a, Decl(promisePermutations.ts, 125, 3))
@@ -820,7 +820,7 @@
  >sIPromise : Symbol(sIPromise, Decl(promisePermutations.ts, 76, 3))
  >sIPromise : Symbol(sIPromise, Decl(promisePermutations.ts, 76, 3))
  >sIPromise : Symbol(sIPromise, Decl(promisePermutations.ts, 76, 3))
-@@ -1048,68 +1048,68 @@
+@@= skipped -54, +54 lines =@@
  
  var s9a = s9.then(testFunction9, testFunction9, testFunction9); // error
  >s9a : Symbol(s9a, Decl(promisePermutations.ts, 131, 3))
@@ -905,7 +905,7 @@
  >sIPromise : Symbol(sIPromise, Decl(promisePermutations.ts, 76, 3))
  >sIPromise : Symbol(sIPromise, Decl(promisePermutations.ts, 76, 3))
  >sIPromise : Symbol(sIPromise, Decl(promisePermutations.ts, 76, 3))
-@@ -1122,50 +1122,50 @@
+@@= skipped -74, +74 lines =@@
  
  var r10a = r10.then(testFunction10, testFunction10, testFunction10); // ok
  >r10a : Symbol(r10a, Decl(promisePermutations.ts, 140, 3))
@@ -968,7 +968,7 @@
  >sIPromise : Symbol(sIPromise, Decl(promisePermutations.ts, 76, 3))
  >sIPromise : Symbol(sIPromise, Decl(promisePermutations.ts, 76, 3))
  >sIPromise : Symbol(sIPromise, Decl(promisePermutations.ts, 76, 3))
-@@ -1178,68 +1178,68 @@
+@@= skipped -56, +56 lines =@@
  
  var s10a = s10.then(testFunction10, testFunction10, testFunction10); // ok
  >s10a : Symbol(s10a, Decl(promisePermutations.ts, 146, 3))
@@ -1053,7 +1053,7 @@
  >sPromise : Symbol(sPromise, Decl(promisePermutations.ts, 77, 3))
  >sIPromise : Symbol(sIPromise, Decl(promisePermutations.ts, 76, 3))
  >sIPromise : Symbol(sIPromise, Decl(promisePermutations.ts, 76, 3))
-@@ -1250,9 +1250,9 @@
+@@= skipped -72, +72 lines =@@
  
  var r11a = r11.then(testFunction11, testFunction11, testFunction11); // error
  >r11a : Symbol(r11a, Decl(promisePermutations.ts, 155, 3))
@@ -1065,7 +1065,7 @@
  >testFunction11 : Symbol(testFunction11, Decl(promisePermutations.ts, 35, 68), Decl(promisePermutations.ts, 37, 61))
  >testFunction11 : Symbol(testFunction11, Decl(promisePermutations.ts, 35, 68), Decl(promisePermutations.ts, 37, 61))
  >testFunction11 : Symbol(testFunction11, Decl(promisePermutations.ts, 35, 68), Decl(promisePermutations.ts, 37, 61))
-@@ -1263,27 +1263,27 @@
+@@= skipped -13, +13 lines =@@
  
  var s11a = s11.then(testFunction11, testFunction11, testFunction11); // ok
  >s11a : Symbol(s11a, Decl(promisePermutations.ts, 157, 3))
@@ -1099,7 +1099,7 @@
  >testFunction11P : Symbol(testFunction11P, Decl(promisePermutations.ts, 38, 61), Decl(promisePermutations.ts, 39, 61))
  >testFunction11 : Symbol(testFunction11, Decl(promisePermutations.ts, 35, 68), Decl(promisePermutations.ts, 37, 61))
  >testFunction11 : Symbol(testFunction11, Decl(promisePermutations.ts, 35, 68), Decl(promisePermutations.ts, 37, 61))
-@@ -1296,9 +1296,9 @@
+@@= skipped -33, +33 lines =@@
  
  var r12a = r12.then(testFunction12, testFunction12, testFunction12); // ok
  >r12a : Symbol(r12a, Decl(promisePermutations.ts, 162, 3))
@@ -1111,7 +1111,7 @@
  >testFunction12 : Symbol(testFunction12, Decl(promisePermutations.ts, 40, 61), Decl(promisePermutations.ts, 42, 54))
  >testFunction12 : Symbol(testFunction12, Decl(promisePermutations.ts, 40, 61), Decl(promisePermutations.ts, 42, 54))
  >testFunction12 : Symbol(testFunction12, Decl(promisePermutations.ts, 40, 61), Decl(promisePermutations.ts, 42, 54))
-@@ -1311,27 +1311,27 @@
+@@= skipped -15, +15 lines =@@
  
  var s12a = s12.then(testFunction12, testFunction12, testFunction12); // ok
  >s12a : Symbol(s12a, Decl(promisePermutations.ts, 164, 3))

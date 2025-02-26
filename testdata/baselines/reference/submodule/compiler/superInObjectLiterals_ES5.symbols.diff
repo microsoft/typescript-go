@@ -1,6 +1,6 @@
 --- old.superInObjectLiterals_ES5.symbols
 +++ new.superInObjectLiterals_ES5.symbols
-@@ -50,7 +50,7 @@
+@@= skipped -50, +50 lines =@@
  >A : Symbol(A, Decl(superInObjectLiterals_ES5.ts, 24, 2))
  
      method() { }
@@ -9,7 +9,7 @@
  }
  
  class B extends A {
-@@ -58,7 +58,7 @@
+@@= skipped -8, +8 lines =@@
  >A : Symbol(A, Decl(superInObjectLiterals_ES5.ts, 24, 2))
  
      f() {
@@ -18,7 +18,7 @@
  
          var obj = {
  >obj : Symbol(obj, Decl(superInObjectLiterals_ES5.ts, 32, 11))
-@@ -102,9 +102,9 @@
+@@= skipped -44, +44 lines =@@
  >p3 : Symbol(p3, Decl(superInObjectLiterals_ES5.ts, 52, 14))
  
                  super.method();

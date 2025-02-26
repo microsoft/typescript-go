@@ -1,6 +1,6 @@
 --- old.jsdocImplements_interface.symbols
 +++ new.jsdocImplements_interface.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(defs.d.ts, 0, 0))
  
      mNumber(): number;
@@ -9,7 +9,7 @@
  }
  === /a.js ===
  /** @implements A */
-@@ -13,7 +13,7 @@
+@@= skipped -8, +8 lines =@@
  >B : Symbol(B, Decl(a.js, 0, 0))
  
      mNumber() {
@@ -18,7 +18,7 @@
  
          return 0;
      }
-@@ -23,7 +23,7 @@
+@@= skipped -10, +10 lines =@@
  >B2 : Symbol(B2, Decl(a.js, 5, 1))
  
      mNumber() {

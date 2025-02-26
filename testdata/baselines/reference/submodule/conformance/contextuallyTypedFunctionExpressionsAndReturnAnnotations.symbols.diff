@@ -1,6 +1,6 @@
 --- old.contextuallyTypedFunctionExpressionsAndReturnAnnotations.symbols
 +++ new.contextuallyTypedFunctionExpressionsAndReturnAnnotations.symbols
-@@ -15,9 +15,9 @@
+@@= skipped -15, +15 lines =@@
  
      var z = y.charAt(0); // Should be string
  >z : Symbol(z, Decl(contextuallyTypedFunctionExpressionsAndReturnAnnotations.ts, 4, 7))
@@ -12,7 +12,7 @@
  
      return null;
  });
-@@ -31,9 +31,9 @@
+@@= skipped -16, +16 lines =@@
  
          var z = y2.toFixed(); // Should be string
  >z : Symbol(z, Decl(contextuallyTypedFunctionExpressionsAndReturnAnnotations.ts, 10, 11))

@@ -1,6 +1,6 @@
 --- old.implicitAnyFromCircularInference.symbols
 +++ new.implicitAnyFromCircularInference.symbols
-@@ -63,7 +63,7 @@
+@@= skipped -63, +63 lines =@@
  >A : Symbol(A, Decl(implicitAnyFromCircularInference.ts, 29, 1))
  
      s: string;
@@ -9,7 +9,7 @@
  }
  
  function foo(x: A): string { return "abc"; }
-@@ -75,7 +75,7 @@
+@@= skipped -12, +12 lines =@@
  >C : Symbol(C, Decl(implicitAnyFromCircularInference.ts, 35, 44))
  
      s = foo(this);
@@ -18,7 +18,7 @@
  >foo : Symbol(foo, Decl(implicitAnyFromCircularInference.ts, 33, 1))
  >this : Symbol(C, Decl(implicitAnyFromCircularInference.ts, 35, 44))
  }
-@@ -85,12 +85,12 @@
+@@= skipped -10, +10 lines =@@
  
      // Error expected
      get x() {

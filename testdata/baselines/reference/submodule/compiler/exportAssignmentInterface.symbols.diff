@@ -1,6 +1,6 @@
 --- old.exportAssignmentInterface.symbols
 +++ new.exportAssignmentInterface.symbols
-@@ -10,18 +10,5 @@
+@@= skipped -10, +10 lines =@@
  
  var n: number = i.p1;
  >n : Symbol(n, Decl(exportAssignmentInterface_B.ts, 4, 3))

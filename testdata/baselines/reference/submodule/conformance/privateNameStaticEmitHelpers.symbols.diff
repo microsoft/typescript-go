@@ -1,6 +1,6 @@
 --- old.privateNameStaticEmitHelpers.symbols
 +++ new.privateNameStaticEmitHelpers.symbols
-@@ -5,38 +5,38 @@
+@@= skipped -5, +5 lines =@@
  >S : Symbol(S, Decl(main.ts, 0, 0))
  
      static #a = 1;

@@ -1,6 +1,6 @@
 --- old.duplicatePropertyNames.symbols
 +++ new.duplicatePropertyNames.symbols
-@@ -7,20 +7,20 @@
+@@= skipped -7, +7 lines =@@
  >Number : Symbol(Number, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(duplicatePropertyNames.ts, 0, 0))
  
      foo: string;
@@ -25,7 +25,7 @@
  }
  
  interface Array<T> {
-@@ -28,11 +28,11 @@
+@@= skipped -21, +21 lines =@@
  >T : Symbol(T, Decl(lib.es5.d.ts, --, --), Decl(duplicatePropertyNames.ts, 12, 16))
  
      foo: T;
@@ -39,7 +39,7 @@
  >T : Symbol(T, Decl(lib.es5.d.ts, --, --), Decl(duplicatePropertyNames.ts, 12, 16))
  }
  
-@@ -40,34 +40,34 @@
+@@= skipped -12, +12 lines =@@
  >C : Symbol(C, Decl(duplicatePropertyNames.ts, 15, 1))
  
      foo: string;

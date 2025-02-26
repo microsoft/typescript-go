@@ -1,6 +1,6 @@
 --- old.classFieldSuperAccessibleJs1.symbols
 +++ new.classFieldSuperAccessibleJs1.symbols
-@@ -2,36 +2,32 @@
+@@= skipped -2, +2 lines =@@
  
  === index.js ===
  class C {

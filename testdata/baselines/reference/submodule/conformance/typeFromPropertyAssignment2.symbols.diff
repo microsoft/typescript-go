@@ -1,6 +1,6 @@
 --- old.typeFromPropertyAssignment2.symbols
 +++ new.typeFromPropertyAssignment2.symbols
-@@ -2,24 +2,19 @@
+@@= skipped -2, +2 lines =@@
  
  === a.js ===
  function Outer() {
@@ -29,7 +29,7 @@
      }
  }
  /** @type {Outer} */
-@@ -27,16 +22,12 @@
+@@= skipped -25, +20 lines =@@
  >ok : Symbol(ok, Decl(a.js, 9, 3))
  
  ok.y

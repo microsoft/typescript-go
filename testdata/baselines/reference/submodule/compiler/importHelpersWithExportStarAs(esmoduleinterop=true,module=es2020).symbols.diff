@@ -1,6 +1,6 @@
 --- old.importHelpersWithExportStarAs(esmoduleinterop=true,module=es2020).symbols
 +++ new.importHelpersWithExportStarAs(esmoduleinterop=true,module=es2020).symbols
-@@ -10,9 +10,9 @@
+@@= skipped -10, +10 lines =@@
  
  === tslib.d.ts ===
  declare module "tslib" {

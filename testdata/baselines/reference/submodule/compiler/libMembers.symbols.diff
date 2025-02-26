@@ -1,6 +1,6 @@
 --- old.libMembers.symbols
 +++ new.libMembers.symbols
-@@ -5,22 +5,22 @@
+@@= skipped -5, +5 lines =@@
  >s : Symbol(s, Decl(libMembers.ts, 0, 3))
  
  s.substring(0);

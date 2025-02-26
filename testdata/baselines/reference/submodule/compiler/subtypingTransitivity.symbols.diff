@@ -1,6 +1,6 @@
 --- old.subtypingTransitivity.symbols
 +++ new.subtypingTransitivity.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >B : Symbol(B, Decl(subtypingTransitivity.ts, 0, 0))
  
      x: Object;
@@ -9,7 +9,7 @@
  >Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  }
  
-@@ -14,14 +14,14 @@
+@@= skipped -9, +9 lines =@@
  >B : Symbol(B, Decl(subtypingTransitivity.ts, 0, 0))
  
      public x: string;
@@ -26,7 +26,7 @@
  }
  
  var b: B;
-@@ -37,16 +37,16 @@
+@@= skipped -23, +23 lines =@@
  >D2 : Symbol(D2, Decl(subtypingTransitivity.ts, 6, 1))
  
  d.x = '';

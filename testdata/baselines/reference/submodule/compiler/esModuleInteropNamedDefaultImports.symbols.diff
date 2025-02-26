@@ -1,6 +1,6 @@
 --- old.esModuleInteropNamedDefaultImports.symbols
 +++ new.esModuleInteropNamedDefaultImports.symbols
-@@ -2,7 +2,7 @@
+@@= skipped -2, +2 lines =@@
  
  === mod.ts ===
  export default class Foo {}
@@ -9,7 +9,7 @@
  
  export class Bar {}
  >Bar : Symbol(Bar, Decl(mod.ts, 0, 27))
-@@ -12,12 +12,12 @@
+@@= skipped -10, +10 lines =@@
  >Foo : Symbol(Foo, Decl(idx.ts, 0, 6))
  
  import { default as Foo2 } from "./mod";

@@ -1,6 +1,6 @@
 --- old.contextualReturnTypeOfIIFE2.symbols
 +++ new.contextualReturnTypeOfIIFE2.symbols
-@@ -2,18 +2,16 @@
+@@= skipped -2, +2 lines =@@
  
  === contextualReturnTypeOfIIFE2.ts ===
  declare namespace app {
@@ -24,7 +24,7 @@
  
    const someFun = (arg: number) => {};
  >someFun : Symbol(someFun, Decl(contextualReturnTypeOfIIFE2.ts, 5, 7))
-@@ -25,11 +23,7 @@
+@@= skipped -23, +21 lines =@@
  })();
  
  app.foo.bar.someFun(1);

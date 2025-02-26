@@ -1,6 +1,6 @@
 --- old.stringPropertyAccess.symbols
 +++ new.stringPropertyAccess.symbols
-@@ -6,23 +6,23 @@
+@@= skipped -6, +6 lines =@@
  
  var a = x.charAt(0);
  >a : Symbol(a, Decl(stringPropertyAccess.ts, 1, 3))

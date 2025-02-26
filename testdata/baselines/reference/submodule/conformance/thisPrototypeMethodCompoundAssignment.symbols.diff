@@ -1,6 +1,6 @@
 --- old.thisPrototypeMethodCompoundAssignment.symbols
 +++ new.thisPrototypeMethodCompoundAssignment.symbols
-@@ -2,18 +2,18 @@
+@@= skipped -2, +2 lines =@@
  
  === thisPrototypeMethodCompoundAssignment.ts ===
  Element.prototype.remove ??= function () {

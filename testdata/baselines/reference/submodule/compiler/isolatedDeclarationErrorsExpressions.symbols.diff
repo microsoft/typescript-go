@@ -1,6 +1,6 @@
 --- old.isolatedDeclarationErrorsExpressions.symbols
 +++ new.isolatedDeclarationErrorsExpressions.symbols
-@@ -12,9 +12,9 @@
+@@= skipped -12, +12 lines =@@
  
  export const numberConstBad2 = Math.random();
  >numberConstBad2 : Symbol(numberConstBad2, Decl(isolatedDeclarationErrorsExpressions.ts, 3, 12))
@@ -12,7 +12,7 @@
  
  export const numberConstBad3 = numberConst;
  >numberConstBad3 : Symbol(numberConstBad3, Decl(isolatedDeclarationErrorsExpressions.ts, 4, 12))
-@@ -64,9 +64,9 @@
+@@= skipped -52, +52 lines =@@
  
  export let numberLetBad2 = Math.random();
  >numberLetBad2 : Symbol(numberLetBad2, Decl(isolatedDeclarationErrorsExpressions.ts, 23, 10))
@@ -24,7 +24,7 @@
  
  export let numberLetBad3 = numberLet;
  >numberLetBad3 : Symbol(numberLetBad3, Decl(isolatedDeclarationErrorsExpressions.ts, 24, 10))
-@@ -150,128 +150,128 @@
+@@= skipped -86, +86 lines =@@
  >Exported : Symbol(Exported, Decl(isolatedDeclarationErrorsExpressions.ts, 54, 54))
  
      public numberLet = 1;
@@ -192,7 +192,7 @@
  >const : Symbol(const)
  
  }
-@@ -287,9 +287,9 @@
+@@= skipped -137, +137 lines =@@
  export function numberParamBad2(p = Math.random()): void { }
  >numberParamBad2 : Symbol(numberParamBad2, Decl(isolatedDeclarationErrorsExpressions.ts, 108, 52))
  >p : Symbol(p, Decl(isolatedDeclarationErrorsExpressions.ts, 109, 32))

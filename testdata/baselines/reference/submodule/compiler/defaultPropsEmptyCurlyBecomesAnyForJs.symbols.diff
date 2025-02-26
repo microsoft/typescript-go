@@ -1,6 +1,6 @@
 --- old.defaultPropsEmptyCurlyBecomesAnyForJs.symbols
 +++ new.defaultPropsEmptyCurlyBecomesAnyForJs.symbols
-@@ -2,23 +2,23 @@
+@@= skipped -2, +2 lines =@@
  
  === library.d.ts ===
  export class Foo<T = {}, U = {}> {
@@ -35,7 +35,7 @@
  }
  
  === component.js ===
-@@ -30,7 +30,7 @@
+@@= skipped -28, +28 lines =@@
  >Foo : Symbol(Foo, Decl(component.js, 0, 8))
  
      member;
@@ -44,7 +44,7 @@
  }
  
  === typed_component.ts ===
-@@ -50,23 +50,23 @@
+@@= skipped -20, +20 lines =@@
  >undefined : Symbol(undefined)
  
          this.props.x;

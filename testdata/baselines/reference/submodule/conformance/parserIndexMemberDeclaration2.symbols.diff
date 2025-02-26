@@ -1,6 +1,6 @@
 --- old.parserIndexMemberDeclaration2.symbols
 +++ new.parserIndexMemberDeclaration2.symbols
-@@ -8,5 +8,5 @@
+@@= skipped -8, +8 lines =@@
  >a : Symbol(a, Decl(parserIndexMemberDeclaration2.ts, 1, 4))
  
     public v: number

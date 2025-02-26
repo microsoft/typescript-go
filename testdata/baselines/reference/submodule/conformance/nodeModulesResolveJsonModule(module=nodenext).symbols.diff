@@ -1,6 +1,6 @@
 --- old.nodeModulesResolveJsonModule(module=nodenext).symbols
 +++ new.nodeModulesResolveJsonModule(module=nodenext).symbols
-@@ -6,9 +6,7 @@
+@@= skipped -6, +6 lines =@@
  
  export const name = pkg.name;
  >name : Symbol(name, Decl(index.ts, 1, 12))
@@ -10,7 +10,7 @@
  
  import * as ns from "./package.json" with { type: "json" };
  >ns : Symbol(ns, Decl(index.ts, 2, 6))
-@@ -19,11 +17,7 @@
+@@= skipped -13, +11 lines =@@
  
  export const name2 = ns.default.name;
  >name2 : Symbol(name2, Decl(index.ts, 4, 12))
@@ -22,7 +22,7 @@
  
  === index.cts ===
  import pkg from "./package.json";
-@@ -31,9 +25,7 @@
+@@= skipped -12, +8 lines =@@
  
  export const name = pkg.name;
  >name : Symbol(name, Decl(index.cts, 1, 12))
@@ -32,7 +32,7 @@
  
  import * as ns from "./package.json";
  >ns : Symbol(ns, Decl(index.cts, 2, 6))
-@@ -44,11 +36,7 @@
+@@= skipped -13, +11 lines =@@
  
  export const name2 = ns.default.name;
  >name2 : Symbol(name2, Decl(index.cts, 4, 12))
@@ -44,7 +44,7 @@
  
  === index.mts ===
  import pkg from "./package.json" with { type: "json" };
-@@ -56,9 +44,7 @@
+@@= skipped -12, +8 lines =@@
  
  export const name = pkg.name;
  >name : Symbol(name, Decl(index.mts, 1, 12))
@@ -54,7 +54,7 @@
  
  import * as ns from "./package.json" with { type: "json" };
  >ns : Symbol(ns, Decl(index.mts, 2, 6))
-@@ -69,23 +55,5 @@
+@@= skipped -13, +11 lines =@@
  
  export const name2 = ns.default.name;
  >name2 : Symbol(name2, Decl(index.mts, 4, 12))

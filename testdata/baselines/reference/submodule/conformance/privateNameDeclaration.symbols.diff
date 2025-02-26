@@ -1,6 +1,6 @@
 --- old.privateNameDeclaration.symbols
 +++ new.privateNameDeclaration.symbols
-@@ -5,19 +5,19 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(privateNameDeclaration.ts, 0, 0))
  
      #foo: string;

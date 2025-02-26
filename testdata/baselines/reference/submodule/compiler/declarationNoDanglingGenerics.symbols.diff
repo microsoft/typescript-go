@@ -1,6 +1,6 @@
 --- old.declarationNoDanglingGenerics.symbols
 +++ new.declarationNoDanglingGenerics.symbols
-@@ -34,12 +34,12 @@
+@@= skipped -34, +34 lines =@@
  
    return class {
      static readonly THE_KIND: TKind = kind;
@@ -15,7 +15,7 @@
  >TKind : Symbol(TKind, Decl(declarationNoDanglingGenerics.ts, 9, 22))
  >kind : Symbol(kind, Decl(declarationNoDanglingGenerics.ts, 9, 44))
  
-@@ -50,35 +50,35 @@
+@@= skipped -16, +16 lines =@@
  >Kinds : Symbol(Kinds, Decl(declarationNoDanglingGenerics.ts, 16, 1))
  
    static readonly A = "A";

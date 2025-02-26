@@ -1,6 +1,6 @@
 --- old.tsxInferenceShouldNotYieldAnyOnUnions.symbols
 +++ new.tsxInferenceShouldNotYieldAnyOnUnions.symbols
-@@ -20,7 +20,7 @@
+@@= skipped -20, +20 lines =@@
  >T : Symbol(T, Decl(index.tsx, 6, 20))
  
      data: T;
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(index.tsx, 6, 20))
  }
  
-@@ -31,7 +31,7 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(index.tsx, 10, 27))
  
      convert: (t: T) => string;
@@ -18,7 +18,7 @@
  >t : Symbol(t, Decl(index.tsx, 11, 14))
  >T : Symbol(T, Decl(index.tsx, 10, 27))
  }
-@@ -43,7 +43,7 @@
+@@= skipped -12, +12 lines =@@
  >Props : Symbol(Props, Decl(index.tsx, 2, 1))
  >T : Symbol(T, Decl(index.tsx, 14, 29))
  >JSX : Symbol(JSX, Decl(index.tsx, 0, 0))

@@ -1,6 +1,6 @@
 --- old.overloadBindingAcrossDeclarationBoundaries2.symbols
 +++ new.overloadBindingAcrossDeclarationBoundaries2.symbols
-@@ -5,38 +5,38 @@
+@@= skipped -5, +5 lines =@@
  >Opt1 : Symbol(Opt1, Decl(overloadBindingAcrossDeclarationBoundaries_file0.ts, 0, 0))
  
      p?: any;
@@ -45,7 +45,7 @@
  >o : Symbol(o, Decl(overloadBindingAcrossDeclarationBoundaries_file0.ts, 15, 6))
  >Opt2 : Symbol(Opt2, Decl(overloadBindingAcrossDeclarationBoundaries_file0.ts, 2, 1))
  >Opt2 : Symbol(Opt2, Decl(overloadBindingAcrossDeclarationBoundaries_file0.ts, 2, 1))
-@@ -67,13 +67,13 @@
+@@= skipped -62, +62 lines =@@
  >A : Symbol(A, Decl(overloadBindingAcrossDeclarationBoundaries_file0.ts, 11, 1), Decl(overloadBindingAcrossDeclarationBoundaries_file1.ts, 0, 0))
  
      a(o: Opt3): Opt3;
@@ -61,7 +61,7 @@
  >o : Symbol(o, Decl(overloadBindingAcrossDeclarationBoundaries_file1.ts, 2, 6))
  >Opt4 : Symbol(Opt4, Decl(overloadBindingAcrossDeclarationBoundaries_file0.ts, 8, 1))
  >Opt4 : Symbol(Opt4, Decl(overloadBindingAcrossDeclarationBoundaries_file0.ts, 8, 1))
-@@ -106,9 +106,9 @@
+@@= skipped -39, +39 lines =@@
  // These should all be Opt3
  var a1 = a.a({});
  >a1 : Symbol(a1, Decl(overloadBindingAcrossDeclarationBoundaries_file1.ts, 11, 3), Decl(overloadBindingAcrossDeclarationBoundaries_file1.ts, 12, 3), Decl(overloadBindingAcrossDeclarationBoundaries_file1.ts, 13, 3))

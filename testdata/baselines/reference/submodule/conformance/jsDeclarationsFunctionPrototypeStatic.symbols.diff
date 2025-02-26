@@ -1,6 +1,6 @@
 --- old.jsDeclarationsFunctionPrototypeStatic.symbols
 +++ new.jsDeclarationsFunctionPrototypeStatic.symbols
-@@ -2,29 +2,25 @@
+@@= skipped -2, +2 lines =@@
  
  === source.js ===
  module.exports = MyClass;

@@ -1,6 +1,6 @@
 --- old.inheritedGenericCallSignature.symbols
 +++ new.inheritedGenericCallSignature.symbols
-@@ -25,7 +25,7 @@
+@@= skipped -25, +25 lines =@@
  >T : Symbol(T, Decl(inheritedGenericCallSignature.ts, 11, 13))
  
      b: T;
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(inheritedGenericCallSignature.ts, 11, 13))
  
  }
-@@ -45,7 +45,7 @@
+@@= skipped -20, +20 lines =@@
  >undefined : Symbol(undefined)
  
  y.length;  // should not error

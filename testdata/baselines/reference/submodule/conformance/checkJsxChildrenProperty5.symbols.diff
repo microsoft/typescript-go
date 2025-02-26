@@ -1,6 +1,6 @@
 --- old.checkJsxChildrenProperty5.symbols
 +++ new.checkJsxChildrenProperty5.symbols
-@@ -8,28 +8,26 @@
+@@= skipped -8, +8 lines =@@
  >Prop : Symbol(Prop, Decl(file.tsx, 0, 32))
  
      a: number,
@@ -35,7 +35,7 @@
      }
  }
  
-@@ -39,11 +37,9 @@
+@@= skipped -31, +29 lines =@@
  >Prop : Symbol(Prop, Decl(file.tsx, 0, 32))
  
      return <div>{p.b}</div>;

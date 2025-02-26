@@ -1,6 +1,6 @@
 --- old.parserRealSource5.symbols
 +++ new.parserRealSource5.symbols
-@@ -14,65 +14,65 @@
+@@= skipped -14, +14 lines =@@
  >PrintContext : Symbol(PrintContext, Decl(parserRealSource5.ts, 5, 19))
  
          public builder = "";
@@ -89,7 +89,7 @@
  
              if (indentString === undefined) {
  >indentString : Symbol(indentString, Decl(parserRealSource5.ts, 28, 15))
-@@ -84,68 +84,68 @@
+@@= skipped -70, +70 lines =@@
                  for (var i = 0; i < this.indentAmt; i++) {
  >i : Symbol(i, Decl(parserRealSource5.ts, 31, 24))
  >i : Symbol(i, Decl(parserRealSource5.ts, 31, 24))
@@ -182,7 +182,7 @@
          }
  
      }
-@@ -170,9 +170,9 @@
+@@= skipped -86, +86 lines =@@
  >pc : Symbol(pc, Decl(parserRealSource5.ts, 52, 11))
  
          pc.increaseIndent();
@@ -194,7 +194,7 @@
  
          return ast;
  >ast : Symbol(ast, Decl(parserRealSource5.ts, 51, 32))
-@@ -195,9 +195,9 @@
+@@= skipped -25, +25 lines =@@
  >walker : Symbol(walker, Decl(parserRealSource5.ts, 60, 55))
  
          pc.decreaseIndent();

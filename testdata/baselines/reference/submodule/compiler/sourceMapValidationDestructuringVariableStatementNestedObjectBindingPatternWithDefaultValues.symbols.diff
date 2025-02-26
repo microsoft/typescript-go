@@ -1,6 +1,6 @@
 --- old.sourceMapValidationDestructuringVariableStatementNestedObjectBindingPatternWithDefaultValues.symbols
 +++ new.sourceMapValidationDestructuringVariableStatementNestedObjectBindingPatternWithDefaultValues.symbols
-@@ -12,10 +12,10 @@
+@@= skipped -12, +12 lines =@@
  >Robot : Symbol(Robot, Decl(sourceMapValidationDestructuringVariableStatementNestedObjectBindingPatternWithDefaultValues.ts, 2, 1))
  
      name: string;
@@ -13,7 +13,7 @@
  
          primary?: string;
  >primary : Symbol(primary, Decl(sourceMapValidationDestructuringVariableStatementNestedObjectBindingPatternWithDefaultValues.ts, 5, 13))
-@@ -43,7 +43,7 @@
+@@= skipped -31, +31 lines =@@
  
  var {
      skills: {
@@ -22,7 +22,7 @@
  
          primary: primaryA = "noSkill",
  >primary : Symbol(primary, Decl(sourceMapValidationDestructuringVariableStatementNestedObjectBindingPatternWithDefaultValues.ts, 5, 13))
-@@ -62,11 +62,11 @@
+@@= skipped -19, +19 lines =@@
  
  var {
      name: nameB = "noNameSpecified",
@@ -36,7 +36,7 @@
  
          primary: primaryB = "noSkill",
  >primary : Symbol(primary, Decl(sourceMapValidationDestructuringVariableStatementNestedObjectBindingPatternWithDefaultValues.ts, 5, 13))
-@@ -85,11 +85,11 @@
+@@= skipped -23, +23 lines =@@
  
  var {
      name: nameC = "noNameSpecified",

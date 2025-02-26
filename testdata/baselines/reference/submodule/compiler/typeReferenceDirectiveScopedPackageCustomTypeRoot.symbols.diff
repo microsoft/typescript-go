@@ -1,6 +1,6 @@
 --- old.typeReferenceDirectiveScopedPackageCustomTypeRoot.symbols
 +++ new.typeReferenceDirectiveScopedPackageCustomTypeRoot.symbols
-@@ -2,27 +2,15 @@
+@@= skipped -2, +2 lines =@@
  
  === /a.ts ===
  typesCache;

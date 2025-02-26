@@ -1,6 +1,6 @@
 --- old.mappedTypes2.symbols
 +++ new.mappedTypes2.symbols
-@@ -156,26 +156,26 @@
+@@= skipped -156, +156 lines =@@
  >Point : Symbol(Point, Decl(mappedTypes2.ts, 28, 48))
  
      x: number;
@@ -33,7 +33,7 @@
  >Point : Symbol(Point, Decl(mappedTypes2.ts, 28, 48))
  }
  
-@@ -183,16 +183,16 @@
+@@= skipped -27, +27 lines =@@
  >PartialShape : Symbol(PartialShape, Decl(mappedTypes2.ts, 40, 1))
  
      name?: string;
@@ -54,7 +54,7 @@
  >Point : Symbol(Point, Decl(mappedTypes2.ts, 28, 48))
  }
  
-@@ -200,16 +200,16 @@
+@@= skipped -17, +17 lines =@@
  >ReadonlyShape : Symbol(ReadonlyShape, Decl(mappedTypes2.ts, 47, 1))
  
      readonly name: string;
@@ -75,7 +75,7 @@
  >Point : Symbol(Point, Decl(mappedTypes2.ts, 28, 48))
  }
  
-@@ -297,9 +297,9 @@
+@@= skipped -97, +97 lines =@@
  >mapObject : Symbol(mapObject, Decl(mappedTypes2.ts, 26, 78))
  >rec : Symbol(rec, Decl(mappedTypes2.ts, 78, 9))
  >s : Symbol(s, Decl(mappedTypes2.ts, 79, 34))

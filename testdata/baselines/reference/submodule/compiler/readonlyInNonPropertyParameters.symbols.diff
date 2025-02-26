@@ -1,6 +1,6 @@
 --- old.readonlyInNonPropertyParameters.symbols
 +++ new.readonlyInNonPropertyParameters.symbols
-@@ -6,11 +6,11 @@
+@@= skipped -6, +6 lines =@@
  >X : Symbol(X, Decl(readonlyInNonPropertyParameters.ts, 0, 0))
  
  	method(readonly x: number) {}

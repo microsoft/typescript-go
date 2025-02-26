@@ -1,6 +1,6 @@
 --- old.templateLiteralTypesPatterns.symbols
 +++ new.templateLiteralTypesPatterns.symbols
-@@ -468,21 +468,21 @@
+@@= skipped -468, +468 lines =@@
  >BB : Symbol(BB, Decl(templateLiteralTypesPatterns.ts, 193, 18))
  
      abstract get(id: Id<AA>): void;

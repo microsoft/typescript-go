@@ -1,6 +1,6 @@
 --- old.exportDefaultClassWithStaticPropertyAssignmentsInES6.symbols
 +++ new.exportDefaultClassWithStaticPropertyAssignmentsInES6.symbols
-@@ -3,5 +3,5 @@
+@@= skipped -3, +3 lines =@@
  === exportDefaultClassWithStaticPropertyAssignmentsInES6.ts ===
  export default class {
      static z: string = "Foo";

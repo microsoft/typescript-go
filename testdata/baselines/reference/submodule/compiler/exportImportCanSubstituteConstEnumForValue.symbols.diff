@@ -1,6 +1,6 @@
 --- old.exportImportCanSubstituteConstEnumForValue.symbols
 +++ new.exportImportCanSubstituteConstEnumForValue.symbols
-@@ -3,32 +3,32 @@
+@@= skipped -3, +3 lines =@@
  === exportImportCanSubstituteConstEnumForValue.ts ===
  module MsPortalFx.ViewModels.Dialogs {
  >MsPortalFx : Symbol(MsPortalFx, Decl(exportImportCanSubstituteConstEnumForValue.ts, 0, 0), Decl(exportImportCanSubstituteConstEnumForValue.ts, 27, 1))
@@ -41,7 +41,7 @@
      }
  
      export interface DialogResultCallback {
-@@ -37,9 +37,9 @@
+@@= skipped -34, +34 lines =@@
          (result: MsPortalFx.ViewModels.Dialogs.DialogResult): void;
  >result : Symbol(result, Decl(exportImportCanSubstituteConstEnumForValue.ts, 13, 9))
  >MsPortalFx : Symbol(MsPortalFx, Decl(exportImportCanSubstituteConstEnumForValue.ts, 0, 0), Decl(exportImportCanSubstituteConstEnumForValue.ts, 27, 1))
@@ -54,7 +54,7 @@
      }
  
      export function someExportedFunction() {
-@@ -50,53 +50,47 @@
+@@= skipped -13, +13 lines =@@
  >MessageBoxButtons : Symbol(MessageBoxButtons, Decl(exportImportCanSubstituteConstEnumForValue.ts, 17, 5))
  
          AbortRetryIgnore,
@@ -115,7 +115,7 @@
  
      export class SomeUsagesOfTheseConsts {
  >SomeUsagesOfTheseConsts : Symbol(SomeUsagesOfTheseConsts, Decl(exportImportCanSubstituteConstEnumForValue.ts, 45, 58))
-@@ -105,26 +99,22 @@
+@@= skipped -55, +49 lines =@@
              // these do get replaced by the const value
              const value1 = ReExportedEnum.Cancel;
  >value1 : Symbol(value1, Decl(exportImportCanSubstituteConstEnumForValue.ts, 50, 17))

@@ -1,6 +1,6 @@
 --- old.namespaceNotMergedWithFunctionDefaultExport.symbols
 +++ new.namespaceNotMergedWithFunctionDefaultExport.symbols
-@@ -2,7 +2,7 @@
+@@= skipped -2, +2 lines =@@
  
  === replace-in-file/types/index.d.ts ===
  declare module 'replace-in-file' {

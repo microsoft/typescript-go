@@ -1,6 +1,6 @@
 --- old.discriminantPropertyCheck.symbols
 +++ new.discriminantPropertyCheck.symbols
-@@ -10,7 +10,7 @@
+@@= skipped -10, +10 lines =@@
  >Base : Symbol(Base, Decl(discriminantPropertyCheck.ts, 0, 26))
  
      bar: boolean;
@@ -9,7 +9,7 @@
  }
  
  interface Item1 extends Base {
-@@ -18,16 +18,16 @@
+@@= skipped -8, +8 lines =@@
  >Base : Symbol(Base, Decl(discriminantPropertyCheck.ts, 0, 26))
  
      kind: "A";
@@ -30,7 +30,7 @@
  }
  
  interface Item2 extends Base {
-@@ -35,16 +35,16 @@
+@@= skipped -17, +17 lines =@@
  >Base : Symbol(Base, Decl(discriminantPropertyCheck.ts, 0, 26))
  
      kind: "B";
@@ -51,7 +51,7 @@
  }
  
  function goo1(x: Item) {
-@@ -56,17 +56,17 @@
+@@= skipped -21, +21 lines =@@
  >x.kind : Symbol(kind, Decl(discriminantPropertyCheck.ts, 6, 30), Decl(discriminantPropertyCheck.ts, 13, 30))
  >x : Symbol(x, Decl(discriminantPropertyCheck.ts, 20, 14))
  >kind : Symbol(kind, Decl(discriminantPropertyCheck.ts, 6, 30), Decl(discriminantPropertyCheck.ts, 13, 30))
@@ -75,7 +75,7 @@
      }
  }
  
-@@ -85,11 +85,11 @@
+@@= skipped -29, +29 lines =@@
  >kind : Symbol(kind, Decl(discriminantPropertyCheck.ts, 6, 30), Decl(discriminantPropertyCheck.ts, 13, 30))
  
          x.foo.length;  // Error, intervening discriminant guard
@@ -91,7 +91,7 @@
      }
  }
  
-@@ -99,20 +99,20 @@
+@@= skipped -14, +14 lines =@@
  >Item : Symbol(Item, Decl(discriminantPropertyCheck.ts, 0, 0))
  
      if (x.bar && x.foo !== undefined) {
@@ -116,7 +116,7 @@
      }
  }
  
-@@ -126,16 +126,16 @@
+@@= skipped -27, +27 lines =@@
  >x : Symbol(x, Decl(discriminantPropertyCheck.ts, 38, 14))
  >foo : Symbol(foo, Decl(discriminantPropertyCheck.ts, 7, 14), Decl(discriminantPropertyCheck.ts, 14, 14))
  >undefined : Symbol(undefined)
@@ -137,7 +137,7 @@
      }
  }
  
-@@ -154,11 +154,11 @@
+@@= skipped -28, +28 lines =@@
  >undefined : Symbol(undefined)
  
          x.foo.length;
@@ -151,7 +151,7 @@
      }
  }
  
-@@ -177,11 +177,11 @@
+@@= skipped -23, +23 lines =@@
  >baz : Symbol(baz, Decl(discriminantPropertyCheck.ts, 8, 28), Decl(discriminantPropertyCheck.ts, 15, 28))
  
          x.foo.length;
@@ -165,7 +165,7 @@
      }
  }
  
-@@ -194,17 +194,17 @@
+@@= skipped -17, +17 lines =@@
  >x.qux : Symbol(qux, Decl(discriminantPropertyCheck.ts, 9, 17), Decl(discriminantPropertyCheck.ts, 16, 17))
  >x : Symbol(x, Decl(discriminantPropertyCheck.ts, 56, 14))
  >qux : Symbol(qux, Decl(discriminantPropertyCheck.ts, 9, 17), Decl(discriminantPropertyCheck.ts, 16, 17))
@@ -189,7 +189,7 @@
      }
  }
  
-@@ -223,11 +223,11 @@
+@@= skipped -29, +29 lines =@@
  >qux : Symbol(qux, Decl(discriminantPropertyCheck.ts, 9, 17), Decl(discriminantPropertyCheck.ts, 16, 17))
  
          x.foo.length;  // Error, intervening discriminant guard
@@ -205,7 +205,7 @@
      }
  }
  
-@@ -235,8 +235,8 @@
+@@= skipped -12, +12 lines =@@
  
  enum Types { Str = 1, Num = 2 }
  >Types : Symbol(Types, Decl(discriminantPropertyCheck.ts, 66, 1))
@@ -216,7 +216,7 @@
  
  type Instance = StrType | NumType;
  >Instance : Symbol(Instance, Decl(discriminantPropertyCheck.ts, 70, 31))
-@@ -247,27 +247,27 @@
+@@= skipped -12, +12 lines =@@
  >StrType : Symbol(StrType, Decl(discriminantPropertyCheck.ts, 72, 34))
  
      type: Types.Str;
@@ -251,7 +251,7 @@
  }
  
  function func2(inst: Instance) {
-@@ -277,35 +277,35 @@
+@@= skipped -30, +30 lines =@@
  
      while (true) {
          switch (inst.type) {
@@ -301,7 +301,7 @@
  
                  break;
              }
-@@ -324,20 +324,20 @@
+@@= skipped -47, +47 lines =@@
  >A : Symbol(A, Decl(discriminantPropertyCheck.ts, 102, 47))
  
    a?: string;
@@ -326,7 +326,7 @@
  }
  
  type U = A | B;
-@@ -391,7 +391,7 @@
+@@= skipped -67, +67 lines =@@
  >AdditiveObj : Symbol(AdditiveObj, Decl(discriminantPropertyCheck.ts, 125, 32))
  
      key: Additive
@@ -335,7 +335,7 @@
  >Additive : Symbol(Additive, Decl(discriminantPropertyCheck.ts, 120, 26))
  }
  
-@@ -399,7 +399,7 @@
+@@= skipped -8, +8 lines =@@
  >MultiplicativeObj : Symbol(MultiplicativeObj, Decl(discriminantPropertyCheck.ts, 129, 1))
  
      key: Multiplicative
@@ -344,7 +344,7 @@
  >Multiplicative : Symbol(Multiplicative, Decl(discriminantPropertyCheck.ts, 124, 26))
  }
  
-@@ -421,9 +421,9 @@
+@@= skipped -22, +22 lines =@@
          case '+': {
              onlyPlus(obj.key);
  >onlyPlus : Symbol(onlyPlus, Decl(discriminantPropertyCheck.ts, 144, 1))
@@ -356,7 +356,7 @@
  
              return;
          }
-@@ -448,10 +448,10 @@
+@@= skipped -27, +27 lines =@@
  >BarEnum : Symbol(BarEnum, Decl(discriminantPropertyCheck.ts, 152, 44))
  
      bar1 = 1,
@@ -369,7 +369,7 @@
  }
  
  type UnionOfBar = TypeBar1 | TypeBar2;
-@@ -463,13 +463,13 @@
+@@= skipped -15, +15 lines =@@
  >TypeBar1 : Symbol(TypeBar1, Decl(discriminantPropertyCheck.ts, 159, 38))
  >type : Symbol(type, Decl(discriminantPropertyCheck.ts, 160, 17))
  >BarEnum : Symbol(BarEnum, Decl(discriminantPropertyCheck.ts, 152, 44))
@@ -385,7 +385,7 @@
  
  function func3(value: Partial<UnionOfBar>) {
  >func3 : Symbol(func3, Decl(discriminantPropertyCheck.ts, 161, 39))
-@@ -489,15 +489,15 @@
+@@= skipped -26, +26 lines =@@
  >type : Symbol(type, Decl(discriminantPropertyCheck.ts, 160, 17), Decl(discriminantPropertyCheck.ts, 161, 17))
  
              case BarEnum.bar1:
@@ -405,7 +405,7 @@
  
                  break;
              default:
-@@ -516,20 +516,20 @@
+@@= skipped -27, +27 lines =@@
  >TypeA : Symbol(TypeA, Decl(discriminantPropertyCheck.ts, 174, 1))
  
      Name: "TypeA";
@@ -430,7 +430,7 @@
  }
  
  type Type = TypeA | TypeB;
-@@ -555,9 +555,9 @@
+@@= skipped -39, +39 lines =@@
  
          const value1 = data.Value1;
  >value1 : Symbol(value1, Decl(discriminantPropertyCheck.ts, 194, 13))
@@ -442,7 +442,7 @@
      }
  }
  
-@@ -576,9 +576,9 @@
+@@= skipped -21, +21 lines =@@
  
              const value1 = data.Value1;
  >value1 : Symbol(value1, Decl(discriminantPropertyCheck.ts, 201, 17))
@@ -454,7 +454,7 @@
          }
      }
  }
-@@ -622,9 +622,9 @@
+@@= skipped -46, +46 lines =@@
  >ids : Symbol(ids, Decl(discriminantPropertyCheck.ts, 222, 50))
  
      ids.forEach(id => {
@@ -466,7 +466,7 @@
  >id : Symbol(id, Decl(discriminantPropertyCheck.ts, 223, 16))
  
          let test;
-@@ -641,9 +641,9 @@
+@@= skipped -19, +19 lines =@@
  >type : Symbol(type, Decl(discriminantPropertyCheck.ts, 208, 14), Decl(discriminantPropertyCheck.ts, 213, 14))
  
              console.log(test.bananas);
@@ -478,7 +478,7 @@
  >test.bananas : Symbol(bananas, Decl(discriminantPropertyCheck.ts, 209, 18))
  >test : Symbol(test, Decl(discriminantPropertyCheck.ts, 224, 11))
  >bananas : Symbol(bananas, Decl(discriminantPropertyCheck.ts, 209, 18))
-@@ -655,9 +655,9 @@
+@@= skipped -14, +14 lines =@@
  
              case 'testA': {
                  console.log(test.bananas);

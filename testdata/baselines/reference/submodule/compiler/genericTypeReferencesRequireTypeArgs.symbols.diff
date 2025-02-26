@@ -1,6 +1,6 @@
 --- old.genericTypeReferencesRequireTypeArgs.symbols
 +++ new.genericTypeReferencesRequireTypeArgs.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(genericTypeReferencesRequireTypeArgs.ts, 0, 8))
  
     foo(): T { return null }
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(genericTypeReferencesRequireTypeArgs.ts, 0, 8))
  }
  interface I<T> {
-@@ -14,7 +14,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(genericTypeReferencesRequireTypeArgs.ts, 3, 12))
  
     bar(): T;

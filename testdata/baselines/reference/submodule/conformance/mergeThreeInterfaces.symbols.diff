@@ -1,6 +1,6 @@
 --- old.mergeThreeInterfaces.symbols
 +++ new.mergeThreeInterfaces.symbols
-@@ -8,21 +8,21 @@
+@@= skipped -8, +8 lines =@@
  >A : Symbol(A, Decl(mergeThreeInterfaces.ts, 0, 0), Decl(mergeThreeInterfaces.ts, 5, 1), Decl(mergeThreeInterfaces.ts, 9, 1))
  
      foo: string;
@@ -25,7 +25,7 @@
  }
  
  var a: A;
-@@ -31,21 +31,21 @@
+@@= skipped -23, +23 lines =@@
  
  var r1 = a.foo
  >r1 : Symbol(r1, Decl(mergeThreeInterfaces.ts, 16, 3))
@@ -53,7 +53,7 @@
  
  // basic generic case
  interface B<T> {
-@@ -53,7 +53,7 @@
+@@= skipped -22, +22 lines =@@
  >T : Symbol(T, Decl(mergeThreeInterfaces.ts, 21, 12), Decl(mergeThreeInterfaces.ts, 25, 12), Decl(mergeThreeInterfaces.ts, 29, 12))
  
      foo: T;
@@ -62,7 +62,7 @@
  >T : Symbol(T, Decl(mergeThreeInterfaces.ts, 21, 12), Decl(mergeThreeInterfaces.ts, 25, 12), Decl(mergeThreeInterfaces.ts, 29, 12))
  }
  
-@@ -62,7 +62,7 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(mergeThreeInterfaces.ts, 21, 12), Decl(mergeThreeInterfaces.ts, 25, 12), Decl(mergeThreeInterfaces.ts, 29, 12))
  
      bar: T;
@@ -71,7 +71,7 @@
  >T : Symbol(T, Decl(mergeThreeInterfaces.ts, 21, 12), Decl(mergeThreeInterfaces.ts, 25, 12), Decl(mergeThreeInterfaces.ts, 29, 12))
  }
  
-@@ -71,7 +71,7 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(mergeThreeInterfaces.ts, 21, 12), Decl(mergeThreeInterfaces.ts, 25, 12), Decl(mergeThreeInterfaces.ts, 29, 12))
  
      baz: T;
@@ -80,7 +80,7 @@
  >T : Symbol(T, Decl(mergeThreeInterfaces.ts, 21, 12), Decl(mergeThreeInterfaces.ts, 25, 12), Decl(mergeThreeInterfaces.ts, 29, 12))
  }
  
-@@ -81,21 +81,21 @@
+@@= skipped -10, +10 lines =@@
  
  var r4 = b.foo
  >r4 : Symbol(r4, Decl(mergeThreeInterfaces.ts, 34, 3))
@@ -108,7 +108,7 @@
  
  // basic non-generic and generic case inside a module
  module M {
-@@ -105,21 +105,21 @@
+@@= skipped -24, +24 lines =@@
  >A : Symbol(A, Decl(mergeThreeInterfaces.ts, 39, 10), Decl(mergeThreeInterfaces.ts, 42, 5), Decl(mergeThreeInterfaces.ts, 46, 5))
  
          foo: string;
@@ -133,7 +133,7 @@
      }
  
      var a: A;
-@@ -128,30 +128,30 @@
+@@= skipped -23, +23 lines =@@
  
      var r1 = a.foo;
  >r1 : Symbol(r1, Decl(mergeThreeInterfaces.ts, 53, 7))
@@ -171,7 +171,7 @@
  >T : Symbol(T, Decl(mergeThreeInterfaces.ts, 59, 16), Decl(mergeThreeInterfaces.ts, 63, 16), Decl(mergeThreeInterfaces.ts, 67, 16))
      }
  
-@@ -160,7 +160,7 @@
+@@= skipped -32, +32 lines =@@
  >T : Symbol(T, Decl(mergeThreeInterfaces.ts, 59, 16), Decl(mergeThreeInterfaces.ts, 63, 16), Decl(mergeThreeInterfaces.ts, 67, 16))
  
          bar: T;
@@ -180,7 +180,7 @@
  >T : Symbol(T, Decl(mergeThreeInterfaces.ts, 59, 16), Decl(mergeThreeInterfaces.ts, 63, 16), Decl(mergeThreeInterfaces.ts, 67, 16))
      }
  
-@@ -169,7 +169,7 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(mergeThreeInterfaces.ts, 59, 16), Decl(mergeThreeInterfaces.ts, 63, 16), Decl(mergeThreeInterfaces.ts, 67, 16))
  
          baz: T;
@@ -189,7 +189,7 @@
  >T : Symbol(T, Decl(mergeThreeInterfaces.ts, 59, 16), Decl(mergeThreeInterfaces.ts, 63, 16), Decl(mergeThreeInterfaces.ts, 67, 16))
      }
  
-@@ -179,21 +179,21 @@
+@@= skipped -10, +10 lines =@@
  
      var r4 = b.foo
  >r4 : Symbol(r4, Decl(mergeThreeInterfaces.ts, 72, 7))

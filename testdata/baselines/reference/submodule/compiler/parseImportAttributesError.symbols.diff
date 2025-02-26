@@ -1,6 +1,6 @@
 --- old.parseImportAttributesError.symbols
 +++ new.parseImportAttributesError.symbols
-@@ -6,7 +6,6 @@
+@@= skipped -6, +6 lines =@@
  
      & import("pkg", { with: {1234, "resolution-mode": "require"} }).RequireInterface
      & import("pkg", { with: {1234, "resolution-mode": "import"} }).ImportInterface;
@@ -8,7 +8,7 @@
  >with : Symbol(with, Decl(index.ts, 2, 21))
  >1234 : Symbol(1234, Decl(index.ts, 2, 29))
  >"resolution-mode" : Symbol("resolution-mode", Decl(index.ts, 2, 34))
-@@ -17,10 +16,6 @@
+@@= skipped -11, +10 lines =@@
  export const b = (null as any as import("pkg", { with: {1234, "resolution-mode": "import"} }).ImportInterface);
  >b : Symbol(b, Decl(index.ts, 5, 12))
  

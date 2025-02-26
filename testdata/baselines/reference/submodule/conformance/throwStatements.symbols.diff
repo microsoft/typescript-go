@@ -1,6 +1,6 @@
 --- old.throwStatements.symbols
 +++ new.throwStatements.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >I : Symbol(I, Decl(throwStatements.ts, 0, 0))
  
      id: number;
@@ -9,7 +9,7 @@
  }
  
  class C implements I {
-@@ -15,7 +15,7 @@
+@@= skipped -8, +8 lines =@@
  >I : Symbol(I, Decl(throwStatements.ts, 0, 0))
  
      id: number;
@@ -18,7 +18,7 @@
  }
  
  class D<T>{
-@@ -23,16 +23,16 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(throwStatements.ts, 10, 8))
  
      source: T;
@@ -38,7 +38,7 @@
  >D : Symbol(D, Decl(throwStatements.ts, 8, 1))
  >D : Symbol(D, Decl(throwStatements.ts, 8, 1))
  >T : Symbol(T, Decl(throwStatements.ts, 10, 8))
-@@ -49,15 +49,15 @@
+@@= skipped -26, +26 lines =@@
  >A : Symbol(A, Decl(throwStatements.ts, 18, 10))
  
          name: string;
@@ -57,7 +57,7 @@
  }
  
  var aNumber = 9.9;
-@@ -159,18 +159,18 @@
+@@= skipped -110, +110 lines =@@
  
  var aClassInModule = new M.A();
  >aClassInModule : Symbol(aClassInModule, Decl(throwStatements.ts, 59, 3))

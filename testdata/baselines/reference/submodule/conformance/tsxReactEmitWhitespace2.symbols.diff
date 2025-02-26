@@ -1,6 +1,6 @@
 --- old.tsxReactEmitWhitespace2.symbols
 +++ new.tsxReactEmitWhitespace2.symbols
-@@ -19,22 +19,9 @@
+@@= skipped -19, +19 lines =@@
  
  // Emit ' word' in the last string
  <div>word <code>code</code> word</div>;

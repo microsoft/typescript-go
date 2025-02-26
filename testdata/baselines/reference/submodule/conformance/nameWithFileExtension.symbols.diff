@@ -1,6 +1,6 @@
 --- old.nameWithFileExtension.symbols
 +++ new.nameWithFileExtension.symbols
-@@ -6,9 +6,9 @@
+@@= skipped -6, +6 lines =@@
  
  var x = foo.foo + 42;
  >x : Symbol(x, Decl(foo_1.ts, 1, 3))

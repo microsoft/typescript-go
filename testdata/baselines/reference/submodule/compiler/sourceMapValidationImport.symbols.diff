@@ -1,6 +1,6 @@
 --- old.sourceMapValidationImport.symbols
 +++ new.sourceMapValidationImport.symbols
-@@ -11,12 +11,12 @@
+@@= skipped -11, +11 lines =@@
  import a = m.c;
  >a : Symbol(a, Decl(sourceMapValidationImport.ts, 3, 1))
  >m : Symbol(m, Decl(sourceMapValidationImport.ts, 0, 0))

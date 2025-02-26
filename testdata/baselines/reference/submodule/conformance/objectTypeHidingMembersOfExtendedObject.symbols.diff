@@ -1,6 +1,6 @@
 --- old.objectTypeHidingMembersOfExtendedObject.symbols
 +++ new.objectTypeHidingMembersOfExtendedObject.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(objectTypeHidingMembersOfExtendedObject.ts, 0, 0))
  
      foo: string;
@@ -9,7 +9,7 @@
  }
  
  class B extends A {
-@@ -13,14 +13,14 @@
+@@= skipped -8, +8 lines =@@
  >A : Symbol(A, Decl(objectTypeHidingMembersOfExtendedObject.ts, 0, 0))
  
      bar: string;
@@ -26,7 +26,7 @@
  >A : Symbol(A, Decl(objectTypeHidingMembersOfExtendedObject.ts, 0, 0))
  
      [x: string]: Object;
-@@ -32,10 +32,10 @@
+@@= skipped -19, +19 lines =@@
  >C : Symbol(C, Decl(objectTypeHidingMembersOfExtendedObject.ts, 11, 1))
  
      valueOf() { }
@@ -39,7 +39,7 @@
  >B : Symbol(B, Decl(objectTypeHidingMembersOfExtendedObject.ts, 2, 1))
  
      [x: string]: any;
-@@ -48,16 +48,16 @@
+@@= skipped -16, +16 lines =@@
  
  var r1: void = c.valueOf();
  >r1 : Symbol(r1, Decl(objectTypeHidingMembersOfExtendedObject.ts, 20, 3))
@@ -60,7 +60,7 @@
  
  var r1c = r1b['hm']; // should be 'Object'
  >r1c : Symbol(r1c, Decl(objectTypeHidingMembersOfExtendedObject.ts, 22, 3))
-@@ -71,10 +71,10 @@
+@@= skipped -23, +23 lines =@@
  >I : Symbol(I, Decl(objectTypeHidingMembersOfExtendedObject.ts, 23, 18))
  
      valueOf(): void;
@@ -73,7 +73,7 @@
  >B : Symbol(B, Decl(objectTypeHidingMembersOfExtendedObject.ts, 2, 1))
  
      [x: string]: any;
-@@ -87,16 +87,16 @@
+@@= skipped -16, +16 lines =@@
  
  var r2: void = i.valueOf();
  >r2 : Symbol(r2, Decl(objectTypeHidingMembersOfExtendedObject.ts, 32, 3))

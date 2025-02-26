@@ -1,6 +1,6 @@
 --- old.detachedCommentAtStartOfFunctionBody1.symbols
 +++ new.detachedCommentAtStartOfFunctionBody1.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >TestFile : Symbol(TestFile, Decl(detachedCommentAtStartOfFunctionBody1.ts, 0, 0))
  
      foo(message: string): () => string {

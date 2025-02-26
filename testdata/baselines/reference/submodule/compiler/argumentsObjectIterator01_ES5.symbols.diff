@@ -1,6 +1,6 @@
 --- old.argumentsObjectIterator01_ES5.symbols
 +++ new.argumentsObjectIterator01_ES5.symbols
-@@ -15,9 +15,9 @@
+@@= skipped -15, +15 lines =@@
  >arguments : Symbol(arguments)
  
          result.push(arg + arg);

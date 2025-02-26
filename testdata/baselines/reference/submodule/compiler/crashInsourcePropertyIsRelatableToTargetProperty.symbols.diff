@@ -1,6 +1,6 @@
 --- old.crashInsourcePropertyIsRelatableToTargetProperty.symbols
 +++ new.crashInsourcePropertyIsRelatableToTargetProperty.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(crashInsourcePropertyIsRelatableToTargetProperty.ts, 0, 0))
  
      private x = 1;

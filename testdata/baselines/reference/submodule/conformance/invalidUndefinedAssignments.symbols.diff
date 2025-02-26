@@ -1,6 +1,6 @@
 --- old.invalidUndefinedAssignments.symbols
 +++ new.invalidUndefinedAssignments.symbols
-@@ -7,21 +7,21 @@
+@@= skipped -7, +7 lines =@@
  
  enum E { A }
  >E : Symbol(E, Decl(invalidUndefinedAssignments.ts, 0, 24))
@@ -26,7 +26,7 @@
  
  var f: C;
  >f : Symbol(f, Decl(invalidUndefinedAssignments.ts, 7, 3))
-@@ -33,7 +33,7 @@
+@@= skipped -26, +26 lines =@@
  
  interface I { foo: string }
  >I : Symbol(I, Decl(invalidUndefinedAssignments.ts, 8, 6))

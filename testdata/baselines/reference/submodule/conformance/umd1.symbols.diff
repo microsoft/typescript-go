@@ -1,6 +1,6 @@
 --- old.umd1.symbols
 +++ new.umd1.symbols
-@@ -3,20 +3,20 @@
+@@= skipped -3, +3 lines =@@
  === a.ts ===
  /// <reference path="foo.d.ts" />
  Foo.fn();
@@ -26,7 +26,7 @@
  
  === foo.d.ts ===
  export var x: number;
-@@ -27,7 +27,7 @@
+@@= skipped -24, +24 lines =@@
  
  export interface Thing { n: typeof x }
  >Thing : Symbol(Thing, Decl(foo.d.ts, 1, 27))

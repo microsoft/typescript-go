@@ -1,6 +1,6 @@
 --- old.es6ExportEqualsInterop.symbols
 +++ new.es6ExportEqualsInterop.symbols
-@@ -36,45 +36,45 @@
+@@= skipped -36, +36 lines =@@
  
  z1.a;
  z2.a;
@@ -60,7 +60,7 @@
  
  // default import
  import x1 from "interface";
-@@ -140,82 +140,82 @@
+@@= skipped -104, +104 lines =@@
  
  y1.a;
  y2.a;
@@ -164,7 +164,7 @@
  >a0 : Symbol(a0, Decl(main.ts, 70, 8))
  
  a1;
-@@ -253,37 +253,37 @@
+@@= skipped -113, +113 lines =@@
  >a1 : Symbol(a1, Decl(main.ts, 84, 8))
  
  export { a as a2 } from "variable";
@@ -209,7 +209,7 @@
  >a0 : Symbol(a0, Decl(main.ts, 93, 8))
  
  // export-star
-@@ -306,10 +306,10 @@
+@@= skipped -53, +53 lines =@@
  >Foo : Symbol(Foo, Decl(modules.d.ts, 0, 28))
  
          x: number;
@@ -222,7 +222,7 @@
      }
      export = Foo;
  >Foo : Symbol(Foo, Decl(modules.d.ts, 0, 28))
-@@ -338,10 +338,10 @@
+@@= skipped -32, +32 lines =@@
  >Foo : Symbol(Foo, Decl(modules.d.ts, 16, 37), Decl(modules.d.ts, 21, 7))
  
          x: number;
@@ -235,7 +235,7 @@
      }
      var Foo: {
  >Foo : Symbol(Foo, Decl(modules.d.ts, 16, 37), Decl(modules.d.ts, 21, 7))
-@@ -379,10 +379,10 @@
+@@= skipped -41, +41 lines =@@
  >Foo : Symbol(Foo, Decl(modules.d.ts, 36, 35), Decl(modules.d.ts, 40, 5))
  
          x: number;
@@ -248,7 +248,7 @@
      }
      module Foo {
  >Foo : Symbol(Foo, Decl(modules.d.ts, 36, 35), Decl(modules.d.ts, 40, 5))
-@@ -407,10 +407,10 @@
+@@= skipped -28, +28 lines =@@
  >Bar : Symbol(Bar, Decl(modules.d.ts, 49, 16))
  
              x: number;
@@ -261,7 +261,7 @@
          }
      }
      var Foo: {
-@@ -462,10 +462,10 @@
+@@= skipped -55, +55 lines =@@
  >Foo : Symbol(Foo, Decl(modules.d.ts, 76, 24))
  
          x: number;
@@ -274,7 +274,7 @@
      }
      export = Foo;
  >Foo : Symbol(Foo, Decl(modules.d.ts, 76, 24))
-@@ -478,10 +478,10 @@
+@@= skipped -16, +16 lines =@@
  >Foo : Symbol(Foo, Decl(modules.d.ts, 84, 31), Decl(modules.d.ts, 88, 5))
  
          x: number;

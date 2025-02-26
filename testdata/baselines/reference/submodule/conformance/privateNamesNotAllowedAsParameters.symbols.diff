@@ -1,6 +1,6 @@
 --- old.privateNamesNotAllowedAsParameters.symbols
 +++ new.privateNamesNotAllowedAsParameters.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(privateNamesNotAllowedAsParameters.ts, 0, 0))
  
      setFoo(#foo: string) {}

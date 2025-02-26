@@ -1,6 +1,6 @@
 --- old.divergentAccessors1.symbols
 +++ new.divergentAccessors1.symbols
-@@ -8,10 +8,10 @@
+@@= skipped -8, +8 lines =@@
  >IHasGetSet : Symbol(IHasGetSet, Decl(divergentAccessors1.ts, 2, 1))
  
          get foo(): number;
@@ -13,7 +13,7 @@
  >v : Symbol(v, Decl(divergentAccessors1.ts, 5, 16))
      }
      
-@@ -20,15 +20,15 @@
+@@= skipped -12, +12 lines =@@
  >IHasGetSet : Symbol(IHasGetSet, Decl(divergentAccessors1.ts, 2, 1))
  
      ihgs.foo = "32";

@@ -1,6 +1,6 @@
 --- old.assignmentCompatability40.symbols
 +++ new.assignmentCompatability40.symbols
-@@ -8,9 +8,9 @@
+@@= skipped -8, +8 lines =@@
  >interfaceWithPublicAndOptional : Symbol(interfaceWithPublicAndOptional, Decl(assignmentCompatability40.ts, 0, 18))
  >T : Symbol(T, Decl(assignmentCompatability40.ts, 1, 52))
  >U : Symbol(U, Decl(assignmentCompatability40.ts, 1, 54))
@@ -12,7 +12,7 @@
  >U : Symbol(U, Decl(assignmentCompatability40.ts, 1, 54))
  >obj4 : Symbol(obj4, Decl(assignmentCompatability40.ts, 1, 83))
  >interfaceWithPublicAndOptional : Symbol(interfaceWithPublicAndOptional, Decl(assignmentCompatability40.ts, 0, 18))
-@@ -26,7 +26,7 @@
+@@= skipped -18, +18 lines =@@
      export           class classWithPrivate<T> { constructor(private one: T) {} }                       var x5 = new classWithPrivate(1);;
  >classWithPrivate : Symbol(classWithPrivate, Decl(assignmentCompatability40.ts, 4, 18))
  >T : Symbol(T, Decl(assignmentCompatability40.ts, 5, 44))
@@ -21,7 +21,7 @@
  >T : Symbol(T, Decl(assignmentCompatability40.ts, 5, 44))
  >x5 : Symbol(x5, Decl(assignmentCompatability40.ts, 5, 107))
  >classWithPrivate : Symbol(classWithPrivate, Decl(assignmentCompatability40.ts, 4, 18))
-@@ -36,10 +36,10 @@
+@@= skipped -10, +10 lines =@@
  >x5 : Symbol(x5, Decl(assignmentCompatability40.ts, 5, 107))
  }
  __test2__.__val__x5 = __test1__.__val__obj4

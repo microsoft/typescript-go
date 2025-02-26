@@ -1,6 +1,6 @@
 --- old.contextualTyping14.symbols
 +++ new.contextualTyping14.symbols
-@@ -3,7 +3,7 @@
+@@= skipped -3, +3 lines =@@
  === contextualTyping14.ts ===
  class foo { public bar:(a:number)=>number = function(a){return a}; }
  >foo : Symbol(foo, Decl(contextualTyping14.ts, 0, 0))

@@ -1,6 +1,6 @@
 --- old.exportAsNamespace4(module=esnext).symbols
 +++ new.exportAsNamespace4(module=esnext).symbols
-@@ -26,22 +26,22 @@
+@@= skipped -26, +26 lines =@@
  >foo1 : Symbol(foo1, Decl(2.ts, 1, 6))
  
  foo.a;

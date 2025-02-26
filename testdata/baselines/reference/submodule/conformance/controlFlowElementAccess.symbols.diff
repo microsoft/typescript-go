@@ -1,6 +1,6 @@
 --- old.controlFlowElementAccess.symbols
 +++ new.controlFlowElementAccess.symbols
-@@ -20,10 +20,10 @@
+@@= skipped -20, +20 lines =@@
  
  if (y[0] === 0) {
  >y : Symbol(y, Decl(controlFlowElementAccess.ts, 5, 5))

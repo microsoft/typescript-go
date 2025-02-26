@@ -1,6 +1,6 @@
 --- old.exportDefaultInterfaceClassAndFunctionOverloads.symbols
 +++ new.exportDefaultInterfaceClassAndFunctionOverloads.symbols
-@@ -2,15 +2,15 @@
+@@= skipped -2, +2 lines =@@
  
  === exportDefaultInterfaceClassAndFunctionOverloads.ts ===
  export default function foo(value: number): number
@@ -19,7 +19,7 @@
  >value : Symbol(value, Decl(exportDefaultInterfaceClassAndFunctionOverloads.ts, 2, 28))
  
      return 1
-@@ -22,5 +22,5 @@
+@@= skipped -20, +20 lines =@@
  >Foo : Symbol(Foo, Decl(exportDefaultInterfaceClassAndFunctionOverloads.ts, 4, 1))
  
  export default interface Bar {}

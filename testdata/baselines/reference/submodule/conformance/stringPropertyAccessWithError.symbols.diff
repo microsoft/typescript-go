@@ -1,6 +1,6 @@
 --- old.stringPropertyAccessWithError.symbols
 +++ new.stringPropertyAccessWithError.symbols
-@@ -7,5 +7,5 @@
+@@= skipped -7, +7 lines =@@
  var d = x['charAt']('invalid'); // error
  >d : Symbol(d, Decl(stringPropertyAccessWithError.ts, 1, 3))
  >x : Symbol(x, Decl(stringPropertyAccessWithError.ts, 0, 3))

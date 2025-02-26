@@ -1,6 +1,6 @@
 --- old.mergedInheritedClassInterface.symbols
 +++ new.mergedInheritedClassInterface.symbols
-@@ -5,20 +5,20 @@
+@@= skipped -5, +5 lines =@@
  >BaseInterface : Symbol(BaseInterface, Decl(mergedInheritedClassInterface.ts, 0, 0))
  
      required: number;
@@ -25,7 +25,7 @@
  }
  
  interface Child extends BaseInterface {
-@@ -26,7 +26,7 @@
+@@= skipped -21, +21 lines =@@
  >BaseInterface : Symbol(BaseInterface, Decl(mergedInheritedClassInterface.ts, 0, 0))
  
      additional: number;
@@ -34,7 +34,7 @@
  }
  
  class Child extends BaseClass {
-@@ -34,10 +34,10 @@
+@@= skipped -8, +8 lines =@@
  >BaseClass : Symbol(BaseClass, Decl(mergedInheritedClassInterface.ts, 3, 1))
  
      classNumber: number;
@@ -47,7 +47,7 @@
  }
  
  interface ChildNoBaseClass extends BaseInterface {
-@@ -45,16 +45,16 @@
+@@= skipped -11, +11 lines =@@
  >BaseInterface : Symbol(BaseInterface, Decl(mergedInheritedClassInterface.ts, 0, 0))
  
      additional2: string;
@@ -67,7 +67,7 @@
  }
  class Grandchild extends ChildNoBaseClass {
  >Grandchild : Symbol(Grandchild, Decl(mergedInheritedClassInterface.ts, 25, 1))
-@@ -67,66 +67,66 @@
+@@= skipped -22, +22 lines =@@
  >Child : Symbol(Child, Decl(mergedInheritedClassInterface.ts, 8, 1), Decl(mergedInheritedClassInterface.ts, 12, 1))
  
  child.required;

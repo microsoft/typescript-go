@@ -1,6 +1,6 @@
 --- old.propertyAccessExpressionInnerComments.symbols
 +++ new.propertyAccessExpressionInnerComments.symbols
-@@ -2,64 +2,64 @@
+@@= skipped -2, +2 lines =@@
  
  === propertyAccessExpressionInnerComments.ts ===
  /*1*/Array/*2*/./*3*/toString/*4*/

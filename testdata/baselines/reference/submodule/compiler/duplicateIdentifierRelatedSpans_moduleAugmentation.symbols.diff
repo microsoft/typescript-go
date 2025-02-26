@@ -1,6 +1,6 @@
 --- old.duplicateIdentifierRelatedSpans_moduleAugmentation.symbols
 +++ new.duplicateIdentifierRelatedSpans_moduleAugmentation.symbols
-@@ -8,14 +8,14 @@
+@@= skipped -8, +8 lines =@@
  export {};
  
  declare module "./a" {

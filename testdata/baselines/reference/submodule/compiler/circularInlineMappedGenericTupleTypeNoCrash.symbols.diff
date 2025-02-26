@@ -1,6 +1,6 @@
 --- old.circularInlineMappedGenericTupleTypeNoCrash.symbols
 +++ new.circularInlineMappedGenericTupleTypeNoCrash.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >Elements : Symbol(Elements, Decl(circularInlineMappedGenericTupleTypeNoCrash.ts, 0, 10))
  
    public readonly elements: { [P in keyof Elements]: { bar: Elements[P] } };
@@ -9,7 +9,7 @@
  >P : Symbol(P, Decl(circularInlineMappedGenericTupleTypeNoCrash.ts, 1, 31))
  >Elements : Symbol(Elements, Decl(circularInlineMappedGenericTupleTypeNoCrash.ts, 0, 10))
  >bar : Symbol(bar, Decl(circularInlineMappedGenericTupleTypeNoCrash.ts, 1, 54))
-@@ -24,23 +24,23 @@
+@@= skipped -18, +18 lines =@@
  
    ) {
      this.elements = elements;

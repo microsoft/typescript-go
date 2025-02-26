@@ -1,6 +1,6 @@
 --- old.esModuleIntersectionCrash.symbols
 +++ new.esModuleIntersectionCrash.symbols
-@@ -7,33 +7,33 @@
+@@= skipped -7, +7 lines =@@
  declare const modObj: modObj.A & modObj.B;
  >modObj : Symbol(modObj, Decl(mod.d.ts, 1, 13), Decl(mod.d.ts, 1, 42))
  >modObj : Symbol(modObj, Decl(mod.d.ts, 1, 13), Decl(mod.d.ts, 1, 42))

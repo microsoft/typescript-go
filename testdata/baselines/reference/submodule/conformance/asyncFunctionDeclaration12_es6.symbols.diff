@@ -1,6 +1,6 @@
 --- old.asyncFunctionDeclaration12_es6.symbols
 +++ new.asyncFunctionDeclaration12_es6.symbols
-@@ -4,5 +4,5 @@
+@@= skipped -4, +4 lines =@@
  var v = async function await(): Promise<void> { }
  >v : Symbol(v, Decl(asyncFunctionDeclaration12_es6.ts, 0, 3))
  >await : Symbol(await, Decl(asyncFunctionDeclaration12_es6.ts, 0, 7))

@@ -1,6 +1,6 @@
 --- old.nodeAllowJsPackageSelfName2.symbols
 +++ new.nodeAllowJsPackageSelfName2.symbols
-@@ -8,3 +8,7 @@
+@@= skipped -8, +8 lines =@@
  import { foo } from "js-self-name-import/foo.js";
  >foo : Symbol(foo, Decl(foo.js, 0, 8))
  

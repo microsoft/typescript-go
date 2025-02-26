@@ -1,6 +1,6 @@
 --- old.computedPropertyNames34_ES6.symbols
 +++ new.computedPropertyNames34_ES6.symbols
-@@ -10,7 +10,7 @@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(computedPropertyNames34_ES6.ts, 1, 8))
  
      static bar() {

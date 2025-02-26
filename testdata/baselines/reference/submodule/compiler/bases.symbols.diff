@@ -1,6 +1,6 @@
 --- old.bases.symbols
 +++ new.bases.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >I : Symbol(I, Decl(bases.ts, 0, 0))
  
      x;

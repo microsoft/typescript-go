@@ -1,6 +1,6 @@
 --- old.privateNameStaticFieldCallExpression.symbols
 +++ new.privateNameStaticFieldCallExpression.symbols
-@@ -5,66 +5,66 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(privateNameStaticFieldCallExpression.ts, 0, 0))
  
      static #fieldFunc = function () { this.x = 10; };

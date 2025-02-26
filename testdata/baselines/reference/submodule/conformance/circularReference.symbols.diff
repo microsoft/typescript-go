@@ -1,6 +1,6 @@
 --- old.circularReference.symbols
 +++ new.circularReference.symbols
-@@ -11,36 +11,36 @@
+@@= skipped -11, +11 lines =@@
  >C1 : Symbol(C1, Decl(foo2.ts, 1, 18))
  
  		m1: foo1.M1.C1;
@@ -53,7 +53,7 @@
  
  			var tmp = new M1.C1();
  >tmp : Symbol(tmp, Decl(foo2.ts, 10, 6))
-@@ -49,9 +49,9 @@
+@@= skipped -38, +38 lines =@@
  >C1 : Symbol(C1, Decl(foo2.ts, 1, 18))
  
  			tmp.y = 10; // OK
@@ -65,7 +65,7 @@
  
  			tmp.x = 20; // Error			
  >tmp : Symbol(tmp, Decl(foo2.ts, 10, 6))
-@@ -70,36 +70,36 @@
+@@= skipped -21, +21 lines =@@
  >C1 : Symbol(C1, Decl(foo1.ts, 1, 18))
  
  		m1: foo2.M1.C1;

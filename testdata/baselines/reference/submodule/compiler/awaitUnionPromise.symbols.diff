@@ -1,6 +1,6 @@
 --- old.awaitUnionPromise.symbols
 +++ new.awaitUnionPromise.symbols
-@@ -11,26 +11,26 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(awaitUnionPromise.ts, 4, 27))
  
      next1(): Promise<T | AsyncEnumeratorDone>;
@@ -36,7 +36,7 @@
  >T : Symbol(T, Decl(awaitUnionPromise.ts, 4, 27))
  >x : Symbol(x, Decl(awaitUnionPromise.ts, 8, 26))
  }
-@@ -44,26 +44,26 @@
+@@= skipped -33, +33 lines =@@
  
      let a = await x.next1();
  >a : Symbol(a, Decl(awaitUnionPromise.ts, 13, 7))

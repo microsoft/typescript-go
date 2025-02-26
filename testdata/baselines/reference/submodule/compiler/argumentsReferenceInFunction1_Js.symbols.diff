@@ -1,6 +1,6 @@
 --- old.argumentsReferenceInFunction1_Js.symbols
 +++ new.argumentsReferenceInFunction1_Js.symbols
-@@ -17,9 +17,9 @@
+@@= skipped -17, +17 lines =@@
  
    var len = args.length;
  >len : Symbol(len, Decl(index.js, 4, 5))
@@ -12,7 +12,7 @@
  
    for (var x = args[i]; i < len; x = args[++i]) {
  >x : Symbol(x, Decl(index.js, 5, 10))
-@@ -44,9 +44,9 @@
+@@= skipped -27, +27 lines =@@
  >debuglog : Symbol(debuglog, Decl(index.js, 11, 5))
  
    return format.apply(null, arguments);

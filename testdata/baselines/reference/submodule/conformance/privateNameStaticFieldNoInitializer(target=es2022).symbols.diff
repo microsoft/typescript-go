@@ -1,6 +1,6 @@
 --- old.privateNameStaticFieldNoInitializer(target=es2022).symbols
 +++ new.privateNameStaticFieldNoInitializer(target=es2022).symbols
-@@ -5,13 +5,13 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(privateNameStaticFieldNoInitializer.ts, 0, 5))
  
      static #x;

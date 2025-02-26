@@ -1,6 +1,6 @@
 --- old.neverInference.symbols
 +++ new.neverInference.symbols
-@@ -35,12 +35,12 @@
+@@= skipped -35, +35 lines =@@
  >T : Symbol(T, Decl(neverInference.ts, 11, 21))
  
      comparator: Comparator<T>,
@@ -15,7 +15,7 @@
  >Node : Symbol(Node, Decl(neverInference.ts, 14, 1))
  >T : Symbol(T, Decl(neverInference.ts, 11, 21))
  }
-@@ -93,9 +93,9 @@
+@@= skipped -58, +58 lines =@@
  
  f2(Array.from([0]), [], (a1, a2) => a1 - a2);
  >f2 : Symbol(f2, Decl(neverInference.ts, 21, 60))
@@ -27,7 +27,7 @@
  >a1 : Symbol(a1, Decl(neverInference.ts, 26, 25))
  >a2 : Symbol(a2, Decl(neverInference.ts, 26, 28))
  >a1 : Symbol(a1, Decl(neverInference.ts, 26, 25))
-@@ -103,9 +103,9 @@
+@@= skipped -10, +10 lines =@@
  
  f2(Array.from([]), [0], (a1, a2) => a1 - a2);
  >f2 : Symbol(f2, Decl(neverInference.ts, 21, 60))

@@ -1,6 +1,6 @@
 --- old.abstractPropertyBasics.symbols
 +++ new.abstractPropertyBasics.symbols
-@@ -5,57 +5,57 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(abstractPropertyBasics.ts, 0, 0))
  
      prop: string;

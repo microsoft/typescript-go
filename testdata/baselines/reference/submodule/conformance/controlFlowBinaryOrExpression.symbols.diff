@@ -1,6 +1,6 @@
 --- old.controlFlowBinaryOrExpression.symbols
 +++ new.controlFlowBinaryOrExpression.symbols
-@@ -28,14 +28,14 @@
+@@= skipped -28, +28 lines =@@
  >NodeList : Symbol(NodeList, Decl(controlFlowBinaryOrExpression.ts, 8, 2))
  
      length: number;
@@ -17,7 +17,7 @@
  }
  
  declare function isNodeList(sourceObj: any): sourceObj is NodeList;
-@@ -66,9 +66,9 @@
+@@= skipped -38, +38 lines =@@
  >sourceObj : Symbol(sourceObj, Decl(controlFlowBinaryOrExpression.ts, 23, 3))
  
      sourceObj.length;
@@ -29,7 +29,7 @@
  }
  
  if (isHTMLCollection(sourceObj)) {
-@@ -76,9 +76,9 @@
+@@= skipped -10, +10 lines =@@
  >sourceObj : Symbol(sourceObj, Decl(controlFlowBinaryOrExpression.ts, 23, 3))
  
      sourceObj.length;
@@ -41,7 +41,7 @@
  }
  
  if (isNodeList(sourceObj) || isHTMLCollection(sourceObj)) {
-@@ -88,8 +88,8 @@
+@@= skipped -12, +12 lines =@@
  >sourceObj : Symbol(sourceObj, Decl(controlFlowBinaryOrExpression.ts, 23, 3))
  
      sourceObj.length;

@@ -1,6 +1,6 @@
 --- old.optionalParamAssignmentCompat.symbols
 +++ new.optionalParamAssignmentCompat.symbols
-@@ -12,11 +12,11 @@
+@@= skipped -12, +12 lines =@@
  >I2 : Symbol(I2, Decl(optionalParamAssignmentCompat.ts, 2, 1))
  
      p1: I1;
@@ -14,7 +14,7 @@
  >p1 : Symbol(p1, Decl(optionalParamAssignmentCompat.ts, 5, 7))
  >I1 : Symbol(I1, Decl(optionalParamAssignmentCompat.ts, 0, 0))
  }
-@@ -27,14 +27,14 @@
+@@= skipped -15, +15 lines =@@
  var c: I1 = i2.p1; // should be ok
  >c : Symbol(c, Decl(optionalParamAssignmentCompat.ts, 8, 3))
  >I1 : Symbol(I1, Decl(optionalParamAssignmentCompat.ts, 0, 0))

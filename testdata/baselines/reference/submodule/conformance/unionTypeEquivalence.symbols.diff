@@ -1,6 +1,6 @@
 --- old.unionTypeEquivalence.symbols
 +++ new.unionTypeEquivalence.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  class D extends C { foo() { } }
  >D : Symbol(D, Decl(unionTypeEquivalence.ts, 1, 11))
  >C : Symbol(C, Decl(unionTypeEquivalence.ts, 0, 0))

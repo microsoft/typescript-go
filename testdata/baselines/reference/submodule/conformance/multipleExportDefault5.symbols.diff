@@ -1,6 +1,6 @@
 --- old.multipleExportDefault5.symbols
 +++ new.multipleExportDefault5.symbols
-@@ -2,8 +2,8 @@
+@@= skipped -2, +2 lines =@@
  
  === multipleExportDefault5.ts ===
  export default function bar() { }

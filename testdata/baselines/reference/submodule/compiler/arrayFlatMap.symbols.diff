@@ -1,6 +1,6 @@
 --- old.arrayFlatMap.symbols
 +++ new.arrayFlatMap.symbols
-@@ -9,14 +9,14 @@
+@@= skipped -9, +9 lines =@@
  >ReadonlyArray : Symbol(ReadonlyArray, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2016.array.include.d.ts, --, --) ... and 1 more)
  
  array.flatMap((): ReadonlyArray<number> => []); // ok

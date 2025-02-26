@@ -1,6 +1,6 @@
 --- old.contextuallyTypeAsyncFunctionReturnTypeFromUnion.symbols
 +++ new.contextuallyTypeAsyncFunctionReturnTypeFromUnion.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(contextuallyTypeAsyncFunctionReturnTypeFromUnion.ts, 2, 27))
  
    onDone: (a: T) => void;
@@ -9,7 +9,7 @@
  >a : Symbol(a, Decl(contextuallyTypeAsyncFunctionReturnTypeFromUnion.ts, 3, 11))
  >T : Symbol(T, Decl(contextuallyTypeAsyncFunctionReturnTypeFromUnion.ts, 2, 27))
  }
-@@ -37,17 +37,17 @@
+@@= skipped -29, +29 lines =@@
  
      test: async () => Promise.reject("some err"),
  >test : Symbol(test, Decl(contextuallyTypeAsyncFunctionReturnTypeFromUnion.ts, 11, 13))
@@ -31,7 +31,7 @@
  
      },
    },
-@@ -61,9 +61,9 @@
+@@= skipped -24, +24 lines =@@
  >count : Symbol(count, Decl(contextuallyTypeAsyncFunctionReturnTypeFromUnion.ts, 19, 65))
  
    return async () => Promise.reject('some err')
@@ -43,7 +43,7 @@
  }
  
  // repro #47682 issuecomment-1174099713
-@@ -80,9 +80,9 @@
+@@= skipped -19, +19 lines =@@
  const cb1: LoadCallback = async () => load().then(m => m);
  >cb1 : Symbol(cb1, Decl(contextuallyTypeAsyncFunctionReturnTypeFromUnion.ts, 30, 5))
  >LoadCallback : Symbol(LoadCallback, Decl(contextuallyTypeAsyncFunctionReturnTypeFromUnion.ts, 25, 42))
@@ -55,7 +55,7 @@
  >m : Symbol(m, Decl(contextuallyTypeAsyncFunctionReturnTypeFromUnion.ts, 30, 50))
  >m : Symbol(m, Decl(contextuallyTypeAsyncFunctionReturnTypeFromUnion.ts, 30, 50))
  
-@@ -94,9 +94,9 @@
+@@= skipped -14, +14 lines =@@
  const cb3: LoadCallback = () => load().then(m => m);
  >cb3 : Symbol(cb3, Decl(contextuallyTypeAsyncFunctionReturnTypeFromUnion.ts, 32, 5))
  >LoadCallback : Symbol(LoadCallback, Decl(contextuallyTypeAsyncFunctionReturnTypeFromUnion.ts, 25, 42))

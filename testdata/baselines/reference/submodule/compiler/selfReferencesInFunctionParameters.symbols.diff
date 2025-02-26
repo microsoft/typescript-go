@@ -1,6 +1,6 @@
 --- old.selfReferencesInFunctionParameters.symbols
 +++ new.selfReferencesInFunctionParameters.symbols
-@@ -24,11 +24,11 @@
+@@= skipped -24, +24 lines =@@
      }
       
      bar(a = "", b: string = b.toString()) {

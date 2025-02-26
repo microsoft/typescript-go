@@ -1,6 +1,6 @@
 --- old.partialDiscriminatedUnionMemberHasGoodError.symbols
 +++ new.partialDiscriminatedUnionMemberHasGoodError.symbols
-@@ -5,20 +5,20 @@
+@@= skipped -5, +5 lines =@@
  >TypeA : Symbol(TypeA, Decl(partialDiscriminatedUnionMemberHasGoodError.ts, 0, 0))
  
      type: "A";
@@ -25,7 +25,7 @@
  }
  
  type ValidType = TypeA | TypeB;
-@@ -30,7 +30,7 @@
+@@= skipped -25, +25 lines =@@
  >Wrapper : Symbol(Wrapper, Decl(partialDiscriminatedUnionMemberHasGoodError.ts, 10, 31))
  
      types: ValidType[];
@@ -34,7 +34,7 @@
  >ValidType : Symbol(ValidType, Decl(partialDiscriminatedUnionMemberHasGoodError.ts, 8, 1))
  }
  
-@@ -39,9 +39,9 @@
+@@= skipped -9, +9 lines =@@
  >Wrapper : Symbol(Wrapper, Decl(partialDiscriminatedUnionMemberHasGoodError.ts, 10, 31))
  
  foo.push({

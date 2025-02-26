@@ -1,6 +1,6 @@
 --- old.ModuleWithExportedAndNonExportedClasses.symbols
 +++ new.ModuleWithExportedAndNonExportedClasses.symbols
-@@ -8,10 +8,10 @@
+@@= skipped -8, +8 lines =@@
  >A : Symbol(A, Decl(ModuleWithExportedAndNonExportedClasses.ts, 0, 10))
  
          id: number;
@@ -13,7 +13,7 @@
      }
  
      export class AG<T, U>{
-@@ -20,11 +20,11 @@
+@@= skipped -12, +12 lines =@@
  >U : Symbol(U, Decl(ModuleWithExportedAndNonExportedClasses.ts, 6, 22))
  
          id: T;
@@ -27,7 +27,7 @@
  >U : Symbol(U, Decl(ModuleWithExportedAndNonExportedClasses.ts, 6, 22))
      }
  
-@@ -32,10 +32,10 @@
+@@= skipped -12, +12 lines =@@
  >A2 : Symbol(A2, Decl(ModuleWithExportedAndNonExportedClasses.ts, 9, 5))
  
          id: number;
@@ -40,7 +40,7 @@
      }
  
      class AG2<T, U>{
-@@ -44,11 +44,11 @@
+@@= skipped -12, +12 lines =@@
  >U : Symbol(U, Decl(ModuleWithExportedAndNonExportedClasses.ts, 16, 16))
  
          id: T;
@@ -54,7 +54,7 @@
  >U : Symbol(U, Decl(ModuleWithExportedAndNonExportedClasses.ts, 16, 16))
      }
  }
-@@ -61,15 +61,15 @@
+@@= skipped -17, +17 lines =@@
  
  var a = new A.A();
  >a : Symbol(a, Decl(ModuleWithExportedAndNonExportedClasses.ts, 23, 3), Decl(ModuleWithExportedAndNonExportedClasses.ts, 24, 3))

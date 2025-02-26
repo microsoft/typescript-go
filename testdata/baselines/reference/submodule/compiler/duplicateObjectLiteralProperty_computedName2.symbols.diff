@@ -1,6 +1,6 @@
 --- old.duplicateObjectLiteralProperty_computedName2.symbols
 +++ new.duplicateObjectLiteralProperty_computedName2.symbols
-@@ -9,11 +9,11 @@
+@@= skipped -9, +9 lines =@@
  
  enum E1 { A = "ENUM_KEY" }
  >E1 : Symbol(E1, Decl(duplicateObjectLiteralProperty_computedName2.ts, 1, 14))
@@ -14,7 +14,7 @@
  
  const t1 = {
  >t1 : Symbol(t1, Decl(duplicateObjectLiteralProperty_computedName2.ts, 5, 5))
-@@ -31,11 +31,11 @@
+@@= skipped -22, +22 lines =@@
  >t2 : Symbol(t2, Decl(duplicateObjectLiteralProperty_computedName2.ts, 10, 5))
  
      [s]: 1,
@@ -28,7 +28,7 @@
  >s : Symbol(s, Decl(duplicateObjectLiteralProperty_computedName2.ts, 1, 5))
  }
  
-@@ -43,16 +43,16 @@
+@@= skipped -12, +12 lines =@@
  >t3 : Symbol(t3, Decl(duplicateObjectLiteralProperty_computedName2.ts, 15, 5))
  
      [E1.A]: 1,
@@ -51,7 +51,7 @@
  }
  
  const t4 = {
-@@ -60,14 +60,14 @@
+@@= skipped -17, +17 lines =@@
  
      [E2.B]: 1,
  >[E2.B] : Symbol([E2.B], Decl(duplicateObjectLiteralProperty_computedName2.ts, 20, 12), Decl(duplicateObjectLiteralProperty_computedName2.ts, 21, 14))

@@ -1,6 +1,6 @@
 --- old.importsInAmbientModules2.symbols
 +++ new.importsInAmbientModules2.symbols
-@@ -2,7 +2,7 @@
+@@= skipped -2, +2 lines =@@
  
  === external.d.ts ===
  export default class C {}

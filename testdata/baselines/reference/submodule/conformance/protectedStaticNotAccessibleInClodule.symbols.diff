@@ -1,6 +1,6 @@
 --- old.protectedStaticNotAccessibleInClodule.symbols
 +++ new.protectedStaticNotAccessibleInClodule.symbols
-@@ -7,10 +7,10 @@
+@@= skipped -7, +7 lines =@@
  >C : Symbol(C, Decl(protectedStaticNotAccessibleInClodule.ts, 0, 0), Decl(protectedStaticNotAccessibleInClodule.ts, 5, 1))
  
      public static foo: string;
@@ -13,7 +13,7 @@
  }
  
  module C {
-@@ -18,13 +18,13 @@
+@@= skipped -11, +11 lines =@@
  
      export var f = C.foo; // OK
  >f : Symbol(f, Decl(protectedStaticNotAccessibleInClodule.ts, 8, 14))

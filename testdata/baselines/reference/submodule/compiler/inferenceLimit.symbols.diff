@@ -1,6 +1,6 @@
 --- old.inferenceLimit.symbols
 +++ new.inferenceLimit.symbols
-@@ -11,42 +11,38 @@
+@@= skipped -11, +11 lines =@@
    constructor() {}
  
    public brokenMethod(field: string, value: string) {
@@ -50,7 +50,7 @@
  >items : Symbol(items, Decl(file1.ts, 15, 17))
  
              order.items = items;
-@@ -62,21 +58,14 @@
+@@= skipped -51, +47 lines =@@
      };
  
      return Promise.all(result.map(populateItems))
@@ -74,7 +74,7 @@
  
          resolve(orders);
  >resolve : Symbol(resolve, Decl(file1.ts, 8, 47))
-@@ -87,7 +76,7 @@
+@@= skipped -25, +18 lines =@@
    }
  
    public async doStuff(id: number) {
@@ -83,7 +83,7 @@
  >id : Symbol(id, Decl(file1.ts, 29, 23))
  
      return;
-@@ -99,5 +88,5 @@
+@@= skipped -12, +12 lines =@@
  >MyModel : Symbol(MyModel, Decl(mymodule.ts, 0, 0))
  
      id: number;

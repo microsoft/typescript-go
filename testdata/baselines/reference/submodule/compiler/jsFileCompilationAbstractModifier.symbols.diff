@@ -1,6 +1,6 @@
 --- old.jsFileCompilationAbstractModifier.symbols
 +++ new.jsFileCompilationAbstractModifier.symbols
-@@ -5,5 +5,5 @@
+@@= skipped -5, +5 lines =@@
  >c : Symbol(c, Decl(a.js, 0, 0))
  
      abstract x;

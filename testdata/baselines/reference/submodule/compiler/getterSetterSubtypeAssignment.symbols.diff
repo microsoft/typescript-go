@@ -1,6 +1,6 @@
 --- old.getterSetterSubtypeAssignment.symbols
 +++ new.getterSetterSubtypeAssignment.symbols
-@@ -5,56 +5,56 @@
+@@= skipped -5, +5 lines =@@
  >NumberOrUndefined : Symbol(NumberOrUndefined, Decl(getterSetterSubtypeAssignment.ts, 0, 0))
  
      _x: number | undefined;
@@ -76,7 +76,7 @@
      }
  }
  const numberOrUndefined = new NumberOrUndefined();
-@@ -62,94 +62,93 @@
+@@= skipped -57, +57 lines =@@
  >NumberOrUndefined : Symbol(NumberOrUndefined, Decl(getterSetterSubtypeAssignment.ts, 0, 0))
  
  numberOrUndefined.x += 1;
@@ -205,7 +205,7 @@
      }
  }
  const numberOrString = new NumberOrString();
-@@ -157,29 +156,29 @@
+@@= skipped -95, +94 lines =@@
  >NumberOrString : Symbol(NumberOrString, Decl(getterSetterSubtypeAssignment.ts, 25, 25))
  
  numberOrString.x += 1;
@@ -245,7 +245,7 @@
  
  type Foo = { bar: number; };
  >Foo : Symbol(Foo, Decl(getterSetterSubtypeAssignment.ts, 56, 22))
-@@ -189,66 +188,66 @@
+@@= skipped -32, +32 lines =@@
  >NumberOrObject : Symbol(NumberOrObject, Decl(getterSetterSubtypeAssignment.ts, 58, 28))
  
      _x: number | Foo = 0;
@@ -335,7 +335,7 @@
      }
  }
  const numberOrObject = new NumberOrObject();
-@@ -256,22 +255,22 @@
+@@= skipped -67, +67 lines =@@
  >NumberOrObject : Symbol(NumberOrObject, Decl(getterSetterSubtypeAssignment.ts, 58, 28))
  
  numberOrObject.x += 1;

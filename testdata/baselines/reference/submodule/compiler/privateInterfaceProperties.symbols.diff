@@ -1,6 +1,6 @@
 --- old.privateInterfaceProperties.symbols
 +++ new.privateInterfaceProperties.symbols
-@@ -3,18 +3,18 @@
+@@= skipped -3, +3 lines =@@
  === privateInterfaceProperties.ts ===
  interface i1 { name:string; }
  >i1 : Symbol(i1, Decl(privateInterfaceProperties.ts, 0, 0))

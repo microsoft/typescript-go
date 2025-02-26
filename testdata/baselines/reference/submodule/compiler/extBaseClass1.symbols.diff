@@ -1,6 +1,6 @@
 --- old.extBaseClass1.symbols
 +++ new.extBaseClass1.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >B : Symbol(B, Decl(extBaseClass1.ts, 0, 10))
  
  	    public x=10;
@@ -9,7 +9,7 @@
      }
  
      export class C extends B {
-@@ -31,9 +31,9 @@
+@@= skipped -23, +23 lines =@@
  
      export class C3 extends M.B {
  >C3 : Symbol(C3, Decl(extBaseClass1.ts, 14, 10))

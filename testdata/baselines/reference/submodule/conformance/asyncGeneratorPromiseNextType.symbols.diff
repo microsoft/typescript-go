@@ -1,6 +1,6 @@
 --- old.asyncGeneratorPromiseNextType.symbols
 +++ new.asyncGeneratorPromiseNextType.symbols
-@@ -28,26 +28,26 @@
+@@= skipped -28, +28 lines =@@
  >p : Symbol(p, Decl(asyncGeneratorPromiseNextType.ts, 7, 13))
  
              pending.push(p);
@@ -33,7 +33,7 @@
  
              await storeResults(results);
  >storeResults : Symbol(storeResults, Decl(asyncGeneratorPromiseNextType.ts, 17, 1))
-@@ -62,15 +62,15 @@
+@@= skipped -34, +34 lines =@@
  >Result : Symbol(Result, Decl(asyncGeneratorPromiseNextType.ts, 0, 0))
  
      console.log(results);
@@ -53,7 +53,7 @@
  }
  
  async function *saverGen2() {
-@@ -91,26 +91,26 @@
+@@= skipped -29, +29 lines =@@
  >p : Symbol(p, Decl(asyncGeneratorPromiseNextType.ts, 27, 13))
  
              pending.push(p);

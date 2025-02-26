@@ -1,6 +1,6 @@
 --- old.classConstructorParametersAccessibility2.symbols
 +++ new.classConstructorParametersAccessibility2.symbols
-@@ -5,48 +5,48 @@
+@@= skipped -5, +5 lines =@@
  >C1 : Symbol(C1, Decl(classConstructorParametersAccessibility2.ts, 0, 0))
  
      constructor(public x?: number) { }
@@ -58,7 +58,7 @@
  
  class Derived extends C3 {
  >Derived : Symbol(Derived, Decl(classConstructorParametersAccessibility2.ts, 18, 4))
-@@ -60,9 +60,9 @@
+@@= skipped -55, +55 lines =@@
  >p : Symbol(p, Decl(classConstructorParametersAccessibility2.ts, 20, 16))
  
          this.p; // OK

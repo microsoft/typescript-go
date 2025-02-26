@@ -1,6 +1,6 @@
 --- old.externSyntax.symbols
 +++ new.externSyntax.symbols
-@@ -11,16 +11,16 @@
+@@= skipped -11, +11 lines =@@
  >D : Symbol(D, Decl(externSyntax.ts, 1, 18))
  
          public p;

@@ -1,6 +1,6 @@
 --- old.jsDocDeclarationEmitDoesNotUseNodeModulesPathWithoutError.symbols
 +++ new.jsDocDeclarationEmitDoesNotUseNodeModulesPathWithoutError.symbols
-@@ -10,7 +10,7 @@
+@@= skipped -10, +10 lines =@@
  >LionRequestInit : Symbol(LionRequestInit, Decl(types.d.ts, 0, 0))
  
      body?: null | Object;
@@ -9,7 +9,7 @@
  >Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  } 
  === index.js ===
-@@ -25,7 +25,7 @@
+@@= skipped -15, +15 lines =@@
       * @param {LionRequestInit} [init]
       */
      case5_unexpectedlyResolvesPathToNodeModules(init) {}
@@ -18,7 +18,7 @@
  >init : Symbol(init, Decl(index.js, 8, 48))
  }
  
-@@ -34,9 +34,7 @@
+@@= skipped -9, +9 lines =@@
   */
  // @ts-expect-error
  NewAjax.prototype.case6_unexpectedlyResolvesPathToNodeModules;

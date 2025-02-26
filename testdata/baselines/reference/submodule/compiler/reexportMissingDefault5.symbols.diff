@@ -1,6 +1,6 @@
 --- old.reexportMissingDefault5.symbols
 +++ new.reexportMissingDefault5.symbols
-@@ -12,6 +12,6 @@
+@@= skipped -12, +12 lines =@@
  >b : Symbol(b, Decl(a.ts, 0, 8))
  
  export { default as Foo } from "./b";

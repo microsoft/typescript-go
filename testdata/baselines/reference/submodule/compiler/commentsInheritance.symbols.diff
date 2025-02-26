@@ -1,6 +1,6 @@
 --- old.commentsInheritance.symbols
 +++ new.commentsInheritance.symbols
-@@ -7,90 +7,90 @@
+@@= skipped -7, +7 lines =@@
  
      /** i1_p1*/
      i1_p1: number;
@@ -115,7 +115,7 @@
  }
  var i1_i: i1;
  >i1_i : Symbol(i1_i, Decl(commentsInheritance.ts, 44, 3))
-@@ -110,51 +110,51 @@
+@@= skipped -103, +103 lines =@@
  
      /** c2 c2_p1*/
      public c2_p1: number;
@@ -179,7 +179,7 @@
  
          return 10;
      }
-@@ -163,9 +163,9 @@
+@@= skipped -53, +53 lines =@@
  >a : Symbol(a, Decl(commentsInheritance.ts, 80, 16))
  
          this.c2_p1 = a;
@@ -191,7 +191,7 @@
  >a : Symbol(a, Decl(commentsInheritance.ts, 80, 16))
      }
  }
-@@ -179,26 +179,26 @@
+@@= skipped -16, +16 lines =@@
      }
      /** c3 p1*/
      public p1: number;
@@ -224,7 +224,7 @@
  
          return 10;
      }
-@@ -229,46 +229,46 @@
+@@= skipped -50, +50 lines =@@
  
      /** i2_p1*/
      i2_p1: number;
@@ -283,7 +283,7 @@
  }
  interface i3 extends i2 {
  >i3 : Symbol(i3, Decl(commentsInheritance.ts, 131, 1))
-@@ -276,26 +276,26 @@
+@@= skipped -47, +47 lines =@@
  
      /** i3 p1 */
      p1: number;

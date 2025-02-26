@@ -1,6 +1,6 @@
 --- old.controlFlowWithIncompleteTypes.symbols
 +++ new.controlFlowWithIncompleteTypes.symbols
-@@ -20,9 +20,9 @@
+@@= skipped -20, +20 lines =@@
  
              x = x.slice();
  >x : Symbol(x, Decl(controlFlowWithIncompleteTypes.ts, 5, 7))
@@ -12,7 +12,7 @@
          }
          else {
              x = "abc";
-@@ -49,9 +49,9 @@
+@@= skipped -29, +29 lines =@@
          else {
              x = x.slice();
  >x : Symbol(x, Decl(controlFlowWithIncompleteTypes.ts, 17, 7))

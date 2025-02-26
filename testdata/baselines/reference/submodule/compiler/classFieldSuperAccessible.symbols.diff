@@ -1,6 +1,6 @@
 --- old.classFieldSuperAccessible.symbols
 +++ new.classFieldSuperAccessible.symbols
-@@ -7,12 +7,12 @@
+@@= skipped -7, +7 lines =@@
  
      static {
          console.log(super.name);
@@ -17,7 +17,7 @@
      }
  }
  class B extends Number {
-@@ -21,12 +21,12 @@
+@@= skipped -14, +14 lines =@@
  
      static {
          console.log(super.EPSILON);
@@ -34,7 +34,7 @@
      }
  }
  class C extends Array {
-@@ -34,15 +34,15 @@
+@@= skipped -13, +13 lines =@@
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --) ... and 4 more)
  
      foo() {
@@ -55,7 +55,7 @@
      }
  }
  
-@@ -50,19 +50,19 @@
+@@= skipped -16, +16 lines =@@
  >D : Symbol(D, Decl(classFieldSuperAccessible.ts, 14, 1))
  
      accessor b = () => {}

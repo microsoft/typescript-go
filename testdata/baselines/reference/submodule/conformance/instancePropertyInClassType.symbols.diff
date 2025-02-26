@@ -1,6 +1,6 @@
 --- old.instancePropertyInClassType.symbols
 +++ new.instancePropertyInClassType.symbols
-@@ -8,24 +8,24 @@
+@@= skipped -8, +8 lines =@@
  >C : Symbol(C, Decl(instancePropertyInClassType.ts, 0, 19))
  
          x: string;
@@ -31,7 +31,7 @@
      }
  
      var c = new C(1, 2);
-@@ -34,32 +34,32 @@
+@@= skipped -26, +26 lines =@@
  
      var r = c.fn();
  >r : Symbol(r, Decl(instancePropertyInClassType.ts, 12, 7))
@@ -74,7 +74,7 @@
  
  }
  
-@@ -72,27 +72,27 @@
+@@= skipped -38, +38 lines =@@
  >U : Symbol(U, Decl(instancePropertyInClassType.ts, 21, 14))
  
          x: T;
@@ -108,7 +108,7 @@
  >U : Symbol(U, Decl(instancePropertyInClassType.ts, 21, 14))
      }
  
-@@ -102,30 +102,30 @@
+@@= skipped -30, +30 lines =@@
  
      var r = c.fn();
  >r : Symbol(r, Decl(instancePropertyInClassType.ts, 32, 7))

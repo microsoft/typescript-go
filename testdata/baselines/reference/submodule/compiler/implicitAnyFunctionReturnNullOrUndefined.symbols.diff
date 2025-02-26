@@ -1,6 +1,6 @@
 --- old.implicitAnyFunctionReturnNullOrUndefined.symbols
 +++ new.implicitAnyFunctionReturnNullOrUndefined.symbols
-@@ -13,13 +13,13 @@
+@@= skipped -13, +13 lines =@@
  >C : Symbol(C, Decl(implicitAnyFunctionReturnNullOrUndefined.ts, 2, 55))
  
      nullWidenFuncOfC() {  // error at "nullWidenFuncOfC"

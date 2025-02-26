@@ -1,6 +1,6 @@
 --- old.destructuringWithConstraint.symbols
 +++ new.destructuringWithConstraint.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >Props : Symbol(Props, Decl(destructuringWithConstraint.ts, 0, 0))
  
      foo?: boolean;

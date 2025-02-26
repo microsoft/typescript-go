@@ -1,6 +1,6 @@
 --- old.overloadOnGenericClassAndNonGenericClass.symbols
 +++ new.overloadOnGenericClassAndNonGenericClass.symbols
-@@ -3,29 +3,29 @@
+@@= skipped -3, +3 lines =@@
  === overloadOnGenericClassAndNonGenericClass.ts ===
  class A { a; }
  >A : Symbol(A, Decl(overloadOnGenericClassAndNonGenericClass.ts, 0, 0))

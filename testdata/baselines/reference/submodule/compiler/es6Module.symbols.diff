@@ -1,6 +1,6 @@
 --- old.es6Module.symbols
 +++ new.es6Module.symbols
-@@ -9,7 +9,7 @@
+@@= skipped -9, +9 lines =@@
      }
  
      public B()

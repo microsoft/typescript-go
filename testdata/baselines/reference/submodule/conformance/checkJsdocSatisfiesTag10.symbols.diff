@@ -1,6 +1,6 @@
 --- old.checkJsdocSatisfiesTag10.symbols
 +++ new.checkJsdocSatisfiesTag10.symbols
-@@ -20,19 +20,19 @@
+@@= skipped -20, +20 lines =@@
  // Should be OK -- retain info that a is number and b is string
  let a = p.a.toFixed();
  >a : Symbol(a, Decl(a.js, 9, 3))

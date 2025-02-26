@@ -1,6 +1,6 @@
 --- old.constructorOverloads6.symbols
 +++ new.constructorOverloads6.symbols
-@@ -15,7 +15,7 @@
+@@= skipped -15, +15 lines =@@
  
      }
  	bar1():void;
@@ -9,7 +9,7 @@
  }
  
   declare class Foo extends FooBase {
-@@ -33,7 +33,7 @@
+@@= skipped -18, +18 lines =@@
  >y : Symbol(y, Decl(constructorOverloads6.ts, 12, 23))
  
      bar1():void;
@@ -18,7 +18,7 @@
  }
  
  var f1 = new Foo("hey");
-@@ -57,7 +57,7 @@
+@@= skipped -24, +24 lines =@@
  >f3 : Symbol(f3, Decl(constructorOverloads6.ts, 19, 3))
  
  f1.bar1();

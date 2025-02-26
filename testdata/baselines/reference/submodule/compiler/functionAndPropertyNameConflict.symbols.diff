@@ -1,6 +1,6 @@
 --- old.functionAndPropertyNameConflict.symbols
 +++ new.functionAndPropertyNameConflict.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >C65 : Symbol(C65, Decl(functionAndPropertyNameConflict.ts, 0, 0))
  
      public aaaaa() { }

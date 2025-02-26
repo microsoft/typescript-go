@@ -1,6 +1,6 @@
 --- old.jsNoImplicitAnyNoCascadingReferenceErrors.symbols
 +++ new.jsNoImplicitAnyNoCascadingReferenceErrors.symbols
-@@ -2,12 +2,12 @@
+@@= skipped -2, +2 lines =@@
  
  === somelib.d.ts ===
  export declare class Foo<T> {
@@ -17,7 +17,7 @@
  }
  === index.js ===
  import {Foo} from "./somelib";
-@@ -19,12 +19,8 @@
+@@= skipped -17, +17 lines =@@
  
      constructor() {
          super();

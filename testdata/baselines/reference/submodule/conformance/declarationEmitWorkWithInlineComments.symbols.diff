@@ -1,6 +1,6 @@
 --- old.declarationEmitWorkWithInlineComments.symbols
 +++ new.declarationEmitWorkWithInlineComments.symbols
-@@ -7,43 +7,43 @@
+@@= skipped -7, +7 lines =@@
    constructor(
      /** @internal */
      public isInternal1: string,
@@ -54,7 +54,7 @@
  
    ) { }
  }
-@@ -52,7 +52,7 @@
+@@= skipped -45, +45 lines =@@
  >Bar : Symbol(Bar, Decl(declarationEmitWorkWithInlineComments.ts, 23, 1))
  
    constructor(/* @internal */ public isInternal1: string) {}
@@ -63,7 +63,7 @@
  }
  
  export class Baz {
-@@ -60,7 +60,7 @@
+@@= skipped -8, +8 lines =@@
  
    constructor(/* @internal */
      public isInternal: string

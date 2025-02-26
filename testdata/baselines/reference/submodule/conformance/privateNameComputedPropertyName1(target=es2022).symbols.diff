@@ -1,6 +1,6 @@
 --- old.privateNameComputedPropertyName1(target=es2022).symbols
 +++ new.privateNameComputedPropertyName1(target=es2022).symbols
-@@ -5,32 +5,32 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(privateNameComputedPropertyName1.ts, 0, 0))
  
      #a = 'a';
@@ -41,7 +41,7 @@
  
          const data: Record<string, string> = { a: 'a', b: 'b', c: 'c', d: 'd', e: 'e' };
  >data : Symbol(data, Decl(privateNameComputedPropertyName1.ts, 15, 13))
-@@ -43,27 +43,27 @@
+@@= skipped -38, +38 lines =@@
  
          const {
              [this.#a]: a,
@@ -74,7 +74,7 @@
  >this : Symbol(A, Decl(privateNameComputedPropertyName1.ts, 0, 0))
  >e : Symbol(e, Decl(privateNameComputedPropertyName1.ts, 20, 25))
  
-@@ -71,9 +71,9 @@
+@@= skipped -28, +28 lines =@@
  >data : Symbol(data, Decl(privateNameComputedPropertyName1.ts, 15, 13))
  
          console.log(a, b, c, d, e);
@@ -86,7 +86,7 @@
  >a : Symbol(a, Decl(privateNameComputedPropertyName1.ts, 16, 15))
  >b : Symbol(b, Decl(privateNameComputedPropertyName1.ts, 17, 25))
  >c : Symbol(c, Decl(privateNameComputedPropertyName1.ts, 18, 25))
-@@ -83,37 +83,37 @@
+@@= skipped -12, +12 lines =@@
          const a1 = data[this.#a];
  >a1 : Symbol(a1, Decl(privateNameComputedPropertyName1.ts, 25, 13))
  >data : Symbol(data, Decl(privateNameComputedPropertyName1.ts, 15, 13))
@@ -131,7 +131,7 @@
  >a1 : Symbol(a1, Decl(privateNameComputedPropertyName1.ts, 25, 13))
  >b1 : Symbol(b1, Decl(privateNameComputedPropertyName1.ts, 26, 13))
  >c1 : Symbol(c1, Decl(privateNameComputedPropertyName1.ts, 27, 13))
-@@ -122,8 +122,8 @@
+@@= skipped -39, +39 lines =@@
  }
  
  new A().test();

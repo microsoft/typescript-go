@@ -1,6 +1,6 @@
 --- old.everyTypeWithAnnotationAndInvalidInitializer.symbols
 +++ new.everyTypeWithAnnotationAndInvalidInitializer.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >I : Symbol(I, Decl(everyTypeWithAnnotationAndInvalidInitializer.ts, 0, 0))
  
      id: number;
@@ -9,7 +9,7 @@
  }
  
  class C implements I {
-@@ -13,7 +13,7 @@
+@@= skipped -8, +8 lines =@@
  >I : Symbol(I, Decl(everyTypeWithAnnotationAndInvalidInitializer.ts, 0, 0))
  
      id: number;
@@ -18,7 +18,7 @@
  }
  
  class D<T>{
-@@ -21,16 +21,16 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(everyTypeWithAnnotationAndInvalidInitializer.ts, 8, 8))
  
      source: T;
@@ -38,7 +38,7 @@
  >D : Symbol(D, Decl(everyTypeWithAnnotationAndInvalidInitializer.ts, 6, 1))
  >D : Symbol(D, Decl(everyTypeWithAnnotationAndInvalidInitializer.ts, 6, 1))
  >T : Symbol(T, Decl(everyTypeWithAnnotationAndInvalidInitializer.ts, 8, 8))
-@@ -52,15 +52,15 @@
+@@= skipped -31, +31 lines =@@
  >A : Symbol(A, Decl(everyTypeWithAnnotationAndInvalidInitializer.ts, 17, 10))
  
          name: string;
@@ -57,7 +57,7 @@
  }
  
  module N {
-@@ -70,15 +70,15 @@
+@@= skipped -18, +18 lines =@@
  >A : Symbol(A, Decl(everyTypeWithAnnotationAndInvalidInitializer.ts, 25, 10))
  
          id: number;
@@ -76,7 +76,7 @@
  }
  
  var aNumber: number = 'this is a string';
-@@ -142,16 +142,16 @@
+@@= skipped -72, +72 lines =@@
  var aClassInModule: M.A = new N.A();
  >aClassInModule : Symbol(aClassInModule, Decl(everyTypeWithAnnotationAndInvalidInitializer.ts, 50, 3))
  >M : Symbol(M, Decl(everyTypeWithAnnotationAndInvalidInitializer.ts, 15, 50))

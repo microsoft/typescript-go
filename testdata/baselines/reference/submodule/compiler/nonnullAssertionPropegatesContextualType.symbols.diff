@@ -1,6 +1,6 @@
 --- old.nonnullAssertionPropegatesContextualType.symbols
 +++ new.nonnullAssertionPropegatesContextualType.symbols
-@@ -4,7 +4,7 @@
+@@= skipped -4, +4 lines =@@
  let rect2: SVGRectElement = document.querySelector('.svg-rectangle')!; // Error: Element
  >rect2 : Symbol(rect2, Decl(nonnullAssertionPropegatesContextualType.ts, 0, 3))
  >SVGRectElement : Symbol(SVGRectElement, Decl(lib.dom.d.ts, --, --), Decl(lib.dom.d.ts, --, --))

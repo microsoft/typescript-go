@@ -1,6 +1,6 @@
 --- old.importHelpers.symbols
 +++ new.importHelpers.symbols
-@@ -18,7 +18,7 @@
+@@= skipped -18, +18 lines =@@
  >C : Symbol(C, Decl(external.ts, 3, 21))
  
      method(@dec x: number) {
@@ -9,7 +9,7 @@
  >dec : Symbol(dec, Decl(external.ts, 3, 11))
  >x : Symbol(x, Decl(external.ts, 7, 11))
      }
-@@ -56,7 +56,7 @@
+@@= skipped -38, +38 lines =@@
  >C : Symbol(C, Decl(script.ts, 3, 21))
  
      method(@dec x: number) {
@@ -18,7 +18,7 @@
  >dec : Symbol(dec, Decl(script.ts, 3, 11))
  >x : Symbol(x, Decl(script.ts, 7, 11))
      }
-@@ -78,50 +78,50 @@
+@@= skipped -22, +22 lines =@@
  
  === tslib.d.ts ===
  export declare function __extends(d: Function, b: Function): void;

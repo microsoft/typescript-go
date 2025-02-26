@@ -1,6 +1,6 @@
 --- old.objectPropertyAsClass.symbols
 +++ new.objectPropertyAsClass.symbols
-@@ -8,8 +8,6 @@
+@@= skipped -8, +8 lines =@@
  >foo : Symbol(foo, Decl(index.js, 0, 12))
  
          this.x = 0;
@@ -9,7 +9,7 @@
      }
  }
  
-@@ -20,8 +18,6 @@
+@@= skipped -12, +10 lines =@@
  >foo : Symbol(foo, Decl(index.js, 6, 12))
  
          this.x = 0;
@@ -18,7 +18,7 @@
      }
  }
  
-@@ -33,8 +29,6 @@
+@@= skipped -13, +11 lines =@@
  >foo : Symbol(foo, Decl(index.js, 12, 12))
  
          this.x = 0;
@@ -27,7 +27,7 @@
      }
  }
  
-@@ -46,9 +40,6 @@
+@@= skipped -13, +11 lines =@@
  >foo : Symbol(foo, Decl(index.js, 19, 12))
  
          this.x = 0;

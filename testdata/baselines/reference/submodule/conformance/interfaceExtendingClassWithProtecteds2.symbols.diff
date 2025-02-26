@@ -1,6 +1,6 @@
 --- old.interfaceExtendingClassWithProtecteds2.symbols
 +++ new.interfaceExtendingClassWithProtecteds2.symbols
-@@ -5,14 +5,14 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(interfaceExtendingClassWithProtecteds2.ts, 0, 0))
  
      protected x: string;
@@ -17,7 +17,7 @@
  }
  
  interface I3 extends Foo, Bar { // error
-@@ -27,14 +27,14 @@
+@@= skipped -22, +22 lines =@@
  >Bar : Symbol(Bar, Decl(interfaceExtendingClassWithProtecteds2.ts, 2, 1))
  
      x: string;
@@ -34,7 +34,7 @@
  }
  
  interface I5 extends Foo, Baz {
-@@ -43,7 +43,7 @@
+@@= skipped -16, +16 lines =@@
  >Baz : Symbol(Baz, Decl(interfaceExtendingClassWithProtecteds2.ts, 13, 1))
  
      z: string;
@@ -43,7 +43,7 @@
  }
  
  var i: I5;
-@@ -52,19 +52,19 @@
+@@= skipped -9, +9 lines =@@
  
  var r: string = i.z;
  >r : Symbol(r, Decl(interfaceExtendingClassWithProtecteds2.ts, 24, 3))

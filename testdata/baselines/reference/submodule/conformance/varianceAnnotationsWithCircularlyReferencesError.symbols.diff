@@ -1,6 +1,6 @@
 --- old.varianceAnnotationsWithCircularlyReferencesError.symbols
 +++ new.varianceAnnotationsWithCircularlyReferencesError.symbols
-@@ -3,8 +3,8 @@
+@@= skipped -3, +3 lines =@@
  === varianceAnnotationsWithCircularlyReferencesError.ts ===
  type T1<in in> = T1 // Error: circularly references 
  >T1 : Symbol(T1, Decl(varianceAnnotationsWithCircularlyReferencesError.ts, 0, 0))

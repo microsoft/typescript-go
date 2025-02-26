@@ -1,6 +1,6 @@
 --- old.importDefaultNamedType2.symbols
 +++ new.importDefaultNamedType2.symbols
-@@ -2,7 +2,7 @@
+@@= skipped -2, +2 lines =@@
  
  === /a.ts ===
  export default class A {}

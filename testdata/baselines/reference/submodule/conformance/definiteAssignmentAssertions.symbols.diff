@@ -1,6 +1,6 @@
 --- old.definiteAssignmentAssertions.symbols
 +++ new.definiteAssignmentAssertions.symbols
-@@ -7,10 +7,10 @@
+@@= skipped -7, +7 lines =@@
  >C1 : Symbol(C1, Decl(definiteAssignmentAssertions.ts, 0, 0))
  
      a!: number;
@@ -13,7 +13,7 @@
  }
  
  // Suppress definite assignment check in constructor
-@@ -19,14 +19,14 @@
+@@= skipped -12, +12 lines =@@
  >C2 : Symbol(C2, Decl(definiteAssignmentAssertions.ts, 5, 1))
  
      a!: number;
@@ -31,7 +31,7 @@
      }
  }
  
-@@ -36,16 +36,16 @@
+@@= skipped -17, +17 lines =@@
  >C3 : Symbol(C3, Decl(definiteAssignmentAssertions.ts, 14, 1))
  
      a! = 1;
@@ -52,7 +52,7 @@
  }
  
  // Definite assignment assertion not permitted in ambient context
-@@ -54,7 +54,7 @@
+@@= skipped -18, +18 lines =@@
  >C4 : Symbol(C4, Decl(definiteAssignmentAssertions.ts, 23, 1))
  
      a!: number;
@@ -61,7 +61,7 @@
  }
  
  // Definite assignment assertion not permitted on abstract property
-@@ -63,7 +63,7 @@
+@@= skipped -9, +9 lines =@@
  >C5 : Symbol(C5, Decl(definiteAssignmentAssertions.ts, 29, 1))
  
      abstract a!: number;

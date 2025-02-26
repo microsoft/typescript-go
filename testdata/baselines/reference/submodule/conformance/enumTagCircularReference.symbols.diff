@@ -1,6 +1,6 @@
 --- old.enumTagCircularReference.symbols
 +++ new.enumTagCircularReference.symbols
-@@ -3,6 +3,6 @@
+@@= skipped -3, +3 lines =@@
  === bug27142.js ===
  /** @enum {E} */
  const E = { x: 0 };

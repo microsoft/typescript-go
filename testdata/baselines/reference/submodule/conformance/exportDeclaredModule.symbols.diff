@@ -1,6 +1,6 @@
 --- old.exportDeclaredModule.symbols
 +++ new.exportDeclaredModule.symbols
-@@ -6,9 +6,9 @@
+@@= skipped -6, +6 lines =@@
  
  var x: number = foo1.b();
  >x : Symbol(x, Decl(foo2.ts, 1, 3))

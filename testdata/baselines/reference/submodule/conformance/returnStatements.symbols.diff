@@ -1,6 +1,6 @@
 --- old.returnStatements.symbols
 +++ new.returnStatements.symbols
-@@ -31,24 +31,24 @@
+@@= skipped -31, +31 lines =@@
  
  interface I { id: number }
  >I : Symbol(I, Decl(returnStatements.ts, 8, 31))

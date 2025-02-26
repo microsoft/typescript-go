@@ -1,6 +1,6 @@
 --- old.selfInLambdas.symbols
 +++ new.selfInLambdas.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >MouseEvent : Symbol(MouseEvent, Decl(selfInLambdas.ts, 0, 0))
  
      x: number;
@@ -13,7 +13,7 @@
  }
  
  declare var window: Window;
-@@ -19,7 +19,7 @@
+@@= skipped -14, +14 lines =@@
  >Window : Symbol(Window, Decl(selfInLambdas.ts, 5, 27))
  
      onmousemove: (ev: MouseEvent) => any;
@@ -22,7 +22,7 @@
  >ev : Symbol(ev, Decl(selfInLambdas.ts, 7, 18))
  >MouseEvent : Symbol(MouseEvent, Decl(selfInLambdas.ts, 0, 0))
      
-@@ -34,19 +34,19 @@
+@@= skipped -15, +15 lines =@@
  >start : Symbol(start, Decl(selfInLambdas.ts, 12, 15))
  
          window.onmousemove = () => {
@@ -46,7 +46,7 @@
  >counter : Symbol(counter, Decl(selfInLambdas.ts, 10, 9))
  
          }
-@@ -61,28 +61,28 @@
+@@= skipped -27, +27 lines =@@
  >X : Symbol(X, Decl(selfInLambdas.ts, 24, 1))
  
  	private value = "value";

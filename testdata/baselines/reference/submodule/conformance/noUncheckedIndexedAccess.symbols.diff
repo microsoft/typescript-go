@@ -1,6 +1,6 @@
 --- old.noUncheckedIndexedAccess.symbols
 +++ new.noUncheckedIndexedAccess.symbols
-@@ -12,20 +12,20 @@
+@@= skipped -12, +12 lines =@@
  
  enum NumericEnum1 { A, B, C }
  >NumericEnum1 : Symbol(NumericEnum1, Decl(noUncheckedIndexedAccess.ts, 2, 52))
@@ -29,7 +29,7 @@
  
  declare const strMap: { [s: string]: boolean };
  >strMap : Symbol(strMap, Decl(noUncheckedIndexedAccess.ts, 8, 13))
-@@ -38,9 +38,9 @@
+@@= skipped -26, +26 lines =@@
  
  const e2: boolean = strMap.bar;
  >e2 : Symbol(e2, Decl(noUncheckedIndexedAccess.ts, 12, 5))
@@ -41,7 +41,7 @@
  
  const e3: boolean = strMap[0];
  >e3 : Symbol(e3, Decl(noUncheckedIndexedAccess.ts, 13, 5))
-@@ -65,46 +65,46 @@
+@@= skipped -27, +27 lines =@@
  const e8: boolean = strMap[NumericEnum1.A];
  >e8 : Symbol(e8, Decl(noUncheckedIndexedAccess.ts, 18, 5))
  >strMap : Symbol(strMap, Decl(noUncheckedIndexedAccess.ts, 8, 13))
@@ -100,7 +100,7 @@
  >NumericEnum2 : Symbol(NumericEnum2, Decl(noUncheckedIndexedAccess.ts, 4, 29))
  
  const e14: boolean = strMap[null as any];
-@@ -118,9 +118,9 @@
+@@= skipped -53, +53 lines =@@
  
  const ok2: boolean | undefined = strMap.bar;
  >ok2 : Symbol(ok2, Decl(noUncheckedIndexedAccess.ts, 28, 5))
@@ -112,7 +112,7 @@
  
  type T_OK1 = CheckBooleanOnly<(typeof strMap)[string]>;
  >T_OK1 : Symbol(T_OK1, Decl(noUncheckedIndexedAccess.ts, 28, 44))
-@@ -153,9 +153,9 @@
+@@= skipped -35, +35 lines =@@
  >undefined : Symbol(undefined)
  
  strMap.qua = undefined;
@@ -124,7 +124,7 @@
  >undefined : Symbol(undefined)
  
  strMap[0] = undefined;
-@@ -187,16 +187,16 @@
+@@= skipped -34, +34 lines =@@
  const num_ok4: boolean = numMap[NumericEnum1.A];
  >num_ok4 : Symbol(num_ok4, Decl(noUncheckedIndexedAccess.ts, 48, 5))
  >numMap : Symbol(numMap, Decl(noUncheckedIndexedAccess.ts, 43, 13))
@@ -145,7 +145,7 @@
  
  // Generics
  function generic1<T extends { [s: string]: boolean }>(arg: T): boolean {
-@@ -302,7 +302,7 @@
+@@= skipped -115, +115 lines =@@
  const variadicOk1: string = nonEmptyStringArray[0];  // Should OK
  >variadicOk1 : Symbol(variadicOk1, Decl(noUncheckedIndexedAccess.ts, 88, 5))
  >nonEmptyStringArray : Symbol(nonEmptyStringArray, Decl(noUncheckedIndexedAccess.ts, 87, 13))

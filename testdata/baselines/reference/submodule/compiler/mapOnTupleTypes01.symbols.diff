@@ -1,6 +1,6 @@
 --- old.mapOnTupleTypes01.symbols
 +++ new.mapOnTupleTypes01.symbols
-@@ -3,8 +3,8 @@
+@@= skipped -3, +3 lines =@@
  === mapOnTupleTypes01.ts ===
  export let mapOnLooseArrayLiteral = [1, 2, 3, 4].map(n => n * n);
  >mapOnLooseArrayLiteral : Symbol(mapOnLooseArrayLiteral, Decl(mapOnTupleTypes01.ts, 0, 10))
@@ -11,7 +11,7 @@
  >n : Symbol(n, Decl(mapOnTupleTypes01.ts, 0, 53))
  >n : Symbol(n, Decl(mapOnTupleTypes01.ts, 0, 53))
  >n : Symbol(n, Decl(mapOnTupleTypes01.ts, 0, 53))
-@@ -16,9 +16,9 @@
+@@= skipped -13, +13 lines =@@
  
  export let a = numTuple.map(x => x * x);
  >a : Symbol(a, Decl(mapOnTupleTypes01.ts, 5, 10))
@@ -23,7 +23,7 @@
  >x : Symbol(x, Decl(mapOnTupleTypes01.ts, 5, 28))
  >x : Symbol(x, Decl(mapOnTupleTypes01.ts, 5, 28))
  >x : Symbol(x, Decl(mapOnTupleTypes01.ts, 5, 28))
-@@ -36,28 +36,28 @@
+@@= skipped -20, +20 lines =@@
  
  export let b = numNum.map(n => n * n);
  >b : Symbol(b, Decl(mapOnTupleTypes01.ts, 13, 10))
@@ -60,7 +60,7 @@
  >x : Symbol(x, Decl(mapOnTupleTypes01.ts, 15, 26))
  >x : Symbol(x, Decl(mapOnTupleTypes01.ts, 15, 26))
  
-@@ -68,9 +68,9 @@
+@@= skipped -32, +32 lines =@@
  
  export let e = numNumNum.map(n => n * n);
  >e : Symbol(e, Decl(mapOnTupleTypes01.ts, 21, 10))
@@ -72,7 +72,7 @@
  >n : Symbol(n, Decl(mapOnTupleTypes01.ts, 21, 29))
  >n : Symbol(n, Decl(mapOnTupleTypes01.ts, 21, 29))
  >n : Symbol(n, Decl(mapOnTupleTypes01.ts, 21, 29))
-@@ -82,9 +82,9 @@
+@@= skipped -14, +14 lines =@@
  
  export let f = numNumNumNum.map(n => n * n);
  >f : Symbol(f, Decl(mapOnTupleTypes01.ts, 27, 10))
@@ -84,7 +84,7 @@
  >n : Symbol(n, Decl(mapOnTupleTypes01.ts, 27, 32))
  >n : Symbol(n, Decl(mapOnTupleTypes01.ts, 27, 32))
  >n : Symbol(n, Decl(mapOnTupleTypes01.ts, 27, 32))
-@@ -96,9 +96,9 @@
+@@= skipped -14, +14 lines =@@
  
  export let g = numNumNumNumNum.map(n => n * n);
  >g : Symbol(g, Decl(mapOnTupleTypes01.ts, 33, 10))
@@ -96,7 +96,7 @@
  >n : Symbol(n, Decl(mapOnTupleTypes01.ts, 33, 35))
  >n : Symbol(n, Decl(mapOnTupleTypes01.ts, 33, 35))
  >n : Symbol(n, Decl(mapOnTupleTypes01.ts, 33, 35))
-@@ -111,9 +111,9 @@
+@@= skipped -15, +15 lines =@@
  
  export let h = numNumNumNumNum.map(n => n * n);
  >h : Symbol(h, Decl(mapOnTupleTypes01.ts, 40, 10))

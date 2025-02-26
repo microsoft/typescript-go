@@ -1,6 +1,6 @@
 --- old.inferParameterWithMethodCallInitializer.symbols
 +++ new.inferParameterWithMethodCallInitializer.symbols
-@@ -10,16 +10,16 @@
+@@= skipped -10, +10 lines =@@
  >Example : Symbol(Example, Decl(inferParameterWithMethodCallInitializer.ts, 2, 1))
  
      getNumber(): number {
@@ -21,7 +21,7 @@
  >a : Symbol(a, Decl(inferParameterWithMethodCallInitializer.ts, 7, 16))
  
          return a;
-@@ -31,9 +31,9 @@
+@@= skipped -21, +21 lines =@@
  >this : Symbol(this, Decl(inferParameterWithMethodCallInitializer.ts, 11, 15))
  >Example : Symbol(Example, Decl(inferParameterWithMethodCallInitializer.ts, 2, 1))
  >a : Symbol(a, Decl(inferParameterWithMethodCallInitializer.ts, 11, 29))
@@ -33,7 +33,7 @@
  
      return a;
  >a : Symbol(a, Decl(inferParameterWithMethodCallInitializer.ts, 11, 29))
-@@ -42,13 +42,13 @@
+@@= skipped -11, +11 lines =@@
  >Weird : Symbol(Weird, Decl(inferParameterWithMethodCallInitializer.ts, 13, 1))
  
      doSomething(this: Example, a = this.getNumber()) {

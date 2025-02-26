@@ -1,6 +1,6 @@
 --- old.typeGuardOfFromPropNameInUnionType.symbols
 +++ new.typeGuardOfFromPropNameInUnionType.symbols
-@@ -3,20 +3,20 @@
+@@= skipped -3, +3 lines =@@
  === typeGuardOfFromPropNameInUnionType.ts ===
  class A { a: string; }
  >A : Symbol(A, Decl(typeGuardOfFromPropNameInUnionType.ts, 0, 0))
@@ -25,7 +25,7 @@
  >Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
  
  function namedClasses(x: A | B) {
-@@ -29,15 +29,15 @@
+@@= skipped -26, +26 lines =@@
  >x : Symbol(x, Decl(typeGuardOfFromPropNameInUnionType.ts, 5, 22))
  
          x.a = "1";
@@ -45,7 +45,7 @@
      }
  }
  
-@@ -95,11 +95,11 @@
+@@= skipped -66, +66 lines =@@
  
  class AWithOptionalProp { a?: string; }
  >AWithOptionalProp : Symbol(AWithOptionalProp, Decl(typeGuardOfFromPropNameInUnionType.ts, 27, 1))
@@ -59,7 +59,7 @@
  
  function positiveTestClassesWithOptionalProperties(x: AWithOptionalProp | BWithOptionalProp) {
  >positiveTestClassesWithOptionalProperties : Symbol(positiveTestClassesWithOptionalProperties, Decl(typeGuardOfFromPropNameInUnionType.ts, 30, 39))
-@@ -111,9 +111,9 @@
+@@= skipped -16, +16 lines =@@
  >x : Symbol(x, Decl(typeGuardOfFromPropNameInUnionType.ts, 32, 51))
  
          x.a = "1";
@@ -71,7 +71,7 @@
  
      } else {
          const y: string = x instanceof AWithOptionalProp
-@@ -122,14 +122,14 @@
+@@= skipped -11, +11 lines =@@
  >AWithOptionalProp : Symbol(AWithOptionalProp, Decl(typeGuardOfFromPropNameInUnionType.ts, 27, 1))
  
              ? x.a
@@ -90,7 +90,7 @@
      }
  }
  
-@@ -144,22 +144,22 @@
+@@= skipped -22, +22 lines =@@
  
          let y: string = x.a;
  >y : Symbol(y, Decl(typeGuardOfFromPropNameInUnionType.ts, 44, 11))
@@ -118,7 +118,7 @@
  >A : Symbol(A, Decl(typeGuardOfFromPropNameInUnionType.ts, 0, 0))
  >B : Symbol(B, Decl(typeGuardOfFromPropNameInUnionType.ts, 0, 22))
  
-@@ -169,32 +169,32 @@
+@@= skipped -25, +25 lines =@@
  >ClassWithUnionProp : Symbol(ClassWithUnionProp, Decl(typeGuardOfFromPropNameInUnionType.ts, 48, 1))
  
      if ("a" in x.prop) {
@@ -162,7 +162,7 @@
  >ClassWithUnionProp : Symbol(ClassWithUnionProp, Decl(typeGuardOfFromPropNameInUnionType.ts, 48, 1))
  
  function innestedProperty(x: NestedClassWithProp) {
-@@ -203,32 +203,32 @@
+@@= skipped -34, +34 lines =@@
  >NestedClassWithProp : Symbol(NestedClassWithProp, Decl(typeGuardOfFromPropNameInUnionType.ts, 58, 1))
  
      if ("a" in x.outer.prop) {
@@ -211,7 +211,7 @@
      }
  }
  
-@@ -236,34 +236,34 @@
+@@= skipped -33, +33 lines =@@
  >InMemberOfClass : Symbol(InMemberOfClass, Decl(typeGuardOfFromPropNameInUnionType.ts, 68, 1))
  
      protected prop: A | B;
@@ -258,7 +258,7 @@
          }
      }
  }
-@@ -273,19 +273,19 @@
+@@= skipped -37, +37 lines =@@
  >SelfAssert : Symbol(SelfAssert, Decl(typeGuardOfFromPropNameInUnionType.ts, 79, 1))
  
      a: string;
@@ -282,7 +282,7 @@
  
          } else {
          }
-@@ -308,22 +308,22 @@
+@@= skipped -35, +35 lines =@@
  >i : Symbol(i, Decl(typeGuardOfFromPropNameInUnionType.ts, 96, 11))
  
          return i.a;

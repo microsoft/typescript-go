@@ -1,6 +1,6 @@
 --- old.genericSetterInClassType.symbols
 +++ new.genericSetterInClassType.symbols
-@@ -9,13 +9,13 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(genericSetterInClassType.ts, 1, 12))
  
          get y(): T {
@@ -16,7 +16,7 @@
  >v : Symbol(v, Decl(genericSetterInClassType.ts, 5, 14))
      }
  
-@@ -24,42 +24,42 @@
+@@= skipped -15, +15 lines =@@
  >C : Symbol(C, Decl(genericSetterInClassType.ts, 0, 16))
  
      c.y = c.y;

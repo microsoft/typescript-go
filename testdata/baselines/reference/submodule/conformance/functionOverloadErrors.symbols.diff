@@ -1,6 +1,6 @@
 --- old.functionOverloadErrors.symbols
 +++ new.functionOverloadErrors.symbols
-@@ -140,7 +140,7 @@
+@@= skipped -140, +140 lines =@@
  >T : Symbol(T, Decl(functionOverloadErrors.ts, 54, 15))
  
      parents: List<List<T>>;
@@ -9,7 +9,7 @@
  >List : Symbol(List, Decl(functionOverloadErrors.ts, 51, 19))
  >List : Symbol(List, Decl(functionOverloadErrors.ts, 51, 19))
  >T : Symbol(T, Decl(functionOverloadErrors.ts, 54, 15))
-@@ -164,24 +164,24 @@
+@@= skipped -24, +24 lines =@@
  >cls : Symbol(cls, Decl(functionOverloadErrors.ts, 59, 19))
  
      public f();

@@ -1,6 +1,6 @@
 --- old.innerAliases.symbols
 +++ new.innerAliases.symbols
-@@ -22,14 +22,14 @@
+@@= skipped -22, +22 lines =@@
      import inner = A.B.C; 
  >inner : Symbol(inner, Decl(innerAliases.ts, 8, 10))
  >A : Symbol(A, Decl(innerAliases.ts, 0, 0))
@@ -19,7 +19,7 @@
  
      export module E { 
  >E : Symbol(E, Decl(innerAliases.ts, 11, 32))
-@@ -42,8 +42,8 @@
+@@= skipped -20, +20 lines =@@
  var c: D.inner.Class1;
  >c : Symbol(c, Decl(innerAliases.ts, 18, 3))
  >D : Symbol(D, Decl(innerAliases.ts, 6, 1))

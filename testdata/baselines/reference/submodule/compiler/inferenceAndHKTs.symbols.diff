@@ -1,6 +1,6 @@
 --- old.inferenceAndHKTs.symbols
 +++ new.inferenceAndHKTs.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >TypeLambda : Symbol(TypeLambda, Decl(inferenceAndHKTs.ts, 0, 0))
  
      readonly A: unknown;
@@ -9,7 +9,7 @@
  }
  
  export interface TypeClass<F extends TypeLambda> {
-@@ -16,7 +16,7 @@
+@@= skipped -9, +9 lines =@@
  >TypeLambda : Symbol(TypeLambda, Decl(inferenceAndHKTs.ts, 0, 0))
  
      readonly _F: F;
@@ -18,7 +18,7 @@
  >F : Symbol(F, Decl(inferenceAndHKTs.ts, 6, 27))
  }
  
-@@ -44,7 +44,7 @@
+@@= skipped -28, +28 lines =@@
  >A : Symbol(A, Decl(inferenceAndHKTs.ts, 14, 19))
  
      value: A;
@@ -27,7 +27,7 @@
  >A : Symbol(A, Decl(inferenceAndHKTs.ts, 14, 19))
  }
  
-@@ -53,7 +53,7 @@
+@@= skipped -9, +9 lines =@@
  >TypeLambda : Symbol(TypeLambda, Decl(inferenceAndHKTs.ts, 0, 0))
  
      readonly type: T<this["A"]>;

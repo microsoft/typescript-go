@@ -1,6 +1,6 @@
 --- old.genericArrayExtenstions.symbols
 +++ new.genericArrayExtenstions.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(genericArrayExtenstions.ts, 0, 37))
  
  concat<U extends T[]>(...items: U[]): T[];
@@ -9,7 +9,7 @@
  >U : Symbol(U, Decl(genericArrayExtenstions.ts, 1, 7))
  >T : Symbol(T, Decl(genericArrayExtenstions.ts, 0, 37))
  >items : Symbol(items, Decl(genericArrayExtenstions.ts, 1, 22))
-@@ -16,7 +16,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(genericArrayExtenstions.ts, 0, 37))
  
  concat(...items: T[]): T[];

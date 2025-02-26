@@ -1,6 +1,6 @@
 --- old.mappedTypesGenericTuples2.symbols
 +++ new.mappedTypesGenericTuples2.symbols
-@@ -9,25 +9,25 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(mappedTypesGenericTuples2.ts, 2, 22))
  
  Promise.all([getT<string>(), ...getT<any>()]).then((result) => {

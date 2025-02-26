@@ -1,6 +1,6 @@
 --- old.importAliasWithDottedName.symbols
 +++ new.importAliasWithDottedName.symbols
-@@ -25,15 +25,15 @@
+@@= skipped -25, +25 lines =@@
  
      var r = N.y;
  >r : Symbol(r, Decl(importAliasWithDottedName.ts, 9, 7))

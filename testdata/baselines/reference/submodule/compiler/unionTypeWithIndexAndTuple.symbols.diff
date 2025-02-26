@@ -1,6 +1,6 @@
 --- old.unionTypeWithIndexAndTuple.symbols
 +++ new.unionTypeWithIndexAndTuple.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >index : Symbol(index, Decl(unionTypeWithIndexAndTuple.ts, 1, 5))
  
      someOtherProperty: number;

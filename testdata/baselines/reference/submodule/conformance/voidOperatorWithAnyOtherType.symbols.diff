@@ -1,6 +1,6 @@
 --- old.voidOperatorWithAnyOtherType.symbols
 +++ new.voidOperatorWithAnyOtherType.symbols
-@@ -33,10 +33,10 @@
+@@= skipped -33, +33 lines =@@
  >A : Symbol(A, Decl(voidOperatorWithAnyOtherType.ts, 11, 1))
  
      public a: any;
@@ -13,7 +13,7 @@
  
          var a;
  >a : Symbol(a, Decl(voidOperatorWithAnyOtherType.ts, 15, 11))
-@@ -107,15 +107,15 @@
+@@= skipped -74, +74 lines =@@
  
  var ResultIsAny12 = void objA.a;
  >ResultIsAny12 : Symbol(ResultIsAny12, Decl(voidOperatorWithAnyOtherType.ts, 40, 3))
@@ -33,7 +33,7 @@
  
  var ResultIsAny14 = void foo();
  >ResultIsAny14 : Symbol(ResultIsAny14, Decl(voidOperatorWithAnyOtherType.ts, 42, 3))
-@@ -123,9 +123,9 @@
+@@= skipped -16, +16 lines =@@
  
  var ResultIsAny15 = void A.foo();
  >ResultIsAny15 : Symbol(ResultIsAny15, Decl(voidOperatorWithAnyOtherType.ts, 43, 3))
@@ -45,7 +45,7 @@
  
  var ResultIsAny16 = void (ANY + ANY1);
  >ResultIsAny16 : Symbol(ResultIsAny16, Decl(voidOperatorWithAnyOtherType.ts, 44, 3))
-@@ -169,12 +169,12 @@
+@@= skipped -46, +46 lines =@@
  >ANY1 : Symbol(ANY1, Decl(voidOperatorWithAnyOtherType.ts, 3, 3))
  
  void objA.a;

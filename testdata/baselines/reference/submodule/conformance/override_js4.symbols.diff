@@ -1,6 +1,6 @@
 --- old.override_js4.symbols
 +++ new.override_js4.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(a.js, 0, 0))
  
      doSomething() {}
@@ -9,7 +9,7 @@
  }
  
  class B extends A {
-@@ -14,6 +14,6 @@
+@@= skipped -9, +9 lines =@@
  
      /** @override  */
      doSomethang() {}

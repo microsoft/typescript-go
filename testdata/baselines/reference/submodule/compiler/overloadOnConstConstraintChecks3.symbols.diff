@@ -1,6 +1,6 @@
 --- old.overloadOnConstConstraintChecks3.symbols
 +++ new.overloadOnConstConstraintChecks3.symbols
-@@ -3,7 +3,7 @@
+@@= skipped -3, +3 lines =@@
  === overloadOnConstConstraintChecks3.ts ===
  class A { private x = 1} 
  >A : Symbol(A, Decl(overloadOnConstConstraintChecks3.ts, 0, 0))
@@ -9,7 +9,7 @@
  
  class B extends A {}
  >B : Symbol(B, Decl(overloadOnConstConstraintChecks3.ts, 0, 24))
-@@ -14,7 +14,7 @@
+@@= skipped -11, +11 lines =@@
  >A : Symbol(A, Decl(overloadOnConstConstraintChecks3.ts, 0, 0))
  
      public foo() { }

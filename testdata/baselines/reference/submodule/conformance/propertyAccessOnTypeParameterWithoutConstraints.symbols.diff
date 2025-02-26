@@ -1,6 +1,6 @@
 --- old.propertyAccessOnTypeParameterWithoutConstraints.symbols
 +++ new.propertyAccessOnTypeParameterWithoutConstraints.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(propertyAccessOnTypeParameterWithoutConstraints.ts, 0, 8))
  
      f() {
@@ -9,7 +9,7 @@
  
          var x: T;
  >x : Symbol(x, Decl(propertyAccessOnTypeParameterWithoutConstraints.ts, 2, 11))
-@@ -15,28 +15,28 @@
+@@= skipped -9, +9 lines =@@
          var a = x['toString'](); // should be string
  >a : Symbol(a, Decl(propertyAccessOnTypeParameterWithoutConstraints.ts, 3, 11))
  >x : Symbol(x, Decl(propertyAccessOnTypeParameterWithoutConstraints.ts, 2, 11))
@@ -44,7 +44,7 @@
  >T : Symbol(T, Decl(propertyAccessOnTypeParameterWithoutConstraints.ts, 10, 12))
  }
  var i: I<number>;
-@@ -45,18 +45,18 @@
+@@= skipped -30, +30 lines =@@
  
  var r2 = i.foo.toString();
  >r2 : Symbol(r2, Decl(propertyAccessOnTypeParameterWithoutConstraints.ts, 14, 3))
@@ -70,7 +70,7 @@
  
  var a: {
  >a : Symbol(a, Decl(propertyAccessOnTypeParameterWithoutConstraints.ts, 17, 3))
-@@ -67,14 +67,14 @@
+@@= skipped -22, +22 lines =@@
  }
  var r3: string = a().toString();
  >r3 : Symbol(r3, Decl(propertyAccessOnTypeParameterWithoutConstraints.ts, 20, 3))
@@ -88,7 +88,7 @@
  
  var b = {
  >b : Symbol(b, Decl(propertyAccessOnTypeParameterWithoutConstraints.ts, 23, 3))
-@@ -88,13 +88,13 @@
+@@= skipped -21, +21 lines =@@
          var a = x['toString'](); // should be string
  >a : Symbol(a, Decl(propertyAccessOnTypeParameterWithoutConstraints.ts, 25, 11))
  >x : Symbol(x, Decl(propertyAccessOnTypeParameterWithoutConstraints.ts, 24, 13))

@@ -1,6 +1,6 @@
 --- old.useObjectValuesAndEntries3.symbols
 +++ new.useObjectValuesAndEntries3.symbols
-@@ -8,7 +8,6 @@
+@@= skipped -8, +8 lines =@@
  
  for (var x of Object.values(o)) {
  >x : Symbol(x, Decl(useObjectValuesAndEntries3.ts, 2, 8))
@@ -8,7 +8,7 @@
  >o : Symbol(o, Decl(useObjectValuesAndEntries3.ts, 0, 3))
  
      let y = x;
-@@ -18,6 +17,5 @@
+@@= skipped -10, +9 lines =@@
  
  var entries = Object.entries(o);
  >entries : Symbol(entries, Decl(useObjectValuesAndEntries3.ts, 6, 3))

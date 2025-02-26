@@ -1,6 +1,6 @@
 --- old.coAndContraVariantInferences2.symbols
 +++ new.coAndContraVariantInferences2.symbols
-@@ -3,17 +3,17 @@
+@@= skipped -3, +3 lines =@@
  === coAndContraVariantInferences2.ts ===
  interface A { a: string }
  >A : Symbol(A, Decl(coAndContraVariantInferences2.ts, 0, 0))
@@ -21,7 +21,7 @@
  
  declare function cast<T, U extends T>(x: T, test: (x: T) => x is U): U;
  >cast : Symbol(cast, Decl(coAndContraVariantInferences2.ts, 2, 35))
-@@ -147,64 +147,64 @@
+@@= skipped -144, +144 lines =@@
  >SyntaxKind : Symbol(SyntaxKind, Decl(coAndContraVariantInferences2.ts, 33, 1))
  
      Block,
@@ -102,7 +102,7 @@
  
  type HasLocals = Block | FunctionDeclaration;
  >HasLocals : Symbol(HasLocals, Decl(coAndContraVariantInferences2.ts, 51, 91))
-@@ -297,17 +297,17 @@
+@@= skipped -150, +150 lines =@@
  >SyntaxKind1 : Symbol(SyntaxKind1, Decl(coAndContraVariantInferences2.ts, 70, 1))
  
      ClassExpression,
@@ -123,7 +123,7 @@
  >SyntaxKind1 : Symbol(SyntaxKind1, Decl(coAndContraVariantInferences2.ts, 70, 1))
  }
  
-@@ -316,7 +316,7 @@
+@@= skipped -19, +19 lines =@@
  >Node1 : Symbol(Node1, Decl(coAndContraVariantInferences2.ts, 77, 1))
  
      _statementBrand: any;
@@ -132,7 +132,7 @@
  }
  
  interface ClassExpression1 extends Node1 {
-@@ -324,9 +324,9 @@
+@@= skipped -8, +8 lines =@@
  >Node1 : Symbol(Node1, Decl(coAndContraVariantInferences2.ts, 77, 1))
  
      kind: SyntaxKind1.ClassExpression;
@@ -144,7 +144,7 @@
  }
  
  interface ClassStatement1 extends Statement1 {
-@@ -334,9 +334,9 @@
+@@= skipped -10, +10 lines =@@
  >Statement1 : Symbol(Statement1, Decl(coAndContraVariantInferences2.ts, 81, 1))
  
      kind: SyntaxKind1.ClassStatement;
@@ -156,7 +156,7 @@
  }
  
  type ClassLike1 = ClassExpression1 | ClassStatement1;
-@@ -368,7 +368,7 @@
+@@= skipped -34, +34 lines =@@
  >Node : Symbol(Node, Decl(lib.dom.d.ts, --, --), Decl(lib.dom.d.ts, --, --), Decl(coAndContraVariantInferences2.ts, 43, 1))
  
      typeInfo: string;
@@ -165,7 +165,7 @@
  }
  
  interface NodeArray<T extends Node> extends Array<T> {
-@@ -379,7 +379,7 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(coAndContraVariantInferences2.ts, 109, 20))
  
      someProp: string;

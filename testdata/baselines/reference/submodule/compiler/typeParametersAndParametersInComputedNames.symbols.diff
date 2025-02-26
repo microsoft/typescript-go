@@ -1,6 +1,6 @@
 --- old.typeParametersAndParametersInComputedNames.symbols
 +++ new.typeParametersAndParametersInComputedNames.symbols
-@@ -14,7 +14,7 @@
+@@= skipped -14, +14 lines =@@
  >A : Symbol(A, Decl(typeParametersAndParametersInComputedNames.ts, 2, 1))
  
      [foo<T>(a)]<T>(a: T) {  

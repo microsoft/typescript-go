@@ -1,6 +1,6 @@
 --- old.tsxAttributeResolution15.symbols
 +++ new.tsxAttributeResolution15.symbols
-@@ -6,19 +6,17 @@
+@@= skipped -6, +6 lines =@@
  
  class BigGreeter extends React.Component<{ }, {}> {
  >BigGreeter : Symbol(BigGreeter, Decl(file.tsx, 0, 32))

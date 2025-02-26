@@ -1,6 +1,6 @@
 --- old.classPropertyAsPrivate.symbols
 +++ new.classPropertyAsPrivate.symbols
-@@ -5,30 +5,30 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(classPropertyAsPrivate.ts, 0, 0))
  
      private x: string;
@@ -39,7 +39,7 @@
  }
  
  var c: C;
-@@ -37,42 +37,42 @@
+@@= skipped -32, +32 lines =@@
  
  // all errors
  c.x;

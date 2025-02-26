@@ -1,6 +1,6 @@
 --- old.interfacePropertiesWithSameName1.symbols
 +++ new.interfacePropertiesWithSameName1.symbols
-@@ -5,20 +5,20 @@
+@@= skipped -5, +5 lines =@@
  >Mover : Symbol(Mover, Decl(interfacePropertiesWithSameName1.ts, 0, 0))
  
      move(): void;
@@ -25,7 +25,7 @@
  >frequency : Symbol(frequency, Decl(interfacePropertiesWithSameName1.ts, 6, 18))
  }
  
-@@ -28,7 +28,7 @@
+@@= skipped -23, +23 lines =@@
  >Shaker : Symbol(Shaker, Decl(interfacePropertiesWithSameName1.ts, 3, 1))
  
      getStatus(): { speed: number; frequency: number; };

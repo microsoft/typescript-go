@@ -1,6 +1,6 @@
 --- old.yieldExpression1.symbols
 +++ new.yieldExpression1.symbols
-@@ -10,7 +10,7 @@
+@@= skipped -10, +10 lines =@@
  
  function* b(): IterableIterator<number> {
  >b : Symbol(b, Decl(yieldExpression1.ts, 3, 1))

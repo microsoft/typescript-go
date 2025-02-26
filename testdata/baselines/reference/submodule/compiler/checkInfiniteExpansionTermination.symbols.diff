@@ -1,6 +1,6 @@
 --- old.checkInfiniteExpansionTermination.symbols
 +++ new.checkInfiniteExpansionTermination.symbols
-@@ -9,7 +9,7 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(checkInfiniteExpansionTermination.ts, 3, 22))
  
      n: IObservable<T[]>; // Needed, must be T[]
@@ -9,7 +9,7 @@
  >IObservable : Symbol(IObservable, Decl(checkInfiniteExpansionTermination.ts, 0, 0))
  >T : Symbol(T, Decl(checkInfiniteExpansionTermination.ts, 3, 22))
  }
-@@ -23,11 +23,11 @@
+@@= skipped -14, +14 lines =@@
  
  interface Foo { x }
  >Foo : Symbol(Foo, Decl(checkInfiniteExpansionTermination.ts, 8, 48))

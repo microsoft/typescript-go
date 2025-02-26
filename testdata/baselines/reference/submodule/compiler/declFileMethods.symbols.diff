@@ -1,6 +1,6 @@
 --- old.declFileMethods.symbols
 +++ new.declFileMethods.symbols
-@@ -6,11 +6,11 @@
+@@= skipped -6, +6 lines =@@
  
      /** This comment should appear for foo*/
      public foo() {
@@ -14,7 +14,7 @@
  >a : Symbol(a, Decl(declFileMethods_0.ts, 5, 29))
  
          /** this is comment for b*/
-@@ -22,27 +22,27 @@
+@@= skipped -16, +16 lines =@@
  >a : Symbol(a, Decl(declFileMethods_0.ts, 5, 29))
      }
      public fooWithRestParameters(a: string, ...rests: string[]) {
@@ -48,7 +48,7 @@
  >a : Symbol(a, Decl(declFileMethods_0.ts, 16, 28))
  
          return a;
-@@ -52,11 +52,11 @@
+@@= skipped -30, +30 lines =@@
  
      /** This comment should appear for privateFoo*/
      private privateFoo() {
@@ -62,7 +62,7 @@
  >a : Symbol(a, Decl(declFileMethods_0.ts, 25, 37))
  
          /** this is comment for b*/
-@@ -68,26 +68,26 @@
+@@= skipped -16, +16 lines =@@
  >a : Symbol(a, Decl(declFileMethods_0.ts, 25, 37))
      }
      private privateFooWithRestParameters(a: string, ...rests: string[]) {
@@ -95,7 +95,7 @@
  >a : Symbol(a, Decl(declFileMethods_0.ts, 35, 36))
  
          return a;
-@@ -97,11 +97,11 @@
+@@= skipped -29, +29 lines =@@
  
      /** This comment should appear for static foo*/
      static staticFoo() {
@@ -109,7 +109,7 @@
  >a : Symbol(a, Decl(declFileMethods_0.ts, 44, 35))
  
          /** this is comment for b*/
-@@ -113,26 +113,26 @@
+@@= skipped -16, +16 lines =@@
  >a : Symbol(a, Decl(declFileMethods_0.ts, 44, 35))
      }
      static staticFooWithRestParameters(a: string, ...rests: string[]) {
@@ -142,7 +142,7 @@
  >a : Symbol(a, Decl(declFileMethods_0.ts, 54, 34))
  
          return a;
-@@ -142,11 +142,11 @@
+@@= skipped -29, +29 lines =@@
  
      /** This comment should appear for privateStaticFoo*/
      private static privateStaticFoo() {
@@ -156,7 +156,7 @@
  >a : Symbol(a, Decl(declFileMethods_0.ts, 63, 50))
  
          /** this is comment for b*/
-@@ -158,26 +158,26 @@
+@@= skipped -16, +16 lines =@@
  >a : Symbol(a, Decl(declFileMethods_0.ts, 63, 50))
      }
      private static privateStaticFooWithRestParameters(a: string, ...rests: string[]) {
@@ -189,7 +189,7 @@
  >a : Symbol(a, Decl(declFileMethods_0.ts, 73, 49))
  
          return a;
-@@ -190,11 +190,11 @@
+@@= skipped -32, +32 lines =@@
  
      /** This comment should appear for foo*/
      foo(): string;
@@ -203,7 +203,7 @@
  >a : Symbol(a, Decl(declFileMethods_0.ts, 83, 22))
  
          /** this is comment for b*/
-@@ -202,16 +202,16 @@
+@@= skipped -12, +12 lines =@@
  >b : Symbol(b, Decl(declFileMethods_0.ts, 83, 61))
  
      fooWithRestParameters(a: string, ...rests: string[]): string;
@@ -223,7 +223,7 @@
  >a : Symbol(a, Decl(declFileMethods_0.ts, 90, 21))
  }
  
-@@ -221,11 +221,11 @@
+@@= skipped -19, +19 lines =@@
  
      /** This comment should appear for foo*/
      public foo() {
@@ -237,7 +237,7 @@
  >a : Symbol(a, Decl(declFileMethods_1.ts, 5, 29))
  
          /** this is comment for b*/
-@@ -237,27 +237,27 @@
+@@= skipped -16, +16 lines =@@
  >a : Symbol(a, Decl(declFileMethods_1.ts, 5, 29))
      }
      public fooWithRestParameters(a: string, ...rests: string[]) {
@@ -271,7 +271,7 @@
  >a : Symbol(a, Decl(declFileMethods_1.ts, 16, 28))
  
          return a;
-@@ -267,11 +267,11 @@
+@@= skipped -30, +30 lines =@@
  
      /** This comment should appear for privateFoo*/
      private privateFoo() {
@@ -285,7 +285,7 @@
  >a : Symbol(a, Decl(declFileMethods_1.ts, 25, 37))
  
          /** this is comment for b*/
-@@ -283,26 +283,26 @@
+@@= skipped -16, +16 lines =@@
  >a : Symbol(a, Decl(declFileMethods_1.ts, 25, 37))
      }
      private privateFooWithRestParameters(a: string, ...rests: string[]) {
@@ -318,7 +318,7 @@
  >a : Symbol(a, Decl(declFileMethods_1.ts, 35, 36))
  
          return a;
-@@ -312,11 +312,11 @@
+@@= skipped -29, +29 lines =@@
  
      /** This comment should appear for static foo*/
      static staticFoo() {
@@ -332,7 +332,7 @@
  >a : Symbol(a, Decl(declFileMethods_1.ts, 44, 35))
  
          /** this is comment for b*/
-@@ -328,26 +328,26 @@
+@@= skipped -16, +16 lines =@@
  >a : Symbol(a, Decl(declFileMethods_1.ts, 44, 35))
      }
      static staticFooWithRestParameters(a: string, ...rests: string[]) {
@@ -365,7 +365,7 @@
  >a : Symbol(a, Decl(declFileMethods_1.ts, 54, 34))
  
          return a;
-@@ -357,11 +357,11 @@
+@@= skipped -29, +29 lines =@@
  
      /** This comment should appear for privateStaticFoo*/
      private static privateStaticFoo() {
@@ -379,7 +379,7 @@
  >a : Symbol(a, Decl(declFileMethods_1.ts, 63, 50))
  
          /** this is comment for b*/
-@@ -373,26 +373,26 @@
+@@= skipped -16, +16 lines =@@
  >a : Symbol(a, Decl(declFileMethods_1.ts, 63, 50))
      }
      private static privateStaticFooWithRestParameters(a: string, ...rests: string[]) {
@@ -412,7 +412,7 @@
  >a : Symbol(a, Decl(declFileMethods_1.ts, 73, 49))
  
          return a;
-@@ -405,11 +405,11 @@
+@@= skipped -32, +32 lines =@@
  
      /** This comment should appear for foo*/
      foo(): string;
@@ -426,7 +426,7 @@
  >a : Symbol(a, Decl(declFileMethods_1.ts, 83, 22))
  
          /** this is comment for b*/
-@@ -417,16 +417,16 @@
+@@= skipped -12, +12 lines =@@
  >b : Symbol(b, Decl(declFileMethods_1.ts, 83, 61))
  
      fooWithRestParameters(a: string, ...rests: string[]): string;

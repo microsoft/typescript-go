@@ -1,6 +1,6 @@
 --- old.parserPropertySignature1.symbols
 +++ new.parserPropertySignature1.symbols
-@@ -5,5 +5,5 @@
+@@= skipped -5, +5 lines =@@
  >I : Symbol(I, Decl(parserPropertySignature1.ts, 0, 0))
  
    A;

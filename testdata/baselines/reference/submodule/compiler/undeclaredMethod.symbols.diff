@@ -1,6 +1,6 @@
 --- old.undeclaredMethod.symbols
 +++ new.undeclaredMethod.symbols
-@@ -8,22 +8,22 @@
+@@= skipped -8, +8 lines =@@
  >C : Symbol(C, Decl(undeclaredMethod.ts, 0, 10))
  
          public salt() {}

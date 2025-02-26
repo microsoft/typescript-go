@@ -1,6 +1,6 @@
 --- old.assignmentCompatWithObjectMembersAccessibility.symbols
 +++ new.assignmentCompatWithObjectMembersAccessibility.symbols
-@@ -11,14 +11,14 @@
+@@= skipped -11, +11 lines =@@
  >Base : Symbol(Base, Decl(assignmentCompatWithObjectMembersAccessibility.ts, 2, 23))
  
          public foo: string;
@@ -17,7 +17,7 @@
      }
  
      var a: { foo: string; }
-@@ -38,14 +38,14 @@
+@@= skipped -27, +27 lines =@@
  >D : Symbol(D, Decl(assignmentCompatWithObjectMembersAccessibility.ts, 14, 13))
  
          public foo: string;
@@ -34,7 +34,7 @@
      }
      var d: D;
  >d : Symbol(d, Decl(assignmentCompatWithObjectMembersAccessibility.ts, 24, 7))
-@@ -149,7 +149,7 @@
+@@= skipped -111, +111 lines =@@
  >Base : Symbol(Base, Decl(assignmentCompatWithObjectMembersAccessibility.ts, 55, 23))
  
          private foo: string;
@@ -43,7 +43,7 @@
      }
  
      interface I extends Base {
-@@ -174,14 +174,14 @@
+@@= skipped -25, +25 lines =@@
  >D : Symbol(D, Decl(assignmentCompatWithObjectMembersAccessibility.ts, 66, 13))
  
          public foo: string;

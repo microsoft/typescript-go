@@ -1,6 +1,6 @@
 --- old.destructuringAssignment_private.symbols
 +++ new.destructuringAssignment_private.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(destructuringAssignment_private.ts, 0, 0))
  
      private x = 0;
@@ -13,7 +13,7 @@
  >a : Symbol(a, Decl(destructuringAssignment_private.ts, 2, 18))
  }
  let x: number;
-@@ -31,7 +31,7 @@
+@@= skipped -26, +26 lines =@@
  
  ([{ a: { [nameX]: x } }] = [{ a: new C() }]);
  >a : Symbol(a, Decl(destructuringAssignment_private.ts, 9, 3))
@@ -22,7 +22,7 @@
  >nameX : Symbol(nameX, Decl(destructuringAssignment_private.ts, 8, 5))
  >x : Symbol(x, Decl(destructuringAssignment_private.ts, 4, 3))
  >a : Symbol(a, Decl(destructuringAssignment_private.ts, 9, 29))
-@@ -41,7 +41,7 @@
+@@= skipped -10, +10 lines =@@
  >nameO : Symbol(nameO, Decl(destructuringAssignment_private.ts, 11, 5))
  
  ({ [nameO]: [{ a: x }]} = new C());

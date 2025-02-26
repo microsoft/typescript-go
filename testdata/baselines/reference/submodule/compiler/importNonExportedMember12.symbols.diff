@@ -1,6 +1,6 @@
 --- old.importNonExportedMember12.symbols
 +++ new.importNonExportedMember12.symbols
-@@ -1,16 +1,12 @@
+@@= skipped -1, +1 lines =@@
  //// [tests/cases/compiler/importNonExportedMember12.ts] ////
  
  === /node_modules/foo/src/index.js ===

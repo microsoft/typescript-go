@@ -1,6 +1,6 @@
 --- old.interfaceWithPropertyThatIsPrivateInBaseType2.symbols
 +++ new.interfaceWithPropertyThatIsPrivateInBaseType2.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Base : Symbol(Base, Decl(interfaceWithPropertyThatIsPrivateInBaseType2.ts, 0, 0))
  
      private x() {}
@@ -9,7 +9,7 @@
  }
  
  interface Foo extends Base { // error
-@@ -13,7 +13,7 @@
+@@= skipped -8, +8 lines =@@
  >Base : Symbol(Base, Decl(interfaceWithPropertyThatIsPrivateInBaseType2.ts, 0, 0))
  
      x(): any;
@@ -18,7 +18,7 @@
  }
  
  class Base2<T> {
-@@ -21,7 +21,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(interfaceWithPropertyThatIsPrivateInBaseType2.ts, 8, 12))
  
      private x() { }
@@ -27,7 +27,7 @@
  }
  
  interface Foo2<T> extends Base2<T> { // error
-@@ -31,5 +31,5 @@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(interfaceWithPropertyThatIsPrivateInBaseType2.ts, 12, 15))
  
      x(): any;

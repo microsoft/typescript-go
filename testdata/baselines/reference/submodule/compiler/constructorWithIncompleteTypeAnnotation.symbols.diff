@@ -1,6 +1,6 @@
 --- old.constructorWithIncompleteTypeAnnotation.symbols
 +++ new.constructorWithIncompleteTypeAnnotation.symbols
-@@ -11,7 +11,7 @@
+@@= skipped -11, +11 lines =@@
  >filename : Symbol(filename, Decl(constructorWithIncompleteTypeAnnotation.ts, 2, 20))
  
          public ReadAllText(): string;
@@ -9,7 +9,7 @@
      }
      export interface IFile {
  >IFile : Symbol(IFile, Decl(constructorWithIncompleteTypeAnnotation.ts, 4, 5))
-@@ -32,7 +32,7 @@
+@@= skipped -21, +21 lines =@@
  >Program : Symbol(Program, Decl(constructorWithIncompleteTypeAnnotation.ts, 13, 27))
  
          static Main(...args: string[]) {
@@ -18,7 +18,7 @@
  >args : Symbol(args, Decl(constructorWithIncompleteTypeAnnotation.ts, 15, 20))
  
              try {
-@@ -45,9 +45,9 @@
+@@= skipped -13, +13 lines =@@
  
                  retValue = bfs.VARIABLES();
  >retValue : Symbol(retValue, Decl(constructorWithIncompleteTypeAnnotation.ts, 18, 19))
@@ -30,7 +30,7 @@
  
                  if (retValue != 0 ^=  {
  >retValue : Symbol(retValue, Decl(constructorWithIncompleteTypeAnnotation.ts, 18, 19))
-@@ -57,10 +57,10 @@
+@@= skipped -12, +12 lines =@@
                  }
  
                   case  = bfs.STATEMENTS(4);
@@ -43,7 +43,7 @@
  >retValue : Symbol(retValue, Decl(constructorWithIncompleteTypeAnnotation.ts, 27, 20))
  
                      return 1;
-@@ -104,38 +104,38 @@
+@@= skipped -47, +47 lines =@@
          /// </summary>
          /// <returns></returns>
          public VARIABLES(): number {
@@ -92,7 +92,7 @@
  >uE59F : Symbol(uE59F, Decl(constructorWithIncompleteTypeAnnotation.ts, 71, 37))
  >local : Symbol(local, Decl(constructorWithIncompleteTypeAnnotation.ts, 65, 15))
  
-@@ -146,7 +146,7 @@
+@@= skipped -42, +42 lines =@@
              var local5 = <fs.File>null;
  >local5 : Symbol(local5, Decl(constructorWithIncompleteTypeAnnotation.ts, 74, 15))
  >fs : Symbol(fs, Decl(constructorWithIncompleteTypeAnnotation.ts, 8, 1))
@@ -101,7 +101,7 @@
  
              var local6 = local5 instanceof fs.File;
  >local6 : Symbol(local6, Decl(constructorWithIncompleteTypeAnnotation.ts, 75, 15))
-@@ -163,7 +163,7 @@
+@@= skipped -17, +17 lines =@@
  
              var char = 'c', \u0066 = '\u0066', hexchar = '\x42' != 
  >char : Symbol(char, Decl(constructorWithIncompleteTypeAnnotation.ts, 79, 15))
@@ -110,7 +110,7 @@
  >hexchar : Symbol(hexchar, Decl(constructorWithIncompleteTypeAnnotation.ts, 79, 46))
  
              var quoted = '"', quoted2 = "'";
-@@ -175,7 +175,7 @@
+@@= skipped -12, +12 lines =@@
  
              var objLit = { "var": number = 42, equals: function (x) { return x["var"] === 42; },  instanceof : () => 'objLit{42}' };
  >objLit : Symbol(objLit, Decl(constructorWithIncompleteTypeAnnotation.ts, 82, 15))
@@ -119,7 +119,7 @@
  >number : Symbol(number, Decl(constructorWithIncompleteTypeAnnotation.ts, 97, 15))
  >equals : Symbol(equals, Decl(constructorWithIncompleteTypeAnnotation.ts, 82, 46))
  >x : Symbol(x, Decl(constructorWithIncompleteTypeAnnotation.ts, 82, 65))
-@@ -184,24 +184,24 @@
+@@= skipped -9, +9 lines =@@
  
              var weekday = Weekdays.Monday;
  >weekday : Symbol(weekday, Decl(constructorWithIncompleteTypeAnnotation.ts, 83, 15))
@@ -153,7 +153,7 @@
  >objLit : Symbol(objLit, Decl(constructorWithIncompleteTypeAnnotation.ts, 82, 15))
  >weekday : Symbol(weekday, Decl(constructorWithIncompleteTypeAnnotation.ts, 83, 15))
  
-@@ -290,7 +290,7 @@
+@@= skipped -106, +106 lines =@@
          /// <param name="i"></param>
          /// <returns></returns>
          STATEMENTS(i: number): number {
@@ -162,7 +162,7 @@
  >i : Symbol(i, Decl(constructorWithIncompleteTypeAnnotation.ts, 117, 19))
  
              var retVal = 0;
-@@ -351,7 +351,7 @@
+@@= skipped -61, +61 lines =@@
          /// </summary>
          /// <returns></returns>
          public TYPES(): number {
@@ -171,7 +171,7 @@
  
              var retVal = 0;
  >retVal : Symbol(retVal, Decl(constructorWithIncompleteTypeAnnotation.ts, 155, 15))
-@@ -370,15 +370,15 @@
+@@= skipped -19, +19 lines =@@
  
              retVal += c.Member();
  >retVal : Symbol(retVal, Decl(constructorWithIncompleteTypeAnnotation.ts, 155, 15))
@@ -191,7 +191,7 @@
  
              //anonymous type
              var anony = { a: new CLASS() };
-@@ -388,11 +388,11 @@
+@@= skipped -18, +18 lines =@@
  
              retVal += anony.a.d();
  >retVal : Symbol(retVal, Decl(constructorWithIncompleteTypeAnnotation.ts, 155, 15))
@@ -205,7 +205,7 @@
  
              return retVal;
  >retVal : Symbol(retVal, Decl(constructorWithIncompleteTypeAnnotation.ts, 155, 15))
-@@ -404,7 +404,7 @@
+@@= skipped -16, +16 lines =@@
          ///// </summary>
          ///// <returns></returns>
          public OPERATOR(): number {
@@ -214,7 +214,7 @@
  
              var a: number[] = [1, 2, 3, 4, 5, ];/*[] bug*/ // YES []
  >a : Symbol(a, Decl(constructorWithIncompleteTypeAnnotation.ts, 176, 15))
-@@ -538,7 +538,7 @@
+@@= skipped -134, +134 lines =@@
  >IF : Symbol(IF, Decl(constructorWithIncompleteTypeAnnotation.ts, 209, 5))
  
          Foo(): bool;
@@ -223,7 +223,7 @@
  >bool : Symbol(bool)
      }
  
-@@ -547,18 +547,18 @@
+@@= skipped -9, +9 lines =@@
  >IF : Symbol(IF, Decl(constructorWithIncompleteTypeAnnotation.ts, 209, 5))
  
           case  d = () => {  yield  0; };
@@ -246,7 +246,7 @@
  >bool : Symbol(bool)
  
              var myEvent = () => { return 1; };
-@@ -592,7 +592,7 @@
+@@= skipped -45, +45 lines =@@
  >A : Symbol(A, Decl(constructorWithIncompleteTypeAnnotation.ts, 229, 5))
  
          public method2() {
@@ -255,7 +255,7 @@
  
              return this.method1(2);
  >this : Symbol(B, Decl(constructorWithIncompleteTypeAnnotation.ts, 240, 5))
-@@ -603,12 +603,12 @@
+@@= skipped -11, +11 lines =@@
  >Overloading : Symbol(Overloading, Decl(constructorWithIncompleteTypeAnnotation.ts, 247, 5))
  
          private otherValue = 42;
@@ -272,7 +272,7 @@
         
          public Overloads(value: string);
          public Overloads( while : string, ...rest: string[]) {  & 
-@@ -621,36 +621,36 @@
+@@= skipped -18, +18 lines =@@
  >Weekdays : Symbol(Weekdays, Decl(constructorWithIncompleteTypeAnnotation.ts, 260, 1))
  
      Monday,

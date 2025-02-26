@@ -1,6 +1,6 @@
 --- old.booleanLiteralsContextuallyTypedFromUnion.symbols
 +++ new.booleanLiteralsContextuallyTypedFromUnion.symbols
-@@ -3,13 +3,13 @@
+@@= skipped -3, +3 lines =@@
  === booleanLiteralsContextuallyTypedFromUnion.tsx ===
  interface A { isIt: true; text: string; }
  >A : Symbol(A, Decl(booleanLiteralsContextuallyTypedFromUnion.tsx, 0, 0))
@@ -18,7 +18,7 @@
  
  type C = A | B;
  >C : Symbol(C, Decl(booleanLiteralsContextuallyTypedFromUnion.tsx, 1, 43))
-@@ -18,9 +18,9 @@
+@@= skipped -15, +15 lines =@@
  
  const isIt = Math.random() > 0.5;
  >isIt : Symbol(isIt, Decl(booleanLiteralsContextuallyTypedFromUnion.tsx, 3, 5))
@@ -31,7 +31,7 @@
  
  const c: C = isIt ? { isIt, text: 'hey' } : { isIt, value: 123 };
  >c : Symbol(c, Decl(booleanLiteralsContextuallyTypedFromUnion.tsx, 4, 5))
-@@ -62,8 +62,6 @@
+@@= skipped -44, +44 lines =@@
  >Funk : Symbol(Funk, Decl(booleanLiteralsContextuallyTypedFromUnion.tsx, 16, 3))
  >_props : Symbol(_props, Decl(booleanLiteralsContextuallyTypedFromUnion.tsx, 16, 12))
  >ComponentProps : Symbol(ComponentProps, Decl(booleanLiteralsContextuallyTypedFromUnion.tsx, 5, 78))

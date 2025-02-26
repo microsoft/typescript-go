@@ -1,6 +1,6 @@
 --- old.moduleAugmentationWithNonExistentNamedImport.symbols
 +++ new.moduleAugmentationWithNonExistentNamedImport.symbols
-@@ -15,7 +15,7 @@
+@@= skipped -15, +15 lines =@@
  }
  
  declare global {

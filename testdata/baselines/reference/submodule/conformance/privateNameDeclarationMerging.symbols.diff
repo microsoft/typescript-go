@@ -1,6 +1,6 @@
 --- old.privateNameDeclarationMerging.symbols
 +++ new.privateNameDeclarationMerging.symbols
-@@ -8,17 +8,17 @@
+@@= skipped -8, +8 lines =@@
  >C : Symbol(C, Decl(privateNameDeclarationMerging.ts, 0, 11), Decl(privateNameDeclarationMerging.ts, 10, 1))
  
      #x;

@@ -1,6 +1,6 @@
 --- old.genericContextualTypes3.symbols
 +++ new.genericContextualTypes3.symbols
-@@ -50,7 +50,7 @@
+@@= skipped -50, +50 lines =@@
  >TContext : Symbol(TContext, Decl(genericContextualTypes3.ts, 14, 23))
  
    type: "xstate.assign";

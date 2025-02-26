@@ -1,6 +1,6 @@
 --- old.optionalPropertiesTest.symbols
 +++ new.optionalPropertiesTest.symbols
-@@ -11,13 +11,13 @@
+@@= skipped -11, +11 lines =@@
  >IFoo : Symbol(IFoo, Decl(optionalPropertiesTest.ts, 0, 50))
  {
      id: number;
@@ -17,7 +17,7 @@
  }
  
  
-@@ -45,34 +45,34 @@
+@@= skipped -34, +34 lines =@@
  
  var s = foo.name || "default";
  >s : Symbol(s, Decl(optionalPropertiesTest.ts, 16, 3))

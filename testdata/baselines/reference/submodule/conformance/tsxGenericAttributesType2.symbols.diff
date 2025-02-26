@@ -1,6 +1,6 @@
 --- old.tsxGenericAttributesType2.symbols
 +++ new.tsxGenericAttributesType2.symbols
-@@ -10,10 +10,10 @@
+@@= skipped -10, +10 lines =@@
  >x : Symbol(x, Decl(file.tsx, 2, 40))
  >Component : Symbol(Component, Decl(file.tsx, 2, 54))
  >React : Symbol(React, Decl(file.tsx, 0, 0))

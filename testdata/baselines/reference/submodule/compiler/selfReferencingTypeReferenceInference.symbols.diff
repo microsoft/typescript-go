@@ -1,6 +1,6 @@
 --- old.selfReferencingTypeReferenceInference.symbols
 +++ new.selfReferencingTypeReferenceInference.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(selfReferencingTypeReferenceInference.ts, 0, 14))
  
      __: T

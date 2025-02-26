@@ -1,6 +1,6 @@
 --- old.maxConstraints.symbols
 +++ new.maxConstraints.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(maxConstraints.ts, 0, 21))
  
      compareTo(other: T): number;
@@ -9,7 +9,7 @@
  >other : Symbol(other, Decl(maxConstraints.ts, 1, 14))
  >T : Symbol(T, Decl(maxConstraints.ts, 0, 21))
  }
-@@ -28,9 +28,9 @@
+@@= skipped -22, +22 lines =@@
  >Comparer : Symbol(Comparer, Decl(maxConstraints.ts, 2, 1))
  >x : Symbol(x, Decl(maxConstraints.ts, 6, 22))
  >y : Symbol(y, Decl(maxConstraints.ts, 6, 24))

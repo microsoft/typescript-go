@@ -1,6 +1,6 @@
 --- old.ambientPropertyDeclarationInJs.symbols
 +++ new.ambientPropertyDeclarationInJs.symbols
-@@ -6,21 +6,21 @@
+@@= skipped -6, +6 lines =@@
  
      constructor() {
          this.prop = {};

@@ -1,6 +1,6 @@
 --- old.declarationEmitWithInvalidPackageJsonTypings.symbols
 +++ new.declarationEmitWithInvalidPackageJsonTypings.symbols
-@@ -10,7 +10,7 @@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(index.ts, 0, 34))
  
      current: T;

@@ -1,6 +1,6 @@
 --- old.isolatedDeclarationErrorsClassesExpressions.symbols
 +++ new.isolatedDeclarationErrorsClassesExpressions.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >cls : Symbol(cls, Decl(isolatedDeclarationErrorsClassesExpressions.ts, 0, 12))
  
      foo: string = "";

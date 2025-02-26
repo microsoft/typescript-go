@@ -1,6 +1,6 @@
 --- old.jsdocDisallowedInTypescript.symbols
 +++ new.jsdocDisallowedInTypescript.symbols
-@@ -21,27 +21,30 @@
+@@= skipped -21, +21 lines =@@
  function hof(ctor: function(new: number, string)) {
  >hof : Symbol(hof, Decl(jsdocDisallowedInTypescript.ts, 5, 1))
  >ctor : Symbol(ctor, Decl(jsdocDisallowedInTypescript.ts, 6, 13))
@@ -34,7 +34,7 @@
  >n : Symbol(n, Decl(jsdocDisallowedInTypescript.ts, 14, 43))
  >m : Symbol(m, Decl(jsdocDisallowedInTypescript.ts, 14, 45))
  >n : Symbol(n, Decl(jsdocDisallowedInTypescript.ts, 14, 43))
-@@ -55,7 +58,7 @@
+@@= skipped -34, +37 lines =@@
  
  var postfixopt: number? = undefined;
  >postfixopt : Symbol(postfixopt, Decl(jsdocDisallowedInTypescript.ts, 17, 3))

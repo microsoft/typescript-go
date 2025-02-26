@@ -1,6 +1,6 @@
 --- old.useSharedArrayBuffer5.symbols
 +++ new.useSharedArrayBuffer5.symbols
-@@ -8,14 +8,14 @@
+@@= skipped -8, +8 lines =@@
  var species = foge[Symbol.species];
  >species : Symbol(species, Decl(useSharedArrayBuffer5.ts, 1, 3))
  >foge : Symbol(foge, Decl(useSharedArrayBuffer5.ts, 0, 3))

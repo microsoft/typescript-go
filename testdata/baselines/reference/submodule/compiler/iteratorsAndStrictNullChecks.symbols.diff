@@ -1,6 +1,6 @@
 --- old.iteratorsAndStrictNullChecks.symbols
 +++ new.iteratorsAndStrictNullChecks.symbols
-@@ -6,9 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >x : Symbol(x, Decl(iteratorsAndStrictNullChecks.ts, 1, 10))
  
      x.substring;
@@ -10,7 +10,7 @@
  }
  
  // Spread
-@@ -19,8 +17,6 @@
+@@= skipped -13, +11 lines =@@
  >ys : Symbol(ys, Decl(iteratorsAndStrictNullChecks.ts, 7, 5))
  
  xs.push(...ys);

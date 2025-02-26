@@ -1,6 +1,6 @@
 --- old.conditionalTypeContextualTypeSimplificationsSuceeds.symbols
 +++ new.conditionalTypeContextualTypeSimplificationsSuceeds.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >Props : Symbol(Props, Decl(conditionalTypeContextualTypeSimplificationsSuceeds.ts, 0, 0))
  
      when: (value: string) => boolean;

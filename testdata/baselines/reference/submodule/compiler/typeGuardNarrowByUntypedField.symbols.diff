@@ -1,6 +1,6 @@
 --- old.typeGuardNarrowByUntypedField.symbols
 +++ new.typeGuardNarrowByUntypedField.symbols
-@@ -23,7 +23,7 @@
+@@= skipped -23, +23 lines =@@
  
      let x: number = arrayLikeOrIterable.length;
  >x : Symbol(x, Decl(typeGuardNarrowByUntypedField.ts, 3, 7))

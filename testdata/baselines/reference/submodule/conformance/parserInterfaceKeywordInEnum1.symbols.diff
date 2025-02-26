@@ -1,6 +1,6 @@
 --- old.parserInterfaceKeywordInEnum1.symbols
 +++ new.parserInterfaceKeywordInEnum1.symbols
-@@ -7,6 +7,6 @@
+@@= skipped -7, +7 lines =@@
  >Bar : Symbol(Bar, Decl(parserInterfaceKeywordInEnum1.ts, 0, 13))
  
      interface,

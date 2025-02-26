@@ -1,6 +1,6 @@
 --- old.nodeNextImportModeImplicitIndexResolution.symbols
 +++ new.nodeNextImportModeImplicitIndexResolution.symbols
-@@ -13,8 +13,10 @@
+@@= skipped -13, +13 lines =@@
  >item : Symbol(item, Decl(index.ts, 0, 8))
  
  import { item as item2 } from "./pkg";  // shouldn't work (`index.js` is _not_ assumed to be the entrypoint for packages found via relative import)

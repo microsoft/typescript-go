@@ -1,6 +1,6 @@
 --- old.statics.symbols
 +++ new.statics.symbols
-@@ -8,87 +8,87 @@
+@@= skipped -8, +8 lines =@@
  >C : Symbol(C, Decl(statics.ts, 0, 10))
  
          x: number;
@@ -125,7 +125,7 @@
  
      export function f() {
  >f : Symbol(f, Decl(statics.ts, 16, 14))
-@@ -102,22 +102,22 @@
+@@= skipped -94, +94 lines =@@
  
          result+=(new C(0,1,2).x);
  >result : Symbol(result, Decl(statics.ts, 18, 11))
@@ -154,7 +154,7 @@
  
          return result;
  >result : Symbol(result, Decl(statics.ts, 18, 11))
-@@ -125,9 +125,9 @@
+@@= skipped -23, +23 lines =@@
  }
  
  M.f();

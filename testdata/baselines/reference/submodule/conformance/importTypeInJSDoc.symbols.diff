@@ -1,6 +1,6 @@
 --- old.importTypeInJSDoc.symbols
 +++ new.importTypeInJSDoc.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >Bar : Symbol(Bar, Decl(externs.d.ts, 0, 27), Decl(externs.d.ts, 6, 18))
  
          doer: (x: string) => void;
@@ -9,7 +9,7 @@
  >x : Symbol(x, Decl(externs.d.ts, 2, 15))
      }
  }
-@@ -16,23 +16,23 @@
+@@= skipped -8, +8 lines =@@
  >MyClass : Symbol(MyClass, Decl(externs.d.ts, 0, 0), Decl(externs.d.ts, 4, 1))
  
      field: string;
@@ -37,7 +37,7 @@
  >MyClass : Symbol(MyClass, Decl(externs.d.ts, 0, 0), Decl(externs.d.ts, 4, 1))
  }
  export = MyClass;
-@@ -49,11 +49,11 @@
+@@= skipped -33, +33 lines =@@
  
  a = new Foo({doer: Foo.Bar});
  >a : Symbol(a, Decl(index.js, 4, 3))

@@ -1,6 +1,6 @@
 --- old.spreadIntersectionJsx.symbols
 +++ new.spreadIntersectionJsx.symbols
-@@ -6,11 +6,11 @@
+@@= skipped -6, +6 lines =@@
  
  class A { a; }
  >A : Symbol(A, Decl(spreadIntersectionJsx.tsx, 0, 24))

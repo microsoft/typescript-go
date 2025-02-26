@@ -1,6 +1,6 @@
 --- old.parser15.4.4.14-9-2.symbols
 +++ new.parser15.4.4.14-9-2.symbols
-@@ -34,24 +34,24 @@
+@@= skipped -34, +34 lines =@@
  >_float : Symbol(_float, Decl(parser15.4.4.14-9-2.ts, 14, 5))
  
    if (a.indexOf(-(4/3)) === 14 &&      // a[14]=_float===-(4/3)

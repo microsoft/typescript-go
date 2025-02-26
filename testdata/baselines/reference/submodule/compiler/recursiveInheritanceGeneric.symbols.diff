@@ -1,6 +1,6 @@
 --- old.recursiveInheritanceGeneric.symbols
 +++ new.recursiveInheritanceGeneric.symbols
-@@ -8,5 +8,5 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(recursiveInheritanceGeneric.ts, 0, 13))
  
      foo():void;

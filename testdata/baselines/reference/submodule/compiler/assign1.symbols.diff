@@ -1,6 +1,6 @@
 --- old.assign1.symbols
 +++ new.assign1.symbols
-@@ -8,10 +8,10 @@
+@@= skipped -8, +8 lines =@@
  >I : Symbol(I, Decl(assign1.ts, 0, 10))
  
          salt:number;

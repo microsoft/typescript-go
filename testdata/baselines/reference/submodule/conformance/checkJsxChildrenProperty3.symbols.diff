@@ -1,6 +1,6 @@
 --- old.checkJsxChildrenProperty3.symbols
 +++ new.checkJsxChildrenProperty3.symbols
-@@ -8,44 +8,36 @@
+@@= skipped -8, +8 lines =@@
  >IUser : Symbol(IUser, Decl(file.tsx, 0, 32))
  
      Name: string;
@@ -52,7 +52,7 @@
  
              : null;
      }
-@@ -63,11 +55,7 @@
+@@= skipped -55, +47 lines =@@
  >user : Symbol(user, Decl(file.tsx, 22, 13))
  
                  <h1>{ user.Name }</h1>
@@ -64,7 +64,7 @@
  
              ) }
          </FetchUser>
-@@ -87,11 +75,7 @@
+@@= skipped -24, +20 lines =@@
  >user : Symbol(user, Decl(file.tsx, 33, 13))
  
                  <h1>{ user.Name }</h1>

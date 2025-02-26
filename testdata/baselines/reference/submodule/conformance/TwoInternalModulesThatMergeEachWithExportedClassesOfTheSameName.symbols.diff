@@ -1,6 +1,6 @@
 --- old.TwoInternalModulesThatMergeEachWithExportedClassesOfTheSameName.symbols
 +++ new.TwoInternalModulesThatMergeEachWithExportedClassesOfTheSameName.symbols
-@@ -8,10 +8,10 @@
+@@= skipped -8, +8 lines =@@
  >Point : Symbol(Point, Decl(TwoInternalModulesThatMergeEachWithExportedClassesOfTheSameName.ts, 0, 10))
  
          x: number;
@@ -13,7 +13,7 @@
      }
  }
  
-@@ -23,23 +23,23 @@
+@@= skipped -15, +15 lines =@@
  >Point : Symbol(Point, Decl(TwoInternalModulesThatMergeEachWithExportedClassesOfTheSameName.ts, 7, 9))
  
          origin: number;
@@ -42,7 +42,7 @@
      }
  }
  
-@@ -47,17 +47,17 @@
+@@= skipped -24, +24 lines =@@
  >X : Symbol(X, Decl(TwoInternalModulesThatMergeEachWithExportedClassesOfTheSameName.ts, 13, 1), Decl(TwoInternalModulesThatMergeEachWithExportedClassesOfTheSameName.ts, 19, 1))
  
      export module Y {

@@ -1,6 +1,6 @@
 --- old.tsxSpreadAttributesResolution1.symbols
 +++ new.tsxSpreadAttributesResolution1.symbols
-@@ -6,16 +6,14 @@
+@@= skipped -6, +6 lines =@@
  
  class Poisoned extends React.Component<{}, {}> {
  >Poisoned : Symbol(Poisoned, Decl(file.tsx, 0, 32))

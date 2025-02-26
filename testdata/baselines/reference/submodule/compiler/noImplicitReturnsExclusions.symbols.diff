@@ -1,6 +1,6 @@
 --- old.noImplicitReturnsExclusions.symbols
 +++ new.noImplicitReturnsExclusions.symbols
-@@ -128,7 +128,7 @@
+@@= skipped -128, +128 lines =@@
  >HistoryItem : Symbol(HistoryItem, Decl(noImplicitReturnsExclusions.ts, 55, 1))
  
    input: {
@@ -9,7 +9,7 @@
  
      location: {
  >location : Symbol(location, Decl(noImplicitReturnsExclusions.ts, 58, 10))
-@@ -145,7 +145,7 @@
+@@= skipped -17, +17 lines =@@
  >T : Symbol(T, Decl(noImplicitReturnsExclusions.ts, 65, 19))
  
    then<TResult>(
@@ -18,7 +18,7 @@
  >TResult : Symbol(TResult, Decl(noImplicitReturnsExclusions.ts, 66, 7))
  
      onfulfilled?: (value: T) => TResult | Thenable<TResult>,
-@@ -168,7 +168,7 @@
+@@= skipped -23, +23 lines =@@
  >TResult : Symbol(TResult, Decl(noImplicitReturnsExclusions.ts, 66, 7))
  
    then<TResult>(
@@ -27,7 +27,7 @@
  >TResult : Symbol(TResult, Decl(noImplicitReturnsExclusions.ts, 70, 7))
  
      onfulfilled?: (value: T) => TResult | Thenable<TResult>,
-@@ -229,9 +229,9 @@
+@@= skipped -61, +61 lines =@@
  >executeCommand : Symbol(executeCommand, Decl(noImplicitReturnsExclusions.ts, 74, 1))
  >item.input.location.uri : Symbol(uri, Decl(noImplicitReturnsExclusions.ts, 59, 15))
  >item.input.location : Symbol(location, Decl(noImplicitReturnsExclusions.ts, 58, 10))

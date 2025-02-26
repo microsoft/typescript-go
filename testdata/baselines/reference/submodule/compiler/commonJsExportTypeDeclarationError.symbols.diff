@@ -1,6 +1,6 @@
 --- old.commonJsExportTypeDeclarationError.symbols
 +++ new.commonJsExportTypeDeclarationError.symbols
-@@ -1,16 +1,12 @@
+@@= skipped -1, +1 lines =@@
  //// [tests/cases/compiler/commonJsExportTypeDeclarationError.ts] ////
  
 -=== ./test.js ===
@@ -19,7 +19,7 @@
  import test from "./test";
  >test : Symbol(test, Decl(types1.ts, 0, 6), Decl(types1.ts, 0, 26))
  
-@@ -19,7 +15,7 @@
+@@= skipped -18, +14 lines =@@
  
  > : Symbol(unknown)
  
@@ -28,7 +28,7 @@
  import test from "./test";
  >test : Symbol(test, Decl(types2.ts, 0, 6), Decl(types2.ts, 0, 26))
  
-@@ -28,11 +24,11 @@
+@@= skipped -9, +9 lines =@@
  
  > : Symbol(unknown)
  

@@ -1,6 +1,6 @@
 --- old.jsFileMethodOverloads.symbols
 +++ new.jsFileMethodOverloads.symbols
-@@ -14,9 +14,7 @@
+@@= skipped -14, +14 lines =@@
  >value : Symbol(value, Decl(jsFileMethodOverloads.js, 7, 14))
  
      this.value = value;
@@ -10,7 +10,7 @@
  >value : Symbol(value, Decl(jsFileMethodOverloads.js, 7, 14))
    }
  
-@@ -34,12 +32,10 @@
+@@= skipped -20, +18 lines =@@
     * @returns {string}
     */
    getTypeName() {
@@ -24,7 +24,7 @@
    }
  
    /**
-@@ -57,18 +53,14 @@
+@@= skipped -23, +21 lines =@@
     * @returns {unknown}
     */
    transform(fn) {

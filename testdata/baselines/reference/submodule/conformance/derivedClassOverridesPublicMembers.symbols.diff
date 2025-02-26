@@ -1,6 +1,6 @@
 --- old.derivedClassOverridesPublicMembers.symbols
 +++ new.derivedClassOverridesPublicMembers.symbols
-@@ -14,48 +14,48 @@
+@@= skipped -14, +14 lines =@@
  >Base : Symbol(Base, Decl(derivedClassOverridesPublicMembers.ts, 1, 36))
  
      a: typeof x;
@@ -59,7 +59,7 @@
  >a : Symbol(a, Decl(derivedClassOverridesPublicMembers.ts, 14, 15))
  >x : Symbol(x, Decl(derivedClassOverridesPublicMembers.ts, 0, 3))
  
-@@ -69,48 +69,48 @@
+@@= skipped -55, +55 lines =@@
  >Base : Symbol(Base, Decl(derivedClassOverridesPublicMembers.ts, 1, 36))
  
      a: typeof y;
@@ -118,7 +118,7 @@
  >a : Symbol(a, Decl(derivedClassOverridesPublicMembers.ts, 30, 15))
  >y : Symbol(y, Decl(derivedClassOverridesPublicMembers.ts, 1, 3))
  
-@@ -129,64 +129,64 @@
+@@= skipped -60, +60 lines =@@
  
  var r1 = d.a;
  >r1 : Symbol(r1, Decl(derivedClassOverridesPublicMembers.ts, 36, 3))

@@ -1,6 +1,6 @@
 --- old.strictBindCallApply2.symbols
 +++ new.strictBindCallApply2.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  
  interface Foo { blub: string };
  >Foo : Symbol(Foo, Decl(strictBindCallApply2.ts, 0, 0))
@@ -9,7 +9,7 @@
  
  function fn(this: Foo) {}
  >fn : Symbol(fn, Decl(strictBindCallApply2.ts, 2, 31))
-@@ -19,8 +19,8 @@
+@@= skipped -14, +14 lines =@@
  
  const fb = fn.bind({ blub: "blub" });
  >fb : Symbol(fb, Decl(strictBindCallApply2.ts, 7, 5))

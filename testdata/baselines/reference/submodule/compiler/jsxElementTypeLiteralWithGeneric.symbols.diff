@@ -1,6 +1,6 @@
 --- old.jsxElementTypeLiteralWithGeneric.symbols
 +++ new.jsxElementTypeLiteralWithGeneric.symbols
-@@ -6,10 +6,10 @@
+@@= skipped -6, +6 lines =@@
  >React : Symbol(React, Decl(jsxElementTypeLiteralWithGeneric.tsx, 1, 6))
  
  declare global {
@@ -13,7 +13,7 @@
  
      type ElementType<P = any> =
  >ElementType : Symbol(ElementType, Decl(jsxElementTypeLiteralWithGeneric.tsx, 4, 17))
-@@ -18,11 +18,11 @@
+@@= skipped -12, +12 lines =@@
        | {
          [K in keyof JSX.IntrinsicElements]: P extends JSX.IntrinsicElements[K]
  >K : Symbol(K, Decl(jsxElementTypeLiteralWithGeneric.tsx, 7, 9))
@@ -29,7 +29,7 @@
  >K : Symbol(K, Decl(jsxElementTypeLiteralWithGeneric.tsx, 7, 9))
  
          ? K
-@@ -30,12 +30,12 @@
+@@= skipped -12, +12 lines =@@
  
          : never;
        }[keyof JSX.IntrinsicElements]
@@ -45,7 +45,7 @@
  >P : Symbol(P, Decl(jsxElementTypeLiteralWithGeneric.tsx, 5, 21))
    }
  }
-@@ -43,7 +43,6 @@
+@@= skipped -13, +13 lines =@@
  // should be fine - `ElementType` accepts `div`
  let a = <div />;
  >a : Symbol(a, Decl(jsxElementTypeLiteralWithGeneric.tsx, 16, 3))

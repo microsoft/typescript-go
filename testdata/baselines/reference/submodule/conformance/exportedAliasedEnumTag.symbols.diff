@@ -1,6 +1,6 @@
 --- old.exportedAliasedEnumTag.symbols
 +++ new.exportedAliasedEnumTag.symbols
-@@ -3,15 +3,10 @@
+@@= skipped -3, +3 lines =@@
  === exportedAliasedEnumTag.js ===
  var middlewarify = module.exports = {};
  >middlewarify : Symbol(middlewarify, Decl(exportedAliasedEnumTag.js, 0, 3))

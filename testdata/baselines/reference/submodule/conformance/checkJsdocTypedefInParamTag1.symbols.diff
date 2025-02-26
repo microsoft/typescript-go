@@ -1,6 +1,6 @@
 --- old.checkJsdocTypedefInParamTag1.symbols
 +++ new.checkJsdocTypedefInParamTag1.symbols
-@@ -16,9 +16,7 @@
+@@= skipped -16, +16 lines =@@
  >opts : Symbol(opts, Decl(0.js, 10, 13))
  
      opts.x;
@@ -10,7 +10,7 @@
  }
  
  foo({x: 'abc'});
-@@ -37,9 +35,7 @@
+@@= skipped -21, +19 lines =@@
  >opts : Symbol(opts, Decl(0.js, 23, 14))
  
      opts.anotherX;
@@ -20,7 +20,7 @@
  }
  
  foo1({anotherX: "world"});
-@@ -60,9 +56,7 @@
+@@= skipped -23, +21 lines =@@
  >opts : Symbol(opts, Decl(0.js, 38, 14))
  
      opts.x;

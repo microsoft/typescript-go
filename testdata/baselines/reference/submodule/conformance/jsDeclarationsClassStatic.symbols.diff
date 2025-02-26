@@ -1,6 +1,6 @@
 --- old.jsDeclarationsClassStatic.symbols
 +++ new.jsDeclarationsClassStatic.symbols
-@@ -2,22 +2,20 @@
+@@= skipped -2, +2 lines =@@
  
  === source.js ===
  class Handler {
@@ -27,7 +27,7 @@
  
  const Strings = {
  >Strings : Symbol(Strings, Decl(source.js, 9, 5))
-@@ -30,17 +28,9 @@
+@@= skipped -28, +26 lines =@@
  }
  
  module.exports = Handler;

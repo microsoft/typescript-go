@@ -1,6 +1,6 @@
 --- old.noUnusedLocals_writeOnlyProperty_dynamicNames.symbols
 +++ new.noUnusedLocals_writeOnlyProperty_dynamicNames.symbols
-@@ -13,15 +13,15 @@
+@@= skipped -13, +13 lines =@@
  >C : Symbol(C, Decl(noUnusedLocals_writeOnlyProperty_dynamicNames.ts, 1, 22))
  
      private [x]: number;

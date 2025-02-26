@@ -1,6 +1,6 @@
 --- old.blockScopedEnumVariablesUseBeforeDef_preserve.symbols
 +++ new.blockScopedEnumVariablesUseBeforeDef_preserve.symbols
-@@ -5,26 +5,26 @@
+@@= skipped -5, +5 lines =@@
  >foo1 : Symbol(foo1, Decl(blockScopedEnumVariablesUseBeforeDef_preserve.ts, 0, 0))
  
      return E.A
@@ -33,7 +33,7 @@
  }
  
  const config = {
-@@ -32,9 +32,9 @@
+@@= skipped -27, +27 lines =@@
  
      a: AfterObject.A,
  >a : Symbol(a, Decl(blockScopedEnumVariablesUseBeforeDef_preserve.ts, 10, 16))
@@ -45,7 +45,7 @@
  
  };
  
-@@ -42,6 +42,6 @@
+@@= skipped -10, +10 lines =@@
  >AfterObject : Symbol(AfterObject, Decl(blockScopedEnumVariablesUseBeforeDef_preserve.ts, 12, 2))
  
      A = 2,

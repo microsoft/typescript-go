@@ -1,6 +1,6 @@
 --- old.declarationEmitTopLevelNodeFromCrossFile2.symbols
 +++ new.declarationEmitTopLevelNodeFromCrossFile2.symbols
-@@ -30,7 +30,7 @@
+@@= skipped -30, +30 lines =@@
  >T : Symbol(T, Decl(box.d.ts, 0, 25))
  
      value: T;

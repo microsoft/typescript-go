@@ -1,6 +1,6 @@
 --- old.initializedDestructuringAssignmentTypes.symbols
 +++ new.initializedDestructuringAssignmentTypes.symbols
-@@ -3,8 +3,8 @@
+@@= skipped -3, +3 lines =@@
  === initializedDestructuringAssignmentTypes.ts ===
  const [, a = ''] = ''.match('') || [];
  >a : Symbol(a, Decl(initializedDestructuringAssignmentTypes.ts, 0, 8))

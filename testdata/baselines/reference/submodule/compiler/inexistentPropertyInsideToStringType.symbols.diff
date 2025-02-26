@@ -1,6 +1,6 @@
 --- old.inexistentPropertyInsideToStringType.symbols
 +++ new.inexistentPropertyInsideToStringType.symbols
-@@ -5,10 +5,5 @@
+@@= skipped -5, +5 lines =@@
  >toString : Symbol(toString, Decl(lib.dom.d.ts, --, --), Decl(index.js, 0, 0))
  
      this.yadda

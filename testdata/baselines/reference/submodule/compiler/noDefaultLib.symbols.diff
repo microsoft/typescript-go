@@ -1,6 +1,6 @@
 --- old.noDefaultLib.symbols
 +++ new.noDefaultLib.symbols
-@@ -6,23 +6,23 @@
+@@= skipped -6, +6 lines =@@
  >x : Symbol(x, Decl(noDefaultLib.ts, 1, 3))
  
  interface Array {}

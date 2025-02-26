@@ -1,6 +1,6 @@
 --- old.targetTypingOnFunctions.symbols
 +++ new.targetTypingOnFunctions.symbols
-@@ -5,15 +5,15 @@
+@@= skipped -5, +5 lines =@@
  >fu : Symbol(fu, Decl(targetTypingOnFunctions.ts, 0, 3))
  >s : Symbol(s, Decl(targetTypingOnFunctions.ts, 0, 9))
  >s : Symbol(s, Decl(targetTypingOnFunctions.ts, 0, 42))

@@ -1,6 +1,6 @@
 --- old.raiseErrorOnParameterProperty.symbols
 +++ new.raiseErrorOnParameterProperty.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >C1 : Symbol(C1, Decl(raiseErrorOnParameterProperty.ts, 0, 0))
  
    constructor(public x: X) {

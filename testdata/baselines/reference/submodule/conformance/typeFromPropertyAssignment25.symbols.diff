@@ -1,6 +1,6 @@
 --- old.typeFromPropertyAssignment25.symbols
 +++ new.typeFromPropertyAssignment25.symbols
-@@ -2,63 +2,41 @@
+@@= skipped -2, +2 lines =@@
  
  === bug24703.js ===
  var Common = {};

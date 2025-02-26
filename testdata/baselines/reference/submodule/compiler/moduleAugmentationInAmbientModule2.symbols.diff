@@ -1,6 +1,6 @@
 --- old.moduleAugmentationInAmbientModule2.symbols
 +++ new.moduleAugmentationInAmbientModule2.symbols
-@@ -12,18 +12,14 @@
+@@= skipped -12, +12 lines =@@
  >Observable : Symbol(Observable, Decl(main.ts, 2, 8))
  
  x.foo().x;
@@ -21,7 +21,7 @@
  }
  
  declare module "M" {
-@@ -31,7 +27,7 @@
+@@= skipped -19, +15 lines =@@
  
      class Cls { x: number }
  >Cls : Symbol(Cls, Decl(O.d.ts, 4, 20))
@@ -30,7 +30,7 @@
  }
  
  declare module "Map" {
-@@ -41,13 +37,13 @@
+@@= skipped -10, +10 lines =@@
  >Cls : Symbol(Cls, Decl(O.d.ts, 9, 12))
  
      module "Observable" {

@@ -1,6 +1,6 @@
 --- old.moduleWithStatementsOfEveryKind.symbols
 +++ new.moduleWithStatementsOfEveryKind.symbols
-@@ -6,23 +6,23 @@
+@@= skipped -6, +6 lines =@@
  
      class A { s: string }
  >A : Symbol(A, Decl(moduleWithStatementsOfEveryKind.ts, 0, 10))
@@ -28,7 +28,7 @@
  
      class BB<T> extends A {
  >BB : Symbol(BB, Decl(moduleWithStatementsOfEveryKind.ts, 5, 58))
-@@ -30,7 +30,7 @@
+@@= skipped -24, +24 lines =@@
  >A : Symbol(A, Decl(moduleWithStatementsOfEveryKind.ts, 0, 10))
  
          id: number;
@@ -37,7 +37,7 @@
      }
  
      module Module {
-@@ -38,12 +38,12 @@
+@@= skipped -8, +8 lines =@@
  
          class A { s: string }
  >A : Symbol(A, Decl(moduleWithStatementsOfEveryKind.ts, 10, 19))
@@ -53,7 +53,7 @@
  
      var x = 12;
  >x : Symbol(x, Decl(moduleWithStatementsOfEveryKind.ts, 14, 7))
-@@ -75,7 +75,7 @@
+@@= skipped -37, +37 lines =@@
  >DC : Symbol(DC, Decl(moduleWithStatementsOfEveryKind.ts, 22, 50))
  
          static x: number;
@@ -62,7 +62,7 @@
      }
  }
  
-@@ -84,23 +84,23 @@
+@@= skipped -9, +9 lines =@@
  
      export class A { s: string }
  >A : Symbol(A, Decl(moduleWithStatementsOfEveryKind.ts, 29, 10))
@@ -90,7 +90,7 @@
  
      export class BB<T> extends A {
  >BB : Symbol(BB, Decl(moduleWithStatementsOfEveryKind.ts, 34, 65))
-@@ -108,7 +108,7 @@
+@@= skipped -24, +24 lines =@@
  >A : Symbol(A, Decl(moduleWithStatementsOfEveryKind.ts, 29, 10))
  
          id: number;
@@ -99,7 +99,7 @@
      }
  
      export module Module {
-@@ -116,12 +116,12 @@
+@@= skipped -8, +8 lines =@@
  
          class A { s: string }
  >A : Symbol(A, Decl(moduleWithStatementsOfEveryKind.ts, 39, 26))
@@ -115,7 +115,7 @@
  
      export var x = 12;
  >x : Symbol(x, Decl(moduleWithStatementsOfEveryKind.ts, 43, 14))
-@@ -153,7 +153,7 @@
+@@= skipped -37, +37 lines =@@
  >DC : Symbol(DC, Decl(moduleWithStatementsOfEveryKind.ts, 51, 57))
  
          static x: number;

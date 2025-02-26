@@ -1,6 +1,6 @@
 --- old.parserErrantSemicolonInClass1.symbols
 +++ new.parserErrantSemicolonInClass1.symbols
-@@ -17,22 +17,22 @@
+@@= skipped -17, +17 lines =@@
      }
  
      public pgF() { };
@@ -28,7 +28,7 @@
  
          return { x: 30, y: 40 };
  >x : Symbol(x, Decl(parserErrantSemicolonInClass1.ts, 18, 16))
-@@ -40,26 +40,26 @@
+@@= skipped -23, +23 lines =@@
      }
  
      private static d2() {

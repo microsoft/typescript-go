@@ -1,6 +1,6 @@
 --- old.propertyAssignmentUseParentType2.symbols
 +++ new.propertyAssignmentUseParentType2.symbols
-@@ -3,30 +3,30 @@
+@@= skipped -3, +3 lines =@@
  === propertyAssignmentUseParentType2.js ===
  /** @type {{ (): boolean; nuo: 789 }} */
  export const inlined = () => true

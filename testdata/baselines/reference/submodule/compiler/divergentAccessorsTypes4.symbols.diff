@@ -1,6 +1,6 @@
 --- old.divergentAccessorsTypes4.symbols
 +++ new.divergentAccessorsTypes4.symbols
-@@ -5,31 +5,31 @@
+@@= skipped -5, +5 lines =@@
  >One : Symbol(One, Decl(divergentAccessorsTypes4.ts, 0, 0))
  
    get prop1(): string { return ""; }

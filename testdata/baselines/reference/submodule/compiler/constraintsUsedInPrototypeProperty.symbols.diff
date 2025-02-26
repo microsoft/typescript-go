@@ -1,6 +1,6 @@
 --- old.constraintsUsedInPrototypeProperty.symbols
 +++ new.constraintsUsedInPrototypeProperty.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >V : Symbol(V, Decl(constraintsUsedInPrototypeProperty.ts, 0, 30))
  
  Foo.prototype; // Foo<any, any, any>

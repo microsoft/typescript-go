@@ -1,6 +1,6 @@
 --- old.destructuringObjectBindingPatternAndAssignment1ES6.symbols
 +++ new.destructuringObjectBindingPatternAndAssignment1ES6.symbols
-@@ -97,7 +97,7 @@
+@@= skipped -97, +97 lines =@@
  
      return {
          "prop1": 2

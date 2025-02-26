@@ -1,6 +1,6 @@
 --- old.constructorHasPrototypeProperty.symbols
 +++ new.constructorHasPrototypeProperty.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >C : Symbol(C, Decl(constructorHasPrototypeProperty.ts, 0, 19))
  
          foo: string;
@@ -9,7 +9,7 @@
      }
  
      class D extends C {
-@@ -16,30 +16,30 @@
+@@= skipped -8, +8 lines =@@
  >C : Symbol(C, Decl(constructorHasPrototypeProperty.ts, 0, 19))
  
          bar: string;
@@ -49,7 +49,7 @@
  }
  
  module Generic {
-@@ -51,11 +51,11 @@
+@@= skipped -35, +35 lines =@@
  >U : Symbol(U, Decl(constructorHasPrototypeProperty.ts, 16, 14))
  
          foo: T;
@@ -63,7 +63,7 @@
  >U : Symbol(U, Decl(constructorHasPrototypeProperty.ts, 16, 14))
      }
  
-@@ -68,35 +68,35 @@
+@@= skipped -17, +17 lines =@@
  >U : Symbol(U, Decl(constructorHasPrototypeProperty.ts, 21, 14))
  
          baz: T;

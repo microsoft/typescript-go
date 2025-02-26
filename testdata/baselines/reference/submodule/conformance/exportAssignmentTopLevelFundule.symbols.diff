@@ -1,6 +1,6 @@
 --- old.exportAssignmentTopLevelFundule.symbols
 +++ new.exportAssignmentTopLevelFundule.symbols
-@@ -5,9 +5,9 @@
+@@= skipped -5, +5 lines =@@
  >foo : Symbol(foo, Decl(foo_1.ts, 0, 0))
  
  if(foo.answer === 42){

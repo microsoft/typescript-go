@@ -1,6 +1,6 @@
 --- old.jsxNamespaceImplicitImportJSXNamespaceFromConfigPickedOverGlobalOne(jsx=react-jsx).symbols
 +++ new.jsxNamespaceImplicitImportJSXNamespaceFromConfigPickedOverGlobalOne(jsx=react-jsx).symbols
-@@ -11,7 +11,7 @@
+@@= skipped -11, +11 lines =@@
  >React : Symbol(React, Decl(index.d.ts, 1, 26))
  
  declare global {
@@ -9,7 +9,7 @@
  
    namespace JSX {
  >JSX : Symbol(JSX, Decl(index.d.ts, 5, 16))
-@@ -44,7 +44,7 @@
+@@= skipped -33, +33 lines =@@
  >IntrinsicElements : Symbol(IntrinsicElements, Decl(index.d.ts, 13, 44))
  
        div: {}
@@ -18,7 +18,7 @@
      }
    }
  }
-@@ -74,48 +74,48 @@
+@@= skipped -30, +30 lines =@@
  type ReactJSXElement = JSX.Element
  >ReactJSXElement : Symbol(ReactJSXElement, Decl(jsx-namespace.d.ts, 4, 5))
  >JSX : Symbol(JSX, Decl(index.d.ts, 5, 16))
@@ -75,7 +75,7 @@
  
  export namespace EmotionJSX {
  >EmotionJSX : Symbol(EmotionJSX, Decl(jsx-namespace.d.ts, 13, 54))
-@@ -180,7 +180,5 @@
+@@= skipped -106, +106 lines =@@
  === /index.tsx ===
  export const Comp = () => <div css="color: hotpink;"></div>;
  >Comp : Symbol(Comp, Decl(index.tsx, 0, 12))

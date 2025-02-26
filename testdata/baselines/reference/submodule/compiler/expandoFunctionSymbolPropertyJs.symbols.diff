@@ -1,6 +1,6 @@
 --- old.expandoFunctionSymbolPropertyJs.symbols
 +++ new.expandoFunctionSymbolPropertyJs.symbols
-@@ -10,7 +10,7 @@
+@@= skipped -10, +10 lines =@@
  
    (): void;
    readonly [symb]: boolean;

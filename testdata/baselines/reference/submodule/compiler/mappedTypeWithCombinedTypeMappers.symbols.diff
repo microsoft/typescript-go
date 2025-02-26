@@ -1,6 +1,6 @@
 --- old.mappedTypeWithCombinedTypeMappers.symbols
 +++ new.mappedTypeWithCombinedTypeMappers.symbols
-@@ -35,10 +35,10 @@
+@@= skipped -35, +35 lines =@@
  >Input : Symbol(Input, Decl(mappedTypeWithCombinedTypeMappers.ts, 8, 1))
  
      x: string;

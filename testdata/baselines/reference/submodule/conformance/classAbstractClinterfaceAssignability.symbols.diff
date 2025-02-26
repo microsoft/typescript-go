@@ -1,6 +1,6 @@
 --- old.classAbstractClinterfaceAssignability.symbols
 +++ new.classAbstractClinterfaceAssignability.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >I : Symbol(I, Decl(classAbstractClinterfaceAssignability.ts, 0, 0), Decl(classAbstractClinterfaceAssignability.ts, 11, 3))
  
      x: number;
@@ -9,7 +9,7 @@
  }
  
  interface IConstructor {
-@@ -15,10 +15,10 @@
+@@= skipped -10, +10 lines =@@
  >I : Symbol(I, Decl(classAbstractClinterfaceAssignability.ts, 0, 0), Decl(classAbstractClinterfaceAssignability.ts, 11, 3))
      
      y: number;
@@ -22,7 +22,7 @@
  >I : Symbol(I, Decl(classAbstractClinterfaceAssignability.ts, 0, 0), Decl(classAbstractClinterfaceAssignability.ts, 11, 3))
  }
  
-@@ -30,10 +30,10 @@
+@@= skipped -15, +15 lines =@@
  >A : Symbol(A, Decl(classAbstractClinterfaceAssignability.ts, 11, 20))
  
      x: number;

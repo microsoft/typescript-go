@@ -1,6 +1,6 @@
 --- old.unknownTypeArgOnCall.symbols
 +++ new.unknownTypeArgOnCall.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(unknownTypeArgOnCall.ts, 0, 10))
  
    public clone<U>() {
@@ -9,7 +9,7 @@
  >U : Symbol(U, Decl(unknownTypeArgOnCall.ts, 1, 15))
  
     return null;
-@@ -18,8 +18,8 @@
+@@= skipped -12, +12 lines =@@
  
  var r = f.clone<Uhhhh>()
  >r : Symbol(r, Decl(unknownTypeArgOnCall.ts, 6, 3))

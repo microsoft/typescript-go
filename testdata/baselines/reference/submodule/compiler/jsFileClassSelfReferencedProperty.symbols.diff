@@ -1,6 +1,6 @@
 --- old.jsFileClassSelfReferencedProperty.symbols
 +++ new.jsFileClassSelfReferencedProperty.symbols
-@@ -6,12 +6,8 @@
+@@= skipped -6, +6 lines =@@
  
    constructor () {
      this.testStackOverflow = this.testStackOverflow.bind(this)

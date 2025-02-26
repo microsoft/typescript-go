@@ -1,6 +1,6 @@
 --- old.typeFromContextualThisType.symbols
 +++ new.typeFromContextualThisType.symbols
-@@ -9,9 +9,7 @@
+@@= skipped -9, +9 lines =@@
  >a : Symbol(a, Decl(bug25926.js, 1, 12))
  
          this.b = n => n;
@@ -11,7 +11,7 @@
  >n : Symbol(n, Decl(bug25926.js, 3, 16))
  >n : Symbol(n, Decl(bug25926.js, 3, 16))
      }
-@@ -25,16 +23,10 @@
+@@= skipped -16, +14 lines =@@
  >d : Symbol(d, Decl(bug25926.js, 8, 12))
  
          this.e = this.f = m => this.g || m;

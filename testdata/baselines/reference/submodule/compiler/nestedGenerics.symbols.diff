@@ -1,6 +1,6 @@
 --- old.nestedGenerics.symbols
 +++ new.nestedGenerics.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(nestedGenerics.ts, 0, 14))
  
  	t: T;

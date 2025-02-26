@@ -1,6 +1,6 @@
 --- old.discriminatedUnionJsxElement.symbols
 +++ new.discriminatedUnionJsxElement.symbols
-@@ -8,10 +8,10 @@
+@@= skipped -8, +8 lines =@@
  >MenuItemVariant : Symbol(MenuItemVariant, Decl(discriminatedUnionJsxElement.tsx, 2, 16))
  >ListItemVariant : Symbol(ListItemVariant, Decl(discriminatedUnionJsxElement.tsx, 11, 98))
  >ListItemVariant : Symbol(ListItemVariant, Decl(discriminatedUnionJsxElement.tsx, 11, 98))
@@ -13,7 +13,7 @@
  >MenuItemVariant : Symbol(MenuItemVariant, Decl(discriminatedUnionJsxElement.tsx, 2, 16))
  }
  
-@@ -20,19 +20,19 @@
+@@= skipped -12, +12 lines =@@
  >MenuItemVariant : Symbol(MenuItemVariant, Decl(discriminatedUnionJsxElement.tsx, 6, 14))
  >ListItemVariant : Symbol(ListItemVariant, Decl(discriminatedUnionJsxElement.tsx, 11, 98))
  >ListItemVariant : Symbol(ListItemVariant, Decl(discriminatedUnionJsxElement.tsx, 11, 98))
@@ -38,7 +38,7 @@
  
      return <ListItem variant={listItemVariant} />;
  >ListItem : Symbol(ListItem, Decl(discriminatedUnionJsxElement.tsx, 16, 1))
-@@ -44,19 +44,19 @@
+@@= skipped -24, +24 lines =@@
  >IListItemData : Symbol(IListItemData, Decl(discriminatedUnionJsxElement.tsx, 9, 1))
  >variant : Symbol(variant, Decl(discriminatedUnionJsxElement.tsx, 11, 22))
  >ListItemVariant : Symbol(ListItemVariant, Decl(discriminatedUnionJsxElement.tsx, 11, 98))

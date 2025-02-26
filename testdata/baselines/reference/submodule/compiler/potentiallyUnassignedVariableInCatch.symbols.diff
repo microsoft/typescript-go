@@ -1,6 +1,6 @@
 --- old.potentiallyUnassignedVariableInCatch.symbols
 +++ new.potentiallyUnassignedVariableInCatch.symbols
-@@ -6,9 +6,9 @@
+@@= skipped -6, +6 lines =@@
  
  try {
  	if (Math.random() > 0.5) {

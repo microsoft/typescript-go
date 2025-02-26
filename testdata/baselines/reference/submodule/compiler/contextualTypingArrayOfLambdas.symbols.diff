@@ -1,6 +1,6 @@
 --- old.contextualTypingArrayOfLambdas.symbols
 +++ new.contextualTypingArrayOfLambdas.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(contextualTypingArrayOfLambdas.ts, 0, 0))
  
      foo: string;
@@ -9,7 +9,7 @@
  }
  
  class B extends A {
-@@ -13,7 +13,7 @@
+@@= skipped -8, +8 lines =@@
  >A : Symbol(A, Decl(contextualTypingArrayOfLambdas.ts, 0, 0))
  
      bar: string;
@@ -18,7 +18,7 @@
  }
  
  class C extends A {
-@@ -21,7 +21,7 @@
+@@= skipped -8, +8 lines =@@
  >A : Symbol(A, Decl(contextualTypingArrayOfLambdas.ts, 0, 0))
  
      baz: string;

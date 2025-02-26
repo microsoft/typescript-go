@@ -1,6 +1,6 @@
 --- old.mixinClassesMembers.symbols
 +++ new.mixinClassesMembers.symbols
-@@ -5,13 +5,13 @@
+@@= skipped -5, +5 lines =@@
  >C1 : Symbol(C1, Decl(mixinClassesMembers.ts, 0, 0))
  
      public a: number;
@@ -17,7 +17,7 @@
  
      constructor(s: string);
  >s : Symbol(s, Decl(mixinClassesMembers.ts, 4, 16))
-@@ -27,10 +27,10 @@
+@@= skipped -22, +22 lines =@@
  >args : Symbol(args, Decl(mixinClassesMembers.ts, 9, 16))
  
      p: number;
@@ -30,7 +30,7 @@
  }
  
  declare class M2 {
-@@ -40,10 +40,10 @@
+@@= skipped -13, +13 lines =@@
  >args : Symbol(args, Decl(mixinClassesMembers.ts, 15, 16))
  
      f(): number;
@@ -43,7 +43,7 @@
  }
  
  declare const Mixed1: typeof M1 & typeof C1;
-@@ -121,19 +121,19 @@
+@@= skipped -81, +81 lines =@@
  >Mixed1 : Symbol(Mixed1, Decl(mixinClassesMembers.ts, 20, 13))
  
      x.a;
@@ -69,7 +69,7 @@
  }
  
  function f3() {
-@@ -144,19 +144,19 @@
+@@= skipped -23, +23 lines =@@
  >Mixed2 : Symbol(Mixed2, Decl(mixinClassesMembers.ts, 21, 13))
  
      x.a;
@@ -95,7 +95,7 @@
  }
  
  function f4() {
-@@ -167,29 +167,29 @@
+@@= skipped -23, +23 lines =@@
  >Mixed3 : Symbol(Mixed3, Decl(mixinClassesMembers.ts, 22, 13))
  
      x.a;
@@ -135,7 +135,7 @@
  }
  
  function f5() {
-@@ -200,29 +200,29 @@
+@@= skipped -33, +33 lines =@@
  >Mixed4 : Symbol(Mixed4, Decl(mixinClassesMembers.ts, 23, 13))
  
      x.a;
@@ -175,7 +175,7 @@
  }
  
  function f6() {
-@@ -233,24 +233,24 @@
+@@= skipped -33, +33 lines =@@
  >Mixed5 : Symbol(Mixed5, Decl(mixinClassesMembers.ts, 24, 13))
  
      x.p;
@@ -208,7 +208,7 @@
  }
  
  class C2 extends Mixed1 {
-@@ -260,19 +260,19 @@
+@@= skipped -27, +27 lines =@@
      constructor() {
          super("hello");
          this.a;
@@ -234,7 +234,7 @@
      }
  }
  
-@@ -283,28 +283,28 @@
+@@= skipped -23, +23 lines =@@
      constructor() {
          super(42);
          this.a;

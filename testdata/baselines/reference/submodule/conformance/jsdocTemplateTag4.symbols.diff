@@ -1,6 +1,6 @@
 --- old.jsdocTemplateTag4.symbols
 +++ new.jsdocTemplateTag4.symbols
-@@ -12,10 +12,6 @@
+@@= skipped -12, +12 lines =@@
  
      /** @type {Object<string, V>} TODO: Remove the prototype from the fresh object */
      this._map = {};
@@ -11,7 +11,7 @@
  };
  
  /**
-@@ -23,16 +19,12 @@
+@@= skipped -11, +7 lines =@@
   * @returns {V} the value ok
   */
  Multimap.prototype.get = function (key) {
@@ -30,7 +30,7 @@
  >key : Symbol(key, Decl(a.js, 15, 35))
  }
  
-@@ -47,10 +39,6 @@
+@@= skipped -24, +20 lines =@@
  
      /** @type {Object<string, V>} TODO: Remove the prototype from the fresh object */
      this._map = {};
@@ -41,7 +41,7 @@
  };
  
  /**
-@@ -58,21 +46,17 @@
+@@= skipped -11, +7 lines =@@
   * @returns {V} the value ok
   */
  Multimap2.prototype.get = function (key) {
@@ -66,7 +66,7 @@
  
  /**
   * Should work for expando-namespaced initialisers too
-@@ -81,15 +65,11 @@
+@@= skipped -23, +19 lines =@@
   * @template V
   */
  Ns.Multimap3 = function() {
@@ -84,7 +84,7 @@
  
  };
  
-@@ -98,18 +78,10 @@
+@@= skipped -17, +13 lines =@@
   * @returns {V} the value ok
   */
  Ns.Multimap3.prototype.get = function (key) {

@@ -1,6 +1,6 @@
 --- old.parserVariableDeclaration3.symbols
 +++ new.parserVariableDeclaration3.symbols
-@@ -13,7 +13,7 @@
+@@= skipped -13, +13 lines =@@
        , compiler = <TypeScript.TypeScriptCompiler>new TypeScript.TypeScriptCompiler(outerr)
  >compiler : Symbol(compiler, Decl(parserVariableDeclaration3.ts, 3, 7))
  >TypeScript : Symbol(TypeScript)

@@ -1,6 +1,6 @@
 --- old.objectTypeWithNumericProperty.symbols
 +++ new.objectTypeWithNumericProperty.symbols
-@@ -7,10 +7,10 @@
+@@= skipped -7, +7 lines =@@
  >C : Symbol(C, Decl(objectTypeWithNumericProperty.ts, 0, 0))
  
      1: number;
@@ -13,7 +13,7 @@
  }
  
  var c: C;
-@@ -20,31 +20,31 @@
+@@= skipped -13, +13 lines =@@
  var r1 = c[1];
  >r1 : Symbol(r1, Decl(objectTypeWithNumericProperty.ts, 8, 3), Decl(objectTypeWithNumericProperty.ts, 19, 3), Decl(objectTypeWithNumericProperty.ts, 29, 3), Decl(objectTypeWithNumericProperty.ts, 39, 3))
  >c : Symbol(c, Decl(objectTypeWithNumericProperty.ts, 7, 3))
@@ -51,7 +51,7 @@
  }
  
  var i: I;
-@@ -54,22 +54,22 @@
+@@= skipped -34, +34 lines =@@
  var r1 = i[1];
  >r1 : Symbol(r1, Decl(objectTypeWithNumericProperty.ts, 8, 3), Decl(objectTypeWithNumericProperty.ts, 19, 3), Decl(objectTypeWithNumericProperty.ts, 29, 3), Decl(objectTypeWithNumericProperty.ts, 39, 3))
  >i : Symbol(i, Decl(objectTypeWithNumericProperty.ts, 18, 3))

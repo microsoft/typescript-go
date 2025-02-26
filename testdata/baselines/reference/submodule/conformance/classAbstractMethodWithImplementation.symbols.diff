@@ -1,6 +1,6 @@
 --- old.classAbstractMethodWithImplementation.symbols
 +++ new.classAbstractMethodWithImplementation.symbols
-@@ -5,5 +5,5 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(classAbstractMethodWithImplementation.ts, 0, 0))
  
      abstract foo() {}

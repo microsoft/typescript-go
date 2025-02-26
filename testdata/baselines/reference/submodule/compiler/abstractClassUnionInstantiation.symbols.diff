@@ -1,6 +1,6 @@
 --- old.abstractClassUnionInstantiation.symbols
 +++ new.abstractClassUnionInstantiation.symbols
-@@ -9,11 +9,11 @@
+@@= skipped -9, +9 lines =@@
  
  abstract class AbstractA { a: string; }
  >AbstractA : Symbol(AbstractA, Decl(abstractClassUnionInstantiation.ts, 1, 18))
@@ -14,7 +14,7 @@
  
  type Abstracts = typeof AbstractA | typeof AbstractB;
  >Abstracts : Symbol(Abstracts, Decl(abstractClassUnionInstantiation.ts, 3, 39))
-@@ -52,36 +52,36 @@
+@@= skipped -43, +43 lines =@@
  >cls3 : Symbol(cls3, Decl(abstractClassUnionInstantiation.ts, 11, 13))
  
  [ConcreteA, AbstractA, AbstractB].map(cls => new cls()); // should error

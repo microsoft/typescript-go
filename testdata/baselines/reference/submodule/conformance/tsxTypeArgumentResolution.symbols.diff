@@ -1,6 +1,6 @@
 --- old.tsxTypeArgumentResolution.symbols
 +++ new.tsxTypeArgumentResolution.symbols
-@@ -8,22 +8,22 @@
+@@= skipped -8, +8 lines =@@
  >Prop : Symbol(Prop, Decl(file.tsx, 0, 32))
  
      a: number,
@@ -28,7 +28,7 @@
  >P : Symbol(P, Decl(file.tsx, 7, 21))
  }
  
-@@ -101,14 +101,14 @@
+@@= skipped -93, +93 lines =@@
  >P : Symbol(P, Decl(file.tsx, 31, 22))
  >a : Symbol(a, Decl(file.tsx, 31, 33))
  >P2 : Symbol(P2, Decl(file.tsx, 31, 46))

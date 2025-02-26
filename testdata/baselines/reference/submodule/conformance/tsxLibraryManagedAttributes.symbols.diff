@@ -1,6 +1,6 @@
 --- old.tsxLibraryManagedAttributes.symbols
 +++ new.tsxLibraryManagedAttributes.symbols
-@@ -57,12 +57,12 @@
+@@= skipped -57, +57 lines =@@
  >propFullName : Symbol(propFullName, Decl(tsxLibraryManagedAttributes.tsx, 9, 72))
  
      isRequired: PropTypeChecker<U, true>;
@@ -15,7 +15,7 @@
  >checkedType : Symbol(checkedType, Decl(tsxLibraryManagedAttributes.tsx, 7, 13))
  >TRequired : Symbol(TRequired, Decl(tsxLibraryManagedAttributes.tsx, 8, 28))
  >U : Symbol(U, Decl(tsxLibraryManagedAttributes.tsx, 8, 26))
-@@ -100,21 +100,21 @@
+@@= skipped -43, +43 lines =@@
  >P : Symbol(P, Decl(tsxLibraryManagedAttributes.tsx, 22, 29))
  
      props: P & Readonly<{children: ReactNode[]}>;
@@ -40,7 +40,7 @@
  >ReactNode : Symbol(ReactNode, Decl(tsxLibraryManagedAttributes.tsx, 18, 1))
  }
  
-@@ -176,31 +176,31 @@
+@@= skipped -76, +76 lines =@@
  >ReactComponent : Symbol(ReactComponent, Decl(tsxLibraryManagedAttributes.tsx, 20, 58))
  
      static propTypes = {
@@ -82,7 +82,7 @@
  
          foo: 42,
  >foo : Symbol(foo, Decl(tsxLibraryManagedAttributes.tsx, 48, 27))
-@@ -251,21 +251,21 @@
+@@= skipped -75, +75 lines =@@
  >ReactComponent : Symbol(ReactComponent, Decl(tsxLibraryManagedAttributes.tsx, 20, 58))
  
      static propTypes = {
@@ -111,7 +111,7 @@
  
      };
  }
-@@ -298,7 +298,7 @@
+@@= skipped -47, +47 lines =@@
  >ReactComponent : Symbol(ReactComponent, Decl(tsxLibraryManagedAttributes.tsx, 20, 58))
  
      static defaultProps = {
@@ -120,7 +120,7 @@
  
          foo: 42,
  >foo : Symbol(foo, Decl(tsxLibraryManagedAttributes.tsx, 73, 27))
-@@ -326,7 +326,7 @@
+@@= skipped -28, +28 lines =@@
  >FooProps : Symbol(FooProps, Decl(tsxLibraryManagedAttributes.tsx, 80, 40))
  
      foo: string;
@@ -129,7 +129,7 @@
  }
  
  class BothWithSpecifiedGeneric extends ReactComponent<FooProps> {
-@@ -335,31 +335,31 @@
+@@= skipped -9, +9 lines =@@
  >FooProps : Symbol(FooProps, Decl(tsxLibraryManagedAttributes.tsx, 80, 40))
  
      static propTypes = {
@@ -171,7 +171,7 @@
  
          foo: "yo",
  >foo : Symbol(foo, Decl(tsxLibraryManagedAttributes.tsx, 92, 27))
-@@ -411,21 +411,21 @@
+@@= skipped -76, +76 lines =@@
  >FooProps : Symbol(FooProps, Decl(tsxLibraryManagedAttributes.tsx, 80, 40))
  
      static propTypes = {
@@ -200,7 +200,7 @@
  
      };
  }
-@@ -458,7 +458,7 @@
+@@= skipped -47, +47 lines =@@
  >FooProps : Symbol(FooProps, Decl(tsxLibraryManagedAttributes.tsx, 80, 40))
  
      static defaultProps = {

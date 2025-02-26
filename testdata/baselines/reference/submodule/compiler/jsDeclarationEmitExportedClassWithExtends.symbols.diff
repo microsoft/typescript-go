@@ -1,6 +1,6 @@
 --- old.jsDeclarationEmitExportedClassWithExtends.symbols
 +++ new.jsDeclarationEmitExportedClassWithExtends.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  === node_modules/lit-element/development/index.d.ts ===
  
  export * from "./lit-element.js";

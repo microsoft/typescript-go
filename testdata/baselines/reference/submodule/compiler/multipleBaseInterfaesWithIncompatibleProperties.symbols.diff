@@ -1,6 +1,6 @@
 --- old.multipleBaseInterfaesWithIncompatibleProperties.symbols
 +++ new.multipleBaseInterfaesWithIncompatibleProperties.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(multipleBaseInterfaesWithIncompatibleProperties.ts, 0, 12))
  {
      x: T

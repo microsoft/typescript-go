@@ -1,6 +1,6 @@
 --- old.useObjectValuesAndEntries1.symbols
 +++ new.useObjectValuesAndEntries1.symbols
-@@ -8,9 +8,9 @@
+@@= skipped -8, +8 lines =@@
  
  for (var x of Object.values(o)) {
  >x : Symbol(x, Decl(useObjectValuesAndEntries1.ts, 2, 8))
@@ -12,7 +12,7 @@
  >o : Symbol(o, Decl(useObjectValuesAndEntries1.ts, 0, 3))
  
      let y = x;
-@@ -20,92 +20,92 @@
+@@= skipped -12, +12 lines =@@
  
  var entries = Object.entries(o);                    // [string, number][]
  >entries : Symbol(entries, Decl(useObjectValuesAndEntries1.ts, 6, 3))
@@ -131,7 +131,7 @@
  >E : Symbol(E, Decl(useObjectValuesAndEntries1.ts, 20, 31))
  
  interface I { }
-@@ -117,15 +117,15 @@
+@@= skipped -97, +97 lines =@@
  
  var entries6 = Object.entries(i);                   // [string, any][]
  >entries6 : Symbol(entries6, Decl(useObjectValuesAndEntries1.ts, 28, 3))

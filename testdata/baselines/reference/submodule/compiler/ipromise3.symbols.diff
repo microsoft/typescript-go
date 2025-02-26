@@ -1,6 +1,6 @@
 --- old.ipromise3.symbols
 +++ new.ipromise3.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(ipromise3.ts, 0, 20))
  
      then<U>(success?: (value: T) => IPromise3<U>, error?: (error: any) => IPromise3<U>, progress?: (progress: any) => void ): IPromise3<U>;
@@ -9,7 +9,7 @@
  >U : Symbol(U, Decl(ipromise3.ts, 1, 9))
  >success : Symbol(success, Decl(ipromise3.ts, 1, 12))
  >value : Symbol(value, Decl(ipromise3.ts, 1, 23))
-@@ -23,7 +23,7 @@
+@@= skipped -17, +17 lines =@@
  >U : Symbol(U, Decl(ipromise3.ts, 1, 9))
  
      then<U>(success?: (value: T) => IPromise3<U>, error?: (error: any) => U, progress?: (progress: any) => void ): IPromise3<U>;
@@ -18,7 +18,7 @@
  >U : Symbol(U, Decl(ipromise3.ts, 2, 9))
  >success : Symbol(success, Decl(ipromise3.ts, 2, 12))
  >value : Symbol(value, Decl(ipromise3.ts, 2, 23))
-@@ -39,7 +39,7 @@
+@@= skipped -16, +16 lines =@@
  >U : Symbol(U, Decl(ipromise3.ts, 2, 9))
  
      then<U>(success?: (value: T) => U, error?: (error: any) => IPromise3<U>, progress?: (progress: any) => void ): IPromise3<U>;
@@ -27,7 +27,7 @@
  >U : Symbol(U, Decl(ipromise3.ts, 3, 9))
  >success : Symbol(success, Decl(ipromise3.ts, 3, 12))
  >value : Symbol(value, Decl(ipromise3.ts, 3, 23))
-@@ -55,7 +55,7 @@
+@@= skipped -16, +16 lines =@@
  >U : Symbol(U, Decl(ipromise3.ts, 3, 9))
  
      then<U>(success?: (value: T) => U, error?: (error: any) => U, progress?: (progress: any) => void ): IPromise3<U>;
@@ -36,7 +36,7 @@
  >U : Symbol(U, Decl(ipromise3.ts, 4, 9))
  >success : Symbol(success, Decl(ipromise3.ts, 4, 12))
  >value : Symbol(value, Decl(ipromise3.ts, 4, 23))
-@@ -70,7 +70,7 @@
+@@= skipped -15, +15 lines =@@
  >U : Symbol(U, Decl(ipromise3.ts, 4, 9))
  
      done? <U>(success?: (value: T) => any, error?: (error: any) => any, progress?: (progress: any) => void ): void;
@@ -45,7 +45,7 @@
  >U : Symbol(U, Decl(ipromise3.ts, 5, 11))
  >success : Symbol(success, Decl(ipromise3.ts, 5, 14))
  >value : Symbol(value, Decl(ipromise3.ts, 5, 25))
-@@ -87,9 +87,9 @@
+@@= skipped -17, +17 lines =@@
  var p2: IPromise3<string> = p1.then(function (x) {
  >p2 : Symbol(p2, Decl(ipromise3.ts, 8, 3))
  >IPromise3 : Symbol(IPromise3, Decl(ipromise3.ts, 0, 0))

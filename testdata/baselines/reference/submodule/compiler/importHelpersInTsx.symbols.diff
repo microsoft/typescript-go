@@ -1,6 +1,6 @@
 --- old.importHelpersInTsx.symbols
 +++ new.importHelpersInTsx.symbols
-@@ -24,44 +24,44 @@
+@@= skipped -24, +24 lines =@@
  
  === tslib.d.ts ===
  export declare function __extends(d: Function, b: Function): void;

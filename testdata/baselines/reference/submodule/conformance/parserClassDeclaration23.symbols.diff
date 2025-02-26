@@ -1,6 +1,6 @@
 --- old.parserClassDeclaration23.symbols
 +++ new.parserClassDeclaration23.symbols
-@@ -2,5 +2,5 @@
+@@= skipped -2, +2 lines =@@
  
  === parserClassDeclaration23.ts ===
  class C\u0032 {

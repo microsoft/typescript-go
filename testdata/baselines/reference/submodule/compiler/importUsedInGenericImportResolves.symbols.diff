@@ -1,6 +1,6 @@
 --- old.importUsedInGenericImportResolves.symbols
 +++ new.importUsedInGenericImportResolves.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >P : Symbol(P, Decl(test1.d.ts, 0, 19))
  
      a: P;

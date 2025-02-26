@@ -1,6 +1,6 @@
 --- old.privateNameUnused.symbols
 +++ new.privateNameUnused.symbols
-@@ -5,17 +5,14 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(privateNameUnused.ts, 0, 0))
  
      #used = "used";
@@ -21,7 +21,7 @@
  >this : Symbol(A, Decl(privateNameUnused.ts, 0, 0))
      }
  }
-@@ -24,17 +21,14 @@
+@@= skipped -19, +16 lines =@@
  >A2 : Symbol(A2, Decl(privateNameUnused.ts, 6, 1))
  
      #used() {  };
@@ -42,7 +42,7 @@
  >this : Symbol(A2, Decl(privateNameUnused.ts, 6, 1))
      }
  }
-@@ -43,25 +37,22 @@
+@@= skipped -19, +16 lines =@@
  >A3 : Symbol(A3, Decl(privateNameUnused.ts, 14, 1))
  
      get #used() { return 0 };

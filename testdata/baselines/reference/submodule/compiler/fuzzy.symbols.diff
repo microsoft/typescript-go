@@ -1,6 +1,6 @@
 --- old.fuzzy.symbols
 +++ new.fuzzy.symbols
-@@ -8,15 +8,15 @@
+@@= skipped -8, +8 lines =@@
  >I : Symbol(I, Decl(fuzzy.ts, 0, 10))
  
          works:()=>R;
@@ -19,7 +19,7 @@
  >R : Symbol(R, Decl(fuzzy.ts, 5, 5))
      }
  
-@@ -24,10 +24,10 @@
+@@= skipped -16, +16 lines =@@
  >R : Symbol(R, Decl(fuzzy.ts, 5, 5))
  
          anything:number;
@@ -32,7 +32,7 @@
  >I : Symbol(I, Decl(fuzzy.ts, 0, 10))
      }
  
-@@ -36,10 +36,10 @@
+@@= skipped -12, +12 lines =@@
  >I : Symbol(I, Decl(fuzzy.ts, 0, 10))
  
          constructor(public x:number) {
@@ -45,7 +45,7 @@
  >R : Symbol(R, Decl(fuzzy.ts, 5, 5))
  
              return <R>({ anything: 1 });
-@@ -48,7 +48,7 @@
+@@= skipped -12, +12 lines =@@
          }
  
          doesntWork():R {
@@ -54,7 +54,7 @@
  >R : Symbol(R, Decl(fuzzy.ts, 5, 5))
  
              return { anything:1, oneI:this };
-@@ -58,7 +58,7 @@
+@@= skipped -10, +10 lines =@@
          }
  
          worksToo():R {

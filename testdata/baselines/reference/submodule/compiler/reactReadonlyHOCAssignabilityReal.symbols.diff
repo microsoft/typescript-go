@@ -1,6 +1,6 @@
 --- old.reactReadonlyHOCAssignabilityReal.symbols
 +++ new.reactReadonlyHOCAssignabilityReal.symbols
-@@ -10,28 +10,26 @@
+@@= skipped -10, +10 lines =@@
  >P : Symbol(P, Decl(reactReadonlyHOCAssignabilityReal.tsx, 3, 32))
  >Inner : Symbol(Inner, Decl(reactReadonlyHOCAssignabilityReal.tsx, 3, 35))
  >React : Symbol(React, Decl(reactReadonlyHOCAssignabilityReal.tsx, 1, 6))

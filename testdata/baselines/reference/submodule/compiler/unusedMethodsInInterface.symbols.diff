@@ -1,6 +1,6 @@
 --- old.unusedMethodsInInterface.symbols
 +++ new.unusedMethodsInInterface.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >I1 : Symbol(I1, Decl(unusedMethodsInInterface.ts, 0, 0))
  
      f1();

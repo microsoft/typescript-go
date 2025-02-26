@@ -1,6 +1,6 @@
 --- old.inferringClassMembersFromAssignments5.symbols
 +++ new.inferringClassMembersFromAssignments5.symbols
-@@ -5,12 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >Base : Symbol(Base, Decl(a.js, 0, 0))
  
      m() {
@@ -14,7 +14,7 @@
      }
  }
  class Derived extends Base {
-@@ -23,17 +21,13 @@
+@@= skipped -18, +16 lines =@@
  
          // should be OK, and p should have type number from this assignment
          this.p = 1

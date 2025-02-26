@@ -1,6 +1,6 @@
 --- old.privateNameFieldDerivedClasses.symbols
 +++ new.privateNameFieldDerivedClasses.symbols
-@@ -5,18 +5,15 @@
+@@= skipped -5, +5 lines =@@
  >Base : Symbol(Base, Decl(privateNameFieldDerivedClasses.ts, 0, 0))
  
      #prop: number = 123;
@@ -22,7 +22,7 @@
  >x : Symbol(x, Decl(privateNameFieldDerivedClasses.ts, 2, 18))
      }
  }
-@@ -25,14 +22,11 @@
+@@= skipped -20, +17 lines =@@
  >Base : Symbol(Base, Decl(privateNameFieldDerivedClasses.ts, 0, 0))
  
      static method(x: Derived) {

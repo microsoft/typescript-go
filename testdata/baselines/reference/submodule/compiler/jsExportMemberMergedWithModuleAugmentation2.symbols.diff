@@ -1,6 +1,6 @@
 --- old.jsExportMemberMergedWithModuleAugmentation2.symbols
 +++ new.jsExportMemberMergedWithModuleAugmentation2.symbols
-@@ -2,10 +2,6 @@
+@@= skipped -2, +2 lines =@@
  
  === /test.js ===
  module.exports = {
@@ -11,7 +11,7 @@
    a: "ok"
  >a : Symbol(a, Decl(test.js, 0, 18))
  
-@@ -16,7 +12,7 @@
+@@= skipped -14, +10 lines =@@
  >a : Symbol(a, Decl(index.ts, 0, 8))
  
  declare module "./test" {

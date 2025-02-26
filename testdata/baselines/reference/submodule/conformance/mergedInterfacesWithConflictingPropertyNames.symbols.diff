@@ -1,6 +1,6 @@
 --- old.mergedInterfacesWithConflictingPropertyNames.symbols
 +++ new.mergedInterfacesWithConflictingPropertyNames.symbols
-@@ -5,14 +5,14 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(mergedInterfacesWithConflictingPropertyNames.ts, 0, 0), Decl(mergedInterfacesWithConflictingPropertyNames.ts, 2, 1))
  
      x: string; // error
@@ -17,7 +17,7 @@
  }
  
  module M {
-@@ -23,7 +23,7 @@
+@@= skipped -18, +18 lines =@@
  >T : Symbol(T, Decl(mergedInterfacesWithConflictingPropertyNames.ts, 9, 16), Decl(mergedInterfacesWithConflictingPropertyNames.ts, 13, 16))
  
          x: T;
@@ -26,7 +26,7 @@
  >T : Symbol(T, Decl(mergedInterfacesWithConflictingPropertyNames.ts, 9, 16), Decl(mergedInterfacesWithConflictingPropertyNames.ts, 13, 16))
      }
  
-@@ -32,7 +32,7 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(mergedInterfacesWithConflictingPropertyNames.ts, 9, 16), Decl(mergedInterfacesWithConflictingPropertyNames.ts, 13, 16))
  
          x: number;  // error
@@ -35,7 +35,7 @@
      }
  }
  
-@@ -44,7 +44,7 @@
+@@= skipped -12, +12 lines =@@
  >T : Symbol(T, Decl(mergedInterfacesWithConflictingPropertyNames.ts, 19, 16))
  
          x: T;
@@ -44,7 +44,7 @@
  >T : Symbol(T, Decl(mergedInterfacesWithConflictingPropertyNames.ts, 19, 16))
      }   
  }
-@@ -57,7 +57,7 @@
+@@= skipped -13, +13 lines =@@
  >T : Symbol(T, Decl(mergedInterfacesWithConflictingPropertyNames.ts, 25, 16))
  
          x: number;  // ok, different declaration space than other M2
@@ -53,7 +53,7 @@
      }
  }
  
-@@ -69,7 +69,7 @@
+@@= skipped -12, +12 lines =@@
  >T : Symbol(T, Decl(mergedInterfacesWithConflictingPropertyNames.ts, 31, 23), Decl(mergedInterfacesWithConflictingPropertyNames.ts, 37, 23))
  
          x: T;
@@ -62,7 +62,7 @@
  >T : Symbol(T, Decl(mergedInterfacesWithConflictingPropertyNames.ts, 31, 23), Decl(mergedInterfacesWithConflictingPropertyNames.ts, 37, 23))
      }
  }
-@@ -82,6 +82,6 @@
+@@= skipped -13, +13 lines =@@
  >T : Symbol(T, Decl(mergedInterfacesWithConflictingPropertyNames.ts, 31, 23), Decl(mergedInterfacesWithConflictingPropertyNames.ts, 37, 23))
  
          x: number;  // error

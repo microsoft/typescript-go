@@ -1,6 +1,6 @@
 --- old.discriminantsAndTypePredicates.symbols
 +++ new.discriminantsAndTypePredicates.symbols
-@@ -5,11 +5,11 @@
+@@= skipped -5, +5 lines =@@
  
  interface A { type: 'A' }
  >A : Symbol(A, Decl(discriminantsAndTypePredicates.ts, 0, 0))
@@ -14,7 +14,7 @@
  
  function isA(x: A | B): x is A { return x.type === 'A'; }
  >isA : Symbol(isA, Decl(discriminantsAndTypePredicates.ts, 3, 25))
-@@ -84,9 +84,9 @@
+@@= skipped -79, +79 lines =@@
  >x : Symbol(x, Decl(discriminantsAndTypePredicates.ts, 20, 14))
  
      if (x.type === 'B') {

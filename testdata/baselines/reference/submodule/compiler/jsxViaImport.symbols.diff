@@ -1,6 +1,6 @@
 --- old.jsxViaImport.symbols
 +++ new.jsxViaImport.symbols
-@@ -7,12 +7,12 @@
+@@= skipped -7, +7 lines =@@
  
  class TestComponent extends React.Component<any, {}> {
  >TestComponent : Symbol(TestComponent, Decl(consumer.tsx, 1, 48))
@@ -16,7 +16,7 @@
  
          return <BaseComponent />;
  >BaseComponent : Symbol(BaseComponent, Decl(consumer.tsx, 0, 0))
-@@ -25,7 +25,7 @@
+@@= skipped -18, +18 lines =@@
  
    interface ElementAttributesProperty { props; }
  >ElementAttributesProperty : Symbol(ElementAttributesProperty, Decl(component.d.ts, 0, 20))
@@ -25,7 +25,7 @@
  }
  declare module React {
  >React : Symbol(React, Decl(component.d.ts, 2, 1))
-@@ -41,7 +41,7 @@
+@@= skipped -16, +16 lines =@@
      var base: React.Component<any, {}>;
  >base : Symbol(base, Decl(component.d.ts, 7, 7))
  >React : Symbol(React, Decl(component.d.ts, 2, 1))

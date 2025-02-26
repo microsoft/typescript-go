@@ -1,6 +1,6 @@
 --- old.validNullAssignments.symbols
 +++ new.validNullAssignments.symbols
-@@ -22,16 +22,16 @@
+@@= skipped -22, +22 lines =@@
  
  enum E { A }
  >E : Symbol(E, Decl(validNullAssignments.ts, 6, 9))
@@ -21,7 +21,7 @@
  
  var f: C;
  >f : Symbol(f, Decl(validNullAssignments.ts, 12, 3))
-@@ -45,7 +45,7 @@
+@@= skipped -23, +23 lines =@@
  
  interface I { foo: string }
  >I : Symbol(I, Decl(validNullAssignments.ts, 14, 9))

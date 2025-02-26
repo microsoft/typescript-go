@@ -1,6 +1,6 @@
 --- old.comparisonOperatorWithOneOperandIsUndefined.symbols
 +++ new.comparisonOperatorWithOneOperandIsUndefined.symbols
-@@ -7,9 +7,9 @@
+@@= skipped -7, +7 lines =@@
  
  enum E { a, b, c }
  >E : Symbol(E, Decl(comparisonOperatorWithOneOperandIsUndefined.ts, 0, 24))

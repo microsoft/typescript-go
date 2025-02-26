@@ -1,6 +1,6 @@
 --- old.autoAccessorExperimentalDecorators(target=es2022).symbols
 +++ new.autoAccessorExperimentalDecorators(target=es2022).symbols
-@@ -16,13 +16,13 @@
+@@= skipped -16, +16 lines =@@
  >dec : Symbol(dec, Decl(autoAccessorExperimentalDecorators.ts, 0, 11))
  
      accessor a: any;
@@ -16,7 +16,7 @@
  }
  
  class C2 {
-@@ -32,12 +32,12 @@
+@@= skipped -16, +16 lines =@@
  >dec : Symbol(dec, Decl(autoAccessorExperimentalDecorators.ts, 0, 11))
  
      accessor #a: any;

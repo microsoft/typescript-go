@@ -1,6 +1,6 @@
 --- old.argumentsReferenceInConstructor4_Js.symbols
 +++ new.argumentsReferenceInConstructor4_Js.symbols
-@@ -19,9 +19,7 @@
+@@= skipped -19, +19 lines =@@
  		 * @type object
  		 */
  		this.foo = foo;
@@ -10,7 +10,7 @@
  >foo : Symbol(foo, Decl(a.js, 6, 13))
  
  		/**
-@@ -29,26 +27,24 @@
+@@= skipped -10, +8 lines =@@
  		 */
  		const arguments = this.arguments;
  >arguments : Symbol(arguments, Decl(a.js, 17, 7))
@@ -41,7 +41,7 @@
  >arguments : Symbol(arguments, Decl(a.js, 17, 7))
  >key : Symbol(key, Decl(a.js, 7, 7))
  
-@@ -56,14 +52,12 @@
+@@= skipped -27, +25 lines =@@
  		 * @type object
  		 */
  		this.options = arguments;

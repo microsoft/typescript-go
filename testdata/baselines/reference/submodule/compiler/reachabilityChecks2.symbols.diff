@@ -1,6 +1,6 @@
 --- old.reachabilityChecks2.symbols
 +++ new.reachabilityChecks2.symbols
-@@ -4,7 +4,7 @@
+@@= skipped -4, +4 lines =@@
  while (true) { }
  const enum E { X }
  >E : Symbol(E, Decl(reachabilityChecks2.ts, 0, 16))
@@ -9,7 +9,7 @@
  
  module A4 {
  >A4 : Symbol(A4, Decl(reachabilityChecks2.ts, 1, 18))
-@@ -15,7 +15,7 @@
+@@= skipped -11, +11 lines =@@
  
          const enum E { X }
  >E : Symbol(E, Decl(reachabilityChecks2.ts, 5, 14))

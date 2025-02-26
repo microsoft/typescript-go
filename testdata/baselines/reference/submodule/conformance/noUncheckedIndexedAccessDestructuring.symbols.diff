@@ -1,6 +1,6 @@
 --- old.noUncheckedIndexedAccessDestructuring.symbols
 +++ new.noUncheckedIndexedAccessDestructuring.symbols
-@@ -15,9 +15,7 @@
+@@= skipped -15, +15 lines =@@
  >strArray : Symbol(strArray, Decl(noUncheckedIndexedAccessDestructuring.ts, 0, 13))
  
  s1.toString(); // Should error, s1 possibly undefined
@@ -10,7 +10,7 @@
  
  // Destructuring a rest element -> do not include undefined
  const [...s2] = strArray;
-@@ -25,9 +23,9 @@
+@@= skipped -10, +8 lines =@@
  >strArray : Symbol(strArray, Decl(noUncheckedIndexedAccessDestructuring.ts, 0, 13))
  
  s2.push(undefined); // Should error, 'undefined' not part of s2's element type
@@ -22,7 +22,7 @@
  >undefined : Symbol(undefined)
  
  // Destructuring a rest element -> do not include undefined
-@@ -36,9 +34,9 @@
+@@= skipped -11, +11 lines =@@
  >strArray : Symbol(strArray, Decl(noUncheckedIndexedAccessDestructuring.ts, 0, 13))
  
  s3.push(undefined); // Should error, 'undefined' not part of s2's element type
@@ -34,7 +34,7 @@
  >undefined : Symbol(undefined)
  
  // Declaration forms for object destructuring
-@@ -52,18 +50,14 @@
+@@= skipped -16, +16 lines =@@
  >strMap : Symbol(strMap, Decl(noUncheckedIndexedAccessDestructuring.ts, 19, 13))
  
  t1.toString(); // Should error, t1 possibly undefined
@@ -53,7 +53,7 @@
  
  // Test intersections with declared properties
  declare const numMapPoint: { x: number, y: number} & { [s: string]: number };
-@@ -79,19 +73,17 @@
+@@= skipped -27, +23 lines =@@
  >numMapPoint : Symbol(numMapPoint, Decl(noUncheckedIndexedAccessDestructuring.ts, 28, 13))
  
      x.toFixed(); // Should OK
@@ -77,7 +77,7 @@
  }
  
  {
-@@ -101,21 +93,19 @@
+@@= skipped -22, +20 lines =@@
  >numMapPoint : Symbol(numMapPoint, Decl(noUncheckedIndexedAccessDestructuring.ts, 28, 13))
  
      x.toFixed(); // Should OK
@@ -103,7 +103,7 @@
  }
  
  {
-@@ -125,27 +115,25 @@
+@@= skipped -24, +22 lines =@@
  >numMapPoint : Symbol(numMapPoint, Decl(noUncheckedIndexedAccessDestructuring.ts, 28, 13))
  
      x.

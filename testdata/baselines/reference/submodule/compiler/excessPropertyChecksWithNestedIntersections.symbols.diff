@@ -1,6 +1,6 @@
 --- old.excessPropertyChecksWithNestedIntersections.symbols
 +++ new.excessPropertyChecksWithNestedIntersections.symbols
-@@ -7,14 +7,14 @@
+@@= skipped -7, +7 lines =@@
  >A : Symbol(A, Decl(excessPropertyChecksWithNestedIntersections.ts, 0, 0))
  
      x: string
@@ -17,7 +17,7 @@
  >A : Symbol(A, Decl(excessPropertyChecksWithNestedIntersections.ts, 0, 0))
  }
  
-@@ -22,7 +22,7 @@
+@@= skipped -15, +15 lines =@@
  >C : Symbol(C, Decl(excessPropertyChecksWithNestedIntersections.ts, 8, 1))
  
      c: number;
@@ -26,7 +26,7 @@
  }
  
  type D = B & C;
-@@ -143,20 +143,20 @@
+@@= skipped -121, +121 lines =@@
  >TypeC : Symbol(TypeC, Decl(excessPropertyChecksWithNestedIntersections.ts, 48, 95))
  
      foo: string;
@@ -51,7 +51,7 @@
  >TypeC : Symbol(TypeC, Decl(excessPropertyChecksWithNestedIntersections.ts, 48, 95))
  }
  
-@@ -164,10 +164,10 @@
+@@= skipped -21, +21 lines =@@
  >TypeA : Symbol(TypeA, Decl(excessPropertyChecksWithNestedIntersections.ts, 58, 1))
  
      foo: string,

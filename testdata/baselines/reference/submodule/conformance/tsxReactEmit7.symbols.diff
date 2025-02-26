@@ -1,6 +1,6 @@
 --- old.tsxReactEmit7.symbols
 +++ new.tsxReactEmit7.symbols
-@@ -17,56 +17,38 @@
+@@= skipped -17, +17 lines =@@
  
  var m = <div x-y="val"></div>;
  >m : Symbol(m, Decl(file.tsx, 7, 3))

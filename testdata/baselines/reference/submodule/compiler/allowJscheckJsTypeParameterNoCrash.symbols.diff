@@ -1,6 +1,6 @@
 --- old.allowJscheckJsTypeParameterNoCrash.symbols
 +++ new.allowJscheckJsTypeParameterNoCrash.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >V : Symbol(V, Decl(func.ts, 0, 27))
  
      watch: Record<string, WatchHandler<any>>;
@@ -9,7 +9,7 @@
  >Record : Symbol(Record, Decl(lib.es5.d.ts, --, --))
  >WatchHandler : Symbol(WatchHandler, Decl(func.ts, 2, 1))
  }
-@@ -42,12 +42,9 @@
+@@= skipped -36, +36 lines =@@
  >val : Symbol(val, Decl(app.js, 4, 10))
  
        this.data2 = 1;

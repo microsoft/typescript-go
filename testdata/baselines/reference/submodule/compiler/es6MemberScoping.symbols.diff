@@ -1,6 +1,6 @@
 --- old.es6MemberScoping.symbols
 +++ new.es6MemberScoping.symbols
-@@ -8,22 +8,22 @@
+@@= skipped -8, +8 lines =@@
  >store : Symbol(store, Decl(es6MemberScoping.ts, 1, 16))
  
      public foo() {

@@ -1,6 +1,6 @@
 --- old.resolvingClassDeclarationWhenInBaseTypeResolution.symbols
 +++ new.resolvingClassDeclarationWhenInBaseTypeResolution.symbols
-@@ -6,16 +6,16 @@
+@@= skipped -6, +6 lines =@@
  
    export class caniventer extends Lanthanum.nitidus<petrophilus.minutilla, julianae.sumatrana> {
  >caniventer : Symbol(caniventer, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 0, 21))
@@ -22,7 +22,7 @@
  >caniventer : Symbol(caniventer, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 0, 21))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 2, 36))
  >caniventer : Symbol(caniventer, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 0, 21))
-@@ -24,61 +24,61 @@
+@@= skipped -18, +18 lines =@@
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 2, 36))
  
      uchidai() : lavali.xanthognathus { var x : lavali.xanthognathus; () => { var y = this; }; return x; }
@@ -104,7 +104,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 6, 73))
  >this : Symbol(caniventer, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 0, 21))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 6, 38))
-@@ -87,113 +87,113 @@
+@@= skipped -63, +63 lines =@@
  >veraecrucis : Symbol(veraecrucis, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 7, 3))
  >T0 : Symbol(T0, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 8, 27))
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 8, 30))
@@ -261,7 +261,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 13, 79))
  >this : Symbol(veraecrucis, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 7, 3))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 13, 42))
-@@ -209,72 +209,72 @@
+@@= skipped -122, +122 lines =@@
  >nudicaudus : Symbol(nudicaudus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 18, 3))
  
      brandtii() : argurus.germaini { var x : argurus.germaini; () => { var y = this; }; return x; }
@@ -357,7 +357,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 24, 87))
  >this : Symbol(nudicaudus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 18, 3))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 24, 46))
-@@ -283,102 +283,102 @@
+@@= skipped -74, +74 lines =@@
  >galapagoensis : Symbol(galapagoensis, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 25, 3))
  
      isabellae() : panglima.amphibius<macrorhinos.daphaenodon, patas.uralensis> { var x : panglima.amphibius<macrorhinos.daphaenodon, patas.uralensis>; () => { var y = this; }; return x; }
@@ -493,7 +493,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 33, 167))
  >this : Symbol(galapagoensis, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 25, 3))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 33, 87))
-@@ -389,34 +389,34 @@
+@@= skipped -106, +106 lines =@@
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 35, 27))
  
      mattheyi() : samarensis.fuscus<lavali.wilsoni, chrysaeolus.sarasinorum<Lanthanum.jugularis, imperfecta.subspinosus>> { var x : samarensis.fuscus<lavali.wilsoni, chrysaeolus.sarasinorum<Lanthanum.jugularis, imperfecta.subspinosus>>; () => { var y = this; }; return x; }
@@ -540,7 +540,7 @@
  >steerii : Symbol(steerii, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 16, 17))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 37, 30))
  >steerii : Symbol(steerii, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 16, 17))
-@@ -425,37 +425,37 @@
+@@= skipped -36, +36 lines =@@
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 37, 30))
  
      vincenti() : argurus.dauricus<macrorhinos.konganensis, patas.uralensis> { var x : argurus.dauricus<macrorhinos.konganensis, patas.uralensis>; () => { var y = this; }; return x; }
@@ -589,7 +589,7 @@
  >durangae : Symbol(durangae, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 94, 3))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 40, 34))
  >durangae : Symbol(durangae, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 94, 3))
-@@ -464,23 +464,23 @@
+@@= skipped -39, +39 lines =@@
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 40, 34))
  
      macrophyllum() : howi.marcanoi { var x : howi.marcanoi; () => { var y = this; }; return x; }
@@ -619,7 +619,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 42, 82))
  >this : Symbol(albidens, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 34, 3))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 42, 44))
-@@ -489,108 +489,108 @@
+@@= skipped -25, +25 lines =@@
  >oralis : Symbol(oralis, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 43, 3))
  >T0 : Symbol(T0, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 44, 22))
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 44, 25))
@@ -763,7 +763,7 @@
  >nudicaudus : Symbol(nudicaudus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 18, 3))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 51, 30))
  >nudicaudus : Symbol(nudicaudus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 18, 3))
-@@ -599,240 +599,240 @@
+@@= skipped -110, +110 lines =@@
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 51, 30))
  
      monax() : imperfecta.subspinosus { var x : imperfecta.subspinosus; () => { var y = this; }; return x; }
@@ -1087,7 +1087,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 66, 156))
  >this : Symbol(sumatrana, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 58, 3))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 66, 83))
-@@ -843,154 +843,154 @@
+@@= skipped -244, +244 lines =@@
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 68, 28))
  
      pundti() : sagitta.sicarius<dogramacii.koepckeae, caurinus.psilurus> { var x : sagitta.sicarius<dogramacii.koepckeae, caurinus.psilurus>; () => { var y = this; }; return x; }
@@ -1291,7 +1291,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 79, 80))
  >this : Symbol(gerbillus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 67, 3))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 79, 42))
-@@ -999,266 +999,266 @@
+@@= skipped -156, +156 lines =@@
  >acariensis : Symbol(acariensis, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 80, 3))
  
      levicula() : lavali.lepturus { var x : lavali.lepturus; () => { var y = this; }; return x; }
@@ -1651,7 +1651,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 98, 76))
  >this : Symbol(durangae, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 94, 3))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 98, 40))
-@@ -1273,39 +1273,39 @@
+@@= skipped -274, +274 lines =@@
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 102, 25))
  
      humulis() : julianae.steerii { var x : julianae.steerii; () => { var y = this; }; return x; }
@@ -1703,7 +1703,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 104, 242))
  >this : Symbol(hector, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 101, 18))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 104, 124))
-@@ -1320,34 +1320,34 @@
+@@= skipped -47, +47 lines =@@
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 108, 26))
  
      spilosoma() : quasiater.carolinensis { var x : quasiater.carolinensis; () => { var y = this; }; return x; }
@@ -1747,7 +1747,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 111, 75))
  >this : Symbol(suillus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 107, 18))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 111, 41))
-@@ -1356,293 +1356,293 @@
+@@= skipped -36, +36 lines =@@
  >nitidus : Symbol(nitidus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 112, 3))
  >T0 : Symbol(T0, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 113, 23))
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 113, 26))
@@ -2139,7 +2139,7 @@
  >megalonyx : Symbol(megalonyx, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 124, 3))
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 133, 136))
  >this : Symbol(megalonyx, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 124, 3))
-@@ -1652,225 +1652,225 @@
+@@= skipped -296, +296 lines =@@
  >jugularis : Symbol(jugularis, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 134, 3))
  
      torrei() : petrophilus.sodyi<argurus.oreas, macrorhinos.daphaenodon> { var x : petrophilus.sodyi<argurus.oreas, macrorhinos.daphaenodon>; () => { var y = this; }; return x; }
@@ -2441,7 +2441,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 149, 83))
  >this : Symbol(jugularis, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 134, 3))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 149, 43))
-@@ -1881,224 +1881,224 @@
+@@= skipped -229, +229 lines =@@
  
    export class zuluensis extends julianae.steerii {
  >zuluensis : Symbol(zuluensis, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 152, 17))
@@ -2742,7 +2742,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 167, 76))
  >this : Symbol(zuluensis, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 152, 17))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 167, 40))
-@@ -2109,48 +2109,48 @@
+@@= skipped -228, +228 lines =@@
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 169, 26))
  
      floweri() : lavali.otion { var x : lavali.otion; () => { var y = this; }; return x; }
@@ -2805,7 +2805,7 @@
  >zuluensis : Symbol(zuluensis, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 152, 17))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 173, 31))
  >zuluensis : Symbol(zuluensis, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 152, 17))
-@@ -2159,131 +2159,131 @@
+@@= skipped -50, +50 lines =@@
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 173, 31))
  
      marchei() : panglima.amphibius<patas.uralensis, gabriellae.klossii<julianae.nudicaudus, dogramacii.aurata>> { var x : panglima.amphibius<patas.uralensis, gabriellae.klossii<julianae.nudicaudus, dogramacii.aurata>>; () => { var y = this; }; return x; }
@@ -2987,7 +2987,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 179, 152))
  >this : Symbol(moojeni, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 168, 3))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 179, 79))
-@@ -2292,71 +2292,71 @@
+@@= skipped -133, +133 lines =@@
  >crenulata : Symbol(crenulata, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 180, 3))
  >T0 : Symbol(T0, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 181, 25))
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 181, 28))
@@ -3086,7 +3086,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 184, 321))
  >this : Symbol(crenulata, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 180, 3))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 184, 161))
-@@ -2371,40 +2371,40 @@
+@@= skipped -79, +79 lines =@@
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 188, 30))
  
      nivalis() : dogramacii.kaiseri { var x : dogramacii.kaiseri; () => { var y = this; }; return x; }
@@ -3137,7 +3137,7 @@
  >oconnelli : Symbol(oconnelli, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 219, 3))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 192, 32))
  >oconnelli : Symbol(oconnelli, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 219, 3))
-@@ -2413,61 +2413,61 @@
+@@= skipped -42, +42 lines =@@
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 192, 32))
  
      improvisum() : argurus.peninsulae { var x : argurus.peninsulae; () => { var y = this; }; return x; }
@@ -3219,7 +3219,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 196, 143))
  >this : Symbol(tumidifrons, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 187, 20))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 196, 74))
-@@ -2476,161 +2476,161 @@
+@@= skipped -63, +63 lines =@@
  >mixtus : Symbol(mixtus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 197, 3))
  >T0 : Symbol(T0, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 198, 22))
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 198, 25))
@@ -3442,7 +3442,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 205, 161))
  >this : Symbol(mixtus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 197, 3))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 205, 83))
-@@ -2641,31 +2641,31 @@
+@@= skipped -165, +165 lines =@@
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 207, 24))
  
      balensis() : samarensis.pallidus { var x : samarensis.pallidus; () => { var y = this; }; return x; }
@@ -3484,7 +3484,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 209, 176))
  >this : Symbol(lotor, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 206, 3))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 209, 90))
-@@ -2674,190 +2674,190 @@
+@@= skipped -33, +33 lines =@@
  >falconeri : Symbol(falconeri, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 210, 3))
  
      cabrali() : rendalli.moojeni<imperfecta.lasiurus<howi.marcanoi, imperfecta.ciliolabrum<Lanthanum.megalonyx, petrophilus.minutilla>>, daubentonii.arboreus<julianae.nudicaudus, julianae.steerii>> { var x : rendalli.moojeni<imperfecta.lasiurus<howi.marcanoi, imperfecta.ciliolabrum<Lanthanum.megalonyx, petrophilus.minutilla>>, daubentonii.arboreus<julianae.nudicaudus, julianae.steerii>>; () => { var y = this; }; return x; }
@@ -3752,7 +3752,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 218, 86))
  >this : Symbol(falconeri, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 210, 3))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 218, 45))
-@@ -2866,227 +2866,227 @@
+@@= skipped -192, +192 lines =@@
  >oconnelli : Symbol(oconnelli, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 219, 3))
  
      youngsoni() : nigra.thalia<patas.uralensis, julianae.galapagoensis> { var x : nigra.thalia<patas.uralensis, julianae.galapagoensis>; () => { var y = this; }; return x; }
@@ -4058,7 +4058,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 234, 78))
  >this : Symbol(oconnelli, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 219, 3))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 234, 40))
-@@ -3099,77 +3099,77 @@
+@@= skipped -233, +233 lines =@@
  >bobrinskoi : Symbol(bobrinskoi, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 237, 18))
  
      crassicaudatus() : samarensis.cahirinus<macrorhinos.daphaenodon, argurus.luctuosa> { var x : samarensis.cahirinus<macrorhinos.daphaenodon, argurus.luctuosa>; () => { var y = this; }; return x; }
@@ -4162,7 +4162,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 242, 161))
  >this : Symbol(bobrinskoi, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 237, 18))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 242, 82))
-@@ -3180,62 +3180,62 @@
+@@= skipped -81, +81 lines =@@
  
    export class americanus extends imperfecta.ciliolabrum<argurus.germaini, lutreolus.foina> {
  >americanus : Symbol(americanus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 245, 18))
@@ -4245,7 +4245,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 250, 74))
  >this : Symbol(americanus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 245, 18))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 250, 39))
-@@ -3246,205 +3246,205 @@
+@@= skipped -66, +66 lines =@@
  
    export class wilsoni extends Lanthanum.nitidus<rionegrensis.caniventer, Lanthanum.jugularis> {
  >wilsoni : Symbol(wilsoni, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 253, 15))
@@ -4518,7 +4518,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 267, 80))
  >this : Symbol(wilsoni, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 253, 15))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 267, 42))
-@@ -3454,76 +3454,76 @@
+@@= skipped -208, +208 lines =@@
    }
    export class otion extends howi.coludo<argurus.oreas, howi.marcanoi> {
  >otion : Symbol(otion, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 270, 3))
@@ -4620,7 +4620,7 @@
  >lepturus : Symbol(lepturus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 309, 3))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 276, 30))
  >lepturus : Symbol(lepturus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 309, 3))
-@@ -3532,133 +3532,133 @@
+@@= skipped -78, +78 lines =@@
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 276, 30))
  
      cristatus() : argurus.luctuosa { var x : argurus.luctuosa; () => { var y = this; }; return x; }
@@ -4798,7 +4798,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 284, 90))
  >this : Symbol(otion, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 270, 3))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 284, 51))
-@@ -3667,146 +3667,146 @@
+@@= skipped -135, +135 lines =@@
  >xanthognathus : Symbol(xanthognathus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 285, 3))
  
      nanulus() : daubentonii.nigricans<imperfecta.subspinosus, samarensis.pallidus> { var x : daubentonii.nigricans<imperfecta.subspinosus, samarensis.pallidus>; () => { var y = this; }; return x; }
@@ -4992,7 +4992,7 @@
  >xanthognathus : Symbol(xanthognathus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 285, 3))
  >beisa : Symbol(beisa, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 268, 3))
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 295, 124))
-@@ -3814,316 +3814,316 @@
+@@= skipped -147, +147 lines =@@
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 295, 64))
  
      euryotis() : rendalli.moojeni<julianae.steerii, samarensis.pelurus<Lanthanum.jugularis, ruatanica.americanus>> { var x : rendalli.moojeni<julianae.steerii, samarensis.pelurus<Lanthanum.jugularis, ruatanica.americanus>>; () => { var y = this; }; return x; }
@@ -5430,7 +5430,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 312, 403))
  >this : Symbol(lepturus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 309, 3))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 312, 204))
-@@ -4134,145 +4134,145 @@
+@@= skipped -320, +320 lines =@@
  
    export class robustulus extends lavali.wilsoni {
  >robustulus : Symbol(robustulus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 315, 19))
@@ -5625,7 +5625,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 325, 163))
  >this : Symbol(robustulus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 315, 19))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 325, 83))
-@@ -4281,26 +4281,26 @@
+@@= skipped -147, +147 lines =@@
  >koepckeae : Symbol(koepckeae, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 326, 3))
  
      culturatus() : samarensis.pelurus<daubentonii.arboreus<kaiseri, lutreolus.punicus>, julianae.sumatrana> { var x : samarensis.pelurus<daubentonii.arboreus<kaiseri, lutreolus.punicus>, julianae.sumatrana>; () => { var y = this; }; return x; }
@@ -5661,7 +5661,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 328, 219))
  >this : Symbol(koepckeae, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 326, 3))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 328, 113))
-@@ -4309,200 +4309,200 @@
+@@= skipped -28, +28 lines =@@
  >kaiseri : Symbol(kaiseri, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 329, 3))
  
      bedfordiae() : quasiater.carolinensis { var x : quasiater.carolinensis; () => { var y = this; }; return x; }
@@ -5929,7 +5929,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 343, 77))
  >this : Symbol(kaiseri, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 329, 3))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 343, 39))
-@@ -4511,81 +4511,81 @@
+@@= skipped -202, +202 lines =@@
  >aurata : Symbol(aurata, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 344, 3))
  
      grunniens() : nigra.gracilis<samarensis.pelurus<daubentonii.arboreus<kaiseri, lutreolus.punicus>, julianae.sumatrana>, ruatanica.americanus> { var x : nigra.gracilis<samarensis.pelurus<daubentonii.arboreus<kaiseri, lutreolus.punicus>, julianae.sumatrana>, ruatanica.americanus>; () => { var y = this; }; return x; }
@@ -6038,7 +6038,7 @@
  >aurata : Symbol(aurata, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 344, 3))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 350, 29))
  >aurata : Symbol(aurata, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 344, 3))
-@@ -4594,80 +4594,80 @@
+@@= skipped -83, +83 lines =@@
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 350, 29))
  
      landeri() : samarensis.pelurus<Lanthanum.jugularis, ruatanica.americanus> { var x : samarensis.pelurus<Lanthanum.jugularis, ruatanica.americanus>; () => { var y = this; }; return x; }
@@ -6150,7 +6150,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 353, 313))
  >this : Symbol(aurata, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 344, 3))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 353, 160))
-@@ -4678,129 +4678,129 @@
+@@= skipped -84, +84 lines =@@
  
    export class schlegeli extends lavali.beisa {
  >schlegeli : Symbol(schlegeli, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 356, 18))
@@ -6323,7 +6323,7 @@
  >lutreolus : Symbol(lutreolus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 355, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 719, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 855, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 872, 1))
  >punicus : Symbol(punicus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 720, 18))
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 364, 252))
-@@ -4808,37 +4808,37 @@
+@@= skipped -130, +130 lines =@@
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 364, 129))
  
      tavaratra() : Lanthanum.nitidus<howi.marcanoi, macrorhinos.daphaenodon> { var x : Lanthanum.nitidus<howi.marcanoi, macrorhinos.daphaenodon>; () => { var y = this; }; return x; }
@@ -6373,7 +6373,7 @@
  >lutreolus : Symbol(lutreolus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 355, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 719, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 855, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 872, 1))
  >punicus : Symbol(punicus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 720, 18))
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 366, 170))
-@@ -4846,112 +4846,112 @@
+@@= skipped -38, +38 lines =@@
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 366, 88))
  
      frontalis() : macrorhinos.marmosurus<ruatanica.hector<julianae.sumatrana, samarensis.pelurus<Lanthanum.jugularis, sagitta.walkeri>>, samarensis.pallidus> { var x : macrorhinos.marmosurus<ruatanica.hector<julianae.sumatrana, samarensis.pelurus<Lanthanum.jugularis, sagitta.walkeri>>, samarensis.pallidus>; () => { var y = this; }; return x; }
@@ -6529,7 +6529,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 371, 161))
  >this : Symbol(schlegeli, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 356, 18))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 371, 82))
-@@ -4966,170 +4966,170 @@
+@@= skipped -120, +120 lines =@@
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 375, 27))
  
      chinensis() : Lanthanum.jugularis { var x : Lanthanum.jugularis; () => { var y = this; }; return x; }
@@ -6757,7 +6757,7 @@
  >argurus : Symbol(argurus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 373, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 595, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 613, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 624, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 699, 1) ... and 4 more)
  >oreas : Symbol(oreas, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 625, 16))
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 384, 138))
-@@ -5137,47 +5137,47 @@
+@@= skipped -171, +171 lines =@@
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 384, 72))
  
      mahomet() : imperfecta.ciliolabrum<argurus.germaini, lutreolus.foina> { var x : imperfecta.ciliolabrum<argurus.germaini, lutreolus.foina>; () => { var y = this; }; return x; }
@@ -6821,7 +6821,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 386, 274))
  >this : Symbol(dauricus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 374, 16))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 386, 141))
-@@ -5192,185 +5192,185 @@
+@@= skipped -55, +55 lines =@@
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 390, 29))
  
      solomonis() : panglima.abidi<quasiater.carolinensis, rendalli.crenulata<gabriellae.klossii<julianae.nudicaudus, dogramacii.aurata>, argurus.netscheri<minutus.inez<argurus.peninsulae, julianae.nudicaudus>, julianae.oralis<lavali.xanthognathus, argurus.oreas>>>> { var x : panglima.abidi<quasiater.carolinensis, rendalli.crenulata<gabriellae.klossii<julianae.nudicaudus, dogramacii.aurata>, argurus.netscheri<minutus.inez<argurus.peninsulae, julianae.nudicaudus>, julianae.oralis<lavali.xanthognathus, argurus.oreas>>>>; () => { var y = this; }; return x; }
@@ -7077,7 +7077,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 398, 64))
  >this : Symbol(dolichurus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 389, 14))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 398, 33))
-@@ -5383,126 +5383,126 @@
+@@= skipped -191, +191 lines =@@
  >amphibius : Symbol(amphibius, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 401, 17))
  >T0 : Symbol(T0, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 402, 27))
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 402, 30))
@@ -7250,7 +7250,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 408, 164))
  >this : Symbol(amphibius, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 401, 17))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 408, 88))
-@@ -5511,101 +5511,101 @@
+@@= skipped -128, +128 lines =@@
  >fundatus : Symbol(fundatus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 409, 5))
  >T0 : Symbol(T0, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 410, 26))
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 410, 29))
@@ -7393,7 +7393,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 413, 228))
  >this : Symbol(fundatus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 409, 5))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 413, 119))
-@@ -5614,89 +5614,89 @@
+@@= skipped -103, +103 lines =@@
  >abidi : Symbol(abidi, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 414, 5))
  >T0 : Symbol(T0, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 415, 23))
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 415, 26))
@@ -7514,7 +7514,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 420, 204))
  >this : Symbol(abidi, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 414, 5))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 420, 104))
-@@ -5709,102 +5709,102 @@
+@@= skipped -95, +95 lines =@@
  >carolinensis : Symbol(carolinensis, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 423, 18))
  
          concinna(): rendalli.zuluensis { var x: rendalli.zuluensis; () => { var y = this; }; return x; }
@@ -7650,7 +7650,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 431, 81))
  >this : Symbol(carolinensis, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 423, 18))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 431, 45))
-@@ -5817,226 +5817,226 @@
+@@= skipped -108, +108 lines =@@
  >himalayana : Symbol(himalayana, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 434, 16))
  >T0 : Symbol(T0, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 435, 28))
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 435, 31))
@@ -7957,7 +7957,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 447, 80))
  >this : Symbol(himalayana, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 434, 16))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 447, 44))
-@@ -6049,108 +6049,108 @@
+@@= skipped -232, +232 lines =@@
  >mahaganus : Symbol(mahaganus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 450, 17))
  >T0 : Symbol(T0, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 451, 27))
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 451, 30))
@@ -8106,7 +8106,7 @@
  >caurinus : Symbol(caurinus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 449, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 836, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 976, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 1007, 1))
  >psilurus : Symbol(psilurus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 1008, 17))
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 455, 149))
-@@ -6158,85 +6158,85 @@
+@@= skipped -109, +109 lines =@@
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 455, 80))
  
          simulus(): gabriellae.echinatus { var x: gabriellae.echinatus; () => { var y = this; }; return x; }
@@ -8222,7 +8222,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 459, 75))
  >this : Symbol(mahaganus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 450, 17))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 459, 42))
-@@ -6251,12 +6251,12 @@
+@@= skipped -93, +93 lines =@@
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 463, 31))
  
          tansaniana(): lutreolus.punicus { var x: lutreolus.punicus; () => { var y = this; }; return x; }
@@ -8238,7 +8238,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 464, 79))
  >this : Symbol(marmosurus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 462, 20))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 464, 45))
-@@ -6269,12 +6269,12 @@
+@@= skipped -18, +18 lines =@@
  >angulatus : Symbol(angulatus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 467, 13))
  >T0 : Symbol(T0, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 468, 27))
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 468, 30))
@@ -8254,7 +8254,7 @@
  >howi : Symbol(howi, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 466, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 681, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 886, 1))
  >marcanoi : Symbol(marcanoi, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 682, 13))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 469, 39))
-@@ -6303,161 +6303,161 @@
+@@= skipped -34, +34 lines =@@
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 477, 27))
  
          dichotomus(): quasiater.carolinensis { var x: quasiater.carolinensis; () => { var y = this; }; return x; }
@@ -8476,7 +8476,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 485, 167))
  >this : Symbol(thalia, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 476, 14))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 485, 87))
-@@ -6468,25 +6468,25 @@
+@@= skipped -165, +165 lines =@@
  
      export class walkeri extends minutus.portoricensis {
  >walkeri : Symbol(walkeri, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 488, 16))
@@ -8511,7 +8511,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 490, 174))
  >this : Symbol(walkeri, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 488, 16))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 490, 94))
-@@ -6499,29 +6499,29 @@
+@@= skipped -31, +31 lines =@@
  >inez : Symbol(inez, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 493, 16))
  >T0 : Symbol(T0, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 494, 22))
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 494, 25))
@@ -8552,7 +8552,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 495, 151))
  >this : Symbol(inez, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 493, 16))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 495, 81))
-@@ -6532,13 +6532,13 @@
+@@= skipped -33, +33 lines =@@
  
      export class konganensis extends imperfecta.lasiurus<caurinus.psilurus, caurinus.psilurus> {
  >konganensis : Symbol(konganensis, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 498, 20))
@@ -8570,7 +8570,7 @@
      }
  }
  module panamensis {
-@@ -6548,177 +6548,177 @@
+@@= skipped -16, +16 lines =@@
  >linulus : Symbol(linulus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 502, 19))
  >T0 : Symbol(T0, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 503, 25))
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 503, 28))
@@ -8813,7 +8813,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 512, 253))
  >this : Symbol(linulus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 502, 19))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 512, 134))
-@@ -6733,248 +6733,248 @@
+@@= skipped -185, +185 lines =@@
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 516, 29))
  
          weddellii(): nigra.dolichurus<dogramacii.aurata, julianae.steerii> { var x: nigra.dolichurus<dogramacii.aurata, julianae.steerii>; () => { var y = this; }; return x; }
@@ -9145,7 +9145,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 529, 172))
  >this : Symbol(gracilis, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 515, 14))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 529, 92))
-@@ -6987,243 +6987,243 @@
+@@= skipped -254, +254 lines =@@
  >pelurus : Symbol(pelurus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 532, 19))
  >T0 : Symbol(T0, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 533, 25))
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 533, 28))
@@ -9476,7 +9476,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 546, 177))
  >this : Symbol(pelurus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 532, 19))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 546, 92))
-@@ -7232,75 +7232,75 @@
+@@= skipped -245, +245 lines =@@
  >fuscus : Symbol(fuscus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 547, 5))
  >T0 : Symbol(T0, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 548, 24))
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 548, 27))
@@ -9574,7 +9574,7 @@
  >pallidus : Symbol(pallidus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 563, 5))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 554, 33))
  >pallidus : Symbol(pallidus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 563, 5))
-@@ -7309,161 +7309,161 @@
+@@= skipped -77, +77 lines =@@
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 554, 33))
  
          macrocercus(): panamensis.setulosus<dogramacii.koepckeae, julianae.sumatrana> { var x: panamensis.setulosus<dogramacii.koepckeae, julianae.sumatrana>; () => { var y = this; }; return x; }
@@ -9796,7 +9796,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 562, 224))
  >this : Symbol(fuscus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 547, 5))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 562, 115))
-@@ -7472,85 +7472,85 @@
+@@= skipped -163, +163 lines =@@
  >pallidus : Symbol(pallidus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 563, 5))
  
          oblativa(): trivirgatus.falconeri { var x: trivirgatus.falconeri; () => { var y = this; }; return x; }
@@ -9914,7 +9914,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 568, 169))
  >this : Symbol(pallidus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 563, 5))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 568, 88))
-@@ -7561,120 +7561,120 @@
+@@= skipped -89, +89 lines =@@
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 570, 30))
  
          alashanicus(): nigra.caucasica<ruatanica.americanus, argurus.peninsulae> { var x: nigra.caucasica<ruatanica.americanus, argurus.peninsulae>; () => { var y = this; }; return x; }
@@ -10082,7 +10082,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 575, 456))
  >this : Symbol(cahirinus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 569, 5))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 575, 233))
-@@ -7687,101 +7687,101 @@
+@@= skipped -126, +126 lines =@@
  >leptoceros : Symbol(leptoceros, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 578, 16))
  >T0 : Symbol(T0, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 579, 28))
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 579, 31))
@@ -10220,7 +10220,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 584, 173))
  >this : Symbol(leptoceros, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 578, 16))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 584, 90))
-@@ -7794,17 +7794,17 @@
+@@= skipped -107, +107 lines =@@
  >nigricans : Symbol(nigricans, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 587, 20))
  >T0 : Symbol(T0, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 588, 27))
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 588, 30))
@@ -10243,7 +10243,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 589, 85))
  >this : Symbol(nigricans, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 587, 20))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 589, 47))
-@@ -7826,43 +7826,43 @@
+@@= skipped -32, +32 lines =@@
  >pygmaea : Symbol(pygmaea, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 596, 16))
  >T0 : Symbol(T0, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 597, 25))
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 597, 28))
@@ -10300,7 +10300,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 600, 88))
  >this : Symbol(pygmaea, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 596, 16))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 600, 48))
-@@ -7875,107 +7875,107 @@
+@@= skipped -49, +49 lines =@@
  >sarasinorum : Symbol(sarasinorum, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 603, 20))
  >T0 : Symbol(T0, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 604, 29))
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 604, 32))
@@ -10443,7 +10443,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 611, 85))
  >this : Symbol(sarasinorum, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 603, 20))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 611, 47))
-@@ -7990,110 +7990,110 @@
+@@= skipped -115, +115 lines =@@
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 615, 29))
  
          leucoptera(): petrophilus.rosalia<dogramacii.koepckeae, lutreolus.foina> { var x: petrophilus.rosalia<dogramacii.koepckeae, lutreolus.foina>; () => { var y = this; }; return x; }
@@ -10589,7 +10589,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 622, 77))
  >this : Symbol(wetmorei, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 614, 16))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 622, 42))
-@@ -8104,121 +8104,121 @@
+@@= skipped -114, +114 lines =@@
  
      export class oreas extends lavali.wilsoni {
  >oreas : Symbol(oreas, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 625, 16))
@@ -10749,7 +10749,7 @@
  >argurus : Symbol(argurus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 373, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 595, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 613, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 624, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 699, 1) ... and 4 more)
  >peninsulae : Symbol(peninsulae, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 931, 16))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 634, 47))
-@@ -8238,213 +8238,213 @@
+@@= skipped -134, +134 lines =@@
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 638, 29))
  
          capreolus(): rendalli.crenulata<samarensis.pelurus<Lanthanum.jugularis, ruatanica.americanus>, lavali.wilsoni> { var x: rendalli.crenulata<samarensis.pelurus<Lanthanum.jugularis, ruatanica.americanus>, lavali.wilsoni>; () => { var y = this; }; return x; }
@@ -11039,7 +11039,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 650, 72))
  >this : Symbol(arboreus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 637, 20))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 650, 42))
-@@ -8457,240 +8457,240 @@
+@@= skipped -219, +219 lines =@@
  >uralensis : Symbol(uralensis, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 653, 14))
  
          cartilagonodus(): Lanthanum.nitidus<rionegrensis.caniventer, Lanthanum.jugularis> { var x: Lanthanum.nitidus<rionegrensis.caniventer, Lanthanum.jugularis>; () => { var y = this; }; return x; }
@@ -11367,7 +11367,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 667, 167))
  >this : Symbol(uralensis, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 653, 14))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 667, 89))
-@@ -8701,52 +8701,52 @@
+@@= skipped -244, +244 lines =@@
  
      export class melanoleuca extends lavali.wilsoni {
  >melanoleuca : Symbol(melanoleuca, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 670, 17))
@@ -11440,7 +11440,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 673, 156))
  >this : Symbol(melanoleuca, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 670, 17))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 673, 81))
-@@ -8761,77 +8761,77 @@
+@@= skipped -60, +60 lines =@@
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 677, 29))
  
          Chlorine(): samarensis.cahirinus<nigra.gracilis<argurus.luctuosa, imperfecta.subspinosus>, dogramacii.robustulus> { var x: samarensis.cahirinus<nigra.gracilis<argurus.luctuosa, imperfecta.subspinosus>, dogramacii.robustulus>; () => { var y = this; }; return x; }
@@ -11550,7 +11550,7 @@
  >sagitta : Symbol(sagitta, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 487, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 577, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 675, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 746, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 898, 1))
  >stolzmanni : Symbol(stolzmanni, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 899, 16))
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 679, 494))
-@@ -8844,264 +8844,264 @@
+@@= skipped -83, +83 lines =@@
  
      export class marcanoi extends Lanthanum.megalonyx {
  >marcanoi : Symbol(marcanoi, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 682, 13))
@@ -11909,7 +11909,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 697, 129))
  >this : Symbol(marcanoi, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 682, 13))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 697, 68))
-@@ -9116,78 +9116,78 @@
+@@= skipped -272, +272 lines =@@
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 701, 30))
  
          nasutus(): lavali.lepturus { var x: lavali.lepturus; () => { var y = this; }; return x; }
@@ -12011,7 +12011,7 @@
  >argurus : Symbol(argurus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 373, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 595, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 613, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 624, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 699, 1) ... and 4 more)
  >oreas : Symbol(oreas, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 625, 16))
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 706, 159))
-@@ -9195,110 +9195,110 @@
+@@= skipped -79, +79 lines =@@
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 706, 84))
  
          lindberghi(): minutus.inez<rendalli.zuluensis, rionegrensis.caniventer> { var x: minutus.inez<rendalli.zuluensis, rionegrensis.caniventer>; () => { var y = this; }; return x; }
@@ -12159,7 +12159,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 713, 162))
  >this : Symbol(gilbertii, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 700, 16))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 713, 86))
-@@ -9318,78 +9318,78 @@
+@@= skipped -123, +123 lines =@@
  >punicus : Symbol(punicus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 720, 18))
  
          strandi(): gabriellae.klossii<Lanthanum.jugularis, Lanthanum.jugularis> { var x: gabriellae.klossii<Lanthanum.jugularis, Lanthanum.jugularis>; () => { var y = this; }; return x; }
@@ -12263,7 +12263,7 @@
  >lutreolus : Symbol(lutreolus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 355, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 719, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 855, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 872, 1))
  >foina : Symbol(foina, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 856, 18))
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 726, 152))
-@@ -9397,59 +9397,59 @@
+@@= skipped -79, +79 lines =@@
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 726, 82))
  
          aspalax(): panamensis.linulus<lavali.xanthognathus, macrorhinos.konganensis> { var x: panamensis.linulus<lavali.xanthognathus, macrorhinos.konganensis>; () => { var y = this; }; return x; }
@@ -12341,7 +12341,7 @@
  >lutreolus : Symbol(lutreolus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 355, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 719, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 855, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 872, 1))
  >punicus : Symbol(punicus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 720, 18))
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 730, 140))
-@@ -9457,53 +9457,53 @@
+@@= skipped -60, +60 lines =@@
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 730, 76))
  
          purinus(): ruatanica.hector<lutreolus.schlegeli, provocax.melanoleuca> { var x: ruatanica.hector<lutreolus.schlegeli, provocax.melanoleuca>; () => { var y = this; }; return x; }
@@ -12409,7 +12409,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 734, 79))
  >this : Symbol(punicus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 720, 18))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 734, 43))
-@@ -9516,115 +9516,115 @@
+@@= skipped -59, +59 lines =@@
  >daphaenodon : Symbol(daphaenodon, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 737, 20))
  
          bredanensis(): julianae.sumatrana { var x: julianae.sumatrana; () => { var y = this; }; return x; }
@@ -12567,7 +12567,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 744, 157))
  >this : Symbol(daphaenodon, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 737, 20))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 744, 83))
-@@ -9639,197 +9639,197 @@
+@@= skipped -123, +123 lines =@@
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 748, 29))
  
          zunigae(): rendalli.crenulata<macrorhinos.konganensis, nigra.dolichurus<lavali.lepturus, samarensis.pallidus>> { var x: rendalli.crenulata<macrorhinos.konganensis, nigra.dolichurus<lavali.lepturus, samarensis.pallidus>>; () => { var y = this; }; return x; }
@@ -12836,7 +12836,7 @@
  >sagitta : Symbol(sagitta, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 487, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 577, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 675, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 746, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 898, 1))
  >stolzmanni : Symbol(stolzmanni, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 899, 16))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 759, 44))
-@@ -9840,18 +9840,18 @@
+@@= skipped -201, +201 lines =@@
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 759, 44))
  
          pittieri(): samarensis.fuscus<quasiater.carolinensis, sagitta.stolzmanni> { var x: samarensis.fuscus<quasiater.carolinensis, sagitta.stolzmanni>; () => { var y = this; }; return x; }
@@ -12860,7 +12860,7 @@
  >sagitta : Symbol(sagitta, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 487, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 577, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 675, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 746, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 898, 1))
  >stolzmanni : Symbol(stolzmanni, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 899, 16))
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 760, 165))
-@@ -9875,195 +9875,195 @@
+@@= skipped -35, +35 lines =@@
  >klossii : Symbol(klossii, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 767, 19))
  >T0 : Symbol(T0, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 768, 25))
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 768, 28))
@@ -13126,7 +13126,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 780, 222))
  >this : Symbol(amicus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 769, 5))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 780, 114))
-@@ -10072,28 +10072,28 @@
+@@= skipped -197, +197 lines =@@
  >echinatus : Symbol(echinatus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 781, 5))
  
          tenuipes(): howi.coludo<macrorhinos.daphaenodon, panglima.amphibius<macrorhinos.daphaenodon, patas.uralensis>> { var x: howi.coludo<macrorhinos.daphaenodon, panglima.amphibius<macrorhinos.daphaenodon, patas.uralensis>>; () => { var y = this; }; return x; }
@@ -13166,7 +13166,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 783, 239))
  >this : Symbol(echinatus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 781, 5))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 783, 124))
-@@ -10108,91 +10108,91 @@
+@@= skipped -36, +36 lines =@@
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 787, 29))
  
          marisae(): lavali.thaeleri { var x: lavali.thaeleri; () => { var y = this; }; return x; }
@@ -13288,7 +13288,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 793, 75))
  >this : Symbol(lasiurus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 786, 19))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 793, 40))
-@@ -10201,154 +10201,154 @@
+@@= skipped -93, +93 lines =@@
  >subspinosus : Symbol(subspinosus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 794, 5))
  
          monticularis(): macrorhinos.konganensis { var x: macrorhinos.konganensis; () => { var y = this; }; return x; }
@@ -13492,7 +13492,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 806, 73))
  >this : Symbol(subspinosus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 794, 5))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 806, 40))
-@@ -10357,71 +10357,71 @@
+@@= skipped -156, +156 lines =@@
  >ciliolabrum : Symbol(ciliolabrum, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 807, 5))
  >T0 : Symbol(T0, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 808, 29))
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 808, 32))
@@ -13591,7 +13591,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 811, 174))
  >this : Symbol(ciliolabrum, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 807, 5))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 811, 91))
-@@ -10436,69 +10436,69 @@
+@@= skipped -79, +79 lines =@@
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 815, 27))
  
          lagotis(): lavali.xanthognathus { var x: lavali.xanthognathus; () => { var y = this; }; return x; }
@@ -13685,7 +13685,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 819, 73))
  >this : Symbol(wattsi, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 814, 18))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 819, 41))
-@@ -10514,121 +10514,121 @@
+@@= skipped -78, +78 lines =@@
  >sodyi : Symbol(sodyi, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 824, 20))
  >T0 : Symbol(T0, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 825, 23))
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 825, 26))
@@ -13844,7 +13844,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 834, 66))
  >this : Symbol(sodyi, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 824, 20))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 834, 37))
-@@ -10639,126 +10639,126 @@
+@@= skipped -125, +125 lines =@@
  
      export class megaphyllus extends imperfecta.lasiurus<julianae.acariensis, howi.coludo<argurus.oreas, howi.marcanoi>> {
  >megaphyllus : Symbol(megaphyllus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 837, 17))
@@ -14013,7 +14013,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 846, 88))
  >this : Symbol(megaphyllus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 837, 17))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 846, 49))
-@@ -10771,50 +10771,50 @@
+@@= skipped -132, +132 lines =@@
  >portoricensis : Symbol(portoricensis, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 849, 16))
  
          relictus(): quasiater.carolinensis { var x: quasiater.carolinensis; () => { var y = this; }; return x; }
@@ -14081,7 +14081,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 853, 175))
  >this : Symbol(portoricensis, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 849, 16))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 853, 95))
-@@ -10827,7 +10827,7 @@
+@@= skipped -56, +56 lines =@@
  >foina : Symbol(foina, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 856, 18))
  
          tarfayensis(): lutreolus.punicus { var x: lutreolus.punicus; () => { var y = this; }; return x; }
@@ -14090,7 +14090,7 @@
  >lutreolus : Symbol(lutreolus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 355, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 719, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 855, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 872, 1))
  >punicus : Symbol(punicus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 720, 18))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 858, 46))
-@@ -10838,203 +10838,203 @@
+@@= skipped -11, +11 lines =@@
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 858, 46))
  
          Promethium(): samarensis.pelurus<argurus.germaini, julianae.durangae> { var x: samarensis.pelurus<argurus.germaini, julianae.durangae>; () => { var y = this; }; return x; }
@@ -14364,7 +14364,7 @@
  >lutreolus : Symbol(lutreolus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 355, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 719, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 855, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 872, 1))
  >punicus : Symbol(punicus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 720, 18))
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 870, 160))
-@@ -11049,84 +11049,84 @@
+@@= skipped -211, +211 lines =@@
  >cor : Symbol(cor, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 873, 18))
  >T0 : Symbol(T0, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 874, 21))
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 874, 24))
@@ -14479,7 +14479,7 @@
  >lutreolus : Symbol(lutreolus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 355, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 719, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 855, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 872, 1))
  >foina : Symbol(foina, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 856, 18))
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 878, 152))
-@@ -11134,115 +11134,115 @@
+@@= skipped -85, +85 lines =@@
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 878, 81))
  
          achates(): provocax.melanoleuca { var x: provocax.melanoleuca; () => { var y = this; }; return x; }
@@ -14637,7 +14637,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 884, 85))
  >this : Symbol(cor, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 873, 18))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 884, 49))
-@@ -11257,23 +11257,23 @@
+@@= skipped -123, +123 lines =@@
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 888, 27))
  
          bernhardi(): lutreolus.punicus { var x: lutreolus.punicus; () => { var y = this; }; return x; }
@@ -14667,7 +14667,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 890, 73))
  >this : Symbol(coludo, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 887, 13))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 890, 40))
-@@ -11284,36 +11284,36 @@
+@@= skipped -27, +27 lines =@@
  
      export class germaini extends gabriellae.amicus {
  >germaini : Symbol(germaini, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 893, 16))
@@ -14716,7 +14716,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 896, 163))
  >this : Symbol(germaini, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 893, 16))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 896, 86))
-@@ -11326,154 +11326,154 @@
+@@= skipped -42, +42 lines =@@
  >stolzmanni : Symbol(stolzmanni, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 899, 16))
  
          riparius(): nigra.dolichurus<dogramacii.koepckeae, caurinus.psilurus> { var x: nigra.dolichurus<dogramacii.koepckeae, caurinus.psilurus>; () => { var y = this; }; return x; }
@@ -14920,7 +14920,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 911, 78))
  >this : Symbol(stolzmanni, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 899, 16))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 911, 43))
-@@ -11484,16 +11484,16 @@
+@@= skipped -158, +158 lines =@@
  
      export class melanops extends minutus.inez<sagitta.stolzmanni, dammermani.melanops> {
  >melanops : Symbol(melanops, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 914, 19))
@@ -14941,7 +14941,7 @@
  >dammermani : Symbol(dammermani, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 591, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 913, 1))
  >melanops : Symbol(melanops, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 914, 19))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 916, 44))
-@@ -11504,213 +11504,213 @@
+@@= skipped -20, +20 lines =@@
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 916, 44))
  
          harwoodi(): rionegrensis.veraecrucis<nigra.dolichurus<lavali.lepturus, samarensis.pallidus>, lavali.wilsoni> { var x: rionegrensis.veraecrucis<nigra.dolichurus<lavali.lepturus, samarensis.pallidus>, lavali.wilsoni>; () => { var y = this; }; return x; }
@@ -15231,7 +15231,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 928, 142))
  >this : Symbol(melanops, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 914, 19))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 928, 75))
-@@ -11721,132 +11721,132 @@
+@@= skipped -217, +217 lines =@@
  
      export class peninsulae extends patas.uralensis {
  >peninsulae : Symbol(peninsulae, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 931, 16))
@@ -15406,7 +15406,7 @@
  >argurus : Symbol(argurus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 373, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 595, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 613, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 624, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 699, 1) ... and 4 more)
  >luctuosa : Symbol(luctuosa, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 982, 16))
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 940, 149))
-@@ -11863,99 +11863,99 @@
+@@= skipped -142, +142 lines =@@
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 944, 30))
  
          gravis(): nigra.caucasica<rendalli.crenulata<trivirgatus.falconeri, howi.marcanoi>, dogramacii.kaiseri> { var x: nigra.caucasica<rendalli.crenulata<trivirgatus.falconeri, howi.marcanoi>, dogramacii.kaiseri>; () => { var y = this; }; return x; }
@@ -15544,7 +15544,7 @@
  >argurus : Symbol(argurus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 373, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 595, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 613, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 624, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 699, 1) ... and 4 more)
  >peninsulae : Symbol(peninsulae, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 931, 16))
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 948, 295))
-@@ -11963,196 +11963,196 @@
+@@= skipped -100, +100 lines =@@
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 948, 153))
  
          colletti(): samarensis.pallidus { var x: samarensis.pallidus; () => { var y = this; }; return x; }
@@ -15810,7 +15810,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 957, 474))
  >this : Symbol(netscheri, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 943, 16))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 957, 242))
-@@ -12169,325 +12169,325 @@
+@@= skipped -206, +206 lines =@@
  >ruatanica : Symbol(ruatanica, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 100, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 244, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 959, 1))
  >hector : Symbol(hector, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 101, 18))
  >lutreolus : Symbol(lutreolus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 355, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 719, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 855, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 872, 1))
@@ -16263,7 +16263,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 974, 88))
  >this : Symbol(Praseodymium, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 960, 18))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 974, 49))
-@@ -12500,25 +12500,25 @@
+@@= skipped -331, +331 lines =@@
  >johorensis : Symbol(johorensis, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 977, 17))
  >T0 : Symbol(T0, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 978, 28))
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 978, 31))
@@ -16298,7 +16298,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 979, 160))
  >this : Symbol(johorensis, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 977, 17))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 979, 83))
-@@ -12531,44 +12531,44 @@
+@@= skipped -31, +31 lines =@@
  >luctuosa : Symbol(luctuosa, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 982, 16))
  
          loriae(): rendalli.moojeni<macrorhinos.marmosurus<rendalli.moojeni<panglima.amphibius<trivirgatus.falconeri, caurinus.psilurus>, gabriellae.echinatus>, sagitta.stolzmanni>, lutreolus.punicus> { var x: rendalli.moojeni<macrorhinos.marmosurus<rendalli.moojeni<panglima.amphibius<trivirgatus.falconeri, caurinus.psilurus>, gabriellae.echinatus>, sagitta.stolzmanni>, lutreolus.punicus>; () => { var y = this; }; return x; }
@@ -16362,7 +16362,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 984, 403))
  >this : Symbol(luctuosa, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 982, 16))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 984, 205))
-@@ -12583,193 +12583,193 @@
+@@= skipped -52, +52 lines =@@
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 988, 30))
  
          duthieae(): caurinus.mahaganus<howi.coludo<argurus.oreas, howi.marcanoi>, dogramacii.aurata> { var x: caurinus.mahaganus<howi.coludo<argurus.oreas, howi.marcanoi>, dogramacii.aurata>; () => { var y = this; }; return x; }
@@ -16632,7 +16632,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 996, 151))
  >this : Symbol(setulosus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 987, 19))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 996, 80))
-@@ -12784,144 +12784,144 @@
+@@= skipped -201, +201 lines =@@
  >T1 : Symbol(T1, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 1000, 28))
  
          palmeri(): panglima.amphibius<howi.coludo<macrorhinos.daphaenodon, panglima.amphibius<macrorhinos.daphaenodon, patas.uralensis>>, trivirgatus.mixtus<argurus.dauricus<dogramacii.aurata, dammermani.melanops>, panglima.amphibius<lavali.lepturus, quasiater.carolinensis>>> { var x: panglima.amphibius<howi.coludo<macrorhinos.daphaenodon, panglima.amphibius<macrorhinos.daphaenodon, patas.uralensis>>, trivirgatus.mixtus<argurus.dauricus<dogramacii.aurata, dammermani.melanops>, panglima.amphibius<lavali.lepturus, quasiater.carolinensis>>>; () => { var y = this; }; return x; }
@@ -16836,7 +16836,7 @@
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 1005, 240))
  >this : Symbol(rosalia, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 999, 20))
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 1005, 125))
-@@ -12932,23 +12932,23 @@
+@@= skipped -148, +148 lines =@@
  
      export class psilurus extends lutreolus.punicus {
  >psilurus : Symbol(psilurus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 1008, 17))
@@ -16867,7 +16867,7 @@
  >caurinus : Symbol(caurinus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 449, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 836, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 976, 1), Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 1007, 1))
  >psilurus : Symbol(psilurus, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 1008, 17))
  >y : Symbol(y, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 1010, 163))
-@@ -12956,96 +12956,96 @@
+@@= skipped -24, +24 lines =@@
  >x : Symbol(x, Decl(resolvingClassDeclarationWhenInBaseTypeResolution.ts, 1010, 86))
  
          lundi(): petrophilus.sodyi<trivirgatus.falconeri, quasiater.bobrinskoi> { var x: petrophilus.sodyi<trivirgatus.falconeri, quasiater.bobrinskoi>; () => { var y = this; }; return x; }

@@ -1,6 +1,6 @@
 --- old.infinitelyExpandingTypes3.symbols
 +++ new.infinitelyExpandingTypes3.symbols
-@@ -6,16 +6,16 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(infinitelyExpandingTypes3.ts, 0, 15))
  
      data: T;
@@ -20,7 +20,7 @@
  >OwnerList : Symbol(OwnerList, Decl(infinitelyExpandingTypes3.ts, 4, 1))
  >T : Symbol(T, Decl(infinitelyExpandingTypes3.ts, 0, 15))
  }
-@@ -28,7 +28,7 @@
+@@= skipped -22, +22 lines =@@
  >U : Symbol(U, Decl(infinitelyExpandingTypes3.ts, 6, 20))
  
      name: string;
@@ -29,7 +29,7 @@
  }
  
  interface OwnerList2<U> extends List<List<U>> {
-@@ -39,7 +39,7 @@
+@@= skipped -11, +11 lines =@@
  >U : Symbol(U, Decl(infinitelyExpandingTypes3.ts, 10, 21))
  
      name: string;

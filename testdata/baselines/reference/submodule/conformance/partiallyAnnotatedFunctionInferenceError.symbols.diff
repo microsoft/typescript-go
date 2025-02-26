@@ -1,6 +1,6 @@
 --- old.partiallyAnnotatedFunctionInferenceError.symbols
 +++ new.partiallyAnnotatedFunctionInferenceError.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(partiallyAnnotatedFunctionInferenceError.ts, 0, 0))
  
    test: string
@@ -9,7 +9,7 @@
  }
  
  class D extends C {
-@@ -13,7 +13,7 @@
+@@= skipped -8, +8 lines =@@
  >C : Symbol(C, Decl(partiallyAnnotatedFunctionInferenceError.ts, 0, 0))
  
    test2: string

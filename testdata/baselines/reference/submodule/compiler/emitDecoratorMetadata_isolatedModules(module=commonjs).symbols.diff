@@ -1,6 +1,6 @@
 --- old.emitDecoratorMetadata_isolatedModules(module=commonjs).symbols
 +++ new.emitDecoratorMetadata_isolatedModules(module=commonjs).symbols
-@@ -38,7 +38,7 @@
+@@= skipped -38, +38 lines =@@
  >EventListener : Symbol(EventListener, Decl(index.ts, 4, 11))
  
    handleEvent1(event: T1) {} // Error
@@ -9,7 +9,7 @@
  >event : Symbol(event, Decl(index.ts, 8, 15))
  >T1 : Symbol(T1, Decl(index.ts, 0, 8))
    
-@@ -46,7 +46,7 @@
+@@= skipped -8, +8 lines =@@
  >EventListener : Symbol(EventListener, Decl(index.ts, 4, 11))
  
    handleEvent2(event: T2) {} // Ok
@@ -18,7 +18,7 @@
  >event : Symbol(event, Decl(index.ts, 11, 15))
  >T2 : Symbol(T2, Decl(index.ts, 2, 13))
  
-@@ -54,29 +54,29 @@
+@@= skipped -8, +8 lines =@@
  >EventListener : Symbol(EventListener, Decl(index.ts, 4, 11))
  
    p1!: T1; // Error

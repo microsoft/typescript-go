@@ -1,6 +1,6 @@
 --- old.parserMemberAccessorDeclaration5.symbols
 +++ new.parserMemberAccessorDeclaration5.symbols
-@@ -5,6 +5,6 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(parserMemberAccessorDeclaration5.ts, 0, 0))
  
    set "a"(i) { }

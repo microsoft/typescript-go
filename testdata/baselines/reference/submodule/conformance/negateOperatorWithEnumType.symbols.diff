@@ -1,6 +1,6 @@
 --- old.negateOperatorWithEnumType.symbols
 +++ new.negateOperatorWithEnumType.symbols
-@@ -8,9 +8,9 @@
+@@= skipped -8, +8 lines =@@
  
  enum ENUM1 { A, B, "" };
  >ENUM1 : Symbol(ENUM1, Decl(negateOperatorWithEnumType.ts, 2, 14))
@@ -13,7 +13,7 @@
  
  // enum type var
  var ResultIsNumber1 = -ENUM;
-@@ -21,15 +21,15 @@
+@@= skipped -13, +13 lines =@@
  var ResultIsNumber2 = -ENUM1["B"];
  >ResultIsNumber2 : Symbol(ResultIsNumber2, Decl(negateOperatorWithEnumType.ts, 9, 3))
  >ENUM1 : Symbol(ENUM1, Decl(negateOperatorWithEnumType.ts, 2, 14))
@@ -33,7 +33,7 @@
  
  // miss assignment operators
  -ENUM;
-@@ -40,7 +40,7 @@
+@@= skipped -19, +19 lines =@@
  
  -ENUM1["B"];
  >ENUM1 : Symbol(ENUM1, Decl(negateOperatorWithEnumType.ts, 2, 14))

@@ -1,6 +1,6 @@
 --- old.jsDeclarationsImportTypeBundled.symbols
 +++ new.jsDeclarationsImportTypeBundled.symbols
-@@ -12,9 +12,6 @@
+@@= skipped -12, +12 lines =@@
  >x : Symbol(x, Decl(mod1.js, 6, 11))
  
  module.exports = x;
@@ -10,7 +10,7 @@
  >x : Symbol(x, Decl(mod1.js, 6, 5))
  
  === index.js ===
-@@ -24,8 +21,5 @@
+@@= skipped -12, +9 lines =@@
  >x : Symbol(x, Decl(index.js, 1, 16))
  
  module.exports = items;

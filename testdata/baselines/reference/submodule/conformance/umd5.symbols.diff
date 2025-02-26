@@ -1,6 +1,6 @@
 --- old.umd5.symbols
 +++ new.umd5.symbols
-@@ -5,20 +5,20 @@
+@@= skipped -5, +5 lines =@@
  >Bar : Symbol(Bar, Decl(a.ts, 0, 6))
  
  Bar.fn();
@@ -26,7 +26,7 @@
  
  // should error
  let z = Foo;
-@@ -34,7 +34,7 @@
+@@= skipped -29, +29 lines =@@
  
  export interface Thing { n: typeof x }
  >Thing : Symbol(Thing, Decl(foo.d.ts, 1, 27))

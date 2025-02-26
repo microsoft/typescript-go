@@ -1,6 +1,6 @@
 --- old.moduleNodeDefaultImports(module=node16).symbols
 +++ new.moduleNodeDefaultImports(module=node16).symbols
-@@ -12,23 +12,23 @@
+@@= skipped -12, +12 lines =@@
  >a : Symbol(a, Decl(b.mts, 0, 6))
  
  import { default as b } from "./mod.cjs";
@@ -29,7 +29,7 @@
  
  a === b;
  >a : Symbol(a, Decl(b.mts, 0, 6))
-@@ -44,17 +44,17 @@
+@@= skipped -32, +32 lines =@@
  
  d === self.default;
  >d : Symbol(d, Decl(b.mts, 2, 11))
@@ -53,7 +53,7 @@
  
  // should all fail
  a();
-@@ -70,47 +70,35 @@
+@@= skipped -26, +26 lines =@@
  >d : Symbol(d, Decl(b.mts, 2, 11))
  
  self.default();

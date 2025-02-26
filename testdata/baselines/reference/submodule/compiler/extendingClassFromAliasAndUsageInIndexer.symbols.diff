@@ -1,6 +1,6 @@
 --- old.extendingClassFromAliasAndUsageInIndexer.symbols
 +++ new.extendingClassFromAliasAndUsageInIndexer.symbols
-@@ -14,10 +14,10 @@
+@@= skipped -14, +14 lines =@@
  >IHasVisualizationModel : Symbol(IHasVisualizationModel, Decl(extendingClassFromAliasAndUsageInIndexer_main.ts, 2, 79))
  
      VisualizationModel: typeof Backbone.Model;
@@ -14,7 +14,7 @@
  }
  var moduleATyped: IHasVisualizationModel = moduleA;
  >moduleATyped : Symbol(moduleATyped, Decl(extendingClassFromAliasAndUsageInIndexer_main.ts, 6, 3))
-@@ -30,11 +30,11 @@
+@@= skipped -16, +16 lines =@@
  >IHasVisualizationModel : Symbol(IHasVisualizationModel, Decl(extendingClassFromAliasAndUsageInIndexer_main.ts, 2, 79))
  
      "moduleA": moduleA,
@@ -28,7 +28,7 @@
  >moduleB : Symbol(moduleB, Decl(extendingClassFromAliasAndUsageInIndexer_main.ts, 1, 79))
  
  };
-@@ -43,17 +43,17 @@
+@@= skipped -13, +13 lines =@@
  
  var visModel = new moduleMap[moduleName].VisualizationModel();
  >visModel : Symbol(visModel, Decl(extendingClassFromAliasAndUsageInIndexer_main.ts, 12, 3))
@@ -49,7 +49,7 @@
  }
  
  === extendingClassFromAliasAndUsageInIndexer_moduleA.ts ===
-@@ -62,9 +62,9 @@
+@@= skipped -19, +19 lines =@@
  
  export class VisualizationModel extends Backbone.Model {
  >VisualizationModel : Symbol(VisualizationModel, Decl(extendingClassFromAliasAndUsageInIndexer_moduleA.ts, 0, 81))
@@ -61,7 +61,7 @@
  
      // interesting stuff here
  }
-@@ -75,9 +75,9 @@
+@@= skipped -13, +13 lines =@@
  
  export class VisualizationModel extends Backbone.Model {
  >VisualizationModel : Symbol(VisualizationModel, Decl(extendingClassFromAliasAndUsageInIndexer_moduleB.ts, 0, 81))

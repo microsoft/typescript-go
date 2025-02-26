@@ -1,6 +1,6 @@
 --- old.badInferenceLowerPriorityThanGoodInference.symbols
 +++ new.badInferenceLowerPriorityThanGoodInference.symbols
-@@ -8,11 +8,11 @@
+@@= skipped -8, +8 lines =@@
  >A : Symbol(A, Decl(badInferenceLowerPriorityThanGoodInference.ts, 2, 14))
  
      a: A;

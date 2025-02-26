@@ -1,6 +1,6 @@
 --- old.contextualTypeBasedOnIntersectionWithAnyInTheMix1.symbols
 +++ new.contextualTypeBasedOnIntersectionWithAnyInTheMix1.symbols
-@@ -38,7 +38,7 @@
+@@= skipped -38, +38 lines =@@
  
  > {
    attrs<
@@ -9,7 +9,7 @@
  
      U,
  >U : Symbol(U, Decl(contextualTypeBasedOnIntersectionWithAnyInTheMix1.ts, 10, 8))
-@@ -92,7 +92,7 @@
+@@= skipped -54, +54 lines =@@
  >BaseProps : Symbol(BaseProps, Decl(contextualTypeBasedOnIntersectionWithAnyInTheMix1.ts, 24, 38))
  
    as?: "select" | "input";
@@ -18,7 +18,7 @@
  }
  
  declare const Flex: (props: BaseProps) => null;
-@@ -102,10 +102,10 @@
+@@= skipped -10, +10 lines =@@
  
  export const StyledSelect = styled(Flex).attrs({
  >StyledSelect : Symbol(StyledSelect, Decl(contextualTypeBasedOnIntersectionWithAnyInTheMix1.ts, 32, 12))

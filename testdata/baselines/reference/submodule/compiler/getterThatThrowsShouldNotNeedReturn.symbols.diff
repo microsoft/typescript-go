@@ -1,6 +1,6 @@
 --- old.getterThatThrowsShouldNotNeedReturn.symbols
 +++ new.getterThatThrowsShouldNotNeedReturn.symbols
-@@ -5,12 +5,12 @@
+@@= skipped -5, +5 lines =@@
  >Greeter : Symbol(Greeter, Decl(getterThatThrowsShouldNotNeedReturn.ts, 0, 0))
  
   public get greet(): string {

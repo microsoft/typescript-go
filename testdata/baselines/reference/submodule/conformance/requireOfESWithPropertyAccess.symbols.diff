@@ -1,6 +1,6 @@
 --- old.requireOfESWithPropertyAccess.symbols
 +++ new.requireOfESWithPropertyAccess.symbols
-@@ -3,18 +3,12 @@
+@@= skipped -3, +3 lines =@@
  === main.js ===
  const x = require('./ch').x
  >x : Symbol(x, Decl(main.js, 0, 5))

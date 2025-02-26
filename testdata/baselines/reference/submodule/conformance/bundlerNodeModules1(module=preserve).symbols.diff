@@ -1,6 +1,6 @@
 --- old.bundlerNodeModules1(module=preserve).symbols
 +++ new.bundlerNodeModules1(module=preserve).symbols
-@@ -1,9 +1,17 @@
+@@= skipped -1, +1 lines =@@
  //// [tests/cases/conformance/moduleResolution/bundler/bundlerNodeModules1.ts] ////
  
 +=== /node_modules/dual/index.js ===

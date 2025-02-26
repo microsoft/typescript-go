@@ -1,6 +1,6 @@
 --- old.tsxElementResolution10.symbols
 +++ new.tsxElementResolution10.symbols
-@@ -11,7 +11,7 @@
+@@= skipped -11, +11 lines =@@
  >ElementClass : Symbol(ElementClass, Decl(file.tsx, 1, 22))
  
  		render: any;

@@ -1,6 +1,6 @@
 --- old.requireOfJsonFile_PathMapping.symbols
 +++ new.requireOfJsonFile_PathMapping.symbols
-@@ -4,7 +4,3 @@
+@@= skipped -4, +4 lines =@@
  import foobar from "foo/bar/foobar.json";
  >foobar : Symbol(foobar, Decl(a.ts, 0, 6))
  

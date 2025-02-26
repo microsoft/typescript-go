@@ -1,6 +1,6 @@
 --- old.covariance1.symbols
 +++ new.covariance1.symbols
-@@ -6,16 +6,16 @@
+@@= skipped -6, +6 lines =@@
  
      interface X { m1:number; }
  >X : Symbol(X, Decl(covariance1.ts, 0, 10))

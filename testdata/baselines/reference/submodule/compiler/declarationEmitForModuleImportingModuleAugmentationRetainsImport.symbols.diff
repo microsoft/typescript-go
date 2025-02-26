@@ -1,6 +1,6 @@
 --- old.declarationEmitForModuleImportingModuleAugmentationRetainsImport.symbols
 +++ new.declarationEmitForModuleImportingModuleAugmentationRetainsImport.symbols
-@@ -5,13 +5,13 @@
+@@= skipped -5, +5 lines =@@
  >ParentThing : Symbol(ParentThing, Decl(child1.ts, 0, 8))
  
  declare module './parent' {
@@ -16,7 +16,7 @@
  >a : Symbol(a, Decl(child1.ts, 4, 14))
  >b : Symbol(b, Decl(child1.ts, 4, 24))
      }
-@@ -23,9 +23,9 @@
+@@= skipped -18, +18 lines =@@
  >ParentThing : Symbol(ParentThing, Decl(child1.ts, 0, 8))
  
      prototype.add = (a: number, b: number) => a + b;
@@ -28,7 +28,7 @@
  >a : Symbol(a, Decl(child1.ts, 9, 21))
  >b : Symbol(b, Decl(child1.ts, 9, 31))
  >a : Symbol(a, Decl(child1.ts, 9, 21))
-@@ -42,7 +42,7 @@
+@@= skipped -19, +19 lines =@@
  
  child1(ParentThing.prototype);
  >child1 : Symbol(child1, Decl(parent.ts, 0, 8))

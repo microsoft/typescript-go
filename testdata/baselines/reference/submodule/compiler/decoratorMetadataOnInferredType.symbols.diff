@@ -1,6 +1,6 @@
 --- old.decoratorMetadataOnInferredType.symbols
 +++ new.decoratorMetadataOnInferredType.symbols
-@@ -33,7 +33,7 @@
+@@= skipped -33, +33 lines =@@
  >decorator : Symbol(decorator, Decl(decoratorMetadataOnInferredType.ts, 6, 1))
  
      x = new A();

@@ -1,6 +1,6 @@
 --- old.complexClassRelationships.symbols
 +++ new.complexClassRelationships.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >Base : Symbol(Base, Decl(complexClassRelationships.ts, 11, 1))
  
      public static createEmpty(): Derived {
@@ -9,7 +9,7 @@
  >Derived : Symbol(Derived, Decl(complexClassRelationships.ts, 0, 0))
  
          var item = new Derived();
-@@ -30,16 +30,16 @@
+@@= skipped -23, +23 lines =@@
          (item: Thing) => { return [item.Components]; };
  >item : Symbol(item, Decl(complexClassRelationships.ts, 9, 9))
  >Thing : Symbol(Thing, Decl(complexClassRelationships.ts, 14, 1))
@@ -29,7 +29,7 @@
  >BaseCollection : Symbol(BaseCollection, Decl(complexClassRelationships.ts, 6, 1))
  >Base : Symbol(Base, Decl(complexClassRelationships.ts, 11, 1))
  }
-@@ -48,7 +48,7 @@
+@@= skipped -18, +18 lines =@@
  >Thing : Symbol(Thing, Decl(complexClassRelationships.ts, 14, 1))
  
      public get Components(): ComponentCollection<any> { return null }
@@ -38,7 +38,7 @@
  >ComponentCollection : Symbol(ComponentCollection, Decl(complexClassRelationships.ts, 18, 1))
  }
  
-@@ -57,14 +57,14 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(complexClassRelationships.ts, 20, 26))
  
      private static sortComponents(p: Foo) {
@@ -56,7 +56,7 @@
      }
  }
  
-@@ -72,31 +72,31 @@
+@@= skipped -15, +15 lines =@@
  >Foo : Symbol(Foo, Decl(complexClassRelationships.ts, 24, 1))
  
      public get prop1() {
@@ -95,7 +95,7 @@
      }
  }
  
-@@ -113,7 +113,7 @@
+@@= skipped -41, +41 lines =@@
  >FooBase : Symbol(FooBase, Decl(complexClassRelationships.ts, 40, 1))
  
      public populate() {

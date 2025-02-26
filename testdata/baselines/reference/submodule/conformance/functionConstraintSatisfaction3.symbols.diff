@@ -1,6 +1,6 @@
 --- old.functionConstraintSatisfaction3.symbols
 +++ new.functionConstraintSatisfaction3.symbols
-@@ -25,7 +25,7 @@
+@@= skipped -25, +25 lines =@@
  >C : Symbol(C, Decl(functionConstraintSatisfaction3.ts, 7, 9))
  
      foo: string;
@@ -9,7 +9,7 @@
  }
  
  var a: { (): string };
-@@ -90,7 +90,7 @@
+@@= skipped -65, +65 lines =@@
  >T : Symbol(T, Decl(functionConstraintSatisfaction3.ts, 29, 9))
  
      foo: T;

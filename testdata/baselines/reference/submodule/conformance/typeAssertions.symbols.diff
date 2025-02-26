@@ -1,6 +1,6 @@
 --- old.typeAssertions.symbols
 +++ new.typeAssertions.symbols
-@@ -33,20 +33,20 @@
+@@= skipped -33, +33 lines =@@
  >SomeBase : Symbol(SomeBase, Decl(typeAssertions.ts, 11, 20))
  
      private p;

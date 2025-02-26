@@ -1,6 +1,6 @@
 --- old.constEnumSyntheticNodesComments.symbols
 +++ new.constEnumSyntheticNodesComments.symbols
-@@ -3,10 +3,10 @@
+@@= skipped -3, +3 lines =@@
  === constEnumSyntheticNodesComments.ts ===
  const enum En { A, B, C, D }
  >En : Symbol(En, Decl(constEnumSyntheticNodesComments.ts, 0, 0))
@@ -15,7 +15,7 @@
  
  function assert<T>(x: T) {
  >assert : Symbol(assert, Decl(constEnumSyntheticNodesComments.ts, 0, 28))
-@@ -27,9 +27,9 @@
+@@= skipped -24, +24 lines =@@
  >a : Symbol(a, Decl(constEnumSyntheticNodesComments.ts, 6, 16))
  
          case En.A:
@@ -27,7 +27,7 @@
  
              return assert<0>(a);
  >assert : Symbol(assert, Decl(constEnumSyntheticNodesComments.ts, 0, 28))
-@@ -37,7 +37,7 @@
+@@= skipped -10, +10 lines =@@
  
          case En["B"]:
  >En : Symbol(En, Decl(constEnumSyntheticNodesComments.ts, 0, 0))
@@ -36,7 +36,7 @@
  
              return assert<1>(a);
  >assert : Symbol(assert, Decl(constEnumSyntheticNodesComments.ts, 0, 28))
-@@ -45,7 +45,7 @@
+@@= skipped -8, +8 lines =@@
  
          case En[`C`]:
  >En : Symbol(En, Decl(constEnumSyntheticNodesComments.ts, 0, 0))
@@ -45,7 +45,7 @@
  
              return assert<2>(a);
  >assert : Symbol(assert, Decl(constEnumSyntheticNodesComments.ts, 0, 28))
-@@ -53,7 +53,7 @@
+@@= skipped -8, +8 lines =@@
  
          case En["\u{44}"]:
  >En : Symbol(En, Decl(constEnumSyntheticNodesComments.ts, 0, 0))

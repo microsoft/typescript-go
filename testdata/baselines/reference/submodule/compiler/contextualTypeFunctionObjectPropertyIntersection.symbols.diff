@@ -1,6 +1,6 @@
 --- old.contextualTypeFunctionObjectPropertyIntersection.symbols
 +++ new.contextualTypeFunctionObjectPropertyIntersection.symbols
-@@ -16,7 +16,7 @@
+@@= skipped -16, +16 lines =@@
  >type : Symbol(type, Decl(contextualTypeFunctionObjectPropertyIntersection.ts, 4, 40))
  
    schema: {
@@ -9,7 +9,7 @@
  
      events: TEvent;
  >events : Symbol(events, Decl(contextualTypeFunctionObjectPropertyIntersection.ts, 5, 11))
-@@ -24,7 +24,7 @@
+@@= skipped -8, +8 lines =@@
  
    };
    on?: {
@@ -18,7 +18,7 @@
  
      [K in TEvent["type"]]?: Action<TEvent extends { type: K } ? TEvent : never>;
  >K : Symbol(K, Decl(contextualTypeFunctionObjectPropertyIntersection.ts, 9, 5))
-@@ -118,7 +118,7 @@
+@@= skipped -94, +94 lines =@@
  >type : Symbol(type, Decl(contextualTypeFunctionObjectPropertyIntersection.ts, 41, 41))
  
    schema: {
@@ -27,7 +27,7 @@
  
      events: TEvent;
  >events : Symbol(events, Decl(contextualTypeFunctionObjectPropertyIntersection.ts, 42, 11))
-@@ -126,7 +126,7 @@
+@@= skipped -8, +8 lines =@@
  
    };
    on?: {

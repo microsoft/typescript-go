@@ -1,6 +1,6 @@
 --- old.narrowByBooleanComparison.symbols
 +++ new.narrowByBooleanComparison.symbols
-@@ -121,9 +121,9 @@
+@@= skipped -121, +121 lines =@@
  
      if (typeof foo !== 'string' && Array.isArray(foo) === false) {
  >foo : Symbol(foo, Decl(narrowByBooleanComparison.ts, 50, 15))
@@ -12,7 +12,7 @@
  >foo : Symbol(foo, Decl(narrowByBooleanComparison.ts, 50, 15))
  
          throw new Error('Not a string or an array');
-@@ -139,7 +139,7 @@
+@@= skipped -18, +18 lines =@@
  >URIError : Symbol(URIError, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      status?: number;
@@ -21,7 +21,7 @@
  }
  function test4() {
  >test4 : Symbol(test4, Decl(narrowByBooleanComparison.ts, 60, 1))
-@@ -152,14 +152,14 @@
+@@= skipped -13, +13 lines =@@
          if (err instanceof WebError === false || err.status != 401) {
  >err : Symbol(err, Decl(narrowByBooleanComparison.ts, 64, 13))
  >WebError : Symbol(WebError, Decl(narrowByBooleanComparison.ts, 55, 1))
@@ -40,7 +40,7 @@
  >err : Symbol(err, Decl(narrowByBooleanComparison.ts, 64, 13))
          }
      }
-@@ -170,7 +170,7 @@
+@@= skipped -18, +18 lines =@@
  >Entity : Symbol(Entity, Decl(narrowByBooleanComparison.ts, 69, 1))
  
      type: string;
@@ -49,7 +49,7 @@
  }
  const ACTOR_TYPE = "actor";
  >ACTOR_TYPE : Symbol(ACTOR_TYPE, Decl(narrowByBooleanComparison.ts, 75, 5))
-@@ -180,7 +180,7 @@
+@@= skipped -10, +10 lines =@@
  >Entity : Symbol(Entity, Decl(narrowByBooleanComparison.ts, 69, 1))
  
      type: typeof ACTOR_TYPE;
@@ -58,7 +58,7 @@
  >ACTOR_TYPE : Symbol(ACTOR_TYPE, Decl(narrowByBooleanComparison.ts, 75, 5))
  }
  function isActor(entity: Entity): entity is Actor {
-@@ -191,9 +191,9 @@
+@@= skipped -11, +11 lines =@@
  >Actor : Symbol(Actor, Decl(narrowByBooleanComparison.ts, 75, 27))
  
      return entity.type === ACTOR_TYPE;

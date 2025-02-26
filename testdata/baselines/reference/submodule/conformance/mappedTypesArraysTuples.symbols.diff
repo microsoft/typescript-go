@@ -1,6 +1,6 @@
 --- old.mappedTypesArraysTuples.symbols
 +++ new.mappedTypesArraysTuples.symbols
-@@ -289,16 +289,16 @@
+@@= skipped -289, +289 lines =@@
      let x: Box<any> | undefined = a.pop();
  >x : Symbol(x, Decl(mappedTypesArraysTuples.ts, 72, 7))
  >Box : Symbol(Box, Decl(mappedTypesArraysTuples.ts, 0, 0))

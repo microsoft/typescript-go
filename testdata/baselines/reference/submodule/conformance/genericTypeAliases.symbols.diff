@@ -1,6 +1,6 @@
 --- old.genericTypeAliases.symbols
 +++ new.genericTypeAliases.symbols
-@@ -132,11 +132,11 @@
+@@= skipped -132, +132 lines =@@
  >B : Symbol(B, Decl(genericTypeAliases.ts, 41, 15))
  
      a: A;
@@ -14,7 +14,7 @@
  >B : Symbol(B, Decl(genericTypeAliases.ts, 41, 15))
  }
  
-@@ -154,7 +154,7 @@
+@@= skipped -22, +22 lines =@@
  >T : Symbol(T, Decl(genericTypeAliases.ts, 48, 21))
  
      tag: string;
@@ -23,7 +23,7 @@
  }
  
  var p: TaggedPair<number>;
-@@ -162,19 +162,19 @@
+@@= skipped -8, +8 lines =@@
  >TaggedPair : Symbol(TaggedPair, Decl(genericTypeAliases.ts, 46, 24))
  
  p.a = 1;

@@ -1,6 +1,6 @@
 --- old.declFileTypeAnnotationStringLiteral.symbols
 +++ new.declFileTypeAnnotationStringLiteral.symbols
-@@ -21,9 +21,9 @@
+@@= skipped -21, +21 lines =@@
  >a : Symbol(a, Decl(declFileTypeAnnotationStringLiteral.ts, 3, 13))
  
          return a.length;

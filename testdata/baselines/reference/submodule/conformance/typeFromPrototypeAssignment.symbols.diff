@@ -1,6 +1,6 @@
 --- old.typeFromPrototypeAssignment.symbols
 +++ new.typeFromPrototypeAssignment.symbols
-@@ -5,137 +5,62 @@
+@@= skipped -5, +5 lines =@@
  
  /** @constructor */
  var Multimap = function() {

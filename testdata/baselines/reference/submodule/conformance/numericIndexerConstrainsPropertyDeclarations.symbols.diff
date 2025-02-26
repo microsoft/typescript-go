@@ -1,6 +1,6 @@
 --- old.numericIndexerConstrainsPropertyDeclarations.symbols
 +++ new.numericIndexerConstrainsPropertyDeclarations.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >Number : Symbol(Number, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      foo: number;
@@ -9,7 +9,7 @@
  }
  
  class C {
-@@ -20,62 +20,62 @@
+@@= skipped -12, +12 lines =@@
      constructor() { } // ok
  
      a: string; // ok
@@ -89,7 +89,7 @@
  
          return 1;
      }
-@@ -88,41 +88,41 @@
+@@= skipped -68, +68 lines =@@
  >x : Symbol(x, Decl(numericIndexerConstrainsPropertyDeclarations.ts, 41, 5))
  
      a: string; // ok
@@ -142,7 +142,7 @@
  >MyNumber : Symbol(MyNumber, Decl(numericIndexerConstrainsPropertyDeclarations.ts, 0, 0))
  }
  
-@@ -142,10 +142,10 @@
+@@= skipped -54, +54 lines =@@
  >c : Symbol(c, Decl(numericIndexerConstrainsPropertyDeclarations.ts, 62, 14))
  
      "d": string; // ok
@@ -155,7 +155,7 @@
  
      1.0: string; // ok
  >1.0 : Symbol(1.0, Decl(numericIndexerConstrainsPropertyDeclarations.ts, 65, 16))
-@@ -186,10 +186,10 @@
+@@= skipped -44, +44 lines =@@
  >c : Symbol(c, Decl(numericIndexerConstrainsPropertyDeclarations.ts, 79, 9))
  
      "d": '', 

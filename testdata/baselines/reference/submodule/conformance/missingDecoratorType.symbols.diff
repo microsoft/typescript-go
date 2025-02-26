@@ -1,6 +1,6 @@
 --- old.missingDecoratorType.symbols
 +++ new.missingDecoratorType.symbols
-@@ -2,29 +2,29 @@
+@@= skipped -2, +2 lines =@@
  
  === a.ts ===
  interface Object { }
@@ -39,7 +39,7 @@
  
  === b.ts ===
  declare function dec(t, k, d);
-@@ -40,7 +40,7 @@
+@@= skipped -38, +38 lines =@@
  >dec : Symbol(dec, Decl(b.ts, 0, 0))
  
      method() {}

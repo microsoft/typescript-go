@@ -1,6 +1,6 @@
 --- old.tsxSpreadAttributesResolution4.symbols
 +++ new.tsxSpreadAttributesResolution4.symbols
-@@ -8,25 +8,23 @@
+@@= skipped -8, +8 lines =@@
  >PoisonedProp : Symbol(PoisonedProp, Decl(file.tsx, 0, 32))
  
      x: string;
@@ -31,7 +31,7 @@
      }
  }
  
-@@ -50,16 +48,14 @@
+@@= skipped -42, +40 lines =@@
  
  class EmptyProp extends React.Component<{}, {}> {
  >EmptyProp : Symbol(EmptyProp, Decl(file.tsx, 19, 30))

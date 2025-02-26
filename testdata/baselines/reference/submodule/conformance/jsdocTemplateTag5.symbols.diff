@@ -1,6 +1,6 @@
 --- old.jsdocTemplateTag5.symbols
 +++ new.jsdocTemplateTag5.symbols
-@@ -8,20 +8,16 @@
+@@= skipped -8, +8 lines =@@
   * @template V
   */
  function Multimap() {
@@ -25,7 +25,7 @@
  
      /**
       * @param {K} key the key ok
-@@ -32,9 +28,7 @@
+@@= skipped -24, +20 lines =@@
  >key : Symbol(key, Decl(a.js, 16, 8))
  
          return this._map[key + ''];
@@ -36,7 +36,7 @@
  >key : Symbol(key, Decl(a.js, 16, 8))
      }
  }
-@@ -46,20 +40,16 @@
+@@= skipped -14, +12 lines =@@
   * @template V
   */
  var Multimap2 = function() {
@@ -61,7 +61,7 @@
  
      /**
       * @param {K} key the key ok
-@@ -70,15 +60,12 @@
+@@= skipped -24, +20 lines =@@
  >key : Symbol(key, Decl(a.js, 37, 18))
  
          return this._map[key + ''];
@@ -78,7 +78,7 @@
  
  /**
   * Should work for expando-namespaced initialisers too
-@@ -87,24 +74,16 @@
+@@= skipped -17, +14 lines =@@
   * @template V
   */
  Ns.Multimap3 = function() {
@@ -106,7 +106,7 @@
  
      /**
       * @param {K} key the key ok
-@@ -115,9 +94,6 @@
+@@= skipped -28, +20 lines =@@
  >key : Symbol(key, Decl(a.js, 59, 8))
  
          return this._map[key + ''];

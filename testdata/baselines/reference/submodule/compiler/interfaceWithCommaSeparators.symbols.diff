@@ -1,6 +1,6 @@
 --- old.interfaceWithCommaSeparators.symbols
 +++ new.interfaceWithCommaSeparators.symbols
-@@ -8,6 +8,6 @@
+@@= skipped -8, +8 lines =@@
  
  interface Foo { bar(): void, baz }
  >Foo : Symbol(Foo, Decl(interfaceWithCommaSeparators.ts, 0, 27))

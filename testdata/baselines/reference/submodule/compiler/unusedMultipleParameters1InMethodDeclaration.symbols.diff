@@ -1,6 +1,6 @@
 --- old.unusedMultipleParameters1InMethodDeclaration.symbols
 +++ new.unusedMultipleParameters1InMethodDeclaration.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Dummy : Symbol(Dummy, Decl(unusedMultipleParameters1InMethodDeclaration.ts, 0, 0))
  
      public greeter(person: string, person2: string) {

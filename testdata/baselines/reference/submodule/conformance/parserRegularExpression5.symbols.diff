@@ -1,6 +1,6 @@
 --- old.parserRegularExpression5.symbols
 +++ new.parserRegularExpression5.symbols
-@@ -2,6 +2,6 @@
+@@= skipped -2, +2 lines =@@
  
  === parserRegularExpression5.ts ===
  if (a) / (\\ ? | & ) rct = j / .test(c.href);

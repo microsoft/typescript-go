@@ -1,6 +1,6 @@
 --- old.complexNarrowingWithAny.symbols
 +++ new.complexNarrowingWithAny.symbols
-@@ -177,1070 +177,1070 @@
+@@= skipped -177, +177 lines =@@
  >_View_AppComponent0 : Symbol(_View_AppComponent0, Decl(complexNarrowingWithAny.ts, 126, 1))
  
    _text_0:any;
@@ -1447,7 +1447,7 @@
  
    constructor(viewUtils:any,parentInjector:any,declarationEl:any) {
  >viewUtils : Symbol(viewUtils, Decl(complexNarrowingWithAny.ts, 445, 14))
-@@ -1249,1043 +1249,1043 @@
+@@= skipped -1072, +1072 lines =@@
    }
  
    injectorGetInternal(token:any,requestNodeIndex:number,notFoundResult:any):any {

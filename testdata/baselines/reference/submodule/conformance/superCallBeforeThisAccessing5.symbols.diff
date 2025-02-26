@@ -1,6 +1,6 @@
 --- old.superCallBeforeThisAccessing5.symbols
 +++ new.superCallBeforeThisAccessing5.symbols
-@@ -5,13 +5,13 @@
+@@= skipped -5, +5 lines =@@
  >D : Symbol(D, Decl(superCallBeforeThisAccessing5.ts, 0, 0))
  
      private _t;

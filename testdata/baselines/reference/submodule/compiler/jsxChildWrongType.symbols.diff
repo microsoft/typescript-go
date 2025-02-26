@@ -1,6 +1,6 @@
 --- old.jsxChildWrongType.symbols
 +++ new.jsxChildWrongType.symbols
-@@ -8,16 +8,8 @@
+@@= skipped -8, +8 lines =@@
  >a : Symbol(a, Decl(index.tsx, 3, 5))
  
    <main>

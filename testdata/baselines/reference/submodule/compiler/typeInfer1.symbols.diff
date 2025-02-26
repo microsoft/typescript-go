@@ -1,6 +1,6 @@
 --- old.typeInfer1.symbols
 +++ new.typeInfer1.symbols
-@@ -5,11 +5,11 @@
+@@= skipped -5, +5 lines =@@
  >ITextWriter2 : Symbol(ITextWriter2, Decl(typeInfer1.ts, 0, 0))
  
      Write(s:string):void;

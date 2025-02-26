@@ -1,6 +1,6 @@
 --- old.restArgAssignmentCompat.symbols
 +++ new.restArgAssignmentCompat.symbols
-@@ -6,9 +6,9 @@
+@@= skipped -6, +6 lines =@@
  >x : Symbol(x, Decl(restArgAssignmentCompat.ts, 0, 11))
  
      x.forEach((n, i) => void ('item ' + i + ' = ' + n));

@@ -1,6 +1,6 @@
 --- old.privateNameStaticAccessorssDerivedClasses.symbols
 +++ new.privateNameStaticAccessorssDerivedClasses.symbols
-@@ -5,17 +5,14 @@
+@@= skipped -5, +5 lines =@@
  >Base : Symbol(Base, Decl(privateNameStaticAccessorssDerivedClasses.ts, 0, 0))
  
      static get #prop(): number { return  123; }
@@ -20,7 +20,7 @@
  >x : Symbol(x, Decl(privateNameStaticAccessorssDerivedClasses.ts, 2, 18))
      }
  }
-@@ -24,14 +21,11 @@
+@@= skipped -19, +16 lines =@@
  >Base : Symbol(Base, Decl(privateNameStaticAccessorssDerivedClasses.ts, 0, 0))
  
      static method(x: typeof Derived) {

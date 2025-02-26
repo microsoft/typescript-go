@@ -1,6 +1,6 @@
 --- old.declarationEmitRetainedAnnotationRetainsImportInOutput.symbols
 +++ new.declarationEmitRetainedAnnotationRetainsImportInOutput.symbols
-@@ -25,13 +25,13 @@
+@@= skipped -25, +25 lines =@@
  >E : Symbol(E, Decl(index.ts, 2, 20))
  >i : Symbol(i, Decl(index.ts, 2, 23))
  >E : Symbol(E, Decl(index.ts, 0, 6))

@@ -1,6 +1,6 @@
 --- old.jsxElementClassTooManyParams.symbols
 +++ new.jsxElementClassTooManyParams.symbols
-@@ -13,11 +13,11 @@
+@@= skipped -13, +13 lines =@@
  >TOther : Symbol(TOther, Decl(jsxElementClassTooManyParams.tsx, 2, 53))
  
          ref?: TClass;
@@ -14,7 +14,7 @@
  >TOther : Symbol(TOther, Decl(jsxElementClassTooManyParams.tsx, 2, 53))
      }
      export interface ElementClass extends Element {}
-@@ -26,11 +26,11 @@
+@@= skipped -13, +13 lines =@@
  
      export interface ElementAttributesProperty { props: {}; }
  >ElementAttributesProperty : Symbol(ElementAttributesProperty, Decl(jsxElementClassTooManyParams.tsx, 6, 52))
@@ -28,7 +28,7 @@
  
      export interface IntrinsicAttributes {}
  >IntrinsicAttributes : Symbol(IntrinsicAttributes, Decl(jsxElementClassTooManyParams.tsx, 8, 63))
-@@ -44,12 +44,12 @@
+@@= skipped -18, +18 lines =@@
  >ElemClass : Symbol(ElemClass, Decl(jsxElementClassTooManyParams.tsx, 11, 1))
  >T : Symbol(T, Decl(jsxElementClassTooManyParams.tsx, 12, 16))
  >x : Symbol(x, Decl(jsxElementClassTooManyParams.tsx, 12, 27))

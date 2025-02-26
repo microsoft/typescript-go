@@ -1,6 +1,6 @@
 --- old.invalidThisEmitInContextualObjectLiteral.symbols
 +++ new.invalidThisEmitInContextualObjectLiteral.symbols
-@@ -5,11 +5,11 @@
+@@= skipped -5, +5 lines =@@
  >IDef : Symbol(IDef, Decl(invalidThisEmitInContextualObjectLiteral.ts, 0, 0))
  
  	p1: (e:string) => void;
@@ -14,7 +14,7 @@
  >n : Symbol(n, Decl(invalidThisEmitInContextualObjectLiteral.ts, 2, 12))
  }
  
-@@ -17,15 +17,15 @@
+@@= skipped -12, +12 lines =@@
  >TestController : Symbol(TestController, Decl(invalidThisEmitInContextualObjectLiteral.ts, 3, 1))
  
  	public m(def: IDef) { }

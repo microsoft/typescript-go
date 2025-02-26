@@ -1,6 +1,6 @@
 --- old.inlineSourceMap2.symbols
 +++ new.inlineSourceMap2.symbols
-@@ -7,8 +7,8 @@
+@@= skipped -7, +7 lines =@@
  >x : Symbol(x, Decl(inlineSourceMap2.ts, 2, 3))
  
  console.log(x);

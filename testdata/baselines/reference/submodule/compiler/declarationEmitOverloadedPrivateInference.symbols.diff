@@ -1,6 +1,6 @@
 --- old.declarationEmitOverloadedPrivateInference.symbols
 +++ new.declarationEmitOverloadedPrivateInference.symbols
-@@ -18,7 +18,7 @@
+@@= skipped -18, +18 lines =@@
  >Wrapper : Symbol(Wrapper, Decl(declarationEmitOverloadedPrivateInference.ts, 6, 1))
  
      private proxy<T, U>(fn: (options: T) => U): (options: T) => U;
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(declarationEmitOverloadedPrivateInference.ts, 9, 18))
  >U : Symbol(U, Decl(declarationEmitOverloadedPrivateInference.ts, 9, 20))
  >fn : Symbol(fn, Decl(declarationEmitOverloadedPrivateInference.ts, 9, 24))
-@@ -30,7 +30,7 @@
+@@= skipped -12, +12 lines =@@
  >U : Symbol(U, Decl(declarationEmitOverloadedPrivateInference.ts, 9, 20))
  
      private proxy<T, U>(fn: (options?: T) => U, noArgs: true): (options?: T) => U;
@@ -18,7 +18,7 @@
  >T : Symbol(T, Decl(declarationEmitOverloadedPrivateInference.ts, 10, 18))
  >U : Symbol(U, Decl(declarationEmitOverloadedPrivateInference.ts, 10, 20))
  >fn : Symbol(fn, Decl(declarationEmitOverloadedPrivateInference.ts, 10, 24))
-@@ -43,7 +43,7 @@
+@@= skipped -13, +13 lines =@@
  >U : Symbol(U, Decl(declarationEmitOverloadedPrivateInference.ts, 10, 20))
  
      private proxy<T, U>(fn: (options: T) => U) {
@@ -27,7 +27,7 @@
  >T : Symbol(T, Decl(declarationEmitOverloadedPrivateInference.ts, 12, 18))
  >U : Symbol(U, Decl(declarationEmitOverloadedPrivateInference.ts, 12, 20))
  >fn : Symbol(fn, Decl(declarationEmitOverloadedPrivateInference.ts, 12, 24))
-@@ -55,20 +55,20 @@
+@@= skipped -12, +12 lines =@@
      }
  
      public Proxies = {

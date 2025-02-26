@@ -1,6 +1,6 @@
 --- old.privateNamesAndDecorators.symbols
 +++ new.privateNamesAndDecorators.symbols
-@@ -15,12 +15,12 @@
+@@= skipped -15, +15 lines =@@
  >dec : Symbol(dec, Decl(privateNamesAndDecorators.ts, 0, 0))
  
      #foo = 1;

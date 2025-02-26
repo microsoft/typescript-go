@@ -1,6 +1,6 @@
 --- old.jsDeclarationsJSDocRedirectedLookups.symbols
 +++ new.jsDeclarationsJSDocRedirectedLookups.symbols
-@@ -33,9 +33,6 @@
+@@= skipped -33, +33 lines =@@
  
  /** @type {promise} */const j = Promise.resolve(0);
  >j : Symbol(j, Decl(index.js, 11, 27))

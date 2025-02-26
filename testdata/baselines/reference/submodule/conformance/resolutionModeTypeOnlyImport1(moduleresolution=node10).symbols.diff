@@ -1,6 +1,6 @@
 --- old.resolutionModeTypeOnlyImport1(moduleresolution=node10).symbols
 +++ new.resolutionModeTypeOnlyImport1(moduleresolution=node10).symbols
-@@ -10,14 +10,15 @@
+@@= skipped -10, +10 lines =@@
  
  === /app.ts ===
  import type { x as Default } from "foo";
@@ -18,7 +18,7 @@
  >Require : Symbol(Require, Decl(app.ts, 2, 13))
  
  type _Default = typeof Default;
-@@ -34,11 +35,11 @@
+@@= skipped -24, +25 lines =@@
  
  // resolution-mode does not enforce file extension in `bundler`, just sets conditions
  import type { x as ImportRelative } from "./other" assert { "resolution-mode": "import" };

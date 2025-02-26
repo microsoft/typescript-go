@@ -1,6 +1,6 @@
 --- old.privacyAccessorDeclFile.symbols
 +++ new.privacyAccessorDeclFile.symbols
-@@ -13,49 +13,49 @@
+@@= skipped -13, +13 lines =@@
  >publicClassWithWithPrivateGetAccessorTypes : Symbol(publicClassWithWithPrivateGetAccessorTypes, Decl(privacyAccessorDeclFile_externalModule.ts, 4, 1))
  
      static get myPublicStaticMethod(): privateClass { // Error
@@ -58,7 +58,7 @@
  
          return new privateClass();
  >privateClass : Symbol(privateClass, Decl(privacyAccessorDeclFile_externalModule.ts, 0, 0))
-@@ -66,49 +66,49 @@
+@@= skipped -53, +53 lines =@@
  >publicClassWithWithPublicGetAccessorTypes : Symbol(publicClassWithWithPublicGetAccessorTypes, Decl(privacyAccessorDeclFile_externalModule.ts, 31, 1))
  
      static get myPublicStaticMethod(): publicClass {
@@ -116,7 +116,7 @@
  
          return new publicClass();
  >publicClass : Symbol(publicClass, Decl(privacyAccessorDeclFile_externalModule.ts, 1, 1))
-@@ -119,49 +119,49 @@
+@@= skipped -53, +53 lines =@@
  >privateClassWithWithPrivateGetAccessorTypes : Symbol(privateClassWithWithPrivateGetAccessorTypes, Decl(privacyAccessorDeclFile_externalModule.ts, 58, 1))
  
      static get myPublicStaticMethod(): privateClass {
@@ -174,7 +174,7 @@
  
          return new privateClass();
  >privateClass : Symbol(privateClass, Decl(privacyAccessorDeclFile_externalModule.ts, 0, 0))
-@@ -172,49 +172,49 @@
+@@= skipped -53, +53 lines =@@
  >privateClassWithWithPublicGetAccessorTypes : Symbol(privateClassWithWithPublicGetAccessorTypes, Decl(privacyAccessorDeclFile_externalModule.ts, 85, 1))
  
      static get myPublicStaticMethod(): publicClass {
@@ -232,7 +232,7 @@
  
          return new publicClass();
  >publicClass : Symbol(publicClass, Decl(privacyAccessorDeclFile_externalModule.ts, 1, 1))
-@@ -225,22 +225,22 @@
+@@= skipped -53, +53 lines =@@
  >publicClassWithWithPrivateSetAccessorTypes : Symbol(publicClassWithWithPrivateSetAccessorTypes, Decl(privacyAccessorDeclFile_externalModule.ts, 112, 1))
  
      static set myPublicStaticMethod(param: privateClass) { // Error
@@ -259,7 +259,7 @@
  >param : Symbol(param, Decl(privacyAccessorDeclFile_externalModule.ts, 121, 32))
  >privateClass : Symbol(privateClass, Decl(privacyAccessorDeclFile_externalModule.ts, 0, 0))
      }
-@@ -250,22 +250,22 @@
+@@= skipped -25, +25 lines =@@
  >publicClassWithWithPublicSetAccessorTypes : Symbol(publicClassWithWithPublicSetAccessorTypes, Decl(privacyAccessorDeclFile_externalModule.ts, 123, 1))
  
      static set myPublicStaticMethod(param: publicClass) {
@@ -286,7 +286,7 @@
  >param : Symbol(param, Decl(privacyAccessorDeclFile_externalModule.ts, 132, 32))
  >publicClass : Symbol(publicClass, Decl(privacyAccessorDeclFile_externalModule.ts, 1, 1))
      }
-@@ -275,22 +275,22 @@
+@@= skipped -25, +25 lines =@@
  >privateClassWithWithPrivateSetAccessorTypes : Symbol(privateClassWithWithPrivateSetAccessorTypes, Decl(privacyAccessorDeclFile_externalModule.ts, 134, 1))
  
      static set myPublicStaticMethod(param: privateClass) {
@@ -313,7 +313,7 @@
  >param : Symbol(param, Decl(privacyAccessorDeclFile_externalModule.ts, 143, 32))
  >privateClass : Symbol(privateClass, Decl(privacyAccessorDeclFile_externalModule.ts, 0, 0))
      }
-@@ -300,22 +300,22 @@
+@@= skipped -25, +25 lines =@@
  >privateClassWithWithPublicSetAccessorTypes : Symbol(privateClassWithWithPublicSetAccessorTypes, Decl(privacyAccessorDeclFile_externalModule.ts, 145, 1))
  
      static set myPublicStaticMethod(param: publicClass) {
@@ -340,7 +340,7 @@
  >param : Symbol(param, Decl(privacyAccessorDeclFile_externalModule.ts, 154, 32))
  >publicClass : Symbol(publicClass, Decl(privacyAccessorDeclFile_externalModule.ts, 1, 1))
      }
-@@ -325,34 +325,34 @@
+@@= skipped -25, +25 lines =@@
  >publicClassWithPrivateModuleGetAccessorTypes : Symbol(publicClassWithPrivateModuleGetAccessorTypes, Decl(privacyAccessorDeclFile_externalModule.ts, 156, 1))
  
      static get myPublicStaticMethod(): privateModule.publicClass { // Error
@@ -385,7 +385,7 @@
      }
  }
  
-@@ -360,16 +360,16 @@
+@@= skipped -35, +35 lines =@@
  >publicClassWithPrivateModuleSetAccessorTypes : Symbol(publicClassWithPrivateModuleSetAccessorTypes, Decl(privacyAccessorDeclFile_externalModule.ts, 171, 1))
  
      static set myPublicStaticMethod(param: privateModule.publicClass) { // Error
@@ -406,7 +406,7 @@
      }
  }
  
-@@ -377,34 +377,34 @@
+@@= skipped -17, +17 lines =@@
  >privateClassWithPrivateModuleGetAccessorTypes : Symbol(privateClassWithPrivateModuleGetAccessorTypes, Decl(privacyAccessorDeclFile_externalModule.ts, 178, 1))
  
      static get myPublicStaticMethod(): privateModule.publicClass {
@@ -451,7 +451,7 @@
      }
  }
  
-@@ -412,16 +412,16 @@
+@@= skipped -35, +35 lines =@@
  >privateClassWithPrivateModuleSetAccessorTypes : Symbol(privateClassWithPrivateModuleSetAccessorTypes, Decl(privacyAccessorDeclFile_externalModule.ts, 193, 1))
  
      static set myPublicStaticMethod(param: privateModule.publicClass) {
@@ -472,7 +472,7 @@
      }
  }
  
-@@ -439,49 +439,49 @@
+@@= skipped -27, +27 lines =@@
  >publicClassWithWithPrivateGetAccessorTypes : Symbol(publicClassWithWithPrivateGetAccessorTypes, Decl(privacyAccessorDeclFile_externalModule.ts, 207, 5))
  
          static get myPublicStaticMethod(): privateClass { // Error
@@ -530,7 +530,7 @@
  
              return new privateClass();
  >privateClass : Symbol(privateClass, Decl(privacyAccessorDeclFile_externalModule.ts, 202, 28))
-@@ -492,49 +492,49 @@
+@@= skipped -53, +53 lines =@@
  >publicClassWithWithPublicGetAccessorTypes : Symbol(publicClassWithWithPublicGetAccessorTypes, Decl(privacyAccessorDeclFile_externalModule.ts, 233, 5))
  
          static get myPublicStaticMethod(): publicClass {
@@ -588,7 +588,7 @@
  
              return new publicClass();
  >publicClass : Symbol(publicClass, Decl(privacyAccessorDeclFile_externalModule.ts, 204, 5))
-@@ -545,49 +545,49 @@
+@@= skipped -53, +53 lines =@@
  >privateClassWithWithPrivateGetAccessorTypes : Symbol(privateClassWithWithPrivateGetAccessorTypes, Decl(privacyAccessorDeclFile_externalModule.ts, 260, 5))
  
          static get myPublicStaticMethod(): privateClass {
@@ -646,7 +646,7 @@
  
              return new privateClass();
  >privateClass : Symbol(privateClass, Decl(privacyAccessorDeclFile_externalModule.ts, 202, 28))
-@@ -598,49 +598,49 @@
+@@= skipped -53, +53 lines =@@
  >privateClassWithWithPublicGetAccessorTypes : Symbol(privateClassWithWithPublicGetAccessorTypes, Decl(privacyAccessorDeclFile_externalModule.ts, 287, 5))
  
          static get myPublicStaticMethod(): publicClass {
@@ -704,7 +704,7 @@
  
              return new publicClass();
  >publicClass : Symbol(publicClass, Decl(privacyAccessorDeclFile_externalModule.ts, 204, 5))
-@@ -651,22 +651,22 @@
+@@= skipped -53, +53 lines =@@
  >publicClassWithWithPrivateSetAccessorTypes : Symbol(publicClassWithWithPrivateSetAccessorTypes, Decl(privacyAccessorDeclFile_externalModule.ts, 314, 5))
  
          static set myPublicStaticMethod(param: privateClass) { // Error
@@ -731,7 +731,7 @@
  >param : Symbol(param, Decl(privacyAccessorDeclFile_externalModule.ts, 323, 36))
  >privateClass : Symbol(privateClass, Decl(privacyAccessorDeclFile_externalModule.ts, 202, 28))
          }
-@@ -676,22 +676,22 @@
+@@= skipped -25, +25 lines =@@
  >publicClassWithWithPublicSetAccessorTypes : Symbol(publicClassWithWithPublicSetAccessorTypes, Decl(privacyAccessorDeclFile_externalModule.ts, 325, 5))
  
          static set myPublicStaticMethod(param: publicClass) {
@@ -758,7 +758,7 @@
  >param : Symbol(param, Decl(privacyAccessorDeclFile_externalModule.ts, 334, 36))
  >publicClass : Symbol(publicClass, Decl(privacyAccessorDeclFile_externalModule.ts, 204, 5))
          }
-@@ -701,22 +701,22 @@
+@@= skipped -25, +25 lines =@@
  >privateClassWithWithPrivateSetAccessorTypes : Symbol(privateClassWithWithPrivateSetAccessorTypes, Decl(privacyAccessorDeclFile_externalModule.ts, 336, 5))
  
          static set myPublicStaticMethod(param: privateClass) {
@@ -785,7 +785,7 @@
  >param : Symbol(param, Decl(privacyAccessorDeclFile_externalModule.ts, 345, 36))
  >privateClass : Symbol(privateClass, Decl(privacyAccessorDeclFile_externalModule.ts, 202, 28))
          }
-@@ -726,22 +726,22 @@
+@@= skipped -25, +25 lines =@@
  >privateClassWithWithPublicSetAccessorTypes : Symbol(privateClassWithWithPublicSetAccessorTypes, Decl(privacyAccessorDeclFile_externalModule.ts, 347, 5))
  
          static set myPublicStaticMethod(param: publicClass) {
@@ -812,7 +812,7 @@
  >param : Symbol(param, Decl(privacyAccessorDeclFile_externalModule.ts, 356, 36))
  >publicClass : Symbol(publicClass, Decl(privacyAccessorDeclFile_externalModule.ts, 204, 5))
          }
-@@ -751,34 +751,34 @@
+@@= skipped -25, +25 lines =@@
  >publicClassWithPrivateModuleGetAccessorTypes : Symbol(publicClassWithPrivateModuleGetAccessorTypes, Decl(privacyAccessorDeclFile_externalModule.ts, 358, 5))
  
          static get myPublicStaticMethod(): privateModule.publicClass { // Error
@@ -857,7 +857,7 @@
          }
      }
  
-@@ -786,16 +786,16 @@
+@@= skipped -35, +35 lines =@@
  >publicClassWithPrivateModuleSetAccessorTypes : Symbol(publicClassWithPrivateModuleSetAccessorTypes, Decl(privacyAccessorDeclFile_externalModule.ts, 373, 5))
  
          static set myPublicStaticMethod(param: privateModule.publicClass) { // Error
@@ -878,7 +878,7 @@
          }
      }
  
-@@ -803,34 +803,34 @@
+@@= skipped -17, +17 lines =@@
  >privateClassWithPrivateModuleGetAccessorTypes : Symbol(privateClassWithPrivateModuleGetAccessorTypes, Decl(privacyAccessorDeclFile_externalModule.ts, 380, 5))
  
          static get myPublicStaticMethod(): privateModule.publicClass {
@@ -923,7 +923,7 @@
          }
      }
  
-@@ -838,16 +838,16 @@
+@@= skipped -35, +35 lines =@@
  >privateClassWithPrivateModuleSetAccessorTypes : Symbol(privateClassWithPrivateModuleSetAccessorTypes, Decl(privacyAccessorDeclFile_externalModule.ts, 395, 5))
  
          static set myPublicStaticMethod(param: privateModule.publicClass) {
@@ -944,7 +944,7 @@
          }
      }
  }
-@@ -866,49 +866,49 @@
+@@= skipped -28, +28 lines =@@
  >publicClassWithWithPrivateGetAccessorTypes : Symbol(publicClassWithWithPrivateGetAccessorTypes, Decl(privacyAccessorDeclFile_externalModule.ts, 410, 5))
  
          static get myPublicStaticMethod(): privateClass { 
@@ -1002,7 +1002,7 @@
  
              return new privateClass();
  >privateClass : Symbol(privateClass, Decl(privacyAccessorDeclFile_externalModule.ts, 405, 22))
-@@ -919,49 +919,49 @@
+@@= skipped -53, +53 lines =@@
  >publicClassWithWithPublicGetAccessorTypes : Symbol(publicClassWithWithPublicGetAccessorTypes, Decl(privacyAccessorDeclFile_externalModule.ts, 436, 5))
  
          static get myPublicStaticMethod(): publicClass {
@@ -1060,7 +1060,7 @@
  
              return new publicClass();
  >publicClass : Symbol(publicClass, Decl(privacyAccessorDeclFile_externalModule.ts, 407, 5))
-@@ -972,49 +972,49 @@
+@@= skipped -53, +53 lines =@@
  >privateClassWithWithPrivateGetAccessorTypes : Symbol(privateClassWithWithPrivateGetAccessorTypes, Decl(privacyAccessorDeclFile_externalModule.ts, 463, 5))
  
          static get myPublicStaticMethod(): privateClass {
@@ -1118,7 +1118,7 @@
  
              return new privateClass();
  >privateClass : Symbol(privateClass, Decl(privacyAccessorDeclFile_externalModule.ts, 405, 22))
-@@ -1025,49 +1025,49 @@
+@@= skipped -53, +53 lines =@@
  >privateClassWithWithPublicGetAccessorTypes : Symbol(privateClassWithWithPublicGetAccessorTypes, Decl(privacyAccessorDeclFile_externalModule.ts, 490, 5))
  
          static get myPublicStaticMethod(): publicClass {
@@ -1176,7 +1176,7 @@
  
              return new publicClass();
  >publicClass : Symbol(publicClass, Decl(privacyAccessorDeclFile_externalModule.ts, 407, 5))
-@@ -1078,22 +1078,22 @@
+@@= skipped -53, +53 lines =@@
  >publicClassWithWithPrivateSetAccessorTypes : Symbol(publicClassWithWithPrivateSetAccessorTypes, Decl(privacyAccessorDeclFile_externalModule.ts, 517, 5))
  
          static set myPublicStaticMethod(param: privateClass) { 
@@ -1203,7 +1203,7 @@
  >param : Symbol(param, Decl(privacyAccessorDeclFile_externalModule.ts, 526, 36))
  >privateClass : Symbol(privateClass, Decl(privacyAccessorDeclFile_externalModule.ts, 405, 22))
          }
-@@ -1103,22 +1103,22 @@
+@@= skipped -25, +25 lines =@@
  >publicClassWithWithPublicSetAccessorTypes : Symbol(publicClassWithWithPublicSetAccessorTypes, Decl(privacyAccessorDeclFile_externalModule.ts, 528, 5))
  
          static set myPublicStaticMethod(param: publicClass) {
@@ -1230,7 +1230,7 @@
  >param : Symbol(param, Decl(privacyAccessorDeclFile_externalModule.ts, 537, 36))
  >publicClass : Symbol(publicClass, Decl(privacyAccessorDeclFile_externalModule.ts, 407, 5))
          }
-@@ -1128,22 +1128,22 @@
+@@= skipped -25, +25 lines =@@
  >privateClassWithWithPrivateSetAccessorTypes : Symbol(privateClassWithWithPrivateSetAccessorTypes, Decl(privacyAccessorDeclFile_externalModule.ts, 539, 5))
  
          static set myPublicStaticMethod(param: privateClass) {
@@ -1257,7 +1257,7 @@
  >param : Symbol(param, Decl(privacyAccessorDeclFile_externalModule.ts, 548, 36))
  >privateClass : Symbol(privateClass, Decl(privacyAccessorDeclFile_externalModule.ts, 405, 22))
          }
-@@ -1153,22 +1153,22 @@
+@@= skipped -25, +25 lines =@@
  >privateClassWithWithPublicSetAccessorTypes : Symbol(privateClassWithWithPublicSetAccessorTypes, Decl(privacyAccessorDeclFile_externalModule.ts, 550, 5))
  
          static set myPublicStaticMethod(param: publicClass) {
@@ -1284,7 +1284,7 @@
  >param : Symbol(param, Decl(privacyAccessorDeclFile_externalModule.ts, 559, 36))
  >publicClass : Symbol(publicClass, Decl(privacyAccessorDeclFile_externalModule.ts, 407, 5))
          }
-@@ -1178,21 +1178,21 @@
+@@= skipped -25, +25 lines =@@
  >publicClassWithPrivateModuleGetAccessorTypes : Symbol(publicClassWithPrivateModuleGetAccessorTypes, Decl(privacyAccessorDeclFile_externalModule.ts, 561, 5))
  
          static get myPublicStaticMethod(): privateModule.publicClass { 
@@ -1309,7 +1309,7 @@
  
              return new privateModule.publicClass();
  >privateModule.publicClass : Symbol(publicClass, Decl(privacyAccessorDeclFile_externalModule.ts, 407, 5))
-@@ -1200,7 +1200,7 @@
+@@= skipped -22, +22 lines =@@
  >publicClass : Symbol(publicClass, Decl(privacyAccessorDeclFile_externalModule.ts, 407, 5))
          }
          get myPublicMethod1() { 
@@ -1318,7 +1318,7 @@
  
              return new privateModule.publicClass();
  >privateModule.publicClass : Symbol(publicClass, Decl(privacyAccessorDeclFile_externalModule.ts, 407, 5))
-@@ -1213,13 +1213,13 @@
+@@= skipped -13, +13 lines =@@
  >publicClassWithPrivateModuleSetAccessorTypes : Symbol(publicClassWithPrivateModuleSetAccessorTypes, Decl(privacyAccessorDeclFile_externalModule.ts, 576, 5))
  
          static set myPublicStaticMethod(param: privateModule.publicClass) { 
@@ -1334,7 +1334,7 @@
  >param : Symbol(param, Decl(privacyAccessorDeclFile_externalModule.ts, 581, 27))
  >privateModule : Symbol(privateModule, Decl(privacyAccessorDeclFile_externalModule.ts, 403, 1))
  >publicClass : Symbol(publicClass, Decl(privacyAccessorDeclFile_externalModule.ts, 407, 5))
-@@ -1230,21 +1230,21 @@
+@@= skipped -17, +17 lines =@@
  >privateClassWithPrivateModuleGetAccessorTypes : Symbol(privateClassWithPrivateModuleGetAccessorTypes, Decl(privacyAccessorDeclFile_externalModule.ts, 583, 5))
  
          static get myPublicStaticMethod(): privateModule.publicClass {
@@ -1359,7 +1359,7 @@
  
              return new privateModule.publicClass();
  >privateModule.publicClass : Symbol(publicClass, Decl(privacyAccessorDeclFile_externalModule.ts, 407, 5))
-@@ -1252,7 +1252,7 @@
+@@= skipped -22, +22 lines =@@
  >publicClass : Symbol(publicClass, Decl(privacyAccessorDeclFile_externalModule.ts, 407, 5))
          }
          get myPublicMethod1() {
@@ -1368,7 +1368,7 @@
  
              return new privateModule.publicClass();
  >privateModule.publicClass : Symbol(publicClass, Decl(privacyAccessorDeclFile_externalModule.ts, 407, 5))
-@@ -1265,13 +1265,13 @@
+@@= skipped -13, +13 lines =@@
  >privateClassWithPrivateModuleSetAccessorTypes : Symbol(privateClassWithPrivateModuleSetAccessorTypes, Decl(privacyAccessorDeclFile_externalModule.ts, 598, 5))
  
          static set myPublicStaticMethod(param: privateModule.publicClass) {
@@ -1384,7 +1384,7 @@
  >param : Symbol(param, Decl(privacyAccessorDeclFile_externalModule.ts, 603, 27))
  >privateModule : Symbol(privateModule, Decl(privacyAccessorDeclFile_externalModule.ts, 403, 1))
  >publicClass : Symbol(publicClass, Decl(privacyAccessorDeclFile_externalModule.ts, 407, 5))
-@@ -1288,49 +1288,49 @@
+@@= skipped -23, +23 lines =@@
  >publicClassInGlobalWithPublicGetAccessorTypes : Symbol(publicClassInGlobalWithPublicGetAccessorTypes, Decl(privacyAccessorDeclFile_GlobalFile.ts, 1, 1))
  
      static get myPublicStaticMethod(): publicClassInGlobal {
@@ -1442,7 +1442,7 @@
  
          return new publicClassInGlobal();
  >publicClassInGlobal : Symbol(publicClassInGlobal, Decl(privacyAccessorDeclFile_GlobalFile.ts, 0, 0))
-@@ -1341,22 +1341,22 @@
+@@= skipped -53, +53 lines =@@
  >publicClassInGlobalWithWithPublicSetAccessorTypes : Symbol(publicClassInGlobalWithWithPublicSetAccessorTypes, Decl(privacyAccessorDeclFile_GlobalFile.ts, 28, 1))
  
      static set myPublicStaticMethod(param: publicClassInGlobal) {
@@ -1469,7 +1469,7 @@
  >param : Symbol(param, Decl(privacyAccessorDeclFile_GlobalFile.ts, 37, 32))
  >publicClassInGlobal : Symbol(publicClassInGlobal, Decl(privacyAccessorDeclFile_GlobalFile.ts, 0, 0))
      }
-@@ -1387,49 +1387,49 @@
+@@= skipped -46, +46 lines =@@
  >publicClassWithWithPrivateGetAccessorTypes : Symbol(publicClassWithWithPrivateGetAccessorTypes, Decl(privacyAccessorDeclFile_GlobalFile.ts, 53, 9))
  
              static get myPublicStaticMethod(): privateClass {
@@ -1527,7 +1527,7 @@
  
                  return new privateClass();
  >privateClass : Symbol(privateClass, Decl(privacyAccessorDeclFile_GlobalFile.ts, 48, 26))
-@@ -1440,49 +1440,49 @@
+@@= skipped -53, +53 lines =@@
  >publicClassWithWithPublicGetAccessorTypes : Symbol(publicClassWithWithPublicGetAccessorTypes, Decl(privacyAccessorDeclFile_GlobalFile.ts, 79, 9))
  
              static get myPublicStaticMethod(): publicClass {
@@ -1585,7 +1585,7 @@
  
                  return new publicClass();
  >publicClass : Symbol(publicClass, Decl(privacyAccessorDeclFile_GlobalFile.ts, 50, 9))
-@@ -1493,49 +1493,49 @@
+@@= skipped -53, +53 lines =@@
  >privateClassWithWithPrivateGetAccessorTypes : Symbol(privateClassWithWithPrivateGetAccessorTypes, Decl(privacyAccessorDeclFile_GlobalFile.ts, 106, 9))
  
              static get myPublicStaticMethod(): privateClass {
@@ -1643,7 +1643,7 @@
  
                  return new privateClass();
  >privateClass : Symbol(privateClass, Decl(privacyAccessorDeclFile_GlobalFile.ts, 48, 26))
-@@ -1546,49 +1546,49 @@
+@@= skipped -53, +53 lines =@@
  >privateClassWithWithPublicGetAccessorTypes : Symbol(privateClassWithWithPublicGetAccessorTypes, Decl(privacyAccessorDeclFile_GlobalFile.ts, 133, 9))
  
              static get myPublicStaticMethod(): publicClass {
@@ -1701,7 +1701,7 @@
  
                  return new publicClass();
  >publicClass : Symbol(publicClass, Decl(privacyAccessorDeclFile_GlobalFile.ts, 50, 9))
-@@ -1599,22 +1599,22 @@
+@@= skipped -53, +53 lines =@@
  >publicClassWithWithPrivateSetAccessorTypes : Symbol(publicClassWithWithPrivateSetAccessorTypes, Decl(privacyAccessorDeclFile_GlobalFile.ts, 160, 9))
  
              static set myPublicStaticMethod(param: privateClass) {
@@ -1728,7 +1728,7 @@
  >param : Symbol(param, Decl(privacyAccessorDeclFile_GlobalFile.ts, 169, 40))
  >privateClass : Symbol(privateClass, Decl(privacyAccessorDeclFile_GlobalFile.ts, 48, 26))
              }
-@@ -1624,22 +1624,22 @@
+@@= skipped -25, +25 lines =@@
  >publicClassWithWithPublicSetAccessorTypes : Symbol(publicClassWithWithPublicSetAccessorTypes, Decl(privacyAccessorDeclFile_GlobalFile.ts, 171, 9))
  
              static set myPublicStaticMethod(param: publicClass) {
@@ -1755,7 +1755,7 @@
  >param : Symbol(param, Decl(privacyAccessorDeclFile_GlobalFile.ts, 180, 40))
  >publicClass : Symbol(publicClass, Decl(privacyAccessorDeclFile_GlobalFile.ts, 50, 9))
              }
-@@ -1649,22 +1649,22 @@
+@@= skipped -25, +25 lines =@@
  >privateClassWithWithPrivateSetAccessorTypes : Symbol(privateClassWithWithPrivateSetAccessorTypes, Decl(privacyAccessorDeclFile_GlobalFile.ts, 182, 9))
  
              static set myPublicStaticMethod(param: privateClass) {
@@ -1782,7 +1782,7 @@
  >param : Symbol(param, Decl(privacyAccessorDeclFile_GlobalFile.ts, 191, 40))
  >privateClass : Symbol(privateClass, Decl(privacyAccessorDeclFile_GlobalFile.ts, 48, 26))
              }
-@@ -1674,22 +1674,22 @@
+@@= skipped -25, +25 lines =@@
  >privateClassWithWithPublicSetAccessorTypes : Symbol(privateClassWithWithPublicSetAccessorTypes, Decl(privacyAccessorDeclFile_GlobalFile.ts, 193, 9))
  
              static set myPublicStaticMethod(param: publicClass) {
@@ -1809,7 +1809,7 @@
  >param : Symbol(param, Decl(privacyAccessorDeclFile_GlobalFile.ts, 202, 40))
  >publicClass : Symbol(publicClass, Decl(privacyAccessorDeclFile_GlobalFile.ts, 50, 9))
              }
-@@ -1699,21 +1699,21 @@
+@@= skipped -25, +25 lines =@@
  >publicClassWithPrivateModuleGetAccessorTypes : Symbol(publicClassWithPrivateModuleGetAccessorTypes, Decl(privacyAccessorDeclFile_GlobalFile.ts, 204, 9))
  
              static get myPublicStaticMethod(): privateModule.publicClass {
@@ -1834,7 +1834,7 @@
  
                  return new privateModule.publicClass();
  >privateModule.publicClass : Symbol(publicClass, Decl(privacyAccessorDeclFile_GlobalFile.ts, 50, 9))
-@@ -1721,7 +1721,7 @@
+@@= skipped -22, +22 lines =@@
  >publicClass : Symbol(publicClass, Decl(privacyAccessorDeclFile_GlobalFile.ts, 50, 9))
              }
              get myPublicMethod1() {
@@ -1843,7 +1843,7 @@
  
                  return new privateModule.publicClass();
  >privateModule.publicClass : Symbol(publicClass, Decl(privacyAccessorDeclFile_GlobalFile.ts, 50, 9))
-@@ -1734,13 +1734,13 @@
+@@= skipped -13, +13 lines =@@
  >publicClassWithPrivateModuleSetAccessorTypes : Symbol(publicClassWithPrivateModuleSetAccessorTypes, Decl(privacyAccessorDeclFile_GlobalFile.ts, 219, 9))
  
              static set myPublicStaticMethod(param: privateModule.publicClass) {
@@ -1859,7 +1859,7 @@
  >param : Symbol(param, Decl(privacyAccessorDeclFile_GlobalFile.ts, 224, 31))
  >privateModule : Symbol(privateModule, Decl(privacyAccessorDeclFile_GlobalFile.ts, 46, 5))
  >publicClass : Symbol(publicClass, Decl(privacyAccessorDeclFile_GlobalFile.ts, 50, 9))
-@@ -1751,21 +1751,21 @@
+@@= skipped -17, +17 lines =@@
  >privateClassWithPrivateModuleGetAccessorTypes : Symbol(privateClassWithPrivateModuleGetAccessorTypes, Decl(privacyAccessorDeclFile_GlobalFile.ts, 226, 9))
  
              static get myPublicStaticMethod(): privateModule.publicClass {
@@ -1884,7 +1884,7 @@
  
                  return new privateModule.publicClass();
  >privateModule.publicClass : Symbol(publicClass, Decl(privacyAccessorDeclFile_GlobalFile.ts, 50, 9))
-@@ -1773,7 +1773,7 @@
+@@= skipped -22, +22 lines =@@
  >publicClass : Symbol(publicClass, Decl(privacyAccessorDeclFile_GlobalFile.ts, 50, 9))
              }
              get myPublicMethod1() {
@@ -1893,7 +1893,7 @@
  
                  return new privateModule.publicClass();
  >privateModule.publicClass : Symbol(publicClass, Decl(privacyAccessorDeclFile_GlobalFile.ts, 50, 9))
-@@ -1786,13 +1786,13 @@
+@@= skipped -13, +13 lines =@@
  >privateClassWithPrivateModuleSetAccessorTypes : Symbol(privateClassWithPrivateModuleSetAccessorTypes, Decl(privacyAccessorDeclFile_GlobalFile.ts, 241, 9))
  
              static set myPublicStaticMethod(param: privateModule.publicClass) {
@@ -1909,7 +1909,7 @@
  >param : Symbol(param, Decl(privacyAccessorDeclFile_GlobalFile.ts, 246, 31))
  >privateModule : Symbol(privateModule, Decl(privacyAccessorDeclFile_GlobalFile.ts, 46, 5))
  >publicClass : Symbol(publicClass, Decl(privacyAccessorDeclFile_GlobalFile.ts, 50, 9))
-@@ -1804,49 +1804,49 @@
+@@= skipped -18, +18 lines =@@
  >publicClassWithWithPrivateGetAccessorTypes : Symbol(publicClassWithWithPrivateGetAccessorTypes, Decl(privacyAccessorDeclFile_GlobalFile.ts, 249, 5))
  
          static get myPublicStaticMethod(): privateClass { // Error
@@ -1967,7 +1967,7 @@
  
              return new privateClass();
  >privateClass : Symbol(privateClass, Decl(privacyAccessorDeclFile_GlobalFile.ts, 41, 29))
-@@ -1857,49 +1857,49 @@
+@@= skipped -53, +53 lines =@@
  >publicClassWithWithPublicGetAccessorTypes : Symbol(publicClassWithWithPublicGetAccessorTypes, Decl(privacyAccessorDeclFile_GlobalFile.ts, 276, 5))
  
          static get myPublicStaticMethod(): publicClass {
@@ -2025,7 +2025,7 @@
  
              return new publicClass();
  >publicClass : Symbol(publicClass, Decl(privacyAccessorDeclFile_GlobalFile.ts, 43, 5))
-@@ -1910,49 +1910,49 @@
+@@= skipped -53, +53 lines =@@
  >privateClassWithWithPrivateGetAccessorTypes : Symbol(privateClassWithWithPrivateGetAccessorTypes, Decl(privacyAccessorDeclFile_GlobalFile.ts, 303, 5))
  
          static get myPublicStaticMethod(): privateClass {
@@ -2083,7 +2083,7 @@
  
              return new privateClass();
  >privateClass : Symbol(privateClass, Decl(privacyAccessorDeclFile_GlobalFile.ts, 41, 29))
-@@ -1963,49 +1963,49 @@
+@@= skipped -53, +53 lines =@@
  >privateClassWithWithPublicGetAccessorTypes : Symbol(privateClassWithWithPublicGetAccessorTypes, Decl(privacyAccessorDeclFile_GlobalFile.ts, 330, 5))
  
          static get myPublicStaticMethod(): publicClass {
@@ -2141,7 +2141,7 @@
  
              return new publicClass();
  >publicClass : Symbol(publicClass, Decl(privacyAccessorDeclFile_GlobalFile.ts, 43, 5))
-@@ -2016,22 +2016,22 @@
+@@= skipped -53, +53 lines =@@
  >publicClassWithWithPrivateSetAccessorTypes : Symbol(publicClassWithWithPrivateSetAccessorTypes, Decl(privacyAccessorDeclFile_GlobalFile.ts, 357, 5))
  
          static set myPublicStaticMethod(param: privateClass) { // Error
@@ -2168,7 +2168,7 @@
  >param : Symbol(param, Decl(privacyAccessorDeclFile_GlobalFile.ts, 366, 36))
  >privateClass : Symbol(privateClass, Decl(privacyAccessorDeclFile_GlobalFile.ts, 41, 29))
          }
-@@ -2041,22 +2041,22 @@
+@@= skipped -25, +25 lines =@@
  >publicClassWithWithPublicSetAccessorTypes : Symbol(publicClassWithWithPublicSetAccessorTypes, Decl(privacyAccessorDeclFile_GlobalFile.ts, 368, 5))
  
          static set myPublicStaticMethod(param: publicClass) {
@@ -2195,7 +2195,7 @@
  >param : Symbol(param, Decl(privacyAccessorDeclFile_GlobalFile.ts, 377, 36))
  >publicClass : Symbol(publicClass, Decl(privacyAccessorDeclFile_GlobalFile.ts, 43, 5))
          }
-@@ -2066,22 +2066,22 @@
+@@= skipped -25, +25 lines =@@
  >privateClassWithWithPrivateSetAccessorTypes : Symbol(privateClassWithWithPrivateSetAccessorTypes, Decl(privacyAccessorDeclFile_GlobalFile.ts, 379, 5))
  
          static set myPublicStaticMethod(param: privateClass) {
@@ -2222,7 +2222,7 @@
  >param : Symbol(param, Decl(privacyAccessorDeclFile_GlobalFile.ts, 388, 36))
  >privateClass : Symbol(privateClass, Decl(privacyAccessorDeclFile_GlobalFile.ts, 41, 29))
          }
-@@ -2091,22 +2091,22 @@
+@@= skipped -25, +25 lines =@@
  >privateClassWithWithPublicSetAccessorTypes : Symbol(privateClassWithWithPublicSetAccessorTypes, Decl(privacyAccessorDeclFile_GlobalFile.ts, 390, 5))
  
          static set myPublicStaticMethod(param: publicClass) {
@@ -2249,7 +2249,7 @@
  >param : Symbol(param, Decl(privacyAccessorDeclFile_GlobalFile.ts, 399, 36))
  >publicClass : Symbol(publicClass, Decl(privacyAccessorDeclFile_GlobalFile.ts, 43, 5))
          }
-@@ -2116,34 +2116,34 @@
+@@= skipped -25, +25 lines =@@
  >publicClassWithPrivateModuleGetAccessorTypes : Symbol(publicClassWithPrivateModuleGetAccessorTypes, Decl(privacyAccessorDeclFile_GlobalFile.ts, 401, 5))
  
          static get myPublicStaticMethod(): privateModule.publicClass { // Error
@@ -2294,7 +2294,7 @@
          }
      }
  
-@@ -2151,16 +2151,16 @@
+@@= skipped -35, +35 lines =@@
  >publicClassWithPrivateModuleSetAccessorTypes : Symbol(publicClassWithPrivateModuleSetAccessorTypes, Decl(privacyAccessorDeclFile_GlobalFile.ts, 416, 5))
  
          static set myPublicStaticMethod(param: privateModule.publicClass) { // Error
@@ -2315,7 +2315,7 @@
          }
      }
  
-@@ -2168,34 +2168,34 @@
+@@= skipped -17, +17 lines =@@
  >privateClassWithPrivateModuleGetAccessorTypes : Symbol(privateClassWithPrivateModuleGetAccessorTypes, Decl(privacyAccessorDeclFile_GlobalFile.ts, 423, 5))
  
          static get myPublicStaticMethod(): privateModule.publicClass {
@@ -2360,7 +2360,7 @@
          }
      }
  
-@@ -2203,16 +2203,16 @@
+@@= skipped -35, +35 lines =@@
  >privateClassWithPrivateModuleSetAccessorTypes : Symbol(privateClassWithPrivateModuleSetAccessorTypes, Decl(privacyAccessorDeclFile_GlobalFile.ts, 438, 5))
  
          static set myPublicStaticMethod(param: privateModule.publicClass) {

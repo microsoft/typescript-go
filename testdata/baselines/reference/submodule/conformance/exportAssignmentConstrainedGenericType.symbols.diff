@@ -1,6 +1,6 @@
 --- old.exportAssignmentConstrainedGenericType.symbols
 +++ new.exportAssignmentConstrainedGenericType.symbols
-@@ -17,9 +17,9 @@
+@@= skipped -17, +17 lines =@@
  var z: number = y.test.b;
  >z : Symbol(z, Decl(foo_1.ts, 3, 3))
  >y.test.b : Symbol(b, Decl(foo_1.ts, 2, 27))
@@ -12,7 +12,7 @@
  >b : Symbol(b, Decl(foo_1.ts, 2, 27))
  
  === foo_0.ts ===
-@@ -30,7 +30,7 @@
+@@= skipped -13, +13 lines =@@
  >b : Symbol(b, Decl(foo_0.ts, 0, 31))
  
  	test: T;

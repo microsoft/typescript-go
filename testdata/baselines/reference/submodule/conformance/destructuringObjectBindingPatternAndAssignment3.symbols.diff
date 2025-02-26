@@ -1,6 +1,6 @@
 --- old.destructuringObjectBindingPatternAndAssignment3.symbols
 +++ new.destructuringObjectBindingPatternAndAssignment3.symbols
-@@ -20,10 +20,10 @@
+@@= skipped -20, +20 lines =@@
  >undefined : Symbol(undefined)
  
  var {1} = { 1 };

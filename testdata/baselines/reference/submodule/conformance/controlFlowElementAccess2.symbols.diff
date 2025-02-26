@@ -1,6 +1,6 @@
 --- old.controlFlowElementAccess2.symbols
 +++ new.controlFlowElementAccess2.symbols
-@@ -15,9 +15,9 @@
+@@= skipped -15, +15 lines =@@
  
      config.works.prop = 'test'; // ok
  >config.works.prop : Symbol(prop, Decl(controlFlowElementAccess2.ts, 1, 30))
@@ -12,7 +12,7 @@
  >prop : Symbol(prop, Decl(controlFlowElementAccess2.ts, 1, 30))
  
      config['works'].prop = 'test'; // error, config['works']: boolean | { 'prop': string }
-@@ -26,9 +26,9 @@
+@@= skipped -11, +11 lines =@@
  >prop : Symbol(prop, Decl(controlFlowElementAccess2.ts, 1, 30))
  }
  if (typeof config.works !== 'boolean') {
@@ -24,7 +24,7 @@
  
      config['works'].prop = 'test'; // error, config['works']: boolean | { 'prop': string }
  >config['works'].prop : Symbol(prop, Decl(controlFlowElementAccess2.ts, 1, 30))
-@@ -37,9 +37,9 @@
+@@= skipped -11, +11 lines =@@
  
      config.works.prop = 'test'; // ok
  >config.works.prop : Symbol(prop, Decl(controlFlowElementAccess2.ts, 1, 30))

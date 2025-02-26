@@ -1,6 +1,6 @@
 --- old.genericGetter2.symbols
 +++ new.genericGetter2.symbols
-@@ -10,17 +10,17 @@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(genericGetter2.ts, 2, 8))
  
      data: A<T>;

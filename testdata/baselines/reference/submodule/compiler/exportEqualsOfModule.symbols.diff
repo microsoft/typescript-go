@@ -1,6 +1,6 @@
 --- old.exportEqualsOfModule.symbols
 +++ new.exportEqualsOfModule.symbols
-@@ -2,14 +2,14 @@
+@@= skipped -2, +2 lines =@@
  
  === exportEqualsOfModule.ts ===
  declare module '~popsicle/dist/request' {
@@ -17,7 +17,7 @@
  
      import { Request } from '~popsicle/dist/request';
  >Request : Symbol(Request, Decl(exportEqualsOfModule.ts, 5, 12))
-@@ -19,7 +19,7 @@
+@@= skipped -17, +17 lines =@@
  }
  
  declare module 'popsicle' {
@@ -26,7 +26,7 @@
  
      import alias = require('~popsicle/dist/common');
  >alias : Symbol(alias, Decl(exportEqualsOfModule.ts, 9, 27))
-@@ -29,7 +29,7 @@
+@@= skipped -10, +10 lines =@@
  }
  
  declare module 'popsicle-proxy-agent' {

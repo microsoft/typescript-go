@@ -1,6 +1,6 @@
 --- old.parserRealSource13.symbols
 +++ new.parserRealSource13.symbols
-@@ -14,643 +14,643 @@
+@@= skipped -14, +14 lines =@@
  >AstWalkerDetailCallback : Symbol(AstWalkerDetailCallback, Decl(parserRealSource13.ts, 5, 47))
  
          EmptyCallback? (pre, ast: AST): boolean;
@@ -751,7 +751,7 @@
  >pre : Symbol(pre, Decl(parserRealSource13.ts, 113, 26))
  >ast : Symbol(ast, Decl(parserRealSource13.ts, 113, 30))
  >AST : Symbol(AST)
-@@ -736,14 +736,14 @@
+@@= skipped -722, +722 lines =@@
          }
  
          if (callback.DefaultCallback) {

@@ -1,6 +1,6 @@
 --- old.declarationEmitPrefersPathKindBasedOnBundling.symbols
 +++ new.declarationEmitPrefersPathKindBasedOnBundling.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  
  	(): string;
  	value: number;

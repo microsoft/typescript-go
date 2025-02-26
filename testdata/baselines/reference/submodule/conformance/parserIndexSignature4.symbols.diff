@@ -1,6 +1,6 @@
 --- old.parserIndexSignature4.symbols
 +++ new.parserIndexSignature4.symbols
-@@ -5,5 +5,5 @@
+@@= skipped -5, +5 lines =@@
  >I : Symbol(I, Decl(parserIndexSignature4.ts, 0, 0))
  
    [a = 0] // Used to be indexer, now it is a computed property

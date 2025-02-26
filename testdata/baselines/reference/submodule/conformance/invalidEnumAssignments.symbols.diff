@@ -1,6 +1,6 @@
 --- old.invalidEnumAssignments.symbols
 +++ new.invalidEnumAssignments.symbols
-@@ -5,20 +5,20 @@
+@@= skipped -5, +5 lines =@@
  >E : Symbol(E, Decl(invalidEnumAssignments.ts, 0, 0))
  
      A,
@@ -25,7 +25,7 @@
  }
  
  var e: E;
-@@ -31,15 +31,15 @@
+@@= skipped -26, +26 lines =@@
  
  e = E2.A;
  >e : Symbol(e, Decl(invalidEnumAssignments.ts, 10, 3))

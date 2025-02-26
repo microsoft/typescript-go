@@ -1,6 +1,6 @@
 --- old.compoundAdditionAssignmentWithInvalidOperands.symbols
 +++ new.compoundAdditionAssignmentWithInvalidOperands.symbols
-@@ -3,8 +3,8 @@
+@@= skipped -3, +3 lines =@@
  === compoundAdditionAssignmentWithInvalidOperands.ts ===
  enum E { a, b }
  >E : Symbol(E, Decl(compoundAdditionAssignmentWithInvalidOperands.ts, 0, 0))
@@ -11,7 +11,7 @@
  
  var a: void;
  >a : Symbol(a, Decl(compoundAdditionAssignmentWithInvalidOperands.ts, 2, 3))
-@@ -24,9 +24,9 @@
+@@= skipped -21, +21 lines =@@
  
  x1 += E.a;
  >x1 : Symbol(x1, Decl(compoundAdditionAssignmentWithInvalidOperands.ts, 4, 3))
@@ -23,7 +23,7 @@
  
  x1 += {};
  >x1 : Symbol(x1, Decl(compoundAdditionAssignmentWithInvalidOperands.ts, 4, 3))
-@@ -53,9 +53,9 @@
+@@= skipped -29, +29 lines =@@
  
  x2 += E.a;
  >x2 : Symbol(x2, Decl(compoundAdditionAssignmentWithInvalidOperands.ts, 13, 3))
@@ -35,7 +35,7 @@
  
  x2 += {};
  >x2 : Symbol(x2, Decl(compoundAdditionAssignmentWithInvalidOperands.ts, 13, 3))
-@@ -82,9 +82,9 @@
+@@= skipped -29, +29 lines =@@
  
  x3 += E.a;
  >x3 : Symbol(x3, Decl(compoundAdditionAssignmentWithInvalidOperands.ts, 22, 3))

@@ -1,6 +1,6 @@
 --- old.equalityWithEnumTypes.symbols
 +++ new.equalityWithEnumTypes.symbols
-@@ -6,10 +6,10 @@
+@@= skipped -6, +6 lines =@@
  >E1 : Symbol(E1, Decl(equalityWithEnumTypes.ts, 0, 0))
  
      a = 1,
@@ -13,7 +13,7 @@
  }
  
  // Numeric enum type
-@@ -17,10 +17,10 @@
+@@= skipped -11, +11 lines =@@
  >E2 : Symbol(E2, Decl(equalityWithEnumTypes.ts, 4, 1))
  
      a = 1 << 0,

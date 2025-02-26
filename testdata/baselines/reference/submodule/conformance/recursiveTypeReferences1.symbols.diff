@@ -1,6 +1,6 @@
 --- old.recursiveTypeReferences1.symbols
 +++ new.recursiveTypeReferences1.symbols
-@@ -63,7 +63,7 @@
+@@= skipped -63, +63 lines =@@
  interface Box<T> { value: T };
  >Box : Symbol(Box, Decl(recursiveTypeReferences1.ts, 19, 2))
  >T : Symbol(T, Decl(recursiveTypeReferences1.ts, 21, 14))
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(recursiveTypeReferences1.ts, 21, 14))
  
  type T1 = Box<T1>;
-@@ -354,9 +354,9 @@
+@@= skipped -291, +291 lines =@@
  >HTMLUListElement : Symbol(HTMLUListElement, Decl(lib.dom.d.ts, --, --), Decl(lib.dom.d.ts, --, --))
  
    return html('ul', node.map(([el, children], i) => {
@@ -21,7 +21,7 @@
  >el : Symbol(el, Decl(recursiveTypeReferences1.ts, 101, 31))
  >children : Symbol(children, Decl(recursiveTypeReferences1.ts, 101, 34))
  >i : Symbol(i, Decl(recursiveTypeReferences1.ts, 101, 45))
-@@ -369,22 +369,22 @@
+@@= skipped -15, +15 lines =@@
      return html('li', [
        html('a', { href: `#${el.id}`, rel: 'noopener', 'data-index': idx.join('.') }, el.textContent!),
  >href : Symbol(href, Decl(recursiveTypeReferences1.ts, 104, 17))
@@ -52,7 +52,7 @@
  >parse : Symbol(parse, Decl(recursiveTypeReferences1.ts, 98, 41))
  >children : Symbol(children, Decl(recursiveTypeReferences1.ts, 101, 34))
  >idx : Symbol(idx, Decl(recursiveTypeReferences1.ts, 102, 9))
-@@ -400,26 +400,26 @@
+@@= skipped -31, +31 lines =@@
  >Tree : Symbol(Tree, Decl(recursiveTypeReferences1.ts, 94, 19))
  
    return hs
@@ -86,7 +86,7 @@
  >level : Symbol(level, Decl(recursiveTypeReferences1.ts, 123, 1))
  >h : Symbol(h, Decl(recursiveTypeReferences1.ts, 112, 41))
  >level : Symbol(level, Decl(recursiveTypeReferences1.ts, 123, 1))
-@@ -437,15 +437,15 @@
+@@= skipped -37, +37 lines =@@
  
      }, [[]])
      .reduce<Tree>((node, hs) =>
@@ -105,7 +105,7 @@
  
          ? node
  >node : Symbol(node, Decl(recursiveTypeReferences1.ts, 118, 19))
-@@ -453,9 +453,9 @@
+@@= skipped -16, +16 lines =@@
          : concat<Tree[number]>(node, [[hs.shift()!, cons(hs)]])
  >Tree : Symbol(Tree, Decl(recursiveTypeReferences1.ts, 94, 19))
  >node : Symbol(node, Decl(recursiveTypeReferences1.ts, 118, 19))
@@ -117,7 +117,7 @@
  >cons : Symbol(cons, Decl(recursiveTypeReferences1.ts, 108, 1))
  >hs : Symbol(hs, Decl(recursiveTypeReferences1.ts, 118, 24))
  
-@@ -469,13 +469,13 @@
+@@= skipped -16, +16 lines =@@
  
    assert(isFinite(+h.tagName[1]));
  >isFinite : Symbol(isFinite, Decl(lib.es5.d.ts, --, --))

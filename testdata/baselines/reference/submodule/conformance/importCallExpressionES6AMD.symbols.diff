@@ -1,6 +1,6 @@
 --- old.importCallExpressionES6AMD.symbols
 +++ new.importCallExpressionES6AMD.symbols
-@@ -6,46 +6,36 @@
+@@= skipped -6, +6 lines =@@
  
  === 1.ts ===
  import("./0");
@@ -48,7 +48,7 @@
      }
  }
  
-@@ -53,10 +43,9 @@
+@@= skipped -47, +37 lines =@@
  >D : Symbol(D, Decl(1.ts, 16, 1))
  
      method() {

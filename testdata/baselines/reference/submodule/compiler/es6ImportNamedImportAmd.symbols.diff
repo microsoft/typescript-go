@@ -1,6 +1,6 @@
 --- old.es6ImportNamedImportAmd.symbols
 +++ new.es6ImportNamedImportAmd.symbols
-@@ -37,7 +37,6 @@
+@@= skipped -37, +37 lines =@@
  >a : Symbol(a, Decl(es6ImportNamedImportAmd_1.ts, 1, 8))
  
  import { a as b } from "es6ImportNamedImportAmd_0";
@@ -8,7 +8,7 @@
  >b : Symbol(b, Decl(es6ImportNamedImportAmd_1.ts, 3, 8))
  
  var xxxx = b;
-@@ -46,7 +45,6 @@
+@@= skipped -9, +8 lines =@@
  
  import { x, a as y } from "es6ImportNamedImportAmd_0";
  >x : Symbol(x, Decl(es6ImportNamedImportAmd_1.ts, 5, 8))
@@ -16,7 +16,7 @@
  >y : Symbol(y, Decl(es6ImportNamedImportAmd_1.ts, 5, 11))
  
  var xxxx = x;
-@@ -58,7 +56,6 @@
+@@= skipped -12, +11 lines =@@
  >y : Symbol(y, Decl(es6ImportNamedImportAmd_1.ts, 5, 11))
  
  import { x as z,  } from "es6ImportNamedImportAmd_0";
@@ -24,7 +24,7 @@
  >z : Symbol(z, Decl(es6ImportNamedImportAmd_1.ts, 8, 8))
  
  var xxxx = z;
-@@ -85,9 +82,7 @@
+@@= skipped -27, +26 lines =@@
  >x1 : Symbol(x1, Decl(es6ImportNamedImportAmd_1.ts, 12, 12))
  
  import { a1 as a11, x1 as x11 } from "es6ImportNamedImportAmd_0";
@@ -34,7 +34,7 @@
  >x11 : Symbol(x11, Decl(es6ImportNamedImportAmd_1.ts, 15, 19))
  
  var xxxx = a11;
-@@ -106,7 +101,6 @@
+@@= skipped -21, +19 lines =@@
  >z1 : Symbol(z1, Decl(es6ImportNamedImportAmd_1.ts, 18, 8))
  
  import { z2 as z3 } from "es6ImportNamedImportAmd_0";
@@ -42,7 +42,7 @@
  >z3 : Symbol(z3, Decl(es6ImportNamedImportAmd_1.ts, 20, 8))
  
  var z2 = z3; // z2 shouldn't give redeclare error
-@@ -119,6 +113,5 @@
+@@= skipped -13, +12 lines =@@
  
  // These are elided
  import { aaaa as bbbb } from "es6ImportNamedImportAmd_0";

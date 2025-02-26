@@ -1,6 +1,6 @@
 --- old.commaOperatorInConditionalExpression.symbols
 +++ new.commaOperatorInConditionalExpression.symbols
-@@ -6,8 +6,8 @@
+@@= skipped -6, +6 lines =@@
  >m : Symbol(m, Decl(commaOperatorInConditionalExpression.ts, 0, 12))
  
      [1, 2, 3].map(i => {

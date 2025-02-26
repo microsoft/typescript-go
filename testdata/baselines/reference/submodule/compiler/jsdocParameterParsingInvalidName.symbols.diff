@@ -1,6 +1,6 @@
 --- old.jsdocParameterParsingInvalidName.symbols
 +++ new.jsdocParameterParsingInvalidName.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
       * @param {string} [`foo]
       */
      method(foo) {

@@ -1,6 +1,6 @@
 --- old.intersectionTypeMembers.symbols
 +++ new.intersectionTypeMembers.symbols
-@@ -6,15 +6,15 @@
+@@= skipped -6, +6 lines =@@
  
  interface A { a: string }
  >A : Symbol(A, Decl(intersectionTypeMembers.ts, 0, 0))
@@ -19,7 +19,7 @@
  
  var abc: A & B & C;
  >abc : Symbol(abc, Decl(intersectionTypeMembers.ts, 7, 3))
-@@ -23,33 +23,33 @@
+@@= skipped -17, +17 lines =@@
  >C : Symbol(C, Decl(intersectionTypeMembers.ts, 4, 25))
  
  abc.a = "hello";
@@ -62,7 +62,7 @@
  >C : Symbol(C, Decl(intersectionTypeMembers.ts, 4, 25))
  
  var xyz: X & Y & Z;
-@@ -59,25 +59,25 @@
+@@= skipped -36, +36 lines =@@
  >Z : Symbol(Z, Decl(intersectionTypeMembers.ts, 13, 20))
  
  xyz.x.a = "hello";
@@ -94,7 +94,7 @@
  
  type F1 = (x: string) => string;
  >F1 : Symbol(F1, Decl(intersectionTypeMembers.ts, 19, 18))
-@@ -104,7 +104,7 @@
+@@= skipped -45, +45 lines =@@
  >D : Symbol(D, Decl(intersectionTypeMembers.ts, 26, 14))
  
      nested: { doublyNested: { d: string; }, different: { e: number } };
@@ -103,7 +103,7 @@
  >doublyNested : Symbol(doublyNested, Decl(intersectionTypeMembers.ts, 29, 13))
  >d : Symbol(d, Decl(intersectionTypeMembers.ts, 29, 29))
  >different : Symbol(different, Decl(intersectionTypeMembers.ts, 29, 43))
-@@ -114,7 +114,7 @@
+@@= skipped -10, +10 lines =@@
  >E : Symbol(E, Decl(intersectionTypeMembers.ts, 30, 1))
  
      nested: { doublyNested: { f: string; }, other: {g: number } };
@@ -112,7 +112,7 @@
  >doublyNested : Symbol(doublyNested, Decl(intersectionTypeMembers.ts, 32, 13))
  >f : Symbol(f, Decl(intersectionTypeMembers.ts, 32, 29))
  >other : Symbol(other, Decl(intersectionTypeMembers.ts, 32, 43))
-@@ -153,7 +153,7 @@
+@@= skipped -39, +39 lines =@@
  >F : Symbol(F, Decl(intersectionTypeMembers.ts, 43, 1))
  
      nested: { doublyNested: { g: string; } }
@@ -121,7 +121,7 @@
  >doublyNested : Symbol(doublyNested, Decl(intersectionTypeMembers.ts, 47, 13))
  >g : Symbol(g, Decl(intersectionTypeMembers.ts, 47, 29))
  }
-@@ -162,7 +162,7 @@
+@@= skipped -9, +9 lines =@@
  >G : Symbol(G, Decl(intersectionTypeMembers.ts, 48, 1))
  
      nested: { doublyNested: { h: string; } }

@@ -1,6 +1,6 @@
 --- old.jsDeclarationsClassStatic2.symbols
 +++ new.jsDeclarationsClassStatic2.symbols
-@@ -5,16 +5,16 @@
+@@= skipped -5, +5 lines =@@
  >Base : Symbol(Base, Decl(Foo.js, 0, 0))
  
    static foo = "";
@@ -22,7 +22,7 @@
  
  === Bar.ts ===
  import { Foo } from "./Foo.js";
-@@ -25,7 +25,7 @@
+@@= skipped -20, +20 lines =@@
  >Foo : Symbol(Foo, Decl(Bar.ts, 0, 8))
  
  Bar.foo = "foo";

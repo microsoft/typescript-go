@@ -1,6 +1,6 @@
 --- old.accessorsAreNotContextuallyTyped.symbols
 +++ new.accessorsAreNotContextuallyTyped.symbols
-@@ -7,13 +7,13 @@
+@@= skipped -7, +7 lines =@@
  >C : Symbol(C, Decl(accessorsAreNotContextuallyTyped.ts, 0, 0))
  
      set x(v: (a: string) => string) {
@@ -16,7 +16,7 @@
  
          return (x: string) => "";
  >x : Symbol(x, Decl(accessorsAreNotContextuallyTyped.ts, 7, 16))
-@@ -26,7 +26,7 @@
+@@= skipped -19, +19 lines =@@
  
  var r = c.x(''); // string
  >r : Symbol(r, Decl(accessorsAreNotContextuallyTyped.ts, 12, 3))

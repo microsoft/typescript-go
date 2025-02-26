@@ -1,6 +1,6 @@
 --- old.reachabilityChecks7.symbols
 +++ new.reachabilityChecks7.symbols
-@@ -13,7 +13,7 @@
+@@= skipped -13, +13 lines =@@
  // async function with which promised type is void - return can be omitted
  async function f2(): Promise<void> {
  >f2 : Symbol(f2, Decl(reachabilityChecks7.ts, 5, 1))
@@ -9,7 +9,7 @@
      
  }
  
-@@ -27,7 +27,7 @@
+@@= skipped -14, +14 lines =@@
  
  async function f4(): Promise<number> {
  >f4 : Symbol(f4, Decl(reachabilityChecks7.ts, 14, 1))

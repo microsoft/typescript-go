@@ -1,6 +1,6 @@
 --- old.checkSuperCallBeforeThisAccess.symbols
 +++ new.checkSuperCallBeforeThisAccess.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(checkSuperCallBeforeThisAccess.ts, 0, 0))
  
      x = 1;
@@ -9,7 +9,7 @@
  }
  
  class C1 extends A {
-@@ -21,15 +21,15 @@
+@@= skipped -16, +16 lines =@@
  
          let a2 = this.x;  // Error
  >a2 : Symbol(a2, Decl(checkSuperCallBeforeThisAccess.ts, 7, 11))
@@ -29,7 +29,7 @@
  
          let a4 = () => this;
  >a4 : Symbol(a4, Decl(checkSuperCallBeforeThisAccess.ts, 9, 11))
-@@ -37,15 +37,15 @@
+@@= skipped -16, +16 lines =@@
  
          let a5 = () => this.x;
  >a5 : Symbol(a5, Decl(checkSuperCallBeforeThisAccess.ts, 10, 11))
@@ -49,7 +49,7 @@
  
          if (!!true) {
              super();
-@@ -57,15 +57,15 @@
+@@= skipped -20, +20 lines =@@
  
              let b2 = this.x;
  >b2 : Symbol(b2, Decl(checkSuperCallBeforeThisAccess.ts, 15, 15))
@@ -69,7 +69,7 @@
          }
          else {
              let c1 = this;  // Error
-@@ -74,15 +74,15 @@
+@@= skipped -17, +17 lines =@@
  
              let c2 = this.x;  // Error
  >c2 : Symbol(c2, Decl(checkSuperCallBeforeThisAccess.ts, 20, 15))
@@ -89,7 +89,7 @@
          }
          if (!!true) {
              switch (n) {
-@@ -94,16 +94,16 @@
+@@= skipped -20, +20 lines =@@
  
                      let d1 = this.x;
  >d1 : Symbol(d1, Decl(checkSuperCallBeforeThisAccess.ts, 27, 23))
@@ -110,7 +110,7 @@
  
                  default:
                      super();
-@@ -111,15 +111,15 @@
+@@= skipped -17, +17 lines =@@
  
                      let d3 = this.x;
  >d3 : Symbol(d3, Decl(checkSuperCallBeforeThisAccess.ts, 32, 23))
@@ -130,7 +130,7 @@
          }
          if (!!true) {
              let e1 = { w: !!true ? super() : 0 };
-@@ -129,9 +129,9 @@
+@@= skipped -18, +18 lines =@@
  
              let e2 = this.x;  // Error
  >e2 : Symbol(e2, Decl(checkSuperCallBeforeThisAccess.ts, 38, 15))
@@ -142,7 +142,7 @@
  
              let e3 = { w: !!true ? super() : super() };
  >e3 : Symbol(e3, Decl(checkSuperCallBeforeThisAccess.ts, 39, 15))
-@@ -141,9 +141,9 @@
+@@= skipped -12, +12 lines =@@
  
              let e4 = this.x;
  >e4 : Symbol(e4, Decl(checkSuperCallBeforeThisAccess.ts, 40, 15))
@@ -154,7 +154,7 @@
          }
          let f1 = this;  // Error
  >f1 : Symbol(f1, Decl(checkSuperCallBeforeThisAccess.ts, 42, 11))
-@@ -151,15 +151,15 @@
+@@= skipped -10, +10 lines =@@
  
          let f2 = this.x;  // Error
  >f2 : Symbol(f2, Decl(checkSuperCallBeforeThisAccess.ts, 43, 11))
@@ -174,7 +174,7 @@
      }
  }
  
-@@ -185,9 +185,9 @@
+@@= skipped -34, +34 lines =@@
  
              const value = this.bar();  // Error
  >value : Symbol(value, Decl(checkSuperCallBeforeThisAccess.ts, 58, 17))
@@ -186,7 +186,7 @@
  
              super(value);
  >super : Symbol(Foo, Decl(checkSuperCallBeforeThisAccess.ts, 46, 1))
-@@ -199,7 +199,7 @@
+@@= skipped -14, +14 lines =@@
          }
      }
      bar(): number { return 4; }
@@ -195,7 +195,7 @@
  }
  
  export class BarIncorrectlyWorks extends Foo {
-@@ -218,9 +218,9 @@
+@@= skipped -19, +19 lines =@@
          else {
              const value = this.bar();  // Error
  >value : Symbol(value, Decl(checkSuperCallBeforeThisAccess.ts, 74, 17))
@@ -207,7 +207,7 @@
  
              super(value);
  >super : Symbol(Foo, Decl(checkSuperCallBeforeThisAccess.ts, 46, 1))
-@@ -228,6 +228,6 @@
+@@= skipped -10, +10 lines =@@
          }
      }
      bar(): number { return 4; }

@@ -1,6 +1,6 @@
 --- old.tsxUnionElementType6.symbols
 +++ new.tsxUnionElementType6.symbols
-@@ -8,16 +8,12 @@
+@@= skipped -8, +8 lines =@@
  >EmptySFC1 : Symbol(EmptySFC1, Decl(file.tsx, 0, 32))
  
      return <div>Hi</div>
@@ -17,7 +17,7 @@
  }
  
  function SFC2(prop: { x: boolean }) {
-@@ -26,8 +22,6 @@
+@@= skipped -18, +14 lines =@@
  >x : Symbol(x, Decl(file.tsx, 10, 21))
  
      return <h1>World</h1>;

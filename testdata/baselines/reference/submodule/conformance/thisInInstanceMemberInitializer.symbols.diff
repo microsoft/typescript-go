@@ -1,6 +1,6 @@
 --- old.thisInInstanceMemberInitializer.symbols
 +++ new.thisInInstanceMemberInitializer.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(thisInInstanceMemberInitializer.ts, 0, 0))
  
      x = this;
@@ -9,7 +9,7 @@
  >this : Symbol(C, Decl(thisInInstanceMemberInitializer.ts, 0, 0))
  }
  
-@@ -14,10 +14,10 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(thisInInstanceMemberInitializer.ts, 4, 8))
  
      x = this;

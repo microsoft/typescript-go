@@ -1,6 +1,6 @@
 --- old.noImplicitAnyAndPrivateMembersWithoutTypeAnnotations.symbols
 +++ new.noImplicitAnyAndPrivateMembersWithoutTypeAnnotations.symbols
-@@ -11,16 +11,16 @@
+@@= skipped -11, +11 lines =@@
  >Something : Symbol(Something, Decl(test.d.ts, 0, 0))
  {
      private static someStaticVar;

@@ -1,6 +1,6 @@
 --- old.comparisonOperatorWithIdenticalObjects.symbols
 +++ new.comparisonOperatorWithIdenticalObjects.symbols
-@@ -5,23 +5,23 @@
+@@= skipped -5, +5 lines =@@
  >A1 : Symbol(A1, Decl(comparisonOperatorWithIdenticalObjects.ts, 0, 0))
  
      public a: string;
@@ -30,7 +30,7 @@
  >a : Symbol(a, Decl(comparisonOperatorWithIdenticalObjects.ts, 6, 14))
  
          return null;
-@@ -31,23 +31,23 @@
+@@= skipped -26, +26 lines =@@
  >B1 : Symbol(B1, Decl(comparisonOperatorWithIdenticalObjects.ts, 9, 1))
  
      public a: string;
@@ -60,7 +60,7 @@
  >b : Symbol(b, Decl(comparisonOperatorWithIdenticalObjects.ts, 16, 14))
  
          return null;
-@@ -58,10 +58,10 @@
+@@= skipped -27, +27 lines =@@
  >Base : Symbol(Base, Decl(comparisonOperatorWithIdenticalObjects.ts, 19, 1))
  
      private a: string;
@@ -73,7 +73,7 @@
  >b : Symbol(b, Decl(comparisonOperatorWithIdenticalObjects.ts, 23, 15))
  
          return null;
-@@ -77,12 +77,12 @@
+@@= skipped -19, +19 lines =@@
  
  interface A3 { f(a: number): string; }
  >A3 : Symbol(A3, Decl(comparisonOperatorWithIdenticalObjects.ts, 28, 25))

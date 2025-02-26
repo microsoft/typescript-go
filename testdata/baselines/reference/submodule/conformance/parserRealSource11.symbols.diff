@@ -1,6 +1,6 @@
 --- old.parserRealSource11.symbols
 +++ new.parserRealSource11.symbols
-@@ -13,10 +13,10 @@
+@@= skipped -13, +13 lines =@@
  >ASTSpan : Symbol(ASTSpan, Decl(parserRealSource11.ts, 5, 19))
  
          public minChar: number = -1;  // -1 = "undefined" or "compiler generated"
@@ -13,7 +13,7 @@
      }
  
      export class AST extends ASTSpan {
-@@ -24,29 +24,29 @@
+@@= skipped -11, +11 lines =@@
  >ASTSpan : Symbol(ASTSpan, Decl(parserRealSource11.ts, 5, 19))
  
          public type: Type = null;
@@ -50,7 +50,7 @@
  >NodeType : Symbol(NodeType)
  
              super();
-@@ -54,39 +54,39 @@
+@@= skipped -30, +30 lines =@@
          }
  
          public isExpression() { return false; }
@@ -103,7 +103,7 @@
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 35, 25))
  
                      break;
-@@ -97,18 +97,18 @@
+@@= skipped -43, +43 lines =@@
  
                  case NodeType.Null:
                      this.type = typeFlow.nullType;
@@ -126,7 +126,7 @@
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 35, 25))
  
                      break;
-@@ -121,9 +121,9 @@
+@@= skipped -24, +24 lines =@@
                  case NodeType.Empty:
                  case NodeType.Void:
                      this.type = typeFlow.voidType;
@@ -138,7 +138,7 @@
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 35, 25))
  
                      break;
-@@ -136,7 +136,7 @@
+@@= skipped -15, +15 lines =@@
          }
  
          public emit(emitter: Emitter, tokenId: TokenID, startLine: boolean) {
@@ -147,7 +147,7 @@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 63, 20))
  >Emitter : Symbol(Emitter)
  >tokenId : Symbol(tokenId, Decl(parserRealSource11.ts, 63, 37))
-@@ -148,9 +148,9 @@
+@@= skipped -12, +12 lines =@@
  >this : Symbol(AST, Decl(parserRealSource11.ts, 9, 5))
  
              switch (this.nodeType) {
@@ -159,7 +159,7 @@
  
                  case NodeType.This:
                      emitter.recordSourceMappingStart(this);
-@@ -267,7 +267,7 @@
+@@= skipped -119, +119 lines =@@
          }
  
          public print(context: PrintContext) {
@@ -168,7 +168,7 @@
  >context : Symbol(context, Decl(parserRealSource11.ts, 118, 21))
  >PrintContext : Symbol(PrintContext)
  
-@@ -290,16 +290,16 @@
+@@= skipped -23, +23 lines =@@
                  context.parser.getSourceLineCol(lineCol, this.minChar);
  >context : Symbol(context, Decl(parserRealSource11.ts, 118, 21))
  >lineCol : Symbol(lineCol, Decl(parserRealSource11.ts, 120, 15))
@@ -189,7 +189,7 @@
  
                  context.write("(" + lineCol.line + "," + lineCol.col + ")--" +
  >context : Symbol(context, Decl(parserRealSource11.ts, 118, 21))
-@@ -320,14 +320,14 @@
+@@= skipped -30, +30 lines =@@
              }
              var lab = this.printLabel();
  >lab : Symbol(lab, Decl(parserRealSource11.ts, 128, 15))
@@ -208,7 +208,7 @@
  
                  lab += " (Error)";
  >lab : Symbol(lab, Decl(parserRealSource11.ts, 128, 15))
-@@ -338,29 +338,29 @@
+@@= skipped -18, +18 lines =@@
          }
  
          public printLabel() {
@@ -246,7 +246,7 @@
  >context : Symbol(context, Decl(parserRealSource11.ts, 144, 32))
  >ControlFlowContext : Symbol(ControlFlowContext)
  
-@@ -374,7 +374,7 @@
+@@= skipped -36, +36 lines =@@
          }
  
          public netFreeUses(container: Symbol, freeUses: StringHashTable) {
@@ -255,7 +255,7 @@
  >container : Symbol(container, Decl(parserRealSource11.ts, 150, 27))
  >Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --))
  >freeUses : Symbol(freeUses, Decl(parserRealSource11.ts, 150, 45))
-@@ -382,16 +382,16 @@
+@@= skipped -8, +8 lines =@@
          }
  
          public treeViewLabel() {
@@ -276,7 +276,7 @@
  >name : Symbol(name, Decl(parserRealSource11.ts, 157, 48))
  
              if (!name) return "";
-@@ -408,43 +408,43 @@
+@@= skipped -26, +26 lines =@@
  
              while(i <= name.length - 6) {
  >i : Symbol(i, Decl(parserRealSource11.ts, 162, 15))
@@ -332,7 +332,7 @@
  >charCode : Symbol(charCode, Decl(parserRealSource11.ts, 166, 23))
  
                      i += 6;
-@@ -462,9 +462,9 @@
+@@= skipped -54, +54 lines =@@
              // Append remaining string
              resolved += name.substring(start);
  >resolved : Symbol(resolved, Decl(parserRealSource11.ts, 160, 15))
@@ -344,7 +344,7 @@
  >start : Symbol(start, Decl(parserRealSource11.ts, 161, 15))
  
              return resolved;
-@@ -484,15 +484,15 @@
+@@= skipped -22, +22 lines =@@
  >super : Symbol(AST, Decl(parserRealSource11.ts, 9, 5))
  
              this.minChar = min;
@@ -364,7 +364,7 @@
  >lim : Symbol(lim, Decl(parserRealSource11.ts, 182, 33))
          }
      }
-@@ -502,11 +502,11 @@
+@@= skipped -18, +18 lines =@@
  >AST : Symbol(AST, Decl(parserRealSource11.ts, 9, 5))
  
          public enclosingScope: SymbolScope = null;
@@ -378,7 +378,7 @@
  >AST : Symbol(AST, Decl(parserRealSource11.ts, 9, 5))
  >AST : Symbol(AST, Decl(parserRealSource11.ts, 9, 5))
  
-@@ -516,17 +516,17 @@
+@@= skipped -14, +14 lines =@@
          }
  
          public addToControlFlow(context: ControlFlowContext) {
@@ -401,7 +401,7 @@
  
              for (var i = 0; i < len; i++) {
  >i : Symbol(i, Decl(parserRealSource11.ts, 200, 20))
-@@ -539,23 +539,23 @@
+@@= skipped -23, +23 lines =@@
  
                      context.addUnreachable(this.members[i]);
  >context : Symbol(context, Decl(parserRealSource11.ts, 198, 32))
@@ -431,7 +431,7 @@
  >i : Symbol(i, Decl(parserRealSource11.ts, 200, 20))
  >this : Symbol(ASTList, Decl(parserRealSource11.ts, 188, 5))
                  }
-@@ -565,19 +565,19 @@
+@@= skipped -26, +26 lines =@@
          }
  
          public append(ast: AST) {
@@ -458,7 +458,7 @@
  >ast : Symbol(ast, Decl(parserRealSource11.ts, 212, 22))
  
              return this;
-@@ -585,14 +585,14 @@
+@@= skipped -20, +20 lines =@@
          }
  
          public appendAll(ast: AST) {
@@ -476,7 +476,7 @@
  
                  var list = <ASTList>ast;
  >list : Symbol(list, Decl(parserRealSource11.ts, 219, 19))
-@@ -602,30 +602,30 @@
+@@= skipped -17, +17 lines =@@
                  for (var i = 0, len = list.members.length; i < len; i++) {
  >i : Symbol(i, Decl(parserRealSource11.ts, 220, 24))
  >len : Symbol(len, Decl(parserRealSource11.ts, 220, 31))
@@ -517,7 +517,7 @@
  >ast : Symbol(ast, Decl(parserRealSource11.ts, 217, 25))
              }
              return this;
-@@ -633,7 +633,7 @@
+@@= skipped -31, +31 lines =@@
          }
  
          public emit(emitter: Emitter, tokenId: TokenID, startLine: boolean) {
@@ -526,7 +526,7 @@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 230, 20))
  >Emitter : Symbol(Emitter)
  >tokenId : Symbol(tokenId, Decl(parserRealSource11.ts, 230, 37))
-@@ -655,17 +655,17 @@
+@@= skipped -22, +22 lines =@@
          }
  
          public typeCheck(typeFlow: TypeFlow) {
@@ -549,7 +549,7 @@
  
              typeFlow.nestingLevel++;
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 236, 25))
-@@ -677,22 +677,22 @@
+@@= skipped -22, +22 lines =@@
  >i : Symbol(i, Decl(parserRealSource11.ts, 239, 20))
  
                  if (this.members[i]) {
@@ -580,7 +580,7 @@
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 236, 25))
                  }
              }
-@@ -709,14 +709,14 @@
+@@= skipped -32, +32 lines =@@
  >AST : Symbol(AST, Decl(parserRealSource11.ts, 9, 5))
  
          public sym: Symbol = null;
@@ -598,7 +598,7 @@
  
          // 'actualText' is the text that the user has entered for the identifier. the text might 
          // include any Unicode escape sequences (e.g.: \u0041 for 'A'). 'text', however, contains 
-@@ -731,79 +731,79 @@
+@@= skipped -22, +22 lines =@@
          //    To change text, and to avoid running into a situation where 'actualText' does not 
          //    match 'text', always use setText.
          constructor (public actualText: string, public hasEscapeSequence?: boolean) {
@@ -701,7 +701,7 @@
              }
              else {
                  return "name node";
-@@ -811,7 +811,7 @@
+@@= skipped -80, +80 lines =@@
          }
  
          public typeCheck(typeFlow: TypeFlow) {
@@ -710,7 +710,7 @@
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 297, 25))
  >TypeFlow : Symbol(TypeFlow)
  
-@@ -821,7 +821,7 @@
+@@= skipped -10, +10 lines =@@
          }
  
          public emit(emitter: Emitter, tokenId: TokenID, startLine: boolean) {
@@ -719,7 +719,7 @@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 301, 20))
  >Emitter : Symbol(Emitter)
  >tokenId : Symbol(tokenId, Decl(parserRealSource11.ts, 301, 37))
-@@ -834,7 +834,7 @@
+@@= skipped -13, +13 lines =@@
          }
  
          public static fromToken(token: Token): Identifier {
@@ -728,7 +728,7 @@
  >token : Symbol(token, Decl(parserRealSource11.ts, 305, 32))
  >Token : Symbol(Token)
  >Identifier : Symbol(Identifier, Decl(parserRealSource11.ts, 247, 5))
-@@ -857,13 +857,13 @@
+@@= skipped -23, +23 lines =@@
          }
  
          public isMissing() {
@@ -744,7 +744,7 @@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 319, 20))
  >Emitter : Symbol(Emitter)
  >tokenId : Symbol(tokenId, Decl(parserRealSource11.ts, 319, 37))
-@@ -879,7 +879,7 @@
+@@= skipped -22, +22 lines =@@
  >AST : Symbol(AST, Decl(parserRealSource11.ts, 9, 5))
  
          constructor (public id: Identifier) {
@@ -753,7 +753,7 @@
  >Identifier : Symbol(Identifier, Decl(parserRealSource11.ts, 247, 5))
  
              super(NodeType.Label);
-@@ -887,22 +887,22 @@
+@@= skipped -8, +8 lines =@@
          }
  
          public printLabel() { return this.id.actualText + ":"; }
@@ -784,7 +784,7 @@
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 331, 25))
  
              return this;
-@@ -910,7 +910,7 @@
+@@= skipped -23, +23 lines =@@
          }
  
          public emit(emitter: Emitter, tokenId: TokenID, startLine: boolean) {
@@ -793,7 +793,7 @@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 336, 20))
  >Emitter : Symbol(Emitter)
  >tokenId : Symbol(tokenId, Decl(parserRealSource11.ts, 336, 37))
-@@ -927,23 +927,23 @@
+@@= skipped -17, +17 lines =@@
  
              emitter.recordSourceMappingStart(this.id);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 336, 20))
@@ -825,7 +825,7 @@
  
              emitter.writeLineToOutput(":");
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 336, 20))
-@@ -972,10 +972,10 @@
+@@= skipped -45, +45 lines =@@
          }
  
          public isExpression() { return true; }
@@ -838,7 +838,7 @@
      }
  
      export class UnaryExpression extends Expression {
-@@ -983,17 +983,17 @@
+@@= skipped -11, +11 lines =@@
  >Expression : Symbol(Expression, Decl(parserRealSource11.ts, 346, 5))
  
          public targetType: Type = null; // Target type for an object literal (null if no target type)
@@ -859,7 +859,7 @@
  >AST : Symbol(AST, Decl(parserRealSource11.ts, 9, 5))
  
              super(nodeType);
-@@ -1002,21 +1002,21 @@
+@@= skipped -19, +19 lines =@@
          }
  
          public addToControlFlow(context: ControlFlowContext): void {
@@ -886,7 +886,7 @@
  
                  context.returnStmt();
  >context : Symbol(context, Decl(parserRealSource11.ts, 366, 32))
-@@ -1024,14 +1024,14 @@
+@@= skipped -22, +22 lines =@@
          }
  
          public typeCheck(typeFlow: TypeFlow) {
@@ -904,7 +904,7 @@
  
                  case NodeType.Not:
                      return typeFlow.typeCheckBitNot(this);
-@@ -1075,18 +1075,18 @@
+@@= skipped -51, +51 lines =@@
  
                  case NodeType.Throw:
                      this.operand = typeFlow.typeCheck(this.operand);
@@ -929,7 +929,7 @@
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 374, 25))
  
                      return this;
-@@ -1094,18 +1094,18 @@
+@@= skipped -19, +19 lines =@@
  
                  case NodeType.Typeof:
                      this.operand = typeFlow.typeCheck(this.operand);
@@ -954,7 +954,7 @@
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 374, 25))
  
                      return this;
-@@ -1113,77 +1113,77 @@
+@@= skipped -19, +19 lines =@@
  
                  case NodeType.Delete:
                      this.operand = typeFlow.typeCheck(this.operand);
@@ -1064,7 +1064,7 @@
  
                      return this;
  >this : Symbol(UnaryExpression, Decl(parserRealSource11.ts, 356, 5))
-@@ -1193,18 +1193,18 @@
+@@= skipped -80, +80 lines =@@
                      // this shouldn't be strictly necessary from the void operator's
                      // point of view
                      this.operand = typeFlow.typeCheck(this.operand);
@@ -1089,7 +1089,7 @@
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 374, 25))
  
                      break;
-@@ -1218,7 +1218,7 @@
+@@= skipped -25, +25 lines =@@
          }
  
          public emit(emitter: Emitter, tokenId: TokenID, startLine: boolean) {
@@ -1098,7 +1098,7 @@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 440, 20))
  >Emitter : Symbol(Emitter)
  >tokenId : Symbol(tokenId, Decl(parserRealSource11.ts, 440, 37))
-@@ -1234,16 +1234,16 @@
+@@= skipped -16, +16 lines =@@
  >this : Symbol(UnaryExpression, Decl(parserRealSource11.ts, 356, 5))
  
              switch (this.nodeType) {
@@ -1119,7 +1119,7 @@
  
                      emitter.writeToOutput("++");
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 440, 20))
-@@ -1255,17 +1255,17 @@
+@@= skipped -21, +21 lines =@@
  
                      emitter.emitJavascript(this.operand, TokenID.Exclamation, false);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 440, 20))
@@ -1141,7 +1141,7 @@
  
                      emitter.writeToOutput("--");
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 440, 20))
-@@ -1275,18 +1275,18 @@
+@@= skipped -20, +20 lines =@@
                      emitter.emitObjectLiteral(<ASTList>this.operand);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 440, 20))
  >ASTList : Symbol(ASTList, Decl(parserRealSource11.ts, 188, 5))
@@ -1164,7 +1164,7 @@
  
                      break;
                  case NodeType.Not:
-@@ -1295,9 +1295,9 @@
+@@= skipped -20, +20 lines =@@
  
                      emitter.emitJavascript(this.operand, TokenID.Tilde, false);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 440, 20))
@@ -1176,7 +1176,7 @@
  
                      break;
                  case NodeType.Neg:
-@@ -1305,24 +1305,24 @@
+@@= skipped -10, +10 lines =@@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 440, 20))
  
                      if (this.operand.nodeType == NodeType.Neg) {
@@ -1211,7 +1211,7 @@
  
                      break;
                  case NodeType.Pos:
-@@ -1330,24 +1330,24 @@
+@@= skipped -25, +25 lines =@@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 440, 20))
  
                      if (this.operand.nodeType == NodeType.Pos) {
@@ -1246,7 +1246,7 @@
  
                      break;
                  case NodeType.IncPre:
-@@ -1356,9 +1356,9 @@
+@@= skipped -26, +26 lines =@@
  
                      emitter.emitJavascript(this.operand, TokenID.PlusPlus, false);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 440, 20))
@@ -1258,7 +1258,7 @@
  
                      break;
                  case NodeType.DecPre:
-@@ -1367,9 +1367,9 @@
+@@= skipped -11, +11 lines =@@
  
                      emitter.emitJavascript(this.operand, TokenID.MinusMinus, false);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 440, 20))
@@ -1270,7 +1270,7 @@
  
                      break;
                  case NodeType.Throw:
-@@ -1378,9 +1378,9 @@
+@@= skipped -11, +11 lines =@@
  
                      emitter.emitJavascript(this.operand, TokenID.Tilde, false);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 440, 20))
@@ -1282,7 +1282,7 @@
  
                      emitter.writeToOutput(";");
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 440, 20))
-@@ -1392,9 +1392,9 @@
+@@= skipped -14, +14 lines =@@
  
                      emitter.emitJavascript(this.operand, TokenID.Tilde, false);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 440, 20))
@@ -1294,7 +1294,7 @@
  
                      break;
                  case NodeType.Delete:
-@@ -1403,9 +1403,9 @@
+@@= skipped -11, +11 lines =@@
  
                      emitter.emitJavascript(this.operand, TokenID.Tilde, false);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 440, 20))
@@ -1306,7 +1306,7 @@
  
                      break;
                  case NodeType.Void:
-@@ -1414,17 +1414,17 @@
+@@= skipped -11, +11 lines =@@
  
                      emitter.emitJavascript(this.operand, TokenID.Tilde, false);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 440, 20))
@@ -1328,7 +1328,7 @@
  
                      break;
                  default:
-@@ -1450,11 +1450,11 @@
+@@= skipped -36, +36 lines =@@
  >NodeType : Symbol(NodeType)
  
                       public target: AST,
@@ -1342,7 +1342,7 @@
  >ASTList : Symbol(ASTList, Decl(parserRealSource11.ts, 188, 5))
  
              super(nodeType);
-@@ -1462,29 +1462,29 @@
+@@= skipped -12, +12 lines =@@
  >nodeType : Symbol(nodeType, Decl(parserRealSource11.ts, 517, 21))
  
              this.minChar = this.target.minChar;
@@ -1382,7 +1382,7 @@
  
                  return typeFlow.typeCheckNew(this);
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 526, 25))
-@@ -1498,7 +1498,7 @@
+@@= skipped -36, +36 lines =@@
          }
  
          public emit(emitter: Emitter, tokenId: TokenID, startLine: boolean) {
@@ -1391,7 +1391,7 @@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 535, 20))
  >Emitter : Symbol(Emitter)
  >tokenId : Symbol(tokenId, Decl(parserRealSource11.ts, 535, 37))
-@@ -1514,29 +1514,29 @@
+@@= skipped -16, +16 lines =@@
  >this : Symbol(CallExpression, Decl(parserRealSource11.ts, 514, 5))
  
              if (this.nodeType == NodeType.New) {
@@ -1431,7 +1431,7 @@
              }
  
              emitter.recordSourceMappingEnd(this);
-@@ -1556,9 +1556,9 @@
+@@= skipped -42, +42 lines =@@
          constructor (nodeType: NodeType, public operand1: AST, public operand2: AST) {
  >nodeType : Symbol(nodeType, Decl(parserRealSource11.ts, 552, 21))
  >NodeType : Symbol(NodeType)
@@ -1443,7 +1443,7 @@
  >AST : Symbol(AST, Decl(parserRealSource11.ts, 9, 5))
  
              super(nodeType);
-@@ -1567,14 +1567,14 @@
+@@= skipped -11, +11 lines =@@
          }
  
          public typeCheck(typeFlow: TypeFlow) {
@@ -1461,7 +1461,7 @@
  
                  case NodeType.Dot:
                      return typeFlow.typeCheckDotOperator(this);
-@@ -1612,9 +1612,9 @@
+@@= skipped -45, +45 lines =@@
  
                          text = nodeTypeTable[this.nodeType];
  >text : Symbol(text, Decl(parserRealSource11.ts, 574, 23))
@@ -1473,7 +1473,7 @@
  
                          typeFlow.checker.errorReporter.styleError(this, "use of " + text);
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 556, 25))
-@@ -1626,19 +1626,19 @@
+@@= skipped -14, +14 lines =@@
  
                          text = nodeTypeTable[this.nodeType];
  >text : Symbol(text, Decl(parserRealSource11.ts, 574, 23))
@@ -1501,7 +1501,7 @@
  
                              typeFlow.checker.errorReporter.styleError(this, "use of " + text + " to compare with null");
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 556, 25))
-@@ -1663,9 +1663,9 @@
+@@= skipped -37, +37 lines =@@
  
                  case NodeType.Member:
                      this.type = typeFlow.voidType;
@@ -1513,7 +1513,7 @@
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 556, 25))
  
                      return this;
-@@ -1741,7 +1741,7 @@
+@@= skipped -78, +78 lines =@@
          }
  
          public emit(emitter: Emitter, tokenId: TokenID, startLine: boolean) {
@@ -1522,7 +1522,7 @@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 634, 20))
  >Emitter : Symbol(Emitter)
  >tokenId : Symbol(tokenId, Decl(parserRealSource11.ts, 634, 37))
-@@ -1750,9 +1750,9 @@
+@@= skipped -9, +9 lines =@@
  
              var binTokenId = nodeTypeToTokTable[this.nodeType];
  >binTokenId : Symbol(binTokenId, Decl(parserRealSource11.ts, 635, 15))
@@ -1534,7 +1534,7 @@
  
              emitter.emitParensAndCommentsInPlace(this, true);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 634, 20))
-@@ -1768,9 +1768,9 @@
+@@= skipped -18, +18 lines =@@
  
                  emitter.emitJavascript(this.operand1, binTokenId, false);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 634, 20))
@@ -1546,7 +1546,7 @@
  >binTokenId : Symbol(binTokenId, Decl(parserRealSource11.ts, 635, 15))
  
                  if (tokenTable[binTokenId].text == "instanceof") {
-@@ -1793,16 +1793,16 @@
+@@= skipped -25, +25 lines =@@
  
                  emitter.emitJavascript(this.operand2, binTokenId, false);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 634, 20))
@@ -1567,7 +1567,7 @@
  
                      case NodeType.Dot:
                          if (!emitter.tryEmitConstant(this)) {
-@@ -1811,9 +1811,9 @@
+@@= skipped -18, +18 lines =@@
  
                              emitter.emitJavascript(this.operand1, TokenID.Dot, false);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 634, 20))
@@ -1579,7 +1579,7 @@
  
                              emitter.writeToOutput(".");
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 634, 20))
-@@ -1821,48 +1821,48 @@
+@@= skipped -10, +10 lines =@@
                              emitter.emitJavascriptName(<Identifier>this.operand2, false);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 634, 20))
  >Identifier : Symbol(Identifier, Decl(parserRealSource11.ts, 247, 5))
@@ -1646,7 +1646,7 @@
  
                                  emitter.writeToOutput("get ");
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 634, 20))
-@@ -1873,33 +1873,33 @@
+@@= skipped -52, +52 lines =@@
                              }
                              emitter.emitJavascript(this.operand1, TokenID.Colon, false);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 634, 20))
@@ -1688,7 +1688,7 @@
  
                          if (emitter.emitState.inObjectLiteral) {
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 634, 20))
-@@ -1913,9 +1913,9 @@
+@@= skipped -40, +40 lines =@@
                          }
                          emitter.emitJavascript(this.operand2, TokenID.Comma, false);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 634, 20))
@@ -1700,7 +1700,7 @@
  
                          break;
                      case NodeType.Is:
-@@ -1942,15 +1942,15 @@
+@@= skipped -29, +29 lines =@@
  >Expression : Symbol(Expression, Decl(parserRealSource11.ts, 346, 5))
  
          constructor (public operand1: AST,
@@ -1719,7 +1719,7 @@
  >AST : Symbol(AST, Decl(parserRealSource11.ts, 9, 5))
  
              super(NodeType.ConditionalExpression);
-@@ -1958,7 +1958,7 @@
+@@= skipped -16, +16 lines =@@
          }
  
          public typeCheck(typeFlow: TypeFlow) {
@@ -1728,7 +1728,7 @@
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 713, 25))
  >TypeFlow : Symbol(TypeFlow)
  
-@@ -1968,7 +1968,7 @@
+@@= skipped -10, +10 lines =@@
          }
  
          public emit(emitter: Emitter, tokenId: TokenID, startLine: boolean) {
@@ -1737,7 +1737,7 @@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 717, 20))
  >Emitter : Symbol(Emitter)
  >tokenId : Symbol(tokenId, Decl(parserRealSource11.ts, 717, 37))
-@@ -1985,27 +1985,27 @@
+@@= skipped -17, +17 lines =@@
  
              emitter.emitJavascript(this.operand1, TokenID.Question, false);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 717, 20))
@@ -1771,7 +1771,7 @@
  
              emitter.recordSourceMappingEnd(this);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 717, 20))
-@@ -2022,25 +2022,25 @@
+@@= skipped -37, +37 lines =@@
  >Expression : Symbol(Expression, Decl(parserRealSource11.ts, 346, 5))
  
          constructor (public value: number, public hasEmptyFraction?: boolean) {
@@ -1803,7 +1803,7 @@
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 737, 25))
  
              return this;
-@@ -2048,16 +2048,16 @@
+@@= skipped -26, +26 lines =@@
          }
  
          public treeViewLabel() {
@@ -1824,7 +1824,7 @@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 746, 20))
  >Emitter : Symbol(Emitter)
  >tokenId : Symbol(tokenId, Decl(parserRealSource11.ts, 746, 37))
-@@ -2073,9 +2073,9 @@
+@@= skipped -25, +25 lines =@@
  >this : Symbol(NumberLiteral, Decl(parserRealSource11.ts, 728, 5))
  
              if (this.isNegativeZero) {
@@ -1836,7 +1836,7 @@
  
                  emitter.writeToOutput("-");
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 746, 20))
-@@ -2083,16 +2083,16 @@
+@@= skipped -10, +10 lines =@@
  
              emitter.writeToOutput(this.value.toString());
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 746, 20))
@@ -1859,7 +1859,7 @@
  
                  emitter.writeToOutput(".0");
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 746, 20))
-@@ -2107,47 +2107,47 @@
+@@= skipped -24, +24 lines =@@
          }
  
          public printLabel() {
@@ -1930,7 +1930,7 @@
              }
          }
      }
-@@ -2157,21 +2157,21 @@
+@@= skipped -50, +50 lines =@@
  >Expression : Symbol(Expression, Decl(parserRealSource11.ts, 346, 5))
  
          constructor (public regex) {
@@ -1956,7 +1956,7 @@
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 780, 25))
  
              return this;
-@@ -2179,7 +2179,7 @@
+@@= skipped -22, +22 lines =@@
          }
  
          public emit(emitter: Emitter, tokenId: TokenID, startLine: boolean) {
@@ -1965,7 +1965,7 @@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 785, 20))
  >Emitter : Symbol(Emitter)
  >tokenId : Symbol(tokenId, Decl(parserRealSource11.ts, 785, 37))
-@@ -2196,9 +2196,9 @@
+@@= skipped -17, +17 lines =@@
  
              emitter.writeToOutput(this.regex.toString());
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 785, 20))
@@ -1977,7 +1977,7 @@
  
              emitter.recordSourceMappingEnd(this);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 785, 20))
-@@ -2215,14 +2215,14 @@
+@@= skipped -19, +19 lines =@@
  >Expression : Symbol(Expression, Decl(parserRealSource11.ts, 346, 5))
  
          constructor (public text: string) {
@@ -1994,7 +1994,7 @@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 799, 20))
  >Emitter : Symbol(Emitter)
  >tokenId : Symbol(tokenId, Decl(parserRealSource11.ts, 799, 37))
-@@ -2239,9 +2239,9 @@
+@@= skipped -24, +24 lines =@@
  
              emitter.emitStringLiteral(this.text);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 799, 20))
@@ -2006,7 +2006,7 @@
  
              emitter.recordSourceMappingEnd(this);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 799, 20))
-@@ -2253,14 +2253,14 @@
+@@= skipped -14, +14 lines =@@
          }
  
          public typeCheck(typeFlow: TypeFlow) {
@@ -2024,7 +2024,7 @@
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 807, 25))
  
              return this;
-@@ -2268,21 +2268,21 @@
+@@= skipped -15, +15 lines =@@
          }
  
          public treeViewLabel() {
@@ -2052,7 +2052,7 @@
          }
      }
  
-@@ -2305,18 +2305,18 @@
+@@= skipped -37, +37 lines =@@
  >ModuleElement : Symbol(ModuleElement, Decl(parserRealSource11.ts, 819, 5))
  
          public isStatementOrExpression() { return true; }
@@ -2076,7 +2076,7 @@
  >AST : Symbol(AST, Decl(parserRealSource11.ts, 9, 5))
  
              super(NodeType.ImportDeclaration);
-@@ -2324,7 +2324,7 @@
+@@= skipped -19, +19 lines =@@
          }
  
          public emit(emitter: Emitter, tokenId: TokenID, startLine: boolean) {
@@ -2085,7 +2085,7 @@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 836, 20))
  >Emitter : Symbol(Emitter)
  >tokenId : Symbol(tokenId, Decl(parserRealSource11.ts, 836, 37))
-@@ -2334,29 +2334,29 @@
+@@= skipped -10, +10 lines =@@
              var mod = <ModuleType>this.alias.type;
  >mod : Symbol(mod, Decl(parserRealSource11.ts, 837, 15))
  >ModuleType : Symbol(ModuleType)
@@ -2129,7 +2129,7 @@
  
                  var prevModAliasId = emitter.modAliasId;
  >prevModAliasId : Symbol(prevModAliasId, Decl(parserRealSource11.ts, 841, 19))
-@@ -2376,37 +2376,37 @@
+@@= skipped -42, +42 lines =@@
  
                  emitter.writeToOutput("var " + this.id.actualText + " = ");
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 836, 20))
@@ -2181,7 +2181,7 @@
  
                      emitter.writeToOutput(";");
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 836, 20))
-@@ -2430,7 +2430,7 @@
+@@= skipped -54, +54 lines =@@
          }
  
          public typeCheck(typeFlow: TypeFlow) {
@@ -2190,7 +2190,7 @@
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 862, 25))
  >TypeFlow : Symbol(TypeFlow)
  
-@@ -2440,23 +2440,23 @@
+@@= skipped -10, +10 lines =@@
          }
  
          public getAliasName(aliasAST?: AST = this.alias) : string {
@@ -2221,7 +2221,7 @@
  
              } else {
                  var dotExpr = <BinaryExpression>aliasAST;
-@@ -2465,58 +2465,58 @@
+@@= skipped -25, +25 lines =@@
  >aliasAST : Symbol(aliasAST, Decl(parserRealSource11.ts, 866, 28))
  
                  return this.getAliasName(dotExpr.operand1) + "." + this.getAliasName(dotExpr.operand2);
@@ -2303,7 +2303,7 @@
              }
          }
      }
-@@ -2526,26 +2526,26 @@
+@@= skipped -61, +61 lines =@@
  >AST : Symbol(AST, Decl(parserRealSource11.ts, 9, 5))
  
          public init: AST = null;
@@ -2336,7 +2336,7 @@
  
              super(nodeType);
  >super : Symbol(AST, Decl(parserRealSource11.ts, 9, 5))
-@@ -2553,28 +2553,28 @@
+@@= skipped -27, +27 lines =@@
          }
  
          public isStatementOrExpression() { return true; }
@@ -2376,7 +2376,7 @@
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 903, 25))
  >TypeFlow : Symbol(TypeFlow)
  
-@@ -2584,12 +2584,12 @@
+@@= skipped -31, +31 lines =@@
          }
  
          public printLabel() {
@@ -2392,7 +2392,7 @@
          }
      }
  
-@@ -2609,25 +2609,25 @@
+@@= skipped -25, +25 lines =@@
          }
  
          public isAmbient() { return hasFlag(this.varFlags, VarFlags.Ambient); }
@@ -2428,7 +2428,7 @@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 921, 20))
  >Emitter : Symbol(Emitter)
  >tokenId : Symbol(tokenId, Decl(parserRealSource11.ts, 921, 37))
-@@ -2641,14 +2641,14 @@
+@@= skipped -32, +32 lines =@@
          }
  
          public treeViewLabel() {
@@ -2448,7 +2448,7 @@
          }
      }
  
-@@ -2666,34 +2666,34 @@
+@@= skipped -25, +25 lines =@@
          }
  
          public isOptional = false;
@@ -2496,7 +2496,7 @@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 945, 20))
  >Emitter : Symbol(Emitter)
  >tokenId : Symbol(tokenId, Decl(parserRealSource11.ts, 945, 37))
-@@ -2710,11 +2710,11 @@
+@@= skipped -44, +44 lines =@@
  
              emitter.writeToOutput(this.id.actualText);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 945, 20))
@@ -2512,7 +2512,7 @@
  
              emitter.recordSourceMappingEnd(this);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 945, 20))
-@@ -2734,109 +2734,109 @@
+@@= skipped -24, +24 lines =@@
  >AST : Symbol(AST, Decl(parserRealSource11.ts, 9, 5))
  
          public hint: string = null;
@@ -2654,7 +2654,7 @@
  >ASTList : Symbol(ASTList, Decl(parserRealSource11.ts, 188, 5))
  
              nodeType: number) {
-@@ -2848,134 +2848,134 @@
+@@= skipped -114, +114 lines =@@
          }
  
          public internalName(): string {
@@ -2834,7 +2834,7 @@
  >Identifier : Symbol(Identifier, Decl(parserRealSource11.ts, 247, 5))
              }
              var id = new Identifier(sym.name);
-@@ -2984,34 +2984,34 @@
+@@= skipped -136, +136 lines =@@
  >sym : Symbol(sym, Decl(parserRealSource11.ts, 1021, 26))
  
              this.jumpRefs[this.jumpRefs.length] = id;
@@ -2882,7 +2882,7 @@
  >ControlFlowContext : Symbol(ControlFlowContext)
  
              var entry = new BasicBlock();
-@@ -3035,9 +3035,9 @@
+@@= skipped -51, +51 lines =@@
  >IAstWalker : Symbol(IAstWalker)
  
                  ast.addToControlFlow(walker.state);
@@ -2894,7 +2894,7 @@
  >walker : Symbol(walker, Decl(parserRealSource11.ts, 1037, 59))
  
                  return ast;
-@@ -3055,9 +3055,9 @@
+@@= skipped -20, +20 lines =@@
  
              walker.walk(this.bod, this);
  >walker : Symbol(walker, Decl(parserRealSource11.ts, 1042, 15))
@@ -2906,7 +2906,7 @@
  >this : Symbol(FuncDecl, Decl(parserRealSource11.ts, 954, 23))
  
              return context;
-@@ -3065,7 +3065,7 @@
+@@= skipped -10, +10 lines =@@
          }
  
          public typeCheck(typeFlow: TypeFlow) {
@@ -2915,7 +2915,7 @@
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 1049, 25))
  >TypeFlow : Symbol(TypeFlow)
  
-@@ -3075,7 +3075,7 @@
+@@= skipped -10, +10 lines =@@
          }
  
          public emit(emitter: Emitter, tokenId: TokenID, startLine: boolean) {
@@ -2924,7 +2924,7 @@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1053, 20))
  >Emitter : Symbol(Emitter)
  >tokenId : Symbol(tokenId, Decl(parserRealSource11.ts, 1053, 37))
-@@ -3088,185 +3088,185 @@
+@@= skipped -13, +13 lines =@@
          }
  
          public getNameText() {
@@ -3196,7 +3196,7 @@
      }
  
      export var unknownLocationInfo = new LocationInfo("unknown", null, -1);
-@@ -3278,52 +3278,52 @@
+@@= skipped -190, +190 lines =@@
  >FuncDecl : Symbol(FuncDecl, Decl(parserRealSource11.ts, 954, 23))
  
          public locationInfo: LocationInfo = null;
@@ -3263,7 +3263,7 @@
  
          constructor (vars: ASTList, scopes: ASTList) {
  >vars : Symbol(vars, Decl(parserRealSource11.ts, 1125, 21))
-@@ -3338,20 +3338,20 @@
+@@= skipped -60, +60 lines =@@
  >scopes : Symbol(scopes, Decl(parserRealSource11.ts, 1125, 35))
  
              this.vars = vars;
@@ -3289,7 +3289,7 @@
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 1131, 25))
  >TypeFlow : Symbol(TypeFlow)
  
-@@ -3361,111 +3361,111 @@
+@@= skipped -23, +23 lines =@@
          }
  
          public treeViewLabel() {
@@ -3439,7 +3439,7 @@
  
                          return true;
                      }
-@@ -3475,7 +3475,7 @@
+@@= skipped -114, +114 lines =@@
          }
  
          public emit(emitter: Emitter, tokenId: TokenID, startLine: boolean) {
@@ -3448,7 +3448,7 @@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1171, 20))
  >Emitter : Symbol(Emitter)
  >tokenId : Symbol(tokenId, Decl(parserRealSource11.ts, 1171, 37))
-@@ -3483,9 +3483,9 @@
+@@= skipped -8, +8 lines =@@
  >startLine : Symbol(startLine, Decl(parserRealSource11.ts, 1171, 55))
  
              if (this.emitRequired()) {
@@ -3460,7 +3460,7 @@
  
                  emitter.emitParensAndCommentsInPlace(this, true);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1171, 20))
-@@ -3497,12 +3497,12 @@
+@@= skipped -14, +14 lines =@@
  
                  emitter.emitJavascriptList(this.bod, null, TokenID.Semicolon, true, false, false, true, this.requiresInherits);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1171, 20))
@@ -3477,7 +3477,7 @@
  
                  emitter.recordSourceMappingEnd(this);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1171, 20))
-@@ -3520,21 +3520,21 @@
+@@= skipped -23, +23 lines =@@
  >ModuleElement : Symbol(ModuleElement, Decl(parserRealSource11.ts, 819, 5))
  
          public leftCurlyCount = 0;
@@ -3503,7 +3503,7 @@
  >ASTList : Symbol(ASTList, Decl(parserRealSource11.ts, 188, 5))
  
              super(nodeType);
-@@ -3548,32 +3548,32 @@
+@@= skipped -28, +28 lines =@@
  >NamedDeclaration : Symbol(NamedDeclaration, Decl(parserRealSource11.ts, 1180, 5))
  
          public modFlags = ModuleFlags.ShouldEmitModuleDecl;
@@ -3544,7 +3544,7 @@
  
          constructor (name: Identifier, members: ASTList, vars: ASTList, scopes: ASTList, public endingToken: ASTSpan) {
  >name : Symbol(name, Decl(parserRealSource11.ts, 1204, 21))
-@@ -3584,7 +3584,7 @@
+@@= skipped -36, +36 lines =@@
  >ASTList : Symbol(ASTList, Decl(parserRealSource11.ts, 188, 5))
  >scopes : Symbol(scopes, Decl(parserRealSource11.ts, 1204, 71))
  >ASTList : Symbol(ASTList, Decl(parserRealSource11.ts, 188, 5))
@@ -3553,7 +3553,7 @@
  >ASTSpan : Symbol(ASTSpan, Decl(parserRealSource11.ts, 5, 19))
  
              super(NodeType.ModuleDeclaration, name, members);
-@@ -3593,57 +3593,57 @@
+@@= skipped -9, +9 lines =@@
  >members : Symbol(members, Decl(parserRealSource11.ts, 1204, 38))
  
              this.vars = vars;
@@ -3634,7 +3634,7 @@
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 1220, 25))
  >TypeFlow : Symbol(TypeFlow)
  
-@@ -3653,7 +3653,7 @@
+@@= skipped -60, +60 lines =@@
          }
  
          public emit(emitter: Emitter, tokenId: TokenID, startLine: boolean) {
@@ -3643,7 +3643,7 @@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1224, 20))
  >Emitter : Symbol(Emitter)
  >tokenId : Symbol(tokenId, Decl(parserRealSource11.ts, 1224, 37))
-@@ -3661,9 +3661,9 @@
+@@= skipped -8, +8 lines =@@
  >startLine : Symbol(startLine, Decl(parserRealSource11.ts, 1224, 55))
  
              if (!hasFlag(this.modFlags, ModuleFlags.ShouldEmitModuleDecl)) {
@@ -3655,7 +3655,7 @@
  
                  emitter.emitParensAndCommentsInPlace(this, true);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1224, 20))
-@@ -3693,7 +3693,7 @@
+@@= skipped -32, +32 lines =@@
  >NamedDeclaration : Symbol(NamedDeclaration, Decl(parserRealSource11.ts, 1180, 5))
  
          public varFlags = VarFlags.None;
@@ -3664,7 +3664,7 @@
  
          constructor (nodeType: NodeType,
  >nodeType : Symbol(nodeType, Decl(parserRealSource11.ts, 1238, 21))
-@@ -3704,11 +3704,11 @@
+@@= skipped -11, +11 lines =@@
  >Identifier : Symbol(Identifier, Decl(parserRealSource11.ts, 247, 5))
  
                       public extendsList: ASTList,
@@ -3678,7 +3678,7 @@
  >ASTList : Symbol(ASTList, Decl(parserRealSource11.ts, 188, 5))
  
                       members: ASTList) {
-@@ -3723,21 +3723,21 @@
+@@= skipped -19, +19 lines =@@
          }
  
          public isExported() { 
@@ -3706,7 +3706,7 @@
          }
      }
  
-@@ -3746,17 +3746,17 @@
+@@= skipped -23, +23 lines =@@
  >TypeDeclaration : Symbol(TypeDeclaration, Decl(parserRealSource11.ts, 1233, 5))
  
          public knownMemberNames: any = {};
@@ -3728,7 +3728,7 @@
  >ASTSpan : Symbol(ASTSpan, Decl(parserRealSource11.ts, 5, 19))
  
          constructor (name: Identifier,
-@@ -3784,7 +3784,7 @@
+@@= skipped -38, +38 lines =@@
          }
  
          public typeCheck(typeFlow: TypeFlow) {
@@ -3737,7 +3737,7 @@
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 1268, 25))
  >TypeFlow : Symbol(TypeFlow)
  
-@@ -3794,7 +3794,7 @@
+@@= skipped -10, +10 lines =@@
          }
  
          public emit(emitter: Emitter, tokenId: TokenID, startLine: boolean) {
@@ -3746,7 +3746,7 @@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1272, 20))
  >Emitter : Symbol(Emitter)
  >tokenId : Symbol(tokenId, Decl(parserRealSource11.ts, 1272, 37))
-@@ -3836,7 +3836,7 @@
+@@= skipped -42, +42 lines =@@
          }
  
          public typeCheck(typeFlow: TypeFlow) {
@@ -3755,7 +3755,7 @@
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 1285, 25))
  >TypeFlow : Symbol(TypeFlow)
  
-@@ -3846,7 +3846,7 @@
+@@= skipped -10, +10 lines =@@
          }
  
          public emit(emitter: Emitter, tokenId: TokenID, startLine: boolean) {
@@ -3764,7 +3764,7 @@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1289, 20))
  >Emitter : Symbol(Emitter)
  >tokenId : Symbol(tokenId, Decl(parserRealSource11.ts, 1289, 37))
-@@ -3868,32 +3868,32 @@
+@@= skipped -22, +22 lines =@@
  >nodeType : Symbol(nodeType, Decl(parserRealSource11.ts, 1294, 21))
  
              this.flags |= ASTFlags.IsStatement;
@@ -3807,7 +3807,7 @@
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 1305, 25))
  
              return this;
-@@ -3906,9 +3906,9 @@
+@@= skipped -38, +38 lines =@@
  >Statement : Symbol(Statement, Decl(parserRealSource11.ts, 1291, 5))
  
          constructor (public labels: ASTList, public stmt: AST) {
@@ -3819,7 +3819,7 @@
  >AST : Symbol(AST, Decl(parserRealSource11.ts, 9, 5))
  
              super(NodeType.LabeledStatement);
-@@ -3916,7 +3916,7 @@
+@@= skipped -10, +10 lines =@@
          }
  
          public emit(emitter: Emitter, tokenId: TokenID, startLine: boolean) {
@@ -3828,7 +3828,7 @@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1316, 20))
  >Emitter : Symbol(Emitter)
  >tokenId : Symbol(tokenId, Decl(parserRealSource11.ts, 1316, 37))
-@@ -3932,19 +3932,19 @@
+@@= skipped -16, +16 lines =@@
  >this : Symbol(LabeledStatement, Decl(parserRealSource11.ts, 1309, 5))
  
              if (this.labels) {
@@ -3856,7 +3856,7 @@
  
                  for (var i = 0; i < labelsLen; i++) {
  >i : Symbol(i, Decl(parserRealSource11.ts, 1321, 24))
-@@ -3953,25 +3953,25 @@
+@@= skipped -21, +21 lines =@@
  >i : Symbol(i, Decl(parserRealSource11.ts, 1321, 24))
  
                      this.labels.members[i].emit(emitter, tokenId, startLine);
@@ -3892,7 +3892,7 @@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1316, 20))
  >tokenId : Symbol(tokenId, Decl(parserRealSource11.ts, 1316, 37))
  
-@@ -3985,25 +3985,25 @@
+@@= skipped -32, +32 lines =@@
          }
  
          public typeCheck(typeFlow: TypeFlow) {
@@ -3927,7 +3927,7 @@
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 1330, 25))
  
              return this;
-@@ -4011,7 +4011,7 @@
+@@= skipped -26, +26 lines =@@
          }
  
          public addToControlFlow(context: ControlFlowContext): void {
@@ -3936,7 +3936,7 @@
  >context : Symbol(context, Decl(parserRealSource11.ts, 1336, 32))
  >ControlFlowContext : Symbol(ControlFlowContext)
  
-@@ -4037,18 +4037,18 @@
+@@= skipped -26, +26 lines =@@
  >Statement : Symbol(Statement, Decl(parserRealSource11.ts, 1291, 5))
  
          constructor (public statements: ASTList,
@@ -3958,7 +3958,7 @@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1350, 20))
  >Emitter : Symbol(Emitter)
  >tokenId : Symbol(tokenId, Decl(parserRealSource11.ts, 1350, 37))
-@@ -4064,9 +4064,9 @@
+@@= skipped -27, +27 lines =@@
  >this : Symbol(Block, Decl(parserRealSource11.ts, 1342, 5))
  
              if (this.isStatementBlock) {
@@ -3970,7 +3970,7 @@
  
                  emitter.writeLineToOutput(" {");
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1350, 20))
-@@ -4077,33 +4077,33 @@
+@@= skipped -13, +13 lines =@@
              } else {
                  emitter.setInVarBlock(this.statements.members.length);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1350, 20))
@@ -4016,7 +4016,7 @@
  
                  emitter.indenter.decreaseIndent();
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1350, 20))
-@@ -4128,7 +4128,7 @@
+@@= skipped -51, +51 lines =@@
          }
  
          public addToControlFlow(context: ControlFlowContext) {
@@ -4025,7 +4025,7 @@
  >context : Symbol(context, Decl(parserRealSource11.ts, 1373, 32))
  >ControlFlowContext : Symbol(ControlFlowContext)
  
-@@ -4142,15 +4142,15 @@
+@@= skipped -14, +14 lines =@@
  >afterIfNeeded : Symbol(afterIfNeeded, Decl(parserRealSource11.ts, 1374, 15))
  
              if (this.statements) {
@@ -4045,7 +4045,7 @@
  >this : Symbol(Block, Decl(parserRealSource11.ts, 1342, 5))
              }
              context.walker.options.goChildren = false;
-@@ -4173,7 +4173,7 @@
+@@= skipped -31, +31 lines =@@
          }
  
          public typeCheck(typeFlow: TypeFlow) {
@@ -4054,7 +4054,7 @@
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 1387, 25))
  >TypeFlow : Symbol(TypeFlow)
  
-@@ -4181,16 +4181,16 @@
+@@= skipped -8, +8 lines =@@
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 1387, 25))
  
                  if ((this.statements === null) || (this.statements.members.length == 0)) {
@@ -4079,7 +4079,7 @@
  
                      typeFlow.checker.errorReporter.styleError(this, "empty block");
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 1387, 25))
-@@ -4200,9 +4200,9 @@
+@@= skipped -19, +19 lines =@@
  
              typeFlow.typeCheck(this.statements);
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 1387, 25))
@@ -4091,7 +4091,7 @@
  
              return this;
  >this : Symbol(Block, Decl(parserRealSource11.ts, 1342, 5))
-@@ -4214,16 +4214,16 @@
+@@= skipped -14, +14 lines =@@
  >Statement : Symbol(Statement, Decl(parserRealSource11.ts, 1291, 5))
  
          public target: string = null;
@@ -4113,7 +4113,7 @@
  >Statement : Symbol(Statement, Decl(parserRealSource11.ts, 1291, 5))
  
          constructor (nodeType: NodeType) {
-@@ -4236,29 +4236,29 @@
+@@= skipped -22, +22 lines =@@
          }
  
          public setResolvedTarget(parser: Parser, stmt: Statement): boolean {
@@ -4150,7 +4150,7 @@
  
                  parser.reportParseError("continue statement applies only to loops");
  >parser : Symbol(parser, Decl(parserRealSource11.ts, 1408, 33))
-@@ -4267,17 +4267,17 @@
+@@= skipped -31, +31 lines =@@
              }
              else {
                  if ((stmt.nodeType == NodeType.Switch) || this.hasExplicitTarget()) {
@@ -4174,7 +4174,7 @@
  >stmt : Symbol(stmt, Decl(parserRealSource11.ts, 1408, 48))
  
                      return true;
-@@ -4292,28 +4292,28 @@
+@@= skipped -25, +25 lines =@@
          }
  
          public addToControlFlow(context: ControlFlowContext): void {
@@ -4211,7 +4211,7 @@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1434, 20))
  >Emitter : Symbol(Emitter)
  >tokenId : Symbol(tokenId, Decl(parserRealSource11.ts, 1434, 37))
-@@ -4329,9 +4329,9 @@
+@@= skipped -37, +37 lines =@@
  >this : Symbol(Jump, Decl(parserRealSource11.ts, 1397, 5))
  
              if (this.nodeType == NodeType.Break) {
@@ -4223,7 +4223,7 @@
  
                  emitter.writeToOutput("break");
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1434, 20))
-@@ -4341,15 +4341,15 @@
+@@= skipped -12, +12 lines =@@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1434, 20))
              }
              if (this.hasExplicitTarget()) {
@@ -4243,7 +4243,7 @@
              }
              emitter.recordSourceMappingEnd(this);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1434, 20))
-@@ -4369,11 +4369,11 @@
+@@= skipped -28, +28 lines =@@
  >Statement : Symbol(Statement, Decl(parserRealSource11.ts, 1291, 5))
  
          public body: AST = null;
@@ -4257,7 +4257,7 @@
  >AST : Symbol(AST, Decl(parserRealSource11.ts, 9, 5))
  
              super(NodeType.While);
-@@ -4381,10 +4381,10 @@
+@@= skipped -12, +12 lines =@@
          }
  
          public isLoop() { return true; }
@@ -4270,7 +4270,7 @@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1461, 20))
  >Emitter : Symbol(Emitter)
  >tokenId : Symbol(tokenId, Decl(parserRealSource11.ts, 1461, 37))
-@@ -4408,18 +4408,18 @@
+@@= skipped -27, +27 lines =@@
  
              emitter.emitJavascript(this.cond, TokenID.While, false);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1461, 20))
@@ -4293,7 +4293,7 @@
  
              emitter.setInObjectLiteral(temp);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1461, 20))
-@@ -4435,7 +4435,7 @@
+@@= skipped -27, +27 lines =@@
          }
  
          public typeCheck(typeFlow: TypeFlow) {
@@ -4302,7 +4302,7 @@
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 1474, 25))
  >TypeFlow : Symbol(TypeFlow)
  
-@@ -4445,7 +4445,7 @@
+@@= skipped -10, +10 lines =@@
          }
  
          public addToControlFlow(context: ControlFlowContext): void {
@@ -4311,7 +4311,7 @@
  >context : Symbol(context, Decl(parserRealSource11.ts, 1478, 32))
  >ControlFlowContext : Symbol(ControlFlowContext)
  
-@@ -4469,9 +4469,9 @@
+@@= skipped -24, +24 lines =@@
  
              context.addContent(this.cond);
  >context : Symbol(context, Decl(parserRealSource11.ts, 1478, 32))
@@ -4323,7 +4323,7 @@
  
              var condBlock = context.current;
  >condBlock : Symbol(condBlock, Decl(parserRealSource11.ts, 1486, 15))
-@@ -4482,9 +4482,9 @@
+@@= skipped -13, +13 lines =@@
  >ITargetInfo : Symbol(ITargetInfo)
  
              if (this.body) {
@@ -4335,7 +4335,7 @@
  
                  context.current = new BasicBlock();
  >context : Symbol(context, Decl(parserRealSource11.ts, 1478, 32))
-@@ -4501,9 +4501,9 @@
+@@= skipped -19, +19 lines =@@
  
                  context.walk(this.body, this);
  >context : Symbol(context, Decl(parserRealSource11.ts, 1478, 32))
@@ -4347,7 +4347,7 @@
  >this : Symbol(WhileStatement, Decl(parserRealSource11.ts, 1450, 5))
  
                  targetInfo = context.popStatement();
-@@ -4543,19 +4543,19 @@
+@@= skipped -42, +42 lines =@@
  >Statement : Symbol(Statement, Decl(parserRealSource11.ts, 1291, 5))
  
          public body: AST = null;
@@ -4371,7 +4371,7 @@
  
          constructor () {
              super(NodeType.DoWhile);
-@@ -4563,7 +4563,7 @@
+@@= skipped -20, +20 lines =@@
          }
  
          public emit(emitter: Emitter, tokenId: TokenID, startLine: boolean) {
@@ -4380,7 +4380,7 @@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1517, 20))
  >Emitter : Symbol(Emitter)
  >tokenId : Symbol(tokenId, Decl(parserRealSource11.ts, 1517, 37))
-@@ -4587,33 +4587,33 @@
+@@= skipped -24, +24 lines =@@
  
              emitter.emitJavascriptStatements(this.body, true, false);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1517, 20))
@@ -4422,7 +4422,7 @@
  
              emitter.writeToOutput(")");
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1517, 20))
-@@ -4632,7 +4632,7 @@
+@@= skipped -45, +45 lines =@@
          }
  
          public typeCheck(typeFlow: TypeFlow) {
@@ -4431,7 +4431,7 @@
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 1534, 25))
  >TypeFlow : Symbol(TypeFlow)
  
-@@ -4642,7 +4642,7 @@
+@@= skipped -10, +10 lines =@@
          }
  
          public addToControlFlow(context: ControlFlowContext): void {
@@ -4440,7 +4440,7 @@
  >context : Symbol(context, Decl(parserRealSource11.ts, 1538, 32))
  >ControlFlowContext : Symbol(ControlFlowContext)
  
-@@ -4669,9 +4669,9 @@
+@@= skipped -27, +27 lines =@@
  >ITargetInfo : Symbol(ITargetInfo)
  
              if (this.body) {
@@ -4452,7 +4452,7 @@
  
                  context.pushStatement(this, loopStart, afterLoop);
  >context : Symbol(context, Decl(parserRealSource11.ts, 1538, 32))
-@@ -4681,9 +4681,9 @@
+@@= skipped -12, +12 lines =@@
  
                  context.walk(this.body, this);
  >context : Symbol(context, Decl(parserRealSource11.ts, 1538, 32))
@@ -4464,7 +4464,7 @@
  >this : Symbol(DoWhileStatement, Decl(parserRealSource11.ts, 1505, 5))
  
                  targetInfo = context.popStatement();
-@@ -4703,9 +4703,9 @@
+@@= skipped -22, +22 lines =@@
  
                  context.addContent(this.cond);
  >context : Symbol(context, Decl(parserRealSource11.ts, 1538, 32))
@@ -4476,7 +4476,7 @@
  
                  // TODO: check for while (true) 
                  context.current = afterLoop;
-@@ -4719,9 +4719,9 @@
+@@= skipped -16, +16 lines =@@
              else {
                  context.addUnreachable(this.cond);
  >context : Symbol(context, Decl(parserRealSource11.ts, 1538, 32))
@@ -4488,7 +4488,7 @@
              }
              context.walker.options.goChildren = false;
  >context : Symbol(context, Decl(parserRealSource11.ts, 1538, 32))
-@@ -4733,20 +4733,20 @@
+@@= skipped -14, +14 lines =@@
  >Statement : Symbol(Statement, Decl(parserRealSource11.ts, 1291, 5))
  
          public thenBod: AST;
@@ -4513,7 +4513,7 @@
  >AST : Symbol(AST, Decl(parserRealSource11.ts, 9, 5))
  
              super(NodeType.If);
-@@ -4754,10 +4754,10 @@
+@@= skipped -21, +21 lines =@@
          }
  
          public isCompoundStatement() { return true; }
@@ -4526,7 +4526,7 @@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1576, 20))
  >Emitter : Symbol(Emitter)
  >tokenId : Symbol(tokenId, Decl(parserRealSource11.ts, 1576, 37))
-@@ -4778,47 +4778,47 @@
+@@= skipped -24, +24 lines =@@
  
              emitter.recordSourceMappingStart(this.statement);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1576, 20))
@@ -4586,7 +4586,7 @@
              }
              emitter.setInObjectLiteral(temp);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1576, 20))
-@@ -4834,7 +4834,7 @@
+@@= skipped -56, +56 lines =@@
          }
  
          public typeCheck(typeFlow: TypeFlow) {
@@ -4595,7 +4595,7 @@
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 1595, 25))
  >TypeFlow : Symbol(TypeFlow)
  
-@@ -4844,16 +4844,16 @@
+@@= skipped -10, +10 lines =@@
          }
  
          public addToControlFlow(context: ControlFlowContext): void {
@@ -4617,7 +4617,7 @@
  >context : Symbol(context, Decl(parserRealSource11.ts, 1599, 32))
  
              var afterIf = new BasicBlock();
-@@ -4881,9 +4881,9 @@
+@@= skipped -37, +37 lines =@@
  
              context.walk(this.thenBod, this);
  >context : Symbol(context, Decl(parserRealSource11.ts, 1599, 32))
@@ -4629,7 +4629,7 @@
  >this : Symbol(IfStatement, Decl(parserRealSource11.ts, 1563, 5))
  
              if (!context.noContinuation) {
-@@ -4897,9 +4897,9 @@
+@@= skipped -16, +16 lines =@@
  >afterIf : Symbol(afterIf, Decl(parserRealSource11.ts, 1601, 15))
              }
              if (this.elseBod) {
@@ -4641,7 +4641,7 @@
  
                  // current block will be thenBod
                  context.current = new BasicBlock();
-@@ -4914,9 +4914,9 @@
+@@= skipped -17, +17 lines =@@
  
                  context.walk(this.elseBod, this);
  >context : Symbol(context, Decl(parserRealSource11.ts, 1599, 32))
@@ -4653,7 +4653,7 @@
  >this : Symbol(IfStatement, Decl(parserRealSource11.ts, 1563, 5))
  
                  if (!context.noContinuation) {
-@@ -4980,7 +4980,7 @@
+@@= skipped -66, +66 lines =@@
  >Statement : Symbol(Statement, Decl(parserRealSource11.ts, 1291, 5))
  
          public returnExpression: AST = null;
@@ -4662,7 +4662,7 @@
  >AST : Symbol(AST, Decl(parserRealSource11.ts, 9, 5))
  
          constructor () {
-@@ -4989,7 +4989,7 @@
+@@= skipped -9, +9 lines =@@
          }
  
          public emit(emitter: Emitter, tokenId: TokenID, startLine: boolean) {
@@ -4671,7 +4671,7 @@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1653, 20))
  >Emitter : Symbol(Emitter)
  >tokenId : Symbol(tokenId, Decl(parserRealSource11.ts, 1653, 37))
-@@ -5009,18 +5009,18 @@
+@@= skipped -20, +20 lines =@@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1653, 20))
  
              if (this.returnExpression) {
@@ -4694,7 +4694,7 @@
              }
              else {
                  emitter.writeToOutput("return;");
-@@ -5040,14 +5040,14 @@
+@@= skipped -31, +31 lines =@@
          }
  
          public addToControlFlow(context: ControlFlowContext): void {
@@ -4712,7 +4712,7 @@
  >context : Symbol(context, Decl(parserRealSource11.ts, 1669, 32))
  
              context.returnStmt();
-@@ -5055,7 +5055,7 @@
+@@= skipped -15, +15 lines =@@
          }
  
          public typeCheck(typeFlow: TypeFlow) {
@@ -4721,7 +4721,7 @@
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 1674, 25))
  >TypeFlow : Symbol(TypeFlow)
  
-@@ -5080,100 +5080,100 @@
+@@= skipped -25, +25 lines =@@
  >Statement : Symbol(Statement, Decl(parserRealSource11.ts, 1291, 5))
  
          constructor (public lval: AST, public obj: AST) {
@@ -4856,7 +4856,7 @@
  
                          var block = <Block>singleItem;
  >block : Symbol(block, Decl(parserRealSource11.ts, 1712, 27))
-@@ -5181,54 +5181,54 @@
+@@= skipped -101, +101 lines =@@
  >singleItem : Symbol(singleItem, Decl(parserRealSource11.ts, 1699, 19))
  
                          if ((block.statements !== null) && (block.statements.members.length == 1)) {
@@ -4933,7 +4933,7 @@
  
                                  var binex = <BinaryExpression>target;
  >binex : Symbol(binex, Decl(parserRealSource11.ts, 1722, 35))
-@@ -5236,89 +5236,89 @@
+@@= skipped -55, +55 lines =@@
  >target : Symbol(target, Decl(parserRealSource11.ts, 1720, 31))
  
                                  if ((binex.operand1.nodeType == NodeType.Name) &&
@@ -5063,7 +5063,7 @@
  
                                                      return true;
                                                  }
-@@ -5335,7 +5335,7 @@
+@@= skipped -99, +99 lines =@@
          }
  
          public emit(emitter: Emitter, tokenId: TokenID, startLine: boolean) {
@@ -5072,7 +5072,7 @@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1748, 20))
  >Emitter : Symbol(Emitter)
  >tokenId : Symbol(tokenId, Decl(parserRealSource11.ts, 1748, 37))
-@@ -5356,42 +5356,42 @@
+@@= skipped -21, +21 lines =@@
  
              emitter.recordSourceMappingStart(this.statement);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1748, 20))
@@ -5125,7 +5125,7 @@
  
              emitter.setInObjectLiteral(temp);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1748, 20))
-@@ -5407,7 +5407,7 @@
+@@= skipped -51, +51 lines =@@
          }
  
          public typeCheck(typeFlow: TypeFlow) {
@@ -5134,7 +5134,7 @@
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 1765, 25))
  >TypeFlow : Symbol(TypeFlow)
  
-@@ -5415,9 +5415,9 @@
+@@= skipped -8, +8 lines =@@
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 1765, 25))
  
                  if (!this.isFiltered()) {
@@ -5146,7 +5146,7 @@
  
                      typeFlow.checker.errorReporter.styleError(this, "no hasOwnProperty filter");
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 1765, 25))
-@@ -5430,31 +5430,31 @@
+@@= skipped -15, +15 lines =@@
          }
  
          public addToControlFlow(context: ControlFlowContext): void {
@@ -5187,7 +5187,7 @@
              }
  
              var loopHeader = context.current;
-@@ -5476,9 +5476,9 @@
+@@= skipped -46, +46 lines =@@
  >loopStart : Symbol(loopStart, Decl(parserRealSource11.ts, 1783, 15))
  
              if (this.body) {
@@ -5199,7 +5199,7 @@
  
                  context.pushStatement(this, loopStart, afterLoop);
  >context : Symbol(context, Decl(parserRealSource11.ts, 1774, 32))
-@@ -5488,9 +5488,9 @@
+@@= skipped -12, +12 lines =@@
  
                  context.walk(this.body, this);
  >context : Symbol(context, Decl(parserRealSource11.ts, 1774, 32))
@@ -5211,7 +5211,7 @@
  >this : Symbol(ForInStatement, Decl(parserRealSource11.ts, 1683, 5))
  
                  context.popStatement();
-@@ -5528,19 +5528,19 @@
+@@= skipped -40, +40 lines =@@
  >Statement : Symbol(Statement, Decl(parserRealSource11.ts, 1291, 5))
  
          public cond: AST;
@@ -5235,7 +5235,7 @@
  >AST : Symbol(AST, Decl(parserRealSource11.ts, 9, 5))
  
              super(NodeType.For);
-@@ -5548,10 +5548,10 @@
+@@= skipped -20, +20 lines =@@
          }
  
          public isLoop() { return true; }
@@ -5248,7 +5248,7 @@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1815, 20))
  >Emitter : Symbol(Emitter)
  >tokenId : Symbol(tokenId, Decl(parserRealSource11.ts, 1815, 37))
-@@ -5574,40 +5574,40 @@
+@@= skipped -26, +26 lines =@@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1815, 20))
  
              if (this.init) {
@@ -5305,7 +5305,7 @@
                  }
              }
              emitter.writeToOutput("; ");
-@@ -5615,27 +5615,27 @@
+@@= skipped -41, +41 lines =@@
  
              emitter.emitJavascript(this.cond, TokenID.For, false);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1815, 20))
@@ -5339,7 +5339,7 @@
  
              emitter.setInObjectLiteral(temp);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1815, 20))
-@@ -5651,7 +5651,7 @@
+@@= skipped -36, +36 lines =@@
          }
  
          public typeCheck(typeFlow: TypeFlow) {
@@ -5348,7 +5348,7 @@
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 1840, 25))
  >TypeFlow : Symbol(TypeFlow)
  
-@@ -5661,20 +5661,20 @@
+@@= skipped -10, +10 lines =@@
          }
  
          public addToControlFlow(context: ControlFlowContext): void {
@@ -5374,7 +5374,7 @@
              }
              var loopHeader = context.current;
  >loopHeader : Symbol(loopHeader, Decl(parserRealSource11.ts, 1848, 15))
-@@ -5707,9 +5707,9 @@
+@@= skipped -46, +46 lines =@@
  >BasicBlock : Symbol(BasicBlock)
  
              if (this.incr) {
@@ -5386,7 +5386,7 @@
  
                  incrBB = new BasicBlock();
  >incrBB : Symbol(incrBB, Decl(parserRealSource11.ts, 1856, 15))
-@@ -5719,9 +5719,9 @@
+@@= skipped -12, +12 lines =@@
  >incrBB : Symbol(incrBB, Decl(parserRealSource11.ts, 1856, 15))
              }
              if (this.cond) {
@@ -5398,7 +5398,7 @@
  
                  condBlock = context.current;
  >condBlock : Symbol(condBlock, Decl(parserRealSource11.ts, 1854, 15))
-@@ -5729,9 +5729,9 @@
+@@= skipped -10, +10 lines =@@
  
                  context.addContent(this.cond);
  >context : Symbol(context, Decl(parserRealSource11.ts, 1844, 32))
@@ -5410,7 +5410,7 @@
  
                  context.current = new BasicBlock();
  >context : Symbol(context, Decl(parserRealSource11.ts, 1844, 32))
-@@ -5745,9 +5745,9 @@
+@@= skipped -16, +16 lines =@@
  >ITargetInfo : Symbol(ITargetInfo)
  
              if (this.body) {
@@ -5422,7 +5422,7 @@
  
                  context.pushStatement(this, continueTarget, afterLoop);
  >context : Symbol(context, Decl(parserRealSource11.ts, 1844, 32))
-@@ -5757,9 +5757,9 @@
+@@= skipped -12, +12 lines =@@
  
                  context.walk(this.body, this);
  >context : Symbol(context, Decl(parserRealSource11.ts, 1844, 32))
@@ -5434,7 +5434,7 @@
  >this : Symbol(ForStatement, Decl(parserRealSource11.ts, 1802, 5))
  
                  targetInfo = context.popStatement();
-@@ -5767,9 +5767,9 @@
+@@= skipped -10, +10 lines =@@
  >context : Symbol(context, Decl(parserRealSource11.ts, 1844, 32))
              }
              if (this.incr) {
@@ -5446,7 +5446,7 @@
  
                  if (context.noContinuation) {
  >context : Symbol(context, Decl(parserRealSource11.ts, 1844, 32))
-@@ -5779,9 +5779,9 @@
+@@= skipped -12, +12 lines =@@
  
                          context.addUnreachable(this.incr);
  >context : Symbol(context, Decl(parserRealSource11.ts, 1844, 32))
@@ -5458,7 +5458,7 @@
                      }
                  }
                  else {
-@@ -5795,9 +5795,9 @@
+@@= skipped -16, +16 lines =@@
  
                      context.addContent(this.incr);
  >context : Symbol(context, Decl(parserRealSource11.ts, 1844, 32))
@@ -5470,7 +5470,7 @@
                  }
              }
              var loopEnd = context.current;
-@@ -5842,18 +5842,18 @@
+@@= skipped -47, +47 lines =@@
  >Statement : Symbol(Statement, Decl(parserRealSource11.ts, 1291, 5))
  
          public body: AST;
@@ -5493,7 +5493,7 @@
  >AST : Symbol(AST, Decl(parserRealSource11.ts, 9, 5))
  
              super(NodeType.With);
-@@ -5861,7 +5861,7 @@
+@@= skipped -19, +19 lines =@@
          }
  
          public emit(emitter: Emitter, tokenId: TokenID, startLine: boolean) {
@@ -5502,7 +5502,7 @@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1913, 20))
  >Emitter : Symbol(Emitter)
  >tokenId : Symbol(tokenId, Decl(parserRealSource11.ts, 1913, 37))
-@@ -5880,15 +5880,15 @@
+@@= skipped -19, +19 lines =@@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1913, 20))
  
              if (this.expr) {
@@ -5522,7 +5522,7 @@
              }
  
              emitter.writeToOutput(")");
-@@ -5896,9 +5896,9 @@
+@@= skipped -16, +16 lines =@@
  
              emitter.emitJavascriptStatements(this.body, true, false);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1913, 20))
@@ -5534,7 +5534,7 @@
  
              emitter.recordSourceMappingEnd(this);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1913, 20))
-@@ -5910,7 +5910,7 @@
+@@= skipped -14, +14 lines =@@
          }
  
          public typeCheck(typeFlow: TypeFlow) {
@@ -5543,7 +5543,7 @@
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 1927, 25))
  >TypeFlow : Symbol(TypeFlow)
  
-@@ -5925,20 +5925,20 @@
+@@= skipped -15, +15 lines =@@
  >Statement : Symbol(Statement, Decl(parserRealSource11.ts, 1291, 5))
  
          public caseList: ASTList;
@@ -5568,7 +5568,7 @@
  >AST : Symbol(AST, Decl(parserRealSource11.ts, 9, 5))
  
              super(NodeType.Switch);
-@@ -5946,10 +5946,10 @@
+@@= skipped -21, +21 lines =@@
          }
  
          public isCompoundStatement() { return true; }
@@ -5581,7 +5581,7 @@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1943, 20))
  >Emitter : Symbol(Emitter)
  >tokenId : Symbol(tokenId, Decl(parserRealSource11.ts, 1943, 37))
-@@ -5970,27 +5970,27 @@
+@@= skipped -24, +24 lines =@@
  
              emitter.recordSourceMappingStart(this.statement);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1943, 20))
@@ -5615,7 +5615,7 @@
  
              emitter.writeLineToOutput(" {");
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 1943, 20))
-@@ -6000,13 +6000,13 @@
+@@= skipped -30, +30 lines =@@
  
              var casesLen = this.caseList.members.length;
  >casesLen : Symbol(casesLen, Decl(parserRealSource11.ts, 1954, 15))
@@ -5635,7 +5635,7 @@
  
              for (var i = 0; i < casesLen; i++) {
  >i : Symbol(i, Decl(parserRealSource11.ts, 1955, 20))
-@@ -6016,11 +6016,11 @@
+@@= skipped -16, +16 lines =@@
  
                  var caseExpr = this.caseList.members[i];
  >caseExpr : Symbol(caseExpr, Decl(parserRealSource11.ts, 1956, 19))
@@ -5651,7 +5651,7 @@
  >i : Symbol(i, Decl(parserRealSource11.ts, 1955, 20))
  
                  emitter.emitJavascript(caseExpr, TokenID.Case, true);
-@@ -6053,28 +6053,28 @@
+@@= skipped -37, +37 lines =@@
          }
  
          public typeCheck(typeFlow: TypeFlow) {
@@ -5691,7 +5691,7 @@
  
              for (var i = 0; i < len; i++) {
  >i : Symbol(i, Decl(parserRealSource11.ts, 1971, 20))
-@@ -6083,34 +6083,34 @@
+@@= skipped -30, +30 lines =@@
  >i : Symbol(i, Decl(parserRealSource11.ts, 1971, 20))
  
                  this.caseList.members[i] = typeFlow.typeCheck(this.caseList.members[i]);
@@ -5740,7 +5740,7 @@
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 1968, 25))
  
              return this;
-@@ -6119,7 +6119,7 @@
+@@= skipped -36, +36 lines =@@
  
          // if there are break statements that match this switch, then just link cond block with block after switch
          public addToControlFlow(context: ControlFlowContext) {
@@ -5749,7 +5749,7 @@
  >context : Symbol(context, Decl(parserRealSource11.ts, 1980, 32))
  >ControlFlowContext : Symbol(ControlFlowContext)
  
-@@ -6129,9 +6129,9 @@
+@@= skipped -10, +10 lines =@@
  
              context.addContent(this.val);
  >context : Symbol(context, Decl(parserRealSource11.ts, 1980, 32))
@@ -5761,7 +5761,7 @@
  
              var execBlock = new BasicBlock();
  >execBlock : Symbol(execBlock, Decl(parserRealSource11.ts, 1983, 15))
-@@ -6159,9 +6159,9 @@
+@@= skipped -30, +30 lines =@@
  
              context.walk(this.caseList, this);
  >context : Symbol(context, Decl(parserRealSource11.ts, 1980, 32))
@@ -5773,7 +5773,7 @@
  >this : Symbol(SwitchStatement, Decl(parserRealSource11.ts, 1930, 5))
  
              context.popSwitch();
-@@ -6173,14 +6173,14 @@
+@@= skipped -14, +14 lines =@@
  
              var hasCondContinuation = (this.defaultCase == null);
  >hasCondContinuation : Symbol(hasCondContinuation, Decl(parserRealSource11.ts, 1993, 15))
@@ -5792,7 +5792,7 @@
  
                  condBlock.addSuccessor(afterSwitch);
  >condBlock : Symbol(condBlock, Decl(parserRealSource11.ts, 1981, 15))
-@@ -6210,11 +6210,11 @@
+@@= skipped -37, +37 lines =@@
  >Statement : Symbol(Statement, Decl(parserRealSource11.ts, 1291, 5))
  
          public expr: AST = null;
@@ -5806,7 +5806,7 @@
  >ASTList : Symbol(ASTList, Decl(parserRealSource11.ts, 188, 5))
  
          constructor () {
-@@ -6223,7 +6223,7 @@
+@@= skipped -13, +13 lines =@@
          }
  
          public emit(emitter: Emitter, tokenId: TokenID, startLine: boolean) {
@@ -5815,7 +5815,7 @@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 2016, 20))
  >Emitter : Symbol(Emitter)
  >tokenId : Symbol(tokenId, Decl(parserRealSource11.ts, 2016, 37))
-@@ -6239,18 +6239,18 @@
+@@= skipped -16, +16 lines =@@
  >this : Symbol(CaseStatement, Decl(parserRealSource11.ts, 2006, 5))
  
              if (this.expr) {
@@ -5838,7 +5838,7 @@
              }
              else {
                  emitter.writeToOutput("default");
-@@ -6261,9 +6261,9 @@
+@@= skipped -22, +22 lines =@@
  
              emitter.emitJavascriptStatements(this.body, false, false);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 2016, 20))
@@ -5850,7 +5850,7 @@
  
              emitter.recordSourceMappingEnd(this);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 2016, 20))
-@@ -6275,29 +6275,29 @@
+@@= skipped -14, +14 lines =@@
          }
  
          public typeCheck(typeFlow: TypeFlow) {
@@ -5889,7 +5889,7 @@
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 2032, 25))
  
              return this;
-@@ -6307,7 +6307,7 @@
+@@= skipped -32, +32 lines =@@
          // TODO: more reasoning about unreachable cases (such as duplicate literals as case expressions)
          // for now, assume all cases are reachable, regardless of whether some cases fall through
          public addToControlFlow(context: ControlFlowContext) {
@@ -5898,7 +5898,7 @@
  >context : Symbol(context, Decl(parserRealSource11.ts, 2041, 32))
  >ControlFlowContext : Symbol(ControlFlowContext)
  
-@@ -6321,9 +6321,9 @@
+@@= skipped -14, +14 lines =@@
  
              // TODO: fall-through from previous (+ to end of switch)
              if (this.expr) {
@@ -5910,7 +5910,7 @@
  
                  var exprBlock = new BasicBlock();
  >exprBlock : Symbol(exprBlock, Decl(parserRealSource11.ts, 2046, 19))
-@@ -6338,9 +6338,9 @@
+@@= skipped -17, +17 lines =@@
  
                  context.addContent(this.expr);
  >context : Symbol(context, Decl(parserRealSource11.ts, 2041, 32))
@@ -5922,7 +5922,7 @@
  
                  exprBlock.addSuccessor(execBlock);
  >exprBlock : Symbol(exprBlock, Decl(parserRealSource11.ts, 2046, 19))
-@@ -6356,15 +6356,15 @@
+@@= skipped -18, +18 lines =@@
  >execBlock : Symbol(execBlock, Decl(parserRealSource11.ts, 2042, 15))
  
              if (this.body) {
@@ -5942,7 +5942,7 @@
  >this : Symbol(CaseStatement, Decl(parserRealSource11.ts, 2006, 5))
              }
              context.noContinuation = false;
-@@ -6380,16 +6380,16 @@
+@@= skipped -24, +24 lines =@@
  >AST : Symbol(AST, Decl(parserRealSource11.ts, 9, 5))
  
          constructor (public term: AST, public arrayCount: number) {
@@ -5962,7 +5962,7 @@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 2069, 20))
  >Emitter : Symbol(Emitter)
  >tokenId : Symbol(tokenId, Decl(parserRealSource11.ts, 2069, 37))
-@@ -6401,7 +6401,7 @@
+@@= skipped -21, +21 lines =@@
          }
  
          public typeCheck(typeFlow: TypeFlow) {
@@ -5971,7 +5971,7 @@
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 2073, 25))
  >TypeFlow : Symbol(TypeFlow)
  
-@@ -6423,15 +6423,15 @@
+@@= skipped -22, +22 lines =@@
  >typeLink : Symbol(typeLink, Decl(parserRealSource11.ts, 2076, 15))
  
              if (this.term) {
@@ -5991,7 +5991,7 @@
              }
  
              typeFlow.checkForVoidConstructor(typeLink.type, this);
-@@ -6440,26 +6440,26 @@
+@@= skipped -17, +17 lines =@@
  >this : Symbol(TypeReference, Decl(parserRealSource11.ts, 2062, 5))
  
              this.type = typeLink.type;
@@ -6028,7 +6028,7 @@
              }
  
              typeFlow.inTypeRefTypeCheck = prevInTCTR;
-@@ -6476,9 +6476,9 @@
+@@= skipped -36, +36 lines =@@
  >Statement : Symbol(Statement, Decl(parserRealSource11.ts, 1291, 5))
  
          constructor (public tryNode: AST, public finallyNode: Finally) {
@@ -6040,7 +6040,7 @@
  >Finally : Symbol(Finally, Decl(parserRealSource11.ts, 2295, 5))
  
              super(NodeType.TryFinally);
-@@ -6486,10 +6486,10 @@
+@@= skipped -10, +10 lines =@@
          }
  
          public isCompoundStatement() { return true; }
@@ -6053,7 +6053,7 @@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 2104, 20))
  >Emitter : Symbol(Emitter)
  >tokenId : Symbol(tokenId, Decl(parserRealSource11.ts, 2104, 37))
-@@ -6502,15 +6502,15 @@
+@@= skipped -16, +16 lines =@@
  
              emitter.emitJavascript(this.tryNode, TokenID.Try, false);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 2104, 20))
@@ -6073,7 +6073,7 @@
  
              emitter.recordSourceMappingEnd(this);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 2104, 20))
-@@ -6518,33 +6518,33 @@
+@@= skipped -16, +16 lines =@@
          }
  
          public typeCheck(typeFlow: TypeFlow) {
@@ -6118,7 +6118,7 @@
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 2111, 25))
  
              return this;
-@@ -6552,7 +6552,7 @@
+@@= skipped -34, +34 lines =@@
          }
  
          public addToControlFlow(context: ControlFlowContext) {
@@ -6127,7 +6127,7 @@
  >context : Symbol(context, Decl(parserRealSource11.ts, 2118, 32))
  >ControlFlowContext : Symbol(ControlFlowContext)
  
-@@ -6561,9 +6561,9 @@
+@@= skipped -9, +9 lines =@@
  
              context.walk(this.tryNode, this);
  >context : Symbol(context, Decl(parserRealSource11.ts, 2118, 32))
@@ -6139,7 +6139,7 @@
  >this : Symbol(TryFinally, Decl(parserRealSource11.ts, 2095, 5))
  
              var finBlock = new BasicBlock();
-@@ -6587,9 +6587,9 @@
+@@= skipped -26, +26 lines =@@
  
              context.walk(this.finallyNode, this);
  >context : Symbol(context, Decl(parserRealSource11.ts, 2118, 32))
@@ -6151,7 +6151,7 @@
  >this : Symbol(TryFinally, Decl(parserRealSource11.ts, 2095, 5))
  
              if (!context.noContinuation && context.current) {
-@@ -6624,9 +6624,9 @@
+@@= skipped -37, +37 lines =@@
  >Statement : Symbol(Statement, Decl(parserRealSource11.ts, 1291, 5))
  
          constructor (public tryNode: Try, public catchNode: Catch) {
@@ -6163,7 +6163,7 @@
  >Catch : Symbol(Catch, Decl(parserRealSource11.ts, 2218, 5))
  
              super(NodeType.TryCatch);
-@@ -6634,10 +6634,10 @@
+@@= skipped -10, +10 lines =@@
          }
  
          public isCompoundStatement() { return true; }
@@ -6176,7 +6176,7 @@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 2149, 20))
  >Emitter : Symbol(Emitter)
  >tokenId : Symbol(tokenId, Decl(parserRealSource11.ts, 2149, 37))
-@@ -6654,15 +6654,15 @@
+@@= skipped -20, +20 lines =@@
  
              emitter.emitJavascript(this.tryNode, TokenID.Try, false);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 2149, 20))
@@ -6196,7 +6196,7 @@
  
              emitter.recordSourceMappingEnd(this);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 2149, 20))
-@@ -6674,7 +6674,7 @@
+@@= skipped -20, +20 lines =@@
          }
  
          public addToControlFlow(context: ControlFlowContext) {
@@ -6205,7 +6205,7 @@
  >context : Symbol(context, Decl(parserRealSource11.ts, 2158, 32))
  >ControlFlowContext : Symbol(ControlFlowContext)
  
-@@ -6703,9 +6703,9 @@
+@@= skipped -29, +29 lines =@@
  
              context.walk(this.tryNode, this);
  >context : Symbol(context, Decl(parserRealSource11.ts, 2158, 32))
@@ -6217,7 +6217,7 @@
  >this : Symbol(TryCatch, Decl(parserRealSource11.ts, 2140, 5))
  
              if (!context.noContinuation) {
-@@ -6728,9 +6728,9 @@
+@@= skipped -25, +25 lines =@@
  
              context.walk(this.catchNode, this);
  >context : Symbol(context, Decl(parserRealSource11.ts, 2158, 32))
@@ -6229,7 +6229,7 @@
  >this : Symbol(TryCatch, Decl(parserRealSource11.ts, 2140, 5))
  
              context.popStatement();
-@@ -6756,34 +6756,34 @@
+@@= skipped -28, +28 lines =@@
          }
  
          public typeCheck(typeFlow: TypeFlow) {
@@ -6275,7 +6275,7 @@
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 2184, 25))
  
              return this;
-@@ -6796,7 +6796,7 @@
+@@= skipped -40, +40 lines =@@
  >Statement : Symbol(Statement, Decl(parserRealSource11.ts, 1291, 5))
  
          constructor (public body: AST) {
@@ -6284,7 +6284,7 @@
  >AST : Symbol(AST, Decl(parserRealSource11.ts, 9, 5))
  
              super(NodeType.Try);
-@@ -6804,7 +6804,7 @@
+@@= skipped -8, +8 lines =@@
          }
  
          public emit(emitter: Emitter, tokenId: TokenID, startLine: boolean) {
@@ -6293,7 +6293,7 @@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 2197, 20))
  >Emitter : Symbol(Emitter)
  >tokenId : Symbol(tokenId, Decl(parserRealSource11.ts, 2197, 37))
-@@ -6824,9 +6824,9 @@
+@@= skipped -20, +20 lines =@@
  
              emitter.emitJavascript(this.body, TokenID.Try, false);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 2197, 20))
@@ -6305,7 +6305,7 @@
  
              emitter.recordSourceMappingEnd(this);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 2197, 20))
-@@ -6838,38 +6838,38 @@
+@@= skipped -14, +14 lines =@@
          }
  
          public typeCheck(typeFlow: TypeFlow) {
@@ -6354,7 +6354,7 @@
  >this : Symbol(Try, Decl(parserRealSource11.ts, 2190, 5))
              }
              context.walker.options.goChildren = false;
-@@ -6885,38 +6885,38 @@
+@@= skipped -47, +47 lines =@@
  >Statement : Symbol(Statement, Decl(parserRealSource11.ts, 1291, 5))
  
          constructor (public param: VarDecl, public body: AST) {
@@ -6404,7 +6404,7 @@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 2230, 20))
  >Emitter : Symbol(Emitter)
  >tokenId : Symbol(tokenId, Decl(parserRealSource11.ts, 2230, 37))
-@@ -6936,33 +6936,33 @@
+@@= skipped -51, +51 lines =@@
  
              emitter.recordSourceMappingStart(this.statement);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 2230, 20))
@@ -6446,7 +6446,7 @@
  
              emitter.recordSourceMappingEnd(this);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 2230, 20))
-@@ -6974,20 +6974,20 @@
+@@= skipped -38, +38 lines =@@
          }
  
          public addToControlFlow(context: ControlFlowContext) {
@@ -6472,7 +6472,7 @@
  
                  var bodBlock = new BasicBlock();
  >bodBlock : Symbol(bodBlock, Decl(parserRealSource11.ts, 2247, 19))
-@@ -7001,15 +7001,15 @@
+@@= skipped -27, +27 lines =@@
  >bodBlock : Symbol(bodBlock, Decl(parserRealSource11.ts, 2247, 19))
              }
              if (this.body) {
@@ -6492,7 +6492,7 @@
  >this : Symbol(Catch, Decl(parserRealSource11.ts, 2218, 5))
              }
              context.noContinuation = false;
-@@ -7020,7 +7020,7 @@
+@@= skipped -19, +19 lines =@@
          }
  
          public typeCheck(typeFlow: TypeFlow) {
@@ -6501,7 +6501,7 @@
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 2258, 25))
  >TypeFlow : Symbol(TypeFlow)
  
-@@ -7030,40 +7030,40 @@
+@@= skipped -10, +10 lines =@@
  
              typeFlow.scope = this.containedScope;
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 2258, 25))
@@ -6558,7 +6558,7 @@
  
                                            typeFlow.checker.locationInfo.unitIndex,
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 2258, 25))
-@@ -7100,32 +7100,32 @@
+@@= skipped -70, +70 lines =@@
  >exceptVar : Symbol(exceptVar, Decl(parserRealSource11.ts, 2262, 15))
              }
              this.param.sym = exceptVar.symbol;
@@ -6601,7 +6601,7 @@
  
              // if we're in provisional typecheck mode, clean up the symbol entry
              // REVIEW: This is obviously bad form, since we're counting on the internal
-@@ -7144,9 +7144,9 @@
+@@= skipped -44, +44 lines =@@
  >undefined : Symbol(undefined)
              }
              this.type = typeFlow.voidType;
@@ -6613,7 +6613,7 @@
  >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 2258, 25))
  
              typeFlow.scope = prevScope;
-@@ -7163,7 +7163,7 @@
+@@= skipped -19, +19 lines =@@
  >Statement : Symbol(Statement, Decl(parserRealSource11.ts, 1291, 5))
  
          constructor (public body: AST) {
@@ -6622,7 +6622,7 @@
  >AST : Symbol(AST, Decl(parserRealSource11.ts, 9, 5))
  
              super(NodeType.Finally);
-@@ -7171,7 +7171,7 @@
+@@= skipped -8, +8 lines =@@
          }
  
          public emit(emitter: Emitter, tokenId: TokenID, startLine: boolean) {
@@ -6631,7 +6631,7 @@
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 2302, 20))
  >Emitter : Symbol(Emitter)
  >tokenId : Symbol(tokenId, Decl(parserRealSource11.ts, 2302, 37))
-@@ -7191,9 +7191,9 @@
+@@= skipped -20, +20 lines =@@
  
              emitter.emitJavascript(this.body, TokenID.Finally, false);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 2302, 20))
@@ -6643,7 +6643,7 @@
  
              emitter.recordSourceMappingEnd(this);
  >emitter : Symbol(emitter, Decl(parserRealSource11.ts, 2302, 20))
-@@ -7205,20 +7205,20 @@
+@@= skipped -14, +14 lines =@@
          }
  
          public addToControlFlow(context: ControlFlowContext) {
@@ -6669,7 +6669,7 @@
  >this : Symbol(Finally, Decl(parserRealSource11.ts, 2295, 5))
              }
              context.walker.options.goChildren = false;
-@@ -7229,18 +7229,18 @@
+@@= skipped -24, +24 lines =@@
          }
  
          public typeCheck(typeFlow: TypeFlow) {
@@ -6693,7 +6693,7 @@
  
              return this;
  >this : Symbol(Finally, Decl(parserRealSource11.ts, 2295, 5))
-@@ -7252,80 +7252,80 @@
+@@= skipped -23, +23 lines =@@
  >AST : Symbol(AST, Decl(parserRealSource11.ts, 9, 5))
  
          public text: string[] = null;
@@ -6807,7 +6807,7 @@
          }
      }
  
-@@ -7339,7 +7339,7 @@
+@@= skipped -87, +87 lines =@@
          }
  
          public emit(emitter: Emitter, tokenId: TokenID, startLine: boolean) {

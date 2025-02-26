@@ -1,6 +1,6 @@
 --- old.variableDeclarationDeclarationEmitUniqueSymbolPartialStatement.symbols
 +++ new.variableDeclarationDeclarationEmitUniqueSymbolPartialStatement.symbols
-@@ -10,7 +10,7 @@
+@@= skipped -10, +10 lines =@@
  >Foo : Symbol(Foo, Decl(variableDeclarationDeclarationEmitUniqueSymbolPartialStatement.ts, 0, 33))
  
      [key] = value;

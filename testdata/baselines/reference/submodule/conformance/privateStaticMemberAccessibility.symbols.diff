@@ -1,6 +1,6 @@
 --- old.privateStaticMemberAccessibility.symbols
 +++ new.privateStaticMemberAccessibility.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Base : Symbol(Base, Decl(privateStaticMemberAccessibility.ts, 0, 0))
  
      private static foo: string;
@@ -9,7 +9,7 @@
  }
  
  class Derived extends Base {
-@@ -13,14 +13,14 @@
+@@= skipped -8, +8 lines =@@
  >Base : Symbol(Base, Decl(privateStaticMemberAccessibility.ts, 0, 0))
  
      static bar = Base.foo; // error

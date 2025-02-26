@@ -1,6 +1,6 @@
 --- old.constructorArgWithGenericCallSignature.symbols
 +++ new.constructorArgWithGenericCallSignature.symbols
-@@ -29,18 +29,18 @@
+@@= skipped -29, +29 lines =@@
  var func: Test.MyFunc;
  >func : Symbol(func, Decl(constructorArgWithGenericCallSignature.ts, 10, 3))
  >Test : Symbol(Test, Decl(constructorArgWithGenericCallSignature.ts, 0, 0))

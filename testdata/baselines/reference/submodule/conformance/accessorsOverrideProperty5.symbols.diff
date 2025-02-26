@@ -1,6 +1,6 @@
 --- old.accessorsOverrideProperty5.symbols
 +++ new.accessorsOverrideProperty5.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >I : Symbol(I, Decl(accessorsOverrideProperty5.ts, 0, 0))
  
      p: number
@@ -9,7 +9,7 @@
  }
  interface B extends I { }
  >B : Symbol(B, Decl(accessorsOverrideProperty5.ts, 2, 1), Decl(accessorsOverrideProperty5.ts, 3, 25))
-@@ -19,10 +19,10 @@
+@@= skipped -14, +14 lines =@@
  >B : Symbol(B, Decl(accessorsOverrideProperty5.ts, 2, 1), Decl(accessorsOverrideProperty5.ts, 3, 25))
  
      get p() { return 1 }

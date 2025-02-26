@@ -1,6 +1,6 @@
 --- old.argumentsReferenceInMethod1_Js.symbols
 +++ new.argumentsReferenceInMethod1_Js.symbols
-@@ -8,16 +8,14 @@
+@@= skipped -8, +8 lines =@@
  	 * @param {object} [foo={}]
  	 */
  	m(foo = {}) {

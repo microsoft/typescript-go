@@ -1,6 +1,6 @@
 --- old.multipleDefaultExports03.symbols
 +++ new.multipleDefaultExports03.symbols
-@@ -2,9 +2,9 @@
+@@= skipped -2, +2 lines =@@
  
  === multipleDefaultExports03.ts ===
  export default class C {

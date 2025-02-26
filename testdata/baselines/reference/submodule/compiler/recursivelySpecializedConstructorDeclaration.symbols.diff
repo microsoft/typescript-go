@@ -1,6 +1,6 @@
 --- old.recursivelySpecializedConstructorDeclaration.symbols
 +++ new.recursivelySpecializedConstructorDeclaration.symbols
-@@ -13,7 +13,7 @@
+@@= skipped -13, +13 lines =@@
  
          // Removing this line fixes the constructor of ItemValue
          options: ViewModel<TValue>;

@@ -1,6 +1,6 @@
 --- old.nodeModulesAtTypesPriority.symbols
 +++ new.nodeModulesAtTypesPriority.symbols
-@@ -11,10 +11,18 @@
+@@= skipped -11, +11 lines =@@
  export declare function createStore(): void;
  >createStore : Symbol(createStore, Decl(index.d.ts, 0, 0))
  

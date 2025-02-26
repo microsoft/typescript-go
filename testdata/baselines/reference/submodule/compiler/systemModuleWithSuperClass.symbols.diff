@@ -1,6 +1,6 @@
 --- old.systemModuleWithSuperClass.symbols
 +++ new.systemModuleWithSuperClass.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(foo.ts, 0, 0))
  
      a: string;
@@ -9,7 +9,7 @@
  }
  
  === bar.ts ===
-@@ -17,5 +17,5 @@
+@@= skipped -12, +12 lines =@@
  >Foo : Symbol(Foo, Decl(bar.ts, 0, 8))
  
      b: string;

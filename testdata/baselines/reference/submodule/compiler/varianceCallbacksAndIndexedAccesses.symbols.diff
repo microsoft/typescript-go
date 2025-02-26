@@ -1,6 +1,6 @@
 --- old.varianceCallbacksAndIndexedAccesses.symbols
 +++ new.varianceCallbacksAndIndexedAccesses.symbols
-@@ -39,15 +39,15 @@
+@@= skipped -39, +39 lines =@@
  >T : Symbol(T, Decl(varianceCallbacksAndIndexedAccesses.ts, 8, 27))
  
      source: WindowLike<T>;
@@ -19,7 +19,7 @@
  >T : Symbol(T, Decl(varianceCallbacksAndIndexedAccesses.ts, 8, 27))
  }
  interface PostMessageObject<T> {
-@@ -55,7 +55,7 @@
+@@= skipped -16, +16 lines =@@
  >T : Symbol(T, Decl(varianceCallbacksAndIndexedAccesses.ts, 13, 28))
  
      postMessage(message: T, host: string): void;
@@ -28,7 +28,7 @@
  >message : Symbol(message, Decl(varianceCallbacksAndIndexedAccesses.ts, 14, 16))
  >T : Symbol(T, Decl(varianceCallbacksAndIndexedAccesses.ts, 13, 28))
  >host : Symbol(host, Decl(varianceCallbacksAndIndexedAccesses.ts, 14, 27))
-@@ -67,7 +67,7 @@
+@@= skipped -12, +12 lines =@@
  >T : Symbol(T, Decl(varianceCallbacksAndIndexedAccesses.ts, 16, 21))
  
      addEventListener(type: "message", handler: Action1<MessageEventLike<T>>): void;
@@ -37,7 +37,7 @@
  >type : Symbol(type, Decl(varianceCallbacksAndIndexedAccesses.ts, 17, 21))
  >handler : Symbol(handler, Decl(varianceCallbacksAndIndexedAccesses.ts, 17, 37))
  >Action1 : Symbol(Action1, Decl(varianceCallbacksAndIndexedAccesses.ts, 3, 1))
-@@ -75,13 +75,13 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(varianceCallbacksAndIndexedAccesses.ts, 16, 21))
  
      addEventListener(type: string, handler: Action1<any>): void;
@@ -53,7 +53,7 @@
  >type : Symbol(type, Decl(varianceCallbacksAndIndexedAccesses.ts, 19, 24))
  >handler : Symbol(handler, Decl(varianceCallbacksAndIndexedAccesses.ts, 19, 40))
  >Action1 : Symbol(Action1, Decl(varianceCallbacksAndIndexedAccesses.ts, 3, 1))
-@@ -89,7 +89,7 @@
+@@= skipped -14, +14 lines =@@
  >T : Symbol(T, Decl(varianceCallbacksAndIndexedAccesses.ts, 16, 21))
  
      removeEventListener(type: string, handler: Action1<any>): void;

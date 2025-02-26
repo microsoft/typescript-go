@@ -1,6 +1,6 @@
 --- old.instanceofOperatorWithInvalidStaticToString.symbols
 +++ new.instanceofOperatorWithInvalidStaticToString.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >StaticToString : Symbol(StaticToString, Decl(instanceofOperatorWithInvalidStaticToString.ts, 0, 0))
  
      static toString(): void;
@@ -9,7 +9,7 @@
  }
  
  function foo(staticToString: StaticToString) {
-@@ -22,7 +22,7 @@
+@@= skipped -17, +17 lines =@@
  >StaticToNumber : Symbol(StaticToNumber, Decl(instanceofOperatorWithInvalidStaticToString.ts, 6, 1))
  
      static toNumber(): void;
@@ -18,7 +18,7 @@
  }
  function bar(staticToNumber: StaticToNumber) {
  >bar : Symbol(bar, Decl(instanceofOperatorWithInvalidStaticToString.ts, 10, 1))
-@@ -38,7 +38,7 @@
+@@= skipped -16, +16 lines =@@
  >NormalToString : Symbol(NormalToString, Decl(instanceofOperatorWithInvalidStaticToString.ts, 13, 1))
  
      toString(): void;

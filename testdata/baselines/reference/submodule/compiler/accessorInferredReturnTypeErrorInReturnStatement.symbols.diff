@@ -1,6 +1,6 @@
 --- old.accessorInferredReturnTypeErrorInReturnStatement.symbols
 +++ new.accessorInferredReturnTypeErrorInReturnStatement.symbols
-@@ -9,7 +9,7 @@
+@@= skipped -9, +9 lines =@@
  
      var _this = this;
  >_this : Symbol(_this, Decl(accessorInferredReturnTypeErrorInReturnStatement.ts, 2, 7))

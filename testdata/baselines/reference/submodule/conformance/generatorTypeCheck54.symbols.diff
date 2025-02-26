@@ -1,6 +1,6 @@
 --- old.generatorTypeCheck54.symbols
 +++ new.generatorTypeCheck54.symbols
-@@ -3,11 +3,11 @@
+@@= skipped -3, +3 lines =@@
  === generatorTypeCheck54.ts ===
  class Foo { x: number }
  >Foo : Symbol(Foo, Decl(generatorTypeCheck54.ts, 0, 0))

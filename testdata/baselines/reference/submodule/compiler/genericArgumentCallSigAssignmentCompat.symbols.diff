@@ -1,6 +1,6 @@
 --- old.genericArgumentCallSigAssignmentCompat.symbols
 +++ new.genericArgumentCallSigAssignmentCompat.symbols
-@@ -21,7 +21,7 @@
+@@= skipped -21, +21 lines =@@
  >Static : Symbol(Static, Decl(genericArgumentCallSigAssignmentCompat.ts, 3, 5))
  
          all<T>(list: T[], iterator?: Iterator<T, boolean>, context?: any): boolean;
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(genericArgumentCallSigAssignmentCompat.ts, 6, 12))
  >list : Symbol(list, Decl(genericArgumentCallSigAssignmentCompat.ts, 6, 15))
  >T : Symbol(T, Decl(genericArgumentCallSigAssignmentCompat.ts, 6, 12))
-@@ -31,7 +31,7 @@
+@@= skipped -10, +10 lines =@@
  >context : Symbol(context, Decl(genericArgumentCallSigAssignmentCompat.ts, 6, 58))
  
          identity<T>(value: T): T;
@@ -18,7 +18,7 @@
  >T : Symbol(T, Decl(genericArgumentCallSigAssignmentCompat.ts, 7, 17))
  >value : Symbol(value, Decl(genericArgumentCallSigAssignmentCompat.ts, 7, 20))
  >T : Symbol(T, Decl(genericArgumentCallSigAssignmentCompat.ts, 7, 17))
-@@ -42,24 +42,24 @@
+@@= skipped -11, +11 lines =@@
  declare var _: Underscore.Static;
  >_ : Symbol(_, Decl(genericArgumentCallSigAssignmentCompat.ts, 11, 11))
  >Underscore : Symbol(Underscore, Decl(genericArgumentCallSigAssignmentCompat.ts, 0, 0))

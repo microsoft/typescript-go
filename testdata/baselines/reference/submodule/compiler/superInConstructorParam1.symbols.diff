@@ -1,6 +1,6 @@
 --- old.superInConstructorParam1.symbols
 +++ new.superInConstructorParam1.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >B : Symbol(B, Decl(superInConstructorParam1.ts, 0, 0))
  
    public foo(): number {

@@ -1,6 +1,6 @@
 --- old.jsDeclarationsFunctionLikeClasses.symbols
 +++ new.jsDeclarationsFunctionLikeClasses.symbols
-@@ -11,7 +11,6 @@
+@@= skipped -11, +11 lines =@@
  >y : Symbol(y, Decl(source.js, 4, 24))
  
      if (!(this instanceof Point)) {
@@ -8,7 +8,7 @@
  >Point : Symbol(Point, Decl(source.js, 0, 0))
  
          return new Point(x, y);
-@@ -20,15 +19,9 @@
+@@= skipped -9, +8 lines =@@
  >y : Symbol(y, Decl(source.js, 4, 24))
      }
      this.x = x;
@@ -24,7 +24,7 @@
  >y : Symbol(y, Decl(source.js, 4, 24))
  }
  
-@@ -44,14 +37,10 @@
+@@= skipped -24, +18 lines =@@
  >p : Symbol(p, Decl(referencer.js, 5, 26))
  
      return Math.sqrt(p.x ** 2 + p.y ** 2);

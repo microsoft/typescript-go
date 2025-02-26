@@ -1,6 +1,6 @@
 --- old.superPropertyAccess_ES6.symbols
 +++ new.superPropertyAccess_ES6.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >MyBase : Symbol(MyBase, Decl(superPropertyAccess_ES6.ts, 0, 0))
  
    getValue(): number { return 1; }
@@ -13,7 +13,7 @@
  }
  
  class MyDerived extends MyBase {
-@@ -21,15 +21,15 @@
+@@= skipped -16, +16 lines =@@
  
      const f1 = super.getValue();
  >f1 : Symbol(f1, Decl(superPropertyAccess_ES6.ts, 9, 9))
@@ -33,7 +33,7 @@
    }
  }
  
-@@ -39,28 +39,28 @@
+@@= skipped -18, +18 lines =@@
  
  var f3 = d.value;
  >f3 : Symbol(f3, Decl(superPropertyAccess_ES6.ts, 15, 3))
@@ -71,7 +71,7 @@
  >value : Symbol(value, Decl(superPropertyAccess_ES6.ts, 20, 17))
  }
  
-@@ -69,13 +69,13 @@
+@@= skipped -30, +30 lines =@@
  >A : Symbol(A, Decl(superPropertyAccess_ES6.ts, 15, 17))
  
      set property(value: string) {

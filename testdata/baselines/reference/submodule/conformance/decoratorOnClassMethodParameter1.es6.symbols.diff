@@ -1,6 +1,6 @@
 --- old.decoratorOnClassMethodParameter1.es6.symbols
 +++ new.decoratorOnClassMethodParameter1.es6.symbols
-@@ -4,13 +4,13 @@
+@@= skipped -4, +4 lines =@@
  declare function dec(target: Object, propertyKey: string | symbol, parameterIndex: number): void;
  >dec : Symbol(dec, Decl(decoratorOnClassMethodParameter1.es6.ts, 0, 0))
  >target : Symbol(target, Decl(decoratorOnClassMethodParameter1.es6.ts, 0, 21))

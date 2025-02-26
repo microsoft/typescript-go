@@ -1,6 +1,6 @@
 --- old.es2017basicAsync.symbols
 +++ new.es2017basicAsync.symbols
-@@ -49,14 +49,14 @@
+@@= skipped -49, +49 lines =@@
  >AsyncClass : Symbol(AsyncClass, Decl(es2017basicAsync.ts, 26, 1))
  
      asyncPropFunc = async function(): Promise<void> {
@@ -17,7 +17,7 @@
  >namedFunc : Symbol(namedFunc, Decl(es2017basicAsync.ts, 33, 24))
  >Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
  
-@@ -64,14 +64,14 @@
+@@= skipped -15, +15 lines =@@
      }
  
      asyncPropArrowFunc = async (): Promise<void> => {

@@ -1,6 +1,6 @@
 --- old.genericObjectLitReturnType.symbols
 +++ new.genericObjectLitReturnType.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(genericObjectLitReturnType.ts, 0, 8))
  {
      f(t: T) { return { a: t }; }
@@ -9,7 +9,7 @@
  >t : Symbol(t, Decl(genericObjectLitReturnType.ts, 2, 6))
  >T : Symbol(T, Decl(genericObjectLitReturnType.ts, 0, 8))
  >a : Symbol(a, Decl(genericObjectLitReturnType.ts, 2, 22))
-@@ -20,9 +20,9 @@
+@@= skipped -14, +14 lines =@@
  
  var t1 = x.f(5);
  >t1 : Symbol(t1, Decl(genericObjectLitReturnType.ts, 7, 3))

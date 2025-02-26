@@ -1,6 +1,6 @@
 --- old.parameterReferencesOtherParameter1.symbols
 +++ new.parameterReferencesOtherParameter1.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Model : Symbol(Model, Decl(parameterReferencesOtherParameter1.ts, 0, 0))
  
      public name: string;
@@ -9,7 +9,7 @@
  }
  
  class UI {
-@@ -15,9 +15,9 @@
+@@= skipped -10, +10 lines =@@
  >model : Symbol(model, Decl(parameterReferencesOtherParameter1.ts, 5, 16))
  >Model : Symbol(Model, Decl(parameterReferencesOtherParameter1.ts, 0, 0))
  >foo : Symbol(foo, Decl(parameterReferencesOtherParameter1.ts, 5, 29))

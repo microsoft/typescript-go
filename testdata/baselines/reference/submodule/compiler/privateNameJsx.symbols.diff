@@ -1,6 +1,6 @@
 --- old.privateNameJsx.symbols
 +++ new.privateNameJsx.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >Test : Symbol(Test, Decl(privateNameJsx.tsx, 0, 0))
  
      #prop = () => <div />;

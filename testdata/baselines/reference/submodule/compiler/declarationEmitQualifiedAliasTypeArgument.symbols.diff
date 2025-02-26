@@ -1,6 +1,6 @@
 --- old.declarationEmitQualifiedAliasTypeArgument.symbols
 +++ new.declarationEmitQualifiedAliasTypeArgument.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(bbb.d.ts, 0, 23))
  
      data: T;
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(bbb.d.ts, 0, 23))
  }
  
-@@ -27,10 +27,10 @@
+@@= skipped -21, +21 lines =@@
  >E : Symbol(E, Decl(lib.d.ts, --, --))
  
      A = "a",
@@ -22,7 +22,7 @@
  }
  
  export type T = G<E>;
-@@ -42,7 +42,7 @@
+@@= skipped -15, +15 lines =@@
  >Q : Symbol(Q, Decl(lib.d.ts, --, --))
  >G : Symbol(G, Decl(lib.d.ts, --, --))
  >E : Symbol(E, Decl(lib.d.ts, --, --))

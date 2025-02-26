@@ -1,6 +1,6 @@
 --- old.superCallFromClassThatDerivesFromGenericTypeButWithNoTypeArguments1.symbols
 +++ new.superCallFromClassThatDerivesFromGenericTypeButWithNoTypeArguments1.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >T2 : Symbol(T2, Decl(superCallFromClassThatDerivesFromGenericTypeButWithNoTypeArguments1.ts, 0, 11))
  
      constructor(private map: (value: T1) => T2) {

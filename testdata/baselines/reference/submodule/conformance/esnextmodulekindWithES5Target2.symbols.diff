@@ -1,6 +1,6 @@
 --- old.esnextmodulekindWithES5Target2.symbols
 +++ new.esnextmodulekindWithES5Target2.symbols
-@@ -2,15 +2,15 @@
+@@= skipped -2, +2 lines =@@
  
  === esnextmodulekindWithES5Target2.ts ===
  export default class C {

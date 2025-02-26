@@ -1,6 +1,6 @@
 --- old.esmNoSynthesizedDefault(module=preserve).symbols
 +++ new.esmNoSynthesizedDefault(module=preserve).symbols
-@@ -13,11 +13,12 @@
+@@= skipped -13, +13 lines =@@
  >mdast : Symbol(mdast, Decl(index.ts, 0, 6))
  
  mdast.toString();
@@ -14,7 +14,7 @@
  
  mdast2.toString();
  >mdast2.toString : Symbol(toString, Decl(index.d.ts, 0, 0))
-@@ -25,5 +26,7 @@
+@@= skipped -12, +13 lines =@@
  >toString : Symbol(toString, Decl(index.d.ts, 0, 0))
  
  mdast2.default;

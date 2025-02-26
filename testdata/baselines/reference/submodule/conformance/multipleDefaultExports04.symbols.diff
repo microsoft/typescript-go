@@ -1,6 +1,6 @@
 --- old.multipleDefaultExports04.symbols
 +++ new.multipleDefaultExports04.symbols
-@@ -2,9 +2,9 @@
+@@= skipped -2, +2 lines =@@
  
  === multipleDefaultExports04.ts ===
  export default function f() {

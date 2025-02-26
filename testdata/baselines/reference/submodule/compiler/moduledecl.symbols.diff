@@ -1,6 +1,6 @@
 --- old.moduledecl.symbols
 +++ new.moduledecl.symbols
-@@ -13,11 +13,11 @@
+@@= skipped -13, +13 lines =@@
  module c.a.b {
  >c : Symbol(c, Decl(moduledecl.ts, 4, 1))
  >a : Symbol(a, Decl(moduledecl.ts, 6, 9))
@@ -14,7 +14,7 @@
  }
  
  module mImport {
-@@ -25,21 +25,19 @@
+@@= skipped -12, +12 lines =@@
  
      import d = a;
  >d : Symbol(d, Decl(moduledecl.ts, 10, 16))
@@ -38,7 +38,7 @@
  }
  
  module m0 {
-@@ -66,16 +64,16 @@
+@@= skipped -41, +39 lines =@@
  >c1 : Symbol(c1, Decl(moduledecl.ts, 24, 5))
  
          public a : ()=>string;
@@ -59,7 +59,7 @@
      }
  
      interface i1 {
-@@ -91,31 +89,27 @@
+@@= skipped -25, +25 lines =@@
  
      import m2 = a;
  >m2 : Symbol(m2, Decl(moduledecl.ts, 36, 5))
@@ -97,7 +97,7 @@
  }
  
  module m1 {
-@@ -142,33 +136,33 @@
+@@= skipped -51, +47 lines =@@
  >c1 : Symbol(c1, Decl(moduledecl.ts, 53, 5))
  
          public a: () =>string;
@@ -141,7 +141,7 @@
          }
      }
  
-@@ -185,31 +179,27 @@
+@@= skipped -43, +43 lines =@@
  
      import m2 = a;
  >m2 : Symbol(m2, Decl(moduledecl.ts, 73, 5))
@@ -179,7 +179,7 @@
  }
  
  module m {
-@@ -315,13 +305,13 @@
+@@= skipped -130, +126 lines =@@
  >C1_public : Symbol(C1_public, Decl(moduledecl.ts, 137, 20))
  
          private f2() {
@@ -195,7 +195,7 @@
  
              return "string";
          }
-@@ -330,13 +320,13 @@
+@@= skipped -15, +15 lines =@@
  >C2_private : Symbol(C2_private, Decl(moduledecl.ts, 146, 5))
  
          private f2() {
@@ -211,7 +211,7 @@
  
              return "string";
          }
-@@ -346,35 +336,35 @@
+@@= skipped -16, +16 lines =@@
  >C3_public : Symbol(C3_public, Decl(moduledecl.ts, 155, 5))
  
          private getC2_private() {
@@ -253,7 +253,7 @@
  
              return new C1_public();
  >C1_public : Symbol(C1_public, Decl(moduledecl.ts, 137, 20))
-@@ -389,7 +379,7 @@
+@@= skipped -43, +43 lines =@@
  >C : Symbol(C, Decl(moduledecl.ts, 177, 25))
  
          public myProp: number;
@@ -262,7 +262,7 @@
      }
  
      function foo() : C;
-@@ -404,23 +394,23 @@
+@@= skipped -15, +15 lines =@@
  >B : Symbol(B, Decl(moduledecl.ts, 183, 16))
  
          x: number;
@@ -291,7 +291,7 @@
      }
  
      module m3 {
-@@ -430,7 +420,7 @@
+@@= skipped -26, +26 lines =@@
  >C : Symbol(C, Decl(moduledecl.ts, 194, 15))
  
              public myProp: number;
@@ -300,7 +300,7 @@
          }
  
          function foo(): C;
-@@ -445,23 +435,23 @@
+@@= skipped -15, +15 lines =@@
  >B : Symbol(B, Decl(moduledecl.ts, 200, 20))
  
              x: number;
@@ -329,7 +329,7 @@
          }
      }
  }
-@@ -470,70 +460,70 @@
+@@= skipped -25, +25 lines =@@
  >foo : Symbol(foo, Decl(moduledecl.ts, 211, 1))
  
      return mAmbient.foo();

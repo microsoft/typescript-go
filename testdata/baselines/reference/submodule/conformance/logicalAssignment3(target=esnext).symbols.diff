@@ -1,6 +1,6 @@
 --- old.logicalAssignment3(target=esnext).symbols
 +++ new.logicalAssignment3(target=esnext).symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(logicalAssignment3.ts, 0, 0))
  
      baz: 0 | 1 | 42 | undefined | ''
@@ -9,7 +9,7 @@
  }
  
  declare const result: A;
-@@ -25,27 +25,27 @@
+@@= skipped -20, +20 lines =@@
  >A : Symbol(A, Decl(logicalAssignment3.ts, 0, 0))
  
  (a.baz) &&= result.baz;

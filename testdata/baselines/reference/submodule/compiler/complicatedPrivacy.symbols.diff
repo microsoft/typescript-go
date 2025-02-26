@@ -1,6 +1,6 @@
 --- old.complicatedPrivacy.symbols
 +++ new.complicatedPrivacy.symbols
-@@ -21,12 +21,12 @@
+@@= skipped -21, +21 lines =@@
  
          export class C2 implements m3.i3 {
  >C2 : Symbol(C2, Decl(complicatedPrivacy.ts, 7, 9))
@@ -16,7 +16,7 @@
  >arg : Symbol(arg, Decl(complicatedPrivacy.ts, 10, 26))
  
                  return new C1();
-@@ -34,13 +34,13 @@
+@@= skipped -13, +13 lines =@@
              }
  
              public set p1(arg1: C1) {
@@ -32,7 +32,7 @@
  
                  return "Hello world";
              }
-@@ -102,7 +102,7 @@
+@@= skipped -68, +68 lines =@@
  >i3 : Symbol(i3, Decl(complicatedPrivacy.ts, 45, 9))
  
              f55(): string;
@@ -41,7 +41,7 @@
          }
      }
  
-@@ -114,7 +114,7 @@
+@@= skipped -12, +12 lines =@@
  >i : Symbol(i, Decl(complicatedPrivacy.ts, 53, 5))
  
          x: number;
@@ -50,7 +50,7 @@
      }
  
      export class C5 implements i {
-@@ -122,7 +122,7 @@
+@@= skipped -8, +8 lines =@@
  >i : Symbol(i, Decl(complicatedPrivacy.ts, 53, 5))
  
          public x: number;
@@ -59,7 +59,7 @@
      }
  
      export var v2: C1[];
-@@ -142,13 +142,13 @@
+@@= skipped -20, +20 lines =@@
  
          export class c_pr  implements mglo5.i5, mglo5.i6 {
  >c_pr : Symbol(c_pr, Decl(complicatedPrivacy.ts, 70, 22))
@@ -76,7 +76,7 @@
  
                  return "Hello";
              }
-@@ -186,14 +186,14 @@
+@@= skipped -44, +44 lines =@@
  >i5 : Symbol(i5, Decl(complicatedPrivacy.ts, 94, 14))
  
          f1(): string;

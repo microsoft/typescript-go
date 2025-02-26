@@ -1,6 +1,6 @@
 --- old.aliasBug.symbols
 +++ new.aliasBug.symbols
-@@ -21,14 +21,14 @@
+@@= skipped -21, +21 lines =@@
  import booz = foo.bar.baz;
  >booz : Symbol(booz, Decl(aliasBug.ts, 7, 21))
  >foo : Symbol(foo, Decl(aliasBug.ts, 0, 0))
@@ -19,7 +19,7 @@
  
  function use() {
  >use : Symbol(use, Decl(aliasBug.ts, 10, 30))
-@@ -36,22 +36,22 @@
+@@= skipped -15, +15 lines =@@
    var p1: provide.Provide; // error here, but should be okay
  >p1 : Symbol(p1, Decl(aliasBug.ts, 13, 5))
  >provide : Symbol(provide, Decl(aliasBug.ts, 5, 1))

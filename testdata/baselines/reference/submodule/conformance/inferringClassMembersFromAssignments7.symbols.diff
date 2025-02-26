@@ -1,6 +1,6 @@
 --- old.inferringClassMembersFromAssignments7.symbols
 +++ new.inferringClassMembersFromAssignments7.symbols
-@@ -10,35 +10,27 @@
+@@= skipped -10, +10 lines =@@
  >this : Symbol(C, Decl(inferringClassMembersFromAssignments7.js, 0, 0))
  
          self.x = 1
@@ -39,7 +39,7 @@
      }
  }
  const c = new C()
-@@ -46,17 +38,11 @@
+@@= skipped -36, +28 lines =@@
  >C : Symbol(C, Decl(inferringClassMembersFromAssignments7.js, 0, 0))
  
  c.x

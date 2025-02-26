@@ -1,6 +1,6 @@
 --- old.staticMemberExportAccess.symbols
 +++ new.staticMemberExportAccess.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >Sammy : Symbol(Sammy, Decl(staticMemberExportAccess.ts, 0, 0), Decl(staticMemberExportAccess.ts, 5, 1))
  
     foo() { return "hi"; }
@@ -13,7 +13,7 @@
  
      return -1;
     }
-@@ -23,7 +23,7 @@
+@@= skipped -18, +18 lines =@@
  >JQueryStatic : Symbol(JQueryStatic, Decl(staticMemberExportAccess.ts, 8, 1))
  
      sammy: Sammy; // class instance
@@ -22,7 +22,7 @@
  >Sammy : Symbol(Sammy, Decl(staticMemberExportAccess.ts, 0, 0), Decl(staticMemberExportAccess.ts, 5, 1))
  }
  var $: JQueryStatic;
-@@ -33,38 +33,38 @@
+@@= skipped -10, +10 lines =@@
  var instanceOfClassSammy: Sammy = new $.sammy(); // should be error
  >instanceOfClassSammy : Symbol(instanceOfClassSammy, Decl(staticMemberExportAccess.ts, 13, 3))
  >Sammy : Symbol(Sammy, Decl(staticMemberExportAccess.ts, 0, 0), Decl(staticMemberExportAccess.ts, 5, 1))

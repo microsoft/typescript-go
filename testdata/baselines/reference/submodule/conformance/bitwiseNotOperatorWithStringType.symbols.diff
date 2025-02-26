@@ -1,6 +1,6 @@
 --- old.bitwiseNotOperatorWithStringType.symbols
 +++ new.bitwiseNotOperatorWithStringType.symbols
-@@ -15,10 +15,10 @@
+@@= skipped -15, +15 lines =@@
  >A : Symbol(A, Decl(bitwiseNotOperatorWithStringType.ts, 4, 40))
  
      public a: string;
@@ -13,7 +13,7 @@
  }
  module M {
  >M : Symbol(M, Decl(bitwiseNotOperatorWithStringType.ts, 9, 1))
-@@ -59,15 +59,15 @@
+@@= skipped -44, +44 lines =@@
  // string type expressions
  var ResultIsNumber6 = ~objA.a;
  >ResultIsNumber6 : Symbol(ResultIsNumber6, Decl(bitwiseNotOperatorWithStringType.ts, 26, 3))
@@ -33,7 +33,7 @@
  
  var ResultIsNumber8 = ~STRING1[0];
  >ResultIsNumber8 : Symbol(ResultIsNumber8, Decl(bitwiseNotOperatorWithStringType.ts, 28, 3))
-@@ -79,9 +79,9 @@
+@@= skipped -20, +20 lines =@@
  
  var ResultIsNumber10 = ~A.foo();
  >ResultIsNumber10 : Symbol(ResultIsNumber10, Decl(bitwiseNotOperatorWithStringType.ts, 30, 3))
@@ -45,7 +45,7 @@
  
  var ResultIsNumber11 = ~(STRING + STRING);
  >ResultIsNumber11 : Symbol(ResultIsNumber11, Decl(bitwiseNotOperatorWithStringType.ts, 31, 3))
-@@ -90,9 +90,9 @@
+@@= skipped -11, +11 lines =@@
  
  var ResultIsNumber12 = ~STRING.charAt(0);
  >ResultIsNumber12 : Symbol(ResultIsNumber12, Decl(bitwiseNotOperatorWithStringType.ts, 32, 3))
@@ -57,7 +57,7 @@
  
  // multiple ~ operators
  var ResultIsNumber13 = ~~STRING;
-@@ -115,10 +115,10 @@
+@@= skipped -25, +25 lines =@@
  >foo : Symbol(foo, Decl(bitwiseNotOperatorWithStringType.ts, 2, 36))
  
  ~objA.a,M.n;

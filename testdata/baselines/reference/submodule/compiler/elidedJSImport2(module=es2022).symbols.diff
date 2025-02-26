@@ -1,6 +1,6 @@
 --- old.elidedJSImport2(module=es2022).symbols
 +++ new.elidedJSImport2(module=es2022).symbols
-@@ -25,14 +25,14 @@
+@@= skipped -25, +25 lines =@@
  >Foo : Symbol(Foo, Decl(other.d.ts, 0, 0))
  
      bar: number;
@@ -18,7 +18,7 @@
  }
  
  === other.js ===
-@@ -40,13 +40,13 @@
+@@= skipped -15, +15 lines =@@
  >Foo : Symbol(Foo, Decl(other.js, 0, 0))
  
      bar = 2.4;

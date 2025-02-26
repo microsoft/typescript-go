@@ -1,6 +1,6 @@
 --- old.circularConstructorWithReturn.symbols
 +++ new.circularConstructorWithReturn.symbols
-@@ -18,16 +18,16 @@
+@@= skipped -18, +18 lines =@@
  >PrismaClient : Symbol(PrismaClient, Decl(circularConstructorWithReturn.ts, 4, 48))
  
      self: Client;

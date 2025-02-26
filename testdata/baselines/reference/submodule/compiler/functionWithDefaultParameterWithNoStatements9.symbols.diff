@@ -1,6 +1,6 @@
 --- old.functionWithDefaultParameterWithNoStatements9.symbols
 +++ new.functionWithDefaultParameterWithNoStatements9.symbols
-@@ -4,14 +4,14 @@
+@@= skipped -4, +4 lines =@@
  function foo(a = console.log) { }
  >foo : Symbol(foo, Decl(functionWithDefaultParameterWithNoStatements9.ts, 0, 0))
  >a : Symbol(a, Decl(functionWithDefaultParameterWithNoStatements9.ts, 0, 13))

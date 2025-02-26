@@ -1,6 +1,6 @@
 --- old.noAsConstNameLookup.symbols
 +++ new.noAsConstNameLookup.symbols
-@@ -14,7 +14,7 @@
+@@= skipped -14, +14 lines =@@
  >runner : Symbol(runner, Decl(noAsConstNameLookup.ts, 3, 40))
  >FeatureRunner : Symbol(FeatureRunner, Decl(noAsConstNameLookup.ts, 3, 81))
  >W : Symbol(W, Decl(noAsConstNameLookup.ts, 3, 23))
@@ -9,7 +9,7 @@
  
  export class FeatureRunner<W extends Store> {
  >FeatureRunner : Symbol(FeatureRunner, Decl(noAsConstNameLookup.ts, 3, 81))
-@@ -22,12 +22,12 @@
+@@= skipped -8, +8 lines =@@
  >Store : Symbol(Store, Decl(noAsConstNameLookup.ts, 0, 0))
  
      private readonly cleaners: Cleaner[] = []
@@ -25,7 +25,7 @@
  
          const objectWhichShouldBeConst = {
  >objectWhichShouldBeConst : Symbol(objectWhichShouldBeConst, Decl(noAsConstNameLookup.ts, 9, 13))
-@@ -46,18 +46,16 @@
+@@= skipped -24, +24 lines =@@
      }
  
      async run(): Promise<any> {
@@ -48,7 +48,7 @@
  >c : Symbol(c, Decl(noAsConstNameLookup.ts, 18, 30))
  >c : Symbol(c, Decl(noAsConstNameLookup.ts, 18, 30))
  >this : Symbol(FeatureRunner, Decl(noAsConstNameLookup.ts, 3, 81))
-@@ -72,7 +70,7 @@
+@@= skipped -26, +24 lines =@@
  >T : Symbol(T, Decl(noAsConstNameLookup.ts, 23, 15))
  
      f(): void {
@@ -57,7 +57,7 @@
  
          let one = 1 as const;
  >one : Symbol(one, Decl(noAsConstNameLookup.ts, 25, 11))
-@@ -80,7 +78,7 @@
+@@= skipped -8, +8 lines =@@
      }
  }
  new C<string>().f();

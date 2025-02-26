@@ -1,6 +1,6 @@
 --- old.typeOfThisInMemberFunctions.symbols
 +++ new.typeOfThisInMemberFunctions.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(typeOfThisInMemberFunctions.ts, 0, 0))
  
      foo() {
@@ -9,7 +9,7 @@
  
          var r = this;
  >r : Symbol(r, Decl(typeOfThisInMemberFunctions.ts, 2, 11))
-@@ -13,7 +13,7 @@
+@@= skipped -8, +8 lines =@@
      }
  
      static bar() {
@@ -18,7 +18,7 @@
  
          var r2 = this;
  >r2 : Symbol(r2, Decl(typeOfThisInMemberFunctions.ts, 6, 11))
-@@ -26,11 +26,11 @@
+@@= skipped -13, +13 lines =@@
  >T : Symbol(T, Decl(typeOfThisInMemberFunctions.ts, 10, 8))
  
      x: T;
@@ -32,7 +32,7 @@
  
          var r = this;
  >r : Symbol(r, Decl(typeOfThisInMemberFunctions.ts, 13, 11))
-@@ -38,7 +38,7 @@
+@@= skipped -12, +12 lines =@@
      }
  
      static bar() {
@@ -41,7 +41,7 @@
  
          var r2 = this;
  >r2 : Symbol(r2, Decl(typeOfThisInMemberFunctions.ts, 17, 11))
-@@ -52,11 +52,11 @@
+@@= skipped -14, +14 lines =@@
  >Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
  
      x: T;
@@ -55,7 +55,7 @@
  
          var r = this;
  >r : Symbol(r, Decl(typeOfThisInMemberFunctions.ts, 24, 11))
-@@ -64,7 +64,7 @@
+@@= skipped -12, +12 lines =@@
      }
  
      static bar() {

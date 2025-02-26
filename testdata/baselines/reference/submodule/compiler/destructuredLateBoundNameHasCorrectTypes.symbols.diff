@@ -1,6 +1,6 @@
 --- old.destructuredLateBoundNameHasCorrectTypes.symbols
 +++ new.destructuredLateBoundNameHasCorrectTypes.symbols
-@@ -2,9 +2,6 @@
+@@= skipped -2, +2 lines =@@
  
  === destructuredLateBoundNameHasCorrectTypes.ts ===
  let { [Symbol.iterator]: destructured } = [];

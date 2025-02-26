@@ -1,6 +1,6 @@
 --- old.importTypeLocal.symbols
 +++ new.importTypeLocal.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >Point : Symbol(Point, Decl(foo.ts, 0, 0))
  
      x: number;
@@ -13,7 +13,7 @@
  }
  export = Point;
  >Point : Symbol(Point, Decl(foo.ts, 0, 0))
-@@ -21,10 +21,10 @@
+@@= skipped -16, +16 lines =@@
  >I : Symbol(I, Decl(foo2.ts, 0, 15))
  
          a: string;
@@ -26,7 +26,7 @@
      }
  }
  
-@@ -35,10 +35,10 @@
+@@= skipped -14, +14 lines =@@
  >J : Symbol(J, Decl(foo2.ts, 7, 22))
  
          a: number;
@@ -39,7 +39,7 @@
      }
  }
  
-@@ -46,14 +46,14 @@
+@@= skipped -11, +11 lines =@@
  >Bar : Symbol(Bar, Decl(foo2.ts, 0, 0), Decl(foo2.ts, 12, 1))
  
      item: Bar.I;
@@ -57,7 +57,7 @@
  }
  export { Bar }
  >Bar : Symbol(Bar, Decl(foo2.ts, 18, 8))
-@@ -67,7 +67,7 @@
+@@= skipped -21, +21 lines =@@
  export let y: import("./foo2").Bar.I = { a: "", b: 0 };
  >y : Symbol(y, Decl(usage.ts, 1, 10))
  >Bar : Symbol(Bar, Decl(foo2.ts, 18, 8))
@@ -66,7 +66,7 @@
  >a : Symbol(a, Decl(usage.ts, 1, 40))
  >b : Symbol(b, Decl(usage.ts, 1, 47))
  
-@@ -75,7 +75,7 @@
+@@= skipped -8, +8 lines =@@
  >Bar2 : Symbol(Bar2, Decl(usage.ts, 1, 55))
  
      item: {a: string, b: number, c: object};

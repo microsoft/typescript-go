@@ -1,6 +1,6 @@
 --- old.genericInstanceOf.symbols
 +++ new.genericInstanceOf.symbols
-@@ -12,21 +12,21 @@
+@@= skipped -12, +12 lines =@@
  >T : Symbol(T, Decl(genericInstanceOf.ts, 4, 8))
  
      constructor(public a: T, public b: F) {}

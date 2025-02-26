@@ -1,6 +1,6 @@
 --- old.returnTypePredicateIsInstantiateInContextOfTarget.symbols
 +++ new.returnTypePredicateIsInstantiateInContextOfTarget.symbols
-@@ -7,9 +7,9 @@
+@@= skipped -7, +7 lines =@@
  
  class TestComponent extends React.Component<{ isAny: <T>(obj: any) => obj is T }> {
  >TestComponent : Symbol(TestComponent, Decl(returnTypePredicateIsInstantiateInContextOfTarget.tsx, 1, 31))
@@ -12,7 +12,7 @@
  >isAny : Symbol(isAny, Decl(returnTypePredicateIsInstantiateInContextOfTarget.tsx, 2, 45))
  >T : Symbol(T, Decl(returnTypePredicateIsInstantiateInContextOfTarget.tsx, 2, 54))
  >obj : Symbol(obj, Decl(returnTypePredicateIsInstantiateInContextOfTarget.tsx, 2, 57))
-@@ -17,18 +17,18 @@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(returnTypePredicateIsInstantiateInContextOfTarget.tsx, 2, 54))
  
      static defaultProps = {

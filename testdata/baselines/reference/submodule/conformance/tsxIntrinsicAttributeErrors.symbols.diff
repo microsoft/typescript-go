@@ -1,6 +1,6 @@
 --- old.tsxIntrinsicAttributeErrors.symbols
 +++ new.tsxIntrinsicAttributeErrors.symbols
-@@ -11,27 +11,27 @@
+@@= skipped -11, +11 lines =@@
  >ElementClass : Symbol(ElementClass, Decl(tsxIntrinsicAttributeErrors.tsx, 1, 25))
  
          render: any;
@@ -32,7 +32,7 @@
  
              text?: string;
  >text : Symbol(text, Decl(tsxIntrinsicAttributeErrors.tsx, 12, 14))
-@@ -41,7 +41,7 @@
+@@= skipped -30, +30 lines =@@
          }
  
          span: any;

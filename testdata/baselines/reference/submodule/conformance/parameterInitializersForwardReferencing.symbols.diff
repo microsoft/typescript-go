@@ -1,6 +1,6 @@
 --- old.parameterInitializersForwardReferencing.symbols
 +++ new.parameterInitializersForwardReferencing.symbols
-@@ -95,7 +95,7 @@
+@@= skipped -95, +95 lines =@@
  >b : Symbol(b, Decl(parameterInitializersForwardReferencing.ts, 31, 22))
  
      method(a = b, b = 1) { }

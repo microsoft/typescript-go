@@ -1,6 +1,6 @@
 --- old.emitClassDeclarationWithTypeArgumentInES6.symbols
 +++ new.emitClassDeclarationWithTypeArgumentInES6.symbols
-@@ -6,48 +6,48 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(emitClassDeclarationWithTypeArgumentInES6.ts, 0, 8))
  
      x: T;

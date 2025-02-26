@@ -1,6 +1,6 @@
 --- old.jsdocParamTagTypeLiteral.symbols
 +++ new.jsdocParamTagTypeLiteral.symbols
-@@ -27,9 +27,7 @@
+@@= skipped -27, +27 lines =@@
  >opts1 : Symbol(opts1, Decl(0.js, 16, 14))
  
      opts1.x;
@@ -10,7 +10,7 @@
  }
  
  foo1({x: 'abc'});
-@@ -46,9 +44,7 @@
+@@= skipped -19, +17 lines =@@
  >opts2 : Symbol(opts2, Decl(0.js, 27, 14))
  
      opts2[0].anotherX;
@@ -20,7 +20,7 @@
  }
  
  foo2([{anotherX: "world"}]);
-@@ -64,9 +60,7 @@
+@@= skipped -18, +16 lines =@@
  >opts3 : Symbol(opts3, Decl(0.js, 37, 14))
  
      opts3.x;
@@ -30,7 +30,7 @@
  }
  foo3({x: 'abc'});
  >foo3 : Symbol(foo3, Decl(0.js, 31, 28))
-@@ -84,9 +78,7 @@
+@@= skipped -20, +18 lines =@@
  >opts4 : Symbol(opts4, Decl(0.js, 49, 14))
  
      opts4[0].x;
@@ -40,7 +40,7 @@
  }
  
  foo4([{ x: 'hi' }]);
-@@ -108,18 +100,10 @@
+@@= skipped -24, +22 lines =@@
  >opts5 : Symbol(opts5, Decl(0.js, 65, 14))
  
      opts5[0].what.bad[0].idea;

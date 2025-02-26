@@ -1,6 +1,6 @@
 --- old.readonlyTupleAndArrayElaboration.symbols
 +++ new.readonlyTupleAndArrayElaboration.symbols
-@@ -14,9 +14,9 @@
+@@= skipped -14, +14 lines =@@
  >y : Symbol(y, Decl(readonlyTupleAndArrayElaboration.ts, 5, 31))
  
      return Math.sqrt(x ** 2 + y ** 2);

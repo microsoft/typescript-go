@@ -1,6 +1,6 @@
 --- old.asyncArrowFunction9_es6.symbols
 +++ new.asyncArrowFunction9_es6.symbols
-@@ -5,5 +5,5 @@
+@@= skipped -5, +5 lines =@@
  >foo : Symbol(foo, Decl(asyncArrowFunction9_es6.ts, 0, 3))
  >await : Symbol(await, Decl(asyncArrowFunction9_es6.ts, 0, 20))
  >await : Symbol(await, Decl(asyncArrowFunction9_es6.ts, 0, 20))

@@ -1,6 +1,6 @@
 --- old.flowInFinally1.symbols
 +++ new.flowInFinally1.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  
    constructor() { }
    method() { }
@@ -9,7 +9,7 @@
  }
  
  let a: A | null = null;
-@@ -23,8 +23,8 @@
+@@= skipped -17, +17 lines =@@
  >a : Symbol(a, Decl(flowInFinally1.ts, 5, 3))
  
      a.method();

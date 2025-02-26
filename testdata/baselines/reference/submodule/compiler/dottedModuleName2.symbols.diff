@@ -1,6 +1,6 @@
 --- old.dottedModuleName2.symbols
 +++ new.dottedModuleName2.symbols
-@@ -3,7 +3,7 @@
+@@= skipped -3, +3 lines =@@
  === dottedModuleName2.ts ===
  module A.B {
  >A : Symbol(A, Decl(dottedModuleName2.ts, 0, 0), Decl(dottedModuleName2.ts, 18, 21))
@@ -9,7 +9,7 @@
   
    export var x = 1;
  >x : Symbol(x, Decl(dottedModuleName2.ts, 2, 12))
-@@ -25,24 +25,20 @@
+@@= skipped -22, +22 lines =@@
   
  var tmpOK = AA.B.x;
  >tmpOK : Symbol(tmpOK, Decl(dottedModuleName2.ts, 16, 3))
@@ -39,7 +39,7 @@
  >C : Symbol(C, Decl(dottedModuleName2.ts, 21, 11))
   
  {
-@@ -61,18 +57,15 @@
+@@= skipped -36, +32 lines =@@
   
      import X1 = A;
  >X1 : Symbol(X1, Decl(dottedModuleName2.ts, 33, 1))

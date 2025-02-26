@@ -1,6 +1,6 @@
 --- old.forInStrictNullChecksNoError.symbols
 +++ new.forInStrictNullChecksNoError.symbols
-@@ -11,9 +11,9 @@
+@@= skipped -11, +11 lines =@@
  >x : Symbol(x, Decl(forInStrictNullChecksNoError.ts, 0, 11))
  
          console.log(x[key]);  // 2

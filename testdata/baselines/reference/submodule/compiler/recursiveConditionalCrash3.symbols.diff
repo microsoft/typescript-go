@@ -1,6 +1,6 @@
 --- old.recursiveConditionalCrash3.symbols
 +++ new.recursiveConditionalCrash3.symbols
-@@ -34,15 +34,15 @@
+@@= skipped -34, +34 lines =@@
  >Base : Symbol(Base, Decl(recursiveConditionalCrash3.ts, 12, 1))
  
      id: string,
@@ -19,7 +19,7 @@
  }
  
  interface Role extends Base {
-@@ -50,15 +50,15 @@
+@@= skipped -16, +16 lines =@@
  >Base : Symbol(Base, Decl(recursiveConditionalCrash3.ts, 12, 1))
  
      id: string,
@@ -38,7 +38,7 @@
  }
  
  // This interface will be expanded in circular way.
-@@ -67,23 +67,23 @@
+@@= skipped -17, +17 lines =@@
  >Base : Symbol(Base, Decl(recursiveConditionalCrash3.ts, 12, 1))
  
      id: string,

@@ -1,6 +1,6 @@
 --- old.jsxJsxsCjsTransformKeyPropCustomImportPragma(jsx=react-jsx).symbols
 +++ new.jsxJsxsCjsTransformKeyPropCustomImportPragma(jsx=react-jsx).symbols
-@@ -10,17 +10,13 @@
+@@= skipped -10, +10 lines =@@
  
  const a2 = <div key="foo" {...props2}>text</div>;
  >a2 : Symbol(a2, Decl(react.tsx, 4, 5))
@@ -18,7 +18,7 @@
  
  export {};
  
-@@ -33,17 +29,13 @@
+@@= skipped -23, +19 lines =@@
  
  const a = <div key="foo" {...props}>text</div>;
  >a : Symbol(a, Decl(preact.tsx, 3, 5))

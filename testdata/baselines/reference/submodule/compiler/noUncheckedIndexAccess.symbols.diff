@@ -1,6 +1,6 @@
 --- old.noUncheckedIndexAccess.symbols
 +++ new.noUncheckedIndexAccess.symbols
-@@ -5,16 +5,16 @@
+@@= skipped -5, +5 lines =@@
  >Meat : Symbol(Meat, Decl(noUncheckedIndexAccess.ts, 0, 0))
  
      Sausage,
@@ -21,7 +21,7 @@
  
    const valueSausage = Meat[sausage]
  >valueSausage : Symbol(valueSausage, Decl(noUncheckedIndexAccess.ts, 5, 7))
-@@ -23,9 +23,9 @@
+@@= skipped -18, +18 lines =@@
  
    const bacon = Meat.Bacon
  >bacon : Symbol(bacon, Decl(noUncheckedIndexAccess.ts, 7, 7))
@@ -33,7 +33,7 @@
  
    const valueBacon = Meat[bacon]
  >valueBacon : Symbol(valueBacon, Decl(noUncheckedIndexAccess.ts, 8, 7))
-@@ -35,12 +35,12 @@
+@@= skipped -12, +12 lines =@@
    const union: Meat.Bacon | Meat.Sausage = Meat.Bacon
  >union : Symbol(union, Decl(noUncheckedIndexAccess.ts, 10, 7))
  >Meat : Symbol(Meat, Decl(noUncheckedIndexAccess.ts, 0, 0))
@@ -50,7 +50,7 @@
  
    const valueUnion = Meat[union]
  >valueUnion : Symbol(valueUnion, Decl(noUncheckedIndexAccess.ts, 11, 7))
-@@ -64,23 +64,23 @@
+@@= skipped -29, +29 lines =@@
  >A : Symbol(A, Decl(noUncheckedIndexAccess.ts, 17, 37))
  
      a, b, c

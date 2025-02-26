@@ -1,6 +1,6 @@
 --- old.declFileExportAssignmentOfGenericInterface.symbols
 +++ new.declFileExportAssignmentOfGenericInterface.symbols
-@@ -10,18 +10,5 @@
+@@= skipped -10, +10 lines =@@
  >a : Symbol(a, Decl(declFileExportAssignmentOfGenericInterface_1.ts, 0, 0))
  
  x.a;

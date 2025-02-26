@@ -1,6 +1,6 @@
 --- old.importEquals1.symbols
 +++ new.importEquals1.symbols
-@@ -23,34 +23,34 @@
+@@= skipped -23, +23 lines =@@
  >types : Symbol(types, Decl(d.ts, 0, 6))
  
  new types.A(); // Error

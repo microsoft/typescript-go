@@ -1,6 +1,6 @@
 --- old.arrayFlatNoCrashInferenceDeclarations.symbols
 +++ new.arrayFlatNoCrashInferenceDeclarations.symbols
-@@ -9,8 +9,8 @@
+@@= skipped -9, +9 lines =@@
  >depth : Symbol(depth, Decl(arrayFlatNoCrashInferenceDeclarations.ts, 0, 25))
  
      return arr.flat(depth);

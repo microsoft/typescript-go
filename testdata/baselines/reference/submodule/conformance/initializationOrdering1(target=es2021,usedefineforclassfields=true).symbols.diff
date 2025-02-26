@@ -1,6 +1,6 @@
 --- old.initializationOrdering1(target=es2021,usedefineforclassfields=true).symbols
 +++ new.initializationOrdering1(target=es2021,usedefineforclassfields=true).symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Helper : Symbol(Helper, Decl(initializationOrdering1.ts, 0, 0))
  
      create(): boolean {
@@ -9,7 +9,7 @@
  
          return true
      }
-@@ -15,24 +15,24 @@
+@@= skipped -10, +10 lines =@@
  >Broken : Symbol(Broken, Decl(initializationOrdering1.ts, 4, 1))
  
      constructor(readonly facade: Helper) {

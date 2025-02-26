@@ -1,6 +1,6 @@
 --- old.privacyImport.symbols
 +++ new.privacyImport.symbols
-@@ -68,51 +68,51 @@
+@@= skipped -68, +68 lines =@@
  
      export var m1_im1_private_v1_public = m1_im1_private.c1;
  >m1_im1_private_v1_public : Symbol(m1_im1_private_v1_public, Decl(privacyImport.ts, 38, 14))
@@ -68,7 +68,7 @@
  
  
      import m1_im2_private = m1_M2_private;
-@@ -121,51 +121,51 @@
+@@= skipped -53, +53 lines =@@
  
      export var m1_im2_private_v1_public = m1_im2_private.c1;
  >m1_im2_private_v1_public : Symbol(m1_im2_private_v1_public, Decl(privacyImport.ts, 49, 14))
@@ -136,7 +136,7 @@
  
      //import m1_im3_private = require("m1_M3_public");
      //export var m1_im3_private_v1_public = m1_im3_private.c1;
-@@ -266,51 +266,51 @@
+@@= skipped -145, +145 lines =@@
  
      export var m1_im1_private_v1_public = m1_im1_private.c1;
  >m1_im1_private_v1_public : Symbol(m1_im1_private_v1_public, Decl(privacyImport.ts, 122, 14))
@@ -204,7 +204,7 @@
  
  
      import m1_im2_private = m2_M2_private;
-@@ -319,51 +319,51 @@
+@@= skipped -53, +53 lines =@@
  
      export var m1_im2_private_v1_public = m1_im2_private.c1;
  >m1_im2_private_v1_public : Symbol(m1_im2_private_v1_public, Decl(privacyImport.ts, 133, 14))
@@ -272,7 +272,7 @@
  
      //import m1_im3_private = require("m2_M3_public");
      //export var m1_im3_private_v1_public = m1_im3_private.c1;
-@@ -463,51 +463,51 @@
+@@= skipped -144, +144 lines =@@
  
  export var glo_im1_private_v1_public = glo_im1_private.c1;
  >glo_im1_private_v1_public : Symbol(glo_im1_private_v1_public, Decl(privacyImport.ts, 207, 10))
@@ -340,7 +340,7 @@
  
  
  //import glo_im2_private = require("glo_M2_public");
-@@ -526,51 +526,51 @@
+@@= skipped -63, +63 lines =@@
  
  export var glo_im3_private_v1_public = glo_im3_private.c1;
  >glo_im3_private_v1_public : Symbol(glo_im3_private_v1_public, Decl(privacyImport.ts, 228, 10))

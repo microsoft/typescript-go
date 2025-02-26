@@ -1,6 +1,6 @@
 --- old.typeFromPropertyAssignment31.symbols
 +++ new.typeFromPropertyAssignment31.symbols
-@@ -2,49 +2,49 @@
+@@= skipped -2, +2 lines =@@
  
  === typeFromPropertyAssignment31.ts ===
  function ExpandoMerge(n: number) {
@@ -68,7 +68,7 @@
  
      export var p3 = 333;
  >p3 : Symbol(p3, Decl(typeFromPropertyAssignment31.ts, 14, 14))
-@@ -68,51 +68,51 @@
+@@= skipped -66, +66 lines =@@
  >p9 : Symbol(p9, Decl(typeFromPropertyAssignment31.ts, 20, 14), Decl(typeFromPropertyAssignment31.ts, 23, 25))
  }
  ExpandoMerge.p5 = 555555; // ok

@@ -1,6 +1,6 @@
 --- old.newOperator.symbols
 +++ new.newOperator.symbols
-@@ -28,9 +28,9 @@
+@@= skipped -28, +28 lines =@@
  
  // Use in LHS of expression?
  (new Date()).toString();
@@ -12,7 +12,7 @@
  
  // Various spacing
  var t3 = new string[]( );
-@@ -96,7 +96,7 @@
+@@= skipped -68, +68 lines =@@
  >T : Symbol(T, Decl(newOperator.ts, 47, 10))
  
          x: number;
@@ -21,7 +21,7 @@
      }
  }
  
-@@ -104,14 +104,14 @@
+@@= skipped -8, +8 lines =@@
  >S : Symbol(S, Decl(newOperator.ts, 51, 1))
  
      public get xs(): M.T[] {

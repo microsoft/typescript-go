@@ -1,6 +1,6 @@
 --- old.pathMappingBasedModuleResolution4_classic.symbols
 +++ new.pathMappingBasedModuleResolution4_classic.symbols
-@@ -10,17 +10,14 @@
+@@= skipped -10, +10 lines =@@
  
  use(x.toExponential());
  >use : Symbol(use, Decl(file1.ts, 0, 31))
@@ -19,7 +19,7 @@
  >b : Symbol(b, Decl(file2.ts, 1, 8))
  
  export var x = a + b;
-@@ -32,7 +29,3 @@
+@@= skipped -22, +19 lines =@@
  export var x = 1;
  >x : Symbol(x, Decl(file3.ts, 0, 10))
  

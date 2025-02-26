@@ -1,6 +1,6 @@
 --- old.genericFunctionInference1.symbols
 +++ new.genericFunctionInference1.symbols
-@@ -151,9 +151,7 @@
+@@= skipped -151, +151 lines =@@
  >pipe : Symbol(pipe, Decl(genericFunctionInference1.ts, 0, 0), Decl(genericFunctionInference1.ts, 0, 84), Decl(genericFunctionInference1.ts, 1, 104))
  >list : Symbol(list, Decl(genericFunctionInference1.ts, 2, 124))
  >x : Symbol(x, Decl(genericFunctionInference1.ts, 17, 22))
@@ -10,7 +10,7 @@
  
  const f10 = pipe(foo);
  >f10 : Symbol(f10, Decl(genericFunctionInference1.ts, 18, 5))
-@@ -288,9 +286,7 @@
+@@= skipped -137, +135 lines =@@
  >pipe : Symbol(pipe, Decl(genericFunctionInference1.ts, 0, 0), Decl(genericFunctionInference1.ts, 0, 84), Decl(genericFunctionInference1.ts, 1, 104))
  >list : Symbol(list, Decl(genericFunctionInference1.ts, 2, 124))
  >x : Symbol(x, Decl(genericFunctionInference1.ts, 30, 43))
@@ -20,7 +20,7 @@
  
  const g10: <T extends { value: T }>(x: T) => T = pipe(foo);
  >g10 : Symbol(g10, Decl(genericFunctionInference1.ts, 31, 5))
-@@ -535,10 +531,10 @@
+@@= skipped -247, +245 lines =@@
  >y : Symbol(y, Decl(genericFunctionInference1.ts, 74, 26))
  
      readonly x: number;
@@ -33,7 +33,7 @@
  }
  
  declare class Bag<T> {
-@@ -550,12 +546,12 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(genericFunctionInference1.ts, 79, 18))
  
      contains(value: T): boolean;
@@ -48,7 +48,7 @@
  }
  
  function asFunction<A extends any[], B>(cf: new (...args: A) => B) {
-@@ -605,7 +601,7 @@
+@@= skipped -55, +55 lines =@@
  >P : Symbol(P, Decl(genericFunctionInference1.ts, 96, 19))
  
      props: P;
@@ -57,7 +57,7 @@
  >P : Symbol(P, Decl(genericFunctionInference1.ts, 96, 19))
  
      constructor(props: P);
-@@ -701,11 +697,11 @@
+@@= skipped -96, +96 lines =@@
  >Data : Symbol(Data, Decl(genericFunctionInference1.ts, 124, 1))
  
      key: number;
@@ -72,7 +72,7 @@
  }
  
  var data: Data[] = [];
-@@ -802,9 +798,7 @@
+@@= skipped -101, +101 lines =@@
      (arr: T[]) => arr.map(transform)
  >arr : Symbol(arr, Decl(genericFunctionInference1.ts, 151, 5))
  >T : Symbol(T, Decl(genericFunctionInference1.ts, 150, 13))
@@ -82,7 +82,7 @@
  >transform : Symbol(transform, Decl(genericFunctionInference1.ts, 150, 19))
  
  const identityStr = (t: string) => t;
-@@ -923,14 +917,9 @@
+@@= skipped -121, +119 lines =@@
  
  const promise = Promise.resolve(1);
  >promise : Symbol(promise, Decl(genericFunctionInference1.ts, 194, 5))

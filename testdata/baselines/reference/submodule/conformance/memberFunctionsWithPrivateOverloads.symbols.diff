@@ -1,6 +1,6 @@
 --- old.memberFunctionsWithPrivateOverloads.symbols
 +++ new.memberFunctionsWithPrivateOverloads.symbols
-@@ -5,66 +5,66 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(memberFunctionsWithPrivateOverloads.ts, 0, 0))
  
      private foo(x: number);
@@ -81,7 +81,7 @@
  >x : Symbol(x, Decl(memberFunctionsWithPrivateOverloads.ts, 17, 23))
  >y : Symbol(y, Decl(memberFunctionsWithPrivateOverloads.ts, 17, 30))
  }
-@@ -74,70 +74,70 @@
+@@= skipped -69, +69 lines =@@
  >T : Symbol(T, Decl(memberFunctionsWithPrivateOverloads.ts, 20, 8))
  
      private foo(x: number);
@@ -166,7 +166,7 @@
  >x : Symbol(x, Decl(memberFunctionsWithPrivateOverloads.ts, 37, 23))
  >y : Symbol(y, Decl(memberFunctionsWithPrivateOverloads.ts, 37, 30))
  
-@@ -149,9 +149,9 @@
+@@= skipped -75, +75 lines =@@
  
  var r = c.foo(1); // error
  >r : Symbol(r, Decl(memberFunctionsWithPrivateOverloads.ts, 42, 3))
@@ -178,7 +178,7 @@
  
  var d: D<number>;
  >d : Symbol(d, Decl(memberFunctionsWithPrivateOverloads.ts, 44, 3))
-@@ -159,19 +159,19 @@
+@@= skipped -10, +10 lines =@@
  
  var r2 = d.foo(2); // error
  >r2 : Symbol(r2, Decl(memberFunctionsWithPrivateOverloads.ts, 45, 3))

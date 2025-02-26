@@ -1,6 +1,6 @@
 --- old.classAbstractUsingAbstractMethods2.symbols
 +++ new.classAbstractUsingAbstractMethods2.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(classAbstractUsingAbstractMethods2.ts, 0, 0))
  
      abstract foo();
@@ -9,7 +9,7 @@
  }
  
  class B extends A  {}
-@@ -21,7 +21,7 @@
+@@= skipped -16, +16 lines =@@
  >A : Symbol(A, Decl(classAbstractUsingAbstractMethods2.ts, 0, 0))
  
      foo() {}
@@ -18,7 +18,7 @@
  }
  
  abstract class E extends A {
-@@ -29,14 +29,14 @@
+@@= skipped -8, +8 lines =@@
  >A : Symbol(A, Decl(classAbstractUsingAbstractMethods2.ts, 0, 0))
  
      foo() {}
@@ -35,7 +35,7 @@
  }
  
  class BB extends AA  {}
-@@ -52,5 +52,5 @@
+@@= skipped -23, +23 lines =@@
  >AA : Symbol(AA, Decl(classAbstractUsingAbstractMethods2.ts, 14, 1))
  
      foo() {}

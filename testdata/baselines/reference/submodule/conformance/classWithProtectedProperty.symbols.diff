@@ -1,6 +1,6 @@
 --- old.classWithProtectedProperty.symbols
 +++ new.classWithProtectedProperty.symbols
-@@ -7,28 +7,28 @@
+@@= skipped -7, +7 lines =@@
  >C : Symbol(C, Decl(classWithProtectedProperty.ts, 0, 0))
  
      protected x;
@@ -37,7 +37,7 @@
  }
  
  class D extends C {
-@@ -36,7 +36,7 @@
+@@= skipped -29, +29 lines =@@
  >C : Symbol(C, Decl(classWithProtectedProperty.ts, 0, 0))
  
      method() {
@@ -46,7 +46,7 @@
  
          // No errors
          var d = new D();
-@@ -45,50 +45,50 @@
+@@= skipped -9, +9 lines =@@
  
          var r1: string = d.x;
  >r1 : Symbol(r1, Decl(classWithProtectedProperty.ts, 17, 11))

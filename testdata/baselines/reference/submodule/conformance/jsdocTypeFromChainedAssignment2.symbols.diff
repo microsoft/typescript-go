@@ -1,6 +1,6 @@
 --- old.jsdocTypeFromChainedAssignment2.symbols
 +++ new.jsdocTypeFromChainedAssignment2.symbols
-@@ -3,60 +3,16 @@
+@@= skipped -3, +3 lines =@@
  === use.js ===
  var mod = require('./mod');
  >mod : Symbol(mod, Decl(use.js, 0, 3))

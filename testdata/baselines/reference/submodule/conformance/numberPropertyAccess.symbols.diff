@@ -1,6 +1,6 @@
 --- old.numberPropertyAccess.symbols
 +++ new.numberPropertyAccess.symbols
-@@ -6,23 +6,23 @@
+@@= skipped -6, +6 lines =@@
  
  var a = x.toExponential();
  >a : Symbol(a, Decl(numberPropertyAccess.ts, 1, 3))

@@ -1,6 +1,6 @@
 --- old.infiniteExpansionThroughInstantiation.symbols
 +++ new.infiniteExpansionThroughInstantiation.symbols
-@@ -8,16 +8,16 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(infiniteExpansionThroughInstantiation.ts, 2, 15))
  
      data: T;
@@ -20,7 +20,7 @@
  >OwnerList : Symbol(OwnerList, Decl(infiniteExpansionThroughInstantiation.ts, 6, 1))
  >T : Symbol(T, Decl(infiniteExpansionThroughInstantiation.ts, 2, 15))
  }
-@@ -31,7 +31,7 @@
+@@= skipped -23, +23 lines =@@
  >U : Symbol(U, Decl(infiniteExpansionThroughInstantiation.ts, 9, 20))
  
      name: string;

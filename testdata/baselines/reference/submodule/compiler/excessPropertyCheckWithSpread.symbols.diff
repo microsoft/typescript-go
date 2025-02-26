@@ -1,6 +1,6 @@
 --- old.excessPropertyCheckWithSpread.symbols
 +++ new.excessPropertyCheckWithSpread.symbols
-@@ -10,7 +10,7 @@
+@@= skipped -10, +10 lines =@@
  >I : Symbol(I, Decl(excessPropertyCheckWithSpread.ts, 0, 39))
  
      readonly n: number;
@@ -9,7 +9,7 @@
  }
  declare let i: I;
  >i : Symbol(i, Decl(excessPropertyCheckWithSpread.ts, 4, 11))
-@@ -25,13 +25,13 @@
+@@= skipped -15, +15 lines =@@
  >R : Symbol(R, Decl(excessPropertyCheckWithSpread.ts, 5, 18))
  
      opt?: number

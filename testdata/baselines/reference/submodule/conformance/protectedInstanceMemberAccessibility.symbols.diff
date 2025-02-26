@@ -1,6 +1,6 @@
 --- old.protectedInstanceMemberAccessibility.symbols
 +++ new.protectedInstanceMemberAccessibility.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(protectedInstanceMemberAccessibility.ts, 0, 0))
  
      protected x: string;
@@ -13,7 +13,7 @@
  
          return "hello";
      }
-@@ -19,28 +19,28 @@
+@@= skipped -14, +14 lines =@@
  >A : Symbol(A, Decl(protectedInstanceMemberAccessibility.ts, 0, 0))
  
      protected y: string;
@@ -50,7 +50,7 @@
  
          var t4 = this.z;     // error
  >t4 : Symbol(t4, Decl(protectedInstanceMemberAccessibility.ts, 13, 11))
-@@ -48,15 +48,15 @@
+@@= skipped -29, +29 lines =@@
  
          var s1 = super.x;    // error
  >s1 : Symbol(s1, Decl(protectedInstanceMemberAccessibility.ts, 15, 11))
@@ -70,7 +70,7 @@
  
          var s3 = super.y;    // error
  >s3 : Symbol(s3, Decl(protectedInstanceMemberAccessibility.ts, 17, 11))
-@@ -72,15 +72,15 @@
+@@= skipped -24, +24 lines =@@
  
          var a1 = a.x;    // error
  >a1 : Symbol(a1, Decl(protectedInstanceMemberAccessibility.ts, 21, 11))
@@ -90,7 +90,7 @@
  
          var a3 = a.y;    // error
  >a3 : Symbol(a3, Decl(protectedInstanceMemberAccessibility.ts, 23, 11))
-@@ -96,21 +96,21 @@
+@@= skipped -24, +24 lines =@@
  
          var b1 = b.x;
  >b1 : Symbol(b1, Decl(protectedInstanceMemberAccessibility.ts, 27, 11))
@@ -118,7 +118,7 @@
  
          var b4 = b.z;    // error
  >b4 : Symbol(b4, Decl(protectedInstanceMemberAccessibility.ts, 30, 11))
-@@ -122,15 +122,15 @@
+@@= skipped -26, +26 lines =@@
  
          var c1 = c.x;    // error
  >c1 : Symbol(c1, Decl(protectedInstanceMemberAccessibility.ts, 33, 11))
@@ -138,7 +138,7 @@
  
          var c3 = c.y;    // error
  >c3 : Symbol(c3, Decl(protectedInstanceMemberAccessibility.ts, 35, 11))
-@@ -138,9 +138,9 @@
+@@= skipped -16, +16 lines =@@
  
          var c4 = c.z;    // error
  >c4 : Symbol(c4, Decl(protectedInstanceMemberAccessibility.ts, 36, 11))
@@ -150,7 +150,7 @@
      }
  }
  
-@@ -149,6 +149,6 @@
+@@= skipped -11, +11 lines =@@
  >A : Symbol(A, Decl(protectedInstanceMemberAccessibility.ts, 0, 0))
  
      protected z: string;

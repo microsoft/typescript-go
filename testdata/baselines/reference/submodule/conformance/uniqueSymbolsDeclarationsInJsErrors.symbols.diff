@@ -1,6 +1,6 @@
 --- old.uniqueSymbolsDeclarationsInJsErrors.symbols
 +++ new.uniqueSymbolsDeclarationsInJsErrors.symbols
-@@ -8,19 +8,19 @@
+@@= skipped -8, +8 lines =@@
       * @type {unique symbol}
       */
      static readwriteStaticType;

@@ -1,6 +1,6 @@
 --- old.declarationEmitBindingPatternsUnused.symbols
 +++ new.declarationEmitBindingPatternsUnused.symbols
-@@ -163,27 +163,27 @@
+@@= skipped -163, +163 lines =@@
  >Named : Symbol(Named, Decl(declarationEmitBindingPatternsUnused.ts, 0, 0))
  	}
  	set x({ name: alias }: Named) {
@@ -34,7 +34,7 @@
  >alias : Symbol(alias, Decl(declarationEmitBindingPatternsUnused.ts, 59, 4))
      }
  }
-@@ -197,33 +197,33 @@
+@@= skipped -34, +34 lines =@@
  >Named : Symbol(Named, Decl(declarationEmitBindingPatternsUnused.ts, 0, 0))
  
  		console.log(alias);
@@ -76,7 +76,7 @@
  >alias : Symbol(alias, Decl(declarationEmitBindingPatternsUnused.ts, 71, 4))
      }
  }
-@@ -239,13 +239,13 @@
+@@= skipped -42, +42 lines =@@
  >alias : Symbol(alias, Decl(declarationEmitBindingPatternsUnused.ts, 77, 14))
  
  		console.log(alias);
@@ -93,7 +93,7 @@
  >name : Symbol(name, Decl(declarationEmitBindingPatternsUnused.ts, 0, 14))
  >alias : Symbol(alias, Decl(declarationEmitBindingPatternsUnused.ts, 80, 8))
  >Named : Symbol(Named, Decl(declarationEmitBindingPatternsUnused.ts, 0, 0))
-@@ -254,7 +254,7 @@
+@@= skipped -15, +15 lines =@@
          
      }
  	mReturnType({ name: alias }: Named): typeof alias {
@@ -102,7 +102,7 @@
  >name : Symbol(name, Decl(declarationEmitBindingPatternsUnused.ts, 0, 14))
  >alias : Symbol(alias, Decl(declarationEmitBindingPatternsUnused.ts, 83, 14))
  >Named : Symbol(Named, Decl(declarationEmitBindingPatternsUnused.ts, 0, 0))
-@@ -263,7 +263,7 @@
+@@= skipped -9, +9 lines =@@
          return null!
      }
  	mRerturnTypeNested({ name: alias }: Named): NonNullable<typeof alias> {
@@ -111,7 +111,7 @@
  >name : Symbol(name, Decl(declarationEmitBindingPatternsUnused.ts, 0, 14))
  >alias : Symbol(alias, Decl(declarationEmitBindingPatternsUnused.ts, 86, 21))
  >Named : Symbol(Named, Decl(declarationEmitBindingPatternsUnused.ts, 0, 0))
-@@ -273,7 +273,7 @@
+@@= skipped -10, +10 lines =@@
          return null!
      }
      mParameter({ name: alias }: Named, p: typeof alias) {
@@ -120,7 +120,7 @@
  >name : Symbol(name, Decl(declarationEmitBindingPatternsUnused.ts, 0, 14))
  >alias : Symbol(alias, Decl(declarationEmitBindingPatternsUnused.ts, 89, 16))
  >Named : Symbol(Named, Decl(declarationEmitBindingPatternsUnused.ts, 0, 0))
-@@ -341,13 +341,13 @@
+@@= skipped -68, +68 lines =@@
  >Named : Symbol(Named, Decl(declarationEmitBindingPatternsUnused.ts, 0, 0))
  
  	set x({ name: alias }: Named);
@@ -136,7 +136,7 @@
  >name : Symbol(name, Decl(declarationEmitBindingPatternsUnused.ts, 0, 14))
  >alias : Symbol(alias, Decl(declarationEmitBindingPatternsUnused.ts, 107, 4))
  >Named : Symbol(Named, Decl(declarationEmitBindingPatternsUnused.ts, 0, 0))
-@@ -383,7 +383,7 @@
+@@= skipped -42, +42 lines =@@
  >alias : Symbol(alias, Decl(declarationEmitBindingPatternsUnused.ts, 115, 7))
  
  	set x({ name: alias }: Named & { o: typeof alias })
@@ -145,7 +145,7 @@
  >name : Symbol(name, Decl(declarationEmitBindingPatternsUnused.ts, 0, 14))
  >alias : Symbol(alias, Decl(declarationEmitBindingPatternsUnused.ts, 116, 8))
  >Named : Symbol(Named, Decl(declarationEmitBindingPatternsUnused.ts, 0, 0))
-@@ -391,14 +391,14 @@
+@@= skipped -8, +8 lines =@@
  >alias : Symbol(alias, Decl(declarationEmitBindingPatternsUnused.ts, 116, 8))
  
  	mReturnType({ name: alias }: Named): typeof alias;
@@ -162,7 +162,7 @@
  >name : Symbol(name, Decl(declarationEmitBindingPatternsUnused.ts, 0, 14))
  >alias : Symbol(alias, Decl(declarationEmitBindingPatternsUnused.ts, 118, 21))
  >Named : Symbol(Named, Decl(declarationEmitBindingPatternsUnused.ts, 0, 0))
-@@ -406,7 +406,7 @@
+@@= skipped -15, +15 lines =@@
  >alias : Symbol(alias, Decl(declarationEmitBindingPatternsUnused.ts, 118, 21))
  
      mParameter({ name: alias }: Named, p: typeof alias);

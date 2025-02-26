@@ -1,6 +1,6 @@
 --- old.parserRealSource12.symbols
 +++ new.parserRealSource12.symbols
-@@ -13,7 +13,7 @@
+@@= skipped -13, +13 lines =@@
  >IAstWalker : Symbol(IAstWalker, Decl(parserRealSource12.ts, 5, 19))
  
          walk(ast: AST, parent: AST): AST;
@@ -9,7 +9,7 @@
  >ast : Symbol(ast, Decl(parserRealSource12.ts, 7, 13))
  >AST : Symbol(AST)
  >parent : Symbol(parent, Decl(parserRealSource12.ts, 7, 22))
-@@ -21,39 +21,39 @@
+@@= skipped -8, +8 lines =@@
  >AST : Symbol(AST)
  
          options: AstWalkOptions;
@@ -59,7 +59,7 @@
  >stop : Symbol(stop, Decl(parserRealSource12.ts, 17, 24))
          }
      }
-@@ -89,27 +89,27 @@
+@@= skipped -68, +68 lines =@@
  
          constructor (
              private childrenWalkers: IAstWalkChildren[],
@@ -93,7 +93,7 @@
  >ast : Symbol(ast, Decl(parserRealSource12.ts, 40, 20))
  >AST : Symbol(AST)
  >parent : Symbol(parent, Decl(parserRealSource12.ts, 40, 29))
-@@ -118,9 +118,9 @@
+@@= skipped -29, +29 lines =@@
  
              var preAst = this.pre(ast, parent, this);
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 41, 15))
@@ -105,7 +105,7 @@
  >ast : Symbol(ast, Decl(parserRealSource12.ts, 40, 20))
  >parent : Symbol(parent, Decl(parserRealSource12.ts, 40, 29))
  >this : Symbol(AstWalker, Decl(parserRealSource12.ts, 29, 5))
-@@ -134,64 +134,64 @@
+@@= skipped -16, +16 lines =@@
  >ast : Symbol(ast, Decl(parserRealSource12.ts, 40, 20))
              }
              if (this.options.goChildren) {
@@ -196,7 +196,7 @@
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 41, 15))
  >parent : Symbol(parent, Decl(parserRealSource12.ts, 40, 29))
  >this : Symbol(AstWalker, Decl(parserRealSource12.ts, 29, 5))
-@@ -218,18 +218,18 @@
+@@= skipped -84, +84 lines =@@
  >AstWalkerFactory : Symbol(AstWalkerFactory, Decl(parserRealSource12.ts, 67, 5))
  
          private childrenWalkers: IAstWalkChildren[] = [];
@@ -219,7 +219,7 @@
  >ast : Symbol(ast, Decl(parserRealSource12.ts, 76, 20))
  >AST : Symbol(AST)
  >pre : Symbol(pre, Decl(parserRealSource12.ts, 76, 29))
-@@ -242,20 +242,20 @@
+@@= skipped -24, +24 lines =@@
  >AST : Symbol(AST)
  
              return this.getWalker(pre, post, options, state).walk(ast, null)
@@ -245,7 +245,7 @@
  >pre : Symbol(pre, Decl(parserRealSource12.ts, 80, 25))
  >IAstWalkCallback : Symbol(IAstWalkCallback, Decl(parserRealSource12.ts, 21, 5))
  >post : Symbol(post, Decl(parserRealSource12.ts, 80, 47))
-@@ -266,9 +266,9 @@
+@@= skipped -24, +24 lines =@@
  >IAstWalker : Symbol(IAstWalker, Decl(parserRealSource12.ts, 5, 19))
  
              return this.getSlowWalker(pre, post, options, state);
@@ -257,7 +257,7 @@
  >pre : Symbol(pre, Decl(parserRealSource12.ts, 80, 25))
  >post : Symbol(post, Decl(parserRealSource12.ts, 80, 47))
  >options : Symbol(options, Decl(parserRealSource12.ts, 80, 72))
-@@ -276,7 +276,7 @@
+@@= skipped -10, +10 lines =@@
          }
  
          private getSlowWalker(pre: IAstWalkCallback, post?: IAstWalkCallback, options?: AstWalkOptions, state?: any): IAstWalker {
@@ -266,7 +266,7 @@
  >pre : Symbol(pre, Decl(parserRealSource12.ts, 84, 30))
  >IAstWalkCallback : Symbol(IAstWalkCallback, Decl(parserRealSource12.ts, 21, 5))
  >post : Symbol(post, Decl(parserRealSource12.ts, 84, 52))
-@@ -296,9 +296,9 @@
+@@= skipped -20, +20 lines =@@
  
              return new AstWalker(this.childrenWalkers, pre, post, options, state);
  >AstWalker : Symbol(AstWalker, Decl(parserRealSource12.ts, 29, 5))
@@ -278,7 +278,7 @@
  >pre : Symbol(pre, Decl(parserRealSource12.ts, 84, 30))
  >post : Symbol(post, Decl(parserRealSource12.ts, 84, 52))
  >options : Symbol(options, Decl(parserRealSource12.ts, 84, 77))
-@@ -306,872 +306,872 @@
+@@= skipped -10, +10 lines =@@
          }
  
          private initChildrenWalkers(): void {
@@ -1582,7 +1582,7 @@
  >e : Symbol(e, Decl(parserRealSource12.ts, 202, 20))
  >undefined : Symbol(undefined)
  
-@@ -1230,11 +1230,11 @@
+@@= skipped -924, +924 lines =@@
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 224, 41))
  
              if (walker.options.reverseSiblings) {
@@ -1598,7 +1598,7 @@
  
                  for (var i = len - 1; i >= 0; i--) {
  >i : Symbol(i, Decl(parserRealSource12.ts, 227, 24), Decl(parserRealSource12.ts, 234, 24))
-@@ -1243,18 +1243,18 @@
+@@= skipped -13, +13 lines =@@
  >i : Symbol(i, Decl(parserRealSource12.ts, 227, 24), Decl(parserRealSource12.ts, 234, 24))
  
                      if (walker.options.goNextSibling) {
@@ -1623,7 +1623,7 @@
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 224, 41))
  >i : Symbol(i, Decl(parserRealSource12.ts, 227, 24), Decl(parserRealSource12.ts, 234, 24))
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 224, 41))
-@@ -1269,18 +1269,18 @@
+@@= skipped -26, +26 lines =@@
  >i : Symbol(i, Decl(parserRealSource12.ts, 227, 24), Decl(parserRealSource12.ts, 234, 24))
  
                      if (walker.options.goNextSibling) {
@@ -1648,7 +1648,7 @@
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 224, 41))
  >i : Symbol(i, Decl(parserRealSource12.ts, 227, 24), Decl(parserRealSource12.ts, 234, 24))
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 224, 41))
-@@ -1303,9 +1303,9 @@
+@@= skipped -34, +34 lines =@@
  
                  preAst.castTerm = walker.walk(preAst.castTerm, preAst);
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 242, 52))
@@ -1660,7 +1660,7 @@
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 242, 52))
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 242, 52))
              }
-@@ -1314,9 +1314,9 @@
+@@= skipped -11, +11 lines =@@
  
                  preAst.operand = walker.walk(preAst.operand, preAst);
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 242, 52))
@@ -1672,7 +1672,7 @@
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 242, 52))
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 242, 52))
              }
-@@ -1332,36 +1332,36 @@
+@@= skipped -18, +18 lines =@@
  >IAstWalker : Symbol(IAstWalker, Decl(parserRealSource12.ts, 5, 19))
  
              if (walker.options.reverseSiblings) {
@@ -1721,7 +1721,7 @@
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 251, 53))
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 251, 53))
                  }
-@@ -1371,25 +1371,25 @@
+@@= skipped -39, +39 lines =@@
  
                      preAst.operand1 = walker.walk(preAst.operand1, preAst);
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 251, 53))
@@ -1755,7 +1755,7 @@
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 251, 53))
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 251, 53))
                  }
-@@ -1410,9 +1410,9 @@
+@@= skipped -39, +39 lines =@@
  
                  preAst.term = walker.walk(preAst.term, preAst);
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 269, 50))
@@ -1767,7 +1767,7 @@
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 269, 50))
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 269, 50))
              }
-@@ -1428,54 +1428,54 @@
+@@= skipped -18, +18 lines =@@
  >IAstWalker : Symbol(IAstWalker, Decl(parserRealSource12.ts, 5, 19))
  
              if (!walker.options.reverseSiblings) {
@@ -1844,7 +1844,7 @@
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 275, 51))
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 275, 51))
              }
-@@ -1495,41 +1495,41 @@
+@@= skipped -67, +67 lines =@@
  
                  preAst.operand1 = walker.walk(preAst.operand1, preAst);
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 287, 54))
@@ -1900,7 +1900,7 @@
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 287, 54))
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 287, 54))
              }
-@@ -1550,61 +1550,61 @@
+@@= skipped -55, +55 lines =@@
                  preAst.name = <Identifier>walker.walk(preAst.name, preAst);
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 299, 45))
  >Identifier : Symbol(Identifier)
@@ -1982,7 +1982,7 @@
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 299, 45))
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 299, 45))
              }
-@@ -1625,9 +1625,9 @@
+@@= skipped -75, +75 lines =@@
                  preAst.id = <Identifier>walker.walk(preAst.id, preAst);
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 314, 46))
  >Identifier : Symbol(Identifier)
@@ -1994,7 +1994,7 @@
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 314, 46))
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 314, 46))
              }
-@@ -1636,25 +1636,25 @@
+@@= skipped -11, +11 lines =@@
  
                  preAst.init = walker.walk(preAst.init, preAst);
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 314, 46))
@@ -2028,7 +2028,7 @@
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 314, 46))
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 314, 46))
              }
-@@ -1674,9 +1674,9 @@
+@@= skipped -38, +38 lines =@@
  
                  preAst.returnExpression = walker.walk(preAst.returnExpression, preAst);
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 326, 52))
@@ -2040,7 +2040,7 @@
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 326, 52))
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 326, 52))
              }
-@@ -1696,60 +1696,60 @@
+@@= skipped -22, +22 lines =@@
  
                  preAst.init = walker.walk(preAst.init, preAst);
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 332, 49))
@@ -2121,7 +2121,7 @@
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 332, 49))
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 332, 49))
              }
-@@ -1766,40 +1766,40 @@
+@@= skipped -70, +70 lines =@@
  
              preAst.lval = walker.walk(preAst.lval, preAst);
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 350, 51))
@@ -2176,7 +2176,7 @@
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 350, 51))
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 350, 51))
              }
-@@ -1816,41 +1816,41 @@
+@@= skipped -50, +50 lines =@@
  
              preAst.cond = walker.walk(preAst.cond, preAst);
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 360, 48))
@@ -2232,7 +2232,7 @@
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 360, 48))
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 360, 48))
              }
-@@ -1867,25 +1867,25 @@
+@@= skipped -51, +51 lines =@@
  
              preAst.cond = walker.walk(preAst.cond, preAst);
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 370, 51))
@@ -2266,7 +2266,7 @@
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 370, 51))
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 370, 51))
              }
-@@ -1902,25 +1902,25 @@
+@@= skipped -35, +35 lines =@@
  
              preAst.cond = walker.walk(preAst.cond, preAst);
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 377, 53))
@@ -2300,7 +2300,7 @@
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 377, 53))
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 377, 53))
              }
-@@ -1941,9 +1941,9 @@
+@@= skipped -39, +39 lines =@@
                  preAst.statements = <ASTList>walker.walk(preAst.statements, preAst);
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 384, 42))
  >ASTList : Symbol(ASTList)
@@ -2312,7 +2312,7 @@
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 384, 42))
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 384, 42))
              }
-@@ -1963,27 +1963,27 @@
+@@= skipped -22, +22 lines =@@
  
                  preAst.expr = walker.walk(preAst.expr, preAst);
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 390, 50))
@@ -2348,7 +2348,7 @@
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 390, 50))
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 390, 50))
              }
-@@ -2003,27 +2003,27 @@
+@@= skipped -40, +40 lines =@@
  
                  preAst.val = walker.walk(preAst.val, preAst);
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 400, 52))
@@ -2384,7 +2384,7 @@
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 400, 52))
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 400, 52))
              }
-@@ -2043,9 +2043,9 @@
+@@= skipped -40, +40 lines =@@
  
                  preAst.body = walker.walk(preAst.body, preAst);
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 410, 40))
@@ -2396,7 +2396,7 @@
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 410, 40))
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 410, 40))
              }
-@@ -2066,27 +2066,27 @@
+@@= skipped -23, +23 lines =@@
                  preAst.tryNode = <Try>walker.walk(preAst.tryNode, preAst);
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 416, 45))
  >Try : Symbol(Try)
@@ -2432,7 +2432,7 @@
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 416, 45))
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 416, 45))
              }
-@@ -2106,27 +2106,27 @@
+@@= skipped -40, +40 lines =@@
  
                  preAst.tryNode = walker.walk(preAst.tryNode, preAst);
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 426, 47))
@@ -2468,7 +2468,7 @@
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 426, 47))
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 426, 47))
              }
-@@ -2146,9 +2146,9 @@
+@@= skipped -40, +40 lines =@@
  
                  preAst.body = walker.walk(preAst.body, preAst);
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 436, 44))
@@ -2480,7 +2480,7 @@
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 436, 44))
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 436, 44))
              }
-@@ -2169,26 +2169,26 @@
+@@= skipped -23, +23 lines =@@
                  preAst.param = <VarDecl>walker.walk(preAst.param, preAst);
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 442, 42))
  >VarDecl : Symbol(VarDecl)
@@ -2515,7 +2515,7 @@
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 442, 42))
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 442, 42))
              }
-@@ -2206,26 +2206,26 @@
+@@= skipped -37, +37 lines =@@
              preAst.name = <Identifier>walker.walk(preAst.name, preAst);
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 452, 43))
  >Identifier : Symbol(Identifier)
@@ -2550,7 +2550,7 @@
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 452, 43))
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 452, 43))
              }
-@@ -2264,37 +2264,37 @@
+@@= skipped -58, +58 lines =@@
  >walker : Symbol(walker, Decl(parserRealSource12.ts, 464, 84))
  
              if (walker.options.goNextSibling && preAst.extendsList) {
@@ -2600,7 +2600,7 @@
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 464, 46))
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 464, 46))
              }
-@@ -2315,9 +2315,9 @@
+@@= skipped -51, +51 lines =@@
                  preAst.bod = <ASTList>walker.walk(preAst.bod, preAst);
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 476, 43))
  >ASTList : Symbol(ASTList)
@@ -2612,7 +2612,7 @@
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 476, 43))
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 476, 43))
              }
-@@ -2340,37 +2340,37 @@
+@@= skipped -25, +25 lines =@@
  
              // walked arguments as part of members
              if (walker.options.goNextSibling && preAst.extendsList) {
@@ -2662,7 +2662,7 @@
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 482, 45))
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 482, 45))
              }
-@@ -2407,9 +2407,9 @@
+@@= skipped -67, +67 lines =@@
                  preAst.id = <Identifier>walker.walk(preAst.id, preAst);
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 499, 47))
  >Identifier : Symbol(Identifier)
@@ -2674,7 +2674,7 @@
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 499, 47))
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 499, 47))
              }
-@@ -2418,9 +2418,9 @@
+@@= skipped -11, +11 lines =@@
  
                  preAst.alias = walker.walk(preAst.alias, preAst);
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 499, 47))
@@ -2686,7 +2686,7 @@
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 499, 47))
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 499, 47))
              }
-@@ -2440,26 +2440,26 @@
+@@= skipped -22, +22 lines =@@
  
                  preAst.expr = walker.walk(preAst.expr, preAst);
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 508, 50))
@@ -2721,7 +2721,7 @@
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 508, 50))
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 508, 50))
              }
-@@ -2489,24 +2489,24 @@
+@@= skipped -49, +49 lines =@@
              preAst.labels = <ASTList>walker.walk(preAst.labels, preAst);
  >preAst : Symbol(preAst, Decl(parserRealSource12.ts, 522, 53))
  >ASTList : Symbol(ASTList)

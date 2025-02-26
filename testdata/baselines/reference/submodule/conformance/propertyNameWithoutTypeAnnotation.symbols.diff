@@ -1,6 +1,6 @@
 --- old.propertyNameWithoutTypeAnnotation.symbols
 +++ new.propertyNameWithoutTypeAnnotation.symbols
-@@ -5,14 +5,14 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(propertyNameWithoutTypeAnnotation.ts, 0, 0))
  
      foo;
@@ -17,7 +17,7 @@
  }
  
  var a: {
-@@ -32,15 +32,15 @@
+@@= skipped -27, +27 lines =@@
  // These should all be of type 'any'
  var r1 = (new C()).foo;
  >r1 : Symbol(r1, Decl(propertyNameWithoutTypeAnnotation.ts, 17, 3))

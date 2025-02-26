@@ -1,6 +1,6 @@
 --- old.enumKeysQuotedAsObjectPropertiesInDeclarationEmit.symbols
 +++ new.enumKeysQuotedAsObjectPropertiesInDeclarationEmit.symbols
-@@ -5,22 +5,22 @@
+@@= skipped -5, +5 lines =@@
  >MouseButton : Symbol(MouseButton, Decl(enumKeysQuotedAsObjectPropertiesInDeclarationEmit.ts, 0, 0))
  
  	LEFT_BUTTON = 1,
@@ -29,7 +29,7 @@
  }
  
  export const DOMMouseButton = {
-@@ -28,38 +28,38 @@
+@@= skipped -23, +23 lines =@@
  
  	'-1': MouseButton.NO_BUTTON,
  >'-1' : Symbol('-1', Decl(enumKeysQuotedAsObjectPropertiesInDeclarationEmit.ts, 9, 31))

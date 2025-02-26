@@ -1,6 +1,6 @@
 --- old.enumErrors.symbols
 +++ new.enumErrors.symbols
-@@ -19,7 +19,7 @@
+@@= skipped -19, +19 lines =@@
  >E5 : Symbol(E5, Decl(enumErrors.ts, 4, 16))
  
      C = new Number(30)
@@ -9,7 +9,7 @@
  >Number : Symbol(Number, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  }
  
-@@ -27,11 +27,11 @@
+@@= skipped -8, +8 lines =@@
  >E9 : Symbol(E9, Decl(enumErrors.ts, 9, 1))
  
      A,
@@ -24,7 +24,7 @@
  }
  
  //Enum with computed member intializer of different enum type
-@@ -40,16 +40,16 @@
+@@= skipped -13, +13 lines =@@
  >E10 : Symbol(E10, Decl(enumErrors.ts, 14, 1))
  
      A = E9.A,
@@ -47,7 +47,7 @@
  }
  
  // Enum with computed member intializer of other types
-@@ -57,21 +57,21 @@
+@@= skipped -17, +17 lines =@@
  >E11 : Symbol(E11, Decl(enumErrors.ts, 21, 1))
  
      A = true,
@@ -74,7 +74,7 @@
  }
  
  // Enum with string valued member and computed member initializers
-@@ -79,24 +79,24 @@
+@@= skipped -22, +22 lines =@@
  >E12 : Symbol(E12, Decl(enumErrors.ts, 30, 1))
  
      A = '',
@@ -105,7 +105,7 @@
  }
  
  // Enum with incorrect syntax
-@@ -104,31 +104,31 @@
+@@= skipped -25, +25 lines =@@
  >E13 : Symbol(E13, Decl(enumErrors.ts, 40, 1))
  
      postComma,

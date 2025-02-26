@@ -1,6 +1,6 @@
 --- old.bitwiseNotOperatorWithEnumType.symbols
 +++ new.bitwiseNotOperatorWithEnumType.symbols
-@@ -5,9 +5,9 @@
+@@= skipped -5, +5 lines =@@
  
  enum ENUM1 { A, B, "" };
  >ENUM1 : Symbol(ENUM1, Decl(bitwiseNotOperatorWithEnumType.ts, 0, 0))
@@ -13,7 +13,7 @@
  
  // enum type var
  var ResultIsNumber1 = ~ENUM1;
-@@ -18,24 +18,24 @@
+@@= skipped -13, +13 lines =@@
  var ResultIsNumber2 = ~ENUM1["A"];
  >ResultIsNumber2 : Symbol(ResultIsNumber2, Decl(bitwiseNotOperatorWithEnumType.ts, 8, 3))
  >ENUM1 : Symbol(ENUM1, Decl(bitwiseNotOperatorWithEnumType.ts, 0, 0))
@@ -45,7 +45,7 @@
  
  // miss assignment operators
  ~ENUM1;
-@@ -43,12 +43,12 @@
+@@= skipped -25, +25 lines =@@
  
  ~ENUM1["A"];
  >ENUM1 : Symbol(ENUM1, Decl(bitwiseNotOperatorWithEnumType.ts, 0, 0))

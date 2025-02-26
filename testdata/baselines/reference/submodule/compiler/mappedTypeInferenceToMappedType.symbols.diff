@@ -1,6 +1,6 @@
 --- old.mappedTypeInferenceToMappedType.symbols
 +++ new.mappedTypeInferenceToMappedType.symbols
-@@ -8,11 +8,11 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(mappedTypeInferenceToMappedType.ts, 2, 19))
  
      someProp: T;
@@ -14,7 +14,7 @@
  >U : Symbol(U, Decl(mappedTypeInferenceToMappedType.ts, 4, 11))
  >x : Symbol(x, Decl(mappedTypeInferenceToMappedType.ts, 4, 32))
  >K : Symbol(K, Decl(mappedTypeInferenceToMappedType.ts, 4, 38))
-@@ -30,7 +30,7 @@
+@@= skipped -22, +22 lines =@@
  >T : Symbol(T, Decl(mappedTypeInferenceToMappedType.ts, 7, 22))
  
      method<V extends unknown[]>(x: { [K in keyof V]: V[K] }): Base<V>;

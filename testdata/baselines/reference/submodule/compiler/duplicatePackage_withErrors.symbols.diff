@@ -1,6 +1,6 @@
 --- old.duplicatePackage_withErrors.symbols
 +++ new.duplicatePackage_withErrors.symbols
-@@ -22,6 +22,6 @@
+@@= skipped -22, +22 lines =@@
  >x : Symbol(x, Decl(index.d.ts, 0, 8))
  
  === /node_modules/b/node_modules/x/index.d.ts ===

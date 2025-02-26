@@ -1,6 +1,6 @@
 --- old.checkJsxChildrenProperty11.symbols
 +++ new.checkJsxChildrenProperty11.symbols
-@@ -9,19 +9,19 @@
+@@= skipped -9, +9 lines =@@
  
  	interface ElementAttributesProperty { props: {} }
  >ElementAttributesProperty : Symbol(ElementAttributesProperty, Decl(file.tsx, 1, 22))
@@ -24,7 +24,7 @@
  	}
  }
  
-@@ -29,47 +29,29 @@
+@@= skipped -20, +20 lines =@@
  >Button : Symbol(Button, Decl(file.tsx, 8, 1))
  
  	props: {}

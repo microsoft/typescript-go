@@ -1,6 +1,6 @@
 --- old.controlFlowGenericTypes.symbols
 +++ new.controlFlowGenericTypes.symbols
-@@ -19,9 +19,9 @@
+@@= skipped -19, +19 lines =@@
  >x : Symbol(x, Decl(controlFlowGenericTypes.ts, 0, 42))
  
          x.length;
@@ -12,7 +12,7 @@
  
          return x;
  >x : Symbol(x, Decl(controlFlowGenericTypes.ts, 0, 42))
-@@ -32,11 +32,11 @@
+@@= skipped -13, +13 lines =@@
  >a : Symbol(a, Decl(controlFlowGenericTypes.ts, 0, 52))
  
          y.a.length;
@@ -26,7 +26,7 @@
  
          return y.a;
  >y.a : Symbol(a, Decl(controlFlowGenericTypes.ts, 0, 52))
-@@ -45,17 +45,17 @@
+@@= skipped -13, +13 lines =@@
      }
      if (z[0]) {
  >z : Symbol(z, Decl(controlFlowGenericTypes.ts, 0, 60))
@@ -49,7 +49,7 @@
      }
      return "hello";
  }
-@@ -74,9 +74,9 @@
+@@= skipped -29, +29 lines =@@
  >x : Symbol(x, Decl(controlFlowGenericTypes.ts, 17, 15))
  
          x.length;
@@ -61,7 +61,7 @@
  
          return x;
  >x : Symbol(x, Decl(controlFlowGenericTypes.ts, 17, 15))
-@@ -89,7 +89,7 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(controlFlowGenericTypes.ts, 26, 14))
  
      item: T;
@@ -70,7 +70,7 @@
  >T : Symbol(T, Decl(controlFlowGenericTypes.ts, 26, 14))
  }
  
-@@ -342,7 +342,7 @@
+@@= skipped -253, +253 lines =@@
  >A : Symbol(A, Decl(controlFlowGenericTypes.ts, 114, 1))
  
      a: number | null;
@@ -79,7 +79,7 @@
  
  };
  
-@@ -376,7 +376,7 @@
+@@= skipped -34, +34 lines =@@
  >ET : Symbol(ET, Decl(controlFlowGenericTypes.ts, 132, 19))
  
      off<K extends keyof ET>(...args: [K, number] | [unknown, string]):void {}
@@ -88,7 +88,7 @@
  >K : Symbol(K, Decl(controlFlowGenericTypes.ts, 133, 8))
  >ET : Symbol(ET, Decl(controlFlowGenericTypes.ts, 132, 19))
  >args : Symbol(args, Decl(controlFlowGenericTypes.ts, 133, 28))
-@@ -394,15 +394,15 @@
+@@= skipped -18, +18 lines =@@
  >ET : Symbol(ET, Decl(controlFlowGenericTypes.ts, 135, 14))
  
      emittingObject.off(eventName, 0);
@@ -108,7 +108,7 @@
  >eventName : Symbol(eventName, Decl(controlFlowGenericTypes.ts, 135, 64))
  >eventName : Symbol(eventName, Decl(controlFlowGenericTypes.ts, 135, 64))
  }
-@@ -497,7 +497,7 @@
+@@= skipped -103, +103 lines =@@
  >PublicSpec : Symbol(PublicSpec, Decl(controlFlowGenericTypes.ts, 161, 20))
  
      m() {
@@ -117,7 +117,7 @@
  
          let iSpec = null! as InternalSpec;
  >iSpec : Symbol(iSpec, Decl(controlFlowGenericTypes.ts, 165, 11))
-@@ -556,22 +556,22 @@
+@@= skipped -59, +59 lines =@@
  >T : Symbol(T, Decl(controlFlowGenericTypes.ts, 184, 15))
  
      protected validateRow(_row: Partial<SqlInsertSet<T>>): void {
@@ -144,7 +144,7 @@
  >row : Symbol(row, Decl(controlFlowGenericTypes.ts, 187, 21))
      }
  }
-@@ -582,20 +582,20 @@
+@@= skipped -26, +26 lines =@@
  >Button : Symbol(Button, Decl(controlFlowGenericTypes.ts, 190, 1))
  
      type: "button";

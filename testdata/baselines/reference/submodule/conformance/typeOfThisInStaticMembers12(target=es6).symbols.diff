@@ -1,6 +1,6 @@
 --- old.typeOfThisInStaticMembers12(target=es6).symbols
 +++ new.typeOfThisInStaticMembers12(target=es6).symbols
-@@ -5,18 +5,18 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(typeOfThisInStaticMembers12.ts, 0, 0))
  
      static readonly c: "foo" = "foo"

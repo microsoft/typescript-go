@@ -1,6 +1,6 @@
 --- old.mergedInstantiationAssignment.symbols
 +++ new.mergedInstantiationAssignment.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(mergedInstantiationAssignment.ts, 2, 20))
  
    set x(x: T) {}
@@ -9,7 +9,7 @@
  >x : Symbol(x, Decl(mergedInstantiationAssignment.ts, 3, 8))
  >T : Symbol(T, Decl(mergedInstantiationAssignment.ts, 2, 20))
  }
-@@ -23,16 +23,16 @@
+@@= skipped -15, +15 lines =@@
  >b : Symbol(b, Decl(mergedInstantiationAssignment.ts, 7, 21))
  
  v1.x = 432;
@@ -29,7 +29,7 @@
  >T : Symbol(T, Decl(mergedInstantiationAssignment.ts, 10, 33))
  }
  
-@@ -46,15 +46,15 @@
+@@= skipped -23, +23 lines =@@
  >b : Symbol(b, Decl(mergedInstantiationAssignment.ts, 15, 21))
  
  v2.x = 42;
@@ -48,7 +48,7 @@
  >x : Symbol(x, Decl(mergedInstantiationAssignment.ts, 19, 8))
  }
  
-@@ -68,7 +68,7 @@
+@@= skipped -22, +22 lines =@@
  >b : Symbol(b, Decl(mergedInstantiationAssignment.ts, 23, 21))
  
  v3.x = 42;

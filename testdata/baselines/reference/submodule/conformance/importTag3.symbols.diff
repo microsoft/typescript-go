@@ -1,6 +1,6 @@
 --- old.importTag3.symbols
 +++ new.importTag3.symbols
-@@ -2,10 +2,10 @@
+@@= skipped -2, +2 lines =@@
  
  === /types.ts ===
  export default interface Foo {

@@ -1,6 +1,6 @@
 --- old.ambientEnum1.symbols
 +++ new.ambientEnum1.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >E1 : Symbol(E1, Decl(ambientEnum1.ts, 0, 0))
  
          y = 4.23
@@ -9,7 +9,7 @@
      }
      
      // Ambient enum with computer member
-@@ -13,7 +13,7 @@
+@@= skipped -8, +8 lines =@@
  >E2 : Symbol(E2, Decl(ambientEnum1.ts, 2, 5))
  
          x = 'foo'.length

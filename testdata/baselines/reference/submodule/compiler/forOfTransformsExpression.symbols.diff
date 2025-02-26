@@ -1,6 +1,6 @@
 --- old.forOfTransformsExpression.symbols
 +++ new.forOfTransformsExpression.symbols
-@@ -10,16 +10,16 @@
+@@= skipped -10, +10 lines =@@
  
  for (var item of items.sort((a, b) => a.name.localeCompare(b.name))) {
  >item : Symbol(item, Decl(forOfTransformsExpression.ts, 2, 8))

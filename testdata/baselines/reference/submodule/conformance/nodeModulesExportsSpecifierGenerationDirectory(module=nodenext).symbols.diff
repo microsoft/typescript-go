@@ -1,6 +1,6 @@
 --- old.nodeModulesExportsSpecifierGenerationDirectory(module=nodenext).symbols
 +++ new.nodeModulesExportsSpecifierGenerationDirectory(module=nodenext).symbols
-@@ -8,7 +8,6 @@
+@@= skipped -8, +8 lines =@@
  export const a = (await import("inner/index.js")).x();
  >a : Symbol(a, Decl(index.ts, 2, 12))
  >(await import("inner/index.js")).x : Symbol(x, Decl(index.d.ts, 1, 8))

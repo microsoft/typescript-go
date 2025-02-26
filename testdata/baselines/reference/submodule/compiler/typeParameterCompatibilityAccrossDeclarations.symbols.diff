@@ -1,6 +1,6 @@
 --- old.typeParameterCompatibilityAccrossDeclarations.symbols
 +++ new.typeParameterCompatibilityAccrossDeclarations.symbols
-@@ -22,7 +22,7 @@
+@@= skipped -22, +22 lines =@@
  >I : Symbol(I, Decl(typeParameterCompatibilityAccrossDeclarations.ts, 5, 1))
  
     x<T>(y: T): T;
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(typeParameterCompatibilityAccrossDeclarations.ts, 7, 5))
  >y : Symbol(y, Decl(typeParameterCompatibilityAccrossDeclarations.ts, 7, 8))
  >T : Symbol(T, Decl(typeParameterCompatibilityAccrossDeclarations.ts, 7, 5))
-@@ -32,7 +32,7 @@
+@@= skipped -10, +10 lines =@@
  >I2 : Symbol(I2, Decl(typeParameterCompatibilityAccrossDeclarations.ts, 8, 1))
  
     x(y: any): any;

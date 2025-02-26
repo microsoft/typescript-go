@@ -1,6 +1,6 @@
 --- old.inKeywordAndIntersection.symbols
 +++ new.inKeywordAndIntersection.symbols
-@@ -3,11 +3,11 @@
+@@= skipped -3, +3 lines =@@
  === inKeywordAndIntersection.ts ===
  class A { a = 0 }
  >A : Symbol(A, Decl(inKeywordAndIntersection.ts, 0, 0))
@@ -14,7 +14,7 @@
  
  function f10(obj: A & { x: string } | B) {
  >f10 : Symbol(f10, Decl(inKeywordAndIntersection.ts, 1, 17))
-@@ -35,14 +35,14 @@
+@@= skipped -32, +32 lines =@@
  >InstanceOne : Symbol(InstanceOne, Decl(inKeywordAndIntersection.ts, 10, 1))
  
      one(): void
@@ -31,7 +31,7 @@
  }
  
  const instance = {} as InstanceOne | InstanceTwo
-@@ -60,8 +60,8 @@
+@@= skipped -25, +25 lines =@@
  >ClassOne : Symbol(ClassOne, Decl(inKeywordAndIntersection.ts, 24, 5))
  
      instance.one();

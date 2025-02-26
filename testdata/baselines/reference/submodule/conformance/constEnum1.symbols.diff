@@ -1,6 +1,6 @@
 --- old.constEnum1.symbols
 +++ new.constEnum1.symbols
-@@ -9,33 +9,33 @@
+@@= skipped -9, +9 lines =@@
  >E : Symbol(E, Decl(constEnum1.ts, 0, 0))
  
      a = 10,

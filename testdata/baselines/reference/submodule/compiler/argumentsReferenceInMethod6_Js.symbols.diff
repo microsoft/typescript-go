@@ -1,6 +1,6 @@
 --- old.argumentsReferenceInMethod6_Js.symbols
 +++ new.argumentsReferenceInMethod6_Js.symbols
-@@ -5,15 +5,13 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(a.js, 0, 0))
  
  	m() {

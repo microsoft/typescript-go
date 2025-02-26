@@ -1,6 +1,6 @@
 --- old.libTypeScriptOverrideSimpleConfig.symbols
 +++ new.libTypeScriptOverrideSimpleConfig.symbols
-@@ -4,14 +4,13 @@
+@@= skipped -4, +4 lines =@@
  /// <reference lib="dom" />
  const a: ABC = { abc: "Hello" }
  >a : Symbol(a, Decl(index.ts, 1, 5))

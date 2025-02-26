@@ -1,6 +1,6 @@
 --- old.declarationEmitStringEnumUsedInNonlocalSpread.symbols
 +++ new.declarationEmitStringEnumUsedInNonlocalSpread.symbols
-@@ -5,47 +5,47 @@
+@@= skipped -5, +5 lines =@@
  >TestEnum : Symbol(TestEnum, Decl(class.ts, 0, 0))
  
      Test1 = '123123',
@@ -61,7 +61,7 @@
  
          };
      }
-@@ -59,13 +59,13 @@
+@@= skipped -54, +54 lines =@@
  >A : Symbol(A, Decl(index.ts, 0, 8))
  
      getA() { // TS4053 error

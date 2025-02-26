@@ -1,6 +1,6 @@
 --- old.recursiveIntersectionTypes.symbols
 +++ new.recursiveIntersectionTypes.symbols
-@@ -13,7 +13,7 @@
+@@= skipped -13, +13 lines =@@
  >Entity : Symbol(Entity, Decl(recursiveIntersectionTypes.ts, 0, 49))
  
      name: string;
@@ -9,7 +9,7 @@
  }
  
  interface Product extends Entity {
-@@ -21,7 +21,7 @@
+@@= skipped -8, +8 lines =@@
  >Entity : Symbol(Entity, Decl(recursiveIntersectionTypes.ts, 0, 49))
  
      price: number;
@@ -18,7 +18,7 @@
  }
  
  var entityList: LinkedList<Entity>;
-@@ -31,31 +31,31 @@
+@@= skipped -10, +10 lines =@@
  
  var s = entityList.name;
  >s : Symbol(s, Decl(recursiveIntersectionTypes.ts, 11, 3), Decl(recursiveIntersectionTypes.ts, 12, 3), Decl(recursiveIntersectionTypes.ts, 13, 3), Decl(recursiveIntersectionTypes.ts, 14, 3))
@@ -57,7 +57,7 @@
  >entityList.next.next.next : Symbol(next, Decl(recursiveIntersectionTypes.ts, 0, 26))
  >entityList.next.next : Symbol(next, Decl(recursiveIntersectionTypes.ts, 0, 26))
  >entityList.next : Symbol(next, Decl(recursiveIntersectionTypes.ts, 0, 26))
-@@ -63,7 +63,7 @@
+@@= skipped -32, +32 lines =@@
  >next : Symbol(next, Decl(recursiveIntersectionTypes.ts, 0, 26))
  >next : Symbol(next, Decl(recursiveIntersectionTypes.ts, 0, 26))
  >next : Symbol(next, Decl(recursiveIntersectionTypes.ts, 0, 26))

@@ -1,6 +1,6 @@
 --- old.objectTypesIdentityWithGenericCallSignaturesDifferingByConstraints3.symbols
 +++ new.objectTypesIdentityWithGenericCallSignaturesDifferingByConstraints3.symbols
-@@ -7,20 +7,20 @@
+@@= skipped -7, +7 lines =@@
  
  class One { foo: string }
  >One : Symbol(One, Decl(objectTypesIdentityWithGenericCallSignaturesDifferingByConstraints3.ts, 0, 0))
@@ -25,7 +25,7 @@
  >T : Symbol(T, Decl(objectTypesIdentityWithGenericCallSignaturesDifferingByConstraints3.ts, 7, 15))
  
  interface Five<T> extends Four<T> { }
-@@ -35,7 +35,7 @@
+@@= skipped -28, +28 lines =@@
  >U : Symbol(U, Decl(objectTypesIdentityWithGenericCallSignaturesDifferingByConstraints3.ts, 9, 16))
  
      foo: T;
@@ -34,7 +34,7 @@
  >T : Symbol(T, Decl(objectTypesIdentityWithGenericCallSignaturesDifferingByConstraints3.ts, 9, 14))
  }
  
-@@ -43,7 +43,7 @@
+@@= skipped -8, +8 lines =@@
  >A : Symbol(A, Decl(objectTypesIdentityWithGenericCallSignaturesDifferingByConstraints3.ts, 11, 1))
  
      foo<T extends U, U extends One>(x: T, y: U): string { return null; }
@@ -43,7 +43,7 @@
  >T : Symbol(T, Decl(objectTypesIdentityWithGenericCallSignaturesDifferingByConstraints3.ts, 14, 8))
  >U : Symbol(U, Decl(objectTypesIdentityWithGenericCallSignaturesDifferingByConstraints3.ts, 14, 20))
  >U : Symbol(U, Decl(objectTypesIdentityWithGenericCallSignaturesDifferingByConstraints3.ts, 14, 20))
-@@ -62,7 +62,7 @@
+@@= skipped -19, +19 lines =@@
  >Two : Symbol(Two, Decl(objectTypesIdentityWithGenericCallSignaturesDifferingByConstraints3.ts, 4, 25))
  
      foo(x: T, y: U): string { return null; }
@@ -52,7 +52,7 @@
  >x : Symbol(x, Decl(objectTypesIdentityWithGenericCallSignaturesDifferingByConstraints3.ts, 18, 8))
  >T : Symbol(T, Decl(objectTypesIdentityWithGenericCallSignaturesDifferingByConstraints3.ts, 17, 8))
  >y : Symbol(y, Decl(objectTypesIdentityWithGenericCallSignaturesDifferingByConstraints3.ts, 18, 13))
-@@ -77,7 +77,7 @@
+@@= skipped -15, +15 lines =@@
  >Three : Symbol(Three, Decl(objectTypesIdentityWithGenericCallSignaturesDifferingByConstraints3.ts, 5, 25))
  
      foo(x: T, y: U): string { return null; }
@@ -61,7 +61,7 @@
  >x : Symbol(x, Decl(objectTypesIdentityWithGenericCallSignaturesDifferingByConstraints3.ts, 22, 8))
  >T : Symbol(T, Decl(objectTypesIdentityWithGenericCallSignaturesDifferingByConstraints3.ts, 21, 8))
  >y : Symbol(y, Decl(objectTypesIdentityWithGenericCallSignaturesDifferingByConstraints3.ts, 22, 13))
-@@ -92,7 +92,7 @@
+@@= skipped -15, +15 lines =@@
  >Four : Symbol(Four, Decl(objectTypesIdentityWithGenericCallSignaturesDifferingByConstraints3.ts, 6, 31))
  
      foo(x: T, y: U): string { return null; }
@@ -70,7 +70,7 @@
  >x : Symbol(x, Decl(objectTypesIdentityWithGenericCallSignaturesDifferingByConstraints3.ts, 26, 8))
  >T : Symbol(T, Decl(objectTypesIdentityWithGenericCallSignaturesDifferingByConstraints3.ts, 25, 8))
  >y : Symbol(y, Decl(objectTypesIdentityWithGenericCallSignaturesDifferingByConstraints3.ts, 26, 13))
-@@ -107,7 +107,7 @@
+@@= skipped -15, +15 lines =@@
  >Five : Symbol(Five, Decl(objectTypesIdentityWithGenericCallSignaturesDifferingByConstraints3.ts, 7, 28))
  
      foo(x: T, y: U): string;
@@ -79,7 +79,7 @@
  >x : Symbol(x, Decl(objectTypesIdentityWithGenericCallSignaturesDifferingByConstraints3.ts, 30, 8))
  >T : Symbol(T, Decl(objectTypesIdentityWithGenericCallSignaturesDifferingByConstraints3.ts, 29, 12))
  >y : Symbol(y, Decl(objectTypesIdentityWithGenericCallSignaturesDifferingByConstraints3.ts, 30, 13))
-@@ -118,7 +118,7 @@
+@@= skipped -11, +11 lines =@@
  >I2 : Symbol(I2, Decl(objectTypesIdentityWithGenericCallSignaturesDifferingByConstraints3.ts, 31, 1))
  
      foo<T extends U, U extends Six<string, string>>(x: T, y: U): string;

@@ -1,6 +1,6 @@
 --- old.forStatements.symbols
 +++ new.forStatements.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >I : Symbol(I, Decl(forStatements.ts, 0, 0))
  
      id: number;
@@ -9,7 +9,7 @@
  }
  
  class C implements I {
-@@ -13,7 +13,7 @@
+@@= skipped -8, +8 lines =@@
  >I : Symbol(I, Decl(forStatements.ts, 0, 0))
  
      id: number;
@@ -18,7 +18,7 @@
  }
  
  class D<T>{
-@@ -21,16 +21,16 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(forStatements.ts, 8, 8))
  
      source: T;
@@ -38,7 +38,7 @@
  >D : Symbol(D, Decl(forStatements.ts, 6, 1))
  >D : Symbol(D, Decl(forStatements.ts, 6, 1))
  >T : Symbol(T, Decl(forStatements.ts, 8, 8))
-@@ -47,15 +47,15 @@
+@@= skipped -26, +26 lines =@@
  >A : Symbol(A, Decl(forStatements.ts, 16, 10))
  
          name: string;
@@ -57,7 +57,7 @@
  }
  
  for(var aNumber: number = 9.9;;){} 
-@@ -133,15 +133,15 @@
+@@= skipped -86, +86 lines =@@
  for(var aClassInModule: M.A = new M.A();;){}
  >aClassInModule : Symbol(aClassInModule, Decl(forStatements.ts, 44, 7))
  >M : Symbol(M, Decl(forStatements.ts, 14, 44))

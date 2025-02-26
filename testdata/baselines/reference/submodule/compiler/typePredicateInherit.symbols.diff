@@ -1,6 +1,6 @@
 --- old.typePredicateInherit.symbols
 +++ new.typePredicateInherit.symbols
-@@ -5,16 +5,16 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(typePredicateInherit.ts, 0, 0))
  
    method1(): this is {
@@ -20,7 +20,7 @@
  
      a: 1
  >a : Symbol(a, Decl(typePredicateInherit.ts, 5, 22))
-@@ -26,13 +26,13 @@
+@@= skipped -21, +21 lines =@@
  >A : Symbol(A, Decl(typePredicateInherit.ts, 0, 0))
  
    method1() { }      // should error
@@ -37,7 +37,7 @@
  
      return true
    }
-@@ -42,7 +42,7 @@
+@@= skipped -16, +16 lines =@@
  >C : Symbol(C, Decl(typePredicateInherit.ts, 17, 1))
  
    method1(): this is {
@@ -46,7 +46,7 @@
  
      a: 1
  >a : Symbol(a, Decl(typePredicateInherit.ts, 20, 22))
-@@ -52,7 +52,7 @@
+@@= skipped -10, +10 lines =@@
    }
  
    method2(): this is {
@@ -55,7 +55,7 @@
  
      a: 1
  >a : Symbol(a, Decl(typePredicateInherit.ts, 26, 22))
-@@ -62,7 +62,7 @@
+@@= skipped -10, +10 lines =@@
    }
  
    method3(): this is {
@@ -64,7 +64,7 @@
  
      a: 1
  >a : Symbol(a, Decl(typePredicateInherit.ts, 32, 22))
-@@ -77,11 +77,11 @@
+@@= skipped -15, +15 lines =@@
  >C : Symbol(C, Decl(typePredicateInherit.ts, 17, 1))
  
    method1(): void {   // should error
@@ -78,7 +78,7 @@
  
      a: 1
  >a : Symbol(a, Decl(typePredicateInherit.ts, 43, 22))
-@@ -91,7 +91,7 @@
+@@= skipped -14, +14 lines =@@
    }
  
    method3(): boolean {  // should error

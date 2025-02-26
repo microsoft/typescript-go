@@ -1,6 +1,6 @@
 --- old.symbolType2.symbols
 +++ new.symbolType2.symbols
-@@ -1,13 +1,6 @@
+@@= skipped -1, +1 lines =@@
  //// [tests/cases/conformance/es6/Symbols/symbolType2.ts] ////
  
  === symbolType2.ts ===

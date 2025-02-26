@@ -1,6 +1,6 @@
 --- old.es6ExportDefaultFunctionDeclaration.symbols
 +++ new.es6ExportDefaultFunctionDeclaration.symbols
-@@ -2,5 +2,5 @@
+@@= skipped -2, +2 lines =@@
  
  === es6ExportDefaultFunctionDeclaration.ts ===
  export default function f() { }

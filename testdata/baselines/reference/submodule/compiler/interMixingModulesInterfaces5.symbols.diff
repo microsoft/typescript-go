@@ -1,6 +1,6 @@
 --- old.interMixingModulesInterfaces5.symbols
 +++ new.interMixingModulesInterfaces5.symbols
-@@ -8,10 +8,10 @@
+@@= skipped -8, +8 lines =@@
  >B : Symbol(B, Decl(interMixingModulesInterfaces5.ts, 0, 10), Decl(interMixingModulesInterfaces5.ts, 5, 5))
  
          name: string;
@@ -13,7 +13,7 @@
      }
  
      export module B {
-@@ -27,9 +27,9 @@
+@@= skipped -19, +19 lines =@@
  
  var x: number = A.B.createB();
  >x : Symbol(x, Decl(interMixingModulesInterfaces5.ts, 14, 3))

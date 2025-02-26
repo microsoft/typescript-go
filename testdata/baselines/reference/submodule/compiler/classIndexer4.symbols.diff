@@ -1,6 +1,6 @@
 --- old.classIndexer4.symbols
 +++ new.classIndexer4.symbols
-@@ -16,8 +16,8 @@
+@@= skipped -16, +16 lines =@@
  >C123 : Symbol(C123, Decl(classIndexer4.ts, 0, 0))
  
      x: number;

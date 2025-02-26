@@ -1,6 +1,6 @@
 --- old.divergentAccessorsTypes8.symbols
 +++ new.divergentAccessorsTypes8.symbols
-@@ -7,11 +7,11 @@
+@@= skipped -7, +7 lines =@@
  >Serializer : Symbol(Serializer, Decl(divergentAccessorsTypes8.ts, 0, 9))
  
    set value(v: string | number | boolean);
@@ -14,7 +14,7 @@
  }
  declare let box: Serializer;
  >box : Symbol(box, Decl(divergentAccessorsTypes8.ts, 6, 11))
-@@ -20,29 +20,29 @@
+@@= skipped -13, +13 lines =@@
  const v = box['value']
  >v : Symbol(v, Decl(divergentAccessorsTypes8.ts, 7, 5))
  >box : Symbol(box, Decl(divergentAccessorsTypes8.ts, 6, 11))
@@ -50,7 +50,7 @@
  >cssText : Symbol(cssText, Decl(divergentAccessorsTypes8.ts, 14, 14))
  }
  
-@@ -52,46 +52,46 @@
+@@= skipped -32, +32 lines =@@
  
  element['style'] = "color: red";
  >element : Symbol(element, Decl(divergentAccessorsTypes8.ts, 17, 13))
@@ -108,7 +108,7 @@
  >s : Symbol(s, Decl(divergentAccessorsTypes8.ts, 37, 12))
  }
  
-@@ -99,39 +99,39 @@
+@@= skipped -47, +47 lines =@@
  >Two : Symbol(Two, Decl(divergentAccessorsTypes8.ts, 38, 1))
  
    get prop1(): string {
@@ -156,7 +156,7 @@
  >s : Symbol(s, Decl(divergentAccessorsTypes8.ts, 59, 12))
  }
  
-@@ -215,37 +215,37 @@
+@@= skipped -116, +116 lines =@@
  >Three : Symbol(Three, Decl(divergentAccessorsTypes8.ts, 86, 21))
  
    get prop1(): string {
@@ -201,7 +201,7 @@
  >s : Symbol(s, Decl(divergentAccessorsTypes8.ts, 106, 12))
  }
  
-@@ -253,21 +253,21 @@
+@@= skipped -38, +38 lines =@@
  >Five : Symbol(Five, Decl(divergentAccessorsTypes8.ts, 107, 1))
  
    get prop1(): "hello" {
@@ -227,7 +227,7 @@
  >s : Symbol(s, Decl(divergentAccessorsTypes8.ts, 118, 12))
  }
  
-@@ -297,21 +297,21 @@
+@@= skipped -44, +44 lines =@@
  >Six : Symbol(Six, Decl(divergentAccessorsTypes8.ts, 127, 22))
  
    get prop1(): boolean | number {

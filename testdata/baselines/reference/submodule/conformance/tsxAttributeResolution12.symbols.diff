@@ -1,6 +1,6 @@
 --- old.tsxAttributeResolution12.symbols
 +++ new.tsxAttributeResolution12.symbols
-@@ -14,13 +14,13 @@
+@@= skipped -14, +14 lines =@@
  >ElementAttributesProperty : Symbol(ElementAttributesProperty, Decl(react.d.ts, 3, 2))
  
  		props;
@@ -16,7 +16,7 @@
  	}
  }
  
-@@ -36,7 +36,7 @@
+@@= skipped -22, +22 lines =@@
  >context : Symbol(context, Decl(file.tsx, 1, 23))
  
  	setState(f: (prevState: S, props: P) => S, callback?: () => any): void;
@@ -25,7 +25,7 @@
  >f : Symbol(f, Decl(file.tsx, 2, 10))
  >prevState : Symbol(prevState, Decl(file.tsx, 2, 14))
  >S : Symbol(S, Decl(file.tsx, 0, 26))
-@@ -46,30 +46,30 @@
+@@= skipped -10, +10 lines =@@
  >callback : Symbol(callback, Decl(file.tsx, 2, 43))
  
  	setState(state: S, callback?: () => any): void;
@@ -63,7 +63,7 @@
  }
  
  
-@@ -101,9 +101,9 @@
+@@= skipped -55, +55 lines =@@
  // Errors correctly
  const T = TestMod.Test;
  >T : Symbol(T, Decl(file.tsx, 23, 5))
@@ -75,7 +75,7 @@
  
  var t1 = <T />;
  >t1 : Symbol(t1, Decl(file.tsx, 24, 3))
-@@ -112,8 +112,8 @@
+@@= skipped -11, +11 lines =@@
  // Should error
  var t2 = <TestMod.Test />;
  >t2 : Symbol(t2, Decl(file.tsx, 27, 3))

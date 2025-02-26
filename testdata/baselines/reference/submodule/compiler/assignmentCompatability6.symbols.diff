@@ -1,6 +1,6 @@
 --- old.assignmentCompatability6.symbols
 +++ new.assignmentCompatability6.symbols
-@@ -8,9 +8,9 @@
+@@= skipped -8, +8 lines =@@
  >interfaceWithPublicAndOptional : Symbol(interfaceWithPublicAndOptional, Decl(assignmentCompatability6.ts, 0, 18))
  >T : Symbol(T, Decl(assignmentCompatability6.ts, 1, 52))
  >U : Symbol(U, Decl(assignmentCompatability6.ts, 1, 54))
@@ -12,7 +12,7 @@
  >U : Symbol(U, Decl(assignmentCompatability6.ts, 1, 54))
  >obj4 : Symbol(obj4, Decl(assignmentCompatability6.ts, 1, 83))
  >interfaceWithPublicAndOptional : Symbol(interfaceWithPublicAndOptional, Decl(assignmentCompatability6.ts, 0, 18))
-@@ -26,7 +26,7 @@
+@@= skipped -18, +18 lines =@@
      export          interface interfaceWithOptional<T> { one?: T; };               var obj3: interfaceWithOptional<number> = { };;
  >interfaceWithOptional : Symbol(interfaceWithOptional, Decl(assignmentCompatability6.ts, 4, 18))
  >T : Symbol(T, Decl(assignmentCompatability6.ts, 5, 52))
@@ -21,7 +21,7 @@
  >T : Symbol(T, Decl(assignmentCompatability6.ts, 5, 52))
  >obj3 : Symbol(obj3, Decl(assignmentCompatability6.ts, 5, 86))
  >interfaceWithOptional : Symbol(interfaceWithOptional, Decl(assignmentCompatability6.ts, 4, 18))
-@@ -36,10 +36,10 @@
+@@= skipped -10, +10 lines =@@
  >obj3 : Symbol(obj3, Decl(assignmentCompatability6.ts, 5, 86))
  }
  __test2__.__val__obj3 = __test1__.__val__obj4

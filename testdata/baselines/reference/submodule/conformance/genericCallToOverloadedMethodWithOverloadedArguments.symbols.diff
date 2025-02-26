@@ -1,6 +1,6 @@
 --- old.genericCallToOverloadedMethodWithOverloadedArguments.symbols
 +++ new.genericCallToOverloadedMethodWithOverloadedArguments.symbols
-@@ -9,7 +9,7 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 1, 22))
  
          then<U>(cb: (x: T) => Promise<U>): Promise<U>;
@@ -9,7 +9,7 @@
  >U : Symbol(U, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 2, 13))
  >cb : Symbol(cb, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 2, 16))
  >x : Symbol(x, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 2, 21))
-@@ -31,9 +31,9 @@
+@@= skipped -22, +22 lines =@@
  
      var newPromise = numPromise.then(testFunction);
  >newPromise : Symbol(newPromise, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 8, 7))
@@ -21,7 +21,7 @@
  >testFunction : Symbol(testFunction, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 3, 5))
  }
  
-@@ -47,7 +47,7 @@
+@@= skipped -16, +16 lines =@@
  >T : Symbol(T, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 14, 22))
  
          then<U>(cb: (x: T) => Promise<U>): Promise<U>;
@@ -30,7 +30,7 @@
  >U : Symbol(U, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 15, 13))
  >cb : Symbol(cb, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 15, 16))
  >x : Symbol(x, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 15, 21))
-@@ -74,9 +74,9 @@
+@@= skipped -27, +27 lines =@@
  
      var newPromise = numPromise.then(testFunction);
  >newPromise : Symbol(newPromise, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 22, 7))
@@ -42,7 +42,7 @@
  >testFunction : Symbol(testFunction, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 16, 5), Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 18, 62))
  }
  
-@@ -90,7 +90,7 @@
+@@= skipped -16, +16 lines =@@
  >T : Symbol(T, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 28, 22))
  
          then<U>(cb: (x: T) => Promise<U>): Promise<U>;
@@ -51,7 +51,7 @@
  >U : Symbol(U, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 29, 13))
  >cb : Symbol(cb, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 29, 16))
  >x : Symbol(x, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 29, 21))
-@@ -101,7 +101,7 @@
+@@= skipped -11, +11 lines =@@
  >U : Symbol(U, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 29, 13))
  
          then<U>(cb: (x: T) => Promise<U>, error?: (error: any) => Promise<U>): Promise<U>;
@@ -60,7 +60,7 @@
  >U : Symbol(U, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 30, 13))
  >cb : Symbol(cb, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 30, 16))
  >x : Symbol(x, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 30, 21))
-@@ -127,9 +127,9 @@
+@@= skipped -26, +26 lines =@@
  
      var newPromise = numPromise.then(testFunction);
  >newPromise : Symbol(newPromise, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 36, 7))
@@ -72,7 +72,7 @@
  >testFunction : Symbol(testFunction, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 31, 5))
  }
  
-@@ -143,7 +143,7 @@
+@@= skipped -16, +16 lines =@@
  >T : Symbol(T, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 42, 22))
  
          then<U>(cb: (x: T) => Promise<U>): Promise<U>;
@@ -81,7 +81,7 @@
  >U : Symbol(U, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 43, 13))
  >cb : Symbol(cb, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 43, 16))
  >x : Symbol(x, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 43, 21))
-@@ -154,7 +154,7 @@
+@@= skipped -11, +11 lines =@@
  >U : Symbol(U, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 43, 13))
  
          then<U>(cb: (x: T) => Promise<U>, error?: (error: any) => Promise<U>): Promise<U>;
@@ -90,7 +90,7 @@
  >U : Symbol(U, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 44, 13))
  >cb : Symbol(cb, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 44, 16))
  >x : Symbol(x, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 44, 21))
-@@ -185,9 +185,9 @@
+@@= skipped -31, +31 lines =@@
  
      var newPromise = numPromise.then(testFunction);
  >newPromise : Symbol(newPromise, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 51, 7))
@@ -102,7 +102,7 @@
  >testFunction : Symbol(testFunction, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 45, 5), Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 47, 62))
  }
  
-@@ -201,7 +201,7 @@
+@@= skipped -16, +16 lines =@@
  >T : Symbol(T, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 57, 22))
  
          then<U>(cb: (x: T) => Promise<U>): Promise<U>;
@@ -111,7 +111,7 @@
  >U : Symbol(U, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 58, 13))
  >cb : Symbol(cb, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 58, 16))
  >x : Symbol(x, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 58, 21))
-@@ -212,7 +212,7 @@
+@@= skipped -11, +11 lines =@@
  >U : Symbol(U, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 58, 13))
  
          then<U>(cb: (x: T) => Promise<U>, error?: (error: any) => Promise<U>): Promise<U>;
@@ -120,7 +120,7 @@
  >U : Symbol(U, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 59, 13))
  >cb : Symbol(cb, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 59, 16))
  >x : Symbol(x, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 59, 21))
-@@ -227,7 +227,7 @@
+@@= skipped -15, +15 lines =@@
  >U : Symbol(U, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 59, 13))
  
          then<U>(cb: (x: T) => Promise<U>, error?: (error: any) => U, progress?: (preservation: any) => void): Promise<U>;
@@ -129,7 +129,7 @@
  >U : Symbol(U, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 60, 13))
  >cb : Symbol(cb, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 60, 16))
  >x : Symbol(x, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 60, 21))
-@@ -259,9 +259,9 @@
+@@= skipped -32, +32 lines =@@
  
      var newPromise = numPromise.then(testFunction);
  >newPromise : Symbol(newPromise, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 67, 7))
@@ -141,7 +141,7 @@
  >testFunction : Symbol(testFunction, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 61, 5), Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 63, 62))
  }
  
-@@ -275,7 +275,7 @@
+@@= skipped -16, +16 lines =@@
  >T : Symbol(T, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 73, 22))
  
          then<U>(cb: (x: T) => Promise<U>): Promise<U>;
@@ -150,7 +150,7 @@
  >U : Symbol(U, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 74, 13))
  >cb : Symbol(cb, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 74, 16))
  >x : Symbol(x, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 74, 21))
-@@ -286,7 +286,7 @@
+@@= skipped -11, +11 lines =@@
  >U : Symbol(U, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 74, 13))
  
          then<U>(cb: (x: T) => Promise<U>, error?: (error: any) => Promise<U>): Promise<U>;
@@ -159,7 +159,7 @@
  >U : Symbol(U, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 75, 13))
  >cb : Symbol(cb, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 75, 16))
  >x : Symbol(x, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 75, 21))
-@@ -322,9 +322,9 @@
+@@= skipped -36, +36 lines =@@
  
      var newPromise = numPromise.then(testFunction);
  >newPromise : Symbol(newPromise, Decl(genericCallToOverloadedMethodWithOverloadedArguments.ts, 83, 7))

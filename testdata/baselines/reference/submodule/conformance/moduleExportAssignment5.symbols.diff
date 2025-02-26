@@ -1,6 +1,6 @@
 --- old.moduleExportAssignment5.symbols
 +++ new.moduleExportAssignment5.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
      constructor() {
      }
      m() { }
@@ -9,7 +9,7 @@
  }
  var axios = new Axios();
  >axios : Symbol(axios, Decl(axios.js, 5, 3))
-@@ -15,21 +15,13 @@
+@@= skipped -8, +8 lines =@@
  
  // none of the 3 references should have a use-before-def error
  axios.m()

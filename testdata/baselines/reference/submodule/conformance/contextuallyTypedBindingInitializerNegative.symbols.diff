@@ -1,6 +1,6 @@
 --- old.contextuallyTypedBindingInitializerNegative.symbols
 +++ new.contextuallyTypedBindingInitializerNegative.symbols
-@@ -5,12 +5,12 @@
+@@= skipped -5, +5 lines =@@
  >Show : Symbol(Show, Decl(contextuallyTypedBindingInitializerNegative.ts, 0, 0))
  
      show: (x: number) => string;
@@ -15,7 +15,7 @@
  >showRename : Symbol(showRename, Decl(contextuallyTypedBindingInitializerNegative.ts, 3, 12))
  >v : Symbol(v, Decl(contextuallyTypedBindingInitializerNegative.ts, 3, 31))
  >v : Symbol(v, Decl(contextuallyTypedBindingInitializerNegative.ts, 3, 31))
-@@ -35,12 +35,12 @@
+@@= skipped -30, +30 lines =@@
  >Nested : Symbol(Nested, Decl(contextuallyTypedBindingInitializerNegative.ts, 5, 55))
  
      nested: Show
@@ -30,7 +30,7 @@
  >nestedRename : Symbol(nestedRename, Decl(contextuallyTypedBindingInitializerNegative.ts, 10, 13))
  >show : Symbol(show, Decl(contextuallyTypedBindingInitializerNegative.ts, 10, 38))
  >v : Symbol(v, Decl(contextuallyTypedBindingInitializerNegative.ts, 10, 44))
-@@ -51,16 +51,16 @@
+@@= skipped -16, +16 lines =@@
  >StringIdentity : Symbol(StringIdentity, Decl(contextuallyTypedBindingInitializerNegative.ts, 10, 67))
  
      stringIdentity(s: string): string;
@@ -51,7 +51,7 @@
  >StringIdentity : Symbol(StringIdentity, Decl(contextuallyTypedBindingInitializerNegative.ts, 10, 67))
  >stringIdentity : Symbol(stringIdentity, Decl(contextuallyTypedBindingInitializerNegative.ts, 15, 66))
  >x : Symbol(x, Decl(contextuallyTypedBindingInitializerNegative.ts, 15, 82))
-@@ -70,7 +70,7 @@
+@@= skipped -19, +19 lines =@@
  >Tuples : Symbol(Tuples, Decl(contextuallyTypedBindingInitializerNegative.ts, 15, 91))
  
      prop: [string, number];
@@ -60,7 +60,7 @@
  }
  function g({ prop = [101, 1234] }: Tuples) {}
  >g : Symbol(g, Decl(contextuallyTypedBindingInitializerNegative.ts, 19, 1))
-@@ -81,7 +81,7 @@
+@@= skipped -11, +11 lines =@@
  >StringUnion : Symbol(StringUnion, Decl(contextuallyTypedBindingInitializerNegative.ts, 20, 45))
  
      prop: "foo" | "bar";

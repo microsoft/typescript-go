@@ -1,6 +1,6 @@
 --- old.sourceMapSample.symbols
 +++ new.sourceMapSample.symbols
-@@ -11,16 +11,16 @@
+@@= skipped -11, +11 lines =@@
  >Greeter : Symbol(Greeter, Decl(sourceMapSample.ts, 1, 17))
  
          constructor(public greeting: string) {
@@ -21,7 +21,7 @@
          }
      }
  
-@@ -29,8 +29,8 @@
+@@= skipped -18, +18 lines =@@
  >foo : Symbol(foo, Decl(sourceMapSample.ts, 10, 5))
  >greeting : Symbol(greeting, Decl(sourceMapSample.ts, 13, 17))
  >Foo : Symbol(Foo, Decl(sourceMapSample.ts, 0, 0))
@@ -32,7 +32,7 @@
  
          return new Greeter(greeting);
  >Greeter : Symbol(Greeter, Decl(sourceMapSample.ts, 1, 17))
-@@ -43,9 +43,9 @@
+@@= skipped -14, +14 lines =@@
  
      var str = greeter.greet();
  >str : Symbol(str, Decl(sourceMapSample.ts, 18, 7))
@@ -44,7 +44,7 @@
  
      function foo2(greeting: string, ...restGreetings: string[]) {
  >foo2 : Symbol(foo2, Decl(sourceMapSample.ts, 18, 30))
-@@ -64,15 +64,15 @@
+@@= skipped -21, +21 lines =@@
          for (var i = 0; i < restGreetings.length; i++) {
  >i : Symbol(i, Decl(sourceMapSample.ts, 23, 16))
  >i : Symbol(i, Decl(sourceMapSample.ts, 23, 16))
@@ -64,7 +64,7 @@
  >Greeter : Symbol(Greeter, Decl(sourceMapSample.ts, 1, 17))
  >restGreetings : Symbol(restGreetings, Decl(sourceMapSample.ts, 20, 35))
  >i : Symbol(i, Decl(sourceMapSample.ts, 23, 16))
-@@ -89,15 +89,15 @@
+@@= skipped -25, +25 lines =@@
      for (var j = 0; j < b.length; j++) {
  >j : Symbol(j, Decl(sourceMapSample.ts, 31, 12))
  >j : Symbol(j, Decl(sourceMapSample.ts, 31, 12))

@@ -1,6 +1,6 @@
 --- old.declarationEmitNameConflicts.symbols
 +++ new.declarationEmitNameConflicts.symbols
-@@ -64,8 +64,6 @@
+@@= skipped -64, +64 lines =@@
      export import im = M.P.f;
  >im : Symbol(im, Decl(declarationEmit_nameConflicts_0.ts, 21, 5))
  >M : Symbol(M, Decl(declarationEmit_nameConflicts_0.ts, 0, 57), Decl(declarationEmit_nameConflicts_0.ts, 13, 1), Decl(declarationEmit_nameConflicts_0.ts, 28, 1))
@@ -9,7 +9,7 @@
  
      export var a = M.a; // emitted incorrectly as typeof f
  >a : Symbol(a, Decl(declarationEmit_nameConflicts_0.ts, 23, 14))
-@@ -87,11 +85,11 @@
+@@= skipped -23, +21 lines =@@
  
      export var g = M.c.g; // ok
  >g : Symbol(g, Decl(declarationEmit_nameConflicts_0.ts, 26, 14))
@@ -23,7 +23,7 @@
  
      export var d = M.d; // emitted incorrectly as typeof im
  >d : Symbol(d, Decl(declarationEmit_nameConflicts_0.ts, 27, 14))
-@@ -127,22 +125,22 @@
+@@= skipped -40, +40 lines =@@
  
      export interface I extends M.c.I { } // ok
  >I : Symbol(I, Decl(declarationEmit_nameConflicts_0.ts, 37, 38))

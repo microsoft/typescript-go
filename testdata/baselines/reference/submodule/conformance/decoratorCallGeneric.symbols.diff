@@ -1,6 +1,6 @@
 --- old.decoratorCallGeneric.symbols
 +++ new.decoratorCallGeneric.symbols
-@@ -6,11 +6,11 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(decoratorCallGeneric.ts, 0, 12))
  
      prototype: T,
@@ -14,7 +14,7 @@
  >T : Symbol(T, Decl(decoratorCallGeneric.ts, 0, 12))
  }
  function dec<T>(c: I<T>) { }
-@@ -27,9 +27,9 @@
+@@= skipped -21, +21 lines =@@
  >C : Symbol(C, Decl(decoratorCallGeneric.ts, 4, 28))
  
      _brand: any;

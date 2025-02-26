@@ -1,6 +1,6 @@
 --- old.ExportVariableWithAccessibleTypeInTypeAnnotation.symbols
 +++ new.ExportVariableWithAccessibleTypeInTypeAnnotation.symbols
-@@ -8,10 +8,10 @@
+@@= skipped -8, +8 lines =@@
  >Point : Symbol(Point, Decl(ExportVariableWithAccessibleTypeInTypeAnnotation.ts, 0, 10))
  
          x: number;

@@ -1,6 +1,6 @@
 --- old.errorCause(target=es2022).symbols
 +++ new.errorCause(target=es2022).symbols
-@@ -11,9 +11,9 @@
+@@= skipped -11, +11 lines =@@
  >Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2022.error.d.ts, --, --))
  
  err.cause;
@@ -12,7 +12,7 @@
  
  let anotherErr = new Error("foo", { cause: a });
  >anotherErr : Symbol(anotherErr, Decl(errorCause.ts, 4, 3))
-@@ -22,9 +22,9 @@
+@@= skipped -11, +11 lines =@@
  >a : Symbol(a, Decl(errorCause.ts, 0, 13))
  
  anotherErr.cause;

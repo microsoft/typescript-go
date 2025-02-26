@@ -1,6 +1,6 @@
 --- old.generatorTypeCheck58.symbols
 +++ new.generatorTypeCheck58.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >C : Symbol(C, Decl(generatorTypeCheck58.ts, 0, 15))
  
          static x = yield 0;

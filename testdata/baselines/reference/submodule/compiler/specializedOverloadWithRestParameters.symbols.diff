@@ -1,6 +1,6 @@
 --- old.specializedOverloadWithRestParameters.symbols
 +++ new.specializedOverloadWithRestParameters.symbols
-@@ -3,12 +3,12 @@
+@@= skipped -3, +3 lines =@@
  === specializedOverloadWithRestParameters.ts ===
  class Base { foo() { } }
  >Base : Symbol(Base, Decl(specializedOverloadWithRestParameters.ts, 0, 0))

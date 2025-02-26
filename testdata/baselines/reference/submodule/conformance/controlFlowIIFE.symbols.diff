@@ -1,6 +1,6 @@
 --- old.controlFlowIIFE.symbols
 +++ new.controlFlowIIFE.symbols
-@@ -18,9 +18,9 @@
+@@= skipped -18, +18 lines =@@
  >n : Symbol(n, Decl(controlFlowIIFE.ts, 5, 11))
  
              return x.length;
@@ -12,7 +12,7 @@
  
          }();
      }
-@@ -40,9 +40,9 @@
+@@= skipped -22, +22 lines =@@
  >n : Symbol(n, Decl(controlFlowIIFE.ts, 14, 11))
  
              return x.length;
@@ -24,7 +24,7 @@
  
          })();
      }
-@@ -64,9 +64,9 @@
+@@= skipped -24, +24 lines =@@
          let n = (z => x.length + y + z)(y = 1);
  >n : Symbol(n, Decl(controlFlowIIFE.ts, 24, 11))
  >z : Symbol(z, Decl(controlFlowIIFE.ts, 24, 17))
@@ -36,7 +36,7 @@
  >y : Symbol(y, Decl(controlFlowIIFE.ts, 22, 7))
  >z : Symbol(z, Decl(controlFlowIIFE.ts, 24, 17))
  >y : Symbol(y, Decl(controlFlowIIFE.ts, 22, 7))
-@@ -105,9 +105,9 @@
+@@= skipped -41, +41 lines =@@
  }
  (() => {
      test.slice(1); // No error

@@ -1,6 +1,6 @@
 --- old.derivedClassSuperProperties.symbols
 +++ new.derivedClassSuperProperties.symbols
-@@ -11,7 +11,7 @@
+@@= skipped -11, +11 lines =@@
  >a : Symbol(a, Decl(derivedClassSuperProperties.ts, 3, 16))
  
      receivesAnything(param?) { }
@@ -9,7 +9,7 @@
  >param : Symbol(param, Decl(derivedClassSuperProperties.ts, 5, 21))
  }
  
-@@ -20,13 +20,13 @@
+@@= skipped -9, +9 lines =@@
  >Base : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
  
      prop = true;
@@ -26,7 +26,7 @@
  
          super();
  >super : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
-@@ -38,13 +38,13 @@
+@@= skipped -18, +18 lines =@@
  >Base : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
  
      prop = true;
@@ -43,7 +43,7 @@
  >this : Symbol(Derived2, Decl(derivedClassSuperProperties.ts, 14, 1))
  
          super();
-@@ -57,13 +57,13 @@
+@@= skipped -19, +19 lines =@@
  >Base : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
  
      prop = true;
@@ -60,7 +60,7 @@
  
          super(this);
  >super : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
-@@ -76,13 +76,13 @@
+@@= skipped -19, +19 lines =@@
  >Base : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
  
      prop = true;
@@ -77,7 +77,7 @@
  >this : Symbol(Derived4, Decl(derivedClassSuperProperties.ts, 30, 1))
  
          super(this);
-@@ -96,16 +96,16 @@
+@@= skipped -20, +20 lines =@@
  >Base : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
  
      prop = true;
@@ -97,7 +97,7 @@
      }
  }
  
-@@ -114,7 +114,7 @@
+@@= skipped -18, +18 lines =@@
  >Base : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
  
      prop = true;
@@ -106,7 +106,7 @@
  
      constructor() {
          super(this);
-@@ -122,9 +122,9 @@
+@@= skipped -8, +8 lines =@@
  >this : Symbol(Derived6, Decl(derivedClassSuperProperties.ts, 46, 1))
  
          super.receivesAnything();
@@ -118,7 +118,7 @@
      }
  }
  
-@@ -133,16 +133,16 @@
+@@= skipped -11, +11 lines =@@
  >Base : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
  
      prop = true;
@@ -138,7 +138,7 @@
  >this : Symbol(Derived7, Decl(derivedClassSuperProperties.ts, 54, 1))
      }
  }
-@@ -152,7 +152,7 @@
+@@= skipped -19, +19 lines =@@
  >Base : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
  
      prop = true;
@@ -147,7 +147,7 @@
  
      constructor() {
          super(this);
-@@ -160,9 +160,9 @@
+@@= skipped -8, +8 lines =@@
  >this : Symbol(Derived8, Decl(derivedClassSuperProperties.ts, 62, 1))
  
          super.receivesAnything(this);
@@ -159,7 +159,7 @@
  >this : Symbol(Derived8, Decl(derivedClassSuperProperties.ts, 62, 1))
      }
  }
-@@ -172,7 +172,7 @@
+@@= skipped -12, +12 lines =@@
  >Base : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
  
      prop = true;
@@ -168,7 +168,7 @@
  
      constructor() {
          (() => this)();
-@@ -188,7 +188,7 @@
+@@= skipped -16, +16 lines =@@
  >Base : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
  
      prop = true;
@@ -177,7 +177,7 @@
  
      constructor() {
          const lambda = (param = this) => {};
-@@ -206,7 +206,7 @@
+@@= skipped -18, +18 lines =@@
  >Base : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
  
      prop = true;
@@ -186,7 +186,7 @@
  
      constructor() {
          @decorate(this)
-@@ -226,7 +226,7 @@
+@@= skipped -20, +20 lines =@@
  >Base : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
  
      prop = true;
@@ -195,7 +195,7 @@
  
      constructor() {
          class InnerClass {
-@@ -237,7 +237,7 @@
+@@= skipped -11, +11 lines =@@
  >this : Symbol(DerivedWithDecoratorOnClassMethod, Decl(derivedClassSuperProperties.ts, 96, 1))
  
              innerMethod() { }
@@ -204,7 +204,7 @@
          }
  
          super();
-@@ -250,7 +250,7 @@
+@@= skipped -13, +13 lines =@@
  >Base : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
  
      prop = true;
@@ -213,7 +213,7 @@
  
      constructor() {
          class InnerClass {
-@@ -261,7 +261,7 @@
+@@= skipped -11, +11 lines =@@
  >this : Symbol(DerivedWithDecoratorOnClassProperty, Decl(derivedClassSuperProperties.ts, 108, 1))
  
              innerProp = true;
@@ -222,7 +222,7 @@
          }
  
          super();
-@@ -274,7 +274,7 @@
+@@= skipped -13, +13 lines =@@
  >Base : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
  
      prop = true;
@@ -231,7 +231,7 @@
  
      constructor() {
          function declaration() {
-@@ -292,7 +292,7 @@
+@@= skipped -18, +18 lines =@@
  >Base : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
  
      prop = true;
@@ -240,7 +240,7 @@
  
      constructor() {
          function declaration(param = this) {
-@@ -312,7 +312,7 @@
+@@= skipped -20, +20 lines =@@
  >Base : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
  
      prop = true;
@@ -249,7 +249,7 @@
  
      constructor() {
          (function () {
-@@ -328,7 +328,7 @@
+@@= skipped -16, +16 lines =@@
  >Base : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
  
      prop = true;
@@ -258,7 +258,7 @@
  
      constructor() {
          (super());
-@@ -341,13 +341,13 @@
+@@= skipped -13, +13 lines =@@
  >Base : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
  
      prop = true;
@@ -275,7 +275,7 @@
  
          (super());
  >super : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
-@@ -359,16 +359,16 @@
+@@= skipped -18, +18 lines =@@
  >Base : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
  
      prop = true;
@@ -295,7 +295,7 @@
      }
  }
  
-@@ -377,31 +377,31 @@
+@@= skipped -18, +18 lines =@@
  >Base : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
  
      prop = true;
@@ -334,7 +334,7 @@
              }
          }
          super();
-@@ -414,37 +414,37 @@
+@@= skipped -37, +37 lines =@@
  >Base : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
  
      memberClass = class { };
@@ -381,7 +381,7 @@
              }
          }
          super();
-@@ -457,33 +457,33 @@
+@@= skipped -43, +43 lines =@@
  >Base : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
  
      prop = true;
@@ -424,7 +424,7 @@
              }
          });
          super();
-@@ -496,16 +496,16 @@
+@@= skipped -39, +39 lines =@@
  >Base : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
  
      memberClass = class { };
@@ -446,7 +446,7 @@
  
          super();
  >super : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
-@@ -517,13 +517,13 @@
+@@= skipped -21, +21 lines =@@
  >Base : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
  
      prop = true;
@@ -463,7 +463,7 @@
  >Base : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
  
              constructor() {
-@@ -531,13 +531,13 @@
+@@= skipped -14, +14 lines =@@
  >super : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
              }
              public foo() {
@@ -479,7 +479,7 @@
  >this : Symbol((Anonymous class), Decl(derivedClassSuperProperties.ts, 238, 20))
  
          });
-@@ -551,13 +551,13 @@
+@@= skipped -20, +20 lines =@@
  >Base : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
  
      prop = true;
@@ -496,7 +496,7 @@
  >Base : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
  
              constructor() {
-@@ -575,7 +575,7 @@
+@@= skipped -24, +24 lines =@@
  >Base : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
  
      prop = true;
@@ -505,7 +505,7 @@
  
      constructor() {
          const obj = {
-@@ -604,7 +604,7 @@
+@@= skipped -29, +29 lines =@@
  >Base : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
  
      propName = "prop";
@@ -514,7 +514,7 @@
  
      constructor() {
          const obj = {
-@@ -615,17 +615,17 @@
+@@= skipped -11, +11 lines =@@
  
              get [this.propName]() {
  >[this.propName] : Symbol([this.propName], Decl(derivedClassSuperProperties.ts, 282, 26))
@@ -536,7 +536,7 @@
  >param : Symbol(param, Decl(derivedClassSuperProperties.ts, 286, 32))
  
                  this._prop = param;
-@@ -642,7 +642,7 @@
+@@= skipped -27, +27 lines =@@
  >Base : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
  
      propName = "prop";
@@ -545,7 +545,7 @@
  
      constructor() {
          const obj = {
-@@ -674,7 +674,7 @@
+@@= skipped -32, +32 lines =@@
  >Base : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
  
      propName = "prop";
@@ -554,7 +554,7 @@
  
      constructor() {
          const obj = {
-@@ -682,9 +682,9 @@
+@@= skipped -8, +8 lines =@@
  
              prop: this.propName,
  >prop : Symbol(prop, Decl(derivedClassSuperProperties.ts, 313, 21))
@@ -566,7 +566,7 @@
  
          };
          super();
-@@ -697,7 +697,7 @@
+@@= skipped -15, +15 lines =@@
  >Base : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
  
      propName = "prop";
@@ -575,7 +575,7 @@
  
      constructor() {
          const obj = {
-@@ -705,9 +705,9 @@
+@@= skipped -8, +8 lines =@@
  
              [this.propName]: true,
  >[this.propName] : Symbol([this.propName], Decl(derivedClassSuperProperties.ts, 323, 21))
@@ -587,7 +587,7 @@
  
          };
          super();
-@@ -720,7 +720,7 @@
+@@= skipped -15, +15 lines =@@
  >Base : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
  
      prop = true;
@@ -596,7 +596,7 @@
  
      constructor() {
          const obj = {
-@@ -748,7 +748,7 @@
+@@= skipped -28, +28 lines =@@
  >Base : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
  
          prop = true;
@@ -605,7 +605,7 @@
  
          constructor() {
              for(super();;) {}
-@@ -759,7 +759,7 @@
+@@= skipped -11, +11 lines =@@
  >Base : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
  
          prop = true;
@@ -614,7 +614,7 @@
  
          constructor() {
              for(a; super();) {}
-@@ -771,7 +771,7 @@
+@@= skipped -12, +12 lines =@@
  >Base : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
  
          prop = true;
@@ -623,7 +623,7 @@
  
          constructor() {
              for(a; b; super()) {}
-@@ -784,7 +784,7 @@
+@@= skipped -13, +13 lines =@@
  >Base : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
  
          prop = true;
@@ -632,7 +632,7 @@
  
          constructor() {
              for(; ; super()) { break; }
-@@ -795,7 +795,7 @@
+@@= skipped -11, +11 lines =@@
  >Base : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
  
          prop = true;
@@ -641,7 +641,7 @@
  
          constructor() {
              for (const x of super()) {}
-@@ -807,7 +807,7 @@
+@@= skipped -12, +12 lines =@@
  >Base : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
  
          prop = true;
@@ -650,7 +650,7 @@
  
          constructor() {
              while (super()) {}
-@@ -818,7 +818,7 @@
+@@= skipped -11, +11 lines =@@
  >Base : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
  
          prop = true;
@@ -659,7 +659,7 @@
  
          constructor() {
              do {} while (super());
-@@ -829,7 +829,7 @@
+@@= skipped -11, +11 lines =@@
  >Base : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
  
          prop = true;
@@ -668,7 +668,7 @@
  
          constructor() {
              if (super()) {}
-@@ -840,7 +840,7 @@
+@@= skipped -11, +11 lines =@@
  >Base : Symbol(Base, Decl(derivedClassSuperProperties.ts, 0, 28))
  
          prop = true;

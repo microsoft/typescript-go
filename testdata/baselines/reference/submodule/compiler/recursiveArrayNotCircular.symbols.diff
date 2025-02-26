@@ -1,6 +1,6 @@
 --- old.recursiveArrayNotCircular.symbols
 +++ new.recursiveArrayNotCircular.symbols
-@@ -17,16 +17,16 @@
+@@= skipped -17, +17 lines =@@
  >ActionType : Symbol(ActionType, Decl(recursiveArrayNotCircular.ts, 0, 75))
  
      Foo,
@@ -21,7 +21,7 @@
  }
  
  type ReducerAction =
-@@ -35,22 +35,22 @@
+@@= skipped -18, +18 lines =@@
    | Action<ActionType.Bar, number>
  >Action : Symbol(Action, Decl(recursiveArrayNotCircular.ts, 0, 0))
  >ActionType : Symbol(ActionType, Decl(recursiveArrayNotCircular.ts, 0, 75))
@@ -48,7 +48,7 @@
  >ReducerAction : Symbol(ReducerAction, Decl(recursiveArrayNotCircular.ts, 7, 1))
  
  function assertNever(a: never): never {
-@@ -72,9 +72,9 @@
+@@= skipped -37, +37 lines =@@
  >type : Symbol(type, Decl(recursiveArrayNotCircular.ts, 0, 53), Decl(recursiveArrayNotCircular.ts, 0, 53), Decl(recursiveArrayNotCircular.ts, 0, 53), Decl(recursiveArrayNotCircular.ts, 0, 53), Decl(recursiveArrayNotCircular.ts, 0, 53))
  
          case ActionType.Bar:
@@ -60,7 +60,7 @@
  
              const x: number = action.payload;
  >x : Symbol(x, Decl(recursiveArrayNotCircular.ts, 22, 17))
-@@ -84,9 +84,9 @@
+@@= skipped -12, +12 lines =@@
  
              break;
          case ActionType.Baz:
@@ -72,7 +72,7 @@
  
              const y: boolean = action.payload;
  >y : Symbol(y, Decl(recursiveArrayNotCircular.ts, 25, 17))
-@@ -96,9 +96,9 @@
+@@= skipped -12, +12 lines =@@
  
              break;
          case ActionType.Foo:
@@ -84,7 +84,7 @@
  
              const z: string = action.payload;
  >z : Symbol(z, Decl(recursiveArrayNotCircular.ts, 28, 17))
-@@ -108,16 +108,16 @@
+@@= skipped -12, +12 lines =@@
  
              break;
          case ActionType.Batch:

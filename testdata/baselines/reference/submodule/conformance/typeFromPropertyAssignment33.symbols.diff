@@ -1,6 +1,6 @@
 --- old.typeFromPropertyAssignment33.symbols
 +++ new.typeFromPropertyAssignment33.symbols
-@@ -2,7 +2,7 @@
+@@= skipped -2, +2 lines =@@
  
  === ns.ts ===
  namespace ExpandoMerge {
@@ -9,7 +9,7 @@
  
      export var p3 = 333;
  >p3 : Symbol(p3, Decl(ns.ts, 1, 14))
-@@ -26,7 +26,7 @@
+@@= skipped -24, +24 lines =@@
  >p9 : Symbol(p9, Decl(ns.ts, 7, 14), Decl(expando.ts, 11, 24))
  }
  namespace ExpandoMerge {
@@ -18,7 +18,7 @@
  
      export var p2 = 222;
  >p2 : Symbol(p2, Decl(ns.ts, 10, 14))
-@@ -35,88 +35,88 @@
+@@= skipped -9, +9 lines =@@
  
  === expando.ts ===
  function ExpandoMerge(n: number) {

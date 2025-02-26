@@ -1,6 +1,6 @@
 --- old.mappedToToIndexSignatureInference.symbols
 +++ new.mappedToToIndexSignatureInference.symbols
-@@ -32,8 +32,8 @@
+@@= skipped -32, +32 lines =@@
  
  enum E { A = 'foo', B = 'bar' }
  >E : Symbol(E, Decl(mappedToToIndexSignatureInference.ts, 6, 86))

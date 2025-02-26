@@ -1,6 +1,6 @@
 --- old.keyofGenericExtendingClassDoubleLayer.symbols
 +++ new.keyofGenericExtendingClassDoubleLayer.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >Attributes : Symbol(Attributes, Decl(keyofGenericExtendingClassDoubleLayer.ts, 0, 12))
  
      public createdAt: Date;
@@ -9,7 +9,7 @@
  >Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
  }
  
-@@ -30,10 +30,10 @@
+@@= skipped -24, +24 lines =@@
  >PersonModel : Symbol(PersonModel, Decl(keyofGenericExtendingClassDoubleLayer.ts, 6, 55))
  
      public age: number;

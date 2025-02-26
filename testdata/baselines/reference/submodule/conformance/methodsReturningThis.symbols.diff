@@ -1,6 +1,6 @@
 --- old.methodsReturningThis.symbols
 +++ new.methodsReturningThis.symbols
-@@ -8,65 +8,52 @@
+@@= skipped -8, +8 lines =@@
  
  // error: 'Class' doesn't have property 'notPresent'
  Class.prototype.containsError = function () { return this.notPresent; };
@@ -80,7 +80,7 @@
  >x : Symbol(x, Decl(input.js, 13, 31))
  >y : Symbol(y, Decl(input.js, 13, 33))
  >pivotX : Symbol(pivotX, Decl(input.js, 13, 36))
-@@ -76,28 +63,21 @@
+@@= skipped -68, +55 lines =@@
  >rotation : Symbol(rotation, Decl(input.js, 13, 68))
  >skewX : Symbol(skewX, Decl(input.js, 13, 78))
  >skewY : Symbol(skewY, Decl(input.js, 13, 85))

@@ -1,6 +1,6 @@
 --- old.qualify.symbols
 +++ new.qualify.symbols
-@@ -40,7 +40,7 @@
+@@= skipped -40, +40 lines =@@
  >I : Symbol(I, Decl(qualify.ts, 15, 10))
  
          p;
@@ -9,7 +9,7 @@
      }
      export module U {
  >U : Symbol(U, Decl(qualify.ts, 18, 5))
-@@ -53,7 +53,7 @@
+@@= skipped -13, +13 lines =@@
  >I2 : Symbol(I2, Decl(qualify.ts, 20, 18))
  
              q;
@@ -18,7 +18,7 @@
          }
      }
  }
-@@ -67,8 +67,8 @@
+@@= skipped -14, +14 lines =@@
          var z:T.U.I2=3;
  >z : Symbol(z, Decl(qualify.ts, 29, 11))
  >T : Symbol(T, Decl(qualify.ts, 12, 1))
@@ -29,7 +29,7 @@
      }
  }
  
-@@ -82,7 +82,7 @@
+@@= skipped -15, +15 lines =@@
  >I3 : Symbol(I3, Decl(qualify.ts, 34, 22))
  
              zeep;
@@ -38,7 +38,7 @@
          }
      }
      export module K2 {
-@@ -92,7 +92,7 @@
+@@= skipped -10, +10 lines =@@
  >I4 : Symbol(I4, Decl(qualify.ts, 39, 22))
  
              z;
@@ -47,7 +47,7 @@
          }
          var v1:I4;
  >v1 : Symbol(v1, Decl(qualify.ts, 43, 11))
-@@ -101,33 +101,33 @@
+@@= skipped -9, +9 lines =@@
          var v2:K1.I3=v1;
  >v2 : Symbol(v2, Decl(qualify.ts, 44, 11))
  >K1 : Symbol(K1, Decl(qualify.ts, 33, 16))
@@ -86,7 +86,7 @@
  >v1 : Symbol(v1, Decl(qualify.ts, 43, 11))
      }
  }
-@@ -136,7 +136,7 @@
+@@= skipped -35, +35 lines =@@
  >I : Symbol(I, Decl(qualify.ts, 50, 1))
  
      k;
@@ -95,7 +95,7 @@
  }
  
  var y:I;
-@@ -146,7 +146,7 @@
+@@= skipped -10, +10 lines =@@
  var x:T.I=y;
  >x : Symbol(x, Decl(qualify.ts, 57, 3))
  >T : Symbol(T, Decl(qualify.ts, 12, 1))

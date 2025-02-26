@@ -1,6 +1,6 @@
 --- old.crashInResolveInterface.symbols
 +++ new.crashInResolveInterface.symbols
-@@ -10,14 +10,14 @@
+@@= skipped -10, +10 lines =@@
  >C : Symbol(C, Decl(file2.ts, 1, 17), Decl(file2.ts, 4, 1))
  
      count(countTitle?: string): void;
@@ -17,7 +17,7 @@
  >message : Symbol(message, Decl(file2.ts, 6, 8))
  >optionalParams : Symbol(optionalParams, Decl(file2.ts, 6, 22))
  }
-@@ -28,7 +28,7 @@
+@@= skipped -18, +18 lines =@@
  >T : Symbol(T, Decl(file1.ts, 0, 12))
  
      each(action: (item: T, index: number) => void): void;
@@ -26,7 +26,7 @@
  >action : Symbol(action, Decl(file1.ts, 1, 9))
  >item : Symbol(item, Decl(file1.ts, 1, 18))
  >T : Symbol(T, Decl(file1.ts, 0, 12))
-@@ -41,12 +41,12 @@
+@@= skipped -13, +13 lines =@@
  
  var x = q1.each(x => c.log(x));
  >x : Symbol(x, Decl(file1.ts, 4, 3))

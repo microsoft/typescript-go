@@ -1,6 +1,6 @@
 --- old.parserMethodSignature3.symbols
 +++ new.parserMethodSignature3.symbols
-@@ -5,6 +5,6 @@
+@@= skipped -5, +5 lines =@@
  >I : Symbol(I, Decl(parserMethodSignature3.ts, 0, 0))
  
    C<T>();

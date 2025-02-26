@@ -1,6 +1,6 @@
 --- old.lambdaPropSelf.symbols
 +++ new.lambdaPropSelf.symbols
-@@ -8,27 +8,27 @@
+@@= skipped -8, +8 lines =@@
  >Person : Symbol(Person, Decl(lambdaPropSelf.ts, 0, 20))
  
      children: string[];
@@ -37,7 +37,7 @@
  }
  
  
-@@ -36,7 +36,7 @@
+@@= skipped -28, +28 lines =@@
  >T : Symbol(T, Decl(lambdaPropSelf.ts, 10, 1))
  
       fo() {

@@ -1,6 +1,6 @@
 --- old.jsFileESModuleWithEnumTag.symbols
 +++ new.jsFileESModuleWithEnumTag.symbols
-@@ -4,7 +4,7 @@
+@@= skipped -4, +4 lines =@@
  export {}; // mark as module
  /** @enum {number} */
  const ChangeDetectionStrategy = {
@@ -9,7 +9,7 @@
  
    OnPush: 0,
  >OnPush : Symbol(OnPush, Decl(jsFileESModuleWithEnumTag.js, 2, 33))
-@@ -14,27 +14,26 @@
+@@= skipped -10, +10 lines =@@
  
  };
  ChangeDetectionStrategy[ChangeDetectionStrategy.OnPush] = 'OnPush';

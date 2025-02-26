@@ -1,6 +1,6 @@
 --- old.callChainInference.symbols
 +++ new.callChainInference.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >Y : Symbol(Y, Decl(callChainInference.ts, 0, 0))
  
      foo<T>(this: T, arg: keyof T): void;
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(callChainInference.ts, 3, 8))
  >this : Symbol(this, Decl(callChainInference.ts, 3, 11))
  >T : Symbol(T, Decl(callChainInference.ts, 3, 8))
-@@ -15,10 +15,10 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(callChainInference.ts, 3, 8))
  
      a: number;
@@ -22,7 +22,7 @@
  }
  
  declare const value: Y | undefined;
-@@ -29,13 +29,13 @@
+@@= skipped -14, +14 lines =@@
  >value : Symbol(value, Decl(callChainInference.ts, 8, 13))
  
      value?.foo("a");

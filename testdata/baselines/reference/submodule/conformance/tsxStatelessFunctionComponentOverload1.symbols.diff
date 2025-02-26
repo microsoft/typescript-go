@@ -1,6 +1,6 @@
 --- old.tsxStatelessFunctionComponentOverload1.symbols
 +++ new.tsxStatelessFunctionComponentOverload1.symbols
-@@ -8,24 +8,24 @@
+@@= skipped -8, +8 lines =@@
  >OneThing : Symbol(OneThing, Decl(file.tsx, 0, 31), Decl(file.tsx, 2, 57), Decl(file.tsx, 3, 76), Decl(file.tsx, 4, 69), Decl(file.tsx, 5, 83))
  >k : Symbol(k, Decl(file.tsx, 2, 26))
  >yxx : Symbol(yxx, Decl(file.tsx, 2, 30))
@@ -31,7 +31,7 @@
  
  declare function OneThing(l: {yy: number, yy1: string, yy2: boolean}): JSX.Element;
  >OneThing : Symbol(OneThing, Decl(file.tsx, 0, 31), Decl(file.tsx, 2, 57), Decl(file.tsx, 3, 76), Decl(file.tsx, 4, 69), Decl(file.tsx, 5, 83))
-@@ -33,16 +33,16 @@
+@@= skipped -25, +25 lines =@@
  >yy : Symbol(yy, Decl(file.tsx, 5, 30))
  >yy1 : Symbol(yy1, Decl(file.tsx, 5, 41))
  >yy2 : Symbol(yy2, Decl(file.tsx, 5, 54))
@@ -52,7 +52,7 @@
  
  // OK
  const c1 = <OneThing yxx='ok' />
-@@ -79,32 +79,32 @@
+@@= skipped -46, +46 lines =@@
  >TestingOneThing : Symbol(TestingOneThing, Decl(file.tsx, 13, 47), Decl(file.tsx, 16, 60), Decl(file.tsx, 17, 86), Decl(file.tsx, 18, 83))
  >y1 : Symbol(y1)
  >string : Symbol(string, Decl(file.tsx, 16, 34))
@@ -93,7 +93,7 @@
  
  // OK
  const d1 = <TestingOneThing y1 extra-data />;
-@@ -144,8 +144,8 @@
+@@= skipped -65, +65 lines =@@
  >a : Symbol(a, Decl(file.tsx, 29, 33))
  >y1 : Symbol(y1, Decl(file.tsx, 29, 37))
  >y2 : Symbol(y2, Decl(file.tsx, 29, 49))
@@ -104,7 +104,7 @@
  
  declare function TestingOptional(a: {y1: boolean, y2?: number, y3: boolean}): JSX.Element;
  >TestingOptional : Symbol(TestingOptional, Decl(file.tsx, 26, 72), Decl(file.tsx, 29, 77))
-@@ -153,8 +153,8 @@
+@@= skipped -9, +9 lines =@@
  >y1 : Symbol(y1, Decl(file.tsx, 30, 37))
  >y2 : Symbol(y2, Decl(file.tsx, 30, 49))
  >y3 : Symbol(y3, Decl(file.tsx, 30, 62))

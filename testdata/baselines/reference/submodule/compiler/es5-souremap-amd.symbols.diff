@@ -1,6 +1,6 @@
 --- old.es5-souremap-amd.symbols
 +++ new.es5-souremap-amd.symbols
-@@ -10,7 +10,7 @@
+@@= skipped -10, +10 lines =@@
      }
  
      public B()

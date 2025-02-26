@@ -1,6 +1,6 @@
 --- old.declarationEmitLateBoundAssignments2.symbols
 +++ new.declarationEmitLateBoundAssignments2.symbols
-@@ -19,142 +19,142 @@
+@@= skipped -19, +19 lines =@@
  >emoji : Symbol(emoji, Decl(declarationEmitLateBoundAssignments2.ts, 6, 5))
  
  export function decl() {}

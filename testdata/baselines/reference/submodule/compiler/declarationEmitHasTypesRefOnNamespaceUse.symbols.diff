@@ -1,6 +1,6 @@
 --- old.declarationEmitHasTypesRefOnNamespaceUse.symbols
 +++ new.declarationEmitHasTypesRefOnNamespaceUse.symbols
-@@ -3,15 +3,4 @@
+@@= skipped -3, +3 lines =@@
  === /src/index.ts ===
  class Src implements NS.Dep { }
  >Src : Symbol(Src, Decl(index.ts, 0, 0))

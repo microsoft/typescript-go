@@ -1,6 +1,6 @@
 --- old.importHelpersNoHelpers.symbols
 +++ new.importHelpersNoHelpers.symbols
-@@ -19,7 +19,7 @@
+@@= skipped -19, +19 lines =@@
  >C : Symbol(C, Decl(external.ts, 4, 21))
  
      method(@dec x: number) {
@@ -9,7 +9,7 @@
  >dec : Symbol(dec, Decl(external.ts, 4, 11))
  >x : Symbol(x, Decl(external.ts, 8, 11))
      }
-@@ -59,7 +59,7 @@
+@@= skipped -40, +40 lines =@@
  >C : Symbol(C, Decl(script.ts, 3, 21))
  
      method(@dec x: number) {

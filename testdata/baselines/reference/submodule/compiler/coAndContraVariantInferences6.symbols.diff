@@ -1,6 +1,6 @@
 --- old.coAndContraVariantInferences6.symbols
 +++ new.coAndContraVariantInferences6.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >ExactProps : Symbol(ExactProps, Decl(coAndContraVariantInferences6.ts, 0, 0))
  
    value: "A" | "B";
@@ -9,7 +9,7 @@
  }
  interface FunctionComponent<P = {}> {
  >FunctionComponent : Symbol(FunctionComponent, Decl(coAndContraVariantInferences6.ts, 4, 1))
-@@ -50,7 +50,7 @@
+@@= skipped -43, +43 lines =@@
  
  > {
    type: T;
@@ -18,7 +18,7 @@
  >T : Symbol(T, Decl(coAndContraVariantInferences6.ts, 15, 23))
  }
  
-@@ -102,10 +102,10 @@
+@@= skipped -52, +52 lines =@@
  >stat : Symbol(stat, Decl(coAndContraVariantInferences6.ts, 36, 13))
  
  [].push.apply(props, stat.properties);

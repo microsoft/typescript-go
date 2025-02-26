@@ -1,6 +1,6 @@
 --- old.es6ImportNamedImportMergeErrors.symbols
 +++ new.es6ImportNamedImportMergeErrors.symbols
-@@ -24,7 +24,7 @@
+@@= skipped -24, +24 lines =@@
  >a : Symbol(a, Decl(es6ImportNamedImportMergeErrors_1.ts, 0, 8), Decl(es6ImportNamedImportMergeErrors_1.ts, 0, 56))
  
  import { x as x1 } from "./es6ImportNamedImportMergeErrors_0";
@@ -9,7 +9,7 @@
  >x1 : Symbol(x1, Decl(es6ImportNamedImportMergeErrors_1.ts, 2, 8), Decl(es6ImportNamedImportMergeErrors_1.ts, 2, 62))
  
  interface x1 { } // shouldnt be error
-@@ -37,7 +37,7 @@
+@@= skipped -13, +13 lines =@@
  >x : Symbol(x, Decl(es6ImportNamedImportMergeErrors_1.ts, 4, 8), Decl(es6ImportNamedImportMergeErrors_1.ts, 5, 3))
  
  import { x as x44 } from "./es6ImportNamedImportMergeErrors_0"; // should be error

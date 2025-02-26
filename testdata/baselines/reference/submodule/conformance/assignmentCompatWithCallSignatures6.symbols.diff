@@ -1,6 +1,6 @@
 --- old.assignmentCompatWithCallSignatures6.symbols
 +++ new.assignmentCompatWithCallSignatures6.symbols
-@@ -5,47 +5,47 @@
+@@= skipped -5, +5 lines =@@
  
  class Base { foo: string; }
  >Base : Symbol(Base, Decl(assignmentCompatWithCallSignatures6.ts, 0, 0))
@@ -56,7 +56,7 @@
  >T : Symbol(T, Decl(assignmentCompatWithCallSignatures6.ts, 11, 9))
  >U : Symbol(U, Decl(assignmentCompatWithCallSignatures6.ts, 11, 11))
  >x : Symbol(x, Decl(assignmentCompatWithCallSignatures6.ts, 11, 14))
-@@ -54,7 +54,7 @@
+@@= skipped -49, +49 lines =@@
  >U : Symbol(U, Decl(assignmentCompatWithCallSignatures6.ts, 11, 11))
  
      a5: <T,U>(x: (arg: T) => U) => T;
@@ -65,7 +65,7 @@
  >T : Symbol(T, Decl(assignmentCompatWithCallSignatures6.ts, 12, 9))
  >U : Symbol(U, Decl(assignmentCompatWithCallSignatures6.ts, 12, 11))
  >x : Symbol(x, Decl(assignmentCompatWithCallSignatures6.ts, 12, 14))
-@@ -64,7 +64,7 @@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(assignmentCompatWithCallSignatures6.ts, 12, 9))
  
      a6: <T extends Base>(x: (arg: T) => Derived) => T;
@@ -74,7 +74,7 @@
  >T : Symbol(T, Decl(assignmentCompatWithCallSignatures6.ts, 13, 9))
  >Base : Symbol(Base, Decl(assignmentCompatWithCallSignatures6.ts, 0, 0))
  >x : Symbol(x, Decl(assignmentCompatWithCallSignatures6.ts, 13, 25))
-@@ -74,7 +74,7 @@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(assignmentCompatWithCallSignatures6.ts, 13, 9))
  
      a11: <T>(x: { foo: T }, y: { foo: T; bar: T }) => Base;
@@ -83,7 +83,7 @@
  >T : Symbol(T, Decl(assignmentCompatWithCallSignatures6.ts, 14, 10))
  >x : Symbol(x, Decl(assignmentCompatWithCallSignatures6.ts, 14, 13))
  >foo : Symbol(foo, Decl(assignmentCompatWithCallSignatures6.ts, 14, 17))
-@@ -87,7 +87,7 @@
+@@= skipped -13, +13 lines =@@
  >Base : Symbol(Base, Decl(assignmentCompatWithCallSignatures6.ts, 0, 0))
  
      a15: <T>(x: { a: T; b: T }) => T[];
@@ -92,7 +92,7 @@
  >T : Symbol(T, Decl(assignmentCompatWithCallSignatures6.ts, 15, 10))
  >x : Symbol(x, Decl(assignmentCompatWithCallSignatures6.ts, 15, 13))
  >a : Symbol(a, Decl(assignmentCompatWithCallSignatures6.ts, 15, 17))
-@@ -97,7 +97,7 @@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(assignmentCompatWithCallSignatures6.ts, 15, 10))
  
      a16: <T extends Base>(x: { a: T; b: T }) => T[];
@@ -101,7 +101,7 @@
  >T : Symbol(T, Decl(assignmentCompatWithCallSignatures6.ts, 16, 10))
  >Base : Symbol(Base, Decl(assignmentCompatWithCallSignatures6.ts, 0, 0))
  >x : Symbol(x, Decl(assignmentCompatWithCallSignatures6.ts, 16, 26))
-@@ -120,16 +120,16 @@
+@@= skipped -23, +23 lines =@@
  >T : Symbol(T, Decl(assignmentCompatWithCallSignatures6.ts, 21, 8))
  
  x.a = b;
@@ -122,7 +122,7 @@
  
  var b2: <T>(x: T) => string[]; 
  >b2 : Symbol(b2, Decl(assignmentCompatWithCallSignatures6.ts, 24, 3))
-@@ -138,16 +138,16 @@
+@@= skipped -18, +18 lines =@@
  >T : Symbol(T, Decl(assignmentCompatWithCallSignatures6.ts, 24, 9))
  
  x.a2 = b2;
@@ -143,7 +143,7 @@
  
  var b3: <T>(x: T) => T;
  >b3 : Symbol(b3, Decl(assignmentCompatWithCallSignatures6.ts, 27, 3))
-@@ -157,16 +157,16 @@
+@@= skipped -19, +19 lines =@@
  >T : Symbol(T, Decl(assignmentCompatWithCallSignatures6.ts, 27, 9))
  
  x.a3 = b3;
@@ -164,7 +164,7 @@
  
  var b4: <T, U>(x: T, y: U) => string; 
  >b4 : Symbol(b4, Decl(assignmentCompatWithCallSignatures6.ts, 30, 3))
-@@ -178,16 +178,16 @@
+@@= skipped -21, +21 lines =@@
  >U : Symbol(U, Decl(assignmentCompatWithCallSignatures6.ts, 30, 11))
  
  x.a4 = b4;
@@ -185,7 +185,7 @@
  
  var b5: <T, U>(x: (arg: T) => U) => T; 
  >b5 : Symbol(b5, Decl(assignmentCompatWithCallSignatures6.ts, 33, 3))
-@@ -200,16 +200,16 @@
+@@= skipped -22, +22 lines =@@
  >T : Symbol(T, Decl(assignmentCompatWithCallSignatures6.ts, 33, 9))
  
  x.a5 = b5;
@@ -206,7 +206,7 @@
  
  var b11: <T, U>(x: { foo: T }, y: { foo: U; bar: U }) => Base; 
  >b11 : Symbol(b11, Decl(assignmentCompatWithCallSignatures6.ts, 36, 3))
-@@ -226,16 +226,16 @@
+@@= skipped -26, +26 lines =@@
  >Base : Symbol(Base, Decl(assignmentCompatWithCallSignatures6.ts, 0, 0))
  
  x.a11 = b11;
@@ -227,7 +227,7 @@
  
  var b16: <T>(x: { a: T; b: T }) => T[]; 
  >b16 : Symbol(b16, Decl(assignmentCompatWithCallSignatures6.ts, 39, 3))
-@@ -248,14 +248,14 @@
+@@= skipped -22, +22 lines =@@
  >T : Symbol(T, Decl(assignmentCompatWithCallSignatures6.ts, 39, 10))
  
  x.a16 = b16;

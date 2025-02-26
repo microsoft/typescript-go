@@ -1,6 +1,6 @@
 --- old.contextualTypeWithUnionTypeIndexSignatures.symbols
 +++ new.contextualTypeWithUnionTypeIndexSignatures.symbols
-@@ -20,13 +20,13 @@
+@@= skipped -20, +20 lines =@@
  >IWithNoStringIndexSignature : Symbol(IWithNoStringIndexSignature, Decl(contextualTypeWithUnionTypeIndexSignatures.ts, 7, 1))
  
      foo: string;
@@ -16,7 +16,7 @@
  }
  interface IWithStringIndexSignature1 {
  >IWithStringIndexSignature1 : Symbol(IWithStringIndexSignature1, Decl(contextualTypeWithUnionTypeIndexSignatures.ts, 14, 1))
-@@ -96,9 +96,9 @@
+@@= skipped -76, +76 lines =@@
  >IWithStringIndexSignature2 : Symbol(IWithStringIndexSignature2, Decl(contextualTypeWithUnionTypeIndexSignatures.ts, 17, 1))
  >z : Symbol(z, Decl(contextualTypeWithUnionTypeIndexSignatures.ts, 42, 67))
  >a : Symbol(a, Decl(contextualTypeWithUnionTypeIndexSignatures.ts, 42, 70))
@@ -28,7 +28,7 @@
  
  var x2: IWithStringIndexSignature1 | IWithStringIndexSignature2 = { z: a => a }; // a should be number
  >x2 : Symbol(x2, Decl(contextualTypeWithUnionTypeIndexSignatures.ts, 42, 3), Decl(contextualTypeWithUnionTypeIndexSignatures.ts, 43, 3))
-@@ -140,9 +140,9 @@
+@@= skipped -44, +44 lines =@@
  >IWithNumberIndexSignature2 : Symbol(IWithNumberIndexSignature2, Decl(contextualTypeWithUnionTypeIndexSignatures.ts, 23, 1))
  >1 : Symbol(1, Decl(contextualTypeWithUnionTypeIndexSignatures.ts, 52, 67))
  >a : Symbol(a, Decl(contextualTypeWithUnionTypeIndexSignatures.ts, 52, 70))

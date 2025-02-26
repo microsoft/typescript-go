@@ -1,6 +1,6 @@
 --- old.simpleRecursionWithBaseCase3.symbols
 +++ new.simpleRecursionWithBaseCase3.symbols
-@@ -5,9 +5,9 @@
+@@= skipped -5, +5 lines =@@
  >fn1 : Symbol(fn1, Decl(simpleRecursionWithBaseCase3.ts, 0, 5))
  
    if (Math.random() > 0.5) {

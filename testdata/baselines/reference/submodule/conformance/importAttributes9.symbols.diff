@@ -1,6 +1,6 @@
 --- old.importAttributes9.symbols
 +++ new.importAttributes9.symbols
-@@ -1,18 +1,18 @@
+@@= skipped -1, +1 lines =@@
  //// [tests/cases/conformance/importAttributes/importAttributes9.ts] ////
  
 -=== ./a.ts ===
@@ -23,7 +23,7 @@
      }
  }
  
-@@ -26,8 +26,6 @@
+@@= skipped -25, +25 lines =@@
  >f : Symbol(f, Decl(b.ts, 7, 8))
  
      await import("./a", {

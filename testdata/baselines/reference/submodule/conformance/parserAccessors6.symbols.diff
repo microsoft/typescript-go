@@ -1,6 +1,6 @@
 --- old.parserAccessors6.symbols
 +++ new.parserAccessors6.symbols
-@@ -5,6 +5,6 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(parserAccessors6.ts, 0, 0))
  
    set foo(v) { }

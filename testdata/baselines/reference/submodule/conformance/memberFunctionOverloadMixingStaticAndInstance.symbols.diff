@@ -1,6 +1,6 @@
 --- old.memberFunctionOverloadMixingStaticAndInstance.symbols
 +++ new.memberFunctionOverloadMixingStaticAndInstance.symbols
-@@ -5,20 +5,20 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(memberFunctionOverloadMixingStaticAndInstance.ts, 0, 0))
  
      foo();
@@ -25,7 +25,7 @@
  }
  
  class E<T> {
-@@ -26,12 +26,12 @@
+@@= skipped -21, +21 lines =@@
  >T : Symbol(T, Decl(memberFunctionOverloadMixingStaticAndInstance.ts, 10, 8))
  
      foo(x: T);
@@ -40,7 +40,7 @@
  >x : Symbol(x, Decl(memberFunctionOverloadMixingStaticAndInstance.ts, 12, 15))
  }
  
-@@ -40,11 +40,11 @@
+@@= skipped -14, +14 lines =@@
  >T : Symbol(T, Decl(memberFunctionOverloadMixingStaticAndInstance.ts, 15, 8))
  
      static foo(x: number);

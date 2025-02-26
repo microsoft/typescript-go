@@ -1,6 +1,6 @@
 --- old.asyncFunctionsAndStrictNullChecks.symbols
 +++ new.asyncFunctionsAndStrictNullChecks.symbols
-@@ -10,7 +10,7 @@
+@@= skipped -10, +10 lines =@@
  >TResult : Symbol(TResult, Decl(asyncFunctionsAndStrictNullChecks.ts, 1, 23))
  
          then<U>(success?: (value: TResult) => IPromise<U>, error?: (error: any) => IPromise<U>, progress?: (progress: any) => void): IPromise<U>;
@@ -9,7 +9,7 @@
  >U : Symbol(U, Decl(asyncFunctionsAndStrictNullChecks.ts, 2, 13))
  >success : Symbol(success, Decl(asyncFunctionsAndStrictNullChecks.ts, 2, 16))
  >value : Symbol(value, Decl(asyncFunctionsAndStrictNullChecks.ts, 2, 27))
-@@ -27,7 +27,7 @@
+@@= skipped -17, +17 lines =@@
  >U : Symbol(U, Decl(asyncFunctionsAndStrictNullChecks.ts, 2, 13))
  
          then<U>(success?: (value: TResult) => IPromise<U>, error?: (error: any) => U, progress?: (progress: any) => void): IPromise<U>;
@@ -18,7 +18,7 @@
  >U : Symbol(U, Decl(asyncFunctionsAndStrictNullChecks.ts, 3, 13))
  >success : Symbol(success, Decl(asyncFunctionsAndStrictNullChecks.ts, 3, 16))
  >value : Symbol(value, Decl(asyncFunctionsAndStrictNullChecks.ts, 3, 27))
-@@ -43,7 +43,7 @@
+@@= skipped -16, +16 lines =@@
  >U : Symbol(U, Decl(asyncFunctionsAndStrictNullChecks.ts, 3, 13))
  
          then<U>(success?: (value: TResult) => U, error?: (error: any) => IPromise<U>, progress?: (progress: any) => void): IPromise<U>;
@@ -27,7 +27,7 @@
  >U : Symbol(U, Decl(asyncFunctionsAndStrictNullChecks.ts, 4, 13))
  >success : Symbol(success, Decl(asyncFunctionsAndStrictNullChecks.ts, 4, 16))
  >value : Symbol(value, Decl(asyncFunctionsAndStrictNullChecks.ts, 4, 27))
-@@ -59,7 +59,7 @@
+@@= skipped -16, +16 lines =@@
  >U : Symbol(U, Decl(asyncFunctionsAndStrictNullChecks.ts, 4, 13))
  
          then<U>(success?: (value: TResult) => U, error?: (error: any) => U, progress?: (progress: any) => void): IPromise<U>;
@@ -36,7 +36,7 @@
  >U : Symbol(U, Decl(asyncFunctionsAndStrictNullChecks.ts, 5, 13))
  >success : Symbol(success, Decl(asyncFunctionsAndStrictNullChecks.ts, 5, 16))
  >value : Symbol(value, Decl(asyncFunctionsAndStrictNullChecks.ts, 5, 27))
-@@ -74,7 +74,7 @@
+@@= skipped -15, +15 lines =@@
  >U : Symbol(U, Decl(asyncFunctionsAndStrictNullChecks.ts, 5, 13))
  
          done<U>(success?: (value: TResult) => any, error?: (error: any) => any, progress?: (progress: any) => void): void;
@@ -45,7 +45,7 @@
  >U : Symbol(U, Decl(asyncFunctionsAndStrictNullChecks.ts, 6, 13))
  >success : Symbol(success, Decl(asyncFunctionsAndStrictNullChecks.ts, 6, 16))
  >value : Symbol(value, Decl(asyncFunctionsAndStrictNullChecks.ts, 6, 27))
-@@ -85,7 +85,7 @@
+@@= skipped -11, +11 lines =@@
  >progress : Symbol(progress, Decl(asyncFunctionsAndStrictNullChecks.ts, 6, 92))
  
          cancel(): void;
@@ -54,7 +54,7 @@
      }
  }
  
-@@ -93,8 +93,8 @@
+@@= skipped -8, +8 lines =@@
  >sample : Symbol(sample, Decl(asyncFunctionsAndStrictNullChecks.ts, 10, 1))
  >promise : Symbol(promise, Decl(asyncFunctionsAndStrictNullChecks.ts, 12, 22))
  >Windows : Symbol(Windows, Decl(asyncFunctionsAndStrictNullChecks.ts, 0, 0))
@@ -65,7 +65,7 @@
  
      var number = await promise;
  >number : Symbol(number, Decl(asyncFunctionsAndStrictNullChecks.ts, 13, 7))
-@@ -107,7 +107,7 @@
+@@= skipped -14, +14 lines =@@
  >T : Symbol(T, Decl(asyncFunctionsAndStrictNullChecks.ts, 17, 26))
  >value : Symbol(value, Decl(asyncFunctionsAndStrictNullChecks.ts, 17, 29))
  >T : Symbol(T, Decl(asyncFunctionsAndStrictNullChecks.ts, 17, 26))
@@ -74,7 +74,7 @@
  >T : Symbol(T, Decl(asyncFunctionsAndStrictNullChecks.ts, 17, 26))
  
  declare function resolve2<T>(value: T): Windows.Foundation.IPromise<T>;
-@@ -116,8 +116,8 @@
+@@= skipped -9, +9 lines =@@
  >value : Symbol(value, Decl(asyncFunctionsAndStrictNullChecks.ts, 18, 29))
  >T : Symbol(T, Decl(asyncFunctionsAndStrictNullChecks.ts, 18, 26))
  >Windows : Symbol(Windows, Decl(asyncFunctionsAndStrictNullChecks.ts, 0, 0))

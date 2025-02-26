@@ -1,6 +1,6 @@
 --- old.defaultArgsInOverloads.symbols
 +++ new.defaultArgsInOverloads.symbols
-@@ -17,27 +17,27 @@
+@@= skipped -17, +17 lines =@@
  >C : Symbol(C, Decl(defaultArgsInOverloads.ts, 2, 26))
  
  	fun(a: string);
@@ -34,7 +34,7 @@
  >a : Symbol(a, Decl(defaultArgsInOverloads.ts, 10, 12))
  }
  
-@@ -45,11 +45,11 @@
+@@= skipped -28, +28 lines =@@
  >I : Symbol(I, Decl(defaultArgsInOverloads.ts, 11, 1))
  
      fun(a: string);

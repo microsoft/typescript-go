@@ -1,6 +1,6 @@
 --- old.globalMergeWithCommonJSAssignmentDeclaration.symbols
 +++ new.globalMergeWithCommonJSAssignmentDeclaration.symbols
-@@ -2,18 +2,15 @@
+@@= skipped -2, +2 lines =@@
  
  === bug27099.js ===
  window.name = 1;

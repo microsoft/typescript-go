@@ -1,6 +1,6 @@
 --- old.chainedImportAlias.symbols
 +++ new.chainedImportAlias.symbols
-@@ -9,11 +9,11 @@
+@@= skipped -9, +9 lines =@@
  >x : Symbol(x, Decl(chainedImportAlias_file1.ts, 0, 0))
  
  y.m.foo();

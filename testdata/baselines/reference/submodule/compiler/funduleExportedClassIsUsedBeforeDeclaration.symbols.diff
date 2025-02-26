@@ -1,6 +1,6 @@
 --- old.funduleExportedClassIsUsedBeforeDeclaration.symbols
 +++ new.funduleExportedClassIsUsedBeforeDeclaration.symbols
-@@ -6,12 +6,12 @@
+@@= skipped -6, +6 lines =@@
  
      (): B.C;    // uses defined below class in module
  >B : Symbol(B, Decl(funduleExportedClassIsUsedBeforeDeclaration.ts, 2, 1), Decl(funduleExportedClassIsUsedBeforeDeclaration.ts, 3, 26))
@@ -15,7 +15,7 @@
  
  declare module B {
  >B : Symbol(B, Decl(funduleExportedClassIsUsedBeforeDeclaration.ts, 2, 1), Decl(funduleExportedClassIsUsedBeforeDeclaration.ts, 3, 26))
-@@ -21,7 +21,7 @@
+@@= skipped -15, +15 lines =@@
      }
  }
  new B.C(); 

@@ -1,6 +1,6 @@
 --- old.newNamesInGlobalAugmentations1.symbols
 +++ new.newNamesInGlobalAugmentations1.symbols
-@@ -14,14 +14,14 @@
+@@= skipped -14, +14 lines =@@
  >global : Symbol(global, Decl(f1.d.ts, 4, 1))
  
      interface SymbolConstructor {
@@ -18,7 +18,7 @@
  
      let [a, b]: number[];
  >a : Symbol(a, Decl(f1.d.ts, 10, 9))
-@@ -30,20 +30,16 @@
+@@= skipped -16, +16 lines =@@
      export import X = M.M1.x;
  >X : Symbol(X, Decl(f1.d.ts, 10, 25))
  >M : Symbol(M, Decl(f1.d.ts, 0, 10))

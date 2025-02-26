@@ -1,6 +1,6 @@
 --- old.for-of17.symbols
 +++ new.for-of17.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >NumberIterator : Symbol(NumberIterator, Decl(for-of17.ts, 0, 0))
  
      next() {
@@ -9,7 +9,7 @@
  
          return {
              value: 0,
-@@ -17,10 +17,7 @@
+@@= skipped -12, +12 lines =@@
          };
      }
      [Symbol.iterator]() {

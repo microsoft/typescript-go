@@ -1,6 +1,6 @@
 --- old.recursiveConditionalCrash4.symbols
 +++ new.recursiveConditionalCrash4.symbols
-@@ -18,11 +18,11 @@
+@@= skipped -18, +18 lines =@@
  > = It extends StrIter.Iterator
  >It : Symbol(It, Decl(recursiveConditionalCrash4.ts, 4, 33))
  >StrIter : Symbol(StrIter)
@@ -14,7 +14,7 @@
  >Str : Symbol(Str, Decl(recursiveConditionalCrash4.ts, 2, 16))
  >It : Symbol(It, Decl(recursiveConditionalCrash4.ts, 4, 33))
  >$Rest : Symbol($Rest, Decl(recursiveConditionalCrash4.ts, 7, 43))
-@@ -33,7 +33,7 @@
+@@= skipped -15, +15 lines =@@
  >Add : Symbol(Add)
  >Length : Symbol(Length, Decl(recursiveConditionalCrash4.ts, 3, 21))
  >StrIter : Symbol(StrIter)
@@ -23,7 +23,7 @@
  >It : Symbol(It, Decl(recursiveConditionalCrash4.ts, 4, 33))
  >It : Symbol(It, Decl(recursiveConditionalCrash4.ts, 4, 33))
  
-@@ -42,7 +42,7 @@
+@@= skipped -9, +9 lines =@@
  >Str : Symbol(Str, Decl(recursiveConditionalCrash4.ts, 2, 16))
  >Length : Symbol(Length, Decl(recursiveConditionalCrash4.ts, 3, 21))
  >StrIter : Symbol(StrIter)

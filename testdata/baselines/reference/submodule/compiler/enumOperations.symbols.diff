@@ -1,6 +1,6 @@
 --- old.enumOperations.symbols
 +++ new.enumOperations.symbols
-@@ -3,14 +3,14 @@
+@@= skipped -3, +3 lines =@@
  === enumOperations.ts ===
  enum Enum { None = 0 }
  >Enum : Symbol(Enum, Decl(enumOperations.ts, 0, 0))

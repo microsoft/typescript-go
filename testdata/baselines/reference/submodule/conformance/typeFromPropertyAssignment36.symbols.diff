@@ -1,6 +1,6 @@
 --- old.typeFromPropertyAssignment36.symbols
 +++ new.typeFromPropertyAssignment36.symbols
-@@ -9,74 +9,74 @@
+@@= skipped -9, +9 lines =@@
  >d : Symbol(d, Decl(typeFromPropertyAssignment36.ts, 0, 24))
      }
      d.e = 12
@@ -97,7 +97,7 @@
      }
      return d
  >d : Symbol(d, Decl(typeFromPropertyAssignment36.ts, 0, 24))
-@@ -84,67 +84,67 @@
+@@= skipped -75, +75 lines =@@
  // OK to access possibly-unassigned properties outside the initialising scope
  var test = f(true).s
  >test : Symbol(test, Decl(typeFromPropertyAssignment36.ts, 31, 3))
@@ -198,7 +198,7 @@
  
  // test function expressions too
  const g = function() {
-@@ -152,29 +152,29 @@
+@@= skipped -68, +68 lines =@@
  }
  if (!!false) {
      g.expando = 1

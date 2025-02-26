@@ -1,6 +1,6 @@
 --- old.parserUsingConstructorAsIdentifier.symbols
 +++ new.parserUsingConstructorAsIdentifier.symbols
-@@ -52,18 +52,18 @@
+@@= skipped -52, +52 lines =@@
  
                  constructor.prototype = Object.create(basePrototype);
  >constructor : Symbol(constructor, Decl(parserUsingConstructorAsIdentifier.ts, 12, 34))
@@ -23,7 +23,7 @@
  >constructor : Symbol(constructor, Decl(parserUsingConstructorAsIdentifier.ts, 12, 34))
  >value : Symbol(value, Decl(parserUsingConstructorAsIdentifier.ts, 18, 77))
  >constructor : Symbol(constructor, Decl(parserUsingConstructorAsIdentifier.ts, 12, 34))
-@@ -112,9 +112,9 @@
+@@= skipped -60, +60 lines =@@
              for (i = 1, len = arguments.length; i < len; i++) {
  >i : Symbol(i, Decl(parserUsingConstructorAsIdentifier.ts, 33, 15))
  >len : Symbol(len, Decl(parserUsingConstructorAsIdentifier.ts, 33, 18))

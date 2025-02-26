@@ -1,6 +1,6 @@
 --- old.jsdocThisType.symbols
 +++ new.jsdocThisType.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(types.d.ts, 0, 0))
  
      foo: () => void;
@@ -9,7 +9,7 @@
  }
  
  export type M = (this: Foo) => void;
-@@ -19,7 +19,6 @@
+@@= skipped -14, +14 lines =@@
  >f1 : Symbol(f1, Decl(a.js, 1, 12))
  
      this.test();
@@ -17,7 +17,7 @@
  }
  
  /** @type {import('./types').M} */
-@@ -27,7 +26,6 @@
+@@= skipped -8, +7 lines =@@
  >f2 : Symbol(f2, Decl(a.js, 3, 1))
  
      this.test();
@@ -25,7 +25,7 @@
  }
  
  /** @type {(this: import('./types').Foo) => void} */
-@@ -35,7 +33,6 @@
+@@= skipped -8, +7 lines =@@
  >f3 : Symbol(f3, Decl(a.js, 11, 12))
  
      this.test();
@@ -33,7 +33,7 @@
  }
  
  /** @type {(this: import('./types').Foo) => void} */
-@@ -43,7 +40,6 @@
+@@= skipped -8, +7 lines =@@
  >f4 : Symbol(f4, Decl(a.js, 13, 1))
  
      this.test();
@@ -41,7 +41,7 @@
  }
  
  /** @type {function(this: import('./types').Foo): void} */
-@@ -51,7 +47,6 @@
+@@= skipped -8, +7 lines =@@
  >f5 : Symbol(f5, Decl(a.js, 21, 12))
  
      this.test();
@@ -49,7 +49,7 @@
  }
  
  /** @type {function(this: import('./types').Foo): void} */
-@@ -59,6 +54,5 @@
+@@= skipped -8, +7 lines =@@
  >f6 : Symbol(f6, Decl(a.js, 23, 1))
  
      this.test();

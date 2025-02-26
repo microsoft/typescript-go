@@ -1,6 +1,6 @@
 --- old.typeFromPropertyAssignment22.symbols
 +++ new.typeFromPropertyAssignment22.symbols
-@@ -5,15 +5,11 @@
+@@= skipped -5, +5 lines =@@
  >Installer : Symbol(Installer, Decl(npm-install.js, 0, 0))
  
      this.args = 0
@@ -18,7 +18,7 @@
  >next : Symbol(next, Decl(npm-install.js, 3, 48))
  
      // ArrowFunction isn't treated as a this-container
-@@ -21,25 +17,14 @@
+@@= skipped -16, +12 lines =@@
  >args : Symbol(args, Decl(npm-install.js, 5, 5))
  
          this.args = 'hi'

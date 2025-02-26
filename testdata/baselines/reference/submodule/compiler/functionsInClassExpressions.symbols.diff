@@ -1,6 +1,6 @@
 --- old.functionsInClassExpressions.symbols
 +++ new.functionsInClassExpressions.symbols
-@@ -6,24 +6,24 @@
+@@= skipped -6, +6 lines =@@
  
      constructor() {
          this.bar++;

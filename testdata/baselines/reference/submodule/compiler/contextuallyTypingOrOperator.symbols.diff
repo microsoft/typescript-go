@@ -1,6 +1,6 @@
 --- old.contextuallyTypingOrOperator.symbols
 +++ new.contextuallyTypingOrOperator.symbols
-@@ -7,34 +7,34 @@
+@@= skipped -7, +7 lines =@@
  >_ : Symbol(_, Decl(contextuallyTypingOrOperator.ts, 0, 13))
  >a : Symbol(a, Decl(contextuallyTypingOrOperator.ts, 0, 39))
  >s : Symbol(s, Decl(contextuallyTypingOrOperator.ts, 0, 42))

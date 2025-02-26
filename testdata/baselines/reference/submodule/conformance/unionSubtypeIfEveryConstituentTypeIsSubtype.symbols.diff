@@ -1,6 +1,6 @@
 --- old.unionSubtypeIfEveryConstituentTypeIsSubtype.symbols
 +++ new.unionSubtypeIfEveryConstituentTypeIsSubtype.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >e : Symbol(e, Decl(unionSubtypeIfEveryConstituentTypeIsSubtype.ts, 0, 0))
  
      e1,
@@ -13,7 +13,7 @@
  }
  
  // A union type U is a subtype of a type T if each type in U is a subtype of T
-@@ -19,10 +19,10 @@
+@@= skipped -14, +14 lines =@@
  >x : Symbol(x, Decl(unionSubtypeIfEveryConstituentTypeIsSubtype.ts, 7, 5))
  
      foo: string | number; // ok
@@ -26,7 +26,7 @@
  >e : Symbol(e, Decl(unionSubtypeIfEveryConstituentTypeIsSubtype.ts, 0, 0))
  }
  interface I2 {
-@@ -33,10 +33,10 @@
+@@= skipped -14, +14 lines =@@
  
      // S is union type and each constituent type of S is a subtype of T
      foo: string | number; // error string is not subtype of number
@@ -39,7 +39,7 @@
  >e : Symbol(e, Decl(unionSubtypeIfEveryConstituentTypeIsSubtype.ts, 0, 0))
  }
  
-@@ -47,10 +47,10 @@
+@@= skipped -14, +14 lines =@@
  >x : Symbol(x, Decl(unionSubtypeIfEveryConstituentTypeIsSubtype.ts, 19, 5))
  
      foo: string | number; // error numer is not subtype of string
@@ -52,7 +52,7 @@
  >e : Symbol(e, Decl(unionSubtypeIfEveryConstituentTypeIsSubtype.ts, 0, 0))
  }
  
-@@ -62,10 +62,10 @@
+@@= skipped -15, +15 lines =@@
  >x : Symbol(x, Decl(unionSubtypeIfEveryConstituentTypeIsSubtype.ts, 26, 5))
  
      foo: string | number;
@@ -65,7 +65,7 @@
  >e : Symbol(e, Decl(unionSubtypeIfEveryConstituentTypeIsSubtype.ts, 0, 0))
  }
  
-@@ -78,10 +78,10 @@
+@@= skipped -16, +16 lines =@@
  >Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
  
      foo: string | number;
@@ -78,7 +78,7 @@
  >e : Symbol(e, Decl(unionSubtypeIfEveryConstituentTypeIsSubtype.ts, 0, 0))
  }
  
-@@ -94,10 +94,10 @@
+@@= skipped -16, +16 lines =@@
  >RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      foo: string | number;
@@ -91,7 +91,7 @@
  >e : Symbol(e, Decl(unionSubtypeIfEveryConstituentTypeIsSubtype.ts, 0, 0))
  }
  
-@@ -110,10 +110,10 @@
+@@= skipped -16, +16 lines =@@
  >bar : Symbol(bar, Decl(unionSubtypeIfEveryConstituentTypeIsSubtype.ts, 47, 18))
  
      foo: string | number;
@@ -104,7 +104,7 @@
  >e : Symbol(e, Decl(unionSubtypeIfEveryConstituentTypeIsSubtype.ts, 0, 0))
  }
  
-@@ -125,10 +125,10 @@
+@@= skipped -15, +15 lines =@@
  >x : Symbol(x, Decl(unionSubtypeIfEveryConstituentTypeIsSubtype.ts, 54, 5))
  
      foo: string | number;
@@ -117,7 +117,7 @@
  >e : Symbol(e, Decl(unionSubtypeIfEveryConstituentTypeIsSubtype.ts, 0, 0))
  }
  
-@@ -141,16 +141,16 @@
+@@= skipped -16, +16 lines =@@
  >I8 : Symbol(I8, Decl(unionSubtypeIfEveryConstituentTypeIsSubtype.ts, 50, 1))
  
      foo: string | number;
@@ -137,7 +137,7 @@
  
  interface I10 {
  >I10 : Symbol(I10, Decl(unionSubtypeIfEveryConstituentTypeIsSubtype.ts, 66, 24))
-@@ -160,17 +160,17 @@
+@@= skipped -19, +19 lines =@@
  >A : Symbol(A, Decl(unionSubtypeIfEveryConstituentTypeIsSubtype.ts, 64, 1))
  
      foo: string | number;
@@ -158,7 +158,7 @@
  >T : Symbol(T, Decl(unionSubtypeIfEveryConstituentTypeIsSubtype.ts, 73, 9))
  
  interface I11 {
-@@ -181,10 +181,10 @@
+@@= skipped -21, +21 lines =@@
  >A2 : Symbol(A2, Decl(unionSubtypeIfEveryConstituentTypeIsSubtype.ts, 71, 1))
  
      foo: string | number;
@@ -171,7 +171,7 @@
  >e : Symbol(e, Decl(unionSubtypeIfEveryConstituentTypeIsSubtype.ts, 0, 0))
  }
  
-@@ -197,10 +197,10 @@
+@@= skipped -16, +16 lines =@@
  >x : Symbol(x, Decl(unionSubtypeIfEveryConstituentTypeIsSubtype.ts, 82, 18))
  
      foo: string | number;
@@ -184,7 +184,7 @@
  >e : Symbol(e, Decl(unionSubtypeIfEveryConstituentTypeIsSubtype.ts, 0, 0))
  }
  
-@@ -216,17 +216,17 @@
+@@= skipped -19, +19 lines =@@
  >T : Symbol(T, Decl(unionSubtypeIfEveryConstituentTypeIsSubtype.ts, 89, 18))
  
      foo: string | number;
@@ -205,7 +205,7 @@
  
  interface I14 {
  >I14 : Symbol(I14, Decl(unionSubtypeIfEveryConstituentTypeIsSubtype.ts, 95, 13))
-@@ -236,10 +236,10 @@
+@@= skipped -20, +20 lines =@@
  >E2 : Symbol(E2, Decl(unionSubtypeIfEveryConstituentTypeIsSubtype.ts, 92, 1))
  
      foo: string | number;
@@ -218,7 +218,7 @@
  >e : Symbol(e, Decl(unionSubtypeIfEveryConstituentTypeIsSubtype.ts, 0, 0))
  }
  
-@@ -261,17 +261,17 @@
+@@= skipped -25, +25 lines =@@
  >f : Symbol(f, Decl(unionSubtypeIfEveryConstituentTypeIsSubtype.ts, 100, 1), Decl(unionSubtypeIfEveryConstituentTypeIsSubtype.ts, 103, 16))
  
      foo: string | number;
@@ -239,7 +239,7 @@
  
  module c {
  >c : Symbol(c, Decl(unionSubtypeIfEveryConstituentTypeIsSubtype.ts, 111, 1), Decl(unionSubtypeIfEveryConstituentTypeIsSubtype.ts, 114, 23))
-@@ -287,10 +287,10 @@
+@@= skipped -26, +26 lines =@@
  >c : Symbol(c, Decl(unionSubtypeIfEveryConstituentTypeIsSubtype.ts, 111, 1), Decl(unionSubtypeIfEveryConstituentTypeIsSubtype.ts, 114, 23))
  
      foo: string | number;
@@ -252,7 +252,7 @@
  >e : Symbol(e, Decl(unionSubtypeIfEveryConstituentTypeIsSubtype.ts, 0, 0))
  }
  
-@@ -304,10 +304,10 @@
+@@= skipped -17, +17 lines =@@
  >T : Symbol(T, Decl(unionSubtypeIfEveryConstituentTypeIsSubtype.ts, 125, 14))
  
      foo: string | number;
@@ -265,7 +265,7 @@
  >e : Symbol(e, Decl(unionSubtypeIfEveryConstituentTypeIsSubtype.ts, 0, 0))
  }
  
-@@ -319,10 +319,10 @@
+@@= skipped -15, +15 lines =@@
  >Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      foo: string | number;
@@ -278,7 +278,7 @@
  >e : Symbol(e, Decl(unionSubtypeIfEveryConstituentTypeIsSubtype.ts, 0, 0))
  }
  
-@@ -334,9 +334,9 @@
+@@= skipped -15, +15 lines =@@
  >x : Symbol(x, Decl(unionSubtypeIfEveryConstituentTypeIsSubtype.ts, 139, 5))
  
      foo: string | number;

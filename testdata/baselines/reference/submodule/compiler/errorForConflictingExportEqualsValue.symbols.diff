@@ -1,6 +1,6 @@
 --- old.errorForConflictingExportEqualsValue.symbols
 +++ new.errorForConflictingExportEqualsValue.symbols
-@@ -8,5 +8,4 @@
+@@= skipped -8, +8 lines =@@
  >x : Symbol(x, Decl(a.ts, 0, 10))
  
  import("./a");

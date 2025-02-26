@@ -1,6 +1,6 @@
 --- old.trivialSubtypeReductionNoStructuralCheck2.symbols
 +++ new.trivialSubtypeReductionNoStructuralCheck2.symbols
-@@ -9,7 +9,7 @@
+@@= skipped -9, +9 lines =@@
  >Wizard : Symbol(Wizard, Decl(trivialSubtypeReductionNoStructuralCheck2.ts, 0, 37))
  
    get steps() {
@@ -9,7 +9,7 @@
  
      return {
        wizard: this as Wizard,
-@@ -29,6 +29,6 @@
+@@= skipped -20, +20 lines =@@
  >WizardStepProps : Symbol(WizardStepProps, Decl(trivialSubtypeReductionNoStructuralCheck2.ts, 8, 1))
  
    wizard?: Wizard;

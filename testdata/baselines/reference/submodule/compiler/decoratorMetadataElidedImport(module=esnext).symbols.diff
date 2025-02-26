@@ -1,6 +1,6 @@
 --- old.decoratorMetadataElidedImport(module=esnext).symbols
 +++ new.decoratorMetadataElidedImport(module=esnext).symbols
-@@ -19,7 +19,7 @@
+@@= skipped -19, +19 lines =@@
  >Test : Symbol(Test, Decl(index.ts, 2, 44))
  
      foo(

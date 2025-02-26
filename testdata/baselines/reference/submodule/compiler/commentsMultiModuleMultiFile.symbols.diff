@@ -1,6 +1,6 @@
 --- old.commentsMultiModuleMultiFile.symbols
 +++ new.commentsMultiModuleMultiFile.symbols
-@@ -19,42 +19,7 @@
+@@= skipped -19, +19 lines =@@
      }
  }
  new multiM.d();

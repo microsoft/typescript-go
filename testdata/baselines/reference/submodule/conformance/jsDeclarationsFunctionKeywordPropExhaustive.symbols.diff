@@ -1,6 +1,6 @@
 --- old.jsDeclarationsFunctionKeywordPropExhaustive.symbols
 +++ new.jsDeclarationsFunctionKeywordPropExhaustive.symbols
-@@ -2,397 +2,397 @@
+@@= skipped -2, +2 lines =@@
  
  === source.js ===
  function foo() {}

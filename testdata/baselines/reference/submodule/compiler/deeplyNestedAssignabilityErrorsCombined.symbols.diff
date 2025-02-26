@@ -1,6 +1,6 @@
 --- old.deeplyNestedAssignabilityErrorsCombined.symbols
 +++ new.deeplyNestedAssignabilityErrorsCombined.symbols
-@@ -29,14 +29,14 @@
+@@= skipped -29, +29 lines =@@
  >Ctor1 : Symbol(Ctor1, Decl(deeplyNestedAssignabilityErrorsCombined.ts, 2, 6))
  
      g = "ok"

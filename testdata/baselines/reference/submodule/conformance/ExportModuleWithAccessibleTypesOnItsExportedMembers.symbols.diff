@@ -1,6 +1,6 @@
 --- old.ExportModuleWithAccessibleTypesOnItsExportedMembers.symbols
 +++ new.ExportModuleWithAccessibleTypesOnItsExportedMembers.symbols
-@@ -8,8 +8,8 @@
+@@= skipped -8, +8 lines =@@
  >Point : Symbol(Point, Decl(ExportModuleWithAccessibleTypesOnItsExportedMembers.ts, 0, 10))
  
          constructor(public x: number, public y: number) { }
@@ -11,7 +11,7 @@
      }
  
      export module B {
-@@ -32,7 +32,7 @@
+@@= skipped -24, +24 lines =@@
              }
  
              static fromOrigin(p: Point) {

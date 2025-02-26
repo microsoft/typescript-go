@@ -1,6 +1,6 @@
 --- old.newTargetNarrowing.symbols
 +++ new.newTargetNarrowing.symbols
-@@ -6,25 +6,19 @@
+@@= skipped -6, +6 lines =@@
  >x : Symbol(x, Decl(newTargetNarrowing.ts, 0, 13))
  
  function f() {

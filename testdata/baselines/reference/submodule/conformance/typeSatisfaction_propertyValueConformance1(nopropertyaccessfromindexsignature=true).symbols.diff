@@ -1,6 +1,6 @@
 --- old.typeSatisfaction_propertyValueConformance1(nopropertyaccessfromindexsignature=true).symbols
 +++ new.typeSatisfaction_propertyValueConformance1(nopropertyaccessfromindexsignature=true).symbols
-@@ -35,9 +35,9 @@
+@@= skipped -35, +35 lines =@@
  
  // Should fail under --noPropertyAccessFromIndexSignature
  console.log(x.z);

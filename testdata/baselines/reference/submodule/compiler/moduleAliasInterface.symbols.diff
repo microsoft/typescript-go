@@ -1,6 +1,6 @@
 --- old.moduleAliasInterface.symbols
 +++ new.moduleAliasInterface.symbols
-@@ -22,12 +22,12 @@
+@@= skipped -22, +22 lines =@@
  
   import modes = _modes;
  >modes : Symbol(modes, Decl(moduleAliasInterface.ts, 12, 15))
@@ -15,7 +15,7 @@
    
   // If you just use p1:modes, the compiler accepts it - should be an error
   class Bug { 
-@@ -36,16 +36,16 @@
+@@= skipped -14, +14 lines =@@
    constructor(p1: modes.IMode, p2: modes.Mode) { }// should be an error on p2 - it's not exported
  >p1 : Symbol(p1, Decl(moduleAliasInterface.ts, 19, 14))
  >modes : Symbol(modes, Decl(moduleAliasInterface.ts, 12, 15))
@@ -36,7 +36,7 @@
     
    } 
   }
-@@ -61,7 +61,7 @@
+@@= skipped -25, +25 lines =@@
   var i : modesOuter.IMode;
  >i : Symbol(i, Decl(moduleAliasInterface.ts, 29, 4))
  >modesOuter : Symbol(modesOuter, Decl(moduleAliasInterface.ts, 24, 1))
@@ -45,7 +45,7 @@
   
   class Bug {
  >Bug : Symbol(Bug, Decl(moduleAliasInterface.ts, 29, 26))
-@@ -69,10 +69,10 @@
+@@= skipped -8, +8 lines =@@
       constructor(p1: modesOuter.IMode, p2: modesOuter.Mode) { }// no error here, since modesOuter is declared externally
  >p1 : Symbol(p1, Decl(moduleAliasInterface.ts, 32, 17))
  >modesOuter : Symbol(modesOuter, Decl(moduleAliasInterface.ts, 24, 1))
@@ -58,7 +58,7 @@
    
   }
   
-@@ -86,10 +86,10 @@
+@@= skipped -17, +17 lines =@@
        constructor(p1: Foo.Bar, p2: modesOuter.Mode) { }
  >p1 : Symbol(p1, Decl(moduleAliasInterface.ts, 39, 18))
  >Foo : Symbol(Foo, Decl(moduleAliasInterface.ts, 34, 2))
@@ -71,7 +71,7 @@
    }
  }
  
-@@ -108,16 +108,16 @@
+@@= skipped -22, +22 lines =@@
  
      import A1Alias1 = A1;
  >A1Alias1 : Symbol(A1Alias1, Decl(moduleAliasInterface.ts, 48, 11))

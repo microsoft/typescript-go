@@ -1,6 +1,6 @@
 --- old.inKeywordTypeguard(strict=false).symbols
 +++ new.inKeywordTypeguard(strict=false).symbols
-@@ -3,11 +3,11 @@
+@@= skipped -3, +3 lines =@@
  === inKeywordTypeguard.ts ===
  class A { a: string; }
  >A : Symbol(A, Decl(inKeywordTypeguard.ts, 0, 0))
@@ -14,7 +14,7 @@
  
  function negativeClassesTest(x: A | B) {
  >negativeClassesTest : Symbol(negativeClassesTest, Decl(inKeywordTypeguard.ts, 1, 22))
-@@ -47,11 +47,11 @@
+@@= skipped -44, +44 lines =@@
  
  class AWithOptionalProp { a?: string; }
  >AWithOptionalProp : Symbol(AWithOptionalProp, Decl(inKeywordTypeguard.ts, 17, 1))
@@ -28,7 +28,7 @@
  
  function positiveTestClassesWithOptionalProperties(x: AWithOptionalProp | BWithOptionalProp) {
  >positiveTestClassesWithOptionalProperties : Symbol(positiveTestClassesWithOptionalProperties, Decl(inKeywordTypeguard.ts, 20, 39))
-@@ -63,9 +63,9 @@
+@@= skipped -16, +16 lines =@@
  >x : Symbol(x, Decl(inKeywordTypeguard.ts, 22, 51))
  
          x.a = "1";
@@ -40,7 +40,7 @@
  
      } else {
          x.b = "1";
-@@ -77,14 +77,14 @@
+@@= skipped -14, +14 lines =@@
  >AWithMethod : Symbol(AWithMethod, Decl(inKeywordTypeguard.ts, 28, 1))
  
      a(): string { return ""; }
@@ -57,7 +57,7 @@
  }
  
  function negativeTestClassesWithMembers(x: AWithMethod | BWithMethod) {
-@@ -97,9 +97,9 @@
+@@= skipped -20, +20 lines =@@
  >x : Symbol(x, Decl(inKeywordTypeguard.ts, 38, 40))
  
          x.a();
@@ -69,7 +69,7 @@
  
          x.b();
  >x : Symbol(x, Decl(inKeywordTypeguard.ts, 38, 40))
-@@ -134,11 +134,11 @@
+@@= skipped -37, +37 lines =@@
  
  class C { a: string; }
  >C : Symbol(C, Decl(inKeywordTypeguard.ts, 54, 1))
@@ -83,7 +83,7 @@
  
  function negativeMultipleClassesTest(x: A | B | C | D) {
  >negativeMultipleClassesTest : Symbol(negativeMultipleClassesTest, Decl(inKeywordTypeguard.ts, 57, 22))
-@@ -162,7 +162,7 @@
+@@= skipped -28, +28 lines =@@
  
  class ClassWithUnionProp { prop: A | B }
  >ClassWithUnionProp : Symbol(ClassWithUnionProp, Decl(inKeywordTypeguard.ts, 65, 1))
@@ -92,7 +92,7 @@
  >A : Symbol(A, Decl(inKeywordTypeguard.ts, 0, 0))
  >B : Symbol(B, Decl(inKeywordTypeguard.ts, 0, 22))
  
-@@ -172,22 +172,22 @@
+@@= skipped -10, +10 lines =@@
  >ClassWithUnionProp : Symbol(ClassWithUnionProp, Decl(inKeywordTypeguard.ts, 65, 1))
  
      if ("a" in x.prop) {
@@ -121,7 +121,7 @@
      }
  }
  
-@@ -195,30 +195,30 @@
+@@= skipped -23, +23 lines =@@
  >NegativeClassTest : Symbol(NegativeClassTest, Decl(inKeywordTypeguard.ts, 75, 1))
  
      protected prop: A | B;
@@ -160,7 +160,7 @@
          }
      }
  }
-@@ -227,10 +227,10 @@
+@@= skipped -32, +32 lines =@@
  >UnreachableCodeDetection : Symbol(UnreachableCodeDetection, Decl(inKeywordTypeguard.ts, 86, 1))
  
      a: string;
@@ -173,7 +173,7 @@
  
          if ("a" in this) {
  >this : Symbol(UnreachableCodeDetection, Decl(inKeywordTypeguard.ts, 86, 1))
-@@ -267,7 +267,7 @@
+@@= skipped -40, +40 lines =@@
  // Repro from #38608
  declare const error: Error;
  >error : Symbol(error, Decl(inKeywordTypeguard.ts, 107, 13))
@@ -182,7 +182,7 @@
  
  if ('extra' in error) {
  >error : Symbol(error, Decl(inKeywordTypeguard.ts, 107, 13))
-@@ -364,18 +364,9 @@
+@@= skipped -97, +97 lines =@@
  >negativeIntersectionTest : Symbol(negativeIntersectionTest, Decl(inKeywordTypeguard.ts, 143, 1))
  
      if ("ontouchstart" in window) {
@@ -201,7 +201,7 @@
      }
  }
  
-@@ -387,18 +378,14 @@
+@@= skipped -23, +14 lines =@@
  >x : Symbol(x, Decl(inKeywordTypeguard.ts, 153, 12))
  
          x.a;
@@ -220,7 +220,7 @@
      }
      if (x && typeof x === "object" && "a" in x) {
  >x : Symbol(x, Decl(inKeywordTypeguard.ts, 153, 12))
-@@ -406,9 +393,7 @@
+@@= skipped -19, +15 lines =@@
  >x : Symbol(x, Decl(inKeywordTypeguard.ts, 153, 12))
  
          x.a;
@@ -230,7 +230,7 @@
      }
      if (x && typeof x === "object" && "a" in x && "b" in x && "c" in x) {
  >x : Symbol(x, Decl(inKeywordTypeguard.ts, 153, 12))
-@@ -418,19 +403,13 @@
+@@= skipped -12, +10 lines =@@
  >x : Symbol(x, Decl(inKeywordTypeguard.ts, 153, 12))
  
          x.a;
@@ -250,7 +250,7 @@
      }
  }
  
-@@ -442,9 +421,7 @@
+@@= skipped -24, +18 lines =@@
  >x : Symbol(x, Decl(inKeywordTypeguard.ts, 170, 12))
  
          x.a;
@@ -260,7 +260,7 @@
      }
      if ("a" in x && "b" in x && "c" in x) {
  >x : Symbol(x, Decl(inKeywordTypeguard.ts, 170, 12))
-@@ -452,19 +429,13 @@
+@@= skipped -10, +8 lines =@@
  >x : Symbol(x, Decl(inKeywordTypeguard.ts, 170, 12))
  
          x.a;
@@ -280,7 +280,7 @@
      }
  }
  
-@@ -478,18 +449,14 @@
+@@= skipped -26, +20 lines =@@
  >x : Symbol(x, Decl(inKeywordTypeguard.ts, 181, 15))
  
          x.a;
@@ -299,7 +299,7 @@
      }
      if (x && typeof x === "object" && "a" in x) {
  >x : Symbol(x, Decl(inKeywordTypeguard.ts, 181, 15))
-@@ -497,9 +464,7 @@
+@@= skipped -19, +15 lines =@@
  >x : Symbol(x, Decl(inKeywordTypeguard.ts, 181, 15))
  
          x.a;
@@ -309,7 +309,7 @@
      }
      if (x && typeof x === "object" && "a" in x && "b" in x && "c" in x) {
  >x : Symbol(x, Decl(inKeywordTypeguard.ts, 181, 15))
-@@ -509,19 +474,13 @@
+@@= skipped -12, +10 lines =@@
  >x : Symbol(x, Decl(inKeywordTypeguard.ts, 181, 15))
  
          x.a;
@@ -329,7 +329,7 @@
      }
  }
  
-@@ -549,14 +508,10 @@
+@@= skipped -40, +34 lines =@@
  >a : Symbol(a, Decl(inKeywordTypeguard.ts, 198, 16))
  
          x.b;
@@ -344,7 +344,7 @@
      }
  }
  
-@@ -643,7 +598,6 @@
+@@= skipped -94, +90 lines =@@
  
  const sym = Symbol();
  >sym : Symbol(sym, Decl(inKeywordTypeguard.ts, 250, 5))
@@ -352,7 +352,7 @@
  
  function f8(x: object) {
  >f8 : Symbol(f8, Decl(inKeywordTypeguard.ts, 250, 21))
-@@ -656,21 +610,16 @@
+@@= skipped -13, +12 lines =@@
  >x : Symbol(x, Decl(inKeywordTypeguard.ts, 252, 12))
  
          x.a;
@@ -374,7 +374,7 @@
  
          x[sym];
  >x : Symbol(x, Decl(inKeywordTypeguard.ts, 252, 12))
-@@ -689,21 +638,16 @@
+@@= skipped -33, +28 lines =@@
  >x : Symbol(x, Decl(inKeywordTypeguard.ts, 262, 12))
  
          x.a;
@@ -396,7 +396,7 @@
  
          x[sym];
  >x : Symbol(x, Decl(inKeywordTypeguard.ts, 262, 12))
-@@ -818,7 +762,7 @@
+@@= skipped -129, +124 lines =@@
  >x : Symbol(x, Decl(inKeywordTypeguard.ts, 326, 13))
  >globalThis : Symbol(globalThis)
  >y : Symbol(y, Decl(inKeywordTypeguard.ts, 326, 34))
@@ -405,7 +405,7 @@
  >globalThis : Symbol(globalThis)
  
      x = y;
-@@ -850,10 +794,6 @@
+@@= skipped -32, +32 lines =@@
  >checkIsTouchDevice : Symbol(checkIsTouchDevice, Decl(inKeywordTypeguard.ts, 340, 5))
  
      "ontouchstart" in window || "msMaxTouchPoints" in window.navigator;
@@ -416,7 +416,7 @@
  
  // Repro from #51501
  
-@@ -886,14 +826,11 @@
+@@= skipped -36, +32 lines =@@
  function test1<T extends any[] | Record<string, any>>(obj: T) {
  >test1 : Symbol(test1, Decl(inKeywordTypeguard.ts, 353, 2))
  >T : Symbol(T, Decl(inKeywordTypeguard.ts, 357, 15))
@@ -432,7 +432,7 @@
  >obj : Symbol(obj, Decl(inKeywordTypeguard.ts, 357, 54))
  >obj : Symbol(obj, Decl(inKeywordTypeguard.ts, 357, 54))
  
-@@ -909,14 +846,11 @@
+@@= skipped -23, +20 lines =@@
  function test2<T extends any[] | Record<string, any>>(obj: T) {
  >test2 : Symbol(test2, Decl(inKeywordTypeguard.ts, 364, 1))
  >T : Symbol(T, Decl(inKeywordTypeguard.ts, 366, 15))
@@ -448,7 +448,7 @@
  >obj : Symbol(obj, Decl(inKeywordTypeguard.ts, 366, 54))
  
        obj;  // T & any[]
-@@ -931,7 +865,7 @@
+@@= skipped -22, +19 lines =@@
  function test3<T extends any[] | Record<string, any>>(obj: T) {
  >test3 : Symbol(test3, Decl(inKeywordTypeguard.ts, 373, 1))
  >T : Symbol(T, Decl(inKeywordTypeguard.ts, 375, 15))

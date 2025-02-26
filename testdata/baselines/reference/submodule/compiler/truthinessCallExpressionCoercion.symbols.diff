@@ -1,6 +1,6 @@
 --- old.truthinessCallExpressionCoercion.symbols
 +++ new.truthinessCallExpressionCoercion.symbols
-@@ -28,26 +28,26 @@
+@@= skipped -28, +28 lines =@@
  
      function test() { return Math.random() > 0.5; }
  >test : Symbol(test, Decl(truthinessCallExpressionCoercion.ts, 14, 39))
@@ -33,7 +33,7 @@
  >test : Symbol(test, Decl(truthinessCallExpressionCoercion.ts, 14, 39))
      }
  
-@@ -62,8 +62,8 @@
+@@= skipped -34, +34 lines =@@
  >test : Symbol(test, Decl(truthinessCallExpressionCoercion.ts, 14, 39))
  
          [() => null].forEach(() => {
@@ -44,7 +44,7 @@
  
              test();
  >test : Symbol(test, Decl(truthinessCallExpressionCoercion.ts, 14, 39))
-@@ -75,8 +75,8 @@
+@@= skipped -13, +13 lines =@@
  >test : Symbol(test, Decl(truthinessCallExpressionCoercion.ts, 14, 39))
  
          [() => null].forEach(test => {
@@ -55,7 +55,7 @@
  >test : Symbol(test, Decl(truthinessCallExpressionCoercion.ts, 36, 29))
  
              test();
-@@ -128,27 +128,27 @@
+@@= skipped -53, +53 lines =@@
  >Foo : Symbol(Foo, Decl(truthinessCallExpressionCoercion.ts, 55, 1))
  
      maybeIsUser?: () => boolean;
@@ -90,7 +90,7 @@
          }
      }
  }
-@@ -160,17 +160,17 @@
+@@= skipped -32, +32 lines =@@
  >StatsBase : Symbol(StatsBase, Decl(truthinessCallExpressionCoercion.ts, 87, 1))
  
      if (stats.isDirectory) { // err
@@ -114,7 +114,7 @@
      }
  }
  
-@@ -182,32 +182,32 @@
+@@= skipped -22, +22 lines =@@
  >Nested : Symbol(Nested, Decl(truthinessCallExpressionCoercion.ts, 92, 1))
  
      if (a.stats.isDirectory) { // err
@@ -163,7 +163,7 @@
      }
  } 
  
-@@ -216,16 +216,16 @@
+@@= skipped -34, +34 lines =@@
  >T : Symbol(T, Decl(truthinessCallExpressionCoercion.ts, 89, 20))
  
      isDirectory(): boolean;

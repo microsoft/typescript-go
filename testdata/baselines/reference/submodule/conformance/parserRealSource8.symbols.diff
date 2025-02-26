@@ -1,6 +1,6 @@
 --- old.parserRealSource8.symbols
 +++ new.parserRealSource8.symbols
-@@ -13,15 +13,15 @@
+@@= skipped -13, +13 lines =@@
  >AssignScopeContext : Symbol(AssignScopeContext, Decl(parserRealSource8.ts, 5, 19))
  
          constructor (public scopeChain: ScopeChain,
@@ -19,7 +19,7 @@
  >ModuleDeclaration : Symbol(ModuleDeclaration)
          }
      }
-@@ -49,9 +49,9 @@
+@@= skipped -36, +36 lines =@@
  
          var chain = new ScopeChain(null, context.scopeChain, scope);
  >chain : Symbol(chain, Decl(parserRealSource8.ts, 20, 11))
@@ -31,7 +31,7 @@
  >scope : Symbol(scope, Decl(parserRealSource8.ts, 14, 36))
  
          chain.thisType = type;
-@@ -67,9 +67,9 @@
+@@= skipped -18, +18 lines =@@
  >fnc : Symbol(fnc, Decl(parserRealSource8.ts, 17, 24))
  
          context.scopeChain = chain;
@@ -43,7 +43,7 @@
  >chain : Symbol(chain, Decl(parserRealSource8.ts, 20, 11))
      }
  
-@@ -79,12 +79,12 @@
+@@= skipped -12, +12 lines =@@
  >AssignScopeContext : Symbol(AssignScopeContext, Decl(parserRealSource8.ts, 5, 19))
  
          context.scopeChain = context.scopeChain.previous;
@@ -60,7 +60,7 @@
      }
  
      export function instanceCompare(a: Symbol, b: Symbol) {
-@@ -120,7 +120,7 @@
+@@= skipped -41, +41 lines =@@
  >ScopeSearchFilter : Symbol(ScopeSearchFilter, Decl(parserRealSource8.ts, 42, 5))
  
          constructor (public select: (a: Symbol, b: Symbol) =>Symbol,
@@ -69,7 +69,7 @@
  >a : Symbol(a, Decl(parserRealSource8.ts, 46, 37))
  >Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --))
  >b : Symbol(b, Decl(parserRealSource8.ts, 46, 47))
-@@ -128,52 +128,52 @@
+@@= skipped -8, +8 lines =@@
  >Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --))
  
                              public stop: (s: Symbol) =>boolean) { }
@@ -140,7 +140,7 @@
              }
              else {
                  return false;
-@@ -240,17 +240,17 @@
+@@= skipped -112, +112 lines =@@
  >memberScope : Symbol(memberScope, Decl(parserRealSource8.ts, 70, 11))
  
          context.modDeclChain.push(moduleDecl);
@@ -164,7 +164,7 @@
  >moduleDecl : Symbol(moduleDecl, Decl(parserRealSource8.ts, 69, 11))
  
          aggScope = new SymbolAggregateScope(mod.symbol);
-@@ -263,9 +263,9 @@
+@@= skipped -23, +23 lines =@@
  
          aggScope.addParentScope(context.scopeChain.scope);
  >aggScope : Symbol(aggScope, Decl(parserRealSource8.ts, 71, 11))
@@ -176,7 +176,7 @@
  
          pushAssignScope(aggScope, context, null, null, null);
  >pushAssignScope : Symbol(pushAssignScope, Decl(parserRealSource8.ts, 12, 5))
-@@ -280,9 +280,9 @@
+@@= skipped -17, +17 lines =@@
  >mod : Symbol(mod, Decl(parserRealSource8.ts, 77, 11))
  
              context.typeFlow.addLocalsFromScope(mod.containedScope, mod.symbol, moduleDecl.vars, mod.members.privateMembers, true);
@@ -188,7 +188,7 @@
  >mod : Symbol(mod, Decl(parserRealSource8.ts, 77, 11))
  >mod : Symbol(mod, Decl(parserRealSource8.ts, 77, 11))
  >moduleDecl : Symbol(moduleDecl, Decl(parserRealSource8.ts, 69, 11))
-@@ -333,9 +333,9 @@
+@@= skipped -53, +53 lines =@@
              memberScope = <SymbolTableScope>context.typeFlow.checker.scopeOf(classType);
  >memberScope : Symbol(memberScope, Decl(parserRealSource8.ts, 100, 11))
  >SymbolTableScope : Symbol(SymbolTableScope)
@@ -200,7 +200,7 @@
  >classType : Symbol(classType, Decl(parserRealSource8.ts, 107, 11))
  
              aggScope = new SymbolAggregateScope(classType.symbol);
-@@ -348,9 +348,9 @@
+@@= skipped -15, +15 lines =@@
  
              aggScope.addParentScope(context.scopeChain.scope);
  >aggScope : Symbol(aggScope, Decl(parserRealSource8.ts, 101, 11))
@@ -212,7 +212,7 @@
  
              classType.containedScope = aggScope;
  >classType : Symbol(classType, Decl(parserRealSource8.ts, 107, 11))
-@@ -367,9 +367,9 @@
+@@= skipped -19, +19 lines =@@
              memberScope = <SymbolTableScope>context.typeFlow.checker.scopeOf(instanceType);
  >memberScope : Symbol(memberScope, Decl(parserRealSource8.ts, 100, 11))
  >SymbolTableScope : Symbol(SymbolTableScope)
@@ -224,7 +224,7 @@
  >instanceType : Symbol(instanceType, Decl(parserRealSource8.ts, 120, 15))
  
              instanceType.memberScope = memberScope;
-@@ -382,9 +382,9 @@
+@@= skipped -15, +15 lines =@@
  
              aggScope.addParentScope(context.scopeChain.scope);
  >aggScope : Symbol(aggScope, Decl(parserRealSource8.ts, 101, 11))
@@ -236,7 +236,7 @@
  
              pushAssignScope(aggScope, context, instanceType, classType, null);
  >pushAssignScope : Symbol(pushAssignScope, Decl(parserRealSource8.ts, 12, 5))
-@@ -400,9 +400,9 @@
+@@= skipped -18, +18 lines =@@
          else {
              ast.type = context.typeFlow.anyType;
  >ast : Symbol(ast, Decl(parserRealSource8.ts, 98, 41))
@@ -248,7 +248,7 @@
          }
      }
  
-@@ -442,9 +442,9 @@
+@@= skipped -42, +42 lines =@@
          memberScope = <SymbolTableScope>context.typeFlow.checker.scopeOf(interfaceType);
  >memberScope : Symbol(memberScope, Decl(parserRealSource8.ts, 137, 11))
  >SymbolTableScope : Symbol(SymbolTableScope)
@@ -260,7 +260,7 @@
  >interfaceType : Symbol(interfaceType, Decl(parserRealSource8.ts, 144, 11))
  
          interfaceType.memberScope = memberScope;
-@@ -461,9 +461,9 @@
+@@= skipped -19, +19 lines =@@
  
          aggScope.addParentScope(context.scopeChain.scope);
  >aggScope : Symbol(aggScope, Decl(parserRealSource8.ts, 138, 11))
@@ -272,7 +272,7 @@
  
          pushAssignScope(aggScope, context, null, null, null);
  >pushAssignScope : Symbol(pushAssignScope, Decl(parserRealSource8.ts, 12, 5))
-@@ -503,9 +503,9 @@
+@@= skipped -42, +42 lines =@@
          var withSymbol = new WithSymbol(withStmt.minChar, context.typeFlow.checker.locationInfo.unitIndex, withType);
  >withSymbol : Symbol(withSymbol, Decl(parserRealSource8.ts, 162, 11))
  >withStmt : Symbol(withStmt, Decl(parserRealSource8.ts, 155, 11))
@@ -284,7 +284,7 @@
  >withType : Symbol(withType, Decl(parserRealSource8.ts, 156, 11), Decl(parserRealSource8.ts, 161, 11))
  
          withType.members = members;
-@@ -532,9 +532,9 @@
+@@= skipped -29, +29 lines =@@
  >TypeScript : Symbol(TypeScript, Decl(parserRealSource8.ts, 0, 0))
  >withType : Symbol(withType, Decl(parserRealSource8.ts, 156, 11), Decl(parserRealSource8.ts, 161, 11))
  >withType : Symbol(withType, Decl(parserRealSource8.ts, 156, 11), Decl(parserRealSource8.ts, 161, 11))
@@ -296,7 +296,7 @@
  >withType : Symbol(withType, Decl(parserRealSource8.ts, 156, 11), Decl(parserRealSource8.ts, 161, 11))
  
          pushAssignScope(withScope, context, null, null, null);
-@@ -582,29 +582,29 @@
+@@= skipped -50, +50 lines =@@
          var isInnerStatic = isStatic && context.scopeChain.fnc != null;
  >isInnerStatic : Symbol(isInnerStatic, Decl(parserRealSource8.ts, 185, 11))
  >isStatic : Symbol(isStatic, Decl(parserRealSource8.ts, 184, 11))
@@ -334,7 +334,7 @@
  
              (!funcDecl.isConstructor || hasFlag(funcDecl.fncFlags, FncFlags.ClassMethod))) {
  >funcDecl : Symbol(funcDecl, Decl(parserRealSource8.ts, 176, 11))
-@@ -612,9 +612,9 @@
+@@= skipped -30, +30 lines =@@
  
              var instType = context.scopeChain.thisType;
  >instType : Symbol(instType, Decl(parserRealSource8.ts, 195, 15))
@@ -346,7 +346,7 @@
  
              if (!(instType.typeFlags & TypeFlags.IsClass) && !hasFlag(funcDecl.fncFlags, FncFlags.ClassMethod)) {
  >instType : Symbol(instType, Decl(parserRealSource8.ts, 195, 15))
-@@ -637,25 +637,25 @@
+@@= skipped -25, +25 lines =@@
              }
              else {
                  if (context.scopeChain.previous.scope.container &&
@@ -380,7 +380,7 @@
  
                          // if the parent is the class constructor, use the constructor scope
                      parentScope = instType.constructorScope;
-@@ -664,15 +664,15 @@
+@@= skipped -27, +27 lines =@@
                  }
                  else if (isStatic && context.scopeChain.classType) {
  >isStatic : Symbol(isStatic, Decl(parserRealSource8.ts, 184, 11))
@@ -400,7 +400,7 @@
                  }
                  else {
                      // else, use the contained scope
-@@ -687,16 +687,16 @@
+@@= skipped -23, +23 lines =@@
          }
          else if (funcDecl.isConstructor && context.scopeChain.thisType) {
  >funcDecl : Symbol(funcDecl, Decl(parserRealSource8.ts, 176, 11))
@@ -421,7 +421,7 @@
          }
  
          if (funcDecl.type == null || hasFlag(funcDecl.type.symbol.flags, SymbolFlags.TypeSetDuringScopeAssignment)) {
-@@ -704,18 +704,18 @@
+@@= skipped -17, +17 lines =@@
  >funcDecl : Symbol(funcDecl, Decl(parserRealSource8.ts, 176, 11))
  
              if (context.scopeChain.fnc && context.scopeChain.fnc.type) {
@@ -446,7 +446,7 @@
              }
  
              var funcScope = null;
-@@ -724,9 +724,9 @@
+@@= skipped -20, +20 lines =@@
              var outerFnc: FuncDecl = context.scopeChain.fnc;
  >outerFnc : Symbol(outerFnc, Decl(parserRealSource8.ts, 236, 15))
  >FuncDecl : Symbol(FuncDecl)
@@ -458,7 +458,7 @@
  
              var nameText = funcDecl.name ? funcDecl.name.actualText : null;
  >nameText : Symbol(nameText, Decl(parserRealSource8.ts, 237, 15))
-@@ -755,9 +755,9 @@
+@@= skipped -31, +31 lines =@@
                  }
                  funcScope = context.scopeChain.fnc.type.memberScope;
  >funcScope : Symbol(funcScope, Decl(parserRealSource8.ts, 235, 15))
@@ -470,7 +470,7 @@
  
                  outerFnc.innerStaticFuncs[outerFnc.innerStaticFuncs.length] = funcDecl;
  >outerFnc : Symbol(outerFnc, Decl(parserRealSource8.ts, 236, 15))
-@@ -787,16 +787,16 @@
+@@= skipped -32, +32 lines =@@
  
                      funcScope = context.scopeChain.thisType.constructorScope;//locals;
  >funcScope : Symbol(funcScope, Decl(parserRealSource8.ts, 235, 15))
@@ -491,7 +491,7 @@
                  }
              }
  
-@@ -826,9 +826,9 @@
+@@= skipped -39, +39 lines =@@
              }
  
              context.typeFlow.checker.createFunctionSignature(funcDecl, container,
@@ -503,7 +503,7 @@
  >funcDecl : Symbol(funcDecl, Decl(parserRealSource8.ts, 176, 11))
  >container : Symbol(container, Decl(parserRealSource8.ts, 178, 11))
  
-@@ -858,9 +858,9 @@
+@@= skipped -32, +32 lines =@@
              {
                  funcDecl.accessorSymbol = context.typeFlow.checker.createAccessorSymbol(funcDecl, fgSym, container.getType(), (funcDecl.isMethod() && isStatic), true, funcScope, container);
  >funcDecl : Symbol(funcDecl, Decl(parserRealSource8.ts, 176, 11))
@@ -515,7 +515,7 @@
  >funcDecl : Symbol(funcDecl, Decl(parserRealSource8.ts, 176, 11))
  >fgSym : Symbol(fgSym, Decl(parserRealSource8.ts, 238, 15), Decl(parserRealSource8.ts, 352, 15))
  >container : Symbol(container, Decl(parserRealSource8.ts, 178, 11))
-@@ -928,9 +928,9 @@
+@@= skipped -70, +70 lines =@@
          // REVIEW: Is it a problem that this is being set twice for properties and constructors?
          funcDecl.unitIndex = context.typeFlow.checker.locationInfo.unitIndex;
  >funcDecl : Symbol(funcDecl, Decl(parserRealSource8.ts, 176, 11))
@@ -527,7 +527,7 @@
  
          var locals = new SymbolScopeBuilder(funcMembers, ambientFuncMembers, null, null, parentScope, localContainer);
  >locals : Symbol(locals, Decl(parserRealSource8.ts, 320, 11))
-@@ -947,14 +947,14 @@
+@@= skipped -19, +19 lines =@@
  
          if (funcDecl.isConstructor && context.scopeChain.thisType) {
  >funcDecl : Symbol(funcDecl, Decl(parserRealSource8.ts, 176, 11))
@@ -546,7 +546,7 @@
  >locals : Symbol(locals, Decl(parserRealSource8.ts, 320, 11))
          }
  
-@@ -1003,19 +1003,19 @@
+@@= skipped -56, +56 lines =@@
              }
              funcDecl.enclosingFnc = context.scopeChain.fnc;
  >funcDecl : Symbol(funcDecl, Decl(parserRealSource8.ts, 176, 11))
@@ -572,7 +572,7 @@
  
              // for mapping when type checking
              var fgSym = <TypeSymbol>ast.type.symbol;
-@@ -1028,9 +1028,9 @@
+@@= skipped -25, +25 lines =@@
  >funcDecl : Symbol(funcDecl, Decl(parserRealSource8.ts, 176, 11))
  
                  context.typeFlow.addLocalsFromScope(locals, fgSym, funcDecl.vars,
@@ -584,7 +584,7 @@
  >locals : Symbol(locals, Decl(parserRealSource8.ts, 320, 11))
  >fgSym : Symbol(fgSym, Decl(parserRealSource8.ts, 238, 15), Decl(parserRealSource8.ts, 352, 15))
  >funcDecl : Symbol(funcDecl, Decl(parserRealSource8.ts, 176, 11))
-@@ -1039,9 +1039,9 @@
+@@= skipped -11, +11 lines =@@
  >funcTable : Symbol(funcTable, Decl(parserRealSource8.ts, 308, 11))
  
                  context.typeFlow.addLocalsFromScope(statics, fgSym, funcDecl.statics,
@@ -596,7 +596,7 @@
  >statics : Symbol(statics, Decl(parserRealSource8.ts, 321, 11))
  >fgSym : Symbol(fgSym, Decl(parserRealSource8.ts, 238, 15), Decl(parserRealSource8.ts, 352, 15))
  >funcDecl : Symbol(funcDecl, Decl(parserRealSource8.ts, 176, 11))
-@@ -1069,9 +1069,9 @@
+@@= skipped -30, +30 lines =@@
  >i : Symbol(i, Decl(parserRealSource8.ts, 361, 24))
  
                      context.typeFlow.checker.resolveTypeLink(locals,
@@ -608,7 +608,7 @@
  >locals : Symbol(locals, Decl(parserRealSource8.ts, 320, 11))
  
                                                                  paramSym.parameter.typeLink, true);
-@@ -1079,9 +1079,9 @@
+@@= skipped -10, +10 lines =@@
                  }
              }
              context.typeFlow.checker.resolveTypeLink(locals, signature.returnType,
@@ -620,7 +620,7 @@
  >locals : Symbol(locals, Decl(parserRealSource8.ts, 320, 11))
  >signature : Symbol(signature, Decl(parserRealSource8.ts, 340, 15))
  
-@@ -1097,9 +1097,9 @@
+@@= skipped -18, +18 lines =@@
  >thisType : Symbol(thisType, Decl(parserRealSource8.ts, 372, 15))
  >funcDecl : Symbol(funcDecl, Decl(parserRealSource8.ts, 176, 11))
  >funcDecl : Symbol(funcDecl, Decl(parserRealSource8.ts, 176, 11))
@@ -632,7 +632,7 @@
  
              pushAssignScope(locals, context, thisType, null, funcDecl);
  >pushAssignScope : Symbol(pushAssignScope, Decl(parserRealSource8.ts, 12, 5))
-@@ -1131,14 +1131,14 @@
+@@= skipped -34, +34 lines =@@
              var catchLocals = new SymbolScopeBuilder(catchTable, null, null, null, context.scopeChain.scope,
  >catchLocals : Symbol(catchLocals, Decl(parserRealSource8.ts, 381, 15))
  >catchTable : Symbol(catchTable, Decl(parserRealSource8.ts, 380, 15))
@@ -651,7 +651,7 @@
  
              catchBlock.containedScope = catchLocals;
  >catchBlock : Symbol(catchBlock, Decl(parserRealSource8.ts, 378, 11))
-@@ -1148,15 +1148,15 @@
+@@= skipped -17, +17 lines =@@
  >pushAssignScope : Symbol(pushAssignScope, Decl(parserRealSource8.ts, 12, 5))
  >catchLocals : Symbol(catchLocals, Decl(parserRealSource8.ts, 381, 15))
  >context : Symbol(context, Decl(parserRealSource8.ts, 377, 50))
@@ -673,7 +673,7 @@
          }
      }
  
-@@ -1190,9 +1190,9 @@
+@@= skipped -42, +42 lines =@@
  
                  list.enclosingScope = context.scopeChain.scope;
  >list : Symbol(list, Decl(parserRealSource8.ts, 394, 19))
@@ -685,7 +685,7 @@
              }
              else if (ast.nodeType == NodeType.ModuleDeclaration) {
  >ast : Symbol(ast, Decl(parserRealSource8.ts, 388, 36))
-@@ -1290,31 +1290,31 @@
+@@= skipped -100, +100 lines =@@
  >context : Symbol(context, Decl(parserRealSource8.ts, 424, 11))
  
                  context.modDeclChain.pop();

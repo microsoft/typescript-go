@@ -1,6 +1,6 @@
 --- old.emitCapturingThisInTupleDestructuring2.symbols
 +++ new.emitCapturingThisInTupleDestructuring2.symbols
-@@ -8,27 +8,27 @@
+@@= skipped -8, +8 lines =@@
  >B : Symbol(B, Decl(emitCapturingThisInTupleDestructuring2.ts, 0, 38))
  
      test: number;

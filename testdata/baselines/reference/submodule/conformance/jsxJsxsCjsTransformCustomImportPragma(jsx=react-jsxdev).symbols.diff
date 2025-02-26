@@ -1,6 +1,6 @@
 --- old.jsxJsxsCjsTransformCustomImportPragma(jsx=react-jsxdev).symbols
 +++ new.jsxJsxsCjsTransformCustomImportPragma(jsx=react-jsxdev).symbols
-@@ -8,14 +8,9 @@
+@@= skipped -8, +8 lines =@@
  >a : Symbol(a, Decl(react.tsx, 3, 5))
  
    <p></p>
@@ -15,7 +15,7 @@
  
  </>
  
-@@ -27,14 +22,9 @@
+@@= skipped -19, +14 lines =@@
  >a : Symbol(a, Decl(preact.tsx, 2, 5))
  
    <p></p>

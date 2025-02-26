@@ -1,6 +1,6 @@
 --- old.ambientEnumDeclaration1.symbols
 +++ new.ambientEnumDeclaration1.symbols
-@@ -7,19 +7,19 @@
+@@= skipped -7, +7 lines =@@
  >E : Symbol(E, Decl(ambientEnumDeclaration1.ts, 0, 0))
  
      a = 10,

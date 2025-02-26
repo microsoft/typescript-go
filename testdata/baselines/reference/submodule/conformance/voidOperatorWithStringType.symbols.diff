@@ -1,6 +1,6 @@
 --- old.voidOperatorWithStringType.symbols
 +++ new.voidOperatorWithStringType.symbols
-@@ -15,10 +15,10 @@
+@@= skipped -15, +15 lines =@@
  >A : Symbol(A, Decl(voidOperatorWithStringType.ts, 4, 40))
  
      public a: string;
@@ -13,7 +13,7 @@
  }
  module M {
  >M : Symbol(M, Decl(voidOperatorWithStringType.ts, 9, 1))
-@@ -59,15 +59,15 @@
+@@= skipped -44, +44 lines =@@
  // string type expressions
  var ResultIsAny6 = void objA.a;
  >ResultIsAny6 : Symbol(ResultIsAny6, Decl(voidOperatorWithStringType.ts, 26, 3))
@@ -33,7 +33,7 @@
  
  var ResultIsAny8 = void STRING1[0];
  >ResultIsAny8 : Symbol(ResultIsAny8, Decl(voidOperatorWithStringType.ts, 28, 3))
-@@ -79,9 +79,9 @@
+@@= skipped -20, +20 lines =@@
  
  var ResultIsAny10 = void A.foo();
  >ResultIsAny10 : Symbol(ResultIsAny10, Decl(voidOperatorWithStringType.ts, 30, 3))
@@ -45,7 +45,7 @@
  
  var ResultIsAny11 = void (STRING + STRING);
  >ResultIsAny11 : Symbol(ResultIsAny11, Decl(voidOperatorWithStringType.ts, 31, 3))
-@@ -90,9 +90,9 @@
+@@= skipped -11, +11 lines =@@
  
  var ResultIsAny12 = void STRING.charAt(0);
  >ResultIsAny12 : Symbol(ResultIsAny12, Decl(voidOperatorWithStringType.ts, 32, 3))
@@ -57,7 +57,7 @@
  
  // multiple void  operators
  var ResultIsAny13 = void void STRING;
-@@ -116,10 +116,10 @@
+@@= skipped -26, +26 lines =@@
  >foo : Symbol(foo, Decl(voidOperatorWithStringType.ts, 2, 36))
  
  void objA.a,M.n;

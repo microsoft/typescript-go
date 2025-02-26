@@ -1,6 +1,6 @@
 --- old.implicitAnyWidenToAny.symbols
 +++ new.implicitAnyWidenToAny.symbols
-@@ -21,7 +21,7 @@
+@@= skipped -21, +21 lines =@@
  >AnimalObj : Symbol(AnimalObj, Decl(implicitAnyWidenToAny.ts, 4, 20))
  
        x:any;

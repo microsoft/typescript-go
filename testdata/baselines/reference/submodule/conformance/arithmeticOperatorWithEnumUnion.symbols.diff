@@ -1,6 +1,6 @@
 --- old.arithmeticOperatorWithEnumUnion.symbols
 +++ new.arithmeticOperatorWithEnumUnion.symbols
-@@ -7,19 +7,19 @@
+@@= skipped -7, +7 lines =@@
  >E : Symbol(E, Decl(arithmeticOperatorWithEnumUnion.ts, 0, 0))
  
      a,
@@ -24,7 +24,7 @@
  }
  
  var a: any;
-@@ -61,52 +61,52 @@
+@@= skipped -54, +54 lines =@@
  
  var ra6 = E.a * a;
  >ra6 : Symbol(ra6, Decl(arithmeticOperatorWithEnumUnion.ts, 21, 3))
@@ -93,7 +93,7 @@
  
  // operator /
  var rb1 = c / a;
-@@ -136,52 +136,52 @@
+@@= skipped -75, +75 lines =@@
  
  var rb6 = E.a / a;
  >rb6 : Symbol(rb6, Decl(arithmeticOperatorWithEnumUnion.ts, 35, 3))
@@ -162,7 +162,7 @@
  
  // operator %
  var rc1 = c % a;
-@@ -211,52 +211,52 @@
+@@= skipped -75, +75 lines =@@
  
  var rc6 = E.a % a;
  >rc6 : Symbol(rc6, Decl(arithmeticOperatorWithEnumUnion.ts, 49, 3))
@@ -231,7 +231,7 @@
  
  // operator -
  var rd1 = c - a;
-@@ -286,52 +286,52 @@
+@@= skipped -75, +75 lines =@@
  
  var rd6 = E.a - a;
  >rd6 : Symbol(rd6, Decl(arithmeticOperatorWithEnumUnion.ts, 63, 3))
@@ -300,7 +300,7 @@
  
  // operator <<
  var re1 = c << a;
-@@ -361,52 +361,52 @@
+@@= skipped -75, +75 lines =@@
  
  var re6 = E.a << a;
  >re6 : Symbol(re6, Decl(arithmeticOperatorWithEnumUnion.ts, 77, 3))
@@ -369,7 +369,7 @@
  
  // operator >>
  var rf1 = c >> a;
-@@ -436,52 +436,52 @@
+@@= skipped -75, +75 lines =@@
  
  var rf6 = E.a >> a;
  >rf6 : Symbol(rf6, Decl(arithmeticOperatorWithEnumUnion.ts, 91, 3))
@@ -438,7 +438,7 @@
  
  // operator >>>
  var rg1 = c >>> a;
-@@ -511,52 +511,52 @@
+@@= skipped -75, +75 lines =@@
  
  var rg6 = E.a >>> a;
  >rg6 : Symbol(rg6, Decl(arithmeticOperatorWithEnumUnion.ts, 105, 3))
@@ -507,7 +507,7 @@
  
  // operator &
  var rh1 = c & a;
-@@ -586,52 +586,52 @@
+@@= skipped -75, +75 lines =@@
  
  var rh6 = E.a & a;
  >rh6 : Symbol(rh6, Decl(arithmeticOperatorWithEnumUnion.ts, 119, 3))
@@ -576,7 +576,7 @@
  
  // operator ^
  var ri1 = c ^ a;
-@@ -661,52 +661,52 @@
+@@= skipped -75, +75 lines =@@
  
  var ri6 = E.a ^ a;
  >ri6 : Symbol(ri6, Decl(arithmeticOperatorWithEnumUnion.ts, 133, 3))
@@ -645,7 +645,7 @@
  
  // operator |
  var rj1 = c | a;
-@@ -736,50 +736,50 @@
+@@= skipped -75, +75 lines =@@
  
  var rj6 = E.a | a;
  >rj6 : Symbol(rj6, Decl(arithmeticOperatorWithEnumUnion.ts, 147, 3))

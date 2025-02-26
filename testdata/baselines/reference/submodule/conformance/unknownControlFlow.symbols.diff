@@ -1,6 +1,6 @@
 --- old.unknownControlFlow.symbols
 +++ new.unknownControlFlow.symbols
-@@ -588,30 +588,30 @@
+@@= skipped -588, +588 lines =@@
          return false;
      }
      if (Array.isArray(a) || Array.isArray(b)) {

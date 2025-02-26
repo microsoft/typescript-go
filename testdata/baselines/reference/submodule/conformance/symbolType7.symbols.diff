@@ -1,6 +1,6 @@
 --- old.symbolType7.symbols
 +++ new.symbolType7.symbols
-@@ -3,9 +3,6 @@
+@@= skipped -3, +3 lines =@@
  === symbolType7.ts ===
  var s = Symbol.for("shift");
  >s : Symbol(s, Decl(symbolType7.ts, 0, 3))

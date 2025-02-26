@@ -1,6 +1,6 @@
 --- old.baseTypeAfterDerivedType.symbols
 +++ new.baseTypeAfterDerivedType.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >Base : Symbol(Base, Decl(baseTypeAfterDerivedType.ts, 2, 1))
  
      method(...args: any[]): void;
@@ -9,7 +9,7 @@
  >args : Symbol(args, Decl(baseTypeAfterDerivedType.ts, 1, 11))
  }
  
-@@ -14,7 +14,7 @@
+@@= skipped -8, +8 lines =@@
  >Base : Symbol(Base, Decl(baseTypeAfterDerivedType.ts, 2, 1))
  
      method(...args: any[]): void;
@@ -18,7 +18,7 @@
  >args : Symbol(args, Decl(baseTypeAfterDerivedType.ts, 5, 11))
  }
  
-@@ -23,7 +23,7 @@
+@@= skipped -9, +9 lines =@@
  >Base2 : Symbol(Base2, Decl(baseTypeAfterDerivedType.ts, 10, 1))
  
      method(...args: any[]): void { }
@@ -27,7 +27,7 @@
  >args : Symbol(args, Decl(baseTypeAfterDerivedType.ts, 9, 11))
  }
  
-@@ -31,7 +31,7 @@
+@@= skipped -8, +8 lines =@@
  >Base2 : Symbol(Base2, Decl(baseTypeAfterDerivedType.ts, 10, 1))
  
      method(...args: any[]): void;

@@ -1,6 +1,6 @@
 --- old.override12(target=esnext).symbols
 +++ new.override12(target=esnext).symbols
-@@ -5,19 +5,19 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(override12.ts, 0, 0))
  
      public m1(): number {
@@ -23,7 +23,7 @@
  }
  
  class B extends A {
-@@ -25,18 +25,18 @@
+@@= skipped -20, +20 lines =@@
  >A : Symbol(A, Decl(override12.ts, 0, 0))
  
      override m1() {

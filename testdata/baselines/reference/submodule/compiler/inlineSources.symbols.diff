@@ -1,6 +1,6 @@
 --- old.inlineSources.symbols
 +++ new.inlineSources.symbols
-@@ -5,9 +5,9 @@
+@@= skipped -5, +5 lines =@@
  >a : Symbol(a, Decl(a.ts, 0, 3))
  
  console.log(a);
@@ -12,7 +12,7 @@
  >a : Symbol(a, Decl(a.ts, 0, 3))
  
  === b.ts ===
-@@ -15,8 +15,8 @@
+@@= skipped -10, +10 lines =@@
  >b : Symbol(b, Decl(b.ts, 0, 3))
  
  console.log(b);

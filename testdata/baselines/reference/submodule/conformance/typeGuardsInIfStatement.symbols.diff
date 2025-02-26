@@ -1,6 +1,6 @@
 --- old.typeGuardsInIfStatement.symbols
 +++ new.typeGuardsInIfStatement.symbols
-@@ -13,9 +13,9 @@
+@@= skipped -13, +13 lines =@@
  >x : Symbol(x, Decl(typeGuardsInIfStatement.ts, 4, 13))
  
          return x.length; // string
@@ -12,7 +12,7 @@
      }
      else {
          return x++; // number
-@@ -176,9 +176,9 @@
+@@= skipped -163, +163 lines =@@
          // usage of x or assignment to separate variable shouldn't cause narrowing of type to stop
          y = x.length; 
  >y : Symbol(y, Decl(typeGuardsInIfStatement.ts, 84, 7))
@@ -24,7 +24,7 @@
  
          return x === "hello"; // string
  >x : Symbol(x, Decl(typeGuardsInIfStatement.ts, 83, 14))
-@@ -244,9 +244,9 @@
+@@= skipped -68, +68 lines =@@
              // change value of x
              x = 10 && x.toString() // number | boolean | string
  >x : Symbol(x, Decl(typeGuardsInIfStatement.ts, 107, 15))
@@ -36,7 +36,7 @@
  
              )
              : (
-@@ -254,9 +254,9 @@
+@@= skipped -10, +10 lines =@@
              y = x && x.toString() // number | boolean | string
  >y : Symbol(y, Decl(typeGuardsInIfStatement.ts, 114, 11))
  >x : Symbol(x, Decl(typeGuardsInIfStatement.ts, 107, 15))
@@ -48,7 +48,7 @@
  
              );
      }
-@@ -271,9 +271,9 @@
+@@= skipped -17, +17 lines =@@
  >x : Symbol(x, Decl(typeGuardsInIfStatement.ts, 127, 15))
  
          return x.toString(); // string | number | boolean - x changed in else branch
@@ -60,7 +60,7 @@
      }
      else {
          x = 10;
-@@ -287,9 +287,9 @@
+@@= skipped -16, +16 lines =@@
  >x : Symbol(x, Decl(typeGuardsInIfStatement.ts, 127, 15))
  
              ? x.toString() // number

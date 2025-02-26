@@ -1,6 +1,6 @@
 --- old.jsxContainsOnlyTriviaWhiteSpacesNotCountedAsChild.symbols
 +++ new.jsxContainsOnlyTriviaWhiteSpacesNotCountedAsChild.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >ElementChildrenAttribute : Symbol(ElementChildrenAttribute, Decl(jsxContainsOnlyTriviaWhiteSpacesNotCountedAsChild.tsx, 0, 15))
  
      children: {};
@@ -9,7 +9,7 @@
    }
  }
  
-@@ -16,7 +16,7 @@
+@@= skipped -8, +8 lines =@@
  >Props : Symbol(Props, Decl(jsxContainsOnlyTriviaWhiteSpacesNotCountedAsChild.tsx, 4, 1))
  
    className?: string | undefined;

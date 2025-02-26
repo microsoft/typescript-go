@@ -1,6 +1,6 @@
 --- old.implicitAnyInCatch.symbols
 +++ new.implicitAnyInCatch.symbols
-@@ -16,7 +16,7 @@
+@@= skipped -16, +16 lines =@@
  >C : Symbol(C, Decl(implicitAnyInCatch.ts, 4, 25))
  
      public temp() {

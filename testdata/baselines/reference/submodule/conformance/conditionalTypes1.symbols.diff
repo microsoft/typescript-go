@@ -1,6 +1,6 @@
 --- old.conditionalTypes1.symbols
 +++ new.conditionalTypes1.symbols
-@@ -290,13 +290,13 @@
+@@= skipped -290, +290 lines =@@
  >Item : Symbol(Item, Decl(conditionalTypes1.ts, 75, 1))
  
      id: number;
@@ -17,7 +17,7 @@
  }
  
  type KOItem = KnockedOutObj<Item>;
-@@ -308,17 +308,17 @@
+@@= skipped -18, +18 lines =@@
  >Part : Symbol(Part, Decl(conditionalTypes1.ts, 83, 34))
  
      id: number;
@@ -39,7 +39,7 @@
  >newName : Symbol(newName, Decl(conditionalTypes1.ts, 89, 15))
  }
  
-@@ -1220,17 +1220,17 @@
+@@= skipped -912, +912 lines =@@
  >A : Symbol(A, Decl(conditionalTypes1.ts, 307, 45))
  
      a: 'a';
@@ -60,7 +60,7 @@
  >OldDiff : Symbol(OldDiff, Decl(conditionalTypes1.ts, 298, 1))
  >A : Symbol(A, Decl(conditionalTypes1.ts, 307, 45))
  }
-@@ -1239,10 +1239,10 @@
+@@= skipped -19, +19 lines =@@
  >A : Symbol(A, Decl(conditionalTypes1.ts, 307, 45))
  
      b: 'b';
@@ -73,7 +73,7 @@
  >NewDiff : Symbol(NewDiff, Decl(conditionalTypes1.ts, 306, 5))
  >A : Symbol(A, Decl(conditionalTypes1.ts, 307, 45))
  }
-@@ -1286,11 +1286,11 @@
+@@= skipped -47, +47 lines =@@
  
  interface Foo2 { foo: string; }
  >Foo2 : Symbol(Foo2, Decl(conditionalTypes1.ts, 328, 51))

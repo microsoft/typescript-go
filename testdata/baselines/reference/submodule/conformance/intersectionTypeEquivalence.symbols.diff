@@ -1,6 +1,6 @@
 --- old.intersectionTypeEquivalence.symbols
 +++ new.intersectionTypeEquivalence.symbols
-@@ -3,15 +3,15 @@
+@@= skipped -3, +3 lines =@@
  === intersectionTypeEquivalence.ts ===
  interface A { a: string }
  >A : Symbol(A, Decl(intersectionTypeEquivalence.ts, 0, 0))

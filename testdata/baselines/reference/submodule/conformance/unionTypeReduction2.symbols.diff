@@ -1,6 +1,6 @@
 --- old.unionTypeReduction2.symbols
 +++ new.unionTypeReduction2.symbols
-@@ -172,7 +172,7 @@
+@@= skipped -172, +172 lines =@@
  >ReturnVal : Symbol(ReturnVal, Decl(unionTypeReduction2.ts, 49, 1))
  
      something(): void;
@@ -9,7 +9,7 @@
  }
  
  const k: ReturnVal = { something() { } }
-@@ -195,9 +195,9 @@
+@@= skipped -23, +23 lines =@@
  >options.something : Symbol(something, Decl(unionTypeReduction2.ts, 60, 23))
  >options : Symbol(options, Decl(unionTypeReduction2.ts, 60, 13))
  >something : Symbol(something, Decl(unionTypeReduction2.ts, 60, 23))

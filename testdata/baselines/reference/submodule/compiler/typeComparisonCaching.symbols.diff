@@ -1,6 +1,6 @@
 --- old.typeComparisonCaching.symbols
 +++ new.typeComparisonCaching.symbols
-@@ -7,29 +7,29 @@
+@@= skipped -7, +7 lines =@@
  >A : Symbol(A, Decl(typeComparisonCaching.ts, 0, 0))
  
      p: C;
@@ -35,7 +35,7 @@
  >A : Symbol(A, Decl(typeComparisonCaching.ts, 0, 0))
  }
  
-@@ -37,7 +37,7 @@
+@@= skipped -30, +30 lines =@@
  >D : Symbol(D, Decl(typeComparisonCaching.ts, 14, 1))
  
      q: B;

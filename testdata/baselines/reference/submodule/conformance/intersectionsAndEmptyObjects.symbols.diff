@@ -1,6 +1,6 @@
 --- old.intersectionsAndEmptyObjects.symbols
 +++ new.intersectionsAndEmptyObjects.symbols
-@@ -118,9 +118,6 @@
+@@= skipped -118, +118 lines =@@
  ): F1 & F2 => Object.assign({}, d1, d2);
  >F1 : Symbol(F1, Decl(intersectionsAndEmptyObjects.ts, 30, 31))
  >F2 : Symbol(F2, Decl(intersectionsAndEmptyObjects.ts, 30, 53))
@@ -10,7 +10,7 @@
  >d1 : Symbol(d1, Decl(intersectionsAndEmptyObjects.ts, 30, 77))
  >d2 : Symbol(d2, Decl(intersectionsAndEmptyObjects.ts, 31, 9))
  
-@@ -268,13 +265,12 @@
+@@= skipped -150, +147 lines =@@
  >mock : Symbol(mock, Decl(intersectionsAndEmptyObjects.ts, 80, 52))
  >M : Symbol(M, Decl(intersectionsAndEmptyObjects.ts, 84, 22))
  >_ : Symbol(_, Decl(intersectionsAndEmptyObjects.ts, 84, 25))

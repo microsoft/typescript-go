@@ -1,6 +1,6 @@
 --- old.relativePathToDeclarationFile.symbols
 +++ new.relativePathToDeclarationFile.symbols
-@@ -11,32 +11,20 @@
+@@= skipped -11, +11 lines =@@
  >relMod : Symbol(relMod, Decl(file1.ts, 1, 34))
  
  if(foo.M2.x){

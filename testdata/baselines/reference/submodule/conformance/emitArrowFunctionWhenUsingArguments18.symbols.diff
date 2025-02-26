@@ -1,6 +1,6 @@
 --- old.emitArrowFunctionWhenUsingArguments18.symbols
 +++ new.emitArrowFunctionWhenUsingArguments18.symbols
-@@ -10,9 +10,9 @@
+@@= skipped -10, +10 lines =@@
  >arguments : Symbol(arguments, Decl(emitArrowFunctionWhenUsingArguments18.ts, 1, 31))
  
      if (Math.random()) {

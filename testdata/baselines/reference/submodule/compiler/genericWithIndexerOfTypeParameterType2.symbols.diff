@@ -1,6 +1,6 @@
 --- old.genericWithIndexerOfTypeParameterType2.symbols
 +++ new.genericWithIndexerOfTypeParameterType2.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >CollectionItem : Symbol(CollectionItem, Decl(genericWithIndexerOfTypeParameterType2.ts, 6, 1))
  
      _itemsByKey: { [key: string]: TItem; };
@@ -9,7 +9,7 @@
  >key : Symbol(key, Decl(genericWithIndexerOfTypeParameterType2.ts, 1, 20))
  >TItem : Symbol(TItem, Decl(genericWithIndexerOfTypeParameterType2.ts, 0, 24))
  }
-@@ -18,7 +18,7 @@
+@@= skipped -11, +11 lines =@@
  >ListItem : Symbol(ListItem, Decl(genericWithIndexerOfTypeParameterType2.ts, 8, 30))
  
      Bar() {}
@@ -18,7 +18,7 @@
  }
  
  export class CollectionItem {}
-@@ -29,6 +29,6 @@
+@@= skipped -11, +11 lines =@@
  >CollectionItem : Symbol(CollectionItem, Decl(genericWithIndexerOfTypeParameterType2.ts, 6, 1))
  
      __isNew: boolean;

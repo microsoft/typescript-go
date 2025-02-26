@@ -1,6 +1,6 @@
 --- old.moduleExportAlias2.symbols
 +++ new.moduleExportAlias2.symbols
-@@ -5,13 +5,10 @@
+@@= skipped -5, +5 lines =@@
  const C = require("./semver")
  >C : Symbol(C, Decl(index.js, 1, 5))
  >require : Symbol(require, Decl(node.d.ts, 0, 0))
@@ -14,7 +14,7 @@
  
  var c = new C
  >c : Symbol(c, Decl(index.js, 3, 3))
-@@ -29,27 +26,3 @@
+@@= skipped -24, +21 lines =@@
  >module : Symbol(module, Decl(node.d.ts, 2, 11))
  >exports : Symbol(exports, Decl(node.d.ts, 2, 21))
  

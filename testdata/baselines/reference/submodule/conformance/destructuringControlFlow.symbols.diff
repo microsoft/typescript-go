@@ -1,6 +1,6 @@
 --- old.destructuringControlFlow.symbols
 +++ new.destructuringControlFlow.symbols
-@@ -34,12 +34,12 @@
+@@= skipped -34, +34 lines =@@
      let a0 = obj[0];  // number | null
  >a0 : Symbol(a0, Decl(destructuringControlFlow.ts, 9, 7))
  >obj : Symbol(obj, Decl(destructuringControlFlow.ts, 8, 12))
@@ -15,7 +15,7 @@
  
      let [b0, b1] = obj;
  >b0 : Symbol(b0, Decl(destructuringControlFlow.ts, 11, 9))
-@@ -53,19 +53,19 @@
+@@= skipped -19, +19 lines =@@
  
      if (obj[0] && obj[1]) {
  >obj : Symbol(obj, Decl(destructuringControlFlow.ts, 8, 12))
@@ -39,7 +39,7 @@
  
          let [d0, d1] = obj;
  >d0 : Symbol(d0, Decl(destructuringControlFlow.ts, 16, 13))
-@@ -115,8 +115,8 @@
+@@= skipped -62, +62 lines =@@
  >x : Symbol(x, Decl(destructuringControlFlow.ts, 30, 6))
  
      ({ ["x"]: x } = 0);  // Error

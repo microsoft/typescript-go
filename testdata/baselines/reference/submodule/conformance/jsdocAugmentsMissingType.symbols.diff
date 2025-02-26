@@ -1,6 +1,6 @@
 --- old.jsdocAugmentsMissingType.symbols
 +++ new.jsdocAugmentsMissingType.symbols
-@@ -3,9 +3,7 @@
+@@= skipped -3, +3 lines =@@
  === /a.js ===
  class A { constructor() { this.x = 0; } }
  >A : Symbol(A, Decl(a.js, 0, 0))
@@ -10,7 +10,7 @@
  
  /** @augments */
  class B extends A {
-@@ -13,7 +11,7 @@
+@@= skipped -10, +8 lines =@@
  >A : Symbol(A, Decl(a.js, 0, 0))
  
      m() {

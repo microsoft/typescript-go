@@ -1,6 +1,6 @@
 --- old.constantOverloadFunction.symbols
 +++ new.constantOverloadFunction.symbols
-@@ -3,22 +3,22 @@
+@@= skipped -3, +3 lines =@@
  === constantOverloadFunction.ts ===
  class Base { foo() { } }
  >Base : Symbol(Base, Decl(constantOverloadFunction.ts, 0, 0))

@@ -1,6 +1,6 @@
 --- old.jsxIntrinsicElementsExtendsRecord.symbols
 +++ new.jsxIntrinsicElementsExtendsRecord.symbols
-@@ -10,5 +10,4 @@
+@@= skipped -10, +10 lines =@@
  }
  
  <a />;

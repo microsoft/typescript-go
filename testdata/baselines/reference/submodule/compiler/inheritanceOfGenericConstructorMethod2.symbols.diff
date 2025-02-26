@@ -1,6 +1,6 @@
 --- old.inheritanceOfGenericConstructorMethod2.symbols
 +++ new.inheritanceOfGenericConstructorMethod2.symbols
-@@ -16,40 +16,40 @@
+@@= skipped -16, +16 lines =@@
  
     export class D1 extends M.C1 { }
  >D1 : Symbol(D1, Decl(inheritanceOfGenericConstructorMethod2.ts, 4, 10))

@@ -1,6 +1,6 @@
 --- old.protectedMembersThisParameter.symbols
 +++ new.protectedMembersThisParameter.symbols
-@@ -5,25 +5,25 @@
+@@= skipped -5, +5 lines =@@
  >Message : Symbol(Message, Decl(protectedMembersThisParameter.ts, 0, 0))
  
    protected secret(): void {}
@@ -31,7 +31,7 @@
  
      let f = function(this: T) {
  >f : Symbol(f, Decl(protectedMembersThisParameter.ts, 7, 7))
-@@ -31,9 +31,9 @@
+@@= skipped -26, +26 lines =@@
  >T : Symbol(T, Decl(protectedMembersThisParameter.ts, 5, 7))
  
        m.secret(); // should error
@@ -43,7 +43,7 @@
      }
    }
  }
-@@ -42,27 +42,27 @@
+@@= skipped -11, +11 lines =@@
  >A : Symbol(A, Decl(protectedMembersThisParameter.ts, 11, 1))
  
    protected a() {}
@@ -75,7 +75,7 @@
  }
  
  function bA<T extends A>(this: T, arg: B) {
-@@ -75,19 +75,19 @@
+@@= skipped -33, +33 lines =@@
  >B : Symbol(B, Decl(protectedMembersThisParameter.ts, 15, 1))
  
    this.a();
@@ -101,7 +101,7 @@
  }
  function bB<T extends B>(this: T, arg: B) {
  >bB : Symbol(bB, Decl(protectedMembersThisParameter.ts, 30, 1))
-@@ -99,24 +99,24 @@
+@@= skipped -24, +24 lines =@@
  >B : Symbol(B, Decl(protectedMembersThisParameter.ts, 15, 1))
  
    this.a();
@@ -134,7 +134,7 @@
  }
  function bC<T extends C>(this: T, arg: B) {
  >bC : Symbol(bC, Decl(protectedMembersThisParameter.ts, 36, 1))
-@@ -128,24 +128,24 @@
+@@= skipped -29, +29 lines =@@
  >B : Symbol(B, Decl(protectedMembersThisParameter.ts, 15, 1))
  
    this.a();
@@ -167,7 +167,7 @@
  }
  function bZ<T extends Z>(this: T, arg: B) {
  >bZ : Symbol(bZ, Decl(protectedMembersThisParameter.ts, 42, 1))
-@@ -157,19 +157,19 @@
+@@= skipped -29, +29 lines =@@
  >B : Symbol(B, Decl(protectedMembersThisParameter.ts, 15, 1))
  
    this.z();
@@ -193,7 +193,7 @@
  }
  function bString<T extends string>(this: T, arg: B) {
  >bString : Symbol(bString, Decl(protectedMembersThisParameter.ts, 47, 1))
-@@ -180,19 +180,19 @@
+@@= skipped -23, +23 lines =@@
  >B : Symbol(B, Decl(protectedMembersThisParameter.ts, 15, 1))
  
    this.toLowerCase();
@@ -219,7 +219,7 @@
  }
  function bAny<T>(this: T, arg: B) {
  >bAny : Symbol(bAny, Decl(protectedMembersThisParameter.ts, 52, 1))
-@@ -203,120 +203,120 @@
+@@= skipped -23, +23 lines =@@
  >B : Symbol(B, Decl(protectedMembersThisParameter.ts, 15, 1))
  
    arg.a(); // should error
@@ -375,7 +375,7 @@
    }
  }
  class D1 extends D {
-@@ -324,17 +324,17 @@
+@@= skipped -121, +121 lines =@@
  >D : Symbol(D, Decl(protectedMembersThisParameter.ts, 56, 1))
  
    protected d1() {}

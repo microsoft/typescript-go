@@ -1,6 +1,6 @@
 --- old.objectAssignLikeNonUnionResult.symbols
 +++ new.objectAssignLikeNonUnionResult.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Interface : Symbol(Interface, Decl(objectAssignLikeNonUnionResult.ts, 0, 0))
  
      field: number;
@@ -9,7 +9,7 @@
  }
  const defaultValue: Interface = { field: 1 };
  >defaultValue : Symbol(defaultValue, Decl(objectAssignLikeNonUnionResult.ts, 3, 5))
-@@ -29,9 +29,9 @@
+@@= skipped -24, +24 lines =@@
  >data1 : Symbol(data1, Decl(objectAssignLikeNonUnionResult.ts, 9, 5))
  >assign : Symbol(assign, Decl(objectAssignLikeNonUnionResult.ts, 3, 45))
  >defaultValue : Symbol(defaultValue, Decl(objectAssignLikeNonUnionResult.ts, 3, 5))

@@ -1,6 +1,6 @@
 --- old.booleanPropertyAccess.symbols
 +++ new.booleanPropertyAccess.symbols
-@@ -6,12 +6,12 @@
+@@= skipped -6, +6 lines =@@
  
  var a = x.toString();
  >a : Symbol(a, Decl(booleanPropertyAccess.ts, 2, 3))

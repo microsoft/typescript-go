@@ -1,6 +1,6 @@
 --- old.constructorInvocationWithTooFewTypeArgs.symbols
 +++ new.constructorInvocationWithTooFewTypeArgs.symbols
-@@ -7,11 +7,11 @@
+@@= skipped -7, +7 lines =@@
  >U : Symbol(U, Decl(constructorInvocationWithTooFewTypeArgs.ts, 0, 10))
  
     x: T

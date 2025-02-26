@@ -1,6 +1,6 @@
 --- old.reachabilityChecks1.symbols
 +++ new.reachabilityChecks1.symbols
-@@ -54,7 +54,7 @@
+@@= skipped -54, +54 lines =@@
  
          const enum E { X }
  >E : Symbol(E, Decl(reachabilityChecks1.ts, 29, 14))
@@ -9,7 +9,7 @@
      }
  }
  
-@@ -102,7 +102,7 @@
+@@= skipped -48, +48 lines =@@
  >E : Symbol(E, Decl(reachabilityChecks1.ts, 58, 19))
  
          X = 1
@@ -18,7 +18,7 @@
      }
  }
  
-@@ -117,7 +117,7 @@
+@@= skipped -15, +15 lines =@@
  >E : Symbol(E, Decl(reachabilityChecks1.ts, 67, 5))
  
          X = 1

@@ -1,6 +1,6 @@
 --- old.moduleAugmentationsBundledOutput1.symbols
 +++ new.moduleAugmentationsBundledOutput1.symbols
-@@ -10,45 +10,45 @@
+@@= skipped -10, +10 lines =@@
  >Cls : Symbol(Cls, Decl(m2.ts, 0, 8))
  
  (<any>Cls.prototype).foo = function() { return 1; };
@@ -56,7 +56,7 @@
  
  === m4.ts ===
  import {Cls} from "./m1";
-@@ -59,37 +59,37 @@
+@@= skipped -49, +49 lines =@@
  >C2 : Symbol(C2, Decl(m4.ts, 1, 11))
  
  (<any>Cls.prototype).baz1 = function() { return undefined };
@@ -102,7 +102,7 @@
  >C2 : Symbol(C2, Decl(m4.ts, 1, 11))
      }
  }
-@@ -105,34 +105,34 @@
+@@= skipped -46, +46 lines =@@
  >Cls : Symbol(Cls, Decl(test.ts, 0, 8))
  
  c.foo().toExponential();

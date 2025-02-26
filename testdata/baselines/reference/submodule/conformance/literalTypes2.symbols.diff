@@ -1,6 +1,6 @@
 --- old.literalTypes2.symbols
 +++ new.literalTypes2.symbols
-@@ -5,9 +5,9 @@
+@@= skipped -5, +5 lines =@@
  >E : Symbol(E, Decl(literalTypes2.ts, 0, 0))
  
      A, B, C
@@ -13,7 +13,7 @@
  }
  
  let cond: boolean;
-@@ -19,9 +19,9 @@
+@@= skipped -14, +14 lines =@@
  >p2 : Symbol(p2, Decl(literalTypes2.ts, 6, 19))
  >p3 : Symbol(p3, Decl(literalTypes2.ts, 6, 31))
  >p4 : Symbol(p4, Decl(literalTypes2.ts, 6, 42))
@@ -25,7 +25,7 @@
  
      var v1 = 1;
  >v1 : Symbol(v1, Decl(literalTypes2.ts, 7, 7))
-@@ -46,9 +46,9 @@
+@@= skipped -27, +27 lines =@@
  
      var v8 = E.A;
  >v8 : Symbol(v8, Decl(literalTypes2.ts, 14, 7))
@@ -37,7 +37,7 @@
  
      let x1 = 1;
  >x1 : Symbol(x1, Decl(literalTypes2.ts, 15, 7))
-@@ -73,9 +73,9 @@
+@@= skipped -27, +27 lines =@@
  
      var x8 = E.A;
  >x8 : Symbol(x8, Decl(literalTypes2.ts, 22, 7))
@@ -49,7 +49,7 @@
  
      const c1 = 1;
  >c1 : Symbol(c1, Decl(literalTypes2.ts, 23, 9))
-@@ -100,9 +100,9 @@
+@@= skipped -27, +27 lines =@@
  
      const c8 = E.A;
  >c8 : Symbol(c8, Decl(literalTypes2.ts, 30, 9))
@@ -61,7 +61,7 @@
  }
  
  function f2(p1: 1 = 1, p2: "abc" = "abc", p3: true = true, p4: E.A = E.A) {
-@@ -112,10 +112,10 @@
+@@= skipped -12, +12 lines =@@
  >p3 : Symbol(p3, Decl(literalTypes2.ts, 33, 41))
  >p4 : Symbol(p4, Decl(literalTypes2.ts, 33, 58))
  >E : Symbol(E, Decl(literalTypes2.ts, 0, 0))
@@ -75,7 +75,7 @@
  
      var v1: 1 = 1;
  >v1 : Symbol(v1, Decl(literalTypes2.ts, 34, 7))
-@@ -132,10 +132,10 @@
+@@= skipped -20, +20 lines =@@
      var v5: E.A = E.A;
  >v5 : Symbol(v5, Decl(literalTypes2.ts, 38, 7))
  >E : Symbol(E, Decl(literalTypes2.ts, 0, 0))
@@ -89,7 +89,7 @@
  
      let x1: 1 = 1;
  >x1 : Symbol(x1, Decl(literalTypes2.ts, 39, 7))
-@@ -152,10 +152,10 @@
+@@= skipped -20, +20 lines =@@
      let x5: E.A = E.A;
  >x5 : Symbol(x5, Decl(literalTypes2.ts, 43, 7))
  >E : Symbol(E, Decl(literalTypes2.ts, 0, 0))
@@ -103,7 +103,7 @@
  }
  
  function f3() {
-@@ -172,9 +172,9 @@
+@@= skipped -20, +20 lines =@@
      const c3 = cond ? E.A : cond ? true : 123;
  >c3 : Symbol(c3, Decl(literalTypes2.ts, 49, 9))
  >cond : Symbol(cond, Decl(literalTypes2.ts, 4, 3))
@@ -115,7 +115,7 @@
  >cond : Symbol(cond, Decl(literalTypes2.ts, 4, 3))
  
      const c4 = cond ? "abc" : null;
-@@ -238,58 +238,58 @@
+@@= skipped -66, +66 lines =@@
  >C1 : Symbol(C1, Decl(literalTypes2.ts, 63, 1))
  
      x1 = 1;
@@ -194,7 +194,7 @@
  }
  
  function f4() {
-@@ -392,12 +392,12 @@
+@@= skipped -154, +154 lines =@@
  >C2 : Symbol(C2, Decl(literalTypes2.ts, 120, 1))
  
      foo() {
@@ -209,7 +209,7 @@
  
          return cond ? 0 : 1;
  >cond : Symbol(cond, Decl(literalTypes2.ts, 4, 3))
-@@ -418,9 +418,9 @@
+@@= skipped -26, +26 lines =@@
  
      const f4 = () => E.C;
  >f4 : Symbol(f4, Decl(literalTypes2.ts, 135, 9))
@@ -221,7 +221,7 @@
  
      const f5 = (): "foo" => "foo";
  >f5 : Symbol(f5, Decl(literalTypes2.ts, 136, 9))
-@@ -575,14 +575,14 @@
+@@= skipped -157, +157 lines =@@
  
      let result = a.slice();
  >result : Symbol(result, Decl(literalTypes2.ts, 169, 7))

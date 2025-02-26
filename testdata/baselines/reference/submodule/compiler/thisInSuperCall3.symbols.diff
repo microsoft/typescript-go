@@ -1,6 +1,6 @@
 --- old.thisInSuperCall3.symbols
 +++ new.thisInSuperCall3.symbols
-@@ -13,7 +13,7 @@
+@@= skipped -13, +13 lines =@@
  >Base : Symbol(Base, Decl(thisInSuperCall3.ts, 0, 0))
  
      public x: number = 0;

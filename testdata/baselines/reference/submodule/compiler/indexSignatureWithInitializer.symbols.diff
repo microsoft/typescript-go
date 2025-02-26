@@ -1,6 +1,6 @@
 --- old.indexSignatureWithInitializer.symbols
 +++ new.indexSignatureWithInitializer.symbols
-@@ -6,12 +6,12 @@
+@@= skipped -6, +6 lines =@@
  >I : Symbol(I, Decl(indexSignatureWithInitializer.ts, 0, 0))
  
      [x = '']: string;

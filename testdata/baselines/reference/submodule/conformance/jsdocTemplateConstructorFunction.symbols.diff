@@ -1,6 +1,6 @@
 --- old.jsdocTemplateConstructorFunction.symbols
 +++ new.jsdocTemplateConstructorFunction.symbols
-@@ -15,14 +15,7 @@
+@@= skipped -15, +15 lines =@@
  
      /** @type {T} */
      this.u
@@ -15,7 +15,7 @@
  >t : Symbol(t, Decl(templateTagOnConstructorFunctions.js, 8, 13))
  }
  /**
-@@ -30,39 +23,25 @@
+@@= skipped -15, +8 lines =@@
   * @param {Id<T>} id
   */
  Zet.prototype.add = function(v, id) {

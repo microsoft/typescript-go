@@ -1,6 +1,6 @@
 --- old.autoLift2.symbols
 +++ new.autoLift2.symbols
-@@ -15,7 +15,7 @@
+@@= skipped -15, +15 lines =@@
  
  
    baz() {
@@ -9,7 +9,7 @@
  
       this.foo = "foo";
  >this : Symbol(A, Decl(autoLift2.ts, 0, 0))
-@@ -24,14 +24,14 @@
+@@= skipped -9, +9 lines =@@
  >this : Symbol(A, Decl(autoLift2.ts, 0, 0))
  
       [1, 2].forEach((p) => this.foo);
@@ -28,7 +28,7 @@
  >p : Symbol(p, Decl(autoLift2.ts, 17, 21))
  >this : Symbol(A, Decl(autoLift2.ts, 0, 0))
  
-@@ -46,9 +46,9 @@
+@@= skipped -22, +22 lines =@@
  >A : Symbol(A, Decl(autoLift2.ts, 0, 0))
  
  a.baz();

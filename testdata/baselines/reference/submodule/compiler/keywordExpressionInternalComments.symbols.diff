@@ -1,6 +1,6 @@
 --- old.keywordExpressionInternalComments.symbols
 +++ new.keywordExpressionInternalComments.symbols
-@@ -11,7 +11,7 @@
+@@= skipped -11, +11 lines =@@
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
  /*1*/ delete /*2*/ Array.toString /*3*/;

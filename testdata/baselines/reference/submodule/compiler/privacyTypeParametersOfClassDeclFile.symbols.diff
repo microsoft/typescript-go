@@ -1,6 +1,6 @@
 --- old.privacyTypeParametersOfClassDeclFile.symbols
 +++ new.privacyTypeParametersOfClassDeclFile.symbols
-@@ -15,7 +15,7 @@
+@@= skipped -15, +15 lines =@@
  >privateClass : Symbol(privateClass, Decl(privacyTypeParametersOfClassDeclFile.ts, 0, 0))
  
      myMethod(val: T): T {
@@ -9,7 +9,7 @@
  >val : Symbol(val, Decl(privacyTypeParametersOfClassDeclFile.ts, 7, 13))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 6, 50))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 6, 50))
-@@ -31,7 +31,7 @@
+@@= skipped -16, +16 lines =@@
  >publicClass : Symbol(publicClass, Decl(privacyTypeParametersOfClassDeclFile.ts, 1, 1))
  
      myMethod(val: T): T {
@@ -18,7 +18,7 @@
  >val : Symbol(val, Decl(privacyTypeParametersOfClassDeclFile.ts, 13, 13))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 12, 49))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 12, 49))
-@@ -47,7 +47,7 @@
+@@= skipped -16, +16 lines =@@
  >privateClass : Symbol(privateClass, Decl(privacyTypeParametersOfClassDeclFile.ts, 0, 0))
  
      myMethod(val: T): T {
@@ -27,7 +27,7 @@
  >val : Symbol(val, Decl(privacyTypeParametersOfClassDeclFile.ts, 19, 13))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 18, 44))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 18, 44))
-@@ -63,7 +63,7 @@
+@@= skipped -16, +16 lines =@@
  >publicClass : Symbol(publicClass, Decl(privacyTypeParametersOfClassDeclFile.ts, 1, 1))
  
      myMethod(val: T): T { 
@@ -36,7 +36,7 @@
  >val : Symbol(val, Decl(privacyTypeParametersOfClassDeclFile.ts, 25, 13))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 24, 43))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 24, 43))
-@@ -78,7 +78,7 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 30, 63))
  
      myMethod(val: T): T { 
@@ -45,7 +45,7 @@
  >val : Symbol(val, Decl(privacyTypeParametersOfClassDeclFile.ts, 31, 13))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 30, 63))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 30, 63))
-@@ -93,7 +93,7 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 36, 57))
  
      myMethod(val: T): T { 
@@ -54,7 +54,7 @@
  >val : Symbol(val, Decl(privacyTypeParametersOfClassDeclFile.ts, 37, 13))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 36, 57))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 36, 57))
-@@ -107,10 +107,10 @@
+@@= skipped -14, +14 lines =@@
  >publicClassWithTypeParametersFromPrivateModule : Symbol(publicClassWithTypeParametersFromPrivateModule, Decl(privacyTypeParametersOfClassDeclFile.ts, 40, 1))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 42, 60))
  >privateModule : Symbol(privateModule, Decl(privacyTypeParametersOfClassDeclFile.ts, 108, 1))
@@ -67,7 +67,7 @@
  >val : Symbol(val, Decl(privacyTypeParametersOfClassDeclFile.ts, 43, 13))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 42, 60))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 42, 60))
-@@ -124,10 +124,10 @@
+@@= skipped -17, +17 lines =@@
  >privateClassWithTypeParametersFromPrivateModule : Symbol(privateClassWithTypeParametersFromPrivateModule, Decl(privacyTypeParametersOfClassDeclFile.ts, 46, 1))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 48, 54))
  >privateModule : Symbol(privateModule, Decl(privacyTypeParametersOfClassDeclFile.ts, 108, 1))
@@ -80,7 +80,7 @@
  >val : Symbol(val, Decl(privacyTypeParametersOfClassDeclFile.ts, 49, 13))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 48, 54))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 48, 54))
-@@ -154,7 +154,7 @@
+@@= skipped -30, +30 lines =@@
  >privateClassInPublicModule : Symbol(privateClassInPublicModule, Decl(privacyTypeParametersOfClassDeclFile.ts, 54, 28))
  
          myMethod(val: T): T {
@@ -89,7 +89,7 @@
  >val : Symbol(val, Decl(privacyTypeParametersOfClassDeclFile.ts, 62, 17))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 61, 54))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 61, 54))
-@@ -170,7 +170,7 @@
+@@= skipped -16, +16 lines =@@
  >publicClassInPublicModule : Symbol(publicClassInPublicModule, Decl(privacyTypeParametersOfClassDeclFile.ts, 56, 5))
  
          myMethod(val: T): T {
@@ -98,7 +98,7 @@
  >val : Symbol(val, Decl(privacyTypeParametersOfClassDeclFile.ts, 68, 17))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 67, 53))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 67, 53))
-@@ -186,7 +186,7 @@
+@@= skipped -16, +16 lines =@@
  >privateClassInPublicModule : Symbol(privateClassInPublicModule, Decl(privacyTypeParametersOfClassDeclFile.ts, 54, 28))
  
          myMethod(val: T): T {
@@ -107,7 +107,7 @@
  >val : Symbol(val, Decl(privacyTypeParametersOfClassDeclFile.ts, 74, 17))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 73, 48))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 73, 48))
-@@ -202,7 +202,7 @@
+@@= skipped -16, +16 lines =@@
  >publicClassInPublicModule : Symbol(publicClassInPublicModule, Decl(privacyTypeParametersOfClassDeclFile.ts, 56, 5))
  
          myMethod(val: T): T {
@@ -116,7 +116,7 @@
  >val : Symbol(val, Decl(privacyTypeParametersOfClassDeclFile.ts, 80, 17))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 79, 47))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 79, 47))
-@@ -217,7 +217,7 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 85, 67))
  
          myMethod(val: T): T {
@@ -125,7 +125,7 @@
  >val : Symbol(val, Decl(privacyTypeParametersOfClassDeclFile.ts, 86, 17))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 85, 67))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 85, 67))
-@@ -232,7 +232,7 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 91, 61))
  
          myMethod(val: T): T {
@@ -134,7 +134,7 @@
  >val : Symbol(val, Decl(privacyTypeParametersOfClassDeclFile.ts, 92, 17))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 91, 61))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 91, 61))
-@@ -246,10 +246,10 @@
+@@= skipped -14, +14 lines =@@
  >publicClassWithTypeParametersFromPrivateModule : Symbol(publicClassWithTypeParametersFromPrivateModule, Decl(privacyTypeParametersOfClassDeclFile.ts, 95, 5))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 97, 64))
  >privateModule : Symbol(privateModule, Decl(privacyTypeParametersOfClassDeclFile.ts, 108, 1))
@@ -147,7 +147,7 @@
  >val : Symbol(val, Decl(privacyTypeParametersOfClassDeclFile.ts, 98, 17))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 97, 64))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 97, 64))
-@@ -263,10 +263,10 @@
+@@= skipped -17, +17 lines =@@
  >privateClassWithTypeParametersFromPrivateModule : Symbol(privateClassWithTypeParametersFromPrivateModule, Decl(privacyTypeParametersOfClassDeclFile.ts, 101, 5))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 103, 58))
  >privateModule : Symbol(privateModule, Decl(privacyTypeParametersOfClassDeclFile.ts, 108, 1))
@@ -160,7 +160,7 @@
  >val : Symbol(val, Decl(privacyTypeParametersOfClassDeclFile.ts, 104, 17))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 103, 58))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 103, 58))
-@@ -294,7 +294,7 @@
+@@= skipped -31, +31 lines =@@
  >privateClassInPrivateModule : Symbol(privateClassInPrivateModule, Decl(privacyTypeParametersOfClassDeclFile.ts, 110, 22))
  
          myMethod(val: T): T {
@@ -169,7 +169,7 @@
  >val : Symbol(val, Decl(privacyTypeParametersOfClassDeclFile.ts, 118, 17))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 117, 54))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 117, 54))
-@@ -310,7 +310,7 @@
+@@= skipped -16, +16 lines =@@
  >publicClassInPrivateModule : Symbol(publicClassInPrivateModule, Decl(privacyTypeParametersOfClassDeclFile.ts, 112, 5))
  
          myMethod(val: T): T {
@@ -178,7 +178,7 @@
  >val : Symbol(val, Decl(privacyTypeParametersOfClassDeclFile.ts, 124, 17))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 123, 53))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 123, 53))
-@@ -326,7 +326,7 @@
+@@= skipped -16, +16 lines =@@
  >privateClassInPrivateModule : Symbol(privateClassInPrivateModule, Decl(privacyTypeParametersOfClassDeclFile.ts, 110, 22))
  
          myMethod(val: T): T {
@@ -187,7 +187,7 @@
  >val : Symbol(val, Decl(privacyTypeParametersOfClassDeclFile.ts, 130, 17))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 129, 48))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 129, 48))
-@@ -342,7 +342,7 @@
+@@= skipped -16, +16 lines =@@
  >publicClassInPrivateModule : Symbol(publicClassInPrivateModule, Decl(privacyTypeParametersOfClassDeclFile.ts, 112, 5))
  
          myMethod(val: T): T {
@@ -196,7 +196,7 @@
  >val : Symbol(val, Decl(privacyTypeParametersOfClassDeclFile.ts, 136, 17))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 135, 47))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 135, 47))
-@@ -357,7 +357,7 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 141, 67))
  
          myMethod(val: T): T {
@@ -205,7 +205,7 @@
  >val : Symbol(val, Decl(privacyTypeParametersOfClassDeclFile.ts, 142, 17))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 141, 67))
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 141, 67))
-@@ -372,7 +372,7 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(privacyTypeParametersOfClassDeclFile.ts, 147, 61))
  
          myMethod(val: T): T {

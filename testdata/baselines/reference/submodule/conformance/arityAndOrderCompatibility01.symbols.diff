@@ -1,6 +1,6 @@
 --- old.arityAndOrderCompatibility01.symbols
 +++ new.arityAndOrderCompatibility01.symbols
-@@ -6,13 +6,13 @@
+@@= skipped -6, +6 lines =@@
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      0: string;

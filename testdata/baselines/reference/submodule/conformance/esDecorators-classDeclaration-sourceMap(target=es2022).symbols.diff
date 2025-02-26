@@ -1,6 +1,6 @@
 --- old.esDecorators-classDeclaration-sourceMap(target=es2022).symbols
 +++ new.esDecorators-classDeclaration-sourceMap(target=es2022).symbols
-@@ -20,7 +20,7 @@
+@@= skipped -20, +20 lines =@@
  >dec : Symbol(dec, Decl(esDecorators-classDeclaration-sourceMap.ts, 0, 11))
  
      method() {}
@@ -9,7 +9,7 @@
  
      @dec
  >dec : Symbol(dec, Decl(esDecorators-classDeclaration-sourceMap.ts, 0, 11))
-@@ -29,7 +29,7 @@
+@@= skipped -9, +9 lines =@@
  >dec : Symbol(dec, Decl(esDecorators-classDeclaration-sourceMap.ts, 0, 11))
  
      get x() { return 1; }
@@ -18,7 +18,7 @@
  
      @dec
  >dec : Symbol(dec, Decl(esDecorators-classDeclaration-sourceMap.ts, 0, 11))
-@@ -38,7 +38,7 @@
+@@= skipped -9, +9 lines =@@
  >dec : Symbol(dec, Decl(esDecorators-classDeclaration-sourceMap.ts, 0, 11))
  
      set x(value: number) { }
@@ -27,7 +27,7 @@
  >value : Symbol(value, Decl(esDecorators-classDeclaration-sourceMap.ts, 15, 10))
  
      @dec
-@@ -48,7 +48,7 @@
+@@= skipped -10, +10 lines =@@
  >dec : Symbol(dec, Decl(esDecorators-classDeclaration-sourceMap.ts, 0, 11))
  
      y = 1;
@@ -36,7 +36,7 @@
  
      @dec
  >dec : Symbol(dec, Decl(esDecorators-classDeclaration-sourceMap.ts, 0, 11))
-@@ -57,7 +57,7 @@
+@@= skipped -9, +9 lines =@@
  >dec : Symbol(dec, Decl(esDecorators-classDeclaration-sourceMap.ts, 0, 11))
  
      accessor z = 1;
@@ -45,7 +45,7 @@
  
      @dec
  >dec : Symbol(dec, Decl(esDecorators-classDeclaration-sourceMap.ts, 0, 11))
-@@ -66,7 +66,7 @@
+@@= skipped -9, +9 lines =@@
  >dec : Symbol(dec, Decl(esDecorators-classDeclaration-sourceMap.ts, 0, 11))
  
      static #method() {}
@@ -54,7 +54,7 @@
  
      @dec
  >dec : Symbol(dec, Decl(esDecorators-classDeclaration-sourceMap.ts, 0, 11))
-@@ -75,7 +75,7 @@
+@@= skipped -9, +9 lines =@@
  >dec : Symbol(dec, Decl(esDecorators-classDeclaration-sourceMap.ts, 0, 11))
  
      static get #x() { return 1; }
@@ -63,7 +63,7 @@
  
      @dec
  >dec : Symbol(dec, Decl(esDecorators-classDeclaration-sourceMap.ts, 0, 11))
-@@ -84,7 +84,7 @@
+@@= skipped -9, +9 lines =@@
  >dec : Symbol(dec, Decl(esDecorators-classDeclaration-sourceMap.ts, 0, 11))
  
      static set #x(value: number) { }
@@ -72,7 +72,7 @@
  >value : Symbol(value, Decl(esDecorators-classDeclaration-sourceMap.ts, 35, 18))
  
      @dec
-@@ -94,7 +94,7 @@
+@@= skipped -10, +10 lines =@@
  >dec : Symbol(dec, Decl(esDecorators-classDeclaration-sourceMap.ts, 0, 11))
  
      static #y = 1;
@@ -81,7 +81,7 @@
  
      @dec
  >dec : Symbol(dec, Decl(esDecorators-classDeclaration-sourceMap.ts, 0, 11))
-@@ -103,6 +103,6 @@
+@@= skipped -9, +9 lines =@@
  >dec : Symbol(dec, Decl(esDecorators-classDeclaration-sourceMap.ts, 0, 11))
  
      static accessor #z = 1;

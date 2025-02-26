@@ -1,6 +1,6 @@
 --- old.objectRest.symbols
 +++ new.objectRest.symbols
-@@ -115,42 +115,42 @@
+@@= skipped -115, +115 lines =@@
  >Removable : Symbol(Removable, Decl(objectRest.ts, 18, 35))
  
      private x: number;

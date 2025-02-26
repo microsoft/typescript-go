@@ -1,6 +1,6 @@
 --- old.baseExpressionTypeParameters.symbols
 +++ new.baseExpressionTypeParameters.symbols
-@@ -11,7 +11,7 @@
+@@= skipped -11, +11 lines =@@
  >Base : Symbol(Base, Decl(baseExpressionTypeParameters.ts, 2, 20))
  
          static prop: T;
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(baseExpressionTypeParameters.ts, 2, 14))
      }
      return Base;
-@@ -29,7 +29,7 @@
+@@= skipped -18, +18 lines =@@
  >Gen : Symbol(Gen, Decl(baseExpressionTypeParameters.ts, 7, 1))
  
  <string>Spec.prop;

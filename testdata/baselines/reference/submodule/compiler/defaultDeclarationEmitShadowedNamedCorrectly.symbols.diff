@@ -1,6 +1,6 @@
 --- old.defaultDeclarationEmitShadowedNamedCorrectly.symbols
 +++ new.defaultDeclarationEmitShadowedNamedCorrectly.symbols
-@@ -5,16 +5,16 @@
+@@= skipped -5, +5 lines =@@
  >me : Symbol(me, Decl(this.ts, 0, 6))
  
  export interface Things<P, T> {
@@ -20,7 +20,7 @@
  >T : Symbol(T, Decl(this.ts, 1, 26))
  }
  export function make<P, CTor>(x: { new (): CTor & {props: P} }): Things<P, CTor> {
-@@ -25,7 +25,7 @@
+@@= skipped -20, +20 lines =@@
  >CTor : Symbol(CTor, Decl(this.ts, 5, 23))
  >props : Symbol(props, Decl(this.ts, 5, 51))
  >P : Symbol(P, Decl(this.ts, 5, 21))
@@ -29,7 +29,7 @@
  >P : Symbol(P, Decl(this.ts, 5, 21))
  >CTor : Symbol(CTor, Decl(this.ts, 5, 23))
  
-@@ -33,18 +33,18 @@
+@@= skipped -8, +8 lines =@@
  }
  
  export interface Props {
@@ -53,7 +53,7 @@
  
      let MyComponent = 2; // Shadow declaration, so symbol is only usable via the self-import
  >MyComponent : Symbol(MyComponent, Decl(this.ts, 16, 7))
-@@ -52,7 +52,7 @@
+@@= skipped -19, +19 lines =@@
      export const create = make(me.default);
  >create : Symbol(create, Decl(this.ts, 17, 16))
  >make : Symbol(make, Decl(this.ts, 4, 1))

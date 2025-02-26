@@ -1,6 +1,6 @@
 --- old.requiredMappedTypeModifierTrumpsVariance.symbols
 +++ new.requiredMappedTypeModifierTrumpsVariance.symbols
-@@ -44,7 +44,7 @@
+@@= skipped -44, +44 lines =@@
  >T : Symbol(T, Decl(requiredMappedTypeModifierTrumpsVariance.ts, 10, 14))
  
      a: Required<T>;
@@ -9,7 +9,7 @@
  >Required : Symbol(Required, Decl(lib.es5.d.ts, --, --))
  >T : Symbol(T, Decl(requiredMappedTypeModifierTrumpsVariance.ts, 10, 14))
  }
-@@ -83,12 +83,12 @@
+@@= skipped -39, +39 lines =@@
  >aa : Symbol(aa, Decl(requiredMappedTypeModifierTrumpsVariance.ts, 13, 5))
  
  aa.a.b; // Property 'b' does not exist on type 'Required<{ a?: 1; x: 1; }>'.

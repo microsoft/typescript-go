@@ -1,6 +1,6 @@
 --- old.moduleCodeGenTest5.symbols
 +++ new.moduleCodeGenTest5.symbols
-@@ -17,39 +17,39 @@
+@@= skipped -17, +17 lines =@@
  >C1 : Symbol(C1, Decl(moduleCodeGenTest5.ts, 4, 16))
  
  	public p1 = 0;

@@ -1,6 +1,6 @@
 --- old.commonJsUnusedLocals.symbols
 +++ new.commonJsUnusedLocals.symbols
-@@ -5,7 +5,4 @@
+@@= skipped -5, +5 lines =@@
  >x : Symbol(x, Decl(a.js, 0, 5))
  
  exports.y = 1;

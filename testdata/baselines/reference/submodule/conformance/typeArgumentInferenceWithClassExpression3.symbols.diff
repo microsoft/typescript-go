@@ -1,6 +1,6 @@
 --- old.typeArgumentInferenceWithClassExpression3.symbols
 +++ new.typeArgumentInferenceWithClassExpression3.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >foo : Symbol(foo, Decl(typeArgumentInferenceWithClassExpression3.ts, 0, 0))
  >T : Symbol(T, Decl(typeArgumentInferenceWithClassExpression3.ts, 0, 13))
  >x : Symbol(x, Decl(typeArgumentInferenceWithClassExpression3.ts, 0, 16))
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(typeArgumentInferenceWithClassExpression3.ts, 0, 13))
  >T : Symbol(T, Decl(typeArgumentInferenceWithClassExpression3.ts, 0, 13))
  
-@@ -14,8 +14,8 @@
+@@= skipped -9, +9 lines =@@
  }
  
  foo(class { prop = "hello" }).length;

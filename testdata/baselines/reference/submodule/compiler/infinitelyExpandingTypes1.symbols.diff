@@ -1,6 +1,6 @@
 --- old.infinitelyExpandingTypes1.symbols
 +++ new.infinitelyExpandingTypes1.symbols
-@@ -6,16 +6,16 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(infinitelyExpandingTypes1.ts, 0, 15))
  
      data: T;
@@ -20,7 +20,7 @@
  >List : Symbol(List, Decl(infinitelyExpandingTypes1.ts, 0, 0))
  >List : Symbol(List, Decl(infinitelyExpandingTypes1.ts, 0, 0))
  >T : Symbol(T, Decl(infinitelyExpandingTypes1.ts, 0, 15))
-@@ -27,16 +27,16 @@
+@@= skipped -21, +21 lines =@@
  >T : Symbol(T, Decl(infinitelyExpandingTypes1.ts, 7, 17))
  
      data: T;

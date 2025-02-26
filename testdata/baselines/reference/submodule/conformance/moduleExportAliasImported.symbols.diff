@@ -1,6 +1,6 @@
 --- old.moduleExportAliasImported.symbols
 +++ new.moduleExportAliasImported.symbols
-@@ -2,20 +2,13 @@
+@@= skipped -2, +2 lines =@@
  
  === bug28014.js ===
  exports.version = 1

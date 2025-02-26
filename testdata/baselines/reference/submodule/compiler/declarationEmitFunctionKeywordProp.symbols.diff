@@ -1,6 +1,6 @@
 --- old.declarationEmitFunctionKeywordProp.symbols
 +++ new.declarationEmitFunctionKeywordProp.symbols
-@@ -2,36 +2,36 @@
+@@= skipped -2, +2 lines =@@
  
  === declarationEmitFunctionKeywordProp.ts ===
  function foo() {}

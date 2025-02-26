@@ -1,6 +1,6 @@
 --- old.es6ImportDefaultBindingFollowedWithNamespaceBinding.symbols
 +++ new.es6ImportDefaultBindingFollowedWithNamespaceBinding.symbols
-@@ -11,7 +11,5 @@
+@@= skipped -11, +11 lines =@@
  
  var x: number = nameSpaceBinding.a;
  >x : Symbol(x, Decl(es6ImportDefaultBindingFollowedWithNamespaceBinding_1.ts, 1, 3))

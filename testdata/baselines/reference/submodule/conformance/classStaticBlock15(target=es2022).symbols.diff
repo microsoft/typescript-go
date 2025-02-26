@@ -1,6 +1,6 @@
 --- old.classStaticBlock15(target=es2022).symbols
 +++ new.classStaticBlock15(target=es2022).symbols
-@@ -8,13 +8,13 @@
+@@= skipped -8, +8 lines =@@
  >C : Symbol(C, Decl(classStaticBlock15.ts, 0, 10))
  
    static #_1 = 1;
@@ -17,7 +17,7 @@
  
    static {}
    static {}
-@@ -25,8 +25,8 @@
+@@= skipped -17, +17 lines =@@
  }
  
  console.log(_C__1)

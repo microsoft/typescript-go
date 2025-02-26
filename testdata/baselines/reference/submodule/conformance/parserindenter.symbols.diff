@@ -1,6 +1,6 @@
 --- old.parserindenter.symbols
 +++ new.parserindenter.symbols
-@@ -26,92 +26,92 @@
+@@= skipped -26, +26 lines =@@
  >Indenter : Symbol(Indenter, Decl(parserindenter.ts, 18, 19))
  
          private indentationBag: IndentationBag;
@@ -126,7 +126,7 @@
  >token : Symbol(token, Decl(parserindenter.ts, 46, 35))
  >TokenSpan : Symbol(TokenSpan)
  >nextToken : Symbol(nextToken, Decl(parserindenter.ts, 46, 52))
-@@ -122,14 +122,14 @@
+@@= skipped -96, +96 lines =@@
  >List_TextEditInfo : Symbol(List_TextEditInfo)
  
              if (this.logger.information()) {
@@ -145,7 +145,7 @@
  
                      "t1=[" + token.Span.startPosition() + "," + token.Span.endPosition()+ "], " +
  >token : Symbol(token, Decl(parserindenter.ts, 46, 35))
-@@ -145,18 +145,18 @@
+@@= skipped -23, +23 lines =@@
  
              var result = this.GetIndentationEditsWorker(token, nextToken, node, sameLineIndent);
  >result : Symbol(result, Decl(parserindenter.ts, 54, 15))
@@ -168,7 +168,7 @@
  
                  for (var i = 0; i < result.count() ; i++) {
  >i : Symbol(i, Decl(parserindenter.ts, 57, 24))
-@@ -170,9 +170,9 @@
+@@= skipped -25, +25 lines =@@
  >i : Symbol(i, Decl(parserindenter.ts, 57, 24))
  
                      this.logger.log("edit: minChar=" + edit.position + ", limChar=" + (edit.position + edit.length) + ", text=\"" + TypeScript.stringToLiteral(edit.replaceWith, 30) + "\"");
@@ -180,7 +180,7 @@
  >edit : Symbol(edit, Decl(parserindenter.ts, 58, 23))
  >edit : Symbol(edit, Decl(parserindenter.ts, 58, 23))
  >edit : Symbol(edit, Decl(parserindenter.ts, 58, 23))
-@@ -185,7 +185,7 @@
+@@= skipped -15, +15 lines =@@
          }
  
          public GetIndentationEditsWorker(token: TokenSpan, nextToken: TokenSpan, node: ParseNode, sameLineIndent: boolean): List_TextEditInfo {
@@ -189,7 +189,7 @@
  >token : Symbol(token, Decl(parserindenter.ts, 66, 41))
  >TokenSpan : Symbol(TokenSpan)
  >nextToken : Symbol(nextToken, Decl(parserindenter.ts, 66, 58))
-@@ -213,17 +213,17 @@
+@@= skipped -28, +28 lines =@@
              // It's also done in ParseTree when we traverse up the tree because we don't have the 
              // tokens for nodes outside the span we are formatting.
              this.AdjustStartOffsetIfNeeded(token, node);
@@ -211,7 +211,7 @@
  >token : Symbol(token, Decl(parserindenter.ts, 66, 41))
  
                  return result;
-@@ -233,9 +233,9 @@
+@@= skipped -20, +20 lines =@@
              // Don't indent multi-line strings
              if (!sameLineIndent && this.IsMultiLineString(token)) {
  >sameLineIndent : Symbol(sameLineIndent, Decl(parserindenter.ts, 66, 97))
@@ -223,7 +223,7 @@
  >token : Symbol(token, Decl(parserindenter.ts, 66, 41))
  
                  return result;
-@@ -245,9 +245,9 @@
+@@= skipped -12, +12 lines =@@
              // Special cases for the tokens that don't show up in the tree, such as curly braces and comments
              indentationInfo = this.GetSpecialCaseIndentation(token, node);
  >indentationInfo : Symbol(indentationInfo, Decl(parserindenter.ts, 68, 15))
@@ -235,7 +235,7 @@
  >token : Symbol(token, Decl(parserindenter.ts, 66, 41))
  >node : Symbol(node, Decl(parserindenter.ts, 66, 80))
  
-@@ -307,9 +307,9 @@
+@@= skipped -62, +62 lines =@@
                          //// The declaration 'b' would remain under 'a' even if 'var' got indented.
                          indentationInfo = this.ApplyIndentationDeltaFromParent(token, node);
  >indentationInfo : Symbol(indentationInfo, Decl(parserindenter.ts, 68, 15))
@@ -247,7 +247,7 @@
  >token : Symbol(token, Decl(parserindenter.ts, 66, 41))
  >node : Symbol(node, Decl(parserindenter.ts, 66, 80))
                      }
-@@ -322,9 +322,9 @@
+@@= skipped -15, +15 lines =@@
  
                  var edit = this.GetIndentEdit(indentationInfo, token.Span.startPosition(), sameLineIndent);
  >edit : Symbol(edit, Decl(parserindenter.ts, 132, 19))
@@ -259,7 +259,7 @@
  >indentationInfo : Symbol(indentationInfo, Decl(parserindenter.ts, 68, 15))
  >token : Symbol(token, Decl(parserindenter.ts, 66, 41))
  >sameLineIndent : Symbol(sameLineIndent, Decl(parserindenter.ts, 66, 97))
-@@ -333,9 +333,9 @@
+@@= skipped -11, +11 lines =@@
  >edit : Symbol(edit, Decl(parserindenter.ts, 132, 19))
  
                      this.RegisterIndentation(edit, sameLineIndent);
@@ -271,7 +271,7 @@
  >edit : Symbol(edit, Decl(parserindenter.ts, 132, 19))
  >sameLineIndent : Symbol(sameLineIndent, Decl(parserindenter.ts, 66, 97))
  
-@@ -349,9 +349,9 @@
+@@= skipped -16, +16 lines =@@
  
                          var commentEdits = this.GetCommentIndentationEdits(token);
  >commentEdits : Symbol(commentEdits, Decl(parserindenter.ts, 140, 27))
@@ -283,7 +283,7 @@
  >token : Symbol(token, Decl(parserindenter.ts, 66, 41))
  
                          commentEdits.foreach((item) => {
-@@ -372,7 +372,7 @@
+@@= skipped -23, +23 lines =@@
          }
  
          private GetCommentIndentationEdits(token: TokenSpan): List_TextEditInfo {
@@ -292,7 +292,7 @@
  >token : Symbol(token, Decl(parserindenter.ts, 151, 43))
  >TokenSpan : Symbol(TokenSpan)
  >List_TextEditInfo : Symbol(List_TextEditInfo)
-@@ -388,9 +388,9 @@
+@@= skipped -16, +16 lines =@@
  
              var commentLastLineNumber = this.snapshot.GetLineNumberFromPosition(token.Span.endPosition());
  >commentLastLineNumber : Symbol(commentLastLineNumber, Decl(parserindenter.ts, 157, 15))
@@ -304,7 +304,7 @@
  >token : Symbol(token, Decl(parserindenter.ts, 151, 43))
  
              if (token.lineNumber() == commentLastLineNumber)
-@@ -402,9 +402,9 @@
+@@= skipped -14, +14 lines =@@
  
              var commentFirstLineIndentationDelta = this.GetIndentationDelta(token.Span.startPosition(), null);
  >commentFirstLineIndentationDelta : Symbol(commentFirstLineIndentationDelta, Decl(parserindenter.ts, 161, 15))
@@ -316,7 +316,7 @@
  >token : Symbol(token, Decl(parserindenter.ts, 151, 43))
  
              if (commentFirstLineIndentationDelta != undefined) {
-@@ -420,23 +420,23 @@
+@@= skipped -18, +18 lines =@@
  
                      var lineStartPosition = this.snapshot.GetLineFromLineNumber(line).startPosition();
  >lineStartPosition : Symbol(lineStartPosition, Decl(parserindenter.ts, 164, 23))
@@ -346,7 +346,7 @@
  >lineIndent : Symbol(lineIndent, Decl(parserindenter.ts, 165, 23))
  >commentFirstLineIndentationDelta : Symbol(commentFirstLineIndentationDelta, Decl(parserindenter.ts, 161, 15))
  
-@@ -446,15 +446,15 @@
+@@= skipped -26, +26 lines =@@
                          var tokenStartPosition = lineStartPosition + lineIndent.length;
  >tokenStartPosition : Symbol(tokenStartPosition, Decl(parserindenter.ts, 169, 27))
  >lineStartPosition : Symbol(lineStartPosition, Decl(parserindenter.ts, 164, 23))
@@ -366,7 +366,7 @@
  >commentIndentationInfo : Symbol(commentIndentationInfo, Decl(parserindenter.ts, 167, 23))
  >tokenStartPosition : Symbol(tokenStartPosition, Decl(parserindenter.ts, 169, 27))
  
-@@ -474,11 +474,11 @@
+@@= skipped -28, +28 lines =@@
          }
  
          static GetIndentSizeFromIndentText(indentText: string, editorOptions: Services.EditorOptions): number {
@@ -380,7 +380,7 @@
  
              return GetIndentSizeFromText(indentText, editorOptions, /*includeNonIndentChars:*/ false);
  >indentText : Symbol(indentText, Decl(parserindenter.ts, 181, 43))
-@@ -486,11 +486,11 @@
+@@= skipped -12, +12 lines =@@
          }
  
          static GetIndentSizeFromText(text: string, editorOptions: Services.EditorOptions, includeNonIndentChars: boolean): number {
@@ -394,7 +394,7 @@
  >includeNonIndentChars : Symbol(includeNonIndentChars, Decl(parserindenter.ts, 185, 89))
  
              var indentSize = 0;
-@@ -499,16 +499,16 @@
+@@= skipped -13, +13 lines =@@
              for (var i = 0; i < text.length; i++) {
  >i : Symbol(i, Decl(parserindenter.ts, 188, 20))
  >i : Symbol(i, Decl(parserindenter.ts, 188, 20))
@@ -415,7 +415,7 @@
  >i : Symbol(i, Decl(parserindenter.ts, 188, 20))
  
                  if (c == '\t')
-@@ -544,7 +544,7 @@
+@@= skipped -45, +45 lines =@@
          }
  
          private GetSpecialCaseIndentation(token: TokenSpan, node: ParseNode): IndentationInfo {
@@ -424,7 +424,7 @@
  >token : Symbol(token, Decl(parserindenter.ts, 206, 42))
  >TokenSpan : Symbol(TokenSpan)
  >node : Symbol(node, Decl(parserindenter.ts, 206, 59))
-@@ -561,9 +561,9 @@
+@@= skipped -17, +17 lines =@@
                  case AuthorTokenKind.atkLCurly: // { is not part of the tree
                      indentationInfo = this.GetSpecialCaseIndentationForLCurly(node);
  >indentationInfo : Symbol(indentationInfo, Decl(parserindenter.ts, 207, 15))
@@ -436,7 +436,7 @@
  >node : Symbol(node, Decl(parserindenter.ts, 206, 59))
  
                      return indentationInfo;
-@@ -614,17 +614,17 @@
+@@= skipped -53, +53 lines =@@
  
                  case AuthorTokenKind.atkSColon:
                      return this.GetSpecialCaseIndentationForSemicolon(token, node);
@@ -458,7 +458,7 @@
  >token : Symbol(token, Decl(parserindenter.ts, 206, 42))
  >node : Symbol(node, Decl(parserindenter.ts, 206, 59))
  
-@@ -635,7 +635,7 @@
+@@= skipped -21, +21 lines =@@
          }
  
          private GetSpecialCaseIndentationForLCurly(node: ParseNode): IndentationInfo {
@@ -467,7 +467,7 @@
  >node : Symbol(node, Decl(parserindenter.ts, 245, 51))
  >ParseNode : Symbol(ParseNode)
  >IndentationInfo : Symbol(IndentationInfo)
-@@ -679,7 +679,7 @@
+@@= skipped -44, +44 lines =@@
          }
  
          private GetSpecialCaseIndentationForSemicolon(token: TokenSpan, node: ParseNode): IndentationInfo {
@@ -476,7 +476,7 @@
  >token : Symbol(token, Decl(parserindenter.ts, 264, 54))
  >TokenSpan : Symbol(TokenSpan)
  >node : Symbol(node, Decl(parserindenter.ts, 264, 71))
-@@ -691,9 +691,9 @@
+@@= skipped -12, +12 lines =@@
  >IndentationInfo : Symbol(IndentationInfo)
  
              if (this.smartIndent) {
@@ -488,7 +488,7 @@
  
                  indentationInfo = node.GetEffectiveChildrenIndentation(this);
  >indentationInfo : Symbol(indentationInfo, Decl(parserindenter.ts, 265, 15))
-@@ -735,7 +735,7 @@
+@@= skipped -44, +44 lines =@@
          }
  
          private GetSpecialCaseIndentationForComment(token: TokenSpan, node: ParseNode): IndentationInfo {
@@ -497,7 +497,7 @@
  >token : Symbol(token, Decl(parserindenter.ts, 287, 52))
  >TokenSpan : Symbol(TokenSpan)
  >node : Symbol(node, Decl(parserindenter.ts, 287, 69))
-@@ -766,9 +766,9 @@
+@@= skipped -31, +31 lines =@@
  >node : Symbol(node, Decl(parserindenter.ts, 287, 69))
  
                  if (this.CanIndentComment(token, node)) {
@@ -509,7 +509,7 @@
  >token : Symbol(token, Decl(parserindenter.ts, 287, 52))
  >node : Symbol(node, Decl(parserindenter.ts, 287, 69))
  
-@@ -780,9 +780,9 @@
+@@= skipped -14, +14 lines =@@
                  else {
                      indentationInfo = this.ApplyIndentationDeltaFromParent(token, node);
  >indentationInfo : Symbol(indentationInfo, Decl(parserindenter.ts, 288, 15))
@@ -521,7 +521,7 @@
  >token : Symbol(token, Decl(parserindenter.ts, 287, 52))
  >node : Symbol(node, Decl(parserindenter.ts, 287, 69))
                  }
-@@ -793,7 +793,7 @@
+@@= skipped -13, +13 lines =@@
          }
  
          private CanIndentComment(token: TokenSpan, node: ParseNode): boolean {
@@ -530,7 +530,7 @@
  >token : Symbol(token, Decl(parserindenter.ts, 307, 33))
  >TokenSpan : Symbol(TokenSpan)
  >node : Symbol(node, Decl(parserindenter.ts, 307, 50))
-@@ -850,7 +850,7 @@
+@@= skipped -57, +57 lines =@@
          }
  
          private ApplyScriptBlockIndentation(languageHostIndentation: string, tree: ParseTree): void
@@ -539,7 +539,7 @@
  >languageHostIndentation : Symbol(languageHostIndentation, Decl(parserindenter.ts, 342, 44))
  >tree : Symbol(tree, Decl(parserindenter.ts, 342, 76))
  >ParseTree : Symbol(ParseTree)
-@@ -863,9 +863,9 @@
+@@= skipped -13, +13 lines =@@
  
              var scriptBlockIndentation = this.ApplyIndentationLevel(languageHostIndentation, 1);
  >scriptBlockIndentation : Symbol(scriptBlockIndentation, Decl(parserindenter.ts, 347, 15))
@@ -551,7 +551,7 @@
  >languageHostIndentation : Symbol(languageHostIndentation, Decl(parserindenter.ts, 342, 44))
  
              //TypeScript: Projection snapshots not supported
-@@ -917,7 +917,7 @@
+@@= skipped -54, +54 lines =@@
          }
  
          private GetIndentEdit(indentInfo: IndentationInfo, tokenStartPosition: number, sameLineIndent: boolean): TextEditInfo {
@@ -560,7 +560,7 @@
  >indentInfo : Symbol(indentInfo, Decl(parserindenter.ts, 395, 30))
  >IndentationInfo : Symbol(IndentationInfo)
  >tokenStartPosition : Symbol(tokenStartPosition, Decl(parserindenter.ts, 395, 58))
-@@ -926,9 +926,9 @@
+@@= skipped -9, +9 lines =@@
  
              var indentText = this.ApplyIndentationLevel(indentInfo.Prefix, indentInfo.Level);
  >indentText : Symbol(indentText, Decl(parserindenter.ts, 396, 15))
@@ -572,7 +572,7 @@
  >indentInfo : Symbol(indentInfo, Decl(parserindenter.ts, 395, 30))
  >indentInfo : Symbol(indentInfo, Decl(parserindenter.ts, 395, 30))
  
-@@ -942,9 +942,9 @@
+@@= skipped -16, +16 lines =@@
              else {
                  var snapshotLine = this.snapshot.GetLineFromPosition(tokenStartPosition);
  >snapshotLine : Symbol(snapshotLine, Decl(parserindenter.ts, 402, 19))
@@ -584,7 +584,7 @@
  >tokenStartPosition : Symbol(tokenStartPosition, Decl(parserindenter.ts, 395, 58))
  
                  var currentIndentSpan = new Span(snapshotLine.startPosition(), tokenStartPosition - snapshotLine.startPosition());
-@@ -955,9 +955,9 @@
+@@= skipped -13, +13 lines =@@
  
                  var currentIndentText = this.snapshot.GetText(currentIndentSpan);
  >currentIndentText : Symbol(currentIndentText, Decl(parserindenter.ts, 404, 19))
@@ -596,7 +596,7 @@
  >currentIndentSpan : Symbol(currentIndentSpan, Decl(parserindenter.ts, 403, 19))
  
                  if (currentIndentText !== indentText) {
-@@ -965,9 +965,9 @@
+@@= skipped -10, +10 lines =@@
  >indentText : Symbol(indentText, Decl(parserindenter.ts, 396, 15))
  
                      if (this.logger.debug()) {
@@ -608,7 +608,7 @@
  
                          // Verify that currentIndentText is all whitespaces
                          for (var i = 0, len = currentIndentText.length; i < len; i++) {
-@@ -1004,27 +1004,27 @@
+@@= skipped -39, +39 lines =@@
          }
  
          private ApplyIndentationLevel(existingIndentation: string, level: number): string {
@@ -643,7 +643,7 @@
  
              if (level < 0) {
  >level : Symbol(level, Decl(parserindenter.ts, 424, 66))
-@@ -1065,9 +1065,9 @@
+@@= skipped -61, +61 lines =@@
                      return "";
                  else
                      return this.GetIndentString(null, totalIndent, tabSize, convertTabsToSpaces);
@@ -655,7 +655,7 @@
  >totalIndent : Symbol(totalIndent, Decl(parserindenter.ts, 433, 19))
  >tabSize : Symbol(tabSize, Decl(parserindenter.ts, 426, 15))
  >convertTabsToSpaces : Symbol(convertTabsToSpaces, Decl(parserindenter.ts, 427, 15))
-@@ -1079,9 +1079,9 @@
+@@= skipped -14, +14 lines =@@
  >indentSize : Symbol(indentSize, Decl(parserindenter.ts, 425, 15))
  
              return this.GetIndentString(existingIndentation, totalIndentSize, tabSize, convertTabsToSpaces);
@@ -667,7 +667,7 @@
  >existingIndentation : Symbol(existingIndentation, Decl(parserindenter.ts, 424, 38))
  >totalIndentSize : Symbol(totalIndentSize, Decl(parserindenter.ts, 448, 15))
  >tabSize : Symbol(tabSize, Decl(parserindenter.ts, 426, 15))
-@@ -1089,7 +1089,7 @@
+@@= skipped -10, +10 lines =@@
          }
  
          private GetIndentString(prefix: string, totalIndentSize: number, tabSize: number, convertTabsToSpaces: boolean): string {
@@ -676,7 +676,7 @@
  >prefix : Symbol(prefix, Decl(parserindenter.ts, 452, 32))
  >totalIndentSize : Symbol(totalIndentSize, Decl(parserindenter.ts, 452, 47))
  >tabSize : Symbol(tabSize, Decl(parserindenter.ts, 452, 72))
-@@ -1145,7 +1145,7 @@
+@@= skipped -56, +56 lines =@@
          }
  
          private  ApplyIndentationDeltaFromParent(token: TokenSpan, node: ParseNode): IndentationInfo {
@@ -685,7 +685,7 @@
  >token : Symbol(token, Decl(parserindenter.ts, 476, 49))
  >TokenSpan : Symbol(TokenSpan)
  >node : Symbol(node, Decl(parserindenter.ts, 476, 66))
-@@ -1174,9 +1174,9 @@
+@@= skipped -29, +29 lines =@@
  
                  var parentIndentationDeltaSize = this.GetIndentationDelta(indentableParent.AuthorNode.Details.StartOffset, token.Span.startPosition());
  >parentIndentationDeltaSize : Symbol(parentIndentationDeltaSize, Decl(parserindenter.ts, 484, 19))
@@ -697,7 +697,7 @@
  >indentableParent : Symbol(indentableParent, Decl(parserindenter.ts, 479, 15))
  >token : Symbol(token, Decl(parserindenter.ts, 476, 49))
  
-@@ -1186,9 +1186,9 @@
+@@= skipped -12, +12 lines =@@
  
                      indentationInfo = this.ApplyIndentationDelta1(token.Span.startPosition(), parentIndentationDeltaSize);
  >indentationInfo : Symbol(indentationInfo, Decl(parserindenter.ts, 477, 15))
@@ -709,7 +709,7 @@
  >token : Symbol(token, Decl(parserindenter.ts, 476, 49))
  >parentIndentationDeltaSize : Symbol(parentIndentationDeltaSize, Decl(parserindenter.ts, 484, 19))
                  }
-@@ -1199,7 +1199,7 @@
+@@= skipped -13, +13 lines =@@
          }
  
          private ApplyIndentationDelta1(tokenStartPosition: number, delta: number): IndentationInfo {
@@ -718,7 +718,7 @@
  >tokenStartPosition : Symbol(tokenStartPosition, Decl(parserindenter.ts, 493, 39))
  >delta : Symbol(delta, Decl(parserindenter.ts, 493, 66))
  >IndentationInfo : Symbol(IndentationInfo)
-@@ -1207,9 +1207,9 @@
+@@= skipped -8, +8 lines =@@
              // Get current indentation
              var snapshotLine = this.snapshot.GetLineFromPosition(tokenStartPosition);
  >snapshotLine : Symbol(snapshotLine, Decl(parserindenter.ts, 495, 15))
@@ -730,7 +730,7 @@
  >tokenStartPosition : Symbol(tokenStartPosition, Decl(parserindenter.ts, 493, 39))
  
              var currentIndentSpan = new Span(snapshotLine.startPosition(), tokenStartPosition - snapshotLine.startPosition());
-@@ -1220,22 +1220,22 @@
+@@= skipped -13, +13 lines =@@
  
              var currentIndent = this.snapshot.GetText(currentIndentSpan);
  >currentIndent : Symbol(currentIndent, Decl(parserindenter.ts, 497, 15))
@@ -758,7 +758,7 @@
  >currentIndent : Symbol(currentIndent, Decl(parserindenter.ts, 503, 39))
  >delta : Symbol(delta, Decl(parserindenter.ts, 503, 61))
  >IndentationInfo : Symbol(IndentationInfo)
-@@ -1247,13 +1247,13 @@
+@@= skipped -27, +27 lines =@@
  
              var currentIndentSize = Indenter.GetIndentSizeFromIndentText(currentIndent, this.editorOptions);
  >currentIndentSize : Symbol(currentIndentSize, Decl(parserindenter.ts, 507, 15))
@@ -776,7 +776,7 @@
  
              var newIndentSize = currentIndentSize + delta;
  >newIndentSize : Symbol(newIndentSize, Decl(parserindenter.ts, 509, 15))
-@@ -1269,16 +1269,16 @@
+@@= skipped -22, +22 lines =@@
  
              var newIndent = this.GetIndentString(null, newIndentSize, this.editorOptions.TabSize, this.editorOptions.ConvertTabsToSpaces);
  >newIndent : Symbol(newIndent, Decl(parserindenter.ts, 514, 15))
@@ -799,7 +799,7 @@
  
              if (newIndent != null) {
  >newIndent : Symbol(newIndent, Decl(parserindenter.ts, 514, 15))
-@@ -1291,7 +1291,7 @@
+@@= skipped -22, +22 lines =@@
          }
  
          private GetIndentationDelta(tokenStartPosition: number, childTokenStartPosition: number/*?*/): number/*?*/ {
@@ -808,7 +808,7 @@
  >tokenStartPosition : Symbol(tokenStartPosition, Decl(parserindenter.ts, 522, 36))
  >childTokenStartPosition : Symbol(childTokenStartPosition, Decl(parserindenter.ts, 522, 63))
  
-@@ -1301,9 +1301,9 @@
+@@= skipped -10, +10 lines =@@
  
              var indentationDeltaSize = this.offsetIndentationDeltas.GetValue(tokenStartPosition);
  >indentationDeltaSize : Symbol(indentationDeltaSize, Decl(parserindenter.ts, 525, 15))
@@ -820,7 +820,7 @@
  >tokenStartPosition : Symbol(tokenStartPosition, Decl(parserindenter.ts, 522, 36))
  
              if (indentationDeltaSize === null) {
-@@ -1311,9 +1311,9 @@
+@@= skipped -10, +10 lines =@@
  
                  var indentEditInfo = this.indentationBag.FindIndent(tokenStartPosition);
  >indentEditInfo : Symbol(indentEditInfo, Decl(parserindenter.ts, 527, 19))
@@ -832,7 +832,7 @@
  >tokenStartPosition : Symbol(tokenStartPosition, Decl(parserindenter.ts, 522, 36))
  
                  // No recorded indentation, return null
-@@ -1324,9 +1324,9 @@
+@@= skipped -13, +13 lines =@@
  
                  var origIndentText = this.snapshot.GetText(new Span(indentEditInfo.OrigIndentPosition, indentEditInfo.OrigIndentLength()));
  >origIndentText : Symbol(origIndentText, Decl(parserindenter.ts, 533, 19))
@@ -844,7 +844,7 @@
  >indentEditInfo : Symbol(indentEditInfo, Decl(parserindenter.ts, 527, 19))
  >indentEditInfo : Symbol(indentEditInfo, Decl(parserindenter.ts, 527, 19))
  
-@@ -1336,23 +1336,23 @@
+@@= skipped -12, +12 lines =@@
  
                  var origIndentSize = Indenter.GetIndentSizeFromText(origIndentText, this.editorOptions, /*includeNonIndentChars*/true);
  >origIndentSize : Symbol(origIndentSize, Decl(parserindenter.ts, 536, 19))
@@ -876,7 +876,7 @@
  
                  // Check the child's position whether it's before the parent position
                  // if so indent the child based on the first token on the line as opposed to the parent position
-@@ -1373,29 +1373,29 @@
+@@= skipped -37, +37 lines =@@
  
                      var childTokenLineStartPosition = this.snapshot.GetLineFromPosition(childTokenStartPosition).startPosition();
  >childTokenLineStartPosition : Symbol(childTokenLineStartPosition, Decl(parserindenter.ts, 554, 23))
@@ -914,7 +914,7 @@
  
                      if (childIndentSize < origIndentSize)
  >childIndentSize : Symbol(childIndentSize, Decl(parserindenter.ts, 557, 23))
-@@ -1403,13 +1403,13 @@
+@@= skipped -30, +30 lines =@@
  
                          origIndentSize = Indenter.GetIndentSizeFromIndentText(origIndentText, this.editorOptions);
  >origIndentSize : Symbol(origIndentSize, Decl(parserindenter.ts, 536, 19))
@@ -932,7 +932,7 @@
                  }
  
                  indentationDeltaSize = newIndentSize - origIndentSize;
-@@ -1418,9 +1418,9 @@
+@@= skipped -15, +15 lines =@@
  >origIndentSize : Symbol(origIndentSize, Decl(parserindenter.ts, 536, 19))
  
                  this.offsetIndentationDeltas.Add(tokenStartPosition, indentationDeltaSize);
@@ -944,7 +944,7 @@
  >tokenStartPosition : Symbol(tokenStartPosition, Decl(parserindenter.ts, 522, 36))
  >indentationDeltaSize : Symbol(indentationDeltaSize, Decl(parserindenter.ts, 525, 15))
              }
-@@ -1430,7 +1430,7 @@
+@@= skipped -12, +12 lines =@@
          }
  
          private FillInheritedIndentation(tree: ParseTree): void
@@ -953,7 +953,7 @@
  >tree : Symbol(tree, Decl(parserindenter.ts, 570, 41))
  >ParseTree : Symbol(ParseTree)
          {
-@@ -1445,9 +1445,9 @@
+@@= skipped -15, +15 lines =@@
  >tree : Symbol(tree, Decl(parserindenter.ts, 570, 41))
  
                  if (!this.smartIndent && tree.StartNodePreviousSibling !== null && tree.StartNodeSelf.AuthorNode.Label == 0 && tree.StartNodePreviousSibling.Label == 0) {
@@ -965,7 +965,7 @@
  >tree : Symbol(tree, Decl(parserindenter.ts, 570, 41))
  >tree : Symbol(tree, Decl(parserindenter.ts, 570, 41))
  >tree : Symbol(tree, Decl(parserindenter.ts, 570, 41))
-@@ -1466,9 +1466,9 @@
+@@= skipped -21, +21 lines =@@
                      // In this example, the sibling of break is a++ but a++ is on the same line of its parent.
                      var lineNum = this.snapshot.GetLineNumberFromPosition(offset);
  >lineNum : Symbol(lineNum, Decl(parserindenter.ts, 584, 23))
@@ -977,7 +977,7 @@
  >offset : Symbol(offset, Decl(parserindenter.ts, 572, 15))
  
                      var node = indentNode;
-@@ -1477,9 +1477,9 @@
+@@= skipped -11, +11 lines =@@
  
                      while (node.Parent != null && this.snapshot.GetLineNumberFromPosition(node.Parent.AuthorNode.Details.StartOffset) == lineNum) {
  >node : Symbol(node, Decl(parserindenter.ts, 585, 23))
@@ -989,7 +989,7 @@
  >node : Symbol(node, Decl(parserindenter.ts, 585, 23))
  >lineNum : Symbol(lineNum, Decl(parserindenter.ts, 584, 23))
  
-@@ -1506,9 +1506,9 @@
+@@= skipped -29, +29 lines =@@
  
                      // Otherwise base on parent indentation.
                      if (this.smartIndent) {
@@ -1001,7 +1001,7 @@
  
                          // in smartIndent the self node is the parent node since it's the closest node to the new line
                          // ... unless in case if the startNodeSelf represents the firstToken then we need to choose its parent
-@@ -1519,9 +1519,9 @@
+@@= skipped -13, +13 lines =@@
                          while (parent != null && parent.AuthorNode.Details.StartOffset == this.firstToken.Span.startPosition())
  >parent : Symbol(parent, Decl(parserindenter.ts, 595, 23))
  >parent : Symbol(parent, Decl(parserindenter.ts, 595, 23))
@@ -1013,7 +1013,7 @@
  
                              parent = parent.Parent;
  >parent : Symbol(parent, Decl(parserindenter.ts, 595, 23))
-@@ -1531,9 +1531,9 @@
+@@= skipped -12, +12 lines =@@
                          // Get the parent that is really on a different line from the self node
                          var startNodeLineNumber = this.snapshot.GetLineNumberFromPosition(tree.StartNodeSelf.AuthorNode.Details.StartOffset);
  >startNodeLineNumber : Symbol(startNodeLineNumber, Decl(parserindenter.ts, 607, 27))
@@ -1025,7 +1025,7 @@
  >tree : Symbol(tree, Decl(parserindenter.ts, 570, 41))
  
                          parent = tree.StartNodeSelf.Parent;
-@@ -1545,9 +1545,9 @@
+@@= skipped -14, +14 lines =@@
  
                                  startNodeLineNumber == this.snapshot.GetLineNumberFromPosition(parent.AuthorNode.Details.StartOffset)) {
  >startNodeLineNumber : Symbol(startNodeLineNumber, Decl(parserindenter.ts, 607, 27))
@@ -1037,7 +1037,7 @@
  >parent : Symbol(parent, Decl(parserindenter.ts, 595, 23))
  
                              parent = parent.Parent;
-@@ -1587,16 +1587,16 @@
+@@= skipped -42, +42 lines =@@
  
                  var indentOverride = this.GetLineIndentationForOffset(offset);
  >indentOverride : Symbol(indentOverride, Decl(parserindenter.ts, 629, 19))
@@ -1058,7 +1058,7 @@
  >tree : Symbol(tree, Decl(parserindenter.ts, 570, 41))
  >indentNode : Symbol(indentNode, Decl(parserindenter.ts, 573, 15))
  
-@@ -1624,17 +1624,17 @@
+@@= skipped -37, +37 lines =@@
  
                  var lastLine = this.snapshot.GetLineNumberFromPosition(indentNode.AuthorNode.Details.StartOffset);
  >lastLine : Symbol(lastLine, Decl(parserindenter.ts, 643, 19))
@@ -1080,7 +1080,7 @@
  >indentNode : Symbol(indentNode, Decl(parserindenter.ts, 573, 15))
  
                      if (lastLine != currentLine) {
-@@ -1647,9 +1647,9 @@
+@@= skipped -23, +23 lines =@@
  
                          indentOverride = this.ApplyIndentationLevel(indentOverride, -lastDelta);
  >indentOverride : Symbol(indentOverride, Decl(parserindenter.ts, 629, 19))
@@ -1092,7 +1092,7 @@
  >indentOverride : Symbol(indentOverride, Decl(parserindenter.ts, 629, 19))
  >lastDelta : Symbol(lastDelta, Decl(parserindenter.ts, 642, 19))
  
-@@ -1679,7 +1679,7 @@
+@@= skipped -32, +32 lines =@@
          }
  
          public GetLineIndentationForOffset(offset: number): string {
@@ -1101,7 +1101,7 @@
  >offset : Symbol(offset, Decl(parserindenter.ts, 663, 43))
  
              var indentationEdit: IndentationEditInfo;
-@@ -1689,9 +1689,9 @@
+@@= skipped -10, +10 lines =@@
              // First check if we already have indentation info in our indentation bag
              indentationEdit = this.indentationBag.FindIndent(offset);
  >indentationEdit : Symbol(indentationEdit, Decl(parserindenter.ts, 664, 15))
@@ -1113,7 +1113,7 @@
  >offset : Symbol(offset, Decl(parserindenter.ts, 663, 43))
  
              if (indentationEdit != null) {
-@@ -1704,9 +1704,9 @@
+@@= skipped -15, +15 lines =@@
                  // Otherwise, use the indentation from the textBuffer
                  var line = this.snapshot.GetLineFromPosition(offset);
  >line : Symbol(line, Decl(parserindenter.ts, 673, 19))
@@ -1125,7 +1125,7 @@
  >offset : Symbol(offset, Decl(parserindenter.ts, 663, 43))
  
                  var lineText = line.getText();
-@@ -1735,7 +1735,7 @@
+@@= skipped -31, +31 lines =@@
          }
  
          private RegisterIndentation(indent: TextEditInfo, sameLineIndent: boolean): void
@@ -1134,7 +1134,7 @@
  >indent : Symbol(indent, Decl(parserindenter.ts, 685, 36))
  >TextEditInfo : Symbol(TextEditInfo)
  >sameLineIndent : Symbol(sameLineIndent, Decl(parserindenter.ts, 685, 57))
-@@ -1750,9 +1750,9 @@
+@@= skipped -15, +15 lines =@@
                  // Consider the original indentation from the beginning of the line up to the indent position (or really the token position)
                  var lineStartPosition = this.snapshot.GetLineFromPosition(indent.Position).startPosition();
  >lineStartPosition : Symbol(lineStartPosition, Decl(parserindenter.ts, 691, 19))
@@ -1146,7 +1146,7 @@
  >indent : Symbol(indent, Decl(parserindenter.ts, 685, 36))
  
                  var lineIndentLength = indent.Position - lineStartPosition;
-@@ -1774,27 +1774,27 @@
+@@= skipped -24, +24 lines =@@
              }
  
              this.indentationBag.AddIndent(indentationInfo);
@@ -1180,7 +1180,7 @@
  >token : Symbol(token, Decl(parserindenter.ts, 708, 42))
  >TokenSpan : Symbol(TokenSpan)
  >node : Symbol(node, Decl(parserindenter.ts, 708, 59))
-@@ -1844,7 +1844,7 @@
+@@= skipped -70, +70 lines =@@
          }
  
          private IsMultiLineString(token: TokenSpan): boolean {
@@ -1189,7 +1189,7 @@
  >token : Symbol(token, Decl(parserindenter.ts, 734, 34))
  >TokenSpan : Symbol(TokenSpan)
  
-@@ -1852,13 +1852,13 @@
+@@= skipped -8, +8 lines =@@
  >token : Symbol(token, Decl(parserindenter.ts, 734, 34))
  
                  this.snapshot.GetLineNumberFromPosition(token.Span.endPosition()) > this.snapshot.GetLineNumberFromPosition(token.Span.startPosition());

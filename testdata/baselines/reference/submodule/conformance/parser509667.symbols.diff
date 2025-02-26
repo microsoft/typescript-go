@@ -1,6 +1,6 @@
 --- old.parser509667.symbols
 +++ new.parser509667.symbols
-@@ -5,17 +5,17 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(parser509667.ts, 0, 0))
  
     f1() {

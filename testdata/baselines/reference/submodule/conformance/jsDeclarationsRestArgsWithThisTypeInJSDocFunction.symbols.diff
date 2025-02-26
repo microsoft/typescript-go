@@ -1,6 +1,6 @@
 --- old.jsDeclarationsRestArgsWithThisTypeInJSDocFunction.symbols
 +++ new.jsDeclarationsRestArgsWithThisTypeInJSDocFunction.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
     * @param {function(this:Object, ...*):*} functionDeclaration
     */
    method(functionDeclaration) {}

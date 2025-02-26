@@ -1,6 +1,6 @@
 --- old.mergeSymbolReexportInterface.symbols
 +++ new.mergeSymbolReexportInterface.symbols
-@@ -15,10 +15,10 @@
+@@= skipped -15, +15 lines =@@
  >s : Symbol(s, Decl(main.ts, 2, 15))
  
   
@@ -13,7 +13,7 @@
  
    type Row2 = { a: string }
  >Row2 : Symbol(Row2, Decl(a.d.ts, 1, 20))
-@@ -29,12 +29,12 @@
+@@= skipped -14, +14 lines =@@
  >s : Symbol(s, Decl(a.d.ts, 3, 12))
  }
   

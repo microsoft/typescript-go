@@ -1,6 +1,6 @@
 --- old.visibilityOfCrossModuleTypeUsage.symbols
 +++ new.visibilityOfCrossModuleTypeUsage.symbols
-@@ -8,18 +8,18 @@
+@@= skipped -8, +8 lines =@@
  >run : Symbol(run, Decl(visibilityOfCrossModuleTypeUsage_fs.ts, 0, 73))
  >configuration : Symbol(configuration, Decl(visibilityOfCrossModuleTypeUsage_fs.ts, 1, 13))
  >commands : Symbol(commands, Decl(visibilityOfCrossModuleTypeUsage_fs.ts, 0, 0))
@@ -26,7 +26,7 @@
  }
  === visibilityOfCrossModuleTypeUsage_commands.ts ===
  import fs = require('./visibilityOfCrossModuleTypeUsage_fs');
-@@ -32,14 +32,14 @@
+@@= skipped -24, +24 lines =@@
  >IConfiguration : Symbol(IConfiguration, Decl(visibilityOfCrossModuleTypeUsage_commands.ts, 1, 69))
  
      workspace: server.IWorkspace;
@@ -45,7 +45,7 @@
  }
  
  === visibilityOfCrossModuleTypeUsage_server.ts ===
-@@ -51,7 +51,7 @@
+@@= skipped -19, +19 lines =@@
  >IWorkspace : Symbol(IWorkspace, Decl(visibilityOfCrossModuleTypeUsage_server.ts, 1, 1))
  
      toAbsolutePath(server: IServer, workspaceRelativePath?: string): string;

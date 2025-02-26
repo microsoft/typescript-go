@@ -1,6 +1,6 @@
 --- old.assignmentCompatWithObjectMembersStringNumericNames.symbols
 +++ new.assignmentCompatWithObjectMembersStringNumericNames.symbols
-@@ -9,11 +9,11 @@
+@@= skipped -9, +9 lines =@@
  
      class S { '1': string; }
  >S : Symbol(S, Decl(assignmentCompatWithObjectMembersStringNumericNames.ts, 3, 20))
@@ -14,7 +14,7 @@
  
      var s: S;
  >s : Symbol(s, Decl(assignmentCompatWithObjectMembersStringNumericNames.ts, 6, 7))
-@@ -25,13 +25,13 @@
+@@= skipped -16, +16 lines =@@
  
      interface S2 { '1': string; bar?: string }
  >S2 : Symbol(S2, Decl(assignmentCompatWithObjectMembersStringNumericNames.ts, 7, 13))
@@ -32,7 +32,7 @@
  
      var s2: S2;
  >s2 : Symbol(s2, Decl(assignmentCompatWithObjectMembersStringNumericNames.ts, 11, 7))
-@@ -141,11 +141,11 @@
+@@= skipped -116, +116 lines =@@
  
      class S { '1': string; }
  >S : Symbol(S, Decl(assignmentCompatWithObjectMembersStringNumericNames.ts, 44, 26))
@@ -46,7 +46,7 @@
  
      var s: S;
  >s : Symbol(s, Decl(assignmentCompatWithObjectMembersStringNumericNames.ts, 47, 7))
-@@ -157,13 +157,13 @@
+@@= skipped -16, +16 lines =@@
  
      interface S2 { '1': string; bar?: string }
  >S2 : Symbol(S2, Decl(assignmentCompatWithObjectMembersStringNumericNames.ts, 48, 13))

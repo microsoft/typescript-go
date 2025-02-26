@@ -1,6 +1,6 @@
 --- old.staticInterfaceAssignmentCompat.symbols
 +++ new.staticInterfaceAssignmentCompat.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Shape : Symbol(Shape, Decl(staticInterfaceAssignmentCompat.ts, 0, 0))
  
      static create(): Shape {
@@ -9,7 +9,7 @@
  >Shape : Symbol(Shape, Decl(staticInterfaceAssignmentCompat.ts, 0, 0))
  
          return new Shape();
-@@ -17,7 +17,7 @@
+@@= skipped -12, +12 lines =@@
  >ShapeFactory : Symbol(ShapeFactory, Decl(staticInterfaceAssignmentCompat.ts, 4, 1))
  
      create(): Shape;

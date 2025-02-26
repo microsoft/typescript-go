@@ -1,6 +1,6 @@
 --- old.genericInstantiationEquivalentToObjectLiteral.symbols
 +++ new.genericInstantiationEquivalentToObjectLiteral.symbols
-@@ -5,9 +5,9 @@
+@@= skipped -5, +5 lines =@@
  >Pair : Symbol(Pair, Decl(genericInstantiationEquivalentToObjectLiteral.ts, 0, 0))
  >T1 : Symbol(T1, Decl(genericInstantiationEquivalentToObjectLiteral.ts, 0, 15))
  >T2 : Symbol(T2, Decl(genericInstantiationEquivalentToObjectLiteral.ts, 0, 18))

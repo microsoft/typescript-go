@@ -1,6 +1,6 @@
 --- old.subclassThisTypeAssignable02.symbols
 +++ new.subclassThisTypeAssignable02.symbols
-@@ -10,7 +10,7 @@
+@@= skipped -10, +10 lines =@@
  >State : Symbol(State, Decl(tile1.ts, 0, 26))
  
  	oninit?(vnode: Vnode<Attrs, State>): number;
@@ -9,7 +9,7 @@
  >vnode : Symbol(vnode, Decl(tile1.ts, 1, 9))
  >Vnode : Symbol(Vnode, Decl(tile1.ts, 3, 1))
  >Attrs : Symbol(Attrs, Decl(tile1.ts, 0, 20))
-@@ -29,7 +29,7 @@
+@@= skipped -19, +19 lines =@@
  >State : Symbol(State, Decl(tile1.ts, 5, 22))
  
  	tag: Component<Attrs, State>;
@@ -18,7 +18,7 @@
  >Component : Symbol(Component, Decl(tile1.ts, 7, 1))
  >Attrs : Symbol(Attrs, Decl(tile1.ts, 5, 16))
  >State : Symbol(State, Decl(tile1.ts, 5, 22))
-@@ -44,7 +44,7 @@
+@@= skipped -15, +15 lines =@@
  >State : Symbol(State, Decl(tile1.ts, 9, 26))
  
  	view(this: State, vnode: Vnode<Attrs, State>): number;
@@ -27,7 +27,7 @@
  >this : Symbol(this, Decl(tile1.ts, 10, 6))
  >State : Symbol(State, Decl(tile1.ts, 9, 26))
  >vnode : Symbol(vnode, Decl(tile1.ts, 10, 18))
-@@ -62,13 +62,13 @@
+@@= skipped -18, +18 lines =@@
  >A : Symbol(A, Decl(tile1.ts, 13, 25))
  
  	oninit?(vnode: Vnode<A, this>): number;
@@ -43,7 +43,7 @@
  >vnode : Symbol(vnode, Decl(tile1.ts, 15, 6))
  >Vnode : Symbol(Vnode, Decl(tile1.ts, 3, 1))
  >A : Symbol(A, Decl(tile1.ts, 13, 25))
-@@ -76,7 +76,7 @@
+@@= skipped -14, +14 lines =@@
  
  interface MyAttrs { id: number }
  >MyAttrs : Symbol(MyAttrs, Decl(tile1.ts, 16, 1))
@@ -52,7 +52,7 @@
  
  class C implements ClassComponent<MyAttrs> {
  >C : Symbol(C, Decl(tile1.ts, 18, 32))
-@@ -84,7 +84,7 @@
+@@= skipped -8, +8 lines =@@
  >MyAttrs : Symbol(MyAttrs, Decl(tile1.ts, 16, 1))
  
  	view(v: Vnode<MyAttrs, C>) { return 0; }

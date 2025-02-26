@@ -1,6 +1,6 @@
 --- old.returnInConstructor1.symbols
 +++ new.returnInConstructor1.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(returnInConstructor1.ts, 0, 0))
  
      foo() { }
@@ -9,7 +9,7 @@
  
      constructor() {
          return;
-@@ -16,7 +16,7 @@
+@@= skipped -11, +11 lines =@@
  >B : Symbol(B, Decl(returnInConstructor1.ts, 5, 1))
  
      foo() { }
@@ -18,7 +18,7 @@
  
      constructor() {
          return 1; // error
-@@ -27,7 +27,7 @@
+@@= skipped -11, +11 lines =@@
  >C : Symbol(C, Decl(returnInConstructor1.ts, 12, 1))
  
      foo() { }
@@ -27,7 +27,7 @@
  
      constructor() {
          return this;
-@@ -39,7 +39,7 @@
+@@= skipped -12, +12 lines =@@
  >D : Symbol(D, Decl(returnInConstructor1.ts, 19, 1))
  
      foo() { }
@@ -36,7 +36,7 @@
  
      constructor() {
          return "test"; // error
-@@ -50,7 +50,7 @@
+@@= skipped -11, +11 lines =@@
  >E : Symbol(E, Decl(returnInConstructor1.ts, 26, 1))
  
      public foo: number;
@@ -45,7 +45,7 @@
  
      constructor() {
          return { foo: 1 };
-@@ -62,7 +62,7 @@
+@@= skipped -12, +12 lines =@@
  >F : Symbol(F, Decl(returnInConstructor1.ts, 33, 1))
  
      public foo: string;
@@ -54,7 +54,7 @@
  
      constructor() {
          return { foo: 1 }; //error
-@@ -74,19 +74,19 @@
+@@= skipped -12, +12 lines =@@
  >G : Symbol(G, Decl(returnInConstructor1.ts, 40, 1))
  
      private test: number;

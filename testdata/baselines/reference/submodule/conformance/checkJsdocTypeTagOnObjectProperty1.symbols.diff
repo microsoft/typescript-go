@@ -1,6 +1,6 @@
 --- old.checkJsdocTypeTagOnObjectProperty1.symbols
 +++ new.checkJsdocTypeTagOnObjectProperty1.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >lol : Symbol(lol, Decl(0.js, 1, 3))
  
  const obj = {
@@ -9,7 +9,7 @@
  
    /** @type {string|undefined} */
    foo: undefined,
-@@ -42,31 +42,31 @@
+@@= skipped -36, +36 lines =@@
  }
  obj.foo = 'string'
  >obj.foo : Symbol(foo, Decl(0.js, 2, 13))

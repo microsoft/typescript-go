@@ -1,6 +1,6 @@
 --- old.neverAsDiscriminantType(strict=false).symbols
 +++ new.neverAsDiscriminantType(strict=false).symbols
-@@ -60,19 +60,19 @@
+@@= skipped -60, +60 lines =@@
  >D : Symbol(D, Decl(neverAsDiscriminantType.ts, 18, 96))
  
      op: O
@@ -24,7 +24,7 @@
  }
  
  export type GatewayPayload = {
-@@ -83,7 +83,7 @@
+@@= skipped -23, +23 lines =@@
  >GatewayOpcode : Symbol(GatewayOpcode, Decl(neverAsDiscriminantType.ts, 35, 1))
  >O : Symbol(O, Decl(neverAsDiscriminantType.ts, 26, 5))
  >GatewayOpcode : Symbol(GatewayOpcode, Decl(neverAsDiscriminantType.ts, 35, 1))
@@ -33,7 +33,7 @@
  
      ? {
          [T in keyof GatewayEvents]: GatewayPayloadStructure<GatewayOpcode.DISPATCH, T, GatewayEvents[T]>
-@@ -91,7 +91,7 @@
+@@= skipped -8, +8 lines =@@
  >GatewayEvents : Symbol(GatewayEvents, Decl(neverAsDiscriminantType.ts, 49, 1))
  >GatewayPayloadStructure : Symbol(GatewayPayloadStructure, Decl(neverAsDiscriminantType.ts, 14, 1))
  >GatewayOpcode : Symbol(GatewayOpcode, Decl(neverAsDiscriminantType.ts, 35, 1))
@@ -42,7 +42,7 @@
  >T : Symbol(T, Decl(neverAsDiscriminantType.ts, 28, 9))
  >GatewayEvents : Symbol(GatewayEvents, Decl(neverAsDiscriminantType.ts, 49, 1))
  >T : Symbol(T, Decl(neverAsDiscriminantType.ts, 28, 9))
-@@ -114,10 +114,10 @@
+@@= skipped -23, +23 lines =@@
  >GatewayParams : Symbol(GatewayParams, Decl(neverAsDiscriminantType.ts, 31, 16))
  
      [GatewayOpcode.HELLO]: { b: 1 }
@@ -56,7 +56,7 @@
  >b : Symbol(b, Decl(neverAsDiscriminantType.ts, 34, 28))
  }
  
-@@ -125,52 +125,52 @@
+@@= skipped -11, +11 lines =@@
  >GatewayOpcode : Symbol(GatewayOpcode, Decl(neverAsDiscriminantType.ts, 35, 1))
  
      DISPATCH = 0,
@@ -123,7 +123,7 @@
  >a : Symbol(a, Decl(neverAsDiscriminantType.ts, 54, 21))
  }
  
-@@ -185,15 +185,15 @@
+@@= skipped -60, +60 lines =@@
  >GatewayPayload : Symbol(GatewayPayload, Decl(neverAsDiscriminantType.ts, 23, 1))
  
      if (input.t === 'MESSAGE_CREATE') {

@@ -1,6 +1,6 @@
 --- old.checkInfiniteExpansionTermination2.symbols
 +++ new.checkInfiniteExpansionTermination2.symbols
-@@ -9,7 +9,7 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(checkInfiniteExpansionTermination2.ts, 3, 22))
  
      n: IObservable<T[]>;

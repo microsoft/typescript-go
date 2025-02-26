@@ -1,6 +1,6 @@
 --- old.decoratorMetadataNoLibIsolatedModulesTypes.symbols
 +++ new.decoratorMetadataNoLibIsolatedModulesTypes.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  
      @Decorate
      member: Map<string, number>;

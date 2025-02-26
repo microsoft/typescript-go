@@ -1,6 +1,6 @@
 --- old.importHelpersES6.symbols
 +++ new.importHelpersES6.symbols
-@@ -9,19 +9,19 @@
+@@= skipped -9, +9 lines =@@
  >A : Symbol(A, Decl(a.ts, 0, 21))
  
      #x: number = 1;
@@ -26,7 +26,7 @@
  >u : Symbol(u, Decl(a.ts, 4, 6))
  }
  
-@@ -35,59 +35,59 @@
+@@= skipped -26, +26 lines =@@
  
  === tslib.d.ts ===
  export declare function __extends(d: Function, b: Function): void;

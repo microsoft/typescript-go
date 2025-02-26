@@ -1,6 +1,6 @@
 --- old.inferenceDoesntCompareAgainstUninstantiatedTypeParameter.symbols
 +++ new.inferenceDoesntCompareAgainstUninstantiatedTypeParameter.symbols
-@@ -6,9 +6,9 @@
+@@= skipped -6, +6 lines =@@
  >TEntityClass : Symbol(TEntityClass, Decl(inferenceDoesntCompareAgainstUninstantiatedTypeParameter.ts, 0, 13))
  
      constructor(private entity?: TEntityClass, public settings?: SettingsInterface<TEntityClass>) {
@@ -12,7 +12,7 @@
  >SettingsInterface : Symbol(SettingsInterface, Decl(inferenceDoesntCompareAgainstUninstantiatedTypeParameter.ts, 8, 1))
  >TEntityClass : Symbol(TEntityClass, Decl(inferenceDoesntCompareAgainstUninstantiatedTypeParameter.ts, 0, 13))
  
-@@ -19,19 +19,19 @@
+@@= skipped -13, +13 lines =@@
  >TValueClass : Symbol(TValueClass, Decl(inferenceDoesntCompareAgainstUninstantiatedTypeParameter.ts, 5, 32))
  
      func?: (row: TValueClass) => any;
@@ -35,7 +35,7 @@
  >row : Symbol(row, Decl(inferenceDoesntCompareAgainstUninstantiatedTypeParameter.ts, 10, 14))
  >TClass : Symbol(TClass, Decl(inferenceDoesntCompareAgainstUninstantiatedTypeParameter.ts, 9, 35))
  >ValueInterface : Symbol(ValueInterface, Decl(inferenceDoesntCompareAgainstUninstantiatedTypeParameter.ts, 4, 1))
-@@ -41,7 +41,7 @@
+@@= skipped -22, +22 lines =@@
  >ConcreteClass : Symbol(ConcreteClass, Decl(inferenceDoesntCompareAgainstUninstantiatedTypeParameter.ts, 11, 1))
  
      theName = 'myClass';
@@ -44,7 +44,7 @@
  }
  
  var thisGetsTheFalseError = new ClassA(new ConcreteClass(), {
-@@ -55,9 +55,9 @@
+@@= skipped -14, +14 lines =@@
          {
              value: o.theName,
  >value : Symbol(value, Decl(inferenceDoesntCompareAgainstUninstantiatedTypeParameter.ts, 18, 9))
@@ -56,7 +56,7 @@
  
              func: x => 'asdfkjhgfdfghjkjhgfdfghjklkjhgfdfghjklkjhgfghj'
  >func : Symbol(func, Decl(inferenceDoesntCompareAgainstUninstantiatedTypeParameter.ts, 19, 29))
-@@ -78,9 +78,9 @@
+@@= skipped -23, +23 lines =@@
          {
              value: o.theName,
  >value : Symbol(value, Decl(inferenceDoesntCompareAgainstUninstantiatedTypeParameter.ts, 27, 9))

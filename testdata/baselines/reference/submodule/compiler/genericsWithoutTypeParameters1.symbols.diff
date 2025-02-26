@@ -1,6 +1,6 @@
 --- old.genericsWithoutTypeParameters1.symbols
 +++ new.genericsWithoutTypeParameters1.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(genericsWithoutTypeParameters1.ts, 0, 8))
  
      foo(): T { return null }
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(genericsWithoutTypeParameters1.ts, 0, 8))
  }
  
-@@ -15,7 +15,7 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(genericsWithoutTypeParameters1.ts, 4, 12))
  
      bar(): T;
@@ -18,7 +18,7 @@
  >T : Symbol(T, Decl(genericsWithoutTypeParameters1.ts, 4, 12))
  }
  
-@@ -72,11 +72,11 @@
+@@= skipped -57, +57 lines =@@
  >T : Symbol(T, Decl(genericsWithoutTypeParameters1.ts, 19, 8))
  
      x: C;
@@ -32,7 +32,7 @@
  >D : Symbol(D, Decl(genericsWithoutTypeParameters1.ts, 17, 49))
  }
  
-@@ -85,11 +85,11 @@
+@@= skipped -13, +13 lines =@@
  >T : Symbol(T, Decl(genericsWithoutTypeParameters1.ts, 24, 12))
  
      x: I;

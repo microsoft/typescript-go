@@ -1,6 +1,6 @@
 --- old.privacyInterface.symbols
 +++ new.privacyInterface.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >C1_public : Symbol(C1_public, Decl(privacyInterface.ts, 0, 18))
  
          private f1() {
@@ -9,7 +9,7 @@
          }
      }
  
-@@ -59,37 +59,37 @@
+@@= skipped -51, +51 lines =@@
  >C2_private : Symbol(C2_private, Decl(privacyInterface.ts, 4, 5))
  
          x: C1_public;
@@ -55,7 +55,7 @@
  >C2_private : Symbol(C2_private, Decl(privacyInterface.ts, 4, 5))
  
      }
-@@ -136,37 +136,37 @@
+@@= skipped -77, +77 lines =@@
  >C2_private : Symbol(C2_private, Decl(privacyInterface.ts, 4, 5))
  
          x: C1_public;
@@ -101,7 +101,7 @@
  >C2_private : Symbol(C2_private, Decl(privacyInterface.ts, 4, 5))
  
      }
-@@ -180,7 +180,7 @@
+@@= skipped -44, +44 lines =@@
  >C1_public : Symbol(C1_public, Decl(privacyInterface.ts, 66, 11))
  
          private f1() {
@@ -110,7 +110,7 @@
          }
      }
  
-@@ -231,37 +231,37 @@
+@@= skipped -51, +51 lines =@@
  >C2_private : Symbol(C2_private, Decl(privacyInterface.ts, 70, 5))
  
          x: C1_public;
@@ -156,7 +156,7 @@
  >C2_private : Symbol(C2_private, Decl(privacyInterface.ts, 70, 5))
  
      }
-@@ -308,37 +308,37 @@
+@@= skipped -77, +77 lines =@@
  >C2_private : Symbol(C2_private, Decl(privacyInterface.ts, 70, 5))
  
          x: C1_public;
@@ -202,7 +202,7 @@
  >C2_private : Symbol(C2_private, Decl(privacyInterface.ts, 70, 5))
  
      }
-@@ -348,7 +348,7 @@
+@@= skipped -40, +40 lines =@@
  >C5_public : Symbol(C5_public, Decl(privacyInterface.ts, 129, 1))
  
      private f1() {
@@ -211,7 +211,7 @@
      }
  }
  
-@@ -399,37 +399,37 @@
+@@= skipped -51, +51 lines =@@
  >C6_private : Symbol(C6_private, Decl(privacyInterface.ts, 134, 1))
  
      x: C5_public;
@@ -257,7 +257,7 @@
  >C6_private : Symbol(C6_private, Decl(privacyInterface.ts, 134, 1))
  
  }
-@@ -476,37 +476,37 @@
+@@= skipped -77, +77 lines =@@
  >C6_private : Symbol(C6_private, Decl(privacyInterface.ts, 134, 1))
  
      x: C5_public;
@@ -303,7 +303,7 @@
  >C6_private : Symbol(C6_private, Decl(privacyInterface.ts, 134, 1))
  
  }
-@@ -518,14 +518,14 @@
+@@= skipped -42, +42 lines =@@
  >m3_i_public : Symbol(m3_i_public, Decl(privacyInterface.ts, 194, 18))
  
          f1(): number;
@@ -320,7 +320,7 @@
      }
  
      interface m3_C1_private extends m3_i_public {
-@@ -565,14 +565,14 @@
+@@= skipped -47, +47 lines =@@
  >m4_i_public : Symbol(m4_i_public, Decl(privacyInterface.ts, 219, 11))
  
          f1(): number;
@@ -337,7 +337,7 @@
      }
  
      interface m4_C1_private extends m4_i_public {
-@@ -608,14 +608,14 @@
+@@= skipped -43, +43 lines =@@
  >glo_i_public : Symbol(glo_i_public, Decl(privacyInterface.ts, 241, 1))
  
      f1(): number;

@@ -1,6 +1,6 @@
 --- old.modularizeLibrary_Worker.asynciterable.symbols
 +++ new.modularizeLibrary_Worker.asynciterable.symbols
-@@ -2,13 +2,13 @@
+@@= skipped -2, +2 lines =@@
  
  === modularizeLibrary_Worker.asynciterable.ts ===
  navigator.storage.getDirectory().then(async directory => {
@@ -20,7 +20,7 @@
  >directory : Symbol(directory, Decl(modularizeLibrary_Worker.asynciterable.ts, 0, 43))
  
      for await (const [key, handle] of directory) {
-@@ -17,9 +17,9 @@
+@@= skipped -15, +15 lines =@@
  >directory : Symbol(directory, Decl(modularizeLibrary_Worker.asynciterable.ts, 0, 43))
  
          handle.kind;

@@ -1,6 +1,6 @@
 --- old.reExportAliasMakesInstantiated.symbols
 +++ new.reExportAliasMakesInstantiated.symbols
-@@ -16,7 +16,7 @@
+@@= skipped -16, +16 lines =@@
    import test1 = pack1.test1;
  >test1 : Symbol(test1, Decl(reExportAliasMakesInstantiated.ts, 4, 22))
  >pack1 : Symbol(pack1, Decl(reExportAliasMakesInstantiated.ts, 0, 0))
@@ -9,7 +9,7 @@
  
    export { test1 };
  >test1 : Symbol(test1, Decl(reExportAliasMakesInstantiated.ts, 6, 10))
-@@ -24,7 +24,7 @@
+@@= skipped -8, +8 lines =@@
  export import test1 = pack2.test1;
  >test1 : Symbol(test1, Decl(reExportAliasMakesInstantiated.ts, 7, 1))
  >pack2 : Symbol(pack2, Decl(reExportAliasMakesInstantiated.ts, 3, 1))
@@ -18,7 +18,7 @@
  
  declare module mod1 {
  >mod1 : Symbol(mod1, Decl(reExportAliasMakesInstantiated.ts, 8, 34))
-@@ -41,7 +41,7 @@
+@@= skipped -17, +17 lines =@@
    import test1 = mod1.test1;
  >test1 : Symbol(test1, Decl(reExportAliasMakesInstantiated.ts, 14, 21))
  >mod1 : Symbol(mod1, Decl(reExportAliasMakesInstantiated.ts, 8, 34))

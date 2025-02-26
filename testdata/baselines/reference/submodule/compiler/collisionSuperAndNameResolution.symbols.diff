@@ -1,6 +1,6 @@
 --- old.collisionSuperAndNameResolution.symbols
 +++ new.collisionSuperAndNameResolution.symbols
-@@ -19,7 +19,7 @@
+@@= skipped -19, +19 lines =@@
  >base : Symbol(base, Decl(collisionSuperAndNameResolution.ts, 3, 16))
  
      x() {

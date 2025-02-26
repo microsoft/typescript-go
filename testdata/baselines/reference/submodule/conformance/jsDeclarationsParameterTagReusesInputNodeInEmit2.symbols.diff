@@ -1,6 +1,6 @@
 --- old.jsDeclarationsParameterTagReusesInputNodeInEmit2.symbols
 +++ new.jsDeclarationsParameterTagReusesInputNodeInEmit2.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  }
  
  const BaseFactory = () => {
@@ -9,7 +9,7 @@
  
      return new Base();
  >Base : Symbol(Base, Decl(base.js, 0, 0))
-@@ -16,16 +16,13 @@
+@@= skipped -8, +8 lines =@@
  };
  
  BaseFactory.Base = Base;

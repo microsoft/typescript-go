@@ -1,6 +1,6 @@
 --- old.tsxSpreadAttributesResolution9.symbols
 +++ new.tsxSpreadAttributesResolution9.symbols
-@@ -8,25 +8,23 @@
+@@= skipped -8, +8 lines =@@
  >OptionProp : Symbol(OptionProp, Decl(file.tsx, 0, 32))
  
      x?: 2

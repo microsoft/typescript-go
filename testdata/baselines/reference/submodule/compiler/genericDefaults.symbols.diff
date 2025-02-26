@@ -1,6 +1,6 @@
 --- old.genericDefaults.symbols
 +++ new.genericDefaults.symbols
-@@ -3,29 +3,29 @@
+@@= skipped -3, +3 lines =@@
  === genericDefaults.ts ===
  interface A { a: number; }
  >A : Symbol(A, Decl(genericDefaults.ts, 0, 0))
@@ -38,7 +38,7 @@
  
  declare const a: A;
  >a : Symbol(a, Decl(genericDefaults.ts, 7, 13))
-@@ -1809,89 +1809,89 @@
+@@= skipped -1806, +1806 lines =@@
  interface i00<T = number> { a: T; }
  >i00 : Symbol(i00, Decl(genericDefaults.ts, 393, 22))
  >T : Symbol(T, Decl(genericDefaults.ts, 395, 14))
@@ -149,7 +149,7 @@
  
  interface i03<T extends number, U extends T = T> { a: [T, U]; }
  >i03 : Symbol(i03, Decl(genericDefaults.ts, 408, 37))
-@@ -1899,44 +1899,44 @@
+@@= skipped -90, +90 lines =@@
  >U : Symbol(U, Decl(genericDefaults.ts, 410, 31))
  >T : Symbol(T, Decl(genericDefaults.ts, 410, 14))
  >T : Symbol(T, Decl(genericDefaults.ts, 410, 14))
@@ -205,7 +205,7 @@
  
  interface i04 {}
  >i04 : Symbol(i04, Decl(genericDefaults.ts, 415, 37), Decl(genericDefaults.ts, 417, 16), Decl(genericDefaults.ts, 418, 19), Decl(genericDefaults.ts, 419, 28))
-@@ -1958,22 +1958,22 @@
+@@= skipped -59, +59 lines =@@
  >i05 : Symbol(i05, Decl(genericDefaults.ts, 420, 40))
  >T : Symbol(T, Decl(genericDefaults.ts, 422, 14))
  >T : Symbol(T, Decl(genericDefaults.ts, 422, 14))
@@ -233,7 +233,7 @@
  
  interface i06<T = U, U = T> { a: [T, U]; }
  >i06 : Symbol(i06, Decl(genericDefaults.ts, 424, 34))
-@@ -1981,76 +1981,76 @@
+@@= skipped -23, +23 lines =@@
  >U : Symbol(U, Decl(genericDefaults.ts, 426, 20))
  >U : Symbol(U, Decl(genericDefaults.ts, 426, 20))
  >T : Symbol(T, Decl(genericDefaults.ts, 426, 14))
@@ -328,7 +328,7 @@
  >T : Symbol(T, Decl(genericDefaults.ts, 438, 17))
  
  interface Base01Constructor { new <T = number>(a?: T): Base01<T>; }
-@@ -2153,9 +2153,9 @@
+@@= skipped -172, +172 lines =@@
  
  const Derived03c01 = Derived03c00.a;
  >Derived03c01 : Symbol(Derived03c01, Decl(genericDefaults.ts, 465, 5))

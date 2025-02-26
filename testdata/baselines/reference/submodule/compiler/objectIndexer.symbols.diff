@@ -1,6 +1,6 @@
 --- old.objectIndexer.symbols
 +++ new.objectIndexer.symbols
-@@ -20,14 +20,14 @@
+@@= skipped -20, +20 lines =@@
  >Emitter : Symbol(Emitter, Decl(objectIndexer.ts, 6, 1))
  
      private listeners: IMap;

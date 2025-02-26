@@ -1,6 +1,6 @@
 --- old.restInvalidArgumentType.symbols
 +++ new.restInvalidArgumentType.symbols
-@@ -3,8 +3,8 @@
+@@= skipped -3, +3 lines =@@
  === restInvalidArgumentType.ts ===
  enum E { v1, v2 };
  >E : Symbol(E, Decl(restInvalidArgumentType.ts, 0, 0))

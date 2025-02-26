@@ -1,6 +1,6 @@
 --- old.privacyTypeParametersOfClass.symbols
 +++ new.privacyTypeParametersOfClass.symbols
-@@ -16,7 +16,7 @@
+@@= skipped -16, +16 lines =@@
  >privateClass : Symbol(privateClass, Decl(privacyTypeParametersOfClass.ts, 0, 0))
  
      myMethod(val: T): T { // Error
@@ -9,7 +9,7 @@
  >val : Symbol(val, Decl(privacyTypeParametersOfClass.ts, 8, 13))
  >T : Symbol(T, Decl(privacyTypeParametersOfClass.ts, 7, 50))
  >T : Symbol(T, Decl(privacyTypeParametersOfClass.ts, 7, 50))
-@@ -32,7 +32,7 @@
+@@= skipped -16, +16 lines =@@
  >publicClass : Symbol(publicClass, Decl(privacyTypeParametersOfClass.ts, 1, 1))
  
      myMethod(val: T): T { // No Error
@@ -18,7 +18,7 @@
  >val : Symbol(val, Decl(privacyTypeParametersOfClass.ts, 14, 13))
  >T : Symbol(T, Decl(privacyTypeParametersOfClass.ts, 13, 49))
  >T : Symbol(T, Decl(privacyTypeParametersOfClass.ts, 13, 49))
-@@ -48,7 +48,7 @@
+@@= skipped -16, +16 lines =@@
  >privateClass : Symbol(privateClass, Decl(privacyTypeParametersOfClass.ts, 0, 0))
  
      myMethod(val: T): T { // No Error
@@ -27,7 +27,7 @@
  >val : Symbol(val, Decl(privacyTypeParametersOfClass.ts, 20, 13))
  >T : Symbol(T, Decl(privacyTypeParametersOfClass.ts, 19, 44))
  >T : Symbol(T, Decl(privacyTypeParametersOfClass.ts, 19, 44))
-@@ -64,7 +64,7 @@
+@@= skipped -16, +16 lines =@@
  >publicClass : Symbol(publicClass, Decl(privacyTypeParametersOfClass.ts, 1, 1))
  
      myMethod(val: T): T { // No Error
@@ -36,7 +36,7 @@
  >val : Symbol(val, Decl(privacyTypeParametersOfClass.ts, 26, 13))
  >T : Symbol(T, Decl(privacyTypeParametersOfClass.ts, 25, 43))
  >T : Symbol(T, Decl(privacyTypeParametersOfClass.ts, 25, 43))
-@@ -79,7 +79,7 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(privacyTypeParametersOfClass.ts, 31, 63))
  
      myMethod(val: T): T { // No Error
@@ -45,7 +45,7 @@
  >val : Symbol(val, Decl(privacyTypeParametersOfClass.ts, 32, 13))
  >T : Symbol(T, Decl(privacyTypeParametersOfClass.ts, 31, 63))
  >T : Symbol(T, Decl(privacyTypeParametersOfClass.ts, 31, 63))
-@@ -94,7 +94,7 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(privacyTypeParametersOfClass.ts, 37, 57))
  
      myMethod(val: T): T { // No Error

@@ -1,6 +1,6 @@
 --- old.intersectionTypeReadonly.symbols
 +++ new.intersectionTypeReadonly.symbols
-@@ -5,40 +5,40 @@
+@@= skipped -5, +5 lines =@@
  >Base : Symbol(Base, Decl(intersectionTypeReadonly.ts, 0, 0))
  
      readonly value: number;
@@ -48,7 +48,7 @@
  
  let identical: Base & Identical;
  >identical : Symbol(identical, Decl(intersectionTypeReadonly.ts, 17, 3))
-@@ -76,7 +76,7 @@
+@@= skipped -71, +71 lines =@@
  >DifferentName : Symbol(DifferentName, Decl(intersectionTypeReadonly.ts, 11, 1))
  
  differentName.value = 12; // error, property 'value' doesn't exist

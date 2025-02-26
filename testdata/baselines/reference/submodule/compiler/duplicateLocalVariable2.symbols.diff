@@ -1,6 +1,6 @@
 --- old.duplicateLocalVariable2.symbols
 +++ new.duplicateLocalVariable2.symbols
-@@ -5,16 +5,16 @@
+@@= skipped -5, +5 lines =@@
  >TestCase : Symbol(TestCase, Decl(duplicateLocalVariable2.ts, 0, 0))
  
      constructor (public name: string, public test: ()=>boolean, public errorMessageRegEx?: string) {
@@ -21,7 +21,7 @@
  >arg1 : Symbol(arg1, Decl(duplicateLocalVariable2.ts, 5, 24))
  >arg2 : Symbol(arg2, Decl(duplicateLocalVariable2.ts, 5, 36))
  
-@@ -22,7 +22,7 @@
+@@= skipped -17, +17 lines =@@
      }
  
      public addTest(test: TestCase) {
@@ -30,7 +30,7 @@
  >test : Symbol(test, Decl(duplicateLocalVariable2.ts, 9, 19))
  >TestCase : Symbol(TestCase, Decl(duplicateLocalVariable2.ts, 0, 0))
      }
-@@ -37,9 +37,9 @@
+@@= skipped -15, +15 lines =@@
  >TestRunner : Symbol(TestRunner, Decl(duplicateLocalVariable2.ts, 3, 1))
  
      testRunner.addTest(new TestCase("Check UTF8 encoding",
@@ -42,7 +42,7 @@
  >TestCase : Symbol(TestCase, Decl(duplicateLocalVariable2.ts, 0, 0))
  
          function () {
-@@ -73,18 +73,18 @@
+@@= skipped -36, +36 lines =@@
  >i : Symbol(i, Decl(duplicateLocalVariable2.ts, 21, 20), Decl(duplicateLocalVariable2.ts, 26, 20))
  
                  bytes.push(fb.readByte());

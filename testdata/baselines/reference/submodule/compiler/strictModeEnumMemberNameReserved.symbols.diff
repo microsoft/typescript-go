@@ -1,6 +1,6 @@
 --- old.strictModeEnumMemberNameReserved.symbols
 +++ new.strictModeEnumMemberNameReserved.symbols
-@@ -6,14 +6,14 @@
+@@= skipped -6, +6 lines =@@
  >E : Symbol(E, Decl(strictModeEnumMemberNameReserved.ts, 0, 13))
  
      static

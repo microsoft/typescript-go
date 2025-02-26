@@ -1,6 +1,6 @@
 --- old.tsxReactEmitEntities.symbols
 +++ new.tsxReactEmitEntities.symbols
-@@ -18,42 +18,22 @@
+@@= skipped -18, +18 lines =@@
  >React : Symbol(React, Decl(file.tsx, 6, 11))
  
  <div>Dot goes here: &middot; &notAnEntity; </div>;

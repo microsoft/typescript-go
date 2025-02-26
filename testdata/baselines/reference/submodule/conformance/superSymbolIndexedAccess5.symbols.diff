@@ -1,6 +1,6 @@
 --- old.superSymbolIndexedAccess5.symbols
 +++ new.superSymbolIndexedAccess5.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >Foo : Symbol(Foo, Decl(superSymbolIndexedAccess5.ts, 0, 16))
  
      [symbol]() {
@@ -9,7 +9,7 @@
  >symbol : Symbol(symbol, Decl(superSymbolIndexedAccess5.ts, 0, 3))
  
          return 0;
-@@ -20,7 +20,7 @@
+@@= skipped -12, +12 lines =@@
  >Foo : Symbol(Foo, Decl(superSymbolIndexedAccess5.ts, 0, 16))
  
      [symbol]() {

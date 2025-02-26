@@ -1,6 +1,6 @@
 --- old.jsExportAssignmentNonMutableLocation.symbols
 +++ new.jsExportAssignmentNonMutableLocation.symbols
-@@ -3,22 +3,12 @@
+@@= skipped -3, +3 lines =@@
  === file.js ===
  const customSymbol = Symbol("custom");
  >customSymbol : Symbol(customSymbol, Decl(file.js, 0, 5))

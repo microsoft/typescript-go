@@ -1,6 +1,6 @@
 --- old.exportNamespace10.symbols
 +++ new.exportNamespace10.symbols
-@@ -15,8 +15,8 @@
+@@= skipped -15, +15 lines =@@
  let _: ns.A = new ns.A(); // Error
  >_ : Symbol(_, Decl(c.ts, 1, 3))
  >ns : Symbol(ns, Decl(c.ts, 0, 8))

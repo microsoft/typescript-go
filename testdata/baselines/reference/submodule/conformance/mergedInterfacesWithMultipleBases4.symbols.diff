@@ -1,6 +1,6 @@
 --- old.mergedInterfacesWithMultipleBases4.symbols
 +++ new.mergedInterfacesWithMultipleBases4.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(mergedInterfacesWithMultipleBases4.ts, 2, 8))
  
      a: T;
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(mergedInterfacesWithMultipleBases4.ts, 2, 8))
  }
  
-@@ -17,7 +17,7 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(mergedInterfacesWithMultipleBases4.ts, 6, 9))
  
      b: T;
@@ -18,7 +18,7 @@
  >T : Symbol(T, Decl(mergedInterfacesWithMultipleBases4.ts, 6, 9))
  }
  
-@@ -26,7 +26,7 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(mergedInterfacesWithMultipleBases4.ts, 10, 9))
  
      c: T;
@@ -27,7 +27,7 @@
  >T : Symbol(T, Decl(mergedInterfacesWithMultipleBases4.ts, 10, 9))
  }
  
-@@ -35,7 +35,7 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(mergedInterfacesWithMultipleBases4.ts, 14, 9))
  
      d: T;
@@ -36,7 +36,7 @@
  >T : Symbol(T, Decl(mergedInterfacesWithMultipleBases4.ts, 14, 9))
  }
  
-@@ -46,7 +46,7 @@
+@@= skipped -11, +11 lines =@@
  >C3 : Symbol(C3, Decl(mergedInterfacesWithMultipleBases4.ts, 8, 1))
  
      y: T;
@@ -45,7 +45,7 @@
  >T : Symbol(T, Decl(mergedInterfacesWithMultipleBases4.ts, 18, 12), Decl(mergedInterfacesWithMultipleBases4.ts, 22, 12))
  }
  
-@@ -57,7 +57,7 @@
+@@= skipped -11, +11 lines =@@
  >C4 : Symbol(C4, Decl(mergedInterfacesWithMultipleBases4.ts, 12, 1))
  
      z: T;
@@ -54,7 +54,7 @@
  >T : Symbol(T, Decl(mergedInterfacesWithMultipleBases4.ts, 18, 12), Decl(mergedInterfacesWithMultipleBases4.ts, 22, 12))
  }
  
-@@ -66,20 +66,20 @@
+@@= skipped -9, +9 lines =@@
  >A : Symbol(A, Decl(mergedInterfacesWithMultipleBases4.ts, 16, 1), Decl(mergedInterfacesWithMultipleBases4.ts, 20, 1))
  
      a: string;

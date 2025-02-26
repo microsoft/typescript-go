@@ -1,6 +1,6 @@
 --- old.symbolDeclarationEmit10.symbols
 +++ new.symbolDeclarationEmit10.symbols
-@@ -5,15 +5,9 @@
+@@= skipped -5, +5 lines =@@
  >obj : Symbol(obj, Decl(symbolDeclarationEmit10.ts, 0, 3))
  
      get [Symbol.isConcatSpreadable]() { return '' },

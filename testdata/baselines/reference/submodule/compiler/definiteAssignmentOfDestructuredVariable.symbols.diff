@@ -1,6 +1,6 @@
 --- old.definiteAssignmentOfDestructuredVariable.symbols
 +++ new.definiteAssignmentOfDestructuredVariable.symbols
-@@ -6,10 +6,10 @@
+@@= skipped -6, +6 lines =@@
  >Options : Symbol(Options, Decl(definiteAssignmentOfDestructuredVariable.ts, 0, 0))
  
      a?: number | object;
@@ -13,7 +13,7 @@
  }
  
  class C<T extends Options> {
-@@ -18,21 +18,21 @@
+@@= skipped -12, +12 lines =@@
  >Options : Symbol(Options, Decl(definiteAssignmentOfDestructuredVariable.ts, 0, 0))
  
      foo!: { [P in keyof T]: T[P] }

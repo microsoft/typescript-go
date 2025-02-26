@@ -1,6 +1,6 @@
 --- old.superCallFromClassThatDerivesNonGenericTypeButWithTypeArguments1.symbols
 +++ new.superCallFromClassThatDerivesNonGenericTypeButWithTypeArguments1.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(superCallFromClassThatDerivesNonGenericTypeButWithTypeArguments1.ts, 0, 0))
  
      constructor(private map: (value: number) => string) {

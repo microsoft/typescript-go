@@ -1,6 +1,6 @@
 --- old.privateNameStaticMethodCallExpression.symbols
 +++ new.privateNameStaticMethodCallExpression.symbols
-@@ -5,87 +5,87 @@
+@@= skipped -5, +5 lines =@@
  >AA : Symbol(AA, Decl(privateNameStaticMethodCallExpression.ts, 0, 0))
  
      static #method() { this.x = 10; };

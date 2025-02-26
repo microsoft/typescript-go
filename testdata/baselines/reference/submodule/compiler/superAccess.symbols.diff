@@ -1,6 +1,6 @@
 --- old.superAccess.symbols
 +++ new.superAccess.symbols
-@@ -5,13 +5,13 @@
+@@= skipped -5, +5 lines =@@
  >MyBase : Symbol(MyBase, Decl(superAccess.ts, 0, 0))
  
      static S1: number = 5;
@@ -17,7 +17,7 @@
  }
  
  class MyDerived extends MyBase {
-@@ -19,7 +19,7 @@
+@@= skipped -14, +14 lines =@@
  >MyBase : Symbol(MyBase, Decl(superAccess.ts, 0, 0))
  
      foo() {
@@ -26,7 +26,7 @@
  
          var l3 = super.S1;    // Expected => Error: Only public instance methods of the base class are accessible via the 'super' keyword
  >l3 : Symbol(l3, Decl(superAccess.ts, 8, 11))
-@@ -27,14 +27,14 @@
+@@= skipped -8, +8 lines =@@
  
          var l4 = super.S2;    // Expected => Error: Only public instance methods of the base class are accessible via the 'super' keyword
  >l4 : Symbol(l4, Decl(superAccess.ts, 9, 11))

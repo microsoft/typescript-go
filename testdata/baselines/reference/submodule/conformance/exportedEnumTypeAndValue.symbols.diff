@@ -1,6 +1,6 @@
 --- old.exportedEnumTypeAndValue.symbols
 +++ new.exportedEnumTypeAndValue.symbols
-@@ -3,7 +3,7 @@
+@@= skipped -3, +3 lines =@@
  === def.js ===
  /** @enum {number} */
  const MyEnum = {
@@ -9,7 +9,7 @@
  
    a: 1,
  >a : Symbol(a, Decl(def.js, 1, 16))
-@@ -13,7 +13,7 @@
+@@= skipped -10, +10 lines =@@
  
  };
  export default MyEnum;

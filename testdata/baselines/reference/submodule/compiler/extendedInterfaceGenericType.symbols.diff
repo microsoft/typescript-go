@@ -1,6 +1,6 @@
 --- old.extendedInterfaceGenericType.symbols
 +++ new.extendedInterfaceGenericType.symbols
-@@ -6,14 +6,14 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(extendedInterfaceGenericType.ts, 0, 16))
  
      takesArgOfT(arg: T): Alpha<T>;
@@ -17,7 +17,7 @@
  >Beta : Symbol(Beta, Decl(extendedInterfaceGenericType.ts, 3, 1))
  }
  interface Beta<T> extends Alpha<T> {
-@@ -29,12 +29,12 @@
+@@= skipped -23, +23 lines =@@
  
  var betaOfNumber = alpha.makeBetaOfNumber();
  >betaOfNumber : Symbol(betaOfNumber, Decl(extendedInterfaceGenericType.ts, 8, 3))

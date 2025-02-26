@@ -1,6 +1,6 @@
 --- old.classStaticBlockUseBeforeDef2(target=esnext).symbols
 +++ new.classStaticBlockUseBeforeDef2(target=esnext).symbols
-@@ -6,11 +6,11 @@
+@@= skipped -6, +6 lines =@@
  
      static {
          this.x = 1;

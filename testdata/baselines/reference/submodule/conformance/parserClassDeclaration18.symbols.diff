@@ -1,6 +1,6 @@
 --- old.parserClassDeclaration18.symbols
 +++ new.parserClassDeclaration18.symbols
-@@ -14,5 +14,5 @@
+@@= skipped -14, +14 lines =@@
  >x : Symbol(x, Decl(parserClassDeclaration18.ts, 3, 16))
      }
      bar1():void;

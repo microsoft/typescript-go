@@ -1,6 +1,6 @@
 --- old.checkInterfaceBases.symbols
 +++ new.checkInterfaceBases.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >SecondEvent : Symbol(SecondEvent, Decl(app.ts, 0, 0))
  
      data: any;
@@ -9,7 +9,7 @@
  }
  interface Third extends JQueryEventObjectTest, SecondEvent {}
  >Third : Symbol(Third, Decl(app.ts, 3, 1))
-@@ -18,12 +18,12 @@
+@@= skipped -12, +12 lines =@@
  >JQueryEventObjectTest : Symbol(JQueryEventObjectTest, Decl(jquery.d.ts, 0, 0))
  
      data: any;

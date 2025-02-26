@@ -1,6 +1,6 @@
 --- old.implicitAnyInAmbientDeclaration.symbols
 +++ new.implicitAnyInAmbientDeclaration.symbols
-@@ -8,17 +8,17 @@
+@@= skipped -8, +8 lines =@@
  >C : Symbol(C, Decl(implicitAnyInAmbientDeclaration.ts, 0, 13))
  
          public publicMember;  // this should be an error

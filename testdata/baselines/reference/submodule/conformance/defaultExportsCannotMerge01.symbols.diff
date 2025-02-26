@@ -1,6 +1,6 @@
 --- old.defaultExportsCannotMerge01.symbols
 +++ new.defaultExportsCannotMerge01.symbols
-@@ -2,7 +2,7 @@
+@@= skipped -2, +2 lines =@@
  
  === m1.ts ===
  export default function Decl() {
@@ -9,7 +9,7 @@
  
      return 0;
  }
-@@ -11,10 +11,10 @@
+@@= skipped -9, +9 lines =@@
  >Decl : Symbol(Decl, Decl(m1.ts, 2, 1), Decl(m1.ts, 7, 1))
  
      p1: number;
@@ -22,7 +22,7 @@
  }
  
  export namespace Decl {
-@@ -45,7 +45,7 @@
+@@= skipped -34, +34 lines =@@
  var y: Entity.I;
  >y : Symbol(y, Decl(m2.ts, 5, 3))
  >Entity : Symbol(Entity, Decl(m2.ts, 0, 6))

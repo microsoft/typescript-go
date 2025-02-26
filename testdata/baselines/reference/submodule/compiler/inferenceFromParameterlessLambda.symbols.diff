@@ -1,6 +1,6 @@
 --- old.inferenceFromParameterlessLambda.symbols
 +++ new.inferenceFromParameterlessLambda.symbols
-@@ -30,7 +30,7 @@
+@@= skipped -30, +30 lines =@@
  foo(n => n.length, () => 'hi');
  >foo : Symbol(foo, Decl(inferenceFromParameterlessLambda.ts, 0, 0))
  >n : Symbol(n, Decl(inferenceFromParameterlessLambda.ts, 8, 4))

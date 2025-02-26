@@ -1,6 +1,6 @@
 --- old.usingDeclarationsWithObjectLiterals1.symbols
 +++ new.usingDeclarationsWithObjectLiterals1.symbols
-@@ -5,31 +5,31 @@
+@@= skipped -5, +5 lines =@@
  >MyDisposable : Symbol(MyDisposable, Decl(usingDeclarationsWithObjectLiterals1.ts, 0, 0))
  
    value: number;
@@ -40,7 +40,7 @@
  >value : Symbol(value, Decl(usingDeclarationsWithObjectLiterals1.ts, 10, 36))
  }
  
-@@ -38,9 +38,9 @@
+@@= skipped -33, +33 lines =@@
  >_ : Symbol(_, Decl(usingDeclarationsWithObjectLiterals1.ts, 14, 7))
  >MyDisposable : Symbol(MyDisposable, Decl(usingDeclarationsWithObjectLiterals1.ts, 0, 0))
  >[Symbol.dispose] : Symbol([Symbol.dispose], Decl(usingDeclarationsWithObjectLiterals1.ts, 14, 27))
@@ -52,7 +52,7 @@
  >value : Symbol(value, Decl(usingDeclarationsWithObjectLiterals1.ts, 14, 50))
  >extra : Symbol(extra, Decl(usingDeclarationsWithObjectLiterals1.ts, 14, 60))
  }
-@@ -49,13 +49,13 @@
+@@= skipped -11, +11 lines =@@
  >MyAsyncDisposable : Symbol(MyAsyncDisposable, Decl(usingDeclarationsWithObjectLiterals1.ts, 15, 1))
  
    value: number;
@@ -70,7 +70,7 @@
  >Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2018.promise.d.ts, --, --))
  }
  
-@@ -65,18 +65,18 @@
+@@= skipped -16, +16 lines =@@
      await using _ = { async [Symbol.asyncDispose]() {} };
  >_ : Symbol(_, Decl(usingDeclarationsWithObjectLiterals1.ts, 24, 15))
  >[Symbol.asyncDispose] : Symbol([Symbol.asyncDispose], Decl(usingDeclarationsWithObjectLiterals1.ts, 24, 21))
@@ -93,7 +93,7 @@
  >value : Symbol(value, Decl(usingDeclarationsWithObjectLiterals1.ts, 28, 55))
    }
  
-@@ -87,9 +87,9 @@
+@@= skipped -22, +22 lines =@@
  
        async [Symbol.asyncDispose]() {},
  >[Symbol.asyncDispose] : Symbol([Symbol.asyncDispose], Decl(usingDeclarationsWithObjectLiterals1.ts, 32, 40))

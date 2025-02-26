@@ -1,6 +1,6 @@
 --- old.additionOperatorWithTypeParameter.symbols
 +++ new.additionOperatorWithTypeParameter.symbols
-@@ -4,8 +4,8 @@
+@@= skipped -4, +4 lines =@@
  // type parameter type is not a valid operand of addition operator
  enum E { a, b }
  >E : Symbol(E, Decl(additionOperatorWithTypeParameter.ts, 0, 0))

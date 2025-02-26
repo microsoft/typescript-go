@@ -1,6 +1,6 @@
 --- old.checkJsxChildrenProperty14.symbols
 +++ new.checkJsxChildrenProperty14.symbols
-@@ -8,31 +8,29 @@
+@@= skipped -8, +8 lines =@@
  >Prop : Symbol(Prop, Decl(file.tsx, 0, 32))
  
      a: number,
@@ -42,7 +42,7 @@
      }
  }
  
-@@ -41,8 +39,6 @@
+@@= skipped -33, +31 lines =@@
  >p : Symbol(p, Decl(file.tsx, 14, 23))
  
      return <h1>Just Another Button</h1>;
@@ -51,7 +51,7 @@
  }
  
  function Comp(p: Prop) {
-@@ -51,11 +47,9 @@
+@@= skipped -10, +8 lines =@@
  >Prop : Symbol(Prop, Decl(file.tsx, 0, 32))
  
      return <div>{p.b}</div>;
@@ -65,7 +65,7 @@
  }
  
  // OK
-@@ -90,15 +84,15 @@
+@@= skipped -39, +37 lines =@@
  >SingleChildProp : Symbol(SingleChildProp, Decl(file.tsx, 25, 69))
  
      a: number,
@@ -86,7 +86,7 @@
  }
  
  function SingleChildComp(p: SingleChildProp) {
-@@ -107,11 +101,9 @@
+@@= skipped -17, +17 lines =@@
  >SingleChildProp : Symbol(SingleChildProp, Decl(file.tsx, 25, 69))
  
      return <div>{p.b}</div>;

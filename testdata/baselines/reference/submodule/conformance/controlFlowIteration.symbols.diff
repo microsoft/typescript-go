@@ -1,6 +1,6 @@
 --- old.controlFlowIteration.symbols
 +++ new.controlFlowIteration.symbols
-@@ -22,17 +22,17 @@
+@@= skipped -22, +22 lines =@@
  >x : Symbol(x, Decl(controlFlowIteration.ts, 3, 7))
  
                  x.length;

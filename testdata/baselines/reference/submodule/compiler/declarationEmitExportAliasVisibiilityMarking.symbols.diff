@@ -1,6 +1,6 @@
 --- old.declarationEmitExportAliasVisibiilityMarking.symbols
 +++ new.declarationEmitExportAliasVisibiilityMarking.symbols
-@@ -27,9 +27,8 @@
+@@= skipped -27, +27 lines =@@
  === index.ts ===
  export let lazyCard = () => import('./Card').then(a => a.default);
  >lazyCard : Symbol(lazyCard, Decl(index.ts, 0, 10))

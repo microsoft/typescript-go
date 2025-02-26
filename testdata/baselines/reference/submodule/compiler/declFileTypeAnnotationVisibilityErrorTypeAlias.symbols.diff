@@ -1,6 +1,6 @@
 --- old.declFileTypeAnnotationVisibilityErrorTypeAlias.symbols
 +++ new.declFileTypeAnnotationVisibilityErrorTypeAlias.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Window : Symbol(Window, Decl(lib.dom.d.ts, --, --), Decl(lib.dom.d.ts, --, --), Decl(declFileTypeAnnotationVisibilityErrorTypeAlias.ts, 0, 0))
  
      someMethod();
@@ -9,7 +9,7 @@
  }
  
  module M {
-@@ -82,11 +82,11 @@
+@@= skipped -77, +77 lines =@@
      type t111 = m3.public1;
  >t111 : Symbol(t111, Decl(declFileTypeAnnotationVisibilityErrorTypeAlias.ts, 34, 30))
  >m3 : Symbol(m3, Decl(declFileTypeAnnotationVisibilityErrorTypeAlias.ts, 24, 5))

@@ -1,6 +1,6 @@
 --- old.restArgMissingName.symbols
 +++ new.restArgMissingName.symbols
-@@ -3,5 +3,5 @@
+@@= skipped -3, +3 lines =@@
  === restArgMissingName.ts ===
  function sum (...) {} 
  >sum : Symbol(sum, Decl(restArgMissingName.ts, 0, 0))

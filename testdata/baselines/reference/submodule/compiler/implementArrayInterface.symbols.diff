@@ -1,6 +1,6 @@
 --- old.implementArrayInterface.symbols
 +++ new.implementArrayInterface.symbols
-@@ -8,13 +8,13 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(implementArrayInterface.ts, 0, 22))
  
      toString(): string;
@@ -17,7 +17,7 @@
  >U : Symbol(U, Decl(implementArrayInterface.ts, 3, 11))
  >T : Symbol(T, Decl(implementArrayInterface.ts, 0, 22))
  >items : Symbol(items, Decl(implementArrayInterface.ts, 3, 26))
-@@ -22,40 +22,40 @@
+@@= skipped -14, +14 lines =@@
  >T : Symbol(T, Decl(implementArrayInterface.ts, 0, 22))
  
      concat(...items: T[]): T[];
@@ -66,7 +66,7 @@
  >compareFn : Symbol(compareFn, Decl(implementArrayInterface.ts, 11, 9))
  >a : Symbol(a, Decl(implementArrayInterface.ts, 11, 22))
  >T : Symbol(T, Decl(implementArrayInterface.ts, 0, 22))
-@@ -63,12 +63,12 @@
+@@= skipped -41, +41 lines =@@
  >T : Symbol(T, Decl(implementArrayInterface.ts, 0, 22))
  
      splice(start: number): T[];
@@ -81,7 +81,7 @@
  >start : Symbol(start, Decl(implementArrayInterface.ts, 13, 11))
  >deleteCount : Symbol(deleteCount, Decl(implementArrayInterface.ts, 13, 25))
  >items : Symbol(items, Decl(implementArrayInterface.ts, 13, 46))
-@@ -76,24 +76,24 @@
+@@= skipped -13, +13 lines =@@
  >T : Symbol(T, Decl(implementArrayInterface.ts, 0, 22))
  
      unshift(...items: T[]): number;
@@ -110,7 +110,7 @@
  >callbackfn : Symbol(callbackfn, Decl(implementArrayInterface.ts, 18, 10))
  >value : Symbol(value, Decl(implementArrayInterface.ts, 18, 23))
  >T : Symbol(T, Decl(implementArrayInterface.ts, 0, 22))
-@@ -103,7 +103,7 @@
+@@= skipped -27, +27 lines =@@
  >thisArg : Symbol(thisArg, Decl(implementArrayInterface.ts, 18, 71))
  
      some(callbackfn: (value: T, index: number, array: T[]) => boolean, thisArg?: any): boolean;
@@ -119,7 +119,7 @@
  >callbackfn : Symbol(callbackfn, Decl(implementArrayInterface.ts, 19, 9))
  >value : Symbol(value, Decl(implementArrayInterface.ts, 19, 22))
  >T : Symbol(T, Decl(implementArrayInterface.ts, 0, 22))
-@@ -113,7 +113,7 @@
+@@= skipped -10, +10 lines =@@
  >thisArg : Symbol(thisArg, Decl(implementArrayInterface.ts, 19, 70))
  
      forEach(callbackfn: (value: T, index: number, array: T[]) => void, thisArg?: any): void;
@@ -128,7 +128,7 @@
  >callbackfn : Symbol(callbackfn, Decl(implementArrayInterface.ts, 20, 12))
  >value : Symbol(value, Decl(implementArrayInterface.ts, 20, 25))
  >T : Symbol(T, Decl(implementArrayInterface.ts, 0, 22))
-@@ -123,7 +123,7 @@
+@@= skipped -10, +10 lines =@@
  >thisArg : Symbol(thisArg, Decl(implementArrayInterface.ts, 20, 70))
  
      map<U>(callbackfn: (value: T, index: number, array: T[]) => U, thisArg?: any): U[];
@@ -137,7 +137,7 @@
  >U : Symbol(U, Decl(implementArrayInterface.ts, 21, 8))
  >callbackfn : Symbol(callbackfn, Decl(implementArrayInterface.ts, 21, 11))
  >value : Symbol(value, Decl(implementArrayInterface.ts, 21, 24))
-@@ -136,7 +136,7 @@
+@@= skipped -13, +13 lines =@@
  >U : Symbol(U, Decl(implementArrayInterface.ts, 21, 8))
  
      filter(callbackfn: (value: T, index: number, array: T[]) => boolean, thisArg?: any): T[];
@@ -146,7 +146,7 @@
  >callbackfn : Symbol(callbackfn, Decl(implementArrayInterface.ts, 22, 11))
  >value : Symbol(value, Decl(implementArrayInterface.ts, 22, 24))
  >T : Symbol(T, Decl(implementArrayInterface.ts, 0, 22))
-@@ -147,7 +147,7 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(implementArrayInterface.ts, 0, 22))
  
      reduce(callbackfn: (previousValue: T, currentValue: T, currentIndex: number, array: T[]) => T, initialValue?: T): T;
@@ -155,7 +155,7 @@
  >callbackfn : Symbol(callbackfn, Decl(implementArrayInterface.ts, 23, 11))
  >previousValue : Symbol(previousValue, Decl(implementArrayInterface.ts, 23, 24))
  >T : Symbol(T, Decl(implementArrayInterface.ts, 0, 22))
-@@ -162,7 +162,7 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(implementArrayInterface.ts, 0, 22))
  
      reduce<U>(callbackfn: (previousValue: U, currentValue: T, currentIndex: number, array: T[]) => U, initialValue: U): U;
@@ -164,7 +164,7 @@
  >U : Symbol(U, Decl(implementArrayInterface.ts, 24, 11))
  >callbackfn : Symbol(callbackfn, Decl(implementArrayInterface.ts, 24, 14))
  >previousValue : Symbol(previousValue, Decl(implementArrayInterface.ts, 24, 27))
-@@ -178,7 +178,7 @@
+@@= skipped -16, +16 lines =@@
  >U : Symbol(U, Decl(implementArrayInterface.ts, 24, 11))
  
      reduceRight(callbackfn: (previousValue: T, currentValue: T, currentIndex: number, array: T[]) => T, initialValue?: T): T;
@@ -173,7 +173,7 @@
  >callbackfn : Symbol(callbackfn, Decl(implementArrayInterface.ts, 25, 16))
  >previousValue : Symbol(previousValue, Decl(implementArrayInterface.ts, 25, 29))
  >T : Symbol(T, Decl(implementArrayInterface.ts, 0, 22))
-@@ -193,7 +193,7 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(implementArrayInterface.ts, 0, 22))
  
      reduceRight<U>(callbackfn: (previousValue: U, currentValue: T, currentIndex: number, array: T[]) => U, initialValue: U): U;
@@ -182,7 +182,7 @@
  >U : Symbol(U, Decl(implementArrayInterface.ts, 26, 16))
  >callbackfn : Symbol(callbackfn, Decl(implementArrayInterface.ts, 26, 19))
  >previousValue : Symbol(previousValue, Decl(implementArrayInterface.ts, 26, 32))
-@@ -209,7 +209,7 @@
+@@= skipped -16, +16 lines =@@
  >U : Symbol(U, Decl(implementArrayInterface.ts, 26, 16))
  
      length: number;

@@ -1,6 +1,6 @@
 --- old.logicalAssignment4(target=es2021).symbols
 +++ new.logicalAssignment4(target=es2021).symbols
-@@ -6,9 +6,9 @@
+@@= skipped -6, +6 lines =@@
  >results : Symbol(results, Decl(logicalAssignment4.ts, 0, 14))
  
      (results ||= []).push(100);
@@ -12,7 +12,7 @@
  }
  
  function foo2(results: number[] | undefined) {
-@@ -16,9 +16,9 @@
+@@= skipped -10, +10 lines =@@
  >results : Symbol(results, Decl(logicalAssignment4.ts, 4, 14))
  
      (results ??= []).push(100);
@@ -24,7 +24,7 @@
  }
  
  function foo3(results: number[] | undefined) {
-@@ -29,9 +29,9 @@
+@@= skipped -13, +13 lines =@@
  >results : Symbol(results, Decl(logicalAssignment4.ts, 8, 14))
  
      results.push(100);
@@ -36,7 +36,7 @@
  }
  
  function foo4(results: number[] | undefined) {
-@@ -42,19 +42,19 @@
+@@= skipped -13, +13 lines =@@
  >results : Symbol(results, Decl(logicalAssignment4.ts, 13, 14))
  
      results.push(100);
@@ -60,7 +60,7 @@
  >ThingWithOriginal : Symbol(ThingWithOriginal, Decl(logicalAssignment4.ts, 16, 1))
  }
  declare const v: number
-@@ -72,14 +72,14 @@
+@@= skipped -30, +30 lines =@@
  
          if (thing &&= thing.original) {
  >thing : Symbol(thing, Decl(logicalAssignment4.ts, 23, 30))
@@ -79,7 +79,7 @@
          }
      }
      else if (v === 2) {
-@@ -90,14 +90,14 @@
+@@= skipped -18, +18 lines =@@
  >defaultValue : Symbol(defaultValue, Decl(logicalAssignment4.ts, 23, 67))
  
              thing.name;
@@ -98,7 +98,7 @@
          }
      }
      else if (v === 3) {
-@@ -108,14 +108,12 @@
+@@= skipped -18, +18 lines =@@
  >defaultValue : Symbol(defaultValue, Decl(logicalAssignment4.ts, 23, 67))
  
              thing.name;
@@ -115,7 +115,7 @@
          }
      }
      else {
-@@ -124,14 +122,12 @@
+@@= skipped -16, +14 lines =@@
  >defaultValue : Symbol(defaultValue, Decl(logicalAssignment4.ts, 23, 67))
  
              thing.name;

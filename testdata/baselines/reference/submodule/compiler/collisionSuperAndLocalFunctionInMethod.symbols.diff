@@ -1,6 +1,6 @@
 --- old.collisionSuperAndLocalFunctionInMethod.symbols
 +++ new.collisionSuperAndLocalFunctionInMethod.symbols
-@@ -8,14 +8,14 @@
+@@= skipped -8, +8 lines =@@
  >Foo : Symbol(Foo, Decl(collisionSuperAndLocalFunctionInMethod.ts, 1, 1))
  
      x() {
@@ -17,7 +17,7 @@
      }
  }
  class b extends Foo {
-@@ -23,14 +23,14 @@
+@@= skipped -15, +15 lines =@@
  >Foo : Symbol(Foo, Decl(collisionSuperAndLocalFunctionInMethod.ts, 1, 1))
  
      public foo() {
@@ -34,7 +34,7 @@
      }
  }
  class c extends Foo {
-@@ -38,7 +38,7 @@
+@@= skipped -15, +15 lines =@@
  >Foo : Symbol(Foo, Decl(collisionSuperAndLocalFunctionInMethod.ts, 1, 1))
  
      public foo() {
@@ -43,7 +43,7 @@
  
          var x = () => {
  >x : Symbol(x, Decl(collisionSuperAndLocalFunctionInMethod.ts, 20, 11))
-@@ -49,6 +49,6 @@
+@@= skipped -11, +11 lines =@@
          }
      }
      _super() { // No error

@@ -1,6 +1,6 @@
 --- old.jsFileImportPreservedWhenUsed.symbols
 +++ new.jsFileImportPreservedWhenUsed.symbols
-@@ -17,7 +17,7 @@
+@@= skipped -17, +17 lines =@@
  >LoDashStatic : Symbol(LoDashStatic, Decl(dash.d.ts, 0, 117))
  
      mapValues<T extends object, TResult>(obj: T | null | undefined, callback: ObjectIterator<T, TResult>): { [P in keyof T]: TResult };
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(dash.d.ts, 3, 14))
  >TResult : Symbol(TResult, Decl(dash.d.ts, 3, 31))
  >obj : Symbol(obj, Decl(dash.d.ts, 3, 41))
-@@ -56,7 +56,7 @@
+@@= skipped -39, +39 lines =@@
       * @param {object} vm
       */
      test(obj, vm) {
@@ -18,7 +18,7 @@
  >obj : Symbol(obj, Decl(index.js, 8, 9))
  >vm : Symbol(vm, Decl(index.js, 8, 13))
  
-@@ -65,9 +65,9 @@
+@@= skipped -9, +9 lines =@@
  
          vm.objects = _.mapValues(
  >vm : Symbol(vm, Decl(index.js, 8, 13))
@@ -30,7 +30,7 @@
  
              obj,
  >obj : Symbol(obj, Decl(index.js, 8, 9))
-@@ -75,7 +75,7 @@
+@@= skipped -10, +10 lines =@@
              object => ({ ...object, [INDEX_FIELD]: index++ }),
  >object : Symbol(object, Decl(index.js, 11, 16))
  >object : Symbol(object, Decl(index.js, 11, 16))

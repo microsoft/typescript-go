@@ -1,6 +1,6 @@
 --- old.declarationEmitFunctionDuplicateNamespace.symbols
 +++ new.declarationEmitFunctionDuplicateNamespace.symbols
-@@ -2,15 +2,15 @@
+@@= skipped -2, +2 lines =@@
  
  === declarationEmitFunctionDuplicateNamespace.ts ===
  function f(a: 0): 0;
@@ -19,7 +19,7 @@
  >a : Symbol(a, Decl(declarationEmitFunctionDuplicateNamespace.ts, 2, 11))
  
      return a;
-@@ -18,7 +18,7 @@
+@@= skipped -16, +16 lines =@@
  }
  
  f.x = 2;

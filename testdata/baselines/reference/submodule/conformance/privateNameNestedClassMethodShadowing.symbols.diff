@@ -1,6 +1,6 @@
 --- old.privateNameNestedClassMethodShadowing.symbols
 +++ new.privateNameNestedClassMethodShadowing.symbols
-@@ -5,36 +5,30 @@
+@@= skipped -5, +5 lines =@@
  >Base : Symbol(Base, Decl(privateNameNestedClassMethodShadowing.ts, 0, 0))
  
      #x() { };

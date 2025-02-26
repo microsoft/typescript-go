@@ -1,6 +1,6 @@
 --- old.privateNameFieldInitializer.symbols
 +++ new.privateNameFieldInitializer.symbols
-@@ -5,9 +5,9 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(privateNameFieldInitializer.ts, 0, 0))
  
      #field = 10;

@@ -1,6 +1,6 @@
 --- old.comparisonOperatorWithSubtypeObjectOnInstantiatedCallSignature.symbols
 +++ new.comparisonOperatorWithSubtypeObjectOnInstantiatedCallSignature.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Base : Symbol(Base, Decl(comparisonOperatorWithSubtypeObjectOnInstantiatedCallSignature.ts, 0, 0))
  
      public a: string;
@@ -9,7 +9,7 @@
  }
  
  class Derived extends Base {
-@@ -13,7 +13,7 @@
+@@= skipped -8, +8 lines =@@
  >Base : Symbol(Base, Decl(comparisonOperatorWithSubtypeObjectOnInstantiatedCallSignature.ts, 0, 0))
  
      public b: string;

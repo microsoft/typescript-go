@@ -1,6 +1,6 @@
 --- old.incrementOperatorWithUnsupportedBooleanType.symbols
 +++ new.incrementOperatorWithUnsupportedBooleanType.symbols
-@@ -12,10 +12,10 @@
+@@= skipped -12, +12 lines =@@
  >A : Symbol(A, Decl(incrementOperatorWithUnsupportedBooleanType.ts, 3, 40))
  
      public a: boolean;
@@ -13,7 +13,7 @@
  }
  module M {
  >M : Symbol(M, Decl(incrementOperatorWithUnsupportedBooleanType.ts, 8, 1))
-@@ -71,15 +71,15 @@
+@@= skipped -59, +59 lines =@@
  // boolean type expressions
  var ResultIsNumber9 = ++objA.a;
  >ResultIsNumber9 : Symbol(ResultIsNumber9, Decl(incrementOperatorWithUnsupportedBooleanType.ts, 30, 3))
@@ -33,7 +33,7 @@
  
  var ResultIsNumber11 = ++foo();
  >ResultIsNumber11 : Symbol(ResultIsNumber11, Decl(incrementOperatorWithUnsupportedBooleanType.ts, 32, 3))
-@@ -87,9 +87,9 @@
+@@= skipped -16, +16 lines =@@
  
  var ResultIsNumber12 = ++A.foo();
  >ResultIsNumber12 : Symbol(ResultIsNumber12, Decl(incrementOperatorWithUnsupportedBooleanType.ts, 33, 3))
@@ -45,7 +45,7 @@
  
  var ResultIsNumber13 = foo()++;
  >ResultIsNumber13 : Symbol(ResultIsNumber13, Decl(incrementOperatorWithUnsupportedBooleanType.ts, 35, 3))
-@@ -97,21 +97,21 @@
+@@= skipped -10, +10 lines =@@
  
  var ResultIsNumber14 = A.foo()++;
  >ResultIsNumber14 : Symbol(ResultIsNumber14, Decl(incrementOperatorWithUnsupportedBooleanType.ts, 36, 3))
@@ -73,7 +73,7 @@
  
  // miss assignment operators
  ++true;
-@@ -122,22 +122,22 @@
+@@= skipped -25, +25 lines =@@
  >foo : Symbol(foo, Decl(incrementOperatorWithUnsupportedBooleanType.ts, 1, 21))
  
  ++objA.a;
@@ -104,7 +104,7 @@
  
  true++;
  BOOLEAN++;
-@@ -147,20 +147,20 @@
+@@= skipped -25, +25 lines =@@
  >foo : Symbol(foo, Decl(incrementOperatorWithUnsupportedBooleanType.ts, 1, 21))
  
  objA.a++;

@@ -1,6 +1,6 @@
 --- old.innerTypeParameterShadowingOuterOne.symbols
 +++ new.innerTypeParameterShadowingOuterOne.symbols
-@@ -19,18 +19,18 @@
+@@= skipped -19, +19 lines =@@
  >T : Symbol(T, Decl(innerTypeParameterShadowingOuterOne.ts, 4, 15))
  
          x.toFixed();
@@ -23,7 +23,7 @@
  }
  
  function f2<T extends Date, U extends Date>() {
-@@ -52,18 +52,18 @@
+@@= skipped -33, +33 lines =@@
  >U : Symbol(U, Decl(innerTypeParameterShadowingOuterOne.ts, 13, 32))
  
          x.toFixed();

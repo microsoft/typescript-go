@@ -1,6 +1,6 @@
 --- old.subtypingWithCallSignaturesWithRestParameters.symbols
 +++ new.subtypingWithCallSignaturesWithRestParameters.symbols
-@@ -7,22 +7,22 @@
+@@= skipped -7, +7 lines =@@
  >Base : Symbol(Base, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 0, 0))
  
      a: (...args: number[]) => number;
@@ -27,7 +27,7 @@
  >x : Symbol(x, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 6, 9))
  >y : Symbol(y, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 6, 20))
  >z : Symbol(z, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 6, 32))
-@@ -33,7 +33,7 @@
+@@= skipped -26, +26 lines =@@
  >Base : Symbol(Base, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 0, 0))
  
      a: () => number; // ok, same number of required params
@@ -36,7 +36,7 @@
  }
  
  interface I1B extends Base {
-@@ -41,7 +41,7 @@
+@@= skipped -8, +8 lines =@@
  >Base : Symbol(Base, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 0, 0))
  
      a: (...args: number[]) => number; // ok, same number of required params
@@ -45,7 +45,7 @@
  >args : Symbol(args, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 14, 8))
  }
  
-@@ -50,7 +50,7 @@
+@@= skipped -9, +9 lines =@@
  >Base : Symbol(Base, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 0, 0))
  
      a: (...args: string[]) => number; // error, type mismatch
@@ -54,7 +54,7 @@
  >args : Symbol(args, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 18, 8))
  }
  
-@@ -59,7 +59,7 @@
+@@= skipped -9, +9 lines =@@
  >Base : Symbol(Base, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 0, 0))
  
      a: (x?: number) => number; // ok, same number of required params
@@ -63,7 +63,7 @@
  >x : Symbol(x, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 22, 8))
  }
  
-@@ -68,7 +68,7 @@
+@@= skipped -9, +9 lines =@@
  >Base : Symbol(Base, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 0, 0))
  
      a: (x?: number, y?: number, z?: number) => number; // ok, same number of required params
@@ -72,7 +72,7 @@
  >x : Symbol(x, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 26, 8))
  >y : Symbol(y, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 26, 19))
  >z : Symbol(z, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 26, 31))
-@@ -79,7 +79,7 @@
+@@= skipped -11, +11 lines =@@
  >Base : Symbol(Base, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 0, 0))
  
      a: (x: number) => number; // ok, all present params match
@@ -81,7 +81,7 @@
  >x : Symbol(x, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 30, 8))
  }
  
-@@ -88,7 +88,7 @@
+@@= skipped -9, +9 lines =@@
  >Base : Symbol(Base, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 0, 0))
  
      a: (x?: string) => number; // error, incompatible type
@@ -90,7 +90,7 @@
  >x : Symbol(x, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 34, 8))
  }
  
-@@ -99,7 +99,7 @@
+@@= skipped -11, +11 lines =@@
  >Base : Symbol(Base, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 0, 0))
  
      a2: () => number; // ok, fewer required params
@@ -99,7 +99,7 @@
  }
  
  interface I4B extends Base {
-@@ -107,7 +107,7 @@
+@@= skipped -8, +8 lines =@@
  >Base : Symbol(Base, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 0, 0))
  
      a2: (...args: number[]) => number; // ok, fewer required params
@@ -108,7 +108,7 @@
  >args : Symbol(args, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 44, 9))
  }
  
-@@ -116,7 +116,7 @@
+@@= skipped -9, +9 lines =@@
  >Base : Symbol(Base, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 0, 0))
  
      a2: (x?: number) => number; // ok, fewer required params
@@ -117,7 +117,7 @@
  >x : Symbol(x, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 48, 9))
  }
  
-@@ -125,7 +125,7 @@
+@@= skipped -9, +9 lines =@@
  >Base : Symbol(Base, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 0, 0))
  
      a2: (x: number) => number; // ok, same number of required params
@@ -126,7 +126,7 @@
  >x : Symbol(x, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 52, 9))
  }
  
-@@ -134,7 +134,7 @@
+@@= skipped -9, +9 lines =@@
  >Base : Symbol(Base, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 0, 0))
  
      a2: (x: number, ...args: number[]) => number; // ok, same number of required params
@@ -135,7 +135,7 @@
  >x : Symbol(x, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 56, 9))
  >args : Symbol(args, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 56, 19))
  }
-@@ -144,7 +144,7 @@
+@@= skipped -10, +10 lines =@@
  >Base : Symbol(Base, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 0, 0))
  
      a2: (x: number, ...args: string[]) => number; // error
@@ -144,7 +144,7 @@
  >x : Symbol(x, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 60, 9))
  >args : Symbol(args, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 60, 19))
  }
-@@ -154,7 +154,7 @@
+@@= skipped -10, +10 lines =@@
  >Base : Symbol(Base, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 0, 0))
  
      a2: (x: number, y: number) => number; // ok, all present params match
@@ -153,7 +153,7 @@
  >x : Symbol(x, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 64, 9))
  >y : Symbol(y, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 64, 19))
  }
-@@ -164,7 +164,7 @@
+@@= skipped -10, +10 lines =@@
  >Base : Symbol(Base, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 0, 0))
  
      a2: (x: number, y?: number) => number; // ok, same number of required params
@@ -162,7 +162,7 @@
  >x : Symbol(x, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 68, 9))
  >y : Symbol(y, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 68, 19))
  }
-@@ -176,7 +176,7 @@
+@@= skipped -12, +12 lines =@@
  >Base : Symbol(Base, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 0, 0))
  
      a3: () => number; // ok, fewer required params
@@ -171,7 +171,7 @@
  }
  
  interface I8 extends Base {
-@@ -184,7 +184,7 @@
+@@= skipped -8, +8 lines =@@
  >Base : Symbol(Base, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 0, 0))
  
      a3: (x?: number) => number; // ok, fewer required params
@@ -180,7 +180,7 @@
  >x : Symbol(x, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 78, 9))
  }
  
-@@ -193,7 +193,7 @@
+@@= skipped -9, +9 lines =@@
  >Base : Symbol(Base, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 0, 0))
  
      a3: (x: number) => number; // ok, same number of required params
@@ -189,7 +189,7 @@
  >x : Symbol(x, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 82, 9))
  }
  
-@@ -202,7 +202,7 @@
+@@= skipped -9, +9 lines =@@
  >Base : Symbol(Base, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 0, 0))
  
      a3: (x: number, y: string) => number;  // ok, all present params match
@@ -198,7 +198,7 @@
  >x : Symbol(x, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 86, 9))
  >y : Symbol(y, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 86, 19))
  }
-@@ -212,7 +212,7 @@
+@@= skipped -10, +10 lines =@@
  >Base : Symbol(Base, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 0, 0))
  
      a3: (x: number, y?: number, z?: number) => number;  // error
@@ -207,7 +207,7 @@
  >x : Symbol(x, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 90, 9))
  >y : Symbol(y, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 90, 19))
  >z : Symbol(z, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 90, 31))
-@@ -223,7 +223,7 @@
+@@= skipped -11, +11 lines =@@
  >Base : Symbol(Base, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 0, 0))
  
      a3: (x: number, ...z: number[]) => number;  // error
@@ -216,7 +216,7 @@
  >x : Symbol(x, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 94, 9))
  >z : Symbol(z, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 94, 19))
  }
-@@ -233,7 +233,7 @@
+@@= skipped -10, +10 lines =@@
  >Base : Symbol(Base, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 0, 0))
  
      a3: (x: string, y?: string, z?: string) => number;  // error, incompatible types
@@ -225,7 +225,7 @@
  >x : Symbol(x, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 98, 9))
  >y : Symbol(y, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 98, 19))
  >z : Symbol(z, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 98, 31))
-@@ -244,7 +244,7 @@
+@@= skipped -11, +11 lines =@@
  >Base : Symbol(Base, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 0, 0))
  
      a3: (x: number, ...z: string[]) => number;  // error
@@ -234,7 +234,7 @@
  >x : Symbol(x, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 102, 9))
  >z : Symbol(z, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 102, 19))
  }
-@@ -254,7 +254,7 @@
+@@= skipped -10, +10 lines =@@
  >Base : Symbol(Base, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 0, 0))
  
      a4: () => number; // ok, fewer required params
@@ -243,7 +243,7 @@
  }
  
  interface I12 extends Base {
-@@ -262,7 +262,7 @@
+@@= skipped -8, +8 lines =@@
  >Base : Symbol(Base, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 0, 0))
  
      a4: (x?: number, y?: number) => number; // error, type mismatch
@@ -252,7 +252,7 @@
  >x : Symbol(x, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 110, 9))
  >y : Symbol(y, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 110, 20))
  }
-@@ -272,7 +272,7 @@
+@@= skipped -10, +10 lines =@@
  >Base : Symbol(Base, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 0, 0))
  
      a4: (x: number) => number; // ok, all present params match
@@ -261,7 +261,7 @@
  >x : Symbol(x, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 114, 9))
  }
  
-@@ -281,7 +281,7 @@
+@@= skipped -9, +9 lines =@@
  >Base : Symbol(Base, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 0, 0))
  
      a4: (x: number, y?: number) => number;  // error, second param has type mismatch
@@ -270,7 +270,7 @@
  >x : Symbol(x, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 118, 9))
  >y : Symbol(y, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 118, 19))
  }
-@@ -291,7 +291,7 @@
+@@= skipped -10, +10 lines =@@
  >Base : Symbol(Base, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 0, 0))
  
      a4: (x?: number, y?: string) => number;  // ok, same number of required params with matching types
@@ -279,7 +279,7 @@
  >x : Symbol(x, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 122, 9))
  >y : Symbol(y, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 122, 20))
  }
-@@ -301,7 +301,7 @@
+@@= skipped -10, +10 lines =@@
  >Base : Symbol(Base, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 0, 0))
  
      a4: (x: number, ...args: string[]) => number;  // error, rest param has type mismatch
@@ -288,7 +288,7 @@
  >x : Symbol(x, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 126, 9))
  >args : Symbol(args, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 126, 19))
  }
-@@ -311,7 +311,7 @@
+@@= skipped -10, +10 lines =@@
  >Base : Symbol(Base, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 0, 0))
  
      a4: (...args: number[]) => number; // error

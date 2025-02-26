@@ -1,6 +1,6 @@
 --- old.subtypingWithCallSignatures3.symbols
 +++ new.subtypingWithCallSignatures3.symbols
-@@ -9,22 +9,22 @@
+@@= skipped -9, +9 lines =@@
  
      class Base { foo: string; }
  >Base : Symbol(Base, Decl(subtypingWithCallSignatures3.ts, 3, 15))

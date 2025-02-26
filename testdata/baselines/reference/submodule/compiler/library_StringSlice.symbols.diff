@@ -1,6 +1,6 @@
 --- old.library_StringSlice.symbols
 +++ new.library_StringSlice.symbols
-@@ -3,23 +3,23 @@
+@@= skipped -3, +3 lines =@@
  === library_StringSlice.ts ===
  // String.prototype.slice can have zero, one, or two arguments
  String.prototype.slice();

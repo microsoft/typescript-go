@@ -1,6 +1,6 @@
 --- old.asyncFunctionReturnType.symbols
 +++ new.asyncFunctionReturnType.symbols
-@@ -10,7 +10,7 @@
+@@= skipped -10, +10 lines =@@
  
  async function fAsyncExplicit(): Promise<[number, boolean]> {
  >fAsyncExplicit : Symbol(fAsyncExplicit, Decl(asyncFunctionReturnType.ts, 3, 1))
@@ -9,7 +9,7 @@
  
      // This is contextually typed as a tuple.
      return [1, true];
-@@ -21,102 +21,90 @@
+@@= skipped -11, +11 lines =@@
  >Obj : Symbol(Obj, Decl(asyncFunctionReturnType.ts, 8, 1))
  
      stringProp: string;
@@ -132,7 +132,7 @@
  }
  
  async function fGenericIndexedTypeForStringProp<TObj extends Obj>(obj: TObj): Promise<TObj["stringProp"]> {
-@@ -125,13 +113,13 @@
+@@= skipped -104, +92 lines =@@
  >Obj : Symbol(Obj, Decl(asyncFunctionReturnType.ts, 8, 1))
  >obj : Symbol(obj, Decl(asyncFunctionReturnType.ts, 40, 66))
  >TObj : Symbol(TObj, Decl(asyncFunctionReturnType.ts, 40, 48))
@@ -149,7 +149,7 @@
  }
  
  async function fGenericIndexedTypeForPromiseOfStringProp<TObj extends Obj>(obj: TObj): Promise<TObj["stringProp"]> {
-@@ -140,16 +128,13 @@
+@@= skipped -15, +15 lines =@@
  >Obj : Symbol(Obj, Decl(asyncFunctionReturnType.ts, 8, 1))
  >obj : Symbol(obj, Decl(asyncFunctionReturnType.ts, 44, 75))
  >TObj : Symbol(TObj, Decl(asyncFunctionReturnType.ts, 44, 57))
@@ -169,7 +169,7 @@
  }
  
  async function fGenericIndexedTypeForExplicitPromiseOfStringProp<TObj extends Obj>(obj: TObj): Promise<TObj["stringProp"]> {
-@@ -158,17 +143,14 @@
+@@= skipped -18, +15 lines =@@
  >Obj : Symbol(Obj, Decl(asyncFunctionReturnType.ts, 8, 1))
  >obj : Symbol(obj, Decl(asyncFunctionReturnType.ts, 48, 83))
  >TObj : Symbol(TObj, Decl(asyncFunctionReturnType.ts, 48, 65))
@@ -190,7 +190,7 @@
  }
  
  async function fGenericIndexedTypeForAnyProp<TObj extends Obj>(obj: TObj): Promise<TObj["anyProp"]> {
-@@ -177,13 +159,13 @@
+@@= skipped -19, +16 lines =@@
  >Obj : Symbol(Obj, Decl(asyncFunctionReturnType.ts, 8, 1))
  >obj : Symbol(obj, Decl(asyncFunctionReturnType.ts, 52, 63))
  >TObj : Symbol(TObj, Decl(asyncFunctionReturnType.ts, 52, 45))
@@ -207,7 +207,7 @@
  }
  
  async function fGenericIndexedTypeForPromiseOfAnyProp<TObj extends Obj>(obj: TObj): Promise<TObj["anyProp"]> {
-@@ -192,16 +174,13 @@
+@@= skipped -15, +15 lines =@@
  >Obj : Symbol(Obj, Decl(asyncFunctionReturnType.ts, 8, 1))
  >obj : Symbol(obj, Decl(asyncFunctionReturnType.ts, 56, 72))
  >TObj : Symbol(TObj, Decl(asyncFunctionReturnType.ts, 56, 54))
@@ -227,7 +227,7 @@
  }
  
  async function fGenericIndexedTypeForExplicitPromiseOfAnyProp<TObj extends Obj>(obj: TObj): Promise<TObj["anyProp"]> {
-@@ -210,17 +189,14 @@
+@@= skipped -18, +15 lines =@@
  >Obj : Symbol(Obj, Decl(asyncFunctionReturnType.ts, 8, 1))
  >obj : Symbol(obj, Decl(asyncFunctionReturnType.ts, 60, 80))
  >TObj : Symbol(TObj, Decl(asyncFunctionReturnType.ts, 60, 62))
@@ -248,7 +248,7 @@
  }
  
  async function fGenericIndexedTypeForKProp<TObj extends Obj, K extends keyof TObj>(obj: TObj, key: K): Promise<TObj[K]> {
-@@ -233,7 +209,7 @@
+@@= skipped -23, +20 lines =@@
  >TObj : Symbol(TObj, Decl(asyncFunctionReturnType.ts, 64, 43))
  >key : Symbol(key, Decl(asyncFunctionReturnType.ts, 64, 93))
  >K : Symbol(K, Decl(asyncFunctionReturnType.ts, 64, 60))
@@ -257,7 +257,7 @@
  >TObj : Symbol(TObj, Decl(asyncFunctionReturnType.ts, 64, 43))
  >K : Symbol(K, Decl(asyncFunctionReturnType.ts, 64, 60))
  
-@@ -252,14 +228,11 @@
+@@= skipped -19, +19 lines =@@
  >TObj : Symbol(TObj, Decl(asyncFunctionReturnType.ts, 68, 52))
  >key : Symbol(key, Decl(asyncFunctionReturnType.ts, 68, 102))
  >K : Symbol(K, Decl(asyncFunctionReturnType.ts, 68, 69))
@@ -273,7 +273,7 @@
  >obj : Symbol(obj, Decl(asyncFunctionReturnType.ts, 68, 92))
  >key : Symbol(key, Decl(asyncFunctionReturnType.ts, 68, 102))
  }
-@@ -274,14 +247,11 @@
+@@= skipped -22, +19 lines =@@
  >TObj : Symbol(TObj, Decl(asyncFunctionReturnType.ts, 72, 60))
  >key : Symbol(key, Decl(asyncFunctionReturnType.ts, 72, 110))
  >K : Symbol(K, Decl(asyncFunctionReturnType.ts, 72, 77))

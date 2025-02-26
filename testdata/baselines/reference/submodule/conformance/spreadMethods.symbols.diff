@@ -1,6 +1,6 @@
 --- old.spreadMethods.symbols
 +++ new.spreadMethods.symbols
-@@ -5,25 +5,25 @@
+@@= skipped -5, +5 lines =@@
  >K : Symbol(K, Decl(spreadMethods.ts, 0, 0))
  
      p = 12;
@@ -32,7 +32,7 @@
  }
  
  let k = new K()
-@@ -40,9 +40,9 @@
+@@= skipped -35, +35 lines =@@
  >k : Symbol(k, Decl(spreadMethods.ts, 11, 3))
  
  sk.p;
@@ -44,7 +44,7 @@
  
  sk.m(); // error
  >sk : Symbol(sk, Decl(spreadMethods.ts, 12, 3))
-@@ -51,9 +51,9 @@
+@@= skipped -11, +11 lines =@@
  >sk : Symbol(sk, Decl(spreadMethods.ts, 12, 3))
  
  ssk.p;
@@ -56,7 +56,7 @@
  
  ssk.m(); // error
  >ssk : Symbol(ssk, Decl(spreadMethods.ts, 13, 3))
-@@ -78,14 +78,14 @@
+@@= skipped -27, +27 lines =@@
  >i : Symbol(i, Decl(spreadMethods.ts, 21, 3))
  
  si.p;
@@ -75,7 +75,7 @@
  
  si.g; // ok
  >si.g : Symbol(g, Decl(spreadMethods.ts, 7, 14))
-@@ -93,14 +93,14 @@
+@@= skipped -15, +15 lines =@@
  >g : Symbol(g, Decl(spreadMethods.ts, 7, 14))
  
  ssi.p;

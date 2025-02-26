@@ -1,6 +1,6 @@
 --- old.noSubtypeReduction.symbols
 +++ new.noSubtypeReduction.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >IA : Symbol(IA, Decl(noSubtypeReduction.ts, 0, 0))
  
      arr: { A: number; }[];
@@ -9,7 +9,7 @@
  >A : Symbol(A, Decl(noSubtypeReduction.ts, 3, 10))
  }
  
-@@ -15,7 +15,7 @@
+@@= skipped -8, +8 lines =@@
  >IAB : Symbol(IAB, Decl(noSubtypeReduction.ts, 4, 1))
  
      arr: { A: number; B: number; }[];

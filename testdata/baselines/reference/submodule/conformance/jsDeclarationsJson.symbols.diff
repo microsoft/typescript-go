@@ -1,6 +1,6 @@
 --- old.jsDeclarationsJson.symbols
 +++ new.jsDeclarationsJson.symbols
-@@ -3,33 +3,7 @@
+@@= skipped -3, +3 lines =@@
  === index.js ===
  const j = require("./obj.json");
  >j : Symbol(j, Decl(index.js, 0, 5))

@@ -1,6 +1,6 @@
 --- old.baseCheck.symbols
 +++ new.baseCheck.symbols
-@@ -30,7 +30,7 @@
+@@= skipped -30, +30 lines =@@
      }
  
      m() {
@@ -9,7 +9,7 @@
  
          var loc=10;
  >loc : Symbol(loc, Decl(baseCheck.ts, 12, 11))
-@@ -40,29 +40,29 @@
+@@= skipped -10, +10 lines =@@
  class D extends C { constructor(public z: number) { super(this.z) }  } // too few params
  >D : Symbol(D, Decl(baseCheck.ts, 14, 1))
  >C : Symbol(C, Decl(baseCheck.ts, 0, 0))

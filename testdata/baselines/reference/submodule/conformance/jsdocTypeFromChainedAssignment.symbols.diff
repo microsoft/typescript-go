@@ -1,6 +1,6 @@
 --- old.jsdocTypeFromChainedAssignment.symbols
 +++ new.jsdocTypeFromChainedAssignment.symbols
-@@ -2,82 +2,60 @@
+@@= skipped -2, +2 lines =@@
  
  === a.js ===
  function A () {

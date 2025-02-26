@@ -1,6 +1,6 @@
 --- old.typeGuardIntersectionTypes.symbols
 +++ new.typeGuardIntersectionTypes.symbols
-@@ -5,21 +5,21 @@
+@@= skipped -5, +5 lines =@@
  >X : Symbol(X, Decl(typeGuardIntersectionTypes.ts, 0, 0))
  
      x: string;
@@ -25,7 +25,7 @@
  }
  
  declare function isX(obj: any): obj is X;
-@@ -76,14 +76,14 @@
+@@= skipped -71, +71 lines =@@
  >A : Symbol(A, Decl(typeGuardIntersectionTypes.ts, 23, 1))
  
    a: string;
@@ -42,7 +42,7 @@
  }
  
  // a type guard for B
-@@ -127,16 +127,16 @@
+@@= skipped -51, +51 lines =@@
  // Supported beast features
  interface Beast     { wings?: boolean; legs?: number }
  >Beast : Symbol(Beast, Decl(typeGuardIntersectionTypes.ts, 52, 38))
@@ -63,7 +63,7 @@
  
  // Beast feature detection via user-defined type guards
  function hasLegs(x: Beast): x is Legged { return x && typeof x.legs === 'number'; }
-@@ -146,9 +146,9 @@
+@@= skipped -19, +19 lines =@@
  >x : Symbol(x, Decl(typeGuardIntersectionTypes.ts, 60, 17))
  >Legged : Symbol(Legged, Decl(typeGuardIntersectionTypes.ts, 55, 54))
  >x : Symbol(x, Decl(typeGuardIntersectionTypes.ts, 60, 17))
@@ -75,7 +75,7 @@
  
  function hasWings(x: Beast): x is Winged { return x && !!x.wings; }
  >hasWings : Symbol(hasWings, Decl(typeGuardIntersectionTypes.ts, 60, 83))
-@@ -157,9 +157,9 @@
+@@= skipped -11, +11 lines =@@
  >x : Symbol(x, Decl(typeGuardIntersectionTypes.ts, 61, 18))
  >Winged : Symbol(Winged, Decl(typeGuardIntersectionTypes.ts, 56, 37))
  >x : Symbol(x, Decl(typeGuardIntersectionTypes.ts, 61, 18))
@@ -87,7 +87,7 @@
  
  // Function to identify a given beast by detecting its features
  function identifyBeast(beast: Beast) {
-@@ -178,17 +178,17 @@
+@@= skipped -21, +21 lines =@@
  >beast : Symbol(beast, Decl(typeGuardIntersectionTypes.ts, 64, 23))
  
              if (beast.legs === 4) {
@@ -109,7 +109,7 @@
  
                  log(`bird - 2 legs, wings`);
  >log : Symbol(log, Decl(typeGuardIntersectionTypes.ts, 48, 1))
-@@ -196,9 +196,9 @@
+@@= skipped -18, +18 lines =@@
              else {
                  log(`unknown - ${beast.legs} legs, wings`);
  >log : Symbol(log, Decl(typeGuardIntersectionTypes.ts, 48, 1))
@@ -121,7 +121,7 @@
              }
          }
  
-@@ -206,9 +206,9 @@
+@@= skipped -10, +10 lines =@@
          else {
              log(`manbearpig - ${beast.legs} legs, no wings`);
  >log : Symbol(log, Decl(typeGuardIntersectionTypes.ts, 48, 1))

@@ -1,6 +1,6 @@
 --- old.jsDeclarationsExportDefinePropertyEmit.symbols
 +++ new.jsDeclarationsExportDefinePropertyEmit.symbols
-@@ -2,37 +2,23 @@
+@@= skipped -2, +2 lines =@@
  
  === index.js ===
  Object.defineProperty(module.exports, "a", { value: function a() {} });
@@ -44,7 +44,7 @@
  >value : Symbol(value, Decl(index.js, 3, 48))
  
  /**
-@@ -46,13 +32,9 @@
+@@= skipped -44, +30 lines =@@
  >b : Symbol(b, Decl(index.js, 10, 13))
  
  Object.defineProperty(module.exports, "d", { value: d });
@@ -60,7 +60,7 @@
  >value : Symbol(value, Decl(index.js, 11, 44))
  >d : Symbol(d, Decl(index.js, 3, 65))
  
-@@ -69,13 +51,9 @@
+@@= skipped -23, +19 lines =@@
  >b : Symbol(b, Decl(index.js, 20, 13))
  
  Object.defineProperty(module.exports, "e", { value: e });
@@ -76,7 +76,7 @@
  >value : Symbol(value, Decl(index.js, 21, 44))
  >e : Symbol(e, Decl(index.js, 11, 57))
  
-@@ -91,32 +69,17 @@
+@@= skipped -22, +18 lines =@@
  >a : Symbol(a, Decl(index.js, 27, 11))
  }
  Object.defineProperty(module.exports, "f", { value: f });
@@ -113,7 +113,7 @@
  
  /**
   * @param {{x: string}} a
-@@ -128,21 +91,13 @@
+@@= skipped -37, +22 lines =@@
  >b : Symbol(b, Decl(index.js, 37, 13))
  
      return a.x && b.y();
@@ -137,7 +137,7 @@
  >value : Symbol(value, Decl(index.js, 40, 44))
  >g : Symbol(g, Decl(index.js, 31, 77))
  
-@@ -157,74 +112,40 @@
+@@= skipped -29, +21 lines =@@
  >b : Symbol(b, Decl(index.js, 47, 14))
  
      return a.x && b.y();

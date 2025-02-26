@@ -1,6 +1,6 @@
 --- old.typeofUsedBeforeBlockScoped.symbols
 +++ new.typeofUsedBeforeBlockScoped.symbols
-@@ -4,9 +4,9 @@
+@@= skipped -4, +4 lines =@@
  type T = typeof C & typeof C.s & typeof o & typeof o.n;
  >T : Symbol(T, Decl(typeofUsedBeforeBlockScoped.ts, 0, 0))
  >C : Symbol(C, Decl(typeofUsedBeforeBlockScoped.ts, 0, 55))
@@ -12,7 +12,7 @@
  >o : Symbol(o, Decl(typeofUsedBeforeBlockScoped.ts, 6, 3))
  >o.n : Symbol(n, Decl(typeofUsedBeforeBlockScoped.ts, 6, 9))
  >o : Symbol(o, Decl(typeofUsedBeforeBlockScoped.ts, 6, 3))
-@@ -16,7 +16,7 @@
+@@= skipped -12, +12 lines =@@
  >C : Symbol(C, Decl(typeofUsedBeforeBlockScoped.ts, 0, 55))
  
      static s = 2;

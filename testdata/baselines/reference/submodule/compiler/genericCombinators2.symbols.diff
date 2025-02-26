@@ -1,6 +1,6 @@
 --- old.genericCombinators2.symbols
 +++ new.genericCombinators2.symbols
-@@ -7,17 +7,17 @@
+@@= skipped -7, +7 lines =@@
  >U : Symbol(U, Decl(genericCombinators2.ts, 0, 23))
  
      length: number;
@@ -21,7 +21,7 @@
  >x : Symbol(x, Decl(genericCombinators2.ts, 3, 11))
  >T : Symbol(T, Decl(genericCombinators2.ts, 0, 21))
  >y : Symbol(y, Decl(genericCombinators2.ts, 3, 16))
-@@ -28,7 +28,7 @@
+@@= skipped -21, +21 lines =@@
  >Combinators : Symbol(Combinators, Decl(genericCombinators2.ts, 4, 1))
  
      map<T, U>(c: Collection<T, U>, f: (x: T, y: U) => any): Collection<any, any>;
@@ -30,7 +30,7 @@
  >T : Symbol(T, Decl(genericCombinators2.ts, 7, 8))
  >U : Symbol(U, Decl(genericCombinators2.ts, 7, 10))
  >c : Symbol(c, Decl(genericCombinators2.ts, 7, 14))
-@@ -43,7 +43,7 @@
+@@= skipped -15, +15 lines =@@
  >Collection : Symbol(Collection, Decl(genericCombinators2.ts, 0, 0))
  
      map<T, U, V>(c: Collection<T, U>, f: (x: T, y: U) => V): Collection<T, V>;
@@ -39,7 +39,7 @@
  >T : Symbol(T, Decl(genericCombinators2.ts, 8, 8))
  >U : Symbol(U, Decl(genericCombinators2.ts, 8, 10))
  >V : Symbol(V, Decl(genericCombinators2.ts, 8, 13))
-@@ -74,28 +74,28 @@
+@@= skipped -31, +31 lines =@@
  >rf1 : Symbol(rf1, Decl(genericCombinators2.ts, 13, 3))
  >x : Symbol(x, Decl(genericCombinators2.ts, 13, 11))
  >y : Symbol(y, Decl(genericCombinators2.ts, 13, 21))

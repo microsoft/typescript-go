@@ -1,6 +1,6 @@
 --- old.narrowingByDiscriminantInLoop.symbols
 +++ new.narrowingByDiscriminantInLoop.symbols
-@@ -12,14 +12,14 @@
+@@= skipped -12, +12 lines =@@
  >IDLTypeDescription : Symbol(IDLTypeDescription, Decl(narrowingByDiscriminantInLoop.ts, 2, 63))
  
      origin: string;
@@ -17,7 +17,7 @@
  >IDLMemberTypes : Symbol(IDLMemberTypes, Decl(narrowingByDiscriminantInLoop.ts, 0, 0))
  }
  
-@@ -27,10 +27,10 @@
+@@= skipped -15, +15 lines =@@
  >OperationMemberType : Symbol(OperationMemberType, Decl(narrowingByDiscriminantInLoop.ts, 10, 1))
  
      type: "operation";
@@ -30,7 +30,7 @@
  >IDLTypeDescription : Symbol(IDLTypeDescription, Decl(narrowingByDiscriminantInLoop.ts, 2, 63))
  }
  
-@@ -38,10 +38,10 @@
+@@= skipped -11, +11 lines =@@
  >ConstantMemberType : Symbol(ConstantMemberType, Decl(narrowingByDiscriminantInLoop.ts, 15, 1))
  
      type: "const";
@@ -43,7 +43,7 @@
  }
  
  function insertInterface(callbackType: InterfaceType) {
-@@ -51,36 +51,36 @@
+@@= skipped -13, +13 lines =@@
  
      for (const memberType of callbackType.members) {
  >memberType : Symbol(memberType, Decl(narrowingByDiscriminantInLoop.ts, 23, 14))
@@ -94,7 +94,7 @@
  >IDLTypeDescription : Symbol(IDLTypeDescription, Decl(narrowingByDiscriminantInLoop.ts, 2, 63))
          }
      }
-@@ -93,21 +93,21 @@
+@@= skipped -42, +42 lines =@@
  
      for (const memberType of callbackType.members) {
  >memberType : Symbol(memberType, Decl(narrowingByDiscriminantInLoop.ts, 35, 14))
@@ -124,7 +124,7 @@
          }
      }
  }
-@@ -118,26 +118,26 @@
+@@= skipped -25, +25 lines =@@
  >IDLMemberTypes : Symbol(IDLMemberTypes, Decl(narrowingByDiscriminantInLoop.ts, 0, 0))
  
      if (memberType.type === "const") {
@@ -161,7 +161,7 @@
      }
  }
  
-@@ -147,10 +147,10 @@
+@@= skipped -29, +29 lines =@@
  >A : Symbol(A, Decl(narrowingByDiscriminantInLoop.ts, 49, 1))
  
      kind: true;
@@ -174,7 +174,7 @@
  >a : Symbol(a, Decl(narrowingByDiscriminantInLoop.ts, 55, 11))
  }
  
-@@ -158,10 +158,10 @@
+@@= skipped -11, +11 lines =@@
  >B : Symbol(B, Decl(narrowingByDiscriminantInLoop.ts, 56, 1))
  
      kind: false;
@@ -187,7 +187,7 @@
  >b : Symbol(b, Decl(narrowingByDiscriminantInLoop.ts, 60, 11))
  }
  
-@@ -184,9 +184,9 @@
+@@= skipped -26, +26 lines =@@
  
              x.prop.a;
  >x.prop.a : Symbol(a, Decl(narrowingByDiscriminantInLoop.ts, 55, 11))
@@ -199,7 +199,7 @@
  >a : Symbol(a, Decl(narrowingByDiscriminantInLoop.ts, 55, 11))
          }
          if (x.kind === false) {
-@@ -196,9 +196,9 @@
+@@= skipped -12, +12 lines =@@
  
              x.prop.b;
  >x.prop.b : Symbol(b, Decl(narrowingByDiscriminantInLoop.ts, 60, 11))
@@ -211,7 +211,7 @@
  >b : Symbol(b, Decl(narrowingByDiscriminantInLoop.ts, 60, 11))
          }
      }
-@@ -218,9 +218,9 @@
+@@= skipped -22, +22 lines =@@
  
              x.prop.a;
  >x.prop.a : Symbol(a, Decl(narrowingByDiscriminantInLoop.ts, 55, 11))
@@ -223,7 +223,7 @@
  >a : Symbol(a, Decl(narrowingByDiscriminantInLoop.ts, 55, 11))
          }
          if (!x.kind) {
-@@ -230,9 +230,9 @@
+@@= skipped -12, +12 lines =@@
  
              x.prop.b;
  >x.prop.b : Symbol(b, Decl(narrowingByDiscriminantInLoop.ts, 60, 11))

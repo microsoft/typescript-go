@@ -1,6 +1,6 @@
 --- old.negateOperatorWithNumberType.symbols
 +++ new.negateOperatorWithNumberType.symbols
-@@ -15,10 +15,10 @@
+@@= skipped -15, +15 lines =@@
  >A : Symbol(A, Decl(negateOperatorWithNumberType.ts, 4, 36))
  
      public a: number;
@@ -13,7 +13,7 @@
  }
  module M {
  >M : Symbol(M, Decl(negateOperatorWithNumberType.ts, 9, 1))
-@@ -59,15 +59,15 @@
+@@= skipped -44, +44 lines =@@
  // number type expressions
  var ResultIsNumber6 = -objA.a;
  >ResultIsNumber6 : Symbol(ResultIsNumber6, Decl(negateOperatorWithNumberType.ts, 26, 3))
@@ -33,7 +33,7 @@
  
  var ResultIsNumber8 = -NUMBER1[0];
  >ResultIsNumber8 : Symbol(ResultIsNumber8, Decl(negateOperatorWithNumberType.ts, 28, 3))
-@@ -79,9 +79,9 @@
+@@= skipped -20, +20 lines =@@
  
  var ResultIsNumber10 = -A.foo();
  >ResultIsNumber10 : Symbol(ResultIsNumber10, Decl(negateOperatorWithNumberType.ts, 30, 3))
@@ -45,7 +45,7 @@
  
  var ResultIsNumber11 = -(NUMBER - NUMBER);
  >ResultIsNumber11 : Symbol(ResultIsNumber11, Decl(negateOperatorWithNumberType.ts, 31, 3))
-@@ -100,20 +100,20 @@
+@@= skipped -21, +21 lines =@@
  >foo : Symbol(foo, Decl(negateOperatorWithNumberType.ts, 2, 31))
  
  -objA.a;

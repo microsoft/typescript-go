@@ -1,6 +1,6 @@
 --- old.tsxUnionTypeComponent1.symbols
 +++ new.tsxUnionTypeComponent1.symbols
-@@ -8,28 +8,26 @@
+@@= skipped -8, +8 lines =@@
  >ComponentProps : Symbol(ComponentProps, Decl(file.tsx, 0, 32))
  
      AnyComponent: React.StatelessComponent<any> | React.ComponentClass<any>;
@@ -35,7 +35,7 @@
  
          return (<AnyComponent />);
  >AnyComponent : Symbol(AnyComponent, Decl(file.tsx, 8, 15))
-@@ -40,15 +38,13 @@
+@@= skipped -32, +30 lines =@@
  <MyComponent AnyComponent={() => <button>test</button>}/>
  >MyComponent : Symbol(MyComponent, Decl(file.tsx, 4, 1))
  >AnyComponent : Symbol(AnyComponent, Decl(file.tsx, 14, 12))

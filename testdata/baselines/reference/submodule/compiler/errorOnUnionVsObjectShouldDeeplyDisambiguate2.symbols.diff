@@ -1,6 +1,6 @@
 --- old.errorOnUnionVsObjectShouldDeeplyDisambiguate2.symbols
 +++ new.errorOnUnionVsObjectShouldDeeplyDisambiguate2.symbols
-@@ -5,47 +5,47 @@
+@@= skipped -5, +5 lines =@@
  >Stuff : Symbol(Stuff, Decl(errorOnUnionVsObjectShouldDeeplyDisambiguate2.ts, 0, 0))
  
    a?: () => Promise<number[]>;

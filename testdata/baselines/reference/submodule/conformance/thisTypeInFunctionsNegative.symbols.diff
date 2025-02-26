@@ -1,6 +1,6 @@
 --- old.thisTypeInFunctionsNegative.symbols
 +++ new.thisTypeInFunctionsNegative.symbols
-@@ -5,43 +5,43 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(thisTypeInFunctionsNegative.ts, 0, 0))
  
      n: number;
@@ -55,7 +55,7 @@
  >this : Symbol(this, Decl(thisTypeInFunctionsNegative.ts, 11, 21))
  >n : Symbol(n, Decl(thisTypeInFunctionsNegative.ts, 11, 28))
  >m : Symbol(m, Decl(thisTypeInFunctionsNegative.ts, 11, 39))
-@@ -53,7 +53,7 @@
+@@= skipped -48, +48 lines =@@
  >m : Symbol(m, Decl(thisTypeInFunctionsNegative.ts, 11, 39))
      }
      explicitVoid(this: void, m: number): number {
@@ -64,7 +64,7 @@
  >this : Symbol(this, Decl(thisTypeInFunctionsNegative.ts, 14, 17))
  >m : Symbol(m, Decl(thisTypeInFunctionsNegative.ts, 14, 28))
  
-@@ -66,29 +66,29 @@
+@@= skipped -13, +13 lines =@@
  >D : Symbol(D, Decl(thisTypeInFunctionsNegative.ts, 17, 1))
  
  	x: number;
@@ -101,7 +101,7 @@
  >m : Symbol(m, Decl(thisTypeInFunctionsNegative.ts, 23, 19))
  	}
  }
-@@ -96,28 +96,28 @@
+@@= skipped -30, +30 lines =@@
  >I : Symbol(I, Decl(thisTypeInFunctionsNegative.ts, 26, 1))
  
      a: number;
@@ -136,7 +136,7 @@
  >this : Symbol(this, Decl(thisTypeInFunctionsNegative.ts, 33, 17))
  }
  let impl: I = {
-@@ -148,26 +148,26 @@
+@@= skipped -52, +52 lines =@@
  >explicitThis : Symbol(explicitThis, Decl(thisTypeInFunctionsNegative.ts, 42, 32))
  
          return this.a;
@@ -169,7 +169,7 @@
  
  implExplicitInterface(); // error, no 'a' in 'void' 
  >implExplicitInterface : Symbol(implExplicitInterface, Decl(thisTypeInFunctionsNegative.ts, 49, 3))
-@@ -263,64 +263,64 @@
+@@= skipped -115, +115 lines =@@
  >C : Symbol(C, Decl(thisTypeInFunctionsNegative.ts, 0, 0))
  
  c.explicitC(); // not enough arguments
@@ -258,7 +258,7 @@
  
  // oops, this triggers contextual typing, which needs to be updated to understand that =>'s `this` is void.
  let specifiedToVoid: (this: void, x: number) => number = explicitStructural;
-@@ -364,27 +364,27 @@
+@@= skipped -101, +101 lines =@@
  
      explicitThis: c.explicitThis,
  >explicitThis : Symbol(explicitThis, Decl(thisTypeInFunctionsNegative.ts, 94, 10))
@@ -294,7 +294,7 @@
  
  };;
  
-@@ -401,86 +401,86 @@
+@@= skipped -37, +37 lines =@@
  
  // from differing object types
  c.explicitC = function(this: D, m: number) { return this.x + m };
@@ -419,7 +419,7 @@
  
  /// class-based polymorphic assignability (with inheritance!) ///
  
-@@ -488,25 +488,25 @@
+@@= skipped -87, +87 lines =@@
  >Base1 : Symbol(Base1, Decl(thisTypeInFunctionsNegative.ts, 116, 32))
  
      x: number
@@ -453,7 +453,7 @@
  >this : Symbol(this, Decl(thisTypeInFunctionsNegative.ts, 124, 26))
  >Base1 : Symbol(Base1, Decl(thisTypeInFunctionsNegative.ts, 116, 32))
  >this : Symbol(this, Decl(thisTypeInFunctionsNegative.ts, 124, 26))
-@@ -516,35 +516,35 @@
+@@= skipped -28, +28 lines =@@
  >Base1 : Symbol(Base1, Decl(thisTypeInFunctionsNegative.ts, 116, 32))
  
      y: number
@@ -498,7 +498,7 @@
  }
  
  
-@@ -565,28 +565,28 @@
+@@= skipped -49, +49 lines =@@
  >Derived2 : Symbol(Derived2, Decl(thisTypeInFunctionsNegative.ts, 133, 1))
  
  b1.polymorphic = b2.polymorphic // error, 'this.y' not in Base1: { x }
@@ -539,7 +539,7 @@
  
  ////// use this-type for construction with new ////
  function VoidThis(this: void) {
-@@ -605,7 +605,7 @@
+@@= skipped -40, +40 lines =@@
      constructor(this: ThisConstructor, private n: number) {
  >this : Symbol(this, Decl(thisTypeInFunctionsNegative.ts, 157, 16))
  >ThisConstructor : Symbol(ThisConstructor, Decl(thisTypeInFunctionsNegative.ts, 153, 30))
@@ -548,7 +548,7 @@
      }
  }
  interface ThisConstructorInterface {
-@@ -631,20 +631,20 @@
+@@= skipped -26, +26 lines =@@
  >modifiers : Symbol(modifiers, Decl(thisTypeInFunctionsNegative.ts, 164, 64))
  >this : Symbol(this, Decl(thisTypeInFunctionsNegative.ts, 167, 19))
  >C : Symbol(C, Decl(thisTypeInFunctionsNegative.ts, 0, 0))
@@ -573,7 +573,7 @@
  >C : Symbol(C, Decl(thisTypeInFunctionsNegative.ts, 0, 0))
  >this : Symbol(this, Decl(thisTypeInFunctionsNegative.ts, 169, 18))
  
-@@ -652,23 +652,23 @@
+@@= skipped -21, +21 lines =@@
  >decorated : Symbol(decorated, Decl(thisTypeInFunctionsNegative.ts, 169, 54))
  >this : Symbol(this, Decl(thisTypeInFunctionsNegative.ts, 170, 19))
  >C : Symbol(C, Decl(thisTypeInFunctionsNegative.ts, 0, 0))
@@ -602,7 +602,7 @@
  >this : Symbol(this, Decl(thisTypeInFunctionsNegative.ts, 174, 22))
  >m : Symbol(m, Decl(thisTypeInFunctionsNegative.ts, 174, 27))
  >m : Symbol(m, Decl(thisTypeInFunctionsNegative.ts, 174, 27))
-@@ -705,13 +705,13 @@
+@@= skipped -53, +53 lines =@@
  >Base2 : Symbol(Base2, Decl(thisTypeInFunctionsNegative.ts, 128, 1))
  
      f(this: this) {

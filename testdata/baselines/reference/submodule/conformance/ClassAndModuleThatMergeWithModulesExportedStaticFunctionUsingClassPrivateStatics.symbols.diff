@@ -1,6 +1,6 @@
 --- old.ClassAndModuleThatMergeWithModulesExportedStaticFunctionUsingClassPrivateStatics.symbols
 +++ new.ClassAndModuleThatMergeWithModulesExportedStaticFunctionUsingClassPrivateStatics.symbols
-@@ -6,14 +6,14 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(ClassAndModuleThatMergeWithModulesExportedStaticFunctionUsingClassPrivateStatics.ts, 0, 14))
  
      id: string;
@@ -18,7 +18,7 @@
  >id : Symbol(id, Decl(ClassAndModuleThatMergeWithModulesExportedStaticFunctionUsingClassPrivateStatics.ts, 4, 23))
  }
  
-@@ -30,9 +30,9 @@
+@@= skipped -24, +24 lines =@@
  >T : Symbol(T, Decl(ClassAndModuleThatMergeWithModulesExportedStaticFunctionUsingClassPrivateStatics.ts, 9, 23))
  
          return clodule.sfn('a');

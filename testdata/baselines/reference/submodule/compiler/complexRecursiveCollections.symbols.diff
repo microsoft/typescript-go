@@ -1,6 +1,6 @@
 --- old.complexRecursiveCollections.symbols
 +++ new.complexRecursiveCollections.symbols
-@@ -4,7 +4,7 @@
+@@= skipped -4, +4 lines =@@
  interface Ara<T> { t: T }
  >Ara : Symbol(Ara, Decl(complex.ts, 0, 0))
  >T : Symbol(T, Decl(complex.ts, 0, 14))
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(complex.ts, 0, 14))
  
  interface Collection<K, V> {
-@@ -13,7 +13,7 @@
+@@= skipped -9, +9 lines =@@
  >V : Symbol(V, Decl(complex.ts, 1, 23))
  
      map<M>(mapper: (value: V, key: K, iter: this) => M): Collection<K, M>;
@@ -18,7 +18,7 @@
  >M : Symbol(M, Decl(complex.ts, 2, 8))
  >mapper : Symbol(mapper, Decl(complex.ts, 2, 11))
  >value : Symbol(value, Decl(complex.ts, 2, 20))
-@@ -27,7 +27,7 @@
+@@= skipped -14, +14 lines =@@
  >M : Symbol(M, Decl(complex.ts, 2, 8))
  
      flatMap<M>(mapper: (value: V, key: K, iter: this) => Ara<M>, context?: any): Collection<K, M>;
@@ -27,7 +27,7 @@
  >M : Symbol(M, Decl(complex.ts, 3, 12))
  >mapper : Symbol(mapper, Decl(complex.ts, 3, 15))
  >value : Symbol(value, Decl(complex.ts, 3, 24))
-@@ -44,7 +44,7 @@
+@@= skipped -17, +17 lines =@@
  
      // these seem necessary to push it over the top for memory usage
      reduce<R>(reducer: (reduction: R, value: V, key: K, iter: this) => R, initialReduction: R, context?: any): R;
@@ -36,7 +36,7 @@
  >R : Symbol(R, Decl(complex.ts, 5, 11))
  >reducer : Symbol(reducer, Decl(complex.ts, 5, 14))
  >reduction : Symbol(reduction, Decl(complex.ts, 5, 24))
-@@ -61,7 +61,7 @@
+@@= skipped -17, +17 lines =@@
  >R : Symbol(R, Decl(complex.ts, 5, 11))
  
      reduce<R>(reducer: (reduction: V | R, value: V, key: K, iter: this) => R): R;
@@ -45,7 +45,7 @@
  >R : Symbol(R, Decl(complex.ts, 6, 11))
  >reducer : Symbol(reducer, Decl(complex.ts, 6, 14))
  >reduction : Symbol(reduction, Decl(complex.ts, 6, 24))
-@@ -76,7 +76,7 @@
+@@= skipped -15, +15 lines =@@
  >R : Symbol(R, Decl(complex.ts, 6, 11))
  
      toSeq(): Seq<K, V>;
@@ -54,7 +54,7 @@
  >Seq : Symbol(Seq, Decl(complex.ts, 8, 1))
  >K : Symbol(K, Decl(complex.ts, 1, 21))
  >V : Symbol(V, Decl(complex.ts, 1, 23))
-@@ -96,7 +96,7 @@
+@@= skipped -20, +20 lines =@@
  >T : Symbol(T, Decl(complex.ts, 11, 13))
  
      map<M>(mapper: (value: T, key: void, iter: this) => M): N1<M>;
@@ -63,7 +63,7 @@
  >M : Symbol(M, Decl(complex.ts, 12, 8))
  >mapper : Symbol(mapper, Decl(complex.ts, 12, 11))
  >value : Symbol(value, Decl(complex.ts, 12, 20))
-@@ -108,7 +108,7 @@
+@@= skipped -12, +12 lines =@@
  >M : Symbol(M, Decl(complex.ts, 12, 8))
  
      flatMap<M>(mapper: (value: T, key: void, iter: this) => Ara<M>, context?: any): N1<M>;
@@ -72,7 +72,7 @@
  >M : Symbol(M, Decl(complex.ts, 13, 12))
  >mapper : Symbol(mapper, Decl(complex.ts, 13, 15))
  >value : Symbol(value, Decl(complex.ts, 13, 24))
-@@ -128,7 +128,7 @@
+@@= skipped -20, +20 lines =@@
  >T : Symbol(T, Decl(complex.ts, 15, 13))
  
      map<M>(mapper: (value: T, key: void, iter: this) => M): N2<M>;
@@ -81,7 +81,7 @@
  >M : Symbol(M, Decl(complex.ts, 16, 8))
  >mapper : Symbol(mapper, Decl(complex.ts, 16, 11))
  >value : Symbol(value, Decl(complex.ts, 16, 20))
-@@ -140,7 +140,7 @@
+@@= skipped -12, +12 lines =@@
  >M : Symbol(M, Decl(complex.ts, 16, 8))
  
      flatMap<M>(mapper: (value: T, key: void, iter: this) => Ara<M>, context?: any): N2<M>;
@@ -90,7 +90,7 @@
  >M : Symbol(M, Decl(complex.ts, 17, 12))
  >mapper : Symbol(mapper, Decl(complex.ts, 17, 15))
  >value : Symbol(value, Decl(complex.ts, 17, 24))
-@@ -154,7 +154,7 @@
+@@= skipped -14, +14 lines =@@
  >M : Symbol(M, Decl(complex.ts, 17, 12))
  
      toSeq(): N2<T>;
@@ -99,7 +99,7 @@
  >N2 : Symbol(N2, Decl(complex.ts, 14, 1))
  >T : Symbol(T, Decl(complex.ts, 15, 13))
  }
-@@ -172,9 +172,9 @@
+@@= skipped -18, +18 lines =@@
  >key : Symbol(key, Decl(immutable.ts, 4, 50))
  >sequence : Symbol(sequence, Decl(immutable.ts, 4, 71))
  >Collection : Symbol(Collection, Decl(immutable.ts, 402, 3), Decl(immutable.ts, 403, 79), Decl(immutable.ts, 404, 80), Decl(immutable.ts, 331, 3), Decl(immutable.ts, 405, 86))
@@ -111,7 +111,7 @@
  >path : Symbol(path, Decl(immutable.ts, 4, 138))
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
  
-@@ -204,23 +204,23 @@
+@@= skipped -32, +32 lines =@@
  >maybeKeyed : Symbol(maybeKeyed, Decl(immutable.ts, 9, 26))
  >maybeKeyed : Symbol(maybeKeyed, Decl(immutable.ts, 9, 26))
  >Collection : Symbol(Collection, Decl(immutable.ts, 402, 3), Decl(immutable.ts, 403, 79), Decl(immutable.ts, 404, 80), Decl(immutable.ts, 331, 3), Decl(immutable.ts, 405, 86))
@@ -139,7 +139,7 @@
  
    export function isOrdered(maybeOrdered: any): boolean;
  >isOrdered : Symbol(isOrdered, Decl(immutable.ts, 11, 129))
-@@ -236,11 +236,11 @@
+@@= skipped -32, +32 lines =@@
  >ValueObject : Symbol(ValueObject, Decl(immutable.ts, 13, 76))
  
      equals(other: any): boolean;
@@ -153,7 +153,7 @@
    }
    export module List {
  >List : Symbol(List, Decl(immutable.ts, 21, 3), Decl(immutable.ts, 22, 36), Decl(immutable.ts, 23, 37), Decl(immutable.ts, 17, 3), Decl(immutable.ts, 24, 60))
-@@ -282,14 +282,14 @@
+@@= skipped -46, +46 lines =@@
    export interface List<T> extends Collection.Indexed<T> {
  >List : Symbol(List, Decl(immutable.ts, 21, 3), Decl(immutable.ts, 22, 36), Decl(immutable.ts, 23, 37), Decl(immutable.ts, 17, 3), Decl(immutable.ts, 24, 60))
  >T : Symbol(T, Decl(immutable.ts, 25, 24))
@@ -171,7 +171,7 @@
  >index : Symbol(index, Decl(immutable.ts, 27, 8))
  >value : Symbol(value, Decl(immutable.ts, 27, 22))
  >T : Symbol(T, Decl(immutable.ts, 25, 24))
-@@ -297,19 +297,19 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(immutable.ts, 25, 24))
  
      delete(index: number): List<T>;
@@ -194,7 +194,7 @@
  >index : Symbol(index, Decl(immutable.ts, 30, 11))
  >value : Symbol(value, Decl(immutable.ts, 30, 25))
  >T : Symbol(T, Decl(immutable.ts, 25, 24))
-@@ -317,12 +317,12 @@
+@@= skipped -20, +20 lines =@@
  >T : Symbol(T, Decl(immutable.ts, 25, 24))
  
      clear(): List<T>;
@@ -209,7 +209,7 @@
  >values : Symbol(values, Decl(immutable.ts, 32, 9))
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
  >T : Symbol(T, Decl(immutable.ts, 25, 24))
-@@ -330,12 +330,12 @@
+@@= skipped -13, +13 lines =@@
  >T : Symbol(T, Decl(immutable.ts, 25, 24))
  
      pop(): List<T>;
@@ -224,7 +224,7 @@
  >values : Symbol(values, Decl(immutable.ts, 34, 12))
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
  >T : Symbol(T, Decl(immutable.ts, 25, 24))
-@@ -343,12 +343,12 @@
+@@= skipped -13, +13 lines =@@
  >T : Symbol(T, Decl(immutable.ts, 25, 24))
  
      shift(): List<T>;
@@ -239,7 +239,7 @@
  >index : Symbol(index, Decl(immutable.ts, 36, 11))
  >notSetValue : Symbol(notSetValue, Decl(immutable.ts, 36, 25))
  >T : Symbol(T, Decl(immutable.ts, 25, 24))
-@@ -358,7 +358,7 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(immutable.ts, 25, 24))
  
      update(index: number, updater: (value: T) => T): this;
@@ -248,7 +248,7 @@
  >index : Symbol(index, Decl(immutable.ts, 37, 11))
  >updater : Symbol(updater, Decl(immutable.ts, 37, 25))
  >value : Symbol(value, Decl(immutable.ts, 37, 36))
-@@ -366,7 +366,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(immutable.ts, 25, 24))
  
      update<R>(updater: (value: this) => R): R;
@@ -257,7 +257,7 @@
  >R : Symbol(R, Decl(immutable.ts, 38, 11))
  >updater : Symbol(updater, Decl(immutable.ts, 38, 14))
  >value : Symbol(value, Decl(immutable.ts, 38, 24))
-@@ -374,17 +374,17 @@
+@@= skipped -8, +8 lines =@@
  >R : Symbol(R, Decl(immutable.ts, 38, 11))
  
      merge(...collections: Array<Collection.Indexed<T> | Array<T>>): this;
@@ -278,7 +278,7 @@
  >merger : Symbol(merger, Decl(immutable.ts, 40, 14))
  >oldVal : Symbol(oldVal, Decl(immutable.ts, 40, 23))
  >T : Symbol(T, Decl(immutable.ts, 25, 24))
-@@ -395,23 +395,23 @@
+@@= skipped -21, +21 lines =@@
  >collections : Symbol(collections, Decl(immutable.ts, 40, 63))
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
  >Collection : Symbol(Collection, Decl(immutable.ts, 402, 3), Decl(immutable.ts, 403, 79), Decl(immutable.ts, 404, 80), Decl(immutable.ts, 331, 3), Decl(immutable.ts, 405, 86))
@@ -306,7 +306,7 @@
  >merger : Symbol(merger, Decl(immutable.ts, 42, 18))
  >oldVal : Symbol(oldVal, Decl(immutable.ts, 42, 27))
  >T : Symbol(T, Decl(immutable.ts, 25, 24))
-@@ -422,36 +422,36 @@
+@@= skipped -27, +27 lines =@@
  >collections : Symbol(collections, Decl(immutable.ts, 42, 67))
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
  >Collection : Symbol(Collection, Decl(immutable.ts, 402, 3), Decl(immutable.ts, 403, 79), Decl(immutable.ts, 404, 80), Decl(immutable.ts, 331, 3), Decl(immutable.ts, 405, 86))
@@ -349,7 +349,7 @@
  >keyPath : Symbol(keyPath, Decl(immutable.ts, 48, 13))
  >Iterable : Symbol(Iterable, Decl(lib.es2015.iterable.d.ts, --, --))
  >notSetValue : Symbol(notSetValue, Decl(immutable.ts, 48, 36))
-@@ -459,21 +459,21 @@
+@@= skipped -37, +37 lines =@@
  >value : Symbol(value, Decl(immutable.ts, 48, 65))
  
      updateIn(keyPath: Iterable<any>, updater: (value: any) => any): this;
@@ -374,7 +374,7 @@
  >keyPath : Symbol(keyPath, Decl(immutable.ts, 51, 16))
  >Iterable : Symbol(Iterable, Decl(lib.es2015.iterable.d.ts, --, --))
  >collections : Symbol(collections, Decl(immutable.ts, 51, 39))
-@@ -481,19 +481,19 @@
+@@= skipped -22, +22 lines =@@
  
      // Transient changes
      withMutations(mutator: (mutable: this) => any): this;
@@ -398,7 +398,7 @@
  >C : Symbol(C, Decl(immutable.ts, 57, 11))
  >valuesOrCollections : Symbol(valuesOrCollections, Decl(immutable.ts, 57, 14))
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
-@@ -505,7 +505,7 @@
+@@= skipped -24, +24 lines =@@
  >C : Symbol(C, Decl(immutable.ts, 57, 11))
  
      map<M>(mapper: (value: T, key: number, iter: this) => M, context?: any): List<M>;
@@ -407,7 +407,7 @@
  >M : Symbol(M, Decl(immutable.ts, 58, 8))
  >mapper : Symbol(mapper, Decl(immutable.ts, 58, 11))
  >value : Symbol(value, Decl(immutable.ts, 58, 20))
-@@ -518,7 +518,7 @@
+@@= skipped -13, +13 lines =@@
  >M : Symbol(M, Decl(immutable.ts, 58, 8))
  
      flatMap<M>(mapper: (value: T, key: number, iter: this) => Iterable<M>, context?: any): List<M>;
@@ -416,7 +416,7 @@
  >M : Symbol(M, Decl(immutable.ts, 59, 12))
  >mapper : Symbol(mapper, Decl(immutable.ts, 59, 15))
  >value : Symbol(value, Decl(immutable.ts, 59, 24))
-@@ -532,7 +532,7 @@
+@@= skipped -14, +14 lines =@@
  >M : Symbol(M, Decl(immutable.ts, 59, 12))
  
      filter<F extends T>(predicate: (value: T, index: number, iter: this) => value is F, context?: any): List<F>;
@@ -425,7 +425,7 @@
  >F : Symbol(F, Decl(immutable.ts, 60, 11))
  >T : Symbol(T, Decl(immutable.ts, 25, 24))
  >predicate : Symbol(predicate, Decl(immutable.ts, 60, 24))
-@@ -547,7 +547,7 @@
+@@= skipped -15, +15 lines =@@
  >F : Symbol(F, Decl(immutable.ts, 60, 11))
  
      filter(predicate: (value: T, index: number, iter: this) => any, context?: any): this;
@@ -434,7 +434,7 @@
  >predicate : Symbol(predicate, Decl(immutable.ts, 61, 11))
  >value : Symbol(value, Decl(immutable.ts, 61, 23))
  >T : Symbol(T, Decl(immutable.ts, 25, 24))
-@@ -618,47 +618,47 @@
+@@= skipped -71, +71 lines =@@
  >Map : Symbol(Map, Decl(immutable.ts, 66, 3), Decl(immutable.ts, 67, 69), Decl(immutable.ts, 68, 71), Decl(immutable.ts, 69, 66), Decl(immutable.ts, 70, 41) ... and 2 more)
  >K : Symbol(K, Decl(immutable.ts, 72, 23))
  >V : Symbol(V, Decl(immutable.ts, 72, 25))
@@ -491,7 +491,7 @@
  >key : Symbol(key, Decl(immutable.ts, 80, 11))
  >K : Symbol(K, Decl(immutable.ts, 72, 23))
  >notSetValue : Symbol(notSetValue, Decl(immutable.ts, 80, 18))
-@@ -669,7 +669,7 @@
+@@= skipped -51, +51 lines =@@
  >V : Symbol(V, Decl(immutable.ts, 72, 25))
  
      update(key: K, updater: (value: V) => V): this;
@@ -500,7 +500,7 @@
  >key : Symbol(key, Decl(immutable.ts, 81, 11))
  >K : Symbol(K, Decl(immutable.ts, 72, 23))
  >updater : Symbol(updater, Decl(immutable.ts, 81, 18))
-@@ -678,7 +678,7 @@
+@@= skipped -9, +9 lines =@@
  >V : Symbol(V, Decl(immutable.ts, 72, 25))
  
      update<R>(updater: (value: this) => R): R;
@@ -509,7 +509,7 @@
  >R : Symbol(R, Decl(immutable.ts, 82, 11))
  >updater : Symbol(updater, Decl(immutable.ts, 82, 14))
  >value : Symbol(value, Decl(immutable.ts, 82, 24))
-@@ -686,7 +686,7 @@
+@@= skipped -8, +8 lines =@@
  >R : Symbol(R, Decl(immutable.ts, 82, 11))
  
      merge(...collections: Array<Collection<K, V> | {[key: string]: V}>): this;
@@ -518,7 +518,7 @@
  >collections : Symbol(collections, Decl(immutable.ts, 83, 10))
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
  >Collection : Symbol(Collection, Decl(immutable.ts, 402, 3), Decl(immutable.ts, 403, 79), Decl(immutable.ts, 404, 80), Decl(immutable.ts, 331, 3), Decl(immutable.ts, 405, 86))
-@@ -696,7 +696,7 @@
+@@= skipped -10, +10 lines =@@
  >V : Symbol(V, Decl(immutable.ts, 72, 25))
  
      mergeWith(merger: (oldVal: V, newVal: V, key: K) => V, ...collections: Array<Collection<K, V> | {[key: string]: V}>): this;
@@ -527,7 +527,7 @@
  >merger : Symbol(merger, Decl(immutable.ts, 84, 14))
  >oldVal : Symbol(oldVal, Decl(immutable.ts, 84, 23))
  >V : Symbol(V, Decl(immutable.ts, 72, 25))
-@@ -714,7 +714,7 @@
+@@= skipped -18, +18 lines =@@
  >V : Symbol(V, Decl(immutable.ts, 72, 25))
  
      mergeDeep(...collections: Array<Collection<K, V> | {[key: string]: V}>): this;
@@ -536,7 +536,7 @@
  >collections : Symbol(collections, Decl(immutable.ts, 85, 14))
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
  >Collection : Symbol(Collection, Decl(immutable.ts, 402, 3), Decl(immutable.ts, 403, 79), Decl(immutable.ts, 404, 80), Decl(immutable.ts, 331, 3), Decl(immutable.ts, 405, 86))
-@@ -724,7 +724,7 @@
+@@= skipped -10, +10 lines =@@
  >V : Symbol(V, Decl(immutable.ts, 72, 25))
  
      mergeDeepWith(merger: (oldVal: V, newVal: V, key: K) => V, ...collections: Array<Collection<K, V> | {[key: string]: V}>): this;
@@ -545,7 +545,7 @@
  >merger : Symbol(merger, Decl(immutable.ts, 86, 18))
  >oldVal : Symbol(oldVal, Decl(immutable.ts, 86, 27))
  >V : Symbol(V, Decl(immutable.ts, 72, 25))
-@@ -743,23 +743,23 @@
+@@= skipped -19, +19 lines =@@
  
      // Deep persistent changes
      setIn(keyPath: Iterable<any>, value: any): this;
@@ -573,7 +573,7 @@
  >keyPath : Symbol(keyPath, Decl(immutable.ts, 91, 13))
  >Iterable : Symbol(Iterable, Decl(lib.es2015.iterable.d.ts, --, --))
  >notSetValue : Symbol(notSetValue, Decl(immutable.ts, 91, 36))
-@@ -767,21 +767,21 @@
+@@= skipped -24, +24 lines =@@
  >value : Symbol(value, Decl(immutable.ts, 91, 65))
  
      updateIn(keyPath: Iterable<any>, updater: (value: any) => any): this;
@@ -598,7 +598,7 @@
  >keyPath : Symbol(keyPath, Decl(immutable.ts, 94, 16))
  >Iterable : Symbol(Iterable, Decl(lib.es2015.iterable.d.ts, --, --))
  >collections : Symbol(collections, Decl(immutable.ts, 94, 39))
-@@ -789,19 +789,19 @@
+@@= skipped -22, +22 lines =@@
  
      // Transient changes
      withMutations(mutator: (mutable: this) => any): this;
@@ -622,7 +622,7 @@
  >KC : Symbol(KC, Decl(immutable.ts, 100, 11))
  >VC : Symbol(VC, Decl(immutable.ts, 100, 14))
  >collections : Symbol(collections, Decl(immutable.ts, 100, 19))
-@@ -816,7 +816,7 @@
+@@= skipped -27, +27 lines =@@
  >VC : Symbol(VC, Decl(immutable.ts, 100, 14))
  
      concat<C>(...collections: Array<{[key: string]: C}>): Map<K | string, V | C>;
@@ -631,7 +631,7 @@
  >C : Symbol(C, Decl(immutable.ts, 101, 11))
  >collections : Symbol(collections, Decl(immutable.ts, 101, 14))
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
-@@ -828,7 +828,7 @@
+@@= skipped -12, +12 lines =@@
  >C : Symbol(C, Decl(immutable.ts, 101, 11))
  
      map<M>(mapper: (value: V, key: K, iter: this) => M, context?: any): Map<K, M>;
@@ -640,7 +640,7 @@
  >M : Symbol(M, Decl(immutable.ts, 102, 8))
  >mapper : Symbol(mapper, Decl(immutable.ts, 102, 11))
  >value : Symbol(value, Decl(immutable.ts, 102, 20))
-@@ -843,7 +843,7 @@
+@@= skipped -15, +15 lines =@@
  >M : Symbol(M, Decl(immutable.ts, 102, 8))
  
      mapKeys<M>(mapper: (key: K, value: V, iter: this) => M, context?: any): Map<M, V>;
@@ -649,7 +649,7 @@
  >M : Symbol(M, Decl(immutable.ts, 103, 12))
  >mapper : Symbol(mapper, Decl(immutable.ts, 103, 15))
  >key : Symbol(key, Decl(immutable.ts, 103, 24))
-@@ -858,7 +858,7 @@
+@@= skipped -15, +15 lines =@@
  >V : Symbol(V, Decl(immutable.ts, 72, 25))
  
      mapEntries<KM, VM>(mapper: (entry: [K, V], index: number, iter: this) => [KM, VM], context?: any): Map<KM, VM>;
@@ -658,7 +658,7 @@
  >KM : Symbol(KM, Decl(immutable.ts, 104, 15))
  >VM : Symbol(VM, Decl(immutable.ts, 104, 18))
  >mapper : Symbol(mapper, Decl(immutable.ts, 104, 23))
-@@ -875,7 +875,7 @@
+@@= skipped -17, +17 lines =@@
  >VM : Symbol(VM, Decl(immutable.ts, 104, 18))
  
      flatMap<M>(mapper: (value: V, key: K, iter: this) => Iterable<M>, context?: any): Map<any, any>;
@@ -667,7 +667,7 @@
  >M : Symbol(M, Decl(immutable.ts, 105, 12))
  >mapper : Symbol(mapper, Decl(immutable.ts, 105, 15))
  >value : Symbol(value, Decl(immutable.ts, 105, 24))
-@@ -889,7 +889,7 @@
+@@= skipped -14, +14 lines =@@
  >Map : Symbol(Map, Decl(immutable.ts, 66, 3), Decl(immutable.ts, 67, 69), Decl(immutable.ts, 68, 71), Decl(immutable.ts, 69, 66), Decl(immutable.ts, 70, 41) ... and 2 more)
  
      filter<F extends V>(predicate: (value: V, key: K, iter: this) => value is F, context?: any): Map<K, F>;
@@ -676,7 +676,7 @@
  >F : Symbol(F, Decl(immutable.ts, 106, 11))
  >V : Symbol(V, Decl(immutable.ts, 72, 25))
  >predicate : Symbol(predicate, Decl(immutable.ts, 106, 24))
-@@ -906,7 +906,7 @@
+@@= skipped -17, +17 lines =@@
  >F : Symbol(F, Decl(immutable.ts, 106, 11))
  
      filter(predicate: (value: V, key: K, iter: this) => any, context?: any): this;
@@ -685,7 +685,7 @@
  >predicate : Symbol(predicate, Decl(immutable.ts, 107, 11))
  >value : Symbol(value, Decl(immutable.ts, 107, 23))
  >V : Symbol(V, Decl(immutable.ts, 72, 25))
-@@ -978,7 +978,7 @@
+@@= skipped -72, +72 lines =@@
  
      // Sequence algorithms
      concat<KC, VC>(...collections: Array<Iterable<[KC, VC]>>): OrderedMap<K | KC, V | VC>;
@@ -694,7 +694,7 @@
  >KC : Symbol(KC, Decl(immutable.ts, 119, 11))
  >VC : Symbol(VC, Decl(immutable.ts, 119, 14))
  >collections : Symbol(collections, Decl(immutable.ts, 119, 19))
-@@ -993,7 +993,7 @@
+@@= skipped -15, +15 lines =@@
  >VC : Symbol(VC, Decl(immutable.ts, 119, 14))
  
      concat<C>(...collections: Array<{[key: string]: C}>): OrderedMap<K | string, V | C>;
@@ -703,7 +703,7 @@
  >C : Symbol(C, Decl(immutable.ts, 120, 11))
  >collections : Symbol(collections, Decl(immutable.ts, 120, 14))
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
-@@ -1005,7 +1005,7 @@
+@@= skipped -12, +12 lines =@@
  >C : Symbol(C, Decl(immutable.ts, 120, 11))
  
      map<M>(mapper: (value: V, key: K, iter: this) => M, context?: any): OrderedMap<K, M>;
@@ -712,7 +712,7 @@
  >M : Symbol(M, Decl(immutable.ts, 121, 8))
  >mapper : Symbol(mapper, Decl(immutable.ts, 121, 11))
  >value : Symbol(value, Decl(immutable.ts, 121, 20))
-@@ -1020,7 +1020,7 @@
+@@= skipped -15, +15 lines =@@
  >M : Symbol(M, Decl(immutable.ts, 121, 8))
  
      mapKeys<M>(mapper: (key: K, value: V, iter: this) => M, context?: any): OrderedMap<M, V>;
@@ -721,7 +721,7 @@
  >M : Symbol(M, Decl(immutable.ts, 122, 12))
  >mapper : Symbol(mapper, Decl(immutable.ts, 122, 15))
  >key : Symbol(key, Decl(immutable.ts, 122, 24))
-@@ -1035,7 +1035,7 @@
+@@= skipped -15, +15 lines =@@
  >V : Symbol(V, Decl(immutable.ts, 117, 32))
  
      mapEntries<KM, VM>(mapper: (entry: [K, V], index: number, iter: this) => [KM, VM], context?: any): OrderedMap<KM, VM>;
@@ -730,7 +730,7 @@
  >KM : Symbol(KM, Decl(immutable.ts, 123, 15))
  >VM : Symbol(VM, Decl(immutable.ts, 123, 18))
  >mapper : Symbol(mapper, Decl(immutable.ts, 123, 23))
-@@ -1052,7 +1052,7 @@
+@@= skipped -17, +17 lines =@@
  >VM : Symbol(VM, Decl(immutable.ts, 123, 18))
  
      flatMap<M>(mapper: (value: V, key: K, iter: this) => Iterable<M>, context?: any): OrderedMap<any, any>;
@@ -739,7 +739,7 @@
  >M : Symbol(M, Decl(immutable.ts, 124, 12))
  >mapper : Symbol(mapper, Decl(immutable.ts, 124, 15))
  >value : Symbol(value, Decl(immutable.ts, 124, 24))
-@@ -1066,7 +1066,7 @@
+@@= skipped -14, +14 lines =@@
  >OrderedMap : Symbol(OrderedMap, Decl(immutable.ts, 111, 3), Decl(immutable.ts, 112, 83), Decl(immutable.ts, 113, 85), Decl(immutable.ts, 114, 80), Decl(immutable.ts, 115, 55) ... and 2 more)
  
      filter<F extends V>(predicate: (value: V, key: K, iter: this) => value is F, context?: any): OrderedMap<K, F>;
@@ -748,7 +748,7 @@
  >F : Symbol(F, Decl(immutable.ts, 125, 11))
  >V : Symbol(V, Decl(immutable.ts, 117, 32))
  >predicate : Symbol(predicate, Decl(immutable.ts, 125, 24))
-@@ -1083,7 +1083,7 @@
+@@= skipped -17, +17 lines =@@
  >F : Symbol(F, Decl(immutable.ts, 125, 11))
  
      filter(predicate: (value: V, key: K, iter: this) => any, context?: any): this;
@@ -757,7 +757,7 @@
  >predicate : Symbol(predicate, Decl(immutable.ts, 126, 11))
  >value : Symbol(value, Decl(immutable.ts, 126, 23))
  >V : Symbol(V, Decl(immutable.ts, 117, 32))
-@@ -1167,32 +1167,32 @@
+@@= skipped -84, +84 lines =@@
    export interface Set<T> extends Collection.Set<T> {
  >Set : Symbol(Set, Decl(immutable.ts, 135, 3), Decl(immutable.ts, 136, 34), Decl(immutable.ts, 137, 35), Decl(immutable.ts, 127, 3), Decl(immutable.ts, 138, 58))
  >T : Symbol(T, Decl(immutable.ts, 139, 23))
@@ -797,7 +797,7 @@
  >collections : Symbol(collections, Decl(immutable.ts, 145, 10))
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
  >Collection : Symbol(Collection, Decl(immutable.ts, 402, 3), Decl(immutable.ts, 403, 79), Decl(immutable.ts, 404, 80), Decl(immutable.ts, 331, 3), Decl(immutable.ts, 405, 86))
-@@ -1201,7 +1201,7 @@
+@@= skipped -34, +34 lines =@@
  >T : Symbol(T, Decl(immutable.ts, 139, 23))
  
      merge(...collections: Array<Collection<any, T> | Array<T>>): this;
@@ -806,7 +806,7 @@
  >collections : Symbol(collections, Decl(immutable.ts, 146, 10))
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
  >Collection : Symbol(Collection, Decl(immutable.ts, 402, 3), Decl(immutable.ts, 403, 79), Decl(immutable.ts, 404, 80), Decl(immutable.ts, 331, 3), Decl(immutable.ts, 405, 86))
-@@ -1210,7 +1210,7 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(immutable.ts, 139, 23))
  
      intersect(...collections: Array<Collection<any, T> | Array<T>>): this;
@@ -815,7 +815,7 @@
  >collections : Symbol(collections, Decl(immutable.ts, 147, 14))
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
  >Collection : Symbol(Collection, Decl(immutable.ts, 402, 3), Decl(immutable.ts, 403, 79), Decl(immutable.ts, 404, 80), Decl(immutable.ts, 331, 3), Decl(immutable.ts, 405, 86))
-@@ -1219,7 +1219,7 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(immutable.ts, 139, 23))
  
      subtract(...collections: Array<Collection<any, T> | Array<T>>): this;
@@ -824,7 +824,7 @@
  >collections : Symbol(collections, Decl(immutable.ts, 148, 13))
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
  >Collection : Symbol(Collection, Decl(immutable.ts, 402, 3), Decl(immutable.ts, 403, 79), Decl(immutable.ts, 404, 80), Decl(immutable.ts, 331, 3), Decl(immutable.ts, 405, 86))
-@@ -1229,19 +1229,19 @@
+@@= skipped -10, +10 lines =@@
  
      // Transient changes
      withMutations(mutator: (mutable: this) => any): this;
@@ -848,7 +848,7 @@
  >C : Symbol(C, Decl(immutable.ts, 154, 11))
  >valuesOrCollections : Symbol(valuesOrCollections, Decl(immutable.ts, 154, 14))
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
-@@ -1253,7 +1253,7 @@
+@@= skipped -24, +24 lines =@@
  >C : Symbol(C, Decl(immutable.ts, 154, 11))
  
      map<M>(mapper: (value: T, key: never, iter: this) => M, context?: any): Set<M>;
@@ -857,7 +857,7 @@
  >M : Symbol(M, Decl(immutable.ts, 155, 8))
  >mapper : Symbol(mapper, Decl(immutable.ts, 155, 11))
  >value : Symbol(value, Decl(immutable.ts, 155, 20))
-@@ -1266,7 +1266,7 @@
+@@= skipped -13, +13 lines =@@
  >M : Symbol(M, Decl(immutable.ts, 155, 8))
  
      flatMap<M>(mapper: (value: T, key: never, iter: this) => Iterable<M>, context?: any): Set<M>;
@@ -866,7 +866,7 @@
  >M : Symbol(M, Decl(immutable.ts, 156, 12))
  >mapper : Symbol(mapper, Decl(immutable.ts, 156, 15))
  >value : Symbol(value, Decl(immutable.ts, 156, 24))
-@@ -1280,7 +1280,7 @@
+@@= skipped -14, +14 lines =@@
  >M : Symbol(M, Decl(immutable.ts, 156, 12))
  
      filter<F extends T>(predicate: (value: T, key: never, iter: this) => value is F, context?: any): Set<F>;
@@ -875,7 +875,7 @@
  >F : Symbol(F, Decl(immutable.ts, 157, 11))
  >T : Symbol(T, Decl(immutable.ts, 139, 23))
  >predicate : Symbol(predicate, Decl(immutable.ts, 157, 24))
-@@ -1295,7 +1295,7 @@
+@@= skipped -15, +15 lines =@@
  >F : Symbol(F, Decl(immutable.ts, 157, 11))
  
      filter(predicate: (value: T, key: never, iter: this) => any, context?: any): this;
@@ -884,7 +884,7 @@
  >predicate : Symbol(predicate, Decl(immutable.ts, 158, 11))
  >value : Symbol(value, Decl(immutable.ts, 158, 23))
  >T : Symbol(T, Decl(immutable.ts, 139, 23))
-@@ -1361,7 +1361,7 @@
+@@= skipped -66, +66 lines =@@
  
      // Sequence algorithms
      concat<C>(...valuesOrCollections: Array<Iterable<C> | C>): OrderedSet<T | C>;
@@ -893,7 +893,7 @@
  >C : Symbol(C, Decl(immutable.ts, 171, 11))
  >valuesOrCollections : Symbol(valuesOrCollections, Decl(immutable.ts, 171, 14))
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
-@@ -1373,7 +1373,7 @@
+@@= skipped -12, +12 lines =@@
  >C : Symbol(C, Decl(immutable.ts, 171, 11))
  
      map<M>(mapper: (value: T, key: never, iter: this) => M, context?: any): OrderedSet<M>;
@@ -902,7 +902,7 @@
  >M : Symbol(M, Decl(immutable.ts, 172, 8))
  >mapper : Symbol(mapper, Decl(immutable.ts, 172, 11))
  >value : Symbol(value, Decl(immutable.ts, 172, 20))
-@@ -1386,7 +1386,7 @@
+@@= skipped -13, +13 lines =@@
  >M : Symbol(M, Decl(immutable.ts, 172, 8))
  
      flatMap<M>(mapper: (value: T, key: never, iter: this) => Iterable<M>, context?: any): OrderedSet<M>;
@@ -911,7 +911,7 @@
  >M : Symbol(M, Decl(immutable.ts, 173, 12))
  >mapper : Symbol(mapper, Decl(immutable.ts, 173, 15))
  >value : Symbol(value, Decl(immutable.ts, 173, 24))
-@@ -1400,7 +1400,7 @@
+@@= skipped -14, +14 lines =@@
  >M : Symbol(M, Decl(immutable.ts, 173, 12))
  
      filter<F extends T>(predicate: (value: T, key: never, iter: this) => value is F, context?: any): OrderedSet<F>;
@@ -920,7 +920,7 @@
  >F : Symbol(F, Decl(immutable.ts, 174, 11))
  >T : Symbol(T, Decl(immutable.ts, 169, 30))
  >predicate : Symbol(predicate, Decl(immutable.ts, 174, 24))
-@@ -1415,7 +1415,7 @@
+@@= skipped -15, +15 lines =@@
  >F : Symbol(F, Decl(immutable.ts, 174, 11))
  
      filter(predicate: (value: T, key: never, iter: this) => any, context?: any): this;
@@ -929,7 +929,7 @@
  >predicate : Symbol(predicate, Decl(immutable.ts, 175, 11))
  >value : Symbol(value, Decl(immutable.ts, 175, 23))
  >T : Symbol(T, Decl(immutable.ts, 169, 30))
-@@ -1424,14 +1424,14 @@
+@@= skipped -9, +9 lines =@@
  >context : Symbol(context, Decl(immutable.ts, 175, 64))
  
      zip(...collections: Array<Collection<any, any>>): OrderedSet<any>;
@@ -946,7 +946,7 @@
  >U : Symbol(U, Decl(immutable.ts, 177, 12))
  >Z : Symbol(Z, Decl(immutable.ts, 177, 14))
  >zipper : Symbol(zipper, Decl(immutable.ts, 177, 18))
-@@ -1447,7 +1447,7 @@
+@@= skipped -23, +23 lines =@@
  >Z : Symbol(Z, Decl(immutable.ts, 177, 14))
  
      zipWith<U, V, Z>(zipper: (value: T, otherValue: U, thirdValue: V) => Z, otherCollection: Collection<any, U>, thirdCollection: Collection<any, V>): OrderedSet<Z>;
@@ -955,7 +955,7 @@
  >U : Symbol(U, Decl(immutable.ts, 178, 12))
  >V : Symbol(V, Decl(immutable.ts, 178, 14))
  >Z : Symbol(Z, Decl(immutable.ts, 178, 17))
-@@ -1469,7 +1469,7 @@
+@@= skipped -22, +22 lines =@@
  >Z : Symbol(Z, Decl(immutable.ts, 178, 17))
  
      zipWith<Z>(zipper: (...any: Array<any>) => Z, ...collections: Array<Collection<any, any>>): OrderedSet<Z>;
@@ -964,7 +964,7 @@
  >Z : Symbol(Z, Decl(immutable.ts, 179, 12))
  >zipper : Symbol(zipper, Decl(immutable.ts, 179, 15))
  >any : Symbol(any, Decl(immutable.ts, 179, 24))
-@@ -1521,24 +1521,24 @@
+@@= skipped -52, +52 lines =@@
    export interface Stack<T> extends Collection.Indexed<T> {
  >Stack : Symbol(Stack, Decl(immutable.ts, 184, 3), Decl(immutable.ts, 185, 38), Decl(immutable.ts, 186, 39), Decl(immutable.ts, 180, 3), Decl(immutable.ts, 187, 62))
  >T : Symbol(T, Decl(immutable.ts, 188, 25))
@@ -994,7 +994,7 @@
  >values : Symbol(values, Decl(immutable.ts, 193, 12))
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
  >T : Symbol(T, Decl(immutable.ts, 188, 25))
-@@ -1546,7 +1546,7 @@
+@@= skipped -25, +25 lines =@@
  >T : Symbol(T, Decl(immutable.ts, 188, 25))
  
      unshiftAll(iter: Iterable<T>): Stack<T>;
@@ -1003,7 +1003,7 @@
  >iter : Symbol(iter, Decl(immutable.ts, 194, 15))
  >Iterable : Symbol(Iterable, Decl(lib.es2015.iterable.d.ts, --, --))
  >T : Symbol(T, Decl(immutable.ts, 188, 25))
-@@ -1554,12 +1554,12 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(immutable.ts, 188, 25))
  
      shift(): Stack<T>;
@@ -1018,7 +1018,7 @@
  >values : Symbol(values, Decl(immutable.ts, 196, 9))
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
  >T : Symbol(T, Decl(immutable.ts, 188, 25))
-@@ -1567,7 +1567,7 @@
+@@= skipped -13, +13 lines =@@
  >T : Symbol(T, Decl(immutable.ts, 188, 25))
  
      pushAll(iter: Iterable<T>): Stack<T>;
@@ -1027,7 +1027,7 @@
  >iter : Symbol(iter, Decl(immutable.ts, 197, 12))
  >Iterable : Symbol(Iterable, Decl(lib.es2015.iterable.d.ts, --, --))
  >T : Symbol(T, Decl(immutable.ts, 188, 25))
-@@ -1575,25 +1575,25 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(immutable.ts, 188, 25))
  
      pop(): Stack<T>;
@@ -1058,7 +1058,7 @@
  >C : Symbol(C, Decl(immutable.ts, 204, 11))
  >valuesOrCollections : Symbol(valuesOrCollections, Decl(immutable.ts, 204, 14))
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
-@@ -1605,7 +1605,7 @@
+@@= skipped -30, +30 lines =@@
  >C : Symbol(C, Decl(immutable.ts, 204, 11))
  
      map<M>(mapper: (value: T, key: number, iter: this) => M, context?: any): Stack<M>;
@@ -1067,7 +1067,7 @@
  >M : Symbol(M, Decl(immutable.ts, 205, 8))
  >mapper : Symbol(mapper, Decl(immutable.ts, 205, 11))
  >value : Symbol(value, Decl(immutable.ts, 205, 20))
-@@ -1618,7 +1618,7 @@
+@@= skipped -13, +13 lines =@@
  >M : Symbol(M, Decl(immutable.ts, 205, 8))
  
      flatMap<M>(mapper: (value: T, key: number, iter: this) => Iterable<M>, context?: any): Stack<M>;
@@ -1076,7 +1076,7 @@
  >M : Symbol(M, Decl(immutable.ts, 206, 12))
  >mapper : Symbol(mapper, Decl(immutable.ts, 206, 15))
  >value : Symbol(value, Decl(immutable.ts, 206, 24))
-@@ -1632,7 +1632,7 @@
+@@= skipped -14, +14 lines =@@
  >M : Symbol(M, Decl(immutable.ts, 206, 12))
  
      filter<F extends T>(predicate: (value: T, index: number, iter: this) => value is F, context?: any): Set<F>;
@@ -1085,7 +1085,7 @@
  >F : Symbol(F, Decl(immutable.ts, 207, 11))
  >T : Symbol(T, Decl(immutable.ts, 188, 25))
  >predicate : Symbol(predicate, Decl(immutable.ts, 207, 24))
-@@ -1647,7 +1647,7 @@
+@@= skipped -15, +15 lines =@@
  >F : Symbol(F, Decl(immutable.ts, 207, 11))
  
      filter(predicate: (value: T, index: number, iter: this) => any, context?: any): this;
@@ -1094,7 +1094,7 @@
  >predicate : Symbol(predicate, Decl(immutable.ts, 208, 11))
  >value : Symbol(value, Decl(immutable.ts, 208, 23))
  >T : Symbol(T, Decl(immutable.ts, 188, 25))
-@@ -1661,7 +1661,7 @@
+@@= skipped -14, +14 lines =@@
  >end : Symbol(end, Decl(immutable.ts, 210, 39))
  >step : Symbol(step, Decl(immutable.ts, 210, 53))
  >Seq : Symbol(Seq, Decl(immutable.ts, 314, 3), Decl(immutable.ts, 315, 58), Decl(immutable.ts, 316, 81), Decl(immutable.ts, 317, 76), Decl(immutable.ts, 318, 68) ... and 4 more)
@@ -1103,7 +1103,7 @@
  
    export function Repeat<T>(value: T, times?: number): Seq.Indexed<T>;
  >Repeat : Symbol(Repeat, Decl(immutable.ts, 210, 90))
-@@ -1670,7 +1670,7 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(immutable.ts, 211, 25))
  >times : Symbol(times, Decl(immutable.ts, 211, 37))
  >Seq : Symbol(Seq, Decl(immutable.ts, 314, 3), Decl(immutable.ts, 315, 58), Decl(immutable.ts, 316, 81), Decl(immutable.ts, 317, 76), Decl(immutable.ts, 318, 68) ... and 4 more)
@@ -1112,7 +1112,7 @@
  >T : Symbol(T, Decl(immutable.ts, 211, 25))
  
    export module Record {
-@@ -1719,15 +1719,15 @@
+@@= skipped -49, +49 lines =@@
  >Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
        readonly size: number;
@@ -1131,7 +1131,7 @@
  >K : Symbol(K, Decl(immutable.ts, 223, 10))
  >T : Symbol(T, Decl(immutable.ts, 219, 30))
  >key : Symbol(key, Decl(immutable.ts, 223, 29))
-@@ -1737,26 +1737,26 @@
+@@= skipped -18, +18 lines =@@
  
        // Reading deep values
        hasIn(keyPath: Iterable<any>): boolean;
@@ -1163,7 +1163,7 @@
  >K : Symbol(K, Decl(immutable.ts, 231, 10))
  >T : Symbol(T, Decl(immutable.ts, 219, 30))
  >key : Symbol(key, Decl(immutable.ts, 231, 29))
-@@ -1766,7 +1766,7 @@
+@@= skipped -29, +29 lines =@@
  >K : Symbol(K, Decl(immutable.ts, 231, 10))
  
        update<K extends keyof T>(key: K, updater: (value: T[K]) => T[K]): this;
@@ -1172,7 +1172,7 @@
  >K : Symbol(K, Decl(immutable.ts, 232, 13))
  >T : Symbol(T, Decl(immutable.ts, 219, 30))
  >key : Symbol(key, Decl(immutable.ts, 232, 32))
-@@ -1779,7 +1779,7 @@
+@@= skipped -13, +13 lines =@@
  >K : Symbol(K, Decl(immutable.ts, 232, 13))
  
        merge(...collections: Array<Partial<T> | Iterable<[string, any]>>): this;
@@ -1181,7 +1181,7 @@
  >collections : Symbol(collections, Decl(immutable.ts, 233, 12))
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
  >Partial : Symbol(Partial, Decl(lib.es5.d.ts, --, --))
-@@ -1787,7 +1787,7 @@
+@@= skipped -8, +8 lines =@@
  >Iterable : Symbol(Iterable, Decl(lib.es2015.iterable.d.ts, --, --))
  
        mergeDeep(...collections: Array<Partial<T> | Iterable<[string, any]>>): this;
@@ -1190,7 +1190,7 @@
  >collections : Symbol(collections, Decl(immutable.ts, 234, 16))
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
  >Partial : Symbol(Partial, Decl(lib.es5.d.ts, --, --))
-@@ -1795,7 +1795,7 @@
+@@= skipped -8, +8 lines =@@
  >Iterable : Symbol(Iterable, Decl(lib.es2015.iterable.d.ts, --, --))
  
        mergeWith(merger: (oldVal: any, newVal: any, key: keyof T) => any, ...collections: Array<Partial<T> | Iterable<[string, any]>>): this;
@@ -1199,7 +1199,7 @@
  >merger : Symbol(merger, Decl(immutable.ts, 235, 16))
  >oldVal : Symbol(oldVal, Decl(immutable.ts, 235, 25))
  >newVal : Symbol(newVal, Decl(immutable.ts, 235, 37))
-@@ -1808,7 +1808,7 @@
+@@= skipped -13, +13 lines =@@
  >Iterable : Symbol(Iterable, Decl(lib.es2015.iterable.d.ts, --, --))
  
        mergeDeepWith(merger: (oldVal: any, newVal: any, key: any) => any, ...collections: Array<Partial<T> | Iterable<[string, any]>>): this;
@@ -1208,7 +1208,7 @@
  >merger : Symbol(merger, Decl(immutable.ts, 236, 20))
  >oldVal : Symbol(oldVal, Decl(immutable.ts, 236, 29))
  >newVal : Symbol(newVal, Decl(immutable.ts, 236, 41))
-@@ -1820,100 +1820,100 @@
+@@= skipped -12, +12 lines =@@
  >Iterable : Symbol(Iterable, Decl(lib.es2015.iterable.d.ts, --, --))
  
        delete<K extends keyof T>(key: K): this;
@@ -1329,7 +1329,7 @@
  >IterableIterator : Symbol(IterableIterator, Decl(lib.es2015.iterable.d.ts, --, --))
  >T : Symbol(T, Decl(immutable.ts, 219, 30))
  >T : Symbol(T, Decl(immutable.ts, 219, 30))
-@@ -1927,7 +1927,7 @@
+@@= skipped -107, +107 lines =@@
  >T : Symbol(T, Decl(immutable.ts, 260, 25))
  >name : Symbol(name, Decl(immutable.ts, 260, 45))
  >Record : Symbol(Record, Decl(immutable.ts, 259, 3), Decl(immutable.ts, 211, 70))
@@ -1338,7 +1338,7 @@
  >T : Symbol(T, Decl(immutable.ts, 260, 25))
  
    export module Seq {
-@@ -1999,26 +1999,26 @@
+@@= skipped -72, +72 lines =@@
  >Seq : Symbol(Seq, Decl(immutable.ts, 314, 3), Decl(immutable.ts, 315, 58), Decl(immutable.ts, 316, 81), Decl(immutable.ts, 317, 76), Decl(immutable.ts, 318, 68) ... and 4 more)
  >K : Symbol(K, Decl(immutable.ts, 269, 27))
  >V : Symbol(V, Decl(immutable.ts, 269, 29))
@@ -1371,7 +1371,7 @@
  >KC : Symbol(KC, Decl(immutable.ts, 273, 13))
  >VC : Symbol(VC, Decl(immutable.ts, 273, 16))
  >collections : Symbol(collections, Decl(immutable.ts, 273, 21))
-@@ -2034,7 +2034,7 @@
+@@= skipped -35, +35 lines =@@
  >VC : Symbol(VC, Decl(immutable.ts, 273, 16))
  
        concat<C>(...collections: Array<{[key: string]: C}>): Seq.Keyed<K | string, V | C>;
@@ -1380,7 +1380,7 @@
  >C : Symbol(C, Decl(immutable.ts, 274, 13))
  >collections : Symbol(collections, Decl(immutable.ts, 274, 16))
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
-@@ -2047,7 +2047,7 @@
+@@= skipped -13, +13 lines =@@
  >C : Symbol(C, Decl(immutable.ts, 274, 13))
  
        map<M>(mapper: (value: V, key: K, iter: this) => M, context?: any): Seq.Keyed<K, M>;
@@ -1389,7 +1389,7 @@
  >M : Symbol(M, Decl(immutable.ts, 275, 10))
  >mapper : Symbol(mapper, Decl(immutable.ts, 275, 13))
  >value : Symbol(value, Decl(immutable.ts, 275, 22))
-@@ -2063,7 +2063,7 @@
+@@= skipped -16, +16 lines =@@
  >M : Symbol(M, Decl(immutable.ts, 275, 10))
  
        mapKeys<M>(mapper: (key: K, value: V, iter: this) => M, context?: any): Seq.Keyed<M, V>;
@@ -1398,7 +1398,7 @@
  >M : Symbol(M, Decl(immutable.ts, 276, 14))
  >mapper : Symbol(mapper, Decl(immutable.ts, 276, 17))
  >key : Symbol(key, Decl(immutable.ts, 276, 26))
-@@ -2079,7 +2079,7 @@
+@@= skipped -16, +16 lines =@@
  >V : Symbol(V, Decl(immutable.ts, 269, 29))
  
        mapEntries<KM, VM>(mapper: (entry: [K, V], index: number, iter: this) => [KM, VM], context?: any): Seq.Keyed<KM, VM>;
@@ -1407,7 +1407,7 @@
  >KM : Symbol(KM, Decl(immutable.ts, 277, 17))
  >VM : Symbol(VM, Decl(immutable.ts, 277, 20))
  >mapper : Symbol(mapper, Decl(immutable.ts, 277, 25))
-@@ -2097,7 +2097,7 @@
+@@= skipped -18, +18 lines =@@
  >VM : Symbol(VM, Decl(immutable.ts, 277, 20))
  
        flatMap<M>(mapper: (value: V, key: K, iter: this) => Iterable<M>, context?: any): Seq.Keyed<any, any>;
@@ -1416,7 +1416,7 @@
  >M : Symbol(M, Decl(immutable.ts, 278, 14))
  >mapper : Symbol(mapper, Decl(immutable.ts, 278, 17))
  >value : Symbol(value, Decl(immutable.ts, 278, 26))
-@@ -2112,7 +2112,7 @@
+@@= skipped -15, +15 lines =@@
  >Keyed : Symbol(Keyed, Decl(immutable.ts, 264, 26), Decl(immutable.ts, 265, 79), Decl(immutable.ts, 266, 76), Decl(immutable.ts, 267, 51), Decl(immutable.ts, 263, 56) ... and 1 more)
  
        filter<F extends V>(predicate: (value: V, key: K, iter: this) => value is F, context?: any): Seq.Keyed<K, F>;
@@ -1425,7 +1425,7 @@
  >F : Symbol(F, Decl(immutable.ts, 279, 13))
  >V : Symbol(V, Decl(immutable.ts, 269, 29))
  >predicate : Symbol(predicate, Decl(immutable.ts, 279, 26))
-@@ -2130,7 +2130,7 @@
+@@= skipped -18, +18 lines =@@
  >F : Symbol(F, Decl(immutable.ts, 279, 13))
  
        filter(predicate: (value: V, key: K, iter: this) => any, context?: any): this;
@@ -1434,7 +1434,7 @@
  >predicate : Symbol(predicate, Decl(immutable.ts, 280, 13))
  >value : Symbol(value, Decl(immutable.ts, 280, 25))
  >V : Symbol(V, Decl(immutable.ts, 269, 29))
-@@ -2179,25 +2179,25 @@
+@@= skipped -49, +49 lines =@@
  >T : Symbol(T, Decl(immutable.ts, 288, 29))
  >Seq : Symbol(Seq, Decl(immutable.ts, 314, 3), Decl(immutable.ts, 315, 58), Decl(immutable.ts, 316, 81), Decl(immutable.ts, 317, 76), Decl(immutable.ts, 318, 68) ... and 4 more)
  >T : Symbol(T, Decl(immutable.ts, 288, 29))
@@ -1466,7 +1466,7 @@
  >C : Symbol(C, Decl(immutable.ts, 292, 13))
  >valuesOrCollections : Symbol(valuesOrCollections, Decl(immutable.ts, 292, 16))
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
-@@ -2210,7 +2210,7 @@
+@@= skipped -31, +31 lines =@@
  >C : Symbol(C, Decl(immutable.ts, 292, 13))
  
        map<M>(mapper: (value: T, key: number, iter: this) => M, context?: any): Seq.Indexed<M>;
@@ -1475,7 +1475,7 @@
  >M : Symbol(M, Decl(immutable.ts, 293, 10))
  >mapper : Symbol(mapper, Decl(immutable.ts, 293, 13))
  >value : Symbol(value, Decl(immutable.ts, 293, 22))
-@@ -2224,7 +2224,7 @@
+@@= skipped -14, +14 lines =@@
  >M : Symbol(M, Decl(immutable.ts, 293, 10))
  
        flatMap<M>(mapper: (value: T, key: number, iter: this) => Iterable<M>, context?: any): Seq.Indexed<M>;
@@ -1484,7 +1484,7 @@
  >M : Symbol(M, Decl(immutable.ts, 294, 14))
  >mapper : Symbol(mapper, Decl(immutable.ts, 294, 17))
  >value : Symbol(value, Decl(immutable.ts, 294, 26))
-@@ -2239,7 +2239,7 @@
+@@= skipped -15, +15 lines =@@
  >M : Symbol(M, Decl(immutable.ts, 294, 14))
  
        filter<F extends T>(predicate: (value: T, index: number, iter: this) => value is F, context?: any): Seq.Indexed<F>;
@@ -1493,7 +1493,7 @@
  >F : Symbol(F, Decl(immutable.ts, 295, 13))
  >T : Symbol(T, Decl(immutable.ts, 288, 29))
  >predicate : Symbol(predicate, Decl(immutable.ts, 295, 26))
-@@ -2255,7 +2255,7 @@
+@@= skipped -16, +16 lines =@@
  >F : Symbol(F, Decl(immutable.ts, 295, 13))
  
        filter(predicate: (value: T, index: number, iter: this) => any, context?: any): this;
@@ -1502,7 +1502,7 @@
  >predicate : Symbol(predicate, Decl(immutable.ts, 296, 13))
  >value : Symbol(value, Decl(immutable.ts, 296, 25))
  >T : Symbol(T, Decl(immutable.ts, 288, 29))
-@@ -2303,25 +2303,25 @@
+@@= skipped -48, +48 lines =@@
  >T : Symbol(T, Decl(immutable.ts, 304, 25))
  >Seq : Symbol(Seq, Decl(immutable.ts, 314, 3), Decl(immutable.ts, 315, 58), Decl(immutable.ts, 316, 81), Decl(immutable.ts, 317, 76), Decl(immutable.ts, 318, 68) ... and 4 more)
  >T : Symbol(T, Decl(immutable.ts, 304, 25))
@@ -1534,7 +1534,7 @@
  >C : Symbol(C, Decl(immutable.ts, 308, 13))
  >valuesOrCollections : Symbol(valuesOrCollections, Decl(immutable.ts, 308, 16))
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
-@@ -2334,7 +2334,7 @@
+@@= skipped -31, +31 lines =@@
  >C : Symbol(C, Decl(immutable.ts, 308, 13))
  
        map<M>(mapper: (value: T, key: never, iter: this) => M, context?: any): Seq.Set<M>;
@@ -1543,7 +1543,7 @@
  >M : Symbol(M, Decl(immutable.ts, 309, 10))
  >mapper : Symbol(mapper, Decl(immutable.ts, 309, 13))
  >value : Symbol(value, Decl(immutable.ts, 309, 22))
-@@ -2348,7 +2348,7 @@
+@@= skipped -14, +14 lines =@@
  >M : Symbol(M, Decl(immutable.ts, 309, 10))
  
        flatMap<M>(mapper: (value: T, key: never, iter: this) => Iterable<M>, context?: any): Seq.Set<M>;
@@ -1552,7 +1552,7 @@
  >M : Symbol(M, Decl(immutable.ts, 310, 14))
  >mapper : Symbol(mapper, Decl(immutable.ts, 310, 17))
  >value : Symbol(value, Decl(immutable.ts, 310, 26))
-@@ -2363,7 +2363,7 @@
+@@= skipped -15, +15 lines =@@
  >M : Symbol(M, Decl(immutable.ts, 310, 14))
  
        filter<F extends T>(predicate: (value: T, key: never, iter: this) => value is F, context?: any): Seq.Set<F>;
@@ -1561,7 +1561,7 @@
  >F : Symbol(F, Decl(immutable.ts, 311, 13))
  >T : Symbol(T, Decl(immutable.ts, 304, 25))
  >predicate : Symbol(predicate, Decl(immutable.ts, 311, 26))
-@@ -2379,7 +2379,7 @@
+@@= skipped -16, +16 lines =@@
  >F : Symbol(F, Decl(immutable.ts, 311, 13))
  
        filter(predicate: (value: T, key: never, iter: this) => any, context?: any): this;
@@ -1570,7 +1570,7 @@
  >predicate : Symbol(predicate, Decl(immutable.ts, 312, 13))
  >value : Symbol(value, Decl(immutable.ts, 312, 25))
  >T : Symbol(T, Decl(immutable.ts, 304, 25))
-@@ -2402,11 +2402,11 @@
+@@= skipped -23, +23 lines =@@
  >V : Symbol(V, Decl(immutable.ts, 316, 24))
  >collection : Symbol(collection, Decl(immutable.ts, 316, 28))
  >Collection : Symbol(Collection, Decl(immutable.ts, 402, 3), Decl(immutable.ts, 403, 79), Decl(immutable.ts, 404, 80), Decl(immutable.ts, 331, 3), Decl(immutable.ts, 405, 86))
@@ -1584,7 +1584,7 @@
  >K : Symbol(K, Decl(immutable.ts, 316, 22))
  >V : Symbol(V, Decl(immutable.ts, 316, 24))
  
-@@ -2415,10 +2415,10 @@
+@@= skipped -13, +13 lines =@@
  >T : Symbol(T, Decl(immutable.ts, 317, 22))
  >collection : Symbol(collection, Decl(immutable.ts, 317, 25))
  >Collection : Symbol(Collection, Decl(immutable.ts, 402, 3), Decl(immutable.ts, 403, 79), Decl(immutable.ts, 404, 80), Decl(immutable.ts, 331, 3), Decl(immutable.ts, 405, 86))
@@ -1597,7 +1597,7 @@
  >T : Symbol(T, Decl(immutable.ts, 317, 22))
  
    export function Seq<T>(collection: Collection.Set<T>): Seq.Set<T>;
-@@ -2426,10 +2426,10 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(immutable.ts, 318, 22))
  >collection : Symbol(collection, Decl(immutable.ts, 318, 25))
  >Collection : Symbol(Collection, Decl(immutable.ts, 402, 3), Decl(immutable.ts, 403, 79), Decl(immutable.ts, 404, 80), Decl(immutable.ts, 331, 3), Decl(immutable.ts, 405, 86))
@@ -1610,7 +1610,7 @@
  >T : Symbol(T, Decl(immutable.ts, 318, 22))
  
    export function Seq<T>(collection: Iterable<T>): Seq.Indexed<T>;
-@@ -2439,7 +2439,7 @@
+@@= skipped -13, +13 lines =@@
  >Iterable : Symbol(Iterable, Decl(lib.es2015.iterable.d.ts, --, --))
  >T : Symbol(T, Decl(immutable.ts, 319, 22))
  >Seq : Symbol(Seq, Decl(immutable.ts, 314, 3), Decl(immutable.ts, 315, 58), Decl(immutable.ts, 316, 81), Decl(immutable.ts, 317, 76), Decl(immutable.ts, 318, 68) ... and 4 more)
@@ -1619,7 +1619,7 @@
  >T : Symbol(T, Decl(immutable.ts, 319, 22))
  
    export function Seq<V>(obj: {[key: string]: V}): Seq.Keyed<string, V>;
-@@ -2449,7 +2449,7 @@
+@@= skipped -10, +10 lines =@@
  >key : Symbol(key, Decl(immutable.ts, 320, 32))
  >V : Symbol(V, Decl(immutable.ts, 320, 22))
  >Seq : Symbol(Seq, Decl(immutable.ts, 314, 3), Decl(immutable.ts, 315, 58), Decl(immutable.ts, 316, 81), Decl(immutable.ts, 317, 76), Decl(immutable.ts, 318, 68) ... and 4 more)
@@ -1628,7 +1628,7 @@
  >V : Symbol(V, Decl(immutable.ts, 320, 22))
  
    export function Seq(): Seq<any, any>;
-@@ -2465,15 +2465,15 @@
+@@= skipped -16, +16 lines =@@
  >V : Symbol(V, Decl(immutable.ts, 322, 25))
  
      readonly size: number | undefined;
@@ -1647,7 +1647,7 @@
  >M : Symbol(M, Decl(immutable.ts, 327, 8))
  >mapper : Symbol(mapper, Decl(immutable.ts, 327, 11))
  >value : Symbol(value, Decl(immutable.ts, 327, 20))
-@@ -2488,7 +2488,7 @@
+@@= skipped -23, +23 lines =@@
  >M : Symbol(M, Decl(immutable.ts, 327, 8))
  
      flatMap<M>(mapper: (value: V, key: K, iter: this) => Iterable<M>, context?: any): Seq<K, M>;
@@ -1656,7 +1656,7 @@
  >M : Symbol(M, Decl(immutable.ts, 328, 12))
  >mapper : Symbol(mapper, Decl(immutable.ts, 328, 15))
  >value : Symbol(value, Decl(immutable.ts, 328, 24))
-@@ -2504,7 +2504,7 @@
+@@= skipped -16, +16 lines =@@
  >M : Symbol(M, Decl(immutable.ts, 328, 12))
  
      filter<F extends V>(predicate: (value: V, key: K, iter: this) => value is F, context?: any): Seq<K, F>;
@@ -1665,7 +1665,7 @@
  >F : Symbol(F, Decl(immutable.ts, 329, 11))
  >V : Symbol(V, Decl(immutable.ts, 322, 25))
  >predicate : Symbol(predicate, Decl(immutable.ts, 329, 24))
-@@ -2521,7 +2521,7 @@
+@@= skipped -17, +17 lines =@@
  >F : Symbol(F, Decl(immutable.ts, 329, 11))
  
      filter(predicate: (value: V, key: K, iter: this) => any, context?: any): this;
@@ -1674,7 +1674,7 @@
  >predicate : Symbol(predicate, Decl(immutable.ts, 330, 11))
  >value : Symbol(value, Decl(immutable.ts, 330, 23))
  >V : Symbol(V, Decl(immutable.ts, 322, 25))
-@@ -2595,27 +2595,27 @@
+@@= skipped -74, +74 lines =@@
  >V : Symbol(V, Decl(immutable.ts, 340, 29))
  
        toJS(): Object;
@@ -1708,7 +1708,7 @@
  >KC : Symbol(KC, Decl(immutable.ts, 346, 13))
  >VC : Symbol(VC, Decl(immutable.ts, 346, 16))
  >collections : Symbol(collections, Decl(immutable.ts, 346, 21))
-@@ -2631,7 +2631,7 @@
+@@= skipped -36, +36 lines =@@
  >VC : Symbol(VC, Decl(immutable.ts, 346, 16))
  
        concat<C>(...collections: Array<{[key: string]: C}>): Collection.Keyed<K | string, V | C>;
@@ -1717,7 +1717,7 @@
  >C : Symbol(C, Decl(immutable.ts, 347, 13))
  >collections : Symbol(collections, Decl(immutable.ts, 347, 16))
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
-@@ -2644,7 +2644,7 @@
+@@= skipped -13, +13 lines =@@
  >C : Symbol(C, Decl(immutable.ts, 347, 13))
  
        map<M>(mapper: (value: V, key: K, iter: this) => M, context?: any): Collection.Keyed<K, M>;
@@ -1726,7 +1726,7 @@
  >M : Symbol(M, Decl(immutable.ts, 348, 10))
  >mapper : Symbol(mapper, Decl(immutable.ts, 348, 13))
  >value : Symbol(value, Decl(immutable.ts, 348, 22))
-@@ -2660,7 +2660,7 @@
+@@= skipped -16, +16 lines =@@
  >M : Symbol(M, Decl(immutable.ts, 348, 10))
  
        mapKeys<M>(mapper: (key: K, value: V, iter: this) => M, context?: any): Collection.Keyed<M, V>;
@@ -1735,7 +1735,7 @@
  >M : Symbol(M, Decl(immutable.ts, 349, 14))
  >mapper : Symbol(mapper, Decl(immutable.ts, 349, 17))
  >key : Symbol(key, Decl(immutable.ts, 349, 26))
-@@ -2676,7 +2676,7 @@
+@@= skipped -16, +16 lines =@@
  >V : Symbol(V, Decl(immutable.ts, 340, 29))
  
        mapEntries<KM, VM>(mapper: (entry: [K, V], index: number, iter: this) => [KM, VM], context?: any): Collection.Keyed<KM, VM>;
@@ -1744,7 +1744,7 @@
  >KM : Symbol(KM, Decl(immutable.ts, 350, 17))
  >VM : Symbol(VM, Decl(immutable.ts, 350, 20))
  >mapper : Symbol(mapper, Decl(immutable.ts, 350, 25))
-@@ -2694,7 +2694,7 @@
+@@= skipped -18, +18 lines =@@
  >VM : Symbol(VM, Decl(immutable.ts, 350, 20))
  
        flatMap<M>(mapper: (value: V, key: K, iter: this) => Iterable<M>, context?: any): Collection.Keyed<any, any>;
@@ -1753,7 +1753,7 @@
  >M : Symbol(M, Decl(immutable.ts, 351, 14))
  >mapper : Symbol(mapper, Decl(immutable.ts, 351, 17))
  >value : Symbol(value, Decl(immutable.ts, 351, 26))
-@@ -2709,7 +2709,7 @@
+@@= skipped -15, +15 lines =@@
  >Keyed : Symbol(Keyed, Decl(immutable.ts, 337, 26), Decl(immutable.ts, 338, 86), Decl(immutable.ts, 336, 51), Decl(immutable.ts, 339, 83))
  
        filter<F extends V>(predicate: (value: V, key: K, iter: this) => value is F, context?: any): Collection.Keyed<K, F>;
@@ -1762,7 +1762,7 @@
  >F : Symbol(F, Decl(immutable.ts, 352, 13))
  >V : Symbol(V, Decl(immutable.ts, 340, 29))
  >predicate : Symbol(predicate, Decl(immutable.ts, 352, 26))
-@@ -2727,7 +2727,7 @@
+@@= skipped -18, +18 lines =@@
  >F : Symbol(F, Decl(immutable.ts, 352, 13))
  
        filter(predicate: (value: V, key: K, iter: this) => any, context?: any): this;
@@ -1771,7 +1771,7 @@
  >predicate : Symbol(predicate, Decl(immutable.ts, 353, 13))
  >value : Symbol(value, Decl(immutable.ts, 353, 25))
  >V : Symbol(V, Decl(immutable.ts, 340, 29))
-@@ -2737,10 +2737,10 @@
+@@= skipped -10, +10 lines =@@
  >context : Symbol(context, Decl(immutable.ts, 353, 62))
  
        [Symbol.iterator](): IterableIterator<[K, V]>;
@@ -1785,7 +1785,7 @@
  >IterableIterator : Symbol(IterableIterator, Decl(lib.es2015.iterable.d.ts, --, --))
  >K : Symbol(K, Decl(immutable.ts, 340, 27))
  >V : Symbol(V, Decl(immutable.ts, 340, 29))
-@@ -2765,17 +2765,17 @@
+@@= skipped -28, +28 lines =@@
  >T : Symbol(T, Decl(immutable.ts, 358, 29))
  
        toJS(): Array<any>;
@@ -1806,7 +1806,7 @@
  >NSV : Symbol(NSV, Decl(immutable.ts, 362, 10))
  >index : Symbol(index, Decl(immutable.ts, 362, 15))
  >notSetValue : Symbol(notSetValue, Decl(immutable.ts, 362, 29))
-@@ -2784,37 +2784,37 @@
+@@= skipped -19, +19 lines =@@
  >NSV : Symbol(NSV, Decl(immutable.ts, 362, 10))
  
        get(index: number): T | undefined;
@@ -1852,7 +1852,7 @@
  >index : Symbol(index, Decl(immutable.ts, 370, 13))
  >removeNum : Symbol(removeNum, Decl(immutable.ts, 370, 27))
  >values : Symbol(values, Decl(immutable.ts, 370, 46))
-@@ -2822,7 +2822,7 @@
+@@= skipped -38, +38 lines =@@
  >T : Symbol(T, Decl(immutable.ts, 358, 29))
  
        zip(...collections: Array<Collection<any, any>>): Collection.Indexed<any>;
@@ -1861,7 +1861,7 @@
  >collections : Symbol(collections, Decl(immutable.ts, 371, 10))
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
  >Collection : Symbol(Collection, Decl(immutable.ts, 402, 3), Decl(immutable.ts, 403, 79), Decl(immutable.ts, 404, 80), Decl(immutable.ts, 331, 3), Decl(immutable.ts, 405, 86))
-@@ -2830,7 +2830,7 @@
+@@= skipped -8, +8 lines =@@
  >Indexed : Symbol(Indexed, Decl(immutable.ts, 356, 28), Decl(immutable.ts, 355, 5), Decl(immutable.ts, 357, 79))
  
        zipWith<U, Z>(zipper: (value: T, otherValue: U) => Z, otherCollection: Collection<any, U>): Collection.Indexed<Z>;
@@ -1870,7 +1870,7 @@
  >U : Symbol(U, Decl(immutable.ts, 372, 14))
  >Z : Symbol(Z, Decl(immutable.ts, 372, 16))
  >zipper : Symbol(zipper, Decl(immutable.ts, 372, 20))
-@@ -2847,7 +2847,7 @@
+@@= skipped -17, +17 lines =@@
  >Z : Symbol(Z, Decl(immutable.ts, 372, 16))
  
        zipWith<U, V, Z>(zipper: (value: T, otherValue: U, thirdValue: V) => Z, otherCollection: Collection<any, U>, thirdCollection: Collection<any, V>): Collection.Indexed<Z>;
@@ -1879,7 +1879,7 @@
  >U : Symbol(U, Decl(immutable.ts, 373, 14))
  >V : Symbol(V, Decl(immutable.ts, 373, 16))
  >Z : Symbol(Z, Decl(immutable.ts, 373, 19))
-@@ -2870,7 +2870,7 @@
+@@= skipped -23, +23 lines =@@
  >Z : Symbol(Z, Decl(immutable.ts, 373, 19))
  
        zipWith<Z>(zipper: (...any: Array<any>) => Z, ...collections: Array<Collection<any, any>>): Collection.Indexed<Z>;
@@ -1888,7 +1888,7 @@
  >Z : Symbol(Z, Decl(immutable.ts, 374, 14))
  >zipper : Symbol(zipper, Decl(immutable.ts, 374, 17))
  >any : Symbol(any, Decl(immutable.ts, 374, 26))
-@@ -2885,17 +2885,17 @@
+@@= skipped -15, +15 lines =@@
  
        // Search for value
        indexOf(searchValue: T): number;
@@ -1909,7 +1909,7 @@
  >predicate : Symbol(predicate, Decl(immutable.ts, 378, 16))
  >value : Symbol(value, Decl(immutable.ts, 378, 28))
  >T : Symbol(T, Decl(immutable.ts, 358, 29))
-@@ -2904,7 +2904,7 @@
+@@= skipped -19, +19 lines =@@
  >context : Symbol(context, Decl(immutable.ts, 378, 76))
  
        findLastIndex(predicate: (value: T, index: number, iter: this) => boolean, context?: any): number;
@@ -1918,7 +1918,7 @@
  >predicate : Symbol(predicate, Decl(immutable.ts, 379, 20))
  >value : Symbol(value, Decl(immutable.ts, 379, 32))
  >T : Symbol(T, Decl(immutable.ts, 358, 29))
-@@ -2914,7 +2914,7 @@
+@@= skipped -10, +10 lines =@@
  
        // Sequence algorithms
        concat<C>(...valuesOrCollections: Array<Iterable<C> | C>): Collection.Indexed<T | C>;
@@ -1927,7 +1927,7 @@
  >C : Symbol(C, Decl(immutable.ts, 381, 13))
  >valuesOrCollections : Symbol(valuesOrCollections, Decl(immutable.ts, 381, 16))
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
-@@ -2927,7 +2927,7 @@
+@@= skipped -13, +13 lines =@@
  >C : Symbol(C, Decl(immutable.ts, 381, 13))
  
        map<M>(mapper: (value: T, key: number, iter: this) => M, context?: any): Collection.Indexed<M>;
@@ -1936,7 +1936,7 @@
  >M : Symbol(M, Decl(immutable.ts, 382, 10))
  >mapper : Symbol(mapper, Decl(immutable.ts, 382, 13))
  >value : Symbol(value, Decl(immutable.ts, 382, 22))
-@@ -2941,7 +2941,7 @@
+@@= skipped -14, +14 lines =@@
  >M : Symbol(M, Decl(immutable.ts, 382, 10))
  
        flatMap<M>(mapper: (value: T, key: number, iter: this) => Iterable<M>, context?: any): Collection.Indexed<M>;
@@ -1945,7 +1945,7 @@
  >M : Symbol(M, Decl(immutable.ts, 383, 14))
  >mapper : Symbol(mapper, Decl(immutable.ts, 383, 17))
  >value : Symbol(value, Decl(immutable.ts, 383, 26))
-@@ -2956,7 +2956,7 @@
+@@= skipped -15, +15 lines =@@
  >M : Symbol(M, Decl(immutable.ts, 383, 14))
  
        filter<F extends T>(predicate: (value: T, index: number, iter: this) => value is F, context?: any): Collection.Indexed<F>;
@@ -1954,7 +1954,7 @@
  >F : Symbol(F, Decl(immutable.ts, 384, 13))
  >T : Symbol(T, Decl(immutable.ts, 358, 29))
  >predicate : Symbol(predicate, Decl(immutable.ts, 384, 26))
-@@ -2972,7 +2972,7 @@
+@@= skipped -16, +16 lines =@@
  >F : Symbol(F, Decl(immutable.ts, 384, 13))
  
        filter(predicate: (value: T, index: number, iter: this) => any, context?: any): this;
@@ -1963,7 +1963,7 @@
  >predicate : Symbol(predicate, Decl(immutable.ts, 385, 13))
  >value : Symbol(value, Decl(immutable.ts, 385, 25))
  >T : Symbol(T, Decl(immutable.ts, 358, 29))
-@@ -2981,10 +2981,10 @@
+@@= skipped -9, +9 lines =@@
  >context : Symbol(context, Decl(immutable.ts, 385, 69))
  
        [Symbol.iterator](): IterableIterator<T>;
@@ -1977,7 +1977,7 @@
  >IterableIterator : Symbol(IterableIterator, Decl(lib.es2015.iterable.d.ts, --, --))
  >T : Symbol(T, Decl(immutable.ts, 358, 29))
      }
-@@ -3008,23 +3008,23 @@
+@@= skipped -27, +27 lines =@@
  >T : Symbol(T, Decl(immutable.ts, 390, 25))
  
        toJS(): Array<any>;
@@ -2006,7 +2006,7 @@
  >C : Symbol(C, Decl(immutable.ts, 395, 13))
  >valuesOrCollections : Symbol(valuesOrCollections, Decl(immutable.ts, 395, 16))
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
-@@ -3037,7 +3037,7 @@
+@@= skipped -29, +29 lines =@@
  >C : Symbol(C, Decl(immutable.ts, 395, 13))
  
        map<M>(mapper: (value: T, key: never, iter: this) => M, context?: any): Collection.Set<M>;
@@ -2015,7 +2015,7 @@
  >M : Symbol(M, Decl(immutable.ts, 396, 10))
  >mapper : Symbol(mapper, Decl(immutable.ts, 396, 13))
  >value : Symbol(value, Decl(immutable.ts, 396, 22))
-@@ -3051,7 +3051,7 @@
+@@= skipped -14, +14 lines =@@
  >M : Symbol(M, Decl(immutable.ts, 396, 10))
  
        flatMap<M>(mapper: (value: T, key: never, iter: this) => Iterable<M>, context?: any):  Collection.Set<M>;
@@ -2024,7 +2024,7 @@
  >M : Symbol(M, Decl(immutable.ts, 397, 14))
  >mapper : Symbol(mapper, Decl(immutable.ts, 397, 17))
  >value : Symbol(value, Decl(immutable.ts, 397, 26))
-@@ -3066,7 +3066,7 @@
+@@= skipped -15, +15 lines =@@
  >M : Symbol(M, Decl(immutable.ts, 397, 14))
  
        filter<F extends T>(predicate: (value: T, key: never, iter: this) => value is F, context?: any): Collection.Set<F>;
@@ -2033,7 +2033,7 @@
  >F : Symbol(F, Decl(immutable.ts, 398, 13))
  >T : Symbol(T, Decl(immutable.ts, 390, 25))
  >predicate : Symbol(predicate, Decl(immutable.ts, 398, 26))
-@@ -3082,7 +3082,7 @@
+@@= skipped -16, +16 lines =@@
  >F : Symbol(F, Decl(immutable.ts, 398, 13))
  
        filter(predicate: (value: T, key: never, iter: this) => any, context?: any): this;
@@ -2042,7 +2042,7 @@
  >predicate : Symbol(predicate, Decl(immutable.ts, 399, 13))
  >value : Symbol(value, Decl(immutable.ts, 399, 25))
  >T : Symbol(T, Decl(immutable.ts, 390, 25))
-@@ -3091,10 +3091,10 @@
+@@= skipped -9, +9 lines =@@
  >context : Symbol(context, Decl(immutable.ts, 399, 66))
  
        [Symbol.iterator](): IterableIterator<T>;
@@ -2056,7 +2056,7 @@
  >IterableIterator : Symbol(IterableIterator, Decl(lib.es2015.iterable.d.ts, --, --))
  >T : Symbol(T, Decl(immutable.ts, 390, 25))
      }
-@@ -3114,7 +3114,7 @@
+@@= skipped -23, +23 lines =@@
  >Iterable : Symbol(Iterable, Decl(lib.es2015.iterable.d.ts, --, --))
  >T : Symbol(T, Decl(immutable.ts, 404, 29))
  >Collection : Symbol(Collection, Decl(immutable.ts, 402, 3), Decl(immutable.ts, 403, 79), Decl(immutable.ts, 404, 80), Decl(immutable.ts, 331, 3), Decl(immutable.ts, 405, 86))
@@ -2065,7 +2065,7 @@
  >T : Symbol(T, Decl(immutable.ts, 404, 29))
  
    export function Collection<V>(obj: {[key: string]: V}): Collection.Keyed<string, V>;
-@@ -3124,7 +3124,7 @@
+@@= skipped -10, +10 lines =@@
  >key : Symbol(key, Decl(immutable.ts, 405, 39))
  >V : Symbol(V, Decl(immutable.ts, 405, 29))
  >Collection : Symbol(Collection, Decl(immutable.ts, 402, 3), Decl(immutable.ts, 403, 79), Decl(immutable.ts, 404, 80), Decl(immutable.ts, 331, 3), Decl(immutable.ts, 405, 86))
@@ -2074,7 +2074,7 @@
  >V : Symbol(V, Decl(immutable.ts, 405, 29))
  
    export interface Collection<K, V> extends ValueObject {
-@@ -3135,15 +3135,15 @@
+@@= skipped -11, +11 lines =@@
  
      // Value equality
      equals(other: any): boolean;
@@ -2093,7 +2093,7 @@
  >NSV : Symbol(NSV, Decl(immutable.ts, 411, 8))
  >key : Symbol(key, Decl(immutable.ts, 411, 13))
  >K : Symbol(K, Decl(immutable.ts, 406, 30))
-@@ -3153,49 +3153,49 @@
+@@= skipped -18, +18 lines =@@
  >NSV : Symbol(NSV, Decl(immutable.ts, 411, 8))
  
      get(key: K): V | undefined;
@@ -2152,7 +2152,7 @@
  >R : Symbol(R, Decl(immutable.ts, 422, 11))
  >updater : Symbol(updater, Decl(immutable.ts, 422, 14))
  >value : Symbol(value, Decl(immutable.ts, 422, 24))
-@@ -3204,123 +3204,123 @@
+@@= skipped -51, +51 lines =@@
  
      // Conversion to JavaScript types
      toJS(): Array<any> | { [key: string]: any };
@@ -2303,7 +2303,7 @@
  >M : Symbol(M, Decl(immutable.ts, 449, 8))
  >mapper : Symbol(mapper, Decl(immutable.ts, 449, 11))
  >value : Symbol(value, Decl(immutable.ts, 449, 20))
-@@ -3335,7 +3335,7 @@
+@@= skipped -131, +131 lines =@@
  >M : Symbol(M, Decl(immutable.ts, 449, 8))
  
      filter<F extends V>(predicate: (value: V, key: K, iter: this) => value is F, context?: any): Collection<K, F>;
@@ -2312,7 +2312,7 @@
  >F : Symbol(F, Decl(immutable.ts, 450, 11))
  >V : Symbol(V, Decl(immutable.ts, 406, 32))
  >predicate : Symbol(predicate, Decl(immutable.ts, 450, 24))
-@@ -3352,7 +3352,7 @@
+@@= skipped -17, +17 lines =@@
  >F : Symbol(F, Decl(immutable.ts, 450, 11))
  
      filter(predicate: (value: V, key: K, iter: this) => any, context?: any): this;
@@ -2321,7 +2321,7 @@
  >predicate : Symbol(predicate, Decl(immutable.ts, 451, 11))
  >value : Symbol(value, Decl(immutable.ts, 451, 23))
  >V : Symbol(V, Decl(immutable.ts, 406, 32))
-@@ -3362,7 +3362,7 @@
+@@= skipped -10, +10 lines =@@
  >context : Symbol(context, Decl(immutable.ts, 451, 60))
  
      filterNot(predicate: (value: V, key: K, iter: this) => boolean, context?: any): this;
@@ -2330,7 +2330,7 @@
  >predicate : Symbol(predicate, Decl(immutable.ts, 452, 14))
  >value : Symbol(value, Decl(immutable.ts, 452, 26))
  >V : Symbol(V, Decl(immutable.ts, 406, 32))
-@@ -3372,10 +3372,10 @@
+@@= skipped -10, +10 lines =@@
  >context : Symbol(context, Decl(immutable.ts, 452, 67))
  
      reverse(): this;
@@ -2343,7 +2343,7 @@
  >comparator : Symbol(comparator, Decl(immutable.ts, 454, 9))
  >valueA : Symbol(valueA, Decl(immutable.ts, 454, 23))
  >V : Symbol(V, Decl(immutable.ts, 406, 32))
-@@ -3383,7 +3383,7 @@
+@@= skipped -11, +11 lines =@@
  >V : Symbol(V, Decl(immutable.ts, 406, 32))
  
      sortBy<C>(comparatorValueMapper: (value: V, key: K, iter: this) => C, comparator?: (valueA: C, valueB: C) => number): this;
@@ -2352,7 +2352,7 @@
  >C : Symbol(C, Decl(immutable.ts, 455, 11))
  >comparatorValueMapper : Symbol(comparatorValueMapper, Decl(immutable.ts, 455, 14))
  >value : Symbol(value, Decl(immutable.ts, 455, 38))
-@@ -3399,7 +3399,7 @@
+@@= skipped -16, +16 lines =@@
  >C : Symbol(C, Decl(immutable.ts, 455, 11))
  
      groupBy<G>(grouper: (value: V, key: K, iter: this) => G, context?: any): /*Map*/Seq.Keyed<G, /*this*/Collection<K, V>>;
@@ -2361,7 +2361,7 @@
  >G : Symbol(G, Decl(immutable.ts, 456, 12))
  >grouper : Symbol(grouper, Decl(immutable.ts, 456, 15))
  >value : Symbol(value, Decl(immutable.ts, 456, 25))
-@@ -3410,7 +3410,7 @@
+@@= skipped -11, +11 lines =@@
  >G : Symbol(G, Decl(immutable.ts, 456, 12))
  >context : Symbol(context, Decl(immutable.ts, 456, 60))
  >Seq : Symbol(Seq, Decl(immutable.ts, 314, 3), Decl(immutable.ts, 315, 58), Decl(immutable.ts, 316, 81), Decl(immutable.ts, 317, 76), Decl(immutable.ts, 318, 68) ... and 4 more)
@@ -2370,7 +2370,7 @@
  >G : Symbol(G, Decl(immutable.ts, 456, 12))
  >Collection : Symbol(Collection, Decl(immutable.ts, 402, 3), Decl(immutable.ts, 403, 79), Decl(immutable.ts, 404, 80), Decl(immutable.ts, 331, 3), Decl(immutable.ts, 405, 86))
  >K : Symbol(K, Decl(immutable.ts, 406, 30))
-@@ -3418,7 +3418,7 @@
+@@= skipped -8, +8 lines =@@
  
      // Side effects
      forEach(sideEffect: (value: V, key: K, iter: this) => any, context?: any): number;
@@ -2379,7 +2379,7 @@
  >sideEffect : Symbol(sideEffect, Decl(immutable.ts, 458, 12))
  >value : Symbol(value, Decl(immutable.ts, 458, 25))
  >V : Symbol(V, Decl(immutable.ts, 406, 32))
-@@ -3429,26 +3429,26 @@
+@@= skipped -11, +11 lines =@@
  
      // Creating subsets
      slice(begin?: number, end?: number): this;
@@ -2412,7 +2412,7 @@
  >predicate : Symbol(predicate, Decl(immutable.ts, 465, 14))
  >value : Symbol(value, Decl(immutable.ts, 465, 26))
  >V : Symbol(V, Decl(immutable.ts, 406, 32))
-@@ -3458,7 +3458,7 @@
+@@= skipped -29, +29 lines =@@
  >context : Symbol(context, Decl(immutable.ts, 465, 67))
  
      skipUntil(predicate: (value: V, key: K, iter: this) => boolean, context?: any): this;
@@ -2421,7 +2421,7 @@
  >predicate : Symbol(predicate, Decl(immutable.ts, 466, 14))
  >value : Symbol(value, Decl(immutable.ts, 466, 26))
  >V : Symbol(V, Decl(immutable.ts, 406, 32))
-@@ -3468,15 +3468,15 @@
+@@= skipped -10, +10 lines =@@
  >context : Symbol(context, Decl(immutable.ts, 466, 67))
  
      take(amount: number): this;
@@ -2440,7 +2440,7 @@
  >predicate : Symbol(predicate, Decl(immutable.ts, 469, 14))
  >value : Symbol(value, Decl(immutable.ts, 469, 26))
  >V : Symbol(V, Decl(immutable.ts, 406, 32))
-@@ -3486,7 +3486,7 @@
+@@= skipped -18, +18 lines =@@
  >context : Symbol(context, Decl(immutable.ts, 469, 67))
  
      takeUntil(predicate: (value: V, key: K, iter: this) => boolean, context?: any): this;
@@ -2449,7 +2449,7 @@
  >predicate : Symbol(predicate, Decl(immutable.ts, 470, 14))
  >value : Symbol(value, Decl(immutable.ts, 470, 26))
  >V : Symbol(V, Decl(immutable.ts, 406, 32))
-@@ -3497,23 +3497,23 @@
+@@= skipped -11, +11 lines =@@
  
      // Combination
      concat(...valuesOrCollections: Array<any>): Collection<any, any>;
@@ -2477,7 +2477,7 @@
  >M : Symbol(M, Decl(immutable.ts, 475, 12))
  >mapper : Symbol(mapper, Decl(immutable.ts, 475, 15))
  >value : Symbol(value, Decl(immutable.ts, 475, 24))
-@@ -3530,7 +3530,7 @@
+@@= skipped -33, +33 lines =@@
  
      // Reducing a value
      reduce<R>(reducer: (reduction: R, value: V, key: K, iter: this) => R, initialReduction: R, context?: any): R;
@@ -2486,7 +2486,7 @@
  >R : Symbol(R, Decl(immutable.ts, 477, 11))
  >reducer : Symbol(reducer, Decl(immutable.ts, 477, 14))
  >reduction : Symbol(reduction, Decl(immutable.ts, 477, 24))
-@@ -3547,7 +3547,7 @@
+@@= skipped -17, +17 lines =@@
  >R : Symbol(R, Decl(immutable.ts, 477, 11))
  
      reduce<R>(reducer: (reduction: V | R, value: V, key: K, iter: this) => R): R;
@@ -2495,7 +2495,7 @@
  >R : Symbol(R, Decl(immutable.ts, 478, 11))
  >reducer : Symbol(reducer, Decl(immutable.ts, 478, 14))
  >reduction : Symbol(reduction, Decl(immutable.ts, 478, 24))
-@@ -3562,7 +3562,7 @@
+@@= skipped -15, +15 lines =@@
  >R : Symbol(R, Decl(immutable.ts, 478, 11))
  
      reduceRight<R>(reducer: (reduction: R, value: V, key: K, iter: this) => R, initialReduction: R, context?: any): R;
@@ -2504,7 +2504,7 @@
  >R : Symbol(R, Decl(immutable.ts, 479, 16))
  >reducer : Symbol(reducer, Decl(immutable.ts, 479, 19))
  >reduction : Symbol(reduction, Decl(immutable.ts, 479, 29))
-@@ -3579,7 +3579,7 @@
+@@= skipped -17, +17 lines =@@
  >R : Symbol(R, Decl(immutable.ts, 479, 16))
  
      reduceRight<R>(reducer: (reduction: V | R, value: V, key: K, iter: this) => R): R;
@@ -2513,7 +2513,7 @@
  >R : Symbol(R, Decl(immutable.ts, 480, 16))
  >reducer : Symbol(reducer, Decl(immutable.ts, 480, 19))
  >reduction : Symbol(reduction, Decl(immutable.ts, 480, 29))
-@@ -3594,7 +3594,7 @@
+@@= skipped -15, +15 lines =@@
  >R : Symbol(R, Decl(immutable.ts, 480, 16))
  
      every(predicate: (value: V, key: K, iter: this) => boolean, context?: any): boolean;
@@ -2522,7 +2522,7 @@
  >predicate : Symbol(predicate, Decl(immutable.ts, 481, 10))
  >value : Symbol(value, Decl(immutable.ts, 481, 22))
  >V : Symbol(V, Decl(immutable.ts, 406, 32))
-@@ -3604,7 +3604,7 @@
+@@= skipped -10, +10 lines =@@
  >context : Symbol(context, Decl(immutable.ts, 481, 63))
  
      some(predicate: (value: V, key: K, iter: this) => boolean, context?: any): boolean;
@@ -2531,7 +2531,7 @@
  >predicate : Symbol(predicate, Decl(immutable.ts, 482, 9))
  >value : Symbol(value, Decl(immutable.ts, 482, 21))
  >V : Symbol(V, Decl(immutable.ts, 406, 32))
-@@ -3614,17 +3614,17 @@
+@@= skipped -10, +10 lines =@@
  >context : Symbol(context, Decl(immutable.ts, 482, 62))
  
      join(separator?: string): string;
@@ -2553,7 +2553,7 @@
  >predicate : Symbol(predicate, Decl(immutable.ts, 486, 10))
  >value : Symbol(value, Decl(immutable.ts, 486, 22))
  >V : Symbol(V, Decl(immutable.ts, 406, 32))
-@@ -3634,7 +3634,7 @@
+@@= skipped -20, +20 lines =@@
  >context : Symbol(context, Decl(immutable.ts, 486, 63))
  
      countBy<G>(grouper: (value: V, key: K, iter: this) => G, context?: any): Map<G, number>;
@@ -2562,7 +2562,7 @@
  >G : Symbol(G, Decl(immutable.ts, 487, 12))
  >grouper : Symbol(grouper, Decl(immutable.ts, 487, 15))
  >value : Symbol(value, Decl(immutable.ts, 487, 25))
-@@ -3649,7 +3649,7 @@
+@@= skipped -15, +15 lines =@@
  
      // Search for value
      find(predicate: (value: V, key: K, iter: this) => boolean, context?: any, notSetValue?: V): V | undefined;
@@ -2571,7 +2571,7 @@
  >predicate : Symbol(predicate, Decl(immutable.ts, 489, 9))
  >value : Symbol(value, Decl(immutable.ts, 489, 21))
  >V : Symbol(V, Decl(immutable.ts, 406, 32))
-@@ -3662,7 +3662,7 @@
+@@= skipped -13, +13 lines =@@
  >V : Symbol(V, Decl(immutable.ts, 406, 32))
  
      findLast(predicate: (value: V, key: K, iter: this) => boolean, context?: any, notSetValue?: V): V | undefined;
@@ -2580,7 +2580,7 @@
  >predicate : Symbol(predicate, Decl(immutable.ts, 490, 13))
  >value : Symbol(value, Decl(immutable.ts, 490, 25))
  >V : Symbol(V, Decl(immutable.ts, 406, 32))
-@@ -3675,7 +3675,7 @@
+@@= skipped -13, +13 lines =@@
  >V : Symbol(V, Decl(immutable.ts, 406, 32))
  
      findEntry(predicate: (value: V, key: K, iter: this) => boolean, context?: any, notSetValue?: V): [K, V] | undefined;
@@ -2589,7 +2589,7 @@
  >predicate : Symbol(predicate, Decl(immutable.ts, 491, 14))
  >value : Symbol(value, Decl(immutable.ts, 491, 26))
  >V : Symbol(V, Decl(immutable.ts, 406, 32))
-@@ -3689,7 +3689,7 @@
+@@= skipped -14, +14 lines =@@
  >V : Symbol(V, Decl(immutable.ts, 406, 32))
  
      findLastEntry(predicate: (value: V, key: K, iter: this) => boolean, context?: any, notSetValue?: V): [K, V] | undefined;
@@ -2598,7 +2598,7 @@
  >predicate : Symbol(predicate, Decl(immutable.ts, 492, 18))
  >value : Symbol(value, Decl(immutable.ts, 492, 30))
  >V : Symbol(V, Decl(immutable.ts, 406, 32))
-@@ -3703,7 +3703,7 @@
+@@= skipped -14, +14 lines =@@
  >V : Symbol(V, Decl(immutable.ts, 406, 32))
  
      findKey(predicate: (value: V, key: K, iter: this) => boolean, context?: any): K | undefined;
@@ -2607,7 +2607,7 @@
  >predicate : Symbol(predicate, Decl(immutable.ts, 493, 12))
  >value : Symbol(value, Decl(immutable.ts, 493, 24))
  >V : Symbol(V, Decl(immutable.ts, 406, 32))
-@@ -3714,7 +3714,7 @@
+@@= skipped -11, +11 lines =@@
  >K : Symbol(K, Decl(immutable.ts, 406, 30))
  
      findLastKey(predicate: (value: V, key: K, iter: this) => boolean, context?: any): K | undefined;
@@ -2616,7 +2616,7 @@
  >predicate : Symbol(predicate, Decl(immutable.ts, 494, 16))
  >value : Symbol(value, Decl(immutable.ts, 494, 28))
  >V : Symbol(V, Decl(immutable.ts, 406, 32))
-@@ -3725,19 +3725,19 @@
+@@= skipped -11, +11 lines =@@
  >K : Symbol(K, Decl(immutable.ts, 406, 30))
  
      keyOf(searchValue: V): K | undefined;
@@ -2639,7 +2639,7 @@
  >comparator : Symbol(comparator, Decl(immutable.ts, 497, 8))
  >valueA : Symbol(valueA, Decl(immutable.ts, 497, 22))
  >V : Symbol(V, Decl(immutable.ts, 406, 32))
-@@ -3746,7 +3746,7 @@
+@@= skipped -21, +21 lines =@@
  >V : Symbol(V, Decl(immutable.ts, 406, 32))
  
      maxBy<C>(comparatorValueMapper: (value: V, key: K, iter: this) => C, comparator?: (valueA: C, valueB: C) => number): V | undefined;
@@ -2648,7 +2648,7 @@
  >C : Symbol(C, Decl(immutable.ts, 498, 10))
  >comparatorValueMapper : Symbol(comparatorValueMapper, Decl(immutable.ts, 498, 13))
  >value : Symbol(value, Decl(immutable.ts, 498, 37))
-@@ -3763,7 +3763,7 @@
+@@= skipped -17, +17 lines =@@
  >V : Symbol(V, Decl(immutable.ts, 406, 32))
  
      min(comparator?: (valueA: V, valueB: V) => number): V | undefined;
@@ -2657,7 +2657,7 @@
  >comparator : Symbol(comparator, Decl(immutable.ts, 499, 8))
  >valueA : Symbol(valueA, Decl(immutable.ts, 499, 22))
  >V : Symbol(V, Decl(immutable.ts, 406, 32))
-@@ -3772,7 +3772,7 @@
+@@= skipped -9, +9 lines =@@
  >V : Symbol(V, Decl(immutable.ts, 406, 32))
  
      minBy<C>(comparatorValueMapper: (value: V, key: K, iter: this) => C, comparator?: (valueA: C, valueB: C) => number): V | undefined;
@@ -2666,7 +2666,7 @@
  >C : Symbol(C, Decl(immutable.ts, 500, 10))
  >comparatorValueMapper : Symbol(comparatorValueMapper, Decl(immutable.ts, 500, 13))
  >value : Symbol(value, Decl(immutable.ts, 500, 37))
-@@ -3790,19 +3790,19 @@
+@@= skipped -18, +18 lines =@@
  
      // Comparison
      isSubset(iter: Iterable<V>): boolean;

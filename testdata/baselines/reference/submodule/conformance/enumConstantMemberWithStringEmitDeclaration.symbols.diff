@@ -1,6 +1,6 @@
 --- old.enumConstantMemberWithStringEmitDeclaration.symbols
 +++ new.enumConstantMemberWithStringEmitDeclaration.symbols
-@@ -5,56 +5,56 @@
+@@= skipped -5, +5 lines =@@
  >T1 : Symbol(T1, Decl(enumConstantMemberWithStringEmitDeclaration.ts, 0, 0))
  
      a = "1",

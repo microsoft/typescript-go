@@ -1,6 +1,6 @@
 --- old.divergentAccessorsTypes1.symbols
 +++ new.divergentAccessorsTypes1.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >Test1 : Symbol(Test1, Decl(divergentAccessorsTypes1.ts, 0, 0))
  
      get foo(): string { return "" }
@@ -13,7 +13,7 @@
  >s : Symbol(s, Decl(divergentAccessorsTypes1.ts, 2, 12))
  
          let a = s as string;
-@@ -21,10 +21,10 @@
+@@= skipped -16, +16 lines =@@
      }
  
      get bar(): string | number { return "" }
@@ -26,7 +26,7 @@
  >s : Symbol(s, Decl(divergentAccessorsTypes1.ts, 8, 12))
      }
  }
-@@ -33,17 +33,17 @@
+@@= skipped -12, +12 lines =@@
  >Test2 : Symbol(Test2, Decl(divergentAccessorsTypes1.ts, 10, 1))
  
      get foo(): string;
@@ -48,7 +48,7 @@
  >s : Symbol(s, Decl(divergentAccessorsTypes1.ts, 17, 12))
  }
  
-@@ -72,38 +72,38 @@
+@@= skipped -39, +39 lines =@@
  >Test1 : Symbol(Test1, Decl(divergentAccessorsTypes1.ts, 0, 0))
  
      t.foo = 32;
@@ -99,7 +99,7 @@
  }
  
  {
-@@ -112,38 +112,38 @@
+@@= skipped -40, +40 lines =@@
  >Test2 : Symbol(Test2, Decl(divergentAccessorsTypes1.ts, 10, 1))
  
      t.foo = 32;

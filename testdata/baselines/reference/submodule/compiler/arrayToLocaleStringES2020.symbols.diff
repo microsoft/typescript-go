@@ -1,6 +1,6 @@
 --- old.arrayToLocaleStringES2020.symbols
 +++ new.arrayToLocaleStringES2020.symbols
-@@ -9,21 +9,21 @@
+@@= skipped -9, +9 lines =@@
  
  str = arr.toLocaleString(); // OK
  >str : Symbol(str, Decl(arrayToLocaleStringES2020.ts, 0, 3))
@@ -28,7 +28,7 @@
  >style : Symbol(style, Decl(arrayToLocaleStringES2020.ts, 4, 35))
  >currency : Symbol(currency, Decl(arrayToLocaleStringES2020.ts, 4, 54))
  
-@@ -35,21 +35,21 @@
+@@= skipped -26, +26 lines =@@
  
  str = dates.toLocaleString(); // OK
  >str : Symbol(str, Decl(arrayToLocaleStringES2020.ts, 0, 3))
@@ -56,7 +56,7 @@
  >timeZone : Symbol(timeZone, Decl(arrayToLocaleStringES2020.ts, 9, 34))
  
  const mixed = [1, new Date(), 59782, new Date()];
-@@ -59,25 +59,25 @@
+@@= skipped -24, +24 lines =@@
  
  str = mixed.toLocaleString(); // OK
  >str : Symbol(str, Decl(arrayToLocaleStringES2020.ts, 0, 3))
@@ -88,7 +88,7 @@
  >currency : Symbol(currency, Decl(arrayToLocaleStringES2020.ts, 14, 68))
  >style : Symbol(style, Decl(arrayToLocaleStringES2020.ts, 14, 85))
  >timeZone : Symbol(timeZone, Decl(arrayToLocaleStringES2020.ts, 14, 104))
-@@ -90,21 +90,21 @@
+@@= skipped -31, +31 lines =@@
  
  str = bigInts.toLocaleString(); // OK
  >str : Symbol(str, Decl(arrayToLocaleStringES2020.ts, 0, 3))
@@ -116,7 +116,7 @@
  >style : Symbol(style, Decl(arrayToLocaleStringES2020.ts, 19, 39))
  >currency : Symbol(currency, Decl(arrayToLocaleStringES2020.ts, 19, 58))
  
-@@ -114,21 +114,21 @@
+@@= skipped -24, +24 lines =@@
  
  str = int8Array.toLocaleString(); // OK
  >str : Symbol(str, Decl(arrayToLocaleStringES2020.ts, 0, 3))
@@ -144,7 +144,7 @@
  >style : Symbol(style, Decl(arrayToLocaleStringES2020.ts, 24, 41))
  >currency : Symbol(currency, Decl(arrayToLocaleStringES2020.ts, 24, 60))
  
-@@ -138,21 +138,21 @@
+@@= skipped -24, +24 lines =@@
  
  str = uint8Array.toLocaleString(); // OK
  >str : Symbol(str, Decl(arrayToLocaleStringES2020.ts, 0, 3))
@@ -172,7 +172,7 @@
  >style : Symbol(style, Decl(arrayToLocaleStringES2020.ts, 29, 42))
  >currency : Symbol(currency, Decl(arrayToLocaleStringES2020.ts, 29, 61))
  
-@@ -162,21 +162,21 @@
+@@= skipped -24, +24 lines =@@
  
  str = uint8ClampedArray.toLocaleString(); // OK
  >str : Symbol(str, Decl(arrayToLocaleStringES2020.ts, 0, 3))
@@ -200,7 +200,7 @@
  >style : Symbol(style, Decl(arrayToLocaleStringES2020.ts, 34, 49))
  >currency : Symbol(currency, Decl(arrayToLocaleStringES2020.ts, 34, 68))
  
-@@ -186,21 +186,21 @@
+@@= skipped -24, +24 lines =@@
  
  str = int16Array.toLocaleString(); // OK
  >str : Symbol(str, Decl(arrayToLocaleStringES2020.ts, 0, 3))
@@ -228,7 +228,7 @@
  >style : Symbol(style, Decl(arrayToLocaleStringES2020.ts, 39, 42))
  >currency : Symbol(currency, Decl(arrayToLocaleStringES2020.ts, 39, 61))
  
-@@ -210,21 +210,21 @@
+@@= skipped -24, +24 lines =@@
  
  str = uint16Array.toLocaleString(); // OK
  >str : Symbol(str, Decl(arrayToLocaleStringES2020.ts, 0, 3))
@@ -256,7 +256,7 @@
  >style : Symbol(style, Decl(arrayToLocaleStringES2020.ts, 44, 43))
  >currency : Symbol(currency, Decl(arrayToLocaleStringES2020.ts, 44, 62))
  
-@@ -234,21 +234,21 @@
+@@= skipped -24, +24 lines =@@
  
  str = int32Array.toLocaleString(); // OK
  >str : Symbol(str, Decl(arrayToLocaleStringES2020.ts, 0, 3))
@@ -284,7 +284,7 @@
  >style : Symbol(style, Decl(arrayToLocaleStringES2020.ts, 49, 42))
  >currency : Symbol(currency, Decl(arrayToLocaleStringES2020.ts, 49, 61))
  
-@@ -258,21 +258,21 @@
+@@= skipped -24, +24 lines =@@
  
  str = uint32Array.toLocaleString(); // OK
  >str : Symbol(str, Decl(arrayToLocaleStringES2020.ts, 0, 3))
@@ -312,7 +312,7 @@
  >style : Symbol(style, Decl(arrayToLocaleStringES2020.ts, 54, 43))
  >currency : Symbol(currency, Decl(arrayToLocaleStringES2020.ts, 54, 62))
  
-@@ -282,21 +282,21 @@
+@@= skipped -24, +24 lines =@@
  
  str = float32Array.toLocaleString(); // OK
  >str : Symbol(str, Decl(arrayToLocaleStringES2020.ts, 0, 3))
@@ -340,7 +340,7 @@
  >style : Symbol(style, Decl(arrayToLocaleStringES2020.ts, 59, 44))
  >currency : Symbol(currency, Decl(arrayToLocaleStringES2020.ts, 59, 63))
  
-@@ -306,21 +306,21 @@
+@@= skipped -24, +24 lines =@@
  
  str = float64Array.toLocaleString(); // OK
  >str : Symbol(str, Decl(arrayToLocaleStringES2020.ts, 0, 3))
@@ -368,7 +368,7 @@
  >style : Symbol(style, Decl(arrayToLocaleStringES2020.ts, 64, 44))
  >currency : Symbol(currency, Decl(arrayToLocaleStringES2020.ts, 64, 63))
  
-@@ -330,21 +330,21 @@
+@@= skipped -24, +24 lines =@@
  
  str = bigInt64Array.toLocaleString(); // OK
  >str : Symbol(str, Decl(arrayToLocaleStringES2020.ts, 0, 3))
@@ -396,7 +396,7 @@
  >style : Symbol(style, Decl(arrayToLocaleStringES2020.ts, 69, 45))
  >currency : Symbol(currency, Decl(arrayToLocaleStringES2020.ts, 69, 64))
  
-@@ -354,21 +354,21 @@
+@@= skipped -24, +24 lines =@@
  
  str = bigIntUint64Array.toLocaleString(); // OK
  >str : Symbol(str, Decl(arrayToLocaleStringES2020.ts, 0, 3))

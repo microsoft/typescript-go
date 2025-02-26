@@ -1,6 +1,6 @@
 --- old.modulePreserve4.symbols
 +++ new.modulePreserve4.symbols
-@@ -30,10 +30,8 @@
+@@= skipped -30, +30 lines =@@
  export default 0;
  
  === /g.js ===
@@ -12,7 +12,7 @@
  
  === /main1.ts ===
  import { x, y } from "./a"; // No y
-@@ -48,7 +46,6 @@
+@@= skipped -18, +16 lines =@@
  
  const a3 = await import("./a"); // { x: 0 }
  >a3 : Symbol(a3, Decl(main1.ts, 3, 5))
@@ -20,7 +20,7 @@
  
  a3.x;
  >a3.x : Symbol(x, Decl(a.js, 0, 12))
-@@ -62,18 +59,17 @@
+@@= skipped -14, +13 lines =@@
  >b2 : Symbol(b2, Decl(main1.ts, 6, 21))
  
  b2.default;
@@ -43,7 +43,7 @@
  
  import c1 from "./c"; // { default: [Function: default] }
  >c1 : Symbol(c1, Decl(main1.ts, 12, 6))
-@@ -100,7 +96,6 @@
+@@= skipped -38, +37 lines =@@
  
  const d3 = await import("./d"); // { default: [Function: default] }
  >d3 : Symbol(d3, Decl(main1.ts, 19, 5))
@@ -51,7 +51,7 @@
  
  d3.default();
  >d3.default : Symbol(default)
-@@ -120,25 +115,21 @@
+@@= skipped -20, +19 lines =@@
  >f2 : Symbol(f2, Decl(main1.ts, 24, 25))
  
  f2.default;
@@ -79,7 +79,7 @@
  
  === /main2.mts ===
  import { x, y } from "./a"; // No y
-@@ -205,64 +196,46 @@
+@@= skipped -85, +81 lines =@@
  
  const a2 = require("./a"); // { x: 0 }
  >a2 : Symbol(a2, Decl(main3.cjs, 2, 5))

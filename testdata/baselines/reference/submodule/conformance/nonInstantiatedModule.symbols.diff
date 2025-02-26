@@ -1,6 +1,6 @@
 --- old.nonInstantiatedModule.symbols
 +++ new.nonInstantiatedModule.symbols
-@@ -6,8 +6,8 @@
+@@= skipped -6, +6 lines =@@
  
      export interface Point { x: number; y: number }
  >Point : Symbol(Point, Decl(nonInstantiatedModule.ts, 0, 10))
@@ -11,7 +11,7 @@
  
      export var a = 1;
  >a : Symbol(a, Decl(nonInstantiatedModule.ts, 2, 14))
-@@ -27,18 +27,18 @@
+@@= skipped -21, +21 lines =@@
  
  var a1 = M.a;
  >a1 : Symbol(a1, Decl(nonInstantiatedModule.ts, 9, 3), Decl(nonInstantiatedModule.ts, 10, 3))
@@ -34,7 +34,7 @@
  
  module M2 {
  >M2 : Symbol(M2, Decl(nonInstantiatedModule.ts, 13, 13))
-@@ -60,10 +60,10 @@
+@@= skipped -33, +33 lines =@@
  >Point : Symbol(Point, Decl(nonInstantiatedModule.ts, 15, 11), Decl(nonInstantiatedModule.ts, 20, 5))
  
          x: number;
@@ -47,7 +47,7 @@
      }
  }
  
-@@ -75,7 +75,7 @@
+@@= skipped -15, +15 lines =@@
  var p: M2.Point;
  >p : Symbol(p, Decl(nonInstantiatedModule.ts, 28, 3), Decl(nonInstantiatedModule.ts, 29, 3))
  >M2 : Symbol(M2, Decl(nonInstantiatedModule.ts, 13, 13))
@@ -56,7 +56,7 @@
  
  var p2: { Origin() : { x: number; y: number; } };
  >p2 : Symbol(p2, Decl(nonInstantiatedModule.ts, 31, 3), Decl(nonInstantiatedModule.ts, 32, 3))
-@@ -85,9 +85,9 @@
+@@= skipped -10, +10 lines =@@
  
  var p2: typeof M2.Point;
  >p2 : Symbol(p2, Decl(nonInstantiatedModule.ts, 31, 3), Decl(nonInstantiatedModule.ts, 32, 3))
@@ -68,7 +68,7 @@
  
  module M3 {
  >M3 : Symbol(M3, Decl(nonInstantiatedModule.ts, 32, 24))
-@@ -99,8 +99,8 @@
+@@= skipped -14, +14 lines =@@
  >Point : Symbol(Point, Decl(nonInstantiatedModule.ts, 35, 25))
  
              x: number; y: number;
@@ -79,7 +79,7 @@
          }
      }
  
-@@ -108,6 +108,6 @@
+@@= skipped -9, +9 lines =@@
  >Utils : Symbol(Utils, Decl(nonInstantiatedModule.ts, 34, 11), Decl(nonInstantiatedModule.ts, 39, 5))
  
          name: string;

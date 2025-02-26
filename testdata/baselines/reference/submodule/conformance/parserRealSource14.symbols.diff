@@ -1,6 +1,6 @@
 --- old.parserRealSource14.symbols
 +++ new.parserRealSource14.symbols
-@@ -15,13 +15,13 @@
+@@= skipped -15, +15 lines =@@
  
          return (items === null || items.length === 0) ? null : items[items.length - 1];
  >items : Symbol(items, Decl(parserRealSource14.ts, 6, 27))
@@ -18,7 +18,7 @@
      }
  
      export function max(a: number, b: number): number {
-@@ -56,33 +56,33 @@
+@@= skipped -41, +41 lines =@@
  >AstPath : Symbol(AstPath, Decl(parserRealSource14.ts, 16, 5))
  
          public asts: TypeScript.AST[] = [];
@@ -61,7 +61,7 @@
  >AstPath : Symbol(AstPath, Decl(parserRealSource14.ts, 16, 5))
  
              var clone = new AstPath();
-@@ -90,2106 +90,2106 @@
+@@= skipped -34, +34 lines =@@
  >AstPath : Symbol(AstPath, Decl(parserRealSource14.ts, 16, 5))
  
              clone.asts = this.asts.map((value) => { return value; });
@@ -3107,7 +3107,7 @@
          }
      }
  
-@@ -2197,7 +2197,7 @@
+@@= skipped -2107, +2107 lines =@@
  >isValidAstNode : Symbol(isValidAstNode, Decl(parserRealSource14.ts, 429, 5))
  >ast : Symbol(ast, Decl(parserRealSource14.ts, 431, 35))
  >TypeScript : Symbol(TypeScript, Decl(parserRealSource14.ts, 0, 0))
@@ -3116,7 +3116,7 @@
  
          if (ast === null)
  >ast : Symbol(ast, Decl(parserRealSource14.ts, 431, 35))
-@@ -2217,7 +2217,7 @@
+@@= skipped -20, +20 lines =@@
  >AstPathContext : Symbol(AstPathContext, Decl(parserRealSource14.ts, 439, 5))
  
          public path = new TypeScript.AstPath();
@@ -3125,7 +3125,7 @@
  >TypeScript.AstPath : Symbol(AstPath, Decl(parserRealSource14.ts, 16, 5))
  >TypeScript : Symbol(TypeScript, Decl(parserRealSource14.ts, 0, 0))
  >AstPath : Symbol(AstPath, Decl(parserRealSource14.ts, 16, 5))
-@@ -2227,10 +2227,10 @@
+@@= skipped -10, +10 lines =@@
  >GetAstPathOptions : Symbol(GetAstPathOptions, Decl(parserRealSource14.ts, 443, 5))
  
          Default = 0,
@@ -3138,7 +3138,7 @@
  
          //We need this options dealing with an AST coming from an incomplete AST. For example:
          //     class foo { // r
-@@ -2240,7 +2240,7 @@
+@@= skipped -13, +13 lines =@@
          // we don't find the "precomment" attached to the errorneous empty stmt.
          //TODO: It would be nice to be able to get rid of this.
          DontPruneSearchBasedOnPosition = 1 << 1,
@@ -3147,7 +3147,7 @@
      }
  
      ///
-@@ -2250,12 +2250,12 @@
+@@= skipped -10, +10 lines =@@
  >getAstPathToPosition : Symbol(getAstPathToPosition, Decl(parserRealSource14.ts, 456, 5))
  >script : Symbol(script, Decl(parserRealSource14.ts, 461, 41))
  >TypeScript : Symbol(TypeScript, Decl(parserRealSource14.ts, 0, 0))
@@ -3163,7 +3163,7 @@
  >TypeScript : Symbol(TypeScript, Decl(parserRealSource14.ts, 0, 0))
  >AstPath : Symbol(AstPath, Decl(parserRealSource14.ts, 16, 5))
  
-@@ -2263,20 +2263,20 @@
+@@= skipped -13, +13 lines =@@
  >lookInComments : Symbol(lookInComments, Decl(parserRealSource14.ts, 462, 11))
  >comments : Symbol(comments, Decl(parserRealSource14.ts, 462, 30))
  >TypeScript : Symbol(TypeScript, Decl(parserRealSource14.ts, 0, 0))
@@ -3189,7 +3189,7 @@
  >i : Symbol(i, Decl(parserRealSource14.ts, 464, 24))
  
                      var minChar = comments[i].minChar;
-@@ -2303,11 +2303,11 @@
+@@= skipped -40, +40 lines =@@
  >limChar : Symbol(limChar, Decl(parserRealSource14.ts, 466, 23))
  
                          ctx.path.push(comments[i]);
@@ -3205,7 +3205,7 @@
  >comments : Symbol(comments, Decl(parserRealSource14.ts, 462, 30))
  >i : Symbol(i, Decl(parserRealSource14.ts, 464, 24))
                      }
-@@ -2319,10 +2319,10 @@
+@@= skipped -16, +16 lines =@@
  >pre : Symbol(pre, Decl(parserRealSource14.ts, 477, 11))
  >cur : Symbol(cur, Decl(parserRealSource14.ts, 477, 28))
  >TypeScript : Symbol(TypeScript, Decl(parserRealSource14.ts, 0, 0))
@@ -3218,7 +3218,7 @@
  >walker : Symbol(walker, Decl(parserRealSource14.ts, 477, 72))
  >IAstWalker : Symbol(IAstWalker)
  
-@@ -2342,9 +2342,9 @@
+@@= skipped -23, +23 lines =@@
  
                      hasFlag(options, GetAstPathOptions.EdgeInclusive) ||
  >options : Symbol(options, Decl(parserRealSource14.ts, 461, 77))
@@ -3230,7 +3230,7 @@
  
                      cur.nodeType === TypeScript.NodeType.Name ||
  >cur : Symbol(cur, Decl(parserRealSource14.ts, 477, 28))
-@@ -2373,11 +2373,11 @@
+@@= skipped -31, +31 lines =@@
                      //       than top of the stack.
                      var previous = ctx.path.ast();
  >previous : Symbol(previous, Decl(parserRealSource14.ts, 498, 23))
@@ -3246,7 +3246,7 @@
  
                      if (previous == null || (cur.minChar >= previous.minChar && cur.limChar <= previous.limChar)) {
  >previous : Symbol(previous, Decl(parserRealSource14.ts, 498, 23))
-@@ -2387,11 +2387,11 @@
+@@= skipped -14, +14 lines =@@
  >previous : Symbol(previous, Decl(parserRealSource14.ts, 498, 23))
  
                          ctx.path.push(cur);
@@ -3262,7 +3262,7 @@
  >cur : Symbol(cur, Decl(parserRealSource14.ts, 477, 28))
                      }
                      else {
-@@ -2419,9 +2419,9 @@
+@@= skipped -32, +32 lines =@@
  
                  if (!hasFlag(options, GetAstPathOptions.DontPruneSearchBasedOnPosition)) {
  >options : Symbol(options, Decl(parserRealSource14.ts, 461, 77))
@@ -3274,7 +3274,7 @@
  
                      // Don't go further down the tree if pos is outside of [minChar, limChar]
                      walker.options.goChildren = (minChar <= pos && pos <= limChar);
-@@ -2447,9 +2447,9 @@
+@@= skipped -28, +28 lines =@@
  >ctx : Symbol(ctx, Decl(parserRealSource14.ts, 523, 11))
  
          return ctx.path;
@@ -3286,7 +3286,7 @@
      }
  
      //
-@@ -2460,7 +2460,7 @@
+@@= skipped -13, +13 lines =@@
  >getTokenizationOffset : Symbol(getTokenizationOffset, Decl(parserRealSource14.ts, 526, 5))
  >script : Symbol(script, Decl(parserRealSource14.ts, 532, 42))
  >TypeScript : Symbol(TypeScript, Decl(parserRealSource14.ts, 0, 0))
@@ -3295,7 +3295,7 @@
  >position : Symbol(position, Decl(parserRealSource14.ts, 532, 68))
  
          var bestOffset = 0;
-@@ -2470,15 +2470,15 @@
+@@= skipped -10, +10 lines =@@
  >pre : Symbol(pre, Decl(parserRealSource14.ts, 534, 11))
  >cur : Symbol(cur, Decl(parserRealSource14.ts, 534, 19))
  >TypeScript : Symbol(TypeScript, Decl(parserRealSource14.ts, 0, 0))
@@ -3315,7 +3315,7 @@
  
              if (TypeScript.isValidAstNode(cur)) {
  >TypeScript.isValidAstNode : Symbol(isValidAstNode, Decl(parserRealSource14.ts, 429, 5))
-@@ -2530,25 +2530,25 @@
+@@= skipped -60, +60 lines =@@
  >walkAST : Symbol(walkAST, Decl(parserRealSource14.ts, 552, 5))
  >ast : Symbol(ast, Decl(parserRealSource14.ts, 557, 28))
  >TypeScript : Symbol(TypeScript, Decl(parserRealSource14.ts, 0, 0))
@@ -3346,7 +3346,7 @@
  
              var path: TypeScript.AstPath = walker.state;
  >path : Symbol(path, Decl(parserRealSource14.ts, 559, 15))
-@@ -2557,9 +2557,9 @@
+@@= skipped -27, +27 lines =@@
  >walker : Symbol(walker, Decl(parserRealSource14.ts, 558, 72))
  
              path.push(cur);
@@ -3358,7 +3358,7 @@
  >cur : Symbol(cur, Decl(parserRealSource14.ts, 558, 28))
  
              callback(path, walker);
-@@ -2574,13 +2574,13 @@
+@@= skipped -17, +17 lines =@@
  >post : Symbol(post, Decl(parserRealSource14.ts, 564, 11))
  >cur : Symbol(cur, Decl(parserRealSource14.ts, 564, 29))
  >TypeScript : Symbol(TypeScript, Decl(parserRealSource14.ts, 0, 0))
@@ -3375,7 +3375,7 @@
  
              var path: TypeScript.AstPath = walker.state;
  >path : Symbol(path, Decl(parserRealSource14.ts, 565, 15))
-@@ -2589,9 +2589,9 @@
+@@= skipped -15, +15 lines =@@
  >walker : Symbol(walker, Decl(parserRealSource14.ts, 564, 73))
  
              path.pop();

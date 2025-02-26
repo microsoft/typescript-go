@@ -1,6 +1,6 @@
 --- old.declarationEmitPartialNodeReuseTypeOf.symbols
 +++ new.declarationEmitPartialNodeReuseTypeOf.symbols
-@@ -35,9 +35,9 @@
+@@= skipped -35, +35 lines =@@
  >o : Symbol(o, Decl(b.ts, 0, 8))
  
  console.log(nImported);
@@ -12,7 +12,7 @@
  >nImported : Symbol(nImported, Decl(b.ts, 0, 11))
  
  === c.ts ===
-@@ -46,7 +46,7 @@
+@@= skipped -11, +11 lines =@@
  
  export const g = a.o
  >g : Symbol(g, Decl(c.ts, 1, 12))

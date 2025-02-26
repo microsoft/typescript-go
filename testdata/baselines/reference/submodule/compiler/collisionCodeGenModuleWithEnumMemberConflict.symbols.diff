@@ -1,6 +1,6 @@
 --- old.collisionCodeGenModuleWithEnumMemberConflict.symbols
 +++ new.collisionCodeGenModuleWithEnumMemberConflict.symbols
-@@ -8,10 +8,10 @@
+@@= skipped -8, +8 lines =@@
  >e : Symbol(e, Decl(collisionCodeGenModuleWithEnumMemberConflict.ts, 0, 11))
  
          m1, 

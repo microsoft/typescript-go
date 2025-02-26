@@ -1,6 +1,6 @@
 --- old.conditionalTypeSimplification.symbols
 +++ new.conditionalTypeSimplification.symbols
-@@ -9,7 +9,7 @@
+@@= skipped -9, +9 lines =@@
  >V : Symbol(V, Decl(conditionalTypeSimplification.ts, 2, 27))
  
    m1<T> (v: T): SchemaType<S, Exclude<V, T>>;
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(conditionalTypeSimplification.ts, 3, 5))
  >v : Symbol(v, Decl(conditionalTypeSimplification.ts, 3, 9))
  >T : Symbol(T, Decl(conditionalTypeSimplification.ts, 3, 5))
-@@ -20,7 +20,7 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(conditionalTypeSimplification.ts, 3, 5))
  
    m2<T> (v: T): SchemaType<S, T>;

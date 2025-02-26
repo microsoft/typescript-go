@@ -1,6 +1,6 @@
 --- old.typeArgInference.symbols
 +++ new.typeArgInference.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >I : Symbol(I, Decl(typeArgInference.ts, 0, 0))
  
      f<T, U>(a1: { a: T; b: U }[], a2: { a: T; b: U }[]): { c: T; d: U };
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(typeArgInference.ts, 1, 6))
  >U : Symbol(U, Decl(typeArgInference.ts, 1, 8))
  >a1 : Symbol(a1, Decl(typeArgInference.ts, 1, 12))
-@@ -24,7 +24,7 @@
+@@= skipped -19, +19 lines =@@
  >U : Symbol(U, Decl(typeArgInference.ts, 1, 8))
  
      g<T, U>(...arg: { a: T; b: U }[][]): { c: T; d: U };
@@ -18,7 +18,7 @@
  >T : Symbol(T, Decl(typeArgInference.ts, 2, 6))
  >U : Symbol(U, Decl(typeArgInference.ts, 2, 8))
  >arg : Symbol(arg, Decl(typeArgInference.ts, 2, 12))
-@@ -48,9 +48,9 @@
+@@= skipped -24, +24 lines =@@
  
  var t1 = x.f([o], [o]);
  >t1 : Symbol(t1, Decl(typeArgInference.ts, 6, 3), Decl(typeArgInference.ts, 7, 3))
@@ -30,7 +30,7 @@
  >o : Symbol(o, Decl(typeArgInference.ts, 4, 3))
  >o : Symbol(o, Decl(typeArgInference.ts, 4, 3))
  
-@@ -61,9 +61,9 @@
+@@= skipped -13, +13 lines =@@
  
  var t2 = x.f<number, string>([o], [o]);
  >t2 : Symbol(t2, Decl(typeArgInference.ts, 8, 3), Decl(typeArgInference.ts, 9, 3))
@@ -42,7 +42,7 @@
  >o : Symbol(o, Decl(typeArgInference.ts, 4, 3))
  >o : Symbol(o, Decl(typeArgInference.ts, 4, 3))
  
-@@ -74,9 +74,9 @@
+@@= skipped -13, +13 lines =@@
  
  var t3 = x.g([o], [o]);
  >t3 : Symbol(t3, Decl(typeArgInference.ts, 10, 3), Decl(typeArgInference.ts, 11, 3))
@@ -54,7 +54,7 @@
  >o : Symbol(o, Decl(typeArgInference.ts, 4, 3))
  >o : Symbol(o, Decl(typeArgInference.ts, 4, 3))
  
-@@ -87,9 +87,9 @@
+@@= skipped -13, +13 lines =@@
  
  var t4 = x.g<number, string>([o], [o]);
  >t4 : Symbol(t4, Decl(typeArgInference.ts, 12, 3), Decl(typeArgInference.ts, 13, 3))

@@ -1,6 +1,6 @@
 --- old.errorOnEnumReferenceInCondition.symbols
 +++ new.errorOnEnumReferenceInCondition.symbols
-@@ -5,28 +5,28 @@
+@@= skipped -5, +5 lines =@@
  >Nums : Symbol(Nums, Decl(errorOnEnumReferenceInCondition.ts, 0, 0))
  
      Zero = 0,
@@ -37,7 +37,7 @@
  
      Nums;
  >Nums : Symbol(Nums, Decl(errorOnEnumReferenceInCondition.ts, 0, 0))
-@@ -38,9 +38,9 @@
+@@= skipped -33, +33 lines =@@
  
  
  if (Nums.One) {
@@ -49,7 +49,7 @@
  
      Nums;
  >Nums : Symbol(Nums, Decl(errorOnEnumReferenceInCondition.ts, 0, 0))
-@@ -55,28 +55,28 @@
+@@= skipped -17, +17 lines =@@
  >Strs : Symbol(Strs, Decl(errorOnEnumReferenceInCondition.ts, 21, 1))
  
      Empty = "",
@@ -86,7 +86,7 @@
  
      Strs;
  >Strs : Symbol(Strs, Decl(errorOnEnumReferenceInCondition.ts, 21, 1))
-@@ -88,9 +88,9 @@
+@@= skipped -33, +33 lines =@@
  
  
  if (Strs.A) {

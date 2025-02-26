@@ -1,6 +1,6 @@
 --- old.jsDeclarationsGetterSetter.symbols
 +++ new.jsDeclarationsGetterSetter.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(index.js, 0, 0))
  
      get x() {
@@ -9,7 +9,7 @@
  
          return 12;
      }
-@@ -18,7 +18,7 @@
+@@= skipped -13, +13 lines =@@
       * @param {number} _arg
       */
      set x(_arg) {
@@ -18,7 +18,7 @@
  >_arg : Symbol(_arg, Decl(index.js, 10, 10))
      }
  }
-@@ -27,12 +27,12 @@
+@@= skipped -9, +9 lines =@@
  >C : Symbol(C, Decl(index.js, 12, 1))
  
      get x() {
@@ -33,7 +33,7 @@
  >_arg : Symbol(_arg, Decl(index.js, 18, 10))
      }
  }
-@@ -41,13 +41,9 @@
+@@= skipped -14, +14 lines =@@
  >D : Symbol(D, Decl(index.js, 20, 1))
  
  Object.defineProperty(D.prototype, "x", {
@@ -49,7 +49,7 @@
  
      get() {
  >get : Symbol(get, Decl(index.js, 23, 41))
-@@ -60,13 +56,9 @@
+@@= skipped -19, +15 lines =@@
  >E : Symbol(E, Decl(index.js, 27, 3))
  
  Object.defineProperty(E.prototype, "x", {
@@ -65,7 +65,7 @@
  
      /**
       * @param {number} _arg
-@@ -81,13 +73,9 @@
+@@= skipped -21, +17 lines =@@
  >F : Symbol(F, Decl(index.js, 35, 3))
  
  Object.defineProperty(F.prototype, "x", {
@@ -81,7 +81,7 @@
  
      get() {
  >get : Symbol(get, Decl(index.js, 38, 41))
-@@ -107,13 +95,9 @@
+@@= skipped -26, +22 lines =@@
  >G : Symbol(G, Decl(index.js, 46, 3))
  
  Object.defineProperty(G.prototype, "x", {
@@ -97,7 +97,7 @@
  
      /**
       * @param {number[]} args
-@@ -128,13 +112,9 @@
+@@= skipped -21, +17 lines =@@
  >H : Symbol(H, Decl(index.js, 54, 3))
  
  Object.defineProperty(H.prototype, "x", {
@@ -113,7 +113,7 @@
  
      set() {}
  >set : Symbol(set, Decl(index.js, 57, 41))
-@@ -146,13 +126,9 @@
+@@= skipped -18, +14 lines =@@
  >I : Symbol(I, Decl(index.js, 59, 3))
  
  Object.defineProperty(I.prototype, "x", {
@@ -129,7 +129,7 @@
  
      /**
       * @param {number} v
-@@ -174,13 +150,9 @@
+@@= skipped -28, +24 lines =@@
  >J : Symbol(J, Decl(index.js, 73, 25))
  
  Object.defineProperty(J.prototype, "x", {
@@ -145,7 +145,7 @@
  
      set: jSetter
  >set : Symbol(set, Decl(index.js, 75, 41))
-@@ -206,19 +178,12 @@
+@@= skipped -32, +28 lines =@@
  >K : Symbol(K, Decl(index.js, 86, 26))
  
  Object.defineProperty(K.prototype, "x", {
@@ -167,7 +167,7 @@
  >kSetter1 : Symbol(kSetter1, Decl(index.js, 82, 5))
  >kSetter2 : Symbol(kSetter2, Decl(index.js, 86, 5))
  
-@@ -242,19 +207,12 @@
+@@= skipped -36, +29 lines =@@
  >L : Symbol(L, Decl(index.js, 99, 26))
  
  Object.defineProperty(L.prototype, "x", {
@@ -189,7 +189,7 @@
  >lSetter1 : Symbol(lSetter1, Decl(index.js, 95, 5))
  >lSetter2 : Symbol(lSetter2, Decl(index.js, 99, 5))
  
-@@ -278,19 +236,12 @@
+@@= skipped -36, +29 lines =@@
  >M : Symbol(M, Decl(index.js, 112, 26))
  
  Object.defineProperty(M.prototype, "x", {

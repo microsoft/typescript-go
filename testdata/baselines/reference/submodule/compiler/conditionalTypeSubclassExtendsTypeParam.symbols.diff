@@ -1,6 +1,6 @@
 --- old.conditionalTypeSubclassExtendsTypeParam.symbols
 +++ new.conditionalTypeSubclassExtendsTypeParam.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >MR : Symbol(MR, Decl(conditionalTypeSubclassExtendsTypeParam.ts, 0, 33))
  
      public getField2<K extends keyof M>(): Field<M[K], [K] extends [keyof MR] ? MR[K] : M[K]>

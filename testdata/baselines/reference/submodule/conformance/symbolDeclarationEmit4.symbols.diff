@@ -1,6 +1,6 @@
 --- old.symbolDeclarationEmit4.symbols
 +++ new.symbolDeclarationEmit4.symbols
-@@ -5,15 +5,9 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(symbolDeclarationEmit4.ts, 0, 0))
  
      get [Symbol.toPrimitive]() { return ""; }

@@ -1,6 +1,6 @@
 --- old.jsFileClassPropertyType.symbols
 +++ new.jsFileClassPropertyType.symbols
-@@ -6,15 +6,11 @@
+@@= skipped -6, +6 lines =@@
  
    constructor () {
        this.p = 0;

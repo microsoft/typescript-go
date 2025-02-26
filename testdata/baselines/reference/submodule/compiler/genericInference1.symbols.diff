@@ -1,6 +1,6 @@
 --- old.genericInference1.symbols
 +++ new.genericInference1.symbols
-@@ -2,10 +2,10 @@
+@@= skipped -2, +2 lines =@@
  
  === genericInference1.ts ===
  ['a', 'b', 'c'].map(x => x.length);

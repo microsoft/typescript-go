@@ -1,6 +1,6 @@
 --- old.parserRealSource1.symbols
 +++ new.parserRealSource1.symbols
-@@ -19,7 +19,7 @@
+@@= skipped -19, +19 lines =@@
  >IDiagnosticWriter : Symbol(IDiagnosticWriter, Decl(parserRealSource1.ts, 7, 33))
  
              Alert(output: string): void;
@@ -9,7 +9,7 @@
  >output : Symbol(output, Decl(parserRealSource1.ts, 9, 18))
          }
  
-@@ -38,9 +38,9 @@
+@@= skipped -19, +19 lines =@@
  >diagnosticWriter : Symbol(diagnosticWriter, Decl(parserRealSource1.ts, 12, 18))
  
                  diagnosticWriter.Alert(output);
@@ -21,7 +21,7 @@
  >output : Symbol(output, Decl(parserRealSource1.ts, 16, 30))
              }
          }
-@@ -82,22 +82,22 @@
+@@= skipped -44, +44 lines =@@
  >ILogger : Symbol(ILogger, Decl(parserRealSource1.ts, 36, 5))
  
          information(): boolean;
@@ -50,7 +50,7 @@
  >s : Symbol(s, Decl(parserRealSource1.ts, 44, 12))
      }
  
-@@ -106,22 +106,22 @@
+@@= skipped -24, +24 lines =@@
  >ILogger : Symbol(ILogger, Decl(parserRealSource1.ts, 36, 5))
  
          public information(): boolean { return false; }
@@ -79,7 +79,7 @@
  >s : Symbol(s, Decl(parserRealSource1.ts, 53, 19))
          }
      }
-@@ -131,116 +131,116 @@
+@@= skipped -25, +25 lines =@@
  >ILogger : Symbol(ILogger, Decl(parserRealSource1.ts, 36, 5))
  
          private _information: boolean;
@@ -252,7 +252,7 @@
  >s : Symbol(s, Decl(parserRealSource1.ts, 78, 19))
          }
      }
-@@ -250,33 +250,33 @@
+@@= skipped -119, +119 lines =@@
  >ILogger : Symbol(ILogger, Decl(parserRealSource1.ts, 36, 5))
  
          public logContents = [];
@@ -297,7 +297,7 @@
  >s : Symbol(s, Decl(parserRealSource1.ts, 91, 19))
          }
      }
-@@ -301,9 +301,9 @@
+@@= skipped -51, +51 lines =@@
  >Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
  
          logger.log(funcDescription + " completed in " + (end - start) + " msec");
@@ -309,7 +309,7 @@
  >funcDescription : Symbol(funcDescription, Decl(parserRealSource1.ts, 96, 49))
  >end : Symbol(end, Decl(parserRealSource1.ts, 99, 11))
  >start : Symbol(start, Decl(parserRealSource1.ts, 97, 11))
-@@ -326,9 +326,9 @@
+@@= skipped -25, +25 lines =@@
  
              var ch = value.charCodeAt(index);
  >ch : Symbol(ch, Decl(parserRealSource1.ts, 108, 15))
@@ -321,7 +321,7 @@
  >index : Symbol(index, Decl(parserRealSource1.ts, 107, 23))
  
              switch (ch) {
-@@ -377,18 +377,18 @@
+@@= skipped -51, +51 lines =@@
                  default:
                      result += value.charAt(index);
  >result : Symbol(result, Decl(parserRealSource1.ts, 105, 11))
@@ -344,7 +344,7 @@
  >length : Symbol(length, Decl(parserRealSource1.ts, 104, 50))
  
          if (tooLong) {
-@@ -411,14 +411,14 @@
+@@= skipped -34, +34 lines =@@
  
              for (var i = value.length - mid; i < value.length; i++) addChar(i);
  >i : Symbol(i, Decl(parserRealSource1.ts, 142, 20), Decl(parserRealSource1.ts, 144, 20), Decl(parserRealSource1.ts, 148, 20))
@@ -363,7 +363,7 @@
  >i : Symbol(i, Decl(parserRealSource1.ts, 142, 20), Decl(parserRealSource1.ts, 144, 20), Decl(parserRealSource1.ts, 148, 20))
  >addChar : Symbol(addChar, Decl(parserRealSource1.ts, 107, 11))
  >i : Symbol(i, Decl(parserRealSource1.ts, 142, 20), Decl(parserRealSource1.ts, 144, 20), Decl(parserRealSource1.ts, 148, 20))
-@@ -426,9 +426,9 @@
+@@= skipped -15, +15 lines =@@
          else {
              length = value.length;
  >length : Symbol(length, Decl(parserRealSource1.ts, 104, 50))

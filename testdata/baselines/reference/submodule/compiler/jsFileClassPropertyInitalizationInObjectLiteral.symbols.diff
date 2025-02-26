@@ -1,6 +1,6 @@
 --- old.jsFileClassPropertyInitalizationInObjectLiteral.symbols
 +++ new.jsFileClassPropertyInitalizationInObjectLiteral.symbols
-@@ -2,10 +2,6 @@
+@@= skipped -2, +2 lines =@@
  
  === foo.js ===
  module.exports = function () {

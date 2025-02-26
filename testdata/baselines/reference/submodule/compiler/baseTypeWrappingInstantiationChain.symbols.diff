@@ -1,6 +1,6 @@
 --- old.baseTypeWrappingInstantiationChain.symbols
 +++ new.baseTypeWrappingInstantiationChain.symbols
-@@ -25,7 +25,7 @@
+@@= skipped -25, +25 lines =@@
  >T4 : Symbol(T4, Decl(baseTypeWrappingInstantiationChain.ts, 8, 16))
  
      method(t: T4) { }
@@ -9,7 +9,7 @@
  >t : Symbol(t, Decl(baseTypeWrappingInstantiationChain.ts, 9, 11))
  >T4 : Symbol(T4, Decl(baseTypeWrappingInstantiationChain.ts, 8, 16))
  }
-@@ -35,7 +35,7 @@
+@@= skipped -10, +10 lines =@@
  >T5 : Symbol(T5, Decl(baseTypeWrappingInstantiationChain.ts, 12, 14))
  
      property: T5;
@@ -18,7 +18,7 @@
  >T5 : Symbol(T5, Decl(baseTypeWrappingInstantiationChain.ts, 12, 14))
  }
  
-@@ -46,7 +46,7 @@
+@@= skipped -11, +11 lines =@@
  >T1 : Symbol(T1, Decl(baseTypeWrappingInstantiationChain.ts, 16, 8))
  
      public works() {
@@ -27,7 +27,7 @@
  
          new CBaseBase<Wrapper<T1>>(this);
  >CBaseBase : Symbol(CBaseBase, Decl(baseTypeWrappingInstantiationChain.ts, 0, 0))
-@@ -55,7 +55,7 @@
+@@= skipped -9, +9 lines =@@
  >this : Symbol(C, Decl(baseTypeWrappingInstantiationChain.ts, 14, 1))
      }
      public alsoWorks() {
@@ -36,7 +36,7 @@
  
          new CBase<T1>(this); // Should not error, parameter is of type Parameter<Wrapper<T1>>
  >CBase : Symbol(CBase, Decl(baseTypeWrappingInstantiationChain.ts, 2, 1))
-@@ -64,7 +64,7 @@
+@@= skipped -9, +9 lines =@@
      }
  
      public method(t: Wrapper<T1>) { }

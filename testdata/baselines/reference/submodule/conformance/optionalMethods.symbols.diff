@@ -1,6 +1,6 @@
 --- old.optionalMethods.symbols
 +++ new.optionalMethods.symbols
-@@ -5,16 +5,16 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(optionalMethods.ts, 0, 0))
  
      a: number;
@@ -21,7 +21,7 @@
  }
  
  function test1(x: Foo) {
-@@ -23,76 +23,76 @@
+@@= skipped -18, +18 lines =@@
  >Foo : Symbol(Foo, Decl(optionalMethods.ts, 0, 0))
  
      x.a;
@@ -124,7 +124,7 @@
  
          return 2;
      }
-@@ -104,91 +104,91 @@
+@@= skipped -81, +81 lines =@@
  >Bar : Symbol(Bar, Decl(optionalMethods.ts, 15, 1))
  
      x.a;
@@ -250,7 +250,7 @@
  }
  
  class Derived extends Base {
-@@ -196,9 +196,9 @@
+@@= skipped -92, +92 lines =@@
  >Base : Symbol(Base, Decl(optionalMethods.ts, 44, 1))
  
      a = 1;

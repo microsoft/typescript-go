@@ -1,6 +1,6 @@
 --- old.asiInES6Classes.symbols
 +++ new.asiInES6Classes.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
   
  
      defaults = {
@@ -9,7 +9,7 @@
  
          done: false
  >done : Symbol(done, Decl(asiInES6Classes.ts, 4, 16))
-@@ -17,7 +17,7 @@
+@@= skipped -10, +10 lines =@@
   
  
      bar() {

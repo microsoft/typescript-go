@@ -1,6 +1,6 @@
 --- old.jsxSpreadOverwritesAttributeStrict.symbols
 +++ new.jsxSpreadOverwritesAttributeStrict.symbols
-@@ -8,16 +8,16 @@
+@@= skipped -8, +8 lines =@@
  >Props : Symbol(Props, Decl(file.tsx, 0, 32))
  
      a: number;
@@ -21,7 +21,7 @@
  }
  
  
-@@ -31,11 +31,9 @@
+@@= skipped -23, +23 lines =@@
  >Foo : Symbol(Foo, Decl(file.tsx, 11, 5))
  >props : Symbol(props, Decl(file.tsx, 11, 13))
  >Props : Symbol(Props, Decl(file.tsx, 0, 32))

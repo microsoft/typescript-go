@@ -1,6 +1,6 @@
 --- old.genericTypeAssertions6.symbols
 +++ new.genericTypeAssertions6.symbols
-@@ -21,7 +21,7 @@
+@@= skipped -21, +21 lines =@@
      }
  
      f(x: T, y: U) {
@@ -9,7 +9,7 @@
  >x : Symbol(x, Decl(genericTypeAssertions6.ts, 6, 6))
  >T : Symbol(T, Decl(genericTypeAssertions6.ts, 0, 8))
  >y : Symbol(y, Decl(genericTypeAssertions6.ts, 6, 11))
-@@ -50,7 +50,7 @@
+@@= skipped -29, +29 lines =@@
  >U : Symbol(U, Decl(genericTypeAssertions6.ts, 12, 23))
  
      g(x: T) {

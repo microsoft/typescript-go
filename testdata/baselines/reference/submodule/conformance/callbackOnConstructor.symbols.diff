@@ -1,6 +1,6 @@
 --- old.callbackOnConstructor.symbols
 +++ new.callbackOnConstructor.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Preferences : Symbol(Preferences, Decl(callbackOnConstructor.js, 0, 0))
  
    assignability = "no"
@@ -9,7 +9,7 @@
  
    /**
     * @callback ValueGetter_2
-@@ -20,7 +20,5 @@
+@@= skipped -15, +15 lines =@@
  var ooscope2 = s => s.length > 0
  >ooscope2 : Symbol(ooscope2, Decl(callbackOnConstructor.js, 12, 3))
  >s : Symbol(s, Decl(callbackOnConstructor.js, 12, 14))

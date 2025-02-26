@@ -1,6 +1,6 @@
 --- old.jsDeclarationsImportAliasExposedWithinNamespace.symbols
 +++ new.jsDeclarationsImportAliasExposedWithinNamespace.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
   * @type {Object<string,*>}
   */
  const myTypes = {
@@ -9,7 +9,7 @@
  
      // SOME PROPS HERE
  };
-@@ -23,7 +23,7 @@
+@@= skipped -16, +16 lines =@@
  /** @typedef {myTypes.typeB|Function} myTypes.typeC */
  
  export {myTypes};
@@ -18,7 +18,7 @@
  
  === file2.js ===
  import {myTypes} from './file.js';
-@@ -35,7 +35,7 @@
+@@= skipped -12, +12 lines =@@
   * @type {Object<string,*>}
   */
  const testFnTypes = {
@@ -27,7 +27,7 @@
  
      // SOME PROPS HERE
  };
-@@ -65,5 +65,5 @@
+@@= skipped -30, +30 lines =@@
  
  export {testFn, testFnTypes};
  >testFn : Symbol(testFn, Decl(file2.js, 27, 8))

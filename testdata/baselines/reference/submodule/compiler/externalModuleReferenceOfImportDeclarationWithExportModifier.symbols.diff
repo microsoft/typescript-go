@@ -1,6 +1,6 @@
 --- old.externalModuleReferenceOfImportDeclarationWithExportModifier.symbols
 +++ new.externalModuleReferenceOfImportDeclarationWithExportModifier.symbols
-@@ -5,11 +5,5 @@
+@@= skipped -5, +5 lines =@@
  >file1 : Symbol(file1, Decl(externalModuleReferenceOfImportDeclarationWithExportModifier_1.ts, 0, 0))
  
  file1.foo();

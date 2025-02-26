@@ -1,6 +1,6 @@
 --- old.privateNameES5Ban.symbols
 +++ new.privateNameES5Ban.symbols
-@@ -6,29 +6,29 @@
+@@= skipped -6, +6 lines =@@
  
      constructor() {}
      #field = 123;

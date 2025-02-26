@@ -1,6 +1,6 @@
 --- old.typeArgInference2WithError.symbols
 +++ new.typeArgInference2WithError.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Item : Symbol(Item, Decl(typeArgInference2WithError.ts, 0, 0))
  
      name: string;

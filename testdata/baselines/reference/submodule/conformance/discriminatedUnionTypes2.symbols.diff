@@ -1,6 +1,6 @@
 --- old.discriminatedUnionTypes2.symbols
 +++ new.discriminatedUnionTypes2.symbols
-@@ -126,9 +126,9 @@
+@@= skipped -126, +126 lines =@@
  >Result : Symbol(Result, Decl(discriminatedUnionTypes2.ts, 33, 1))
  
      if (!x.error) {
@@ -12,7 +12,7 @@
  
          x.value;
  >x.value : Symbol(value, Decl(discriminatedUnionTypes2.ts, 35, 37))
-@@ -137,11 +137,11 @@
+@@= skipped -11, +11 lines =@@
      }
      else {
          x.error.message;
@@ -26,7 +26,7 @@
      }
  }
  
-@@ -160,11 +160,11 @@
+@@= skipped -23, +23 lines =@@
  >WithError : Symbol(WithError, Decl(discriminatedUnionTypes2.ts, 47, 34))
  
      error: Error
@@ -40,7 +40,7 @@
  }
  
  interface WithoutError<Data> {
-@@ -172,10 +172,10 @@
+@@= skipped -12, +12 lines =@@
  >Data : Symbol(Data, Decl(discriminatedUnionTypes2.ts, 56, 23))
  
      error: null
@@ -53,7 +53,7 @@
  >Data : Symbol(Data, Decl(discriminatedUnionTypes2.ts, 56, 23))
  }
  
-@@ -200,30 +200,30 @@
+@@= skipped -28, +28 lines =@@
  
          const error: null = carrier.error
  >error : Symbol(error, Decl(discriminatedUnionTypes2.ts, 65, 13))

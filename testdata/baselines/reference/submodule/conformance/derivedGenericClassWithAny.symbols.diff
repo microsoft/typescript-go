@@ -1,6 +1,6 @@
 --- old.derivedGenericClassWithAny.symbols
 +++ new.derivedGenericClassWithAny.symbols
-@@ -6,15 +6,15 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(derivedGenericClassWithAny.ts, 0, 8))
  
      x: T;
@@ -19,7 +19,7 @@
  >T : Symbol(T, Decl(derivedGenericClassWithAny.ts, 0, 8))
  
          return null;
-@@ -26,29 +26,29 @@
+@@= skipped -20, +20 lines =@@
  >C : Symbol(C, Decl(derivedGenericClassWithAny.ts, 0, 0))
  
      x: any;
@@ -55,7 +55,7 @@
  
          return null;
      }
-@@ -61,15 +61,15 @@
+@@= skipped -35, +35 lines =@@
  >D : Symbol(D, Decl(derivedGenericClassWithAny.ts, 6, 1))
  
      x: T;
@@ -74,7 +74,7 @@
  >T : Symbol(T, Decl(derivedGenericClassWithAny.ts, 27, 8))
  
          return ''; // error
-@@ -98,7 +98,7 @@
+@@= skipped -37, +37 lines =@@
  
  var r = c.foo(); // e.foo would return string
  >r : Symbol(r, Decl(derivedGenericClassWithAny.ts, 41, 3))

@@ -1,6 +1,6 @@
 --- old.blockScopedFunctionDeclarationInStrictModule.symbols
 +++ new.blockScopedFunctionDeclarationInStrictModule.symbols
-@@ -10,3 +10,5 @@
+@@= skipped -10, +10 lines =@@
  }
  
  export = foo; // not ok

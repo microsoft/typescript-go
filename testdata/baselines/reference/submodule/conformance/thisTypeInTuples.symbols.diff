@@ -1,6 +1,6 @@
 --- old.thisTypeInTuples.symbols
 +++ new.thisTypeInTuples.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(lib.es5.d.ts, --, --), Decl(thisTypeInTuples.ts, 0, 16))
  
      slice(): this;
@@ -9,7 +9,7 @@
  }
  
  let t: [number, string] = [42, "hello"];
-@@ -14,19 +14,19 @@
+@@= skipped -8, +8 lines =@@
  
  let a = t.slice();
  >a : Symbol(a, Decl(thisTypeInTuples.ts, 5, 3))

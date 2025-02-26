@@ -1,6 +1,6 @@
 --- old.thisTypeInFunctions2.symbols
 +++ new.thisTypeInFunctions2.symbols
-@@ -6,11 +6,11 @@
+@@= skipped -6, +6 lines =@@
  
      // this is a workaround for React
      init?: (this: this) => void;
@@ -14,7 +14,7 @@
  >this : Symbol(this, Decl(thisTypeInFunctions2.ts, 3, 19))
  
      [propName: string]: number | string | boolean | symbol | undefined | null | {} | ((this: any, ...args:any[]) => any);
-@@ -23,10 +23,10 @@
+@@= skipped -17, +17 lines =@@
  
      // this is what React would like to write (and what they write today)
      init?: () => void;
@@ -27,7 +27,7 @@
  
      [propName: string]: any;
  >propName : Symbol(propName, Decl(thisTypeInFunctions2.ts, 10, 5))
-@@ -35,11 +35,11 @@
+@@= skipped -12, +12 lines =@@
  >SimpleInterface : Symbol(SimpleInterface, Decl(thisTypeInFunctions2.ts, 11, 1))
  
      foo(n: string);
@@ -41,7 +41,7 @@
  }
  declare function extend1(args: IndexedWithThis): void;
  >extend1 : Symbol(extend1, Decl(thisTypeInFunctions2.ts, 15, 1))
-@@ -67,9 +67,9 @@
+@@= skipped -32, +32 lines =@@
  
          // this.mine
          this.willDestroy
@@ -53,7 +53,7 @@
  
      },
      mine: 12,
-@@ -95,9 +95,9 @@
+@@= skipped -28, +28 lines =@@
  >this : Symbol(IndexedWithoutThis, Decl(thisTypeInFunctions2.ts, 5, 1))
  
          this.mine
@@ -65,7 +65,7 @@
  
      },
      mine: 13,
-@@ -110,9 +110,9 @@
+@@= skipped -15, +15 lines =@@
  >this : Symbol(IndexedWithoutThis, Decl(thisTypeInFunctions2.ts, 5, 1))
  
          this.mine
@@ -77,7 +77,7 @@
      }
  });
  
-@@ -124,12 +124,12 @@
+@@= skipped -14, +14 lines =@@
  >n : Symbol(n, Decl(thisTypeInFunctions2.ts, 45, 8))
  
          return n.length + this.bar();

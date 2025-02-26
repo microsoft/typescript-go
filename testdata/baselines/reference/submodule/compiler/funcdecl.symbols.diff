@@ -1,6 +1,6 @@
 --- old.funcdecl.symbols
 +++ new.funcdecl.symbols
-@@ -125,9 +125,9 @@
+@@= skipped -125, +125 lines =@@
  }
  
  m2.foo(() =>  {

@@ -1,6 +1,6 @@
 --- old.defineProperty(target=es5).symbols
 +++ new.defineProperty(target=es5).symbols
-@@ -8,69 +8,69 @@
+@@= skipped -8, +8 lines =@@
  >A : Symbol(A, Decl(defineProperty.ts, 0, 16))
  
      a = this.y

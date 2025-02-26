@@ -1,6 +1,6 @@
 --- old.constDeclarationShadowedByVarDeclaration3.symbols
 +++ new.constDeclarationShadowedByVarDeclaration3.symbols
-@@ -6,20 +6,20 @@
+@@= skipped -6, +6 lines =@@
  >Rule : Symbol(Rule, Decl(constDeclarationShadowedByVarDeclaration3.ts, 0, 0))
  
      public regex: RegExp = new RegExp('');

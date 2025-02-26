@@ -1,6 +1,6 @@
 --- old.reactSFCAndFunctionResolvable.symbols
 +++ new.reactSFCAndFunctionResolvable.symbols
-@@ -10,17 +10,17 @@
+@@= skipped -10, +10 lines =@@
  >Radio : Symbol(Radio, Decl(reactSFCAndFunctionResolvable.tsx, 4, 13))
  >props : Symbol(props, Decl(reactSFCAndFunctionResolvable.tsx, 4, 22))
  >React : Symbol(React, Decl(reactSFCAndFunctionResolvable.tsx, 2, 6))
@@ -21,7 +21,7 @@
  
  declare const condition1: boolean;
  >condition1 : Symbol(condition1, Decl(reactSFCAndFunctionResolvable.tsx, 8, 13))
-@@ -34,7 +34,7 @@
+@@= skipped -24, +24 lines =@@
  const RandomComponent: React.SFC = () => {
  >RandomComponent : Symbol(RandomComponent, Decl(reactSFCAndFunctionResolvable.tsx, 12, 5))
  >React : Symbol(React, Decl(reactSFCAndFunctionResolvable.tsx, 2, 6))

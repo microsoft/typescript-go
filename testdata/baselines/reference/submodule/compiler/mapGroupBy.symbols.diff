@@ -1,6 +1,6 @@
 --- old.mapGroupBy.symbols
 +++ new.mapGroupBy.symbols
-@@ -3,17 +3,17 @@
+@@= skipped -3, +3 lines =@@
  === mapGroupBy.ts ===
  const basic = Map.groupBy([0, 2, 8], x => x < 5 ? 'small' : 'large');
  >basic : Symbol(basic, Decl(mapGroupBy.ts, 0, 5))
@@ -22,7 +22,7 @@
  >c : Symbol(c, Decl(mapGroupBy.ts, 2, 37))
  >c : Symbol(c, Decl(mapGroupBy.ts, 2, 37))
  
-@@ -30,9 +30,9 @@
+@@= skipped -27, +27 lines =@@
  
  const byRole = Map.groupBy(employees, x => x.role);
  >byRole : Symbol(byRole, Decl(mapGroupBy.ts, 6, 5))
@@ -34,7 +34,7 @@
  >employees : Symbol(employees, Decl(mapGroupBy.ts, 5, 5))
  >x : Symbol(x, Decl(mapGroupBy.ts, 6, 37))
  >x.role : Symbol(role, Decl(mapGroupBy.ts, 4, 31))
-@@ -41,9 +41,9 @@
+@@= skipped -11, +11 lines =@@
  
  const byNonKey = Map.groupBy(employees, x => x);
  >byNonKey : Symbol(byNonKey, Decl(mapGroupBy.ts, 8, 5))

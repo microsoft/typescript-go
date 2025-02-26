@@ -1,6 +1,6 @@
 --- old.typeGuardConstructorNarrowPrimitivesInUnion.symbols
 +++ new.typeGuardConstructorNarrowPrimitivesInUnion.symbols
-@@ -6,9 +6,9 @@
+@@= skipped -6, +6 lines =@@
  >var1 : Symbol(var1, Decl(typeGuardConstructorNarrowPrimitivesInUnion.ts, 1, 3))
  
  if (var1.constructor === Number) {
@@ -12,7 +12,7 @@
  >Number : Symbol(Number, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      var1; // number
-@@ -16,9 +16,9 @@
+@@= skipped -10, +10 lines =@@
  }
  
  if (var1.constructor === String) {
@@ -24,7 +24,7 @@
  >String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      var1; // "hello" | "world"
-@@ -26,9 +26,9 @@
+@@= skipped -10, +10 lines =@@
  }
  
  if (var1.constructor === Boolean) {
@@ -36,7 +36,7 @@
  >Boolean : Symbol(Boolean, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      var1; // boolean
-@@ -36,9 +36,9 @@
+@@= skipped -10, +10 lines =@@
  }
  
  if (var1.constructor === Array) {

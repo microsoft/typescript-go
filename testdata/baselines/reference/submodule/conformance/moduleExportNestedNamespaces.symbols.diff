@@ -1,6 +1,6 @@
 --- old.moduleExportNestedNamespaces.symbols
 +++ new.moduleExportNestedNamespaces.symbols
-@@ -2,39 +2,15 @@
+@@= skipped -2, +2 lines =@@
  
  === mod.js ===
  module.exports.n = {};
@@ -40,7 +40,7 @@
      }
  }
  
-@@ -44,22 +20,14 @@
+@@= skipped -42, +18 lines =@@
  
  var k = new s.n.K()
  >k : Symbol(k, Decl(use.js, 2, 3))
@@ -63,7 +63,7 @@
  
  
  /** @param {s.n.K} c
-@@ -70,13 +38,9 @@
+@@= skipped -26, +18 lines =@@
  >classic : Symbol(classic, Decl(use.js, 9, 13))
  
      c.x

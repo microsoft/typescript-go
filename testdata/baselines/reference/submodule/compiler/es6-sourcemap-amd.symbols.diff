@@ -1,6 +1,6 @@
 --- old.es6-sourcemap-amd.symbols
 +++ new.es6-sourcemap-amd.symbols
-@@ -10,7 +10,7 @@
+@@= skipped -10, +10 lines =@@
      }
  
      public B()

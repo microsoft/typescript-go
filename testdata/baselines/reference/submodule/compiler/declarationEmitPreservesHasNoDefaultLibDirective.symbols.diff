@@ -1,6 +1,6 @@
 --- old.declarationEmitPreservesHasNoDefaultLibDirective.symbols
 +++ new.declarationEmitPreservesHasNoDefaultLibDirective.symbols
-@@ -6,30 +6,30 @@
+@@= skipped -6, +6 lines =@@
  >Foo : Symbol(Foo, Decl(declarationEmitPreservesHasNoDefaultLibDirective.ts, 0, 0))
  
      public: string;

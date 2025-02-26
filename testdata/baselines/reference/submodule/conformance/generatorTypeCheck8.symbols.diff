@@ -1,6 +1,6 @@
 --- old.generatorTypeCheck8.symbols
 +++ new.generatorTypeCheck8.symbols
-@@ -3,8 +3,6 @@
+@@= skipped -3, +3 lines =@@
  === generatorTypeCheck8.ts ===
  interface BadGenerator extends Iterator<number>, Iterable<string> { }
  >BadGenerator : Symbol(BadGenerator, Decl(generatorTypeCheck8.ts, 0, 0))

@@ -1,6 +1,6 @@
 --- old.isolatedDeclarationsAddUndefined.symbols
 +++ new.isolatedDeclarationsAddUndefined.symbols
-@@ -8,19 +8,19 @@
+@@= skipped -8, +8 lines =@@
  >Bar : Symbol(Bar, Decl(file1.ts, 0, 11))
  
      c? = [2 as N] as const;
@@ -24,7 +24,7 @@
  }
  
  === file2.ts ===
-@@ -44,8 +44,8 @@
+@@= skipped -36, +36 lines =@@
  >Bar2 : Symbol(Bar2, Decl(file2.ts, 3, 71))
  
      readonly r = 1;

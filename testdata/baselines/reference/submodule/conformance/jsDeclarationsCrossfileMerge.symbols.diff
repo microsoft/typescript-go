@@ -1,6 +1,6 @@
 --- old.jsDeclarationsCrossfileMerge.symbols
 +++ new.jsDeclarationsCrossfileMerge.symbols
-@@ -3,23 +3,11 @@
+@@= skipped -3, +3 lines =@@
  === index.js ===
  const m = require("./exporter");
  >m : Symbol(m, Decl(index.js, 0, 5))

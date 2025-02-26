@@ -1,6 +1,6 @@
 --- old.anonClassDeclarationEmitIsAnon.symbols
 +++ new.anonClassDeclarationEmitIsAnon.symbols
-@@ -9,7 +9,7 @@
+@@= skipped -9, +9 lines =@@
  >Wrapped : Symbol(Wrapped, Decl(wrapClass.ts, 1, 10))
  
          foo() {
@@ -9,7 +9,7 @@
  
              return param;
  >param : Symbol(param, Decl(wrapClass.ts, 0, 26))
-@@ -34,10 +34,10 @@
+@@= skipped -25, +25 lines =@@
  >Base : Symbol(Base, Decl(wrapClass.ts, 10, 55))
  
          timestamp = Date.now();
@@ -23,7 +23,7 @@
  
      };
  }
-@@ -55,7 +55,7 @@
+@@= skipped -21, +21 lines =@@
  >User : Symbol(User, Decl(index.ts, 2, 28))
  
      name = '';

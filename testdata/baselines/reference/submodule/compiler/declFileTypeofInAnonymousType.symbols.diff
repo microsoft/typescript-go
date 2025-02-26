@@ -1,6 +1,6 @@
 --- old.declFileTypeofInAnonymousType.symbols
 +++ new.declFileTypeofInAnonymousType.symbols
-@@ -11,29 +11,29 @@
+@@= skipped -11, +11 lines =@@
  >e : Symbol(e, Decl(declFileTypeofInAnonymousType.ts, 2, 5))
  
          weekday,
@@ -36,7 +36,7 @@
  
      m1: m1
  >m1 : Symbol(m1, Decl(declFileTypeofInAnonymousType.ts, 11, 12))
-@@ -56,23 +56,23 @@
+@@= skipped -45, +45 lines =@@
      mc: { cl: m1.c },
  >mc : Symbol(mc, Decl(declFileTypeofInAnonymousType.ts, 16, 19))
  >cl : Symbol(cl, Decl(declFileTypeofInAnonymousType.ts, 17, 9))

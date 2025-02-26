@@ -1,6 +1,6 @@
 --- old.tsxSpreadAttributesResolution16.symbols
 +++ new.tsxSpreadAttributesResolution16.symbols
-@@ -8,14 +8,14 @@
+@@= skipped -8, +8 lines =@@
  >ComponentProps : Symbol(ComponentProps, Decl(file.tsx, 0, 32))
  
      property1: string;
@@ -18,7 +18,7 @@
  >props : Symbol(props, Decl(file.tsx, 7, 34))
  >ComponentProps : Symbol(ComponentProps, Decl(file.tsx, 0, 32))
  
-@@ -32,13 +32,13 @@
+@@= skipped -24, +24 lines =@@
  >AnotherComponentProps : Symbol(AnotherComponentProps, Decl(file.tsx, 12, 1))
  
      property1: string;
@@ -35,7 +35,7 @@
  }
  
  function AnotherComponent({ property1 }: AnotherComponentProps) {
-@@ -48,9 +48,7 @@
+@@= skipped -16, +16 lines =@@
  
      return (
          <span>{property1}</span>

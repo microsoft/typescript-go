@@ -1,6 +1,6 @@
 --- old.newArrays.symbols
 +++ new.newArrays.symbols
-@@ -11,30 +11,30 @@
+@@= skipped -11, +11 lines =@@
  >Gar : Symbol(Gar, Decl(newArrays.ts, 1, 13))
  
  		public fa: Foo[];

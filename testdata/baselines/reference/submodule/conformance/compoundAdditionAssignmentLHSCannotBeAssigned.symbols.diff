@@ -1,6 +1,6 @@
 --- old.compoundAdditionAssignmentLHSCannotBeAssigned.symbols
 +++ new.compoundAdditionAssignmentLHSCannotBeAssigned.symbols
-@@ -4,9 +4,9 @@
+@@= skipped -4, +4 lines =@@
  // string can add every type, and result string cannot be assigned to below types
  enum E { a, b, c }
  >E : Symbol(E, Decl(compoundAdditionAssignmentLHSCannotBeAssigned.ts, 0, 0))

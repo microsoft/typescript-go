@@ -1,6 +1,6 @@
 --- old.conditionalOperatorConditionIsObjectType.symbols
 +++ new.conditionalOperatorConditionIsObjectType.symbols
-@@ -43,7 +43,7 @@
+@@= skipped -43, +43 lines =@@
  
  class C { static doIt: () => void };
  >C : Symbol(C, Decl(conditionalOperatorConditionIsObjectType.ts, 15, 19))
@@ -9,7 +9,7 @@
  
  //Cond is an object type variable
  condObject ? exprAny1 : exprAny2;
-@@ -79,17 +79,17 @@
+@@= skipped -36, +36 lines =@@
  //Cond is an object type literal
  ((a: string) => a.length) ? exprAny1 : exprAny2;
  >a : Symbol(a, Decl(conditionalOperatorConditionIsObjectType.ts, 27, 2))
@@ -31,7 +31,7 @@
  >exprBoolean1 : Symbol(exprBoolean1, Decl(conditionalOperatorConditionIsObjectType.ts, 4, 3))
  >exprBoolean2 : Symbol(exprBoolean2, Decl(conditionalOperatorConditionIsObjectType.ts, 10, 3))
  
-@@ -132,16 +132,16 @@
+@@= skipped -53, +53 lines =@@
  >exprNumber2 : Symbol(exprNumber2, Decl(conditionalOperatorConditionIsObjectType.ts, 11, 3))
  
  C.doIt() ? exprString1 : exprString2;
@@ -52,7 +52,7 @@
  >exprIsObject1 : Symbol(exprIsObject1, Decl(conditionalOperatorConditionIsObjectType.ts, 7, 3))
  >exprIsObject2 : Symbol(exprIsObject2, Decl(conditionalOperatorConditionIsObjectType.ts, 13, 3))
  
-@@ -190,18 +190,18 @@
+@@= skipped -58, +58 lines =@@
  var resultIsAny2 = ((a: string) => a.length) ? exprAny1 : exprAny2;
  >resultIsAny2 : Symbol(resultIsAny2, Decl(conditionalOperatorConditionIsObjectType.ts, 50, 3))
  >a : Symbol(a, Decl(conditionalOperatorConditionIsObjectType.ts, 50, 21))
@@ -75,7 +75,7 @@
  >exprBoolean1 : Symbol(exprBoolean1, Decl(conditionalOperatorConditionIsObjectType.ts, 4, 3))
  >exprBoolean2 : Symbol(exprBoolean2, Decl(conditionalOperatorConditionIsObjectType.ts, 10, 3))
  
-@@ -251,25 +251,25 @@
+@@= skipped -61, +61 lines =@@
  
  var resultIsString3 = C.doIt() ? exprString1 : exprString2;
  >resultIsString3 : Symbol(resultIsString3, Decl(conditionalOperatorConditionIsObjectType.ts, 60, 3))

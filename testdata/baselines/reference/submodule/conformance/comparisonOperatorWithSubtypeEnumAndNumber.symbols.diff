@@ -1,6 +1,6 @@
 --- old.comparisonOperatorWithSubtypeEnumAndNumber.symbols
 +++ new.comparisonOperatorWithSubtypeEnumAndNumber.symbols
-@@ -3,9 +3,9 @@
+@@= skipped -3, +3 lines =@@
  === comparisonOperatorWithSubtypeEnumAndNumber.ts ===
  enum E { a, b, c }
  >E : Symbol(E, Decl(comparisonOperatorWithSubtypeEnumAndNumber.ts, 0, 0))
@@ -13,7 +13,7 @@
  
  var a: E;
  >a : Symbol(a, Decl(comparisonOperatorWithSubtypeEnumAndNumber.ts, 2, 3))
-@@ -27,29 +27,29 @@
+@@= skipped -24, +24 lines =@@
  
  var ra3 = E.a < b;
  >ra3 : Symbol(ra3, Decl(comparisonOperatorWithSubtypeEnumAndNumber.ts, 8, 3))
@@ -51,7 +51,7 @@
  
  // operator >
  var rb1 = a > b;
-@@ -64,29 +64,29 @@
+@@= skipped -37, +37 lines =@@
  
  var rb3 = E.a > b;
  >rb3 : Symbol(rb3, Decl(comparisonOperatorWithSubtypeEnumAndNumber.ts, 16, 3))
@@ -89,7 +89,7 @@
  
  // operator <=
  var rc1 = a <= b;
-@@ -101,29 +101,29 @@
+@@= skipped -37, +37 lines =@@
  
  var rc3 = E.a <= b;
  >rc3 : Symbol(rc3, Decl(comparisonOperatorWithSubtypeEnumAndNumber.ts, 24, 3))
@@ -127,7 +127,7 @@
  
  // operator >=
  var rd1 = a >= b;
-@@ -138,29 +138,29 @@
+@@= skipped -37, +37 lines =@@
  
  var rd3 = E.a >= b;
  >rd3 : Symbol(rd3, Decl(comparisonOperatorWithSubtypeEnumAndNumber.ts, 32, 3))
@@ -165,7 +165,7 @@
  
  // operator ==
  var re1 = a == b;
-@@ -175,29 +175,29 @@
+@@= skipped -37, +37 lines =@@
  
  var re3 = E.a == b;
  >re3 : Symbol(re3, Decl(comparisonOperatorWithSubtypeEnumAndNumber.ts, 40, 3))
@@ -203,7 +203,7 @@
  
  // operator !=
  var rf1 = a != b;
-@@ -212,29 +212,29 @@
+@@= skipped -37, +37 lines =@@
  
  var rf3 = E.a != b;
  >rf3 : Symbol(rf3, Decl(comparisonOperatorWithSubtypeEnumAndNumber.ts, 48, 3))
@@ -241,7 +241,7 @@
  
  // operator ===
  var rg1 = a === b;
-@@ -249,29 +249,29 @@
+@@= skipped -37, +37 lines =@@
  
  var rg3 = E.a === b;
  >rg3 : Symbol(rg3, Decl(comparisonOperatorWithSubtypeEnumAndNumber.ts, 56, 3))
@@ -279,7 +279,7 @@
  
  // operator !==
  var rh1 = a !== b;
-@@ -286,27 +286,27 @@
+@@= skipped -37, +37 lines =@@
  
  var rh3 = E.a !== b;
  >rh3 : Symbol(rh3, Decl(comparisonOperatorWithSubtypeEnumAndNumber.ts, 64, 3))

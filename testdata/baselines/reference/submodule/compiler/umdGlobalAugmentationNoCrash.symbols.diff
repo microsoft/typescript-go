@@ -1,6 +1,6 @@
 --- old.umdGlobalAugmentationNoCrash.symbols
 +++ new.umdGlobalAugmentationNoCrash.symbols
-@@ -25,9 +25,9 @@
+@@= skipped -25, +25 lines =@@
  
  === emits.ts ===
  console.log("hello");

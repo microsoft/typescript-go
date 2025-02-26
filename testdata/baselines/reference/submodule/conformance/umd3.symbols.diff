@@ -1,6 +1,6 @@
 --- old.umd3.symbols
 +++ new.umd3.symbols
-@@ -5,20 +5,20 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(a.ts, 0, 6))
  
  Foo.fn();
@@ -26,7 +26,7 @@
  
  === foo.d.ts ===
  export var x: number;
-@@ -29,7 +29,7 @@
+@@= skipped -24, +24 lines =@@
  
  export interface Thing { n: typeof x }
  >Thing : Symbol(Thing, Decl(foo.d.ts, 1, 27))

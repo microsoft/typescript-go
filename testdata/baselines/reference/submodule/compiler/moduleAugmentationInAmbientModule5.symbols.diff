@@ -1,6 +1,6 @@
 --- old.moduleAugmentationInAmbientModule5.symbols
 +++ new.moduleAugmentationInAmbientModule5.symbols
-@@ -9,11 +9,11 @@
+@@= skipped -9, +9 lines =@@
  
  let y = x.getA().x;
  >y : Symbol(y, Decl(f.ts, 4, 3))
@@ -16,7 +16,7 @@
  
  === array.d.ts ===
  declare module "A" {
-@@ -21,7 +21,7 @@
+@@= skipped -12, +12 lines =@@
  
      class A { x: number; }
  >A : Symbol(A, Decl(array.d.ts, 0, 20))
@@ -25,7 +25,7 @@
  }
  
  declare module "array" {
-@@ -31,14 +31,14 @@
+@@= skipped -10, +10 lines =@@
  >A : Symbol(A, Decl(array.d.ts, 5, 12))
  
      global {

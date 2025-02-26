@@ -1,6 +1,6 @@
 --- old.superPropertyAccess1.symbols
 +++ new.superPropertyAccess1.symbols
-@@ -5,16 +5,16 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(superPropertyAccess1.ts, 0, 0))
  
      public foo() { }
@@ -20,7 +20,7 @@
  }
  
  class D extends C {
-@@ -22,17 +22,17 @@
+@@= skipped -17, +17 lines =@@
  >C : Symbol(C, Decl(superPropertyAccess1.ts, 0, 0))
  
      public foo() {
@@ -43,7 +43,7 @@
      }    
  
      constructor() {
-@@ -40,28 +40,28 @@
+@@= skipped -18, +18 lines =@@
  >super : Symbol(C, Decl(superPropertyAccess1.ts, 0, 0))
  
          super.bar();

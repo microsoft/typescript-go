@@ -1,6 +1,6 @@
 --- old.tsxStatelessFunctionComponentOverload3.symbols
 +++ new.tsxStatelessFunctionComponentOverload3.symbols
-@@ -5,12 +5,12 @@
+@@= skipped -5, +5 lines =@@
  >Context : Symbol(Context, Decl(file.tsx, 0, 0))
  
      color: any;
@@ -16,7 +16,7 @@
  
  declare function ZeroThingOrTwoThing(l: {yy: number, yy1: string}, context: Context): JSX.Element;
  >ZeroThingOrTwoThing : Symbol(ZeroThingOrTwoThing, Decl(file.tsx, 2, 1), Decl(file.tsx, 3, 52))
-@@ -19,8 +19,8 @@
+@@= skipped -14, +14 lines =@@
  >yy1 : Symbol(yy1, Decl(file.tsx, 4, 52))
  >context : Symbol(context, Decl(file.tsx, 4, 66))
  >Context : Symbol(Context, Decl(file.tsx, 0, 0))
@@ -27,7 +27,7 @@
  
  let obj2: any;
  >obj2 : Symbol(obj2, Decl(file.tsx, 6, 3))
-@@ -57,15 +57,15 @@
+@@= skipped -38, +38 lines =@@
  >ThreeThing : Symbol(ThreeThing, Decl(file.tsx, 13, 58), Decl(file.tsx, 15, 58), Decl(file.tsx, 16, 58))
  >l : Symbol(l, Decl(file.tsx, 15, 28))
  >y1 : Symbol(y1, Decl(file.tsx, 15, 32))
@@ -47,7 +47,7 @@
  
  declare function ThreeThing(l: {yy: number, yy1: string}, context: Context, updater: any): JSX.Element;
  >ThreeThing : Symbol(ThreeThing, Decl(file.tsx, 13, 58), Decl(file.tsx, 15, 58), Decl(file.tsx, 16, 58))
-@@ -75,8 +75,8 @@
+@@= skipped -18, +18 lines =@@
  >context : Symbol(context, Decl(file.tsx, 17, 57))
  >Context : Symbol(Context, Decl(file.tsx, 0, 0))
  >updater : Symbol(updater, Decl(file.tsx, 17, 75))

@@ -1,6 +1,6 @@
 --- old.genericGetter.symbols
 +++ new.genericGetter.symbols
-@@ -6,17 +6,17 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(genericGetter.ts, 0, 8))
  
      data: T;
@@ -22,7 +22,7 @@
      }
  }
  
-@@ -26,7 +26,7 @@
+@@= skipped -20, +20 lines =@@
  
  var r: string = c.x;
  >r : Symbol(r, Decl(genericGetter.ts, 8, 3))

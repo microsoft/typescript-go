@@ -1,6 +1,6 @@
 --- old.inOperatorWithGeneric.symbols
 +++ new.inOperatorWithGeneric.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(inOperatorWithGeneric.ts, 0, 8))
  
      foo(x:T) {

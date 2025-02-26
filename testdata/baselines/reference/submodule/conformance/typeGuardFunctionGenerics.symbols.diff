@@ -1,6 +1,6 @@
 --- old.typeGuardFunctionGenerics.symbols
 +++ new.typeGuardFunctionGenerics.symbols
-@@ -5,14 +5,14 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(typeGuardFunctionGenerics.ts, 0, 0))
  
      propA: number;
@@ -17,7 +17,7 @@
  }
  
  class C extends A {
-@@ -20,7 +20,7 @@
+@@= skipped -15, +15 lines =@@
  >A : Symbol(A, Decl(typeGuardFunctionGenerics.ts, 0, 0))
  
      propC: number;
@@ -26,7 +26,7 @@
  }
  
  declare function isB(p1): p1 is B;
-@@ -105,9 +105,9 @@
+@@= skipped -85, +85 lines =@@
  >a : Symbol(a, Decl(typeGuardFunctionGenerics.ts, 22, 3))
  
      a.propC;
@@ -38,7 +38,7 @@
  }
  let test2: B = funC(isB);
  >test2 : Symbol(test2, Decl(typeGuardFunctionGenerics.ts, 27, 3))
-@@ -121,9 +121,9 @@
+@@= skipped -16, +16 lines =@@
  >a : Symbol(a, Decl(typeGuardFunctionGenerics.ts, 22, 3))
  
      a.propC;

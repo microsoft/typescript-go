@@ -1,6 +1,6 @@
 --- old.ambientModuleExports.symbols
 +++ new.ambientModuleExports.symbols
-@@ -15,20 +15,20 @@
+@@= skipped -15, +15 lines =@@
  }
  
  Foo.a();
@@ -27,7 +27,7 @@
  
  declare module Foo2 {
  >Foo2 : Symbol(Foo2, Decl(ambientModuleExports.ts, 8, 20))
-@@ -44,18 +44,18 @@
+@@= skipped -29, +29 lines =@@
  }
  
  Foo2.a();

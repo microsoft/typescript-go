@@ -1,6 +1,6 @@
 --- old.symbolType3.symbols
 +++ new.symbolType3.symbols
-@@ -3,23 +3,10 @@
+@@= skipped -3, +3 lines =@@
  === symbolType3.ts ===
  var s = Symbol();
  >s : Symbol(s, Decl(symbolType3.ts, 0, 3))
@@ -24,7 +24,7 @@
  ++s;
  >s : Symbol(s, Decl(symbolType3.ts, 0, 3))
  
-@@ -27,17 +14,8 @@
+@@= skipped -24, +11 lines =@@
  >s : Symbol(s, Decl(symbolType3.ts, 0, 3))
  
  + Symbol();

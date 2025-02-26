@@ -1,6 +1,6 @@
 --- old.declarationEmitNameConflictsWithAlias.symbols
 +++ new.declarationEmitNameConflictsWithAlias.symbols
-@@ -19,5 +19,5 @@
+@@= skipped -19, +19 lines =@@
      export var w: v.I; // Gets emitted as C.I, which is the wrong interface
  >w : Symbol(w, Decl(declarationEmitNameConflictsWithAlias.ts, 4, 14))
  >v : Symbol(v, Decl(declarationEmitNameConflictsWithAlias.ts, 0, 42))

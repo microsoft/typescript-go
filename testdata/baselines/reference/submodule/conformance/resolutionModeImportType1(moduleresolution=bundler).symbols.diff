@@ -1,6 +1,6 @@
 --- old.resolutionModeImportType1(moduleresolution=bundler).symbols
 +++ new.resolutionModeImportType1(moduleresolution=bundler).symbols
-@@ -11,11 +11,11 @@
+@@= skipped -11, +11 lines =@@
  === /app.ts ===
  type Default = typeof import("foo").x;
  >Default : Symbol(Default, Decl(app.ts, 0, 0))

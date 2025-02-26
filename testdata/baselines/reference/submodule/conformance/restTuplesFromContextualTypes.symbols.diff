@@ -1,6 +1,6 @@
 --- old.restTuplesFromContextualTypes.symbols
 +++ new.restTuplesFromContextualTypes.symbols
-@@ -308,9 +308,9 @@
+@@= skipped -308, +308 lines =@@
  >pipe : Symbol(pipe, Decl(restTuplesFromContextualTypes.ts, 64, 31))
  >x : Symbol(x, Decl(restTuplesFromContextualTypes.ts, 69, 14))
  >s : Symbol(s, Decl(restTuplesFromContextualTypes.ts, 69, 27))

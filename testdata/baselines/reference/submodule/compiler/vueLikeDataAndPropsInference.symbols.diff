@@ -1,6 +1,6 @@
 --- old.vueLikeDataAndPropsInference.symbols
 +++ new.vueLikeDataAndPropsInference.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Instance : Symbol(Instance, Decl(vueLikeDataAndPropsInference.ts, 0, 0))
  
      _instanceBrand: never
@@ -9,7 +9,7 @@
  }
  
  type DataDef<Data, Props> = (this: Readonly<Props> & Instance) => Data
-@@ -42,15 +42,15 @@
+@@= skipped -37, +37 lines =@@
  
      > {
      data?: Data

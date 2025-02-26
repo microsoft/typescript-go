@@ -1,6 +1,6 @@
 --- old.arraySpreadInCall.symbols
 +++ new.arraySpreadInCall.symbols
-@@ -102,7 +102,7 @@
+@@= skipped -102, +102 lines =@@
  >IAction : Symbol(IAction, Decl(arraySpreadInCall.ts, 24, 37))
  
      run(event?: unknown): unknown;
@@ -9,7 +9,7 @@
  >event : Symbol(event, Decl(arraySpreadInCall.ts, 28, 8))
  }
  declare const action: IAction
-@@ -110,8 +110,8 @@
+@@= skipped -8, +8 lines =@@
  >IAction : Symbol(IAction, Decl(arraySpreadInCall.ts, 24, 37))
  
  action.run(...[100, 'foo']) // error

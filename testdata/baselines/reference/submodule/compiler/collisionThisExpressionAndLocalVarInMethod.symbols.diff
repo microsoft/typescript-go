@@ -1,6 +1,6 @@
 --- old.collisionThisExpressionAndLocalVarInMethod.symbols
 +++ new.collisionThisExpressionAndLocalVarInMethod.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >a : Symbol(a, Decl(collisionThisExpressionAndLocalVarInMethod.ts, 0, 0))
  
      method1() {
@@ -9,7 +9,7 @@
  
          return {
              doStuff: (callback) => () => {
-@@ -22,7 +22,7 @@
+@@= skipped -17, +17 lines =@@
          }
      }
      method2() {

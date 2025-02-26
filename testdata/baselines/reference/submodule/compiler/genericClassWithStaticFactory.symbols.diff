@@ -1,6 +1,6 @@
 --- old.genericClassWithStaticFactory.symbols
 +++ new.genericClassWithStaticFactory.symbols
-@@ -9,36 +9,36 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(genericClassWithStaticFactory.ts, 2, 22))
  
          public next: List<T>;
@@ -45,7 +45,7 @@
  >data : Symbol(data, Decl(genericClassWithStaticFactory.ts, 12, 19))
  >T : Symbol(T, Decl(genericClassWithStaticFactory.ts, 2, 22))
  >List : Symbol(List, Decl(genericClassWithStaticFactory.ts, 0, 15))
-@@ -46,39 +46,39 @@
+@@= skipped -37, +37 lines =@@
  
              var entry = this.listFactory.MakeEntry(data);
  >entry : Symbol(entry, Decl(genericClassWithStaticFactory.ts, 13, 15))
@@ -101,7 +101,7 @@
  >entry : Symbol(entry, Decl(genericClassWithStaticFactory.ts, 13, 15))
  
              return entry;
-@@ -86,7 +86,7 @@
+@@= skipped -40, +40 lines =@@
          }
  
          public count(): number {
@@ -110,7 +110,7 @@
  
              var entry: List<T>;
  >entry : Symbol(entry, Decl(genericClassWithStaticFactory.ts, 23, 15))
-@@ -98,22 +98,22 @@
+@@= skipped -12, +12 lines =@@
  
              entry = this.next;
  >entry : Symbol(entry, Decl(genericClassWithStaticFactory.ts, 23, 15))
@@ -139,7 +139,7 @@
              }
  
              return (i);
-@@ -121,30 +121,30 @@
+@@= skipped -23, +23 lines =@@
          }
  
          public isEmpty(): boolean {
@@ -180,7 +180,7 @@
              }
              else {
                  return null;
-@@ -152,101 +152,101 @@
+@@= skipped -31, +31 lines =@@
          }
  
          public pushEntry(entry: List<T>): void {
@@ -319,7 +319,7 @@
  >head : Symbol(head, Decl(genericClassWithStaticFactory.ts, 66, 24))
  >List : Symbol(List, Decl(genericClassWithStaticFactory.ts, 0, 15))
  >T : Symbol(T, Decl(genericClassWithStaticFactory.ts, 2, 22))
-@@ -254,29 +254,29 @@
+@@= skipped -102, +102 lines =@@
  >T : Symbol(T, Decl(genericClassWithStaticFactory.ts, 2, 22))
  
              if (this.next.isHead) {
@@ -360,7 +360,7 @@
  >entry : Symbol(entry, Decl(genericClassWithStaticFactory.ts, 75, 27))
  >List : Symbol(List, Decl(genericClassWithStaticFactory.ts, 0, 15))
  >T : Symbol(T, Decl(genericClassWithStaticFactory.ts, 2, 22))
-@@ -284,36 +284,36 @@
+@@= skipped -30, +30 lines =@@
  >T : Symbol(T, Decl(genericClassWithStaticFactory.ts, 2, 22))
  
              entry.isHead = false;
@@ -411,7 +411,7 @@
  >entry : Symbol(entry, Decl(genericClassWithStaticFactory.ts, 75, 27))
  
              return entry;
-@@ -321,7 +321,7 @@
+@@= skipped -37, +37 lines =@@
          }
  
          public insertAfter(data: T): List<T> {
@@ -420,7 +420,7 @@
  >data : Symbol(data, Decl(genericClassWithStaticFactory.ts, 84, 27))
  >T : Symbol(T, Decl(genericClassWithStaticFactory.ts, 2, 22))
  >List : Symbol(List, Decl(genericClassWithStaticFactory.ts, 0, 15))
-@@ -331,39 +331,39 @@
+@@= skipped -10, +10 lines =@@
  >entry : Symbol(entry, Decl(genericClassWithStaticFactory.ts, 85, 15))
  >List : Symbol(List, Decl(genericClassWithStaticFactory.ts, 0, 15))
  >T : Symbol(T, Decl(genericClassWithStaticFactory.ts, 2, 22))
@@ -476,7 +476,7 @@
  >entry : Symbol(entry, Decl(genericClassWithStaticFactory.ts, 85, 15))
  
              return entry;
-@@ -371,7 +371,7 @@
+@@= skipped -40, +40 lines =@@
          }
  
          public insertEntryBefore(entry: List<T>): List<T> {
@@ -485,7 +485,7 @@
  >entry : Symbol(entry, Decl(genericClassWithStaticFactory.ts, 93, 33))
  >List : Symbol(List, Decl(genericClassWithStaticFactory.ts, 0, 15))
  >T : Symbol(T, Decl(genericClassWithStaticFactory.ts, 2, 22))
-@@ -379,31 +379,31 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(genericClassWithStaticFactory.ts, 2, 22))
  
              this.prev.next = entry;
@@ -529,7 +529,7 @@
  >entry : Symbol(entry, Decl(genericClassWithStaticFactory.ts, 93, 33))
  
              return entry;
-@@ -411,7 +411,7 @@
+@@= skipped -32, +32 lines =@@
          }
  
          public insertBefore(data: T): List<T> {
@@ -538,7 +538,7 @@
  >data : Symbol(data, Decl(genericClassWithStaticFactory.ts, 102, 28))
  >T : Symbol(T, Decl(genericClassWithStaticFactory.ts, 2, 22))
  >List : Symbol(List, Decl(genericClassWithStaticFactory.ts, 0, 15))
-@@ -419,17 +419,17 @@
+@@= skipped -8, +8 lines =@@
  
              var entry = this.listFactory.MakeEntry(data);
  >entry : Symbol(entry, Decl(genericClassWithStaticFactory.ts, 103, 15))
@@ -562,7 +562,7 @@
  >entry : Symbol(entry, Decl(genericClassWithStaticFactory.ts, 103, 15))
          }
      }
-@@ -439,7 +439,7 @@
+@@= skipped -20, +20 lines =@@
  >T : Symbol(T, Decl(genericClassWithStaticFactory.ts, 108, 29))
  
          public MakeHead<T>(): List<T> {
@@ -571,7 +571,7 @@
  >T : Symbol(T, Decl(genericClassWithStaticFactory.ts, 110, 24))
  >List : Symbol(List, Decl(genericClassWithStaticFactory.ts, 0, 15))
  >T : Symbol(T, Decl(genericClassWithStaticFactory.ts, 110, 24))
-@@ -452,15 +452,15 @@
+@@= skipped -13, +13 lines =@@
  >T : Symbol(T, Decl(genericClassWithStaticFactory.ts, 110, 24))
  
              entry.prev = entry;
@@ -591,7 +591,7 @@
  >entry : Symbol(entry, Decl(genericClassWithStaticFactory.ts, 111, 15))
  
              return entry;
-@@ -468,7 +468,7 @@
+@@= skipped -16, +16 lines =@@
          }
  
          public MakeEntry<T>(data: T): List<T> {
@@ -600,7 +600,7 @@
  >T : Symbol(T, Decl(genericClassWithStaticFactory.ts, 117, 25))
  >data : Symbol(data, Decl(genericClassWithStaticFactory.ts, 117, 28))
  >T : Symbol(T, Decl(genericClassWithStaticFactory.ts, 117, 25))
-@@ -484,15 +484,15 @@
+@@= skipped -16, +16 lines =@@
  >data : Symbol(data, Decl(genericClassWithStaticFactory.ts, 117, 28))
  
              entry.prev = entry;
@@ -620,7 +620,7 @@
  >entry : Symbol(entry, Decl(genericClassWithStaticFactory.ts, 118, 15))
  
              return entry;
-@@ -500,7 +500,7 @@
+@@= skipped -16, +16 lines =@@
          }
  
          public RemoveEntry<T>(entry: List<T>): List<T> {
@@ -629,7 +629,7 @@
  >T : Symbol(T, Decl(genericClassWithStaticFactory.ts, 124, 27))
  >entry : Symbol(entry, Decl(genericClassWithStaticFactory.ts, 124, 30))
  >List : Symbol(List, Decl(genericClassWithStaticFactory.ts, 0, 15))
-@@ -514,33 +514,33 @@
+@@= skipped -14, +14 lines =@@
                  return null;
              }
              else if (entry.isHead) {

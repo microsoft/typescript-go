@@ -1,6 +1,6 @@
 --- old.intersectionTypeNormalization.symbols
 +++ new.intersectionTypeNormalization.symbols
-@@ -3,19 +3,19 @@
+@@= skipped -3, +3 lines =@@
  === intersectionTypeNormalization.ts ===
  interface A { a: string }
  >A : Symbol(A, Decl(intersectionTypeNormalization.ts, 0, 0))
@@ -24,7 +24,7 @@
  
  // Identical ways of writing the same type
  type X1 = (A | B) & (C | D);
-@@ -59,11 +59,11 @@
+@@= skipped -56, +56 lines =@@
  
  interface X { x: string }
  >X : Symbol(X, Decl(intersectionTypeNormalization.ts, 12, 10))
@@ -38,7 +38,7 @@
  
  // Identical ways of writing the same type
  type Y1 = (A | X & Y) & (C | D);
-@@ -111,11 +111,11 @@
+@@= skipped -52, +52 lines =@@
  
  interface M { m: string }
  >M : Symbol(M, Decl(intersectionTypeNormalization.ts, 24, 10))
@@ -52,7 +52,7 @@
  
  // Identical ways of writing the same type
  type Z1 = (A | X & (M | N)) & (C | D);
-@@ -252,55 +252,55 @@
+@@= skipped -141, +141 lines =@@
  >A : Symbol(A, Decl(intersectionTypeNormalization.ts, 63, 17))
  
          a1,
@@ -122,7 +122,7 @@
      }
      export type Genre = A | B | C;
  >Genre : Symbol(Genre, Decl(intersectionTypeNormalization.ts, 86, 5))
-@@ -315,7 +315,7 @@
+@@= skipped -63, +63 lines =@@
      genreId: enums.Genre;
  >genreId : Symbol(genreId, Decl(intersectionTypeNormalization.ts, 90, 12))
  >enums : Symbol(enums, Decl(intersectionTypeNormalization.ts, 59, 1))
@@ -131,7 +131,7 @@
  
  };
  
-@@ -325,7 +325,7 @@
+@@= skipped -10, +10 lines =@@
      genreId: enums.Genre;
  >genreId : Symbol(genreId, Decl(intersectionTypeNormalization.ts, 94, 12))
  >enums : Symbol(enums, Decl(intersectionTypeNormalization.ts, 59, 1))

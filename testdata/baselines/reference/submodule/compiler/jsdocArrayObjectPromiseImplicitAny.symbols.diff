@@ -1,6 +1,6 @@
 --- old.jsdocArrayObjectPromiseImplicitAny.symbols
 +++ new.jsdocArrayObjectPromiseImplicitAny.symbols
-@@ -24,16 +24,16 @@
+@@= skipped -24, +24 lines =@@
  /** @type {Promise} */
  var anyPromise = Promise.resolve(5);
  >anyPromise : Symbol(anyPromise, Decl(jsdocArrayObjectPromiseImplicitAny.js, 15, 3))

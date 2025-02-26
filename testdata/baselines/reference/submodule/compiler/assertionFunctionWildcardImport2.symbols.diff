@@ -1,6 +1,6 @@
 --- old.assertionFunctionWildcardImport2.symbols
 +++ new.assertionFunctionWildcardImport2.symbols
-@@ -35,14 +35,14 @@
+@@= skipped -35, +35 lines =@@
  >obj : Symbol(obj, Decl(test.ts, 2, 14))
  
      asserts.isNonNullable(obj);

@@ -1,6 +1,6 @@
 --- old.stringLiteralTypesAsTags03.symbols
 +++ new.stringLiteralTypesAsTags03.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >Entity : Symbol(Entity, Decl(stringLiteralTypesAsTags03.ts, 0, 21))
  
      kind: Kind;
@@ -9,7 +9,7 @@
  >Kind : Symbol(Kind, Decl(stringLiteralTypesAsTags03.ts, 0, 0))
  }
  
-@@ -17,10 +17,10 @@
+@@= skipped -9, +9 lines =@@
  >Entity : Symbol(Entity, Decl(stringLiteralTypesAsTags03.ts, 0, 21))
  
      kind: "A";
@@ -22,7 +22,7 @@
  }
  
  interface B extends Entity {
-@@ -28,10 +28,10 @@
+@@= skipped -11, +11 lines =@@
  >Entity : Symbol(Entity, Decl(stringLiteralTypesAsTags03.ts, 0, 21))
  
      kind: "B";
@@ -35,7 +35,7 @@
  }
  
  // Currently (2015-12-14), we write '"A" | "A"' and '"B" | "B"' to avoid
-@@ -64,9 +64,9 @@
+@@= skipped -36, +36 lines =@@
  >Entity : Symbol(Entity, Decl(stringLiteralTypesAsTags03.ts, 0, 21))
  
      return entity.kind === kind;

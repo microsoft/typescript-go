@@ -1,6 +1,6 @@
 --- old.objectLiteralContextualTyping.symbols
 +++ new.objectLiteralContextualTyping.symbols
-@@ -10,10 +10,10 @@
+@@= skipped -10, +10 lines =@@
  >Item : Symbol(Item, Decl(objectLiteralContextualTyping.ts, 0, 0))
  
      name: string;

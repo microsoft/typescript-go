@@ -1,6 +1,6 @@
 --- old.duplicateObjectLiteralProperty_computedName3.symbols
 +++ new.duplicateObjectLiteralProperty_computedName3.symbols
-@@ -9,11 +9,11 @@
+@@= skipped -9, +9 lines =@@
  
  export enum E1 { A = "ENUM_KEY" }
  >E1 : Symbol(E1, Decl(a.ts, 1, 21))
@@ -14,7 +14,7 @@
  
  === b.ts ===
  import * as keys from "./a";
-@@ -24,51 +24,51 @@
+@@= skipped -15, +15 lines =@@
  
      [keys.n]: 1,
  >[keys.n] : Symbol([keys.n], Decl(b.ts, 2, 12), Decl(b.ts, 3, 16))
@@ -86,7 +86,7 @@
  }
  
  const t4 = {
-@@ -76,18 +76,18 @@
+@@= skipped -52, +52 lines =@@
  
      [keys.E2.B]: 1,
  >[keys.E2.B] : Symbol([keys.E2.B], Decl(b.ts, 17, 12), Decl(b.ts, 18, 19))

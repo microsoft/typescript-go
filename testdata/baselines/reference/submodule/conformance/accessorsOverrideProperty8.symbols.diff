@@ -1,6 +1,6 @@
 --- old.accessorsOverrideProperty8.symbols
 +++ new.accessorsOverrideProperty8.symbols
-@@ -71,12 +71,12 @@
+@@= skipped -71, +71 lines =@@
  >Base : Symbol(Base, Decl(accessorsOverrideProperty8.ts, 13, 5))
  
      get x() {
@@ -15,7 +15,7 @@
  
          return 'hi'
      }
-@@ -88,8 +88,8 @@
+@@= skipped -17, +17 lines =@@
  
  const value = mine.x;
  >value : Symbol(value, Decl(accessorsOverrideProperty8.ts, 29, 5))

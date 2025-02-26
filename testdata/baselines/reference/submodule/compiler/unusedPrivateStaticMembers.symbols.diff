@@ -1,6 +1,6 @@
 --- old.unusedPrivateStaticMembers.symbols
 +++ new.unusedPrivateStaticMembers.symbols
-@@ -5,15 +5,15 @@
+@@= skipped -5, +5 lines =@@
  >Test1 : Symbol(Test1, Decl(unusedPrivateStaticMembers.ts, 0, 0))
  
      private static m1() {}
@@ -20,7 +20,7 @@
      }
  }
  
-@@ -21,15 +21,15 @@
+@@= skipped -16, +16 lines =@@
  >Test2 : Symbol(Test2, Decl(unusedPrivateStaticMembers.ts, 5, 1))
  
      private static p1 = 0
@@ -40,7 +40,7 @@
      }
  }
  
-@@ -37,37 +37,37 @@
+@@= skipped -16, +16 lines =@@
  >Test3 : Symbol(Test3, Decl(unusedPrivateStaticMembers.ts, 12, 1))
  
      private static p1 = 0;
@@ -85,7 +85,7 @@
  >n : Symbol(n, Decl(unusedPrivateStaticMembers.ts, 24, 22))
      }
  }
-@@ -76,14 +76,14 @@
+@@= skipped -39, +39 lines =@@
  >Test5 : Symbol(Test5, Decl(unusedPrivateStaticMembers.ts, 27, 1))
  
      private static m1() {}
@@ -103,7 +103,7 @@
      }
  }
  
-@@ -91,14 +91,14 @@
+@@= skipped -15, +15 lines =@@
  >Test6 : Symbol(Test6, Decl(unusedPrivateStaticMembers.ts, 34, 1))
  
      private static p1 = 0;

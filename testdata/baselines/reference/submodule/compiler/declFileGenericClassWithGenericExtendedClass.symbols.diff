@@ -1,6 +1,6 @@
 --- old.declFileGenericClassWithGenericExtendedClass.symbols
 +++ new.declFileGenericClassWithGenericExtendedClass.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >IFoo : Symbol(IFoo, Decl(declFileGenericClassWithGenericExtendedClass.ts, 0, 0))
  
      baz: Baz;
@@ -9,7 +9,7 @@
  >Baz : Symbol(Baz, Decl(declFileGenericClassWithGenericExtendedClass.ts, 7, 1))
  }
  class Base<T> { }
-@@ -23,7 +23,7 @@
+@@= skipped -18, +18 lines =@@
  >T : Symbol(T, Decl(declFileGenericClassWithGenericExtendedClass.ts, 5, 15))
  
      derived: Derived<T>;
@@ -18,7 +18,7 @@
  >Derived : Symbol(Derived, Decl(declFileGenericClassWithGenericExtendedClass.ts, 3, 17))
  >T : Symbol(T, Decl(declFileGenericClassWithGenericExtendedClass.ts, 5, 15))
  }
-@@ -33,7 +33,7 @@
+@@= skipped -10, +10 lines =@@
  >Baz : Symbol(Baz, Decl(declFileGenericClassWithGenericExtendedClass.ts, 7, 1))
  
      derived: Derived<Baz>;

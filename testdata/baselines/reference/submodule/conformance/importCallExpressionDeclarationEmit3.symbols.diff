@@ -1,6 +1,6 @@
 --- old.importCallExpressionDeclarationEmit3.symbols
 +++ new.importCallExpressionDeclarationEmit3.symbols
-@@ -12,7 +12,6 @@
+@@= skipped -12, +12 lines =@@
  >Zero : Symbol(Zero, Decl(1.ts, 1, 6))
  
  import("./0");
@@ -8,7 +8,7 @@
  
  export var p0: Promise<typeof Zero> = import(getPath());
  >p0 : Symbol(p0, Decl(1.ts, 4, 10))
-@@ -24,10 +23,8 @@
+@@= skipped -12, +11 lines =@@
  >p1 : Symbol(p1, Decl(1.ts, 5, 10))
  >Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2018.promise.d.ts, --, --))
  >Zero : Symbol(Zero, Decl(1.ts, 1, 6))

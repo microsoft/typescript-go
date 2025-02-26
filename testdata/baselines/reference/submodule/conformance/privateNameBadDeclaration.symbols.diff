@@ -1,6 +1,6 @@
 --- old.privateNameBadDeclaration.symbols
 +++ new.privateNameBadDeclaration.symbols
-@@ -5,9 +5,9 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(privateNameBadDeclaration.ts, 0, 0))
  
  A.prototype = {
@@ -12,7 +12,7 @@
  
    #x: 1,         // Error
  >#x : Symbol(#x, Decl(privateNameBadDeclaration.ts, 1, 15))
-@@ -22,9 +22,9 @@
+@@= skipped -17, +17 lines =@@
  >B : Symbol(B, Decl(privateNameBadDeclaration.ts, 5, 1))
  
  B.prototype = {

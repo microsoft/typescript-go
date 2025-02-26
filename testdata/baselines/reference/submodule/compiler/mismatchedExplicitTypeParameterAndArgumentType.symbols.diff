@@ -1,6 +1,6 @@
 --- old.mismatchedExplicitTypeParameterAndArgumentType.symbols
 +++ new.mismatchedExplicitTypeParameterAndArgumentType.symbols
-@@ -17,13 +17,13 @@
+@@= skipped -17, +17 lines =@@
  >U : Symbol(U, Decl(mismatchedExplicitTypeParameterAndArgumentType.ts, 0, 15))
  
      xs.forEach(x => ys.push(f(x)));
@@ -18,7 +18,7 @@
  >f : Symbol(f, Decl(mismatchedExplicitTypeParameterAndArgumentType.ts, 0, 27))
  >x : Symbol(x, Decl(mismatchedExplicitTypeParameterAndArgumentType.ts, 2, 15))
  
-@@ -51,25 +51,25 @@
+@@= skipped -34, +34 lines =@@
  >Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  >Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  >x : Symbol(x, Decl(mismatchedExplicitTypeParameterAndArgumentType.ts, 8, 39))

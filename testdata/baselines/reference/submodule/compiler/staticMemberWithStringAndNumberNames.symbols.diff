@@ -1,6 +1,6 @@
 --- old.staticMemberWithStringAndNumberNames.symbols
 +++ new.staticMemberWithStringAndNumberNames.symbols
-@@ -5,38 +5,38 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(staticMemberWithStringAndNumberNames.ts, 0, 0))
  
      static "foo" = 0;

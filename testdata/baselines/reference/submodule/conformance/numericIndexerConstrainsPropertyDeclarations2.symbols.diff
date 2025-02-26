@@ -1,6 +1,6 @@
 --- old.numericIndexerConstrainsPropertyDeclarations2.symbols
 +++ new.numericIndexerConstrainsPropertyDeclarations2.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >A : Symbol(A, Decl(numericIndexerConstrainsPropertyDeclarations2.ts, 0, 0))
  
      foo(): string { return ''; }
@@ -9,7 +9,7 @@
  }
  
  class B extends A {
-@@ -15,7 +15,7 @@
+@@= skipped -8, +8 lines =@@
  >A : Symbol(A, Decl(numericIndexerConstrainsPropertyDeclarations2.ts, 0, 0))
  
      bar(): string { return ''; }
@@ -18,7 +18,7 @@
  }
  
  class Foo {
-@@ -26,22 +26,22 @@
+@@= skipped -11, +11 lines =@@
  >A : Symbol(A, Decl(numericIndexerConstrainsPropertyDeclarations2.ts, 0, 0))
  
      1.0: A; // ok
@@ -46,7 +46,7 @@
  }
  
  interface Foo2 {
-@@ -52,22 +52,22 @@
+@@= skipped -26, +26 lines =@@
  >A : Symbol(A, Decl(numericIndexerConstrainsPropertyDeclarations2.ts, 0, 0))
  
      1.0: A; // ok

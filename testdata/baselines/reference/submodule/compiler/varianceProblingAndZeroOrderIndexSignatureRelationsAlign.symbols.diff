@@ -1,6 +1,6 @@
 --- old.varianceProblingAndZeroOrderIndexSignatureRelationsAlign.symbols
 +++ new.varianceProblingAndZeroOrderIndexSignatureRelationsAlign.symbols
-@@ -18,23 +18,23 @@
+@@= skipped -18, +18 lines =@@
  >A : Symbol(A, Decl(varianceProblingAndZeroOrderIndexSignatureRelationsAlign.ts, 2, 13))
  
      readonly _tag: 'Left' = 'Left'
@@ -29,7 +29,7 @@
  >B : Symbol(B, Decl(varianceProblingAndZeroOrderIndexSignatureRelationsAlign.ts, 8, 8))
  >f : Symbol(f, Decl(varianceProblingAndZeroOrderIndexSignatureRelationsAlign.ts, 8, 11))
  >a : Symbol(a, Decl(varianceProblingAndZeroOrderIndexSignatureRelationsAlign.ts, 8, 15))
-@@ -48,7 +48,7 @@
+@@= skipped -30, +30 lines =@@
  >this : Symbol(Left, Decl(varianceProblingAndZeroOrderIndexSignatureRelationsAlign.ts, 0, 45))
      }
      ap<B>(fab: Either<L, (a: A) => B>): Either<L, B> {
@@ -38,7 +38,7 @@
  >B : Symbol(B, Decl(varianceProblingAndZeroOrderIndexSignatureRelationsAlign.ts, 11, 7))
  >fab : Symbol(fab, Decl(varianceProblingAndZeroOrderIndexSignatureRelationsAlign.ts, 11, 10))
  >Either : Symbol(Either, Decl(varianceProblingAndZeroOrderIndexSignatureRelationsAlign.ts, 0, 0))
-@@ -70,22 +70,22 @@
+@@= skipped -22, +22 lines =@@
  >A : Symbol(A, Decl(varianceProblingAndZeroOrderIndexSignatureRelationsAlign.ts, 16, 14))
  
      readonly _tag: 'Right' = 'Right'
@@ -66,7 +66,7 @@
  >B : Symbol(B, Decl(varianceProblingAndZeroOrderIndexSignatureRelationsAlign.ts, 21, 8))
  >f : Symbol(f, Decl(varianceProblingAndZeroOrderIndexSignatureRelationsAlign.ts, 21, 11))
  >a : Symbol(a, Decl(varianceProblingAndZeroOrderIndexSignatureRelationsAlign.ts, 21, 15))
-@@ -98,12 +98,12 @@
+@@= skipped -28, +28 lines =@@
        return new Right(f(this.value))
  >Right : Symbol(Right, Decl(varianceProblingAndZeroOrderIndexSignatureRelationsAlign.ts, 14, 1))
  >f : Symbol(f, Decl(varianceProblingAndZeroOrderIndexSignatureRelationsAlign.ts, 21, 11))
@@ -82,7 +82,7 @@
  >B : Symbol(B, Decl(varianceProblingAndZeroOrderIndexSignatureRelationsAlign.ts, 24, 7))
  >fab : Symbol(fab, Decl(varianceProblingAndZeroOrderIndexSignatureRelationsAlign.ts, 24, 10))
  >Either : Symbol(Either, Decl(varianceProblingAndZeroOrderIndexSignatureRelationsAlign.ts, 0, 0))
-@@ -127,32 +127,32 @@
+@@= skipped -29, +29 lines =@@
  >I : Symbol(I, Decl(varianceProblingAndZeroOrderIndexSignatureRelationsAlign.ts, 29, 20))
  
    readonly _A!: A;
@@ -121,7 +121,7 @@
  >input : Symbol(input, Decl(varianceProblingAndZeroOrderIndexSignatureRelationsAlign.ts, 39, 24))
  >I : Symbol(I, Decl(varianceProblingAndZeroOrderIndexSignatureRelationsAlign.ts, 29, 20))
  >context : Symbol(context, Decl(varianceProblingAndZeroOrderIndexSignatureRelationsAlign.ts, 39, 33))
-@@ -161,7 +161,7 @@
+@@= skipped -34, +34 lines =@@
  
      /** converts a value of type A to a value of type O */
      readonly encode: (a: A) => O
@@ -130,7 +130,7 @@
  >a : Symbol(a, Decl(varianceProblingAndZeroOrderIndexSignatureRelationsAlign.ts, 41, 22))
  >A : Symbol(A, Decl(varianceProblingAndZeroOrderIndexSignatureRelationsAlign.ts, 29, 11))
  >O : Symbol(O, Decl(varianceProblingAndZeroOrderIndexSignatureRelationsAlign.ts, 29, 13))
-@@ -169,7 +169,7 @@
+@@= skipped -8, +8 lines =@@
    ) {}
    /** a version of `validate` with a default context */
    decode(i: I): Either<{}[], A> { return null as any; }

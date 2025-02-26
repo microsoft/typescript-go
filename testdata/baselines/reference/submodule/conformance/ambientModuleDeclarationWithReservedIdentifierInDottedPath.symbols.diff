@@ -1,6 +1,6 @@
 --- old.ambientModuleDeclarationWithReservedIdentifierInDottedPath.symbols
 +++ new.ambientModuleDeclarationWithReservedIdentifierInDottedPath.symbols
-@@ -13,11 +13,11 @@
+@@= skipped -13, +13 lines =@@
  
  export const tabId = chrome.debugger.tabId;
  >tabId : Symbol(tabId, Decl(ambientModuleDeclarationWithReservedIdentifierInDottedPath.ts, 6, 12))

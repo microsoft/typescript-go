@@ -1,6 +1,6 @@
 --- old.genericContextualTypes1.symbols
 +++ new.genericContextualTypes1.symbols
-@@ -211,9 +211,9 @@
+@@= skipped -211, +211 lines =@@
  >U : Symbol(U, Decl(genericContextualTypes1.ts, 32, 20))
  >a : Symbol(a, Decl(genericContextualTypes1.ts, 32, 44))
  >T : Symbol(T, Decl(genericContextualTypes1.ts, 32, 18))
@@ -12,7 +12,7 @@
  >f : Symbol(f, Decl(genericContextualTypes1.ts, 32, 24))
  
  const arrayFilter = <T>(f: (x: T) => boolean) => (a: T[]) => a.filter(f);
-@@ -224,9 +224,9 @@
+@@= skipped -13, +13 lines =@@
  >T : Symbol(T, Decl(genericContextualTypes1.ts, 33, 21))
  >a : Symbol(a, Decl(genericContextualTypes1.ts, 33, 50))
  >T : Symbol(T, Decl(genericContextualTypes1.ts, 33, 21))
@@ -24,7 +24,7 @@
  >f : Symbol(f, Decl(genericContextualTypes1.ts, 33, 24))
  
  const f20: (a: string[]) => number[] = arrayMap(x => x.length);
-@@ -234,9 +234,9 @@
+@@= skipped -10, +10 lines =@@
  >a : Symbol(a, Decl(genericContextualTypes1.ts, 35, 12))
  >arrayMap : Symbol(arrayMap, Decl(genericContextualTypes1.ts, 32, 5))
  >x : Symbol(x, Decl(genericContextualTypes1.ts, 35, 48))
@@ -36,7 +36,7 @@
  
  const f21: <A>(a: A[]) => A[][] = arrayMap(x => [x]);
  >f21 : Symbol(f21, Decl(genericContextualTypes1.ts, 36, 5))
-@@ -273,9 +273,9 @@
+@@= skipped -39, +39 lines =@@
  >a : Symbol(a, Decl(genericContextualTypes1.ts, 40, 12))
  >arrayFilter : Symbol(arrayFilter, Decl(genericContextualTypes1.ts, 33, 5))
  >x : Symbol(x, Decl(genericContextualTypes1.ts, 40, 51))

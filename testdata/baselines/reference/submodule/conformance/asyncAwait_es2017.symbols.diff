@@ -1,6 +1,6 @@
 --- old.asyncAwait_es2017.symbols
 +++ new.asyncAwait_es2017.symbols
-@@ -90,25 +90,25 @@
+@@= skipped -90, +90 lines =@@
  >C : Symbol(C, Decl(asyncAwait_es2017.ts, 25, 2))
  
  	async m1() { }

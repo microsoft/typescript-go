@@ -1,6 +1,6 @@
 --- old.typeFromPropertyAssignment15.symbols
 +++ new.typeFromPropertyAssignment15.symbols
-@@ -2,21 +2,17 @@
+@@= skipped -2, +2 lines =@@
  
  === a.js ===
  var Outer = {};
@@ -25,7 +25,7 @@
  }
  
  /** @type {Outer.Inner} */
-@@ -24,28 +20,18 @@
+@@= skipped -22, +18 lines =@@
  >inner : Symbol(inner, Decl(a.js, 10, 3))
  
  inner.x

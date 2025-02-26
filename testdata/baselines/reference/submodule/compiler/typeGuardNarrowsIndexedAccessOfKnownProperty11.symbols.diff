@@ -1,6 +1,6 @@
 --- old.typeGuardNarrowsIndexedAccessOfKnownProperty11.symbols
 +++ new.typeGuardNarrowsIndexedAccessOfKnownProperty11.symbols
-@@ -3,8 +3,8 @@
+@@= skipped -3, +3 lines =@@
  === typeGuardNarrowsIndexedAccessOfKnownProperty11.ts ===
  enum E { A, B }
  >E : Symbol(E, Decl(typeGuardNarrowsIndexedAccessOfKnownProperty11.ts, 0, 0))
@@ -11,7 +11,7 @@
  
  declare const m: { [K in E]: string | null };
  >m : Symbol(m, Decl(typeGuardNarrowsIndexedAccessOfKnownProperty11.ts, 2, 13))
-@@ -13,16 +13,16 @@
+@@= skipped -10, +10 lines =@@
  
  if (m[E.A] !== null) {
  >m : Symbol(m, Decl(typeGuardNarrowsIndexedAccessOfKnownProperty11.ts, 2, 13))

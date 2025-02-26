@@ -1,6 +1,6 @@
 --- old.optionalPropertiesInClasses.symbols
 +++ new.optionalPropertiesInClasses.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >ifoo : Symbol(ifoo, Decl(optionalPropertiesInClasses.ts, 0, 0))
  
  	x?:number;
@@ -13,7 +13,7 @@
  }
  
  class C1 implements ifoo {
-@@ -16,7 +16,7 @@
+@@= skipped -11, +11 lines =@@
  >ifoo : Symbol(ifoo, Decl(optionalPropertiesInClasses.ts, 0, 0))
  
  	public y:number;
@@ -22,7 +22,7 @@
  }
  
  class C2 implements ifoo { // ERROR - still need 'y'
-@@ -24,7 +24,7 @@
+@@= skipped -8, +8 lines =@@
  >ifoo : Symbol(ifoo, Decl(optionalPropertiesInClasses.ts, 0, 0))
  
  	public x:number;
@@ -31,7 +31,7 @@
  }
  
  class C3 implements ifoo {
-@@ -32,8 +32,8 @@
+@@= skipped -8, +8 lines =@@
  >ifoo : Symbol(ifoo, Decl(optionalPropertiesInClasses.ts, 0, 0))
  
  	public x:number;

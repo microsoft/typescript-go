@@ -1,6 +1,6 @@
 --- old.subtypesOfAny.symbols
 +++ new.subtypesOfAny.symbols
-@@ -10,7 +10,7 @@
+@@= skipped -10, +10 lines =@@
  >x : Symbol(x, Decl(subtypesOfAny.ts, 3, 5))
  
      foo: any;
@@ -9,7 +9,7 @@
  }
  
  
-@@ -21,7 +21,7 @@
+@@= skipped -11, +11 lines =@@
  >x : Symbol(x, Decl(subtypesOfAny.ts, 9, 5))
  
      foo: number;
@@ -18,7 +18,7 @@
  }
  
  
-@@ -32,7 +32,7 @@
+@@= skipped -11, +11 lines =@@
  >x : Symbol(x, Decl(subtypesOfAny.ts, 15, 5))
  
      foo: string;
@@ -27,7 +27,7 @@
  }
  
  
-@@ -43,7 +43,7 @@
+@@= skipped -11, +11 lines =@@
  >x : Symbol(x, Decl(subtypesOfAny.ts, 21, 5))
  
      foo: boolean;
@@ -36,7 +36,7 @@
  }
  
  
-@@ -54,7 +54,7 @@
+@@= skipped -11, +11 lines =@@
  >x : Symbol(x, Decl(subtypesOfAny.ts, 27, 5))
  
      foo: Date;
@@ -45,7 +45,7 @@
  >Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
  }
  
-@@ -66,7 +66,7 @@
+@@= skipped -12, +12 lines =@@
  >x : Symbol(x, Decl(subtypesOfAny.ts, 33, 5))
  
      foo: RegExp;
@@ -54,7 +54,7 @@
  >RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  }
  
-@@ -78,7 +78,7 @@
+@@= skipped -12, +12 lines =@@
  >x : Symbol(x, Decl(subtypesOfAny.ts, 39, 5))
  
      foo: { bar: number };
@@ -63,7 +63,7 @@
  >bar : Symbol(bar, Decl(subtypesOfAny.ts, 40, 10))
  }
  
-@@ -90,7 +90,7 @@
+@@= skipped -12, +12 lines =@@
  >x : Symbol(x, Decl(subtypesOfAny.ts, 45, 5))
  
      foo: number[];
@@ -72,7 +72,7 @@
  }
  
  
-@@ -101,13 +101,13 @@
+@@= skipped -11, +11 lines =@@
  >x : Symbol(x, Decl(subtypesOfAny.ts, 51, 5))
  
      foo: I8;
@@ -88,7 +88,7 @@
  
  interface I10 {
  >I10 : Symbol(I10, Decl(subtypesOfAny.ts, 55, 24))
-@@ -116,14 +116,14 @@
+@@= skipped -15, +15 lines =@@
  >x : Symbol(x, Decl(subtypesOfAny.ts, 57, 5))
  
      foo: A;
@@ -105,7 +105,7 @@
  >T : Symbol(T, Decl(subtypesOfAny.ts, 61, 9))
  
  interface I11 {
-@@ -133,7 +133,7 @@
+@@= skipped -17, +17 lines =@@
  >x : Symbol(x, Decl(subtypesOfAny.ts, 63, 5))
  
      foo: A2<number>;
@@ -114,7 +114,7 @@
  >A2 : Symbol(A2, Decl(subtypesOfAny.ts, 59, 1))
  }
  
-@@ -145,7 +145,7 @@
+@@= skipped -12, +12 lines =@@
  >x : Symbol(x, Decl(subtypesOfAny.ts, 69, 5))
  
      foo: (x) => number;
@@ -123,7 +123,7 @@
  >x : Symbol(x, Decl(subtypesOfAny.ts, 70, 10))
  }
  
-@@ -157,7 +157,7 @@
+@@= skipped -12, +12 lines =@@
  >x : Symbol(x, Decl(subtypesOfAny.ts, 75, 5))
  
      foo: <T>(x:T) => T;
@@ -132,7 +132,7 @@
  >T : Symbol(T, Decl(subtypesOfAny.ts, 76, 10))
  >x : Symbol(x, Decl(subtypesOfAny.ts, 76, 13))
  >T : Symbol(T, Decl(subtypesOfAny.ts, 76, 10))
-@@ -167,7 +167,7 @@
+@@= skipped -10, +10 lines =@@
  
  enum E { A }
  >E : Symbol(E, Decl(subtypesOfAny.ts, 77, 1))
@@ -141,7 +141,7 @@
  
  interface I14 {
  >I14 : Symbol(I14, Decl(subtypesOfAny.ts, 80, 12))
-@@ -176,7 +176,7 @@
+@@= skipped -9, +9 lines =@@
  >x : Symbol(x, Decl(subtypesOfAny.ts, 82, 5))
  
      foo: E;
@@ -150,7 +150,7 @@
  >E : Symbol(E, Decl(subtypesOfAny.ts, 77, 1))
  }
  
-@@ -197,14 +197,14 @@
+@@= skipped -21, +21 lines =@@
  >x : Symbol(x, Decl(subtypesOfAny.ts, 92, 5))
  
      foo: typeof f;
@@ -167,7 +167,7 @@
  
  module c {
  >c : Symbol(c, Decl(subtypesOfAny.ts, 94, 1), Decl(subtypesOfAny.ts, 97, 23))
-@@ -219,7 +219,7 @@
+@@= skipped -22, +22 lines =@@
  >x : Symbol(x, Decl(subtypesOfAny.ts, 102, 5))
  
      foo: typeof c;
@@ -176,7 +176,7 @@
  >c : Symbol(c, Decl(subtypesOfAny.ts, 94, 1), Decl(subtypesOfAny.ts, 97, 23))
  }
  
-@@ -232,7 +232,7 @@
+@@= skipped -13, +13 lines =@@
  >x : Symbol(x, Decl(subtypesOfAny.ts, 108, 5))
  
      foo: T;
@@ -185,7 +185,7 @@
  >T : Symbol(T, Decl(subtypesOfAny.ts, 107, 14))
  }
  
-@@ -246,7 +246,7 @@
+@@= skipped -14, +14 lines =@@
  >x : Symbol(x, Decl(subtypesOfAny.ts, 114, 5))
  
      foo: U;
@@ -194,7 +194,7 @@
  >U : Symbol(U, Decl(subtypesOfAny.ts, 113, 16))
  }
  //interface I18<T, U extends T> {
-@@ -262,7 +262,7 @@
+@@= skipped -16, +16 lines =@@
  >x : Symbol(x, Decl(subtypesOfAny.ts, 124, 5))
  
      foo: Object;
@@ -203,7 +203,7 @@
  >Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  }
  
-@@ -274,5 +274,5 @@
+@@= skipped -12, +12 lines =@@
  >x : Symbol(x, Decl(subtypesOfAny.ts, 130, 5))
  
      foo: {};

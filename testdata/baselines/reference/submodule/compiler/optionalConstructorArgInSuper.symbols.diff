@@ -1,6 +1,6 @@
 --- old.optionalConstructorArgInSuper.symbols
 +++ new.optionalConstructorArgInSuper.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >opt : Symbol(opt, Decl(optionalConstructorArgInSuper.ts, 1, 16))
  
      foo(other?) { }
@@ -9,7 +9,7 @@
  >other : Symbol(other, Decl(optionalConstructorArgInSuper.ts, 2, 8))
  }
  class Derived extends Base {
-@@ -24,7 +24,7 @@
+@@= skipped -16, +16 lines =@@
  >Derived : Symbol(Derived, Decl(optionalConstructorArgInSuper.ts, 3, 1))
  
  d2.foo(); 

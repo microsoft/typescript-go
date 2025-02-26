@@ -1,6 +1,6 @@
 --- old.compoundArithmeticAssignmentWithInvalidOperands.symbols
 +++ new.compoundArithmeticAssignmentWithInvalidOperands.symbols
-@@ -3,8 +3,8 @@
+@@= skipped -3, +3 lines =@@
  === compoundArithmeticAssignmentWithInvalidOperands.ts ===
  enum E { a, b }
  >E : Symbol(E, Decl(compoundArithmeticAssignmentWithInvalidOperands.ts, 0, 0))
@@ -11,7 +11,7 @@
  
  var a: any;
  >a : Symbol(a, Decl(compoundArithmeticAssignmentWithInvalidOperands.ts, 2, 3))
-@@ -34,9 +34,9 @@
+@@= skipped -31, +31 lines =@@
  
  x1 *= E.a;
  >x1 : Symbol(x1, Decl(compoundArithmeticAssignmentWithInvalidOperands.ts, 5, 3))
@@ -23,7 +23,7 @@
  
  x1 *= {};
  >x1 : Symbol(x1, Decl(compoundArithmeticAssignmentWithInvalidOperands.ts, 5, 3))
-@@ -70,9 +70,9 @@
+@@= skipped -36, +36 lines =@@
  
  x2 *= E.a;
  >x2 : Symbol(x2, Decl(compoundArithmeticAssignmentWithInvalidOperands.ts, 16, 3))
@@ -35,7 +35,7 @@
  
  x2 *= {};
  >x2 : Symbol(x2, Decl(compoundArithmeticAssignmentWithInvalidOperands.ts, 16, 3))
-@@ -106,9 +106,9 @@
+@@= skipped -36, +36 lines =@@
  
  x3 *= E.a;
  >x3 : Symbol(x3, Decl(compoundArithmeticAssignmentWithInvalidOperands.ts, 27, 3))
@@ -47,7 +47,7 @@
  
  x3 *= {};
  >x3 : Symbol(x3, Decl(compoundArithmeticAssignmentWithInvalidOperands.ts, 27, 3))
-@@ -142,9 +142,9 @@
+@@= skipped -36, +36 lines =@@
  
  x4 *= E.a;
  >x4 : Symbol(x4, Decl(compoundArithmeticAssignmentWithInvalidOperands.ts, 38, 3))

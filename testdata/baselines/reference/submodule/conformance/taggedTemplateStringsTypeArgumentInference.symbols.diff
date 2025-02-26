@@ -1,6 +1,6 @@
 --- old.taggedTemplateStringsTypeArgumentInference.symbols
 +++ new.taggedTemplateStringsTypeArgumentInference.symbols
-@@ -282,19 +282,19 @@
+@@= skipped -282, +282 lines =@@
  >A91 : Symbol(A91, Decl(taggedTemplateStringsTypeArgumentInference.ts, 62, 12))
  
      x: number;

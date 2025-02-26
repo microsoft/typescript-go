@@ -1,6 +1,6 @@
 --- old.recursiveResolveDeclaredMembers.symbols
 +++ new.recursiveResolveDeclaredMembers.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >F : Symbol(F, Decl(types.ts, 0, 0))
  
      (): E;

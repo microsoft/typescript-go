@@ -1,6 +1,6 @@
 --- old.assignmentCompatWithObjectMembers4.symbols
 +++ new.assignmentCompatWithObjectMembers4.symbols
-@@ -8,26 +8,26 @@
+@@= skipped -8, +8 lines =@@
  
      class Base { foo: string; }
  >Base : Symbol(Base, Decl(assignmentCompatWithObjectMembers4.ts, 2, 20))
@@ -32,7 +32,7 @@
  >Derived2 : Symbol(Derived2, Decl(assignmentCompatWithObjectMembers4.ts, 4, 47))
  
      var s: S;
-@@ -40,12 +40,12 @@
+@@= skipped -32, +32 lines =@@
  
      interface S2 { foo: Derived; }
  >S2 : Symbol(S2, Decl(assignmentCompatWithObjectMembers4.ts, 10, 13))
@@ -47,7 +47,7 @@
  >Derived2 : Symbol(Derived2, Decl(assignmentCompatWithObjectMembers4.ts, 4, 47))
  
      var s2: S2;
-@@ -158,26 +158,26 @@
+@@= skipped -118, +118 lines =@@
  
      class Base { foo: string; }
  >Base : Symbol(Base, Decl(assignmentCompatWithObjectMembers4.ts, 47, 17))
@@ -79,7 +79,7 @@
  >Derived2 : Symbol(Derived2, Decl(assignmentCompatWithObjectMembers4.ts, 49, 47))
  
      var s: S;
-@@ -190,12 +190,12 @@
+@@= skipped -32, +32 lines =@@
  
      interface S2 { foo: Base; }
  >S2 : Symbol(S2, Decl(assignmentCompatWithObjectMembers4.ts, 55, 13))

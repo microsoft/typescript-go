@@ -1,6 +1,6 @@
 --- old.nonNullableTypes1.symbols
 +++ new.nonNullableTypes1.symbols
-@@ -76,16 +76,16 @@
+@@= skipped -76, +76 lines =@@
  >A : Symbol(A, Decl(nonNullableTypes1.ts, 26, 1))
  
      x = "hello";

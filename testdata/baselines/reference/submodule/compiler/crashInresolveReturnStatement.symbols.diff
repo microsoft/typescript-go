@@ -1,6 +1,6 @@
 --- old.crashInresolveReturnStatement.symbols
 +++ new.crashInresolveReturnStatement.symbols
-@@ -5,19 +5,19 @@
+@@= skipped -5, +5 lines =@@
  >WorkItemToolbar : Symbol(WorkItemToolbar, Decl(crashInresolveReturnStatement.ts, 0, 0))
  
      public onToolbarItemClick() {
@@ -24,7 +24,7 @@
  
          return null;
      }
-@@ -32,7 +32,7 @@
+@@= skipped -27, +27 lines =@@
  >WITDialogs : Symbol(WITDialogs, Decl(crashInresolveReturnStatement.ts, 11, 1))
  
      public static createCopyOfWorkItem() {

@@ -1,6 +1,6 @@
 --- old.tsxDiscriminantPropertyInference.symbols
 +++ new.tsxDiscriminantPropertyInference.symbols
-@@ -42,7 +42,7 @@
+@@= skipped -42, +42 lines =@@
  >DiscriminatorTrue : Symbol(DiscriminatorTrue, Decl(tsxDiscriminantPropertyInference.tsx, 3, 1))
  >DiscriminatorFalse : Symbol(DiscriminatorFalse, Decl(tsxDiscriminantPropertyInference.tsx, 8, 1))
  >JSX : Symbol(JSX, Decl(tsxDiscriminantPropertyInference.tsx, 0, 0))
@@ -9,7 +9,7 @@
  
  // simple inference
  void (<Comp disc cb={s => parseInt(s)} />);
-@@ -59,9 +59,7 @@
+@@= skipped -17, +17 lines =@@
  >disc : Symbol(disc, Decl(tsxDiscriminantPropertyInference.tsx, 23, 11))
  >cb : Symbol(cb, Decl(tsxDiscriminantPropertyInference.tsx, 23, 24))
  >n : Symbol(n, Decl(tsxDiscriminantPropertyInference.tsx, 23, 29))
@@ -19,7 +19,7 @@
  
  // simple inference when strict-null-checks are enabled
  void (<Comp disc={undefined} cb={n => n.toFixed()} />);
-@@ -70,16 +68,12 @@
+@@= skipped -11, +9 lines =@@
  >undefined : Symbol(undefined)
  >cb : Symbol(cb, Decl(tsxDiscriminantPropertyInference.tsx, 26, 28))
  >n : Symbol(n, Decl(tsxDiscriminantPropertyInference.tsx, 26, 33))

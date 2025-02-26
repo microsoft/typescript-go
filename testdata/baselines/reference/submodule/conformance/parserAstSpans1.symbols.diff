@@ -1,6 +1,6 @@
 --- old.parserAstSpans1.symbols
 +++ new.parserAstSpans1.symbols
-@@ -7,176 +7,176 @@
+@@= skipped -7, +7 lines =@@
  
      /** i1_p1*/
      i1_p1: number;
@@ -233,7 +233,7 @@
  
  // assign to interface
  i1_i = c1_i;
-@@ -184,95 +184,95 @@
+@@= skipped -177, +177 lines =@@
  >c1_i : Symbol(c1_i, Decl(parserAstSpans1.ts, 51, 3))
  
  i1_i.i1_f1();
@@ -357,7 +357,7 @@
  
          return 10;
      }
-@@ -281,9 +281,9 @@
+@@= skipped -97, +97 lines =@@
  >a : Symbol(a, Decl(parserAstSpans1.ts, 103, 16))
  
          this.c2_p1 = a;
@@ -369,7 +369,7 @@
  >a : Symbol(a, Decl(parserAstSpans1.ts, 103, 16))
      }
  }
-@@ -296,35 +296,35 @@
+@@= skipped -15, +15 lines =@@
  >super : Symbol(c2, Decl(parserAstSpans1.ts, 69, 13))
  
          this.p1 = super.c2_p1;
@@ -415,7 +415,7 @@
  
          return 10;
      }
-@@ -338,44 +338,44 @@
+@@= skipped -42, +42 lines =@@
  >c3 : Symbol(c3, Decl(parserAstSpans1.ts, 106, 1))
  
  c2_i.c2_f1();
@@ -476,7 +476,7 @@
  
  // assign
  c2_i = c3_i;
-@@ -383,24 +383,24 @@
+@@= skipped -45, +45 lines =@@
  >c3_i : Symbol(c3_i, Decl(parserAstSpans1.ts, 129, 3))
  
  c2_i.c2_f1();
@@ -509,7 +509,7 @@
  
  class c4 extends c2 {
  >c4 : Symbol(c4, Decl(parserAstSpans1.ts, 143, 13))
-@@ -415,45 +415,45 @@
+@@= skipped -32, +32 lines =@@
  
      /** i2_p1*/
      i2_p1: number;
@@ -567,7 +567,7 @@
  }
  interface i3 extends i2 {
  >i3 : Symbol(i3, Decl(parserAstSpans1.ts, 167, 1))
-@@ -461,24 +461,24 @@
+@@= skipped -46, +46 lines =@@
  
      /** i3 p1*/
      p1: number;
@@ -598,7 +598,7 @@
  }
  var i2_i: i2;
  >i2_i : Symbol(i2_i, Decl(parserAstSpans1.ts, 179, 3))
-@@ -489,84 +489,84 @@
+@@= skipped -28, +28 lines =@@
  >i3 : Symbol(i3, Decl(parserAstSpans1.ts, 167, 1))
  
  i2_i.i2_f1();
@@ -715,7 +715,7 @@
  
  // assign to interface
  i2_i = i3_i;
-@@ -574,69 +574,69 @@
+@@= skipped -85, +85 lines =@@
  >i3_i : Symbol(i3_i, Decl(parserAstSpans1.ts, 180, 3))
  
  i2_i.i2_f1();

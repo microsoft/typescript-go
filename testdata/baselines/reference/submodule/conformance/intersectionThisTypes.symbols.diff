@@ -1,6 +1,6 @@
 --- old.intersectionThisTypes.symbols
 +++ new.intersectionThisTypes.symbols
-@@ -5,20 +5,20 @@
+@@= skipped -5, +5 lines =@@
  >Thing1 : Symbol(Thing1, Decl(intersectionThisTypes.ts, 0, 0))
  
      a: number;
@@ -25,7 +25,7 @@
  }
  
  type Thing3 = Thing1 & Thing2;
-@@ -37,19 +37,19 @@
+@@= skipped -32, +32 lines =@@
  
      t = t.self();
  >t : Symbol(t, Decl(intersectionThisTypes.ts, 13, 12))
@@ -53,7 +53,7 @@
  }
  
  interface Thing5 extends Thing4 {
-@@ -57,7 +57,7 @@
+@@= skipped -20, +20 lines =@@
  >Thing4 : Symbol(Thing4, Decl(intersectionThisTypes.ts, 10, 30))
  
      c: string;
@@ -62,7 +62,7 @@
  }
  
  function f2(t: Thing5) {
-@@ -67,26 +67,26 @@
+@@= skipped -10, +10 lines =@@
  
      t = t.self();
  >t : Symbol(t, Decl(intersectionThisTypes.ts, 22, 12))
@@ -98,7 +98,7 @@
  >T : Symbol(T, Decl(intersectionThisTypes.ts, 28, 11))
  >props : Symbol(props, Decl(intersectionThisTypes.ts, 28, 14))
  >T : Symbol(T, Decl(intersectionThisTypes.ts, 28, 11))
-@@ -98,7 +98,7 @@
+@@= skipped -31, +31 lines =@@
  >Component : Symbol(Component, Decl(intersectionThisTypes.ts, 25, 1))
  
      title: string;
@@ -107,7 +107,7 @@
  }
  
  function test(label: Label) {
-@@ -108,12 +108,12 @@
+@@= skipped -10, +10 lines =@@
  
      const extended = label.extend({ id: 67 }).extend({ tag: "hello" });
  >extended : Symbol(extended, Decl(intersectionThisTypes.ts, 36, 9))

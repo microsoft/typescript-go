@@ -1,6 +1,6 @@
 --- old.typeFromPropertyAssignment26.symbols
 +++ new.typeFromPropertyAssignment26.symbols
-@@ -2,44 +2,32 @@
+@@= skipped -2, +2 lines =@@
  
  === bug24730.js ===
  var UI = {}

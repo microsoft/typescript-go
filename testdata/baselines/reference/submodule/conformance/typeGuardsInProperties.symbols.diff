@@ -1,6 +1,6 @@
 --- old.typeGuardsInProperties.symbols
 +++ new.typeGuardsInProperties.symbols
-@@ -14,47 +14,47 @@
+@@= skipped -14, +14 lines =@@
  >C1 : Symbol(C1, Decl(typeGuardsInProperties.ts, 4, 30))
  
      private pp1: string | number;
@@ -64,7 +64,7 @@
      }
  }
  var c1: C1;
-@@ -63,21 +63,21 @@
+@@= skipped -49, +49 lines =@@
  
  strOrNum = typeof c1.pp2 === "string" && c1.pp2; // string | number
  >strOrNum : Symbol(strOrNum, Decl(typeGuardsInProperties.ts, 4, 3))

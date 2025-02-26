@@ -1,6 +1,6 @@
 --- old.dependentDestructuredVariables.symbols
 +++ new.dependentDestructuredVariables.symbols
-@@ -22,17 +22,17 @@
+@@= skipped -22, +22 lines =@@
  >kind : Symbol(kind, Decl(dependentDestructuredVariables.ts, 4, 14))
  
          payload.toFixed();
@@ -22,7 +22,7 @@
      }
  }
  
-@@ -50,17 +50,17 @@
+@@= skipped -28, +28 lines =@@
  >kind : Symbol(kind, Decl(dependentDestructuredVariables.ts, 14, 11))
  
          payload.toFixed();
@@ -44,7 +44,7 @@
      }
  }
  
-@@ -75,16 +75,16 @@
+@@= skipped -25, +25 lines =@@
  
          case 'A':
              payload.toFixed();
@@ -65,7 +65,7 @@
  
              break;
          default:
-@@ -106,17 +106,17 @@
+@@= skipped -31, +31 lines =@@
  >kind : Symbol(kind, Decl(dependentDestructuredVariables.ts, 37, 32))
  
          payload.toFixed();
@@ -87,7 +87,7 @@
      }
  }
  
-@@ -136,17 +136,17 @@
+@@= skipped -30, +30 lines =@@
  >kind : Symbol(kind, Decl(dependentDestructuredVariables.ts, 47, 11))
  
          payload.toFixed();
@@ -109,7 +109,7 @@
      }
  }
  
-@@ -174,17 +174,17 @@
+@@= skipped -38, +38 lines =@@
  >kind : Symbol(kind, Decl(dependentDestructuredVariables.ts, 60, 14))
  
              payload.toFixed();
@@ -131,7 +131,7 @@
          }
      }
  }
-@@ -206,17 +206,17 @@
+@@= skipped -32, +32 lines =@@
  >kind : Symbol(kind, Decl(dependentDestructuredVariables.ts, 72, 11))
  
              payload.toFixed();
@@ -153,7 +153,7 @@
          }
      }
  }
-@@ -240,17 +240,17 @@
+@@= skipped -34, +34 lines =@@
  >kind : Symbol(kind, Decl(dependentDestructuredVariables.ts, 85, 15))
  
              payload.toFixed();
@@ -175,7 +175,7 @@
          }
      }
  }
-@@ -269,16 +269,16 @@
+@@= skipped -29, +29 lines =@@
  
              case 'A':
                  payload.toFixed();
@@ -196,7 +196,7 @@
  
                  break;
              default:
-@@ -352,17 +352,17 @@
+@@= skipped -83, +83 lines =@@
  >kind : Symbol(kind, Decl(dependentDestructuredVariables.ts, 135, 17))
  
          data.toFixed();
@@ -218,7 +218,7 @@
      }
  }
  
-@@ -371,15 +371,15 @@
+@@= skipped -19, +19 lines =@@
  interface A<T> { variant: 'a', value: T }
  >A : Symbol(A, Decl(dependentDestructuredVariables.ts, 142, 1))
  >T : Symbol(T, Decl(dependentDestructuredVariables.ts, 146, 12))
@@ -238,7 +238,7 @@
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --) ... and 4 more)
  >T : Symbol(T, Decl(dependentDestructuredVariables.ts, 148, 12))
  
-@@ -482,9 +482,9 @@
+@@= skipped -111, +111 lines =@@
  const { value, done } = it.next();
  >value : Symbol(value, Decl(dependentDestructuredVariables.ts, 184, 7))
  >done : Symbol(done, Decl(dependentDestructuredVariables.ts, 184, 14))
@@ -250,7 +250,7 @@
  
  if (!done) {
  >done : Symbol(done, Decl(dependentDestructuredVariables.ts, 184, 14))
-@@ -510,17 +510,17 @@
+@@= skipped -28, +28 lines =@@
  >kind : Symbol(kind, Decl(dependentDestructuredVariables.ts, 193, 5))
  
          data.toFixed();
@@ -272,7 +272,7 @@
      }
  });
  
-@@ -534,17 +534,17 @@
+@@= skipped -24, +24 lines =@@
  >kind : Symbol(kind, Decl(dependentDestructuredVariables.ts, 202, 63))
  
          payload.toFixed();
@@ -294,7 +294,7 @@
      }
  };
  
-@@ -558,9 +558,9 @@
+@@= skipped -24, +24 lines =@@
  >kind : Symbol(kind, Decl(dependentDestructuredVariables.ts, 211, 55))
  
          payload.toFixed();
@@ -306,7 +306,7 @@
      }
      else {
          payload;  // undefined
-@@ -584,15 +584,15 @@
+@@= skipped -26, +26 lines =@@
  >err : Symbol(err, Decl(dependentDestructuredVariables.ts, 222, 19))
  
          data.length;
@@ -326,7 +326,7 @@
      }
  });
  
-@@ -615,9 +615,9 @@
+@@= skipped -31, +31 lines =@@
  
          case "add":
              console.log(args.a + args.b);
@@ -338,7 +338,7 @@
  >args.a : Symbol(a, Decl(dependentDestructuredVariables.ts, 231, 28))
  >args : Symbol(args, Decl(dependentDestructuredVariables.ts, 233, 52))
  >a : Symbol(a, Decl(dependentDestructuredVariables.ts, 231, 28))
-@@ -628,14 +628,14 @@
+@@= skipped -13, +13 lines =@@
              break;
          case "concat":
              console.log(args.firstArr.concat(args.secondArr));
@@ -357,7 +357,7 @@
  >args.secondArr : Symbol(secondArr, Decl(dependentDestructuredVariables.ts, 231, 84))
  >args : Symbol(args, Decl(dependentDestructuredVariables.ts, 233, 52))
  >secondArr : Symbol(secondArr, Decl(dependentDestructuredVariables.ts, 231, 84))
-@@ -829,17 +829,17 @@
+@@= skipped -201, +201 lines =@@
  >kind : Symbol(kind, Decl(dependentDestructuredVariables.ts, 321, 19))
  
          payload.toFixed();  // error
@@ -379,7 +379,7 @@
      }
  };
  
-@@ -973,10 +973,10 @@
+@@= skipped -144, +144 lines =@@
  >ClientEvents : Symbol(ClientEvents, Decl(dependentDestructuredVariables.ts, 386, 1))
  
      warn: [message: string];
@@ -392,7 +392,7 @@
  >CloseEvent : Symbol(CloseEvent, Decl(lib.dom.d.ts, --, --), Decl(lib.dom.d.ts, --, --))
  }
    
-@@ -984,7 +984,7 @@
+@@= skipped -11, +11 lines =@@
  >Client : Symbol(Client, Decl(dependentDestructuredVariables.ts, 393, 1))
  
      public on<K extends keyof ClientEvents>(event: K, listener: (...args: ClientEvents[K]) => void): void;
@@ -401,7 +401,7 @@
  >K : Symbol(K, Decl(dependentDestructuredVariables.ts, 396, 14))
  >ClientEvents : Symbol(ClientEvents, Decl(dependentDestructuredVariables.ts, 386, 1))
  >event : Symbol(event, Decl(dependentDestructuredVariables.ts, 396, 44))
-@@ -1000,42 +1000,42 @@
+@@= skipped -16, +16 lines =@@
  >Client : Symbol(Client, Decl(dependentDestructuredVariables.ts, 393, 1))
  
  bot.on("shardDisconnect", (event, shard) => console.log(`Shard ${shard} disconnected (${event.code},${event.wasClean}): ${event.reason}`));
@@ -464,7 +464,7 @@
  
  // Destructuring tuple types with different arities
  
-@@ -1108,9 +1108,9 @@
+@@= skipped -108, +108 lines =@@
  >y : Symbol(y, Decl(dependentDestructuredVariables.ts, 436, 33))
  
    if (Math.random()) {
@@ -476,7 +476,7 @@
  
      x = 1;
  >x : Symbol(x, Decl(dependentDestructuredVariables.ts, 436, 31))
-@@ -1129,9 +1129,9 @@
+@@= skipped -21, +21 lines =@@
  >y : Symbol(y, Decl(dependentDestructuredVariables.ts, 445, 33))
  
    if (Math.random()) {
@@ -488,7 +488,7 @@
  
      y = 2;
  >y : Symbol(y, Decl(dependentDestructuredVariables.ts, 445, 33))
-@@ -1153,9 +1153,9 @@
+@@= skipped -24, +24 lines =@@
  >y : Symbol(y, Decl(dependentDestructuredVariables.ts, 456, 82))
  
    if (Math.random()) {

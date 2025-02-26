@@ -1,6 +1,6 @@
 --- old.predicateSemantics.symbols
 +++ new.predicateSemantics.symbols
-@@ -63,9 +63,9 @@
+@@= skipped -63, +63 lines =@@
  
  // Should be OK
  console.log((cond || undefined) && 1 / cond);

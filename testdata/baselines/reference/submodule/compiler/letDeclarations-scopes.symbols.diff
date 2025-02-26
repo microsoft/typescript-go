@@ -1,6 +1,6 @@
 --- old.letDeclarations-scopes.symbols
 +++ new.letDeclarations-scopes.symbols
-@@ -249,7 +249,7 @@
+@@= skipped -249, +249 lines =@@
      }
  
      method() {
@@ -9,7 +9,7 @@
  
          let l = 0;
  >l : Symbol(l, Decl(letDeclarations-scopes.ts, 129, 11))
-@@ -260,7 +260,7 @@
+@@= skipped -11, +11 lines =@@
      }
  
      get v() {
@@ -18,7 +18,7 @@
  
          let l = 0;
  >l : Symbol(l, Decl(letDeclarations-scopes.ts, 134, 11))
-@@ -274,7 +274,7 @@
+@@= skipped -14, +14 lines =@@
      }
  
      set v(value) {

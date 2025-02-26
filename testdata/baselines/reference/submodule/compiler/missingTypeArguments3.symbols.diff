@@ -1,6 +1,6 @@
 --- old.missingTypeArguments3.symbols
 +++ new.missingTypeArguments3.symbols
-@@ -9,13 +9,13 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(missingTypeArguments3.ts, 2, 25))
  
          OrderByDescending(keySelector?: string): OrderedEnumerable<T>;
@@ -16,7 +16,7 @@
  >TKey : Symbol(TKey, Decl(missingTypeArguments3.ts, 4, 16))
  >keySelector : Symbol(keySelector, Decl(missingTypeArguments3.ts, 4, 22))
  >element : Symbol(element, Decl(missingTypeArguments3.ts, 4, 36))
-@@ -27,7 +27,7 @@
+@@= skipped -18, +18 lines =@@
  >T : Symbol(T, Decl(missingTypeArguments3.ts, 2, 25))
  
          GroupBy<TKey, TElement>(keySelector: (element: T) => TKey, elementSelector: (element: T) => TElement): Enumerable<Grouping<TKey, TElement>>;
@@ -25,7 +25,7 @@
  >TKey : Symbol(TKey, Decl(missingTypeArguments3.ts, 5, 16))
  >TElement : Symbol(TElement, Decl(missingTypeArguments3.ts, 5, 21))
  >keySelector : Symbol(keySelector, Decl(missingTypeArguments3.ts, 5, 32))
-@@ -44,7 +44,7 @@
+@@= skipped -17, +17 lines =@@
  >TElement : Symbol(TElement, Decl(missingTypeArguments3.ts, 5, 21))
  
          ToDictionary<TKey>(keySelector: (element: T) => TKey): Dictionary<TKey, T>;
@@ -34,7 +34,7 @@
  >TKey : Symbol(TKey, Decl(missingTypeArguments3.ts, 6, 21))
  >keySelector : Symbol(keySelector, Decl(missingTypeArguments3.ts, 6, 27))
  >element : Symbol(element, Decl(missingTypeArguments3.ts, 6, 41))
-@@ -62,7 +62,7 @@
+@@= skipped -18, +18 lines =@@
  >T : Symbol(T, Decl(missingTypeArguments3.ts, 9, 32))
  
          ThenBy<TCompare>(keySelector: (element: T) => TCompare): OrderedEnumerable<T>; // used to incorrectly think this was missing a type argument
@@ -43,7 +43,7 @@
  >TCompare : Symbol(TCompare, Decl(missingTypeArguments3.ts, 10, 15))
  >keySelector : Symbol(keySelector, Decl(missingTypeArguments3.ts, 10, 25))
  >element : Symbol(element, Decl(missingTypeArguments3.ts, 10, 39))
-@@ -80,7 +80,7 @@
+@@= skipped -18, +18 lines =@@
  >TElement : Symbol(TElement, Decl(missingTypeArguments3.ts, 13, 28))
  
          Key(): TKey;
@@ -52,7 +52,7 @@
  >TKey : Symbol(TKey, Decl(missingTypeArguments3.ts, 13, 23))
      }
  
-@@ -90,19 +90,19 @@
+@@= skipped -10, +10 lines =@@
  >TElement : Symbol(TElement, Decl(missingTypeArguments3.ts, 17, 26))
  
          Count(): number;
@@ -76,7 +76,7 @@
  >Enumerable : Symbol(Enumerable, Decl(missingTypeArguments3.ts, 0, 21))
  >Grouping : Symbol(Grouping, Decl(missingTypeArguments3.ts, 11, 5))
  >TKey : Symbol(TKey, Decl(missingTypeArguments3.ts, 17, 21))
-@@ -114,43 +114,43 @@
+@@= skipped -24, +24 lines =@@
  >TValue : Symbol(TValue, Decl(missingTypeArguments3.ts, 24, 30))
  
          Add(key: TKey, value: TValue): void;
@@ -128,7 +128,7 @@
  >Enumerable : Symbol(Enumerable, Decl(missingTypeArguments3.ts, 0, 21))
  >KeyValuePair : Symbol(KeyValuePair, Decl(missingTypeArguments3.ts, 33, 5))
  >TKey : Symbol(TKey, Decl(missingTypeArguments3.ts, 24, 25))
-@@ -163,11 +163,11 @@
+@@= skipped -49, +49 lines =@@
  >TValue : Symbol(TValue, Decl(missingTypeArguments3.ts, 35, 32))
  
          Key: TKey;

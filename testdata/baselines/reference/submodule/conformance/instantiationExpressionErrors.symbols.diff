@@ -1,6 +1,6 @@
 --- old.instantiationExpressionErrors.symbols
 +++ new.instantiationExpressionErrors.symbols
-@@ -201,52 +201,52 @@
+@@= skipped -201, +201 lines =@@
  >C1 : Symbol(C1, Decl(instantiationExpressionErrors.ts, 76, 10))
  
      static specialFoo = f<string>
@@ -63,7 +63,7 @@
  
  let ver = 21
  >ver : Symbol(ver, Decl(instantiationExpressionErrors.ts, 101, 3))
-@@ -254,16 +254,16 @@
+@@= skipped -53, +53 lines =@@
  const a = ver < (MyVer.v1 >= MyVer.v2 ? MyVer.v1 : MyVer.v2)
  >a : Symbol(a, Decl(instantiationExpressionErrors.ts, 102, 5))
  >ver : Symbol(ver, Decl(instantiationExpressionErrors.ts, 101, 3))

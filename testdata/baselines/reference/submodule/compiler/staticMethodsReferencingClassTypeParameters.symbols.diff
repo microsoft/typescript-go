@@ -1,6 +1,6 @@
 --- old.staticMethodsReferencingClassTypeParameters.symbols
 +++ new.staticMethodsReferencingClassTypeParameters.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(staticMethodsReferencingClassTypeParameters.ts, 0, 8))
  
      static s(p: T) { return p; }

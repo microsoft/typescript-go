@@ -1,6 +1,6 @@
 --- old.classMemberInitializerWithLamdaScoping.symbols
 +++ new.classMemberInitializerWithLamdaScoping.symbols
-@@ -13,16 +13,16 @@
+@@= skipped -13, +13 lines =@@
  >Test : Symbol(Test, Decl(classMemberInitializerWithLamdaScoping.ts, 2, 2))
  
      constructor(private field: string) {
@@ -21,7 +21,7 @@
  
          console.log(field); // Using field here shouldnt be error
  >console.log : Symbol(log, Decl(classMemberInitializerWithLamdaScoping.ts, 0, 22))
-@@ -32,16 +32,16 @@
+@@= skipped -19, +19 lines =@@
  
      };
      static field: number;
@@ -42,7 +42,7 @@
  
          console.log(field); // Using field here shouldnt be error
  >console.log : Symbol(log, Decl(classMemberInitializerWithLamdaScoping.ts, 0, 22))
-@@ -59,10 +59,10 @@
+@@= skipped -27, +27 lines =@@
  >Test1 : Symbol(Test1, Decl(classMemberInitializerWithLamdaScoping.ts, 17, 19))
  
      constructor(private field1: string) {
@@ -55,7 +55,7 @@
  
          console.log(field1); // But this should be error as the field1 will resolve to var field1 
  >console.log : Symbol(log, Decl(classMemberInitializerWithLamdaScoping.ts, 0, 22))
-@@ -74,7 +74,7 @@
+@@= skipped -15, +15 lines =@@
                               // it would resolve to private field1 and thats not what user intended here. 
      };
      static staticMessageHandler = () => {

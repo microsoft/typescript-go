@@ -1,6 +1,6 @@
 --- old.tsxEmit1.symbols
 +++ new.tsxEmit1.symbols
-@@ -20,146 +20,111 @@
+@@= skipped -20, +20 lines =@@
  
  var selfClosed1 = <div />;
  >selfClosed1 : Symbol(selfClosed1, Decl(file.tsx, 8, 3))

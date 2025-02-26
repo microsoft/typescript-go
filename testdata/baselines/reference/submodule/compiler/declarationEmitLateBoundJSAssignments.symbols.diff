@@ -1,6 +1,6 @@
 --- old.declarationEmitLateBoundJSAssignments.symbols
 +++ new.declarationEmitLateBoundJSAssignments.symbols
-@@ -2,63 +2,62 @@
+@@= skipped -2, +2 lines =@@
  
  === file.js ===
  export function foo() {}

@@ -1,6 +1,6 @@
 --- old.typePredicateStructuralMatch.symbols
 +++ new.typePredicateStructuralMatch.symbols
-@@ -37,9 +37,9 @@
+@@= skipped -37, +37 lines =@@
  >T : Symbol(T, Decl(typePredicateStructuralMatch.ts, 11, 26))
  
      return value.hasOwnProperty('data');
@@ -12,7 +12,7 @@
  }
  
  function getResults1(value: Results | { data: Results }): Results {
-@@ -70,9 +70,9 @@
+@@= skipped -33, +33 lines =@@
  >T : Symbol(T, Decl(typePredicateStructuralMatch.ts, 19, 25))
  
      return !value.hasOwnProperty('data');

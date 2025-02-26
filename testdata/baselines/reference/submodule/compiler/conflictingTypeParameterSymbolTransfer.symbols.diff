@@ -1,6 +1,6 @@
 --- old.conflictingTypeParameterSymbolTransfer.symbols
 +++ new.conflictingTypeParameterSymbolTransfer.symbols
-@@ -51,7 +51,7 @@
+@@= skipped -51, +51 lines =@@
  
      // should allow this access since t was declared as a property on Foo
      foo = this.t
@@ -9,7 +9,7 @@
  >this.t : Symbol(t, Decl(conflictingTypeParameterSymbolTransfer.ts, 18, 10), Decl(conflictingTypeParameterSymbolTransfer.ts, 18, 26))
  >this : Symbol(Foo, Decl(conflictingTypeParameterSymbolTransfer.ts, 17, 13))
  >t : Symbol(t, Decl(conflictingTypeParameterSymbolTransfer.ts, 18, 10), Decl(conflictingTypeParameterSymbolTransfer.ts, 18, 26))
-@@ -71,7 +71,7 @@
+@@= skipped -20, +20 lines =@@
  >data : Symbol(data, Decl(conflictingTypeParameterSymbolTransfer.ts, 27, 11), Decl(conflictingTypeParameterSymbolTransfer.ts, 27, 36))
  
      getData() {

@@ -1,6 +1,6 @@
 --- old.typeFromJSInitializer.symbols
 +++ new.typeFromJSInitializer.symbols
-@@ -6,92 +6,50 @@
+@@= skipped -6, +6 lines =@@
  
      // should get any on this-assignments in constructor
      this.unknown = null
@@ -106,7 +106,7 @@
  
  /** @type {number | undefined} */
  var n;
-@@ -138,14 +96,14 @@
+@@= skipped -132, +90 lines =@@
  
      // l should be any[]
      l.push(1)
@@ -125,7 +125,7 @@
  }
  
  // should get any on variable initialisers
-@@ -173,9 +131,9 @@
+@@= skipped -35, +35 lines =@@
  >u : Symbol(u, Decl(a.js, 44, 3))
  
  l.push('ok')
@@ -137,7 +137,7 @@
  
  /** @type {(v: unknown) => v is undefined} */
  const isUndef = v => v === undefined;
-@@ -191,8 +149,8 @@
+@@= skipped -18, +18 lines =@@
  // should be undefined[]
  const g = e.filter(isUndef);
  >g : Symbol(g, Decl(a.js, 59, 5))

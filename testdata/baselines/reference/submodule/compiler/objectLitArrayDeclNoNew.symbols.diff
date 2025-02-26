@@ -1,6 +1,6 @@
 --- old.objectLitArrayDeclNoNew.symbols
 +++ new.objectLitArrayDeclNoNew.symbols
-@@ -20,11 +20,11 @@
+@@= skipped -20, +20 lines =@@
  >ILineTokens : Symbol(ILineTokens, Decl(objectLitArrayDeclNoNew.ts, 7, 5))
  
          tokens: IToken[];
@@ -14,7 +14,7 @@
  >IState : Symbol(IState, Decl(objectLitArrayDeclNoNew.ts, 2, 13))
      }
  
-@@ -32,7 +32,7 @@
+@@= skipped -12, +12 lines =@@
  >Gar : Symbol(Gar, Decl(objectLitArrayDeclNoNew.ts, 12, 5))
  
          public moo: number = 0;

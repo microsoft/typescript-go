@@ -1,6 +1,6 @@
 --- old.unusedParametersInLambda2.symbols
 +++ new.unusedParametersInLambda2.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(unusedParametersInLambda2.ts, 0, 0))
  
      public f1() {

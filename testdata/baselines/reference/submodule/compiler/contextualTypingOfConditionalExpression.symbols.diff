@@ -1,6 +1,6 @@
 --- old.contextualTypingOfConditionalExpression.symbols
 +++ new.contextualTypingOfConditionalExpression.symbols
-@@ -5,33 +5,33 @@
+@@= skipped -5, +5 lines =@@
  >x : Symbol(x, Decl(contextualTypingOfConditionalExpression.ts, 0, 3))
  >a : Symbol(a, Decl(contextualTypingOfConditionalExpression.ts, 0, 8))
  >a : Symbol(a, Decl(contextualTypingOfConditionalExpression.ts, 0, 37))
@@ -41,7 +41,7 @@
  }
  
  var x2: (a: A) => void = true ? (a) => a.foo : (b) => b.foo;
-@@ -39,11 +39,11 @@
+@@= skipped -34, +34 lines =@@
  >a : Symbol(a, Decl(contextualTypingOfConditionalExpression.ts, 12, 9))
  >A : Symbol(A, Decl(contextualTypingOfConditionalExpression.ts, 0, 82))
  >a : Symbol(a, Decl(contextualTypingOfConditionalExpression.ts, 12, 33))

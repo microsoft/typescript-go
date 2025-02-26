@@ -1,6 +1,6 @@
 --- old.exportNamespaceDeclarationRetainsVisibility.symbols
 +++ new.exportNamespaceDeclarationRetainsVisibility.symbols
-@@ -8,14 +8,14 @@
+@@= skipped -8, +8 lines =@@
  >A : Symbol(A, Decl(exportNamespaceDeclarationRetainsVisibility.ts, 0, 13))
  
          kind: 'a';

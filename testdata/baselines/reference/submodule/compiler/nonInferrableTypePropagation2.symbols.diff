@@ -1,6 +1,6 @@
 --- old.nonInferrableTypePropagation2.symbols
 +++ new.nonInferrableTypePropagation2.symbols
-@@ -15,10 +15,10 @@
+@@= skipped -15, +15 lines =@@
  >E : Symbol(E, Decl(nonInferrableTypePropagation2.ts, 4, 15))
  
      readonly _tag: 'Left'
@@ -13,7 +13,7 @@
  >E : Symbol(E, Decl(nonInferrableTypePropagation2.ts, 4, 15))
  }
    
-@@ -27,10 +27,10 @@
+@@= skipped -12, +12 lines =@@
  >A : Symbol(A, Decl(nonInferrableTypePropagation2.ts, 9, 16))
  
      readonly _tag: 'Right'

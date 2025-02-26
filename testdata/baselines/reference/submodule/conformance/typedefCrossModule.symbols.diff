@@ -1,6 +1,6 @@
 --- old.typedefCrossModule.symbols
 +++ new.typedefCrossModule.symbols
-@@ -11,18 +11,15 @@
+@@= skipped -11, +11 lines =@@
  /** @typedef {{ type: "b", y: 1 }} B */
  /** @typedef {A | B} Both */
  module.exports = C
@@ -22,7 +22,7 @@
  }
  
  === mod2.js ===
-@@ -35,26 +32,17 @@
+@@= skipped -24, +21 lines =@@
  >C : Symbol(C, Decl(mod2.js, 0, 0))
  
      this.p = 1

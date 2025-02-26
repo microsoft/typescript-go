@@ -1,6 +1,6 @@
 --- old.privacyFunc.symbols
 +++ new.privacyFunc.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >C1_public : Symbol(C1_public, Decl(privacyFunc.ts, 0, 11))
  
          private f1() {
@@ -9,7 +9,7 @@
          }
      }
  
-@@ -32,59 +32,59 @@
+@@= skipped -24, +24 lines =@@
          }
  
          private f1_private(m1_c3_f1_arg: C1_public) {
@@ -78,7 +78,7 @@
  >C1_public : Symbol(C1_public, Decl(privacyFunc.ts, 0, 11))
  
              return new C1_public();
-@@ -92,7 +92,7 @@
+@@= skipped -60, +60 lines =@@
          }
  
          public f10_public(): C1_public {
@@ -87,7 +87,7 @@
  >C1_public : Symbol(C1_public, Decl(privacyFunc.ts, 0, 11))
  
              return new C1_public();
-@@ -100,7 +100,7 @@
+@@= skipped -8, +8 lines =@@
          }
  
          private f11_private(): C2_private {
@@ -96,7 +96,7 @@
  >C2_private : Symbol(C2_private, Decl(privacyFunc.ts, 4, 5))
  
              return new C2_private();
-@@ -108,7 +108,7 @@
+@@= skipped -8, +8 lines =@@
          }
  
          public f12_public(): C2_private { // error
@@ -105,7 +105,7 @@
  >C2_private : Symbol(C2_private, Decl(privacyFunc.ts, 4, 5))
  
              return new C2_private(); //error
-@@ -131,53 +131,53 @@
+@@= skipped -23, +23 lines =@@
  >m1_c4_c1_2 : Symbol(m1_c4_c1_2, Decl(privacyFunc.ts, 63, 21))
          }
          private f1_private(m1_c4_f1_arg: C1_public) {
@@ -167,7 +167,7 @@
  
              return new C2_private();
  >C2_private : Symbol(C2_private, Decl(privacyFunc.ts, 4, 5))
-@@ -185,7 +185,7 @@
+@@= skipped -54, +54 lines =@@
  
  
          private f9_private(): C1_public {
@@ -176,7 +176,7 @@
  >C1_public : Symbol(C1_public, Decl(privacyFunc.ts, 0, 11))
  
              return new C1_public();
-@@ -193,7 +193,7 @@
+@@= skipped -8, +8 lines =@@
          }
  
          public f10_public(): C1_public {
@@ -185,7 +185,7 @@
  >C1_public : Symbol(C1_public, Decl(privacyFunc.ts, 0, 11))
  
              return new C1_public();
-@@ -201,7 +201,7 @@
+@@= skipped -8, +8 lines =@@
          }
  
          private f11_private(): C2_private {
@@ -194,7 +194,7 @@
  >C2_private : Symbol(C2_private, Decl(privacyFunc.ts, 4, 5))
  
              return new C2_private();
-@@ -209,7 +209,7 @@
+@@= skipped -8, +8 lines =@@
          }
  
          public f12_public(): C2_private {
@@ -203,7 +203,7 @@
  >C2_private : Symbol(C2_private, Decl(privacyFunc.ts, 4, 5))
  
              return new C2_private();
-@@ -354,33 +354,33 @@
+@@= skipped -145, +145 lines =@@
  >c7_c1_2 : Symbol(c7_c1_2, Decl(privacyFunc.ts, 183, 17))
      }
      private f1_private(c7_f1_arg: C6_public) {
@@ -242,7 +242,7 @@
  >C6_public : Symbol(C6_public, Decl(privacyFunc.ts, 176, 1))
  
          return new C6_public();
-@@ -388,7 +388,7 @@
+@@= skipped -34, +34 lines =@@
      }
  
      public f10_public(): C6_public {

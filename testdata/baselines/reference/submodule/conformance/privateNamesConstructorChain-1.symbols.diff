@@ -1,6 +1,6 @@
 --- old.privateNamesConstructorChain-1.symbols
 +++ new.privateNamesConstructorChain-1.symbols
-@@ -5,16 +5,16 @@
+@@= skipped -5, +5 lines =@@
  >Parent : Symbol(Parent, Decl(privateNamesConstructorChain-1.ts, 0, 0))
  
      #foo = 3;
@@ -21,7 +21,7 @@
  >Child : Symbol(Child, Decl(privateNamesConstructorChain-1.ts, 7, 1))
  
          Child.#bar;       // Error: not found
-@@ -27,9 +27,9 @@
+@@= skipped -22, +22 lines =@@
  >Parent : Symbol(Parent, Decl(privateNamesConstructorChain-1.ts, 0, 0))
  
      #foo = "foo";       // OK (Child's #foo does not conflict, as `Parent`'s `#foo` is not accessible)

@@ -1,6 +1,6 @@
 --- old.json.stringify.symbols
 +++ new.json.stringify.symbols
-@@ -5,36 +5,36 @@
+@@= skipped -5, +5 lines =@@
  >value : Symbol(value, Decl(json.stringify.ts, 0, 3))
  
  JSON.stringify(value, undefined, 2);

@@ -1,6 +1,6 @@
 --- old.commentsAfterSpread.symbols
 +++ new.commentsAfterSpread.symbols
-@@ -68,9 +68,9 @@
+@@= skipped -68, +68 lines =@@
  >args : Symbol(args, Decl(commentsAfterSpread.ts, 30, 12))
  
    return args.length;
@@ -12,7 +12,7 @@
  }
  
  function f (
-@@ -84,9 +84,9 @@
+@@= skipped -16, +16 lines =@@
  
  ) {
    return rest.length;
@@ -24,7 +24,7 @@
  }
  
  function g (
-@@ -109,17 +109,17 @@
+@@= skipped -25, +25 lines =@@
  
    ]
    return rest.length;
@@ -46,7 +46,7 @@
  
  const i = (
  >i : Symbol(i, Decl(commentsAfterSpread.ts, 55, 5))
-@@ -129,9 +129,9 @@
+@@= skipped -20, +20 lines =@@
  >rest : Symbol(rest, Decl(commentsAfterSpread.ts, 56, 8))
  
  ) => rest.length;
@@ -58,7 +58,7 @@
  
  const j = (
  >j : Symbol(j, Decl(commentsAfterSpread.ts, 59, 5))
-@@ -144,9 +144,9 @@
+@@= skipped -15, +15 lines =@@
  >rest : Symbol(rest, Decl(commentsAfterSpread.ts, 60, 8))
  
  ) => rest.length;

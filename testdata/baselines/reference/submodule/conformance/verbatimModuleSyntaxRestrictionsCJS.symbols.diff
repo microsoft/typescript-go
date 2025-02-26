@@ -1,6 +1,6 @@
 --- old.verbatimModuleSyntaxRestrictionsCJS.symbols
 +++ new.verbatimModuleSyntaxRestrictionsCJS.symbols
-@@ -32,12 +32,10 @@
+@@= skipped -32, +32 lines =@@
  >funciton : Symbol(funciton, Decl(main.ts, 2, 8))
  
  import type { funciton as funciton2 } from "./decl"; // ok I guess?
@@ -14,7 +14,7 @@
  type T = typeof import("./decl"); // ok
  >T : Symbol(T, Decl(main.ts, 4, 17))
  
-@@ -64,7 +62,7 @@
+@@= skipped -32, +30 lines =@@
  >x : Symbol(x, Decl(main.ts, 14, 16))
  }
  export default interface Default {} // sketchy, but ok
@@ -23,7 +23,7 @@
  
  === /main2.ts ===
  export interface I {}
-@@ -92,7 +90,7 @@
+@@= skipped -28, +28 lines =@@
  
  === /main5.ts ===
  export default class C {} // error

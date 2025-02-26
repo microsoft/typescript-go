@@ -1,6 +1,6 @@
 --- old.nestedExcessPropertyChecking.symbols
 +++ new.nestedExcessPropertyChecking.symbols
-@@ -42,14 +42,14 @@
+@@= skipped -42, +42 lines =@@
  
  enum E { A = "A" }
  >E : Symbol(E, Decl(nestedExcessPropertyChecking.ts, 12, 30))
@@ -18,7 +18,7 @@
  
  let y: { nope?: any } = "A";  // Error
  >y : Symbol(y, Decl(nestedExcessPropertyChecking.ts, 17, 3))
-@@ -88,16 +88,16 @@
+@@= skipped -46, +46 lines =@@
  
  interface Unrelated { _?: any }
  >Unrelated : Symbol(Unrelated, Decl(nestedExcessPropertyChecking.ts, 29, 42))

@@ -1,6 +1,6 @@
 --- old.defaultPropertyAssignedClassWithPrototype.symbols
 +++ new.defaultPropertyAssignedClassWithPrototype.symbols
-@@ -2,24 +2,16 @@
+@@= skipped -2, +2 lines =@@
  
  === bug39167.js ===
  var test = {};
@@ -29,7 +29,7 @@
  
      add() {}
  >add : Symbol(add, Decl(bug39167.js, 4, 20))
-@@ -27,9 +19,5 @@
+@@= skipped -25, +17 lines =@@
  };
  
  new test.K().add;

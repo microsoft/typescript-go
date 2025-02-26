@@ -1,6 +1,6 @@
 --- old.defaultDeclarationEmitNamedCorrectly.symbols
 +++ new.defaultDeclarationEmitNamedCorrectly.symbols
-@@ -7,11 +7,11 @@
+@@= skipped -7, +7 lines =@@
  >T : Symbol(T, Decl(defaultDeclarationEmitNamedCorrectly.ts, 0, 26))
  
      p: P;
@@ -14,7 +14,7 @@
  >T : Symbol(T, Decl(defaultDeclarationEmitNamedCorrectly.ts, 0, 26))
  }
  export function make<P, CTor>(x: { new (): CTor & {props: P} }): Things<P, CTor> {
-@@ -34,14 +34,14 @@
+@@= skipped -27, +27 lines =@@
  }
  
  export default class MyComponent {

@@ -1,6 +1,6 @@
 --- old.nullPropertyName.symbols
 +++ new.nullPropertyName.symbols
-@@ -2,397 +2,397 @@
+@@= skipped -2, +2 lines =@@
  
  === nullPropertyName.ts ===
  function foo() {}

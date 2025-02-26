@@ -1,6 +1,6 @@
 --- old.declarationEmitPromise.symbols
 +++ new.declarationEmitPromise.symbols
-@@ -6,8 +6,8 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(declarationEmitPromise.ts, 0, 22))
  
      static all: Array<bluebird<any>>;
@@ -11,7 +11,7 @@
  >bluebird : Symbol(bluebird, Decl(declarationEmitPromise.ts, 0, 0))
  }
  
-@@ -38,16 +38,14 @@
+@@= skipped -32, +32 lines =@@
  
      let result = await (bluebird.all as any)([a, b, c, d, e].filter(el => !!el));
  >result : Symbol(result, Decl(declarationEmitPromise.ts, 6, 7))
@@ -30,7 +30,7 @@
  >el : Symbol(el, Decl(declarationEmitPromise.ts, 6, 68))
  >el : Symbol(el, Decl(declarationEmitPromise.ts, 6, 68))
  
-@@ -69,9 +67,7 @@
+@@= skipped -31, +29 lines =@@
  >T : Symbol(T, Decl(declarationEmitPromise.ts, 7, 16))
  
          f.apply(this, result);
@@ -40,7 +40,7 @@
  >result : Symbol(result, Decl(declarationEmitPromise.ts, 6, 7))
  
      let rfunc: typeof func & {} = func as any; // <- This is the only difference
-@@ -110,16 +106,14 @@
+@@= skipped -41, +39 lines =@@
  
      let result = await (bluebird.all as any)([a, b, c, d, e].filter(el => !!el));
  >result : Symbol(result, Decl(declarationEmitPromise.ts, 15, 7))
@@ -59,7 +59,7 @@
  >el : Symbol(el, Decl(declarationEmitPromise.ts, 15, 68))
  >el : Symbol(el, Decl(declarationEmitPromise.ts, 15, 68))
  
-@@ -141,9 +135,7 @@
+@@= skipped -31, +29 lines =@@
  >T : Symbol(T, Decl(declarationEmitPromise.ts, 16, 16))
  
          f.apply(this, result);

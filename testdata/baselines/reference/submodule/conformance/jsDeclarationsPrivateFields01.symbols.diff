@@ -1,6 +1,6 @@
 --- old.jsDeclarationsPrivateFields01.symbols
 +++ new.jsDeclarationsPrivateFields01.symbols
-@@ -5,41 +5,41 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(file.js, 0, 0))
  
      #hello = "hello";

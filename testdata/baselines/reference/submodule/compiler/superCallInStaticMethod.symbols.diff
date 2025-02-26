@@ -1,6 +1,6 @@
 --- old.superCallInStaticMethod.symbols
 +++ new.superCallInStaticMethod.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Doing : Symbol(Doing, Decl(superCallInStaticMethod.ts, 0, 0))
  
      public static staticMethod() {
@@ -9,7 +9,7 @@
      }
  }
  
-@@ -15,84 +15,84 @@
+@@= skipped -10, +10 lines =@@
  
      // in static method
      public static staticMethod() {

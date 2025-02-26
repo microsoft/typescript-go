@@ -1,6 +1,6 @@
 --- old.errorSuperPropertyAccess.symbols
 +++ new.errorSuperPropertyAccess.symbols
-@@ -16,7 +16,7 @@
+@@= skipped -16, +16 lines =@@
      }
  
      fn() {
@@ -9,7 +9,7 @@
  
          var a = super.prototype;
  >a : Symbol(a, Decl(errorSuperPropertyAccess.ts, 10, 11))
-@@ -26,28 +26,28 @@
+@@= skipped -10, +10 lines =@@
      }
  
      m = super.prototype;
@@ -43,7 +43,7 @@
  >n : Symbol(n, Decl(errorSuperPropertyAccess.ts, 28, 30))
  
          super.hasOwnProperty('');
-@@ -58,28 +58,28 @@
+@@= skipped -32, +32 lines =@@
  >SomeBase : Symbol(SomeBase, Decl(errorSuperPropertyAccess.ts, 31, 1))
  
      private privateFunc() { }
@@ -80,7 +80,7 @@
  
  }
  
-@@ -97,45 +97,45 @@
+@@= skipped -39, +39 lines =@@
  >super : Symbol(SomeBase, Decl(errorSuperPropertyAccess.ts, 31, 1))
  
          super.publicMember = 1;
@@ -138,7 +138,7 @@
  
          function inner() {
  >inner : Symbol(inner, Decl(errorSuperPropertyAccess.ts, 70, 11))
-@@ -163,42 +163,42 @@
+@@= skipped -66, +66 lines =@@
  >super : Symbol(SomeBase, Decl(errorSuperPropertyAccess.ts, 31, 1))
  
          super.privateMember = 1;
@@ -192,7 +192,7 @@
      }
  }
  
-@@ -211,61 +211,61 @@
+@@= skipped -48, +48 lines =@@
  >SomeBase : Symbol(SomeBase, Decl(errorSuperPropertyAccess.ts, 31, 1))
  
      static fn() {

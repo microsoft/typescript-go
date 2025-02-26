@@ -1,6 +1,6 @@
 --- old.commentOnSignature1.symbols
 +++ new.commentOnSignature1.symbols
-@@ -53,16 +53,16 @@
+@@= skipped -53, +53 lines =@@
  
      // dont keep this comment
      foo(a: string);

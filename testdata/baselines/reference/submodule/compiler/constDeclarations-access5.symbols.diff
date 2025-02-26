@@ -1,6 +1,6 @@
 --- old.constDeclarations-access5.symbols
 +++ new.constDeclarations-access5.symbols
-@@ -7,103 +7,66 @@
+@@= skipped -7, +7 lines =@@
  
  // Errors
  m.x = 1;
@@ -104,7 +104,7 @@
  
  function f(v: number) { }
  >f : Symbol(f, Decl(constDeclarations_access_2.ts, 26, 16))
-@@ -111,41 +74,25 @@
+@@= skipped -104, +67 lines =@@
  
  f(m.x);
  >f : Symbol(f, Decl(constDeclarations_access_2.ts, 26, 16))

@@ -1,6 +1,6 @@
 --- old.unionCallMixedTypeParameterPresence.symbols
 +++ new.unionCallMixedTypeParameterPresence.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(unionCallMixedTypeParameterPresence.ts, 2, 14))
  
    f<U>(a: (err: T) => U): Err<U>;
@@ -9,7 +9,7 @@
  >U : Symbol(U, Decl(unionCallMixedTypeParameterPresence.ts, 3, 4))
  >a : Symbol(a, Decl(unionCallMixedTypeParameterPresence.ts, 3, 7))
  >err : Symbol(err, Decl(unionCallMixedTypeParameterPresence.ts, 3, 11))
-@@ -22,7 +22,7 @@
+@@= skipped -14, +14 lines =@@
  >T : Symbol(T, Decl(unionCallMixedTypeParameterPresence.ts, 5, 13))
  
    f(a: (err: T) => unknown): Err<T>;

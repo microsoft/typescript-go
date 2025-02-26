@@ -1,6 +1,6 @@
 --- old.templateLiteralTypes5.symbols
 +++ new.templateLiteralTypes5.symbols
-@@ -6,10 +6,10 @@
+@@= skipped -6, +6 lines =@@
  >TypeMap : Symbol(TypeMap, Decl(templateLiteralTypes5.ts, 0, 0))
  
    a: "A";

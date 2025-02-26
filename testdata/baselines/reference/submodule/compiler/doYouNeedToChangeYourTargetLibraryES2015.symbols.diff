@@ -1,6 +1,6 @@
 --- old.doYouNeedToChangeYourTargetLibraryES2015.symbols
 +++ new.doYouNeedToChangeYourTargetLibraryES2015.symbols
-@@ -93,9 +93,9 @@
+@@= skipped -93, +93 lines =@@
  
  const testObjectConstructorKeys = Object.keys({});
  >testObjectConstructorKeys : Symbol(testObjectConstructorKeys, Decl(doYouNeedToChangeYourTargetLibraryES2015.ts, 29, 5))

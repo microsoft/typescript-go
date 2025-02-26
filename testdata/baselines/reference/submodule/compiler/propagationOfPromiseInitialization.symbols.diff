@@ -1,6 +1,6 @@
 --- old.propagationOfPromiseInitialization.symbols
 +++ new.propagationOfPromiseInitialization.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(propagationOfPromiseInitialization.ts, 0, 19))
  
      then<TResult>(successCallback: (promiseValue: T) => TResult, errorCallback?: (reason: any) => TResult): IPromise<TResult>;
@@ -9,7 +9,7 @@
  >TResult : Symbol(TResult, Decl(propagationOfPromiseInitialization.ts, 1, 9))
  >successCallback : Symbol(successCallback, Decl(propagationOfPromiseInitialization.ts, 1, 18))
  >promiseValue : Symbol(promiseValue, Decl(propagationOfPromiseInitialization.ts, 1, 36))
-@@ -24,23 +24,23 @@
+@@= skipped -18, +18 lines =@@
  >IPromise : Symbol(IPromise, Decl(propagationOfPromiseInitialization.ts, 0, 0))
  
  foo.then((x) => {

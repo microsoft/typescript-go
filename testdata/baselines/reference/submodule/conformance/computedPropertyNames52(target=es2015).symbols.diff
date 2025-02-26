@@ -1,6 +1,6 @@
 --- old.computedPropertyNames52(target=es2015).symbols
 +++ new.computedPropertyNames52(target=es2015).symbols
-@@ -10,18 +10,16 @@
+@@= skipped -10, +10 lines =@@
  >i : Symbol(i, Decl(computedPropertyNames52.js, 1, 8))
  
      array.push(class C {

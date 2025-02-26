@@ -1,6 +1,6 @@
 --- old.parserMethodSignature8.symbols
 +++ new.parserMethodSignature8.symbols
-@@ -5,6 +5,6 @@
+@@= skipped -5, +5 lines =@@
  >I : Symbol(I, Decl(parserMethodSignature8.ts, 0, 0))
  
    "H"?<T>();

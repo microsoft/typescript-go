@@ -1,6 +1,6 @@
 --- old.reverseMappedTypeIntersectionConstraint.symbols
 +++ new.reverseMappedTypeIntersectionConstraint.symbols
-@@ -138,10 +138,10 @@
+@@= skipped -138, +138 lines =@@
  >Stuff : Symbol(Stuff, Decl(reverseMappedTypeIntersectionConstraint.ts, 45, 8))
  
      field: number;
@@ -13,7 +13,7 @@
  }
  
  function doStuffWithStuff<T extends Stuff>(s: { [K in keyof T & keyof Stuff]: T[K] } ): T {
-@@ -157,9 +157,9 @@
+@@= skipped -19, +19 lines =@@
  >T : Symbol(T, Decl(reverseMappedTypeIntersectionConstraint.ts, 54, 26))
  
      if(Math.random() > 0.5) {
@@ -25,7 +25,7 @@
  
        return s as T
  >s : Symbol(s, Decl(reverseMappedTypeIntersectionConstraint.ts, 54, 43))
-@@ -190,9 +190,9 @@
+@@= skipped -33, +33 lines =@@
  >T : Symbol(T, Decl(reverseMappedTypeIntersectionConstraint.ts, 64, 29))
  
      if(Math.random() > 0.5) {
@@ -37,7 +37,7 @@
  
        return arr as T[]
  >arr : Symbol(arr, Decl(reverseMappedTypeIntersectionConstraint.ts, 64, 46))
-@@ -296,10 +296,10 @@
+@@= skipped -106, +106 lines =@@
  >WithNestedProp : Symbol(WithNestedProp, Decl(reverseMappedTypeIntersectionConstraint.ts, 99, 30))
  
    prop: string;
@@ -50,7 +50,7 @@
  
      prop: string;
  >prop : Symbol(prop, Decl(reverseMappedTypeIntersectionConstraint.ts, 105, 11))
-@@ -349,10 +349,10 @@
+@@= skipped -53, +53 lines =@@
  >ProvidedActor : Symbol(ProvidedActor, Decl(reverseMappedTypeIntersectionConstraint.ts, 118, 96))
  
    src: string;
@@ -63,7 +63,7 @@
  >Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --))
  }
  
-@@ -376,7 +376,7 @@
+@@= skipped -27, +27 lines =@@
  >ProvidedActor : Symbol(ProvidedActor, Decl(reverseMappedTypeIntersectionConstraint.ts, 118, 96))
  
    types?: {
@@ -72,7 +72,7 @@
  
      actors?: TActor;
  >actors : Symbol(actors, Decl(reverseMappedTypeIntersectionConstraint.ts, 132, 11))
-@@ -384,7 +384,7 @@
+@@= skipped -8, +8 lines =@@
  
    };
    invoke: IsLiteralString<TActor["src"]> extends true

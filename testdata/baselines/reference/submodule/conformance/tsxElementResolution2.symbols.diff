@@ -1,6 +1,6 @@
 --- old.tsxElementResolution2.symbols
 +++ new.tsxElementResolution2.symbols
-@@ -17,9 +17,6 @@
+@@= skipped -17, +17 lines =@@
  
  // OK
  <div />;

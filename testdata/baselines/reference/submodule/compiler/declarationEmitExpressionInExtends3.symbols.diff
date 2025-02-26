@@ -1,6 +1,6 @@
 --- old.declarationEmitExpressionInExtends3.symbols
 +++ new.declarationEmitExpressionInExtends3.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(declarationEmitExpressionInExtends3.ts, 0, 27))
  
  	x: T;
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(declarationEmitExpressionInExtends3.ts, 0, 27))
  }
  
-@@ -16,11 +16,11 @@
+@@= skipped -10, +10 lines =@@
  >U : Symbol(U, Decl(declarationEmitExpressionInExtends3.ts, 4, 19))
  
      x: T;
@@ -23,7 +23,7 @@
  >U : Symbol(U, Decl(declarationEmitExpressionInExtends3.ts, 4, 19))
  }
  
-@@ -28,14 +28,14 @@
+@@= skipped -12, +12 lines =@@
  >ExportedInterface : Symbol(ExportedInterface, Decl(declarationEmitExpressionInExtends3.ts, 7, 1))
  
      x: number;

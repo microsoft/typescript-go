@@ -1,6 +1,6 @@
 --- old.coAndContraVariantInferences8.symbols
 +++ new.coAndContraVariantInferences8.symbols
-@@ -14,15 +14,15 @@
+@@= skipped -14, +14 lines =@@
  >y : Symbol(y, Decl(coAndContraVariantInferences8.ts, 5, 13))
  
  fn.call(null, x);

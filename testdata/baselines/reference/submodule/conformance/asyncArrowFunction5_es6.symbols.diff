@@ -1,6 +1,6 @@
 --- old.asyncArrowFunction5_es6.symbols
 +++ new.asyncArrowFunction5_es6.symbols
-@@ -4,5 +4,5 @@
+@@= skipped -4, +4 lines =@@
  var foo = async (await): Promise<void> => {
  >foo : Symbol(foo, Decl(asyncArrowFunction5_es6.ts, 0, 3))
  >await : Symbol(await, Decl(asyncArrowFunction5_es6.ts, 0, 17))

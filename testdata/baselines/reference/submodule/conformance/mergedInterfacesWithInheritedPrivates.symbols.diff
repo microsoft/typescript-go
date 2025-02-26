@@ -1,6 +1,6 @@
 --- old.mergedInterfacesWithInheritedPrivates.symbols
 +++ new.mergedInterfacesWithInheritedPrivates.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(mergedInterfacesWithInheritedPrivates.ts, 0, 0))
  
      private x: number;
@@ -9,7 +9,7 @@
  }
  
  interface A extends C {
-@@ -13,14 +13,14 @@
+@@= skipped -8, +8 lines =@@
  >C : Symbol(C, Decl(mergedInterfacesWithInheritedPrivates.ts, 0, 0))
  
      y: string;
@@ -26,7 +26,7 @@
  }
  
  class D implements A { // error
-@@ -28,13 +28,13 @@
+@@= skipped -15, +15 lines =@@
  >A : Symbol(A, Decl(mergedInterfacesWithInheritedPrivates.ts, 2, 1), Decl(mergedInterfacesWithInheritedPrivates.ts, 6, 1))
  
      private x: number;
@@ -43,7 +43,7 @@
  }
  
  class E implements A { // error
-@@ -42,13 +42,13 @@
+@@= skipped -14, +14 lines =@@
  >A : Symbol(A, Decl(mergedInterfacesWithInheritedPrivates.ts, 2, 1), Decl(mergedInterfacesWithInheritedPrivates.ts, 6, 1))
  
      x: number;
@@ -60,7 +60,7 @@
  }
  
  var a: A;
-@@ -57,7 +57,7 @@
+@@= skipped -15, +15 lines =@@
  
  var r = a.x; // error
  >r : Symbol(r, Decl(mergedInterfacesWithInheritedPrivates.ts, 25, 3))

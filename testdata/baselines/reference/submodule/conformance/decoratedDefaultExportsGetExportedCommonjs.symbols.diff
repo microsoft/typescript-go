@@ -1,6 +1,6 @@
 --- old.decoratedDefaultExportsGetExportedCommonjs.symbols
 +++ new.decoratedDefaultExportsGetExportedCommonjs.symbols
-@@ -3,18 +3,18 @@
+@@= skipped -3, +3 lines =@@
  === a.ts ===
  var decorator: ClassDecorator;
  >decorator : Symbol(decorator, Decl(a.ts, 0, 3))

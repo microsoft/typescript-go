@@ -1,6 +1,6 @@
 --- old.es6ImportNamedImportDts.symbols
 +++ new.es6ImportNamedImportDts.symbols
-@@ -53,7 +53,7 @@
+@@= skipped -53, +53 lines =@@
  >a : Symbol(a, Decl(client.ts, 1, 8))
  
  import { a11 as b } from "./server";
@@ -9,7 +9,7 @@
  >b : Symbol(b, Decl(client.ts, 3, 8))
  
  export var xxxx1 = new b();
-@@ -62,7 +62,7 @@
+@@= skipped -9, +9 lines =@@
  
  import { x, a12 as y } from "./server";
  >x : Symbol(x, Decl(client.ts, 5, 8))
@@ -18,7 +18,7 @@
  >y : Symbol(y, Decl(client.ts, 5, 11))
  
  export var xxxx2 = new x();
-@@ -74,7 +74,7 @@
+@@= skipped -12, +12 lines =@@
  >y : Symbol(y, Decl(client.ts, 5, 11))
  
  import { x11 as z,  } from "./server";
@@ -27,7 +27,7 @@
  >z : Symbol(z, Decl(client.ts, 8, 8))
  
  export var xxxx4 = new z();
-@@ -101,9 +101,9 @@
+@@= skipped -27, +27 lines =@@
  >x1 : Symbol(x1, Decl(client.ts, 12, 12))
  
  import { a111 as a11, x111 as x11 } from "./server";
@@ -39,7 +39,7 @@
  >x11 : Symbol(x11, Decl(client.ts, 15, 21))
  
  export var xxxx8 = new a11();
-@@ -122,7 +122,7 @@
+@@= skipped -21, +21 lines =@@
  >z1 : Symbol(z1, Decl(client.ts, 18, 8))
  
  import { z2 as z3 } from "./server";
@@ -48,7 +48,7 @@
  >z3 : Symbol(z3, Decl(client.ts, 20, 8))
  
  export var z2 = new z3(); // z2 shouldn't give redeclare error
-@@ -134,6 +134,6 @@
+@@= skipped -12, +12 lines =@@
  >aaaa : Symbol(aaaa, Decl(client.ts, 24, 8))
  
  import { aaaa1 as bbbb } from "./server";

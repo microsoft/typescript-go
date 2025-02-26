@@ -1,6 +1,6 @@
 --- old.unusedParametersThis.symbols
 +++ new.unusedParametersThis.symbols
-@@ -5,67 +5,67 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(unusedParametersThis.ts, 0, 0))
  
      public a: number;
@@ -84,7 +84,7 @@
      }
  }
  
-@@ -75,9 +75,9 @@
+@@= skipped -70, +70 lines =@@
  >A : Symbol(A, Decl(unusedParametersThis.ts, 0, 0))
  
      return this.a
@@ -96,7 +96,7 @@
  }
  
  var f2 = function f2(this: A): number {
-@@ -87,8 +87,8 @@
+@@= skipped -12, +12 lines =@@
  >A : Symbol(A, Decl(unusedParametersThis.ts, 0, 0))
  
      return this.a;

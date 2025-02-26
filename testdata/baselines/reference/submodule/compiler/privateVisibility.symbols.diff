@@ -1,6 +1,6 @@
 --- old.privateVisibility.symbols
 +++ new.privateVisibility.symbols
-@@ -5,19 +5,19 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(privateVisibility.ts, 0, 0))
  
  	public pubMeth() {this.privMeth();}
@@ -26,7 +26,7 @@
  }
  
  var f = new Foo();
-@@ -25,32 +25,32 @@
+@@= skipped -20, +20 lines =@@
  >Foo : Symbol(Foo, Decl(privateVisibility.ts, 0, 0))
  
  f.privMeth(); // should not work
@@ -69,7 +69,7 @@
  
      export var V = 0;
  >V : Symbol(V, Decl(privateVisibility.ts, 16, 14))
-@@ -59,18 +59,18 @@
+@@= skipped -34, +34 lines =@@
  
  var c = new M.C();
  >c : Symbol(c, Decl(privateVisibility.ts, 20, 3))

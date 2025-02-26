@@ -1,6 +1,6 @@
 --- old.parserGenericsInTypeContexts2.symbols
 +++ new.parserGenericsInTypeContexts2.symbols
-@@ -36,7 +36,7 @@
+@@= skipped -36, +36 lines =@@
  var v3: E.F<X<T>, Y<Z<T>>>;
  >v3 : Symbol(v3, Decl(parserGenericsInTypeContexts2.ts, 5, 3))
  >E : Symbol(E)
@@ -9,7 +9,7 @@
  >X : Symbol(X)
  >T : Symbol(T)
  >Y : Symbol(Y)
-@@ -46,8 +46,8 @@
+@@= skipped -10, +10 lines =@@
  var v4: G.H.I<X<T>, Y<Z<T>>>;
  >v4 : Symbol(v4, Decl(parserGenericsInTypeContexts2.ts, 6, 3))
  >G : Symbol(G)

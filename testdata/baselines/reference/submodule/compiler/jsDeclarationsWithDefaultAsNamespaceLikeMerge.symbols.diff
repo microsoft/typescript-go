@@ -1,6 +1,6 @@
 --- old.jsDeclarationsWithDefaultAsNamespaceLikeMerge.symbols
 +++ new.jsDeclarationsWithDefaultAsNamespaceLikeMerge.symbols
-@@ -29,7 +29,7 @@
+@@= skipped -29, +29 lines =@@
  >NamespacedMappers : Symbol(NamespacedMappers, Decl(helper.d.ts, 4, 1))
  
      mapState: Mapper<Computed>;

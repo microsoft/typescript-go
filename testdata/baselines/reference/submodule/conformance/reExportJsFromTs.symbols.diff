@@ -1,6 +1,6 @@
 --- old.reExportJsFromTs.symbols
 +++ new.reExportJsFromTs.symbols
-@@ -2,10 +2,6 @@
+@@= skipped -2, +2 lines =@@
  
  === /lib/constants.js ===
  module.exports = {

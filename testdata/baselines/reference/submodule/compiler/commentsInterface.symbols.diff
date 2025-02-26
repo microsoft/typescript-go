@@ -1,6 +1,6 @@
 --- old.commentsInterface.symbols
 +++ new.commentsInterface.symbols
-@@ -22,11 +22,11 @@
+@@= skipped -22, +22 lines =@@
  
      /** this is x*/
      x: number;
@@ -14,7 +14,7 @@
  >b : Symbol(b, Decl(commentsInterface.ts, 12, 10))
  
      /** this is indexer*/
-@@ -39,10 +39,10 @@
+@@= skipped -17, +17 lines =@@
  >i1 : Symbol(i1, Decl(commentsInterface.ts, 0, 0))
  
      nc_x: number;
@@ -27,7 +27,7 @@
  >b : Symbol(b, Decl(commentsInterface.ts, 18, 13))
  
      [i: number]: number;
-@@ -55,16 +55,16 @@
+@@= skipped -16, +16 lines =@@
  
      /** this is fnfoo*/
      fnfoo(/**param help*/b: number): string;
@@ -47,7 +47,7 @@
  }
  var i2_i: i2;
  >i2_i : Symbol(i2_i, Decl(commentsInterface.ts, 28, 3))
-@@ -72,21 +72,21 @@
+@@= skipped -17, +17 lines =@@
  
  var i2_i_x = i2_i.x;
  >i2_i_x : Symbol(i2_i_x, Decl(commentsInterface.ts, 29, 3))
@@ -75,7 +75,7 @@
  
  var i2_i_i2_si = i2_i["hello"];
  >i2_i_i2_si : Symbol(i2_i_i2_si, Decl(commentsInterface.ts, 32, 3))
-@@ -103,21 +103,21 @@
+@@= skipped -31, +31 lines =@@
  
  var i2_i_nc_x = i2_i.nc_x;
  >i2_i_nc_x : Symbol(i2_i_nc_x, Decl(commentsInterface.ts, 35, 3))
@@ -103,7 +103,7 @@
  
  var i2_i_r = i2_i(10, 20);
  >i2_i_r : Symbol(i2_i_r, Decl(commentsInterface.ts, 38, 3))
-@@ -125,54 +125,54 @@
+@@= skipped -22, +22 lines =@@
  
  var i2_i_fnfoo = i2_i.fnfoo;
  >i2_i_fnfoo : Symbol(i2_i_fnfoo, Decl(commentsInterface.ts, 39, 3))
@@ -172,7 +172,7 @@
  >b : Symbol(b, Decl(commentsInterface.ts, 52, 11))
  }
  var i3_i: i3;
-@@ -211,22 +211,22 @@
+@@= skipped -86, +86 lines =@@
  
  };
  i3_i.f(10);

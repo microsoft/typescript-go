@@ -1,6 +1,6 @@
 --- old.declFileTypeAnnotationVisibilityErrorAccessors.symbols
 +++ new.declFileTypeAnnotationVisibilityErrorAccessors.symbols
-@@ -25,7 +25,7 @@
+@@= skipped -25, +25 lines =@@
  
          // getter with annotation
          get foo1(): private1 {
@@ -9,7 +9,7 @@
  >private1 : Symbol(private1, Decl(declFileTypeAnnotationVisibilityErrorAccessors.ts, 0, 10))
  
              return;
-@@ -33,7 +33,7 @@
+@@= skipped -8, +8 lines =@@
  
          // getter without annotation
          get foo2() {
@@ -18,7 +18,7 @@
  
              return new private1();
  >private1 : Symbol(private1, Decl(declFileTypeAnnotationVisibilityErrorAccessors.ts, 0, 10))
-@@ -41,40 +41,40 @@
+@@= skipped -8, +8 lines =@@
  
          // setter with annotation
          set foo3(param: private1) {
@@ -65,7 +65,7 @@
  >public1 : Symbol(public1, Decl(declFileTypeAnnotationVisibilityErrorAccessors.ts, 2, 5))
  
              return;
-@@ -82,7 +82,7 @@
+@@= skipped -41, +41 lines =@@
  
          // getter without annotation
          get foo12() {
@@ -74,7 +74,7 @@
  
              return new public1();
  >public1 : Symbol(public1, Decl(declFileTypeAnnotationVisibilityErrorAccessors.ts, 2, 5))
-@@ -90,93 +90,93 @@
+@@= skipped -8, +8 lines =@@
  
          // setter with annotation
          set foo13(param: public1) {

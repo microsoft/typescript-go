@@ -1,6 +1,6 @@
 --- old.importEquals3.symbols
 +++ new.importEquals3.symbols
-@@ -11,7 +11,7 @@
+@@= skipped -11, +11 lines =@@
  import A = a.A; // Error
  >A : Symbol(A, Decl(b.ts, 0, 30))
  >a : Symbol(a, Decl(b.ts, 0, 11))
@@ -9,7 +9,7 @@
  
  import aa = a;  // Error
  >aa : Symbol(aa, Decl(b.ts, 1, 15))
-@@ -32,22 +32,22 @@
+@@= skipped -21, +21 lines =@@
  import A = b.a.A; // Error
  >A : Symbol(A, Decl(c.ts, 0, 25))
  >b : Symbol(b, Decl(c.ts, 0, 6))

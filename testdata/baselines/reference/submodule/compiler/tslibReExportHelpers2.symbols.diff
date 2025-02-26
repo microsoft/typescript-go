@@ -1,6 +1,6 @@
 --- old.tslibReExportHelpers2.symbols
 +++ new.tslibReExportHelpers2.symbols
-@@ -61,15 +61,15 @@
+@@= skipped -61, +61 lines =@@
  
    constructor() {
      console.log(Foo.#test());

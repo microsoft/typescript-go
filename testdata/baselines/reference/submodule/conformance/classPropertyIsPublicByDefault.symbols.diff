@@ -1,6 +1,6 @@
 --- old.classPropertyIsPublicByDefault.symbols
 +++ new.classPropertyIsPublicByDefault.symbols
-@@ -5,30 +5,30 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(classPropertyIsPublicByDefault.ts, 0, 0))
  
      x: string;
@@ -39,7 +39,7 @@
  }
  
  var c: C;
-@@ -36,42 +36,42 @@
+@@= skipped -31, +31 lines =@@
  >C : Symbol(C, Decl(classPropertyIsPublicByDefault.ts, 0, 0))
  
  c.x;

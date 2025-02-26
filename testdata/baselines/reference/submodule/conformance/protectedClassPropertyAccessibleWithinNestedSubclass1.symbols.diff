@@ -1,6 +1,6 @@
 --- old.protectedClassPropertyAccessibleWithinNestedSubclass1.symbols
 +++ new.protectedClassPropertyAccessibleWithinNestedSubclass1.symbols
-@@ -5,16 +5,16 @@
+@@= skipped -5, +5 lines =@@
  >Base : Symbol(Base, Decl(protectedClassPropertyAccessibleWithinNestedSubclass1.ts, 0, 0))
  
      protected x: string;
@@ -20,7 +20,7 @@
  
                  var b: Base;
  >b : Symbol(b, Decl(protectedClassPropertyAccessibleWithinNestedSubclass1.ts, 5, 19))
-@@ -37,29 +37,29 @@
+@@= skipped -32, +32 lines =@@
  >Derived4 : Symbol(Derived4, Decl(protectedClassPropertyAccessibleWithinNestedSubclass1.ts, 80, 1))
  
                  b.x;            // OK, accessed within their declaring class
@@ -60,7 +60,7 @@
              }
          }
      }
-@@ -70,13 +70,13 @@
+@@= skipped -33, +33 lines =@@
  >Base : Symbol(Base, Decl(protectedClassPropertyAccessibleWithinNestedSubclass1.ts, 0, 0))
  
      method1() {
@@ -76,7 +76,7 @@
  
                  var b: Base;
  >b : Symbol(b, Decl(protectedClassPropertyAccessibleWithinNestedSubclass1.ts, 25, 19))
-@@ -99,29 +99,29 @@
+@@= skipped -29, +29 lines =@@
  >Derived4 : Symbol(Derived4, Decl(protectedClassPropertyAccessibleWithinNestedSubclass1.ts, 80, 1))
  
                  b.x;            // Error, isn't accessed through an instance of the enclosing class
@@ -116,7 +116,7 @@
              }
          }
      }
-@@ -132,13 +132,13 @@
+@@= skipped -33, +33 lines =@@
  >Base : Symbol(Base, Decl(protectedClassPropertyAccessibleWithinNestedSubclass1.ts, 0, 0))
  
      method2() {
@@ -132,7 +132,7 @@
  
                  var b: Base;
  >b : Symbol(b, Decl(protectedClassPropertyAccessibleWithinNestedSubclass1.ts, 45, 19))
-@@ -161,29 +161,29 @@
+@@= skipped -29, +29 lines =@@
  >Derived4 : Symbol(Derived4, Decl(protectedClassPropertyAccessibleWithinNestedSubclass1.ts, 80, 1))
  
                  b.x;            // Error, isn't accessed through an instance of the enclosing class
@@ -172,7 +172,7 @@
              }
          }
      }
-@@ -194,16 +194,16 @@
+@@= skipped -33, +33 lines =@@
  >Derived1 : Symbol(Derived1, Decl(protectedClassPropertyAccessibleWithinNestedSubclass1.ts, 19, 1))
  
      protected x: string;
@@ -192,7 +192,7 @@
  
                  var b: Base;
  >b : Symbol(b, Decl(protectedClassPropertyAccessibleWithinNestedSubclass1.ts, 66, 19))
-@@ -226,29 +226,29 @@
+@@= skipped -32, +32 lines =@@
  >Derived4 : Symbol(Derived4, Decl(protectedClassPropertyAccessibleWithinNestedSubclass1.ts, 80, 1))
  
                  b.x;            // Error, isn't accessed through an instance of the enclosing class
@@ -232,7 +232,7 @@
              }
          }
      }
-@@ -259,13 +259,13 @@
+@@= skipped -33, +33 lines =@@
  >Derived2 : Symbol(Derived2, Decl(protectedClassPropertyAccessibleWithinNestedSubclass1.ts, 39, 1))
  
      method4() {
@@ -248,7 +248,7 @@
  
                  var b: Base;
  >b : Symbol(b, Decl(protectedClassPropertyAccessibleWithinNestedSubclass1.ts, 86, 19))
-@@ -288,29 +288,29 @@
+@@= skipped -29, +29 lines =@@
  >Derived4 : Symbol(Derived4, Decl(protectedClassPropertyAccessibleWithinNestedSubclass1.ts, 80, 1))
  
                  b.x;            // Error, isn't accessed through an instance of the enclosing class
@@ -288,7 +288,7 @@
              }
          }
      }
-@@ -338,27 +338,27 @@
+@@= skipped -50, +50 lines =@@
  >Derived4 : Symbol(Derived4, Decl(protectedClassPropertyAccessibleWithinNestedSubclass1.ts, 80, 1))
  
  b.x;                    // Error, neither within their declaring class nor classes derived from their declaring class

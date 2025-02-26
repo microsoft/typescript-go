@@ -1,6 +1,6 @@
 --- old.libTypeScriptSubfileResolvingConfig.symbols
 +++ new.libTypeScriptSubfileResolvingConfig.symbols
-@@ -4,17 +4,13 @@
+@@= skipped -4, +4 lines =@@
  /// <reference lib="dom.iterable" />
  const a: DOMIterable = { abc: "Hello" }
  >a : Symbol(a, Decl(index.ts, 1, 5))

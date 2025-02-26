@@ -1,6 +1,6 @@
 --- old.objectLiteralParameterResolution.symbols
 +++ new.objectLiteralParameterResolution.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(objectLiteralParameterResolution.ts, 0, 0))
  
      extend<T>(target: T, ...objs: any[]): T;
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(objectLiteralParameterResolution.ts, 1, 11))
  >target : Symbol(target, Decl(objectLiteralParameterResolution.ts, 1, 14))
  >T : Symbol(T, Decl(objectLiteralParameterResolution.ts, 1, 11))
-@@ -13,7 +13,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(objectLiteralParameterResolution.ts, 1, 11))
  
      extend<T>(deep: boolean, target: T, ...objs: any[]): T;
@@ -18,7 +18,7 @@
  >T : Symbol(T, Decl(objectLiteralParameterResolution.ts, 2, 11))
  >deep : Symbol(deep, Decl(objectLiteralParameterResolution.ts, 2, 14))
  >target : Symbol(target, Decl(objectLiteralParameterResolution.ts, 2, 28))
-@@ -27,9 +27,9 @@
+@@= skipped -14, +14 lines =@@
  
  var s = $.extend({
  >s : Symbol(s, Decl(objectLiteralParameterResolution.ts, 5, 3))

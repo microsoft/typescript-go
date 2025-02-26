@@ -1,6 +1,6 @@
 --- old.privateNameClassExpressionLoop.symbols
 +++ new.privateNameClassExpressionLoop.symbols
-@@ -10,22 +10,20 @@
+@@= skipped -10, +10 lines =@@
  >i : Symbol(i, Decl(privateNameClassExpressionLoop.ts, 1, 8))
  
      array.push(class C {

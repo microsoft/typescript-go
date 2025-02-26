@@ -1,6 +1,6 @@
 --- old.mixedStaticAndInstanceClassMembers.symbols
 +++ new.mixedStaticAndInstanceClassMembers.symbols
-@@ -5,18 +5,18 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(mixedStaticAndInstanceClassMembers.ts, 0, 0))
  
      f() {}
@@ -23,7 +23,7 @@
  >a : Symbol(a, Decl(mixedStaticAndInstanceClassMembers.ts, 4, 8))
      }
  }
-@@ -25,18 +25,18 @@
+@@= skipped -20, +20 lines =@@
  >B : Symbol(B, Decl(mixedStaticAndInstanceClassMembers.ts, 6, 1))
  
      f() {}

@@ -1,6 +1,6 @@
 --- old.varianceReferences.symbols
 +++ new.varianceReferences.symbols
-@@ -101,7 +101,7 @@
+@@= skipped -101, +101 lines =@@
  >Value : Symbol(Value, Decl(varianceReferences.ts, 33, 16))
  
    value: Value;
@@ -9,7 +9,7 @@
  >Value : Symbol(Value, Decl(varianceReferences.ts, 33, 16))
  }
  
-@@ -132,7 +132,7 @@
+@@= skipped -31, +31 lines =@@
  >Value : Symbol(Value, Decl(varianceReferences.ts, 45, 25))
  
    value: Value;

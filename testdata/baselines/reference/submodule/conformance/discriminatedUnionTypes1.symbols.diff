@@ -1,6 +1,6 @@
 --- old.discriminatedUnionTypes1.symbols
 +++ new.discriminatedUnionTypes1.symbols
-@@ -5,33 +5,33 @@
+@@= skipped -5, +5 lines =@@
  >Square : Symbol(Square, Decl(discriminatedUnionTypes1.ts, 0, 0))
  
      kind: "square";
@@ -41,7 +41,7 @@
  }
  
  type Shape = Square | Rectangle | Circle;
-@@ -46,46 +46,46 @@
+@@= skipped -41, +41 lines =@@
  >Shape : Symbol(Shape, Decl(discriminatedUnionTypes1.ts, 14, 1))
  
      if (s.kind === "square") {
@@ -108,7 +108,7 @@
      }
      else {
          return 0;
-@@ -98,36 +98,36 @@
+@@= skipped -52, +52 lines =@@
  >Shape : Symbol(Shape, Decl(discriminatedUnionTypes1.ts, 14, 1))
  
      switch (s.kind) {
@@ -161,7 +161,7 @@
      }
  }
  
-@@ -146,36 +146,36 @@
+@@= skipped -48, +48 lines =@@
  >Shape : Symbol(Shape, Decl(discriminatedUnionTypes1.ts, 14, 1))
  
      switch (s.kind) {
@@ -214,7 +214,7 @@
  
          default: return assertNever(s);
  >assertNever : Symbol(assertNever, Decl(discriminatedUnionTypes1.ts, 39, 1))
-@@ -189,36 +189,36 @@
+@@= skipped -43, +43 lines =@@
  >Shape : Symbol(Shape, Decl(discriminatedUnionTypes1.ts, 14, 1))
  
      switch (s.kind) {

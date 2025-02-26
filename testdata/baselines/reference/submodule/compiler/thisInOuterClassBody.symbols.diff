@@ -1,6 +1,6 @@
 --- old.thisInOuterClassBody.symbols
 +++ new.thisInOuterClassBody.symbols
-@@ -5,26 +5,26 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(thisInOuterClassBody.ts, 0, 0))
  
      x = this;
@@ -34,7 +34,7 @@
  
          var p = this.y;
  >p : Symbol(p, Decl(thisInOuterClassBody.ts, 11, 11))
-@@ -35,13 +35,13 @@
+@@= skipped -30, +30 lines =@@
      }
  
      static bar2() {

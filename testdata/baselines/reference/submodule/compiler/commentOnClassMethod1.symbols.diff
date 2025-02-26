@@ -1,6 +1,6 @@
 --- old.commentOnClassMethod1.symbols
 +++ new.commentOnClassMethod1.symbols
-@@ -8,6 +8,6 @@
+@@= skipped -8, +8 lines =@@
       * Render a control
       */
      createControl(): any {

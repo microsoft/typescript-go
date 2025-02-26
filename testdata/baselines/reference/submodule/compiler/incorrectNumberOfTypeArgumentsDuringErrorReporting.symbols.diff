@@ -1,6 +1,6 @@
 --- old.incorrectNumberOfTypeArgumentsDuringErrorReporting.symbols
 +++ new.incorrectNumberOfTypeArgumentsDuringErrorReporting.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >ObjA : Symbol(ObjA, Decl(incorrectNumberOfTypeArgumentsDuringErrorReporting.ts, 0, 0))
  
    y?:string,
@@ -9,7 +9,7 @@
  }
  
  interface ObjB {[key:string]:any}
-@@ -16,9 +16,9 @@
+@@= skipped -11, +11 lines =@@
  >Opts : Symbol(Opts, Decl(incorrectNumberOfTypeArgumentsDuringErrorReporting.ts, 4, 33))
  >A : Symbol(A, Decl(incorrectNumberOfTypeArgumentsDuringErrorReporting.ts, 6, 15))
  >B : Symbol(B, Decl(incorrectNumberOfTypeArgumentsDuringErrorReporting.ts, 6, 17))
@@ -21,7 +21,7 @@
  >B : Symbol(B, Decl(incorrectNumberOfTypeArgumentsDuringErrorReporting.ts, 6, 17))
  
  const fn = <
-@@ -43,7 +43,7 @@
+@@= skipped -27, +27 lines =@@
  >MyObjA : Symbol(MyObjA, Decl(incorrectNumberOfTypeArgumentsDuringErrorReporting.ts, 11, 32))
  
    x:string,

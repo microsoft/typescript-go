@@ -1,6 +1,6 @@
 --- old.privateNameFieldsESNext(target=esnext).symbols
 +++ new.privateNameFieldsESNext(target=esnext).symbols
-@@ -5,63 +5,63 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(privateNameFieldsESNext.ts, 0, 0))
  
      a = 123;

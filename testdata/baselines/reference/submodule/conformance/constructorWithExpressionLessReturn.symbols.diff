@@ -1,6 +1,6 @@
 --- old.constructorWithExpressionLessReturn.symbols
 +++ new.constructorWithExpressionLessReturn.symbols
-@@ -13,7 +13,7 @@
+@@= skipped -13, +13 lines =@@
  >D : Symbol(D, Decl(constructorWithExpressionLessReturn.ts, 4, 1))
  
      x: number;
@@ -9,7 +9,7 @@
  
      constructor() {
          return;
-@@ -24,7 +24,7 @@
+@@= skipped -11, +11 lines =@@
  >E : Symbol(E, Decl(constructorWithExpressionLessReturn.ts, 11, 1))
  
      constructor(public x: number) {
@@ -18,7 +18,7 @@
  
          return;
      }
-@@ -35,7 +35,7 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(constructorWithExpressionLessReturn.ts, 19, 8))
  
      constructor(public x: T) {

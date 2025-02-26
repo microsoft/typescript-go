@@ -1,6 +1,6 @@
 --- old.checkIndexConstraintOfJavascriptClassExpression.symbols
 +++ new.checkIndexConstraintOfJavascriptClassExpression.symbols
-@@ -15,12 +15,10 @@
+@@= skipped -15, +15 lines =@@
          constructor() {
              super();
              this.foo = "bar";

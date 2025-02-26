@@ -1,6 +1,6 @@
 --- old.destructuringParameterProperties2.symbols
 +++ new.destructuringParameterProperties2.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >C1 : Symbol(C1, Decl(destructuringParameterProperties2.ts, 0, 0))
  
      constructor(private k: number, private [a, b, c]: [number, string, boolean]) {
@@ -9,7 +9,7 @@
  >a : Symbol(a, Decl(destructuringParameterProperties2.ts, 1, 44))
  >b : Symbol(b, Decl(destructuringParameterProperties2.ts, 1, 46))
  >c : Symbol(c, Decl(destructuringParameterProperties2.ts, 1, 49))
-@@ -28,21 +28,21 @@
+@@= skipped -23, +23 lines =@@
      }
  
      public getA() {
@@ -34,7 +34,7 @@
  
          return this.c;
  >this : Symbol(C1, Decl(destructuringParameterProperties2.ts, 0, 0))
-@@ -59,15 +59,15 @@
+@@= skipped -31, +31 lines =@@
  >x_a : Symbol(x_a, Decl(destructuringParameterProperties2.ts, 21, 5))
  >x_b : Symbol(x_b, Decl(destructuringParameterProperties2.ts, 21, 9))
  >x_c : Symbol(x_c, Decl(destructuringParameterProperties2.ts, 21, 14))
@@ -56,7 +56,7 @@
  
  var y = new C1(10, [0, "", true]);
  >y : Symbol(y, Decl(destructuringParameterProperties2.ts, 23, 3))
-@@ -77,15 +77,15 @@
+@@= skipped -18, +18 lines =@@
  >y_a : Symbol(y_a, Decl(destructuringParameterProperties2.ts, 24, 5))
  >y_b : Symbol(y_b, Decl(destructuringParameterProperties2.ts, 24, 9))
  >y_c : Symbol(y_c, Decl(destructuringParameterProperties2.ts, 24, 14))
@@ -78,7 +78,7 @@
  
  var z = new C1(10, [undefined, "", null]);
  >z : Symbol(z, Decl(destructuringParameterProperties2.ts, 26, 3))
-@@ -96,13 +96,13 @@
+@@= skipped -19, +19 lines =@@
  >z_a : Symbol(z_a, Decl(destructuringParameterProperties2.ts, 27, 5))
  >z_b : Symbol(z_b, Decl(destructuringParameterProperties2.ts, 27, 9))
  >z_c : Symbol(z_c, Decl(destructuringParameterProperties2.ts, 27, 14))

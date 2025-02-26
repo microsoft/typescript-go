@@ -1,6 +1,6 @@
 --- old.customEventDetail.symbols
 +++ new.customEventDetail.symbols
-@@ -7,15 +7,15 @@
+@@= skipped -7, +7 lines =@@
  
  // valid since detail is any
  x.initCustomEvent('hello', true, true, { id: 12, name: 'hello' });

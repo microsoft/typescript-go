@@ -1,6 +1,6 @@
 --- old.strictModeInConstructor.symbols
 +++ new.strictModeInConstructor.symbols
-@@ -12,7 +12,7 @@
+@@= skipped -12, +12 lines =@@
  >A : Symbol(A, Decl(strictModeInConstructor.ts, 0, 0))
  
      public s: number = 9;
@@ -9,7 +9,7 @@
  
      constructor () {
          "use strict";   // No error
-@@ -26,7 +26,7 @@
+@@= skipped -14, +14 lines =@@
  >A : Symbol(A, Decl(strictModeInConstructor.ts, 0, 0))
  
      public s: number = 9;
@@ -18,7 +18,7 @@
  
      constructor () {
          super();            // No error
-@@ -41,7 +41,7 @@
+@@= skipped -15, +15 lines =@@
  >A : Symbol(A, Decl(strictModeInConstructor.ts, 0, 0))
  
      public s: number = 9;
@@ -27,7 +27,7 @@
  
      constructor () {
          var x = 1; // No error
-@@ -49,9 +49,9 @@
+@@= skipped -8, +8 lines =@@
  
          var y = this.s; // Error
  >y : Symbol(y, Decl(strictModeInConstructor.ts, 28, 11))
@@ -39,7 +39,7 @@
  
          super();
  >super : Symbol(A, Decl(strictModeInConstructor.ts, 0, 0))
-@@ -65,7 +65,7 @@
+@@= skipped -16, +16 lines =@@
  >A : Symbol(A, Decl(strictModeInConstructor.ts, 0, 0))
  
      public static s: number = 9;
@@ -48,7 +48,7 @@
  
      constructor () {
          "use strict";   // No error
-@@ -79,7 +79,7 @@
+@@= skipped -14, +14 lines =@@
  >A : Symbol(A, Decl(strictModeInConstructor.ts, 0, 0))
  
      public static s: number = 9;
@@ -57,7 +57,7 @@
  
      constructor () {
          super();            // No error
-@@ -94,7 +94,7 @@
+@@= skipped -15, +15 lines =@@
  >A : Symbol(A, Decl(strictModeInConstructor.ts, 0, 0))
  
      public static s: number = 9;

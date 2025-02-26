@@ -1,6 +1,6 @@
 --- old.collisionSuperAndParameter.symbols
 +++ new.collisionSuperAndParameter.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(collisionSuperAndParameter.ts, 0, 0))
  
      a() {
@@ -9,7 +9,7 @@
  
          var lamda = (_super: number) => { // No Error 
  >lamda : Symbol(lamda, Decl(collisionSuperAndParameter.ts, 2, 11))
-@@ -17,7 +17,7 @@
+@@= skipped -12, +12 lines =@@
          }
      }
      b(_super: number) { // No Error 
@@ -18,7 +18,7 @@
  >_super : Symbol(_super, Decl(collisionSuperAndParameter.ts, 6, 6))
  
          var lambda = () => {
-@@ -29,7 +29,7 @@
+@@= skipped -12, +12 lines =@@
          }
      }
      set c(_super: number) { // No error
@@ -27,7 +27,7 @@
  >_super : Symbol(_super, Decl(collisionSuperAndParameter.ts, 11, 10))
      }
  }
-@@ -38,7 +38,7 @@
+@@= skipped -9, +9 lines =@@
  >Foo : Symbol(Foo, Decl(collisionSuperAndParameter.ts, 0, 0))
  
      x() {
@@ -36,7 +36,7 @@
  
          var lamda = (_super: number) => { // Error 
  >lamda : Symbol(lamda, Decl(collisionSuperAndParameter.ts, 16, 11))
-@@ -50,7 +50,7 @@
+@@= skipped -12, +12 lines =@@
          }
      }
      y(_super: number) { // Error 
@@ -45,7 +45,7 @@
  >_super : Symbol(_super, Decl(collisionSuperAndParameter.ts, 20, 6))
  
          var lambda = () => {
-@@ -62,18 +62,18 @@
+@@= skipped -12, +12 lines =@@
          }
      }
      set z(_super: number) { // Error
@@ -67,7 +67,7 @@
  
          doStuff: (_super: number) => { // should be error
  >doStuff : Symbol(doStuff, Decl(collisionSuperAndParameter.ts, 30, 20))
-@@ -92,17 +92,17 @@
+@@= skipped -30, +30 lines =@@
  >Foo : Symbol(Foo, Decl(collisionSuperAndParameter.ts, 0, 0))
  
      x();
@@ -88,7 +88,7 @@
  
          doStuff: (_super: number) => void; // no error - no code gen
  >doStuff : Symbol(doStuff, Decl(collisionSuperAndParameter.ts, 42, 19))
-@@ -110,7 +110,7 @@
+@@= skipped -18, +18 lines =@@
  
      };
      public _super: number; // No error
@@ -97,7 +97,7 @@
  }
  
  class Foo4 extends Foo {
-@@ -130,15 +130,15 @@
+@@= skipped -20, +20 lines =@@
  >super : Symbol(Foo, Decl(collisionSuperAndParameter.ts, 0, 0))
      }
      y(_super: number); // no code gen - no error

@@ -1,6 +1,6 @@
 --- old.typeArgumentInferenceWithObjectLiteral.symbols
 +++ new.typeArgumentInferenceWithObjectLiteral.symbols
-@@ -6,11 +6,11 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(typeArgumentInferenceWithObjectLiteral.ts, 0, 19))
  
      read(): T;
@@ -14,7 +14,7 @@
  >value : Symbol(value, Decl(typeArgumentInferenceWithObjectLiteral.ts, 2, 10))
  >T : Symbol(T, Decl(typeArgumentInferenceWithObjectLiteral.ts, 0, 19))
  }
-@@ -57,11 +57,11 @@
+@@= skipped -51, +51 lines =@@
  
  enum E1 { X }
  >E1 : Symbol(E1, Decl(typeArgumentInferenceWithObjectLiteral.ts, 17, 3))
@@ -28,7 +28,7 @@
  
  // Check that we infer from both a.r and b before fixing T in a.w
  
-@@ -98,9 +98,9 @@
+@@= skipped -41, +41 lines =@@
  >x : Symbol(x, Decl(typeArgumentInferenceWithObjectLiteral.ts, 28, 16))
  >x : Symbol(x, Decl(typeArgumentInferenceWithObjectLiteral.ts, 28, 16))
  >r : Symbol(r, Decl(typeArgumentInferenceWithObjectLiteral.ts, 28, 24))
@@ -40,7 +40,7 @@
  
  var v1 = f1({ w: x => x, r: () => E1.X }, 0);
  >v1 : Symbol(v1, Decl(typeArgumentInferenceWithObjectLiteral.ts, 26, 3), Decl(typeArgumentInferenceWithObjectLiteral.ts, 27, 3), Decl(typeArgumentInferenceWithObjectLiteral.ts, 28, 3), Decl(typeArgumentInferenceWithObjectLiteral.ts, 29, 3))
-@@ -109,9 +109,9 @@
+@@= skipped -11, +11 lines =@@
  >x : Symbol(x, Decl(typeArgumentInferenceWithObjectLiteral.ts, 29, 16))
  >x : Symbol(x, Decl(typeArgumentInferenceWithObjectLiteral.ts, 29, 16))
  >r : Symbol(r, Decl(typeArgumentInferenceWithObjectLiteral.ts, 29, 24))
@@ -52,7 +52,7 @@
  
  var v2: E1;
  >v2 : Symbol(v2, Decl(typeArgumentInferenceWithObjectLiteral.ts, 31, 3), Decl(typeArgumentInferenceWithObjectLiteral.ts, 32, 3))
-@@ -124,12 +124,12 @@
+@@= skipped -15, +15 lines =@@
  >x : Symbol(x, Decl(typeArgumentInferenceWithObjectLiteral.ts, 32, 16))
  >x : Symbol(x, Decl(typeArgumentInferenceWithObjectLiteral.ts, 32, 16))
  >r : Symbol(r, Decl(typeArgumentInferenceWithObjectLiteral.ts, 32, 24))
@@ -69,7 +69,7 @@
  
  var v3 = f1({ w: x => x, r: () => E1.X }, E2.X);  // Error
  >v3 : Symbol(v3, Decl(typeArgumentInferenceWithObjectLiteral.ts, 34, 3))
-@@ -138,10 +138,10 @@
+@@= skipped -14, +14 lines =@@
  >x : Symbol(x, Decl(typeArgumentInferenceWithObjectLiteral.ts, 34, 16))
  >x : Symbol(x, Decl(typeArgumentInferenceWithObjectLiteral.ts, 34, 16))
  >r : Symbol(r, Decl(typeArgumentInferenceWithObjectLiteral.ts, 34, 24))

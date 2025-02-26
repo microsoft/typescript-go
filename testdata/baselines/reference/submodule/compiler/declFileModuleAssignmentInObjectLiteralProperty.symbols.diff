@@ -1,6 +1,6 @@
 --- old.declFileModuleAssignmentInObjectLiteralProperty.symbols
 +++ new.declFileModuleAssignmentInObjectLiteralProperty.symbols
-@@ -19,8 +19,8 @@
+@@= skipped -19, +19 lines =@@
      m2: { c: m1.c },
  >m2 : Symbol(m2, Decl(declFileModuleAssignmentInObjectLiteralProperty.ts, 5, 18))
  >c : Symbol(c, Decl(declFileModuleAssignmentInObjectLiteralProperty.ts, 6, 9))

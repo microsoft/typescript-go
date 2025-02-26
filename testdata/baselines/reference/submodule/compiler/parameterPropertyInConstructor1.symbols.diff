@@ -1,6 +1,6 @@
 --- old.parameterPropertyInConstructor1.symbols
 +++ new.parameterPropertyInConstructor1.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >Customers : Symbol(Customers, Decl(parameterPropertyInConstructor1.ts, 0, 20))
  
      constructor(public names: string);

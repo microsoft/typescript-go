@@ -1,6 +1,6 @@
 --- old.newTarget.es6.symbols
 +++ new.newTarget.es6.symbols
-@@ -7,22 +7,18 @@
+@@= skipped -7, +7 lines =@@
      constructor() {
          const a = new.target;
  >a : Symbol(a, Decl(newTarget.es6.ts, 2, 13))
@@ -25,7 +25,7 @@
  >target : Symbol((Anonymous function), Decl(newTarget.es6.ts, 6, 7))
  }
  
-@@ -36,12 +32,10 @@
+@@= skipped -29, +25 lines =@@
  
          const e = new.target;
  >e : Symbol(e, Decl(newTarget.es6.ts, 12, 13))
@@ -38,7 +38,7 @@
  >target : Symbol(B, Decl(newTarget.es6.ts, 7, 1))
      }
  }
-@@ -51,12 +45,10 @@
+@@= skipped -15, +13 lines =@@
  
      const g = new.target;
  >g : Symbol(g, Decl(newTarget.es6.ts, 18, 9))
@@ -51,7 +51,7 @@
  >target : Symbol(f1, Decl(newTarget.es6.ts, 15, 1))
  }
  
-@@ -65,12 +57,10 @@
+@@= skipped -14, +12 lines =@@
  
      const i = new.target;
  >i : Symbol(i, Decl(newTarget.es6.ts, 23, 9))
@@ -64,7 +64,7 @@
  >target : Symbol(f2, Decl(newTarget.es6.ts, 22, 10))
  }
  
-@@ -79,7 +69,6 @@
+@@= skipped -14, +12 lines =@@
  
      k: function () { return new.target; }
  >k : Symbol(k, Decl(newTarget.es6.ts, 27, 11))

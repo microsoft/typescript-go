@@ -1,6 +1,6 @@
 --- old.es6ImportDefaultBindingFollowedWithNamespaceBindingDts.symbols
 +++ new.es6ImportDefaultBindingFollowedWithNamespaceBindingDts.symbols
-@@ -11,7 +11,7 @@
+@@= skipped -11, +11 lines =@@
  
  export var x = new nameSpaceBinding.a();
  >x : Symbol(x, Decl(client.ts, 1, 10))

@@ -1,6 +1,6 @@
 --- old.moduleAugmentationGlobal2.symbols
 +++ new.moduleAugmentationGlobal2.symbols
-@@ -10,14 +10,14 @@
+@@= skipped -10, +10 lines =@@
  >A : Symbol(A, Decl(f2.ts, 1, 8))
  
  declare global {
@@ -17,7 +17,7 @@
      }
  }
  
-@@ -26,9 +26,9 @@
+@@= skipped -16, +16 lines =@@
  
  let y = x.getCountAsString().toLowerCase();
  >y : Symbol(y, Decl(f2.ts, 10, 3))

@@ -1,6 +1,6 @@
 --- old.functionExpressionNames.symbols
 +++ new.functionExpressionNames.symbols
-@@ -2,20 +2,10 @@
+@@= skipped -2, +2 lines =@@
  
  === b.js ===
  exports.E = function() {
@@ -21,7 +21,7 @@
  
  var o = {
  >o : Symbol(o, Decl(b.js, 5, 3))
-@@ -24,8 +14,6 @@
+@@= skipped -22, +12 lines =@@
  >C : Symbol(C, Decl(b.js, 5, 9))
  
          this.c = 'nested object'
@@ -30,7 +30,7 @@
      }
  }
  var og = new o.C();
-@@ -38,9 +26,6 @@
+@@= skipped -14, +12 lines =@@
  >V : Symbol(V, Decl(b.js, 12, 3))
  
      this.v = 'simple'
@@ -40,7 +40,7 @@
  }
  var v = new V();
  >v : Symbol(v, Decl(b.js, 15, 3))
-@@ -53,9 +38,6 @@
+@@= skipped -15, +12 lines =@@
  >A : Symbol(A, Decl(b.js, 17, 3))
  
      this.a = 'assignment'
@@ -50,7 +50,7 @@
  }
  var a = new A();
  >a : Symbol(a, Decl(b.js, 21, 3))
-@@ -66,9 +48,6 @@
+@@= skipped -13, +10 lines =@@
  >B : Symbol(B, Decl(b.js, 23, 7))
  
          this.b = 'binding pattern'

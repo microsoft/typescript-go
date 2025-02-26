@@ -1,6 +1,6 @@
 --- old.ModuleWithExportedAndNonExportedImportAlias.symbols
 +++ new.ModuleWithExportedAndNonExportedImportAlias.symbols
-@@ -8,10 +8,10 @@
+@@= skipped -8, +8 lines =@@
  >Point : Symbol(Point, Decl(ModuleWithExportedAndNonExportedImportAlias.ts, 0, 10))
  
          x: number;
@@ -13,7 +13,7 @@
      }
  
      interface Point3d extends Point {
-@@ -19,7 +19,7 @@
+@@= skipped -11, +11 lines =@@
  >Point : Symbol(Point, Decl(ModuleWithExportedAndNonExportedImportAlias.ts, 0, 10))
  
          z: number;
@@ -22,7 +22,7 @@
      }
  }
  
-@@ -30,12 +30,12 @@
+@@= skipped -11, +11 lines =@@
  >Line : Symbol(Line, Decl(ModuleWithExportedAndNonExportedImportAlias.ts, 11, 10))
  
          constructor(public start: A.Point, public end: A.Point) { }
@@ -39,7 +39,7 @@
      }
  }
  
-@@ -44,16 +44,16 @@
+@@= skipped -14, +14 lines =@@
  
      export import Points = A;
  >Points : Symbol(Points, Decl(ModuleWithExportedAndNonExportedImportAlias.ts, 17, 17))
@@ -59,7 +59,7 @@
  >x : Symbol(x, Decl(ModuleWithExportedAndNonExportedImportAlias.ts, 21, 39))
  >y : Symbol(y, Decl(ModuleWithExportedAndNonExportedImportAlias.ts, 21, 45))
  
-@@ -61,10 +61,10 @@
+@@= skipped -17, +17 lines =@@
      export var Unit: Lines.Line = new Lines.Line(Origin, { x: 1, y: 0 });
  >Unit : Symbol(Unit, Decl(ModuleWithExportedAndNonExportedImportAlias.ts, 24, 14))
  >Lines : Symbol(Lines, Decl(ModuleWithExportedAndNonExportedImportAlias.ts, 18, 29))
@@ -73,7 +73,7 @@
  >Origin : Symbol(Origin, Decl(ModuleWithExportedAndNonExportedImportAlias.ts, 21, 14))
  >x : Symbol(x, Decl(ModuleWithExportedAndNonExportedImportAlias.ts, 24, 58))
  >y : Symbol(y, Decl(ModuleWithExportedAndNonExportedImportAlias.ts, 24, 64))
-@@ -79,14 +79,14 @@
+@@= skipped -18, +18 lines =@@
  var p: Geometry.Points.Point;
  >p : Symbol(p, Decl(ModuleWithExportedAndNonExportedImportAlias.ts, 28, 3), Decl(ModuleWithExportedAndNonExportedImportAlias.ts, 29, 3), Decl(ModuleWithExportedAndNonExportedImportAlias.ts, 30, 3))
  >Geometry : Symbol(Geometry, Decl(ModuleWithExportedAndNonExportedImportAlias.ts, 15, 1))
@@ -92,7 +92,7 @@
  
  var line: { start: { x: number; y: number }; end: { x: number; y: number; } };
  >line : Symbol(line, Decl(ModuleWithExportedAndNonExportedImportAlias.ts, 32, 3), Decl(ModuleWithExportedAndNonExportedImportAlias.ts, 33, 3), Decl(ModuleWithExportedAndNonExportedImportAlias.ts, 36, 3))
-@@ -99,9 +99,9 @@
+@@= skipped -20, +20 lines =@@
  
  var line = Geometry.Unit;
  >line : Symbol(line, Decl(ModuleWithExportedAndNonExportedImportAlias.ts, 32, 3), Decl(ModuleWithExportedAndNonExportedImportAlias.ts, 33, 3), Decl(ModuleWithExportedAndNonExportedImportAlias.ts, 36, 3))

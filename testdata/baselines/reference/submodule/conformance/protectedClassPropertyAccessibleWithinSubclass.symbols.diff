@@ -1,6 +1,6 @@
 --- old.protectedClassPropertyAccessibleWithinSubclass.symbols
 +++ new.protectedClassPropertyAccessibleWithinSubclass.symbols
-@@ -7,10 +7,10 @@
+@@= skipped -7, +7 lines =@@
  >B : Symbol(B, Decl(protectedClassPropertyAccessibleWithinSubclass.ts, 0, 0))
  
      protected x: string;
@@ -13,7 +13,7 @@
  }
  
  class C extends B {
-@@ -18,59 +18,59 @@
+@@= skipped -11, +11 lines =@@
  >B : Symbol(B, Decl(protectedClassPropertyAccessibleWithinSubclass.ts, 0, 0))
  
      protected get y() { return this.x; }

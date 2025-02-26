@@ -1,6 +1,6 @@
 --- old.partiallyNamedTuples2.symbols
 +++ new.partiallyNamedTuples2.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >Value : Symbol(Value, Decl(partiallyNamedTuples2.ts, 1, 54))
  
    get<Key extends GetKeys<Keys>>(...key: Key): GetResult<Keys, Key, Value>;
@@ -9,7 +9,7 @@
  >Key : Symbol(Key, Decl(partiallyNamedTuples2.ts, 2, 6))
  >GetKeys : Symbol(GetKeys, Decl(partiallyNamedTuples2.ts, 3, 1))
  >Keys : Symbol(Keys, Decl(partiallyNamedTuples2.ts, 1, 22))
-@@ -80,8 +80,8 @@
+@@= skipped -72, +72 lines =@@
  
  const matches = x.get(id1);
  >matches : Symbol(matches, Decl(partiallyNamedTuples2.ts, 21, 5))

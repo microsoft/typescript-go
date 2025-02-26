@@ -1,6 +1,6 @@
 --- old.importsInAmbientModules3.symbols
 +++ new.importsInAmbientModules3.symbols
-@@ -7,7 +7,3 @@
+@@= skipped -7, +7 lines =@@
      import C = require("external");
  >C : Symbol(C, Decl(main.ts, 0, 20))
  }

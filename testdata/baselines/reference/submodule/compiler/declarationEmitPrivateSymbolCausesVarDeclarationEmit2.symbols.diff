@@ -1,6 +1,6 @@
 --- old.declarationEmitPrivateSymbolCausesVarDeclarationEmit2.symbols
 +++ new.declarationEmitPrivateSymbolCausesVarDeclarationEmit2.symbols
-@@ -13,7 +13,7 @@
+@@= skipped -13, +13 lines =@@
  >C : Symbol(C, Decl(b.ts, 0, 24))
  
    private [x]: number = 1;
@@ -9,7 +9,7 @@
  >x : Symbol(x, Decl(b.ts, 0, 8))
  }
  
-@@ -29,7 +29,7 @@
+@@= skipped -16, +16 lines =@@
  >C : Symbol(C, Decl(c.ts, 1, 8))
  
    private [x]: 12 = 12;

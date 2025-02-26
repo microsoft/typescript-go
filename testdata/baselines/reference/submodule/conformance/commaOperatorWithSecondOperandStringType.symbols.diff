@@ -1,6 +1,6 @@
 --- old.commaOperatorWithSecondOperandStringType.symbols
 +++ new.commaOperatorWithSecondOperandStringType.symbols
-@@ -82,9 +82,9 @@
+@@= skipped -82, +82 lines =@@
  >undefined : Symbol(undefined)
  
  ["a", "b"], NUMBER.toString();
@@ -12,7 +12,7 @@
  
  OBJECT = new Object, STRING + "string";
  >OBJECT : Symbol(OBJECT, Decl(commaOperatorWithSecondOperandStringType.ts, 4, 3))
-@@ -111,9 +111,9 @@
+@@= skipped -29, +29 lines =@@
  
  var resultIsString10 = (["a", "b"], NUMBER.toString());
  >resultIsString10 : Symbol(resultIsString10, Decl(commaOperatorWithSecondOperandStringType.ts, 34, 3))

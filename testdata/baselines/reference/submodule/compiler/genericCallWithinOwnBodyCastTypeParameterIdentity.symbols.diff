@@ -1,6 +1,6 @@
 --- old.genericCallWithinOwnBodyCastTypeParameterIdentity.symbols
 +++ new.genericCallWithinOwnBodyCastTypeParameterIdentity.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >Value : Symbol(Value, Decl(genericCallWithinOwnBodyCastTypeParameterIdentity.ts, 0, 19))
  
      then<V>(

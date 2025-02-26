@@ -1,6 +1,6 @@
 --- old.instanceofOperatorWithRHSHasSymbolHasInstance.symbols
 +++ new.instanceofOperatorWithRHSHasSymbolHasInstance.symbols
-@@ -3,49 +3,49 @@
+@@= skipped -3, +3 lines =@@
  === instanceofOperatorWithRHSHasSymbolHasInstance.ts ===
  interface Point { x: number, y: number }
  >Point : Symbol(Point, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 0, 0))
@@ -64,7 +64,7 @@
  >value : Symbol(value, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 7, 41))
  >value : Symbol(value, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 7, 41))
  >Point : Symbol(Point, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 0, 0))
-@@ -53,9 +53,9 @@
+@@= skipped -50, +50 lines =@@
  declare var rhs3: { [Symbol.hasInstance](value: Point | Line): value is Point; };
  >rhs3 : Symbol(rhs3, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 8, 11))
  >[Symbol.hasInstance] : Symbol([Symbol.hasInstance], Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 8, 19))
@@ -76,7 +76,7 @@
  >value : Symbol(value, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 8, 41))
  >Point : Symbol(Point, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 0, 0))
  >Line : Symbol(Line, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 2, 46))
-@@ -65,9 +65,9 @@
+@@= skipped -12, +12 lines =@@
  declare var rhs4: { [Symbol.hasInstance](value: Point | Line): value is Line; };
  >rhs4 : Symbol(rhs4, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 9, 11))
  >[Symbol.hasInstance] : Symbol([Symbol.hasInstance], Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 9, 19))
@@ -88,7 +88,7 @@
  >value : Symbol(value, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 9, 41))
  >Point : Symbol(Point, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 0, 0))
  >Line : Symbol(Line, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 2, 46))
-@@ -77,9 +77,9 @@
+@@= skipped -12, +12 lines =@@
  declare var rhs5: { [Symbol.hasInstance](value: Point | Point3D | Line): value is Point3D; };
  >rhs5 : Symbol(rhs5, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 10, 11))
  >[Symbol.hasInstance] : Symbol([Symbol.hasInstance], Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 10, 19))
@@ -100,7 +100,7 @@
  >value : Symbol(value, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 10, 41))
  >Point : Symbol(Point, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 0, 0))
  >Point3D : Symbol(Point3D, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 0, 40))
-@@ -90,9 +90,9 @@
+@@= skipped -13, +13 lines =@@
  declare var rhs6: { [Symbol.hasInstance](value: Point3D | Line): value is Point3D; };
  >rhs6 : Symbol(rhs6, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 11, 11))
  >[Symbol.hasInstance] : Symbol([Symbol.hasInstance], Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 11, 19))
@@ -112,7 +112,7 @@
  >value : Symbol(value, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 11, 41))
  >Point3D : Symbol(Point3D, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 0, 40))
  >Line : Symbol(Line, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 2, 46))
-@@ -101,36 +101,36 @@
+@@= skipped -11, +11 lines =@@
  
  declare class Rhs7 { static [Symbol.hasInstance](value: unknown): boolean; }
  >Rhs7 : Symbol(Rhs7, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 11, 85))
@@ -161,7 +161,7 @@
  >value : Symbol(value, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 16, 50))
  >Point : Symbol(Point, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 0, 0))
  >Line : Symbol(Line, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 2, 46))
-@@ -139,10 +139,10 @@
+@@= skipped -38, +38 lines =@@
  
  declare class Rhs11 { static [Symbol.hasInstance](value: Point | Line): value is Line; }
  >Rhs11 : Symbol(Rhs11, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 16, 89))
@@ -175,7 +175,7 @@
  >value : Symbol(value, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 17, 50))
  >Point : Symbol(Point, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 0, 0))
  >Line : Symbol(Line, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 2, 46))
-@@ -151,10 +151,10 @@
+@@= skipped -12, +12 lines =@@
  
  declare class Rhs12 { static [Symbol.hasInstance](value: Point | Point3D | Line): value is Point3D; }
  >Rhs12 : Symbol(Rhs12, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 17, 88))
@@ -189,7 +189,7 @@
  >value : Symbol(value, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 18, 50))
  >Point : Symbol(Point, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 0, 0))
  >Point3D : Symbol(Point3D, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 0, 40))
-@@ -164,10 +164,10 @@
+@@= skipped -13, +13 lines =@@
  
  declare class Rhs13 { static [Symbol.hasInstance](value: Point3D | Line): value is Point3D; }
  >Rhs13 : Symbol(Rhs13, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 18, 101))
@@ -203,7 +203,7 @@
  >value : Symbol(value, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 19, 50))
  >Point3D : Symbol(Point3D, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 0, 40))
  >Line : Symbol(Line, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 2, 46))
-@@ -491,15 +491,15 @@
+@@= skipped -327, +327 lines =@@
  >A : Symbol(A, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 88, 30))
  
      #x: number;
@@ -223,7 +223,7 @@
  >T : Symbol(T, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 95, 32))
  >this : Symbol(this, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 95, 35))
  >T : Symbol(T, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 95, 32))
-@@ -536,7 +536,7 @@
+@@= skipped -45, +45 lines =@@
  declare class B extends A { #y: number; }
  >B : Symbol(B, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 104, 1))
  >A : Symbol(A, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 88, 30))
@@ -232,7 +232,7 @@
  
  declare const obj: unknown;
  >obj : Symbol(obj, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 108, 13))
-@@ -561,10 +561,10 @@
+@@= skipped -25, +25 lines =@@
  
  interface HasInstanceOf { [Symbol.hasInstance](x: unknown): boolean }
  >HasInstanceOf : Symbol(HasInstanceOf, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 114, 1))
@@ -246,7 +246,7 @@
  >x : Symbol(x, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 119, 47))
  
  type Rhs14 = HasInstanceOf & object;
-@@ -584,20 +584,20 @@
+@@= skipped -23, +23 lines =@@
  
  interface HasInstanceOf1 { [Symbol.hasInstance](x: unknown): x is Point }
  >HasInstanceOf1 : Symbol(HasInstanceOf1, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 122, 30))

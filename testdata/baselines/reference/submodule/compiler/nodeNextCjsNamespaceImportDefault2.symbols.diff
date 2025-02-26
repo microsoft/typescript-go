@@ -1,6 +1,6 @@
 --- old.nodeNextCjsNamespaceImportDefault2.symbols
 +++ new.nodeNextCjsNamespaceImportDefault2.symbols
-@@ -19,14 +19,10 @@
+@@= skipped -19, +19 lines =@@
  >ns : Symbol(ns, Decl(foo.mts, 2, 13))
  
  d.a;

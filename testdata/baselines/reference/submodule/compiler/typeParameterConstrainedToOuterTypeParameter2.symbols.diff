@@ -1,6 +1,6 @@
 --- old.typeParameterConstrainedToOuterTypeParameter2.symbols
 +++ new.typeParameterConstrainedToOuterTypeParameter2.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(typeParameterConstrainedToOuterTypeParameter2.ts, 0, 12))
  
      foo<U extends T>(x: A<A<U>>)
@@ -9,7 +9,7 @@
  >U : Symbol(U, Decl(typeParameterConstrainedToOuterTypeParameter2.ts, 1, 8))
  >T : Symbol(T, Decl(typeParameterConstrainedToOuterTypeParameter2.ts, 0, 12))
  >x : Symbol(x, Decl(typeParameterConstrainedToOuterTypeParameter2.ts, 1, 21))
-@@ -20,7 +20,7 @@
+@@= skipped -14, +14 lines =@@
  >T : Symbol(T, Decl(typeParameterConstrainedToOuterTypeParameter2.ts, 4, 12))
  
      foo<U extends T>(x: B<B<U>>)

@@ -1,6 +1,6 @@
 --- old.objectCreate-errors.symbols
 +++ new.objectCreate-errors.symbols
-@@ -3,52 +3,52 @@
+@@= skipped -3, +3 lines =@@
  === objectCreate-errors.ts ===
  var e1 = Object.create(1);               // Error
  >e1 : Symbol(e1, Decl(objectCreate-errors.ts, 0, 3))

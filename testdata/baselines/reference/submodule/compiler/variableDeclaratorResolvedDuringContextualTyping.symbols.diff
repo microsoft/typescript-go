@@ -1,6 +1,6 @@
 --- old.variableDeclaratorResolvedDuringContextualTyping.symbols
 +++ new.variableDeclaratorResolvedDuringContextualTyping.symbols
-@@ -46,51 +46,51 @@
+@@= skipped -46, +46 lines =@@
  >oncancel : Symbol(oncancel, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 18, 110))
  
          static as(value: any): Promise;
@@ -61,7 +61,7 @@
  >success : Symbol(success, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 29, 20))
  >ValueCallback : Symbol(ValueCallback, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 0, 14))
  >error : Symbol(error, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 29, 44))
-@@ -100,7 +100,7 @@
+@@= skipped -54, +54 lines =@@
  >Promise : Symbol(Promise, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 15, 5))
  
          public done(success?: ValueCallback, error?: ErrorCallback, progress?: ProgressCallback): void;
@@ -70,7 +70,7 @@
  >success : Symbol(success, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 30, 20))
  >ValueCallback : Symbol(ValueCallback, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 0, 14))
  >error : Symbol(error, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 30, 44))
-@@ -109,7 +109,7 @@
+@@= skipped -9, +9 lines =@@
  >ProgressCallback : Symbol(ProgressCallback, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 11, 5))
  
          public cancel(): void;
@@ -79,7 +79,7 @@
      }
  
      export declare class TPromise<V> {
-@@ -128,7 +128,7 @@
+@@= skipped -19, +19 lines =@@
  >oncancel : Symbol(oncancel, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 36, 120))
  
          public then<U>(success?: (value: V) => TPromise<U>, error?: (err: any) => TPromise<U>, progress?: ProgressCallback): TPromise<U>;
@@ -88,7 +88,7 @@
  >U : Symbol(U, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 38, 20))
  >success : Symbol(success, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 38, 23))
  >value : Symbol(value, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 38, 34))
-@@ -145,7 +145,7 @@
+@@= skipped -17, +17 lines =@@
  >U : Symbol(U, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 38, 20))
  
          public then<U>(success?: (value: V) => TPromise<U>, error?: (err: any) => U, progress?: ProgressCallback): TPromise<U>;
@@ -97,7 +97,7 @@
  >U : Symbol(U, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 39, 20))
  >success : Symbol(success, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 39, 23))
  >value : Symbol(value, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 39, 34))
-@@ -161,7 +161,7 @@
+@@= skipped -16, +16 lines =@@
  >U : Symbol(U, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 39, 20))
  
          public then<U>(success?: (value: V) => U, error?: (err: any) => TPromise<U>, progress?: ProgressCallback): TPromise<U>;
@@ -106,7 +106,7 @@
  >U : Symbol(U, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 40, 20))
  >success : Symbol(success, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 40, 23))
  >value : Symbol(value, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 40, 34))
-@@ -177,7 +177,7 @@
+@@= skipped -16, +16 lines =@@
  >U : Symbol(U, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 40, 20))
  
          public then<U>(success?: (value: V) => U, error?: (err: any) => U, progress?: ProgressCallback): TPromise<U>;
@@ -115,7 +115,7 @@
  >U : Symbol(U, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 41, 20))
  >success : Symbol(success, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 41, 23))
  >value : Symbol(value, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 41, 34))
-@@ -192,7 +192,7 @@
+@@= skipped -15, +15 lines =@@
  >U : Symbol(U, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 41, 20))
  
          public done(success?: (value: V) => void, error?: (err: any) => any, progress?: ProgressCallback): void;
@@ -124,7 +124,7 @@
  >success : Symbol(success, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 43, 20))
  >value : Symbol(value, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 43, 31))
  >V : Symbol(V, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 34, 34))
-@@ -202,10 +202,10 @@
+@@= skipped -10, +10 lines =@@
  >ProgressCallback : Symbol(ProgressCallback, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 11, 5))
  
          public cancel(): void;
@@ -137,7 +137,7 @@
  >ValueType : Symbol(ValueType, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 46, 25))
  >value : Symbol(value, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 46, 36))
  >ValueType : Symbol(ValueType, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 46, 25))
-@@ -213,12 +213,12 @@
+@@= skipped -11, +11 lines =@@
  >ValueType : Symbol(ValueType, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 46, 25))
  
          public static timeout(delay: number): TPromise<void>;
@@ -152,7 +152,7 @@
  >ValueType : Symbol(ValueType, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 48, 27))
  >promises : Symbol(promises, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 48, 38))
  >TPromise : Symbol(TPromise, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 32, 5))
-@@ -227,7 +227,7 @@
+@@= skipped -14, +14 lines =@@
  >ValueType : Symbol(ValueType, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 48, 27))
  
          public static any<ValueType>(promises: TPromise<ValueType>[]): TPromise<ValueType>;
@@ -161,7 +161,7 @@
  >ValueType : Symbol(ValueType, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 49, 26))
  >promises : Symbol(promises, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 49, 37))
  >TPromise : Symbol(TPromise, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 32, 5))
-@@ -236,7 +236,7 @@
+@@= skipped -9, +9 lines =@@
  >ValueType : Symbol(ValueType, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 49, 26))
  
          public static wrapError<ValueType>(error: any): TPromise<ValueType>;
@@ -170,7 +170,7 @@
  >ValueType : Symbol(ValueType, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 50, 32))
  >error : Symbol(error, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 50, 43))
  >TPromise : Symbol(TPromise, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 32, 5))
-@@ -247,29 +247,29 @@
+@@= skipped -11, +11 lines =@@
  >IXHROptions : Symbol(IXHROptions, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 51, 5))
  
          type?: string;
@@ -208,7 +208,7 @@
      }
  }
  
-@@ -285,12 +285,12 @@
+@@= skipped -38, +38 lines =@@
           * allows to specify to return a fully absolute server URL. 
           */
          getRequestUrl(service: string, path?: string): string;
@@ -223,7 +223,7 @@
  >service : Symbol(service, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 73, 22))
  >path : Symbol(path, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 73, 38))
  >absolute : Symbol(absolute, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 73, 53))
-@@ -300,12 +300,12 @@
+@@= skipped -15, +15 lines =@@
           * of calling WinJS.XHR directly.
           */
          makeRequest(options: WinJS.IXHROptions): WinJS.Promise;
@@ -239,7 +239,7 @@
      }
  }
  
-@@ -329,10 +329,10 @@
+@@= skipped -29, +29 lines =@@
  >IUploadResult : Symbol(IUploadResult, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 90, 14))
  
          stat: string;
@@ -252,7 +252,7 @@
      }
  }
  
-@@ -340,13 +340,13 @@
+@@= skipped -11, +11 lines =@@
  >XMLHttpRequest : Symbol(XMLHttpRequest, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 95, 1))
  
      status: number;
@@ -269,7 +269,7 @@
  
  }
  
-@@ -354,35 +354,35 @@
+@@= skipped -14, +14 lines =@@
  >FileService : Symbol(FileService, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 102, 1))
  
      private requestService: Services.IRequestService;
@@ -319,7 +319,7 @@
  >path : Symbol(path, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 107, 11))
  
              type: 'POST',
-@@ -395,7 +395,7 @@
+@@= skipped -41, +41 lines =@@
  >data : Symbol(data, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 111, 24))
  
          }).then((response: XMLHttpRequest) => {
@@ -328,7 +328,7 @@
  >response : Symbol(response, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 113, 17))
  >XMLHttpRequest : Symbol(XMLHttpRequest, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 95, 1))
  
-@@ -409,20 +409,20 @@
+@@= skipped -14, +14 lines =@@
  
                      isNew: response.status === 201
  >isNew : Symbol(isNew, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 115, 69))
@@ -356,7 +356,7 @@
  >result : Symbol(result, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 114, 19))
  
              }, (xhr: XMLHttpRequest) => {
-@@ -430,14 +430,14 @@
+@@= skipped -21, +21 lines =@@
  >XMLHttpRequest : Symbol(XMLHttpRequest, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 95, 1))
  
                  return WinJS.Promise.wrapError(new Errors.ConnectionError(xhr));

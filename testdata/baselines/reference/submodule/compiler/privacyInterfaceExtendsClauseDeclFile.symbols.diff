@@ -1,6 +1,6 @@
 --- old.privacyInterfaceExtendsClauseDeclFile.symbols
 +++ new.privacyInterfaceExtendsClauseDeclFile.symbols
-@@ -31,15 +31,15 @@
+@@= skipped -31, +31 lines =@@
  
      interface privateInterfaceImplementingFromPrivateModuleInterface extends privateModule.publicInterfaceInPrivateModule {
  >privateInterfaceImplementingFromPrivateModuleInterface : Symbol(privateInterfaceImplementingFromPrivateModuleInterface, Decl(privacyInterfaceExtendsClauseDeclFile_externalModule.ts, 14, 5))
@@ -20,7 +20,7 @@
      }
  
      export interface publicInterfaceImplementingPrivateAndPublicInterface extends privateInterfaceInPublicModule, publicInterfaceInPublicModule { // Should error
-@@ -120,15 +120,15 @@
+@@= skipped -89, +89 lines =@@
  
  interface privateInterfaceImplementingFromPrivateModuleInterface extends privateModule.publicInterfaceInPrivateModule {
  >privateInterfaceImplementingFromPrivateModuleInterface : Symbol(privateInterfaceImplementingFromPrivateModuleInterface, Decl(privacyInterfaceExtendsClauseDeclFile_externalModule.ts, 62, 1))

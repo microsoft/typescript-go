@@ -1,6 +1,6 @@
 --- old.genericClassesRedeclaration.symbols
 +++ new.genericClassesRedeclaration.symbols
-@@ -23,22 +23,22 @@
+@@= skipped -23, +23 lines =@@
  >T : Symbol(T, Decl(genericClassesRedeclaration.ts, 5, 25), Decl(genericClassesRedeclaration.ts, 44, 25))
  
          getAllKeys(): string[];
@@ -27,7 +27,7 @@
  >fn : Symbol(fn, Decl(genericClassesRedeclaration.ts, 9, 12))
  >k : Symbol(k, Decl(genericClassesRedeclaration.ts, 9, 17))
  >value : Symbol(value, Decl(genericClassesRedeclaration.ts, 9, 27))
-@@ -47,7 +47,7 @@
+@@= skipped -24, +24 lines =@@
  >context : Symbol(context, Decl(genericClassesRedeclaration.ts, 9, 60))
  
          every(fn: (k: string, value: T, context: any) => void, context: any): boolean;
@@ -36,7 +36,7 @@
  >fn : Symbol(fn, Decl(genericClassesRedeclaration.ts, 10, 14))
  >k : Symbol(k, Decl(genericClassesRedeclaration.ts, 10, 19))
  >value : Symbol(value, Decl(genericClassesRedeclaration.ts, 10, 29))
-@@ -56,7 +56,7 @@
+@@= skipped -9, +9 lines =@@
  >context : Symbol(context, Decl(genericClassesRedeclaration.ts, 10, 62))
  
          some(fn: (k: string, value: T, context: any) => void, context: any): boolean;
@@ -45,7 +45,7 @@
  >fn : Symbol(fn, Decl(genericClassesRedeclaration.ts, 11, 13))
  >k : Symbol(k, Decl(genericClassesRedeclaration.ts, 11, 18))
  >value : Symbol(value, Decl(genericClassesRedeclaration.ts, 11, 28))
-@@ -65,10 +65,10 @@
+@@= skipped -9, +9 lines =@@
  >context : Symbol(context, Decl(genericClassesRedeclaration.ts, 11, 61))
  
          count(): number;
@@ -58,7 +58,7 @@
  >key : Symbol(key, Decl(genericClassesRedeclaration.ts, 13, 15))
  >T : Symbol(T, Decl(genericClassesRedeclaration.ts, 5, 25), Decl(genericClassesRedeclaration.ts, 44, 25))
      }
-@@ -79,28 +79,28 @@
+@@= skipped -14, +14 lines =@@
  >T : Symbol(T, Decl(genericClassesRedeclaration.ts, 15, 26))
  
          private itemCount;
@@ -93,7 +93,7 @@
  >fn : Symbol(fn, Decl(genericClassesRedeclaration.ts, 21, 19))
  >k : Symbol(k, Decl(genericClassesRedeclaration.ts, 21, 24))
  >value : Symbol(value, Decl(genericClassesRedeclaration.ts, 21, 34))
-@@ -109,7 +109,7 @@
+@@= skipped -30, +30 lines =@@
  >context : Symbol(context, Decl(genericClassesRedeclaration.ts, 21, 67))
  
          public every(fn: (k: string, value: T, context: any) => void, context: any): boolean;
@@ -102,7 +102,7 @@
  >fn : Symbol(fn, Decl(genericClassesRedeclaration.ts, 22, 21))
  >k : Symbol(k, Decl(genericClassesRedeclaration.ts, 22, 26))
  >value : Symbol(value, Decl(genericClassesRedeclaration.ts, 22, 36))
-@@ -118,7 +118,7 @@
+@@= skipped -9, +9 lines =@@
  >context : Symbol(context, Decl(genericClassesRedeclaration.ts, 22, 69))
  
          public some(fn: (k: string, value: T, context: any) => void, context: any): boolean;
@@ -111,7 +111,7 @@
  >fn : Symbol(fn, Decl(genericClassesRedeclaration.ts, 23, 20))
  >k : Symbol(k, Decl(genericClassesRedeclaration.ts, 23, 25))
  >value : Symbol(value, Decl(genericClassesRedeclaration.ts, 23, 35))
-@@ -127,15 +127,15 @@
+@@= skipped -9, +9 lines =@@
  >context : Symbol(context, Decl(genericClassesRedeclaration.ts, 23, 68))
  
          public count(): number;
@@ -130,7 +130,7 @@
  >key : Symbol(key, Decl(genericClassesRedeclaration.ts, 26, 22))
      }
      class IdentifierNameHashTable<T> extends StringHashTable<T> {
-@@ -145,22 +145,22 @@
+@@= skipped -18, +18 lines =@@
  >T : Symbol(T, Decl(genericClassesRedeclaration.ts, 28, 34))
  
          public getAllKeys(): string[];
@@ -157,7 +157,7 @@
  >fn : Symbol(fn, Decl(genericClassesRedeclaration.ts, 32, 19))
  >k : Symbol(k, Decl(genericClassesRedeclaration.ts, 32, 24))
  >value : Symbol(value, Decl(genericClassesRedeclaration.ts, 32, 34))
-@@ -169,7 +169,7 @@
+@@= skipped -24, +24 lines =@@
  >context : Symbol(context, Decl(genericClassesRedeclaration.ts, 32, 67))
  
          public every(fn: (k: string, value: T, context: any) => void, context: any): boolean;
@@ -166,7 +166,7 @@
  >fn : Symbol(fn, Decl(genericClassesRedeclaration.ts, 33, 21))
  >k : Symbol(k, Decl(genericClassesRedeclaration.ts, 33, 26))
  >value : Symbol(value, Decl(genericClassesRedeclaration.ts, 33, 36))
-@@ -178,7 +178,7 @@
+@@= skipped -9, +9 lines =@@
  >context : Symbol(context, Decl(genericClassesRedeclaration.ts, 33, 69))
  
          public some(fn: (k: string, value: any, context: any) => void, context: any): boolean;
@@ -175,7 +175,7 @@
  >fn : Symbol(fn, Decl(genericClassesRedeclaration.ts, 34, 20))
  >k : Symbol(k, Decl(genericClassesRedeclaration.ts, 34, 25))
  >value : Symbol(value, Decl(genericClassesRedeclaration.ts, 34, 35))
-@@ -186,7 +186,7 @@
+@@= skipped -8, +8 lines =@@
  >context : Symbol(context, Decl(genericClassesRedeclaration.ts, 34, 70))
  
          public lookup(key: string): T;
@@ -184,7 +184,7 @@
  >key : Symbol(key, Decl(genericClassesRedeclaration.ts, 35, 22))
  >T : Symbol(T, Decl(genericClassesRedeclaration.ts, 28, 34))
      }
-@@ -214,22 +214,22 @@
+@@= skipped -28, +28 lines =@@
  >T : Symbol(T, Decl(genericClassesRedeclaration.ts, 5, 25), Decl(genericClassesRedeclaration.ts, 44, 25))
  
          getAllKeys(): string[];
@@ -211,7 +211,7 @@
  >fn : Symbol(fn, Decl(genericClassesRedeclaration.ts, 48, 12))
  >k : Symbol(k, Decl(genericClassesRedeclaration.ts, 48, 17))
  >value : Symbol(value, Decl(genericClassesRedeclaration.ts, 48, 27))
-@@ -238,7 +238,7 @@
+@@= skipped -24, +24 lines =@@
  >context : Symbol(context, Decl(genericClassesRedeclaration.ts, 48, 60))
  
          every(fn: (k: string, value: T, context: any) => void, context: any): boolean;
@@ -220,7 +220,7 @@
  >fn : Symbol(fn, Decl(genericClassesRedeclaration.ts, 49, 14))
  >k : Symbol(k, Decl(genericClassesRedeclaration.ts, 49, 19))
  >value : Symbol(value, Decl(genericClassesRedeclaration.ts, 49, 29))
-@@ -247,7 +247,7 @@
+@@= skipped -9, +9 lines =@@
  >context : Symbol(context, Decl(genericClassesRedeclaration.ts, 49, 62))
  
          some(fn: (k: string, value: T, context: any) => void, context: any): boolean;
@@ -229,7 +229,7 @@
  >fn : Symbol(fn, Decl(genericClassesRedeclaration.ts, 50, 13))
  >k : Symbol(k, Decl(genericClassesRedeclaration.ts, 50, 18))
  >value : Symbol(value, Decl(genericClassesRedeclaration.ts, 50, 28))
-@@ -256,10 +256,10 @@
+@@= skipped -9, +9 lines =@@
  >context : Symbol(context, Decl(genericClassesRedeclaration.ts, 50, 61))
  
          count(): number;
@@ -242,7 +242,7 @@
  >key : Symbol(key, Decl(genericClassesRedeclaration.ts, 52, 15))
  >T : Symbol(T, Decl(genericClassesRedeclaration.ts, 5, 25), Decl(genericClassesRedeclaration.ts, 44, 25))
      }
-@@ -270,28 +270,28 @@
+@@= skipped -14, +14 lines =@@
  >T : Symbol(T, Decl(genericClassesRedeclaration.ts, 54, 26))
  
          private itemCount;
@@ -277,7 +277,7 @@
  >fn : Symbol(fn, Decl(genericClassesRedeclaration.ts, 60, 19))
  >k : Symbol(k, Decl(genericClassesRedeclaration.ts, 60, 24))
  >value : Symbol(value, Decl(genericClassesRedeclaration.ts, 60, 34))
-@@ -300,7 +300,7 @@
+@@= skipped -30, +30 lines =@@
  >context : Symbol(context, Decl(genericClassesRedeclaration.ts, 60, 67))
  
          public every(fn: (k: string, value: T, context: any) => void, context: any): boolean;
@@ -286,7 +286,7 @@
  >fn : Symbol(fn, Decl(genericClassesRedeclaration.ts, 61, 21))
  >k : Symbol(k, Decl(genericClassesRedeclaration.ts, 61, 26))
  >value : Symbol(value, Decl(genericClassesRedeclaration.ts, 61, 36))
-@@ -309,7 +309,7 @@
+@@= skipped -9, +9 lines =@@
  >context : Symbol(context, Decl(genericClassesRedeclaration.ts, 61, 69))
  
          public some(fn: (k: string, value: T, context: any) => void, context: any): boolean;
@@ -295,7 +295,7 @@
  >fn : Symbol(fn, Decl(genericClassesRedeclaration.ts, 62, 20))
  >k : Symbol(k, Decl(genericClassesRedeclaration.ts, 62, 25))
  >value : Symbol(value, Decl(genericClassesRedeclaration.ts, 62, 35))
-@@ -318,15 +318,15 @@
+@@= skipped -9, +9 lines =@@
  >context : Symbol(context, Decl(genericClassesRedeclaration.ts, 62, 68))
  
          public count(): number;
@@ -314,7 +314,7 @@
  >key : Symbol(key, Decl(genericClassesRedeclaration.ts, 65, 22))
      }
      class IdentifierNameHashTable<T> extends StringHashTable<T> {
-@@ -336,22 +336,22 @@
+@@= skipped -18, +18 lines =@@
  >T : Symbol(T, Decl(genericClassesRedeclaration.ts, 67, 34))
  
          public getAllKeys(): string[];
@@ -341,7 +341,7 @@
  >fn : Symbol(fn, Decl(genericClassesRedeclaration.ts, 71, 19))
  >k : Symbol(k, Decl(genericClassesRedeclaration.ts, 71, 24))
  >value : Symbol(value, Decl(genericClassesRedeclaration.ts, 71, 34))
-@@ -360,7 +360,7 @@
+@@= skipped -24, +24 lines =@@
  >context : Symbol(context, Decl(genericClassesRedeclaration.ts, 71, 67))
  
          public every(fn: (k: string, value: T, context: any) => void, context: any): boolean;
@@ -350,7 +350,7 @@
  >fn : Symbol(fn, Decl(genericClassesRedeclaration.ts, 72, 21))
  >k : Symbol(k, Decl(genericClassesRedeclaration.ts, 72, 26))
  >value : Symbol(value, Decl(genericClassesRedeclaration.ts, 72, 36))
-@@ -369,7 +369,7 @@
+@@= skipped -9, +9 lines =@@
  >context : Symbol(context, Decl(genericClassesRedeclaration.ts, 72, 69))
  
          public some(fn: (k: string, value: any, context: any) => void, context: any): boolean;
@@ -359,7 +359,7 @@
  >fn : Symbol(fn, Decl(genericClassesRedeclaration.ts, 73, 20))
  >k : Symbol(k, Decl(genericClassesRedeclaration.ts, 73, 25))
  >value : Symbol(value, Decl(genericClassesRedeclaration.ts, 73, 35))
-@@ -377,7 +377,7 @@
+@@= skipped -8, +8 lines =@@
  >context : Symbol(context, Decl(genericClassesRedeclaration.ts, 73, 70))
  
          public lookup(key: string): T;

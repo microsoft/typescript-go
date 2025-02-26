@@ -1,6 +1,6 @@
 --- old.classIndexer2.symbols
 +++ new.classIndexer2.symbols
-@@ -8,10 +8,10 @@
+@@= skipped -8, +8 lines =@@
  >s : Symbol(s, Decl(classIndexer2.ts, 1, 5))
  
      x: number;

@@ -1,6 +1,6 @@
 --- old.exportStarFromEmptyModule.symbols
 +++ new.exportStarFromEmptyModule.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(exportStarFromEmptyModule_module1.ts, 0, 0))
  
      static r;
@@ -9,7 +9,7 @@
  }
  
  === exportStarFromEmptyModule_module2.ts ===
-@@ -20,7 +20,7 @@
+@@= skipped -15, +15 lines =@@
  >A : Symbol(A, Decl(exportStarFromEmptyModule_module3.ts, 1, 52))
  
      static q;
@@ -18,7 +18,7 @@
  }
  
  === exportStarFromEmptyModule_module4.ts ===
-@@ -30,17 +30,17 @@
+@@= skipped -10, +10 lines =@@
  var s: X.A;
  >s : Symbol(s, Decl(exportStarFromEmptyModule_module4.ts, 1, 3))
  >X : Symbol(X, Decl(exportStarFromEmptyModule_module4.ts, 0, 6))

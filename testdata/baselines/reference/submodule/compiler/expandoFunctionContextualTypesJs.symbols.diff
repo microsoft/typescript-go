@@ -1,6 +1,6 @@
 --- old.expandoFunctionContextualTypesJs.symbols
 +++ new.expandoFunctionContextualTypesJs.symbols
-@@ -11,12 +11,12 @@
+@@= skipped -11, +11 lines =@@
    * @type {StatelessComponent<MyComponentProps>}
    */
  const MyComponent = () => /* @type {any} */(null);
@@ -17,7 +17,7 @@
  
      color: "red"
  >color : Symbol(color, Decl(input.js, 11, 28))
-@@ -24,15 +24,15 @@
+@@= skipped -13, +13 lines =@@
  };
  
  const MyComponent2 = () => null;
@@ -37,7 +37,7 @@
  
      color: "red"
  >color : Symbol(color, Decl(input.js, 20, 29))
-@@ -43,7 +43,7 @@
+@@= skipped -19, +19 lines =@@
   */
  const check = MyComponent2;
  >check : Symbol(check, Decl(input.js, 27, 5))
@@ -46,7 +46,7 @@
  
  /**
   * 
-@@ -60,24 +60,16 @@
+@@= skipped -17, +17 lines =@@
       * @type {MyComponentProps}
       */
      this.props = { color: "red" };
@@ -71,7 +71,7 @@
      color: "red"
  >color : Symbol(color, Decl(input.js, 47, 18))
  }
-@@ -85,7 +77,4 @@
+@@= skipped -25, +17 lines =@@
  expectLiteral({ props: module.exports });
  >expectLiteral : Symbol(expectLiteral, Decl(input.js, 27, 27))
  >props : Symbol(props, Decl(input.js, 51, 15))

@@ -1,6 +1,6 @@
 --- old.accessorAccidentalCallDiagnostic.symbols
 +++ new.accessorAccidentalCallDiagnostic.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >Test24554 : Symbol(Test24554, Decl(accessorAccidentalCallDiagnostic.ts, 0, 0))
  
      get property(): number { return 1; }
@@ -9,7 +9,7 @@
  }
  function test24554(x: Test24554) {
  >test24554 : Symbol(test24554, Decl(accessorAccidentalCallDiagnostic.ts, 3, 1))
-@@ -14,8 +14,8 @@
+@@= skipped -8, +8 lines =@@
  >Test24554 : Symbol(Test24554, Decl(accessorAccidentalCallDiagnostic.ts, 0, 0))
  
      return x.property();

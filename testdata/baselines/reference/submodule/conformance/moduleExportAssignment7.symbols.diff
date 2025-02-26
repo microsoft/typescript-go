@@ -1,6 +1,6 @@
 --- old.moduleExportAssignment7.symbols
 +++ new.moduleExportAssignment7.symbols
-@@ -3,11 +3,11 @@
+@@= skipped -3, +3 lines =@@
  === mod.js ===
  class Thing  { x = 1 }
  >Thing : Symbol(Thing, Decl(mod.js, 0, 0))
@@ -14,7 +14,7 @@
  
  function foo() { return 3 }
  >foo : Symbol(foo, Decl(mod.js, 1, 29))
-@@ -17,10 +17,6 @@
+@@= skipped -14, +14 lines =@@
  
  /** @typedef {() => number} buz */
  module.exports = {
@@ -25,7 +25,7 @@
      Thing,
  >Thing : Symbol(Thing, Decl(mod.js, 5, 18))
  
-@@ -61,19 +57,13 @@
+@@= skipped -44, +40 lines =@@
  >g : Symbol(g, Decl(main.js, 9, 34))
  
      return a.x + b.y + c() + d() + e() + f() + g.length
@@ -45,7 +45,7 @@
  }
  
  /**
-@@ -96,19 +86,13 @@
+@@= skipped -35, +29 lines =@@
  >g : Symbol(g, Decl(main.js, 22, 35))
  
      return a.length + b.length + c() + d() + e() + f() + g.length
@@ -65,7 +65,7 @@
  }
  
  === index.ts ===
-@@ -132,7 +116,6 @@
+@@= skipped -36, +30 lines =@@
  
      f: import('./mod').buz,
  >f : Symbol(f, Decl(index.ts, 5, 27))
@@ -73,7 +73,7 @@
  
      g: import('./mod').literal,
  >g : Symbol(g, Decl(index.ts, 6, 27))
-@@ -153,45 +136,33 @@
+@@= skipped -21, +20 lines =@@
  
      a: typeof import('./mod').Thing,
  >a : Symbol(a, Decl(index.ts, 12, 16))

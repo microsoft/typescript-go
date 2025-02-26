@@ -1,6 +1,6 @@
 --- old.numericMethodName1.symbols
 +++ new.numericMethodName1.symbols
-@@ -5,6 +5,6 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(numericMethodName1.ts, 0, 0))
  
    1 = 2;

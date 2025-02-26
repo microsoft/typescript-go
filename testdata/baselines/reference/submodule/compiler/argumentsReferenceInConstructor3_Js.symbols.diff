@@ -1,6 +1,6 @@
 --- old.argumentsReferenceInConstructor3_Js.symbols
 +++ new.argumentsReferenceInConstructor3_Js.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(a.js, 0, 0))
  
  	get arguments() {
@@ -9,7 +9,7 @@
  
  		return { bar: {} };
  >bar : Symbol(bar, Decl(a.js, 2, 10))
-@@ -31,21 +31,17 @@
+@@= skipped -26, +26 lines =@@
  		 * @type object
  		 */
  		this.foo = foo;

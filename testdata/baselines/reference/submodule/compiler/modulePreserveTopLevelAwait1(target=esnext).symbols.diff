@@ -1,6 +1,6 @@
 --- old.modulePreserveTopLevelAwait1(target=esnext).symbols
 +++ new.modulePreserveTopLevelAwait1(target=esnext).symbols
-@@ -5,9 +5,9 @@
+@@= skipped -5, +5 lines =@@
  >x : Symbol(x, Decl(modulePreserveTopLevelAwait1.ts, 0, 16))
  
  await Promise.resolve();

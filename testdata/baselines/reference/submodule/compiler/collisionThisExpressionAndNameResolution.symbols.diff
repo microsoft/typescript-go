@@ -1,6 +1,6 @@
 --- old.collisionThisExpressionAndNameResolution.symbols
 +++ new.collisionThisExpressionAndNameResolution.symbols
-@@ -12,7 +12,7 @@
+@@= skipped -12, +12 lines =@@
  >Foo : Symbol(Foo, Decl(collisionThisExpressionAndNameResolution.ts, 2, 1))
  
      x() {

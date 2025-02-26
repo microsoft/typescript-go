@@ -1,6 +1,6 @@
 --- old.argumentsReferenceInConstructor2_Js.symbols
 +++ new.argumentsReferenceInConstructor2_Js.symbols
-@@ -17,7 +17,6 @@
+@@= skipped -17, +17 lines =@@
  		 */
  		this["arguments"] = foo;
  >this : Symbol(A, Decl(a.js, 0, 0))

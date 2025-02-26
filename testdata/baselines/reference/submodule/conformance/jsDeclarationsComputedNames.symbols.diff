@@ -1,6 +1,6 @@
 --- old.jsDeclarationsComputedNames.symbols
 +++ new.jsDeclarationsComputedNames.symbols
-@@ -10,10 +10,6 @@
+@@= skipped -10, +10 lines =@@
  >Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
  
  module.exports = {
@@ -11,7 +11,7 @@
      [TopLevelSym](x = 12) {
  >[TopLevelSym] : Symbol([TopLevelSym], Decl(index.js, 2, 18))
  >TopLevelSym : Symbol(TopLevelSym, Decl(index.js, 0, 5))
-@@ -50,11 +46,11 @@
+@@= skipped -40, +36 lines =@@
  >MyClass : Symbol(MyClass, Decl(index2.js, 1, 26))
  
      static [TopLevelSym] = 12;

@@ -1,6 +1,6 @@
 --- old.controlFlowElementAccessNoCrash1.symbols
 +++ new.controlFlowElementAccessNoCrash1.symbols
-@@ -5,34 +5,34 @@
+@@= skipped -5, +5 lines =@@
  >TestTscEdit : Symbol(TestTscEdit, Decl(controlFlowElementAccessNoCrash1.ts, 0, 0))
  
    caption: string;
@@ -42,7 +42,7 @@
  >TestTscCompile : Symbol(TestTscCompile, Decl(controlFlowElementAccessNoCrash1.ts, 3, 1))
  }
  
-@@ -70,10 +70,10 @@
+@@= skipped -65, +65 lines =@@
  
      commandLineArgs: edits[index].commandLineArgs || commandLineArgs,
  >commandLineArgs : Symbol(commandLineArgs, Decl(controlFlowElementAccessNoCrash1.ts, 25, 25))

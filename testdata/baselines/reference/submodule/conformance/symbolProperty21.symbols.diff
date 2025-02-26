@@ -1,6 +1,6 @@
 --- old.symbolProperty21.symbols
 +++ new.symbolProperty21.symbols
-@@ -7,17 +7,11 @@
+@@= skipped -7, +7 lines =@@
  >U : Symbol(U, Decl(symbolProperty21.ts, 0, 14))
  
      [Symbol.unscopables]: T;
@@ -20,7 +20,7 @@
  >U : Symbol(U, Decl(symbolProperty21.ts, 0, 14))
  }
  
-@@ -39,20 +33,11 @@
+@@= skipped -32, +26 lines =@@
  
      [Symbol.isConcatSpreadable]: "",
  >[Symbol.isConcatSpreadable] : Symbol([Symbol.isConcatSpreadable], Decl(symbolProperty21.ts, 7, 5))

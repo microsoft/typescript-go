@@ -1,6 +1,6 @@
 --- old.unusedLocalsAndParametersOverloadSignatures.symbols
 +++ new.unusedLocalsAndParametersOverloadSignatures.symbols
-@@ -35,13 +35,13 @@
+@@= skipped -35, +35 lines =@@
      }
  
      method(details: number, message: string, ...args: any[]): void;

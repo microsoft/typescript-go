@@ -1,6 +1,6 @@
 --- old.derivedClassOverridesWithoutSubtype.symbols
 +++ new.derivedClassOverridesWithoutSubtype.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Base : Symbol(Base, Decl(derivedClassOverridesWithoutSubtype.ts, 0, 0))
  
      x: {
@@ -9,7 +9,7 @@
  
          foo: string;
  >foo : Symbol(foo, Decl(derivedClassOverridesWithoutSubtype.ts, 1, 8))
-@@ -17,7 +17,7 @@
+@@= skipped -12, +12 lines =@@
  >Base : Symbol(Base, Decl(derivedClassOverridesWithoutSubtype.ts, 0, 0))
  
      x: {
@@ -18,7 +18,7 @@
  
          foo: any;
  >foo : Symbol(foo, Decl(derivedClassOverridesWithoutSubtype.ts, 7, 8))
-@@ -28,7 +28,7 @@
+@@= skipped -11, +11 lines =@@
  >Base2 : Symbol(Base2, Decl(derivedClassOverridesWithoutSubtype.ts, 10, 1))
  
      static y: {
@@ -27,7 +27,7 @@
  
          foo: string;
  >foo : Symbol(foo, Decl(derivedClassOverridesWithoutSubtype.ts, 13, 15))
-@@ -40,7 +40,7 @@
+@@= skipped -12, +12 lines =@@
  >Base2 : Symbol(Base2, Decl(derivedClassOverridesWithoutSubtype.ts, 10, 1))
  
      static y: {

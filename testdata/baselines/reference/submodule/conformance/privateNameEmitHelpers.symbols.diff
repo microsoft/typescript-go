@@ -1,6 +1,6 @@
 --- old.privateNameEmitHelpers.symbols
 +++ new.privateNameEmitHelpers.symbols
-@@ -5,17 +5,17 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(main.ts, 0, 0))
  
      #a = 1;
@@ -23,7 +23,7 @@
  >this : Symbol(C, Decl(main.ts, 0, 0))
  >v : Symbol(v, Decl(main.ts, 3, 11))
  }
-@@ -23,22 +23,22 @@
+@@= skipped -18, +18 lines =@@
  === tslib.d.ts ===
  // these are pre-TS4.3 versions of emit helpers, which only supported private instance fields
  export declare function __classPrivateFieldGet<T extends object, V>(receiver: T, state: any): V;

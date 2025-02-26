@@ -1,6 +1,6 @@
 --- old.importOnAliasedIdentifiers.symbols
 +++ new.importOnAliasedIdentifiers.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  
      export interface X { s: string }
  >X : Symbol(X, Decl(importOnAliasedIdentifiers.ts, 0, 10), Decl(importOnAliasedIdentifiers.ts, 2, 14))
@@ -9,7 +9,7 @@
  
      export var X: X;
  >X : Symbol(X, Decl(importOnAliasedIdentifiers.ts, 0, 10), Decl(importOnAliasedIdentifiers.ts, 2, 14))
-@@ -17,16 +17,16 @@
+@@= skipped -11, +11 lines =@@
  
      interface A { n: number }
  >A : Symbol(A, Decl(importOnAliasedIdentifiers.ts, 4, 10))

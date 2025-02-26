@@ -1,6 +1,6 @@
 --- old.decoratorMetadataGenericTypeVariableInScope.symbols
 +++ new.decoratorMetadataGenericTypeVariableInScope.symbols
-@@ -11,7 +11,7 @@
+@@= skipped -11, +11 lines =@@
  
    @Decorate
    member: TypeVariable;

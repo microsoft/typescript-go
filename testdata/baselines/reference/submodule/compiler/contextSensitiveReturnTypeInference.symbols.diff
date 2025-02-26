@@ -1,6 +1,6 @@
 --- old.contextSensitiveReturnTypeInference.symbols
 +++ new.contextSensitiveReturnTypeInference.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >IData : Symbol(IData, Decl(contextSensitiveReturnTypeInference.ts, 0, 0))
  
    bar: boolean
@@ -9,7 +9,7 @@
  }
  
  declare function test<TDependencies>(
-@@ -49,9 +49,9 @@
+@@= skipped -42, +42 lines =@@
  
      fn2: data.bar
  >fn2 : Symbol(fn2, Decl(contextSensitiveReturnTypeInference.ts, 17, 40))
@@ -21,7 +21,7 @@
  
    }),
    DEPS
-@@ -75,9 +75,9 @@
+@@= skipped -26, +26 lines =@@
  
      fn2: data.bar
  >fn2 : Symbol(fn2, Decl(contextSensitiveReturnTypeInference.ts, 25, 40))
@@ -33,7 +33,7 @@
  
    }),
    DEPS
-@@ -100,9 +100,9 @@
+@@= skipped -25, +25 lines =@@
  
      fn2: data.bar
  >fn2 : Symbol(fn2, Decl(contextSensitiveReturnTypeInference.ts, 33, 24))
@@ -45,7 +45,7 @@
  
    }),
    DEPS
-@@ -126,9 +126,9 @@
+@@= skipped -26, +26 lines =@@
  
        fn2: data.bar
  >fn2 : Symbol(fn2, Decl(contextSensitiveReturnTypeInference.ts, 42, 32))

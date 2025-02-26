@@ -1,6 +1,6 @@
 --- old.es5ModuleWithoutModuleGenTarget.symbols
 +++ new.es5ModuleWithoutModuleGenTarget.symbols
-@@ -9,7 +9,7 @@
+@@= skipped -9, +9 lines =@@
      }
  
      public B()

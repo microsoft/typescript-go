@@ -1,6 +1,6 @@
 --- old.duplicateOverloadInTypeAugmentation1.symbols
 +++ new.duplicateOverloadInTypeAugmentation1.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(lib.es5.d.ts, --, --), Decl(duplicateOverloadInTypeAugmentation1.ts, 0, 16))
  
      reduce(callbackfn: (previousValue: T, currentValue: T, currentIndex: number, array: T[]) => T,
@@ -9,7 +9,7 @@
  >callbackfn : Symbol(callbackfn, Decl(duplicateOverloadInTypeAugmentation1.ts, 1, 11))
  >previousValue : Symbol(previousValue, Decl(duplicateOverloadInTypeAugmentation1.ts, 1, 24))
  >T : Symbol(T, Decl(lib.es5.d.ts, --, --), Decl(duplicateOverloadInTypeAugmentation1.ts, 0, 16))
-@@ -23,7 +23,7 @@
+@@= skipped -17, +17 lines =@@
  >T : Symbol(T, Decl(lib.es5.d.ts, --, --), Decl(duplicateOverloadInTypeAugmentation1.ts, 0, 16))
  
      reduce<U>(callbackfn: (previousValue: U, currentValue: T, currentIndex: number, array: T[]) => U,
@@ -18,7 +18,7 @@
  >U : Symbol(U, Decl(duplicateOverloadInTypeAugmentation1.ts, 3, 11))
  >callbackfn : Symbol(callbackfn, Decl(duplicateOverloadInTypeAugmentation1.ts, 3, 14))
  >previousValue : Symbol(previousValue, Decl(duplicateOverloadInTypeAugmentation1.ts, 3, 27))
-@@ -46,9 +46,9 @@
+@@= skipped -23, +23 lines =@@
  
  var r5 = a.reduce((x, y) => x + y);
  >r5 : Symbol(r5, Decl(duplicateOverloadInTypeAugmentation1.ts, 7, 3))

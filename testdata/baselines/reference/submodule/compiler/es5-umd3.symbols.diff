@@ -1,6 +1,6 @@
 --- old.es5-umd3.symbols
 +++ new.es5-umd3.symbols
-@@ -2,7 +2,7 @@
+@@= skipped -2, +2 lines =@@
  
  === es5-umd3.ts ===
  export default class A
@@ -9,7 +9,7 @@
  {
      constructor ()
      {
-@@ -10,7 +10,7 @@
+@@= skipped -8, +8 lines =@@
      }
  
      public B()

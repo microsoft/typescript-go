@@ -1,6 +1,6 @@
 --- old.typeParamExtendsOtherTypeParam.symbols
 +++ new.typeParamExtendsOtherTypeParam.symbols
-@@ -15,7 +15,7 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(typeParamExtendsOtherTypeParam.ts, 1, 8))
  
      data: A<Object, Object>;
@@ -9,7 +9,7 @@
  >A : Symbol(A, Decl(typeParamExtendsOtherTypeParam.ts, 0, 0))
  >Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  >Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
-@@ -80,17 +80,17 @@
+@@= skipped -65, +65 lines =@@
  >I1 : Symbol(I1, Decl(typeParamExtendsOtherTypeParam.ts, 16, 51))
  
      a: string;

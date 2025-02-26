@@ -1,6 +1,6 @@
 --- old.sourceMapValidationClasses.symbols
 +++ new.sourceMapValidationClasses.symbols
-@@ -11,16 +11,16 @@
+@@= skipped -11, +11 lines =@@
  >Greeter : Symbol(Greeter, Decl(sourceMapValidationClasses.ts, 1, 17))
  
          constructor(public greeting: string) {
@@ -21,7 +21,7 @@
          }
      }
  
-@@ -41,9 +41,9 @@
+@@= skipped -30, +30 lines =@@
  
      var str = greeter.greet();
  >str : Symbol(str, Decl(sourceMapValidationClasses.ts, 18, 7))
@@ -33,7 +33,7 @@
  
      function foo2(greeting: string, ...restGreetings /* more greeting */: string[]) {
  >foo2 : Symbol(foo2, Decl(sourceMapValidationClasses.ts, 18, 30))
-@@ -62,15 +62,15 @@
+@@= skipped -21, +21 lines =@@
          for (var i = 0; i < restGreetings.length; i++) {
  >i : Symbol(i, Decl(sourceMapValidationClasses.ts, 23, 16))
  >i : Symbol(i, Decl(sourceMapValidationClasses.ts, 23, 16))
@@ -53,7 +53,7 @@
  >Greeter : Symbol(Greeter, Decl(sourceMapValidationClasses.ts, 1, 17))
  >restGreetings : Symbol(restGreetings, Decl(sourceMapValidationClasses.ts, 20, 35))
  >i : Symbol(i, Decl(sourceMapValidationClasses.ts, 23, 16))
-@@ -88,15 +88,15 @@
+@@= skipped -26, +26 lines =@@
      for (var j = 0; j < b.length; j++) {
  >j : Symbol(j, Decl(sourceMapValidationClasses.ts, 32, 12))
  >j : Symbol(j, Decl(sourceMapValidationClasses.ts, 32, 12))

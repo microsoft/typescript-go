@@ -1,6 +1,6 @@
 --- old.metadataReferencedWithinFilteredUnion.symbols
 +++ new.metadataReferencedWithinFilteredUnion.symbols
-@@ -21,7 +21,7 @@
+@@= skipped -21, +21 lines =@@
  >decorate : Symbol(decorate, Decl(Class2.ts, 0, 34))
  
      get prop(): Class1 | undefined {

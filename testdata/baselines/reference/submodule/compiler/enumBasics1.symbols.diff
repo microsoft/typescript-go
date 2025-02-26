@@ -1,6 +1,6 @@
 --- old.enumBasics1.symbols
 +++ new.enumBasics1.symbols
-@@ -5,13 +5,13 @@
+@@= skipped -5, +5 lines =@@
  >E : Symbol(E, Decl(enumBasics1.ts, 0, 0))
  
  	A = 1,
@@ -17,7 +17,7 @@
  }
  
  /*
-@@ -34,27 +34,27 @@
+@@= skipped -29, +29 lines =@@
  var e = E; // shouldn't error
  */
  E.A.A; // should error

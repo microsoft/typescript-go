@@ -1,6 +1,6 @@
 --- old.contextualSignatureInstatiationCovariance.symbols
 +++ new.contextualSignatureInstatiationCovariance.symbols
-@@ -3,17 +3,17 @@
+@@= skipped -3, +3 lines =@@
  === contextualSignatureInstatiationCovariance.ts ===
  interface Animal { x }
  >Animal : Symbol(Animal, Decl(contextualSignatureInstatiationCovariance.ts, 0, 0))

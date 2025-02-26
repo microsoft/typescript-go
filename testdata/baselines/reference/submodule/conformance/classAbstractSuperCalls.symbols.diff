@@ -1,6 +1,6 @@
 --- old.classAbstractSuperCalls.symbols
 +++ new.classAbstractSuperCalls.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(classAbstractSuperCalls.ts, 0, 0))
  
      foo() { return 1; }
@@ -9,7 +9,7 @@
  }
  
  abstract class B extends A {
-@@ -13,19 +13,19 @@
+@@= skipped -8, +8 lines =@@
  >A : Symbol(A, Decl(classAbstractSuperCalls.ts, 0, 0))
  
      abstract foo();
@@ -36,7 +36,7 @@
  }
  
  class C extends B {
-@@ -33,35 +33,35 @@
+@@= skipped -20, +20 lines =@@
  >B : Symbol(B, Decl(classAbstractSuperCalls.ts, 2, 1))
  
      foo() { return 2; }
@@ -85,7 +85,7 @@
  }
  
  abstract class BB extends AA {
-@@ -69,7 +69,7 @@
+@@= skipped -36, +36 lines =@@
  >AA : Symbol(AA, Decl(classAbstractSuperCalls.ts, 14, 1))
  
      abstract foo();

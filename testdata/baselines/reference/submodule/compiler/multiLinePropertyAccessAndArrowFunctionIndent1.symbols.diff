@@ -1,6 +1,6 @@
 --- old.multiLinePropertyAccessAndArrowFunctionIndent1.symbols
 +++ new.multiLinePropertyAccessAndArrowFunctionIndent1.symbols
-@@ -15,7 +15,7 @@
+@@= skipped -15, +15 lines =@@
              .then((data: ng.IHttpPromiseCallbackArg<Role>) => data.data));
  >data : Symbol(data, Decl(multiLinePropertyAccessAndArrowFunctionIndent1.ts, 3, 19))
  >ng : Symbol(ng)

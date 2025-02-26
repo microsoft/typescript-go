@@ -1,6 +1,6 @@
 --- old.avoidCycleWithVoidExpressionReturnedFromArrow.symbols
 +++ new.avoidCycleWithVoidExpressionReturnedFromArrow.symbols
-@@ -10,7 +10,7 @@
+@@= skipped -10, +10 lines =@@
  >HowlOptions : Symbol(HowlOptions, Decl(avoidCycleWithVoidExpressionReturnedFromArrow.ts, 0, 67))
  
    onplayerror?: HowlErrorCallback | undefined;
@@ -9,7 +9,7 @@
  >HowlErrorCallback : Symbol(HowlErrorCallback, Decl(avoidCycleWithVoidExpressionReturnedFromArrow.ts, 0, 0))
  }
  
-@@ -18,18 +18,18 @@
+@@= skipped -8, +8 lines =@@
  >Howl : Symbol(Howl, Decl(avoidCycleWithVoidExpressionReturnedFromArrow.ts, 4, 1))
  
    constructor(public readonly options: HowlOptions) {}
@@ -32,7 +32,7 @@
  >name : Symbol(name, Decl(avoidCycleWithVoidExpressionReturnedFromArrow.ts, 8, 7))
  >fn : Symbol(fn, Decl(avoidCycleWithVoidExpressionReturnedFromArrow.ts, 8, 22))
    }
-@@ -41,9 +41,9 @@
+@@= skipped -23, +23 lines =@@
  
    onplayerror: () => void instance.once("unlock", () => {}),
  >onplayerror : Symbol(onplayerror, Decl(avoidCycleWithVoidExpressionReturnedFromArrow.ts, 13, 27))

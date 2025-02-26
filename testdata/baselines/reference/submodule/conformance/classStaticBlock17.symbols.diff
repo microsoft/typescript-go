@@ -1,6 +1,6 @@
 --- old.classStaticBlock17.symbols
 +++ new.classStaticBlock17.symbols
-@@ -15,22 +15,22 @@
+@@= skipped -15, +15 lines =@@
  >A : Symbol(A, Decl(classStaticBlock17.ts, 0, 65))
  
    #x: number;
@@ -27,7 +27,7 @@
  >this : Symbol(A, Decl(classStaticBlock17.ts, 0, 65))
    }
  
-@@ -41,14 +41,14 @@
+@@= skipped -26, +26 lines =@@
        getX(obj) { return obj.#x },
  >getX : Symbol(getX, Decl(classStaticBlock17.ts, 14, 15))
  >obj : Symbol(obj, Decl(classStaticBlock17.ts, 15, 11))
@@ -44,7 +44,7 @@
  >obj : Symbol(obj, Decl(classStaticBlock17.ts, 16, 11))
  >value : Symbol(value, Decl(classStaticBlock17.ts, 16, 15))
  
-@@ -89,7 +89,7 @@
+@@= skipped -48, +48 lines =@@
  >a : Symbol(a, Decl(classStaticBlock17.ts, 28, 5))
  
  a.getX();

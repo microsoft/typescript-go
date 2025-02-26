@@ -1,6 +1,6 @@
 --- old.exportAndImport-es5.symbols
 +++ new.exportAndImport-es5.symbols
-@@ -2,7 +2,7 @@
+@@= skipped -2, +2 lines =@@
  
  === m1.ts ===
  export default function f1() {
@@ -9,7 +9,7 @@
  }
  
  === m2.ts ===
-@@ -10,7 +10,7 @@
+@@= skipped -8, +8 lines =@@
  >f1 : Symbol(f1, Decl(m2.ts, 0, 6))
  
  export default function f2() {

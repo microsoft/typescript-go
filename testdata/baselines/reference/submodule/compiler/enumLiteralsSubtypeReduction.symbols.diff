@@ -1,6 +1,6 @@
 --- old.enumLiteralsSubtypeReduction.symbols
 +++ new.enumLiteralsSubtypeReduction.symbols
-@@ -5,3076 +5,3076 @@
+@@= skipped -5, +5 lines =@@
  >E : Symbol(E, Decl(enumLiteralsSubtypeReduction.ts, 0, 0))
  
      E0,
@@ -4101,7 +4101,7 @@
  }
  function run(a: number) {
  >run : Symbol(run, Decl(enumLiteralsSubtypeReduction.ts, 1025, 1))
-@@ -3085,4611 +3085,4611 @@
+@@= skipped -3080, +3080 lines =@@
  
          case 0:
              return [ E.E0, E.E1]

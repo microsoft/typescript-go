@@ -1,6 +1,6 @@
 --- old.neverType.symbols
 +++ new.neverType.symbols
-@@ -99,24 +99,24 @@
+@@= skipped -99, +99 lines =@@
  >C : Symbol(C, Decl(neverType.ts, 47, 1))
  
      void1() {

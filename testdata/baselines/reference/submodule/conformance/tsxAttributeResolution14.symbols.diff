@@ -1,6 +1,6 @@
 --- old.tsxAttributeResolution14.symbols
 +++ new.tsxAttributeResolution14.symbols
-@@ -11,11 +11,11 @@
+@@= skipped -11, +11 lines =@@
  >IntrinsicElements : Symbol(IntrinsicElements, Decl(react.d.ts, 1, 22))
  
          div: any;
@@ -14,7 +14,7 @@
  }
  
  === file.tsx ===
-@@ -23,7 +23,7 @@
+@@= skipped -12, +12 lines =@@
  >IProps : Symbol(IProps, Decl(file.tsx, 0, 0))
  
    primaryText: string,
@@ -23,7 +23,7 @@
  
    [propName: string]: string | number
  >propName : Symbol(propName, Decl(file.tsx, 2, 3))
-@@ -35,8 +35,6 @@
+@@= skipped -12, +12 lines =@@
  >IProps : Symbol(IProps, Decl(file.tsx, 0, 0))
  
    return <div>props.primaryText</div>
@@ -32,7 +32,7 @@
  }
  
  function VerticalNav() {
-@@ -44,8 +42,6 @@
+@@= skipped -9, +7 lines =@@
  
    return (
      <div>
@@ -41,7 +41,7 @@
        <VerticalNavMenuItem primaryText={2} />  // error
  >VerticalNavMenuItem : Symbol(VerticalNavMenuItem, Decl(file.tsx, 3, 1))
  >primaryText : Symbol(primaryText, Decl(file.tsx, 12, 26))
-@@ -61,7 +57,5 @@
+@@= skipped -17, +15 lines =@@
  >primaryText : Symbol(primaryText, Decl(file.tsx, 14, 49))
  
      </div>

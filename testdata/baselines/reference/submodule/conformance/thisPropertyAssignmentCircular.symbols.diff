@@ -1,6 +1,6 @@
 --- old.thisPropertyAssignmentCircular.symbols
 +++ new.thisPropertyAssignmentCircular.symbols
-@@ -6,30 +6,20 @@
+@@= skipped -6, +6 lines =@@
  
      constructor() {
          this.foo = "Hello";
@@ -33,7 +33,7 @@
      }
  }
  
-@@ -38,18 +28,6 @@
+@@= skipped -32, +22 lines =@@
  >C : Symbol(C, Decl(thisPropertyAssignmentCircular.js, 10, 1))
  
      this.x = 0;

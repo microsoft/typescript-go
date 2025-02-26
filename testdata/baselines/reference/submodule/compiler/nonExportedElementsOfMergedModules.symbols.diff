@@ -1,6 +1,6 @@
 --- old.nonExportedElementsOfMergedModules.symbols
 +++ new.nonExportedElementsOfMergedModules.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  
      enum A { X }
  >A : Symbol(A, Decl(nonExportedElementsOfMergedModules.ts, 0, 12))
@@ -9,7 +9,7 @@
  
      module B {
  >B : Symbol(B, Decl(nonExportedElementsOfMergedModules.ts, 1, 16))
-@@ -21,7 +21,7 @@
+@@= skipped -15, +15 lines =@@
  
      enum A { Y }
  >A : Symbol(A, Decl(nonExportedElementsOfMergedModules.ts, 7, 12))
@@ -18,7 +18,7 @@
  
      module B {
  >B : Symbol(B, Decl(nonExportedElementsOfMergedModules.ts, 8, 16))
-@@ -33,8 +33,8 @@
+@@= skipped -12, +12 lines =@@
  >B : Symbol(B, Decl(nonExportedElementsOfMergedModules.ts, 8, 16))
  
      B.y;

@@ -1,6 +1,6 @@
 --- old.decoratorsOnComputedProperties.symbols
 +++ new.decoratorsOnComputedProperties.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >x : Symbol(x, Decl(decoratorsOnComputedProperties.ts, 0, 0))
  >o : Symbol(o, Decl(decoratorsOnComputedProperties.ts, 0, 11))
  >k : Symbol(k, Decl(decoratorsOnComputedProperties.ts, 0, 21))
@@ -9,7 +9,7 @@
  
  let i = 0;
  >i : Symbol(i, Decl(decoratorsOnComputedProperties.ts, 1, 3))
-@@ -28,74 +28,62 @@
+@@= skipped -23, +23 lines =@@
  
      @x ["property"]: any;
  >x : Symbol(x, Decl(decoratorsOnComputedProperties.ts, 0, 0))
@@ -102,7 +102,7 @@
  >fieldNameC : Symbol(fieldNameC, Decl(decoratorsOnComputedProperties.ts, 6, 5))
  }
  
-@@ -104,74 +92,62 @@
+@@= skipped -76, +64 lines =@@
  
      @x ["property"]: any;
  >x : Symbol(x, Decl(decoratorsOnComputedProperties.ts, 0, 0))
@@ -195,7 +195,7 @@
  >fieldNameC : Symbol(fieldNameC, Decl(decoratorsOnComputedProperties.ts, 6, 5))
  
  };
-@@ -181,78 +157,66 @@
+@@= skipped -77, +65 lines =@@
  
      @x ["property"]: any;
  >x : Symbol(x, Decl(decoratorsOnComputedProperties.ts, 0, 0))
@@ -293,7 +293,7 @@
  }
  
  void class D {
-@@ -260,78 +224,66 @@
+@@= skipped -79, +67 lines =@@
  
      @x ["property"]: any;
  >x : Symbol(x, Decl(decoratorsOnComputedProperties.ts, 0, 0))
@@ -391,7 +391,7 @@
  
  };
  
-@@ -340,77 +292,65 @@
+@@= skipped -80, +68 lines =@@
  
      @x ["property"]: any;
  >x : Symbol(x, Decl(decoratorsOnComputedProperties.ts, 0, 0))
@@ -488,7 +488,7 @@
  >fieldNameC : Symbol(fieldNameC, Decl(decoratorsOnComputedProperties.ts, 6, 5))
  }
  
-@@ -419,77 +359,65 @@
+@@= skipped -79, +67 lines =@@
  
      @x ["property"]: any;
  >x : Symbol(x, Decl(decoratorsOnComputedProperties.ts, 0, 0))
@@ -585,7 +585,7 @@
  >fieldNameC : Symbol(fieldNameC, Decl(decoratorsOnComputedProperties.ts, 6, 5))
  
  };
-@@ -499,80 +427,68 @@
+@@= skipped -80, +68 lines =@@
  
      @x ["property"]: any;
  >x : Symbol(x, Decl(decoratorsOnComputedProperties.ts, 0, 0))
@@ -686,7 +686,7 @@
  >fieldNameC : Symbol(fieldNameC, Decl(decoratorsOnComputedProperties.ts, 6, 5))
  }
  
-@@ -581,80 +497,68 @@
+@@= skipped -82, +70 lines =@@
  
      @x ["property"]: any;
  >x : Symbol(x, Decl(decoratorsOnComputedProperties.ts, 0, 0))
@@ -787,7 +787,7 @@
  >fieldNameC : Symbol(fieldNameC, Decl(decoratorsOnComputedProperties.ts, 6, 5))
  
  };
-@@ -664,81 +568,69 @@
+@@= skipped -83, +71 lines =@@
  
      @x ["property"]: any;
  >x : Symbol(x, Decl(decoratorsOnComputedProperties.ts, 0, 0))
@@ -889,7 +889,7 @@
  >fieldNameC : Symbol(fieldNameC, Decl(decoratorsOnComputedProperties.ts, 6, 5))
  }
  
-@@ -747,81 +639,69 @@
+@@= skipped -83, +71 lines =@@
  
      @x ["property"]: any;
  >x : Symbol(x, Decl(decoratorsOnComputedProperties.ts, 0, 0))

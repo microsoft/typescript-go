@@ -1,6 +1,6 @@
 --- old.nodeModulesTripleSlashReferenceModeOverrideOldResolutionError.symbols
 +++ new.nodeModulesTripleSlashReferenceModeOverrideOldResolutionError.symbols
-@@ -4,20 +4,10 @@
+@@= skipped -4, +4 lines =@@
  /// <reference types="pkg" resolution-mode="require" />
  /// <reference types="pkg" resolution-mode="import" />
  foo;

@@ -1,6 +1,6 @@
 --- old.parserRealSource2.symbols
 +++ new.parserRealSource2.symbols
-@@ -23,532 +23,532 @@
+@@= skipped -23, +23 lines =@@
  >ErrorRecoverySet : Symbol(ErrorRecoverySet, Decl(parserRealSource2.ts, 9, 5))
  
          None = 0,
@@ -713,7 +713,7 @@
      }
  
      export function ToDeclFlags(fncFlags: FncFlags) : DeclFlags;
-@@ -588,82 +588,82 @@
+@@= skipped -565, +565 lines =@@
  >TypeFlags : Symbol(TypeFlags, Decl(parserRealSource2.ts, 208, 5))
  
          None = 0,
@@ -818,7 +818,7 @@
      }
  
      // Compiler defaults to generating ES5-compliant code for
-@@ -671,16 +671,16 @@
+@@= skipped -83, +83 lines =@@
      export var codeGenTarget: CodeGenTarget = CodeGenTarget.ES3;
  >codeGenTarget : Symbol(codeGenTarget, Decl(parserRealSource2.ts, 246, 14))
  >CodeGenTarget : Symbol(CodeGenTarget, Decl(parserRealSource2.ts, 231, 5))
@@ -839,7 +839,7 @@
  
      export var optimizeModuleCodeGen = true;
  >optimizeModuleCodeGen : Symbol(optimizeModuleCodeGen, Decl(parserRealSource2.ts, 250, 14))
-@@ -713,9 +713,9 @@
+@@= skipped -42, +42 lines =@@
  >i : Symbol(i, Decl(parserRealSource2.ts, 254, 16))
  
                          if (builder.length > 0) {

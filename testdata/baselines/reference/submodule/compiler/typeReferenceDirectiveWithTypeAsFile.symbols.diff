@@ -1,6 +1,6 @@
 --- old.typeReferenceDirectiveWithTypeAsFile.symbols
 +++ new.typeReferenceDirectiveWithTypeAsFile.symbols
-@@ -1,10 +1,6 @@
+@@= skipped -1, +1 lines =@@
  //// [tests/cases/compiler/typeReferenceDirectiveWithTypeAsFile.ts] ////
  
  === /a.ts ===

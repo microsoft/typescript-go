@@ -1,6 +1,6 @@
 --- old.destructureTupleWithVariableElement.symbols
 +++ new.destructureTupleWithVariableElement.symbols
-@@ -18,19 +18,15 @@
+@@= skipped -18, +18 lines =@@
  >strings : Symbol(strings, Decl(destructureTupleWithVariableElement.ts, 4, 5))
  
  s0.toUpperCase()
@@ -22,7 +22,7 @@
  
  declare const strings2: [string, ...Array<string>, string]
  >strings2 : Symbol(strings2, Decl(destructureTupleWithVariableElement.ts, 11, 13))
-@@ -43,17 +39,15 @@
+@@= skipped -25, +21 lines =@@
  >strings2 : Symbol(strings2, Decl(destructureTupleWithVariableElement.ts, 11, 13))
  
  s3.toUpperCase()

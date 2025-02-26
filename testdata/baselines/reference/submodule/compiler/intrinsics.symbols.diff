@@ -1,6 +1,6 @@
 --- old.intrinsics.symbols
 +++ new.intrinsics.symbols
-@@ -23,9 +23,9 @@
+@@= skipped -23, +23 lines =@@
  
  __proto__ = 0; // Error, __proto__ not defined
  m1.__proto__ = 0;

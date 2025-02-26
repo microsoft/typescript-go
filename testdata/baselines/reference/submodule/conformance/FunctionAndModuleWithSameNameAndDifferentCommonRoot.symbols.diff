@@ -1,6 +1,6 @@
 --- old.FunctionAndModuleWithSameNameAndDifferentCommonRoot.symbols
 +++ new.FunctionAndModuleWithSameNameAndDifferentCommonRoot.symbols
-@@ -35,9 +35,9 @@
+@@= skipped -35, +35 lines =@@
  
  var fn = A.Point;
  >fn : Symbol(fn, Decl(test.ts, 0, 3), Decl(test.ts, 1, 3))
@@ -12,7 +12,7 @@
  
  var cl: { x: number; y: number; }
  >cl : Symbol(cl, Decl(test.ts, 3, 3), Decl(test.ts, 4, 3))
-@@ -46,9 +46,9 @@
+@@= skipped -11, +11 lines =@@
  
  var cl = B.Point.Origin;
  >cl : Symbol(cl, Decl(test.ts, 3, 3), Decl(test.ts, 4, 3))

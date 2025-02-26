@@ -1,6 +1,6 @@
 --- old.augmentedTypesInterface.symbols
 +++ new.augmentedTypesInterface.symbols
-@@ -7,14 +7,14 @@
+@@= skipped -7, +7 lines =@@
  >i : Symbol(i, Decl(augmentedTypesInterface.ts, 0, 0), Decl(augmentedTypesInterface.ts, 4, 1))
  
      foo(): void;
@@ -17,7 +17,7 @@
  }
  
  // interface then class
-@@ -22,14 +22,14 @@
+@@= skipped -15, +15 lines =@@
  >i2 : Symbol(i2, Decl(augmentedTypesInterface.ts, 8, 1), Decl(augmentedTypesInterface.ts, 13, 1))
  
      foo(): void;
@@ -34,7 +34,7 @@
  
          return 1;
      }
-@@ -40,18 +40,18 @@
+@@= skipped -18, +18 lines =@@
  >i3 : Symbol(i3, Decl(augmentedTypesInterface.ts, 19, 1))
  
      foo(): void;

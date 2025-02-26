@@ -1,6 +1,6 @@
 --- old.compositeWithNodeModulesSourceFile.symbols
 +++ new.compositeWithNodeModulesSourceFile.symbols
-@@ -5,9 +5,9 @@
+@@= skipped -5, +5 lines =@@
  >myModule : Symbol(myModule, Decl(test.ts, 0, 0))
  
  new myModule.c();

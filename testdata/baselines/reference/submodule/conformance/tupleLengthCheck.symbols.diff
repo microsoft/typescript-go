@@ -1,6 +1,6 @@
 --- old.tupleLengthCheck.symbols
 +++ new.tupleLengthCheck.symbols
-@@ -10,7 +10,7 @@
+@@= skipped -10, +10 lines =@@
  const a1 = a[1]
  >a1 : Symbol(a1, Decl(tupleLengthCheck.ts, 3, 5))
  >a : Symbol(a, Decl(tupleLengthCheck.ts, 0, 13))
@@ -9,7 +9,7 @@
  
  const a2 = a[2]
  >a2 : Symbol(a2, Decl(tupleLengthCheck.ts, 4, 5))
-@@ -23,7 +23,7 @@
+@@= skipped -13, +13 lines =@@
  const a4 = rest[1]
  >a4 : Symbol(a4, Decl(tupleLengthCheck.ts, 7, 5))
  >rest : Symbol(rest, Decl(tupleLengthCheck.ts, 1, 13))

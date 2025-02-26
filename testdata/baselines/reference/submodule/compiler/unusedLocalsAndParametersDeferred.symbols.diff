@@ -1,6 +1,6 @@
 --- old.unusedLocalsAndParametersDeferred.symbols
 +++ new.unusedLocalsAndParametersDeferred.symbols
-@@ -70,7 +70,7 @@
+@@= skipped -70, +70 lines =@@
  
      // Method declaration paramter
      method(a) {
@@ -9,7 +9,7 @@
  >a : Symbol(a, Decl(unusedLocalsAndParametersDeferred.ts, 34, 11))
  
          defered(() => {
-@@ -83,7 +83,7 @@
+@@= skipped -13, +13 lines =@@
      }
      // Accessor declaration paramter
      set x(v: number) {
@@ -18,7 +18,7 @@
  >v : Symbol(v, Decl(unusedLocalsAndParametersDeferred.ts, 40, 10))
  
          defered(() => {
-@@ -96,7 +96,7 @@
+@@= skipped -13, +13 lines =@@
      }
      // in a property initalizer
      p = defered(() => {
@@ -27,7 +27,7 @@
  >defered : Symbol(defered, Decl(unusedLocalsAndParametersDeferred.ts, 0, 11))
  
          prop1;
-@@ -116,7 +116,7 @@
+@@= skipped -20, +20 lines =@@
  
      // Method declaration paramter
      method(a) {
@@ -36,7 +36,7 @@
  >a : Symbol(a, Decl(unusedLocalsAndParametersDeferred.ts, 57, 11))
  
          defered(() => {
-@@ -129,7 +129,7 @@
+@@= skipped -13, +13 lines =@@
      }
      // Accessor declaration paramter
      set x(v: number) {
@@ -45,7 +45,7 @@
  >v : Symbol(v, Decl(unusedLocalsAndParametersDeferred.ts, 63, 10))
  
          defered(() => {
-@@ -142,7 +142,7 @@
+@@= skipped -13, +13 lines =@@
      }
      // in a property initalizer
      p = defered(() => {

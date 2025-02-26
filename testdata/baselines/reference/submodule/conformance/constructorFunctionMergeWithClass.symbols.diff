@@ -1,6 +1,6 @@
 --- old.constructorFunctionMergeWithClass.symbols
 +++ new.constructorFunctionMergeWithClass.symbols
-@@ -2,24 +2,18 @@
+@@= skipped -2, +2 lines =@@
  
  === file1.js ===
  var SomeClass = function () {

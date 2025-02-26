@@ -1,6 +1,6 @@
 --- old.symbolDeclarationEmit9.symbols
 +++ new.symbolDeclarationEmit9.symbols
-@@ -6,7 +6,4 @@
+@@= skipped -6, +6 lines =@@
  
      [Symbol.isConcatSpreadable]() { }
  >[Symbol.isConcatSpreadable] : Symbol([Symbol.isConcatSpreadable], Decl(symbolDeclarationEmit9.ts, 0, 11))

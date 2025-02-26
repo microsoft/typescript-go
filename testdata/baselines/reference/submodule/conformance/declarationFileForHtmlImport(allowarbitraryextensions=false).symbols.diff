@@ -1,6 +1,6 @@
 --- old.declarationFileForHtmlImport(allowarbitraryextensions=false).symbols
 +++ new.declarationFileForHtmlImport(allowarbitraryextensions=false).symbols
-@@ -21,7 +21,7 @@
+@@= skipped -21, +21 lines =@@
  >HTMLElement : Symbol(HTMLElement, Decl(lib.dom.d.ts, --, --), Decl(lib.dom.d.ts, --, --))
  
      connectedCallback(): void;
@@ -9,7 +9,7 @@
  }
  
  === file.ts ===
-@@ -29,22 +29,28 @@
+@@= skipped -8, +8 lines =@@
  >mod : Symbol(mod, Decl(file.ts, 0, 6))
  
  window.customElements.define("my-html5-element", mod.HTML5Element);

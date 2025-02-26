@@ -1,6 +1,6 @@
 --- old.correctOrderOfPromiseMethod.symbols
 +++ new.correctOrderOfPromiseMethod.symbols
-@@ -5,17 +5,17 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(correctOrderOfPromiseMethod.ts, 0, 0))
  
      id: string
@@ -21,7 +21,7 @@
  }
  
  async function countEverything(): Promise<number> {
-@@ -35,9 +35,9 @@
+@@= skipped -30, +30 lines =@@
      const [resultA, resultB] = await Promise.all([
  >resultA : Symbol(resultA, Decl(correctOrderOfPromiseMethod.ts, 13, 11))
  >resultB : Symbol(resultB, Decl(correctOrderOfPromiseMethod.ts, 13, 19))
@@ -33,7 +33,7 @@
  
          providerA(),
  >providerA : Symbol(providerA, Decl(correctOrderOfPromiseMethod.ts, 10, 9))
-@@ -62,12 +62,12 @@
+@@= skipped -27, +27 lines =@@
  >dataB : Symbol(dataB, Decl(correctOrderOfPromiseMethod.ts, 19, 9))
  
          return dataA.length + dataB.length;
@@ -50,7 +50,7 @@
      }
      return 0;
  }
-@@ -77,8 +77,8 @@
+@@= skipped -15, +15 lines =@@
  const expected: Promise<["a", "b", "c"]> = Promise.all(undefined as readonly ["a", "b", "c"]);
  >expected : Symbol(expected, Decl(correctOrderOfPromiseMethod.ts, 28, 5))
  >Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))

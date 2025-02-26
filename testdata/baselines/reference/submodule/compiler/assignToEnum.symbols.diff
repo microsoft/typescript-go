@@ -1,6 +1,6 @@
 --- old.assignToEnum.symbols
 +++ new.assignToEnum.symbols
-@@ -3,8 +3,8 @@
+@@= skipped -3, +3 lines =@@
  === assignToEnum.ts ===
  enum A { foo, bar }
  >A : Symbol(A, Decl(assignToEnum.ts, 0, 0))
@@ -11,7 +11,7 @@
  
  A = undefined;  // invalid LHS
  >A : Symbol(A, Decl(assignToEnum.ts, 0, 0))
-@@ -12,21 +12,21 @@
+@@= skipped -9, +9 lines =@@
  
  A = A.bar;      // invalid LHS
  >A : Symbol(A, Decl(assignToEnum.ts, 0, 0))

@@ -1,6 +1,6 @@
 --- old.interfaceImplementation6.symbols
 +++ new.interfaceImplementation6.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >I1 : Symbol(I1, Decl(interfaceImplementation6.ts, 0, 0))
  
      item:number;
@@ -9,7 +9,7 @@
  }
  
  class C1 implements I1 {
-@@ -13,7 +13,7 @@
+@@= skipped -8, +8 lines =@@
  >I1 : Symbol(I1, Decl(interfaceImplementation6.ts, 0, 0))
  
      public item:number;
@@ -18,7 +18,7 @@
  }
  
  class C2 implements I1 {
-@@ -21,7 +21,7 @@
+@@= skipped -8, +8 lines =@@
  >I1 : Symbol(I1, Decl(interfaceImplementation6.ts, 0, 0))
  
      private item:number;
@@ -27,7 +27,7 @@
  }
  
  class C3 implements I1 {
-@@ -38,7 +38,7 @@
+@@= skipped -17, +17 lines =@@
  >Test : Symbol(Test, Decl(interfaceImplementation6.ts, 16, 1))
  
      private pt: I1 = { item: 1 };

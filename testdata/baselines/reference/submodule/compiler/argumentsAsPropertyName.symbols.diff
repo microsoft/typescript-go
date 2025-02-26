@@ -1,6 +1,6 @@
 --- old.argumentsAsPropertyName.symbols
 +++ new.argumentsAsPropertyName.symbols
-@@ -36,8 +36,8 @@
+@@= skipped -36, +36 lines =@@
  >x : Symbol(x, Decl(argumentsAsPropertyName.ts, 11, 13))
  
          [1, 2, 3].forEach(function(j) { use(x); })

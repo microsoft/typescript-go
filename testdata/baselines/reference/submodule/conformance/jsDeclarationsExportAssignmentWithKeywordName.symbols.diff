@@ -1,6 +1,6 @@
 --- old.jsDeclarationsExportAssignmentWithKeywordName.symbols
 +++ new.jsDeclarationsExportAssignmentWithKeywordName.symbols
-@@ -5,10 +5,6 @@
+@@= skipped -5, +5 lines =@@
  >x : Symbol(x, Decl(index.js, 0, 3))
  
  module.exports = {

@@ -1,6 +1,6 @@
 --- old.superSymbolIndexedAccess3.symbols
 +++ new.superSymbolIndexedAccess3.symbols
-@@ -3,15 +3,12 @@
+@@= skipped -3, +3 lines =@@
  === superSymbolIndexedAccess3.ts ===
  var symbol = Symbol.for('myThing');
  >symbol : Symbol(symbol, Decl(superSymbolIndexedAccess3.ts, 0, 3))
@@ -17,7 +17,7 @@
  >symbol : Symbol(symbol, Decl(superSymbolIndexedAccess3.ts, 0, 3))
  
          return 0;
-@@ -23,7 +20,7 @@
+@@= skipped -20, +17 lines =@@
  >Foo : Symbol(Foo, Decl(superSymbolIndexedAccess3.ts, 0, 35))
  
      [symbol]() {

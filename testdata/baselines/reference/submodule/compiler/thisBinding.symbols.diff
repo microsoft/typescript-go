@@ -1,6 +1,6 @@
 --- old.thisBinding.symbols
 +++ new.thisBinding.symbols
-@@ -8,17 +8,17 @@
+@@= skipped -8, +8 lines =@@
  >I : Symbol(I, Decl(thisBinding.ts, 0, 10))
  
  	z;
@@ -21,7 +21,7 @@
  >x : Symbol(x, Decl(thisBinding.ts, 7, 3))
  >I : Symbol(I, Decl(thisBinding.ts, 0, 10))
  
-@@ -26,18 +26,18 @@
+@@= skipped -18, +18 lines =@@
  >x : Symbol(x, Decl(thisBinding.ts, 7, 3))
  
  	    x.z;  // ok 
@@ -44,7 +44,7 @@
  >f : Symbol(f, Decl(thisBinding.ts, 12, 8))
  >I : Symbol(I, Decl(thisBinding.ts, 0, 10))
      }
-@@ -48,7 +48,7 @@
+@@= skipped -22, +22 lines =@@
  >C : Symbol(C, Decl(thisBinding.ts, 15, 1))
  
      f(x: number) {

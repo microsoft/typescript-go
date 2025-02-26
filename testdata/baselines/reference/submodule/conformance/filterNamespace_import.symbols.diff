@@ -1,6 +1,6 @@
 --- old.filterNamespace_import.symbols
 +++ new.filterNamespace_import.symbols
-@@ -20,7 +20,7 @@
+@@= skipped -20, +20 lines =@@
  >NestedClass : Symbol(NestedClass, Decl(ns.ts, 4, 27))
  
        a!: string;
@@ -9,7 +9,7 @@
      }
    }
  }
-@@ -33,29 +33,29 @@
+@@= skipped -13, +13 lines =@@
  >ns : Symbol(ns, Decl(a.ts, 0, 6))
  
  ns.Class; // Error

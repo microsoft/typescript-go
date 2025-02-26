@@ -1,6 +1,6 @@
 --- old.es2018IntlAPIs.symbols
 +++ new.es2018IntlAPIs.symbols
-@@ -12,35 +12,35 @@
+@@= skipped -12, +12 lines =@@
  >const : Symbol(const)
  
  console.log(Intl.PluralRules.supportedLocalesOf(locales, options).join(', '));

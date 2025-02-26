@@ -1,6 +1,6 @@
 --- old.enumMergingErrors.symbols
 +++ new.enumMergingErrors.symbols
-@@ -7,51 +7,51 @@
+@@= skipped -7, +7 lines =@@
  
      export enum E1 { A = 0 }
  >E1 : Symbol(E1, Decl(enumMergingErrors.ts, 1, 10), Decl(enumMergingErrors.ts, 6, 10), Decl(enumMergingErrors.ts, 11, 10))
@@ -67,7 +67,7 @@
  }
  
  // Enum with no initializer in either declaration with constant members with the same root module
-@@ -60,21 +60,21 @@
+@@= skipped -53, +53 lines =@@
  
      export enum E1 { A = 0 }
  >E1 : Symbol(E1, Decl(enumMergingErrors.ts, 18, 11), Decl(enumMergingErrors.ts, 21, 11), Decl(enumMergingErrors.ts, 24, 11))
@@ -92,7 +92,7 @@
  }
  
  
-@@ -84,21 +84,21 @@
+@@= skipped -24, +24 lines =@@
  
      export enum E1 { A }
  >E1 : Symbol(E1, Decl(enumMergingErrors.ts, 30, 11), Decl(enumMergingErrors.ts, 33, 11), Decl(enumMergingErrors.ts, 36, 11))

@@ -1,6 +1,6 @@
 --- old.indexTypeCheck.symbols
 +++ new.indexTypeCheck.symbols
-@@ -124,23 +124,23 @@
+@@= skipped -124, +124 lines =@@
  >Benchmark : Symbol(Benchmark, Decl(indexTypeCheck.ts, 53, 5))
  
      public results: { [x:string]: any; } = <{ [x:string]: any; }>{};

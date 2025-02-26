@@ -1,6 +1,6 @@
 --- old.classMergedWithInterfaceMultipleBasesNoError.symbols
 +++ new.classMergedWithInterfaceMultipleBasesNoError.symbols
-@@ -22,11 +22,11 @@
+@@= skipped -22, +22 lines =@@
  >Foo : Symbol(Foo, Decl(classMergedWithInterfaceMultipleBasesNoError.ts, 2, 15), Decl(classMergedWithInterfaceMultipleBasesNoError.ts, 3, 34))
  
      readonly observer = this.handleIntersection;

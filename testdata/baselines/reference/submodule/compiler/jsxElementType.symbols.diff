@@ -1,6 +1,6 @@
 --- old.jsxElementType.symbols
 +++ new.jsxElementType.symbols
-@@ -15,7 +15,7 @@
+@@= skipped -15, +15 lines =@@
  
    | React.ReactElement<any>
  >React : Symbol(React, Decl(jsxElementType.tsx, 1, 6))
@@ -9,7 +9,7 @@
  
    | string
    | number
-@@ -24,7 +24,7 @@
+@@= skipped -9, +9 lines =@@
  
    | React.ReactPortal
  >React : Symbol(React, Decl(jsxElementType.tsx, 1, 6))
@@ -18,7 +18,7 @@
  
    | boolean
    | null
-@@ -47,27 +47,27 @@
+@@= skipped -23, +23 lines =@@
  >props : Symbol(props, Decl(jsxElementType.tsx, 18, 10))
  >P : Symbol(P, Decl(jsxElementType.tsx, 16, 35))
  >React : Symbol(React, Decl(jsxElementType.tsx, 1, 6))
@@ -53,7 +53,7 @@
      }
    }
  }
-@@ -81,9 +81,7 @@
+@@= skipped -34, +34 lines =@@
  >RenderElement : Symbol(RenderElement, Decl(jsxElementType.tsx, 31, 5))
  >title : Symbol(title, Decl(jsxElementType.tsx, 31, 24))
  >title : Symbol(title, Decl(jsxElementType.tsx, 31, 35))
@@ -63,7 +63,7 @@
  
  Component = RenderElement;
  >Component : Symbol(Component, Decl(jsxElementType.tsx, 29, 3))
-@@ -125,9 +123,9 @@
+@@= skipped -44, +42 lines =@@
  >RenderNumber : Symbol(RenderNumber, Decl(jsxElementType.tsx, 43, 5))
  >title : Symbol(title, Decl(jsxElementType.tsx, 43, 23))
  >title : Symbol(title, Decl(jsxElementType.tsx, 43, 34))
@@ -75,7 +75,7 @@
  
  Component = RenderNumber;
  >Component : Symbol(Component, Decl(jsxElementType.tsx, 29, 3))
-@@ -189,20 +187,16 @@
+@@= skipped -64, +64 lines =@@
  // Class components still work
  class RenderStringClass extends React.Component<{ title: string }> {
  >RenderStringClass : Symbol(RenderStringClass, Decl(jsxElementType.tsx, 60, 29))
@@ -99,7 +99,7 @@
    }
  }
  Component = RenderStringClass;
-@@ -222,11 +216,7 @@
+@@= skipped -33, +29 lines =@@
  
  // Host element types still work
  <div />;
@@ -111,7 +111,7 @@
  // Undeclared host element types are still rejected
  <boop />;
  <my-undeclared-custom-element />;
-@@ -247,7 +237,7 @@
+@@= skipped -25, +21 lines =@@
    ref: React.ForwardedRef<typeof ReactNativeFlatList>
  >ref : Symbol(ref, Decl(jsxElementType.tsx, 85, 12))
  >React : Symbol(React, Decl(jsxElementType.tsx, 1, 6))
@@ -120,7 +120,7 @@
  >ReactNativeFlatList : Symbol(ReactNativeFlatList, Decl(jsxElementType.tsx, 83, 43))
  
  ) {
-@@ -262,7 +252,7 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(jsxElementType.tsx, 93, 12))
  >props : Symbol(props, Decl(jsxElementType.tsx, 93, 23))
  >React : Symbol(React, Decl(jsxElementType.tsx, 1, 6))
@@ -129,7 +129,7 @@
  >Component : Symbol(Component, Decl(jsxElementType.tsx, 93, 62))
  >T : Symbol(T, Decl(jsxElementType.tsx, 93, 12))
  
-@@ -275,17 +265,17 @@
+@@= skipped -13, +13 lines =@@
  >foo : Symbol(foo, Decl(jsxElementType.tsx, 98, 11))
  
  declare global {

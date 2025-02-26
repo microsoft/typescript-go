@@ -1,6 +1,6 @@
 --- old.recursiveFunctionTypes.symbols
 +++ new.recursiveFunctionTypes.symbols
-@@ -52,16 +52,16 @@
+@@= skipped -52, +52 lines =@@
  >C : Symbol(C, Decl(recursiveFunctionTypes.ts, 16, 19))
  
       static g(t: typeof C.g){ }

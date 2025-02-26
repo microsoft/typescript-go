@@ -1,6 +1,6 @@
 --- old.metadataImportType.symbols
 +++ new.metadataImportType.symbols
-@@ -6,5 +6,5 @@
+@@= skipped -6, +6 lines =@@
  
      @test
      b: import('./b').B

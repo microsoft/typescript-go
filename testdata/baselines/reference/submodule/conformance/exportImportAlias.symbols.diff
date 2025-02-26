@@ -1,6 +1,6 @@
 --- old.exportImportAlias.symbols
 +++ new.exportImportAlias.symbols
-@@ -13,8 +13,8 @@
+@@= skipped -13, +13 lines =@@
  >Point : Symbol(Point, Decl(exportImportAlias.ts, 4, 32))
  
          constructor(public x: number, public y: number) { }
@@ -11,7 +11,7 @@
      }
      export module B {
  >B : Symbol(B, Decl(exportImportAlias.ts, 7, 5))
-@@ -23,7 +23,7 @@
+@@= skipped -10, +10 lines =@@
  >Id : Symbol(Id, Decl(exportImportAlias.ts, 8, 21))
  
              name: string;
@@ -20,7 +20,7 @@
          }
      }
  }
-@@ -33,26 +33,26 @@
+@@= skipped -10, +10 lines =@@
  
      export import a = A;
  >a : Symbol(a, Decl(exportImportAlias.ts, 15, 10))
@@ -56,7 +56,7 @@
  
  var c: { name: string };
  >c : Symbol(c, Decl(exportImportAlias.ts, 21, 3), Decl(exportImportAlias.ts, 22, 3))
-@@ -61,9 +61,9 @@
+@@= skipped -28, +28 lines =@@
  var c: C.a.B.Id;
  >c : Symbol(c, Decl(exportImportAlias.ts, 21, 3), Decl(exportImportAlias.ts, 22, 3))
  >C : Symbol(C, Decl(exportImportAlias.ts, 13, 1))
@@ -69,7 +69,7 @@
  
  module X {
  >X : Symbol(X, Decl(exportImportAlias.ts, 22, 16))
-@@ -81,8 +81,8 @@
+@@= skipped -20, +20 lines =@@
  >Point : Symbol(Point, Decl(exportImportAlias.ts, 29, 21))
  
              constructor(public x: number, public y: number) { }
@@ -80,7 +80,7 @@
          }
      }
  }
-@@ -94,24 +94,24 @@
+@@= skipped -13, +13 lines =@@
      export import y = X.Y;
  >y : Symbol(y, Decl(exportImportAlias.ts, 36, 10))
  >X : Symbol(X, Decl(exportImportAlias.ts, 22, 16))
@@ -112,7 +112,7 @@
  
  module K {
  >K : Symbol(K, Decl(exportImportAlias.ts, 43, 55))
-@@ -120,7 +120,7 @@
+@@= skipped -26, +26 lines =@@
  >L : Symbol(L, Decl(exportImportAlias.ts, 45, 10), Decl(exportImportAlias.ts, 48, 5))
  
          constructor(public name: string) { }
@@ -121,7 +121,7 @@
      }
  
      export module L {
-@@ -133,10 +133,10 @@
+@@= skipped -13, +13 lines =@@
  >Point : Symbol(Point, Decl(exportImportAlias.ts, 51, 26))
  
              x: number;
@@ -134,7 +134,7 @@
          }
      }
  }
-@@ -147,7 +147,7 @@
+@@= skipped -14, +14 lines =@@
      export import D = K.L;
  >D : Symbol(D, Decl(exportImportAlias.ts, 59, 10))
  >K : Symbol(K, Decl(exportImportAlias.ts, 43, 55))
@@ -143,7 +143,7 @@
  }
  
  var o: { name: string };
-@@ -156,9 +156,9 @@
+@@= skipped -9, +9 lines =@@
  
  var o = new M.D('Hello');
  >o : Symbol(o, Decl(exportImportAlias.ts, 63, 3), Decl(exportImportAlias.ts, 64, 3))
@@ -155,7 +155,7 @@
  
  var p: { x: number; y: number; }
  >p : Symbol(p, Decl(exportImportAlias.ts, 66, 3), Decl(exportImportAlias.ts, 67, 3))
-@@ -168,6 +168,6 @@
+@@= skipped -12, +12 lines =@@
  var p: M.D.Point;
  >p : Symbol(p, Decl(exportImportAlias.ts, 66, 3), Decl(exportImportAlias.ts, 67, 3))
  >M : Symbol(M, Decl(exportImportAlias.ts, 57, 1))

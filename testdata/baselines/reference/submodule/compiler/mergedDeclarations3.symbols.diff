@@ -1,6 +1,6 @@
 --- old.mergedDeclarations3.symbols
 +++ new.mergedDeclarations3.symbols
-@@ -8,8 +8,8 @@
+@@= skipped -8, +8 lines =@@
  >Color : Symbol(Color, Decl(mergedDeclarations3.ts, 0, 10), Decl(mergedDeclarations3.ts, 5, 10))
  
     Red, Green
@@ -11,7 +11,7 @@
   }
  }
  module M {
-@@ -24,11 +24,11 @@
+@@= skipped -16, +16 lines =@@
  }
  var p = M.Color.Blue; // ok
  >p : Symbol(p, Decl(mergedDeclarations3.ts, 10, 3))
@@ -27,7 +27,7 @@
  
  module M {
  >M : Symbol(M, Decl(mergedDeclarations3.ts, 0, 0), Decl(mergedDeclarations3.ts, 4, 1), Decl(mergedDeclarations3.ts, 10, 21), Decl(mergedDeclarations3.ts, 15, 1), Decl(mergedDeclarations3.ts, 21, 1) ... and 1 more)
-@@ -72,24 +72,24 @@
+@@= skipped -48, +48 lines =@@
  }
  
  M.foo() // ok

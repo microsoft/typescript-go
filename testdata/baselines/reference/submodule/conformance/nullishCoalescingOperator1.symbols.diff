@@ -1,6 +1,6 @@
 --- old.nullishCoalescingOperator1.symbols
 +++ new.nullishCoalescingOperator1.symbols
-@@ -39,7 +39,7 @@
+@@= skipped -39, +39 lines =@@
  
  interface I { a: string }
  >I : Symbol(I, Decl(nullishCoalescingOperator1.ts, 13, 44))

@@ -1,6 +1,6 @@
 --- old.mixinPrivateAndProtected.symbols
 +++ new.mixinPrivateAndProtected.symbols
-@@ -13,13 +13,13 @@
+@@= skipped -13, +13 lines =@@
  >A : Symbol(A, Decl(mixinPrivateAndProtected.ts, 2, 47))
  
      public pb: number = 2;
@@ -17,7 +17,7 @@
  }
  
  function mixB<T extends Constructor<{}>>(Cls: T) {
-@@ -33,10 +33,10 @@
+@@= skipped -20, +20 lines =@@
  >Cls : Symbol(Cls, Decl(mixinPrivateAndProtected.ts, 10, 41))
  
          protected ptd: number = 10;
@@ -30,7 +30,7 @@
  
      };
  }
-@@ -53,7 +53,7 @@
+@@= skipped -20, +20 lines =@@
  >Cls : Symbol(Cls, Decl(mixinPrivateAndProtected.ts, 17, 41))
  
          protected ptd: number = 10;
@@ -39,7 +39,7 @@
  
      };
  }
-@@ -80,10 +80,10 @@
+@@= skipped -27, +27 lines =@@
  >Cls : Symbol(Cls, Decl(mixinPrivateAndProtected.ts, 27, 41))
  
          protected ptd: number = 100;
@@ -52,7 +52,7 @@
  
      };
  }
-@@ -117,25 +117,25 @@
+@@= skipped -37, +37 lines =@@
  >AB2C : Symbol(AB2C, Decl(mixinPrivateAndProtected.ts, 34, 5))
  
  a.pb.toFixed();
@@ -90,7 +90,7 @@
  
  ab.pb.toFixed();
  >ab : Symbol(ab, Decl(mixinPrivateAndProtected.ts, 39, 16))
-@@ -170,10 +170,10 @@
+@@= skipped -53, +53 lines =@@
  >Person : Symbol(Person, Decl(mixinPrivateAndProtected.ts, 58, 19))
  
  	constructor(public name: string) {}
@@ -103,7 +103,7 @@
  
  		// do something
  	}
-@@ -199,12 +199,12 @@
+@@= skipped -29, +29 lines =@@
  		}
  
  		myProtectedFunction() {
@@ -119,7 +119,7 @@
  
  			// do more things
  		}
-@@ -217,10 +217,10 @@
+@@= skipped -18, +18 lines =@@
  >Person : Symbol(Person, Decl(mixinPrivateAndProtected.ts, 58, 19))
  
  	accountBalance: number;

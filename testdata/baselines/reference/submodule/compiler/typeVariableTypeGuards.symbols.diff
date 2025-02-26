@@ -1,6 +1,6 @@
 --- old.typeVariableTypeGuards.symbols
 +++ new.typeVariableTypeGuards.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >Foo : Symbol(Foo, Decl(typeVariableTypeGuards.ts, 0, 0))
  
      foo(): void
@@ -9,7 +9,7 @@
  }
  
  class A<P extends Partial<Foo>> {
-@@ -17,23 +17,23 @@
+@@= skipped -10, +10 lines =@@
  >Foo : Symbol(Foo, Decl(typeVariableTypeGuards.ts, 0, 0))
  
      constructor(public props: Readonly<P>) {}
@@ -39,7 +39,7 @@
  >foo : Symbol(foo, Decl(typeVariableTypeGuards.ts, 2, 15))
      }
  }
-@@ -44,7 +44,7 @@
+@@= skipped -27, +27 lines =@@
  >Banana : Symbol(Banana, Decl(typeVariableTypeGuards.ts, 11, 1))
  
      color: 'yellow';
@@ -48,7 +48,7 @@
  }
  
  class Monkey<T extends Banana | undefined> {
-@@ -53,23 +53,23 @@
+@@= skipped -9, +9 lines =@@
  >Banana : Symbol(Banana, Decl(typeVariableTypeGuards.ts, 11, 1))
  
      constructor(public a: T) {}
@@ -80,7 +80,7 @@
          }
      }
  }
-@@ -85,19 +85,19 @@
+@@= skipped -32, +32 lines =@@
  >BigBanana : Symbol(BigBanana, Decl(typeVariableTypeGuards.ts, 26, 1))
  
      render() {
@@ -107,7 +107,7 @@
          }
      }
  }
-@@ -195,10 +195,10 @@
+@@= skipped -110, +110 lines =@@
  >obj : Symbol(obj, Decl(typeVariableTypeGuards.ts, 70, 44))
  
          obj[x].length;

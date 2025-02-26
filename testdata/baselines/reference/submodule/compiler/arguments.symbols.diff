@@ -1,6 +1,6 @@
 --- old.arguments.symbols
 +++ new.arguments.symbols
-@@ -18,11 +18,11 @@
+@@= skipped -18, +18 lines =@@
  >I : Symbol(I, Decl(arguments.ts, 5, 20))
  
      method(args: typeof arguments): void;
@@ -14,7 +14,7 @@
  >args : Symbol(args, Decl(arguments.ts, 9, 9))
  
      (args: typeof arguments): void;
-@@ -32,6 +32,6 @@
+@@= skipped -14, +14 lines =@@
  >args : Symbol(args, Decl(arguments.ts, 11, 9))
  
      construct: new (args: typeof arguments) => void;

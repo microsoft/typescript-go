@@ -1,6 +1,6 @@
 --- old.symlinkedWorkspaceDependenciesNoDirectLinkPeerGeneratesNonrelativeName.symbols
 +++ new.symlinkedWorkspaceDependenciesNoDirectLinkPeerGeneratesNonrelativeName.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(index.d.ts, 0, 0))
  
      private f: any;
@@ -9,7 +9,7 @@
  }
  === workspace/packageB/index.d.ts ===
  import { Foo } from "package-a";
-@@ -21,7 +21,5 @@
+@@= skipped -16, +16 lines =@@
  
  export const a = pkg.invoke();
  >a : Symbol(a, Decl(index.ts, 2, 12))

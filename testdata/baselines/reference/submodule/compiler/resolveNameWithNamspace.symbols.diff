@@ -1,6 +1,6 @@
 --- old.resolveNameWithNamspace.symbols
 +++ new.resolveNameWithNamspace.symbols
-@@ -30,13 +30,6 @@
+@@= skipped -30, +30 lines =@@
  
  === app.js ===
  exports.equal = myAssert.equal

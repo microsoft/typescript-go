@@ -1,6 +1,6 @@
 --- old.innerAliases2.symbols
 +++ new.innerAliases2.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >UsefulClass : Symbol(UsefulClass, Decl(innerAliases2.ts, 0, 18))
  
                                  public foo() {
@@ -9,7 +9,7 @@
                                  }
                  }
  }
-@@ -18,25 +18,25 @@
+@@= skipped -10, +10 lines =@@
  
                  import provider = _provider;
  >provider : Symbol(provider, Decl(innerAliases2.ts, 7, 17))

@@ -1,6 +1,6 @@
 --- old.unusedInvalidTypeArguments.symbols
 +++ new.unusedInvalidTypeArguments.symbols
-@@ -32,7 +32,7 @@
+@@= skipped -32, +32 lines =@@
  export interface I<T> { x: Foo<T>; }
  >I : Symbol(I, Decl(interface.ts, 0, 30))
  >T : Symbol(T, Decl(interface.ts, 1, 19))
@@ -9,7 +9,7 @@
  >Foo : Symbol(Foo, Decl(interface.ts, 0, 8))
  >T : Symbol(T, Decl(interface.ts, 1, 19))
  
-@@ -87,7 +87,7 @@
+@@= skipped -55, +55 lines =@@
  >B : Symbol(B, Decl(super.ts, 0, 11))
  
      m() {

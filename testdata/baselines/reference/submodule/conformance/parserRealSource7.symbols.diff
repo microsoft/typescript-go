@@ -1,6 +1,6 @@
 --- old.parserRealSource7.symbols
 +++ new.parserRealSource7.symbols
-@@ -13,10 +13,10 @@
+@@= skipped -13, +13 lines =@@
  >Continuation : Symbol(Continuation, Decl(parserRealSource7.ts, 5, 19))
  
          public exceptionBlock = -1;
@@ -13,7 +13,7 @@
      }
  
      function getBaseTypeLinks(bases: ASTList, baseTypeLinks: TypeLink[]) {
-@@ -63,9 +63,9 @@
+@@= skipped -50, +50 lines =@@
  
                  baseTypeLinks[baseTypeLinks.length] = typeLink;
  >baseTypeLinks : Symbol(baseTypeLinks, Decl(parserRealSource7.ts, 11, 45))
@@ -25,7 +25,7 @@
  >typeLink : Symbol(typeLink, Decl(parserRealSource7.ts, 20, 19))
              }
          }
-@@ -240,15 +240,15 @@
+@@= skipped -177, +177 lines =@@
  >IAliasScopeContext : Symbol(IAliasScopeContext, Decl(parserRealSource7.ts, 79, 34))
  
          topLevelScope: ScopeChain;
@@ -44,7 +44,7 @@
  >TypeCollectionContext : Symbol(TypeCollectionContext)
      }
  
-@@ -309,23 +309,23 @@
+@@= skipped -69, +69 lines =@@
  >id : Symbol(id, Decl(parserRealSource7.ts, 104, 31))
  
                      if (context.members) {
@@ -74,7 +74,7 @@
                      }
                  }
  
-@@ -334,13 +334,13 @@
+@@= skipped -25, +25 lines =@@
  
                      symbol = context.tcContext.checker.findSymbolForDynamicModule(name, context.tcContext.script.locationInfo.filename, findSym);
  >symbol : Symbol(symbol, Decl(parserRealSource7.ts, 98, 11))
@@ -92,7 +92,7 @@
  >findSym : Symbol(findSym, Decl(parserRealSource7.ts, 104, 19))
                  }
                  else {
-@@ -399,9 +399,9 @@
+@@= skipped -65, +65 lines =@@
  >members : Symbol(members, Decl(parserRealSource7.ts, 139, 19))
  
                      context.members = members.publicMembers;

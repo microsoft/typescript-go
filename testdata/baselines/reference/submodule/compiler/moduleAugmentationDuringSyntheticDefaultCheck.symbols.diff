@@ -1,6 +1,6 @@
 --- old.moduleAugmentationDuringSyntheticDefaultCheck.symbols
 +++ new.moduleAugmentationDuringSyntheticDefaultCheck.symbols
-@@ -8,23 +8,23 @@
+@@= skipped -8, +8 lines =@@
  
  === node_modules/moment/index.d.ts ===
  declare function moment(): moment.Moment;
@@ -31,7 +31,7 @@
  
  === node_modules/moment-timezone/index.d.ts ===
  import * as moment from 'moment';
-@@ -34,38 +34,12 @@
+@@= skipped -26, +26 lines =@@
  >moment : Symbol(moment, Decl(index.d.ts, 0, 6))
  
  declare module "moment" {

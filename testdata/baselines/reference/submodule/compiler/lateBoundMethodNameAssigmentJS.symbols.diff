@@ -1,6 +1,6 @@
 --- old.lateBoundMethodNameAssigmentJS.symbols
 +++ new.lateBoundMethodNameAssigmentJS.symbols
-@@ -3,7 +3,6 @@
+@@= skipped -3, +3 lines =@@
  === lateBoundMethodNameAssigmentJS.js ===
  const _symbol = Symbol("_sym");
  >_symbol : Symbol(_symbol, Decl(lateBoundMethodNameAssigmentJS.js, 0, 5))
@@ -8,7 +8,7 @@
  
  export class MyClass {
  >MyClass : Symbol(MyClass, Decl(lateBoundMethodNameAssigmentJS.js, 0, 31))
-@@ -18,6 +17,6 @@
+@@= skipped -15, +14 lines =@@
      }
  
      async [_symbol]() { }

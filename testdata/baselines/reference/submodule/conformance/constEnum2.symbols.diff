@@ -1,6 +1,6 @@
 --- old.constEnum2.symbols
 +++ new.constEnum2.symbols
-@@ -14,28 +14,28 @@
+@@= skipped -14, +14 lines =@@
  >D : Symbol(D, Decl(constEnum2.ts, 6, 23))
  
      d = 10,

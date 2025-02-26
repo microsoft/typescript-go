@@ -1,6 +1,6 @@
 --- old.callSignaturesWithParameterInitializers2.symbols
 +++ new.callSignaturesWithParameterInitializers2.symbols
-@@ -22,11 +22,11 @@
+@@= skipped -22, +22 lines =@@
  >C : Symbol(C, Decl(callSignaturesWithParameterInitializers2.ts, 7, 6))
  
      foo(x = 2);
@@ -14,7 +14,7 @@
  >x : Symbol(x, Decl(callSignaturesWithParameterInitializers2.ts, 11, 8))
  }
  
-@@ -35,34 +35,34 @@
+@@= skipped -13, +13 lines =@@
  >C : Symbol(C, Decl(callSignaturesWithParameterInitializers2.ts, 7, 6))
  
  c.foo();

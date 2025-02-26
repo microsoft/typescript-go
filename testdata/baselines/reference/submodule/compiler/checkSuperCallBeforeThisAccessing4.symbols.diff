@@ -1,6 +1,6 @@
 --- old.checkSuperCallBeforeThisAccessing4.symbols
 +++ new.checkSuperCallBeforeThisAccessing4.symbols
-@@ -9,7 +9,7 @@
+@@= skipped -9, +9 lines =@@
  >Based : Symbol(Based, Decl(checkSuperCallBeforeThisAccessing4.ts, 0, 0))
  
      public x: number;
@@ -9,7 +9,7 @@
  
      constructor() {
          (() => {
-@@ -34,9 +34,9 @@
+@@= skipped -25, +25 lines =@@
  >super : Symbol(Based, Decl(checkSuperCallBeforeThisAccessing4.ts, 0, 0))
  
          this.x = 10;

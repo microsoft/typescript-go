@@ -1,6 +1,6 @@
 --- old.funduleSplitAcrossFiles.symbols
 +++ new.funduleSplitAcrossFiles.symbols
-@@ -12,7 +12,7 @@
+@@= skipped -12, +12 lines =@@
  >y : Symbol(y, Decl(funduleSplitAcrossFiles_module.ts, 1, 14))
  }
  D.y;

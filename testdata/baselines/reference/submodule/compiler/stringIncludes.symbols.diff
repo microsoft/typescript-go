@@ -1,6 +1,6 @@
 --- old.stringIncludes.symbols
 +++ new.stringIncludes.symbols
-@@ -6,11 +6,7 @@
+@@= skipped -6, +6 lines =@@
  
  includes = "abcde".includes("cd");
  >includes : Symbol(includes, Decl(stringIncludes.ts, 0, 3))

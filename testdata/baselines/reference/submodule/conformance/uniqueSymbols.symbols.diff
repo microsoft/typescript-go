@@ -1,6 +1,6 @@
 --- old.uniqueSymbols.symbols
 +++ new.uniqueSymbols.symbols
-@@ -158,26 +158,26 @@
+@@= skipped -158, +158 lines =@@
  >C : Symbol(C, Decl(uniqueSymbols.ts, 57, 61))
  
      static readonly readonlyStaticCall = Symbol();
@@ -33,7 +33,7 @@
  >Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
  }
  declare const c: C;
-@@ -186,114 +186,114 @@
+@@= skipped -28, +28 lines =@@
  
  const constInitToCReadonlyStaticCall = C.readonlyStaticCall;
  >constInitToCReadonlyStaticCall : Symbol(constInitToCReadonlyStaticCall, Decl(uniqueSymbols.ts, 71, 5))
@@ -189,7 +189,7 @@
  }
  declare const i: I;
  >i : Symbol(i, Decl(uniqueSymbols.ts, 92, 13))
-@@ -301,25 +301,25 @@
+@@= skipped -115, +115 lines =@@
  
  const constInitToIReadonlyType = i.readonlyType;
  >constInitToIReadonlyType : Symbol(constInitToIReadonlyType, Decl(uniqueSymbols.ts, 94, 5))
@@ -223,7 +223,7 @@
  
  // type literals
  type L = {
-@@ -394,9 +394,9 @@
+@@= skipped -93, +93 lines =@@
  // type argument inference
  const promiseForConstCall = Promise.resolve(constCall);
  >promiseForConstCall : Symbol(promiseForConstCall, Decl(uniqueSymbols.ts, 115, 5))
@@ -235,7 +235,7 @@
  >constCall : Symbol(constCall, Decl(uniqueSymbols.ts, 1, 5))
  
  const arrayOfConstCall = [constCall];
-@@ -416,9 +416,9 @@
+@@= skipped -22, +22 lines =@@
  >[s] : Symbol([s], Decl(uniqueSymbols.ts, 121, 18))
  >s : Symbol(s, Decl(uniqueSymbols.ts, 119, 13))
  >[N.s] : Symbol([N.s], Decl(uniqueSymbols.ts, 121, 28))
@@ -247,7 +247,7 @@
  
  declare function f<T>(x: T): T;
  >f : Symbol(f, Decl(uniqueSymbols.ts, 121, 42))
-@@ -435,9 +435,9 @@
+@@= skipped -19, +19 lines =@@
  declare function g(x: typeof N.s): void;
  >g : Symbol(g, Decl(uniqueSymbols.ts, 122, 31), Decl(uniqueSymbols.ts, 123, 38))
  >x : Symbol(x, Decl(uniqueSymbols.ts, 124, 19))
@@ -259,7 +259,7 @@
  
  // widening positions
  
-@@ -448,27 +448,27 @@
+@@= skipped -13, +13 lines =@@
  
  f(N.s);
  >f : Symbol(f, Decl(uniqueSymbols.ts, 121, 42))
@@ -293,7 +293,7 @@
  
  // property assignments/methods
  const o2 = {
-@@ -480,14 +480,14 @@
+@@= skipped -32, +32 lines =@@
  
      b: N.s,
  >b : Symbol(b, Decl(uniqueSymbols.ts, 140, 9))
@@ -311,7 +311,7 @@
  
      method1() { return s; },
  >method1 : Symbol(method1, Decl(uniqueSymbols.ts, 142, 14))
-@@ -518,83 +518,83 @@
+@@= skipped -38, +38 lines =@@
  >C0 : Symbol(C0, Decl(uniqueSymbols.ts, 149, 2))
  
      static readonly a = s;
@@ -424,7 +424,7 @@
  >p : Symbol(p, Decl(uniqueSymbols.ts, 173, 12))
  >s : Symbol(s, Decl(uniqueSymbols.ts, 119, 13))
  >p : Symbol(p, Decl(uniqueSymbols.ts, 173, 12))
-@@ -609,14 +609,14 @@
+@@= skipped -91, +91 lines =@@
  
  o[N.s];
  >o : Symbol(o, Decl(uniqueSymbols.ts, 121, 13))
@@ -442,7 +442,7 @@
  
  // arguments (no-inference)
  f<typeof s>(s);
-@@ -626,20 +626,20 @@
+@@= skipped -17, +17 lines =@@
  
  f<typeof N.s>(N.s);
  >f : Symbol(f, Decl(uniqueSymbols.ts, 121, 42))
@@ -470,7 +470,7 @@
  
  g(s);
  >g : Symbol(g, Decl(uniqueSymbols.ts, 122, 31), Decl(uniqueSymbols.ts, 123, 38))
-@@ -647,49 +647,49 @@
+@@= skipped -21, +21 lines =@@
  
  g(N.s);
  >g : Symbol(g, Decl(uniqueSymbols.ts, 122, 31), Decl(uniqueSymbols.ts, 123, 38))
@@ -535,7 +535,7 @@
  
  // computed property names
  ({
-@@ -699,9 +699,9 @@
+@@= skipped -52, +52 lines =@@
  
      [N.s]: "b",
  >[N.s] : Symbol([N.s], Decl(uniqueSymbols.ts, 203, 13))
@@ -547,7 +547,7 @@
  
  });
  
-@@ -709,24 +709,24 @@
+@@= skipped -10, +10 lines =@@
  >C1 : Symbol(C1, Decl(uniqueSymbols.ts, 205, 3))
  
      static [s]: "a";
@@ -580,7 +580,7 @@
  }
  
  // contextual types
-@@ -735,26 +735,26 @@
+@@= skipped -26, +26 lines =@@
  >Context : Symbol(Context, Decl(uniqueSymbols.ts, 213, 1))
  
      method1(): typeof s;
@@ -612,7 +612,7 @@
  >p : Symbol(p, Decl(uniqueSymbols.ts, 222, 12))
  >s : Symbol(s, Decl(uniqueSymbols.ts, 119, 13))
  >s : Symbol(s, Decl(uniqueSymbols.ts, 119, 13))
-@@ -833,7 +833,7 @@
+@@= skipped -98, +98 lines =@@
  >ce0 : Symbol(ce0, Decl(uniqueSymbols.ts, 254, 5))
  
      method1(p: typeof s): typeof s {
@@ -621,7 +621,7 @@
  >p : Symbol(p, Decl(uniqueSymbols.ts, 255, 12))
  >s : Symbol(s, Decl(uniqueSymbols.ts, 119, 13))
  >s : Symbol(s, Decl(uniqueSymbols.ts, 119, 13))
-@@ -842,7 +842,7 @@
+@@= skipped -9, +9 lines =@@
  >p : Symbol(p, Decl(uniqueSymbols.ts, 255, 12))
      }
      method2(p: I["readonlyType"]): I["readonlyType"] {

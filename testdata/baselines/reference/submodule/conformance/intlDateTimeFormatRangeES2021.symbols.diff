@@ -1,6 +1,6 @@
 --- old.intlDateTimeFormatRangeES2021.symbols
 +++ new.intlDateTimeFormatRangeES2021.symbols
-@@ -2,19 +2,19 @@
+@@= skipped -2, +2 lines =@@
  
  === intlDateTimeFormatRangeES2021.ts ===
  new Intl.DateTimeFormat().formatRange(new Date(0), new Date());

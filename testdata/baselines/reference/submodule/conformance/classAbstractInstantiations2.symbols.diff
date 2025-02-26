@@ -1,6 +1,6 @@
 --- old.classAbstractInstantiations2.symbols
 +++ new.classAbstractInstantiations2.symbols
-@@ -11,13 +11,13 @@
+@@= skipped -11, +11 lines =@@
  >B : Symbol(B, Decl(classAbstractInstantiations2.ts, 2, 1))
  
      foo(): number { return this.bar(); }
@@ -18,7 +18,7 @@
  }
  
  new B; // error
-@@ -72,7 +72,7 @@
+@@= skipped -61, +61 lines =@@
  >B : Symbol(B, Decl(classAbstractInstantiations2.ts, 2, 1))
  
      bar() { return 1; }
@@ -27,7 +27,7 @@
  }
  
  abstract class F extends B {
-@@ -80,35 +80,35 @@
+@@= skipped -8, +8 lines =@@
  >B : Symbol(B, Decl(classAbstractInstantiations2.ts, 2, 1))
  
      abstract foo() : number;
@@ -71,7 +71,7 @@
  >x : Symbol(x, Decl(classAbstractInstantiations2.ts, 45, 8))
  }
  
-@@ -116,5 +116,5 @@
+@@= skipped -36, +36 lines =@@
  >H : Symbol(H, Decl(classAbstractInstantiations2.ts, 46, 1))
  
      abstract baz() : number;

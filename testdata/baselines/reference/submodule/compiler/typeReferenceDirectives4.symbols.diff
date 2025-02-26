@@ -1,6 +1,6 @@
 --- old.typeReferenceDirectives4.symbols
 +++ new.typeReferenceDirectives4.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  
  let x: $;
  >x : Symbol(x, Decl(app.ts, 3, 3))
@@ -9,7 +9,7 @@
  
  let y = () => x
  >y : Symbol(y, Decl(app.ts, 4, 3))
-@@ -14,12 +14,6 @@
+@@= skipped -8, +8 lines =@@
  
  === /ref.d.ts ===
  interface $ { x }

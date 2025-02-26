@@ -1,6 +1,6 @@
 --- old.enumTag.symbols
 +++ new.enumTag.symbols
-@@ -3,7 +3,7 @@
+@@= skipped -3, +3 lines =@@
  === a.js ===
  /** @enum {string} */
  const Target = {
@@ -9,7 +9,7 @@
  
      START: "start",
  >START : Symbol(START, Decl(a.js, 1, 16))
-@@ -23,7 +23,7 @@
+@@= skipped -20, +20 lines =@@
  }
  /** @enum number */
  const Second = {
@@ -18,7 +18,7 @@
  
      MISTAKE: "end",
  >MISTAKE : Symbol(MISTAKE, Decl(a.js, 10, 16))
-@@ -37,7 +37,7 @@
+@@= skipped -14, +14 lines =@@
  }
  /** @enum {function(number): number} */
  const Fs = {
@@ -27,7 +27,7 @@
  
      ADD1: n => n + 1,
  >ADD1 : Symbol(ADD1, Decl(a.js, 17, 12))
-@@ -84,17 +84,17 @@
+@@= skipped -47, +47 lines =@@
      var v = Target.START
  >v : Symbol(v, Decl(a.js, 35, 7))
  >Target.START : Symbol(START, Decl(a.js, 1, 16))
@@ -48,7 +48,7 @@
  >MISTAKE : Symbol(MISTAKE, Decl(a.js, 10, 16))
  
      v = 'something else' // allowed, like Typescript's classic enums and unlike its string enums
-@@ -107,14 +107,14 @@
+@@= skipped -23, +23 lines =@@
  
      // element access with arbitrary string is an error only with noImplicitAny
      if (!Target[s]) {

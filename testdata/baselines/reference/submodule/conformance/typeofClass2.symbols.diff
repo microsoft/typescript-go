@@ -1,6 +1,6 @@
 --- old.typeofClass2.symbols
 +++ new.typeofClass2.symbols
-@@ -14,20 +14,20 @@
+@@= skipped -14, +14 lines =@@
  >x : Symbol(x, Decl(typeofClass2.ts, 3, 16))
  
      static foo(x: number);
@@ -25,7 +25,7 @@
  >x : Symbol(x, Decl(typeofClass2.ts, 9, 15))
  }
  
-@@ -36,11 +36,11 @@
+@@= skipped -22, +22 lines =@@
  >C : Symbol(C, Decl(typeofClass2.ts, 0, 0))
  
      static baz(x: number) { }

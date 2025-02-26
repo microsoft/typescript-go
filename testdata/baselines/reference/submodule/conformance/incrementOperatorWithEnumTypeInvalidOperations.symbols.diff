@@ -1,6 +1,6 @@
 --- old.incrementOperatorWithEnumTypeInvalidOperations.symbols
 +++ new.incrementOperatorWithEnumTypeInvalidOperations.symbols
-@@ -8,9 +8,9 @@
+@@= skipped -8, +8 lines =@@
  
  enum ENUM1 { A, B, "" };
  >ENUM1 : Symbol(ENUM1, Decl(incrementOperatorWithEnumTypeInvalidOperations.ts, 2, 14))

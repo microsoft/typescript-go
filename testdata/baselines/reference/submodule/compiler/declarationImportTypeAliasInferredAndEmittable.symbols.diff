@@ -1,6 +1,6 @@
 --- old.declarationImportTypeAliasInferredAndEmittable.symbols
 +++ new.declarationImportTypeAliasInferredAndEmittable.symbols
-@@ -6,10 +6,10 @@
+@@= skipped -6, +6 lines =@@
  
      constructor() { }
      item = 3;
@@ -13,7 +13,7 @@
  }
  
  export = Conn;
-@@ -27,19 +27,19 @@
+@@= skipped -21, +21 lines =@@
  >Wrap : Symbol(Wrap, Decl(usage.ts, 1, 20))
  
      connItem: number;

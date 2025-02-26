@@ -1,6 +1,6 @@
 --- old.noImplicitAnyStringIndexerOnObject.symbols
 +++ new.noImplicitAnyStringIndexerOnObject.symbols
-@@ -216,8 +216,8 @@
+@@= skipped -216, +216 lines =@@
  
  enum NumEnum { a, b }
  >NumEnum : Symbol(NumEnum, Decl(noImplicitAnyStringIndexerOnObject.ts, 71, 7))
@@ -11,7 +11,7 @@
  
  let numEnumKey: NumEnum;
  >numEnumKey : Symbol(numEnumKey, Decl(noImplicitAnyStringIndexerOnObject.ts, 74, 3))
-@@ -230,8 +230,8 @@
+@@= skipped -14, +14 lines =@@
  
  enum StrEnum { a = "a", b = "b" }
  >StrEnum : Symbol(StrEnum, Decl(noImplicitAnyStringIndexerOnObject.ts, 75, 14))
@@ -22,7 +22,7 @@
  
  let strEnumKey: StrEnum;
  >strEnumKey : Symbol(strEnumKey, Decl(noImplicitAnyStringIndexerOnObject.ts, 79, 3))
-@@ -248,13 +248,13 @@
+@@= skipped -18, +18 lines =@@
  >T : Symbol(T, Decl(noImplicitAnyStringIndexerOnObject.ts, 83, 18))
  
    get(key: K): T;
@@ -38,7 +38,7 @@
  >key : Symbol(key, Decl(noImplicitAnyStringIndexerOnObject.ts, 85, 6))
  >K : Symbol(K, Decl(noImplicitAnyStringIndexerOnObject.ts, 83, 16))
  >value : Symbol(value, Decl(noImplicitAnyStringIndexerOnObject.ts, 85, 13))
-@@ -263,7 +263,7 @@
+@@= skipped -15, +15 lines =@@
  
  interface Dog { bark(): void; }
  >Dog : Symbol(Dog, Decl(noImplicitAnyStringIndexerOnObject.ts, 86, 1))
@@ -47,7 +47,7 @@
  
  let rover: Dog = { bark() {} };
  >rover : Symbol(rover, Decl(noImplicitAnyStringIndexerOnObject.ts, 89, 3))
-@@ -283,7 +283,7 @@
+@@= skipped -20, +20 lines =@@
  >I : Symbol(I, Decl(noImplicitAnyStringIndexerOnObject.ts, 92, 21))
  
    prop: MyMap<string, string>
@@ -56,7 +56,7 @@
  >MyMap : Symbol(MyMap, Decl(noImplicitAnyStringIndexerOnObject.ts, 80, 14))
  }
  declare const m: I;
-@@ -291,7 +291,7 @@
+@@= skipped -8, +8 lines =@@
  >I : Symbol(I, Decl(noImplicitAnyStringIndexerOnObject.ts, 92, 21))
  
  m.prop['a'];

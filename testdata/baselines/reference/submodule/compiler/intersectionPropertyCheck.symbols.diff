@@ -1,6 +1,6 @@
 --- old.intersectionPropertyCheck.symbols
 +++ new.intersectionPropertyCheck.symbols
-@@ -43,7 +43,7 @@
+@@= skipped -43, +43 lines =@@
  >Test : Symbol(Test, Decl(intersectionPropertyCheck.ts, 7, 1))
  
    readonly hi?: string[]

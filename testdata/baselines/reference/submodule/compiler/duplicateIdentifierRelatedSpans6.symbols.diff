@@ -1,6 +1,6 @@
 --- old.duplicateIdentifierRelatedSpans6.symbols
 +++ new.duplicateIdentifierRelatedSpans6.symbols
-@@ -4,37 +4,20 @@
+@@= skipped -4, +4 lines =@@
  /// <reference path="./file1" />
  
  declare module "someMod" {

@@ -1,6 +1,6 @@
 --- old.interfaceClassMerging2.symbols
 +++ new.interfaceClassMerging2.symbols
-@@ -5,20 +5,20 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(interfaceClassMerging2.ts, 0, 0), Decl(interfaceClassMerging2.ts, 3, 1))
  
      interfaceFooMethod(): this;
@@ -25,7 +25,7 @@
  
          return this;
  >this : Symbol(Foo, Decl(interfaceClassMerging2.ts, 0, 0), Decl(interfaceClassMerging2.ts, 3, 1))
-@@ -30,10 +30,10 @@
+@@= skipped -25, +25 lines =@@
  >Bar : Symbol(Bar, Decl(interfaceClassMerging2.ts, 11, 1), Decl(interfaceClassMerging2.ts, 17, 1))
  
      interfaceBarMethod(): this;
@@ -38,7 +38,7 @@
  }
  
  class Bar extends Foo {
-@@ -41,10 +41,10 @@
+@@= skipped -11, +11 lines =@@
  >Foo : Symbol(Foo, Decl(interfaceClassMerging2.ts, 0, 0), Decl(interfaceClassMerging2.ts, 3, 1))
  
      classBarProperty: this;
@@ -51,7 +51,7 @@
  
          return this;
  >this : Symbol(Bar, Decl(interfaceClassMerging2.ts, 11, 1), Decl(interfaceClassMerging2.ts, 17, 1))
-@@ -57,15 +57,15 @@
+@@= skipped -16, +16 lines =@@
  >Bar : Symbol(Bar, Decl(interfaceClassMerging2.ts, 11, 1), Decl(interfaceClassMerging2.ts, 17, 1))
  
  bar.interfaceBarMethod().interfaceFooMethod().classBarMethod().classFooMethod();

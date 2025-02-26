@@ -1,6 +1,6 @@
 --- old.thisIndexOnExistingReadonlyFieldIsNotNever.symbols
 +++ new.thisIndexOnExistingReadonlyFieldIsNotNever.symbols
-@@ -7,14 +7,14 @@
+@@= skipped -7, +7 lines =@@
  >S : Symbol(S, Decl(thisIndexOnExistingReadonlyFieldIsNotNever.ts, 0, 26))
  
      readonly props: Readonly<{ children?: unknown }> & Readonly<P>;
@@ -17,7 +17,7 @@
  >Readonly : Symbol(Readonly, Decl(lib.es5.d.ts, --, --))
  >S : Symbol(S, Decl(thisIndexOnExistingReadonlyFieldIsNotNever.ts, 0, 26))
  }
-@@ -23,7 +23,7 @@
+@@= skipped -16, +16 lines =@@
  >C : Symbol(C, Decl(thisIndexOnExistingReadonlyFieldIsNotNever.ts, 4, 31))
  
      anchorRef?: (anchor: C) => void;
@@ -26,7 +26,7 @@
  >anchor : Symbol(anchor, Decl(thisIndexOnExistingReadonlyFieldIsNotNever.ts, 5, 17))
  >C : Symbol(C, Decl(thisIndexOnExistingReadonlyFieldIsNotNever.ts, 4, 31))
  }
-@@ -37,7 +37,7 @@
+@@= skipped -14, +14 lines =@@
  >CoachMarkAnchorDecorator : Symbol(CoachMarkAnchorDecorator, Decl(thisIndexOnExistingReadonlyFieldIsNotNever.ts, 7, 34))
  
      decorateComponent<P>(anchor: P) {
@@ -35,7 +35,7 @@
  >P : Symbol(P, Decl(thisIndexOnExistingReadonlyFieldIsNotNever.ts, 10, 22))
  >anchor : Symbol(anchor, Decl(thisIndexOnExistingReadonlyFieldIsNotNever.ts, 10, 25))
  >P : Symbol(P, Decl(thisIndexOnExistingReadonlyFieldIsNotNever.ts, 10, 22))
-@@ -51,7 +51,7 @@
+@@= skipped -14, +14 lines =@@
  >P : Symbol(P, Decl(thisIndexOnExistingReadonlyFieldIsNotNever.ts, 10, 22))
  
              private _onAnchorRef = (anchor: AnchorType<P>) => {
@@ -44,7 +44,7 @@
  >anchor : Symbol(anchor, Decl(thisIndexOnExistingReadonlyFieldIsNotNever.ts, 12, 36))
  >AnchorType : Symbol(AnchorType, Decl(thisIndexOnExistingReadonlyFieldIsNotNever.ts, 6, 1))
  >P : Symbol(P, Decl(thisIndexOnExistingReadonlyFieldIsNotNever.ts, 10, 22))
-@@ -59,9 +59,9 @@
+@@= skipped -8, +8 lines =@@
                  const anchorRef = this.props.anchorRef;
  >anchorRef : Symbol(anchorRef, Decl(thisIndexOnExistingReadonlyFieldIsNotNever.ts, 13, 21))
  >this.props.anchorRef : Symbol(anchorRef, Decl(thisIndexOnExistingReadonlyFieldIsNotNever.ts, 4, 35))

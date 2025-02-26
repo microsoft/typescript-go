@@ -1,6 +1,6 @@
 --- old.genericInference2.symbols
 +++ new.genericInference2.symbols
-@@ -16,13 +16,13 @@
+@@= skipped -16, +16 lines =@@
  >T : Symbol(T, Decl(genericInference2.ts, 1, 35))
  
             N: number; 
@@ -17,7 +17,7 @@
  >T : Symbol(T, Decl(genericInference2.ts, 1, 35))
         } 
         export function observable<T>(value: T): Observable<T>; 
-@@ -38,24 +38,24 @@
+@@= skipped -22, +22 lines =@@
  
         name: ko.observable("Bob"), 
  >name : Symbol(name, Decl(genericInference2.ts, 10, 13))
@@ -48,7 +48,7 @@
  
      var age_v = o.age();  // should be 'number'
  >age_v : Symbol(age_v, Decl(genericInference2.ts, 15, 7))
-@@ -71,25 +71,25 @@
+@@= skipped -33, +33 lines =@@
  
      var zz_v = o.name.N;  // should be 'number'
  >zz_v : Symbol(zz_v, Decl(genericInference2.ts, 17, 7))

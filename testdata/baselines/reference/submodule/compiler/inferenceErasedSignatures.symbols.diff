@@ -1,6 +1,6 @@
 --- old.inferenceErasedSignatures.symbols
 +++ new.inferenceErasedSignatures.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >SomeBaseClass : Symbol(SomeBaseClass, Decl(inferenceErasedSignatures.ts, 0, 0))
  
      set<K extends keyof this>(key: K, value: this[K]): this[K];
@@ -9,7 +9,7 @@
  >K : Symbol(K, Decl(inferenceErasedSignatures.ts, 3, 8))
  >key : Symbol(key, Decl(inferenceErasedSignatures.ts, 3, 30))
  >K : Symbol(K, Decl(inferenceErasedSignatures.ts, 3, 8))
-@@ -24,19 +24,19 @@
+@@= skipped -17, +17 lines =@@
  >SomeBaseClass : Symbol(SomeBaseClass, Decl(inferenceErasedSignatures.ts, 0, 0))
  
      foo!: (r?: R) => void;
@@ -33,7 +33,7 @@
  >M : Symbol(M, Decl(inferenceErasedSignatures.ts, 6, 35))
  }
  
-@@ -45,9 +45,9 @@
+@@= skipped -21, +21 lines =@@
  >SomeAbstractClass : Symbol(SomeAbstractClass, Decl(inferenceErasedSignatures.ts, 4, 1))
  
      async baz(context: number): Promise<string> {
@@ -45,7 +45,7 @@
  
          return `${context}`;
  >context : Symbol(context, Decl(inferenceErasedSignatures.ts, 13, 14))
-@@ -101,7 +101,7 @@
+@@= skipped -56, +56 lines =@@
  >T2 : Symbol(T2, Decl(inferenceErasedSignatures.ts, 28, 22))
  
      set<K extends keyof this>(key: K, value: this[K]): this[K];
@@ -54,7 +54,7 @@
  >K : Symbol(K, Decl(inferenceErasedSignatures.ts, 29, 8))
  >key : Symbol(key, Decl(inferenceErasedSignatures.ts, 29, 30))
  >K : Symbol(K, Decl(inferenceErasedSignatures.ts, 29, 8))
-@@ -110,17 +110,17 @@
+@@= skipped -9, +9 lines =@@
  >K : Symbol(K, Decl(inferenceErasedSignatures.ts, 29, 8))
  
      useT1(c: T1): void;
@@ -75,7 +75,7 @@
  >r : Symbol(r, Decl(inferenceErasedSignatures.ts, 32, 32))
  }
  
-@@ -130,7 +130,7 @@
+@@= skipped -20, +20 lines =@@
  
      // This declaration shouldn't do anything...
      useT1(_: number): void
@@ -84,7 +84,7 @@
  >_ : Symbol(_, Decl(inferenceErasedSignatures.ts, 37, 10))
  }
  
-@@ -139,7 +139,7 @@
+@@= skipped -9, +9 lines =@@
  >StructuralVersion : Symbol(StructuralVersion, Decl(inferenceErasedSignatures.ts, 38, 1))
  
      set<K extends keyof this>(key: K, value: this[K]): this[K];
@@ -93,7 +93,7 @@
  >K : Symbol(K, Decl(inferenceErasedSignatures.ts, 42, 8))
  >key : Symbol(key, Decl(inferenceErasedSignatures.ts, 42, 30))
  >K : Symbol(K, Decl(inferenceErasedSignatures.ts, 42, 8))
-@@ -148,15 +148,15 @@
+@@= skipped -9, +9 lines =@@
  >K : Symbol(K, Decl(inferenceErasedSignatures.ts, 42, 8))
  
      useT1(c: number): void;

@@ -1,6 +1,6 @@
 --- old.expandoFunctionExpressionsWithDynamicNames2.symbols
 +++ new.expandoFunctionExpressionsWithDynamicNames2.symbols
-@@ -10,15 +10,15 @@
+@@= skipped -10, +10 lines =@@
  
    (): void;
    [mySymbol]: true;
@@ -19,7 +19,7 @@
  >mySymbol : Symbol(mySymbol, Decl(expandoFunctionExpressionsWithDynamicNames2.ts, 0, 5))
  
  interface Bar {
-@@ -26,17 +26,17 @@
+@@= skipped -16, +16 lines =@@
  
    (): void;
    test: true;

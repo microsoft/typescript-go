@@ -1,6 +1,6 @@
 --- old.checkObjectDefineProperty.symbols
 +++ new.checkObjectDefineProperty.symbols
-@@ -6,200 +6,41 @@
+@@= skipped -6, +6 lines =@@
  >x : Symbol(x, Decl(validate.ts, 0, 0))
  
  x.name;

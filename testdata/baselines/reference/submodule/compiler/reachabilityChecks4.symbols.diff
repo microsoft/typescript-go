@@ -1,6 +1,6 @@
 --- old.reachabilityChecks4.symbols
 +++ new.reachabilityChecks4.symbols
-@@ -61,11 +61,11 @@
+@@= skipped -61, +61 lines =@@
  >Transition : Symbol(Transition, Decl(reachabilityChecks4.ts, 31, 52))
  
    behavior: Behavior
@@ -14,7 +14,7 @@
  >Direction : Symbol(Direction, Decl(reachabilityChecks4.ts, 30, 37))
  }
  
-@@ -75,15 +75,15 @@
+@@= skipped -14, +14 lines =@@
  >Transition : Symbol(Transition, Decl(reachabilityChecks4.ts, 31, 52))
  
      switch (transition.behavior) {
@@ -34,7 +34,7 @@
  
                  case 'LEFT':
                      return []
-@@ -96,9 +96,9 @@
+@@= skipped -21, +21 lines =@@
              }
          case 'SLIDE_OUT':
              switch (transition.direction) {

@@ -1,6 +1,6 @@
 --- old.collisionThisExpressionAndParameter.symbols
 +++ new.collisionThisExpressionAndParameter.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(collisionThisExpressionAndParameter.ts, 0, 0))
  
      x() {
@@ -9,7 +9,7 @@
  
          var _this = 10; // Local var. No this capture in x(), so no conflict.
  >_this : Symbol(_this, Decl(collisionThisExpressionAndParameter.ts, 2, 11))
-@@ -19,7 +19,7 @@
+@@= skipped -14, +14 lines =@@
          }
      }
      y() {
@@ -18,7 +18,7 @@
  
          var lamda = (_this: number) => { // Error 
  >lamda : Symbol(lamda, Decl(collisionThisExpressionAndParameter.ts, 8, 11))
-@@ -31,7 +31,7 @@
+@@= skipped -12, +12 lines =@@
          }
      }
      z(_this: number) { // Error 
@@ -27,7 +27,7 @@
  >_this : Symbol(_this, Decl(collisionThisExpressionAndParameter.ts, 12, 6))
  
          var lambda = () => {
-@@ -44,7 +44,7 @@
+@@= skipped -13, +13 lines =@@
      }
  
      x1() {
@@ -36,7 +36,7 @@
  
          var _this = 10; // Local var. No this capture in x(), so no conflict.
  >_this : Symbol(_this, Decl(collisionThisExpressionAndParameter.ts, 19, 11))
-@@ -55,7 +55,7 @@
+@@= skipped -11, +11 lines =@@
          }
      }
      y1() {
@@ -45,7 +45,7 @@
  
          var lamda = (_this: number) => { // No Error 
  >lamda : Symbol(lamda, Decl(collisionThisExpressionAndParameter.ts, 24, 11))
-@@ -63,7 +63,7 @@
+@@= skipped -8, +8 lines =@@
          }
      }
      z1(_this: number) { // No Error 
@@ -54,7 +54,7 @@
  >_this : Symbol(_this, Decl(collisionThisExpressionAndParameter.ts, 27, 7))
  
          var lambda = () => {
-@@ -117,7 +117,7 @@
+@@= skipped -54, +54 lines =@@
  >_this : Symbol(_this, Decl(collisionThisExpressionAndParameter.ts, 50, 16))
  
      z(_this: number); // no error - no code gen
@@ -63,7 +63,7 @@
  >_this : Symbol(_this, Decl(collisionThisExpressionAndParameter.ts, 51, 6))
  }
  declare function f2(_this: number); // no error
-@@ -151,15 +151,15 @@
+@@= skipped -34, +34 lines =@@
      }
  
      z(_this: string); // no code gen - no error
@@ -82,7 +82,7 @@
  >_this : Symbol(_this, Decl(collisionThisExpressionAndParameter.ts, 68, 6))
  
          var lambda = () => {
-@@ -208,11 +208,11 @@
+@@= skipped -57, +57 lines =@@
  >_this : Symbol(_this, Decl(collisionThisExpressionAndParameter.ts, 86, 16))
  
      z(_this: string); // no code gen - no error

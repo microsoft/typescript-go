@@ -1,6 +1,6 @@
 --- old.callGenericFunctionWithIncorrectNumberOfTypeArguments.symbols
 +++ new.callGenericFunctionWithIncorrectNumberOfTypeArguments.symbols
-@@ -62,7 +62,7 @@
+@@= skipped -62, +62 lines =@@
  >C : Symbol(C, Decl(callGenericFunctionWithIncorrectNumberOfTypeArguments.ts, 13, 44))
  
      f<T, U>(x: T, y: U): T {
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(callGenericFunctionWithIncorrectNumberOfTypeArguments.ts, 16, 6))
  >U : Symbol(U, Decl(callGenericFunctionWithIncorrectNumberOfTypeArguments.ts, 16, 8))
  >x : Symbol(x, Decl(callGenericFunctionWithIncorrectNumberOfTypeArguments.ts, 16, 12))
-@@ -76,21 +76,21 @@
+@@= skipped -14, +14 lines =@@
  }
  var r4 = (new C()).f<number>(1, '');
  >r4 : Symbol(r4, Decl(callGenericFunctionWithIncorrectNumberOfTypeArguments.ts, 20, 3))
@@ -36,7 +36,7 @@
  >T : Symbol(T, Decl(callGenericFunctionWithIncorrectNumberOfTypeArguments.ts, 24, 6))
  >U : Symbol(U, Decl(callGenericFunctionWithIncorrectNumberOfTypeArguments.ts, 24, 8))
  >x : Symbol(x, Decl(callGenericFunctionWithIncorrectNumberOfTypeArguments.ts, 24, 12))
-@@ -105,15 +105,15 @@
+@@= skipped -29, +29 lines =@@
  
  var r5 = i.f<number>(1, '');
  >r5 : Symbol(r5, Decl(callGenericFunctionWithIncorrectNumberOfTypeArguments.ts, 27, 3))
@@ -56,7 +56,7 @@
  
  class C2<T, U> {
  >C2 : Symbol(C2, Decl(callGenericFunctionWithIncorrectNumberOfTypeArguments.ts, 28, 45))
-@@ -121,7 +121,7 @@
+@@= skipped -16, +16 lines =@@
  >U : Symbol(U, Decl(callGenericFunctionWithIncorrectNumberOfTypeArguments.ts, 30, 11))
  
      f(x: T, y: U): T {
@@ -65,7 +65,7 @@
  >x : Symbol(x, Decl(callGenericFunctionWithIncorrectNumberOfTypeArguments.ts, 31, 6))
  >T : Symbol(T, Decl(callGenericFunctionWithIncorrectNumberOfTypeArguments.ts, 30, 9))
  >y : Symbol(y, Decl(callGenericFunctionWithIncorrectNumberOfTypeArguments.ts, 31, 11))
-@@ -133,15 +133,15 @@
+@@= skipped -12, +12 lines =@@
  }
  var r6 = (new C2()).f<number>(1, '');
  >r6 : Symbol(r6, Decl(callGenericFunctionWithIncorrectNumberOfTypeArguments.ts, 35, 3))
@@ -85,7 +85,7 @@
  
  interface I2<T, U> {
  >I2 : Symbol(I2, Decl(callGenericFunctionWithIncorrectNumberOfTypeArguments.ts, 36, 54))
-@@ -149,7 +149,7 @@
+@@= skipped -16, +16 lines =@@
  >U : Symbol(U, Decl(callGenericFunctionWithIncorrectNumberOfTypeArguments.ts, 38, 15))
  
      f(x: T, y: U): T;
@@ -94,7 +94,7 @@
  >x : Symbol(x, Decl(callGenericFunctionWithIncorrectNumberOfTypeArguments.ts, 39, 6))
  >T : Symbol(T, Decl(callGenericFunctionWithIncorrectNumberOfTypeArguments.ts, 38, 13))
  >y : Symbol(y, Decl(callGenericFunctionWithIncorrectNumberOfTypeArguments.ts, 39, 11))
-@@ -162,13 +162,13 @@
+@@= skipped -13, +13 lines =@@
  
  var r7 = i2.f<number>(1, '');
  >r7 : Symbol(r7, Decl(callGenericFunctionWithIncorrectNumberOfTypeArguments.ts, 42, 3))

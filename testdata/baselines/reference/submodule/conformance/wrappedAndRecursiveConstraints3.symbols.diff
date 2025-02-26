@@ -1,6 +1,6 @@
 --- old.wrappedAndRecursiveConstraints3.symbols
 +++ new.wrappedAndRecursiveConstraints3.symbols
-@@ -13,7 +13,7 @@
+@@= skipped -13, +13 lines =@@
  >T : Symbol(T, Decl(wrappedAndRecursiveConstraints3.ts, 2, 8))
  
      foo<U extends T>(x: U) {
@@ -9,7 +9,7 @@
  >U : Symbol(U, Decl(wrappedAndRecursiveConstraints3.ts, 4, 8))
  >T : Symbol(T, Decl(wrappedAndRecursiveConstraints3.ts, 2, 8))
  >x : Symbol(x, Decl(wrappedAndRecursiveConstraints3.ts, 4, 21))
-@@ -41,9 +41,9 @@
+@@= skipped -28, +28 lines =@@
  
  var r = c.foo({ length: 3, charAt: (x: number) => { '' } });
  >r : Symbol(r, Decl(wrappedAndRecursiveConstraints3.ts, 13, 3))

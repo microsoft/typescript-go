@@ -1,6 +1,6 @@
 --- old.superCallParameterContextualTyping3.symbols
 +++ new.superCallParameterContextualTyping3.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(superCallParameterContextualTyping3.ts, 0, 25))
  
      method(parameter: T): void;
@@ -9,7 +9,7 @@
  >parameter : Symbol(parameter, Decl(superCallParameterContextualTyping3.ts, 1, 11))
  >T : Symbol(T, Decl(superCallParameterContextualTyping3.ts, 0, 25))
  }
-@@ -22,7 +22,7 @@
+@@= skipped -16, +16 lines =@@
      }
  
      foo(param: ContextualType<T>) {
@@ -18,7 +18,7 @@
  >param : Symbol(param, Decl(superCallParameterContextualTyping3.ts, 8, 8))
  >ContextualType : Symbol(ContextualType, Decl(superCallParameterContextualTyping3.ts, 0, 0))
  >T : Symbol(T, Decl(superCallParameterContextualTyping3.ts, 4, 12))
-@@ -44,27 +44,27 @@
+@@= skipped -22, +22 lines =@@
  >p : Symbol(p, Decl(superCallParameterContextualTyping3.ts, 17, 19))
  
                  p.length;

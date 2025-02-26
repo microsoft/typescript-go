@@ -1,6 +1,6 @@
 --- old.conditionalTypeAssignabilityWhenDeferred.symbols
 +++ new.conditionalTypeAssignabilityWhenDeferred.symbols
-@@ -108,9 +108,9 @@
+@@= skipped -108, +108 lines =@@
    var x: T | null = Math.random() > 0.5 ? null : t;
  >x : Symbol(x, Decl(conditionalTypeAssignabilityWhenDeferred.ts, 31, 5))
  >T : Symbol(T, Decl(conditionalTypeAssignabilityWhenDeferred.ts, 30, 11))
@@ -12,7 +12,7 @@
  >t : Symbol(t, Decl(conditionalTypeAssignabilityWhenDeferred.ts, 30, 14))
  
    onlyNullablePlease(x); // should work
-@@ -313,11 +313,11 @@
+@@= skipped -205, +205 lines =@@
  >Foo2 : Symbol(Foo2, Decl(conditionalTypeAssignabilityWhenDeferred.ts, 88, 16))
  
    prop!: Wrapped<string>;

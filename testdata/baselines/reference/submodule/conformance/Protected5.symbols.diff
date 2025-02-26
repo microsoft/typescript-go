@@ -1,6 +1,6 @@
 --- old.Protected5.symbols
 +++ new.Protected5.symbols
-@@ -5,5 +5,5 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(Protected5.ts, 0, 0))
  
    protected static m() { }

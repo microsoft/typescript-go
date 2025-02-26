@@ -1,6 +1,6 @@
 --- old.clinterfaces.symbols
 +++ new.clinterfaces.symbols
-@@ -22,7 +22,7 @@
+@@= skipped -22, +22 lines =@@
  >T : Symbol(T, Decl(clinterfaces.ts, 7, 14), Decl(clinterfaces.ts, 11, 10))
  
      a: string;
@@ -9,7 +9,7 @@
  }
  
  class Foo<T>{
-@@ -30,7 +30,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(clinterfaces.ts, 7, 14), Decl(clinterfaces.ts, 11, 10))
  
      b: number;
@@ -18,7 +18,7 @@
  }
  
  class Bar<T>{
-@@ -38,7 +38,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(clinterfaces.ts, 15, 10), Decl(clinterfaces.ts, 19, 14))
  
      b: number;
@@ -27,7 +27,7 @@
  }
  
  interface Bar<T> {
-@@ -46,7 +46,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(clinterfaces.ts, 15, 10), Decl(clinterfaces.ts, 19, 14))
  
      a: string;

@@ -1,6 +1,6 @@
 --- old.commonJsImportClassExpression.symbols
 +++ new.commonJsImportClassExpression.symbols
-@@ -9,13 +9,13 @@
+@@= skipped -9, +9 lines =@@
  >Chunk : Symbol(Chunk, Decl(use.ts, 0, 0))
  
  c.chunk;

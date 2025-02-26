@@ -1,6 +1,6 @@
 --- old.deleteOperatorWithEnumType.symbols
 +++ new.deleteOperatorWithEnumType.symbols
-@@ -8,9 +8,9 @@
+@@= skipped -8, +8 lines =@@
  
  enum ENUM1 { A, B, "" };
  >ENUM1 : Symbol(ENUM1, Decl(deleteOperatorWithEnumType.ts, 2, 14))
@@ -13,7 +13,7 @@
  
  // enum type var
  var ResultIsBoolean1 = delete ENUM;
-@@ -25,13 +25,13 @@
+@@= skipped -17, +17 lines =@@
  var ResultIsBoolean3 = delete ENUM1["A"];
  >ResultIsBoolean3 : Symbol(ResultIsBoolean3, Decl(deleteOperatorWithEnumType.ts, 10, 3))
  >ENUM1 : Symbol(ENUM1, Decl(deleteOperatorWithEnumType.ts, 2, 14))
@@ -29,7 +29,7 @@
  
  // multiple delete  operators
  var ResultIsBoolean5 = delete delete ENUM;
-@@ -42,7 +42,7 @@
+@@= skipped -17, +17 lines =@@
  >ResultIsBoolean6 : Symbol(ResultIsBoolean6, Decl(deleteOperatorWithEnumType.ts, 15, 3))
  >ENUM : Symbol(ENUM, Decl(deleteOperatorWithEnumType.ts, 0, 0))
  >ENUM1 : Symbol(ENUM1, Decl(deleteOperatorWithEnumType.ts, 2, 14))
@@ -38,7 +38,7 @@
  
  // miss assignment operators
  delete ENUM;
-@@ -52,9 +52,9 @@
+@@= skipped -10, +10 lines =@@
  >ENUM1 : Symbol(ENUM1, Decl(deleteOperatorWithEnumType.ts, 2, 14))
  
  delete ENUM1.B;

@@ -1,6 +1,6 @@
 --- old.tsxElementResolution17.symbols
 +++ new.tsxElementResolution17.symbols
-@@ -10,9 +10,9 @@
+@@= skipped -10, +10 lines =@@
  >s2 : Symbol(s2, Decl(consumer.tsx, 2, 33))
  
  <s1.MyElement />;
@@ -12,7 +12,7 @@
  
  === file.tsx ===
  declare module JSX {
-@@ -26,7 +26,7 @@
+@@= skipped -16, +16 lines =@@
  }
  
  declare module 'elements1' {
@@ -21,7 +21,7 @@
  
  	class MyElement {
  >MyElement : Symbol(MyElement, Decl(file.tsx, 5, 28))
-@@ -35,7 +35,7 @@
+@@= skipped -9, +9 lines =@@
  }
  
  declare module 'elements2' {

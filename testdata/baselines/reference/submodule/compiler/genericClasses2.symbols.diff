@@ -1,6 +1,6 @@
 --- old.genericClasses2.symbols
 +++ new.genericClasses2.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(genericClasses2.ts, 0, 14))
  
  	a: T;
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(genericClasses2.ts, 0, 14))
  }
  
-@@ -15,16 +15,16 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(genericClasses2.ts, 4, 8))
  
  	public x: T;
@@ -29,7 +29,7 @@
  >Foo : Symbol(Foo, Decl(genericClasses2.ts, 0, 0))
  }
  
-@@ -34,23 +34,23 @@
+@@= skipped -19, +19 lines =@@
  
  var y = v1.x; // should be 'string'
  >y : Symbol(y, Decl(genericClasses2.ts, 12, 3))

@@ -1,6 +1,6 @@
 --- old.tsxDeepAttributeAssignabilityError.symbols
 +++ new.tsxDeepAttributeAssignabilityError.symbols
-@@ -8,10 +8,10 @@
+@@= skipped -8, +8 lines =@@
  >MyProps : Symbol(MyProps, Decl(my-component.tsx, 0, 30))
  
      x: string;
@@ -13,7 +13,7 @@
  >MyInnerProps : Symbol(MyInnerProps, Decl(my-component.tsx, 5, 1))
  }
  
-@@ -19,7 +19,7 @@
+@@= skipped -11, +11 lines =@@
  >MyInnerProps : Symbol(MyInnerProps, Decl(my-component.tsx, 5, 1))
  
      value: string;
@@ -22,7 +22,7 @@
  }
  
  export function MyComponent(_props: MyProps) {
-@@ -28,8 +28,6 @@
+@@= skipped -9, +9 lines =@@
  >MyProps : Symbol(MyProps, Decl(my-component.tsx, 0, 30))
  
      return <span>my component</span>;

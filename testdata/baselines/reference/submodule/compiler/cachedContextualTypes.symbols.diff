@@ -1,6 +1,6 @@
 --- old.cachedContextualTypes.symbols
 +++ new.cachedContextualTypes.symbols
-@@ -21,7 +21,7 @@
+@@= skipped -21, +21 lines =@@
  >IMenuWorkbenchToolBarOptions : Symbol(IMenuWorkbenchToolBarOptions, Decl(cachedContextualTypes.ts, 2, 157))
  
      toolbarOptions: {

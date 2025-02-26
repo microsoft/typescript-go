@@ -1,6 +1,6 @@
 --- old.privateNameSetterNoGetter.symbols
 +++ new.privateNameSetterNoGetter.symbols
-@@ -5,23 +5,20 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(privateNameSetterNoGetter.ts, 0, 5))
  
      set #x(x) {}

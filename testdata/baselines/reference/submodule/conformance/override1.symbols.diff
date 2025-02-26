@@ -1,6 +1,6 @@
 --- old.override1.symbols
 +++ new.override1.symbols
-@@ -5,11 +5,11 @@
+@@= skipped -5, +5 lines =@@
  >B : Symbol(B, Decl(override1.ts, 0, 0))
  
      foo (v: string) {}
@@ -14,7 +14,7 @@
  >v : Symbol(v, Decl(override1.ts, 2, 10))
  }
  
-@@ -18,15 +18,15 @@
+@@= skipped -13, +13 lines =@@
  >B : Symbol(B, Decl(override1.ts, 0, 0))
  
      override foo (v: string) {}
@@ -33,7 +33,7 @@
  >v : Symbol(v, Decl(override1.ts, 10, 17))
  }
  
-@@ -34,7 +34,7 @@
+@@= skipped -16, +16 lines =@@
  >C : Symbol(C, Decl(override1.ts, 11, 1))
  
      override foo(v: string) {}
@@ -42,7 +42,7 @@
  >v : Symbol(v, Decl(override1.ts, 14, 17))
  }
  
-@@ -45,15 +45,15 @@
+@@= skipped -11, +11 lines =@@
  >B : Symbol(B, Decl(override1.ts, 0, 0))
  
          override foo (v: string) {}
@@ -61,7 +61,7 @@
  >v : Symbol(v, Decl(override1.ts, 23, 21))
      }
  }
-@@ -62,23 +62,23 @@
+@@= skipped -17, +17 lines =@@
  >E : Symbol(E, Decl(override1.ts, 25, 1))
  
      foo () { }
@@ -91,7 +91,7 @@
  }
  
  function ff () {
-@@ -86,6 +86,6 @@
+@@= skipped -24, +24 lines =@@
  
      return class {
          override foo () {}

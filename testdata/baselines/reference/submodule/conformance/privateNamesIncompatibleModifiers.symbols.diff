@@ -1,6 +1,6 @@
 --- old.privateNamesIncompatibleModifiers.symbols
 +++ new.privateNamesIncompatibleModifiers.symbols
-@@ -5,84 +5,84 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(privateNamesIncompatibleModifiers.ts, 0, 0))
  
      public #foo = 3;         // Error
@@ -110,7 +110,7 @@
  >value : Symbol(value, Decl(privateNamesIncompatibleModifiers.ts, 27, 25))
  }
  
-@@ -90,6 +90,6 @@
+@@= skipped -85, +85 lines =@@
  >B : Symbol(B, Decl(privateNamesIncompatibleModifiers.ts, 28, 1))
  
      abstract #quux = 3;      // Error

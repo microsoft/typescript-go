@@ -1,6 +1,6 @@
 --- old.jsFileMethodOverloads4.symbols
 +++ new.jsFileMethodOverloads4.symbols
-@@ -23,10 +23,9 @@
+@@= skipped -23, +23 lines =@@
   * @return {void}
   */
  Foo.prototype.bar = function (a, b) { }

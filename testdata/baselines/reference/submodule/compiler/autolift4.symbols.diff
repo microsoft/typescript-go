@@ -1,6 +1,6 @@
 --- old.autolift4.symbols
 +++ new.autolift4.symbols
-@@ -5,32 +5,32 @@
+@@= skipped -5, +5 lines =@@
  >Point : Symbol(Point, Decl(autolift4.ts, 0, 0))
  
      constructor(public x: number, public y: number) {
@@ -47,7 +47,7 @@
  >Point : Symbol(Point, Decl(autolift4.ts, 0, 0))
  }
  
-@@ -41,7 +41,7 @@
+@@= skipped -36, +36 lines =@@
      constructor(x: number, y: number, public z: number, m:number) {
  >x : Symbol(x, Decl(autolift4.ts, 13, 16))
  >y : Symbol(y, Decl(autolift4.ts, 13, 26))
@@ -56,7 +56,7 @@
  >m : Symbol(m, Decl(autolift4.ts, 13, 55))
  
          super(x, y);
-@@ -51,27 +51,27 @@
+@@= skipped -10, +10 lines =@@
      }
      
      getDist() {

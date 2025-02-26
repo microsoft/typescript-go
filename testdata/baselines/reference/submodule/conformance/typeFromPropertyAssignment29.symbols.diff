@@ -1,6 +1,6 @@
 --- old.typeFromPropertyAssignment29.symbols
 +++ new.typeFromPropertyAssignment29.symbols
-@@ -2,23 +2,23 @@
+@@= skipped -2, +2 lines =@@
  
  === typeFromPropertyAssignment29.ts ===
  function ExpandoDecl(n: number) {
@@ -33,7 +33,7 @@
  >n : Symbol(n, Decl(typeFromPropertyAssignment29.ts, 4, 25))
  
      return n + 1;
-@@ -26,41 +26,41 @@
+@@= skipped -24, +24 lines =@@
  }
  var n = ExpandoDecl.prop + ExpandoDecl.m(12) + ExpandoDecl(101).length
  >n : Symbol(n, Decl(typeFromPropertyAssignment29.ts, 7, 3), Decl(typeFromPropertyAssignment29.ts, 17, 3), Decl(typeFromPropertyAssignment29.ts, 45, 3), Decl(typeFromPropertyAssignment29.ts, 63, 3), Decl(typeFromPropertyAssignment29.ts, 73, 3) ... and 1 more)
@@ -96,7 +96,7 @@
  >n : Symbol(n, Decl(typeFromPropertyAssignment29.ts, 14, 25))
  
      return n + 1;
-@@ -69,33 +69,33 @@
+@@= skipped -43, +43 lines =@@
  var n = (ExpandoExpr.prop.x || 0) + ExpandoExpr.m(12) + ExpandoExpr(101).length
  >n : Symbol(n, Decl(typeFromPropertyAssignment29.ts, 7, 3), Decl(typeFromPropertyAssignment29.ts, 17, 3), Decl(typeFromPropertyAssignment29.ts, 45, 3), Decl(typeFromPropertyAssignment29.ts, 63, 3), Decl(typeFromPropertyAssignment29.ts, 73, 3) ... and 1 more)
  >ExpandoExpr.prop.x : Symbol(x, Decl(typeFromPropertyAssignment29.ts, 12, 20))
@@ -148,7 +148,7 @@
  >n : Symbol(n, Decl(typeFromPropertyAssignment29.ts, 21, 26))
  
      return n + 1;
-@@ -104,7 +104,7 @@
+@@= skipped -35, +35 lines =@@
  }
  
  function ExpandoNested(n: number) {
@@ -157,7 +157,7 @@
  >n : Symbol(n, Decl(typeFromPropertyAssignment29.ts, 26, 23))
  
      const nested = function (m: number) {
-@@ -117,55 +117,55 @@
+@@= skipped -13, +13 lines =@@
  
      };
      nested.total = n + 1_000_000;
@@ -234,7 +234,7 @@
  
  namespace Ns {
  >Ns : Symbol(Ns, Decl(typeFromPropertyAssignment29.ts, 45, 78))
-@@ -174,9 +174,9 @@
+@@= skipped -57, +57 lines =@@
  >ExpandoNamespace : Symbol(ExpandoNamespace, Decl(typeFromPropertyAssignment29.ts, 47, 14))
  
      ExpandoNamespace.p6 = 42;
@@ -246,7 +246,7 @@
  
      export function foo() {
  >foo : Symbol(foo, Decl(typeFromPropertyAssignment29.ts, 49, 29))
-@@ -188,19 +188,19 @@
+@@= skipped -14, +14 lines =@@
  
  // Should not work in Typescript -- must be const
  var ExpandoExpr2 = function (n: number) {
@@ -271,7 +271,7 @@
  >n : Symbol(n, Decl(typeFromPropertyAssignment29.ts, 60, 26))
  
      return n + 1;
-@@ -208,18 +208,18 @@
+@@= skipped -20, +20 lines =@@
  }
  var n = ExpandoExpr2.prop + ExpandoExpr2.m(12) + ExpandoExpr2(101).length
  >n : Symbol(n, Decl(typeFromPropertyAssignment29.ts, 7, 3), Decl(typeFromPropertyAssignment29.ts, 17, 3), Decl(typeFromPropertyAssignment29.ts, 45, 3), Decl(typeFromPropertyAssignment29.ts, 63, 3), Decl(typeFromPropertyAssignment29.ts, 73, 3) ... and 1 more)
@@ -296,7 +296,7 @@
  }
  ExpandoClass.prop = 2
  >ExpandoClass : Symbol(ExpandoClass, Decl(typeFromPropertyAssignment29.ts, 63, 73))
-@@ -235,16 +235,16 @@
+@@= skipped -27, +27 lines =@@
  >n : Symbol(n, Decl(typeFromPropertyAssignment29.ts, 7, 3), Decl(typeFromPropertyAssignment29.ts, 17, 3), Decl(typeFromPropertyAssignment29.ts, 45, 3), Decl(typeFromPropertyAssignment29.ts, 63, 3), Decl(typeFromPropertyAssignment29.ts, 73, 3) ... and 1 more)
  >ExpandoClass : Symbol(ExpandoClass, Decl(typeFromPropertyAssignment29.ts, 63, 73))
  >ExpandoClass : Symbol(ExpandoClass, Decl(typeFromPropertyAssignment29.ts, 63, 73))
@@ -316,7 +316,7 @@
  }
  ExpandoExpr3.prop = 3
  >ExpandoExpr3 : Symbol(ExpandoExpr3, Decl(typeFromPropertyAssignment29.ts, 76, 3))
-@@ -260,8 +260,8 @@
+@@= skipped -25, +25 lines =@@
  >n : Symbol(n, Decl(typeFromPropertyAssignment29.ts, 7, 3), Decl(typeFromPropertyAssignment29.ts, 17, 3), Decl(typeFromPropertyAssignment29.ts, 45, 3), Decl(typeFromPropertyAssignment29.ts, 63, 3), Decl(typeFromPropertyAssignment29.ts, 73, 3) ... and 1 more)
  >ExpandoExpr3 : Symbol(ExpandoExpr3, Decl(typeFromPropertyAssignment29.ts, 76, 3))
  >ExpandoExpr3 : Symbol(ExpandoExpr3, Decl(typeFromPropertyAssignment29.ts, 76, 3))

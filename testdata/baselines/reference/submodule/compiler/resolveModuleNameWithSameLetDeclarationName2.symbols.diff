@@ -1,6 +1,6 @@
 --- old.resolveModuleNameWithSameLetDeclarationName2.symbols
 +++ new.resolveModuleNameWithSameLetDeclarationName2.symbols
-@@ -8,11 +8,11 @@
+@@= skipped -8, +8 lines =@@
  >ucs2 : Symbol(ucs2, Decl(resolveModuleNameWithSameLetDeclarationName2.ts, 0, 27), Decl(resolveModuleNameWithSameLetDeclarationName2.ts, 6, 14))
  
          decode(string: string): string;

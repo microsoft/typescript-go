@@ -1,6 +1,6 @@
 --- old.systemDefaultImportCallable.symbols
 +++ new.systemDefaultImportCallable.symbols
-@@ -20,9 +20,9 @@
+@@= skipped -20, +20 lines =@@
      var repeat: typeof core.String.repeat;
  >repeat : Symbol(repeat, Decl(core-js.d.ts, 6, 7))
  >core.String.repeat : Symbol(repeat, Decl(core-js.d.ts, 1, 17))
@@ -12,7 +12,7 @@
  >repeat : Symbol(repeat, Decl(core-js.d.ts, 1, 17))
  
      export default repeat;
-@@ -35,7 +35,7 @@
+@@= skipped -15, +15 lines =@@
  const _: string = repeat(new Date().toUTCString() + " ", 2);
  >_ : Symbol(_, Decl(greeter.ts, 2, 5))
  >repeat : Symbol(repeat, Decl(greeter.ts, 0, 6))

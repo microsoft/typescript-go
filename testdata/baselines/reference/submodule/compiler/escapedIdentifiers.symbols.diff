@@ -1,6 +1,6 @@
 --- old.escapedIdentifiers.symbols
 +++ new.escapedIdentifiers.symbols
-@@ -14,13 +14,13 @@
+@@= skipped -14, +14 lines =@@
  
  // var decl
  var \u0061 = 1;
@@ -17,7 +17,7 @@
  
  var b = 1;
  >b : Symbol(b, Decl(escapedIdentifiers.ts, 16, 3))
-@@ -39,31 +39,31 @@
+@@= skipped -25, +25 lines =@@
  >baz1 : Symbol(baz1, Decl(escapedIdentifiers.ts, 22, 14))
  }
  module moduleType\u0032 { 
@@ -60,7 +60,7 @@
  
  // classes
  
-@@ -71,13 +71,13 @@
+@@= skipped -32, +32 lines =@@
  >classType1 : Symbol(classType1, Decl(escapedIdentifiers.ts, 31, 26))
  
      public foo1: number;
@@ -77,7 +77,7 @@
  }
  
  var classType1Object1 = new classType1();
-@@ -85,49 +85,49 @@
+@@= skipped -14, +14 lines =@@
  >classType1 : Symbol(classType1, Decl(escapedIdentifiers.ts, 31, 26))
  
  classType1Object1.foo1 = 2;
@@ -140,7 +140,7 @@
  }
  
  var interfaceType1Object1 = <interfaceType1>{ bar1: 0 };
-@@ -136,9 +136,9 @@
+@@= skipped -51, +51 lines =@@
  >bar1 : Symbol(bar1, Decl(escapedIdentifiers.ts, 59, 45))
  
  interfaceType1Object1.bar1 = 2;
@@ -152,7 +152,7 @@
  
  var interfaceType1Object2 = <interfaceType\u0031>{ bar1: 0 };
  >interfaceType1Object2 : Symbol(interfaceType1Object2, Decl(escapedIdentifiers.ts, 61, 3))
-@@ -146,29 +146,29 @@
+@@= skipped -10, +10 lines =@@
  >bar1 : Symbol(bar1, Decl(escapedIdentifiers.ts, 61, 50))
  
  interfaceType1Object2.bar1 = 2;
@@ -190,7 +190,7 @@
  
  
  // arguments
-@@ -176,20 +176,20 @@
+@@= skipped -30, +30 lines =@@
  >testClass : Symbol(testClass, Decl(escapedIdentifiers.ts, 66, 31))
  
      public func(arg1: number, arg\u0032: string, arg\u0033: boolean, arg4: number) { 
@@ -216,7 +216,7 @@
  
          arg4 = 2;
  >arg4 : Symbol(arg4, Decl(escapedIdentifiers.ts, 71, 68))
-@@ -201,10 +201,10 @@
+@@= skipped -25, +25 lines =@@
  >constructorTestClass : Symbol(constructorTestClass, Decl(escapedIdentifiers.ts, 77, 1))
  
      constructor (public arg1: number,public arg\u0032: string,public arg\u0033: boolean,public arg4: number) { 
@@ -231,7 +231,7 @@
      }
  }
  var constructorTestObject = new constructorTestClass(1, 'string', true, 2);
-@@ -212,24 +212,24 @@
+@@= skipped -11, +11 lines =@@
  >constructorTestClass : Symbol(constructorTestClass, Decl(escapedIdentifiers.ts, 77, 1))
  
  constructorTestObject.arg\u0031 = 1;

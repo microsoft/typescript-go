@@ -1,6 +1,6 @@
 --- old.fillInMissingTypeArgsOnJSConstructCalls.symbols
 +++ new.fillInMissingTypeArgsOnJSConstructCalls.symbols
-@@ -2,14 +2,14 @@
+@@= skipped -2, +2 lines =@@
  
  === BaseA.js ===
  export default class BaseA {
@@ -17,7 +17,7 @@
  >BaseA : Symbol(BaseA, Decl(SubA.js, 0, 6))
  }
  === BaseB.js ===
-@@ -17,12 +17,12 @@
+@@= skipped -15, +15 lines =@@
  >BaseA : Symbol(BaseA, Decl(BaseB.js, 0, 6))
  
  export default class B<T: BaseA> {
@@ -32,7 +32,7 @@
  >Class : Symbol(Class)
  >T : Symbol(T, Decl(BaseB.js, 1, 23))
  
-@@ -32,9 +32,9 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(BaseB.js, 1, 23))
  
          this._AClass = AClass;
@@ -45,7 +45,7 @@
  >AClass : Symbol(AClass, Decl(BaseB.js, 3, 16))
      }
  }
-@@ -46,13 +46,12 @@
+@@= skipped -14, +14 lines =@@
  >BaseB : Symbol(BaseB, Decl(SubB.js, 1, 6))
  
  export default class SubB extends BaseB<SubA> {

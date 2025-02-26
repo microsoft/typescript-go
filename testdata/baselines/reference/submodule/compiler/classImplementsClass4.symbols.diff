@@ -1,6 +1,6 @@
 --- old.classImplementsClass4.symbols
 +++ new.classImplementsClass4.symbols
-@@ -5,17 +5,17 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(classImplementsClass4.ts, 0, 0))
  
      private x = 1;

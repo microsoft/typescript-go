@@ -1,6 +1,6 @@
 --- old.constructorImplementationWithDefaultValues2.symbols
 +++ new.constructorImplementationWithDefaultValues2.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >x : Symbol(x, Decl(constructorImplementationWithDefaultValues2.ts, 1, 16))
  
      constructor(public x: string = 1) { // error
@@ -9,7 +9,7 @@
  
          var y = x;
  >y : Symbol(y, Decl(constructorImplementationWithDefaultValues2.ts, 3, 11))
-@@ -30,7 +30,7 @@
+@@= skipped -22, +22 lines =@@
      constructor(x: T = 1, public y: U = x) { // error
  >x : Symbol(x, Decl(constructorImplementationWithDefaultValues2.ts, 9, 16))
  >T : Symbol(T, Decl(constructorImplementationWithDefaultValues2.ts, 7, 8))

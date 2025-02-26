@@ -1,6 +1,6 @@
 --- old.typeArgumentInferenceWithClassExpression2.symbols
 +++ new.typeArgumentInferenceWithClassExpression2.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >foo : Symbol(foo, Decl(typeArgumentInferenceWithClassExpression2.ts, 0, 0))
  >T : Symbol(T, Decl(typeArgumentInferenceWithClassExpression2.ts, 0, 13))
  >x : Symbol(x, Decl(typeArgumentInferenceWithClassExpression2.ts, 0, 16))
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(typeArgumentInferenceWithClassExpression2.ts, 0, 13))
  >T : Symbol(T, Decl(typeArgumentInferenceWithClassExpression2.ts, 0, 13))
  
-@@ -16,5 +16,5 @@
+@@= skipped -11, +11 lines =@@
  // Should not infer string because it is a static property
  foo(class { static prop = "hello" }).length;
  >foo : Symbol(foo, Decl(typeArgumentInferenceWithClassExpression2.ts, 0, 0))

@@ -1,6 +1,6 @@
 --- old.typeGuardsInConditionalExpression.symbols
 +++ new.typeGuardsInConditionalExpression.symbols
-@@ -16,9 +16,9 @@
+@@= skipped -16, +16 lines =@@
  >x : Symbol(x, Decl(typeGuardsInConditionalExpression.ts, 7, 13))
  
          ? x.length // string
@@ -12,7 +12,7 @@
  
          : x++; // number
  >x : Symbol(x, Decl(typeGuardsInConditionalExpression.ts, 7, 13))
-@@ -153,9 +153,9 @@
+@@= skipped -137, +137 lines =@@
  
          ? ((y = x.length) && x === "hello") // boolean
  >y : Symbol(y, Decl(typeGuardsInConditionalExpression.ts, 55, 7))
@@ -24,7 +24,7 @@
  >x : Symbol(x, Decl(typeGuardsInConditionalExpression.ts, 54, 14))
  
          : x === 10; // boolean
-@@ -183,9 +183,9 @@
+@@= skipped -30, +30 lines =@@
  >x : Symbol(x, Decl(typeGuardsInConditionalExpression.ts, 61, 15))
  
          && x.toString()); // x is number
@@ -36,7 +36,7 @@
  }
  function foo11(x: number | string | boolean) {
  >foo11 : Symbol(foo11, Decl(typeGuardsInConditionalExpression.ts, 69, 1))
-@@ -227,11 +227,11 @@
+@@= skipped -44, +44 lines =@@
  
          ? ((x = 10) && x.toString().length) // number
  >x : Symbol(x, Decl(typeGuardsInConditionalExpression.ts, 80, 15))

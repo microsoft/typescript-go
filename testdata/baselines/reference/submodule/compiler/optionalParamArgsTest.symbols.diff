@@ -1,6 +1,6 @@
 --- old.optionalParamArgsTest.symbols
 +++ new.optionalParamArgsTest.symbols
-@@ -13,19 +13,19 @@
+@@= skipped -13, +13 lines =@@
  >I1 : Symbol(I1, Decl(optionalParamArgsTest.ts, 0, 0))
  
      C1M1():number;
@@ -24,7 +24,7 @@
  >C1M4A1 : Symbol(C1M4A1, Decl(optionalParamArgsTest.ts, 12, 9))
  >C1M4A2 : Symbol(C1M4A2, Decl(optionalParamArgsTest.ts, 12, 23))
  }
-@@ -39,19 +39,19 @@
+@@= skipped -26, +26 lines =@@
  >p : Symbol(p, Decl(optionalParamArgsTest.ts, 17, 30))
  
      public n:number = 0;
@@ -48,7 +48,7 @@
  >C1M3A1 : Symbol(C1M3A1, Decl(optionalParamArgsTest.ts, 25, 16))
  >C1M3A2 : Symbol(C1M3A2, Decl(optionalParamArgsTest.ts, 25, 32))
  >C1M3A1 : Symbol(C1M3A1, Decl(optionalParamArgsTest.ts, 25, 16))
-@@ -60,14 +60,14 @@
+@@= skipped -21, +21 lines =@@
  
      // C1M4 contains a mix of optional and non-optional parameters
      public C1M4(C1M4A1:number,C1M4A2?:number) { return C1M4A1 + C1M4A2; }
@@ -65,7 +65,7 @@
  >C1M5A1 : Symbol(C1M5A1, Decl(optionalParamArgsTest.ts, 30, 16))
  >C1M5A2 : Symbol(C1M5A2, Decl(optionalParamArgsTest.ts, 30, 30))
  >C1M5A3 : Symbol(C1M5A3, Decl(optionalParamArgsTest.ts, 30, 46))
-@@ -76,7 +76,7 @@
+@@= skipped -16, +16 lines =@@
  
      // Uninitialized parameter makes the initialized one required
      public C1M5(C1M5A1:number,C1M5A2:number=0,C1M5A3:number) { return C1M5A1 + C1M5A2; }
@@ -74,7 +74,7 @@
  >C1M5A1 : Symbol(C1M5A1, Decl(optionalParamArgsTest.ts, 33, 16))
  >C1M5A2 : Symbol(C1M5A2, Decl(optionalParamArgsTest.ts, 33, 30))
  >C1M5A3 : Symbol(C1M5A3, Decl(optionalParamArgsTest.ts, 33, 46))
-@@ -156,9 +156,9 @@
+@@= skipped -80, +80 lines =@@
  
  // Valid
  c1o1.C1M1();
@@ -86,7 +86,7 @@
  
  var f1v1=F1();
  >f1v1 : Symbol(f1v1, Decl(optionalParamArgsTest.ts, 57, 3))
-@@ -170,14 +170,14 @@
+@@= skipped -14, +14 lines =@@
  
  // Valid
  c1o1.C1M2(1);
@@ -105,7 +105,7 @@
  
  var f2v1=F2(1);
  >f2v1 : Symbol(f2v1, Decl(optionalParamArgsTest.ts, 63, 3))
-@@ -189,14 +189,14 @@
+@@= skipped -19, +19 lines =@@
  
  // Valid
  c1o1.C1M3(1,2);
@@ -124,7 +124,7 @@
  
  var f3v1=F3(1,2);
  >f3v1 : Symbol(f3v1, Decl(optionalParamArgsTest.ts, 69, 3))
-@@ -208,14 +208,14 @@
+@@= skipped -19, +19 lines =@@
  
  // Valid
  c1o1.C1M4(1,2);
@@ -143,7 +143,7 @@
  
  var f4v1=F4(1,2);
  >f4v1 : Symbol(f4v1, Decl(optionalParamArgsTest.ts, 75, 3))
-@@ -227,14 +227,14 @@
+@@= skipped -19, +19 lines =@@
  
  // Valid
  c1o1.C1M3(1);
@@ -162,7 +162,7 @@
  
  var f3v2=F3(1);
  >f3v2 : Symbol(f3v2, Decl(optionalParamArgsTest.ts, 81, 3))
-@@ -246,14 +246,14 @@
+@@= skipped -19, +19 lines =@@
  
  // Valid 
  c1o1.C1M3();
@@ -181,7 +181,7 @@
  
  var f3v3=F3();
  >f3v3 : Symbol(f3v3, Decl(optionalParamArgsTest.ts, 87, 3))
-@@ -265,14 +265,14 @@
+@@= skipped -19, +19 lines =@@
  
  // Valid
  c1o1.C1M4(1);
@@ -200,7 +200,7 @@
  
  var f4v2=F4(1);
  >f4v2 : Symbol(f4v2, Decl(optionalParamArgsTest.ts, 93, 3))
-@@ -284,14 +284,14 @@
+@@= skipped -19, +19 lines =@@
  
  // Negative tests - we expect these cases to fail
  c1o1.C1M1(1);
@@ -219,7 +219,7 @@
  
  F1(1);
  >F1 : Symbol(F1, Decl(optionalParamArgsTest.ts, 40, 1))
-@@ -300,14 +300,14 @@
+@@= skipped -16, +16 lines =@@
  >L1 : Symbol(L1, Decl(optionalParamArgsTest.ts, 48, 3))
  
  c1o1.C1M2();
@@ -238,7 +238,7 @@
  
  F2();
  >F2 : Symbol(F2, Decl(optionalParamArgsTest.ts, 43, 27))
-@@ -316,14 +316,14 @@
+@@= skipped -16, +16 lines =@@
  >L2 : Symbol(L2, Decl(optionalParamArgsTest.ts, 49, 3))
  
  c1o1.C1M2(1,2);
@@ -257,7 +257,7 @@
  
  F2(1,2);
  >F2 : Symbol(F2, Decl(optionalParamArgsTest.ts, 43, 27))
-@@ -332,14 +332,14 @@
+@@= skipped -16, +16 lines =@@
  >L2 : Symbol(L2, Decl(optionalParamArgsTest.ts, 49, 3))
  
  c1o1.C1M3(1,2,3);
@@ -276,7 +276,7 @@
  
  F3(1,2,3);
  >F3 : Symbol(F3, Decl(optionalParamArgsTest.ts, 44, 41))
-@@ -348,14 +348,14 @@
+@@= skipped -16, +16 lines =@@
  >L3 : Symbol(L3, Decl(optionalParamArgsTest.ts, 50, 3))
  
  c1o1.C1M4();

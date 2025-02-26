@@ -1,6 +1,6 @@
 --- old.jsxChildrenSingleChildConfusableWithMultipleChildrenNoError.symbols
 +++ new.jsxChildrenSingleChildConfusableWithMultipleChildrenNoError.symbols
-@@ -9,13 +9,13 @@
+@@= skipped -9, +9 lines =@@
  type Tab = [string, React.ReactNode]  // [tabName, tabContent]
  >Tab : Symbol(Tab, Decl(jsxChildrenSingleChildConfusableWithMultipleChildrenNoError.tsx, 2, 30))
  >React : Symbol(React, Decl(jsxChildrenSingleChildConfusableWithMultipleChildrenNoError.tsx, 2, 6))
@@ -16,7 +16,7 @@
  >Tab : Symbol(Tab, Decl(jsxChildrenSingleChildConfusableWithMultipleChildrenNoError.tsx, 2, 30))
  }
  
-@@ -25,28 +25,23 @@
+@@= skipped -16, +16 lines =@@
  >Props : Symbol(Props, Decl(jsxChildrenSingleChildConfusableWithMultipleChildrenNoError.tsx, 4, 36))
  
      return <div/>

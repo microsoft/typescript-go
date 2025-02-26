@@ -1,6 +1,6 @@
 --- old.callOverloads2.symbols
 +++ new.callOverloads2.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(callOverloads2.ts, 6, 1), Decl(callOverloads2.ts, 0, 0))
  
      bar1() { /*WScript.Echo("bar1");*/ }
@@ -9,7 +9,7 @@
  
      constructor(x: any) {
  >x : Symbol(x, Decl(callOverloads2.ts, 3, 16))
-@@ -42,9 +42,9 @@
+@@= skipped -37, +37 lines =@@
  
  
  f1.bar1();

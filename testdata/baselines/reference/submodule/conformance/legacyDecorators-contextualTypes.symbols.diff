@@ -1,6 +1,6 @@
 --- old.legacyDecorators-contextualTypes.symbols
 +++ new.legacyDecorators-contextualTypes.symbols
-@@ -19,7 +19,7 @@
+@@= skipped -19, +19 lines =@@
  >d : Symbol(d, Decl(legacyDecorators-contextualTypes.ts, 4, 12))
  
      static f() {}
@@ -9,7 +9,7 @@
  
      @((t, k, d) => { })
  >t : Symbol(t, Decl(legacyDecorators-contextualTypes.ts, 7, 7))
-@@ -27,10 +27,10 @@
+@@= skipped -8, +8 lines =@@
  >d : Symbol(d, Decl(legacyDecorators-contextualTypes.ts, 7, 12))
  
      static get x() { return 1; }
@@ -22,7 +22,7 @@
  >value : Symbol(value, Decl(legacyDecorators-contextualTypes.ts, 9, 17))
  
      @((t, k, d) => { })
-@@ -39,14 +39,14 @@
+@@= skipped -12, +12 lines =@@
  >d : Symbol(d, Decl(legacyDecorators-contextualTypes.ts, 11, 12))
  
      static accessor y = 1;
@@ -39,7 +39,7 @@
  
      @((t, k, d) => { })
  >t : Symbol(t, Decl(legacyDecorators-contextualTypes.ts, 17, 7))
-@@ -54,7 +54,7 @@
+@@= skipped -15, +15 lines =@@
  >d : Symbol(d, Decl(legacyDecorators-contextualTypes.ts, 17, 12))
  
      g() {}
@@ -48,7 +48,7 @@
  
      @((t, k, d) => { })
  >t : Symbol(t, Decl(legacyDecorators-contextualTypes.ts, 20, 7))
-@@ -62,10 +62,10 @@
+@@= skipped -8, +8 lines =@@
  >d : Symbol(d, Decl(legacyDecorators-contextualTypes.ts, 20, 12))
  
      get a() { return 1; }
@@ -61,7 +61,7 @@
  >value : Symbol(value, Decl(legacyDecorators-contextualTypes.ts, 22, 10))
  
      @((t, k, d) => { })
-@@ -74,24 +74,24 @@
+@@= skipped -12, +12 lines =@@
  >d : Symbol(d, Decl(legacyDecorators-contextualTypes.ts, 24, 12))
  
      accessor b = 1;

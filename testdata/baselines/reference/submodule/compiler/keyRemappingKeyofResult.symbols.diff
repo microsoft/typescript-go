@@ -1,6 +1,6 @@
 --- old.keyRemappingKeyofResult.symbols
 +++ new.keyRemappingKeyofResult.symbols
-@@ -3,7 +3,6 @@
+@@= skipped -3, +3 lines =@@
  === keyRemappingKeyofResult.ts ===
  const sym = Symbol("")
  >sym : Symbol(sym, Decl(keyRemappingKeyofResult.ts, 0, 5))
@@ -8,7 +8,7 @@
  
  type Orig = { [k: string]: any, str: any, [sym]: any }
  >Orig : Symbol(Orig, Decl(keyRemappingKeyofResult.ts, 0, 22))
-@@ -14,7 +13,7 @@
+@@= skipped -11, +10 lines =@@
  
  type Okay = Exclude<keyof Orig, never>
  >Okay : Symbol(Okay, Decl(keyRemappingKeyofResult.ts, 1, 54))
@@ -17,7 +17,7 @@
  >Orig : Symbol(Orig, Decl(keyRemappingKeyofResult.ts, 0, 22))
  
  // type Okay = string | number | typeof sym
-@@ -23,7 +22,7 @@
+@@= skipped -9, +9 lines =@@
  >Remapped : Symbol(Remapped, Decl(keyRemappingKeyofResult.ts, 3, 38))
  >K : Symbol(K, Decl(keyRemappingKeyofResult.ts, 6, 19))
  >Orig : Symbol(Orig, Decl(keyRemappingKeyofResult.ts, 0, 22))
@@ -26,7 +26,7 @@
  >K : Symbol(K, Decl(keyRemappingKeyofResult.ts, 6, 19))
  >K : Symbol(K, Decl(keyRemappingKeyofResult.ts, 6, 19))
  
-@@ -35,7 +34,7 @@
+@@= skipped -12, +12 lines =@@
  
  type Oops = Exclude<keyof Remapped, never>
  >Oops : Symbol(Oops, Decl(keyRemappingKeyofResult.ts, 6, 83))
@@ -35,7 +35,7 @@
  >Remapped : Symbol(Remapped, Decl(keyRemappingKeyofResult.ts, 3, 38))
  
  declare let x: Oops;
-@@ -88,7 +87,7 @@
+@@= skipped -53, +53 lines =@@
  >Remapped : Symbol(Remapped, Decl(keyRemappingKeyofResult.ts, 27, 19))
  >K : Symbol(K, Decl(keyRemappingKeyofResult.ts, 30, 23))
  >Orig : Symbol(Orig, Decl(keyRemappingKeyofResult.ts, 20, 17))
@@ -44,7 +44,7 @@
  >K : Symbol(K, Decl(keyRemappingKeyofResult.ts, 30, 23))
  >K : Symbol(K, Decl(keyRemappingKeyofResult.ts, 30, 23))
  
-@@ -150,15 +149,15 @@
+@@= skipped -62, +62 lines =@@
      type NonIndex<T extends PropertyKey> = {} extends Record<T, any> ? never : T;
  >NonIndex : Symbol(NonIndex, Decl(keyRemappingKeyofResult.ts, 51, 19))
  >T : Symbol(T, Decl(keyRemappingKeyofResult.ts, 54, 18))

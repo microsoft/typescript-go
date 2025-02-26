@@ -1,6 +1,6 @@
 --- old.declFileTypeAnnotationUnionType.symbols
 +++ new.declFileTypeAnnotationUnionType.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >c : Symbol(c, Decl(declFileTypeAnnotationUnionType.ts, 0, 0))
  
      private p: string;
@@ -9,7 +9,7 @@
  }
  module m {
  >m : Symbol(m, Decl(declFileTypeAnnotationUnionType.ts, 2, 1))
-@@ -14,14 +14,14 @@
+@@= skipped -9, +9 lines =@@
  >c : Symbol(c, Decl(declFileTypeAnnotationUnionType.ts, 3, 10))
  
          private q: string;
@@ -26,7 +26,7 @@
      }
  }
  class g<T> {
-@@ -29,7 +29,7 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(declFileTypeAnnotationUnionType.ts, 11, 8))
  
      private s: string;
@@ -35,7 +35,7 @@
  }
  
  // Just the name
-@@ -37,36 +37,36 @@
+@@= skipped -8, +8 lines =@@
  >k : Symbol(k, Decl(declFileTypeAnnotationUnionType.ts, 16, 3))
  >c : Symbol(c, Decl(declFileTypeAnnotationUnionType.ts, 0, 0))
  >m : Symbol(m, Decl(declFileTypeAnnotationUnionType.ts, 2, 1))

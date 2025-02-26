@@ -1,6 +1,6 @@
 --- old.invariantGenericErrorElaboration.symbols
 +++ new.invariantGenericErrorElaboration.symbols
-@@ -19,11 +19,11 @@
+@@= skipped -19, +19 lines =@@
  >A : Symbol(A, Decl(invariantGenericErrorElaboration.ts, 5, 18))
  
    constraint: Constraint<this>
@@ -14,7 +14,7 @@
  >A : Symbol(A, Decl(invariantGenericErrorElaboration.ts, 5, 18))
  }
  
-@@ -32,7 +32,7 @@
+@@= skipped -13, +13 lines =@@
  >Runtype : Symbol(Runtype, Decl(invariantGenericErrorElaboration.ts, 3, 29))
  
    tag: 'number'
@@ -23,7 +23,7 @@
  }
  declare const Num: Num
  >Num : Symbol(Num, Decl(invariantGenericErrorElaboration.ts, 8, 1), Decl(invariantGenericErrorElaboration.ts, 13, 13))
-@@ -67,11 +67,11 @@
+@@= skipped -35, +35 lines =@@
  >A : Symbol(A, Decl(invariantGenericErrorElaboration.ts, 18, 21))
  
    underlying: A,

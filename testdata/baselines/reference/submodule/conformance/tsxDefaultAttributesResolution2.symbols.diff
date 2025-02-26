@@ -1,6 +1,6 @@
 --- old.tsxDefaultAttributesResolution2.symbols
 +++ new.tsxDefaultAttributesResolution2.symbols
-@@ -8,21 +8,19 @@
+@@= skipped -8, +8 lines =@@
  >Prop : Symbol(Prop, Decl(file.tsx, 0, 32))
  
      x: true;

@@ -1,6 +1,6 @@
 --- old.truthinessCallExpressionCoercion1.symbols
 +++ new.truthinessCallExpressionCoercion1.symbols
-@@ -9,33 +9,33 @@
+@@= skipped -9, +9 lines =@@
      // error
      required ? console.log('required') : undefined;
  >required : Symbol(required, Decl(truthinessCallExpressionCoercion1.ts, 0, 54))
@@ -42,7 +42,7 @@
  >undefined : Symbol(undefined)
  }
  
-@@ -44,24 +44,24 @@
+@@= skipped -35, +35 lines =@@
  
      function test() { return Math.random() > 0.5; }
  >test : Symbol(test, Decl(truthinessCallExpressionCoercion1.ts, 14, 39))
@@ -73,7 +73,7 @@
  >test : Symbol(test, Decl(truthinessCallExpressionCoercion1.ts, 14, 39))
  >undefined : Symbol(undefined)
  
-@@ -76,8 +76,8 @@
+@@= skipped -32, +32 lines =@@
  >test : Symbol(test, Decl(truthinessCallExpressionCoercion1.ts, 14, 39))
  
          ? [() => null].forEach(() => { test(); })
@@ -84,7 +84,7 @@
  >test : Symbol(test, Decl(truthinessCallExpressionCoercion1.ts, 14, 39))
  
          : undefined;
-@@ -88,8 +88,8 @@
+@@= skipped -12, +12 lines =@@
  >test : Symbol(test, Decl(truthinessCallExpressionCoercion1.ts, 14, 39))
  
          ? [() => null].forEach(test => { test() })
@@ -95,7 +95,7 @@
  >test : Symbol(test, Decl(truthinessCallExpressionCoercion1.ts, 33, 31))
  >test : Symbol(test, Decl(truthinessCallExpressionCoercion1.ts, 33, 31))
  
-@@ -118,9 +118,9 @@
+@@= skipped -30, +30 lines =@@
  >x : Symbol(x, Decl(truthinessCallExpressionCoercion1.ts, 38, 9))
  >foo : Symbol(foo, Decl(truthinessCallExpressionCoercion1.ts, 38, 15))
  >bar : Symbol(bar, Decl(truthinessCallExpressionCoercion1.ts, 39, 14))
@@ -107,7 +107,7 @@
  >undefined : Symbol(undefined)
  
      // ok
-@@ -181,47 +181,47 @@
+@@= skipped -63, +63 lines =@@
  >Foo : Symbol(Foo, Decl(truthinessCallExpressionCoercion1.ts, 64, 1))
  
      maybeIsUser?: () => boolean;

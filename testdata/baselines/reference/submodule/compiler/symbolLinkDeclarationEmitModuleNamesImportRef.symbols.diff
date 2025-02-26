@@ -1,6 +1,6 @@
 --- old.symbolLinkDeclarationEmitModuleNamesImportRef.symbols
 +++ new.symbolLinkDeclarationEmitModuleNamesImportRef.symbols
-@@ -11,12 +11,3 @@
+@@= skipped -11, +11 lines =@@
  >styles : Symbol(styles, Decl(index.ts, 0, 8))
  }
  

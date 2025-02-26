@@ -1,6 +1,6 @@
 --- old.intersectionReduction.symbols
 +++ new.intersectionReduction.symbols
-@@ -381,20 +381,20 @@
+@@= skipped -381, +381 lines =@@
  >A2 : Symbol(A2, Decl(intersectionReduction.ts, 107, 93))
  
      kind: "A";
@@ -25,7 +25,7 @@
  }
  
  declare const shouldBeB: (A2 | B2) & B2;
-@@ -429,20 +429,20 @@
+@@= skipped -48, +48 lines =@@
  >ABI : Symbol(ABI, Decl(intersectionReduction.ts, 126, 1))
  
      kind: 'a' | 'b';

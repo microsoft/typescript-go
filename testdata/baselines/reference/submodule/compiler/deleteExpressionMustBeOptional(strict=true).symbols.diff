@@ -1,6 +1,6 @@
 --- old.deleteExpressionMustBeOptional(strict=true).symbols
 +++ new.deleteExpressionMustBeOptional(strict=true).symbols
-@@ -5,31 +5,31 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(deleteExpressionMustBeOptional.ts, 0, 0))
  
      a: number
@@ -41,7 +41,7 @@
  }
  
  interface AA {
-@@ -59,62 +59,62 @@
+@@= skipped -54, +54 lines =@@
  >BB : Symbol(BB, Decl(deleteExpressionMustBeOptional.ts, 14, 1))
  
  delete f.a

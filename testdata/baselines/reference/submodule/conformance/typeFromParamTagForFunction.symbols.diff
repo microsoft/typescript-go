@@ -1,6 +1,6 @@
 --- old.typeFromParamTagForFunction.symbols
 +++ new.typeFromParamTagForFunction.symbols
-@@ -11,42 +11,29 @@
+@@= skipped -11, +11 lines =@@
  
  === a-ext.js ===
  exports.A = function () {
@@ -45,7 +45,7 @@
      }
  };
  
-@@ -54,64 +41,48 @@
+@@= skipped -43, +30 lines =@@
  const { B } = require("./b-ext");
  >B : Symbol(B, Decl(b.js, 0, 7))
  >require : Symbol(require, Decl(node.d.ts, 0, 0))
@@ -110,7 +110,7 @@
  
  === e-ext.js ===
  export class E {
-@@ -119,9 +90,7 @@
+@@= skipped -65, +49 lines =@@
  
      constructor() {
          this.x = 1;
@@ -120,7 +120,7 @@
      }
  }
  
-@@ -129,52 +98,38 @@
+@@= skipped -10, +8 lines =@@
  const { E } = require("./e-ext");
  >E : Symbol(E, Decl(e.js, 0, 7))
  >require : Symbol(require, Decl(node.d.ts, 0, 0))
@@ -173,7 +173,7 @@
  
  === h.js ===
  class H {
-@@ -182,9 +137,7 @@
+@@= skipped -53, +39 lines =@@
  
      constructor() {
          this.x = 1;
@@ -183,7 +183,7 @@
      }
  }
  
-@@ -192,7 +145,5 @@
+@@= skipped -10, +8 lines =@@
  function h(p) { p.x; }
  >h : Symbol(h, Decl(h.js, 4, 1))
  >p : Symbol(p, Decl(h.js, 7, 11))

@@ -1,6 +1,6 @@
 --- old.invalidSplice.symbols
 +++ new.invalidSplice.symbols
-@@ -3,6 +3,6 @@
+@@= skipped -3, +3 lines =@@
  === invalidSplice.ts ===
  var arr = [].splice(0,3,4,5);
  >arr : Symbol(arr, Decl(invalidSplice.ts, 0, 3))

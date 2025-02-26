@@ -1,6 +1,6 @@
 --- old.typeFromPropertyAssignment30.symbols
 +++ new.typeFromPropertyAssignment30.symbols
-@@ -6,17 +6,17 @@
+@@= skipped -6, +6 lines =@@
  
      (): number;
      p?: { [s: string]: number };

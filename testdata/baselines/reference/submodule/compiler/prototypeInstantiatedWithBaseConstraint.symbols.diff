@@ -1,6 +1,6 @@
 --- old.prototypeInstantiatedWithBaseConstraint.symbols
 +++ new.prototypeInstantiatedWithBaseConstraint.symbols
-@@ -6,14 +6,14 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(prototypeInstantiatedWithBaseConstraint.ts, 0, 8))
  
      x: T;

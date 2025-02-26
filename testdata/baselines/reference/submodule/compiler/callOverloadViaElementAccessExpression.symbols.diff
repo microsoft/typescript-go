@@ -1,6 +1,6 @@
 --- old.callOverloadViaElementAccessExpression.symbols
 +++ new.callOverloadViaElementAccessExpression.symbols
-@@ -5,15 +5,15 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(callOverloadViaElementAccessExpression.ts, 0, 0))
  
      foo(x: number): number;
@@ -19,7 +19,7 @@
  >x : Symbol(x, Decl(callOverloadViaElementAccessExpression.ts, 3, 8))
  
          return null;
-@@ -27,10 +27,10 @@
+@@= skipped -22, +22 lines =@@
  var r: string = c['foo'](1);
  >r : Symbol(r, Decl(callOverloadViaElementAccessExpression.ts, 9, 3))
  >c : Symbol(c, Decl(callOverloadViaElementAccessExpression.ts, 8, 3))

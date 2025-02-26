@@ -1,6 +1,6 @@
 --- old.intersectionAndUnionTypes.symbols
 +++ new.intersectionAndUnionTypes.symbols
-@@ -3,19 +3,19 @@
+@@= skipped -3, +3 lines =@@
  === intersectionAndUnionTypes.ts ===
  interface A { a: string }
  >A : Symbol(A, Decl(intersectionAndUnionTypes.ts, 0, 0))

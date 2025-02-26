@@ -1,6 +1,6 @@
 --- old.implementGenericWithMismatchedTypes.symbols
 +++ new.implementGenericWithMismatchedTypes.symbols
-@@ -9,7 +9,7 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(implementGenericWithMismatchedTypes.ts, 3, 15))
  
      foo(x: T): T;
@@ -9,7 +9,7 @@
  >x : Symbol(x, Decl(implementGenericWithMismatchedTypes.ts, 4, 8))
  >T : Symbol(T, Decl(implementGenericWithMismatchedTypes.ts, 3, 15))
  >T : Symbol(T, Decl(implementGenericWithMismatchedTypes.ts, 3, 15))
-@@ -21,7 +21,7 @@
+@@= skipped -12, +12 lines =@@
  >T : Symbol(T, Decl(implementGenericWithMismatchedTypes.ts, 6, 8))
  
      foo(x: string): number {
@@ -18,7 +18,7 @@
  >x : Symbol(x, Decl(implementGenericWithMismatchedTypes.ts, 7, 8))
  
          return null;
-@@ -33,7 +33,7 @@
+@@= skipped -12, +12 lines =@@
  >T : Symbol(T, Decl(implementGenericWithMismatchedTypes.ts, 12, 16))
  
      foo(x: T): T;
@@ -27,7 +27,7 @@
  >x : Symbol(x, Decl(implementGenericWithMismatchedTypes.ts, 13, 8))
  >T : Symbol(T, Decl(implementGenericWithMismatchedTypes.ts, 12, 16))
  >T : Symbol(T, Decl(implementGenericWithMismatchedTypes.ts, 12, 16))
-@@ -45,7 +45,7 @@
+@@= skipped -12, +12 lines =@@
  >T : Symbol(T, Decl(implementGenericWithMismatchedTypes.ts, 15, 9))
  
      foo<Tstring>(x: Tstring): number {

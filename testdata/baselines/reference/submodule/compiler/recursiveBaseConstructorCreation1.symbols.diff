@@ -1,6 +1,6 @@
 --- old.recursiveBaseConstructorCreation1.symbols
 +++ new.recursiveBaseConstructorCreation1.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >C1 : Symbol(C1, Decl(recursiveBaseConstructorCreation1.ts, 0, 0))
  
  public func(param: C2): any { }

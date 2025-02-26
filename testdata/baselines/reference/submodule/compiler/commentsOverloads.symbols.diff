@@ -1,6 +1,6 @@
 --- old.commentsOverloads.symbols
 +++ new.commentsOverloads.symbols
-@@ -99,53 +99,53 @@
+@@= skipped -99, +99 lines =@@
  
      /** foo 1*/
      foo(a: number): number;
@@ -65,7 +65,7 @@
  >c : Symbol(c, Decl(commentsOverloads.ts, 56, 9))
  
      /// new 1
-@@ -222,78 +222,78 @@
+@@= skipped -123, +123 lines =@@
  >c : Symbol(c, Decl(commentsOverloads.ts, 87, 1))
  
      public prop1(a: number): number;

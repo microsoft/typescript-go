@@ -1,6 +1,6 @@
 --- old.systemModuleAmbientDeclarations.symbols
 +++ new.systemModuleAmbientDeclarations.symbols
-@@ -12,7 +12,7 @@
+@@= skipped -12, +12 lines =@@
  
  declare enum E {X = 1};
  >E : Symbol(E, Decl(file1.ts, 2, 18))
@@ -9,7 +9,7 @@
  
  export var promise = Promise;
  >promise : Symbol(promise, Decl(file1.ts, 5, 10))
-@@ -45,7 +45,7 @@
+@@= skipped -33, +33 lines =@@
  === file5.ts ===
  export declare enum E {X = 1}
  >E : Symbol(E, Decl(file5.ts, 0, 0))

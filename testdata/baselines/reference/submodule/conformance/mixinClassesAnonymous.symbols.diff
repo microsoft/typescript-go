@@ -1,6 +1,6 @@
 --- old.mixinClassesAnonymous.symbols
 +++ new.mixinClassesAnonymous.symbols
-@@ -11,8 +11,8 @@
+@@= skipped -11, +11 lines =@@
  >Base : Symbol(Base, Decl(mixinClassesAnonymous.ts, 0, 47))
  
      constructor(public x: number, public y: number) {}
@@ -11,7 +11,7 @@
  }
  
  class Derived extends Base {
-@@ -22,7 +22,7 @@
+@@= skipped -11, +11 lines =@@
      constructor(x: number, y: number, public z: number) {
  >x : Symbol(x, Decl(mixinClassesAnonymous.ts, 7, 16))
  >y : Symbol(y, Decl(mixinClassesAnonymous.ts, 7, 26))
@@ -20,7 +20,7 @@
  
          super(x, y);
  >super : Symbol(Base, Decl(mixinClassesAnonymous.ts, 0, 47))
-@@ -41,19 +41,19 @@
+@@= skipped -19, +19 lines =@@
  >superClass : Symbol(superClass, Decl(mixinClassesAnonymous.ts, 12, 48))
  
      static message = "hello";
@@ -46,7 +46,7 @@
      }
  }
  
-@@ -69,7 +69,7 @@
+@@= skipped -28, +28 lines =@@
  >superClass : Symbol(superClass, Decl(mixinClassesAnonymous.ts, 19, 43))
  
          _tag: string;
@@ -55,7 +55,7 @@
  
          constructor(...args: any[]) {
  >args : Symbol(args, Decl(mixinClassesAnonymous.ts, 22, 20))
-@@ -79,9 +79,9 @@
+@@= skipped -10, +10 lines =@@
  >args : Symbol(args, Decl(mixinClassesAnonymous.ts, 22, 20))
  
              this._tag = "hello";
@@ -67,7 +67,7 @@
          }
      }
      return C;
-@@ -100,9 +100,9 @@
+@@= skipped -21, +21 lines =@@
  >Derived : Symbol(Derived, Decl(mixinClassesAnonymous.ts, 4, 1))
  
  Thing2.message;
@@ -79,7 +79,7 @@
  
  function f1() {
  >f1 : Symbol(f1, Decl(mixinClassesAnonymous.ts, 32, 15))
-@@ -112,14 +112,14 @@
+@@= skipped -12, +12 lines =@@
  >Thing1 : Symbol(Thing1, Decl(mixinClassesAnonymous.ts, 30, 5))
  
      thing.x;
@@ -98,7 +98,7 @@
  }
  
  function f2() {
-@@ -130,19 +130,19 @@
+@@= skipped -18, +18 lines =@@
  >Thing2 : Symbol(Thing2, Decl(mixinClassesAnonymous.ts, 31, 5))
  
      thing.x;
@@ -124,7 +124,7 @@
  }
  
  class Thing3 extends Thing2 {
-@@ -154,18 +154,18 @@
+@@= skipped -24, +24 lines =@@
  
          super(10, 20, 30);
          this._tag = tag;
@@ -148,7 +148,7 @@
      }
  }
  
-@@ -182,7 +182,7 @@
+@@= skipped -28, +28 lines =@@
  >Base : Symbol(Base, Decl(mixinClassesAnonymous.ts, 59, 53))
  
          timestamp = new Date();

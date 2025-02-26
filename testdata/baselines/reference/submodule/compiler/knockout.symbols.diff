@@ -1,6 +1,6 @@
 --- old.knockout.symbols
 +++ new.knockout.symbols
-@@ -16,13 +16,13 @@
+@@= skipped -16, +16 lines =@@
  >T : Symbol(T, Decl(knockout.ts, 1, 31))
  
       N: number;
@@ -17,7 +17,7 @@
  >T : Symbol(T, Decl(knockout.ts, 1, 31))
     }
     export function observable<T>(value: T): Observable<T>;
-@@ -38,23 +38,23 @@
+@@= skipped -22, +22 lines =@@
  
       name: ko.observable("Bob"),
  >name : Symbol(name, Decl(knockout.ts, 10, 10))
@@ -47,7 +47,7 @@
  
   var age_v = o.age();
  >age_v : Symbol(age_v, Decl(knockout.ts, 15, 4))
-@@ -70,27 +70,27 @@
+@@= skipped -32, +32 lines =@@
  
   var zz_v = o.name.N;
  >zz_v : Symbol(zz_v, Decl(knockout.ts, 17, 4))

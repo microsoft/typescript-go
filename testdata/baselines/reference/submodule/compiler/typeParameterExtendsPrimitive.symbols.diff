@@ -1,6 +1,6 @@
 --- old.typeParameterExtendsPrimitive.symbols
 +++ new.typeParameterExtendsPrimitive.symbols
-@@ -25,7 +25,7 @@
+@@= skipped -25, +25 lines =@@
  // #15501
  interface I { x: number }
  >I : Symbol(I, Decl(typeParameterExtendsPrimitive.ts, 7, 1))

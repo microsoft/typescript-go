@@ -1,6 +1,6 @@
 --- old.regexpExecAndMatchTypeUsages(strict=true).symbols
 +++ new.regexpExecAndMatchTypeUsages(strict=true).symbols
-@@ -9,81 +9,71 @@
+@@= skipped -9, +9 lines =@@
  >RegExpExecArray : Symbol(RegExpExecArray, Decl(lib.es5.d.ts, --, --), Decl(lib.es2018.regexp.d.ts, --, --))
  
      matchResult[0].length;

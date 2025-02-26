@@ -1,6 +1,6 @@
 --- old.tsxSpreadDoesNotReportExcessProps.symbols
 +++ new.tsxSpreadDoesNotReportExcessProps.symbols
-@@ -8,22 +8,18 @@
+@@= skipped -8, +8 lines =@@
  
  class MyComponent extends React.Component<{dataSource: number[], onClick?: any}, {}> {
  >MyComponent : Symbol(MyComponent, Decl(tsxSpreadDoesNotReportExcessProps.tsx, 2, 26))

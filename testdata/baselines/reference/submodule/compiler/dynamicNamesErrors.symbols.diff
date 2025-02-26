@@ -1,6 +1,6 @@
 --- old.dynamicNamesErrors.symbols
 +++ new.dynamicNamesErrors.symbols
-@@ -11,18 +11,18 @@
+@@= skipped -11, +11 lines =@@
  >T0 : Symbol(T0, Decl(dynamicNamesErrors.ts, 1, 13))
  
      [c0]: number;
@@ -22,7 +22,7 @@
  >c0 : Symbol(c0, Decl(dynamicNamesErrors.ts, 0, 5))
  }
  
-@@ -30,7 +30,7 @@
+@@= skipped -19, +19 lines =@@
  >T2 : Symbol(T2, Decl(dynamicNamesErrors.ts, 10, 1))
  
      [c0]: string;
@@ -31,7 +31,7 @@
  >c0 : Symbol(c0, Decl(dynamicNamesErrors.ts, 0, 5))
  }
  
-@@ -38,11 +38,11 @@
+@@= skipped -8, +8 lines =@@
  >T3 : Symbol(T3, Decl(dynamicNamesErrors.ts, 14, 1))
  
      [c0]: number;
@@ -45,7 +45,7 @@
  >c1 : Symbol(c1, Decl(dynamicNamesErrors.ts, 1, 5))
  }
  
-@@ -82,11 +82,11 @@
+@@= skipped -44, +44 lines =@@
  >InterfaceMemberVisibility : Symbol(InterfaceMemberVisibility, Decl(dynamicNamesErrors.ts, 29, 19))
  
      [x]: number;
@@ -59,7 +59,7 @@
  >y : Symbol(y, Decl(dynamicNamesErrors.ts, 27, 5))
  }
  
-@@ -94,36 +94,36 @@
+@@= skipped -12, +12 lines =@@
  >ClassMemberVisibility : Symbol(ClassMemberVisibility, Decl(dynamicNamesErrors.ts, 34, 1))
  
      static [x]: number;

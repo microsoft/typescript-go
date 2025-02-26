@@ -1,6 +1,6 @@
 --- old.tsxElementResolution3.symbols
 +++ new.tsxElementResolution3.symbols
-@@ -18,11 +18,9 @@
+@@= skipped -18, +18 lines =@@
  
  // OK
  <div n='x' />;

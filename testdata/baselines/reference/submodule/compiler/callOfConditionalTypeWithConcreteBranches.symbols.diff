@@ -1,6 +1,6 @@
 --- old.callOfConditionalTypeWithConcreteBranches.symbols
 +++ new.callOfConditionalTypeWithConcreteBranches.symbols
-@@ -23,16 +23,16 @@
+@@= skipped -23, +23 lines =@@
  fn<string | number>(m => m.toFixed());
  >fn : Symbol(fn, Decl(callOfConditionalTypeWithConcreteBranches.ts, 0, 59))
  >m : Symbol(m, Decl(callOfConditionalTypeWithConcreteBranches.ts, 7, 20))

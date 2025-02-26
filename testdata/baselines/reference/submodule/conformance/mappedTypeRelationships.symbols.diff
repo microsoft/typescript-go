@@ -1,6 +1,6 @@
 --- old.mappedTypeRelationships.symbols
 +++ new.mappedTypeRelationships.symbols
-@@ -843,14 +843,14 @@
+@@= skipped -843, +843 lines =@@
  >SettingsTypes : Symbol(SettingsTypes, Decl(mappedTypeRelationships.ts, 190, 1))
  
    audio: {
@@ -17,7 +17,7 @@
  
      resolution: string;
  >resolution : Symbol(resolution, Decl(mappedTypeRelationships.ts, 197, 10))
-@@ -864,7 +864,7 @@
+@@= skipped -21, +21 lines =@@
  >Params : Symbol(Params, Decl(mappedTypeRelationships.ts, 201, 19))
  
    config: Params;

@@ -1,6 +1,6 @@
 --- old.propertyAssignmentUseParentType3.symbols
 +++ new.propertyAssignmentUseParentType3.symbols
-@@ -4,44 +4,44 @@
+@@= skipped -4, +4 lines =@@
  // don't use the parent type if it's a function declaration (#33741)
  
  function foo1(): number {

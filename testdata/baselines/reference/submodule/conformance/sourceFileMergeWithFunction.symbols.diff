@@ -1,6 +1,6 @@
 --- old.sourceFileMergeWithFunction.symbols
 +++ new.sourceFileMergeWithFunction.symbols
-@@ -3,7 +3,7 @@
+@@= skipped -3, +3 lines =@@
  === foo.ts ===
  /// <reference path="types.d.ts" />
  declare function foo(): any;

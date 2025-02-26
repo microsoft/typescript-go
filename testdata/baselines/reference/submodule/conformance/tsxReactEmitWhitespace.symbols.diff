@@ -1,6 +1,6 @@
 --- old.tsxReactEmitWhitespace.symbols
 +++ new.tsxReactEmitWhitespace.symbols
-@@ -25,88 +25,59 @@
+@@= skipped -25, +25 lines =@@
  
  // Emit "   "
  <div>   </div>;

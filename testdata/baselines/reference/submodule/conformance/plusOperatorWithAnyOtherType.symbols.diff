@@ -1,6 +1,6 @@
 --- old.plusOperatorWithAnyOtherType.symbols
 +++ new.plusOperatorWithAnyOtherType.symbols
-@@ -35,10 +35,10 @@
+@@= skipped -35, +35 lines =@@
  >A : Symbol(A, Decl(plusOperatorWithAnyOtherType.ts, 11, 1))
  
      public a: any;
@@ -13,7 +13,7 @@
  
          var a;
  >a : Symbol(a, Decl(plusOperatorWithAnyOtherType.ts, 15, 11))
-@@ -109,15 +109,15 @@
+@@= skipped -74, +74 lines =@@
  
  var ResultIsNumber12 = +objA.a;
  >ResultIsNumber12 : Symbol(ResultIsNumber12, Decl(plusOperatorWithAnyOtherType.ts, 40, 3))
@@ -33,7 +33,7 @@
  
  var ResultIsNumber14 = +foo();
  >ResultIsNumber14 : Symbol(ResultIsNumber14, Decl(plusOperatorWithAnyOtherType.ts, 42, 3))
-@@ -125,9 +125,9 @@
+@@= skipped -16, +16 lines =@@
  
  var ResultIsNumber15 = +A.foo();
  >ResultIsNumber15 : Symbol(ResultIsNumber15, Decl(plusOperatorWithAnyOtherType.ts, 43, 3))
@@ -45,7 +45,7 @@
  
  var ResultIsNumber16 = +(ANY + ANY1);
  >ResultIsNumber16 : Symbol(ResultIsNumber16, Decl(plusOperatorWithAnyOtherType.ts, 44, 3))
-@@ -161,12 +161,12 @@
+@@= skipped -36, +36 lines =@@
  >ANY1 : Symbol(ANY1, Decl(plusOperatorWithAnyOtherType.ts, 3, 3))
  
  +objA.a;

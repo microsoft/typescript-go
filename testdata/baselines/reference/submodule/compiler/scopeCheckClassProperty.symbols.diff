@@ -1,6 +1,6 @@
 --- old.scopeCheckClassProperty.symbols
 +++ new.scopeCheckClassProperty.symbols
-@@ -6,20 +6,20 @@
+@@= skipped -6, +6 lines =@@
  
    constructor() {
      new A().p; // ok

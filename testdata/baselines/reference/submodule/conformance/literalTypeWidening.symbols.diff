@@ -1,6 +1,6 @@
 --- old.literalTypeWidening.symbols
 +++ new.literalTypeWidening.symbols
-@@ -346,9 +346,9 @@
+@@= skipped -346, +346 lines =@@
  >K : Symbol(K, Decl(literalTypeWidening.ts, 112, 20))
  
    keys.forEach(key => result[key] = true)
@@ -12,7 +12,7 @@
  >key : Symbol(key, Decl(literalTypeWidening.ts, 114, 15))
  >result : Symbol(result, Decl(literalTypeWidening.ts, 113, 7))
  >key : Symbol(key, Decl(literalTypeWidening.ts, 114, 15))
-@@ -368,9 +368,9 @@
+@@= skipped -22, +22 lines =@@
  >K : Symbol(K, Decl(literalTypeWidening.ts, 118, 21))
  
    return Object.keys(obj) as K[]
@@ -24,7 +24,7 @@
  >obj : Symbol(obj, Decl(literalTypeWidening.ts, 118, 42))
  >K : Symbol(K, Decl(literalTypeWidening.ts, 118, 21))
  }
-@@ -396,9 +396,9 @@
+@@= skipped -28, +28 lines =@@
  const arr: Obj[] = langCodes.map(code => ({ code }))
  >arr : Symbol(arr, Decl(literalTypeWidening.ts, 128, 5))
  >Obj : Symbol(Obj, Decl(literalTypeWidening.ts, 120, 1))
@@ -36,7 +36,7 @@
  >code : Symbol(code, Decl(literalTypeWidening.ts, 128, 33))
  >code : Symbol(code, Decl(literalTypeWidening.ts, 128, 43))
  
-@@ -436,19 +436,19 @@
+@@= skipped -40, +40 lines =@@
  
  enum E { A, B }
  >E : Symbol(E, Decl(literalTypeWidening.ts, 139, 44))

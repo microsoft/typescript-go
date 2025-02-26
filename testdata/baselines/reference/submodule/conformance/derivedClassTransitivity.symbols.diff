@@ -1,6 +1,6 @@
 --- old.derivedClassTransitivity.symbols
 +++ new.derivedClassTransitivity.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >C : Symbol(C, Decl(derivedClassTransitivity.ts, 0, 0))
  
      foo(x: number) { }
@@ -9,7 +9,7 @@
  >x : Symbol(x, Decl(derivedClassTransitivity.ts, 3, 8))
  }
  
-@@ -16,7 +16,7 @@
+@@= skipped -9, +9 lines =@@
  >C : Symbol(C, Decl(derivedClassTransitivity.ts, 0, 0))
  
      foo() { } // ok to drop parameters
@@ -18,7 +18,7 @@
  }
  
  class E extends D {
-@@ -24,7 +24,7 @@
+@@= skipped -8, +8 lines =@@
  >D : Symbol(D, Decl(derivedClassTransitivity.ts, 4, 1))
  
      foo(x?: string) { } // ok to add optional parameters
@@ -27,7 +27,7 @@
  >x : Symbol(x, Decl(derivedClassTransitivity.ts, 11, 8))
  }
  
-@@ -46,13 +46,13 @@
+@@= skipped -22, +22 lines =@@
  
  var r = c.foo(1);
  >r : Symbol(r, Decl(derivedClassTransitivity.ts, 18, 3))

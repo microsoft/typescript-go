@@ -1,6 +1,6 @@
 --- old.varianceAnnotations.symbols
 +++ new.varianceAnnotations.symbols
-@@ -285,10 +285,10 @@
+@@= skipped -285, +285 lines =@@
  >C : Symbol(C, Decl(varianceAnnotations.ts, 100, 32))
  
      in a = 0;  // Error
@@ -13,7 +13,7 @@
  }
  
  // Interface merging
-@@ -324,12 +324,12 @@
+@@= skipped -39, +39 lines =@@
  >A : Symbol(A, Decl(varianceAnnotations.ts, 120, 17))
  
      child: Child<A> | null;
@@ -28,7 +28,7 @@
  >Parent : Symbol(Parent, Decl(varianceAnnotations.ts, 116, 12))
  >A : Symbol(A, Decl(varianceAnnotations.ts, 120, 17))
  }
-@@ -342,11 +342,11 @@
+@@= skipped -18, +18 lines =@@
  >A : Symbol(A, Decl(varianceAnnotations.ts, 125, 16))
  
      readonly a: A;
@@ -42,7 +42,7 @@
  >B : Symbol(B, Decl(varianceAnnotations.ts, 125, 18))
  }
  
-@@ -387,16 +387,16 @@
+@@= skipped -45, +45 lines =@@
  >type : Symbol(type, Decl(varianceAnnotations.ts, 139, 57))
  
      _storedEvent: TEvent;
@@ -62,7 +62,7 @@
  >StateNode : Symbol(StateNode, Decl(varianceAnnotations.ts, 135, 37))
  >TContext : Symbol(TContext, Decl(varianceAnnotations.ts, 139, 24))
  }
-@@ -407,7 +407,7 @@
+@@= skipped -20, +20 lines =@@
  >type : Symbol(type, Decl(varianceAnnotations.ts, 145, 39))
  
      exec: (meta: StateNode<any, TEvent>) => void;
@@ -71,7 +71,7 @@
  >meta : Symbol(meta, Decl(varianceAnnotations.ts, 146, 11))
  >StateNode : Symbol(StateNode, Decl(varianceAnnotations.ts, 135, 37))
  >TEvent : Symbol(TEvent, Decl(varianceAnnotations.ts, 145, 23))
-@@ -457,7 +457,7 @@
+@@= skipped -50, +50 lines =@@
  >T : Symbol(T, Decl(varianceAnnotations.ts, 163, 18))
  
      foo(): InstanceType<(typeof Anon<T>)> {
@@ -80,7 +80,7 @@
  >InstanceType : Symbol(InstanceType, Decl(lib.es5.d.ts, --, --))
  >Anon : Symbol(Anon, Decl(varianceAnnotations.ts, 163, 3))
  >T : Symbol(T, Decl(varianceAnnotations.ts, 163, 18))
-@@ -473,7 +473,7 @@
+@@= skipped -16, +16 lines =@@
  >T : Symbol(T, Decl(varianceAnnotations.ts, 169, 21))
  
      foo(): C<T> {

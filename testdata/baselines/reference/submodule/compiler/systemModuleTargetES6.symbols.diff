@@ -1,6 +1,6 @@
 --- old.systemModuleTargetES6.symbols
 +++ new.systemModuleTargetES6.symbols
-@@ -8,13 +8,13 @@
+@@= skipped -8, +8 lines =@@
  >MyClass2 : Symbol(MyClass2, Decl(systemModuleTargetES6.ts, 0, 24))
  
      static value = 42;

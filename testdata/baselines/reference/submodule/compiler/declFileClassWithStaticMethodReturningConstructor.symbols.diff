@@ -1,6 +1,6 @@
 --- old.declFileClassWithStaticMethodReturningConstructor.symbols
 +++ new.declFileClassWithStaticMethodReturningConstructor.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Enhancement : Symbol(Enhancement, Decl(declFileClassWithStaticMethodReturningConstructor.ts, 0, 0))
  
      public static getType() {

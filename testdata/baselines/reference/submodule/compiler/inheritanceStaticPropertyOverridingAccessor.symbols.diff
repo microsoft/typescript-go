@@ -1,6 +1,6 @@
 --- old.inheritanceStaticPropertyOverridingAccessor.symbols
 +++ new.inheritanceStaticPropertyOverridingAccessor.symbols
-@@ -5,12 +5,12 @@
+@@= skipped -5, +5 lines =@@
  >a : Symbol(a, Decl(inheritanceStaticPropertyOverridingAccessor.ts, 0, 0))
  
      static get x(): () => string {
@@ -15,7 +15,7 @@
  >aValue : Symbol(aValue, Decl(inheritanceStaticPropertyOverridingAccessor.ts, 4, 17))
      }
  }
-@@ -20,5 +20,5 @@
+@@= skipped -15, +15 lines =@@
  >a : Symbol(a, Decl(inheritanceStaticPropertyOverridingAccessor.ts, 0, 0))
  
      static x: () => string;

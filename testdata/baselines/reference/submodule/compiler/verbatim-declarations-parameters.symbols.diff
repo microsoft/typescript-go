@@ -1,6 +1,6 @@
 --- old.verbatim-declarations-parameters.symbols
 +++ new.verbatim-declarations-parameters.symbols
-@@ -15,17 +15,17 @@
+@@= skipped -15, +15 lines =@@
    constructor(
      // Type node is accurate, preserve
      public reuseTypeNode?: Map | undefined,

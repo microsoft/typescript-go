@@ -1,6 +1,6 @@
 --- old.moduleResolution_explicitNodeModulesImport.symbols
 +++ new.moduleResolution_explicitNodeModulesImport.symbols
-@@ -4,9 +4,3 @@
+@@= skipped -4, +4 lines =@@
  import { x } from "../node_modules/foo";
  >x : Symbol(x, Decl(index.ts, 0, 8))
  

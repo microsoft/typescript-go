@@ -1,6 +1,6 @@
 --- old.logicalAssignment2(target=es2021).symbols
 +++ new.logicalAssignment2(target=es2021).symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(logicalAssignment2.ts, 0, 0))
  
      foo: {
@@ -9,7 +9,7 @@
  
          bar(): {
  >bar : Symbol(bar, Decl(logicalAssignment2.ts, 1, 10))
-@@ -17,7 +17,7 @@
+@@= skipped -12, +12 lines =@@
  >baz : Symbol(baz, Decl(logicalAssignment2.ts, 4, 9))
      }
      baz: 0 | 1 | 42 | undefined | ''
@@ -18,7 +18,7 @@
  }
  
  declare const result: A
-@@ -37,107 +37,107 @@
+@@= skipped -20, +20 lines =@@
  >A : Symbol(A, Decl(logicalAssignment2.ts, 0, 0))
  
  a.baz &&= result.baz

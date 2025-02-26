@@ -1,6 +1,6 @@
 --- old.classStaticPropertyTypeGuard.symbols
 +++ new.classStaticPropertyTypeGuard.symbols
-@@ -7,24 +7,24 @@
+@@= skipped -7, +7 lines =@@
  >A : Symbol(A, Decl(classStaticPropertyTypeGuard.ts, 0, 0))
  
      private static _a: string | undefined;

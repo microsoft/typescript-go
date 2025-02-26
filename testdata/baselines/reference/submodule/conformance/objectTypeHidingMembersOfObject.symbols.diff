@@ -1,6 +1,6 @@
 --- old.objectTypeHidingMembersOfObject.symbols
 +++ new.objectTypeHidingMembersOfObject.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >C : Symbol(C, Decl(objectTypeHidingMembersOfObject.ts, 0, 0))
  
      valueOf() { }
@@ -9,7 +9,7 @@
  }
  
  var c: C;
-@@ -16,15 +16,15 @@
+@@= skipped -9, +9 lines =@@
  
  var r1: void = c.valueOf();
  >r1 : Symbol(r1, Decl(objectTypeHidingMembersOfObject.ts, 7, 3))
@@ -28,7 +28,7 @@
  }
  
  var i: I;
-@@ -33,9 +33,9 @@
+@@= skipped -17, +17 lines =@@
  
  var r2: void = i.valueOf();
  >r2 : Symbol(r2, Decl(objectTypeHidingMembersOfObject.ts, 14, 3))

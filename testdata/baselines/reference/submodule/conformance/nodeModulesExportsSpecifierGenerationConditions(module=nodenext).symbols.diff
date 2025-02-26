@@ -1,6 +1,6 @@
 --- old.nodeModulesExportsSpecifierGenerationConditions(module=nodenext).symbols
 +++ new.nodeModulesExportsSpecifierGenerationConditions(module=nodenext).symbols
-@@ -8,7 +8,6 @@
+@@= skipped -8, +8 lines =@@
  export const a = (await import("inner")).x();
  >a : Symbol(a, Decl(index.ts, 2, 12))
  >(await import("inner")).x : Symbol(x, Decl(index.d.ts, 1, 8))

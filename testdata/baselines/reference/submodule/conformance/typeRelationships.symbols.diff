@@ -1,6 +1,6 @@
 --- old.typeRelationships.symbols
 +++ new.typeRelationships.symbols
-@@ -5,40 +5,40 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(typeRelationships.ts, 0, 0))
  
      self = this;
@@ -54,7 +54,7 @@
  
          var a: C[];
  >a : Symbol(a, Decl(typeRelationships.ts, 11, 11), Decl(typeRelationships.ts, 12, 11))
-@@ -47,9 +47,9 @@
+@@= skipped -42, +42 lines =@@
          var a = [this, this.c];  // C[] since this is subtype of C
  >a : Symbol(a, Decl(typeRelationships.ts, 11, 11), Decl(typeRelationships.ts, 12, 11))
  >this : Symbol(C, Decl(typeRelationships.ts, 0, 0))
@@ -66,7 +66,7 @@
  
          var b: this[];
  >b : Symbol(b, Decl(typeRelationships.ts, 13, 11), Decl(typeRelationships.ts, 14, 11))
-@@ -57,23 +57,23 @@
+@@= skipped -10, +10 lines =@@
          var b = [this, this.self, null, undefined];
  >b : Symbol(b, Decl(typeRelationships.ts, 13, 11), Decl(typeRelationships.ts, 14, 11))
  >this : Symbol(C, Decl(typeRelationships.ts, 0, 0))
@@ -97,7 +97,7 @@
      }
  }
  
-@@ -82,107 +82,107 @@
+@@= skipped -25, +25 lines =@@
  >C : Symbol(C, Decl(typeRelationships.ts, 0, 0))
  
      self1 = this;

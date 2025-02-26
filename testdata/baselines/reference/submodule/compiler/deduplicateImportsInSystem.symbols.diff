@@ -1,6 +1,6 @@
 --- old.deduplicateImportsInSystem.symbols
 +++ new.deduplicateImportsInSystem.symbols
-@@ -20,9 +20,9 @@
+@@= skipped -20, +20 lines =@@
  >F : Symbol(F, Decl(deduplicateImportsInSystem.ts, 5, 8))
  
  console.log(A + B + C + D + E + F)

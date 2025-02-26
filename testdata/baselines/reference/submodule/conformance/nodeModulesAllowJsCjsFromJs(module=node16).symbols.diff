@@ -1,6 +1,6 @@
 --- old.nodeModulesAllowJsCjsFromJs(module=node16).symbols
 +++ new.nodeModulesAllowJsCjsFromJs(module=node16).symbols
-@@ -1,17 +1,12 @@
+@@= skipped -1, +1 lines =@@
  //// [tests/cases/conformance/node/allowJs/nodeModulesAllowJsCjsFromJs.ts] ////
  
  === foo.cjs ===

@@ -1,6 +1,6 @@
 --- old.derivedClassOverridesProtectedMembers3.symbols
 +++ new.derivedClassOverridesProtectedMembers3.symbols
-@@ -14,48 +14,48 @@
+@@= skipped -14, +14 lines =@@
  >Base : Symbol(Base, Decl(derivedClassOverridesProtectedMembers3.ts, 1, 36))
  
      a: typeof x;
@@ -59,7 +59,7 @@
  >a : Symbol(a, Decl(derivedClassOverridesProtectedMembers3.ts, 14, 15))
  >x : Symbol(x, Decl(derivedClassOverridesProtectedMembers3.ts, 0, 3))
  
-@@ -71,7 +71,7 @@
+@@= skipped -57, +57 lines =@@
  >Base : Symbol(Base, Decl(derivedClassOverridesProtectedMembers3.ts, 1, 36))
  
      protected a: typeof x;
@@ -68,7 +68,7 @@
  >x : Symbol(x, Decl(derivedClassOverridesProtectedMembers3.ts, 0, 3))
  
      constructor(a: typeof x) { super(a); }
-@@ -86,7 +86,7 @@
+@@= skipped -15, +15 lines =@@
  >Base : Symbol(Base, Decl(derivedClassOverridesProtectedMembers3.ts, 1, 36))
  
      protected b(a: typeof x) { }
@@ -77,7 +77,7 @@
  >a : Symbol(a, Decl(derivedClassOverridesProtectedMembers3.ts, 27, 16))
  >x : Symbol(x, Decl(derivedClassOverridesProtectedMembers3.ts, 0, 3))
  
-@@ -102,7 +102,7 @@
+@@= skipped -16, +16 lines =@@
  >Base : Symbol(Base, Decl(derivedClassOverridesProtectedMembers3.ts, 1, 36))
  
      protected get c() { return x; }
@@ -86,7 +86,7 @@
  >x : Symbol(x, Decl(derivedClassOverridesProtectedMembers3.ts, 0, 3))
  
      constructor(a: typeof x) { super(a); }
-@@ -117,7 +117,7 @@
+@@= skipped -15, +15 lines =@@
  >Base : Symbol(Base, Decl(derivedClassOverridesProtectedMembers3.ts, 1, 36))
  
      protected set c(v: typeof x) { }
@@ -95,7 +95,7 @@
  >v : Symbol(v, Decl(derivedClassOverridesProtectedMembers3.ts, 37, 20))
  >x : Symbol(x, Decl(derivedClassOverridesProtectedMembers3.ts, 0, 3))
  
-@@ -133,7 +133,7 @@
+@@= skipped -16, +16 lines =@@
  >Base : Symbol(Base, Decl(derivedClassOverridesProtectedMembers3.ts, 1, 36))
  
      protected d: (a: typeof x) => void ;
@@ -104,7 +104,7 @@
  >a : Symbol(a, Decl(derivedClassOverridesProtectedMembers3.ts, 42, 18))
  >x : Symbol(x, Decl(derivedClassOverridesProtectedMembers3.ts, 0, 3))
  
-@@ -149,7 +149,7 @@
+@@= skipped -16, +16 lines =@@
  >Base : Symbol(Base, Decl(derivedClassOverridesProtectedMembers3.ts, 1, 36))
  
      protected static r: typeof x;
@@ -113,7 +113,7 @@
  >x : Symbol(x, Decl(derivedClassOverridesProtectedMembers3.ts, 0, 3))
  
      constructor(a: typeof x) { super(a); }
-@@ -164,7 +164,7 @@
+@@= skipped -15, +15 lines =@@
  >Base : Symbol(Base, Decl(derivedClassOverridesProtectedMembers3.ts, 1, 36))
  
      protected static s(a: typeof x) { }
@@ -122,7 +122,7 @@
  >a : Symbol(a, Decl(derivedClassOverridesProtectedMembers3.ts, 52, 23))
  >x : Symbol(x, Decl(derivedClassOverridesProtectedMembers3.ts, 0, 3))
  
-@@ -180,7 +180,7 @@
+@@= skipped -16, +16 lines =@@
  >Base : Symbol(Base, Decl(derivedClassOverridesProtectedMembers3.ts, 1, 36))
  
      protected static get t() { return x; }
@@ -131,7 +131,7 @@
  >x : Symbol(x, Decl(derivedClassOverridesProtectedMembers3.ts, 0, 3))
  
      constructor(a: typeof x) { super(a); }
-@@ -195,7 +195,7 @@
+@@= skipped -15, +15 lines =@@
  >Base : Symbol(Base, Decl(derivedClassOverridesProtectedMembers3.ts, 1, 36))
  
      protected static set t(v: typeof x) { }
@@ -140,7 +140,7 @@
  >v : Symbol(v, Decl(derivedClassOverridesProtectedMembers3.ts, 62, 27))
  >x : Symbol(x, Decl(derivedClassOverridesProtectedMembers3.ts, 0, 3))
  
-@@ -211,7 +211,7 @@
+@@= skipped -16, +16 lines =@@
  >Base : Symbol(Base, Decl(derivedClassOverridesProtectedMembers3.ts, 1, 36))
  
      protected static u: (a: typeof x) => void ;

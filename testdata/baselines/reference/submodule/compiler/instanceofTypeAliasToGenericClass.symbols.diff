@@ -1,6 +1,6 @@
 --- old.instanceofTypeAliasToGenericClass.symbols
 +++ new.instanceofTypeAliasToGenericClass.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >S : Symbol(S, Decl(instanceofTypeAliasToGenericClass.ts, 0, 25))
  
      _field: S;

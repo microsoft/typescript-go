@@ -1,6 +1,6 @@
 --- old.modifierOnClassDeclarationMemberInFunction.symbols
 +++ new.modifierOnClassDeclarationMemberInFunction.symbols
-@@ -8,12 +8,12 @@
+@@= skipped -8, +8 lines =@@
  >C : Symbol(C, Decl(modifierOnClassDeclarationMemberInFunction.ts, 0, 14))
  
          public baz = 1;

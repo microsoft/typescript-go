@@ -1,6 +1,6 @@
 --- old.noImplicitReturnsInAsync2.symbols
 +++ new.noImplicitReturnsInAsync2.symbols
-@@ -30,7 +30,7 @@
+@@= skipped -30, +30 lines =@@
  async function test5(isError: boolean = true): Promise<any> { //should not be error
  >test5 : Symbol(test5, Decl(noImplicitReturnsInAsync2.ts, 12, 1))
  >isError : Symbol(isError, Decl(noImplicitReturnsInAsync2.ts, 15, 21))
@@ -9,7 +9,7 @@
  
      if (isError === true) {
  >isError : Symbol(isError, Decl(noImplicitReturnsInAsync2.ts, 15, 21))
-@@ -45,7 +45,7 @@
+@@= skipped -15, +15 lines =@@
  async function test6(isError: boolean = true): Promise<number> { 
  >test6 : Symbol(test6, Decl(noImplicitReturnsInAsync2.ts, 19, 1))
  >isError : Symbol(isError, Decl(noImplicitReturnsInAsync2.ts, 23, 21))

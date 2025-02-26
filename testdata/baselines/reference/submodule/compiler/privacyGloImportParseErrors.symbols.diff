@@ -1,6 +1,6 @@
 --- old.privacyGloImportParseErrors.symbols
 +++ new.privacyGloImportParseErrors.symbols
-@@ -88,51 +88,51 @@
+@@= skipped -88, +88 lines =@@
  
      export var m1_im1_private_v1_public = m1_im1_private.c1;
  >m1_im1_private_v1_public : Symbol(m1_im1_private_v1_public, Decl(privacyGloImportParseErrors.ts, 38, 14))
@@ -68,7 +68,7 @@
  
  
      import m1_im2_private = m1_M2_private;
-@@ -141,51 +141,51 @@
+@@= skipped -53, +53 lines =@@
  
      export var m1_im2_private_v1_public = m1_im2_private.c1;
  >m1_im2_private_v1_public : Symbol(m1_im2_private_v1_public, Decl(privacyGloImportParseErrors.ts, 49, 14))
@@ -136,7 +136,7 @@
  
      import m1_im3_private = require("m1_M3_public");
  >m1_im3_private : Symbol(m1_im3_private, Decl(privacyGloImportParseErrors.ts, 56, 56))
-@@ -316,12 +316,12 @@
+@@= skipped -175, +175 lines =@@
  
      import use_glo_M1_public = glo_M1_public;
  >use_glo_M1_public : Symbol(use_glo_M1_public, Decl(privacyGloImportParseErrors.ts, 102, 36))
@@ -151,7 +151,7 @@
  
      export var use_glo_M1_public_v2_public: typeof use_glo_M1_public;
  >use_glo_M1_public_v2_public : Symbol(use_glo_M1_public_v2_public, Decl(privacyGloImportParseErrors.ts, 105, 14))
-@@ -330,12 +330,12 @@
+@@= skipped -14, +14 lines =@@
      export var use_glo_M1_public_v3_public: ()=> use_glo_M1_public.c1;
  >use_glo_M1_public_v3_public : Symbol(use_glo_M1_public_v3_public, Decl(privacyGloImportParseErrors.ts, 106, 14))
  >use_glo_M1_public : Symbol(use_glo_M1_public, Decl(privacyGloImportParseErrors.ts, 102, 36))
@@ -166,7 +166,7 @@
  
      var use_glo_M1_public_v2_private: typeof use_glo_M1_public;
  >use_glo_M1_public_v2_private : Symbol(use_glo_M1_public_v2_private, Decl(privacyGloImportParseErrors.ts, 108, 7))
-@@ -344,7 +344,7 @@
+@@= skipped -14, +14 lines =@@
      var use_glo_M1_public_v3_private: () => use_glo_M1_public.c1;
  >use_glo_M1_public_v3_private : Symbol(use_glo_M1_public_v3_private, Decl(privacyGloImportParseErrors.ts, 109, 7))
  >use_glo_M1_public : Symbol(use_glo_M1_public, Decl(privacyGloImportParseErrors.ts, 102, 36))
@@ -175,7 +175,7 @@
  
      import use_glo_M2_public = require("glo_M2_public");
  >use_glo_M2_public : Symbol(use_glo_M2_public, Decl(privacyGloImportParseErrors.ts, 109, 65))
-@@ -352,7 +352,7 @@
+@@= skipped -8, +8 lines =@@
      export var use_glo_M2_public_v1_public: { new (): use_glo_M2_public.c1; };
  >use_glo_M2_public_v1_public : Symbol(use_glo_M2_public_v1_public, Decl(privacyGloImportParseErrors.ts, 112, 14))
  >use_glo_M2_public : Symbol(use_glo_M2_public, Decl(privacyGloImportParseErrors.ts, 109, 65))
@@ -184,7 +184,7 @@
  
      export var use_glo_M2_public_v2_public: typeof use_glo_M2_public;
  >use_glo_M2_public_v2_public : Symbol(use_glo_M2_public_v2_public, Decl(privacyGloImportParseErrors.ts, 113, 14))
-@@ -361,12 +361,12 @@
+@@= skipped -9, +9 lines =@@
      export var use_glo_M2_public_v3_public: () => use_glo_M2_public.c1;
  >use_glo_M2_public_v3_public : Symbol(use_glo_M2_public_v3_public, Decl(privacyGloImportParseErrors.ts, 114, 14))
  >use_glo_M2_public : Symbol(use_glo_M2_public, Decl(privacyGloImportParseErrors.ts, 109, 65))
@@ -199,7 +199,7 @@
  
      var use_glo_M2_public_v2_private: typeof use_glo_M2_public;
  >use_glo_M2_public_v2_private : Symbol(use_glo_M2_public_v2_private, Decl(privacyGloImportParseErrors.ts, 116, 7))
-@@ -375,7 +375,7 @@
+@@= skipped -14, +14 lines =@@
      var use_glo_M2_public_v3_private: () => use_glo_M2_public.c1;
  >use_glo_M2_public_v3_private : Symbol(use_glo_M2_public_v3_private, Decl(privacyGloImportParseErrors.ts, 117, 7))
  >use_glo_M2_public : Symbol(use_glo_M2_public, Decl(privacyGloImportParseErrors.ts, 109, 65))
@@ -208,7 +208,7 @@
  
      module m2 {
  >m2 : Symbol(m2, Decl(privacyGloImportParseErrors.ts, 117, 65))
-@@ -385,7 +385,7 @@
+@@= skipped -10, +10 lines =@@
  
          import nonerrorImport = glo_M1_public;
  >nonerrorImport : Symbol(nonerrorImport, Decl(privacyGloImportParseErrors.ts, 120, 54))
@@ -217,7 +217,7 @@
  
          module m5 {
  >m5 : Symbol(m5, Decl(privacyGloImportParseErrors.ts, 121, 46))
-@@ -395,7 +395,7 @@
+@@= skipped -10, +10 lines =@@
  
              import m5_nonerrorImport = glo_M1_public;
  >m5_nonerrorImport : Symbol(m5_nonerrorImport, Decl(privacyGloImportParseErrors.ts, 124, 61))
@@ -226,7 +226,7 @@
          }
      }
  }
-@@ -419,7 +419,7 @@
+@@= skipped -24, +24 lines =@@
          }
      }
      module "abc3" {

@@ -1,6 +1,6 @@
 --- old.indexerConstraints.symbols
 +++ new.indexerConstraints.symbols
-@@ -3,12 +3,12 @@
+@@= skipped -3, +3 lines =@@
  === indexerConstraints.ts ===
  interface A { a: number; }
  >A : Symbol(A, Decl(indexerConstraints.ts, 0, 0))

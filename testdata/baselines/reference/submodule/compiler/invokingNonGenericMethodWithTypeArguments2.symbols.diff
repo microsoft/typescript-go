@@ -1,6 +1,6 @@
 --- old.invokingNonGenericMethodWithTypeArguments2.symbols
 +++ new.invokingNonGenericMethodWithTypeArguments2.symbols
-@@ -5,13 +5,13 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(invokingNonGenericMethodWithTypeArguments2.ts, 0, 0))
  
      private foo: any;

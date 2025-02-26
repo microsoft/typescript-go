@@ -1,6 +1,6 @@
 --- old.experimentalDecoratorMetadataUnresolvedTypeObjectInEmit.symbols
 +++ new.experimentalDecoratorMetadataUnresolvedTypeObjectInEmit.symbols
-@@ -21,12 +21,12 @@
+@@= skipped -21, +21 lines =@@
  >Foo : Symbol(Foo, Decl(usage.ts, 0, 0))
  
      f(@decorate user: A.B.C.D.E): void {}

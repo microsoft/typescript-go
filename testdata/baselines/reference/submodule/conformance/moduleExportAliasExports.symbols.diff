@@ -1,6 +1,6 @@
 --- old.moduleExportAliasExports.symbols
 +++ new.moduleExportAliasExports.symbols
-@@ -1,23 +1,11 @@
+@@= skipped -1, +1 lines =@@
  //// [tests/cases/conformance/salsa/moduleExportAliasExports.ts] ////
  
  === Eloquent.js ===

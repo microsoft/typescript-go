@@ -1,6 +1,6 @@
 --- old.capturedLetConstInLoop13.symbols
 +++ new.capturedLetConstInLoop13.symbols
-@@ -6,13 +6,13 @@
+@@= skipped -6, +6 lines =@@
  
      constructor() {
          this.register("a", "b", "c");
@@ -17,7 +17,7 @@
  >names : Symbol(names, Decl(capturedLetConstInLoop13.ts, 6, 21))
  
          for (let name of names) {
-@@ -20,16 +20,16 @@
+@@= skipped -14, +14 lines =@@
  >names : Symbol(names, Decl(capturedLetConstInLoop13.ts, 6, 21))
  
              this.bar({
@@ -38,7 +38,7 @@
  >name : Symbol(name, Decl(capturedLetConstInLoop13.ts, 7, 16))
  
              });
-@@ -37,11 +37,11 @@
+@@= skipped -17, +17 lines =@@
      }
  
      private bar(a: any): void { }

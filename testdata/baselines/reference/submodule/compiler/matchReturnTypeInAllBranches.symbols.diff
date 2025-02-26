@@ -1,6 +1,6 @@
 --- old.matchReturnTypeInAllBranches.symbols
 +++ new.matchReturnTypeInAllBranches.symbols
-@@ -6,19 +6,19 @@
+@@= skipped -6, +6 lines =@@
  >IceCreamMonster : Symbol(IceCreamMonster, Decl(matchReturnTypeInAllBranches.ts, 0, 0))
  
      private iceCreamFlavor: string;
@@ -25,7 +25,7 @@
  
      constructor(iceCreamFlavor: string, wantsSprinkles: boolean, soundsWhenEating: string, name: string) {
  >iceCreamFlavor : Symbol(iceCreamFlavor, Decl(matchReturnTypeInAllBranches.ts, 7, 16))
-@@ -27,32 +27,32 @@
+@@= skipped -21, +21 lines =@@
  >name : Symbol(name, Decl(matchReturnTypeInAllBranches.ts, 7, 90))
  
          this.iceCreamFlavor = iceCreamFlavor;
@@ -68,7 +68,7 @@
  >name : Symbol(name, Decl(matchReturnTypeInAllBranches.ts, 7, 90))
      }
      /**
-@@ -62,24 +62,24 @@
+@@= skipped -35, +35 lines =@@
  * @return {boolean} True if ice cream remains, false if there is no more ice cream le    ft.
  */
      public eatIceCream(amount: number): boolean {

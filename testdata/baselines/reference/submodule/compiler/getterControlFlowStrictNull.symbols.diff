@@ -1,6 +1,6 @@
 --- old.getterControlFlowStrictNull.symbols
 +++ new.getterControlFlowStrictNull.symbols
-@@ -5,12 +5,12 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(getterControlFlowStrictNull.ts, 0, 0))
  
     a(): string | null {
@@ -16,7 +16,7 @@
  
              return '';
          }
-@@ -22,12 +22,12 @@
+@@= skipped -17, +17 lines =@@
  >B : Symbol(B, Decl(getterControlFlowStrictNull.ts, 8, 1))
  
      get a(): string | null {
@@ -32,7 +32,7 @@
  
              return '';
          }
-@@ -39,12 +39,12 @@
+@@= skipped -17, +17 lines =@@
  >C : Symbol(C, Decl(getterControlFlowStrictNull.ts, 17, 1))
  
      get a() {
@@ -48,7 +48,7 @@
  
              return 0;
          }
-@@ -53,7 +53,7 @@
+@@= skipped -14, +14 lines =@@
      }
  
      set a(value: number) {

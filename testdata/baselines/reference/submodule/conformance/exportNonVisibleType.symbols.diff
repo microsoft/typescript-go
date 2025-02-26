@@ -1,6 +1,6 @@
 --- old.exportNonVisibleType.symbols
 +++ new.exportNonVisibleType.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >I1 : Symbol(I1, Decl(foo1.ts, 0, 0))
  
  	a: string;
@@ -13,7 +13,7 @@
  }
  
  var x: I1 = {a: "test", b: 42};
-@@ -26,17 +26,17 @@
+@@= skipped -21, +21 lines =@@
  >I1 : Symbol(I1, Decl(foo2.ts, 0, 0))
  
  	a: string;
@@ -34,7 +34,7 @@
  >I1 : Symbol(I1, Decl(foo2.ts, 0, 0))
  }
  
-@@ -48,17 +48,17 @@
+@@= skipped -22, +22 lines =@@
  >I1 : Symbol(I1, Decl(foo3.ts, 0, 0))
  
  	a: string;

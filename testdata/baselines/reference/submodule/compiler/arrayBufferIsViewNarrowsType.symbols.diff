@@ -1,6 +1,6 @@
 --- old.arrayBufferIsViewNarrowsType.symbols
 +++ new.arrayBufferIsViewNarrowsType.symbols
-@@ -6,9 +6,9 @@
+@@= skipped -6, +6 lines =@@
  >Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
  if (ArrayBuffer.isView(obj)) {

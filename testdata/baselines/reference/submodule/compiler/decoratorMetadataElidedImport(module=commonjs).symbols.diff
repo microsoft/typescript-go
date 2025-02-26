@@ -1,6 +1,6 @@
 --- old.decoratorMetadataElidedImport(module=commonjs).symbols
 +++ new.decoratorMetadataElidedImport(module=commonjs).symbols
-@@ -19,7 +19,7 @@
+@@= skipped -19, +19 lines =@@
  >Test : Symbol(Test, Decl(index.ts, 2, 44))
  
      foo(

@@ -1,6 +1,6 @@
 --- old.arrayAssignmentTest3.symbols
 +++ new.arrayAssignmentTest3.symbols
-@@ -11,8 +11,8 @@
+@@= skipped -11, +11 lines =@@
  >a : Symbol(a, Decl(arrayAssignmentTest3.ts, 3, 10))
  
      constructor(public x: string, public y: number, z: B[]) { }

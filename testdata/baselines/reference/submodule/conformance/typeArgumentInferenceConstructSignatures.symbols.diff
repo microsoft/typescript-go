@@ -1,6 +1,6 @@
 --- old.typeArgumentInferenceConstructSignatures.symbols
 +++ new.typeArgumentInferenceConstructSignatures.symbols
-@@ -93,9 +93,9 @@
+@@= skipped -93, +93 lines =@@
  new someGenerics2a<string>((n) => n.substr(0));
  >someGenerics2a : Symbol(someGenerics2a, Decl(typeArgumentInferenceConstructSignatures.ts, 25, 36), Decl(typeArgumentInferenceConstructSignatures.ts, 31, 3))
  >n : Symbol(n, Decl(typeArgumentInferenceConstructSignatures.ts, 34, 28))
@@ -12,7 +12,7 @@
  
  interface someGenerics2b {
  >someGenerics2b : Symbol(someGenerics2b, Decl(typeArgumentInferenceConstructSignatures.ts, 34, 47), Decl(typeArgumentInferenceConstructSignatures.ts, 39, 3))
-@@ -129,9 +129,9 @@
+@@= skipped -36, +36 lines =@@
  >someGenerics2b : Symbol(someGenerics2b, Decl(typeArgumentInferenceConstructSignatures.ts, 34, 47), Decl(typeArgumentInferenceConstructSignatures.ts, 39, 3))
  >n : Symbol(n, Decl(typeArgumentInferenceConstructSignatures.ts, 42, 36))
  >t : Symbol(t, Decl(typeArgumentInferenceConstructSignatures.ts, 42, 38))
@@ -24,7 +24,7 @@
  >t : Symbol(t, Decl(typeArgumentInferenceConstructSignatures.ts, 42, 38))
  >t : Symbol(t, Decl(typeArgumentInferenceConstructSignatures.ts, 42, 38))
  
-@@ -395,19 +395,19 @@
+@@= skipped -266, +266 lines =@@
  >A91 : Symbol(A91, Decl(typeArgumentInferenceConstructSignatures.ts, 108, 37))
  
      x: number;

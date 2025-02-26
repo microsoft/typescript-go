@@ -1,6 +1,6 @@
 --- old.modularizeLibrary_TargetES5UsingES6Lib.symbols
 +++ new.modularizeLibrary_TargetES5UsingES6Lib.symbols
-@@ -9,9 +9,9 @@
+@@= skipped -9, +9 lines =@@
  >z : Symbol(z, Decl(modularizeLibrary_TargetES5UsingES6Lib.ts, 1, 32))
  
      return Array.from(arguments);
@@ -12,7 +12,7 @@
  >arguments : Symbol(arguments)
  }
  
-@@ -24,24 +24,24 @@
+@@= skipped -15, +15 lines =@@
  >Map : Symbol(Map, Decl(lib.es2015.collection.d.ts, --, --), Decl(lib.es2015.collection.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
  
  m.clear();
@@ -43,7 +43,7 @@
  
  // Using ES6 generator
  function* gen() {
-@@ -80,9 +80,9 @@
+@@= skipped -56, +56 lines =@@
  
  // Using ES6 math
  Math.sign(1);
@@ -55,7 +55,7 @@
  
  // Using ES6 object
  var o = {
-@@ -93,21 +93,21 @@
+@@= skipped -13, +13 lines =@@
  
      [Symbol.hasInstance](value: any) {
  >[Symbol.hasInstance] : Symbol([Symbol.hasInstance], Decl(modularizeLibrary_TargetES5UsingES6Lib.ts, 39, 9))
@@ -83,7 +83,7 @@
  
  // Using ES6 promise
  async function out() {
-@@ -123,9 +123,9 @@
+@@= skipped -30, +30 lines =@@
  >console : Symbol(console, Decl(modularizeLibrary_TargetES5UsingES6Lib.ts, 51, 11))
  
  out().then(() => {
@@ -95,7 +95,7 @@
  
      console.log("Yea!");
  >console : Symbol(console, Decl(modularizeLibrary_TargetES5UsingES6Lib.ts, 51, 11))
-@@ -143,9 +143,9 @@
+@@= skipped -20, +20 lines =@@
  
  // Using ES6 reflect
  Reflect.isExtensible({});
@@ -107,7 +107,7 @@
  
  // Using Es6 regexp
  var reg = new RegExp("/s");
-@@ -153,18 +153,18 @@
+@@= skipped -10, +10 lines =@@
  >RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
  
  reg.flags;
@@ -130,7 +130,7 @@
  
  // Using ES6 symbol
  var s = Symbol();
-@@ -177,9 +177,9 @@
+@@= skipped -24, +24 lines =@@
  
      [Symbol.hasInstance](value: any) {
  >[Symbol.hasInstance] : Symbol([Symbol.hasInstance], Decl(modularizeLibrary_TargetES5UsingES6Lib.ts, 75, 12))

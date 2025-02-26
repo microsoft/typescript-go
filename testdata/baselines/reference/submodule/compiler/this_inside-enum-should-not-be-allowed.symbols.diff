@@ -1,6 +1,6 @@
 --- old.this_inside-enum-should-not-be-allowed.symbols
 +++ new.this_inside-enum-should-not-be-allowed.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >TopLevelEnum : Symbol(TopLevelEnum, Decl(this_inside-enum-should-not-be-allowed.ts, 0, 0))
  
      ThisWasAllowedButShouldNotBe = this // Should not be allowed
@@ -9,7 +9,7 @@
  }
  
  module ModuleEnum {
-@@ -15,6 +15,6 @@
+@@= skipped -10, +10 lines =@@
  >EnumInModule : Symbol(EnumInModule, Decl(this_inside-enum-should-not-be-allowed.ts, 4, 19))
  
          WasADifferentError = this // this was handled as if this was in a module

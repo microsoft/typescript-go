@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -57,12 +58,34 @@ func getBaselineDiff(t *testing.T, actual string, fileName string) string {
 		return NoContent
 	}
 	var b strings.Builder
-	err := diff.Text("old."+fileName, "new."+fileName, expected, actual, &b)
-	if err != nil {
+	if err := diff.Text("old."+fileName, "new."+fileName, expected, actual, &b); err != nil {
 		t.Fatalf("failed to diff the actual and expected content: %v", err)
 	}
-	return b.String()
+
+	// Remove line numbers from unified diff headers; this avoids adding/deleting
+	// lines in our baselines from causing knock-on header changes later in the diff.
+	s := b.String()
+
+	var aCurLine, bCurLine int
+	s = fixUnifiedDiff.ReplaceAllStringFunc(s, func(match string) string {
+		var aLine, aLineCount, bLine, bLineCount int
+		if _, err := fmt.Sscanf(match, "@@ -%d,%d +%d,%d @@", &aLine, &aLineCount, &bLine, &bLineCount); err != nil {
+			panic(fmt.Sprintf("failed to parse unified diff header: %v", err))
+		}
+		aDiff := aLine - aCurLine
+		bDiff := bLine - bCurLine
+		aCurLine = aLine
+		bCurLine = bLine
+
+		// Keep surrounded by @@, to make GitHub's grammar happy.
+		// https://github.com/textmate/diff.tmbundle/blob/0593bb775eab1824af97ef2172fd38822abd97d7/Syntaxes/Diff.plist#L68
+		return fmt.Sprintf("@@= skipped -%d, +%d lines =@@", aDiff, bDiff)
+	})
+
+	return s
 }
+
+var fixUnifiedDiff = regexp.MustCompile(`@@ -\d+,\d+ \+\d+,\d+ @@`)
 
 func RunAgainstSubmodule(t *testing.T, fileName string, actual string, opts Options) {
 	writeComparison(t, actual, fileName, true /*useSubmodule*/, opts)

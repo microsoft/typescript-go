@@ -1,6 +1,6 @@
 --- old.privateNameStaticFieldDerivedClasses.symbols
 +++ new.privateNameStaticFieldDerivedClasses.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >Base : Symbol(Base, Decl(privateNameStaticFieldDerivedClasses.ts, 0, 0))
  
      static #prop: number = 123;
@@ -13,7 +13,7 @@
  >x : Symbol(x, Decl(privateNameStaticFieldDerivedClasses.ts, 2, 18))
  >Derived : Symbol(Derived, Decl(privateNameStaticFieldDerivedClasses.ts, 6, 1))
  
-@@ -16,7 +16,7 @@
+@@= skipped -11, +11 lines =@@
  >Derived : Symbol(Derived, Decl(privateNameStaticFieldDerivedClasses.ts, 6, 1))
  
          Base.#prop  = 10;
@@ -22,7 +22,7 @@
  >Base : Symbol(Base, Decl(privateNameStaticFieldDerivedClasses.ts, 0, 0))
      }
  }
-@@ -25,15 +25,15 @@
+@@= skipped -9, +9 lines =@@
  >Base : Symbol(Base, Decl(privateNameStaticFieldDerivedClasses.ts, 0, 0))
  
      static #derivedProp: number = 10;

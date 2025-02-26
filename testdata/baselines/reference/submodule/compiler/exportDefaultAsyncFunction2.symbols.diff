@@ -1,6 +1,6 @@
 --- old.exportDefaultAsyncFunction2.symbols
 +++ new.exportDefaultAsyncFunction2.symbols
-@@ -18,9 +18,6 @@
+@@= skipped -18, +18 lines =@@
  export default async(() => await(Promise.resolve(1)));
  >async : Symbol(async, Decl(a.ts, 0, 8))
  >await : Symbol(await, Decl(a.ts, 0, 15))

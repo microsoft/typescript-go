@@ -1,6 +1,6 @@
 --- old.stringIndexingResults.symbols
 +++ new.stringIndexingResults.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >x : Symbol(x, Decl(stringIndexingResults.ts, 1, 5))
  
      y = '';
@@ -9,7 +9,7 @@
  }
  
  var c: C;
-@@ -18,7 +18,7 @@
+@@= skipped -10, +10 lines =@@
  var r1 = c['y']; 
  >r1 : Symbol(r1, Decl(stringIndexingResults.ts, 6, 3))
  >c : Symbol(c, Decl(stringIndexingResults.ts, 5, 3))
@@ -18,7 +18,7 @@
  
  var r2 = c['a'];
  >r2 : Symbol(r2, Decl(stringIndexingResults.ts, 7, 3))
-@@ -35,7 +35,7 @@
+@@= skipped -17, +17 lines =@@
  >x : Symbol(x, Decl(stringIndexingResults.ts, 11, 5))
  
      y: string;
@@ -27,7 +27,7 @@
  }
  
  var i: I
-@@ -45,7 +45,7 @@
+@@= skipped -10, +10 lines =@@
  var r4 = i['y'];
  >r4 : Symbol(r4, Decl(stringIndexingResults.ts, 16, 3))
  >i : Symbol(i, Decl(stringIndexingResults.ts, 15, 3))

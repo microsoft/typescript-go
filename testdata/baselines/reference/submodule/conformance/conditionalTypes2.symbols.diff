@@ -1,6 +1,6 @@
 --- old.conditionalTypes2.symbols
 +++ new.conditionalTypes2.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(conditionalTypes2.ts, 0, 20))
  
      foo: T extends string ? T : number;
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(conditionalTypes2.ts, 0, 20))
  >T : Symbol(T, Decl(conditionalTypes2.ts, 0, 20))
  }
-@@ -16,7 +16,7 @@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(conditionalTypes2.ts, 4, 24))
  
      foo: T extends string ? keyof T : number;
@@ -18,7 +18,7 @@
  >T : Symbol(T, Decl(conditionalTypes2.ts, 4, 24))
  >T : Symbol(T, Decl(conditionalTypes2.ts, 4, 24))
  }
-@@ -26,7 +26,7 @@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(conditionalTypes2.ts, 8, 20))
  
      foo: T extends string ? keyof T : T;
@@ -27,7 +27,7 @@
  >T : Symbol(T, Decl(conditionalTypes2.ts, 8, 20))
  >T : Symbol(T, Decl(conditionalTypes2.ts, 8, 20))
  >T : Symbol(T, Decl(conditionalTypes2.ts, 8, 20))
-@@ -279,7 +279,7 @@
+@@= skipped -253, +253 lines =@@
  >T : Symbol(T, Decl(conditionalTypes2.ts, 79, 10))
  
      toVector(): Vector<T> {
@@ -36,7 +36,7 @@
  >Vector : Symbol(Vector, Decl(conditionalTypes2.ts, 87, 1))
  >T : Symbol(T, Decl(conditionalTypes2.ts, 79, 10))
  
-@@ -293,7 +293,7 @@
+@@= skipped -14, +14 lines =@@
  >T : Symbol(T, Decl(conditionalTypes2.ts, 85, 14))
  
      tail(): Opt<Seq<T>>;
@@ -45,7 +45,7 @@
  >Opt : Symbol(Opt, Decl(conditionalTypes2.ts, 75, 1))
  >Seq : Symbol(Seq, Decl(conditionalTypes2.ts, 83, 1))
  >T : Symbol(T, Decl(conditionalTypes2.ts, 85, 14))
-@@ -306,7 +306,7 @@
+@@= skipped -13, +13 lines =@@
  >T : Symbol(T, Decl(conditionalTypes2.ts, 89, 13))
  
      tail(): Opt<Vector<T>> {
@@ -54,7 +54,7 @@
  >Opt : Symbol(Opt, Decl(conditionalTypes2.ts, 75, 1))
  >Vector : Symbol(Vector, Decl(conditionalTypes2.ts, 87, 1))
  >T : Symbol(T, Decl(conditionalTypes2.ts, 89, 13))
-@@ -315,7 +315,7 @@
+@@= skipped -9, +9 lines =@@
  >undefined : Symbol(undefined)
      }
      partition2<U extends T>(predicate:(v:T)=>v is U): [Vector<U>,Vector<Exclude<T, U>>];
@@ -63,7 +63,7 @@
  >U : Symbol(U, Decl(conditionalTypes2.ts, 93, 15))
  >T : Symbol(T, Decl(conditionalTypes2.ts, 89, 13))
  >predicate : Symbol(predicate, Decl(conditionalTypes2.ts, 93, 28))
-@@ -331,7 +331,7 @@
+@@= skipped -16, +16 lines =@@
  >U : Symbol(U, Decl(conditionalTypes2.ts, 93, 15))
  
      partition2(predicate:(x:T)=>boolean): [Vector<T>,Vector<T>];
@@ -72,7 +72,7 @@
  >predicate : Symbol(predicate, Decl(conditionalTypes2.ts, 94, 15))
  >x : Symbol(x, Decl(conditionalTypes2.ts, 94, 26))
  >T : Symbol(T, Decl(conditionalTypes2.ts, 89, 13))
-@@ -341,7 +341,7 @@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(conditionalTypes2.ts, 89, 13))
  
      partition2<U extends T>(predicate:(v:T)=>boolean): [Vector<U>,Vector<any>] {
@@ -81,7 +81,7 @@
  >U : Symbol(U, Decl(conditionalTypes2.ts, 95, 15))
  >T : Symbol(T, Decl(conditionalTypes2.ts, 89, 13))
  >predicate : Symbol(predicate, Decl(conditionalTypes2.ts, 95, 28))
-@@ -361,7 +361,7 @@
+@@= skipped -20, +20 lines =@@
  >T : Symbol(T, Decl(conditionalTypes2.ts, 100, 13))
  
      bat: B1<A1<T>>;
@@ -90,7 +90,7 @@
  >B1 : Symbol(B1, Decl(conditionalTypes2.ts, 102, 1))
  >A1 : Symbol(A1, Decl(conditionalTypes2.ts, 98, 1))
  >T : Symbol(T, Decl(conditionalTypes2.ts, 100, 13))
-@@ -374,13 +374,13 @@
+@@= skipped -13, +13 lines =@@
  >T : Symbol(T, Decl(conditionalTypes2.ts, 104, 13))
  
      bat: B1<B1<T>>;
@@ -106,7 +106,7 @@
  >T : Symbol(T, Decl(conditionalTypes2.ts, 104, 13))
  }
  
-@@ -753,7 +753,7 @@
+@@= skipped -379, +379 lines =@@
  >IRecord : Symbol(IRecord, Decl(conditionalTypes2.ts, 209, 79))
  
  	readonly Id: string;

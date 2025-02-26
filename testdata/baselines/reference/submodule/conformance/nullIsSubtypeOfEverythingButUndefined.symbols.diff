@@ -1,6 +1,6 @@
 --- old.nullIsSubtypeOfEverythingButUndefined.symbols
 +++ new.nullIsSubtypeOfEverythingButUndefined.symbols
-@@ -83,7 +83,7 @@
+@@= skipped -83, +83 lines =@@
  
  interface I1 { foo: number; }
  >I1 : Symbol(I1, Decl(nullIsSubtypeOfEverythingButUndefined.ts, 31, 50))
@@ -9,7 +9,7 @@
  
  var i1: I1;
  >i1 : Symbol(i1, Decl(nullIsSubtypeOfEverythingButUndefined.ts, 34, 3))
-@@ -99,7 +99,7 @@
+@@= skipped -16, +16 lines =@@
  
  class C1 { foo: number; }
  >C1 : Symbol(C1, Decl(nullIsSubtypeOfEverythingButUndefined.ts, 36, 26))
@@ -18,7 +18,7 @@
  
  var c1: C1;
  >c1 : Symbol(c1, Decl(nullIsSubtypeOfEverythingButUndefined.ts, 39, 3))
-@@ -116,7 +116,7 @@
+@@= skipped -17, +17 lines =@@
  class C2<T> { foo: T; }
  >C2 : Symbol(C2, Decl(nullIsSubtypeOfEverythingButUndefined.ts, 41, 27))
  >T : Symbol(T, Decl(nullIsSubtypeOfEverythingButUndefined.ts, 43, 9))
@@ -27,7 +27,7 @@
  >T : Symbol(T, Decl(nullIsSubtypeOfEverythingButUndefined.ts, 43, 9))
  
  var c2: C2<number>;
-@@ -133,7 +133,7 @@
+@@= skipped -17, +17 lines =@@
  
  enum E { A }
  >E : Symbol(E, Decl(nullIsSubtypeOfEverythingButUndefined.ts, 46, 27))
@@ -36,7 +36,7 @@
  
  var r13 = true ? E : null;
  >r13 : Symbol(r13, Decl(nullIsSubtypeOfEverythingButUndefined.ts, 49, 3), Decl(nullIsSubtypeOfEverythingButUndefined.ts, 50, 3))
-@@ -145,15 +145,15 @@
+@@= skipped -12, +12 lines =@@
  
  var r14 = true ? E.A : null;
  >r14 : Symbol(r14, Decl(nullIsSubtypeOfEverythingButUndefined.ts, 52, 3), Decl(nullIsSubtypeOfEverythingButUndefined.ts, 53, 3))
@@ -56,7 +56,7 @@
  
  function f() { }
  >f : Symbol(f, Decl(nullIsSubtypeOfEverythingButUndefined.ts, 53, 28), Decl(nullIsSubtypeOfEverythingButUndefined.ts, 55, 16))
-@@ -178,7 +178,7 @@
+@@= skipped -33, +33 lines =@@
  
  class c { baz: string }
  >c : Symbol(c, Decl(nullIsSubtypeOfEverythingButUndefined.ts, 61, 27), Decl(nullIsSubtypeOfEverythingButUndefined.ts, 63, 23))

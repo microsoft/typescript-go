@@ -1,6 +1,6 @@
 --- old.privateNamesInNestedClasses-1.symbols
 +++ new.privateNamesInNestedClasses-1.symbols
-@@ -5,29 +5,29 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(privateNamesInNestedClasses-1.ts, 0, 0))
  
     #foo = "A's #foo";
@@ -36,7 +36,7 @@
  >a : Symbol(a, Decl(privateNamesInNestedClasses-1.ts, 9, 16))
  >A : Symbol(A, Decl(privateNamesInNestedClasses-1.ts, 0, 0))
  
-@@ -35,12 +35,12 @@
+@@= skipped -30, +30 lines =@@
  >a : Symbol(a, Decl(privateNamesInNestedClasses-1.ts, 9, 16))
             }
             quux (b: B) {
@@ -51,7 +51,7 @@
  >b : Symbol(b, Decl(privateNamesInNestedClasses-1.ts, 12, 17))
             }
         }
-@@ -49,15 +49,15 @@
+@@= skipped -14, +14 lines =@@
  >A : Symbol(A, Decl(privateNamesInNestedClasses-1.ts, 0, 0))
  
         new B().bar(a);
@@ -71,7 +71,7 @@
  >a : Symbol(a, Decl(privateNamesInNestedClasses-1.ts, 16, 12))
  
         const b = new B();
-@@ -65,15 +65,15 @@
+@@= skipped -16, +16 lines =@@
  >B : Symbol(B, Decl(privateNamesInNestedClasses-1.ts, 3, 14))
  
         new B().quux(b);

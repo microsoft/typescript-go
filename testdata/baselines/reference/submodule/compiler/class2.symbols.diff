@@ -1,6 +1,6 @@
 --- old.class2.symbols
 +++ new.class2.symbols
-@@ -3,5 +3,5 @@
+@@= skipped -3, +3 lines =@@
  === class2.ts ===
  class foo { constructor() { static f = 3; } }
  >foo : Symbol(foo, Decl(class2.ts, 0, 0))

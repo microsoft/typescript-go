@@ -1,6 +1,6 @@
 --- old.numericLiteralsWithTrailingDecimalPoints01.symbols
 +++ new.numericLiteralsWithTrailingDecimalPoints01.symbols
-@@ -2,12 +2,12 @@
+@@= skipped -2, +2 lines =@@
  
  === numericLiteralsWithTrailingDecimalPoints01.ts ===
  1..toString();
@@ -17,7 +17,7 @@
  
  1.toString();
  >toString : Symbol(toString, Decl(numericLiteralsWithTrailingDecimalPoints01.ts, 8, 14))
-@@ -20,9 +20,9 @@
+@@= skipped -18, +18 lines =@@
  
  var test1 = i.toString();
  >test1 : Symbol(test1, Decl(numericLiteralsWithTrailingDecimalPoints01.ts, 7, 3))
@@ -29,7 +29,7 @@
  
  var test2 = 2.toString();
  >test2 : Symbol(test2, Decl(numericLiteralsWithTrailingDecimalPoints01.ts, 8, 3))
-@@ -30,91 +30,91 @@
+@@= skipped -10, +10 lines =@@
  
  var test3 = 3 .toString();
  >test3 : Symbol(test3, Decl(numericLiteralsWithTrailingDecimalPoints01.ts, 9, 3))

@@ -1,6 +1,6 @@
 --- old.javascriptThisAssignmentInStaticBlock.symbols
 +++ new.javascriptThisAssignmentInStaticBlock.symbols
-@@ -6,16 +6,12 @@
+@@= skipped -6, +6 lines =@@
  
      static {
          this.doSomething = () => {};
@@ -17,7 +17,7 @@
  
  // GH#46468
  class ElementsArray extends Array {
-@@ -25,9 +21,9 @@
+@@= skipped -19, +15 lines =@@
      static {
          const superisArray = super.isArray;
  >superisArray : Symbol(superisArray, Decl(a.js, 11, 13))
@@ -29,7 +29,7 @@
  
          const customIsArray = (arg)=> superisArray(arg);
  >customIsArray : Symbol(customIsArray, Decl(a.js, 12, 13))
-@@ -36,16 +32,16 @@
+@@= skipped -11, +11 lines =@@
  >arg : Symbol(arg, Decl(a.js, 12, 31))
  
          this.isArray = customIsArray;

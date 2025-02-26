@@ -1,6 +1,6 @@
 --- old.assignmentCompatWithCallSignatures2.symbols
 +++ new.assignmentCompatWithCallSignatures2.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >T : Symbol(T, Decl(assignmentCompatWithCallSignatures2.ts, 0, 0))
  
      f(x: number): void;
@@ -9,7 +9,7 @@
  >x : Symbol(x, Decl(assignmentCompatWithCallSignatures2.ts, 3, 6))
  }
  var t: T;
-@@ -31,7 +31,7 @@
+@@= skipped -24, +24 lines =@@
  >S : Symbol(S, Decl(assignmentCompatWithCallSignatures2.ts, 9, 6))
  
      f(x: number): string;
@@ -18,7 +18,7 @@
  >x : Symbol(x, Decl(assignmentCompatWithCallSignatures2.ts, 12, 6))
  }
  var s: S;
-@@ -115,7 +115,7 @@
+@@= skipped -84, +84 lines =@@
  >S2 : Symbol(S2, Decl(assignmentCompatWithCallSignatures2.ts, 33, 39))
  
      f(x: string): void;

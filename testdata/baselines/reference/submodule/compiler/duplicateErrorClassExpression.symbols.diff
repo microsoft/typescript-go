@@ -1,6 +1,6 @@
 --- old.duplicateErrorClassExpression.symbols
 +++ new.duplicateErrorClassExpression.symbols
-@@ -19,19 +19,19 @@
+@@= skipped -19, +19 lines =@@
  >ABase : Symbol(ABase, Decl(duplicateErrorClassExpression.ts, 5, 1))
  
      a: string;
@@ -23,7 +23,7 @@
  >ComplicatedTypeBase : Symbol(ComplicatedTypeBase, Decl(duplicateErrorClassExpression.ts, 0, 0))
  }
  const x = class Derived extends Base {
-@@ -40,7 +40,7 @@
+@@= skipped -21, +21 lines =@@
  >Base : Symbol(Base, Decl(duplicateErrorClassExpression.ts, 11, 1))
  
      foo!: ComplicatedTypeDerived;

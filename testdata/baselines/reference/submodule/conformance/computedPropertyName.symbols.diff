@@ -1,6 +1,6 @@
 --- old.computedPropertyName.symbols
 +++ new.computedPropertyName.symbols
-@@ -13,7 +13,7 @@
+@@= skipped -13, +13 lines =@@
  >Component : Symbol(Component, Decl(component.ts, 0, 48))
  
    [onInit]?(): void;
@@ -9,7 +9,7 @@
  >onInit : Symbol(onInit, Decl(component.ts, 0, 13))
  }
  
-@@ -38,7 +38,7 @@
+@@= skipped -25, +25 lines =@@
  >C : Symbol(C, Decl(component.ts, 12, 2))
  
    [onInit]: any; // Error (because class fields)
@@ -18,7 +18,7 @@
  >onInit : Symbol(onInit, Decl(component.ts, 0, 13))
  }
  
-@@ -46,7 +46,7 @@
+@@= skipped -8, +8 lines =@@
  >D : Symbol(D, Decl(component.ts, 16, 1))
  
    [onInit] = 0; // Error
@@ -27,7 +27,7 @@
  >onInit : Symbol(onInit, Decl(component.ts, 0, 13))
  }
  
-@@ -54,7 +54,7 @@
+@@= skipped -8, +8 lines =@@
  >E : Symbol(E, Decl(component.ts, 20, 1))
  
    [onInit]() {} // Error
@@ -36,7 +36,7 @@
  >onInit : Symbol(onInit, Decl(component.ts, 0, 13))
  }
  
-@@ -62,7 +62,7 @@
+@@= skipped -8, +8 lines =@@
  >F : Symbol(F, Decl(component.ts, 24, 1))
  
    abstract [onInit](): void;
@@ -45,7 +45,7 @@
  >onInit : Symbol(onInit, Decl(component.ts, 0, 13))
  }
  
-@@ -70,7 +70,7 @@
+@@= skipped -8, +8 lines =@@
  >G : Symbol(G, Decl(component.ts, 28, 1))
  
    declare [onInit]: any;
@@ -54,7 +54,7 @@
  >onInit : Symbol(onInit, Decl(component.ts, 0, 13))
  }
  
-@@ -78,7 +78,7 @@
+@@= skipped -8, +8 lines =@@
  >H : Symbol(H, Decl(component.ts, 32, 1))
  
    [onInit]: any;

@@ -1,6 +1,6 @@
 --- old.assignmentToVoidZero2.symbols
 +++ new.assignmentToVoidZero2.symbols
-@@ -2,49 +2,32 @@
+@@= skipped -2, +2 lines =@@
  
  === assignmentToVoidZero2.js ===
  exports.j = 1;

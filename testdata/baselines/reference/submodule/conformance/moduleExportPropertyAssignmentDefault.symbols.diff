@@ -1,6 +1,6 @@
 --- old.moduleExportPropertyAssignmentDefault.symbols
 +++ new.moduleExportPropertyAssignmentDefault.symbols
-@@ -5,16 +5,8 @@
+@@= skipped -5, +5 lines =@@
  >axios : Symbol(axios, Decl(axios.js, 0, 3))
  
  module.exports = axios // both assignments should be ok

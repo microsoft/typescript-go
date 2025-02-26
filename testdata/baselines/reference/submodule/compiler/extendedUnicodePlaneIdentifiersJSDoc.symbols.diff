@@ -1,6 +1,6 @@
 --- old.extendedUnicodePlaneIdentifiersJSDoc.symbols
 +++ new.extendedUnicodePlaneIdentifiersJSDoc.symbols
-@@ -9,12 +9,12 @@
+@@= skipped -9, +9 lines =@@
  function foo(𝑚, 𝑀) {
  >foo : Symbol(foo, Decl(file.js, 0, 0))
  >𝑚 : Symbol(𝑚, Decl(file.js, 5, 13))

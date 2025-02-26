@@ -1,6 +1,6 @@
 --- old.importStatements.symbols
 +++ new.importStatements.symbols
-@@ -8,8 +8,8 @@
+@@= skipped -8, +8 lines =@@
  >Point : Symbol(Point, Decl(importStatements.ts, 0, 10))
  
          constructor(public x: number, public y: number) { }
@@ -11,7 +11,7 @@
      }
  
      export var Origin = new Point(0, 0);
-@@ -23,7 +23,7 @@
+@@= skipped -15, +15 lines =@@
  
      import a = A; //Error generates 'var <Alias> = <EntityName>;'
  >a : Symbol(a, Decl(importStatements.ts, 9, 10))
@@ -20,7 +20,7 @@
  }
  
  // no code gen expected
-@@ -32,7 +32,7 @@
+@@= skipped -9, +9 lines =@@
  
      import a = A; //Error generates 'var <Alias> = <EntityName>;'
  >a : Symbol(a, Decl(importStatements.ts, 14, 10))
@@ -29,7 +29,7 @@
  
      var m: typeof a;
  >m : Symbol(m, Decl(importStatements.ts, 16, 7))
-@@ -41,7 +41,7 @@
+@@= skipped -9, +9 lines =@@
      var p: a.Point;
  >p : Symbol(p, Decl(importStatements.ts, 17, 7), Decl(importStatements.ts, 18, 7))
  >a : Symbol(a, Decl(importStatements.ts, 14, 10))
@@ -38,7 +38,7 @@
  
      var p = {x:0, y:0 };
  >p : Symbol(p, Decl(importStatements.ts, 17, 7), Decl(importStatements.ts, 18, 7))
-@@ -55,13 +55,13 @@
+@@= skipped -14, +14 lines =@@
  
      import a = A;
  >a : Symbol(a, Decl(importStatements.ts, 22, 10))
@@ -55,7 +55,7 @@
  }
  
  module E {
-@@ -69,22 +69,22 @@
+@@= skipped -14, +14 lines =@@
  
      import a = A;
  >a : Symbol(a, Decl(importStatements.ts, 28, 10))

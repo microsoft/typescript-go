@@ -1,6 +1,6 @@
 --- old.collisionArgumentsInterfaceMembers.symbols
 +++ new.collisionArgumentsInterfaceMembers.symbols
-@@ -50,16 +50,16 @@
+@@= skipped -50, +50 lines =@@
  >i3 : Symbol(i3, Decl(collisionArgumentsInterfaceMembers.ts, 20, 1))
  
      foo(i: number, ...arguments); // no error - no code gen

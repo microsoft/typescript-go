@@ -1,6 +1,6 @@
 --- old.mixinAbstractClasses.2.symbols
 +++ new.mixinAbstractClasses.2.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Mixin : Symbol(Mixin, Decl(mixinAbstractClasses.2.ts, 2, 1), Decl(mixinAbstractClasses.2.ts, 0, 0))
  
      mixinMethod(): void;
@@ -9,7 +9,7 @@
  }
  
  function Mixin<TBaseClass extends abstract new (...args: any) => any>(baseClass: TBaseClass): TBaseClass & (abstract new (...args: any) => Mixin) {
-@@ -25,7 +25,7 @@
+@@= skipped -20, +20 lines =@@
  >Mixin : Symbol(Mixin, Decl(mixinAbstractClasses.2.ts, 2, 1), Decl(mixinAbstractClasses.2.ts, 0, 0))
  
          mixinMethod() {
@@ -18,7 +18,7 @@
          }
      }
      return MixinClass;
-@@ -36,7 +36,7 @@
+@@= skipped -11, +11 lines =@@
  >AbstractBase : Symbol(AbstractBase, Decl(mixinAbstractClasses.2.ts, 11, 1))
  
      abstract abstractBaseMethod(): void;

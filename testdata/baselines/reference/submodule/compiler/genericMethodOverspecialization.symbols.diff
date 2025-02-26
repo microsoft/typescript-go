@@ -1,6 +1,6 @@
 --- old.genericMethodOverspecialization.symbols
 +++ new.genericMethodOverspecialization.symbols
-@@ -8,10 +8,10 @@
+@@= skipped -8, +8 lines =@@
  >HTMLElement : Symbol(HTMLElement, Decl(lib.dom.d.ts, --, --), Decl(lib.dom.d.ts, --, --), Decl(genericMethodOverspecialization.ts, 0, 62))
  
      clientWidth: number;
@@ -13,7 +13,7 @@
  }
  
  declare var document: Document;
-@@ -22,22 +22,22 @@
+@@= skipped -14, +14 lines =@@
  >Document : Symbol(Document, Decl(lib.dom.d.ts, --, --), Decl(lib.dom.d.ts, --, --), Decl(genericMethodOverspecialization.ts, 7, 31))
  
      getElementById(elementId: string): HTMLElement;
@@ -41,7 +41,7 @@
  >name : Symbol(name, Decl(genericMethodOverspecialization.ts, 12, 35))
  
  });
-@@ -45,29 +45,29 @@
+@@= skipped -23, +23 lines =@@
  
  var xxx = elements.filter(function (e) {
  >xxx : Symbol(xxx, Decl(genericMethodOverspecialization.ts, 17, 3))

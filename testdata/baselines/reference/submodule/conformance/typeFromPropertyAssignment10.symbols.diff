@@ -1,6 +1,6 @@
 --- old.typeFromPropertyAssignment10.symbols
 +++ new.typeFromPropertyAssignment10.symbols
-@@ -2,24 +2,16 @@
+@@= skipped -2, +2 lines =@@
  
  === module.js ===
  var Outer = Outer || {};
@@ -30,7 +30,7 @@
  
      var SomeView = function() {
  >SomeView : Symbol(SomeView, Decl(someview.js, 1, 7))
-@@ -32,40 +24,24 @@
+@@= skipped -30, +22 lines =@@
  
  })();
  Outer.app.Inner = class {
@@ -74,7 +74,7 @@
  >k : Symbol(k, Decl(someview.js, 15, 32))
  
      return k ** k;
-@@ -74,11 +50,7 @@
+@@= skipped -42, +26 lines =@@
  }
  === application.js ===
  Outer.app.Application = (function () {
@@ -87,7 +87,7 @@
  
      /**
       * Application main class.
-@@ -89,17 +61,10 @@
+@@= skipped -15, +11 lines =@@
  
          var me = this;
  >me : Symbol(me, Decl(application.js, 7, 11))
@@ -106,7 +106,7 @@
  
      };
      return Application;
-@@ -109,38 +74,22 @@
+@@= skipped -20, +13 lines =@@
  === main.js ===
  var app = new Outer.app.Application();
  >app : Symbol(app, Decl(main.js, 0, 3))

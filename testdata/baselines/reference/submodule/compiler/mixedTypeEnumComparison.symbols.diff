@@ -1,6 +1,6 @@
 --- old.mixedTypeEnumComparison.symbols
 +++ new.mixedTypeEnumComparison.symbols
-@@ -5,16 +5,16 @@
+@@= skipped -5, +5 lines =@@
  >E : Symbol(E, Decl(mixedTypeEnumComparison.ts, 0, 0))
  
      S1 = "foo",
@@ -21,7 +21,7 @@
  }
  
  declare var someNumber: number
-@@ -22,23 +22,23 @@
+@@= skipped -17, +17 lines =@@
  
  if (someNumber > E.N2) {
  >someNumber : Symbol(someNumber, Decl(mixedTypeEnumComparison.ts, 8, 11))
@@ -51,7 +51,7 @@
  
  if (someNumber > unionOfEnum) {
  >someNumber : Symbol(someNumber, Decl(mixedTypeEnumComparison.ts, 8, 11))
-@@ -46,9 +46,9 @@
+@@= skipped -24, +24 lines =@@
  
      someNumber = E.N2;
  >someNumber : Symbol(someNumber, Decl(mixedTypeEnumComparison.ts, 8, 11))
@@ -63,7 +63,7 @@
  }
  
  declare var someString: string
-@@ -56,15 +56,15 @@
+@@= skipped -10, +10 lines =@@
  
  if (someString > E.S1) {
  >someString : Symbol(someString, Decl(mixedTypeEnumComparison.ts, 20, 11))
@@ -83,7 +83,7 @@
  }
  
  
-@@ -75,31 +75,31 @@
+@@= skipped -19, +19 lines =@@
  >E2 : Symbol(E2, Decl(mixedTypeEnumComparison.ts, 27, 37))
  
      S1 = "foo",

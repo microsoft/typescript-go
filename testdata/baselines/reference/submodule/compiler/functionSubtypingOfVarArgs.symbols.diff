@@ -1,6 +1,6 @@
 --- old.functionSubtypingOfVarArgs.symbols
 +++ new.functionSubtypingOfVarArgs.symbols
-@@ -5,19 +5,19 @@
+@@= skipped -5, +5 lines =@@
  >EventBase : Symbol(EventBase, Decl(functionSubtypingOfVarArgs.ts, 0, 0))
  
      private _listeners = [];
@@ -26,7 +26,7 @@
  >listener : Symbol(listener, Decl(functionSubtypingOfVarArgs.ts, 3, 8))
      }
  }
-@@ -27,14 +27,14 @@
+@@= skipped -22, +22 lines =@@
  >EventBase : Symbol(EventBase, Decl(functionSubtypingOfVarArgs.ts, 0, 0))
  
      add(listener: (items: string) => void ) { // valid, items is subtype of args

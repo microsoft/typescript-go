@@ -1,6 +1,6 @@
 --- old.tsxSpreadInvalidType.symbols
 +++ new.tsxSpreadInvalidType.symbols
-@@ -21,16 +21,13 @@
+@@= skipped -21, +21 lines =@@
  
  const d = <div { ...a } />
  >d : Symbol(d, Decl(a.tsx, 8, 5))

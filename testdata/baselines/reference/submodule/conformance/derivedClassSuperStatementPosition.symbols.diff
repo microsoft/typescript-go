@@ -1,6 +1,6 @@
 --- old.derivedClassSuperStatementPosition.symbols
 +++ new.derivedClassSuperStatementPosition.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      prop = 1;
@@ -9,7 +9,7 @@
  
      constructor() {
          super();
-@@ -19,18 +19,18 @@
+@@= skipped -13, +13 lines =@@
  >Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      x1: boolean;
@@ -32,7 +32,7 @@
  >x : Symbol(x, Decl(derivedClassSuperStatementPosition.ts, 10, 16))
  
          super(x);
-@@ -38,9 +38,9 @@
+@@= skipped -19, +19 lines =@@
  >x : Symbol(x, Decl(derivedClassSuperStatementPosition.ts, 10, 16))
  
          this.x2 = x;
@@ -44,7 +44,7 @@
  >x : Symbol(x, Decl(derivedClassSuperStatementPosition.ts, 10, 16))
      }
  }
-@@ -50,18 +50,18 @@
+@@= skipped -12, +12 lines =@@
  >Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      x1: boolean[];
@@ -67,7 +67,7 @@
  >x : Symbol(x, Decl(derivedClassSuperStatementPosition.ts, 20, 16))
  
          super(x);
-@@ -69,9 +69,9 @@
+@@= skipped -19, +19 lines =@@
  >x : Symbol(x, Decl(derivedClassSuperStatementPosition.ts, 20, 16))
  
          this.x2 = x;
@@ -79,7 +79,7 @@
  >x : Symbol(x, Decl(derivedClassSuperStatementPosition.ts, 20, 16))
      }
  }
-@@ -81,14 +81,14 @@
+@@= skipped -12, +12 lines =@@
  >Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      x: any;
@@ -97,7 +97,7 @@
  
          // c3
          super(); // c4
-@@ -96,9 +96,9 @@
+@@= skipped -15, +15 lines =@@
  
          // c5
          this.x = null; // c6
@@ -109,7 +109,7 @@
  
          // c7
      }
-@@ -109,7 +109,7 @@
+@@= skipped -13, +13 lines =@@
  >Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      x: any;
@@ -118,7 +118,7 @@
  
      constructor() {
          // c0
-@@ -118,9 +118,9 @@
+@@= skipped -9, +9 lines =@@
  
          // c1
          console.log(); // c2
@@ -130,7 +130,7 @@
  
          // c3
          super(); // c4
-@@ -128,9 +128,9 @@
+@@= skipped -10, +10 lines =@@
  
          // c5
          this.x = null; // c6
@@ -142,7 +142,7 @@
  
          // c7
      }
-@@ -141,13 +141,13 @@
+@@= skipped -13, +13 lines =@@
  >Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      prop = 1;
@@ -159,7 +159,7 @@
  
              ? super(1)
  >super : Symbol(ObjectConstructor, Decl(lib.es5.d.ts, --, --))
-@@ -162,13 +162,13 @@
+@@= skipped -21, +21 lines =@@
  >Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      prop = 1;
@@ -176,7 +176,7 @@
  
              super(1);
  >super : Symbol(ObjectConstructor, Decl(lib.es5.d.ts, --, --))
-@@ -185,10 +185,10 @@
+@@= skipped -23, +23 lines =@@
  >Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      prop = 1;
@@ -189,7 +189,7 @@
          {
              super();
  >super : Symbol(ObjectConstructor, Decl(lib.es5.d.ts, --, --))
-@@ -201,15 +201,15 @@
+@@= skipped -16, +16 lines =@@
  >Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      prop = 1;

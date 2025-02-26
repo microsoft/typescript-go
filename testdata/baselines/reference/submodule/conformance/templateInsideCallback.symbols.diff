@@ -1,6 +1,6 @@
 --- old.templateInsideCallback.symbols
 +++ new.templateInsideCallback.symbols
-@@ -63,15 +63,13 @@
+@@= skipped -63, +63 lines =@@
    for (let i = 0; i < array.length; i += 1) {
  >i : Symbol(i, Decl(templateInsideCallback.js, 49, 10))
  >i : Symbol(i, Decl(templateInsideCallback.js, 49, 10))

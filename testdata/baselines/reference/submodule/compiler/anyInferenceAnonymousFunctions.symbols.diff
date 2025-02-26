@@ -1,6 +1,6 @@
 --- old.anyInferenceAnonymousFunctions.symbols
 +++ new.anyInferenceAnonymousFunctions.symbols
-@@ -5,9 +5,9 @@
+@@= skipped -5, +5 lines =@@
  >paired : Symbol(paired, Decl(anyInferenceAnonymousFunctions.ts, 0, 3))
  
  paired.reduce(function (a1, a2) {
@@ -12,7 +12,7 @@
  >a1 : Symbol(a1, Decl(anyInferenceAnonymousFunctions.ts, 2, 24))
  >a2 : Symbol(a2, Decl(anyInferenceAnonymousFunctions.ts, 2, 27))
  
-@@ -17,9 +17,9 @@
+@@= skipped -12, +12 lines =@@
  } , []);
  
  paired.reduce((b1, b2) => {
@@ -24,7 +24,7 @@
  >b1 : Symbol(b1, Decl(anyInferenceAnonymousFunctions.ts, 8, 15))
  >b2 : Symbol(b2, Decl(anyInferenceAnonymousFunctions.ts, 8, 18))
  
-@@ -29,24 +29,24 @@
+@@= skipped -12, +12 lines =@@
  } , []);
  
  paired.reduce((b3, b4) => b3.concat({}), []);

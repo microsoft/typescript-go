@@ -1,6 +1,6 @@
 --- old.specializationError.symbols
 +++ new.specializationError.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(lib.es5.d.ts, --, --), Decl(specializationError.ts, 0, 18))
  
      then<U>(value: T): void;
@@ -9,7 +9,7 @@
  >U : Symbol(U, Decl(specializationError.ts, 1, 9))
  >value : Symbol(value, Decl(specializationError.ts, 1, 12))
  >T : Symbol(T, Decl(lib.es5.d.ts, --, --), Decl(specializationError.ts, 0, 18))
-@@ -16,12 +16,12 @@
+@@= skipped -10, +10 lines =@@
  >Bar : Symbol(Bar, Decl(specializationError.ts, 2, 1))
  
      bar(value: "Menu"): Promise<string>;
@@ -24,7 +24,7 @@
  >T : Symbol(T, Decl(specializationError.ts, 6, 8))
  >value : Symbol(value, Decl(specializationError.ts, 6, 11))
  >element : Symbol(element, Decl(specializationError.ts, 6, 25))
-@@ -29,7 +29,7 @@
+@@= skipped -13, +13 lines =@@
  >T : Symbol(T, Decl(specializationError.ts, 6, 8))
  
      bar<T>(value: string): Promise<T>;

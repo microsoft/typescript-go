@@ -1,6 +1,6 @@
 --- old.for-of58.symbols
 +++ new.for-of58.symbols
-@@ -19,13 +19,9 @@
+@@= skipped -19, +19 lines =@@
  >arr : Symbol(arr, Decl(for-of58.ts, 3, 13))
  
      item.x;

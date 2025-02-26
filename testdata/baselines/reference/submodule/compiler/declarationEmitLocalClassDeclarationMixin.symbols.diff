@@ -1,6 +1,6 @@
 --- old.declarationEmitLocalClassDeclarationMixin.symbols
 +++ new.declarationEmitLocalClassDeclarationMixin.symbols
-@@ -19,7 +19,7 @@
+@@= skipped -19, +19 lines =@@
  >Base : Symbol(Base, Decl(declarationEmitLocalClassDeclarationMixin.ts, 2, 42))
  
          bar = 2;
@@ -9,7 +9,7 @@
      }
      return PrivateMixed;
  >PrivateMixed : Symbol(PrivateMixed, Decl(declarationEmitLocalClassDeclarationMixin.ts, 2, 52))
-@@ -29,7 +29,7 @@
+@@= skipped -10, +10 lines =@@
  >Unmixed : Symbol(Unmixed, Decl(declarationEmitLocalClassDeclarationMixin.ts, 7, 1))
  
      foo = 1;
@@ -18,7 +18,7 @@
  }
  
  export const Mixed = mixin(Unmixed);
-@@ -49,12 +49,12 @@
+@@= skipped -20, +20 lines =@@
  >ctor : Symbol(ctor, Decl(declarationEmitLocalClassDeclarationMixin.ts, 15, 43))
  
          abstract match(path: string): boolean;
@@ -33,7 +33,7 @@
      }
      return FilterMixin;
  >FilterMixin : Symbol(FilterMixin, Decl(declarationEmitLocalClassDeclarationMixin.ts, 15, 53))
-@@ -66,7 +66,7 @@
+@@= skipped -17, +17 lines =@@
  >Unmixed : Symbol(Unmixed, Decl(declarationEmitLocalClassDeclarationMixin.ts, 7, 1))
  
      match(path: string) {

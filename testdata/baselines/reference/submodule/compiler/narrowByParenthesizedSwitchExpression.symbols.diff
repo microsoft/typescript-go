@@ -1,6 +1,6 @@
 --- old.narrowByParenthesizedSwitchExpression.symbols
 +++ new.narrowByParenthesizedSwitchExpression.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Base : Symbol(Base, Decl(narrowByParenthesizedSwitchExpression.ts, 0, 0))
  
    type: "foo" | "bar";
@@ -9,7 +9,7 @@
  }
  
  interface Foo extends Base {
-@@ -13,10 +13,10 @@
+@@= skipped -8, +8 lines =@@
  >Base : Symbol(Base, Decl(narrowByParenthesizedSwitchExpression.ts, 0, 0))
  
    type: "foo";
@@ -22,7 +22,7 @@
  }
  
  interface Bar extends Base {
-@@ -24,10 +24,10 @@
+@@= skipped -11, +11 lines =@@
  >Base : Symbol(Base, Decl(narrowByParenthesizedSwitchExpression.ts, 0, 0))
  
    type: "bar";
@@ -35,7 +35,7 @@
  }
  
  function getV(): Foo | Bar {
-@@ -43,23 +43,23 @@
+@@= skipped -19, +19 lines =@@
  >getV : Symbol(getV, Decl(narrowByParenthesizedSwitchExpression.ts, 12, 1))
  
  switch ((v.type)) {

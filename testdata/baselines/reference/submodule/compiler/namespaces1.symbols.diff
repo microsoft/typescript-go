@@ -1,6 +1,6 @@
 --- old.namespaces1.symbols
 +++ new.namespaces1.symbols
-@@ -17,11 +17,11 @@
+@@= skipped -17, +17 lines =@@
  var x: X.Y.Z;
  >x : Symbol(x, Decl(namespaces1.ts, 7, 3))
  >X : Symbol(X, Decl(namespaces1.ts, 0, 0))

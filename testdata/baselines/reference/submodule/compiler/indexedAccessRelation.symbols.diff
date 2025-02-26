@@ -1,6 +1,6 @@
 --- old.indexedAccessRelation.symbols
 +++ new.indexedAccessRelation.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >S : Symbol(S, Decl(indexedAccessRelation.ts, 2, 16))
  
      setState<K extends keyof S>(state: Pick<S, K>) {}
@@ -9,7 +9,7 @@
  >K : Symbol(K, Decl(indexedAccessRelation.ts, 3, 13))
  >S : Symbol(S, Decl(indexedAccessRelation.ts, 2, 16))
  >state : Symbol(state, Decl(indexedAccessRelation.ts, 3, 32))
-@@ -22,7 +22,7 @@
+@@= skipped -14, +14 lines =@@
  >T : Symbol(T, Decl(indexedAccessRelation.ts, 6, 23))
  
      a?: T;
@@ -18,7 +18,7 @@
  >T : Symbol(T, Decl(indexedAccessRelation.ts, 6, 23))
  }
  
-@@ -40,14 +40,14 @@
+@@= skipped -18, +18 lines =@@
  >T : Symbol(T, Decl(indexedAccessRelation.ts, 12, 11))
  {
      foo(a: T) {

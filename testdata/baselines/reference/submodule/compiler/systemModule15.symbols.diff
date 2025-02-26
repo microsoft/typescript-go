@@ -1,6 +1,6 @@
 --- old.systemModule15.symbols
 +++ new.systemModule15.symbols
-@@ -10,21 +10,21 @@
+@@= skipped -10, +10 lines =@@
  
  use(moduleB.value);
  >use : Symbol(use, Decl(file1.ts, 0, 34))

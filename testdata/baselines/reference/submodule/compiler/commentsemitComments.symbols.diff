@@ -1,6 +1,6 @@
 --- old.commentsemitComments.symbols
 +++ new.commentsemitComments.symbols
-@@ -31,53 +31,53 @@
+@@= skipped -31, +31 lines =@@
  
      /** property comment */
      public b = 10;
@@ -67,7 +67,7 @@
  >aOrb : Symbol(aOrb, Decl(commentsemitComments.ts, 41, 16))
  
          return aOrb.toString();
-@@ -108,12 +108,12 @@
+@@= skipped -77, +77 lines =@@
  
      /** function property;*/
      myFoo(/*param prop*/a: number): string;
@@ -82,7 +82,7 @@
  }
  
  /**interface instance comments*/
-@@ -130,7 +130,7 @@
+@@= skipped -22, +22 lines =@@
  >b : Symbol(b, Decl(commentsemitComments.ts, 71, 11))
  
          constructor(public x: number) {

@@ -1,6 +1,6 @@
 --- old.namespaceMergedWithFunctionWithOverloadsUsage.symbols
 +++ new.namespaceMergedWithFunctionWithOverloadsUsage.symbols
-@@ -15,7 +15,7 @@
+@@= skipped -15, +15 lines =@@
  >Whatever : Symbol(Whatever, Decl(file.d.ts, 0, 23))
  
          prop: any;
@@ -9,7 +9,7 @@
      }
  }
  
-@@ -23,7 +23,7 @@
+@@= skipped -8, +8 lines =@@
  >Foo : Symbol(Foo, Decl(file.d.ts, 4, 1), Decl(file.d.ts, 6, 48), Decl(file.d.ts, 0, 0))
  >opts : Symbol(opts, Decl(file.d.ts, 6, 21))
  >Foo : Symbol(Foo, Decl(file.d.ts, 4, 1), Decl(file.d.ts, 6, 48), Decl(file.d.ts, 0, 0))
@@ -18,7 +18,7 @@
  
  declare function Foo(cb: Function, opts?: Foo.Whatever): void;
  >Foo : Symbol(Foo, Decl(file.d.ts, 4, 1), Decl(file.d.ts, 6, 48), Decl(file.d.ts, 0, 0))
-@@ -31,7 +31,7 @@
+@@= skipped -8, +8 lines =@@
  >Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  >opts : Symbol(opts, Decl(file.d.ts, 7, 34))
  >Foo : Symbol(Foo, Decl(file.d.ts, 4, 1), Decl(file.d.ts, 6, 48), Decl(file.d.ts, 0, 0))

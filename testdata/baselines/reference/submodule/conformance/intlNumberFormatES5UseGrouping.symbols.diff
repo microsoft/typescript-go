@@ -1,6 +1,6 @@
 --- old.intlNumberFormatES5UseGrouping.symbols
 +++ new.intlNumberFormatES5UseGrouping.symbols
-@@ -2,28 +2,28 @@
+@@= skipped -2, +2 lines =@@
  
  === intlNumberFormatES5UseGrouping.ts ===
  new Intl.NumberFormat('en-GB', { useGrouping: true });

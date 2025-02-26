@@ -1,6 +1,6 @@
 --- old.privateNameComputedPropertyName3(target=es2022).symbols
 +++ new.privateNameComputedPropertyName3(target=es2022).symbols
-@@ -5,19 +5,19 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(privateNameComputedPropertyName3.ts, 0, 0))
  
      #name;
@@ -23,7 +23,7 @@
  >x : Symbol(x, Decl(privateNameComputedPropertyName3.ts, 7, 13))
  
          const obj = this;
-@@ -28,32 +28,32 @@
+@@= skipped -23, +23 lines =@@
  >Bar : Symbol(Bar, Decl(privateNameComputedPropertyName3.ts, 8, 25))
  
              #y = 100;

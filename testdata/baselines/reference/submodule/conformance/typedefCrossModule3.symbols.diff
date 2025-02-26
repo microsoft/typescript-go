@@ -1,6 +1,6 @@
 --- old.typedefCrossModule3.symbols
 +++ new.typedefCrossModule3.symbols
-@@ -3,17 +3,12 @@
+@@= skipped -3, +3 lines =@@
  === mod2.js ===
  /** @typedef {number} Foo */
  const ns = {};

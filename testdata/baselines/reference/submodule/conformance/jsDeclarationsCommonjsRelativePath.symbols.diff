@@ -1,6 +1,6 @@
 --- old.jsDeclarationsCommonjsRelativePath.symbols
 +++ new.jsDeclarationsCommonjsRelativePath.symbols
-@@ -4,25 +4,7 @@
+@@= skipped -4, +4 lines =@@
  'use strict';
  const Thing = require('./thing').Thing
  >Thing : Symbol(Thing, Decl(reexport.js, 1, 5))

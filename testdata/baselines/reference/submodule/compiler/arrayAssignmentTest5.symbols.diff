@@ -1,6 +1,6 @@
 --- old.arrayAssignmentTest5.symbols
 +++ new.arrayAssignmentTest5.symbols
-@@ -11,25 +11,25 @@
+@@= skipped -11, +11 lines =@@
  >IToken : Symbol(IToken, Decl(arrayAssignmentTest5.ts, 2, 5))
  
          startIndex: number;
@@ -30,7 +30,7 @@
  >IState : Symbol(IState, Decl(arrayAssignmentTest5.ts, 0, 13))
      }
      interface IAction {
-@@ -39,7 +39,7 @@
+@@= skipped -28, +28 lines =@@
  >IMode : Symbol(IMode, Decl(arrayAssignmentTest5.ts, 14, 5))
  
          onEnter(line:string, state:IState, offset:number):IAction;
@@ -39,7 +39,7 @@
  >line : Symbol(line, Decl(arrayAssignmentTest5.ts, 16, 16))
  >state : Symbol(state, Decl(arrayAssignmentTest5.ts, 16, 28))
  >IState : Symbol(IState, Decl(arrayAssignmentTest5.ts, 0, 13))
-@@ -47,7 +47,7 @@
+@@= skipped -8, +8 lines =@@
  >IAction : Symbol(IAction, Decl(arrayAssignmentTest5.ts, 12, 5))
  
          tokenize(line:string, state:IState, includeStates:boolean):ILineTokens;
@@ -48,7 +48,7 @@
  >line : Symbol(line, Decl(arrayAssignmentTest5.ts, 17, 17))
  >state : Symbol(state, Decl(arrayAssignmentTest5.ts, 17, 29))
  >IState : Symbol(IState, Decl(arrayAssignmentTest5.ts, 0, 13))
-@@ -59,7 +59,7 @@
+@@= skipped -12, +12 lines =@@
  >IMode : Symbol(IMode, Decl(arrayAssignmentTest5.ts, 14, 5))
  
          public onEnter(line:string, state:IState, offset:number):IAction {
@@ -57,7 +57,7 @@
  >line : Symbol(line, Decl(arrayAssignmentTest5.ts, 20, 23))
  >state : Symbol(state, Decl(arrayAssignmentTest5.ts, 20, 35))
  >IState : Symbol(IState, Decl(arrayAssignmentTest5.ts, 0, 13))
-@@ -69,35 +69,35 @@
+@@= skipped -10, +10 lines =@@
              var lineTokens:ILineTokens= this.tokenize(line, state, true);
  >lineTokens : Symbol(lineTokens, Decl(arrayAssignmentTest5.ts, 21, 15))
  >ILineTokens : Symbol(ILineTokens, Decl(arrayAssignmentTest5.ts, 8, 5))

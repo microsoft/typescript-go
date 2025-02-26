@@ -1,6 +1,6 @@
 --- old.jsdocFunctionType.symbols
 +++ new.jsdocFunctionType.symbols
-@@ -17,9 +17,6 @@
+@@= skipped -17, +17 lines =@@
  >x : Symbol(x, Decl(functions.js, 8, 3))
  >id1 : Symbol(id1, Decl(functions.js, 0, 0))
  >n : Symbol(n, Decl(functions.js, 8, 22))
@@ -10,7 +10,7 @@
  >n : Symbol(n, Decl(functions.js, 8, 22))
  
  /**
-@@ -42,9 +39,7 @@
+@@= skipped -25, +22 lines =@@
  >n : Symbol(n, Decl(functions.js, 20, 16))
  
          this.length = n;
@@ -20,7 +20,7 @@
  >n : Symbol(n, Decl(functions.js, 20, 16))
      }
  }
-@@ -59,9 +54,7 @@
+@@= skipped -17, +15 lines =@@
  >y : Symbol(y, Decl(functions.js, 25, 3))
  
  z.length;
@@ -30,7 +30,7 @@
  
  /** @type {function ("a" | "b", 1 | 2): 3 | 4} */
  var f = function (ab, onetwo) { return ab === "a" ? 3 : 4;  }
-@@ -80,9 +73,6 @@
+@@= skipped -21, +19 lines =@@
  >n : Symbol(n, Decl(functions.js, 37, 11))
  
    this.length = n;
@@ -40,7 +40,7 @@
  >n : Symbol(n, Decl(functions.js, 37, 11))
  }
  
-@@ -96,9 +86,7 @@
+@@= skipped -16, +13 lines =@@
  >y2 : Symbol(y2, Decl(functions.js, 41, 3))
  
  z2.length;
@@ -50,7 +50,7 @@
  
  
  /** 
-@@ -116,9 +104,7 @@
+@@= skipped -20, +18 lines =@@
  >D : Symbol(D, Decl(functions.js, 30, 61))
  
  z3.length;
@@ -60,7 +60,7 @@
  
  
  /** 
-@@ -130,9 +116,6 @@
+@@= skipped -14, +12 lines =@@
  >n : Symbol(n, Decl(functions.js, 59, 17))
  
    this.not_length_on_purpose = n;

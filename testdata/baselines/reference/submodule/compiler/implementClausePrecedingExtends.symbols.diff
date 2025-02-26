@@ -1,6 +1,6 @@
 --- old.implementClausePrecedingExtends.symbols
 +++ new.implementClausePrecedingExtends.symbols
-@@ -3,7 +3,7 @@
+@@= skipped -3, +3 lines =@@
  === implementClausePrecedingExtends.ts ===
  class C { foo: number }
  >C : Symbol(C, Decl(implementClausePrecedingExtends.ts, 0, 0))

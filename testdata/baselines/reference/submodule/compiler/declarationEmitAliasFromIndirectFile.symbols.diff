@@ -1,6 +1,6 @@
 --- old.declarationEmitAliasFromIndirectFile.symbols
 +++ new.declarationEmitAliasFromIndirectFile.symbols
-@@ -36,14 +36,14 @@
+@@= skipped -36, +36 lines =@@
  import { Locale, CustomLocale, key as LocaleKey } from "./locale";
  >Locale : Symbol(Locale, Decl(instance.d.ts, 0, 8))
  >CustomLocale : Symbol(CustomLocale, Decl(instance.d.ts, 0, 16))
@@ -17,7 +17,7 @@
  >k : Symbol(k, Decl(instance.d.ts, 2, 13))
  >LocaleKey : Symbol(LocaleKey, Decl(instance.d.ts, 0, 30))
  >CustomLocale : Symbol(CustomLocale, Decl(instance.d.ts, 0, 16))
-@@ -61,7 +61,7 @@
+@@= skipped -25, +25 lines =@@
  >FlatpickrFn : Symbol(FlatpickrFn, Decl(app.ts, 0, 8))
  
  export default fp.l10ns;

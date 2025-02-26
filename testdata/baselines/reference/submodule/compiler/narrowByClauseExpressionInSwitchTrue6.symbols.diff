@@ -1,6 +1,6 @@
 --- old.narrowByClauseExpressionInSwitchTrue6.symbols
 +++ new.narrowByClauseExpressionInSwitchTrue6.symbols
-@@ -5,30 +5,30 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(narrowByClauseExpressionInSwitchTrue6.ts, 0, 0))
  
      kind: "a";
@@ -37,7 +37,7 @@
  }
  
  
-@@ -55,9 +55,9 @@
+@@= skipped -50, +50 lines =@@
  >kind : Symbol(kind, Decl(narrowByClauseExpressionInSwitchTrue6.ts, 0, 13), Decl(narrowByClauseExpressionInSwitchTrue6.ts, 5, 13), Decl(narrowByClauseExpressionInSwitchTrue6.ts, 10, 13))
  
              x.aProps;
@@ -49,7 +49,7 @@
  
              break;
          case x.kind === "b":
-@@ -66,9 +66,9 @@
+@@= skipped -11, +11 lines =@@
  >kind : Symbol(kind, Decl(narrowByClauseExpressionInSwitchTrue6.ts, 0, 13), Decl(narrowByClauseExpressionInSwitchTrue6.ts, 5, 13), Decl(narrowByClauseExpressionInSwitchTrue6.ts, 10, 13))
  
              x.bProps;
@@ -61,7 +61,7 @@
  
              break;
          case x.kind === "c":
-@@ -77,9 +77,9 @@
+@@= skipped -11, +11 lines =@@
  >kind : Symbol(kind, Decl(narrowByClauseExpressionInSwitchTrue6.ts, 0, 13), Decl(narrowByClauseExpressionInSwitchTrue6.ts, 5, 13), Decl(narrowByClauseExpressionInSwitchTrue6.ts, 10, 13))
  
              x.cProps;
@@ -73,7 +73,7 @@
  
              break;
      }
-@@ -96,9 +96,9 @@
+@@= skipped -19, +19 lines =@@
  >kind : Symbol(kind, Decl(narrowByClauseExpressionInSwitchTrue6.ts, 0, 13), Decl(narrowByClauseExpressionInSwitchTrue6.ts, 5, 13), Decl(narrowByClauseExpressionInSwitchTrue6.ts, 10, 13))
  
              x.aProps;
@@ -85,7 +85,7 @@
  
              break;
          }
-@@ -108,9 +108,9 @@
+@@= skipped -12, +12 lines =@@
  >kind : Symbol(kind, Decl(narrowByClauseExpressionInSwitchTrue6.ts, 0, 13), Decl(narrowByClauseExpressionInSwitchTrue6.ts, 5, 13), Decl(narrowByClauseExpressionInSwitchTrue6.ts, 10, 13))
  
              x.bProps;
@@ -97,7 +97,7 @@
  
              break;
          }
-@@ -120,9 +120,9 @@
+@@= skipped -12, +12 lines =@@
  >kind : Symbol(kind, Decl(narrowByClauseExpressionInSwitchTrue6.ts, 0, 13), Decl(narrowByClauseExpressionInSwitchTrue6.ts, 5, 13), Decl(narrowByClauseExpressionInSwitchTrue6.ts, 10, 13))
  
              x.cProps;
@@ -109,7 +109,7 @@
  
              break;
          }
-@@ -131,9 +131,9 @@
+@@= skipped -11, +11 lines =@@
      switch (true) {
          default:
              x.aProps;
@@ -121,7 +121,7 @@
  
              break;
          case x.kind === "b":
-@@ -142,9 +142,9 @@
+@@= skipped -11, +11 lines =@@
  >kind : Symbol(kind, Decl(narrowByClauseExpressionInSwitchTrue6.ts, 0, 13), Decl(narrowByClauseExpressionInSwitchTrue6.ts, 5, 13), Decl(narrowByClauseExpressionInSwitchTrue6.ts, 10, 13))
  
              x.bProps;
@@ -133,7 +133,7 @@
  
              break;
          case x.kind === "c":
-@@ -153,9 +153,9 @@
+@@= skipped -11, +11 lines =@@
  >kind : Symbol(kind, Decl(narrowByClauseExpressionInSwitchTrue6.ts, 0, 13), Decl(narrowByClauseExpressionInSwitchTrue6.ts, 5, 13), Decl(narrowByClauseExpressionInSwitchTrue6.ts, 10, 13))
  
              x.cProps;
@@ -145,7 +145,7 @@
  
              break;
      }
-@@ -172,9 +172,9 @@
+@@= skipped -19, +19 lines =@@
  >kind : Symbol(kind, Decl(narrowByClauseExpressionInSwitchTrue6.ts, 0, 13), Decl(narrowByClauseExpressionInSwitchTrue6.ts, 5, 13), Decl(narrowByClauseExpressionInSwitchTrue6.ts, 10, 13))
  
              x.aProps;

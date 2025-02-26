@@ -1,6 +1,6 @@
 --- old.commaOperatorLeftSideUnused.symbols
 +++ new.commaOperatorLeftSideUnused.symbols
-@@ -14,9 +14,9 @@
+@@= skipped -14, +14 lines =@@
  >arr : Symbol(arr, Decl(commaOperatorLeftSideUnused.ts, 4, 5))
  
    switch(arr.length) {
@@ -12,7 +12,7 @@
  
      // Should error
      case 0, 1:
-@@ -29,9 +29,9 @@
+@@= skipped -15, +15 lines =@@
  // Should error
  let x = Math.pow((3, 5), 2);
  >x : Symbol(x, Decl(commaOperatorLeftSideUnused.ts, 15, 3))
@@ -24,7 +24,7 @@
  
  // Should error
  let a = [(3 + 4), ((1 + 1, 8) * 4)];
-@@ -145,9 +145,9 @@
+@@= skipped -116, +116 lines =@@
  
  xx = (Math.pow(3, 2), 4);
  >xx : Symbol(xx, Decl(commaOperatorLeftSideUnused.ts, 0, 3))

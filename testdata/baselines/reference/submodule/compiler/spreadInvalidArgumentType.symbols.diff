@@ -1,6 +1,6 @@
 --- old.spreadInvalidArgumentType.symbols
 +++ new.spreadInvalidArgumentType.symbols
-@@ -3,8 +3,8 @@
+@@= skipped -3, +3 lines =@@
  === spreadInvalidArgumentType.ts ===
  enum E { v1, v2 };
  >E : Symbol(E, Decl(spreadInvalidArgumentType.ts, 0, 0))

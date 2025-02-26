@@ -1,6 +1,6 @@
 --- old.aliasDoesNotDuplicateSignatures.symbols
 +++ new.aliasDoesNotDuplicateSignatures.symbols
-@@ -8,11 +8,11 @@
+@@= skipped -8, +8 lines =@@
  >f : Symbol(f, Decl(demo.d.ts, 0, 26))
  }
  declare module 'demoModule' {

@@ -1,6 +1,6 @@
 --- old.typeArgumentInference.symbols
 +++ new.typeArgumentInference.symbols
-@@ -66,9 +66,9 @@
+@@= skipped -66, +66 lines =@@
  someGenerics2a<string>((n) => n.substr(0));
  >someGenerics2a : Symbol(someGenerics2a, Decl(typeArgumentInference.ts, 15, 32))
  >n : Symbol(n, Decl(typeArgumentInference.ts, 21, 24))
@@ -12,7 +12,7 @@
  
  function someGenerics2b<T, U>(n: (x: T, y: U) => void) { }
  >someGenerics2b : Symbol(someGenerics2b, Decl(typeArgumentInference.ts, 21, 43))
-@@ -96,9 +96,9 @@
+@@= skipped -30, +30 lines =@@
  >someGenerics2b : Symbol(someGenerics2b, Decl(typeArgumentInference.ts, 21, 43))
  >n : Symbol(n, Decl(typeArgumentInference.ts, 26, 32))
  >t : Symbol(t, Decl(typeArgumentInference.ts, 26, 34))
@@ -24,7 +24,7 @@
  >t : Symbol(t, Decl(typeArgumentInference.ts, 26, 34))
  >t : Symbol(t, Decl(typeArgumentInference.ts, 26, 34))
  
-@@ -306,19 +306,19 @@
+@@= skipped -210, +210 lines =@@
  >A91 : Symbol(A91, Decl(typeArgumentInference.ts, 70, 37))
  
      x: number;

@@ -1,6 +1,6 @@
 --- old.jsdocAccessibilityTags.symbols
 +++ new.jsdocAccessibilityTags.symbols
-@@ -10,7 +10,7 @@
+@@= skipped -10, +10 lines =@@
       * @private
       */
      priv = 4;
@@ -9,7 +9,7 @@
  
      /**
       * Aq docs
-@@ -18,7 +18,7 @@
+@@= skipped -8, +8 lines =@@
       * @protected
       */
      prot = 5;
@@ -18,7 +18,7 @@
  
      /**
       * Ar docs
-@@ -26,18 +26,18 @@
+@@= skipped -8, +8 lines =@@
       * @public
       */
      pub = 6;
@@ -42,7 +42,7 @@
  >value : Symbol(value, Decl(jsdocAccessibilityTag.js, 22, 12))
  }
  class C {
-@@ -50,9 +50,7 @@
+@@= skipped -24, +24 lines =@@
           * @private
           */
          this.priv2 = 1;
@@ -52,7 +52,7 @@
  
          /**
           * Cq docs
-@@ -60,9 +58,7 @@
+@@= skipped -10, +8 lines =@@
           * @protected
           */
          this.prot2 = 2;
@@ -62,7 +62,7 @@
  
          /**
           * Cr docs
-@@ -70,33 +66,29 @@
+@@= skipped -10, +8 lines =@@
           * @public
           */
          this.pub2 = 3;
@@ -104,7 +104,7 @@
      }
  }
  class D extends C {
-@@ -104,61 +96,43 @@
+@@= skipped -34, +30 lines =@@
  >C : Symbol(C, Decl(jsdocAccessibilityTag.js, 23, 1))
  
      n() {

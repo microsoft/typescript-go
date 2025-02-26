@@ -1,6 +1,6 @@
 --- old.superAccessInFatArrow1.symbols
 +++ new.superAccessInFatArrow1.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >A : Symbol(A, Decl(superAccessInFatArrow1.ts, 0, 13))
  
          foo() {
@@ -9,7 +9,7 @@
          }
      }
      export class B extends A {
-@@ -16,21 +16,21 @@
+@@= skipped -8, +8 lines =@@
  >A : Symbol(A, Decl(superAccessInFatArrow1.ts, 0, 13))
  
          bar(callback: () => void ) {

@@ -1,6 +1,6 @@
 --- old.thisInSuperCall2.symbols
 +++ new.thisInSuperCall2.symbols
-@@ -13,7 +13,7 @@
+@@= skipped -13, +13 lines =@@
  >Base : Symbol(Base, Decl(thisInSuperCall2.ts, 0, 0))
  
      public x: number;
@@ -9,7 +9,7 @@
  
      constructor() {
          super(this); // error: "super" has to be called before "this" accessing
-@@ -28,7 +28,7 @@
+@@= skipped -15, +15 lines =@@
  >Base : Symbol(Base, Decl(thisInSuperCall2.ts, 0, 0))
  
      public x: number = 0;

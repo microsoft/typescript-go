@@ -1,6 +1,6 @@
 --- old.typeFromPropertyAssignment39.symbols
 +++ new.typeFromPropertyAssignment39.symbols
-@@ -2,14 +2,11 @@
+@@= skipped -2, +2 lines =@@
  
  === a.js ===
  const foo = {};

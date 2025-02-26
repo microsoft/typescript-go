@@ -1,6 +1,6 @@
 --- old.implicitAnyCastedValue.symbols
 +++ new.implicitAnyCastedValue.symbols
-@@ -17,34 +17,34 @@
+@@= skipped -17, +17 lines =@@
  >C : Symbol(C, Decl(implicitAnyCastedValue.ts, 6, 1))
  
      bar = null;  // this should be an error
@@ -44,7 +44,7 @@
      }
  }
  
-@@ -52,24 +52,24 @@
+@@= skipped -35, +35 lines =@@
  >C1 : Symbol(C1, Decl(implicitAnyCastedValue.ts, 22, 1))
  
      getValue = null;  // this should be an error

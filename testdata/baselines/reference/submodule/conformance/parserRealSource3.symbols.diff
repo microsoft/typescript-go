@@ -1,6 +1,6 @@
 --- old.parserRealSource3.symbols
 +++ new.parserRealSource3.symbols
-@@ -14,332 +14,332 @@
+@@= skipped -14, +14 lines =@@
  >NodeType : Symbol(NodeType, Decl(parserRealSource3.ts, 5, 19))
  
          None,

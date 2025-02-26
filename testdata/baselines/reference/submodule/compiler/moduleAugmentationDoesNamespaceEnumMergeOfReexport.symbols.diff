@@ -1,6 +1,6 @@
 --- old.moduleAugmentationDoesNamespaceEnumMergeOfReexport.symbols
 +++ new.moduleAugmentationDoesNamespaceEnumMergeOfReexport.symbols
-@@ -9,7 +9,7 @@
+@@= skipped -9, +9 lines =@@
  >Foo : Symbol(Foo, Decl(file.ts, 0, 23))
  
          x: number;
@@ -9,7 +9,7 @@
      }
  }
  === reexport.ts ===
-@@ -20,41 +20,41 @@
+@@= skipped -11, +11 lines =@@
  >ns : Symbol(ns, Decl(augment.ts, 0, 6))
  
  declare module "./reexport" {

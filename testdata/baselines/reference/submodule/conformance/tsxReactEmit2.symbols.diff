@@ -1,6 +1,6 @@
 --- old.tsxReactEmit2.symbols
 +++ new.tsxReactEmit2.symbols
-@@ -24,44 +24,34 @@
+@@= skipped -24, +24 lines =@@
  
  var spreads1 = <div {...p1}>{p2}</div>;
  >spreads1 : Symbol(spreads1, Decl(file.tsx, 9, 3))

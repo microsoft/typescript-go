@@ -1,6 +1,6 @@
 --- old.amdLikeInputDeclarationEmit.symbols
 +++ new.amdLikeInputDeclarationEmit.symbols
-@@ -18,7 +18,7 @@
+@@= skipped -18, +18 lines =@@
  >BaseClass : Symbol(BaseClass, Decl(BaseClass.d.ts, 0, 33))
  
          static extends<A>(a: A): new () => A & BaseClass;
@@ -9,7 +9,7 @@
  >A : Symbol(A, Decl(BaseClass.d.ts, 2, 23))
  >a : Symbol(a, Decl(BaseClass.d.ts, 2, 26))
  >A : Symbol(A, Decl(BaseClass.d.ts, 2, 23))
-@@ -42,9 +42,7 @@
+@@= skipped -24, +24 lines =@@
      
      const ExtendedClass = BaseClass.extends({
  >ExtendedClass : Symbol(ExtendedClass, Decl(ExtendedClass.js, 8, 9))
@@ -19,7 +19,7 @@
  
          f: function() {
  >f : Symbol(f, Decl(ExtendedClass.js, 8, 45))
-@@ -58,8 +56,7 @@
+@@= skipped -16, +14 lines =@@
  >module : Symbol(module, Decl(ExtendedClass.js, 15, 9))
  
      module.exports = ExtendedClass

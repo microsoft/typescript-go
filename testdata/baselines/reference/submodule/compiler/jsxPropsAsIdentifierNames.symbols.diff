@@ -1,6 +1,6 @@
 --- old.jsxPropsAsIdentifierNames.symbols
 +++ new.jsxPropsAsIdentifierNames.symbols
-@@ -11,7 +11,7 @@
+@@= skipped -11, +11 lines =@@
  >IntrinsicElements : Symbol(IntrinsicElements, Decl(index.tsx, 1, 25))
  
          div: {

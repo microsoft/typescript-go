@@ -1,6 +1,6 @@
 --- old.instantiatedModule.symbols
 +++ new.instantiatedModule.symbols
-@@ -8,8 +8,8 @@
+@@= skipped -8, +8 lines =@@
  
      export interface Point { x: number; y: number }
  >Point : Symbol(Point, Decl(instantiatedModule.ts, 2, 10), Decl(instantiatedModule.ts, 4, 14))
@@ -11,7 +11,7 @@
  
      export var Point = 1;
  >Point : Symbol(Point, Decl(instantiatedModule.ts, 2, 10), Decl(instantiatedModule.ts, 4, 14))
-@@ -29,15 +29,15 @@
+@@= skipped -21, +21 lines =@@
  
  var a1 = M.Point;
  >a1 : Symbol(a1, Decl(instantiatedModule.ts, 11, 3), Decl(instantiatedModule.ts, 12, 3), Decl(instantiatedModule.ts, 13, 3))
@@ -31,7 +31,7 @@
  
  var p1: { x: number; y: number; }
  >p1 : Symbol(p1, Decl(instantiatedModule.ts, 15, 3), Decl(instantiatedModule.ts, 16, 3))
-@@ -47,7 +47,7 @@
+@@= skipped -18, +18 lines =@@
  var p1: M.Point;
  >p1 : Symbol(p1, Decl(instantiatedModule.ts, 15, 3), Decl(instantiatedModule.ts, 16, 3))
  >M : Symbol(M, Decl(instantiatedModule.ts, 0, 0))
@@ -40,7 +40,7 @@
  
  // making the point a class instead of an interface 
  // makes this an instantiated mmodule
-@@ -58,13 +58,13 @@
+@@= skipped -11, +11 lines =@@
  >Point : Symbol(Point, Decl(instantiatedModule.ts, 20, 11))
  
          x: number;
@@ -57,7 +57,7 @@
  >Point : Symbol(Point, Decl(instantiatedModule.ts, 20, 11))
  
              return { x: 0, y: 0 };
-@@ -85,29 +85,29 @@
+@@= skipped -27, +27 lines =@@
  // static side of the class
  var a2: typeof M2.Point;
  >a2 : Symbol(a2, Decl(instantiatedModule.ts, 34, 3), Decl(instantiatedModule.ts, 35, 3), Decl(instantiatedModule.ts, 36, 3))
@@ -96,7 +96,7 @@
  
  var p2: { x: number; y: number }
  >p2 : Symbol(p2, Decl(instantiatedModule.ts, 39, 3), Decl(instantiatedModule.ts, 40, 3), Decl(instantiatedModule.ts, 41, 3), Decl(instantiatedModule.ts, 42, 3))
-@@ -117,27 +117,27 @@
+@@= skipped -32, +32 lines =@@
  var p2: M2.Point;
  >p2 : Symbol(p2, Decl(instantiatedModule.ts, 39, 3), Decl(instantiatedModule.ts, 40, 3), Decl(instantiatedModule.ts, 41, 3), Decl(instantiatedModule.ts, 42, 3))
  >M2 : Symbol(M2, Decl(instantiatedModule.ts, 16, 16))
@@ -131,7 +131,7 @@
  }
  
  var m3: typeof M3;
-@@ -150,48 +150,48 @@
+@@= skipped -33, +33 lines =@@
  
  var a3: typeof M3.Color;
  >a3 : Symbol(a3, Decl(instantiatedModule.ts, 51, 3), Decl(instantiatedModule.ts, 52, 3), Decl(instantiatedModule.ts, 53, 3))

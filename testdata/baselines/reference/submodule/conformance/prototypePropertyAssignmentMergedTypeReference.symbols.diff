@@ -1,6 +1,6 @@
 --- old.prototypePropertyAssignmentMergedTypeReference.symbols
 +++ new.prototypePropertyAssignmentMergedTypeReference.symbols
-@@ -8,10 +8,9 @@
+@@= skipped -8, +8 lines =@@
  };
  
  f.prototype.a = "a";

@@ -1,6 +1,6 @@
 --- old.conditionalTypeRelaxingConstraintAssignability.symbols
 +++ new.conditionalTypeRelaxingConstraintAssignability.symbols
-@@ -6,11 +6,11 @@
+@@= skipped -6, +6 lines =@@
  
    | ElChildren.Void
  >ElChildren : Symbol(ElChildren, Decl(conditionalTypeRelaxingConstraintAssignability.ts, 0, 0), Decl(conditionalTypeRelaxingConstraintAssignability.ts, 2, 20))
@@ -14,7 +14,7 @@
  
  export namespace ElChildren {
  >ElChildren : Symbol(ElChildren, Decl(conditionalTypeRelaxingConstraintAssignability.ts, 0, 0), Decl(conditionalTypeRelaxingConstraintAssignability.ts, 2, 20))
-@@ -28,9 +28,9 @@
+@@= skipped -22, +22 lines =@@
  >ElChildren : Symbol(ElChildren, Decl(conditionalTypeRelaxingConstraintAssignability.ts, 0, 0), Decl(conditionalTypeRelaxingConstraintAssignability.ts, 2, 20))
  >C : Symbol(C, Decl(conditionalTypeRelaxingConstraintAssignability.ts, 8, 11))
  >ElChildren : Symbol(ElChildren, Decl(conditionalTypeRelaxingConstraintAssignability.ts, 0, 0), Decl(conditionalTypeRelaxingConstraintAssignability.ts, 2, 20))
@@ -26,7 +26,7 @@
  >C : Symbol(C, Decl(conditionalTypeRelaxingConstraintAssignability.ts, 8, 11))
  
  export class Elem<
-@@ -43,7 +43,7 @@
+@@= skipped -15, +15 lines =@@
    > {
    constructor(
      private children_: Relax<C>,
@@ -35,7 +35,7 @@
  >Relax : Symbol(Relax, Decl(conditionalTypeRelaxingConstraintAssignability.ts, 6, 1))
  >C : Symbol(C, Decl(conditionalTypeRelaxingConstraintAssignability.ts, 10, 18))
  
-@@ -55,19 +55,19 @@
+@@= skipped -12, +12 lines =@@
  >Elem : Symbol(Elem, Decl(conditionalTypeRelaxingConstraintAssignability.ts, 8, 83))
  >undefined : Symbol(undefined)
  >ElChildren : Symbol(ElChildren, Decl(conditionalTypeRelaxingConstraintAssignability.ts, 0, 0), Decl(conditionalTypeRelaxingConstraintAssignability.ts, 2, 20))
@@ -59,7 +59,7 @@
  
  new Elem('' as ElChildren); // error
  >Elem : Symbol(Elem, Decl(conditionalTypeRelaxingConstraintAssignability.ts, 8, 83))
-@@ -77,7 +77,7 @@
+@@= skipped -22, +22 lines =@@
  
  interface I { a: string }
  >I : Symbol(I, Decl(conditionalTypeRelaxingConstraintAssignability.ts, 22, 27))

@@ -1,6 +1,6 @@
 --- old.tsxAttributeResolution7.symbols
 +++ new.tsxAttributeResolution7.symbols
-@@ -11,26 +11,22 @@
+@@= skipped -11, +11 lines =@@
  >IntrinsicElements : Symbol(IntrinsicElements, Decl(file.tsx, 1, 22))
  
  		test1: { "data-foo"?: string };

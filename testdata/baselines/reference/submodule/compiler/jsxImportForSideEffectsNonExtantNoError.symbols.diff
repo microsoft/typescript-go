@@ -1,6 +1,6 @@
 --- old.jsxImportForSideEffectsNonExtantNoError.symbols
 +++ new.jsxImportForSideEffectsNonExtantNoError.symbols
-@@ -9,6 +9,4 @@
+@@= skipped -9, +9 lines =@@
  
  const tag = <div></div>;
  >tag : Symbol(tag, Decl(jsxImportForSideEffectsNonExtantNoError.tsx, 5, 5))

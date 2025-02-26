@@ -1,6 +1,6 @@
 --- old.staticPropertyNameConflictsInAmbientContext.symbols
 +++ new.staticPropertyNameConflictsInAmbientContext.symbols
-@@ -6,20 +6,20 @@
+@@= skipped -6, +6 lines =@@
  >StaticName : Symbol(StaticName, Decl(decl.d.ts, 0, 0))
  
      static name: number; // ok
@@ -25,7 +25,7 @@
  }
  
  // length
-@@ -27,20 +27,20 @@
+@@= skipped -21, +21 lines =@@
  >StaticLength : Symbol(StaticLength, Decl(decl.d.ts, 9, 1))
  
      static length: number; // ok
@@ -50,7 +50,7 @@
  }
  
  // prototype
-@@ -48,20 +48,20 @@
+@@= skipped -21, +21 lines =@@
  >StaticPrototype : Symbol(StaticPrototype, Decl(decl.d.ts, 20, 1))
  
      static prototype: number; // ok
@@ -75,7 +75,7 @@
  }
  
  // caller
-@@ -69,20 +69,20 @@
+@@= skipped -21, +21 lines =@@
  >StaticCaller : Symbol(StaticCaller, Decl(decl.d.ts, 31, 1))
  
      static caller: number; // ok
@@ -100,7 +100,7 @@
  }
  
  // arguments
-@@ -90,19 +90,19 @@
+@@= skipped -21, +21 lines =@@
  >StaticArguments : Symbol(StaticArguments, Decl(decl.d.ts, 42, 1))
  
      static arguments: number; // ok

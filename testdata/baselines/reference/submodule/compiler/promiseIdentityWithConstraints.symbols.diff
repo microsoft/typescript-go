@@ -1,6 +1,6 @@
 --- old.promiseIdentityWithConstraints.symbols
 +++ new.promiseIdentityWithConstraints.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >V : Symbol(V, Decl(promiseIdentityWithConstraints.ts, 0, 28))
  
      then<U extends T, W extends V>(callback: (x: T) => IPromise<U, W>): IPromise<U, W>;
@@ -9,7 +9,7 @@
  >U : Symbol(U, Decl(promiseIdentityWithConstraints.ts, 1, 9))
  >T : Symbol(T, Decl(promiseIdentityWithConstraints.ts, 0, 26))
  >W : Symbol(W, Decl(promiseIdentityWithConstraints.ts, 1, 21))
-@@ -28,7 +28,7 @@
+@@= skipped -21, +21 lines =@@
  >V : Symbol(V, Decl(promiseIdentityWithConstraints.ts, 3, 27))
  
      then<U extends T, W extends V>(callback: (x: T) => Promise<U, W>): Promise<U, W>;

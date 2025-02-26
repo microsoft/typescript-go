@@ -1,6 +1,6 @@
 --- old.staticPropertyAndFunctionWithSameName.symbols
 +++ new.staticPropertyAndFunctionWithSameName.symbols
-@@ -5,18 +5,18 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(staticPropertyAndFunctionWithSameName.ts, 0, 0))
  
      static f: number;

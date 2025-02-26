@@ -1,6 +1,6 @@
 --- old.twoMergedInterfacesWithDifferingOverloads.symbols
 +++ new.twoMergedInterfacesWithDifferingOverloads.symbols
-@@ -7,11 +7,11 @@
+@@= skipped -7, +7 lines =@@
  >A : Symbol(A, Decl(twoMergedInterfacesWithDifferingOverloads.ts, 0, 0), Decl(twoMergedInterfacesWithDifferingOverloads.ts, 5, 1))
  
      foo(x: number): number;
@@ -14,7 +14,7 @@
  >x : Symbol(x, Decl(twoMergedInterfacesWithDifferingOverloads.ts, 4, 8))
  }
  
-@@ -19,7 +19,7 @@
+@@= skipped -12, +12 lines =@@
  >A : Symbol(A, Decl(twoMergedInterfacesWithDifferingOverloads.ts, 0, 0), Decl(twoMergedInterfacesWithDifferingOverloads.ts, 5, 1))
  
      foo(x: Date): Date;
@@ -23,7 +23,7 @@
  >x : Symbol(x, Decl(twoMergedInterfacesWithDifferingOverloads.ts, 8, 8))
  >Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
  >Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
-@@ -30,12 +30,12 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(twoMergedInterfacesWithDifferingOverloads.ts, 11, 12), Decl(twoMergedInterfacesWithDifferingOverloads.ts, 16, 12))
  
      foo(x: T): number;
@@ -38,7 +38,7 @@
  >x : Symbol(x, Decl(twoMergedInterfacesWithDifferingOverloads.ts, 13, 8))
  }
  
-@@ -44,13 +44,13 @@
+@@= skipped -14, +14 lines =@@
  >T : Symbol(T, Decl(twoMergedInterfacesWithDifferingOverloads.ts, 11, 12), Decl(twoMergedInterfacesWithDifferingOverloads.ts, 16, 12))
  
      foo(x: T): Date;
@@ -54,7 +54,7 @@
  >x : Symbol(x, Decl(twoMergedInterfacesWithDifferingOverloads.ts, 18, 8))
  >Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
  }
-@@ -61,9 +61,9 @@
+@@= skipped -17, +17 lines =@@
  
  var r = b.foo(true); // returns Date
  >r : Symbol(r, Decl(twoMergedInterfacesWithDifferingOverloads.ts, 22, 3))
@@ -66,7 +66,7 @@
  
  // add generic overload
  interface C<T, U> {
-@@ -72,14 +72,14 @@
+@@= skipped -11, +11 lines =@@
  >U : Symbol(U, Decl(twoMergedInterfacesWithDifferingOverloads.ts, 25, 14), Decl(twoMergedInterfacesWithDifferingOverloads.ts, 30, 14))
  
      foo(x: T, y: U): string;
@@ -83,7 +83,7 @@
  >x : Symbol(x, Decl(twoMergedInterfacesWithDifferingOverloads.ts, 27, 8))
  >y : Symbol(y, Decl(twoMergedInterfacesWithDifferingOverloads.ts, 27, 18))
  }
-@@ -90,7 +90,7 @@
+@@= skipped -18, +18 lines =@@
  >U : Symbol(U, Decl(twoMergedInterfacesWithDifferingOverloads.ts, 25, 14), Decl(twoMergedInterfacesWithDifferingOverloads.ts, 30, 14))
  
      foo<W>(x: W, y: W): W;
@@ -92,7 +92,7 @@
  >W : Symbol(W, Decl(twoMergedInterfacesWithDifferingOverloads.ts, 31, 8))
  >x : Symbol(x, Decl(twoMergedInterfacesWithDifferingOverloads.ts, 31, 11))
  >W : Symbol(W, Decl(twoMergedInterfacesWithDifferingOverloads.ts, 31, 8))
-@@ -106,9 +106,9 @@
+@@= skipped -16, +16 lines =@@
  
  var r2 = c.foo(1, 2); // number
  >r2 : Symbol(r2, Decl(twoMergedInterfacesWithDifferingOverloads.ts, 35, 3))
@@ -104,7 +104,7 @@
  
  // add generic overload that would be ambiguous
  interface D<T, U> {
-@@ -117,15 +117,15 @@
+@@= skipped -11, +11 lines =@@
  >U : Symbol(U, Decl(twoMergedInterfacesWithDifferingOverloads.ts, 38, 14), Decl(twoMergedInterfacesWithDifferingOverloads.ts, 44, 14))
  
      a: T;
@@ -123,7 +123,7 @@
  >A : Symbol(A, Decl(twoMergedInterfacesWithDifferingOverloads.ts, 41, 8))
  >x : Symbol(x, Decl(twoMergedInterfacesWithDifferingOverloads.ts, 41, 11))
  >A : Symbol(A, Decl(twoMergedInterfacesWithDifferingOverloads.ts, 41, 8))
-@@ -140,7 +140,7 @@
+@@= skipped -23, +23 lines =@@
  >U : Symbol(U, Decl(twoMergedInterfacesWithDifferingOverloads.ts, 38, 14), Decl(twoMergedInterfacesWithDifferingOverloads.ts, 44, 14))
  
      foo<W>(x: W, y: W): T;
@@ -132,7 +132,7 @@
  >W : Symbol(W, Decl(twoMergedInterfacesWithDifferingOverloads.ts, 45, 8))
  >x : Symbol(x, Decl(twoMergedInterfacesWithDifferingOverloads.ts, 45, 11))
  >W : Symbol(W, Decl(twoMergedInterfacesWithDifferingOverloads.ts, 45, 8))
-@@ -156,7 +156,7 @@
+@@= skipped -16, +16 lines =@@
  
  var r3 = d.foo(1, 1); // boolean, last definition wins
  >r3 : Symbol(r3, Decl(twoMergedInterfacesWithDifferingOverloads.ts, 49, 3))

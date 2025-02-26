@@ -1,6 +1,6 @@
 --- old.typePredicateWithThisParameter.symbols
 +++ new.typePredicateWithThisParameter.symbols
-@@ -7,13 +7,13 @@
+@@= skipped -7, +7 lines =@@
  >Foo : Symbol(Foo, Decl(typePredicateWithThisParameter.ts, 0, 0))
  
      foo: string;
@@ -16,7 +16,7 @@
  }
  
  function isFoo1(object: {}): object is Foo {
-@@ -47,9 +47,9 @@
+@@= skipped -40, +40 lines =@@
  >test : Symbol(test, Decl(typePredicateWithThisParameter.ts, 17, 11))
  
      test.foo = 'hi';
@@ -28,7 +28,7 @@
  }
  
  if (isFoo2(test)) {
-@@ -57,8 +57,8 @@
+@@= skipped -10, +10 lines =@@
  >test : Symbol(test, Decl(typePredicateWithThisParameter.ts, 17, 11))
  
      test.foo = 'hi';

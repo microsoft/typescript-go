@@ -1,6 +1,6 @@
 --- old.inheritanceGrandParentPrivateMemberCollisionWithPublicMember.symbols
 +++ new.inheritanceGrandParentPrivateMemberCollisionWithPublicMember.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(inheritanceGrandParentPrivateMemberCollisionWithPublicMember.ts, 0, 0))
  
      private myMethod() { }
@@ -9,7 +9,7 @@
  }
  
  class B extends A { }
-@@ -17,6 +17,6 @@
+@@= skipped -12, +12 lines =@@
  >B : Symbol(B, Decl(inheritanceGrandParentPrivateMemberCollisionWithPublicMember.ts, 2, 1))
  
      public myMethod() { }

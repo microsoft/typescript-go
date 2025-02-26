@@ -1,6 +1,6 @@
 --- old.declarationEmitClassMemberWithComputedPropertyName.symbols
 +++ new.declarationEmitClassMemberWithComputedPropertyName.symbols
-@@ -21,58 +21,58 @@
+@@= skipped -21, +21 lines =@@
  >Foo : Symbol(Foo, Decl(declarationEmitClassMemberWithComputedPropertyName.ts, 4, 27))
  
      static [k1](): number {
@@ -71,7 +71,7 @@
  }
  
  export const t1 = Foo[k1];
-@@ -97,15 +97,15 @@
+@@= skipped -76, +76 lines =@@
  
  export const t5 = Foo.m1;
  >t5 : Symbol(t5, Decl(declarationEmitClassMemberWithComputedPropertyName.ts, 40, 12))
@@ -91,7 +91,7 @@
  
  export const t7 = Foo[k3];
  >t7 : Symbol(t7, Decl(declarationEmitClassMemberWithComputedPropertyName.ts, 43, 12))
-@@ -129,13 +129,13 @@
+@@= skipped -32, +32 lines =@@
  
  export const t11 = Foo.p1;
  >t11 : Symbol(t11, Decl(declarationEmitClassMemberWithComputedPropertyName.ts, 49, 12))

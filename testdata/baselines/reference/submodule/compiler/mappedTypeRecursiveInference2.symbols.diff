@@ -1,6 +1,6 @@
 --- old.mappedTypeRecursiveInference2.symbols
 +++ new.mappedTypeRecursiveInference2.symbols
-@@ -50,24 +50,24 @@
+@@= skipped -50, +50 lines =@@
  >shallow : Symbol(shallow, Decl(mappedTypeRecursiveInference2.ts, 14, 5))
  >type : Symbol(type, Decl(mappedTypeRecursiveInference2.ts, 10, 7))
  >x : Symbol(x, Decl(mappedTypeRecursiveInference2.ts, 14, 36))

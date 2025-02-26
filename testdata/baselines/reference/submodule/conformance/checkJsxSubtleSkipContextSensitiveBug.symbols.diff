@@ -1,6 +1,6 @@
 --- old.checkJsxSubtleSkipContextSensitiveBug.symbols
 +++ new.checkJsxSubtleSkipContextSensitiveBug.symbols
-@@ -7,19 +7,19 @@
+@@= skipped -7, +7 lines =@@
  
  interface ErrorResult { error: true }
  >ErrorResult : Symbol(ErrorResult, Decl(checkJsxSubtleSkipContextSensitiveBug.tsx, 1, 31))
@@ -23,7 +23,7 @@
  >result : Symbol(result, Decl(checkJsxSubtleSkipContextSensitiveBug.tsx, 8, 21))
  >Exclude : Symbol(Exclude, Decl(lib.es5.d.ts, --, --))
  >TResult : Symbol(TResult, Decl(checkJsxSubtleSkipContextSensitiveBug.tsx, 5, 27))
-@@ -29,14 +29,14 @@
+@@= skipped -22, +22 lines =@@
  class AsyncLoader<TResult> extends React.Component<AsyncLoaderProps<TResult>> {
  >AsyncLoader : Symbol(AsyncLoader, Decl(checkJsxSubtleSkipContextSensitiveBug.tsx, 9, 1))
  >TResult : Symbol(TResult, Decl(checkJsxSubtleSkipContextSensitiveBug.tsx, 11, 18))

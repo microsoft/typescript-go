@@ -1,6 +1,6 @@
 --- old.classStaticPropertyAccess.symbols
 +++ new.classStaticPropertyAccess.symbols
-@@ -5,16 +5,16 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(classStaticPropertyAccess.ts, 0, 0))
  
      public static "\""() {}
@@ -21,7 +21,7 @@
  }
  
  const a = new A();
-@@ -31,9 +31,9 @@
+@@= skipped -26, +26 lines =@@
  >a : Symbol(a, Decl(classStaticPropertyAccess.ts, 7, 5))
  
  A._b    // Error

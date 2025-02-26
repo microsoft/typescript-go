@@ -1,6 +1,6 @@
 --- old.unusedTypeParameters_templateTag2.symbols
 +++ new.unusedTypeParameters_templateTag2.symbols
-@@ -11,9 +11,7 @@
+@@= skipped -11, +11 lines =@@
      constructor() {
          /** @type {T} */
          this.p;
@@ -10,7 +10,7 @@
      }
  }
  
-@@ -35,8 +33,6 @@
+@@= skipped -24, +22 lines =@@
      constructor() {
          /** @type {T} */
          this.p;

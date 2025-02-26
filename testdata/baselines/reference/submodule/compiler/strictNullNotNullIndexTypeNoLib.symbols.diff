@@ -1,6 +1,6 @@
 --- old.strictNullNotNullIndexTypeNoLib.symbols
 +++ new.strictNullNotNullIndexTypeNoLib.symbols
-@@ -13,7 +13,7 @@
+@@= skipped -13, +13 lines =@@
  >A : Symbol(A, Decl(strictNullNotNullIndexTypeNoLib.ts, 0, 50))
  
      params?: { name: string; };
@@ -9,7 +9,7 @@
  >name : Symbol(name, Decl(strictNullNotNullIndexTypeNoLib.ts, 2, 14))
  }
  
-@@ -23,19 +23,19 @@
+@@= skipped -10, +10 lines =@@
  >A : Symbol(A, Decl(strictNullNotNullIndexTypeNoLib.ts, 0, 50))
  
      attrs: Readonly<T>;
@@ -34,7 +34,7 @@
  >params : Symbol(params, Decl(strictNullNotNullIndexTypeNoLib.ts, 1, 13))
  >name : Symbol(name, Decl(strictNullNotNullIndexTypeNoLib.ts, 2, 14))
      }
-@@ -45,7 +45,7 @@
+@@= skipped -22, +22 lines =@@
  >Foo : Symbol(Foo, Decl(strictNullNotNullIndexTypeNoLib.ts, 11, 1))
  
      foo?: number;
@@ -43,7 +43,7 @@
  }
  
  class FooClass<P extends Foo = Foo> {
-@@ -55,18 +55,18 @@
+@@= skipped -10, +10 lines =@@
  >Foo : Symbol(Foo, Decl(strictNullNotNullIndexTypeNoLib.ts, 11, 1))
  
      properties: Readonly<P>;
@@ -67,7 +67,7 @@
  
          return foo;
  >foo : Symbol(foo, Decl(strictNullNotNullIndexTypeNoLib.ts, 21, 15))
-@@ -79,18 +79,18 @@
+@@= skipped -24, +24 lines =@@
  >A : Symbol(A, Decl(strictNullNotNullIndexTypeNoLib.ts, 0, 50))
  
      attrs: Readonly<T>;

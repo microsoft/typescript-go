@@ -1,6 +1,6 @@
 --- old.privateNamesUseBeforeDef.symbols
 +++ new.privateNamesUseBeforeDef.symbols
-@@ -5,49 +5,49 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(privateNamesUseBeforeDef.ts, 0, 0))
  
      #foo = this.#bar; // Error

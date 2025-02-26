@@ -1,6 +1,6 @@
 --- old.decoratorOnClassMethodParameter3.symbols
 +++ new.decoratorOnClassMethodParameter3.symbols
-@@ -9,13 +9,13 @@
+@@= skipped -9, +9 lines =@@
  function fn(value: Promise<number>): any {
  >fn : Symbol(fn, Decl(decoratorOnClassMethodParameter3.ts, 1, 34))
  >value : Symbol(value, Decl(decoratorOnClassMethodParameter3.ts, 2, 12))

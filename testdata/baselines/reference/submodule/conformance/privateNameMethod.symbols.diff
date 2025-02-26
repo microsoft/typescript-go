@@ -1,6 +1,6 @@
 --- old.privateNameMethod.symbols
 +++ new.privateNameMethod.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >A1 : Symbol(A1, Decl(privateNameMethod.ts, 0, 0))
  
      #method(param: string): string {
@@ -9,7 +9,7 @@
  >param : Symbol(param, Decl(privateNameMethod.ts, 1, 12))
  
          return "";
-@@ -14,15 +14,15 @@
+@@= skipped -9, +9 lines =@@
  >name : Symbol(name, Decl(privateNameMethod.ts, 4, 16))
  
          this.#method("")

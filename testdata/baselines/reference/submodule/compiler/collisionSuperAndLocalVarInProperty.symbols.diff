@@ -1,6 +1,6 @@
 --- old.collisionSuperAndLocalVarInProperty.symbols
 +++ new.collisionSuperAndLocalVarInProperty.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >Foo : Symbol(Foo, Decl(collisionSuperAndLocalVarInProperty.ts, 0, 16))
  
     public prop1 = {
@@ -9,7 +9,7 @@
  
          doStuff: () => {
  >doStuff : Symbol(doStuff, Decl(collisionSuperAndLocalVarInProperty.ts, 2, 19))
-@@ -18,14 +18,14 @@
+@@= skipped -10, +10 lines =@@
          }
      }
      public _super = 10; // No error
@@ -26,7 +26,7 @@
  
          doStuff: () => {
  >doStuff : Symbol(doStuff, Decl(collisionSuperAndLocalVarInProperty.ts, 10, 20))
-@@ -35,5 +35,5 @@
+@@= skipped -17, +17 lines =@@
          }
      }
      public _super = 10; // No error

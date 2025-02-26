@@ -1,6 +1,6 @@
 --- old.signaturesUseJSDocForOptionalParameters.symbols
 +++ new.signaturesUseJSDocForOptionalParameters.symbols
-@@ -5,9 +5,6 @@
+@@= skipped -5, +5 lines =@@
  >MyClass : Symbol(MyClass, Decl(jsDocOptionality.js, 0, 0))
  
    this.prop = null;
@@ -10,7 +10,7 @@
  }
  /**
   * @param  {string} required
-@@ -15,16 +12,13 @@
+@@= skipped -10, +7 lines =@@
   * @returns {MyClass}
   */
  MyClass.prototype.optionalParam = function(required, notRequired) {
@@ -29,7 +29,7 @@
  };
  let pInst = new MyClass();
  >pInst : Symbol(pInst, Decl(jsDocOptionality.js, 11, 3))
-@@ -32,13 +26,9 @@
+@@= skipped -17, +14 lines =@@
  
  let c1 = pInst.optionalParam('hello')
  >c1 : Symbol(c1, Decl(jsDocOptionality.js, 12, 3))

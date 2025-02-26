@@ -1,6 +1,6 @@
 --- old.constructSignatureAssignabilityInInheritance4.symbols
 +++ new.constructSignatureAssignabilityInInheritance4.symbols
-@@ -5,48 +5,48 @@
+@@= skipped -5, +5 lines =@@
  
  class Base { foo: string; }
  >Base : Symbol(Base, Decl(constructSignatureAssignabilityInInheritance4.ts, 0, 0))
@@ -57,7 +57,7 @@
  >T : Symbol(T, Decl(constructSignatureAssignabilityInInheritance4.ts, 12, 13))
  >U : Symbol(U, Decl(constructSignatureAssignabilityInInheritance4.ts, 12, 15))
  >x : Symbol(x, Decl(constructSignatureAssignabilityInInheritance4.ts, 12, 19))
-@@ -55,7 +55,7 @@
+@@= skipped -50, +50 lines =@@
  >U : Symbol(U, Decl(constructSignatureAssignabilityInInheritance4.ts, 12, 15))
  
      a5: new <T, U>(x: (arg: T) => U) => T;
@@ -66,7 +66,7 @@
  >T : Symbol(T, Decl(constructSignatureAssignabilityInInheritance4.ts, 13, 13))
  >U : Symbol(U, Decl(constructSignatureAssignabilityInInheritance4.ts, 13, 15))
  >x : Symbol(x, Decl(constructSignatureAssignabilityInInheritance4.ts, 13, 19))
-@@ -65,7 +65,7 @@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(constructSignatureAssignabilityInInheritance4.ts, 13, 13))
  
      a6: new <T extends Base>(x: (arg: T) => Derived) => T;
@@ -75,7 +75,7 @@
  >T : Symbol(T, Decl(constructSignatureAssignabilityInInheritance4.ts, 14, 13))
  >Base : Symbol(Base, Decl(constructSignatureAssignabilityInInheritance4.ts, 0, 0))
  >x : Symbol(x, Decl(constructSignatureAssignabilityInInheritance4.ts, 14, 29))
-@@ -75,7 +75,7 @@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(constructSignatureAssignabilityInInheritance4.ts, 14, 13))
  
      a11: new <T>(x: { foo: T }, y: { foo: T; bar: T }) => Base;
@@ -84,7 +84,7 @@
  >T : Symbol(T, Decl(constructSignatureAssignabilityInInheritance4.ts, 15, 14))
  >x : Symbol(x, Decl(constructSignatureAssignabilityInInheritance4.ts, 15, 17))
  >foo : Symbol(foo, Decl(constructSignatureAssignabilityInInheritance4.ts, 15, 21))
-@@ -88,7 +88,7 @@
+@@= skipped -13, +13 lines =@@
  >Base : Symbol(Base, Decl(constructSignatureAssignabilityInInheritance4.ts, 0, 0))
  
      a15: new <T>(x: { a: T; b: T }) => T[];
@@ -93,7 +93,7 @@
  >T : Symbol(T, Decl(constructSignatureAssignabilityInInheritance4.ts, 16, 14))
  >x : Symbol(x, Decl(constructSignatureAssignabilityInInheritance4.ts, 16, 17))
  >a : Symbol(a, Decl(constructSignatureAssignabilityInInheritance4.ts, 16, 21))
-@@ -98,7 +98,7 @@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(constructSignatureAssignabilityInInheritance4.ts, 16, 14))
  
      a16: new <T extends Base>(x: { a: T; b: T }) => T[];
@@ -102,7 +102,7 @@
  >T : Symbol(T, Decl(constructSignatureAssignabilityInInheritance4.ts, 17, 14))
  >Base : Symbol(Base, Decl(constructSignatureAssignabilityInInheritance4.ts, 0, 0))
  >x : Symbol(x, Decl(constructSignatureAssignabilityInInheritance4.ts, 17, 30))
-@@ -109,7 +109,7 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(constructSignatureAssignabilityInInheritance4.ts, 17, 14))
  
      a17: {
@@ -111,7 +111,7 @@
  
          new <T extends Base>(x: T): T[];
  >T : Symbol(T, Decl(constructSignatureAssignabilityInInheritance4.ts, 19, 13))
-@@ -127,7 +127,7 @@
+@@= skipped -18, +18 lines =@@
  
      };
      a18: {
@@ -120,7 +120,7 @@
  
          new <T extends Derived>(x: T): number[];
  >T : Symbol(T, Decl(constructSignatureAssignabilityInInheritance4.ts, 23, 13))
-@@ -143,7 +143,7 @@
+@@= skipped -16, +16 lines =@@
  
      };
      a19: {
@@ -129,7 +129,7 @@
  
          new <T extends Derived>(x: new (a: T) => T): T[];
  >T : Symbol(T, Decl(constructSignatureAssignabilityInInheritance4.ts, 27, 13))
-@@ -165,7 +165,7 @@
+@@= skipped -22, +22 lines =@@
  
      };
      a20: {
@@ -138,7 +138,7 @@
  
          new (x: {
  >x : Symbol(x, Decl(constructSignatureAssignabilityInInheritance4.ts, 31, 13))
-@@ -213,27 +213,27 @@
+@@= skipped -48, +48 lines =@@
  
      // N's
      a: new <T>(x: T) => T[]; // ok, instantiation of N is a subtype of M, T is number
@@ -170,7 +170,7 @@
  >T : Symbol(T, Decl(constructSignatureAssignabilityInInheritance4.ts, 48, 13))
  >U : Symbol(U, Decl(constructSignatureAssignabilityInInheritance4.ts, 48, 15))
  >x : Symbol(x, Decl(constructSignatureAssignabilityInInheritance4.ts, 48, 19))
-@@ -242,7 +242,7 @@
+@@= skipped -29, +29 lines =@@
  >U : Symbol(U, Decl(constructSignatureAssignabilityInInheritance4.ts, 48, 15))
  
      a5: new <T, U>(x: (arg: T) => U) => T; // ok, U is in a parameter position so inferences can be made
@@ -179,7 +179,7 @@
  >T : Symbol(T, Decl(constructSignatureAssignabilityInInheritance4.ts, 49, 13))
  >U : Symbol(U, Decl(constructSignatureAssignabilityInInheritance4.ts, 49, 15))
  >x : Symbol(x, Decl(constructSignatureAssignabilityInInheritance4.ts, 49, 19))
-@@ -252,7 +252,7 @@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(constructSignatureAssignabilityInInheritance4.ts, 49, 13))
  
      a6: new <T extends Base, U extends Derived>(x: (arg: T) => U) => T; // ok, same as a5 but with object type hierarchy
@@ -188,7 +188,7 @@
  >T : Symbol(T, Decl(constructSignatureAssignabilityInInheritance4.ts, 50, 13))
  >Base : Symbol(Base, Decl(constructSignatureAssignabilityInInheritance4.ts, 0, 0))
  >U : Symbol(U, Decl(constructSignatureAssignabilityInInheritance4.ts, 50, 28))
-@@ -264,7 +264,7 @@
+@@= skipped -12, +12 lines =@@
  >T : Symbol(T, Decl(constructSignatureAssignabilityInInheritance4.ts, 50, 13))
  
      a11: new <T, U>(x: { foo: T }, y: { foo: U; bar: U }) => Base; // ok
@@ -197,7 +197,7 @@
  >T : Symbol(T, Decl(constructSignatureAssignabilityInInheritance4.ts, 51, 14))
  >U : Symbol(U, Decl(constructSignatureAssignabilityInInheritance4.ts, 51, 16))
  >x : Symbol(x, Decl(constructSignatureAssignabilityInInheritance4.ts, 51, 20))
-@@ -278,7 +278,7 @@
+@@= skipped -14, +14 lines =@@
  >Base : Symbol(Base, Decl(constructSignatureAssignabilityInInheritance4.ts, 0, 0))
  
      a15: new <U, V>(x: { a: U; b: V; }) => U[]; // ok, T = U, T = V
@@ -206,7 +206,7 @@
  >U : Symbol(U, Decl(constructSignatureAssignabilityInInheritance4.ts, 52, 14))
  >V : Symbol(V, Decl(constructSignatureAssignabilityInInheritance4.ts, 52, 16))
  >x : Symbol(x, Decl(constructSignatureAssignabilityInInheritance4.ts, 52, 20))
-@@ -289,7 +289,7 @@
+@@= skipped -11, +11 lines =@@
  >U : Symbol(U, Decl(constructSignatureAssignabilityInInheritance4.ts, 52, 14))
  
      a16: new <T>(x: { a: T; b: T }) => T[]; // ok, more general parameter type
@@ -215,7 +215,7 @@
  >T : Symbol(T, Decl(constructSignatureAssignabilityInInheritance4.ts, 53, 14))
  >x : Symbol(x, Decl(constructSignatureAssignabilityInInheritance4.ts, 53, 17))
  >a : Symbol(a, Decl(constructSignatureAssignabilityInInheritance4.ts, 53, 21))
-@@ -299,7 +299,7 @@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(constructSignatureAssignabilityInInheritance4.ts, 53, 14))
  
      a17: new <T extends Base>(x: T) => T[]; // ok, more general parameter type
@@ -224,7 +224,7 @@
  >T : Symbol(T, Decl(constructSignatureAssignabilityInInheritance4.ts, 54, 14))
  >Base : Symbol(Base, Decl(constructSignatureAssignabilityInInheritance4.ts, 0, 0))
  >x : Symbol(x, Decl(constructSignatureAssignabilityInInheritance4.ts, 54, 30))
-@@ -307,14 +307,14 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(constructSignatureAssignabilityInInheritance4.ts, 54, 14))
  
      a18: new <T extends Base>(x: T) => number[]; // ok, more general parameter type
@@ -241,7 +241,7 @@
  >T : Symbol(T, Decl(constructSignatureAssignabilityInInheritance4.ts, 56, 14))
  >Base : Symbol(Base, Decl(constructSignatureAssignabilityInInheritance4.ts, 0, 0))
  >x : Symbol(x, Decl(constructSignatureAssignabilityInInheritance4.ts, 56, 30))
-@@ -324,7 +324,7 @@
+@@= skipped -17, +17 lines =@@
  >T : Symbol(T, Decl(constructSignatureAssignabilityInInheritance4.ts, 56, 14))
  
      a20: new (x: new <T extends Base>(a: T) => T) => any[]; // ok

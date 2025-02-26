@@ -1,6 +1,6 @@
 --- old.importPropertyFromMappedType.symbols
 +++ new.importPropertyFromMappedType.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  declare const createHttpError: createHttpError.NamedConstructors;
  >createHttpError : Symbol(createHttpError, Decl(errors.d.ts, 1, 13), Decl(errors.d.ts, 1, 65))
  >createHttpError : Symbol(createHttpError, Decl(errors.d.ts, 1, 13), Decl(errors.d.ts, 1, 65))

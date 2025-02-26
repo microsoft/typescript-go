@@ -1,6 +1,6 @@
 --- old.jsdocTemplateConstructorFunction2.symbols
 +++ new.jsdocTemplateConstructorFunction2.symbols
-@@ -11,14 +11,7 @@
+@@= skipped -11, +11 lines =@@
  
      /** @type {T} */
      this.u
@@ -15,7 +15,7 @@
  >t : Symbol(t, Decl(templateTagWithNestedTypeLiteral.js, 4, 13))
  }
  /**
-@@ -27,47 +20,32 @@
+@@= skipped -16, +9 lines =@@
   * @param {T} o.nested
   */
  Zet.prototype.add = function(v, o) {

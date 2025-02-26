@@ -1,6 +1,6 @@
 --- old.doNotEmitPinnedCommentOnNotEmittedNodets.symbols
 +++ new.doNotEmitPinnedCommentOnNotEmittedNodets.symbols
-@@ -6,12 +6,12 @@
+@@= skipped -6, +6 lines =@@
  
      /*! remove pinned comment anywhere else */
      public foo(x: string, y: any)

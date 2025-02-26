@@ -1,6 +1,6 @@
 --- old.symbolProperty61.symbols
 +++ new.symbolProperty61.symbols
-@@ -2,48 +2,42 @@
+@@= skipped -2, +2 lines =@@
  
  === symbolProperty61.ts ===
  declare global {
@@ -57,7 +57,7 @@
  >observable : Symbol(observable, Decl(symbolProperty61.ts, 6, 5))
  
          return this
-@@ -57,9 +51,6 @@
+@@= skipped -55, +49 lines =@@
  
      [Symbol.obs]: () => { subscribe(next: (val: T) => void): void }
  >[Symbol.obs] : Symbol([Symbol.obs], Decl(symbolProperty61.ts, 20, 29))
@@ -67,7 +67,7 @@
  >subscribe : Symbol(subscribe, Decl(symbolProperty61.ts, 21, 25))
  >next : Symbol(next, Decl(symbolProperty61.ts, 21, 36))
  >val : Symbol(val, Decl(symbolProperty61.ts, 21, 43))
-@@ -75,9 +66,6 @@
+@@= skipped -18, +15 lines =@@
  
      return obs[Symbol.obs]()
  >obs : Symbol(obs, Decl(symbolProperty61.ts, 24, 17))

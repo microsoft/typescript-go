@@ -1,6 +1,6 @@
 --- old.expr.symbols
 +++ new.expr.symbols
-@@ -9,9 +9,9 @@
+@@= skipped -9, +9 lines =@@
  >E : Symbol(E, Decl(expr.ts, 1, 1))
  
      Red, Green, Blue

@@ -1,6 +1,6 @@
 --- old.override10.symbols
 +++ new.override10.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >Base : Symbol(Base, Decl(override10.ts, 0, 0))
  
      abstract foo(): unknown;
@@ -13,7 +13,7 @@
  }
  
  abstract class Sub extends Base {
-@@ -16,8 +16,8 @@
+@@= skipped -11, +11 lines =@@
  >Base : Symbol(Base, Decl(override10.ts, 0, 0))
  
      abstract override foo(): number;

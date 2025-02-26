@@ -1,6 +1,6 @@
 --- old.controlFlowForOfStatement.symbols
 +++ new.controlFlowForOfStatement.symbols
-@@ -20,9 +20,9 @@
+@@= skipped -20, +20 lines =@@
  
          x = x.toExponential();
  >x : Symbol(x, Decl(controlFlowForOfStatement.ts, 1, 3))

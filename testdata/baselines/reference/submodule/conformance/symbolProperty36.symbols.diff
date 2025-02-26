@@ -1,6 +1,6 @@
 --- old.symbolProperty36.symbols
 +++ new.symbolProperty36.symbols
-@@ -5,14 +5,8 @@
+@@= skipped -5, +5 lines =@@
  >x : Symbol(x, Decl(symbolProperty36.ts, 0, 3))
  
      [Symbol.isConcatSpreadable]: 0,

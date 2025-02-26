@@ -1,6 +1,6 @@
 --- old.asyncFunctionContextuallyTypedReturns.symbols
 +++ new.asyncFunctionContextuallyTypedReturns.symbols
-@@ -5,45 +5,33 @@
+@@= skipped -5, +5 lines =@@
  >f : Symbol(f, Decl(asyncFunctionContextuallyTypedReturns.ts, 0, 0))
  >cb : Symbol(cb, Decl(asyncFunctionContextuallyTypedReturns.ts, 0, 19))
  >v : Symbol(v, Decl(asyncFunctionContextuallyTypedReturns.ts, 0, 24))
@@ -48,7 +48,7 @@
  
  type MyCallback = (thing: string) => void;
  >MyCallback : Symbol(MyCallback, Decl(asyncFunctionContextuallyTypedReturns.ts, 6, 59))
-@@ -54,7 +42,7 @@
+@@= skipped -49, +37 lines =@@
  >cb : Symbol(cb, Decl(asyncFunctionContextuallyTypedReturns.ts, 9, 19))
  >v : Symbol(v, Decl(asyncFunctionContextuallyTypedReturns.ts, 9, 24))
  >MyCallback : Symbol(MyCallback, Decl(asyncFunctionContextuallyTypedReturns.ts, 6, 59))
@@ -57,7 +57,7 @@
  >MyCallback : Symbol(MyCallback, Decl(asyncFunctionContextuallyTypedReturns.ts, 6, 59))
  
  h(v => v ? (abc) => { } : Promise.reject());
-@@ -62,18 +50,12 @@
+@@= skipped -8, +8 lines =@@
  >v : Symbol(v, Decl(asyncFunctionContextuallyTypedReturns.ts, 10, 2))
  >v : Symbol(v, Decl(asyncFunctionContextuallyTypedReturns.ts, 10, 2))
  >abc : Symbol(abc, Decl(asyncFunctionContextuallyTypedReturns.ts, 10, 12))
@@ -76,7 +76,7 @@
  
  // repro from #29196
  const increment: (
-@@ -86,7 +68,7 @@
+@@= skipped -24, +18 lines =@@
  >str : Symbol(str, Decl(asyncFunctionContextuallyTypedReturns.ts, 15, 14))
  
  ) => Promise<((s: string) => any) | string> | string = async (num, str) => {
@@ -85,7 +85,7 @@
  >s : Symbol(s, Decl(asyncFunctionContextuallyTypedReturns.ts, 17, 15))
  >num : Symbol(num, Decl(asyncFunctionContextuallyTypedReturns.ts, 17, 62))
  >str : Symbol(str, Decl(asyncFunctionContextuallyTypedReturns.ts, 17, 66))
-@@ -95,9 +77,7 @@
+@@= skipped -9, +9 lines =@@
  >a : Symbol(a, Decl(asyncFunctionContextuallyTypedReturns.ts, 18, 8))
  
      return a.length
@@ -95,7 +95,7 @@
    }
  }
  
-@@ -111,7 +91,7 @@
+@@= skipped -16, +14 lines =@@
  >str : Symbol(str, Decl(asyncFunctionContextuallyTypedReturns.ts, 24, 14))
  
  ) => Promise<((s: string) => any) | string> = async (num, str) => {
@@ -104,7 +104,7 @@
  >s : Symbol(s, Decl(asyncFunctionContextuallyTypedReturns.ts, 26, 15))
  >num : Symbol(num, Decl(asyncFunctionContextuallyTypedReturns.ts, 26, 53))
  >str : Symbol(str, Decl(asyncFunctionContextuallyTypedReturns.ts, 26, 57))
-@@ -120,9 +100,7 @@
+@@= skipped -9, +9 lines =@@
  >a : Symbol(a, Decl(asyncFunctionContextuallyTypedReturns.ts, 27, 8))
  
      return a.length

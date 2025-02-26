@@ -1,6 +1,6 @@
 --- old.enumLiteralAssignableToEnumInsideUnion.symbols
 +++ new.enumLiteralAssignableToEnumInsideUnion.symbols
-@@ -8,8 +8,8 @@
+@@= skipped -8, +8 lines =@@
  >Foo : Symbol(Foo, Decl(enumLiteralAssignableToEnumInsideUnion.ts, 0, 10))
  
          A, B
@@ -11,7 +11,7 @@
      }
  }
  module Y {
-@@ -19,8 +19,8 @@
+@@= skipped -11, +11 lines =@@
  >Foo : Symbol(Foo, Decl(enumLiteralAssignableToEnumInsideUnion.ts, 5, 10))
  
          A, B
@@ -22,7 +22,7 @@
      }
  }
  module Z {
-@@ -30,10 +30,10 @@
+@@= skipped -11, +11 lines =@@
  >Foo : Symbol(Foo, Decl(enumLiteralAssignableToEnumInsideUnion.ts, 10, 10))
  
          A = 1 << 1,
@@ -35,7 +35,7 @@
      }
  }
  module Ka {
-@@ -43,75 +43,75 @@
+@@= skipped -13, +13 lines =@@
  >Foo : Symbol(Foo, Decl(enumLiteralAssignableToEnumInsideUnion.ts, 16, 11))
  
          A = 1 << 10,

@@ -1,6 +1,6 @@
 --- old.tsxStatelessFunctionComponentWithDefaultTypeParameter2.symbols
 +++ new.tsxStatelessFunctionComponentWithDefaultTypeParameter2.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >MyComponentProp : Symbol(MyComponentProp, Decl(file.tsx, 0, 31))
  
      values: string;
@@ -9,7 +9,7 @@
  }
  
  function MyComponent1<T extends MyComponentProp>(attr: T) {
-@@ -19,8 +19,6 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(file.tsx, 6, 22))
  
      return <div>attr.values</div>

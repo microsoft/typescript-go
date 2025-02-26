@@ -1,6 +1,6 @@
 --- old.typeGuardNarrowsIndexedAccessOfKnownProperty9.symbols
 +++ new.typeGuardNarrowsIndexedAccessOfKnownProperty9.symbols
-@@ -5,19 +5,19 @@
+@@= skipped -5, +5 lines =@@
  >C1 : Symbol(C1, Decl(typeGuardNarrowsIndexedAccessOfKnownProperty9.ts, 0, 0))
  
      private a = "a"; // ok

@@ -1,6 +1,6 @@
 --- old.duplicatePackage_subModule.symbols
 +++ new.duplicatePackage_subModule.symbols
-@@ -10,9 +10,9 @@
+@@= skipped -10, +10 lines =@@
  const o: Foo = a.o;
  >o : Symbol(o, Decl(index.ts, 3, 5))
  >Foo : Symbol(Foo, Decl(index.ts, 0, 6))
@@ -12,7 +12,7 @@
  
  === /node_modules/a/index.d.ts ===
  import Foo from "foo/Foo";
-@@ -24,17 +24,17 @@
+@@= skipped -14, +14 lines =@@
  
  === /node_modules/a/node_modules/foo/Foo.d.ts ===
  export default class Foo {

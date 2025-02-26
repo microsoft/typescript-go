@@ -1,6 +1,6 @@
 --- old.doesNotNarrowUnionOfConstructorsWithInstanceof.symbols
 +++ new.doesNotNarrowUnionOfConstructorsWithInstanceof.symbols
-@@ -5,13 +5,13 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(doesNotNarrowUnionOfConstructorsWithInstanceof.ts, 0, 0))
  
      length: 1
@@ -17,7 +17,7 @@
      }
  }
  
-@@ -19,13 +19,13 @@
+@@= skipped -14, +14 lines =@@
  >B : Symbol(B, Decl(doesNotNarrowUnionOfConstructorsWithInstanceof.ts, 5, 1))
  
      length: 2
@@ -34,7 +34,7 @@
      }
  }
  
-@@ -60,9 +60,9 @@
+@@= skipped -41, +41 lines =@@
  >b : Symbol(b, Decl(doesNotNarrowUnionOfConstructorsWithInstanceof.ts, 21, 5))
  
    console.log(a.length);  // Used to be property 'length' does not exist on type 'never'.

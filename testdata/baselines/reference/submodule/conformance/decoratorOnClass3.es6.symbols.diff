@@ -1,6 +1,6 @@
 --- old.decoratorOnClass3.es6.symbols
 +++ new.decoratorOnClass3.es6.symbols
-@@ -12,10 +12,10 @@
+@@= skipped -12, +12 lines =@@
  >dec : Symbol(dec, Decl(decoratorOnClass3.es6.ts, 0, 0))
  
  export default class C {

@@ -1,6 +1,6 @@
 --- old.builtinIterator.symbols
 +++ new.builtinIterator.symbols
-@@ -3,22 +3,22 @@
+@@= skipped -3, +3 lines =@@
  === builtinIterator.ts ===
  const iterator = Iterator.from([0, 1, 2]);
  >iterator : Symbol(iterator, Decl(builtinIterator.ts, 0, 5))
@@ -29,7 +29,7 @@
  >x : Symbol(x, Decl(builtinIterator.ts, 4, 33))
  >x : Symbol(x, Decl(builtinIterator.ts, 4, 33))
  
-@@ -32,16 +32,16 @@
+@@= skipped -29, +29 lines =@@
  }
  const zero = iterator.filter(isZero);
  >zero : Symbol(zero, Decl(builtinIterator.ts, 9, 5))
@@ -50,7 +50,7 @@
  
    next() {
  >next : Symbol(next, Decl(builtinIterator.ts, 11, 40))
-@@ -49,9 +49,9 @@
+@@= skipped -17, +17 lines =@@
      return {
        done: Math.random() < .5,
  >done : Symbol(done, Decl(builtinIterator.ts, 13, 12))
@@ -62,7 +62,7 @@
  
        value: "a string",
  >value : Symbol(value, Decl(builtinIterator.ts, 14, 31))
-@@ -69,18 +69,18 @@
+@@= skipped -20, +20 lines =@@
  
  const mappedGen = gen().map(x => x === 0 ? "zero" : "other");
  >mappedGen : Symbol(mappedGen, Decl(builtinIterator.ts, 25, 5))
@@ -87,7 +87,7 @@
  >x : Symbol(x, Decl(builtinIterator.ts, 27, 44))
  >x : Symbol(x, Decl(builtinIterator.ts, 27, 44))
  
-@@ -90,7 +90,7 @@
+@@= skipped -21, +21 lines =@@
  >Iterator : Symbol(Iterator, Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.esnext.iterator.d.ts, --, --))
  
    next() {
@@ -96,7 +96,7 @@
  
      return { done: false, value: 0 } as const;
  >done : Symbol(done, Decl(builtinIterator.ts, 32, 12))
-@@ -113,12 +113,12 @@
+@@= skipped -23, +23 lines =@@
  >Iterator : Symbol(Iterator, Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.esnext.iterator.d.ts, --, --))
  
    next() {
@@ -112,7 +112,7 @@
  
        return { done: false, value: 0 } as const;
  >done : Symbol(done, Decl(builtinIterator.ts, 45, 14))
-@@ -139,7 +139,7 @@
+@@= skipped -26, +26 lines =@@
  >Iterator : Symbol(Iterator, Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.esnext.iterator.d.ts, --, --))
  
    next() {
@@ -121,7 +121,7 @@
  
      return { done: false, value: 0 };
  >done : Symbol(done, Decl(builtinIterator.ts, 54, 12))
-@@ -152,12 +152,12 @@
+@@= skipped -13, +13 lines =@@
  >Iterator : Symbol(Iterator, Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.esnext.iterator.d.ts, --, --))
  
    next() {
@@ -137,7 +137,7 @@
  
        return { done: false, value: 0 };
  >done : Symbol(done, Decl(builtinIterator.ts, 61, 14))
-@@ -177,9 +177,9 @@
+@@= skipped -25, +25 lines =@@
  
  const iter1 = Iterator.from(g1);
  >iter1 : Symbol(iter1, Decl(builtinIterator.ts, 69, 5))
@@ -149,7 +149,7 @@
  >g1 : Symbol(g1, Decl(builtinIterator.ts, 68, 13))
  
  declare const iter2: IteratorObject<string>;
-@@ -188,8 +188,8 @@
+@@= skipped -11, +11 lines =@@
  
  const iter3 = iter2.flatMap(() => g1);
  >iter3 : Symbol(iter3, Decl(builtinIterator.ts, 72, 5))

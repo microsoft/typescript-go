@@ -1,6 +1,6 @@
 --- old.interfaceImplementation4.symbols
 +++ new.interfaceImplementation4.symbols
-@@ -5,16 +5,16 @@
+@@= skipped -5, +5 lines =@@
  >I1 : Symbol(I1, Decl(interfaceImplementation4.ts, 0, 0))
  
      iObj:{ };
@@ -21,7 +21,7 @@
  }
  
  class C5 implements I1 {
-@@ -22,12 +22,12 @@
+@@= skipped -17, +17 lines =@@
  >I1 : Symbol(I1, Decl(interfaceImplementation4.ts, 0, 0))
  
      public iNum:number;

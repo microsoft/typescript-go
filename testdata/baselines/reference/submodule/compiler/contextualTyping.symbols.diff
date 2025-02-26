@@ -1,6 +1,6 @@
 --- old.contextualTyping.symbols
 +++ new.contextualTyping.symbols
-@@ -6,25 +6,25 @@
+@@= skipped -6, +6 lines =@@
  >IFoo : Symbol(IFoo, Decl(contextualTyping.ts, 0, 0))
  
      n: number;
@@ -31,7 +31,7 @@
  >IFoo : Symbol(IFoo, Decl(contextualTyping.ts, 0, 0))
  }
  
-@@ -33,7 +33,7 @@
+@@= skipped -27, +27 lines =@@
  >C1T5 : Symbol(C1T5, Decl(contextualTyping.ts, 10, 1))
  
      foo: (i: number, s: string) => number = function(i) {
@@ -40,7 +40,7 @@
  >i : Symbol(i, Decl(contextualTyping.ts, 14, 10))
  >s : Symbol(s, Decl(contextualTyping.ts, 14, 20))
  >i : Symbol(i, Decl(contextualTyping.ts, 14, 53))
-@@ -167,15 +167,15 @@
+@@= skipped -134, +134 lines =@@
  >C4T5 : Symbol(C4T5, Decl(contextualTyping.ts, 52, 2))
  
      foo: (i: number, s: string) => string;
@@ -59,7 +59,7 @@
  >i : Symbol(i, Decl(contextualTyping.ts, 58, 28))
  >s : Symbol(s, Decl(contextualTyping.ts, 58, 30))
  
-@@ -232,33 +232,33 @@
+@@= skipped -65, +65 lines =@@
  >IPlaceHolder : Symbol(IPlaceHolder, Decl(contextualTyping.ts, 78, 25))
  
      t1: (s: string) => string;
@@ -100,7 +100,7 @@
  
              (n: number, s: string): number;    
  >n : Symbol(n, Decl(contextualTyping.ts, 89, 13))
-@@ -267,32 +267,32 @@
+@@= skipped -35, +35 lines =@@
              //(s1: string, s2: string): number;
          };
      t8: (n: number, s: string) => number;
@@ -140,7 +140,7 @@
  >IFoo : Symbol(IFoo, Decl(contextualTyping.ts, 0, 0))
      }
  
-@@ -644,35 +644,35 @@
+@@= skipped -377, +377 lines =@@
  >y : Symbol(y, Decl(contextualTyping.ts, 198, 28))
  
        x: number;
@@ -186,7 +186,7 @@
  >dx : Symbol(dx, Decl(contextualTyping.ts, 208, 31))
  >dy : Symbol(dy, Decl(contextualTyping.ts, 208, 34))
  
-@@ -684,9 +684,9 @@
+@@= skipped -40, +40 lines =@@
  };
  
  Point.prototype = {
@@ -198,7 +198,7 @@
  
      x: 0,
  >x : Symbol(x, Decl(contextualTyping.ts, 212, 19))
-@@ -708,7 +708,7 @@
+@@= skipped -24, +24 lines =@@
  
  interface A { x: string; }
  >A : Symbol(A, Decl(contextualTyping.ts, 218, 2))

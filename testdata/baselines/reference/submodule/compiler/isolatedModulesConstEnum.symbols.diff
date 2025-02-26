@@ -1,6 +1,6 @@
 --- old.isolatedModulesConstEnum.symbols
 +++ new.isolatedModulesConstEnum.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >EventName : Symbol(EventName, Decl(foo.d.ts, 0, 0))
  
      FOO = 1,
@@ -13,7 +13,7 @@
  }
  
  type E1 = {
-@@ -16,15 +16,15 @@
+@@= skipped -11, +11 lines =@@
  
      [EventName.FOO]: number;
  >[EventName.FOO] : Symbol([EventName.FOO], Decl(foo.d.ts, 5, 11))
@@ -33,7 +33,7 @@
  
  };
  
-@@ -34,15 +34,15 @@
+@@= skipped -18, +18 lines =@@
  
      [EventName.FOO]: number;
  >[EventName.FOO] : Symbol([EventName.FOO], Decl(bar.ts, 0, 11))

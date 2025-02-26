@@ -1,6 +1,6 @@
 --- old.logicalNotOperatorWithBooleanType.symbols
 +++ new.logicalNotOperatorWithBooleanType.symbols
-@@ -12,10 +12,10 @@
+@@= skipped -12, +12 lines =@@
  >A : Symbol(A, Decl(logicalNotOperatorWithBooleanType.ts, 3, 40))
  
      public a: boolean;
@@ -13,7 +13,7 @@
  }
  module M {
  >M : Symbol(M, Decl(logicalNotOperatorWithBooleanType.ts, 8, 1))
-@@ -45,15 +45,15 @@
+@@= skipped -33, +33 lines =@@
  // boolean type expressions
  var ResultIsBoolean4 = !objA.a;
  >ResultIsBoolean4 : Symbol(ResultIsBoolean4, Decl(logicalNotOperatorWithBooleanType.ts, 23, 3))
@@ -33,7 +33,7 @@
  
  var ResultIsBoolean6 = !foo();
  >ResultIsBoolean6 : Symbol(ResultIsBoolean6, Decl(logicalNotOperatorWithBooleanType.ts, 25, 3))
-@@ -61,9 +61,9 @@
+@@= skipped -16, +16 lines =@@
  
  var ResultIsBoolean7 = !A.foo();
  >ResultIsBoolean7 : Symbol(ResultIsBoolean7, Decl(logicalNotOperatorWithBooleanType.ts, 26, 3))
@@ -45,7 +45,7 @@
  
  // multiple ! operators
  var ResultIsBoolean = !!BOOLEAN;
-@@ -80,12 +80,12 @@
+@@= skipped -19, +19 lines =@@
  
  !true, false;
  !objA.a;

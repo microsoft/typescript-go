@@ -1,6 +1,6 @@
 --- old.moduleDuplicateIdentifiers.symbols
 +++ new.moduleDuplicateIdentifiers.symbols
-@@ -11,14 +11,14 @@
+@@= skipped -11, +11 lines =@@
  >Bar : Symbol(Bar, Decl(moduleDuplicateIdentifiers.ts, 1, 20), Decl(moduleDuplicateIdentifiers.ts, 5, 1))
  
  	_brand1: any;
@@ -17,7 +17,7 @@
  }
  
  export namespace FooBar {
-@@ -39,14 +39,14 @@
+@@= skipped -28, +28 lines =@@
  >Kettle : Symbol(Kettle, Decl(moduleDuplicateIdentifiers.ts, 17, 1))
  
  	member1 = 2;
@@ -34,7 +34,7 @@
  }
  
  export var Pot = 2;
-@@ -59,19 +59,19 @@
+@@= skipped -20, +20 lines =@@
  >Utensils : Symbol(Utensils, Decl(moduleDuplicateIdentifiers.ts, 28, 9), Decl(moduleDuplicateIdentifiers.ts, 34, 1))
  
  	Spoon,

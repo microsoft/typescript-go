@@ -1,6 +1,6 @@
 --- old.augmentedTypesExternalModule1.symbols
 +++ new.augmentedTypesExternalModule1.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  
  class c5 { public foo() { } }
  >c5 : Symbol(c5, Decl(augmentedTypesExternalModule1.ts, 0, 17), Decl(augmentedTypesExternalModule1.ts, 1, 29))

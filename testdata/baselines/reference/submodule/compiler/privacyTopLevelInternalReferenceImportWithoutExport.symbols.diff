@@ -1,6 +1,6 @@
 --- old.privacyTopLevelInternalReferenceImportWithoutExport.symbols
 +++ new.privacyTopLevelInternalReferenceImportWithoutExport.symbols
-@@ -12,10 +12,10 @@
+@@= skipped -12, +12 lines =@@
  >e_private : Symbol(e_private, Decl(privacyTopLevelInternalReferenceImportWithoutExport.ts, 3, 5))
  
          Happy,
@@ -13,7 +13,7 @@
      }
      export function f_private() {
  >f_private : Symbol(f_private, Decl(privacyTopLevelInternalReferenceImportWithoutExport.ts, 7, 5))
-@@ -57,10 +57,10 @@
+@@= skipped -45, +45 lines =@@
  >e_public : Symbol(e_public, Decl(privacyTopLevelInternalReferenceImportWithoutExport.ts, 27, 5))
  
          Happy,
@@ -26,7 +26,7 @@
      }
      export function f_public() {
  >f_public : Symbol(f_public, Decl(privacyTopLevelInternalReferenceImportWithoutExport.ts, 31, 5))
-@@ -94,37 +94,37 @@
+@@= skipped -37, +37 lines =@@
  import im_private_c_private = m_private.c_private;
  >im_private_c_private : Symbol(im_private_c_private, Decl(privacyTopLevelInternalReferenceImportWithoutExport.ts, 46, 1))
  >m_private : Symbol(m_private, Decl(privacyTopLevelInternalReferenceImportWithoutExport.ts, 0, 0))
@@ -71,7 +71,7 @@
  
  // Usage of above decls
  var privateUse_im_private_c_private = new im_private_c_private();
-@@ -137,15 +137,15 @@
+@@= skipped -43, +43 lines =@@
  
  var privateUse_im_private_e_private = im_private_e_private.Happy;
  >privateUse_im_private_e_private : Symbol(privateUse_im_private_e_private, Decl(privacyTopLevelInternalReferenceImportWithoutExport.ts, 60, 3))
@@ -91,7 +91,7 @@
  
  var privateUse_im_private_f_private = im_private_f_private();
  >privateUse_im_private_f_private : Symbol(privateUse_im_private_f_private, Decl(privacyTopLevelInternalReferenceImportWithoutExport.ts, 62, 3))
-@@ -173,62 +173,62 @@
+@@= skipped -36, +36 lines =@@
  
  var privateUse_im_private_mi_private = new im_private_mi_private.c();
  >privateUse_im_private_mi_private : Symbol(privateUse_im_private_mi_private, Decl(privacyTopLevelInternalReferenceImportWithoutExport.ts, 68, 3))
@@ -167,7 +167,7 @@
  
  // Usage of above decls
  var privateUse_im_private_c_public = new im_private_c_public();
-@@ -241,15 +241,15 @@
+@@= skipped -68, +68 lines =@@
  
  var privateUse_im_private_e_public = im_private_e_public.Happy;
  >privateUse_im_private_e_public : Symbol(privateUse_im_private_e_public, Decl(privacyTopLevelInternalReferenceImportWithoutExport.ts, 86, 3))
@@ -187,7 +187,7 @@
  
  var privateUse_im_private_f_public = im_private_f_public();
  >privateUse_im_private_f_public : Symbol(privateUse_im_private_f_public, Decl(privacyTopLevelInternalReferenceImportWithoutExport.ts, 88, 3))
-@@ -277,23 +277,23 @@
+@@= skipped -36, +36 lines =@@
  
  var privateUse_im_private_mi_public = new im_private_mi_public.c();
  >privateUse_im_private_mi_public : Symbol(privateUse_im_private_mi_public, Decl(privacyTopLevelInternalReferenceImportWithoutExport.ts, 94, 3))

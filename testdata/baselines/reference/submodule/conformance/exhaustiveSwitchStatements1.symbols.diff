@@ -1,6 +1,6 @@
 --- old.exhaustiveSwitchStatements1.symbols
 +++ new.exhaustiveSwitchStatements1.symbols
-@@ -59,8 +59,8 @@
+@@= skipped -59, +59 lines =@@
  
  enum E { A, B }
  >E : Symbol(E, Decl(exhaustiveSwitchStatements1.ts, 29, 1))
@@ -11,7 +11,7 @@
  
  function f(e: E): number {
  >f : Symbol(f, Decl(exhaustiveSwitchStatements1.ts, 33, 15))
-@@ -71,14 +71,14 @@
+@@= skipped -12, +12 lines =@@
  >e : Symbol(e, Decl(exhaustiveSwitchStatements1.ts, 35, 11))
  
          case E.A: return 0
@@ -30,7 +30,7 @@
      }
  }
  
-@@ -94,14 +94,14 @@
+@@= skipped -23, +23 lines =@@
  >e : Symbol(e, Decl(exhaustiveSwitchStatements1.ts, 42, 11))
  
              case E.A: return 0
@@ -49,7 +49,7 @@
          }
  }
  
-@@ -109,24 +109,24 @@
+@@= skipped -15, +15 lines =@@
  
  interface Square { kind: "square"; size: number; }
  >Square : Symbol(Square, Decl(exhaustiveSwitchStatements1.ts, 50, 1))
@@ -83,7 +83,7 @@
  
  type Shape = Square | Rectangle | Circle | Triangle;
  >Shape : Symbol(Shape, Decl(exhaustiveSwitchStatements1.ts, 60, 54))
-@@ -144,51 +144,51 @@
+@@= skipped -35, +35 lines =@@
  >area : Symbol(area, Decl(exhaustiveSwitchStatements1.ts, 65, 7))
  
      switch (s.kind) {
@@ -157,7 +157,7 @@
      }
      return area;
  >area : Symbol(area, Decl(exhaustiveSwitchStatements1.ts, 65, 7))
-@@ -206,47 +206,47 @@
+@@= skipped -62, +62 lines =@@
  >area : Symbol(area, Decl(exhaustiveSwitchStatements1.ts, 76, 7))
  
          switch (s.kind) {
@@ -227,7 +227,7 @@
          }
      })();
      return area;
-@@ -259,10 +259,10 @@
+@@= skipped -53, +53 lines =@@
  >MyEnum : Symbol(MyEnum, Decl(exhaustiveSwitchStatements1.ts, 86, 1))
  
  	A,
@@ -240,7 +240,7 @@
  }
  
  function thisGivesError(e: MyEnum): string {
-@@ -277,15 +277,15 @@
+@@= skipped -18, +18 lines =@@
  >e : Symbol(e, Decl(exhaustiveSwitchStatements1.ts, 95, 24))
  
  		case MyEnum.A: s = "it was A"; break;
@@ -260,7 +260,7 @@
  >s : Symbol(s, Decl(exhaustiveSwitchStatements1.ts, 96, 4))
  	}
  	return s;
-@@ -304,15 +304,15 @@
+@@= skipped -27, +27 lines =@@
  >e : Symbol(e, Decl(exhaustiveSwitchStatements1.ts, 104, 15))
  
  		case MyEnum.A: s = "it was A"; break;
@@ -280,7 +280,7 @@
  >s : Symbol(s, Decl(exhaustiveSwitchStatements1.ts, 105, 4))
  
  		default: s = "it was something else"; break;
-@@ -331,14 +331,14 @@
+@@= skipped -27, +27 lines =@@
  >e : Symbol(e, Decl(exhaustiveSwitchStatements1.ts, 114, 15))
  
  		case MyEnum.A: return "it was A";
@@ -299,7 +299,7 @@
  	}
  }
  
-@@ -348,10 +348,10 @@
+@@= skipped -17, +17 lines =@@
  >Level : Symbol(Level, Decl(exhaustiveSwitchStatements1.ts, 119, 1))
  
    One,
@@ -312,7 +312,7 @@
  }
  
  const doSomethingWithLevel = (level: Level) => {
-@@ -367,27 +367,27 @@
+@@= skipped -19, +19 lines =@@
  >level : Symbol(level, Decl(exhaustiveSwitchStatements1.ts, 128, 30))
  
      case Level.One:
@@ -348,7 +348,7 @@
  
        break;
    }
-@@ -402,20 +402,20 @@
+@@= skipped -35, +35 lines =@@
  >Square2 : Symbol(Square2, Decl(exhaustiveSwitchStatements1.ts, 139, 2))
  
      kind: "square";
@@ -373,7 +373,7 @@
  }
  
  type Shape2 = Square2 | Circle2;
-@@ -431,17 +431,17 @@
+@@= skipped -29, +29 lines =@@
  >Shape2 : Symbol(Shape2, Decl(exhaustiveSwitchStatements1.ts, 151, 1))
  
      switch (s1.kind) {
@@ -395,7 +395,7 @@
  
                  case "square":
                      return "2";
-@@ -461,17 +461,17 @@
+@@= skipped -30, +30 lines =@@
  >Shape2 : Symbol(Shape2, Decl(exhaustiveSwitchStatements1.ts, 151, 1))
  
      switch (s1.kind) {
@@ -417,7 +417,7 @@
  
                  case "square":
                      return "2";
-@@ -507,8 +507,8 @@
+@@= skipped -46, +46 lines =@@
  
  enum Animal { DOG, CAT }
  >Animal : Symbol(Animal, Decl(exhaustiveSwitchStatements1.ts, 194, 1))
@@ -428,7 +428,7 @@
  
  declare const zoo: { animal: Animal } | undefined;
  >zoo : Symbol(zoo, Decl(exhaustiveSwitchStatements1.ts, 200, 13))
-@@ -523,25 +523,25 @@
+@@= skipped -16, +16 lines =@@
  >zoo?.animal : Symbol(animal, Decl(exhaustiveSwitchStatements1.ts, 200, 20))
  >zoo : Symbol(zoo, Decl(exhaustiveSwitchStatements1.ts, 200, 13))
  >animal : Symbol(animal, Decl(exhaustiveSwitchStatements1.ts, 200, 20))

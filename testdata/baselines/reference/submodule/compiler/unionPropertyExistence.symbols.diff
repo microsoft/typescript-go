@@ -1,6 +1,6 @@
 --- old.unionPropertyExistence.symbols
 +++ new.unionPropertyExistence.symbols
-@@ -5,36 +5,36 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(unionPropertyExistence.ts, 0, 0))
  
      inAll: string;
@@ -45,7 +45,7 @@
  }
  
  type AB = A | B;
-@@ -69,9 +69,9 @@
+@@= skipped -64, +64 lines =@@
  >bFoo : Symbol(bFoo, Decl(unionPropertyExistence.ts, 24, 13))
  
  x.length; // Ok

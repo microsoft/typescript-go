@@ -1,6 +1,6 @@
 --- old.importAttributes1(module=es2015).symbols
 +++ new.importAttributes1(module=es2015).symbols
-@@ -58,36 +58,30 @@
+@@= skipped -58, +58 lines =@@
  === 3.ts ===
  const a = import('./0')
  >a : Symbol(a, Decl(3.ts, 0, 5))
@@ -37,7 +37,7 @@
  >foo : Symbol(foo, Decl(3.ts, 4, 28))
  
  const f = import()
-@@ -95,11 +89,9 @@
+@@= skipped -37, +31 lines =@@
  
  const g = import('./0', {}, {})
  >g : Symbol(g, Decl(3.ts, 8, 5))

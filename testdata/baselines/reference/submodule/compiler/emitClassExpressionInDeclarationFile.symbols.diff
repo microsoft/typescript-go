@@ -1,6 +1,6 @@
 --- old.emitClassExpressionInDeclarationFile.symbols
 +++ new.emitClassExpressionInDeclarationFile.symbols
-@@ -5,24 +5,24 @@
+@@= skipped -5, +5 lines =@@
  >simpleExample : Symbol(simpleExample, Decl(emitClassExpressionInDeclarationFile.ts, 0, 10))
  
      static getTags() { }
@@ -29,7 +29,7 @@
  >c : Symbol(c, Decl(emitClassExpressionInDeclarationFile.ts, 6, 9))
  >C : Symbol(C, Decl(emitClassExpressionInDeclarationFile.ts, 4, 30))
  >C : Symbol(C, Decl(emitClassExpressionInDeclarationFile.ts, 4, 30))
-@@ -34,10 +34,10 @@
+@@= skipped -29, +29 lines =@@
  >FooItem : Symbol(FooItem, Decl(emitClassExpressionInDeclarationFile.ts, 7, 1))
  
      foo(): void { }
@@ -42,7 +42,7 @@
  }
  
  export type Constructor<T> = new(...args: any[]) => T;
-@@ -58,10 +58,10 @@
+@@= skipped -24, +24 lines =@@
  >Base : Symbol(Base, Decl(emitClassExpressionInDeclarationFile.ts, 16, 57))
  
          static getTags(): void { }
@@ -55,7 +55,7 @@
      }
  }
  
-@@ -75,12 +75,12 @@
+@@= skipped -17, +17 lines =@@
  >Test : Symbol(Test, Decl(emitClassExpressionInDeclarationFile.ts, 21, 1))
  
  Test.getTags()

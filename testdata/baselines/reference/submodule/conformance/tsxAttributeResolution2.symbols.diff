@@ -1,6 +1,6 @@
 --- old.tsxAttributeResolution2.symbols
 +++ new.tsxAttributeResolution2.symbols
-@@ -11,7 +11,7 @@
+@@= skipped -11, +11 lines =@@
  >IntrinsicElements : Symbol(IntrinsicElements, Decl(file.tsx, 1, 22))
  
  		test1: Attribs1;
@@ -9,7 +9,7 @@
  >Attribs1 : Symbol(Attribs1, Decl(file.tsx, 5, 1))
  	}
  }
-@@ -19,21 +19,17 @@
+@@= skipped -8, +8 lines =@@
  >Attribs1 : Symbol(Attribs1, Decl(file.tsx, 5, 1))
  
  	c1?: (x: string) => void;
@@ -32,7 +32,7 @@
  >data-c1 : Symbol(data-c1, Decl(file.tsx, 12, 6))
  >x : Symbol(x, Decl(file.tsx, 12, 17))
  >x : Symbol(x, Decl(file.tsx, 12, 17))
-@@ -41,7 +37,6 @@
+@@= skipped -22, +18 lines =@@
  
  // Errors
  <test1 c1={(x) => x.leng} />; // Error, no leng on 'string'

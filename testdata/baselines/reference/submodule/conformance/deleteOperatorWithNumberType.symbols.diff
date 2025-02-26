@@ -1,6 +1,6 @@
 --- old.deleteOperatorWithNumberType.symbols
 +++ new.deleteOperatorWithNumberType.symbols
-@@ -15,10 +15,10 @@
+@@= skipped -15, +15 lines =@@
  >A : Symbol(A, Decl(deleteOperatorWithNumberType.ts, 4, 36))
  
      public a: number;
@@ -13,7 +13,7 @@
  }
  module M {
  >M : Symbol(M, Decl(deleteOperatorWithNumberType.ts, 9, 1))
-@@ -59,15 +59,15 @@
+@@= skipped -44, +44 lines =@@
  // number type expressions
  var ResultIsBoolean6 = delete objA.a;
  >ResultIsBoolean6 : Symbol(ResultIsBoolean6, Decl(deleteOperatorWithNumberType.ts, 26, 3))
@@ -33,7 +33,7 @@
  
  var ResultIsBoolean8 = delete NUMBER1[0];
  >ResultIsBoolean8 : Symbol(ResultIsBoolean8, Decl(deleteOperatorWithNumberType.ts, 28, 3))
-@@ -79,9 +79,9 @@
+@@= skipped -20, +20 lines =@@
  
  var ResultIsBoolean10 = delete A.foo();
  >ResultIsBoolean10 : Symbol(ResultIsBoolean10, Decl(deleteOperatorWithNumberType.ts, 30, 3))
@@ -45,7 +45,7 @@
  
  var ResultIsBoolean11 = delete (NUMBER + NUMBER);
  >ResultIsBoolean11 : Symbol(ResultIsBoolean11, Decl(deleteOperatorWithNumberType.ts, 31, 3))
-@@ -110,20 +110,20 @@
+@@= skipped -31, +31 lines =@@
  >foo : Symbol(foo, Decl(deleteOperatorWithNumberType.ts, 2, 31))
  
  delete objA.a;

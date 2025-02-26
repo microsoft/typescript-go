@@ -1,6 +1,6 @@
 --- old.narrowByInstanceof.symbols
 +++ new.narrowByInstanceof.symbols
-@@ -3,15 +3,15 @@
+@@= skipped -3, +3 lines =@@
  === narrowByInstanceof.ts ===
  interface A { a: string }
  >A : Symbol(A, Decl(narrowByInstanceof.ts, 0, 0))
@@ -19,7 +19,7 @@
  
  type AA = {
  >AA : Symbol(AA, Decl(narrowByInstanceof.ts, 2, 25))
-@@ -99,7 +99,7 @@
+@@= skipped -96, +96 lines =@@
  >Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      public check(o: any) {
@@ -28,7 +28,7 @@
  >o : Symbol(o, Decl(narrowByInstanceof.ts, 43, 17))
  
          return typeof o === "object" && o !== null && o instanceof Person;
-@@ -118,26 +118,26 @@
+@@= skipped -19, +19 lines =@@
  >Person : Symbol(Person, Decl(narrowByInstanceof.ts, 48, 30))
  
      work(): void { console.log("work") }
@@ -64,7 +64,7 @@
  }
  
  function test(o: Person | Car) {
-@@ -151,26 +151,26 @@
+@@= skipped -33, +33 lines =@@
  >cls : Symbol(cls, Decl(narrowByInstanceof.ts, 48, 5))
  
          console.log("Is Person");

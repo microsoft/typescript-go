@@ -1,6 +1,6 @@
 --- old.classDeclarationCheckUsedBeforeDefinitionInItself.symbols
 +++ new.classDeclarationCheckUsedBeforeDefinitionInItself.symbols
-@@ -5,6 +5,6 @@
+@@= skipped -5, +5 lines =@@
  >C3 : Symbol(C3, Decl(classDeclarationCheckUsedBeforeDefinitionInItself.ts, 0, 0))
  
      static intance = new C3();  // ok

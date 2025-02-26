@@ -1,6 +1,6 @@
 --- old.exponentiationOperatorWithUndefinedValueAndValidOperands.symbols
 +++ new.exponentiationOperatorWithUndefinedValueAndValidOperands.symbols
-@@ -8,10 +8,10 @@
+@@= skipped -8, +8 lines =@@
  >E : Symbol(E, Decl(exponentiationOperatorWithUndefinedValueAndValidOperands.ts, 0, 0))
  
      a,
@@ -13,7 +13,7 @@
  }
  
  var a: any;
-@@ -38,9 +38,9 @@
+@@= skipped -30, +30 lines =@@
  var rk4 = undefined ** E.a;
  >rk4 : Symbol(rk4, Decl(exponentiationOperatorWithUndefinedValueAndValidOperands.ts, 15, 3))
  >undefined : Symbol(undefined)
@@ -25,7 +25,7 @@
  
  var rk5 = a ** undefined;
  >rk5 : Symbol(rk5, Decl(exponentiationOperatorWithUndefinedValueAndValidOperands.ts, 16, 3))
-@@ -58,8 +58,8 @@
+@@= skipped -20, +20 lines =@@
  
  var rk8 = E.b ** undefined;
  >rk8 : Symbol(rk8, Decl(exponentiationOperatorWithUndefinedValueAndValidOperands.ts, 19, 3))

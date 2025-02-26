@@ -1,6 +1,6 @@
 --- old.spreadNonObject1.symbols
 +++ new.spreadNonObject1.symbols
-@@ -11,9 +11,9 @@
+@@= skipped -11, +11 lines =@@
  
    c: (["4"] as S[]).map(function (s) {
  >c : Symbol(c, Decl(spreadNonObject1.ts, 3, 11))

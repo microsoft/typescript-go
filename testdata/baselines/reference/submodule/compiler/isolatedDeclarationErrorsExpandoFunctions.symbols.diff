@@ -1,6 +1,6 @@
 --- old.isolatedDeclarationErrorsExpandoFunctions.symbols
 +++ new.isolatedDeclarationErrorsExpandoFunctions.symbols
-@@ -2,40 +2,40 @@
+@@= skipped -2, +2 lines =@@
  
  === isolatedDeclarationErrorsExpandoFunctions.ts ===
  export function foo() {}

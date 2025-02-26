@@ -1,6 +1,6 @@
 --- old.partialOfLargeAPIIsAbleToBeWorkedWith.symbols
 +++ new.partialOfLargeAPIIsAbleToBeWorkedWith.symbols
-@@ -5,211 +5,211 @@
+@@= skipped -5, +5 lines =@@
  >MyAPI : Symbol(MyAPI, Decl(partialOfLargeAPIIsAbleToBeWorkedWith.ts, 0, 0))
  
      0: (x: 0) => string;

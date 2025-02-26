@@ -1,6 +1,6 @@
 --- old.genericCallWithFixedArguments.symbols
 +++ new.genericCallWithFixedArguments.symbols
-@@ -3,11 +3,11 @@
+@@= skipped -3, +3 lines =@@
  === genericCallWithFixedArguments.ts ===
  class A { foo() { } }
  >A : Symbol(A, Decl(genericCallWithFixedArguments.ts, 0, 0))

@@ -1,6 +1,6 @@
 --- old.nullishCoalescingOperator9.symbols
 +++ new.nullishCoalescingOperator9.symbols
-@@ -9,15 +9,15 @@
+@@= skipped -9, +9 lines =@@
  >g : Symbol(g, Decl(nullishCoalescingOperator9.ts, 2, 3))
  >f : Symbol(f, Decl(nullishCoalescingOperator9.ts, 0, 11))
  >abc : Symbol(abc, Decl(nullishCoalescingOperator9.ts, 2, 14))

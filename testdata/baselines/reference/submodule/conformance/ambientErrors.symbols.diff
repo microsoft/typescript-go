@@ -1,6 +1,6 @@
 --- old.ambientErrors.symbols
 +++ new.ambientErrors.symbols
-@@ -46,7 +46,7 @@
+@@= skipped -46, +46 lines =@@
  >E1 : Symbol(E1, Decl(ambientErrors.ts, 19, 27))
  
      y = 4.23
@@ -9,7 +9,7 @@
  }
  
  // Ambient enum with computer member
-@@ -54,9 +54,9 @@
+@@= skipped -8, +8 lines =@@
  >E2 : Symbol(E2, Decl(ambientErrors.ts, 24, 1))
  
      x = 'foo'.length
@@ -22,7 +22,7 @@
  }
  
  // Ambient module with initializers for values, bodies for functions / classes
-@@ -73,17 +73,17 @@
+@@= skipped -19, +19 lines =@@
  >C : Symbol(C, Decl(ambientErrors.ts, 34, 21))
  
          static x = 3;
@@ -44,7 +44,7 @@
      }
  }
  
-@@ -92,16 +92,16 @@
+@@= skipped -19, +19 lines =@@
  >M2 : Symbol(M2, Decl(ambientErrors.ts, 42, 1))
  
      declare module 'nope' { }

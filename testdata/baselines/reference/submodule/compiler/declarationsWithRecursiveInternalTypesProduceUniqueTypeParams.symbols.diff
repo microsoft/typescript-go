@@ -1,6 +1,6 @@
 --- old.declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.symbols
 +++ new.declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.symbols
-@@ -39,9 +39,9 @@
+@@= skipped -39, +39 lines =@@
  >set : Symbol(set, Decl(declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.ts, 8, 13))
  >newU : Symbol(newU, Decl(declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.ts, 8, 21))
  >U : Symbol(U, Decl(declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.ts, 7, 20))
@@ -12,7 +12,7 @@
  >u : Symbol(u, Decl(declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.ts, 7, 23))
  >newU : Symbol(newU, Decl(declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.ts, 8, 21))
  >t : Symbol(t, Decl(declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.ts, 6, 35))
-@@ -49,9 +49,9 @@
+@@= skipped -10, +10 lines =@@
  >newU : Symbol(newU, Decl(declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.ts, 8, 21))
  
          return Object.assign(
@@ -24,7 +24,7 @@
  
              <K extends Key<U>>(key: K) =>
  >K : Symbol(K, Decl(declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.ts, 10, 13))
-@@ -78,12 +78,12 @@
+@@= skipped -29, +29 lines =@@
  
                      return update(Object.assign(Array.isArray(u) ? [] : {}, u, { [key]: v }));
  >update : Symbol(update, Decl(declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.ts, 7, 28))

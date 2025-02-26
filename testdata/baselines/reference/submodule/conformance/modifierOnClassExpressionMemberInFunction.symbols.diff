@@ -1,6 +1,6 @@
 --- old.modifierOnClassExpressionMemberInFunction.symbols
 +++ new.modifierOnClassExpressionMemberInFunction.symbols
-@@ -9,12 +9,12 @@
+@@= skipped -9, +9 lines =@@
  >C : Symbol(C, Decl(modifierOnClassExpressionMemberInFunction.ts, 1, 11))
  
          public prop1 = 1;

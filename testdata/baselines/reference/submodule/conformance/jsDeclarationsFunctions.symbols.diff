@@ -1,6 +1,6 @@
 --- old.jsDeclarationsFunctions.symbols
 +++ new.jsDeclarationsFunctions.symbols
-@@ -5,20 +5,20 @@
+@@= skipped -5, +5 lines =@@
  >a : Symbol(a, Decl(index.js, 0, 0))
  
  export function b() {}
@@ -29,7 +29,7 @@
  
  /**
   * @param {number} a
-@@ -46,17 +46,17 @@
+@@= skipped -41, +41 lines =@@
   * @param {T} a
   */
  export function f(a) {
@@ -52,7 +52,7 @@
  
  /**
   * @param {{x: string}} a
-@@ -68,12 +68,8 @@
+@@= skipped -22, +22 lines =@@
  >b : Symbol(b, Decl(index.js, 36, 13))
  
      return a.x && b.y();
@@ -65,7 +65,7 @@
  }
  
  export { g };
-@@ -89,12 +85,8 @@
+@@= skipped -21, +17 lines =@@
  >b : Symbol(b, Decl(index.js, 46, 14))
  
      return a.x && b.y();

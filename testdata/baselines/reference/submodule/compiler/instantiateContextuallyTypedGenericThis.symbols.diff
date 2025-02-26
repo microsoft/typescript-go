@@ -1,6 +1,6 @@
 --- old.instantiateContextuallyTypedGenericThis.symbols
 +++ new.instantiateContextuallyTypedGenericThis.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >JQuery : Symbol(JQuery, Decl(instantiateContextuallyTypedGenericThis.ts, 0, 0))
  
      each<T>(
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(instantiateContextuallyTypedGenericThis.ts, 1, 9))
  
          collection: T[], callback: (this: T, dit: T) => T
-@@ -30,19 +30,19 @@
+@@= skipped -25, +25 lines =@@
  >lines : Symbol(lines, Decl(instantiateContextuallyTypedGenericThis.ts, 7, 3))
  
  $.each(lines, function(dit) {

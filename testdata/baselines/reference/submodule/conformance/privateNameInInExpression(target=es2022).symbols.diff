@@ -1,6 +1,6 @@
 --- old.privateNameInInExpression(target=es2022).symbols
 +++ new.privateNameInInExpression(target=es2022).symbols
-@@ -5,59 +5,59 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(privateNameInInExpression.ts, 0, 0))
  
      #field = 1;
@@ -73,7 +73,7 @@
  >v : Symbol(v, Decl(privateNameInInExpression.ts, 19, 11))
  
          const b = #fiel in v; // Bad - typo in privateID
-@@ -73,24 +73,24 @@
+@@= skipped -68, +68 lines =@@
  
          for (let d in #field in v) { /**/ } // Bad - rhs of in should be a object/any
  >d : Symbol(d, Decl(privateNameInInExpression.ts, 28, 16))
@@ -102,7 +102,7 @@
  >u : Symbol(u, Decl(privateNameInInExpression.ts, 35, 9))
  >n : Symbol(n, Decl(privateNameInInExpression.ts, 35, 20))
  >fb : Symbol(fb, Decl(privateNameInInExpression.ts, 35, 30))
-@@ -112,7 +112,7 @@
+@@= skipped -39, +39 lines =@@
  >u : Symbol(u, Decl(privateNameInInExpression.ts, 35, 9))
  
              if (#field in n) {
@@ -111,7 +111,7 @@
  >n : Symbol(n, Decl(privateNameInInExpression.ts, 35, 20))
  
                  n; // good n is never
-@@ -120,7 +120,7 @@
+@@= skipped -8, +8 lines =@@
              }
  
              if (#field in u) {
@@ -120,7 +120,7 @@
  >u : Symbol(u, Decl(privateNameInInExpression.ts, 35, 9))
  
                  u; // good u is Foo
-@@ -135,7 +135,7 @@
+@@= skipped -15, +15 lines =@@
  >u : Symbol(u, Decl(privateNameInInExpression.ts, 35, 9))
  
                  if (#field in u) {
@@ -129,7 +129,7 @@
  >u : Symbol(u, Decl(privateNameInInExpression.ts, 35, 9))
  
                      u; // good u is Foo
-@@ -147,7 +147,7 @@
+@@= skipped -12, +12 lines =@@
                  }
  
                  if (#method in u) {
@@ -138,7 +138,7 @@
  >u : Symbol(u, Decl(privateNameInInExpression.ts, 35, 9))
  
                      u; // good u is Foo
-@@ -155,7 +155,7 @@
+@@= skipped -8, +8 lines =@@
                  }
  
                  if (#staticField in u) {
@@ -147,7 +147,7 @@
  >u : Symbol(u, Decl(privateNameInInExpression.ts, 35, 9))
  
                      u; // good u is typeof Foo
-@@ -163,7 +163,7 @@
+@@= skipped -8, +8 lines =@@
                  }
  
                  if (#staticMethod in u) {
@@ -156,7 +156,7 @@
  >u : Symbol(u, Decl(privateNameInInExpression.ts, 35, 9))
  
                      u; // good u is typeof Foo
-@@ -173,7 +173,7 @@
+@@= skipped -10, +10 lines =@@
          }
  
          if (#field in fb) {
@@ -165,7 +165,7 @@
  >fb : Symbol(fb, Decl(privateNameInInExpression.ts, 35, 30))
  
              fb; // good fb is Foo
-@@ -185,7 +185,7 @@
+@@= skipped -12, +12 lines =@@
          }
  
          if (#field in fs) {
@@ -174,7 +174,7 @@
  >fs : Symbol(fs, Decl(privateNameInInExpression.ts, 35, 45))
  
              fs; // good fs is FooSub
-@@ -197,7 +197,7 @@
+@@= skipped -12, +12 lines =@@
          }
  
          if (#field in b) {
@@ -183,7 +183,7 @@
  >b : Symbol(b, Decl(privateNameInInExpression.ts, 35, 57))
  
              b; // good b is 'Bar & Foo'
-@@ -209,7 +209,7 @@
+@@= skipped -12, +12 lines =@@
          }
  
          if (#field in fsb) {
@@ -192,7 +192,7 @@
  >fsb : Symbol(fsb, Decl(privateNameInInExpression.ts, 35, 65))
  
              fsb; // good fsb is FooSub
-@@ -221,7 +221,7 @@
+@@= skipped -12, +12 lines =@@
          }
  
          if (#field in fsfb) {
@@ -201,7 +201,7 @@
  >fsfb : Symbol(fsfb, Decl(privateNameInInExpression.ts, 35, 84))
  
              fsfb; // good fsfb is 'Foo | FooSub'
-@@ -236,11 +236,11 @@
+@@= skipped -15, +15 lines =@@
  >Nested : Symbol(Nested, Decl(privateNameInInExpression.ts, 97, 9))
  
              m(v: any) {
@@ -215,7 +215,7 @@
  >v : Symbol(v, Decl(privateNameInInExpression.ts, 100, 14))
  
                      v; // good v is Foo
-@@ -254,11 +254,11 @@
+@@= skipped -18, +18 lines =@@
  class FooSub extends Foo { subTypeOfFoo = true }
  >FooSub : Symbol(FooSub, Decl(privateNameInInExpression.ts, 107, 1))
  >Foo : Symbol(Foo, Decl(privateNameInInExpression.ts, 0, 0))

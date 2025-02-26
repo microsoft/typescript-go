@@ -1,6 +1,6 @@
 --- old.typeMatch2.symbols
 +++ new.typeMatch2.symbols
-@@ -30,12 +30,12 @@
+@@= skipped -30, +30 lines =@@
  
  class Animal { private a; }
  >Animal : Symbol(Animal, Decl(typeMatch2.ts, 6, 1))

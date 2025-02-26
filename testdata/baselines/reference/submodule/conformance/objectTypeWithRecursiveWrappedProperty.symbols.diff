@@ -1,6 +1,6 @@
 --- old.objectTypeWithRecursiveWrappedProperty.symbols
 +++ new.objectTypeWithRecursiveWrappedProperty.symbols
-@@ -8,11 +8,11 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(objectTypeWithRecursiveWrappedProperty.ts, 2, 11))
  
      data: T;

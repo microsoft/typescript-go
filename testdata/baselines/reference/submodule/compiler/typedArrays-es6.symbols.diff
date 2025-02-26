@@ -1,6 +1,6 @@
 --- old.typedArrays-es6.symbols
 +++ new.typedArrays-es6.symbols
-@@ -3,70 +3,60 @@
+@@= skipped -3, +3 lines =@@
  === typedArrays-es6.ts ===
  const float32Array = new Float32Array(1);
  >float32Array : Symbol(float32Array, Decl(typedArrays-es6.ts, 0, 5))

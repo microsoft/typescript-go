@@ -1,6 +1,6 @@
 --- old.chainedSpecializationToObjectTypeLiteral.symbols
 +++ new.chainedSpecializationToObjectTypeLiteral.symbols
-@@ -6,13 +6,13 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(chainedSpecializationToObjectTypeLiteral.ts, 0, 19))
  
      each(iterator: (value: T) => void): void;
@@ -16,7 +16,7 @@
  >U : Symbol(U, Decl(chainedSpecializationToObjectTypeLiteral.ts, 2, 8))
  >iterator : Symbol(iterator, Decl(chainedSpecializationToObjectTypeLiteral.ts, 2, 11))
  >value : Symbol(value, Decl(chainedSpecializationToObjectTypeLiteral.ts, 2, 22))
-@@ -22,7 +22,7 @@
+@@= skipped -16, +16 lines =@@
  >U : Symbol(U, Decl(chainedSpecializationToObjectTypeLiteral.ts, 2, 8))
  
      filter(iterator: (value: T) => boolean): Sequence<T>;
@@ -25,7 +25,7 @@
  >iterator : Symbol(iterator, Decl(chainedSpecializationToObjectTypeLiteral.ts, 3, 11))
  >value : Symbol(value, Decl(chainedSpecializationToObjectTypeLiteral.ts, 3, 22))
  >T : Symbol(T, Decl(chainedSpecializationToObjectTypeLiteral.ts, 0, 19))
-@@ -30,7 +30,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(chainedSpecializationToObjectTypeLiteral.ts, 0, 19))
  
      groupBy<K>(keySelector: (value: T) => K): Sequence<{ key: K; items: T[]; }>;
@@ -34,7 +34,7 @@
  >K : Symbol(K, Decl(chainedSpecializationToObjectTypeLiteral.ts, 4, 12))
  >keySelector : Symbol(keySelector, Decl(chainedSpecializationToObjectTypeLiteral.ts, 4, 15))
  >value : Symbol(value, Decl(chainedSpecializationToObjectTypeLiteral.ts, 4, 29))
-@@ -49,19 +49,19 @@
+@@= skipped -19, +19 lines =@@
  
  var s2 = s.groupBy(s => s.length);
  >s2 : Symbol(s2, Decl(chainedSpecializationToObjectTypeLiteral.ts, 8, 3))

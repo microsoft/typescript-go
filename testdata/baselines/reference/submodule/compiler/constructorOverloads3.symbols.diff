@@ -1,6 +1,6 @@
 --- old.constructorOverloads3.symbols
 +++ new.constructorOverloads3.symbols
-@@ -33,7 +33,7 @@
+@@= skipped -33, +33 lines =@@
  >y : Symbol(y, Decl(constructorOverloads3.ts, 11, 23))
  
      bar1() { /*WScript.Echo("Yo");*/}
@@ -9,7 +9,7 @@
  }
  
  var f1 = new Foo("hey");
-@@ -57,7 +57,7 @@
+@@= skipped -24, +24 lines =@@
  >f3 : Symbol(f3, Decl(constructorOverloads3.ts, 17, 3))
  
  f1.bar1();

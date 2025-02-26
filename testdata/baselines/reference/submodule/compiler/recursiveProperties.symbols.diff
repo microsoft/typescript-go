@@ -1,6 +1,6 @@
 --- old.recursiveProperties.symbols
 +++ new.recursiveProperties.symbols
-@@ -5,20 +5,20 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(recursiveProperties.ts, 0, 0))
  
      get testProp() { return this.testProp; }

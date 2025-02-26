@@ -1,6 +1,6 @@
 --- old.umd6.symbols
 +++ new.umd6.symbols
-@@ -4,9 +4,9 @@
+@@= skipped -4, +4 lines =@@
  /// <reference path="foo.d.ts" />
  let y: number = Foo.fn();
  >y : Symbol(y, Decl(a.ts, 1, 3))

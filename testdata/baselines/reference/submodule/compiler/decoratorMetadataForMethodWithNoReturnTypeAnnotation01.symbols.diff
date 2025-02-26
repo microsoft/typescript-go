@@ -1,6 +1,6 @@
 --- old.decoratorMetadataForMethodWithNoReturnTypeAnnotation01.symbols
 +++ new.decoratorMetadataForMethodWithNoReturnTypeAnnotation01.symbols
-@@ -17,7 +17,7 @@
+@@= skipped -17, +17 lines =@@
  >decorator : Symbol(decorator, Decl(decoratorMetadataForMethodWithNoReturnTypeAnnotation01.ts, 0, 11))
  
      doSomething() {

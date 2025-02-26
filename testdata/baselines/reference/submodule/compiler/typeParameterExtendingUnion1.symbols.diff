@@ -1,6 +1,6 @@
 --- old.typeParameterExtendingUnion1.symbols
 +++ new.typeParameterExtendingUnion1.symbols
-@@ -3,17 +3,17 @@
+@@= skipped -3, +3 lines =@@
  === typeParameterExtendingUnion1.ts ===
  class Animal { run() { } }
  >Animal : Symbol(Animal, Decl(typeParameterExtendingUnion1.ts, 0, 0))
@@ -21,7 +21,7 @@
  
  function run(a: Animal) {
  >run : Symbol(run, Decl(typeParameterExtendingUnion1.ts, 2, 33))
-@@ -21,9 +21,9 @@
+@@= skipped -18, +18 lines =@@
  >Animal : Symbol(Animal, Decl(typeParameterExtendingUnion1.ts, 0, 0))
  
      a.run();
@@ -33,7 +33,7 @@
  }
  
  function f<T extends Cat | Dog>(a: T) {
-@@ -35,9 +35,9 @@
+@@= skipped -14, +14 lines =@@
  >T : Symbol(T, Decl(typeParameterExtendingUnion1.ts, 8, 11))
  
      a.run();

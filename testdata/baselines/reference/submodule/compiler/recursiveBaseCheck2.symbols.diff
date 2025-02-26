@@ -1,6 +1,6 @@
 --- old.recursiveBaseCheck2.symbols
 +++ new.recursiveBaseCheck2.symbols
-@@ -27,13 +27,13 @@
+@@= skipped -27, +27 lines =@@
  
      export class b2ContactListener extends Box2D.Collision.Shapes.b2Shape {
  >b2ContactListener : Symbol(b2ContactListener, Decl(recursiveBaseCheck2.ts, 6, 31))

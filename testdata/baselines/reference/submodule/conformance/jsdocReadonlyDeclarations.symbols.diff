@@ -1,6 +1,6 @@
 --- old.jsdocReadonlyDeclarations.symbols
 +++ new.jsdocReadonlyDeclarations.symbols
-@@ -6,16 +6,16 @@
+@@= skipped -6, +6 lines =@@
  
      /** @readonly */
      x = 6
@@ -20,7 +20,7 @@
  >n : Symbol(n, Decl(jsdocReadonlyDeclarations.js, 4, 16))
  
          /**
-@@ -23,25 +23,20 @@
+@@= skipped -17, +17 lines =@@
           * @type {number}
           */
          this.y = n

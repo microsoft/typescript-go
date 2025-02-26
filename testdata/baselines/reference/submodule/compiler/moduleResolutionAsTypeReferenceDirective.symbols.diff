@@ -1,6 +1,6 @@
 --- old.moduleResolutionAsTypeReferenceDirective.symbols
 +++ new.moduleResolutionAsTypeReferenceDirective.symbols
-@@ -4,7 +4,3 @@
+@@= skipped -4, +4 lines =@@
  import { a2 } from "phaser";
  >a2 : Symbol(a2, Decl(a.ts, 0, 8))
  

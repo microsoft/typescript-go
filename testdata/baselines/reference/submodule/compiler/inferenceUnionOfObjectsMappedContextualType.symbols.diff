@@ -1,6 +1,6 @@
 --- old.inferenceUnionOfObjectsMappedContextualType.symbols
 +++ new.inferenceUnionOfObjectsMappedContextualType.symbols
-@@ -51,8 +51,8 @@
+@@= skipped -51, +51 lines =@@
  >formatter : Symbol(formatter, Decl(inferenceUnionOfObjectsMappedContextualType.ts, 12, 23))
  >value : Symbol(value, Decl(inferenceUnionOfObjectsMappedContextualType.ts, 13, 16))
  >value : Symbol(value, Decl(inferenceUnionOfObjectsMappedContextualType.ts, 13, 16))

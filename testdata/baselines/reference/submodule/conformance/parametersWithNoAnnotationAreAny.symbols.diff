@@ -1,6 +1,6 @@
 --- old.parametersWithNoAnnotationAreAny.symbols
 +++ new.parametersWithNoAnnotationAreAny.symbols
-@@ -27,7 +27,7 @@
+@@= skipped -27, +27 lines =@@
  >C : Symbol(C, Decl(parametersWithNoAnnotationAreAny.ts, 3, 21))
  
      foo(x) {
@@ -9,7 +9,7 @@
  >x : Symbol(x, Decl(parametersWithNoAnnotationAreAny.ts, 6, 8))
  
          return x;
-@@ -39,11 +39,11 @@
+@@= skipped -12, +12 lines =@@
  >I : Symbol(I, Decl(parametersWithNoAnnotationAreAny.ts, 9, 1))
  
      foo(x);

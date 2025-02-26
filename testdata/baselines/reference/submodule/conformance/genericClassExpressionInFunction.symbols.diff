@@ -1,6 +1,6 @@
 --- old.genericClassExpressionInFunction.symbols
 +++ new.genericClassExpressionInFunction.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(genericClassExpressionInFunction.ts, 0, 8))
  
      genericVar: T
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(genericClassExpressionInFunction.ts, 0, 8))
  }
  function B1<U>() {
-@@ -23,7 +23,7 @@
+@@= skipped -17, +17 lines =@@
  >V : Symbol(V, Decl(genericClassExpressionInFunction.ts, 7, 9))
  
      anon = class extends A<V> { }
@@ -18,7 +18,7 @@
  >A : Symbol(A, Decl(genericClassExpressionInFunction.ts, 0, 0))
  >V : Symbol(V, Decl(genericClassExpressionInFunction.ts, 7, 9))
  }
-@@ -43,16 +43,16 @@
+@@= skipped -20, +20 lines =@@
  >B1 : Symbol(B1, Decl(genericClassExpressionInFunction.ts, 2, 1))
  
      namae: string;
@@ -39,7 +39,7 @@
  }
  let b3Number = B3<number>();
  >b3Number : Symbol(b3Number, Decl(genericClassExpressionInFunction.ts, 20, 3))
-@@ -63,7 +63,7 @@
+@@= skipped -20, +20 lines =@@
  >b3Number : Symbol(b3Number, Decl(genericClassExpressionInFunction.ts, 20, 3))
  
      nom: string;
@@ -48,7 +48,7 @@
  }
  var c = new C();
  >c : Symbol(c, Decl(genericClassExpressionInFunction.ts, 24, 3))
-@@ -78,17 +78,17 @@
+@@= skipped -15, +15 lines =@@
  >S : Symbol(S, Decl(genericClassExpressionInFunction.ts, 20, 28))
  
  c.genericVar = 12;

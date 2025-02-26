@@ -1,6 +1,6 @@
 --- old.varArgsOnConstructorTypes.symbols
 +++ new.varArgsOnConstructorTypes.symbols
-@@ -13,10 +13,10 @@
+@@= skipped -13, +13 lines =@@
  >A : Symbol(A, Decl(varArgsOnConstructorTypes.ts, 0, 0))
  
      private p1: number;
@@ -13,7 +13,7 @@
  
      constructor(element: any, url: string) {
  >element : Symbol(element, Decl(varArgsOnConstructorTypes.ts, 8, 16))
-@@ -27,15 +27,15 @@
+@@= skipped -14, +14 lines =@@
  >element : Symbol(element, Decl(varArgsOnConstructorTypes.ts, 8, 16))
  
          this.p1 = element;
@@ -33,7 +33,7 @@
  >url : Symbol(url, Decl(varArgsOnConstructorTypes.ts, 8, 29))
      }
  }
-@@ -44,13 +44,13 @@
+@@= skipped -17, +17 lines =@@
  >I1 : Symbol(I1, Decl(varArgsOnConstructorTypes.ts, 13, 1))
  
      register(inputClass: new(...params: any[]) => A);
@@ -49,7 +49,7 @@
  >inputClass : Symbol(inputClass, Decl(varArgsOnConstructorTypes.ts, 17, 13))
  >params : Symbol(params, Decl(varArgsOnConstructorTypes.ts, 17, 32))
  >A : Symbol(A, Decl(varArgsOnConstructorTypes.ts, 0, 0))
-@@ -62,8 +62,8 @@
+@@= skipped -18, +18 lines =@@
  >I1 : Symbol(I1, Decl(varArgsOnConstructorTypes.ts, 13, 1))
  
  reg.register(B);

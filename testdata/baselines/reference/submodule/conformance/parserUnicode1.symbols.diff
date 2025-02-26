@@ -1,6 +1,6 @@
 --- old.parserUnicode1.symbols
 +++ new.parserUnicode1.symbols
-@@ -3,19 +3,19 @@
+@@= skipped -3, +3 lines =@@
  === parserUnicode1.ts ===
  try {
    var \u0078x = 6;

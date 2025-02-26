@@ -1,6 +1,6 @@
 --- old.topLevelAwaitErrors.1(module=es2022).symbols
 +++ new.topLevelAwaitErrors.1(module=es2022).symbols
-@@ -34,24 +34,24 @@
+@@= skipped -34, +34 lines =@@
  
      @await
      ["foo"]() {}
@@ -31,7 +31,7 @@
  }
  
  // await in parameter decorators should fail
-@@ -59,15 +59,15 @@
+@@= skipped -25, +25 lines =@@
  >C7 : Symbol(C7, Decl(topLevelAwaitErrors.1.ts, 35, 1))
  
      method1(@await [x]) {}

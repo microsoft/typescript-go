@@ -1,6 +1,6 @@
 --- old.emitMethodCalledNew.symbols
 +++ new.emitMethodCalledNew.symbols
-@@ -15,7 +15,7 @@
+@@= skipped -15, +15 lines =@@
  >b : Symbol(b, Decl(emitMethodCalledNew.ts, 5, 12))
  
    "new"(x: number) { return x + 1 }
@@ -9,7 +9,7 @@
  >x : Symbol(x, Decl(emitMethodCalledNew.ts, 6, 8))
  >x : Symbol(x, Decl(emitMethodCalledNew.ts, 6, 8))
  }
-@@ -23,8 +23,8 @@
+@@= skipped -8, +8 lines =@@
  >c : Symbol(c, Decl(emitMethodCalledNew.ts, 8, 12))
  
    ["new"](x: number) { return x + 1 }

@@ -1,6 +1,6 @@
 --- old.systemModule17.symbols
 +++ new.systemModule17.symbols
-@@ -27,18 +27,16 @@
+@@= skipped -27, +27 lines =@@
  import IX = N.x;
  >IX : Symbol(IX, Decl(f2.ts, 6, 1))
  >N : Symbol(N, Decl(f2.ts, 1, 15))

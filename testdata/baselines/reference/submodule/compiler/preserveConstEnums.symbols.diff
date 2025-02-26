@@ -1,6 +1,6 @@
 --- old.preserveConstEnums.symbols
 +++ new.preserveConstEnums.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >E : Symbol(E, Decl(preserveConstEnums.ts, 0, 0))
  
      Value = 1, Value2 = Value

@@ -1,6 +1,6 @@
 --- old.typeFromPropertyAssignment37.symbols
 +++ new.typeFromPropertyAssignment37.symbols
-@@ -3,34 +3,13 @@
+@@= skipped -3, +3 lines =@@
  === use.js ===
  const util = require('./mod')
  >util : Symbol(util, Decl(use.js, 0, 5))

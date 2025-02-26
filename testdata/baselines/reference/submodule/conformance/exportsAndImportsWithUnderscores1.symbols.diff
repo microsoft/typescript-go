@@ -1,6 +1,6 @@
 --- old.exportsAndImportsWithUnderscores1.symbols
 +++ new.exportsAndImportsWithUnderscores1.symbols
-@@ -8,13 +8,13 @@
+@@= skipped -8, +8 lines =@@
  >R : Symbol(R, Decl(m1.ts, 0, 3))
  
      "__": 20,

@@ -1,6 +1,6 @@
 --- old.duplicatePackage_globalMerge.symbols
 +++ new.duplicatePackage_globalMerge.symbols
-@@ -23,8 +23,6 @@
+@@= skipped -23, +23 lines =@@
  
  === /tests/node_modules/@types/react/index.d.ts ===
  

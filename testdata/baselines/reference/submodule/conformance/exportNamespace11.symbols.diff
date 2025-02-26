@@ -1,6 +1,6 @@
 --- old.exportNamespace11.symbols
 +++ new.exportNamespace11.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  const ghost: intermediate.Ghost = new intermediate.Ghost()
  >ghost : Symbol(ghost, Decl(main.ts, 1, 5))
  >intermediate : Symbol(intermediate, Decl(main.ts, 0, 6))

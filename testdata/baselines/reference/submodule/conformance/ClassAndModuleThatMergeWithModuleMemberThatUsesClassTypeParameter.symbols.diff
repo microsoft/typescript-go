@@ -1,6 +1,6 @@
 --- old.ClassAndModuleThatMergeWithModuleMemberThatUsesClassTypeParameter.symbols
 +++ new.ClassAndModuleThatMergeWithModuleMemberThatUsesClassTypeParameter.symbols
-@@ -8,10 +8,10 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(ClassAndModuleThatMergeWithModuleMemberThatUsesClassTypeParameter.ts, 2, 15))
  
      id: string;
@@ -13,7 +13,7 @@
  >T : Symbol(T, Decl(ClassAndModuleThatMergeWithModuleMemberThatUsesClassTypeParameter.ts, 2, 15))
  }
  
-@@ -29,10 +29,10 @@
+@@= skipped -21, +21 lines =@@
  >T : Symbol(T, Decl(ClassAndModuleThatMergeWithModuleMemberThatUsesClassTypeParameter.ts, 12, 15))
  
      id: string;
@@ -26,7 +26,7 @@
  >T : Symbol(T, Decl(ClassAndModuleThatMergeWithModuleMemberThatUsesClassTypeParameter.ts, 12, 15))
  }
  
-@@ -49,10 +49,10 @@
+@@= skipped -20, +20 lines =@@
  >T : Symbol(T)
  
          id: string;
@@ -39,7 +39,7 @@
  >U : Symbol(U, Decl(ClassAndModuleThatMergeWithModuleMemberThatUsesClassTypeParameter.ts, 21, 12))
      }
  }
-@@ -62,10 +62,10 @@
+@@= skipped -13, +13 lines =@@
  >T : Symbol(T, Decl(ClassAndModuleThatMergeWithModuleMemberThatUsesClassTypeParameter.ts, 27, 15))
  
      id: string;
@@ -52,7 +52,7 @@
  >T : Symbol(T, Decl(ClassAndModuleThatMergeWithModuleMemberThatUsesClassTypeParameter.ts, 27, 15))
  }
  
-@@ -82,10 +82,10 @@
+@@= skipped -20, +20 lines =@@
  >T : Symbol(T, Decl(ClassAndModuleThatMergeWithModuleMemberThatUsesClassTypeParameter.ts, 37, 15))
  
      id: string;
@@ -65,7 +65,7 @@
  >T : Symbol(T, Decl(ClassAndModuleThatMergeWithModuleMemberThatUsesClassTypeParameter.ts, 37, 15))
  }
  
-@@ -96,7 +96,7 @@
+@@= skipped -14, +14 lines =@@
  >D : Symbol(D, Decl(ClassAndModuleThatMergeWithModuleMemberThatUsesClassTypeParameter.ts, 43, 17))
  
          name: T;

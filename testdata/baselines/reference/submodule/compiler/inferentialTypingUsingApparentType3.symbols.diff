@@ -1,6 +1,6 @@
 --- old.inferentialTypingUsingApparentType3.symbols
 +++ new.inferentialTypingUsingApparentType3.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(inferentialTypingUsingApparentType3.ts, 0, 16))
  
      clean(input: T): T
@@ -9,7 +9,7 @@
  >input : Symbol(input, Decl(inferentialTypingUsingApparentType3.ts, 1, 10))
  >T : Symbol(T, Decl(inferentialTypingUsingApparentType3.ts, 0, 16))
  >T : Symbol(T, Decl(inferentialTypingUsingApparentType3.ts, 0, 16))
-@@ -17,7 +17,7 @@
+@@= skipped -11, +11 lines =@@
  >Field : Symbol(Field, Decl(inferentialTypingUsingApparentType3.ts, 0, 0))
  
      clean(input: string) {
@@ -18,7 +18,7 @@
  >input : Symbol(input, Decl(inferentialTypingUsingApparentType3.ts, 5, 10))
  
          return "Yup";
-@@ -29,7 +29,7 @@
+@@= skipped -12, +12 lines =@@
  >Field : Symbol(Field, Decl(inferentialTypingUsingApparentType3.ts, 0, 0))
  
      clean(input: number) {
@@ -27,7 +27,7 @@
  >input : Symbol(input, Decl(inferentialTypingUsingApparentType3.ts, 11, 10))
  
          return 123;
-@@ -44,7 +44,7 @@
+@@= skipped -15, +15 lines =@@
  >Field : Symbol(Field, Decl(inferentialTypingUsingApparentType3.ts, 0, 0))
  
      constructor(public fields: T) { }
@@ -36,7 +36,7 @@
  >T : Symbol(T, Decl(inferentialTypingUsingApparentType3.ts, 16, 20))
  }
  
-@@ -64,8 +64,8 @@
+@@= skipped -20, +20 lines =@@
  
  person.fields.id;
  >person.fields.id : Symbol(id, Decl(inferentialTypingUsingApparentType3.ts, 20, 30))

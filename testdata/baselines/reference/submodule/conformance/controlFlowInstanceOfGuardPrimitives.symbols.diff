@@ -1,6 +1,6 @@
 --- old.controlFlowInstanceOfGuardPrimitives.symbols
 +++ new.controlFlowInstanceOfGuardPrimitives.symbols
-@@ -11,32 +11,32 @@
+@@= skipped -11, +11 lines =@@
  >Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
          console.log("Aha!! It's a Date in " + thing.getFullYear());

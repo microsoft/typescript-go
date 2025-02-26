@@ -1,6 +1,6 @@
 --- old.unicodeEscapesInNames02(target=es5).symbols
 +++ new.unicodeEscapesInNames02(target=es5).symbols
-@@ -3,16 +3,16 @@
+@@= skipped -3, +3 lines =@@
  === extendedEscapesForAstralsInVarsAndClasses.ts ===
  // U+102A7 CARIAN LETTER A2
  var 𐊧: string;
@@ -20,7 +20,7 @@
  
      𐊧 = "hello";
  }
-@@ -26,9 +26,9 @@
+@@= skipped -23, +23 lines =@@
  >Foo : Symbol(Foo, Decl(extendedEscapesForAstralsInVarsAndClasses.ts, 9, 1))
  
      \u{102A7}: string;
@@ -32,7 +32,7 @@
  
      constructor() {
          this.\u{102A7} = " world";
-@@ -55,7 +55,7 @@
+@@= skipped -29, +29 lines =@@
  === astralAsSurrogatePair.ts ===
  import { _𐊧 as \uD800\uDEA7 } from "./extendedEscapesForAstralsInVarsAndClasses.js";
  >_ : Symbol(_, Decl(astralAsSurrogatePair.ts, 0, 8))

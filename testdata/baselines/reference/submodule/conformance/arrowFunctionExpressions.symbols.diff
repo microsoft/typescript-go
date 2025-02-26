@@ -1,6 +1,6 @@
 --- old.arrowFunctionExpressions.symbols
 +++ new.arrowFunctionExpressions.symbols
-@@ -5,16 +5,16 @@
+@@= skipped -5, +5 lines =@@
  var a = (p: string) => p.length;
  >a : Symbol(a, Decl(arrowFunctionExpressions.ts, 1, 3), Decl(arrowFunctionExpressions.ts, 2, 3))
  >p : Symbol(p, Decl(arrowFunctionExpressions.ts, 1, 9))
@@ -21,7 +21,7 @@
  
  // Identifier => Block is equivalent to(Identifier) => Block
  var b = j => { return 0; }
-@@ -96,18 +96,18 @@
+@@= skipped -91, +91 lines =@@
  >MyClass : Symbol(MyClass, Decl(arrowFunctionExpressions.ts, 24, 37))
  
      m = (n) => n + 1;
@@ -43,7 +43,7 @@
  
          var m = (n) => n + 1;
  >m : Symbol(m, Decl(arrowFunctionExpressions.ts, 33, 11))
-@@ -149,9 +149,9 @@
+@@= skipped -53, +53 lines =@@
  >n : Symbol(n, Decl(arrowFunctionExpressions.ts, 45, 15))
  
      arr(3)(4).toExponential();
@@ -55,7 +55,7 @@
  }
  
  // Arrow function used in function
-@@ -164,9 +164,9 @@
+@@= skipped -15, +15 lines =@@
  >n : Symbol(n, Decl(arrowFunctionExpressions.ts, 51, 15))
  
      arr(4).charAt(0);
@@ -67,7 +67,7 @@
  }
  
  // Arrow function used in nested function in function
-@@ -224,9 +224,9 @@
+@@= skipped -60, +60 lines =@@
  >innerFn : Symbol(innerFn, Decl(arrowFunctionExpressions.ts, 77, 30))
  
              return () => n.length;
@@ -79,7 +79,7 @@
          }
          return innerFn;
  >innerFn : Symbol(innerFn, Decl(arrowFunctionExpressions.ts, 77, 30))
-@@ -239,9 +239,9 @@
+@@= skipped -15, +15 lines =@@
  >someOuterFn : Symbol(someOuterFn, Decl(arrowFunctionExpressions.ts, 72, 14))
  
  h.toExponential();

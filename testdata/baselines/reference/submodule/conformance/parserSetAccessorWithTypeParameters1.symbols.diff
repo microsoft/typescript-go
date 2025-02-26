@@ -1,6 +1,6 @@
 --- old.parserSetAccessorWithTypeParameters1.symbols
 +++ new.parserSetAccessorWithTypeParameters1.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(parserSetAccessorWithTypeParameters1.ts, 0, 0))
  
     set foo<T>(v) { }

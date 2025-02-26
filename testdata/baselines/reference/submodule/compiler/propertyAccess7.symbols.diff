@@ -1,6 +1,6 @@
 --- old.propertyAccess7.symbols
 +++ new.propertyAccess7.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >foo : Symbol(foo, Decl(propertyAccess7.ts, 0, 3))
  
  foo.toUpperCase();

@@ -1,6 +1,6 @@
 --- old.gettersAndSetters.symbols
 +++ new.gettersAndSetters.symbols
-@@ -6,47 +6,47 @@
+@@= skipped -6, +6 lines =@@
  >C : Symbol(C, Decl(gettersAndSetters.ts, 0, 0))
  
      public fooBack = "";
@@ -65,7 +65,7 @@
  }
  
  var c = new C();
-@@ -55,25 +55,25 @@
+@@= skipped -49, +49 lines =@@
  
  var foo = c.Foo;
  >foo : Symbol(foo, Decl(gettersAndSetters.ts, 18, 3))
@@ -99,7 +99,7 @@
  
  var baz = c.Baz;
  >baz : Symbol(baz, Decl(gettersAndSetters.ts, 24, 3))
-@@ -119,9 +119,9 @@
+@@= skipped -64, +64 lines =@@
  // Repro from #45006
  const x: string | number = Math.random() < 0.5 ? "str" : 123;
  >x : Symbol(x, Decl(gettersAndSetters.ts, 41, 5))
@@ -111,7 +111,7 @@
  
  if (typeof x === "string") {
  >x : Symbol(x, Decl(gettersAndSetters.ts, 41, 5))
-@@ -132,21 +132,21 @@
+@@= skipped -13, +13 lines =@@
      set prop(_: any) { x.toUpperCase(); },
  >prop : Symbol(prop, Decl(gettersAndSetters.ts, 43, 13), Decl(gettersAndSetters.ts, 44, 42))
  >_ : Symbol(_, Decl(gettersAndSetters.ts, 44, 13))

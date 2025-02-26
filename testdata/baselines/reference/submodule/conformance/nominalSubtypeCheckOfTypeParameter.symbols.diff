@@ -1,6 +1,6 @@
 --- old.nominalSubtypeCheckOfTypeParameter.symbols
 +++ new.nominalSubtypeCheckOfTypeParameter.symbols
-@@ -7,11 +7,11 @@
+@@= skipped -7, +7 lines =@@
  >S : Symbol(S, Decl(nominalSubtypeCheckOfTypeParameter.ts, 0, 24))
  
      first: T
@@ -14,7 +14,7 @@
  >S : Symbol(S, Decl(nominalSubtypeCheckOfTypeParameter.ts, 0, 24))
  }
  
-@@ -20,14 +20,14 @@
+@@= skipped -13, +13 lines =@@
  >T : Symbol(T, Decl(nominalSubtypeCheckOfTypeParameter.ts, 5, 19))
  
      hasNext(): boolean
@@ -32,7 +32,7 @@
  >S : Symbol(S, Decl(nominalSubtypeCheckOfTypeParameter.ts, 8, 8))
  >seq : Symbol(seq, Decl(nominalSubtypeCheckOfTypeParameter.ts, 8, 11))
  >Sequence : Symbol(Sequence, Decl(nominalSubtypeCheckOfTypeParameter.ts, 3, 1))
-@@ -47,10 +47,10 @@
+@@= skipped -27, +27 lines =@@
  >T : Symbol(T, Decl(nominalSubtypeCheckOfTypeParameter.ts, 13, 15))
  
      getLength(): number

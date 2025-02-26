@@ -1,6 +1,6 @@
 --- old.symbolType4.symbols
 +++ new.symbolType4.symbols
-@@ -3,9 +3,6 @@
+@@= skipped -3, +3 lines =@@
  === symbolType4.ts ===
  var s = Symbol.for("postfix");
  >s : Symbol(s, Decl(symbolType4.ts, 0, 3))

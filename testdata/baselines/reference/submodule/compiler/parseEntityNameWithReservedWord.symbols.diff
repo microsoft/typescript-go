@@ -1,6 +1,6 @@
 --- old.parseEntityNameWithReservedWord.symbols
 +++ new.parseEntityNameWithReservedWord.symbols
-@@ -3,13 +3,13 @@
+@@= skipped -3, +3 lines =@@
  === parseEntityNameWithReservedWord.ts ===
  enum Bool { false }
  >Bool : Symbol(Bool, Decl(parseEntityNameWithReservedWord.ts, 0, 0))

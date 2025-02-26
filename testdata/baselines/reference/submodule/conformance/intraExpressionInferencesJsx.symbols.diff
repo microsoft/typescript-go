@@ -1,6 +1,6 @@
 --- old.intraExpressionInferencesJsx.symbols
 +++ new.intraExpressionInferencesJsx.symbols
-@@ -206,12 +206,12 @@
+@@= skipped -206, +206 lines =@@
  >T : Symbol(T, Decl(intraExpressionInferencesJsx.tsx, 85, 16))
  
    a: (x: string) => T;
@@ -15,7 +15,7 @@
  >arg : Symbol(arg, Decl(intraExpressionInferencesJsx.tsx, 87, 6))
  >T : Symbol(T, Decl(intraExpressionInferencesJsx.tsx, 85, 16))
  }
-@@ -224,7 +224,6 @@
+@@= skipped -18, +18 lines =@@
  >T : Symbol(T, Decl(intraExpressionInferencesJsx.tsx, 90, 13))
  
    return <div />;
@@ -23,7 +23,7 @@
  }
  
  <Foo
-@@ -236,9 +235,7 @@
+@@= skipped -12, +11 lines =@@
    b={(arg) => { arg.toString(); }}
  >b : Symbol(b, Decl(intraExpressionInferencesJsx.tsx, 95, 14))
  >arg : Symbol(arg, Decl(intraExpressionInferencesJsx.tsx, 96, 6))
@@ -33,7 +33,7 @@
  
  />;
  
-@@ -252,9 +249,7 @@
+@@= skipped -16, +14 lines =@@
    b={(arg) => { arg.toString(); }}
  >b : Symbol(b, Decl(intraExpressionInferencesJsx.tsx, 100, 15))
  >arg : Symbol(arg, Decl(intraExpressionInferencesJsx.tsx, 101, 6))
@@ -43,7 +43,7 @@
  
  />;
  
-@@ -268,9 +263,7 @@
+@@= skipped -16, +14 lines =@@
    b: (arg) => { arg.toString(); },
  >b : Symbol(b, Decl(intraExpressionInferencesJsx.tsx, 105, 15))
  >arg : Symbol(arg, Decl(intraExpressionInferencesJsx.tsx, 106, 6))

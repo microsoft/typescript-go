@@ -1,6 +1,6 @@
 --- old.jsDeclarationsReusesExistingTypeAnnotations.symbols
 +++ new.jsDeclarationsReusesExistingTypeAnnotations.symbols
-@@ -6,21 +6,21 @@
+@@= skipped -6, +6 lines =@@
  
      /** @type {string=} */
      p1 = undefined;
@@ -26,7 +26,7 @@
  }
  
  class С2 {
-@@ -28,7 +28,7 @@
+@@= skipped -22, +22 lines =@@
  
      /** @type {string=} */
      get p1() {
@@ -35,7 +35,7 @@
  
          return undefined;
  >undefined : Symbol(undefined)
-@@ -36,7 +36,7 @@
+@@= skipped -8, +8 lines =@@
  
      /** @type {string | undefined} */
      get p2() {
@@ -44,7 +44,7 @@
  
          return undefined;
  >undefined : Symbol(undefined)
-@@ -44,14 +44,14 @@
+@@= skipped -8, +8 lines =@@
  
      /** @type {?string} */
      get p3() {
@@ -61,7 +61,7 @@
  
          return null;
      }
-@@ -63,7 +63,7 @@
+@@= skipped -19, +19 lines =@@
  
      /** @type {string=} */
      get p1() {
@@ -70,7 +70,7 @@
  
          return undefined;
  >undefined : Symbol(undefined)
-@@ -71,19 +71,19 @@
+@@= skipped -8, +8 lines =@@
  
      /** @param {string=} value */
      set p1(value) {
@@ -94,7 +94,7 @@
  
          return undefined;
  >undefined : Symbol(undefined)
-@@ -91,51 +91,51 @@
+@@= skipped -20, +20 lines =@@
  
      /** @param {string | undefined} value */
      set p2(value) {
@@ -157,7 +157,7 @@
  >value : Symbol(value, Decl(index.js, 74, 11))
      }
  }
-@@ -146,49 +146,49 @@
+@@= skipped -55, +55 lines =@@
  
      /** @param {string=} value */
      set p1(value) {

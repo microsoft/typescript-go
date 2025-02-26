@@ -1,6 +1,6 @@
 --- old.jsDeclarationsExportAssignedClassInstance1.symbols
 +++ new.jsDeclarationsExportAssignedClassInstance1.symbols
-@@ -5,8 +5,5 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(index.js, 0, 0))
  
  module.exports = new Foo();

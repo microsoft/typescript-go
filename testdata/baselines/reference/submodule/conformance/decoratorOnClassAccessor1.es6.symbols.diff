@@ -1,6 +1,6 @@
 --- old.decoratorOnClassAccessor1.es6.symbols
 +++ new.decoratorOnClassAccessor1.es6.symbols
-@@ -7,13 +7,13 @@
+@@= skipped -7, +7 lines =@@
  >target : Symbol(target, Decl(decoratorOnClassAccessor1.es6.ts, 0, 24))
  >propertyKey : Symbol(propertyKey, Decl(decoratorOnClassAccessor1.es6.ts, 0, 36))
  >descriptor : Symbol(descriptor, Decl(decoratorOnClassAccessor1.es6.ts, 0, 57))

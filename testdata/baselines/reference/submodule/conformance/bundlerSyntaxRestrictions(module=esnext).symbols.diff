@@ -1,6 +1,6 @@
 --- old.bundlerSyntaxRestrictions(module=esnext).symbols
 +++ new.bundlerSyntaxRestrictions(module=esnext).symbols
-@@ -33,17 +33,12 @@
+@@= skipped -33, +33 lines =@@
  === /mainJs.js ===
  import {} from "./a";
  import("./a");

@@ -1,6 +1,6 @@
 --- old.assertionFunctionWildcardImport1.symbols
 +++ new.assertionFunctionWildcardImport1.symbols
-@@ -22,16 +22,16 @@
+@@= skipped -22, +22 lines =@@
  >Debug : Symbol(Debug, Decl(foo.ts, 1, 8))
  
  ts.Debug.assert(true);
@@ -23,7 +23,7 @@
  
  
  === src/other/_namespaces/ts.ts ===
-@@ -47,14 +47,14 @@
+@@= skipped -25, +25 lines =@@
  >Debug : Symbol(Debug, Decl(bar.ts, 1, 8))
  
  ts.Debug.assert(true);

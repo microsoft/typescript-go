@@ -1,6 +1,6 @@
 --- old.exportAsNamespace1(module=commonjs).symbols
 +++ new.exportAsNamespace1(module=commonjs).symbols
-@@ -19,16 +19,16 @@
+@@= skipped -19, +19 lines =@@
  >foo : Symbol(foo, Decl(2.ts, 0, 6))
  
  foo.ns.a;

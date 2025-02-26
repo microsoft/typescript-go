@@ -1,6 +1,6 @@
 --- old.thisInInvalidContexts.symbols
 +++ new.thisInInvalidContexts.symbols
-@@ -13,7 +13,7 @@
+@@= skipped -13, +13 lines =@@
  >BaseErrClass : Symbol(BaseErrClass, Decl(thisInInvalidContexts.ts, 0, 0))
  
      t;
@@ -9,7 +9,7 @@
  
      //'this' in optional super call
      constructor() {
-@@ -28,7 +28,7 @@
+@@= skipped -15, +15 lines =@@
  >BaseErrClass : Symbol(BaseErrClass, Decl(thisInInvalidContexts.ts, 0, 0))
  
      t = 4;
@@ -18,7 +18,7 @@
  
      //'this' in required super call
      constructor() {
-@@ -71,10 +71,10 @@
+@@= skipped -43, +43 lines =@@
  >SomeEnum : Symbol(SomeEnum, Decl(thisInInvalidContexts.ts, 34, 1))
  
      A = this, // Should not be allowed

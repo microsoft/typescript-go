@@ -1,6 +1,6 @@
 --- old.enumAssignmentCompat3.symbols
 +++ new.enumAssignmentCompat3.symbols
-@@ -8,9 +8,9 @@
+@@= skipped -8, +8 lines =@@
  >E : Symbol(E, Decl(enumAssignmentCompat3.ts, 0, 17))
  
          a, b, c,
@@ -13,7 +13,7 @@
      }
  }
  namespace Abc {
-@@ -20,17 +20,17 @@
+@@= skipped -12, +12 lines =@@
  >E : Symbol(E, Decl(enumAssignmentCompat3.ts, 5, 15))
  
          a, b, c,
@@ -37,7 +37,7 @@
      }
  }
  namespace Abcd {
-@@ -40,10 +40,10 @@
+@@= skipped -20, +20 lines =@@
  >E : Symbol(E, Decl(enumAssignmentCompat3.ts, 13, 16))
  
          a, b, c, d,
@@ -52,7 +52,7 @@
      }
  }
  namespace Ab {
-@@ -53,8 +53,8 @@
+@@= skipped -13, +13 lines =@@
  >E : Symbol(E, Decl(enumAssignmentCompat3.ts, 18, 14))
  
          a, b,
@@ -63,7 +63,7 @@
      }
  }
  namespace Cd {
-@@ -64,8 +64,8 @@
+@@= skipped -11, +11 lines =@@
  >E : Symbol(E, Decl(enumAssignmentCompat3.ts, 23, 14))
  
          c, d,
@@ -74,7 +74,7 @@
      }
  }
  namespace Const {
-@@ -75,9 +75,9 @@
+@@= skipped -11, +11 lines =@@
  >E : Symbol(E, Decl(enumAssignmentCompat3.ts, 28, 17))
  
          a, b, c,
@@ -87,7 +87,7 @@
      }
  }
  namespace Decl {
-@@ -87,9 +87,9 @@
+@@= skipped -12, +12 lines =@@
  >E : Symbol(E, Decl(enumAssignmentCompat3.ts, 33, 16))
  
          a, b, c = 3,
@@ -100,7 +100,7 @@
      }
  }
  namespace Merged {
-@@ -99,15 +99,15 @@
+@@= skipped -12, +12 lines =@@
  >E : Symbol(E, Decl(enumAssignmentCompat3.ts, 38, 18), Decl(enumAssignmentCompat3.ts, 41, 5))
  
          a, b, 
@@ -120,7 +120,7 @@
      }
  }
  
-@@ -118,9 +118,9 @@
+@@= skipped -19, +19 lines =@@
  >E : Symbol(E, Decl(enumAssignmentCompat3.ts, 47, 19), Decl(enumAssignmentCompat3.ts, 50, 5))
  
          a, b, c
@@ -133,7 +133,7 @@
      }
      export module E {
  >E : Symbol(E, Decl(enumAssignmentCompat3.ts, 47, 19), Decl(enumAssignmentCompat3.ts, 50, 5))
-@@ -133,52 +133,52 @@
+@@= skipped -15, +15 lines =@@
  var abc: First.E;
  >abc : Symbol(abc, Decl(enumAssignmentCompat3.ts, 56, 3))
  >First : Symbol(First, Decl(enumAssignmentCompat3.ts, 0, 0))

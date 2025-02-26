@@ -1,6 +1,6 @@
 --- old.jsDeclarationsTypedefAndImportTypes.symbols
 +++ new.jsDeclarationsTypedefAndImportTypes.symbols
-@@ -10,16 +10,13 @@
+@@= skipped -10, +10 lines =@@
  
      constructor() {}
      item = 3;
@@ -19,7 +19,7 @@
  >Conn : Symbol(Conn, Decl(conn.js, 0, 0))
  
  === usage.js ===
-@@ -37,26 +34,16 @@
+@@= skipped -27, +24 lines =@@
  >c : Symbol(c, Decl(usage.js, 8, 16))
  
          this.connItem = c.item;

@@ -1,6 +1,6 @@
 --- old.genericObjectRest.symbols
 +++ new.genericObjectRest.symbols
-@@ -50,11 +50,9 @@
+@@= skipped -50, +50 lines =@@
  
  const sa = Symbol();
  >sa : Symbol(sa, Decl(genericObjectRest.ts, 11, 5))

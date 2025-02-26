@@ -1,6 +1,6 @@
 --- old.exponentiationOperatorWithEnum.symbols
 +++ new.exponentiationOperatorWithEnum.symbols
-@@ -7,10 +7,10 @@
+@@= skipped -7, +7 lines =@@
  >E : Symbol(E, Decl(exponentiationOperatorWithEnum.ts, 0, 0))
  
      a,
@@ -13,7 +13,7 @@
  }
  
  var a: any;
-@@ -51,50 +51,50 @@
+@@= skipped -44, +44 lines =@@
  
  var r6 = E.a ** a;
  >r6 : Symbol(r6, Decl(exponentiationOperatorWithEnum.ts, 17, 3))

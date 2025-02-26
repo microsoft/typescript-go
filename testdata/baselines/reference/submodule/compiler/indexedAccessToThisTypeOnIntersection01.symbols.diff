@@ -1,6 +1,6 @@
 --- old.indexedAccessToThisTypeOnIntersection01.symbols
 +++ new.indexedAccessToThisTypeOnIntersection01.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(indexedAccessToThisTypeOnIntersection01.ts, 0, 0))
  
    a: string;

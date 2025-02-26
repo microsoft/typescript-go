@@ -1,6 +1,6 @@
 --- old.contextuallyTypedStringLiteralsInJsxAttributes01.symbols
 +++ new.contextuallyTypedStringLiteralsInJsxAttributes01.symbols
-@@ -8,13 +8,13 @@
+@@= skipped -8, +8 lines =@@
  >IntrinsicElements : Symbol(IntrinsicElements, Decl(contextuallyTypedStringLiteralsInJsxAttributes01.tsx, 0, 15))
  
          span: {};
@@ -16,7 +16,7 @@
      }
  }
  
-@@ -22,11 +22,9 @@
+@@= skipped -14, +14 lines =@@
  >FooComponent : Symbol(FooComponent, Decl(contextuallyTypedStringLiteralsInJsxAttributes01.tsx, 9, 5))
  >props : Symbol(props, Decl(contextuallyTypedStringLiteralsInJsxAttributes01.tsx, 9, 22))
  >foo : Symbol(foo, Decl(contextuallyTypedStringLiteralsInJsxAttributes01.tsx, 9, 30))

@@ -1,6 +1,6 @@
 --- old.typePredicateAcceptingPartialOfRefinedType.symbols
 +++ new.typePredicateAcceptingPartialOfRefinedType.symbols
-@@ -7,14 +7,14 @@
+@@= skipped -7, +7 lines =@@
  >Test : Symbol(Test, Decl(typePredicateAcceptingPartialOfRefinedType.ts, 0, 0))
  
    testy?: string;

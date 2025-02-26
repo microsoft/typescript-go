@@ -1,6 +1,6 @@
 --- old.jsDeclarationsTypeReassignmentFromDeclaration.symbols
 +++ new.jsDeclarationsTypeReassignmentFromDeclaration.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Item : Symbol(Item, Decl(some-mod.d.ts, 0, 0))
  
      x: string;
@@ -9,7 +9,7 @@
  }
  declare const items: Item[];
  >items : Symbol(items, Decl(some-mod.d.ts, 3, 13))
-@@ -20,8 +20,5 @@
+@@= skipped -15, +15 lines =@@
  >items : Symbol(items, Decl(index.js, 1, 5))
  
  module.exports = items;

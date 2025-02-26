@@ -1,6 +1,6 @@
 --- old.crashRegressionTest.symbols
 +++ new.crashRegressionTest.symbols
-@@ -19,7 +19,7 @@
+@@= skipped -19, +19 lines =@@
  >StringTemplate : Symbol(StringTemplate, Decl(crashRegressionTest.ts, 5, 5))
  
          private _templateStorage: TemplateStorage;
@@ -9,7 +9,7 @@
  >TemplateStorage : Symbol(TemplateStorage, Decl(crashRegressionTest.ts, 17, 5))
   
          constructor(templateStorage: TemplateStorage) {
-@@ -27,22 +27,22 @@
+@@= skipped -8, +8 lines =@@
  >TemplateStorage : Symbol(TemplateStorage, Decl(crashRegressionTest.ts, 17, 5))
  
              this._templateStorage = templateStorage;
@@ -39,7 +39,7 @@
  >this : Symbol(StringTemplate, Decl(crashRegressionTest.ts, 5, 5))
  >value : Symbol(value, Decl(crashRegressionTest.ts, 14, 20))
          }
-@@ -52,11 +52,11 @@
+@@= skipped -25, +25 lines =@@
  >TemplateStorage : Symbol(TemplateStorage, Decl(crashRegressionTest.ts, 17, 5))
  
          public templateSources: TemplateKeyValue = {};

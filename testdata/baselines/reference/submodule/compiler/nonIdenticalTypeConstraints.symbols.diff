@@ -1,6 +1,6 @@
 --- old.nonIdenticalTypeConstraints.symbols
 +++ new.nonIdenticalTypeConstraints.symbols
-@@ -5,13 +5,13 @@
+@@= skipped -5, +5 lines =@@
  >Different : Symbol(Different, Decl(nonIdenticalTypeConstraints.ts, 0, 0))
  
      a: number;
@@ -17,7 +17,7 @@
  }
  
  class Foo<T extends Function> {
-@@ -20,7 +20,7 @@
+@@= skipped -15, +15 lines =@@
  >Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      n: T;
@@ -26,7 +26,7 @@
  >T : Symbol(T, Decl(nonIdenticalTypeConstraints.ts, 6, 10), Decl(nonIdenticalTypeConstraints.ts, 9, 14))
  }
  interface Foo<T extends Different> {
-@@ -29,7 +29,7 @@
+@@= skipped -9, +9 lines =@@
  >Different : Symbol(Different, Decl(nonIdenticalTypeConstraints.ts, 0, 0))
  
      y: T;
@@ -35,7 +35,7 @@
  >T : Symbol(T, Decl(nonIdenticalTypeConstraints.ts, 6, 10), Decl(nonIdenticalTypeConstraints.ts, 9, 14))
  }
  interface Qux<T extends Different> {
-@@ -38,7 +38,7 @@
+@@= skipped -9, +9 lines =@@
  >Different : Symbol(Different, Decl(nonIdenticalTypeConstraints.ts, 0, 0))
  
      y: T;
@@ -44,7 +44,7 @@
  >T : Symbol(T, Decl(nonIdenticalTypeConstraints.ts, 12, 14), Decl(nonIdenticalTypeConstraints.ts, 15, 10))
  }
  class Qux<T extends Function> {
-@@ -47,7 +47,7 @@
+@@= skipped -9, +9 lines =@@
  >Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      n: T;
@@ -53,7 +53,7 @@
  >T : Symbol(T, Decl(nonIdenticalTypeConstraints.ts, 12, 14), Decl(nonIdenticalTypeConstraints.ts, 15, 10))
  }
  
-@@ -57,7 +57,7 @@
+@@= skipped -10, +10 lines =@@
  >Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      n: T;
@@ -62,7 +62,7 @@
  >T : Symbol(T, Decl(nonIdenticalTypeConstraints.ts, 19, 10), Decl(nonIdenticalTypeConstraints.ts, 22, 14))
  }
  interface Bar<T extends Function> {
-@@ -66,7 +66,7 @@
+@@= skipped -9, +9 lines =@@
  >Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      y: T;
@@ -71,7 +71,7 @@
  >T : Symbol(T, Decl(nonIdenticalTypeConstraints.ts, 19, 10), Decl(nonIdenticalTypeConstraints.ts, 22, 14))
  }
  interface Baz<T extends Function> {
-@@ -75,7 +75,7 @@
+@@= skipped -9, +9 lines =@@
  >Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      y: T;
@@ -80,7 +80,7 @@
  >T : Symbol(T, Decl(nonIdenticalTypeConstraints.ts, 25, 14), Decl(nonIdenticalTypeConstraints.ts, 28, 10))
  }
  class Baz<T extends Function> {
-@@ -84,7 +84,7 @@
+@@= skipped -9, +9 lines =@@
  >Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      n: T;
@@ -89,7 +89,7 @@
  >T : Symbol(T, Decl(nonIdenticalTypeConstraints.ts, 25, 14), Decl(nonIdenticalTypeConstraints.ts, 28, 10))
  }
  
-@@ -93,7 +93,7 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(nonIdenticalTypeConstraints.ts, 32, 11))
  
      n: T;
@@ -98,7 +98,7 @@
  >T : Symbol(T, Decl(nonIdenticalTypeConstraints.ts, 32, 11))
  }
  interface Quux<U> {
-@@ -101,6 +101,6 @@
+@@= skipped -8, +8 lines =@@
  >U : Symbol(U, Decl(nonIdenticalTypeConstraints.ts, 35, 15))
  
      m: U;

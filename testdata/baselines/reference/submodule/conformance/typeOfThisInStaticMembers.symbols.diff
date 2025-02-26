@@ -1,6 +1,6 @@
 --- old.typeOfThisInStaticMembers.symbols
 +++ new.typeOfThisInStaticMembers.symbols
-@@ -8,10 +8,10 @@
+@@= skipped -8, +8 lines =@@
  >x : Symbol(x, Decl(typeOfThisInStaticMembers.ts, 1, 16))
  
      static foo: number;
@@ -13,7 +13,7 @@
  
          // type of this is the constructor function type
          var t = this;
-@@ -25,22 +25,22 @@
+@@= skipped -17, +17 lines =@@
  
  var t = C.bar();
  >t : Symbol(t, Decl(typeOfThisInStaticMembers.ts, 10, 3))
@@ -42,7 +42,7 @@
  
  var r4 = new t(1);
  >r4 : Symbol(r4, Decl(typeOfThisInStaticMembers.ts, 14, 3))
-@@ -51,16 +51,16 @@
+@@= skipped -26, +26 lines =@@
  >T : Symbol(T, Decl(typeOfThisInStaticMembers.ts, 16, 9))
  
      static test: number;
@@ -62,7 +62,7 @@
  
          // type of this is the constructor function type
          var t = this;
-@@ -74,22 +74,22 @@
+@@= skipped -23, +23 lines =@@
  
  var t2 = C2.bar();
  >t2 : Symbol(t2, Decl(typeOfThisInStaticMembers.ts, 27, 3))

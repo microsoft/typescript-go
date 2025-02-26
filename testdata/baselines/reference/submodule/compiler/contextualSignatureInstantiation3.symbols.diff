@@ -1,6 +1,6 @@
 --- old.contextualSignatureInstantiation3.symbols
 +++ new.contextualSignatureInstantiation3.symbols
-@@ -14,9 +14,9 @@
+@@= skipped -14, +14 lines =@@
  >U : Symbol(U, Decl(contextualSignatureInstantiation3.ts, 0, 15))
  
      return items.map(f);
@@ -12,7 +12,7 @@
  >f : Symbol(f, Decl(contextualSignatureInstantiation3.ts, 0, 30))
  }
  
-@@ -49,9 +49,9 @@
+@@= skipped -35, +35 lines =@@
  
  var v1 = xs.map(identity);      // Error if not number[]
  >v1 : Symbol(v1, Decl(contextualSignatureInstantiation3.ts, 15, 3), Decl(contextualSignatureInstantiation3.ts, 16, 3), Decl(contextualSignatureInstantiation3.ts, 17, 3))
@@ -24,7 +24,7 @@
  >identity : Symbol(identity, Decl(contextualSignatureInstantiation3.ts, 2, 1))
  
  var v1 = map(xs, identity);     // Error if not number[]
-@@ -65,9 +65,9 @@
+@@= skipped -16, +16 lines =@@
  
  var v2 = xs.map(singleton);     // Error if not number[][]
  >v2 : Symbol(v2, Decl(contextualSignatureInstantiation3.ts, 19, 3), Decl(contextualSignatureInstantiation3.ts, 20, 3), Decl(contextualSignatureInstantiation3.ts, 21, 3))

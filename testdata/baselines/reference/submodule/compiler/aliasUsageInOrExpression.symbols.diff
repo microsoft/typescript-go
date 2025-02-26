@@ -1,6 +1,6 @@
 --- old.aliasUsageInOrExpression.symbols
 +++ new.aliasUsageInOrExpression.symbols
-@@ -11,10 +11,10 @@
+@@= skipped -11, +11 lines =@@
  >IHasVisualizationModel : Symbol(IHasVisualizationModel, Decl(aliasUsageInOrExpression_main.ts, 1, 63))
  
      VisualizationModel: typeof Backbone.Model;
@@ -14,7 +14,7 @@
  }
  var i: IHasVisualizationModel;
  >i : Symbol(i, Decl(aliasUsageInOrExpression_main.ts, 5, 3))
-@@ -60,7 +60,7 @@
+@@= skipped -49, +49 lines =@@
  >Model : Symbol(Model, Decl(aliasUsageInOrExpression_backbone.ts, 0, 0))
  
      public someData: string;
@@ -23,7 +23,7 @@
  }
  
  === aliasUsageInOrExpression_moduleA.ts ===
-@@ -69,9 +69,9 @@
+@@= skipped -9, +9 lines =@@
  
  export class VisualizationModel extends Backbone.Model {
  >VisualizationModel : Symbol(VisualizationModel, Decl(aliasUsageInOrExpression_moduleA.ts, 0, 65))

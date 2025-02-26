@@ -1,6 +1,6 @@
 --- old.arrayConcat3.symbols
 +++ new.arrayConcat3.symbols
-@@ -26,9 +26,9 @@
+@@= skipped -26, +26 lines =@@
  >T1 : Symbol(T1, Decl(arrayConcat3.ts, 2, 34))
  
      b.concat(a);

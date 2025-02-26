@@ -1,6 +1,6 @@
 --- old.constDeclarations-scopes.symbols
 +++ new.constDeclarations-scopes.symbols
-@@ -228,7 +228,7 @@
+@@= skipped -228, +228 lines =@@
      }
  
      method() {
@@ -9,7 +9,7 @@
  
          const c = 0;
  >c : Symbol(c, Decl(constDeclarations-scopes.ts, 119, 13))
-@@ -239,7 +239,7 @@
+@@= skipped -11, +11 lines =@@
      }
  
      get v() {
@@ -18,7 +18,7 @@
  
          const c = 0;
  >c : Symbol(c, Decl(constDeclarations-scopes.ts, 124, 13))
-@@ -253,7 +253,7 @@
+@@= skipped -14, +14 lines =@@
      }
  
      set v(value) {

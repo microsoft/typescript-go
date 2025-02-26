@@ -1,6 +1,6 @@
 --- old.thisInObjectLiterals.symbols
 +++ new.thisInObjectLiterals.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >MyClass : Symbol(MyClass, Decl(thisInObjectLiterals.ts, 0, 0))
  
      t: number;
@@ -13,7 +13,7 @@
  
          type ContainingThis = this;
  >ContainingThis : Symbol(ContainingThis, Decl(thisInObjectLiterals.ts, 3, 10))
-@@ -19,9 +19,9 @@
+@@= skipped -14, +14 lines =@@
  >x : Symbol(x, Decl(thisInObjectLiterals.ts, 6, 17))
  >this : Symbol(MyClass, Decl(thisInObjectLiterals.ts, 0, 0))
  >y : Symbol(y, Decl(thisInObjectLiterals.ts, 6, 26))
@@ -25,7 +25,7 @@
  
          var t: { x: ContainingThis; y: number };
  >t : Symbol(t, Decl(thisInObjectLiterals.ts, 6, 11), Decl(thisInObjectLiterals.ts, 7, 11))
-@@ -39,7 +39,7 @@
+@@= skipped -20, +20 lines =@@
  >f : Symbol(f, Decl(thisInObjectLiterals.ts, 12, 11))
  
          return this.spaaace;

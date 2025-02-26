@@ -1,6 +1,6 @@
 --- old.controlFlowUnionContainingTypeParameter1.symbols
 +++ new.controlFlowUnionContainingTypeParameter1.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(controlFlowUnionContainingTypeParameter1.ts, 2, 16))
  
    typeguard(val: unknown): val is T {
@@ -9,7 +9,7 @@
  >val : Symbol(val, Decl(controlFlowUnionContainingTypeParameter1.ts, 3, 12))
  >val : Symbol(val, Decl(controlFlowUnionContainingTypeParameter1.ts, 3, 12))
  >T : Symbol(T, Decl(controlFlowUnionContainingTypeParameter1.ts, 2, 16))
-@@ -16,37 +16,37 @@
+@@= skipped -8, +8 lines =@@
      return true;
    }
    f(v: number): void {}
@@ -56,7 +56,7 @@
  >val : Symbol(val, Decl(controlFlowUnionContainingTypeParameter1.ts, 8, 7))
    }
  }
-@@ -57,7 +57,7 @@
+@@= skipped -41, +41 lines =@@
  >Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
  
    typeguard(val: unknown): val is T {
@@ -65,7 +65,7 @@
  >val : Symbol(val, Decl(controlFlowUnionContainingTypeParameter1.ts, 18, 12))
  >val : Symbol(val, Decl(controlFlowUnionContainingTypeParameter1.ts, 18, 12))
  >T : Symbol(T, Decl(controlFlowUnionContainingTypeParameter1.ts, 17, 17))
-@@ -65,29 +65,29 @@
+@@= skipped -8, +8 lines =@@
      return true;
    }
    f(v: number): void {}
@@ -102,7 +102,7 @@
  >val : Symbol(val, Decl(controlFlowUnionContainingTypeParameter1.ts, 23, 7))
  
        return;
-@@ -96,9 +96,9 @@
+@@= skipped -31, +31 lines =@@
  >val : Symbol(val, Decl(controlFlowUnionContainingTypeParameter1.ts, 23, 7))
  
      this.f(val);

@@ -1,6 +1,6 @@
 --- old.jsDeclarationsDocCommentsOnConsts.symbols
 +++ new.jsDeclarationsDocCommentsOnConsts.symbols
-@@ -21,9 +21,6 @@
+@@= skipped -21, +21 lines =@@
  }
  
  module.exports = {x, b}

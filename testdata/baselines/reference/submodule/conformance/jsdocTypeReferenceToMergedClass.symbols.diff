@@ -1,6 +1,6 @@
 --- old.jsdocTypeReferenceToMergedClass.symbols
 +++ new.jsdocTypeReferenceToMergedClass.symbols
-@@ -2,29 +2,21 @@
+@@= skipped -2, +2 lines =@@
  
  === jsdocTypeReferenceToMergedClass.js ===
  var Workspace = {}

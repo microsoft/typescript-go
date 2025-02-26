@@ -1,6 +1,6 @@
 --- old.classIndexer5.symbols
 +++ new.classIndexer5.symbols
-@@ -8,9 +8,9 @@
+@@= skipped -8, +8 lines =@@
  >key : Symbol(key, Decl(classIndexer5.ts, 1, 5))
  
      #a: boolean;

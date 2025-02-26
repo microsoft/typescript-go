@@ -1,6 +1,6 @@
 --- old.jsxCallbackWithDestructuring.symbols
 +++ new.jsxCallbackWithDestructuring.symbols
-@@ -18,10 +18,10 @@
+@@= skipped -18, +18 lines =@@
  >context : Symbol(context, Decl(jsxCallbackWithDestructuring.tsx, 3, 25))
  
      render(): {};
@@ -13,7 +13,7 @@
  >Readonly : Symbol(Readonly, Decl(lib.es5.d.ts, --, --))
  >children : Symbol(children, Decl(jsxCallbackWithDestructuring.tsx, 5, 21))
  >Readonly : Symbol(Readonly, Decl(lib.es5.d.ts, --, --))
-@@ -29,7 +29,7 @@
+@@= skipped -11, +11 lines =@@
  }
  
  declare global {
@@ -22,7 +22,7 @@
  
      namespace JSX {
  >JSX : Symbol(JSX, Decl(jsxCallbackWithDestructuring.tsx, 8, 16))
-@@ -41,15 +41,15 @@
+@@= skipped -12, +12 lines =@@
  >ElementClass : Symbol(ElementClass, Decl(jsxCallbackWithDestructuring.tsx, 10, 30))
  
              render(): {};
@@ -41,7 +41,7 @@
  
          interface IntrinsicAttributes  { }
  >IntrinsicAttributes : Symbol(IntrinsicAttributes, Decl(jsxCallbackWithDestructuring.tsx, 15, 60))
-@@ -64,7 +64,7 @@
+@@= skipped -23, +23 lines =@@
  >RouteProps : Symbol(RouteProps, Decl(jsxCallbackWithDestructuring.tsx, 19, 1))
  
      children?: (props: { x: number }) => any;

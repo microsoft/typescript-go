@@ -1,6 +1,6 @@
 --- old.defaultIndexProps1.symbols
 +++ new.defaultIndexProps1.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(defaultIndexProps1.ts, 0, 0))
  
  	public v = "Yo";
@@ -9,7 +9,7 @@
  }
  
  var f = new Foo();
-@@ -15,7 +15,7 @@
+@@= skipped -10, +10 lines =@@
  var q = f["v"];
  >q : Symbol(q, Decl(defaultIndexProps1.ts, 6, 3))
  >f : Symbol(f, Decl(defaultIndexProps1.ts, 4, 3))

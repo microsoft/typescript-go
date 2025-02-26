@@ -1,6 +1,6 @@
 --- old.duplicateIdentifiersAcrossContainerBoundaries.symbols
 +++ new.duplicateIdentifiersAcrossContainerBoundaries.symbols
-@@ -70,7 +70,7 @@
+@@= skipped -70, +70 lines =@@
  >Foo : Symbol(Foo, Decl(duplicateIdentifiersAcrossContainerBoundaries.ts, 33, 1), Decl(duplicateIdentifiersAcrossContainerBoundaries.ts, 37, 1))
  
      static x: number;

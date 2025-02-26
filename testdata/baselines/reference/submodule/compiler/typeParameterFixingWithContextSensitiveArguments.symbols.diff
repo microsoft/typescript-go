@@ -1,6 +1,6 @@
 --- old.typeParameterFixingWithContextSensitiveArguments.symbols
 +++ new.typeParameterFixingWithContextSensitiveArguments.symbols
-@@ -21,13 +21,13 @@
+@@= skipped -21, +21 lines =@@
  
  interface A { a: A; }
  >A : Symbol(A, Decl(typeParameterFixingWithContextSensitiveArguments.ts, 0, 74))
@@ -16,7 +16,7 @@
  
  var a: A, b: B;
  >a : Symbol(a, Decl(typeParameterFixingWithContextSensitiveArguments.ts, 4, 3))
-@@ -40,9 +40,9 @@
+@@= skipped -19, +19 lines =@@
  >f : Symbol(f, Decl(typeParameterFixingWithContextSensitiveArguments.ts, 0, 0))
  >b : Symbol(b, Decl(typeParameterFixingWithContextSensitiveArguments.ts, 4, 9))
  >x : Symbol(x, Decl(typeParameterFixingWithContextSensitiveArguments.ts, 6, 12))
@@ -28,7 +28,7 @@
  >a : Symbol(a, Decl(typeParameterFixingWithContextSensitiveArguments.ts, 4, 3))
  
  var d2 = f(b, x => x.a, null); // type [B, A]
-@@ -50,16 +50,16 @@
+@@= skipped -10, +10 lines =@@
  >f : Symbol(f, Decl(typeParameterFixingWithContextSensitiveArguments.ts, 0, 0))
  >b : Symbol(b, Decl(typeParameterFixingWithContextSensitiveArguments.ts, 4, 9))
  >x : Symbol(x, Decl(typeParameterFixingWithContextSensitiveArguments.ts, 7, 13))

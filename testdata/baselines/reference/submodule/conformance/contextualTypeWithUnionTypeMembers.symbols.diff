@@ -1,6 +1,6 @@
 --- old.contextualTypeWithUnionTypeMembers.symbols
 +++ new.contextualTypeWithUnionTypeMembers.symbols
-@@ -8,48 +8,48 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(contextualTypeWithUnionTypeMembers.ts, 2, 13))
  
      commonMethodType(a: string): string;
@@ -59,7 +59,7 @@
  }
  
  // Let S be the set of types in U that has a property P.
-@@ -252,23 +252,23 @@
+@@= skipped -244, +244 lines =@@
  >I11 : Symbol(I11, Decl(contextualTypeWithUnionTypeMembers.ts, 74, 7))
  
      commonMethodDifferentReturnType(a: string, b: number): string;
@@ -87,7 +87,7 @@
  }
  var i11: I11;
  >i11 : Symbol(i11, Decl(contextualTypeWithUnionTypeMembers.ts, 84, 3))
-@@ -303,9 +303,9 @@
+@@= skipped -51, +51 lines =@@
  
          var z = a.charAt(b);
  >z : Symbol(z, Decl(contextualTypeWithUnionTypeMembers.ts, 91, 11))
@@ -99,7 +99,7 @@
  >b : Symbol(b, Decl(contextualTypeWithUnionTypeMembers.ts, 90, 40))
  
          return z;  
-@@ -329,9 +329,9 @@
+@@= skipped -26, +26 lines =@@
  
          var z = a.charCodeAt(b);
  >z : Symbol(z, Decl(contextualTypeWithUnionTypeMembers.ts, 99, 11))
@@ -111,7 +111,7 @@
  >b : Symbol(b, Decl(contextualTypeWithUnionTypeMembers.ts, 98, 40))
  
          return z;
-@@ -360,9 +360,9 @@
+@@= skipped -31, +31 lines =@@
  
              var z = a.charAt(b);
  >z : Symbol(z, Decl(contextualTypeWithUnionTypeMembers.ts, 107, 15))
@@ -123,7 +123,7 @@
  >b : Symbol(b, Decl(contextualTypeWithUnionTypeMembers.ts, 106, 44))
  
              return z;
-@@ -381,9 +381,9 @@
+@@= skipped -21, +21 lines =@@
  
              var z = a.charCodeAt(b);
  >z : Symbol(z, Decl(contextualTypeWithUnionTypeMembers.ts, 114, 15))

@@ -1,6 +1,6 @@
 --- old.assignmentToParenthesizedIdentifiers.symbols
 +++ new.assignmentToParenthesizedIdentifiers.symbols
-@@ -23,34 +23,34 @@
+@@= skipped -23, +23 lines =@@
  >y : Symbol(y, Decl(assignmentToParenthesizedIdentifiers.ts, 7, 14))
  }
  M.y = 3; // OK
@@ -47,7 +47,7 @@
  
  M = { y: 3 }; // Error
  >M : Symbol(M, Decl(assignmentToParenthesizedIdentifiers.ts, 4, 9))
-@@ -75,39 +75,39 @@
+@@= skipped -52, +52 lines =@@
  >x : Symbol(x, Decl(assignmentToParenthesizedIdentifiers.ts, 24, 10))
  }
  M2.M3 = { x: 3 }; // OK
@@ -99,7 +99,7 @@
  >x : Symbol(x, Decl(assignmentToParenthesizedIdentifiers.ts, 32, 11))
  
  
-@@ -187,7 +187,7 @@
+@@= skipped -112, +112 lines =@@
  >E : Symbol(E, Decl(assignmentToParenthesizedIdentifiers.ts, 56, 1))
  
      A

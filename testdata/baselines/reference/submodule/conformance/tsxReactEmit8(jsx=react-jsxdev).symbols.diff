@@ -1,6 +1,6 @@
 --- old.tsxReactEmit8(jsx=react-jsxdev).symbols
 +++ new.tsxReactEmit8(jsx=react-jsxdev).symbols
-@@ -4,11 +4,6 @@
+@@= skipped -4, +4 lines =@@
  /// <reference path="react16.d.ts" />
  
  <div>1</div>;

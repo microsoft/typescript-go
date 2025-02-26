@@ -1,6 +1,6 @@
 --- old.exportAssignImportedIdentifier.symbols
 +++ new.exportAssignImportedIdentifier.symbols
-@@ -21,9 +21,9 @@
+@@= skipped -21, +21 lines =@@
  
  var x = foo1.x;
  >x : Symbol(x, Decl(foo2.ts, 1, 3))

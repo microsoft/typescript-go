@@ -1,6 +1,6 @@
 --- old.exportImportNonInstantiatedModule2.symbols
 +++ new.exportImportNonInstantiatedModule2.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  export function w(): e.w { // Should be OK
  >w : Symbol(w, Decl(consumer.ts, 0, 33))
  >e : Symbol(e, Decl(consumer.ts, 0, 0))
@@ -9,7 +9,7 @@
  
      return {name: 'value' };
  >name : Symbol(name, Decl(consumer.ts, 3, 12))
-@@ -18,7 +18,7 @@
+@@= skipped -11, +11 lines =@@
  
  interface Widget1 { name: string; }
  >Widget1 : Symbol(Widget1, Decl(w1.ts, 0, 16))

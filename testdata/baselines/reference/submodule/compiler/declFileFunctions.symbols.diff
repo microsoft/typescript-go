@@ -1,6 +1,6 @@
 --- old.declFileFunctions.symbols
 +++ new.declFileFunctions.symbols
-@@ -25,9 +25,9 @@
+@@= skipped -25, +25 lines =@@
  
      return a + rests.join("");
  >a : Symbol(a, Decl(declFileFunctions_0.ts, 9, 38))
@@ -12,7 +12,7 @@
  }
  
  export function fooWithOverloads(a: string): string;
-@@ -116,9 +116,9 @@
+@@= skipped -91, +91 lines =@@
  
      return a + rests.join("");
  >a : Symbol(a, Decl(declFileFunctions_0.ts, 46, 42))
@@ -24,7 +24,7 @@
  }
  
  function nonExportedFooWithOverloads(a: string): string;
-@@ -162,9 +162,9 @@
+@@= skipped -46, +46 lines =@@
  
      return a + rests.join("");
  >a : Symbol(a, Decl(declFileFunctions_1.ts, 9, 37))

@@ -1,6 +1,6 @@
 --- old.types.asyncGenerators.es2018.1.symbols
 +++ new.types.asyncGenerators.es2018.1.symbols
-@@ -18,18 +18,18 @@
+@@= skipped -18, +18 lines =@@
  >inferReturnType4 : Symbol(inferReturnType4, Decl(types.asyncGenerators.es2018.1.ts, 7, 1))
  
      yield Promise.resolve(1);
@@ -23,7 +23,7 @@
  }
  async function * inferReturnType6() {
  >inferReturnType6 : Symbol(inferReturnType6, Decl(types.asyncGenerators.es2018.1.ts, 14, 1))
-@@ -40,9 +40,9 @@
+@@= skipped -22, +22 lines =@@
  >inferReturnType7 : Symbol(inferReturnType7, Decl(types.asyncGenerators.es2018.1.ts, 17, 1))
  
      yield* [Promise.resolve(1)];
@@ -35,7 +35,7 @@
  }
  async function * inferReturnType8() {
  >inferReturnType8 : Symbol(inferReturnType8, Decl(types.asyncGenerators.es2018.1.ts, 20, 1))
-@@ -60,9 +60,9 @@
+@@= skipped -20, +20 lines =@@
  >AsyncIterableIterator : Symbol(AsyncIterableIterator, Decl(lib.es2018.asynciterable.d.ts, --, --))
  
      yield Promise.resolve(1);
@@ -47,7 +47,7 @@
  
  };
  const assignability3: () => AsyncIterableIterator<number> = async function * () {
-@@ -76,9 +76,9 @@
+@@= skipped -16, +16 lines =@@
  >AsyncIterableIterator : Symbol(AsyncIterableIterator, Decl(lib.es2018.asynciterable.d.ts, --, --))
  
      yield* [Promise.resolve(1)];
@@ -59,7 +59,7 @@
  
  };
  const assignability5: () => AsyncIterableIterator<number> = async function * () {
-@@ -98,9 +98,9 @@
+@@= skipped -22, +22 lines =@@
  >AsyncIterable : Symbol(AsyncIterable, Decl(lib.es2018.asynciterable.d.ts, --, --))
  
      yield Promise.resolve(1);
@@ -71,7 +71,7 @@
  
  };
  const assignability8: () => AsyncIterable<number> = async function * () {
-@@ -114,9 +114,9 @@
+@@= skipped -16, +16 lines =@@
  >AsyncIterable : Symbol(AsyncIterable, Decl(lib.es2018.asynciterable.d.ts, --, --))
  
      yield* [Promise.resolve(1)];
@@ -83,7 +83,7 @@
  
  };
  const assignability10: () => AsyncIterable<number> = async function * () {
-@@ -136,9 +136,9 @@
+@@= skipped -22, +22 lines =@@
  >AsyncIterator : Symbol(AsyncIterator, Decl(lib.es2018.asynciterable.d.ts, --, --))
  
      yield Promise.resolve(1);
@@ -95,7 +95,7 @@
  
  };
  const assignability13: () => AsyncIterator<number> = async function * () {
-@@ -152,9 +152,9 @@
+@@= skipped -16, +16 lines =@@
  >AsyncIterator : Symbol(AsyncIterator, Decl(lib.es2018.asynciterable.d.ts, --, --))
  
      yield* [Promise.resolve(1)];
@@ -107,7 +107,7 @@
  
  };
  const assignability15: () => AsyncIterator<number> = async function * () {
-@@ -174,9 +174,9 @@
+@@= skipped -22, +22 lines =@@
  >AsyncIterableIterator : Symbol(AsyncIterableIterator, Decl(lib.es2018.asynciterable.d.ts, --, --))
  
      yield Promise.resolve(1);
@@ -119,7 +119,7 @@
  }
  async function * explicitReturnType3(): AsyncIterableIterator<number> {
  >explicitReturnType3 : Symbol(explicitReturnType3, Decl(types.asyncGenerators.es2018.1.ts, 74, 1))
-@@ -189,9 +189,9 @@
+@@= skipped -15, +15 lines =@@
  >AsyncIterableIterator : Symbol(AsyncIterableIterator, Decl(lib.es2018.asynciterable.d.ts, --, --))
  
      yield* [Promise.resolve(1)];
@@ -131,7 +131,7 @@
  }
  async function * explicitReturnType5(): AsyncIterableIterator<number> {
  >explicitReturnType5 : Symbol(explicitReturnType5, Decl(types.asyncGenerators.es2018.1.ts, 80, 1))
-@@ -210,9 +210,9 @@
+@@= skipped -21, +21 lines =@@
  >AsyncIterable : Symbol(AsyncIterable, Decl(lib.es2018.asynciterable.d.ts, --, --))
  
      yield Promise.resolve(1);
@@ -143,7 +143,7 @@
  }
  async function * explicitReturnType8(): AsyncIterable<number> {
  >explicitReturnType8 : Symbol(explicitReturnType8, Decl(types.asyncGenerators.es2018.1.ts, 89, 1))
-@@ -225,9 +225,9 @@
+@@= skipped -15, +15 lines =@@
  >AsyncIterable : Symbol(AsyncIterable, Decl(lib.es2018.asynciterable.d.ts, --, --))
  
      yield* [Promise.resolve(1)];
@@ -155,7 +155,7 @@
  }
  async function * explicitReturnType10(): AsyncIterable<number> {
  >explicitReturnType10 : Symbol(explicitReturnType10, Decl(types.asyncGenerators.es2018.1.ts, 95, 1))
-@@ -246,9 +246,9 @@
+@@= skipped -21, +21 lines =@@
  >AsyncIterator : Symbol(AsyncIterator, Decl(lib.es2018.asynciterable.d.ts, --, --))
  
      yield Promise.resolve(1);
@@ -167,7 +167,7 @@
  }
  async function * explicitReturnType13(): AsyncIterator<number> {
  >explicitReturnType13 : Symbol(explicitReturnType13, Decl(types.asyncGenerators.es2018.1.ts, 104, 1))
-@@ -261,9 +261,9 @@
+@@= skipped -15, +15 lines =@@
  >AsyncIterator : Symbol(AsyncIterator, Decl(lib.es2018.asynciterable.d.ts, --, --))
  
      yield* [Promise.resolve(1)];
@@ -179,7 +179,7 @@
  }
  async function * explicitReturnType15(): AsyncIterator<number> {
  >explicitReturnType15 : Symbol(explicitReturnType15, Decl(types.asyncGenerators.es2018.1.ts, 110, 1))
-@@ -287,9 +287,9 @@
+@@= skipped -26, +26 lines =@@
  
      const x = await Promise.resolve(1);
  >x : Symbol(x, Decl(types.asyncGenerators.es2018.1.ts, 121, 9))

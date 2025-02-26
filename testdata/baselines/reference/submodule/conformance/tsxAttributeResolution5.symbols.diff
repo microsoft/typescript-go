@@ -1,6 +1,6 @@
 --- old.tsxAttributeResolution5.symbols
 +++ new.tsxAttributeResolution5.symbols
-@@ -11,11 +11,11 @@
+@@= skipped -11, +11 lines =@@
  >IntrinsicElements : Symbol(IntrinsicElements, Decl(file.tsx, 1, 22))
  
  		test1: Attribs1;
@@ -14,7 +14,7 @@
  >Attribs2 : Symbol(Attribs2, Decl(file.tsx, 9, 1))
  	}
  }
-@@ -23,14 +23,14 @@
+@@= skipped -12, +12 lines =@@
  >Attribs1 : Symbol(Attribs1, Decl(file.tsx, 6, 1))
  
  	x: string;
@@ -31,7 +31,7 @@
  }
  
  function make1<T extends {x: string}> (obj: T) {
-@@ -41,7 +41,6 @@
+@@= skipped -18, +18 lines =@@
  >T : Symbol(T, Decl(file.tsx, 15, 15))
  
  	return <test1 {...obj} />; // OK
@@ -39,7 +39,7 @@
  >obj : Symbol(obj, Decl(file.tsx, 15, 39))
  }
  
-@@ -53,7 +52,6 @@
+@@= skipped -12, +11 lines =@@
  >T : Symbol(T, Decl(file.tsx, 19, 15))
  
  	return <test1 {...obj} />; // Error (x is number, not string)
@@ -47,7 +47,7 @@
  >obj : Symbol(obj, Decl(file.tsx, 19, 39))
  }
  
-@@ -65,14 +63,10 @@
+@@= skipped -12, +11 lines =@@
  >T : Symbol(T, Decl(file.tsx, 23, 15))
  
  	return <test1 {...obj} />; // Error, missing x

@@ -1,6 +1,6 @@
 --- old.jsExpandoObjectDefineProperty.symbols
 +++ new.jsExpandoObjectDefineProperty.symbols
-@@ -2,21 +2,16 @@
+@@= skipped -2, +2 lines =@@
  
  === index.js ===
  var chrome = {}

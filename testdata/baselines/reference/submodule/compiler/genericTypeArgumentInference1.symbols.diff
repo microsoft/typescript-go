@@ -1,6 +1,6 @@
 --- old.genericTypeArgumentInference1.symbols
 +++ new.genericTypeArgumentInference1.symbols
-@@ -20,7 +20,7 @@
+@@= skipped -20, +20 lines =@@
  >Static : Symbol(Static, Decl(genericTypeArgumentInference1.ts, 3, 5))
  
          all<T>(list: T[], iterator?: Iterator<T, boolean>, context?: any): T;
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(genericTypeArgumentInference1.ts, 5, 12))
  >list : Symbol(list, Decl(genericTypeArgumentInference1.ts, 5, 15))
  >T : Symbol(T, Decl(genericTypeArgumentInference1.ts, 5, 12))
-@@ -31,7 +31,7 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(genericTypeArgumentInference1.ts, 5, 12))
  
          identity<T>(value: T): T;
@@ -18,7 +18,7 @@
  >T : Symbol(T, Decl(genericTypeArgumentInference1.ts, 6, 17))
  >value : Symbol(value, Decl(genericTypeArgumentInference1.ts, 6, 20))
  >T : Symbol(T, Decl(genericTypeArgumentInference1.ts, 6, 17))
-@@ -41,41 +41,41 @@
+@@= skipped -10, +10 lines =@@
  declare var _: Underscore.Static;
  >_ : Symbol(_, Decl(genericTypeArgumentInference1.ts, 9, 11))
  >Underscore : Symbol(Underscore, Decl(genericTypeArgumentInference1.ts, 0, 0))

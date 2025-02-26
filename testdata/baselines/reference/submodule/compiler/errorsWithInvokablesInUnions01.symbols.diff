@@ -1,6 +1,6 @@
 --- old.errorsWithInvokablesInUnions01.symbols
 +++ new.errorsWithInvokablesInUnions01.symbols
-@@ -22,12 +22,12 @@
+@@= skipped -22, +22 lines =@@
  >TScope : Symbol(TScope, Decl(errorsWithInvokablesInUnions01.ts, 8, 28))
  
      pre?: IDirectiveLinkFn<TScope>;
@@ -15,7 +15,7 @@
  >IDirectiveLinkFn : Symbol(IDirectiveLinkFn, Decl(errorsWithInvokablesInUnions01.ts, 2, 1))
  >TScope : Symbol(TScope, Decl(errorsWithInvokablesInUnions01.ts, 8, 28))
  }
-@@ -46,6 +46,6 @@
+@@= skipped -24, +24 lines =@@
  >IDirectivePrePost : Symbol(IDirectivePrePost, Decl(errorsWithInvokablesInUnions01.ts, 6, 1))
  
      someUnaccountedProp: any;

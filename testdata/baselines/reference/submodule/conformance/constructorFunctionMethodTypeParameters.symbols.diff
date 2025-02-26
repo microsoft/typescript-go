@@ -1,6 +1,6 @@
 --- old.constructorFunctionMethodTypeParameters.symbols
 +++ new.constructorFunctionMethodTypeParameters.symbols
-@@ -10,9 +10,6 @@
+@@= skipped -10, +10 lines =@@
  >t : Symbol(t, Decl(constructorFunctionMethodTypeParameters.js, 4, 13))
  
      this.t = t;
@@ -10,7 +10,7 @@
  >t : Symbol(t, Decl(constructorFunctionMethodTypeParameters.js, 4, 13))
  }
  
-@@ -23,10 +20,9 @@
+@@= skipped -13, +10 lines =@@
   * @return {V}
   */
  Cls.prototype.topLevelComment = function (t, v) {
@@ -23,7 +23,7 @@
  >t : Symbol(t, Decl(constructorFunctionMethodTypeParameters.js, 14, 42))
  >v : Symbol(v, Decl(constructorFunctionMethodTypeParameters.js, 14, 44))
  
-@@ -36,10 +32,9 @@
+@@= skipped -13, +12 lines =@@
  };
  
  Cls.prototype.nestedComment =
@@ -36,7 +36,7 @@
  
      /**
       * @template {string} U
-@@ -62,14 +57,10 @@
+@@= skipped -26, +25 lines =@@
  
  const s = c.topLevelComment('a', 'b');
  >s : Symbol(s, Decl(constructorFunctionMethodTypeParameters.js, 30, 5))

@@ -1,6 +1,6 @@
 --- old.genericCallbacksAndClassHierarchy.symbols
 +++ new.genericCallbacksAndClassHierarchy.symbols
-@@ -9,7 +9,7 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(genericCallbacksAndClassHierarchy.ts, 1, 23))
  
          subscribe(callback: (newValue: T) => void ): any;
@@ -9,7 +9,7 @@
  >callback : Symbol(callback, Decl(genericCallbacksAndClassHierarchy.ts, 2, 18))
  >newValue : Symbol(newValue, Decl(genericCallbacksAndClassHierarchy.ts, 2, 29))
  >T : Symbol(T, Decl(genericCallbacksAndClassHierarchy.ts, 1, 23))
-@@ -19,7 +19,7 @@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(genericCallbacksAndClassHierarchy.ts, 4, 20))
  
          public value: I<T>;
@@ -18,7 +18,7 @@
  >I : Symbol(I, Decl(genericCallbacksAndClassHierarchy.ts, 0, 10))
  >T : Symbol(T, Decl(genericCallbacksAndClassHierarchy.ts, 4, 20))
      }
-@@ -28,7 +28,7 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(genericCallbacksAndClassHierarchy.ts, 7, 19))
  
          public dummy: any;
@@ -27,7 +27,7 @@
      }
      export class B<T> extends C1<A<T>> { }
  >B : Symbol(B, Decl(genericCallbacksAndClassHierarchy.ts, 9, 5))
-@@ -42,7 +42,7 @@
+@@= skipped -14, +14 lines =@@
  >T : Symbol(T, Decl(genericCallbacksAndClassHierarchy.ts, 11, 19))
  
          _subscribe(viewModel: B<T>): void {
@@ -36,7 +36,7 @@
  >viewModel : Symbol(viewModel, Decl(genericCallbacksAndClassHierarchy.ts, 12, 19))
  >B : Symbol(B, Decl(genericCallbacksAndClassHierarchy.ts, 9, 5))
  >T : Symbol(T, Decl(genericCallbacksAndClassHierarchy.ts, 11, 19))
-@@ -58,21 +58,21 @@
+@@= skipped -16, +16 lines =@@
  >I : Symbol(I, Decl(genericCallbacksAndClassHierarchy.ts, 0, 10))
  >A : Symbol(A, Decl(genericCallbacksAndClassHierarchy.ts, 6, 5))
  >T : Symbol(T, Decl(genericCallbacksAndClassHierarchy.ts, 11, 19))

@@ -1,6 +1,6 @@
 --- old.destructuringParameterDeclaration2.symbols
 +++ new.destructuringParameterDeclaration2.symbols
-@@ -27,7 +27,7 @@
+@@= skipped -27, +27 lines =@@
  >F1 : Symbol(F1, Decl(destructuringParameterDeclaration2.ts, 7, 34))
  
      b0(z = 10, [[a, b], d, {u}] = [[1, 2], "string", { u: false }]);  // Error, no function body
@@ -9,7 +9,7 @@
  >z : Symbol(z, Decl(destructuringParameterDeclaration2.ts, 15, 7))
  >a : Symbol(a, Decl(destructuringParameterDeclaration2.ts, 15, 17))
  >b : Symbol(b, Decl(destructuringParameterDeclaration2.ts, 15, 19))
-@@ -153,19 +153,19 @@
+@@= skipped -126, +126 lines =@@
  >F2 : Symbol(F2, Decl(destructuringParameterDeclaration2.ts, 46, 27))
  
      d3([a, b, c]?);
@@ -32,7 +32,7 @@
  >a : Symbol(a, Decl(destructuringParameterDeclaration2.ts, 51, 8))
  >b : Symbol(b, Decl(destructuringParameterDeclaration2.ts, 51, 10))
  >c : Symbol(c, Decl(destructuringParameterDeclaration2.ts, 51, 13))
-@@ -176,19 +176,19 @@
+@@= skipped -23, +23 lines =@@
  >F2 : Symbol(F2, Decl(destructuringParameterDeclaration2.ts, 46, 27))
  
      d3([a, b, c]?) { }  // Error, binding pattern can't be optional in implementation signature

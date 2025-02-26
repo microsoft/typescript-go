@@ -1,6 +1,6 @@
 --- old.subtypingWithGenericCallSignaturesWithOptionalParameters.symbols
 +++ new.subtypingWithGenericCallSignaturesWithOptionalParameters.symbols
-@@ -11,23 +11,23 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 3, 19))
  
          a: () => T;
@@ -28,7 +28,7 @@
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 7, 13))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 3, 19))
  >y : Symbol(y, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 7, 18))
-@@ -35,7 +35,7 @@
+@@= skipped -24, +24 lines =@@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 3, 19))
  
          a5: (x?: T, y?: T) => T;
@@ -37,7 +37,7 @@
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 8, 13))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 3, 19))
  >y : Symbol(y, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 8, 19))
-@@ -50,7 +50,7 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 11, 17))
  
          a: () => T; // ok, same T of required params
@@ -46,7 +46,7 @@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 11, 17))
      }
  
-@@ -61,7 +61,7 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 15, 17))
  
          a: (x?: T) => T; // ok, same T of required params
@@ -55,7 +55,7 @@
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 16, 12))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 15, 17))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 15, 17))
-@@ -74,7 +74,7 @@
+@@= skipped -13, +13 lines =@@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 19, 17))
  
          a: (x: T) => T; // error, too many required params
@@ -64,7 +64,7 @@
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 20, 12))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 19, 17))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 19, 17))
-@@ -88,7 +88,7 @@
+@@= skipped -14, +14 lines =@@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 24, 17))
  
          a2: () => T; // ok, same T of required params
@@ -73,7 +73,7 @@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 24, 17))
      }
  
-@@ -99,7 +99,7 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 28, 17))
  
          a2: (x?: T) => T; // ok, same T of required params
@@ -82,7 +82,7 @@
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 29, 13))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 28, 17))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 28, 17))
-@@ -112,7 +112,7 @@
+@@= skipped -13, +13 lines =@@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 32, 17))
  
          a2: (x: T) => T; // ok, same number of params
@@ -91,7 +91,7 @@
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 33, 13))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 32, 17))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 32, 17))
-@@ -126,7 +126,7 @@
+@@= skipped -14, +14 lines =@@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 37, 17))
  
          a3: () => T; // ok, fewer required params
@@ -100,7 +100,7 @@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 37, 17))
      }
  
-@@ -137,7 +137,7 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 41, 17))
  
          a3: (x?: T) => T; // ok, fewer required params
@@ -109,7 +109,7 @@
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 42, 13))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 41, 17))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 41, 17))
-@@ -150,7 +150,7 @@
+@@= skipped -13, +13 lines =@@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 45, 17))
  
          a3: (x: T) => T; // ok, same T of required params
@@ -118,7 +118,7 @@
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 46, 13))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 45, 17))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 45, 17))
-@@ -163,7 +163,7 @@
+@@= skipped -13, +13 lines =@@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 49, 18))
  
          a3: (x: T, y: T) => T;  // error, too many required params
@@ -127,7 +127,7 @@
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 50, 13))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 49, 18))
  >y : Symbol(y, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 50, 18))
-@@ -179,7 +179,7 @@
+@@= skipped -16, +16 lines =@@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 54, 18))
  
          a4: () => T; // ok, fewer required params
@@ -136,7 +136,7 @@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 54, 18))
      }
  
-@@ -190,7 +190,7 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 58, 18))
  
          a4: (x?: T, y?: T) => T; // ok, fewer required params
@@ -145,7 +145,7 @@
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 59, 13))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 58, 18))
  >y : Symbol(y, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 59, 19))
-@@ -205,7 +205,7 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 62, 18))
  
          a4: (x: T) => T; // ok, same T of required params
@@ -154,7 +154,7 @@
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 63, 13))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 62, 18))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 62, 18))
-@@ -218,7 +218,7 @@
+@@= skipped -13, +13 lines =@@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 66, 18))
  
          a4: (x: T, y: T) => T;  // ok, same number of params
@@ -163,7 +163,7 @@
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 67, 13))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 66, 18))
  >y : Symbol(y, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 67, 18))
-@@ -234,7 +234,7 @@
+@@= skipped -16, +16 lines =@@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 71, 18))
  
          a5: () => T; // ok, fewer required params
@@ -172,7 +172,7 @@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 71, 18))
      }
  
-@@ -245,7 +245,7 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 75, 18))
  
          a5: (x?: T, y?: T) => T; // ok, fewer required params
@@ -181,7 +181,7 @@
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 76, 13))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 75, 18))
  >y : Symbol(y, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 76, 19))
-@@ -260,7 +260,7 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 79, 18))
  
          a5: (x: T) => T; // ok, all present params match
@@ -190,7 +190,7 @@
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 80, 13))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 79, 18))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 79, 18))
-@@ -273,7 +273,7 @@
+@@= skipped -13, +13 lines =@@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 83, 18))
  
          a5: (x: T, y: T) => T;  // ok, same number of params
@@ -199,7 +199,7 @@
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 84, 13))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 83, 18))
  >y : Symbol(y, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 84, 18))
-@@ -290,26 +290,26 @@
+@@= skipped -17, +17 lines =@@
  >Base2 : Symbol(Base2, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 88, 33))
  
          a: <T>() => T;
@@ -230,7 +230,7 @@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 95, 13))
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 95, 16))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 95, 13))
-@@ -318,7 +318,7 @@
+@@= skipped -28, +28 lines =@@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 95, 13))
  
          a5: <T>(x?: T, y?: T) => T;
@@ -239,7 +239,7 @@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 96, 13))
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 96, 16))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 96, 13))
-@@ -333,7 +333,7 @@
+@@= skipped -15, +15 lines =@@
  >Base2 : Symbol(Base2, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 88, 33))
  
          a: () => T; 
@@ -248,7 +248,7 @@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 99, 17))
      }
  
-@@ -343,7 +343,7 @@
+@@= skipped -10, +10 lines =@@
  >Base2 : Symbol(Base2, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 88, 33))
  
          a: (x?: T) => T;
@@ -257,7 +257,7 @@
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 104, 12))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 103, 17))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 103, 17))
-@@ -355,7 +355,7 @@
+@@= skipped -12, +12 lines =@@
  >Base2 : Symbol(Base2, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 88, 33))
  
          a: (x: T) => T; 
@@ -266,7 +266,7 @@
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 108, 12))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 107, 17))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 107, 17))
-@@ -368,7 +368,7 @@
+@@= skipped -13, +13 lines =@@
  >Base2 : Symbol(Base2, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 88, 33))
  
          a2: () => T; 
@@ -275,7 +275,7 @@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 112, 17))
      }
  
-@@ -378,7 +378,7 @@
+@@= skipped -10, +10 lines =@@
  >Base2 : Symbol(Base2, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 88, 33))
  
          a2: (x?: T) => T
@@ -284,7 +284,7 @@
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 117, 13))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 116, 17))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 116, 17))
-@@ -390,7 +390,7 @@
+@@= skipped -12, +12 lines =@@
  >Base2 : Symbol(Base2, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 88, 33))
  
          a2: (x: T) => T;
@@ -293,7 +293,7 @@
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 121, 13))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 120, 17))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 120, 17))
-@@ -403,7 +403,7 @@
+@@= skipped -13, +13 lines =@@
  >Base2 : Symbol(Base2, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 88, 33))
  
          a3: () => T;
@@ -302,7 +302,7 @@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 125, 17))
      }
  
-@@ -413,7 +413,7 @@
+@@= skipped -10, +10 lines =@@
  >Base2 : Symbol(Base2, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 88, 33))
  
          a3: (x?: T) => T; 
@@ -311,7 +311,7 @@
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 130, 13))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 129, 17))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 129, 17))
-@@ -425,7 +425,7 @@
+@@= skipped -12, +12 lines =@@
  >Base2 : Symbol(Base2, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 88, 33))
  
          a3: (x: T) => T; 
@@ -320,7 +320,7 @@
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 134, 13))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 133, 17))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 133, 17))
-@@ -437,7 +437,7 @@
+@@= skipped -12, +12 lines =@@
  >Base2 : Symbol(Base2, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 88, 33))
  
          a3: (x: T, y: T) => T;  
@@ -329,7 +329,7 @@
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 138, 13))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 137, 18))
  >y : Symbol(y, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 138, 18))
-@@ -452,7 +452,7 @@
+@@= skipped -15, +15 lines =@@
  >Base2 : Symbol(Base2, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 88, 33))
  
          a4: () => T; 
@@ -338,7 +338,7 @@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 142, 18))
      }
  
-@@ -462,7 +462,7 @@
+@@= skipped -10, +10 lines =@@
  >Base2 : Symbol(Base2, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 88, 33))
  
          a4: (x?: T, y?: T) => T; 
@@ -347,7 +347,7 @@
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 147, 13))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 146, 18))
  >y : Symbol(y, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 147, 19))
-@@ -476,7 +476,7 @@
+@@= skipped -14, +14 lines =@@
  >Base2 : Symbol(Base2, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 88, 33))
  
          a4: (x: T) => T; 
@@ -356,7 +356,7 @@
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 151, 13))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 150, 18))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 150, 18))
-@@ -488,7 +488,7 @@
+@@= skipped -12, +12 lines =@@
  >Base2 : Symbol(Base2, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 88, 33))
  
          a4: (x: T, y: T) => T; 
@@ -365,7 +365,7 @@
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 155, 13))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 154, 18))
  >y : Symbol(y, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 155, 18))
-@@ -503,7 +503,7 @@
+@@= skipped -15, +15 lines =@@
  >Base2 : Symbol(Base2, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 88, 33))
  
          a5: () => T; 
@@ -374,7 +374,7 @@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 159, 18))
      }
  
-@@ -513,7 +513,7 @@
+@@= skipped -10, +10 lines =@@
  >Base2 : Symbol(Base2, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 88, 33))
  
          a5: (x?: T, y?: T) => T; 
@@ -383,7 +383,7 @@
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 164, 13))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 163, 18))
  >y : Symbol(y, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 164, 19))
-@@ -527,7 +527,7 @@
+@@= skipped -14, +14 lines =@@
  >Base2 : Symbol(Base2, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 88, 33))
  
          a5: (x: T) => T;
@@ -392,7 +392,7 @@
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 168, 13))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 167, 18))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 167, 18))
-@@ -539,7 +539,7 @@
+@@= skipped -12, +12 lines =@@
  >Base2 : Symbol(Base2, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 88, 33))
  
          a5: (x: T, y: T) => T; 
@@ -401,7 +401,7 @@
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 172, 13))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 171, 18))
  >y : Symbol(y, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 172, 18))
-@@ -555,26 +555,26 @@
+@@= skipped -16, +16 lines =@@
  >Base2 : Symbol(Base2, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 176, 31))
  
          a: <T>() => T;
@@ -432,7 +432,7 @@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 182, 13))
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 182, 16))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 182, 13))
-@@ -583,7 +583,7 @@
+@@= skipped -28, +28 lines =@@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 182, 13))
  
          a5: <T>(x?: T, y?: T) => T;
@@ -441,7 +441,7 @@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 183, 13))
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 183, 16))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 183, 13))
-@@ -598,7 +598,7 @@
+@@= skipped -15, +15 lines =@@
  >Base2 : Symbol(Base2, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 176, 31))
  
          a: <T>() => T; // ok, same number of required params
@@ -450,7 +450,7 @@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 188, 12))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 188, 12))
      }
-@@ -608,7 +608,7 @@
+@@= skipped -10, +10 lines =@@
  >Base2 : Symbol(Base2, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 176, 31))
  
          a: <T>(x?: T) => T; // error, not identical and contextual signature instatiation can't make inference from T to T
@@ -459,7 +459,7 @@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 192, 12))
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 192, 15))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 192, 12))
-@@ -620,7 +620,7 @@
+@@= skipped -12, +12 lines =@@
  >Base2 : Symbol(Base2, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 176, 31))
  
          a: <T>(x: T) => T; // error, not identical and contextual signature instatiation can't make inference from T to T
@@ -468,7 +468,7 @@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 196, 12))
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 196, 15))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 196, 12))
-@@ -633,7 +633,7 @@
+@@= skipped -13, +13 lines =@@
  >Base2 : Symbol(Base2, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 176, 31))
  
          a2: <T>() => T; // error, not identical and contextual signature instatiation can't make inference from T to T
@@ -477,7 +477,7 @@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 201, 13))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 201, 13))
      }
-@@ -643,7 +643,7 @@
+@@= skipped -10, +10 lines =@@
  >Base2 : Symbol(Base2, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 176, 31))
  
          a2: <T>(x?: T) => T; // ok, identical
@@ -486,7 +486,7 @@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 205, 13))
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 205, 16))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 205, 13))
-@@ -655,7 +655,7 @@
+@@= skipped -12, +12 lines =@@
  >Base2 : Symbol(Base2, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 176, 31))
  
          a2: <T>(x: T) => T; // ok, same number of params
@@ -495,7 +495,7 @@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 209, 13))
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 209, 16))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 209, 13))
-@@ -668,7 +668,7 @@
+@@= skipped -13, +13 lines =@@
  >Base2 : Symbol(Base2, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 176, 31))
  
          a3: <T>() => T; // error, no inferences for T so {} not assignable to {} in return type
@@ -504,7 +504,7 @@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 214, 13))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 214, 13))
      }
-@@ -678,7 +678,7 @@
+@@= skipped -10, +10 lines =@@
  >Base2 : Symbol(Base2, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 176, 31))
  
          a3: <T>(x?: T) => T; // ok, fewer required params
@@ -513,7 +513,7 @@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 218, 13))
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 218, 16))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 218, 13))
-@@ -690,7 +690,7 @@
+@@= skipped -12, +12 lines =@@
  >Base2 : Symbol(Base2, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 176, 31))
  
          a3: <T>(x: T) => T; // ok, identical, same number of required params
@@ -522,7 +522,7 @@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 222, 13))
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 222, 16))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 222, 13))
-@@ -702,7 +702,7 @@
+@@= skipped -12, +12 lines =@@
  >Base2 : Symbol(Base2, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 176, 31))
  
          a3: <T>(x: T, y: T) => T;  // error, too many required params
@@ -531,7 +531,7 @@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 226, 13))
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 226, 16))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 226, 13))
-@@ -717,7 +717,7 @@
+@@= skipped -15, +15 lines =@@
  >Base2 : Symbol(Base2, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 176, 31))
  
          a4: <T>() => T; // error, not identical and contextual signature instatiation can't make inference from T to T
@@ -540,7 +540,7 @@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 231, 13))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 231, 13))
      }
-@@ -727,7 +727,7 @@
+@@= skipped -10, +10 lines =@@
  >Base2 : Symbol(Base2, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 176, 31))
  
          a4: <T>(x?: T, y?: T) => T; // ok, fewer required params
@@ -549,7 +549,7 @@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 235, 13))
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 235, 16))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 235, 13))
-@@ -741,7 +741,7 @@
+@@= skipped -14, +14 lines =@@
  >Base2 : Symbol(Base2, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 176, 31))
  
          a4: <T>(x: T) => T; // ok, same T of required params
@@ -558,7 +558,7 @@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 239, 13))
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 239, 16))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 239, 13))
-@@ -753,7 +753,7 @@
+@@= skipped -12, +12 lines =@@
  >Base2 : Symbol(Base2, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 176, 31))
  
          a4: <T>(x: T, y: T) => T;  // error, too many required params
@@ -567,7 +567,7 @@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 243, 13))
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 243, 16))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 243, 13))
-@@ -768,7 +768,7 @@
+@@= skipped -15, +15 lines =@@
  >Base2 : Symbol(Base2, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 176, 31))
  
          a5: <T>() => T; // error, not identical and contextual signature instatiation can't make inference from T to T
@@ -576,7 +576,7 @@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 248, 13))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 248, 13))
      }
-@@ -778,7 +778,7 @@
+@@= skipped -10, +10 lines =@@
  >Base2 : Symbol(Base2, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 176, 31))
  
          a5: <T>(x?: T, y?: T) => T; // ok, fewer required params
@@ -585,7 +585,7 @@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 252, 13))
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 252, 16))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 252, 13))
-@@ -792,7 +792,7 @@
+@@= skipped -14, +14 lines =@@
  >Base2 : Symbol(Base2, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 176, 31))
  
          a5: <T>(x: T) => T; // ok, all present params match
@@ -594,7 +594,7 @@
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 256, 13))
  >x : Symbol(x, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 256, 16))
  >T : Symbol(T, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 256, 13))
-@@ -804,7 +804,7 @@
+@@= skipped -12, +12 lines =@@
  >Base2 : Symbol(Base2, Decl(subtypingWithGenericCallSignaturesWithOptionalParameters.ts, 176, 31))
  
          a5: <T>(x: T, y: T) => T;  // ok, same number of params

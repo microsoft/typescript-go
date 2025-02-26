@@ -1,6 +1,6 @@
 --- old.staticInheritance.symbols
 +++ new.staticInheritance.symbols
-@@ -10,10 +10,10 @@
+@@= skipped -10, +10 lines =@@
  >A : Symbol(A, Decl(staticInheritance.ts, 0, 38))
  
      static n: string;
@@ -13,7 +13,7 @@
  >doThing : Symbol(doThing, Decl(staticInheritance.ts, 0, 0))
  >A : Symbol(A, Decl(staticInheritance.ts, 0, 38))
  }
-@@ -22,12 +22,12 @@
+@@= skipped -12, +12 lines =@@
  >A : Symbol(A, Decl(staticInheritance.ts, 0, 38))
  
      p1 = doThing(A); // OK

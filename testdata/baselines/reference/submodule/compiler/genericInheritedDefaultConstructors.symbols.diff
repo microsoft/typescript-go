@@ -1,6 +1,6 @@
 --- old.genericInheritedDefaultConstructors.symbols
 +++ new.genericInheritedDefaultConstructors.symbols
-@@ -11,14 +11,14 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(genericInheritedDefaultConstructors.ts, 1, 22))
  
      prototype: T;
@@ -17,7 +17,7 @@
  >U : Symbol(U, Decl(genericInheritedDefaultConstructors.ts, 6, 8))
  
  class B<V> extends A<V> { b: V; }
-@@ -26,7 +26,7 @@
+@@= skipped -15, +15 lines =@@
  >V : Symbol(V, Decl(genericInheritedDefaultConstructors.ts, 7, 8))
  >A : Symbol(A, Decl(genericInheritedDefaultConstructors.ts, 4, 1))
  >V : Symbol(V, Decl(genericInheritedDefaultConstructors.ts, 7, 8))

@@ -1,6 +1,6 @@
 --- old.classWithOnlyPublicMembersEquivalentToInterface2.symbols
 +++ new.classWithOnlyPublicMembersEquivalentToInterface2.symbols
-@@ -7,17 +7,17 @@
+@@= skipped -7, +7 lines =@@
  >C : Symbol(C, Decl(classWithOnlyPublicMembersEquivalentToInterface2.ts, 0, 0))
  
      public x: string;
@@ -22,7 +22,7 @@
  >v : Symbol(v, Decl(classWithOnlyPublicMembersEquivalentToInterface2.ts, 6, 17))
  
      [x: string]: Object;
-@@ -29,24 +29,24 @@
+@@= skipped -22, +22 lines =@@
  >Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      0: number;
@@ -52,7 +52,7 @@
  
      [x: string]: Object;
  >x : Symbol(x, Decl(classWithOnlyPublicMembersEquivalentToInterface2.ts, 18, 5))
-@@ -57,7 +57,7 @@
+@@= skipped -28, +28 lines =@@
  >Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      0: number;

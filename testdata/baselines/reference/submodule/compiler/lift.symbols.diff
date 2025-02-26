@@ -1,6 +1,6 @@
 --- old.lift.symbols
 +++ new.lift.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >B : Symbol(B, Decl(lift.ts, 0, 0))
  
      constructor(public y:number) {
@@ -13,7 +13,7 @@
  }
  
  class C extends B {
-@@ -35,18 +35,18 @@
+@@= skipped -30, +30 lines =@@
      }
  
      public liftxyz () { return x+z+this.y; }

@@ -1,6 +1,6 @@
 --- old.unusedPrivateVariableInClass4.symbols
 +++ new.unusedPrivateVariableInClass4.symbols
-@@ -5,20 +5,20 @@
+@@= skipped -5, +5 lines =@@
  >greeter : Symbol(greeter, Decl(unusedPrivateVariableInClass4.ts, 0, 0))
  
      private x: string;

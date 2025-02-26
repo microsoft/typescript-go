@@ -1,6 +1,6 @@
 --- old.declareExternalModuleWithExportAssignedFundule.symbols
 +++ new.declareExternalModuleWithExportAssignedFundule.symbols
-@@ -10,7 +10,7 @@
+@@= skipped -10, +10 lines =@@
      function express(): express.ExpressServer;
  >express : Symbol(express, Decl(declareExternalModuleWithExportAssignedFundule.ts, 2, 21), Decl(declareExternalModuleWithExportAssignedFundule.ts, 4, 46))
  >express : Symbol(express, Decl(declareExternalModuleWithExportAssignedFundule.ts, 2, 21), Decl(declareExternalModuleWithExportAssignedFundule.ts, 4, 46))
@@ -9,7 +9,7 @@
  
      module express {
  >express : Symbol(express, Decl(declareExternalModuleWithExportAssignedFundule.ts, 2, 21), Decl(declareExternalModuleWithExportAssignedFundule.ts, 4, 46))
-@@ -19,12 +19,12 @@
+@@= skipped -9, +9 lines =@@
  >ExpressServer : Symbol(ExpressServer, Decl(declareExternalModuleWithExportAssignedFundule.ts, 6, 20))
  
              enable(name: string): ExpressServer;

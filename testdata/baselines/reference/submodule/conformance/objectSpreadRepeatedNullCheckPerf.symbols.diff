@@ -1,6 +1,6 @@
 --- old.objectSpreadRepeatedNullCheckPerf.symbols
 +++ new.objectSpreadRepeatedNullCheckPerf.symbols
-@@ -5,82 +5,82 @@
+@@= skipped -5, +5 lines =@@
  >Props : Symbol(Props, Decl(objectSpreadRepeatedNullCheckPerf.ts, 0, 0))
  
      readonly a?: string
@@ -109,7 +109,7 @@
  }
  
  function parseWithSpread(config: Record<string, number>): Props {
-@@ -94,209 +94,209 @@
+@@= skipped -89, +89 lines =@@
  >config : Symbol(config, Decl(objectSpreadRepeatedNullCheckPerf.ts, 29, 25))
  >undefined : Symbol(undefined)
  >a : Symbol(a, Decl(objectSpreadRepeatedNullCheckPerf.ts, 31, 38))

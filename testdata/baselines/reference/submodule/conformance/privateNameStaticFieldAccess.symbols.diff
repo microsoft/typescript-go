@@ -1,6 +1,6 @@
 --- old.privateNameStaticFieldAccess.symbols
 +++ new.privateNameStaticFieldAccess.symbols
-@@ -5,20 +5,14 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(privateNameStaticFieldAccess.ts, 0, 0))
  
      static #myField = "hello world";

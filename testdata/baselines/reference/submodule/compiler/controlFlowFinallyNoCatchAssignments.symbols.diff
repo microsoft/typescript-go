@@ -1,6 +1,6 @@
 --- old.controlFlowFinallyNoCatchAssignments.symbols
 +++ new.controlFlowFinallyNoCatchAssignments.symbols
-@@ -6,9 +6,9 @@
+@@= skipped -6, +6 lines =@@
  
  x = Math.random();
  >x : Symbol(x, Decl(controlFlowFinallyNoCatchAssignments.ts, 0, 3))
@@ -12,7 +12,7 @@
  
  let a: number;
  >a : Symbol(a, Decl(controlFlowFinallyNoCatchAssignments.ts, 2, 3))
-@@ -26,15 +26,15 @@
+@@= skipped -20, +20 lines =@@
      }
  } finally {
      console.log(x);

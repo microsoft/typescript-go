@@ -1,6 +1,6 @@
 --- old.dottedModuleName.symbols
 +++ new.dottedModuleName.symbols
-@@ -5,21 +5,20 @@
+@@= skipped -5, +5 lines =@@
  >M : Symbol(M, Decl(dottedModuleName.ts, 0, 0), Decl(dottedModuleName.ts, 7, 1))
  
      export module N {
@@ -26,7 +26,7 @@
  	}
      }
  }
-@@ -28,18 +27,17 @@
+@@= skipped -23, +22 lines =@@
  
  module M.N {
  >M : Symbol(M, Decl(dottedModuleName.ts, 0, 0), Decl(dottedModuleName.ts, 7, 1))

@@ -1,6 +1,6 @@
 --- old.functionTypeArgumentArrayAssignment.symbols
 +++ new.functionTypeArgumentArrayAssignment.symbols
-@@ -9,11 +9,11 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(functionTypeArgumentArrayAssignment.ts, 1, 20))
  
          foo: T;

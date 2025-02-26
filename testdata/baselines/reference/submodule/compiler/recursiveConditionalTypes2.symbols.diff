@@ -1,6 +1,6 @@
 --- old.recursiveConditionalTypes2.symbols
 +++ new.recursiveConditionalTypes2.symbols
-@@ -25,18 +25,18 @@
+@@= skipped -25, +25 lines =@@
  >ClassSpec : Symbol(ClassSpec, Decl(recursiveConditionalTypes2.ts, 6, 10))
  
    public?: object;
@@ -23,7 +23,7 @@
  >Record : Symbol(Record, Decl(lib.es5.d.ts, --, --))
  >ClassSpec : Symbol(ClassSpec, Decl(recursiveConditionalTypes2.ts, 6, 10))
  }
-@@ -188,7 +188,7 @@
+@@= skipped -163, +163 lines =@@
  >T : Symbol(T, Decl(recursiveConditionalTypes2.ts, 54, 17))
  
    find<S extends T>(predicate: (value: T) => boolean): void;
@@ -32,7 +32,7 @@
  >S : Symbol(S, Decl(recursiveConditionalTypes2.ts, 55, 7))
  >T : Symbol(T, Decl(recursiveConditionalTypes2.ts, 54, 17))
  >predicate : Symbol(predicate, Decl(recursiveConditionalTypes2.ts, 55, 20))
-@@ -202,8 +202,8 @@
+@@= skipped -14, +14 lines =@@
  >DefaultsDeep : Symbol(DefaultsDeep, Decl(recursiveConditionalTypes2.ts, 44, 2))
  
  z.find((_) => true);

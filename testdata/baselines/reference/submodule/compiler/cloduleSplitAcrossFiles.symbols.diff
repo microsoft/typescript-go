@@ -1,6 +1,6 @@
 --- old.cloduleSplitAcrossFiles.symbols
 +++ new.cloduleSplitAcrossFiles.symbols
-@@ -12,7 +12,7 @@
+@@= skipped -12, +12 lines =@@
  >y : Symbol(y, Decl(cloduleSplitAcrossFiles_module.ts, 1, 14))
  }
  D.y;

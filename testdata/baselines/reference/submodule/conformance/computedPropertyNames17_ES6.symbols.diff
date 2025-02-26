@@ -1,6 +1,6 @@
 --- old.computedPropertyNames17_ES6.symbols
 +++ new.computedPropertyNames17_ES6.symbols
-@@ -8,25 +8,25 @@
+@@= skipped -8, +8 lines =@@
  >C : Symbol(C, Decl(computedPropertyNames17_ES6.ts, 0, 15))
  
      get [b]() { return 0;}

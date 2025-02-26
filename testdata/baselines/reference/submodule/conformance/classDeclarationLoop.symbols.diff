@@ -1,6 +1,6 @@
 --- old.classDeclarationLoop.symbols
 +++ new.classDeclarationLoop.symbols
-@@ -13,13 +13,13 @@
+@@= skipped -13, +13 lines =@@
  >C : Symbol(C, Decl(classDeclarationLoop.ts, 1, 30))
  
          prop = i;

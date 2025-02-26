@@ -1,6 +1,6 @@
 --- old.interfaceImplementation7.symbols
 +++ new.interfaceImplementation7.symbols
-@@ -3,12 +3,12 @@
+@@= skipped -3, +3 lines =@@
  === interfaceImplementation7.ts ===
  interface i1{ name(): { s: string; }; }
  >i1 : Symbol(i1, Decl(interfaceImplementation7.ts, 0, 0))
@@ -15,7 +15,7 @@
  >n : Symbol(n, Decl(interfaceImplementation7.ts, 1, 23))
  
  interface i3 extends i1, i2 { }
-@@ -20,7 +20,7 @@
+@@= skipped -17, +17 lines =@@
  >i4 : Symbol(i4, Decl(interfaceImplementation7.ts, 3, 31))
  >i1 : Symbol(i1, Decl(interfaceImplementation7.ts, 0, 0))
  >i2 : Symbol(i2, Decl(interfaceImplementation7.ts, 0, 39))
@@ -24,7 +24,7 @@
  >s : Symbol(s, Decl(interfaceImplementation7.ts, 4, 39))
  >n : Symbol(n, Decl(interfaceImplementation7.ts, 4, 50))
  
-@@ -29,6 +29,6 @@
+@@= skipped -9, +9 lines =@@
  >i4 : Symbol(i4, Decl(interfaceImplementation7.ts, 3, 31))
  
      public name(): string { return ""; }

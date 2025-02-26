@@ -1,6 +1,6 @@
 --- old.emptyIndexer.symbols
 +++ new.emptyIndexer.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >I1 : Symbol(I1, Decl(emptyIndexer.ts, 0, 0))
  
  	m(): number;
@@ -9,7 +9,7 @@
  }
  
  interface I2 {
-@@ -23,7 +23,7 @@
+@@= skipped -18, +18 lines =@@
  
  var n = x[''].m(); // should not crash compiler
  >n : Symbol(n, Decl(emptyIndexer.ts, 11, 3))

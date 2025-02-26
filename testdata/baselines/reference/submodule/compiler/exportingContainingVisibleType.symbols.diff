@@ -1,6 +1,6 @@
 --- old.exportingContainingVisibleType.symbols
 +++ new.exportingContainingVisibleType.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(exportingContainingVisibleType.ts, 0, 0))
  
      public get foo() {

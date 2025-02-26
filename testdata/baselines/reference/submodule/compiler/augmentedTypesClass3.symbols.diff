@@ -1,6 +1,6 @@
 --- old.augmentedTypesClass3.symbols
 +++ new.augmentedTypesClass3.symbols
-@@ -4,14 +4,14 @@
+@@= skipped -4, +4 lines =@@
  // class then module
  class c5 { public foo() { } }
  >c5 : Symbol(c5, Decl(augmentedTypesClass3.ts, 0, 0), Decl(augmentedTypesClass3.ts, 1, 29))
@@ -17,7 +17,7 @@
  
  module c5a { var y = 2; } // should be ok
  >c5a : Symbol(c5a, Decl(augmentedTypesClass3.ts, 2, 13), Decl(augmentedTypesClass3.ts, 4, 30))
-@@ -19,7 +19,7 @@
+@@= skipped -15, +15 lines =@@
  
  class c5b { public foo() { } }
  >c5b : Symbol(c5b, Decl(augmentedTypesClass3.ts, 5, 25), Decl(augmentedTypesClass3.ts, 7, 30))
@@ -26,7 +26,7 @@
  
  module c5b { export var y = 2; } // should be ok
  >c5b : Symbol(c5b, Decl(augmentedTypesClass3.ts, 5, 25), Decl(augmentedTypesClass3.ts, 7, 30))
-@@ -28,6 +28,6 @@
+@@= skipped -9, +9 lines =@@
  //// class then import
  class c5c { public foo() { } }
  >c5c : Symbol(c5c, Decl(augmentedTypesClass3.ts, 8, 32))

@@ -1,6 +1,6 @@
 --- old.declFileWithExtendsClauseThatHasItsContainerNameConflict.symbols
 +++ new.declFileWithExtendsClauseThatHasItsContainerNameConflict.symbols
-@@ -3,8 +3,8 @@
+@@= skipped -3, +3 lines =@@
  === declFileWithExtendsClauseThatHasItsContainerNameConflict.ts ===
  declare module A.B.C {
  >A : Symbol(A, Decl(declFileWithExtendsClauseThatHasItsContainerNameConflict.ts, 0, 0), Decl(declFileWithExtendsClauseThatHasItsContainerNameConflict.ts, 3, 1), Decl(declFileWithExtendsClauseThatHasItsContainerNameConflict.ts, 10, 1))
@@ -11,7 +11,7 @@
  
      class B {
  >B : Symbol(B, Decl(declFileWithExtendsClauseThatHasItsContainerNameConflict.ts, 0, 22))
-@@ -13,27 +13,26 @@
+@@= skipped -10, +10 lines =@@
  
  module A.B {
  >A : Symbol(A, Decl(declFileWithExtendsClauseThatHasItsContainerNameConflict.ts, 0, 0), Decl(declFileWithExtendsClauseThatHasItsContainerNameConflict.ts, 3, 1), Decl(declFileWithExtendsClauseThatHasItsContainerNameConflict.ts, 10, 1))

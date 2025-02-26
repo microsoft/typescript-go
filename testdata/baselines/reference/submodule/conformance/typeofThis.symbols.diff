@@ -1,6 +1,6 @@
 --- old.typeofThis.symbols
 +++ new.typeofThis.symbols
-@@ -5,14 +5,14 @@
+@@= skipped -5, +5 lines =@@
  >Test : Symbol(Test, Decl(typeofThis.ts, 0, 0))
  
      data = {};
@@ -18,7 +18,7 @@
      }
  }
  
-@@ -20,27 +20,27 @@
+@@= skipped -15, +15 lines =@@
  >Test1 : Symbol(Test1, Decl(typeofThis.ts, 5, 1))
  
      data = { foo: '' };
@@ -53,7 +53,7 @@
  >foo : Symbol(foo, Decl(typeofThis.ts, 8, 12))
  
          var self: typeof this = this;
-@@ -49,15 +49,15 @@
+@@= skipped -29, +29 lines =@@
  >this : Symbol(Test1, Decl(typeofThis.ts, 5, 1))
  
          self.data;
@@ -73,7 +73,7 @@
      }
  }
  
-@@ -88,26 +88,24 @@
+@@= skipped -39, +39 lines =@@
  
      let x: typeof this.no = 1;
  >x : Symbol(x, Decl(typeofThis.ts, 31, 7))
@@ -104,7 +104,7 @@
      }
  }
  
-@@ -145,13 +143,13 @@
+@@= skipped -57, +55 lines =@@
  >Test9 : Symbol(Test9, Decl(typeofThis.ts, 57, 1))
  
      no = 0;
@@ -121,7 +121,7 @@
  
          if (this instanceof Test9D1) {
  >this : Symbol(Test9, Decl(typeofThis.ts, 57, 1))
-@@ -162,9 +160,9 @@
+@@= skipped -17, +17 lines =@@
  >this : Symbol(Test9, Decl(typeofThis.ts, 57, 1))
  
              d1.f1();
@@ -133,7 +133,7 @@
          }
  
          if (this instanceof Test9D2) {
-@@ -176,43 +174,43 @@
+@@= skipped -14, +14 lines =@@
  >this : Symbol(Test9, Decl(typeofThis.ts, 57, 1))
  
              d2.f2();
@@ -192,7 +192,7 @@
          }
      }
  }
-@@ -221,67 +219,67 @@
+@@= skipped -45, +45 lines =@@
  >Test9D1 : Symbol(Test9D1, Decl(typeofThis.ts, 84, 1))
  
      f1() {}
@@ -276,7 +276,7 @@
  >b : Symbol(b, Decl(typeofThis.ts, 95, 9))
  >undefined : Symbol(undefined)
              }
-@@ -293,11 +291,11 @@
+@@= skipped -72, +72 lines =@@
  >Test11 : Symbol(Test11, Decl(typeofThis.ts, 108, 1))
  
      this?: { x?: string };
@@ -290,7 +290,7 @@
  
          const o = this;
  >o : Symbol(o, Decl(typeofThis.ts, 114, 13))
-@@ -305,26 +303,26 @@
+@@= skipped -12, +12 lines =@@
  
          let bar: typeof o.this = {};
  >bar : Symbol(bar, Decl(typeofThis.ts, 115, 11))
@@ -325,7 +325,7 @@
  >x : Symbol(x, Decl(typeofThis.ts, 111, 12))
          }
      }
-@@ -334,7 +332,7 @@
+@@= skipped -29, +29 lines =@@
  >Tests12 : Symbol(Tests12, Decl(typeofThis.ts, 121, 1))
  
      test1() { // OK
@@ -334,7 +334,7 @@
  
          type Test = typeof this;
  >Test : Symbol(Test, Decl(typeofThis.ts, 124, 13))
-@@ -342,7 +340,7 @@
+@@= skipped -8, +8 lines =@@
      }
  
      test2() { // OK
@@ -343,7 +343,7 @@
  
          for (;;) {}
          type Test = typeof this;
-@@ -351,7 +349,7 @@
+@@= skipped -9, +9 lines =@@
      }
  
      test3() { // expected no compile errors
@@ -352,7 +352,7 @@
  
          for (const dummy in []) {}
  >dummy : Symbol(dummy, Decl(typeofThis.ts, 134, 18))
-@@ -362,7 +360,7 @@
+@@= skipped -11, +11 lines =@@
      }
  
      test4() { // expected no compile errors

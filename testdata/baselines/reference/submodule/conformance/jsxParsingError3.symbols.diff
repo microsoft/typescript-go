@@ -1,6 +1,6 @@
 --- old.jsxParsingError3.symbols
 +++ new.jsxParsingError3.symbols
-@@ -18,36 +18,24 @@
+@@= skipped -18, +18 lines =@@
  === Error1.tsx ===
  let x1 = <div>}</div>;
  >x1 : Symbol(x1, Decl(Error1.tsx, 0, 3))

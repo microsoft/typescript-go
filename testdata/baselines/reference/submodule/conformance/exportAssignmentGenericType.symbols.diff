@@ -1,6 +1,6 @@
 --- old.exportAssignmentGenericType.symbols
 +++ new.exportAssignmentGenericType.symbols
-@@ -10,9 +10,9 @@
+@@= skipped -10, +10 lines =@@
  
  var y:number = x.test;
  >y : Symbol(y, Decl(foo_1.ts, 2, 3))
@@ -12,7 +12,7 @@
  
  === foo_0.ts ===
  class Foo<T>{
-@@ -20,7 +20,7 @@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(foo_0.ts, 0, 10))
  
  	test: T;

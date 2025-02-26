@@ -1,6 +1,6 @@
 --- old.commentsExternalModules3.symbols
 +++ new.commentsExternalModules3.symbols
-@@ -6,38 +6,38 @@
+@@= skipped -6, +6 lines =@@
  >extMod : Symbol(extMod, Decl(commentsExternalModules_1.ts, 0, 0))
  
  extMod.m1.fooExport();
@@ -59,7 +59,7 @@
  
  === commentsExternalModules2_0.ts ===
  /** Module comment*/
-@@ -78,17 +78,17 @@
+@@= skipped -72, +72 lines =@@
      }
  }
  m1.fooExport();
@@ -83,7 +83,7 @@
  
  /** Module comment */
  export module m4 {
-@@ -130,15 +130,15 @@
+@@= skipped -52, +52 lines =@@
      }
  }
  m4.fooExport();

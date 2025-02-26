@@ -1,6 +1,6 @@
 --- old.tsxStatelessFunctionComponents3.symbols
 +++ new.tsxStatelessFunctionComponents3.symbols
-@@ -7,7 +7,6 @@
+@@= skipped -7, +7 lines =@@
  const Foo = (props: any) => <div/>;
  >Foo : Symbol(Foo, Decl(file.tsx, 2, 5))
  >props : Symbol(props, Decl(file.tsx, 2, 13))
@@ -8,7 +8,7 @@
  
  // Should be OK
  const foo = <Foo />;
-@@ -19,31 +18,22 @@
+@@= skipped -12, +11 lines =@@
  var MainMenu: React.StatelessComponent<{}> = (props) => (<div>
  >MainMenu : Symbol(MainMenu, Decl(file.tsx, 8, 3))
  >React : Symbol(React, Decl(file.tsx, 0, 0))

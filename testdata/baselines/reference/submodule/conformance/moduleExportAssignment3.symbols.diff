@@ -1,6 +1,6 @@
 --- old.moduleExportAssignment3.symbols
 +++ new.moduleExportAssignment3.symbols
-@@ -3,21 +3,7 @@
+@@= skipped -3, +3 lines =@@
  === npm.js ===
  var mod = require('./mod')
  >mod : Symbol(mod, Decl(npm.js, 0, 3))

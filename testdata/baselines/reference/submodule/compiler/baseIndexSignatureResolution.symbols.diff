@@ -1,6 +1,6 @@
 --- old.baseIndexSignatureResolution.symbols
 +++ new.baseIndexSignatureResolution.symbols
-@@ -3,12 +3,12 @@
+@@= skipped -3, +3 lines =@@
  === baseIndexSignatureResolution.ts ===
  class Base { private a: string; }
  >Base : Symbol(Base, Decl(baseIndexSignatureResolution.ts, 0, 0))

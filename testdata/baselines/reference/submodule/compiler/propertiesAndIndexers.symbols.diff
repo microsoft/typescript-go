@@ -1,6 +1,6 @@
 --- old.propertiesAndIndexers.symbols
 +++ new.propertiesAndIndexers.symbols
-@@ -8,28 +8,28 @@
+@@= skipped -8, +8 lines =@@
  >Y : Symbol(Y, Decl(propertiesAndIndexers.ts, 0, 15))
  
      n: number;
@@ -34,7 +34,7 @@
  >Z : Symbol(Z, Decl(propertiesAndIndexers.ts, 3, 1))
  }
  
-@@ -41,23 +41,23 @@
+@@= skipped -33, +33 lines =@@
  >n : Symbol(n, Decl(propertiesAndIndexers.ts, 15, 5))
  
      c: boolean;
@@ -63,7 +63,7 @@
  }
  
  interface C extends A {
-@@ -68,10 +68,10 @@
+@@= skipped -27, +27 lines =@@
  >s : Symbol(s, Decl(propertiesAndIndexers.ts, 27, 5))
  
      c: boolean;
@@ -76,7 +76,7 @@
  }
  
  interface D extends B, C {
-@@ -80,14 +80,14 @@
+@@= skipped -12, +12 lines =@@
  >C : Symbol(C, Decl(propertiesAndIndexers.ts, 24, 1))
  
      2: Z;
@@ -94,7 +94,7 @@
  }
  
  class P {
-@@ -102,7 +102,7 @@
+@@= skipped -22, +22 lines =@@
  >P : Symbol(P, Decl(propertiesAndIndexers.ts, 36, 1))
  
      t: number;

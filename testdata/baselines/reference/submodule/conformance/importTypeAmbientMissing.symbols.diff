@@ -1,6 +1,6 @@
 --- old.importTypeAmbientMissing.symbols
 +++ new.importTypeAmbientMissing.symbols
-@@ -8,10 +8,10 @@
+@@= skipped -8, +8 lines =@@
  >Point : Symbol(Point, Decl(importTypeAmbientMissing.ts, 0, 22))
  
          x: number;

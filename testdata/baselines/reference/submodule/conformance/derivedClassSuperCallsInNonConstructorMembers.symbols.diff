@@ -1,6 +1,6 @@
 --- old.derivedClassSuperCallsInNonConstructorMembers.symbols
 +++ new.derivedClassSuperCallsInNonConstructorMembers.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >Base : Symbol(Base, Decl(derivedClassSuperCallsInNonConstructorMembers.ts, 0, 0))
  
      x: string;
@@ -9,7 +9,7 @@
  }
  
  class Derived extends Base {
-@@ -15,44 +15,44 @@
+@@= skipped -8, +8 lines =@@
  >Base : Symbol(Base, Decl(derivedClassSuperCallsInNonConstructorMembers.ts, 0, 0))
  
      a: super();

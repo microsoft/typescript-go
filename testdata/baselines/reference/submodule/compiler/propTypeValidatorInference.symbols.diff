@@ -1,6 +1,6 @@
 --- old.propTypeValidatorInference.symbols
 +++ new.propTypeValidatorInference.symbols
-@@ -56,7 +56,7 @@
+@@= skipped -56, +56 lines =@@
  >Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      [nominalTypeHack]?: T;
@@ -9,7 +9,7 @@
  >nominalTypeHack : Symbol(nominalTypeHack, Decl(index.d.ts, 0, 12))
  >T : Symbol(T, Decl(index.d.ts, 8, 27))
  }
-@@ -68,7 +68,7 @@
+@@= skipped -12, +12 lines =@@
  >T : Symbol(T, Decl(index.d.ts, 13, 29))
  
      isRequired: Validator<NonNullable<T>>;
@@ -18,7 +18,7 @@
  >Validator : Symbol(Validator, Decl(index.d.ts, 6, 72))
  >NonNullable : Symbol(NonNullable, Decl(lib.es5.d.ts, --, --))
  >T : Symbol(T, Decl(index.d.ts, 13, 29))
-@@ -160,16 +160,16 @@
+@@= skipped -92, +92 lines =@@
  >Props : Symbol(Props, Decl(file.ts, 0, 40))
  
      any?: any;
@@ -39,7 +39,7 @@
  
          foo: string;
  >foo : Symbol(foo, Decl(file.ts, 5, 12))
-@@ -182,7 +182,7 @@
+@@= skipped -22, +22 lines =@@
  
      };
      oneOfType: string | boolean | {
@@ -48,7 +48,7 @@
  
          foo?: string;
  >foo : Symbol(foo, Decl(file.ts, 10, 35))
-@@ -196,7 +196,7 @@
+@@= skipped -14, +14 lines =@@
  type PropTypesMap = PropTypes.ValidationMap<Props>;
  >PropTypesMap : Symbol(PropTypesMap, Decl(file.ts, 14, 1))
  >PropTypes : Symbol(PropTypes, Decl(file.ts, 0, 6))
@@ -57,7 +57,7 @@
  >Props : Symbol(Props, Decl(file.ts, 0, 40))
  
  const innerProps = {
-@@ -204,51 +204,51 @@
+@@= skipped -8, +8 lines =@@
  
      foo: PropTypes.string.isRequired,
  >foo : Symbol(foo, Decl(file.ts, 18, 20))
@@ -129,7 +129,7 @@
  
  })];
  
-@@ -259,43 +259,43 @@
+@@= skipped -55, +55 lines =@@
  
      any: PropTypes.any,
  >any : Symbol(any, Decl(file.ts, 30, 33))
@@ -191,7 +191,7 @@
  
  };
  
-@@ -305,56 +305,56 @@
+@@= skipped -46, +46 lines =@@
  
      any: PropTypes.any,
  >any : Symbol(any, Decl(file.ts, 39, 36))

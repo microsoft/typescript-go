@@ -1,6 +1,6 @@
 --- old.exportEqualsAmd.symbols
 +++ new.exportEqualsAmd.symbols
-@@ -2,6 +2,6 @@
+@@= skipped -2, +2 lines =@@
  
  === exportEqualsAmd.ts ===
  export = { ["hi"]: "there" };

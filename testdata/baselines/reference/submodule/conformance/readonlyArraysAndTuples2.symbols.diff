@@ -1,6 +1,6 @@
 --- old.readonlyArraysAndTuples2.symbols
 +++ new.readonlyArraysAndTuples2.symbols
-@@ -38,12 +38,12 @@
+@@= skipped -38, +38 lines =@@
  >someDec : Symbol(someDec, Decl(readonlyArraysAndTuples2.ts, 10, 13))
  
    j: readonly string[] = [];

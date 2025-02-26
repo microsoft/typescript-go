@@ -1,6 +1,6 @@
 --- old.declarationEmitNameConflicts2.symbols
 +++ new.declarationEmitNameConflicts2.symbols
-@@ -3,8 +3,8 @@
+@@= skipped -3, +3 lines =@@
  === declarationEmitNameConflicts2.ts ===
  module X.Y.base {
  >X : Symbol(X, Decl(declarationEmitNameConflicts2.ts, 0, 0), Decl(declarationEmitNameConflicts2.ts, 7, 1))
@@ -11,7 +11,7 @@
  
      export function f() { }
  >f : Symbol(f, Decl(declarationEmitNameConflicts2.ts, 0, 17))
-@@ -24,47 +24,23 @@
+@@= skipped -21, +21 lines =@@
  
  module X.Y.base.Z {
  >X : Symbol(X, Decl(declarationEmitNameConflicts2.ts, 0, 0), Decl(declarationEmitNameConflicts2.ts, 7, 1))

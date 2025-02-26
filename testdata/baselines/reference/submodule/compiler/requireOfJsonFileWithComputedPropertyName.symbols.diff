@@ -1,6 +1,6 @@
 --- old.requireOfJsonFileWithComputedPropertyName.symbols
 +++ new.requireOfJsonFileWithComputedPropertyName.symbols
-@@ -19,8 +19,3 @@
+@@= skipped -19, +19 lines =@@
  >b2 : Symbol(b2, Decl(file1.ts, 1, 11))
  }
  

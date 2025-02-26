@@ -1,6 +1,6 @@
 --- old.propertyAccessOnTypeParameterWithConstraints4.symbols
 +++ new.propertyAccessOnTypeParameterWithConstraints4.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
  
      f() {
@@ -9,7 +9,7 @@
  
          var x: T;
  >x : Symbol(x, Decl(propertyAccessOnTypeParameterWithConstraints4.ts, 2, 11))
-@@ -25,10 +25,10 @@
+@@= skipped -18, +18 lines =@@
  
  var r = (new C<Date>()).f();
  >r : Symbol(r, Decl(propertyAccessOnTypeParameterWithConstraints4.ts, 8, 3))
@@ -22,7 +22,7 @@
  
  interface I<T extends Date> {
  >I : Symbol(I, Decl(propertyAccessOnTypeParameterWithConstraints4.ts, 8, 28))
-@@ -36,7 +36,7 @@
+@@= skipped -11, +11 lines =@@
  >Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
  
      foo: T;
@@ -31,7 +31,7 @@
  >T : Symbol(T, Decl(propertyAccessOnTypeParameterWithConstraints4.ts, 10, 12))
  }
  var i: I<Date>;
-@@ -46,15 +46,15 @@
+@@= skipped -10, +10 lines =@@
  
  var r2 = i.foo.notHere();
  >r2 : Symbol(r2, Decl(propertyAccessOnTypeParameterWithConstraints4.ts, 14, 3))

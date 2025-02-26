@@ -1,6 +1,6 @@
 --- old.voidOperatorWithNumberType.symbols
 +++ new.voidOperatorWithNumberType.symbols
-@@ -15,10 +15,10 @@
+@@= skipped -15, +15 lines =@@
  >A : Symbol(A, Decl(voidOperatorWithNumberType.ts, 4, 36))
  
      public a: number;
@@ -13,7 +13,7 @@
  }
  module M {
  >M : Symbol(M, Decl(voidOperatorWithNumberType.ts, 9, 1))
-@@ -59,15 +59,15 @@
+@@= skipped -44, +44 lines =@@
  // number type expressions
  var ResultIsAny6 = void objA.a;
  >ResultIsAny6 : Symbol(ResultIsAny6, Decl(voidOperatorWithNumberType.ts, 26, 3))
@@ -33,7 +33,7 @@
  
  var ResultIsAny8 = void NUMBER1[0];
  >ResultIsAny8 : Symbol(ResultIsAny8, Decl(voidOperatorWithNumberType.ts, 28, 3))
-@@ -79,9 +79,9 @@
+@@= skipped -20, +20 lines =@@
  
  var ResultIsAny10 = void A.foo();
  >ResultIsAny10 : Symbol(ResultIsAny10, Decl(voidOperatorWithNumberType.ts, 30, 3))
@@ -45,7 +45,7 @@
  
  var ResultIsAny11 = void (NUMBER + NUMBER);
  >ResultIsAny11 : Symbol(ResultIsAny11, Decl(voidOperatorWithNumberType.ts, 31, 3))
-@@ -110,20 +110,20 @@
+@@= skipped -31, +31 lines =@@
  >foo : Symbol(foo, Decl(voidOperatorWithNumberType.ts, 2, 31))
  
  void objA.a;

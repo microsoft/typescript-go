@@ -1,6 +1,6 @@
 --- old.constEnumErrors.symbols
 +++ new.constEnumErrors.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >E : Symbol(E, Decl(constEnumErrors.ts, 0, 0))
  
      A
@@ -9,7 +9,7 @@
  }
  
  module E {
-@@ -21,16 +21,16 @@
+@@= skipped -16, +16 lines =@@
      // illegal case
      // forward reference to the element of the same enum
      X = Y,
@@ -30,7 +30,7 @@
  >E1 : Symbol(E1, Decl(constEnumErrors.ts, 6, 1))
  }
  
-@@ -38,7 +38,7 @@
+@@= skipped -17, +17 lines =@@
  >E2 : Symbol(E2, Decl(constEnumErrors.ts, 15, 1))
  
      A
@@ -39,7 +39,7 @@
  }
  
  var y0 = E2[1]
-@@ -79,36 +79,36 @@
+@@= skipped -41, +41 lines =@@
  >NaNOrInfinity : Symbol(NaNOrInfinity, Decl(constEnumErrors.ts, 32, 8))
  
      A = 9007199254740992,

@@ -1,6 +1,6 @@
 --- old.systemModuleExportDefault.symbols
 +++ new.systemModuleExportDefault.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  
  === file2.ts ===
  export default function foo() {}
@@ -9,7 +9,7 @@
  
  === file3.ts ===
  
-@@ -14,6 +14,6 @@
+@@= skipped -8, +8 lines =@@
  
  === file4.ts ===
  export default class C {}

@@ -1,6 +1,6 @@
 --- old.inlineJsxAndJsxFragPragma.symbols
 +++ new.inlineJsxAndJsxFragPragma.symbols
-@@ -2,7 +2,7 @@
+@@= skipped -2, +2 lines =@@
  
  === renderer.d.ts ===
  declare global {
@@ -9,7 +9,7 @@
  
      namespace JSX {
  >JSX : Symbol(JSX, Decl(renderer.d.ts, 0, 16))
-@@ -34,8 +34,6 @@
+@@= skipped -32, +32 lines =@@
  >Fragment : Symbol(Fragment, Decl(preacty.tsx, 4, 10))
  
  <><div></div></>
@@ -18,7 +18,7 @@
  
  === snabbdomy.tsx ===
  /* @jsx jsx */
-@@ -44,8 +42,6 @@
+@@= skipped -10, +8 lines =@@
  >jsx : Symbol(jsx, Decl(snabbdomy.tsx, 2, 8))
  
  <><span></span></>
@@ -27,7 +27,7 @@
  
  === preacty-only-fragment.tsx ===
  /**
-@@ -93,8 +89,6 @@
+@@= skipped -49, +47 lines =@@
  >Fragment : Symbol(Fragment, Decl(preacty-no-fragment.tsx, 4, 10))
  
  <div></div>
@@ -36,7 +36,7 @@
  
  === snabbdomy-no-fragment.tsx ===
  /* @jsx jsx */
-@@ -103,8 +97,6 @@
+@@= skipped -10, +8 lines =@@
  >jsx : Symbol(jsx, Decl(snabbdomy-no-fragment.tsx, 2, 8))
  
  <div></div>

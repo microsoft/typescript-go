@@ -1,6 +1,6 @@
 --- old.specializedSignatureIsSubtypeOfNonSpecializedSignature.symbols
 +++ new.specializedSignatureIsSubtypeOfNonSpecializedSignature.symbols
-@@ -20,15 +20,15 @@
+@@= skipped -20, +20 lines =@@
  >C : Symbol(C, Decl(specializedSignatureIsSubtypeOfNonSpecializedSignature.ts, 5, 24))
  
      foo(x: 'a');
@@ -19,7 +19,7 @@
  >x : Symbol(x, Decl(specializedSignatureIsSubtypeOfNonSpecializedSignature.ts, 10, 8))
  }
  
-@@ -37,20 +37,20 @@
+@@= skipped -17, +17 lines =@@
  >T : Symbol(T, Decl(specializedSignatureIsSubtypeOfNonSpecializedSignature.ts, 13, 9))
  
      foo(x: 'a');
@@ -44,7 +44,7 @@
  >x : Symbol(x, Decl(specializedSignatureIsSubtypeOfNonSpecializedSignature.ts, 17, 8))
  }
  
-@@ -60,20 +60,20 @@
+@@= skipped -23, +23 lines =@@
  >String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      foo(x: 'a');
@@ -69,7 +69,7 @@
  >x : Symbol(x, Decl(specializedSignatureIsSubtypeOfNonSpecializedSignature.ts, 24, 8))
  }
  
-@@ -90,15 +90,15 @@
+@@= skipped -30, +30 lines =@@
  >x : Symbol(x, Decl(specializedSignatureIsSubtypeOfNonSpecializedSignature.ts, 30, 5))
  
      foo(x: 'a');
@@ -88,7 +88,7 @@
  >x : Symbol(x, Decl(specializedSignatureIsSubtypeOfNonSpecializedSignature.ts, 33, 8))
  }
  
-@@ -117,15 +117,15 @@
+@@= skipped -27, +27 lines =@@
  >x : Symbol(x, Decl(specializedSignatureIsSubtypeOfNonSpecializedSignature.ts, 39, 5))
  
      foo(x: 'a');
@@ -107,7 +107,7 @@
  >x : Symbol(x, Decl(specializedSignatureIsSubtypeOfNonSpecializedSignature.ts, 42, 8))
  >T : Symbol(T, Decl(specializedSignatureIsSubtypeOfNonSpecializedSignature.ts, 36, 13))
  }
-@@ -146,15 +146,15 @@
+@@= skipped -29, +29 lines =@@
  >T : Symbol(T, Decl(specializedSignatureIsSubtypeOfNonSpecializedSignature.ts, 45, 13))
  
      foo(x: 'a');

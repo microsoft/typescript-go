@@ -1,6 +1,6 @@
 --- old.assignToFn.symbols
 +++ new.assignToFn.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >I : Symbol(I, Decl(assignToFn.ts, 0, 10))
  
  	f(n:number):boolean;
@@ -9,7 +9,7 @@
  >n : Symbol(n, Decl(assignToFn.ts, 2, 3))
      }
  
-@@ -19,8 +19,8 @@
+@@= skipped -11, +11 lines =@@
  >n : Symbol(n, Decl(assignToFn.ts, 5, 25))
  
      x.f="hello";

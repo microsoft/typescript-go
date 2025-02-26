@@ -1,6 +1,6 @@
 --- old.extendGlobalThis.symbols
 +++ new.extendGlobalThis.symbols
-@@ -21,12 +21,12 @@
+@@= skipped -21, +21 lines =@@
  >globalThis : Symbol(globalThis, Decl(extension.d.ts, 0, 16))
  
  console.log(globalThis.test.split("-"));

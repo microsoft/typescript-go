@@ -1,6 +1,6 @@
 --- old.extendedInterfacesWithDuplicateTypeParameters.symbols
 +++ new.extendedInterfacesWithDuplicateTypeParameters.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >A : Symbol(A, Decl(extendedInterfacesWithDuplicateTypeParameters.ts, 0, 38), Decl(extendedInterfacesWithDuplicateTypeParameters.ts, 0, 40))
  
  	bar(): void;
@@ -9,7 +9,7 @@
  }
  
  interface InterfaceWithSomeTypars<B> { // should not error
-@@ -15,7 +15,7 @@
+@@= skipped -8, +8 lines =@@
  >B : Symbol(B, Decl(extendedInterfacesWithDuplicateTypeParameters.ts, 4, 34))
  
  	bar(): void;
@@ -18,7 +18,7 @@
  }
  
  interface InterfaceWithSomeTypars<C, C> { // should error
-@@ -24,5 +24,5 @@
+@@= skipped -9, +9 lines =@@
  >C : Symbol(C, Decl(extendedInterfacesWithDuplicateTypeParameters.ts, 8, 34), Decl(extendedInterfacesWithDuplicateTypeParameters.ts, 8, 36))
  
  	bar2(): void;

@@ -1,6 +1,6 @@
 --- old.declarationEmitIdentifierPredicatesWithPrivateName01.symbols
 +++ new.declarationEmitIdentifierPredicatesWithPrivateName01.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >I : Symbol(I, Decl(declarationEmitIdentifierPredicatesWithPrivateName01.ts, 0, 0))
  
      a: number;

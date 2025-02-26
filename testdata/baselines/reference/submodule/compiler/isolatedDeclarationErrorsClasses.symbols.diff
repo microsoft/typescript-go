@@ -1,6 +1,6 @@
 --- old.isolatedDeclarationErrorsClasses.symbols
 +++ new.isolatedDeclarationErrorsClasses.symbols
-@@ -5,55 +5,55 @@
+@@= skipped -5, +5 lines =@@
  >Cls : Symbol(Cls, Decl(isolatedDeclarationErrorsClasses.ts, 0, 0))
  
      field = 1 + 1;
@@ -71,7 +71,7 @@
  >value : Symbol(value, Decl(isolatedDeclarationErrorsClasses.ts, 23, 18))
  }
  
-@@ -74,37 +74,37 @@
+@@= skipped -69, +69 lines =@@
  
      // Should not be reported as an isolated declaration error
      [missing] = 1;
@@ -117,7 +117,7 @@
  
  }
  
-@@ -112,10 +112,10 @@
+@@= skipped -38, +38 lines =@@
  >I : Symbol(I, Decl(isolatedDeclarationErrorsClasses.ts, 51, 1))
  
      [noAnnotationStringName]: 10;

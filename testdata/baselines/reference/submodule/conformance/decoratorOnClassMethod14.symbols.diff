@@ -1,6 +1,6 @@
 --- old.decoratorOnClassMethod14.symbols
 +++ new.decoratorOnClassMethod14.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >Foo : Symbol(Foo, Decl(decoratorOnClassMethod14.ts, 0, 27))
  
      private prop = () => {
@@ -9,7 +9,7 @@
  
          return 0;
      }
-@@ -16,7 +16,7 @@
+@@= skipped -8, +8 lines =@@
  >decorator : Symbol(decorator, Decl(decoratorOnClassMethod14.ts, 0, 11))
  
      foo() {

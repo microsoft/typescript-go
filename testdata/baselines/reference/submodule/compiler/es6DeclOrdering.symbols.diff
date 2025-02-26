@@ -1,6 +1,6 @@
 --- old.es6DeclOrdering.symbols
 +++ new.es6DeclOrdering.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
     //public bar() { }
  
     public foo() {

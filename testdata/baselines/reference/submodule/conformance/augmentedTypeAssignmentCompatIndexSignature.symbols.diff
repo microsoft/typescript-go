@@ -1,6 +1,6 @@
 --- old.augmentedTypeAssignmentCompatIndexSignature.symbols
 +++ new.augmentedTypeAssignmentCompatIndexSignature.symbols
-@@ -3,11 +3,11 @@
+@@= skipped -3, +3 lines =@@
  === augmentedTypeAssignmentCompatIndexSignature.ts ===
  interface Foo { a }
  >Foo : Symbol(Foo, Decl(augmentedTypeAssignmentCompatIndexSignature.ts, 0, 0))

@@ -1,6 +1,6 @@
 --- old.jsxChildrenArrayWrongType.symbols
 +++ new.jsxChildrenArrayWrongType.symbols
-@@ -10,13 +10,10 @@
+@@= skipped -10, +10 lines =@@
  >PropsType : Symbol(PropsType, Decl(index.tsx, 0, 0))
  
      children: [string, number] | boolean[];
@@ -15,7 +15,7 @@
  >PropsType : Symbol(PropsType, Decl(index.tsx, 0, 0))
  
  const b = (
-@@ -26,8 +23,6 @@
+@@= skipped -16, +13 lines =@@
  >Foo : Symbol(Foo, Decl(index.tsx, 7, 1))
  
          {<div/> as unknown}

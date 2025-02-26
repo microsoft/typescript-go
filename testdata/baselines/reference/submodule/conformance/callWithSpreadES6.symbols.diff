@@ -1,6 +1,6 @@
 --- old.callWithSpreadES6.symbols
 +++ new.callWithSpreadES6.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >X : Symbol(X, Decl(callWithSpreadES6.ts, 0, 0))
  
      foo(x: number, y: number, ...z: string[]);
@@ -9,7 +9,7 @@
  >x : Symbol(x, Decl(callWithSpreadES6.ts, 1, 8))
  >y : Symbol(y, Decl(callWithSpreadES6.ts, 1, 18))
  >z : Symbol(z, Decl(callWithSpreadES6.ts, 1, 29))
-@@ -44,61 +44,53 @@
+@@= skipped -39, +39 lines =@@
  >a : Symbol(a, Decl(callWithSpreadES6.ts, 7, 3))
  
  obj.foo(1, 2, "abc");
@@ -84,7 +84,7 @@
  
  class C {
  >C : Symbol(C, Decl(callWithSpreadES6.ts, 28, 40))
-@@ -109,22 +101,22 @@
+@@= skipped -65, +57 lines =@@
  >z : Symbol(z, Decl(callWithSpreadES6.ts, 31, 37))
  
          this.foo(x, y);
@@ -112,7 +112,7 @@
  >x : Symbol(x, Decl(callWithSpreadES6.ts, 35, 8))
  >y : Symbol(y, Decl(callWithSpreadES6.ts, 35, 18))
  >z : Symbol(z, Decl(callWithSpreadES6.ts, 35, 29))
-@@ -144,17 +136,17 @@
+@@= skipped -35, +35 lines =@@
  >a : Symbol(a, Decl(callWithSpreadES6.ts, 7, 3))
      }
      foo() {

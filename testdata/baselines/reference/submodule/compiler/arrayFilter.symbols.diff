@@ -1,6 +1,6 @@
 --- old.arrayFilter.symbols
 +++ new.arrayFilter.symbols
-@@ -16,9 +16,9 @@
+@@= skipped -16, +16 lines =@@
  ]
  
  foo.filter(x => x.name); //should accepted all possible types not only boolean! 

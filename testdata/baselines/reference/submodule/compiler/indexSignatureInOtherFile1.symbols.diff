@@ -1,6 +1,6 @@
 --- old.indexSignatureInOtherFile1.symbols
 +++ new.indexSignatureInOtherFile1.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(other.ts, 0, 17), Decl(other.ts, 12, 17), Decl(other.ts, 17, 17))
  
    length: number;
@@ -9,7 +9,7 @@
  
    [n: number]: T;
  >n : Symbol(n, Decl(other.ts, 2, 3))
-@@ -31,11 +31,8 @@
+@@= skipped -25, +25 lines =@@
  >T : Symbol(T, Decl(other.ts, 0, 17), Decl(other.ts, 12, 17), Decl(other.ts, 17, 17))
  
    [Symbol.iterator](): IterableIterator<T>;
@@ -23,7 +23,7 @@
  >T : Symbol(T, Decl(other.ts, 0, 17), Decl(other.ts, 12, 17), Decl(other.ts, 17, 17))
  }
  
-@@ -49,10 +46,7 @@
+@@= skipped -18, +15 lines =@@
     * when they will be absent when used in a 'with' statement.
     */
    [Symbol.unscopables](): {

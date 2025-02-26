@@ -1,6 +1,6 @@
 --- old.unionTypeParameterInference.symbols
 +++ new.unionTypeParameterInference.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  interface Foo<T> { prop: T; }
  >Foo : Symbol(Foo, Decl(unionTypeParameterInference.ts, 0, 0))
  >T : Symbol(T, Decl(unionTypeParameterInference.ts, 2, 14))
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(unionTypeParameterInference.ts, 2, 14))
  
  declare function lift<U>(value: U | Foo<U>): Foo<U>;
-@@ -29,9 +29,9 @@
+@@= skipped -23, +23 lines =@@
  >U : Symbol(U, Decl(unionTypeParameterInference.ts, 6, 16))
  
      return lift(value).prop;

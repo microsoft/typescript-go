@@ -1,6 +1,6 @@
 --- old.declarationEmitHigherOrderRetainedGenerics.symbols
 +++ new.declarationEmitHigherOrderRetainedGenerics.symbols
-@@ -5,16 +5,16 @@
+@@= skipped -5, +5 lines =@@
  >TypeLambda : Symbol(TypeLambda, Decl(declarationEmitHigherOrderRetainedGenerics.ts, 0, 0))
  
      readonly In: unknown
@@ -21,7 +21,7 @@
  }
  export namespace Types {
  >Types : Symbol(Types, Decl(declarationEmitHigherOrderRetainedGenerics.ts, 5, 1))
-@@ -48,7 +48,7 @@
+@@= skipped -43, +43 lines =@@
  >TypeLambda : Symbol(TypeLambda, Decl(declarationEmitHigherOrderRetainedGenerics.ts, 0, 0))
  
      readonly [URI]?: F
@@ -30,7 +30,7 @@
  >URI : Symbol(URI, Decl(declarationEmitHigherOrderRetainedGenerics.ts, 12, 20))
  >F : Symbol(F, Decl(declarationEmitHigherOrderRetainedGenerics.ts, 13, 27))
  }
-@@ -61,7 +61,7 @@
+@@= skipped -13, +13 lines =@@
  >F : Symbol(F, Decl(declarationEmitHigherOrderRetainedGenerics.ts, 17, 27))
  
      readonly imap: {
@@ -39,7 +39,7 @@
  
          <A, B>(
  >A : Symbol(A, Decl(declarationEmitHigherOrderRetainedGenerics.ts, 19, 9))
-@@ -143,7 +143,7 @@
+@@= skipped -82, +82 lines =@@
  >F : Symbol(F, Decl(declarationEmitHigherOrderRetainedGenerics.ts, 31, 27))
  
      readonly map: {
@@ -48,7 +48,7 @@
  
          <A, B>(f: (a: A) => B): <R, O, E>(self: Kind<F, R, O, E, A>) => Kind<F, R, O, E, B>
  >A : Symbol(A, Decl(declarationEmitHigherOrderRetainedGenerics.ts, 33, 9))
-@@ -237,25 +237,25 @@
+@@= skipped -94, +94 lines =@@
          readonly In: Types.Contravariant<In>
  >In : Symbol(In, Decl(declarationEmitHigherOrderRetainedGenerics.ts, 48, 21))
  >Types : Symbol(Types, Decl(declarationEmitHigherOrderRetainedGenerics.ts, 5, 1))
@@ -78,7 +78,7 @@
  >Target : Symbol(Target, Decl(declarationEmitHigherOrderRetainedGenerics.ts, 39, 54))
      }
  
-@@ -267,7 +267,7 @@
+@@= skipped -30, +30 lines =@@
  >F : Symbol(F, Decl(declarationEmitHigherOrderRetainedGenerics.ts, 55, 29))
  
      readonly product: <R1, O1, E1, A, R2, O2, E2, B>(
@@ -87,7 +87,7 @@
  >R1 : Symbol(R1, Decl(declarationEmitHigherOrderRetainedGenerics.ts, 56, 23))
  >O1 : Symbol(O1, Decl(declarationEmitHigherOrderRetainedGenerics.ts, 56, 26))
  >E1 : Symbol(E1, Decl(declarationEmitHigherOrderRetainedGenerics.ts, 56, 30))
-@@ -308,7 +308,7 @@
+@@= skipped -41, +41 lines =@@
  >B : Symbol(B, Decl(declarationEmitHigherOrderRetainedGenerics.ts, 56, 49))
  
      readonly productMany: <R, O, E, A>(
@@ -96,7 +96,7 @@
  >R : Symbol(R, Decl(declarationEmitHigherOrderRetainedGenerics.ts, 61, 27))
  >O : Symbol(O, Decl(declarationEmitHigherOrderRetainedGenerics.ts, 61, 29))
  >E : Symbol(E, Decl(declarationEmitHigherOrderRetainedGenerics.ts, 61, 32))
-@@ -325,7 +325,7 @@
+@@= skipped -17, +17 lines =@@
  
          collection: Iterable<Kind<F, R, O, E, A>>
  >collection : Symbol(collection, Decl(declarationEmitHigherOrderRetainedGenerics.ts, 62, 34))
@@ -105,7 +105,7 @@
  >Kind : Symbol(Kind, Decl(declarationEmitHigherOrderRetainedGenerics.ts, 36, 1))
  >F : Symbol(F, Decl(declarationEmitHigherOrderRetainedGenerics.ts, 55, 29))
  >R : Symbol(R, Decl(declarationEmitHigherOrderRetainedGenerics.ts, 61, 27))
-@@ -340,7 +340,7 @@
+@@= skipped -15, +15 lines =@@
  >O : Symbol(O, Decl(declarationEmitHigherOrderRetainedGenerics.ts, 61, 29))
  >E : Symbol(E, Decl(declarationEmitHigherOrderRetainedGenerics.ts, 61, 32))
  >A : Symbol(A, Decl(declarationEmitHigherOrderRetainedGenerics.ts, 61, 35))
@@ -114,7 +114,7 @@
  >A : Symbol(A, Decl(declarationEmitHigherOrderRetainedGenerics.ts, 61, 35))
  }
  export interface SemiApplicative<F extends TypeLambda> extends SemiProduct<F>, Covariant<F> { }
-@@ -370,14 +370,14 @@
+@@= skipped -30, +30 lines =@@
      <DataLast extends (...args: Array<any>) => any, DataFirst extends (...args: Array<any>) => any>(
  >DataLast : Symbol(DataLast, Decl(declarationEmitHigherOrderRetainedGenerics.ts, 72, 5))
  >args : Symbol(args, Decl(declarationEmitHigherOrderRetainedGenerics.ts, 72, 23))
@@ -132,7 +132,7 @@
  >DataFirst : Symbol(DataFirst, Decl(declarationEmitHigherOrderRetainedGenerics.ts, 72, 51))
  
          body: DataFirst
-@@ -391,15 +391,15 @@
+@@= skipped -21, +21 lines =@@
      <DataLast extends (...args: Array<any>) => any, DataFirst extends (...args: Array<any>) => any>(
  >DataLast : Symbol(DataLast, Decl(declarationEmitHigherOrderRetainedGenerics.ts, 76, 5))
  >args : Symbol(args, Decl(declarationEmitHigherOrderRetainedGenerics.ts, 76, 23))
@@ -151,7 +151,7 @@
  
          body: DataFirst
  >body : Symbol(body, Decl(declarationEmitHigherOrderRetainedGenerics.ts, 77, 51))
-@@ -565,12 +565,12 @@
+@@= skipped -174, +174 lines =@@
  >E1 : Symbol(E1, Decl(declarationEmitHigherOrderRetainedGenerics.ts, 95, 16))
  >E2 : Symbol(E2, Decl(declarationEmitHigherOrderRetainedGenerics.ts, 95, 31))
  >C : Symbol(C, Decl(declarationEmitHigherOrderRetainedGenerics.ts, 95, 38))

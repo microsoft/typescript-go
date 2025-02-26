@@ -1,6 +1,6 @@
 --- old.declarationEmitRetainsJsdocyComments.symbols
 +++ new.declarationEmitRetainsJsdocyComments.symbols
-@@ -36,7 +36,7 @@
+@@= skipped -36, +36 lines =@@
       * @param s  
       */
      bar(s: number) {
@@ -9,7 +9,7 @@
  >s : Symbol(s, Decl(declarationEmitRetainsJsdocyComments.ts, 24, 8))
      }
  }
-@@ -51,7 +51,7 @@
+@@= skipped -15, +15 lines =@@
  } = null as any;
  
  declare global {
@@ -18,7 +18,7 @@
  
      interface ExtFunc {
  >ExtFunc : Symbol(ExtFunc, Decl(declarationEmitRetainsJsdocyComments.ts, 35, 16))
-@@ -60,7 +60,7 @@
+@@= skipped -9, +9 lines =@@
          * comment6
          */
          someMethod(collection: any[]): boolean;

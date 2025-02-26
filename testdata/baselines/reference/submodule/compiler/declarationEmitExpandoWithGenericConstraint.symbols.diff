@@ -1,6 +1,6 @@
 --- old.declarationEmitExpandoWithGenericConstraint.symbols
 +++ new.declarationEmitExpandoWithGenericConstraint.symbols
-@@ -2,41 +2,41 @@
+@@= skipped -2, +2 lines =@@
  
  === declarationEmitExpandoWithGenericConstraint.ts ===
  export interface Point {
@@ -51,7 +51,7 @@
  >a : Symbol(a, Decl(declarationEmitExpandoWithGenericConstraint.ts, 11, 38))
  >p : Symbol(p, Decl(declarationEmitExpandoWithGenericConstraint.ts, 11, 21))
  >b : Symbol(b, Decl(declarationEmitExpandoWithGenericConstraint.ts, 11, 43))
-@@ -47,9 +47,9 @@
+@@= skipped -45, +45 lines =@@
  >b : Symbol(b, Decl(declarationEmitExpandoWithGenericConstraint.ts, 11, 67))
  
  Point.zero = (): Point => Point(0, 0);

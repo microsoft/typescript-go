@@ -1,6 +1,6 @@
 --- old.derivedClassIncludesInheritedMembers.symbols
 +++ new.derivedClassIncludesInheritedMembers.symbols
-@@ -5,29 +5,29 @@
+@@= skipped -5, +5 lines =@@
  >Base : Symbol(Base, Decl(derivedClassIncludesInheritedMembers.ts, 0, 0))
  
      a: string;
@@ -38,7 +38,7 @@
  >v : Symbol(v, Decl(derivedClassIncludesInheritedMembers.ts, 9, 17))
  
      constructor(x) { }
-@@ -46,49 +46,49 @@
+@@= skipped -41, +41 lines =@@
  
  var r1 = d.a;
  >r1 : Symbol(r1, Decl(derivedClassIncludesInheritedMembers.ts, 18, 3))

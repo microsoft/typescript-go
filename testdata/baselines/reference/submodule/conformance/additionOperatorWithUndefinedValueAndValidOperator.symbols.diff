@@ -1,6 +1,6 @@
 --- old.additionOperatorWithUndefinedValueAndValidOperator.symbols
 +++ new.additionOperatorWithUndefinedValueAndValidOperator.symbols
-@@ -5,9 +5,9 @@
+@@= skipped -5, +5 lines =@@
  
  enum E { a, b, c }
  >E : Symbol(E, Decl(additionOperatorWithUndefinedValueAndValidOperator.ts, 0, 0))
@@ -13,7 +13,7 @@
  
  var a: any;
  >a : Symbol(a, Decl(additionOperatorWithUndefinedValueAndValidOperator.ts, 4, 3))
-@@ -51,15 +51,15 @@
+@@= skipped -46, +46 lines =@@
  var r6 = undefined + E.a;
  >r6 : Symbol(r6, Decl(additionOperatorWithUndefinedValueAndValidOperator.ts, 17, 3))
  >undefined : Symbol(undefined)
@@ -32,7 +32,7 @@
  
  var r8 = b + undefined;
  >r8 : Symbol(r8, Decl(additionOperatorWithUndefinedValueAndValidOperator.ts, 19, 3))
-@@ -77,15 +77,15 @@
+@@= skipped -26, +26 lines =@@
  
  var r11 = E.a + undefined;
  >r11 : Symbol(r11, Decl(additionOperatorWithUndefinedValueAndValidOperator.ts, 22, 3))

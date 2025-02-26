@@ -1,6 +1,6 @@
 --- old.declarationFiles.symbols
 +++ new.declarationFiles.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >C1 : Symbol(C1, Decl(declarationFiles.ts, 0, 0))
  
      x: this;
@@ -13,7 +13,7 @@
  >x : Symbol(x, Decl(declarationFiles.ts, 2, 6))
  >undefined : Symbol(undefined)
  
-@@ -28,51 +28,51 @@
+@@= skipped -23, +23 lines =@@
  >T : Symbol(T, Decl(declarationFiles.ts, 10, 14))
  
      x: T;
@@ -77,7 +77,7 @@
  >x : Symbol(x, Decl(declarationFiles.ts, 25, 8))
  >x : Symbol(x, Decl(declarationFiles.ts, 25, 8))
  }
-@@ -81,45 +81,45 @@
+@@= skipped -53, +53 lines =@@
  >C4 : Symbol(C4, Decl(declarationFiles.ts, 26, 1))
  
      x1 = { a: this };

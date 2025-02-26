@@ -1,6 +1,6 @@
 --- old.tripleSlashReferenceAbsoluteWindowsPath.symbols
 +++ new.tripleSlashReferenceAbsoluteWindowsPath.symbols
-@@ -1,12 +1,12 @@
+@@= skipped -1, +1 lines =@@
  //// [tests/cases/compiler/tripleSlashReferenceAbsoluteWindowsPath.ts] ////
  
 -=== C:\a\b\d.ts ===

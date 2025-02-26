@@ -1,6 +1,6 @@
 --- old.intersectionsOfLargeUnions2.symbols
 +++ new.intersectionsOfLargeUnions2.symbols
-@@ -4,7 +4,7 @@
+@@= skipped -4, +4 lines =@@
  // Repro from #24233
  
  declare global {
@@ -9,7 +9,7 @@
  
      interface ElementTagNameMap {
  >ElementTagNameMap : Symbol(ElementTagNameMap, Decl(intersectionsOfLargeUnions2.ts, 2, 16))
-@@ -33,9 +33,9 @@
+@@= skipped -29, +29 lines =@@
      let nodeType = node === null ? null : node.nodeType;
  >nodeType : Symbol(nodeType, Decl(intersectionsOfLargeUnions2.ts, 13, 7))
  >node : Symbol(node, Decl(intersectionsOfLargeUnions2.ts, 12, 32))
@@ -21,7 +21,7 @@
  
      return nodeType === 1;
  >nodeType : Symbol(nodeType, Decl(intersectionsOfLargeUnions2.ts, 13, 7))
-@@ -65,11 +65,11 @@
+@@= skipped -32, +32 lines =@@
  
          const nodeTagName = node.tagName.toLowerCase();
  >nodeTagName : Symbol(nodeTagName, Decl(intersectionsOfLargeUnions2.ts, 21, 13))

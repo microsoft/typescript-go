@@ -1,6 +1,6 @@
 --- old.nameCollision.symbols
 +++ new.nameCollision.symbols
-@@ -29,7 +29,7 @@
+@@= skipped -29, +29 lines =@@
  >B : Symbol(B, Decl(nameCollision.ts, 11, 10))
  
          name: string;
@@ -9,7 +9,7 @@
      }
  }
  
-@@ -68,8 +68,8 @@
+@@= skipped -39, +39 lines =@@
  >Y : Symbol(Y, Decl(nameCollision.ts, 31, 12))
  
          Red, Blue
@@ -20,7 +20,7 @@
      }
  }
  
-@@ -82,7 +82,7 @@
+@@= skipped -14, +14 lines =@@
  >D : Symbol(D, Decl(nameCollision.ts, 39, 10))
  
          id: number;

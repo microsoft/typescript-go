@@ -1,6 +1,6 @@
 --- old.computedEnumTypeWidening.symbols
 +++ new.computedEnumTypeWidening.symbols
-@@ -9,19 +9,19 @@
+@@= skipped -9, +9 lines =@@
  >E : Symbol(E, Decl(computedEnumTypeWidening.ts, 0, 45))
  
      A = computed(0),
@@ -24,7 +24,7 @@
  >computed : Symbol(computed, Decl(computedEnumTypeWidening.ts, 0, 0))
  }
  
-@@ -30,9 +30,9 @@
+@@= skipped -21, +21 lines =@@
  
      const c1 = E.B;  // Fresh E.B
  >c1 : Symbol(c1, Decl(computedEnumTypeWidening.ts, 10, 9))
@@ -36,7 +36,7 @@
  
      let v1 = c1;  // E
  >v1 : Symbol(v1, Decl(computedEnumTypeWidening.ts, 11, 7))
-@@ -49,10 +49,10 @@
+@@= skipped -19, +19 lines =@@
      const c3: E.B = E.B;  // E.B
  >c3 : Symbol(c3, Decl(computedEnumTypeWidening.ts, 14, 9))
  >E : Symbol(E, Decl(computedEnumTypeWidening.ts, 0, 45))
@@ -50,7 +50,7 @@
  
      let v3 = c3;  // E.B
  >v3 : Symbol(v3, Decl(computedEnumTypeWidening.ts, 15, 7))
-@@ -61,7 +61,7 @@
+@@= skipped -12, +12 lines =@@
      const c4: E.B = c1;  // E.B
  >c4 : Symbol(c4, Decl(computedEnumTypeWidening.ts, 16, 9))
  >E : Symbol(E, Decl(computedEnumTypeWidening.ts, 0, 45))
@@ -59,7 +59,7 @@
  >c1 : Symbol(c1, Decl(computedEnumTypeWidening.ts, 10, 9))
  
      let v4 = c4;  // E.B
-@@ -76,19 +76,19 @@
+@@= skipped -15, +15 lines =@@
      const c1 = cond ? E.A : E.B;  // Fresh E.A | fresh E.B
  >c1 : Symbol(c1, Decl(computedEnumTypeWidening.ts, 21, 9))
  >cond : Symbol(cond, Decl(computedEnumTypeWidening.ts, 20, 12))
@@ -85,7 +85,7 @@
  >c1 : Symbol(c1, Decl(computedEnumTypeWidening.ts, 21, 9))
  
      const c3 = cond ? c1 : c2;  // E.A | E.B
-@@ -101,18 +101,18 @@
+@@= skipped -25, +25 lines =@@
  >c4 : Symbol(c4, Decl(computedEnumTypeWidening.ts, 24, 9))
  >cond : Symbol(cond, Decl(computedEnumTypeWidening.ts, 20, 12))
  >c3 : Symbol(c3, Decl(computedEnumTypeWidening.ts, 23, 9))
@@ -109,7 +109,7 @@
  >c4 : Symbol(c4, Decl(computedEnumTypeWidening.ts, 24, 9))
  
      let v1 = c1;  // E
-@@ -141,9 +141,9 @@
+@@= skipped -40, +40 lines =@@
  
      const c1 = E.B;
  >c1 : Symbol(c1, Decl(computedEnumTypeWidening.ts, 34, 9))
@@ -121,7 +121,7 @@
  
      let v1 = c1;  // E
  >v1 : Symbol(v1, Decl(computedEnumTypeWidening.ts, 35, 7))
-@@ -152,10 +152,10 @@
+@@= skipped -11, +11 lines =@@
      const c2: E.B = E.B;
  >c2 : Symbol(c2, Decl(computedEnumTypeWidening.ts, 36, 9))
  >E : Symbol(E, Decl(computedEnumTypeWidening.ts, 0, 45))
@@ -135,7 +135,7 @@
  
      let v2 = c2;  // E.B
  >v2 : Symbol(v2, Decl(computedEnumTypeWidening.ts, 37, 7))
-@@ -163,11 +163,11 @@
+@@= skipped -11, +11 lines =@@
  
      const c3 = E.B as E.B;
  >c3 : Symbol(c3, Decl(computedEnumTypeWidening.ts, 38, 9))
@@ -150,7 +150,7 @@
  
      let v3 = c3;  // E.B
  >v3 : Symbol(v3, Decl(computedEnumTypeWidening.ts, 39, 7))
-@@ -176,10 +176,10 @@
+@@= skipped -13, +13 lines =@@
      const c4 = <E.B>E.B;
  >c4 : Symbol(c4, Decl(computedEnumTypeWidening.ts, 40, 9))
  >E : Symbol(E, Decl(computedEnumTypeWidening.ts, 0, 45))
@@ -164,7 +164,7 @@
  
      let v4 = c4;  // E.B
  >v4 : Symbol(v4, Decl(computedEnumTypeWidening.ts, 41, 7))
-@@ -187,9 +187,9 @@
+@@= skipped -11, +11 lines =@@
  
      const c5 = E.B as const;
  >c5 : Symbol(c5, Decl(computedEnumTypeWidening.ts, 42, 9))
@@ -176,7 +176,7 @@
  >const : Symbol(const)
  
      let v5 = c5;  // E.B
-@@ -199,80 +199,80 @@
+@@= skipped -12, +12 lines =@@
  
  declare enum E2 { A, B, C, D }
  >E2 : Symbol(E2, Decl(computedEnumTypeWidening.ts, 44, 1))
@@ -285,7 +285,7 @@
  >const : Symbol(const)
  }
  
-@@ -280,37 +280,37 @@
+@@= skipped -81, +81 lines =@@
  
  enum MyEnum { A, B, C }
  >MyEnum : Symbol(MyEnum, Decl(computedEnumTypeWidening.ts, 63, 1))

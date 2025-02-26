@@ -1,6 +1,6 @@
 --- old.moduleResolutionAsTypeReferenceDirectiveScoped.symbols
 +++ new.moduleResolutionAsTypeReferenceDirectiveScoped.symbols
-@@ -19,20 +19,3 @@
+@@= skipped -19, +19 lines =@@
  import { mangledAtTypesCache } from "@mangled/attypescache";
  >mangledAtTypesCache : Symbol(mangledAtTypesCache, Decl(a.ts, 5, 8))
  

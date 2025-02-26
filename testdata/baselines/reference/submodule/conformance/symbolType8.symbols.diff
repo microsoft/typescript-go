@@ -1,6 +1,6 @@
 --- old.symbolType8.symbols
 +++ new.symbolType8.symbols
-@@ -3,9 +3,6 @@
+@@= skipped -3, +3 lines =@@
  === symbolType8.ts ===
  var s = Symbol.for("compare");
  >s : Symbol(s, Decl(symbolType8.ts, 0, 3))

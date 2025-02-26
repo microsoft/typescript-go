@@ -1,6 +1,6 @@
 --- old.symbolProperty58.symbols
 +++ new.symbolProperty58.symbols
-@@ -2,10 +2,10 @@
+@@= skipped -2, +2 lines =@@
  
  === symbolProperty58.ts ===
  interface SymbolConstructor {
@@ -13,7 +13,7 @@
  }
  
  var obj = {
-@@ -13,7 +13,4 @@
+@@= skipped -11, +11 lines =@@
  
      [Symbol.foo]: 0
  >[Symbol.foo] : Symbol([Symbol.foo], Decl(symbolProperty58.ts, 4, 11))

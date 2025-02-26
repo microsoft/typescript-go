@@ -1,6 +1,6 @@
 --- old.overloadModifiersMustAgree.symbols
 +++ new.overloadModifiersMustAgree.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >baz : Symbol(baz, Decl(overloadModifiersMustAgree.ts, 0, 0))
  
      public foo();
@@ -13,7 +13,7 @@
  >bar : Symbol(bar, Decl(overloadModifiersMustAgree.ts, 2, 16))
  }
  
-@@ -27,10 +27,10 @@
+@@= skipped -22, +22 lines =@@
  >I : Symbol(I, Decl(overloadModifiersMustAgree.ts, 7, 28))
  
      foo? ();

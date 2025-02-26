@@ -1,6 +1,6 @@
 --- old.mergedDeclarations4.symbols
 +++ new.mergedDeclarations4.symbols
-@@ -17,9 +17,9 @@
+@@= skipped -17, +17 lines =@@
  
      var r = f.hello;
  >r : Symbol(r, Decl(mergedDeclarations4.ts, 4, 7))
@@ -12,7 +12,7 @@
  }
   
  module M {
-@@ -41,20 +41,20 @@
+@@= skipped -24, +24 lines =@@
  
      var r = f.hello;
  >r : Symbol(r, Decl(mergedDeclarations4.ts, 13, 7))

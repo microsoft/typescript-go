@@ -1,6 +1,6 @@
 --- old.inlineJsxFactoryWithFragmentIsError.symbols
 +++ new.inlineJsxFactoryWithFragmentIsError.symbols
-@@ -2,7 +2,7 @@
+@@= skipped -2, +2 lines =@@
  
  === renderer.d.ts ===
  declare global {
@@ -9,7 +9,7 @@
  
      namespace JSX {
  >JSX : Symbol(JSX, Decl(renderer.d.ts, 0, 16))
-@@ -27,15 +27,9 @@
+@@= skipped -25, +25 lines =@@
  >React : Symbol(React, Decl(reacty.tsx, 1, 6))
  
  <><h></h></>

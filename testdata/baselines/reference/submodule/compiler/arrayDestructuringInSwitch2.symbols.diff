@@ -1,6 +1,6 @@
 --- old.arrayDestructuringInSwitch2.symbols
 +++ new.arrayDestructuringInSwitch2.symbols
-@@ -24,7 +24,7 @@
+@@= skipped -24, +24 lines =@@
      case "a":
        return a[0];
  >a : Symbol(a, Decl(arrayDestructuringInSwitch2.ts, 3, 15))

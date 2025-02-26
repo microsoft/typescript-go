@@ -1,6 +1,6 @@
 --- old.typePredicatesInUnion_noMatch.symbols
 +++ new.typePredicatesInUnion_noMatch.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(typePredicatesInUnion_noMatch.ts, 0, 0))
  
      pred(x: {}, y: {}): x is boolean;
@@ -9,7 +9,7 @@
  >x : Symbol(x, Decl(typePredicatesInUnion_noMatch.ts, 1, 9))
  >y : Symbol(y, Decl(typePredicatesInUnion_noMatch.ts, 1, 15))
  >x : Symbol(x, Decl(typePredicatesInUnion_noMatch.ts, 1, 9))
-@@ -14,7 +14,7 @@
+@@= skipped -9, +9 lines =@@
  >B : Symbol(B, Decl(typePredicatesInUnion_noMatch.ts, 2, 1))
  
      pred(x: {}, y: {}): y is string;

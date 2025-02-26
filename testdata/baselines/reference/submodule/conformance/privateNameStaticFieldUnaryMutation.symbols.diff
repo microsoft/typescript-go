@@ -1,6 +1,6 @@
 --- old.privateNameStaticFieldUnaryMutation.symbols
 +++ new.privateNameStaticFieldUnaryMutation.symbols
-@@ -5,146 +5,146 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(privateNameStaticFieldUnaryMutation.ts, 0, 0))
  
      static #test: number = 24;

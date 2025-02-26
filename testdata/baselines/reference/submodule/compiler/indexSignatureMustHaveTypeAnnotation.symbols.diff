@@ -1,6 +1,6 @@
 --- old.indexSignatureMustHaveTypeAnnotation.symbols
 +++ new.indexSignatureMustHaveTypeAnnotation.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  
      // Used to be indexer, now it is a computed property
      [x]: string;
@@ -9,7 +9,7 @@
  
      [x: string];
  >x : Symbol(x, Decl(indexSignatureMustHaveTypeAnnotation.ts, 3, 5))
-@@ -17,7 +17,7 @@
+@@= skipped -11, +11 lines =@@
  
      // Used to be indexer, now it is a computed property
      [x]: string

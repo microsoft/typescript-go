@@ -1,6 +1,6 @@
 --- old.invalidStringAssignments.symbols
 +++ new.invalidStringAssignments.symbols
-@@ -23,7 +23,7 @@
+@@= skipped -23, +23 lines =@@
  
  class C { foo: string; }
  >C : Symbol(C, Decl(invalidStringAssignments.ts, 5, 28))
@@ -9,7 +9,7 @@
  
  var e: C = x;
  >e : Symbol(e, Decl(invalidStringAssignments.ts, 8, 3))
-@@ -32,7 +32,7 @@
+@@= skipped -9, +9 lines =@@
  
  interface I { bar: string; }
  >I : Symbol(I, Decl(invalidStringAssignments.ts, 8, 13))
@@ -18,7 +18,7 @@
  
  var f: I = x;
  >f : Symbol(f, Decl(invalidStringAssignments.ts, 11, 3))
-@@ -71,7 +71,7 @@
+@@= skipped -39, +39 lines =@@
  
  enum E { A }
  >E : Symbol(E, Decl(invalidStringAssignments.ts, 22, 6))

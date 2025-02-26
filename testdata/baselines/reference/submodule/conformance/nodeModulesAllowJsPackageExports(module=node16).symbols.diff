@@ -1,6 +1,6 @@
 --- old.nodeModulesAllowJsPackageExports(module=node16).symbols
 +++ new.nodeModulesAllowJsPackageExports(module=node16).symbols
-@@ -126,13 +126,13 @@
+@@= skipped -126, +126 lines =@@
  >type : Symbol(type, Decl(index.d.ts, 3, 6))
  
  export { cjs };
@@ -17,7 +17,7 @@
  
  === node_modules/inner/index.d.mts ===
  // esm format file
-@@ -146,13 +146,13 @@
+@@= skipped -20, +20 lines =@@
  >type : Symbol(type, Decl(index.d.mts, 3, 6))
  
  export { cjs };
@@ -34,7 +34,7 @@
  
  === node_modules/inner/index.d.cts ===
  // cjs format file
-@@ -166,11 +166,11 @@
+@@= skipped -20, +20 lines =@@
  >type : Symbol(type, Decl(index.d.cts, 3, 6))
  
  export { cjs };

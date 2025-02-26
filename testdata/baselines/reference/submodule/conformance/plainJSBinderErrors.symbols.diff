@@ -1,6 +1,6 @@
 --- old.plainJSBinderErrors.symbols
 +++ new.plainJSBinderErrors.symbols
-@@ -25,10 +25,10 @@
+@@= skipped -25, +25 lines =@@
  >C : Symbol(C, Decl(plainJSBinderErrors.js, 9, 1))
  
      #constructor = 5
@@ -13,7 +13,7 @@
  
          function container(f) {
  >container : Symbol(container, Decl(plainJSBinderErrors.js, 12, 15))
-@@ -47,7 +47,7 @@
+@@= skipped -22, +22 lines =@@
  >container : Symbol(container, Decl(plainJSBinderErrors.js, 12, 15))
      }
      evalArguments() {
@@ -22,7 +22,7 @@
  
          const eval = 7
  >eval : Symbol(eval, Decl(plainJSBinderErrors.js, 21, 13))
-@@ -56,7 +56,7 @@
+@@= skipped -9, +9 lines =@@
  >arguments : Symbol(arguments, Decl(plainJSBinderErrors.js, 22, 13))
      }
      withOctal() {
@@ -31,7 +31,7 @@
  
          const redundant = 0o10
  >redundant : Symbol(redundant, Decl(plainJSBinderErrors.js, 25, 13))
-@@ -68,7 +68,7 @@
+@@= skipped -12, +12 lines =@@
          }
      }
      label() {

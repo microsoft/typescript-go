@@ -1,6 +1,6 @@
 --- old.anyAssignabilityInInheritance.symbols
 +++ new.anyAssignabilityInInheritance.symbols
-@@ -10,7 +10,7 @@
+@@= skipped -10, +10 lines =@@
  >x : Symbol(x, Decl(anyAssignabilityInInheritance.ts, 3, 5))
  
      foo: any; // ok, any identical to itself
@@ -9,7 +9,7 @@
  }
  
  var a: any;
-@@ -115,7 +115,7 @@
+@@= skipped -105, +105 lines =@@
  
  interface I8 { foo: string }
  >I8 : Symbol(I8, Decl(anyAssignabilityInInheritance.ts, 35, 17))
@@ -18,7 +18,7 @@
  
  declare function foo9(x: I8): I8;
  >foo9 : Symbol(foo9, Decl(anyAssignabilityInInheritance.ts, 37, 28), Decl(anyAssignabilityInInheritance.ts, 38, 33))
-@@ -134,7 +134,7 @@
+@@= skipped -19, +19 lines =@@
  
  class A { foo: number; }
  >A : Symbol(A, Decl(anyAssignabilityInInheritance.ts, 40, 17))
@@ -27,7 +27,7 @@
  
  declare function foo10(x: A): A;
  >foo10 : Symbol(foo10, Decl(anyAssignabilityInInheritance.ts, 42, 24), Decl(anyAssignabilityInInheritance.ts, 43, 32))
-@@ -154,7 +154,7 @@
+@@= skipped -20, +20 lines =@@
  class A2<T> { foo: T; }
  >A2 : Symbol(A2, Decl(anyAssignabilityInInheritance.ts, 45, 17))
  >T : Symbol(T, Decl(anyAssignabilityInInheritance.ts, 47, 9))
@@ -36,7 +36,7 @@
  >T : Symbol(T, Decl(anyAssignabilityInInheritance.ts, 47, 9))
  
  declare function foo11(x: A2<string>): A2<string>;
-@@ -210,7 +210,7 @@
+@@= skipped -56, +56 lines =@@
  
  enum E { A }
  >E : Symbol(E, Decl(anyAssignabilityInInheritance.ts, 58, 17))
@@ -45,7 +45,7 @@
  
  declare function foo14(x: E): E;
  >foo14 : Symbol(foo14, Decl(anyAssignabilityInInheritance.ts, 60, 12), Decl(anyAssignabilityInInheritance.ts, 61, 32))
-@@ -253,7 +253,7 @@
+@@= skipped -43, +43 lines =@@
  
  class CC { baz: string }
  >CC : Symbol(CC, Decl(anyAssignabilityInInheritance.ts, 71, 17), Decl(anyAssignabilityInInheritance.ts, 73, 24))

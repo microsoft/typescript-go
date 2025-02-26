@@ -1,6 +1,6 @@
 --- old.tsxDynamicTagName8.symbols
 +++ new.tsxDynamicTagName8.symbols
-@@ -2,7 +2,7 @@
+@@= skipped -2, +2 lines =@@
  
  === react.d.ts ===
  declare module 'react' {
@@ -9,7 +9,7 @@
  
  	class Component<T, U> { }
  >Component : Symbol(Component, Decl(react.d.ts, 0, 24))
-@@ -16,24 +16,24 @@
+@@= skipped -14, +14 lines =@@
  
  export class Text extends React.Component<{}, {}> {
  >Text : Symbol(Text, Decl(app.tsx, 0, 31))

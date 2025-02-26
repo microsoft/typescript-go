@@ -1,6 +1,6 @@
 --- old.deleteOperatorInvalidOperations.symbols
 +++ new.deleteOperatorInvalidOperations.symbols
-@@ -19,7 +19,7 @@
+@@= skipped -19, +19 lines =@@
  >testADelx : Symbol(testADelx, Decl(deleteOperatorInvalidOperations.ts, 7, 23))
  
      constructor(public s: () => {}) {

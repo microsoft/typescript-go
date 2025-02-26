@@ -1,6 +1,6 @@
 --- old.arrayFromAsync.symbols
 +++ new.arrayFromAsync.symbols
-@@ -27,9 +27,9 @@
+@@= skipped -27, +27 lines =@@
  >i : Symbol(i, Decl(arrayFromAsync.ts, 7, 12))
  
          yield Promise.resolve(i * 2);
@@ -12,7 +12,7 @@
  >i : Symbol(i, Decl(arrayFromAsync.ts, 7, 12))
      }
  }
-@@ -39,27 +39,27 @@
+@@= skipped -12, +12 lines =@@
  
      0: Promise.resolve(0),
  >0 : Symbol(0, Decl(arrayFromAsync.ts, 12, 17))
@@ -48,7 +48,7 @@
  
      length: 4,
  >length : Symbol(length, Decl(arrayFromAsync.ts, 16, 26))
-@@ -73,95 +73,95 @@
+@@= skipped -34, +34 lines =@@
  >asyncGen : Symbol(asyncGen, Decl(arrayFromAsync.ts, 0, 11))
  
    arr.push(v);
@@ -179,7 +179,7 @@
  >v : Symbol(v, Decl(arrayFromAsync.ts, 36, 48))
  >v : Symbol(v, Decl(arrayFromAsync.ts, 36, 48))
  
-@@ -172,24 +172,24 @@
+@@= skipped -99, +99 lines =@@
  const badIterable = { [Symbol.iterator] () { throw err; } };
  >badIterable : Symbol(badIterable, Decl(arrayFromAsync.ts, 39, 5))
  >[Symbol.iterator] : Symbol([Symbol.iterator], Decl(arrayFromAsync.ts, 39, 21))

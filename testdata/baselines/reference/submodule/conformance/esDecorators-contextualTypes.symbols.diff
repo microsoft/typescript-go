@@ -1,6 +1,6 @@
 --- old.esDecorators-contextualTypes.symbols
 +++ new.esDecorators-contextualTypes.symbols
-@@ -13,28 +13,28 @@
+@@= skipped -13, +13 lines =@@
  >c : Symbol(c, Decl(esDecorators-contextualTypes.ts, 2, 9))
  
      static f() {}
@@ -33,7 +33,7 @@
  >value : Symbol(value, Decl(esDecorators-contextualTypes.ts, 12, 17))
  
      @((t, c) => { })
-@@ -42,14 +42,14 @@
+@@= skipped -29, +29 lines =@@
  >c : Symbol(c, Decl(esDecorators-contextualTypes.ts, 14, 9))
  
      static get #x() { return 1; }
@@ -50,7 +50,7 @@
  >value : Symbol(value, Decl(esDecorators-contextualTypes.ts, 18, 18))
  
      @((t, c) => { })
-@@ -57,56 +57,56 @@
+@@= skipped -15, +15 lines =@@
  >c : Symbol(c, Decl(esDecorators-contextualTypes.ts, 20, 9))
  
      static accessor y = 1;
@@ -115,7 +115,7 @@
  >value : Symbol(value, Decl(esDecorators-contextualTypes.ts, 42, 10))
  
      @((t, c) => { })
-@@ -114,14 +114,14 @@
+@@= skipped -57, +57 lines =@@
  >c : Symbol(c, Decl(esDecorators-contextualTypes.ts, 44, 9))
  
      get #a() { return 1; }
@@ -132,7 +132,7 @@
  >value : Symbol(value, Decl(esDecorators-contextualTypes.ts, 48, 11))
  
      @((t, c) => { })
-@@ -129,26 +129,26 @@
+@@= skipped -15, +15 lines =@@
  >c : Symbol(c, Decl(esDecorators-contextualTypes.ts, 50, 9))
  
      accessor b = 1;

@@ -1,6 +1,6 @@
 --- old.jsxParsingError4(strict=true).symbols
 +++ new.jsxParsingError4(strict=true).symbols
-@@ -19,17 +19,11 @@
+@@= skipped -19, +19 lines =@@
  >a : Symbol(a, Decl(a.tsx, 7, 5))
  
    <public-foo></public-foo>

@@ -1,6 +1,6 @@
 --- old.twiceNestedKeyofIndexInference.symbols
 +++ new.twiceNestedKeyofIndexInference.symbols
-@@ -101,7 +101,7 @@
+@@= skipped -101, +101 lines =@@
  >State : Symbol(State, Decl(twiceNestedKeyofIndexInference.ts, 12, 130))
  
      a: {
@@ -9,7 +9,7 @@
  
          b: string;
  >b : Symbol(b, Decl(twiceNestedKeyofIndexInference.ts, 16, 8))
-@@ -111,7 +111,7 @@
+@@= skipped -10, +10 lines =@@
  
      };
      d: boolean;

@@ -1,6 +1,6 @@
 --- old.objectLiteralArraySpecialization.symbols
 +++ new.objectLiteralArraySpecialization.symbols
-@@ -14,12 +14,12 @@
+@@= skipped -14, +14 lines =@@
  >T : Symbol(T, Decl(objectLiteralArraySpecialization.ts, 1, 25))
  
  	constructor(initialItems?: T[]);
@@ -15,7 +15,7 @@
  >predicate : Symbol(predicate, Decl(objectLiteralArraySpecialization.ts, 3, 13))
  >x : Symbol(x, Decl(objectLiteralArraySpecialization.ts, 3, 25))
  >T : Symbol(T, Decl(objectLiteralArraySpecialization.ts, 1, 25))
-@@ -35,9 +35,9 @@
+@@= skipped -21, +21 lines =@@
  >id : Symbol(id, Decl(objectLiteralArraySpecialization.ts, 5, 61))
  
  thing.doSomething((x, y) => x.name === "bob"); // should not error

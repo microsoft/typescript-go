@@ -1,6 +1,6 @@
 --- old.es6ModuleFunctionDeclaration.symbols
 +++ new.es6ModuleFunctionDeclaration.symbols
-@@ -56,7 +56,7 @@
+@@= skipped -56, +56 lines =@@
  >foo4 : Symbol(foo4, Decl(es6ModuleFunctionDeclaration.ts, 19, 5))
  
      m1.foo3();

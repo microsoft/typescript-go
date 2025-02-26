@@ -1,6 +1,6 @@
 --- old.callWithMissingVoidUndefinedUnknownAnyInJs(strict=true).symbols
 +++ new.callWithMissingVoidUndefinedUnknownAnyInJs(strict=true).symbols
-@@ -20,7 +20,7 @@
+@@= skipped -20, +20 lines =@@
  interface I<T> { m(p: T): void; }
  >I : Symbol(I, Decl(defs.d.ts, 3, 34))
  >T : Symbol(T, Decl(defs.d.ts, 5, 12))
@@ -9,7 +9,7 @@
  >p : Symbol(p, Decl(defs.d.ts, 5, 19))
  >T : Symbol(T, Decl(defs.d.ts, 5, 12))
  
-@@ -46,9 +46,9 @@
+@@= skipped -26, +26 lines =@@
  >f1 : Symbol(f1, Decl(defs.d.ts, 0, 0))
  
  o1.m();
@@ -21,7 +21,7 @@
  
  // new behavior: treat 'undefined', 'unknown', and 'any' as optional in non-strict mode
  f2();
-@@ -61,19 +61,19 @@
+@@= skipped -15, +15 lines =@@
  >f4 : Symbol(f4, Decl(defs.d.ts, 2, 38))
  
  o2.m();
@@ -47,7 +47,7 @@
  
  === tsfile.ts ===
  // current behavior: treat trailing `void` as optional
-@@ -81,9 +81,9 @@
+@@= skipped -20, +20 lines =@@
  >f1 : Symbol(f1, Decl(defs.d.ts, 0, 0))
  
  o1.m();
@@ -59,7 +59,7 @@
  
  // no change in behavior
  f2();
-@@ -96,17 +96,17 @@
+@@= skipped -15, +15 lines =@@
  >f4 : Symbol(f4, Decl(defs.d.ts, 2, 38))
  
  o2.m();

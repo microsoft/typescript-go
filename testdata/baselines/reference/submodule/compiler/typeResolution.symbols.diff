@@ -1,6 +1,6 @@
 --- old.typeResolution.symbols
 +++ new.typeResolution.symbols
-@@ -14,32 +14,32 @@
+@@= skipped -14, +14 lines =@@
  >ClassA : Symbol(ClassA, Decl(typeResolution.ts, 2, 37))
  
                  public AisIn1_1_1() {
@@ -40,7 +40,7 @@
  
                      var a4: TopLevelModule1.SubModule1.SubSubModule1.ClassA; a4.AisIn1_1_1();
  >a4 : Symbol(a4, Decl(typeResolution.ts, 9, 23))
-@@ -47,17 +47,17 @@
+@@= skipped -33, +33 lines =@@
  >SubModule1 : Symbol(SubModule1, Decl(typeResolution.ts, 0, 31))
  >SubSubModule1 : Symbol(SubSubModule1, Decl(typeResolution.ts, 1, 30))
  >ClassA : Symbol(ClassA, Decl(typeResolution.ts, 2, 37))
@@ -62,7 +62,7 @@
  
                      var b2: TopLevelModule1.SubModule1.SubSubModule1.ClassB; b2.BisIn1_1_1();
  >b2 : Symbol(b2, Decl(typeResolution.ts, 13, 23))
-@@ -65,43 +65,43 @@
+@@= skipped -18, +18 lines =@@
  >SubModule1 : Symbol(SubModule1, Decl(typeResolution.ts, 0, 31))
  >SubSubModule1 : Symbol(SubSubModule1, Decl(typeResolution.ts, 1, 30))
  >ClassB : Symbol(ClassB, Decl(typeResolution.ts, 22, 13))
@@ -117,7 +117,7 @@
  
                      /** Exactly the same as above in AisIn1_1_1 **/
                      
-@@ -109,26 +109,26 @@
+@@= skipped -44, +44 lines =@@
                      var a1: ClassA; a1.AisIn1_1_1();
  >a1 : Symbol(a1, Decl(typeResolution.ts, 28, 23))
  >ClassA : Symbol(ClassA, Decl(typeResolution.ts, 2, 37))
@@ -150,7 +150,7 @@
  
                      var a4: TopLevelModule1.SubModule1.SubSubModule1.ClassA; a4.AisIn1_1_1();
  >a4 : Symbol(a4, Decl(typeResolution.ts, 31, 23))
-@@ -136,17 +136,17 @@
+@@= skipped -27, +27 lines =@@
  >SubModule1 : Symbol(SubModule1, Decl(typeResolution.ts, 0, 31))
  >SubSubModule1 : Symbol(SubSubModule1, Decl(typeResolution.ts, 1, 30))
  >ClassA : Symbol(ClassA, Decl(typeResolution.ts, 2, 37))
@@ -172,7 +172,7 @@
  
                      var b2: TopLevelModule1.SubModule1.SubSubModule1.ClassB; b2.BisIn1_1_1();
  >b2 : Symbol(b2, Decl(typeResolution.ts, 35, 23))
-@@ -154,50 +154,50 @@
+@@= skipped -18, +18 lines =@@
  >SubModule1 : Symbol(SubModule1, Decl(typeResolution.ts, 0, 31))
  >SubSubModule1 : Symbol(SubSubModule1, Decl(typeResolution.ts, 1, 30))
  >ClassB : Symbol(ClassB, Decl(typeResolution.ts, 22, 13))
@@ -238,7 +238,7 @@
  
              class NonExportedClassQ {
  >NonExportedClassQ : Symbol(NonExportedClassQ, Decl(typeResolution.ts, 46, 57))
-@@ -213,35 +213,35 @@
+@@= skipped -59, +59 lines =@@
  >SubModule1 : Symbol(SubModule1, Decl(typeResolution.ts, 0, 31))
  >SubSubModule1 : Symbol(SubSubModule1, Decl(typeResolution.ts, 1, 30))
  >ClassA : Symbol(ClassA, Decl(typeResolution.ts, 2, 37))
@@ -286,7 +286,7 @@
                      }
                  }
              }
-@@ -258,38 +258,38 @@
+@@= skipped -45, +45 lines =@@
                      var a2: SubSubModule1.ClassA; a2.AisIn1_1_1();
  >a2 : Symbol(a2, Decl(typeResolution.ts, 64, 23))
  >SubSubModule1 : Symbol(SubSubModule1, Decl(typeResolution.ts, 1, 30))
@@ -337,7 +337,7 @@
                  }
              }
          }
-@@ -304,19 +304,19 @@
+@@= skipped -46, +46 lines =@@
              // No code here since these are the mirror of the above calls
              export class ClassA { public AisIn1_2_2() { } }
  >ClassA : Symbol(ClassA, Decl(typeResolution.ts, 76, 37))
@@ -361,7 +361,7 @@
  
              interface NonExportedInterfaceQ { }
  >NonExportedInterfaceQ : Symbol(NonExportedInterfaceQ, Decl(typeResolution.ts, 81, 57))
-@@ -324,21 +324,21 @@
+@@= skipped -20, +20 lines =@@
          
          export interface InterfaceY { YisIn1_2(); }
  >InterfaceY : Symbol(InterfaceY, Decl(typeResolution.ts, 83, 9))
@@ -386,7 +386,7 @@
      }
      
      module NotExportedModule {
-@@ -359,7 +359,7 @@
+@@= skipped -35, +35 lines =@@
  >ClassA : Symbol(ClassA, Decl(typeResolution.ts, 102, 30))
  
              public AisIn2_3() { }

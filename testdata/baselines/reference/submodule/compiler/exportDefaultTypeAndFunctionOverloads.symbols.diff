@@ -1,6 +1,6 @@
 --- old.exportDefaultTypeAndFunctionOverloads.symbols
 +++ new.exportDefaultTypeAndFunctionOverloads.symbols
-@@ -2,15 +2,15 @@
+@@= skipped -2, +2 lines =@@
  
  === exportDefaultTypeAndFunctionOverloads.ts ===
  export default function foo(value: number): number

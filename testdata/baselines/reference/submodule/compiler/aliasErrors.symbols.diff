@@ -1,6 +1,6 @@
 --- old.aliasErrors.symbols
 +++ new.aliasErrors.symbols
-@@ -20,13 +20,13 @@
+@@= skipped -20, +20 lines =@@
  import booz = foo.bar.baz;
  >booz : Symbol(booz, Decl(aliasErrors.ts, 6, 21))
  >foo : Symbol(foo, Decl(aliasErrors.ts, 0, 0))
@@ -17,7 +17,7 @@
  
  import m = no;
  >m : Symbol(m, Decl(aliasErrors.ts, 8, 22))
-@@ -49,40 +49,40 @@
+@@= skipped -29, +29 lines =@@
  
  var p = new provide.Provide();
  >p : Symbol(p, Decl(aliasErrors.ts, 18, 3))

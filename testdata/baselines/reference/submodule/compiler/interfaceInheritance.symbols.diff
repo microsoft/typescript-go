@@ -1,6 +1,6 @@
 --- old.interfaceInheritance.symbols
 +++ new.interfaceInheritance.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >I1 : Symbol(I1, Decl(interfaceInheritance.ts, 0, 0))
  
      i1P1: number;
@@ -13,7 +13,7 @@
  }
  
  interface I2 extends I1 {
-@@ -16,28 +16,28 @@
+@@= skipped -11, +11 lines =@@
  >I1 : Symbol(I1, Decl(interfaceInheritance.ts, 0, 0))
  
      i2P1: string;
@@ -46,7 +46,7 @@
  }
  
  class C1 implements I2 { // should be an error - it doesn't implement the members of I1
-@@ -45,7 +45,7 @@
+@@= skipped -29, +29 lines =@@
  >I2 : Symbol(I2, Decl(interfaceInheritance.ts, 3, 1))
  
      public i2P1: string;

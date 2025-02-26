@@ -1,6 +1,6 @@
 --- old.classStaticBlockUseBeforeDef1(target=esnext).symbols
 +++ new.classStaticBlockUseBeforeDef1(target=esnext).symbols
-@@ -5,31 +5,31 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(classStaticBlockUseBeforeDef1.ts, 0, 0))
  
      static x;

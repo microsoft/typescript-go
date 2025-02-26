@@ -1,6 +1,6 @@
 --- old.tsxReactComponentWithDefaultTypeParameter3.symbols
 +++ new.tsxReactComponentWithDefaultTypeParameter3.symbols
-@@ -8,23 +8,23 @@
+@@= skipped -8, +8 lines =@@
  >Prop : Symbol(Prop, Decl(file.tsx, 0, 32))
  
      a: number,

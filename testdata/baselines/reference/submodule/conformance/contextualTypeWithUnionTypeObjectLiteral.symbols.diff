@@ -1,6 +1,6 @@
 --- old.contextualTypeWithUnionTypeObjectLiteral.symbols
 +++ new.contextualTypeWithUnionTypeObjectLiteral.symbols
-@@ -121,7 +121,7 @@
+@@= skipped -121, +121 lines =@@
  >I11 : Symbol(I11, Decl(contextualTypeWithUnionTypeObjectLiteral.ts, 32, 2))
  
      commonMethodDifferentReturnType(a: string, b: number): string;
@@ -9,7 +9,7 @@
  >a : Symbol(a, Decl(contextualTypeWithUnionTypeObjectLiteral.ts, 34, 36))
  >b : Symbol(b, Decl(contextualTypeWithUnionTypeObjectLiteral.ts, 34, 46))
  }
-@@ -129,7 +129,7 @@
+@@= skipped -8, +8 lines =@@
  >I21 : Symbol(I21, Decl(contextualTypeWithUnionTypeObjectLiteral.ts, 35, 1))
  
      commonMethodDifferentReturnType(a: string, b: number): number;
@@ -18,7 +18,7 @@
  >a : Symbol(a, Decl(contextualTypeWithUnionTypeObjectLiteral.ts, 37, 36))
  >b : Symbol(b, Decl(contextualTypeWithUnionTypeObjectLiteral.ts, 37, 46))
  }
-@@ -165,9 +165,9 @@
+@@= skipped -36, +36 lines =@@
  
          var z = a.charAt(b);
  >z : Symbol(z, Decl(contextualTypeWithUnionTypeObjectLiteral.ts, 45, 11))
@@ -30,7 +30,7 @@
  >b : Symbol(b, Decl(contextualTypeWithUnionTypeObjectLiteral.ts, 44, 40))
  
          return z;
-@@ -187,9 +187,9 @@
+@@= skipped -22, +22 lines =@@
  
          var z = a.charCodeAt(b);
  >z : Symbol(z, Decl(contextualTypeWithUnionTypeObjectLiteral.ts, 51, 11))

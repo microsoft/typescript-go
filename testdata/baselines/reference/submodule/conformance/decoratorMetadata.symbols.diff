@@ -1,6 +1,6 @@
 --- old.decoratorMetadata.symbols
 +++ new.decoratorMetadata.symbols
-@@ -2,7 +2,7 @@
+@@= skipped -2, +2 lines =@@
  
  === service.ts ===
  export default class Service {
@@ -9,7 +9,7 @@
  }
  === component.ts ===
  import Service from "./service";
-@@ -18,7 +18,7 @@
+@@= skipped -16, +16 lines =@@
  >MyComponent : Symbol(MyComponent, Decl(component.ts, 2, 27))
  
      constructor(public Service: Service) {
@@ -18,7 +18,7 @@
  >Service : Symbol(Service, Decl(component.ts, 0, 6))
      }
  
-@@ -26,7 +26,7 @@
+@@= skipped -8, +8 lines =@@
  >decorator : Symbol(decorator, Decl(component.ts, 2, 11))
  
      method(x: this) {

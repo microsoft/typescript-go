@@ -1,6 +1,6 @@
 --- old.enumErrorOnConstantBindingWithInitializer.symbols
 +++ new.enumErrorOnConstantBindingWithInitializer.symbols
-@@ -21,7 +21,7 @@
+@@= skipped -21, +21 lines =@@
  >E : Symbol(E, Decl(enumErrorOnConstantBindingWithInitializer.ts, 5, 32))
  
    test = value,

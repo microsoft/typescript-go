@@ -1,6 +1,6 @@
 --- old.requireOfJsonFileWithModuleNodeResolutionEmitSystem.symbols
 +++ new.requireOfJsonFileWithModuleNodeResolutionEmitSystem.symbols
-@@ -4,11 +4,3 @@
+@@= skipped -4, +4 lines =@@
  import * as b from './b.json';
  >b : Symbol(b, Decl(file1.ts, 0, 6))
  

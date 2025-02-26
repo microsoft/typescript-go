@@ -1,6 +1,6 @@
 --- old.nestedRecursiveArraysOrObjectsError01.symbols
 +++ new.nestedRecursiveArraysOrObjectsError01.symbols
-@@ -15,7 +15,7 @@
+@@= skipped -15, +15 lines =@@
  >StyleBase : Symbol(StyleBase, Decl(nestedRecursiveArraysOrObjectsError01.ts, 1, 44))
  
      foo: string;

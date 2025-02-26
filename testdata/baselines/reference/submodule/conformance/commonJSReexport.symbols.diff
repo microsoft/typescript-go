@@ -1,6 +1,6 @@
 --- old.commonJSReexport.symbols
 +++ new.commonJSReexport.symbols
-@@ -3,39 +3,7 @@
+@@= skipped -3, +3 lines =@@
  === main.js ===
  const { hardline } = require('./second').nested;
  >hardline : Symbol(hardline, Decl(main.js, 0, 7))

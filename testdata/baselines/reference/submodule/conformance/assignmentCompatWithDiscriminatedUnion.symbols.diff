@@ -1,6 +1,6 @@
 --- old.assignmentCompatWithDiscriminatedUnion.symbols
 +++ new.assignmentCompatWithDiscriminatedUnion.symbols
-@@ -314,13 +314,13 @@
+@@= skipped -314, +314 lines =@@
  >Blue : Symbol(Blue, Decl(assignmentCompatWithDiscriminatedUnion.ts, 107, 19))
  
          color: 'blue'
@@ -16,7 +16,7 @@
      }
      function draw(val: Blue | Yellow) { }
  >draw : Symbol(draw, Decl(assignmentCompatWithDiscriminatedUnion.ts, 113, 5))
-@@ -345,11 +345,11 @@
+@@= skipped -31, +31 lines =@@
  
      interface ILinearAxis { type: "linear"; }
  >ILinearAxis : Symbol(ILinearAxis, Decl(assignmentCompatWithDiscriminatedUnion.ts, 122, 19))
@@ -30,7 +30,7 @@
  
      type IAxis = ILinearAxis | ICategoricalAxis;
  >IAxis : Symbol(IAxis, Decl(assignmentCompatWithDiscriminatedUnion.ts, 125, 55))
-@@ -383,9 +383,9 @@
+@@= skipped -38, +38 lines =@@
  >undefined : Symbol(undefined)
  
      good.type = getAxisType();
@@ -42,7 +42,7 @@
  >getAxisType : Symbol(getAxisType, Decl(assignmentCompatWithDiscriminatedUnion.ts, 128, 46))
  }
  
-@@ -397,14 +397,14 @@
+@@= skipped -14, +14 lines =@@
  >ThingTypeOne : Symbol(ThingTypeOne, Decl(assignmentCompatWithDiscriminatedUnion.ts, 144, 19))
  
          type: 'one';
@@ -59,7 +59,7 @@
      }
  
      type ThingType = 'one' | 'two';
-@@ -463,13 +463,13 @@
+@@= skipped -66, +66 lines =@@
  >A1 : Symbol(A1, Decl(assignmentCompatWithDiscriminatedUnion.ts, 178, 19))
  
          type: "A1";
@@ -75,7 +75,7 @@
      }
      type AU = A1 | A2;
  >AU : Symbol(AU, Decl(assignmentCompatWithDiscriminatedUnion.ts, 184, 5))
-@@ -523,21 +523,21 @@
+@@= skipped -60, +60 lines =@@
  
      enum MyEnum { A = 1, B = 2 }
  >MyEnum : Symbol(MyEnum, Decl(assignmentCompatWithDiscriminatedUnion.ts, 203, 19))

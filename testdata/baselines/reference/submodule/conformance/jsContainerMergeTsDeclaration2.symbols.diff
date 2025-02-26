@@ -1,6 +1,6 @@
 --- old.jsContainerMergeTsDeclaration2.symbols
 +++ new.jsContainerMergeTsDeclaration2.symbols
-@@ -2,19 +2,17 @@
+@@= skipped -2, +2 lines =@@
  
  === a.d.ts ===
  declare namespace C {

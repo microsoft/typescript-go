@@ -1,6 +1,6 @@
 --- old.declarationEmitBundlePreservesHasNoDefaultLibDirective.symbols
 +++ new.declarationEmitBundlePreservesHasNoDefaultLibDirective.symbols
-@@ -6,31 +6,31 @@
+@@= skipped -6, +6 lines =@@
  >Foo : Symbol(Foo, Decl(extensions.ts, 0, 0))
  
      public: string;

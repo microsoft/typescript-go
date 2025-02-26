@@ -1,6 +1,6 @@
 --- old.arrayFrom.symbols
 +++ new.arrayFrom.symbols
-@@ -8,14 +8,14 @@
+@@= skipped -8, +8 lines =@@
  >A : Symbol(A, Decl(arrayFrom.ts, 0, 0))
  
    a: string;
@@ -17,7 +17,7 @@
  }
  
  const inputA: A[] = [];
-@@ -46,37 +46,37 @@
+@@= skipped -38, +38 lines =@@
  const result1: A[] = Array.from(inputA);
  >result1 : Symbol(result1, Decl(arrayFrom.ts, 17, 5))
  >A : Symbol(A, Decl(arrayFrom.ts, 0, 0))
@@ -67,7 +67,7 @@
  >inputB : Symbol(inputB, Decl(arrayFrom.ts, 12, 5))
  >b : Symbol(b, Decl(arrayFrom.ts, 20, 42))
  >A : Symbol(A, Decl(arrayFrom.ts, 0, 0))
-@@ -86,25 +86,25 @@
+@@= skipped -40, +40 lines =@@
  const result5: A[] = Array.from(inputALike);
  >result5 : Symbol(result5, Decl(arrayFrom.ts, 21, 5))
  >A : Symbol(A, Decl(arrayFrom.ts, 0, 0))
@@ -99,7 +99,7 @@
  >inputALike : Symbol(inputALike, Decl(arrayFrom.ts, 13, 5))
  >a : Symbol(a, Decl(arrayFrom.ts, 23, 46))
  >B : Symbol(B, Decl(arrayFrom.ts, 5, 1))
-@@ -114,17 +114,17 @@
+@@= skipped -28, +28 lines =@@
  const result8: A[] = Array.from(inputARand);
  >result8 : Symbol(result8, Decl(arrayFrom.ts, 24, 5))
  >A : Symbol(A, Decl(arrayFrom.ts, 0, 0))
@@ -121,7 +121,7 @@
  >inputARand : Symbol(inputARand, Decl(arrayFrom.ts, 14, 5))
  >a : Symbol(a, Decl(arrayFrom.ts, 25, 46))
  >B : Symbol(B, Decl(arrayFrom.ts, 5, 1))
-@@ -134,18 +134,18 @@
+@@= skipped -20, +20 lines =@@
  const result10: A[] = Array.from(new Set<A>());
  >result10 : Symbol(result10, Decl(arrayFrom.ts, 26, 5))
  >A : Symbol(A, Decl(arrayFrom.ts, 0, 0))
@@ -144,7 +144,7 @@
  >inputASet : Symbol(inputASet, Decl(arrayFrom.ts, 15, 5))
  >a : Symbol(a, Decl(arrayFrom.ts, 27, 46))
  >B : Symbol(B, Decl(arrayFrom.ts, 5, 1))
-@@ -166,9 +166,9 @@
+@@= skipped -32, +32 lines =@@
  >T : Symbol(T, Decl(arrayFrom.ts, 32, 19))
  
    return Math.random() > 0.5 ? in1 : in2;

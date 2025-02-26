@@ -1,6 +1,6 @@
 --- old.controlFlowIterationErrorsAsync.symbols
 +++ new.controlFlowIterationErrorsAsync.symbols
-@@ -9,9 +9,9 @@
+@@= skipped -9, +9 lines =@@
  >s : Symbol(s, Decl(controlFlowIterationErrorsAsync.ts, 2, 19))
  
      return s.length;
@@ -12,7 +12,7 @@
  }
  
  async function f1() {
-@@ -315,9 +315,9 @@
+@@= skipped -306, +306 lines =@@
      lastId = entities[entities.length - 1];
  >lastId : Symbol(lastId, Decl(controlFlowIterationErrorsAsync.ts, 123, 5))
  >entities : Symbol(entities, Decl(controlFlowIterationErrorsAsync.ts, 126, 11))

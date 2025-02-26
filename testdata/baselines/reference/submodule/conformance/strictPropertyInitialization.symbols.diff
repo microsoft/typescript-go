@@ -1,6 +1,6 @@
 --- old.strictPropertyInitialization.symbols
 +++ new.strictPropertyInitialization.symbols
-@@ -7,28 +7,28 @@
+@@= skipped -7, +7 lines =@@
  >C1 : Symbol(C1, Decl(strictPropertyInitialization.ts, 0, 0))
  
      a: number;  // Error
@@ -37,7 +37,7 @@
  }
  
  // No strict initialization checks in ambient contexts
-@@ -37,28 +37,28 @@
+@@= skipped -30, +30 lines =@@
  >C2 : Symbol(C2, Decl(strictPropertyInitialization.ts, 11, 1))
  
      a: number;
@@ -74,7 +74,7 @@
  }
  
  // No strict initialization checks for static members
-@@ -67,16 +67,16 @@
+@@= skipped -30, +30 lines =@@
  >C3 : Symbol(C3, Decl(strictPropertyInitialization.ts, 25, 1))
  
      static a: number;
@@ -95,7 +95,7 @@
  }
  
  // Initializer satisfies strict initialization check
-@@ -85,22 +85,22 @@
+@@= skipped -18, +18 lines =@@
  >C4 : Symbol(C4, Decl(strictPropertyInitialization.ts, 34, 1))
  
      a = 0;
@@ -124,7 +124,7 @@
  }
  
  // Assignment in constructor satisfies strict initialization check
-@@ -109,19 +109,19 @@
+@@= skipped -24, +24 lines =@@
  >C5 : Symbol(C5, Decl(strictPropertyInitialization.ts, 45, 1))
  
      a: number;
@@ -149,7 +149,7 @@
  >this : Symbol(C5, Decl(strictPropertyInitialization.ts, 45, 1))
      }
  }
-@@ -132,10 +132,10 @@
+@@= skipped -23, +23 lines =@@
  >C6 : Symbol(C6, Decl(strictPropertyInitialization.ts, 56, 1))
  
      a: number;  // Error
@@ -162,7 +162,7 @@
  
      constructor(cond: boolean) {
  >cond : Symbol(cond, Decl(strictPropertyInitialization.ts, 63, 16))
-@@ -146,12 +146,12 @@
+@@= skipped -14, +14 lines =@@
              return;
          }
          this.a = 0;
@@ -178,7 +178,7 @@
  >this : Symbol(C6, Decl(strictPropertyInitialization.ts, 56, 1))
      }
  }
-@@ -160,10 +160,10 @@
+@@= skipped -14, +14 lines =@@
  >C7 : Symbol(C7, Decl(strictPropertyInitialization.ts, 70, 1))
  
      a: number;
@@ -191,7 +191,7 @@
  
      constructor(cond: boolean) {
  >cond : Symbol(cond, Decl(strictPropertyInitialization.ts, 75, 16))
-@@ -172,23 +172,23 @@
+@@= skipped -12, +12 lines =@@
  >cond : Symbol(cond, Decl(strictPropertyInitialization.ts, 75, 16))
  
              this.a = 1;
@@ -221,7 +221,7 @@
  >this : Symbol(C7, Decl(strictPropertyInitialization.ts, 70, 1))
      }
  }
-@@ -199,13 +199,13 @@
+@@= skipped -27, +27 lines =@@
  >C8 : Symbol(C8, Decl(strictPropertyInitialization.ts, 84, 1))
  
      a: number;  // Error
@@ -238,7 +238,7 @@
  }
  
  // No strict initialization checks for abstract members
-@@ -214,16 +214,16 @@
+@@= skipped -15, +15 lines =@@
  >C9 : Symbol(C9, Decl(strictPropertyInitialization.ts, 92, 1))
  
      abstract a: number;
@@ -259,7 +259,7 @@
  }
  
  // Properties with non-undefined types must be assigned before they can be accessed
-@@ -233,55 +233,55 @@
+@@= skipped -19, +19 lines =@@
  >C10 : Symbol(C10, Decl(strictPropertyInitialization.ts, 101, 1))
  
      a: number;
@@ -333,7 +333,7 @@
      }
  }
  
-@@ -294,20 +294,20 @@
+@@= skipped -61, +61 lines =@@
  >C11 : Symbol(C11, Decl(strictPropertyInitialization.ts, 123, 34))
  
      a: number;
@@ -359,7 +359,7 @@
  >this : Symbol(C11, Decl(strictPropertyInitialization.ts, 123, 34))
  >someValue : Symbol(someValue, Decl(strictPropertyInitialization.ts, 119, 1))
      }
-@@ -318,22 +318,21 @@
+@@= skipped -24, +24 lines =@@
  
  const b = Symbol();
  >b : Symbol(b, Decl(strictPropertyInitialization.ts, 135, 5))
@@ -386,7 +386,7 @@
  
      constructor() {
          this[a] = 1;
-@@ -346,7 +345,7 @@
+@@= skipped -28, +27 lines =@@
  
          this['c'] = 1;
  >this : Symbol(C12, Decl(strictPropertyInitialization.ts, 135, 19))
@@ -395,7 +395,7 @@
      }
  }
  
-@@ -354,26 +353,26 @@
+@@= skipped -8, +8 lines =@@
  >E : Symbol(E, Decl(strictPropertyInitialization.ts, 147, 1))
  
      A = "A",

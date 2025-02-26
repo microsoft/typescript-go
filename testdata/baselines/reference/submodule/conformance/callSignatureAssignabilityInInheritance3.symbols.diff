@@ -1,6 +1,6 @@
 --- old.callSignatureAssignabilityInInheritance3.symbols
 +++ new.callSignatureAssignabilityInInheritance3.symbols
-@@ -9,22 +9,22 @@
+@@= skipped -9, +9 lines =@@
  
      class Base { foo: string; }
  >Base : Symbol(Base, Decl(callSignatureAssignabilityInInheritance3.ts, 3, 15))
@@ -27,7 +27,7 @@
  
      module WithNonGenericSignaturesInBaseType {
  >WithNonGenericSignaturesInBaseType : Symbol(WithNonGenericSignaturesInBaseType, Decl(callSignatureAssignabilityInInheritance3.ts, 7, 53))
-@@ -34,11 +34,11 @@
+@@= skipped -25, +25 lines =@@
  >A : Symbol(A, Decl(callSignatureAssignabilityInInheritance3.ts, 9, 47))
  
              a2: (x: number) => string[];
@@ -41,7 +41,7 @@
  >x : Symbol(x, Decl(callSignatureAssignabilityInInheritance3.ts, 13, 17))
  >arg : Symbol(arg, Decl(callSignatureAssignabilityInInheritance3.ts, 13, 21))
  >Base : Symbol(Base, Decl(callSignatureAssignabilityInInheritance3.ts, 3, 15))
-@@ -48,7 +48,7 @@
+@@= skipped -14, +14 lines =@@
  >Derived2 : Symbol(Derived2, Decl(callSignatureAssignabilityInInheritance3.ts, 5, 47))
  
              a8: (x: (arg: Base) => Derived, y: (arg2: Base) => Derived) => (r: Base) => Derived;
@@ -50,7 +50,7 @@
  >x : Symbol(x, Decl(callSignatureAssignabilityInInheritance3.ts, 14, 17))
  >arg : Symbol(arg, Decl(callSignatureAssignabilityInInheritance3.ts, 14, 21))
  >Base : Symbol(Base, Decl(callSignatureAssignabilityInInheritance3.ts, 3, 15))
-@@ -62,13 +62,13 @@
+@@= skipped -14, +14 lines =@@
  >Derived : Symbol(Derived, Decl(callSignatureAssignabilityInInheritance3.ts, 4, 31))
  
              a10: (...x: Base[]) => Base;
@@ -66,7 +66,7 @@
  >x : Symbol(x, Decl(callSignatureAssignabilityInInheritance3.ts, 16, 18))
  >foo : Symbol(foo, Decl(callSignatureAssignabilityInInheritance3.ts, 16, 22))
  >y : Symbol(y, Decl(callSignatureAssignabilityInInheritance3.ts, 16, 37))
-@@ -77,7 +77,7 @@
+@@= skipped -15, +15 lines =@@
  >Base : Symbol(Base, Decl(callSignatureAssignabilityInInheritance3.ts, 3, 15))
  
              a12: (x: Array<Base>, y: Array<Derived2>) => Array<Derived>;
@@ -75,7 +75,7 @@
  >x : Symbol(x, Decl(callSignatureAssignabilityInInheritance3.ts, 17, 18))
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  >Base : Symbol(Base, Decl(callSignatureAssignabilityInInheritance3.ts, 3, 15))
-@@ -88,7 +88,7 @@
+@@= skipped -11, +11 lines =@@
  >Derived : Symbol(Derived, Decl(callSignatureAssignabilityInInheritance3.ts, 4, 31))
  
              a14: {
@@ -84,7 +84,7 @@
  
                  (x: number): number[];
  >x : Symbol(x, Decl(callSignatureAssignabilityInInheritance3.ts, 19, 17))
-@@ -98,13 +98,13 @@
+@@= skipped -10, +10 lines =@@
  
              };
              a15: (x: { a: string; b: number }) => number;
@@ -100,7 +100,7 @@
  
                  // type of parameter is overload set which means we can't do inference based on this type
                  (x: {
-@@ -129,7 +129,7 @@
+@@= skipped -31, +31 lines =@@
                  }): boolean[];
              };
              a17: {
@@ -109,7 +109,7 @@
  
                  (x: {
  >x : Symbol(x, Decl(callSignatureAssignabilityInInheritance3.ts, 35, 17))
-@@ -175,7 +175,7 @@
+@@= skipped -46, +46 lines =@@
  >A : Symbol(A, Decl(callSignatureAssignabilityInInheritance3.ts, 9, 47))
  
              a2: <T, U>(x: T) => U[]; // error, contextual signature instantiation doesn't relate return types so U is {}, not a subtype of string[]
@@ -118,7 +118,7 @@
  >T : Symbol(T, Decl(callSignatureAssignabilityInInheritance3.ts, 47, 17))
  >U : Symbol(U, Decl(callSignatureAssignabilityInInheritance3.ts, 47, 19))
  >x : Symbol(x, Decl(callSignatureAssignabilityInInheritance3.ts, 47, 23))
-@@ -190,7 +190,7 @@
+@@= skipped -15, +15 lines =@@
  >A : Symbol(A, Decl(callSignatureAssignabilityInInheritance3.ts, 9, 47))
  
              a2: (x: T) => U[]; // error, no contextual signature instantiation since I2.a2 is not generic
@@ -127,7 +127,7 @@
  >x : Symbol(x, Decl(callSignatureAssignabilityInInheritance3.ts, 51, 17))
  >T : Symbol(T, Decl(callSignatureAssignabilityInInheritance3.ts, 50, 21))
  >U : Symbol(U, Decl(callSignatureAssignabilityInInheritance3.ts, 50, 23))
-@@ -202,7 +202,7 @@
+@@= skipped -12, +12 lines =@@
  
              // valid, no inferences for V so it defaults to Derived2
              a7: <T extends Base, U extends Derived, V extends Derived2>(x: (arg: T) => U) => (r: T) => V;
@@ -136,7 +136,7 @@
  >T : Symbol(T, Decl(callSignatureAssignabilityInInheritance3.ts, 56, 17))
  >Base : Symbol(Base, Decl(callSignatureAssignabilityInInheritance3.ts, 3, 15))
  >U : Symbol(U, Decl(callSignatureAssignabilityInInheritance3.ts, 56, 32))
-@@ -223,7 +223,7 @@
+@@= skipped -21, +21 lines =@@
  >A : Symbol(A, Decl(callSignatureAssignabilityInInheritance3.ts, 9, 47))
  
              a8: <T extends Base, U extends Derived>(x: (arg: T) => U, y: (arg2: { foo: number; }) => U) => (r: T) => U; // error, type mismatch
@@ -145,7 +145,7 @@
  >T : Symbol(T, Decl(callSignatureAssignabilityInInheritance3.ts, 60, 17))
  >Base : Symbol(Base, Decl(callSignatureAssignabilityInInheritance3.ts, 3, 15))
  >U : Symbol(U, Decl(callSignatureAssignabilityInInheritance3.ts, 60, 32))
-@@ -246,7 +246,7 @@
+@@= skipped -23, +23 lines =@@
  >A : Symbol(A, Decl(callSignatureAssignabilityInInheritance3.ts, 9, 47))
  
              a10: <T extends Derived>(...x: T[]) => T; // valid, parameter covariance works even after contextual signature instantiation
@@ -154,7 +154,7 @@
  >T : Symbol(T, Decl(callSignatureAssignabilityInInheritance3.ts, 64, 18))
  >Derived : Symbol(Derived, Decl(callSignatureAssignabilityInInheritance3.ts, 4, 31))
  >x : Symbol(x, Decl(callSignatureAssignabilityInInheritance3.ts, 64, 37))
-@@ -259,7 +259,7 @@
+@@= skipped -13, +13 lines =@@
  >A : Symbol(A, Decl(callSignatureAssignabilityInInheritance3.ts, 9, 47))
  
              a11: <T extends Derived>(x: T, y: T) => T; // valid, even though x is a Base, parameter covariance works even after contextual signature instantiation
@@ -163,7 +163,7 @@
  >T : Symbol(T, Decl(callSignatureAssignabilityInInheritance3.ts, 68, 18))
  >Derived : Symbol(Derived, Decl(callSignatureAssignabilityInInheritance3.ts, 4, 31))
  >x : Symbol(x, Decl(callSignatureAssignabilityInInheritance3.ts, 68, 37))
-@@ -274,7 +274,7 @@
+@@= skipped -15, +15 lines =@@
  >A : Symbol(A, Decl(callSignatureAssignabilityInInheritance3.ts, 9, 47))
  
              a12: <T extends Array<Derived2>>(x: Array<Base>, y: Array<Base>) => T; // valid, no inferences for T, defaults to Array<Derived2>
@@ -172,7 +172,7 @@
  >T : Symbol(T, Decl(callSignatureAssignabilityInInheritance3.ts, 72, 18))
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  >Derived2 : Symbol(Derived2, Decl(callSignatureAssignabilityInInheritance3.ts, 5, 47))
-@@ -292,7 +292,7 @@
+@@= skipped -18, +18 lines =@@
  >A : Symbol(A, Decl(callSignatureAssignabilityInInheritance3.ts, 9, 47))
  
              a15: <T>(x: { a: T; b: T }) => T; // error, T is {} which isn't an acceptable return type
@@ -181,7 +181,7 @@
  >T : Symbol(T, Decl(callSignatureAssignabilityInInheritance3.ts, 76, 18))
  >x : Symbol(x, Decl(callSignatureAssignabilityInInheritance3.ts, 76, 21))
  >a : Symbol(a, Decl(callSignatureAssignabilityInInheritance3.ts, 76, 25))
-@@ -307,7 +307,7 @@
+@@= skipped -15, +15 lines =@@
  >A : Symbol(A, Decl(callSignatureAssignabilityInInheritance3.ts, 9, 47))
  
              a15: <T extends Base>(x: { a: T; b: T }) => number; // error, T defaults to Base, which is not compatible with number or string
@@ -190,7 +190,7 @@
  >T : Symbol(T, Decl(callSignatureAssignabilityInInheritance3.ts, 80, 18))
  >Base : Symbol(Base, Decl(callSignatureAssignabilityInInheritance3.ts, 3, 15))
  >x : Symbol(x, Decl(callSignatureAssignabilityInInheritance3.ts, 80, 34))
-@@ -323,7 +323,7 @@
+@@= skipped -16, +16 lines =@@
  
              // ok, we relate each signature of a16 to b16, and within that, we make inferences from two different signatures in the respective A.a16 signature
              a16: <T>(x: (a: T) => T) => T[];
@@ -199,7 +199,7 @@
  >T : Symbol(T, Decl(callSignatureAssignabilityInInheritance3.ts, 85, 18))
  >x : Symbol(x, Decl(callSignatureAssignabilityInInheritance3.ts, 85, 21))
  >a : Symbol(a, Decl(callSignatureAssignabilityInInheritance3.ts, 85, 25))
-@@ -337,7 +337,7 @@
+@@= skipped -14, +14 lines =@@
  >A : Symbol(A, Decl(callSignatureAssignabilityInInheritance3.ts, 9, 47))
  
              a17: <T>(x: (a: T) => T) => any[]; // valid, target is more constrained than source, so it is safe in the traditional constraint-contravariant fashion
@@ -208,7 +208,7 @@
  >T : Symbol(T, Decl(callSignatureAssignabilityInInheritance3.ts, 89, 18))
  >x : Symbol(x, Decl(callSignatureAssignabilityInInheritance3.ts, 89, 21))
  >a : Symbol(a, Decl(callSignatureAssignabilityInInheritance3.ts, 89, 25))
-@@ -354,7 +354,7 @@
+@@= skipped -17, +17 lines =@@
  >B : Symbol(B, Decl(callSignatureAssignabilityInInheritance3.ts, 93, 44))
  
              a2: <T>(x: T) => T[];
@@ -217,7 +217,7 @@
  >T : Symbol(T, Decl(callSignatureAssignabilityInInheritance3.ts, 96, 17))
  >x : Symbol(x, Decl(callSignatureAssignabilityInInheritance3.ts, 96, 20))
  >T : Symbol(T, Decl(callSignatureAssignabilityInInheritance3.ts, 96, 17))
-@@ -366,7 +366,7 @@
+@@= skipped -12, +12 lines =@@
  >B : Symbol(B, Decl(callSignatureAssignabilityInInheritance3.ts, 93, 44))
  
              a2: <T>(x: T) => string[]; // error
@@ -226,7 +226,7 @@
  >T : Symbol(T, Decl(callSignatureAssignabilityInInheritance3.ts, 100, 17))
  >x : Symbol(x, Decl(callSignatureAssignabilityInInheritance3.ts, 100, 20))
  >T : Symbol(T, Decl(callSignatureAssignabilityInInheritance3.ts, 100, 17))
-@@ -377,7 +377,7 @@
+@@= skipped -11, +11 lines =@@
  >C : Symbol(C, Decl(callSignatureAssignabilityInInheritance3.ts, 101, 9))
  
              a2: <T>(x: T) => string[];
@@ -235,7 +235,7 @@
  >T : Symbol(T, Decl(callSignatureAssignabilityInInheritance3.ts, 105, 17))
  >x : Symbol(x, Decl(callSignatureAssignabilityInInheritance3.ts, 105, 20))
  >T : Symbol(T, Decl(callSignatureAssignabilityInInheritance3.ts, 105, 17))
-@@ -388,7 +388,7 @@
+@@= skipped -11, +11 lines =@@
  >C : Symbol(C, Decl(callSignatureAssignabilityInInheritance3.ts, 101, 9))
  
              a2: <T>(x: T) => T[]; // error

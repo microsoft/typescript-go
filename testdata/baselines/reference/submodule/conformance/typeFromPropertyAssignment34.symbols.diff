@@ -1,6 +1,6 @@
 --- old.typeFromPropertyAssignment34.symbols
 +++ new.typeFromPropertyAssignment34.symbols
-@@ -2,25 +2,15 @@
+@@= skipped -2, +2 lines =@@
  
  === file1.js ===
  var N = {};

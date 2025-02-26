@@ -1,6 +1,6 @@
 --- old.untypedModuleImport_allowJs.symbols
 +++ new.untypedModuleImport_allowJs.symbols
-@@ -5,14 +5,5 @@
+@@= skipped -5, +5 lines =@@
  >foo : Symbol(foo, Decl(a.ts, 0, 6))
  
  foo.bar();

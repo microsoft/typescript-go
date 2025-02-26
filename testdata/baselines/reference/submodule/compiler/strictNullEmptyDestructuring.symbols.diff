@@ -1,6 +1,6 @@
 --- old.strictNullEmptyDestructuring.symbols
 +++ new.strictNullEmptyDestructuring.symbols
-@@ -16,36 +16,36 @@
+@@= skipped -16, +16 lines =@@
  >undefined : Symbol(undefined)
  
  let { } = Math.random() ? {} : null;

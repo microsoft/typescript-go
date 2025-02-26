@@ -1,6 +1,6 @@
 --- old.anonymousClassExpression2.symbols
 +++ new.anonymousClassExpression2.symbols
-@@ -9,7 +9,7 @@
+@@= skipped -9, +9 lines =@@
  >A : Symbol(A, Decl(anonymousClassExpression2.ts, 3, 11))
  
          methodA() {
@@ -9,7 +9,7 @@
  
              this; //note: a this reference of some kind is required to trigger the bug
  >this : Symbol(A, Decl(anonymousClassExpression2.ts, 3, 11))
-@@ -20,15 +20,15 @@
+@@= skipped -11, +11 lines =@@
  >B : Symbol(B, Decl(anonymousClassExpression2.ts, 8, 5))
  
          methodB() {

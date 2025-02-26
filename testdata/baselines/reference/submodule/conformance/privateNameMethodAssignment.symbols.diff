@@ -1,6 +1,6 @@
 --- old.privateNameMethodAssignment.symbols
 +++ new.privateNameMethodAssignment.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >A3 : Symbol(A3, Decl(privateNameMethodAssignment.ts, 0, 0))
  
      #method() { };
@@ -9,7 +9,7 @@
  
      constructor(a: A3, b: any) {
  >a : Symbol(a, Decl(privateNameMethodAssignment.ts, 2, 16))
-@@ -13,11 +13,11 @@
+@@= skipped -8, +8 lines =@@
  >b : Symbol(b, Decl(privateNameMethodAssignment.ts, 2, 22))
  
          this.#method = () => {} // Error, not writable 
@@ -23,7 +23,7 @@
  >a : Symbol(a, Decl(privateNameMethodAssignment.ts, 2, 16))
  
          b.#method =  () => { } //Error, not writable 
-@@ -25,13 +25,13 @@
+@@= skipped -12, +12 lines =@@
  
          ({ x: this.#method } = { x: () => {}}); //Error, not writable 
  >x : Symbol(x, Decl(privateNameMethodAssignment.ts, 6, 10))

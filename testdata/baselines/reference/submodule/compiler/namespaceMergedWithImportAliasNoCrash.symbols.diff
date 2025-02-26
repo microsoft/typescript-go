@@ -1,6 +1,6 @@
 --- old.namespaceMergedWithImportAliasNoCrash.symbols
 +++ new.namespaceMergedWithImportAliasNoCrash.symbols
-@@ -11,7 +11,7 @@
+@@= skipped -11, +11 lines =@@
  var x: Library.Bar; // should work
  >x : Symbol(x, Decl(file1.ts, 3, 3))
  >Library : Symbol(Library, Decl(file1.ts, 0, 0))
@@ -9,7 +9,7 @@
  
  Library.foo; // should be an error
  === file2.ts ===
-@@ -25,14 +25,14 @@
+@@= skipped -14, +14 lines =@@
  >foo : Symbol(foo, Decl(file2.ts, 2, 16))
  }
  Lib.foo; // should work

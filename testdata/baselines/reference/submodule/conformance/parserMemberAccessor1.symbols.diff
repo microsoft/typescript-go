@@ -1,6 +1,6 @@
 --- old.parserMemberAccessor1.symbols
 +++ new.parserMemberAccessor1.symbols
-@@ -5,9 +5,9 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(parserMemberAccessor1.ts, 0, 0))
  
    get foo() { }

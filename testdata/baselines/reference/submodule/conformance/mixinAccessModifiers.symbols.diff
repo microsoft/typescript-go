@@ -1,6 +1,6 @@
 --- old.mixinAccessModifiers.symbols
 +++ new.mixinAccessModifiers.symbols
-@@ -12,7 +12,7 @@
+@@= skipped -12, +12 lines =@@
  >args : Symbol(args, Decl(mixinAccessModifiers.ts, 3, 14))
  
  	private p: string;
@@ -9,7 +9,7 @@
  }
  
  class Private2 {
-@@ -22,7 +22,7 @@
+@@= skipped -10, +10 lines =@@
  >args : Symbol(args, Decl(mixinAccessModifiers.ts, 8, 14))
  
  	private p: string;
@@ -18,7 +18,7 @@
  }
  
  class Protected {
-@@ -32,10 +32,10 @@
+@@= skipped -10, +10 lines =@@
  >args : Symbol(args, Decl(mixinAccessModifiers.ts, 13, 14))
  
  	protected p: string;
@@ -31,7 +31,7 @@
  }
  
  class Protected2 {
-@@ -45,10 +45,10 @@
+@@= skipped -13, +13 lines =@@
  >args : Symbol(args, Decl(mixinAccessModifiers.ts, 19, 14))
  
  	protected p: string;
@@ -44,7 +44,7 @@
  }
  
  class Public {
-@@ -58,10 +58,10 @@
+@@= skipped -13, +13 lines =@@
  >args : Symbol(args, Decl(mixinAccessModifiers.ts, 25, 14))
  
  	public p: string;
@@ -57,7 +57,7 @@
  }
  
  class Public2 {
-@@ -71,10 +71,10 @@
+@@= skipped -13, +13 lines =@@
  >args : Symbol(args, Decl(mixinAccessModifiers.ts, 31, 14))
  
  	public p: string;
@@ -70,7 +70,7 @@
  }
  
  function f1(x: Private & Private2) {
-@@ -181,7 +181,7 @@
+@@= skipped -110, +110 lines =@@
  >Protected2 : Symbol(Protected2, Decl(mixinAccessModifiers.ts, 16, 1))
  
  	f(c4: C4, c5: C5, c6: C6) {
@@ -79,7 +79,7 @@
  >c4 : Symbol(c4, Decl(mixinAccessModifiers.ts, 69, 3))
  >C4 : Symbol(C4, Decl(mixinAccessModifiers.ts, 66, 40))
  >c5 : Symbol(c5, Decl(mixinAccessModifiers.ts, 69, 10))
-@@ -205,7 +205,7 @@
+@@= skipped -24, +24 lines =@@
  >p : Symbol(p, Decl(mixinAccessModifiers.ts, 25, 32), Decl(mixinAccessModifiers.ts, 31, 32))
  	}
  	static g() {
@@ -88,7 +88,7 @@
  
  		C4.s;
  >C4.s : Symbol(s, Decl(mixinAccessModifiers.ts, 14, 21), Decl(mixinAccessModifiers.ts, 20, 21))
-@@ -231,7 +231,7 @@
+@@= skipped -26, +26 lines =@@
  >Public : Symbol(Public, Decl(mixinAccessModifiers.ts, 22, 1))
  
  	f(c4: C4, c5: C5, c6: C6) {
@@ -97,7 +97,7 @@
  >c4 : Symbol(c4, Decl(mixinAccessModifiers.ts, 82, 3))
  >C4 : Symbol(C4, Decl(mixinAccessModifiers.ts, 66, 40))
  >c5 : Symbol(c5, Decl(mixinAccessModifiers.ts, 82, 10))
-@@ -255,7 +255,7 @@
+@@= skipped -24, +24 lines =@@
  >p : Symbol(p, Decl(mixinAccessModifiers.ts, 25, 32), Decl(mixinAccessModifiers.ts, 31, 32))
  	}
  	static g() {
@@ -106,7 +106,7 @@
  
  		C4.s;  // Error, not in class deriving from Protected2
  >C4.s : Symbol(s, Decl(mixinAccessModifiers.ts, 14, 21), Decl(mixinAccessModifiers.ts, 20, 21))
-@@ -281,7 +281,7 @@
+@@= skipped -26, +26 lines =@@
  >Public2 : Symbol(Public2, Decl(mixinAccessModifiers.ts, 28, 1))
  
  	f(c4: C4, c5: C5, c6: C6) {
@@ -115,7 +115,7 @@
  >c4 : Symbol(c4, Decl(mixinAccessModifiers.ts, 95, 3))
  >C4 : Symbol(C4, Decl(mixinAccessModifiers.ts, 66, 40))
  >c5 : Symbol(c5, Decl(mixinAccessModifiers.ts, 95, 10))
-@@ -305,7 +305,7 @@
+@@= skipped -24, +24 lines =@@
  >p : Symbol(p, Decl(mixinAccessModifiers.ts, 25, 32), Decl(mixinAccessModifiers.ts, 31, 32))
  	}
  	static g() {
@@ -124,7 +124,7 @@
  
  		C4.s;  // Error, not in class deriving from Protected2
  >C4.s : Symbol(s, Decl(mixinAccessModifiers.ts, 14, 21), Decl(mixinAccessModifiers.ts, 20, 21))
-@@ -329,10 +329,10 @@
+@@= skipped -24, +24 lines =@@
  >T : Symbol(T, Decl(mixinAccessModifiers.ts, 107, 23))
  
  	private privateMethod() {}
@@ -137,7 +137,7 @@
  }
  
  class ProtectedGeneric2<T> {
-@@ -340,10 +340,10 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(mixinAccessModifiers.ts, 112, 24))
  
  	private privateMethod() {}
@@ -150,7 +150,7 @@
  }
  
  function f7(x: ProtectedGeneric<{}> & ProtectedGeneric<{}>) {
-@@ -353,14 +353,14 @@
+@@= skipped -13, +13 lines =@@
  >ProtectedGeneric : Symbol(ProtectedGeneric, Decl(mixinAccessModifiers.ts, 105, 1))
  
  	x.privateMethod(); // Error, private constituent makes method inaccessible
@@ -169,7 +169,7 @@
  }
  
  function f8(x: ProtectedGeneric<{a: void;}> & ProtectedGeneric2<{a:void;b:void;}>) {
-@@ -389,13 +389,13 @@
+@@= skipped -36, +36 lines =@@
  >b : Symbol(b, Decl(mixinAccessModifiers.ts, 127, 71))
  
  	x.privateMethod(); // Error, private constituent makes method inaccessible

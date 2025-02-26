@@ -1,6 +1,6 @@
 --- old.unusedTypeParameterInInterface2.symbols
 +++ new.unusedTypeParameterInInterface2.symbols
-@@ -8,11 +8,11 @@
+@@= skipped -8, +8 lines =@@
  >V : Symbol(V, Decl(unusedTypeParameterInInterface2.ts, 0, 19))
  
      f1(a: T): string;

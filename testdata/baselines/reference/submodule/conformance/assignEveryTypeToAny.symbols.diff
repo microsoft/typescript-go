@@ -1,6 +1,6 @@
 --- old.assignEveryTypeToAny.symbols
 +++ new.assignEveryTypeToAny.symbols
-@@ -63,20 +63,20 @@
+@@= skipped -63, +63 lines =@@
  >E : Symbol(E, Decl(assignEveryTypeToAny.ts, 23, 7))
  
      A
@@ -26,7 +26,7 @@
  
  x = f;
  >x : Symbol(x, Decl(assignEveryTypeToAny.ts, 2, 3))
-@@ -86,7 +86,7 @@
+@@= skipped -23, +23 lines =@@
  >I : Symbol(I, Decl(assignEveryTypeToAny.ts, 31, 6))
  
      foo: string;
@@ -35,7 +35,7 @@
  }
  
  var g: I;
-@@ -101,7 +101,7 @@
+@@= skipped -15, +15 lines =@@
  >C : Symbol(C, Decl(assignEveryTypeToAny.ts, 38, 6))
  
      bar: string;

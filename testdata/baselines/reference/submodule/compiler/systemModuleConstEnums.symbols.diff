@@ -1,6 +1,6 @@
 --- old.systemModuleConstEnums.symbols
 +++ new.systemModuleConstEnums.symbols
-@@ -7,24 +7,24 @@
+@@= skipped -7, +7 lines =@@
  
  const enum TopLevelConstEnum { X }
  >TopLevelConstEnum : Symbol(TopLevelConstEnum, Decl(systemModuleConstEnums.ts, 0, 29))
@@ -32,7 +32,7 @@
  }
  
  module M {
-@@ -32,5 +32,5 @@
+@@= skipped -25, +25 lines =@@
  
      export const enum NonTopLevelConstEnum { X }
  >NonTopLevelConstEnum : Symbol(NonTopLevelConstEnum, Decl(systemModuleConstEnums.ts, 8, 10))

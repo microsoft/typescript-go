@@ -1,6 +1,6 @@
 --- old.es2020IntlAPIs.symbols
 +++ new.es2020IntlAPIs.symbols
-@@ -14,24 +14,24 @@
+@@= skipped -14, +14 lines =@@
  >locale : Symbol(locale, Decl(es2020IntlAPIs.ts, 4, 13))
  
    console.log(
@@ -35,7 +35,7 @@
  >count : Symbol(count, Decl(es2020IntlAPIs.ts, 1, 5))
  
    );
-@@ -50,80 +50,80 @@
+@@= skipped -36, +36 lines =@@
  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/RelativeTimeFormat
  const rtf1 = new Intl.RelativeTimeFormat('en', { style: 'narrow' });
  >rtf1 : Symbol(rtf1, Decl(es2020IntlAPIs.ts, 17, 5))
@@ -144,7 +144,7 @@
  
  // expected output: "美國"
  
-@@ -136,108 +136,108 @@
+@@= skipped -86, +86 lines =@@
  >const : Symbol(const)
  
  console.log(Intl.DisplayNames.supportedLocalesOf(locales1, options1).join(', '));

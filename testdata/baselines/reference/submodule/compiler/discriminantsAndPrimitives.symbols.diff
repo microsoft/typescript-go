@@ -1,6 +1,6 @@
 --- old.discriminantsAndPrimitives.symbols
 +++ new.discriminantsAndPrimitives.symbols
-@@ -7,20 +7,20 @@
+@@= skipped -7, +7 lines =@@
  >Foo : Symbol(Foo, Decl(discriminantsAndPrimitives.ts, 0, 0))
  
      kind: "foo";
@@ -25,7 +25,7 @@
  }
  
  function f1(x: Foo | Bar | string) {
-@@ -33,15 +33,15 @@
+@@= skipped -26, +26 lines =@@
  >x : Symbol(x, Decl(discriminantsAndPrimitives.ts, 12, 12))
  
          switch(x.kind) {
@@ -45,7 +45,7 @@
          }
      }
  }
-@@ -56,15 +56,15 @@
+@@= skipped -23, +23 lines =@@
  >x : Symbol(x, Decl(discriminantsAndPrimitives.ts, 21, 12))
  
          switch(x.kind) {
@@ -65,7 +65,7 @@
          }
      }
  }
-@@ -80,15 +80,15 @@
+@@= skipped -24, +24 lines =@@
  >x : Symbol(x, Decl(discriminantsAndPrimitives.ts, 30, 12))
  
          switch(x.kind) {
@@ -85,7 +85,7 @@
          }
      }
  }
-@@ -104,15 +104,15 @@
+@@= skipped -24, +24 lines =@@
  >x : Symbol(x, Decl(discriminantsAndPrimitives.ts, 39, 12))
  
          switch(x.kind) {
@@ -105,7 +105,7 @@
          }
      }
  }
-@@ -123,10 +123,10 @@
+@@= skipped -19, +19 lines =@@
  >EnumTypeNode : Symbol(EnumTypeNode, Decl(discriminantsAndPrimitives.ts, 46, 1))
  
      Pattern = "Pattern",
@@ -118,7 +118,7 @@
  }
  
  type NodeA = Disjunction | Pattern;
-@@ -138,7 +138,7 @@
+@@= skipped -15, +15 lines =@@
  >NodeBase : Symbol(NodeBase, Decl(discriminantsAndPrimitives.ts, 55, 35))
  
      type: NodeA["type"]
@@ -127,7 +127,7 @@
  >NodeA : Symbol(NodeA, Decl(discriminantsAndPrimitives.ts, 53, 1))
  }
  
-@@ -147,12 +147,12 @@
+@@= skipped -9, +9 lines =@@
  >NodeBase : Symbol(NodeBase, Decl(discriminantsAndPrimitives.ts, 55, 35))
  
      type: EnumTypeNode.Disjunction
@@ -143,7 +143,7 @@
  }
  
  interface Pattern extends NodeBase {
-@@ -160,12 +160,12 @@
+@@= skipped -13, +13 lines =@@
  >NodeBase : Symbol(NodeBase, Decl(discriminantsAndPrimitives.ts, 55, 35))
  
      type: EnumTypeNode.Pattern
@@ -159,7 +159,7 @@
  }
  
  let n!: NodeA
-@@ -178,18 +178,18 @@
+@@= skipped -18, +18 lines =@@
  >type : Symbol(type, Decl(discriminantsAndPrimitives.ts, 61, 40), Decl(discriminantsAndPrimitives.ts, 66, 36))
  
      n.alternatives.slice()

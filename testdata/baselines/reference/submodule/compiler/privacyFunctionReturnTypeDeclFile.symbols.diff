@@ -1,6 +1,6 @@
 --- old.privacyFunctionReturnTypeDeclFile.symbols
 +++ new.privacyFunctionReturnTypeDeclFile.symbols
-@@ -23,7 +23,7 @@
+@@= skipped -23, +23 lines =@@
  >privateClass : Symbol(privateClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 0, 0))
  
      myMethod(): privateClass; // Error
@@ -9,7 +9,7 @@
  >privateClass : Symbol(privateClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 0, 0))
  }
  
-@@ -41,7 +41,7 @@
+@@= skipped -18, +18 lines =@@
  >publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 1, 1))
  
      myMethod(): publicClass;
@@ -18,7 +18,7 @@
  >publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 1, 1))
  }
  
-@@ -59,7 +59,7 @@
+@@= skipped -18, +18 lines =@@
  >privateClass : Symbol(privateClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 0, 0))
  
      myMethod(): privateClass;
@@ -27,7 +27,7 @@
  >privateClass : Symbol(privateClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 0, 0))
  }
  
-@@ -77,7 +77,7 @@
+@@= skipped -18, +18 lines =@@
  >publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 1, 1))
  
      myMethod(): publicClass;
@@ -36,7 +36,7 @@
  >publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 1, 1))
  }
  
-@@ -85,49 +85,49 @@
+@@= skipped -8, +8 lines =@@
  >publicClassWithWithPrivateParmeterTypes : Symbol(publicClassWithWithPrivateParmeterTypes, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 32, 1))
  
      static myPublicStaticMethod(): privateClass { // Error
@@ -94,7 +94,7 @@
  
          return new privateClass();
  >privateClass : Symbol(privateClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 0, 0))
-@@ -138,49 +138,49 @@
+@@= skipped -53, +53 lines =@@
  >publicClassWithWithPublicParmeterTypes : Symbol(publicClassWithWithPublicParmeterTypes, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 59, 1))
  
      static myPublicStaticMethod(): publicClass { 
@@ -152,7 +152,7 @@
  
          return new publicClass();
  >publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 1, 1))
-@@ -191,49 +191,49 @@
+@@= skipped -53, +53 lines =@@
  >privateClassWithWithPrivateParmeterTypes : Symbol(privateClassWithWithPrivateParmeterTypes, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 86, 1))
  
      static myPublicStaticMethod(): privateClass {
@@ -210,7 +210,7 @@
  
          return new privateClass();
  >privateClass : Symbol(privateClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 0, 0))
-@@ -244,49 +244,49 @@
+@@= skipped -53, +53 lines =@@
  >privateClassWithWithPublicParmeterTypes : Symbol(privateClassWithWithPublicParmeterTypes, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 113, 1))
  
      static myPublicStaticMethod(): publicClass {
@@ -268,7 +268,7 @@
  
          return new publicClass();
  >publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 1, 1))
-@@ -363,60 +363,60 @@
+@@= skipped -119, +119 lines =@@
  
      new (): privateModule.publicClass; // Error
  >privateModule : Symbol(privateModule, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 456, 1))
@@ -345,7 +345,7 @@
  
      return null;
  }
-@@ -424,74 +424,74 @@
+@@= skipped -61, +61 lines =@@
  >publicFunctionWithPrivateModuleParameterTypes1 : Symbol(publicFunctionWithPrivateModuleParameterTypes1, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 194, 1))
  
      return new privateModule.publicClass();
@@ -439,7 +439,7 @@
  
      return null;
  }
-@@ -499,14 +499,14 @@
+@@= skipped -75, +75 lines =@@
  >privateFunctionWithPrivateModuleParameterTypes1 : Symbol(privateFunctionWithPrivateModuleParameterTypes1, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 222, 1))
  
      return new privateModule.publicClass();
@@ -457,7 +457,7 @@
  
  export module publicModule {
  >publicModule : Symbol(publicModule, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 226, 100))
-@@ -533,7 +533,7 @@
+@@= skipped -34, +34 lines =@@
  >privateClass : Symbol(privateClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 228, 28))
  
          myMethod(): privateClass; // Error
@@ -466,7 +466,7 @@
  >privateClass : Symbol(privateClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 228, 28))
      }
  
-@@ -551,7 +551,7 @@
+@@= skipped -18, +18 lines =@@
  >publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 230, 5))
  
          myMethod(): publicClass;
@@ -475,7 +475,7 @@
  >publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 230, 5))
      }
  
-@@ -569,7 +569,7 @@
+@@= skipped -18, +18 lines =@@
  >privateClass : Symbol(privateClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 228, 28))
  
          myMethod(): privateClass;
@@ -484,7 +484,7 @@
  >privateClass : Symbol(privateClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 228, 28))
      }
  
-@@ -587,7 +587,7 @@
+@@= skipped -18, +18 lines =@@
  >publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 230, 5))
  
          myMethod(): publicClass;
@@ -493,7 +493,7 @@
  >publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 230, 5))
      }
  
-@@ -595,49 +595,49 @@
+@@= skipped -8, +8 lines =@@
  >publicClassWithWithPrivateParmeterTypes : Symbol(publicClassWithWithPrivateParmeterTypes, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 261, 5))
  
          static myPublicStaticMethod(): privateClass { // Error
@@ -551,7 +551,7 @@
  
              return new privateClass();
  >privateClass : Symbol(privateClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 228, 28))
-@@ -648,49 +648,49 @@
+@@= skipped -53, +53 lines =@@
  >publicClassWithWithPublicParmeterTypes : Symbol(publicClassWithWithPublicParmeterTypes, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 288, 5))
  
          static myPublicStaticMethod(): publicClass {
@@ -609,7 +609,7 @@
  
              return new publicClass();
  >publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 230, 5))
-@@ -701,49 +701,49 @@
+@@= skipped -53, +53 lines =@@
  >privateClassWithWithPrivateParmeterTypes : Symbol(privateClassWithWithPrivateParmeterTypes, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 315, 5))
  
          static myPublicStaticMethod(): privateClass {
@@ -667,7 +667,7 @@
  
              return new privateClass();
  >privateClass : Symbol(privateClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 228, 28))
-@@ -754,49 +754,49 @@
+@@= skipped -53, +53 lines =@@
  >privateClassWithWithPublicParmeterTypes : Symbol(privateClassWithWithPublicParmeterTypes, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 342, 5))
  
          static myPublicStaticMethod(): publicClass {
@@ -725,7 +725,7 @@
  
              return new publicClass();
  >publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 230, 5))
-@@ -873,60 +873,60 @@
+@@= skipped -119, +119 lines =@@
  
          new (): privateModule.publicClass; // Error
  >privateModule : Symbol(privateModule, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 456, 1))
@@ -802,7 +802,7 @@
  
          return null;
      }
-@@ -934,74 +934,74 @@
+@@= skipped -61, +61 lines =@@
  >publicFunctionWithPrivateModuleParameterTypes1 : Symbol(publicFunctionWithPrivateModuleParameterTypes1, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 423, 5))
  
          return new privateModule.publicClass();
@@ -896,7 +896,7 @@
  
          return null;
      }
-@@ -1009,14 +1009,14 @@
+@@= skipped -75, +75 lines =@@
  >privateFunctionWithPrivateModuleParameterTypes1 : Symbol(privateFunctionWithPrivateModuleParameterTypes1, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 451, 5))
  
          return new privateModule.publicClass();
@@ -914,7 +914,7 @@
  }
  
  module privateModule {
-@@ -1044,7 +1044,7 @@
+@@= skipped -35, +35 lines =@@
  >privateClass : Symbol(privateClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 458, 22))
  
          myMethod(): privateClass; 
@@ -923,7 +923,7 @@
  >privateClass : Symbol(privateClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 458, 22))
      }
  
-@@ -1062,7 +1062,7 @@
+@@= skipped -18, +18 lines =@@
  >publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 460, 5))
  
          myMethod(): publicClass;
@@ -932,7 +932,7 @@
  >publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 460, 5))
      }
  
-@@ -1080,7 +1080,7 @@
+@@= skipped -18, +18 lines =@@
  >privateClass : Symbol(privateClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 458, 22))
  
          myMethod(): privateClass;
@@ -941,7 +941,7 @@
  >privateClass : Symbol(privateClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 458, 22))
      }
  
-@@ -1098,7 +1098,7 @@
+@@= skipped -18, +18 lines =@@
  >publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 460, 5))
  
          myMethod(): publicClass;
@@ -950,7 +950,7 @@
  >publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 460, 5))
      }
  
-@@ -1106,49 +1106,49 @@
+@@= skipped -8, +8 lines =@@
  >publicClassWithWithPrivateParmeterTypes : Symbol(publicClassWithWithPrivateParmeterTypes, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 491, 5))
  
          static myPublicStaticMethod(): privateClass { 
@@ -1008,7 +1008,7 @@
  
              return new privateClass();
  >privateClass : Symbol(privateClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 458, 22))
-@@ -1159,49 +1159,49 @@
+@@= skipped -53, +53 lines =@@
  >publicClassWithWithPublicParmeterTypes : Symbol(publicClassWithWithPublicParmeterTypes, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 518, 5))
  
          static myPublicStaticMethod(): publicClass {
@@ -1066,7 +1066,7 @@
  
              return new publicClass();
  >publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 460, 5))
-@@ -1212,49 +1212,49 @@
+@@= skipped -53, +53 lines =@@
  >privateClassWithWithPrivateParmeterTypes : Symbol(privateClassWithWithPrivateParmeterTypes, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 545, 5))
  
          static myPublicStaticMethod(): privateClass {
@@ -1124,7 +1124,7 @@
  
              return new privateClass();
  >privateClass : Symbol(privateClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 458, 22))
-@@ -1265,49 +1265,49 @@
+@@= skipped -53, +53 lines =@@
  >privateClassWithWithPublicParmeterTypes : Symbol(privateClassWithWithPublicParmeterTypes, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 572, 5))
  
          static myPublicStaticMethod(): publicClass {
@@ -1182,7 +1182,7 @@
  
              return new publicClass();
  >publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 460, 5))
-@@ -1396,7 +1396,7 @@
+@@= skipped -131, +131 lines =@@
  >publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 460, 5))
  
          myMethod(): privateModule.publicClass;
@@ -1191,7 +1191,7 @@
  >privateModule : Symbol(privateModule, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 456, 1))
  >publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 460, 5))
      }
-@@ -1404,21 +1404,21 @@
+@@= skipped -8, +8 lines =@@
  >publicClassWithPrivateModuleParameterTypes : Symbol(publicClassWithPrivateModuleParameterTypes, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 636, 5))
  
          static myPublicStaticMethod(): privateModule.publicClass { 
@@ -1216,7 +1216,7 @@
  
              return new privateModule.publicClass();
  >privateModule.publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 460, 5))
-@@ -1426,7 +1426,7 @@
+@@= skipped -22, +22 lines =@@
  >publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 460, 5))
          }
          myPublicMethod1() { 
@@ -1225,7 +1225,7 @@
  
              return new privateModule.publicClass();
  >privateModule.publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 460, 5))
-@@ -1471,7 +1471,7 @@
+@@= skipped -45, +45 lines =@@
  >publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 460, 5))
  
          myMethod(): privateModule.publicClass;
@@ -1234,7 +1234,7 @@
  >privateModule : Symbol(privateModule, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 456, 1))
  >publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 460, 5))
      }
-@@ -1479,21 +1479,21 @@
+@@= skipped -8, +8 lines =@@
  >privateClassWithPrivateModuleParameterTypes : Symbol(privateClassWithPrivateModuleParameterTypes, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 664, 5))
  
          static myPublicStaticMethod(): privateModule.publicClass {
@@ -1259,7 +1259,7 @@
  
              return new privateModule.publicClass();
  >privateModule.publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 460, 5))
-@@ -1501,7 +1501,7 @@
+@@= skipped -22, +22 lines =@@
  >publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 460, 5))
          }
          myPublicMethod1() {
@@ -1268,7 +1268,7 @@
  
              return new privateModule.publicClass();
  >privateModule.publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 460, 5))
-@@ -1548,56 +1548,56 @@
+@@= skipped -47, +47 lines =@@
  >publicClassInGlobal : Symbol(publicClassInGlobal, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 0, 0))
  
      myMethod(): publicClassInGlobal;
@@ -1334,7 +1334,7 @@
  
          return new publicClassInGlobal();
  >publicClassInGlobal : Symbol(publicClassInGlobal, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 0, 0))
-@@ -1655,7 +1655,7 @@
+@@= skipped -107, +107 lines =@@
  >privateClass : Symbol(privateClass, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 49, 26))
  
              myMethod(): privateClass;
@@ -1343,7 +1343,7 @@
  >privateClass : Symbol(privateClass, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 49, 26))
          }
  
-@@ -1673,7 +1673,7 @@
+@@= skipped -18, +18 lines =@@
  >publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 51, 9))
  
              myMethod(): publicClass;
@@ -1352,7 +1352,7 @@
  >publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 51, 9))
          }
  
-@@ -1691,7 +1691,7 @@
+@@= skipped -18, +18 lines =@@
  >privateClass : Symbol(privateClass, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 49, 26))
  
              myMethod(): privateClass;
@@ -1361,7 +1361,7 @@
  >privateClass : Symbol(privateClass, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 49, 26))
          }
  
-@@ -1709,7 +1709,7 @@
+@@= skipped -18, +18 lines =@@
  >publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 51, 9))
  
              myMethod(): publicClass;
@@ -1370,7 +1370,7 @@
  >publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 51, 9))
          }
  
-@@ -1717,49 +1717,49 @@
+@@= skipped -8, +8 lines =@@
  >publicClassWithWithPrivateParmeterTypes : Symbol(publicClassWithWithPrivateParmeterTypes, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 82, 9))
  
              static myPublicStaticMethod(): privateClass {
@@ -1428,7 +1428,7 @@
  
                  return new privateClass();
  >privateClass : Symbol(privateClass, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 49, 26))
-@@ -1770,49 +1770,49 @@
+@@= skipped -53, +53 lines =@@
  >publicClassWithWithPublicParmeterTypes : Symbol(publicClassWithWithPublicParmeterTypes, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 109, 9))
  
              static myPublicStaticMethod(): publicClass {
@@ -1486,7 +1486,7 @@
  
                  return new publicClass();
  >publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 51, 9))
-@@ -1823,49 +1823,49 @@
+@@= skipped -53, +53 lines =@@
  >privateClassWithWithPrivateParmeterTypes : Symbol(privateClassWithWithPrivateParmeterTypes, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 136, 9))
  
              static myPublicStaticMethod(): privateClass {
@@ -1544,7 +1544,7 @@
  
                  return new privateClass();
  >privateClass : Symbol(privateClass, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 49, 26))
-@@ -1876,49 +1876,49 @@
+@@= skipped -53, +53 lines =@@
  >privateClassWithWithPublicParmeterTypes : Symbol(privateClassWithWithPublicParmeterTypes, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 163, 9))
  
              static myPublicStaticMethod(): publicClass {
@@ -1602,7 +1602,7 @@
  
                  return new publicClass();
  >publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 51, 9))
-@@ -2007,7 +2007,7 @@
+@@= skipped -131, +131 lines =@@
  >publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 51, 9))
  
              myMethod(): privateModule.publicClass;
@@ -1611,7 +1611,7 @@
  >privateModule : Symbol(privateModule, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 47, 5))
  >publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 51, 9))
          }
-@@ -2015,21 +2015,21 @@
+@@= skipped -8, +8 lines =@@
  >publicClassWithPrivateModuleParameterTypes : Symbol(publicClassWithPrivateModuleParameterTypes, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 227, 9))
  
              static myPublicStaticMethod(): privateModule.publicClass {
@@ -1636,7 +1636,7 @@
  
                  return new privateModule.publicClass();
  >privateModule.publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 51, 9))
-@@ -2037,7 +2037,7 @@
+@@= skipped -22, +22 lines =@@
  >publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 51, 9))
              }
              myPublicMethod1() {
@@ -1645,7 +1645,7 @@
  
                  return new privateModule.publicClass();
  >privateModule.publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 51, 9))
-@@ -2082,7 +2082,7 @@
+@@= skipped -45, +45 lines =@@
  >publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 51, 9))
  
              myMethod(): privateModule.publicClass;
@@ -1654,7 +1654,7 @@
  >privateModule : Symbol(privateModule, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 47, 5))
  >publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 51, 9))
          }
-@@ -2090,21 +2090,21 @@
+@@= skipped -8, +8 lines =@@
  >privateClassWithPrivateModuleParameterTypes : Symbol(privateClassWithPrivateModuleParameterTypes, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 255, 9))
  
              static myPublicStaticMethod(): privateModule.publicClass {
@@ -1679,7 +1679,7 @@
  
                  return new privateModule.publicClass();
  >privateModule.publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 51, 9))
-@@ -2112,7 +2112,7 @@
+@@= skipped -22, +22 lines =@@
  >publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 51, 9))
              }
              myPublicMethod1() {
@@ -1688,7 +1688,7 @@
  
                  return new privateModule.publicClass();
  >privateModule.publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 51, 9))
-@@ -2155,7 +2155,7 @@
+@@= skipped -43, +43 lines =@@
  >privateClass : Symbol(privateClass, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 42, 29))
  
          myMethod(): privateClass; // Error
@@ -1697,7 +1697,7 @@
  >privateClass : Symbol(privateClass, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 42, 29))
      }
  
-@@ -2173,7 +2173,7 @@
+@@= skipped -18, +18 lines =@@
  >publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 44, 5))
  
          myMethod(): publicClass;
@@ -1706,7 +1706,7 @@
  >publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 44, 5))
      }
  
-@@ -2191,7 +2191,7 @@
+@@= skipped -18, +18 lines =@@
  >privateClass : Symbol(privateClass, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 42, 29))
  
          myMethod(): privateClass;
@@ -1715,7 +1715,7 @@
  >privateClass : Symbol(privateClass, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 42, 29))
      }
  
-@@ -2209,7 +2209,7 @@
+@@= skipped -18, +18 lines =@@
  >publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 44, 5))
  
          myMethod(): publicClass;
@@ -1724,7 +1724,7 @@
  >publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 44, 5))
      }
  
-@@ -2217,49 +2217,49 @@
+@@= skipped -8, +8 lines =@@
  >publicClassWithWithPrivateParmeterTypes : Symbol(publicClassWithWithPrivateParmeterTypes, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 305, 5))
  
          static myPublicStaticMethod(): privateClass { // Error
@@ -1782,7 +1782,7 @@
  
              return new privateClass();
  >privateClass : Symbol(privateClass, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 42, 29))
-@@ -2270,49 +2270,49 @@
+@@= skipped -53, +53 lines =@@
  >publicClassWithWithPublicParmeterTypes : Symbol(publicClassWithWithPublicParmeterTypes, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 332, 5))
  
          static myPublicStaticMethod(): publicClass {
@@ -1840,7 +1840,7 @@
  
              return new publicClass();
  >publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 44, 5))
-@@ -2323,49 +2323,49 @@
+@@= skipped -53, +53 lines =@@
  >privateClassWithWithPrivateParmeterTypes : Symbol(privateClassWithWithPrivateParmeterTypes, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 359, 5))
  
          static myPublicStaticMethod(): privateClass {
@@ -1898,7 +1898,7 @@
  
              return new privateClass();
  >privateClass : Symbol(privateClass, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 42, 29))
-@@ -2376,49 +2376,49 @@
+@@= skipped -53, +53 lines =@@
  >privateClassWithWithPublicParmeterTypes : Symbol(privateClassWithWithPublicParmeterTypes, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 386, 5))
  
          static myPublicStaticMethod(): publicClass {
@@ -1956,7 +1956,7 @@
  
              return new publicClass();
  >publicClass : Symbol(publicClass, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 44, 5))
-@@ -2495,60 +2495,60 @@
+@@= skipped -119, +119 lines =@@
  
          new (): privateModule.publicClass; // Error
  >privateModule : Symbol(privateModule, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 47, 5))
@@ -2033,7 +2033,7 @@
  
          return null;
      }
-@@ -2556,74 +2556,74 @@
+@@= skipped -61, +61 lines =@@
  >publicFunctionWithPrivateModuleParameterTypes1 : Symbol(publicFunctionWithPrivateModuleParameterTypes1, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 467, 5))
  
          return new privateModule.publicClass();
@@ -2127,7 +2127,7 @@
  
          return null;
      }
-@@ -2631,12 +2631,12 @@
+@@= skipped -75, +75 lines =@@
  >privateFunctionWithPrivateModuleParameterTypes1 : Symbol(privateFunctionWithPrivateModuleParameterTypes1, Decl(privacyFunctionReturnTypeDeclFile_GlobalFile.ts, 495, 5))
  
          return new privateModule.publicClass();

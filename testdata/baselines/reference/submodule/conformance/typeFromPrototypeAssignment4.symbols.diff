@@ -1,6 +1,6 @@
 --- old.typeFromPrototypeAssignment4.symbols
 +++ new.typeFromPrototypeAssignment4.symbols
-@@ -2,18 +2,14 @@
+@@= skipped -2, +2 lines =@@
  
  === a.js ===
  function Multimap4() {
@@ -22,7 +22,7 @@
  
    /**
     * @param {string} key
-@@ -24,45 +20,35 @@
+@@= skipped -22, +18 lines =@@
  >key : Symbol(key, Decl(a.js, 9, 6))
  
      return this._map[key + ''];

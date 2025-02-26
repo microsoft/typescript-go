@@ -1,6 +1,6 @@
 --- old.ExportFunctionWithInaccessibleTypesInParameterTypeAnnotation.symbols
 +++ new.ExportFunctionWithInaccessibleTypesInParameterTypeAnnotation.symbols
-@@ -8,19 +8,19 @@
+@@= skipped -8, +8 lines =@@
  >Point : Symbol(Point, Decl(ExportFunctionWithInaccessibleTypesInParameterTypeAnnotation.ts, 0, 10))
  
          x: number;

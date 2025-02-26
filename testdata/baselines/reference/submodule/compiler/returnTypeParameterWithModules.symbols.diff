@@ -1,6 +1,6 @@
 --- old.returnTypeParameterWithModules.symbols
 +++ new.returnTypeParameterWithModules.symbols
-@@ -14,13 +14,13 @@
+@@= skipped -14, +14 lines =@@
  >A : Symbol(A, Decl(returnTypeParameterWithModules.ts, 1, 27))
  
          return Array.prototype.reduce.apply(ar, e ? [f, e] : [f]);
@@ -20,7 +20,7 @@
  >ar : Symbol(ar, Decl(returnTypeParameterWithModules.ts, 1, 30))
  >e : Symbol(e, Decl(returnTypeParameterWithModules.ts, 1, 36))
  >f : Symbol(f, Decl(returnTypeParameterWithModules.ts, 1, 33))
-@@ -34,15 +34,15 @@
+@@= skipped -20, +20 lines =@@
  
    import A = M1
  >A : Symbol(A, Decl(returnTypeParameterWithModules.ts, 5, 11))

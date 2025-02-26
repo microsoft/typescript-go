@@ -1,6 +1,6 @@
 --- old.stringLiteralTypesAsTags01.symbols
 +++ new.stringLiteralTypesAsTags01.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >Entity : Symbol(Entity, Decl(stringLiteralTypesAsTags01.ts, 0, 21))
  
      kind: Kind;
@@ -9,7 +9,7 @@
  >Kind : Symbol(Kind, Decl(stringLiteralTypesAsTags01.ts, 0, 0))
  }
  
-@@ -17,10 +17,10 @@
+@@= skipped -9, +9 lines =@@
  >Entity : Symbol(Entity, Decl(stringLiteralTypesAsTags01.ts, 0, 21))
  
      kind: "A";
@@ -22,7 +22,7 @@
  }
  
  interface B extends Entity {
-@@ -28,10 +28,10 @@
+@@= skipped -11, +11 lines =@@
  >Entity : Symbol(Entity, Decl(stringLiteralTypesAsTags01.ts, 0, 21))
  
      kind: "B";
@@ -35,7 +35,7 @@
  }
  
  function hasKind(entity: Entity, kind: "A"): entity is A;
-@@ -67,9 +67,9 @@
+@@= skipped -39, +39 lines =@@
  >Kind : Symbol(Kind, Decl(stringLiteralTypesAsTags01.ts, 0, 0))
  
      return entity.kind === kind;

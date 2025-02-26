@@ -1,6 +1,6 @@
 --- old.subtypingWithConstructSignatures4.symbols
 +++ new.subtypingWithConstructSignatures4.symbols
-@@ -5,22 +5,22 @@
+@@= skipped -5, +5 lines =@@
  
  class Base { foo: string; }
  >Base : Symbol(Base, Decl(subtypingWithConstructSignatures4.ts, 0, 0))

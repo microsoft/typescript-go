@@ -1,6 +1,6 @@
 --- old.exportDefaultInterfaceAndFunctionOverloads.symbols
 +++ new.exportDefaultInterfaceAndFunctionOverloads.symbols
-@@ -2,19 +2,19 @@
+@@= skipped -2, +2 lines =@@
  
  === exportDefaultInterfaceAndFunctionOverloads.ts ===
  export default function foo(value: number): number

@@ -1,6 +1,6 @@
 --- old.pathMappingBasedModuleResolution_rootImport_aliasWithRoot_differentRootTypes.symbols
 +++ new.pathMappingBasedModuleResolution_rootImport_aliasWithRoot_differentRootTypes.symbols
-@@ -10,74 +10,74 @@
+@@= skipped -10, +10 lines =@@
  
  === /root/a.ts ===
  import { foo as foo1 } from "/foo";

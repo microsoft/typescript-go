@@ -1,6 +1,6 @@
 --- old.genericConstraint1.symbols
 +++ new.genericConstraint1.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(genericConstraint1.ts, 0, 8))
  
      public bar2<U extends T>(x: T, y: U): T {
@@ -9,7 +9,7 @@
  >U : Symbol(U, Decl(genericConstraint1.ts, 1, 16))
  >T : Symbol(T, Decl(genericConstraint1.ts, 0, 8))
  >x : Symbol(x, Decl(genericConstraint1.ts, 1, 29))
-@@ -24,7 +24,7 @@
+@@= skipped -18, +18 lines =@@
  >C : Symbol(C, Decl(genericConstraint1.ts, 0, 0))
  
  x.bar2<string>(2, "");

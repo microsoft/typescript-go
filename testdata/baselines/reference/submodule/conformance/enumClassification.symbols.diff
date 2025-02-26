@@ -1,6 +1,6 @@
 --- old.enumClassification.symbols
 +++ new.enumClassification.symbols
-@@ -12,104 +12,104 @@
+@@= skipped -12, +12 lines =@@
  >E01 : Symbol(E01, Decl(enumClassification.ts, 0, 0))
  
      A
@@ -131,7 +131,7 @@
  }
  
  // Examples of numeric enum types with only constant members
-@@ -121,26 +121,26 @@
+@@= skipped -109, +109 lines =@@
  >E11 : Symbol(E11, Decl(enumClassification.ts, 56, 11))
  
      A = +0,
@@ -164,7 +164,7 @@
  }
  
  // Examples of numeric enum types with constant and computed members
-@@ -149,21 +149,21 @@
+@@= skipped -28, +28 lines =@@
  >E20 : Symbol(E20, Decl(enumClassification.ts, 68, 1))
  
      A = "foo".length,

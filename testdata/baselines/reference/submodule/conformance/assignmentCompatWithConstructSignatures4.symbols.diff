@@ -1,6 +1,6 @@
 --- old.assignmentCompatWithConstructSignatures4.symbols
 +++ new.assignmentCompatWithConstructSignatures4.symbols
-@@ -8,22 +8,22 @@
+@@= skipped -8, +8 lines =@@
  
      class Base { foo: string; }
  >Base : Symbol(Base, Decl(assignmentCompatWithConstructSignatures4.ts, 2, 15))

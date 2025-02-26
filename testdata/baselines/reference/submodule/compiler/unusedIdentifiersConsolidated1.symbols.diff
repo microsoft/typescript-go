@@ -1,6 +1,6 @@
 --- old.unusedIdentifiersConsolidated1.symbols
 +++ new.unusedIdentifiersConsolidated1.symbols
-@@ -15,16 +15,16 @@
+@@= skipped -15, +15 lines =@@
  >unusedtypeparameter : Symbol(unusedtypeparameter, Decl(unusedIdentifiersConsolidated1.ts, 4, 30))
  
      private unusedprivatevariable: string;
@@ -21,7 +21,7 @@
  >usedtypeparameter : Symbol(usedtypeparameter, Decl(unusedIdentifiersConsolidated1.ts, 4, 12))
  
      constructor(message: string) {
-@@ -34,30 +34,30 @@
+@@= skipped -19, +19 lines =@@
  >unused2 : Symbol(unused2, Decl(unusedIdentifiersConsolidated1.ts, 11, 11))
  
          this.greeting = "Dummy Message";
@@ -59,7 +59,7 @@
      }
  }
  
-@@ -74,7 +74,7 @@
+@@= skipped -40, +40 lines =@@
  >StringValidator : Symbol(StringValidator, Decl(unusedIdentifiersConsolidated1.ts, 30, 22))
  
          isAcceptable(s: string): boolean;
@@ -68,7 +68,7 @@
  >s : Symbol(s, Decl(unusedIdentifiersConsolidated1.ts, 32, 21))
      }
  
-@@ -89,18 +89,18 @@
+@@= skipped -15, +15 lines =@@
  >StringValidator : Symbol(StringValidator, Decl(unusedIdentifiersConsolidated1.ts, 30, 22))
  
          isAcceptable(s2: string) {
@@ -91,7 +91,7 @@
          }
      }
  
-@@ -109,13 +109,13 @@
+@@= skipped -20, +20 lines =@@
  >StringValidator : Symbol(StringValidator, Decl(unusedIdentifiersConsolidated1.ts, 30, 22))
  
          isAcceptable(s3: string) {
@@ -108,7 +108,7 @@
          }
      }
  
-@@ -127,7 +127,7 @@
+@@= skipped -18, +18 lines =@@
  >usedLocallyInterface2 : Symbol(usedLocallyInterface2, Decl(unusedIdentifiersConsolidated1.ts, 54, 5))
  
          someFunction(s1: string): void;

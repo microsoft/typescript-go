@@ -1,6 +1,6 @@
 --- old.inferentialTypingWithFunctionType2.symbols
 +++ new.inferentialTypingWithFunctionType2.symbols
-@@ -13,7 +13,7 @@
+@@= skipped -13, +13 lines =@@
  }
  var x = [1, 2, 3].map(identity)[0];
  >x : Symbol(x, Decl(inferentialTypingWithFunctionType2.ts, 3, 3))

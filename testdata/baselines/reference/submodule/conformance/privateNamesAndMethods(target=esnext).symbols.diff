@@ -1,6 +1,6 @@
 --- old.privateNamesAndMethods(target=esnext).symbols
 +++ new.privateNamesAndMethods(target=esnext).symbols
-@@ -5,59 +5,59 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(privateNamesAndMethods.ts, 0, 0))
  
      #foo(a: number) {}
@@ -74,7 +74,7 @@
  >this : Symbol(A, Decl(privateNamesAndMethods.ts, 0, 0))
   }
  }
-@@ -67,7 +67,7 @@
+@@= skipped -62, +62 lines =@@
  >A : Symbol(A, Decl(privateNamesAndMethods.ts, 0, 0))
  
      #foo(a: string) {}
@@ -83,7 +83,7 @@
  >a : Symbol(a, Decl(privateNamesAndMethods.ts, 23, 9))
  
      constructor () {
-@@ -75,7 +75,7 @@
+@@= skipped -8, +8 lines =@@
  >super : Symbol(A, Decl(privateNamesAndMethods.ts, 0, 0))
  
          this.#foo("str");

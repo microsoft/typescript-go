@@ -1,6 +1,6 @@
 --- old.objectTypesIdentityWithPublics.symbols
 +++ new.objectTypesIdentityWithPublics.symbols
-@@ -7,14 +7,14 @@
+@@= skipped -7, +7 lines =@@
  >A : Symbol(A, Decl(objectTypesIdentityWithPublics.ts, 0, 0))
  
      public foo: string;
@@ -17,7 +17,7 @@
  }
  
  class C<T> {
-@@ -22,7 +22,7 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(objectTypesIdentityWithPublics.ts, 10, 8))
  
      public foo: T;
@@ -26,7 +26,7 @@
  >T : Symbol(T, Decl(objectTypesIdentityWithPublics.ts, 10, 8))
  }
  
-@@ -30,7 +30,7 @@
+@@= skipped -8, +8 lines =@@
  >I : Symbol(I, Decl(objectTypesIdentityWithPublics.ts, 12, 1))
  
      foo: string;

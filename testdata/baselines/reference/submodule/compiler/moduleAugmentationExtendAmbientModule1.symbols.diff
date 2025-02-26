@@ -1,6 +1,6 @@
 --- old.moduleAugmentationExtendAmbientModule1.symbols
 +++ new.moduleAugmentationExtendAmbientModule1.symbols
-@@ -13,9 +13,7 @@
+@@= skipped -13, +13 lines =@@
  
  let y = x.map(x => x + 1);
  >y : Symbol(y, Decl(main.ts, 5, 3))
@@ -10,7 +10,7 @@
  >x : Symbol(x, Decl(main.ts, 5, 14))
  >x : Symbol(x, Decl(main.ts, 5, 14))
  
-@@ -24,29 +22,29 @@
+@@= skipped -11, +9 lines =@@
  >Observable : Symbol(Observable, Decl(map.ts, 0, 8))
  
  (<any>Observable.prototype).map = function() { }
@@ -49,7 +49,7 @@
  
          let someAnotherValue: number;
  >someAnotherValue : Symbol(someAnotherValue, Decl(map.ts, 9, 11))
-@@ -55,22 +53,22 @@
+@@= skipped -31, +31 lines =@@
  
  === observable.d.ts ===
  declare module "observable" {

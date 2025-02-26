@@ -1,6 +1,6 @@
 --- old.overloadedStaticMethodSpecialization.symbols
 +++ new.overloadedStaticMethodSpecialization.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(overloadedStaticMethodSpecialization.ts, 0, 8))
  
      static B<S>(v: A<S>): A<S>;
@@ -9,7 +9,7 @@
  >S : Symbol(S, Decl(overloadedStaticMethodSpecialization.ts, 1, 13))
  >v : Symbol(v, Decl(overloadedStaticMethodSpecialization.ts, 1, 16))
  >A : Symbol(A, Decl(overloadedStaticMethodSpecialization.ts, 0, 0))
-@@ -15,7 +15,7 @@
+@@= skipped -9, +9 lines =@@
  >S : Symbol(S, Decl(overloadedStaticMethodSpecialization.ts, 1, 13))
  
      static B<S>(v: S): A<S>;
@@ -18,7 +18,7 @@
  >S : Symbol(S, Decl(overloadedStaticMethodSpecialization.ts, 2, 13))
  >v : Symbol(v, Decl(overloadedStaticMethodSpecialization.ts, 2, 16))
  >S : Symbol(S, Decl(overloadedStaticMethodSpecialization.ts, 2, 13))
-@@ -23,7 +23,7 @@
+@@= skipped -8, +8 lines =@@
  >S : Symbol(S, Decl(overloadedStaticMethodSpecialization.ts, 2, 13))
  
      static B<S>(v: any): A<S> {

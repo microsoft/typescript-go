@@ -1,6 +1,6 @@
 --- old.inheritanceMemberAccessorOverridingMethod.symbols
 +++ new.inheritanceMemberAccessorOverridingMethod.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >a : Symbol(a, Decl(inheritanceMemberAccessorOverridingMethod.ts, 0, 0))
  
      x() {
@@ -9,7 +9,7 @@
  
          return "20";
      }
-@@ -16,12 +16,12 @@
+@@= skipped -11, +11 lines =@@
  >a : Symbol(a, Decl(inheritanceMemberAccessorOverridingMethod.ts, 0, 0))
  
      get x() {

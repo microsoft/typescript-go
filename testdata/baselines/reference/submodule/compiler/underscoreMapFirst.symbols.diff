@@ -1,6 +1,6 @@
 --- old.underscoreMapFirst.symbols
 +++ new.underscoreMapFirst.symbols
-@@ -19,7 +19,7 @@
+@@= skipped -19, +19 lines =@@
  >T : Symbol(T, Decl(underscoreMapFirst.ts, 2, 19))
  
          length: number;
@@ -9,7 +9,7 @@
      }
  
      interface ListIterator<T, TResult> {
-@@ -91,14 +91,14 @@
+@@= skipped -72, +72 lines =@@
  >View : Symbol(View, Decl(underscoreMapFirst.ts, 24, 1))
  
      model: any;
@@ -26,7 +26,7 @@
  >ISeries : Symbol(ISeries, Decl(underscoreMapFirst.ts, 32, 1))
  }
  
-@@ -106,10 +106,10 @@
+@@= skipped -15, +15 lines =@@
  >ISeries : Symbol(ISeries, Decl(underscoreMapFirst.ts, 32, 1))
  
      items: any[];
@@ -39,7 +39,7 @@
  }
  
  class MyView extends View {
-@@ -117,32 +117,32 @@
+@@= skipped -11, +11 lines =@@
  >View : Symbol(View, Decl(underscoreMapFirst.ts, 24, 1))
  
      public getDataSeries(): ISeries[] {

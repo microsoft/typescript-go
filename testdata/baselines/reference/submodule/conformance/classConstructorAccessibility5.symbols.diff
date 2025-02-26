@@ -1,6 +1,6 @@
 --- old.classConstructorAccessibility5.symbols
 +++ new.classConstructorAccessibility5.symbols
-@@ -11,7 +11,7 @@
+@@= skipped -11, +11 lines =@@
  >Base : Symbol(Base, Decl(classConstructorAccessibility5.ts, 0, 0))
  
      static make() { new Base() } // ok
@@ -9,7 +9,7 @@
  >Base : Symbol(Base, Decl(classConstructorAccessibility5.ts, 0, 0))
  }
  
-@@ -19,7 +19,7 @@
+@@= skipped -8, +8 lines =@@
  >Unrelated : Symbol(Unrelated, Decl(classConstructorAccessibility5.ts, 5, 1))
  
      static fake() { new Base() } // error

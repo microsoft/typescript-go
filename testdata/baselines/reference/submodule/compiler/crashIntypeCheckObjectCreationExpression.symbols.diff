@@ -1,6 +1,6 @@
 --- old.crashIntypeCheckObjectCreationExpression.symbols
 +++ new.crashIntypeCheckObjectCreationExpression.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >BuildWorkspaceService : Symbol(BuildWorkspaceService, Decl(crashIntypeCheckObjectCreationExpression.ts, 0, 0))
  
      public injectRequestService<P0, P1, P2>(service: P0) {
@@ -9,7 +9,7 @@
  >P0 : Symbol(P0, Decl(crashIntypeCheckObjectCreationExpression.ts, 1, 32))
  >P1 : Symbol(P1, Decl(crashIntypeCheckObjectCreationExpression.ts, 1, 35))
  >P2 : Symbol(P2, Decl(crashIntypeCheckObjectCreationExpression.ts, 1, 39))
-@@ -13,13 +13,13 @@
+@@= skipped -8, +8 lines =@@
  >P0 : Symbol(P0, Decl(crashIntypeCheckObjectCreationExpression.ts, 1, 32))
  
          this.injectBuildService<number>(new X(service));

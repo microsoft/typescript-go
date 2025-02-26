@@ -1,6 +1,6 @@
 --- old.localesObjectArgument.symbols
 +++ new.localesObjectArgument.symbols
-@@ -3,21 +3,21 @@
+@@= skipped -3, +3 lines =@@
  === localesObjectArgument.ts ===
  const enUS = new Intl.Locale("en-US");
  >enUS : Symbol(enUS, Decl(localesObjectArgument.ts, 0, 5))
@@ -28,7 +28,7 @@
  
  const now = new Date();
  >now : Symbol(now, Decl(localesObjectArgument.ts, 4, 5))
-@@ -37,311 +37,311 @@
+@@= skipped -34, +34 lines =@@
  >Readonly : Symbol(Readonly, Decl(lib.es5.d.ts, --, --))
  
  now.toLocaleString(enUS);

@@ -1,6 +1,6 @@
 --- old.declarationEmitObjectAssignedDefaultExport.symbols
 +++ new.declarationEmitObjectAssignedDefaultExport.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Statics : Symbol(Statics, Decl(index.d.ts, 0, 0))
  
      "$$whatever": string;
@@ -9,7 +9,7 @@
  }
  declare namespace hoistNonReactStatics {
  >hoistNonReactStatics : Symbol(hoistNonReactStatics, Decl(index.d.ts, 2, 1))
-@@ -14,7 +14,7 @@
+@@= skipped -9, +9 lines =@@
  >NonReactStatics : Symbol(NonReactStatics, Decl(index.d.ts, 3, 40))
  >T : Symbol(T, Decl(index.d.ts, 4, 25))
  >X : Symbol(X, Decl(index.d.ts, 4, 32))
@@ -18,7 +18,7 @@
  >T : Symbol(T, Decl(index.d.ts, 4, 25))
  >Statics : Symbol(Statics, Decl(index.d.ts, 0, 0))
  >T : Symbol(T, Decl(index.d.ts, 4, 25))
-@@ -48,7 +48,7 @@
+@@= skipped -34, +34 lines =@@
  
      & hoistNonReactStatics.NonReactStatics<TTag>;
  >hoistNonReactStatics : Symbol(hoistNonReactStatics, Decl(index.d.ts, 0, 6))
@@ -27,7 +27,7 @@
  >TTag : Symbol(TTag, Decl(index.d.ts, 2, 28))
  
  export interface StyledComponentBase<TTag extends string, TTheme = DefaultTheme, TStyle = {}, TWhatever = never> {
-@@ -60,28 +60,28 @@
+@@= skipped -12, +12 lines =@@
  >TWhatever : Symbol(TWhatever, Decl(index.d.ts, 6, 93))
  
      tag: TTag;
@@ -62,7 +62,7 @@
  >StyledComponent : Symbol(StyledComponent, Decl(index.d.ts, 1, 32))
  }
  
-@@ -98,26 +98,23 @@
+@@= skipped -38, +38 lines =@@
  
  const A = styled.div``;
  >A : Symbol(A, Decl(index.ts, 2, 5))

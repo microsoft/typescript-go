@@ -1,6 +1,6 @@
 --- old.contextualTypeBasedOnIntersectionWithAnyInTheMix5.symbols
 +++ new.contextualTypeBasedOnIntersectionWithAnyInTheMix5.symbols
-@@ -38,11 +38,11 @@
+@@= skipped -38, +38 lines =@@
  >ComputedOptions : Symbol(ComputedOptions, Decl(contextualTypeBasedOnIntersectionWithAnyInTheMix5.ts, 0, 45))
  
    data?: D;
@@ -14,7 +14,7 @@
  >C : Symbol(C, Decl(contextualTypeBasedOnIntersectionWithAnyInTheMix5.ts, 9, 33))
  }
  
-@@ -80,7 +80,7 @@
+@@= skipped -42, +42 lines =@@
  >App : Symbol(App, Decl(contextualTypeBasedOnIntersectionWithAnyInTheMix5.ts, 20, 73))
  
    mixin(mixin: ComponentOptions): this;
@@ -23,7 +23,7 @@
  >mixin : Symbol(mixin, Decl(contextualTypeBasedOnIntersectionWithAnyInTheMix5.ts, 23, 8))
  >ComponentOptions : Symbol(ComponentOptions, Decl(contextualTypeBasedOnIntersectionWithAnyInTheMix5.ts, 15, 28))
  }
-@@ -95,7 +95,7 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(contextualTypeBasedOnIntersectionWithAnyInTheMix5.ts, 28, 14))
  
    _v: T;
@@ -32,7 +32,7 @@
  >T : Symbol(T, Decl(contextualTypeBasedOnIntersectionWithAnyInTheMix5.ts, 28, 14))
  }
  
-@@ -111,7 +111,7 @@
+@@= skipped -16, +16 lines =@@
  >ThemeInstance : Symbol(ThemeInstance, Decl(contextualTypeBasedOnIntersectionWithAnyInTheMix5.ts, 32, 63))
  
    readonly name: Readonly<Ref<string>>;
@@ -41,7 +41,7 @@
  >Readonly : Symbol(Readonly, Decl(lib.es5.d.ts, --, --))
  >Ref : Symbol(Ref, Decl(contextualTypeBasedOnIntersectionWithAnyInTheMix5.ts, 26, 43))
  }
-@@ -139,9 +139,9 @@
+@@= skipped -28, +28 lines =@@
  >App : Symbol(App, Decl(contextualTypeBasedOnIntersectionWithAnyInTheMix5.ts, 20, 73))
  
  app.mixin({
@@ -53,7 +53,7 @@
  
    computed: {
  >computed : Symbol(computed, Decl(contextualTypeBasedOnIntersectionWithAnyInTheMix5.ts, 46, 11))
-@@ -155,9 +155,9 @@
+@@= skipped -16, +16 lines =@@
  
          theme: inject.call(this, ThemeSymbol),
  >theme : Symbol(theme, Decl(contextualTypeBasedOnIntersectionWithAnyInTheMix5.ts, 50, 23))

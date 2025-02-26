@@ -1,6 +1,6 @@
 --- old.derivedClassConstructorWithExplicitReturns01.symbols
 +++ new.derivedClassConstructorWithExplicitReturns01.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(derivedClassConstructorWithExplicitReturns01.ts, 0, 0))
  
      cProp = 10;
@@ -13,7 +13,7 @@
  
      constructor(value: number) {
  >value : Symbol(value, Decl(derivedClassConstructorWithExplicitReturns01.ts, 5, 16))
-@@ -32,7 +32,7 @@
+@@= skipped -27, +27 lines =@@
  >C : Symbol(C, Decl(derivedClassConstructorWithExplicitReturns01.ts, 0, 0))
  
      dProp = () => this;
@@ -22,7 +22,7 @@
  >this : Symbol(D, Decl(derivedClassConstructorWithExplicitReturns01.ts, 13, 1))
  
      constructor(a = 100) {
-@@ -43,9 +43,9 @@
+@@= skipped -11, +11 lines =@@
  >a : Symbol(a, Decl(derivedClassConstructorWithExplicitReturns01.ts, 18, 16))
  
          if (Math.random() < 0.5) {

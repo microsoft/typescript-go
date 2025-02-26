@@ -1,6 +1,6 @@
 --- old.initializerReferencingConstructorParameters.symbols
 +++ new.initializerReferencingConstructorParameters.symbols
-@@ -7,10 +7,10 @@
+@@= skipped -7, +7 lines =@@
  >C : Symbol(C, Decl(initializerReferencingConstructorParameters.ts, 0, 0))
  
      a = x; // error
@@ -13,7 +13,7 @@
  
      constructor(x) { }
  >x : Symbol(x, Decl(initializerReferencingConstructorParameters.ts, 5, 16))
-@@ -20,32 +20,32 @@
+@@= skipped -13, +13 lines =@@
  >D : Symbol(D, Decl(initializerReferencingConstructorParameters.ts, 6, 1))
  
      a = x; // error
@@ -56,7 +56,7 @@
  }
  
  class F<T> {
-@@ -53,15 +53,15 @@
+@@= skipped -33, +33 lines =@@
  >T : Symbol(T, Decl(initializerReferencingConstructorParameters.ts, 20, 8))
  
      a = this.x; // ok

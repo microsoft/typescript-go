@@ -1,6 +1,6 @@
 --- old.subclassWithPolymorphicThisIsAssignable.symbols
 +++ new.subclassWithPolymorphicThisIsAssignable.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >Document : Symbol(Document, Decl(subclassWithPolymorphicThisIsAssignable.ts, 0, 0))
  
      increment(): this;
@@ -9,7 +9,7 @@
  }
  
  /* our custom model extends the mongoose document */
-@@ -22,14 +22,14 @@
+@@= skipped -16, +16 lines =@@
      constructor() {
          // types of increment not compatible??
          this.test<Z>();

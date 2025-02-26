@@ -1,6 +1,6 @@
 --- old.objectTypesIdentityWithCallSignaturesDifferingParamCounts.symbols
 +++ new.objectTypesIdentityWithCallSignaturesDifferingParamCounts.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >A : Symbol(A, Decl(objectTypesIdentityWithCallSignaturesDifferingParamCounts.ts, 0, 0))
  
      foo(x: string): string { return null; }
@@ -9,7 +9,7 @@
  >x : Symbol(x, Decl(objectTypesIdentityWithCallSignaturesDifferingParamCounts.ts, 3, 8))
  }
  
-@@ -15,7 +15,7 @@
+@@= skipped -8, +8 lines =@@
  >B : Symbol(B, Decl(objectTypesIdentityWithCallSignaturesDifferingParamCounts.ts, 4, 1))
  
      foo(x: string, y: string): string { return null; }
@@ -18,7 +18,7 @@
  >x : Symbol(x, Decl(objectTypesIdentityWithCallSignaturesDifferingParamCounts.ts, 7, 8))
  >y : Symbol(y, Decl(objectTypesIdentityWithCallSignaturesDifferingParamCounts.ts, 7, 18))
  }
-@@ -25,7 +25,7 @@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(objectTypesIdentityWithCallSignaturesDifferingParamCounts.ts, 10, 8))
  
      foo(x: T, y: T): T { return null; }
@@ -27,7 +27,7 @@
  >x : Symbol(x, Decl(objectTypesIdentityWithCallSignaturesDifferingParamCounts.ts, 11, 8))
  >T : Symbol(T, Decl(objectTypesIdentityWithCallSignaturesDifferingParamCounts.ts, 10, 8))
  >y : Symbol(y, Decl(objectTypesIdentityWithCallSignaturesDifferingParamCounts.ts, 11, 13))
-@@ -37,7 +37,7 @@
+@@= skipped -12, +12 lines =@@
  >I : Symbol(I, Decl(objectTypesIdentityWithCallSignaturesDifferingParamCounts.ts, 12, 1))
  
      foo(x: string): string;
@@ -36,7 +36,7 @@
  >x : Symbol(x, Decl(objectTypesIdentityWithCallSignaturesDifferingParamCounts.ts, 15, 8))
  }
  
-@@ -46,7 +46,7 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(objectTypesIdentityWithCallSignaturesDifferingParamCounts.ts, 18, 13))
  
      foo(x: T): T;

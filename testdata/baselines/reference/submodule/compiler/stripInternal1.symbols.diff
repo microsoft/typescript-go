@@ -1,6 +1,6 @@
 --- old.stripInternal1.symbols
 +++ new.stripInternal1.symbols
-@@ -5,9 +5,9 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(stripInternal1.ts, 0, 0))
  
    foo(): void { }

@@ -1,6 +1,6 @@
 --- old.jsDeclarationsTypeReassignmentFromDeclaration2.symbols
 +++ new.jsDeclarationsTypeReassignmentFromDeclaration2.symbols
-@@ -3,26 +3,7 @@
+@@= skipped -3, +3 lines =@@
  === index.js ===
  const items = require("./some-mod")();
  >items : Symbol(items, Decl(index.js, 0, 5))

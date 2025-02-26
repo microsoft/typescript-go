@@ -1,6 +1,6 @@
 --- old.namespacesDeclaration2.symbols
 +++ new.namespacesDeclaration2.symbols
-@@ -24,15 +24,15 @@
+@@= skipped -24, +24 lines =@@
  var foge: N.S;
  >foge : Symbol(foge, Decl(namespacesDeclaration2.ts, 11, 3))
  >N : Symbol(N, Decl(namespacesDeclaration2.ts, 0, 0))

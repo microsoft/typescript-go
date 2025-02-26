@@ -1,6 +1,6 @@
 --- old.noExcessiveStackDepthError.symbols
 +++ new.noExcessiveStackDepthError.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(noExcessiveStackDepthError.ts, 2, 23))
  
      foo: T;

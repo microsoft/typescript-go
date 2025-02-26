@@ -1,6 +1,6 @@
 --- old.declarationEmitClassMixinLocalClassDeclaration.symbols
 +++ new.declarationEmitClassMixinLocalClassDeclaration.symbols
-@@ -60,7 +60,7 @@
+@@= skipped -60, +60 lines =@@
  >base : Symbol(base, Decl(declarationEmitClassMixinLocalClassDeclaration.ts, 17, 5))
  
              num: number = 0

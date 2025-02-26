@@ -1,6 +1,6 @@
 --- old.moduleMergeConstructor.symbols
 +++ new.moduleMergeConstructor.symbols
-@@ -9,7 +9,7 @@
+@@= skipped -9, +9 lines =@@
  
          constructor();
          method1(): any;
@@ -9,7 +9,7 @@
      }
  }
  
-@@ -21,7 +21,7 @@
+@@= skipped -12, +12 lines =@@
  >Foo : Symbol(Foo, Decl(foo.d.ts, 0, 22), Decl(foo-ext.d.ts, 0, 22))
  
          method2(): any;
@@ -18,7 +18,7 @@
      }
  }
  
-@@ -33,18 +33,18 @@
+@@= skipped -12, +12 lines =@@
  >Test : Symbol(Test, Decl(index.ts, 0, 27))
  
      bar: foo.Foo;

@@ -1,6 +1,6 @@
 --- old.parserEnumDeclaration4.symbols
 +++ new.parserEnumDeclaration4.symbols
-@@ -2,5 +2,5 @@
+@@= skipped -2, +2 lines =@@
  
  === parserEnumDeclaration4.ts ===
  enum void {

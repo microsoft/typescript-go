@@ -1,6 +1,6 @@
 --- old.library_ArraySlice.symbols
 +++ new.library_ArraySlice.symbols
-@@ -3,23 +3,23 @@
+@@= skipped -3, +3 lines =@@
  === library_ArraySlice.ts ===
  // Array.prototype.slice can have zero, one, or two arguments
  Array.prototype.slice();

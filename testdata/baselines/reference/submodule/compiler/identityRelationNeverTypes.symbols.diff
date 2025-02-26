@@ -1,6 +1,6 @@
 --- old.identityRelationNeverTypes.symbols
 +++ new.identityRelationNeverTypes.symbols
-@@ -19,14 +19,14 @@
+@@= skipped -19, +19 lines =@@
  >TContext : Symbol(TContext, Decl(identityRelationNeverTypes.ts, 4, 20))
  
      _context: TContext;
@@ -18,7 +18,7 @@
  >TSV : Symbol(TSV, Decl(identityRelationNeverTypes.ts, 7, 12))
  >stateValue : Symbol(stateValue, Decl(identityRelationNeverTypes.ts, 7, 32))
  >TSV : Symbol(TSV, Decl(identityRelationNeverTypes.ts, 7, 12))
-@@ -43,12 +43,12 @@
+@@= skipped -24, +24 lines =@@
  >foo : Symbol(foo, Decl(identityRelationNeverTypes.ts, 10, 26))
  
      if (state.matches('a') && state.matches('a.b')) {

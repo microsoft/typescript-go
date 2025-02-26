@@ -1,6 +1,6 @@
 --- old.omitTypeTestErrors01.symbols
 +++ new.omitTypeTestErrors01.symbols
-@@ -5,13 +5,13 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(omitTypeTestErrors01.ts, 0, 0))
  
      a: string;

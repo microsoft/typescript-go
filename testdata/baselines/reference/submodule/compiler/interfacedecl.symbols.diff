@@ -1,6 +1,6 @@
 --- old.interfacedecl.symbols
 +++ new.interfacedecl.symbols
-@@ -21,33 +21,33 @@
+@@= skipped -21, +21 lines =@@
  >s : Symbol(s, Decl(interfacedecl.ts, 8, 5))
  
      p1;

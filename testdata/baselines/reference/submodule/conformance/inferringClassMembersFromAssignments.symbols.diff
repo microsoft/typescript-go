@@ -1,6 +1,6 @@
 --- old.inferringClassMembersFromAssignments.symbols
 +++ new.inferringClassMembersFromAssignments.symbols
-@@ -6,255 +6,197 @@
+@@= skipped -6, +6 lines =@@
  
      constructor() {
          if (Math.random()) {
@@ -286,7 +286,7 @@
          }
      }
  }
-@@ -269,42 +211,30 @@
+@@= skipped -263, +205 lines =@@
  
  var stringOrNumber = c.inConstructor;
  >stringOrNumber : Symbol(stringOrNumber, Decl(b.ts, 2, 3), Decl(b.ts, 3, 3))
@@ -329,7 +329,7 @@
  
  var stringOrNumberOrBoolean: string | number | boolean;
  >stringOrNumberOrBoolean : Symbol(stringOrNumberOrBoolean, Decl(b.ts, 13, 3))
-@@ -314,56 +244,40 @@
+@@= skipped -45, +33 lines =@@
  
  var number = c.inMultiple;
  >number : Symbol(number, Decl(b.ts, 15, 3), Decl(b.ts, 16, 3))

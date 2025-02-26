@@ -1,6 +1,6 @@
 --- old.voidReturnIndexUnionInference.symbols
 +++ new.voidReturnIndexUnionInference.symbols
-@@ -37,11 +37,11 @@
+@@= skipped -37, +37 lines =@@
  >Props : Symbol(Props, Decl(voidReturnIndexUnionInference.ts, 10, 1))
  
      onFoo?(value: string): boolean;

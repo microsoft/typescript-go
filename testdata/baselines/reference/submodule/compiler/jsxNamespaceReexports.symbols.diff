@@ -1,6 +1,6 @@
 --- old.jsxNamespaceReexports.symbols
 +++ new.jsxNamespaceReexports.symbols
-@@ -29,5 +29,4 @@
+@@= skipped -29, +29 lines =@@
  
  const content = <my-element/>;
  >content : Symbol(content, Decl(index.tsx, 2, 5))

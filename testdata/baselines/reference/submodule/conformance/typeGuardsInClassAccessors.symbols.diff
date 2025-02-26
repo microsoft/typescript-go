@@ -1,6 +1,6 @@
 --- old.typeGuardsInClassAccessors.symbols
 +++ new.typeGuardsInClassAccessors.symbols
-@@ -19,15 +19,15 @@
+@@= skipped -19, +19 lines =@@
  
      // Inside public accessor getter
      get p1() {
@@ -19,7 +19,7 @@
  
          // variables in function declaration
          var var2: string | number;
-@@ -36,33 +36,33 @@
+@@= skipped -17, +17 lines =@@
          num = typeof var2 === "string" && var2.length; // string
  >num : Symbol(num, Decl(typeGuardsInClassAccessors.ts, 4, 3))
  >var2 : Symbol(var2, Decl(typeGuardsInClassAccessors.ts, 14, 11))
@@ -60,7 +60,7 @@
  
          // variables in function declaration
          var var2: string | number;
-@@ -71,21 +71,21 @@
+@@= skipped -35, +35 lines =@@
          num = typeof var2 === "string" && var2.length; // string
  >num : Symbol(num, Decl(typeGuardsInClassAccessors.ts, 4, 3))
  >var2 : Symbol(var2, Decl(typeGuardsInClassAccessors.ts, 28, 11))
@@ -87,7 +87,7 @@
  
          // variables in function declaration
          var var2: string | number;
-@@ -94,33 +94,33 @@
+@@= skipped -23, +23 lines =@@
          num = typeof var2 === "string" && var2.length; // string
  >num : Symbol(num, Decl(typeGuardsInClassAccessors.ts, 4, 3))
  >var2 : Symbol(var2, Decl(typeGuardsInClassAccessors.ts, 37, 11))
@@ -128,7 +128,7 @@
  
          // variables in function declaration
          var var2: string | number;
-@@ -129,21 +129,21 @@
+@@= skipped -35, +35 lines =@@
          num = typeof var2 === "string" && var2.length; // string
  >num : Symbol(num, Decl(typeGuardsInClassAccessors.ts, 4, 3))
  >var2 : Symbol(var2, Decl(typeGuardsInClassAccessors.ts, 51, 11))
@@ -155,7 +155,7 @@
  
          // variables in function declaration
          var var2: string | number;
-@@ -152,33 +152,33 @@
+@@= skipped -23, +23 lines =@@
          num = typeof var2 === "string" && var2.length; // string
  >num : Symbol(num, Decl(typeGuardsInClassAccessors.ts, 4, 3))
  >var2 : Symbol(var2, Decl(typeGuardsInClassAccessors.ts, 60, 11))
@@ -196,7 +196,7 @@
  
          // variables in function declaration
          var var2: string | number;
-@@ -187,21 +187,21 @@
+@@= skipped -35, +35 lines =@@
          num = typeof var2 === "string" && var2.length; // string
  >num : Symbol(num, Decl(typeGuardsInClassAccessors.ts, 4, 3))
  >var2 : Symbol(var2, Decl(typeGuardsInClassAccessors.ts, 74, 11))
@@ -223,7 +223,7 @@
  
          // variables in function declaration
          var var2: string | number;
-@@ -210,33 +210,33 @@
+@@= skipped -23, +23 lines =@@
          num = typeof var2 === "string" && var2.length; // string
  >num : Symbol(num, Decl(typeGuardsInClassAccessors.ts, 4, 3))
  >var2 : Symbol(var2, Decl(typeGuardsInClassAccessors.ts, 83, 11))
@@ -264,7 +264,7 @@
  
          // variables in function declaration
          var var2: string | number;
-@@ -245,9 +245,9 @@
+@@= skipped -35, +35 lines =@@
          num = typeof var2 === "string" && var2.length; // string
  >num : Symbol(num, Decl(typeGuardsInClassAccessors.ts, 4, 3))
  >var2 : Symbol(var2, Decl(typeGuardsInClassAccessors.ts, 97, 11))

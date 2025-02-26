@@ -1,6 +1,6 @@
 --- old.deepKeysIndexing.symbols
 +++ new.deepKeysIndexing.symbols
-@@ -71,7 +71,7 @@
+@@= skipped -71, +71 lines =@@
  >DeepObject : Symbol(DeepObject, Decl(deepKeysIndexing.ts, 0, 0))
  
    a: {
@@ -9,7 +9,7 @@
  
      "1": 123;
  >"1" : Symbol("1", Decl(deepKeysIndexing.ts, 23, 6))
-@@ -91,7 +91,7 @@
+@@= skipped -20, +20 lines =@@
  >DeepObject : Symbol(DeepObject, Decl(deepKeysIndexing.ts, 0, 0))
  
    broken<
@@ -18,7 +18,7 @@
  
      K1 extends keyof O,
  >K1 : Symbol(K1, Decl(deepKeysIndexing.ts, 31, 9))
-@@ -118,7 +118,7 @@
+@@= skipped -27, +27 lines =@@
  >V : Symbol(V, Decl(deepKeysIndexing.ts, 33, 34))
  
    working<
@@ -27,7 +27,7 @@
  
      K1 extends keyof O,
  >K1 : Symbol(K1, Decl(deepKeysIndexing.ts, 37, 10))
-@@ -145,7 +145,7 @@
+@@= skipped -27, +27 lines =@@
  >V : Symbol(V, Decl(deepKeysIndexing.ts, 39, 35))
  
    workaround<
@@ -36,7 +36,7 @@
  
      K1 extends keyof O,
  >K1 : Symbol(K1, Decl(deepKeysIndexing.ts, 43, 13))
-@@ -179,17 +179,17 @@
+@@= skipped -34, +34 lines =@@
  
  // all 3 of the below should error on passing `true` for `"1"`
  bar.broken("a", "1", true); // was broken in the past - with 2nd argument incorrectly of type "1" | "2" | "3".

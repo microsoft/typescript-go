@@ -1,6 +1,6 @@
 --- old.InvalidNonInstantiatedModule.symbols
 +++ new.InvalidNonInstantiatedModule.symbols
-@@ -6,8 +6,8 @@
+@@= skipped -6, +6 lines =@@
  
      export interface Point { x: number; y: number }
  >Point : Symbol(Point, Decl(InvalidNonInstantiatedModule.ts, 0, 10))

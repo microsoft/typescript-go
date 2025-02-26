@@ -1,6 +1,6 @@
 --- old.genericTypeWithMultipleBases3.symbols
 +++ new.genericTypeWithMultipleBases3.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(genericTypeWithMultipleBases3.ts, 0, 13))
  
  foo(x: T): T;
@@ -9,7 +9,7 @@
  >x : Symbol(x, Decl(genericTypeWithMultipleBases3.ts, 2, 4))
  >T : Symbol(T, Decl(genericTypeWithMultipleBases3.ts, 0, 13))
  >T : Symbol(T, Decl(genericTypeWithMultipleBases3.ts, 0, 13))
-@@ -18,7 +18,7 @@
+@@= skipped -12, +12 lines =@@
  >T : Symbol(T, Decl(genericTypeWithMultipleBases3.ts, 6, 13))
  
  bar(x: T): T;
@@ -18,7 +18,7 @@
  >x : Symbol(x, Decl(genericTypeWithMultipleBases3.ts, 8, 4))
  >T : Symbol(T, Decl(genericTypeWithMultipleBases3.ts, 6, 13))
  >T : Symbol(T, Decl(genericTypeWithMultipleBases3.ts, 6, 13))
-@@ -39,13 +39,13 @@
+@@= skipped -21, +21 lines =@@
  
  var x = c.foo;
  >x : Symbol(x, Decl(genericTypeWithMultipleBases3.ts, 16, 3))

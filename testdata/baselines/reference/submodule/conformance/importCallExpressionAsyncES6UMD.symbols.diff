@@ -1,6 +1,6 @@
 --- old.importCallExpressionAsyncES6UMD.symbols
 +++ new.importCallExpressionAsyncES6UMD.symbols
-@@ -6,18 +6,16 @@
+@@= skipped -6, +6 lines =@@
  
      const req = await import('./test') // ONE
  >req : Symbol(req, Decl(test.ts, 1, 9))
@@ -20,7 +20,7 @@
      }
  }
  
-@@ -29,7 +27,6 @@
+@@= skipped -23, +21 lines =@@
  
          const req = await import('./test') // THREE
  >req : Symbol(req, Decl(test.ts, 12, 13))
@@ -28,7 +28,7 @@
      }
  }
  
-@@ -37,14 +34,13 @@
+@@= skipped -8, +7 lines =@@
  >cl2 : Symbol(cl2, Decl(test.ts, 14, 1))
  
      public p = {
@@ -44,7 +44,7 @@
          }
      }
  }
-@@ -54,6 +50,5 @@
+@@= skipped -17, +16 lines =@@
  
      const req = await import('./test') // FIVE
  >req : Symbol(req, Decl(test.ts, 25, 9))

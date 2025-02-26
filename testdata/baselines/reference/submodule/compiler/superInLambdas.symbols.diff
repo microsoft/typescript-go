@@ -1,6 +1,6 @@
 --- old.superInLambdas.symbols
 +++ new.superInLambdas.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >User : Symbol(User, Decl(superInLambdas.ts, 0, 0))
  
      name: string = "Bob";
@@ -13,7 +13,7 @@
  
          //console.log("Hello, " + this.name);
      }
-@@ -19,7 +19,7 @@
+@@= skipped -14, +14 lines =@@
  >User : Symbol(User, Decl(superInLambdas.ts, 0, 0))
  
      name: string = "Frank";
@@ -22,7 +22,7 @@
  
      constructor() {
          super();
-@@ -27,32 +27,32 @@
+@@= skipped -8, +8 lines =@@
  
          // super call in a constructor
          super.sayHello();
@@ -64,7 +64,7 @@
      }
  }
  class RegisteredUser2 extends User {
-@@ -60,7 +60,7 @@
+@@= skipped -33, +33 lines =@@
  >User : Symbol(User, Decl(superInLambdas.ts, 0, 0))
  
      name: string = "Joe";
@@ -73,7 +73,7 @@
  
      constructor() {
          super();
-@@ -69,19 +69,19 @@
+@@= skipped -9, +9 lines =@@
          // super call in a nested lambda in a constructor 
          var x = () => () => () => super.sayHello();
  >x : Symbol(x, Decl(superInLambdas.ts, 32, 11))
@@ -98,7 +98,7 @@
      }
  }
  
-@@ -90,7 +90,7 @@
+@@= skipped -21, +21 lines =@@
  >User : Symbol(User, Decl(superInLambdas.ts, 0, 0))
  
      name: string = "Sam";
@@ -107,7 +107,7 @@
  
      constructor() {
          super();
-@@ -99,19 +99,19 @@
+@@= skipped -9, +9 lines =@@
          // super property in a nested lambda in a constructor 
          var superName = () => () => () => super.name;
  >superName : Symbol(superName, Decl(superInLambdas.ts, 46, 11))
@@ -132,7 +132,7 @@
      }
  }
  
-@@ -120,7 +120,7 @@
+@@= skipped -21, +21 lines =@@
  >User : Symbol(User, Decl(superInLambdas.ts, 0, 0))
  
      name: string = "Mark";
@@ -141,7 +141,7 @@
  
      constructor() {
          super();
-@@ -132,7 +132,7 @@
+@@= skipped -12, +12 lines =@@
  >super : Symbol(User, Decl(superInLambdas.ts, 0, 0))
      }
      sayHello(): void {

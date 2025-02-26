@@ -1,6 +1,6 @@
 --- old.checkSuperCallBeforeThisAccessing5.symbols
 +++ new.checkSuperCallBeforeThisAccessing5.symbols
-@@ -10,13 +10,13 @@
+@@= skipped -10, +10 lines =@@
  >Based : Symbol(Based, Decl(checkSuperCallBeforeThisAccessing5.ts, 0, 0))
  
      public x: number;

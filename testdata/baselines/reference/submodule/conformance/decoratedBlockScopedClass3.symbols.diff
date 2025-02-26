@@ -1,6 +1,6 @@
 --- old.decoratedBlockScopedClass3.symbols
 +++ new.decoratedBlockScopedClass3.symbols
-@@ -16,7 +16,7 @@
+@@= skipped -16, +16 lines =@@
  >Foo : Symbol(Foo, Decl(a.ts, 2, 1))
  
      public static func(): Foo {
@@ -9,7 +9,7 @@
  >Foo : Symbol(Foo, Decl(a.ts, 2, 1))
  
          return new Foo();
-@@ -24,9 +24,9 @@
+@@= skipped -8, +8 lines =@@
      }
  }
  Foo.func();
@@ -21,7 +21,7 @@
  
  try {
      @decorator()
-@@ -36,7 +36,7 @@
+@@= skipped -12, +12 lines =@@
  >Foo : Symbol(Foo, Decl(a.ts, 12, 5))
  
          public static func(): Foo {
@@ -30,7 +30,7 @@
  >Foo : Symbol(Foo, Decl(a.ts, 12, 5))
  
              return new Foo();
-@@ -44,9 +44,9 @@
+@@= skipped -8, +8 lines =@@
          }
      }
      Foo.func();

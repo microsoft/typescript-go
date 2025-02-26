@@ -1,6 +1,6 @@
 --- old.umd-augmentation-3.symbols
 +++ new.umd-augmentation-3.symbols
-@@ -7,36 +7,36 @@
+@@= skipped -7, +7 lines =@@
  
  let v = new m.Vector(3, 2);
  >v : Symbol(v, Decl(b.ts, 2, 3))
@@ -48,7 +48,7 @@
  
  === node_modules/math2d/index.d.ts ===
  export as namespace Math2d;
-@@ -52,10 +52,10 @@
+@@= skipped -45, +45 lines =@@
  >Point : Symbol(Point, Decl(index.d.ts, 4, 23))
  
  		x: number;
@@ -61,7 +61,7 @@
  	}
  
  	class Vector implements Point {
-@@ -63,17 +63,17 @@
+@@= skipped -11, +11 lines =@@
  >Point : Symbol(Point, Decl(index.d.ts, 4, 23))
  
  		x: number;
@@ -82,7 +82,7 @@
  >dx : Symbol(dx, Decl(index.d.ts, 15, 12))
  >dy : Symbol(dy, Decl(index.d.ts, 15, 23))
  >Vector : Symbol(Vector, Decl(index.d.ts, 8, 2), Decl(math2d-augment.d.ts, 2, 25))
-@@ -93,14 +93,14 @@
+@@= skipped -30, +30 lines =@@
  
  // Augment the module
  declare module 'math2d' {

@@ -1,6 +1,6 @@
 --- old.multiline.symbols
 +++ new.multiline.symbols
-@@ -7,23 +7,23 @@
+@@= skipped -7, +7 lines =@@
  /**
   @ts-ignore */
  texts.push(100);
@@ -30,7 +30,7 @@
  
  === b.tsx ===
  import * as React from "react";
-@@ -35,15 +35,12 @@
+@@= skipped -28, +28 lines =@@
  >foo : Symbol(foo, Decl(b.tsx, 2, 36))
  
    return <div />;
@@ -46,7 +46,7 @@
      {/*
     @ts-ignore */}
      <MyComponent foo={100} />
-@@ -85,7 +82,5 @@
+@@= skipped -50, +47 lines =@@
  >foo : Symbol(foo, Decl(b.tsx, 32, 16))
  
    </div>

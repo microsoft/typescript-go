@@ -1,6 +1,6 @@
 --- old.errorTypesAsTypeArguments.symbols
 +++ new.errorTypesAsTypeArguments.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >A : Symbol(A, Decl(errorTypesAsTypeArguments.ts, 0, 14))
  
    bar(baz: Foo<B>): Foo<C>;

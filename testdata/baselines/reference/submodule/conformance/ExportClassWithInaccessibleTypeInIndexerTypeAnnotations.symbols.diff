@@ -1,6 +1,6 @@
 --- old.ExportClassWithInaccessibleTypeInIndexerTypeAnnotations.symbols
 +++ new.ExportClassWithInaccessibleTypeInIndexerTypeAnnotations.symbols
-@@ -8,10 +8,10 @@
+@@= skipped -8, +8 lines =@@
  >Point : Symbol(Point, Decl(ExportClassWithInaccessibleTypeInIndexerTypeAnnotations.ts, 0, 10))
  
          x: number;

@@ -1,6 +1,6 @@
 --- old.superErrors.symbols
 +++ new.superErrors.symbols
-@@ -19,10 +19,10 @@
+@@= skipped -19, +19 lines =@@
  >User : Symbol(User, Decl(superErrors.ts, 5, 1))
  
      name: string = "Bob";
@@ -13,7 +13,7 @@
  
          //console.log("Hello, " + this.name);
      }
-@@ -33,7 +33,7 @@
+@@= skipped -14, +14 lines =@@
  >User : Symbol(User, Decl(superErrors.ts, 5, 1))
  
      name: string = "Frank";
@@ -22,7 +22,7 @@
  
      constructor() {
          super();
-@@ -58,13 +58,13 @@
+@@= skipped -25, +25 lines =@@
          (function() { return () => super; })();
      }
      sayHello(): void {
@@ -39,7 +39,7 @@
  
          // super call in a lambda in an inner function in a method
          function inner() {
-@@ -78,7 +78,7 @@
+@@= skipped -20, +20 lines =@@
          (function() { return () => super; })();
      }
      static staticFunction(): void {

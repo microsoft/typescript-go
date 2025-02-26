@@ -1,6 +1,6 @@
 --- old.classExtendingClassLikeType.symbols
 +++ new.classExtendingClassLikeType.symbols
-@@ -7,11 +7,11 @@
+@@= skipped -7, +7 lines =@@
  >U : Symbol(U, Decl(classExtendingClassLikeType.ts, 0, 17))
  
      x: T;
@@ -14,7 +14,7 @@
  >U : Symbol(U, Decl(classExtendingClassLikeType.ts, 0, 17))
  }
  
-@@ -71,14 +71,14 @@
+@@= skipped -64, +64 lines =@@
  >super : Symbol(BaseConstructor, Decl(classExtendingClassLikeType.ts, 7, 1))
  
          this.x = "x";
@@ -33,7 +33,7 @@
      }
  }
  
-@@ -94,14 +94,14 @@
+@@= skipped -23, +23 lines =@@
  >super : Symbol(BaseConstructor, Decl(classExtendingClassLikeType.ts, 7, 1))
  
          this.x = 1;
@@ -52,7 +52,7 @@
      }
  }
  
-@@ -114,14 +114,14 @@
+@@= skipped -20, +20 lines =@@
  >super : Symbol(BaseConstructor, Decl(classExtendingClassLikeType.ts, 7, 1))
  
          this.x = "x";

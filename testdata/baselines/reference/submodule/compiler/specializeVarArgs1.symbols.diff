@@ -1,6 +1,6 @@
 --- old.specializeVarArgs1.symbols
 +++ new.specializeVarArgs1.symbols
-@@ -16,7 +16,7 @@
+@@= skipped -16, +16 lines =@@
  {
  
      push(...values: T[]);
@@ -9,7 +9,7 @@
  >values : Symbol(values, Decl(specializeVarArgs1.ts, 8, 9))
  >T : Symbol(T, Decl(specializeVarArgs1.ts, 4, 26))
  
-@@ -37,7 +37,7 @@
+@@= skipped -21, +21 lines =@@
  >observableArray : Symbol(observableArray, Decl(specializeVarArgs1.ts, 10, 1))
  
  a.push('Some Value');

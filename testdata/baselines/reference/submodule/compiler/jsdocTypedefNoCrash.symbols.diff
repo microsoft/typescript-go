@@ -1,6 +1,6 @@
 --- old.jsdocTypedefNoCrash.symbols
 +++ new.jsdocTypedefNoCrash.symbols
-@@ -6,5 +6,5 @@
+@@= skipped -6, +6 lines =@@
   * }}
   */
  export const foo = 5;

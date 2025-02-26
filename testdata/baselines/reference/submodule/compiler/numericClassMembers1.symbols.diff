@@ -1,6 +1,6 @@
 --- old.numericClassMembers1.symbols
 +++ new.numericClassMembers1.symbols
-@@ -5,29 +5,29 @@
+@@= skipped -5, +5 lines =@@
  >C234 : Symbol(C234, Decl(numericClassMembers1.ts, 0, 0))
  
    0 = 1; 

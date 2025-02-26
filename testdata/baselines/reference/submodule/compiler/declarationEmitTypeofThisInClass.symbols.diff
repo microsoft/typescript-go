@@ -1,6 +1,6 @@
 --- old.declarationEmitTypeofThisInClass.symbols
 +++ new.declarationEmitTypeofThisInClass.symbols
-@@ -5,11 +5,11 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(declarationEmitTypeofThisInClass.ts, 0, 0))
  
      public foo!: string

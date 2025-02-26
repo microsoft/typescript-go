@@ -1,6 +1,6 @@
 --- old.iterableArrayPattern29.symbols
 +++ new.iterableArrayPattern29.symbols
-@@ -10,5 +10,4 @@
+@@= skipped -10, +10 lines =@@
  
  takeFirstTwoEntries(...new Map([["", true], ["hello", true]]));
  >takeFirstTwoEntries : Symbol(takeFirstTwoEntries, Decl(iterableArrayPattern29.ts, 0, 0))

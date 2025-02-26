@@ -1,6 +1,6 @@
 --- old.typeParameterAndArgumentOfSameName1.symbols
 +++ new.typeParameterAndArgumentOfSameName1.symbols
-@@ -11,9 +11,9 @@
+@@= skipped -11, +11 lines =@@
  
      var r = A.toExponential(123);
  >r : Symbol(r, Decl(typeParameterAndArgumentOfSameName1.ts, 1, 7))

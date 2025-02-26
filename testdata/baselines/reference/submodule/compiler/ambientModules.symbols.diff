@@ -1,6 +1,6 @@
 --- old.ambientModules.symbols
 +++ new.ambientModules.symbols
-@@ -7,9 +7,9 @@
+@@= skipped -7, +7 lines =@@
  >foo : Symbol(foo, Decl(ambientModules.ts, 0, 35))
  
  Foo.Bar.foo = 5; 

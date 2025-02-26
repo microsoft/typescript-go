@@ -1,6 +1,6 @@
 --- old.interfacedeclWithIndexerErrors.symbols
 +++ new.interfacedeclWithIndexerErrors.symbols
-@@ -21,33 +21,33 @@
+@@= skipped -21, +21 lines =@@
  >s : Symbol(s, Decl(interfacedeclWithIndexerErrors.ts, 8, 5))
  
      p1;
@@ -43,7 +43,7 @@
  >s : Symbol(s, Decl(interfacedeclWithIndexerErrors.ts, 19, 9))
  }
  
-@@ -94,7 +94,7 @@
+@@= skipped -73, +73 lines =@@
  >f : Symbol(f, Decl(interfacedeclWithIndexerErrors.ts, 44, 1))
  
      prop: typeof string;

@@ -1,6 +1,6 @@
 --- old.objectTypePropertyAccess.symbols
 +++ new.objectTypePropertyAccess.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >C : Symbol(C, Decl(objectTypePropertyAccess.ts, 0, 0))
  
      foo: string;
@@ -9,7 +9,7 @@
  }
  
  var c: C;
-@@ -15,31 +15,31 @@
+@@= skipped -9, +9 lines =@@
  
  var r1 = c.toString();
  >r1 : Symbol(r1, Decl(objectTypePropertyAccess.ts, 6, 3))
@@ -48,7 +48,7 @@
  }
  var i: I;
  >i : Symbol(i, Decl(objectTypePropertyAccess.ts, 14, 3))
-@@ -47,25 +47,25 @@
+@@= skipped -32, +32 lines =@@
  
  var r4 = i.toString();
  >r4 : Symbol(r4, Decl(objectTypePropertyAccess.ts, 9, 3), Decl(objectTypePropertyAccess.ts, 15, 3))
@@ -80,7 +80,7 @@
  
  var a = {
  >a : Symbol(a, Decl(objectTypePropertyAccess.ts, 20, 3))
-@@ -76,14 +76,14 @@
+@@= skipped -29, +29 lines =@@
  
  var r8 = a.toString();
  >r8 : Symbol(r8, Decl(objectTypePropertyAccess.ts, 24, 3))

@@ -1,6 +1,6 @@
 --- old.overloadsWithComputedNames.symbols
 +++ new.overloadsWithComputedNames.symbols
-@@ -6,13 +6,13 @@
+@@= skipped -6, +6 lines =@@
  >Person : Symbol(Person, Decl(overloadsWithComputedNames.ts, 0, 0))
  
      ["B"](a: number): string;
@@ -18,7 +18,7 @@
  >a : Symbol(a, Decl(overloadsWithComputedNames.ts, 3, 10))
  
        return 0;
-@@ -23,30 +23,30 @@
+@@= skipped -17, +17 lines =@@
  >Person : Symbol(Person, Decl(overloadsWithComputedNames.ts, 0, 0))
  
  p.A(0)
@@ -59,7 +59,7 @@
  
          return 0;
      }
-@@ -68,19 +68,19 @@
+@@= skipped -45, +45 lines =@@
  >C1 : Symbol(C1, Decl(overloadsWithComputedNames.ts, 24, 38))
  
      [sym](): void;  // should error
@@ -83,7 +83,7 @@
  >uniqueSym : Symbol(uniqueSym, Decl(overloadsWithComputedNames.ts, 20, 13))
  }
  
-@@ -88,19 +88,19 @@
+@@= skipped -20, +20 lines =@@
  >I1 : Symbol(I1, Decl(overloadsWithComputedNames.ts, 31, 1))
  
      [sym](): void;  // should error
@@ -107,7 +107,7 @@
  >uniqueSym : Symbol(uniqueSym, Decl(overloadsWithComputedNames.ts, 20, 13))
  }
  
-@@ -108,11 +108,11 @@
+@@= skipped -20, +20 lines =@@
  >C2 : Symbol(C2, Decl(overloadsWithComputedNames.ts, 38, 1))
  
      [strUnion](): void; // should error
@@ -121,7 +121,7 @@
  >strUnion : Symbol(strUnion, Decl(overloadsWithComputedNames.ts, 24, 13))
  }
  
-@@ -120,11 +120,11 @@
+@@= skipped -12, +12 lines =@@
  >I2 : Symbol(I2, Decl(overloadsWithComputedNames.ts, 43, 1))
  
      [strUnion](): void; // should error
@@ -135,7 +135,7 @@
  >strUnion : Symbol(strUnion, Decl(overloadsWithComputedNames.ts, 24, 13))
  }
  
-@@ -132,30 +132,30 @@
+@@= skipped -12, +12 lines =@@
  >C3 : Symbol(C3, Decl(overloadsWithComputedNames.ts, 48, 1))
  
      [1](): void;  // should error

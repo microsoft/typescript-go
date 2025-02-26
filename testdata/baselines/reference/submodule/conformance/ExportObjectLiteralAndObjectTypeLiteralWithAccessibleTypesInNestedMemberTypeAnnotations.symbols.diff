@@ -1,6 +1,6 @@
 --- old.ExportObjectLiteralAndObjectTypeLiteralWithAccessibleTypesInNestedMemberTypeAnnotations.symbols
 +++ new.ExportObjectLiteralAndObjectTypeLiteralWithAccessibleTypesInNestedMemberTypeAnnotations.symbols
-@@ -8,8 +8,8 @@
+@@= skipped -8, +8 lines =@@
  >Point : Symbol(Point, Decl(ExportObjectLiteralAndObjectTypeLiteralWithAccessibleTypesInNestedMemberTypeAnnotations.ts, 0, 10))
  
          constructor(public x: number, public y: number) { }

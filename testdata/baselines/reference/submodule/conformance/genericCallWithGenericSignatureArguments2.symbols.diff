@@ -1,6 +1,6 @@
 --- old.genericCallWithGenericSignatureArguments2.symbols
 +++ new.genericCallWithGenericSignatureArguments2.symbols
-@@ -115,11 +115,11 @@
+@@= skipped -115, +115 lines =@@
  
      enum E { A }
  >E : Symbol(E, Decl(genericCallWithGenericSignatureArguments2.ts, 26, 5))
@@ -14,7 +14,7 @@
  
      function foo3<T>(x: T, a: (x: T) => T, b: (x: T) => T) {
  >foo3 : Symbol(foo3, Decl(genericCallWithGenericSignatureArguments2.ts, 29, 16))
-@@ -148,17 +148,17 @@
+@@= skipped -33, +33 lines =@@
      var r7 = foo3(E.A, (x) => E.A, (x) => F.A); // error
  >r7 : Symbol(r7, Decl(genericCallWithGenericSignatureArguments2.ts, 36, 7))
  >foo3 : Symbol(foo3, Decl(genericCallWithGenericSignatureArguments2.ts, 29, 16))
@@ -38,7 +38,7 @@
  }
  
  module TU {
-@@ -274,11 +274,11 @@
+@@= skipped -126, +126 lines =@@
  
      enum E { A }
  >E : Symbol(E, Decl(genericCallWithGenericSignatureArguments2.ts, 61, 5))
@@ -52,7 +52,7 @@
  
      function foo3<T>(x: T, a: (x: T) => T, b: (x: U) => U) {
  >foo3 : Symbol(foo3, Decl(genericCallWithGenericSignatureArguments2.ts, 64, 16))
-@@ -307,15 +307,15 @@
+@@= skipped -33, +33 lines =@@
      var r7 = foo3(E.A, (x) => E.A, (x) => F.A);
  >r7 : Symbol(r7, Decl(genericCallWithGenericSignatureArguments2.ts, 71, 7))
  >foo3 : Symbol(foo3, Decl(genericCallWithGenericSignatureArguments2.ts, 64, 16))

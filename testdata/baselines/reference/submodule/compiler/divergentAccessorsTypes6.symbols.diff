@@ -1,6 +1,6 @@
 --- old.divergentAccessorsTypes6.symbols
 +++ new.divergentAccessorsTypes6.symbols
-@@ -7,11 +7,11 @@
+@@= skipped -7, +7 lines =@@
  >Element : Symbol(Element, Decl(divergentAccessorsTypes6.ts, 0, 10))
  
      get style(): CSSStyleDeclaration;
@@ -14,7 +14,7 @@
  >cssText : Symbol(cssText, Decl(divergentAccessorsTypes6.ts, 4, 14))
  }
  
-@@ -20,24 +20,24 @@
+@@= skipped -13, +13 lines =@@
  >Element : Symbol(Element, Decl(divergentAccessorsTypes6.ts, 0, 10))
  
  element.style = "color: red";
@@ -49,7 +49,7 @@
  
  // Now that we don't check for getter/setter assignability, we should
  // ensure the setter annotation is actually checked even if it's never observed.
-@@ -51,10 +51,10 @@
+@@= skipped -31, +31 lines =@@
  >I1 : Symbol(I1, Decl(divergentAccessorsTypes6.ts, 15, 31))
  
      get x(): number;

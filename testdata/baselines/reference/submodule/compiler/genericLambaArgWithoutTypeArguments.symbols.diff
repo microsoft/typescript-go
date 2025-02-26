@@ -1,6 +1,6 @@
 --- old.genericLambaArgWithoutTypeArguments.symbols
 +++ new.genericLambaArgWithoutTypeArguments.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(genericLambaArgWithoutTypeArguments.ts, 0, 14))
  
     x: T;

@@ -1,6 +1,6 @@
 --- old.constructorOverloads4.symbols
 +++ new.constructorOverloads4.symbols
-@@ -22,12 +22,12 @@
+@@= skipped -22, +22 lines =@@
  
  
  (new M.Function("return 5"))();

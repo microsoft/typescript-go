@@ -1,6 +1,6 @@
 --- old.classFunctionMerging2.symbols
 +++ new.classFunctionMerging2.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >p : Symbol(p, Decl(classFunctionMerging2.ts, 1, 16))
  
      a: number;
@@ -9,7 +9,7 @@
  }
  
  declare function B(p: string): B;
-@@ -24,7 +24,7 @@
+@@= skipped -16, +16 lines =@@
  >p : Symbol(p, Decl(classFunctionMerging2.ts, 7, 16))
  
      b: number;
@@ -18,7 +18,7 @@
  }
  
  let b = new B("Hey")
-@@ -32,10 +32,10 @@
+@@= skipped -8, +8 lines =@@
  >B : Symbol(B, Decl(classFunctionMerging2.ts, 3, 1), Decl(classFunctionMerging2.ts, 5, 33))
  
  console.log(b.a)

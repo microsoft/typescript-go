@@ -1,6 +1,6 @@
 --- old.metadataOfClassFromModule.symbols
 +++ new.metadataOfClassFromModule.symbols
-@@ -17,7 +17,7 @@
+@@= skipped -17, +17 lines =@@
  
          @inject leftLeg: Leg;
  >inject : Symbol(inject, Decl(metadataOfClassFromModule.ts, 0, 17))

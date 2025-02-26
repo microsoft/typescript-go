@@ -1,6 +1,6 @@
 --- old.excessPropertyCheckWithUnions.symbols
 +++ new.excessPropertyCheckWithUnions.symbols
-@@ -260,7 +260,7 @@
+@@= skipped -260, +260 lines =@@
  >IValue : Symbol(IValue, Decl(excessPropertyCheckWithUnions.ts, 85, 2))
  
    value: string
@@ -9,7 +9,7 @@
  }
  
  interface StringKeys {
-@@ -316,14 +316,14 @@
+@@= skipped -56, +56 lines =@@
  >I1 : Symbol(I1, Decl(excessPropertyCheckWithUnions.ts, 111, 73))
  
      prop1: string;

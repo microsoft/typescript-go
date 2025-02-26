@@ -1,6 +1,6 @@
 --- old.genericReturnTypeFromGetter1.symbols
 +++ new.genericReturnTypeFromGetter1.symbols
-@@ -16,13 +16,13 @@
+@@= skipped -16, +16 lines =@@
  >T : Symbol(T, Decl(genericReturnTypeFromGetter1.ts, 3, 19))
  
      _entityType: A;

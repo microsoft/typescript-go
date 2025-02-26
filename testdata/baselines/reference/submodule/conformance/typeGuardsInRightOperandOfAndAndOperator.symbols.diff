@@ -1,6 +1,6 @@
 --- old.typeGuardsInRightOperandOfAndAndOperator.symbols
 +++ new.typeGuardsInRightOperandOfAndAndOperator.symbols
-@@ -9,9 +9,9 @@
+@@= skipped -9, +9 lines =@@
  
      return typeof x === "string" && x.length === 10; // string
  >x : Symbol(x, Decl(typeGuardsInRightOperandOfAndAndOperator.ts, 2, 13))
@@ -12,7 +12,7 @@
  }
  function foo2(x: number | string) {
  >foo2 : Symbol(foo2, Decl(typeGuardsInRightOperandOfAndAndOperator.ts, 4, 1))
-@@ -106,16 +106,16 @@
+@@= skipped -97, +97 lines =@@
          // change value of x
          ? ((x = 10) && x.toString()) // x is number
  >x : Symbol(x, Decl(typeGuardsInRightOperandOfAndAndOperator.ts, 32, 14))

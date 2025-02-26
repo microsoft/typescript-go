@@ -1,6 +1,6 @@
 --- old.paramTagTypeResolution.symbols
 +++ new.paramTagTypeResolution.symbols
-@@ -3,24 +3,8 @@
+@@= skipped -3, +3 lines =@@
  === main.js ===
  var f = require('./first');
  >f : Symbol(f, Decl(main.js, 0, 3))

@@ -1,6 +1,6 @@
 --- old.exportAssignmentMergedInterface.symbols
 +++ new.exportAssignmentMergedInterface.symbols
-@@ -16,14 +16,14 @@
+@@= skipped -16, +16 lines =@@
  
  var y: string = x.b;
  >y : Symbol(y, Decl(foo_1.ts, 4, 3))
@@ -19,7 +19,7 @@
  
  var z = {x: 1, y: 2};
  >z : Symbol(z, Decl(foo_1.ts, 6, 3))
-@@ -32,9 +32,9 @@
+@@= skipped -16, +16 lines =@@
  
  z = x.d;
  >z : Symbol(z, Decl(foo_1.ts, 6, 3))
@@ -31,7 +31,7 @@
  
  === foo_0.ts ===
  interface Foo {
-@@ -44,7 +44,7 @@
+@@= skipped -12, +12 lines =@@
  >a : Symbol(a, Decl(foo_0.ts, 1, 2))
  
  	b: string;
@@ -40,7 +40,7 @@
  }
  interface Foo {
  >Foo : Symbol(Foo, Decl(foo_0.ts, 0, 0), Decl(foo_0.ts, 3, 1))
-@@ -53,10 +53,10 @@
+@@= skipped -9, +9 lines =@@
  >a : Symbol(a, Decl(foo_0.ts, 5, 2))
  
  	c: boolean;

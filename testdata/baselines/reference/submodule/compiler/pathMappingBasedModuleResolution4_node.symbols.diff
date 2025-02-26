@@ -1,6 +1,6 @@
 --- old.pathMappingBasedModuleResolution4_node.symbols
 +++ new.pathMappingBasedModuleResolution4_node.symbols
-@@ -10,17 +10,15 @@
+@@= skipped -10, +10 lines =@@
  
  use(x.toExponential());
  >use : Symbol(use, Decl(file1.ts, 0, 31))

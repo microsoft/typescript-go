@@ -1,6 +1,6 @@
 --- old.declFileWithErrorsInInputDeclarationFile.symbols
 +++ new.declFileWithErrorsInInputDeclarationFile.symbols
-@@ -4,9 +4,9 @@
+@@= skipped -4, +4 lines =@@
  ///<reference path="declFile.d.ts" preserve="true"/>
  var x = new M.C(); // Declaration file wont get emitted because there are errors in declaration file
  >x : Symbol(x, Decl(client.ts, 1, 3))

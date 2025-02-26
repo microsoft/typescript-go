@@ -1,6 +1,6 @@
 --- old.typeVariableConstraintedToAliasNotAssignableToUnion.symbols
 +++ new.typeVariableConstraintedToAliasNotAssignableToUnion.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >S : Symbol(S, Decl(typeVariableConstraintedToAliasNotAssignableToUnion.ts, 0, 25))
  
      _field: S;
@@ -9,7 +9,7 @@
  >S : Symbol(S, Decl(typeVariableConstraintedToAliasNotAssignableToUnion.ts, 0, 25))
  }
  
-@@ -18,14 +18,14 @@
+@@= skipped -12, +12 lines =@@
  >Something : Symbol(Something, Decl(typeVariableConstraintedToAliasNotAssignableToUnion.ts, 4, 31))
  
      prop: number;

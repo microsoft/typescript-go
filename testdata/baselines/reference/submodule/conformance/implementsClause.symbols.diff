@@ -1,6 +1,6 @@
 --- old.implementsClause.symbols
 +++ new.implementsClause.symbols
-@@ -20,15 +20,15 @@
+@@= skipped -20, +20 lines =@@
  
  class C implements types.Component {}
  >C : Symbol(C, Decl(index.ts, 1, 40))

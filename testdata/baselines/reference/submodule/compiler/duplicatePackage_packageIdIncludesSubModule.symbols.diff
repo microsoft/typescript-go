@@ -1,6 +1,6 @@
 --- old.duplicatePackage_packageIdIncludesSubModule.symbols
 +++ new.duplicatePackage_packageIdIncludesSubModule.symbols
-@@ -9,10 +9,10 @@
+@@= skipped -9, +9 lines =@@
  
  === /node_modules/foo/Foo.d.ts ===
  export default class Foo {

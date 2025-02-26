@@ -1,6 +1,6 @@
 --- old.moduleExportAssignment2.symbols
 +++ new.moduleExportAssignment2.symbols
-@@ -3,17 +3,9 @@
+@@= skipped -3, +3 lines =@@
  === npm.js ===
  var npm = module.exports = function (tree) {
  >npm : Symbol(npm, Decl(npm.js, 0, 3))
@@ -18,7 +18,7 @@
  >tree : Symbol(tree, Decl(npm.js, 2, 43))
  
      npm(tree) // both references should be callable
-@@ -21,9 +13,6 @@
+@@= skipped -18, +10 lines =@@
  >tree : Symbol(tree, Decl(npm.js, 2, 43))
  
      module.exports(tree)

@@ -1,6 +1,6 @@
 --- old.logicalAssignment11(target=es2015).symbols
 +++ new.logicalAssignment11(target=es2015).symbols
-@@ -13,9 +13,7 @@
+@@= skipped -13, +13 lines =@@
  >x : Symbol(x, Decl(logicalAssignment11.ts, 0, 3))
  
  d.length;
@@ -10,7 +10,7 @@
  
  let e: string | undefined;
  >e : Symbol(e, Decl(logicalAssignment11.ts, 6, 3))
-@@ -25,7 +23,5 @@
+@@= skipped -12, +10 lines =@@
  >x : Symbol(x, Decl(logicalAssignment11.ts, 0, 3))
  
  e.length

@@ -1,6 +1,6 @@
 --- old.declarationEmitProtectedMembers.symbols
 +++ new.declarationEmitProtectedMembers.symbols
-@@ -6,42 +6,42 @@
+@@= skipped -6, +6 lines =@@
  >C1 : Symbol(C1, Decl(declarationEmitProtectedMembers.ts, 0, 0))
  
      protected x: number;
@@ -55,7 +55,7 @@
  }
  
  // Derived class overriding protected members
-@@ -50,26 +50,26 @@
+@@= skipped -44, +44 lines =@@
  >C1 : Symbol(C1, Decl(declarationEmitProtectedMembers.ts, 0, 0))
  
      protected f() {
@@ -92,7 +92,7 @@
      }
  }
  
-@@ -79,30 +79,30 @@
+@@= skipped -29, +29 lines =@@
  >C2 : Symbol(C2, Decl(declarationEmitProtectedMembers.ts, 19, 1))
  
      x: number;
@@ -132,7 +132,7 @@
  }
  
  // Protected properties in constructors
-@@ -110,6 +110,6 @@
+@@= skipped -31, +31 lines =@@
  >C4 : Symbol(C4, Decl(declarationEmitProtectedMembers.ts, 43, 1))
  
      constructor(protected a: number, protected b) { }

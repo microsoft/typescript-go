@@ -1,6 +1,6 @@
 --- old.privateNameReadonly.symbols
 +++ new.privateNameReadonly.symbols
-@@ -5,25 +5,19 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(privateNameReadonly.ts, 0, 5))
  
      #bar() {}

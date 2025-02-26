@@ -1,6 +1,6 @@
 --- old.tsxOpeningClosingNames.symbols
 +++ new.tsxOpeningClosingNames.symbols
-@@ -18,18 +18,18 @@
+@@= skipped -18, +18 lines =@@
  }
  
  <A.B.C.D>foo</A . B . C.D>

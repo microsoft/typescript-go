@@ -1,6 +1,6 @@
 --- old.genericCapturingFunctionNarrowing.symbols
 +++ new.genericCapturingFunctionNarrowing.symbols
-@@ -23,9 +23,9 @@
+@@= skipped -23, +23 lines =@@
  >thing : Symbol(thing, Decl(genericCapturingFunctionNarrowing.ts, 0, 163))
  
          console.log(thing.foo);
@@ -12,7 +12,7 @@
  >thing.foo : Symbol(foo, Decl(genericCapturingFunctionNarrowing.ts, 0, 45))
  >thing : Symbol(thing, Decl(genericCapturingFunctionNarrowing.ts, 0, 163))
  >foo : Symbol(foo, Decl(genericCapturingFunctionNarrowing.ts, 0, 45))
-@@ -33,9 +33,9 @@
+@@= skipped -10, +10 lines =@@
      else {
          // I would expect this to work because the type should be narrowed in this branch to `Second`
          console.log(thing.bar); // Error: Property 'bar' does not exist on type 'First | Second'.

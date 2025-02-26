@@ -1,6 +1,6 @@
 --- old.parserComputedPropertyName34.symbols
 +++ new.parserComputedPropertyName34.symbols
-@@ -6,8 +6,8 @@
+@@= skipped -6, +6 lines =@@
  
      // no ASI, comma expected
      [e] = id++,

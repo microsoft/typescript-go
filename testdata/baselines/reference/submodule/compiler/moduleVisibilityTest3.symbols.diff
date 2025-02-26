@@ -1,6 +1,6 @@
 --- old.moduleVisibilityTest3.symbols
 +++ new.moduleVisibilityTest3.symbols
-@@ -22,12 +22,12 @@
+@@= skipped -22, +22 lines =@@
  
   import modes = _modes;
  >modes : Symbol(modes, Decl(moduleVisibilityTest3.ts, 12, 15))
@@ -15,7 +15,7 @@
    
   // If you just use p1:modes, the compiler accepts it - should be an error
   class Bug {
-@@ -38,12 +38,12 @@
+@@= skipped -16, +16 lines =@@
  >modes : Symbol(modes)
  >p2 : Symbol(p2, Decl(moduleVisibilityTest3.ts, 19, 27))
  >modes : Symbol(modes, Decl(moduleVisibilityTest3.ts, 12, 15))

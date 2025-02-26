@@ -1,6 +1,6 @@
 --- old.promiseWithResolvers.symbols
 +++ new.promiseWithResolvers.symbols
-@@ -8,8 +8,8 @@
+@@= skipped -8, +8 lines =@@
  >promise : Symbol(promise, Decl(promiseWithResolvers.ts, 1, 7))
  >resolve : Symbol(resolve, Decl(promiseWithResolvers.ts, 1, 16))
  >reject : Symbol(reject, Decl(promiseWithResolvers.ts, 1, 25))

@@ -1,6 +1,6 @@
 --- old.correctlyMarkAliasAsReferences2.symbols
 +++ new.correctlyMarkAliasAsReferences2.symbols
-@@ -14,17 +14,14 @@
+@@= skipped -14, +14 lines =@@
  
  let k = <button {...buttonProps}>
  >k : Symbol(k, Decl(0.tsx, 5, 3))

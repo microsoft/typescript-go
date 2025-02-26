@@ -1,6 +1,6 @@
 --- old.decoratorOnFunctionExpression.symbols
 +++ new.decoratorOnFunctionExpression.symbols
-@@ -11,5 +11,5 @@
+@@= skipped -11, +11 lines =@@
  var F = @dec function () {
  >F : Symbol(F, Decl(decoratorOnFunctionExpression.ts, 2, 3))
  >dec : Symbol(dec, Decl(decoratorOnFunctionExpression.ts, 0, 0))

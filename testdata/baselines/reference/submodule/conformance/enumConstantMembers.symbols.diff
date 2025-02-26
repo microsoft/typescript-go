@@ -1,6 +1,6 @@
 --- old.enumConstantMembers.symbols
 +++ new.enumConstantMembers.symbols
-@@ -6,68 +6,68 @@
+@@= skipped -6, +6 lines =@@
  >E1 : Symbol(E1, Decl(enumConstantMembers.ts, 0, 0))
  
      a = 1,
@@ -85,7 +85,7 @@
  >Infinity : Symbol(Infinity, Decl(lib.es5.d.ts, --, --))
  }
  
-@@ -75,27 +75,27 @@
+@@= skipped -69, +69 lines =@@
  >E6 : Symbol(E6, Decl(enumConstantMembers.ts, 28, 1))
  
      a = 1 / 0,

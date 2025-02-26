@@ -1,6 +1,6 @@
 --- old.detachedCommentAtStartOfLambdaFunction2.symbols
 +++ new.detachedCommentAtStartOfLambdaFunction2.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >TestFile : Symbol(TestFile, Decl(detachedCommentAtStartOfLambdaFunction2.ts, 0, 0))
  
      name: string;
@@ -13,7 +13,7 @@
  >message : Symbol(message, Decl(detachedCommentAtStartOfLambdaFunction2.ts, 2, 8))
  
          return (...x: string[]) =>
-@@ -20,8 +20,8 @@
+@@= skipped -15, +15 lines =@@
  
              message + this.name;
  >message : Symbol(message, Decl(detachedCommentAtStartOfLambdaFunction2.ts, 2, 8))

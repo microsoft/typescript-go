@@ -1,6 +1,6 @@
 --- old.jsdocImplements_interface_multiple.symbols
 +++ new.jsdocImplements_interface_multiple.symbols
-@@ -5,13 +5,13 @@
+@@= skipped -5, +5 lines =@@
  >Drawable : Symbol(Drawable, Decl(defs.d.ts, 0, 0))
  
      draw(): number;
@@ -16,7 +16,7 @@
  }
  === /a.js ===
  /** 
-@@ -22,12 +22,12 @@
+@@= skipped -17, +17 lines =@@
  >Square : Symbol(Square, Decl(a.js, 0, 0))
  
      draw() {
@@ -31,7 +31,7 @@
  
          return 0;
      }
-@@ -40,7 +40,7 @@
+@@= skipped -18, +18 lines =@@
  >BadSquare : Symbol(BadSquare, Decl(a.js, 11, 1))
  
      size() {

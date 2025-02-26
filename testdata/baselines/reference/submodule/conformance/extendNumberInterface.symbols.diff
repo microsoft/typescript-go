@@ -1,6 +1,6 @@
 --- old.extendNumberInterface.symbols
 +++ new.extendNumberInterface.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >Number : Symbol(Number, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(extendNumberInterface.ts, 0, 0))
  
      doStuff(): string;
@@ -13,7 +13,7 @@
  >T : Symbol(T, Decl(extendNumberInterface.ts, 2, 17))
  >x : Symbol(x, Decl(extendNumberInterface.ts, 2, 20))
  >T : Symbol(T, Decl(extendNumberInterface.ts, 2, 17))
-@@ -20,23 +20,23 @@
+@@= skipped -15, +15 lines =@@
  
  var a: string = x.doStuff();
  >a : Symbol(a, Decl(extendNumberInterface.ts, 6, 3))

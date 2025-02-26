@@ -1,6 +1,6 @@
 --- old.contextualTypingOfArrayLiterals1.symbols
 +++ new.contextualTypingOfArrayLiterals1.symbols
-@@ -19,7 +19,7 @@
+@@= skipped -19, +19 lines =@@
  >x3 : Symbol(x3, Decl(contextualTypingOfArrayLiterals1.ts, 4, 3))
  
  r2.getDate(); 

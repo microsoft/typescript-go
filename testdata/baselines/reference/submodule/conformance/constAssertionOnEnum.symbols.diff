@@ -1,6 +1,6 @@
 --- old.constAssertionOnEnum.symbols
 +++ new.constAssertionOnEnum.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(enum.ts, 0, 0))
  
      A,
@@ -13,7 +13,7 @@
  }
  
  === test.ts ===
-@@ -19,23 +19,23 @@
+@@= skipped -14, +14 lines =@@
  >Bar : Symbol(Bar, Decl(test.ts, 0, 27))
  
      A,
@@ -43,7 +43,7 @@
  >const : Symbol(const)
  
  === ns.ts ===
-@@ -44,25 +44,25 @@
+@@= skipped -25, +25 lines =@@
  
      export enum Foo { X }
  >Foo : Symbol(Foo, Decl(ns.ts, 0, 14))

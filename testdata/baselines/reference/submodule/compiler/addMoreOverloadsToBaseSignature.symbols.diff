@@ -1,6 +1,6 @@
 --- old.addMoreOverloadsToBaseSignature.symbols
 +++ new.addMoreOverloadsToBaseSignature.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(addMoreOverloadsToBaseSignature.ts, 0, 0))
  
      f(): string;
@@ -9,7 +9,7 @@
  }
  
  interface Bar extends Foo {
-@@ -13,7 +13,7 @@
+@@= skipped -8, +8 lines =@@
  >Foo : Symbol(Foo, Decl(addMoreOverloadsToBaseSignature.ts, 0, 0))
  
      f(key: string): string;

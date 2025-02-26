@@ -1,6 +1,6 @@
 --- old.declarationEmitClassMemberNameConflict2.symbols
 +++ new.declarationEmitClassMemberNameConflict2.symbols
-@@ -8,14 +8,14 @@
+@@= skipped -8, +8 lines =@@
  >Hello : Symbol(Hello, Decl(declarationEmitClassMemberNameConflict2.ts, 0, 18))
  
      World
@@ -17,7 +17,7 @@
  }
  
  class Foo {
-@@ -23,16 +23,16 @@
+@@= skipped -15, +15 lines =@@
  
      // Same names + string => OK
      Bar = Bar;

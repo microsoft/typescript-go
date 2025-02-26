@@ -1,6 +1,6 @@
 --- old.downlevelLetConst16.symbols
 +++ new.downlevelLetConst16.symbols
-@@ -90,7 +90,7 @@
+@@= skipped -90, +90 lines =@@
  >A : Symbol(A, Decl(downlevelLetConst16.ts, 29, 1))
  
      m1() {
@@ -9,7 +9,7 @@
  
          let x = 1;
  >x : Symbol(x, Decl(downlevelLetConst16.ts, 33, 11))
-@@ -116,7 +116,7 @@
+@@= skipped -26, +26 lines =@@
  >z : Symbol(z, Decl(downlevelLetConst16.ts, 37, 13))
      }
      m2() {
@@ -18,7 +18,7 @@
          {
              let x = 1;
  >x : Symbol(x, Decl(downlevelLetConst16.ts, 42, 15))
-@@ -152,7 +152,7 @@
+@@= skipped -36, +36 lines =@@
  >B : Symbol(B, Decl(downlevelLetConst16.ts, 52, 1))
  
      m1() {
@@ -27,7 +27,7 @@
  
          const x = 1;
  >x : Symbol(x, Decl(downlevelLetConst16.ts, 56, 13))
-@@ -179,7 +179,7 @@
+@@= skipped -27, +27 lines =@@
  
      }
      m2() {

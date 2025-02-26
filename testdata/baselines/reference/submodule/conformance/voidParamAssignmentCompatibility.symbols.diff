@@ -1,6 +1,6 @@
 --- old.voidParamAssignmentCompatibility.symbols
 +++ new.voidParamAssignmentCompatibility.symbols
-@@ -14,7 +14,7 @@
+@@= skipped -14, +14 lines =@@
  >T : Symbol(T, Decl(voidParamAssignmentCompatibility.ts, 3, 14))
  
      method(value: T): void;
@@ -9,7 +9,7 @@
  >value : Symbol(value, Decl(voidParamAssignmentCompatibility.ts, 4, 11))
  >T : Symbol(T, Decl(voidParamAssignmentCompatibility.ts, 3, 14))
  }
-@@ -25,7 +25,7 @@
+@@= skipped -11, +11 lines =@@
  
  gg = o.method;
  >gg : Symbol(gg, Decl(voidParamAssignmentCompatibility.ts, 1, 3))

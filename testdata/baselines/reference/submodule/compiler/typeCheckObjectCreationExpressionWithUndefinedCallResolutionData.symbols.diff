@@ -1,6 +1,6 @@
 --- old.typeCheckObjectCreationExpressionWithUndefinedCallResolutionData.symbols
 +++ new.typeCheckObjectCreationExpressionWithUndefinedCallResolutionData.symbols
-@@ -5,9 +5,9 @@
+@@= skipped -5, +5 lines =@@
  >f : Symbol(f, Decl(file2.ts, 0, 0))
  
  f.foo();

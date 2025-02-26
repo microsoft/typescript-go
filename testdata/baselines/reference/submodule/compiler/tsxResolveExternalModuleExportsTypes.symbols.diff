@@ -1,6 +1,6 @@
 --- old.tsxResolveExternalModuleExportsTypes.symbols
 +++ new.tsxResolveExternalModuleExportsTypes.symbols
-@@ -4,7 +4,7 @@
+@@= skipped -4, +4 lines =@@
  declare var a: a.Foo;
  >a : Symbol(a, Decl(index.d.ts, 0, 11), Decl(index.d.ts, 0, 21), Decl(index.d.ts, 0, 23))
  >a : Symbol(a, Decl(index.d.ts, 0, 11), Decl(index.d.ts, 0, 21), Decl(index.d.ts, 0, 23))
@@ -9,7 +9,7 @@
  
  declare namespace a {
  >a : Symbol(a, Decl(index.d.ts, 0, 11), Decl(index.d.ts, 0, 21), Decl(index.d.ts, 0, 23))
-@@ -29,7 +29,7 @@
+@@= skipped -25, +25 lines =@@
  >Foo : Symbol(Foo, Decl(index.d.ts, 1, 21), Decl(index.d.ts, 2, 21))
  
          Test: null;
@@ -18,7 +18,7 @@
      }
  }
  
-@@ -39,6 +39,4 @@
+@@= skipped -10, +10 lines =@@
  
  const Foo = (<h1></h1>);
  >Foo : Symbol(Foo, Decl(foo.tsx, 1, 5))

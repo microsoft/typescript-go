@@ -1,6 +1,6 @@
 --- old.esModuleInteropImportCall.symbols
 +++ new.esModuleInteropImportCall.symbols
-@@ -12,9 +12,8 @@
+@@= skipped -12, +12 lines =@@
  
  === index.ts ===
  import("./foo").then(f => {

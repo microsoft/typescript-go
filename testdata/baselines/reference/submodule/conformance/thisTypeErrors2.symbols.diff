@@ -1,6 +1,6 @@
 --- old.thisTypeErrors2.symbols
 +++ new.thisTypeErrors2.symbols
-@@ -16,10 +16,10 @@
+@@= skipped -16, +16 lines =@@
  >Derived : Symbol(Derived, Decl(thisTypeErrors2.ts, 5, 1))
  
      n: number;
@@ -13,7 +13,7 @@
  >Generic : Symbol(Generic, Decl(thisTypeErrors2.ts, 3, 1))
  
          let self: this = this;
-@@ -27,9 +27,9 @@
+@@= skipped -11, +11 lines =@@
  >this : Symbol(Derived, Decl(thisTypeErrors2.ts, 5, 1))
  
          this.n = 12;

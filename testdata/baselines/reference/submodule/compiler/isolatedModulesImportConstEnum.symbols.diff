@@ -1,6 +1,6 @@
 --- old.isolatedModulesImportConstEnum.symbols
 +++ new.isolatedModulesImportConstEnum.symbols
-@@ -5,18 +5,18 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(file1.ts, 0, 8))
  
  console.log(Foo.BAR);

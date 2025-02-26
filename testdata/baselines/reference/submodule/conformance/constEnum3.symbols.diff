@@ -1,6 +1,6 @@
 --- old.constEnum3.symbols
 +++ new.constEnum3.symbols
-@@ -3,8 +3,8 @@
+@@= skipped -3, +3 lines =@@
  === constEnum3.ts ===
  const enum TestType { foo, bar }
  >TestType : Symbol(TestType, Decl(constEnum3.ts, 0, 0))
@@ -11,7 +11,7 @@
  
  type TestTypeStr = keyof typeof TestType;
  >TestTypeStr : Symbol(TestTypeStr, Decl(constEnum3.ts, 0, 32))
-@@ -22,15 +22,15 @@
+@@= skipped -19, +19 lines =@@
  
  f1(TestType.foo)
  >f1 : Symbol(f1, Decl(constEnum3.ts, 1, 41))

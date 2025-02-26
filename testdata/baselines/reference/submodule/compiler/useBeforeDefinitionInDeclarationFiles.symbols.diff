@@ -1,6 +1,6 @@
 --- old.useBeforeDefinitionInDeclarationFiles.symbols
 +++ new.useBeforeDefinitionInDeclarationFiles.symbols
-@@ -5,16 +5,16 @@
+@@= skipped -5, +5 lines =@@
  >ClassWithSymbols : Symbol(ClassWithSymbols, Decl(declaration.d.ts, 0, 0))
  
    public readonly [Namespace.locallyExportedCustomSymbol]: string;

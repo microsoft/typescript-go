@@ -1,6 +1,6 @@
 --- old.variance.symbols
 +++ new.variance.symbols
-@@ -10,7 +10,7 @@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(variance.ts, 4, 14))
  
    prop: T extends unknown ? true : false;
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(variance.ts, 4, 14))
  }
  
-@@ -42,23 +42,23 @@
+@@= skipped -32, +32 lines =@@
  >T : Symbol(T, Decl(variance.ts, 16, 10))
  
    private static instance: Bar<string>[] = [];

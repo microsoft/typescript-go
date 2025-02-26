@@ -1,6 +1,6 @@
 --- old.typeFromPropertyAssignment.symbols
 +++ new.typeFromPropertyAssignment.symbols
-@@ -2,22 +2,20 @@
+@@= skipped -2, +2 lines =@@
  
  === a.js ===
  var Outer = class O {
@@ -27,7 +27,7 @@
  >a : Symbol(a, Decl(a.js, 4, 6))
  >b : Symbol(b, Decl(a.js, 4, 8))
  
-@@ -27,17 +25,13 @@
+@@= skipped -25, +23 lines =@@
  >si : Symbol(si, Decl(a.js, 8, 3))
  
  si.m

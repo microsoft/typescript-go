@@ -1,6 +1,6 @@
 --- old.strictSubtypeAndNarrowing.symbols
 +++ new.strictSubtypeAndNarrowing.symbols
-@@ -564,14 +564,14 @@
+@@= skipped -564, +564 lines =@@
  >Free : Symbol(Free, Decl(strictSubtypeAndNarrowing.ts, 209, 1))
  
      premium: false;

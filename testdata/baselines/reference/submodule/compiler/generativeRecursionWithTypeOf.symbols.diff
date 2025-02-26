@@ -1,6 +1,6 @@
 --- old.generativeRecursionWithTypeOf.symbols
 +++ new.generativeRecursionWithTypeOf.symbols
-@@ -6,11 +6,11 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(generativeRecursionWithTypeOf.ts, 0, 8))
  
      static foo(x: number) { }

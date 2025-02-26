@@ -1,6 +1,6 @@
 --- old.thisTypeErrors.symbols
 +++ new.thisTypeErrors.symbols
-@@ -25,21 +25,21 @@
+@@= skipped -25, +25 lines =@@
  >I1 : Symbol(I1, Decl(thisTypeErrors.ts, 7, 1))
  
      a: { x: this };
@@ -27,7 +27,7 @@
  >f : Symbol(f, Decl(thisTypeErrors.ts, 14, 8))
  >x : Symbol(x, Decl(thisTypeErrors.ts, 14, 11))
  }
-@@ -48,21 +48,21 @@
+@@= skipped -23, +23 lines =@@
  >C1 : Symbol(C1, Decl(thisTypeErrors.ts, 15, 1))
  
      a: { x: this };
@@ -54,7 +54,7 @@
  >f : Symbol(f, Decl(thisTypeErrors.ts, 22, 8))
  >x : Symbol(x, Decl(thisTypeErrors.ts, 22, 11))
  }
-@@ -71,14 +71,14 @@
+@@= skipped -23, +23 lines =@@
  >C2 : Symbol(C2, Decl(thisTypeErrors.ts, 23, 1))
  
      static x: this;
@@ -72,7 +72,7 @@
  >x : Symbol(x, Decl(thisTypeErrors.ts, 28, 15))
  
          return undefined;
-@@ -100,7 +100,7 @@
+@@= skipped -29, +29 lines =@@
  >C3 : Symbol(C3, Decl(thisTypeErrors.ts, 36, 1))
  
      x1 = {
@@ -81,7 +81,7 @@
  
          g(x: this): this {
  >g : Symbol(g, Decl(thisTypeErrors.ts, 39, 10))
-@@ -111,7 +111,7 @@
+@@= skipped -11, +11 lines =@@
          }
      }
      f() {

@@ -1,6 +1,6 @@
 --- old.targetEs6DecoratorMetadataImportNotElided.symbols
 +++ new.targetEs6DecoratorMetadataImportNotElided.symbols
-@@ -16,25 +16,25 @@
+@@= skipped -16, +16 lines =@@
  >MyComponent : Symbol(MyComponent, Decl(index.ts, 0, 44))
  
      _ref: TemplateRef;

@@ -1,6 +1,6 @@
 --- old.externModule.symbols
 +++ new.externModule.symbols
-@@ -6,10 +6,10 @@
+@@= skipped -6, +6 lines =@@
  >XDate : Symbol(XDate, Decl(externModule.ts, 0, 16))
  
  		public getDay():number;
@@ -13,7 +13,7 @@
  
  		// etc.
  
-@@ -62,29 +62,29 @@
+@@= skipped -56, +56 lines =@@
  	    constructor();
  	    
  	    static parse(string: string): number;
@@ -48,7 +48,7 @@
  >year : Symbol(year, Decl(externModule.ts, 23, 16))
  >month : Symbol(month, Decl(externModule.ts, 23, 29))
  >date : Symbol(date, Decl(externModule.ts, 23, 44))
-@@ -92,7 +92,7 @@
+@@= skipped -30, +30 lines =@@
  >minutes : Symbol(minutes, Decl(externModule.ts, 23, 73))
  
  	    static UTC(year: number, month: number, date: number, hours: number, minutes: number, seconds: number): number;
@@ -57,7 +57,7 @@
  >year : Symbol(year, Decl(externModule.ts, 24, 16))
  >month : Symbol(month, Decl(externModule.ts, 24, 29))
  >date : Symbol(date, Decl(externModule.ts, 24, 44))
-@@ -101,7 +101,7 @@
+@@= skipped -9, +9 lines =@@
  >seconds : Symbol(seconds, Decl(externModule.ts, 24, 90))
  
  	    static UTC(year: number, month: number, date: number, hours: number, minutes: number, seconds: number,
@@ -66,7 +66,7 @@
  >year : Symbol(year, Decl(externModule.ts, 25, 16))
  >month : Symbol(month, Decl(externModule.ts, 25, 29))
  >date : Symbol(date, Decl(externModule.ts, 25, 44))
-@@ -113,7 +113,7 @@
+@@= skipped -12, +12 lines =@@
  >ms : Symbol(ms, Decl(externModule.ts, 25, 107))
  
  	    static now(): number;

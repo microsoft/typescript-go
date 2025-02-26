@@ -1,6 +1,6 @@
 --- old.argumentsReferenceInMethod3_Js.symbols
 +++ new.argumentsReferenceInMethod3_Js.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(a.js, 0, 0))
  
  	get arguments() {
@@ -9,7 +9,7 @@
  
  		return { bar: {} };
  >bar : Symbol(bar, Decl(a.js, 2, 10))
-@@ -20,29 +20,25 @@
+@@= skipped -15, +15 lines =@@
  	 * @param {object} [foo={}]
  	 */
  	m(foo = {}) {

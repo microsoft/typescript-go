@@ -1,6 +1,6 @@
 --- old.functionsMissingReturnStatementsAndExpressions.symbols
 +++ new.functionsMissingReturnStatementsAndExpressions.symbols
-@@ -196,33 +196,33 @@
+@@= skipped -196, +196 lines =@@
  >C : Symbol(C, Decl(functionsMissingReturnStatementsAndExpressions.ts, 126, 1))
  
      public get m1() {

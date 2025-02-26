@@ -1,6 +1,6 @@
 --- old.tsxReactPropsInferenceSucceedsOnIntersections.symbols
 +++ new.tsxReactPropsInferenceSucceedsOnIntersections.symbols
-@@ -10,7 +10,7 @@
+@@= skipped -10, +10 lines =@@
  >ButtonProps : Symbol(ButtonProps, Decl(tsxReactPropsInferenceSucceedsOnIntersections.tsx, 2, 26))
  >T : Symbol(T, Decl(tsxReactPropsInferenceSucceedsOnIntersections.tsx, 4, 24))
  >React : Symbol(React, Decl(tsxReactPropsInferenceSucceedsOnIntersections.tsx, 2, 6))
@@ -9,7 +9,7 @@
  >HTMLButtonElement : Symbol(HTMLButtonElement, Decl(lib.dom.d.ts, --, --), Decl(lib.dom.d.ts, --, --))
  
      outline?: boolean;
-@@ -22,9 +22,9 @@
+@@= skipped -12, +12 lines =@@
  declare class Button<T = {}> extends React.Component<ButtonProps<T>> { }
  >Button : Symbol(Button, Decl(tsxReactPropsInferenceSucceedsOnIntersections.tsx, 6, 6))
  >T : Symbol(T, Decl(tsxReactPropsInferenceSucceedsOnIntersections.tsx, 8, 21))
@@ -21,7 +21,7 @@
  >ButtonProps : Symbol(ButtonProps, Decl(tsxReactPropsInferenceSucceedsOnIntersections.tsx, 2, 26))
  >T : Symbol(T, Decl(tsxReactPropsInferenceSucceedsOnIntersections.tsx, 8, 21))
  
-@@ -33,13 +33,13 @@
+@@= skipped -11, +11 lines =@@
  >ButtonProps : Symbol(ButtonProps, Decl(tsxReactPropsInferenceSucceedsOnIntersections.tsx, 2, 26))
  
      customProp: string;

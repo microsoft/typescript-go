@@ -1,6 +1,6 @@
 --- old.mappedTypeErrors.symbols
 +++ new.mappedTypeErrors.symbols
-@@ -5,33 +5,33 @@
+@@= skipped -5, +5 lines =@@
  >Shape : Symbol(Shape, Decl(mappedTypeErrors.ts, 0, 0))
  
      name: string;
@@ -41,7 +41,7 @@
  }
  
  // Constraint checking
-@@ -314,10 +314,10 @@
+@@= skipped -309, +309 lines =@@
  >Foo : Symbol(Foo, Decl(mappedTypeErrors.ts, 83, 1))
  
      a: string;
@@ -54,7 +54,7 @@
  }
  
  function setState<T, K extends keyof T>(obj: T, props: Pick<T, K>) {
-@@ -392,11 +392,11 @@
+@@= skipped -78, +78 lines =@@
  >T : Symbol(T, Decl(mappedTypeErrors.ts, 107, 8))
  
      state: T;
@@ -68,7 +68,7 @@
  >K : Symbol(K, Decl(mappedTypeErrors.ts, 109, 13))
  >T : Symbol(T, Decl(mappedTypeErrors.ts, 107, 8))
  >props : Symbol(props, Decl(mappedTypeErrors.ts, 109, 32))
-@@ -409,9 +409,9 @@
+@@= skipped -17, +17 lines =@@
  >props : Symbol(props, Decl(mappedTypeErrors.ts, 109, 32))
  
              this.state[k] = props[k];
@@ -80,7 +80,7 @@
  >k : Symbol(k, Decl(mappedTypeErrors.ts, 110, 16))
  >props : Symbol(props, Decl(mappedTypeErrors.ts, 109, 32))
  >k : Symbol(k, Decl(mappedTypeErrors.ts, 110, 16))
-@@ -425,47 +425,47 @@
+@@= skipped -16, +16 lines =@@
  >Foo : Symbol(Foo, Decl(mappedTypeErrors.ts, 83, 1))
  
  c.setState({ a: "test", b: 43 });

@@ -1,6 +1,6 @@
 --- old.overrideInterfaceProperty.symbols
 +++ new.overrideInterfaceProperty.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >V : Symbol(V, Decl(overrideInterfaceProperty.ts, 0, 16))
  
      readonly size: number;
@@ -9,7 +9,7 @@
  }
  interface MupConstructor {
  >MupConstructor : Symbol(MupConstructor, Decl(overrideInterfaceProperty.ts, 2, 1))
-@@ -26,7 +26,7 @@
+@@= skipped -19, +19 lines =@@
  >V : Symbol(V, Decl(overrideInterfaceProperty.ts, 5, 10))
  
      readonly prototype: Mup<any, any>;
@@ -18,7 +18,7 @@
  >Mup : Symbol(Mup, Decl(overrideInterfaceProperty.ts, 0, 0), Decl(overrideInterfaceProperty.ts, 8, 11))
  }
  declare var Mup: MupConstructor;
-@@ -39,13 +39,13 @@
+@@= skipped -13, +13 lines =@@
  
      // ok, because Mup is an interface
      get size() { return 0 }

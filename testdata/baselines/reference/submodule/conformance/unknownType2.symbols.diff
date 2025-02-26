@@ -1,6 +1,6 @@
 --- old.unknownType2.symbols
 +++ new.unknownType2.symbols
-@@ -38,9 +38,9 @@
+@@= skipped -38, +38 lines =@@
  
      const y = u.toString(10);
  >y : Symbol(y, Decl(unknownType2.ts, 12, 9))
@@ -12,7 +12,7 @@
  }
  
  if (u === true || u === false) {
-@@ -239,26 +239,26 @@
+@@= skipped -201, +201 lines =@@
  >NumberEnum : Symbol(NumberEnum, Decl(unknownType2.ts, 90, 1))
  
      A,
@@ -45,7 +45,7 @@
  }
  
  if (u === NumberEnum || u === StringEnum) {
-@@ -274,27 +274,27 @@
+@@= skipped -35, +35 lines =@@
  
  if (u === NumberEnum.A) {
  >u : Symbol(u, Decl(unknownType2.ts, 6, 5))
@@ -79,7 +79,7 @@
  >u : Symbol(u, Decl(unknownType2.ts, 6, 5))
  }
  
-@@ -306,38 +306,38 @@
+@@= skipped -32, +32 lines =@@
  >x : Symbol(x, Decl(unknownType2.ts, 116, 24))
  
          case StringEnum.A:
@@ -127,7 +127,7 @@
  >x : Symbol(x, Decl(unknownType2.ts, 116, 24))
  
              break;
-@@ -357,42 +357,42 @@
+@@= skipped -51, +51 lines =@@
  >x : Symbol(x, Decl(unknownType2.ts, 131, 31))
  
          case StringEnum.A:
@@ -182,7 +182,7 @@
  >x : Symbol(x, Decl(unknownType2.ts, 131, 31))
  
              const all: StringEnum = x;
-@@ -618,69 +618,69 @@
+@@= skipped -261, +261 lines =@@
  
      if (u !== NumberEnum.A) { }
  >u : Symbol(u, Decl(unknownType2.ts, 232, 22))

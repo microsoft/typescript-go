@@ -1,6 +1,6 @@
 --- old.aliasUsageInIndexerOfClass.symbols
 +++ new.aliasUsageInIndexerOfClass.symbols
-@@ -11,10 +11,10 @@
+@@= skipped -11, +11 lines =@@
  >IHasVisualizationModel : Symbol(IHasVisualizationModel, Decl(aliasUsageInIndexerOfClass_main.ts, 1, 65))
  
      VisualizationModel: typeof Backbone.Model;
@@ -14,7 +14,7 @@
  }
  class N {
  >N : Symbol(N, Decl(aliasUsageInIndexerOfClass_main.ts, 4, 1))
-@@ -24,7 +24,7 @@
+@@= skipped -13, +13 lines =@@
  >IHasVisualizationModel : Symbol(IHasVisualizationModel, Decl(aliasUsageInIndexerOfClass_main.ts, 1, 65))
  
      x = moduleA;
@@ -23,7 +23,7 @@
  >moduleA : Symbol(moduleA, Decl(aliasUsageInIndexerOfClass_main.ts, 0, 67))
  }
  class N2 {
-@@ -35,7 +35,7 @@
+@@= skipped -11, +11 lines =@@
  >moduleA : Symbol(moduleA, Decl(aliasUsageInIndexerOfClass_main.ts, 0, 67))
  
      x: IHasVisualizationModel;
@@ -32,7 +32,7 @@
  >IHasVisualizationModel : Symbol(IHasVisualizationModel, Decl(aliasUsageInIndexerOfClass_main.ts, 1, 65))
  }
  === aliasUsageInIndexerOfClass_backbone.ts ===
-@@ -43,7 +43,7 @@
+@@= skipped -8, +8 lines =@@
  >Model : Symbol(Model, Decl(aliasUsageInIndexerOfClass_backbone.ts, 0, 0))
  
      public someData: string;
@@ -41,7 +41,7 @@
  }
  
  === aliasUsageInIndexerOfClass_moduleA.ts ===
-@@ -52,9 +52,9 @@
+@@= skipped -9, +9 lines =@@
  
  export class VisualizationModel extends Backbone.Model {
  >VisualizationModel : Symbol(VisualizationModel, Decl(aliasUsageInIndexerOfClass_moduleA.ts, 0, 67))

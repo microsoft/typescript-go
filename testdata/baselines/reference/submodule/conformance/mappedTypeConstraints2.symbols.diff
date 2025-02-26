@@ -1,6 +1,6 @@
 --- old.mappedTypeConstraints2.symbols
 +++ new.mappedTypeConstraints2.symbols
-@@ -198,10 +198,10 @@
+@@= skipped -198, +198 lines =@@
  >Bounds : Symbol(Bounds, Decl(mappedTypeConstraints2.ts, 50, 71))
  
      min: number;
@@ -13,7 +13,7 @@
  }
  
  type NumericBoundsOf<T> = {
-@@ -229,9 +229,9 @@
+@@= skipped -31, +31 lines =@@
      for (const [key, val] of Object.entries(obj)) {
  >key : Symbol(key, Decl(mappedTypeConstraints2.ts, 64, 16))
  >val : Symbol(val, Decl(mappedTypeConstraints2.ts, 64, 20))

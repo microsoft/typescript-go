@@ -1,6 +1,6 @@
 --- old.privateNamesAndFields.symbols
 +++ new.privateNamesAndFields.symbols
-@@ -5,11 +5,11 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(privateNamesAndFields.ts, 0, 0))
  
      #foo: number;
@@ -14,7 +14,7 @@
  >this : Symbol(A, Decl(privateNamesAndFields.ts, 0, 0))
      }
  }
-@@ -19,14 +19,14 @@
+@@= skipped -14, +14 lines =@@
  >A : Symbol(A, Decl(privateNamesAndFields.ts, 0, 0))
  
      #foo: string;

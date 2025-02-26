@@ -1,6 +1,6 @@
 --- old.classAbstractOverrideWithAbstract.symbols
 +++ new.classAbstractOverrideWithAbstract.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(classAbstractOverrideWithAbstract.ts, 0, 0))
  
      foo() {}
@@ -9,7 +9,7 @@
  }
  
  abstract class B extends A {
-@@ -13,17 +13,17 @@
+@@= skipped -8, +8 lines =@@
  >A : Symbol(A, Decl(classAbstractOverrideWithAbstract.ts, 0, 0))
  
      abstract foo();
@@ -30,7 +30,7 @@
  }
  
  abstract class BB extends AA {
-@@ -31,10 +31,10 @@
+@@= skipped -18, +18 lines =@@
  >AA : Symbol(AA, Decl(classAbstractOverrideWithAbstract.ts, 6, 1))
  
      abstract foo();
@@ -43,7 +43,7 @@
  }
  
  class CC extends BB {} // error
-@@ -46,5 +46,5 @@
+@@= skipped -15, +15 lines =@@
  >BB : Symbol(BB, Decl(classAbstractOverrideWithAbstract.ts, 11, 1))
  
      foo() {}

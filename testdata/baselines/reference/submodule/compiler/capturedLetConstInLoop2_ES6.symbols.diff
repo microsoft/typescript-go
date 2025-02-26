@@ -1,6 +1,6 @@
 --- old.capturedLetConstInLoop2_ES6.symbols
 +++ new.capturedLetConstInLoop2_ES6.symbols
-@@ -11,9 +11,7 @@
+@@= skipped -11, +11 lines =@@
  
          let a = arguments.length;
  >a : Symbol(a, Decl(capturedLetConstInLoop2_ES6.ts, 3, 11))
@@ -10,7 +10,7 @@
  
          (function() { return x + a });
  >x : Symbol(x, Decl(capturedLetConstInLoop2_ES6.ts, 2, 12))
-@@ -34,9 +32,7 @@
+@@= skipped -23, +21 lines =@@
  
          let a = arguments.length;
  >a : Symbol(a, Decl(capturedLetConstInLoop2_ES6.ts, 11, 11))
@@ -20,7 +20,7 @@
  
          (function() { return x + a });
  >x : Symbol(x, Decl(capturedLetConstInLoop2_ES6.ts, 10, 12))
-@@ -59,9 +55,7 @@
+@@= skipped -25, +23 lines =@@
  
          let a = arguments.length;
  >a : Symbol(a, Decl(capturedLetConstInLoop2_ES6.ts, 19, 11))
@@ -30,7 +30,7 @@
  
          (function() { return x + a });
  >x : Symbol(x, Decl(capturedLetConstInLoop2_ES6.ts, 18, 12))
-@@ -80,9 +74,7 @@
+@@= skipped -21, +19 lines =@@
      while (1 === 1) {
          let a = arguments.length;
  >a : Symbol(a, Decl(capturedLetConstInLoop2_ES6.ts, 27, 11))
@@ -40,7 +40,7 @@
  
          (function() { return x + a });
  >x : Symbol(x, Decl(capturedLetConstInLoop2_ES6.ts, 25, 14))
-@@ -104,9 +96,7 @@
+@@= skipped -24, +22 lines =@@
  
          let a = arguments.length;
  >a : Symbol(a, Decl(capturedLetConstInLoop2_ES6.ts, 36, 11))
@@ -50,7 +50,7 @@
  
          (function() { return x + a });
  >x : Symbol(x, Decl(capturedLetConstInLoop2_ES6.ts, 35, 11))
-@@ -130,9 +120,7 @@
+@@= skipped -26, +24 lines =@@
  
          let a = arguments.length;
  >a : Symbol(a, Decl(capturedLetConstInLoop2_ES6.ts, 44, 11))
@@ -60,7 +60,7 @@
  
          let x = 1;
  >x : Symbol(x, Decl(capturedLetConstInLoop2_ES6.ts, 45, 11))
-@@ -159,9 +147,7 @@
+@@= skipped -29, +27 lines =@@
  
          let a = arguments.length;
  >a : Symbol(a, Decl(capturedLetConstInLoop2_ES6.ts, 53, 11))
@@ -70,7 +70,7 @@
  
          (function() { return x + y + a });
  >x : Symbol(x, Decl(capturedLetConstInLoop2_ES6.ts, 52, 12))
-@@ -187,9 +173,7 @@
+@@= skipped -28, +26 lines =@@
  
          let a = arguments.length;
  >a : Symbol(a, Decl(capturedLetConstInLoop2_ES6.ts, 63, 11))
@@ -80,7 +80,7 @@
  
          (function() { return x + y + a });
  >x : Symbol(x, Decl(capturedLetConstInLoop2_ES6.ts, 62, 11))
-@@ -214,9 +198,7 @@
+@@= skipped -27, +25 lines =@@
  
          let a = arguments.length;
  >a : Symbol(a, Decl(capturedLetConstInLoop2_ES6.ts, 72, 11))
@@ -90,7 +90,7 @@
  
          (function() { return x + y + a });
  >x : Symbol(x, Decl(capturedLetConstInLoop2_ES6.ts, 71, 11))
-@@ -246,9 +228,7 @@
+@@= skipped -32, +30 lines =@@
  
          let a = arguments.length;
  >a : Symbol(a, Decl(capturedLetConstInLoop2_ES6.ts, 82, 11))
@@ -100,7 +100,7 @@
  
          (function() { return x + y + a });
  >x : Symbol(x, Decl(capturedLetConstInLoop2_ES6.ts, 81, 11))
-@@ -271,9 +251,7 @@
+@@= skipped -25, +23 lines =@@
  
          const a = arguments.length;
  >a : Symbol(a, Decl(capturedLetConstInLoop2_ES6.ts, 90, 13))
@@ -110,7 +110,7 @@
  
          (function() { return x + a });
  >x : Symbol(x, Decl(capturedLetConstInLoop2_ES6.ts, 89, 14))
-@@ -294,9 +272,7 @@
+@@= skipped -23, +21 lines =@@
  
          const a = arguments.length;
  >a : Symbol(a, Decl(capturedLetConstInLoop2_ES6.ts, 98, 13))
@@ -120,7 +120,7 @@
  
          (function() { return x + a });
  >x : Symbol(x, Decl(capturedLetConstInLoop2_ES6.ts, 97, 14))
-@@ -318,9 +294,7 @@
+@@= skipped -24, +22 lines =@@
  
          const a = arguments.length;
  >a : Symbol(a, Decl(capturedLetConstInLoop2_ES6.ts, 106, 13))
@@ -130,7 +130,7 @@
  
          (function() { return x + a });
  >x : Symbol(x, Decl(capturedLetConstInLoop2_ES6.ts, 105, 14))
-@@ -339,9 +313,7 @@
+@@= skipped -21, +19 lines =@@
      while (1 === 1) {
          const a = arguments.length;
  >a : Symbol(a, Decl(capturedLetConstInLoop2_ES6.ts, 114, 13))
@@ -140,7 +140,7 @@
  
          (function() { return x + a });
  >x : Symbol(x, Decl(capturedLetConstInLoop2_ES6.ts, 112, 16))
-@@ -363,9 +335,7 @@
+@@= skipped -24, +22 lines =@@
  
          const a = arguments.length;
  >a : Symbol(a, Decl(capturedLetConstInLoop2_ES6.ts, 123, 13))
@@ -150,7 +150,7 @@
  
          (function() { return x + a });
  >x : Symbol(x, Decl(capturedLetConstInLoop2_ES6.ts, 122, 13))
-@@ -388,9 +358,7 @@
+@@= skipped -25, +23 lines =@@
  
          const a = arguments.length;
  >a : Symbol(a, Decl(capturedLetConstInLoop2_ES6.ts, 131, 13))
@@ -160,7 +160,7 @@
  
          const x = 1;
  >x : Symbol(x, Decl(capturedLetConstInLoop2_ES6.ts, 132, 13))
-@@ -416,9 +384,7 @@
+@@= skipped -28, +26 lines =@@
  
          const a = arguments.length;
  >a : Symbol(a, Decl(capturedLetConstInLoop2_ES6.ts, 140, 13))
@@ -170,7 +170,7 @@
  
          (function() { return x + y + a });
  >x : Symbol(x, Decl(capturedLetConstInLoop2_ES6.ts, 139, 14))
-@@ -444,9 +410,7 @@
+@@= skipped -28, +26 lines =@@
  
          const a = arguments.length;
  >a : Symbol(a, Decl(capturedLetConstInLoop2_ES6.ts, 150, 13))
@@ -180,7 +180,7 @@
  
          (function() { return x + y + a });
  >x : Symbol(x, Decl(capturedLetConstInLoop2_ES6.ts, 149, 13))
-@@ -471,9 +435,7 @@
+@@= skipped -27, +25 lines =@@
  
          const a = arguments.length;
  >a : Symbol(a, Decl(capturedLetConstInLoop2_ES6.ts, 159, 13))
@@ -190,7 +190,7 @@
  
          (function() { return x + y + a });
  >x : Symbol(x, Decl(capturedLetConstInLoop2_ES6.ts, 158, 13))
-@@ -502,9 +464,7 @@
+@@= skipped -31, +29 lines =@@
  
          const a = arguments.length;
  >a : Symbol(a, Decl(capturedLetConstInLoop2_ES6.ts, 169, 13))

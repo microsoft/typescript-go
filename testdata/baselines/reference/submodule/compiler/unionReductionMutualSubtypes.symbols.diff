@@ -1,6 +1,6 @@
 --- old.unionReductionMutualSubtypes.symbols
 +++ new.unionReductionMutualSubtypes.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >ReturnVal : Symbol(ReturnVal, Decl(unionReductionMutualSubtypes.ts, 0, 0))
  
      something(): void;
@@ -9,7 +9,7 @@
  }
  
  const k: ReturnVal = { something() { } }
-@@ -30,9 +30,9 @@
+@@= skipped -23, +23 lines =@@
  >options.something : Symbol(something, Decl(unionReductionMutualSubtypes.ts, 9, 23))
  >options : Symbol(options, Decl(unionReductionMutualSubtypes.ts, 9, 13))
  >something : Symbol(something, Decl(unionReductionMutualSubtypes.ts, 9, 23))

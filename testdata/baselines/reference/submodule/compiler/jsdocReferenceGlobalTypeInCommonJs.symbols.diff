@@ -1,6 +1,6 @@
 --- old.jsdocReferenceGlobalTypeInCommonJs.symbols
 +++ new.jsdocReferenceGlobalTypeInCommonJs.symbols
-@@ -3,17 +3,15 @@
+@@= skipped -3, +3 lines =@@
  === a.js ===
  const other = require('./other');
  >other : Symbol(other, Decl(a.js, 0, 5))
@@ -20,7 +20,7 @@
  
  === puppet.d.ts ===
  export as namespace Puppeteer;
-@@ -23,7 +21,7 @@
+@@= skipped -20, +18 lines =@@
  >Keyboard : Symbol(Keyboard, Decl(puppet.d.ts, 0, 30))
  
      key: string

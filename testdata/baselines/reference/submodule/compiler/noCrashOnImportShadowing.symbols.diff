@@ -1,6 +1,6 @@
 --- old.noCrashOnImportShadowing.symbols
 +++ new.noCrashOnImportShadowing.symbols
-@@ -12,7 +12,7 @@
+@@= skipped -12, +12 lines =@@
  >B : Symbol(B, Decl(a.ts, 0, 6), Decl(a.ts, 0, 25))
  
      x: string;
@@ -9,7 +9,7 @@
  }
  
  const x: B = { x: "" };
-@@ -21,9 +21,9 @@
+@@= skipped -9, +9 lines =@@
  >x : Symbol(x, Decl(a.ts, 6, 14))
  
  B.zzz;
@@ -21,7 +21,7 @@
  
  export { B };
  >B : Symbol(B, Decl(a.ts, 9, 8))
-@@ -38,17 +38,17 @@
+@@= skipped -17, +17 lines =@@
  >x : Symbol(x, Decl(index.ts, 2, 14))
  
  B.zzz;

@@ -1,6 +1,6 @@
 --- old.assignToExistingClass.symbols
 +++ new.assignToExistingClass.symbols
-@@ -8,14 +8,14 @@
+@@= skipped -8, +8 lines =@@
  >Mocked : Symbol(Mocked, Decl(assignToExistingClass.ts, 0, 13))
  
          myProp: string;

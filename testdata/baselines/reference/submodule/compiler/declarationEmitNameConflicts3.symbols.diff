@@ -1,6 +1,6 @@
 --- old.declarationEmitNameConflicts3.symbols
 +++ new.declarationEmitNameConflicts3.symbols
-@@ -35,7 +35,7 @@
+@@= skipped -35, +35 lines =@@
  >C : Symbol(C, Decl(declarationEmitNameConflicts3.ts, 13, 12))
  
          static f() { }
@@ -9,7 +9,7 @@
      }
      export class E extends C { }
  >E : Symbol(E, Decl(declarationEmitNameConflicts3.ts, 16, 5))
-@@ -45,7 +45,7 @@
+@@= skipped -10, +10 lines =@@
  >D : Symbol(D, Decl(declarationEmitNameConflicts3.ts, 17, 32))
  
          f
@@ -18,7 +18,7 @@
      }
      export var v: M.D; // ok
  >v : Symbol(v, Decl(declarationEmitNameConflicts3.ts, 21, 14))
-@@ -54,25 +54,25 @@
+@@= skipped -9, +9 lines =@@
  
      export var w = M.D.f; // error, should be typeof M.D.f
  >w : Symbol(w, Decl(declarationEmitNameConflicts3.ts, 22, 14))

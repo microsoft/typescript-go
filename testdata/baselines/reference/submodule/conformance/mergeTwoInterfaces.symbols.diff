@@ -1,6 +1,6 @@
 --- old.mergeTwoInterfaces.symbols
 +++ new.mergeTwoInterfaces.symbols
-@@ -8,14 +8,14 @@
+@@= skipped -8, +8 lines =@@
  >A : Symbol(A, Decl(mergeTwoInterfaces.ts, 0, 0), Decl(mergeTwoInterfaces.ts, 5, 1))
  
      foo: string;
@@ -17,7 +17,7 @@
  }
  
  var a: A;
-@@ -24,15 +24,15 @@
+@@= skipped -16, +16 lines =@@
  
  var r1 = a.foo
  >r1 : Symbol(r1, Decl(mergeTwoInterfaces.ts, 12, 3))
@@ -37,7 +37,7 @@
  
  // basic generic case
  interface B<T> {
-@@ -40,10 +40,10 @@
+@@= skipped -16, +16 lines =@@
  >T : Symbol(T, Decl(mergeTwoInterfaces.ts, 16, 12), Decl(mergeTwoInterfaces.ts, 21, 12))
  
      baz: string;
@@ -50,7 +50,7 @@
  >T : Symbol(T, Decl(mergeTwoInterfaces.ts, 16, 12), Decl(mergeTwoInterfaces.ts, 21, 12))
  }
  
-@@ -52,7 +52,7 @@
+@@= skipped -12, +12 lines =@@
  >T : Symbol(T, Decl(mergeTwoInterfaces.ts, 16, 12), Decl(mergeTwoInterfaces.ts, 21, 12))
  
      bar: T;
@@ -59,7 +59,7 @@
  >T : Symbol(T, Decl(mergeTwoInterfaces.ts, 16, 12), Decl(mergeTwoInterfaces.ts, 21, 12))
  }
  
-@@ -62,15 +62,15 @@
+@@= skipped -10, +10 lines =@@
  
  var r3 = b.foo
  >r3 : Symbol(r3, Decl(mergeTwoInterfaces.ts, 26, 3))
@@ -79,7 +79,7 @@
  
  // basic non-generic and generic case inside a module
  module M {
-@@ -80,14 +80,14 @@
+@@= skipped -18, +18 lines =@@
  >A : Symbol(A, Decl(mergeTwoInterfaces.ts, 30, 10), Decl(mergeTwoInterfaces.ts, 33, 5))
  
          foo: string;
@@ -96,7 +96,7 @@
      }
  
      var a: A;
-@@ -96,23 +96,23 @@
+@@= skipped -16, +16 lines =@@
  
      var r1 = a.foo;
  >r1 : Symbol(r1, Decl(mergeTwoInterfaces.ts, 40, 7))
@@ -125,7 +125,7 @@
  >T : Symbol(T, Decl(mergeTwoInterfaces.ts, 44, 16), Decl(mergeTwoInterfaces.ts, 48, 16))
      }
  
-@@ -121,7 +121,7 @@
+@@= skipped -25, +25 lines =@@
  >T : Symbol(T, Decl(mergeTwoInterfaces.ts, 44, 16), Decl(mergeTwoInterfaces.ts, 48, 16))
  
          bar: T;
@@ -134,7 +134,7 @@
  >T : Symbol(T, Decl(mergeTwoInterfaces.ts, 44, 16), Decl(mergeTwoInterfaces.ts, 48, 16))
      }
  
-@@ -131,14 +131,14 @@
+@@= skipped -10, +10 lines =@@
  
      var r3 = b.foo
  >r3 : Symbol(r3, Decl(mergeTwoInterfaces.ts, 53, 7))

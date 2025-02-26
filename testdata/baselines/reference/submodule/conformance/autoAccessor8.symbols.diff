@@ -1,6 +1,6 @@
 --- old.autoAccessor8.symbols
 +++ new.autoAccessor8.symbols
-@@ -5,20 +5,20 @@
+@@= skipped -5, +5 lines =@@
  >C1 : Symbol(C1, Decl(autoAccessor8.ts, 0, 0))
  
      accessor a: any;
@@ -25,7 +25,7 @@
  }
  
  function f() {
-@@ -28,10 +28,10 @@
+@@= skipped -23, +23 lines =@@
  >C3 : Symbol(C3, Decl(autoAccessor8.ts, 10, 14))
  
          accessor a: any;

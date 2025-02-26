@@ -1,6 +1,6 @@
 --- old.expandoFunctionNestedAssigments.symbols
 +++ new.expandoFunctionNestedAssigments.symbols
-@@ -2,137 +2,137 @@
+@@= skipped -2, +2 lines =@@
  
  === expandoFunctionNestedAssigments.ts ===
  function Foo(): void {

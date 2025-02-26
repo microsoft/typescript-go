@@ -1,6 +1,6 @@
 --- old.withImportDecl.symbols
 +++ new.withImportDecl.symbols
-@@ -70,17 +70,13 @@
+@@= skipped -70, +70 lines =@@
  
  var b = new m3.A();
  >b : Symbol(b, Decl(withImportDecl_1.ts, 36, 3))

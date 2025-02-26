@@ -1,6 +1,6 @@
 --- old.allowSyntheticDefaultImports7.symbols
 +++ new.allowSyntheticDefaultImports7.symbols
-@@ -9,16 +9,16 @@
+@@= skipped -9, +9 lines =@@
  
  === a.ts ===
  import { default as Foo } from "./b";

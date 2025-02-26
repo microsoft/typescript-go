@@ -1,6 +1,6 @@
 --- old.typeParametersInStaticMethods.symbols
 +++ new.typeParametersInStaticMethods.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(typeParametersInStaticMethods.ts, 0, 10))
  
      static M(x: (x: T) => { x: { y: T } }) {

@@ -1,6 +1,6 @@
 --- old.tsxAttributeResolution16.symbols
 +++ new.tsxAttributeResolution16.symbols
-@@ -8,10 +8,10 @@
+@@= skipped -8, +8 lines =@@
  >Address : Symbol(Address, Decl(file.tsx, 0, 32))
  
    street: string;
@@ -13,7 +13,7 @@
  }
  
  interface CanadianAddress extends Address {
-@@ -19,7 +19,7 @@
+@@= skipped -11, +11 lines =@@
  >Address : Symbol(Address, Decl(file.tsx, 0, 32))
  
      postalCode: string;
@@ -22,7 +22,7 @@
  }
  
  interface AmericanAddress extends Address {
-@@ -27,7 +27,7 @@
+@@= skipped -8, +8 lines =@@
  >Address : Symbol(Address, Decl(file.tsx, 0, 32))
  
      zipCode: string;
@@ -31,7 +31,7 @@
  }
  
  type Properties = CanadianAddress | AmericanAddress;
-@@ -37,13 +37,13 @@
+@@= skipped -10, +10 lines =@@
  
  export class AddressComp extends React.Component<Properties, void> {
  >AddressComp : Symbol(AddressComp, Decl(file.tsx, 15, 52))

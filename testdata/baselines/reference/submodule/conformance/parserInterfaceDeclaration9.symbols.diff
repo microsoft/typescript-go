@@ -1,6 +1,6 @@
 --- old.parserInterfaceDeclaration9.symbols
 +++ new.parserInterfaceDeclaration9.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >I1 : Symbol(I1, Decl(parserInterfaceDeclaration9.ts, 0, 0))
  
      get foo(): number,
@@ -13,7 +13,7 @@
  >value : Symbol(value, Decl(parserInterfaceDeclaration9.ts, 2, 12))
  }
  
-@@ -16,10 +16,10 @@
+@@= skipped -11, +11 lines =@@
  >I2 : Symbol(I2, Decl(parserInterfaceDeclaration9.ts, 3, 1))
  
      get foo(): number;
@@ -26,7 +26,7 @@
  >value : Symbol(value, Decl(parserInterfaceDeclaration9.ts, 7, 12))
  }
  
-@@ -27,10 +27,10 @@
+@@= skipped -11, +11 lines =@@
  >I3 : Symbol(I3, Decl(parserInterfaceDeclaration9.ts, 8, 1))
  
      get foo(): number

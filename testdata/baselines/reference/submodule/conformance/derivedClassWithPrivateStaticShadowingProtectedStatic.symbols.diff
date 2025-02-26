@@ -1,6 +1,6 @@
 --- old.derivedClassWithPrivateStaticShadowingProtectedStatic.symbols
 +++ new.derivedClassWithPrivateStaticShadowingProtectedStatic.symbols
-@@ -5,19 +5,19 @@
+@@= skipped -5, +5 lines =@@
  >Base : Symbol(Base, Decl(derivedClassWithPrivateStaticShadowingProtectedStatic.ts, 0, 0))
  
      protected static x: string;
@@ -24,7 +24,7 @@
  >v : Symbol(v, Decl(derivedClassWithPrivateStaticShadowingProtectedStatic.ts, 7, 27))
  }
  
-@@ -27,18 +27,18 @@
+@@= skipped -22, +22 lines =@@
  >Base : Symbol(Base, Decl(derivedClassWithPrivateStaticShadowingProtectedStatic.ts, 0, 0))
  
      private static x: string; 

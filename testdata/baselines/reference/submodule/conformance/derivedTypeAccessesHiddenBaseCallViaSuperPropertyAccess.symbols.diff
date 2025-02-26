@@ -1,6 +1,6 @@
 --- old.derivedTypeAccessesHiddenBaseCallViaSuperPropertyAccess.symbols
 +++ new.derivedTypeAccessesHiddenBaseCallViaSuperPropertyAccess.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Base : Symbol(Base, Decl(derivedTypeAccessesHiddenBaseCallViaSuperPropertyAccess.ts, 0, 0))
  
      foo(x: { a: number }): { a: number } {
@@ -9,7 +9,7 @@
  >x : Symbol(x, Decl(derivedTypeAccessesHiddenBaseCallViaSuperPropertyAccess.ts, 1, 8))
  >a : Symbol(a, Decl(derivedTypeAccessesHiddenBaseCallViaSuperPropertyAccess.ts, 1, 12))
  >a : Symbol(a, Decl(derivedTypeAccessesHiddenBaseCallViaSuperPropertyAccess.ts, 1, 28))
-@@ -19,7 +19,7 @@
+@@= skipped -14, +14 lines =@@
  >Base : Symbol(Base, Decl(derivedTypeAccessesHiddenBaseCallViaSuperPropertyAccess.ts, 0, 0))
  
      foo(x: { a: number; b: number }): { a: number; b: number } {
@@ -18,7 +18,7 @@
  >x : Symbol(x, Decl(derivedTypeAccessesHiddenBaseCallViaSuperPropertyAccess.ts, 7, 8))
  >a : Symbol(a, Decl(derivedTypeAccessesHiddenBaseCallViaSuperPropertyAccess.ts, 7, 12))
  >b : Symbol(b, Decl(derivedTypeAccessesHiddenBaseCallViaSuperPropertyAccess.ts, 7, 23))
-@@ -30,28 +30,28 @@
+@@= skipped -11, +11 lines =@@
      }
  
      bar() {

@@ -1,6 +1,6 @@
 --- old.jsdocImportTypeReferenceToESModule.symbols
 +++ new.jsdocImportTypeReferenceToESModule.symbols
-@@ -11,8 +11,6 @@
+@@= skipped -11, +11 lines =@@
  >a : Symbol(a, Decl(test.js, 1, 14))
  
      a.config

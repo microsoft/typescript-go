@@ -1,6 +1,6 @@
 --- old.genericTypeParameterEquivalence2.symbols
 +++ new.genericTypeParameterEquivalence2.symbols
-@@ -26,9 +26,9 @@
+@@= skipped -26, +26 lines =@@
  
          return f(g.apply(null, a));
  >f : Symbol(f, Decl(genericTypeParameterEquivalence2.ts, 1, 26))
@@ -12,7 +12,7 @@
  >a : Symbol(a, Decl(genericTypeParameterEquivalence2.ts, 2, 21))
  
      };
-@@ -48,9 +48,9 @@
+@@= skipped -22, +22 lines =@@
      for (var i = 0; i < list.length; ++i) {
  >i : Symbol(i, Decl(genericTypeParameterEquivalence2.ts, 9, 12))
  >i : Symbol(i, Decl(genericTypeParameterEquivalence2.ts, 9, 12))
@@ -24,7 +24,7 @@
  >i : Symbol(i, Decl(genericTypeParameterEquivalence2.ts, 9, 12))
  
          f(list[i], i);
-@@ -85,9 +85,9 @@
+@@= skipped -37, +37 lines =@@
  >el : Symbol(el, Decl(genericTypeParameterEquivalence2.ts, 17, 17))
  
              ret.push(el);
@@ -36,7 +36,7 @@
  >el : Symbol(el, Decl(genericTypeParameterEquivalence2.ts, 17, 17))
          }
      } );
-@@ -104,9 +104,9 @@
+@@= skipped -19, +19 lines =@@
  >A : Symbol(A, Decl(genericTypeParameterEquivalence2.ts, 27, 17))
  
      return ar.length;

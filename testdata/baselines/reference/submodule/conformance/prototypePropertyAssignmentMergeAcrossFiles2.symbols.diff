@@ -1,6 +1,6 @@
 --- old.prototypePropertyAssignmentMergeAcrossFiles2.symbols
 +++ new.prototypePropertyAssignmentMergeAcrossFiles2.symbols
-@@ -2,35 +2,23 @@
+@@= skipped -2, +2 lines =@@
  
  === prototypePropertyAssignmentMergeAcrossFiles2.js ===
  var Ns = {}

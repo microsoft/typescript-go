@@ -1,6 +1,6 @@
 --- old.tsxReactEmit1.symbols
 +++ new.tsxReactEmit1.symbols
-@@ -22,39 +22,32 @@
+@@= skipped -22, +22 lines =@@
  
  var selfClosed1 = <div />;
  >selfClosed1 : Symbol(selfClosed1, Decl(file.tsx, 9, 3))
@@ -40,7 +40,7 @@
  >x : Symbol(x, Decl(file.tsx, 15, 22))
  >p : Symbol(p, Decl(file.tsx, 8, 3))
  >y : Symbol(y, Decl(file.tsx, 15, 28))
-@@ -62,108 +55,80 @@
+@@= skipped -40, +33 lines =@@
  
  var openClosed1 = <div></div>;
  >openClosed1 : Symbol(openClosed1, Decl(file.tsx, 17, 3))

@@ -1,6 +1,6 @@
 --- old.readonlyAssignmentInSubclassOfClassExpression.symbols
 +++ new.readonlyAssignmentInSubclassOfClassExpression.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  
      constructor() {
          super()

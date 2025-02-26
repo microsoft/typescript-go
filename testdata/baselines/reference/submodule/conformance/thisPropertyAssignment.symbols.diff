@@ -1,6 +1,6 @@
 --- old.thisPropertyAssignment.symbols
 +++ new.thisPropertyAssignment.symbols
-@@ -9,44 +9,25 @@
+@@= skipped -9, +9 lines =@@
  // element access assignments to create declarations.
  
  this.x = {};
@@ -45,7 +45,7 @@
  }
  
  const f = new F();
-@@ -54,12 +35,8 @@
+@@= skipped -45, +26 lines =@@
  >F : Symbol(F, Decl(a.js, 10, 20))
  
  f.a;

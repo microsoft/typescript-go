@@ -1,6 +1,6 @@
 --- old.overridingPrivateStaticMembers.symbols
 +++ new.overridingPrivateStaticMembers.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Base2 : Symbol(Base2, Decl(overridingPrivateStaticMembers.ts, 0, 0))
  
      private static y: { foo: string };
@@ -9,7 +9,7 @@
  >foo : Symbol(foo, Decl(overridingPrivateStaticMembers.ts, 1, 23))
  }
   
-@@ -14,7 +14,7 @@
+@@= skipped -9, +9 lines =@@
  >Base2 : Symbol(Base2, Decl(overridingPrivateStaticMembers.ts, 0, 0))
  
      private static y: { foo: string; bar: string; };

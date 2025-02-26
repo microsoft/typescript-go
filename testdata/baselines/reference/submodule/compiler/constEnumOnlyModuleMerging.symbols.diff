@@ -1,6 +1,6 @@
 --- old.constEnumOnlyModuleMerging.symbols
 +++ new.constEnumOnlyModuleMerging.symbols
-@@ -13,7 +13,7 @@
+@@= skipped -13, +13 lines =@@
  
      export const enum A { X }
  >A : Symbol(A, Decl(constEnumOnlyModuleMerging.ts, 4, 14))
@@ -9,7 +9,7 @@
  }
  
  module B {
-@@ -21,19 +21,19 @@
+@@= skipped -8, +8 lines =@@
  
      import O = Outer;
  >O : Symbol(O, Decl(constEnumOnlyModuleMerging.ts, 8, 10))

@@ -1,6 +1,6 @@
 --- old.generics0.symbols
 +++ new.generics0.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(generics0.ts, 0, 12))
  
      x: T;
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(generics0.ts, 0, 12))
  }
  
-@@ -16,7 +16,7 @@
+@@= skipped -10, +10 lines =@@
  
  var z = v2.x; // 'y' should be of type 'string'
  >z : Symbol(z, Decl(generics0.ts, 6, 3))

@@ -1,6 +1,6 @@
 --- old.jsxComponentTypeErrors.symbols
 +++ new.jsxComponentTypeErrors.symbols
-@@ -8,18 +8,18 @@
+@@= skipped -8, +8 lines =@@
  >Element : Symbol(Element, Decl(jsxComponentTypeErrors.tsx, 0, 15))
  
      type: 'element';
@@ -22,7 +22,7 @@
  >T : Symbol(T, Decl(jsxComponentTypeErrors.tsx, 9, 27))
  >type : Symbol(type, Decl(jsxComponentTypeErrors.tsx, 9, 46))
  >type : Symbol(type, Decl(jsxComponentTypeErrors.tsx, 9, 54))
-@@ -31,12 +31,12 @@
+@@= skipped -23, +23 lines =@@
    }
  }
  FunctionComponent.useThis = function() {
@@ -39,7 +39,7 @@
  >type : Symbol(type, Decl(jsxComponentTypeErrors.tsx, 15, 14))
  }
  
-@@ -44,25 +44,25 @@
+@@= skipped -13, +13 lines =@@
  >ClassComponent : Symbol(ClassComponent, Decl(jsxComponentTypeErrors.tsx, 16, 1))
  
    type = 'string';

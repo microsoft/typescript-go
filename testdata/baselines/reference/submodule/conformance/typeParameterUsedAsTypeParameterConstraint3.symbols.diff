@@ -1,6 +1,6 @@
 --- old.typeParameterUsedAsTypeParameterConstraint3.symbols
 +++ new.typeParameterUsedAsTypeParameterConstraint3.symbols
-@@ -31,19 +31,19 @@
+@@= skipped -31, +31 lines =@@
  >V : Symbol(V, Decl(typeParameterUsedAsTypeParameterConstraint3.ts, 23, 17))
  
      x: T;
@@ -24,7 +24,7 @@
  >W : Symbol(W, Decl(typeParameterUsedAsTypeParameterConstraint3.ts, 27, 8))
  >V : Symbol(V, Decl(typeParameterUsedAsTypeParameterConstraint3.ts, 23, 17))
  >x : Symbol(x, Decl(typeParameterUsedAsTypeParameterConstraint3.ts, 27, 21))
-@@ -58,19 +58,19 @@
+@@= skipped -27, +27 lines =@@
  >U : Symbol(U, Decl(typeParameterUsedAsTypeParameterConstraint3.ts, 30, 18))
  
      x: T;

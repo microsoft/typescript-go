@@ -1,6 +1,6 @@
 --- old.metadataOfUnion.symbols
 +++ new.metadataOfUnion.symbols
-@@ -18,36 +18,36 @@
+@@= skipped -18, +18 lines =@@
  >PropDeco : Symbol(PropDeco, Decl(metadataOfUnion.ts, 0, 0))
  
      x: "foo" | A;
@@ -44,7 +44,7 @@
  }
  
  class D {
-@@ -57,31 +57,31 @@
+@@= skipped -39, +39 lines =@@
  >PropDeco : Symbol(PropDeco, Decl(metadataOfUnion.ts, 0, 0))
  
      a: E.A;

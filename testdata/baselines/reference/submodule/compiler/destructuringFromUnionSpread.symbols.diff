@@ -1,6 +1,6 @@
 --- old.destructuringFromUnionSpread.symbols
 +++ new.destructuringFromUnionSpread.symbols
-@@ -3,11 +3,11 @@
+@@= skipped -3, +3 lines =@@
  === destructuringFromUnionSpread.ts ===
  interface A { a: string }
  >A : Symbol(A, Decl(destructuringFromUnionSpread.ts, 0, 0))

@@ -1,6 +1,6 @@
 --- old.returnTagTypeGuard.symbols
 +++ new.returnTagTypeGuard.symbols
-@@ -6,16 +6,14 @@
+@@= skipped -6, +6 lines =@@
  
      constructor() {
          this.c = 1
@@ -18,7 +18,7 @@
  >x : Symbol(x, Decl(bug25127.js, 8, 11))
  
          return true
-@@ -26,16 +24,14 @@
+@@= skipped -20, +18 lines =@@
  
      constructor() {
          this.d = 'no'
@@ -36,7 +36,7 @@
  >x : Symbol(x, Decl(bug25127.js, 20, 11))
  
          return false
-@@ -48,16 +44,10 @@
+@@= skipped -22, +20 lines =@@
  
      let x = chunk.isInit(chunk) ? chunk.c : chunk.d
  >x : Symbol(x, Decl(bug25127.js, 26, 7))

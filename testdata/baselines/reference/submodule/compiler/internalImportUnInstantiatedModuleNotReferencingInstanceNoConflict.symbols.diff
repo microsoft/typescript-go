@@ -1,6 +1,6 @@
 --- old.internalImportUnInstantiatedModuleNotReferencingInstanceNoConflict.symbols
 +++ new.internalImportUnInstantiatedModuleNotReferencingInstanceNoConflict.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  
      export interface X { s: string }
  >X : Symbol(X, Decl(internalImportUnInstantiatedModuleNotReferencingInstanceNoConflict.ts, 0, 10))
@@ -9,7 +9,7 @@
  }
  
  module B {
-@@ -17,6 +17,6 @@
+@@= skipped -11, +11 lines =@@
  
      import Y = A;
  >Y : Symbol(Y, Decl(internalImportUnInstantiatedModuleNotReferencingInstanceNoConflict.ts, 5, 14))

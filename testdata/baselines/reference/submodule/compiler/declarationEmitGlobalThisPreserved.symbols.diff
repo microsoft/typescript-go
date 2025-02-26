@@ -1,6 +1,6 @@
 --- old.declarationEmitGlobalThisPreserved.symbols
 +++ new.declarationEmitGlobalThisPreserved.symbols
-@@ -393,7 +393,7 @@
+@@= skipped -393, +393 lines =@@
  >A : Symbol(A, Decl(declarationEmitGlobalThisPreserved.ts, 74, 81))
  
      method1(isNaN: typeof globalThis.isNaN) { return isNaN }
@@ -9,7 +9,7 @@
  >isNaN : Symbol(isNaN, Decl(declarationEmitGlobalThisPreserved.ts, 77, 12))
  >globalThis.isNaN : Symbol(isNaN, Decl(lib.es5.d.ts, --, --))
  >globalThis : Symbol(globalThis)
-@@ -401,7 +401,7 @@
+@@= skipped -8, +8 lines =@@
  >isNaN : Symbol(isNaN, Decl(declarationEmitGlobalThisPreserved.ts, 77, 12))
  
      method2(isNaN: typeof globalThis.isNaN, bar?: typeof globalThis.isNaN) { return bar ?? isNaN }
@@ -18,7 +18,7 @@
  >isNaN : Symbol(isNaN, Decl(declarationEmitGlobalThisPreserved.ts, 78, 12))
  >globalThis.isNaN : Symbol(isNaN, Decl(lib.es5.d.ts, --, --))
  >globalThis : Symbol(globalThis)
-@@ -414,7 +414,7 @@
+@@= skipped -13, +13 lines =@@
  >isNaN : Symbol(isNaN, Decl(declarationEmitGlobalThisPreserved.ts, 78, 12))
  
      method3(isNaN: number, bar: typeof globalThis.isNaN) { return bar }
@@ -27,7 +27,7 @@
  >isNaN : Symbol(isNaN, Decl(declarationEmitGlobalThisPreserved.ts, 79, 12))
  >bar : Symbol(bar, Decl(declarationEmitGlobalThisPreserved.ts, 79, 26))
  >globalThis.isNaN : Symbol(isNaN, Decl(lib.es5.d.ts, --, --))
-@@ -423,7 +423,7 @@
+@@= skipped -9, +9 lines =@@
  >bar : Symbol(bar, Decl(declarationEmitGlobalThisPreserved.ts, 79, 26))
  
      method4(isNaN: number) { return globalThis.isNaN; }
@@ -36,7 +36,7 @@
  >isNaN : Symbol(isNaN, Decl(declarationEmitGlobalThisPreserved.ts, 80, 12))
  >globalThis.isNaN : Symbol(isNaN, Decl(lib.es5.d.ts, --, --))
  >globalThis : Symbol(globalThis)
-@@ -485,7 +485,7 @@
+@@= skipped -62, +62 lines =@@
  >AsClassProperty : Symbol(AsClassProperty, Decl(declarationEmitGlobalThisPreserved.ts, 97, 1))
  
      isNaN?: typeof globalThis.isNaN;

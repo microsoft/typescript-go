@@ -1,6 +1,6 @@
 --- old.recursiveExcessPropertyChecks.symbols
 +++ new.recursiveExcessPropertyChecks.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >ITreeItem : Symbol(ITreeItem, Decl(recursiveExcessPropertyChecks.ts, 0, 0))
  
    Parent?: this;

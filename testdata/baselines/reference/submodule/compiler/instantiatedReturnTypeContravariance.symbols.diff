@@ -1,6 +1,6 @@
 --- old.instantiatedReturnTypeContravariance.symbols
 +++ new.instantiatedReturnTypeContravariance.symbols
-@@ -6,10 +6,10 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(instantiatedReturnTypeContravariance.ts, 0, 12))
  
  name: string;
@@ -13,7 +13,7 @@
  >T : Symbol(T, Decl(instantiatedReturnTypeContravariance.ts, 0, 12))
  
  }
-@@ -18,7 +18,7 @@
+@@= skipped -12, +12 lines =@@
  >c : Symbol(c, Decl(instantiatedReturnTypeContravariance.ts, 6, 1))
  
  foo(): B<void> {
@@ -22,7 +22,7 @@
  >B : Symbol(B, Decl(instantiatedReturnTypeContravariance.ts, 0, 0))
  
  return null;
-@@ -32,7 +32,7 @@
+@@= skipped -14, +14 lines =@@
  >c : Symbol(c, Decl(instantiatedReturnTypeContravariance.ts, 6, 1))
  
  foo(): B<number> {

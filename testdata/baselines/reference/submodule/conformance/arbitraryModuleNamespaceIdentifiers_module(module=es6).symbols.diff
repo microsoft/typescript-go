@@ -1,6 +1,6 @@
 --- old.arbitraryModuleNamespaceIdentifiers_module(module=es6).symbols
 +++ new.arbitraryModuleNamespaceIdentifiers_module(module=es6).symbols
-@@ -9,7 +9,7 @@
+@@= skipped -9, +9 lines =@@
  
  export { someValue as "<X>" };
  >someValue : Symbol(someValue, Decl(arbitraryModuleNamespaceIdentifiers_module.ts, 0, 5))
@@ -9,7 +9,7 @@
  
  import { "<X>" as valueX } from "./arbitraryModuleNamespaceIdentifiers_module";
  >valueX : Symbol(valueX, Decl(arbitraryModuleNamespaceIdentifiers_module.ts, 4, 8))
-@@ -18,7 +18,7 @@
+@@= skipped -9, +9 lines =@@
  >valueX : Symbol(valueX, Decl(arbitraryModuleNamespaceIdentifiers_module.ts, 4, 8))
  
  export { "<X>" as "<Y>" } from "./arbitraryModuleNamespaceIdentifiers_module";
@@ -18,7 +18,7 @@
  
  import { "<Y>" as valueY } from "./arbitraryModuleNamespaceIdentifiers_module";
  >valueY : Symbol(valueY, Decl(arbitraryModuleNamespaceIdentifiers_module.ts, 8, 8))
-@@ -27,27 +27,27 @@
+@@= skipped -9, +9 lines =@@
  >valueY : Symbol(valueY, Decl(arbitraryModuleNamespaceIdentifiers_module.ts, 8, 8))
  
  export * as "<Z>" from "./arbitraryModuleNamespaceIdentifiers_module";
@@ -51,7 +51,7 @@
  
  import { type "<A>" as typeA } from "./arbitraryModuleNamespaceIdentifiers_module";
  >typeA : Symbol(typeA, Decl(arbitraryModuleNamespaceIdentifiers_module.ts, 18, 8))
-@@ -57,7 +57,7 @@
+@@= skipped -30, +30 lines =@@
  >typeA : Symbol(typeA, Decl(arbitraryModuleNamespaceIdentifiers_module.ts, 18, 8))
  
  export { type "<A>" as "<B>" } from "./arbitraryModuleNamespaceIdentifiers_module";
@@ -60,7 +60,7 @@
  
  import { type "<B>" as typeB } from "./arbitraryModuleNamespaceIdentifiers_module";
  >typeB : Symbol(typeB, Decl(arbitraryModuleNamespaceIdentifiers_module.ts, 22, 8))
-@@ -67,16 +67,16 @@
+@@= skipped -10, +10 lines =@@
  >typeB : Symbol(typeB, Decl(arbitraryModuleNamespaceIdentifiers_module.ts, 22, 8))
  
  export type * as "<C>" from "./arbitraryModuleNamespaceIdentifiers_module";

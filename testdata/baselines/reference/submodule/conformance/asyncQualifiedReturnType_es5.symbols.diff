@@ -1,6 +1,6 @@
 --- old.asyncQualifiedReturnType_es5.symbols
 +++ new.asyncQualifiedReturnType_es5.symbols
-@@ -15,5 +15,5 @@
+@@= skipped -15, +15 lines =@@
  async function f(): X.MyPromise<void> {
  >f : Symbol(f, Decl(asyncQualifiedReturnType_es5.ts, 3, 1))
  >X : Symbol(X, Decl(asyncQualifiedReturnType_es5.ts, 0, 0))

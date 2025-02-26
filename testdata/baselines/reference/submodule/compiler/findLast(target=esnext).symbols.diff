@@ -1,6 +1,6 @@
 --- old.findLast(target=esnext).symbols
 +++ new.findLast(target=esnext).symbols
-@@ -3,186 +3,186 @@
+@@= skipped -3, +3 lines =@@
  === findLast.ts ===
  const itemNumber: number | undefined = [0].findLast((item) => item === 0);
  >itemNumber : Symbol(itemNumber, Decl(findLast.ts, 0, 5))

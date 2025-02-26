@@ -1,6 +1,6 @@
 --- old.logicalAssignment6(target=es2021).symbols
 +++ new.logicalAssignment6(target=es2021).symbols
-@@ -7,10 +7,10 @@
+@@= skipped -7, +7 lines =@@
  >results1 : Symbol(results1, Decl(logicalAssignment6.ts, 0, 44))
  
      (results ||= (results1 ||= [])).push(100);
@@ -13,7 +13,7 @@
  }
  
  function foo2(results: number[] | undefined, results1: number[] | undefined) {
-@@ -19,10 +19,10 @@
+@@= skipped -12, +12 lines =@@
  >results1 : Symbol(results1, Decl(logicalAssignment6.ts, 4, 44))
  
      (results ??= (results1 ??= [])).push(100);
@@ -26,7 +26,7 @@
  }
  
  function foo3(results: number[] | undefined, results1: number[] | undefined) {
-@@ -31,9 +31,7 @@
+@@= skipped -12, +12 lines =@@
  >results1 : Symbol(results1, Decl(logicalAssignment6.ts, 8, 44))
  
      (results &&= (results1 &&= [])).push(100);

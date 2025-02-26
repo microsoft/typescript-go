@@ -1,6 +1,6 @@
 --- old.symbolProperty22.symbols
 +++ new.symbolProperty22.symbols
-@@ -7,10 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >U : Symbol(U, Decl(symbolProperty22.ts, 0, 14))
  
      [Symbol.unscopables](x: T): U;
@@ -12,7 +12,7 @@
  >x : Symbol(x, Decl(symbolProperty22.ts, 1, 25))
  >T : Symbol(T, Decl(symbolProperty22.ts, 0, 12))
  >U : Symbol(U, Decl(symbolProperty22.ts, 0, 14))
-@@ -31,11 +28,6 @@
+@@= skipped -24, +21 lines =@@
  foo("", { [Symbol.unscopables]: s => s.length });
  >foo : Symbol(foo, Decl(symbolProperty22.ts, 2, 1))
  >[Symbol.unscopables] : Symbol([Symbol.unscopables], Decl(symbolProperty22.ts, 6, 9))

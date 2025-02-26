@@ -1,6 +1,6 @@
 --- old.symbolProperty4.symbols
 +++ new.symbolProperty4.symbols
-@@ -6,15 +6,12 @@
+@@= skipped -6, +6 lines =@@
  
      [Symbol()]: 0,
  >[Symbol()] : Symbol([Symbol()], Decl(symbolProperty4.ts, 0, 9))

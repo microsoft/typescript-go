@@ -1,6 +1,6 @@
 --- old.namespacesWithTypeAliasOnlyExportsMerge.symbols
 +++ new.namespacesWithTypeAliasOnlyExportsMerge.symbols
-@@ -16,7 +16,7 @@
+@@= skipped -16, +16 lines =@@
  declare const try1: Q.A;
  >try1 : Symbol(try1, Decl(constAndNS.ts, 5, 13))
  >Q : Symbol(Q, Decl(constAndNS.ts, 1, 13), Decl(constAndNS.ts, 1, 24))
@@ -9,7 +9,7 @@
  
  declare namespace Q2 {
  >Q2 : Symbol(Q2, Decl(constAndNS.ts, 5, 24))
-@@ -27,8 +27,8 @@
+@@= skipped -11, +11 lines =@@
  declare const try2: Q2.Q.A;
  >try2 : Symbol(try2, Decl(constAndNS.ts, 9, 13))
  >Q2 : Symbol(Q2, Decl(constAndNS.ts, 5, 24))
@@ -20,7 +20,7 @@
  
  declare namespace Q3 {
  >Q3 : Symbol(Q3, Decl(constAndNS.ts, 9, 27))
-@@ -40,7 +40,7 @@
+@@= skipped -13, +13 lines =@@
  declare const try3: Q3.B;
  >try3 : Symbol(try3, Decl(constAndNS.ts, 13, 13))
  >Q3 : Symbol(Q3, Decl(constAndNS.ts, 9, 27))
@@ -29,7 +29,7 @@
  
  declare namespace Q4 {
  >Q4 : Symbol(Q4, Decl(constAndNS.ts, 13, 25))
-@@ -52,8 +52,8 @@
+@@= skipped -12, +12 lines =@@
  declare const try4: Q4.default.A;
  >try4 : Symbol(try4, Decl(constAndNS.ts, 17, 13))
  >Q4 : Symbol(Q4, Decl(constAndNS.ts, 13, 25))
@@ -40,7 +40,7 @@
  
  export {};
  === circular.ts ===
-@@ -95,36 +95,36 @@
+@@= skipped -43, +43 lines =@@
  declare const try1: NS1.A;
  >try1 : Symbol(try1, Decl(circularWithUses.ts, 9, 13))
  >NS1 : Symbol(NS1, Decl(circularWithUses.ts, 1, 16))

@@ -1,6 +1,6 @@
 --- old.parserS7.6_A4.2_T1.symbols
 +++ new.parserS7.6_A4.2_T1.symbols
-@@ -13,266 +13,266 @@
+@@= skipped -13, +13 lines =@@
  
  //CHECK#А-Я
  var \u0410 = 1;

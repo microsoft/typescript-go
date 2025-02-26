@@ -1,6 +1,6 @@
 --- old.importCallExpressionInScriptContext1.symbols
 +++ new.importCallExpressionInScriptContext1.symbols
-@@ -7,7 +7,6 @@
+@@= skipped -7, +7 lines =@@
  === 1.ts ===
  var p1 = import("./0");
  >p1 : Symbol(p1, Decl(1.ts, 0, 3))

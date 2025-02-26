@@ -1,6 +1,6 @@
 --- old.objectTypesIdentityWithPrivates2.symbols
 +++ new.objectTypesIdentityWithPrivates2.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(objectTypesIdentityWithPrivates2.ts, 2, 8))
  
      private foo: T;

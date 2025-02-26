@@ -1,6 +1,6 @@
 --- old.jsDeclarationsEnums.symbols
 +++ new.jsDeclarationsEnums.symbols
-@@ -11,7 +11,7 @@
+@@= skipped -11, +11 lines =@@
  >B : Symbol(B, Decl(index.js, 3, 16))
  
      Member
@@ -9,7 +9,7 @@
  }
  
  enum C {}
-@@ -45,92 +45,92 @@
+@@= skipped -34, +34 lines =@@
  >G : Symbol(G, Decl(index.js, 21, 16))
  
      A = 1,

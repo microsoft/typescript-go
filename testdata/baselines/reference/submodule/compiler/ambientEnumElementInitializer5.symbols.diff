@@ -1,6 +1,6 @@
 --- old.ambientEnumElementInitializer5.symbols
 +++ new.ambientEnumElementInitializer5.symbols
-@@ -5,5 +5,5 @@
+@@= skipped -5, +5 lines =@@
  >E : Symbol(E, Decl(ambientEnumElementInitializer5.ts, 0, 0))
  
   e = -0xA

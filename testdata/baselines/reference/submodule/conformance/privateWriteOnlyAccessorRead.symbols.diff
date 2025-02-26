@@ -1,6 +1,6 @@
 --- old.privateWriteOnlyAccessorRead.symbols
 +++ new.privateWriteOnlyAccessorRead.symbols
-@@ -5,70 +5,67 @@
+@@= skipped -5, +5 lines =@@
  >Test : Symbol(Test, Decl(privateWriteOnlyAccessorRead.ts, 0, 0))
  
    set #value(v: { foo: { bar: number } }) {}
@@ -83,7 +83,7 @@
  >this : Symbol(Test, Decl(privateWriteOnlyAccessorRead.ts, 0, 0))
  >foo : Symbol(foo, Decl(privateWriteOnlyAccessorRead.ts, 1, 17))
  >foo : Symbol(foo, Decl(privateWriteOnlyAccessorRead.ts, 16, 33))
-@@ -77,7 +74,7 @@
+@@= skipped -72, +69 lines =@@
        foo: { ...this.#value.foo },
  >foo : Symbol(foo, Decl(privateWriteOnlyAccessorRead.ts, 17, 6))
  >this.#value.foo : Symbol(foo, Decl(privateWriteOnlyAccessorRead.ts, 1, 17))
@@ -92,7 +92,7 @@
  >this : Symbol(Test, Decl(privateWriteOnlyAccessorRead.ts, 0, 0))
  >foo : Symbol(foo, Decl(privateWriteOnlyAccessorRead.ts, 1, 17))
  
-@@ -87,35 +84,35 @@
+@@= skipped -10, +10 lines =@@
      let r = { o: this.#value }; //error
  >r : Symbol(r, Decl(privateWriteOnlyAccessorRead.ts, 21, 7))
  >o : Symbol(o, Decl(privateWriteOnlyAccessorRead.ts, 21, 13))

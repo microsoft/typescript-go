@@ -1,6 +1,6 @@
 --- old.commentsEnums.symbols
 +++ new.commentsEnums.symbols
-@@ -7,23 +7,23 @@
+@@= skipped -7, +7 lines =@@
  
      /** Fancy name for 'blue'*/
      Cornflower /* blue */,

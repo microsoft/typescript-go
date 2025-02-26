@@ -1,6 +1,6 @@
 --- old.typeGuardsAsAssertions.symbols
 +++ new.typeGuardsAsAssertions.symbols
-@@ -15,12 +15,12 @@
+@@= skipped -15, +15 lines =@@
  
  export interface None { readonly none: string; }
  >None : Symbol(None, Decl(typeGuardsAsAssertions.ts, 4, 41))
@@ -15,7 +15,7 @@
  >a : Symbol(a, Decl(typeGuardsAsAssertions.ts, 7, 22))
  
  export const none : None = { none: '' };
-@@ -78,9 +78,9 @@
+@@= skipped -63, +63 lines =@@
  >someFrom : Symbol(someFrom, Decl(typeGuardsAsAssertions.ts, 13, 1))
  >isSome : Symbol(isSome, Decl(typeGuardsAsAssertions.ts, 9, 40))
  >result : Symbol(result, Decl(typeGuardsAsAssertions.ts, 20, 7))
@@ -27,7 +27,7 @@
  >makeSome : Symbol(makeSome, Decl(typeGuardsAsAssertions.ts, 19, 22))
  
          result;  // Some<r>
-@@ -106,9 +106,9 @@
+@@= skipped -28, +28 lines =@@
          x = typeof x === "string" ? x.slice() : "abc";
  >x : Symbol(x, Decl(typeGuardsAsAssertions.ts, 30, 7))
  >x : Symbol(x, Decl(typeGuardsAsAssertions.ts, 30, 7))
@@ -39,7 +39,7 @@
  
          x;  // string
  >x : Symbol(x, Decl(typeGuardsAsAssertions.ts, 30, 7))
-@@ -137,9 +137,9 @@
+@@= skipped -31, +31 lines =@@
  
              x = x.slice();
  >x : Symbol(x, Decl(typeGuardsAsAssertions.ts, 41, 7))
@@ -51,7 +51,7 @@
          }
          else {
              x = "abc";
-@@ -259,59 +259,59 @@
+@@= skipped -122, +122 lines =@@
  >x : Symbol(x, Decl(typeGuardsAsAssertions.ts, 105, 7))
  
      x!.slice();
@@ -125,7 +125,7 @@
  }
  
  function f7() {
-@@ -321,8 +321,8 @@
+@@= skipped -62, +62 lines =@@
  >x : Symbol(x, Decl(typeGuardsAsAssertions.ts, 122, 7))
  
      x!.slice();

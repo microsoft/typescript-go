@@ -1,6 +1,6 @@
 --- old.reverseMappedTupleContext.symbols
 +++ new.reverseMappedTupleContext.symbols
-@@ -86,13 +86,13 @@
+@@= skipped -86, +86 lines =@@
  >CompilerOptions : Symbol(CompilerOptions, Decl(reverseMappedTupleContext.ts, 21, 3))
  
    allowUnreachableCode?: boolean;

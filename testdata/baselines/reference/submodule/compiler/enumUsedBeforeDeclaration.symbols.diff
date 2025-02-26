@@ -1,6 +1,6 @@
 --- old.enumUsedBeforeDeclaration.symbols
 +++ new.enumUsedBeforeDeclaration.symbols
-@@ -4,27 +4,27 @@
+@@= skipped -4, +4 lines =@@
  const v: Color = Color.Green;
  >v : Symbol(v, Decl(enumUsedBeforeDeclaration.ts, 0, 5))
  >Color : Symbol(Color, Decl(enumUsedBeforeDeclaration.ts, 1, 40))

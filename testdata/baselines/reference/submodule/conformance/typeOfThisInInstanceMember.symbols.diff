@@ -1,6 +1,6 @@
 --- old.typeOfThisInInstanceMember.symbols
 +++ new.typeOfThisInInstanceMember.symbols
-@@ -5,11 +5,11 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(typeOfThisInInstanceMember.ts, 0, 0))
  
      x = this;
@@ -14,7 +14,7 @@
  
          return this;
  >this : Symbol(C, Decl(typeOfThisInInstanceMember.ts, 0, 0))
-@@ -22,27 +22,27 @@
+@@= skipped -17, +17 lines =@@
  >this : Symbol(C, Decl(typeOfThisInInstanceMember.ts, 0, 0))
  
          t.x;
@@ -49,7 +49,7 @@
  
          return this;
  >this : Symbol(C, Decl(typeOfThisInInstanceMember.ts, 0, 0))
-@@ -56,31 +56,31 @@
+@@= skipped -34, +34 lines =@@
  // all ok
  var r = c.x;
  >r : Symbol(r, Decl(typeOfThisInInstanceMember.ts, 20, 3))
@@ -93,7 +93,7 @@
  
  var rs = [r, r2, r3];
  >rs : Symbol(rs, Decl(typeOfThisInInstanceMember.ts, 24, 3))
-@@ -89,24 +89,24 @@
+@@= skipped -33, +33 lines =@@
  >r3 : Symbol(r3, Decl(typeOfThisInInstanceMember.ts, 23, 3))
  
  rs.forEach(x => {

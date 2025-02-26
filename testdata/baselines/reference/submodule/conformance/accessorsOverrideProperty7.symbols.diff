@@ -1,6 +1,6 @@
 --- old.accessorsOverrideProperty7.symbols
 +++ new.accessorsOverrideProperty7.symbols
-@@ -5,13 +5,13 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(accessorsOverrideProperty7.ts, 0, 0))
  
      abstract p = 'yep'

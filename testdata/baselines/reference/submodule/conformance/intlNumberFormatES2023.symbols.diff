@@ -1,6 +1,6 @@
 --- old.intlNumberFormatES2023.symbols
 +++ new.intlNumberFormatES2023.symbols
-@@ -8,23 +8,23 @@
+@@= skipped -8, +8 lines =@@
  >roundingIncrement : Symbol(roundingIncrement, Decl(intlNumberFormatES2023.ts, 1, 39))
  >trailingZeroDisplay : Symbol(trailingZeroDisplay, Decl(intlNumberFormatES2023.ts, 1, 58))
  >useGrouping : Symbol(useGrouping, Decl(intlNumberFormatES2023.ts, 1, 79))
@@ -32,7 +32,7 @@
  >roundingPriority : Symbol(roundingPriority, Decl(intlNumberFormatES2023.ts, 7, 32))
  >roundingIncrement : Symbol(roundingIncrement, Decl(intlNumberFormatES2023.ts, 7, 67))
  >roundingMode : Symbol(roundingMode, Decl(intlNumberFormatES2023.ts, 7, 91))
-@@ -32,101 +32,101 @@
+@@= skipped -24, +24 lines =@@
  // Changes to signDisplay
  const { signDisplay } = new Intl.NumberFormat('en-GB', { signDisplay: 'negative' }).resolvedOptions();
  >signDisplay : Symbol(signDisplay, Decl(intlNumberFormatES2023.ts, 10, 7))

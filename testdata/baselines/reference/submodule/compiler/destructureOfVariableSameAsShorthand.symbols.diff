@@ -1,6 +1,6 @@
 --- old.destructureOfVariableSameAsShorthand.symbols
 +++ new.destructureOfVariableSameAsShorthand.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >T : Symbol(T, Decl(destructureOfVariableSameAsShorthand.ts, 1, 24))
  
      data: T;
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(destructureOfVariableSameAsShorthand.ts, 1, 24))
  }
  
-@@ -25,23 +25,23 @@
+@@= skipped -18, +18 lines =@@
  
      // These work examples as expected
      get().then((response) => {
@@ -39,7 +39,7 @@
  >data : Symbol(data, Decl(destructureOfVariableSameAsShorthand.ts, 13, 17))
  
          // data is never
-@@ -53,9 +53,9 @@
+@@= skipped -28, +28 lines =@@
      // body is never
      const body = response.data;
  >body : Symbol(body, Decl(destructureOfVariableSameAsShorthand.ts, 18, 9))
@@ -51,7 +51,7 @@
  
      // data is never
      const { data } = await get<never>();
-@@ -65,7 +65,7 @@
+@@= skipped -12, +12 lines =@@
      // The following did not work as expected.
      // shouldBeNever should be never, but was any
      const { data: shouldBeNever } = await get();

@@ -1,6 +1,6 @@
 --- old.exportDefaultInterfaceClassAndValue.symbols
 +++ new.exportDefaultInterfaceClassAndValue.symbols
-@@ -8,8 +8,8 @@
+@@= skipped -8, +8 lines =@@
  >foo : Symbol(foo, Decl(exportDefaultInterfaceClassAndValue.ts, 0, 5))
  
  export default class Foo {}

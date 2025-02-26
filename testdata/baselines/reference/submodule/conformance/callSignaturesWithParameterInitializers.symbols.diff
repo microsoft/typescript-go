@@ -1,6 +1,6 @@
 --- old.callSignaturesWithParameterInitializers.symbols
 +++ new.callSignaturesWithParameterInitializers.symbols
-@@ -39,7 +39,7 @@
+@@= skipped -39, +39 lines =@@
  >C : Symbol(C, Decl(callSignaturesWithParameterInitializers.ts, 11, 9))
  
      foo(x = 1) { }
@@ -9,7 +9,7 @@
  >x : Symbol(x, Decl(callSignaturesWithParameterInitializers.ts, 14, 8))
  }
  
-@@ -48,14 +48,14 @@
+@@= skipped -9, +9 lines =@@
  >C : Symbol(C, Decl(callSignaturesWithParameterInitializers.ts, 11, 9))
  
  c.foo();
@@ -28,7 +28,7 @@
  
  // these are errors
  interface I {
-@@ -65,7 +65,7 @@
+@@= skipped -17, +17 lines =@@
  >x : Symbol(x, Decl(callSignaturesWithParameterInitializers.ts, 23, 5))
  
      foo(x: number, y = 1);
@@ -37,7 +37,7 @@
  >x : Symbol(x, Decl(callSignaturesWithParameterInitializers.ts, 24, 8))
  >y : Symbol(y, Decl(callSignaturesWithParameterInitializers.ts, 24, 18))
  }
-@@ -81,14 +81,14 @@
+@@= skipped -16, +16 lines =@@
  >i : Symbol(i, Decl(callSignaturesWithParameterInitializers.ts, 27, 3))
  
  i.foo(1);

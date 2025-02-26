@@ -1,6 +1,6 @@
 --- old.checkJsxNamespaceNamesQuestionableForms.symbols
 +++ new.checkJsxNamespaceNamesQuestionableForms.symbols
-@@ -8,17 +8,17 @@
+@@= skipped -8, +8 lines =@@
  >IntrinsicElements : Symbol(IntrinsicElements, Decl(checkJsxNamespaceNamesQuestionableForms.tsx, 0, 23))
  
          'this:b': any;

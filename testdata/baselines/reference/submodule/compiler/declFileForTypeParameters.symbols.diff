@@ -1,6 +1,6 @@
 --- old.declFileForTypeParameters.symbols
 +++ new.declFileForTypeParameters.symbols
-@@ -6,18 +6,18 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(declFileForTypeParameters.ts, 0, 8))
  
      x: T;

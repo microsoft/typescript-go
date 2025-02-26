@@ -1,6 +1,6 @@
 --- old.inlineJsxFactoryLocalTypeGlobalFallback.symbols
 +++ new.inlineJsxFactoryLocalTypeGlobalFallback.symbols
-@@ -2,7 +2,7 @@
+@@= skipped -2, +2 lines =@@
  
  === renderer.d.ts ===
  declare global {
@@ -9,7 +9,7 @@
  
      namespace JSX {
  >JSX : Symbol(JSX, Decl(renderer.d.ts, 0, 16))
-@@ -17,28 +17,28 @@
+@@= skipped -15, +15 lines =@@
  >Element : Symbol(Element, Decl(renderer.d.ts, 4, 9))
  
              __domBrand: void;
@@ -44,7 +44,7 @@
  
  === renderer2.d.ts ===
  export namespace predom {
-@@ -57,29 +57,29 @@
+@@= skipped -40, +40 lines =@@
  >Element : Symbol(Element, Decl(renderer2.d.ts, 4, 9))
  
              __predomBrand: void;
@@ -81,7 +81,7 @@
  
  === component.tsx ===
  /** @jsx predom */
-@@ -87,8 +87,6 @@
+@@= skipped -30, +30 lines =@@
  >predom : Symbol(predom, Decl(component.tsx, 1, 8))
  
  export default <h></h>
@@ -90,7 +90,7 @@
  
  === index.tsx ===
  /** @jsx dom */
-@@ -104,6 +102,4 @@
+@@= skipped -17, +15 lines =@@
  
  elem = <h></h>; // Expect assignability error here
  >elem : Symbol(elem, Decl(index.tsx, 3, 3))

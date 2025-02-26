@@ -1,6 +1,6 @@
 --- old.subtypesOfTypeParameterWithRecursiveConstraints.symbols
 +++ new.subtypesOfTypeParameterWithRecursiveConstraints.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  class Foo<T> { foo: T; }
  >Foo : Symbol(Foo, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 0, 0))
  >T : Symbol(T, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 2, 10))
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 2, 10))
  
  function f<T extends Foo<U>, U extends Foo<T>, V extends Foo<V>>(t: T, u: U, v: V) {
-@@ -188,7 +188,7 @@
+@@= skipped -182, +182 lines =@@
  >T : Symbol(T, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 56, 15))
  
          foo: T;
@@ -18,7 +18,7 @@
  >T : Symbol(T, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 56, 15))
      }
  
-@@ -211,7 +211,7 @@
+@@= skipped -23, +23 lines =@@
  >T : Symbol(T, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 60, 13))
  
          foo: T
@@ -27,7 +27,7 @@
  >T : Symbol(T, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 60, 13))
      }
  
-@@ -234,7 +234,7 @@
+@@= skipped -23, +23 lines =@@
  >T : Symbol(T, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 65, 13))
  
          foo: U
@@ -36,7 +36,7 @@
  >U : Symbol(U, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 65, 30))
      }
  
-@@ -257,7 +257,7 @@
+@@= skipped -23, +23 lines =@@
  >T : Symbol(T, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 70, 13))
  
          foo: V
@@ -45,7 +45,7 @@
  >V : Symbol(V, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 70, 48))
      }
  
-@@ -280,7 +280,7 @@
+@@= skipped -23, +23 lines =@@
  >U : Symbol(U, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 75, 30))
  
          foo: T
@@ -54,7 +54,7 @@
  >T : Symbol(T, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 75, 13))
      }
  
-@@ -303,7 +303,7 @@
+@@= skipped -23, +23 lines =@@
  >U : Symbol(U, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 80, 30))
  
          foo: U
@@ -63,7 +63,7 @@
  >U : Symbol(U, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 80, 30))
      }
  
-@@ -326,7 +326,7 @@
+@@= skipped -23, +23 lines =@@
  >U : Symbol(U, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 85, 30))
  
          foo: V
@@ -72,7 +72,7 @@
  >V : Symbol(V, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 85, 48))
      }
  
-@@ -349,7 +349,7 @@
+@@= skipped -23, +23 lines =@@
  >V : Symbol(V, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 90, 48))
  
          foo: T
@@ -81,7 +81,7 @@
  >T : Symbol(T, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 90, 13))
      }
  
-@@ -372,7 +372,7 @@
+@@= skipped -23, +23 lines =@@
  >V : Symbol(V, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 95, 48))
  
          foo: U
@@ -90,7 +90,7 @@
  >U : Symbol(U, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 95, 30))
      }
  
-@@ -395,7 +395,7 @@
+@@= skipped -23, +23 lines =@@
  >V : Symbol(V, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 100, 48))
  
          foo: V
@@ -99,7 +99,7 @@
  >V : Symbol(V, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 100, 48))
      }
  }
-@@ -409,7 +409,7 @@
+@@= skipped -14, +14 lines =@@
  >T : Symbol(T, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 108, 16))
  
          foo: Foo<T>;
@@ -108,7 +108,7 @@
  >Foo : Symbol(Foo, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 0, 0))
  >T : Symbol(T, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 108, 16))
      }
-@@ -433,7 +433,7 @@
+@@= skipped -24, +24 lines =@@
  >T : Symbol(T, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 112, 13))
  
          foo: T
@@ -117,7 +117,7 @@
  >T : Symbol(T, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 112, 13))
      }
  
-@@ -456,7 +456,7 @@
+@@= skipped -23, +23 lines =@@
  >T : Symbol(T, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 117, 13))
  
          foo: U
@@ -126,7 +126,7 @@
  >U : Symbol(U, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 117, 30))
      }
  
-@@ -479,7 +479,7 @@
+@@= skipped -23, +23 lines =@@
  >T : Symbol(T, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 122, 13))
  
          foo: V
@@ -135,7 +135,7 @@
  >V : Symbol(V, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 122, 48))
      }
  
-@@ -502,7 +502,7 @@
+@@= skipped -23, +23 lines =@@
  >U : Symbol(U, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 127, 30))
  
          foo: T
@@ -144,7 +144,7 @@
  >T : Symbol(T, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 127, 13))
      }
  
-@@ -525,7 +525,7 @@
+@@= skipped -23, +23 lines =@@
  >U : Symbol(U, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 132, 30))
  
          foo: U
@@ -153,7 +153,7 @@
  >U : Symbol(U, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 132, 30))
      }
  
-@@ -548,7 +548,7 @@
+@@= skipped -23, +23 lines =@@
  >U : Symbol(U, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 137, 30))
  
          foo: V
@@ -162,7 +162,7 @@
  >V : Symbol(V, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 137, 48))
      }
  
-@@ -571,7 +571,7 @@
+@@= skipped -23, +23 lines =@@
  >V : Symbol(V, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 142, 48))
  
          foo: T
@@ -171,7 +171,7 @@
  >T : Symbol(T, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 142, 13))
      }
  
-@@ -594,7 +594,7 @@
+@@= skipped -23, +23 lines =@@
  >V : Symbol(V, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 147, 48))
  
          foo: U
@@ -180,7 +180,7 @@
  >U : Symbol(U, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 147, 30))
      }
  
-@@ -617,7 +617,7 @@
+@@= skipped -23, +23 lines =@@
  >V : Symbol(V, Decl(subtypesOfTypeParameterWithRecursiveConstraints.ts, 152, 48))
  
          foo: V

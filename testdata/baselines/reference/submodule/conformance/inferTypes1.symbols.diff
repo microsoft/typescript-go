@@ -1,6 +1,6 @@
 --- old.inferTypes1.symbols
 +++ new.inferTypes1.symbols
-@@ -70,20 +70,20 @@
+@@= skipped -70, +70 lines =@@
  >C : Symbol(C, Decl(inferTypes1.ts, 16, 1))
  
      x = 0;
@@ -25,7 +25,7 @@
  }
  
  type T10 = ReturnType<() => string>;  // string
-@@ -576,7 +576,7 @@
+@@= skipped -506, +506 lines =@@
  >MyClass : Symbol(MyClass, Decl(inferTypes1.ts, 129, 1))
  
      toJSON(): "correct";
@@ -34,7 +34,7 @@
  }
  
  type JsonifiedExample = Jsonified<Example>;
-@@ -698,10 +698,10 @@
+@@= skipped -122, +122 lines =@@
  >test : Symbol(test, Decl(inferTypes1.ts, 159, 41))
  
      a: 1,

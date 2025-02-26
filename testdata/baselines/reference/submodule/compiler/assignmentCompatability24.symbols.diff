@@ -1,6 +1,6 @@
 --- old.assignmentCompatability24.symbols
 +++ new.assignmentCompatability24.symbols
-@@ -8,9 +8,9 @@
+@@= skipped -8, +8 lines =@@
  >interfaceWithPublicAndOptional : Symbol(interfaceWithPublicAndOptional, Decl(assignmentCompatability24.ts, 0, 18))
  >T : Symbol(T, Decl(assignmentCompatability24.ts, 1, 52))
  >U : Symbol(U, Decl(assignmentCompatability24.ts, 1, 54))
@@ -12,7 +12,7 @@
  >U : Symbol(U, Decl(assignmentCompatability24.ts, 1, 54))
  >obj4 : Symbol(obj4, Decl(assignmentCompatability24.ts, 1, 83))
  >interfaceWithPublicAndOptional : Symbol(interfaceWithPublicAndOptional, Decl(assignmentCompatability24.ts, 0, 18))
-@@ -36,10 +36,10 @@
+@@= skipped -28, +28 lines =@@
  >obj : Symbol(obj, Decl(assignmentCompatability24.ts, 5, 14))
  }
  __test2__.__val__obj = __test1__.__val__obj4

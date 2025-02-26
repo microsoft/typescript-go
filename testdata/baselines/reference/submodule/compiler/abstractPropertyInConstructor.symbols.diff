@@ -1,6 +1,6 @@
 --- old.abstractPropertyInConstructor.symbols
 +++ new.abstractPropertyInConstructor.symbols
-@@ -10,32 +10,32 @@
+@@= skipped -10, +10 lines =@@
  >AbstractClass : Symbol(AbstractClass, Decl(abstractPropertyInConstructor.ts, 0, 0))
  
          this.method(parseInt(str));
@@ -43,7 +43,7 @@
  >str : Symbol(str, Decl(abstractPropertyInConstructor.ts, 1, 16))
  
          // OK, reference is inside function
-@@ -43,54 +43,54 @@
+@@= skipped -33, +33 lines =@@
  >innerFunction : Symbol(innerFunction, Decl(abstractPropertyInConstructor.ts, 11, 13))
  
              return this.prop;
@@ -118,7 +118,7 @@
      }
  }
  
-@@ -99,7 +99,7 @@
+@@= skipped -56, +56 lines =@@
  >AbstractClass : Symbol(AbstractClass, Decl(abstractPropertyInConstructor.ts, 0, 0))
  
      cb = (s: string) => {};
@@ -127,7 +127,7 @@
  >s : Symbol(s, Decl(abstractPropertyInConstructor.ts, 33, 10))
  
      constructor(str: string, other: AbstractClass, yetAnother: DerivedAbstractClass) {
-@@ -116,36 +116,36 @@
+@@= skipped -17, +17 lines =@@
  
          // there is no implementation of 'prop' in any base class
          this.cb(this.prop.toLowerCase());
@@ -180,7 +180,7 @@
      }
  }
  
-@@ -154,10 +154,10 @@
+@@= skipped -38, +38 lines =@@
  >DerivedAbstractClass : Symbol(DerivedAbstractClass, Decl(abstractPropertyInConstructor.ts, 30, 1))
  
      prop = "";
@@ -193,7 +193,7 @@
  >s : Symbol(s, Decl(abstractPropertyInConstructor.ts, 50, 10))
  
      constructor(str: string, other: AbstractClass, yetAnother: DerivedAbstractClass) {
-@@ -174,25 +174,25 @@
+@@= skipped -20, +20 lines =@@
  >yetAnother : Symbol(yetAnother, Decl(abstractPropertyInConstructor.ts, 52, 50))
  
          this.cb(this.prop);
@@ -228,7 +228,7 @@
  >n : Symbol(n, Decl(abstractPropertyInConstructor.ts, 57, 11))
      }
  }
-@@ -205,24 +205,24 @@
+@@= skipped -31, +31 lines =@@
  >AbstractClass : Symbol(AbstractClass, Decl(abstractPropertyInConstructor.ts, 0, 0))
  
          a.prop;
@@ -261,7 +261,7 @@
      }
  }
  
-@@ -230,10 +230,10 @@
+@@= skipped -25, +25 lines =@@
  >C1 : Symbol(C1, Decl(abstractPropertyInConstructor.ts, 69, 1))
  
      abstract x: string;
@@ -274,7 +274,7 @@
  
      constructor() {
          let self = this;                // ok
-@@ -242,7 +242,7 @@
+@@= skipped -12, +12 lines =@@
  
          let { x, y: y1 } = this;        // error
  >x : Symbol(x, Decl(abstractPropertyInConstructor.ts, 77, 13))
@@ -283,7 +283,7 @@
  >y1 : Symbol(y1, Decl(abstractPropertyInConstructor.ts, 77, 16))
  >this : Symbol(C1, Decl(abstractPropertyInConstructor.ts, 69, 1))
  
-@@ -260,10 +260,10 @@
+@@= skipped -18, +18 lines =@@
  >C2 : Symbol(C2, Decl(abstractPropertyInConstructor.ts, 80, 1))
  
      x: string;
@@ -296,7 +296,7 @@
  
      constructor() {
          let self = this;                // ok
-@@ -272,7 +272,7 @@
+@@= skipped -12, +12 lines =@@
  
          let { x, y: y1 } = this;        // ok
  >x : Symbol(x, Decl(abstractPropertyInConstructor.ts, 88, 13))

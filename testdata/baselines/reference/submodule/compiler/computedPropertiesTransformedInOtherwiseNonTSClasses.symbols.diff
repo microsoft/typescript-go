@@ -1,6 +1,6 @@
 --- old.computedPropertiesTransformedInOtherwiseNonTSClasses.symbols
 +++ new.computedPropertiesTransformedInOtherwiseNonTSClasses.symbols
-@@ -12,7 +12,7 @@
+@@= skipped -12, +12 lines =@@
  >NotTransformed : Symbol(NotTransformed, Decl(computedPropertiesTransformedInOtherwiseNonTSClasses.ts, 1, 30))
  
          [NS.x]: number;

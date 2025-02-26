@@ -1,6 +1,6 @@
 --- old.restParameterTypeInstantiation.symbols
 +++ new.restParameterTypeInstantiation.symbols
-@@ -8,10 +8,10 @@
+@@= skipped -8, +8 lines =@@
  >TG : Symbol(TG, Decl(restParameterTypeInstantiation.ts, 2, 22))
  
    f: string
@@ -13,7 +13,7 @@
  >TG : Symbol(TG, Decl(restParameterTypeInstantiation.ts, 2, 22))
  }
  
-@@ -29,9 +29,9 @@
+@@= skipped -21, +21 lines =@@
  
  const result: number = removeF<number>({ f: '', g: 3 }).g
  >result : Symbol(result, Decl(restParameterTypeInstantiation.ts, 11, 5))

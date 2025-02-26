@@ -1,6 +1,6 @@
 --- old.constructorWithSuperAndPrologue.es5.symbols
 +++ new.constructorWithSuperAndPrologue.es5.symbols
-@@ -9,9 +9,9 @@
+@@= skipped -9, +9 lines =@@
  
      public constructor() {
          console.log("A")
@@ -12,7 +12,7 @@
      }
  }
  
-@@ -22,9 +22,9 @@
+@@= skipped -13, +13 lines =@@
      constructor() {
          "ngInject";
          console.log("B")

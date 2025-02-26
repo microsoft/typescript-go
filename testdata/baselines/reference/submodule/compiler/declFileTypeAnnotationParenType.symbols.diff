@@ -1,6 +1,6 @@
 --- old.declFileTypeAnnotationParenType.symbols
 +++ new.declFileTypeAnnotationParenType.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >c : Symbol(c, Decl(declFileTypeAnnotationParenType.ts, 0, 0))
  
      private p: string;

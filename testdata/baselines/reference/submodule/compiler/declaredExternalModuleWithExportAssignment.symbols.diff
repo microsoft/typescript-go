@@ -1,6 +1,6 @@
 --- old.declaredExternalModuleWithExportAssignment.symbols
 +++ new.declaredExternalModuleWithExportAssignment.symbols
-@@ -2,7 +2,7 @@
+@@= skipped -2, +2 lines =@@
  
  === declaredExternalModuleWithExportAssignment.ts ===
  declare module 'connect' {
@@ -9,7 +9,7 @@
  
      interface connectModule {
  >connectModule : Symbol(connectModule, Decl(declaredExternalModuleWithExportAssignment.ts, 0, 26))
-@@ -17,13 +17,13 @@
+@@= skipped -15, +15 lines =@@
  >connectExport : Symbol(connectExport, Decl(declaredExternalModuleWithExportAssignment.ts, 3, 5))
  
          use: (mod: connectModule) => connectExport;

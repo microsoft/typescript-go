@@ -1,6 +1,6 @@
 --- old.unionAndIntersectionInference1.symbols
 +++ new.unionAndIntersectionInference1.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  
  interface Y { 'i am a very certain type': Y }
  >Y : Symbol(Y, Decl(unionAndIntersectionInference1.ts, 0, 0))
@@ -9,7 +9,7 @@
  >Y : Symbol(Y, Decl(unionAndIntersectionInference1.ts, 0, 0))
  
  var y: Y = <Y>undefined;
-@@ -51,9 +51,6 @@
+@@= skipped -46, +46 lines =@@
  
  var value = Math.random() > 0.5 ? 'hey!' : <Y>undefined;
  >value : Symbol(value, Decl(unionAndIntersectionInference1.ts, 12, 3))
@@ -19,7 +19,7 @@
  >Y : Symbol(Y, Decl(unionAndIntersectionInference1.ts, 0, 0))
  >undefined : Symbol(undefined)
  
-@@ -149,10 +146,8 @@
+@@= skipped -98, +95 lines =@@
  >Maybe : Symbol(Maybe, Decl(unionAndIntersectionInference1.ts, 40, 1))
  
  get(foo).toUpperCase(); // Ok
@@ -30,7 +30,7 @@
  
  // Repro from #5456
  
-@@ -160,21 +155,21 @@
+@@= skipped -11, +9 lines =@@
  >Man : Symbol(Man, Decl(unionAndIntersectionInference1.ts, 51, 23))
  
      walks: boolean;
@@ -55,7 +55,7 @@
  }
  
  declare function pigify<T>(y: T & Bear): T & Pig;
-@@ -192,16 +187,16 @@
+@@= skipped -32, +32 lines =@@
  >Bear : Symbol(Bear, Decl(unionAndIntersectionInference1.ts, 57, 1))
  
  pigify(mbp).oinks; // OK, mbp is treated as Pig
@@ -76,7 +76,7 @@
  
  // Repros from #29815
  
-@@ -209,18 +204,13 @@
+@@= skipped -17, +17 lines =@@
  >ITest : Symbol(ITest, Decl(unionAndIntersectionInference1.ts, 71, 18))
  
    name: 'test'
@@ -97,7 +97,7 @@
  >name : Symbol(name, Decl(unionAndIntersectionInference1.ts, 79, 77))
  
  const createTest = (): ITest => {
-@@ -274,9 +264,6 @@
+@@= skipped -65, +60 lines =@@
  >T : Symbol(T, Decl(unionAndIntersectionInference1.ts, 94, 16))
  >b : Symbol(b, Decl(unionAndIntersectionInference1.ts, 94, 27))
  >U : Symbol(U, Decl(unionAndIntersectionInference1.ts, 94, 18))

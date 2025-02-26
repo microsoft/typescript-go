@@ -1,6 +1,6 @@
 --- old.unknownSymbolOffContextualType1.symbols
 +++ new.unknownSymbolOffContextualType1.symbols
-@@ -9,7 +9,7 @@
+@@= skipped -9, +9 lines =@@
  >Document : Symbol(Document, Decl(lib.dom.d.ts, --, --), Decl(lib.dom.d.ts, --, --), Decl(unknownSymbolOffContextualType1.ts, 0, 31))
  
      getElementById(elementId: string): HTMLElement;
@@ -9,7 +9,7 @@
  >elementId : Symbol(elementId, Decl(unknownSymbolOffContextualType1.ts, 2, 19))
  >HTMLElement : Symbol(HTMLElement, Decl(lib.dom.d.ts, --, --), Decl(lib.dom.d.ts, --, --), Decl(unknownSymbolOffContextualType1.ts, 3, 1))
  }
-@@ -17,7 +17,7 @@
+@@= skipped -8, +8 lines =@@
  >HTMLElement : Symbol(HTMLElement, Decl(lib.dom.d.ts, --, --), Decl(lib.dom.d.ts, --, --), Decl(unknownSymbolOffContextualType1.ts, 3, 1))
  
      isDisabled: boolean;
@@ -18,7 +18,7 @@
  }
  function getMaxWidth(elementNames: string[]) {
  >getMaxWidth : Symbol(getMaxWidth, Decl(unknownSymbolOffContextualType1.ts, 6, 1))
-@@ -25,36 +25,36 @@
+@@= skipped -8, +8 lines =@@
  
      var elements = elementNames.map(function (name) {
  >elements : Symbol(elements, Decl(unknownSymbolOffContextualType1.ts, 8, 7))
@@ -65,7 +65,7 @@
  >e : Symbol(e, Decl(unknownSymbolOffContextualType1.ts, 14, 39))
  
          return e.xyxyxyx;  // error expected here
-@@ -63,9 +63,9 @@
+@@= skipped -38, +38 lines =@@
      });
      var maxWidth = widths.reduce(function (a, b) {
  >maxWidth : Symbol(maxWidth, Decl(unknownSymbolOffContextualType1.ts, 17, 7))

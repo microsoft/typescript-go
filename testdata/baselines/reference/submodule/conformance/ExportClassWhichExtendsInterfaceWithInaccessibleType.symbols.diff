@@ -1,6 +1,6 @@
 --- old.ExportClassWhichExtendsInterfaceWithInaccessibleType.symbols
 +++ new.ExportClassWhichExtendsInterfaceWithInaccessibleType.symbols
-@@ -8,13 +8,13 @@
+@@= skipped -8, +8 lines =@@
  >Point : Symbol(Point, Decl(ExportClassWhichExtendsInterfaceWithInaccessibleType.ts, 0, 10))
  
          x: number;
@@ -17,7 +17,7 @@
  >p : Symbol(p, Decl(ExportClassWhichExtendsInterfaceWithInaccessibleType.ts, 6, 19))
  >Point : Symbol(Point, Decl(ExportClassWhichExtendsInterfaceWithInaccessibleType.ts, 0, 10))
      }
-@@ -24,11 +24,11 @@
+@@= skipped -16, +16 lines =@@
  >Point : Symbol(Point, Decl(ExportClassWhichExtendsInterfaceWithInaccessibleType.ts, 0, 10))
  
          constructor(public x: number, public y: number) { }

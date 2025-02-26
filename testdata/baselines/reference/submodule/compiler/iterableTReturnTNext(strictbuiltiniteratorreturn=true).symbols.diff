@@ -1,6 +1,6 @@
 --- old.iterableTReturnTNext(strictbuiltiniteratorreturn=true).symbols
 +++ new.iterableTReturnTNext(strictbuiltiniteratorreturn=true).symbols
-@@ -15,11 +15,11 @@
+@@= skipped -15, +15 lines =@@
  const r1: number = map.values().next().value; // error when strictBuiltinIteratorReturn is true as result is potentially `{ done: true, value: undefined }`
  >r1 : Symbol(r1, Decl(iterableTReturnTNext.ts, 6, 5))
  >map.values().next().value : Symbol(value, Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --))
@@ -16,7 +16,7 @@
  >value : Symbol(value, Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --))
  
  // based on: https://github.com/gcanti/fp-ts/blob/89a772e95e414acee679f42f56527606f7b61f30/src/Map.ts#L246
-@@ -28,20 +28,20 @@
+@@= skipped -13, +13 lines =@@
  >A : Symbol(A, Decl(iterableTReturnTNext.ts, 9, 15))
  
      readonly done?: boolean
@@ -43,7 +43,7 @@
  
  // based on: https://github.com/graphql/graphql-js/blob/e15c3ec4dc21d9fd1df34fe9798cadf3bf02c6ea/src/execution/__tests__/mapAsyncIterable-test.ts#L175
  async function* source() { yield 1; yield 2; yield 3; }
-@@ -52,19 +52,19 @@
+@@= skipped -24, +24 lines =@@
  >source : Symbol(source, Decl(iterableTReturnTNext.ts, 13, 45))
  
  doubles.return();
@@ -69,7 +69,7 @@
  >value : Symbol(value, Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --))
  
  // based on: https://github.com/microsoft/TypeScript/blob/15f67e0b482faf9f6a3ab9965f3c11196bf3e99b/src/harness/compilerImpl.ts#L77
-@@ -73,29 +73,29 @@
+@@= skipped -21, +21 lines =@@
  >Map : Symbol(Map, Decl(lib.es2015.collection.d.ts, --, --), Decl(lib.es2015.collection.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
  
      declare private _keys: string[];
@@ -108,7 +108,7 @@
  >callbackfn : Symbol(callbackfn, Decl(iterableTReturnTNext.ts, 32, 12))
  >value : Symbol(value, Decl(iterableTReturnTNext.ts, 32, 25))
  >key : Symbol(key, Decl(iterableTReturnTNext.ts, 32, 39))
-@@ -104,46 +104,46 @@
+@@= skipped -31, +31 lines =@@
  >thisArg : Symbol(thisArg, Decl(iterableTReturnTNext.ts, 32, 87))
  
      get(key: string): number | undefined { return undefined; }

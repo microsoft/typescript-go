@@ -1,6 +1,6 @@
 --- old.elidedJSImport1.symbols
 +++ new.elidedJSImport1.symbols
-@@ -8,15 +8,15 @@
+@@= skipped -8, +8 lines =@@
  >TruffleContract : Symbol(TruffleContract, Decl(caller.js, 1, 6))
  
  console.log(fs);
@@ -20,7 +20,7 @@
  
  
  === node_modules/@truffle/contract/index.d.ts ===
-@@ -27,7 +27,7 @@
+@@= skipped -19, +19 lines =@@
  >ContractObject : Symbol(ContractObject, Decl(index.d.ts, 0, 36))
  
          foo: number;

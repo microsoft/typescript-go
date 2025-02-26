@@ -1,6 +1,6 @@
 --- old.nestedSelf.symbols
 +++ new.nestedSelf.symbols
-@@ -8,16 +8,16 @@
+@@= skipped -8, +8 lines =@@
  >C : Symbol(C, Decl(nestedSelf.ts, 0, 10))
  
     public n = 42;

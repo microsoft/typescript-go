@@ -1,6 +1,6 @@
 --- old.topLevelAwait.1(module=esnext,target=es2017).symbols
 +++ new.topLevelAwait.1(module=esnext,target=es2017).symbols
-@@ -42,23 +42,23 @@
+@@= skipped -42, +42 lines =@@
  >C1 : Symbol(C1, Decl(index.ts, 16, 18))
  
      await() {}
@@ -28,7 +28,7 @@
  }
  ({
      await() {}
-@@ -82,11 +82,11 @@
+@@= skipped -40, +40 lines =@@
  
  // property access name should be ok
  C1.prototype.await;
@@ -44,7 +44,7 @@
  
  // await in decorators
  declare const dec: any;
-@@ -131,9 +131,9 @@
+@@= skipped -49, +49 lines =@@
  // for-await-of
  const arr = [Promise.resolve()];
  >arr : Symbol(arr, Decl(other.ts, 6, 5))

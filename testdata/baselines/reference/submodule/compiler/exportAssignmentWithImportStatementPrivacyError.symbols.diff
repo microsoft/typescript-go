@@ -1,6 +1,6 @@
 --- old.exportAssignmentWithImportStatementPrivacyError.symbols
 +++ new.exportAssignmentWithImportStatementPrivacyError.symbols
-@@ -16,13 +16,13 @@
+@@= skipped -16, +16 lines =@@
  >connectExport : Symbol(connectExport, Decl(exportAssignmentWithImportStatementPrivacyError.ts, 3, 5))
  
          use: (mod: connectModule) => connectExport;
@@ -16,7 +16,7 @@
  >port : Symbol(port, Decl(exportAssignmentWithImportStatementPrivacyError.ts, 6, 17))
      }
  
-@@ -36,17 +36,17 @@
+@@= skipped -20, +20 lines =@@
  
          (): m2.connectExport;
  >m2 : Symbol(m2, Decl(exportAssignmentWithImportStatementPrivacyError.ts, 0, 0))

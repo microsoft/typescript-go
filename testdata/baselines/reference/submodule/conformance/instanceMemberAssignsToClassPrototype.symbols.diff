@@ -1,6 +1,6 @@
 --- old.instanceMemberAssignsToClassPrototype.symbols
 +++ new.instanceMemberAssignsToClassPrototype.symbols
-@@ -5,42 +5,42 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(instanceMemberAssignsToClassPrototype.ts, 0, 0))
  
      foo() {

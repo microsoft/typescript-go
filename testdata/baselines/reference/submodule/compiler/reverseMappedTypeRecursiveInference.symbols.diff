@@ -1,6 +1,6 @@
 --- old.reverseMappedTypeRecursiveInference.symbols
 +++ new.reverseMappedTypeRecursiveInference.symbols
-@@ -36,9 +36,9 @@
+@@= skipped -36, +36 lines =@@
  >V : Symbol(V, Decl(reverseMappedTypeRecursiveInference.ts, 8, 14))
  
    console.log(value);

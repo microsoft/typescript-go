@@ -1,6 +1,6 @@
 --- old.assignmentToVoidZero1.symbols
 +++ new.assignmentToVoidZero1.symbols
-@@ -1,22 +1,9 @@
+@@= skipped -1, +1 lines =@@
  //// [tests/cases/conformance/salsa/assignmentToVoidZero1.ts] ////
  
  === assignmentToVoidZero1.js ===

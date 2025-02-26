@@ -1,6 +1,6 @@
 --- old.superCallInNonStaticMethod.symbols
 +++ new.superCallInNonStaticMethod.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Doing : Symbol(Doing, Decl(superCallInNonStaticMethod.ts, 0, 0))
  
      public instanceMethod() {
@@ -9,7 +9,7 @@
      }
  }
  
-@@ -15,70 +15,70 @@
+@@= skipped -10, +10 lines =@@
  
      // in instance method
      public instanceMethod() {
@@ -97,7 +97,7 @@
      }
      
      constructor() {
-@@ -86,21 +86,21 @@
+@@= skipped -71, +71 lines =@@
  >super : Symbol(Doing, Decl(superCallInNonStaticMethod.ts, 0, 0))
  
          super.instanceMethod();

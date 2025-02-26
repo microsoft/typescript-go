@@ -1,6 +1,6 @@
 --- old.localTypeParameterInferencePriority.symbols
 +++ new.localTypeParameterInferencePriority.symbols
-@@ -25,12 +25,12 @@
+@@= skipped -25, +25 lines =@@
  >Schema : Symbol(Schema, Decl(localTypeParameterInferencePriority.ts, 2, 10))
  
      __schema!: S;

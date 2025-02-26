@@ -1,6 +1,6 @@
 --- old.undeclaredModuleError.symbols
 +++ new.undeclaredModuleError.symbols
-@@ -10,7 +10,7 @@
+@@= skipped -10, +10 lines =@@
  >accept : Symbol(accept, Decl(undeclaredModuleError.ts, 1, 30))
  >stat : Symbol(stat, Decl(undeclaredModuleError.ts, 1, 40))
  >fs : Symbol(fs, Decl(undeclaredModuleError.ts, 0, 0))
@@ -9,7 +9,7 @@
  >name : Symbol(name, Decl(undeclaredModuleError.ts, 1, 55))
  >callback : Symbol(callback, Decl(undeclaredModuleError.ts, 1, 81))
  >error : Symbol(error, Decl(undeclaredModuleError.ts, 1, 93))
-@@ -19,7 +19,7 @@
+@@= skipped -9, +9 lines =@@
  >name : Symbol(name, Decl(undeclaredModuleError.ts, 1, 117))
  >stat : Symbol(stat, Decl(undeclaredModuleError.ts, 1, 131))
  >fs : Symbol(fs, Decl(undeclaredModuleError.ts, 0, 0))
@@ -18,7 +18,7 @@
  
  function join(...paths: string[]) {}
  >join : Symbol(join, Decl(undeclaredModuleError.ts, 1, 165))
-@@ -45,9 +45,9 @@
+@@= skipped -26, +26 lines =@@
  >files : Symbol(files, Decl(undeclaredModuleError.ts, 8, 26))
  
                  files.forEach((file) => {

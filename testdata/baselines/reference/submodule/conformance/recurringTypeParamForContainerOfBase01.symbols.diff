@@ -1,6 +1,6 @@
 --- old.recurringTypeParamForContainerOfBase01.symbols
 +++ new.recurringTypeParamForContainerOfBase01.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(recurringTypeParamForContainerOfBase01.ts, 0, 19))
  
      item: T
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(recurringTypeParamForContainerOfBase01.ts, 0, 19))
  }
  
-@@ -19,7 +19,7 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(recurringTypeParamForContainerOfBase01.ts, 4, 14))
  
      self: T;
@@ -18,7 +18,7 @@
  >T : Symbol(T, Decl(recurringTypeParamForContainerOfBase01.ts, 4, 14))
  }
  
-@@ -32,7 +32,7 @@
+@@= skipped -13, +13 lines =@@
  >T : Symbol(T, Decl(recurringTypeParamForContainerOfBase01.ts, 8, 14))
  
      other: BoxOfFoo<T>;

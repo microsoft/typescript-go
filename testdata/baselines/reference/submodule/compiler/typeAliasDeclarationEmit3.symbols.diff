@@ -1,6 +1,6 @@
 --- old.typeAliasDeclarationEmit3.symbols
 +++ new.typeAliasDeclarationEmit3.symbols
-@@ -13,9 +13,9 @@
+@@= skipped -13, +13 lines =@@
  >foo : Symbol(foo, Decl(typeAliasDeclarationEmit3.ts, 1, 31))
  
          console.log('f1');
@@ -12,7 +12,7 @@
  }
  
  function f2(): void {
-@@ -26,9 +26,9 @@
+@@= skipped -13, +13 lines =@@
  >foo : Symbol(foo, Decl(typeAliasDeclarationEmit3.ts, 7, 16))
  
          console.log('f2');
@@ -24,7 +24,7 @@
  }
  
  function f3(): void {
-@@ -39,8 +39,8 @@
+@@= skipped -13, +13 lines =@@
  >foo : Symbol(foo, Decl(typeAliasDeclarationEmit3.ts, 13, 13))
  
          console.log('f3');

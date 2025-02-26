@@ -1,6 +1,6 @@
 --- old.narrowingByTypeofInSwitch.symbols
 +++ new.narrowingByTypeofInSwitch.symbols
-@@ -377,9 +377,9 @@
+@@= skipped -377, +377 lines =@@
  >x : Symbol(x, Decl(narrowingByTypeofInSwitch.ts, 137, 26))
  
          case 'number': return x.toString(2);
@@ -12,7 +12,7 @@
  
          case 'string': return x;
  >x : Symbol(x, Decl(narrowingByTypeofInSwitch.ts, 137, 26))
-@@ -406,9 +406,9 @@
+@@= skipped -29, +29 lines =@@
  >x : Symbol(x, Decl(narrowingByTypeofInSwitch.ts, 146, 69))
  
          case 'number': return x.toString(2);

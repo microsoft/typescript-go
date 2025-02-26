@@ -1,6 +1,6 @@
 --- old.potentiallyUncalledDecorators.symbols
 +++ new.potentiallyUncalledDecorators.symbols
-@@ -11,7 +11,7 @@
+@@= skipped -11, +11 lines =@@
  
      @Input foo: string;
  >Input : Symbol(Input, Decl(potentiallyUncalledDecorators.ts, 0, 0))
@@ -9,7 +9,7 @@
  }
  
  // Glimmer-style tracked API:
-@@ -25,26 +25,26 @@
+@@= skipped -14, +14 lines =@@
  
      @tracked person; any;
  >tracked : Symbol(tracked, Decl(potentiallyUncalledDecorators.ts, 7, 13))
@@ -42,7 +42,7 @@
      }
  }
  
-@@ -101,11 +101,11 @@
+@@= skipped -76, +76 lines =@@
  
      @noArgs foo: any;
  >noArgs : Symbol(noArgs, Decl(potentiallyUncalledDecorators.ts, 24, 1))
@@ -56,7 +56,7 @@
  }
  
  @allRest
-@@ -116,11 +116,11 @@
+@@= skipped -15, +15 lines =@@
  
      @allRest foo: any;
  >allRest : Symbol(allRest, Decl(potentiallyUncalledDecorators.ts, 26, 41))
@@ -70,7 +70,7 @@
  }
  
  @oneOptional
-@@ -131,11 +131,11 @@
+@@= skipped -15, +15 lines =@@
  
      @oneOptional foo: any;
  >oneOptional : Symbol(oneOptional, Decl(potentiallyUncalledDecorators.ts, 27, 56))
@@ -84,7 +84,7 @@
  }
  
  @twoOptional
-@@ -146,11 +146,11 @@
+@@= skipped -15, +15 lines =@@
  
      @twoOptional foo: any;
  >twoOptional : Symbol(twoOptional, Decl(potentiallyUncalledDecorators.ts, 28, 53))
@@ -98,7 +98,7 @@
  }
  
  @threeOptional
-@@ -161,11 +161,11 @@
+@@= skipped -15, +15 lines =@@
  
      @threeOptional foo: any;
  >threeOptional : Symbol(threeOptional, Decl(potentiallyUncalledDecorators.ts, 29, 62))
@@ -112,7 +112,7 @@
  }
  
  @oneOptionalWithRest
-@@ -176,11 +176,11 @@
+@@= skipped -15, +15 lines =@@
  
      @oneOptionalWithRest foo: any;
  >oneOptionalWithRest : Symbol(oneOptionalWithRest, Decl(potentiallyUncalledDecorators.ts, 30, 73))
@@ -126,7 +126,7 @@
  }
  
  @anyDec
-@@ -191,11 +191,11 @@
+@@= skipped -15, +15 lines =@@
  
      @anyDec foo: any;
  >anyDec : Symbol(anyDec, Decl(potentiallyUncalledDecorators.ts, 32, 13))

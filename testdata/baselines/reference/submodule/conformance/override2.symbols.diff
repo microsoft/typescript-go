@@ -1,6 +1,6 @@
 --- old.override2.symbols
 +++ new.override2.symbols
-@@ -5,15 +5,15 @@
+@@= skipped -5, +5 lines =@@
  >AB : Symbol(AB, Decl(override2.ts, 0, 0))
  
      abstract foo(v: string): void;
@@ -19,7 +19,7 @@
  >v : Symbol(v, Decl(override2.ts, 4, 17))
  }
  
-@@ -28,7 +28,7 @@
+@@= skipped -23, +23 lines =@@
  >AB : Symbol(AB, Decl(override2.ts, 0, 0))
  
      abstract foo(v: ''): void // need override?
@@ -28,7 +28,7 @@
  >v : Symbol(v, Decl(override2.ts, 12, 17))
  }
  
-@@ -37,14 +37,14 @@
+@@= skipped -9, +9 lines =@@
  >AB : Symbol(AB, Decl(override2.ts, 0, 0))
  
      override foo(v: ''): void { } // need override?
@@ -46,7 +46,7 @@
  }
  
  class D4 extends AB {
-@@ -52,13 +52,13 @@
+@@= skipped -15, +15 lines =@@
  >AB : Symbol(AB, Decl(override2.ts, 0, 0))
  
      override foo(v: ''): void {}

@@ -1,6 +1,6 @@
 --- old.parseAssertEntriesError.symbols
 +++ new.parseAssertEntriesError.symbols
-@@ -6,7 +6,6 @@
+@@= skipped -6, +6 lines =@@
  
      & import("pkg", { assert: {1234, "resolution-mode": "require"} }).RequireInterface
      & import("pkg", { assert: {1234, "resolution-mode": "import"} }).ImportInterface;
@@ -8,7 +8,7 @@
  >assert : Symbol(assert, Decl(index.ts, 2, 21))
  >1234 : Symbol(1234, Decl(index.ts, 2, 31))
  >"resolution-mode" : Symbol("resolution-mode", Decl(index.ts, 2, 36))
-@@ -17,10 +16,6 @@
+@@= skipped -11, +10 lines =@@
  export const b = (null as any as import("pkg", { assert: {1234, "resolution-mode": "import"} }).ImportInterface);
  >b : Symbol(b, Decl(index.ts, 5, 12))
  

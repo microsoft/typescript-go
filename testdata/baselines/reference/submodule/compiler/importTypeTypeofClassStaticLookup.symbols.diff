@@ -1,6 +1,6 @@
 --- old.importTypeTypeofClassStaticLookup.symbols
 +++ new.importTypeTypeofClassStaticLookup.symbols
-@@ -5,12 +5,12 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(a.d.ts, 0, 0))
  
      static foo(): void;

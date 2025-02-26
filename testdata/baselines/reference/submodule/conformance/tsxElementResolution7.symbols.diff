@@ -1,6 +1,6 @@
 --- old.tsxElementResolution7.symbols
 +++ new.tsxElementResolution7.symbols
-@@ -19,9 +19,9 @@
+@@= skipped -19, +19 lines =@@
  }
  // OK
  <my.div n='x' />;
@@ -12,7 +12,7 @@
  >n : Symbol(n, Decl(file.tsx, 9, 7))
  
  // Error
-@@ -33,13 +33,13 @@
+@@= skipped -14, +14 lines =@@
  
      import mine = my;
  >mine : Symbol(mine, Decl(file.tsx, 13, 10))

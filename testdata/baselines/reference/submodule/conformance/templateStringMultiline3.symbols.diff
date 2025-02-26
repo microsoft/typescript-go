@@ -1,6 +1,6 @@
 --- old.templateStringMultiline3.symbols
 +++ new.templateStringMultiline3.symbols
-@@ -2,6 +2,7 @@
+@@= skipped -2, +2 lines =@@
  
  === templateStringMultiline3.ts ===
  

@@ -1,6 +1,6 @@
 --- old.typeQueryOnClass.symbols
 +++ new.typeQueryOnClass.symbols
-@@ -12,71 +12,71 @@
+@@= skipped -12, +12 lines =@@
  >x : Symbol(x, Decl(typeQueryOnClass.ts, 2, 16))
  
      constructor(public x) { }
@@ -90,7 +90,7 @@
  
          return 1;
      }
-@@ -101,14 +101,14 @@
+@@= skipped -89, +89 lines =@@
  >T : Symbol(T, Decl(typeQueryOnClass.ts, 47, 8))
  
      constructor(public y?) { }

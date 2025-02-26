@@ -1,6 +1,6 @@
 --- old.topLevel.symbols
 +++ new.topLevel.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >IPoint : Symbol(IPoint, Decl(topLevel.ts, 0, 0))
  
      x:number;
@@ -13,7 +13,7 @@
  }
  
  class Point implements IPoint {
-@@ -16,39 +16,39 @@
+@@= skipped -11, +11 lines =@@
  >IPoint : Symbol(IPoint, Decl(topLevel.ts, 0, 0))
  
      constructor(public x,public y){}
@@ -65,7 +65,7 @@
      }
  }
  
-@@ -57,9 +57,9 @@
+@@= skipped -41, +41 lines =@@
  
  result+=(new Point(3,4).move(2,2));
  >result : Symbol(result, Decl(topLevel.ts, 17, 3))
@@ -77,7 +77,7 @@
  
  module M {
  >M : Symbol(M, Decl(topLevel.ts, 18, 35))
-@@ -71,10 +71,10 @@
+@@= skipped -14, +14 lines =@@
  
  result+=(M.origin.move(1,1));
  >result : Symbol(result, Decl(topLevel.ts, 17, 3))

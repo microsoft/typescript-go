@@ -1,6 +1,6 @@
 --- old.exportClassExtendingIntersection.symbols
 +++ new.exportClassExtendingIntersection.symbols
-@@ -12,7 +12,7 @@
+@@= skipped -12, +12 lines =@@
  >T : Symbol(T, Decl(BaseClass.ts, 2, 25))
  
      baseProperty: string;
@@ -9,7 +9,7 @@
  
      constructor(value: T) {}
  >value : Symbol(value, Decl(BaseClass.ts, 4, 16))
-@@ -27,7 +27,7 @@
+@@= skipped -15, +15 lines =@@
  >MyMixin : Symbol(MyMixin, Decl(MixinClass.ts, 4, 1), Decl(MixinClass.ts, 0, 55))
  
      mixinProperty: string;
@@ -18,7 +18,7 @@
  }
  
  export function MyMixin<T extends Constructor<MyBaseClass<any>>>(base: T): T & Constructor<MyMixin> {
-@@ -45,7 +45,7 @@
+@@= skipped -18, +18 lines =@@
  >base : Symbol(base, Decl(MixinClass.ts, 6, 65))
  
          mixinProperty: string;
@@ -27,7 +27,7 @@
      }
  }
  === FinalClass.ts ===
-@@ -61,7 +61,7 @@
+@@= skipped -16, +16 lines =@@
  >MyBaseClass : Symbol(MyBaseClass, Decl(FinalClass.ts, 0, 8))
  
      extendedClassProperty: number;

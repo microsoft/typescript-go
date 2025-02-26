@@ -1,6 +1,6 @@
 --- old.inferTypeConstraintInstantiationCircularity.symbols
 +++ new.inferTypeConstraintInstantiationCircularity.symbols
-@@ -33,11 +33,11 @@
+@@= skipped -33, +33 lines =@@
  
  > {
    tee: T;
@@ -14,7 +14,7 @@
  >Output : Symbol(Output, Decl(inferTypeConstraintInstantiationCircularity.ts, 9, 17))
  }
  
-@@ -63,11 +63,11 @@
+@@= skipped -30, +30 lines =@@
  
  > {
    tee: T;
@@ -28,7 +28,7 @@
  >Output : Symbol(Output, Decl(inferTypeConstraintInstantiationCircularity.ts, 21, 17))
  }
  
-@@ -150,7 +150,7 @@
+@@= skipped -87, +87 lines =@@
  >Output : Symbol(Output, Decl(inferTypeConstraintInstantiationCircularity.ts, 50, 18))
  
    _type: Output;
@@ -37,7 +37,7 @@
  >Output : Symbol(Output, Decl(inferTypeConstraintInstantiationCircularity.ts, 50, 18))
  }
  
-@@ -186,7 +186,7 @@
+@@= skipped -36, +36 lines =@@
  >Output : Symbol(Output, Decl(inferTypeConstraintInstantiationCircularity.ts, 55, 24))
  
    readonly _shape: T;

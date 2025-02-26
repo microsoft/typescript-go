@@ -1,6 +1,6 @@
 --- old.getAndSetNotIdenticalType2.symbols
 +++ new.getAndSetNotIdenticalType2.symbols
-@@ -4,7 +4,7 @@
+@@= skipped -4, +4 lines =@@
  class A<T> { foo: T; }
  >A : Symbol(A, Decl(getAndSetNotIdenticalType2.ts, 0, 0))
  >T : Symbol(T, Decl(getAndSetNotIdenticalType2.ts, 0, 8))
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(getAndSetNotIdenticalType2.ts, 0, 8))
  
  class C<T> {
-@@ -12,29 +12,29 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(getAndSetNotIdenticalType2.ts, 2, 8))
  
      data: A<T>;
@@ -46,7 +46,7 @@
  >v : Symbol(v, Decl(getAndSetNotIdenticalType2.ts, 7, 10))
      }
  }
-@@ -45,13 +45,13 @@
+@@= skipped -33, +33 lines =@@
  
  var r = x.x;
  >r : Symbol(r, Decl(getAndSetNotIdenticalType2.ts, 13, 3))

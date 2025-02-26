@@ -1,6 +1,6 @@
 --- old.jsonFileImportChecksCallCorrectlyTwice.symbols
 +++ new.jsonFileImportChecksCallCorrectlyTwice.symbols
-@@ -8,36 +8,19 @@
+@@= skipped -8, +8 lines =@@
  >Foo : Symbol(Foo, Decl(index.ts, 0, 31))
  
    str: string;

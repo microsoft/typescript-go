@@ -1,6 +1,6 @@
 --- old.circularTypeAliasForUnionWithInterface.symbols
 +++ new.circularTypeAliasForUnionWithInterface.symbols
-@@ -13,7 +13,7 @@
+@@= skipped -13, +13 lines =@@
  >I0 : Symbol(I0, Decl(circularTypeAliasForUnionWithInterface.ts, 1, 22))
  
      x: T0;

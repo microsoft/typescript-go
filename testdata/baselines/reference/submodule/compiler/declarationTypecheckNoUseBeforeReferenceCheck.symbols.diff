@@ -1,6 +1,6 @@
 --- old.declarationTypecheckNoUseBeforeReferenceCheck.symbols
 +++ new.declarationTypecheckNoUseBeforeReferenceCheck.symbols
-@@ -6,11 +6,11 @@
+@@= skipped -6, +6 lines =@@
  >Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      static readonly p: unique symbol;

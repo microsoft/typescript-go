@@ -1,6 +1,6 @@
 --- old.nonInferrableTypePropagation3.symbols
 +++ new.nonInferrableTypePropagation3.symbols
-@@ -41,9 +41,9 @@
+@@= skipped -41, +41 lines =@@
  >data : Symbol(data, Decl(nonInferrableTypePropagation3.ts, 7, 42))
  
      return data.filter(user => user.age >= age);

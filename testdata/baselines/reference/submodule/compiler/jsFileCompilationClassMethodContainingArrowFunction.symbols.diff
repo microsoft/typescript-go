@@ -1,6 +1,6 @@
 --- old.jsFileCompilationClassMethodContainingArrowFunction.symbols
 +++ new.jsFileCompilationClassMethodContainingArrowFunction.symbols
-@@ -5,15 +5,15 @@
+@@= skipped -5, +5 lines =@@
  >c : Symbol(c, Decl(a.js, 0, 0))
  
      method(a) {

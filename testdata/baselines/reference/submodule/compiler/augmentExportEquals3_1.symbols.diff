@@ -1,6 +1,6 @@
 --- old.augmentExportEquals3_1.symbols
 +++ new.augmentExportEquals3_1.symbols
-@@ -24,17 +24,17 @@
+@@= skipped -24, +24 lines =@@
  >x : Symbol(x, Decl(file2.ts, 0, 0))
  
  x.b = 1;
@@ -22,7 +22,7 @@
  
      let b: number;
  >b : Symbol(b, Decl(file2.ts, 7, 7))
-@@ -48,11 +48,11 @@
+@@= skipped -24, +24 lines =@@
  let a: x.A;
  >a : Symbol(a, Decl(file3.ts, 2, 3))
  >x : Symbol(x, Decl(file3.ts, 0, 6))

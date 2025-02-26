@@ -1,6 +1,6 @@
 --- old.importShadowsGlobalName.symbols
 +++ new.importShadowsGlobalName.symbols
-@@ -11,10 +11,3 @@
+@@= skipped -11, +11 lines =@@
  export = Bar;
  >Bar : Symbol(Bar, Decl(Bar.ts, 0, 30))
  

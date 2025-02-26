@@ -1,6 +1,6 @@
 --- old.cloduleWithPriorInstantiatedModule.symbols
 +++ new.cloduleWithPriorInstantiatedModule.symbols
-@@ -9,7 +9,7 @@
+@@= skipped -9, +9 lines =@@
  >Someinterface : Symbol(Someinterface, Decl(cloduleWithPriorInstantiatedModule.ts, 1, 18))
  
          foo(): void;

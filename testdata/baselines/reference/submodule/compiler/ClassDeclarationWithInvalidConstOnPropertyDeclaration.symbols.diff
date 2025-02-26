@@ -1,6 +1,6 @@
 --- old.ClassDeclarationWithInvalidConstOnPropertyDeclaration.symbols
 +++ new.ClassDeclarationWithInvalidConstOnPropertyDeclaration.symbols
-@@ -5,5 +5,5 @@
+@@= skipped -5, +5 lines =@@
  >AtomicNumbers : Symbol(AtomicNumbers, Decl(ClassDeclarationWithInvalidConstOnPropertyDeclaration.ts, 0, 0))
  
    static const H = 1;

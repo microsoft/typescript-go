@@ -1,6 +1,6 @@
 --- old.mapConstructor.symbols
 +++ new.mapConstructor.symbols
-@@ -2,21 +2,18 @@
+@@= skipped -2, +2 lines =@@
  
  === mapConstructor.ts ===
  new Map();

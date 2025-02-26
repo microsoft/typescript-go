@@ -1,6 +1,6 @@
 --- old.arrayLiteralContextualType.symbols
 +++ new.arrayLiteralContextualType.symbols
-@@ -5,27 +5,27 @@
+@@= skipped -5, +5 lines =@@
  >IAnimal : Symbol(IAnimal, Decl(arrayLiteralContextualType.ts, 0, 0))
  
      name: string;

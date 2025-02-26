@@ -1,6 +1,6 @@
 --- old.privateStaticNotAccessibleInClodule2.symbols
 +++ new.privateStaticNotAccessibleInClodule2.symbols
-@@ -7,10 +7,10 @@
+@@= skipped -7, +7 lines =@@
  >C : Symbol(C, Decl(privateStaticNotAccessibleInClodule2.ts, 0, 0))
  
      private foo: string;
@@ -13,7 +13,7 @@
  }
  
  class D extends C {
-@@ -18,7 +18,7 @@
+@@= skipped -11, +11 lines =@@
  >C : Symbol(C, Decl(privateStaticNotAccessibleInClodule2.ts, 0, 0))
  
      baz: number;   
@@ -22,7 +22,7 @@
  }
  
  module D {
-@@ -26,7 +26,7 @@
+@@= skipped -8, +8 lines =@@
  
      export var y = D.bar; // error
  >y : Symbol(y, Decl(privateStaticNotAccessibleInClodule2.ts, 12, 14))

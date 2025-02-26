@@ -1,6 +1,6 @@
 --- old.assignmentCompatWithGenericCallSignaturesWithOptionalParameters.symbols
 +++ new.assignmentCompatWithGenericCallSignaturesWithOptionalParameters.symbols
-@@ -11,23 +11,23 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 3, 15))
  
          a: () => T;
@@ -28,7 +28,7 @@
  >x : Symbol(x, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 7, 13))
  >T : Symbol(T, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 3, 15))
  >y : Symbol(y, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 7, 18))
-@@ -35,7 +35,7 @@
+@@= skipped -24, +24 lines =@@
  >T : Symbol(T, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 3, 15))
  
          a5: (x?: T, y?: T) => T;
@@ -37,7 +37,7 @@
  >x : Symbol(x, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 8, 13))
  >T : Symbol(T, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 3, 15))
  >y : Symbol(y, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 8, 19))
-@@ -43,99 +43,99 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 3, 15))
  
          init = () => {
@@ -166,7 +166,7 @@
  >x : Symbol(x, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 27, 23))
  >T : Symbol(T, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 3, 15))
  >y : Symbol(y, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 27, 28))
-@@ -143,30 +143,30 @@
+@@= skipped -100, +100 lines =@@
  
  
              this.a5 = () => null; // ok, fewer required params
@@ -205,7 +205,7 @@
  >x : Symbol(x, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 33, 23))
  >T : Symbol(T, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 3, 15))
  >y : Symbol(y, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 33, 28))
-@@ -182,26 +182,26 @@
+@@= skipped -39, +39 lines =@@
  >Base2 : Symbol(Base2, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 38, 33))
  
          a: <T>() => T;
@@ -236,7 +236,7 @@
  >T : Symbol(T, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 44, 13))
  >x : Symbol(x, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 44, 16))
  >T : Symbol(T, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 44, 13))
-@@ -210,7 +210,7 @@
+@@= skipped -28, +28 lines =@@
  >T : Symbol(T, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 44, 13))
  
          a5: <T>(x?: T, y?: T) => T;
@@ -245,7 +245,7 @@
  >T : Symbol(T, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 45, 13))
  >x : Symbol(x, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 45, 16))
  >T : Symbol(T, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 45, 13))
-@@ -224,23 +224,23 @@
+@@= skipped -14, +14 lines =@@
  >T : Symbol(T, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 48, 17))
  
          a: () => T;
@@ -273,7 +273,7 @@
  >x : Symbol(x, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 52, 13))
  >T : Symbol(T, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 48, 17))
  >y : Symbol(y, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 52, 18))
-@@ -248,7 +248,7 @@
+@@= skipped -24, +24 lines =@@
  >T : Symbol(T, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 48, 17))
  
          a5: (x?: T, y?: T) => T;
@@ -282,7 +282,7 @@
  >x : Symbol(x, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 53, 13))
  >T : Symbol(T, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 48, 17))
  >y : Symbol(y, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 53, 19))
-@@ -272,204 +272,204 @@
+@@= skipped -24, +24 lines =@@
  
          // all errors
          b.a = t.a;
@@ -587,7 +587,7 @@
      }
  }
  
-@@ -480,26 +480,26 @@
+@@= skipped -208, +208 lines =@@
  >Base2 : Symbol(Base2, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 94, 31))
  
          a: <T>() => T;
@@ -618,7 +618,7 @@
  >T : Symbol(T, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 100, 13))
  >x : Symbol(x, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 100, 16))
  >T : Symbol(T, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 100, 13))
-@@ -508,7 +508,7 @@
+@@= skipped -28, +28 lines =@@
  >T : Symbol(T, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 100, 13))
  
          a5: <T>(x?: T, y?: T) => T;
@@ -627,7 +627,7 @@
  >T : Symbol(T, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 101, 13))
  >x : Symbol(x, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 101, 16))
  >T : Symbol(T, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 101, 13))
-@@ -517,78 +517,78 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 101, 13))
  
          init = () => {
@@ -727,7 +727,7 @@
  >T : Symbol(T, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 115, 23))
  >x : Symbol(x, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 115, 26))
  >T : Symbol(T, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 115, 23))
-@@ -596,15 +596,15 @@
+@@= skipped -79, +79 lines =@@
  >T : Symbol(T, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 115, 23))
  
              this.a4 = <T>() => null; // ok, fewer required params
@@ -747,7 +747,7 @@
  >T : Symbol(T, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 118, 23))
  >x : Symbol(x, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 118, 26))
  >T : Symbol(T, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 118, 23))
-@@ -612,17 +612,17 @@
+@@= skipped -16, +16 lines =@@
  >T : Symbol(T, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 118, 23))
  
              this.a4 = <T>(x: T) => null; // ok, same T of required params
@@ -769,7 +769,7 @@
  >T : Symbol(T, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 120, 23))
  >x : Symbol(x, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 120, 26))
  >T : Symbol(T, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 120, 23))
-@@ -631,15 +631,15 @@
+@@= skipped -19, +19 lines =@@
  
  
              this.a5 = <T>() => null; // ok, fewer required params
@@ -789,7 +789,7 @@
  >T : Symbol(T, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 124, 23))
  >x : Symbol(x, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 124, 26))
  >T : Symbol(T, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 124, 23))
-@@ -647,17 +647,17 @@
+@@= skipped -16, +16 lines =@@
  >T : Symbol(T, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 124, 23))
  
              this.a5 = <T>(x: T) => null; // ok, all present params match

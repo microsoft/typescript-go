@@ -1,6 +1,6 @@
 --- old.anyIdenticalToItself.symbols
 +++ new.anyIdenticalToItself.symbols
-@@ -18,7 +18,7 @@
+@@= skipped -18, +18 lines =@@
  >C : Symbol(C, Decl(anyIdenticalToItself.ts, 2, 35))
  
      get X(): any {
@@ -9,7 +9,7 @@
  
          var y: any;
  >y : Symbol(y, Decl(anyIdenticalToItself.ts, 6, 11))
-@@ -27,7 +27,7 @@
+@@= skipped -9, +9 lines =@@
  >y : Symbol(y, Decl(anyIdenticalToItself.ts, 6, 11))
      }
      set X(v: any) {

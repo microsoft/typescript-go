@@ -1,6 +1,6 @@
 --- old.stringNamedPropertyAccess.symbols
 +++ new.stringNamedPropertyAccess.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(stringNamedPropertyAccess.ts, 0, 0))
  
      "a b": number;
@@ -13,7 +13,7 @@
  }
  var c: C;
  >c : Symbol(c, Decl(stringNamedPropertyAccess.ts, 4, 3))
-@@ -17,18 +17,18 @@
+@@= skipped -12, +12 lines =@@
  var r1 = c["a b"];
  >r1 : Symbol(r1, Decl(stringNamedPropertyAccess.ts, 5, 3))
  >c : Symbol(c, Decl(stringNamedPropertyAccess.ts, 4, 3))
@@ -35,7 +35,7 @@
  }
  var i: I;
  >i : Symbol(i, Decl(stringNamedPropertyAccess.ts, 11, 3))
-@@ -37,7 +37,7 @@
+@@= skipped -20, +20 lines =@@
  var r2 = i["a b"];
  >r2 : Symbol(r2, Decl(stringNamedPropertyAccess.ts, 12, 3))
  >i : Symbol(i, Decl(stringNamedPropertyAccess.ts, 11, 3))

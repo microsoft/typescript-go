@@ -1,6 +1,6 @@
 --- old.parameterNamesInTypeParameterList.symbols
 +++ new.parameterNamesInTypeParameterList.symbols
-@@ -36,7 +36,7 @@
+@@= skipped -36, +36 lines =@@
  >A : Symbol(A, Decl(parameterNamesInTypeParameterList.ts, 10, 1))
  
  	m0<T extends typeof a>(a: T) {
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(parameterNamesInTypeParameterList.ts, 13, 4))
  >a : Symbol(a, Decl(parameterNamesInTypeParameterList.ts, 13, 24))
  >T : Symbol(T, Decl(parameterNamesInTypeParameterList.ts, 13, 4))
-@@ -45,7 +45,7 @@
+@@= skipped -9, +9 lines =@@
  >a : Symbol(a, Decl(parameterNamesInTypeParameterList.ts, 13, 24))
  	}
  	m1<T extends typeof a>({a}: {a:T}) {
@@ -18,7 +18,7 @@
  >T : Symbol(T, Decl(parameterNamesInTypeParameterList.ts, 16, 4))
  >a : Symbol(a, Decl(parameterNamesInTypeParameterList.ts, 16, 25))
  >a : Symbol(a, Decl(parameterNamesInTypeParameterList.ts, 16, 30))
-@@ -55,7 +55,7 @@
+@@= skipped -10, +10 lines =@@
  >a : Symbol(a, Decl(parameterNamesInTypeParameterList.ts, 16, 25))
  	}
  	m2<T extends typeof a>([a]: T[]) {

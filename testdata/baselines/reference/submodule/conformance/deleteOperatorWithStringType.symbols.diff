@@ -1,6 +1,6 @@
 --- old.deleteOperatorWithStringType.symbols
 +++ new.deleteOperatorWithStringType.symbols
-@@ -15,10 +15,10 @@
+@@= skipped -15, +15 lines =@@
  >A : Symbol(A, Decl(deleteOperatorWithStringType.ts, 4, 40))
  
      public a: string;
@@ -13,7 +13,7 @@
  }
  module M {
  >M : Symbol(M, Decl(deleteOperatorWithStringType.ts, 9, 1))
-@@ -59,15 +59,15 @@
+@@= skipped -44, +44 lines =@@
  // string type expressions
  var ResultIsBoolean6 = delete objA.a;
  >ResultIsBoolean6 : Symbol(ResultIsBoolean6, Decl(deleteOperatorWithStringType.ts, 26, 3))
@@ -33,7 +33,7 @@
  
  var ResultIsBoolean8 = delete STRING1[0];
  >ResultIsBoolean8 : Symbol(ResultIsBoolean8, Decl(deleteOperatorWithStringType.ts, 28, 3))
-@@ -79,9 +79,9 @@
+@@= skipped -20, +20 lines =@@
  
  var ResultIsBoolean10 = delete A.foo();
  >ResultIsBoolean10 : Symbol(ResultIsBoolean10, Decl(deleteOperatorWithStringType.ts, 30, 3))
@@ -45,7 +45,7 @@
  
  var ResultIsBoolean11 = delete (STRING + STRING);
  >ResultIsBoolean11 : Symbol(ResultIsBoolean11, Decl(deleteOperatorWithStringType.ts, 31, 3))
-@@ -90,9 +90,9 @@
+@@= skipped -11, +11 lines =@@
  
  var ResultIsBoolean12 = delete STRING.charAt(0);
  >ResultIsBoolean12 : Symbol(ResultIsBoolean12, Decl(deleteOperatorWithStringType.ts, 32, 3))
@@ -57,7 +57,7 @@
  
  // multiple delete  operator
  var ResultIsBoolean13 = delete delete STRING;
-@@ -116,10 +116,10 @@
+@@= skipped -26, +26 lines =@@
  >foo : Symbol(foo, Decl(deleteOperatorWithStringType.ts, 2, 36))
  
  delete objA.a,M.n;

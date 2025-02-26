@@ -1,6 +1,6 @@
 --- old.constructorFunctionsStrict.symbols
 +++ new.constructorFunctionsStrict.symbols
-@@ -7,36 +7,25 @@
+@@= skipped -7, +7 lines =@@
  >x : Symbol(x, Decl(a.js, 1, 11))
  
      this.x = x
@@ -42,7 +42,7 @@
  >undefined : Symbol(undefined)
  
  /** @param {number} x */
-@@ -45,7 +34,6 @@
+@@= skipped -38, +27 lines =@@
  >x : Symbol(x, Decl(a.js, 12, 11))
  
      if (!(this instanceof A)) {
@@ -50,7 +50,7 @@
  >A : Symbol(A, Decl(a.js, 9, 15))
  
          return new A(x)
-@@ -53,9 +41,6 @@
+@@= skipped -8, +7 lines =@@
  >x : Symbol(x, Decl(a.js, 12, 11))
      }
      this.x = x
@@ -60,7 +60,7 @@
  >x : Symbol(x, Decl(a.js, 12, 11))
  }
  var k = A(1)
-@@ -67,10 +52,6 @@
+@@= skipped -14, +11 lines =@@
  >A : Symbol(A, Decl(a.js, 9, 15))
  
  k.x === j.x

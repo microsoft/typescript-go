@@ -1,6 +1,6 @@
 --- old.constructorReturnsInvalidType.symbols
 +++ new.constructorReturnsInvalidType.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
          return 1;
      }
      foo() { }

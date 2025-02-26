@@ -1,6 +1,6 @@
 --- old.functionMergedWithModule.symbols
 +++ new.functionMergedWithModule.symbols
-@@ -26,8 +26,5 @@
+@@= skipped -26, +26 lines =@@
  >g : Symbol(g, Decl(functionMergedWithModule.ts, 9, 16))
  
          Bar.f();

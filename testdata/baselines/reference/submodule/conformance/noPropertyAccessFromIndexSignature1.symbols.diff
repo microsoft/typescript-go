@@ -1,6 +1,6 @@
 --- old.noPropertyAccessFromIndexSignature1.symbols
 +++ new.noPropertyAccessFromIndexSignature1.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(noPropertyAccessFromIndexSignature1.ts, 0, 0))
  
      foo: string
@@ -9,7 +9,7 @@
  }
  
  interface B {
-@@ -19,7 +19,7 @@
+@@= skipped -14, +14 lines =@@
  >C : Symbol(C, Decl(noPropertyAccessFromIndexSignature1.ts, 6, 1))
  
      foo: string
@@ -18,7 +18,7 @@
  
      [k: string]: string
  >k : Symbol(k, Decl(noPropertyAccessFromIndexSignature1.ts, 10, 5))
-@@ -43,57 +43,57 @@
+@@= skipped -24, +24 lines =@@
  
  // access property
  a.foo;

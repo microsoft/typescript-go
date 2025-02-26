@@ -1,6 +1,6 @@
 --- old.deeplyNestedMappedTypes.symbols
 +++ new.deeplyNestedMappedTypes.symbols
-@@ -184,27 +184,27 @@
+@@= skipped -184, +184 lines =@@
  
  export const Input = Type.Object({
  >Input : Symbol(Input, Decl(deeplyNestedMappedTypes.ts, 44, 24), Decl(deeplyNestedMappedTypes.ts, 49, 12))
@@ -36,7 +36,7 @@
  
          })
      })
-@@ -217,33 +217,33 @@
+@@= skipped -33, +33 lines =@@
  
  export const Output = Type.Object({
  >Output : Symbol(Output, Decl(deeplyNestedMappedTypes.ts, 55, 2), Decl(deeplyNestedMappedTypes.ts, 58, 12))
@@ -80,7 +80,7 @@
  
          })
      })
-@@ -274,9 +274,9 @@
+@@= skipped -57, +57 lines =@@
  function problematicFunction3(ors: (typeof Input.static)[]): Output[] {
  >problematicFunction3 : Symbol(problematicFunction3, Decl(deeplyNestedMappedTypes.ts, 73, 1))
  >ors : Symbol(ors, Decl(deeplyNestedMappedTypes.ts, 75, 30))
@@ -92,7 +92,7 @@
  >Output : Symbol(Output, Decl(deeplyNestedMappedTypes.ts, 55, 2), Decl(deeplyNestedMappedTypes.ts, 58, 12))
  
      return ors;  // Error
-@@ -309,7 +309,7 @@
+@@= skipped -35, +35 lines =@@
  >TKind : Symbol(TKind, Decl(deeplyNestedMappedTypes.ts, 84, 41))
  
      [Kind]: string
@@ -101,7 +101,7 @@
  >Kind : Symbol(Kind, Decl(deeplyNestedMappedTypes.ts, 84, 20))
  }
  export interface TSchema extends TKind {
-@@ -317,22 +317,22 @@
+@@= skipped -8, +8 lines =@@
  >TKind : Symbol(TKind, Decl(deeplyNestedMappedTypes.ts, 84, 41))
  
      [Readonly]?: string
@@ -129,7 +129,7 @@
  }
  
  export type TReadonlyOptional<T extends TSchema> = TOptional<T> & TReadonly<T>
-@@ -365,14 +365,14 @@
+@@= skipped -48, +48 lines =@@
  >TSchema : Symbol(TSchema, Decl(deeplyNestedMappedTypes.ts, 88, 1))
  
      [Kind]: 'String';
@@ -147,7 +147,7 @@
  }
  
  export type ReadonlyOptionalPropertyKeys<T extends TProperties> = { [K in keyof T]: T[K] extends TReadonly<TSchema> ? (T[K] extends TOptional<T[K]> ? K : never) : never }[keyof T]
-@@ -514,19 +514,19 @@
+@@= skipped -149, +149 lines =@@
  >TSchema : Symbol(TSchema, Decl(deeplyNestedMappedTypes.ts, 88, 1))
  
      [Kind]: 'Object'

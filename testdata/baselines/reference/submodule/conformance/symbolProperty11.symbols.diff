@@ -1,6 +1,6 @@
 --- old.symbolProperty11.symbols
 +++ new.symbolProperty11.symbols
-@@ -8,10 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >I : Symbol(I, Decl(symbolProperty11.ts, 0, 11))
  
      [Symbol.iterator]?: { x };

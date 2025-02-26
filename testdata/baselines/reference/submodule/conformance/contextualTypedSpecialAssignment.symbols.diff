@@ -1,6 +1,6 @@
 --- old.contextualTypedSpecialAssignment.symbols
 +++ new.contextualTypedSpecialAssignment.symbols
-@@ -8,13 +8,11 @@
+@@= skipped -8, +8 lines =@@
  
  // property assignment
  var ns = {}
@@ -16,7 +16,7 @@
  
      status: 'done',
  >status : Symbol(status, Decl(test.js, 8, 8))
-@@ -25,9 +23,7 @@
+@@= skipped -17, +15 lines =@@
  }
  
  ns.x = {
@@ -27,7 +27,7 @@
  
      status: 'done',
  >status : Symbol(status, Decl(test.js, 13, 8))
-@@ -37,9 +33,7 @@
+@@= skipped -12, +10 lines =@@
  >n : Symbol(n, Decl(test.js, 15, 6))
  }
  ns.x
@@ -38,7 +38,7 @@
  
  
  // this-property assignment
-@@ -49,9 +43,7 @@
+@@= skipped -12, +10 lines =@@
      constructor() {
          /** @type {DoneStatus} */
          this.s = {
@@ -48,7 +48,7 @@
  
              status: 'done',
  >status : Symbol(status, Decl(test.js, 24, 18))
-@@ -63,12 +55,10 @@
+@@= skipped -14, +12 lines =@@
      }
  
      fail() {
@@ -62,7 +62,7 @@
  
              status: 'done',
  >status : Symbol(status, Decl(test.js, 31, 18))
-@@ -84,10 +74,6 @@
+@@= skipped -21, +19 lines =@@
  
  /** @type {DoneStatus} */
  exports.x = {
@@ -73,7 +73,7 @@
      status: "done",
  >status : Symbol(status, Decl(test.js, 41, 13))
  
-@@ -96,18 +82,9 @@
+@@= skipped -12, +8 lines =@@
  >n : Symbol(n, Decl(test.js, 43, 6))
  }
  exports.x
@@ -92,7 +92,7 @@
      status: "done",
  >status : Symbol(status, Decl(test.js, 48, 20))
  
-@@ -116,20 +93,13 @@
+@@= skipped -20, +11 lines =@@
  >n : Symbol(n, Decl(test.js, 50, 6))
  }
  module.exports.y
@@ -115,7 +115,7 @@
  
      status: 'done',
  >status : Symbol(status, Decl(test.js, 56, 21))
-@@ -139,21 +109,19 @@
+@@= skipped -23, +16 lines =@@
  >n : Symbol(n, Decl(test.js, 58, 6))
  }
  Thing.prototype.x
@@ -143,7 +143,7 @@
  
      status: "done",
  >status : Symbol(status, Decl(test.js, 66, 15))
-@@ -167,10 +135,6 @@
+@@= skipped -28, +26 lines =@@
  // module.exports assignment
  /** @type {{ status: 'done', m(n: number): void }} */
  module.exports = {

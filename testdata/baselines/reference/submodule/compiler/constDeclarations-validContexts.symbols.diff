@@ -1,6 +1,6 @@
 --- old.constDeclarations-validContexts.symbols
 +++ new.constDeclarations-validContexts.symbols
-@@ -151,14 +151,14 @@
+@@= skipped -151, +151 lines =@@
      }
  
      method() {
@@ -17,7 +17,7 @@
  
          const c26 = 0;
  >c26 : Symbol(c26, Decl(constDeclarations-validContexts.ts, 103, 13))
-@@ -168,7 +168,7 @@
+@@= skipped -17, +17 lines =@@
      }
  
      set v(value) {

@@ -1,6 +1,6 @@
 --- old.classWithNoConstructorOrBaseClass.symbols
 +++ new.classWithNoConstructorOrBaseClass.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(classWithNoConstructorOrBaseClass.ts, 0, 0))
  
      x: string;
@@ -9,7 +9,7 @@
  }
  
  var c = new C();
-@@ -22,11 +22,11 @@
+@@= skipped -17, +17 lines =@@
  >U : Symbol(U, Decl(classWithNoConstructorOrBaseClass.ts, 7, 10))
  
      x: T;

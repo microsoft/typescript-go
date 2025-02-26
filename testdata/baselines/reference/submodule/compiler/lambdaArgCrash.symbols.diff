@@ -1,6 +1,6 @@
 --- old.lambdaArgCrash.symbols
 +++ new.lambdaArgCrash.symbols
-@@ -5,21 +5,21 @@
+@@= skipped -5, +5 lines =@@
  >Event : Symbol(Event, Decl(lambdaArgCrash.ts, 0, 0))
  
  	 private _listeners: any[] = [];
@@ -26,7 +26,7 @@
  >listener : Symbol(listener, Decl(lambdaArgCrash.ts, 12, 6))
  
  		 /// <summary>Registers a new listener for the event.</summary>
-@@ -27,11 +27,11 @@
+@@= skipped -22, +22 lines =@@
  		 /// <param name="listener">The callback function to register.</param>
  
  		 this._listeners.push(listener);
@@ -42,7 +42,7 @@
  >listener : Symbol(listener, Decl(lambdaArgCrash.ts, 12, 6))
  
  	}
-@@ -43,15 +43,15 @@
+@@= skipped -16, +16 lines =@@
  >Event : Symbol(Event, Decl(lambdaArgCrash.ts, 0, 0))
  
  	 add(listener: (items: ItemSet) => void ) {

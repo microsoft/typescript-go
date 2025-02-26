@@ -1,6 +1,6 @@
 --- old.declarationEmitMixinPrivateProtected.symbols
 +++ new.declarationEmitMixinPrivateProtected.symbols
-@@ -12,15 +12,15 @@
+@@= skipped -12, +12 lines =@@
  >DisposableMixin : Symbol(DisposableMixin, Decl(first.ts, 2, 5))
  
      protected _onDispose() {
@@ -20,7 +20,7 @@
      }
  };
  
-@@ -35,7 +35,7 @@
+@@= skipped -23, +23 lines =@@
  >DisposableMixin : Symbol(DisposableMixin, Decl(first.ts, 2, 5))
  
      protected _onDispose() {
@@ -29,7 +29,7 @@
      }
  }
  
-@@ -51,15 +51,15 @@
+@@= skipped -16, +16 lines =@@
  >DisposableMixin : Symbol(DisposableMixin, Decl(another.ts, 2, 5))
  
      protected _onDispose() {
@@ -49,7 +49,7 @@
      }
  };
  
-@@ -68,6 +68,6 @@
+@@= skipped -17, +17 lines =@@
  >DisposableMixin : Symbol(DisposableMixin, Decl(another.ts, 2, 5))
  
      protected _onDispose() {

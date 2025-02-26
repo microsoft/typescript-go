@@ -1,6 +1,6 @@
 --- old.expandoFunctionContextualTypesJSDocInTs.symbols
 +++ new.expandoFunctionContextualTypesJSDocInTs.symbols
-@@ -2,12 +2,12 @@
+@@= skipped -2, +2 lines =@@
  
  === expandoFunctionContextualTypesJSDocInTs.ts ===
  export function Foo() { }

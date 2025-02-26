@@ -1,6 +1,6 @@
 --- old.typeofClassWithPrivates.symbols
 +++ new.typeofClassWithPrivates.symbols
-@@ -6,17 +6,17 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(typeofClassWithPrivates.ts, 0, 8))
  
      private a: number;

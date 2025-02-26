@@ -1,6 +1,6 @@
 --- old.enumMerging.symbols
 +++ new.enumMerging.symbols
-@@ -10,58 +10,58 @@
+@@= skipped -10, +10 lines =@@
  >EImpl1 : Symbol(EImpl1, Decl(enumMerging.ts, 2, 11), Decl(enumMerging.ts, 5, 5))
  
          A, B, C
@@ -83,7 +83,7 @@
  }
  
  // Enum with only computed members across 2 declarations with the same root module 
-@@ -72,52 +72,52 @@
+@@= skipped -62, +62 lines =@@
  >EComp2 : Symbol(EComp2, Decl(enumMerging.ts, 23, 11), Decl(enumMerging.ts, 26, 5))
  
          A = 'foo'.length, B = 'foo'.length, C = 'foo'.length
@@ -166,7 +166,7 @@
  }
  
  // Enum with initializer in only one of two declarations with constant members with the same root module
-@@ -128,19 +128,19 @@
+@@= skipped -56, +56 lines =@@
  >EInit : Symbol(EInit, Decl(enumMerging.ts, 36, 11), Decl(enumMerging.ts, 40, 5))
  
          A,
@@ -191,7 +191,7 @@
      }
  }
  
-@@ -150,54 +150,52 @@
+@@= skipped -22, +22 lines =@@
  
      export enum Color { Red, Green, Blue }
  >Color : Symbol(Color, Decl(enumMerging.ts, 48, 11))

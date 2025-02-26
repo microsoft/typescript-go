@@ -1,6 +1,6 @@
 --- old.typeGuardOfFormThisMemberErrors.symbols
 +++ new.typeGuardOfFormThisMemberErrors.symbols
-@@ -9,11 +9,11 @@
+@@= skipped -9, +9 lines =@@
  >FileSystemObject : Symbol(FileSystemObject, Decl(typeGuardOfFormThisMemberErrors.ts, 1, 16))
  
  		isFSO: this is FileSystemObject;
@@ -14,7 +14,7 @@
  >File : Symbol(File, Decl(typeGuardOfFormThisMemberErrors.ts, 15, 2))
  
  			return this instanceof File;
-@@ -21,13 +21,13 @@
+@@= skipped -12, +12 lines =@@
  >File : Symbol(File, Decl(typeGuardOfFormThisMemberErrors.ts, 15, 2))
  		}
  		set isFile(param) {
@@ -30,7 +30,7 @@
  >Directory : Symbol(Directory, Decl(typeGuardOfFormThisMemberErrors.ts, 19, 2))
  
  			return this instanceof Directory;
-@@ -35,11 +35,11 @@
+@@= skipped -14, +14 lines =@@
  >Directory : Symbol(Directory, Decl(typeGuardOfFormThisMemberErrors.ts, 19, 2))
  		}
  		isNetworked: this is (Networked & this);
@@ -44,7 +44,7 @@
  	}
  
  	export class File extends FileSystemObject {
-@@ -48,7 +48,7 @@
+@@= skipped -13, +13 lines =@@
  
  		constructor(path: string, public content: string) { super(path); }
  >path : Symbol(path, Decl(typeGuardOfFormThisMemberErrors.ts, 18, 14))
@@ -53,7 +53,7 @@
  >super : Symbol(FileSystemObject, Decl(typeGuardOfFormThisMemberErrors.ts, 1, 16))
  >path : Symbol(path, Decl(typeGuardOfFormThisMemberErrors.ts, 18, 14))
  	}
-@@ -57,14 +57,14 @@
+@@= skipped -9, +9 lines =@@
  >FileSystemObject : Symbol(FileSystemObject, Decl(typeGuardOfFormThisMemberErrors.ts, 1, 16))
  
  		children: FileSystemObject[];
@@ -70,7 +70,7 @@
  	}
  
  	let file: FileSystemObject = new File("foo/bar.txt", "foo");
-@@ -73,26 +73,26 @@
+@@= skipped -16, +16 lines =@@
  >File : Symbol(File, Decl(typeGuardOfFormThisMemberErrors.ts, 15, 2))
  
  	file.isNetworked = file.isFile;

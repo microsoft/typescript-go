@@ -1,6 +1,6 @@
 --- old.quickinfoTypeAtReturnPositionsInaccurate.symbols
 +++ new.quickinfoTypeAtReturnPositionsInaccurate.symbols
-@@ -6,20 +6,20 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(quickinfoTypeAtReturnPositionsInaccurate.ts, 0, 15))
  
      private value!: T;
@@ -26,7 +26,7 @@
  }
  
  class StrClass<T extends string> {
-@@ -27,20 +27,20 @@
+@@= skipped -21, +21 lines =@@
  >T : Symbol(T, Decl(quickinfoTypeAtReturnPositionsInaccurate.ts, 8, 15))
  
      private value!: T;
@@ -52,7 +52,7 @@
  }
  
  const isNumClass = <Item extends NumClass<number> | StrClass<string>> (
-@@ -76,11 +76,11 @@
+@@= skipped -49, +49 lines =@@
  >StrClass : Symbol(StrClass, Decl(quickinfoTypeAtReturnPositionsInaccurate.ts, 6, 1))
  
      private entries = { } as Entries;
@@ -66,7 +66,7 @@
  >EntryId : Symbol(EntryId, Decl(quickinfoTypeAtReturnPositionsInaccurate.ts, 29, 15))
  >Entries : Symbol(Entries, Decl(quickinfoTypeAtReturnPositionsInaccurate.ts, 26, 18))
  >entryId : Symbol(entryId, Decl(quickinfoTypeAtReturnPositionsInaccurate.ts, 29, 46))
-@@ -90,9 +90,9 @@
+@@= skipped -14, +14 lines =@@
  
          let entry = this.entries[entryId];
  >entry : Symbol(entry, Decl(quickinfoTypeAtReturnPositionsInaccurate.ts, 30, 11))
@@ -78,7 +78,7 @@
  >entryId : Symbol(entryId, Decl(quickinfoTypeAtReturnPositionsInaccurate.ts, 29, 46))
  
          entry.numExclusive(); // error - expected.
-@@ -103,9 +103,9 @@
+@@= skipped -13, +13 lines =@@
  >entry : Symbol(entry, Decl(quickinfoTypeAtReturnPositionsInaccurate.ts, 30, 11))
  
              entry.numExclusive(); // works
@@ -90,7 +90,7 @@
  
              return entry;
  >entry : Symbol(entry, Decl(quickinfoTypeAtReturnPositionsInaccurate.ts, 30, 11))
-@@ -139,11 +139,11 @@
+@@= skipped -36, +36 lines =@@
  >Slice : Symbol(Slice, Decl(quickinfoTypeAtReturnPositionsInaccurate.ts, 41, 1))
  
      private slices = { } as Slices;
@@ -104,7 +104,7 @@
  >SliceId : Symbol(SliceId, Decl(quickinfoTypeAtReturnPositionsInaccurate.ts, 57, 15))
  >Slices : Symbol(Slices, Decl(quickinfoTypeAtReturnPositionsInaccurate.ts, 54, 19))
  >SliceKey : Symbol(SliceKey, Decl(quickinfoTypeAtReturnPositionsInaccurate.ts, 57, 44))
-@@ -163,9 +163,9 @@
+@@= skipped -24, +24 lines =@@
  
          let item = this.slices[sliceId][sliceKey];
  >item : Symbol(item, Decl(quickinfoTypeAtReturnPositionsInaccurate.ts, 60, 11))
@@ -116,7 +116,7 @@
  >sliceId : Symbol(sliceId, Decl(quickinfoTypeAtReturnPositionsInaccurate.ts, 57, 85))
  >sliceKey : Symbol(sliceKey, Decl(quickinfoTypeAtReturnPositionsInaccurate.ts, 58, 25))
  
-@@ -174,9 +174,9 @@
+@@= skipped -11, +11 lines =@@
  >item : Symbol(item, Decl(quickinfoTypeAtReturnPositionsInaccurate.ts, 60, 11))
  
              item.numExclusive(); // works only since version 4.2
@@ -128,7 +128,7 @@
          }
  
          item.get();
-@@ -192,7 +192,7 @@
+@@= skipped -18, +18 lines =@@
      }
  
      public get2<SliceId extends keyof Slices, SliceKey extends keyof Slices[SliceId]>(
@@ -137,7 +137,7 @@
  >SliceId : Symbol(SliceId, Decl(quickinfoTypeAtReturnPositionsInaccurate.ts, 74, 16))
  >Slices : Symbol(Slices, Decl(quickinfoTypeAtReturnPositionsInaccurate.ts, 54, 19))
  >SliceKey : Symbol(SliceKey, Decl(quickinfoTypeAtReturnPositionsInaccurate.ts, 74, 45))
-@@ -212,9 +212,9 @@
+@@= skipped -20, +20 lines =@@
  
          let item = this.slices[sliceId][sliceKey];
  >item : Symbol(item, Decl(quickinfoTypeAtReturnPositionsInaccurate.ts, 77, 11))
@@ -149,7 +149,7 @@
  >sliceId : Symbol(sliceId, Decl(quickinfoTypeAtReturnPositionsInaccurate.ts, 74, 86))
  >sliceKey : Symbol(sliceKey, Decl(quickinfoTypeAtReturnPositionsInaccurate.ts, 75, 25))
  
-@@ -243,14 +243,14 @@
+@@= skipped -31, +31 lines =@@
  >BuilderProgram : Symbol(BuilderProgram, Decl(quickinfoTypeAtReturnPositionsInaccurate.ts, 89, 1))
  
      getProgram(): Program;
@@ -166,7 +166,7 @@
  }
  declare function isBuilderProgram<T extends BuilderProgram>(program: Program | T): program is T;
  >isBuilderProgram : Symbol(isBuilderProgram, Decl(quickinfoTypeAtReturnPositionsInaccurate.ts, 97, 1))
-@@ -275,8 +275,8 @@
+@@= skipped -32, +32 lines =@@
  >Program : Symbol(Program, Decl(quickinfoTypeAtReturnPositionsInaccurate.ts, 94, 1))
  >isBuilderProgram : Symbol(isBuilderProgram, Decl(quickinfoTypeAtReturnPositionsInaccurate.ts, 97, 1))
  >program : Symbol(program, Decl(quickinfoTypeAtReturnPositionsInaccurate.ts, 99, 52))

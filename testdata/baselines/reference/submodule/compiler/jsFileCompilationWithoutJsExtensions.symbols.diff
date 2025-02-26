@@ -1,8 +1,8 @@
 --- old.jsFileCompilationWithoutJsExtensions.symbols
 +++ new.jsFileCompilationWithoutJsExtensions.symbols
-@@ -1,1 +0,0 @@
+@@= skipped -1, +0 lines =@@
 -<no content>
-@@ -0,0 +1,6 @@
+@@= skipped --1, +1 lines =@@
 +//// [tests/cases/compiler/jsFileCompilationWithoutJsExtensions.ts] ////
 +
 +=== a.js ===

@@ -1,6 +1,6 @@
 --- old.ClassAndModuleThatMergeWithModulesExportedGenericFunctionAndGenericClassStaticFunctionOfTheSameName.symbols
 +++ new.ClassAndModuleThatMergeWithModulesExportedGenericFunctionAndGenericClassStaticFunctionOfTheSameName.symbols
-@@ -6,14 +6,14 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(ClassAndModuleThatMergeWithModulesExportedGenericFunctionAndGenericClassStaticFunctionOfTheSameName.ts, 0, 14))
  
      id: string;

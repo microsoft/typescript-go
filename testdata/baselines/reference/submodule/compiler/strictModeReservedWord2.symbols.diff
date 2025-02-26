@@ -1,6 +1,6 @@
 --- old.strictModeReservedWord2.symbols
 +++ new.strictModeReservedWord2.symbols
-@@ -9,7 +9,7 @@
+@@= skipped -9, +9 lines =@@
  >implements : Symbol(implements, Decl(strictModeReservedWord2.ts, 1, 20))
  
      foo(package, protected);
@@ -9,7 +9,7 @@
  >package : Symbol(package, Decl(strictModeReservedWord2.ts, 3, 8))
  >protected : Symbol(protected, Decl(strictModeReservedWord2.ts, 3, 16))
  }
-@@ -20,38 +20,38 @@
+@@= skipped -11, +11 lines =@@
  >foo : Symbol(foo, Decl(strictModeReservedWord2.ts, 5, 16))
  
      public,

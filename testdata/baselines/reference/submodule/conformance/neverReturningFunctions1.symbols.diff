@@ -1,6 +1,6 @@
 --- old.neverReturningFunctions1.symbols
 +++ new.neverReturningFunctions1.symbols
-@@ -20,9 +20,9 @@
+@@= skipped -20, +20 lines =@@
  >fail : Symbol(fail, Decl(neverReturningFunctions1.ts, 0, 0))
  
      x.length;  // string
@@ -12,7 +12,7 @@
  }
  
  function f02(x: number): number {
-@@ -66,9 +66,9 @@
+@@= skipped -46, +46 lines =@@
  >fail : Symbol(fail, Decl(neverReturningFunctions1.ts, 21, 35))
  
      x.length;  // string
@@ -24,7 +24,7 @@
  }
  
  function f12(x: number, fail: (message?: string) => never): number {
-@@ -119,14 +119,14 @@
+@@= skipped -53, +53 lines =@@
      if (x === undefined) Debug.fail("undefined argument");
  >x : Symbol(x, Decl(neverReturningFunctions1.ts, 42, 13))
  >undefined : Symbol(undefined)
@@ -43,7 +43,7 @@
  }
  
  function f22(x: number): number {
-@@ -138,9 +138,9 @@
+@@= skipped -19, +19 lines =@@
  >x : Symbol(x, Decl(neverReturningFunctions1.ts, 47, 13))
  
      Debug.fail("negative number");
@@ -55,7 +55,7 @@
  
      x;  // Unreachable
  >x : Symbol(x, Decl(neverReturningFunctions1.ts, 47, 13))
-@@ -154,9 +154,9 @@
+@@= skipped -16, +16 lines =@@
  >x : Symbol(x, Decl(neverReturningFunctions1.ts, 53, 13))
  
      Debug.fail();
@@ -67,7 +67,7 @@
  
      x;  // Unreachable
  >x : Symbol(x, Decl(neverReturningFunctions1.ts, 53, 13))
-@@ -170,9 +170,9 @@
+@@= skipped -16, +16 lines =@@
  >x : Symbol(x, Decl(neverReturningFunctions1.ts, 59, 13))
  
      ((Debug).fail)();
@@ -79,7 +79,7 @@
  
      x;  // Unreachable
  >x : Symbol(x, Decl(neverReturningFunctions1.ts, 59, 13))
-@@ -182,7 +182,7 @@
+@@= skipped -12, +12 lines =@@
  >Test : Symbol(Test, Decl(neverReturningFunctions1.ts, 63, 1))
  
      fail(message?: string): never {
@@ -88,7 +88,7 @@
  >message : Symbol(message, Decl(neverReturningFunctions1.ts, 66, 9))
  
          throw new Error(message);
-@@ -190,23 +190,23 @@
+@@= skipped -8, +8 lines =@@
  >message : Symbol(message, Decl(neverReturningFunctions1.ts, 66, 9))
      }
      f1(x: string | undefined) {
@@ -118,7 +118,7 @@
  >x : Symbol(x, Decl(neverReturningFunctions1.ts, 73, 7))
  
          if (x >= 0) return x;
-@@ -214,24 +214,24 @@
+@@= skipped -24, +24 lines =@@
  >x : Symbol(x, Decl(neverReturningFunctions1.ts, 73, 7))
  
          this.fail("negative number");
@@ -148,7 +148,7 @@
  
          x;  // Unreachable
  >x : Symbol(x, Decl(neverReturningFunctions1.ts, 78, 7))
-@@ -415,66 +415,66 @@
+@@= skipped -201, +201 lines =@@
  >T : Symbol(T, Decl(neverReturningFunctions1.ts, 165, 27))
  
  	attrName?: string;
@@ -233,7 +233,7 @@
  }
  
  export interface ComponentConstructor<T extends object> {
-@@ -489,7 +489,7 @@
+@@= skipped -74, +74 lines =@@
  >Component : Symbol(Component, Decl(neverReturningFunctions1.ts, 161, 1))
  
  	prototype: T & {
@@ -242,7 +242,7 @@
  >T : Symbol(T, Decl(neverReturningFunctions1.ts, 188, 38))
  
  		name: string;
-@@ -564,12 +564,12 @@
+@@= skipped -75, +75 lines =@@
  >init : Symbol(init, Decl(neverReturningFunctions1.ts, 215, 3))
  
  		this.data.num = 0;
@@ -259,7 +259,7 @@
  
  	},
  	update() {},
-@@ -594,10 +594,10 @@
+@@= skipped -30, +30 lines =@@
  		// Reference to system because both were registered with the same name.
  		return f * this.data.num * this.system!.data.counter;
  >f : Symbol(f, Decl(neverReturningFunctions1.ts, 226, 10))
@@ -274,7 +274,7 @@
  	}
  });
  
-@@ -607,7 +607,7 @@
+@@= skipped -13, +13 lines =@@
  >MyThrowable : Symbol(MyThrowable, Decl(neverReturningFunctions1.ts, 230, 3))
  
      throw(): never {
@@ -283,7 +283,7 @@
  
          throw new Error();
  >Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
-@@ -619,21 +619,21 @@
+@@= skipped -12, +12 lines =@@
  >MyThrowable : Symbol(MyThrowable, Decl(neverReturningFunctions1.ts, 230, 3))
  
      err(msg: string): never {
@@ -311,7 +311,7 @@
      }
  }
  
-@@ -643,7 +643,7 @@
+@@= skipped -24, +24 lines =@@
  >Services : Symbol(Services, Decl(neverReturningFunctions1.ts, 247, 1))
  
      panic(message: string): never;

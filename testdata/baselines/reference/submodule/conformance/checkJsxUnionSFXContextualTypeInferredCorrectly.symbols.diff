@@ -1,6 +1,6 @@
 --- old.checkJsxUnionSFXContextualTypeInferredCorrectly.symbols
 +++ new.checkJsxUnionSFXContextualTypeInferredCorrectly.symbols
-@@ -10,13 +10,13 @@
+@@= skipped -10, +10 lines =@@
  >PS : Symbol(PS, Decl(checkJsxUnionSFXContextualTypeInferredCorrectly.tsx, 2, 26))
  
      multi: false
@@ -17,7 +17,7 @@
  >selection : Symbol(selection, Decl(checkJsxUnionSFXContextualTypeInferredCorrectly.tsx, 7, 15))
  }
  
-@@ -24,13 +24,13 @@
+@@= skipped -14, +14 lines =@@
  >PM : Symbol(PM, Decl(checkJsxUnionSFXContextualTypeInferredCorrectly.tsx, 8, 1))
  
      multi: true
@@ -34,7 +34,7 @@
  >selection : Symbol(selection, Decl(checkJsxUnionSFXContextualTypeInferredCorrectly.tsx, 13, 15))
  }
  
-@@ -41,8 +41,6 @@
+@@= skipped -17, +17 lines =@@
  >PS : Symbol(PS, Decl(checkJsxUnionSFXContextualTypeInferredCorrectly.tsx, 2, 26))
  
      return <h1></h1>;
@@ -43,7 +43,7 @@
  }
  
  // Usage with React tsx
-@@ -62,9 +60,9 @@
+@@= skipped -21, +19 lines =@@
              onChange={val => console.log(val)} // <- this throws an error
  >onChange : Symbol(onChange, Decl(checkJsxUnionSFXContextualTypeInferredCorrectly.tsx, 25, 23))
  >val : Symbol(val, Decl(checkJsxUnionSFXContextualTypeInferredCorrectly.tsx, 26, 22))
@@ -55,7 +55,7 @@
  >val : Symbol(val, Decl(checkJsxUnionSFXContextualTypeInferredCorrectly.tsx, 26, 22))
  
          />
-@@ -84,9 +82,9 @@
+@@= skipped -22, +22 lines =@@
      onChange: val => console.log(val) // <- this works fine
  >onChange : Symbol(onChange, Decl(checkJsxUnionSFXContextualTypeInferredCorrectly.tsx, 34, 15))
  >val : Symbol(val, Decl(checkJsxUnionSFXContextualTypeInferredCorrectly.tsx, 35, 13))

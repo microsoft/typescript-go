@@ -1,6 +1,6 @@
 --- old.narrowingOrderIndependent.symbols
 +++ new.narrowingOrderIndependent.symbols
-@@ -7,14 +7,14 @@
+@@= skipped -7, +7 lines =@@
  >A : Symbol(A, Decl(narrowingOrderIndependent.ts, 0, 0))
  
      constructor(public stringOrUndefined: string | undefined) {}
@@ -17,7 +17,7 @@
  }
  
  const a = new A("123");
-@@ -24,29 +24,29 @@
+@@= skipped -17, +17 lines =@@
  if (a instanceof A && a.stringOrUndefined) {
  >a : Symbol(a, Decl(narrowingOrderIndependent.ts, 10, 5))
  >A : Symbol(A, Decl(narrowingOrderIndependent.ts, 0, 0))
@@ -55,7 +55,7 @@
  }
  
  if (a instanceof A) {
-@@ -54,22 +54,22 @@
+@@= skipped -30, +30 lines =@@
  >A : Symbol(A, Decl(narrowingOrderIndependent.ts, 0, 0))
  
      if (a.stringOrUndefined) {
@@ -84,7 +84,7 @@
  
      if (a instanceof A) {
  >a : Symbol(a, Decl(narrowingOrderIndependent.ts, 10, 5))
-@@ -77,9 +77,9 @@
+@@= skipped -23, +23 lines =@@
  
          new B(a.stringOrUndefined)
  >B : Symbol(B, Decl(narrowingOrderIndependent.ts, 4, 1))

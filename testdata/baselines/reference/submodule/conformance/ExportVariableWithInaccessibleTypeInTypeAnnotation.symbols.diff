@@ -1,6 +1,6 @@
 --- old.ExportVariableWithInaccessibleTypeInTypeAnnotation.symbols
 +++ new.ExportVariableWithInaccessibleTypeInTypeAnnotation.symbols
-@@ -8,10 +8,10 @@
+@@= skipped -8, +8 lines =@@
  >Point : Symbol(Point, Decl(ExportVariableWithInaccessibleTypeInTypeAnnotation.ts, 0, 10))
  
          x: number;
@@ -13,7 +13,7 @@
      }
  
      // valid since Point is exported
-@@ -26,7 +26,7 @@
+@@= skipped -18, +18 lines =@@
  >Point : Symbol(Point, Decl(ExportVariableWithInaccessibleTypeInTypeAnnotation.ts, 0, 10))
  
          z: number;

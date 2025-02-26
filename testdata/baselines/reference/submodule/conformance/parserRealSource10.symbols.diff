@@ -1,6 +1,6 @@
 --- old.parserRealSource10.symbols
 +++ new.parserRealSource10.symbols
-@@ -14,352 +14,352 @@
+@@= skipped -14, +14 lines =@@
  
          // Keywords
          Any,
@@ -470,7 +470,7 @@
      }
  
      export var tokenTable = new TokenInfo[];
-@@ -377,182 +377,182 @@
+@@= skipped -363, +363 lines =@@
  
      noRegexTable[TokenID.Identifier] = true;
  >noRegexTable : Symbol(noRegexTable, Decl(parserRealSource10.ts, 129, 14))
@@ -715,7 +715,7 @@
  >ErrorRecoverySet : Symbol(ErrorRecoverySet)
      }
  
-@@ -618,1640 +618,1640 @@
+@@= skipped -241, +241 lines =@@
  
      setTokenInfo(TokenID.Any, Reservation.TypeScript, OperatorPrecedence.None, NodeType.None, OperatorPrecedence.None, NodeType.None, "any", ErrorRecoverySet.PrimType);
  >setTokenInfo : Symbol(setTokenInfo, Decl(parserRealSource10.ts, 179, 5))
@@ -3228,7 +3228,7 @@
  
      export function lookupToken(tokenId: TokenID): TokenInfo {
  >lookupToken : Symbol(lookupToken, Decl(parserRealSource10.ts, 311, 171))
-@@ -2268,135 +2268,135 @@
+@@= skipped -1650, +1650 lines =@@
  >TokenClass : Symbol(TokenClass, Decl(parserRealSource10.ts, 315, 5))
  
          Punctuation,
@@ -3405,7 +3405,7 @@
          }
      }
  
-@@ -2405,43 +2405,43 @@
+@@= skipped -137, +137 lines =@@
  >Token : Symbol(Token, Decl(parserRealSource10.ts, 329, 5))
  
          constructor (public value: number, public hasEmptyFraction?: boolean) {
@@ -3467,7 +3467,7 @@
          }
      }
  
-@@ -2450,32 +2450,32 @@
+@@= skipped -45, +45 lines =@@
  >Token : Symbol(Token, Decl(parserRealSource10.ts, 329, 5))
  
          constructor (public value: string) {
@@ -3509,7 +3509,7 @@
          }
      }
  
-@@ -2484,31 +2484,31 @@
+@@= skipped -34, +34 lines =@@
  >Token : Symbol(Token, Decl(parserRealSource10.ts, 329, 5))
  
          constructor (public value: string, public hasEscapeSequence : boolean) {
@@ -3551,7 +3551,7 @@
          }
      }
  
-@@ -2519,7 +2519,7 @@
+@@= skipped -35, +35 lines =@@
          constructor (tokenId: TokenID, public value: string) {
  >tokenId : Symbol(tokenId, Decl(parserRealSource10.ts, 406, 21))
  >TokenID : Symbol(TokenID, Decl(parserRealSource10.ts, 5, 19))
@@ -3560,7 +3560,7 @@
  
              super(tokenId);
  >super : Symbol(Token, Decl(parserRealSource10.ts, 329, 5))
-@@ -2527,22 +2527,22 @@
+@@= skipped -8, +8 lines =@@
          }
  
          public getText(): string {
@@ -3589,7 +3589,7 @@
          }
      }
  
-@@ -2553,11 +2553,11 @@
+@@= skipped -26, +26 lines =@@
          constructor (tokenID: TokenID, public value: string, public isBlock: boolean, public startPos: number, public line: number, public endsLine: boolean) {
  >tokenID : Symbol(tokenID, Decl(parserRealSource10.ts, 420, 21))
  >TokenID : Symbol(TokenID, Decl(parserRealSource10.ts, 5, 19))
@@ -3606,7 +3606,7 @@
  
              super(tokenID);
  >super : Symbol(Token, Decl(parserRealSource10.ts, 329, 5))
-@@ -2565,22 +2565,22 @@
+@@= skipped -12, +12 lines =@@
          }
  
          public getText(): string {
@@ -3635,7 +3635,7 @@
          }
      }
  
-@@ -2589,32 +2589,32 @@
+@@= skipped -24, +24 lines =@@
  >Token : Symbol(Token, Decl(parserRealSource10.ts, 329, 5))
  
          constructor(public regex) {
@@ -3677,7 +3677,7 @@
          }
      }
  
-@@ -2629,9 +2629,9 @@
+@@= skipped -40, +40 lines =@@
          for (var i = 0; i <= TokenID.LimFixed; i++) {
  >i : Symbol(i, Decl(parserRealSource10.ts, 450, 16))
  >i : Symbol(i, Decl(parserRealSource10.ts, 450, 16))

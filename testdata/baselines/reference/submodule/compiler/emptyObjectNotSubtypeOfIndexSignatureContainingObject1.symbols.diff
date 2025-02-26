@@ -1,6 +1,6 @@
 --- old.emptyObjectNotSubtypeOfIndexSignatureContainingObject1.symbols
 +++ new.emptyObjectNotSubtypeOfIndexSignatureContainingObject1.symbols
-@@ -81,14 +81,14 @@
+@@= skipped -81, +81 lines =@@
  >Foo : Symbol(Foo, Decl(emptyObjectNotSubtypeOfIndexSignatureContainingObject1.ts, 24, 1))
  
    foo: string;
@@ -17,7 +17,7 @@
  }
  
  export function fooToBar(
-@@ -109,9 +109,9 @@
+@@= skipped -28, +28 lines =@@
  >mapValues : Symbol(mapValues, Decl(emptyObjectNotSubtypeOfIndexSignatureContainingObject1.ts, 16, 77))
  >foos : Symbol(foos, Decl(emptyObjectNotSubtypeOfIndexSignatureContainingObject1.ts, 35, 25))
  >f : Symbol(f, Decl(emptyObjectNotSubtypeOfIndexSignatureContainingObject1.ts, 38, 52))

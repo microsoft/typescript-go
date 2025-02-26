@@ -1,6 +1,6 @@
 --- old.declarationEmitComputedPropertyName1.symbols
 +++ new.declarationEmitComputedPropertyName1.symbols
-@@ -16,12 +16,12 @@
+@@= skipped -16, +16 lines =@@
  >data : Symbol(data, Decl(declarationEmitComputedPropertyName1.ts, 4, 25))
  
      ["a_b_c"]: string;
@@ -17,7 +17,7 @@
  
      s_d: string;
  >s_d : Symbol(s_d, Decl(declarationEmitComputedPropertyName1.ts, 7, 20))
-@@ -35,8 +35,8 @@
+@@= skipped -19, +19 lines =@@
  
    };
    ["a_b_c"]: string;
@@ -28,7 +28,7 @@
  
  }>();
  
-@@ -44,15 +44,15 @@
+@@= skipped -9, +9 lines =@@
  >IData : Symbol(IData, Decl(declarationEmitComputedPropertyName1.ts, 13, 5))
  
    ["a_b_c"]: string;

@@ -1,6 +1,6 @@
 --- old.outFilerootDirModuleNamesSystem.symbols
 +++ new.outFilerootDirModuleNamesSystem.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >foo : Symbol(foo, Decl(a.ts, 0, 6))
  
  export default class Foo {}
@@ -9,7 +9,7 @@
  
  foo();
  >foo : Symbol(foo, Decl(a.ts, 0, 6))
-@@ -15,10 +15,9 @@
+@@= skipped -10, +10 lines =@@
  >Foo : Symbol(Foo, Decl(b.ts, 0, 6))
  
  export default function foo() { new Foo(); }

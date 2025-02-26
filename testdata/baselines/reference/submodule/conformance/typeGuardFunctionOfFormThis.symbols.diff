@@ -1,6 +1,6 @@
 --- old.typeGuardFunctionOfFormThis.symbols
 +++ new.typeGuardFunctionOfFormThis.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >RoyalGuard : Symbol(RoyalGuard, Decl(typeGuardFunctionOfFormThis.ts, 0, 0))
  
      isLeader(): this is LeadGuard {
@@ -9,7 +9,7 @@
  >LeadGuard : Symbol(LeadGuard, Decl(typeGuardFunctionOfFormThis.ts, 7, 1))
  
          return this instanceof LeadGuard;
-@@ -13,7 +13,7 @@
+@@= skipped -8, +8 lines =@@
  >LeadGuard : Symbol(LeadGuard, Decl(typeGuardFunctionOfFormThis.ts, 7, 1))
      }
      isFollower(): this is FollowerGuard {
@@ -18,7 +18,7 @@
  >FollowerGuard : Symbol(FollowerGuard, Decl(typeGuardFunctionOfFormThis.ts, 11, 1))
  
          return this instanceof FollowerGuard;
-@@ -27,7 +27,7 @@
+@@= skipped -14, +14 lines =@@
  >RoyalGuard : Symbol(RoyalGuard, Decl(typeGuardFunctionOfFormThis.ts, 0, 0))
  
      lead(): void {};
@@ -27,7 +27,7 @@
  }
  
  class FollowerGuard extends RoyalGuard {
-@@ -35,7 +35,7 @@
+@@= skipped -8, +8 lines =@@
  >RoyalGuard : Symbol(RoyalGuard, Decl(typeGuardFunctionOfFormThis.ts, 0, 0))
  
      follow(): void {};
@@ -36,7 +36,7 @@
  }
  
  let a: RoyalGuard = new FollowerGuard();
-@@ -44,24 +44,24 @@
+@@= skipped -9, +9 lines =@@
  >FollowerGuard : Symbol(FollowerGuard, Decl(typeGuardFunctionOfFormThis.ts, 11, 1))
  
  if (a.isLeader()) {
@@ -69,7 +69,7 @@
  }
  
  interface GuardInterface extends RoyalGuard {}
-@@ -73,24 +73,24 @@
+@@= skipped -29, +29 lines =@@
  >GuardInterface : Symbol(GuardInterface, Decl(typeGuardFunctionOfFormThis.ts, 23, 1))
  
  if (b.isLeader()) {
@@ -102,7 +102,7 @@
  }
  
  // if (((a.isLeader)())) {
-@@ -112,11 +112,11 @@
+@@= skipped -39, +39 lines =@@
  >a : Symbol(a, Decl(typeGuardFunctionOfFormThis.ts, 49, 15))
  
  if (holder2.a.isLeader()) {
@@ -116,7 +116,7 @@
  
      holder2.a;
  >holder2.a : Symbol(a, Decl(typeGuardFunctionOfFormThis.ts, 49, 15))
-@@ -134,7 +134,7 @@
+@@= skipped -22, +22 lines =@@
  >ArrowGuard : Symbol(ArrowGuard, Decl(typeGuardFunctionOfFormThis.ts, 56, 1))
  
      isElite = (): this is ArrowElite => {
@@ -125,7 +125,7 @@
  >ArrowElite : Symbol(ArrowElite, Decl(typeGuardFunctionOfFormThis.ts, 65, 1))
  
          return this instanceof ArrowElite;
-@@ -142,7 +142,7 @@
+@@= skipped -8, +8 lines =@@
  >ArrowElite : Symbol(ArrowElite, Decl(typeGuardFunctionOfFormThis.ts, 65, 1))
      }
      isMedic = (): this is ArrowMedic => {
@@ -134,7 +134,7 @@
  >ArrowMedic : Symbol(ArrowMedic, Decl(typeGuardFunctionOfFormThis.ts, 69, 1))
  
          return this instanceof ArrowMedic;
-@@ -156,7 +156,7 @@
+@@= skipped -14, +14 lines =@@
  >ArrowGuard : Symbol(ArrowGuard, Decl(typeGuardFunctionOfFormThis.ts, 56, 1))
  
      defend(): void {}
@@ -143,7 +143,7 @@
  }
  
  class ArrowMedic extends ArrowGuard {
-@@ -164,7 +164,7 @@
+@@= skipped -8, +8 lines =@@
  >ArrowGuard : Symbol(ArrowGuard, Decl(typeGuardFunctionOfFormThis.ts, 56, 1))
  
      heal(): void {}
@@ -152,7 +152,7 @@
  }
  
  let guard = new ArrowGuard();
-@@ -172,38 +172,38 @@
+@@= skipped -8, +8 lines =@@
  >ArrowGuard : Symbol(ArrowGuard, Decl(typeGuardFunctionOfFormThis.ts, 56, 1))
  
  if (guard.isElite()) {
@@ -201,7 +201,7 @@
  }
  
  interface Crate<T> {
-@@ -211,19 +211,19 @@
+@@= skipped -39, +39 lines =@@
  >T : Symbol(T, Decl(typeGuardFunctionOfFormThis.ts, 91, 16))
  
      contents: T;
@@ -225,7 +225,7 @@
  >Crate : Symbol(Crate, Decl(typeGuardFunctionOfFormThis.ts, 89, 1))
  >Sundries : Symbol(Sundries, Decl(typeGuardFunctionOfFormThis.ts, 85, 1))
  }
-@@ -233,59 +233,59 @@
+@@= skipped -22, +22 lines =@@
  >Crate : Symbol(Crate, Decl(typeGuardFunctionOfFormThis.ts, 89, 1))
  
  if (crate.isSundries()) {
@@ -307,7 +307,7 @@
  >MimicFollower : Symbol(MimicFollower, Decl(typeGuardFunctionOfFormThis.ts, 119, 1))
  >this : Symbol(MimicGuard, Decl(typeGuardFunctionOfFormThis.ts, 110, 24))
  >MimicFollower : Symbol(MimicFollower, Decl(typeGuardFunctionOfFormThis.ts, 119, 1))
-@@ -296,7 +296,7 @@
+@@= skipped -63, +63 lines =@@
  >MimicGuard : Symbol(MimicGuard, Decl(typeGuardFunctionOfFormThis.ts, 110, 24))
  
      lead(): void {}
@@ -316,7 +316,7 @@
  }
  
  class MimicFollower extends MimicGuard {
-@@ -304,7 +304,7 @@
+@@= skipped -8, +8 lines =@@
  >MimicGuard : Symbol(MimicGuard, Decl(typeGuardFunctionOfFormThis.ts, 110, 24))
  
      follow(): void {}
@@ -325,7 +325,7 @@
  }
  
  let mimic = new MimicGuard();
-@@ -312,38 +312,38 @@
+@@= skipped -8, +8 lines =@@
  >MimicGuard : Symbol(MimicGuard, Decl(typeGuardFunctionOfFormThis.ts, 110, 24))
  
  a.isLeader = mimic.isLeader;
@@ -380,7 +380,7 @@
  }
  
  
-@@ -351,11 +351,11 @@
+@@= skipped -39, +39 lines =@@
  >MimicGuardInterface : Symbol(MimicGuardInterface, Decl(typeGuardFunctionOfFormThis.ts, 133, 1))
  
      isLeader(): this is LeadGuard;

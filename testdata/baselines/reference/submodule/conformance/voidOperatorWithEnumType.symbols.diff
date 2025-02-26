@@ -1,6 +1,6 @@
 --- old.voidOperatorWithEnumType.symbols
 +++ new.voidOperatorWithEnumType.symbols
-@@ -8,9 +8,9 @@
+@@= skipped -8, +8 lines =@@
  
  enum ENUM1 { A, B, "" };
  >ENUM1 : Symbol(ENUM1, Decl(voidOperatorWithEnumType.ts, 2, 14))
@@ -13,7 +13,7 @@
  
  // enum type var
  var ResultIsAny1 = void ENUM;
-@@ -25,13 +25,13 @@
+@@= skipped -17, +17 lines =@@
  var ResultIsAny3 = void ENUM1["A"];
  >ResultIsAny3 : Symbol(ResultIsAny3, Decl(voidOperatorWithEnumType.ts, 10, 3))
  >ENUM1 : Symbol(ENUM1, Decl(voidOperatorWithEnumType.ts, 2, 14))
@@ -29,7 +29,7 @@
  
  // multiple void  operators
  var ResultIsAny5 = void void ENUM;
-@@ -41,9 +41,9 @@
+@@= skipped -16, +16 lines =@@
  var ResultIsAny6 = void void void (ENUM[0] + ENUM1.B);
  >ResultIsAny6 : Symbol(ResultIsAny6, Decl(voidOperatorWithEnumType.ts, 15, 3))
  >ENUM : Symbol(ENUM, Decl(voidOperatorWithEnumType.ts, 0, 0))
@@ -41,7 +41,7 @@
  
  // miss assignment operators
  void ENUM;
-@@ -54,7 +54,7 @@
+@@= skipped -13, +13 lines =@@
  
  void ENUM1["B"];
  >ENUM1 : Symbol(ENUM1, Decl(voidOperatorWithEnumType.ts, 2, 14))

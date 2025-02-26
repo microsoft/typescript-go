@@ -1,6 +1,6 @@
 --- old.jsdocImplements_properties.symbols
 +++ new.jsdocImplements_properties.symbols
-@@ -3,9 +3,7 @@
+@@= skipped -3, +3 lines =@@
  === /a.js ===
  class A { constructor() { this.x = 0; } }
  >A : Symbol(A, Decl(a.js, 0, 0))
@@ -10,7 +10,7 @@
  
  /** @implements A*/
  class B {}
-@@ -16,7 +14,7 @@
+@@= skipped -13, +11 lines =@@
  >B2 : Symbol(B2, Decl(a.js, 2, 10))
  
      x = 10
@@ -19,7 +19,7 @@
  }
  
  /** @implements {A}*/
-@@ -24,8 +22,6 @@
+@@= skipped -8, +8 lines =@@
  >B3 : Symbol(B3, Decl(a.js, 7, 1))
  
      constructor() { this.x = 10 }

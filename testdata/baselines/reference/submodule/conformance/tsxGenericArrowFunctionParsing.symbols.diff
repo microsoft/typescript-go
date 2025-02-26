@@ -1,6 +1,6 @@
 --- old.tsxGenericArrowFunctionParsing.symbols
 +++ new.tsxGenericArrowFunctionParsing.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  
  	interface Element { isElement; }
  >Element : Symbol(Element, Decl(file.tsx, 0, 20))
@@ -9,7 +9,7 @@
  }
  
  var T: any, T1: any, T2: any;
-@@ -21,9 +21,7 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(file.tsx, 4, 3))
  
  x1.isElement;
@@ -19,7 +19,7 @@
  
  // This is a generic function
  var x2 = <T extends {}>() => {};
-@@ -50,9 +48,7 @@
+@@= skipped -29, +27 lines =@@
  >T : Symbol(T, Decl(file.tsx, 4, 3))
  
  x4.isElement;
@@ -29,7 +29,7 @@
  
  // This is an element
  var x5 = <T extends>() => {}</T>;
-@@ -62,9 +58,7 @@
+@@= skipped -12, +10 lines =@@
  >T : Symbol(T, Decl(file.tsx, 4, 3))
  
  x5.isElement;

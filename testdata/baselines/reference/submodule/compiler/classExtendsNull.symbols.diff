@@ -1,6 +1,6 @@
 --- old.classExtendsNull.symbols
 +++ new.classExtendsNull.symbols
-@@ -7,9 +7,9 @@
+@@= skipped -7, +7 lines =@@
      constructor() {
          super();
          return Object.create(null);
@@ -12,7 +12,7 @@
      }
  }
  
-@@ -18,8 +18,8 @@
+@@= skipped -11, +11 lines =@@
  
      constructor() {
          return Object.create(null);

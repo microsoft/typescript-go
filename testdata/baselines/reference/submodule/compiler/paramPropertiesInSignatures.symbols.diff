@@ -1,6 +1,6 @@
 --- old.paramPropertiesInSignatures.symbols
 +++ new.paramPropertiesInSignatures.symbols
-@@ -5,24 +5,24 @@
+@@= skipped -5, +5 lines =@@
  >C1 : Symbol(C1, Decl(paramPropertiesInSignatures.ts, 0, 0))
  
  	constructor(public p1:string); // ERROR

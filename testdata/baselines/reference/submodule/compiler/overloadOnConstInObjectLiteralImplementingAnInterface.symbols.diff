@@ -1,6 +1,6 @@
 --- old.overloadOnConstInObjectLiteralImplementingAnInterface.symbols
 +++ new.overloadOnConstInObjectLiteralImplementingAnInterface.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >I : Symbol(I, Decl(overloadOnConstInObjectLiteralImplementingAnInterface.ts, 0, 0))
  
      x1(a: number, callback: (x: 'hi') => number);

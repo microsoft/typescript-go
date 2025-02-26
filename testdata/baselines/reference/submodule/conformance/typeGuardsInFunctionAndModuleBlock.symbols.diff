@@ -1,6 +1,6 @@
 --- old.typeGuardsInFunctionAndModuleBlock.symbols
 +++ new.typeGuardsInFunctionAndModuleBlock.symbols
-@@ -24,14 +24,14 @@
+@@= skipped -24, +24 lines =@@
  >x : Symbol(x, Decl(typeGuardsInFunctionAndModuleBlock.ts, 2, 13))
  
                  ? x.toString() // boolean
@@ -19,7 +19,7 @@
  
          } ();
  }
-@@ -57,14 +57,14 @@
+@@= skipped -33, +33 lines =@@
  >x : Symbol(x, Decl(typeGuardsInFunctionAndModuleBlock.ts, 12, 14))
  
                  ? x.toString() // boolean
@@ -38,7 +38,7 @@
  
          } (x); // x here is narrowed to number | boolean
  >x : Symbol(x, Decl(typeGuardsInFunctionAndModuleBlock.ts, 12, 14))
-@@ -88,14 +88,14 @@
+@@= skipped -31, +31 lines =@@
  >x : Symbol(x, Decl(typeGuardsInFunctionAndModuleBlock.ts, 22, 14))
  
                  ? x.toString() // boolean
@@ -57,7 +57,7 @@
  
          })();
  }
-@@ -120,14 +120,14 @@
+@@= skipped -32, +32 lines =@@
  >x : Symbol(x, Decl(typeGuardsInFunctionAndModuleBlock.ts, 32, 14))
  
                  ? x.toString() // boolean
@@ -76,7 +76,7 @@
  
          })(x); // x here is narrowed to number | boolean
  >x : Symbol(x, Decl(typeGuardsInFunctionAndModuleBlock.ts, 32, 14))
-@@ -182,14 +182,14 @@
+@@= skipped -62, +62 lines =@@
  >x : Symbol(x, Decl(typeGuardsInFunctionAndModuleBlock.ts, 52, 7))
  
              ? x.toString() // boolean
@@ -95,7 +95,7 @@
          }
      }
  }
-@@ -223,14 +223,14 @@
+@@= skipped -41, +41 lines =@@
  >x : Symbol(x, Decl(typeGuardsInFunctionAndModuleBlock.ts, 66, 7))
  
              ? x.toString() // boolean

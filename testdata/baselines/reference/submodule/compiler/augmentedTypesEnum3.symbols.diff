@@ -1,6 +1,6 @@
 --- old.augmentedTypesEnum3.symbols
 +++ new.augmentedTypesEnum3.symbols
-@@ -27,13 +27,13 @@
+@@= skipped -27, +27 lines =@@
  >A : Symbol(A, Decl(augmentedTypesEnum3.ts, 6, 19), Decl(augmentedTypesEnum3.ts, 10, 1), Decl(augmentedTypesEnum3.ts, 13, 1), Decl(augmentedTypesEnum3.ts, 16, 1))
  
      b

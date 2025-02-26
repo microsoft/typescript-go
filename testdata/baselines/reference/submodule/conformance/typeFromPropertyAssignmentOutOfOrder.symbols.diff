@@ -1,6 +1,6 @@
 --- old.typeFromPropertyAssignmentOutOfOrder.symbols
 +++ new.typeFromPropertyAssignmentOutOfOrder.symbols
-@@ -2,26 +2,16 @@
+@@= skipped -2, +2 lines =@@
  
  === index.js ===
  First.Item = class I {}
@@ -32,7 +32,7 @@
  
  /** @type {Workspace.Object} */
  var am;
-@@ -29,11 +19,11 @@
+@@= skipped -27, +17 lines =@@
  
  === roots.js ===
  var First = {};

@@ -1,6 +1,6 @@
 --- old.arrayFakeFlatNoCrashInferenceDeclarations.symbols
 +++ new.arrayFakeFlatNoCrashInferenceDeclarations.symbols
-@@ -8,11 +8,11 @@
+@@= skipped -8, +8 lines =@@
  >obj : Symbol(obj, Decl(arrayFakeFlatNoCrashInferenceDeclarations.ts, 0, 48))
  
      "done": Arr,

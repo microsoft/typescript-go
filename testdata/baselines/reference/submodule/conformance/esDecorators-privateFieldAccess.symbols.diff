@@ -1,6 +1,6 @@
 --- old.esDecorators-privateFieldAccess.symbols
 +++ new.esDecorators-privateFieldAccess.symbols
-@@ -13,18 +13,18 @@
+@@= skipped -13, +13 lines =@@
  >A : Symbol(A, Decl(esDecorators-privateFieldAccess.ts, 0, 21))
  
      #foo = 3;
@@ -22,7 +22,7 @@
  }
  
  @dec((x: B) => x.#foo) // error
-@@ -37,21 +37,21 @@
+@@= skipped -24, +24 lines =@@
  >B : Symbol(B, Decl(esDecorators-privateFieldAccess.ts, 8, 1))
  
      #foo = 3;

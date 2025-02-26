@@ -1,6 +1,6 @@
 --- old.genericCallWithObjectTypeArgsAndConstraints5.symbols
 +++ new.genericCallWithObjectTypeArgsAndConstraints5.symbols
-@@ -7,17 +7,17 @@
+@@= skipped -7, +7 lines =@@
  >C : Symbol(C, Decl(genericCallWithObjectTypeArgsAndConstraints5.ts, 0, 0))
  
      x: string;

@@ -1,6 +1,6 @@
 --- old.for-of45.symbols
 +++ new.for-of45.symbols
-@@ -7,7 +7,6 @@
+@@= skipped -7, +7 lines =@@
  
  var map = new Map([["", true]]);
  >map : Symbol(map, Decl(for-of45.ts, 1, 3))

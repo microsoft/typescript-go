@@ -1,6 +1,6 @@
 --- old.overloadresolutionWithConstraintCheckingDeferred.symbols
 +++ new.overloadresolutionWithConstraintCheckingDeferred.symbols
-@@ -3,20 +3,20 @@
+@@= skipped -3, +3 lines =@@
  === overloadresolutionWithConstraintCheckingDeferred.ts ===
  interface A { x }
  >A : Symbol(A, Decl(overloadresolutionWithConstraintCheckingDeferred.ts, 0, 0))

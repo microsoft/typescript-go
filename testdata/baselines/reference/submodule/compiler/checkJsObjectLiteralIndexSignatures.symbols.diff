@@ -1,6 +1,6 @@
 --- old.checkJsObjectLiteralIndexSignatures.symbols
 +++ new.checkJsObjectLiteralIndexSignatures.symbols
-@@ -5,9 +5,9 @@
+@@= skipped -5, +5 lines =@@
  
  let n = Math.random();
  >n : Symbol(n, Decl(file.js, 2, 3))
@@ -12,7 +12,7 @@
  
  let s = `${n}`;
  >s : Symbol(s, Decl(file.js, 3, 3))
-@@ -19,10 +19,10 @@
+@@= skipped -14, +14 lines =@@
  >n : Symbol(n, Decl(file.js, 2, 3))
  
  numericIndex[n].toFixed();
@@ -25,7 +25,7 @@
  
  const stringIndex = { [s]: 1 };
  >stringIndex : Symbol(stringIndex, Decl(file.js, 8, 5))
-@@ -30,9 +30,9 @@
+@@= skipped -11, +11 lines =@@
  >s : Symbol(s, Decl(file.js, 3, 3))
  
  stringIndex[s].toFixed();

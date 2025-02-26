@@ -1,6 +1,6 @@
 --- old.typedefTagNested.symbols
 +++ new.typedefTagNested.symbols
-@@ -55,17 +55,17 @@
+@@= skipped -55, +55 lines =@@
  >nested : Symbol(nested, Decl(a.js, 35, 37))
  
  sala.name

@@ -1,6 +1,6 @@
 --- old.numberAssignableToEnumInsideUnion.symbols
 +++ new.numberAssignableToEnumInsideUnion.symbols
-@@ -3,8 +3,8 @@
+@@= skipped -3, +3 lines =@@
  === numberAssignableToEnumInsideUnion.ts ===
  enum E { A, B }
  >E : Symbol(E, Decl(numberAssignableToEnumInsideUnion.ts, 0, 0))

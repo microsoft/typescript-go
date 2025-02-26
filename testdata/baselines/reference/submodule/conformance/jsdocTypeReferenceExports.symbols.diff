@@ -1,6 +1,6 @@
 --- old.jsdocTypeReferenceExports.symbols
 +++ new.jsdocTypeReferenceExports.symbols
-@@ -2,10 +2,6 @@
+@@= skipped -2, +2 lines =@@
  
  === bug27342.js ===
  module.exports = {}

@@ -1,6 +1,6 @@
 --- old.typeInferenceWithExcessProperties.symbols
 +++ new.typeInferenceWithExcessProperties.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >Named : Symbol(Named, Decl(typeInferenceWithExcessProperties.ts, 0, 0))
  
      name: string;

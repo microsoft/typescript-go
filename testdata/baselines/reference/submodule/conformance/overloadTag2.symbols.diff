@@ -1,6 +1,6 @@
 --- old.overloadTag2.symbols
 +++ new.overloadTag2.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(overloadTag2.js, 0, 0))
  
      #a = true ? 1 : "1"
@@ -13,7 +13,7 @@
  
      /**
       * Should not have an implicit any error, because constructor's return type is always implicit
-@@ -35,12 +35,12 @@
+@@= skipped -30, +30 lines =@@
  >b : Symbol(b, Decl(overloadTag2.js, 24, 18))
  
          this.#a = a

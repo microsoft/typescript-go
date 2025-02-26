@@ -1,6 +1,6 @@
 --- old.inlineJsxAndJsxFragPragmaOverridesCompilerOptions.symbols
 +++ new.inlineJsxAndJsxFragPragmaOverridesCompilerOptions.symbols
-@@ -2,7 +2,7 @@
+@@= skipped -2, +2 lines =@@
  
  === react.d.ts ===
  declare global {
@@ -9,7 +9,7 @@
  
      namespace JSX {
  >JSX : Symbol(JSX, Decl(react.d.ts, 0, 16))
-@@ -38,8 +38,6 @@
+@@= skipped -36, +36 lines =@@
  >Fragment : Symbol(Fragment, Decl(reacty.tsx, 0, 22))
  
  <><span></span></>
@@ -18,7 +18,7 @@
  
  === preacty.tsx ===
  /**
-@@ -51,8 +49,6 @@
+@@= skipped -13, +11 lines =@@
  >Frag : Symbol(Frag, Decl(preacty.tsx, 4, 10))
  
  <><div></div></>
@@ -27,7 +27,7 @@
  
  === snabbdomy.tsx ===
  /**
-@@ -63,8 +59,6 @@
+@@= skipped -12, +10 lines =@@
  >h : Symbol(h, Decl(snabbdomy.tsx, 4, 8))
  
  <><div></div></>
@@ -36,7 +36,7 @@
  
  === mix-n-match.tsx ===
  /* @jsx h */
-@@ -76,6 +70,3 @@
+@@= skipped -13, +11 lines =@@
  >Fragment : Symbol(Fragment, Decl(mix-n-match.tsx, 3, 8))
  
  <><span></span></>

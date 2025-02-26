@@ -1,6 +1,6 @@
 --- old.circularTypeofWithVarOrFunc.symbols
 +++ new.circularTypeofWithVarOrFunc.symbols
-@@ -35,10 +35,10 @@
+@@= skipped -35, +35 lines =@@
  >Input : Symbol(Input, Decl(circularTypeofWithVarOrFunc.ts, 8, 43))
  
    a: number;
@@ -13,7 +13,7 @@
  }
  
  type R = ReturnType<typeof mul>;
-@@ -53,12 +53,12 @@
+@@= skipped -18, +18 lines =@@
  >R : Symbol(R, Decl(circularTypeofWithVarOrFunc.ts, 15, 1))
  
    return input.a * input.b;

@@ -1,6 +1,6 @@
 --- old.privateNameUncheckedJsOptionalChain.symbols
 +++ new.privateNameUncheckedJsOptionalChain.symbols
-@@ -5,14 +5,14 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(privateNameUncheckedJsOptionalChain.js, 0, 0))
  
      #bar;

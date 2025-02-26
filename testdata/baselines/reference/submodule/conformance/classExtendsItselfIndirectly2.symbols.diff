@@ -1,6 +1,6 @@
 --- old.classExtendsItselfIndirectly2.symbols
 +++ new.classExtendsItselfIndirectly2.symbols
-@@ -3,10 +3,10 @@
+@@= skipped -3, +3 lines =@@
  === classExtendsItselfIndirectly2.ts ===
  class C extends N.E { foo: string; } // error
  >C : Symbol(C, Decl(classExtendsItselfIndirectly2.ts, 0, 0))
@@ -14,7 +14,7 @@
  
  module M {
  >M : Symbol(M, Decl(classExtendsItselfIndirectly2.ts, 0, 36))
-@@ -14,7 +14,7 @@
+@@= skipped -11, +11 lines =@@
      export class D extends C { bar: string; }
  >D : Symbol(D, Decl(classExtendsItselfIndirectly2.ts, 2, 10))
  >C : Symbol(C, Decl(classExtendsItselfIndirectly2.ts, 0, 0))
@@ -23,7 +23,7 @@
  
  }
  
-@@ -23,10 +23,10 @@
+@@= skipped -9, +9 lines =@@
  
      export class E extends M.D { baz: number; }
  >E : Symbol(E, Decl(classExtendsItselfIndirectly2.ts, 7, 10))
@@ -37,7 +37,7 @@
  }
  
  module O {
-@@ -35,11 +35,11 @@
+@@= skipped -12, +12 lines =@@
      class C2<T> extends Q.E2<T> { foo: T; } // error
  >C2 : Symbol(C2, Decl(classExtendsItselfIndirectly2.ts, 11, 10))
  >T : Symbol(T, Decl(classExtendsItselfIndirectly2.ts, 12, 13))
@@ -52,7 +52,7 @@
  >T : Symbol(T, Decl(classExtendsItselfIndirectly2.ts, 12, 13))
  
      module P {
-@@ -50,7 +50,7 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(classExtendsItselfIndirectly2.ts, 15, 24))
  >C2 : Symbol(C2, Decl(classExtendsItselfIndirectly2.ts, 11, 10))
  >T : Symbol(T, Decl(classExtendsItselfIndirectly2.ts, 15, 24))
@@ -61,7 +61,7 @@
  >T : Symbol(T, Decl(classExtendsItselfIndirectly2.ts, 15, 24))
      }
  
-@@ -60,11 +60,11 @@
+@@= skipped -10, +10 lines =@@
          export class E2<T> extends P.D2<T> { baz: T; }
  >E2 : Symbol(E2, Decl(classExtendsItselfIndirectly2.ts, 18, 14))
  >T : Symbol(T, Decl(classExtendsItselfIndirectly2.ts, 19, 24))

@@ -1,6 +1,6 @@
 --- old.declarationEmitFBoundedTypeParams.symbols
 +++ new.declarationEmitFBoundedTypeParams.symbols
-@@ -15,9 +15,9 @@
+@@= skipped -15, +15 lines =@@
  >a : Symbol(a, Decl(declarationEmitFBoundedTypeParams.ts, 2, 16))
  
      result.push(value);

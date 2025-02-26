@@ -1,6 +1,6 @@
 --- old.jsdocOuterTypeParameters3.symbols
 +++ new.jsdocOuterTypeParameters3.symbols
-@@ -6,16 +6,16 @@
+@@= skipped -6, +6 lines =@@
  >Baz : Symbol(Baz, Decl(jsdocOuterTypeParameters3.js, 0, 0))
  
      m() {

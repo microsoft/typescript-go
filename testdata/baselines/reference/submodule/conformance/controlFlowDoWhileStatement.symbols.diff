@@ -1,6 +1,6 @@
 --- old.controlFlowDoWhileStatement.symbols
 +++ new.controlFlowDoWhileStatement.symbols
-@@ -82,9 +82,9 @@
+@@= skipped -82, +82 lines =@@
  
      } while (x = x.length)
  >x : Symbol(x, Decl(controlFlowDoWhileStatement.ts, 28, 7))

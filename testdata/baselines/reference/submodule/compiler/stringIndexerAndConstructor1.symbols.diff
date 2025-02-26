@@ -1,6 +1,6 @@
 --- old.stringIndexerAndConstructor1.symbols
 +++ new.stringIndexerAndConstructor1.symbols
-@@ -8,5 +8,5 @@
+@@= skipped -8, +8 lines =@@
  >s : Symbol(s, Decl(stringIndexerAndConstructor1.ts, 1, 5))
  
      "": string;

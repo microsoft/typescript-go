@@ -1,6 +1,6 @@
 --- old.narrowingOfQualifiedNames.symbols
 +++ new.narrowingOfQualifiedNames.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >IProperties : Symbol(IProperties, Decl(narrowingOfQualifiedNames.ts, 0, 0))
  
      foo?: {
@@ -9,7 +9,7 @@
  
          aaa: string
  >aaa : Symbol(aaa, Decl(narrowingOfQualifiedNames.ts, 3, 11))
-@@ -23,34 +23,34 @@
+@@= skipped -16, +16 lines =@@
  >IProperties : Symbol(IProperties, Decl(narrowingOfQualifiedNames.ts, 0, 0))
  
      if (properties.foo) {
@@ -54,7 +54,7 @@
          }
      }
  }
-@@ -59,7 +59,7 @@
+@@= skipped -36, +36 lines =@@
  >DeepOptional : Symbol(DeepOptional, Decl(narrowingOfQualifiedNames.ts, 18, 1))
  
      a?: {
@@ -63,7 +63,7 @@
  
          b?: {
  >b : Symbol(b, Decl(narrowingOfQualifiedNames.ts, 21, 9))
-@@ -76,89 +76,85 @@
+@@= skipped -17, +17 lines =@@
  >DeepOptional : Symbol(DeepOptional, Decl(narrowingOfQualifiedNames.ts, 18, 1))
  
      if (foo.a) {
@@ -175,7 +175,7 @@
  >b : Symbol(b, Decl(narrowingOfQualifiedNames.ts, 21, 9))
  >c : Symbol(c, Decl(narrowingOfQualifiedNames.ts, 22, 13))
  
-@@ -167,58 +163,58 @@
+@@= skipped -91, +87 lines =@@
  
                      type A = typeof foo.a;
  >A : Symbol(A, Decl(narrowingOfQualifiedNames.ts, 44, 37))
@@ -248,7 +248,7 @@
  >b : Symbol(b, Decl(narrowingOfQualifiedNames.ts, 21, 9))
  >c : Symbol(c, Decl(narrowingOfQualifiedNames.ts, 22, 13))
  
-@@ -227,25 +223,25 @@
+@@= skipped -60, +60 lines =@@
  
                              type A = typeof foo.a;
  >A : Symbol(A, Decl(narrowingOfQualifiedNames.ts, 54, 45))
@@ -280,7 +280,7 @@
  >b : Symbol(b, Decl(narrowingOfQualifiedNames.ts, 21, 9))
  >c : Symbol(c, Decl(narrowingOfQualifiedNames.ts, 22, 13))
                          }
-@@ -281,9 +277,9 @@
+@@= skipped -54, +54 lines =@@
  >PetType : Symbol(PetType, Decl(narrowingOfQualifiedNames.ts, 73, 25))
  
      if(pet.type === 'dog') {
@@ -292,7 +292,7 @@
  
          const _okay1 = pet.saysWoof;
  >_okay1 : Symbol(_okay1, Decl(narrowingOfQualifiedNames.ts, 75, 13))
-@@ -308,9 +304,9 @@
+@@= skipped -27, +27 lines =@@
  >Pet : Symbol(Pet, Decl(narrowingOfQualifiedNames.ts, 69, 42))
  
      if(pet.type === 'dog') {

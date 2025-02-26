@@ -1,6 +1,6 @@
 --- old.observableInferenceCanBeMade.symbols
 +++ new.observableInferenceCanBeMade.symbols
-@@ -34,7 +34,7 @@
+@@= skipped -34, +34 lines =@@
  >T : Symbol(T, Decl(observableInferenceCanBeMade.ts, 7, 23))
  
      subscribe(next?: (value: T) => void, error?: (error: any) => void, complete?: () => void): void;
@@ -9,7 +9,7 @@
  >next : Symbol(next, Decl(observableInferenceCanBeMade.ts, 8, 14))
  >value : Symbol(value, Decl(observableInferenceCanBeMade.ts, 8, 22))
  >T : Symbol(T, Decl(observableInferenceCanBeMade.ts, 7, 23))
-@@ -57,7 +57,7 @@
+@@= skipped -23, +23 lines =@@
  >T : Symbol(T, Decl(observableInferenceCanBeMade.ts, 13, 25))
  
      subscribe(next?: (value: T) => void, error?: (error: any) => void, complete?: () => void): void;

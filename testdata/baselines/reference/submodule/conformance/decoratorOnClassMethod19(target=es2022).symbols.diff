@@ -1,6 +1,6 @@
 --- old.decoratorOnClassMethod19(target=es2022).symbols
 +++ new.decoratorOnClassMethod19(target=es2022).symbols
-@@ -9,31 +9,31 @@
+@@= skipped -9, +9 lines =@@
  >C1 : Symbol(C1, Decl(decoratorOnClassMethod19.ts, 1, 27))
  
      #x

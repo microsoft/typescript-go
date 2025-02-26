@@ -1,6 +1,6 @@
 --- old.exportAsNamespace_augment.symbols
 +++ new.exportAsNamespace_augment.symbols
-@@ -18,7 +18,7 @@
+@@= skipped -18, +18 lines =@@
  >global : Symbol(global, Decl(b.ts, 0, 26))
  
      namespace a {
@@ -9,7 +9,7 @@
  
          export const y = 0;
  >y : Symbol(y, Decl(b.ts, 4, 20))
-@@ -29,7 +29,7 @@
+@@= skipped -11, +11 lines =@@
  }
  
  declare module "./a" {
@@ -18,7 +18,7 @@
  
      export const z = 0;
  >z : Symbol(z, Decl(b.ts, 10, 16))
-@@ -39,30 +39,30 @@
+@@= skipped -10, +10 lines =@@
  }
  
  a.x + a.y + a.z + a.conflict;

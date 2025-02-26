@@ -1,6 +1,6 @@
 --- old.commaOperatorsMultipleOperators.symbols
 +++ new.commaOperatorsMultipleOperators.symbols
-@@ -78,9 +78,9 @@
+@@= skipped -78, +78 lines =@@
  null, true, 1;
  ++NUMBER, STRING.charAt(0), new Object();
  >NUMBER : Symbol(NUMBER, Decl(commaOperatorsMultipleOperators.ts, 2, 3))
@@ -12,7 +12,7 @@
  >Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
  var resultIsNumber2 = (null, true, 1);
-@@ -89,8 +89,8 @@
+@@= skipped -11, +11 lines =@@
  var resultIsObject2 = (++NUMBER, STRING.charAt(0), new Object());
  >resultIsObject2 : Symbol(resultIsObject2, Decl(commaOperatorsMultipleOperators.ts, 25, 3))
  >NUMBER : Symbol(NUMBER, Decl(commaOperatorsMultipleOperators.ts, 2, 3))

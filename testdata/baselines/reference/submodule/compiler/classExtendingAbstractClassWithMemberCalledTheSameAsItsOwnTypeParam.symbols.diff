@@ -1,6 +1,6 @@
 --- old.classExtendingAbstractClassWithMemberCalledTheSameAsItsOwnTypeParam.symbols
 +++ new.classExtendingAbstractClassWithMemberCalledTheSameAsItsOwnTypeParam.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >IObserver : Symbol(IObserver, Decl(classExtendingAbstractClassWithMemberCalledTheSameAsItsOwnTypeParam.ts, 0, 0))
  
  	handleChange<T, TChange>(observable: IObservable<T, TChange>, change: TChange): void;
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(classExtendingAbstractClassWithMemberCalledTheSameAsItsOwnTypeParam.ts, 1, 14))
  >TChange : Symbol(TChange, Decl(classExtendingAbstractClassWithMemberCalledTheSameAsItsOwnTypeParam.ts, 1, 16))
  >observable : Symbol(observable, Decl(classExtendingAbstractClassWithMemberCalledTheSameAsItsOwnTypeParam.ts, 1, 26))
-@@ -22,7 +22,7 @@
+@@= skipped -17, +17 lines =@@
  >TChange : Symbol(TChange, Decl(classExtendingAbstractClassWithMemberCalledTheSameAsItsOwnTypeParam.ts, 4, 24), Decl(classExtendingAbstractClassWithMemberCalledTheSameAsItsOwnTypeParam.ts, 5, 10))
  
  	get(): T;
@@ -18,7 +18,7 @@
  >T : Symbol(T, Decl(classExtendingAbstractClassWithMemberCalledTheSameAsItsOwnTypeParam.ts, 4, 22))
  
  	readonly TChange: TChange;
-@@ -34,7 +34,7 @@
+@@= skipped -12, +12 lines =@@
  >IReader : Symbol(IReader, Decl(classExtendingAbstractClassWithMemberCalledTheSameAsItsOwnTypeParam.ts, 7, 1))
  
  	readObservable<T>(observable: IObservable<T, any>): T;
@@ -27,7 +27,7 @@
  >T : Symbol(T, Decl(classExtendingAbstractClassWithMemberCalledTheSameAsItsOwnTypeParam.ts, 10, 16))
  >observable : Symbol(observable, Decl(classExtendingAbstractClassWithMemberCalledTheSameAsItsOwnTypeParam.ts, 10, 19))
  >IObservable : Symbol(IObservable, Decl(classExtendingAbstractClassWithMemberCalledTheSameAsItsOwnTypeParam.ts, 2, 1))
-@@ -55,7 +55,7 @@
+@@= skipped -21, +21 lines =@@
  >TChange : Symbol(TChange, Decl(classExtendingAbstractClassWithMemberCalledTheSameAsItsOwnTypeParam.ts, 13, 45), Decl(classExtendingAbstractClassWithMemberCalledTheSameAsItsOwnTypeParam.ts, 13, 91))
  
  	public abstract get(): T;
@@ -36,7 +36,7 @@
  >T : Symbol(T, Decl(classExtendingAbstractClassWithMemberCalledTheSameAsItsOwnTypeParam.ts, 13, 43))
  }
  
-@@ -68,7 +68,7 @@
+@@= skipped -13, +13 lines =@@
  >TChange : Symbol(TChange, Decl(classExtendingAbstractClassWithMemberCalledTheSameAsItsOwnTypeParam.ts, 18, 39))
  
  	protected readonly observers = new Set<IObserver>();

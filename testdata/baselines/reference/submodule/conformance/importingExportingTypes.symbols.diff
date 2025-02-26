@@ -1,6 +1,6 @@
 --- old.importingExportingTypes.symbols
 +++ new.importingExportingTypes.symbols
-@@ -28,10 +28,9 @@
+@@= skipped -28, +28 lines =@@
  /** @typedef {{ x: any }} JSDocType */
  
  export { JSDocType };

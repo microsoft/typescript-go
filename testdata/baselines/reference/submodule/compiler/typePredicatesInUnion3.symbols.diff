@@ -1,6 +1,6 @@
 --- old.typePredicatesInUnion3.symbols
 +++ new.typePredicatesInUnion3.symbols
-@@ -105,10 +105,10 @@
+@@= skipped -105, +105 lines =@@
  >Type1 : Symbol(Type1, Decl(typePredicatesInUnion3.ts, 36, 49))
  
      attribute: number | null = null;
@@ -13,7 +13,7 @@
  >HasAttribute : Symbol(HasAttribute, Decl(typePredicatesInUnion3.ts, 32, 1))
  >Type1 : Symbol(Type1, Decl(typePredicatesInUnion3.ts, 36, 49))
  
-@@ -120,10 +120,10 @@
+@@= skipped -15, +15 lines =@@
  >Type2 : Symbol(Type2, Decl(typePredicatesInUnion3.ts, 43, 1))
  
      attribute: number | null = null;

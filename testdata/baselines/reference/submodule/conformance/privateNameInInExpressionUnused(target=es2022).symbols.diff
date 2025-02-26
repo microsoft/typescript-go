@@ -1,6 +1,6 @@
 --- old.privateNameInInExpressionUnused(target=es2022).symbols
 +++ new.privateNameInInExpressionUnused(target=es2022).symbols
-@@ -5,20 +5,20 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(privateNameInInExpressionUnused.ts, 0, 0))
  
      #unused: undefined; // expect unused error

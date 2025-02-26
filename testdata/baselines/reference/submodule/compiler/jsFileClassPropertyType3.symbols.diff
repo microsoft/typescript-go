@@ -1,6 +1,6 @@
 --- old.jsFileClassPropertyType3.symbols
 +++ new.jsFileClassPropertyType3.symbols
-@@ -7,22 +7,16 @@
+@@= skipped -7, +7 lines =@@
      constructor() {
          if (cond) {
              this.p = null;

@@ -1,6 +1,6 @@
 --- old.incompatibleTypes.symbols
 +++ new.incompatibleTypes.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >IFoo1 : Symbol(IFoo1, Decl(incompatibleTypes.ts, 0, 0))
  
      p1(): number;
@@ -9,7 +9,7 @@
  }
  
  class C1 implements IFoo1 { // incompatible on the return type
-@@ -13,7 +13,7 @@
+@@= skipped -8, +8 lines =@@
  >IFoo1 : Symbol(IFoo1, Decl(incompatibleTypes.ts, 0, 0))
  
      public p1() {
@@ -18,7 +18,7 @@
  
          return "s";
      }
-@@ -23,7 +23,7 @@
+@@= skipped -10, +10 lines =@@
  >IFoo2 : Symbol(IFoo2, Decl(incompatibleTypes.ts, 8, 1))
  
      p1(s:string): number;
@@ -27,7 +27,7 @@
  >s : Symbol(s, Decl(incompatibleTypes.ts, 11, 7))
  }
  
-@@ -32,7 +32,7 @@
+@@= skipped -9, +9 lines =@@
  >IFoo2 : Symbol(IFoo2, Decl(incompatibleTypes.ts, 8, 1))
  
      public p1(n:number) {
@@ -36,7 +36,7 @@
  >n : Symbol(n, Decl(incompatibleTypes.ts, 15, 14))
  
          return 0;
-@@ -43,7 +43,7 @@
+@@= skipped -11, +11 lines =@@
  >IFoo3 : Symbol(IFoo3, Decl(incompatibleTypes.ts, 18, 1))
  
      p1: string;
@@ -45,7 +45,7 @@
  }
  
  class C3 implements IFoo3 { // incompatible on the property type
-@@ -51,14 +51,14 @@
+@@= skipped -8, +8 lines =@@
  >IFoo3 : Symbol(IFoo3, Decl(incompatibleTypes.ts, 18, 1))
  
      public p1: number;
@@ -62,7 +62,7 @@
  >a : Symbol(a, Decl(incompatibleTypes.ts, 29, 9))
  >a : Symbol(a, Decl(incompatibleTypes.ts, 29, 14))
  >b : Symbol(b, Decl(incompatibleTypes.ts, 29, 28))
-@@ -69,7 +69,7 @@
+@@= skipped -18, +18 lines =@@
  >IFoo4 : Symbol(IFoo4, Decl(incompatibleTypes.ts, 26, 1))
  
      public p1: { c: { b: string; }; d: string; };

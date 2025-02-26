@@ -1,6 +1,6 @@
 --- old.sourceMapValidationClass.symbols
 +++ new.sourceMapValidationClass.symbols
-@@ -5,47 +5,47 @@
+@@= skipped -5, +5 lines =@@
  >Greeter : Symbol(Greeter, Decl(sourceMapValidationClass.ts, 0, 0))
  
      constructor(public greeting: string, ...b: string[]) {

@@ -1,6 +1,6 @@
 --- old.privacyClass.symbols
 +++ new.privacyClass.symbols
-@@ -16,7 +16,7 @@
+@@= skipped -16, +16 lines =@@
  >m1_c_public : Symbol(m1_c_public, Decl(privacyClass.ts, 5, 5))
  
          private f1() {
@@ -9,7 +9,7 @@
          }
      }
  
-@@ -100,7 +100,7 @@
+@@= skipped -84, +84 lines =@@
  >m2_c_public : Symbol(m2_c_public, Decl(privacyClass.ts, 49, 5))
  
          private f1() {
@@ -18,7 +18,7 @@
          }
      }
  
-@@ -180,7 +180,7 @@
+@@= skipped -80, +80 lines =@@
  >glo_c_public : Symbol(glo_c_public, Decl(privacyClass.ts, 91, 1))
  
      private f1() {

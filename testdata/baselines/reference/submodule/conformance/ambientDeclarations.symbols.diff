@@ -1,6 +1,6 @@
 --- old.ambientDeclarations.symbols
 +++ new.ambientDeclarations.symbols
-@@ -65,21 +65,21 @@
+@@= skipped -65, +65 lines =@@
  
      constructor();
      method(): cls;
@@ -27,7 +27,7 @@
  }
  
  // Ambient enum
-@@ -87,13 +87,13 @@
+@@= skipped -22, +22 lines =@@
  >E1 : Symbol(E1, Decl(ambientDeclarations.ts, 32, 1))
  
      x,
@@ -44,7 +44,7 @@
  }
  
  // Ambient enum with integer literal initializer
-@@ -101,19 +101,19 @@
+@@= skipped -14, +14 lines =@@
  >E2 : Symbol(E2, Decl(ambientDeclarations.ts, 39, 1))
  
      q,
@@ -69,7 +69,7 @@
  }
  
  // Ambient enum members are always exported with or without export keyword
-@@ -121,7 +121,7 @@
+@@= skipped -20, +20 lines =@@
  >E3 : Symbol(E3, Decl(ambientDeclarations.ts, 48, 1), Decl(ambientDeclarations.ts, 53, 1))
  
      A
@@ -78,7 +78,7 @@
  }
  declare module E3 {
  >E3 : Symbol(E3, Decl(ambientDeclarations.ts, 48, 1), Decl(ambientDeclarations.ts, 53, 1))
-@@ -131,9 +131,9 @@
+@@= skipped -10, +10 lines =@@
  }
  var x = E3.B;
  >x : Symbol(x, Decl(ambientDeclarations.ts, 57, 3))
@@ -90,7 +90,7 @@
  
  // Ambient module
  declare module M1 {
-@@ -149,20 +149,20 @@
+@@= skipped -18, +18 lines =@@
  // Ambient module members are always exported with or without export keyword
  var p = M1.x;
  >p : Symbol(p, Decl(ambientDeclarations.ts, 66, 3))

@@ -1,6 +1,6 @@
 --- old.jsDeclarationsReexportAliases.symbols
 +++ new.jsDeclarationsReexportAliases.symbols
-@@ -2,11 +2,11 @@
+@@= skipped -2, +2 lines =@@
  
  === cls.js ===
  export default class Foo {}
@@ -14,7 +14,7 @@
  >Fooa : Symbol(Fooa, Decl(usage.js, 0, 8))
  
  export const x = new Fooa();
-@@ -14,6 +14,6 @@
+@@= skipped -12, +12 lines =@@
  >Fooa : Symbol(Fooa, Decl(usage.js, 0, 8))
  
  export {default as Foob} from "./cls";

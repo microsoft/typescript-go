@@ -1,6 +1,6 @@
 --- old.generatorTypeCheck56.symbols
 +++ new.generatorTypeCheck56.symbols
-@@ -9,7 +9,7 @@
+@@= skipped -9, +9 lines =@@
  >C : Symbol(C, Decl(generatorTypeCheck56.ts, 1, 11))
  
          *[yield 0]() {

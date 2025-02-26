@@ -1,6 +1,6 @@
 --- old.assertInWrapSomeTypeParameter.symbols
 +++ new.assertInWrapSomeTypeParameter.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(assertInWrapSomeTypeParameter.ts, 0, 8))
  
      foo<U extends C<C<T>>(x: U) {

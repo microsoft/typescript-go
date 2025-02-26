@@ -1,6 +1,6 @@
 --- old.assertionTypePredicates1.symbols
 +++ new.assertionTypePredicates1.symbols
-@@ -46,9 +46,9 @@
+@@= skipped -46, +46 lines =@@
  >x : Symbol(x, Decl(assertionTypePredicates1.ts, 9, 13))
  
          x.length;
@@ -12,7 +12,7 @@
      }
      if (!!true) {
          assert(x instanceof Error);
-@@ -57,9 +57,9 @@
+@@= skipped -11, +11 lines =@@
  >Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
          x.message;
@@ -24,7 +24,7 @@
      }
      if (!!true) {
          assert(typeof x === "boolean" || typeof x === "number");
-@@ -79,9 +79,9 @@
+@@= skipped -22, +22 lines =@@
  >x : Symbol(x, Decl(assertionTypePredicates1.ts, 9, 13))
  
          x[0].length;
@@ -36,7 +36,7 @@
      }
      if (!!true) {
          assertIsArrayOfStrings(x);
-@@ -89,9 +89,9 @@
+@@= skipped -10, +10 lines =@@
  >x : Symbol(x, Decl(assertionTypePredicates1.ts, 9, 13))
  
          x[0].length;
@@ -48,7 +48,7 @@
      }
      if (!!true) {
          assertIsArrayOfStrings(false);
-@@ -145,9 +145,9 @@
+@@= skipped -56, +56 lines =@@
  >x : Symbol(x, Decl(assertionTypePredicates1.ts, 50, 13))
  
          x.length;
@@ -60,7 +60,7 @@
      }
      if (!!true) {
          assert(x !== undefined);
-@@ -156,9 +156,9 @@
+@@= skipped -11, +11 lines =@@
  >undefined : Symbol(undefined)
  
          x.length;
@@ -72,7 +72,7 @@
      }
      if (!!true) {
          assertDefined(x);
-@@ -166,9 +166,9 @@
+@@= skipped -10, +10 lines =@@
  >x : Symbol(x, Decl(assertionTypePredicates1.ts, 50, 13))
  
          x.length;
@@ -84,7 +84,7 @@
      }
  }
  
-@@ -184,9 +184,9 @@
+@@= skipped -18, +18 lines =@@
  >x : Symbol(x, Decl(assertionTypePredicates1.ts, 65, 13))
  
      x.length;
@@ -96,7 +96,7 @@
  }
  
  namespace Debug {
-@@ -214,46 +214,46 @@
+@@= skipped -30, +30 lines =@@
  
      if (!!true) {
          Debug.assert(x);
@@ -157,7 +157,7 @@
  
          x;  // Unreachable
  >x : Symbol(x, Decl(assertionTypePredicates1.ts, 75, 13))
-@@ -264,7 +264,7 @@
+@@= skipped -50, +50 lines =@@
  >Test : Symbol(Test, Decl(assertionTypePredicates1.ts, 92, 1))
  
      assert(value: unknown): asserts value {
@@ -166,7 +166,7 @@
  >value : Symbol(value, Decl(assertionTypePredicates1.ts, 95, 11))
  >value : Symbol(value, Decl(assertionTypePredicates1.ts, 95, 11))
  
-@@ -275,7 +275,7 @@
+@@= skipped -11, +11 lines =@@
  >Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
      }
      isTest2(): this is Test2 {
@@ -175,7 +175,7 @@
  >Test2 : Symbol(Test2, Decl(assertionTypePredicates1.ts, 127, 1))
  
          return this instanceof Test2;
-@@ -283,7 +283,7 @@
+@@= skipped -8, +8 lines =@@
  >Test2 : Symbol(Test2, Decl(assertionTypePredicates1.ts, 127, 1))
      }
      assertIsTest2(): asserts this is Test2 {
@@ -184,7 +184,7 @@
  >Test2 : Symbol(Test2, Decl(assertionTypePredicates1.ts, 127, 1))
  
          if (this instanceof Test2) return;
-@@ -294,7 +294,7 @@
+@@= skipped -11, +11 lines =@@
  >Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
      }
      assertThis(): asserts this {
@@ -193,7 +193,7 @@
  
          if (!this) return;
  >this : Symbol(Test, Decl(assertionTypePredicates1.ts, 92, 1))
-@@ -303,57 +303,57 @@
+@@= skipped -9, +9 lines =@@
  >Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
      }
      bar() {
@@ -270,7 +270,7 @@
  
          x;  // Unreachable
  >x : Symbol(x, Decl(assertionTypePredicates1.ts, 123, 8))
-@@ -365,7 +365,7 @@
+@@= skipped -62, +62 lines =@@
  >Test : Symbol(Test, Decl(assertionTypePredicates1.ts, 92, 1))
  
      z = 0;
@@ -279,7 +279,7 @@
  }
  
  class Derived extends Test {
-@@ -373,28 +373,28 @@
+@@= skipped -8, +8 lines =@@
  >Test : Symbol(Test, Decl(assertionTypePredicates1.ts, 92, 1))
  
      foo(x: unknown) {
@@ -316,7 +316,7 @@
  
          x;  // Unreachable
  >x : Symbol(x, Decl(assertionTypePredicates1.ts, 138, 8))
-@@ -411,24 +411,24 @@
+@@= skipped -38, +38 lines =@@
  >items : Symbol(items, Decl(assertionTypePredicates1.ts, 144, 13))
  
          if (item.isTest2()) {
@@ -349,7 +349,7 @@
      }
  }
  
-@@ -453,17 +453,17 @@
+@@= skipped -42, +42 lines =@@
  >Wat : Symbol(Wat, Decl(assertionTypePredicates1.ts, 158, 56))
  
      get p1(): this is string;
@@ -371,7 +371,7 @@
  >x : Symbol(x, Decl(assertionTypePredicates1.ts, 164, 11))
  }
  
-@@ -493,9 +493,9 @@
+@@= skipped -40, +40 lines =@@
  >Test : Symbol(Test, Decl(assertionTypePredicates1.ts, 92, 1))
  
      t1.assert(typeof x === "string");  // Error
@@ -383,7 +383,7 @@
  >x : Symbol(x, Decl(assertionTypePredicates1.ts, 167, 13))
  
      const t2: Test = new Test();
-@@ -504,9 +504,9 @@
+@@= skipped -11, +11 lines =@@
  >Test : Symbol(Test, Decl(assertionTypePredicates1.ts, 92, 1))
  
      t2.assert(typeof x === "string");
@@ -395,7 +395,7 @@
  >x : Symbol(x, Decl(assertionTypePredicates1.ts, 167, 13))
  }
  
-@@ -516,10 +516,10 @@
+@@= skipped -12, +12 lines =@@
  >Thing : Symbol(Thing, Decl(assertionTypePredicates1.ts, 176, 1))
  
      good: boolean;
@@ -408,7 +408,7 @@
  >GoodThing : Symbol(GoodThing, Decl(assertionTypePredicates1.ts, 183, 1))
  }
  
-@@ -527,7 +527,7 @@
+@@= skipped -11, +11 lines =@@
  >GoodThing : Symbol(GoodThing, Decl(assertionTypePredicates1.ts, 183, 1))
  
      good: true;
@@ -417,7 +417,7 @@
  }
  
  function example1(things: Thing[]) {
-@@ -540,9 +540,9 @@
+@@= skipped -13, +13 lines =@@
  >things : Symbol(things, Decl(assertionTypePredicates1.ts, 189, 18))
  
          thing.isGood();
@@ -429,7 +429,7 @@
  
          thing.good;
  >thing.good : Symbol(good, Decl(assertionTypePredicates1.ts, 180, 17), Decl(assertionTypePredicates1.ts, 185, 21))
-@@ -555,18 +555,18 @@
+@@= skipped -15, +15 lines =@@
  >TestPropertyDeclaration1 : Symbol(TestPropertyDeclaration1, Decl(assertionTypePredicates1.ts, 194, 1))
  
    assert = (value: unknown): asserts value => {};
@@ -452,7 +452,7 @@
  >x : Symbol(x, Decl(assertionTypePredicates1.ts, 198, 8))
  
      x;
-@@ -578,19 +578,19 @@
+@@= skipped -23, +23 lines =@@
  >TestPropertyDeclaration2 : Symbol(TestPropertyDeclaration2, Decl(assertionTypePredicates1.ts, 202, 1))
  
    assert: (v: unknown) => asserts v = (value) => {};
@@ -476,7 +476,7 @@
  >x : Symbol(x, Decl(assertionTypePredicates1.ts, 206, 8))
  
      x;
-@@ -602,7 +602,7 @@
+@@= skipped -24, +24 lines =@@
  >ParentInheritedPropertyDeclaration : Symbol(ParentInheritedPropertyDeclaration, Decl(assertionTypePredicates1.ts, 210, 1))
  
    assert: (value: unknown) => asserts value;
@@ -485,7 +485,7 @@
  >value : Symbol(value, Decl(assertionTypePredicates1.ts, 213, 11))
  >value : Symbol(value, Decl(assertionTypePredicates1.ts, 213, 11))
  }
-@@ -611,13 +611,13 @@
+@@= skipped -9, +9 lines =@@
  >ParentInheritedPropertyDeclaration : Symbol(ParentInheritedPropertyDeclaration, Decl(assertionTypePredicates1.ts, 210, 1))
  
    other(x: unknown) {
@@ -502,7 +502,7 @@
  >x : Symbol(x, Decl(assertionTypePredicates1.ts, 216, 8))
  
      x;
-@@ -629,7 +629,7 @@
+@@= skipped -18, +18 lines =@@
  >TestPropertySignature : Symbol(TestPropertySignature, Decl(assertionTypePredicates1.ts, 220, 1))
  
    assert: (value: unknown) => asserts value;
@@ -511,7 +511,7 @@
  >value : Symbol(value, Decl(assertionTypePredicates1.ts, 223, 11))
  >value : Symbol(value, Decl(assertionTypePredicates1.ts, 223, 11))
  }
-@@ -645,9 +645,9 @@
+@@= skipped -16, +16 lines =@@
  
  ) {
    x.assert(y); // ok
@@ -523,7 +523,7 @@
  >y : Symbol(y, Decl(assertionTypePredicates1.ts, 226, 27))
  
    x;
-@@ -665,9 +665,9 @@
+@@= skipped -20, +20 lines =@@
  
  ) {
    this.assert(x); // ok
@@ -535,7 +535,7 @@
  >x : Symbol(x, Decl(assertionTypePredicates1.ts, 233, 30))
  
    x;
-@@ -678,7 +678,7 @@
+@@= skipped -13, +13 lines =@@
  >TestMethodSignature : Symbol(TestMethodSignature, Decl(assertionTypePredicates1.ts, 238, 1))
  
    assert(value: unknown): asserts value;
@@ -544,7 +544,7 @@
  >value : Symbol(value, Decl(assertionTypePredicates1.ts, 241, 9))
  >value : Symbol(value, Decl(assertionTypePredicates1.ts, 241, 9))
  }
-@@ -694,9 +694,9 @@
+@@= skipped -16, +16 lines =@@
  
  ) {
    x.assert(y); // ok
@@ -556,7 +556,7 @@
  >y : Symbol(y, Decl(assertionTypePredicates1.ts, 244, 25))
  
    x;
-@@ -714,9 +714,9 @@
+@@= skipped -20, +20 lines =@@
  
  ) {
    this.assert(x); // ok

@@ -1,6 +1,6 @@
 --- old.typeGuardsWithInstanceOfByConstructorSignature.symbols
 +++ new.typeGuardsWithInstanceOfByConstructorSignature.symbols
-@@ -11,7 +11,7 @@
+@@= skipped -11, +11 lines =@@
  >A : Symbol(A, Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 2, 1), Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 6, 11))
  
      foo: string;
@@ -9,7 +9,7 @@
  }
  declare var A: AConstructor;
  >A : Symbol(A, Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 2, 1), Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 6, 11))
-@@ -26,9 +26,9 @@
+@@= skipped -15, +15 lines =@@
  >A : Symbol(A, Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 2, 1), Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 6, 11))
  
      obj1.foo;
@@ -21,7 +21,7 @@
  
      obj1.bar;
  >obj1 : Symbol(obj1, Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 8, 3))
-@@ -42,9 +42,9 @@
+@@= skipped -16, +16 lines =@@
  >A : Symbol(A, Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 2, 1), Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 6, 11))
  
      obj2.foo;
@@ -33,7 +33,7 @@
  
      obj2.bar;
  >obj2 : Symbol(obj2, Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 14, 3))
-@@ -64,7 +64,7 @@
+@@= skipped -22, +22 lines =@@
  >T : Symbol(T, Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 24, 12))
  
      foo: T;
@@ -42,7 +42,7 @@
  >T : Symbol(T, Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 24, 12))
  }
  declare var B: BConstructor;
-@@ -80,14 +80,14 @@
+@@= skipped -16, +16 lines =@@
  >B : Symbol(B, Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 23, 1), Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 27, 11))
  
      obj3.foo = 1;
@@ -61,7 +61,7 @@
  
      obj3.bar = "str";
  >obj3 : Symbol(obj3, Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 29, 3))
-@@ -101,14 +101,14 @@
+@@= skipped -21, +21 lines =@@
  >B : Symbol(B, Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 23, 1), Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 27, 11))
  
      obj4.foo = "str";
@@ -80,7 +80,7 @@
  
      obj4.bar = "str";
  >obj4 : Symbol(obj4, Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 36, 3))
-@@ -130,25 +130,25 @@
+@@= skipped -29, +29 lines =@@
  >C1 : Symbol(C1, Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 47, 1))
  
      foo: string;
@@ -112,7 +112,7 @@
  }
  declare var C: CConstructor;
  >C : Symbol(C, Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 58, 11))
-@@ -164,19 +164,19 @@
+@@= skipped -34, +34 lines =@@
  >C : Symbol(C, Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 58, 11))
  
      obj5.foo;
@@ -138,7 +138,7 @@
  
      obj5.bar2;
  >obj5 : Symbol(obj5, Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 60, 3))
-@@ -206,7 +206,7 @@
+@@= skipped -42, +42 lines =@@
  >D : Symbol(D, Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 73, 1), Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 79, 11))
  
      foo: string;
@@ -147,7 +147,7 @@
  }
  declare var D: { new (): D; };
  >D : Symbol(D, Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 73, 1), Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 79, 11))
-@@ -221,9 +221,9 @@
+@@= skipped -15, +15 lines =@@
  >D : Symbol(D, Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 73, 1), Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 79, 11))
  
      obj7.foo;
@@ -159,7 +159,7 @@
  
      obj7.bar;
  >obj7 : Symbol(obj7, Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 81, 3))
-@@ -237,9 +237,9 @@
+@@= skipped -16, +16 lines =@@
  >D : Symbol(D, Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 73, 1), Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 79, 11))
  
      obj8.foo;
@@ -171,7 +171,7 @@
  
      obj8.bar;
  >obj8 : Symbol(obj8, Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 87, 3))
-@@ -257,19 +257,19 @@
+@@= skipped -20, +20 lines =@@
  >E1 : Symbol(E1, Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 96, 1))
  
      foo: string;
@@ -195,7 +195,7 @@
  }
  declare var E: EConstructor;
  >E : Symbol(E, Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 105, 11))
-@@ -285,14 +285,14 @@
+@@= skipped -28, +28 lines =@@
  >E : Symbol(E, Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 105, 11))
  
      obj9.foo;
@@ -214,7 +214,7 @@
  
      obj9.bar2;
  >obj9 : Symbol(obj9, Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 107, 3))
-@@ -327,10 +327,10 @@
+@@= skipped -42, +42 lines =@@
  >F : Symbol(F, Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 124, 1), Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 129, 11))
  
      foo: string;
@@ -227,7 +227,7 @@
  }
  declare var F: FConstructor;
  >F : Symbol(F, Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 124, 1), Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 129, 11))
-@@ -370,7 +370,7 @@
+@@= skipped -43, +43 lines =@@
  >GConstructor : Symbol(GConstructor, Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 141, 1))
  
      prototype: G1; // high priority
@@ -236,7 +236,7 @@
  >G1 : Symbol(G1, Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 147, 1))
  
      new (): G2;    // low priority
-@@ -380,13 +380,13 @@
+@@= skipped -10, +10 lines =@@
  >G1 : Symbol(G1, Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 147, 1))
  
      foo1: number;
@@ -252,7 +252,7 @@
  }
  declare var G: GConstructor;
  >G : Symbol(G, Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 154, 11))
-@@ -402,9 +402,9 @@
+@@= skipped -22, +22 lines =@@
  >G : Symbol(G, Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 154, 11))
  
      obj13.foo1;
@@ -264,7 +264,7 @@
  
      obj13.foo2;
  >obj13 : Symbol(obj13, Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 156, 3))
-@@ -418,9 +418,9 @@
+@@= skipped -16, +16 lines =@@
  >G : Symbol(G, Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 154, 11))
  
      obj14.foo1;
@@ -276,7 +276,7 @@
  
      obj14.foo2;
  >obj14 : Symbol(obj14, Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 162, 3))
-@@ -431,7 +431,7 @@
+@@= skipped -13, +13 lines =@@
  >HConstructor : Symbol(HConstructor, Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 166, 1))
  
      prototype: any; // high priority, but any type is ignored. interface has implicit `prototype: any`.
@@ -285,7 +285,7 @@
  
      new (): H;      // low priority
  >H : Symbol(H, Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 172, 1), Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 176, 11))
-@@ -440,7 +440,7 @@
+@@= skipped -9, +9 lines =@@
  >H : Symbol(H, Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 172, 1), Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 176, 11))
  
      foo: number;
@@ -294,7 +294,7 @@
  }
  declare var H: HConstructor;
  >H : Symbol(H, Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 172, 1), Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 176, 11))
-@@ -455,9 +455,9 @@
+@@= skipped -15, +15 lines =@@
  >H : Symbol(H, Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 172, 1), Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 176, 11))
  
      obj15.foo;

@@ -1,6 +1,6 @@
 --- old.symbolProperty28.symbols
 +++ new.symbolProperty28.symbols
-@@ -5,10 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >C1 : Symbol(C1, Decl(symbolProperty28.ts, 0, 0))
  
      [Symbol.toStringTag]() {
@@ -12,7 +12,7 @@
  
          return { x: "" };
  >x : Symbol(x, Decl(symbolProperty28.ts, 2, 16))
-@@ -27,8 +24,5 @@
+@@= skipped -22, +19 lines =@@
  >obj : Symbol(obj, Decl(symbolProperty28.ts, 9, 3))
  >c[Symbol.toStringTag]().x : Symbol(x, Decl(symbolProperty28.ts, 2, 16))
  >c : Symbol(c, Decl(symbolProperty28.ts, 8, 3))

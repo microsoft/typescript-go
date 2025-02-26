@@ -1,6 +1,6 @@
 --- old.override19.symbols
 +++ new.override19.symbols
-@@ -30,7 +30,7 @@
+@@= skipped -30, +30 lines =@@
  >A : Symbol(A, Decl(override19.ts, 4, 16))
  
      doSomething() {}
@@ -9,7 +9,7 @@
  }
  
  class B extends CreateMixin(Context, A) {
-@@ -40,7 +40,7 @@
+@@= skipped -10, +10 lines =@@
  >A : Symbol(A, Decl(override19.ts, 4, 16))
  
     override foo() {} // Remove override
@@ -18,7 +18,7 @@
  }
  
  class C extends CreateMixin(Context, A) {
-@@ -50,6 +50,6 @@
+@@= skipped -10, +10 lines =@@
  >A : Symbol(A, Decl(override19.ts, 4, 16))
  
      override doSomethang() {} // Suggestion 'doSomething'

@@ -1,6 +1,6 @@
 --- old.override20.symbols
 +++ new.override20.symbols
-@@ -8,27 +8,27 @@
+@@= skipped -8, +8 lines =@@
  
      class {
          m1() { }
@@ -33,7 +33,7 @@
  }
  
  interface C1 {
-@@ -52,18 +52,18 @@
+@@= skipped -44, +44 lines =@@
  >Foo : Symbol(Foo, Decl(override20.ts, 0, 5))
  
      m1() {

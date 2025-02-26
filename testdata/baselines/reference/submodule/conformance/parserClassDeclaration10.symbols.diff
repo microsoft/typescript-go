@@ -1,6 +1,6 @@
 --- old.parserClassDeclaration10.symbols
 +++ new.parserClassDeclaration10.symbols
-@@ -6,5 +6,5 @@
+@@= skipped -6, +6 lines =@@
  
     constructor();
     foo();

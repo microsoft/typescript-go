@@ -1,6 +1,6 @@
 --- old.moduleAugmentationsImports4.symbols
 +++ new.moduleAugmentationsImports4.symbols
-@@ -15,40 +15,23 @@
+@@= skipped -15, +15 lines =@@
  
  let b = a.getB().x.toFixed();
  >b : Symbol(b, Decl(main.ts, 7, 3))
@@ -43,7 +43,7 @@
  }
  
  === d.d.ts ===
-@@ -62,13 +45,13 @@
+@@= skipped -47, +30 lines =@@
  >B : Symbol(B, Decl(d.d.ts, 2, 12))
  
      module "a" {
@@ -60,7 +60,7 @@
  >B : Symbol(B, Decl(d.d.ts, 2, 12))
          }
      }
-@@ -86,13 +69,13 @@
+@@= skipped -24, +24 lines =@@
  >Cls : Symbol(Cls, Decl(e.d.ts, 3, 12))
  
      module "a" {

@@ -1,6 +1,6 @@
 --- old.constraintCheckInGenericBaseTypeReference.symbols
 +++ new.constraintCheckInGenericBaseTypeReference.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >Constraint : Symbol(Constraint, Decl(constraintCheckInGenericBaseTypeReference.ts, 0, 0))
  
      public method() { }
@@ -9,7 +9,7 @@
  }
  class GenericBase<T extends Constraint> {
  >GenericBase : Symbol(GenericBase, Decl(constraintCheckInGenericBaseTypeReference.ts, 3, 1))
-@@ -14,7 +14,7 @@
+@@= skipped -8, +8 lines =@@
  >Constraint : Symbol(Constraint, Decl(constraintCheckInGenericBaseTypeReference.ts, 0, 0))
  
      public items: any;
@@ -18,7 +18,7 @@
  }
  class Derived extends GenericBase<TypeArg> {
  >Derived : Symbol(Derived, Decl(constraintCheckInGenericBaseTypeReference.ts, 6, 1))
-@@ -26,14 +26,14 @@
+@@= skipped -12, +12 lines =@@
  >TypeArg : Symbol(TypeArg, Decl(constraintCheckInGenericBaseTypeReference.ts, 9, 1))
  
      public method() {
@@ -38,7 +38,7 @@
      }
  }
  
-@@ -41,6 +41,6 @@
+@@= skipped -15, +15 lines =@@
  >Container : Symbol(Container, Decl(constraintCheckInGenericBaseTypeReference.ts, 14, 1))
  
      public static People: Derived

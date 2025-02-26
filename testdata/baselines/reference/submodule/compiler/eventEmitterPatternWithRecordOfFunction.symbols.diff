@@ -1,6 +1,6 @@
 --- old.eventEmitterPatternWithRecordOfFunction.symbols
 +++ new.eventEmitterPatternWithRecordOfFunction.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(eventEmitterPatternWithRecordOfFunction.ts, 0, 0))
  
      emit(event: string, ...args: any[]): boolean;
@@ -9,7 +9,7 @@
  >event : Symbol(event, Decl(eventEmitterPatternWithRecordOfFunction.ts, 1, 9))
  >args : Symbol(args, Decl(eventEmitterPatternWithRecordOfFunction.ts, 1, 23))
  }
-@@ -30,7 +30,7 @@
+@@= skipped -25, +25 lines =@@
  >A : Symbol(A, Decl(eventEmitterPatternWithRecordOfFunction.ts, 0, 0))
  
      emit<Event extends keyof M>(event: Event, ...args: Args<M[Event]>): boolean;

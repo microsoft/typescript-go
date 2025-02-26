@@ -1,6 +1,6 @@
 --- old.extendAndImplementTheSameBaseType2.symbols
 +++ new.extendAndImplementTheSameBaseType2.symbols
-@@ -6,10 +6,10 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(extendAndImplementTheSameBaseType2.ts, 0, 8))
  
      foo: number
@@ -13,7 +13,7 @@
  >T : Symbol(T, Decl(extendAndImplementTheSameBaseType2.ts, 0, 8))
  
          return null;
-@@ -21,7 +21,7 @@
+@@= skipped -15, +15 lines =@@
  >C : Symbol(C, Decl(extendAndImplementTheSameBaseType2.ts, 0, 0))
  
      baz() { }
@@ -22,7 +22,7 @@
  }
  
  var d: D = new D();
-@@ -31,25 +31,25 @@
+@@= skipped -10, +10 lines =@@
  
  var r: string = d.foo;
  >r : Symbol(r, Decl(extendAndImplementTheSameBaseType2.ts, 11, 3))

@@ -1,6 +1,6 @@
 --- old.typeCheckTypeArgument.symbols
 +++ new.typeCheckTypeArgument.symbols
-@@ -25,7 +25,7 @@
+@@= skipped -25, +25 lines =@@
  >Foo2 : Symbol(Foo2, Decl(typeCheckTypeArgument.ts, 6, 37))
  
      method<T extends UNKNOWN>() { }

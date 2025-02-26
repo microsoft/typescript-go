@@ -1,6 +1,6 @@
 --- old.typeAnnotationBestCommonTypeInArrayLiteral.symbols
 +++ new.typeAnnotationBestCommonTypeInArrayLiteral.symbols
-@@ -5,51 +5,51 @@
+@@= skipped -5, +5 lines =@@
  >IMenuItem : Symbol(IMenuItem, Decl(typeAnnotationBestCommonTypeInArrayLiteral.ts, 0, 0))
  
      id: string;

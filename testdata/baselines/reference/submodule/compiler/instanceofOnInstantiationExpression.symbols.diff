@@ -1,6 +1,6 @@
 --- old.instanceofOnInstantiationExpression.symbols
 +++ new.instanceofOnInstantiationExpression.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(instanceofOnInstantiationExpression.ts, 0, 18))
  
      value: T;

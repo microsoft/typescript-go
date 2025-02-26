@@ -1,6 +1,6 @@
 --- old.reactTransitiveImportHasValidDeclaration.symbols
 +++ new.reactTransitiveImportHasValidDeclaration.symbols
-@@ -29,14 +29,14 @@
+@@= skipped -29, +29 lines =@@
  >T : Symbol(T, Decl(index.d.ts, 2, 36), Decl(index.d.ts, 2, 29))
  
          css?: unknown;
@@ -17,7 +17,7 @@
  >React : Symbol(React, Decl(index.d.ts, 4, 15))
  >DetailedHTMLProps : Symbol(DetailedHTMLProps, Decl(index.d.ts, 0, 25))
  >React : Symbol(React, Decl(index.d.ts, 4, 15))
-@@ -60,7 +60,7 @@
+@@= skipped -31, +31 lines =@@
  >StyledOtherComponentList : Symbol(StyledOtherComponentList, Decl(index.d.ts, 0, 29))
  
  export default function styled(tag: string): (o: object) => StyledOtherComponent<{}, StyledOtherComponentList["div"], any>;

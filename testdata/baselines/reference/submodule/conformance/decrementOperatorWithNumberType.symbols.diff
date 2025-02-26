@@ -1,6 +1,6 @@
 --- old.decrementOperatorWithNumberType.symbols
 +++ new.decrementOperatorWithNumberType.symbols
-@@ -12,7 +12,7 @@
+@@= skipped -12, +12 lines =@@
  >A : Symbol(A, Decl(decrementOperatorWithNumberType.ts, 2, 31))
  
      public a: number;
@@ -9,7 +9,7 @@
  }
  module M {
  >M : Symbol(M, Decl(decrementOperatorWithNumberType.ts, 6, 1))
-@@ -37,27 +37,27 @@
+@@= skipped -25, +25 lines =@@
  // expressions
  var ResultIsNumber3 = --objA.a;
  >ResultIsNumber3 : Symbol(ResultIsNumber3, Decl(decrementOperatorWithNumberType.ts, 19, 3))
@@ -45,7 +45,7 @@
  
  var ResultIsNumber7 = NUMBER1[0]--;
  >ResultIsNumber7 : Symbol(ResultIsNumber7, Decl(decrementOperatorWithNumberType.ts, 24, 3))
-@@ -71,22 +71,22 @@
+@@= skipped -34, +34 lines =@@
  >NUMBER1 : Symbol(NUMBER1, Decl(decrementOperatorWithNumberType.ts, 2, 3))
  
  --objA.a;
@@ -76,7 +76,7 @@
  
  NUMBER--;
  >NUMBER : Symbol(NUMBER, Decl(decrementOperatorWithNumberType.ts, 1, 3))
-@@ -95,20 +95,20 @@
+@@= skipped -24, +24 lines =@@
  >NUMBER1 : Symbol(NUMBER1, Decl(decrementOperatorWithNumberType.ts, 2, 3))
  
  objA.a--;

@@ -1,6 +1,6 @@
 --- old.tsxCorrectlyParseLessThanComparison1.symbols
 +++ new.tsxCorrectlyParseLessThanComparison1.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >Element : Symbol(Element, Decl(tsxCorrectlyParseLessThanComparison1.tsx, 0, 20))
  
          div: string;
@@ -9,7 +9,7 @@
      }
  }
  declare namespace React {
-@@ -25,28 +25,28 @@
+@@= skipped -17, +17 lines =@@
  >context : Symbol(context, Decl(tsxCorrectlyParseLessThanComparison1.tsx, 7, 30))
  
          props: P;

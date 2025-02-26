@@ -1,6 +1,6 @@
 --- old.superMethodCall.symbols
 +++ new.superMethodCall.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Base : Symbol(Base, Decl(superMethodCall.ts, 0, 0))
  
      method?() { }
@@ -9,7 +9,7 @@
  }
  
  class Derived extends Base {
-@@ -13,20 +13,20 @@
+@@= skipped -8, +8 lines =@@
  >Base : Symbol(Base, Decl(superMethodCall.ts, 0, 0))
  
      method() {

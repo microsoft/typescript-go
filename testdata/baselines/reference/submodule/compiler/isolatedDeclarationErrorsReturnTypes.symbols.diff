@@ -1,6 +1,6 @@
 --- old.isolatedDeclarationErrorsReturnTypes.symbols
 +++ new.isolatedDeclarationErrorsReturnTypes.symbols
-@@ -76,84 +76,84 @@
+@@= skipped -76, +76 lines =@@
  
      // Should Error
      fnExpression = function foo() { return 0; }
@@ -107,7 +107,7 @@
  }
  
  // Should error
-@@ -161,46 +161,46 @@
+@@= skipped -85, +85 lines =@@
  >IndirectlyExportedClass : Symbol(IndirectlyExportedClass, Decl(isolatedDeclarationErrorsReturnTypes.ts, 62, 1))
  
      fnExpression = function foo() { return 0; }
@@ -166,7 +166,7 @@
  }
  export const instance: IndirectlyExportedClass = new IndirectlyExportedClass();
  >instance : Symbol(instance, Decl(isolatedDeclarationErrorsReturnTypes.ts, 82, 12))
-@@ -212,46 +212,46 @@
+@@= skipped -51, +51 lines =@@
  >InternalClass : Symbol(InternalClass, Decl(isolatedDeclarationErrorsReturnTypes.ts, 82, 79))
  
      fnExpression = function foo() { return 0; }
@@ -225,7 +225,7 @@
  }
  const internalInstance: InternalClass = new InternalClass();
  >internalInstance : Symbol(internalInstance, Decl(isolatedDeclarationErrorsReturnTypes.ts, 102, 5))
-@@ -379,179 +379,179 @@
+@@= skipped -167, +167 lines =@@
  
      // Should Error
      fnExpression = function foo(cb = function(){ }) { return 0; }

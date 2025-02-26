@@ -1,6 +1,6 @@
 --- old.shadowedInternalModule.symbols
 +++ new.shadowedInternalModule.symbols
-@@ -15,10 +15,10 @@
+@@= skipped -15, +15 lines =@@
  >Point : Symbol(Point, Decl(shadowedInternalModule.ts, 3, 14), Decl(shadowedInternalModule.ts, 3, 37))
  
          x: number;
@@ -13,7 +13,7 @@
      }
  } 
  
-@@ -32,7 +32,7 @@
+@@= skipped -17, +17 lines =@@
  
      import Point = A;
  >Point : Symbol(Point, Decl(shadowedInternalModule.ts, 11, 27))
@@ -22,7 +22,7 @@
  }
  
  module X {
-@@ -45,10 +45,10 @@
+@@= skipped -13, +13 lines =@@
  >Point : Symbol(Point, Decl(shadowedInternalModule.ts, 16, 21))
  
              x: number;
@@ -35,7 +35,7 @@
          }
      }
  
-@@ -56,7 +56,7 @@
+@@= skipped -11, +11 lines =@@
  >Y : Symbol(Y, Decl(shadowedInternalModule.ts, 15, 10), Decl(shadowedInternalModule.ts, 21, 5))
  
          name: string;
@@ -44,7 +44,7 @@
      }
  }
  
-@@ -99,7 +99,7 @@
+@@= skipped -43, +43 lines =@@
    import any = b.A;
  >any : Symbol(any, Decl(shadowedInternalModule.ts, 45, 10))
  >b : Symbol(b, Decl(shadowedInternalModule.ts, 38, 1))

@@ -1,6 +1,6 @@
 --- old.arrayLiterals2ES6.symbols
 +++ new.arrayLiterals2ES6.symbols
-@@ -74,14 +74,12 @@
+@@= skipped -74, +74 lines =@@
  
  interface myArray extends Array<Number> { }
  >myArray : Symbol(myArray, Decl(arrayLiterals2ES6.ts, 40, 67))

@@ -1,6 +1,6 @@
 --- old.contextuallyTypedObjectLiteralMethodDeclaration01.symbols
 +++ new.contextuallyTypedObjectLiteralMethodDeclaration01.symbols
-@@ -5,26 +5,26 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(contextuallyTypedObjectLiteralMethodDeclaration01.ts, 0, 0))
  
      numProp: number;
@@ -31,7 +31,7 @@
  >arg : Symbol(arg, Decl(contextuallyTypedObjectLiteralMethodDeclaration01.ts, 10, 12))
  >B : Symbol(B, Decl(contextuallyTypedObjectLiteralMethodDeclaration01.ts, 2, 1))
  }
-@@ -39,9 +39,9 @@
+@@= skipped -34, +34 lines =@@
  >arg : Symbol(arg, Decl(contextuallyTypedObjectLiteralMethodDeclaration01.ts, 15, 16))
  
              arg.numProp = 10;
@@ -43,7 +43,7 @@
  
          },
          method2(arg) {
-@@ -49,9 +49,9 @@
+@@= skipped -10, +10 lines =@@
  >arg : Symbol(arg, Decl(contextuallyTypedObjectLiteralMethodDeclaration01.ts, 18, 16))
  
              arg.strProp = "hello";
@@ -55,7 +55,7 @@
          }
      }
  }
-@@ -66,9 +66,9 @@
+@@= skipped -17, +17 lines =@@
  >arg : Symbol(arg, Decl(contextuallyTypedObjectLiteralMethodDeclaration01.ts, 26, 18))
  
              arg.numProp = 10;
@@ -67,7 +67,7 @@
  
          },
          method2: (arg) => {
-@@ -76,9 +76,9 @@
+@@= skipped -10, +10 lines =@@
  >arg : Symbol(arg, Decl(contextuallyTypedObjectLiteralMethodDeclaration01.ts, 29, 18))
  
              arg.strProp = "hello";
@@ -79,7 +79,7 @@
          }
      }
  }
-@@ -93,9 +93,9 @@
+@@= skipped -17, +17 lines =@@
  >arg : Symbol(arg, Decl(contextuallyTypedObjectLiteralMethodDeclaration01.ts, 37, 27))
  
              arg.numProp = 10;
@@ -91,7 +91,7 @@
  
          },
          method2: function (arg) {
-@@ -103,9 +103,9 @@
+@@= skipped -10, +10 lines =@@
  >arg : Symbol(arg, Decl(contextuallyTypedObjectLiteralMethodDeclaration01.ts, 40, 27))
  
              arg.strProp = "hello";

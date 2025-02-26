@@ -1,6 +1,6 @@
 --- old.unusedClassesinModule1.symbols
 +++ new.unusedClassesinModule1.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >Calculator : Symbol(Calculator, Decl(unusedClassesinModule1.ts, 0, 10))
  
          public handelChar() {

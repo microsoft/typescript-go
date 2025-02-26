@@ -1,6 +1,6 @@
 --- old.contextualTypeShouldBeLiteral.symbols
 +++ new.contextualTypeShouldBeLiteral.symbols
-@@ -5,26 +5,26 @@
+@@= skipped -5, +5 lines =@@
  >X : Symbol(X, Decl(contextualTypeShouldBeLiteral.ts, 0, 0))
  
      type: 'x';
@@ -33,7 +33,7 @@
  }
  
  function foo(bar: X | Y) { }
-@@ -49,14 +49,14 @@
+@@= skipped -44, +44 lines =@@
  >this : Symbol(Y, Decl(contextualTypeShouldBeLiteral.ts, 4, 1))
  
          this.type;
@@ -52,7 +52,7 @@
      }
  });
  
-@@ -64,26 +64,26 @@
+@@= skipped -15, +15 lines =@@
  >X2 : Symbol(X2, Decl(contextualTypeShouldBeLiteral.ts, 22, 3))
  
      type1: 'x';
@@ -85,7 +85,7 @@
  }
  
  function foo2(bar: X2 | Y2) { }
-@@ -106,8 +106,6 @@
+@@= skipped -42, +42 lines =@@
  
          this;
          this.value;
@@ -94,7 +94,7 @@
      }
  });
  
-@@ -115,26 +113,26 @@
+@@= skipped -9, +7 lines =@@
  >X3 : Symbol(X3, Decl(contextualTypeShouldBeLiteral.ts, 45, 3))
  
      type: 'x';
@@ -127,7 +127,7 @@
  }
  
  let xy: X3 | Y3 = {
-@@ -161,32 +159,32 @@
+@@= skipped -46, +46 lines =@@
  >LikeA : Symbol(LikeA, Decl(contextualTypeShouldBeLiteral.ts, 65, 3))
  
      x: 'x';
@@ -168,7 +168,7 @@
  }
  
  let xyz: LikeA | LikeB = {
-@@ -210,19 +208,19 @@
+@@= skipped -49, +49 lines =@@
  >this : Symbol(LikeA, Decl(contextualTypeShouldBeLiteral.ts, 65, 3))
  
          this.x;
@@ -194,7 +194,7 @@
      }
  };
  
-@@ -235,10 +233,10 @@
+@@= skipped -25, +25 lines =@@
  >TestObject : Symbol(TestObject, Decl(contextualTypeShouldBeLiteral.ts, 94, 4))
  
    type?: 'object';
@@ -207,7 +207,7 @@
  
      [k: string]: TestGeneric;
  >k : Symbol(k, Decl(contextualTypeShouldBeLiteral.ts, 101, 5))
-@@ -251,7 +249,7 @@
+@@= skipped -16, +16 lines =@@
  >TestString : Symbol(TestString, Decl(contextualTypeShouldBeLiteral.ts, 103, 1))
  
    type: 'string';

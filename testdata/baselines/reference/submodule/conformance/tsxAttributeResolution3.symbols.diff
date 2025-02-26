@@ -1,6 +1,6 @@
 --- old.tsxAttributeResolution3.symbols
 +++ new.tsxAttributeResolution3.symbols
-@@ -11,7 +11,7 @@
+@@= skipped -11, +11 lines =@@
  >IntrinsicElements : Symbol(IntrinsicElements, Decl(file.tsx, 1, 22))
  
  		test1: Attribs1;
@@ -9,7 +9,7 @@
  >Attribs1 : Symbol(Attribs1, Decl(file.tsx, 5, 1))
  	}
  }
-@@ -19,13 +19,13 @@
+@@= skipped -8, +8 lines =@@
  >Attribs1 : Symbol(Attribs1, Decl(file.tsx, 5, 1))
  
  	x: string;
@@ -26,7 +26,7 @@
  }
  
  // OK
-@@ -34,7 +34,6 @@
+@@= skipped -15, +15 lines =@@
  >x : Symbol(x, Decl(file.tsx, 13, 12))
  
  <test1 {...obj1} />
@@ -34,7 +34,7 @@
  >obj1 : Symbol(obj1, Decl(file.tsx, 13, 3))
  
  // Error, x is not string
-@@ -43,7 +42,6 @@
+@@= skipped -9, +8 lines =@@
  >x : Symbol(x, Decl(file.tsx, 17, 12))
  
  <test1 {...obj2} />
@@ -42,7 +42,7 @@
  >obj2 : Symbol(obj2, Decl(file.tsx, 17, 3))
  
  // Error, x is missing
-@@ -52,7 +50,6 @@
+@@= skipped -9, +8 lines =@@
  >y : Symbol(y, Decl(file.tsx, 21, 12))
  
  <test1 {...obj3} />
@@ -50,7 +50,7 @@
  >obj3 : Symbol(obj3, Decl(file.tsx, 21, 3))
  
  // OK
-@@ -62,7 +59,6 @@
+@@= skipped -10, +9 lines =@@
  >y : Symbol(y, Decl(file.tsx, 25, 19))
  
  <test1 {...obj4} x="ok" />
@@ -58,7 +58,7 @@
  >obj4 : Symbol(obj4, Decl(file.tsx, 25, 3))
  >x : Symbol(x, Decl(file.tsx, 26, 16))
  
-@@ -73,7 +69,6 @@
+@@= skipped -11, +10 lines =@@
  >y : Symbol(y, Decl(file.tsx, 29, 19))
  
  <test1 x="ok" {...obj5} />
@@ -66,7 +66,7 @@
  >x : Symbol(x, Decl(file.tsx, 30, 6))
  >obj5 : Symbol(obj5, Decl(file.tsx, 29, 3))
  
-@@ -85,7 +80,6 @@
+@@= skipped -12, +11 lines =@@
  >extra : Symbol(extra, Decl(file.tsx, 33, 28))
  
  <test1 {...obj6} />
@@ -74,7 +74,7 @@
  >obj6 : Symbol(obj6, Decl(file.tsx, 33, 3))
  
  // OK (spread override)
-@@ -94,7 +88,6 @@
+@@= skipped -9, +8 lines =@@
  >x : Symbol(x, Decl(file.tsx, 37, 12))
  
  <test1 x={32} {...obj7} />

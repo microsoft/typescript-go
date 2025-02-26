@@ -1,6 +1,6 @@
 --- old.constructorParameterProperties2.symbols
 +++ new.constructorParameterProperties2.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(constructorParameterProperties2.ts, 0, 0))
  
      y: number;
@@ -9,7 +9,7 @@
  
      constructor(y: number) { } // ok
  >y : Symbol(y, Decl(constructorParameterProperties2.ts, 2, 16))
-@@ -17,18 +17,18 @@
+@@= skipped -12, +12 lines =@@
  
  var r = c.y;
  >r : Symbol(r, Decl(constructorParameterProperties2.ts, 6, 3))
@@ -32,7 +32,7 @@
  }
  
  var d: D;
-@@ -37,18 +37,18 @@
+@@= skipped -20, +20 lines =@@
  
  var r2 = d.y;
  >r2 : Symbol(r2, Decl(constructorParameterProperties2.ts, 14, 3))
@@ -55,7 +55,7 @@
  }
  
  var e: E;
-@@ -57,18 +57,18 @@
+@@= skipped -20, +20 lines =@@
  
  var r3 = e.y; // error
  >r3 : Symbol(r3, Decl(constructorParameterProperties2.ts, 22, 3))
@@ -78,7 +78,7 @@
  }
  
  var f: F;
-@@ -77,7 +77,7 @@
+@@= skipped -20, +20 lines =@@
  
  var r4 = f.y; // error
  >r4 : Symbol(r4, Decl(constructorParameterProperties2.ts, 30, 3))

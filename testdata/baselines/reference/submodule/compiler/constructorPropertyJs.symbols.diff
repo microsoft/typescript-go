@@ -1,6 +1,6 @@
 --- old.constructorPropertyJs.symbols
 +++ new.constructorPropertyJs.symbols
-@@ -8,13 +8,13 @@
+@@= skipped -8, +8 lines =@@
       * @param {any} a
       */
      foo(a) {

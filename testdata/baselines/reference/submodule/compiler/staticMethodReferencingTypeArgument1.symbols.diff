@@ -1,6 +1,6 @@
 --- old.staticMethodReferencingTypeArgument1.symbols
 +++ new.staticMethodReferencingTypeArgument1.symbols
-@@ -9,23 +9,23 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(staticMethodReferencingTypeArgument1.ts, 1, 22))
  
          next: List<T>;
@@ -29,7 +29,7 @@
  >List : Symbol(List, Decl(staticMethodReferencingTypeArgument1.ts, 0, 15))
  >T : Symbol(T)
  
-@@ -37,15 +37,15 @@
+@@= skipped -28, +28 lines =@@
  >T : Symbol(T)
  
              entry.prev = entry;

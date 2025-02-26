@@ -1,6 +1,6 @@
 --- old.awaitBinaryExpression5_es6.symbols
 +++ new.awaitBinaryExpression5_es6.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  
  declare var p: Promise<boolean>;
  >p : Symbol(p, Decl(awaitBinaryExpression5_es6.ts, 1, 11))
@@ -9,7 +9,7 @@
  
  declare function before(): void;
  >before : Symbol(before, Decl(awaitBinaryExpression5_es6.ts, 1, 32))
-@@ -16,7 +16,7 @@
+@@= skipped -10, +10 lines =@@
  
  async function func(): Promise<void> {
  >func : Symbol(func, Decl(awaitBinaryExpression5_es6.ts, 3, 31))

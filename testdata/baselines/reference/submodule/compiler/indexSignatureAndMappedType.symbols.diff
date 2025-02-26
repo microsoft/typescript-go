@@ -1,6 +1,6 @@
 --- old.indexSignatureAndMappedType.symbols
 +++ new.indexSignatureAndMappedType.symbols
-@@ -80,10 +80,10 @@
+@@= skipped -80, +80 lines =@@
  >IBaseEntity : Symbol(IBaseEntity, Decl(indexSignatureAndMappedType.ts, 22, 2))
  
      name: string;
@@ -13,7 +13,7 @@
  >Dictionary : Symbol(Dictionary, Decl(indexSignatureAndMappedType.ts, 16, 1))
  }
  
-@@ -93,7 +93,7 @@
+@@= skipped -13, +13 lines =@@
  >IBaseEntity : Symbol(IBaseEntity, Decl(indexSignatureAndMappedType.ts, 22, 2))
  
      properties: Record<T, string>;

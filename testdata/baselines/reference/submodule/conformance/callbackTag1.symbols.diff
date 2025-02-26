@@ -1,6 +1,6 @@
 --- old.callbackTag1.symbols
 +++ new.callbackTag1.symbols
-@@ -19,9 +19,7 @@
+@@= skipped -19, +19 lines =@@
  var noreturn = obj => void obj.title
  >noreturn : Symbol(noreturn, Decl(cb.js, 11, 3))
  >obj : Symbol(obj, Decl(cb.js, 11, 14))

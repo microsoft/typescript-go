@@ -1,6 +1,6 @@
 --- old.objectSpreadNegative.symbols
 +++ new.objectSpreadNegative.symbols
-@@ -11,13 +11,13 @@
+@@= skipped -11, +11 lines =@@
  >PrivateOptionalX : Symbol(PrivateOptionalX, Decl(objectSpreadNegative.ts, 0, 25))
  
      private x?: number;
@@ -16,7 +16,7 @@
  }
  declare let publicX: PublicX;
  >publicX : Symbol(publicX, Decl(objectSpreadNegative.ts, 9, 11))
-@@ -55,11 +55,11 @@
+@@= skipped -44, +44 lines =@@
  // assignability as target
  interface Bool { b: boolean };
  >Bool : Symbol(Bool, Decl(objectSpreadNegative.ts, 15, 84))
@@ -30,7 +30,7 @@
  
  let spread = { ...{ b: true }, ...{s: "foo" } };
  >spread : Symbol(spread, Decl(objectSpreadNegative.ts, 21, 3))
-@@ -221,8 +221,8 @@
+@@= skipped -166, +166 lines =@@
  // methods are skipped because they aren't enumerable
  class C { p = 1; m() { } }
  >C : Symbol(C, Decl(objectSpreadNegative.ts, 62, 18))

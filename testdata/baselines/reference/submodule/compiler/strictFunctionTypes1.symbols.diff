@@ -1,6 +1,6 @@
 --- old.strictFunctionTypes1.symbols
 +++ new.strictFunctionTypes1.symbols
-@@ -131,12 +131,12 @@
+@@= skipped -131, +131 lines =@@
  
  interface A { a: string }
  >A : Symbol(A, Decl(strictFunctionTypes1.ts, 25, 16))

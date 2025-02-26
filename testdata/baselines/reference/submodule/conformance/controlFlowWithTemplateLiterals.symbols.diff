@@ -1,6 +1,6 @@
 --- old.controlFlowWithTemplateLiterals.symbols
 +++ new.controlFlowWithTemplateLiterals.symbols
-@@ -8,9 +8,9 @@
+@@= skipped -8, +8 lines =@@
  >envVar : Symbol(envVar, Decl(controlFlowWithTemplateLiterals.ts, 0, 13))
  
    envVar.slice(0)
@@ -12,7 +12,7 @@
  }
  
  declare const obj: {test: string} | {}
-@@ -21,10 +21,10 @@
+@@= skipped -13, +13 lines =@@
  >obj : Symbol(obj, Decl(controlFlowWithTemplateLiterals.ts, 5, 13))
  
    obj.test.slice(0)

@@ -1,6 +1,6 @@
 --- old.parser553699.symbols
 +++ new.parser553699.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  
    constructor() { }
    public banana (x: public) { }

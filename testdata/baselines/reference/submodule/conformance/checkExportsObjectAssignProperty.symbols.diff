@@ -1,6 +1,6 @@
 --- old.checkExportsObjectAssignProperty.symbols
 +++ new.checkExportsObjectAssignProperty.symbols
-@@ -7,282 +7,87 @@
+@@= skipped -7, +7 lines =@@
  >m1 : Symbol(m1, Decl(validator.ts, 0, 12))
  
  m1.thing;

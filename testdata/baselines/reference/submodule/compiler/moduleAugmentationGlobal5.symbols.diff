@@ -1,6 +1,6 @@
 --- old.moduleAugmentationGlobal5.symbols
 +++ new.moduleAugmentationGlobal5.symbols
-@@ -13,11 +13,11 @@
+@@= skipped -13, +13 lines =@@
  >"A" : Symbol("A", Decl(f1.d.ts, 0, 0))
  
      global {
@@ -14,7 +14,7 @@
      }
  }
  === f2.d.ts ===
-@@ -25,10 +25,10 @@
+@@= skipped -12, +12 lines =@@
  >"B" : Symbol("B", Decl(f2.d.ts, 0, 0))
  
      global {

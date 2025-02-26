@@ -1,6 +1,6 @@
 --- old.typeFromPropertyAssignment23.symbols
 +++ new.typeFromPropertyAssignment23.symbols
-@@ -6,12 +6,10 @@
+@@= skipped -6, +6 lines =@@
  
      constructor () {
          this.n = 1
@@ -14,7 +14,7 @@
      }
  }
  
-@@ -21,11 +19,11 @@
+@@= skipped -15, +13 lines =@@
  
  // this override should be fine (even if it's a little odd)
  C.prototype.foo = function() {
@@ -30,7 +30,7 @@
  }
  
  class D extends B { }
-@@ -33,15 +31,14 @@
+@@= skipped -12, +12 lines =@@
  >B : Symbol(B, Decl(a.js, 0, 0))
  
  D.prototype.foo = () =>  {
@@ -50,7 +50,7 @@
  }
  
  // post-class prototype assignments are trying to show that these properties are abstract
-@@ -49,31 +46,27 @@
+@@= skipped -16, +15 lines =@@
  >Module : Symbol(Module, Decl(a.js, 17, 1))
  }
  Module.prototype.identifier = undefined

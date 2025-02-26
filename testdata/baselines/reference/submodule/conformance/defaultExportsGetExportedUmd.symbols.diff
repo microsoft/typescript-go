@@ -1,6 +1,6 @@
 --- old.defaultExportsGetExportedUmd.symbols
 +++ new.defaultExportsGetExportedUmd.symbols
-@@ -2,9 +2,9 @@
+@@= skipped -2, +2 lines =@@
  
  === a.ts ===
  export default class Foo {}

@@ -1,6 +1,6 @@
 --- old.es6ImportWithJsDocTags.symbols
 +++ new.es6ImportWithJsDocTags.symbols
-@@ -1,10 +1,10 @@
+@@= skipped -1, +1 lines =@@
  //// [tests/cases/compiler/es6ImportWithJsDocTags.ts] ////
  
 -=== ./a.js ===
@@ -13,7 +13,7 @@
  'use strict';
  
  /** @private */
-@@ -13,8 +13,8 @@
+@@= skipped -12, +12 lines =@@
  >foo : Symbol(foo, Decl(b.js, 4, 8))
  
  console.log(foo);

@@ -1,6 +1,6 @@
 --- old.for-of29.symbols
 +++ new.for-of29.symbols
-@@ -6,10 +6,7 @@
+@@= skipped -6, +6 lines =@@
  
      [Symbol.iterator]?(): Iterator<string>
  >[Symbol.iterator] : Symbol([Symbol.iterator], Decl(for-of29.ts, 0, 35))

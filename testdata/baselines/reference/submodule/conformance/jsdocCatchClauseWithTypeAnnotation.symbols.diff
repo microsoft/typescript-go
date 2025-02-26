@@ -1,6 +1,6 @@
 --- old.jsdocCatchClauseWithTypeAnnotation.symbols
 +++ new.jsdocCatchClauseWithTypeAnnotation.symbols
-@@ -41,16 +41,16 @@
+@@= skipped -41, +41 lines =@@
  
      try { } catch (/** @type {unknown} */ err) { console.log(err); } // should be OK
  >err : Symbol(err, Decl(foo.js, 17, 19))
@@ -21,7 +21,7 @@
  >err : Symbol(err, Decl(foo.js, 18, 19))
  
      try { } catch (/** @type {unknown} */ err) { err.foo; }          // error in the body
-@@ -68,18 +68,18 @@
+@@= skipped -27, +27 lines =@@
  >err : Symbol(err, Decl(foo.js, 22, 19))
  
      try { console.log(); }
@@ -44,7 +44,7 @@
  >err : Symbol(err, Decl(foo.js, 26, 11))
      }
  
-@@ -114,16 +114,16 @@
+@@= skipped -46, +46 lines =@@
  
      try { } catch (/** @type {unknown} */ { x }) { console.log(x); } // error in the destructure
  >x : Symbol(x, Decl(foo.js, 45, 43))

@@ -1,6 +1,6 @@
 --- old.typeFromPrototypeAssignment2.symbols
 +++ new.typeFromPrototypeAssignment2.symbols
-@@ -11,111 +11,44 @@
+@@= skipped -11, +11 lines =@@
  >Multimap : Symbol(Multimap, Decl(a.js, 4, 7))
  
          this._map = {};
@@ -116,7 +116,7 @@
      }
  
      var mm = new Multimap();
-@@ -123,24 +56,16 @@
+@@= skipped -112, +45 lines =@@
  >Multimap : Symbol(Multimap, Decl(a.js, 4, 7))
  
      mm._map

@@ -1,6 +1,6 @@
 --- old.topLevelBlockExpando.symbols
 +++ new.topLevelBlockExpando.symbols
-@@ -6,31 +6,31 @@
+@@= skipped -6, +6 lines =@@
  >Person : Symbol(Person, Decl(check.ts, 0, 0))
  
    first: string;
@@ -42,7 +42,7 @@
  
    const diceP: Person = dice;  
  >diceP : Symbol(diceP, Decl(check.ts, 10, 7))
-@@ -54,19 +54,19 @@
+@@= skipped -48, +48 lines =@@
  >param : Symbol(param, Decl(check.js, 10, 23))
  
  const dice1 = () => Math.floor(Math.random() * 6);
@@ -70,7 +70,7 @@
  
  // doHumanThings(dice)
  
-@@ -74,22 +74,22 @@
+@@= skipped -20, +20 lines =@@
  {
    const dice2 = () => Math.floor(Math.random() * 6);
  >dice2 : Symbol(dice2, Decl(check.js, 20, 7))

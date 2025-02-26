@@ -1,6 +1,6 @@
 --- old.exportDefaultParenthesize.symbols
 +++ new.exportDefaultParenthesize.symbols
-@@ -76,8 +76,8 @@
+@@= skipped -76, +76 lines =@@
  === comma.ts ===
  export default {
      ['foo']: 42

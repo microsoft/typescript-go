@@ -1,6 +1,6 @@
 --- old.leaveOptionalParameterAsWritten.symbols
 +++ new.leaveOptionalParameterAsWritten.symbols
-@@ -29,8 +29,8 @@
+@@= skipped -29, +29 lines =@@
  type Foo = teams.calling.Foo;
  >Foo : Symbol(Foo, Decl(c.ts, 0, 0))
  >teams : Symbol(teams, Decl(b.ts, 1, 16))

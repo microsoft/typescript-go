@@ -1,6 +1,6 @@
 --- old.propertiesOfGenericConstructorFunctions.symbols
 +++ new.propertiesOfGenericConstructorFunctions.symbols
-@@ -14,15 +14,8 @@
+@@= skipped -14, +14 lines =@@
  
      /** @type {{ [s: string]: V }} */
      this._map = {};
@@ -16,7 +16,7 @@
  >[ik] : Symbol([ik], Decl(propertiesOfGenericConstructorFunctions.js, 10, 18))
  >ik : Symbol(ik, Decl(propertiesOfGenericConstructorFunctions.js, 6, 18))
  >iv : Symbol(iv, Decl(propertiesOfGenericConstructorFunctions.js, 6, 21))
-@@ -42,30 +35,22 @@
+@@= skipped -28, +21 lines =@@
  /** @type {number} */
  var n = map._map['hi']
  >n : Symbol(n, Decl(propertiesOfGenericConstructorFunctions.js, 19, 3), Decl(propertiesOfGenericConstructorFunctions.js, 21, 3), Decl(propertiesOfGenericConstructorFunctions.js, 23, 3), Decl(propertiesOfGenericConstructorFunctions.js, 25, 3), Decl(propertiesOfGenericConstructorFunctions.js, 43, 3) ... and 3 more)
@@ -47,7 +47,7 @@
  
  /**
   * @class
-@@ -73,73 +58,46 @@
+@@= skipped -31, +23 lines =@@
   * @param {T} t
   */
  function Cp(t) {

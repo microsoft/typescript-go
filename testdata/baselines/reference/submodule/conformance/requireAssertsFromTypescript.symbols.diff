@@ -1,6 +1,6 @@
 --- old.requireAssertsFromTypescript.symbols
 +++ new.requireAssertsFromTypescript.symbols
-@@ -3,13 +3,9 @@
+@@= skipped -3, +3 lines =@@
  === 38379.js ===
  const { art } = require('./ex')
  >art : Symbol(art, Decl(38379.js, 0, 7))
@@ -14,7 +14,7 @@
  
  let x = 1
  >x : Symbol(x, Decl(38379.js, 2, 3))
-@@ -25,23 +21,3 @@
+@@= skipped -22, +18 lines =@@
  >artoo : Symbol(artoo, Decl(38379.js, 1, 5))
  >y : Symbol(y, Decl(38379.js, 4, 3))
  

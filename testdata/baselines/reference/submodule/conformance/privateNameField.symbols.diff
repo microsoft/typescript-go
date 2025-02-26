@@ -1,6 +1,6 @@
 --- old.privateNameField.symbols
 +++ new.privateNameField.symbols
-@@ -5,13 +5,13 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(privateNameField.ts, 0, 0))
  
      #name: string;

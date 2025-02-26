@@ -1,6 +1,6 @@
 --- old.inferenceShouldFailOnEvolvingArrays.symbols
 +++ new.inferenceShouldFailOnEvolvingArrays.symbols
-@@ -15,12 +15,12 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(inferenceShouldFailOnEvolvingArrays.ts, 2, 19))
  
      console.log(arg.length);
@@ -17,7 +17,7 @@
  
      return arg;
  >arg : Symbol(arg, Decl(inferenceShouldFailOnEvolvingArrays.ts, 2, 55))
-@@ -47,12 +47,12 @@
+@@= skipped -32, +32 lines =@@
  >T : Symbol(T, Decl(inferenceShouldFailOnEvolvingArrays.ts, 10, 24))
  
      console.log(arg[0].length);
@@ -34,7 +34,7 @@
  
      return arg;
  >arg : Symbol(arg, Decl(inferenceShouldFailOnEvolvingArrays.ts, 10, 62))
-@@ -64,9 +64,9 @@
+@@= skipped -17, +17 lines =@@
  >zz : Symbol(zz, Decl(inferenceShouldFailOnEvolvingArrays.ts, 15, 3))
  
  zz.push(logLength(42));  // no error; T is inferred as `any`

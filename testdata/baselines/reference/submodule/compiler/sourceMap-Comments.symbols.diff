@@ -1,6 +1,6 @@
 --- old.sourceMap-Comments.symbols
 +++ new.sourceMap-Comments.symbols
-@@ -9,7 +9,7 @@
+@@= skipped -9, +9 lines =@@
  >Test : Symbol(Test, Decl(sourceMap-Comments.ts, 0, 18))
  
          public doX(): void {

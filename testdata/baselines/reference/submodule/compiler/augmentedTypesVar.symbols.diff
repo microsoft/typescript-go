@@ -1,6 +1,6 @@
 --- old.augmentedTypesVar.symbols
 +++ new.augmentedTypesVar.symbols
-@@ -33,7 +33,7 @@
+@@= skipped -33, +33 lines =@@
  
  class x4a { public foo() { } } // error
  >x4a : Symbol(x4a, Decl(augmentedTypesVar.ts, 15, 12))
@@ -9,7 +9,7 @@
  
  // var then enum
  var x5 = 1;
-@@ -41,7 +41,7 @@
+@@= skipped -8, +8 lines =@@
  
  enum x5 { One } // error
  >x5 : Symbol(x5, Decl(augmentedTypesVar.ts, 19, 11))

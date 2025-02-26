@@ -1,6 +1,6 @@
 --- old.multipleDefaultExports01.symbols
 +++ new.multipleDefaultExports01.symbols
-@@ -2,12 +2,12 @@
+@@= skipped -2, +2 lines =@@
  
  === m1.ts ===
  export default class foo {

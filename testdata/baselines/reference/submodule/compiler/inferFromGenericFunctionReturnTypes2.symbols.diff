@@ -1,6 +1,6 @@
 --- old.inferFromGenericFunctionReturnTypes2.symbols
 +++ new.inferFromGenericFunctionReturnTypes2.symbols
-@@ -59,18 +59,18 @@
+@@= skipped -59, +59 lines =@@
  >f1 : Symbol(f1, Decl(inferFromGenericFunctionReturnTypes2.ts, 10, 3))
  >Mapper : Symbol(Mapper, Decl(inferFromGenericFunctionReturnTypes2.ts, 0, 0))
  >s : Symbol(s, Decl(inferFromGenericFunctionReturnTypes2.ts, 10, 32))
@@ -23,7 +23,7 @@
  
  let f3: Mapper<string, number[]> = arrayize(wrap(s => s.length));
  >f3 : Symbol(f3, Decl(inferFromGenericFunctionReturnTypes2.ts, 12, 3))
-@@ -78,9 +78,9 @@
+@@= skipped -19, +19 lines =@@
  >arrayize : Symbol(arrayize, Decl(inferFromGenericFunctionReturnTypes2.ts, 2, 60))
  >wrap : Symbol(wrap, Decl(inferFromGenericFunctionReturnTypes2.ts, 0, 32))
  >s : Symbol(s, Decl(inferFromGenericFunctionReturnTypes2.ts, 12, 49))
@@ -35,7 +35,7 @@
  
  let f4: Mapper<string, boolean> = combine(wrap(s => s.length), wrap(n => n >= 10));
  >f4 : Symbol(f4, Decl(inferFromGenericFunctionReturnTypes2.ts, 13, 3))
-@@ -88,9 +88,9 @@
+@@= skipped -10, +10 lines =@@
  >combine : Symbol(combine, Decl(inferFromGenericFunctionReturnTypes2.ts, 4, 66))
  >wrap : Symbol(wrap, Decl(inferFromGenericFunctionReturnTypes2.ts, 0, 32))
  >s : Symbol(s, Decl(inferFromGenericFunctionReturnTypes2.ts, 13, 47))
@@ -47,7 +47,7 @@
  >wrap : Symbol(wrap, Decl(inferFromGenericFunctionReturnTypes2.ts, 0, 32))
  >n : Symbol(n, Decl(inferFromGenericFunctionReturnTypes2.ts, 13, 68))
  >n : Symbol(n, Decl(inferFromGenericFunctionReturnTypes2.ts, 13, 68))
-@@ -99,76 +99,76 @@
+@@= skipped -11, +11 lines =@@
  >foo : Symbol(foo, Decl(inferFromGenericFunctionReturnTypes2.ts, 6, 79))
  >wrap : Symbol(wrap, Decl(inferFromGenericFunctionReturnTypes2.ts, 0, 32))
  >s : Symbol(s, Decl(inferFromGenericFunctionReturnTypes2.ts, 15, 9))
@@ -150,7 +150,7 @@
  >identity : Symbol(identity, Decl(inferFromGenericFunctionReturnTypes2.ts, 82, 1))
  
  // This is a contrived class. We could do the same thing with Observables, etc.
-@@ -177,25 +177,25 @@
+@@= skipped -78, +78 lines =@@
  >A : Symbol(A, Decl(inferFromGenericFunctionReturnTypes2.ts, 25, 12))
  
    _store: A[];
@@ -183,7 +183,7 @@
  >B : Symbol(B, Decl(inferFromGenericFunctionReturnTypes2.ts, 32, 12))
  >transformer : Symbol(transformer, Decl(inferFromGenericFunctionReturnTypes2.ts, 32, 15))
  >a : Symbol(a, Decl(inferFromGenericFunctionReturnTypes2.ts, 32, 29))
-@@ -212,18 +212,18 @@
+@@= skipped -35, +35 lines =@@
    }
  
    forEach(fn: (a: A, index: number) => void) {
@@ -207,7 +207,7 @@
  >a : Symbol(a, Decl(inferFromGenericFunctionReturnTypes2.ts, 37, 27))
  >i : Symbol(i, Decl(inferFromGenericFunctionReturnTypes2.ts, 37, 29))
  >fn : Symbol(fn, Decl(inferFromGenericFunctionReturnTypes2.ts, 36, 10))
-@@ -294,9 +294,9 @@
+@@= skipped -82, +82 lines =@@
    return (x: T) => fns.reduce((prev, fn) => fn(prev), x);
  >x : Symbol(x, Decl(inferFromGenericFunctionReturnTypes2.ts, 49, 10))
  >T : Symbol(T, Decl(inferFromGenericFunctionReturnTypes2.ts, 48, 17))
@@ -219,7 +219,7 @@
  >prev : Symbol(prev, Decl(inferFromGenericFunctionReturnTypes2.ts, 49, 31))
  >fn : Symbol(fn, Decl(inferFromGenericFunctionReturnTypes2.ts, 49, 36))
  >fn : Symbol(fn, Decl(inferFromGenericFunctionReturnTypes2.ts, 49, 36))
-@@ -330,13 +330,13 @@
+@@= skipped -36, +36 lines =@@
  >SetOf : Symbol(SetOf, Decl(inferFromGenericFunctionReturnTypes2.ts, 22, 64))
  
      a.forEach(x => b.add(fn(x)));
@@ -237,7 +237,7 @@
  >fn : Symbol(fn, Decl(inferFromGenericFunctionReturnTypes2.ts, 52, 19))
  >x : Symbol(x, Decl(inferFromGenericFunctionReturnTypes2.ts, 55, 14))
  
-@@ -368,17 +368,17 @@
+@@= skipped -38, +38 lines =@@
  >A : Symbol(A, Decl(inferFromGenericFunctionReturnTypes2.ts, 60, 16))
  
      a.forEach(x => {
@@ -259,7 +259,7 @@
  >x : Symbol(x, Decl(inferFromGenericFunctionReturnTypes2.ts, 63, 14))
  
      });
-@@ -392,25 +392,25 @@
+@@= skipped -24, +24 lines =@@
  >SetOf : Symbol(SetOf, Decl(inferFromGenericFunctionReturnTypes2.ts, 22, 64))
  
  testSet.add(1);
@@ -293,7 +293,7 @@
  
    compose(
  >compose : Symbol(compose, Decl(inferFromGenericFunctionReturnTypes2.ts, 39, 1), Decl(inferFromGenericFunctionReturnTypes2.ts, 46, 28))
-@@ -434,9 +434,9 @@
+@@= skipped -42, +42 lines =@@
      map(x => x.toUpperCase())
  >map : Symbol(map, Decl(inferFromGenericFunctionReturnTypes2.ts, 50, 1))
  >x : Symbol(x, Decl(inferFromGenericFunctionReturnTypes2.ts, 80, 8))
@@ -305,7 +305,7 @@
  
    )
  )
-@@ -450,9 +450,9 @@
+@@= skipped -16, +16 lines =@@
  
  const t2 = testSet.transform(
  >t2 : Symbol(t2, Decl(inferFromGenericFunctionReturnTypes2.ts, 86, 5))
@@ -317,7 +317,7 @@
  
    compose(
  >compose : Symbol(compose, Decl(inferFromGenericFunctionReturnTypes2.ts, 39, 1), Decl(inferFromGenericFunctionReturnTypes2.ts, 46, 28))
-@@ -473,9 +473,9 @@
+@@= skipped -23, +23 lines =@@
      map(x => x.toUpperCase())
  >map : Symbol(map, Decl(inferFromGenericFunctionReturnTypes2.ts, 50, 1))
  >x : Symbol(x, Decl(inferFromGenericFunctionReturnTypes2.ts, 91, 8))

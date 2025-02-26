@@ -1,6 +1,6 @@
 --- old.declFileConstructors.symbols
 +++ new.declFileConstructors.symbols
-@@ -34,9 +34,9 @@
+@@= skipped -34, +34 lines =@@
  
          return a + rests.join("");
  >a : Symbol(a, Decl(declFileConstructors_0.ts, 15, 16))
@@ -12,7 +12,7 @@
      }
  }
  
-@@ -58,7 +58,7 @@
+@@= skipped -24, +24 lines =@@
  >ConstructorWithPublicParameterProperty : Symbol(ConstructorWithPublicParameterProperty, Decl(declFileConstructors_0.ts, 25, 1))
  
      constructor(public x: string) {
@@ -21,7 +21,7 @@
      }
  }
  
-@@ -66,7 +66,7 @@
+@@= skipped -8, +8 lines =@@
  >ConstructorWithPrivateParameterProperty : Symbol(ConstructorWithPrivateParameterProperty, Decl(declFileConstructors_0.ts, 30, 1))
  
      constructor(private x: string) {
@@ -30,7 +30,7 @@
      }
  }
  
-@@ -74,7 +74,7 @@
+@@= skipped -8, +8 lines =@@
  >ConstructorWithOptionalParameterProperty : Symbol(ConstructorWithOptionalParameterProperty, Decl(declFileConstructors_0.ts, 35, 1))
  
      constructor(public x?: string) {
@@ -39,7 +39,7 @@
      }
  }
  
-@@ -82,7 +82,7 @@
+@@= skipped -8, +8 lines =@@
  >ConstructorWithParameterInitializer : Symbol(ConstructorWithParameterInitializer, Decl(declFileConstructors_0.ts, 40, 1))
  
      constructor(public x = "hello") {
@@ -48,7 +48,7 @@
      }
  }
  
-@@ -120,9 +120,9 @@
+@@= skipped -38, +38 lines =@@
  
          return a + rests.join("");
  >a : Symbol(a, Decl(declFileConstructors_1.ts, 15, 16))
@@ -60,7 +60,7 @@
      }
  }
  
-@@ -144,7 +144,7 @@
+@@= skipped -24, +24 lines =@@
  >GlobalConstructorWithPublicParameterProperty : Symbol(GlobalConstructorWithPublicParameterProperty, Decl(declFileConstructors_1.ts, 25, 1))
  
      constructor(public x: string) {
@@ -69,7 +69,7 @@
      }
  }
  
-@@ -152,7 +152,7 @@
+@@= skipped -8, +8 lines =@@
  >GlobalConstructorWithPrivateParameterProperty : Symbol(GlobalConstructorWithPrivateParameterProperty, Decl(declFileConstructors_1.ts, 30, 1))
  
      constructor(private x: string) {
@@ -78,7 +78,7 @@
      }
  }
  
-@@ -160,7 +160,7 @@
+@@= skipped -8, +8 lines =@@
  >GlobalConstructorWithOptionalParameterProperty : Symbol(GlobalConstructorWithOptionalParameterProperty, Decl(declFileConstructors_1.ts, 35, 1))
  
      constructor(public x?: string) {
@@ -87,7 +87,7 @@
      }
  }
  
-@@ -168,6 +168,6 @@
+@@= skipped -8, +8 lines =@@
  >GlobalConstructorWithParameterInitializer : Symbol(GlobalConstructorWithParameterInitializer, Decl(declFileConstructors_1.ts, 40, 1))
  
      constructor(public x = "hello") {

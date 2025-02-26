@@ -1,6 +1,6 @@
 --- old.discriminateWithOptionalProperty4(exactoptionalpropertytypes=true).symbols
 +++ new.discriminateWithOptionalProperty4(exactoptionalpropertytypes=true).symbols
-@@ -19,18 +19,18 @@
+@@= skipped -19, +19 lines =@@
  >a : Symbol(a, Decl(discriminateWithOptionalProperty4.ts, 3, 17), Decl(discriminateWithOptionalProperty4.ts, 3, 17))
  
      ? z.a.toString()
@@ -23,7 +23,7 @@
  
    const zWorkAround:
  >zWorkAround : Symbol(zWorkAround, Decl(discriminateWithOptionalProperty4.ts, 9, 7))
-@@ -48,28 +48,28 @@
+@@= skipped -29, +29 lines =@@
  >zWorkAround.a : Symbol(a, Decl(discriminateWithOptionalProperty4.ts, 10, 7), Decl(discriminateWithOptionalProperty4.ts, 11, 20))
  >zWorkAround : Symbol(zWorkAround, Decl(discriminateWithOptionalProperty4.ts, 9, 7))
  >a : Symbol(a, Decl(discriminateWithOptionalProperty4.ts, 10, 7), Decl(discriminateWithOptionalProperty4.ts, 11, 20))

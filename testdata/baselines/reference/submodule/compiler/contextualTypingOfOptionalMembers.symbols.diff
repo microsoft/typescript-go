@@ -1,6 +1,6 @@
 --- old.contextualTypingOfOptionalMembers.symbols
 +++ new.contextualTypingOfOptionalMembers.symbols
-@@ -18,18 +18,18 @@
+@@= skipped -18, +18 lines =@@
  >Actions : Symbol(Actions, Decl(index.tsx, 4, 24))
  
      state?: State;
@@ -22,7 +22,7 @@
  >Actions : Symbol(Actions, Decl(index.tsx, 4, 24))
  }
  
-@@ -72,7 +72,7 @@
+@@= skipped -54, +54 lines =@@
  >Bar : Symbol(Bar, Decl(index.tsx, 18, 3))
  
      bar: (a: number) => void;
@@ -31,7 +31,7 @@
  >a : Symbol(a, Decl(index.tsx, 22, 10))
  }
  
-@@ -100,18 +100,18 @@
+@@= skipped -28, +28 lines =@@
  >Actions : Symbol(Actions, Decl(index.tsx, 32, 25))
  
      state?: State;
@@ -53,7 +53,7 @@
  >Actions : Symbol(Actions, Decl(index.tsx, 32, 25))
  }
  
-@@ -225,7 +225,7 @@
+@@= skipped -125, +125 lines =@@
  >state : Symbol(state, Decl(index.tsx, 70, 114))
  >State : Symbol(State, Decl(index.tsx, 70, 22))
  >JSX : Symbol(JSX, Decl(index.tsx, 59, 3))

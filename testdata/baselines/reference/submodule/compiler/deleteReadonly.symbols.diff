@@ -1,6 +1,6 @@
 --- old.deleteReadonly.symbols
 +++ new.deleteReadonly.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(deleteReadonly.ts, 0, 0))
  
    readonly b
@@ -9,7 +9,7 @@
  }
  var a: A = {
  >a : Symbol(a, Decl(deleteReadonly.ts, 3, 3))
-@@ -17,9 +17,9 @@
+@@= skipped -12, +12 lines =@@
  };
  
  delete a.b;
@@ -21,7 +21,7 @@
  
  interface B {
  >B : Symbol(B, Decl(deleteReadonly.ts, 7, 11))
-@@ -33,7 +33,7 @@
+@@= skipped -16, +16 lines =@@
  >B : Symbol(B, Decl(deleteReadonly.ts, 7, 11))
  
    'test': 'test'

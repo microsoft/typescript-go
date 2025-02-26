@@ -1,6 +1,6 @@
 --- old.overloadRet.symbols
 +++ new.overloadRet.symbols
-@@ -5,36 +5,36 @@
+@@= skipped -5, +5 lines =@@
  >I : Symbol(I, Decl(overloadRet.ts, 0, 0))
  
      f(s:string):number;  

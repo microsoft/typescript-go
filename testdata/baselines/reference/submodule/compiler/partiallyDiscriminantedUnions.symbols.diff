@@ -1,6 +1,6 @@
 --- old.partiallyDiscriminantedUnions.symbols
 +++ new.partiallyDiscriminantedUnions.symbols
-@@ -7,30 +7,30 @@
+@@= skipped -7, +7 lines =@@
  >A1 : Symbol(A1, Decl(partiallyDiscriminantedUnions.ts, 0, 0))
  
      type: 'a';
@@ -37,7 +37,7 @@
  }
  
  type AB = A1 | A2 | B;
-@@ -55,9 +55,9 @@
+@@= skipped -48, +48 lines =@@
  >subtype : Symbol(subtype, Decl(partiallyDiscriminantedUnions.ts, 3, 14), Decl(partiallyDiscriminantedUnions.ts, 8, 14))
  
          ab.foo;
@@ -49,7 +49,7 @@
      }
  }
  
-@@ -65,11 +65,11 @@
+@@= skipped -10, +10 lines =@@
  
  class Square { kind: "square"; }
  >Square : Symbol(Square, Decl(partiallyDiscriminantedUnions.ts, 25, 1))
@@ -63,7 +63,7 @@
  
  type Shape = Circle | Square;
  >Shape : Symbol(Shape, Decl(partiallyDiscriminantedUnions.ts, 30, 32))
-@@ -90,9 +90,9 @@
+@@= skipped -25, +25 lines =@@
  >Shape : Symbol(Shape, Decl(partiallyDiscriminantedUnions.ts, 30, 32))
  
      return !Array.isArray(s);
@@ -75,7 +75,7 @@
  >s : Symbol(s, Decl(partiallyDiscriminantedUnions.ts, 35, 17))
  }
  
-@@ -106,9 +106,9 @@
+@@= skipped -16, +16 lines =@@
  >s : Symbol(s, Decl(partiallyDiscriminantedUnions.ts, 39, 14))
  
          if (s.kind === "circle") {

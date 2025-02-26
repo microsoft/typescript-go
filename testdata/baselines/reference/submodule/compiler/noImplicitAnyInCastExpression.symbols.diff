@@ -1,6 +1,6 @@
 --- old.noImplicitAnyInCastExpression.symbols
 +++ new.noImplicitAnyInCastExpression.symbols
-@@ -7,10 +7,10 @@
+@@= skipped -7, +7 lines =@@
  >IFoo : Symbol(IFoo, Decl(noImplicitAnyInCastExpression.ts, 0, 0))
  
      a: number;

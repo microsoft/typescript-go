@@ -1,6 +1,6 @@
 --- old.generatorTypeCheck59.symbols
 +++ new.generatorTypeCheck59.symbols
-@@ -9,7 +9,7 @@
+@@= skipped -9, +9 lines =@@
  
          @(yield "")
          m() { }

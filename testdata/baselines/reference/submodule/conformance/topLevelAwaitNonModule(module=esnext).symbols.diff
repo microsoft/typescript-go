@@ -1,6 +1,6 @@
 --- old.topLevelAwaitNonModule(module=esnext).symbols
 +++ new.topLevelAwaitNonModule(module=esnext).symbols
-@@ -5,9 +5,9 @@
+@@= skipped -5, +5 lines =@@
  
  const arr = [Promise.resolve()];
  >arr : Symbol(arr, Decl(topLevelAwaitNonModule.ts, 2, 5))

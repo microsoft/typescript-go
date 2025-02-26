@@ -1,6 +1,6 @@
 --- old.thisConditionalOnMethodReturnOfGenericInstance.symbols
 +++ new.thisConditionalOnMethodReturnOfGenericInstance.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(thisConditionalOnMethodReturnOfGenericInstance.ts, 0, 8))
  
      unmeasurableUsage!: {[K in keyof T]-?: T[K]};
@@ -9,7 +9,7 @@
  >K : Symbol(K, Decl(thisConditionalOnMethodReturnOfGenericInstance.ts, 1, 26))
  >T : Symbol(T, Decl(thisConditionalOnMethodReturnOfGenericInstance.ts, 0, 8))
  >T : Symbol(T, Decl(thisConditionalOnMethodReturnOfGenericInstance.ts, 0, 8))
-@@ -20,7 +20,7 @@
+@@= skipped -14, +14 lines =@@
  >T : Symbol(T, Decl(thisConditionalOnMethodReturnOfGenericInstance.ts, 4, 8))
  
      method(): string | (this extends C ? undefined : null) {
@@ -18,7 +18,7 @@
  >C : Symbol(C, Decl(thisConditionalOnMethodReturnOfGenericInstance.ts, 8, 1))
  
          return "";
-@@ -34,7 +34,7 @@
+@@= skipped -14, +14 lines =@@
  >T : Symbol(T, Decl(thisConditionalOnMethodReturnOfGenericInstance.ts, 10, 8))
  
      marker!: string;
@@ -27,7 +27,7 @@
  }
  
  const x = new C<{}>();
-@@ -43,7 +43,7 @@
+@@= skipped -9, +9 lines =@@
  
  const y = x.method(); // usage flags `method` in `B` as circular and marks `y` as the error-any type
  >y : Symbol(y, Decl(thisConditionalOnMethodReturnOfGenericInstance.ts, 16, 5))

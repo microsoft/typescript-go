@@ -1,6 +1,6 @@
 --- old.specializationOfExportedClass.symbols
 +++ new.specializationOfExportedClass.symbols
-@@ -12,7 +12,7 @@
+@@= skipped -12, +12 lines =@@
   
  var x = new M.C<string>();
  >x : Symbol(x, Decl(specializationOfExportedClass.ts, 6, 3))

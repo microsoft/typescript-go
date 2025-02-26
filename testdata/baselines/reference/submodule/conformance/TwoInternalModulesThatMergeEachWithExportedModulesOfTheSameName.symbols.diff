@@ -1,6 +1,6 @@
 --- old.TwoInternalModulesThatMergeEachWithExportedModulesOfTheSameName.symbols
 +++ new.TwoInternalModulesThatMergeEachWithExportedModulesOfTheSameName.symbols
-@@ -26,22 +26,18 @@
+@@= skipped -26, +26 lines =@@
  
  var x = A.B.x;
  >x : Symbol(x, Decl(TwoInternalModulesThatMergeEachWithExportedModulesOfTheSameName.ts, 11, 3), Decl(TwoInternalModulesThatMergeEachWithExportedModulesOfTheSameName.ts, 12, 3))
@@ -25,7 +25,7 @@
      }
  }
  
-@@ -49,7 +45,7 @@
+@@= skipped -23, +19 lines =@@
  >X : Symbol(X, Decl(TwoInternalModulesThatMergeEachWithExportedModulesOfTheSameName.ts, 12, 14), Decl(TwoInternalModulesThatMergeEachWithExportedModulesOfTheSameName.ts, 18, 1))
  
      export module Y {
@@ -34,7 +34,7 @@
  
          module Z {
  >Z : Symbol(Z, Decl(TwoInternalModulesThatMergeEachWithExportedModulesOfTheSameName.ts, 21, 21))
-@@ -58,7 +54,7 @@
+@@= skipped -9, +9 lines =@@
  >Line : Symbol(Line, Decl(TwoInternalModulesThatMergeEachWithExportedModulesOfTheSameName.ts, 22, 18))
  
                  name: string;
@@ -43,7 +43,7 @@
              }
          }
      }
-@@ -72,7 +68,7 @@
+@@= skipped -14, +14 lines =@@
  var l: X.Y.Z.Line;
  >l : Symbol(l, Decl(TwoInternalModulesThatMergeEachWithExportedModulesOfTheSameName.ts, 31, 3), Decl(TwoInternalModulesThatMergeEachWithExportedModulesOfTheSameName.ts, 32, 3))
  >X : Symbol(X, Decl(TwoInternalModulesThatMergeEachWithExportedModulesOfTheSameName.ts, 12, 14), Decl(TwoInternalModulesThatMergeEachWithExportedModulesOfTheSameName.ts, 18, 1))

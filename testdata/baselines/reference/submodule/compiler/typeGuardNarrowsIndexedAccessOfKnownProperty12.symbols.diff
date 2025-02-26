@@ -1,6 +1,6 @@
 --- old.typeGuardNarrowsIndexedAccessOfKnownProperty12.symbols
 +++ new.typeGuardNarrowsIndexedAccessOfKnownProperty12.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >E : Symbol(E, Decl(typeGuardNarrowsIndexedAccessOfKnownProperty12.ts, 0, 0))
  
      A = "A",
@@ -13,7 +13,7 @@
  }
  
  declare const m: { [K in E]: string | null };
-@@ -18,16 +18,16 @@
+@@= skipped -13, +13 lines =@@
  
  if (m[E.A] !== null) {
  >m : Symbol(m, Decl(typeGuardNarrowsIndexedAccessOfKnownProperty12.ts, 5, 13))

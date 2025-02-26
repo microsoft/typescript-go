@@ -1,6 +1,6 @@
 --- old.privateNameStaticsAndStaticMethods(target=esnext).symbols
 +++ new.privateNameStaticsAndStaticMethods(target=esnext).symbols
-@@ -5,59 +5,59 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(privateNameStaticsAndStaticMethods.ts, 0, 0))
  
      static #foo(a: number) {}
@@ -74,7 +74,7 @@
  >A : Symbol(A, Decl(privateNameStaticsAndStaticMethods.ts, 0, 0))
   }
  }
-@@ -67,7 +67,7 @@
+@@= skipped -62, +62 lines =@@
  >A : Symbol(A, Decl(privateNameStaticsAndStaticMethods.ts, 0, 0))
  
      static #foo(a: string) {}
@@ -83,7 +83,7 @@
  >a : Symbol(a, Decl(privateNameStaticsAndStaticMethods.ts, 23, 16))
  
      constructor () {
-@@ -75,7 +75,7 @@
+@@= skipped -8, +8 lines =@@
  >super : Symbol(A, Decl(privateNameStaticsAndStaticMethods.ts, 0, 0))
  
          B.#foo("str");

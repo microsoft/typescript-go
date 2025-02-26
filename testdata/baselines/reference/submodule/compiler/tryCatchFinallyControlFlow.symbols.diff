@@ -1,6 +1,6 @@
 --- old.tryCatchFinallyControlFlow.symbols
 +++ new.tryCatchFinallyControlFlow.symbols
-@@ -25,9 +25,9 @@
+@@= skipped -25, +25 lines =@@
      finally {
          if (a != null && a.toFixed(0) == "123") { 
  >a : Symbol(a, Decl(tryCatchFinallyControlFlow.ts, 3, 7))
@@ -12,7 +12,7 @@
          }
      }
  }
-@@ -415,9 +415,9 @@
+@@= skipped -390, +390 lines =@@
  >hoge : Symbol(hoge, Decl(tryCatchFinallyControlFlow.ts, 228, 7))
  
              hoge.length;
@@ -24,7 +24,7 @@
          }
          return;
      }
-@@ -493,9 +493,9 @@
+@@= skipped -78, +78 lines =@@
  >tag : Symbol(tag, Decl(tryCatchFinallyControlFlow.ts, 261, 31), Decl(tryCatchFinallyControlFlow.ts, 261, 48))
  
              console.log(state.tag);

@@ -1,6 +1,6 @@
 --- old.declarationEmitForGlobalishSpecifierSymlink.symbols
 +++ new.declarationEmitForGlobalishSpecifierSymlink.symbols
-@@ -9,7 +9,7 @@
+@@= skipped -9, +9 lines =@@
  >A : Symbol(A, Decl(impl.d.ts, 0, 26))
  
      Val
@@ -9,7 +9,7 @@
  }
  === /p1/node_modules/typescript-fsa/index.d.ts ===
  
-@@ -23,7 +23,7 @@
+@@= skipped -14, +14 lines =@@
  >A : Symbol(A, Decl(impl.d.ts, 0, 26))
  
      Val

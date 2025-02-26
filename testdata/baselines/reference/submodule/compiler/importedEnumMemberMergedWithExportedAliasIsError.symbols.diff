@@ -1,6 +1,6 @@
 --- old.importedEnumMemberMergedWithExportedAliasIsError.symbols
 +++ new.importedEnumMemberMergedWithExportedAliasIsError.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >Enum : Symbol(Enum, Decl(enum.ts, 0, 0))
  
      A,
@@ -13,7 +13,7 @@
  }
  === alias.ts ===
  import {Enum} from "./enum";
-@@ -17,7 +17,7 @@
+@@= skipped -12, +12 lines =@@
  import EnumA = Enum.A;
  >EnumA : Symbol(EnumA, Decl(alias.ts, 0, 28), Decl(alias.ts, 2, 22))
  >Enum : Symbol(Enum, Decl(alias.ts, 0, 8))

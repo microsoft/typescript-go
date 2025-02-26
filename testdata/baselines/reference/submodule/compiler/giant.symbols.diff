@@ -1,6 +1,6 @@
 --- old.giant.symbols
 +++ new.giant.symbols
-@@ -28,64 +28,64 @@
+@@= skipped -28, +28 lines =@@
  
      constructor () { }
      public pV;
@@ -83,7 +83,7 @@
  }
  interface I {
  >I : Symbol(I, Decl(giant.ts, 36, 1))
-@@ -138,7 +138,7 @@
+@@= skipped -110, +110 lines =@@
  
      //Index Signature
      [p];
@@ -92,7 +92,7 @@
  >p : Symbol(p, Decl(giant.ts, 13, 5))
  
      [p1: string];
-@@ -150,35 +150,35 @@
+@@= skipped -12, +12 lines =@@
  
      //Property Signature
      p;
@@ -137,7 +137,7 @@
  >pa1 : Symbol(pa1, Decl(giant.ts, 75, 9))
  >pa2 : Symbol(pa2, Decl(giant.ts, 75, 13))
  }
-@@ -196,64 +196,64 @@
+@@= skipped -46, +46 lines =@@
  
          constructor () { }
          public pV;
@@ -220,7 +220,7 @@
      }
      interface I {
  >I : Symbol(I, Decl(giant.ts, 100, 5))
-@@ -306,7 +306,7 @@
+@@= skipped -110, +110 lines =@@
  
          //Index Signature
          [p];
@@ -229,7 +229,7 @@
  >p : Symbol(p, Decl(giant.ts, 13, 5))
  
          [p1: string];
-@@ -318,35 +318,35 @@
+@@= skipped -12, +12 lines =@@
  
          //Property Signature
          p;
@@ -274,7 +274,7 @@
  >pa1 : Symbol(pa1, Decl(giant.ts, 139, 13))
  >pa2 : Symbol(pa2, Decl(giant.ts, 139, 17))
      }
-@@ -406,64 +406,64 @@
+@@= skipped -88, +88 lines =@@
  
          constructor () { }
          public pV;
@@ -357,7 +357,7 @@
      }
      export interface eI {
  >eI : Symbol(eI, Decl(giant.ts, 179, 5))
-@@ -516,7 +516,7 @@
+@@= skipped -110, +110 lines =@@
  
          //Index Signature
          [p];
@@ -366,7 +366,7 @@
  >p : Symbol(p, Decl(giant.ts, 13, 5))
  
          [p1: string];
-@@ -528,35 +528,35 @@
+@@= skipped -12, +12 lines =@@
  
          //Property Signature
          p;
@@ -411,7 +411,7 @@
  >pa1 : Symbol(pa1, Decl(giant.ts, 218, 13))
  >pa2 : Symbol(pa2, Decl(giant.ts, 218, 17))
      }
-@@ -616,64 +616,64 @@
+@@= skipped -88, +88 lines =@@
  
          constructor () { }
          public pV;
@@ -494,7 +494,7 @@
      }
      export declare module eaM {
  >eaM : Symbol(eaM, Decl(giant.ts, 258, 5))
-@@ -720,64 +720,64 @@
+@@= skipped -104, +104 lines =@@
  
      constructor () { }
      public pV;
@@ -577,7 +577,7 @@
  }
  export interface eI {
  >eI : Symbol(eI, Decl(giant.ts, 294, 1))
-@@ -830,7 +830,7 @@
+@@= skipped -110, +110 lines =@@
  
      //Index Signature
      [p];
@@ -586,7 +586,7 @@
  >p : Symbol(p, Decl(giant.ts, 13, 5))
  
      [p1: string];
-@@ -842,35 +842,35 @@
+@@= skipped -12, +12 lines =@@
  
      //Property Signature
      p;
@@ -631,7 +631,7 @@
  >pa1 : Symbol(pa1, Decl(giant.ts, 333, 9))
  >pa2 : Symbol(pa2, Decl(giant.ts, 333, 13))
  }
-@@ -888,64 +888,64 @@
+@@= skipped -46, +46 lines =@@
  
          constructor () { }
          public pV;
@@ -714,7 +714,7 @@
      }
      interface I {
  >I : Symbol(I, Decl(giant.ts, 358, 5))
-@@ -998,7 +998,7 @@
+@@= skipped -110, +110 lines =@@
  
          //Index Signature
          [p];
@@ -723,7 +723,7 @@
  >p : Symbol(p, Decl(giant.ts, 13, 5))
  
          [p1: string];
-@@ -1010,35 +1010,35 @@
+@@= skipped -12, +12 lines =@@
  
          //Property Signature
          p;
@@ -768,7 +768,7 @@
  >pa1 : Symbol(pa1, Decl(giant.ts, 397, 13))
  >pa2 : Symbol(pa2, Decl(giant.ts, 397, 17))
      }
-@@ -1098,64 +1098,64 @@
+@@= skipped -88, +88 lines =@@
  
          constructor () { }
          public pV;
@@ -851,7 +851,7 @@
      }
      export interface eI {
  >eI : Symbol(eI, Decl(giant.ts, 437, 5))
-@@ -1208,7 +1208,7 @@
+@@= skipped -110, +110 lines =@@
  
          //Index Signature
          [p];
@@ -860,7 +860,7 @@
  >p : Symbol(p, Decl(giant.ts, 13, 5))
  
          [p1: string];
-@@ -1220,35 +1220,35 @@
+@@= skipped -12, +12 lines =@@
  
          //Property Signature
          p;
@@ -905,7 +905,7 @@
  >pa1 : Symbol(pa1, Decl(giant.ts, 476, 13))
  >pa2 : Symbol(pa2, Decl(giant.ts, 476, 17))
      }
-@@ -1308,64 +1308,64 @@
+@@= skipped -88, +88 lines =@@
  
          constructor () { }
          public pV;
@@ -988,7 +988,7 @@
      }
      export declare module eaM {
  >eaM : Symbol(eaM, Decl(giant.ts, 516, 5))
-@@ -1412,64 +1412,64 @@
+@@= skipped -104, +104 lines =@@
  
      constructor () { }
      public pV;
@@ -1071,7 +1071,7 @@
  }
  export declare module eaM {
  >eaM : Symbol(eaM, Decl(giant.ts, 552, 1))
-@@ -1485,19 +1485,19 @@
+@@= skipped -73, +73 lines =@@
  
          constructor () { }
          public pV;
@@ -1096,7 +1096,7 @@
      }
      interface I {
  >I : Symbol(I, Decl(giant.ts, 563, 5))
-@@ -1547,7 +1547,7 @@
+@@= skipped -62, +62 lines =@@
  
          //Index Signature
          [p];
@@ -1105,7 +1105,7 @@
  >p : Symbol(p, Decl(giant.ts, 13, 5))
  
          [p1: string];
-@@ -1559,35 +1559,35 @@
+@@= skipped -12, +12 lines =@@
  
          //Property Signature
          p;
@@ -1150,7 +1150,7 @@
  >pa1 : Symbol(pa1, Decl(giant.ts, 601, 13))
  >pa2 : Symbol(pa2, Decl(giant.ts, 601, 17))
      }
-@@ -1647,19 +1647,19 @@
+@@= skipped -88, +88 lines =@@
  
          constructor () { }
          public pV;
@@ -1175,7 +1175,7 @@
      }
      export interface eI {
  >eI : Symbol(eI, Decl(giant.ts, 628, 5))
-@@ -1712,7 +1712,7 @@
+@@= skipped -65, +65 lines =@@
  
          //Index Signature
          [p];
@@ -1184,7 +1184,7 @@
  >p : Symbol(p, Decl(giant.ts, 13, 5))
  
          [p1: string];
-@@ -1724,35 +1724,35 @@
+@@= skipped -12, +12 lines =@@
  
          //Property Signature
          p;

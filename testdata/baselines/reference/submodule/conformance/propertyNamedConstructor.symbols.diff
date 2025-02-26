@@ -1,6 +1,6 @@
 --- old.propertyNamedConstructor.symbols
 +++ new.propertyNamedConstructor.symbols
-@@ -5,14 +5,14 @@
+@@= skipped -5, +5 lines =@@
  >X1 : Symbol(X1, Decl(propertyNamedConstructor.ts, 0, 0))
  
    "constructor" = 3; // Error

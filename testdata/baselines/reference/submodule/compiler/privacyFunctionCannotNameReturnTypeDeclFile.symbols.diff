@@ -1,6 +1,6 @@
 --- old.privacyFunctionCannotNameReturnTypeDeclFile.symbols
 +++ new.privacyFunctionCannotNameReturnTypeDeclFile.symbols
-@@ -8,68 +8,68 @@
+@@= skipped -8, +8 lines =@@
  >publicClassWithWithPrivateParmeterTypes : Symbol(publicClassWithWithPrivateParmeterTypes, Decl(privacyFunctionReturnTypeDeclFile_consumer.ts, 0, 74))
  
      static myPublicStaticMethod() { // Error
@@ -93,7 +93,7 @@
      }
  }
  
-@@ -77,68 +77,68 @@
+@@= skipped -69, +69 lines =@@
  >privateClassWithWithPrivateParmeterTypes : Symbol(privateClassWithWithPrivateParmeterTypes, Decl(privacyFunctionReturnTypeDeclFile_consumer.ts, 26, 1))
  
      static myPublicStaticMethod() { 
@@ -186,7 +186,7 @@
      }
  }
  
-@@ -146,139 +146,139 @@
+@@= skipped -69, +69 lines =@@
  >publicFunctionWithPrivateParmeterTypes : Symbol(publicFunctionWithPrivateParmeterTypes, Decl(privacyFunctionReturnTypeDeclFile_consumer.ts, 53, 1))
  
      return exporter.createExportedWidget1();
@@ -366,7 +366,7 @@
  }
  
  === privacyFunctionReturnTypeDeclFile_GlobalWidgets.ts ===
-@@ -289,7 +289,7 @@
+@@= skipped -143, +143 lines =@@
  >Widget3 : Symbol(Widget3, Decl(privacyFunctionReturnTypeDeclFile_GlobalWidgets.ts, 0, 32))
  
          name: string;
@@ -375,7 +375,7 @@
      }
      export function createWidget3(): Widget3;
  >createWidget3 : Symbol(createWidget3, Decl(privacyFunctionReturnTypeDeclFile_GlobalWidgets.ts, 3, 5))
-@@ -302,7 +302,7 @@
+@@= skipped -13, +13 lines =@@
  >Widget4 : Symbol(Widget4, Decl(privacyFunctionReturnTypeDeclFile_GlobalWidgets.ts, 6, 43))
  
              name: string;
@@ -384,7 +384,7 @@
          }
          function createWidget4(): Widget4;
  >createWidget4 : Symbol(createWidget4, Decl(privacyFunctionReturnTypeDeclFile_GlobalWidgets.ts, 9, 9))
-@@ -315,7 +315,7 @@
+@@= skipped -13, +13 lines =@@
  >Widget1 : Symbol(Widget1, Decl(privacyFunctionReturnTypeDeclFile_Widgets.ts, 0, 0))
  
      name = 'one';
@@ -393,7 +393,7 @@
  }
  export function createWidget1() {
  >createWidget1 : Symbol(createWidget1, Decl(privacyFunctionReturnTypeDeclFile_Widgets.ts, 2, 1))
-@@ -331,7 +331,7 @@
+@@= skipped -16, +16 lines =@@
  >Widget2 : Symbol(Widget2, Decl(privacyFunctionReturnTypeDeclFile_Widgets.ts, 7, 33))
  
          name = 'one';
@@ -402,7 +402,7 @@
      }
      export function createWidget2() {
  >createWidget2 : Symbol(createWidget2, Decl(privacyFunctionReturnTypeDeclFile_Widgets.ts, 10, 5))
-@@ -353,36 +353,36 @@
+@@= skipped -22, +22 lines =@@
  >createExportedWidget1 : Symbol(createExportedWidget1, Decl(privacyFunctionReturnTypeDeclFile_exporter.ts, 2, 43))
  
      return Widgets.createWidget1();

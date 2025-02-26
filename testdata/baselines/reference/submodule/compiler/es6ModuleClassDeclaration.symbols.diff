@@ -1,6 +1,6 @@
 --- old.es6ModuleClassDeclaration.symbols
 +++ new.es6ModuleClassDeclaration.symbols
-@@ -7,28 +7,28 @@
+@@= skipped -7, +7 lines =@@
      constructor() {
      }
      private x = 10;
@@ -37,7 +37,7 @@
      }
  }
  class c2 {
-@@ -37,28 +37,28 @@
+@@= skipped -30, +30 lines =@@
      constructor() {
      }
      private x = 10;
@@ -74,7 +74,7 @@
      }
  }
  new c();
-@@ -76,28 +76,28 @@
+@@= skipped -39, +39 lines =@@
          constructor() {
          }
          private x = 10;
@@ -111,7 +111,7 @@
          }
      }
      class c4 {
-@@ -106,28 +106,28 @@
+@@= skipped -30, +30 lines =@@
          constructor() {
          }
          private x = 10;
@@ -148,7 +148,7 @@
          }
      }
      new c();
-@@ -151,28 +151,28 @@
+@@= skipped -45, +45 lines =@@
          constructor() {
          }
          private x = 10;
@@ -185,7 +185,7 @@
          }
      }
      class c4 {
-@@ -181,28 +181,28 @@
+@@= skipped -30, +30 lines =@@
          constructor() {
          }
          private x = 10;
@@ -222,7 +222,7 @@
          }
      }
      new c();
-@@ -218,7 +218,7 @@
+@@= skipped -37, +37 lines =@@
  >c4 : Symbol(c4, Decl(es6ModuleClassDeclaration.ts, 89, 5))
  
      new m1.c3();

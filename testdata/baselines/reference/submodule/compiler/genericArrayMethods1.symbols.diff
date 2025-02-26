@@ -1,6 +1,6 @@
 --- old.genericArrayMethods1.symbols
 +++ new.genericArrayMethods1.symbols
-@@ -3,6 +3,6 @@
+@@= skipped -3, +3 lines =@@
  === genericArrayMethods1.ts ===
  var x:string[] =  [0,1].slice(0); // this should be an error
  >x : Symbol(x, Decl(genericArrayMethods1.ts, 0, 3))

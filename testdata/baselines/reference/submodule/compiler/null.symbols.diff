@@ -1,6 +1,6 @@
 --- old.null.symbols
 +++ new.null.symbols
-@@ -31,10 +31,10 @@
+@@= skipped -31, +31 lines =@@
  >I : Symbol(I, Decl(null.ts, 12, 1))
  
      x:any;

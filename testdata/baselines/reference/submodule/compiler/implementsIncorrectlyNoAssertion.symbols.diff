@@ -1,6 +1,6 @@
 --- old.implementsIncorrectlyNoAssertion.symbols
 +++ new.implementsIncorrectlyNoAssertion.symbols
-@@ -5,13 +5,13 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(implementsIncorrectlyNoAssertion.ts, 0, 0))
  
      x: string;
@@ -16,7 +16,7 @@
  }
  type Wrapper = Foo & Bar;
  >Wrapper : Symbol(Wrapper, Decl(implementsIncorrectlyNoAssertion.ts, 5, 1))
-@@ -23,9 +23,9 @@
+@@= skipped -18, +18 lines =@@
  >Wrapper : Symbol(Wrapper, Decl(implementsIncorrectlyNoAssertion.ts, 5, 1))
  
      x: number;

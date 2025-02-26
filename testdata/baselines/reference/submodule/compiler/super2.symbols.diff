@@ -1,6 +1,6 @@
 --- old.super2.symbols
 +++ new.super2.symbols
-@@ -6,13 +6,13 @@
+@@= skipped -6, +6 lines =@@
  >Base5 : Symbol(Base5, Decl(super2.ts, 0, 0))
  
      public x() {
@@ -16,7 +16,7 @@
  
          return "BaseY";
      }
-@@ -23,7 +23,7 @@
+@@= skipped -17, +17 lines =@@
  >Base5 : Symbol(Base5, Decl(super2.ts, 0, 0))
  
      public x() {
@@ -25,7 +25,7 @@
  
          return "SubX";
      }
-@@ -34,20 +34,20 @@
+@@= skipped -11, +11 lines =@@
  >Sub5 : Symbol(Sub5, Decl(super2.ts, 9, 1))
  
      public x() {
@@ -52,7 +52,7 @@
      }
  }
  
-@@ -56,7 +56,7 @@
+@@= skipped -22, +22 lines =@@
  >Base6 : Symbol(Base6, Decl(super2.ts, 24, 1))
  
      public x() {
@@ -61,7 +61,7 @@
  
          return "BaseX";
      }
-@@ -67,7 +67,7 @@
+@@= skipped -11, +11 lines =@@
  >Base6 : Symbol(Base6, Decl(super2.ts, 24, 1))
  
      public y() {
@@ -70,7 +70,7 @@
  
          return "SubY";
      }
-@@ -78,12 +78,12 @@
+@@= skipped -11, +11 lines =@@
  >Sub6 : Symbol(Sub6, Decl(super2.ts, 31, 1))
  
      public y() {
@@ -86,7 +86,7 @@
      }
  }
  
-@@ -97,13 +97,13 @@
+@@= skipped -19, +19 lines =@@
  >SubSub6 : Symbol(SubSub6, Decl(super2.ts, 37, 1))
  
  results1.x() + results1.y() + results2.y();

@@ -1,6 +1,6 @@
 --- old.noParameterReassignmentIIFEAnnotated.symbols
 +++ new.noParameterReassignmentIIFEAnnotated.symbols
-@@ -3,7 +3,7 @@
+@@= skipped -3, +3 lines =@@
  === index.js ===
  self.importScripts = (function (importScripts) {
  >self.importScripts : Symbol(importScripts, Decl(lib.webworker.importscripts.d.ts, --, --))
@@ -9,7 +9,7 @@
  >importScripts : Symbol(importScripts, Decl(lib.webworker.importscripts.d.ts, --, --))
  >importScripts : Symbol(importScripts, Decl(index.js, 0, 32))
  
-@@ -12,9 +12,9 @@
+@@= skipped -9, +9 lines =@@
       */
      return function () {
          return importScripts.apply(this, arguments);

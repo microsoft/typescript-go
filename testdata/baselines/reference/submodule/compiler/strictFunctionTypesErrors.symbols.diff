@@ -1,6 +1,6 @@
 --- old.strictFunctionTypesErrors.symbols
 +++ new.strictFunctionTypesErrors.symbols
-@@ -294,24 +294,24 @@
+@@= skipped -294, +294 lines =@@
  
  interface Animal { animal: void }
  >Animal : Symbol(Animal, Decl(strictFunctionTypesErrors.ts, 87, 8))
@@ -29,7 +29,7 @@
  >a : Symbol(a, Decl(strictFunctionTypesErrors.ts, 94, 12))
  >T : Symbol(T, Decl(strictFunctionTypesErrors.ts, 93, 20))
  >b : Symbol(b, Decl(strictFunctionTypesErrors.ts, 94, 17))
-@@ -341,7 +341,7 @@
+@@= skipped -47, +47 lines =@@
  >T : Symbol(T, Decl(strictFunctionTypesErrors.ts, 103, 20))
  
      compare: (a: T, b: T) => number;
@@ -38,7 +38,7 @@
  >a : Symbol(a, Decl(strictFunctionTypesErrors.ts, 104, 14))
  >T : Symbol(T, Decl(strictFunctionTypesErrors.ts, 103, 20))
  >b : Symbol(b, Decl(strictFunctionTypesErrors.ts, 104, 19))
-@@ -373,11 +373,11 @@
+@@= skipped -32, +32 lines =@@
  >T : Symbol(T, Decl(strictFunctionTypesErrors.ts, 115, 16))
  
      item: T;
@@ -52,7 +52,7 @@
  >item : Symbol(item, Decl(strictFunctionTypesErrors.ts, 117, 16))
  >T : Symbol(T, Decl(strictFunctionTypesErrors.ts, 115, 16))
  }
-@@ -436,13 +436,13 @@
+@@= skipped -63, +63 lines =@@
  >Foo : Symbol(Foo, Decl(strictFunctionTypesErrors.ts, 138, 14))
  
          static f1(x: Animal): Animal { throw "wat"; }
@@ -68,7 +68,7 @@
  >x : Symbol(x, Decl(strictFunctionTypesErrors.ts, 141, 18))
  >Dog : Symbol(Dog, Decl(strictFunctionTypesErrors.ts, 89, 33))
  >Animal : Symbol(Animal, Decl(strictFunctionTypesErrors.ts, 87, 8))
-@@ -450,16 +450,16 @@
+@@= skipped -14, +14 lines =@@
      declare let f1: (cb: typeof Foo.f1) => void;
  >f1 : Symbol(f1, Decl(strictFunctionTypesErrors.ts, 143, 15))
  >cb : Symbol(cb, Decl(strictFunctionTypesErrors.ts, 143, 21))

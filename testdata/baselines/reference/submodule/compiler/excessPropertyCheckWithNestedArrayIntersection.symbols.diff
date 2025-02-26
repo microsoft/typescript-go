@@ -1,6 +1,6 @@
 --- old.excessPropertyCheckWithNestedArrayIntersection.symbols
 +++ new.excessPropertyCheckWithNestedArrayIntersection.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >ValueOnlyFields : Symbol(ValueOnlyFields, Decl(excessPropertyCheckWithNestedArrayIntersection.ts, 0, 0))
  
      fields: Array<{
@@ -9,7 +9,7 @@
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
          value: number | null;
-@@ -17,7 +17,7 @@
+@@= skipped -12, +12 lines =@@
  >ValueAndKeyFields : Symbol(ValueAndKeyFields, Decl(excessPropertyCheckWithNestedArrayIntersection.ts, 4, 1))
  
      fields: Array<{
@@ -18,7 +18,7 @@
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
          key: string | null;
-@@ -32,7 +32,7 @@
+@@= skipped -15, +15 lines =@@
  >BugRepro : Symbol(BugRepro, Decl(excessPropertyCheckWithNestedArrayIntersection.ts, 10, 1))
  
    dataType: ValueAndKeyFields & ValueOnlyFields;

@@ -1,6 +1,6 @@
 --- old.typeNamedUndefined2.symbols
 +++ new.typeNamedUndefined2.symbols
-@@ -29,8 +29,8 @@
+@@= skipped -29, +29 lines =@@
  >x : Symbol(x, Decl(typeNamedUndefined2.ts, 8, 1))
  >p : Symbol(p, Decl(typeNamedUndefined2.ts, 10, 18))
  >ns : Symbol(ns, Decl(typeNamedUndefined2.ts, 0, 0))

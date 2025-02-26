@@ -1,6 +1,6 @@
 --- old.subtypesOfUnion.symbols
 +++ new.subtypesOfUnion.symbols
-@@ -3,8 +3,8 @@
+@@= skipped -3, +3 lines =@@
  === subtypesOfUnion.ts ===
  enum E { e1, e2 }
  >E : Symbol(E, Decl(subtypesOfUnion.ts, 0, 0))
@@ -11,7 +11,7 @@
  
  interface I8 { [x: string]: number[]; }
  >I8 : Symbol(I8, Decl(subtypesOfUnion.ts, 0, 17))
-@@ -12,12 +12,12 @@
+@@= skipped -9, +9 lines =@@
  
  class A { foo: number; }
  >A : Symbol(A, Decl(subtypesOfUnion.ts, 1, 39))
@@ -26,7 +26,7 @@
  >T : Symbol(T, Decl(subtypesOfUnion.ts, 3, 9))
  
  function f() { }
-@@ -29,7 +29,7 @@
+@@= skipped -17, +17 lines =@@
  
  class c { baz: string }
  >c : Symbol(c, Decl(subtypesOfUnion.ts, 5, 32), Decl(subtypesOfUnion.ts, 6, 23))
@@ -35,7 +35,7 @@
  
  module c { export var bar = 1; }
  >c : Symbol(c, Decl(subtypesOfUnion.ts, 5, 32), Decl(subtypesOfUnion.ts, 6, 23))
-@@ -44,74 +44,74 @@
+@@= skipped -15, +15 lines =@@
  >x : Symbol(x, Decl(subtypesOfUnion.ts, 11, 5))
  
      foo: any; // ok
@@ -128,7 +128,7 @@
  }
  interface I2<T> {
  >I2 : Symbol(I2, Decl(subtypesOfUnion.ts, 30, 1))
-@@ -122,72 +122,72 @@
+@@= skipped -78, +78 lines =@@
  >E : Symbol(E, Decl(subtypesOfUnion.ts, 0, 0))
  
      foo: any; // ok

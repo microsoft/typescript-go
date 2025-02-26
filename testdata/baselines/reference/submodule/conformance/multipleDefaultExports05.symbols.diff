@@ -1,6 +1,6 @@
 --- old.multipleDefaultExports05.symbols
 +++ new.multipleDefaultExports05.symbols
-@@ -2,11 +2,11 @@
+@@= skipped -2, +2 lines =@@
  
  === multipleDefaultExports05.ts ===
  export default class AA1 {}

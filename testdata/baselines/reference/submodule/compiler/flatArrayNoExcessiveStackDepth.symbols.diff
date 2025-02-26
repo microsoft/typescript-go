@@ -1,6 +1,6 @@
 --- old.flatArrayNoExcessiveStackDepth.symbols
 +++ new.flatArrayNoExcessiveStackDepth.symbols
-@@ -8,9 +8,9 @@
+@@= skipped -8, +8 lines =@@
  
  const bar = foo.flatMap(bar => bar as Foo);
  >bar : Symbol(bar, Decl(flatArrayNoExcessiveStackDepth.ts, 3, 5))
@@ -12,7 +12,7 @@
  >bar : Symbol(bar, Decl(flatArrayNoExcessiveStackDepth.ts, 3, 24))
  >bar : Symbol(bar, Decl(flatArrayNoExcessiveStackDepth.ts, 3, 24))
  >Foo : Symbol(Foo, Decl(flatArrayNoExcessiveStackDepth.ts, 3, 43))
-@@ -33,9 +33,9 @@
+@@= skipped -25, +25 lines =@@
      }
      const match = value.match(/anything/) || [];
  >match : Symbol(match, Decl(flatArrayNoExcessiveStackDepth.ts, 13, 9))

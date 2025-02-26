@@ -1,6 +1,6 @@
 --- old.propertyAccessStringIndexSignatureNoImplicitAny.symbols
 +++ new.propertyAccessStringIndexSignatureNoImplicitAny.symbols
-@@ -10,19 +10,19 @@
+@@= skipped -10, +10 lines =@@
  >Flags : Symbol(Flags, Decl(propertyAccessStringIndexSignatureNoImplicitAny.ts, 0, 0))
  
  flags.b;

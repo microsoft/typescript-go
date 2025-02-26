@@ -1,6 +1,6 @@
 --- old.recursiveTypeAliasWithSpreadConditionalReturnNotCircular.symbols
 +++ new.recursiveTypeAliasWithSpreadConditionalReturnNotCircular.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >T : Symbol(T, Decl(recursiveTypeAliasWithSpreadConditionalReturnNotCircular.ts, 1, 24))
  
  	zip1<O extends Array<Option<any>>>(...others: O): Option<[T, ...UnzipOptionArray1<O>]>;
@@ -9,7 +9,7 @@
  >O : Symbol(O, Decl(recursiveTypeAliasWithSpreadConditionalReturnNotCircular.ts, 2, 6))
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  >Option : Symbol(Option, Decl(recursiveTypeAliasWithSpreadConditionalReturnNotCircular.ts, 0, 9))
-@@ -19,7 +19,7 @@
+@@= skipped -12, +12 lines =@@
  >O : Symbol(O, Decl(recursiveTypeAliasWithSpreadConditionalReturnNotCircular.ts, 2, 6))
  
  	zip2<O extends Array<Option<any>>>(...others: O): Option<[T, ...UnzipOptionArray2<O>]>;
@@ -18,7 +18,7 @@
  >O : Symbol(O, Decl(recursiveTypeAliasWithSpreadConditionalReturnNotCircular.ts, 4, 6))
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  >Option : Symbol(Option, Decl(recursiveTypeAliasWithSpreadConditionalReturnNotCircular.ts, 0, 9))
-@@ -31,7 +31,7 @@
+@@= skipped -12, +12 lines =@@
  >O : Symbol(O, Decl(recursiveTypeAliasWithSpreadConditionalReturnNotCircular.ts, 4, 6))
  
  	zip3<O extends Array<Option<any>>>(...others: O): Option<[T, ...UnzipOptionArray3<O>]>;
@@ -27,7 +27,7 @@
  >O : Symbol(O, Decl(recursiveTypeAliasWithSpreadConditionalReturnNotCircular.ts, 6, 6))
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  >Option : Symbol(Option, Decl(recursiveTypeAliasWithSpreadConditionalReturnNotCircular.ts, 0, 9))
-@@ -99,25 +99,25 @@
+@@= skipped -68, +68 lines =@@
  
  const zipped1 = opt1.zip1(opt2, opt3);
  >zipped1 : Symbol(zipped1, Decl(recursiveTypeAliasWithSpreadConditionalReturnNotCircular.ts, 22, 5))

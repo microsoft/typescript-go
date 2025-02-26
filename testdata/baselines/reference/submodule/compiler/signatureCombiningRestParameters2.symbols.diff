@@ -1,6 +1,6 @@
 --- old.signatureCombiningRestParameters2.symbols
 +++ new.signatureCombiningRestParameters2.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Console : Symbol(Console, Decl(lib.dom.d.ts, --, --), Decl(signatureCombiningRestParameters2.ts, 0, 0))
  
    log(message?: any, ...optionalParams: any[]): void;
@@ -9,7 +9,7 @@
  >message : Symbol(message, Decl(signatureCombiningRestParameters2.ts, 1, 6))
  >optionalParams : Symbol(optionalParams, Decl(signatureCombiningRestParameters2.ts, 1, 20))
  }
-@@ -15,20 +15,20 @@
+@@= skipped -10, +10 lines =@@
  
  let originalLog: typeof console.log;
  >originalLog : Symbol(originalLog, Decl(signatureCombiningRestParameters2.ts, 5, 3))

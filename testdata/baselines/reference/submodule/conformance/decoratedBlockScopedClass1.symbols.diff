@@ -1,6 +1,6 @@
 --- old.decoratedBlockScopedClass1.symbols
 +++ new.decoratedBlockScopedClass1.symbols
-@@ -16,7 +16,7 @@
+@@= skipped -16, +16 lines =@@
  >Foo : Symbol(Foo, Decl(a.ts, 2, 1))
  
      public static func(): Foo {
@@ -9,7 +9,7 @@
  >Foo : Symbol(Foo, Decl(a.ts, 2, 1))
  
          return new Foo();
-@@ -24,7 +24,7 @@
+@@= skipped -8, +8 lines =@@
      }
  }
  Foo.func();

@@ -1,6 +1,6 @@
 --- old.nodeModulesSynchronousCallErrors(module=nodenext).symbols
 +++ new.nodeModulesSynchronousCallErrors(module=nodenext).symbols
-@@ -20,11 +20,9 @@
+@@= skipped -20, +20 lines =@@
  
      const mod3 = await import ("../index.js");
  >mod3 : Symbol(mod3, Decl(index.ts, 6, 9))
@@ -12,7 +12,7 @@
  
      h();
  >h : Symbol(h, Decl(index.ts, 1, 8))
-@@ -49,11 +47,9 @@
+@@= skipped -29, +27 lines =@@
  
      const mod3 = await import ("./index.js");
  >mod3 : Symbol(mod3, Decl(index.ts, 6, 9))

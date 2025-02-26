@@ -1,6 +1,6 @@
 --- old.useBeforeDeclaration_superClass.symbols
 +++ new.useBeforeDeclaration_superClass.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(useBeforeDeclaration_superClass.ts, 0, 0))
  
      x = 0;
@@ -9,7 +9,7 @@
  }
  class D extends C {
  >D : Symbol(D, Decl(useBeforeDeclaration_superClass.ts, 2, 1))
-@@ -13,13 +13,13 @@
+@@= skipped -8, +8 lines =@@
  
      // Not an error -- this will access the parent's initialized value for `x`, not the one on the child.
      old_x = this.x;
@@ -27,7 +27,7 @@
  }
  
  // Test that it works on chains of classes
-@@ -27,7 +27,7 @@
+@@= skipped -14, +14 lines =@@
  >X : Symbol(X, Decl(useBeforeDeclaration_superClass.ts, 7, 1))
  
      x = 0;
@@ -36,7 +36,7 @@
  }
  class Y extends X {}
  >Y : Symbol(Y, Decl(useBeforeDeclaration_superClass.ts, 12, 1))
-@@ -38,13 +38,13 @@
+@@= skipped -11, +11 lines =@@
  >Y : Symbol(Y, Decl(useBeforeDeclaration_superClass.ts, 12, 1))
  
      old_x = this.x;
@@ -54,7 +54,7 @@
  }
  
  // Interface doesn't count
-@@ -52,19 +52,19 @@
+@@= skipped -14, +14 lines =@@
  >I : Symbol(I, Decl(useBeforeDeclaration_superClass.ts, 17, 1))
  
      x: number;

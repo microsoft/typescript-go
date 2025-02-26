@@ -1,6 +1,6 @@
 --- old.prototypePropertyAssignmentMergeAcrossFiles.symbols
 +++ new.prototypePropertyAssignmentMergeAcrossFiles.symbols
-@@ -5,17 +5,11 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(prototypePropertyAssignmentMergeAcrossFiles.js, 0, 0))
  
      this.a = 1

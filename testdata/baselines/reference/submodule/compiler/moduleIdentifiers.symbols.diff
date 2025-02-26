@@ -1,6 +1,6 @@
 --- old.moduleIdentifiers.symbols
 +++ new.moduleIdentifiers.symbols
-@@ -6,8 +6,8 @@
+@@= skipped -6, +6 lines =@@
  
      interface P { x: number; y: number; }
  >P : Symbol(P, Decl(moduleIdentifiers.ts, 0, 10))
@@ -11,7 +11,7 @@
  
      export var a = 1
  >a : Symbol(a, Decl(moduleIdentifiers.ts, 2, 14))
-@@ -17,9 +17,9 @@
+@@= skipped -11, +11 lines =@@
  //var m: M = M;
  var x1 = M.a;
  >x1 : Symbol(x1, Decl(moduleIdentifiers.ts, 7, 3))

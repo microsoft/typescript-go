@@ -1,6 +1,6 @@
 --- old.unusedGetterInClass.symbols
 +++ new.unusedGetterInClass.symbols
-@@ -5,18 +5,18 @@
+@@= skipped -5, +5 lines =@@
  >Employee : Symbol(Employee, Decl(unusedGetterInClass.ts, 0, 0))
  
      private _fullName: string;

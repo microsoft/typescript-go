@@ -1,6 +1,6 @@
 --- old.moduleAliasAsFunctionArgument.symbols
 +++ new.moduleAliasAsFunctionArgument.symbols
-@@ -12,9 +12,7 @@
+@@= skipped -12, +12 lines =@@
  }
  
  a.x; // OK

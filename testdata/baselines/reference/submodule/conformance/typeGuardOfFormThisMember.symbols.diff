@@ -1,6 +1,6 @@
 --- old.typeGuardOfFormThisMember.symbols
 +++ new.typeGuardOfFormThisMember.symbols
-@@ -9,11 +9,11 @@
+@@= skipped -9, +9 lines =@@
  >FileSystemObject : Symbol(FileSystemObject, Decl(typeGuardOfFormThisMember.ts, 1, 16))
  
  		isFSO: this is FileSystemObject;
@@ -14,7 +14,7 @@
  >File : Symbol(File, Decl(typeGuardOfFormThisMember.ts, 15, 2))
  
  			return this instanceof File;
-@@ -21,13 +21,13 @@
+@@= skipped -12, +12 lines =@@
  >File : Symbol(File, Decl(typeGuardOfFormThisMember.ts, 15, 2))
  		}
  		set isFile(param) {
@@ -30,7 +30,7 @@
  >Directory : Symbol(Directory, Decl(typeGuardOfFormThisMember.ts, 19, 2))
  
  			return this instanceof Directory;
-@@ -35,11 +35,11 @@
+@@= skipped -14, +14 lines =@@
  >Directory : Symbol(Directory, Decl(typeGuardOfFormThisMember.ts, 19, 2))
  		}
  		isNetworked: this is (Networked & this);
@@ -44,7 +44,7 @@
  	}
  
  	export class File extends FileSystemObject {
-@@ -48,7 +48,7 @@
+@@= skipped -13, +13 lines =@@
  
  		constructor(path: string, public content: string) { super(path); }
  >path : Symbol(path, Decl(typeGuardOfFormThisMember.ts, 18, 14))
@@ -53,7 +53,7 @@
  >super : Symbol(FileSystemObject, Decl(typeGuardOfFormThisMember.ts, 1, 16))
  >path : Symbol(path, Decl(typeGuardOfFormThisMember.ts, 18, 14))
  	}
-@@ -57,14 +57,14 @@
+@@= skipped -9, +9 lines =@@
  >FileSystemObject : Symbol(FileSystemObject, Decl(typeGuardOfFormThisMember.ts, 1, 16))
  
  		children: FileSystemObject[];
@@ -70,7 +70,7 @@
  	}
  
  	let file: FileSystemObject = new File("foo/bar.txt", "foo");
-@@ -73,41 +73,41 @@
+@@= skipped -16, +16 lines =@@
  >File : Symbol(File, Decl(typeGuardOfFormThisMember.ts, 15, 2))
  
  	file.isNetworked = false;
@@ -126,7 +126,7 @@
  
  			file.host;
  >file : Symbol(file, Decl(typeGuardOfFormThisMember.ts, 27, 4))
-@@ -117,17 +117,17 @@
+@@= skipped -44, +44 lines =@@
  		}
  	}
  	else if (file.isDirectory) {
@@ -148,7 +148,7 @@
  
  		file.host;
  >file : Symbol(file, Decl(typeGuardOfFormThisMember.ts, 27, 4))
-@@ -140,7 +140,7 @@
+@@= skipped -23, +23 lines =@@
  >T : Symbol(T, Decl(typeGuardOfFormThisMember.ts, 46, 28))
  
  		lead(): void;
@@ -157,7 +157,7 @@
  	}
  	
  	interface GenericFollowerGuard<T> extends GenericGuard<T> {
-@@ -150,7 +150,7 @@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(typeGuardOfFormThisMember.ts, 50, 32))
  
  		follow(): void;
@@ -166,7 +166,7 @@
  	}
  	
  	interface GenericGuard<T> {
-@@ -158,16 +158,16 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(typeGuardOfFormThisMember.ts, 54, 24))
  
  		target: T;
@@ -186,7 +186,7 @@
  >GenericFollowerGuard : Symbol(GenericFollowerGuard, Decl(typeGuardOfFormThisMember.ts, 48, 2))
  >T : Symbol(T, Decl(typeGuardOfFormThisMember.ts, 54, 24))
  	}
-@@ -178,17 +178,17 @@
+@@= skipped -20, +20 lines =@@
  >File : Symbol(File, Decl(typeGuardOfFormThisMember.ts, 15, 2))
  
  	if (guard.isLeader) {
@@ -208,7 +208,7 @@
  
  		guard.follow();
  >guard : Symbol(guard, Decl(typeGuardOfFormThisMember.ts, 60, 4))
-@@ -198,7 +198,7 @@
+@@= skipped -20, +20 lines =@@
  >SpecificGuard : Symbol(SpecificGuard, Decl(typeGuardOfFormThisMember.ts, 66, 2))
  
  		isMoreSpecific: this is MoreSpecificGuard;
@@ -217,7 +217,7 @@
  >MoreSpecificGuard : Symbol(MoreSpecificGuard, Decl(typeGuardOfFormThisMember.ts, 70, 2))
  	}
  
-@@ -207,7 +207,7 @@
+@@= skipped -9, +9 lines =@@
  >SpecificGuard : Symbol(SpecificGuard, Decl(typeGuardOfFormThisMember.ts, 66, 2))
  
  		do(): void;
@@ -226,7 +226,7 @@
  	}
  
  	let general: SpecificGuard;
-@@ -215,9 +215,9 @@
+@@= skipped -8, +8 lines =@@
  >SpecificGuard : Symbol(SpecificGuard, Decl(typeGuardOfFormThisMember.ts, 66, 2))
  
  	if (general.isMoreSpecific) {

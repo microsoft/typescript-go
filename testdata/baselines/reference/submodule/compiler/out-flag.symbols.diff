@@ -1,6 +1,6 @@
 --- old.out-flag.symbols
 +++ new.out-flag.symbols
-@@ -9,13 +9,13 @@
+@@= skipped -9, +9 lines =@@
  {
      // my function comments
      public Count(): number

@@ -1,6 +1,6 @@
 --- old.globalThisPropertyAssignment.symbols
 +++ new.globalThisPropertyAssignment.symbols
-@@ -2,20 +2,16 @@
+@@= skipped -2, +2 lines =@@
  
  === globalThisPropertyAssignment.js ===
  this.x = 1

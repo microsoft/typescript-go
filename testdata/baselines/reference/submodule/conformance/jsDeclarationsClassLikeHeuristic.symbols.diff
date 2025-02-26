@@ -1,6 +1,6 @@
 --- old.jsDeclarationsClassLikeHeuristic.symbols
 +++ new.jsDeclarationsClassLikeHeuristic.symbols
-@@ -9,7 +9,5 @@
+@@= skipped -9, +9 lines =@@
  >A : Symbol(A, Decl(index.js, 1, 3))
  
  A.prototype.b = {};

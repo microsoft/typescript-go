@@ -1,6 +1,6 @@
 --- old.checkSwitchStatementIfCaseTypeIsString.symbols
 +++ new.checkSwitchStatementIfCaseTypeIsString.symbols
-@@ -9,14 +9,14 @@
+@@= skipped -9, +9 lines =@@
  >A : Symbol(A, Decl(checkSwitchStatementIfCaseTypeIsString.ts, 0, 35))
  
      doIt(x: Array<string>): void {

@@ -1,6 +1,6 @@
 --- old.numericIndexingResults.symbols
 +++ new.numericIndexingResults.symbols
-@@ -8,10 +8,10 @@
+@@= skipped -8, +8 lines =@@
  >x : Symbol(x, Decl(numericIndexingResults.ts, 1, 5))
  
      1 = '';
@@ -13,7 +13,7 @@
  }
  
  var c: C;
-@@ -21,12 +21,12 @@
+@@= skipped -13, +13 lines =@@
  var r1 = c['1'];
  >r1 : Symbol(r1, Decl(numericIndexingResults.ts, 7, 3), Decl(numericIndexingResults.ts, 21, 3), Decl(numericIndexingResults.ts, 34, 3))
  >c : Symbol(c, Decl(numericIndexingResults.ts, 6, 3))
@@ -28,7 +28,7 @@
  
  var r3 = c['3'];
  >r3 : Symbol(r3, Decl(numericIndexingResults.ts, 9, 3), Decl(numericIndexingResults.ts, 23, 3), Decl(numericIndexingResults.ts, 36, 3), Decl(numericIndexingResults.ts, 44, 3), Decl(numericIndexingResults.ts, 52, 3))
-@@ -35,12 +35,12 @@
+@@= skipped -14, +14 lines =@@
  var r4 = c[1];
  >r4 : Symbol(r4, Decl(numericIndexingResults.ts, 10, 3), Decl(numericIndexingResults.ts, 24, 3), Decl(numericIndexingResults.ts, 37, 3), Decl(numericIndexingResults.ts, 45, 3), Decl(numericIndexingResults.ts, 53, 3))
  >c : Symbol(c, Decl(numericIndexingResults.ts, 6, 3))
@@ -43,7 +43,7 @@
  
  var r6 = c[3];
  >r6 : Symbol(r6, Decl(numericIndexingResults.ts, 12, 3), Decl(numericIndexingResults.ts, 26, 3), Decl(numericIndexingResults.ts, 39, 3), Decl(numericIndexingResults.ts, 47, 3), Decl(numericIndexingResults.ts, 55, 3))
-@@ -53,10 +53,10 @@
+@@= skipped -18, +18 lines =@@
  >x : Symbol(x, Decl(numericIndexingResults.ts, 15, 5))
  
      1: string;
@@ -56,7 +56,7 @@
  }
  
  var i: I
-@@ -66,12 +66,12 @@
+@@= skipped -13, +13 lines =@@
  var r1 = i['1'];
  >r1 : Symbol(r1, Decl(numericIndexingResults.ts, 7, 3), Decl(numericIndexingResults.ts, 21, 3), Decl(numericIndexingResults.ts, 34, 3))
  >i : Symbol(i, Decl(numericIndexingResults.ts, 20, 3))
@@ -71,7 +71,7 @@
  
  var r3 = i['3'];
  >r3 : Symbol(r3, Decl(numericIndexingResults.ts, 9, 3), Decl(numericIndexingResults.ts, 23, 3), Decl(numericIndexingResults.ts, 36, 3), Decl(numericIndexingResults.ts, 44, 3), Decl(numericIndexingResults.ts, 52, 3))
-@@ -80,12 +80,12 @@
+@@= skipped -14, +14 lines =@@
  var r4 = i[1];
  >r4 : Symbol(r4, Decl(numericIndexingResults.ts, 10, 3), Decl(numericIndexingResults.ts, 24, 3), Decl(numericIndexingResults.ts, 37, 3), Decl(numericIndexingResults.ts, 45, 3), Decl(numericIndexingResults.ts, 53, 3))
  >i : Symbol(i, Decl(numericIndexingResults.ts, 20, 3))

@@ -1,6 +1,6 @@
 --- old.exportNamespace2.symbols
 +++ new.exportNamespace2.symbols
-@@ -20,7 +20,7 @@
+@@= skipped -20, +20 lines =@@
  >a : Symbol(a, Decl(d.ts, 0, 8))
  
  new a.A(); // Error

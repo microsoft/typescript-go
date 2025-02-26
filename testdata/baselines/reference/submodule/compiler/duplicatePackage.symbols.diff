@@ -1,6 +1,6 @@
 --- old.duplicatePackage.symbols
 +++ new.duplicatePackage.symbols
-@@ -29,10 +29,10 @@
+@@= skipped -29, +29 lines =@@
  
  === /node_modules/a/node_modules/x/index.d.ts ===
  export default class X {
@@ -13,7 +13,7 @@
  }
  
  === /node_modules/b/index.d.ts ===
-@@ -44,11 +44,9 @@
+@@= skipped -15, +15 lines =@@
  >X : Symbol(X, Decl(index.d.ts, 0, 6))
  
  === /node_modules/b/node_modules/x/index.d.ts ===
@@ -26,7 +26,7 @@
  === /node_modules/c/index.d.ts ===
  import X from "x";
  >X : Symbol(X, Decl(index.d.ts, 0, 6))
-@@ -59,9 +57,9 @@
+@@= skipped -15, +13 lines =@@
  
  === /node_modules/c/node_modules/x/index.d.ts ===
  export default class X {

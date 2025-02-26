@@ -1,6 +1,6 @@
 --- old.typeTagCircularReferenceOnConstructorFunction.symbols
 +++ new.typeTagCircularReferenceOnConstructorFunction.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
   * @type {MyClass}
   */
  function MyClass() { }

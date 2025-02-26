@@ -1,6 +1,6 @@
 --- old.dynamicNames.symbols
 +++ new.dynamicNames.symbols
-@@ -15,15 +15,15 @@
+@@= skipped -15, +15 lines =@@
  >T0 : Symbol(T0, Decl(module.ts, 2, 27))
  
      [c0]: number;
@@ -19,7 +19,7 @@
  >s0 : Symbol(s0, Decl(module.ts, 2, 12))
  }
  export declare class T1 implements T2 {
-@@ -31,15 +31,15 @@
+@@= skipped -16, +16 lines =@@
  >T2 : Symbol(T2, Decl(module.ts, 12, 1))
  
      [c0]: number;
@@ -38,7 +38,7 @@
  >s0 : Symbol(s0, Decl(module.ts, 2, 12))
  }
  export declare class T2 extends T1 {
-@@ -50,7 +50,7 @@
+@@= skipped -19, +19 lines =@@
  >T3 : Symbol(T3, Decl(module.ts, 14, 1))
  
      [c0]: number;
@@ -47,7 +47,7 @@
  >c0 : Symbol(c0, Decl(module.ts, 0, 12))
  
      [c1]: string;
-@@ -94,19 +94,19 @@
+@@= skipped -44, +44 lines =@@
  >T4 : Symbol(T4, Decl(main.ts, 6, 36))
  
          [N.c2]: number;
@@ -70,7 +70,7 @@
  >N.s1 : Symbol(s1, Decl(main.ts, 6, 16))
  >N : Symbol(N, Decl(main.ts, 1, 30))
  >s1 : Symbol(s1, Decl(main.ts, 6, 16))
-@@ -116,19 +116,19 @@
+@@= skipped -22, +22 lines =@@
  >T4 : Symbol(T4, Decl(main.ts, 6, 36))
  
          [N.c2]: number;
@@ -93,7 +93,7 @@
  >N.s1 : Symbol(s1, Decl(main.ts, 6, 16))
  >N : Symbol(N, Decl(main.ts, 1, 30))
  >s1 : Symbol(s1, Decl(main.ts, 6, 16))
-@@ -141,7 +141,7 @@
+@@= skipped -25, +25 lines =@@
  >T7 : Symbol(T7, Decl(main.ts, 19, 5))
  
          [N.c2]: number;
@@ -102,7 +102,7 @@
  >N.c2 : Symbol(c2, Decl(main.ts, 4, 16))
  >N : Symbol(N, Decl(main.ts, 1, 30))
  >c2 : Symbol(c2, Decl(main.ts, 4, 16))
-@@ -176,15 +176,15 @@
+@@= skipped -35, +35 lines =@@
  >T8 : Symbol(T8, Decl(main.ts, 29, 32))
  
      [c4]: number;
@@ -121,7 +121,7 @@
  >s2 : Symbol(s2, Decl(main.ts, 29, 12))
  }
  declare class T9 implements T8 {
-@@ -192,15 +192,15 @@
+@@= skipped -16, +16 lines =@@
  >T8 : Symbol(T8, Decl(main.ts, 29, 32))
  
      [c4]: number;
@@ -140,7 +140,7 @@
  >s2 : Symbol(s2, Decl(main.ts, 29, 12))
  }
  declare class T10 extends T9 {
-@@ -211,7 +211,7 @@
+@@= skipped -19, +19 lines =@@
  >T11 : Symbol(T11, Decl(main.ts, 42, 1))
  
      [c4]: number;
@@ -149,7 +149,7 @@
  >c4 : Symbol(c4, Decl(main.ts, 27, 12))
  
      [c5]: string;
-@@ -228,13 +228,13 @@
+@@= skipped -17, +17 lines =@@
  >T12 : Symbol(T12, Decl(main.ts, 47, 2))
  
      a: number;
@@ -166,7 +166,7 @@
  >s2 : Symbol(s2, Decl(main.ts, 29, 12))
  }
  declare class T13 implements T2 {
-@@ -242,13 +242,13 @@
+@@= skipped -14, +14 lines =@@
  >T2 : Symbol(T2, Decl(main.ts, 0, 28))
  
      a: number;
@@ -183,7 +183,7 @@
  >s2 : Symbol(s2, Decl(main.ts, 29, 12))
  }
  declare class T14 extends T13 {
-@@ -274,13 +274,13 @@
+@@= skipped -32, +32 lines =@@
  >C : Symbol(C, Decl(main.ts, 65, 2))
  
      static a: number;
@@ -200,7 +200,7 @@
  >s2 : Symbol(s2, Decl(main.ts, 29, 12))
  }
  
-@@ -323,22 +323,22 @@
+@@= skipped -49, +49 lines =@@
  let t4: N.T4;
  >t4 : Symbol(t4, Decl(main.ts, 81, 3))
  >N : Symbol(N, Decl(main.ts, 1, 30))
@@ -227,7 +227,7 @@
  
  let t8: T8;
  >t8 : Symbol(t8, Decl(main.ts, 85, 3))
-@@ -452,7 +452,7 @@
+@@= skipped -129, +129 lines =@@
  >o1 : Symbol(o1, Decl(main.ts, 101, 12))
  
      [c4]: 1,
@@ -236,7 +236,7 @@
  >c4 : Symbol(c4, Decl(main.ts, 27, 12))
  
      [c5]: "a",
-@@ -493,23 +493,23 @@
+@@= skipped -41, +41 lines =@@
  >RI : Symbol(RI, Decl(main.ts, 117, 4))
  
  rI.x
@@ -266,7 +266,7 @@
  }
  
  declare const rC: RC<"a">;
-@@ -517,22 +517,22 @@
+@@= skipped -24, +24 lines =@@
  >RC : Symbol(RC, Decl(main.ts, 124, 4))
  
  rC.x

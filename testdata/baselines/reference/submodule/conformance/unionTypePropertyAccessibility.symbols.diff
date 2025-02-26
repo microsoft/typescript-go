@@ -1,6 +1,6 @@
 --- old.unionTypePropertyAccessibility.symbols
 +++ new.unionTypePropertyAccessibility.symbols
-@@ -5,28 +5,28 @@
+@@= skipped -5, +5 lines =@@
  >Default : Symbol(Default, Decl(unionTypePropertyAccessibility.ts, 0, 0))
  
      member: string;
@@ -33,7 +33,7 @@
  }
  
  var v1: Default;
-@@ -107,24 +107,24 @@
+@@= skipped -102, +102 lines =@@
  >Protected : Symbol(Protected, Decl(unionTypePropertyAccessibility.ts, 6, 1))
  
  v1.member;

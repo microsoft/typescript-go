@@ -1,6 +1,6 @@
 --- old.isolatedModulesReExportType.symbols
 +++ new.isolatedModulesReExportType.symbols
-@@ -34,7 +34,7 @@
+@@= skipped -34, +34 lines =@@
  
  // Ok, type-only import indicates that the export can be elided.
  import type { T as TT } from "./exportT";

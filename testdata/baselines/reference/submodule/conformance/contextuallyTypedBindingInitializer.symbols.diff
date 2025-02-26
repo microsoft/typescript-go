@@ -1,6 +1,6 @@
 --- old.contextuallyTypedBindingInitializer.symbols
 +++ new.contextuallyTypedBindingInitializer.symbols
-@@ -5,25 +5,25 @@
+@@= skipped -5, +5 lines =@@
  >Show : Symbol(Show, Decl(contextuallyTypedBindingInitializer.ts, 0, 0))
  
      show: (x: number) => string;
@@ -31,7 +31,7 @@
  >Show : Symbol(Show, Decl(contextuallyTypedBindingInitializer.ts, 0, 0))
  
  function f3({ ["show"]: showRename = v => v.toString() }: Show) {}
-@@ -31,16 +31,16 @@
+@@= skipped -26, +26 lines =@@
  >"show" : Symbol(showRename, Decl(contextuallyTypedBindingInitializer.ts, 5, 13))
  >showRename : Symbol(showRename, Decl(contextuallyTypedBindingInitializer.ts, 5, 13))
  >v : Symbol(v, Decl(contextuallyTypedBindingInitializer.ts, 5, 36))
@@ -51,7 +51,7 @@
  >Show : Symbol(Show, Decl(contextuallyTypedBindingInitializer.ts, 0, 0))
  }
  function ff({ nested = { show: v => v.toString() } }: Nested) {}
-@@ -48,16 +48,16 @@
+@@= skipped -17, +17 lines =@@
  >nested : Symbol(nested, Decl(contextuallyTypedBindingInitializer.ts, 10, 13))
  >show : Symbol(show, Decl(contextuallyTypedBindingInitializer.ts, 10, 24))
  >v : Symbol(v, Decl(contextuallyTypedBindingInitializer.ts, 10, 30))
@@ -71,7 +71,7 @@
  }
  function g({ prop = ["hello", 1234] }: Tuples) {}
  >g : Symbol(g, Decl(contextuallyTypedBindingInitializer.ts, 14, 1))
-@@ -68,7 +68,7 @@
+@@= skipped -20, +20 lines =@@
  >StringUnion : Symbol(StringUnion, Decl(contextuallyTypedBindingInitializer.ts, 15, 49))
  
      prop: "foo" | "bar";
@@ -80,7 +80,7 @@
  }
  function h({ prop = "foo" }: StringUnion) {}
  >h : Symbol(h, Decl(contextuallyTypedBindingInitializer.ts, 19, 1))
-@@ -79,11 +79,11 @@
+@@= skipped -11, +11 lines =@@
  >StringIdentity : Symbol(StringIdentity, Decl(contextuallyTypedBindingInitializer.ts, 20, 44))
  
      stringIdentity(s: string): string;

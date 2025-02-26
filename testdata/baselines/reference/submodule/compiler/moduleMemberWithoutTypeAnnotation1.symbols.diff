@@ -1,6 +1,6 @@
 --- old.moduleMemberWithoutTypeAnnotation1.symbols
 +++ new.moduleMemberWithoutTypeAnnotation1.symbols
-@@ -9,7 +9,7 @@
+@@= skipped -9, +9 lines =@@
  >SyntaxCursor : Symbol(SyntaxCursor, Decl(moduleMemberWithoutTypeAnnotation1.ts, 0, 26))
  
          public currentNode(): SyntaxNode {
@@ -9,7 +9,7 @@
  >SyntaxNode : Symbol(SyntaxNode, Decl(moduleMemberWithoutTypeAnnotation1.ts, 24, 19))
  
              return null;
-@@ -30,14 +30,11 @@
+@@= skipped -21, +21 lines =@@
  >PositionedElement : Symbol(PositionedElement, Decl(moduleMemberWithoutTypeAnnotation1.ts, 10, 38))
  
          public childIndex(child: ISyntaxElement) {
@@ -25,7 +25,7 @@
          }
      }
  
-@@ -61,22 +58,22 @@
+@@= skipped -31, +28 lines =@@
  >SyntaxNode : Symbol(SyntaxNode, Decl(moduleMemberWithoutTypeAnnotation1.ts, 24, 19))
  
          public findToken(position: number, includeSkippedTokens: boolean = false): PositionedToken {
@@ -52,7 +52,7 @@
  >x : Symbol(x, Decl(moduleMemberWithoutTypeAnnotation1.ts, 30, 26))
  >y : Symbol(y, Decl(moduleMemberWithoutTypeAnnotation1.ts, 30, 28))
  >z : Symbol(z, Decl(moduleMemberWithoutTypeAnnotation1.ts, 30, 31))
-@@ -98,7 +95,7 @@
+@@= skipped -37, +37 lines =@@
  >ISyntaxToken : Symbol(ISyntaxToken, Decl(moduleMemberWithoutTypeAnnotation1.ts, 9, 40))
  
          private findTokenInternal(parent: PositionedElement, position: number, fullStart: number) {

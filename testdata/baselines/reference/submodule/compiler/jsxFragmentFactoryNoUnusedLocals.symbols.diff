@@ -1,6 +1,6 @@
 --- old.jsxFragmentFactoryNoUnusedLocals.symbols
 +++ new.jsxFragmentFactoryNoUnusedLocals.symbols
-@@ -24,18 +24,14 @@
+@@= skipped -24, +24 lines =@@
  
      return <>
          <p>{cnt}</p>

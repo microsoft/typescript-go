@@ -1,6 +1,6 @@
 --- old.exportNamespace4.symbols
 +++ new.exportNamespace4.symbols
-@@ -24,7 +24,7 @@
+@@= skipped -24, +24 lines =@@
  >ns : Symbol(ns, Decl(e.ts, 0, 8))
  
  ns.A;

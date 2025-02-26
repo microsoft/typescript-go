@@ -1,6 +1,6 @@
 --- old.stringIndexerAssignments2.symbols
 +++ new.stringIndexerAssignments2.symbols
-@@ -8,24 +8,24 @@
+@@= skipped -8, +8 lines =@@
  >index : Symbol(index, Decl(stringIndexerAssignments2.ts, 1, 5))
  
      one: string;

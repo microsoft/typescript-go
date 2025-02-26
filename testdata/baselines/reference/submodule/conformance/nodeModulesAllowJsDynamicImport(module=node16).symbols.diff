@@ -1,6 +1,6 @@
 --- old.nodeModulesAllowJsDynamicImport(module=node16).symbols
 +++ new.nodeModulesAllowJsDynamicImport(module=node16).symbols
-@@ -7,7 +7,6 @@
+@@= skipped -7, +7 lines =@@
  
      const { readFile } = await import("fs");
  >readFile : Symbol(readFile, Decl(index.js, 2, 11))
@@ -8,7 +8,7 @@
  }
  === index.js ===
  // esm format file
-@@ -16,7 +15,6 @@
+@@= skipped -9, +8 lines =@@
  
      const { readFile } = await import("fs");
  >readFile : Symbol(readFile, Decl(index.js, 2, 11))

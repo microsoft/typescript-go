@@ -1,6 +1,6 @@
 --- old.typeFromPropertyAssignment9.symbols
 +++ new.typeFromPropertyAssignment9.symbols
-@@ -2,96 +2,55 @@
+@@= skipped -2, +2 lines =@@
  
  === a.js ===
  var my = my || {};
@@ -110,7 +110,7 @@
  >first : Symbol(first, Decl(a.js, 20, 51))
  >second : Symbol(second, Decl(a.js, 20, 57))
  
-@@ -102,50 +61,26 @@
+@@= skipped -100, +59 lines =@@
  >second : Symbol(second, Decl(a.js, 20, 57))
  }
  my.predicate.type = class {

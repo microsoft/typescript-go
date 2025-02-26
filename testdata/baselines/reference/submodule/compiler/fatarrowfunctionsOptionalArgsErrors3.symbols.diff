@@ -1,6 +1,6 @@
 --- old.fatarrowfunctionsOptionalArgsErrors3.symbols
 +++ new.fatarrowfunctionsOptionalArgsErrors3.symbols
-@@ -2,5 +2,5 @@
+@@= skipped -2, +2 lines =@@
  
  === fatarrowfunctionsOptionalArgsErrors3.ts ===
  (...) => 105;

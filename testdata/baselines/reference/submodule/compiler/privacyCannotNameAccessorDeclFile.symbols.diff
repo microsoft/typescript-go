@@ -1,6 +1,6 @@
 --- old.privacyCannotNameAccessorDeclFile.symbols
 +++ new.privacyCannotNameAccessorDeclFile.symbols
-@@ -8,68 +8,68 @@
+@@= skipped -8, +8 lines =@@
  >publicClassWithWithPrivateGetAccessorTypes : Symbol(publicClassWithWithPrivateGetAccessorTypes, Decl(privacyCannotNameAccessorDeclFile_consumer.ts, 0, 74))
  
      static get myPublicStaticMethod() { // Error
@@ -93,7 +93,7 @@
      }
  }
  
-@@ -77,68 +77,68 @@
+@@= skipped -69, +69 lines =@@
  >privateClassWithWithPrivateGetAccessorTypes : Symbol(privateClassWithWithPrivateGetAccessorTypes, Decl(privacyCannotNameAccessorDeclFile_consumer.ts, 26, 1))
  
      static get myPublicStaticMethod() { 
@@ -186,7 +186,7 @@
      }
  }
  
-@@ -146,36 +146,36 @@
+@@= skipped -69, +69 lines =@@
  >publicClassWithPrivateModuleGetAccessorTypes : Symbol(publicClassWithPrivateModuleGetAccessorTypes, Decl(privacyCannotNameAccessorDeclFile_consumer.ts, 53, 1))
  
      static get myPublicStaticMethod() { // Error
@@ -235,7 +235,7 @@
      }
  }
  
-@@ -183,36 +183,36 @@
+@@= skipped -37, +37 lines =@@
  >privateClassWithPrivateModuleGetAccessorTypes : Symbol(privateClassWithPrivateModuleGetAccessorTypes, Decl(privacyCannotNameAccessorDeclFile_consumer.ts, 68, 1))
  
      static get myPublicStaticMethod() { 
@@ -284,7 +284,7 @@
      }
  }
  === privacyCannotNameAccessorDeclFile_GlobalWidgets.ts ===
-@@ -223,7 +223,7 @@
+@@= skipped -40, +40 lines =@@
  >Widget3 : Symbol(Widget3, Decl(privacyCannotNameAccessorDeclFile_GlobalWidgets.ts, 0, 32))
  
          name: string;
@@ -293,7 +293,7 @@
      }
      export function createWidget3(): Widget3;
  >createWidget3 : Symbol(createWidget3, Decl(privacyCannotNameAccessorDeclFile_GlobalWidgets.ts, 3, 5))
-@@ -236,7 +236,7 @@
+@@= skipped -13, +13 lines =@@
  >Widget4 : Symbol(Widget4, Decl(privacyCannotNameAccessorDeclFile_GlobalWidgets.ts, 6, 43))
  
              name: string;
@@ -302,7 +302,7 @@
          }
          function createWidget4(): Widget4;
  >createWidget4 : Symbol(createWidget4, Decl(privacyCannotNameAccessorDeclFile_GlobalWidgets.ts, 9, 9))
-@@ -249,7 +249,7 @@
+@@= skipped -13, +13 lines =@@
  >Widget1 : Symbol(Widget1, Decl(privacyCannotNameAccessorDeclFile_Widgets.ts, 0, 0))
  
      name = 'one';
@@ -311,7 +311,7 @@
  }
  export function createWidget1() {
  >createWidget1 : Symbol(createWidget1, Decl(privacyCannotNameAccessorDeclFile_Widgets.ts, 2, 1))
-@@ -265,7 +265,7 @@
+@@= skipped -16, +16 lines =@@
  >Widget2 : Symbol(Widget2, Decl(privacyCannotNameAccessorDeclFile_Widgets.ts, 7, 33))
  
          name = 'one';
@@ -320,7 +320,7 @@
      }
      export function createWidget2() {
  >createWidget2 : Symbol(createWidget2, Decl(privacyCannotNameAccessorDeclFile_Widgets.ts, 10, 5))
-@@ -287,36 +287,36 @@
+@@= skipped -22, +22 lines =@@
  >createExportedWidget1 : Symbol(createExportedWidget1, Decl(privacyCannotNameAccessorDeclFile_exporter.ts, 2, 43))
  
      return Widgets.createWidget1();

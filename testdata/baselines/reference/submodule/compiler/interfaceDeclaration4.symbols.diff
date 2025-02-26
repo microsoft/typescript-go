@@ -1,6 +1,6 @@
 --- old.interfaceDeclaration4.symbols
 +++ new.interfaceDeclaration4.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  
      export interface I1 { item: string; }
  >I1 : Symbol(I1, Decl(interfaceDeclaration4.ts, 2, 12))
@@ -9,7 +9,7 @@
  
      export class C1 { }
  >C1 : Symbol(C1, Decl(interfaceDeclaration4.ts, 3, 41))
-@@ -16,44 +16,44 @@
+@@= skipped -8, +8 lines =@@
  
  class C1 implements Foo.I1 {
  >C1 : Symbol(C1, Decl(interfaceDeclaration4.ts, 5, 1))
@@ -66,7 +66,7 @@
  }
  
  // Err - not implemented item
-@@ -62,7 +62,7 @@
+@@= skipped -46, +46 lines =@@
  >I4 : Symbol(I4, Decl(interfaceDeclaration4.ts, 19, 1))
  
      public token: string;
@@ -75,7 +75,7 @@
  }
  
  interface I5 extends Foo { }
-@@ -72,15 +72,15 @@
+@@= skipped -10, +10 lines =@@
  // Negative case
  interface I6 extends Foo.C1 { }
  >I6 : Symbol(I6, Decl(interfaceDeclaration4.ts, 30, 28))

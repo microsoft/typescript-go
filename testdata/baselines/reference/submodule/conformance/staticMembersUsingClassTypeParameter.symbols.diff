@@ -1,6 +1,6 @@
 --- old.staticMembersUsingClassTypeParameter.symbols
 +++ new.staticMembersUsingClassTypeParameter.symbols
-@@ -7,11 +7,11 @@
+@@= skipped -7, +7 lines =@@
  >T : Symbol(T, Decl(staticMembersUsingClassTypeParameter.ts, 1, 8))
  
      static x: T;
@@ -14,7 +14,7 @@
  >x : Symbol(x, Decl(staticMembersUsingClassTypeParameter.ts, 3, 13))
  >T : Symbol(T)
  }
-@@ -22,11 +22,11 @@
+@@= skipped -15, +15 lines =@@
  >U : Symbol(U, Decl(staticMembersUsingClassTypeParameter.ts, 6, 11))
  
      static x: U;
@@ -28,7 +28,7 @@
  >x : Symbol(x, Decl(staticMembersUsingClassTypeParameter.ts, 8, 13))
  >U : Symbol(U)
  }
-@@ -37,11 +37,11 @@
+@@= skipped -15, +15 lines =@@
  >Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
  
      static x: T;

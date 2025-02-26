@@ -1,6 +1,6 @@
 --- old.emitSkipsThisWithRestParameter.symbols
 +++ new.emitSkipsThisWithRestParameter.symbols
-@@ -13,13 +13,13 @@
+@@= skipped -13, +13 lines =@@
  >args : Symbol(args, Decl(emitSkipsThisWithRestParameter.ts, 1, 30))
  
          return fn.apply(this, [ this ].concat(args));

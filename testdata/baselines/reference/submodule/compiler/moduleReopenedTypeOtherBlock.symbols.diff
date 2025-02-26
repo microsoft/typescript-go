@@ -1,6 +1,6 @@
 --- old.moduleReopenedTypeOtherBlock.symbols
 +++ new.moduleReopenedTypeOtherBlock.symbols
-@@ -9,14 +9,14 @@
+@@= skipped -9, +9 lines =@@
  
      export interface I { n: number; }
  >I : Symbol(I, Decl(moduleReopenedTypeOtherBlock.ts, 1, 23))

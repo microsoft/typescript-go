@@ -1,6 +1,6 @@
 --- old.taggedTemplateStringsWithManyCallAndMemberExpressionsES6.symbols
 +++ new.taggedTemplateStringsWithManyCallAndMemberExpressionsES6.symbols
-@@ -6,12 +6,12 @@
+@@= skipped -6, +6 lines =@@
  
      (strs: TemplateStringsArray, ...subs: number[]): I;
  >strs : Symbol(strs, Decl(taggedTemplateStringsWithManyCallAndMemberExpressionsES6.ts, 1, 5))
@@ -15,7 +15,7 @@
  
          new (s: string): {
  >s : Symbol(s, Decl(taggedTemplateStringsWithManyCallAndMemberExpressionsES6.ts, 3, 13))
-@@ -30,8 +30,6 @@
+@@= skipped -24, +24 lines =@@
  
  var x = new new new f `abc${ 0 }def`.member("hello")(42) === true;
  >x : Symbol(x, Decl(taggedTemplateStringsWithManyCallAndMemberExpressionsES6.ts, 12, 3))

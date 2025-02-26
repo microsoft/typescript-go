@@ -1,6 +1,6 @@
 --- old.classPropInitializationInferenceWithElementAccess.symbols
 +++ new.classPropInitializationInferenceWithElementAccess.symbols
-@@ -6,38 +6,38 @@
+@@= skipped -6, +6 lines =@@
  >Cls : Symbol(Cls, Decl(classPropInitializationInferenceWithElementAccess.ts, 0, 0))
  
      x;

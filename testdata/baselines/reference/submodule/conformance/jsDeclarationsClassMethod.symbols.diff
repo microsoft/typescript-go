@@ -1,6 +1,6 @@
 --- old.jsDeclarationsClassMethod.symbols
 +++ new.jsDeclarationsClassMethod.symbols
-@@ -2,7 +2,7 @@
+@@= skipped -2, +2 lines =@@
  
  === jsDeclarationsClassMethod.js ===
  function C1() {
@@ -9,7 +9,7 @@
  
      /**
       * A comment prop
-@@ -11,9 +11,6 @@
+@@= skipped -9, +9 lines =@@
       * @returns {number}
       */
      this.prop = function (x, y) {
@@ -19,7 +19,7 @@
  >x : Symbol(x, Decl(jsDeclarationsClassMethod.js, 7, 26))
  >y : Symbol(y, Decl(jsDeclarationsClassMethod.js, 7, 28))
  
-@@ -30,10 +27,9 @@
+@@= skipped -19, +16 lines =@@
   * @returns {number}
   */
  C1.prototype.method = function (x, y) {
@@ -33,7 +33,7 @@
  >x : Symbol(x, Decl(jsDeclarationsClassMethod.js, 18, 32))
  >y : Symbol(y, Decl(jsDeclarationsClassMethod.js, 18, 34))
  
-@@ -49,9 +45,9 @@
+@@= skipped -19, +18 lines =@@
   * @returns {number}
   */
  C1.staticProp = function (x, y) {
@@ -46,7 +46,7 @@
  >x : Symbol(x, Decl(jsDeclarationsClassMethod.js, 28, 26))
  >y : Symbol(y, Decl(jsDeclarationsClassMethod.js, 28, 28))
  
-@@ -61,7 +57,7 @@
+@@= skipped -12, +12 lines =@@
  }
  
  class C2 {
@@ -55,7 +55,7 @@
  
      /**
       * A comment method1
-@@ -70,7 +66,7 @@
+@@= skipped -9, +9 lines =@@
       * @returns {number}
       */
      method1(x, y) {
@@ -64,7 +64,7 @@
  >x : Symbol(x, Decl(jsDeclarationsClassMethod.js, 39, 12))
  >y : Symbol(y, Decl(jsDeclarationsClassMethod.js, 39, 14))
  
-@@ -87,11 +83,9 @@
+@@= skipped -17, +17 lines =@@
   * @returns {number}
   */
  C2.prototype.method2 = function (x, y) {
@@ -79,7 +79,7 @@
  >x : Symbol(x, Decl(jsDeclarationsClassMethod.js, 50, 33))
  >y : Symbol(y, Decl(jsDeclarationsClassMethod.js, 50, 35))
  
-@@ -107,9 +101,7 @@
+@@= skipped -20, +18 lines =@@
   * @returns {number}
   */
  C2.staticProp = function (x, y) {

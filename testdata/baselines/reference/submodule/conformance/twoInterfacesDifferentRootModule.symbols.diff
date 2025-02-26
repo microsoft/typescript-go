@@ -1,6 +1,6 @@
 --- old.twoInterfacesDifferentRootModule.symbols
 +++ new.twoInterfacesDifferentRootModule.symbols
-@@ -10,7 +10,7 @@
+@@= skipped -10, +10 lines =@@
  >A : Symbol(A, Decl(twoInterfacesDifferentRootModule.ts, 2, 10))
  
          foo: string;
@@ -9,7 +9,7 @@
      }
  
      export interface B<T> {
-@@ -18,7 +18,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(twoInterfacesDifferentRootModule.ts, 7, 23))
  
          foo: T;
@@ -18,7 +18,7 @@
  >T : Symbol(T, Decl(twoInterfacesDifferentRootModule.ts, 7, 23))
      }
  }
-@@ -30,7 +30,7 @@
+@@= skipped -12, +12 lines =@@
  >A : Symbol(A, Decl(twoInterfacesDifferentRootModule.ts, 12, 11))
  
          bar: number;
@@ -27,7 +27,7 @@
      }
  
      var a: A;
-@@ -43,16 +43,16 @@
+@@= skipped -13, +13 lines =@@
  
      var r2 = a.bar; 
  >r2 : Symbol(r2, Decl(twoInterfacesDifferentRootModule.ts, 19, 7))
@@ -47,7 +47,7 @@
  >T : Symbol(T, Decl(twoInterfacesDifferentRootModule.ts, 21, 23))
      }
  
-@@ -66,7 +66,7 @@
+@@= skipped -23, +23 lines =@@
  
      var r4 = b.bar; 
  >r4 : Symbol(r4, Decl(twoInterfacesDifferentRootModule.ts, 27, 7))

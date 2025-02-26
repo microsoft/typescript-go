@@ -1,6 +1,6 @@
 --- old.thisInFunctionCallJs.symbols
 +++ new.thisInFunctionCallJs.symbols
-@@ -7,20 +7,14 @@
+@@= skipped -7, +7 lines =@@
      constructor() {
          /** @type {number[]} */
          this.data = [1, 2, 3];
@@ -22,7 +22,7 @@
  >d : Symbol(d, Decl(a.js, 7, 33))
  
              return d === this.data.length
-@@ -30,63 +24,40 @@
+@@= skipped -23, +17 lines =@@
      }
  
      forEacherRaw() {
@@ -89,7 +89,7 @@
  
          /** @this {Test} */
          function (d) {
-@@ -94,11 +65,6 @@
+@@= skipped -64, +41 lines =@@
  
              return d === this.data.length
  >d : Symbol(d, Decl(a.js, 29, 18))

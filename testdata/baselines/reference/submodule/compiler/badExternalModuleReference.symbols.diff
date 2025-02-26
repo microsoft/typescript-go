@@ -1,6 +1,6 @@
 --- old.badExternalModuleReference.symbols
 +++ new.badExternalModuleReference.symbols
-@@ -10,11 +10,11 @@
+@@= skipped -10, +10 lines =@@
      test1: a1.connectModule;
  >test1 : Symbol(test1, Decl(badExternalModuleReference.ts, 1, 23))
  >a1 : Symbol(a1, Decl(badExternalModuleReference.ts, 0, 0))

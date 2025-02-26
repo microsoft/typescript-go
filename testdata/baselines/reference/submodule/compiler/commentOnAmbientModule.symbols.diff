@@ -1,6 +1,6 @@
 --- old.commentOnAmbientModule.symbols
 +++ new.commentOnAmbientModule.symbols
-@@ -7,12 +7,12 @@
+@@= skipped -7, +7 lines =@@
  
      class foobar extends D.bar {
  >foobar : Symbol(foobar, Decl(b.ts, 1, 18))

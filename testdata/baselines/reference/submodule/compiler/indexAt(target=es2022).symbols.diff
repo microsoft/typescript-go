@@ -1,6 +1,6 @@
 --- old.indexAt(target=es2022).symbols
 +++ new.indexAt(target=es2022).symbols
-@@ -2,65 +2,65 @@
+@@= skipped -2, +2 lines =@@
  
  === indexAt.ts ===
  [0].at(0);

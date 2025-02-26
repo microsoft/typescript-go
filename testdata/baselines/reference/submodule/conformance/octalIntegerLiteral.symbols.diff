@@ -1,6 +1,6 @@
 --- old.octalIntegerLiteral.symbols
 +++ new.octalIntegerLiteral.symbols
-@@ -59,14 +59,13 @@
+@@= skipped -59, +59 lines =@@
  
  obj1["0o45436"];   // any
  >obj1 : Symbol(obj1, Decl(octalIntegerLiteral.ts, 5, 3))
@@ -16,7 +16,7 @@
  
  obj1["a"];         // number
  >obj1 : Symbol(obj1, Decl(octalIntegerLiteral.ts, 5, 3))
-@@ -82,7 +81,6 @@
+@@= skipped -23, +22 lines =@@
  
  obj1["Infinity"];  // boolean
  >obj1 : Symbol(obj1, Decl(octalIntegerLiteral.ts, 5, 3))
@@ -24,7 +24,7 @@
  
  obj2[0O45436];    // string
  >obj2 : Symbol(obj2, Decl(octalIntegerLiteral.ts, 13, 3))
-@@ -93,11 +91,9 @@
+@@= skipped -11, +10 lines =@@
  
  obj2["19230"];    // string
  >obj2 : Symbol(obj2, Decl(octalIntegerLiteral.ts, 13, 3))
@@ -36,7 +36,7 @@
  
  obj2["a"];        // number
  >obj2 : Symbol(obj2, Decl(octalIntegerLiteral.ts, 13, 3))
-@@ -113,11 +109,9 @@
+@@= skipped -20, +18 lines =@@
  
  obj2[5.462437423415177e+244];    // boolean
  >obj2 : Symbol(obj2, Decl(octalIntegerLiteral.ts, 13, 3))

@@ -1,6 +1,6 @@
 --- old.derivedClassParameterProperties.symbols
 +++ new.derivedClassParameterProperties.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >Base : Symbol(Base, Decl(derivedClassParameterProperties.ts, 0, 0))
  
      x: string;
@@ -9,7 +9,7 @@
  }
  
  class Derived extends Base {
-@@ -30,7 +30,7 @@
+@@= skipped -23, +23 lines =@@
  >Base : Symbol(Base, Decl(derivedClassParameterProperties.ts, 0, 0))
  
      constructor(public y: string) {
@@ -18,7 +18,7 @@
  
          var a = 1;
  >a : Symbol(a, Decl(derivedClassParameterProperties.ts, 15, 11))
-@@ -45,7 +45,7 @@
+@@= skipped -15, +15 lines =@@
  >Base : Symbol(Base, Decl(derivedClassParameterProperties.ts, 0, 0))
  
      constructor(public y: string) {
@@ -27,7 +27,7 @@
  
          super();
  >super : Symbol(Base, Decl(derivedClassParameterProperties.ts, 0, 0))
-@@ -60,7 +60,7 @@
+@@= skipped -15, +15 lines =@@
  >Base : Symbol(Base, Decl(derivedClassParameterProperties.ts, 0, 0))
  
      a = 1;
@@ -36,7 +36,7 @@
  
      constructor(y: string) {
  >y : Symbol(y, Decl(derivedClassParameterProperties.ts, 29, 16))
-@@ -78,7 +78,7 @@
+@@= skipped -18, +18 lines =@@
  >Base : Symbol(Base, Decl(derivedClassParameterProperties.ts, 0, 0))
  
      a = 1;
@@ -45,7 +45,7 @@
  
      constructor(y: string) {
  >y : Symbol(y, Decl(derivedClassParameterProperties.ts, 37, 16))
-@@ -96,15 +96,15 @@
+@@= skipped -18, +18 lines =@@
  >Base : Symbol(Base, Decl(derivedClassParameterProperties.ts, 0, 0))
  
      a: number;
@@ -64,7 +64,7 @@
  
          var b = 2;
  >b : Symbol(b, Decl(derivedClassParameterProperties.ts, 47, 11))
-@@ -119,23 +119,23 @@
+@@= skipped -23, +23 lines =@@
  >Base : Symbol(Base, Decl(derivedClassParameterProperties.ts, 0, 0))
  
      a = 1;
@@ -94,7 +94,7 @@
  
          super();
  >super : Symbol(Base, Decl(derivedClassParameterProperties.ts, 0, 0))
-@@ -147,10 +147,10 @@
+@@= skipped -28, +28 lines =@@
  >Base : Symbol(Base, Decl(derivedClassParameterProperties.ts, 0, 0))
  
      a = 1;
@@ -107,7 +107,7 @@
  
      constructor(y: string) {
  >y : Symbol(y, Decl(derivedClassParameterProperties.ts, 65, 16))
-@@ -159,14 +159,14 @@
+@@= skipped -12, +12 lines =@@
  >super : Symbol(Base, Decl(derivedClassParameterProperties.ts, 0, 0))
  
          this.a = 3;
@@ -126,7 +126,7 @@
      }
  }
  
-@@ -174,7 +174,7 @@
+@@= skipped -15, +15 lines =@@
  class Base2<T> { x: T; }
  >Base2 : Symbol(Base2, Decl(derivedClassParameterProperties.ts, 70, 1))
  >T : Symbol(T, Decl(derivedClassParameterProperties.ts, 73, 12))
@@ -135,7 +135,7 @@
  >T : Symbol(T, Decl(derivedClassParameterProperties.ts, 73, 12))
  
  class Derived9<T> extends Base2<T> {
-@@ -184,23 +184,23 @@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(derivedClassParameterProperties.ts, 75, 15))
  
      a = 1;
@@ -165,7 +165,7 @@
  
          super();
  >super : Symbol(Base2, Decl(derivedClassParameterProperties.ts, 70, 1))
-@@ -214,10 +214,10 @@
+@@= skipped -30, +30 lines =@@
  >T : Symbol(T, Decl(derivedClassParameterProperties.ts, 85, 16))
  
      a = 1;
@@ -178,7 +178,7 @@
  
      constructor(y: string) {
  >y : Symbol(y, Decl(derivedClassParameterProperties.ts, 88, 16))
-@@ -226,13 +226,13 @@
+@@= skipped -12, +12 lines =@@
  >super : Symbol(Base2, Decl(derivedClassParameterProperties.ts, 70, 1))
  
          this.a = 3;

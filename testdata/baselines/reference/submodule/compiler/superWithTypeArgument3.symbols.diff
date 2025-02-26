@@ -1,6 +1,6 @@
 --- old.superWithTypeArgument3.symbols
 +++ new.superWithTypeArgument3.symbols
-@@ -6,11 +6,11 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(superWithTypeArgument3.ts, 0, 8))
  
      foo: T;
@@ -14,7 +14,7 @@
  >U : Symbol(U, Decl(superWithTypeArgument3.ts, 2, 8))
  >x : Symbol(x, Decl(superWithTypeArgument3.ts, 2, 11))
  >U : Symbol(U, Decl(superWithTypeArgument3.ts, 2, 8))
-@@ -28,12 +28,12 @@
+@@= skipped -22, +22 lines =@@
  >T : Symbol(T, Decl(superWithTypeArgument3.ts, 5, 8))
      }
      bar() {

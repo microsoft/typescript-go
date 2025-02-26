@@ -1,6 +1,6 @@
 --- old.typeGuardsInClassMethods.symbols
 +++ new.typeGuardsInClassMethods.symbols
-@@ -21,9 +21,9 @@
+@@= skipped -21, +21 lines =@@
          num = typeof var1 === "string" && var1.length; // string
  >num : Symbol(num, Decl(typeGuardsInClassMethods.ts, 4, 3))
  >var1 : Symbol(var1, Decl(typeGuardsInClassMethods.ts, 5, 3))
@@ -12,7 +12,7 @@
  
          // variables in function declaration
          var var2: string | number;
-@@ -32,30 +32,30 @@
+@@= skipped -11, +11 lines =@@
          num = typeof var2 === "string" && var2.length; // string
  >num : Symbol(num, Decl(typeGuardsInClassMethods.ts, 4, 3))
  >var2 : Symbol(var2, Decl(typeGuardsInClassMethods.ts, 12, 11))
@@ -50,7 +50,7 @@
  
          // variables in function declaration
          var var2: string | number;
-@@ -64,30 +64,30 @@
+@@= skipped -32, +32 lines =@@
          num = typeof var2 === "string" && var2.length; // string
  >num : Symbol(num, Decl(typeGuardsInClassMethods.ts, 4, 3))
  >var2 : Symbol(var2, Decl(typeGuardsInClassMethods.ts, 24, 11))
@@ -88,7 +88,7 @@
  
          // variables in function declaration
          var var2: string | number;
-@@ -96,30 +96,30 @@
+@@= skipped -32, +32 lines =@@
          num = typeof var2 === "string" && var2.length; // string
  >num : Symbol(num, Decl(typeGuardsInClassMethods.ts, 4, 3))
  >var2 : Symbol(var2, Decl(typeGuardsInClassMethods.ts, 36, 11))
@@ -126,7 +126,7 @@
  
          // variables in function declaration
          var var2: string | number;
-@@ -128,30 +128,30 @@
+@@= skipped -32, +32 lines =@@
          num = typeof var2 === "string" && var2.length; // string
  >num : Symbol(num, Decl(typeGuardsInClassMethods.ts, 4, 3))
  >var2 : Symbol(var2, Decl(typeGuardsInClassMethods.ts, 48, 11))
@@ -164,7 +164,7 @@
  
          // variables in function declaration
          var var2: string | number;
-@@ -160,17 +160,17 @@
+@@= skipped -32, +32 lines =@@
          num = typeof var2 === "string" && var2.length; // string
  >num : Symbol(num, Decl(typeGuardsInClassMethods.ts, 4, 3))
  >var2 : Symbol(var2, Decl(typeGuardsInClassMethods.ts, 60, 11))

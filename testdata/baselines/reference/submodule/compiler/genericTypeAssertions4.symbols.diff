@@ -1,6 +1,6 @@
 --- old.genericTypeAssertions4.symbols
 +++ new.genericTypeAssertions4.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(genericTypeAssertions4.ts, 0, 0))
  
      foo() { return ""; }
@@ -9,7 +9,7 @@
  }
  
  class B extends A {
-@@ -13,7 +13,7 @@
+@@= skipped -8, +8 lines =@@
  >A : Symbol(A, Decl(genericTypeAssertions4.ts, 0, 0))
  
      bar() { return 1; }
@@ -18,7 +18,7 @@
  }
  
  class C extends A {
-@@ -21,7 +21,7 @@
+@@= skipped -8, +8 lines =@@
  >A : Symbol(A, Decl(genericTypeAssertions4.ts, 0, 0))
  
      baz() { return 1; }

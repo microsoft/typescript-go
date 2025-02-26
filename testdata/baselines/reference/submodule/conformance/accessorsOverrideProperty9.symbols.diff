@@ -1,6 +1,6 @@
 --- old.accessorsOverrideProperty9.symbols
 +++ new.accessorsOverrideProperty9.symbols
-@@ -30,7 +30,7 @@
+@@= skipped -30, +30 lines =@@
  >ApiItem : Symbol(ApiItem, Decl(accessorsOverrideProperty9.ts, 6, 91))
  
    public get members(): ReadonlyArray<ApiItem> {
@@ -9,7 +9,7 @@
  >ReadonlyArray : Symbol(ReadonlyArray, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2016.array.include.d.ts, --, --))
  >ApiItem : Symbol(ApiItem, Decl(accessorsOverrideProperty9.ts, 6, 91))
  
-@@ -50,7 +50,7 @@
+@@= skipped -20, +20 lines =@@
  >ApiItem : Symbol(ApiItem, Decl(accessorsOverrideProperty9.ts, 6, 91))
  
    readonly members: ReadonlyArray<ApiItem>;
@@ -18,7 +18,7 @@
  >ReadonlyArray : Symbol(ReadonlyArray, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2016.array.include.d.ts, --, --))
  >ApiItem : Symbol(ApiItem, Decl(accessorsOverrideProperty9.ts, 6, 91))
  }
-@@ -83,7 +83,7 @@
+@@= skipped -33, +33 lines =@@
      }
  
      public get members(): ReadonlyArray<ApiItem> {
@@ -27,7 +27,7 @@
  >ReadonlyArray : Symbol(ReadonlyArray, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2016.array.include.d.ts, --, --))
  >ApiItem : Symbol(ApiItem, Decl(accessorsOverrideProperty9.ts, 6, 91))
  
-@@ -103,7 +103,7 @@
+@@= skipped -20, +20 lines =@@
  
    // This worked prior to TypeScript 4.0:
    public get members(): ReadonlyArray<ApiEnumMember> {

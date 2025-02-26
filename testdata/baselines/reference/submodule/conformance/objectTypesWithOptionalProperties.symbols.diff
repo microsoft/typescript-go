@@ -1,6 +1,6 @@
 --- old.objectTypesWithOptionalProperties.symbols
 +++ new.objectTypesWithOptionalProperties.symbols
-@@ -14,14 +14,14 @@
+@@= skipped -14, +14 lines =@@
  >I : Symbol(I, Decl(objectTypesWithOptionalProperties.ts, 4, 1))
  
      x?: number; // ok
@@ -17,7 +17,7 @@
  }
  
  interface I2<T> {
-@@ -29,7 +29,7 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(objectTypesWithOptionalProperties.ts, 14, 13))
  
      x?: T; // ok
@@ -26,7 +26,7 @@
  >T : Symbol(T, Decl(objectTypesWithOptionalProperties.ts, 14, 13))
  }
  
-@@ -38,7 +38,7 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(objectTypesWithOptionalProperties.ts, 18, 9))
  
      x?: T; // ok

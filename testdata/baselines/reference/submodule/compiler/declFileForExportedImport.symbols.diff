@@ -1,6 +1,6 @@
 --- old.declFileForExportedImport.symbols
 +++ new.declFileForExportedImport.symbols
-@@ -7,9 +7,9 @@
+@@= skipped -7, +7 lines =@@
  
  var y = a.x;
  >y : Symbol(y, Decl(declFileForExportedImport_1.ts, 2, 3))
@@ -12,7 +12,7 @@
  
  export import b = a;
  >b : Symbol(b, Decl(declFileForExportedImport_1.ts, 2, 12))
-@@ -17,9 +17,9 @@
+@@= skipped -10, +10 lines =@@
  
  var z = b.x;
  >z : Symbol(z, Decl(declFileForExportedImport_1.ts, 5, 3))

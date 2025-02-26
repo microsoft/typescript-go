@@ -1,6 +1,6 @@
 --- old.privateNameConstructorSignature.symbols
 +++ new.privateNameConstructorSignature.symbols
-@@ -5,19 +5,19 @@
+@@= skipped -5, +5 lines =@@
  >D : Symbol(D, Decl(privateNameConstructorSignature.ts, 0, 0))
  
      x: number;
@@ -24,7 +24,7 @@
  >C : Symbol(C, Decl(privateNameConstructorSignature.ts, 2, 1), Decl(privateNameConstructorSignature.ts, 11, 1))
  
          const y = new C();
-@@ -29,9 +29,9 @@
+@@= skipped -24, +24 lines =@@
  >y : Symbol(y, Decl(privateNameConstructorSignature.ts, 7, 13))
  
          z.x = 123;

@@ -1,6 +1,6 @@
 --- old.checkJsxIntersectionElementPropsType.symbols
 +++ new.checkJsxIntersectionElementPropsType.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  
      interface ElementAttributesProperty { props: {}; }
  >ElementAttributesProperty : Symbol(ElementAttributesProperty, Decl(checkJsxIntersectionElementPropsType.tsx, 0, 23))
@@ -9,7 +9,7 @@
  }
  
  declare class Component<P> {
-@@ -19,7 +19,7 @@
+@@= skipped -13, +13 lines =@@
  >P : Symbol(P, Decl(checkJsxIntersectionElementPropsType.tsx, 4, 24))
  
    readonly props: Readonly<P>;

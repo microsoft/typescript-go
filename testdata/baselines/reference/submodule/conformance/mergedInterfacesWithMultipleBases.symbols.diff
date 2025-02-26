@@ -1,6 +1,6 @@
 --- old.mergedInterfacesWithMultipleBases.symbols
 +++ new.mergedInterfacesWithMultipleBases.symbols
-@@ -8,14 +8,14 @@
+@@= skipped -8, +8 lines =@@
  >C : Symbol(C, Decl(mergedInterfacesWithMultipleBases.ts, 0, 0))
  
      a: number;
@@ -17,7 +17,7 @@
  }
  
  interface A extends C {
-@@ -23,7 +23,7 @@
+@@= skipped -15, +15 lines =@@
  >C : Symbol(C, Decl(mergedInterfacesWithMultipleBases.ts, 0, 0))
  
      y: string;
@@ -26,7 +26,7 @@
  }
  
  interface A extends C2 {
-@@ -31,7 +31,7 @@
+@@= skipped -8, +8 lines =@@
  >C2 : Symbol(C2, Decl(mergedInterfacesWithMultipleBases.ts, 5, 1))
  
      z: string;
@@ -35,7 +35,7 @@
  }
  
  class D implements A {
-@@ -39,16 +39,16 @@
+@@= skipped -8, +8 lines =@@
  >A : Symbol(A, Decl(mergedInterfacesWithMultipleBases.ts, 9, 1), Decl(mergedInterfacesWithMultipleBases.ts, 13, 1))
  
      a: number;
@@ -56,7 +56,7 @@
  }
  
  var a: A;
-@@ -57,9 +57,9 @@
+@@= skipped -18, +18 lines =@@
  
  var r = a.a;
  >r : Symbol(r, Decl(mergedInterfacesWithMultipleBases.ts, 27, 3))
@@ -68,7 +68,7 @@
  
  // generic interfaces in a module
  module M {
-@@ -70,7 +70,7 @@
+@@= skipped -13, +13 lines =@@
  >T : Symbol(T, Decl(mergedInterfacesWithMultipleBases.ts, 31, 12))
  
          a: T;
@@ -77,7 +77,7 @@
  >T : Symbol(T, Decl(mergedInterfacesWithMultipleBases.ts, 31, 12))
      }
  
-@@ -79,7 +79,7 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(mergedInterfacesWithMultipleBases.ts, 35, 13))
  
          b: T;
@@ -86,7 +86,7 @@
  >T : Symbol(T, Decl(mergedInterfacesWithMultipleBases.ts, 35, 13))
      }
  
-@@ -90,7 +90,7 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(mergedInterfacesWithMultipleBases.ts, 39, 16), Decl(mergedInterfacesWithMultipleBases.ts, 43, 16))
  
          y: T;
@@ -95,7 +95,7 @@
  >T : Symbol(T, Decl(mergedInterfacesWithMultipleBases.ts, 39, 16), Decl(mergedInterfacesWithMultipleBases.ts, 43, 16))
      }
  
-@@ -100,7 +100,7 @@
+@@= skipped -10, +10 lines =@@
  >C2 : Symbol(C2, Decl(mergedInterfacesWithMultipleBases.ts, 33, 5))
  
          z: T;
@@ -104,7 +104,7 @@
  >T : Symbol(T, Decl(mergedInterfacesWithMultipleBases.ts, 39, 16), Decl(mergedInterfacesWithMultipleBases.ts, 43, 16))
      }
  
-@@ -109,15 +109,15 @@
+@@= skipped -9, +9 lines =@@
  >A : Symbol(A, Decl(mergedInterfacesWithMultipleBases.ts, 37, 5), Decl(mergedInterfacesWithMultipleBases.ts, 41, 5))
  
          a: boolean;

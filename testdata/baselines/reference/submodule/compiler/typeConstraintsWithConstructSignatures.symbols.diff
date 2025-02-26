@@ -1,6 +1,6 @@
 --- old.typeConstraintsWithConstructSignatures.symbols
 +++ new.typeConstraintsWithConstructSignatures.symbols
-@@ -13,25 +13,25 @@
+@@= skipped -13, +13 lines =@@
  >Constructable : Symbol(Constructable, Decl(typeConstraintsWithConstructSignatures.ts, 0, 0))
  
      constructor(public data: T, public data2: Constructable) { }

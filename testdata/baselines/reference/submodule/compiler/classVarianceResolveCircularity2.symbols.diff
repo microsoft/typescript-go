@@ -1,6 +1,6 @@
 --- old.classVarianceResolveCircularity2.symbols
 +++ new.classVarianceResolveCircularity2.symbols
-@@ -10,27 +10,27 @@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(classVarianceResolveCircularity2.ts, 4, 10))
  
      num!: number;
@@ -39,7 +39,7 @@
  }
  declare function callme(x: Foo<any>): Foo<any>;
  >callme : Symbol(callme, Decl(classVarianceResolveCircularity2.ts, 8, 1), Decl(classVarianceResolveCircularity2.ts, 9, 47))
-@@ -47,7 +47,7 @@
+@@= skipped -37, +37 lines =@@
  >T : Symbol(T, Decl(classVarianceResolveCircularity2.ts, 12, 10))
  
      bar!: Bar<T>;
@@ -48,7 +48,7 @@
  >Bar : Symbol(Bar, Decl(classVarianceResolveCircularity2.ts, 2, 10))
  >T : Symbol(T, Decl(classVarianceResolveCircularity2.ts, 12, 10))
  
-@@ -57,9 +57,9 @@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(classVarianceResolveCircularity2.ts, 12, 10))
  
          this.bar = bar;

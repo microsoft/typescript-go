@@ -1,6 +1,6 @@
 --- old.jsDeclarationsTypedefPropertyAndExportAssignment.symbols
 +++ new.jsDeclarationsTypedefPropertyAndExportAssignment.symbols
-@@ -4,8 +4,6 @@
+@@= skipped -4, +4 lines =@@
  const {taskGroups, taskNameToGroup} = require('./module.js');
  >taskGroups : Symbol(taskGroups, Decl(index.js, 0, 7))
  >taskNameToGroup : Symbol(taskNameToGroup, Decl(index.js, 0, 18))
@@ -9,7 +9,7 @@
  
  /** @typedef {import('./module.js').TaskGroup} TaskGroup */
  
-@@ -30,62 +28,5 @@
+@@= skipped -26, +24 lines =@@
  }
  
  module.exports = MainThreadTasks;

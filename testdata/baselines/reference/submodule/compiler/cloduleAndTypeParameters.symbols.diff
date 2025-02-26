@@ -1,6 +1,6 @@
 --- old.cloduleAndTypeParameters.symbols
 +++ new.cloduleAndTypeParameters.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(cloduleAndTypeParameters.ts, 0, 0), Decl(cloduleAndTypeParameters.ts, 3, 1))
  >T : Symbol(T, Decl(cloduleAndTypeParameters.ts, 0, 10))
  >Foo : Symbol(Foo, Decl(cloduleAndTypeParameters.ts, 0, 0), Decl(cloduleAndTypeParameters.ts, 3, 1))
@@ -9,7 +9,7 @@
  
    constructor() {
    }
-@@ -18,7 +18,7 @@
+@@= skipped -13, +13 lines =@@
  >Bar : Symbol(Bar, Decl(cloduleAndTypeParameters.ts, 5, 12))
  
      bar(): void;

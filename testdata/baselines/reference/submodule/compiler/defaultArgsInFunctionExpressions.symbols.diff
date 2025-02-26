@@ -1,6 +1,6 @@
 --- old.defaultArgsInFunctionExpressions.symbols
 +++ new.defaultArgsInFunctionExpressions.symbols
-@@ -85,7 +85,7 @@
+@@= skipped -85, +85 lines =@@
  >t : Symbol(t, Decl(defaultArgsInFunctionExpressions.ts, 28, 10))
  
  f7().x;

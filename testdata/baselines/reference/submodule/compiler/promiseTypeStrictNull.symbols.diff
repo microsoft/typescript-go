@@ -1,6 +1,6 @@
 --- old.promiseTypeStrictNull.symbols
 +++ new.promiseTypeStrictNull.symbols
-@@ -3,7 +3,7 @@
+@@= skipped -3, +3 lines =@@
  === promiseTypeStrictNull.ts ===
  declare var p: Promise<boolean>;
  >p : Symbol(p, Decl(promiseTypeStrictNull.ts, 0, 11))
@@ -9,7 +9,7 @@
  
  declare var x: any;
  >x : Symbol(x, Decl(promiseTypeStrictNull.ts, 1, 11))
-@@ -75,7 +75,6 @@
+@@= skipped -72, +72 lines =@@
  >e : Symbol(e, Decl(promiseTypeStrictNull.ts, 37, 11))
  
          throw Error();
@@ -17,7 +17,7 @@
      }
  }
  
-@@ -93,10 +92,6 @@
+@@= skipped -18, +17 lines =@@
  >e : Symbol(e, Decl(promiseTypeStrictNull.ts, 47, 11))
  
          return Promise.reject(Error());
@@ -28,7 +28,7 @@
      }
  }
  
-@@ -133,7 +128,6 @@
+@@= skipped -40, +36 lines =@@
  >e : Symbol(e, Decl(promiseTypeStrictNull.ts, 67, 11))
  
          throw Error();
@@ -36,7 +36,7 @@
      }
  }
  
-@@ -152,10 +146,6 @@
+@@= skipped -19, +18 lines =@@
  >e : Symbol(e, Decl(promiseTypeStrictNull.ts, 77, 11))
  
          return Promise.reject(Error());
@@ -47,7 +47,7 @@
      }
  }
  
-@@ -163,931 +153,555 @@
+@@= skipped -11, +7 lines =@@
  
  const p00 = p.catch();
  >p00 : Symbol(p00, Decl(promiseTypeStrictNull.ts, 84, 5))

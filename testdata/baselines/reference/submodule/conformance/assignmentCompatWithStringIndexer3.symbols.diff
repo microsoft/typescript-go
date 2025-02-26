@@ -1,6 +1,6 @@
 --- old.assignmentCompatWithStringIndexer3.symbols
 +++ new.assignmentCompatWithStringIndexer3.symbols
-@@ -5,17 +5,17 @@
+@@= skipped -5, +5 lines =@@
  
  interface Base { foo: string; }
  >Base : Symbol(Base, Decl(assignmentCompatWithStringIndexer3.ts, 0, 0))

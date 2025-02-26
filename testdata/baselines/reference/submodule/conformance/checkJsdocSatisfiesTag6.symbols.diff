@@ -1,6 +1,6 @@
 --- old.checkJsdocSatisfiesTag6.symbols
 +++ new.checkJsdocSatisfiesTag6.symbols
-@@ -14,14 +14,14 @@
+@@= skipped -14, +14 lines =@@
  
  // Should OK
  console.log(a.x.toFixed());

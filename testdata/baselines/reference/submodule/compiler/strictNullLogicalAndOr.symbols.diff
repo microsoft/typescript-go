@@ -1,6 +1,6 @@
 --- old.strictNullLogicalAndOr.symbols
 +++ new.strictNullLogicalAndOr.symbols
-@@ -5,25 +5,25 @@
+@@= skipped -5, +5 lines =@@
  
  let sinOrCos = Math.random() < .5;
  >sinOrCos : Symbol(sinOrCos, Decl(strictNullLogicalAndOr.ts, 2, 3))

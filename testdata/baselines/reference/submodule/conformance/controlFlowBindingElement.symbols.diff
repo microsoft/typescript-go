@@ -1,6 +1,6 @@
 --- old.controlFlowBindingElement.symbols
 +++ new.controlFlowBindingElement.symbols
-@@ -15,9 +15,9 @@
+@@= skipped -15, +15 lines =@@
  >data : Symbol(data, Decl(controlFlowBindingElement.ts, 1, 9))
      
      console.log(param); // should not trigger 'Unreachable code detected.'    
@@ -12,7 +12,7 @@
  >param : Symbol(param, Decl(controlFlowBindingElement.ts, 3, 11))
  }
  
-@@ -87,7 +87,7 @@
+@@= skipped -72, +72 lines =@@
  >Window : Symbol(Window, Decl(controlFlowBindingElement.ts, 44, 1))
  
          window: Window;
@@ -21,7 +21,7 @@
  >Window : Symbol(Window, Decl(controlFlowBindingElement.ts, 44, 1))
      }
  
-@@ -99,9 +99,9 @@
+@@= skipped -12, +12 lines =@@
  >Window : Symbol(Window, Decl(controlFlowBindingElement.ts, 44, 1))
  
      window.window = window;
@@ -33,7 +33,7 @@
  >window : Symbol(window, Decl(controlFlowBindingElement.ts, 50, 7))
  
      const { [(() => { foo = ""; return 'window' as const })()]:
-@@ -122,7 +122,7 @@
+@@= skipped -23, +23 lines =@@
  >Window : Symbol(Window, Decl(controlFlowBindingElement.ts, 59, 1))
  
          window: Window;
@@ -42,7 +42,7 @@
  >Window : Symbol(Window, Decl(controlFlowBindingElement.ts, 59, 1))
      }
  
-@@ -134,9 +134,9 @@
+@@= skipped -12, +12 lines =@@
  >Window : Symbol(Window, Decl(controlFlowBindingElement.ts, 59, 1))
  
      window.window = window;
@@ -54,7 +54,7 @@
  >window : Symbol(window, Decl(controlFlowBindingElement.ts, 65, 7))
  
      const { [(() => {  return 'window' as const })()]:
-@@ -157,7 +157,7 @@
+@@= skipped -23, +23 lines =@@
  >Window : Symbol(Window, Decl(controlFlowBindingElement.ts, 74, 1))
  
          window: Window;
@@ -63,7 +63,7 @@
  >Window : Symbol(Window, Decl(controlFlowBindingElement.ts, 74, 1))
      }
  
-@@ -169,9 +169,9 @@
+@@= skipped -12, +12 lines =@@
  >Window : Symbol(Window, Decl(controlFlowBindingElement.ts, 74, 1))
  
      window.window = window;

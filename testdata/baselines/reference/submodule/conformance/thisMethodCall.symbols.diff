@@ -1,6 +1,6 @@
 --- old.thisMethodCall.symbols
 +++ new.thisMethodCall.symbols
-@@ -5,14 +5,14 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(thisMethodCall.ts, 0, 0))
  
      method?() {}

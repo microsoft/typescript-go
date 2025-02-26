@@ -1,6 +1,6 @@
 --- old.anyAssignableToEveryType2.symbols
 +++ new.anyAssignableToEveryType2.symbols
-@@ -10,7 +10,7 @@
+@@= skipped -10, +10 lines =@@
  >x : Symbol(x, Decl(anyAssignableToEveryType2.ts, 3, 5))
  
      foo: any; // ok, any identical to itself
@@ -9,7 +9,7 @@
  }
  
  
-@@ -21,7 +21,7 @@
+@@= skipped -11, +11 lines =@@
  >x : Symbol(x, Decl(anyAssignableToEveryType2.ts, 9, 5))
  
      foo: any;
@@ -18,7 +18,7 @@
  }
  
  
-@@ -32,7 +32,7 @@
+@@= skipped -11, +11 lines =@@
  >x : Symbol(x, Decl(anyAssignableToEveryType2.ts, 15, 5))
  
      foo: any;
@@ -27,7 +27,7 @@
  }
  
  
-@@ -43,7 +43,7 @@
+@@= skipped -11, +11 lines =@@
  >x : Symbol(x, Decl(anyAssignableToEveryType2.ts, 21, 5))
  
      foo: any;
@@ -36,7 +36,7 @@
  }
  
  
-@@ -55,7 +55,7 @@
+@@= skipped -12, +12 lines =@@
  >Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
  
      foo: any;
@@ -45,7 +45,7 @@
  }
  
  
-@@ -67,7 +67,7 @@
+@@= skipped -12, +12 lines =@@
  >RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      foo: any;
@@ -54,7 +54,7 @@
  }
  
  
-@@ -79,7 +79,7 @@
+@@= skipped -12, +12 lines =@@
  >bar : Symbol(bar, Decl(anyAssignableToEveryType2.ts, 39, 18))
  
      foo: any;
@@ -63,7 +63,7 @@
  }
  
  
-@@ -90,7 +90,7 @@
+@@= skipped -11, +11 lines =@@
  >x : Symbol(x, Decl(anyAssignableToEveryType2.ts, 45, 5))
  
      foo: any;
@@ -72,7 +72,7 @@
  }
  
  
-@@ -102,12 +102,12 @@
+@@= skipped -12, +12 lines =@@
  >I8 : Symbol(I8, Decl(anyAssignableToEveryType2.ts, 41, 1))
  
      foo: any;
@@ -87,7 +87,7 @@
  
  interface I10 {
  >I10 : Symbol(I10, Decl(anyAssignableToEveryType2.ts, 55, 24))
-@@ -117,13 +117,13 @@
+@@= skipped -15, +15 lines =@@
  >A : Symbol(A, Decl(anyAssignableToEveryType2.ts, 53, 1))
  
      foo: any;
@@ -103,7 +103,7 @@
  >T : Symbol(T, Decl(anyAssignableToEveryType2.ts, 61, 9))
  
  interface I11 {
-@@ -134,7 +134,7 @@
+@@= skipped -17, +17 lines =@@
  >A2 : Symbol(A2, Decl(anyAssignableToEveryType2.ts, 59, 1))
  
      foo: any;
@@ -112,7 +112,7 @@
  }
  
  
-@@ -146,7 +146,7 @@
+@@= skipped -12, +12 lines =@@
  >x : Symbol(x, Decl(anyAssignableToEveryType2.ts, 69, 18))
  
      foo: any;
@@ -121,7 +121,7 @@
  }
  
  
-@@ -161,13 +161,13 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(anyAssignableToEveryType2.ts, 75, 18))
  
      foo: any;
@@ -137,7 +137,7 @@
  
  interface I14 {
  >I14 : Symbol(I14, Decl(anyAssignableToEveryType2.ts, 80, 12))
-@@ -177,7 +177,7 @@
+@@= skipped -16, +16 lines =@@
  >E : Symbol(E, Decl(anyAssignableToEveryType2.ts, 77, 1))
  
      foo: any;
@@ -146,7 +146,7 @@
  }
  
  
-@@ -198,13 +198,13 @@
+@@= skipped -21, +21 lines =@@
  >f : Symbol(f, Decl(anyAssignableToEveryType2.ts, 84, 1), Decl(anyAssignableToEveryType2.ts, 87, 16))
  
      foo: any;
@@ -162,7 +162,7 @@
  
  module c {
  >c : Symbol(c, Decl(anyAssignableToEveryType2.ts, 94, 1), Decl(anyAssignableToEveryType2.ts, 97, 23))
-@@ -220,7 +220,7 @@
+@@= skipped -22, +22 lines =@@
  >c : Symbol(c, Decl(anyAssignableToEveryType2.ts, 94, 1), Decl(anyAssignableToEveryType2.ts, 97, 23))
  
      foo: any;
@@ -171,7 +171,7 @@
  }
  
  
-@@ -233,7 +233,7 @@
+@@= skipped -13, +13 lines =@@
  >T : Symbol(T, Decl(anyAssignableToEveryType2.ts, 107, 14))
  
      foo: any;
@@ -180,7 +180,7 @@
  }
  
  
-@@ -248,7 +248,7 @@
+@@= skipped -15, +15 lines =@@
  >U : Symbol(U, Decl(anyAssignableToEveryType2.ts, 113, 16))
  
      foo: any;
@@ -189,7 +189,7 @@
  }
  
  
-@@ -260,7 +260,7 @@
+@@= skipped -12, +12 lines =@@
  >Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      foo: any;
@@ -198,7 +198,7 @@
  }
  
  
-@@ -271,6 +271,6 @@
+@@= skipped -11, +11 lines =@@
  >x : Symbol(x, Decl(anyAssignableToEveryType2.ts, 126, 5))
  
      foo: any;

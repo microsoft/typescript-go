@@ -1,6 +1,6 @@
 --- old.controlFlowInstanceof.symbols
 +++ new.controlFlowInstanceof.symbols
-@@ -6,19 +6,17 @@
+@@= skipped -6, +6 lines =@@
  function f1(s: Set<string> | Set<number>) {
  >f1 : Symbol(f1, Decl(controlFlowInstanceof.ts, 0, 0))
  >s : Symbol(s, Decl(controlFlowInstanceof.ts, 2, 12))
@@ -22,7 +22,7 @@
  
          s;  // Set<number>
  >s : Symbol(s, Decl(controlFlowInstanceof.ts, 2, 12))
-@@ -27,27 +25,23 @@
+@@= skipped -21, +19 lines =@@
  >s : Symbol(s, Decl(controlFlowInstanceof.ts, 2, 12))
  
      s.add(42);
@@ -52,7 +52,7 @@
  
          s;  // Set<number> & Promise<any>
  >s : Symbol(s, Decl(controlFlowInstanceof.ts, 12, 12))
-@@ -56,23 +50,20 @@
+@@= skipped -29, +25 lines =@@
  >s : Symbol(s, Decl(controlFlowInstanceof.ts, 12, 12))
  
      s.add(42);
@@ -78,7 +78,7 @@
  
          s;  // Set<string> | Set<number>
  >s : Symbol(s, Decl(controlFlowInstanceof.ts, 22, 12))
-@@ -86,19 +77,17 @@
+@@= skipped -30, +27 lines =@@
  function f4(s: Set<string> | Set<number>) {
  >f4 : Symbol(f4, Decl(controlFlowInstanceof.ts, 30, 1))
  >s : Symbol(s, Decl(controlFlowInstanceof.ts, 32, 12))
@@ -100,7 +100,7 @@
  
          s;  // Set<number>
  >s : Symbol(s, Decl(controlFlowInstanceof.ts, 32, 12))
-@@ -113,17 +102,17 @@
+@@= skipped -27, +25 lines =@@
  
  class A { a: string }
  >A : Symbol(A, Decl(controlFlowInstanceof.ts, 41, 1))
@@ -121,7 +121,7 @@
  
  function foo(x: A | undefined) {
  >foo : Symbol(foo, Decl(controlFlowInstanceof.ts, 47, 31))
-@@ -201,14 +190,14 @@
+@@= skipped -88, +88 lines =@@
  >X : Symbol(X, Decl(controlFlowInstanceof.ts, 77, 1))
  
      x?: string;
@@ -138,7 +138,7 @@
  }
  
  function goo(x: X) {
-@@ -224,9 +213,9 @@
+@@= skipped -23, +23 lines =@@
  >Y : Symbol(Y, Decl(controlFlowInstanceof.ts, 84, 1))
  
          x.y;
@@ -150,7 +150,7 @@
      }
      x;
  >x : Symbol(x, Decl(controlFlowInstanceof.ts, 90, 13))
-@@ -239,7 +228,7 @@
+@@= skipped -15, +15 lines =@@
  
  declare const ctor: Function;
  >ctor : Symbol(ctor, Decl(controlFlowInstanceof.ts, 101, 13))
@@ -159,7 +159,7 @@
  
  if (x instanceof ctor) {
  >x : Symbol(x, Decl(controlFlowInstanceof.ts, 100, 13))
-@@ -255,9 +244,6 @@
+@@= skipped -16, +16 lines =@@
  function AtTop(val) { this.val = val }
  >AtTop : Symbol(AtTop, Decl(uglify.js, 0, 0))
  >val : Symbol(val, Decl(uglify.js, 1, 15))
@@ -169,7 +169,7 @@
  >val : Symbol(val, Decl(uglify.js, 1, 15))
  
  /** @type {*} */
-@@ -269,8 +255,6 @@
+@@= skipped -14, +11 lines =@@
  >AtTop : Symbol(AtTop, Decl(uglify.js, 0, 0))
  
      v.val

@@ -1,6 +1,6 @@
 --- old.symbolProperty52.symbols
 +++ new.symbolProperty52.symbols
-@@ -6,7 +6,6 @@
+@@= skipped -6, +6 lines =@@
  
      [Symbol.nonsense]: 0
  >[Symbol.nonsense] : Symbol([Symbol.nonsense], Decl(symbolProperty52.ts, 0, 11))
@@ -8,7 +8,7 @@
  
  };
  
-@@ -15,5 +14,4 @@
+@@= skipped -9, +8 lines =@@
  
  obj[Symbol.nonsense];
  >obj : Symbol(obj, Decl(symbolProperty52.ts, 0, 3))

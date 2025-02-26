@@ -1,6 +1,6 @@
 --- old.constructorParametersInVariableDeclarations.symbols
 +++ new.constructorParametersInVariableDeclarations.symbols
-@@ -5,14 +5,14 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(constructorParametersInVariableDeclarations.ts, 0, 0))
  
      private a = x;
@@ -18,7 +18,7 @@
  
      constructor(x: number) {
  >x : Symbol(x, Decl(constructorParametersInVariableDeclarations.ts, 4, 16))
-@@ -23,14 +23,14 @@
+@@= skipped -18, +18 lines =@@
  >B : Symbol(B, Decl(constructorParametersInVariableDeclarations.ts, 6, 1))
  
      private a = x;

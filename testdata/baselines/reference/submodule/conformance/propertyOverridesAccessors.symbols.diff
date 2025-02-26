@@ -1,6 +1,6 @@
 --- old.propertyOverridesAccessors.symbols
 +++ new.propertyOverridesAccessors.symbols
-@@ -5,33 +5,33 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(propertyOverridesAccessors.ts, 0, 0))
  
      get p() { return 'oh no' }
@@ -43,7 +43,7 @@
  >value : Symbol(value, Decl(propertyOverridesAccessors.ts, 9, 10))
  }
  class D extends C {
-@@ -39,6 +39,6 @@
+@@= skipped -34, +34 lines =@@
  >C : Symbol(C, Decl(propertyOverridesAccessors.ts, 5, 1))
  
      p = 101 // error

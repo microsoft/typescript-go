@@ -1,6 +1,6 @@
 --- old.toStringOnPrimitives.symbols
 +++ new.toStringOnPrimitives.symbols
-@@ -2,18 +2,18 @@
+@@= skipped -2, +2 lines =@@
  
  === toStringOnPrimitives.ts ===
  true.toString()

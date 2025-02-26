@@ -1,6 +1,6 @@
 --- old.derivedInterfaceIncompatibleWithBaseIndexer.symbols
 +++ new.derivedInterfaceIncompatibleWithBaseIndexer.symbols
-@@ -19,7 +19,7 @@
+@@= skipped -19, +19 lines =@@
  >Base : Symbol(Base, Decl(derivedInterfaceIncompatibleWithBaseIndexer.ts, 0, 0))
  
      1: { y: number } // error
@@ -9,7 +9,7 @@
  >y : Symbol(y, Decl(derivedInterfaceIncompatibleWithBaseIndexer.ts, 6, 8))
  }
  
-@@ -28,7 +28,7 @@
+@@= skipped -9, +9 lines =@@
  >Base : Symbol(Base, Decl(derivedInterfaceIncompatibleWithBaseIndexer.ts, 0, 0))
  
      '1': { y: number } // error
@@ -18,7 +18,7 @@
  >y : Symbol(y, Decl(derivedInterfaceIncompatibleWithBaseIndexer.ts, 10, 10))
  }
  
-@@ -37,7 +37,7 @@
+@@= skipped -9, +9 lines =@@
  >Base : Symbol(Base, Decl(derivedInterfaceIncompatibleWithBaseIndexer.ts, 0, 0))
  
      foo: { y: number } // error
@@ -27,7 +27,7 @@
  >y : Symbol(y, Decl(derivedInterfaceIncompatibleWithBaseIndexer.ts, 14, 10))
  }
  
-@@ -46,7 +46,7 @@
+@@= skipped -9, +9 lines =@@
  >Base : Symbol(Base, Decl(derivedInterfaceIncompatibleWithBaseIndexer.ts, 0, 0))
  
      foo(): { x: number } // error
@@ -36,7 +36,7 @@
  >x : Symbol(x, Decl(derivedInterfaceIncompatibleWithBaseIndexer.ts, 18, 12))
  }
  
-@@ -56,7 +56,7 @@
+@@= skipped -10, +10 lines =@@
  >Base : Symbol(Base, Decl(derivedInterfaceIncompatibleWithBaseIndexer.ts, 0, 0))
  
      1: { x: number } // error
@@ -45,7 +45,7 @@
  >x : Symbol(x, Decl(derivedInterfaceIncompatibleWithBaseIndexer.ts, 23, 8))
  }
  
-@@ -65,6 +65,6 @@
+@@= skipped -9, +9 lines =@@
  >Base : Symbol(Base, Decl(derivedInterfaceIncompatibleWithBaseIndexer.ts, 0, 0))
  
      '1': { x: number } // error

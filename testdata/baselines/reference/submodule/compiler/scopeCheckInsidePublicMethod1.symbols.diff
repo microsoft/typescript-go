@@ -1,6 +1,6 @@
 --- old.scopeCheckInsidePublicMethod1.symbols
 +++ new.scopeCheckInsidePublicMethod1.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(scopeCheckInsidePublicMethod1.ts, 0, 0))
  
     static s;

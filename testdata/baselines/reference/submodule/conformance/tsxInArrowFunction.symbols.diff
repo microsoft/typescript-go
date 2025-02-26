@@ -1,6 +1,6 @@
 --- old.tsxInArrowFunction.symbols
 +++ new.tsxInArrowFunction.symbols
-@@ -11,7 +11,7 @@
+@@= skipped -11, +11 lines =@@
  >IntrinsicElements : Symbol(IntrinsicElements, Decl(tsxInArrowFunction.tsx, 1, 25))
  
          div: {
@@ -9,7 +9,7 @@
  
              text?: string;
  >text : Symbol(text, Decl(tsxInArrowFunction.tsx, 3, 14))
-@@ -22,31 +22,18 @@
+@@= skipped -11, +11 lines =@@
  
  // didn't work
  <div>{() => <div text="wat" />}</div>;

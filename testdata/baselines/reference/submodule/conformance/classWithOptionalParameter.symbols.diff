@@ -1,6 +1,6 @@
 --- old.classWithOptionalParameter.symbols
 +++ new.classWithOptionalParameter.symbols
-@@ -7,10 +7,10 @@
+@@= skipped -7, +7 lines =@@
  >C : Symbol(C, Decl(classWithOptionalParameter.ts, 0, 0))
  
      x?: string;
@@ -13,7 +13,7 @@
  }
  
  class C2<T> {
-@@ -18,11 +18,11 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(classWithOptionalParameter.ts, 7, 9))
  
      x?: T;

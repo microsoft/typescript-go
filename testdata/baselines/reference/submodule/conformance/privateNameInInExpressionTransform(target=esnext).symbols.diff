@@ -1,6 +1,6 @@
 --- old.privateNameInInExpressionTransform(target=esnext).symbols
 +++ new.privateNameInInExpressionTransform(target=esnext).symbols
-@@ -5,39 +5,39 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(privateNameInInExpressionTransform.ts, 0, 0))
  
      #field = 1;
@@ -50,7 +50,7 @@
  >v : Symbol(v, Decl(privateNameInInExpressionTransform.ts, 12, 15))
  
          // '==' and '||' have lower precedence than 'in'
-@@ -46,7 +46,7 @@
+@@= skipped -41, +41 lines =@@
  
          v == #field in v || v; // Good precedence: (v == (#field in v)) || v
  >v : Symbol(v, Decl(privateNameInInExpressionTransform.ts, 12, 15))
@@ -59,7 +59,7 @@
  >v : Symbol(v, Decl(privateNameInInExpressionTransform.ts, 12, 15))
  >v : Symbol(v, Decl(privateNameInInExpressionTransform.ts, 12, 15))
  
-@@ -62,25 +62,25 @@
+@@= skipped -16, +16 lines =@@
  
          v == #field in v in v; // Good precedence: v == ((#field in v) in v)
  >v : Symbol(v, Decl(privateNameInInExpressionTransform.ts, 12, 15))
@@ -90,7 +90,7 @@
  >v : Symbol(v, Decl(privateNameInInExpressionTransform.ts, 27, 15))
      }
  }
-@@ -89,14 +89,14 @@
+@@= skipped -27, +27 lines =@@
  >Bar : Symbol(Bar, Decl(privateNameInInExpressionTransform.ts, 31, 1))
  
      #field = 1;

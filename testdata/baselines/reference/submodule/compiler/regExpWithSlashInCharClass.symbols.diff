@@ -1,6 +1,6 @@
 --- old.regExpWithSlashInCharClass.symbols
 +++ new.regExpWithSlashInCharClass.symbols
-@@ -3,16 +3,16 @@
+@@= skipped -3, +3 lines =@@
  === regExpWithSlashInCharClass.ts ===
  var foo1 = "a/".replace(/.[/]/, "");
  >foo1 : Symbol(foo1, Decl(regExpWithSlashInCharClass.ts, 0, 3))

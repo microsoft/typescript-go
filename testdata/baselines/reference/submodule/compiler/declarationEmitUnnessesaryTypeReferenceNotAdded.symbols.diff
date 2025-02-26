@@ -1,6 +1,6 @@
 --- old.declarationEmitUnnessesaryTypeReferenceNotAdded.symbols
 +++ new.declarationEmitUnnessesaryTypeReferenceNotAdded.symbols
-@@ -8,9 +8,9 @@
+@@= skipped -8, +8 lines =@@
  >process : Symbol(process, Decl(index.ts, 0, 38))
  
  export default function parseArgs(): minimist.ParsedArgs {
@@ -12,7 +12,7 @@
  
    return minimist(process.argv.slice(2));
  >minimist : Symbol(minimist, Decl(index.ts, 0, 0))
-@@ -28,7 +28,7 @@
+@@= skipped -20, +20 lines =@@
  >thing : Symbol(thing, Decl(minimist.d.ts, 2, 1), Decl(minimist.d.ts, 0, 0))
  >x : Symbol(x, Decl(minimist.d.ts, 3, 23))
  >thing : Symbol(thing, Decl(minimist.d.ts, 2, 1), Decl(minimist.d.ts, 0, 0))

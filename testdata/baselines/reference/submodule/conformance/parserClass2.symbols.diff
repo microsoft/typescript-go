@@ -1,6 +1,6 @@
 --- old.parserClass2.symbols
 +++ new.parserClass2.symbols
-@@ -5,13 +5,13 @@
+@@= skipped -5, +5 lines =@@
  >LoggerAdapter : Symbol(LoggerAdapter, Decl(parserClass2.ts, 0, 0))
  
          constructor (public logger: ILogger) { 

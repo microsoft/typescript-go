@@ -1,6 +1,6 @@
 --- old.recursiveClassReferenceTest.symbols
 +++ new.recursiveClassReferenceTest.symbols
-@@ -8,23 +8,23 @@
+@@= skipped -8, +8 lines =@@
  
  declare module Sample.Thing {
  >Sample : Symbol(Sample, Decl(recursiveClassReferenceTest.ts, 0, 0), Decl(recursiveClassReferenceTest.ts, 29, 1), Decl(recursiveClassReferenceTest.ts, 41, 1), Decl(recursiveClassReferenceTest.ts, 73, 25))
@@ -29,7 +29,7 @@
  >IWidget : Symbol(IWidget, Decl(recursiveClassReferenceTest.ts, 5, 29))
  	}
  
-@@ -32,18 +32,18 @@
+@@= skipped -24, +24 lines =@@
  >ICodeThing : Symbol(ICodeThing, Decl(recursiveClassReferenceTest.ts, 11, 2))
    
    		getDomNode(): Element;
@@ -51,7 +51,7 @@
  		
  		//addWidget(widget: Sample.Thing.Widgets.IWidget);
  	}
-@@ -52,12 +52,12 @@
+@@= skipped -20, +20 lines =@@
  >IAction : Symbol(IAction, Decl(recursiveClassReferenceTest.ts, 23, 2))
  
  		run(Thing:ICodeThing):boolean;
@@ -66,7 +66,7 @@
  	}	
  }
  
-@@ -69,21 +69,21 @@
+@@= skipped -17, +17 lines =@@
  
  	export class StartFindAction implements Sample.Thing.IAction {
  >StartFindAction : Symbol(StartFindAction, Decl(recursiveClassReferenceTest.ts, 31, 34))
@@ -96,7 +96,7 @@
  
  			return true;
  		}
-@@ -92,52 +92,52 @@
+@@= skipped -23, +23 lines =@@
  
  module Sample.Thing.Widgets {
  >Sample : Symbol(Sample, Decl(recursiveClassReferenceTest.ts, 0, 0), Decl(recursiveClassReferenceTest.ts, 29, 1), Decl(recursiveClassReferenceTest.ts, 41, 1), Decl(recursiveClassReferenceTest.ts, 73, 25))
@@ -161,7 +161,7 @@
  
  		}
  
-@@ -146,13 +146,13 @@
+@@= skipped -54, +54 lines =@@
  
  interface IMode { getInitialState(): IState;} 
  >IMode : Symbol(IMode, Decl(recursiveClassReferenceTest.ts, 63, 1))
@@ -177,7 +177,7 @@
  >IState : Symbol(IState, Decl(recursiveClassReferenceTest.ts, 66, 88))
  
  interface IState {}
-@@ -162,7 +162,7 @@
+@@= skipped -16, +16 lines =@@
  >Window : Symbol(Window, Decl(recursiveClassReferenceTest.ts, 68, 19))
  
      opener: Window;
@@ -186,7 +186,7 @@
  >Window : Symbol(Window, Decl(recursiveClassReferenceTest.ts, 68, 19))
  }
  declare var self: Window;
-@@ -171,7 +171,7 @@
+@@= skipped -9, +9 lines =@@
  
  module Sample.Thing.Languages.PlainText {
  >Sample : Symbol(Sample, Decl(recursiveClassReferenceTest.ts, 0, 0), Decl(recursiveClassReferenceTest.ts, 29, 1), Decl(recursiveClassReferenceTest.ts, 41, 1), Decl(recursiveClassReferenceTest.ts, 73, 25))
@@ -195,7 +195,7 @@
  >Languages : Symbol(Languages, Decl(recursiveClassReferenceTest.ts, 75, 20))
  >PlainText : Symbol(PlainText, Decl(recursiveClassReferenceTest.ts, 75, 30))
  	
-@@ -180,11 +180,11 @@
+@@= skipped -9, +9 lines =@@
  >IState : Symbol(IState, Decl(recursiveClassReferenceTest.ts, 66, 88))
  
          constructor(private mode: IMode) { }
@@ -209,7 +209,7 @@
  >IState : Symbol(IState, Decl(recursiveClassReferenceTest.ts, 66, 88))
  
  			return this;
-@@ -192,7 +192,7 @@
+@@= skipped -12, +12 lines =@@
  		}
  
  		public equals(other:IState):boolean {
@@ -218,7 +218,7 @@
  >other : Symbol(other, Decl(recursiveClassReferenceTest.ts, 83, 16))
  >IState : Symbol(IState, Decl(recursiveClassReferenceTest.ts, 66, 88))
  
-@@ -202,7 +202,7 @@
+@@= skipped -10, +10 lines =@@
  		}
  		
  		public getMode(): IMode { return mode; }
@@ -227,7 +227,7 @@
  >IMode : Symbol(IMode, Decl(recursiveClassReferenceTest.ts, 63, 1))
  	}
  	
-@@ -212,7 +212,7 @@
+@@= skipped -10, +10 lines =@@
  
  		// scenario 2
  		public getInitialState(): IState {

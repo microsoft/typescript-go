@@ -1,6 +1,6 @@
 --- old.commentOnStaticMember1.symbols
 +++ new.commentOnStaticMember1.symbols
-@@ -6,6 +6,6 @@
+@@= skipped -6, +6 lines =@@
  
      //Hello World
      static foo(){

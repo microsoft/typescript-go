@@ -1,6 +1,6 @@
 --- old.topLevelFileModule.symbols
 +++ new.topLevelFileModule.symbols
-@@ -9,12 +9,12 @@
+@@= skipped -9, +9 lines =@@
  
  var z = foo.x + fum.y;
  >z : Symbol(z, Decl(foo_1.ts, 2, 3))

@@ -1,6 +1,6 @@
 --- old.commentsOnStaticMembers.symbols
 +++ new.commentsOnStaticMembers.symbols
-@@ -8,23 +8,23 @@
+@@= skipped -8, +8 lines =@@
       * p1 comment appears in output
       */
      public static p1: string = "";

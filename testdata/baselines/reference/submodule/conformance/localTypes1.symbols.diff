@@ -1,6 +1,6 @@
 --- old.localTypes1.symbols
 +++ new.localTypes1.symbols
-@@ -8,22 +8,22 @@
+@@= skipped -8, +8 lines =@@
  >E : Symbol(E, Decl(localTypes1.ts, 0, 15))
  
          A, B, C
@@ -28,7 +28,7 @@
  >E : Symbol(E, Decl(localTypes1.ts, 0, 15))
      }
      type A = I[];
-@@ -36,12 +36,12 @@
+@@= skipped -28, +28 lines =@@
  >C : Symbol(C, Decl(localTypes1.ts, 3, 5))
  
      a[0].x = E.B;
@@ -45,7 +45,7 @@
  
      return a;
  >a : Symbol(a, Decl(localTypes1.ts, 11, 7))
-@@ -57,22 +57,22 @@
+@@= skipped -21, +21 lines =@@
  >E : Symbol(E, Decl(localTypes1.ts, 17, 18))
  
              A, B, C
@@ -73,7 +73,7 @@
  >E : Symbol(E, Decl(localTypes1.ts, 17, 18))
          }
          type A = I[];
-@@ -85,12 +85,12 @@
+@@= skipped -28, +28 lines =@@
  >C : Symbol(C, Decl(localTypes1.ts, 20, 9))
  
          a[0].x = E.B;
@@ -90,7 +90,7 @@
  
          return a;
  >a : Symbol(a, Decl(localTypes1.ts, 28, 11))
-@@ -108,9 +108,9 @@
+@@= skipped -23, +23 lines =@@
  >E : Symbol(E, Decl(localTypes1.ts, 36, 15))
  
              A, B, C
@@ -103,7 +103,7 @@
          }
          if (b) {
  >b : Symbol(b, Decl(localTypes1.ts, 35, 12))
-@@ -119,14 +119,14 @@
+@@= skipped -11, +11 lines =@@
  >C : Symbol(C, Decl(localTypes1.ts, 40, 16))
  
                  x: E;
@@ -120,7 +120,7 @@
  >E : Symbol(E, Decl(localTypes1.ts, 36, 15))
              }
              type A = I[];
-@@ -139,12 +139,12 @@
+@@= skipped -20, +20 lines =@@
  >C : Symbol(C, Decl(localTypes1.ts, 40, 16))
  
              a[0].x = E.B;
@@ -137,7 +137,7 @@
  
              return a;
  >a : Symbol(a, Decl(localTypes1.ts, 48, 15))
-@@ -154,14 +154,14 @@
+@@= skipped -15, +15 lines =@@
  >A : Symbol(A, Decl(localTypes1.ts, 52, 14))
  
                  x: E;
@@ -154,7 +154,7 @@
  >E : Symbol(E, Decl(localTypes1.ts, 36, 15))
              }
              type C = J[];
-@@ -174,12 +174,12 @@
+@@= skipped -20, +20 lines =@@
  >A : Symbol(A, Decl(localTypes1.ts, 52, 14))
  
              c[0].x = E.B;
@@ -171,7 +171,7 @@
  
              return c;
  >c : Symbol(c, Decl(localTypes1.ts, 60, 15))
-@@ -197,15 +197,15 @@
+@@= skipped -23, +23 lines =@@
  >E : Symbol(E, Decl(localTypes1.ts, 68, 26))
  
              A, B, C
@@ -191,7 +191,7 @@
  >E : Symbol(E, Decl(localTypes1.ts, 68, 26))
          }
          return new C();
-@@ -218,15 +218,15 @@
+@@= skipped -21, +21 lines =@@
  >E : Symbol(E, Decl(localTypes1.ts, 77, 20))
  
              A, B, C
@@ -211,7 +211,7 @@
  >E : Symbol(E, Decl(localTypes1.ts, 77, 20))
          }
          return new C();
-@@ -242,55 +242,55 @@
+@@= skipped -24, +24 lines =@@
  >E : Symbol(E, Decl(localTypes1.ts, 89, 19))
  
              A, B, C
@@ -281,7 +281,7 @@
  >E : Symbol(E, Decl(localTypes1.ts, 106, 13))
          }
          return new C();
-@@ -305,7 +305,7 @@
+@@= skipped -63, +63 lines =@@
  >A : Symbol(A, Decl(localTypes1.ts, 117, 15))
  
          a: string;
@@ -290,7 +290,7 @@
      }
      function g() {
  >g : Symbol(g, Decl(localTypes1.ts, 120, 5))
-@@ -315,7 +315,7 @@
+@@= skipped -10, +10 lines =@@
  >A : Symbol(A, Decl(localTypes1.ts, 117, 15))
  
              b: string;
@@ -299,7 +299,7 @@
          }
          function h() {
  >h : Symbol(h, Decl(localTypes1.ts, 124, 9))
-@@ -325,26 +325,26 @@
+@@= skipped -10, +10 lines =@@
  >B : Symbol(B, Decl(localTypes1.ts, 121, 18))
  
                  c: string;

@@ -1,6 +1,6 @@
 --- old.keyofModuleObjectHasCorrectKeys.symbols
 +++ new.keyofModuleObjectHasCorrectKeys.symbols
-@@ -2,7 +2,7 @@
+@@= skipped -2, +2 lines =@@
  
  === example.ts ===
  export default function add(a: number, b: number) {

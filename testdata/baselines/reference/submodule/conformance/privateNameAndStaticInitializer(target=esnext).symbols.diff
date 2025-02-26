@@ -1,6 +1,6 @@
 --- old.privateNameAndStaticInitializer(target=esnext).symbols
 +++ new.privateNameAndStaticInitializer(target=esnext).symbols
-@@ -5,14 +5,14 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(privateNameAndStaticInitializer.ts, 0, 0))
  
    #foo = 1;

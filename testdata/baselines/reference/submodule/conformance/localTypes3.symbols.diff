@@ -1,6 +1,6 @@
 --- old.localTypes3.symbols
 +++ new.localTypes3.symbols
-@@ -13,9 +13,9 @@
+@@= skipped -13, +13 lines =@@
  >Y : Symbol(Y, Decl(localTypes3.ts, 2, 18))
  
              constructor(public x: X, public y: Y) { }
@@ -12,7 +12,7 @@
  >Y : Symbol(Y, Decl(localTypes3.ts, 2, 18))
          }
          return C;
-@@ -31,15 +31,15 @@
+@@= skipped -18, +18 lines =@@
  
      let x = v.x;
  >x : Symbol(x, Decl(localTypes3.ts, 9, 7))
@@ -32,7 +32,7 @@
  }
  
  function f2() {
-@@ -56,11 +56,11 @@
+@@= skipped -25, +25 lines =@@
  >Y : Symbol(Y, Decl(localTypes3.ts, 15, 16))
  
              public x = x;
@@ -46,7 +46,7 @@
  >Y : Symbol(Y, Decl(localTypes3.ts, 15, 16))
          }
          return C;
-@@ -76,15 +76,15 @@
+@@= skipped -20, +20 lines =@@
  
      let x = v.x;
  >x : Symbol(x, Decl(localTypes3.ts, 23, 7))
@@ -66,7 +66,7 @@
  }
  
  function f3() {
-@@ -103,11 +103,11 @@
+@@= skipped -27, +27 lines =@@
  >C : Symbol(C, Decl(localTypes3.ts, 28, 34))
  
              public x = x;
@@ -80,7 +80,7 @@
  >y : Symbol(y, Decl(localTypes3.ts, 28, 26))
          }
          return C;
-@@ -123,14 +123,14 @@
+@@= skipped -20, +20 lines =@@
  
      let x = v.x;
  >x : Symbol(x, Decl(localTypes3.ts, 37, 7))

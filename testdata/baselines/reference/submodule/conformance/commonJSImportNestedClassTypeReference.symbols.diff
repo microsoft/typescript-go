@@ -1,6 +1,6 @@
 --- old.commonJSImportNestedClassTypeReference.symbols
 +++ new.commonJSImportNestedClassTypeReference.symbols
-@@ -3,8 +3,6 @@
+@@= skipped -3, +3 lines =@@
  === main.js ===
  const { K } = require("./mod1");
  >K : Symbol(K, Decl(main.js, 0, 7))
@@ -9,7 +9,7 @@
  
  /** @param {K} k */
  function f(k) {
-@@ -12,34 +10,23 @@
+@@= skipped -9, +7 lines =@@
  >k : Symbol(k, Decl(main.js, 2, 11))
  
      k.values()

@@ -1,6 +1,6 @@
 --- old.implementingAnInterfaceExtendingClassWithPrivates2.symbols
 +++ new.implementingAnInterfaceExtendingClassWithPrivates2.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(implementingAnInterfaceExtendingClassWithPrivates2.ts, 0, 0))
  
      private x: string;
@@ -9,7 +9,7 @@
  }
  
  interface I extends Foo {
-@@ -13,7 +13,7 @@
+@@= skipped -8, +8 lines =@@
  >Foo : Symbol(Foo, Decl(implementingAnInterfaceExtendingClassWithPrivates2.ts, 0, 0))
  
      y: number;
@@ -18,7 +18,7 @@
  }
  
  class Bar extends Foo implements I { // ok
-@@ -22,7 +22,7 @@
+@@= skipped -9, +9 lines =@@
  >I : Symbol(I, Decl(implementingAnInterfaceExtendingClassWithPrivates2.ts, 2, 1))
  
      y: number;
@@ -27,7 +27,7 @@
  }
  
  class Bar2 extends Foo implements I { // error
-@@ -31,10 +31,10 @@
+@@= skipped -9, +9 lines =@@
  >I : Symbol(I, Decl(implementingAnInterfaceExtendingClassWithPrivates2.ts, 2, 1))
  
      x: string;
@@ -40,7 +40,7 @@
  }
  
  class Bar3 extends Foo implements I { // error
-@@ -43,10 +43,10 @@
+@@= skipped -12, +12 lines =@@
  >I : Symbol(I, Decl(implementingAnInterfaceExtendingClassWithPrivates2.ts, 2, 1))
  
      private x: string;
@@ -53,7 +53,7 @@
  }
  
  // another level of indirection
-@@ -57,7 +57,7 @@
+@@= skipped -14, +14 lines =@@
  >Foo : Symbol(Foo, Decl(implementingAnInterfaceExtendingClassWithPrivates2.ts, 23, 10))
  
          private x: string;
@@ -62,7 +62,7 @@
      }
  
      class Baz extends Foo {
-@@ -65,7 +65,7 @@
+@@= skipped -8, +8 lines =@@
  >Foo : Symbol(Foo, Decl(implementingAnInterfaceExtendingClassWithPrivates2.ts, 23, 10))
  
          z: number;
@@ -71,7 +71,7 @@
      }
  
      interface I extends Baz {
-@@ -73,7 +73,7 @@
+@@= skipped -8, +8 lines =@@
  >Baz : Symbol(Baz, Decl(implementingAnInterfaceExtendingClassWithPrivates2.ts, 26, 5))
  
          y: number;
@@ -80,7 +80,7 @@
      }
  
      class Bar extends Foo implements I { // ok
-@@ -82,10 +82,10 @@
+@@= skipped -9, +9 lines =@@
  >I : Symbol(I, Decl(implementingAnInterfaceExtendingClassWithPrivates2.ts, 30, 5))
  
          y: number;
@@ -93,7 +93,7 @@
      }
  
      class Bar2 extends Foo implements I { // error
-@@ -94,10 +94,10 @@
+@@= skipped -12, +12 lines =@@
  >I : Symbol(I, Decl(implementingAnInterfaceExtendingClassWithPrivates2.ts, 30, 5))
  
          x: string;
@@ -106,7 +106,7 @@
      }
  
      class Bar3 extends Foo implements I { // error
-@@ -106,10 +106,10 @@
+@@= skipped -12, +12 lines =@@
  >I : Symbol(I, Decl(implementingAnInterfaceExtendingClassWithPrivates2.ts, 30, 5))
  
          private x: string;
@@ -119,7 +119,7 @@
      }
  }
  
-@@ -121,7 +121,7 @@
+@@= skipped -15, +15 lines =@@
  >Foo : Symbol(Foo, Decl(implementingAnInterfaceExtendingClassWithPrivates2.ts, 53, 11))
  
          private x: string;
@@ -128,7 +128,7 @@
      }
  
      class Baz extends Foo {
-@@ -129,7 +129,7 @@
+@@= skipped -8, +8 lines =@@
  >Foo : Symbol(Foo, Decl(implementingAnInterfaceExtendingClassWithPrivates2.ts, 53, 11))
  
          private y: number;
@@ -137,7 +137,7 @@
      }
  
      interface I extends Baz {
-@@ -137,7 +137,7 @@
+@@= skipped -8, +8 lines =@@
  >Baz : Symbol(Baz, Decl(implementingAnInterfaceExtendingClassWithPrivates2.ts, 56, 5))
  
          z: number;
@@ -146,7 +146,7 @@
      }
  
      class Bar extends Foo implements I { // error
-@@ -146,7 +146,7 @@
+@@= skipped -9, +9 lines =@@
  >I : Symbol(I, Decl(implementingAnInterfaceExtendingClassWithPrivates2.ts, 60, 5))
  
          z: number;
@@ -155,7 +155,7 @@
      }
  
      var b: Bar;
-@@ -155,15 +155,15 @@
+@@= skipped -9, +9 lines =@@
  
      var r1 = b.z;
  >r1 : Symbol(r1, Decl(implementingAnInterfaceExtendingClassWithPrivates2.ts, 71, 7))
@@ -175,7 +175,7 @@
  
      var r3 = b.y; // error
  >r3 : Symbol(r3, Decl(implementingAnInterfaceExtendingClassWithPrivates2.ts, 73, 7))
-@@ -175,10 +175,10 @@
+@@= skipped -20, +20 lines =@@
  >I : Symbol(I, Decl(implementingAnInterfaceExtendingClassWithPrivates2.ts, 60, 5))
  
          x: string;
@@ -188,7 +188,7 @@
      }
  
      class Bar3 extends Foo implements I { // error
-@@ -187,9 +187,9 @@
+@@= skipped -12, +12 lines =@@
  >I : Symbol(I, Decl(implementingAnInterfaceExtendingClassWithPrivates2.ts, 60, 5))
  
          private x: string;

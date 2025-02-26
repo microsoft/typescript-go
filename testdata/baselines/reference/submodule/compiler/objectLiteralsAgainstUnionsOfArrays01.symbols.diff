@@ -1,6 +1,6 @@
 --- old.objectLiteralsAgainstUnionsOfArrays01.symbols
 +++ new.objectLiteralsAgainstUnionsOfArrays01.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(objectLiteralsAgainstUnionsOfArrays01.ts, 0, 0))
  
    bar: Bar | Bar[];
@@ -9,7 +9,7 @@
  >Bar : Symbol(Bar, Decl(objectLiteralsAgainstUnionsOfArrays01.ts, 2, 1))
  >Bar : Symbol(Bar, Decl(objectLiteralsAgainstUnionsOfArrays01.ts, 2, 1))
  }
-@@ -14,7 +14,7 @@
+@@= skipped -9, +9 lines =@@
  >Bar : Symbol(Bar, Decl(objectLiteralsAgainstUnionsOfArrays01.ts, 2, 1))
  
    prop: string;

@@ -1,6 +1,6 @@
 --- old.functionOverloads7.symbols
 +++ new.functionOverloads7.symbols
-@@ -5,30 +5,30 @@
+@@= skipped -5, +5 lines =@@
  >foo : Symbol(foo, Decl(functionOverloads7.ts, 0, 0))
  
     private bar();

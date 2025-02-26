@@ -1,6 +1,6 @@
 --- old.jsDeclarationsTypeReferences2.symbols
 +++ new.jsDeclarationsTypeReferences2.symbols
-@@ -4,10 +4,6 @@
+@@= skipped -4, +4 lines =@@
  const{ a, m } = require("./something").o;
  >a : Symbol(a, Decl(index.js, 0, 6))
  >m : Symbol(m, Decl(index.js, 0, 9))
@@ -11,7 +11,7 @@
  
  const thing = a + m
  >thing : Symbol(thing, Decl(index.js, 2, 5))
-@@ -15,23 +11,8 @@
+@@= skipped -11, +7 lines =@@
  >m : Symbol(m, Decl(index.js, 0, 9))
  
  module.exports = {

@@ -1,6 +1,6 @@
 --- old.genericOverloadSignatures.symbols
 +++ new.genericOverloadSignatures.symbols
-@@ -35,13 +35,13 @@
+@@= skipped -35, +35 lines =@@
  >I2 : Symbol(I2, Decl(genericOverloadSignatures.ts, 7, 17))
  
      f<T>(x: T): number;
@@ -16,7 +16,7 @@
  >T : Symbol(T, Decl(genericOverloadSignatures.ts, 11, 6))
  >x : Symbol(x, Decl(genericOverloadSignatures.ts, 11, 9))
  >T : Symbol(T, Decl(genericOverloadSignatures.ts, 11, 6))
-@@ -52,12 +52,12 @@
+@@= skipped -17, +17 lines =@@
  >T : Symbol(T, Decl(genericOverloadSignatures.ts, 14, 13))
  
      f(x: T): number;

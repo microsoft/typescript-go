@@ -1,6 +1,6 @@
 --- old.symbolProperty44.symbols
 +++ new.symbolProperty44.symbols
-@@ -5,18 +5,12 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(symbolProperty44.ts, 0, 0))
  
      get [Symbol.hasInstance]() {

@@ -1,6 +1,6 @@
 --- old.moduleResolutionWithModule(module=commonjs,moduleresolution=node16).symbols
 +++ new.moduleResolutionWithModule(module=commonjs,moduleresolution=node16).symbols
-@@ -9,7 +9,7 @@
+@@= skipped -9, +9 lines =@@
  >p : Symbol(p, Decl(index.ts, 0, 6))
  
  p.thing();

@@ -1,6 +1,6 @@
 --- old.nodeModulesTripleSlashReferenceModeDeclarationEmit2(module=nodenext).symbols
 +++ new.nodeModulesTripleSlashReferenceModeDeclarationEmit2(module=nodenext).symbols
-@@ -4,13 +4,12 @@
+@@= skipped -4, +4 lines =@@
  /// <reference types="pkg" preserve="true" />
  export interface LocalInterface extends ImportInterface {}
  >LocalInterface : Symbol(LocalInterface, Decl(index.ts, 0, 0))

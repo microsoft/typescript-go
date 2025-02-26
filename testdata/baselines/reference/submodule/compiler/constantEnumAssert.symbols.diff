@@ -1,6 +1,6 @@
 --- old.constantEnumAssert.symbols
 +++ new.constantEnumAssert.symbols
-@@ -5,45 +5,45 @@
+@@= skipped -5, +5 lines =@@
  >E1 : Symbol(E1, Decl(constantEnumAssert.ts, 0, 0))
  
      a,
@@ -57,7 +57,7 @@
  }
  
  const E5 = {
-@@ -59,47 +59,47 @@
+@@= skipped -54, +54 lines =@@
  const foo1 = { a: E1.a }
  >foo1 : Symbol(foo1, Decl(constantEnumAssert.ts, 26, 5))
  >a : Symbol(a, Decl(constantEnumAssert.ts, 26, 14))
@@ -117,7 +117,7 @@
  >const : Symbol(const)
  
  const foo7 = { a: E5.a } as const
-@@ -113,33 +113,33 @@
+@@= skipped -54, +54 lines =@@
  const foo8 = { a: E1.a as const }
  >foo8 : Symbol(foo8, Decl(constantEnumAssert.ts, 40, 5))
  >a : Symbol(a, Decl(constantEnumAssert.ts, 40, 14))

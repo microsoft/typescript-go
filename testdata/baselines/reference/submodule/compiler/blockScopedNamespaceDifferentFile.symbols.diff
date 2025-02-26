@@ -1,6 +1,6 @@
 --- old.blockScopedNamespaceDifferentFile.symbols
 +++ new.blockScopedNamespaceDifferentFile.symbols
-@@ -8,20 +8,20 @@
+@@= skipped -8, +8 lines =@@
  >Name : Symbol(Name, Decl(test.ts, 0, 13))
  
          static funcData = A.AA.func();

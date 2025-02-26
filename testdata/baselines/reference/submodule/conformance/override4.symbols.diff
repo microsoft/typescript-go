@@ -1,6 +1,6 @@
 --- old.override4.symbols
 +++ new.override4.symbols
-@@ -5,23 +5,23 @@
+@@= skipped -5, +5 lines =@@
  >B : Symbol(B, Decl(override4.ts, 0, 0))
  
      p1: number = 1;
@@ -30,7 +30,7 @@
  >v : Symbol(v, Decl(override4.ts, 6, 10))
  }
  
-@@ -30,23 +30,23 @@
+@@= skipped -25, +25 lines =@@
  >B : Symbol(B, Decl(override4.ts, 0, 0))
  
      p1: number = 2;
@@ -60,7 +60,7 @@
  >v : Symbol(v, Decl(override4.ts, 16, 10))
  
  }
-@@ -56,8 +56,8 @@
+@@= skipped -26, +26 lines =@@
  >B : Symbol(B, Decl(override4.ts, 0, 0))
  
      override foo: () => void

@@ -1,6 +1,6 @@
 --- old.TypeGuardWithArrayUnion.symbols
 +++ new.TypeGuardWithArrayUnion.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Message : Symbol(Message, Decl(TypeGuardWithArrayUnion.ts, 0, 0))
  
      value: string;
@@ -9,7 +9,7 @@
  }
  
  function saySize(message: Message | Message[]) {
-@@ -19,9 +19,9 @@
+@@= skipped -14, +14 lines =@@
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
          return message.length;  // Should have type Message[] here

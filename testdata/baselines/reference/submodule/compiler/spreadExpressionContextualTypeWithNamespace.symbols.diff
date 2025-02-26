@@ -1,6 +1,6 @@
 --- old.spreadExpressionContextualTypeWithNamespace.symbols
 +++ new.spreadExpressionContextualTypeWithNamespace.symbols
-@@ -26,24 +26,24 @@
+@@= skipped -26, +26 lines =@@
  >stuff : Symbol(stuff, Decl(spreadExpressionContextualTypeWithNamespace_1.ts, 0, 6))
  
  stuff.func;
@@ -33,7 +33,7 @@
  
  function getStuff<T>() {
  >getStuff : Symbol(getStuff, Decl(spreadExpressionContextualTypeWithNamespace_1.ts, 5, 23))
-@@ -54,46 +54,46 @@
+@@= skipped -28, +28 lines =@@
  >stuff : Symbol(stuff, Decl(spreadExpressionContextualTypeWithNamespace_1.ts, 0, 6))
  
    thing.func;

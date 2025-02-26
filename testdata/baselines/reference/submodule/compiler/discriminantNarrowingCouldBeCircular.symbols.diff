@@ -1,6 +1,6 @@
 --- old.discriminantNarrowingCouldBeCircular.symbols
 +++ new.discriminantNarrowingCouldBeCircular.symbols
-@@ -75,9 +75,9 @@
+@@= skipped -75, +75 lines =@@
      if (!parents || !parent || !parents.includes(parent.a))
  >parents : Symbol(parents, Decl(discriminantNarrowingCouldBeCircular.ts, 19, 9))
  >parent : Symbol(parent, Decl(discriminantNarrowingCouldBeCircular.ts, 18, 9))
@@ -12,7 +12,7 @@
  >parent.a : Symbol(a, Decl(discriminantNarrowingCouldBeCircular.ts, 11, 19))
  >parent : Symbol(parent, Decl(discriminantNarrowingCouldBeCircular.ts, 18, 9))
  >a : Symbol(a, Decl(discriminantNarrowingCouldBeCircular.ts, 11, 19))
-@@ -120,9 +120,9 @@
+@@= skipped -45, +45 lines =@@
  >deeperKeys : Symbol(deeperKeys, Decl(discriminantNarrowingCouldBeCircular.ts, 34, 13))
  >isPlainObject2 : Symbol(isPlainObject2, Decl(discriminantNarrowingCouldBeCircular.ts, 24, 1))
  >deeper : Symbol(deeper, Decl(discriminantNarrowingCouldBeCircular.ts, 33, 13))

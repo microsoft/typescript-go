@@ -1,6 +1,6 @@
 --- old.symbolLinkDeclarationEmitModuleNamesRootDir.symbols
 +++ new.symbolLinkDeclarationEmitModuleNamesRootDir.symbols
-@@ -17,42 +17,6 @@
+@@= skipped -17, +17 lines =@@
  
  export const CONTROLLER_CLASS = BindingKey.create<ControllerClass>(null as any); // line in question
  >CONTROLLER_CLASS : Symbol(CONTROLLER_CLASS, Decl(usage.ts, 3, 12))

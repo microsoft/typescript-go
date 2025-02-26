@@ -1,6 +1,6 @@
 --- old.for-inStatementsInvalid.symbols
 +++ new.for-inStatementsInvalid.symbols
-@@ -85,19 +85,19 @@
+@@= skipped -85, +85 lines =@@
  >A : Symbol(A, Decl(for-inStatementsInvalid.ts, 24, 67))
  
      biz() : number{
@@ -25,7 +25,7 @@
  
          for (var x in this) { }
  >x : Symbol(x, Decl(for-inStatementsInvalid.ts, 28, 16), Decl(for-inStatementsInvalid.ts, 29, 16), Decl(for-inStatementsInvalid.ts, 30, 16))
-@@ -107,7 +107,7 @@
+@@= skipped -22, +22 lines =@@
      }
  
      static baz() : number {
@@ -34,7 +34,7 @@
  
          for (var x in this) { }
  >x : Symbol(x, Decl(for-inStatementsInvalid.ts, 35, 16), Decl(for-inStatementsInvalid.ts, 36, 16), Decl(for-inStatementsInvalid.ts, 37, 16))
-@@ -115,15 +115,15 @@
+@@= skipped -8, +8 lines =@@
  
          for (var x in this.baz) { }
  >x : Symbol(x, Decl(for-inStatementsInvalid.ts, 35, 16), Decl(for-inStatementsInvalid.ts, 36, 16), Decl(for-inStatementsInvalid.ts, 37, 16))
@@ -54,7 +54,7 @@
  
          return null;
      }
-@@ -134,19 +134,19 @@
+@@= skipped -19, +19 lines =@@
  >A : Symbol(A, Decl(for-inStatementsInvalid.ts, 24, 67))
  
      boz() {
@@ -79,7 +79,7 @@
  
          for (var x in this) { }
  >x : Symbol(x, Decl(for-inStatementsInvalid.ts, 45, 16), Decl(for-inStatementsInvalid.ts, 46, 16), Decl(for-inStatementsInvalid.ts, 47, 16), Decl(for-inStatementsInvalid.ts, 49, 16), Decl(for-inStatementsInvalid.ts, 50, 16))
-@@ -154,15 +154,15 @@
+@@= skipped -20, +20 lines =@@
  
          for (var x in super.biz) { }
  >x : Symbol(x, Decl(for-inStatementsInvalid.ts, 45, 16), Decl(for-inStatementsInvalid.ts, 46, 16), Decl(for-inStatementsInvalid.ts, 47, 16), Decl(for-inStatementsInvalid.ts, 49, 16), Decl(for-inStatementsInvalid.ts, 50, 16))
@@ -99,7 +99,7 @@
  
          return null;
      }
-@@ -172,7 +172,7 @@
+@@= skipped -18, +18 lines =@@
  >I : Symbol(I, Decl(for-inStatementsInvalid.ts, 53, 1))
  
      id: number;

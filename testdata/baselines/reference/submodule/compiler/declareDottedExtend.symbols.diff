@@ -1,6 +1,6 @@
 --- old.declareDottedExtend.symbols
 +++ new.declareDottedExtend.symbols
-@@ -12,19 +12,19 @@
+@@= skipped -12, +12 lines =@@
  import ab = A.B;
  >ab : Symbol(ab, Decl(declareDottedExtend.ts, 3, 1))
  >A : Symbol(A, Decl(declareDottedExtend.ts, 0, 0))

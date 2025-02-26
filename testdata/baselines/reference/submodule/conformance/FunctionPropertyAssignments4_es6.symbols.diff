@@ -1,6 +1,6 @@
 --- old.FunctionPropertyAssignments4_es6.symbols
 +++ new.FunctionPropertyAssignments4_es6.symbols
-@@ -3,5 +3,5 @@
+@@= skipped -3, +3 lines =@@
  === FunctionPropertyAssignments4_es6.ts ===
  var v = { * }
  >v : Symbol(v, Decl(FunctionPropertyAssignments4_es6.ts, 0, 3))

@@ -1,6 +1,6 @@
 --- old.declarationEmitCommonSourceDirectoryDoesNotContainAllFiles.symbols
 +++ new.declarationEmitCommonSourceDirectoryDoesNotContainAllFiles.symbols
-@@ -3,13 +3,6 @@
+@@= skipped -3, +3 lines =@@
  === /a/index.ts ===
  
  export * from "./src/"

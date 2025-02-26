@@ -1,6 +1,6 @@
 --- old.typeFromPropertyAssignment7.symbols
 +++ new.typeFromPropertyAssignment7.symbols
-@@ -2,19 +2,15 @@
+@@= skipped -2, +2 lines =@@
  
  === a.js ===
  var obj = {};

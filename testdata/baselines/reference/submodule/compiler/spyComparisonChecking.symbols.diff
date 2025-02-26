@@ -1,6 +1,6 @@
 --- old.spyComparisonChecking.symbols
 +++ new.spyComparisonChecking.symbols
-@@ -8,18 +8,18 @@
+@@= skipped -8, +8 lines =@@
  >params : Symbol(params, Decl(spyComparisonChecking.ts, 1, 5))
  
      identity: string;
@@ -23,7 +23,7 @@
  }
  
  type SpyObj<T> = T & {
-@@ -67,10 +67,10 @@
+@@= skipped -59, +59 lines =@@
  >methodNames : Symbol(methodNames, Decl(spyComparisonChecking.ts, 16, 33))
  
          spyObj[methodName].and.returnValue(1);

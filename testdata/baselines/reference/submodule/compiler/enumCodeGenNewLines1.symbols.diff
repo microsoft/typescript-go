@@ -1,6 +1,6 @@
 --- old.enumCodeGenNewLines1.symbols
 +++ new.enumCodeGenNewLines1.symbols
-@@ -5,12 +5,12 @@
+@@= skipped -5, +5 lines =@@
  >foo : Symbol(foo, Decl(enumCodeGenNewLines1.ts, 0, 0))
  
    b = 1,

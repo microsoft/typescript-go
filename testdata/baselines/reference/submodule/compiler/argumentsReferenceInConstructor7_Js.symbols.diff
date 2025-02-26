@@ -1,6 +1,6 @@
 --- old.argumentsReferenceInConstructor7_Js.symbols
 +++ new.argumentsReferenceInConstructor7_Js.symbols
-@@ -9,12 +9,10 @@
+@@= skipped -9, +9 lines =@@
  		 * @type Function
  		 */
  		this.callee = arguments.callee;

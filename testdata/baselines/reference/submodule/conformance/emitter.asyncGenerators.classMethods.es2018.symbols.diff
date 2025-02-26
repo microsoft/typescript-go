@@ -1,6 +1,6 @@
 --- old.emitter.asyncGenerators.classMethods.es2018.symbols
 +++ new.emitter.asyncGenerators.classMethods.es2018.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >C1 : Symbol(C1, Decl(C1.ts, 0, 0))
  
      async * f() {
@@ -9,7 +9,7 @@
      }
  }
  === C2.ts ===
-@@ -13,7 +13,7 @@
+@@= skipped -8, +8 lines =@@
  >C2 : Symbol(C2, Decl(C2.ts, 0, 0))
  
      async * f() {
@@ -18,7 +18,7 @@
  
          const x = yield;
  >x : Symbol(x, Decl(C2.ts, 2, 13))
-@@ -24,7 +24,7 @@
+@@= skipped -11, +11 lines =@@
  >C3 : Symbol(C3, Decl(C3.ts, 0, 0))
  
      async * f() {
@@ -27,7 +27,7 @@
  
          const x = yield 1;
  >x : Symbol(x, Decl(C3.ts, 2, 13))
-@@ -35,7 +35,7 @@
+@@= skipped -11, +11 lines =@@
  >C4 : Symbol(C4, Decl(C4.ts, 0, 0))
  
      async * f() {
@@ -36,7 +36,7 @@
  
          const x = yield* [1];
  >x : Symbol(x, Decl(C4.ts, 2, 13))
-@@ -46,7 +46,7 @@
+@@= skipped -11, +11 lines =@@
  >C5 : Symbol(C5, Decl(C5.ts, 0, 0))
  
      async * f() {
@@ -45,7 +45,7 @@
  
          const x = yield* (async function*() { yield 1; })();
  >x : Symbol(x, Decl(C5.ts, 2, 13))
-@@ -57,7 +57,7 @@
+@@= skipped -11, +11 lines =@@
  >C6 : Symbol(C6, Decl(C6.ts, 0, 0))
  
      async * f() {
@@ -54,7 +54,7 @@
  
          const x = await 1;
  >x : Symbol(x, Decl(C6.ts, 2, 13))
-@@ -68,7 +68,7 @@
+@@= skipped -11, +11 lines =@@
  >C7 : Symbol(C7, Decl(C7.ts, 0, 0))
  
      async * f() {
@@ -63,7 +63,7 @@
  
          return 1;
      }
-@@ -78,15 +78,15 @@
+@@= skipped -10, +10 lines =@@
  >C8 : Symbol(C8, Decl(C8.ts, 0, 0))
  
      g() {
@@ -83,7 +83,7 @@
      }
  }
  === C9.ts ===
-@@ -94,19 +94,19 @@
+@@= skipped -16, +16 lines =@@
  >B9 : Symbol(B9, Decl(C9.ts, 0, 0))
  
      g() {}

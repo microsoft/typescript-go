@@ -1,6 +1,6 @@
 --- old.contextualExpressionTypecheckingDoesntBlowStack.symbols
 +++ new.contextualExpressionTypecheckingDoesntBlowStack.symbols
-@@ -6,14 +6,14 @@
+@@= skipped -6, +6 lines =@@
  >IValidationError : Symbol(IValidationError, Decl(contextualExpressionTypecheckingDoesntBlowStack.ts, 0, 0))
  
      message: string;
@@ -18,7 +18,7 @@
  >parameterValues : Symbol(parameterValues, Decl(contextualExpressionTypecheckingDoesntBlowStack.ts, 6, 23))
  >IValidationError : Symbol(IValidationError, Decl(contextualExpressionTypecheckingDoesntBlowStack.ts, 0, 0))
  
-@@ -23,18 +23,18 @@
+@@= skipped -17, +17 lines =@@
  
          for(const parameterLocation of Object.keys(parameterValues)) {
  >parameterLocation : Symbol(parameterLocation, Decl(contextualExpressionTypecheckingDoesntBlowStack.ts, 8, 17))
@@ -41,7 +41,7 @@
  
              const innerResult = parameter.validate(values[parameter.oaParameter.name]);
  >innerResult : Symbol(innerResult, Decl(contextualExpressionTypecheckingDoesntBlowStack.ts, 12, 17))
-@@ -49,9 +49,9 @@
+@@= skipped -26, +26 lines =@@
                  // Commenting out this line will fix the problem.
                  result = (result || []).concat(innerResult);
  >result : Symbol(result, Decl(contextualExpressionTypecheckingDoesntBlowStack.ts, 7, 11))

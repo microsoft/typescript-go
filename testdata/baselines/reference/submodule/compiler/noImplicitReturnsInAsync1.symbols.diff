@@ -1,6 +1,6 @@
 --- old.noImplicitReturnsInAsync1.symbols
 +++ new.noImplicitReturnsInAsync1.symbols
-@@ -12,7 +12,4 @@
+@@= skipped -12, +12 lines =@@
      }
      let x = await Promise.resolve("The test is passed without an error.");
  >x : Symbol(x, Decl(noImplicitReturnsInAsync1.ts, 4, 7))

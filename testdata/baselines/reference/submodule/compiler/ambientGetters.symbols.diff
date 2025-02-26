@@ -1,6 +1,6 @@
 --- old.ambientGetters.symbols
 +++ new.ambientGetters.symbols
-@@ -5,12 +5,12 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(ambientGetters.ts, 0, 0))
  
      get length() : number;

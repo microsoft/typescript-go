@@ -1,6 +1,6 @@
 --- old.commentEmittingInPreserveJsx1.symbols
 +++ new.commentEmittingInPreserveJsx1.symbols
-@@ -5,26 +5,18 @@
+@@= skipped -5, +5 lines =@@
  >React : Symbol(React, Decl(file.tsx, 0, 0))
  
  <div>
@@ -27,7 +27,7 @@
      // Not Comment
      {
          //Comment just Fine
-@@ -32,16 +24,11 @@
+@@= skipped -27, +19 lines =@@
      }
      // Another not Comment
  </div>;

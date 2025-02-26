@@ -1,6 +1,6 @@
 --- old.mutrec.symbols
 +++ new.mutrec.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(mutrec.ts, 0, 0))
  
      x:B[];
@@ -9,7 +9,7 @@
  >B : Symbol(B, Decl(mutrec.ts, 2, 1))
  }
  
-@@ -13,7 +13,7 @@
+@@= skipped -8, +8 lines =@@
  >B : Symbol(B, Decl(mutrec.ts, 2, 1))
  
      x:A[];
@@ -18,7 +18,7 @@
  >A : Symbol(A, Decl(mutrec.ts, 0, 0))
  }
  
-@@ -35,7 +35,7 @@
+@@= skipped -22, +22 lines =@@
  >I1 : Symbol(I1, Decl(mutrec.ts, 10, 5))
  
      y:I2;
@@ -27,7 +27,7 @@
  >I2 : Symbol(I2, Decl(mutrec.ts, 14, 1))
  }
  
-@@ -43,7 +43,7 @@
+@@= skipped -8, +8 lines =@@
  >I2 : Symbol(I2, Decl(mutrec.ts, 14, 1))
  
      y:I3;
@@ -36,7 +36,7 @@
  >I3 : Symbol(I3, Decl(mutrec.ts, 18, 1))
  }
  
-@@ -51,7 +51,7 @@
+@@= skipped -8, +8 lines =@@
  >I3 : Symbol(I3, Decl(mutrec.ts, 18, 1))
  
      y:I1;
@@ -45,7 +45,7 @@
  >I1 : Symbol(I1, Decl(mutrec.ts, 10, 5))
  }
  
-@@ -81,7 +81,7 @@
+@@= skipped -30, +30 lines =@@
  >I4 : Symbol(I4, Decl(mutrec.ts, 28, 6))
  
      y:I5;
@@ -54,7 +54,7 @@
  >I5 : Symbol(I5, Decl(mutrec.ts, 32, 1))
  }
  
-@@ -89,7 +89,7 @@
+@@= skipped -8, +8 lines =@@
  >I5 : Symbol(I5, Decl(mutrec.ts, 32, 1))
  
      y:I4;

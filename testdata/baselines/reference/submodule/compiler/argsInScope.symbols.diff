@@ -1,6 +1,6 @@
 --- old.argsInScope.symbols
 +++ new.argsInScope.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(argsInScope.ts, 0, 0))
  
      P(ii:number, j:number, k:number) {
@@ -9,7 +9,7 @@
  >ii : Symbol(ii, Decl(argsInScope.ts, 1, 6))
  >j : Symbol(j, Decl(argsInScope.ts, 1, 16))
  >k : Symbol(k, Decl(argsInScope.ts, 1, 26))
-@@ -13,9 +13,9 @@
+@@= skipped -8, +8 lines =@@
         for (var i = 0; i < arguments.length; i++) {
  >i : Symbol(i, Decl(argsInScope.ts, 2, 15))
  >i : Symbol(i, Decl(argsInScope.ts, 2, 15))
@@ -21,7 +21,7 @@
  >i : Symbol(i, Decl(argsInScope.ts, 2, 15))
  
             // WScript.Echo("param: " + arguments[i]);
-@@ -28,7 +28,7 @@
+@@= skipped -15, +15 lines =@@
  >C : Symbol(C, Decl(argsInScope.ts, 0, 0))
  
  c.P(1,2,3);

@@ -1,6 +1,6 @@
 --- old.sourceMapValidationDestructuringForObjectBindingPatternDefaultValues.symbols
 +++ new.sourceMapValidationDestructuringForObjectBindingPatternDefaultValues.symbols
-@@ -12,20 +12,20 @@
+@@= skipped -12, +12 lines =@@
  >Robot : Symbol(Robot, Decl(sourceMapValidationDestructuringForObjectBindingPatternDefaultValues.ts, 2, 1))
  
      name: string;
@@ -25,7 +25,7 @@
  
          primary?: string;
  >primary : Symbol(primary, Decl(sourceMapValidationDestructuringForObjectBindingPatternDefaultValues.ts, 10, 13))
-@@ -64,7 +64,7 @@
+@@= skipped -52, +52 lines =@@
  }
  
  for (let {name: nameA= "noName" } = robot, i = 0; i < 1; i++) {
@@ -34,7 +34,7 @@
  >nameA : Symbol(nameA, Decl(sourceMapValidationDestructuringForObjectBindingPatternDefaultValues.ts, 25, 10))
  >robot : Symbol(robot, Decl(sourceMapValidationDestructuringForObjectBindingPatternDefaultValues.ts, 16, 3))
  >i : Symbol(i, Decl(sourceMapValidationDestructuringForObjectBindingPatternDefaultValues.ts, 25, 42))
-@@ -78,7 +78,7 @@
+@@= skipped -14, +14 lines =@@
  >nameA : Symbol(nameA, Decl(sourceMapValidationDestructuringForObjectBindingPatternDefaultValues.ts, 25, 10))
  }
  for (let {name: nameA = "noName" } = getRobot(), i = 0; i < 1; i++) {
@@ -43,7 +43,7 @@
  >nameA : Symbol(nameA, Decl(sourceMapValidationDestructuringForObjectBindingPatternDefaultValues.ts, 28, 10))
  >getRobot : Symbol(getRobot, Decl(sourceMapValidationDestructuringForObjectBindingPatternDefaultValues.ts, 17, 97))
  >i : Symbol(i, Decl(sourceMapValidationDestructuringForObjectBindingPatternDefaultValues.ts, 28, 48))
-@@ -92,7 +92,7 @@
+@@= skipped -14, +14 lines =@@
  >nameA : Symbol(nameA, Decl(sourceMapValidationDestructuringForObjectBindingPatternDefaultValues.ts, 28, 10))
  }
  for (let {name: nameA = "noName" } = <Robot>{ name: "trimmer", skill: "trimming" }, i = 0; i < 1; i++) {
@@ -52,7 +52,7 @@
  >nameA : Symbol(nameA, Decl(sourceMapValidationDestructuringForObjectBindingPatternDefaultValues.ts, 31, 10))
  >Robot : Symbol(Robot, Decl(sourceMapValidationDestructuringForObjectBindingPatternDefaultValues.ts, 2, 1))
  >name : Symbol(name, Decl(sourceMapValidationDestructuringForObjectBindingPatternDefaultValues.ts, 31, 45))
-@@ -109,7 +109,7 @@
+@@= skipped -17, +17 lines =@@
  }
  for (let {
      skills: {
@@ -61,7 +61,7 @@
  
          primary: primaryA = "primary",
  >primary : Symbol(primary, Decl(sourceMapValidationDestructuringForObjectBindingPatternDefaultValues.ts, 10, 13))
-@@ -137,7 +137,7 @@
+@@= skipped -28, +28 lines =@@
  }
  for (let {
      skills: {
@@ -70,7 +70,7 @@
  
          primary: primaryA = "primary",
  >primary : Symbol(primary, Decl(sourceMapValidationDestructuringForObjectBindingPatternDefaultValues.ts, 10, 13))
-@@ -165,7 +165,7 @@
+@@= skipped -28, +28 lines =@@
  }
  for (let {
      skills: {
@@ -79,7 +79,7 @@
  
          primary: primaryA = "primary",
  >primary : Symbol(primary, Decl(sourceMapValidationDestructuringForObjectBindingPatternDefaultValues.ts, 10, 13))
-@@ -199,9 +199,9 @@
+@@= skipped -34, +34 lines =@@
  }
  
  for (let {name: nameA = "noName", skill: skillA = "skill" } = robot, i = 0; i < 1; i++) {
@@ -91,7 +91,7 @@
  >skillA : Symbol(skillA, Decl(sourceMapValidationDestructuringForObjectBindingPatternDefaultValues.ts, 60, 33))
  >robot : Symbol(robot, Decl(sourceMapValidationDestructuringForObjectBindingPatternDefaultValues.ts, 16, 3))
  >i : Symbol(i, Decl(sourceMapValidationDestructuringForObjectBindingPatternDefaultValues.ts, 60, 68))
-@@ -215,9 +215,9 @@
+@@= skipped -16, +16 lines =@@
  >nameA : Symbol(nameA, Decl(sourceMapValidationDestructuringForObjectBindingPatternDefaultValues.ts, 60, 10))
  }
  for (let {name: nameA = "noName", skill: skillA = "skill" } = getRobot(), i = 0; i < 1; i++) {
@@ -103,7 +103,7 @@
  >skillA : Symbol(skillA, Decl(sourceMapValidationDestructuringForObjectBindingPatternDefaultValues.ts, 63, 33))
  >getRobot : Symbol(getRobot, Decl(sourceMapValidationDestructuringForObjectBindingPatternDefaultValues.ts, 17, 97))
  >i : Symbol(i, Decl(sourceMapValidationDestructuringForObjectBindingPatternDefaultValues.ts, 63, 73))
-@@ -231,9 +231,9 @@
+@@= skipped -16, +16 lines =@@
  >nameA : Symbol(nameA, Decl(sourceMapValidationDestructuringForObjectBindingPatternDefaultValues.ts, 63, 10))
  }
  for (let {name: nameA = "noName", skill: skillA = "skill" } = <Robot>{ name: "trimmer", skill: "trimming" }, i = 0; i < 1; i++) {
@@ -115,7 +115,7 @@
  >skillA : Symbol(skillA, Decl(sourceMapValidationDestructuringForObjectBindingPatternDefaultValues.ts, 66, 33))
  >Robot : Symbol(Robot, Decl(sourceMapValidationDestructuringForObjectBindingPatternDefaultValues.ts, 2, 1))
  >name : Symbol(name, Decl(sourceMapValidationDestructuringForObjectBindingPatternDefaultValues.ts, 66, 70))
-@@ -250,11 +250,11 @@
+@@= skipped -19, +19 lines =@@
  }
  for (let {
      name: nameA = "noName",
@@ -129,7 +129,7 @@
  
          primary: primaryA = "primary",
  >primary : Symbol(primary, Decl(sourceMapValidationDestructuringForObjectBindingPatternDefaultValues.ts, 10, 13))
-@@ -282,11 +282,11 @@
+@@= skipped -32, +32 lines =@@
  }
  for (let {
      name: nameA = "noName",
@@ -143,7 +143,7 @@
  
          primary: primaryA = "primary",
  >primary : Symbol(primary, Decl(sourceMapValidationDestructuringForObjectBindingPatternDefaultValues.ts, 10, 13))
-@@ -314,11 +314,11 @@
+@@= skipped -32, +32 lines =@@
  }
  for (let {
      name: nameA = "noName",

@@ -1,6 +1,6 @@
 --- old.decoratorMetadataWithImportDeclarationNameCollision7.symbols
 +++ new.decoratorMetadataWithImportDeclarationNameCollision7.symbols
-@@ -2,10 +2,10 @@
+@@= skipped -2, +2 lines =@@
  
  === db.ts ===
  export default class db {
@@ -13,7 +13,7 @@
      }
  }
  
-@@ -27,25 +27,25 @@
+@@= skipped -25, +25 lines =@@
  >MyClass : Symbol(MyClass, Decl(service.ts, 3, 1))
  
      db: db.db; //error

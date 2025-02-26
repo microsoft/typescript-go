@@ -1,6 +1,6 @@
 --- old.jsxIssuesErrorWhenTagExpectsTooManyArguments.symbols
 +++ new.jsxIssuesErrorWhenTagExpectsTooManyArguments.symbols
-@@ -10,7 +10,7 @@
+@@= skipped -10, +10 lines =@@
  >MyProps : Symbol(MyProps, Decl(jsxIssuesErrorWhenTagExpectsTooManyArguments.tsx, 2, 31))
  
      x: number;
@@ -9,7 +9,7 @@
  }
  
  function MyComp4(props: MyProps, context: any, bad: any, verybad: any) {
-@@ -22,8 +22,6 @@
+@@= skipped -12, +12 lines =@@
  >verybad : Symbol(verybad, Decl(jsxIssuesErrorWhenTagExpectsTooManyArguments.tsx, 8, 56))
  
      return <div></div>;
@@ -18,7 +18,7 @@
  }
  function MyComp3(props: MyProps, context: any, bad: any) {
  >MyComp3 : Symbol(MyComp3, Decl(jsxIssuesErrorWhenTagExpectsTooManyArguments.tsx, 10, 1))
-@@ -33,8 +31,6 @@
+@@= skipped -11, +9 lines =@@
  >bad : Symbol(bad, Decl(jsxIssuesErrorWhenTagExpectsTooManyArguments.tsx, 11, 46))
  
      return <div></div>;
@@ -27,7 +27,7 @@
  }
  function MyComp2(props: MyProps, context: any) {
  >MyComp2 : Symbol(MyComp2, Decl(jsxIssuesErrorWhenTagExpectsTooManyArguments.tsx, 13, 1))
-@@ -43,8 +39,6 @@
+@@= skipped -10, +8 lines =@@
  >context : Symbol(context, Decl(jsxIssuesErrorWhenTagExpectsTooManyArguments.tsx, 14, 32))
  
      return <div></div>
@@ -36,7 +36,7 @@
  }
  
  const a = <MyComp4 x={2}/>; // using `MyComp` as a component should error - it expects more arguments than react provides
-@@ -68,8 +62,8 @@
+@@= skipped -25, +23 lines =@@
  >MyProps : Symbol(MyProps, Decl(jsxIssuesErrorWhenTagExpectsTooManyArguments.tsx, 2, 31))
  >context : Symbol(context, Decl(jsxIssuesErrorWhenTagExpectsTooManyArguments.tsx, 22, 60))
  >nonReactArg : Symbol(nonReactArg, Decl(jsxIssuesErrorWhenTagExpectsTooManyArguments.tsx, 22, 74))

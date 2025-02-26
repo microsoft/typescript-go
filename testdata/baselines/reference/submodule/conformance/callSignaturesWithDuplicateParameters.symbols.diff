@@ -1,6 +1,6 @@
 --- old.callSignaturesWithDuplicateParameters.symbols
 +++ new.callSignaturesWithDuplicateParameters.symbols
-@@ -65,17 +65,17 @@
+@@= skipped -65, +65 lines =@@
  >C : Symbol(C, Decl(callSignaturesWithDuplicateParameters.ts, 12, 31))
  
      foo(x, x) { }
@@ -21,7 +21,7 @@
  >T : Symbol(T, Decl(callSignaturesWithDuplicateParameters.ts, 17, 9))
  >x : Symbol(x, Decl(callSignaturesWithDuplicateParameters.ts, 17, 12))
  >T : Symbol(T, Decl(callSignaturesWithDuplicateParameters.ts, 17, 9))
-@@ -95,17 +95,17 @@
+@@= skipped -30, +30 lines =@@
  >x : Symbol(x, Decl(callSignaturesWithDuplicateParameters.ts, 22, 15))
  
      foo(x, x);

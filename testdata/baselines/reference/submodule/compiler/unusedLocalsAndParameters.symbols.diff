@@ -1,6 +1,6 @@
 --- old.unusedLocalsAndParameters.symbols
 +++ new.unusedLocalsAndParameters.symbols
-@@ -33,12 +33,12 @@
+@@= skipped -33, +33 lines =@@
  
      // Method declaration paramter
      method(a) {
@@ -15,7 +15,7 @@
  >v : Symbol(v, Decl(unusedLocalsAndParameters.ts, 22, 10))
      }
  }
-@@ -48,12 +48,12 @@
+@@= skipped -15, +15 lines =@@
  
      // Method declaration paramter
      method(a) {

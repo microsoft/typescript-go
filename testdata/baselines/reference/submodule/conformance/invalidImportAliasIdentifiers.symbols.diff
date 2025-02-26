@@ -1,6 +1,6 @@
 --- old.invalidImportAliasIdentifiers.symbols
 +++ new.invalidImportAliasIdentifiers.symbols
-@@ -13,7 +13,7 @@
+@@= skipped -13, +13 lines =@@
  >C : Symbol(C, Decl(invalidImportAliasIdentifiers.ts, 4, 13))
  
      name: string;
@@ -9,7 +9,7 @@
  }
  
  import c = C;
-@@ -23,8 +23,8 @@
+@@= skipped -10, +10 lines =@@
  >E : Symbol(E, Decl(invalidImportAliasIdentifiers.ts, 10, 13))
  
      Red, Blue
@@ -20,7 +20,7 @@
  }
  
  import e = E;
-@@ -35,7 +35,7 @@
+@@= skipped -12, +12 lines =@@
  >I : Symbol(I, Decl(invalidImportAliasIdentifiers.ts, 16, 13))
  
      id: number;

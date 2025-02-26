@@ -1,6 +1,6 @@
 --- old.destructuringInitializerContextualTypeFromContext.symbols
 +++ new.destructuringInitializerContextualTypeFromContext.symbols
-@@ -15,7 +15,7 @@
+@@= skipped -15, +15 lines =@@
  >Props : Symbol(Props, Decl(destructuringInitializerContextualTypeFromContext.ts, 2, 1))
  
      name: "Apollo" | "Artemis" | "Dionysus" | "Persephone";
@@ -9,7 +9,7 @@
  }
  
  const Parent: SFC<Props> = ({
-@@ -53,9 +53,9 @@
+@@= skipped -38, +38 lines =@@
  
  }) => `name: ${name} props: ${JSON.stringify(props)}`;
  >name : Symbol(name, Decl(destructuringInitializerContextualTypeFromContext.ts, 15, 13))

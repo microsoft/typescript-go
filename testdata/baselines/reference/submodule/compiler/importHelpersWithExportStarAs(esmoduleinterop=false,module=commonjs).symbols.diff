@@ -1,6 +1,6 @@
 --- old.importHelpersWithExportStarAs(esmoduleinterop=false,module=commonjs).symbols
 +++ new.importHelpersWithExportStarAs(esmoduleinterop=false,module=commonjs).symbols
-@@ -10,9 +10,9 @@
+@@= skipped -10, +10 lines =@@
  
  === tslib.d.ts ===
  declare module "tslib" {

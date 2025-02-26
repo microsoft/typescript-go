@@ -1,6 +1,6 @@
 --- old.iterableContextualTyping1.symbols
 +++ new.iterableContextualTyping1.symbols
-@@ -3,10 +3,8 @@
+@@= skipped -3, +3 lines =@@
  === iterableContextualTyping1.ts ===
  var iter: Iterable<(x: string) => number> = [s => s.length];
  >iter : Symbol(iter, Decl(iterableContextualTyping1.ts, 0, 3))

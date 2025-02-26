@@ -1,6 +1,6 @@
 --- old.inheritanceMemberFuncOverridingAccessor.symbols
 +++ new.inheritanceMemberFuncOverridingAccessor.symbols
-@@ -5,12 +5,12 @@
+@@= skipped -5, +5 lines =@@
  >a : Symbol(a, Decl(inheritanceMemberFuncOverridingAccessor.ts, 0, 0))
  
      get x() {
@@ -15,7 +15,7 @@
  >aValue : Symbol(aValue, Decl(inheritanceMemberFuncOverridingAccessor.ts, 4, 10))
  
      }
-@@ -21,7 +21,7 @@
+@@= skipped -16, +16 lines =@@
  >a : Symbol(a, Decl(inheritanceMemberFuncOverridingAccessor.ts, 0, 0))
  
      x() {

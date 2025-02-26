@@ -1,6 +1,6 @@
 --- old.exportEqualsCommonJs.symbols
 +++ new.exportEqualsCommonJs.symbols
-@@ -2,6 +2,6 @@
+@@= skipped -2, +2 lines =@@
  
  === exportEqualsCommonJs.ts ===
  export = { ["hi"]: "there" };

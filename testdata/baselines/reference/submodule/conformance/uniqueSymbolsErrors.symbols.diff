@@ -1,6 +1,6 @@
 --- old.uniqueSymbolsErrors.symbols
 +++ new.uniqueSymbolsErrors.symbols
-@@ -49,82 +49,82 @@
+@@= skipped -49, +49 lines =@@
  >invalidConstructorArgType : Symbol(invalidConstructorArgType, Decl(uniqueSymbolsErrors.ts, 17, 16))
  
      readonly invalidReadonlyPropertyType: unique symbol;
@@ -104,7 +104,7 @@
  >arg : Symbol(arg, Decl(uniqueSymbolsErrors.ts, 40, 35))
  }
  
-@@ -133,34 +133,34 @@
+@@= skipped -84, +84 lines =@@
  >InvalidInterface : Symbol(InvalidInterface, Decl(uniqueSymbolsErrors.ts, 41, 1))
  
      invalidPropertyType: unique symbol;

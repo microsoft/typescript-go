@@ -1,6 +1,6 @@
 --- old.declarationEmitBindingPatternWithReservedWord.symbols
 +++ new.declarationEmitBindingPatternWithReservedWord.symbols
-@@ -32,20 +32,20 @@
+@@= skipped -32, +32 lines =@@
  >LocaleData : Symbol(LocaleData, Decl(declarationEmitBindingPatternWithReservedWord.ts, 0, 0))
  
      app: unknown;
@@ -25,7 +25,7 @@
  }
  
  export const getLocales = <T extends LocaleData>({
-@@ -60,11 +60,11 @@
+@@= skipped -28, +28 lines =@@
  >name : Symbol(name, Decl(declarationEmitBindingPatternWithReservedWord.ts, 15, 8))
  
      default: defaultLocalesConfig,

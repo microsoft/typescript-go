@@ -1,6 +1,6 @@
 --- old.unknownType1.symbols
 +++ new.unknownType1.symbols
-@@ -405,13 +405,13 @@
+@@= skipped -405, +405 lines =@@
  >C1 : Symbol(C1, Decl(unknownType1.ts, 156, 1))
  
      a: string;  // Error

@@ -1,6 +1,6 @@
 --- old.declFileAccessors.symbols
 +++ new.declFileAccessors.symbols
-@@ -7,75 +7,75 @@
+@@= skipped -7, +7 lines =@@
  
      /** getter property*/
      public get p3() {
@@ -90,7 +90,7 @@
  >value : Symbol(value, Decl(declFileAccessors_0.ts, 45, 26))
      }
  }
-@@ -87,75 +87,75 @@
+@@= skipped -80, +80 lines =@@
  
      /** getter property*/
      public get p3() {

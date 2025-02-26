@@ -1,6 +1,6 @@
 --- old.catchClauseWithTypeAnnotation.symbols
 +++ new.catchClauseWithTypeAnnotation.symbols
-@@ -44,17 +44,17 @@
+@@= skipped -44, +44 lines =@@
  
      try { } catch (x: unknown) { console.log(x); } // should be OK
  >x : Symbol(x, Decl(catchClauseWithTypeAnnotation.ts, 14, 19))
@@ -22,7 +22,7 @@
  >x : Symbol(x, Decl(catchClauseWithTypeAnnotation.ts, 15, 19))
  
      try { } catch (x: unknown) { x.foo; } // error in the body
-@@ -74,18 +74,18 @@
+@@= skipped -30, +30 lines =@@
  >x : Symbol(x, Decl(catchClauseWithTypeAnnotation.ts, 19, 19))
  
      try { console.log(); }
@@ -45,7 +45,7 @@
  >e : Symbol(e, Decl(catchClauseWithTypeAnnotation.ts, 23, 11))
      }
  
-@@ -116,17 +116,17 @@
+@@= skipped -42, +42 lines =@@
  
      try { } catch ({ x }: unknown) { console.log(x); } // error in the destructure
  >x : Symbol(x, Decl(catchClauseWithTypeAnnotation.ts, 35, 20))

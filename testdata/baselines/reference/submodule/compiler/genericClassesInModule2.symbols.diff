@@ -1,6 +1,6 @@
 --- old.genericClassesInModule2.symbols
 +++ new.genericClassesInModule2.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T1 : Symbol(T1, Decl(genericClassesInModule2.ts, 0, 15))
  
      constructor( public callback: (self: A<T1>) => void) {
@@ -9,7 +9,7 @@
  >self : Symbol(self, Decl(genericClassesInModule2.ts, 1, 35))
  >A : Symbol(A, Decl(genericClassesInModule2.ts, 0, 0))
  >T1 : Symbol(T1, Decl(genericClassesInModule2.ts, 0, 15))
-@@ -17,7 +17,7 @@
+@@= skipped -11, +11 lines =@@
  >this : Symbol(A, Decl(genericClassesInModule2.ts, 0, 0))
      }
      AAA( callback: (self: A<T1>) => void) {
@@ -18,7 +18,7 @@
  >callback : Symbol(callback, Decl(genericClassesInModule2.ts, 4, 8))
  >self : Symbol(self, Decl(genericClassesInModule2.ts, 4, 20))
  >A : Symbol(A, Decl(genericClassesInModule2.ts, 0, 0))
-@@ -35,7 +35,7 @@
+@@= skipped -18, +18 lines =@@
  >T1 : Symbol(T1, Decl(genericClassesInModule2.ts, 9, 19))
  
      child: B<T1>;
@@ -27,7 +27,7 @@
  >B : Symbol(B, Decl(genericClassesInModule2.ts, 13, 1))
  >T1 : Symbol(T1, Decl(genericClassesInModule2.ts, 9, 19))
  
-@@ -56,7 +56,7 @@
+@@= skipped -21, +21 lines =@@
  >T2 : Symbol(T2, Decl(genericClassesInModule2.ts, 15, 15))
  
      constructor(public parent: T2) { }

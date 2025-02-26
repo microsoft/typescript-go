@@ -1,6 +1,6 @@
 --- old.spreadBooleanRespectsFreshness.symbols
 +++ new.spreadBooleanRespectsFreshness.symbols
-@@ -23,9 +23,9 @@
+@@= skipped -23, +23 lines =@@
  
  foo1 = [...Array.isArray(foo2) ? foo2 : [foo2]];
  >foo1 : Symbol(foo1, Decl(spreadBooleanRespectsFreshness.ts, 4, 11))

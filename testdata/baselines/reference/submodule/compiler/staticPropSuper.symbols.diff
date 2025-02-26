@@ -1,6 +1,6 @@
 --- old.staticPropSuper.symbols
 +++ new.staticPropSuper.symbols
-@@ -10,7 +10,7 @@
+@@= skipped -10, +10 lines =@@
  >A : Symbol(A, Decl(staticPropSuper.ts, 0, 0))
  
      public static s: number = 9;
@@ -9,7 +9,7 @@
  
      constructor() {
          var x = 1; // should not error
-@@ -26,7 +26,7 @@
+@@= skipped -16, +16 lines =@@
  >A : Symbol(A, Decl(staticPropSuper.ts, 0, 0))
  
      public p: number = 10;
@@ -18,7 +18,7 @@
  
      constructor() {
          var x = 1; // should error
-@@ -39,7 +39,7 @@
+@@= skipped -13, +13 lines =@@
  >A : Symbol(A, Decl(staticPropSuper.ts, 0, 0))
  
      private p: number = 11;
@@ -27,7 +27,7 @@
  
      constructor() {
          var x = 1; // should error
-@@ -52,7 +52,7 @@
+@@= skipped -13, +13 lines =@@
  >A : Symbol(A, Decl(staticPropSuper.ts, 0, 0))
  
      p: number = 12;

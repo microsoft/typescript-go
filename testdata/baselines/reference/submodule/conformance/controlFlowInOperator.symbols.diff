@@ -1,6 +1,6 @@
 --- old.controlFlowInOperator.symbols
 +++ new.controlFlowInOperator.symbols
-@@ -12,12 +12,12 @@
+@@= skipped -12, +12 lines =@@
  
  type A = { [a]: number; };
  >A : Symbol(A, Decl(controlFlowInOperator.ts, 2, 14))
@@ -15,7 +15,7 @@
  >b : Symbol(b, Decl(controlFlowInOperator.ts, 1, 5))
  
  declare const c: A | B;
-@@ -33,7 +33,7 @@
+@@= skipped -21, +21 lines =@@
  
      c['a']; // number;
  >c : Symbol(c, Decl(controlFlowInOperator.ts, 7, 13))
@@ -24,7 +24,7 @@
  }
  
  if ('d' in c) {
-@@ -93,9 +93,9 @@
+@@= skipped -60, +60 lines =@@
    for (let i = 1; i < Number.MAX_VALUE; i++) {
  >i : Symbol(i, Decl(controlFlowInOperator.ts, 39, 10))
  >i : Symbol(i, Decl(controlFlowInOperator.ts, 39, 10))

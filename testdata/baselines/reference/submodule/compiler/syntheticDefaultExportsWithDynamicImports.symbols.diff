@@ -1,6 +1,6 @@
 --- old.syntheticDefaultExportsWithDynamicImports.symbols
 +++ new.syntheticDefaultExportsWithDynamicImports.symbols
-@@ -10,9 +10,6 @@
+@@= skipped -10, +10 lines =@@
  
  === index.ts ===
  import("package").then(({default: foo}) => foo(42));

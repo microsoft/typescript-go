@@ -1,6 +1,6 @@
 --- old.declarationEmitTypeofRest.symbols
 +++ new.declarationEmitTypeofRest.symbols
-@@ -17,7 +17,6 @@
+@@= skipped -17, +17 lines =@@
  === v2.ts ===
  const n = Symbol();
  >n : Symbol(n, Decl(v2.ts, 0, 5))

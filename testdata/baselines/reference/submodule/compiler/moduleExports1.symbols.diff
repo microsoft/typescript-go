@@ -1,6 +1,6 @@
 --- old.moduleExports1.symbols
 +++ new.moduleExports1.symbols
-@@ -10,24 +10,16 @@
+@@= skipped -10, +10 lines =@@
  >Rue : Symbol(Rue, Decl(moduleExports1.ts, 0, 41))
  
  		public address:string;

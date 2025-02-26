@@ -1,6 +1,6 @@
 --- old.jsDeclarationsReexportAliasesEsModuleInterop.symbols
 +++ new.jsDeclarationsReexportAliasesEsModuleInterop.symbols
-@@ -5,14 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(cls.js, 0, 0))
  
  module.exports = Foo;
@@ -15,7 +15,7 @@
  >Fooa : Symbol(Fooa, Decl(usage.js, 0, 8))
  
  export const x = new Fooa();
-@@ -20,6 +16,5 @@
+@@= skipped -15, +11 lines =@@
  >Fooa : Symbol(Fooa, Decl(usage.js, 0, 8))
  
  export {default as Foob} from "./cls";

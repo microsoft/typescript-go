@@ -1,6 +1,6 @@
 --- old.arrayBestCommonTypes.symbols
 +++ new.arrayBestCommonTypes.symbols
-@@ -24,98 +24,98 @@
+@@= skipped -24, +24 lines =@@
  >f : Symbol(f, Decl(arrayBestCommonTypes.ts, 4, 34))
  
          public voidIfAny(x: boolean, y?: boolean): number;
@@ -130,7 +130,7 @@
  
  
              var t1: { x: number; y: base; }[] = [{ x: 7, y: new derived() }, { x: 5, y: new base() }];
-@@ -233,122 +233,122 @@
+@@= skipped -209, +209 lines =@@
  
      interface iface { x: string; }
  >iface : Symbol(iface, Decl(arrayBestCommonTypes.ts, 53, 22))

@@ -1,6 +1,6 @@
 --- old.indexTypeNoSubstitutionTemplateLiteral.symbols
 +++ new.indexTypeNoSubstitutionTemplateLiteral.symbols
-@@ -2,14 +2,14 @@
+@@= skipped -2, +2 lines =@@
  
  === indexTypeNoSubstitutionTemplateLiteral.ts ===
  function Foo() {}

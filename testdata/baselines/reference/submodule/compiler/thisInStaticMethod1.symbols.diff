@@ -1,6 +1,6 @@
 --- old.thisInStaticMethod1.symbols
 +++ new.thisInStaticMethod1.symbols
-@@ -5,20 +5,20 @@
+@@= skipped -5, +5 lines =@@
  >foo : Symbol(foo, Decl(thisInStaticMethod1.ts, 0, 0))
  
   static x = 3;

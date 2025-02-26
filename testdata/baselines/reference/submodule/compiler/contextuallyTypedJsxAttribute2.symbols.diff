@@ -1,6 +1,6 @@
 --- old.contextuallyTypedJsxAttribute2.symbols
 +++ new.contextuallyTypedJsxAttribute2.symbols
-@@ -26,8 +26,6 @@
+@@= skipped -26, +26 lines =@@
  
  ) {
    return <a></a>;
@@ -9,7 +9,7 @@
  }
  
  <UnwrappedLink onClick={(e) => {}} />;
-@@ -56,8 +54,6 @@
+@@= skipped -30, +28 lines =@@
    },
  ) {
    return <a></a>;

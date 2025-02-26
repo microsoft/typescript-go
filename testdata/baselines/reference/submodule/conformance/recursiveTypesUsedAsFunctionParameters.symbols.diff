@@ -1,6 +1,6 @@
 --- old.recursiveTypesUsedAsFunctionParameters.symbols
 +++ new.recursiveTypesUsedAsFunctionParameters.symbols
-@@ -6,11 +6,11 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(recursiveTypesUsedAsFunctionParameters.ts, 0, 11))
  
      data: T;
@@ -14,7 +14,7 @@
  >List : Symbol(List, Decl(recursiveTypesUsedAsFunctionParameters.ts, 0, 0))
  >List : Symbol(List, Decl(recursiveTypesUsedAsFunctionParameters.ts, 0, 0))
  >T : Symbol(T, Decl(recursiveTypesUsedAsFunctionParameters.ts, 0, 11))
-@@ -21,11 +21,11 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(recursiveTypesUsedAsFunctionParameters.ts, 5, 13))
  
      data: T;

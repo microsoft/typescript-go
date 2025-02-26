@@ -1,6 +1,6 @@
 --- old.narrowExceptionVariableInCatchClause.symbols
 +++ new.narrowExceptionVariableInCatchClause.symbols
-@@ -35,9 +35,9 @@
+@@= skipped -35, +35 lines =@@
  >Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
              err.message;

@@ -1,6 +1,6 @@
 --- old.baseTypeOrderChecking.symbols
 +++ new.baseTypeOrderChecking.symbols
-@@ -34,7 +34,7 @@
+@@= skipped -34, +34 lines =@@
  {
  
                 public memberVariable: Class2;

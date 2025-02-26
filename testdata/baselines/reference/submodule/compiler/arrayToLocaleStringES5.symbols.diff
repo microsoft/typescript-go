@@ -1,6 +1,6 @@
 --- old.arrayToLocaleStringES5.symbols
 +++ new.arrayToLocaleStringES5.symbols
-@@ -9,21 +9,21 @@
+@@= skipped -9, +9 lines =@@
  
  str = arr.toLocaleString(); // OK
  >str : Symbol(str, Decl(arrayToLocaleStringES5.ts, 0, 3))
@@ -28,7 +28,7 @@
  >style : Symbol(style, Decl(arrayToLocaleStringES5.ts, 4, 35))
  >currency : Symbol(currency, Decl(arrayToLocaleStringES5.ts, 4, 54))
  
-@@ -35,21 +35,21 @@
+@@= skipped -26, +26 lines =@@
  
  str = dates.toLocaleString(); // OK
  >str : Symbol(str, Decl(arrayToLocaleStringES5.ts, 0, 3))
@@ -56,7 +56,7 @@
  >timeZone : Symbol(timeZone, Decl(arrayToLocaleStringES5.ts, 9, 34))
  
  const int8Array = new Int8Array(3);
-@@ -58,21 +58,21 @@
+@@= skipped -23, +23 lines =@@
  
  str = int8Array.toLocaleString(); // OK
  >str : Symbol(str, Decl(arrayToLocaleStringES5.ts, 0, 3))
@@ -84,7 +84,7 @@
  >style : Symbol(style, Decl(arrayToLocaleStringES5.ts, 14, 41))
  >currency : Symbol(currency, Decl(arrayToLocaleStringES5.ts, 14, 60))
  
-@@ -82,21 +82,21 @@
+@@= skipped -24, +24 lines =@@
  
  str = uint8Array.toLocaleString(); // OK
  >str : Symbol(str, Decl(arrayToLocaleStringES5.ts, 0, 3))
@@ -112,7 +112,7 @@
  >style : Symbol(style, Decl(arrayToLocaleStringES5.ts, 19, 42))
  >currency : Symbol(currency, Decl(arrayToLocaleStringES5.ts, 19, 61))
  
-@@ -106,21 +106,21 @@
+@@= skipped -24, +24 lines =@@
  
  str = uint8ClampedArray.toLocaleString(); // OK
  >str : Symbol(str, Decl(arrayToLocaleStringES5.ts, 0, 3))
@@ -140,7 +140,7 @@
  >style : Symbol(style, Decl(arrayToLocaleStringES5.ts, 24, 49))
  >currency : Symbol(currency, Decl(arrayToLocaleStringES5.ts, 24, 68))
  
-@@ -130,21 +130,21 @@
+@@= skipped -24, +24 lines =@@
  
  str = int16Array.toLocaleString(); // OK
  >str : Symbol(str, Decl(arrayToLocaleStringES5.ts, 0, 3))
@@ -168,7 +168,7 @@
  >style : Symbol(style, Decl(arrayToLocaleStringES5.ts, 29, 42))
  >currency : Symbol(currency, Decl(arrayToLocaleStringES5.ts, 29, 61))
  
-@@ -154,21 +154,21 @@
+@@= skipped -24, +24 lines =@@
  
  str = uint16Array.toLocaleString(); // OK
  >str : Symbol(str, Decl(arrayToLocaleStringES5.ts, 0, 3))
@@ -196,7 +196,7 @@
  >style : Symbol(style, Decl(arrayToLocaleStringES5.ts, 34, 43))
  >currency : Symbol(currency, Decl(arrayToLocaleStringES5.ts, 34, 62))
  
-@@ -178,21 +178,21 @@
+@@= skipped -24, +24 lines =@@
  
  str = int32Array.toLocaleString(); // OK
  >str : Symbol(str, Decl(arrayToLocaleStringES5.ts, 0, 3))
@@ -224,7 +224,7 @@
  >style : Symbol(style, Decl(arrayToLocaleStringES5.ts, 39, 42))
  >currency : Symbol(currency, Decl(arrayToLocaleStringES5.ts, 39, 61))
  
-@@ -202,21 +202,21 @@
+@@= skipped -24, +24 lines =@@
  
  str = uint32Array.toLocaleString(); // OK
  >str : Symbol(str, Decl(arrayToLocaleStringES5.ts, 0, 3))
@@ -252,7 +252,7 @@
  >style : Symbol(style, Decl(arrayToLocaleStringES5.ts, 44, 43))
  >currency : Symbol(currency, Decl(arrayToLocaleStringES5.ts, 44, 62))
  
-@@ -226,21 +226,21 @@
+@@= skipped -24, +24 lines =@@
  
  str = float32Array.toLocaleString(); // OK
  >str : Symbol(str, Decl(arrayToLocaleStringES5.ts, 0, 3))
@@ -280,7 +280,7 @@
  >style : Symbol(style, Decl(arrayToLocaleStringES5.ts, 49, 44))
  >currency : Symbol(currency, Decl(arrayToLocaleStringES5.ts, 49, 63))
  
-@@ -250,21 +250,21 @@
+@@= skipped -24, +24 lines =@@
  
  str = float64Array.toLocaleString(); // OK
  >str : Symbol(str, Decl(arrayToLocaleStringES5.ts, 0, 3))

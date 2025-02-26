@@ -1,6 +1,6 @@
 --- old.constAssertions.symbols
 +++ new.constAssertions.symbols
-@@ -131,9 +131,9 @@
+@@= skipped -131, +131 lines =@@
  let o2 = { a: 1, 'b': 2, ['c']: 3, d() {}, ['e' + '']: 4 } as const;
  >o2 : Symbol(o2, Decl(constAssertions.ts, 36, 3))
  >a : Symbol(a, Decl(constAssertions.ts, 36, 10))
@@ -13,7 +13,7 @@
  >d : Symbol(d, Decl(constAssertions.ts, 36, 34))
  >['e' + ''] : Symbol(['e' + ''], Decl(constAssertions.ts, 36, 42))
  >const : Symbol(const)
-@@ -172,7 +172,7 @@
+@@= skipped -41, +41 lines =@@
  >x : Symbol(x, Decl(constAssertions.ts, 43, 10))
  >foo : Symbol(foo, Decl(constAssertions.ts, 43, 17))
  >this.x : Symbol(x, Decl(constAssertions.ts, 43, 10))
@@ -22,7 +22,7 @@
  >x : Symbol(x, Decl(constAssertions.ts, 43, 10))
  >const : Symbol(const)
  
-@@ -394,10 +394,10 @@
+@@= skipped -222, +222 lines =@@
  >Foo54374 : Symbol(Foo54374, Decl(constAssertions.ts, 107, 33))
  
    a: 1;

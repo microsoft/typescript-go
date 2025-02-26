@@ -1,6 +1,6 @@
 --- old.controlFlowSelfReferentialLoop.symbols
 +++ new.controlFlowSelfReferentialLoop.symbols
-@@ -110,9 +110,9 @@
+@@= skipped -110, +110 lines =@@
      for (k=0;k<x.length;k+=16) {
  >k : Symbol(k, Decl(controlFlowSelfReferentialLoop.ts, 21, 7))
  >k : Symbol(k, Decl(controlFlowSelfReferentialLoop.ts, 21, 7))
@@ -12,7 +12,7 @@
  >k : Symbol(k, Decl(controlFlowSelfReferentialLoop.ts, 21, 7))
  
          AA=a; BB=b; CC=c; DD=d;
-@@ -839,7 +839,7 @@
+@@= skipped -729, +729 lines =@@
  >DataShape : Symbol(DataShape, Decl(controlFlowSelfReferentialLoop.ts, 99, 19))
  
    message: { id: string }
@@ -21,7 +21,7 @@
  >id : Symbol(id, Decl(controlFlowSelfReferentialLoop.ts, 104, 12))
  }
  
-@@ -863,9 +863,9 @@
+@@= skipped -24, +24 lines =@@
  
      const message = data.message
  >message : Symbol(message, Decl(controlFlowSelfReferentialLoop.ts, 115, 9))

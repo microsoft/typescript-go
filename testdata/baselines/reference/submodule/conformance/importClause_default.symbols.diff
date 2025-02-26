@@ -1,6 +1,6 @@
 --- old.importClause_default.symbols
 +++ new.importClause_default.symbols
-@@ -2,8 +2,8 @@
+@@= skipped -2, +2 lines =@@
  
  === /a.ts ===
  export default class A { a!: string }

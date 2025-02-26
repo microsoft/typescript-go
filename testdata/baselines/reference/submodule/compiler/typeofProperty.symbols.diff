@@ -1,6 +1,6 @@
 --- old.typeofProperty.symbols
 +++ new.typeofProperty.symbols
-@@ -5,37 +5,37 @@
+@@= skipped -5, +5 lines =@@
  >I1 : Symbol(I1, Decl(typeofProperty.ts, 0, 0))
  
      a: number;
@@ -45,7 +45,7 @@
  }
  
  
-@@ -43,17 +43,17 @@
+@@= skipped -38, +38 lines =@@
  >C2 : Symbol(C2, Decl(typeofProperty.ts, 17, 1))
  
      c: typeof d; // Should yield error (d is not a value)
@@ -66,7 +66,7 @@
  }
  
  
-@@ -62,7 +62,7 @@
+@@= skipped -19, +19 lines =@@
  >ValidInterface : Symbol(ValidInterface, Decl(typeofProperty.ts, 27, 1))
  
      x: string;
@@ -75,7 +75,7 @@
  }
  
  class ValidClass implements ValidInterface {
-@@ -70,7 +70,7 @@
+@@= skipped -8, +8 lines =@@
  >ValidInterface : Symbol(ValidInterface, Decl(typeofProperty.ts, 27, 1))
  
      x: string;
@@ -84,7 +84,7 @@
  }
  
  var vcInstance = new ValidClass();
-@@ -83,15 +83,15 @@
+@@= skipped -13, +13 lines =@@
  
  var x1: typeof vcInstance.x; // x1: string
  >x1 : Symbol(x1, Decl(typeofProperty.ts, 42, 3))

@@ -1,6 +1,6 @@
 --- old.signatureCombiningRestParameters3.symbols
 +++ new.signatureCombiningRestParameters3.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >Options : Symbol(Options, Decl(signatureCombiningRestParameters3.ts, 0, 26))
  
    extendMarkSchema?:
@@ -9,7 +9,7 @@
  
      | ((
          this: {
-@@ -35,25 +35,25 @@
+@@= skipped -29, +29 lines =@@
  >Options : Symbol(Options, Decl(signatureCombiningRestParameters3.ts, 12, 24))
  
    type: string;
@@ -41,7 +41,7 @@
  >ExtensionConfig : Symbol(ExtensionConfig, Decl(signatureCombiningRestParameters3.ts, 0, 0))
  }
  
-@@ -62,21 +62,21 @@
+@@= skipped -27, +27 lines =@@
  >Options : Symbol(Options, Decl(signatureCombiningRestParameters3.ts, 21, 19))
  
    type: string;
@@ -68,7 +68,7 @@
  >Options : Symbol(Options, Decl(signatureCombiningRestParameters3.ts, 21, 19))
  }
  
-@@ -85,7 +85,7 @@
+@@= skipped -23, +23 lines =@@
  >Options : Symbol(Options, Decl(signatureCombiningRestParameters3.ts, 29, 21))
  
    extendMarkSchema?:
@@ -77,7 +77,7 @@
  
      | ((
          this: {
-@@ -114,11 +114,11 @@
+@@= skipped -29, +29 lines =@@
  >Options : Symbol(Options, Decl(signatureCombiningRestParameters3.ts, 41, 19))
  
    options: Options;
@@ -91,7 +91,7 @@
  >MarkConfig : Symbol(MarkConfig, Decl(signatureCombiningRestParameters3.ts, 44, 1))
  }
  
-@@ -127,7 +127,7 @@
+@@= skipped -13, +13 lines =@@
  >Options : Symbol(Options, Decl(signatureCombiningRestParameters3.ts, 46, 21))
  
    extendMarkSchema?:

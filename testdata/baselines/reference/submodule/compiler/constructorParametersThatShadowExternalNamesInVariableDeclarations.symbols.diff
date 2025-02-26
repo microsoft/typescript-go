@@ -1,6 +1,6 @@
 --- old.constructorParametersThatShadowExternalNamesInVariableDeclarations.symbols
 +++ new.constructorParametersThatShadowExternalNamesInVariableDeclarations.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >A : Symbol(A, Decl(constructorParametersThatShadowExternalNamesInVariableDeclarations.ts, 0, 10))
  
      private a = x;
@@ -9,7 +9,7 @@
  >x : Symbol(x, Decl(constructorParametersThatShadowExternalNamesInVariableDeclarations.ts, 0, 3))
  
      constructor(x: number) {
-@@ -20,7 +20,7 @@
+@@= skipped -12, +12 lines =@@
  >B : Symbol(B, Decl(constructorParametersThatShadowExternalNamesInVariableDeclarations.ts, 5, 1))
  
      private a = x;

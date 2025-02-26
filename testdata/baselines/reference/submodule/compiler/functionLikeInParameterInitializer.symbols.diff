@@ -1,6 +1,6 @@
 --- old.functionLikeInParameterInitializer.symbols
 +++ new.functionLikeInParameterInitializer.symbols
-@@ -35,7 +35,7 @@
+@@= skipped -35, +35 lines =@@
  export function baz3(func = class { x = foo }) {
  >baz3 : Symbol(baz3, Decl(functionLikeInParameterInitializer.ts, 12, 1))
  >func : Symbol(func, Decl(functionLikeInParameterInitializer.ts, 15, 21))

@@ -1,6 +1,6 @@
 --- old.declFileGenericType2.symbols
 +++ new.declFileGenericType2.symbols
-@@ -49,7 +49,7 @@
+@@= skipped -49, +49 lines =@@
  >IModel : Symbol(IModel, Decl(declFileGenericType2.ts, 0, 27))
  
          getControllers(): mvc.IController<mvc.IModel>[];
@@ -9,7 +9,7 @@
  >mvc : Symbol(mvc, Decl(declFileGenericType2.ts, 0, 22), Decl(declFileGenericType2.ts, 4, 22), Decl(declFileGenericType2.ts, 8, 22), Decl(declFileGenericType2.ts, 12, 22))
  >IController : Symbol(IController, Decl(declFileGenericType2.ts, 4, 27))
  >mvc : Symbol(mvc, Decl(declFileGenericType2.ts, 0, 22), Decl(declFileGenericType2.ts, 4, 22), Decl(declFileGenericType2.ts, 8, 22), Decl(declFileGenericType2.ts, 12, 22))
-@@ -58,55 +58,54 @@
+@@= skipped -9, +9 lines =@@
  }
  module templa.dom.mvc {
  >templa : Symbol(templa, Decl(declFileGenericType2.ts, 0, 0), Decl(declFileGenericType2.ts, 3, 1), Decl(declFileGenericType2.ts, 7, 1), Decl(declFileGenericType2.ts, 11, 1), Decl(declFileGenericType2.ts, 16, 1) ... and 2 more)
@@ -78,7 +78,7 @@
  >composite : Symbol(composite, Decl(declFileGenericType2.ts, 31, 22))
  
      export class AbstractCompositeElementController<ModelType extends templa.mvc.composite.ICompositeControllerModel> extends templa.dom.mvc.AbstractElementController<ModelType> {
-@@ -114,34 +113,26 @@
+@@= skipped -56, +55 lines =@@
  >ModelType : Symbol(ModelType, Decl(declFileGenericType2.ts, 32, 52))
  >templa : Symbol(templa, Decl(declFileGenericType2.ts, 0, 0), Decl(declFileGenericType2.ts, 3, 1), Decl(declFileGenericType2.ts, 7, 1), Decl(declFileGenericType2.ts, 11, 1), Decl(declFileGenericType2.ts, 16, 1) ... and 2 more)
  >mvc : Symbol(mvc, Decl(declFileGenericType2.ts, 0, 22), Decl(declFileGenericType2.ts, 4, 22), Decl(declFileGenericType2.ts, 8, 22), Decl(declFileGenericType2.ts, 12, 22))

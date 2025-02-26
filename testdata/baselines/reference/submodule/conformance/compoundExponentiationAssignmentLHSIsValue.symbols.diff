@@ -1,6 +1,6 @@
 --- old.compoundExponentiationAssignmentLHSIsValue.symbols
 +++ new.compoundExponentiationAssignmentLHSIsValue.symbols
-@@ -15,14 +15,14 @@
+@@= skipped -15, +15 lines =@@
  >value : Symbol(value, Decl(compoundExponentiationAssignmentLHSIsValue.ts, 1, 3))
      }
      foo() {
@@ -17,7 +17,7 @@
  
          this **= value;
  >this : Symbol(C, Decl(compoundExponentiationAssignmentLHSIsValue.ts, 1, 15))
-@@ -107,7 +107,7 @@
+@@= skipped -92, +92 lines =@@
      }
  
      foo() {
@@ -26,7 +26,7 @@
  
          super **= value;
  >super : Symbol(C, Decl(compoundExponentiationAssignmentLHSIsValue.ts, 1, 15))
-@@ -115,7 +115,7 @@
+@@= skipped -8, +8 lines =@@
      }
  
      static sfoo() {

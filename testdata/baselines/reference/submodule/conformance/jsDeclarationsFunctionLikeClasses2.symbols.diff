@@ -1,6 +1,6 @@
 --- old.jsDeclarationsFunctionLikeClasses2.symbols
 +++ new.jsDeclarationsFunctionLikeClasses2.symbols
-@@ -5,24 +5,21 @@
+@@= skipped -5, +5 lines =@@
   * @param {number} len
   */
  export function Vec(len) {
@@ -29,7 +29,7 @@
  
      /**
       * @param {Vec} other
-@@ -32,16 +29,7 @@
+@@= skipped -27, +24 lines =@@
  >other : Symbol(other, Decl(source.js, 14, 8))
  
          if (other.storage.length !== this.storage.length) {
@@ -46,7 +46,7 @@
  
              throw new Error(`Dot product only applicable for vectors of equal length`);
  >Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
-@@ -52,22 +40,12 @@
+@@= skipped -20, +11 lines =@@
          for (let i = 0; i < this.storage.length; i++) {
  >i : Symbol(i, Decl(source.js, 19, 16))
  >i : Symbol(i, Decl(source.js, 19, 16))
@@ -69,7 +69,7 @@
  >i : Symbol(i, Decl(source.js, 19, 16))
          }
          return sum;
-@@ -83,24 +61,16 @@
+@@= skipped -31, +21 lines =@@
          for (let i = 0; i < this.storage.length; i++) {
  >i : Symbol(i, Decl(source.js, 26, 16))
  >i : Symbol(i, Decl(source.js, 26, 16))
@@ -96,7 +96,7 @@
  >sum : Symbol(sum, Decl(source.js, 25, 11))
      }
  }
-@@ -110,82 +80,68 @@
+@@= skipped -27, +19 lines =@@
   * @param {number} y
   */
  export function Point2D(x, y) {

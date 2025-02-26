@@ -1,6 +1,6 @@
 --- old.classExtendingOptionalChain.symbols
 +++ new.classExtendingOptionalChain.symbols
-@@ -11,14 +11,14 @@
+@@= skipped -11, +11 lines =@@
  // ok
  class C1 extends A?.B {}
  >C1 : Symbol(C1, Decl(classExtendingOptionalChain.ts, 2, 1))

@@ -1,6 +1,6 @@
 --- old.derivedClasses.symbols
 +++ new.derivedClasses.symbols
-@@ -6,13 +6,13 @@
+@@= skipped -6, +6 lines =@@
  >Color : Symbol(Color, Decl(derivedClasses.ts, 5, 1))
  
      public shade() { 
@@ -17,7 +17,7 @@
  
      	return getHue() + " red"; 
  >getHue : Symbol(getHue, Decl(derivedClasses.ts, 2, 8))
-@@ -23,10 +23,10 @@
+@@= skipped -17, +17 lines =@@
  >Color : Symbol(Color, Decl(derivedClasses.ts, 5, 1))
  
      public shade() { return "some shade"; }
@@ -30,7 +30,7 @@
  }
  
  class Blue extends Color {
-@@ -34,13 +34,13 @@
+@@= skipped -11, +11 lines =@@
  >Color : Symbol(Color, Decl(derivedClasses.ts, 5, 1))
      
      public shade() { 
@@ -47,7 +47,7 @@
  
      	return getHue() + " blue"; 
  >getHue : Symbol(getHue, Decl(derivedClasses.ts, 15, 8))
-@@ -56,24 +56,24 @@
+@@= skipped -22, +22 lines =@@
  >Blue : Symbol(Blue, Decl(derivedClasses.ts, 10, 1))
  
  r.shade();

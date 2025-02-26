@@ -1,6 +1,6 @@
 --- old.typeFromPropertyAssignment13.symbols
 +++ new.typeFromPropertyAssignment13.symbols
-@@ -2,19 +2,13 @@
+@@= skipped -2, +2 lines =@@
  
  === module.js ===
  var Outer = {}
@@ -23,7 +23,7 @@
  
      m() { },
  >m : Symbol(m, Decl(module.js, 2, 25))
-@@ -24,44 +18,25 @@
+@@= skipped -22, +16 lines =@@
  }
  // incremental assignments still work
  Outer.Inner.prototype.j = 2

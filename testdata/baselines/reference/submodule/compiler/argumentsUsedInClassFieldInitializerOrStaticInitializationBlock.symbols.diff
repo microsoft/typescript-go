@@ -1,6 +1,6 @@
 --- old.argumentsUsedInClassFieldInitializerOrStaticInitializationBlock.symbols
 +++ new.argumentsUsedInClassFieldInitializerOrStaticInitializationBlock.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(argumentsUsedInClassFieldInitializerOrStaticInitializationBlock.ts, 1, 8))
  
       a = arguments
@@ -9,7 +9,7 @@
  >arguments : Symbol(arguments)
    }
  }
-@@ -20,7 +20,7 @@
+@@= skipped -12, +12 lines =@@
  >T : Symbol(T, Decl(argumentsUsedInClassFieldInitializerOrStaticInitializationBlock.ts, 7, 12))
  
       a = arguments
@@ -18,7 +18,7 @@
  >arguments : Symbol(arguments)
    }
  }
-@@ -32,7 +32,7 @@
+@@= skipped -12, +12 lines =@@
  >T : Symbol(T, Decl(argumentsUsedInClassFieldInitializerOrStaticInitializationBlock.ts, 13, 8))
  
       a = { b: arguments }
@@ -27,7 +27,7 @@
  >b : Symbol(b, Decl(argumentsUsedInClassFieldInitializerOrStaticInitializationBlock.ts, 14, 10))
  >arguments : Symbol(arguments)
    }
-@@ -45,7 +45,7 @@
+@@= skipped -13, +13 lines =@@
  >T : Symbol(T, Decl(argumentsUsedInClassFieldInitializerOrStaticInitializationBlock.ts, 19, 12))
  
       a = { b: arguments }
@@ -36,7 +36,7 @@
  >b : Symbol(b, Decl(argumentsUsedInClassFieldInitializerOrStaticInitializationBlock.ts, 20, 10))
  >arguments : Symbol(arguments)
    }
-@@ -58,7 +58,7 @@
+@@= skipped -13, +13 lines =@@
  >T : Symbol(T, Decl(argumentsUsedInClassFieldInitializerOrStaticInitializationBlock.ts, 25, 8))
  
       a = function () { arguments }

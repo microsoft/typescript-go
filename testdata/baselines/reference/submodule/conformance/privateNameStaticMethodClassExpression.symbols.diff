@@ -1,6 +1,6 @@
 --- old.privateNameStaticMethodClassExpression.symbols
 +++ new.privateNameStaticMethodClassExpression.symbols
-@@ -6,41 +6,38 @@
+@@= skipped -6, +6 lines =@@
  >D : Symbol(D, Decl(privateNameStaticMethodClassExpression.ts, 0, 9))
  
      static #field = D.#method();

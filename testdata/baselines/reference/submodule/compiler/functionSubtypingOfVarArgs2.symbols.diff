@@ -1,6 +1,6 @@
 --- old.functionSubtypingOfVarArgs2.symbols
 +++ new.functionSubtypingOfVarArgs2.symbols
-@@ -5,20 +5,20 @@
+@@= skipped -5, +5 lines =@@
  >EventBase : Symbol(EventBase, Decl(functionSubtypingOfVarArgs2.ts, 0, 0))
  
      private _listeners: { (...args: any[]): void; }[] = [];
@@ -27,7 +27,7 @@
  >listener : Symbol(listener, Decl(functionSubtypingOfVarArgs2.ts, 3, 8))
      }
  }
-@@ -28,15 +28,15 @@
+@@= skipped -23, +23 lines =@@
  >EventBase : Symbol(EventBase, Decl(functionSubtypingOfVarArgs2.ts, 0, 0))
  
      add(listener: (items: string, moreitems: number) => void ) {

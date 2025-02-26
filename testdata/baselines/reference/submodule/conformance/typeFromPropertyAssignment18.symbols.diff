@@ -1,6 +1,6 @@
 --- old.typeFromPropertyAssignment18.symbols
 +++ new.typeFromPropertyAssignment18.symbols
-@@ -2,47 +2,35 @@
+@@= skipped -2, +2 lines =@@
  
  === a.js ===
  var GLOBSTAR = m.GLOBSTAR = {}

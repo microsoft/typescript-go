@@ -1,6 +1,6 @@
 --- old.newWithSpread.symbols
 +++ new.newWithSpread.symbols
-@@ -17,7 +17,7 @@
+@@= skipped -17, +17 lines =@@
  >A : Symbol(A, Decl(newWithSpread.ts, 4, 1))
  
      f: {
@@ -9,7 +9,7 @@
  
          new (x: number, y: number, ...z: string[]);
  >x : Symbol(x, Decl(newWithSpread.ts, 8, 13))
-@@ -39,7 +39,7 @@
+@@= skipped -22, +22 lines =@@
  >C : Symbol(C, Decl(newWithSpread.ts, 14, 1))
  
      "a-b": typeof B;
@@ -18,7 +18,7 @@
  >B : Symbol(B, Decl(newWithSpread.ts, 10, 1))
  }
  
-@@ -47,7 +47,7 @@
+@@= skipped -8, +8 lines =@@
  >D : Symbol(D, Decl(newWithSpread.ts, 18, 1))
  
      1: typeof B;
@@ -27,7 +27,7 @@
  >B : Symbol(B, Decl(newWithSpread.ts, 10, 1))
  }
  
-@@ -121,74 +121,74 @@
+@@= skipped -74, +74 lines =@@
  
  // Property access expression
  new b.f(1, 2, "string");
@@ -126,7 +126,7 @@
  >a : Symbol(a, Decl(newWithSpread.ts, 24, 3))
  
  // Basic expression
-@@ -206,61 +206,61 @@
+@@= skipped -85, +85 lines =@@
  // Property access expression
  new c["a-b"](1, 2, "string");
  >c : Symbol(c, Decl(newWithSpread.ts, 26, 3))

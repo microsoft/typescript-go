@@ -1,6 +1,6 @@
 --- old.controlFlowOptionalChain3.symbols
 +++ new.controlFlowOptionalChain3.symbols
-@@ -12,7 +12,7 @@
+@@= skipped -12, +12 lines =@@
  >Foo : Symbol(Foo, Decl(controlFlowOptionalChain3.tsx, 4, 26))
  
    bar: boolean;
@@ -9,7 +9,7 @@
  }
  
  function test1(foo: Foo | undefined) {
-@@ -21,9 +21,9 @@
+@@= skipped -9, +9 lines =@@
  >Foo : Symbol(Foo, Decl(controlFlowOptionalChain3.tsx, 4, 26))
  
    if (foo?.bar === false) {
@@ -21,7 +21,7 @@
  
      foo;
  >foo : Symbol(foo, Decl(controlFlowOptionalChain3.tsx, 10, 15))
-@@ -38,9 +38,9 @@
+@@= skipped -17, +17 lines =@@
  >Foo : Symbol(Foo, Decl(controlFlowOptionalChain3.tsx, 4, 26))
  
    if (foo?.bar === false) {
@@ -33,7 +33,7 @@
  
      foo;
  >foo : Symbol(foo, Decl(controlFlowOptionalChain3.tsx, 17, 15))
-@@ -59,21 +59,15 @@
+@@= skipped -21, +21 lines =@@
  
    return (
      <div>
@@ -57,7 +57,7 @@
    );
  }
  
-@@ -87,9 +81,7 @@
+@@= skipped -28, +22 lines =@@
  >options?.a : Symbol(a, Decl(controlFlowOptionalChain3.tsx, 34, 26))
  >options : Symbol(options, Decl(controlFlowOptionalChain3.tsx, 34, 15))
  >a : Symbol(a, Decl(controlFlowOptionalChain3.tsx, 34, 26))

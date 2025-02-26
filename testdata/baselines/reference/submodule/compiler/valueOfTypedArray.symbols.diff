@@ -1,6 +1,6 @@
 --- old.valueOfTypedArray.symbols
 +++ new.valueOfTypedArray.symbols
-@@ -5,70 +5,70 @@
+@@= skipped -5, +5 lines =@@
  const typedArray0: Int8Array = (new Int8Array()).valueOf();
  >typedArray0 : Symbol(typedArray0, Decl(valueOfTypedArray.ts, 1, 5))
  >Int8Array : Symbol(Int8Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --) ... and 1 more)

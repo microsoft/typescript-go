@@ -1,6 +1,6 @@
 --- old.importHelpersAmd.symbols
 +++ new.importHelpersAmd.symbols
-@@ -15,60 +15,60 @@
+@@= skipped -15, +15 lines =@@
  
  === tslib.d.ts ===
  export declare function __extends(d: Function, b: Function): void;

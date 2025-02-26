@@ -1,6 +1,6 @@
 --- old.regexMatchAll.symbols
 +++ new.regexMatchAll.symbols
-@@ -3,9 +3,9 @@
+@@= skipped -3, +3 lines =@@
  === regexMatchAll.ts ===
  const matches = /\w/g[Symbol.matchAll]("matchAll");
  >matches : Symbol(matches, Decl(regexMatchAll.ts, 0, 5))

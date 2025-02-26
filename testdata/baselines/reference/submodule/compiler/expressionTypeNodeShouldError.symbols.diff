@@ -1,6 +1,6 @@
 --- old.expressionTypeNodeShouldError.symbols
 +++ new.expressionTypeNodeShouldError.symbols
-@@ -10,7 +10,7 @@
+@@= skipped -10, +10 lines =@@
  >String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(string.ts, 0, 0))
  
      typeof<T>(x: T): T;
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(string.ts, 1, 11))
  >x : Symbol(x, Decl(string.ts, 1, 14))
  >T : Symbol(T, Decl(string.ts, 1, 11))
-@@ -21,34 +21,34 @@
+@@= skipped -11, +11 lines =@@
  >C : Symbol(C, Decl(string.ts, 2, 1))
  
      foo() {
@@ -52,7 +52,7 @@
  >T : Symbol(T, Decl(number.ts, 1, 11))
  >x : Symbol(x, Decl(number.ts, 1, 14))
  >T : Symbol(T, Decl(number.ts, 1, 11))
-@@ -59,34 +59,34 @@
+@@= skipped -38, +38 lines =@@
  >C2 : Symbol(C2, Decl(number.ts, 2, 1))
  
      foo() {
@@ -95,7 +95,7 @@
  >T : Symbol(T, Decl(boolean.ts, 1, 11))
  >x : Symbol(x, Decl(boolean.ts, 1, 14))
  >T : Symbol(T, Decl(boolean.ts, 1, 11))
-@@ -97,26 +97,26 @@
+@@= skipped -38, +38 lines =@@
  >C3 : Symbol(C3, Decl(boolean.ts, 2, 1))
  
      foo() {

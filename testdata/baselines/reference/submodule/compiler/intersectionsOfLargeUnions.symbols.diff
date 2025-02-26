@@ -1,6 +1,6 @@
 --- old.intersectionsOfLargeUnions.symbols
 +++ new.intersectionsOfLargeUnions.symbols
-@@ -13,9 +13,9 @@
+@@= skipped -13, +13 lines =@@
      let nodeType = node === null ? null : node.nodeType;
  >nodeType : Symbol(nodeType, Decl(intersectionsOfLargeUnions.ts, 3, 7))
  >node : Symbol(node, Decl(intersectionsOfLargeUnions.ts, 2, 32))
@@ -12,7 +12,7 @@
  
      return nodeType === 1;
  >nodeType : Symbol(nodeType, Decl(intersectionsOfLargeUnions.ts, 3, 7))
-@@ -45,11 +45,11 @@
+@@= skipped -32, +32 lines =@@
  
          const nodeTagName = node.tagName.toLowerCase();
  >nodeTagName : Symbol(nodeTagName, Decl(intersectionsOfLargeUnions.ts, 11, 13))

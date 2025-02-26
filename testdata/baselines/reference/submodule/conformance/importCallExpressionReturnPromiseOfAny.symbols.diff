@@ -1,6 +1,6 @@
 --- old.importCallExpressionReturnPromiseOfAny.symbols
 +++ new.importCallExpressionReturnPromiseOfAny.symbols
-@@ -36,12 +36,12 @@
+@@= skipped -36, +36 lines =@@
  
  var p1: Promise<any> = import(getSpecifier());
  >p1 : Symbol(p1, Decl(1.ts, 10, 3), Decl(1.ts, 11, 3))
@@ -15,7 +15,7 @@
  >defaultModule : Symbol(defaultModule, Decl(1.ts, 0, 6))
  >getSpecifier : Symbol(getSpecifier, Decl(1.ts, 0, 47))
  
-@@ -49,13 +49,11 @@
+@@= skipped -13, +13 lines =@@
  >p2 : Symbol(p2, Decl(1.ts, 13, 5))
  >whatToLoad : Symbol(whatToLoad, Decl(1.ts, 3, 11))
  >getSpecifier : Symbol(getSpecifier, Decl(1.ts, 0, 47))
@@ -30,7 +30,7 @@
  >zero : Symbol(zero, Decl(1.ts, 14, 8))
  
      return zero.foo();  // ok, zero is any
-@@ -68,7 +66,7 @@
+@@= skipped -19, +17 lines =@@
  
  var p3: Promise<typeof defaultModule> = import(j=getSpecifier());
  >p3 : Symbol(p3, Decl(1.ts, 19, 3))

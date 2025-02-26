@@ -1,6 +1,6 @@
 --- old.mixingApparentTypeOverrides.symbols
 +++ new.mixingApparentTypeOverrides.symbols
-@@ -18,7 +18,7 @@
+@@= skipped -18, +18 lines =@@
  >Base : Symbol(Base, Decl(mixingApparentTypeOverrides.ts, 1, 43))
  
      _tag: string;
@@ -9,7 +9,7 @@
  
      constructor(...args: any[]) {
  >args : Symbol(args, Decl(mixingApparentTypeOverrides.ts, 4, 16))
-@@ -28,9 +28,9 @@
+@@= skipped -10, +10 lines =@@
  >args : Symbol(args, Decl(mixingApparentTypeOverrides.ts, 4, 16))
  
        this._tag = "";
@@ -21,7 +21,7 @@
      }
    };
  }
-@@ -39,7 +39,7 @@
+@@= skipped -11, +11 lines =@@
  >A : Symbol(A, Decl(mixingApparentTypeOverrides.ts, 9, 1))
  
    toString () {
@@ -30,7 +30,7 @@
  
      return "class A";
    }
-@@ -51,7 +51,7 @@
+@@= skipped -12, +12 lines =@@
  >A : Symbol(A, Decl(mixingApparentTypeOverrides.ts, 9, 1))
  
    toString () { // Should not be an error
@@ -39,7 +39,7 @@
  
      return "class B";
    }
-@@ -62,7 +62,7 @@
+@@= skipped -11, +11 lines =@@
  >A : Symbol(A, Decl(mixingApparentTypeOverrides.ts, 9, 1))
  
    toString () { // Should not be an error

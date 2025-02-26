@@ -1,6 +1,6 @@
 --- old.typeParametersAreIdenticalToThemselves.symbols
 +++ new.typeParametersAreIdenticalToThemselves.symbols
-@@ -87,22 +87,22 @@
+@@= skipped -87, +87 lines =@@
  >T : Symbol(T, Decl(typeParametersAreIdenticalToThemselves.ts, 20, 8))
  
      foo1(x: T);
@@ -27,7 +27,7 @@
  >U : Symbol(U, Decl(typeParametersAreIdenticalToThemselves.ts, 25, 9))
  >a : Symbol(a, Decl(typeParametersAreIdenticalToThemselves.ts, 25, 12))
  >T : Symbol(T, Decl(typeParametersAreIdenticalToThemselves.ts, 20, 8))
-@@ -110,7 +110,7 @@
+@@= skipped -23, +23 lines =@@
  >U : Symbol(U, Decl(typeParametersAreIdenticalToThemselves.ts, 25, 9))
  
      foo2<U>(a: T, x: U); // no error, different declaration for each U
@@ -36,7 +36,7 @@
  >U : Symbol(U, Decl(typeParametersAreIdenticalToThemselves.ts, 26, 9))
  >a : Symbol(a, Decl(typeParametersAreIdenticalToThemselves.ts, 26, 12))
  >T : Symbol(T, Decl(typeParametersAreIdenticalToThemselves.ts, 20, 8))
-@@ -118,7 +118,7 @@
+@@= skipped -8, +8 lines =@@
  >U : Symbol(U, Decl(typeParametersAreIdenticalToThemselves.ts, 26, 9))
  
      foo2<U>(a: T, x: U) { }
@@ -45,7 +45,7 @@
  >U : Symbol(U, Decl(typeParametersAreIdenticalToThemselves.ts, 27, 9))
  >a : Symbol(a, Decl(typeParametersAreIdenticalToThemselves.ts, 27, 12))
  >T : Symbol(T, Decl(typeParametersAreIdenticalToThemselves.ts, 20, 8))
-@@ -126,39 +126,39 @@
+@@= skipped -8, +8 lines =@@
  >U : Symbol(U, Decl(typeParametersAreIdenticalToThemselves.ts, 27, 9))
  
      foo3<T>(x: T);
@@ -91,7 +91,7 @@
  >T : Symbol(T, Decl(typeParametersAreIdenticalToThemselves.ts, 35, 9))
  >Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
  >x : Symbol(x, Decl(typeParametersAreIdenticalToThemselves.ts, 35, 25))
-@@ -171,22 +171,22 @@
+@@= skipped -45, +45 lines =@@
  >Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
  
      foo1(x: T);
@@ -118,7 +118,7 @@
  >U : Symbol(U, Decl(typeParametersAreIdenticalToThemselves.ts, 43, 9))
  >a : Symbol(a, Decl(typeParametersAreIdenticalToThemselves.ts, 43, 12))
  >T : Symbol(T, Decl(typeParametersAreIdenticalToThemselves.ts, 38, 9))
-@@ -194,7 +194,7 @@
+@@= skipped -23, +23 lines =@@
  >U : Symbol(U, Decl(typeParametersAreIdenticalToThemselves.ts, 43, 9))
  
      foo2<U>(a: T, x: U); // no error, different declaration for each U
@@ -127,7 +127,7 @@
  >U : Symbol(U, Decl(typeParametersAreIdenticalToThemselves.ts, 44, 9))
  >a : Symbol(a, Decl(typeParametersAreIdenticalToThemselves.ts, 44, 12))
  >T : Symbol(T, Decl(typeParametersAreIdenticalToThemselves.ts, 38, 9))
-@@ -202,7 +202,7 @@
+@@= skipped -8, +8 lines =@@
  >U : Symbol(U, Decl(typeParametersAreIdenticalToThemselves.ts, 44, 9))
  
      foo2<U>(a: T, x: U) { }
@@ -136,7 +136,7 @@
  >U : Symbol(U, Decl(typeParametersAreIdenticalToThemselves.ts, 45, 9))
  >a : Symbol(a, Decl(typeParametersAreIdenticalToThemselves.ts, 45, 12))
  >T : Symbol(T, Decl(typeParametersAreIdenticalToThemselves.ts, 38, 9))
-@@ -210,19 +210,19 @@
+@@= skipped -8, +8 lines =@@
  >U : Symbol(U, Decl(typeParametersAreIdenticalToThemselves.ts, 45, 9))
  
      foo3<T>(x: T);
@@ -159,7 +159,7 @@
  >T : Symbol(T, Decl(typeParametersAreIdenticalToThemselves.ts, 49, 9))
  >x : Symbol(x, Decl(typeParametersAreIdenticalToThemselves.ts, 49, 12))
  >T : Symbol(T, Decl(typeParametersAreIdenticalToThemselves.ts, 49, 9))
-@@ -233,17 +233,17 @@
+@@= skipped -23, +23 lines =@@
  >T : Symbol(T, Decl(typeParametersAreIdenticalToThemselves.ts, 52, 12))
  
      foo1(x: T);
@@ -180,7 +180,7 @@
  >U : Symbol(U, Decl(typeParametersAreIdenticalToThemselves.ts, 56, 9))
  >a : Symbol(a, Decl(typeParametersAreIdenticalToThemselves.ts, 56, 12))
  >T : Symbol(T, Decl(typeParametersAreIdenticalToThemselves.ts, 52, 12))
-@@ -251,7 +251,7 @@
+@@= skipped -18, +18 lines =@@
  >U : Symbol(U, Decl(typeParametersAreIdenticalToThemselves.ts, 56, 9))
  
      foo2<U>(a: T, x: U); // no error, different declaration for each U
@@ -189,7 +189,7 @@
  >U : Symbol(U, Decl(typeParametersAreIdenticalToThemselves.ts, 57, 9))
  >a : Symbol(a, Decl(typeParametersAreIdenticalToThemselves.ts, 57, 12))
  >T : Symbol(T, Decl(typeParametersAreIdenticalToThemselves.ts, 52, 12))
-@@ -259,26 +259,26 @@
+@@= skipped -8, +8 lines =@@
  >U : Symbol(U, Decl(typeParametersAreIdenticalToThemselves.ts, 57, 9))
  
      foo3<T>(x: T);
@@ -220,7 +220,7 @@
  >T : Symbol(T, Decl(typeParametersAreIdenticalToThemselves.ts, 63, 9))
  >Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
  >x : Symbol(x, Decl(typeParametersAreIdenticalToThemselves.ts, 63, 25))
-@@ -291,17 +291,17 @@
+@@= skipped -32, +32 lines =@@
  >Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
  
      foo1(x: T);
@@ -241,7 +241,7 @@
  >U : Symbol(U, Decl(typeParametersAreIdenticalToThemselves.ts, 70, 9))
  >a : Symbol(a, Decl(typeParametersAreIdenticalToThemselves.ts, 70, 12))
  >T : Symbol(T, Decl(typeParametersAreIdenticalToThemselves.ts, 66, 13))
-@@ -309,7 +309,7 @@
+@@= skipped -18, +18 lines =@@
  >U : Symbol(U, Decl(typeParametersAreIdenticalToThemselves.ts, 70, 9))
  
      foo2<U>(a: T, x: U); // no error, different declaration for each U
@@ -250,7 +250,7 @@
  >U : Symbol(U, Decl(typeParametersAreIdenticalToThemselves.ts, 71, 9))
  >a : Symbol(a, Decl(typeParametersAreIdenticalToThemselves.ts, 71, 12))
  >T : Symbol(T, Decl(typeParametersAreIdenticalToThemselves.ts, 66, 13))
-@@ -317,13 +317,13 @@
+@@= skipped -8, +8 lines =@@
  >U : Symbol(U, Decl(typeParametersAreIdenticalToThemselves.ts, 71, 9))
  
      foo3<T>(x: T);

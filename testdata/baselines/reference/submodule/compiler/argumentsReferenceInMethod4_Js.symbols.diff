@@ -1,6 +1,6 @@
 --- old.argumentsReferenceInMethod4_Js.symbols
 +++ new.argumentsReferenceInMethod4_Js.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  	 * @param {object} [foo={}]
  	 */
  	m(foo = {}) {
@@ -9,7 +9,7 @@
  >foo : Symbol(foo, Decl(a.js, 4, 3))
  
  		const key = "bar";
-@@ -18,9 +18,7 @@
+@@= skipped -10, +10 lines =@@
  		 * @type object
  		 */
  		this.foo = foo;
@@ -19,7 +19,7 @@
  >foo : Symbol(foo, Decl(a.js, 4, 3))
  
  		/**
-@@ -28,26 +26,24 @@
+@@= skipped -10, +8 lines =@@
  		 */
  		const arguments = this.arguments;
  >arguments : Symbol(arguments, Decl(a.js, 15, 7))
@@ -50,7 +50,7 @@
  >arguments : Symbol(arguments, Decl(a.js, 15, 7))
  >key : Symbol(key, Decl(a.js, 5, 7))
  
-@@ -55,14 +51,12 @@
+@@= skipped -27, +25 lines =@@
  		 * @type object
  		 */
  		this.options = arguments;

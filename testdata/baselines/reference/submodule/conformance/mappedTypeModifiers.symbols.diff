@@ -1,6 +1,6 @@
 --- old.mappedTypeModifiers.symbols
 +++ new.mappedTypeModifiers.symbols
-@@ -371,9 +371,9 @@
+@@= skipped -371, +371 lines =@@
  >prop : Symbol(prop, Decl(mappedTypeModifiers.ts, 76, 12))
  
      (x["other"] || 0).toFixed();
@@ -12,7 +12,7 @@
  }
  
  function f2(x: Readonly<Foo>) {
-@@ -388,9 +388,9 @@
+@@= skipped -17, +17 lines =@@
  >prop : Symbol(prop, Decl(mappedTypeModifiers.ts, 76, 12))
  
      x["other"].toFixed();
@@ -24,7 +24,7 @@
  }
  
  function f3(x: Boxified<Foo>) {
-@@ -405,11 +405,11 @@
+@@= skipped -17, +17 lines =@@
  >prop : Symbol(prop, Decl(mappedTypeModifiers.ts, 76, 12))
  
      x["other"].x.toFixed();
@@ -38,7 +38,7 @@
  }
  
  function f4(x: { [P in keyof Foo]: Foo[P] }) {
-@@ -426,8 +426,8 @@
+@@= skipped -21, +21 lines =@@
  >prop : Symbol(prop, Decl(mappedTypeModifiers.ts, 76, 12))
  
      x["other"].toFixed();

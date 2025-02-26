@@ -1,6 +1,6 @@
 --- old.instantiateGenericClassWithZeroTypeArguments.symbols
 +++ new.instantiateGenericClassWithZeroTypeArguments.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(instantiateGenericClassWithZeroTypeArguments.ts, 2, 8))
  
      x: T;
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(instantiateGenericClassWithZeroTypeArguments.ts, 2, 8))
  }
  
-@@ -22,11 +22,11 @@
+@@= skipped -14, +14 lines =@@
  >U : Symbol(U, Decl(instantiateGenericClassWithZeroTypeArguments.ts, 8, 10))
  
      x: T

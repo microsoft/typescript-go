@@ -1,6 +1,6 @@
 --- old.prototypes.symbols
 +++ new.prototypes.symbols
-@@ -2,9 +2,9 @@
+@@= skipped -2, +2 lines =@@
  
  === prototypes.ts ===
  Object.prototype; // ok
@@ -12,7 +12,7 @@
  
  new Object().prototype; // error
  >Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
-@@ -13,7 +13,7 @@
+@@= skipped -11, +11 lines =@@
  >f : Symbol(f, Decl(prototypes.ts, 1, 23))
  
  f.prototype;

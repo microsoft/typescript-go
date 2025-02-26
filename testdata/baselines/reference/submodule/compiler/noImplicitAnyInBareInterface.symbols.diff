@@ -1,6 +1,6 @@
 --- old.noImplicitAnyInBareInterface.symbols
 +++ new.noImplicitAnyInBareInterface.symbols
-@@ -7,8 +7,8 @@
+@@= skipped -7, +7 lines =@@
      // Should return error for implicit any on `new` and `foo`.
      new ();
      few() : any;

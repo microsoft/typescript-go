@@ -1,6 +1,6 @@
 --- old.reactReduxLikeDeferredInferenceAllowsAssignment.symbols
 +++ new.reactReduxLikeDeferredInferenceAllowsAssignment.symbols
-@@ -16,7 +16,7 @@
+@@= skipped -16, +16 lines =@@
  >context : Symbol(context, Decl(reactReduxLikeDeferredInferenceAllowsAssignment.ts, 2, 23))
  
    readonly props: Readonly<P> & Readonly<{ children?: {} }>;
@@ -9,7 +9,7 @@
  >Readonly : Symbol(Readonly, Decl(lib.es5.d.ts, --, --))
  >P : Symbol(P, Decl(reactReduxLikeDeferredInferenceAllowsAssignment.ts, 0, 24))
  >Readonly : Symbol(Readonly, Decl(lib.es5.d.ts, --, --))
-@@ -34,17 +34,17 @@
+@@= skipped -18, +18 lines =@@
  >P : Symbol(P, Decl(reactReduxLikeDeferredInferenceAllowsAssignment.ts, 5, 25))
  
    propTypes?: WeakValidationMap<P>;
@@ -30,7 +30,7 @@
  }
  interface FunctionComponent<P = {}> {
  >FunctionComponent : Symbol(FunctionComponent, Decl(reactReduxLikeDeferredInferenceAllowsAssignment.ts, 10, 1))
-@@ -57,17 +57,17 @@
+@@= skipped -23, +23 lines =@@
  >context : Symbol(context, Decl(reactReduxLikeDeferredInferenceAllowsAssignment.ts, 12, 32))
  
    propTypes?: WeakValidationMap<P>;
@@ -51,7 +51,7 @@
  }
  
  declare const nominalTypeHack: unique symbol;
-@@ -97,7 +97,7 @@
+@@= skipped -40, +40 lines =@@
  >Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
    [nominalTypeHack]?: T;
@@ -60,7 +60,7 @@
  >nominalTypeHack : Symbol(nominalTypeHack, Decl(reactReduxLikeDeferredInferenceAllowsAssignment.ts, 18, 13))
  >T : Symbol(T, Decl(reactReduxLikeDeferredInferenceAllowsAssignment.ts, 19, 20))
  }
-@@ -385,7 +385,7 @@
+@@= skipped -288, +288 lines =@@
  >T : Symbol(T, Decl(reactReduxLikeDeferredInferenceAllowsAssignment.ts, 111, 17))
  
    type: T;
@@ -69,7 +69,7 @@
  >T : Symbol(T, Decl(reactReduxLikeDeferredInferenceAllowsAssignment.ts, 111, 17))
  }
  interface AnyAction extends Action {
-@@ -429,18 +429,18 @@
+@@= skipped -44, +44 lines =@@
  >OwnProps : Symbol(OwnProps, Decl(reactReduxLikeDeferredInferenceAllowsAssignment.ts, 127, 2))
  
    foo: string;

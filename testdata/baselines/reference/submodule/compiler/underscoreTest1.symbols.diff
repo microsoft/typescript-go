@@ -1,6 +1,6 @@
 --- old.underscoreTest1.symbols
 +++ new.underscoreTest1.symbols
-@@ -11,40 +11,40 @@
+@@= skipped -11, +11 lines =@@
  >x : Symbol(x, Decl(underscoreTest1_underscoreTests.ts, 3, 23))
  
  _.each([1, 2, 3], (num) => alert(num.toString()));
@@ -53,7 +53,7 @@
  >one : Symbol(one, Decl(underscoreTest1_underscoreTests.ts, 9, 7))
  >two : Symbol(two, Decl(underscoreTest1_underscoreTests.ts, 9, 15))
  >three : Symbol(three, Decl(underscoreTest1_underscoreTests.ts, 9, 23))
-@@ -54,9 +54,9 @@
+@@= skipped -43, +43 lines =@@
  
  var sum = _.reduce([1, 2, 3], (memo, num) => memo + num, 0);
  >sum : Symbol(sum, Decl(underscoreTest1_underscoreTests.ts, 11, 3))
@@ -65,7 +65,7 @@
  >memo : Symbol(memo, Decl(underscoreTest1_underscoreTests.ts, 11, 31))
  >num : Symbol(num, Decl(underscoreTest1_underscoreTests.ts, 11, 36))
  >memo : Symbol(memo, Decl(underscoreTest1_underscoreTests.ts, 11, 31))
-@@ -67,30 +67,30 @@
+@@= skipped -13, +13 lines =@@
  
  var flat = _.reduceRight(list, (a, b) => a.concat(b), []);
  >flat : Symbol(flat, Decl(underscoreTest1_underscoreTests.ts, 14, 3))
@@ -104,7 +104,7 @@
  >num : Symbol(num, Decl(underscoreTest1_underscoreTests.ts, 18, 42))
  >num : Symbol(num, Decl(underscoreTest1_underscoreTests.ts, 18, 42))
  
-@@ -107,43 +107,43 @@
+@@= skipped -40, +40 lines =@@
  >year : Symbol(year, Decl(underscoreTest1_underscoreTests.ts, 20, 183))
  
  _.where(listOfPlays, { author: "Shakespeare", year: 1611 });
@@ -162,7 +162,7 @@
  
  var stooges = [{ name: 'moe', age: 40 }, { name: 'larry', age: 50 }, { name: 'curly', age: 60 }];
  >stooges : Symbol(stooges, Decl(underscoreTest1_underscoreTests.ts, 33, 3))
-@@ -155,15 +155,15 @@
+@@= skipped -48, +48 lines =@@
  >age : Symbol(age, Decl(underscoreTest1_underscoreTests.ts, 33, 85))
  
  _.pluck(stooges, 'name');
@@ -182,7 +182,7 @@
  >stooges : Symbol(stooges, Decl(underscoreTest1_underscoreTests.ts, 33, 3))
  >stooge : Symbol(stooge, Decl(underscoreTest1_underscoreTests.ts, 36, 16))
  >stooge.age : Symbol(age, Decl(underscoreTest1_underscoreTests.ts, 33, 29))
-@@ -174,68 +174,68 @@
+@@= skipped -19, +19 lines =@@
  >numbers : Symbol(numbers, Decl(underscoreTest1_underscoreTests.ts, 38, 3))
  
  _.min(numbers);
@@ -273,7 +273,7 @@
  >one : Symbol(one, Decl(underscoreTest1_underscoreTests.ts, 55, 8))
  >two : Symbol(two, Decl(underscoreTest1_underscoreTests.ts, 55, 16))
  >three : Symbol(three, Decl(underscoreTest1_underscoreTests.ts, 55, 24))
-@@ -243,130 +243,130 @@
+@@= skipped -69, +69 lines =@@
  ///////////////////////////////////////////////////////////////////////////////////////
  
  _.first([5, 4, 3, 2, 1]);
@@ -454,7 +454,7 @@
  
  ///////////////////////////////////////////////////////////////////////////////////////
  
-@@ -379,9 +379,9 @@
+@@= skipped -136, +136 lines =@@
  // instead of the newly returned _bind => func type.
  var func2 = _.bind(func, { name: 'moe' }, 'hi');
  >func2 : Symbol(func2, Decl(underscoreTest1_underscoreTests.ts, 93, 3))
@@ -466,7 +466,7 @@
  >func : Symbol(func, Decl(underscoreTest1_underscoreTests.ts, 90, 3))
  >name : Symbol(name, Decl(underscoreTest1_underscoreTests.ts, 93, 26))
  
-@@ -404,9 +404,9 @@
+@@= skipped -25, +25 lines =@@
  
  };
  _.bindAll(buttonView);
@@ -478,7 +478,7 @@
  >buttonView : Symbol(buttonView, Decl(underscoreTest1_underscoreTests.ts, 96, 3))
  
  $('#underscore_button').bind('click', buttonView.onClick);
-@@ -417,9 +417,9 @@
+@@= skipped -13, +13 lines =@@
  
  var fibonacci = _.memoize(function (n) {
  >fibonacci : Symbol(fibonacci, Decl(underscoreTest1_underscoreTests.ts, 104, 3))
@@ -490,7 +490,7 @@
  >n : Symbol(n, Decl(underscoreTest1_underscoreTests.ts, 104, 36))
  
      return n < 2 ? n : fibonacci(n - 1) + fibonacci(n - 2);
-@@ -434,23 +434,23 @@
+@@= skipped -17, +17 lines =@@
  
  var log = _.bind((message?: string, ...rest: string[]) => { }, Date);
  >log : Symbol(log, Decl(underscoreTest1_underscoreTests.ts, 108, 3))
@@ -520,7 +520,7 @@
  >alert : Symbol(alert, Decl(lib.dom.d.ts, --, --), Decl(underscoreTest1_underscoreTests.ts, 2, 14))
  
  var updatePosition = () => alert('updating position...');
-@@ -459,9 +459,9 @@
+@@= skipped -25, +25 lines =@@
  
  var throttled = _.throttle(updatePosition, 100);
  >throttled : Symbol(throttled, Decl(underscoreTest1_underscoreTests.ts, 114, 3))
@@ -532,7 +532,7 @@
  >updatePosition : Symbol(updatePosition, Decl(underscoreTest1_underscoreTests.ts, 113, 3))
  
  $(null).scroll(throttled);
-@@ -474,9 +474,9 @@
+@@= skipped -15, +15 lines =@@
  
  var lazyLayout = _.debounce(calculateLayout, 300);
  >lazyLayout : Symbol(lazyLayout, Decl(underscoreTest1_underscoreTests.ts, 118, 3))
@@ -544,7 +544,7 @@
  >calculateLayout : Symbol(calculateLayout, Decl(underscoreTest1_underscoreTests.ts, 117, 3))
  
  $(null).resize(lazyLayout);
-@@ -489,9 +489,9 @@
+@@= skipped -15, +15 lines =@@
  
  var initialize = _.once(createApplication);
  >initialize : Symbol(initialize, Decl(underscoreTest1_underscoreTests.ts, 122, 3))
@@ -556,7 +556,7 @@
  >createApplication : Symbol(createApplication, Decl(underscoreTest1_underscoreTests.ts, 121, 3))
  
  initialize();
-@@ -509,18 +509,18 @@
+@@= skipped -20, +20 lines =@@
  
  var renderNotes = _.after(notes.length, render);
  >renderNotes : Symbol(renderNotes, Decl(underscoreTest1_underscoreTests.ts, 128, 3))
@@ -581,7 +581,7 @@
  >notes : Symbol(notes, Decl(underscoreTest1_underscoreTests.ts, 126, 3))
  >note : Symbol(note, Decl(underscoreTest1_underscoreTests.ts, 129, 15))
  >note : Symbol(note, Decl(underscoreTest1_underscoreTests.ts, 129, 15))
-@@ -534,9 +534,9 @@
+@@= skipped -25, +25 lines =@@
  
  hello = _.wrap(hello, (func, arg) => { return "before, " + func(arg) + ", after"; });
  >hello : Symbol(hello, Decl(underscoreTest1_underscoreTests.ts, 131, 3))
@@ -593,7 +593,7 @@
  >hello : Symbol(hello, Decl(underscoreTest1_underscoreTests.ts, 131, 3))
  >func : Symbol(func, Decl(underscoreTest1_underscoreTests.ts, 132, 23))
  >arg : Symbol(arg, Decl(underscoreTest1_underscoreTests.ts, 132, 28))
-@@ -558,9 +558,9 @@
+@@= skipped -24, +24 lines =@@
  
  var welcome = _.compose(exclaim, greet);
  >welcome : Symbol(welcome, Decl(underscoreTest1_underscoreTests.ts, 137, 3))
@@ -605,7 +605,7 @@
  >exclaim : Symbol(exclaim, Decl(underscoreTest1_underscoreTests.ts, 136, 3))
  >greet : Symbol(greet, Decl(underscoreTest1_underscoreTests.ts, 135, 3))
  
-@@ -570,62 +570,62 @@
+@@= skipped -12, +12 lines =@@
  ///////////////////////////////////////////////////////////////////////////////////////
  
  _.keys({ one: 1, two: 2, three: 3 });
@@ -684,7 +684,7 @@
  >name : Symbol(name, Decl(underscoreTest1_underscoreTests.ts, 149, 8))
  >age : Symbol(age, Decl(underscoreTest1_underscoreTests.ts, 149, 21))
  >userid : Symbol(userid, Decl(underscoreTest1_underscoreTests.ts, 149, 30))
-@@ -635,50 +635,50 @@
+@@= skipped -65, +65 lines =@@
  >flavor : Symbol(flavor, Decl(underscoreTest1_underscoreTests.ts, 151, 16))
  
  _.defaults(iceCream, { flavor: "vanilla", sprinkles: "lots" });
@@ -751,7 +751,7 @@
  >a : Symbol(a, Decl(underscoreTest1_underscoreTests.ts, 162, 7))
  >b : Symbol(b, Decl(underscoreTest1_underscoreTests.ts, 162, 13))
  >c : Symbol(c, Decl(underscoreTest1_underscoreTests.ts, 162, 19))
-@@ -698,103 +698,103 @@
+@@= skipped -63, +63 lines =@@
  >clone : Symbol(clone, Decl(underscoreTest1_underscoreTests.ts, 165, 3))
  
  _.isEqual(moe, clone);
@@ -891,7 +891,7 @@
  >NaN : Symbol(NaN, Decl(lib.es5.d.ts, --, --))
  
  isNaN(undefined);
-@@ -802,34 +802,34 @@
+@@= skipped -104, +104 lines =@@
  >undefined : Symbol(undefined)
  
  _.isNaN(undefined);
@@ -936,7 +936,7 @@
  
  var moe2 = { name: 'moe' };
  >moe2 : Symbol(moe2, Decl(underscoreTest1_underscoreTests.ts, 213, 3))
-@@ -837,31 +837,31 @@
+@@= skipped -35, +35 lines =@@
  
  moe2 === _.identity(moe);
  >moe2 : Symbol(moe2, Decl(underscoreTest1_underscoreTests.ts, 213, 3))
@@ -976,7 +976,7 @@
  
      capitalize: function (string) {
  >capitalize : Symbol(capitalize, Decl(underscoreTest1_underscoreTests.ts, 222, 9))
-@@ -876,14 +876,14 @@
+@@= skipped -39, +39 lines =@@
  >_ : Symbol(_, Decl(underscoreTest1_underscore.ts, 645, 11))
  
  _.uniqueId('contact_');
@@ -995,7 +995,7 @@
  
  var object = { cheese: 'crumpets', stuff: function () { return 'nonsense'; } };
  >object : Symbol(object, Decl(underscoreTest1_underscoreTests.ts, 233, 3))
-@@ -891,22 +891,22 @@
+@@= skipped -15, +15 lines =@@
  >stuff : Symbol(stuff, Decl(underscoreTest1_underscoreTests.ts, 233, 34))
  
  _.result(object, 'cheese');
@@ -1024,7 +1024,7 @@
  
  compiled({ name: 'moe' });
  >compiled : Symbol(compiled, Decl(underscoreTest1_underscoreTests.ts, 238, 3))
-@@ -916,17 +916,17 @@
+@@= skipped -25, +25 lines =@@
  >list2 : Symbol(list2, Decl(underscoreTest1_underscoreTests.ts, 240, 3))
  
  _.template(list2, { people: ['moe', 'curly', 'larry'] });
@@ -1046,7 +1046,7 @@
  
  template({ value: '<script>' });
  >template : Symbol(template, Decl(underscoreTest1_underscoreTests.ts, 242, 3))
-@@ -934,18 +934,18 @@
+@@= skipped -18, +18 lines =@@
  
  var compiled2 = _.template("<% print('Hello ' + epithet); %>");
  >compiled2 : Symbol(compiled2, Decl(underscoreTest1_underscoreTests.ts, 244, 3))
@@ -1069,7 +1069,7 @@
  
      interpolate: /\{\{(.+?)\}\}/g
  >interpolate : Symbol(interpolate, Decl(underscoreTest1_underscoreTests.ts, 246, 22))
-@@ -953,18 +953,18 @@
+@@= skipped -19, +19 lines =@@
  };
  var template2 = _.template("Hello {{ name }}!");
  >template2 : Symbol(template2, Decl(underscoreTest1_underscoreTests.ts, 249, 3))
@@ -1092,7 +1092,7 @@
  >answer : Symbol(answer, Decl(underscoreTest1_underscoreTests.ts, 251, 48))
  >variable : Symbol(variable, Decl(underscoreTest1_underscoreTests.ts, 251, 66))
  
-@@ -1013,11 +1013,11 @@
+@@= skipped -60, +60 lines =@@
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      0: T0;
@@ -1106,7 +1106,7 @@
  >T1 : Symbol(T1, Decl(underscoreTest1_underscore.ts, 12, 20))
  }
  
-@@ -1029,15 +1029,15 @@
+@@= skipped -16, +16 lines =@@
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      0: T0;
@@ -1125,7 +1125,7 @@
  >T2 : Symbol(T2, Decl(underscoreTest1_underscore.ts, 17, 24))
  }
  
-@@ -1050,19 +1050,19 @@
+@@= skipped -21, +21 lines =@@
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      0: T0;
@@ -1149,7 +1149,7 @@
  >T3 : Symbol(T3, Decl(underscoreTest1_underscore.ts, 23, 28))
  }
  
-@@ -1074,110 +1074,110 @@
+@@= skipped -24, +24 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 31, 35))
  
          keys(): string[];
@@ -1290,7 +1290,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 31, 35))
      }
  
-@@ -1189,58 +1189,58 @@
+@@= skipped -115, +115 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 64, 37))
  
          bind(object: any): T;
@@ -1360,7 +1360,7 @@
  >wrapper : Symbol(wrapper, Decl(underscoreTest1_underscore.ts, 75, 13))
  >func : Symbol(func, Decl(underscoreTest1_underscore.ts, 75, 23))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 64, 37))
-@@ -1248,7 +1248,7 @@
+@@= skipped -59, +59 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 64, 37))
  
          compose(...funcs: Function[]): Function;
@@ -1369,7 +1369,7 @@
  >funcs : Symbol(funcs, Decl(underscoreTest1_underscore.ts, 76, 16))
  >Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  >Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
-@@ -1262,21 +1262,21 @@
+@@= skipped -14, +14 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 79, 34))
  
          each(iterator: Iterator_<T, void>, context?: any): void;
@@ -1394,7 +1394,7 @@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 82, 12))
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 82, 15))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
-@@ -1286,7 +1286,7 @@
+@@= skipped -24, +24 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 82, 12))
  
          collect<U>(iterator: Iterator_<T, U>, context?: any): U[];
@@ -1403,7 +1403,7 @@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 83, 16))
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 83, 19))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
-@@ -1296,7 +1296,7 @@
+@@= skipped -10, +10 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 83, 16))
  
          reduce(iterator: Reducer<T, T>, initialValue?: T, context?: any): T;
@@ -1412,7 +1412,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 84, 15))
  >Reducer : Symbol(Reducer, Decl(underscoreTest1_underscore.ts, 6, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 79, 34))
-@@ -1307,7 +1307,7 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 79, 34))
  
          reduce<U>(iterator: Reducer<T, U>, initialValue: U, context?: any): U;
@@ -1421,7 +1421,7 @@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 85, 15))
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 85, 18))
  >Reducer : Symbol(Reducer, Decl(underscoreTest1_underscore.ts, 6, 1))
-@@ -1319,7 +1319,7 @@
+@@= skipped -12, +12 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 85, 15))
  
          foldl(iterator: Reducer<T, T>, initialValue?: T, context?: any): T;
@@ -1430,7 +1430,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 86, 14))
  >Reducer : Symbol(Reducer, Decl(underscoreTest1_underscore.ts, 6, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 79, 34))
-@@ -1330,7 +1330,7 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 79, 34))
  
          foldl<U>(iterator: Reducer<T, U>, initialValue: U, context?: any): U;
@@ -1439,7 +1439,7 @@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 87, 14))
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 87, 17))
  >Reducer : Symbol(Reducer, Decl(underscoreTest1_underscore.ts, 6, 1))
-@@ -1342,7 +1342,7 @@
+@@= skipped -12, +12 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 87, 14))
  
          inject(iterator: Reducer<T, T>, initialValue?: T, context?: any): T;
@@ -1448,7 +1448,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 88, 15))
  >Reducer : Symbol(Reducer, Decl(underscoreTest1_underscore.ts, 6, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 79, 34))
-@@ -1353,7 +1353,7 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 79, 34))
  
          inject<U>(iterator: Reducer<T, U>, initialValue: U, context?: any): U;
@@ -1457,7 +1457,7 @@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 89, 15))
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 89, 18))
  >Reducer : Symbol(Reducer, Decl(underscoreTest1_underscore.ts, 6, 1))
-@@ -1365,7 +1365,7 @@
+@@= skipped -12, +12 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 89, 15))
  
          reduceRight(iterator: Reducer<T, T>, initialValue?: T, context?: any): T;
@@ -1466,7 +1466,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 90, 20))
  >Reducer : Symbol(Reducer, Decl(underscoreTest1_underscore.ts, 6, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 79, 34))
-@@ -1376,7 +1376,7 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 79, 34))
  
          reduceRight<U>(iterator: Reducer<T, U>, initialValue: U, context?: any): U;
@@ -1475,7 +1475,7 @@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 91, 20))
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 91, 23))
  >Reducer : Symbol(Reducer, Decl(underscoreTest1_underscore.ts, 6, 1))
-@@ -1388,7 +1388,7 @@
+@@= skipped -12, +12 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 91, 20))
  
          foldr(iterator: Reducer<T, T>, initialValue?: T, context?: any): T;
@@ -1484,7 +1484,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 92, 14))
  >Reducer : Symbol(Reducer, Decl(underscoreTest1_underscore.ts, 6, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 79, 34))
-@@ -1399,7 +1399,7 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 79, 34))
  
          foldr<U>(iterator: Reducer<T, U>, initialValue: U, context?: any): U;
@@ -1493,7 +1493,7 @@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 93, 14))
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 93, 17))
  >Reducer : Symbol(Reducer, Decl(underscoreTest1_underscore.ts, 6, 1))
-@@ -1411,7 +1411,7 @@
+@@= skipped -12, +12 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 93, 14))
  
          find(iterator: Iterator_<T, boolean>, context?: any): T;
@@ -1502,7 +1502,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 94, 13))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 79, 34))
-@@ -1419,7 +1419,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 79, 34))
  
          detect(iterator: Iterator_<T, boolean>, context?: any): T;
@@ -1511,7 +1511,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 95, 15))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 79, 34))
-@@ -1427,7 +1427,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 79, 34))
  
          filter(iterator: Iterator_<T, boolean>, context?: any): T[];
@@ -1520,7 +1520,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 96, 15))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 79, 34))
-@@ -1435,7 +1435,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 79, 34))
  
          select(iterator: Iterator_<T, boolean>, context?: any): T[];
@@ -1529,7 +1529,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 97, 15))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 79, 34))
-@@ -1443,19 +1443,19 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 79, 34))
  
          where(properties: Object): T[];
@@ -1552,7 +1552,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 100, 15))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 79, 34))
-@@ -1463,54 +1463,54 @@
+@@= skipped -20, +20 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 79, 34))
  
          every(iterator?: Iterator_<T, boolean>, context?: any): boolean;
@@ -1616,7 +1616,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 109, 12))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 79, 34))
-@@ -1518,7 +1518,7 @@
+@@= skipped -55, +55 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 79, 34))
  
          min(iterator?: Iterator_<T, any>, context?: any): T;
@@ -1625,7 +1625,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 110, 12))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 79, 34))
-@@ -1526,7 +1526,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 79, 34))
  
          sortBy(iterator: Iterator_<T, any>, context?: any): T[];
@@ -1634,7 +1634,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 111, 15))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 79, 34))
-@@ -1534,12 +1534,12 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 79, 34))
  
          sortBy(propertyName: string): T[];
@@ -1649,7 +1649,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 113, 16))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 79, 34))
-@@ -1548,13 +1548,13 @@
+@@= skipped -14, +14 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 79, 34))
  
          groupBy(propertyName: string): Dictionary<T[]>;
@@ -1665,7 +1665,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 115, 16))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 79, 34))
-@@ -1562,112 +1562,112 @@
+@@= skipped -14, +14 lines =@@
  >Dictionary : Symbol(Dictionary, Decl(underscoreTest1_underscore.ts, 0, 0))
  
          countBy(propertyName: string): Dictionary<number>;
@@ -1801,7 +1801,7 @@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 138, 13))
  >isSorted : Symbol(isSorted, Decl(underscoreTest1_underscore.ts, 138, 16))
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 138, 34))
-@@ -1678,12 +1678,12 @@
+@@= skipped -116, +116 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 138, 13))
  
          unique(isSorted?: boolean): T[];
@@ -1816,7 +1816,7 @@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 140, 15))
  >isSorted : Symbol(isSorted, Decl(underscoreTest1_underscore.ts, 140, 18))
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 140, 36))
-@@ -1694,36 +1694,36 @@
+@@= skipped -16, +16 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 140, 15))
  
          zip(...arrays: any[][]): any[][];
@@ -1860,7 +1860,7 @@
  >obj : Symbol(obj, Decl(underscoreTest1_underscore.ts, 147, 20))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 79, 34))
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 147, 27))
-@@ -1733,40 +1733,40 @@
+@@= skipped -39, +39 lines =@@
  
          // Methods from Array
          concat(...items: T[]): T[];
@@ -1909,7 +1909,7 @@
  >compareFn : Symbol(compareFn, Decl(underscoreTest1_underscore.ts, 156, 13))
  >a : Symbol(a, Decl(underscoreTest1_underscore.ts, 156, 26))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 79, 34))
-@@ -1775,12 +1775,12 @@
+@@= skipped -42, +42 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 79, 34))
  
          splice(start: number): T[];
@@ -1924,7 +1924,7 @@
  >start : Symbol(start, Decl(underscoreTest1_underscore.ts, 158, 15))
  >deleteCount : Symbol(deleteCount, Decl(underscoreTest1_underscore.ts, 158, 29))
  >items : Symbol(items, Decl(underscoreTest1_underscore.ts, 158, 50))
-@@ -1788,7 +1788,7 @@
+@@= skipped -13, +13 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 79, 34))
  
          unshift(...items: T[]): number;
@@ -1933,7 +1933,7 @@
  >items : Symbol(items, Decl(underscoreTest1_underscore.ts, 159, 16))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 79, 34))
      }
-@@ -1801,21 +1801,21 @@
+@@= skipped -13, +13 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 162, 39))
  
          each(iterator: Iterator_<T, void>, context?: any): void;
@@ -1958,7 +1958,7 @@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 165, 12))
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 165, 15))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
-@@ -1825,7 +1825,7 @@
+@@= skipped -24, +24 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 165, 12))
  
          collect<U>(iterator: Iterator_<T, U>, context?: any): U[];
@@ -1967,7 +1967,7 @@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 166, 16))
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 166, 19))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
-@@ -1835,7 +1835,7 @@
+@@= skipped -10, +10 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 166, 16))
  
          reduce(iterator: Reducer<T, T>, initialValue?: T, context?: any): T;
@@ -1976,7 +1976,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 167, 15))
  >Reducer : Symbol(Reducer, Decl(underscoreTest1_underscore.ts, 6, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 162, 39))
-@@ -1846,7 +1846,7 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 162, 39))
  
          reduce<U>(iterator: Reducer<T, U>, initialValue: U, context?: any): U;
@@ -1985,7 +1985,7 @@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 168, 15))
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 168, 18))
  >Reducer : Symbol(Reducer, Decl(underscoreTest1_underscore.ts, 6, 1))
-@@ -1858,7 +1858,7 @@
+@@= skipped -12, +12 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 168, 15))
  
          foldl(iterator: Reducer<T, T>, initialValue?: T, context?: any): T;
@@ -1994,7 +1994,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 169, 14))
  >Reducer : Symbol(Reducer, Decl(underscoreTest1_underscore.ts, 6, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 162, 39))
-@@ -1869,7 +1869,7 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 162, 39))
  
          foldl<U>(iterator: Reducer<T, U>, initialValue: U, context?: any): U;
@@ -2003,7 +2003,7 @@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 170, 14))
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 170, 17))
  >Reducer : Symbol(Reducer, Decl(underscoreTest1_underscore.ts, 6, 1))
-@@ -1881,7 +1881,7 @@
+@@= skipped -12, +12 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 170, 14))
  
          inject(iterator: Reducer<T, T>, initialValue?: T, context?: any): T;
@@ -2012,7 +2012,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 171, 15))
  >Reducer : Symbol(Reducer, Decl(underscoreTest1_underscore.ts, 6, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 162, 39))
-@@ -1892,7 +1892,7 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 162, 39))
  
          inject<U>(iterator: Reducer<T, U>, initialValue: U, context?: any): U;
@@ -2021,7 +2021,7 @@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 172, 15))
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 172, 18))
  >Reducer : Symbol(Reducer, Decl(underscoreTest1_underscore.ts, 6, 1))
-@@ -1904,7 +1904,7 @@
+@@= skipped -12, +12 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 172, 15))
  
          reduceRight(iterator: Reducer<T, T>, initialValue?: T, context?: any): T;
@@ -2030,7 +2030,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 173, 20))
  >Reducer : Symbol(Reducer, Decl(underscoreTest1_underscore.ts, 6, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 162, 39))
-@@ -1915,7 +1915,7 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 162, 39))
  
          reduceRight<U>(iterator: Reducer<T, U>, initialValue: U, context?: any): U;
@@ -2039,7 +2039,7 @@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 174, 20))
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 174, 23))
  >Reducer : Symbol(Reducer, Decl(underscoreTest1_underscore.ts, 6, 1))
-@@ -1927,7 +1927,7 @@
+@@= skipped -12, +12 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 174, 20))
  
          foldr(iterator: Reducer<T, T>, initialValue?: T, context?: any): T;
@@ -2048,7 +2048,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 175, 14))
  >Reducer : Symbol(Reducer, Decl(underscoreTest1_underscore.ts, 6, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 162, 39))
-@@ -1938,7 +1938,7 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 162, 39))
  
          foldr<U>(iterator: Reducer<T, U>, initialValue: U, context?: any): U;
@@ -2057,7 +2057,7 @@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 176, 14))
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 176, 17))
  >Reducer : Symbol(Reducer, Decl(underscoreTest1_underscore.ts, 6, 1))
-@@ -1950,7 +1950,7 @@
+@@= skipped -12, +12 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 176, 14))
  
          find(iterator: Iterator_<T, boolean>, context?: any): T;
@@ -2066,7 +2066,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 177, 13))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 162, 39))
-@@ -1958,7 +1958,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 162, 39))
  
          detect(iterator: Iterator_<T, boolean>, context?: any): T;
@@ -2075,7 +2075,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 178, 15))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 162, 39))
-@@ -1966,7 +1966,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 162, 39))
  
          filter(iterator: Iterator_<T, boolean>, context?: any): T[];
@@ -2084,7 +2084,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 179, 15))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 162, 39))
-@@ -1974,7 +1974,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 162, 39))
  
          select(iterator: Iterator_<T, boolean>, context?: any): T[];
@@ -2093,7 +2093,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 180, 15))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 162, 39))
-@@ -1982,19 +1982,19 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 162, 39))
  
          where(properties: Object): T[];
@@ -2116,7 +2116,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 183, 15))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 162, 39))
-@@ -2002,54 +2002,54 @@
+@@= skipped -20, +20 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 162, 39))
  
          every(iterator?: Iterator_<T, boolean>, context?: any): boolean;
@@ -2180,7 +2180,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 192, 12))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 162, 39))
-@@ -2057,7 +2057,7 @@
+@@= skipped -55, +55 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 162, 39))
  
          min(iterator?: Iterator_<T, any>, context?: any): T;
@@ -2189,7 +2189,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 193, 12))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 162, 39))
-@@ -2065,7 +2065,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 162, 39))
  
          sortBy(iterator: Iterator_<T, any>, context?: any): T[];
@@ -2198,7 +2198,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 194, 15))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 162, 39))
-@@ -2073,12 +2073,12 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 162, 39))
  
          sortBy(propertyName: string): T[];
@@ -2213,7 +2213,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 196, 16))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 162, 39))
-@@ -2087,13 +2087,13 @@
+@@= skipped -14, +14 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 162, 39))
  
          groupBy(propertyName: string): Dictionary<T[]>;
@@ -2229,7 +2229,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 198, 16))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 162, 39))
-@@ -2101,20 +2101,20 @@
+@@= skipped -14, +14 lines =@@
  >Dictionary : Symbol(Dictionary, Decl(underscoreTest1_underscore.ts, 0, 0))
  
          countBy(propertyName: string): Dictionary<number>;
@@ -2254,7 +2254,7 @@
      }
  
      export interface ChainedObject<T> {
-@@ -2122,60 +2122,60 @@
+@@= skipped -21, +21 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 205, 35))
  
          keys(): ChainedArray<string>;
@@ -2327,7 +2327,7 @@
  >interceptor : Symbol(interceptor, Decl(underscoreTest1_underscore.ts, 217, 12))
  >object : Symbol(object, Decl(underscoreTest1_underscore.ts, 217, 26))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 205, 35))
-@@ -2183,78 +2183,78 @@
+@@= skipped -61, +61 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 205, 35))
  
          has(key: string): ChainedObject<boolean>;
@@ -2424,7 +2424,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 205, 35))
      }
  
-@@ -2266,7 +2266,7 @@
+@@= skipped -83, +83 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 238, 34))
  
          each(iterator: Iterator_<T, void>, context?: any): ChainedObject<void>;
@@ -2433,7 +2433,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 239, 13))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 238, 34))
-@@ -2274,7 +2274,7 @@
+@@= skipped -8, +8 lines =@@
  >ChainedObject : Symbol(ChainedObject, Decl(underscoreTest1_underscore.ts, 203, 5))
  
          forEach(iterator: Iterator_<T, void>, context?: any): ChainedObject<void>;
@@ -2442,7 +2442,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 240, 16))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 238, 34))
-@@ -2282,7 +2282,7 @@
+@@= skipped -8, +8 lines =@@
  >ChainedObject : Symbol(ChainedObject, Decl(underscoreTest1_underscore.ts, 203, 5))
  
          map<U>(iterator: Iterator_<T, U>, context?: any): ChainedArray<U>;
@@ -2451,7 +2451,7 @@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 241, 12))
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 241, 15))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
-@@ -2293,7 +2293,7 @@
+@@= skipped -11, +11 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 241, 12))
  
          collect<U>(iterator: Iterator_<T, U>, context?: any): ChainedArray<U>;
@@ -2460,7 +2460,7 @@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 242, 16))
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 242, 19))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
-@@ -2304,7 +2304,7 @@
+@@= skipped -11, +11 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 242, 16))
  
          reduce(iterator: Reducer<T, T>, initialValue?: T, context?: any): ChainedObject<T>;
@@ -2469,7 +2469,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 243, 15))
  >Reducer : Symbol(Reducer, Decl(underscoreTest1_underscore.ts, 6, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 238, 34))
-@@ -2316,7 +2316,7 @@
+@@= skipped -12, +12 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 238, 34))
  
          reduce<U>(iterator: Reducer<T, U>, initialValue: U, context?: any): ChainedObject<U>;
@@ -2478,7 +2478,7 @@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 244, 15))
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 244, 18))
  >Reducer : Symbol(Reducer, Decl(underscoreTest1_underscore.ts, 6, 1))
-@@ -2329,7 +2329,7 @@
+@@= skipped -13, +13 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 244, 15))
  
          foldl(iterator: Reducer<T, T>, initialValue?: T, context?: any): ChainedObject<T>;
@@ -2487,7 +2487,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 245, 14))
  >Reducer : Symbol(Reducer, Decl(underscoreTest1_underscore.ts, 6, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 238, 34))
-@@ -2341,7 +2341,7 @@
+@@= skipped -12, +12 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 238, 34))
  
          foldl<U>(iterator: Reducer<T, U>, initialValue: U, context?: any): ChainedObject<U>;
@@ -2496,7 +2496,7 @@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 246, 14))
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 246, 17))
  >Reducer : Symbol(Reducer, Decl(underscoreTest1_underscore.ts, 6, 1))
-@@ -2354,7 +2354,7 @@
+@@= skipped -13, +13 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 246, 14))
  
          inject(iterator: Reducer<T, T>, initialValue?: T, context?: any): ChainedObject<T>;
@@ -2505,7 +2505,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 247, 15))
  >Reducer : Symbol(Reducer, Decl(underscoreTest1_underscore.ts, 6, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 238, 34))
-@@ -2366,7 +2366,7 @@
+@@= skipped -12, +12 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 238, 34))
  
          inject<U>(iterator: Reducer<T, U>, initialValue: U, context?: any): ChainedObject<U>;
@@ -2514,7 +2514,7 @@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 248, 15))
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 248, 18))
  >Reducer : Symbol(Reducer, Decl(underscoreTest1_underscore.ts, 6, 1))
-@@ -2379,7 +2379,7 @@
+@@= skipped -13, +13 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 248, 15))
  
          reduceRight(iterator: Reducer<T, T>, initialValue?: T, context?: any): ChainedObject<T>;
@@ -2523,7 +2523,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 249, 20))
  >Reducer : Symbol(Reducer, Decl(underscoreTest1_underscore.ts, 6, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 238, 34))
-@@ -2391,7 +2391,7 @@
+@@= skipped -12, +12 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 238, 34))
  
          reduceRight<U>(iterator: Reducer<T, U>, initialValue: U, context?: any): ChainedObject<U>;
@@ -2532,7 +2532,7 @@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 250, 20))
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 250, 23))
  >Reducer : Symbol(Reducer, Decl(underscoreTest1_underscore.ts, 6, 1))
-@@ -2404,7 +2404,7 @@
+@@= skipped -13, +13 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 250, 20))
  
          foldr(iterator: Reducer<T, T>, initialValue?: T, context?: any): ChainedObject<T>;
@@ -2541,7 +2541,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 251, 14))
  >Reducer : Symbol(Reducer, Decl(underscoreTest1_underscore.ts, 6, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 238, 34))
-@@ -2416,7 +2416,7 @@
+@@= skipped -12, +12 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 238, 34))
  
          foldr<U>(iterator: Reducer<T, U>, initialValue: U, context?: any): ChainedObject<U>;
@@ -2550,7 +2550,7 @@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 252, 14))
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 252, 17))
  >Reducer : Symbol(Reducer, Decl(underscoreTest1_underscore.ts, 6, 1))
-@@ -2429,7 +2429,7 @@
+@@= skipped -13, +13 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 252, 14))
  
          find(iterator: Iterator_<T, boolean>, context?: any): ChainedObject<T>;
@@ -2559,7 +2559,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 253, 13))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 238, 34))
-@@ -2438,7 +2438,7 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 238, 34))
  
          detect(iterator: Iterator_<T, boolean>, context?: any): ChainedObject<T>;
@@ -2568,7 +2568,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 254, 15))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 238, 34))
-@@ -2447,7 +2447,7 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 238, 34))
  
          filter(iterator: Iterator_<T, boolean>, context?: any): ChainedArray<T>;
@@ -2577,7 +2577,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 255, 15))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 238, 34))
-@@ -2456,7 +2456,7 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 238, 34))
  
          select(iterator: Iterator_<T, boolean>, context?: any): ChainedArray<T>;
@@ -2586,7 +2586,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 256, 15))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 238, 34))
-@@ -2465,21 +2465,21 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 238, 34))
  
          where(properties: Object): ChainedArray<T>;
@@ -2611,7 +2611,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 259, 15))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 238, 34))
-@@ -2488,7 +2488,7 @@
+@@= skipped -23, +23 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 238, 34))
  
          every(iterator?: Iterator_<T, boolean>, context?: any): ChainedObject<boolean>;
@@ -2620,7 +2620,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 260, 14))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 238, 34))
-@@ -2496,7 +2496,7 @@
+@@= skipped -8, +8 lines =@@
  >ChainedObject : Symbol(ChainedObject, Decl(underscoreTest1_underscore.ts, 203, 5))
  
          all(iterator?: Iterator_<T, boolean>, context?: any): ChainedObject<boolean>;
@@ -2629,7 +2629,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 261, 12))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 238, 34))
-@@ -2504,7 +2504,7 @@
+@@= skipped -8, +8 lines =@@
  >ChainedObject : Symbol(ChainedObject, Decl(underscoreTest1_underscore.ts, 203, 5))
  
          some(iterator?: Iterator_<T, boolean>, context?: any): ChainedObject<boolean>;
@@ -2638,7 +2638,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 262, 13))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 238, 34))
-@@ -2512,7 +2512,7 @@
+@@= skipped -8, +8 lines =@@
  >ChainedObject : Symbol(ChainedObject, Decl(underscoreTest1_underscore.ts, 203, 5))
  
          any(iterator?: Iterator_<T, boolean>, context?: any): ChainedObject<boolean>;
@@ -2647,7 +2647,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 263, 12))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 238, 34))
-@@ -2520,30 +2520,30 @@
+@@= skipped -8, +8 lines =@@
  >ChainedObject : Symbol(ChainedObject, Decl(underscoreTest1_underscore.ts, 203, 5))
  
          contains(value: T): ChainedObject<boolean>;
@@ -2683,7 +2683,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 268, 12))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 238, 34))
-@@ -2552,7 +2552,7 @@
+@@= skipped -32, +32 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 238, 34))
  
          min(iterator?: Iterator_<T, any>, context?: any): ChainedObject<T>;
@@ -2692,7 +2692,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 269, 12))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 238, 34))
-@@ -2561,7 +2561,7 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 238, 34))
  
          sortBy(iterator: Iterator_<T, any>, context?: any): ChainedArray<T>;
@@ -2701,7 +2701,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 270, 15))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 238, 34))
-@@ -2570,14 +2570,14 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 238, 34))
  
          sortBy(propertyName: string): ChainedArray<T>;
@@ -2718,7 +2718,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 273, 16))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 238, 34))
-@@ -2585,12 +2585,12 @@
+@@= skipped -15, +15 lines =@@
  >ChainedDictionary : Symbol(ChainedDictionary, Decl(underscoreTest1_underscore.ts, 327, 5))
  
          groupBy(propertyName: string): ChainedDictionary<any[]>;
@@ -2733,7 +2733,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 275, 16))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 238, 34))
-@@ -2598,133 +2598,133 @@
+@@= skipped -13, +13 lines =@@
  >ChainedDictionary : Symbol(ChainedDictionary, Decl(underscoreTest1_underscore.ts, 327, 5))
  
          countBy(propertyName: string): ChainedDictionary<number>;
@@ -2890,7 +2890,7 @@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 298, 13))
  >isSorted : Symbol(isSorted, Decl(underscoreTest1_underscore.ts, 298, 16))
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 298, 34))
-@@ -2736,13 +2736,13 @@
+@@= skipped -138, +138 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 298, 13))
  
          unique(isSorted?: boolean): ChainedArray<T>;
@@ -2906,7 +2906,7 @@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 300, 15))
  >isSorted : Symbol(isSorted, Decl(underscoreTest1_underscore.ts, 300, 18))
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 300, 36))
-@@ -2754,42 +2754,42 @@
+@@= skipped -18, +18 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 300, 15))
  
          zip(...arrays: any[][]): ChainedArray<any[]>;
@@ -2956,7 +2956,7 @@
  >obj : Symbol(obj, Decl(underscoreTest1_underscore.ts, 307, 20))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 238, 34))
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 307, 27))
-@@ -2800,47 +2800,47 @@
+@@= skipped -46, +46 lines =@@
  
          // Methods from Array
          concat(...items: T[]): ChainedArray<T>;
@@ -3012,7 +3012,7 @@
  >compareFn : Symbol(compareFn, Decl(underscoreTest1_underscore.ts, 316, 13))
  >a : Symbol(a, Decl(underscoreTest1_underscore.ts, 316, 26))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 238, 34))
-@@ -2850,13 +2850,13 @@
+@@= skipped -50, +50 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 238, 34))
  
          splice(start: number): ChainedArray<T>;
@@ -3028,7 +3028,7 @@
  >start : Symbol(start, Decl(underscoreTest1_underscore.ts, 318, 15))
  >deleteCount : Symbol(deleteCount, Decl(underscoreTest1_underscore.ts, 318, 29))
  >items : Symbol(items, Decl(underscoreTest1_underscore.ts, 318, 50))
-@@ -2865,43 +2865,43 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 238, 34))
  
          unshift(...items: T[]): ChainedObject<number>;
@@ -3079,7 +3079,7 @@
  >interceptor : Symbol(interceptor, Decl(underscoreTest1_underscore.ts, 326, 12))
  >object : Symbol(object, Decl(underscoreTest1_underscore.ts, 326, 26))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 238, 34))
-@@ -2917,7 +2917,7 @@
+@@= skipped -52, +52 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 329, 39))
  
          each(iterator: Iterator_<T, void>, context?: any): ChainedObject<void>;
@@ -3088,7 +3088,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 330, 13))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 329, 39))
-@@ -2925,7 +2925,7 @@
+@@= skipped -8, +8 lines =@@
  >ChainedObject : Symbol(ChainedObject, Decl(underscoreTest1_underscore.ts, 203, 5))
  
          forEach(iterator: Iterator_<T, void>, context?: any): ChainedObject<void>;
@@ -3097,7 +3097,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 331, 16))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 329, 39))
-@@ -2933,7 +2933,7 @@
+@@= skipped -8, +8 lines =@@
  >ChainedObject : Symbol(ChainedObject, Decl(underscoreTest1_underscore.ts, 203, 5))
  
          map<U>(iterator: Iterator_<T, U>, context?: any): ChainedArray<U>;
@@ -3106,7 +3106,7 @@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 332, 12))
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 332, 15))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
-@@ -2944,7 +2944,7 @@
+@@= skipped -11, +11 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 332, 12))
  
          collect<U>(iterator: Iterator_<T, U>, context?: any): ChainedArray<U>;
@@ -3115,7 +3115,7 @@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 333, 16))
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 333, 19))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
-@@ -2955,7 +2955,7 @@
+@@= skipped -11, +11 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 333, 16))
  
          reduce(iterator: Reducer<T, T>, initialValue?: T, context?: any): ChainedObject<T>;
@@ -3124,7 +3124,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 334, 15))
  >Reducer : Symbol(Reducer, Decl(underscoreTest1_underscore.ts, 6, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 329, 39))
-@@ -2967,7 +2967,7 @@
+@@= skipped -12, +12 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 329, 39))
  
          reduce<U>(iterator: Reducer<T, U>, initialValue: U, context?: any): ChainedObject<U>;
@@ -3133,7 +3133,7 @@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 335, 15))
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 335, 18))
  >Reducer : Symbol(Reducer, Decl(underscoreTest1_underscore.ts, 6, 1))
-@@ -2980,7 +2980,7 @@
+@@= skipped -13, +13 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 335, 15))
  
          foldl(iterator: Reducer<T, T>, initialValue?: T, context?: any): ChainedObject<T>;
@@ -3142,7 +3142,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 336, 14))
  >Reducer : Symbol(Reducer, Decl(underscoreTest1_underscore.ts, 6, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 329, 39))
-@@ -2992,7 +2992,7 @@
+@@= skipped -12, +12 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 329, 39))
  
          foldl<U>(iterator: Reducer<T, U>, initialValue: U, context?: any): ChainedObject<U>;
@@ -3151,7 +3151,7 @@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 337, 14))
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 337, 17))
  >Reducer : Symbol(Reducer, Decl(underscoreTest1_underscore.ts, 6, 1))
-@@ -3005,7 +3005,7 @@
+@@= skipped -13, +13 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 337, 14))
  
          inject(iterator: Reducer<T, T>, initialValue?: T, context?: any): ChainedObject<T>;
@@ -3160,7 +3160,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 338, 15))
  >Reducer : Symbol(Reducer, Decl(underscoreTest1_underscore.ts, 6, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 329, 39))
-@@ -3017,7 +3017,7 @@
+@@= skipped -12, +12 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 329, 39))
  
          inject<U>(iterator: Reducer<T, U>, initialValue: U, context?: any): ChainedObject<U>;
@@ -3169,7 +3169,7 @@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 339, 15))
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 339, 18))
  >Reducer : Symbol(Reducer, Decl(underscoreTest1_underscore.ts, 6, 1))
-@@ -3030,7 +3030,7 @@
+@@= skipped -13, +13 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 339, 15))
  
          reduceRight(iterator: Reducer<T, T>, initialValue?: T, context?: any): ChainedObject<T>;
@@ -3178,7 +3178,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 340, 20))
  >Reducer : Symbol(Reducer, Decl(underscoreTest1_underscore.ts, 6, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 329, 39))
-@@ -3042,7 +3042,7 @@
+@@= skipped -12, +12 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 329, 39))
  
          reduceRight<U>(iterator: Reducer<T, U>, initialValue: U, context?: any): ChainedObject<U>;
@@ -3187,7 +3187,7 @@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 341, 20))
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 341, 23))
  >Reducer : Symbol(Reducer, Decl(underscoreTest1_underscore.ts, 6, 1))
-@@ -3055,7 +3055,7 @@
+@@= skipped -13, +13 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 341, 20))
  
          foldr(iterator: Reducer<T, T>, initialValue?: T, context?: any): ChainedObject<T>;
@@ -3196,7 +3196,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 342, 14))
  >Reducer : Symbol(Reducer, Decl(underscoreTest1_underscore.ts, 6, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 329, 39))
-@@ -3067,7 +3067,7 @@
+@@= skipped -12, +12 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 329, 39))
  
          foldr<U>(iterator: Reducer<T, U>, initialValue: U, context?: any): ChainedObject<U>;
@@ -3205,7 +3205,7 @@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 343, 14))
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 343, 17))
  >Reducer : Symbol(Reducer, Decl(underscoreTest1_underscore.ts, 6, 1))
-@@ -3080,7 +3080,7 @@
+@@= skipped -13, +13 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 343, 14))
  
          find(iterator: Iterator_<T, boolean>, context?: any): ChainedObject<T>;
@@ -3214,7 +3214,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 344, 13))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 329, 39))
-@@ -3089,7 +3089,7 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 329, 39))
  
          detect(iterator: Iterator_<T, boolean>, context?: any): ChainedObject<T>;
@@ -3223,7 +3223,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 345, 15))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 329, 39))
-@@ -3098,7 +3098,7 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 329, 39))
  
          filter(iterator: Iterator_<T, boolean>, context?: any): ChainedArray<T>;
@@ -3232,7 +3232,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 346, 15))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 329, 39))
-@@ -3107,7 +3107,7 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 329, 39))
  
          select(iterator: Iterator_<T, boolean>, context?: any): ChainedArray<T>;
@@ -3241,7 +3241,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 347, 15))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 329, 39))
-@@ -3116,21 +3116,21 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 329, 39))
  
          where(properties: Object): ChainedArray<T>;
@@ -3266,7 +3266,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 350, 15))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 329, 39))
-@@ -3139,7 +3139,7 @@
+@@= skipped -23, +23 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 329, 39))
  
          every(iterator?: Iterator_<T, boolean>, context?: any): ChainedObject<boolean>;
@@ -3275,7 +3275,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 351, 14))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 329, 39))
-@@ -3147,7 +3147,7 @@
+@@= skipped -8, +8 lines =@@
  >ChainedObject : Symbol(ChainedObject, Decl(underscoreTest1_underscore.ts, 203, 5))
  
          all(iterator?: Iterator_<T, boolean>, context?: any): ChainedObject<boolean>;
@@ -3284,7 +3284,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 352, 12))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 329, 39))
-@@ -3155,7 +3155,7 @@
+@@= skipped -8, +8 lines =@@
  >ChainedObject : Symbol(ChainedObject, Decl(underscoreTest1_underscore.ts, 203, 5))
  
          some(iterator?: Iterator_<T, boolean>, context?: any): ChainedObject<boolean>;
@@ -3293,7 +3293,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 353, 13))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 329, 39))
-@@ -3163,7 +3163,7 @@
+@@= skipped -8, +8 lines =@@
  >ChainedObject : Symbol(ChainedObject, Decl(underscoreTest1_underscore.ts, 203, 5))
  
          any(iterator?: Iterator_<T, boolean>, context?: any): ChainedObject<boolean>;
@@ -3302,7 +3302,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 354, 12))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 329, 39))
-@@ -3171,30 +3171,30 @@
+@@= skipped -8, +8 lines =@@
  >ChainedObject : Symbol(ChainedObject, Decl(underscoreTest1_underscore.ts, 203, 5))
  
          contains(value: T): ChainedObject<boolean>;
@@ -3338,7 +3338,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 359, 12))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 329, 39))
-@@ -3203,7 +3203,7 @@
+@@= skipped -32, +32 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 329, 39))
  
          min(iterator?: Iterator_<T, any>, context?: any): ChainedObject<T>;
@@ -3347,7 +3347,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 360, 12))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 329, 39))
-@@ -3212,7 +3212,7 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 329, 39))
  
          sortBy(iterator: Iterator_<T, any>, context?: any): ChainedArray<T>;
@@ -3356,7 +3356,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 361, 15))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 329, 39))
-@@ -3221,14 +3221,14 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 329, 39))
  
          sortBy(propertyName: string): ChainedArray<T>;
@@ -3373,7 +3373,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 364, 16))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 329, 39))
-@@ -3236,12 +3236,12 @@
+@@= skipped -15, +15 lines =@@
  >ChainedDictionary : Symbol(ChainedDictionary, Decl(underscoreTest1_underscore.ts, 327, 5))
  
          groupBy(propertyName: string): ChainedDictionary<any[]>;
@@ -3388,7 +3388,7 @@
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 366, 16))
  >Iterator_ : Symbol(Iterator_, Decl(underscoreTest1_underscore.ts, 2, 1))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 329, 39))
-@@ -3249,56 +3249,56 @@
+@@= skipped -13, +13 lines =@@
  >ChainedDictionary : Symbol(ChainedDictionary, Decl(underscoreTest1_underscore.ts, 327, 5))
  
          countBy(propertyName: string): ChainedDictionary<number>;
@@ -3455,7 +3455,7 @@
  >interceptor : Symbol(interceptor, Decl(underscoreTest1_underscore.ts, 377, 12))
  >object : Symbol(object, Decl(underscoreTest1_underscore.ts, 377, 26))
  >Dictionary : Symbol(Dictionary, Decl(underscoreTest1_underscore.ts, 0, 0))
-@@ -3311,19 +3311,19 @@
+@@= skipped -62, +62 lines =@@
  >TemplateSettings : Symbol(TemplateSettings, Decl(underscoreTest1_underscore.ts, 378, 5))
  
          evaluate?: RegExp;
@@ -3479,7 +3479,7 @@
      }
  
      export interface Static {
-@@ -3360,7 +3360,7 @@
+@@= skipped -49, +49 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 391, 9))
  
          chain<T>(list: T[]): ChainedArray<T>;
@@ -3488,7 +3488,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 393, 14))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 393, 17))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 393, 14))
-@@ -3368,7 +3368,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 393, 14))
  
          chain<T>(list: Dictionary<T>): ChainedDictionary<T>;
@@ -3497,7 +3497,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 394, 14))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 394, 17))
  >Dictionary : Symbol(Dictionary, Decl(underscoreTest1_underscore.ts, 0, 0))
-@@ -3377,7 +3377,7 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 394, 14))
  
          chain<T>(obj: T): ChainedObject<T>;
@@ -3506,7 +3506,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 395, 14))
  >obj : Symbol(obj, Decl(underscoreTest1_underscore.ts, 395, 17))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 395, 14))
-@@ -3385,7 +3385,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 395, 14))
  
          each<T>(list: T[], iterator: Iterator_<T, void>, context?: any): void;
@@ -3515,7 +3515,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 397, 13))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 397, 16))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 397, 13))
-@@ -3395,7 +3395,7 @@
+@@= skipped -10, +10 lines =@@
  >context : Symbol(context, Decl(underscoreTest1_underscore.ts, 397, 56))
  
          each<T>(list: Dictionary<T>, iterator: Iterator_<T, void>, context?: any): void;
@@ -3524,7 +3524,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 398, 13))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 398, 16))
  >Dictionary : Symbol(Dictionary, Decl(underscoreTest1_underscore.ts, 0, 0))
-@@ -3406,7 +3406,7 @@
+@@= skipped -11, +11 lines =@@
  >context : Symbol(context, Decl(underscoreTest1_underscore.ts, 398, 66))
  
          forEach<T>(list: T[], iterator: Iterator_<T, void>, context?: any): void;
@@ -3533,7 +3533,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 399, 16))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 399, 19))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 399, 16))
-@@ -3416,7 +3416,7 @@
+@@= skipped -10, +10 lines =@@
  >context : Symbol(context, Decl(underscoreTest1_underscore.ts, 399, 59))
  
          forEach<T>(list: Dictionary<T>, iterator: Iterator_<T, void>, context?: any): void;
@@ -3542,7 +3542,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 400, 16))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 400, 19))
  >Dictionary : Symbol(Dictionary, Decl(underscoreTest1_underscore.ts, 0, 0))
-@@ -3427,7 +3427,7 @@
+@@= skipped -11, +11 lines =@@
  >context : Symbol(context, Decl(underscoreTest1_underscore.ts, 400, 69))
  
          map<T, U>(list: T[], iterator: Iterator_<T, U>, context?: any): U[];
@@ -3551,7 +3551,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 402, 12))
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 402, 14))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 402, 18))
-@@ -3440,7 +3440,7 @@
+@@= skipped -13, +13 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 402, 14))
  
          map<T, U>(list: Dictionary<T>, iterator: Iterator_<T, U>, context?: any): U[];
@@ -3560,7 +3560,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 403, 12))
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 403, 14))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 403, 18))
-@@ -3454,7 +3454,7 @@
+@@= skipped -14, +14 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 403, 14))
  
          collect<T, U>(list: T[], iterator: Iterator_<T, U>, context?: any): U[];
@@ -3569,7 +3569,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 404, 16))
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 404, 18))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 404, 22))
-@@ -3467,7 +3467,7 @@
+@@= skipped -13, +13 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 404, 18))
  
          collect<T, U>(list: Dictionary<T>, iterator: Iterator_<T, U>, context?: any): U[];
@@ -3578,7 +3578,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 405, 16))
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 405, 18))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 405, 22))
-@@ -3481,7 +3481,7 @@
+@@= skipped -14, +14 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 405, 18))
  
          reduce<T>(list: T[], iterator: Reducer<T, T>, initialValue?: T, context?: any): T;
@@ -3587,7 +3587,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 407, 15))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 407, 18))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 407, 15))
-@@ -3495,7 +3495,7 @@
+@@= skipped -14, +14 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 407, 15))
  
          reduce<T, U>(list: T[], iterator: Reducer<T, U>, initialValue: U, context?: any): U;
@@ -3596,7 +3596,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 408, 15))
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 408, 17))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 408, 21))
-@@ -3510,7 +3510,7 @@
+@@= skipped -15, +15 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 408, 17))
  
          reduce<T>(list: Dictionary<T>, iterator: Reducer<T, T>, initialValue?: T, context?: any): T;
@@ -3605,7 +3605,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 409, 15))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 409, 18))
  >Dictionary : Symbol(Dictionary, Decl(underscoreTest1_underscore.ts, 0, 0))
-@@ -3525,7 +3525,7 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 409, 15))
  
          reduce<T, U>(list: Dictionary<T>, iterator: Reducer<T, U>, initialValue: U, context?: any): U;
@@ -3614,7 +3614,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 410, 15))
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 410, 17))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 410, 21))
-@@ -3541,7 +3541,7 @@
+@@= skipped -16, +16 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 410, 17))
  
          foldl<T>(list: T[], iterator: Reducer<T, T>, initialValue?: T, context?: any): T;
@@ -3623,7 +3623,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 411, 14))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 411, 17))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 411, 14))
-@@ -3555,7 +3555,7 @@
+@@= skipped -14, +14 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 411, 14))
  
          foldl<T, U>(list: T[], iterator: Reducer<T, U>, initialValue: U, context?: any): U;
@@ -3632,7 +3632,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 412, 14))
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 412, 16))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 412, 20))
-@@ -3570,7 +3570,7 @@
+@@= skipped -15, +15 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 412, 16))
  
          foldl<T>(list: Dictionary<T>, iterator: Reducer<T, T>, initialValue?: T, context?: any): T;
@@ -3641,7 +3641,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 413, 14))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 413, 17))
  >Dictionary : Symbol(Dictionary, Decl(underscoreTest1_underscore.ts, 0, 0))
-@@ -3585,7 +3585,7 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 413, 14))
  
          foldl<T, U>(list: Dictionary<T>, iterator: Reducer<T, U>, initialValue: U, context?: any): U;
@@ -3650,7 +3650,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 414, 14))
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 414, 16))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 414, 20))
-@@ -3601,7 +3601,7 @@
+@@= skipped -16, +16 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 414, 16))
  
          inject<T>(list: T[], iterator: Reducer<T, T>, initialValue?: T, context?: any): T;
@@ -3659,7 +3659,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 415, 15))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 415, 18))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 415, 15))
-@@ -3615,7 +3615,7 @@
+@@= skipped -14, +14 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 415, 15))
  
          inject<T, U>(list: T[], iterator: Reducer<T, U>, initialValue: U, context?: any): U;
@@ -3668,7 +3668,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 416, 15))
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 416, 17))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 416, 21))
-@@ -3630,7 +3630,7 @@
+@@= skipped -15, +15 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 416, 17))
  
          inject<T>(list: Dictionary<T>, iterator: Reducer<T, T>, initialValue?: T, context?: any): T;
@@ -3677,7 +3677,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 417, 15))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 417, 18))
  >Dictionary : Symbol(Dictionary, Decl(underscoreTest1_underscore.ts, 0, 0))
-@@ -3645,7 +3645,7 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 417, 15))
  
          inject<T, U>(list: Dictionary<T>, iterator: Reducer<T, U>, initialValue: U, context?: any): U;
@@ -3686,7 +3686,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 418, 15))
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 418, 17))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 418, 21))
-@@ -3661,7 +3661,7 @@
+@@= skipped -16, +16 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 418, 17))
  
          reduceRight<T>(list: T[], iterator: Reducer<T, T>, initialValue?: T, context?: any): T;
@@ -3695,7 +3695,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 420, 20))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 420, 23))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 420, 20))
-@@ -3675,7 +3675,7 @@
+@@= skipped -14, +14 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 420, 20))
  
          reduceRight<T, U>(list: T[], iterator: Reducer<T, U>, initialValue: U, context?: any): U;
@@ -3704,7 +3704,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 421, 20))
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 421, 22))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 421, 26))
-@@ -3690,7 +3690,7 @@
+@@= skipped -15, +15 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 421, 22))
  
          reduceRight<T>(list: Dictionary<T>, iterator: Reducer<T, T>, initialValue?: T, context?: any): T;
@@ -3713,7 +3713,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 422, 20))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 422, 23))
  >Dictionary : Symbol(Dictionary, Decl(underscoreTest1_underscore.ts, 0, 0))
-@@ -3705,7 +3705,7 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 422, 20))
  
          reduceRight<T, U>(list: Dictionary<T>, iterator: Reducer<T, U>, initialValue: U, context?: any): U;
@@ -3722,7 +3722,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 423, 20))
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 423, 22))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 423, 26))
-@@ -3721,7 +3721,7 @@
+@@= skipped -16, +16 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 423, 22))
  
          foldr<T>(list: T[], iterator: Reducer<T, T>, initialValue?: T, context?: any): T;
@@ -3731,7 +3731,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 424, 14))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 424, 17))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 424, 14))
-@@ -3735,7 +3735,7 @@
+@@= skipped -14, +14 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 424, 14))
  
          foldr<T, U>(list: T[], iterator: Reducer<T, U>, initialValue: U, context?: any): U;
@@ -3740,7 +3740,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 425, 14))
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 425, 16))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 425, 20))
-@@ -3750,7 +3750,7 @@
+@@= skipped -15, +15 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 425, 16))
  
          foldr<T>(list: Dictionary<T>, iterator: Reducer<T, T>, initialValue?: T, context?: any): T;
@@ -3749,7 +3749,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 426, 14))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 426, 17))
  >Dictionary : Symbol(Dictionary, Decl(underscoreTest1_underscore.ts, 0, 0))
-@@ -3765,7 +3765,7 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 426, 14))
  
          foldr<T, U>(list: Dictionary<T>, iterator: Reducer<T, U>, initialValue: U, context?: any): U;
@@ -3758,7 +3758,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 427, 14))
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 427, 16))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 427, 20))
-@@ -3781,7 +3781,7 @@
+@@= skipped -16, +16 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 427, 16))
  
          find<T>(list: T[], iterator: Iterator_<T, boolean>, context?: any): T;
@@ -3767,7 +3767,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 429, 13))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 429, 16))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 429, 13))
-@@ -3792,7 +3792,7 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 429, 13))
  
          find<T>(list: Dictionary<T>, iterator: Iterator_<T, boolean>, context?: any): T;
@@ -3776,7 +3776,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 430, 13))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 430, 16))
  >Dictionary : Symbol(Dictionary, Decl(underscoreTest1_underscore.ts, 0, 0))
-@@ -3804,7 +3804,7 @@
+@@= skipped -12, +12 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 430, 13))
  
          detect<T>(list: T[], iterator: Iterator_<T, boolean>, context?: any): T;
@@ -3785,7 +3785,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 431, 15))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 431, 18))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 431, 15))
-@@ -3815,7 +3815,7 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 431, 15))
  
          detect<T>(list: Dictionary<T>, iterator: Iterator_<T, boolean>, context?: any): T;
@@ -3794,7 +3794,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 432, 15))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 432, 18))
  >Dictionary : Symbol(Dictionary, Decl(underscoreTest1_underscore.ts, 0, 0))
-@@ -3827,7 +3827,7 @@
+@@= skipped -12, +12 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 432, 15))
  
          filter<T>(list: T[], iterator: Iterator_<T, boolean>, context?: any): T[];
@@ -3803,7 +3803,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 434, 15))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 434, 18))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 434, 15))
-@@ -3838,7 +3838,7 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 434, 15))
  
          filter<T>(list: Dictionary<T>, iterator: Iterator_<T, boolean>, context?: any): T[];
@@ -3812,7 +3812,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 435, 15))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 435, 18))
  >Dictionary : Symbol(Dictionary, Decl(underscoreTest1_underscore.ts, 0, 0))
-@@ -3850,7 +3850,7 @@
+@@= skipped -12, +12 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 435, 15))
  
          select<T>(list: T[], iterator: Iterator_<T, boolean>, context?: any): T[];
@@ -3821,7 +3821,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 436, 15))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 436, 18))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 436, 15))
-@@ -3861,7 +3861,7 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 436, 15))
  
          select<T>(list: Dictionary<T>, iterator: Iterator_<T, boolean>, context?: any): T[];
@@ -3830,7 +3830,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 437, 15))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 437, 18))
  >Dictionary : Symbol(Dictionary, Decl(underscoreTest1_underscore.ts, 0, 0))
-@@ -3873,7 +3873,7 @@
+@@= skipped -12, +12 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 437, 15))
  
          where<T>(list: T[], properties: Object): T[];
@@ -3839,7 +3839,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 439, 14))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 439, 17))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 439, 14))
-@@ -3882,7 +3882,7 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 439, 14))
  
          where<T>(list: Dictionary<T>, properties: Object): T[];
@@ -3848,7 +3848,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 440, 14))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 440, 17))
  >Dictionary : Symbol(Dictionary, Decl(underscoreTest1_underscore.ts, 0, 0))
-@@ -3892,7 +3892,7 @@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 440, 14))
  
          findWhere<T>(list: T[], properties: Object): T;
@@ -3857,7 +3857,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 442, 18))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 442, 21))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 442, 18))
-@@ -3901,7 +3901,7 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 442, 18))
  
          findWhere<T>(list: Dictionary<T>, properties: Object): T;
@@ -3866,7 +3866,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 443, 18))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 443, 21))
  >Dictionary : Symbol(Dictionary, Decl(underscoreTest1_underscore.ts, 0, 0))
-@@ -3911,7 +3911,7 @@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 443, 18))
  
          reject<T>(list: T[], iterator: Iterator_<T, boolean>, context?: any): T[];
@@ -3875,7 +3875,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 445, 15))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 445, 18))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 445, 15))
-@@ -3922,7 +3922,7 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 445, 15))
  
          reject<T>(list: Dictionary<T>, iterator: Iterator_<T, boolean>, context?: any): T[];
@@ -3884,7 +3884,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 446, 15))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 446, 18))
  >Dictionary : Symbol(Dictionary, Decl(underscoreTest1_underscore.ts, 0, 0))
-@@ -3934,7 +3934,7 @@
+@@= skipped -12, +12 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 446, 15))
  
          every<T>(list: T[], iterator?: Iterator_<T, boolean>, context?: any): boolean;
@@ -3893,7 +3893,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 448, 14))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 448, 17))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 448, 14))
-@@ -3944,7 +3944,7 @@
+@@= skipped -10, +10 lines =@@
  >context : Symbol(context, Decl(underscoreTest1_underscore.ts, 448, 61))
  
          every<T>(list: Dictionary<T>, iterator?: Iterator_<T, boolean>, context?: any): boolean;
@@ -3902,7 +3902,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 449, 14))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 449, 17))
  >Dictionary : Symbol(Dictionary, Decl(underscoreTest1_underscore.ts, 0, 0))
-@@ -3955,7 +3955,7 @@
+@@= skipped -11, +11 lines =@@
  >context : Symbol(context, Decl(underscoreTest1_underscore.ts, 449, 71))
  
          all<T>(list: T[], iterator?: Iterator_<T, boolean>, context?: any): boolean;
@@ -3911,7 +3911,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 450, 12))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 450, 15))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 450, 12))
-@@ -3965,7 +3965,7 @@
+@@= skipped -10, +10 lines =@@
  >context : Symbol(context, Decl(underscoreTest1_underscore.ts, 450, 59))
  
          all<T>(list: Dictionary<T>, iterator?: Iterator_<T, boolean>, context?: any): boolean;
@@ -3920,7 +3920,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 451, 12))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 451, 15))
  >Dictionary : Symbol(Dictionary, Decl(underscoreTest1_underscore.ts, 0, 0))
-@@ -3976,7 +3976,7 @@
+@@= skipped -11, +11 lines =@@
  >context : Symbol(context, Decl(underscoreTest1_underscore.ts, 451, 69))
  
          some<T>(list: T[], iterator?: Iterator_<T, boolean>, context?: any): boolean;
@@ -3929,7 +3929,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 453, 13))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 453, 16))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 453, 13))
-@@ -3986,7 +3986,7 @@
+@@= skipped -10, +10 lines =@@
  >context : Symbol(context, Decl(underscoreTest1_underscore.ts, 453, 60))
  
          some<T>(list: Dictionary<T>, iterator?: Iterator_<T, boolean>, context?: any): boolean;
@@ -3938,7 +3938,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 454, 13))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 454, 16))
  >Dictionary : Symbol(Dictionary, Decl(underscoreTest1_underscore.ts, 0, 0))
-@@ -3997,7 +3997,7 @@
+@@= skipped -11, +11 lines =@@
  >context : Symbol(context, Decl(underscoreTest1_underscore.ts, 454, 70))
  
          any<T>(list: T[], iterator?: Iterator_<T, boolean>, context?: any): boolean;
@@ -3947,7 +3947,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 455, 12))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 455, 15))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 455, 12))
-@@ -4007,7 +4007,7 @@
+@@= skipped -10, +10 lines =@@
  >context : Symbol(context, Decl(underscoreTest1_underscore.ts, 455, 59))
  
          any<T>(list: Dictionary<T>, iterator?: Iterator_<T, boolean>, context?: any): boolean;
@@ -3956,7 +3956,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 456, 12))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 456, 15))
  >Dictionary : Symbol(Dictionary, Decl(underscoreTest1_underscore.ts, 0, 0))
-@@ -4018,7 +4018,7 @@
+@@= skipped -11, +11 lines =@@
  >context : Symbol(context, Decl(underscoreTest1_underscore.ts, 456, 69))
  
          contains<T>(list: T[], value: T): boolean;
@@ -3965,7 +3965,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 458, 17))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 458, 20))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 458, 17))
-@@ -4026,7 +4026,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 458, 17))
  
          contains<T>(list: Dictionary<T>, value: T): boolean;
@@ -3974,7 +3974,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 459, 17))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 459, 20))
  >Dictionary : Symbol(Dictionary, Decl(underscoreTest1_underscore.ts, 0, 0))
-@@ -4035,7 +4035,7 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 459, 17))
  
          include<T>(list: T[], value: T): boolean;
@@ -3983,7 +3983,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 460, 16))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 460, 19))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 460, 16))
-@@ -4043,7 +4043,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 460, 16))
  
          include<T>(list: Dictionary<T>, value: T): boolean;
@@ -3992,7 +3992,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 461, 16))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 461, 19))
  >Dictionary : Symbol(Dictionary, Decl(underscoreTest1_underscore.ts, 0, 0))
-@@ -4052,31 +4052,31 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 461, 16))
  
          invoke(list: any[], methodName: string, ...args: any[]): any[];
@@ -4029,7 +4029,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 469, 12))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 469, 15))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 469, 12))
-@@ -4087,7 +4087,7 @@
+@@= skipped -35, +35 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 469, 12))
  
          max<T>(list: Dictionary<T>, iterator?: Iterator_<T, any>, context?: any): T;
@@ -4038,7 +4038,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 470, 12))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 470, 15))
  >Dictionary : Symbol(Dictionary, Decl(underscoreTest1_underscore.ts, 0, 0))
-@@ -4099,7 +4099,7 @@
+@@= skipped -12, +12 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 470, 12))
  
          min<T>(list: T[], iterator?: Iterator_<T, any>, context?: any): T;
@@ -4047,7 +4047,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 472, 12))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 472, 15))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 472, 12))
-@@ -4110,7 +4110,7 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 472, 12))
  
          min<T>(list: Dictionary<T>, iterator?: Iterator_<T, any>, context?: any): T;
@@ -4056,7 +4056,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 473, 12))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 473, 15))
  >Dictionary : Symbol(Dictionary, Decl(underscoreTest1_underscore.ts, 0, 0))
-@@ -4122,7 +4122,7 @@
+@@= skipped -12, +12 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 473, 12))
  
          sortBy<T>(list: T[], iterator: Iterator_<T, any>, context?: any): T[];
@@ -4065,7 +4065,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 475, 15))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 475, 18))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 475, 15))
-@@ -4133,7 +4133,7 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 475, 15))
  
          sortBy<T>(list: Dictionary<T>, iterator: Iterator_<T, any>, context?: any): T[];
@@ -4074,7 +4074,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 476, 15))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 476, 18))
  >Dictionary : Symbol(Dictionary, Decl(underscoreTest1_underscore.ts, 0, 0))
-@@ -4145,7 +4145,7 @@
+@@= skipped -12, +12 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 476, 15))
  
          sortBy<T>(list: T[], propertyName: string): T[];
@@ -4083,7 +4083,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 477, 15))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 477, 18))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 477, 15))
-@@ -4153,7 +4153,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 477, 15))
  
          sortBy<T>(list: Dictionary<T>, propertyName: string): T[];
@@ -4092,7 +4092,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 478, 15))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 478, 18))
  >Dictionary : Symbol(Dictionary, Decl(underscoreTest1_underscore.ts, 0, 0))
-@@ -4162,7 +4162,7 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 478, 15))
  
          groupBy<T>(list: T[], iterator?: Iterator_<T, any>, context?: any): Dictionary<T[]>;
@@ -4101,7 +4101,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 480, 16))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 480, 19))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 480, 16))
-@@ -4174,7 +4174,7 @@
+@@= skipped -12, +12 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 480, 16))
  
          groupBy<T>(list: Dictionary<T>, iterator?: Iterator_<T, any>, context?: any): Dictionary<T[]>;
@@ -4110,7 +4110,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 481, 16))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 481, 19))
  >Dictionary : Symbol(Dictionary, Decl(underscoreTest1_underscore.ts, 0, 0))
-@@ -4187,7 +4187,7 @@
+@@= skipped -13, +13 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 481, 16))
  
          groupBy<T>(list: T[], propertyName: string): Dictionary<T[]>;
@@ -4119,7 +4119,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 482, 16))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 482, 19))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 482, 16))
-@@ -4196,7 +4196,7 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 482, 16))
  
          groupBy<T>(list: Dictionary<T>, propertyName: string): Dictionary<T[]>;
@@ -4128,7 +4128,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 483, 16))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 483, 19))
  >Dictionary : Symbol(Dictionary, Decl(underscoreTest1_underscore.ts, 0, 0))
-@@ -4206,7 +4206,7 @@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 483, 16))
  
          countBy<T>(list: T[], iterator?: Iterator_<T, any>, context?: any): Dictionary<number>;
@@ -4137,7 +4137,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 485, 16))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 485, 19))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 485, 16))
-@@ -4217,7 +4217,7 @@
+@@= skipped -11, +11 lines =@@
  >Dictionary : Symbol(Dictionary, Decl(underscoreTest1_underscore.ts, 0, 0))
  
          countBy<T>(list: Dictionary<T>, iterator?: Iterator_<T, any>, context?: any): Dictionary<number>;
@@ -4146,7 +4146,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 486, 16))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 486, 19))
  >Dictionary : Symbol(Dictionary, Decl(underscoreTest1_underscore.ts, 0, 0))
-@@ -4229,7 +4229,7 @@
+@@= skipped -12, +12 lines =@@
  >Dictionary : Symbol(Dictionary, Decl(underscoreTest1_underscore.ts, 0, 0))
  
          countBy<T>(list: T[], propertyName: string): Dictionary<number>;
@@ -4155,7 +4155,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 487, 16))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 487, 19))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 487, 16))
-@@ -4237,7 +4237,7 @@
+@@= skipped -8, +8 lines =@@
  >Dictionary : Symbol(Dictionary, Decl(underscoreTest1_underscore.ts, 0, 0))
  
          countBy<T>(list: Dictionary<T>, propertyName: string): Dictionary<number>;
@@ -4164,7 +4164,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 488, 16))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 488, 19))
  >Dictionary : Symbol(Dictionary, Decl(underscoreTest1_underscore.ts, 0, 0))
-@@ -4246,14 +4246,14 @@
+@@= skipped -9, +9 lines =@@
  >Dictionary : Symbol(Dictionary, Decl(underscoreTest1_underscore.ts, 0, 0))
  
          shuffle<T>(list: T[]): T[];
@@ -4181,7 +4181,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 491, 16))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 491, 19))
  >Dictionary : Symbol(Dictionary, Decl(underscoreTest1_underscore.ts, 0, 0))
-@@ -4261,14 +4261,14 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 491, 16))
  
          toArray<T>(list: T[]): T[];
@@ -4198,7 +4198,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 494, 16))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 494, 19))
  >Dictionary : Symbol(Dictionary, Decl(underscoreTest1_underscore.ts, 0, 0))
-@@ -4276,27 +4276,27 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 494, 16))
  
          size<T>(list: T[]): number;
@@ -4230,7 +4230,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 500, 14))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 500, 17))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 500, 14))
-@@ -4304,14 +4304,14 @@
+@@= skipped -28, +28 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 500, 14))
  
          head<T>(list: T[]): T;
@@ -4247,7 +4247,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 502, 13))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 502, 16))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 502, 13))
-@@ -4319,14 +4319,14 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 502, 13))
  
          take<T>(list: T[]): T;
@@ -4264,7 +4264,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 504, 13))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 504, 16))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 504, 13))
-@@ -4334,14 +4334,14 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 504, 13))
  
          initial<T>(list: T[]): T;
@@ -4281,7 +4281,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 507, 16))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 507, 19))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 507, 16))
-@@ -4349,14 +4349,14 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 507, 16))
  
          last<T>(list: T[]): T;
@@ -4298,7 +4298,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 510, 13))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 510, 16))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 510, 13))
-@@ -4364,7 +4364,7 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 510, 13))
  
          rest<T>(list: T[], index?: number): T[];
@@ -4307,7 +4307,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 512, 13))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 512, 16))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 512, 13))
-@@ -4372,28 +4372,28 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 512, 13))
  
          compact<T>(list: T[]): T[];
@@ -4340,7 +4340,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 519, 16))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 519, 19))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 519, 16))
-@@ -4402,21 +4402,21 @@
+@@= skipped -30, +30 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 519, 16))
  
          union<T>(...arrays: T[][]): T[];
@@ -4365,7 +4365,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 525, 19))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 525, 22))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 525, 19))
-@@ -4425,7 +4425,7 @@
+@@= skipped -23, +23 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 525, 19))
  
          uniq<T>(list: T[], isSorted?: boolean): T[];
@@ -4374,7 +4374,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 527, 13))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 527, 16))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 527, 13))
-@@ -4433,7 +4433,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 527, 13))
  
          uniq<T, U>(list: T[], isSorted: boolean, iterator: Iterator_<T, U>, context?: any): U[];
@@ -4383,7 +4383,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 528, 13))
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 528, 15))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 528, 19))
-@@ -4447,7 +4447,7 @@
+@@= skipped -14, +14 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 528, 15))
  
          unique<T>(list: T[], isSorted?: boolean): T[];
@@ -4392,7 +4392,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 529, 15))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 529, 18))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 529, 15))
-@@ -4455,7 +4455,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 529, 15))
  
          unique<T, U>(list: T[], isSorted: boolean, iterator: Iterator_<T, U>, context?: any): U[];
@@ -4401,7 +4401,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 530, 15))
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 530, 17))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 530, 21))
-@@ -4469,7 +4469,7 @@
+@@= skipped -14, +14 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 530, 17))
  
          zip<T0, T1>(a0: T0[], a1: T1[]): Tuple2<T0, T1>[];
@@ -4410,7 +4410,7 @@
  >T0 : Symbol(T0, Decl(underscoreTest1_underscore.ts, 532, 12))
  >T1 : Symbol(T1, Decl(underscoreTest1_underscore.ts, 532, 15))
  >a0 : Symbol(a0, Decl(underscoreTest1_underscore.ts, 532, 20))
-@@ -4481,7 +4481,7 @@
+@@= skipped -12, +12 lines =@@
  >T1 : Symbol(T1, Decl(underscoreTest1_underscore.ts, 532, 15))
  
          zip<T0, T1, T2>(a0: T0[], a1: T1[], a2: T2[]): Tuple3<T0, T1, T2>[];
@@ -4419,7 +4419,7 @@
  >T0 : Symbol(T0, Decl(underscoreTest1_underscore.ts, 533, 12))
  >T1 : Symbol(T1, Decl(underscoreTest1_underscore.ts, 533, 15))
  >T2 : Symbol(T2, Decl(underscoreTest1_underscore.ts, 533, 19))
-@@ -4497,7 +4497,7 @@
+@@= skipped -16, +16 lines =@@
  >T2 : Symbol(T2, Decl(underscoreTest1_underscore.ts, 533, 19))
  
          zip<T0, T1, T2, T3>(a0: T0[], a1: T1[], a2: T2[], a3: T3[]): Tuple4<T0, T1, T2, T3>[];
@@ -4428,7 +4428,7 @@
  >T0 : Symbol(T0, Decl(underscoreTest1_underscore.ts, 534, 12))
  >T1 : Symbol(T1, Decl(underscoreTest1_underscore.ts, 534, 15))
  >T2 : Symbol(T2, Decl(underscoreTest1_underscore.ts, 534, 19))
-@@ -4517,20 +4517,20 @@
+@@= skipped -20, +20 lines =@@
  >T3 : Symbol(T3, Decl(underscoreTest1_underscore.ts, 534, 23))
  
          zip(...arrays: any[][]): any[][];
@@ -4453,7 +4453,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 540, 16))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 540, 19))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 540, 16))
-@@ -4539,7 +4539,7 @@
+@@= skipped -22, +22 lines =@@
  >isSorted : Symbol(isSorted, Decl(underscoreTest1_underscore.ts, 540, 39))
  
          lastIndexOf<T>(list: T[], value: T, fromIndex?: number): number;
@@ -4462,7 +4462,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 542, 20))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 542, 23))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 542, 20))
-@@ -4548,7 +4548,7 @@
+@@= skipped -9, +9 lines =@@
  >fromIndex : Symbol(fromIndex, Decl(underscoreTest1_underscore.ts, 542, 43))
  
          sortedIndex<T>(list: T[], obj: T, propertyName: string): number;
@@ -4471,7 +4471,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 544, 20))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 544, 23))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 544, 20))
-@@ -4557,7 +4557,7 @@
+@@= skipped -9, +9 lines =@@
  >propertyName : Symbol(propertyName, Decl(underscoreTest1_underscore.ts, 544, 41))
  
          sortedIndex<T>(list: T[], obj: T, iterator?: Iterator_<T, any>, context?: any): number;
@@ -4480,7 +4480,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 545, 20))
  >list : Symbol(list, Decl(underscoreTest1_underscore.ts, 545, 23))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 545, 20))
-@@ -4569,17 +4569,17 @@
+@@= skipped -12, +12 lines =@@
  >context : Symbol(context, Decl(underscoreTest1_underscore.ts, 545, 71))
  
          range(stop: number): number[];
@@ -4501,7 +4501,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 550, 13))
  >Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  >func : Symbol(func, Decl(underscoreTest1_underscore.ts, 550, 33))
-@@ -4588,7 +4588,7 @@
+@@= skipped -19, +19 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 550, 13))
  
          bind(func: Function, object: any, ...args: any[]): Function;
@@ -4510,7 +4510,7 @@
  >func : Symbol(func, Decl(underscoreTest1_underscore.ts, 551, 13))
  >Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  >object : Symbol(object, Decl(underscoreTest1_underscore.ts, 551, 28))
-@@ -4596,7 +4596,7 @@
+@@= skipped -8, +8 lines =@@
  >Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
          bindAll<T>(object: T, ...methodNames: string[]): T;
@@ -4519,7 +4519,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 553, 16))
  >object : Symbol(object, Decl(underscoreTest1_underscore.ts, 553, 19))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 553, 16))
-@@ -4604,14 +4604,14 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 553, 16))
  
          partial(func: Function, ...args: any[]): Function;
@@ -4536,7 +4536,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 557, 16))
  >Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  >func : Symbol(func, Decl(underscoreTest1_underscore.ts, 557, 36))
-@@ -4621,20 +4621,20 @@
+@@= skipped -17, +17 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 557, 16))
  
          delay(func: Function, wait: number, ...args: any[]): number;
@@ -4560,7 +4560,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 563, 17))
  >Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  >func : Symbol(func, Decl(underscoreTest1_underscore.ts, 563, 37))
-@@ -4643,7 +4643,7 @@
+@@= skipped -22, +22 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 563, 17))
  
          debounce<T extends Function>(func: T, wait: number, immediate?: boolean): T;
@@ -4569,7 +4569,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 565, 17))
  >Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  >func : Symbol(func, Decl(underscoreTest1_underscore.ts, 565, 37))
-@@ -4653,7 +4653,7 @@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 565, 17))
  
          once<T extends Function>(func: T): T;
@@ -4578,7 +4578,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 567, 13))
  >Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  >func : Symbol(func, Decl(underscoreTest1_underscore.ts, 567, 33))
-@@ -4661,7 +4661,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 567, 13))
  
          after<T extends Function>(count: number, func: T): T;
@@ -4587,7 +4587,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 569, 14))
  >Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  >count : Symbol(count, Decl(underscoreTest1_underscore.ts, 569, 34))
-@@ -4670,7 +4670,7 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 569, 14))
  
          wrap<T extends Function>(func: T, wrapper: (func: T, ...args: any[]) => any): T;
@@ -4596,7 +4596,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 571, 13))
  >Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  >func : Symbol(func, Decl(underscoreTest1_underscore.ts, 571, 33))
-@@ -4682,37 +4682,37 @@
+@@= skipped -12, +12 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 571, 13))
  
          compose(...funcs: Function[]): Function;
@@ -4642,7 +4642,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 586, 15))
  >destination : Symbol(destination, Decl(underscoreTest1_underscore.ts, 586, 18))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 586, 15))
-@@ -4720,7 +4720,7 @@
+@@= skipped -38, +38 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 586, 15))
  
          pick<T>(object: T, ...keys: string[]): T;
@@ -4651,7 +4651,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 588, 13))
  >object : Symbol(object, Decl(underscoreTest1_underscore.ts, 588, 16))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 588, 13))
-@@ -4728,7 +4728,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 588, 13))
  
          omit<T>(object: T, ...keys: string[]): T;
@@ -4660,7 +4660,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 590, 13))
  >object : Symbol(object, Decl(underscoreTest1_underscore.ts, 590, 16))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 590, 13))
-@@ -4736,7 +4736,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 590, 13))
  
          defaults<T>(object: T, ...defaults: any[]): T;
@@ -4669,7 +4669,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 592, 17))
  >object : Symbol(object, Decl(underscoreTest1_underscore.ts, 592, 20))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 592, 17))
-@@ -4744,14 +4744,14 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 592, 17))
  
          clone<T>(object: T): T;
@@ -4686,7 +4686,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 596, 12))
  >object : Symbol(object, Decl(underscoreTest1_underscore.ts, 596, 15))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 596, 12))
-@@ -4761,12 +4761,12 @@
+@@= skipped -17, +17 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 596, 12))
  
          has(object: any, key: string): boolean;
@@ -4701,7 +4701,7 @@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 600, 16))
  >object : Symbol(object, Decl(underscoreTest1_underscore.ts, 600, 19))
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 600, 16))
-@@ -4774,78 +4774,78 @@
+@@= skipped -13, +13 lines =@@
  >T : Symbol(T, Decl(underscoreTest1_underscore.ts, 600, 16))
  
          isEmpty(object: any): boolean;
@@ -4798,7 +4798,7 @@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 622, 14))
  >n : Symbol(n, Decl(underscoreTest1_underscore.ts, 622, 17))
  >iterator : Symbol(iterator, Decl(underscoreTest1_underscore.ts, 622, 27))
-@@ -4855,49 +4855,49 @@
+@@= skipped -81, +81 lines =@@
  >U : Symbol(U, Decl(underscoreTest1_underscore.ts, 622, 14))
  
          random(max: number): number;
@@ -4859,7 +4859,7 @@
  >templateString : Symbol(templateString, Decl(underscoreTest1_underscore.ts, 641, 17))
  >data : Symbol(data, Decl(underscoreTest1_underscore.ts, 641, 40))
  >settings : Symbol(settings, Decl(underscoreTest1_underscore.ts, 641, 51))
-@@ -4908,5 +4908,5 @@
+@@= skipped -53, +53 lines =@@
  declare var _: Underscore.Static;
  >_ : Symbol(_, Decl(underscoreTest1_underscore.ts, 645, 11))
  >Underscore : Symbol(Underscore, Decl(underscoreTest1_underscore.ts, 28, 1))

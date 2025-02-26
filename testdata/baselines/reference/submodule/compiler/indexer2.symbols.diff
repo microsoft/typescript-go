@@ -1,6 +1,6 @@
 --- old.indexer2.symbols
 +++ new.indexer2.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >IDirectChildrenMap : Symbol(IDirectChildrenMap, Decl(indexer2.ts, 0, 32))
  
          hasOwnProperty(objectId: number) : boolean; 

@@ -1,6 +1,6 @@
 --- old.jsdocParamTagOnPropertyInitializer.symbols
 +++ new.jsdocParamTagOnPropertyInitializer.symbols
-@@ -6,10 +6,8 @@
+@@= skipped -6, +6 lines =@@
  
      /**@param {string} x */
      m = x => x.toLowerCase();

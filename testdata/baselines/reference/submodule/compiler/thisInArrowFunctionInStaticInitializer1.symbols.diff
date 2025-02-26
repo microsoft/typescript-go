@@ -1,6 +1,6 @@
 --- old.thisInArrowFunctionInStaticInitializer1.symbols
 +++ new.thisInArrowFunctionInStaticInitializer1.symbols
-@@ -9,7 +9,7 @@
+@@= skipped -9, +9 lines =@@
  >Vector : Symbol(Vector, Decl(thisInArrowFunctionInStaticInitializer1.ts, 0, 19))
  
   static foo = () => {

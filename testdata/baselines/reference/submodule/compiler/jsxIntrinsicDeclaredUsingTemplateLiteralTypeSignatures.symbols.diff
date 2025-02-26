@@ -1,6 +1,6 @@
 --- old.jsxIntrinsicDeclaredUsingTemplateLiteralTypeSignatures.symbols
 +++ new.jsxIntrinsicDeclaredUsingTemplateLiteralTypeSignatures.symbols
-@@ -20,18 +20,14 @@
+@@= skipped -20, +20 lines =@@
  }
  
  <foobaz prop="smth" />;

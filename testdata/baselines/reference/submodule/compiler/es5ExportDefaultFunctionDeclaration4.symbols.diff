@@ -1,6 +1,6 @@
 --- old.es5ExportDefaultFunctionDeclaration4.symbols
 +++ new.es5ExportDefaultFunctionDeclaration4.symbols
-@@ -6,13 +6,13 @@
+@@= skipped -6, +6 lines =@@
  
      var before: typeof func;
  >before : Symbol(before, Decl(es5ExportDefaultFunctionDeclaration4.ts, 1, 7))

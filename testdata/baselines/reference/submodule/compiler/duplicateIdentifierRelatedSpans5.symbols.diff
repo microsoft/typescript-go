@@ -1,6 +1,6 @@
 --- old.duplicateIdentifierRelatedSpans5.symbols
 +++ new.duplicateIdentifierRelatedSpans5.symbols
-@@ -2,38 +2,38 @@
+@@= skipped -2, +2 lines =@@
  
  === file1.ts ===
  declare global {

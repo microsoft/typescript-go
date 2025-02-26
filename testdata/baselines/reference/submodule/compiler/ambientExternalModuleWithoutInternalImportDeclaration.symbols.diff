@@ -1,6 +1,6 @@
 --- old.ambientExternalModuleWithoutInternalImportDeclaration.symbols
 +++ new.ambientExternalModuleWithoutInternalImportDeclaration.symbols
-@@ -11,7 +11,7 @@
+@@= skipped -11, +11 lines =@@
  
  === ambientExternalModuleWithoutInternalImportDeclaration_0.ts ===
  declare module 'M' {
@@ -9,7 +9,7 @@
  
      module C {
  >C : Symbol(C, Decl(ambientExternalModuleWithoutInternalImportDeclaration_0.ts, 0, 20), Decl(ambientExternalModuleWithoutInternalImportDeclaration_0.ts, 3, 5))
-@@ -23,7 +23,7 @@
+@@= skipped -12, +12 lines =@@
  >C : Symbol(C, Decl(ambientExternalModuleWithoutInternalImportDeclaration_0.ts, 0, 20), Decl(ambientExternalModuleWithoutInternalImportDeclaration_0.ts, 3, 5))
  
          foo(): void;

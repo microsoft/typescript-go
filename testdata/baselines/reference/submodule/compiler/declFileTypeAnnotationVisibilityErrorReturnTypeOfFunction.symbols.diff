@@ -1,6 +1,6 @@
 --- old.declFileTypeAnnotationVisibilityErrorReturnTypeOfFunction.symbols
 +++ new.declFileTypeAnnotationVisibilityErrorReturnTypeOfFunction.symbols
-@@ -76,7 +76,7 @@
+@@= skipped -76, +76 lines =@@
      function foo111(): m2.public2 {
  >foo111 : Symbol(foo111, Decl(declFileTypeAnnotationVisibilityErrorReturnTypeOfFunction.ts, 39, 5))
  >m2 : Symbol(m2, Decl(declFileTypeAnnotationVisibilityErrorReturnTypeOfFunction.ts, 34, 5))
@@ -9,7 +9,7 @@
  
          return;
      }
-@@ -84,15 +84,15 @@
+@@= skipped -8, +8 lines =@@
  >foo112 : Symbol(foo112, Decl(declFileTypeAnnotationVisibilityErrorReturnTypeOfFunction.ts, 43, 5))
  
          return new m2.public2();
@@ -28,7 +28,7 @@
  
          return;
      }
-@@ -100,9 +100,9 @@
+@@= skipped -16, +16 lines =@@
  >foo114 : Symbol(foo114, Decl(declFileTypeAnnotationVisibilityErrorReturnTypeOfFunction.ts, 50, 5))
  
          return new m2.public2();

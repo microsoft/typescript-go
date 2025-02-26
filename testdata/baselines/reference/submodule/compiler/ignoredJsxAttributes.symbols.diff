@@ -1,6 +1,6 @@
 --- old.ignoredJsxAttributes.symbols
 +++ new.ignoredJsxAttributes.symbols
-@@ -12,7 +12,7 @@
+@@= skipped -12, +12 lines =@@
  >Props : Symbol(Props, Decl(ignoredJsxAttributes.tsx, 4, 31))
  
      foo: string;
@@ -9,7 +9,7 @@
  
      [dataProp: string]: string;
  >dataProp : Symbol(dataProp, Decl(ignoredJsxAttributes.tsx, 8, 5))
-@@ -22,8 +22,8 @@
+@@= skipped -10, +10 lines =@@
  >Yadda : Symbol(Yadda, Decl(ignoredJsxAttributes.tsx, 9, 1))
  >props : Symbol(props, Decl(ignoredJsxAttributes.tsx, 11, 23))
  >Props : Symbol(Props, Decl(ignoredJsxAttributes.tsx, 4, 31))

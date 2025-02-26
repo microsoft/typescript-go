@@ -1,6 +1,6 @@
 --- old.thisTypeOfConstructorFunctions.symbols
 +++ new.thisTypeOfConstructorFunctions.symbols
-@@ -7,47 +7,28 @@
+@@= skipped -7, +7 lines =@@
   * @param {T} t
   */
  function Cp(t) {
@@ -52,7 +52,7 @@
      }
  }
  
-@@ -61,60 +42,41 @@
+@@= skipped -54, +35 lines =@@
  >t : Symbol(t, Decl(thisTypeOfConstructorFunctions.js, 25, 13))
  
      this.y = t

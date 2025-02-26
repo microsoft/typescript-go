@@ -1,6 +1,6 @@
 --- old.inferentialTypingObjectLiteralMethod2.symbols
 +++ new.inferentialTypingObjectLiteralMethod2.symbols
-@@ -32,9 +32,9 @@
+@@= skipped -32, +32 lines =@@
  >foo : Symbol(foo, Decl(inferentialTypingObjectLiteralMethod2.ts, 2, 1))
  >method : Symbol(method, Decl(inferentialTypingObjectLiteralMethod2.ts, 4, 9))
  >p1 : Symbol(p1, Decl(inferentialTypingObjectLiteralMethod2.ts, 4, 17))

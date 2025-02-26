@@ -1,6 +1,6 @@
 --- old.moduleNoneErrors.symbols
 +++ new.moduleNoneErrors.symbols
-@@ -5,6 +5,6 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(a.ts, 0, 0))
  
      foo: string;

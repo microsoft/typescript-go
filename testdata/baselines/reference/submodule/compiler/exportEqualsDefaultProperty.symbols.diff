@@ -1,6 +1,6 @@
 --- old.exportEqualsDefaultProperty.symbols
 +++ new.exportEqualsDefaultProperty.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >x : Symbol(x, Decl(exp.ts, 0, 3))
  
      "greeting": "hello, world",
@@ -13,7 +13,7 @@
  
  };
  
-@@ -20,7 +20,5 @@
+@@= skipped -15, +15 lines =@@
  >foo : Symbol(foo, Decl(imp.ts, 0, 6))
  
  foo.toExponential(2);

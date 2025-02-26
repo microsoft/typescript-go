@@ -1,6 +1,6 @@
 --- old.jsDeclarationsExportAssignedVisibility.symbols
 +++ new.jsDeclarationsExportAssignedVisibility.symbols
-@@ -3,38 +3,17 @@
+@@= skipped -3, +3 lines =@@
  === index.js ===
  const Obj = require("./obj");
  >Obj : Symbol(Obj, Decl(index.js, 0, 5))

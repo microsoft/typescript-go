@@ -1,6 +1,6 @@
 --- old.typeGuardFunctionErrors.symbols
 +++ new.typeGuardFunctionErrors.symbols
-@@ -5,14 +5,14 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(typeGuardFunctionErrors.ts, 0, 0))
  
      propA: number;
@@ -17,7 +17,7 @@
  }
  
  class C extends A {
-@@ -20,7 +20,7 @@
+@@= skipped -15, +15 lines =@@
  >A : Symbol(A, Decl(typeGuardFunctionErrors.ts, 0, 0))
  
      propC: number;
@@ -26,7 +26,7 @@
  }
  
  function hasANonBooleanReturnStatement(x): x is A {
-@@ -263,7 +263,7 @@
+@@= skipped -243, +243 lines =@@
          return true;
      }
      get m1(p1: A): p1 is C {
@@ -35,7 +35,7 @@
  >p1 : Symbol(p1, Decl(typeGuardFunctionErrors.ts, 105, 11))
  >A : Symbol(A, Decl(typeGuardFunctionErrors.ts, 0, 0))
  >p1 : Symbol(p1, Decl(typeGuardFunctionErrors.ts, 105, 11))
-@@ -272,7 +272,7 @@
+@@= skipped -9, +9 lines =@@
          return true;
      }
      set m2(p1: A): p1 is C {
@@ -44,7 +44,7 @@
  >p1 : Symbol(p1, Decl(typeGuardFunctionErrors.ts, 108, 11))
  >A : Symbol(A, Decl(typeGuardFunctionErrors.ts, 0, 0))
  >p1 : Symbol(p1, Decl(typeGuardFunctionErrors.ts, 108, 11))
-@@ -362,9 +362,9 @@
+@@= skipped -90, +90 lines =@@
  >hasMissingParameter : Symbol(hasMissingParameter, Decl(typeGuardFunctionErrors.ts, 22, 1))
  
      x.propA;
@@ -56,7 +56,7 @@
  }
  
  // repro #17297
-@@ -393,11 +393,11 @@
+@@= skipped -31, +31 lines =@@
  
  type Foo = { 'a': string; }
  >Foo : Symbol(Foo, Decl(typeGuardFunctionErrors.ts, 151, 74))
@@ -70,7 +70,7 @@
  
  interface NeedsFoo<T extends Foo> {
  >NeedsFoo : Symbol(NeedsFoo, Decl(typeGuardFunctionErrors.ts, 154, 27))
-@@ -405,11 +405,11 @@
+@@= skipped -12, +12 lines =@@
  >Foo : Symbol(Foo, Decl(typeGuardFunctionErrors.ts, 151, 74))
  
      foo: T;

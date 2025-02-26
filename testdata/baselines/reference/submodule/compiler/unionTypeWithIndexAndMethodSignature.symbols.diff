@@ -1,6 +1,6 @@
 --- old.unionTypeWithIndexAndMethodSignature.symbols
 +++ new.unionTypeWithIndexAndMethodSignature.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Options : Symbol(Options, Decl(unionTypeWithIndexAndMethodSignature.ts, 0, 0))
  
      m(x: number): void;

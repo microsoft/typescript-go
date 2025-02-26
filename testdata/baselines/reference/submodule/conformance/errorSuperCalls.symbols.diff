@@ -1,6 +1,6 @@
 --- old.errorSuperCalls.symbols
 +++ new.errorSuperCalls.symbols
-@@ -11,20 +11,20 @@
+@@= skipped -11, +11 lines =@@
  
      //super call in class member function with no base type
      fn() {
@@ -24,7 +24,7 @@
  >v : Symbol(v, Decl(errorSuperCalls.ts, 16, 12))
  
          super();
-@@ -32,28 +32,28 @@
+@@= skipped -21, +21 lines =@@
  
      //super call in class member initializer with no base type
      p = super();
@@ -58,7 +58,7 @@
  >n : Symbol(n, Decl(errorSuperCalls.ts, 36, 17))
  
          super();
-@@ -63,7 +63,7 @@
+@@= skipped -31, +31 lines =@@
  class Base<T> { private n: T; }
  >Base : Symbol(Base, Decl(errorSuperCalls.ts, 39, 1))
  >T : Symbol(T, Decl(errorSuperCalls.ts, 41, 11))
@@ -67,7 +67,7 @@
  >T : Symbol(T, Decl(errorSuperCalls.ts, 41, 11))
  
  class Derived<T> extends Base<T> {
-@@ -87,7 +87,7 @@
+@@= skipped -24, +24 lines =@@
  >OtherBase : Symbol(OtherBase, Decl(errorSuperCalls.ts, 48, 1))
  
      private n: string;
@@ -76,7 +76,7 @@
  }
  
  class OtherDerived extends OtherBase {
-@@ -96,10 +96,10 @@
+@@= skipped -9, +9 lines =@@
  
      //super call in class member initializer of derived type
      t = super();
@@ -89,7 +89,7 @@
  
          //super call in class member function of derived type
          super();
-@@ -107,13 +107,13 @@
+@@= skipped -11, +11 lines =@@
  
      //super call in class accessor (get and set) of derived type
      get foo() {

@@ -1,6 +1,6 @@
 --- old.inferringClassMembersFromAssignments4.symbols
 +++ new.inferringClassMembersFromAssignments4.symbols
-@@ -5,12 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >Base : Symbol(Base, Decl(a.js, 0, 0))
  
      m() {
@@ -14,7 +14,7 @@
      }
  }
  class Derived extends Base {
-@@ -18,13 +16,11 @@
+@@= skipped -13, +11 lines =@@
  >Base : Symbol(Base, Decl(a.js, 0, 0))
  
      m() {

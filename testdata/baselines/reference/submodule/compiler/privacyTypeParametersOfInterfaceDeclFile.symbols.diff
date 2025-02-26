@@ -1,6 +1,6 @@
 --- old.privacyTypeParametersOfInterfaceDeclFile.symbols
 +++ new.privacyTypeParametersOfInterfaceDeclFile.symbols
-@@ -25,33 +25,33 @@
+@@= skipped -25, +25 lines =@@
  >privateClass : Symbol(privateClass, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 0, 0))
  
      myMethod(val: T): T;
@@ -40,7 +40,7 @@
  >publicClassT : Symbol(publicClassT, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 7, 1))
  >publicClass : Symbol(publicClass, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 1, 1))
  }
-@@ -62,33 +62,33 @@
+@@= skipped -37, +37 lines =@@
  >publicClass : Symbol(publicClass, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 1, 1))
  
      myMethod(val: T): T;
@@ -80,7 +80,7 @@
  >publicClassT : Symbol(publicClassT, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 7, 1))
  >publicClass : Symbol(publicClass, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 1, 1))
  }
-@@ -99,33 +99,33 @@
+@@= skipped -37, +37 lines =@@
  >privateClass : Symbol(privateClass, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 0, 0))
  
      myMethod(val: T): T;
@@ -120,7 +120,7 @@
  >publicClassT : Symbol(publicClassT, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 7, 1))
  >publicClass : Symbol(publicClass, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 1, 1))
  }
-@@ -136,33 +136,33 @@
+@@= skipped -37, +37 lines =@@
  >publicClass : Symbol(publicClass, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 1, 1))
  
      myMethod(val: T): T;
@@ -160,7 +160,7 @@
  >publicClassT : Symbol(publicClassT, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 7, 1))
  >publicClass : Symbol(publicClass, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 1, 1))
  }
-@@ -172,13 +172,13 @@
+@@= skipped -36, +36 lines =@@
  >T : Symbol(T, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 48, 71))
  
      myMethod(val: T): T;
@@ -176,7 +176,7 @@
  >publicClassT : Symbol(publicClassT, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 7, 1))
  >T : Symbol(T, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 48, 71))
  }
-@@ -188,13 +188,13 @@
+@@= skipped -16, +16 lines =@@
  >T : Symbol(T, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 53, 65))
  
      myMethod(val: T): T;
@@ -192,7 +192,7 @@
  >publicClassT : Symbol(publicClassT, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 7, 1))
  >T : Symbol(T, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 53, 65))
  }
-@@ -204,14 +204,14 @@
+@@= skipped -16, +16 lines =@@
  >publicInterfaceWithPrivateModuleTypeParameterConstraints : Symbol(publicInterfaceWithPrivateModuleTypeParameterConstraints, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 56, 1))
  >T : Symbol(T, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 59, 74))
  >privateModule : Symbol(privateModule, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 129, 1))
@@ -209,7 +209,7 @@
  }
  
  export module publicModule {
-@@ -241,33 +241,33 @@
+@@= skipped -37, +37 lines =@@
  >privateClassInPublicModule : Symbol(privateClassInPublicModule, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 65, 28))
  
          myMethod(val: T): T;
@@ -249,7 +249,7 @@
  >publicClassInPublicModuleT : Symbol(publicClassInPublicModuleT, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 73, 5))
  >publicClassInPublicModule : Symbol(publicClassInPublicModule, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 67, 5))
      }
-@@ -278,33 +278,33 @@
+@@= skipped -37, +37 lines =@@
  >publicClassInPublicModule : Symbol(publicClassInPublicModule, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 67, 5))
  
          myMethod(val: T): T;
@@ -289,7 +289,7 @@
  >publicClassInPublicModuleT : Symbol(publicClassInPublicModuleT, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 73, 5))
  >publicClassInPublicModule : Symbol(publicClassInPublicModule, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 67, 5))
      }
-@@ -315,33 +315,33 @@
+@@= skipped -37, +37 lines =@@
  >privateClassInPublicModule : Symbol(privateClassInPublicModule, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 65, 28))
  
          myMethod(val: T): T;
@@ -329,7 +329,7 @@
  >publicClassInPublicModuleT : Symbol(publicClassInPublicModuleT, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 73, 5))
  >publicClassInPublicModule : Symbol(publicClassInPublicModule, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 67, 5))
      }
-@@ -352,33 +352,33 @@
+@@= skipped -37, +37 lines =@@
  >publicClassInPublicModule : Symbol(publicClassInPublicModule, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 67, 5))
  
          myMethod(val: T): T;
@@ -369,7 +369,7 @@
  >publicClassInPublicModuleT : Symbol(publicClassInPublicModuleT, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 73, 5))
  >publicClassInPublicModule : Symbol(publicClassInPublicModule, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 67, 5))
      }
-@@ -388,13 +388,13 @@
+@@= skipped -36, +36 lines =@@
  >T : Symbol(T, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 114, 75))
  
          myMethod(val: T): T;
@@ -385,7 +385,7 @@
  >publicClassInPublicModuleT : Symbol(publicClassInPublicModuleT, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 73, 5))
  >T : Symbol(T, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 114, 75))
      }
-@@ -404,13 +404,13 @@
+@@= skipped -16, +16 lines =@@
  >T : Symbol(T, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 119, 69))
  
          myMethod(val: T): T;
@@ -401,7 +401,7 @@
  >publicClassInPublicModuleT : Symbol(publicClassInPublicModuleT, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 73, 5))
  >T : Symbol(T, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 119, 69))
      }
-@@ -419,14 +419,14 @@
+@@= skipped -15, +15 lines =@@
  >publicInterfaceWithPrivateModuleTypeParameterConstraints : Symbol(publicInterfaceWithPrivateModuleTypeParameterConstraints, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 122, 5))
  >T : Symbol(T, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 124, 78))
  >privateModule : Symbol(privateModule, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 129, 1))
@@ -418,7 +418,7 @@
      }
  }
  
-@@ -457,33 +457,33 @@
+@@= skipped -38, +38 lines =@@
  >privateClassInPrivateModule : Symbol(privateClassInPrivateModule, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 131, 22))
  
          myMethod(val: T): T;
@@ -458,7 +458,7 @@
  >publicClassInPrivateModuleT : Symbol(publicClassInPrivateModuleT, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 139, 5))
  >publicClassInPrivateModule : Symbol(publicClassInPrivateModule, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 133, 5))
      }
-@@ -494,33 +494,33 @@
+@@= skipped -37, +37 lines =@@
  >publicClassInPrivateModule : Symbol(publicClassInPrivateModule, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 133, 5))
  
          myMethod(val: T): T;
@@ -498,7 +498,7 @@
  >publicClassInPrivateModuleT : Symbol(publicClassInPrivateModuleT, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 139, 5))
  >publicClassInPrivateModule : Symbol(publicClassInPrivateModule, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 133, 5))
      }
-@@ -531,33 +531,33 @@
+@@= skipped -37, +37 lines =@@
  >privateClassInPrivateModule : Symbol(privateClassInPrivateModule, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 131, 22))
  
          myMethod(val: T): T;
@@ -538,7 +538,7 @@
  >publicClassInPrivateModuleT : Symbol(publicClassInPrivateModuleT, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 139, 5))
  >publicClassInPrivateModule : Symbol(publicClassInPrivateModule, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 133, 5))
      }
-@@ -568,33 +568,33 @@
+@@= skipped -37, +37 lines =@@
  >publicClassInPrivateModule : Symbol(publicClassInPrivateModule, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 133, 5))
  
          myMethod(val: T): T;
@@ -578,7 +578,7 @@
  >publicClassInPrivateModuleT : Symbol(publicClassInPrivateModuleT, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 139, 5))
  >publicClassInPrivateModule : Symbol(publicClassInPrivateModule, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 133, 5))
      }
-@@ -604,13 +604,13 @@
+@@= skipped -36, +36 lines =@@
  >T : Symbol(T, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 180, 75))
  
          myMethod(val: T): T;
@@ -594,7 +594,7 @@
  >publicClassInPrivateModuleT : Symbol(publicClassInPrivateModuleT, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 139, 5))
  >T : Symbol(T, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 180, 75))
      }
-@@ -620,13 +620,13 @@
+@@= skipped -16, +16 lines =@@
  >T : Symbol(T, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 185, 69))
  
          myMethod(val: T): T;

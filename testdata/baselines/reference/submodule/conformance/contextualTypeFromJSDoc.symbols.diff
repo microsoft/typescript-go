@@ -1,6 +1,6 @@
 --- old.contextualTypeFromJSDoc.symbols
 +++ new.contextualTypeFromJSDoc.symbols
-@@ -32,11 +32,11 @@
+@@= skipped -32, +32 lines =@@
  
      /** @param {Array<[string, {x?:number, y?:number}]>} value */
      set x(value) { }

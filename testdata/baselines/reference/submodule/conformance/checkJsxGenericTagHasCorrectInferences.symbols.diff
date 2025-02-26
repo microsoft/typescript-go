@@ -1,6 +1,6 @@
 --- old.checkJsxGenericTagHasCorrectInferences.symbols
 +++ new.checkJsxGenericTagHasCorrectInferences.symbols
-@@ -9,11 +9,11 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(file.tsx, 1, 20))
  
    initialValues: T;
@@ -14,7 +14,7 @@
  >cur : Symbol(cur, Decl(file.tsx, 3, 15))
  >T : Symbol(T, Decl(file.tsx, 1, 20))
  >T : Symbol(T, Decl(file.tsx, 1, 20))
-@@ -22,15 +22,15 @@
+@@= skipped -13, +13 lines =@@
  >GenericComponent : Symbol(GenericComponent, Decl(file.tsx, 4, 1))
  >Props : Symbol(Props, Decl(file.tsx, 5, 31))
  >Values : Symbol(Values, Decl(file.tsx, 5, 42))
@@ -33,7 +33,7 @@
  >Values : Symbol(Values, Decl(file.tsx, 5, 42))
  }
  
-@@ -59,9 +59,7 @@
+@@= skipped -37, +37 lines =@@
  >nextValues : Symbol(nextValues, Decl(file.tsx, 11, 52))
  >a : Symbol(a, Decl(file.tsx, 11, 65))
  >x : Symbol(x, Decl(file.tsx, 11, 72))
@@ -43,7 +43,7 @@
  
  let d = <GenericComponent initialValues={{ x: "y" }} nextValues={a => a.x} />; // Error - `string` is not assignable to `{x: string}`
  >d : Symbol(d, Decl(file.tsx, 12, 3))
-@@ -70,7 +68,5 @@
+@@= skipped -11, +9 lines =@@
  >x : Symbol(x, Decl(file.tsx, 12, 42))
  >nextValues : Symbol(nextValues, Decl(file.tsx, 12, 52))
  >a : Symbol(a, Decl(file.tsx, 12, 65))

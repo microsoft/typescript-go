@@ -1,6 +1,6 @@
 --- old.decoratorOnClassAccessor7.symbols
 +++ new.decoratorOnClassAccessor7.symbols
-@@ -28,10 +28,10 @@
+@@= skipped -28, +28 lines =@@
  
      @dec1 get x() { return 0; }
  >dec1 : Symbol(dec1, Decl(decoratorOnClassAccessor7.ts, 0, 0))
@@ -13,7 +13,7 @@
  >value : Symbol(value, Decl(decoratorOnClassAccessor7.ts, 5, 10))
  }
  
-@@ -39,11 +39,11 @@
+@@= skipped -11, +11 lines =@@
  >B : Symbol(B, Decl(decoratorOnClassAccessor7.ts, 6, 1))
  
      get x() { return 0; }
@@ -27,7 +27,7 @@
  >value : Symbol(value, Decl(decoratorOnClassAccessor7.ts, 10, 16))
  }
  
-@@ -52,23 +52,23 @@
+@@= skipped -13, +13 lines =@@
  
      @dec1 set x(value: number) { }
  >dec1 : Symbol(dec1, Decl(decoratorOnClassAccessor7.ts, 0, 0))
@@ -55,7 +55,7 @@
  }
  
  class E {
-@@ -76,11 +76,11 @@
+@@= skipped -24, +24 lines =@@
  
      @dec1 get x() { return 0; }
  >dec1 : Symbol(dec1, Decl(decoratorOnClassAccessor7.ts, 0, 0))
@@ -69,7 +69,7 @@
  >value : Symbol(value, Decl(decoratorOnClassAccessor7.ts, 25, 16))
  }
  
-@@ -89,10 +89,10 @@
+@@= skipped -13, +13 lines =@@
  
      @dec1 set x(value: number) { }
  >dec1 : Symbol(dec1, Decl(decoratorOnClassAccessor7.ts, 0, 0))

@@ -1,6 +1,6 @@
 --- old.commentsTypeParameters.symbols
 +++ new.commentsTypeParameters.symbols
-@@ -6,28 +6,28 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(commentsTypeParameters.ts, 0, 8))
  
      method</**docComment of method type parameter */ U extends T>(a: U) {

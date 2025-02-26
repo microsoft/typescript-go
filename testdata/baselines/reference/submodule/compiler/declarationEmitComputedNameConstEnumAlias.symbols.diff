@@ -1,6 +1,6 @@
 --- old.declarationEmitComputedNameConstEnumAlias.symbols
 +++ new.declarationEmitComputedNameConstEnumAlias.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >EnumExample : Symbol(EnumExample, Decl(EnumExample.ts, 0, 0))
  
      TEST = 'TEST',
@@ -9,7 +9,7 @@
  }
  
  export default EnumExample;
-@@ -17,9 +17,9 @@
+@@= skipped -12, +12 lines =@@
  
  export default {
      [EnumExample.TEST]: {},

@@ -1,6 +1,6 @@
 --- old.transformsElideNullUndefinedType.symbols
 +++ new.transformsElideNullUndefinedType.symbols
-@@ -56,33 +56,33 @@
+@@= skipped -56, +56 lines =@@
  >C1 : Symbol(C1, Decl(transformsElideNullUndefinedType.ts, 19, 32))
  
      m0(): null { return null; }
@@ -42,7 +42,7 @@
  >p9 : Symbol(p9, Decl(transformsElideNullUndefinedType.ts, 32, 11))
  }
  
-@@ -98,7 +98,7 @@
+@@= skipped -42, +42 lines =@@
  >C4 : Symbol(C4, Decl(transformsElideNullUndefinedType.ts, 36, 44))
  
      f1;
@@ -51,7 +51,7 @@
  
      constructor(p12: null) { }
  >p12 : Symbol(p12, Decl(transformsElideNullUndefinedType.ts, 40, 16))
-@@ -108,7 +108,7 @@
+@@= skipped -10, +10 lines =@@
  >C5 : Symbol(C5, Decl(transformsElideNullUndefinedType.ts, 41, 1))
  
      f2;

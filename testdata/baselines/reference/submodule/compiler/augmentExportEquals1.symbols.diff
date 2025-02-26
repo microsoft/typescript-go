@@ -1,6 +1,6 @@
 --- old.augmentExportEquals1.symbols
 +++ new.augmentExportEquals1.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  let a: x.A; // should not work
  >a : Symbol(a, Decl(file3.ts, 2, 3))
  >x : Symbol(x)
@@ -9,7 +9,7 @@
  
  === file1.ts ===
  var x = 1;
-@@ -24,10 +24,10 @@
+@@= skipped -16, +16 lines =@@
  // augmentation for './file1'
  // should error since './file1' does not have namespace meaning
  declare module "./file1" {

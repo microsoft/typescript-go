@@ -1,6 +1,6 @@
 --- old.simpleArrowFunctionParameterReferencedInObjectLiteral1.symbols
 +++ new.simpleArrowFunctionParameterReferencedInObjectLiteral1.symbols
-@@ -2,10 +2,10 @@
+@@= skipped -2, +2 lines =@@
  
  === simpleArrowFunctionParameterReferencedInObjectLiteral1.ts ===
  [].map(() => [].map(p => ({ X: p })));

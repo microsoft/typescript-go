@@ -1,6 +1,6 @@
 --- old.unionTypeInference.symbols
 +++ new.unionTypeInference.symbols
-@@ -114,7 +114,7 @@
+@@= skipped -114, +114 lines =@@
  >T : Symbol(T, Decl(unionTypeInference.ts, 32, 21))
  
      then<U>(f: (x: T) => U | Foo<U>, g: U): Foo<U>;
@@ -9,7 +9,7 @@
  >U : Symbol(U, Decl(unionTypeInference.ts, 33, 9))
  >f : Symbol(f, Decl(unionTypeInference.ts, 33, 12))
  >x : Symbol(x, Decl(unionTypeInference.ts, 33, 16))
-@@ -132,7 +132,7 @@
+@@= skipped -18, +18 lines =@@
  >T : Symbol(T, Decl(unionTypeInference.ts, 35, 21))
  
      then<S>(f: (x: T) => S | Bar<S>, g: S): Bar<S>;
@@ -18,7 +18,7 @@
  >S : Symbol(S, Decl(unionTypeInference.ts, 36, 9))
  >f : Symbol(f, Decl(unionTypeInference.ts, 36, 12))
  >x : Symbol(x, Decl(unionTypeInference.ts, 36, 16))
-@@ -231,9 +231,9 @@
+@@= skipped -99, +99 lines =@@
  
      for (const value of Object.values(deepPromisedWithIndexer)) {
  >value : Symbol(value, Decl(unionTypeInference.ts, 62, 14))

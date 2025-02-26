@@ -1,6 +1,6 @@
 --- old.uniqueSymbolsDeclarations.symbols
 +++ new.uniqueSymbolsDeclarations.symbols
-@@ -153,26 +153,26 @@
+@@= skipped -153, +153 lines =@@
  >C : Symbol(C, Decl(uniqueSymbolsDeclarations.ts, 53, 61))
  
      static readonly readonlyStaticCall = Symbol();
@@ -33,7 +33,7 @@
  >Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
  }
  declare const c: C;
-@@ -181,114 +181,114 @@
+@@= skipped -28, +28 lines =@@
  
  const constInitToCReadonlyStaticCall = C.readonlyStaticCall;
  >constInitToCReadonlyStaticCall : Symbol(constInitToCReadonlyStaticCall, Decl(uniqueSymbolsDeclarations.ts, 67, 5))
@@ -189,7 +189,7 @@
  }
  declare const i: I;
  >i : Symbol(i, Decl(uniqueSymbolsDeclarations.ts, 88, 13))
-@@ -296,25 +296,25 @@
+@@= skipped -115, +115 lines =@@
  
  const constInitToIReadonlyType = i.readonlyType;
  >constInitToIReadonlyType : Symbol(constInitToIReadonlyType, Decl(uniqueSymbolsDeclarations.ts, 90, 5))
@@ -223,7 +223,7 @@
  
  // type literals
  type L = {
-@@ -389,9 +389,9 @@
+@@= skipped -93, +93 lines =@@
  // type argument inference
  const promiseForConstCall = Promise.resolve(constCall);
  >promiseForConstCall : Symbol(promiseForConstCall, Decl(uniqueSymbolsDeclarations.ts, 111, 5))
@@ -235,7 +235,7 @@
  >constCall : Symbol(constCall, Decl(uniqueSymbolsDeclarations.ts, 1, 5))
  
  const arrayOfConstCall = [constCall];
-@@ -411,9 +411,9 @@
+@@= skipped -22, +22 lines =@@
  >[s] : Symbol([s], Decl(uniqueSymbolsDeclarations.ts, 117, 18))
  >s : Symbol(s, Decl(uniqueSymbolsDeclarations.ts, 115, 13))
  >[N.s] : Symbol([N.s], Decl(uniqueSymbolsDeclarations.ts, 117, 28))
@@ -247,7 +247,7 @@
  
  declare function f<T>(x: T): T;
  >f : Symbol(f, Decl(uniqueSymbolsDeclarations.ts, 117, 42))
-@@ -430,9 +430,9 @@
+@@= skipped -19, +19 lines =@@
  declare function g(x: typeof N.s): void;
  >g : Symbol(g, Decl(uniqueSymbolsDeclarations.ts, 118, 31), Decl(uniqueSymbolsDeclarations.ts, 119, 38))
  >x : Symbol(x, Decl(uniqueSymbolsDeclarations.ts, 120, 19))
@@ -259,7 +259,7 @@
  
  // widening positions
  
-@@ -443,27 +443,27 @@
+@@= skipped -13, +13 lines =@@
  
  f(N.s);
  >f : Symbol(f, Decl(uniqueSymbolsDeclarations.ts, 117, 42))
@@ -293,7 +293,7 @@
  
  // property assignments/methods
  const o2 = {
-@@ -475,14 +475,14 @@
+@@= skipped -32, +32 lines =@@
  
      b: N.s,
  >b : Symbol(b, Decl(uniqueSymbolsDeclarations.ts, 136, 9))
@@ -311,7 +311,7 @@
  
      method1() { return s; },
  >method1 : Symbol(method1, Decl(uniqueSymbolsDeclarations.ts, 138, 14))
-@@ -513,83 +513,83 @@
+@@= skipped -38, +38 lines =@@
  >C0 : Symbol(C0, Decl(uniqueSymbolsDeclarations.ts, 145, 2))
  
      static readonly a = s;
@@ -424,7 +424,7 @@
  >p : Symbol(p, Decl(uniqueSymbolsDeclarations.ts, 169, 12))
  >s : Symbol(s, Decl(uniqueSymbolsDeclarations.ts, 115, 13))
  >p : Symbol(p, Decl(uniqueSymbolsDeclarations.ts, 169, 12))
-@@ -604,14 +604,14 @@
+@@= skipped -91, +91 lines =@@
  
  o[N.s];
  >o : Symbol(o, Decl(uniqueSymbolsDeclarations.ts, 117, 13))
@@ -442,7 +442,7 @@
  
  // arguments (no-inference)
  f<typeof s>(s);
-@@ -621,20 +621,20 @@
+@@= skipped -17, +17 lines =@@
  
  f<typeof N.s>(N.s);
  >f : Symbol(f, Decl(uniqueSymbolsDeclarations.ts, 117, 42))
@@ -470,7 +470,7 @@
  
  g(s);
  >g : Symbol(g, Decl(uniqueSymbolsDeclarations.ts, 118, 31), Decl(uniqueSymbolsDeclarations.ts, 119, 38))
-@@ -642,49 +642,49 @@
+@@= skipped -21, +21 lines =@@
  
  g(N.s);
  >g : Symbol(g, Decl(uniqueSymbolsDeclarations.ts, 118, 31), Decl(uniqueSymbolsDeclarations.ts, 119, 38))
@@ -535,7 +535,7 @@
  
  // computed property names
  ({
-@@ -694,9 +694,9 @@
+@@= skipped -52, +52 lines =@@
  
      [N.s]: "b",
  >[N.s] : Symbol([N.s], Decl(uniqueSymbolsDeclarations.ts, 199, 13))
@@ -547,7 +547,7 @@
  
  });
  
-@@ -704,24 +704,24 @@
+@@= skipped -10, +10 lines =@@
  >C1 : Symbol(C1, Decl(uniqueSymbolsDeclarations.ts, 201, 3))
  
      static [s]: "a";
@@ -580,7 +580,7 @@
  }
  
  // contextual types
-@@ -730,26 +730,26 @@
+@@= skipped -26, +26 lines =@@
  >Context : Symbol(Context, Decl(uniqueSymbolsDeclarations.ts, 209, 1))
  
      method1(): typeof s;

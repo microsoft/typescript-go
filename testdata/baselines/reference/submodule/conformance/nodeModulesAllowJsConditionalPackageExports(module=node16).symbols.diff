@@ -1,6 +1,6 @@
 --- old.nodeModulesAllowJsConditionalPackageExports(module=node16).symbols
 +++ new.nodeModulesAllowJsConditionalPackageExports(module=node16).symbols
-@@ -33,24 +33,16 @@
+@@= skipped -33, +33 lines =@@
  >ts : Symbol(ts, Decl(index.js, 10, 6))
  
  cjsi.mjsSource;
@@ -25,7 +25,7 @@
  
  === index.mjs ===
  // esm format file
-@@ -85,24 +77,16 @@
+@@= skipped -52, +44 lines =@@
  >ts : Symbol(ts, Decl(index.mjs, 10, 6))
  
  cjsi.mjsSource;
@@ -50,7 +50,7 @@
  
  === index.cjs ===
  // cjs format file
-@@ -137,24 +121,18 @@
+@@= skipped -52, +44 lines =@@
  >ts : Symbol(ts, Decl(index.cjs, 10, 6))
  
  cjsi.cjsSource;
@@ -77,7 +77,7 @@
  
  === node_modules/inner/index.d.ts ===
  // cjs format file
-@@ -171,19 +149,19 @@
+@@= skipped -34, +28 lines =@@
  >ts : Symbol(ts, Decl(index.d.ts, 4, 6))
  
  export { cjs };
@@ -102,7 +102,7 @@
  
  === node_modules/inner/index.d.mts ===
  // esm format file
-@@ -200,19 +178,19 @@
+@@= skipped -29, +29 lines =@@
  >ts : Symbol(ts, Decl(index.d.mts, 4, 6))
  
  export { cjs };
@@ -127,7 +127,7 @@
  
  === node_modules/inner/index.d.cts ===
  // cjs format file
-@@ -229,17 +207,17 @@
+@@= skipped -29, +29 lines =@@
  >ts : Symbol(ts, Decl(index.d.cts, 4, 6))
  
  export { cjs };

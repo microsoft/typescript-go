@@ -1,6 +1,6 @@
 --- old.importCallExpressionES5AMD.symbols
 +++ new.importCallExpressionES5AMD.symbols
-@@ -6,16 +6,13 @@
+@@= skipped -6, +6 lines =@@
  
  === 1.ts ===
  import("./0");
@@ -19,7 +19,7 @@
  >zero : Symbol(zero, Decl(1.ts, 2, 8))
  
      return zero.foo();
-@@ -27,25 +24,22 @@
+@@= skipped -21, +18 lines =@@
  
  export var p2 = import("./0");
  >p2 : Symbol(p2, Decl(1.ts, 6, 10))
@@ -46,7 +46,7 @@
      }
  }
  
-@@ -53,10 +47,9 @@
+@@= skipped -26, +23 lines =@@
  >D : Symbol(D, Decl(1.ts, 16, 1))
  
      method() {

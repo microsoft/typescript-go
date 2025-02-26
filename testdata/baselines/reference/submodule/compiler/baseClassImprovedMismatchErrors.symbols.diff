@@ -1,6 +1,6 @@
 --- old.baseClassImprovedMismatchErrors.symbols
 +++ new.baseClassImprovedMismatchErrors.symbols
-@@ -5,11 +5,11 @@
+@@= skipped -5, +5 lines =@@
  >Base : Symbol(Base, Decl(baseClassImprovedMismatchErrors.ts, 0, 0))
  
      n: Base | string;
@@ -14,7 +14,7 @@
  
          return 10;
      }
-@@ -19,11 +19,11 @@
+@@= skipped -14, +14 lines =@@
  >Base : Symbol(Base, Decl(baseClassImprovedMismatchErrors.ts, 0, 0))
  
      n: Derived | string;
@@ -28,7 +28,7 @@
  
          return 10 as number | string;
      }
-@@ -33,11 +33,11 @@
+@@= skipped -14, +14 lines =@@
  >Base : Symbol(Base, Decl(baseClassImprovedMismatchErrors.ts, 0, 0))
  
      n: DerivedInterface | string;

@@ -1,6 +1,6 @@
 --- old.inKeywordNarrowingWithNoUncheckedIndexedAccess.symbols
 +++ new.inKeywordNarrowingWithNoUncheckedIndexedAccess.symbols
-@@ -62,9 +62,9 @@
+@@= skipped -62, +62 lines =@@
  >obj : Symbol(obj, Decl(inKeywordNarrowingWithNoUncheckedIndexedAccess.ts, 24, 12))
  
      if (obj.hasOwnProperty("test")) {

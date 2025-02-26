@@ -1,6 +1,6 @@
 --- old.requireOfJsonFileWithoutExtensionResolvesToTs.symbols
 +++ new.requireOfJsonFileWithoutExtensionResolvesToTs.symbols
-@@ -18,9 +18,7 @@
+@@= skipped -18, +18 lines =@@
  
      let b = c2.b;
  >b : Symbol(b, Decl(file1.ts, 4, 7))
@@ -10,7 +10,7 @@
  
      let x = (c1.b === b);
  >x : Symbol(x, Decl(file1.ts, 5, 7))
-@@ -30,15 +28,6 @@
+@@= skipped -12, +10 lines =@@
  >b : Symbol(b, Decl(file1.ts, 4, 7))
  }
  

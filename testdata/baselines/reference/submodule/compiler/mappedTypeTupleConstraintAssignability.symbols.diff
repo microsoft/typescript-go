@@ -1,6 +1,6 @@
 --- old.mappedTypeTupleConstraintAssignability.symbols
 +++ new.mappedTypeTupleConstraintAssignability.symbols
-@@ -27,7 +27,7 @@
+@@= skipped -27, +27 lines =@@
  >T : Symbol(T, Decl(mappedTypeTupleConstraintAssignability.ts, 6, 22))
  
    get enum(): Values<T>
@@ -9,7 +9,7 @@
  >Values : Symbol(Values, Decl(mappedTypeTupleConstraintAssignability.ts, 3, 40))
  >T : Symbol(T, Decl(mappedTypeTupleConstraintAssignability.ts, 6, 22))
  }
-@@ -71,19 +71,19 @@
+@@= skipped -44, +44 lines =@@
  >D : Symbol(D, Decl(mappedTypeTupleConstraintAssignability.ts, 19, 52))
  
    __flags: F;

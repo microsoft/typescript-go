@@ -1,6 +1,6 @@
 --- old.collisionCodeGenEnumWithEnumMemberConflict.symbols
 +++ new.collisionCodeGenEnumWithEnumMemberConflict.symbols
-@@ -5,9 +5,9 @@
+@@= skipped -5, +5 lines =@@
  >Color : Symbol(Color, Decl(collisionCodeGenEnumWithEnumMemberConflict.ts, 0, 0))
  
      Color,

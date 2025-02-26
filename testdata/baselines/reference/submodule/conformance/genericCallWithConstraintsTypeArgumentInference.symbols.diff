@@ -1,6 +1,6 @@
 --- old.genericCallWithConstraintsTypeArgumentInference.symbols
 +++ new.genericCallWithConstraintsTypeArgumentInference.symbols
-@@ -5,17 +5,17 @@
+@@= skipped -5, +5 lines =@@
  
  class Base { foo: string; }
  >Base : Symbol(Base, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 0, 0))
@@ -21,7 +21,7 @@
  
  var b: Base;
  >b : Symbol(b, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 5, 3))
-@@ -114,14 +114,14 @@
+@@= skipped -109, +109 lines =@@
  >Derived : Symbol(Derived, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 2, 27))
  
      constructor(public t: T, public u: U) {
@@ -39,7 +39,7 @@
  >t : Symbol(t, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 37, 8))
  >T : Symbol(T, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 33, 8))
  >u : Symbol(u, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 37, 13))
-@@ -132,7 +132,7 @@
+@@= skipped -18, +18 lines =@@
      }
  
      foo2(t: T, u: U) {
@@ -48,7 +48,7 @@
  >t : Symbol(t, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 41, 9))
  >T : Symbol(T, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 33, 8))
  >u : Symbol(u, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 41, 14))
-@@ -143,7 +143,7 @@
+@@= skipped -11, +11 lines =@@
      }
  
      foo3<T extends Derived>(t: T, u: U) {
@@ -57,7 +57,7 @@
  >T : Symbol(T, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 45, 9))
  >Derived : Symbol(Derived, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 2, 27))
  >t : Symbol(t, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 45, 28))
-@@ -156,7 +156,7 @@
+@@= skipped -13, +13 lines =@@
      }
  
      foo4<U extends Derived2>(t: T, u: U) {
@@ -66,7 +66,7 @@
  >U : Symbol(U, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 49, 9))
  >Derived2 : Symbol(Derived2, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 3, 43))
  >t : Symbol(t, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 49, 29))
-@@ -169,7 +169,7 @@
+@@= skipped -13, +13 lines =@@
      }
  
      foo5<T extends Derived, U extends Derived2>(t: T, u: U) {
@@ -75,7 +75,7 @@
  >T : Symbol(T, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 53, 9))
  >Derived : Symbol(Derived, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 2, 27))
  >U : Symbol(U, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 53, 27))
-@@ -184,7 +184,7 @@
+@@= skipped -15, +15 lines =@@
      }
  
      foo6<T extends Derived, U extends Derived2>() {
@@ -84,7 +84,7 @@
  >T : Symbol(T, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 57, 9))
  >Derived : Symbol(Derived, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 2, 27))
  >U : Symbol(U, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 57, 27))
-@@ -199,7 +199,7 @@
+@@= skipped -15, +15 lines =@@
      }
  
      foo7<T extends Base, U extends Derived>(u: U) {
@@ -93,7 +93,7 @@
  >T : Symbol(T, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 62, 9))
  >Base : Symbol(Base, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 0, 0))
  >U : Symbol(U, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 62, 24))
-@@ -216,7 +216,7 @@
+@@= skipped -17, +17 lines =@@
      }
  
      foo8<T extends Base, U extends Derived>() {
@@ -102,7 +102,7 @@
  >T : Symbol(T, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 67, 9))
  >Base : Symbol(Base, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 0, 0))
  >U : Symbol(U, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 67, 24))
-@@ -239,70 +239,70 @@
+@@= skipped -23, +23 lines =@@
  
  var r4 = c.foo(d1, d2); // Base
  >r4 : Symbol(r4, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 74, 3), Decl(genericCallWithConstraintsTypeArgumentInference.ts, 97, 3))
@@ -191,7 +191,7 @@
  
  interface I<T extends Base, U extends Derived> {
  >I : Symbol(I, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 82, 19))
-@@ -318,7 +318,7 @@
+@@= skipped -79, +79 lines =@@
  >U : Symbol(U, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 84, 27))
  
      foo(t: T, u: U): T;
@@ -200,7 +200,7 @@
  >t : Symbol(t, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 86, 8))
  >T : Symbol(T, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 84, 12))
  >u : Symbol(u, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 86, 13))
-@@ -326,7 +326,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 84, 12))
  
      foo2(t: T, u: U): U;
@@ -209,7 +209,7 @@
  >t : Symbol(t, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 87, 9))
  >T : Symbol(T, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 84, 12))
  >u : Symbol(u, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 87, 14))
-@@ -334,7 +334,7 @@
+@@= skipped -8, +8 lines =@@
  >U : Symbol(U, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 84, 27))
  
      foo3<T extends Derived>(t: T, u: U): T;
@@ -218,7 +218,7 @@
  >T : Symbol(T, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 88, 9))
  >Derived : Symbol(Derived, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 2, 27))
  >t : Symbol(t, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 88, 28))
-@@ -344,7 +344,7 @@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 88, 9))
  
      foo4<U extends Derived2>(t: T, u: U): T;
@@ -227,7 +227,7 @@
  >U : Symbol(U, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 89, 9))
  >Derived2 : Symbol(Derived2, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 3, 43))
  >t : Symbol(t, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 89, 29))
-@@ -354,7 +354,7 @@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 84, 12))
  
      foo5<T extends Derived, U extends Derived2>(t: T, u: U): T;
@@ -236,7 +236,7 @@
  >T : Symbol(T, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 90, 9))
  >Derived : Symbol(Derived, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 2, 27))
  >U : Symbol(U, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 90, 27))
-@@ -366,7 +366,7 @@
+@@= skipped -12, +12 lines =@@
  >T : Symbol(T, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 90, 9))
  
      foo6<T extends Derived, U extends Derived2>(): T;
@@ -245,7 +245,7 @@
  >T : Symbol(T, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 91, 9))
  >Derived : Symbol(Derived, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 2, 27))
  >U : Symbol(U, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 91, 27))
-@@ -374,7 +374,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 91, 9))
  
      foo7<T extends Base, U extends Derived>(u: U): T;
@@ -254,7 +254,7 @@
  >T : Symbol(T, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 92, 9))
  >Base : Symbol(Base, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 0, 0))
  >U : Symbol(U, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 92, 24))
-@@ -384,7 +384,7 @@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 92, 9))
  
      foo8<T extends Base, U extends Derived>(): T;
@@ -263,7 +263,7 @@
  >T : Symbol(T, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 93, 9))
  >Base : Symbol(Base, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 0, 0))
  >U : Symbol(U, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 93, 24))
-@@ -400,68 +400,68 @@
+@@= skipped -16, +16 lines =@@
  
  var r4 = i.foo(d1, d2); // Base
  >r4 : Symbol(r4, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 74, 3), Decl(genericCallWithConstraintsTypeArgumentInference.ts, 97, 3))

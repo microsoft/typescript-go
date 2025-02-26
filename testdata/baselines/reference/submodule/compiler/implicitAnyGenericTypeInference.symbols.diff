@@ -1,6 +1,6 @@
 --- old.implicitAnyGenericTypeInference.symbols
 +++ new.implicitAnyGenericTypeInference.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(implicitAnyGenericTypeInference.ts, 0, 19))
  
      compareTo<U>(x: T, y: U): U;
@@ -9,7 +9,7 @@
  >U : Symbol(U, Decl(implicitAnyGenericTypeInference.ts, 1, 14))
  >x : Symbol(x, Decl(implicitAnyGenericTypeInference.ts, 1, 17))
  >T : Symbol(T, Decl(implicitAnyGenericTypeInference.ts, 0, 19))
-@@ -28,9 +28,9 @@
+@@= skipped -22, +22 lines =@@
  
  var r = c.compareTo(1, '');
  >r : Symbol(r, Decl(implicitAnyGenericTypeInference.ts, 6, 3))
@@ -21,7 +21,7 @@
  
  declare function f1<T>(cb: () => T): void;
  >f1 : Symbol(f1, Decl(implicitAnyGenericTypeInference.ts, 6, 27))
-@@ -93,18 +93,18 @@
+@@= skipped -65, +65 lines =@@
  
  // https://github.com/microsoft/TypeScript/issues/44913
  Promise.resolve().catch(e => null);

@@ -1,6 +1,6 @@
 --- old.constructSignatureWithAccessibilityModifiersOnParameters.symbols
 +++ new.constructSignatureWithAccessibilityModifiersOnParameters.symbols
-@@ -7,22 +7,22 @@
+@@= skipped -7, +7 lines =@@
  >C : Symbol(C, Decl(constructSignatureWithAccessibilityModifiersOnParameters.ts, 0, 0))
  
      constructor(public x, private y) { }

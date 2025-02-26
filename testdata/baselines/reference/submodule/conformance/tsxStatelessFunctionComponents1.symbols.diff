@@ -1,6 +1,6 @@
 --- old.tsxStatelessFunctionComponents1.symbols
 +++ new.tsxStatelessFunctionComponents1.symbols
-@@ -5,8 +5,6 @@
+@@= skipped -5, +5 lines =@@
  >EmptyPropSFC : Symbol(EmptyPropSFC, Decl(file.tsx, 0, 0))
  
      return <div> Default Greeting </div>;
@@ -9,7 +9,7 @@
  }
  
  function Greet(x: {name: string}) {
-@@ -15,18 +13,14 @@
+@@= skipped -10, +8 lines =@@
  >name : Symbol(name, Decl(file.tsx, 4, 19))
  
  	return <div>Hello, {x}</div>;
@@ -28,7 +28,7 @@
  }
  function MeetAndGreet(k: {"prop-name": string}) {
  >MeetAndGreet : Symbol(MeetAndGreet, Decl(file.tsx, 9, 1))
-@@ -34,8 +28,6 @@
+@@= skipped -19, +15 lines =@@
  >"prop-name" : Symbol("prop-name", Decl(file.tsx, 10, 26))
  
  	return <div>Hi Hi</div>;

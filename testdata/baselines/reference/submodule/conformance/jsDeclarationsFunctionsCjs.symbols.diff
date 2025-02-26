@@ -1,6 +1,6 @@
 --- old.jsDeclarationsFunctionsCjs.symbols
 +++ new.jsDeclarationsFunctionsCjs.symbols
-@@ -2,46 +2,17 @@
+@@= skipped -2, +2 lines =@@
  
  === index.js ===
  module.exports.a = function a() {}
@@ -47,7 +47,7 @@
  
  /**
   * @param {number} a
-@@ -49,11 +20,6 @@
+@@= skipped -47, +18 lines =@@
   * @return {string} 
   */
  module.exports.d = function d(a, b) { return /** @type {*} */(null); }
@@ -59,7 +59,7 @@
  >d : Symbol(d, Decl(index.js, 13, 18))
  >a : Symbol(a, Decl(index.js, 13, 30))
  >b : Symbol(b, Decl(index.js, 13, 32))
-@@ -65,11 +31,6 @@
+@@= skipped -16, +11 lines =@@
   * @return {T & U} 
   */
  module.exports.e = function e(a, b) { return /** @type {*} */(null); }
@@ -71,7 +71,7 @@
  >e : Symbol(e, Decl(index.js, 21, 18))
  >a : Symbol(a, Decl(index.js, 21, 30))
  >b : Symbol(b, Decl(index.js, 21, 32))
-@@ -79,11 +40,6 @@
+@@= skipped -14, +9 lines =@@
   * @param {T} a
   */
  module.exports.f = function f(a) {
@@ -83,7 +83,7 @@
  >f : Symbol(f, Decl(index.js, 27, 18))
  >a : Symbol(a, Decl(index.js, 27, 30))
  
-@@ -91,18 +47,6 @@
+@@= skipped -12, +7 lines =@@
  >a : Symbol(a, Decl(index.js, 27, 30))
  }
  module.exports.f.self = module.exports.f;
@@ -102,7 +102,7 @@
  
  /**
   * @param {{x: string}} a
-@@ -114,20 +58,11 @@
+@@= skipped -23, +11 lines =@@
  >b : Symbol(b, Decl(index.js, 36, 13))
  
      return a.x && b.y();
@@ -123,7 +123,7 @@
  >g : Symbol(g, Decl(index.js, 30, 41))
  
  /**
-@@ -140,60 +75,20 @@
+@@= skipped -26, +17 lines =@@
  >b : Symbol(b, Decl(index.js, 46, 14))
  
      return a.x && b.y();

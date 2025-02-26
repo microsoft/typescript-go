@@ -1,6 +1,6 @@
 --- old.jsDeclarationsNestedParams.symbols
 +++ new.jsDeclarationsNestedParams.symbols
-@@ -12,7 +12,7 @@
+@@= skipped -12, +12 lines =@@
        * @returns {Promise.<*>} resolves when the event has been sent.
        */ 
      async cancel({reason, code}) {}
@@ -9,7 +9,7 @@
  >reason : Symbol(reason, Decl(file.js, 8, 18))
  >code : Symbol(code, Decl(file.js, 8, 25))
  }
-@@ -30,7 +30,7 @@
+@@= skipped -18, +18 lines =@@
        * @returns {Promise.<*>} resolves when the event has been sent.
        */ 
      async cancel({reason, suberr}) {}

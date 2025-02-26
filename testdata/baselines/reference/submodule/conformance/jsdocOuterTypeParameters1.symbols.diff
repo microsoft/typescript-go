@@ -1,6 +1,6 @@
 --- old.jsdocOuterTypeParameters1.symbols
 +++ new.jsdocOuterTypeParameters1.symbols
-@@ -15,10 +15,10 @@
+@@= skipped -15, +15 lines =@@
  >Bar : Symbol(Bar, Decl(jsdocOuterTypeParameters1.js, 4, 47))
  
      static bar() { this.prototype.foo(); }

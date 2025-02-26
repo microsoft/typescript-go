@@ -1,6 +1,6 @@
 --- old.constructorParameterShadowsOuterScopes2.symbols
 +++ new.constructorParameterShadowsOuterScopes2.symbols
-@@ -19,7 +19,7 @@
+@@= skipped -19, +19 lines =@@
  >C : Symbol(C, Decl(constructorParameterShadowsOuterScopes2.ts, 11, 10))
  
      b = x; // ok
@@ -9,7 +9,7 @@
  >x : Symbol(x, Decl(constructorParameterShadowsOuterScopes2.ts, 11, 3))
  
      constructor(x: string) {
-@@ -34,7 +34,7 @@
+@@= skipped -15, +15 lines =@@
  >D : Symbol(D, Decl(constructorParameterShadowsOuterScopes2.ts, 18, 10))
  
      b = y; // ok
@@ -18,7 +18,7 @@
  >y : Symbol(y, Decl(constructorParameterShadowsOuterScopes2.ts, 18, 3))
  
      constructor(x: string) {
-@@ -49,7 +49,7 @@
+@@= skipped -15, +15 lines =@@
  >E : Symbol(E, Decl(constructorParameterShadowsOuterScopes2.ts, 24, 1))
  
      b = z; // not ok

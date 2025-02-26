@@ -1,6 +1,6 @@
 --- old.inheritanceStaticFuncOverridingMethod.symbols
 +++ new.inheritanceStaticFuncOverridingMethod.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >a : Symbol(a, Decl(inheritanceStaticFuncOverridingMethod.ts, 0, 0))
  
      static x() {
@@ -9,7 +9,7 @@
  
          return "10";
      }
-@@ -16,7 +16,7 @@
+@@= skipped -11, +11 lines =@@
  >a : Symbol(a, Decl(inheritanceStaticFuncOverridingMethod.ts, 0, 0))
  
      static x() {

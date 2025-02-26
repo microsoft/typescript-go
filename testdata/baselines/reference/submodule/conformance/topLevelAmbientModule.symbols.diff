@@ -1,6 +1,6 @@
 --- old.topLevelAmbientModule.symbols
 +++ new.topLevelAmbientModule.symbols
-@@ -7,9 +7,9 @@
+@@= skipped -7, +7 lines =@@
  
  var z = foo.x + 10;
  >z : Symbol(z, Decl(foo_1.ts, 2, 3))

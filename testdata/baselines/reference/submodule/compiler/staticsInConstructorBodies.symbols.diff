@@ -1,6 +1,6 @@
 --- old.staticsInConstructorBodies.symbols
 +++ new.staticsInConstructorBodies.symbols
-@@ -6,9 +6,9 @@
+@@= skipped -6, +6 lines =@@
  
  	constructor() {
  		static p1 = 0; // ERROR

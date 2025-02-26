@@ -1,6 +1,6 @@
 --- old.es6ImportDefaultBindingFollowedWithNamedImportDts.symbols
 +++ new.es6ImportDefaultBindingFollowedWithNamedImportDts.symbols
-@@ -33,7 +33,7 @@
+@@= skipped -33, +33 lines =@@
  
  import defaultBinding3, { a11 as b } from "./server";
  >defaultBinding3 : Symbol(defaultBinding3, Decl(client.ts, 3, 6))
@@ -9,7 +9,7 @@
  >b : Symbol(b, Decl(client.ts, 3, 25))
  
  export var x2 = new b();
-@@ -43,7 +43,7 @@
+@@= skipped -10, +10 lines =@@
  import defaultBinding4, { x, a12 as y } from "./server";
  >defaultBinding4 : Symbol(defaultBinding4, Decl(client.ts, 5, 6))
  >x : Symbol(x, Decl(client.ts, 5, 25))
@@ -18,7 +18,7 @@
  >y : Symbol(y, Decl(client.ts, 5, 28))
  
  export var x4 = new x();
-@@ -56,7 +56,7 @@
+@@= skipped -13, +13 lines =@@
  
  import defaultBinding5, { x11 as z,  } from "./server";
  >defaultBinding5 : Symbol(defaultBinding5, Decl(client.ts, 8, 6))

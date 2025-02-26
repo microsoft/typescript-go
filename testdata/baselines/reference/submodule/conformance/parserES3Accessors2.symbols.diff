@@ -1,6 +1,6 @@
 --- old.parserES3Accessors2.symbols
 +++ new.parserES3Accessors2.symbols
-@@ -5,6 +5,6 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(parserES3Accessors2.ts, 0, 0))
  
      set Foo(a) { }

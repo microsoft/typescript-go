@@ -1,6 +1,6 @@
 --- old.nodeModulesTripleSlashReferenceModeOverride5(module=node16).symbols
 +++ new.nodeModulesTripleSlashReferenceModeOverride5(module=node16).symbols
-@@ -6,20 +6,10 @@
+@@= skipped -6, +6 lines =@@
  // Both `foo` and `bar` should resolve, as _both_ entrypoints are included by the two
  // references above.
  foo;

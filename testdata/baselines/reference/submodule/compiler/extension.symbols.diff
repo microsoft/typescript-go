@@ -1,6 +1,6 @@
 --- old.extension.symbols
 +++ new.extension.symbols
-@@ -5,14 +5,14 @@
+@@= skipped -5, +5 lines =@@
  >I : Symbol(I, Decl(extension.ts, 0, 0), Decl(extension.ts, 2, 1))
  
      x;
@@ -17,7 +17,7 @@
  }
  
  declare module M {
-@@ -22,7 +22,7 @@
+@@= skipped -17, +17 lines =@@
  >C : Symbol(C, Decl(extension.ts, 8, 18))
  
          public p:number;
@@ -26,7 +26,7 @@
      }
  }
  
-@@ -33,36 +33,36 @@
+@@= skipped -11, +11 lines =@@
  >C : Symbol(C, Decl(extension.ts, 15, 20))
  
          public pe:string;

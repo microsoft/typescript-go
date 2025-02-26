@@ -1,6 +1,6 @@
 --- old.paramTagTypeResolution2.symbols
 +++ new.paramTagTypeResolution2.symbols
-@@ -17,7 +17,5 @@
+@@= skipped -17, +17 lines =@@
  >x : Symbol(x, Decl(38572.js, 8, 3))
  >x : Symbol(x, Decl(38572.js, 8, 14))
  >param : Symbol(param, Decl(38572.js, 8, 17))

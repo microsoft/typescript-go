@@ -1,6 +1,6 @@
 --- old.jsdocPrivateName1.symbols
 +++ new.jsdocPrivateName1.symbols
-@@ -6,6 +6,6 @@
+@@= skipped -6, +6 lines =@@
  
      /** @type {boolean} some number value */
      #foo = 3 // Error because not assignable to boolean

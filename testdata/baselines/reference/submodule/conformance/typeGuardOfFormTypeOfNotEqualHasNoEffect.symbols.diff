@@ -1,6 +1,6 @@
 --- old.typeGuardOfFormTypeOfNotEqualHasNoEffect.symbols
 +++ new.typeGuardOfFormTypeOfNotEqualHasNoEffect.symbols
-@@ -3,7 +3,7 @@
+@@= skipped -3, +3 lines =@@
  === typeGuardOfFormTypeOfNotEqualHasNoEffect.ts ===
  class C { private p: string };
  >C : Symbol(C, Decl(typeGuardOfFormTypeOfNotEqualHasNoEffect.ts, 0, 0))

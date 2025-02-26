@@ -1,6 +1,6 @@
 --- old.generatorReturnTypeInference.symbols
 +++ new.generatorReturnTypeInference.symbols
-@@ -75,9 +75,9 @@
+@@= skipped -75, +75 lines =@@
  >g103 : Symbol(g103, Decl(generatorReturnTypeInference.ts, 40, 1))
  
      if (Math.random()) return 1;
@@ -12,7 +12,7 @@
  
      return 2;
  }
-@@ -172,15 +172,15 @@
+@@= skipped -97, +97 lines =@@
  >g305 : Symbol(g305, Decl(generatorReturnTypeInference.ts, 94, 1))
  
      if (Math.random()) yield 1;

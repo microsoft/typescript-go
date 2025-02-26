@@ -1,6 +1,6 @@
 --- old.objectRestBindingContextualInference.symbols
 +++ new.objectRestBindingContextualInference.symbols
-@@ -41,10 +41,10 @@
+@@= skipped -41, +41 lines =@@
  >TestInterface : Symbol(TestInterface, Decl(objectRestBindingContextualInference.ts, 12, 2))
  
    name: string;

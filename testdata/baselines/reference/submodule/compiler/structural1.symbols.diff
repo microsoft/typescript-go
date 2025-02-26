@@ -1,6 +1,6 @@
 --- old.structural1.symbols
 +++ new.structural1.symbols
-@@ -8,10 +8,10 @@
+@@= skipped -8, +8 lines =@@
  >I : Symbol(I, Decl(structural1.ts, 0, 10))
  
          salt:number;

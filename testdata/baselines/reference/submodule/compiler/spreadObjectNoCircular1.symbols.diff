@@ -1,6 +1,6 @@
 --- old.spreadObjectNoCircular1.symbols
 +++ new.spreadObjectNoCircular1.symbols
-@@ -19,7 +19,7 @@
+@@= skipped -19, +19 lines =@@
  >Foo : Symbol(Foo, Decl(spreadObjectNoCircular1.ts, 4, 21))
  
    get foo() {

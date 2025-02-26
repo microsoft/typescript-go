@@ -1,6 +1,6 @@
 --- old.destructuringParameterProperties3.symbols
 +++ new.destructuringParameterProperties3.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >V : Symbol(V, Decl(destructuringParameterProperties3.ts, 0, 14))
  
      constructor(private k: T, private [a, b, c]: [T,U,V]) {
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(destructuringParameterProperties3.ts, 0, 9))
  >a : Symbol(a, Decl(destructuringParameterProperties3.ts, 1, 39))
  >b : Symbol(b, Decl(destructuringParameterProperties3.ts, 1, 41))
-@@ -35,21 +35,21 @@
+@@= skipped -27, +27 lines =@@
      }
  
      public getA() {
@@ -34,7 +34,7 @@
  
          return this.c;
  >this : Symbol(C1, Decl(destructuringParameterProperties3.ts, 0, 0))
-@@ -65,15 +65,15 @@
+@@= skipped -30, +30 lines =@@
  >x_a : Symbol(x_a, Decl(destructuringParameterProperties3.ts, 21, 5))
  >x_b : Symbol(x_b, Decl(destructuringParameterProperties3.ts, 21, 9))
  >x_c : Symbol(x_c, Decl(destructuringParameterProperties3.ts, 21, 14))
@@ -56,7 +56,7 @@
  
  var y = new C1(10, [0, true, true]);
  >y : Symbol(y, Decl(destructuringParameterProperties3.ts, 23, 3))
-@@ -83,15 +83,15 @@
+@@= skipped -18, +18 lines =@@
  >y_a : Symbol(y_a, Decl(destructuringParameterProperties3.ts, 24, 5))
  >y_b : Symbol(y_b, Decl(destructuringParameterProperties3.ts, 24, 9))
  >y_c : Symbol(y_c, Decl(destructuringParameterProperties3.ts, 24, 14))
@@ -78,7 +78,7 @@
  
  var z = new C1(10, [undefined, "", ""]);
  >z : Symbol(z, Decl(destructuringParameterProperties3.ts, 26, 3))
-@@ -102,15 +102,15 @@
+@@= skipped -19, +19 lines =@@
  >z_a : Symbol(z_a, Decl(destructuringParameterProperties3.ts, 27, 5), Decl(destructuringParameterProperties3.ts, 30, 5))
  >z_b : Symbol(z_b, Decl(destructuringParameterProperties3.ts, 27, 9), Decl(destructuringParameterProperties3.ts, 30, 9))
  >z_c : Symbol(z_c, Decl(destructuringParameterProperties3.ts, 27, 14), Decl(destructuringParameterProperties3.ts, 30, 14))
@@ -100,7 +100,7 @@
  
  var w = new C1(10, [undefined, undefined, undefined]);
  >w : Symbol(w, Decl(destructuringParameterProperties3.ts, 29, 3))
-@@ -123,13 +123,13 @@
+@@= skipped -21, +21 lines =@@
  >z_a : Symbol(z_a, Decl(destructuringParameterProperties3.ts, 27, 5), Decl(destructuringParameterProperties3.ts, 30, 5))
  >z_b : Symbol(z_b, Decl(destructuringParameterProperties3.ts, 27, 9), Decl(destructuringParameterProperties3.ts, 30, 9))
  >z_c : Symbol(z_c, Decl(destructuringParameterProperties3.ts, 27, 14), Decl(destructuringParameterProperties3.ts, 30, 14))

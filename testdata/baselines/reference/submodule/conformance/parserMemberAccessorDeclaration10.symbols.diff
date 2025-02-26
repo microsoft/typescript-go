@@ -1,6 +1,6 @@
 --- old.parserMemberAccessorDeclaration10.symbols
 +++ new.parserMemberAccessorDeclaration10.symbols
-@@ -5,5 +5,5 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(parserMemberAccessorDeclaration10.ts, 0, 0))
  
      export get Foo() { }

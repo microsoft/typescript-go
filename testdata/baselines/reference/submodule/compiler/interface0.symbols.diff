@@ -1,6 +1,6 @@
 --- old.interface0.symbols
 +++ new.interface0.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(interface0.ts, 0, 18))
  
      x: T;

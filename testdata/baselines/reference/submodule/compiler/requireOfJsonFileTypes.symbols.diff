@@ -1,6 +1,6 @@
 --- old.requireOfJsonFileTypes.symbols
 +++ new.requireOfJsonFileTypes.symbols
-@@ -31,27 +31,19 @@
+@@= skipped -31, +31 lines =@@
  
  booleanLiteral = b.a;
  >booleanLiteral : Symbol(booleanLiteral, Decl(file1.ts, 7, 3))
@@ -28,7 +28,7 @@
  
  const stringOrNumberOrNull: string | number | null = c[0];
  >stringOrNumberOrNull : Symbol(stringOrNumberOrNull, Decl(file1.ts, 15, 5))
-@@ -73,37 +65,3 @@
+@@= skipped -42, +34 lines =@@
  >booleanLiteral : Symbol(booleanLiteral, Decl(file1.ts, 7, 3))
  >g : Symbol(g, Decl(file1.ts, 4, 31))
  

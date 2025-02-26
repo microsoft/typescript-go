@@ -1,6 +1,6 @@
 --- old.promiseTypeInferenceUnion.symbols
 +++ new.promiseTypeInferenceUnion.symbols
-@@ -7,9 +7,9 @@
+@@= skipped -7, +7 lines =@@
  >Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2018.promise.d.ts, --, --))
  
    return Promise.resolve(x);
@@ -12,7 +12,7 @@
  >x : Symbol(x, Decl(promiseTypeInferenceUnion.ts, 0, 12))
  }
  
-@@ -19,9 +19,9 @@
+@@= skipped -12, +12 lines =@@
  >PromiseLike : Symbol(PromiseLike, Decl(lib.es5.d.ts, --, --))
  
    return Promise.resolve(x);
@@ -24,7 +24,7 @@
  >x : Symbol(x, Decl(promiseTypeInferenceUnion.ts, 4, 12))
  }
  
-@@ -32,33 +32,33 @@
+@@= skipped -13, +13 lines =@@
  >PromiseLike : Symbol(PromiseLike, Decl(lib.es5.d.ts, --, --))
  
    return Promise.resolve(x);

@@ -1,6 +1,6 @@
 --- old.duplicateIdentifiersAcrossFileBoundaries.symbols
 +++ new.duplicateIdentifiersAcrossFileBoundaries.symbols
-@@ -20,7 +20,7 @@
+@@= skipped -20, +20 lines =@@
  >Foo : Symbol(Foo, Decl(file1.ts, 4, 10), Decl(file2.ts, 4, 10))
  
      static x: number;

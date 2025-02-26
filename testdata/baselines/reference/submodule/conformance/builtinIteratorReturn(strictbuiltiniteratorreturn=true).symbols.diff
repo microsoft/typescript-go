@@ -1,6 +1,6 @@
 --- old.builtinIteratorReturn(strictbuiltiniteratorreturn=true).symbols
 +++ new.builtinIteratorReturn(strictbuiltiniteratorreturn=true).symbols
-@@ -15,27 +15,27 @@
+@@= skipped -15, +15 lines =@@
  const i0 = array[Symbol.iterator]();
  >i0 : Symbol(i0, Decl(builtinIteratorReturn.ts, 4, 5))
  >array : Symbol(array, Decl(builtinIteratorReturn.ts, 0, 13))
@@ -36,7 +36,7 @@
  
  for (const x of array);
  >x : Symbol(x, Decl(builtinIteratorReturn.ts, 8, 10))
-@@ -44,27 +44,27 @@
+@@= skipped -29, +29 lines =@@
  const i4 = map[Symbol.iterator]();
  >i4 : Symbol(i4, Decl(builtinIteratorReturn.ts, 10, 5))
  >map : Symbol(map, Decl(builtinIteratorReturn.ts, 1, 13))
@@ -72,7 +72,7 @@
  
  for (const x of map);
  >x : Symbol(x, Decl(builtinIteratorReturn.ts, 14, 10))
-@@ -73,27 +73,27 @@
+@@= skipped -29, +29 lines =@@
  const i8 = set[Symbol.iterator]();
  >i8 : Symbol(i8, Decl(builtinIteratorReturn.ts, 16, 5))
  >set : Symbol(set, Decl(builtinIteratorReturn.ts, 2, 13))

@@ -1,6 +1,6 @@
 --- old.tsxSpreadChildrenInvalidType(jsx=react,target=es2015).symbols
 +++ new.tsxSpreadChildrenInvalidType(jsx=react,target=es2015).symbols
-@@ -21,16 +21,16 @@
+@@= skipped -21, +21 lines =@@
  >TodoProp : Symbol(TodoProp, Decl(tsxSpreadChildrenInvalidType.tsx, 6, 23))
  
      id: number;
@@ -20,7 +20,7 @@
  >TodoProp : Symbol(TodoProp, Decl(tsxSpreadChildrenInvalidType.tsx, 6, 23))
  }
  function Todo(prop: { key: number, todo: string }) {
-@@ -40,16 +40,12 @@
+@@= skipped -19, +19 lines =@@
  >todo : Symbol(todo, Decl(tsxSpreadChildrenInvalidType.tsx, 15, 34))
  
      return <div>{prop.key.toString() + prop.todo}</div>;
@@ -37,7 +37,7 @@
  }
  function TodoList({ todos }: TodoListProps) {
  >TodoList : Symbol(TodoList, Decl(tsxSpreadChildrenInvalidType.tsx, 17, 1))
-@@ -57,21 +53,14 @@
+@@= skipped -17, +13 lines =@@
  >TodoListProps : Symbol(TodoListProps, Decl(tsxSpreadChildrenInvalidType.tsx, 11, 1))
  
      return <div>
@@ -59,7 +59,7 @@
  }
  function TodoListNoError({ todos }: TodoListProps) {
  >TodoListNoError : Symbol(TodoListNoError, Decl(tsxSpreadChildrenInvalidType.tsx, 22, 1))
-@@ -80,21 +69,14 @@
+@@= skipped -23, +16 lines =@@
  
      // any is not checked
      return <div>

@@ -1,6 +1,6 @@
 --- old.tsxStatelessFunctionComponentOverload2.symbols
 +++ new.tsxStatelessFunctionComponentOverload2.symbols
-@@ -6,16 +6,16 @@
+@@= skipped -6, +6 lines =@@
  
  declare function OneThing(): JSX.Element;
  >OneThing : Symbol(OneThing, Decl(file.tsx, 0, 31), Decl(file.tsx, 1, 41))

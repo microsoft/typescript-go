@@ -1,6 +1,6 @@
 --- old.jsxIntrinsicElementsTypeArgumentErrors.symbols
 +++ new.jsxIntrinsicElementsTypeArgumentErrors.symbols
-@@ -8,64 +8,46 @@
+@@= skipped -8, +8 lines =@@
  // opening + closing
  const a = <div<>></div>; // empty type args
  >a : Symbol(a, Decl(jsxIntrinsicElementsTypeArgumentErrors.tsx, 4, 5))

@@ -1,6 +1,6 @@
 --- old.promiseIdentity2.symbols
 +++ new.promiseIdentity2.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >V : Symbol(V, Decl(promiseIdentity2.ts, 0, 28))
  
      then<U, W>(callback: (x: T) => IPromise<U, W>): IPromise<U, W>;
@@ -9,7 +9,7 @@
  >U : Symbol(U, Decl(promiseIdentity2.ts, 1, 9))
  >W : Symbol(W, Decl(promiseIdentity2.ts, 1, 11))
  >callback : Symbol(callback, Decl(promiseIdentity2.ts, 1, 15))
-@@ -26,7 +26,7 @@
+@@= skipped -19, +19 lines =@@
  >V : Symbol(V, Decl(promiseIdentity2.ts, 3, 27))
  
      then<U, W>(callback: (x: T) => Promise<T, U>): Promise<T, W>;

@@ -1,6 +1,6 @@
 --- old.esDecorators-contextualTypes.2.symbols
 +++ new.esDecorators-contextualTypes.2.symbols
-@@ -8,21 +8,21 @@
+@@= skipped -8, +8 lines =@@
  >boundMethodLogger : Symbol(boundMethodLogger, Decl(esDecorators-contextualTypes.2.ts, 10, 13))
  
      foo() {
@@ -28,7 +28,7 @@
      }
  };
  export { C };
-@@ -68,19 +68,19 @@
+@@= skipped -60, +60 lines =@@
  >bound : Symbol(bound, Decl(esDecorators-contextualTypes.2.ts, 12, 76))
  
              context.addInitializer(function () {
@@ -54,7 +54,7 @@
  >this : Symbol(this, Decl(lib.decorators.d.ts, --, --))
  
              });
-@@ -91,20 +91,20 @@
+@@= skipped -23, +23 lines =@@
  >args : Symbol(args, Decl(esDecorators-contextualTypes.2.ts, 24, 30))
  
              console.log(`<${source}>: I'm logging stuff from ${context.name.toString()}!`);

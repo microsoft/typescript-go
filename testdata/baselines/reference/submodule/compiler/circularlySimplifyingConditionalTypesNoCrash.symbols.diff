@@ -1,6 +1,6 @@
 --- old.circularlySimplifyingConditionalTypesNoCrash.symbols
 +++ new.circularlySimplifyingConditionalTypesNoCrash.symbols
-@@ -44,7 +44,7 @@
+@@= skipped -44, +44 lines =@@
  >P : Symbol(P, Decl(circularlySimplifyingConditionalTypesNoCrash.ts, 9, 25))
  
      defaultProps?: Partial<P>; // Inference target is also mapped _and_ optional

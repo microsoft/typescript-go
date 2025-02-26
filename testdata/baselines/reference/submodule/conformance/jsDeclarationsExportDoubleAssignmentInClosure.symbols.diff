@@ -1,6 +1,6 @@
 --- old.jsDeclarationsExportDoubleAssignmentInClosure.symbols
 +++ new.jsDeclarationsExportDoubleAssignmentInClosure.symbols
-@@ -6,10 +6,6 @@
+@@= skipped -6, +6 lines =@@
  >foo : Symbol(foo, Decl(index.js, 0, 0))
  
      module.exports = exports = function (o) {
@@ -11,7 +11,7 @@
  >o : Symbol(o, Decl(index.js, 2, 41))
  
          return (o == null) ? create(base) : defineProperties(Object(o), descriptors);
-@@ -24,8 +20,6 @@
+@@= skipped -18, +14 lines =@@
          // I have no idea what to put here
      }
      exports.methods = m;

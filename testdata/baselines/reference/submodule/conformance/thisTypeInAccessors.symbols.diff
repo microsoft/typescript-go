@@ -1,6 +1,6 @@
 --- old.thisTypeInAccessors.symbols
 +++ new.thisTypeInAccessors.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(thisTypeInAccessors.ts, 0, 0))
  
      n: number;
@@ -13,7 +13,7 @@
  }
  
  const explicit = {
-@@ -21,18 +21,18 @@
+@@= skipped -16, +16 lines =@@
  >x : Symbol(x, Decl(thisTypeInAccessors.ts, 6, 10), Decl(thisTypeInAccessors.ts, 7, 48))
  >this : Symbol(this, Decl(thisTypeInAccessors.ts, 7, 10))
  >Foo : Symbol(Foo, Decl(thisTypeInAccessors.ts, 0, 0))
@@ -36,7 +36,7 @@
  >n : Symbol(n, Decl(thisTypeInAccessors.ts, 8, 20))
  }
  const copiedFromGetter = {
-@@ -45,16 +45,16 @@
+@@= skipped -24, +24 lines =@@
  >x : Symbol(x, Decl(thisTypeInAccessors.ts, 11, 10), Decl(thisTypeInAccessors.ts, 12, 48))
  >this : Symbol(this, Decl(thisTypeInAccessors.ts, 12, 10))
  >Foo : Symbol(Foo, Decl(thisTypeInAccessors.ts, 0, 0))
@@ -57,7 +57,7 @@
  >n : Symbol(n, Decl(thisTypeInAccessors.ts, 13, 10))
  }
  const copiedFromSetter = {
-@@ -65,18 +65,18 @@
+@@= skipped -20, +20 lines =@@
  
      get x() { return this.n },
  >x : Symbol(x, Decl(thisTypeInAccessors.ts, 16, 10), Decl(thisTypeInAccessors.ts, 17, 30))
@@ -80,7 +80,7 @@
  >n : Symbol(n, Decl(thisTypeInAccessors.ts, 18, 20))
  }
  const copiedFromGetterUnannotated = {
-@@ -89,17 +89,17 @@
+@@= skipped -24, +24 lines =@@
  >x : Symbol(x, Decl(thisTypeInAccessors.ts, 21, 10), Decl(thisTypeInAccessors.ts, 22, 39))
  >this : Symbol(this, Decl(thisTypeInAccessors.ts, 22, 10))
  >Foo : Symbol(Foo, Decl(thisTypeInAccessors.ts, 0, 0))
@@ -102,7 +102,7 @@
  >n : Symbol(n, Decl(thisTypeInAccessors.ts, 23, 15))
  }
  
-@@ -107,36 +107,36 @@
+@@= skipped -18, +18 lines =@@
  >Explicit : Symbol(Explicit, Decl(thisTypeInAccessors.ts, 24, 1))
  
      n = 17;

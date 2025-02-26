@@ -1,6 +1,6 @@
 --- old.typeFromPrivatePropertyAssignmentJs.symbols
 +++ new.typeFromPrivatePropertyAssignmentJs.symbols
-@@ -8,24 +8,24 @@
+@@= skipped -8, +8 lines =@@
  
      /** @type {{ foo?: string } | undefined } */
      #a;

@@ -1,6 +1,6 @@
 --- old.internalAliasUninitializedModule.symbols
 +++ new.internalAliasUninitializedModule.symbols
-@@ -11,7 +11,7 @@
+@@= skipped -11, +11 lines =@@
  >I : Symbol(I, Decl(internalAliasUninitializedModule.ts, 1, 21))
  
              foo();
@@ -9,7 +9,7 @@
          }
      }
  }
-@@ -27,10 +27,10 @@
+@@= skipped -16, +16 lines =@@
      export var x: b.I;
  >x : Symbol(x, Decl(internalAliasUninitializedModule.ts, 10, 14))
  >b : Symbol(b, Decl(internalAliasUninitializedModule.ts, 8, 10))

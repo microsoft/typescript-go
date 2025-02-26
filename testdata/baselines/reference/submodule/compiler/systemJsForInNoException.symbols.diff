@@ -1,6 +1,6 @@
 --- old.systemJsForInNoException.symbols
 +++ new.systemJsForInNoException.symbols
-@@ -10,9 +10,9 @@
+@@= skipped -10, +10 lines =@@
  >obj : Symbol(obj, Decl(systemJsForInNoException.ts, 0, 12))
  
      console.log(obj[key]);

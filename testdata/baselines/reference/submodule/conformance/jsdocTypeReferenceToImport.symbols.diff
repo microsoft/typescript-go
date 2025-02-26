@@ -1,6 +1,6 @@
 --- old.jsdocTypeReferenceToImport.symbols
 +++ new.jsdocTypeReferenceToImport.symbols
-@@ -3,17 +3,9 @@
+@@= skipped -3, +3 lines =@@
  === jsdocTypeReferenceToImport.js ===
  const C = require('./ex').C;
  >C : Symbol(C, Decl(jsdocTypeReferenceToImport.js, 0, 5))
@@ -18,7 +18,7 @@
  
  /** @type {C} c */
  var c = new C()
-@@ -21,14 +13,10 @@
+@@= skipped -18, +10 lines =@@
  >C : Symbol(C, Decl(jsdocTypeReferenceToImport.js, 0, 5))
  
  c.start
@@ -33,7 +33,7 @@
  
  /** @type {D} c */
  var d = new D()
-@@ -36,23 +24,19 @@
+@@= skipped -15, +11 lines =@@
  >D : Symbol(D, Decl(jsdocTypeReferenceToImport.js, 1, 5))
  
  d.start

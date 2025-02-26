@@ -1,6 +1,6 @@
 --- old.parserParameterList8.symbols
 +++ new.parserParameterList8.symbols
-@@ -5,11 +5,11 @@
+@@= skipped -5, +5 lines =@@
  >C2 : Symbol(C2, Decl(parserParameterList8.ts, 0, 0))
  
   constructor(public p1:string); // ERROR

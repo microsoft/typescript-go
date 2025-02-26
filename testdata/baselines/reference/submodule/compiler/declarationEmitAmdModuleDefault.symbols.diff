@@ -1,6 +1,6 @@
 --- old.declarationEmitAmdModuleDefault.symbols
 +++ new.declarationEmitAmdModuleDefault.symbols
-@@ -2,5 +2,5 @@
+@@= skipped -2, +2 lines =@@
  
  === declarationEmitAmdModuleDefault.ts ===
  export default class DefaultClass { }

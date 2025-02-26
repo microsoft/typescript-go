@@ -1,6 +1,6 @@
 --- old.objectLiteralErrors.symbols
 +++ new.objectLiteralErrors.symbols
-@@ -34,23 +34,23 @@
+@@= skipped -34, +34 lines =@@
  
  var e7 = { 'a': 0, a: 0 };
  >e7 : Symbol(e7, Decl(objectLiteralErrors.ts, 7, 3))
@@ -32,7 +32,7 @@
  
  var e11 = { 1.0: 0, '1': 0 };
  >e11 : Symbol(e11, Decl(objectLiteralErrors.ts, 11, 3))
-@@ -69,13 +69,13 @@
+@@= skipped -35, +35 lines =@@
  
  var e14 = { 0: 0, 0x0: 0 };
  >e14 : Symbol(e14, Decl(objectLiteralErrors.ts, 14, 3), Decl(objectLiteralErrors.ts, 15, 3))
@@ -50,7 +50,7 @@
  
  var e15 = { "100": 0, 1e2: 0 };
  >e15 : Symbol(e15, Decl(objectLiteralErrors.ts, 16, 3))
-@@ -84,8 +84,8 @@
+@@= skipped -15, +15 lines =@@
  
  var e16 = { 0x20: 0, 3.2e1: 0 };
  >e16 : Symbol(e16, Decl(objectLiteralErrors.ts, 17, 3))
@@ -61,7 +61,7 @@
  
  var e17 = { a: 0, b: 1, a: 0 };
  >e17 : Symbol(e17, Decl(objectLiteralErrors.ts, 18, 3))
-@@ -122,27 +122,27 @@
+@@= skipped -38, +38 lines =@@
  var f6 = { a: 0, get 'a'() { return 0; } };
  >f6 : Symbol(f6, Decl(objectLiteralErrors.ts, 26, 3))
  >a : Symbol(a, Decl(objectLiteralErrors.ts, 26, 10))

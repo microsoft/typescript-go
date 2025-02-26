@@ -1,6 +1,6 @@
 --- old.constructorFunctions.symbols
 +++ new.constructorFunctions.symbols
-@@ -5,14 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >C1 : Symbol(C1, Decl(index.js, 0, 0))
  
      if (!(this instanceof C1)) return new C1();
@@ -15,7 +15,7 @@
  }
  
  const c1_v1 = C1();
-@@ -27,15 +23,10 @@
+@@= skipped -22, +18 lines =@@
  >C2 : Symbol(C2, Decl(index.js, 8, 3))
  
      if (!(this instanceof C2)) return new C2();
@@ -31,7 +31,7 @@
  };
  
  const c2_v1 = C2();
-@@ -51,7 +42,6 @@
+@@= skipped -24, +19 lines =@@
  >C3 : Symbol(C3, Decl(index.js, 14, 23))
  
      if (!(this instanceof C3)) return new C3();
@@ -39,7 +39,7 @@
  >C3 : Symbol(C3, Decl(index.js, 14, 23))
  >C3 : Symbol(C3, Decl(index.js, 14, 23))
  
-@@ -70,7 +60,6 @@
+@@= skipped -19, +18 lines =@@
  >C4 : Symbol(C4, Decl(index.js, 25, 3))
  
      if (!(this instanceof C4)) return new C4();
@@ -47,7 +47,7 @@
  >C4 : Symbol(C4, Decl(index.js, 25, 3))
  >C4 : Symbol(C4, Decl(index.js, 25, 3))
  
-@@ -108,9 +97,6 @@
+@@= skipped -38, +37 lines =@@
  >C6 : Symbol(C6, Decl(index.js, 38, 12))
  
    this.functions = [x => x, x => x + 1, x => x - 1]

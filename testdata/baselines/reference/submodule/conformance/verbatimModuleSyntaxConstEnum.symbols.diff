@@ -1,6 +1,6 @@
 --- old.verbatimModuleSyntaxConstEnum.symbols
 +++ new.verbatimModuleSyntaxConstEnum.symbols
-@@ -5,6 +5,6 @@
+@@= skipped -5, +5 lines =@@
  >E : Symbol(E, Decl(verbatimModuleSyntaxConstEnum.ts, 0, 0))
  
      A = 1,

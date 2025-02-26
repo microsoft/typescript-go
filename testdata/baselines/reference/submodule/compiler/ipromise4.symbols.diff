@@ -1,6 +1,6 @@
 --- old.ipromise4.symbols
 +++ new.ipromise4.symbols
-@@ -10,7 +10,7 @@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(ipromise4.ts, 1, 30))
  
          then<U>(success?: (value: T) => IPromise<U>, error?: (error: any) => IPromise<U>, progress?: (progress: any) => void ): Windows.Foundation.IPromise<U>;
@@ -9,7 +9,7 @@
  >U : Symbol(U, Decl(ipromise4.ts, 2, 13))
  >success : Symbol(success, Decl(ipromise4.ts, 2, 16))
  >value : Symbol(value, Decl(ipromise4.ts, 2, 27))
-@@ -29,7 +29,7 @@
+@@= skipped -19, +19 lines =@@
  >U : Symbol(U, Decl(ipromise4.ts, 2, 13))
  
          then<U>(success?: (value: T) => IPromise<U>, error?: (error: any) => U, progress?: (progress: any) => void ): Windows.Foundation.IPromise<U>;
@@ -18,7 +18,7 @@
  >U : Symbol(U, Decl(ipromise4.ts, 3, 13))
  >success : Symbol(success, Decl(ipromise4.ts, 3, 16))
  >value : Symbol(value, Decl(ipromise4.ts, 3, 27))
-@@ -47,7 +47,7 @@
+@@= skipped -18, +18 lines =@@
  >U : Symbol(U, Decl(ipromise4.ts, 3, 13))
  
          then<U>(success?: (value: T) => U, error?: (error: any) => IPromise<U>, progress?: (progress: any) => void ): Windows.Foundation.IPromise<U>;
@@ -27,7 +27,7 @@
  >U : Symbol(U, Decl(ipromise4.ts, 4, 13))
  >success : Symbol(success, Decl(ipromise4.ts, 4, 16))
  >value : Symbol(value, Decl(ipromise4.ts, 4, 27))
-@@ -65,7 +65,7 @@
+@@= skipped -18, +18 lines =@@
  >U : Symbol(U, Decl(ipromise4.ts, 4, 13))
  
          then<U>(success?: (value: T) => U, error?: (error: any) => U, progress?: (progress: any) => void ): Windows.Foundation.IPromise<U>;
@@ -36,7 +36,7 @@
  >U : Symbol(U, Decl(ipromise4.ts, 5, 13))
  >success : Symbol(success, Decl(ipromise4.ts, 5, 16))
  >value : Symbol(value, Decl(ipromise4.ts, 5, 27))
-@@ -82,7 +82,7 @@
+@@= skipped -17, +17 lines =@@
  >U : Symbol(U, Decl(ipromise4.ts, 5, 13))
  
          done? <U>(success?: (value: T) => any, error?: (error: any) => any, progress?: (progress: any) => void ): void;
@@ -45,7 +45,7 @@
  >U : Symbol(U, Decl(ipromise4.ts, 6, 15))
  >success : Symbol(success, Decl(ipromise4.ts, 6, 18))
  >value : Symbol(value, Decl(ipromise4.ts, 6, 29))
-@@ -97,22 +97,22 @@
+@@= skipped -15, +15 lines =@@
  var p: Windows.Foundation.IPromise<number> = null;
  >p : Symbol(p, Decl(ipromise4.ts, 10, 3))
  >Windows : Symbol(Windows, Decl(ipromise4.ts, 0, 0))

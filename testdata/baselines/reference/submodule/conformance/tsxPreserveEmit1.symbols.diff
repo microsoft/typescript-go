@@ -1,6 +1,6 @@
 --- old.tsxPreserveEmit1.symbols
 +++ new.tsxPreserveEmit1.symbols
-@@ -11,7 +11,7 @@
+@@= skipped -11, +11 lines =@@
  import Route = ReactRouter.Route;
  >Route : Symbol(Route, Decl(test.tsx, 2, 45))
  >ReactRouter : Symbol(ReactRouter, Decl(test.tsx, 1, 32))
@@ -9,7 +9,7 @@
  
  var routes1 = <Route />;
  >routes1 : Symbol(routes1, Decl(test.tsx, 6, 3))
-@@ -33,30 +33,3 @@
+@@= skipped -22, +22 lines =@@
  >X : Symbol(X, Decl(test.tsx, 9, 11))
  }
  

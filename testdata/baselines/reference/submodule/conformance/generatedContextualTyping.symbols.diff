@@ -1,6 +1,6 @@
 --- old.generatedContextualTyping.symbols
 +++ new.generatedContextualTyping.symbols
-@@ -3,22 +3,22 @@
+@@= skipped -3, +3 lines =@@
  === generatedContextualTyping.ts ===
  class Base { private p; }
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
@@ -27,7 +27,7 @@
  >n : Symbol(n, Decl(generatedContextualTyping.ts, 3, 27))
  >T : Symbol(T, Decl(generatedContextualTyping.ts, 3, 17))
  
-@@ -115,21 +115,21 @@
+@@= skipped -112, +112 lines =@@
  
  class x13 { member: () => Base[] = () => [d1, d2] }
  >x13 : Symbol(x13, Decl(generatedContextualTyping.ts, 16, 60))
@@ -52,7 +52,7 @@
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >named : Symbol(named, Decl(generatedContextualTyping.ts, 19, 34))
  >d1 : Symbol(d1, Decl(generatedContextualTyping.ts, 4, 19))
-@@ -137,21 +137,21 @@
+@@= skipped -22, +22 lines =@@
  
  class x16 { member: { (): Base[]; } = () => [d1, d2] }
  >x16 : Symbol(x16, Decl(generatedContextualTyping.ts, 19, 73))
@@ -77,7 +77,7 @@
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >named : Symbol(named, Decl(generatedContextualTyping.ts, 22, 37))
  >d1 : Symbol(d1, Decl(generatedContextualTyping.ts, 4, 19))
-@@ -159,14 +159,14 @@
+@@= skipped -22, +22 lines =@@
  
  class x19 { member: Base[] = [d1, d2] }
  >x19 : Symbol(x19, Decl(generatedContextualTyping.ts, 22, 76))
@@ -94,7 +94,7 @@
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >d1 : Symbol(d1, Decl(generatedContextualTyping.ts, 4, 19))
-@@ -174,7 +174,7 @@
+@@= skipped -15, +15 lines =@@
  
  class x21 { member: { [n: number]: Base; } = [d1, d2] }
  >x21 : Symbol(x21, Decl(generatedContextualTyping.ts, 24, 44))
@@ -103,7 +103,7 @@
  >n : Symbol(n, Decl(generatedContextualTyping.ts, 25, 23))
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >d1 : Symbol(d1, Decl(generatedContextualTyping.ts, 4, 19))
-@@ -182,7 +182,7 @@
+@@= skipped -8, +8 lines =@@
  
  class x22 { member: {n: Base[]; }  = { n: [d1, d2] } }
  >x22 : Symbol(x22, Decl(generatedContextualTyping.ts, 25, 55))
@@ -112,7 +112,7 @@
  >n : Symbol(n, Decl(generatedContextualTyping.ts, 26, 21))
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >n : Symbol(n, Decl(generatedContextualTyping.ts, 26, 38))
-@@ -191,7 +191,7 @@
+@@= skipped -9, +9 lines =@@
  
  class x23 { member: (s: Base[]) => any = n => { var n: Base[]; return null; } }
  >x23 : Symbol(x23, Decl(generatedContextualTyping.ts, 26, 54))
@@ -121,7 +121,7 @@
  >s : Symbol(s, Decl(generatedContextualTyping.ts, 27, 21))
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >n : Symbol(n, Decl(generatedContextualTyping.ts, 27, 40), Decl(generatedContextualTyping.ts, 27, 51))
-@@ -200,7 +200,7 @@
+@@= skipped -9, +9 lines =@@
  
  class x24 { member: Genric<Base> = { func: n => { return [d1, d2]; } } }
  >x24 : Symbol(x24, Decl(generatedContextualTyping.ts, 27, 79))
@@ -130,7 +130,7 @@
  >Genric : Symbol(Genric, Decl(generatedContextualTyping.ts, 2, 42))
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >func : Symbol(func, Decl(generatedContextualTyping.ts, 28, 36))
-@@ -210,21 +210,21 @@
+@@= skipped -10, +10 lines =@@
  
  class x25 { private member: () => Base[] = () => [d1, d2] }
  >x25 : Symbol(x25, Decl(generatedContextualTyping.ts, 28, 72))
@@ -155,7 +155,7 @@
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >named : Symbol(named, Decl(generatedContextualTyping.ts, 31, 42))
  >d1 : Symbol(d1, Decl(generatedContextualTyping.ts, 4, 19))
-@@ -232,21 +232,21 @@
+@@= skipped -22, +22 lines =@@
  
  class x28 { private member: { (): Base[]; } = () => [d1, d2] }
  >x28 : Symbol(x28, Decl(generatedContextualTyping.ts, 31, 81))
@@ -180,7 +180,7 @@
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >named : Symbol(named, Decl(generatedContextualTyping.ts, 34, 45))
  >d1 : Symbol(d1, Decl(generatedContextualTyping.ts, 4, 19))
-@@ -254,14 +254,14 @@
+@@= skipped -22, +22 lines =@@
  
  class x31 { private member: Base[] = [d1, d2] }
  >x31 : Symbol(x31, Decl(generatedContextualTyping.ts, 34, 84))
@@ -197,7 +197,7 @@
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >d1 : Symbol(d1, Decl(generatedContextualTyping.ts, 4, 19))
-@@ -269,7 +269,7 @@
+@@= skipped -15, +15 lines =@@
  
  class x33 { private member: { [n: number]: Base; } = [d1, d2] }
  >x33 : Symbol(x33, Decl(generatedContextualTyping.ts, 36, 52))
@@ -206,7 +206,7 @@
  >n : Symbol(n, Decl(generatedContextualTyping.ts, 37, 31))
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >d1 : Symbol(d1, Decl(generatedContextualTyping.ts, 4, 19))
-@@ -277,7 +277,7 @@
+@@= skipped -8, +8 lines =@@
  
  class x34 { private member: {n: Base[]; }  = { n: [d1, d2] } }
  >x34 : Symbol(x34, Decl(generatedContextualTyping.ts, 37, 63))
@@ -215,7 +215,7 @@
  >n : Symbol(n, Decl(generatedContextualTyping.ts, 38, 29))
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >n : Symbol(n, Decl(generatedContextualTyping.ts, 38, 46))
-@@ -286,7 +286,7 @@
+@@= skipped -9, +9 lines =@@
  
  class x35 { private member: (s: Base[]) => any = n => { var n: Base[]; return null; } }
  >x35 : Symbol(x35, Decl(generatedContextualTyping.ts, 38, 62))
@@ -224,7 +224,7 @@
  >s : Symbol(s, Decl(generatedContextualTyping.ts, 39, 29))
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >n : Symbol(n, Decl(generatedContextualTyping.ts, 39, 48), Decl(generatedContextualTyping.ts, 39, 59))
-@@ -295,7 +295,7 @@
+@@= skipped -9, +9 lines =@@
  
  class x36 { private member: Genric<Base> = { func: n => { return [d1, d2]; } } }
  >x36 : Symbol(x36, Decl(generatedContextualTyping.ts, 39, 87))
@@ -233,7 +233,7 @@
  >Genric : Symbol(Genric, Decl(generatedContextualTyping.ts, 2, 42))
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >func : Symbol(func, Decl(generatedContextualTyping.ts, 40, 44))
-@@ -305,21 +305,21 @@
+@@= skipped -10, +10 lines =@@
  
  class x37 { public member: () => Base[] = () => [d1, d2] }
  >x37 : Symbol(x37, Decl(generatedContextualTyping.ts, 40, 80))
@@ -258,7 +258,7 @@
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >named : Symbol(named, Decl(generatedContextualTyping.ts, 43, 41))
  >d1 : Symbol(d1, Decl(generatedContextualTyping.ts, 4, 19))
-@@ -327,21 +327,21 @@
+@@= skipped -22, +22 lines =@@
  
  class x40 { public member: { (): Base[]; } = () => [d1, d2] }
  >x40 : Symbol(x40, Decl(generatedContextualTyping.ts, 43, 80))
@@ -283,7 +283,7 @@
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >named : Symbol(named, Decl(generatedContextualTyping.ts, 46, 44))
  >d1 : Symbol(d1, Decl(generatedContextualTyping.ts, 4, 19))
-@@ -349,14 +349,14 @@
+@@= skipped -22, +22 lines =@@
  
  class x43 { public member: Base[] = [d1, d2] }
  >x43 : Symbol(x43, Decl(generatedContextualTyping.ts, 46, 83))
@@ -300,7 +300,7 @@
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >d1 : Symbol(d1, Decl(generatedContextualTyping.ts, 4, 19))
-@@ -364,7 +364,7 @@
+@@= skipped -15, +15 lines =@@
  
  class x45 { public member: { [n: number]: Base; } = [d1, d2] }
  >x45 : Symbol(x45, Decl(generatedContextualTyping.ts, 48, 51))
@@ -309,7 +309,7 @@
  >n : Symbol(n, Decl(generatedContextualTyping.ts, 49, 30))
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >d1 : Symbol(d1, Decl(generatedContextualTyping.ts, 4, 19))
-@@ -372,7 +372,7 @@
+@@= skipped -8, +8 lines =@@
  
  class x46 { public member: {n: Base[]; }  = { n: [d1, d2] } }
  >x46 : Symbol(x46, Decl(generatedContextualTyping.ts, 49, 62))
@@ -318,7 +318,7 @@
  >n : Symbol(n, Decl(generatedContextualTyping.ts, 50, 28))
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >n : Symbol(n, Decl(generatedContextualTyping.ts, 50, 45))
-@@ -381,7 +381,7 @@
+@@= skipped -9, +9 lines =@@
  
  class x47 { public member: (s: Base[]) => any = n => { var n: Base[]; return null; } }
  >x47 : Symbol(x47, Decl(generatedContextualTyping.ts, 50, 61))
@@ -327,7 +327,7 @@
  >s : Symbol(s, Decl(generatedContextualTyping.ts, 51, 28))
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >n : Symbol(n, Decl(generatedContextualTyping.ts, 51, 47), Decl(generatedContextualTyping.ts, 51, 58))
-@@ -390,7 +390,7 @@
+@@= skipped -9, +9 lines =@@
  
  class x48 { public member: Genric<Base> = { func: n => { return [d1, d2]; } } }
  >x48 : Symbol(x48, Decl(generatedContextualTyping.ts, 51, 86))
@@ -336,7 +336,7 @@
  >Genric : Symbol(Genric, Decl(generatedContextualTyping.ts, 2, 42))
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >func : Symbol(func, Decl(generatedContextualTyping.ts, 52, 43))
-@@ -400,21 +400,21 @@
+@@= skipped -10, +10 lines =@@
  
  class x49 { static member: () => Base[] = () => [d1, d2] }
  >x49 : Symbol(x49, Decl(generatedContextualTyping.ts, 52, 79))
@@ -361,7 +361,7 @@
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >named : Symbol(named, Decl(generatedContextualTyping.ts, 55, 41))
  >d1 : Symbol(d1, Decl(generatedContextualTyping.ts, 4, 19))
-@@ -422,21 +422,21 @@
+@@= skipped -22, +22 lines =@@
  
  class x52 { static member: { (): Base[]; } = () => [d1, d2] }
  >x52 : Symbol(x52, Decl(generatedContextualTyping.ts, 55, 80))
@@ -386,7 +386,7 @@
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >named : Symbol(named, Decl(generatedContextualTyping.ts, 58, 44))
  >d1 : Symbol(d1, Decl(generatedContextualTyping.ts, 4, 19))
-@@ -444,14 +444,14 @@
+@@= skipped -22, +22 lines =@@
  
  class x55 { static member: Base[] = [d1, d2] }
  >x55 : Symbol(x55, Decl(generatedContextualTyping.ts, 58, 83))
@@ -403,7 +403,7 @@
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >d1 : Symbol(d1, Decl(generatedContextualTyping.ts, 4, 19))
-@@ -459,7 +459,7 @@
+@@= skipped -15, +15 lines =@@
  
  class x57 { static member: { [n: number]: Base; } = [d1, d2] }
  >x57 : Symbol(x57, Decl(generatedContextualTyping.ts, 60, 51))
@@ -412,7 +412,7 @@
  >n : Symbol(n, Decl(generatedContextualTyping.ts, 61, 30))
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >d1 : Symbol(d1, Decl(generatedContextualTyping.ts, 4, 19))
-@@ -467,7 +467,7 @@
+@@= skipped -8, +8 lines =@@
  
  class x58 { static member: {n: Base[]; }  = { n: [d1, d2] } }
  >x58 : Symbol(x58, Decl(generatedContextualTyping.ts, 61, 62))
@@ -421,7 +421,7 @@
  >n : Symbol(n, Decl(generatedContextualTyping.ts, 62, 28))
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >n : Symbol(n, Decl(generatedContextualTyping.ts, 62, 45))
-@@ -476,7 +476,7 @@
+@@= skipped -9, +9 lines =@@
  
  class x59 { static member: (s: Base[]) => any = n => { var n: Base[]; return null; } }
  >x59 : Symbol(x59, Decl(generatedContextualTyping.ts, 62, 61))
@@ -430,7 +430,7 @@
  >s : Symbol(s, Decl(generatedContextualTyping.ts, 63, 28))
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >n : Symbol(n, Decl(generatedContextualTyping.ts, 63, 47), Decl(generatedContextualTyping.ts, 63, 58))
-@@ -485,7 +485,7 @@
+@@= skipped -9, +9 lines =@@
  
  class x60 { static member: Genric<Base> = { func: n => { return [d1, d2]; } } }
  >x60 : Symbol(x60, Decl(generatedContextualTyping.ts, 63, 86))
@@ -439,7 +439,7 @@
  >Genric : Symbol(Genric, Decl(generatedContextualTyping.ts, 2, 42))
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >func : Symbol(func, Decl(generatedContextualTyping.ts, 64, 43))
-@@ -495,21 +495,21 @@
+@@= skipped -10, +10 lines =@@
  
  class x61 { private static member: () => Base[] = () => [d1, d2] }
  >x61 : Symbol(x61, Decl(generatedContextualTyping.ts, 64, 79))
@@ -464,7 +464,7 @@
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >named : Symbol(named, Decl(generatedContextualTyping.ts, 67, 49))
  >d1 : Symbol(d1, Decl(generatedContextualTyping.ts, 4, 19))
-@@ -517,21 +517,21 @@
+@@= skipped -22, +22 lines =@@
  
  class x64 { private static member: { (): Base[]; } = () => [d1, d2] }
  >x64 : Symbol(x64, Decl(generatedContextualTyping.ts, 67, 88))
@@ -489,7 +489,7 @@
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >named : Symbol(named, Decl(generatedContextualTyping.ts, 70, 52))
  >d1 : Symbol(d1, Decl(generatedContextualTyping.ts, 4, 19))
-@@ -539,14 +539,14 @@
+@@= skipped -22, +22 lines =@@
  
  class x67 { private static member: Base[] = [d1, d2] }
  >x67 : Symbol(x67, Decl(generatedContextualTyping.ts, 70, 91))
@@ -506,7 +506,7 @@
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >d1 : Symbol(d1, Decl(generatedContextualTyping.ts, 4, 19))
-@@ -554,7 +554,7 @@
+@@= skipped -15, +15 lines =@@
  
  class x69 { private static member: { [n: number]: Base; } = [d1, d2] }
  >x69 : Symbol(x69, Decl(generatedContextualTyping.ts, 72, 59))
@@ -515,7 +515,7 @@
  >n : Symbol(n, Decl(generatedContextualTyping.ts, 73, 38))
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >d1 : Symbol(d1, Decl(generatedContextualTyping.ts, 4, 19))
-@@ -562,7 +562,7 @@
+@@= skipped -8, +8 lines =@@
  
  class x70 { private static member: {n: Base[]; }  = { n: [d1, d2] } }
  >x70 : Symbol(x70, Decl(generatedContextualTyping.ts, 73, 70))
@@ -524,7 +524,7 @@
  >n : Symbol(n, Decl(generatedContextualTyping.ts, 74, 36))
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >n : Symbol(n, Decl(generatedContextualTyping.ts, 74, 53))
-@@ -571,7 +571,7 @@
+@@= skipped -9, +9 lines =@@
  
  class x71 { private static member: (s: Base[]) => any = n => { var n: Base[]; return null; } }
  >x71 : Symbol(x71, Decl(generatedContextualTyping.ts, 74, 69))
@@ -533,7 +533,7 @@
  >s : Symbol(s, Decl(generatedContextualTyping.ts, 75, 36))
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >n : Symbol(n, Decl(generatedContextualTyping.ts, 75, 55), Decl(generatedContextualTyping.ts, 75, 66))
-@@ -580,7 +580,7 @@
+@@= skipped -9, +9 lines =@@
  
  class x72 { private static member: Genric<Base> = { func: n => { return [d1, d2]; } } }
  >x72 : Symbol(x72, Decl(generatedContextualTyping.ts, 75, 94))
@@ -542,7 +542,7 @@
  >Genric : Symbol(Genric, Decl(generatedContextualTyping.ts, 2, 42))
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >func : Symbol(func, Decl(generatedContextualTyping.ts, 76, 51))
-@@ -590,21 +590,21 @@
+@@= skipped -10, +10 lines =@@
  
  class x73 { public static member: () => Base[] = () => [d1, d2] }
  >x73 : Symbol(x73, Decl(generatedContextualTyping.ts, 76, 87))
@@ -567,7 +567,7 @@
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >named : Symbol(named, Decl(generatedContextualTyping.ts, 79, 48))
  >d1 : Symbol(d1, Decl(generatedContextualTyping.ts, 4, 19))
-@@ -612,21 +612,21 @@
+@@= skipped -22, +22 lines =@@
  
  class x76 { public static member: { (): Base[]; } = () => [d1, d2] }
  >x76 : Symbol(x76, Decl(generatedContextualTyping.ts, 79, 87))
@@ -592,7 +592,7 @@
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >named : Symbol(named, Decl(generatedContextualTyping.ts, 82, 51))
  >d1 : Symbol(d1, Decl(generatedContextualTyping.ts, 4, 19))
-@@ -634,14 +634,14 @@
+@@= skipped -22, +22 lines =@@
  
  class x79 { public static member: Base[] = [d1, d2] }
  >x79 : Symbol(x79, Decl(generatedContextualTyping.ts, 82, 90))
@@ -609,7 +609,7 @@
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >d1 : Symbol(d1, Decl(generatedContextualTyping.ts, 4, 19))
-@@ -649,7 +649,7 @@
+@@= skipped -15, +15 lines =@@
  
  class x81 { public static member: { [n: number]: Base; } = [d1, d2] }
  >x81 : Symbol(x81, Decl(generatedContextualTyping.ts, 84, 58))
@@ -618,7 +618,7 @@
  >n : Symbol(n, Decl(generatedContextualTyping.ts, 85, 37))
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >d1 : Symbol(d1, Decl(generatedContextualTyping.ts, 4, 19))
-@@ -657,7 +657,7 @@
+@@= skipped -8, +8 lines =@@
  
  class x82 { public static member: {n: Base[]; }  = { n: [d1, d2] } }
  >x82 : Symbol(x82, Decl(generatedContextualTyping.ts, 85, 69))
@@ -627,7 +627,7 @@
  >n : Symbol(n, Decl(generatedContextualTyping.ts, 86, 35))
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >n : Symbol(n, Decl(generatedContextualTyping.ts, 86, 52))
-@@ -666,7 +666,7 @@
+@@= skipped -9, +9 lines =@@
  
  class x83 { public static member: (s: Base[]) => any = n => { var n: Base[]; return null; } }
  >x83 : Symbol(x83, Decl(generatedContextualTyping.ts, 86, 68))
@@ -636,7 +636,7 @@
  >s : Symbol(s, Decl(generatedContextualTyping.ts, 87, 35))
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >n : Symbol(n, Decl(generatedContextualTyping.ts, 87, 54), Decl(generatedContextualTyping.ts, 87, 65))
-@@ -675,7 +675,7 @@
+@@= skipped -9, +9 lines =@@
  
  class x84 { public static member: Genric<Base> = { func: n => { return [d1, d2]; } } }
  >x84 : Symbol(x84, Decl(generatedContextualTyping.ts, 87, 93))
@@ -645,7 +645,7 @@
  >Genric : Symbol(Genric, Decl(generatedContextualTyping.ts, 2, 42))
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >func : Symbol(func, Decl(generatedContextualTyping.ts, 88, 50))
-@@ -780,21 +780,21 @@
+@@= skipped -105, +105 lines =@@
  
  class x97 { constructor(public parm: () => Base[] = () => [d1, d2]) { } }
  >x97 : Symbol(x97, Decl(generatedContextualTyping.ts, 100, 87))
@@ -670,7 +670,7 @@
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >named : Symbol(named, Decl(generatedContextualTyping.ts, 103, 51))
  >d1 : Symbol(d1, Decl(generatedContextualTyping.ts, 4, 19))
-@@ -802,21 +802,21 @@
+@@= skipped -22, +22 lines =@@
  
  class x100 { constructor(public parm: { (): Base[]; } = () => [d1, d2]) { } }
  >x100 : Symbol(x100, Decl(generatedContextualTyping.ts, 103, 95))
@@ -695,7 +695,7 @@
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >named : Symbol(named, Decl(generatedContextualTyping.ts, 106, 55))
  >d1 : Symbol(d1, Decl(generatedContextualTyping.ts, 4, 19))
-@@ -824,14 +824,14 @@
+@@= skipped -22, +22 lines =@@
  
  class x103 { constructor(public parm: Base[] = [d1, d2]) { } }
  >x103 : Symbol(x103, Decl(generatedContextualTyping.ts, 106, 99))
@@ -712,7 +712,7 @@
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >d1 : Symbol(d1, Decl(generatedContextualTyping.ts, 4, 19))
-@@ -839,7 +839,7 @@
+@@= skipped -15, +15 lines =@@
  
  class x105 { constructor(public parm: { [n: number]: Base; } = [d1, d2]) { } }
  >x105 : Symbol(x105, Decl(generatedContextualTyping.ts, 108, 67))
@@ -721,7 +721,7 @@
  >n : Symbol(n, Decl(generatedContextualTyping.ts, 109, 41))
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >d1 : Symbol(d1, Decl(generatedContextualTyping.ts, 4, 19))
-@@ -847,7 +847,7 @@
+@@= skipped -8, +8 lines =@@
  
  class x106 { constructor(public parm: {n: Base[]; }  = { n: [d1, d2] }) { } }
  >x106 : Symbol(x106, Decl(generatedContextualTyping.ts, 109, 78))
@@ -730,7 +730,7 @@
  >n : Symbol(n, Decl(generatedContextualTyping.ts, 110, 39))
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >n : Symbol(n, Decl(generatedContextualTyping.ts, 110, 56))
-@@ -856,7 +856,7 @@
+@@= skipped -9, +9 lines =@@
  
  class x107 { constructor(public parm: (s: Base[]) => any = n => { var n: Base[]; return null; }) { } }
  >x107 : Symbol(x107, Decl(generatedContextualTyping.ts, 110, 77))
@@ -739,7 +739,7 @@
  >s : Symbol(s, Decl(generatedContextualTyping.ts, 111, 39))
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >n : Symbol(n, Decl(generatedContextualTyping.ts, 111, 58), Decl(generatedContextualTyping.ts, 111, 69))
-@@ -865,7 +865,7 @@
+@@= skipped -9, +9 lines =@@
  
  class x108 { constructor(public parm: Genric<Base> = { func: n => { return [d1, d2]; } }) { } }
  >x108 : Symbol(x108, Decl(generatedContextualTyping.ts, 111, 102))
@@ -748,7 +748,7 @@
  >Genric : Symbol(Genric, Decl(generatedContextualTyping.ts, 2, 42))
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >func : Symbol(func, Decl(generatedContextualTyping.ts, 112, 54))
-@@ -875,21 +875,21 @@
+@@= skipped -10, +10 lines =@@
  
  class x109 { constructor(private parm: () => Base[] = () => [d1, d2]) { } }
  >x109 : Symbol(x109, Decl(generatedContextualTyping.ts, 112, 95))
@@ -773,7 +773,7 @@
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >named : Symbol(named, Decl(generatedContextualTyping.ts, 115, 53))
  >d1 : Symbol(d1, Decl(generatedContextualTyping.ts, 4, 19))
-@@ -897,21 +897,21 @@
+@@= skipped -22, +22 lines =@@
  
  class x112 { constructor(private parm: { (): Base[]; } = () => [d1, d2]) { } }
  >x112 : Symbol(x112, Decl(generatedContextualTyping.ts, 115, 97))
@@ -798,7 +798,7 @@
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >named : Symbol(named, Decl(generatedContextualTyping.ts, 118, 56))
  >d1 : Symbol(d1, Decl(generatedContextualTyping.ts, 4, 19))
-@@ -919,14 +919,14 @@
+@@= skipped -22, +22 lines =@@
  
  class x115 { constructor(private parm: Base[] = [d1, d2]) { } }
  >x115 : Symbol(x115, Decl(generatedContextualTyping.ts, 118, 100))
@@ -815,7 +815,7 @@
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >d1 : Symbol(d1, Decl(generatedContextualTyping.ts, 4, 19))
-@@ -934,7 +934,7 @@
+@@= skipped -15, +15 lines =@@
  
  class x117 { constructor(private parm: { [n: number]: Base; } = [d1, d2]) { } }
  >x117 : Symbol(x117, Decl(generatedContextualTyping.ts, 120, 68))
@@ -824,7 +824,7 @@
  >n : Symbol(n, Decl(generatedContextualTyping.ts, 121, 42))
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >d1 : Symbol(d1, Decl(generatedContextualTyping.ts, 4, 19))
-@@ -942,7 +942,7 @@
+@@= skipped -8, +8 lines =@@
  
  class x118 { constructor(private parm: {n: Base[]; }  = { n: [d1, d2] }) { } }
  >x118 : Symbol(x118, Decl(generatedContextualTyping.ts, 121, 79))
@@ -833,7 +833,7 @@
  >n : Symbol(n, Decl(generatedContextualTyping.ts, 122, 40))
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >n : Symbol(n, Decl(generatedContextualTyping.ts, 122, 57))
-@@ -951,7 +951,7 @@
+@@= skipped -9, +9 lines =@@
  
  class x119 { constructor(private parm: (s: Base[]) => any = n => { var n: Base[]; return null; }) { } }
  >x119 : Symbol(x119, Decl(generatedContextualTyping.ts, 122, 78))
@@ -842,7 +842,7 @@
  >s : Symbol(s, Decl(generatedContextualTyping.ts, 123, 40))
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))
  >n : Symbol(n, Decl(generatedContextualTyping.ts, 123, 59), Decl(generatedContextualTyping.ts, 123, 70))
-@@ -960,7 +960,7 @@
+@@= skipped -9, +9 lines =@@
  
  class x120 { constructor(private parm: Genric<Base> = { func: n => { return [d1, d2]; } }) { } }
  >x120 : Symbol(x120, Decl(generatedContextualTyping.ts, 123, 103))

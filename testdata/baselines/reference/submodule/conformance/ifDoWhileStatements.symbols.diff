@@ -1,6 +1,6 @@
 --- old.ifDoWhileStatements.symbols
 +++ new.ifDoWhileStatements.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >I : Symbol(I, Decl(ifDoWhileStatements.ts, 0, 0))
  
      id: number;
@@ -9,7 +9,7 @@
  }
  
  class C implements I {
-@@ -13,10 +13,10 @@
+@@= skipped -8, +8 lines =@@
  >I : Symbol(I, Decl(ifDoWhileStatements.ts, 0, 0))
  
      id: number;
@@ -22,7 +22,7 @@
  }
  
  class C2 extends C {
-@@ -24,7 +24,7 @@
+@@= skipped -11, +11 lines =@@
  >C : Symbol(C, Decl(ifDoWhileStatements.ts, 2, 1))
  
      valid: boolean;
@@ -31,7 +31,7 @@
  }
  
  class D<T>{
-@@ -32,16 +32,16 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(ifDoWhileStatements.ts, 13, 8))
  
      source: T;
@@ -51,7 +51,7 @@
  >D : Symbol(D, Decl(ifDoWhileStatements.ts, 11, 1))
  >D : Symbol(D, Decl(ifDoWhileStatements.ts, 11, 1))
  >T : Symbol(T, Decl(ifDoWhileStatements.ts, 13, 8))
-@@ -63,15 +63,15 @@
+@@= skipped -31, +31 lines =@@
  >A : Symbol(A, Decl(ifDoWhileStatements.ts, 22, 10))
  
          name: string;
@@ -70,7 +70,7 @@
  }
  
  module N {
-@@ -81,15 +81,15 @@
+@@= skipped -18, +18 lines =@@
  >A : Symbol(A, Decl(ifDoWhileStatements.ts, 30, 10))
  
          id: number;

@@ -1,6 +1,6 @@
 --- old.intersectionsAndOptionalProperties.symbols
 +++ new.intersectionsAndOptionalProperties.symbols
-@@ -30,10 +30,10 @@
+@@= skipped -30, +30 lines =@@
  >To : Symbol(To, Decl(intersectionsAndOptionalProperties.ts, 5, 6))
  
      field?: number;
@@ -13,7 +13,7 @@
  }
  
  type From =  { field: null } & Omit<To, 'field'>;
-@@ -56,9 +56,9 @@
+@@= skipped -26, +26 lines =@@
  >v : Symbol(v, Decl(intersectionsAndOptionalProperties.ts, 16, 13))
  
      x.field = v.field; // Error

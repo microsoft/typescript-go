@@ -1,6 +1,6 @@
 --- old.constLocalsInFunctionExpressions.symbols
 +++ new.constLocalsInFunctionExpressions.symbols
-@@ -16,9 +16,9 @@
+@@= skipped -16, +16 lines =@@
  
          const f = () => x.length;
  >f : Symbol(f, Decl(constLocalsInFunctionExpressions.ts, 5, 13))
@@ -12,7 +12,7 @@
      }
  }
  
-@@ -36,9 +36,9 @@
+@@= skipped -20, +20 lines =@@
      }
      const f = () => x.length;
  >f : Symbol(f, Decl(constLocalsInFunctionExpressions.ts, 14, 9))
@@ -24,7 +24,7 @@
  }
  
  function f3() {
-@@ -53,9 +53,9 @@
+@@= skipped -17, +17 lines =@@
  
          const f = function() { return x.length; };
  >f : Symbol(f, Decl(constLocalsInFunctionExpressions.ts, 20, 13))
@@ -36,7 +36,7 @@
      }
  }
  
-@@ -73,9 +73,9 @@
+@@= skipped -20, +20 lines =@@
      }
      const f = function() { return x.length; };
  >f : Symbol(f, Decl(constLocalsInFunctionExpressions.ts, 29, 9))
@@ -48,7 +48,7 @@
  }
  
  function f5() {
-@@ -90,8 +90,8 @@
+@@= skipped -17, +17 lines =@@
  
          const f = () => () => x.length;
  >f : Symbol(f, Decl(constLocalsInFunctionExpressions.ts, 35, 13))

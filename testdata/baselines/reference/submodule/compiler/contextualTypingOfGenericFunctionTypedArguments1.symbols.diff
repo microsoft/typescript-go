@@ -1,6 +1,6 @@
 --- old.contextualTypingOfGenericFunctionTypedArguments1.symbols
 +++ new.contextualTypingOfGenericFunctionTypedArguments1.symbols
-@@ -6,15 +6,15 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(contextualTypingOfGenericFunctionTypedArguments1.ts, 0, 21))
  
      length: number;
@@ -19,7 +19,7 @@
  >x : Symbol(x, Decl(contextualTypingOfGenericFunctionTypedArguments1.ts, 3, 11))
  >T : Symbol(T, Decl(contextualTypingOfGenericFunctionTypedArguments1.ts, 0, 21))
  }
-@@ -23,7 +23,7 @@
+@@= skipped -17, +17 lines =@@
  >Combinators : Symbol(Combinators, Decl(contextualTypingOfGenericFunctionTypedArguments1.ts, 4, 1))
  
      forEach<T>(c: Collection<T>, f: (x: T) => Date): void;
@@ -28,7 +28,7 @@
  >T : Symbol(T, Decl(contextualTypingOfGenericFunctionTypedArguments1.ts, 7, 12))
  >c : Symbol(c, Decl(contextualTypingOfGenericFunctionTypedArguments1.ts, 7, 15))
  >Collection : Symbol(Collection, Decl(contextualTypingOfGenericFunctionTypedArguments1.ts, 0, 0))
-@@ -46,26 +46,26 @@
+@@= skipped -23, +23 lines =@@
  var f = (x: number) => { return x.toFixed() };
  >f : Symbol(f, Decl(contextualTypingOfGenericFunctionTypedArguments1.ts, 14, 3))
  >x : Symbol(x, Decl(contextualTypingOfGenericFunctionTypedArguments1.ts, 14, 9))

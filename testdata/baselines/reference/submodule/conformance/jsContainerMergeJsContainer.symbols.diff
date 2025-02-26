@@ -1,6 +1,6 @@
 --- old.jsContainerMergeJsContainer.symbols
 +++ new.jsContainerMergeJsContainer.symbols
-@@ -2,18 +2,12 @@
+@@= skipped -2, +2 lines =@@
  
  === a.js ===
  const a = {};

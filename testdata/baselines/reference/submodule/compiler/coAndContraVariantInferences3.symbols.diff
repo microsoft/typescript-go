@@ -1,6 +1,6 @@
 --- old.coAndContraVariantInferences3.symbols
 +++ new.coAndContraVariantInferences3.symbols
-@@ -5,13 +5,13 @@
+@@= skipped -5, +5 lines =@@
  >DeprecationOptions : Symbol(DeprecationOptions, Decl(coAndContraVariantInferences3.ts, 0, 0))
  
      message?: string;
@@ -17,7 +17,7 @@
  }
  
  type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends ((k: infer I) => void) ? I : never;
-@@ -120,7 +120,7 @@
+@@= skipped -115, +115 lines =@@
  >OverloadBuilder : Symbol(OverloadBuilder, Decl(coAndContraVariantInferences3.ts, 24, 122))
  
      overload<T extends OverloadDefinitions>(overloads: T): BindableOverloadBuilder<T>;
@@ -26,7 +26,7 @@
  >T : Symbol(T, Decl(coAndContraVariantInferences3.ts, 27, 13))
  >OverloadDefinitions : Symbol(OverloadDefinitions, Decl(coAndContraVariantInferences3.ts, 6, 114))
  >overloads : Symbol(overloads, Decl(coAndContraVariantInferences3.ts, 27, 44))
-@@ -135,7 +135,7 @@
+@@= skipped -15, +15 lines =@@
  >OverloadDefinitions : Symbol(OverloadDefinitions, Decl(coAndContraVariantInferences3.ts, 6, 114))
  
      bind(binder: OverloadBinders<T>): BoundOverloadBuilder<T>;
@@ -35,7 +35,7 @@
  >binder : Symbol(binder, Decl(coAndContraVariantInferences3.ts, 31, 9))
  >OverloadBinders : Symbol(OverloadBinders, Decl(coAndContraVariantInferences3.ts, 16, 87))
  >T : Symbol(T, Decl(coAndContraVariantInferences3.ts, 30, 34))
-@@ -149,7 +149,7 @@
+@@= skipped -14, +14 lines =@@
  >OverloadDefinitions : Symbol(OverloadDefinitions, Decl(coAndContraVariantInferences3.ts, 6, 114))
  
      finish(): OverloadFunction<T>;
@@ -44,7 +44,7 @@
  >OverloadFunction : Symbol(OverloadFunction, Decl(coAndContraVariantInferences3.ts, 14, 120))
  >T : Symbol(T, Decl(coAndContraVariantInferences3.ts, 34, 36))
  }
-@@ -162,7 +162,7 @@
+@@= skipped -13, +13 lines =@@
  >T : Symbol(T, Decl(coAndContraVariantInferences3.ts, 38, 31))
  
      deprecate(deprecations: OverloadDeprecations<T>): FinishableOverloadBuilder<T>;
@@ -53,7 +53,7 @@
  >deprecations : Symbol(deprecations, Decl(coAndContraVariantInferences3.ts, 39, 14))
  >OverloadDeprecations : Symbol(OverloadDeprecations, Decl(coAndContraVariantInferences3.ts, 18, 136))
  >T : Symbol(T, Decl(coAndContraVariantInferences3.ts, 38, 31))
-@@ -179,78 +179,78 @@
+@@= skipped -17, +17 lines =@@
  >SyntaxKind : Symbol(SyntaxKind, Decl(coAndContraVariantInferences3.ts, 42, 62))
  
      ImportDeclaration,
@@ -151,7 +151,7 @@
  
  declare function isExpression(node: Node): node is Expression;
  >isExpression : Symbol(isExpression, Decl(coAndContraVariantInferences3.ts, 64, 70))
-@@ -371,14 +371,14 @@
+@@= skipped -192, +192 lines =@@
  >DeprecationOptions : Symbol(DeprecationOptions, Decl(coAndContraVariantInferences3.ts, 0, 0))
  
  buildOverload("updateImportDeclaration")
@@ -171,7 +171,7 @@
  
          0(node: ImportDeclaration, modifiers: readonly Modifier[] | undefined, importClause: ImportClause | undefined, moduleSpecifier: Expression, assertClause: AssertClause | undefined): ImportDeclaration {
  >0 : Symbol(0, Decl(coAndContraVariantInferences3.ts, 86, 15))
-@@ -431,7 +431,7 @@
+@@= skipped -60, +60 lines =@@
          },
      })
      .bind({
@@ -180,7 +180,7 @@
  
          0: ([, modifiers, importClause, moduleSpecifier, assertClause, other]) =>
  >0 : Symbol(0, Decl(coAndContraVariantInferences3.ts, 95, 11))
-@@ -511,7 +511,7 @@
+@@= skipped -80, +80 lines =@@
  
      })
      .deprecate({
@@ -189,7 +189,7 @@
  
          1: DISALLOW_DECORATORS
  >1 : Symbol(1, Decl(coAndContraVariantInferences3.ts, 110, 16))
-@@ -519,7 +519,7 @@
+@@= skipped -8, +8 lines =@@
  
      })
      .finish();

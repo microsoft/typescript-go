@@ -1,6 +1,6 @@
 --- old.protectedClassPropertyAccessibleWithinNestedSubclass.symbols
 +++ new.protectedClassPropertyAccessibleWithinNestedSubclass.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >B : Symbol(B, Decl(protectedClassPropertyAccessibleWithinNestedSubclass.ts, 0, 0))
  
      protected x: string;
@@ -13,7 +13,7 @@
  }
  
  class C extends B {
-@@ -16,63 +16,63 @@
+@@= skipped -11, +11 lines =@@
  >B : Symbol(B, Decl(protectedClassPropertyAccessibleWithinNestedSubclass.ts, 0, 0))
  
      protected get y() { return this.x; }
@@ -104,7 +104,7 @@
  
                  var c = new C();
  >c : Symbol(c, Decl(protectedClassPropertyAccessibleWithinNestedSubclass.ts, 18, 19))
-@@ -80,27 +80,27 @@
+@@= skipped -64, +64 lines =@@
  
                  var c1 = c.y;
  >c1 : Symbol(c1, Decl(protectedClassPropertyAccessibleWithinNestedSubclass.ts, 19, 19))
@@ -140,7 +140,7 @@
  
                  var c5 = c.z; // error
  >c5 : Symbol(c5, Decl(protectedClassPropertyAccessibleWithinNestedSubclass.ts, 23, 19))
-@@ -108,27 +108,27 @@
+@@= skipped -28, +28 lines =@@
                  
                  var sc1 = C.x;
  >sc1 : Symbol(sc1, Decl(protectedClassPropertyAccessibleWithinNestedSubclass.ts, 25, 19))
@@ -176,7 +176,7 @@
              }
          }
      }
-@@ -139,5 +139,5 @@
+@@= skipped -31, +31 lines =@@
  >C : Symbol(C, Decl(protectedClassPropertyAccessibleWithinNestedSubclass.ts, 3, 1))
  
      protected z: string;

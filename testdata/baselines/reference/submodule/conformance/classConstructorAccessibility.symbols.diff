@@ -1,6 +1,6 @@
 --- old.classConstructorAccessibility.symbols
 +++ new.classConstructorAccessibility.symbols
-@@ -5,21 +5,21 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(classConstructorAccessibility.ts, 0, 0))
  
      public constructor(public x: number) { }
@@ -25,7 +25,7 @@
  }
  
  var c = new C(1);
-@@ -42,7 +42,7 @@
+@@= skipped -37, +37 lines =@@
  >T : Symbol(T, Decl(classConstructorAccessibility.ts, 17, 12))
  
          public constructor(public x: T) { }
@@ -34,7 +34,7 @@
  >T : Symbol(T, Decl(classConstructorAccessibility.ts, 17, 12))
      }
  
-@@ -51,7 +51,7 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(classConstructorAccessibility.ts, 21, 12))
  
          private constructor(public x: T) { }
@@ -43,7 +43,7 @@
  >T : Symbol(T, Decl(classConstructorAccessibility.ts, 21, 12))
      }
  
-@@ -60,7 +60,7 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(classConstructorAccessibility.ts, 25, 12))
  
          protected constructor(public x: T) { }

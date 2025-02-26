@@ -1,6 +1,6 @@
 --- old.privateNamesInGenericClasses.symbols
 +++ new.privateNamesInGenericClasses.symbols
-@@ -6,93 +6,93 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(privateNamesInGenericClasses.ts, 0, 8))
  
      #foo: T;

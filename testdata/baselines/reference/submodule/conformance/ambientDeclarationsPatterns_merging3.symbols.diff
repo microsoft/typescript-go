@@ -1,6 +1,6 @@
 --- old.ambientDeclarationsPatterns_merging3.symbols
 +++ new.ambientDeclarationsPatterns_merging3.symbols
-@@ -6,16 +6,16 @@
+@@= skipped -6, +6 lines =@@
  
    export interface OhNo { star: string }
  >OhNo : Symbol(OhNo, Decl(types.ts, 0, 24))

@@ -1,6 +1,6 @@
 --- old.lambdaParameterWithTupleArgsHasCorrectAssignability.symbols
 +++ new.lambdaParameterWithTupleArgsHasCorrectAssignability.symbols
-@@ -22,7 +22,7 @@
+@@= skipped -22, +22 lines =@@
  >MyTuple : Symbol(MyTuple, Decl(lambdaParameterWithTupleArgsHasCorrectAssignability.ts, 0, 22))
  
      from: GenericFunction<T> | undefined;
@@ -9,7 +9,7 @@
  >GenericFunction : Symbol(GenericFunction, Decl(lambdaParameterWithTupleArgsHasCorrectAssignability.ts, 1, 47))
  >T : Symbol(T, Decl(lambdaParameterWithTupleArgsHasCorrectAssignability.ts, 5, 19))
  }
-@@ -52,12 +52,12 @@
+@@= skipped -30, +30 lines =@@
  >consumeClass : Symbol(consumeClass, Decl(lambdaParameterWithTupleArgsHasCorrectAssignability.ts, 11, 1))
  >createClass : Symbol(createClass, Decl(lambdaParameterWithTupleArgsHasCorrectAssignability.ts, 7, 1))
  >str : Symbol(str, Decl(lambdaParameterWithTupleArgsHasCorrectAssignability.ts, 16, 25))
@@ -26,7 +26,7 @@
  
  // should work
  consumeClass(createClass((str, _unused_num) => console.log(str.length)));
-@@ -65,10 +65,10 @@
+@@= skipped -13, +13 lines =@@
  >createClass : Symbol(createClass, Decl(lambdaParameterWithTupleArgsHasCorrectAssignability.ts, 7, 1))
  >str : Symbol(str, Decl(lambdaParameterWithTupleArgsHasCorrectAssignability.ts, 19, 26))
  >_unused_num : Symbol(_unused_num, Decl(lambdaParameterWithTupleArgsHasCorrectAssignability.ts, 19, 30))

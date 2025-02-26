@@ -1,6 +1,6 @@
 --- old.derivedClassWithoutExplicitConstructor.symbols
 +++ new.derivedClassWithoutExplicitConstructor.symbols
-@@ -5,13 +5,13 @@
+@@= skipped -5, +5 lines =@@
  >Base : Symbol(Base, Decl(derivedClassWithoutExplicitConstructor.ts, 0, 0))
  
      a = 1;
@@ -17,7 +17,7 @@
  >x : Symbol(x, Decl(derivedClassWithoutExplicitConstructor.ts, 2, 16))
  }
  
-@@ -20,10 +20,10 @@
+@@= skipped -15, +15 lines =@@
  >Base : Symbol(Base, Decl(derivedClassWithoutExplicitConstructor.ts, 0, 0))
  
      x = 1
@@ -30,7 +30,7 @@
  }
  
  var r = new Derived(); // error
-@@ -39,15 +39,15 @@
+@@= skipped -19, +19 lines =@@
  >T : Symbol(T, Decl(derivedClassWithoutExplicitConstructor.ts, 13, 12))
  
      a: T;
@@ -49,7 +49,7 @@
  >x : Symbol(x, Decl(derivedClassWithoutExplicitConstructor.ts, 15, 16))
  }
  
-@@ -59,10 +59,10 @@
+@@= skipped -20, +20 lines =@@
  >T : Symbol(T, Decl(derivedClassWithoutExplicitConstructor.ts, 18, 8))
  
      x = 2

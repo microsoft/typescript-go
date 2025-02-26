@@ -1,6 +1,6 @@
 --- old.typeofClass.symbols
 +++ new.typeofClass.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >K : Symbol(K, Decl(typeofClass.ts, 0, 0))
  
      foo: number;
@@ -13,7 +13,7 @@
  }
  
  var k1: K;
-@@ -16,9 +16,9 @@
+@@= skipped -11, +11 lines =@@
  >K : Symbol(K, Decl(typeofClass.ts, 0, 0))
  
  k1.foo;
@@ -25,7 +25,7 @@
  
  k1.bar;
  >k1 : Symbol(k1, Decl(typeofClass.ts, 5, 3))
-@@ -31,7 +31,7 @@
+@@= skipped -15, +15 lines =@@
  >k2 : Symbol(k2, Decl(typeofClass.ts, 8, 3))
  
  k2.bar;

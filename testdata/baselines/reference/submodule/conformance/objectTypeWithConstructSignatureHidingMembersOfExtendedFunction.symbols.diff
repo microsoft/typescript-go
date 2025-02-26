@@ -1,6 +1,6 @@
 --- old.objectTypeWithConstructSignatureHidingMembersOfExtendedFunction.symbols
 +++ new.objectTypeWithConstructSignatureHidingMembersOfExtendedFunction.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(objectTypeWithConstructSignatureHidingMembersOfExtendedFunction.ts, 0, 0))
  
      data: number;
@@ -9,7 +9,7 @@
  
      [x: string]: Object;
  >x : Symbol(x, Decl(objectTypeWithConstructSignatureHidingMembersOfExtendedFunction.ts, 2, 5))
-@@ -17,12 +17,12 @@
+@@= skipped -12, +12 lines =@@
  
      new(): number;
      apply(a: any, b?: any): void;
@@ -24,7 +24,7 @@
  >thisArg : Symbol(thisArg, Decl(objectTypeWithConstructSignatureHidingMembersOfExtendedFunction.ts, 8, 9))
  >argArray : Symbol(argArray, Decl(objectTypeWithConstructSignatureHidingMembersOfExtendedFunction.ts, 8, 25))
  }
-@@ -35,29 +35,29 @@
+@@= skipped -18, +18 lines =@@
  >r1 : Symbol(r1, Decl(objectTypeWithConstructSignatureHidingMembersOfExtendedFunction.ts, 12, 3))
  >a : Symbol(a, Decl(objectTypeWithConstructSignatureHidingMembersOfExtendedFunction.ts, 12, 9))
  >b : Symbol(b, Decl(objectTypeWithConstructSignatureHidingMembersOfExtendedFunction.ts, 12, 16))
@@ -62,7 +62,7 @@
  
  var r1e = i['hm']; // should be Object
  >r1e : Symbol(r1e, Decl(objectTypeWithConstructSignatureHidingMembersOfExtendedFunction.ts, 16, 3))
-@@ -96,15 +96,15 @@
+@@= skipped -61, +61 lines =@@
  
  var r2c = x.arguments;
  >r2c : Symbol(r2c, Decl(objectTypeWithConstructSignatureHidingMembersOfExtendedFunction.ts, 26, 3))

@@ -1,6 +1,6 @@
 --- old.exportDeclarationsInAmbientNamespaces.symbols
 +++ new.exportDeclarationsInAmbientNamespaces.symbols
-@@ -16,8 +16,8 @@
+@@= skipped -16, +16 lines =@@
  }
  
  Q.try(() => { });

@@ -1,6 +1,6 @@
 --- old.assertionFunctionsCanNarrowByDiscriminant.symbols
 +++ new.assertionFunctionsCanNarrowByDiscriminant.symbols
-@@ -5,20 +5,20 @@
+@@= skipped -5, +5 lines =@@
  >Cat : Symbol(Cat, Decl(assertionFunctionsCanNarrowByDiscriminant.ts, 0, 0))
  
      type: 'cat';
@@ -25,7 +25,7 @@
  }
  
  type Animal = Cat | Dog;
-@@ -49,9 +49,9 @@
+@@= skipped -44, +44 lines =@@
  >const : Symbol(const)
  
  animal.canMeow; // since is cat, should not be an error
@@ -37,7 +37,7 @@
  
  const animalOrUndef = { type: 'cat', canMeow: true } as Animal | undefined;
  >animalOrUndef : Symbol(animalOrUndef, Decl(assertionFunctionsCanNarrowByDiscriminant.ts, 19, 5))
-@@ -67,7 +67,7 @@
+@@= skipped -18, +18 lines =@@
  >const : Symbol(const)
  
  animalOrUndef.canMeow; // since is cat, should not be an error

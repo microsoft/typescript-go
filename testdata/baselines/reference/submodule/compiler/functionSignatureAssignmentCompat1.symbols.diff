@@ -1,6 +1,6 @@
 --- old.functionSignatureAssignmentCompat1.symbols
 +++ new.functionSignatureAssignmentCompat1.symbols
-@@ -12,11 +12,11 @@
+@@= skipped -12, +12 lines =@@
  >Parsers : Symbol(Parsers, Decl(functionSignatureAssignmentCompat1.ts, 2, 1))
  
      raw: ParserFunc;
@@ -14,7 +14,7 @@
  >delimiter : Symbol(delimiter, Decl(functionSignatureAssignmentCompat1.ts, 5, 13))
  >ParserFunc : Symbol(ParserFunc, Decl(functionSignatureAssignmentCompat1.ts, 0, 0))
  }
-@@ -27,21 +27,21 @@
+@@= skipped -15, +15 lines =@@
  var c: ParserFunc = parsers.raw; // ok!
  >c : Symbol(c, Decl(functionSignatureAssignmentCompat1.ts, 8, 3))
  >ParserFunc : Symbol(ParserFunc, Decl(functionSignatureAssignmentCompat1.ts, 0, 0))

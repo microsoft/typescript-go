@@ -1,6 +1,6 @@
 --- old.jsxLocalNamespaceIndexSignatureNoCrash.symbols
 +++ new.jsxLocalNamespaceIndexSignatureNoCrash.symbols
-@@ -5,12 +5,12 @@
+@@= skipped -5, +5 lines =@@
  >X : Symbol(X, Decl(index.tsx, 0, 0), Decl(index.tsx, 4, 1))
  
      static jsx() {
@@ -16,7 +16,7 @@
      }
  }
  
-@@ -34,6 +34,4 @@
+@@= skipped -29, +29 lines =@@
  >A : Symbol(A, Decl(index.tsx, 12, 1))
  
      return (<p>Hello</p>);

@@ -1,6 +1,6 @@
 --- old.literalsInComputedProperties1.symbols
 +++ new.literalsInComputedProperties1.symbols
-@@ -19,45 +19,45 @@
+@@= skipped -19, +19 lines =@@
  >"4" : Symbol(["4"], Decl(literalsInComputedProperties1.ts, 3, 10))
  }
  x[1].toExponential();
@@ -60,7 +60,7 @@
  }
  
  let y:A;
-@@ -65,45 +65,45 @@
+@@= skipped -46, +46 lines =@@
  >A : Symbol(A, Decl(literalsInComputedProperties1.ts, 9, 21))
  
  y[1].toExponential();
@@ -124,7 +124,7 @@
  }
  
  let z:C;
-@@ -111,62 +111,62 @@
+@@= skipped -46, +46 lines =@@
  >C : Symbol(C, Decl(literalsInComputedProperties1.ts, 22, 21))
  
  z[1].toExponential();

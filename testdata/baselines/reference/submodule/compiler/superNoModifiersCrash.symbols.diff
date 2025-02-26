@@ -1,6 +1,6 @@
 --- old.superNoModifiersCrash.symbols
 +++ new.superNoModifiersCrash.symbols
-@@ -5,15 +5,13 @@
+@@= skipped -5, +5 lines =@@
  >Parent : Symbol(Parent, Decl(File.js, 0, 0))
  
      initialize() {
@@ -17,7 +17,7 @@
      }
    }
  
-@@ -22,6 +20,6 @@
+@@= skipped -17, +15 lines =@@
  >Parent : Symbol(Parent, Decl(File.js, 0, 0))
  
      initialize() {

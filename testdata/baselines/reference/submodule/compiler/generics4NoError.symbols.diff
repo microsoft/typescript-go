@@ -1,6 +1,6 @@
 --- old.generics4NoError.symbols
 +++ new.generics4NoError.symbols
-@@ -4,16 +4,16 @@
+@@= skipped -4, +4 lines =@@
  class C<T> { private x: T; }
  >C : Symbol(C, Decl(generics4NoError.ts, 0, 0))
  >T : Symbol(T, Decl(generics4NoError.ts, 0, 8))

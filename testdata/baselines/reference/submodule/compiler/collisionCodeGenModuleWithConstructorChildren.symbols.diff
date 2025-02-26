@@ -1,6 +1,6 @@
 --- old.collisionCodeGenModuleWithConstructorChildren.symbols
 +++ new.collisionCodeGenModuleWithConstructorChildren.symbols
-@@ -25,7 +25,7 @@
+@@= skipped -25, +25 lines =@@
  >d : Symbol(d, Decl(collisionCodeGenModuleWithConstructorChildren.ts, 8, 10))
  
          constructor(private M, p = x) {

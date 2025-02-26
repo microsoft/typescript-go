@@ -1,6 +1,6 @@
 --- old.propertyAccessNumericLiterals.symbols
 +++ new.propertyAccessNumericLiterals.symbols
-@@ -2,54 +2,54 @@
+@@= skipped -2, +2 lines =@@
  
  === propertyAccessNumericLiterals.ts ===
  0xffffffff.toString();

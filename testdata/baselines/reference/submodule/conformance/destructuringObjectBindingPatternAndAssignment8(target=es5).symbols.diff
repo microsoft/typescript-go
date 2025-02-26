@@ -1,6 +1,6 @@
 --- old.destructuringObjectBindingPatternAndAssignment8(target=es5).symbols
 +++ new.destructuringObjectBindingPatternAndAssignment8(target=es5).symbols
-@@ -32,9 +32,9 @@
+@@= skipped -32, +32 lines =@@
  
  })();
  console.log(aVal, bVal);

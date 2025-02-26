@@ -1,6 +1,6 @@
 --- old.spreadIdenticalTypesRemoved.symbols
 +++ new.spreadIdenticalTypesRemoved.symbols
-@@ -5,19 +5,19 @@
+@@= skipped -5, +5 lines =@@
  >Animal : Symbol(Animal, Decl(spreadIdenticalTypesRemoved.ts, 0, 0))
  
      name: string;
@@ -25,7 +25,7 @@
  }
  
  function clonePet(pet: Animal, fullCopy?: boolean) {
-@@ -29,15 +29,15 @@
+@@= skipped -24, +24 lines =@@
      return {
          name: pet.name,
  >name : Symbol(name, Decl(spreadIdenticalTypesRemoved.ts, 9, 12))
@@ -45,7 +45,7 @@
  
          ...(fullCopy && pet),
  >fullCopy : Symbol(fullCopy, Decl(spreadIdenticalTypesRemoved.ts, 8, 30))
-@@ -49,10 +49,10 @@
+@@= skipped -20, +20 lines =@@
  >Animal2 : Symbol(Animal2, Decl(spreadIdenticalTypesRemoved.ts, 14, 1))
  
      name: string;
@@ -58,7 +58,7 @@
  }
  function billOwner(pet: Animal2) {
  >billOwner : Symbol(billOwner, Decl(spreadIdenticalTypesRemoved.ts, 19, 1))
-@@ -61,9 +61,9 @@
+@@= skipped -12, +12 lines =@@
  
      return {
          ...(pet.owner && pet),

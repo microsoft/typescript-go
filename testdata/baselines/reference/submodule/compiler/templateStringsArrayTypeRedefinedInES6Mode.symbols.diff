@@ -1,6 +1,6 @@
 --- old.templateStringsArrayTypeRedefinedInES6Mode.symbols
 +++ new.templateStringsArrayTypeRedefinedInES6Mode.symbols
-@@ -2,13 +2,13 @@
+@@= skipped -2, +2 lines =@@
  
  === templateStringsArrayTypeRedefinedInES6Mode.ts ===
  class TemplateStringsArray {

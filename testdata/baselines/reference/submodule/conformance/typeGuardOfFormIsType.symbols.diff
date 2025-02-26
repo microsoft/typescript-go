@@ -1,6 +1,6 @@
 --- old.typeGuardOfFormIsType.symbols
 +++ new.typeGuardOfFormIsType.symbols
-@@ -5,20 +5,20 @@
+@@= skipped -5, +5 lines =@@
  >C1 : Symbol(C1, Decl(typeGuardOfFormIsType.ts, 0, 0))
  
      p1: string;
@@ -24,7 +24,7 @@
  }
  var str: string;
  >str : Symbol(str, Decl(typeGuardOfFormIsType.ts, 9, 3))
-@@ -65,33 +65,33 @@
+@@= skipped -60, +60 lines =@@
  >str : Symbol(str, Decl(typeGuardOfFormIsType.ts, 9, 3))
  >isC1 : Symbol(isC1, Decl(typeGuardOfFormIsType.ts, 11, 30))
  >c1Orc2 : Symbol(c1Orc2, Decl(typeGuardOfFormIsType.ts, 25, 3))
@@ -66,7 +66,7 @@
  
  var c2Ord1: C2 | D1;
  >c2Ord1 : Symbol(c2Ord1, Decl(typeGuardOfFormIsType.ts, 31, 3))
-@@ -102,25 +102,25 @@
+@@= skipped -37, +37 lines =@@
  >num : Symbol(num, Decl(typeGuardOfFormIsType.ts, 10, 3))
  >isC2 : Symbol(isC2, Decl(typeGuardOfFormIsType.ts, 15, 1))
  >c2Ord1 : Symbol(c2Ord1, Decl(typeGuardOfFormIsType.ts, 31, 3))

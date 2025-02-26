@@ -1,6 +1,6 @@
 --- old.jsdocConstructorFunctionTypeReference.symbols
 +++ new.jsdocConstructorFunctionTypeReference.symbols
-@@ -6,17 +6,12 @@
+@@= skipped -6, +6 lines =@@
  >VFunc : Symbol(VFunc, Decl(jsdocConstructorFunctionTypeReference.js, 0, 15))
  
      this.flags = "gim"
@@ -20,7 +20,7 @@
  
  /**
   * @param {Validator} state
-@@ -26,9 +21,7 @@
+@@= skipped -20, +15 lines =@@
  >state : Symbol(state, Decl(jsdocConstructorFunctionTypeReference.js, 9, 35))
  
      return state.flags

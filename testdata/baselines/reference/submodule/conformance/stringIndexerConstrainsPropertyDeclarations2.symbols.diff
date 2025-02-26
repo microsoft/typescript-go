@@ -1,6 +1,6 @@
 --- old.stringIndexerConstrainsPropertyDeclarations2.symbols
 +++ new.stringIndexerConstrainsPropertyDeclarations2.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >A : Symbol(A, Decl(stringIndexerConstrainsPropertyDeclarations2.ts, 0, 0))
  
      foo(): string { return ''; }
@@ -9,7 +9,7 @@
  }
  
  class B extends A {
-@@ -15,7 +15,7 @@
+@@= skipped -8, +8 lines =@@
  >A : Symbol(A, Decl(stringIndexerConstrainsPropertyDeclarations2.ts, 0, 0))
  
      bar(): string { return ''; }
@@ -18,7 +18,7 @@
  }
  
  class Foo {
-@@ -26,18 +26,18 @@
+@@= skipped -11, +11 lines =@@
  >A : Symbol(A, Decl(stringIndexerConstrainsPropertyDeclarations2.ts, 0, 0))
  
      a: A; // ok
@@ -41,7 +41,7 @@
  }
  
  interface Foo2 {
-@@ -48,18 +48,18 @@
+@@= skipped -22, +22 lines =@@
  >A : Symbol(A, Decl(stringIndexerConstrainsPropertyDeclarations2.ts, 0, 0))
  
      a: A; // ok

@@ -1,6 +1,6 @@
 --- old.jsEnumCrossFileExport.symbols
 +++ new.jsEnumCrossFileExport.symbols
-@@ -2,20 +2,14 @@
+@@= skipped -2, +2 lines =@@
  
  === enumDef.js ===
  var Host = {};
@@ -24,7 +24,7 @@
  
      WindowDocked: 1,
  >WindowDocked : Symbol(WindowDocked, Decl(enumDef.js, 3, 27))
-@@ -37,45 +31,33 @@
+@@= skipped -35, +29 lines =@@
   * @typedef {string}
   */
  Host.UserMetrics.Blah = {

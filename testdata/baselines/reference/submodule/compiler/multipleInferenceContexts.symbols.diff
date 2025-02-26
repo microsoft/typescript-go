@@ -1,6 +1,6 @@
 --- old.multipleInferenceContexts.symbols
 +++ new.multipleInferenceContexts.symbols
-@@ -19,11 +19,11 @@
+@@= skipped -19, +19 lines =@@
  >Data : Symbol(Data, Decl(multipleInferenceContexts.ts, 4, 37))
  
      data: Data;
@@ -14,7 +14,7 @@
  }
  
  interface Instance<Data> {
-@@ -31,7 +31,7 @@
+@@= skipped -12, +12 lines =@@
  >Data : Symbol(Data, Decl(multipleInferenceContexts.ts, 9, 19))
  
      get<K extends keyof Data>(name: K): unknown;
@@ -23,7 +23,7 @@
  >K : Symbol(K, Decl(multipleInferenceContexts.ts, 10, 8))
  >Data : Symbol(Data, Decl(multipleInferenceContexts.ts, 9, 19))
  >name : Symbol(name, Decl(multipleInferenceContexts.ts, 10, 30))
-@@ -69,9 +69,9 @@
+@@= skipped -38, +38 lines =@@
  
          return h(this.get("msg"));
  >h : Symbol(h, Decl(multipleInferenceContexts.ts, 20, 13))

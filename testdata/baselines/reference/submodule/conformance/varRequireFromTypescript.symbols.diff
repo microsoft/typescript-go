@@ -1,6 +1,6 @@
 --- old.varRequireFromTypescript.symbols
 +++ new.varRequireFromTypescript.symbols
-@@ -3,20 +3,14 @@
+@@= skipped -3, +3 lines =@@
  === use.js ===
  var ex = require('./ex')
  >ex : Symbol(ex, Decl(use.js, 0, 3))
@@ -21,7 +21,7 @@
  
  
  // types work
-@@ -30,31 +24,9 @@
+@@= skipped -27, +21 lines =@@
  >wrap : Symbol(wrap, Decl(use.js, 12, 20))
  
      greatest.day

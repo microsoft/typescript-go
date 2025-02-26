@@ -1,6 +1,6 @@
 --- old.nodeModulesAllowJsExportAssignment(module=node16).symbols
 +++ new.nodeModulesAllowJsExportAssignment(module=node16).symbols
-@@ -14,9 +14,6 @@
+@@= skipped -14, +14 lines =@@
  >a : Symbol(a, Decl(file.js, 1, 5))
  
  module.exports = a;

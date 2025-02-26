@@ -1,6 +1,6 @@
 --- old.externalModuleQualification.symbols
 +++ new.externalModuleQualification.symbols
-@@ -11,7 +11,7 @@
+@@= skipped -11, +11 lines =@@
  >C : Symbol(C, Decl(externalModuleQualification.ts, 1, 29))
  
      private previousDiffAction: NavigateAction;
@@ -9,7 +9,7 @@
  >NavigateAction : Symbol(NavigateAction, Decl(externalModuleQualification.ts, 5, 1))
  
      constructor(id: string = ID) {
-@@ -23,7 +23,7 @@
+@@= skipped -12, +12 lines =@@
  >NavigateAction : Symbol(NavigateAction, Decl(externalModuleQualification.ts, 5, 1))
  
      f(editor: DiffEditor<any, any, any>) {

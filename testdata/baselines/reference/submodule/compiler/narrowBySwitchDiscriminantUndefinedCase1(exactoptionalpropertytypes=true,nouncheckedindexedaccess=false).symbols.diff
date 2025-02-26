@@ -1,6 +1,6 @@
 --- old.narrowBySwitchDiscriminantUndefinedCase1(exactoptionalpropertytypes=true,nouncheckedindexedaccess=false).symbols
 +++ new.narrowBySwitchDiscriminantUndefinedCase1(exactoptionalpropertytypes=true,nouncheckedindexedaccess=false).symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >A : Symbol(A, Decl(narrowBySwitchDiscriminantUndefinedCase1.ts, 0, 0))
  
    optionalProp?: "hello";
@@ -9,7 +9,7 @@
  }
  
  function func(arg: A) {
-@@ -43,9 +43,9 @@
+@@= skipped -36, +36 lines =@@
    const optionalProp = ["hello" as const][Math.random()];
  >optionalProp : Symbol(optionalProp, Decl(narrowBySwitchDiscriminantUndefinedCase1.ts, 20, 7))
  >const : Symbol(const)

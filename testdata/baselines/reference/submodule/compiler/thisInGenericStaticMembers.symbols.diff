@@ -1,6 +1,6 @@
 --- old.thisInGenericStaticMembers.symbols
 +++ new.thisInGenericStaticMembers.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >A : Symbol(A, Decl(thisInGenericStaticMembers.ts, 0, 0))
  
      static one<T>(source:T, value: number): T {
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(thisInGenericStaticMembers.ts, 4, 15))
  >source : Symbol(source, Decl(thisInGenericStaticMembers.ts, 4, 18))
  >T : Symbol(T, Decl(thisInGenericStaticMembers.ts, 4, 15))
-@@ -19,16 +19,16 @@
+@@= skipped -12, +12 lines =@@
      }
  
      static two<T>(source: T): T {
@@ -29,7 +29,7 @@
  >T : Symbol(T, Decl(thisInGenericStaticMembers.ts, 8, 15))
  >source : Symbol(source, Decl(thisInGenericStaticMembers.ts, 8, 18))
      }
-@@ -38,7 +38,7 @@
+@@= skipped -19, +19 lines =@@
  >B : Symbol(B, Decl(thisInGenericStaticMembers.ts, 11, 1))
  
      static one(source: B, value: number): B {
@@ -38,7 +38,7 @@
  >source : Symbol(source, Decl(thisInGenericStaticMembers.ts, 15, 15))
  >B : Symbol(B, Decl(thisInGenericStaticMembers.ts, 11, 1))
  >value : Symbol(value, Decl(thisInGenericStaticMembers.ts, 15, 25))
-@@ -49,15 +49,15 @@
+@@= skipped -11, +11 lines =@@
      }
  
      static two(source: B): B {

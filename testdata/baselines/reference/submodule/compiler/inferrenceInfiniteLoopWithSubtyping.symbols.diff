@@ -1,6 +1,6 @@
 --- old.inferrenceInfiniteLoopWithSubtyping.symbols
 +++ new.inferrenceInfiniteLoopWithSubtyping.symbols
-@@ -25,7 +25,7 @@
+@@= skipped -25, +25 lines =@@
  >EnumTypeComposer : Symbol(EnumTypeComposer, Decl(graphql-compose.d.ts, 3, 100))
  
    public setFields(fields: { [name: string]: { [key: string]: any } }): this;
@@ -9,7 +9,7 @@
  >fields : Symbol(fields, Decl(graphql-compose.d.ts, 6, 19))
  >name : Symbol(name, Decl(graphql-compose.d.ts, 6, 30))
  >key : Symbol(key, Decl(graphql-compose.d.ts, 6, 48))
-@@ -37,13 +37,13 @@
+@@= skipped -12, +12 lines =@@
  >TContext : Symbol(TContext, Decl(graphql-compose.d.ts, 9, 40))
  
    public setFields(fields: ObjMapReadOnly<Resolver>): this;
@@ -25,7 +25,7 @@
  >TResolverSource : Symbol(TResolverSource, Decl(graphql-compose.d.ts, 12, 21))
  >opts : Symbol(opts, Decl(graphql-compose.d.ts, 12, 38))
  >type : Symbol(type, Decl(graphql-compose.d.ts, 12, 45))
-@@ -55,7 +55,7 @@
+@@= skipped -18, +18 lines =@@
  >Resolver : Symbol(Resolver, Decl(graphql-compose.d.ts, 13, 1))
  
    public wrapArgs<NewContext>(
@@ -34,7 +34,7 @@
  >NewContext : Symbol(NewContext, Decl(graphql-compose.d.ts, 16, 18))
  
      cb: () => {
-@@ -70,7 +70,7 @@
+@@= skipped -15, +15 lines =@@
    ): void;
  
    public wrapType(cb: () => ComposeOutputTypeDefinition): void;
@@ -43,7 +43,7 @@
  >cb : Symbol(cb, Decl(graphql-compose.d.ts, 22, 18))
  >ComposeOutputTypeDefinition : Symbol(ComposeOutputTypeDefinition, Decl(graphql-compose.d.ts, 1, 37))
  }
-@@ -85,9 +85,9 @@
+@@= skipped -15, +15 lines =@@
  >ObjectTypeComposer : Symbol(ObjectTypeComposer, Decl(app.ts, 0, 8))
  
  User.addResolver({

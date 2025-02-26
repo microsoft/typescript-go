@@ -1,6 +1,6 @@
 --- old.interfaceExtendsClassWithPrivate1.symbols
 +++ new.interfaceExtendsClassWithPrivate1.symbols
-@@ -5,12 +5,12 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(interfaceExtendsClassWithPrivate1.ts, 0, 0))
  
      public foo(x: any) { return x; }
@@ -15,7 +15,7 @@
  }
  
  interface I extends C {
-@@ -18,7 +18,7 @@
+@@= skipped -13, +13 lines =@@
  >C : Symbol(C, Decl(interfaceExtendsClassWithPrivate1.ts, 0, 0))
  
      other(x: any): any;
@@ -24,7 +24,7 @@
  >x : Symbol(x, Decl(interfaceExtendsClassWithPrivate1.ts, 6, 10))
  }
  
-@@ -28,17 +28,17 @@
+@@= skipped -10, +10 lines =@@
  >I : Symbol(I, Decl(interfaceExtendsClassWithPrivate1.ts, 3, 1))
  
      public foo(x: any) { return x; }

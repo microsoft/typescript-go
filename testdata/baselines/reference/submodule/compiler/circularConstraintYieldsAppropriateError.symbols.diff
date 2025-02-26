@@ -1,6 +1,6 @@
 --- old.circularConstraintYieldsAppropriateError.symbols
 +++ new.circularConstraintYieldsAppropriateError.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >T : Symbol(T, Decl(circularConstraintYieldsAppropriateError.ts, 1, 15))
  
      bar: T
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(circularConstraintYieldsAppropriateError.ts, 1, 15))
  }
  
-@@ -21,7 +21,7 @@
+@@= skipped -14, +14 lines =@@
  >T : Symbol(T, Decl(circularConstraintYieldsAppropriateError.ts, 5, 43))
  
      baz: string;
@@ -18,7 +18,7 @@
  }
  
  class Foo extends NextType<Foo> {
-@@ -30,7 +30,7 @@
+@@= skipped -9, +9 lines =@@
  >Foo : Symbol(Foo, Decl(circularConstraintYieldsAppropriateError.ts, 7, 1))
  
      someProp: {
@@ -27,7 +27,7 @@
  
          test: true
  >test : Symbol(test, Decl(circularConstraintYieldsAppropriateError.ts, 10, 15))
-@@ -42,9 +42,5 @@
+@@= skipped -12, +12 lines =@@
  >Foo : Symbol(Foo, Decl(circularConstraintYieldsAppropriateError.ts, 7, 1))
  
  foo.bar.test

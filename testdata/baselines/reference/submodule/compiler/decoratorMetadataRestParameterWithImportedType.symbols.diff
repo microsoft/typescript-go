@@ -1,6 +1,6 @@
 --- old.decoratorMetadataRestParameterWithImportedType.symbols
 +++ new.decoratorMetadataRestParameterWithImportedType.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >SomeClass : Symbol(SomeClass, Decl(aux.ts, 0, 0))
  
      field: string;
@@ -9,7 +9,7 @@
  }
  
  === aux1.ts ===
-@@ -13,7 +13,7 @@
+@@= skipped -8, +8 lines =@@
  >SomeClass1 : Symbol(SomeClass1, Decl(aux1.ts, 0, 0))
  
      field: string;
@@ -18,7 +18,7 @@
  }
  
  === aux2.ts ===
-@@ -21,7 +21,7 @@
+@@= skipped -8, +8 lines =@@
  >SomeClass2 : Symbol(SomeClass2, Decl(aux2.ts, 0, 0))
  
      field: string;
@@ -27,7 +27,7 @@
  }
  === main.ts ===
  import { SomeClass } from './aux';
-@@ -53,7 +53,7 @@
+@@= skipped -32, +32 lines =@@
  >ClassA : Symbol(ClassA, Decl(main.ts, 9, 1))
  
      array: SomeClass[];
@@ -36,7 +36,7 @@
  >SomeClass : Symbol(SomeClass, Decl(main.ts, 0, 8))
  
      constructor(...init: SomeClass[]) {
-@@ -61,9 +61,9 @@
+@@= skipped -8, +8 lines =@@
  >SomeClass : Symbol(SomeClass, Decl(main.ts, 0, 8))
  
          this.array = init;
@@ -48,7 +48,7 @@
  >init : Symbol(init, Decl(main.ts, 15, 16))
      }
  
-@@ -71,7 +71,7 @@
+@@= skipped -10, +10 lines =@@
  >annotation1 : Symbol(annotation1, Decl(main.ts, 5, 1))
  
      foo(... args: SomeClass1[]) {

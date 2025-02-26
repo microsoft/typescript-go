@@ -1,6 +1,6 @@
 --- old.jsDeclarationsInheritedTypes.symbols
 +++ new.jsDeclarationsInheritedTypes.symbols
-@@ -18,7 +18,7 @@
+@@= skipped -18, +18 lines =@@
       * @type {A}
       */
      value;
@@ -9,7 +9,7 @@
  }
  
  class C2 extends C1 {
-@@ -29,7 +29,7 @@
+@@= skipped -11, +11 lines =@@
       * @type {A}
       */
      value;
@@ -18,7 +18,7 @@
  }
  
  class C3 extends C1 {
-@@ -40,6 +40,6 @@
+@@= skipped -11, +11 lines =@@
       * @type {A & B}
       */
      value;

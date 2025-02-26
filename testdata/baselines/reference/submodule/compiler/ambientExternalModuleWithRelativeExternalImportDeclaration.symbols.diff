@@ -1,6 +1,6 @@
 --- old.ambientExternalModuleWithRelativeExternalImportDeclaration.symbols
 +++ new.ambientExternalModuleWithRelativeExternalImportDeclaration.symbols
-@@ -11,15 +11,15 @@
+@@= skipped -11, +11 lines =@@
  >SubModule : Symbol(SubModule, Decl(ambientExternalModuleWithRelativeExternalImportDeclaration.ts, 1, 39))
  
          public static StaticVar: number;

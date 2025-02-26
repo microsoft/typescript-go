@@ -1,6 +1,6 @@
 --- old.duplicateTypeParameters2.symbols
 +++ new.duplicateTypeParameters2.symbols
-@@ -3,11 +3,11 @@
+@@= skipped -3, +3 lines =@@
  === duplicateTypeParameters2.ts ===
  class A { public foo() { } }
  >A : Symbol(A, Decl(duplicateTypeParameters2.ts, 0, 0))

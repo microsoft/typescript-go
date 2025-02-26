@@ -1,6 +1,6 @@
 --- old.disallowLineTerminatorBeforeArrow.symbols
 +++ new.disallowLineTerminatorBeforeArrow.symbols
-@@ -150,7 +150,7 @@
+@@= skipped -150, +150 lines =@@
          }
  
          public m = ()
@@ -9,7 +9,7 @@
  
              => 2 * 2 * 2
      }
-@@ -159,7 +159,7 @@
+@@= skipped -9, +9 lines =@@
  >Enum : Symbol(Enum, Decl(disallowLineTerminatorBeforeArrow.ts, 63, 5))
  
          claw = (()
@@ -18,7 +18,7 @@
  
              => 10)()
      }
-@@ -170,8 +170,8 @@
+@@= skipped -11, +11 lines =@@
  
          => new City(Enum.claw);
  >City : Symbol(City, Decl(disallowLineTerminatorBeforeArrow.ts, 55, 10))

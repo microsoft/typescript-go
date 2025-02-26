@@ -1,6 +1,6 @@
 --- old.controlFlowForStatement.symbols
 +++ new.controlFlowForStatement.symbols
-@@ -29,9 +29,9 @@
+@@= skipped -29, +29 lines =@@
  >x : Symbol(x, Decl(controlFlowForStatement.ts, 8, 7))
  >cond : Symbol(cond, Decl(controlFlowForStatement.ts, 0, 3))
  >x : Symbol(x, Decl(controlFlowForStatement.ts, 8, 7))
@@ -12,7 +12,7 @@
  
          x; // number
  >x : Symbol(x, Decl(controlFlowForStatement.ts, 8, 7))
-@@ -49,9 +49,9 @@
+@@= skipped -20, +20 lines =@@
      for (x = 5; x = x.toExponential(); x = 5) {
  >x : Symbol(x, Decl(controlFlowForStatement.ts, 15, 7))
  >x : Symbol(x, Decl(controlFlowForStatement.ts, 15, 7))

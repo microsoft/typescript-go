@@ -1,6 +1,6 @@
 --- old.moduleAugmentationImportsAndExports3.symbols
 +++ new.moduleAugmentationImportsAndExports3.symbols
-@@ -9,7 +9,7 @@
+@@= skipped -9, +9 lines =@@
  >B : Symbol(B, Decl(f2.ts, 0, 0))
  
      n: number;
@@ -9,7 +9,7 @@
  }
  
  === f3.ts ===
-@@ -17,11 +17,11 @@
+@@= skipped -8, +8 lines =@@
  >A : Symbol(A, Decl(f3.ts, 0, 8))
  
  A.prototype.foo = function () { return undefined; }
@@ -25,7 +25,7 @@
  >undefined : Symbol(undefined)
  
  namespace N {
-@@ -29,15 +29,15 @@
+@@= skipped -12, +12 lines =@@
  
      export interface Ifc { a }
  >Ifc : Symbol(Ifc, Decl(f3.ts, 4, 13))
@@ -44,7 +44,7 @@
  
      import {B} from "./f2";
  >B : Symbol(B, Decl(f3.ts, 10, 12))
-@@ -45,26 +45,26 @@
+@@= skipped -16, +16 lines =@@
      import I = N.Ifc;
  >I : Symbol(I, Decl(f3.ts, 10, 27))
  >N : Symbol(N, Decl(f3.ts, 2, 51))
@@ -76,7 +76,7 @@
  >C : Symbol(C, Decl(f3.ts, 11, 21))
      }
  }
-@@ -81,7 +81,7 @@
+@@= skipped -36, +36 lines =@@
  
  let b = a.foo().n;
  >b : Symbol(b, Decl(f4.ts, 4, 3))

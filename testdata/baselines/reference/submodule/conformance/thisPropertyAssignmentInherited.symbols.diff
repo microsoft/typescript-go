@@ -1,6 +1,6 @@
 --- old.thisPropertyAssignmentInherited.symbols
 +++ new.thisPropertyAssignmentInherited.symbols
-@@ -8,16 +8,16 @@
+@@= skipped -8, +8 lines =@@
     * @returns {String}
     */
    get textContent() {
@@ -20,7 +20,7 @@
  >this : Symbol(Element, Decl(thisPropertyAssignmentInherited.js, 0, 0))
  }
  export class HTMLElement extends Element {}
-@@ -29,21 +29,21 @@
+@@= skipped -21, +21 lines =@@
  >HTMLElement : Symbol(HTMLElement, Decl(thisPropertyAssignmentInherited.js, 9, 1))
  
    get innerHTML() { return this.textContent; }

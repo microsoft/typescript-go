@@ -1,6 +1,6 @@
 --- old.symbolType15.symbols
 +++ new.symbolType15.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  
  var symObj: Symbol;
  >symObj : Symbol(symObj, Decl(symbolType15.ts, 1, 3))

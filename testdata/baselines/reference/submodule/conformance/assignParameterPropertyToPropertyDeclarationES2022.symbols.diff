@@ -1,6 +1,6 @@
 --- old.assignParameterPropertyToPropertyDeclarationES2022.symbols
 +++ new.assignParameterPropertyToPropertyDeclarationES2022.symbols
-@@ -5,74 +5,74 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(assignParameterPropertyToPropertyDeclarationES2022.ts, 0, 0))
  
      qux = this.bar // should error
@@ -107,7 +107,7 @@
      }
  }
  
-@@ -81,87 +81,87 @@
+@@= skipped -76, +76 lines =@@
  >C : Symbol(C, Decl(assignParameterPropertyToPropertyDeclarationES2022.ts, 0, 0))
  
      quill = this.foo // ok

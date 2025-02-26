@@ -1,6 +1,6 @@
 --- old.classExpressionES63.symbols
 +++ new.classExpressionES63.symbols
-@@ -3,26 +3,26 @@
+@@= skipped -3, +3 lines =@@
  === classExpressionES63.ts ===
  let C = class extends class extends class { a = 1 } { b = 2 } { c = 3 };
  >C : Symbol(C, Decl(classExpressionES63.ts, 0, 3))

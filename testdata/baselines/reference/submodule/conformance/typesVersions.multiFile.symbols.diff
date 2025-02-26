@@ -1,6 +1,6 @@
 --- old.typesVersions.multiFile.symbols
 +++ new.typesVersions.multiFile.symbols
-@@ -15,11 +15,11 @@
+@@= skipped -15, +15 lines =@@
  >bb : Symbol(bb, Decl(main.ts, 4, 5))
  >b : Symbol(b, Decl(main.ts, 1, 8))
  

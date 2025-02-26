@@ -1,6 +1,6 @@
 --- old.contextualTypeCaching.symbols
 +++ new.contextualTypeCaching.symbols
-@@ -8,12 +8,12 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(contextualTypeCaching.ts, 2, 23))
  
      callback: (response: T) => void;
@@ -15,7 +15,7 @@
  
          nestedCallback: (response: T) => void;
  >nestedCallback : Symbol(nestedCallback, Decl(contextualTypeCaching.ts, 4, 13))
-@@ -67,13 +67,13 @@
+@@= skipped -59, +59 lines =@@
  >MyCompiler : Symbol(MyCompiler, Decl(contextualTypeCaching.ts, 21, 3))
  
    compile(): void;
@@ -31,7 +31,7 @@
  >compiler : Symbol(compiler, Decl(contextualTypeCaching.ts, 28, 10))
  >MyCompiler : Symbol(MyCompiler, Decl(contextualTypeCaching.ts, 21, 3))
  }
-@@ -88,7 +88,7 @@
+@@= skipped -21, +21 lines =@@
  >Optimization : Symbol(Optimization, Decl(contextualTypeCaching.ts, 30, 78))
  
    minimizer?: (WebpackPluginInstance | WebpackPluginFunction)[];

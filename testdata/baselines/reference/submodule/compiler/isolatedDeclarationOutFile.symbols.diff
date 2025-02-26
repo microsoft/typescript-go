@@ -1,6 +1,6 @@
 --- old.isolatedDeclarationOutFile.symbols
 +++ new.isolatedDeclarationOutFile.symbols
-@@ -5,13 +5,13 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(a.ts, 0, 0))
  
      toUpper(msg: string): string {
@@ -17,7 +17,7 @@
      }
  }
  
-@@ -24,13 +24,13 @@
+@@= skipped -19, +19 lines =@@
  >A : Symbol(A, Decl(b.ts, 0, 8))
  
      toFixed(n: number): string {

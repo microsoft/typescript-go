@@ -1,6 +1,6 @@
 --- old.moduleAugmentationEnumClassMergeOfReexportIsError.symbols
 +++ new.moduleAugmentationEnumClassMergeOfReexportIsError.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(file.ts, 0, 0))
  
      member: string;
@@ -9,7 +9,7 @@
  }
  === reexport.ts ===
  
-@@ -15,20 +15,20 @@
+@@= skipped -10, +10 lines =@@
  >ns : Symbol(ns, Decl(augment.ts, 0, 6))
  
  declare module "./reexport" {

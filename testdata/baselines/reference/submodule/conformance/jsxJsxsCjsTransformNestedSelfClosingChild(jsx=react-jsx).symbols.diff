@@ -1,6 +1,6 @@
 --- old.jsxJsxsCjsTransformNestedSelfClosingChild(jsx=react-jsx).symbols
 +++ new.jsxJsxsCjsTransformNestedSelfClosingChild(jsx=react-jsx).symbols
-@@ -6,59 +6,39 @@
+@@= skipped -6, +6 lines =@@
  >React : Symbol(React, Decl(jsxJsxsCjsTransformNestedSelfClosingChild.tsx, 1, 11))
  
  console.log(

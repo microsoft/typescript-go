@@ -1,6 +1,6 @@
 --- old.unionReductionWithStringMappingAndIdenticalBaseTypeExistsNoCrash.symbols
 +++ new.unionReductionWithStringMappingAndIdenticalBaseTypeExistsNoCrash.symbols
-@@ -48,15 +48,15 @@
+@@= skipped -48, +48 lines =@@
  
    > {
      type: T;
@@ -19,7 +19,7 @@
    }
  
    type ComponentProps<T extends JSXElementConstructor<any>> =
-@@ -80,7 +80,7 @@
+@@= skipped -32, +32 lines =@@
  >ReactNode : Symbol(ReactNode, Decl(index.d.ts, 3, 25))
  
      readonly $$typeof: symbol;
@@ -28,7 +28,7 @@
    }
  
    type LazyExoticComponent<T extends JSXElementConstructor<any>> =
-@@ -150,22 +150,22 @@
+@@= skipped -70, +70 lines =@@
  >P : Symbol(P, Decl(index.d.ts, 51, 30))
  
  declare global {
@@ -55,7 +55,7 @@
      }
      type LibraryManagedAttributes<C, P> = C extends React.LazyExoticComponent<
  >LibraryManagedAttributes : Symbol(LibraryManagedAttributes, Decl(index.d.ts, 60, 5))
-@@ -173,7 +173,7 @@
+@@= skipped -23, +23 lines =@@
  >P : Symbol(P, Decl(index.d.ts, 61, 36))
  >C : Symbol(C, Decl(index.d.ts, 61, 34))
  >React : Symbol(React, Decl(index.d.ts, 1, 26))
@@ -64,7 +64,7 @@
  
        infer T
  >T : Symbol(T, Decl(index.d.ts, 62, 11))
-@@ -193,34 +193,34 @@
+@@= skipped -20, +20 lines =@@
  >IntrinsicElements : Symbol(IntrinsicElements, Decl(index.d.ts, 65, 37))
  
        div: {};
@@ -106,7 +106,7 @@
  
    C,
  >C : Symbol(C, Decl(index.d.ts, 76, 39))
-@@ -231,9 +231,9 @@
+@@= skipped -38, +38 lines =@@
  >;
  interface GlobalJSXIntrinsicElements extends JSX.IntrinsicElements {}
  >GlobalJSXIntrinsicElements : Symbol(GlobalJSXIntrinsicElements, Decl(index.d.ts, 79, 2))
@@ -118,7 +118,7 @@
  
  === src/index.tsx ===
  import React from 'react'
-@@ -251,22 +251,17 @@
+@@= skipped -20, +20 lines =@@
  >displayEnum : Symbol(displayEnum, Decl(index.tsx, 4, 5))
  >value : Symbol(value, Decl(index.tsx, 4, 21))
  >upperFirst : Symbol(upperFirst, Decl(index.tsx, 0, 25))

@@ -1,6 +1,6 @@
 --- old.modulePreserve2.symbols
 +++ new.modulePreserve2.symbols
-@@ -6,13 +6,7 @@
+@@= skipped -6, +6 lines =@@
  
  const cjs = require("dep");
  >cjs : Symbol(cjs, Decl(main.js, 1, 5))

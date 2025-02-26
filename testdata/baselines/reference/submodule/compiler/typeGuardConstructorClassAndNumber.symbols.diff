@@ -1,6 +1,6 @@
 --- old.typeGuardConstructorClassAndNumber.symbols
 +++ new.typeGuardConstructorClassAndNumber.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >C1 : Symbol(C1, Decl(typeGuardConstructorClassAndNumber.ts, 0, 0))
  
      property1: string;
@@ -9,7 +9,7 @@
  }
  
  let var1: C1 | number;
-@@ -14,18 +14,18 @@
+@@= skipped -8, +8 lines =@@
  >C1 : Symbol(C1, Decl(typeGuardConstructorClassAndNumber.ts, 0, 0))
  
  if (var1.constructor == C1) {
@@ -32,7 +32,7 @@
  }
  else {
      var1; // number | C1
-@@ -33,34 +33,34 @@
+@@= skipped -19, +19 lines =@@
  }
  if (var1["constructor"] == C1) {
  >var1 : Symbol(var1, Decl(typeGuardConstructorClassAndNumber.ts, 5, 3))
@@ -74,7 +74,7 @@
  }
  else {
      var1; // number | C1
-@@ -68,16 +68,16 @@
+@@= skipped -35, +35 lines =@@
  }
  if (var1["constructor"] === C1) {
  >var1 : Symbol(var1, Decl(typeGuardConstructorClassAndNumber.ts, 5, 3))
@@ -94,7 +94,7 @@
  }
  else {
      var1; // number | C1
-@@ -85,17 +85,17 @@
+@@= skipped -17, +17 lines =@@
  }
  if (C1 == var1.constructor) {
  >C1 : Symbol(C1, Decl(typeGuardConstructorClassAndNumber.ts, 0, 0))
@@ -116,7 +116,7 @@
  }
  else {
      var1; // number | C1
-@@ -104,15 +104,15 @@
+@@= skipped -19, +19 lines =@@
  if (C1 == var1["constructor"]) {
  >C1 : Symbol(C1, Decl(typeGuardConstructorClassAndNumber.ts, 0, 0))
  >var1 : Symbol(var1, Decl(typeGuardConstructorClassAndNumber.ts, 5, 3))
@@ -135,7 +135,7 @@
  }
  else {
      var1; // number | C1
-@@ -120,17 +120,17 @@
+@@= skipped -16, +16 lines =@@
  }
  if (C1 === var1.constructor) {
  >C1 : Symbol(C1, Decl(typeGuardConstructorClassAndNumber.ts, 0, 0))
@@ -157,7 +157,7 @@
  }
  else {
      var1; // number | C1
-@@ -139,15 +139,15 @@
+@@= skipped -19, +19 lines =@@
  if (C1 === var1["constructor"]) {
  >C1 : Symbol(C1, Decl(typeGuardConstructorClassAndNumber.ts, 0, 0))
  >var1 : Symbol(var1, Decl(typeGuardConstructorClassAndNumber.ts, 5, 3))
@@ -176,7 +176,7 @@
  }
  else {
      var1; // number | C1
-@@ -155,9 +155,9 @@
+@@= skipped -16, +16 lines =@@
  }
  
  if (var1.constructor != C1) {
@@ -188,7 +188,7 @@
  >C1 : Symbol(C1, Decl(typeGuardConstructorClassAndNumber.ts, 0, 0))
  
      var1; // C1 | number
-@@ -172,7 +172,7 @@
+@@= skipped -17, +17 lines =@@
  }
  if (var1["constructor"] != C1) {
  >var1 : Symbol(var1, Decl(typeGuardConstructorClassAndNumber.ts, 5, 3))
@@ -197,7 +197,7 @@
  >C1 : Symbol(C1, Decl(typeGuardConstructorClassAndNumber.ts, 0, 0))
  
      var1; // C1 | number
-@@ -186,9 +186,9 @@
+@@= skipped -14, +14 lines =@@
  >var1 : Symbol(var1, Decl(typeGuardConstructorClassAndNumber.ts, 5, 3))
  }
  if (var1.constructor !== C1) {
@@ -209,7 +209,7 @@
  >C1 : Symbol(C1, Decl(typeGuardConstructorClassAndNumber.ts, 0, 0))
  
      var1; // C1 | number
-@@ -203,7 +203,7 @@
+@@= skipped -17, +17 lines =@@
  }
  if (var1["constructor"] !== C1) {
  >var1 : Symbol(var1, Decl(typeGuardConstructorClassAndNumber.ts, 5, 3))
@@ -218,7 +218,7 @@
  >C1 : Symbol(C1, Decl(typeGuardConstructorClassAndNumber.ts, 0, 0))
  
      var1; // C1 | number
-@@ -218,9 +218,9 @@
+@@= skipped -15, +15 lines =@@
  }
  if (C1 != var1.constructor) {
  >C1 : Symbol(C1, Decl(typeGuardConstructorClassAndNumber.ts, 0, 0))
@@ -230,7 +230,7 @@
  
      var1; // C1 | number
  >var1 : Symbol(var1, Decl(typeGuardConstructorClassAndNumber.ts, 5, 3))
-@@ -235,7 +235,7 @@
+@@= skipped -17, +17 lines =@@
  if (C1 != var1["constructor"]) {
  >C1 : Symbol(C1, Decl(typeGuardConstructorClassAndNumber.ts, 0, 0))
  >var1 : Symbol(var1, Decl(typeGuardConstructorClassAndNumber.ts, 5, 3))
@@ -239,7 +239,7 @@
  
      var1; // C1 | number
  >var1 : Symbol(var1, Decl(typeGuardConstructorClassAndNumber.ts, 5, 3))
-@@ -249,9 +249,9 @@
+@@= skipped -14, +14 lines =@@
  }
  if (C1 !== var1.constructor) {
  >C1 : Symbol(C1, Decl(typeGuardConstructorClassAndNumber.ts, 0, 0))
@@ -251,7 +251,7 @@
  
      var1; // C1 | number
  >var1 : Symbol(var1, Decl(typeGuardConstructorClassAndNumber.ts, 5, 3))
-@@ -266,7 +266,7 @@
+@@= skipped -17, +17 lines =@@
  if (C1 !== var1["constructor"]) {
  >C1 : Symbol(C1, Decl(typeGuardConstructorClassAndNumber.ts, 0, 0))
  >var1 : Symbol(var1, Decl(typeGuardConstructorClassAndNumber.ts, 5, 3))
@@ -260,7 +260,7 @@
  
      var1; // C1 | number
  >var1 : Symbol(var1, Decl(typeGuardConstructorClassAndNumber.ts, 5, 3))
-@@ -290,17 +290,17 @@
+@@= skipped -24, +24 lines =@@
  >instance : Symbol(instance, Decl(typeGuardConstructorClassAndNumber.ts, 122, 13))
  
          if (instance.prototype == null || instance.prototype.constructor == null) {

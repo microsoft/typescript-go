@@ -1,6 +1,6 @@
 --- old.typeInferenceLiteralUnion.symbols
 +++ new.typeInferenceLiteralUnion.symbols
-@@ -16,7 +16,7 @@
+@@= skipped -16, +16 lines =@@
  >Numeric : Symbol(Numeric, Decl(typeInferenceLiteralUnion.ts, 4, 57))
  
      valueOf(): number;
@@ -9,7 +9,7 @@
  }
  
  // Not very useful, but meets Numeric
-@@ -24,24 +24,24 @@
+@@= skipped -8, +8 lines =@@
  >NumCoercible : Symbol(NumCoercible, Decl(typeInferenceLiteralUnion.ts, 11, 1))
  
      public a: number;

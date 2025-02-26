@@ -1,6 +1,6 @@
 --- old.ambientConstLiterals.symbols
 +++ new.ambientConstLiterals.symbols
-@@ -14,10 +14,10 @@
+@@= skipped -14, +14 lines =@@
  
  enum E { A, B, C, "non identifier" }
  >E : Symbol(E, Decl(ambientConstLiterals.ts, 2, 1))
@@ -15,7 +15,7 @@
  
  const c1 = "abc";
  >c1 : Symbol(c1, Decl(ambientConstLiterals.ts, 6, 5))
-@@ -46,14 +46,14 @@
+@@= skipped -32, +32 lines =@@
  
  const c8 = E.A;
  >c8 : Symbol(c8, Decl(ambientConstLiterals.ts, 13, 5))
@@ -33,7 +33,7 @@
  
  const c9 = { x: "abc" };
  >c9 : Symbol(c9, Decl(ambientConstLiterals.ts, 15, 5))
-@@ -70,13 +70,13 @@
+@@= skipped -24, +24 lines =@@
  
  const c13 = Math.random() > 0.5 ? "abc" : "def";
  >c13 : Symbol(c13, Decl(ambientConstLiterals.ts, 19, 5))

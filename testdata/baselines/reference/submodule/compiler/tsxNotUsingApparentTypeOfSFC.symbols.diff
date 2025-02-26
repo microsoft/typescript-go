@@ -1,6 +1,6 @@
 --- old.tsxNotUsingApparentTypeOfSFC.symbols
 +++ new.tsxNotUsingApparentTypeOfSFC.symbols
-@@ -21,13 +21,13 @@
+@@= skipped -21, +21 lines =@@
      };
      class MyComponent extends React.Component<P> {
  >MyComponent : Symbol(MyComponent, Decl(tsxNotUsingApparentTypeOfSFC.tsx, 7, 6))

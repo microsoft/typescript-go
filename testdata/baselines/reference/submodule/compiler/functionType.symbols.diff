@@ -1,6 +1,6 @@
 --- old.functionType.symbols
 +++ new.functionType.symbols
-@@ -5,9 +5,9 @@
+@@= skipped -5, +5 lines =@@
  >salt : Symbol(salt, Decl(functionType.ts, 0, 0))
  
  salt.apply("hello", []);

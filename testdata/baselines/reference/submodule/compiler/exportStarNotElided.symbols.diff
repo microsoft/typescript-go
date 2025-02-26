@@ -1,6 +1,6 @@
 --- old.exportStarNotElided.symbols
 +++ new.exportStarNotElided.symbols
-@@ -9,9 +9,9 @@
+@@= skipped -9, +9 lines =@@
  >data : Symbol(data, Decl(register.ts, 1, 25))
  
    r.push(data);

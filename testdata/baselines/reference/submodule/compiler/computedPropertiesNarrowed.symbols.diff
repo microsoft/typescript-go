@@ -1,6 +1,6 @@
 --- old.computedPropertiesNarrowed.symbols
 +++ new.computedPropertiesNarrowed.symbols
-@@ -3,9 +3,6 @@
+@@= skipped -3, +3 lines =@@
  === computedPropertiesNarrowed.ts ===
  const x: 0 | 1 = Math.random()? 0: 1;
  >x : Symbol(x, Decl(computedPropertiesNarrowed.ts, 0, 5))
@@ -10,7 +10,7 @@
  
  declare function assert(n: number): asserts n is 1;
  >assert : Symbol(assert, Decl(computedPropertiesNarrowed.ts, 0, 37))
-@@ -52,7 +49,6 @@
+@@= skipped -49, +46 lines =@@
  
  let u = Symbol();
  >u : Symbol(u, Decl(computedPropertiesNarrowed.ts, 19, 3))
@@ -18,7 +18,7 @@
  
  export let o4 = {
  >o4 : Symbol(o4, Decl(computedPropertiesNarrowed.ts, 20, 10))
-@@ -67,12 +63,10 @@
+@@= skipped -15, +14 lines =@@
  
      [Symbol()]: 1 // Should error
  >[Symbol()] : Symbol([Symbol()], Decl(computedPropertiesNarrowed.ts, 24, 17))

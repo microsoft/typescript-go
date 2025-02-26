@@ -1,6 +1,6 @@
 --- old.commentsModules.symbols
 +++ new.commentsModules.symbols
-@@ -59,17 +59,17 @@
+@@= skipped -59, +59 lines =@@
      }
  } // trailing comment module
  m1.fooExport();
@@ -24,7 +24,7 @@
  
  /** module comment of m2.m3*/
  module m2.m3 {
-@@ -82,11 +82,7 @@
+@@= skipped -23, +23 lines =@@
      }
  } /* trailing dotted module comment*/
  new m2.m3.c();
@@ -36,7 +36,7 @@
  
  /** module comment of m3.m4.m5*/
  module m3.m4.m5 {
-@@ -100,13 +96,7 @@
+@@= skipped -18, +14 lines =@@
      }
  } // trailing dotted module 2
  new m3.m4.m5.c();
@@ -50,7 +50,7 @@
  
  /** module comment of m4.m5.m6*/
  module m4.m5.m6 {
-@@ -124,15 +114,7 @@
+@@= skipped -24, +18 lines =@@
      } /* trailing inner module */ /* multiple comments*/
  }
  new m4.m5.m6.m7.c();
@@ -66,7 +66,7 @@
  
  /** module comment of m5.m6.m7*/
  module m5.m6.m7 {
-@@ -151,15 +133,7 @@
+@@= skipped -27, +19 lines =@@
      }
  }
  new m5.m6.m7.m8.c();
@@ -82,7 +82,7 @@
  
  module m6.m7 {
  >m6 : Symbol(m6, Decl(commentsModules.ts, 71, 20))
-@@ -175,13 +149,7 @@
+@@= skipped -24, +16 lines =@@
      }
  }
  new m6.m7.m8.c();
@@ -96,7 +96,7 @@
  
  module m7.m8 {
  >m7 : Symbol(m7, Decl(commentsModules.ts, 79, 17))
-@@ -208,11 +176,5 @@
+@@= skipped -33, +27 lines =@@
      }
  }
  new m7.m8.m9.c();

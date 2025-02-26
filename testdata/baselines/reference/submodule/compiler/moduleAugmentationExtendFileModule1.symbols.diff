@@ -1,6 +1,6 @@
 --- old.moduleAugmentationExtendFileModule1.symbols
 +++ new.moduleAugmentationExtendFileModule1.symbols
-@@ -5,19 +5,19 @@
+@@= skipped -5, +5 lines =@@
  >Observable : Symbol(Observable, Decl(map.ts, 0, 8))
  
  (<any>Observable.prototype).map = function() { }
@@ -24,7 +24,7 @@
  >U : Symbol(U, Decl(map.ts, 6, 12))
  >proj : Symbol(proj, Decl(map.ts, 6, 15))
  >e : Symbol(e, Decl(map.ts, 6, 22))
-@@ -40,7 +40,7 @@
+@@= skipped -35, +35 lines =@@
  >T : Symbol(T, Decl(observable.ts, 0, 32), Decl(map.ts, 5, 25))
  
      filter(pred: (e:T) => boolean): Observable<T>;
@@ -33,7 +33,7 @@
  >pred : Symbol(pred, Decl(observable.ts, 1, 11))
  >e : Symbol(e, Decl(observable.ts, 1, 18))
  >T : Symbol(T, Decl(observable.ts, 0, 32), Decl(map.ts, 5, 25))
-@@ -68,9 +68,9 @@
+@@= skipped -28, +28 lines =@@
  
  let y = x.map(x => x + 1);
  >y : Symbol(y, Decl(main.ts, 4, 3))

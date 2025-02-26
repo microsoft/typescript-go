@@ -1,6 +1,6 @@
 --- old.jsxIntrinsicUnions.symbols
 +++ new.jsxIntrinsicUnions.symbols
-@@ -8,9 +8,9 @@
+@@= skipped -8, +8 lines =@@
  
  const El = Math.random() ? 'h1' : 'h2';
  >El : Symbol(El, Decl(jsxIntrinsicUnions.tsx, 4, 5))

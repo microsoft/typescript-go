@@ -1,6 +1,6 @@
 --- old.indexedAccessConstraints.symbols
 +++ new.indexedAccessConstraints.symbols
-@@ -36,9 +36,9 @@
+@@= skipped -36, +36 lines =@@
          return 0;
      }
      return fn.length;

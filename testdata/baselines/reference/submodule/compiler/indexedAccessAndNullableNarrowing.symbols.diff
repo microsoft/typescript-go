@@ -1,6 +1,6 @@
 --- old.indexedAccessAndNullableNarrowing.symbols
 +++ new.indexedAccessAndNullableNarrowing.symbols
-@@ -108,7 +108,7 @@
+@@= skipped -108, +108 lines =@@
  >State : Symbol(State, Decl(indexedAccessAndNullableNarrowing.ts, 21, 37))
  
      setState<K extends keyof S>(key: K, value: S[K]): void;
@@ -9,7 +9,7 @@
  >K : Symbol(K, Decl(indexedAccessAndNullableNarrowing.ts, 30, 13))
  >S : Symbol(S, Decl(indexedAccessAndNullableNarrowing.ts, 29, 16))
  >key : Symbol(key, Decl(indexedAccessAndNullableNarrowing.ts, 30, 32))
-@@ -157,9 +157,9 @@
+@@= skipped -49, +49 lines =@@
  >undefined : Symbol(undefined)
  
      store.setState(key, value);
@@ -21,7 +21,7 @@
  >key : Symbol(key, Decl(indexedAccessAndNullableNarrowing.ts, 37, 28))
  >value : Symbol(value, Decl(indexedAccessAndNullableNarrowing.ts, 38, 9))
  
-@@ -168,9 +168,9 @@
+@@= skipped -11, +11 lines =@@
  >undefined : Symbol(undefined)
  
      store.setState(key, value);

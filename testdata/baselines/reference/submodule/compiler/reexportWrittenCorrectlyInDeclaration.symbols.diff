@@ -1,6 +1,6 @@
 --- old.reexportWrittenCorrectlyInDeclaration.symbols
 +++ new.reexportWrittenCorrectlyInDeclaration.symbols
-@@ -23,8 +23,8 @@
+@@= skipped -23, +23 lines =@@
  >Test : Symbol(Test, Decl(Test.ts, 0, 35))
  
      public method = (input: things.ThingA)  => { };

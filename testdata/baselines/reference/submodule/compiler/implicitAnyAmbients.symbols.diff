@@ -1,6 +1,6 @@
 --- old.implicitAnyAmbients.symbols
 +++ new.implicitAnyAmbients.symbols
-@@ -26,14 +26,14 @@
+@@= skipped -26, +26 lines =@@
  >I : Symbol(I, Decl(implicitAnyAmbients.ts, 6, 29))
  
          foo(); // error
@@ -18,7 +18,7 @@
  >x : Symbol(x, Decl(implicitAnyAmbients.ts, 11, 13))
      }
  
-@@ -41,14 +41,14 @@
+@@= skipped -15, +15 lines =@@
  >C : Symbol(C, Decl(implicitAnyAmbients.ts, 12, 5))
  
          foo(); // error

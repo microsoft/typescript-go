@@ -1,6 +1,6 @@
 --- old.readonlyMembers.symbols
 +++ new.readonlyMembers.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >X : Symbol(X, Decl(readonlyMembers.ts, 0, 0))
  
      readonly a: number;
@@ -13,7 +13,7 @@
  }
  var x: X = { a: 0 };
  >x : Symbol(x, Decl(readonlyMembers.ts, 4, 3))
-@@ -16,79 +16,79 @@
+@@= skipped -11, +11 lines =@@
  >a : Symbol(a, Decl(readonlyMembers.ts, 4, 12))
  
  x.a = 1;  // Error
@@ -119,7 +119,7 @@
      }
  }
  
-@@ -153,14 +153,14 @@
+@@= skipped -137, +137 lines =@@
  >E : Symbol(E, Decl(readonlyMembers.ts, 42, 8))
  
      A, B, C
@@ -139,7 +139,7 @@
  
  namespace N {
  >N : Symbol(N, Decl(readonlyMembers.ts, 47, 8))
-@@ -175,19 +175,19 @@
+@@= skipped -22, +22 lines =@@
  >c : Symbol(c, Decl(readonlyMembers.ts, 52, 14))
  }
  N.a = 1;  // Error

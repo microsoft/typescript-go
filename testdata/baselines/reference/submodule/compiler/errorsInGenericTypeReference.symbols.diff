@@ -1,6 +1,6 @@
 --- old.errorsInGenericTypeReference.symbols
 +++ new.errorsInGenericTypeReference.symbols
-@@ -15,7 +15,7 @@
+@@= skipped -15, +15 lines =@@
  >testClass1 : Symbol(testClass1, Decl(errorsInGenericTypeReference.ts, 2, 16))
  
      method<T>(): void { }
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(errorsInGenericTypeReference.ts, 7, 11))
  }
  var tc1 = new testClass1();
-@@ -23,9 +23,9 @@
+@@= skipped -8, +8 lines =@@
  >testClass1 : Symbol(testClass1, Decl(errorsInGenericTypeReference.ts, 2, 16))
  
  tc1.method<{ x: V }>(); // error: could not find symbol V
@@ -21,7 +21,7 @@
  >x : Symbol(x, Decl(errorsInGenericTypeReference.ts, 10, 12))
  >V : Symbol(V)
  
-@@ -47,26 +47,26 @@
+@@= skipped -24, +24 lines =@@
  >testClass3 : Symbol(testClass3, Decl(errorsInGenericTypeReference.ts, 16, 37))
  
      testMethod1(): Foo<{ x: V }> { return null; } // error: could not find symbol V
@@ -52,7 +52,7 @@
  >Foo : Symbol(Foo, Decl(errorsInGenericTypeReference.ts, 0, 21))
  >x : Symbol(x, Decl(errorsInGenericTypeReference.ts, 24, 19))
  >V : Symbol(V)
-@@ -117,7 +117,7 @@
+@@= skipped -70, +70 lines =@@
  >T : Symbol(T, Decl(errorsInGenericTypeReference.ts, 45, 17))
  
      method<M extends { x: V }>(): void { } // error: could not find symbol V
@@ -61,7 +61,7 @@
  >M : Symbol(M, Decl(errorsInGenericTypeReference.ts, 46, 11))
  >x : Symbol(x, Decl(errorsInGenericTypeReference.ts, 46, 22))
  >V : Symbol(V)
-@@ -171,7 +171,7 @@
+@@= skipped -54, +54 lines =@@
  >V : Symbol(V)
  
      method(a: Foo<{ x: V }>): Foo<{ x: V }>; //2x: error: could not find symbol V
@@ -70,7 +70,7 @@
  >a : Symbol(a, Decl(errorsInGenericTypeReference.ts, 66, 11))
  >Foo : Symbol(Foo, Decl(errorsInGenericTypeReference.ts, 0, 21))
  >x : Symbol(x, Decl(errorsInGenericTypeReference.ts, 66, 19))
-@@ -181,7 +181,7 @@
+@@= skipped -10, +10 lines =@@
  >V : Symbol(V)
  
      property: Foo<{ x: V }>; // error: could not find symbol V

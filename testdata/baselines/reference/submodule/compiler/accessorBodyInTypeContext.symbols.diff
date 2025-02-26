@@ -1,6 +1,6 @@
 --- old.accessorBodyInTypeContext.symbols
 +++ new.accessorBodyInTypeContext.symbols
-@@ -22,14 +22,14 @@
+@@= skipped -22, +22 lines =@@
  >X : Symbol(X, Decl(accessorBodyInTypeContext.ts, 6, 2))
  
      get foo() { return 0 }

@@ -1,6 +1,6 @@
 --- old.tsxAttributeResolution10.symbols
 +++ new.tsxAttributeResolution10.symbols
-@@ -14,7 +14,7 @@
+@@= skipped -14, +14 lines =@@
  >ElementAttributesProperty : Symbol(ElementAttributesProperty, Decl(react.d.ts, 3, 2))
  
  		props;
@@ -9,7 +9,7 @@
  	}
  }
  
-@@ -23,11 +23,11 @@
+@@= skipped -9, +9 lines =@@
  >MyComponent : Symbol(MyComponent, Decl(file.tsx, 0, 0))
  
    render() {

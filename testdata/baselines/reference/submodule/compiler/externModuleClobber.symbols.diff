@@ -1,6 +1,6 @@
 --- old.externModuleClobber.symbols
 +++ new.externModuleClobber.symbols
-@@ -11,7 +11,7 @@
+@@= skipped -11, +11 lines =@@
  >EC : Symbol(EC, Decl(externModuleClobber.ts, 1, 26))
  
  		public getPosition() : EM.Position;
@@ -9,7 +9,7 @@
  >EM : Symbol(EM, Decl(externModuleClobber.ts, 0, 0))
  >Position : Symbol(Position, Decl(externModuleClobber.ts, 0, 19))
  	}
-@@ -20,19 +20,19 @@
+@@= skipped -9, +9 lines =@@
  var x:EM.Position;
  >x : Symbol(x, Decl(externModuleClobber.ts, 8, 3))
  >EM : Symbol(EM, Decl(externModuleClobber.ts, 0, 0))

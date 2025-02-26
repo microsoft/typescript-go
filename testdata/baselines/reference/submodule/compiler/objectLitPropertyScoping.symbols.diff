@@ -1,6 +1,6 @@
 --- old.objectLitPropertyScoping.symbols
 +++ new.objectLitPropertyScoping.symbols
-@@ -27,9 +27,9 @@
+@@= skipped -27, +27 lines =@@
  >dist : Symbol(dist, Decl(objectLitPropertyScoping.ts, 9, 10))
  
              return Math.sqrt(x * x + y * y);

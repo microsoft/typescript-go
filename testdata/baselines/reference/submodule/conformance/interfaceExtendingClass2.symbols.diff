@@ -1,6 +1,6 @@
 --- old.interfaceExtendingClass2.symbols
 +++ new.interfaceExtendingClass2.symbols
-@@ -5,13 +5,13 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(interfaceExtendingClass2.ts, 0, 0))
  
      x: string;
@@ -17,7 +17,7 @@
  
          return 1;
      }
-@@ -25,7 +25,7 @@
+@@= skipped -20, +20 lines =@@
  >Foo : Symbol(Foo, Decl(interfaceExtendingClass2.ts, 0, 0))
  
      a: {

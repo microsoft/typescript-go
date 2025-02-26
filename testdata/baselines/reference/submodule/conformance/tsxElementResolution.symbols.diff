@@ -1,6 +1,6 @@
 --- old.tsxElementResolution.symbols
 +++ new.tsxElementResolution.symbols
-@@ -8,14 +8,14 @@
+@@= skipped -8, +8 lines =@@
  >IntrinsicElements : Symbol(IntrinsicElements, Decl(tsxElementResolution.tsx, 0, 23))
  
  		foundFirst: { x: string };
@@ -18,7 +18,7 @@
  	}
  }
  
-@@ -35,12 +35,10 @@
+@@= skipped -27, +27 lines =@@
  // Should find the intrinsic element, not the class element
  var a = <foundFirst  x="hello" />;
  >a : Symbol(a, Decl(tsxElementResolution.tsx, 16, 3))
@@ -31,7 +31,7 @@
  
  // TODO: This should not be a parse error (should
  //        parse a property name here, not identifier)
-@@ -51,7 +49,7 @@
+@@= skipped -16, +14 lines =@@
  
  var e = <Dotted.Name />;
  >e : Symbol(e, Decl(tsxElementResolution.tsx, 22, 3))

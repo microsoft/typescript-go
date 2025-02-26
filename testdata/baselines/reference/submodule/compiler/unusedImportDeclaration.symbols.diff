@@ -1,6 +1,6 @@
 --- old.unusedImportDeclaration.symbols
 +++ new.unusedImportDeclaration.symbols
-@@ -18,16 +18,16 @@
+@@= skipped -18, +18 lines =@@
  
  foo("IN " + thingy.me + "!");
  >foo : Symbol(foo, Decl(unusedImportDeclaration_testerA.ts, 3, 2))

@@ -1,6 +1,6 @@
 --- old.constEnumToStringWithComments.symbols
 +++ new.constEnumToStringWithComments.symbols
-@@ -5,111 +5,111 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(constEnumToStringWithComments.ts, 0, 0))
  
      X = 100,

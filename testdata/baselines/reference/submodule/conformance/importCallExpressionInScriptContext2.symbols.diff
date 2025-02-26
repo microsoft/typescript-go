@@ -1,6 +1,6 @@
 --- old.importCallExpressionInScriptContext2.symbols
 +++ new.importCallExpressionInScriptContext2.symbols
-@@ -8,7 +8,6 @@
+@@= skipped -8, +8 lines =@@
  "use strict"
  var p1 = import("./0");
  >p1 : Symbol(p1, Decl(1.ts, 1, 3))

@@ -1,6 +1,6 @@
 --- old.discriminatingUnionWithUnionPropertyAgainstUndefinedWithoutStrictNullChecks.symbols
 +++ new.discriminatingUnionWithUnionPropertyAgainstUndefinedWithoutStrictNullChecks.symbols
-@@ -38,31 +38,31 @@
+@@= skipped -38, +38 lines =@@
  >X : Symbol(X, Decl(discriminatingUnionWithUnionPropertyAgainstUndefinedWithoutStrictNullChecks.ts, 11, 38))
  
      foo: string;

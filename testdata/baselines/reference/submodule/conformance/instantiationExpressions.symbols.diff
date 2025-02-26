@@ -1,6 +1,6 @@
 --- old.instantiationExpressions.symbols
 +++ new.instantiationExpressions.symbols
-@@ -99,7 +99,7 @@
+@@= skipped -99, +99 lines =@@
  >T : Symbol(T, Decl(instantiationExpressions.ts, 26, 16))
  
      static f<U>(x: U): U[];
@@ -9,7 +9,7 @@
  >U : Symbol(U, Decl(instantiationExpressions.ts, 28, 13))
  >x : Symbol(x, Decl(instantiationExpressions.ts, 28, 16))
  >U : Symbol(U, Decl(instantiationExpressions.ts, 28, 13))
-@@ -115,9 +115,9 @@
+@@= skipped -16, +16 lines =@@
  
      let f1 = C.f<string>;  // (x: string) => string[]
  >f1 : Symbol(f1, Decl(instantiationExpressions.ts, 33, 7))

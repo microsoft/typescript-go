@@ -1,6 +1,6 @@
 --- old.sourceMap-FileWithComments.symbols
 +++ new.sourceMap-FileWithComments.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >IPoint : Symbol(IPoint, Decl(sourceMap-FileWithComments.ts, 0, 0))
  
      getDist(): number;
@@ -9,7 +9,7 @@
  }
  
  // Module
-@@ -20,31 +20,31 @@
+@@= skipped -14, +14 lines =@@
  
          // Constructor
          constructor(public x: number, public y: number) { }
@@ -55,7 +55,7 @@
  >Point : Symbol(Point, Decl(sourceMap-FileWithComments.ts, 6, 15))
      }
  
-@@ -67,13 +67,13 @@
+@@= skipped -47, +47 lines =@@
  var p: IPoint = new Shapes.Point(3, 4);
  >p : Symbol(p, Decl(sourceMap-FileWithComments.ts, 33, 3))
  >IPoint : Symbol(IPoint, Decl(sourceMap-FileWithComments.ts, 0, 0))

@@ -1,6 +1,6 @@
 --- old.interfaceExtendsObjectIntersectionErrors.symbols
 +++ new.interfaceExtendsObjectIntersectionErrors.symbols
-@@ -23,27 +23,27 @@
+@@= skipped -23, +23 lines =@@
  interface I1 extends T1 { a: string }
  >I1 : Symbol(I1, Decl(interfaceExtendsObjectIntersectionErrors.ts, 4, 45))
  >T1 : Symbol(T1, Decl(interfaceExtendsObjectIntersectionErrors.ts, 0, 0))
@@ -33,7 +33,7 @@
  
  type Constructor<T> = new () => T;
  >Constructor : Symbol(Constructor, Decl(interfaceExtendsObjectIntersectionErrors.ts, 12, 34), Decl(interfaceExtendsObjectIntersectionErrors.ts, 10, 37))
-@@ -60,41 +60,41 @@
+@@= skipped -37, +37 lines =@@
  >C1 : Symbol(C1, Decl(interfaceExtendsObjectIntersectionErrors.ts, 13, 50))
  >Constructor : Symbol(Constructor, Decl(interfaceExtendsObjectIntersectionErrors.ts, 12, 34), Decl(interfaceExtendsObjectIntersectionErrors.ts, 10, 37))
  >T1 : Symbol(T1, Decl(interfaceExtendsObjectIntersectionErrors.ts, 0, 0))
@@ -84,7 +84,7 @@
  
  declare namespace NX { export const a = "hello" }
  >NX : Symbol(NX, Decl(interfaceExtendsObjectIntersectionErrors.ts, 22, 27))
-@@ -115,17 +115,17 @@
+@@= skipped -55, +55 lines =@@
  interface I10 extends TCX { a: number }
  >I10 : Symbol(I10, Decl(interfaceExtendsObjectIntersectionErrors.ts, 27, 21))
  >TCX : Symbol(TCX, Decl(interfaceExtendsObjectIntersectionErrors.ts, 23, 49))
@@ -105,7 +105,7 @@
  
  interface I14 extends TCX { [x: string]: number }
  >I14 : Symbol(I14, Decl(interfaceExtendsObjectIntersectionErrors.ts, 31, 39))
-@@ -152,26 +152,26 @@
+@@= skipped -37, +37 lines =@@
  >I20 : Symbol(I20, Decl(interfaceExtendsObjectIntersectionErrors.ts, 36, 43))
  >Partial : Symbol(Partial, Decl(lib.es5.d.ts, --, --))
  >T1 : Symbol(T1, Decl(interfaceExtendsObjectIntersectionErrors.ts, 0, 0))
@@ -136,7 +136,7 @@
  
  type U = { a: number } | { b: string };
  >U : Symbol(U, Decl(interfaceExtendsObjectIntersectionErrors.ts, 41, 67))
-@@ -181,11 +181,11 @@
+@@= skipped -29, +29 lines =@@
  interface I30 extends U { x: string }
  >I30 : Symbol(I30, Decl(interfaceExtendsObjectIntersectionErrors.ts, 43, 39))
  >U : Symbol(U, Decl(interfaceExtendsObjectIntersectionErrors.ts, 41, 67))

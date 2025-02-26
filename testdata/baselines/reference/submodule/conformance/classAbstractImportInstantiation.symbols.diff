@@ -1,6 +1,6 @@
 --- old.classAbstractImportInstantiation.symbols
 +++ new.classAbstractImportInstantiation.symbols
-@@ -14,7 +14,7 @@
+@@= skipped -14, +14 lines =@@
  import myA = M.A;
  >myA : Symbol(myA, Decl(classAbstractImportInstantiation.ts, 4, 1))
  >M : Symbol(M, Decl(classAbstractImportInstantiation.ts, 0, 0))

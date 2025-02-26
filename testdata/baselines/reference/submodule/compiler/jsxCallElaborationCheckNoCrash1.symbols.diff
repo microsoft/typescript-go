@@ -1,6 +1,6 @@
 --- old.jsxCallElaborationCheckNoCrash1.symbols
 +++ new.jsxCallElaborationCheckNoCrash1.symbols
-@@ -20,7 +20,7 @@
+@@= skipped -20, +20 lines =@@
  
  ): React.SFC => {
  >React : Symbol(React, Decl(jsxCallElaborationCheckNoCrash1.tsx, 2, 6))

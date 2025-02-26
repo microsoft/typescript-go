@@ -1,6 +1,6 @@
 --- old.genericClassPropertyInheritanceSpecialization.symbols
 +++ new.genericClassPropertyInheritanceSpecialization.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(genericClassPropertyInheritanceSpecialization.ts, 0, 33))
  
      peek(): T;
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(genericClassPropertyInheritanceSpecialization.ts, 0, 33))
  
      (): T;
-@@ -24,17 +24,17 @@
+@@= skipped -18, +18 lines =@@
  >T : Symbol(T, Decl(genericClassPropertyInheritanceSpecialization.ts, 6, 29))
  
      equalityComparer(a: T, b: T): boolean;
@@ -30,7 +30,7 @@
  }
  
  interface KnockoutObservableArray<T> extends KnockoutObservable<T[]> {
-@@ -44,19 +44,19 @@
+@@= skipped -20, +20 lines =@@
  >T : Symbol(T, Decl(genericClassPropertyInheritanceSpecialization.ts, 12, 34))
  
      indexOf(searchElement: T, fromIndex?: number): number;
@@ -53,7 +53,7 @@
  >start : Symbol(start, Decl(genericClassPropertyInheritanceSpecialization.ts, 15, 11))
  >deleteCount : Symbol(deleteCount, Decl(genericClassPropertyInheritanceSpecialization.ts, 15, 25))
  >items : Symbol(items, Decl(genericClassPropertyInheritanceSpecialization.ts, 15, 47))
-@@ -64,29 +64,29 @@
+@@= skipped -20, +20 lines =@@
  >T : Symbol(T, Decl(genericClassPropertyInheritanceSpecialization.ts, 12, 34))
  
      pop(): T;
@@ -89,7 +89,7 @@
  >compareFunction : Symbol(compareFunction, Decl(genericClassPropertyInheritanceSpecialization.ts, 21, 9))
  >a : Symbol(a, Decl(genericClassPropertyInheritanceSpecialization.ts, 21, 28))
  >T : Symbol(T, Decl(genericClassPropertyInheritanceSpecialization.ts, 12, 34))
-@@ -94,31 +94,31 @@
+@@= skipped -30, +30 lines =@@
  >T : Symbol(T, Decl(genericClassPropertyInheritanceSpecialization.ts, 12, 34))
  
      replace(oldItem: T, newItem: T): void;
@@ -126,7 +126,7 @@
  >items : Symbol(items, Decl(genericClassPropertyInheritanceSpecialization.ts, 26, 15))
  >T : Symbol(T, Decl(genericClassPropertyInheritanceSpecialization.ts, 12, 34))
  }
-@@ -127,7 +127,7 @@
+@@= skipped -33, +33 lines =@@
  >KnockoutObservableArrayStatic : Symbol(KnockoutObservableArrayStatic, Decl(genericClassPropertyInheritanceSpecialization.ts, 27, 1))
  
      fn: KnockoutObservableArray<any>;
@@ -135,7 +135,7 @@
  >KnockoutObservableArray : Symbol(KnockoutObservableArray, Decl(genericClassPropertyInheritanceSpecialization.ts, 10, 1))
  
      <T>(value?: T[]): KnockoutObservableArray<T>;
-@@ -156,18 +156,18 @@
+@@= skipped -29, +29 lines =@@
  >TValue : Symbol(TValue, Decl(genericClassPropertyInheritanceSpecialization.ts, 41, 27))
  
          private _subscription;
@@ -158,7 +158,7 @@
  >KnockoutObservable : Symbol(KnockoutObservable, Decl(genericClassPropertyInheritanceSpecialization.ts, 4, 1))
  >TValue : Symbol(TValue, Decl(genericClassPropertyInheritanceSpecialization.ts, 41, 27))
  
-@@ -175,10 +175,10 @@
+@@= skipped -19, +19 lines =@@
  >message : Symbol(message, Decl(genericClassPropertyInheritanceSpecialization.ts, 46, 20))
  
          public destroy(): void { }
@@ -171,7 +171,7 @@
  >value : Symbol(value, Decl(genericClassPropertyInheritanceSpecialization.ts, 48, 25))
  >TValue : Symbol(TValue, Decl(genericClassPropertyInheritanceSpecialization.ts, 41, 27))
      }
-@@ -193,20 +193,13 @@
+@@= skipped -18, +18 lines =@@
      export class Validator<TValue> extends Portal.Controls.Validators.Validator<TValue> {
  >Validator : Symbol(Validator, Decl(genericClassPropertyInheritanceSpecialization.ts, 52, 48))
  >TValue : Symbol(TValue, Decl(genericClassPropertyInheritanceSpecialization.ts, 54, 27))
@@ -192,7 +192,7 @@
  >message : Symbol(message, Decl(genericClassPropertyInheritanceSpecialization.ts, 56, 20))
          }
      }
-@@ -218,13 +211,13 @@
+@@= skipped -25, +18 lines =@@
  >TValue : Symbol(TValue, Decl(genericClassPropertyInheritanceSpecialization.ts, 63, 19))
  
      validators: KnockoutObservableArray<PortalFx.ViewModels.Controls.Validators.Validator<TValue>>;
@@ -211,7 +211,7 @@
  >TValue : Symbol(TValue, Decl(genericClassPropertyInheritanceSpecialization.ts, 63, 19))
  }
  
-@@ -236,22 +229,22 @@
+@@= skipped -18, +18 lines =@@
  >TValue : Symbol(TValue, Decl(genericClassPropertyInheritanceSpecialization.ts, 69, 16))
  
      public validators: KnockoutObservableArray<PortalFx.ViewModels.Controls.Validators.Validator<TValue>> = ko.observableArray<PortalFx.ViewModels.Controls.Validators.Validator<TValue>>();

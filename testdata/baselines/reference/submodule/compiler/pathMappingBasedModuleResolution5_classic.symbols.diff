@@ -1,6 +1,6 @@
 --- old.pathMappingBasedModuleResolution5_classic.symbols
 +++ new.pathMappingBasedModuleResolution5_classic.symbols
-@@ -19,27 +19,25 @@
+@@= skipped -19, +19 lines =@@
  
  use(x.toExponential());
  >use : Symbol(use, Decl(file1.ts, 3, 24))
@@ -34,7 +34,7 @@
  
  === c:/root/folder2/file1.ts ===
  export var x = 1;
-@@ -53,7 +51,3 @@
+@@= skipped -34, +32 lines =@@
  export var z = 1;
  >z : Symbol(z, Decl(file3.ts, 0, 10))
  

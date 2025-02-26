@@ -1,6 +1,6 @@
 --- old.typeFromPropertyAssignmentWithExport.symbols
 +++ new.typeFromPropertyAssignmentWithExport.symbols
-@@ -4,16 +4,12 @@
+@@= skipped -4, +4 lines =@@
  // this is a javascript file...
  
  export const Adapter = {};

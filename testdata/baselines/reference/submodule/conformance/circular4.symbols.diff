@@ -1,6 +1,6 @@
 --- old.circular4.symbols
 +++ new.circular4.symbols
-@@ -13,8 +13,8 @@
+@@= skipped -13, +13 lines =@@
      export type T = ns2.nested.T;
  >T : Symbol(T, Decl(a.ts, 2, 27))
  >ns2 : Symbol(ns2, Decl(a.ts, 0, 13))
@@ -11,7 +11,7 @@
    }
  }
  
-@@ -31,8 +31,8 @@
+@@= skipped -18, +18 lines =@@
      export type T = ns1.nested.T;
  >T : Symbol(T, Decl(b.ts, 2, 27))
  >ns1 : Symbol(ns1, Decl(b.ts, 0, 13))

@@ -1,6 +1,6 @@
 --- old.inheritance1.symbols
 +++ new.inheritance1.symbols
-@@ -5,14 +5,14 @@
+@@= skipped -5, +5 lines =@@
  >Control : Symbol(Control, Decl(inheritance1.ts, 0, 0))
  
      private state: any;
@@ -17,7 +17,7 @@
  }
  
  class Button extends Control implements SelectableControl {
-@@ -21,14 +21,14 @@
+@@= skipped -16, +16 lines =@@
  >SelectableControl : Symbol(SelectableControl, Decl(inheritance1.ts, 2, 1))
  
      select() { }
@@ -34,7 +34,7 @@
  }
  class ImageBase extends Control implements SelectableControl{
  >ImageBase : Symbol(ImageBase, Decl(inheritance1.ts, 12, 1))
-@@ -44,13 +44,13 @@
+@@= skipped -23, +23 lines =@@
  >SelectableControl : Symbol(SelectableControl, Decl(inheritance1.ts, 2, 1))
  
      select() { }

@@ -1,6 +1,6 @@
 --- old.reverseMappedUnionInference.symbols
 +++ new.reverseMappedUnionInference.symbols
-@@ -6,11 +6,11 @@
+@@= skipped -6, +6 lines =@@
  >Result : Symbol(Result, Decl(reverseMappedUnionInference.ts, 0, 23))
  
    matches: (node: any) => boolean;
@@ -14,7 +14,7 @@
  >node : Symbol(node, Decl(reverseMappedUnionInference.ts, 2, 12))
  >Result : Symbol(Result, Decl(reverseMappedUnionInference.ts, 0, 23))
  }
-@@ -21,13 +21,13 @@
+@@= skipped -15, +15 lines =@@
  >Result : Symbol(Result, Decl(reverseMappedUnionInference.ts, 5, 22))
  
    matches: (node: unknown) => node is T;
@@ -30,7 +30,7 @@
  >node : Symbol(node, Decl(reverseMappedUnionInference.ts, 7, 12))
  >T : Symbol(T, Decl(reverseMappedUnionInference.ts, 5, 20))
  >Result : Symbol(Result, Decl(reverseMappedUnionInference.ts, 5, 22))
-@@ -60,10 +60,10 @@
+@@= skipped -39, +39 lines =@@
  >Identifier : Symbol(Identifier, Decl(reverseMappedUnionInference.ts, 13, 25))
  
    kind: "identifier";
@@ -43,7 +43,7 @@
  }
  
  declare function isIdentifier(node: unknown): node is Identifier;
-@@ -94,9 +94,9 @@
+@@= skipped -34, +34 lines =@@
  
        value: node.name,
  >value : Symbol(value, Decl(reverseMappedUnionInference.ts, 27, 34))
@@ -55,7 +55,7 @@
  
      };
    },
-@@ -106,10 +106,10 @@
+@@= skipped -12, +12 lines =@@
  >StringLiteral : Symbol(StringLiteral, Decl(reverseMappedUnionInference.ts, 31, 3))
  
    kind: "stringLiteral";
@@ -68,7 +68,7 @@
  }
  
  declare function isStringLiteral(node: unknown): node is StringLiteral;
-@@ -140,9 +140,9 @@
+@@= skipped -34, +34 lines =@@
  
        value: node.value,
  >value : Symbol(value, Decl(reverseMappedUnionInference.ts, 45, 30))

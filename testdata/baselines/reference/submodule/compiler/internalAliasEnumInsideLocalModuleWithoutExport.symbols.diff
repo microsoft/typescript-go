@@ -1,6 +1,6 @@
 --- old.internalAliasEnumInsideLocalModuleWithoutExport.symbols
 +++ new.internalAliasEnumInsideLocalModuleWithoutExport.symbols
-@@ -8,13 +8,13 @@
+@@= skipped -8, +8 lines =@@
  >weekend : Symbol(weekend, Decl(internalAliasEnumInsideLocalModuleWithoutExport.ts, 0, 17))
  
          Friday,
@@ -17,7 +17,7 @@
      }
  }
  
-@@ -24,13 +24,13 @@
+@@= skipped -16, +16 lines =@@
      import b = a.weekend;
  >b : Symbol(b, Decl(internalAliasEnumInsideLocalModuleWithoutExport.ts, 8, 17))
  >a : Symbol(a, Decl(internalAliasEnumInsideLocalModuleWithoutExport.ts, 0, 0))

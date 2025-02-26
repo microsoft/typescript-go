@@ -1,6 +1,6 @@
 --- old.umdNamespaceMergedWithGlobalAugmentationIsNotCircular.symbols
 +++ new.umdNamespaceMergedWithGlobalAugmentationIsNotCircular.symbols
-@@ -27,18 +27,18 @@
+@@= skipped -27, +27 lines =@@
  === some_module.ts ===
  export { };
  React.createRef;

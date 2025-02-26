@@ -1,6 +1,6 @@
 --- old.unusedVariablesinNamespaces2.symbols
 +++ new.unusedVariablesinNamespaces2.symbols
-@@ -14,13 +14,13 @@
+@@= skipped -14, +14 lines =@@
  >LettersOnlyValidator : Symbol(LettersOnlyValidator, Decl(unusedVariablesinNamespaces2.ts, 2, 36))
  
          isAcceptable(s2: string) {

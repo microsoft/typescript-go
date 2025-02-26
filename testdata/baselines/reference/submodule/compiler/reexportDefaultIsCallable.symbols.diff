@@ -1,6 +1,6 @@
 --- old.reexportDefaultIsCallable.symbols
 +++ new.reexportDefaultIsCallable.symbols
-@@ -2,7 +2,7 @@
+@@= skipped -2, +2 lines =@@
  
  === schema.d.ts ===
  export default class Schema {}
@@ -9,7 +9,7 @@
  
  === reexporter.d.ts ===
  export { default } from "./schema";
-@@ -13,6 +13,6 @@
+@@= skipped -11, +11 lines =@@
  >Base : Symbol(Base, Decl(usage.ts, 0, 6))
  
  export default class Mine extends Base {}

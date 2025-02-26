@@ -1,6 +1,6 @@
 --- old.awaitedType.symbols
 +++ new.awaitedType.symbols
-@@ -95,7 +95,7 @@
+@@= skipped -95, +95 lines =@@
  
  interface BadPromise { then(cb: (value: BadPromise) => void): void; }
  >BadPromise : Symbol(BadPromise, Decl(awaitedType.ts, 18, 50))
@@ -9,7 +9,7 @@
  >cb : Symbol(cb, Decl(awaitedType.ts, 20, 28))
  >value : Symbol(value, Decl(awaitedType.ts, 20, 33))
  >BadPromise : Symbol(BadPromise, Decl(awaitedType.ts, 18, 50))
-@@ -107,14 +107,14 @@
+@@= skipped -12, +12 lines =@@
  
  interface BadPromise1 { then(cb: (value: BadPromise2) => void): void; }
  >BadPromise1 : Symbol(BadPromise1, Decl(awaitedType.ts, 21, 31))
@@ -26,7 +26,7 @@
  >cb : Symbol(cb, Decl(awaitedType.ts, 24, 29))
  >value : Symbol(value, Decl(awaitedType.ts, 24, 34))
  >BadPromise1 : Symbol(BadPromise1, Decl(awaitedType.ts, 21, 31))
-@@ -168,9 +168,9 @@
+@@= skipped -61, +61 lines =@@
  >bbb : Symbol(bbb, Decl(awaitedType.ts, 36, 7))
  
      ] = await Promise.all([
@@ -38,7 +38,7 @@
  
          MaybePromise(1),
  >MaybePromise : Symbol(MaybePromise, Decl(awaitedType.ts, 31, 54), Decl(awaitedType.ts, 28, 69))
-@@ -603,24 +603,24 @@
+@@= skipped -435, +435 lines =@@
  {
    const promises = [Promise.resolve(0)] as const
  >promises : Symbol(promises, Decl(awaitedType.ts, 231, 7))
@@ -70,7 +70,7 @@
  
      const second = results[1] // error
  >second : Symbol(second, Decl(awaitedType.ts, 235, 9))
-@@ -636,18 +636,18 @@
+@@= skipped -33, +33 lines =@@
  
      const promiseNumber = Promise.resolve(1);
  >promiseNumber : Symbol(promiseNumber, Decl(awaitedType.ts, 243, 9))

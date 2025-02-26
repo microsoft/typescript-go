@@ -1,6 +1,6 @@
 --- old.arrayAssignmentTest4.symbols
 +++ new.arrayAssignmentTest4.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >C3 : Symbol(C3, Decl(arrayAssignmentTest4.ts, 0, 0))
  
      CM3M1() { return 3;}

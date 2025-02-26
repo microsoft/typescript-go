@@ -1,6 +1,6 @@
 --- old.es5ExportDefaultClassDeclaration.symbols
 +++ new.es5ExportDefaultClassDeclaration.symbols
-@@ -2,9 +2,9 @@
+@@= skipped -2, +2 lines =@@
  
  === es5ExportDefaultClassDeclaration.ts ===
  export default class C {

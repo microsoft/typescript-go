@@ -1,6 +1,6 @@
 --- old.genericConstraint2.symbols
 +++ new.genericConstraint2.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(genericConstraint2.ts, 0, 21))
  
      comparer(other: T): number;
@@ -9,7 +9,7 @@
  >other : Symbol(other, Decl(genericConstraint2.ts, 1, 13))
  >T : Symbol(T, Decl(genericConstraint2.ts, 0, 21))
  }
-@@ -29,9 +29,9 @@
+@@= skipped -23, +23 lines =@@
  >y : Symbol(y, Decl(genericConstraint2.ts, 4, 47))
  
      return x.comparer(y);
@@ -21,7 +21,7 @@
  >y : Symbol(y, Decl(genericConstraint2.ts, 4, 47))
  }
  
-@@ -40,10 +40,10 @@
+@@= skipped -11, +11 lines =@@
  >Comparable : Symbol(Comparable, Decl(genericConstraint2.ts, 0, 0))
  
      constructor(public currentValue: string) { }

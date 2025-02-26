@@ -1,6 +1,6 @@
 --- old.es6ClassTest8.symbols
 +++ new.es6ClassTest8.symbols
-@@ -30,13 +30,13 @@
+@@= skipped -30, +30 lines =@@
  >Vector : Symbol(Vector, Decl(es6ClassTest8.ts, 10, 1))
  
      static norm(v:Vector):Vector {return null;}
@@ -16,7 +16,7 @@
  >v1 : Symbol(v1, Decl(es6ClassTest8.ts, 14, 17))
  >Vector : Symbol(Vector, Decl(es6ClassTest8.ts, 10, 1))
  >v2 : Symbol(v2, Decl(es6ClassTest8.ts, 14, 27))
-@@ -44,7 +44,7 @@
+@@= skipped -14, +14 lines =@@
  >Vector : Symbol(Vector, Decl(es6ClassTest8.ts, 10, 1))
  
      static times(v1:Vector, v2:Vector):Vector {return null;}
@@ -25,7 +25,7 @@
  >v1 : Symbol(v1, Decl(es6ClassTest8.ts, 15, 17))
  >Vector : Symbol(Vector, Decl(es6ClassTest8.ts, 10, 1))
  >v2 : Symbol(v2, Decl(es6ClassTest8.ts, 15, 27))
-@@ -52,7 +52,7 @@
+@@= skipped -8, +8 lines =@@
  >Vector : Symbol(Vector, Decl(es6ClassTest8.ts, 10, 1))
  
      static cross(v1:Vector, v2:Vector):Vector {return null;}
@@ -34,7 +34,7 @@
  >v1 : Symbol(v1, Decl(es6ClassTest8.ts, 16, 17))
  >Vector : Symbol(Vector, Decl(es6ClassTest8.ts, 10, 1))
  >v2 : Symbol(v2, Decl(es6ClassTest8.ts, 16, 27))
-@@ -60,17 +60,17 @@
+@@= skipped -8, +8 lines =@@
  >Vector : Symbol(Vector, Decl(es6ClassTest8.ts, 10, 1))
  
      constructor(public x: number,
@@ -56,7 +56,7 @@
  >v1 : Symbol(v1, Decl(es6ClassTest8.ts, 23, 15))
  >Vector : Symbol(Vector, Decl(es6ClassTest8.ts, 10, 1))
  >v2 : Symbol(v2, Decl(es6ClassTest8.ts, 23, 25))
-@@ -83,19 +83,19 @@
+@@= skipped -23, +23 lines =@@
  >Camera : Symbol(Camera, Decl(es6ClassTest8.ts, 25, 1))
  
      public forward: Vector;
@@ -80,7 +80,7 @@
  >Vector : Symbol(Vector, Decl(es6ClassTest8.ts, 10, 1))
  >lookAt : Symbol(lookAt, Decl(es6ClassTest8.ts, 31, 35))
  >Vector : Symbol(Vector, Decl(es6ClassTest8.ts, 10, 1))
-@@ -105,59 +105,59 @@
+@@= skipped -22, +22 lines =@@
  >Vector : Symbol(Vector, Decl(es6ClassTest8.ts, 10, 1))
  
          this.forward = Vector.norm(Vector.minus(lookAt,this.pos));

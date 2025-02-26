@@ -1,6 +1,6 @@
 --- old.classCanExtendConstructorFunction.symbols
 +++ new.classCanExtendConstructorFunction.symbols
-@@ -6,75 +6,55 @@
+@@= skipped -6, +6 lines =@@
   * @param {number} numberOxen
   */
  function Wagon(numberOxen) {
@@ -90,7 +90,7 @@
      }
      /**
       * @param {Array.<string>} files
-@@ -82,7 +62,7 @@
+@@= skipped -76, +56 lines =@@
       * This is not assignable, so should have a type error
       */
      load(files, format) {
@@ -99,7 +99,7 @@
  >files : Symbol(files, Decl(first.js, 30, 9))
  >format : Symbol(format, Decl(first.js, 30, 15))
  
-@@ -94,31 +74,19 @@
+@@= skipped -12, +12 lines =@@
          }
          else {
              super.speed() // run faster
@@ -134,7 +134,7 @@
  
  // error, can't extend a TS constructor function
  class Drakkhen extends Dragon {
-@@ -150,25 +118,24 @@
+@@= skipped -56, +44 lines =@@
  // ok
  class Conestoga extends Wagon {
  >Conestoga : Symbol(Conestoga, Decl(second.ts, 11, 1))
@@ -166,7 +166,7 @@
      }
  }
  var c = new Conestoga(true);
-@@ -176,14 +143,12 @@
+@@= skipped -26, +25 lines =@@
  >Conestoga : Symbol(Conestoga, Decl(second.ts, 11, 1))
  
  c.drunkOO
@@ -183,7 +183,7 @@
  
  === generic.js ===
  /**
-@@ -195,9 +160,6 @@
+@@= skipped -19, +17 lines =@@
  >flavour : Symbol(flavour, Decl(generic.js, 4, 14))
  
      this.flavour = flavour
@@ -193,7 +193,7 @@
  >flavour : Symbol(flavour, Decl(generic.js, 4, 14))
  }
  /** @extends {Soup<{ claim: "ignorant" | "malicious" }>} */
-@@ -206,12 +168,10 @@
+@@= skipped -11, +8 lines =@@
  >Soup : Symbol(Soup, Decl(generic.js, 0, 0))
  
      log() {
@@ -207,7 +207,7 @@
      }
  }
  
-@@ -220,9 +180,7 @@
+@@= skipped -14, +12 lines =@@
  >Soup : Symbol(Soup, Decl(generic.js, 0, 0))
  
  soup.flavour
@@ -217,7 +217,7 @@
  
  var chowder = new Chowder({ claim: "ignorant" });
  >chowder : Symbol(chowder, Decl(generic.js, 16, 3))
-@@ -230,11 +188,7 @@
+@@= skipped -10, +8 lines =@@
  >claim : Symbol(claim, Decl(generic.js, 16, 27))
  
  chowder.flavour.claim

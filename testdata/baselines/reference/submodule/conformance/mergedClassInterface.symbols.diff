@@ -1,6 +1,6 @@
 --- old.mergedClassInterface.symbols
 +++ new.mergedClassInterface.symbols
-@@ -29,28 +29,28 @@
+@@= skipped -29, +29 lines =@@
  >C5 : Symbol(C5, Decl(file1.ts, 14, 12), Decl(file1.ts, 18, 1), Decl(file1.ts, 22, 1), Decl(file1.ts, 26, 1))
  
      x1: number;
@@ -33,7 +33,7 @@
  }
  
  // checks if properties actually were merged
-@@ -59,24 +59,24 @@
+@@= skipped -30, +30 lines =@@
  >C5 : Symbol(C5, Decl(file1.ts, 14, 12), Decl(file1.ts, 18, 1), Decl(file1.ts, 22, 1), Decl(file1.ts, 26, 1))
  
  c5.x1;

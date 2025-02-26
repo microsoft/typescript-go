@@ -1,6 +1,6 @@
 --- old.uniqueSymbolsDeclarationsInJs.symbols
 +++ new.uniqueSymbolsDeclarationsInJs.symbols
-@@ -9,7 +9,7 @@
+@@= skipped -9, +9 lines =@@
       * @readonly
       */
      static readonlyStaticCall = Symbol();
@@ -9,7 +9,7 @@
  >Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
  
      /**
-@@ -17,29 +17,29 @@
+@@= skipped -8, +8 lines =@@
       * @readonly
       */
      static readonlyStaticType;

@@ -1,6 +1,6 @@
 --- old.genericIndexedAccessVarianceComparisonResultCorrect.symbols
 +++ new.genericIndexedAccessVarianceComparisonResultCorrect.symbols
-@@ -5,20 +5,20 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(genericIndexedAccessVarianceComparisonResultCorrect.ts, 0, 0))
  
      x: string = 'A';

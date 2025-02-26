@@ -1,6 +1,6 @@
 --- old.circularBaseTypes.symbols
 +++ new.circularBaseTypes.symbols
-@@ -43,6 +43,6 @@
+@@= skipped -43, +43 lines =@@
  >Y : Symbol(Y, Decl(circularBaseTypes.ts, 12, 55))
  
    a: "";

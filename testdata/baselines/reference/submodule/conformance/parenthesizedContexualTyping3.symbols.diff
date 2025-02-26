@@ -1,6 +1,6 @@
 --- old.parenthesizedContexualTyping3.symbols
 +++ new.parenthesizedContexualTyping3.symbols
-@@ -10,7 +10,7 @@
+@@= skipped -10, +10 lines =@@
  >tempFun : Symbol(tempFun, Decl(parenthesizedContexualTyping3.ts, 0, 0), Decl(parenthesizedContexualTyping3.ts, 5, 77), Decl(parenthesizedContexualTyping3.ts, 6, 93))
  >T : Symbol(T, Decl(parenthesizedContexualTyping3.ts, 5, 17))
  >tempStrs : Symbol(tempStrs, Decl(parenthesizedContexualTyping3.ts, 5, 20))
@@ -9,7 +9,7 @@
  >g : Symbol(g, Decl(parenthesizedContexualTyping3.ts, 5, 51))
  >x : Symbol(x, Decl(parenthesizedContexualTyping3.ts, 5, 56))
  >T : Symbol(T, Decl(parenthesizedContexualTyping3.ts, 5, 17))
-@@ -23,7 +23,7 @@
+@@= skipped -13, +13 lines =@@
  >tempFun : Symbol(tempFun, Decl(parenthesizedContexualTyping3.ts, 0, 0), Decl(parenthesizedContexualTyping3.ts, 5, 77), Decl(parenthesizedContexualTyping3.ts, 6, 93))
  >T : Symbol(T, Decl(parenthesizedContexualTyping3.ts, 6, 17))
  >tempStrs : Symbol(tempStrs, Decl(parenthesizedContexualTyping3.ts, 6, 20))
@@ -18,7 +18,7 @@
  >g : Symbol(g, Decl(parenthesizedContexualTyping3.ts, 6, 51))
  >x : Symbol(x, Decl(parenthesizedContexualTyping3.ts, 6, 56))
  >T : Symbol(T, Decl(parenthesizedContexualTyping3.ts, 6, 17))
-@@ -40,7 +40,7 @@
+@@= skipped -17, +17 lines =@@
  >tempFun : Symbol(tempFun, Decl(parenthesizedContexualTyping3.ts, 0, 0), Decl(parenthesizedContexualTyping3.ts, 5, 77), Decl(parenthesizedContexualTyping3.ts, 6, 93))
  >T : Symbol(T, Decl(parenthesizedContexualTyping3.ts, 7, 17))
  >tempStrs : Symbol(tempStrs, Decl(parenthesizedContexualTyping3.ts, 7, 20))

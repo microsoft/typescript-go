@@ -1,6 +1,6 @@
 --- old.superPropertyAccess.symbols
 +++ new.superPropertyAccess.symbols
-@@ -5,27 +5,27 @@
+@@= skipped -5, +5 lines =@@
  >MyBase : Symbol(MyBase, Decl(superPropertyAccess.ts, 0, 0))
  
      m1(a: string) { return a; }
@@ -35,7 +35,7 @@
  >v : Symbol(v, Decl(superPropertyAccess.ts, 7, 14))
  }
  
-@@ -35,69 +35,69 @@
+@@= skipped -30, +30 lines =@@
  >MyBase : Symbol(MyBase, Decl(superPropertyAccess.ts, 0, 0))
  
      foo() {

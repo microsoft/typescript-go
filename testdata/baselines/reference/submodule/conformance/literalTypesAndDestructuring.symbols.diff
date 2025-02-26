@@ -1,6 +1,6 @@
 --- old.literalTypesAndDestructuring.symbols
 +++ new.literalTypesAndDestructuring.symbols
-@@ -57,7 +57,7 @@
+@@= skipped -57, +57 lines =@@
  >Foo : Symbol(Foo, Decl(literalTypesAndDestructuring.ts, 10, 27))
  
    bar: 'yo' | 'ha' | undefined;

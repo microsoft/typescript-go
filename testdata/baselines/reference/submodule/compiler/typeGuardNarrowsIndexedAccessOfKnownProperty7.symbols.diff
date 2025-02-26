@@ -1,6 +1,6 @@
 --- old.typeGuardNarrowsIndexedAccessOfKnownProperty7.symbols
 +++ new.typeGuardNarrowsIndexedAccessOfKnownProperty7.symbols
-@@ -13,17 +13,17 @@
+@@= skipped -13, +13 lines =@@
  >C : Symbol(C, Decl(typeGuardNarrowsIndexedAccessOfKnownProperty7.ts, 2, 1))
  
      [Foo.key]: string;

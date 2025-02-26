@@ -1,6 +1,6 @@
 --- old.constEnumNoEmitReexport.symbols
 +++ new.constEnumNoEmitReexport.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >MyConstEnum : Symbol(MyConstEnum, Decl(ConstEnum.ts, 0, 0))
  
      Foo,
@@ -13,7 +13,7 @@
  
  };
  === ImportExport.ts ===
-@@ -42,30 +42,30 @@
+@@= skipped -37, +37 lines =@@
  >MyConstEnum2 : Symbol(MyConstEnum2, Decl(Usage1.ts, 1, 6))
  
  MyConstEnum1.Foo;

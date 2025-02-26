@@ -1,6 +1,6 @@
 --- old.errorForUsingPropertyOfTypeAsType03.symbols
 +++ new.errorForUsingPropertyOfTypeAsType03.symbols
-@@ -8,13 +8,13 @@
+@@= skipped -8, +8 lines =@@
  >Color : Symbol(Color, Decl(errorForUsingPropertyOfTypeAsType03.ts, 0, 17))
  
          Red,
@@ -17,7 +17,7 @@
      }
  
      type C1 = Color;
-@@ -28,13 +28,13 @@
+@@= skipped -20, +20 lines =@@
      let a1: Color.Red.toString;
  >a1 : Symbol(a1, Decl(errorForUsingPropertyOfTypeAsType03.ts, 10, 7))
  >Color : Symbol(Color, Decl(errorForUsingPropertyOfTypeAsType03.ts, 0, 17))
@@ -34,7 +34,7 @@
  
      let a3: Color["Red"]["toString"];
  >a3 : Symbol(a3, Decl(errorForUsingPropertyOfTypeAsType03.ts, 12, 7))
-@@ -49,13 +49,13 @@
+@@= skipped -21, +21 lines =@@
      let c1: C1.Red.toString;
  >c1 : Symbol(c1, Decl(errorForUsingPropertyOfTypeAsType03.ts, 18, 7))
  >C1 : Symbol(C1)
@@ -51,7 +51,7 @@
  
      let c3: C1["Red"]["toString"];
  >c3 : Symbol(c3, Decl(errorForUsingPropertyOfTypeAsType03.ts, 20, 7))
-@@ -64,13 +64,13 @@
+@@= skipped -15, +15 lines =@@
      let d1: C2.Red.toString;
  >d1 : Symbol(d1, Decl(errorForUsingPropertyOfTypeAsType03.ts, 22, 7))
  >C2 : Symbol(C2)

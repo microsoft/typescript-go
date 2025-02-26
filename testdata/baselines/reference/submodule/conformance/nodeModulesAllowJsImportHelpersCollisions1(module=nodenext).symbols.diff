@@ -1,6 +1,6 @@
 --- old.nodeModulesAllowJsImportHelpersCollisions1(module=nodenext).symbols
 +++ new.nodeModulesAllowJsImportHelpersCollisions1(module=nodenext).symbols
-@@ -3,7 +3,7 @@
+@@= skipped -3, +3 lines =@@
  === subfolder/index.js ===
  // cjs format file
  import {default as _fs} from "fs";
@@ -9,7 +9,7 @@
  >_fs : Symbol(_fs, Decl(index.js, 1, 8))
  
  _fs.readFile;
-@@ -18,7 +18,7 @@
+@@= skipped -15, +15 lines =@@
  === index.js ===
  // esm format file
  import {default as _fs} from "fs";

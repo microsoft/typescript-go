@@ -1,6 +1,6 @@
 --- old.complicatedIndexesOfIntersectionsAreInferencable.symbols
 +++ new.complicatedIndexesOfIntersectionsAreInferencable.symbols
-@@ -6,16 +6,16 @@
+@@= skipped -6, +6 lines =@@
  >Values : Symbol(Values, Decl(complicatedIndexesOfIntersectionsAreInferencable.ts, 0, 23))
  
      initialValues: Values;

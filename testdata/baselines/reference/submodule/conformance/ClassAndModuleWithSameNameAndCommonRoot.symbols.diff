@@ -1,6 +1,6 @@
 --- old.ClassAndModuleWithSameNameAndCommonRoot.symbols
 +++ new.ClassAndModuleWithSameNameAndCommonRoot.symbols
-@@ -3,46 +3,46 @@
+@@= skipped -3, +3 lines =@@
  === class.ts ===
  module X.Y {
  >X : Symbol(X, Decl(class.ts, 0, 0), Decl(module.ts, 0, 0))
@@ -60,7 +60,7 @@
      }
  }
  
-@@ -50,21 +50,11 @@
+@@= skipped -47, +47 lines =@@
  //var cl: { x: number; y: number; }
  var cl = new X.Y.Point(1,1);
  >cl : Symbol(cl, Decl(test.ts, 1, 3), Decl(test.ts, 2, 3))
@@ -82,7 +82,7 @@
  
  
  === simple.ts ===
-@@ -72,7 +62,7 @@
+@@= skipped -22, +12 lines =@@
  >A : Symbol(A, Decl(simple.ts, 0, 0), Decl(simple.ts, 2, 1))
  
      id: string;
@@ -91,7 +91,7 @@
  }
  
  module A {
-@@ -86,9 +76,9 @@
+@@= skipped -14, +14 lines =@@
  // ensure merging works as expected
  var a = A.Instance;
  >a : Symbol(a, Decl(simple.ts, 9, 3), Decl(simple.ts, 10, 3), Decl(simple.ts, 11, 3))

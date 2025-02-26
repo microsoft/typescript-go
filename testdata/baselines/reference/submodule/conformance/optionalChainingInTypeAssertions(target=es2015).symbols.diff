@@ -1,6 +1,6 @@
 --- old.optionalChainingInTypeAssertions(target=es2015).symbols
 +++ new.optionalChainingInTypeAssertions(target=es2015).symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(optionalChainingInTypeAssertions.ts, 0, 0))
  
      m() {}
@@ -9,7 +9,7 @@
  }
  
  const foo = new Foo();
-@@ -13,41 +13,41 @@
+@@= skipped -8, +8 lines =@@
  >Foo : Symbol(Foo, Decl(optionalChainingInTypeAssertions.ts, 0, 0))
  
  (foo.m as any)?.();

@@ -1,6 +1,6 @@
 --- old.genericClassWithFunctionTypedMemberArguments.symbols
 +++ new.genericClassWithFunctionTypedMemberArguments.symbols
-@@ -12,7 +12,7 @@
+@@= skipped -12, +12 lines =@@
  >T : Symbol(T, Decl(genericClassWithFunctionTypedMemberArguments.ts, 4, 12))
  
          foo<T>(x: (a: T) => T) {
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(genericClassWithFunctionTypedMemberArguments.ts, 5, 12))
  >x : Symbol(x, Decl(genericClassWithFunctionTypedMemberArguments.ts, 5, 15))
  >a : Symbol(a, Decl(genericClassWithFunctionTypedMemberArguments.ts, 5, 19))
-@@ -30,27 +30,27 @@
+@@= skipped -18, +18 lines =@@
  
      var r = c.foo(<U>(x: U) => ''); // {}
  >r : Symbol(r, Decl(genericClassWithFunctionTypedMemberArguments.ts, 11, 7))
@@ -43,7 +43,7 @@
  >x : Symbol(x, Decl(genericClassWithFunctionTypedMemberArguments.ts, 13, 19))
  
      class C2<T> {
-@@ -58,7 +58,7 @@
+@@= skipped -28, +28 lines =@@
  >T : Symbol(T, Decl(genericClassWithFunctionTypedMemberArguments.ts, 15, 13))
  
          foo(x: (a: T) => T) {
@@ -52,7 +52,7 @@
  >x : Symbol(x, Decl(genericClassWithFunctionTypedMemberArguments.ts, 16, 12))
  >a : Symbol(a, Decl(genericClassWithFunctionTypedMemberArguments.ts, 16, 16))
  >T : Symbol(T, Decl(genericClassWithFunctionTypedMemberArguments.ts, 15, 13))
-@@ -75,18 +75,18 @@
+@@= skipped -17, +17 lines =@@
  
      var ra = c2.foo(<U>(x: U) => 1); // number
  >ra : Symbol(ra, Decl(genericClassWithFunctionTypedMemberArguments.ts, 22, 7))
@@ -75,7 +75,7 @@
  >x : Symbol(x, Decl(genericClassWithFunctionTypedMemberArguments.ts, 23, 21))
  }
  
-@@ -98,7 +98,7 @@
+@@= skipped -23, +23 lines =@@
  >T : Symbol(T, Decl(genericClassWithFunctionTypedMemberArguments.ts, 27, 12))
  
          foo2<T, U>(x: T, cb: (a: T) => U) {
@@ -84,7 +84,7 @@
  >T : Symbol(T, Decl(genericClassWithFunctionTypedMemberArguments.ts, 28, 13))
  >U : Symbol(U, Decl(genericClassWithFunctionTypedMemberArguments.ts, 28, 15))
  >x : Symbol(x, Decl(genericClassWithFunctionTypedMemberArguments.ts, 28, 19))
-@@ -120,25 +120,25 @@
+@@= skipped -22, +22 lines =@@
  
      var r4 = c.foo2(1, function <Z>(a: Z) { return '' }); // string, contextual signature instantiation is applied to generic functions
  >r4 : Symbol(r4, Decl(genericClassWithFunctionTypedMemberArguments.ts, 34, 7))
@@ -116,7 +116,7 @@
  >Z : Symbol(Z, Decl(genericClassWithFunctionTypedMemberArguments.ts, 36, 41))
  >a : Symbol(a, Decl(genericClassWithFunctionTypedMemberArguments.ts, 36, 44))
  >Z : Symbol(Z, Decl(genericClassWithFunctionTypedMemberArguments.ts, 36, 41))
-@@ -149,7 +149,7 @@
+@@= skipped -29, +29 lines =@@
  >U : Symbol(U, Decl(genericClassWithFunctionTypedMemberArguments.ts, 38, 15))
  
          foo3(x: T, cb: (a: T) => U, y: U) {
@@ -125,7 +125,7 @@
  >x : Symbol(x, Decl(genericClassWithFunctionTypedMemberArguments.ts, 39, 13))
  >T : Symbol(T, Decl(genericClassWithFunctionTypedMemberArguments.ts, 38, 13))
  >cb : Symbol(cb, Decl(genericClassWithFunctionTypedMemberArguments.ts, 39, 18))
-@@ -171,18 +171,18 @@
+@@= skipped -22, +22 lines =@@
  
      var r7 = c2.foo3(1, <Z>(a: Z) => '', ''); // string
  >r7 : Symbol(r7, Decl(genericClassWithFunctionTypedMemberArguments.ts, 45, 7))
@@ -148,7 +148,7 @@
  >a : Symbol(a, Decl(genericClassWithFunctionTypedMemberArguments.ts, 46, 34))
  
      class C3<T, U> {
-@@ -191,7 +191,7 @@
+@@= skipped -20, +20 lines =@@
  >U : Symbol(U, Decl(genericClassWithFunctionTypedMemberArguments.ts, 48, 15))
  
          foo3<T,U>(x: T, cb: (a: T) => U, y: U) {
@@ -157,7 +157,7 @@
  >T : Symbol(T, Decl(genericClassWithFunctionTypedMemberArguments.ts, 49, 13))
  >U : Symbol(U, Decl(genericClassWithFunctionTypedMemberArguments.ts, 49, 15))
  >x : Symbol(x, Decl(genericClassWithFunctionTypedMemberArguments.ts, 49, 18))
-@@ -223,40 +223,40 @@
+@@= skipped -32, +32 lines =@@
  
          var r10 = c.foo2(1, (x: T) => ''); // error
  >r10 : Symbol(r10, Decl(genericClassWithFunctionTypedMemberArguments.ts, 56, 11), Decl(genericClassWithFunctionTypedMemberArguments.ts, 57, 11))

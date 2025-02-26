@@ -1,6 +1,6 @@
 --- old.typeParameterAsTypeParameterConstraintTransitively2.symbols
 +++ new.typeParameterAsTypeParameterConstraintTransitively2.symbols
-@@ -6,17 +6,17 @@
+@@= skipped -6, +6 lines =@@
  
  interface A { foo: number }
  >A : Symbol(A, Decl(typeParameterAsTypeParameterConstraintTransitively2.ts, 0, 0))

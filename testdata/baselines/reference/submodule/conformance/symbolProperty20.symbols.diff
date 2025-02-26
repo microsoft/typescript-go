@@ -1,6 +1,6 @@
 --- old.symbolProperty20.symbols
 +++ new.symbolProperty20.symbols
-@@ -5,17 +5,11 @@
+@@= skipped -5, +5 lines =@@
  >I : Symbol(I, Decl(symbolProperty20.ts, 0, 0))
  
      [Symbol.iterator]: (s: string) => string;
@@ -20,7 +20,7 @@
  >s : Symbol(s, Decl(symbolProperty20.ts, 2, 25))
  }
  
-@@ -25,17 +19,11 @@
+@@= skipped -20, +14 lines =@@
  
      [Symbol.iterator]: s => s,
  >[Symbol.iterator] : Symbol([Symbol.iterator], Decl(symbolProperty20.ts, 5, 12))

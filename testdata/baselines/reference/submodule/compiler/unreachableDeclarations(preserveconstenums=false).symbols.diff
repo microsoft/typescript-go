@@ -1,6 +1,6 @@
 --- old.unreachableDeclarations(preserveconstenums=false).symbols
 +++ new.unreachableDeclarations(preserveconstenums=false).symbols
-@@ -8,20 +8,20 @@
+@@= skipped -8, +8 lines =@@
  >aFunc : Symbol(aFunc, Decl(unreachableDeclarations.ts, 6, 11))
  
      console.log(EnumA.Value);
@@ -29,7 +29,7 @@
  
      return;
  
-@@ -29,29 +29,29 @@
+@@= skipped -21, +21 lines =@@
  >aFunc : Symbol(aFunc, Decl(unreachableDeclarations.ts, 6, 11))
  
          console.log(EnumA.Value);
@@ -69,7 +69,7 @@
  }
  
  function func2() {
-@@ -61,12 +61,12 @@
+@@= skipped -32, +32 lines =@@
  >aFunc : Symbol(aFunc, Decl(unreachableDeclarations.ts, 22, 11))
  
      console.log(EnumA.Value);
@@ -86,7 +86,7 @@
  
      return;
  
-@@ -74,17 +74,17 @@
+@@= skipped -13, +13 lines =@@
  >aFunc : Symbol(aFunc, Decl(unreachableDeclarations.ts, 22, 11))
  
          console.log(EnumA.Value);
@@ -109,7 +109,7 @@
  }
  
  function func3() {
-@@ -94,12 +94,12 @@
+@@= skipped -20, +20 lines =@@
  >aFunc : Symbol(aFunc, Decl(unreachableDeclarations.ts, 36, 11))
  
      console.log(EnumB.Value);
@@ -126,7 +126,7 @@
  
      return;
  
-@@ -107,17 +107,17 @@
+@@= skipped -13, +13 lines =@@
  >aFunc : Symbol(aFunc, Decl(unreachableDeclarations.ts, 36, 11))
  
          console.log(EnumB.Value);
@@ -149,7 +149,7 @@
  }
  
  function func4() {
-@@ -127,12 +127,12 @@
+@@= skipped -20, +20 lines =@@
  >aFunc : Symbol(aFunc, Decl(unreachableDeclarations.ts, 50, 11))
  
      console.log(ClassA.Value);
@@ -166,7 +166,7 @@
  
      return;
  
-@@ -140,17 +140,17 @@
+@@= skipped -13, +13 lines =@@
  >aFunc : Symbol(aFunc, Decl(unreachableDeclarations.ts, 50, 11))
  
          console.log(ClassA.Value);
@@ -189,7 +189,7 @@
  }
  
  function func5() {
-@@ -160,34 +160,34 @@
+@@= skipped -20, +20 lines =@@
  >aFunc : Symbol(aFunc, Decl(unreachableDeclarations.ts, 68, 8))
  
  	console.log(Bar.A);
@@ -236,7 +236,7 @@
  
  
  	return;
-@@ -196,34 +196,34 @@
+@@= skipped -36, +36 lines =@@
  >aFunc : Symbol(aFunc, Decl(unreachableDeclarations.ts, 68, 8))
  
  		console.log(Bar.A);
@@ -283,7 +283,7 @@
  	}
  
  	const blah = { prop: 1234 };
-@@ -232,11 +232,11 @@
+@@= skipped -36, +36 lines =@@
  
  	enum Bar { A }
  >Bar : Symbol(Bar, Decl(unreachableDeclarations.ts, 77, 29))

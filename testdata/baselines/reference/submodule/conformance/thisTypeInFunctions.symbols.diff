@@ -1,6 +1,6 @@
 --- old.thisTypeInFunctions.symbols
 +++ new.thisTypeInFunctions.symbols
-@@ -6,39 +6,39 @@
+@@= skipped -6, +6 lines =@@
  >B : Symbol(B, Decl(thisTypeInFunctions.ts, 0, 0))
  
      n: number;
@@ -49,7 +49,7 @@
  >this : Symbol(this, Decl(thisTypeInFunctions.ts, 12, 21))
  >n : Symbol(n, Decl(thisTypeInFunctions.ts, 12, 28))
  >m : Symbol(m, Decl(thisTypeInFunctions.ts, 12, 39))
-@@ -50,7 +50,7 @@
+@@= skipped -44, +44 lines =@@
  >m : Symbol(m, Decl(thisTypeInFunctions.ts, 12, 39))
      }
      explicitVoid(this: void, m: number): number {
@@ -58,7 +58,7 @@
  >this : Symbol(this, Decl(thisTypeInFunctions.ts, 15, 17))
  >m : Symbol(m, Decl(thisTypeInFunctions.ts, 15, 28))
  
-@@ -66,28 +66,28 @@
+@@= skipped -16, +16 lines =@@
  >I : Symbol(I, Decl(thisTypeInFunctions.ts, 19, 21))
  
      a: number;
@@ -93,7 +93,7 @@
  >this : Symbol(this, Decl(thisTypeInFunctions.ts, 26, 17))
  }
  function explicitStructural(this: { y: number }, x: number): number {
-@@ -146,64 +146,64 @@
+@@= skipped -80, +80 lines =@@
  >explicitInterface : Symbol(explicitInterface, Decl(thisTypeInFunctions.ts, 43, 6))
  
          return this.a;
@@ -180,7 +180,7 @@
  
  // parameter checking
  let ok: {y: number, f: (this: { y: number }, x: number) => number} = { y: 12, f: explicitStructural };
-@@ -249,39 +249,39 @@
+@@= skipped -103, +103 lines =@@
  
  let ripped = c.explicitC;
  >ripped : Symbol(ripped, Decl(thisTypeInFunctions.ts, 67, 3))
@@ -234,7 +234,7 @@
  
  let reconstructed: { 
  >reconstructed : Symbol(reconstructed, Decl(thisTypeInFunctions.ts, 74, 3))
-@@ -318,27 +318,27 @@
+@@= skipped -69, +69 lines =@@
  
      explicitThis: c.explicitThis,
  >explicitThis : Symbol(explicitThis, Decl(thisTypeInFunctions.ts, 81, 10))
@@ -270,7 +270,7 @@
  
  };
  reconstructed.explicitThis(10);
-@@ -426,33 +426,33 @@
+@@= skipped -108, +108 lines =@@
  >m : Symbol(m, Decl(thisTypeInFunctions.ts, 103, 49))
  
  c.explicitC = explicitCFunction;
@@ -314,7 +314,7 @@
  >this : Symbol(this, Decl(thisTypeInFunctions.ts, 107, 30))
  >n : Symbol(n, Decl(thisTypeInFunctions.ts, 107, 37))
  >m : Symbol(m, Decl(thisTypeInFunctions.ts, 107, 48))
-@@ -462,95 +462,95 @@
+@@= skipped -36, +36 lines =@@
  >m : Symbol(m, Decl(thisTypeInFunctions.ts, 107, 48))
  
  c.explicitProperty = reconstructed.explicitProperty;
@@ -436,7 +436,7 @@
  >m : Symbol(m, Decl(thisTypeInFunctions.ts, 127, 30))
  >this.n : Symbol(n, Decl(thisTypeInFunctions.ts, 12, 28))
  >this : Symbol(this, Decl(thisTypeInFunctions.ts, 12, 21))
-@@ -558,45 +558,45 @@
+@@= skipped -96, +96 lines =@@
  >m : Symbol(m, Decl(thisTypeInFunctions.ts, 127, 30))
  
  c.explicitThis = function(m) { return this.n + m };
@@ -496,7 +496,7 @@
  >n : Symbol(n, Decl(thisTypeInFunctions.ts, 137, 16))
  >n : Symbol(n, Decl(thisTypeInFunctions.ts, 137, 16))
  
-@@ -605,68 +605,68 @@
+@@= skipped -47, +47 lines =@@
  >Base1 : Symbol(Base1, Decl(thisTypeInFunctions.ts, 137, 24))
  
      x: number;
@@ -585,7 +585,7 @@
  }
  let b1 = new Base1();
  >b1 : Symbol(b1, Decl(thisTypeInFunctions.ts, 158, 3))
-@@ -685,53 +685,53 @@
+@@= skipped -80, +80 lines =@@
  >Derived2 : Symbol(Derived2, Decl(thisTypeInFunctions.ts, 154, 1))
  
  d2.polymorphic = d1.polymorphic // ok, 'x' and 'y' in { x, y }
@@ -663,7 +663,7 @@
  
  ////// use this-type for construction with new ////
  function InterfaceThis(this: I) {
-@@ -740,9 +740,9 @@
+@@= skipped -55, +55 lines =@@
  >I : Symbol(I, Decl(thisTypeInFunctions.ts, 19, 21))
  
      this.a = 12;

@@ -1,6 +1,6 @@
 --- old.subtypesOfTypeParameter.symbols
 +++ new.subtypesOfTypeParameter.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(subtypesOfTypeParameter.ts, 2, 9))
  
      foo: T;
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(subtypesOfTypeParameter.ts, 2, 9))
  }
  
-@@ -20,7 +20,7 @@
+@@= skipped -12, +12 lines =@@
  >T : Symbol(T, Decl(subtypesOfTypeParameter.ts, 6, 9))
  
      foo: U; // error
@@ -18,7 +18,7 @@
  >U : Symbol(U, Decl(subtypesOfTypeParameter.ts, 6, 11))
  }
  
-@@ -46,21 +46,21 @@
+@@= skipped -26, +26 lines =@@
  
  interface I1 { foo: number; }
  >I1 : Symbol(I1, Decl(subtypesOfTypeParameter.ts, 13, 1))
@@ -44,7 +44,7 @@
  
  function f() { }
  >f : Symbol(f, Decl(subtypesOfTypeParameter.ts, 18, 12), Decl(subtypesOfTypeParameter.ts, 19, 16))
-@@ -73,7 +73,7 @@
+@@= skipped -27, +27 lines =@@
  }
  class c { baz: string }
  >c : Symbol(c, Decl(subtypesOfTypeParameter.ts, 22, 1), Decl(subtypesOfTypeParameter.ts, 23, 23))
@@ -53,7 +53,7 @@
  
  module c {
  >c : Symbol(c, Decl(subtypesOfTypeParameter.ts, 22, 1), Decl(subtypesOfTypeParameter.ts, 23, 23))
-@@ -246,17 +246,17 @@
+@@= skipped -173, +173 lines =@@
  
      var r14 = true ? E.A : x;
  >r14 : Symbol(r14, Decl(subtypesOfTypeParameter.ts, 78, 7), Decl(subtypesOfTypeParameter.ts, 79, 7))

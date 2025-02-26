@@ -1,6 +1,6 @@
 --- old.objectTypesIdentityWithGenericCallSignatures2.symbols
 +++ new.objectTypesIdentityWithGenericCallSignatures2.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >A : Symbol(A, Decl(objectTypesIdentityWithGenericCallSignatures2.ts, 0, 0))
  
      foo<T, U>(x: T, y: U): T { return null; }
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(objectTypesIdentityWithGenericCallSignatures2.ts, 3, 8))
  >U : Symbol(U, Decl(objectTypesIdentityWithGenericCallSignatures2.ts, 3, 10))
  >x : Symbol(x, Decl(objectTypesIdentityWithGenericCallSignatures2.ts, 3, 14))
-@@ -23,7 +23,7 @@
+@@= skipped -16, +16 lines =@@
  >U : Symbol(U, Decl(objectTypesIdentityWithGenericCallSignatures2.ts, 6, 10))
  
      foo(x: T, y: U): T { return null; }
@@ -18,7 +18,7 @@
  >x : Symbol(x, Decl(objectTypesIdentityWithGenericCallSignatures2.ts, 7, 8))
  >T : Symbol(T, Decl(objectTypesIdentityWithGenericCallSignatures2.ts, 6, 8))
  >y : Symbol(y, Decl(objectTypesIdentityWithGenericCallSignatures2.ts, 7, 13))
-@@ -37,7 +37,7 @@
+@@= skipped -14, +14 lines =@@
  >U : Symbol(U, Decl(objectTypesIdentityWithGenericCallSignatures2.ts, 10, 10))
  
      foo(x: T, y: U): T { return null; }
@@ -27,7 +27,7 @@
  >x : Symbol(x, Decl(objectTypesIdentityWithGenericCallSignatures2.ts, 11, 8))
  >T : Symbol(T, Decl(objectTypesIdentityWithGenericCallSignatures2.ts, 10, 8))
  >y : Symbol(y, Decl(objectTypesIdentityWithGenericCallSignatures2.ts, 11, 13))
-@@ -51,7 +51,7 @@
+@@= skipped -14, +14 lines =@@
  >U : Symbol(U, Decl(objectTypesIdentityWithGenericCallSignatures2.ts, 14, 14))
  
      foo(x: T, y: U): T;
@@ -36,7 +36,7 @@
  >x : Symbol(x, Decl(objectTypesIdentityWithGenericCallSignatures2.ts, 15, 8))
  >T : Symbol(T, Decl(objectTypesIdentityWithGenericCallSignatures2.ts, 14, 12))
  >y : Symbol(y, Decl(objectTypesIdentityWithGenericCallSignatures2.ts, 15, 13))
-@@ -63,7 +63,7 @@
+@@= skipped -12, +12 lines =@@
  >I2 : Symbol(I2, Decl(objectTypesIdentityWithGenericCallSignatures2.ts, 16, 1))
  
      foo<T, U>(x: T, y: U): T;

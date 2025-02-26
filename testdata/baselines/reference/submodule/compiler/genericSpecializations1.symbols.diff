@@ -1,6 +1,6 @@
 --- old.genericSpecializations1.symbols
 +++ new.genericSpecializations1.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(genericSpecializations1.ts, 0, 15))
  
      foo<T>(x: T): T; // no error on implementors because IFoo's T is different from foo's T
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(genericSpecializations1.ts, 1, 8))
  >x : Symbol(x, Decl(genericSpecializations1.ts, 1, 11))
  >T : Symbol(T, Decl(genericSpecializations1.ts, 1, 8))
-@@ -18,7 +18,7 @@
+@@= skipped -12, +12 lines =@@
  >IFoo : Symbol(IFoo, Decl(genericSpecializations1.ts, 0, 0))
  
      foo(x: string): string { return null; }
@@ -18,7 +18,7 @@
  >x : Symbol(x, Decl(genericSpecializations1.ts, 5, 8))
  }
  
-@@ -27,7 +27,7 @@
+@@= skipped -9, +9 lines =@@
  >IFoo : Symbol(IFoo, Decl(genericSpecializations1.ts, 0, 0))
  
      foo(x: string): string { return null; }
@@ -27,7 +27,7 @@
  >x : Symbol(x, Decl(genericSpecializations1.ts, 9, 8))
  }
  
-@@ -36,7 +36,7 @@
+@@= skipped -9, +9 lines =@@
  >IFoo : Symbol(IFoo, Decl(genericSpecializations1.ts, 0, 0))
  
      foo<T>(x: T): T { return null; }

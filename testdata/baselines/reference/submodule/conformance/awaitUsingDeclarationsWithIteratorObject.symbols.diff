@@ -1,6 +1,6 @@
 --- old.awaitUsingDeclarationsWithIteratorObject.symbols
 +++ new.awaitUsingDeclarationsWithIteratorObject.symbols
-@@ -18,7 +18,7 @@
+@@= skipped -18, +18 lines =@@
  >Iterator : Symbol(Iterator, Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.esnext.iterator.d.ts, --, --))
  
      next() { return { done: true, value: undefined }; }
@@ -9,7 +9,7 @@
  >done : Symbol(done, Decl(awaitUsingDeclarationsWithIteratorObject.ts, 5, 21))
  >value : Symbol(value, Decl(awaitUsingDeclarationsWithIteratorObject.ts, 5, 33))
  >undefined : Symbol(undefined)
-@@ -38,9 +38,9 @@
+@@= skipped -20, +20 lines =@@
  
      await using it2 = Iterator.from(i)
  >it2 : Symbol(it2, Decl(awaitUsingDeclarationsWithIteratorObject.ts, 12, 15))
@@ -21,7 +21,7 @@
  >i : Symbol(i, Decl(awaitUsingDeclarationsWithIteratorObject.ts, 0, 13))
  
      await using it3 = new MyIterator();
-@@ -49,20 +49,20 @@
+@@= skipped -11, +11 lines =@@
  
      await using it4 = [].values();
  >it4 : Symbol(it4, Decl(awaitUsingDeclarationsWithIteratorObject.ts, 14, 15))

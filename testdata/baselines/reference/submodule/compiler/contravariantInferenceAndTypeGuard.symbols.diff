@@ -1,6 +1,6 @@
 --- old.contravariantInferenceAndTypeGuard.symbols
 +++ new.contravariantInferenceAndTypeGuard.symbols
-@@ -6,17 +6,17 @@
+@@= skipped -6, +6 lines =@@
  >TData : Symbol(TData, Decl(contravariantInferenceAndTypeGuard.ts, 0, 19))
  
      prev: ListItem<TData> | null;
@@ -21,7 +21,7 @@
  >TData : Symbol(TData, Decl(contravariantInferenceAndTypeGuard.ts, 0, 19))
  }
  type IteratorFn<TData, TResult, TContext = List<TData>> = (this: TContext, item: TData, node: ListItem<TData>, list: List<TData>) => TResult;
-@@ -64,7 +64,7 @@
+@@= skipped -58, +58 lines =@@
  >TData : Symbol(TData, Decl(contravariantInferenceAndTypeGuard.ts, 8, 19))
  
      filter<TContext, TResult extends TData>(fn: FilterFn<TData, TResult, TContext>, context: TContext): List<TResult>;
@@ -30,7 +30,7 @@
  >TContext : Symbol(TContext, Decl(contravariantInferenceAndTypeGuard.ts, 9, 11))
  >TResult : Symbol(TResult, Decl(contravariantInferenceAndTypeGuard.ts, 9, 20))
  >TData : Symbol(TData, Decl(contravariantInferenceAndTypeGuard.ts, 8, 19))
-@@ -79,7 +79,7 @@
+@@= skipped -15, +15 lines =@@
  >TResult : Symbol(TResult, Decl(contravariantInferenceAndTypeGuard.ts, 9, 20))
  
      filter<TResult extends TData>(fn: FilterFn<TData, TResult>): List<TResult>;
@@ -39,7 +39,7 @@
  >TResult : Symbol(TResult, Decl(contravariantInferenceAndTypeGuard.ts, 10, 11))
  >TData : Symbol(TData, Decl(contravariantInferenceAndTypeGuard.ts, 8, 19))
  >fn : Symbol(fn, Decl(contravariantInferenceAndTypeGuard.ts, 10, 34))
-@@ -90,7 +90,7 @@
+@@= skipped -11, +11 lines =@@
  >TResult : Symbol(TResult, Decl(contravariantInferenceAndTypeGuard.ts, 10, 11))
  
      filter<TContext>(fn: IteratorFn<TData, boolean, TContext>, context: TContext): List<TData>;
@@ -48,7 +48,7 @@
  >TContext : Symbol(TContext, Decl(contravariantInferenceAndTypeGuard.ts, 11, 11))
  >fn : Symbol(fn, Decl(contravariantInferenceAndTypeGuard.ts, 11, 21))
  >IteratorFn : Symbol(IteratorFn, Decl(contravariantInferenceAndTypeGuard.ts, 4, 1))
-@@ -102,7 +102,7 @@
+@@= skipped -12, +12 lines =@@
  >TData : Symbol(TData, Decl(contravariantInferenceAndTypeGuard.ts, 8, 19))
  
      filter(fn: IteratorFn<TData, boolean>): List<TData>;
@@ -57,7 +57,7 @@
  >fn : Symbol(fn, Decl(contravariantInferenceAndTypeGuard.ts, 12, 11))
  >IteratorFn : Symbol(IteratorFn, Decl(contravariantInferenceAndTypeGuard.ts, 4, 1))
  >TData : Symbol(TData, Decl(contravariantInferenceAndTypeGuard.ts, 8, 19))
-@@ -113,7 +113,7 @@
+@@= skipped -11, +11 lines =@@
  >Test : Symbol(Test, Decl(contravariantInferenceAndTypeGuard.ts, 13, 1))
  
      a: string;
@@ -66,7 +66,7 @@
  }
  const list2 = new List<Test | null>();
  >list2 : Symbol(list2, Decl(contravariantInferenceAndTypeGuard.ts, 17, 5))
-@@ -122,9 +122,9 @@
+@@= skipped -9, +9 lines =@@
  
  const filter1 = list2.filter(function(item, node, list): item is Test {
  >filter1 : Symbol(filter1, Decl(contravariantInferenceAndTypeGuard.ts, 18, 5))

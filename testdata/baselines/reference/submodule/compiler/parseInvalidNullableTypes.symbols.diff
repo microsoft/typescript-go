@@ -1,6 +1,6 @@
 --- old.parseInvalidNullableTypes.symbols
 +++ new.parseInvalidNullableTypes.symbols
-@@ -12,10 +12,12 @@
+@@= skipped -12, +12 lines =@@
  function f2(a: string?) {}
  >f2 : Symbol(f2, Decl(parseInvalidNullableTypes.ts, 2, 1))
  >a : Symbol(a, Decl(parseInvalidNullableTypes.ts, 4, 12))

@@ -1,6 +1,6 @@
 --- old.typeFromPrototypeAssignment3.symbols
 +++ new.typeFromPrototypeAssignment3.symbols
-@@ -2,19 +2,15 @@
+@@= skipped -2, +2 lines =@@
  
  === bug26885.js ===
  function Multimap3() {
@@ -24,7 +24,7 @@
  
      /**
       * @param {string} key
-@@ -25,9 +21,7 @@
+@@= skipped -23, +19 lines =@@
  >key : Symbol(key, Decl(bug26885.js, 9, 8))
  
          return this._map[key + ''];
@@ -35,7 +35,7 @@
  >key : Symbol(key, Decl(bug26885.js, 9, 8))
      }
  }
-@@ -35,11 +29,9 @@
+@@= skipped -10, +8 lines =@@
  /** @type {Multimap3} */
  const map = new Multimap3();
  >map : Symbol(map, Decl(bug26885.js, 15, 5))

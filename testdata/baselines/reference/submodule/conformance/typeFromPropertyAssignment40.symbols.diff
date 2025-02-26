@@ -1,6 +1,6 @@
 --- old.typeFromPropertyAssignment40.symbols
 +++ new.typeFromPropertyAssignment40.symbols
-@@ -6,19 +6,14 @@
+@@= skipped -6, +6 lines =@@
  
      var self = this
  >self : Symbol(self, Decl(typeFromPropertyAssignment40.js, 1, 7))

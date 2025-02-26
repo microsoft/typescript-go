@@ -1,6 +1,6 @@
 --- old.classAppearsToHaveMembersOfObject.symbols
 +++ new.classAppearsToHaveMembersOfObject.symbols
-@@ -3,7 +3,7 @@
+@@= skipped -3, +3 lines =@@
  === classAppearsToHaveMembersOfObject.ts ===
  class C { foo: string; }
  >C : Symbol(C, Decl(classAppearsToHaveMembersOfObject.ts, 0, 0))
@@ -9,7 +9,7 @@
  
  var c: C;
  >c : Symbol(c, Decl(classAppearsToHaveMembersOfObject.ts, 2, 3))
-@@ -11,15 +11,15 @@
+@@= skipped -8, +8 lines =@@
  
  var r = c.toString();
  >r : Symbol(r, Decl(classAppearsToHaveMembersOfObject.ts, 3, 3))

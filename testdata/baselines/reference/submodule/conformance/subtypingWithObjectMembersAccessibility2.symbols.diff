@@ -1,6 +1,6 @@
 --- old.subtypingWithObjectMembersAccessibility2.symbols
 +++ new.subtypingWithObjectMembersAccessibility2.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >Base : Symbol(Base, Decl(subtypingWithObjectMembersAccessibility2.ts, 0, 0))
  
      foo: string;
@@ -9,7 +9,7 @@
  }
  
  class Derived extends Base {
-@@ -15,7 +15,7 @@
+@@= skipped -8, +8 lines =@@
  >Base : Symbol(Base, Decl(subtypingWithObjectMembersAccessibility2.ts, 0, 0))
  
      bar: string;
@@ -18,7 +18,7 @@
  }
  
  module ExplicitPublic {
-@@ -25,7 +25,7 @@
+@@= skipped -10, +10 lines =@@
  >A : Symbol(A, Decl(subtypingWithObjectMembersAccessibility2.ts, 10, 23))
  
          private foo: Base;
@@ -27,7 +27,7 @@
  >Base : Symbol(Base, Decl(subtypingWithObjectMembersAccessibility2.ts, 0, 0))
      }
  
-@@ -34,7 +34,7 @@
+@@= skipped -9, +9 lines =@@
  >A : Symbol(A, Decl(subtypingWithObjectMembersAccessibility2.ts, 10, 23))
  
          public foo: Derived; // error
@@ -36,7 +36,7 @@
  >Derived : Symbol(Derived, Decl(subtypingWithObjectMembersAccessibility2.ts, 4, 1))
      }
  
-@@ -42,7 +42,7 @@
+@@= skipped -8, +8 lines =@@
  >A2 : Symbol(A2, Decl(subtypingWithObjectMembersAccessibility2.ts, 17, 5))
  
          private 1: Base;
@@ -45,7 +45,7 @@
  >Base : Symbol(Base, Decl(subtypingWithObjectMembersAccessibility2.ts, 0, 0))
      }
  
-@@ -51,7 +51,7 @@
+@@= skipped -9, +9 lines =@@
  >A2 : Symbol(A2, Decl(subtypingWithObjectMembersAccessibility2.ts, 17, 5))
  
          public 1: Derived; // error
@@ -54,7 +54,7 @@
  >Derived : Symbol(Derived, Decl(subtypingWithObjectMembersAccessibility2.ts, 4, 1))
      }
  
-@@ -59,7 +59,7 @@
+@@= skipped -8, +8 lines =@@
  >A3 : Symbol(A3, Decl(subtypingWithObjectMembersAccessibility2.ts, 25, 5))
  
          private '1': Base;
@@ -63,7 +63,7 @@
  >Base : Symbol(Base, Decl(subtypingWithObjectMembersAccessibility2.ts, 0, 0))
      }
  
-@@ -68,7 +68,7 @@
+@@= skipped -9, +9 lines =@@
  >A3 : Symbol(A3, Decl(subtypingWithObjectMembersAccessibility2.ts, 25, 5))
  
          public '1': Derived; // error
@@ -72,7 +72,7 @@
  >Derived : Symbol(Derived, Decl(subtypingWithObjectMembersAccessibility2.ts, 4, 1))
      }
  }
-@@ -80,7 +80,7 @@
+@@= skipped -12, +12 lines =@@
  >A : Symbol(A, Decl(subtypingWithObjectMembersAccessibility2.ts, 36, 23))
  
          private foo: Base;
@@ -81,7 +81,7 @@
  >Base : Symbol(Base, Decl(subtypingWithObjectMembersAccessibility2.ts, 0, 0))
      }
  
-@@ -89,7 +89,7 @@
+@@= skipped -9, +9 lines =@@
  >A : Symbol(A, Decl(subtypingWithObjectMembersAccessibility2.ts, 36, 23))
  
          foo: Derived; // error
@@ -90,7 +90,7 @@
  >Derived : Symbol(Derived, Decl(subtypingWithObjectMembersAccessibility2.ts, 4, 1))
      }
  
-@@ -97,7 +97,7 @@
+@@= skipped -8, +8 lines =@@
  >A2 : Symbol(A2, Decl(subtypingWithObjectMembersAccessibility2.ts, 43, 5))
  
          private 1: Base;
@@ -99,7 +99,7 @@
  >Base : Symbol(Base, Decl(subtypingWithObjectMembersAccessibility2.ts, 0, 0))
      }
  
-@@ -106,7 +106,7 @@
+@@= skipped -9, +9 lines =@@
  >A2 : Symbol(A2, Decl(subtypingWithObjectMembersAccessibility2.ts, 43, 5))
  
          1: Derived; // error
@@ -108,7 +108,7 @@
  >Derived : Symbol(Derived, Decl(subtypingWithObjectMembersAccessibility2.ts, 4, 1))
      }
  
-@@ -114,7 +114,7 @@
+@@= skipped -8, +8 lines =@@
  >A3 : Symbol(A3, Decl(subtypingWithObjectMembersAccessibility2.ts, 51, 5))
  
          private '1': Base;
@@ -117,7 +117,7 @@
  >Base : Symbol(Base, Decl(subtypingWithObjectMembersAccessibility2.ts, 0, 0))
      }
  
-@@ -123,7 +123,7 @@
+@@= skipped -9, +9 lines =@@
  >A3 : Symbol(A3, Decl(subtypingWithObjectMembersAccessibility2.ts, 51, 5))
  
          '1': Derived; // error

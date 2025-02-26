@@ -1,6 +1,6 @@
 --- old.conditionalOperatorConditoinIsStringType.symbols
 +++ new.conditionalOperatorConditoinIsStringType.symbols
-@@ -106,9 +106,9 @@
+@@= skipped -106, +106 lines =@@
  >exprAny2 : Symbol(exprAny2, Decl(conditionalOperatorConditoinIsStringType.ts, 9, 3))
  
  condString.toUpperCase ? exprBoolean1 : exprBoolean2;
@@ -12,7 +12,7 @@
  >exprBoolean1 : Symbol(exprBoolean1, Decl(conditionalOperatorConditoinIsStringType.ts, 4, 3))
  >exprBoolean2 : Symbol(exprBoolean2, Decl(conditionalOperatorConditoinIsStringType.ts, 10, 3))
  
-@@ -207,9 +207,9 @@
+@@= skipped -101, +101 lines =@@
  
  var resultIsBoolean3 = condString.toUpperCase ? exprBoolean1 : exprBoolean2;
  >resultIsBoolean3 : Symbol(resultIsBoolean3, Decl(conditionalOperatorConditoinIsStringType.ts, 58, 3))
@@ -24,7 +24,7 @@
  >exprBoolean1 : Symbol(exprBoolean1, Decl(conditionalOperatorConditoinIsStringType.ts, 4, 3))
  >exprBoolean2 : Symbol(exprBoolean2, Decl(conditionalOperatorConditoinIsStringType.ts, 10, 3))
  
-@@ -239,9 +239,9 @@
+@@= skipped -32, +32 lines =@@
  
  var resultIsStringOrBoolean4 = condString.toUpperCase ? exprString1 : exprBoolean1; // union
  >resultIsStringOrBoolean4 : Symbol(resultIsStringOrBoolean4, Decl(conditionalOperatorConditoinIsStringType.ts, 63, 3))

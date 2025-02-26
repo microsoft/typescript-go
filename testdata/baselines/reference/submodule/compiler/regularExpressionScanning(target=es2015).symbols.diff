@@ -1,6 +1,6 @@
 --- old.regularExpressionScanning(target=es2015).symbols
 +++ new.regularExpressionScanning(target=es2015).symbols
-@@ -3,7 +3,7 @@
+@@= skipped -3, +3 lines =@@
  === regularExpressionScanning.ts ===
  const regexes: RegExp[] = [
  >regexes : Symbol(regexes, Decl(regularExpressionScanning.ts, 0, 5))

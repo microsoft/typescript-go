@@ -1,6 +1,6 @@
 --- old.moduleExportsAliasLoop1.symbols
 +++ new.moduleExportsAliasLoop1.symbols
-@@ -2,13 +2,8 @@
+@@= skipped -2, +2 lines =@@
  
  === x.js ===
  exports.fn1();

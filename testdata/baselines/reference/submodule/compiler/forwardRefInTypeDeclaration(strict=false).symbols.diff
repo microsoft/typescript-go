@@ -1,6 +1,6 @@
 --- old.forwardRefInTypeDeclaration(strict=false).symbols
 +++ new.forwardRefInTypeDeclaration(strict=false).symbols
-@@ -12,7 +12,7 @@
+@@= skipped -12, +12 lines =@@
  // ignored anywhere in an interface (#35947)
  interface Foo2 { [s2]: number; }
  >Foo2 : Symbol(Foo2, Decl(forwardRefInTypeDeclaration.ts, 2, 15))
@@ -9,7 +9,7 @@
  >s2 : Symbol(s2, Decl(forwardRefInTypeDeclaration.ts, 6, 5))
  
  const s2 = "x";
-@@ -21,7 +21,7 @@
+@@= skipped -9, +9 lines =@@
  // or in a type definition
  type Foo3 = { [s3]: number; }
  >Foo3 : Symbol(Foo3, Decl(forwardRefInTypeDeclaration.ts, 6, 15))
@@ -18,7 +18,7 @@
  >s3 : Symbol(s3, Decl(forwardRefInTypeDeclaration.ts, 10, 5))
  
  const s3 = "x";
-@@ -30,7 +30,7 @@
+@@= skipped -9, +9 lines =@@
  // or in a type literal
  declare const foo4: { [s4]: number; }
  >foo4 : Symbol(foo4, Decl(forwardRefInTypeDeclaration.ts, 13, 13))
@@ -27,7 +27,7 @@
  >s4 : Symbol(s4, Decl(forwardRefInTypeDeclaration.ts, 14, 5))
  
  const s4 = "x";
-@@ -39,7 +39,7 @@
+@@= skipped -9, +9 lines =@@
  // or in a declared class
  declare class Foo5 { [s5]: number; }
  >Foo5 : Symbol(Foo5, Decl(forwardRefInTypeDeclaration.ts, 14, 15))
@@ -36,7 +36,7 @@
  >s5 : Symbol(s5, Decl(forwardRefInTypeDeclaration.ts, 18, 5))
  
  const s5 = "x";
-@@ -48,30 +48,30 @@
+@@= skipped -9, +9 lines =@@
  // or with qualified names
  interface Foo6 { [Cls1.a]: number; [Cls2.b]: number; [obj1.c]: number; [obj2.d]: number }
  >Foo6 : Symbol(Foo6, Decl(forwardRefInTypeDeclaration.ts, 18, 15))

@@ -1,6 +1,6 @@
 --- old.exportAssignmentAndDeclaration.symbols
 +++ new.exportAssignmentAndDeclaration.symbols
-@@ -5,9 +5,9 @@
+@@= skipped -5, +5 lines =@@
  >E1 : Symbol(E1, Decl(foo_0.ts, 0, 0))
  
  	A,B,C

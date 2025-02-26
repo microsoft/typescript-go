@@ -1,6 +1,6 @@
 --- old.multipleExportDefault3.symbols
 +++ new.multipleExportDefault3.symbols
-@@ -8,6 +8,6 @@
+@@= skipped -8, +8 lines =@@
  };
  
  export default class C { }

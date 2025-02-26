@@ -1,6 +1,6 @@
 --- old.emitClassExpressionInDeclarationFile2.symbols
 +++ new.emitClassExpressionInDeclarationFile2.symbols
-@@ -5,16 +5,16 @@
+@@= skipped -5, +5 lines =@@
  >noPrivates : Symbol(noPrivates, Decl(emitClassExpressionInDeclarationFile2.ts, 0, 10))
  
      static getTags() { }
@@ -21,7 +21,7 @@
  }
  
  // altered repro from #15066 to add private property
-@@ -22,13 +22,13 @@
+@@= skipped -17, +17 lines =@@
  >FooItem : Symbol(FooItem, Decl(emitClassExpressionInDeclarationFile2.ts, 5, 1))
  
      foo(): void { }
@@ -38,7 +38,7 @@
  }
  
  export type Constructor<T> = new(...args: any[]) => T;
-@@ -49,10 +49,10 @@
+@@= skipped -27, +27 lines =@@
  >Base : Symbol(Base, Decl(emitClassExpressionInDeclarationFile2.ts, 15, 57))
  
          static getTags(): void { }
@@ -51,7 +51,7 @@
      }
  }
  
-@@ -66,12 +66,12 @@
+@@= skipped -17, +17 lines =@@
  >Test : Symbol(Test, Decl(emitClassExpressionInDeclarationFile2.ts, 20, 1))
  
  Test.getTags()

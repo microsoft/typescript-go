@@ -1,6 +1,6 @@
 --- old.systemModule3.symbols
 +++ new.systemModule3.symbols
-@@ -6,11 +6,11 @@
+@@= skipped -6, +6 lines =@@
  
  === file2.ts ===
  export default function f() {}

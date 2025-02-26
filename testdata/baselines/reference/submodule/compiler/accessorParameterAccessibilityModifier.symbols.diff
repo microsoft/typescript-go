@@ -1,6 +1,6 @@
 --- old.accessorParameterAccessibilityModifier.symbols
 +++ new.accessorParameterAccessibilityModifier.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(accessorParameterAccessibilityModifier.ts, 0, 0))
  
      set X(public v) { }

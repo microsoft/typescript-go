@@ -1,6 +1,6 @@
 --- old.inferenceFromIncompleteSource.symbols
 +++ new.inferenceFromIncompleteSource.symbols
-@@ -10,15 +10,15 @@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(inferenceFromIncompleteSource.ts, 2, 20))
  
    items: T[];

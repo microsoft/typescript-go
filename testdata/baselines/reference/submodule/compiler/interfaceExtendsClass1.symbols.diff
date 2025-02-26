@@ -1,6 +1,6 @@
 --- old.interfaceExtendsClass1.symbols
 +++ new.interfaceExtendsClass1.symbols
-@@ -5,28 +5,28 @@
+@@= skipped -5, +5 lines =@@
  >Control : Symbol(Control, Decl(interfaceExtendsClass1.ts, 0, 0))
  
      private state: any;
@@ -33,7 +33,7 @@
  }
  class Image extends Control {
  >Image : Symbol(Image, Decl(interfaceExtendsClass1.ts, 11, 1))
-@@ -36,6 +36,6 @@
+@@= skipped -31, +31 lines =@@
  >Location : Symbol(Location, Decl(interfaceExtendsClass1.ts, 13, 1))
  
      select() { }

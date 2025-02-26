@@ -1,6 +1,6 @@
 --- old.jsxNamespacePrefixIntrinsics.symbols
 +++ new.jsxNamespacePrefixIntrinsics.symbols
-@@ -8,17 +8,17 @@
+@@= skipped -8, +8 lines =@@
  >IntrinsicElements : Symbol(IntrinsicElements, Decl(jsxNamespacePrefixIntrinsics.tsx, 0, 23))
  
      "ns:element": {

@@ -1,6 +1,6 @@
 --- old.ExportClassWithAccessibleTypesInTypeParameterConstraintsClassHeritageListMemberTypeAnnotations.symbols
 +++ new.ExportClassWithAccessibleTypesInTypeParameterConstraintsClassHeritageListMemberTypeAnnotations.symbols
-@@ -8,10 +8,10 @@
+@@= skipped -8, +8 lines =@@
  >Point : Symbol(Point, Decl(ExportClassWithAccessibleTypesInTypeParameterConstraintsClassHeritageListMemberTypeAnnotations.ts, 0, 10))
  
          x: number;
@@ -13,7 +13,7 @@
      }
  
      export var Origin: Point = { x: 0, y: 0 };
-@@ -25,7 +25,7 @@
+@@= skipped -17, +17 lines =@@
  >Point : Symbol(Point, Decl(ExportClassWithAccessibleTypesInTypeParameterConstraintsClassHeritageListMemberTypeAnnotations.ts, 0, 10))
  
          z: number;
@@ -22,7 +22,7 @@
      }
  
      export var Origin3d: Point3d = { x: 0, y: 0, z: 0 };
-@@ -41,9 +41,9 @@
+@@= skipped -16, +16 lines =@@
  >Point : Symbol(Point, Decl(ExportClassWithAccessibleTypesInTypeParameterConstraintsClassHeritageListMemberTypeAnnotations.ts, 0, 10))
  
          constructor(public start: TPoint, public end: TPoint) { }

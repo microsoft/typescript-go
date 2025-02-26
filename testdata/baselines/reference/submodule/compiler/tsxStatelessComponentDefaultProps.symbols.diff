@@ -1,6 +1,6 @@
 --- old.tsxStatelessComponentDefaultProps.symbols
 +++ new.tsxStatelessComponentDefaultProps.symbols
-@@ -10,21 +10,20 @@
+@@= skipped -10, +10 lines =@@
  >Props : Symbol(Props, Decl(tsxStatelessComponentDefaultProps.tsx, 2, 26))
  
      text: string;
@@ -27,7 +27,7 @@
  
      text: 'Go Back',
  >text : Symbol(text, Decl(tsxStatelessComponentDefaultProps.tsx, 10, 27))
-@@ -32,5 +31,5 @@
+@@= skipped -22, +21 lines =@@
  };
  let a = <BackButton />
  >a : Symbol(a, Decl(tsxStatelessComponentDefaultProps.tsx, 13, 3))

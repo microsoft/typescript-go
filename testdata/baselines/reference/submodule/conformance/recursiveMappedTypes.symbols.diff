@@ -1,6 +1,6 @@
 --- old.recursiveMappedTypes.symbols
 +++ new.recursiveMappedTypes.symbols
-@@ -108,21 +108,21 @@
+@@= skipped -108, +108 lines =@@
  >User : Symbol(User, Decl(recursiveMappedTypes.ts, 37, 56))
  
      avatar: string;
@@ -25,7 +25,7 @@
  >User : Symbol(User, Decl(recursiveMappedTypes.ts, 37, 56))
  >Guest : Symbol(Guest, Decl(recursiveMappedTypes.ts, 41, 1))
  }
-@@ -192,19 +192,19 @@
+@@= skipped -84, +84 lines =@@
  >ListWidget : Symbol(ListWidget, Decl(recursiveMappedTypes.ts, 65, 51))
  
      "type": "list",

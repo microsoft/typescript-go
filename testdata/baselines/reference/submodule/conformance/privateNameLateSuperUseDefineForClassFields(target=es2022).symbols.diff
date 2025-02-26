@@ -1,6 +1,6 @@
 --- old.privateNameLateSuperUseDefineForClassFields(target=es2022).symbols
 +++ new.privateNameLateSuperUseDefineForClassFields(target=es2022).symbols
-@@ -9,7 +9,7 @@
+@@= skipped -9, +9 lines =@@
  >B : Symbol(B, Decl(privateNameLateSuperUseDefineForClassFields.ts, 0, 0))
  
      #x;

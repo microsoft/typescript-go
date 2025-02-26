@@ -1,6 +1,6 @@
 --- old.implicitConstParameters.symbols
 +++ new.implicitConstParameters.symbols
-@@ -18,9 +18,9 @@
+@@= skipped -18, +18 lines =@@
  
        doSomething(() => x.toFixed());
  >doSomething : Symbol(doSomething, Decl(implicitConstParameters.ts, 0, 0))
@@ -12,7 +12,7 @@
    }
  }
  
-@@ -35,9 +35,9 @@
+@@= skipped -17, +17 lines =@@
      }
      doSomething(() => x.length);
  >doSomething : Symbol(doSomething, Decl(implicitConstParameters.ts, 0, 0))
@@ -24,7 +24,7 @@
  }
  
  function f2(x: string | undefined) {
-@@ -52,9 +52,9 @@
+@@= skipped -17, +17 lines =@@
  
              doSomething(() => x.length);
  >doSomething : Symbol(doSomething, Decl(implicitConstParameters.ts, 0, 0))
@@ -36,7 +36,7 @@
  
          });
      }
-@@ -75,9 +75,9 @@
+@@= skipped -23, +23 lines =@@
  
              doSomething(() => x.length);
  >doSomething : Symbol(doSomething, Decl(implicitConstParameters.ts, 0, 0))
@@ -48,7 +48,7 @@
          }
      }
  }
-@@ -94,9 +94,9 @@
+@@= skipped -19, +19 lines =@@
  
          doSomething(() => x.length);
  >doSomething : Symbol(doSomething, Decl(implicitConstParameters.ts, 0, 0))
@@ -60,7 +60,7 @@
      }
  }
  
-@@ -109,9 +109,7 @@
+@@= skipped -15, +15 lines =@@
  
          doSomething(() => x.length);
  >doSomething : Symbol(doSomething, Decl(implicitConstParameters.ts, 0, 0))
@@ -70,7 +70,7 @@
      }
      x = "abc";  // causes x to be considered non-const
  >x : Symbol(x, Decl(implicitConstParameters.ts, 41, 12))
-@@ -131,8 +129,8 @@
+@@= skipped -22, +20 lines =@@
  
          doSomething(() => y.length);
  >doSomething : Symbol(doSomething, Decl(implicitConstParameters.ts, 0, 0))

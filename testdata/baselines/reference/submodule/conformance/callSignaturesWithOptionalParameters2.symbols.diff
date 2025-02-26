@@ -1,6 +1,6 @@
 --- old.callSignaturesWithOptionalParameters2.symbols
 +++ new.callSignaturesWithOptionalParameters2.symbols
-@@ -41,24 +41,24 @@
+@@= skipped -41, +41 lines =@@
  >C : Symbol(C, Decl(callSignaturesWithOptionalParameters2.ts, 13, 11))
  
      foo(x?: number);
@@ -30,7 +30,7 @@
  >x : Symbol(x, Decl(callSignaturesWithOptionalParameters2.ts, 21, 9))
  >y : Symbol(y, Decl(callSignaturesWithOptionalParameters2.ts, 21, 19))
  }
-@@ -68,24 +68,24 @@
+@@= skipped -27, +27 lines =@@
  >C : Symbol(C, Decl(callSignaturesWithOptionalParameters2.ts, 13, 11))
  
  c.foo();
@@ -63,7 +63,7 @@
  
  interface I {
  >I : Symbol(I, Decl(callSignaturesWithOptionalParameters2.ts, 29, 13))
-@@ -98,12 +98,12 @@
+@@= skipped -30, +30 lines =@@
  >y : Symbol(y, Decl(callSignaturesWithOptionalParameters2.ts, 33, 16))
  
      foo(x: number, y?: number);
@@ -78,7 +78,7 @@
  >x : Symbol(x, Decl(callSignaturesWithOptionalParameters2.ts, 35, 8))
  >y : Symbol(y, Decl(callSignaturesWithOptionalParameters2.ts, 35, 18))
  >z : Symbol(z, Decl(callSignaturesWithOptionalParameters2.ts, 35, 30))
-@@ -123,19 +123,19 @@
+@@= skipped -25, +25 lines =@@
  >i : Symbol(i, Decl(callSignaturesWithOptionalParameters2.ts, 38, 3))
  
  i.foo(1);

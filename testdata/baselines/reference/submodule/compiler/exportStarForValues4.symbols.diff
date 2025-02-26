@@ -1,6 +1,6 @@
 --- old.exportStarForValues4.symbols
 +++ new.exportStarForValues4.symbols
-@@ -3,12 +3,12 @@
+@@= skipped -3, +3 lines =@@
  === file1.ts ===
  export interface Foo { x }
  >Foo : Symbol(Foo, Decl(file1.ts, 0, 0))
@@ -15,7 +15,7 @@
  
  export * from "file1"
  export * from "file3"
-@@ -18,7 +18,7 @@
+@@= skipped -15, +15 lines =@@
  === file3.ts ===
  export interface B { x }
  >B : Symbol(B, Decl(file3.ts, 0, 0))

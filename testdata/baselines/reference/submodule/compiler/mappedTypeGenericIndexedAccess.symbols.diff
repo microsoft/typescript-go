@@ -1,6 +1,6 @@
 --- old.mappedTypeGenericIndexedAccess.symbols
 +++ new.mappedTypeGenericIndexedAccess.symbols
-@@ -23,7 +23,7 @@
+@@= skipped -23, +23 lines =@@
  >Test : Symbol(Test, Decl(mappedTypeGenericIndexedAccess.ts, 6, 1))
  
      entries: { [T in keyof Types]?: Types[T][] };
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(mappedTypeGenericIndexedAccess.ts, 9, 16))
  >Types : Symbol(Types, Decl(mappedTypeGenericIndexedAccess.ts, 0, 0))
  >Types : Symbol(Types, Decl(mappedTypeGenericIndexedAccess.ts, 0, 0))
-@@ -31,13 +31,13 @@
+@@= skipped -8, +8 lines =@@
  
      constructor() {
          this.entries = {};
@@ -26,7 +26,7 @@
  >T : Symbol(T, Decl(mappedTypeGenericIndexedAccess.ts, 15, 13))
  >Types : Symbol(Types, Decl(mappedTypeGenericIndexedAccess.ts, 0, 0))
  >name : Symbol(name, Decl(mappedTypeGenericIndexedAccess.ts, 15, 36))
-@@ -47,24 +47,24 @@
+@@= skipped -16, +16 lines =@@
  >T : Symbol(T, Decl(mappedTypeGenericIndexedAccess.ts, 15, 13))
  
          if (!this.entries[name]) {
@@ -59,7 +59,7 @@
  >entry : Symbol(entry, Decl(mappedTypeGenericIndexedAccess.ts, 15, 44))
      }
  }
-@@ -115,9 +115,9 @@
+@@= skipped -68, +68 lines =@@
  >[0] : Symbol([0], Decl(mappedTypeGenericIndexedAccess.ts, 36, 36))
  >0 : Symbol([0], Decl(mappedTypeGenericIndexedAccess.ts, 36, 36))
  >p : Symbol(p, Decl(mappedTypeGenericIndexedAccess.ts, 37, 10))
@@ -71,7 +71,7 @@
  >p.foo : Symbol(foo, Decl(mappedTypeGenericIndexedAccess.ts, 26, 10))
  >p : Symbol(p, Decl(mappedTypeGenericIndexedAccess.ts, 37, 10))
  >foo : Symbol(foo, Decl(mappedTypeGenericIndexedAccess.ts, 26, 10))
-@@ -126,9 +126,9 @@
+@@= skipped -11, +11 lines =@@
  >[1] : Symbol([1], Decl(mappedTypeGenericIndexedAccess.ts, 37, 35))
  >1 : Symbol([1], Decl(mappedTypeGenericIndexedAccess.ts, 37, 35))
  >p : Symbol(p, Decl(mappedTypeGenericIndexedAccess.ts, 38, 10))

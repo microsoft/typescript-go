@@ -1,6 +1,6 @@
 --- old.unionTypeWithRecursiveSubtypeReduction2.symbols
 +++ new.unionTypeWithRecursiveSubtypeReduction2.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Module : Symbol(Module, Decl(unionTypeWithRecursiveSubtypeReduction2.ts, 0, 0))
  
      public members: Class[];
@@ -9,7 +9,7 @@
  >Class : Symbol(Class, Decl(unionTypeWithRecursiveSubtypeReduction2.ts, 6, 1))
  }
  
-@@ -13,7 +13,7 @@
+@@= skipped -8, +8 lines =@@
  >Namespace : Symbol(Namespace, Decl(unionTypeWithRecursiveSubtypeReduction2.ts, 2, 1))
  
      public members: (Class | Property)[];
@@ -18,7 +18,7 @@
  >Class : Symbol(Class, Decl(unionTypeWithRecursiveSubtypeReduction2.ts, 6, 1))
  >Property : Symbol(Property, Decl(unionTypeWithRecursiveSubtypeReduction2.ts, 10, 1))
  }
-@@ -22,7 +22,7 @@
+@@= skipped -9, +9 lines =@@
  >Class : Symbol(Class, Decl(unionTypeWithRecursiveSubtypeReduction2.ts, 6, 1))
  
      public parent: Namespace;
@@ -27,7 +27,7 @@
  >Namespace : Symbol(Namespace, Decl(unionTypeWithRecursiveSubtypeReduction2.ts, 2, 1))
  }
  
-@@ -30,7 +30,7 @@
+@@= skipped -8, +8 lines =@@
  >Property : Symbol(Property, Decl(unionTypeWithRecursiveSubtypeReduction2.ts, 10, 1))
  
      public parent: Module | Class;

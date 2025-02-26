@@ -1,6 +1,6 @@
 --- old.getterSetterNonAccessor.symbols
 +++ new.getterSetterNonAccessor.symbols
-@@ -9,9 +9,9 @@
+@@= skipped -9, +9 lines =@@
  >v : Symbol(v, Decl(getterSetterNonAccessor.ts, 1, 17))
  
  Object.defineProperty({}, "0", <PropertyDescriptor>({

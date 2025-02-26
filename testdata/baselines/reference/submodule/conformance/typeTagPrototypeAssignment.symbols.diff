@@ -1,6 +1,6 @@
 --- old.typeTagPrototypeAssignment.symbols
 +++ new.typeTagPrototypeAssignment.symbols
-@@ -2,11 +2,11 @@
+@@= skipped -2, +2 lines =@@
  
  === bug27327.js ===
  function C() {

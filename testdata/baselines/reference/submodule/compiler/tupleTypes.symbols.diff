@@ -1,6 +1,6 @@
 --- old.tupleTypes.symbols
 +++ new.tupleTypes.symbols
-@@ -19,7 +19,7 @@
+@@= skipped -19, +19 lines =@@
  var t0 = t[0];   // number
  >t0 : Symbol(t0, Decl(tupleTypes.ts, 6, 3), Decl(tupleTypes.ts, 7, 3))
  >t : Symbol(t, Decl(tupleTypes.ts, 5, 3))
@@ -9,7 +9,7 @@
  
  var t0: number;
  >t0 : Symbol(t0, Decl(tupleTypes.ts, 6, 3), Decl(tupleTypes.ts, 7, 3))
-@@ -27,7 +27,7 @@
+@@= skipped -8, +8 lines =@@
  var t1 = t[1];   // string
  >t1 : Symbol(t1, Decl(tupleTypes.ts, 8, 3), Decl(tupleTypes.ts, 9, 3))
  >t : Symbol(t, Decl(tupleTypes.ts, 5, 3))
@@ -18,7 +18,7 @@
  
  var t1: string;
  >t1 : Symbol(t1, Decl(tupleTypes.ts, 8, 3), Decl(tupleTypes.ts, 9, 3))
-@@ -58,9 +58,9 @@
+@@= skipped -31, +31 lines =@@
  >tf : Symbol(tf, Decl(tupleTypes.ts, 19, 3))
  >x : Symbol(x, Decl(tupleTypes.ts, 19, 18))
  >x : Symbol(x, Decl(tupleTypes.ts, 19, 51))
@@ -30,7 +30,7 @@
  
  declare function ff<T, U>(a: T, b: [T, (x: T) => U]): U;
  >ff : Symbol(ff, Decl(tupleTypes.ts, 19, 67))
-@@ -79,9 +79,9 @@
+@@= skipped -21, +21 lines =@@
  >ff1 : Symbol(ff1, Decl(tupleTypes.ts, 22, 3), Decl(tupleTypes.ts, 23, 3))
  >ff : Symbol(ff, Decl(tupleTypes.ts, 19, 67))
  >x : Symbol(x, Decl(tupleTypes.ts, 22, 29))
@@ -42,7 +42,7 @@
  
  var ff1: number;
  >ff1 : Symbol(ff1, Decl(tupleTypes.ts, 22, 3), Decl(tupleTypes.ts, 23, 3))
-@@ -109,7 +109,7 @@
+@@= skipped -30, +30 lines =@@
  var tt0 = tt[0];
  >tt0 : Symbol(tt0, Decl(tupleTypes.ts, 30, 3), Decl(tupleTypes.ts, 31, 3))
  >tt : Symbol(tt, Decl(tupleTypes.ts, 29, 3))
@@ -51,7 +51,7 @@
  
  var tt0: number;
  >tt0 : Symbol(tt0, Decl(tupleTypes.ts, 30, 3), Decl(tupleTypes.ts, 31, 3))
-@@ -117,7 +117,7 @@
+@@= skipped -8, +8 lines =@@
  var tt1 = tt[1];
  >tt1 : Symbol(tt1, Decl(tupleTypes.ts, 32, 3), Decl(tupleTypes.ts, 33, 3))
  >tt : Symbol(tt, Decl(tupleTypes.ts, 29, 3))
@@ -60,7 +60,7 @@
  
  var tt1: string;
  >tt1 : Symbol(tt1, Decl(tupleTypes.ts, 32, 3), Decl(tupleTypes.ts, 33, 3))
-@@ -219,9 +219,9 @@
+@@= skipped -102, +102 lines =@@
  >b3 : Symbol(b3, Decl(tupleTypes.ts, 61, 13))
  
  b3.length = 0; // Error

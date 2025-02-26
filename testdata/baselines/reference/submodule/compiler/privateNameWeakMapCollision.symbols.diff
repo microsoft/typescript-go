@@ -1,6 +1,6 @@
 --- old.privateNameWeakMapCollision.symbols
 +++ new.privateNameWeakMapCollision.symbols
-@@ -14,7 +14,7 @@
+@@= skipped -14, +14 lines =@@
  >C : Symbol(C, Decl(privateNameWeakMapCollision.ts, 2, 16))
  
          #x;

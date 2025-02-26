@@ -1,6 +1,6 @@
 --- old.contextualTypingFunctionReturningFunction.symbols
 +++ new.contextualTypingFunctionReturningFunction.symbols
-@@ -5,11 +5,11 @@
+@@= skipped -5, +5 lines =@@
  >I : Symbol(I, Decl(contextualTypingFunctionReturningFunction.ts, 0, 0))
  
  	a(s: string): void;

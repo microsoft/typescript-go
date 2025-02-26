@@ -1,6 +1,6 @@
 --- old.coAndContraVariantInferences4.symbols
 +++ new.coAndContraVariantInferences4.symbols
-@@ -5,33 +5,33 @@
+@@= skipped -5, +5 lines =@@
  >SyntaxKind : Symbol(SyntaxKind, Decl(coAndContraVariantInferences4.ts, 0, 0))
  
      Modifier,

@@ -1,6 +1,6 @@
 --- old.genericConstraintOnExtendedBuiltinTypes.symbols
 +++ new.genericConstraintOnExtendedBuiltinTypes.symbols
-@@ -8,19 +8,19 @@
+@@= skipped -8, +8 lines =@@
  >ICloneable : Symbol(ICloneable, Decl(genericConstraintOnExtendedBuiltinTypes.ts, 0, 24))
  
          Clone(): any;
@@ -24,7 +24,7 @@
  
      export class Tween<T extends ICloneable>{
  >Tween : Symbol(Tween, Decl(genericConstraintOnExtendedBuiltinTypes.ts, 8, 25))
-@@ -28,7 +28,7 @@
+@@= skipped -20, +20 lines =@@
  >ICloneable : Symbol(ICloneable, Decl(genericConstraintOnExtendedBuiltinTypes.ts, 0, 24))
  
          private _from: T;
@@ -33,7 +33,7 @@
  >T : Symbol(T, Decl(genericConstraintOnExtendedBuiltinTypes.ts, 9, 23))
  
  
-@@ -37,29 +37,27 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(genericConstraintOnExtendedBuiltinTypes.ts, 9, 23))
  
              this._from = from.Clone();

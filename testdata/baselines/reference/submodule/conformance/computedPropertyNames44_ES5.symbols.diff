@@ -1,6 +1,6 @@
 --- old.computedPropertyNames44_ES5.symbols
 +++ new.computedPropertyNames44_ES5.symbols
-@@ -3,12 +3,12 @@
+@@= skipped -3, +3 lines =@@
  === computedPropertyNames44_ES5.ts ===
  class Foo { x }
  >Foo : Symbol(Foo, Decl(computedPropertyNames44_ES5.ts, 0, 0))
@@ -16,7 +16,7 @@
  
  class C {
  >C : Symbol(C, Decl(computedPropertyNames44_ES5.ts, 1, 19))
-@@ -18,8 +18,8 @@
+@@= skipped -15, +15 lines =@@
  >Foo2 : Symbol(Foo2, Decl(computedPropertyNames44_ES5.ts, 0, 15))
  
      get ["get1"]() { return new Foo }
@@ -27,7 +27,7 @@
  >Foo : Symbol(Foo, Decl(computedPropertyNames44_ES5.ts, 0, 0))
  }
  
-@@ -28,8 +28,8 @@
+@@= skipped -10, +10 lines =@@
  >C : Symbol(C, Decl(computedPropertyNames44_ES5.ts, 1, 19))
  
      set ["set1"](p: Foo) { }

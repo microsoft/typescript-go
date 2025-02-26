@@ -1,6 +1,6 @@
 --- old.propertyOverridesAccessors2.symbols
 +++ new.propertyOverridesAccessors2.symbols
-@@ -5,14 +5,14 @@
+@@= skipped -5, +5 lines =@@
  >Base : Symbol(Base, Decl(propertyOverridesAccessors2.ts, 0, 0))
  
    get x() { return 2; }
@@ -19,7 +19,7 @@
  >value : Symbol(value, Decl(propertyOverridesAccessors2.ts, 2, 8))
  }
  
-@@ -21,7 +21,7 @@
+@@= skipped -16, +16 lines =@@
  >Base : Symbol(Base, Decl(propertyOverridesAccessors2.ts, 0, 0))
  
    x = 1;
@@ -28,7 +28,7 @@
  }
  
  const obj = new Derived(); // prints 'x was set to 1'
-@@ -29,10 +29,10 @@
+@@= skipped -8, +8 lines =@@
  >Derived : Symbol(Derived, Decl(propertyOverridesAccessors2.ts, 3, 1))
  
  console.log(obj.x); // 2

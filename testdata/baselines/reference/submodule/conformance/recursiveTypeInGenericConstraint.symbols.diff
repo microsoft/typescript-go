@@ -1,6 +1,6 @@
 --- old.recursiveTypeInGenericConstraint.symbols
 +++ new.recursiveTypeInGenericConstraint.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(recursiveTypeInGenericConstraint.ts, 0, 8))
  
      x: G<G<T>>; // infinitely expanding type reference
@@ -9,7 +9,7 @@
  >G : Symbol(G, Decl(recursiveTypeInGenericConstraint.ts, 0, 0))
  >G : Symbol(G, Decl(recursiveTypeInGenericConstraint.ts, 0, 0))
  >T : Symbol(T, Decl(recursiveTypeInGenericConstraint.ts, 0, 8))
-@@ -19,7 +19,7 @@
+@@= skipped -13, +13 lines =@@
  >T : Symbol(T, Decl(recursiveTypeInGenericConstraint.ts, 4, 10))
  
      bar: T;
@@ -18,7 +18,7 @@
  >T : Symbol(T, Decl(recursiveTypeInGenericConstraint.ts, 4, 10))
  }
  
-@@ -28,7 +28,7 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(recursiveTypeInGenericConstraint.ts, 8, 8))
  
      x: G<G<T>>; 

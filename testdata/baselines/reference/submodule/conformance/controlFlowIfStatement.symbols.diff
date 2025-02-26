@@ -1,6 +1,6 @@
 --- old.controlFlowIfStatement.symbols
 +++ new.controlFlowIfStatement.symbols
-@@ -84,9 +84,9 @@
+@@= skipped -84, +84 lines =@@
  >data : Symbol(data, Decl(controlFlowIfStatement.ts, 36, 14))
  
          return JSON.parse(data);
@@ -12,7 +12,7 @@
  >data : Symbol(data, Decl(controlFlowIfStatement.ts, 36, 14))
      }
      else {
-@@ -117,7 +117,7 @@
+@@= skipped -33, +33 lines =@@
  >T : Symbol(T, Decl(controlFlowIfStatement.ts, 53, 12))
  
    p: T;
@@ -21,7 +21,7 @@
  >T : Symbol(T, Decl(controlFlowIfStatement.ts, 53, 12))
  }
  function e(x: I<"A" | "B">) {
-@@ -126,15 +126,15 @@
+@@= skipped -9, +9 lines =@@
  >I : Symbol(I, Decl(controlFlowIfStatement.ts, 51, 1))
  
      if (x.p === "A") {

@@ -1,6 +1,6 @@
 --- old.overrideBaseIntersectionMethod.symbols
 +++ new.overrideBaseIntersectionMethod.symbols
-@@ -19,23 +19,23 @@
+@@= skipped -19, +19 lines =@@
  >Base : Symbol(Base, Decl(overrideBaseIntersectionMethod.ts, 4, 52))
  
    getLocation(): [number, number] {
@@ -31,7 +31,7 @@
  >y : Symbol(y, Decl(overrideBaseIntersectionMethod.ts, 6, 13))
    }
  }
-@@ -44,11 +44,11 @@
+@@= skipped -25, +25 lines =@@
  >Point : Symbol(Point, Decl(overrideBaseIntersectionMethod.ts, 9, 1))
  
    constructor(public x: number, public y: number) { }
@@ -46,7 +46,7 @@
  
      return [0,0];
    }
-@@ -60,30 +60,30 @@
+@@= skipped -16, +16 lines =@@
  >Point : Symbol(Point, Decl(overrideBaseIntersectionMethod.ts, 9, 1))
  
    calculate() {

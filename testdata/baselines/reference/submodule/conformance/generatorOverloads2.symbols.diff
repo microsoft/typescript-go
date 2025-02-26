@@ -1,6 +1,6 @@
 --- old.generatorOverloads2.symbols
 +++ new.generatorOverloads2.symbols
-@@ -7,15 +7,15 @@
+@@= skipped -7, +7 lines =@@
      function* f(s: string): Iterable<any>;
  >f : Symbol(f, Decl(generatorOverloads2.ts, 0, 18), Decl(generatorOverloads2.ts, 1, 42), Decl(generatorOverloads2.ts, 2, 42))
  >s : Symbol(s, Decl(generatorOverloads2.ts, 1, 16))

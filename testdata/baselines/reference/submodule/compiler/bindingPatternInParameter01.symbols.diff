@@ -1,6 +1,6 @@
 --- old.bindingPatternInParameter01.symbols
 +++ new.bindingPatternInParameter01.symbols
-@@ -5,16 +5,16 @@
+@@= skipped -5, +5 lines =@@
  >nestedArray : Symbol(nestedArray, Decl(bindingPatternInParameter01.ts, 0, 5))
  
  nestedArray.forEach(([[a, b]]) => {

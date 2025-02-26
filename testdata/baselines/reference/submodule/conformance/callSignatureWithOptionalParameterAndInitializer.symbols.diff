@@ -1,6 +1,6 @@
 --- old.callSignatureWithOptionalParameterAndInitializer.symbols
 +++ new.callSignatureWithOptionalParameterAndInitializer.symbols
-@@ -39,7 +39,7 @@
+@@= skipped -39, +39 lines =@@
  >C : Symbol(C, Decl(callSignatureWithOptionalParameterAndInitializer.ts, 11, 9))
  
      foo(x?: number = 1) { }
@@ -9,7 +9,7 @@
  >x : Symbol(x, Decl(callSignatureWithOptionalParameterAndInitializer.ts, 14, 8))
  }
  
-@@ -48,14 +48,14 @@
+@@= skipped -9, +9 lines =@@
  >C : Symbol(C, Decl(callSignatureWithOptionalParameterAndInitializer.ts, 11, 9))
  
  c.foo();
@@ -28,7 +28,7 @@
  
  interface I {
  >I : Symbol(I, Decl(callSignatureWithOptionalParameterAndInitializer.ts, 19, 9))
-@@ -64,7 +64,7 @@
+@@= skipped -16, +16 lines =@@
  >x : Symbol(x, Decl(callSignatureWithOptionalParameterAndInitializer.ts, 22, 5))
  
      foo(x: number, y?: number = 1);
@@ -37,7 +37,7 @@
  >x : Symbol(x, Decl(callSignatureWithOptionalParameterAndInitializer.ts, 23, 8))
  >y : Symbol(y, Decl(callSignatureWithOptionalParameterAndInitializer.ts, 23, 18))
  }
-@@ -80,14 +80,14 @@
+@@= skipped -16, +16 lines =@@
  >i : Symbol(i, Decl(callSignatureWithOptionalParameterAndInitializer.ts, 26, 3))
  
  i.foo(1);

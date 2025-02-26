@@ -1,6 +1,6 @@
 --- old.destructuringWithGenericParameter.symbols
 +++ new.destructuringWithGenericParameter.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(destructuringWithGenericParameter.ts, 0, 19))
  
      payload: T;
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(destructuringWithGenericParameter.ts, 0, 19))
  }
  
-@@ -27,9 +27,9 @@
+@@= skipped -21, +21 lines =@@
  
      callback(object.payload);
  >callback : Symbol(callback, Decl(destructuringWithGenericParameter.ts, 6, 52))
@@ -21,7 +21,7 @@
  }
  
  genericFunction(genericObject, ({greeting}) => {
-@@ -39,9 +39,9 @@
+@@= skipped -12, +12 lines =@@
  
      var s = greeting.toLocaleLowerCase();  // Greeting should be of type string
  >s : Symbol(s, Decl(destructuringWithGenericParameter.ts, 11, 7))

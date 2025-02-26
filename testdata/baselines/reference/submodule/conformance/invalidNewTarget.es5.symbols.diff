@@ -1,6 +1,6 @@
 --- old.invalidNewTarget.es5.symbols
 +++ new.invalidNewTarget.es5.symbols
-@@ -11,38 +11,38 @@
+@@= skipped -11, +11 lines =@@
  >C : Symbol(C, Decl(invalidNewTarget.es5.ts, 1, 27))
  
      [new.target]() { }

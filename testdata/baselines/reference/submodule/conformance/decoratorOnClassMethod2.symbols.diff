@@ -1,6 +1,6 @@
 --- old.decoratorOnClassMethod2.symbols
 +++ new.decoratorOnClassMethod2.symbols
-@@ -17,5 +17,5 @@
+@@= skipped -17, +17 lines =@@
  
      @dec public method() {}
  >dec : Symbol(dec, Decl(decoratorOnClassMethod2.ts, 0, 0))

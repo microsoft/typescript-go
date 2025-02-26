@@ -1,6 +1,6 @@
 --- old.declarationEmitOfTypeofAliasedExport.symbols
 +++ new.declarationEmitOfTypeofAliasedExport.symbols
-@@ -13,7 +13,7 @@
+@@= skipped -13, +13 lines =@@
  >a : Symbol(a, Decl(b.ts, 0, 6))
  
  export default a.D;

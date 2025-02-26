@@ -1,6 +1,6 @@
 --- old.typeParametersAvailableInNestedScope.symbols
 +++ new.typeParametersAvailableInNestedScope.symbols
-@@ -6,11 +6,11 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(typeParametersAvailableInNestedScope.ts, 0, 8))
  
      data: T;
@@ -14,7 +14,7 @@
  >U : Symbol(U, Decl(typeParametersAvailableInNestedScope.ts, 3, 9))
  >a : Symbol(a, Decl(typeParametersAvailableInNestedScope.ts, 3, 12))
  >U : Symbol(U, Decl(typeParametersAvailableInNestedScope.ts, 3, 9))
-@@ -24,7 +24,7 @@
+@@= skipped -18, +18 lines =@@
      }
  
      foo() {
@@ -23,7 +23,7 @@
  
          function temp<U>(a: U) {
  >temp : Symbol(temp, Decl(typeParametersAvailableInNestedScope.ts, 8, 11))
-@@ -50,18 +50,18 @@
+@@= skipped -26, +26 lines =@@
  >C : Symbol(C, Decl(typeParametersAvailableInNestedScope.ts, 0, 0))
  
  c.data = c.x(null);

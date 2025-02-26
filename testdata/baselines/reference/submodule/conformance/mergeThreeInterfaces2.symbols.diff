@@ -1,6 +1,6 @@
 --- old.mergeThreeInterfaces2.symbols
 +++ new.mergeThreeInterfaces2.symbols
-@@ -11,7 +11,7 @@
+@@= skipped -11, +11 lines =@@
  >A : Symbol(A, Decl(mergeThreeInterfaces2.ts, 3, 11), Decl(mergeThreeInterfaces2.ts, 13, 11), Decl(mergeThreeInterfaces2.ts, 16, 5))
  
          foo: string;
@@ -9,7 +9,7 @@
      }
  
      var a: A;
-@@ -20,15 +20,15 @@
+@@= skipped -9, +9 lines =@@
  
      var r1 = a.foo;
  >r1 : Symbol(r1, Decl(mergeThreeInterfaces2.ts, 9, 7))
@@ -29,7 +29,7 @@
  }
  
  module M2 {
-@@ -38,14 +38,14 @@
+@@= skipped -18, +18 lines =@@
  >A : Symbol(A, Decl(mergeThreeInterfaces2.ts, 3, 11), Decl(mergeThreeInterfaces2.ts, 13, 11), Decl(mergeThreeInterfaces2.ts, 16, 5))
  
          bar: number;
@@ -46,7 +46,7 @@
      }
  
      var a: A;
-@@ -54,21 +54,21 @@
+@@= skipped -16, +16 lines =@@
  
      var r1 = a.foo;
  >r1 : Symbol(r1, Decl(mergeThreeInterfaces2.ts, 23, 7))
@@ -74,7 +74,7 @@
  }
  
  // same as above but with an additional level of nesting and third module declaration
-@@ -82,7 +82,7 @@
+@@= skipped -28, +28 lines =@@
  >A : Symbol(A, Decl(mergeThreeInterfaces2.ts, 30, 22), Decl(mergeThreeInterfaces2.ts, 42, 22), Decl(mergeThreeInterfaces2.ts, 56, 22))
  
              foo: string;
@@ -83,7 +83,7 @@
          }
  
          var a: A;
-@@ -91,15 +91,15 @@
+@@= skipped -9, +9 lines =@@
  
          var r1 = a.foo;
  >r1 : Symbol(r1, Decl(mergeThreeInterfaces2.ts, 36, 11))
@@ -103,7 +103,7 @@
      }
  }
  
-@@ -113,7 +113,7 @@
+@@= skipped -22, +22 lines =@@
  >A : Symbol(A, Decl(mergeThreeInterfaces2.ts, 30, 22), Decl(mergeThreeInterfaces2.ts, 42, 22), Decl(mergeThreeInterfaces2.ts, 56, 22))
  
              bar: number;
@@ -112,7 +112,7 @@
          }
  
          var a: A;
-@@ -122,21 +122,21 @@
+@@= skipped -9, +9 lines =@@
  
          var r1 = a.foo
  >r1 : Symbol(r1, Decl(mergeThreeInterfaces2.ts, 49, 11))
@@ -140,7 +140,7 @@
      }
  }
  
-@@ -150,7 +150,7 @@
+@@= skipped -28, +28 lines =@@
  >A : Symbol(A, Decl(mergeThreeInterfaces2.ts, 30, 22), Decl(mergeThreeInterfaces2.ts, 42, 22), Decl(mergeThreeInterfaces2.ts, 56, 22))
  
              baz: boolean;
@@ -149,7 +149,7 @@
          }
  
          var a: A;
-@@ -159,20 +159,20 @@
+@@= skipped -9, +9 lines =@@
  
          var r1 = a.foo
  >r1 : Symbol(r1, Decl(mergeThreeInterfaces2.ts, 62, 11))

@@ -1,6 +1,6 @@
 --- old.staticAsIdentifier.symbols
 +++ new.staticAsIdentifier.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >C1 : Symbol(C1, Decl(staticAsIdentifier.ts, 0, 0))
  
      static static
@@ -9,7 +9,7 @@
  
      [x: string]: string;
  >x : Symbol(x, Decl(staticAsIdentifier.ts, 2, 5))
-@@ -15,33 +15,33 @@
+@@= skipped -10, +10 lines =@@
  >C2 : Symbol(C2, Decl(staticAsIdentifier.ts, 3, 1))
  
      static static
@@ -50,7 +50,7 @@
  }
  
  class C6 {
-@@ -49,7 +49,7 @@
+@@= skipped -34, +34 lines =@@
  
      static 
      static
@@ -59,7 +59,7 @@
  }
  
  class C7 extends C6 {
-@@ -57,7 +57,7 @@
+@@= skipped -8, +8 lines =@@
  >C6 : Symbol(C6, Decl(staticAsIdentifier.ts, 20, 1))
  
      static override static

@@ -1,6 +1,6 @@
 --- old.quotedModuleNameMustBeAmbient.symbols
 +++ new.quotedModuleNameMustBeAmbient.symbols
-@@ -2,8 +2,8 @@
+@@= skipped -2, +2 lines =@@
  
  === quotedModuleNameMustBeAmbient.ts ===
  module 'M' {}

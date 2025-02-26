@@ -1,6 +1,6 @@
 --- old.subtypingWithObjectMembers3.symbols
 +++ new.subtypingWithObjectMembers3.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Base : Symbol(Base, Decl(subtypingWithObjectMembers3.ts, 0, 0))
  
      foo: string;
@@ -9,7 +9,7 @@
  }
  
  interface Derived extends Base {
-@@ -13,7 +13,7 @@
+@@= skipped -8, +8 lines =@@
  >Base : Symbol(Base, Decl(subtypingWithObjectMembers3.ts, 0, 0))
  
      bar: string;
@@ -18,7 +18,7 @@
  }
  
  // N and M have the same name, same accessibility, same optionality, and N is a subtype of M
-@@ -25,11 +25,11 @@
+@@= skipped -12, +12 lines =@@
  >A : Symbol(A, Decl(subtypingWithObjectMembers3.ts, 10, 20))
  
          foo: Base;
@@ -32,7 +32,7 @@
  >Derived : Symbol(Derived, Decl(subtypingWithObjectMembers3.ts, 2, 1))
      }
  
-@@ -38,11 +38,11 @@
+@@= skipped -13, +13 lines =@@
  >A : Symbol(A, Decl(subtypingWithObjectMembers3.ts, 10, 20))
  
          foo: Derived; // ok
@@ -46,7 +46,7 @@
  >Base : Symbol(Base, Decl(subtypingWithObjectMembers3.ts, 0, 0))
      }
  
-@@ -50,11 +50,11 @@
+@@= skipped -12, +12 lines =@@
  >A2 : Symbol(A2, Decl(subtypingWithObjectMembers3.ts, 19, 5))
  
          1: Base;
@@ -60,7 +60,7 @@
  >Derived : Symbol(Derived, Decl(subtypingWithObjectMembers3.ts, 2, 1))
      }
  
-@@ -63,11 +63,11 @@
+@@= skipped -13, +13 lines =@@
  >A2 : Symbol(A2, Decl(subtypingWithObjectMembers3.ts, 19, 5))
  
          1: Derived; // ok
@@ -74,7 +74,7 @@
  >Base : Symbol(Base, Decl(subtypingWithObjectMembers3.ts, 0, 0))
      }
  
-@@ -75,11 +75,11 @@
+@@= skipped -12, +12 lines =@@
  >A3 : Symbol(A3, Decl(subtypingWithObjectMembers3.ts, 29, 5))
  
          '1': Base;
@@ -88,7 +88,7 @@
  >Derived : Symbol(Derived, Decl(subtypingWithObjectMembers3.ts, 2, 1))
      }
  
-@@ -88,11 +88,11 @@
+@@= skipped -13, +13 lines =@@
  >A3 : Symbol(A3, Decl(subtypingWithObjectMembers3.ts, 29, 5))
  
          '1': Derived; // ok
@@ -102,7 +102,7 @@
  >Base : Symbol(Base, Decl(subtypingWithObjectMembers3.ts, 0, 0))
      }
  }
-@@ -104,11 +104,11 @@
+@@= skipped -16, +16 lines =@@
  >A : Symbol(A, Decl(subtypingWithObjectMembers3.ts, 42, 17))
  
          foo?: Base;
@@ -116,7 +116,7 @@
  >Derived : Symbol(Derived, Decl(subtypingWithObjectMembers3.ts, 2, 1))
      }
  
-@@ -117,11 +117,11 @@
+@@= skipped -13, +13 lines =@@
  >A : Symbol(A, Decl(subtypingWithObjectMembers3.ts, 42, 17))
  
          foo?: Derived; // ok
@@ -130,7 +130,7 @@
  >Base : Symbol(Base, Decl(subtypingWithObjectMembers3.ts, 0, 0))
      }
  
-@@ -129,11 +129,11 @@
+@@= skipped -12, +12 lines =@@
  >A2 : Symbol(A2, Decl(subtypingWithObjectMembers3.ts, 51, 5))
  
          1?: Base;
@@ -144,7 +144,7 @@
  >Derived : Symbol(Derived, Decl(subtypingWithObjectMembers3.ts, 2, 1))
      }
  
-@@ -142,11 +142,11 @@
+@@= skipped -13, +13 lines =@@
  >A2 : Symbol(A2, Decl(subtypingWithObjectMembers3.ts, 51, 5))
  
          1?: Derived; // ok
@@ -158,7 +158,7 @@
  >Base : Symbol(Base, Decl(subtypingWithObjectMembers3.ts, 0, 0))
      }
  
-@@ -154,11 +154,11 @@
+@@= skipped -12, +12 lines =@@
  >A3 : Symbol(A3, Decl(subtypingWithObjectMembers3.ts, 61, 5))
  
          '1'?: Base;
@@ -172,7 +172,7 @@
  >Derived : Symbol(Derived, Decl(subtypingWithObjectMembers3.ts, 2, 1))
      }
  
-@@ -167,11 +167,11 @@
+@@= skipped -13, +13 lines =@@
  >A3 : Symbol(A3, Decl(subtypingWithObjectMembers3.ts, 61, 5))
  
          '1'?: Derived; // ok

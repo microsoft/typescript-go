@@ -1,6 +1,6 @@
 --- old.typeFromPrivatePropertyAssignment.symbols
 +++ new.typeFromPrivatePropertyAssignment.symbols
-@@ -9,25 +9,25 @@
+@@= skipped -9, +9 lines =@@
  >C : Symbol(C, Decl(typeFromPrivatePropertyAssignment.ts, 0, 28))
  
      #a?: Foo;

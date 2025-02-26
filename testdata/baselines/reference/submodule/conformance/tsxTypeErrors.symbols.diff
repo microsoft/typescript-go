@@ -1,6 +1,6 @@
 --- old.tsxTypeErrors.symbols
 +++ new.tsxTypeErrors.symbols
-@@ -31,7 +31,7 @@
+@@= skipped -31, +31 lines =@@
  >MyClass : Symbol(MyClass, Decl(tsxTypeErrors.tsx, 11, 31))
  
    props: {

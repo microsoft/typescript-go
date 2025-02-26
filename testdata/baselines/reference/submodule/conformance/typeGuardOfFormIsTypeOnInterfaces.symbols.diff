@@ -1,6 +1,6 @@
 --- old.typeGuardOfFormIsTypeOnInterfaces.symbols
 +++ new.typeGuardOfFormIsTypeOnInterfaces.symbols
-@@ -8,11 +8,11 @@
+@@= skipped -8, +8 lines =@@
  >C1 : Symbol(C1, Decl(typeGuardOfFormIsTypeOnInterfaces.ts, 0, 0))
  
      prototype: C1;
@@ -14,7 +14,7 @@
  }
  interface C2 {
  >C2 : Symbol(C2, Decl(typeGuardOfFormIsTypeOnInterfaces.ts, 4, 1))
-@@ -21,22 +21,22 @@
+@@= skipped -13, +13 lines =@@
  >C2 : Symbol(C2, Decl(typeGuardOfFormIsTypeOnInterfaces.ts, 4, 1))
  
      prototype: C2;
@@ -41,7 +41,7 @@
  }
  var str: string;
  >str : Symbol(str, Decl(typeGuardOfFormIsTypeOnInterfaces.ts, 14, 3))
-@@ -96,33 +96,33 @@
+@@= skipped -75, +75 lines =@@
  >str : Symbol(str, Decl(typeGuardOfFormIsTypeOnInterfaces.ts, 14, 3))
  >isC1 : Symbol(isC1, Decl(typeGuardOfFormIsTypeOnInterfaces.ts, 16, 30))
  >c1Orc2 : Symbol(c1Orc2, Decl(typeGuardOfFormIsTypeOnInterfaces.ts, 34, 3))
@@ -83,7 +83,7 @@
  
  var c2Ord1: C2 | D1;
  >c2Ord1 : Symbol(c2Ord1, Decl(typeGuardOfFormIsTypeOnInterfaces.ts, 40, 3))
-@@ -133,25 +133,25 @@
+@@= skipped -37, +37 lines =@@
  >num : Symbol(num, Decl(typeGuardOfFormIsTypeOnInterfaces.ts, 15, 3))
  >isC2 : Symbol(isC2, Decl(typeGuardOfFormIsTypeOnInterfaces.ts, 21, 1))
  >c2Ord1 : Symbol(c2Ord1, Decl(typeGuardOfFormIsTypeOnInterfaces.ts, 40, 3))

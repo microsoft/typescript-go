@@ -1,6 +1,6 @@
 --- old.tsxElementResolution12.symbols
 +++ new.tsxElementResolution12.symbols
-@@ -9,7 +9,7 @@
+@@= skipped -9, +9 lines =@@
  
  	interface ElementAttributesProperty { pr: any; }
  >ElementAttributesProperty : Symbol(ElementAttributesProperty, Decl(file.tsx, 1, 22))

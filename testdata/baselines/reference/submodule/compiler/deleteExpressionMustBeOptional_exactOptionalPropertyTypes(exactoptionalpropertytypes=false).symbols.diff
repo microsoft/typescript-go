@@ -1,6 +1,6 @@
 --- old.deleteExpressionMustBeOptional_exactOptionalPropertyTypes(exactoptionalpropertytypes=false).symbols
 +++ new.deleteExpressionMustBeOptional_exactOptionalPropertyTypes(exactoptionalpropertytypes=false).symbols
-@@ -5,31 +5,31 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(deleteExpressionMustBeOptional_exactOptionalPropertyTypes.ts, 0, 0))
  
      a: number
@@ -41,7 +41,7 @@
  }
  
  interface AA {
-@@ -64,49 +64,49 @@
+@@= skipped -59, +59 lines =@@
  >BB : Symbol(BB, Decl(deleteExpressionMustBeOptional_exactOptionalPropertyTypes.ts, 14, 1))
  
  delete f.a
@@ -109,7 +109,7 @@
  
  delete f.j
  >f : Symbol(f, Decl(deleteExpressionMustBeOptional_exactOptionalPropertyTypes.ts, 20, 13))
-@@ -160,14 +160,14 @@
+@@= skipped -96, +96 lines =@@
  >g : Symbol(g, Decl(deleteExpressionMustBeOptional_exactOptionalPropertyTypes.ts, 21, 13))
  
  delete a.a

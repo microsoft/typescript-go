@@ -1,6 +1,6 @@
 --- old.esDecorators-preservesThis.symbols
 +++ new.esDecorators-preservesThis.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >DecoratorProvider : Symbol(DecoratorProvider, Decl(esDecorators-preservesThis.ts, 0, 0))
  
      decorate<T>(this: DecoratorProvider, v: T, ctx: DecoratorContext): T;
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(esDecorators-preservesThis.ts, 3, 13))
  >this : Symbol(this, Decl(esDecorators-preservesThis.ts, 3, 16))
  >DecoratorProvider : Symbol(DecoratorProvider, Decl(esDecorators-preservesThis.ts, 0, 0))
-@@ -27,28 +27,28 @@
+@@= skipped -20, +20 lines =@@
  >C : Symbol(C, Decl(esDecorators-preservesThis.ts, 6, 42))
  
      @instance.decorate
@@ -46,7 +46,7 @@
  }
  
  // preserve `this` for `super` access
-@@ -57,33 +57,33 @@
+@@= skipped -30, +30 lines =@@
  >DecoratorProvider : Symbol(DecoratorProvider, Decl(esDecorators-preservesThis.ts, 0, 0))
  
      m() {

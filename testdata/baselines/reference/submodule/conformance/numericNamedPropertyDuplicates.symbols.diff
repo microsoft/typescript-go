@@ -1,6 +1,6 @@
 --- old.numericNamedPropertyDuplicates.symbols
 +++ new.numericNamedPropertyDuplicates.symbols
-@@ -5,26 +5,26 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(numericNamedPropertyDuplicates.ts, 0, 0))
  
      1: number;

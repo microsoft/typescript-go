@@ -1,6 +1,6 @@
 --- old.parserErrorRecovery_ParameterList6.symbols
 +++ new.parserErrorRecovery_ParameterList6.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(parserErrorRecovery_ParameterList6.ts, 0, 0))
  
      public banana (x: break) { }

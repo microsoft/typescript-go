@@ -1,6 +1,6 @@
 --- old.moduleExportAssignment6.symbols
 +++ new.moduleExportAssignment6.symbols
-@@ -9,26 +9,20 @@
+@@= skipped -9, +9 lines =@@
  >x : Symbol(x, Decl(webpackLibNormalModule.js, 2, 16))
  
          this.x = x
@@ -28,7 +28,7 @@
  >y : Symbol(y, Decl(webpackLibNormalModule.js, 7, 6))
      }
  }
-@@ -40,9 +34,7 @@
+@@= skipped -31, +25 lines =@@
  >C : Symbol(C, Decl(webpackLibNormalModule.js, 0, 0))
  
      return module.exports; // should be fine because `module` is defined locally
@@ -38,7 +38,7 @@
  }
  
  function tricky() {
-@@ -55,9 +47,7 @@
+@@= skipped -15, +13 lines =@@
  
      return () => {
          return module.exports;

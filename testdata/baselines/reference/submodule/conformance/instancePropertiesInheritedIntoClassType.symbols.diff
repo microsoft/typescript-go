@@ -1,6 +1,6 @@
 --- old.instancePropertiesInheritedIntoClassType.symbols
 +++ new.instancePropertiesInheritedIntoClassType.symbols
-@@ -8,30 +8,30 @@
+@@= skipped -8, +8 lines =@@
  >C : Symbol(C, Decl(instancePropertiesInheritedIntoClassType.ts, 0, 19))
  
          x: string;
@@ -38,7 +38,7 @@
  
      var d = new D(1, 2);
  >d : Symbol(d, Decl(instancePropertiesInheritedIntoClassType.ts, 13, 7))
-@@ -39,32 +39,32 @@
+@@= skipped -31, +31 lines =@@
  
      var r = d.fn();
  >r : Symbol(r, Decl(instancePropertiesInheritedIntoClassType.ts, 14, 7))
@@ -81,7 +81,7 @@
  
  }
  
-@@ -77,27 +77,27 @@
+@@= skipped -38, +38 lines =@@
  >U : Symbol(U, Decl(instancePropertiesInheritedIntoClassType.ts, 23, 14))
  
          x: T;
@@ -115,7 +115,7 @@
  >U : Symbol(U, Decl(instancePropertiesInheritedIntoClassType.ts, 23, 14))
      }
  
-@@ -108,7 +108,7 @@
+@@= skipped -31, +31 lines =@@
  >C : Symbol(C, Decl(instancePropertiesInheritedIntoClassType.ts, 22, 16))
  >T : Symbol(T, Decl(instancePropertiesInheritedIntoClassType.ts, 33, 12))
  >U : Symbol(U, Decl(instancePropertiesInheritedIntoClassType.ts, 33, 14))
@@ -124,7 +124,7 @@
  >T : Symbol(T, Decl(instancePropertiesInheritedIntoClassType.ts, 33, 12))
  
      var d = new D(1, '');
-@@ -117,30 +117,30 @@
+@@= skipped -9, +9 lines =@@
  
      var r = d.fn();
  >r : Symbol(r, Decl(instancePropertiesInheritedIntoClassType.ts, 36, 7))

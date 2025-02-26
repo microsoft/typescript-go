@@ -1,6 +1,6 @@
 --- old.checkJsxChildrenProperty12.symbols
 +++ new.checkJsxChildrenProperty12.symbols
-@@ -8,25 +8,25 @@
+@@= skipped -8, +8 lines =@@
  >ButtonProp : Symbol(ButtonProp, Decl(file.tsx, 0, 32))
  
      a: number,
@@ -32,7 +32,7 @@
  
  		let condition: boolean;
  >condition : Symbol(condition, Decl(file.tsx, 10, 5))
-@@ -36,21 +36,14 @@
+@@= skipped -28, +28 lines =@@
  
          	return <InnerButton {...this.props} />
  >InnerButton : Symbol(InnerButton, Decl(file.tsx, 24, 1))
@@ -54,7 +54,7 @@
  				</InnerButton>);
  >InnerButton : Symbol(InnerButton, Decl(file.tsx, 24, 1))
  		}
-@@ -61,22 +54,20 @@
+@@= skipped -25, +18 lines =@@
  >InnerButtonProp : Symbol(InnerButtonProp, Decl(file.tsx, 20, 1))
  
  	a: number

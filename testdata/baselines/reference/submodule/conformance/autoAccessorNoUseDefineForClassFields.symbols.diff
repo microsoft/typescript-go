@@ -1,6 +1,6 @@
 --- old.autoAccessorNoUseDefineForClassFields.symbols
 +++ new.autoAccessorNoUseDefineForClassFields.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >C1 : Symbol(C1, Decl(file1.ts, 0, 0))
  
      static accessor x = 0;
@@ -9,7 +9,7 @@
  }
  
  === file2.ts ===
-@@ -14,7 +14,7 @@
+@@= skipped -8, +8 lines =@@
  >C2 : Symbol(C2, Decl(file2.ts, 0, 0))
  
      static accessor #x = 0;
@@ -18,7 +18,7 @@
  }
  
  === file3.ts ===
-@@ -22,7 +22,7 @@
+@@= skipped -8, +8 lines =@@
  >C3 : Symbol(C3, Decl(file3.ts, 0, 0))
  
      static accessor #x = 0;
@@ -27,7 +27,7 @@
  
      accessor #y = 0;
  }
-@@ -32,7 +32,7 @@
+@@= skipped -10, +10 lines =@@
  >C3 : Symbol(C3, Decl(file3.ts, 0, 0))
  
      accessor x = 0;
@@ -36,7 +36,7 @@
  }
  
  === file4.ts ===
-@@ -40,7 +40,7 @@
+@@= skipped -8, +8 lines =@@
  >C4 : Symbol(C4, Decl(file4.ts, 0, 0))
  
      accessor #x = 0;
@@ -45,7 +45,7 @@
  }
  
  === file5.ts ===
-@@ -48,10 +48,10 @@
+@@= skipped -8, +8 lines =@@
  >C5 : Symbol(C5, Decl(file5.ts, 0, 0))
  
      x = 0;
@@ -58,7 +58,7 @@
  }
  
  === file6.ts ===
-@@ -59,9 +59,9 @@
+@@= skipped -11, +11 lines =@@
  >C6 : Symbol(C6, Decl(file6.ts, 0, 0))
  
      accessor #x = 0;

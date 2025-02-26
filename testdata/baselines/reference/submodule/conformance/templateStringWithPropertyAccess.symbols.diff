@@ -1,6 +1,6 @@
 --- old.templateStringWithPropertyAccess.symbols
 +++ new.templateStringWithPropertyAccess.symbols
-@@ -2,6 +2,6 @@
+@@= skipped -2, +2 lines =@@
  
  === templateStringWithPropertyAccess.ts ===
  `abc${0}abc`.indexOf(`abc`);

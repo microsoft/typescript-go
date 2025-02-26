@@ -1,6 +1,6 @@
 --- old.collisionCodeGenModuleWithPrivateMember.symbols
 +++ new.collisionCodeGenModuleWithPrivateMember.symbols
-@@ -17,7 +17,7 @@
+@@= skipped -17, +17 lines =@@
  }
  var foo = new m1.c1();
  >foo : Symbol(foo, Decl(collisionCodeGenModuleWithPrivateMember.ts, 7, 3))

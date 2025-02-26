@@ -1,6 +1,6 @@
 --- old.typesVersionsDeclarationEmit.multiFileBackReferenceToSelf.symbols
 +++ new.typesVersionsDeclarationEmit.multiFileBackReferenceToSelf.symbols
-@@ -15,6 +15,14 @@
+@@= skipped -15, +15 lines =@@
  >vb : Symbol(vb, Decl(main.ts, 4, 12))
  >fb : Symbol(fb, Decl(main.ts, 1, 8))
  
@@ -15,7 +15,7 @@
  === node_modules/ext/other.d.ts ===
  export interface B {}
  >B : Symbol(B, Decl(other.d.ts, 0, 0))
-@@ -23,11 +31,3 @@
+@@= skipped -8, +16 lines =@@
  >fb : Symbol(fb, Decl(other.d.ts, 0, 21))
  >B : Symbol(B, Decl(other.d.ts, 0, 0))
  

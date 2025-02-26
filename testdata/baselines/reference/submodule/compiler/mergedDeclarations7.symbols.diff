@@ -1,6 +1,6 @@
 --- old.mergedDeclarations7.symbols
 +++ new.mergedDeclarations7.symbols
-@@ -2,7 +2,7 @@
+@@= skipped -2, +2 lines =@@
  
  === passport.d.ts ===
  declare module 'passport' {
@@ -9,7 +9,7 @@
  
      namespace passport {
  >passport : Symbol(passport, Decl(passport.d.ts, 0, 27), Decl(passport.d.ts, 11, 9))
-@@ -11,7 +11,7 @@
+@@= skipped -9, +9 lines =@@
  >Passport : Symbol(Passport, Decl(passport.d.ts, 1, 24))
  
              use(): this;
@@ -18,7 +18,7 @@
          }
  
          interface PassportStatic extends Passport {
-@@ -19,7 +19,7 @@
+@@= skipped -8, +8 lines =@@
  >Passport : Symbol(Passport, Decl(passport.d.ts, 1, 24))
  
              Passport: {new(): Passport};
@@ -27,7 +27,7 @@
  >Passport : Symbol(Passport, Decl(passport.d.ts, 1, 24))
          }
      }
-@@ -27,7 +27,7 @@
+@@= skipped -8, +8 lines =@@
      const passport: passport.PassportStatic;
  >passport : Symbol(passport, Decl(passport.d.ts, 0, 27), Decl(passport.d.ts, 11, 9))
  >passport : Symbol(passport, Decl(passport.d.ts, 0, 27), Decl(passport.d.ts, 11, 9))
@@ -36,7 +36,7 @@
  
      export = passport;
  >passport : Symbol(passport, Decl(passport.d.ts, 0, 27), Decl(passport.d.ts, 11, 9))
-@@ -43,7 +43,7 @@
+@@= skipped -16, +16 lines =@@
  let p: Passport = passport.use();
  >p : Symbol(p, Decl(test.ts, 3, 3))
  >Passport : Symbol(Passport, Decl(test.ts, 1, 8))

@@ -1,6 +1,6 @@
 --- old.intersectionTypeInference3.symbols
 +++ new.intersectionTypeInference3.symbols
-@@ -11,9 +11,6 @@
+@@= skipped -11, +11 lines =@@
  
      [Symbol.species]: Kind;
  >[Symbol.species] : Symbol([Symbol.species], Decl(intersectionTypeInference3.ts, 2, 50))
@@ -10,7 +10,7 @@
  >Kind : Symbol(Kind, Decl(intersectionTypeInference3.ts, 2, 13))
  
  };
-@@ -24,25 +21,17 @@
+@@= skipped -13, +10 lines =@@
  
  declare const a: Set<A>;
  >a : Symbol(a, Decl(intersectionTypeInference3.ts, 8, 13))
@@ -38,7 +38,7 @@
  >b : Symbol(b, Decl(intersectionTypeInference3.ts, 9, 13))
  
  // Simpler repro
-@@ -54,7 +43,7 @@
+@@= skipped -30, +22 lines =@@
  
  const c2: ReadonlyArray<A> = from();
  >c2 : Symbol(c2, Decl(intersectionTypeInference3.ts, 16, 5))

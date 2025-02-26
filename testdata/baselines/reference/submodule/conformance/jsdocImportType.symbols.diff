@@ -1,6 +1,6 @@
 --- old.jsdocImportType.symbols
 +++ new.jsdocImportType.symbols
-@@ -8,23 +8,18 @@
+@@= skipped -8, +8 lines =@@
  >c : Symbol(c, Decl(use.js, 3, 3))
  
  c.chunk;
@@ -24,7 +24,7 @@
  
  === types.d.ts ===
  declare function require(name: string): any;
-@@ -38,21 +33,3 @@
+@@= skipped -30, +25 lines =@@
  >module : Symbol(module, Decl(types.d.ts, 2, 11))
  >exports : Symbol(exports, Decl(types.d.ts, 2, 21))
  

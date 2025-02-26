@@ -1,6 +1,6 @@
 --- old.privateNamesUnique-2.symbols
 +++ new.privateNamesUnique-2.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(a.ts, 0, 0))
  
      #x;
@@ -13,7 +13,7 @@
  >other : Symbol(other, Decl(a.ts, 2, 9))
  >Foo : Symbol(Foo, Decl(b.ts, 0, 0))
  
-@@ -22,16 +22,16 @@
+@@= skipped -17, +17 lines =@@
  >Foo : Symbol(Foo, Decl(b.ts, 0, 0))
  
      #x;
@@ -33,7 +33,7 @@
  >B : Symbol(B, Decl(main.ts, 1, 8))
  
  const a = new A();
-@@ -43,8 +43,8 @@
+@@= skipped -21, +21 lines =@@
  >B : Symbol(B, Decl(main.ts, 1, 8))
  
  a.copy(b); // error

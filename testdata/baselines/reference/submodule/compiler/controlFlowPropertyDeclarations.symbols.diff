@@ -1,6 +1,6 @@
 --- old.controlFlowPropertyDeclarations.symbols
 +++ new.controlFlowPropertyDeclarations.symbols
-@@ -27,9 +27,9 @@
+@@= skipped -27, +27 lines =@@
  >mapFrom : Symbol(mapFrom, Decl(controlFlowPropertyDeclarations.ts, 13, 5))
  >HTMLDOMPropertyConfig : Symbol(HTMLDOMPropertyConfig, Decl(controlFlowPropertyDeclarations.ts, 4, 3))
  >propname : Symbol(propname, Decl(controlFlowPropertyDeclarations.ts, 8, 8))
@@ -12,7 +12,7 @@
  }
  
  /**
-@@ -151,8 +151,8 @@
+@@= skipped -124, +124 lines =@@
  >string : Symbol(string, Decl(controlFlowPropertyDeclarations.ts, 79, 17))
  
     return !/[^\s]/.test(string);
@@ -23,7 +23,7 @@
  >string : Symbol(string, Decl(controlFlowPropertyDeclarations.ts, 79, 17))
  }
  
-@@ -168,8 +168,8 @@
+@@= skipped -17, +17 lines =@@
  >value : Symbol(value, Decl(controlFlowPropertyDeclarations.ts, 90, 33))
  
    return /^\d+px$/.test(value);
@@ -34,7 +34,7 @@
  >value : Symbol(value, Decl(controlFlowPropertyDeclarations.ts, 90, 33))
  }
  
-@@ -177,13 +177,13 @@
+@@= skipped -9, +9 lines =@@
  >HTMLtoJSX : Symbol(HTMLtoJSX, Decl(controlFlowPropertyDeclarations.ts, 92, 1))
  
      private output: string;
@@ -51,7 +51,7 @@
  
  
    /**
-@@ -192,7 +192,7 @@
+@@= skipped -15, +15 lines =@@
     * @param {TextNode} node
     */
    _visitText = (node) => {
@@ -60,7 +60,7 @@
  >node : Symbol(node, Decl(controlFlowPropertyDeclarations.ts, 105, 16))
  
      var parentTag = node.parentNode && node.parentNode.tagName.toLowerCase();
-@@ -213,45 +213,45 @@
+@@= skipped -21, +21 lines =@@
  >text : Symbol(text, Decl(controlFlowPropertyDeclarations.ts, 113, 7))
  
      if (this._inPreTag) {
@@ -118,7 +118,7 @@
  >text : Symbol(text, Decl(controlFlowPropertyDeclarations.ts, 113, 7))
    }
  
-@@ -266,23 +266,23 @@
+@@= skipped -53, +53 lines =@@
  >StyleParser : Symbol(StyleParser, Decl(controlFlowPropertyDeclarations.ts, 134, 2))
  
    styles = {};

@@ -1,6 +1,6 @@
 --- old.implementingAnInterfaceExtendingClassWithPrivates.symbols
 +++ new.implementingAnInterfaceExtendingClassWithPrivates.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(implementingAnInterfaceExtendingClassWithPrivates.ts, 0, 0))
  
      private x: string;
@@ -9,7 +9,7 @@
  }
  
  interface I extends Foo {
-@@ -13,7 +13,7 @@
+@@= skipped -8, +8 lines =@@
  >Foo : Symbol(Foo, Decl(implementingAnInterfaceExtendingClassWithPrivates.ts, 0, 0))
  
      y: number;
@@ -18,7 +18,7 @@
  }
  
  class Bar implements I { // error
-@@ -26,7 +26,7 @@
+@@= skipped -13, +13 lines =@@
  >I : Symbol(I, Decl(implementingAnInterfaceExtendingClassWithPrivates.ts, 2, 1))
  
      y: number;
@@ -27,7 +27,7 @@
  }
  
  class Bar3 implements I { // error
-@@ -34,10 +34,10 @@
+@@= skipped -8, +8 lines =@@
  >I : Symbol(I, Decl(implementingAnInterfaceExtendingClassWithPrivates.ts, 2, 1))
  
      x: string;
@@ -40,7 +40,7 @@
  }
  
  class Bar4 implements I { // error
-@@ -45,8 +45,8 @@
+@@= skipped -11, +11 lines =@@
  >I : Symbol(I, Decl(implementingAnInterfaceExtendingClassWithPrivates.ts, 2, 1))
  
      private x: string;

@@ -1,6 +1,6 @@
 --- old.arrayLiteralTypeInference.symbols
 +++ new.arrayLiteralTypeInference.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Action : Symbol(Action, Decl(arrayLiteralTypeInference.ts, 0, 0))
  
      id: number;
@@ -9,7 +9,7 @@
  }
  
  class ActionA extends Action {
-@@ -13,7 +13,7 @@
+@@= skipped -8, +8 lines =@@
  >Action : Symbol(Action, Decl(arrayLiteralTypeInference.ts, 0, 0))
  
      value: string;
@@ -18,7 +18,7 @@
  }
  
  class ActionB extends Action {
-@@ -21,7 +21,7 @@
+@@= skipped -8, +8 lines =@@
  >Action : Symbol(Action, Decl(arrayLiteralTypeInference.ts, 0, 0))
  
      trueNess: boolean;

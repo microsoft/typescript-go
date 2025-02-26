@@ -1,6 +1,6 @@
 --- old.elementAccessExpressionInternalComments.symbols
 +++ new.elementAccessExpressionInternalComments.symbols
-@@ -3,14 +3,14 @@
+@@= skipped -3, +3 lines =@@
  === elementAccessExpressionInternalComments.ts ===
  /*0*/ Array /*1*/[ /*2*/ "toString" /*3*/ ] /*4*/; /*5*/
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))

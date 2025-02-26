@@ -1,6 +1,6 @@
 --- old.javascriptDefinePropertyPrototypeNonConstructor.symbols
 +++ new.javascriptDefinePropertyPrototypeNonConstructor.symbols
-@@ -6,19 +6,17 @@
+@@= skipped -6, +6 lines =@@
  }
  
  Object.defineProperty(Graphic.prototype, "instance", {

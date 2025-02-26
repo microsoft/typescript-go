@@ -1,6 +1,6 @@
 --- old.thisInPropertyBoundDeclarations.symbols
 +++ new.thisInPropertyBoundDeclarations.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >Bug : Symbol(Bug, Decl(thisInPropertyBoundDeclarations.ts, 0, 0))
  
      private name: string;
@@ -13,7 +13,7 @@
  >Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
       (that: Bug, name: string) => {
-@@ -17,21 +17,21 @@
+@@= skipped -12, +12 lines =@@
  >name : Symbol(name, Decl(thisInPropertyBoundDeclarations.ts, 4, 16))
  
           that.foo(name);
@@ -40,7 +40,7 @@
  >name : Symbol(name, Decl(thisInPropertyBoundDeclarations.ts, 9, 16))
      }
  }
-@@ -41,13 +41,13 @@
+@@= skipped -24, +24 lines =@@
  >A : Symbol(A, Decl(thisInPropertyBoundDeclarations.ts, 12, 1))
  
      prop1 = function() {
@@ -56,7 +56,7 @@
  
          function inner() {
  >inner : Symbol(inner, Decl(thisInPropertyBoundDeclarations.ts, 20, 24))
-@@ -58,7 +58,7 @@
+@@= skipped -17, +17 lines =@@
      };
  
      prop3 = () => {
@@ -65,7 +65,7 @@
  
          function inner() {
  >inner : Symbol(inner, Decl(thisInPropertyBoundDeclarations.ts, 27, 19))
-@@ -68,7 +68,7 @@
+@@= skipped -10, +10 lines =@@
      };
  
      prop4 = {
@@ -74,7 +74,7 @@
  
          a: function() { return this; },
  >a : Symbol(a, Decl(thisInPropertyBoundDeclarations.ts, 33, 13))
-@@ -76,7 +76,7 @@
+@@= skipped -8, +8 lines =@@
      };
  
      prop5 = () => {
@@ -83,7 +83,7 @@
  
          return {
              a: function() { return this; },
-@@ -90,19 +90,19 @@
+@@= skipped -14, +14 lines =@@
  >B : Symbol(B, Decl(thisInPropertyBoundDeclarations.ts, 42, 1))
  
      prop1 = this;
@@ -107,7 +107,7 @@
  
      function() {
      } +
-@@ -111,7 +111,7 @@
+@@= skipped -21, +21 lines =@@
  >this : Symbol(B, Decl(thisInPropertyBoundDeclarations.ts, 42, 1))
  
      prop5 = {
@@ -116,7 +116,7 @@
  
          a: () => { return this; }
  >a : Symbol(a, Decl(thisInPropertyBoundDeclarations.ts, 57, 13))
-@@ -120,7 +120,7 @@
+@@= skipped -9, +9 lines =@@
      };
  
      prop6 = () => {

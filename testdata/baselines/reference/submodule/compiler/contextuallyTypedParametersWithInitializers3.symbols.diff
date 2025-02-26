@@ -1,6 +1,6 @@
 --- old.contextuallyTypedParametersWithInitializers3.symbols
 +++ new.contextuallyTypedParametersWithInitializers3.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >GraphActions : Symbol(GraphActions, Decl(contextuallyTypedParametersWithInitializers3.ts, 0, 40))
  
    setDirection: (direction: CanvasDirection) => void;

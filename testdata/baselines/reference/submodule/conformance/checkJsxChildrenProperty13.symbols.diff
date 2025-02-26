@@ -1,6 +1,6 @@
 --- old.checkJsxChildrenProperty13.symbols
 +++ new.checkJsxChildrenProperty13.symbols
-@@ -8,38 +8,33 @@
+@@= skipped -8, +8 lines =@@
  >ButtonProp : Symbol(ButtonProp, Decl(file.tsx, 0, 32))
  
      a: number,
@@ -45,7 +45,7 @@
              </InnerButton>);
  >InnerButton : Symbol(InnerButton, Decl(file.tsx, 19, 1))
      }
-@@ -49,22 +44,20 @@
+@@= skipped -41, +36 lines =@@
  >InnerButtonProp : Symbol(InnerButtonProp, Decl(file.tsx, 15, 1))
  
  	a: number

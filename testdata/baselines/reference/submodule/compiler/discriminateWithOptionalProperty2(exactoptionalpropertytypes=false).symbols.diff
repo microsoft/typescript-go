@@ -1,6 +1,6 @@
 --- old.discriminateWithOptionalProperty2(exactoptionalpropertytypes=false).symbols
 +++ new.discriminateWithOptionalProperty2(exactoptionalpropertytypes=false).symbols
-@@ -40,9 +40,9 @@
+@@= skipped -40, +40 lines =@@
    const iterator = iterable[Symbol.asyncIterator]();
  >iterator : Symbol(iterator, Decl(discriminateWithOptionalProperty2.ts, 8, 7))
  >iterable : Symbol(iterable, Decl(discriminateWithOptionalProperty2.ts, 4, 47))
@@ -12,7 +12,7 @@
  
    async function mapResult(
  >mapResult : Symbol(mapResult, Decl(discriminateWithOptionalProperty2.ts, 8, 52))
-@@ -72,24 +72,24 @@
+@@= skipped -32, +32 lines =@@
        return { value: await callback(result.value), done: false };
  >value : Symbol(value, Decl(discriminateWithOptionalProperty2.ts, 18, 14))
  >callback : Symbol(callback, Decl(discriminateWithOptionalProperty2.ts, 5, 77))
@@ -43,7 +43,7 @@
  
          } catch (_e) {}
  >_e : Symbol(_e, Decl(discriminateWithOptionalProperty2.ts, 23, 17))
-@@ -105,9 +105,9 @@
+@@= skipped -33, +33 lines =@@
  
        return mapResult(await iterator.next());
  >mapResult : Symbol(mapResult, Decl(discriminateWithOptionalProperty2.ts, 8, 52))
@@ -55,7 +55,7 @@
  
      },
      async return(value: R): Promise<IteratorResult<U, R>> {
-@@ -120,15 +120,15 @@
+@@= skipped -15, +15 lines =@@
  >R : Symbol(R, Decl(discriminateWithOptionalProperty2.ts, 4, 31))
  
        return typeof iterator.return === "function"
@@ -75,7 +75,7 @@
  >value : Symbol(value, Decl(discriminateWithOptionalProperty2.ts, 33, 17))
  
          : { value: undefined as any, done: true };
-@@ -142,15 +142,15 @@
+@@= skipped -22, +22 lines =@@
  >error : Symbol(error, Decl(discriminateWithOptionalProperty2.ts, 38, 16))
  
        if (typeof iterator.throw === "function") {
@@ -95,7 +95,7 @@
  >error : Symbol(error, Decl(discriminateWithOptionalProperty2.ts, 38, 16))
        }
        throw error;
-@@ -159,9 +159,9 @@
+@@= skipped -17, +17 lines =@@
      },
      [Symbol.asyncIterator]() {
  >[Symbol.asyncIterator] : Symbol([Symbol.asyncIterator], Decl(discriminateWithOptionalProperty2.ts, 43, 6))
@@ -107,7 +107,7 @@
  
        return this;
  >this : Symbol(AsyncGenerator, Decl(lib.es2018.asyncgenerator.d.ts, --, --))
-@@ -169,14 +169,14 @@
+@@= skipped -10, +10 lines =@@
      },
      async [Symbol.asyncDispose]() {
  >[Symbol.asyncDispose] : Symbol([Symbol.asyncDispose], Decl(discriminateWithOptionalProperty2.ts, 46, 6))
@@ -126,7 +126,7 @@
  >undefined : Symbol(undefined)
      }
    };
-@@ -190,12 +190,12 @@
+@@= skipped -21, +21 lines =@@
  
    [Symbol.asyncIterator]() {
  >[Symbol.asyncIterator] : Symbol([Symbol.asyncIterator], Decl(discriminateWithOptionalProperty2.ts, 55, 18))
@@ -142,7 +142,7 @@
  
    },
    next() {
-@@ -206,20 +206,20 @@
+@@= skipped -16, +16 lines =@@
  >items : Symbol(items, Decl(discriminateWithOptionalProperty2.ts, 53, 5))
  
      items.shift();

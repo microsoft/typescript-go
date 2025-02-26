@@ -1,6 +1,6 @@
 --- old.classWithPublicProperty.symbols
 +++ new.classWithPublicProperty.symbols
-@@ -5,28 +5,28 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(classWithPublicProperty.ts, 0, 0))
  
      public x;
@@ -37,7 +37,7 @@
  }
  
  // all of these are valid
-@@ -36,49 +36,49 @@
+@@= skipped -31, +31 lines =@@
  
  var r1: string = c.x;
  >r1 : Symbol(r1, Decl(classWithPublicProperty.ts, 13, 3))

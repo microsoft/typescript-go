@@ -1,6 +1,6 @@
 --- old.validNumberAssignments.symbols
 +++ new.validNumberAssignments.symbols
-@@ -19,7 +19,7 @@
+@@= skipped -19, +19 lines =@@
  
  enum E { A };
  >E : Symbol(E, Decl(validNumberAssignments.ts, 4, 18))
@@ -9,7 +9,7 @@
  
  var d: E = x;
  >d : Symbol(d, Decl(validNumberAssignments.ts, 6, 3))
-@@ -28,9 +28,9 @@
+@@= skipped -9, +9 lines =@@
  
  var e = E.A;
  >e : Symbol(e, Decl(validNumberAssignments.ts, 7, 3))

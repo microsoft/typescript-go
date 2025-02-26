@@ -1,6 +1,6 @@
 --- old.symbolType5.symbols
 +++ new.symbolType5.symbols
-@@ -3,9 +3,6 @@
+@@= skipped -3, +3 lines =@@
  === symbolType5.ts ===
  var s = Symbol.for("multiply");
  >s : Symbol(s, Decl(symbolType5.ts, 0, 3))

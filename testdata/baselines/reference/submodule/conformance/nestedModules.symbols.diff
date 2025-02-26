@@ -1,6 +1,6 @@
 --- old.nestedModules.symbols
 +++ new.nestedModules.symbols
-@@ -3,17 +3,17 @@
+@@= skipped -3, +3 lines =@@
  === nestedModules.ts ===
  module A.B.C {
  >A : Symbol(A, Decl(nestedModules.ts, 0, 0), Decl(nestedModules.ts, 5, 1))
@@ -21,7 +21,7 @@
      }
  }
  
-@@ -21,12 +21,12 @@
+@@= skipped -18, +18 lines =@@
  >A : Symbol(A, Decl(nestedModules.ts, 0, 0), Decl(nestedModules.ts, 5, 1))
  
      export module B {
@@ -37,7 +37,7 @@
  >x : Symbol(x, Decl(nestedModules.ts, 9, 30))
  >y : Symbol(y, Decl(nestedModules.ts, 9, 36))
      }
-@@ -34,14 +34,14 @@
+@@= skipped -13, +13 lines =@@
  
  module M2.X {
  >M2 : Symbol(M2, Decl(nestedModules.ts, 11, 1), Decl(nestedModules.ts, 17, 1))
@@ -56,7 +56,7 @@
      }
  }
  
-@@ -49,27 +49,27 @@
+@@= skipped -15, +15 lines =@@
  >M2 : Symbol(M2, Decl(nestedModules.ts, 11, 1), Decl(nestedModules.ts, 17, 1))
  
      export module X {
@@ -90,7 +90,7 @@
  
  var p: { x: number; y: number; }
  >p : Symbol(p, Decl(nestedModules.ts, 29, 3), Decl(nestedModules.ts, 30, 3))
-@@ -79,6 +79,6 @@
+@@= skipped -30, +30 lines =@@
  var p: M2.X.Point;
  >p : Symbol(p, Decl(nestedModules.ts, 29, 3), Decl(nestedModules.ts, 30, 3))
  >M2 : Symbol(M2, Decl(nestedModules.ts, 11, 1), Decl(nestedModules.ts, 17, 1))

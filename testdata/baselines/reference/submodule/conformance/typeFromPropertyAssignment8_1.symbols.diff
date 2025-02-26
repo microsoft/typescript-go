@@ -1,6 +1,6 @@
 --- old.typeFromPropertyAssignment8_1.symbols
 +++ new.typeFromPropertyAssignment8_1.symbols
-@@ -2,23 +2,15 @@
+@@= skipped -2, +2 lines =@@
  
  === a.js ===
  var my = my ?? {};
@@ -29,7 +29,7 @@
  
  var Application = function () {
  >Application : Symbol(Application, Decl(a.js, 4, 3))
-@@ -30,33 +22,21 @@
+@@= skipped -28, +20 lines =@@
  
  })();
  my.app.Application()
@@ -70,7 +70,7 @@
  
  var Application = function () {
  >Application : Symbol(Application, Decl(b.js, 4, 3))
-@@ -68,9 +48,5 @@
+@@= skipped -38, +26 lines =@@
  
  })();
  min.app.Application()

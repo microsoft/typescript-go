@@ -1,6 +1,6 @@
 --- old.strictBooleanMemberAssignability.symbols
 +++ new.strictBooleanMemberAssignability.symbols
-@@ -5,12 +5,12 @@
+@@= skipped -5, +5 lines =@@
  >Abc : Symbol(Abc, Decl(strictBooleanMemberAssignability.ts, 0, 0))
  
      def: boolean

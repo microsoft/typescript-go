@@ -1,6 +1,6 @@
 --- old.importTag16.symbols
 +++ new.importTag16.symbols
-@@ -2,7 +2,7 @@
+@@= skipped -2, +2 lines =@@
  
  === a.ts ===
  export default interface Foo {}

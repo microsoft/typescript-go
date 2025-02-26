@@ -1,6 +1,6 @@
 --- old.overloadResolutionClassConstructors.symbols
 +++ new.overloadResolutionClassConstructors.symbols
-@@ -5,31 +5,31 @@
+@@= skipped -5, +5 lines =@@
  >SomeBase : Symbol(SomeBase, Decl(overloadResolutionClassConstructors.ts, 0, 0))
  
      private n;
@@ -37,7 +37,7 @@
  }
  
  
-@@ -218,9 +218,9 @@
+@@= skipped -213, +213 lines =@@
  new fn5((n) => n.substr(0));
  >fn5 : Symbol(fn5, Decl(overloadResolutionClassConstructors.ts, 87, 20))
  >n : Symbol(n, Decl(overloadResolutionClassConstructors.ts, 96, 9))

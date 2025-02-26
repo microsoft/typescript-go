@@ -1,6 +1,6 @@
 --- old.parameterReferenceInInitializer1.symbols
 +++ new.parameterReferenceInInitializer1.symbols
-@@ -17,7 +17,7 @@
+@@= skipped -17, +17 lines =@@
  }
  interface Y { x: number }
  >Y : Symbol(Y, Decl(parameterReferenceInInitializer1.ts, 2, 1))
@@ -9,7 +9,7 @@
  
  class C {
  >C : Symbol(C, Decl(parameterReferenceInInitializer1.ts, 3, 25))
-@@ -28,14 +28,14 @@
+@@= skipped -11, +11 lines =@@
  >Y : Symbol(Y, Decl(parameterReferenceInInitializer1.ts, 2, 1))
  
          public x = fn(y, (y, x) => y.x = x) // expected to work, but actually doesn't

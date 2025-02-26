@@ -1,6 +1,6 @@
 --- old.errorConstructorSubtypes.symbols
 +++ new.errorConstructorSubtypes.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >ErrorConstructor : Symbol(ErrorConstructor, Decl(lib.es5.d.ts, --, --), Decl(errorConstructorSubtypes.ts, 0, 0))
  
    captureStackTrace(targetObject: Object, constructorOpt?: Function): void;
@@ -9,7 +9,7 @@
  >targetObject : Symbol(targetObject, Decl(errorConstructorSubtypes.ts, 2, 20))
  >Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  >constructorOpt : Symbol(constructorOpt, Decl(errorConstructorSubtypes.ts, 2, 41))
-@@ -26,12 +26,12 @@
+@@= skipped -20, +20 lines =@@
  >RangeError : Symbol(RangeError, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
  new x().message

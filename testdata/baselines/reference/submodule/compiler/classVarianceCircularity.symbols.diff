@@ -1,6 +1,6 @@
 --- old.classVarianceCircularity.symbols
 +++ new.classVarianceCircularity.symbols
-@@ -12,12 +12,12 @@
+@@= skipped -12, +12 lines =@@
  
      // Uncomment to create error
      console.log(b.Value);
@@ -17,7 +17,7 @@
  }
  
  class Bar<T> {
-@@ -25,20 +25,20 @@
+@@= skipped -13, +13 lines =@@
  >T : Symbol(T, Decl(classVarianceCircularity.ts, 8, 10))
  
      num!: number;

@@ -1,6 +1,6 @@
 --- old.enumAssignmentCompat7.symbols
 +++ new.enumAssignmentCompat7.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  
      export enum E { A = 1 }
  >E : Symbol(E, Decl(enumAssignmentCompat7.ts, 0, 17))
@@ -9,7 +9,7 @@
  }
  
  namespace second {
-@@ -14,17 +14,17 @@
+@@= skipped -8, +8 lines =@@
  
      export enum E { A = 2 }
  >E : Symbol(E, Decl(enumAssignmentCompat7.ts, 4, 18))
@@ -30,7 +30,7 @@
  
      }
  }
-@@ -34,25 +34,25 @@
+@@= skipped -20, +20 lines =@@
  >Base : Symbol(Base, Decl(enumAssignmentCompat7.ts, 6, 1))
  
      override method(param: second.E) {

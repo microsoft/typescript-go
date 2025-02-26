@@ -1,6 +1,6 @@
 --- old.incrementOperatorWithEnumType.symbols
 +++ new.incrementOperatorWithEnumType.symbols
-@@ -5,29 +5,29 @@
+@@= skipped -5, +5 lines =@@
  
  enum ENUM1 { A, B, "" };
  >ENUM1 : Symbol(ENUM1, Decl(incrementOperatorWithEnumType.ts, 0, 0))

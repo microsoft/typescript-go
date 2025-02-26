@@ -1,6 +1,6 @@
 --- old.classExpression5.symbols
 +++ new.classExpression5.symbols
-@@ -2,13 +2,13 @@
+@@= skipped -2, +2 lines =@@
  
  === classExpression5.ts ===
  new class {

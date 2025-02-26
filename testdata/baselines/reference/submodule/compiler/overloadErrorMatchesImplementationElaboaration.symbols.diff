@@ -1,6 +1,6 @@
 --- old.overloadErrorMatchesImplementationElaboaration.symbols
 +++ new.overloadErrorMatchesImplementationElaboaration.symbols
-@@ -5,12 +5,12 @@
+@@= skipped -5, +5 lines =@@
  >EventAggregator : Symbol(EventAggregator, Decl(overloadErrorMatchesImplementationElaboaration.ts, 0, 0))
  {
      publish(event: string, data?: any): void;
@@ -15,7 +15,7 @@
  >T : Symbol(T, Decl(overloadErrorMatchesImplementationElaboaration.ts, 3, 12))
  >event : Symbol(event, Decl(overloadErrorMatchesImplementationElaboaration.ts, 3, 15))
  >T : Symbol(T, Decl(overloadErrorMatchesImplementationElaboaration.ts, 3, 12))
-@@ -21,7 +21,7 @@
+@@= skipped -16, +16 lines =@@
  >EventAggregator : Symbol(EventAggregator, Decl(overloadErrorMatchesImplementationElaboaration.ts, 0, 0))
  
  ea.publish([1,2,3]);

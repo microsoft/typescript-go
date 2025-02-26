@@ -1,6 +1,6 @@
 --- old.jsDeclarationsThisTypes.symbols
 +++ new.jsDeclarationsThisTypes.symbols
-@@ -6,17 +6,17 @@
+@@= skipped -6, +6 lines =@@
  
      /** @returns {this} */
      method() {

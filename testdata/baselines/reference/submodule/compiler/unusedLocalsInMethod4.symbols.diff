@@ -1,6 +1,6 @@
 --- old.unusedLocalsInMethod4.symbols
 +++ new.unusedLocalsInMethod4.symbols
-@@ -47,69 +47,69 @@
+@@= skipped -47, +47 lines =@@
  >foo : Symbol(foo, Decl(unusedLocalsInMethod4.ts, 11, 21))
  
          console.log(x1);
@@ -92,7 +92,7 @@
  >x11 : Symbol(x11, Decl(unusedLocalsInMethod4.ts, 11, 7))
      }
      function bar() {
-@@ -157,57 +157,57 @@
+@@= skipped -110, +110 lines =@@
  >NonNull : Symbol(NonNull, Decl(unusedLocalsInMethod4.ts, 32, 14))
  
      console.log(x1);
@@ -168,7 +168,7 @@
  >x9 : Symbol(x9, Decl(unusedLocalsInMethod4.ts, 41, 7))
  }
  
-@@ -221,9 +221,9 @@
+@@= skipped -64, +64 lines =@@
  >foo : Symbol(foo, Decl(unusedLocalsInMethod4.ts, 55, 20))
  
          x.toString();
@@ -180,7 +180,7 @@
      }
      foo();
  >foo : Symbol(foo, Decl(unusedLocalsInMethod4.ts, 55, 20))
-@@ -240,9 +240,9 @@
+@@= skipped -19, +19 lines =@@
  >foo : Symbol(foo, Decl(unusedLocalsInMethod4.ts, 64, 12))
  
              return x.toString();
@@ -192,7 +192,7 @@
          }
      };
  }
-@@ -254,9 +254,9 @@
+@@= skipped -14, +14 lines =@@
  >f5 : Symbol(f5, Decl(unusedLocalsInMethod4.ts, 71, 22))
  
      x.toString();
@@ -204,7 +204,7 @@
  }
  export default {};
  
-@@ -270,9 +270,9 @@
+@@= skipped -16, +16 lines =@@
  >key : Symbol(key, Decl(unusedLocalsInMethod4.ts, 78, 7))
  
          console.log(key);
@@ -216,7 +216,7 @@
  >key : Symbol(key, Decl(unusedLocalsInMethod4.ts, 78, 7))
      }
  }
-@@ -287,9 +287,9 @@
+@@= skipped -17, +17 lines =@@
  >key : Symbol(key, Decl(unusedLocalsInMethod4.ts, 85, 7))
  
          console.log(key);
@@ -228,7 +228,7 @@
  >key : Symbol(key, Decl(unusedLocalsInMethod4.ts, 85, 7))
      }
  }
-@@ -344,9 +344,9 @@
+@@= skipped -57, +57 lines =@@
  >i : Symbol(i, Decl(unusedLocalsInMethod4.ts, 110, 7))
  
          console.log(i); // NaN
@@ -240,7 +240,7 @@
  >i : Symbol(i, Decl(unusedLocalsInMethod4.ts, 110, 7))
      }
      inside();
-@@ -370,9 +370,9 @@
+@@= skipped -26, +26 lines =@@
  >f : Symbol(f, Decl(unusedLocalsInMethod4.ts, 122, 28))
  
          file.toString();
@@ -252,7 +252,7 @@
      }
  }
  
-@@ -383,10 +383,10 @@
+@@= skipped -13, +13 lines =@@
  >ClassPropertySubstitutionFlags : Symbol(ClassPropertySubstitutionFlags, Decl(unusedLocalsInMethod4.ts, 129, 33))
  
          ClassAliases = 1 << 0,
@@ -265,7 +265,7 @@
      }
  
      let enabledSubstitutions: ClassPropertySubstitutionFlags;   // should error
-@@ -398,13 +398,13 @@
+@@= skipped -15, +15 lines =@@
  
          enabledSubstitutions |= ClassPropertySubstitutionFlags.ClassAliases;
  >enabledSubstitutions : Symbol(enabledSubstitutions, Decl(unusedLocalsInMethod4.ts, 135, 7))

@@ -1,6 +1,6 @@
 --- old.accessibilityModifiers.symbols
 +++ new.accessibilityModifiers.symbols
-@@ -6,42 +6,42 @@
+@@= skipped -6, +6 lines =@@
  >C : Symbol(C, Decl(accessibilityModifiers.ts, 0, 0))
  
      private static privateProperty;
@@ -55,7 +55,7 @@
  >a : Symbol(a, Decl(accessibilityModifiers.ts, 15, 35))
  }
  
-@@ -50,42 +50,42 @@
+@@= skipped -44, +44 lines =@@
  >D : Symbol(D, Decl(accessibilityModifiers.ts, 16, 1))
  
      static private privateProperty;
@@ -110,7 +110,7 @@
  >a : Symbol(a, Decl(accessibilityModifiers.ts, 33, 35))
  }
  
-@@ -94,16 +94,16 @@
+@@= skipped -44, +44 lines =@@
  >E : Symbol(E, Decl(accessibilityModifiers.ts, 34, 1))
  
      private public protected property;

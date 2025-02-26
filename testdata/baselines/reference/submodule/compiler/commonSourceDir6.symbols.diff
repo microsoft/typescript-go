@@ -1,6 +1,6 @@
 --- old.commonSourceDir6.symbols
 +++ new.commonSourceDir6.symbols
-@@ -15,9 +15,9 @@
+@@= skipped -15, +15 lines =@@
  
  export var i = Math.sqrt(-1);
  >i : Symbol(i, Decl(foo.ts, 1, 10))
@@ -12,7 +12,7 @@
  
  export var z = pi * pi;
  >z : Symbol(z, Decl(foo.ts, 2, 10))
-@@ -33,9 +33,9 @@
+@@= skipped -18, +18 lines =@@
  
  export var pi = Math.PI;
  >pi : Symbol(pi, Decl(baz.ts, 2, 10))

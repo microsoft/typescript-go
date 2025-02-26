@@ -1,6 +1,6 @@
 --- old.jsDeclarationsGlobalFileConstFunctionNamed.symbols
 +++ new.jsDeclarationsGlobalFileConstFunctionNamed.symbols
-@@ -6,53 +6,41 @@
+@@= skipped -6, +6 lines =@@
  >Named : Symbol(Named, Decl(file.js, 0, 23))
  
  	this.x = 1;

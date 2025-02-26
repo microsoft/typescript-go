@@ -1,6 +1,6 @@
 --- old.correctlyMarkAliasAsReferences4.symbols
 +++ new.correctlyMarkAliasAsReferences4.symbols
-@@ -14,7 +14,6 @@
+@@= skipped -14, +14 lines =@@
  
  let k = <button {...buttonProps} className={cx('class1', { class2: true })} />;
  >k : Symbol(k, Decl(0.tsx, 5, 3))

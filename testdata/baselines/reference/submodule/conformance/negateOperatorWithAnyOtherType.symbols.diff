@@ -1,6 +1,6 @@
 --- old.negateOperatorWithAnyOtherType.symbols
 +++ new.negateOperatorWithAnyOtherType.symbols
-@@ -33,10 +33,10 @@
+@@= skipped -33, +33 lines =@@
  >A : Symbol(A, Decl(negateOperatorWithAnyOtherType.ts, 11, 1))
  
      public a: any;
@@ -13,7 +13,7 @@
  
          var a;
  >a : Symbol(a, Decl(negateOperatorWithAnyOtherType.ts, 15, 11))
-@@ -107,15 +107,15 @@
+@@= skipped -74, +74 lines =@@
  
  var ResultIsNumber11 = -objA.a;
  >ResultIsNumber11 : Symbol(ResultIsNumber11, Decl(negateOperatorWithAnyOtherType.ts, 40, 3))
@@ -33,7 +33,7 @@
  
  var ResultIsNumber13 = -foo();
  >ResultIsNumber13 : Symbol(ResultIsNumber13, Decl(negateOperatorWithAnyOtherType.ts, 42, 3))
-@@ -123,9 +123,9 @@
+@@= skipped -16, +16 lines =@@
  
  var ResultIsNumber14 = -A.foo();
  >ResultIsNumber14 : Symbol(ResultIsNumber14, Decl(negateOperatorWithAnyOtherType.ts, 43, 3))
@@ -45,7 +45,7 @@
  
  var ResultIsNumber15 = -(ANY - ANY1);
  >ResultIsNumber15 : Symbol(ResultIsNumber15, Decl(negateOperatorWithAnyOtherType.ts, 44, 3))
-@@ -147,12 +147,12 @@
+@@= skipped -24, +24 lines =@@
  >ANY1 : Symbol(ANY1, Decl(negateOperatorWithAnyOtherType.ts, 3, 3))
  
  -objA.a;

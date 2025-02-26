@@ -1,6 +1,6 @@
 --- old.aliasInstantiationExpressionGenericIntersectionNoCrash1.symbols
 +++ new.aliasInstantiationExpressionGenericIntersectionNoCrash1.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >E : Symbol(E, Decl(aliasInstantiationExpressionGenericIntersectionNoCrash1.ts, 0, 14))
  
    e!: E;

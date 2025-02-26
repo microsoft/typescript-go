@@ -1,6 +1,6 @@
 --- old.interfaceImplementation1.symbols
 +++ new.interfaceImplementation1.symbols
-@@ -5,23 +5,23 @@
+@@= skipped -5, +5 lines =@@
  >I1 : Symbol(I1, Decl(interfaceImplementation1.ts, 0, 0))
  
      iObj:{ };
@@ -29,7 +29,7 @@
  >n : Symbol(n, Decl(interfaceImplementation1.ts, 8, 5))
  >s : Symbol(s, Decl(interfaceImplementation1.ts, 8, 14))
  }
-@@ -32,28 +32,28 @@
+@@= skipped -27, +27 lines =@@
  >I2 : Symbol(I2, Decl(interfaceImplementation1.ts, 5, 1))
  
      private iFn();
@@ -64,7 +64,7 @@
  }
  
  interface I4 {
-@@ -74,7 +74,7 @@
+@@= skipped -42, +42 lines =@@
  >I3 : Symbol(I3, Decl(interfaceImplementation1.ts, 17, 1))
  
      public x = 1;

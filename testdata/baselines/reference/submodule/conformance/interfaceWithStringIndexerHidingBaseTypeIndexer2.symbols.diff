@@ -1,6 +1,6 @@
 --- old.interfaceWithStringIndexerHidingBaseTypeIndexer2.symbols
 +++ new.interfaceWithStringIndexerHidingBaseTypeIndexer2.symbols
-@@ -10,7 +10,7 @@
+@@= skipped -10, +10 lines =@@
  >b : Symbol(b, Decl(interfaceWithStringIndexerHidingBaseTypeIndexer2.ts, 1, 29))
  
      x: {
@@ -9,7 +9,7 @@
  
          a: number; b: number;
  >a : Symbol(a, Decl(interfaceWithStringIndexerHidingBaseTypeIndexer2.ts, 2, 8))
-@@ -31,14 +31,14 @@
+@@= skipped -21, +21 lines =@@
      };
  
      y: {

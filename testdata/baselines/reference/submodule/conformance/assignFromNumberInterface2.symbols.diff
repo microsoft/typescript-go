@@ -1,6 +1,6 @@
 --- old.assignFromNumberInterface2.symbols
 +++ new.assignFromNumberInterface2.symbols
-@@ -5,33 +5,33 @@
+@@= skipped -5, +5 lines =@@
  >Number : Symbol(Number, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(assignFromNumberInterface2.ts, 0, 0))
  
      doStuff(): string;

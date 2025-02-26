@@ -1,6 +1,6 @@
 --- old.accessorWithES5.symbols
 +++ new.accessorWithES5.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(accessorWithES5.ts, 0, 0))
  
      get x() {
@@ -9,7 +9,7 @@
  
          return 1;
      }
-@@ -15,7 +15,7 @@
+@@= skipped -10, +10 lines =@@
  >D : Symbol(D, Decl(accessorWithES5.ts, 4, 1))
  
      set x(v) {

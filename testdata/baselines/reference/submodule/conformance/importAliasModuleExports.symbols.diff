@@ -1,6 +1,6 @@
 --- old.importAliasModuleExports.symbols
 +++ new.importAliasModuleExports.symbols
-@@ -5,12 +5,9 @@
+@@= skipped -5, +5 lines =@@
  >Alias : Symbol(Alias, Decl(mod1.js, 0, 0))
  
      bar() { return 1 }
@@ -14,7 +14,7 @@
  >Alias : Symbol(Alias, Decl(mod1.js, 0, 0))
  
  === main.js ===
-@@ -18,29 +15,20 @@
+@@= skipped -13, +10 lines =@@
  >A : Symbol(A, Decl(main.js, 0, 6))
  
  A.prototype.foo = 0

@@ -1,6 +1,6 @@
 --- old.esDecorators-classDeclaration-outerThisReference(target=es2015).symbols
 +++ new.esDecorators-classDeclaration-outerThisReference(target=es2015).symbols
-@@ -20,7 +20,7 @@
+@@= skipped -20, +20 lines =@@
  >this : Symbol(globalThis)
  
      b = 2;
@@ -9,7 +9,7 @@
  }
  
  // `this` should point to the outer `this`, and maintain the correct evaluation order with respect to computed
-@@ -35,7 +35,7 @@
+@@= skipped -15, +15 lines =@@
  
      // @ts-ignore
      [f(this)] = 1;
@@ -18,7 +18,7 @@
  >f : Symbol(f, Decl(esDecorators-classDeclaration-outerThisReference.ts, 2, 11))
  >this : Symbol(B, Decl(esDecorators-classDeclaration-outerThisReference.ts, 9, 1))
  
-@@ -44,11 +44,11 @@
+@@= skipped -9, +9 lines =@@
  >this : Symbol(globalThis)
  
      b = 2;
@@ -32,7 +32,7 @@
  >f : Symbol(f, Decl(esDecorators-classDeclaration-outerThisReference.ts, 2, 11))
  >this : Symbol(B, Decl(esDecorators-classDeclaration-outerThisReference.ts, 9, 1))
  }
-@@ -63,16 +63,16 @@
+@@= skipped -19, +19 lines =@@
  >C : Symbol(C, Decl(esDecorators-classDeclaration-outerThisReference.ts, 24, 1))
  
      #a = 1;

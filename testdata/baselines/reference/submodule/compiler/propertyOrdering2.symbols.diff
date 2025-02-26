@@ -1,6 +1,6 @@
 --- old.propertyOrdering2.symbols
 +++ new.propertyOrdering2.symbols
-@@ -5,17 +5,17 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(propertyOrdering2.ts, 0, 0))
  
      constructor(public x, y) { }

@@ -1,6 +1,6 @@
 --- old.genericClasses4.symbols
 +++ new.genericClasses4.symbols
-@@ -7,13 +7,13 @@
+@@= skipped -7, +7 lines =@@
  >A : Symbol(A, Decl(genericClasses4.ts, 1, 13))
  {
      constructor(public x: A, public y: A) { }
@@ -17,7 +17,7 @@
  >B : Symbol(B, Decl(genericClasses4.ts, 4, 9))
  >f : Symbol(f, Decl(genericClasses4.ts, 4, 12))
  >a : Symbol(a, Decl(genericClasses4.ts, 4, 16))
-@@ -26,17 +26,17 @@
+@@= skipped -19, +19 lines =@@
  >x : Symbol(x, Decl(genericClasses4.ts, 5, 11))
  >B : Symbol(B, Decl(genericClasses4.ts, 4, 9))
  >f : Symbol(f, Decl(genericClasses4.ts, 4, 12))
@@ -39,7 +39,7 @@
  
          var retval: Vec2_T<B> = new Vec2_T(x, y);
  >retval : Symbol(retval, Decl(genericClasses4.ts, 7, 11))
-@@ -50,7 +50,7 @@
+@@= skipped -24, +24 lines =@@
  >retval : Symbol(retval, Decl(genericClasses4.ts, 7, 11))
      }
      apply<B>(f: Vec2_T<(a: A) => B>): Vec2_T<B> {
@@ -48,7 +48,7 @@
  >B : Symbol(B, Decl(genericClasses4.ts, 10, 10))
  >f : Symbol(f, Decl(genericClasses4.ts, 10, 13))
  >Vec2_T : Symbol(Vec2_T, Decl(genericClasses4.ts, 0, 0))
-@@ -63,22 +63,22 @@
+@@= skipped -13, +13 lines =@@
          var x:B = f.x(this.x);
  >x : Symbol(x, Decl(genericClasses4.ts, 11, 11))
  >B : Symbol(B, Decl(genericClasses4.ts, 10, 10))

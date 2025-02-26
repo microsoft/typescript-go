@@ -1,6 +1,6 @@
 --- old.destructuringUnspreadableIntoRest.symbols
 +++ new.destructuringUnspreadableIntoRest.symbols
-@@ -6,28 +6,28 @@
+@@= skipped -6, +6 lines =@@
  
      constructor(
          public publicProp: string,
@@ -35,7 +35,7 @@
  
          const {                 ...rest1 } = this;
  >rest1 : Symbol(rest1, Decl(destructuringUnspreadableIntoRest.ts, 14, 15))
-@@ -39,27 +39,25 @@
+@@= skipped -33, +33 lines =@@
  >A : Symbol(A, Decl(destructuringUnspreadableIntoRest.ts, 0, 0))
  
          const { publicProp: _1, ...rest3 } = this;
@@ -67,7 +67,7 @@
  
          rest3.publicProp;
  >rest3 : Symbol(rest3, Decl(destructuringUnspreadableIntoRest.ts, 16, 31))
-@@ -146,27 +144,25 @@
+@@= skipped -107, +105 lines =@@
  >A : Symbol(A, Decl(destructuringUnspreadableIntoRest.ts, 0, 0))
  
      const { publicProp: _1, ...rest3 } = x;

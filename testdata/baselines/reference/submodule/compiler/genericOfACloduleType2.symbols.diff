@@ -1,6 +1,6 @@
 --- old.genericOfACloduleType2.symbols
 +++ new.genericOfACloduleType2.symbols
-@@ -4,7 +4,7 @@
+@@= skipped -4, +4 lines =@@
  class G<T>{ bar(x: T) { return x; } }
  >G : Symbol(G, Decl(genericOfACloduleType2.ts, 0, 0))
  >T : Symbol(T, Decl(genericOfACloduleType2.ts, 0, 8))
@@ -9,7 +9,7 @@
  >x : Symbol(x, Decl(genericOfACloduleType2.ts, 0, 16))
  >T : Symbol(T, Decl(genericOfACloduleType2.ts, 0, 8))
  >x : Symbol(x, Decl(genericOfACloduleType2.ts, 0, 16))
-@@ -14,7 +14,7 @@
+@@= skipped -10, +10 lines =@@
  
      export class C { foo() { } }
  >C : Symbol(C, Decl(genericOfACloduleType2.ts, 1, 10), Decl(genericOfACloduleType2.ts, 2, 32))
@@ -18,7 +18,7 @@
  
      export module C {
  >C : Symbol(C, Decl(genericOfACloduleType2.ts, 1, 10), Decl(genericOfACloduleType2.ts, 2, 32))
-@@ -30,11 +30,11 @@
+@@= skipped -16, +16 lines =@@
  >C : Symbol(C, Decl(genericOfACloduleType2.ts, 1, 10), Decl(genericOfACloduleType2.ts, 2, 32))
  
      g1.bar(null).foo(); // no error
@@ -34,7 +34,7 @@
  }
  
  module N {
-@@ -44,5 +44,5 @@
+@@= skipped -14, +14 lines =@@
  >g2 : Symbol(g2, Decl(genericOfACloduleType2.ts, 13, 7))
  >G : Symbol(G, Decl(genericOfACloduleType2.ts, 0, 0))
  >M : Symbol(M, Decl(genericOfACloduleType2.ts, 0, 37))

@@ -1,6 +1,6 @@
 --- old.duplicateLocalVariable4.symbols
 +++ new.duplicateLocalVariable4.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >E : Symbol(E, Decl(duplicateLocalVariable4.ts, 0, 0))
  
  a
@@ -9,7 +9,7 @@
  }
   
  var x = E;
-@@ -14,7 +14,7 @@
+@@= skipped -9, +9 lines =@@
  
  var x = E.a;
  >x : Symbol(x, Decl(duplicateLocalVariable4.ts, 4, 3), Decl(duplicateLocalVariable4.ts, 5, 3))

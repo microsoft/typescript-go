@@ -1,6 +1,6 @@
 --- old.enumDecl1.symbols
 +++ new.enumDecl1.symbols
-@@ -8,13 +8,13 @@
+@@= skipped -8, +8 lines =@@
  >e : Symbol(e, Decl(enumDecl1.ts, 0, 25))
  
          x,

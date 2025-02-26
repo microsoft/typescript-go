@@ -1,6 +1,6 @@
 --- old.duplicateClassElements.symbols
 +++ new.duplicateClassElements.symbols
-@@ -5,76 +5,76 @@
+@@= skipped -5, +5 lines =@@
  >a : Symbol(a, Decl(duplicateClassElements.ts, 0, 0))
  
      public a;

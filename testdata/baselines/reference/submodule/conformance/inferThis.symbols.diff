@@ -1,6 +1,6 @@
 --- old.inferThis.symbols
 +++ new.inferThis.symbols
-@@ -10,10 +10,10 @@
+@@= skipped -10, +10 lines =@@
       * @return {T}
       */
      static a() {
@@ -13,7 +13,7 @@
      }
  
      /**
-@@ -22,18 +22,18 @@
+@@= skipped -12, +12 lines =@@
       * @return {T}
       */
      b() {
@@ -36,7 +36,7 @@
  
  a; // typeof C
  >a : Symbol(a, Decl(a.js, 20, 5))
-@@ -44,9 +44,9 @@
+@@= skipped -22, +22 lines =@@
  
  const b = c.b();
  >b : Symbol(b, Decl(a.js, 24, 5))

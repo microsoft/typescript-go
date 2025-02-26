@@ -1,6 +1,6 @@
 --- old.extractInferenceImprovement.symbols
 +++ new.extractInferenceImprovement.symbols
-@@ -10,7 +10,7 @@
+@@= skipped -10, +10 lines =@@
  >obj : Symbol(obj, Decl(extractInferenceImprovement.ts, 1, 44))
  >T : Symbol(T, Decl(extractInferenceImprovement.ts, 1, 22))
  >key : Symbol(key, Decl(extractInferenceImprovement.ts, 1, 51))
@@ -9,7 +9,7 @@
  >K : Symbol(K, Decl(extractInferenceImprovement.ts, 1, 24))
  >T : Symbol(T, Decl(extractInferenceImprovement.ts, 1, 22))
  >K : Symbol(K, Decl(extractInferenceImprovement.ts, 1, 24))
-@@ -24,7 +24,7 @@
+@@= skipped -14, +14 lines =@@
  >getProperty3 : Symbol(getProperty3, Decl(extractInferenceImprovement.ts, 3, 1))
  >T : Symbol(T, Decl(extractInferenceImprovement.ts, 5, 22))
  >K : Symbol(K, Decl(extractInferenceImprovement.ts, 5, 24))
@@ -18,7 +18,7 @@
  >T : Symbol(T, Decl(extractInferenceImprovement.ts, 5, 22))
  >obj : Symbol(obj, Decl(extractInferenceImprovement.ts, 5, 61))
  >T : Symbol(T, Decl(extractInferenceImprovement.ts, 5, 22))
-@@ -40,19 +40,18 @@
+@@= skipped -16, +16 lines =@@
  
  const s = Symbol();
  >s : Symbol(s, Decl(extractInferenceImprovement.ts, 9, 5))

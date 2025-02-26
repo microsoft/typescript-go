@@ -1,6 +1,6 @@
 --- old.requireTwoPropertyAccesses.symbols
 +++ new.requireTwoPropertyAccesses.symbols
-@@ -3,29 +3,10 @@
+@@= skipped -3, +3 lines =@@
  === requireTwoPropertyAccesses.js ===
  const value = require("./mod").x.y
  >value : Symbol(value, Decl(requireTwoPropertyAccesses.js, 0, 5))

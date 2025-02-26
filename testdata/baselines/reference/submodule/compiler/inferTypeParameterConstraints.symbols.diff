@@ -1,6 +1,6 @@
 --- old.inferTypeParameterConstraints.symbols
 +++ new.inferTypeParameterConstraints.symbols
-@@ -58,7 +58,7 @@
+@@= skipped -58, +58 lines =@@
  >V : Symbol(V, Decl(inferTypeParameterConstraints.ts, 20, 16))
  
    protected fake(): V {
@@ -9,7 +9,7 @@
  >V : Symbol(V, Decl(inferTypeParameterConstraints.ts, 20, 16))
  
      throw new Error("");
-@@ -73,7 +73,7 @@
+@@= skipped -15, +15 lines =@@
  >V : Symbol(V, Decl(inferTypeParameterConstraints.ts, 26, 12))
  
    child = true;
@@ -18,7 +18,7 @@
  }
  
  type Constructor<V, P extends BaseClass<V>> = new () => P;
-@@ -105,7 +105,7 @@
+@@= skipped -32, +32 lines =@@
  >U : Symbol(U, Decl(inferTypeParameterConstraints.ts, 31, 69))
  
  m.child; // ok

@@ -1,6 +1,6 @@
 --- old.promiseTypeInference.symbols
 +++ new.promiseTypeInference.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(promiseTypeInference.ts, 0, 23))
  
      then<U>(success?: (value: T) => CPromise<U>): CPromise<U>;
@@ -9,7 +9,7 @@
  >U : Symbol(U, Decl(promiseTypeInference.ts, 1, 9))
  >success : Symbol(success, Decl(promiseTypeInference.ts, 1, 12))
  >value : Symbol(value, Decl(promiseTypeInference.ts, 1, 23))
-@@ -21,7 +21,7 @@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(promiseTypeInference.ts, 3, 19))
  
      then<U>(success?: (value: T) => IPromise<U>): IPromise<U>;
@@ -18,7 +18,7 @@
  >U : Symbol(U, Decl(promiseTypeInference.ts, 4, 9))
  >success : Symbol(success, Decl(promiseTypeInference.ts, 4, 12))
  >value : Symbol(value, Decl(promiseTypeInference.ts, 4, 23))
-@@ -43,9 +43,9 @@
+@@= skipped -22, +22 lines =@@
  
  var $$x = load("something").then(s => convert(s));
  >$$x : Symbol($$x, Decl(promiseTypeInference.ts, 9, 3))

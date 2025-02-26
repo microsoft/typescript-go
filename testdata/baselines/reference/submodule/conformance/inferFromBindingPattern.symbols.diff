@@ -1,6 +1,6 @@
 --- old.inferFromBindingPattern.symbols
 +++ new.inferFromBindingPattern.symbols
-@@ -51,7 +51,7 @@
+@@= skipped -51, +51 lines =@@
  >K : Symbol(K, Decl(inferFromBindingPattern.ts, 17, 24))
  
    selector?: (obj: T) => K;
@@ -9,7 +9,7 @@
  >obj : Symbol(obj, Decl(inferFromBindingPattern.ts, 18, 14))
  >T : Symbol(T, Decl(inferFromBindingPattern.ts, 17, 22))
  >K : Symbol(K, Decl(inferFromBindingPattern.ts, 17, 24))
-@@ -68,10 +68,10 @@
+@@= skipped -17, +17 lines =@@
  >Person : Symbol(Person, Decl(inferFromBindingPattern.ts, 21, 33))
  
    name: string;

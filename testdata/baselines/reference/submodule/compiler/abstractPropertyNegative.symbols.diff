@@ -1,6 +1,6 @@
 --- old.abstractPropertyNegative.symbols
 +++ new.abstractPropertyNegative.symbols
-@@ -5,32 +5,32 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(abstractPropertyNegative.ts, 0, 0))
  
      prop: string;
@@ -41,7 +41,7 @@
  >val : Symbol(val, Decl(abstractPropertyNegative.ts, 10, 26))
  }
  class C extends B {
-@@ -38,72 +38,72 @@
+@@= skipped -33, +33 lines =@@
  >B : Symbol(B, Decl(abstractPropertyNegative.ts, 3, 1))
  
      readonly ro = "readonly please";

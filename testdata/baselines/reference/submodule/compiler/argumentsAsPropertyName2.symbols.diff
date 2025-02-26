@@ -1,6 +1,6 @@
 --- old.argumentsAsPropertyName2.symbols
 +++ new.argumentsAsPropertyName2.symbols
-@@ -15,8 +15,8 @@
+@@= skipped -15, +15 lines =@@
  >i : Symbol(i, Decl(argumentsAsPropertyName2.ts, 4, 11))
  
          [].forEach(function () { i });

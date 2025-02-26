@@ -1,6 +1,6 @@
 --- old.importDeclTypes.symbols
 +++ new.importDeclTypes.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(index.d.ts, 0, 0))
  
      bar: string;

@@ -1,6 +1,6 @@
 --- old.for-of48.symbols
 +++ new.for-of48.symbols
-@@ -12,14 +12,14 @@
+@@= skipped -12, +12 lines =@@
  
  enum E { x }
  >E : Symbol(E, Decl(for-of48.ts, 1, 32))

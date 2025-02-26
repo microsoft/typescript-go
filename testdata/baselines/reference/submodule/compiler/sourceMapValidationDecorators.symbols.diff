@@ -1,6 +1,6 @@
 --- old.sourceMapValidationDecorators.symbols
 +++ new.sourceMapValidationDecorators.symbols
-@@ -61,7 +61,7 @@
+@@= skipped -61, +61 lines =@@
  >ParameterDecorator2 : Symbol(ParameterDecorator2, Decl(sourceMapValidationDecorators.ts, 4, 101))
  
        public greeting: string, 
@@ -9,7 +9,7 @@
        
        @ParameterDecorator1 
  >ParameterDecorator1 : Symbol(ParameterDecorator1, Decl(sourceMapValidationDecorators.ts, 3, 128))
-@@ -80,12 +80,12 @@
+@@= skipped -19, +19 lines =@@
  >PropertyDecorator2 : Symbol(PropertyDecorator2, Decl(sourceMapValidationDecorators.ts, 2, 113))
  
      greet() {
@@ -25,7 +25,7 @@
      }
  
      @PropertyDecorator1
-@@ -95,7 +95,7 @@
+@@= skipped -15, +15 lines =@@
  >PropertyDecorator2 : Symbol(PropertyDecorator2, Decl(sourceMapValidationDecorators.ts, 2, 113))
  
      private x: string;
@@ -34,7 +34,7 @@
  
      @PropertyDecorator1
  >PropertyDecorator1 : Symbol(PropertyDecorator1, Decl(sourceMapValidationDecorators.ts, 1, 72))
-@@ -104,10 +104,10 @@
+@@= skipped -9, +9 lines =@@
  >PropertyDecorator2 : Symbol(PropertyDecorator2, Decl(sourceMapValidationDecorators.ts, 2, 113))
  
      private static x1: number = 10;
@@ -47,7 +47,7 @@
  
        @ParameterDecorator1 
  >ParameterDecorator1 : Symbol(ParameterDecorator1, Decl(sourceMapValidationDecorators.ts, 3, 128))
-@@ -119,9 +119,9 @@
+@@= skipped -15, +15 lines =@@
  >x : Symbol(x, Decl(sourceMapValidationDecorators.ts, 34, 15))
  
          return this.greeting;
@@ -59,7 +59,7 @@
      }
  
      @PropertyDecorator1
-@@ -131,16 +131,16 @@
+@@= skipped -12, +12 lines =@@
  >PropertyDecorator2 : Symbol(PropertyDecorator2, Decl(sourceMapValidationDecorators.ts, 2, 113))
  
      get greetings() {
@@ -80,7 +80,7 @@
  
        @ParameterDecorator1 
  >ParameterDecorator1 : Symbol(ParameterDecorator1, Decl(sourceMapValidationDecorators.ts, 3, 128))
-@@ -152,9 +152,9 @@
+@@= skipped -21, +21 lines =@@
  >greetings : Symbol(greetings, Decl(sourceMapValidationDecorators.ts, 47, 18))
  
          this.greeting = greetings;

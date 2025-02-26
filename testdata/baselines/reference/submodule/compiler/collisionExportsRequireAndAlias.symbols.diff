@@ -1,6 +1,6 @@
 --- old.collisionExportsRequireAndAlias.symbols
 +++ new.collisionExportsRequireAndAlias.symbols
-@@ -11,24 +11,11 @@
+@@= skipped -11, +11 lines =@@
  >foo : Symbol(foo, Decl(collisionExportsRequireAndAlias_file2.ts, 1, 69))
  
      require.bar();

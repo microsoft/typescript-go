@@ -1,6 +1,6 @@
 --- old.bestCommonTypeOfTuple2.symbols
 +++ new.bestCommonTypeOfTuple2.symbols
-@@ -6,39 +6,39 @@
+@@= skipped -6, +6 lines =@@
  
  interface base1 { i }
  >base1 : Symbol(base1, Decl(bestCommonTypeOfTuple2.ts, 0, 18))

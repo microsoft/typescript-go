@@ -1,6 +1,6 @@
 --- old.inheritedMembersAndIndexSignaturesFromDifferentBases.symbols
 +++ new.inheritedMembersAndIndexSignaturesFromDifferentBases.symbols
-@@ -31,7 +31,7 @@
+@@= skipped -31, +31 lines =@@
  >C : Symbol(C, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.ts, 11, 1))
  
      m: {};
@@ -9,7 +9,7 @@
  }
  
  interface D extends A, B, C { } // error because m is not a subtype of {a;}
-@@ -44,7 +44,7 @@
+@@= skipped -13, +13 lines =@@
  >E : Symbol(E, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.ts, 16, 31))
  
      0: {};

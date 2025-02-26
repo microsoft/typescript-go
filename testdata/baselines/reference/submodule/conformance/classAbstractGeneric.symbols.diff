@@ -1,6 +1,6 @@
 --- old.classAbstractGeneric.symbols
 +++ new.classAbstractGeneric.symbols
-@@ -6,15 +6,15 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(classAbstractGeneric.ts, 0, 17))
  
      t: T;
@@ -19,7 +19,7 @@
  >t : Symbol(t, Decl(classAbstractGeneric.ts, 4, 17))
  >T : Symbol(T, Decl(classAbstractGeneric.ts, 0, 17))
  }
-@@ -42,10 +42,10 @@
+@@= skipped -36, +36 lines =@@
  >T : Symbol(T, Decl(classAbstractGeneric.ts, 13, 8))
  
      foo() { return this.t; }
@@ -33,7 +33,7 @@
  }
  
  class F<T> extends A<T> { // error -- doesn't implement foo
-@@ -55,7 +55,7 @@
+@@= skipped -13, +13 lines =@@
  >T : Symbol(T, Decl(classAbstractGeneric.ts, 17, 8))
  
      bar(t : T) {}
@@ -42,7 +42,7 @@
  >t : Symbol(t, Decl(classAbstractGeneric.ts, 18, 8))
  >T : Symbol(T, Decl(classAbstractGeneric.ts, 17, 8))
  }
-@@ -67,13 +67,13 @@
+@@= skipped -12, +12 lines =@@
  >T : Symbol(T, Decl(classAbstractGeneric.ts, 21, 8))
  
      foo() { return this.t; }

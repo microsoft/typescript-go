@@ -1,6 +1,6 @@
 --- old.intersectionOfUnionOfUnitTypes.symbols
 +++ new.intersectionOfUnionOfUnitTypes.symbols
-@@ -5,12 +5,12 @@
+@@= skipped -5, +5 lines =@@
  
  const enum E { A, B, C, D, E, F }
  >E : Symbol(E, Decl(intersectionOfUnionOfUnitTypes.ts, 0, 0))
@@ -19,7 +19,7 @@
  
  let x0: ('a' | 'b' | 'c') & ('a' | 'b' | 'c');  // 'a' | 'b' | 'c'
  >x0 : Symbol(x0, Decl(intersectionOfUnionOfUnitTypes.ts, 4, 3))
-@@ -51,108 +51,108 @@
+@@= skipped -46, +46 lines =@@
  let z0: (E.A | E.B | E.C) & (E.A | E.B | E.C);  // E.A | E.B | E.C
  >z0 : Symbol(z0, Decl(intersectionOfUnionOfUnitTypes.ts, 18, 3))
  >E : Symbol(E, Decl(intersectionOfUnionOfUnitTypes.ts, 0, 0))

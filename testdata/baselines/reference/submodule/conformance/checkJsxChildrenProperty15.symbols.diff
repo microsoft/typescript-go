@@ -1,6 +1,6 @@
 --- old.checkJsxChildrenProperty15.symbols
 +++ new.checkJsxChildrenProperty15.symbols
-@@ -7,8 +7,6 @@
+@@= skipped -7, +7 lines =@@
  const Tag = (x: {}) => <div></div>;
  >Tag : Symbol(Tag, Decl(file.tsx, 2, 5))
  >x : Symbol(x, Decl(file.tsx, 2, 13))
@@ -9,7 +9,7 @@
  
  // OK
  const k1 = <Tag />;
-@@ -25,24 +23,16 @@
+@@= skipped -18, +16 lines =@@
  >k3 : Symbol(k3, Decl(file.tsx, 9, 5))
  >Tag : Symbol(Tag, Decl(file.tsx, 2, 5))
  >children : Symbol(children, Decl(file.tsx, 9, 15))

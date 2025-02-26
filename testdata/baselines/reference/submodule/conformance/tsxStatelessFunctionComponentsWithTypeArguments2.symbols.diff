@@ -1,6 +1,6 @@
 --- old.tsxStatelessFunctionComponentsWithTypeArguments2.symbols
 +++ new.tsxStatelessFunctionComponentsWithTypeArguments2.symbols
-@@ -11,8 +11,8 @@
+@@= skipped -11, +11 lines =@@
  >prop : Symbol(prop, Decl(file.tsx, 2, 43))
  >U : Symbol(U, Decl(file.tsx, 2, 36))
  >"ignore-prop" : Symbol("ignore-prop", Decl(file.tsx, 2, 51))
@@ -11,7 +11,7 @@
  
  declare function ComponentSpecific2<U>(l: {prop: U}): JSX.Element;
  >ComponentSpecific2 : Symbol(ComponentSpecific2, Decl(file.tsx, 2, 89))
-@@ -20,8 +20,8 @@
+@@= skipped -9, +9 lines =@@
  >l : Symbol(l, Decl(file.tsx, 3, 39))
  >prop : Symbol(prop, Decl(file.tsx, 3, 43))
  >U : Symbol(U, Decl(file.tsx, 3, 36))
@@ -22,7 +22,7 @@
  
  // Error
  function Bar<T extends {prop: number}>(arg: T) {
-@@ -58,8 +58,8 @@
+@@= skipped -38, +38 lines =@@
  >func : Symbol(func, Decl(file.tsx, 15, 29))
  >arg : Symbol(arg, Decl(file.tsx, 15, 36))
  >U : Symbol(U, Decl(file.tsx, 15, 22))
@@ -33,7 +33,7 @@
  
  // Error
  function createLink(func: (a: number, b: string)=>void) {
-@@ -80,12 +80,12 @@
+@@= skipped -22, +22 lines =@@
  >T : Symbol(T, Decl(file.tsx, 22, 25))
  
      values: Array<T>;
@@ -49,7 +49,7 @@
  >selectedVal : Symbol(selectedVal, Decl(file.tsx, 24, 20))
  >T : Symbol(T, Decl(file.tsx, 22, 25))
  }
-@@ -96,8 +96,8 @@
+@@= skipped -16, +16 lines =@@
  >attr : Symbol(attr, Decl(file.tsx, 27, 40))
  >InferParamProp : Symbol(InferParamProp, Decl(file.tsx, 20, 1))
  >T : Symbol(T, Decl(file.tsx, 27, 37))

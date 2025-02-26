@@ -1,6 +1,6 @@
 --- old.doNotElaborateAssignabilityToTypeParameters.symbols
 +++ new.doNotElaborateAssignabilityToTypeParameters.symbols
-@@ -22,10 +22,10 @@
+@@= skipped -22, +22 lines =@@
  >Yadda : Symbol(Yadda, Decl(doNotElaborateAssignabilityToTypeParameters.ts, 3, 1))
  
    stuff: string,

@@ -1,6 +1,6 @@
 --- old.assignmentCompatWithNumericIndexer2.symbols
 +++ new.assignmentCompatWithNumericIndexer2.symbols
-@@ -5,17 +5,17 @@
+@@= skipped -5, +5 lines =@@
  
  interface Base { foo: string; }
  >Base : Symbol(Base, Decl(assignmentCompatWithNumericIndexer2.ts, 0, 0))

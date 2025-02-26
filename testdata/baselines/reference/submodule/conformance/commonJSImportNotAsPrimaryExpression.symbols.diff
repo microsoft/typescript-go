@@ -1,6 +1,6 @@
 --- old.commonJSImportNotAsPrimaryExpression.symbols
 +++ new.commonJSImportNotAsPrimaryExpression.symbols
-@@ -8,57 +8,57 @@
+@@= skipped -8, +8 lines =@@
  import f = foo.M1;
  >f : Symbol(f, Decl(foo_1.ts, 0, 32))
  >foo : Symbol(foo, Decl(foo_1.ts, 0, 0))
@@ -72,7 +72,7 @@
  }
  
  export module M1 {
-@@ -68,7 +68,7 @@
+@@= skipped -60, +60 lines =@@
  >I2 : Symbol(I2, Decl(foo_0.ts, 10, 18))
  
  		foo: string;
@@ -81,7 +81,7 @@
  	}
  }
  
-@@ -76,8 +76,8 @@
+@@= skipped -8, +8 lines =@@
  >E1 : Symbol(E1, Decl(foo_0.ts, 14, 1))
  
  	A,B,C

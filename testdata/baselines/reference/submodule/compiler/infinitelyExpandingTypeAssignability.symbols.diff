@@ -1,6 +1,6 @@
 --- old.infinitelyExpandingTypeAssignability.symbols
 +++ new.infinitelyExpandingTypeAssignability.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(infinitelyExpandingTypeAssignability.ts, 0, 12))
  
     x : T

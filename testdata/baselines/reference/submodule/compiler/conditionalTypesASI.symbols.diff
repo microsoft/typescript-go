@@ -1,6 +1,6 @@
 --- old.conditionalTypesASI.symbols
 +++ new.conditionalTypesASI.symbols
-@@ -7,9 +7,9 @@
+@@= skipped -7, +7 lines =@@
  >JSONSchema4 : Symbol(JSONSchema4, Decl(conditionalTypesASI.ts, 0, 0))
  
    a?: number

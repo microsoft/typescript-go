@@ -1,6 +1,6 @@
 --- old.invalidMultipleVariableDeclarations.symbols
 +++ new.invalidMultipleVariableDeclarations.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >I : Symbol(I, Decl(invalidMultipleVariableDeclarations.ts, 0, 0))
  
      id: number;
@@ -9,7 +9,7 @@
  }
  
  class C implements I {
-@@ -13,10 +13,10 @@
+@@= skipped -8, +8 lines =@@
  >I : Symbol(I, Decl(invalidMultipleVariableDeclarations.ts, 0, 0))
  
      id: number;
@@ -22,7 +22,7 @@
  }
  
  class C2 extends C {
-@@ -24,7 +24,7 @@
+@@= skipped -11, +11 lines =@@
  >C : Symbol(C, Decl(invalidMultipleVariableDeclarations.ts, 2, 1))
  
      name: string;
@@ -31,7 +31,7 @@
  }
  
  class D<T>{
-@@ -32,16 +32,16 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(invalidMultipleVariableDeclarations.ts, 13, 8))
  
      source: T;
@@ -51,7 +51,7 @@
  >D : Symbol(D, Decl(invalidMultipleVariableDeclarations.ts, 11, 1))
  >D : Symbol(D, Decl(invalidMultipleVariableDeclarations.ts, 11, 1))
  >T : Symbol(T, Decl(invalidMultipleVariableDeclarations.ts, 13, 8))
-@@ -58,15 +58,15 @@
+@@= skipped -26, +26 lines =@@
  >A : Symbol(A, Decl(invalidMultipleVariableDeclarations.ts, 21, 10))
  
          name: string;
@@ -70,7 +70,7 @@
  }
  
  // all of these are errors
-@@ -138,7 +138,7 @@
+@@= skipped -80, +80 lines =@@
  
  var m = M.A;
  >m : Symbol(m, Decl(invalidMultipleVariableDeclarations.ts, 51, 3), Decl(invalidMultipleVariableDeclarations.ts, 52, 3))

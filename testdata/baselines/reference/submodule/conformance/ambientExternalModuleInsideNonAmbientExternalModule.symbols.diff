@@ -1,6 +1,6 @@
 --- old.ambientExternalModuleInsideNonAmbientExternalModule.symbols
 +++ new.ambientExternalModuleInsideNonAmbientExternalModule.symbols
-@@ -2,5 +2,5 @@
+@@= skipped -2, +2 lines =@@
  
  === ambientExternalModuleInsideNonAmbientExternalModule.ts ===
  export declare module "M" { }

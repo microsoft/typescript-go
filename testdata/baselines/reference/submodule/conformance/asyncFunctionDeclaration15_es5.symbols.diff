@@ -1,6 +1,6 @@
 --- old.asyncFunctionDeclaration15_es5.symbols
 +++ new.asyncFunctionDeclaration15_es5.symbols
-@@ -3,7 +3,7 @@
+@@= skipped -3, +3 lines =@@
  === asyncFunctionDeclaration15_es5.ts ===
  declare class Thenable { then(): void; }
  >Thenable : Symbol(Thenable, Decl(asyncFunctionDeclaration15_es5.ts, 0, 0))

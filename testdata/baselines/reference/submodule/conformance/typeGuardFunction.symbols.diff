@@ -1,6 +1,6 @@
 --- old.typeGuardFunction.symbols
 +++ new.typeGuardFunction.symbols
-@@ -5,14 +5,14 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(typeGuardFunction.ts, 0, 0))
  
      propA: number;
@@ -17,7 +17,7 @@
  }
  
  class C extends A {
-@@ -20,7 +20,7 @@
+@@= skipped -15, +15 lines =@@
  >A : Symbol(A, Decl(typeGuardFunction.ts, 0, 0))
  
      propC: number;
@@ -26,7 +26,7 @@
  }
  
  declare function isA(p1: any): p1 is A;
-@@ -59,9 +59,9 @@
+@@= skipped -39, +39 lines =@@
  >a : Symbol(a, Decl(typeGuardFunction.ts, 18, 3))
  
      a.propC;
@@ -38,7 +38,7 @@
  }
  
  // Sub type
-@@ -74,9 +74,9 @@
+@@= skipped -15, +15 lines =@@
  >subType : Symbol(subType, Decl(typeGuardFunction.ts, 27, 3))
  
      subType.propC;
@@ -50,7 +50,7 @@
  }
  
  // Union type
-@@ -90,9 +90,9 @@
+@@= skipped -16, +16 lines =@@
  >union : Symbol(union, Decl(typeGuardFunction.ts, 33, 3))
  
      union.propA;
@@ -62,7 +62,7 @@
  }
  
  // Call signature
-@@ -120,9 +120,9 @@
+@@= skipped -30, +30 lines =@@
  >a : Symbol(a, Decl(typeGuardFunction.ts, 18, 3))
  
      a.propC;
@@ -74,7 +74,7 @@
  }
  
  // Methods
-@@ -140,7 +140,7 @@
+@@= skipped -20, +20 lines =@@
  >D : Symbol(D, Decl(typeGuardFunction.ts, 53, 1))
  
      method1(p1: A): p1 is C {

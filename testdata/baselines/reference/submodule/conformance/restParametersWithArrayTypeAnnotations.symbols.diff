@@ -1,6 +1,6 @@
 --- old.restParametersWithArrayTypeAnnotations.symbols
 +++ new.restParametersWithArrayTypeAnnotations.symbols
-@@ -21,7 +21,7 @@
+@@= skipped -21, +21 lines =@@
  >C : Symbol(C, Decl(restParametersWithArrayTypeAnnotations.ts, 4, 48))
  
      foo(...x: number[]) { }
@@ -9,7 +9,7 @@
  >x : Symbol(x, Decl(restParametersWithArrayTypeAnnotations.ts, 7, 8))
  }
  
-@@ -32,7 +32,7 @@
+@@= skipped -11, +11 lines =@@
  >x : Symbol(x, Decl(restParametersWithArrayTypeAnnotations.ts, 11, 5))
  
      foo(...x: number[], ...y: number[]);
@@ -18,7 +18,7 @@
  >x : Symbol(x, Decl(restParametersWithArrayTypeAnnotations.ts, 12, 8))
  >y : Symbol(y, Decl(restParametersWithArrayTypeAnnotations.ts, 12, 23))
  }
-@@ -91,7 +91,7 @@
+@@= skipped -59, +59 lines =@@
  >C2 : Symbol(C2, Decl(restParametersWithArrayTypeAnnotations.ts, 31, 58))
  
      foo(...x: Array<string>) { }
@@ -27,7 +27,7 @@
  >x : Symbol(x, Decl(restParametersWithArrayTypeAnnotations.ts, 34, 8))
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  }
-@@ -104,7 +104,7 @@
+@@= skipped -13, +13 lines =@@
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      foo(...x: Array<string>, ...y: Array<string>);

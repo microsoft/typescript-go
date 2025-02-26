@@ -1,6 +1,6 @@
 --- old.declFileTypeAnnotationTypeReference.symbols
 +++ new.declFileTypeAnnotationTypeReference.symbols
-@@ -39,20 +39,20 @@
+@@= skipped -39, +39 lines =@@
  function foo3(): m.c {
  >foo3 : Symbol(foo3, Decl(declFileTypeAnnotationTypeReference.ts, 17, 1))
  >m : Symbol(m, Decl(declFileTypeAnnotationTypeReference.ts, 1, 1))
@@ -26,7 +26,7 @@
  }
  
  // Just the name with type arguments
-@@ -74,18 +74,18 @@
+@@= skipped -35, +35 lines =@@
  function foo7(): m.g<number> {
  >foo7 : Symbol(foo7, Decl(declFileTypeAnnotationTypeReference.ts, 33, 1))
  >m : Symbol(m, Decl(declFileTypeAnnotationTypeReference.ts, 1, 1))

@@ -1,6 +1,6 @@
 --- old.internalAliasInitializedModuleInsideLocalModuleWithoutExportAccessError.symbols
 +++ new.internalAliasInitializedModuleInsideLocalModuleWithoutExportAccessError.symbols
-@@ -24,10 +24,10 @@
+@@= skipped -24, +24 lines =@@
      export var x: b.c = new b.c();
  >x : Symbol(x, Decl(internalAliasInitializedModuleInsideLocalModuleWithoutExportAccessError.ts, 9, 14))
  >b : Symbol(b, Decl(internalAliasInitializedModuleInsideLocalModuleWithoutExportAccessError.ts, 7, 17))

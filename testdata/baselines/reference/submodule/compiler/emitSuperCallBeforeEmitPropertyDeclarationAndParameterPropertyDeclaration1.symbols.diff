@@ -1,6 +1,6 @@
 --- old.emitSuperCallBeforeEmitPropertyDeclarationAndParameterPropertyDeclaration1.symbols
 +++ new.emitSuperCallBeforeEmitPropertyDeclarationAndParameterPropertyDeclaration1.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(emitSuperCallBeforeEmitPropertyDeclarationAndParameterPropertyDeclaration1.ts, 0, 0))
  
      blub = 6;
@@ -9,7 +9,7 @@
  }
  
  
-@@ -14,10 +14,10 @@
+@@= skipped -9, +9 lines =@@
  >A : Symbol(A, Decl(emitSuperCallBeforeEmitPropertyDeclarationAndParameterPropertyDeclaration1.ts, 0, 0))
  
      blah = 2;

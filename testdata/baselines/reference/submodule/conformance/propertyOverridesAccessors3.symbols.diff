@@ -1,6 +1,6 @@
 --- old.propertyOverridesAccessors3.symbols
 +++ new.propertyOverridesAccessors3.symbols
-@@ -5,37 +5,37 @@
+@@= skipped -5, +5 lines =@@
  >Animal : Symbol(Animal, Decl(propertyOverridesAccessors3.ts, 0, 0))
  
      _sound = 'rustling noise in the bushes'
@@ -50,7 +50,7 @@
      }
  }
  
-@@ -44,16 +44,16 @@
+@@= skipped -39, +39 lines =@@
  >Animal : Symbol(Animal, Decl(propertyOverridesAccessors3.ts, 0, 0))
  
  a.makeSound() // 'rustling noise in the bushes'
@@ -70,7 +70,7 @@
  }
  
  const lion = new Lion
-@@ -61,7 +61,7 @@
+@@= skipped -17, +17 lines =@@
  >Lion : Symbol(Lion, Decl(propertyOverridesAccessors3.ts, 15, 13))
  
  lion.makeSound() // with [[Define]]: Expected "RAWR!" but got "rustling noise in the bushes"

@@ -1,6 +1,6 @@
 --- old.computedPropertyNames45_ES6.symbols
 +++ new.computedPropertyNames45_ES6.symbols
-@@ -3,19 +3,19 @@
+@@= skipped -3, +3 lines =@@
  === computedPropertyNames45_ES6.ts ===
  class Foo { x }
  >Foo : Symbol(Foo, Decl(computedPropertyNames45_ES6.ts, 0, 0))
@@ -25,7 +25,7 @@
  >Foo : Symbol(Foo, Decl(computedPropertyNames45_ES6.ts, 0, 0))
  }
  
-@@ -29,8 +29,8 @@
+@@= skipped -26, +26 lines =@@
  >Foo2 : Symbol(Foo2, Decl(computedPropertyNames45_ES6.ts, 0, 15))
  
      set ["set1"](p: Foo) { }

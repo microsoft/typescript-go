@@ -1,6 +1,6 @@
 --- old.exportsAndImports3-es6.symbols
 +++ new.exportsAndImports3-es6.symbols
-@@ -17,17 +17,17 @@
+@@= skipped -17, +17 lines =@@
  >E : Symbol(E, Decl(t1.ts, 5, 1))
  
      A, B, C
@@ -24,7 +24,7 @@
  }
  export module M {
  >M : Symbol(M, Decl(t1.ts, 11, 1))
-@@ -48,7 +48,7 @@
+@@= skipped -31, +31 lines =@@
  export import a = M.x;
  >a : Symbol(a, Decl(t1.ts, 19, 23))
  >M : Symbol(M, Decl(t1.ts, 11, 1))

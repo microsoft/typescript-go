@@ -1,6 +1,6 @@
 --- old.typeOfThisInStaticMembers9(target=es2022).symbols
 +++ new.typeOfThisInStaticMembers9(target=es2022).symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(typeOfThisInStaticMembers9.ts, 0, 0))
  
      static f = 1
@@ -9,7 +9,7 @@
  }
  
  class D extends C {
-@@ -13,20 +13,20 @@
+@@= skipped -8, +8 lines =@@
  >C : Symbol(C, Decl(typeOfThisInStaticMembers9.ts, 0, 0))
  
      static arrowFunctionBoundary = () => super.f + 1;
@@ -37,7 +37,7 @@
  
          function foo () {
  >foo : Symbol(foo, Decl(typeOfThisInStaticMembers9.ts, 8, 50))
-@@ -37,10 +37,10 @@
+@@= skipped -24, +24 lines =@@
  >C : Symbol(C, Decl(typeOfThisInStaticMembers9.ts, 11, 9))
  
              a = super.f + 5

@@ -1,6 +1,6 @@
 --- old.privateNameStaticFieldClassExpression.symbols
 +++ new.privateNameStaticFieldClassExpression.symbols
-@@ -5,57 +5,50 @@
+@@= skipped -5, +5 lines =@@
  >B : Symbol(B, Decl(privateNameStaticFieldClassExpression.ts, 0, 0))
  
      static #foo = class {

@@ -1,6 +1,6 @@
 --- old.super.symbols
 +++ new.super.symbols
-@@ -9,13 +9,13 @@
+@@= skipped -9, +9 lines =@@
  >x : Symbol(x, Decl(super.ts, 2, 11))
      }
      public foo() {
@@ -16,7 +16,7 @@
  
          return "basebar";
      }
-@@ -26,15 +26,15 @@
+@@= skipped -17, +17 lines =@@
  >Base : Symbol(Base, Decl(super.ts, 0, 0))
  
      public foo() {
@@ -37,7 +37,7 @@
      }
  }
  
-@@ -44,12 +44,12 @@
+@@= skipped -18, +18 lines =@@
  >Sub1 : Symbol(Sub1, Decl(super.ts, 11, 1))
  
      public foo() {
@@ -53,7 +53,7 @@
      }
  }
  
-@@ -57,7 +57,7 @@
+@@= skipped -13, +13 lines =@@
  >Base2 : Symbol(Base2, Decl(super.ts, 24, 1))
  
      public foo() {
@@ -62,7 +62,7 @@
  
          super.foo();
      }
-@@ -72,11 +72,11 @@
+@@= skipped -15, +15 lines =@@
  >SubSub1 : Symbol(SubSub1, Decl(super.ts, 17, 1))
  
  s.foo() + ss.foo();

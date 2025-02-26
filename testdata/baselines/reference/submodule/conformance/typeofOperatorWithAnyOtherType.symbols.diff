@@ -1,6 +1,6 @@
 --- old.typeofOperatorWithAnyOtherType.symbols
 +++ new.typeofOperatorWithAnyOtherType.symbols
-@@ -33,10 +33,10 @@
+@@= skipped -33, +33 lines =@@
  >A : Symbol(A, Decl(typeofOperatorWithAnyOtherType.ts, 11, 1))
  
      public a: any;
@@ -13,7 +13,7 @@
  
          var a;
  >a : Symbol(a, Decl(typeofOperatorWithAnyOtherType.ts, 15, 11))
-@@ -98,9 +98,9 @@
+@@= skipped -65, +65 lines =@@
  
  var ResultIsString11 = typeof objA.a;
  >ResultIsString11 : Symbol(ResultIsString11, Decl(typeofOperatorWithAnyOtherType.ts, 39, 3))
@@ -25,7 +25,7 @@
  
  var ResultIsString12 = typeof obj1.x;
  >ResultIsString12 : Symbol(ResultIsString12, Decl(typeofOperatorWithAnyOtherType.ts, 40, 3))
-@@ -110,9 +110,9 @@
+@@= skipped -12, +12 lines =@@
  
  var ResultIsString13 = typeof M.n;
  >ResultIsString13 : Symbol(ResultIsString13, Decl(typeofOperatorWithAnyOtherType.ts, 41, 3))
@@ -37,7 +37,7 @@
  
  var ResultIsString14 = typeof foo();
  >ResultIsString14 : Symbol(ResultIsString14, Decl(typeofOperatorWithAnyOtherType.ts, 42, 3))
-@@ -120,9 +120,9 @@
+@@= skipped -10, +10 lines =@@
  
  var ResultIsString15 = typeof A.foo();
  >ResultIsString15 : Symbol(ResultIsString15, Decl(typeofOperatorWithAnyOtherType.ts, 43, 3))
@@ -49,7 +49,7 @@
  
  var ResultIsString16 = typeof (ANY + ANY1);
  >ResultIsString16 : Symbol(ResultIsString16, Decl(typeofOperatorWithAnyOtherType.ts, 44, 3))
-@@ -174,14 +174,14 @@
+@@= skipped -54, +54 lines =@@
  >x : Symbol(x, Decl(typeofOperatorWithAnyOtherType.ts, 6, 12))
  
  typeof objA.a;
@@ -68,7 +68,7 @@
  
  // use typeof in type query
  var z: any;
-@@ -203,19 +203,19 @@
+@@= skipped -29, +29 lines =@@
  >foo : Symbol(foo, Decl(typeofOperatorWithAnyOtherType.ts, 6, 35))
  
  z: typeof objA.a;

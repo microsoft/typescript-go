@@ -1,6 +1,6 @@
 --- old.inferentialTypingObjectLiteralMethod1.symbols
 +++ new.inferentialTypingObjectLiteralMethod1.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >U : Symbol(U, Decl(inferentialTypingObjectLiteralMethod1.ts, 0, 16))
  
      method(x: T): U;
@@ -9,7 +9,7 @@
  >x : Symbol(x, Decl(inferentialTypingObjectLiteralMethod1.ts, 1, 11))
  >T : Symbol(T, Decl(inferentialTypingObjectLiteralMethod1.ts, 0, 14))
  >U : Symbol(U, Decl(inferentialTypingObjectLiteralMethod1.ts, 0, 16))
-@@ -32,9 +32,9 @@
+@@= skipped -25, +25 lines =@@
  >foo : Symbol(foo, Decl(inferentialTypingObjectLiteralMethod1.ts, 2, 1))
  >method : Symbol(method, Decl(inferentialTypingObjectLiteralMethod1.ts, 4, 9))
  >p1 : Symbol(p1, Decl(inferentialTypingObjectLiteralMethod1.ts, 4, 17))

@@ -1,6 +1,6 @@
 --- old.implicitAnyGetAndSetAccessorWithAnyReturnType.symbols
 +++ new.implicitAnyGetAndSetAccessorWithAnyReturnType.symbols
-@@ -6,26 +6,26 @@
+@@= skipped -6, +6 lines =@@
  >GetAndSet : Symbol(GetAndSet, Decl(implicitAnyGetAndSetAccessorWithAnyReturnType.ts, 0, 0))
  
      getAndSet = null;             // error at "getAndSet"
@@ -34,7 +34,7 @@
  >value : Symbol(value, Decl(implicitAnyGetAndSetAccessorWithAnyReturnType.ts, 8, 29))
      }
  }
-@@ -34,7 +34,7 @@
+@@= skipped -28, +28 lines =@@
  >SetterOnly : Symbol(SetterOnly, Decl(implicitAnyGetAndSetAccessorWithAnyReturnType.ts, 11, 1))
  
      public set haveOnlySet(newXValue) {  // error at "haveOnlySet, newXValue"
@@ -43,7 +43,7 @@
  >newXValue : Symbol(newXValue, Decl(implicitAnyGetAndSetAccessorWithAnyReturnType.ts, 14, 27))
      }
  }
-@@ -43,7 +43,7 @@
+@@= skipped -9, +9 lines =@@
  >GetterOnly : Symbol(GetterOnly, Decl(implicitAnyGetAndSetAccessorWithAnyReturnType.ts, 16, 1))
  
      public get haveOnlyGet() {  // error at "haveOnlyGet"

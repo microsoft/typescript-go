@@ -1,6 +1,6 @@
 --- old.computedPropertyNames32_ES5.symbols
 +++ new.computedPropertyNames32_ES5.symbols
-@@ -10,12 +10,12 @@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(computedPropertyNames32_ES5.ts, 1, 8))
  
      bar() {

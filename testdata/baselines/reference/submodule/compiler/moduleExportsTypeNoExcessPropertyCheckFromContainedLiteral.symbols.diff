@@ -1,6 +1,6 @@
 --- old.moduleExportsTypeNoExcessPropertyCheckFromContainedLiteral.symbols
 +++ new.moduleExportsTypeNoExcessPropertyCheckFromContainedLiteral.symbols
-@@ -3,76 +3,11 @@
+@@= skipped -3, +3 lines =@@
  === eslint.config.js ===
  const eslintReact = require('./eslint-plugin-react.js');
  >eslintReact : Symbol(eslintReact, Decl(eslint.config.js, 0, 5))

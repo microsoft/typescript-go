@@ -1,6 +1,6 @@
 --- old.exportPrivateType.symbols
 +++ new.exportPrivateType.symbols
-@@ -8,10 +8,10 @@
+@@= skipped -8, +8 lines =@@
  >C1 : Symbol(C1, Decl(exportPrivateType.ts, 0, 12))
  
          x: string;
@@ -13,7 +13,7 @@
  >C1 : Symbol(C1, Decl(exportPrivateType.ts, 0, 12))
      }
   
-@@ -19,7 +19,7 @@
+@@= skipped -11, +11 lines =@@
  >C2 : Symbol(C2, Decl(exportPrivateType.ts, 4, 5))
  
          test() { return true; }
@@ -22,7 +22,7 @@
      }
   
      interface I1 {
-@@ -39,10 +39,10 @@
+@@= skipped -20, +20 lines =@@
  >I2 : Symbol(I2, Decl(exportPrivateType.ts, 13, 5))
  
          x: string;
@@ -35,7 +35,7 @@
      }
   
      // None of the types are exported, so per section 10.3, should all be errors
-@@ -65,8 +65,8 @@
+@@= skipped -26, +26 lines =@@
   
  var y = foo.g; // Exported variable 'y' has or is using private type 'foo.C2'.
  >y : Symbol(y, Decl(exportPrivateType.ts, 27, 3))

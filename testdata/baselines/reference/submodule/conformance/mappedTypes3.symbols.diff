@@ -1,6 +1,6 @@
 --- old.mappedTypes3.symbols
 +++ new.mappedTypes3.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >P : Symbol(P, Decl(mappedTypes3.ts, 0, 10))
  
      value: P;
@@ -9,7 +9,7 @@
  >P : Symbol(P, Decl(mappedTypes3.ts, 0, 10))
  }
  
-@@ -42,21 +42,21 @@
+@@= skipped -36, +36 lines =@@
  >Bacon : Symbol(Bacon, Decl(mappedTypes3.ts, 9, 50))
  
      isPerfect: boolean;
@@ -35,7 +35,7 @@
  >Box : Symbol(Box, Decl(mappedTypes3.ts, 0, 0))
  }
  
-@@ -72,19 +72,19 @@
+@@= skipped -30, +30 lines =@@
  
      let isPerfect = bb.isPerfect.value;
  >isPerfect : Symbol(isPerfect, Decl(mappedTypes3.ts, 23, 7))
@@ -59,7 +59,7 @@
  }
  
  function f2(bb: Boxified<Bacon>) {
-@@ -100,15 +100,15 @@
+@@= skipped -28, +28 lines =@@
  
      let bool = b.isPerfect;
  >bool : Symbol(bool, Decl(mappedTypes3.ts, 29, 7))
@@ -79,7 +79,7 @@
  }
  
  function f3(bb: BoxifiedBacon) {
-@@ -124,13 +124,13 @@
+@@= skipped -24, +24 lines =@@
  
      let bool = b.isPerfect;
  >bool : Symbol(bool, Decl(mappedTypes3.ts, 35, 7))

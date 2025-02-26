@@ -1,6 +1,6 @@
 --- old.assignmentCompatability42.symbols
 +++ new.assignmentCompatability42.symbols
-@@ -8,9 +8,9 @@
+@@= skipped -8, +8 lines =@@
  >interfaceWithPublicAndOptional : Symbol(interfaceWithPublicAndOptional, Decl(assignmentCompatability42.ts, 0, 18))
  >T : Symbol(T, Decl(assignmentCompatability42.ts, 1, 52))
  >U : Symbol(U, Decl(assignmentCompatability42.ts, 1, 54))
@@ -12,7 +12,7 @@
  >U : Symbol(U, Decl(assignmentCompatability42.ts, 1, 54))
  >obj4 : Symbol(obj4, Decl(assignmentCompatability42.ts, 1, 83))
  >interfaceWithPublicAndOptional : Symbol(interfaceWithPublicAndOptional, Decl(assignmentCompatability42.ts, 0, 18))
-@@ -27,9 +27,9 @@
+@@= skipped -19, +19 lines =@@
  >classWithPublicPrivate : Symbol(classWithPublicPrivate, Decl(assignmentCompatability42.ts, 4, 18))
  >T : Symbol(T, Decl(assignmentCompatability42.ts, 5, 44))
  >U : Symbol(U, Decl(assignmentCompatability42.ts, 5, 46))
@@ -24,7 +24,7 @@
  >U : Symbol(U, Decl(assignmentCompatability42.ts, 5, 46))
  >x7 : Symbol(x7, Decl(assignmentCompatability42.ts, 5, 104))
  >classWithPublicPrivate : Symbol(classWithPublicPrivate, Decl(assignmentCompatability42.ts, 4, 18))
-@@ -39,10 +39,10 @@
+@@= skipped -12, +12 lines =@@
  >x7 : Symbol(x7, Decl(assignmentCompatability42.ts, 5, 104))
  }
  __test2__.__val__x7 = __test1__.__val__obj4

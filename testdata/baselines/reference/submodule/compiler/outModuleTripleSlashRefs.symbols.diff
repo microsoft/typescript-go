@@ -1,6 +1,6 @@
 --- old.outModuleTripleSlashRefs.symbols
 +++ new.outModuleTripleSlashRefs.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >A : Symbol(A, Decl(a.ts, 0, 0))
  
  	member: typeof GlobalFoo;
@@ -9,7 +9,7 @@
  >GlobalFoo : Symbol(GlobalFoo, Decl(b.ts, 4, 11))
  }
  
-@@ -16,7 +16,7 @@
+@@= skipped -10, +10 lines =@@
  >Foo : Symbol(Foo, Decl(b.ts, 0, 0))
  
  	member: Bar;
@@ -18,7 +18,7 @@
  >Bar : Symbol(Bar, Decl(c.d.ts, 0, 0))
  }
  declare var GlobalFoo: Foo;
-@@ -29,7 +29,7 @@
+@@= skipped -13, +13 lines =@@
  >Bar : Symbol(Bar, Decl(c.d.ts, 0, 0))
  
  	member: Baz;
@@ -27,7 +27,7 @@
  >Baz : Symbol(Baz, Decl(d.d.ts, 0, 0))
  }
  
-@@ -38,7 +38,7 @@
+@@= skipped -9, +9 lines =@@
  >Baz : Symbol(Baz, Decl(d.d.ts, 0, 0))
  
  	member: number;

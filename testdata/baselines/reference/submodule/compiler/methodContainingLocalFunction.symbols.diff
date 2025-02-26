@@ -1,6 +1,6 @@
 --- old.methodContainingLocalFunction.symbols
 +++ new.methodContainingLocalFunction.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >T : Symbol(T, Decl(methodContainingLocalFunction.ts, 1, 20))
  
      public exhibitBug() {
@@ -9,7 +9,7 @@
  
          function localFunction() { }
  >localFunction : Symbol(localFunction, Decl(methodContainingLocalFunction.ts, 2, 25))
-@@ -26,7 +26,7 @@
+@@= skipped -19, +19 lines =@@
  >T : Symbol(T, Decl(methodContainingLocalFunction.ts, 9, 21))
  
      private static get exhibitBug() {
@@ -18,7 +18,7 @@
  
          function localFunction() { }
  >localFunction : Symbol(localFunction, Decl(methodContainingLocalFunction.ts, 10, 37))
-@@ -47,7 +47,7 @@
+@@= skipped -21, +21 lines =@@
  >T : Symbol(T, Decl(methodContainingLocalFunction.ts, 18, 21))
  
      public exhibitBug() {
@@ -27,7 +27,7 @@
  
          function localGenericFunction<U>(u?: U) { }
  >localGenericFunction : Symbol(localGenericFunction, Decl(methodContainingLocalFunction.ts, 19, 25))
-@@ -68,7 +68,7 @@
+@@= skipped -21, +21 lines =@@
  >C : Symbol(C, Decl(methodContainingLocalFunction.ts, 24, 1))
  
      exhibit() {
@@ -36,7 +36,7 @@
  
          var funcExpr = <U>(u?: U) => { };
  >funcExpr : Symbol(funcExpr, Decl(methodContainingLocalFunction.ts, 28, 11))
-@@ -107,7 +107,7 @@
+@@= skipped -39, +39 lines =@@
  >E : Symbol(E, Decl(methodContainingLocalFunction.ts, 40, 1))
  
      A = (() => {

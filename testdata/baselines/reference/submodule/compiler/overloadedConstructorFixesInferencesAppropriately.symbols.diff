@@ -1,6 +1,6 @@
 --- old.overloadedConstructorFixesInferencesAppropriately.symbols
 +++ new.overloadedConstructorFixesInferencesAppropriately.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(overloadedConstructorFixesInferencesAppropriately.ts, 0, 14))
  
      v: T;
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(overloadedConstructorFixesInferencesAppropriately.ts, 0, 14))
  }
  
-@@ -14,7 +14,7 @@
+@@= skipped -8, +8 lines =@@
  >ErrorResult : Symbol(ErrorResult, Decl(overloadedConstructorFixesInferencesAppropriately.ts, 2, 1))
  
      readonly error: true
@@ -18,7 +18,7 @@
  }
  
  interface AsyncLoaderProps<TResult extends {}> {
-@@ -22,12 +22,12 @@
+@@= skipped -8, +8 lines =@@
  >TResult : Symbol(TResult, Decl(overloadedConstructorFixesInferencesAppropriately.ts, 8, 27))
  
      readonly asyncLoad: () => Box<TResult>;

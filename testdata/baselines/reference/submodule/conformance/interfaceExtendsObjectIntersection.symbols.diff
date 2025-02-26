@@ -1,6 +1,6 @@
 --- old.interfaceExtendsObjectIntersection.symbols
 +++ new.interfaceExtendsObjectIntersection.symbols
-@@ -30,37 +30,37 @@
+@@= skipped -30, +30 lines =@@
  interface I1 extends T1 { x: string }
  >I1 : Symbol(I1, Decl(interfaceExtendsObjectIntersection.ts, 6, 45))
  >T1 : Symbol(T1, Decl(interfaceExtendsObjectIntersection.ts, 0, 0))
@@ -45,7 +45,7 @@
  
  type Constructor<T> = new () => T;
  >Constructor : Symbol(Constructor, Decl(interfaceExtendsObjectIntersection.ts, 16, 34), Decl(interfaceExtendsObjectIntersection.ts, 14, 37))
-@@ -77,43 +77,43 @@
+@@= skipped -47, +47 lines =@@
  >C1 : Symbol(C1, Decl(interfaceExtendsObjectIntersection.ts, 17, 50))
  >Constructor : Symbol(Constructor, Decl(interfaceExtendsObjectIntersection.ts, 16, 34), Decl(interfaceExtendsObjectIntersection.ts, 14, 37))
  >I1 : Symbol(I1, Decl(interfaceExtendsObjectIntersection.ts, 6, 45))
@@ -96,7 +96,7 @@
  
  declare function fx(x: string): string;
  >fx : Symbol(fx, Decl(interfaceExtendsObjectIntersection.ts, 25, 48))
-@@ -121,13 +121,13 @@
+@@= skipped -44, +44 lines =@@
  
  declare class CX { a: number }
  >CX : Symbol(CX, Decl(interfaceExtendsObjectIntersection.ts, 27, 39))
@@ -114,7 +114,7 @@
  
  declare namespace NX { export const a = 1 }
  >NX : Symbol(NX, Decl(interfaceExtendsObjectIntersection.ts, 29, 27))
-@@ -152,22 +152,22 @@
+@@= skipped -31, +31 lines =@@
  interface I10 extends T10 { x: string }
  >I10 : Symbol(I10, Decl(interfaceExtendsObjectIntersection.ts, 35, 21))
  >T10 : Symbol(T10, Decl(interfaceExtendsObjectIntersection.ts, 30, 43))
@@ -141,7 +141,7 @@
  
  type Identifiable<T> = { _id: string } & T;
  >Identifiable : Symbol(Identifiable, Decl(interfaceExtendsObjectIntersection.ts, 40, 39))
-@@ -179,47 +179,47 @@
+@@= skipped -27, +27 lines =@@
  >I20 : Symbol(I20, Decl(interfaceExtendsObjectIntersection.ts, 42, 43))
  >Partial : Symbol(Partial, Decl(lib.es5.d.ts, --, --))
  >T1 : Symbol(T1, Decl(interfaceExtendsObjectIntersection.ts, 0, 0))
@@ -196,7 +196,7 @@
  
  class C23 extends Constructor<Identifiable<T1 & { b: number}>>() { x: string }
  >C23 : Symbol(C23, Decl(interfaceExtendsObjectIntersection.ts, 51, 63))
-@@ -227,5 +227,5 @@
+@@= skipped -48, +48 lines =@@
  >Identifiable : Symbol(Identifiable, Decl(interfaceExtendsObjectIntersection.ts, 40, 39))
  >T1 : Symbol(T1, Decl(interfaceExtendsObjectIntersection.ts, 0, 0))
  >b : Symbol(b, Decl(interfaceExtendsObjectIntersection.ts, 52, 49))

@@ -1,6 +1,6 @@
 --- old.importCallExpression2ES2020.symbols
 +++ new.importCallExpression2ES2020.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >B : Symbol(B, Decl(0.ts, 0, 0))
  
      print() { return "I am B"}
@@ -9,7 +9,7 @@
  }
  
  === 2.ts ===
-@@ -15,9 +15,9 @@
+@@= skipped -10, +10 lines =@@
  >Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2018.promise.d.ts, --, --))
  
      x.then(value => {
@@ -21,7 +21,7 @@
  >value : Symbol(value, Decl(2.ts, 1, 11))
  
          let b = new value.B();
-@@ -32,5 +32,4 @@
+@@= skipped -17, +17 lines =@@
  
  foo(import("./0"));
  >foo : Symbol(foo, Decl(2.ts, 0, 0))

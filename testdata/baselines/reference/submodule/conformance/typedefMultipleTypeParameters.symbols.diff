@@ -1,6 +1,6 @@
 --- old.typedefMultipleTypeParameters.symbols
 +++ new.typedefMultipleTypeParameters.symbols
-@@ -24,7 +24,7 @@
+@@= skipped -24, +24 lines =@@
  === test.ts ===
  declare var actually: Everything<{ a: number  }, undefined, { c: 1, d: 1 }, number, string>;
  >actually : Symbol(actually, Decl(test.ts, 0, 11))

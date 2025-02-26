@@ -1,6 +1,6 @@
 --- old.decoratorMetadataPromise.symbols
 +++ new.decoratorMetadataPromise.symbols
-@@ -3,7 +3,7 @@
+@@= skipped -3, +3 lines =@@
  === decoratorMetadataPromise.ts ===
  declare const decorator: MethodDecorator;
  >decorator : Symbol(decorator, Decl(decoratorMetadataPromise.ts, 0, 13))
@@ -9,7 +9,7 @@
  
  class A {
  >A : Symbol(A, Decl(decoratorMetadataPromise.ts, 0, 41))
-@@ -12,23 +12,23 @@
+@@= skipped -9, +9 lines =@@
  >decorator : Symbol(decorator, Decl(decoratorMetadataPromise.ts, 0, 13))
  
      async foo() {}

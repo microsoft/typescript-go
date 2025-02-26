@@ -1,6 +1,6 @@
 --- old.typeofImportInstantiationExpression.symbols
 +++ new.typeofImportInstantiationExpression.symbols
-@@ -9,14 +9,14 @@
+@@= skipped -9, +9 lines =@@
  >Record : Symbol(Record, Decl(lib.es5.d.ts, --, --))
  
      "__is_argument__"?: true;
@@ -18,7 +18,7 @@
  >Params : Symbol(Params, Decl(input.ts, 0, 22))
  }
  
-@@ -30,9 +30,9 @@
+@@= skipped -21, +21 lines =@@
  >Arg : Symbol(Arg, Decl(input.ts, 0, 0))
  >T : Symbol(T, Decl(input.ts, 6, 27))
  >U : Symbol(U, Decl(input.ts, 6, 35))

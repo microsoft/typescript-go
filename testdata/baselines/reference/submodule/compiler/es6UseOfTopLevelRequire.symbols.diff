@@ -1,6 +1,6 @@
 --- old.es6UseOfTopLevelRequire.symbols
 +++ new.es6UseOfTopLevelRequire.symbols
-@@ -16,7 +16,7 @@
+@@= skipped -16, +16 lines =@@
  
  === b.ts ===
  export default function require(s: string): void {

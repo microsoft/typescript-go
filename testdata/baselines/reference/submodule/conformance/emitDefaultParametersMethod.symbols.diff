@@ -1,6 +1,6 @@
 --- old.emitDefaultParametersMethod.symbols
 +++ new.emitDefaultParametersMethod.symbols
-@@ -11,22 +11,22 @@
+@@= skipped -11, +11 lines =@@
  >y : Symbol(y, Decl(emitDefaultParametersMethod.ts, 1, 49))
  
      public foo(x: string, t = false) { }

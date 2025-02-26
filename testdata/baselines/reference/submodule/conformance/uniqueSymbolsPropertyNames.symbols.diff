@@ -1,6 +1,6 @@
 --- old.uniqueSymbolsPropertyNames.symbols
 +++ new.uniqueSymbolsPropertyNames.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >OpTypes : Symbol(OpTypes, Decl(uniqueSymbolsPropertyNames.ts, 0, 0))
  
    readonly equal: unique symbol;
@@ -9,7 +9,7 @@
  }
  
  namespace OpNamespace {
-@@ -17,15 +17,15 @@
+@@= skipped -12, +12 lines =@@
  
  const uniqueSymbol0 = Symbol.for("");
  >uniqueSymbol0 : Symbol(uniqueSymbol0, Decl(uniqueSymbolsPropertyNames.ts, 8, 5))
@@ -29,7 +29,7 @@
  
  
  function getUniqueSymbol0(): typeof uniqueSymbol0 {
-@@ -50,9 +50,9 @@
+@@= skipped -33, +33 lines =@@
  
    equal: Symbol.for("equal"),
  >equal : Symbol(equal, Decl(uniqueSymbolsPropertyNames.ts, 20, 21))
@@ -41,7 +41,7 @@
  
  } as OpTypes;
  >OpTypes : Symbol(OpTypes, Decl(uniqueSymbolsPropertyNames.ts, 0, 0))
-@@ -77,15 +77,15 @@
+@@= skipped -27, +27 lines =@@
  
    [Op.equal]: "first",
  >[Op.equal] : Symbol([Op.equal], Decl(uniqueSymbolsPropertyNames.ts, 30, 12), Decl(uniqueSymbolsPropertyNames.ts, 31, 22))
@@ -61,7 +61,7 @@
  
  };
  
-@@ -94,15 +94,15 @@
+@@= skipped -17, +17 lines =@@
  
    [OpNamespace.equal]: "first",
  >[OpNamespace.equal] : Symbol([OpNamespace.equal], Decl(uniqueSymbolsPropertyNames.ts, 35, 12), Decl(uniqueSymbolsPropertyNames.ts, 36, 31))
@@ -81,7 +81,7 @@
  
  };
  
-@@ -131,19 +131,19 @@
+@@= skipped -37, +37 lines =@@
  >Cls1 : Symbol(Cls1, Decl(uniqueSymbolsPropertyNames.ts, 45, 2))
  
    [uniqueSymbol0] = "first";
@@ -105,7 +105,7 @@
  >uniqueSymbol1 : Symbol(uniqueSymbol1, Decl(uniqueSymbolsPropertyNames.ts, 9, 5))
  }
  
-@@ -151,34 +151,34 @@
+@@= skipped -20, +20 lines =@@
  >Cls2 : Symbol(Cls2, Decl(uniqueSymbolsPropertyNames.ts, 52, 1))
  
    [OpNamespace.equal] = "first";

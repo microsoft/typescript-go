@@ -1,6 +1,6 @@
 --- old.checkJsFiles_noErrorLocation.symbols
 +++ new.checkJsFiles_noErrorLocation.symbols
-@@ -9,7 +9,7 @@
+@@= skipped -9, +9 lines =@@
  
    }
    foo() {
@@ -9,7 +9,7 @@
  
      return 4;
    }
-@@ -24,9 +24,9 @@
+@@= skipped -15, +15 lines =@@
  >super : Symbol(A, Decl(a.js, 0, 0))
  
      this.foo = () => 3;
@@ -21,7 +21,7 @@
    }
  }
  
-@@ -35,7 +35,7 @@
+@@= skipped -11, +11 lines =@@
  >B : Symbol(B, Decl(a.js, 8, 1))
  
  i.foo();

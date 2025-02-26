@@ -1,6 +1,6 @@
 --- old.arraySigChecking.symbols
 +++ new.arraySigChecking.symbols
-@@ -6,21 +6,21 @@
+@@= skipped -6, +6 lines =@@
  
      interface iBar { t: any; }
  >iBar : Symbol(iBar, Decl(arraySigChecking.ts, 0, 18))
@@ -25,7 +25,7 @@
      }
  
      var foo: { [index: any]; }; // expect an error here
-@@ -32,7 +32,7 @@
+@@= skipped -26, +26 lines =@@
  >myInt : Symbol(myInt, Decl(arraySigChecking.ts, 11, 1))
  
      voidFn(): void;
@@ -34,7 +34,7 @@
  }
  var myVar: myInt;
  >myVar : Symbol(myVar, Decl(arraySigChecking.ts, 16, 3))
-@@ -40,9 +40,9 @@
+@@= skipped -8, +8 lines =@@
  
  var strArray: string[] = [myVar.voidFn()];
  >strArray : Symbol(strArray, Decl(arraySigChecking.ts, 17, 3))

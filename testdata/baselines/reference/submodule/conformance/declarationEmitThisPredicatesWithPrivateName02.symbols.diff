@@ -1,6 +1,6 @@
 --- old.declarationEmitThisPredicatesWithPrivateName02.symbols
 +++ new.declarationEmitThisPredicatesWithPrivateName02.symbols
-@@ -5,13 +5,13 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(declarationEmitThisPredicatesWithPrivateName02.ts, 0, 0))
  
      a: string;
@@ -17,7 +17,7 @@
  }
  
  export const obj = {
-@@ -26,14 +26,14 @@
+@@= skipped -21, +21 lines =@@
  >Foo : Symbol(Foo, Decl(declarationEmitThisPredicatesWithPrivateName02.ts, 0, 0))
  
          return dis.a != null && dis.b != null && dis.c != null;

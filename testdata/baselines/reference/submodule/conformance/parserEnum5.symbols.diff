@@ -1,6 +1,6 @@
 --- old.parserEnum5.symbols
 +++ new.parserEnum5.symbols
-@@ -3,19 +3,19 @@
+@@= skipped -3, +3 lines =@@
  === parserEnum5.ts ===
  enum E2 { a, }
  >E2 : Symbol(E2, Decl(parserEnum5.ts, 0, 0))

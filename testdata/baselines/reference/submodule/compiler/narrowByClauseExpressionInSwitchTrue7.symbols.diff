@@ -1,6 +1,6 @@
 --- old.narrowByClauseExpressionInSwitchTrue7.symbols
 +++ new.narrowByClauseExpressionInSwitchTrue7.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Base : Symbol(Base, Decl(narrowByClauseExpressionInSwitchTrue7.ts, 0, 0))
  
      basey: string = "";
@@ -9,7 +9,7 @@
  }
  
  class Derived1 extends Base {
-@@ -13,7 +13,7 @@
+@@= skipped -8, +8 lines =@@
  >Base : Symbol(Base, Decl(narrowByClauseExpressionInSwitchTrue7.ts, 0, 0))
  
      d: string = "";
@@ -18,7 +18,7 @@
  }
  
  class Derived2 extends Base {
-@@ -21,10 +21,10 @@
+@@= skipped -8, +8 lines =@@
  >Base : Symbol(Base, Decl(narrowByClauseExpressionInSwitchTrue7.ts, 0, 0))
  
      d: string = "";
@@ -31,7 +31,7 @@
  }
  
  function classy(base: Base, someDerived: Derived1 | Derived2) {
-@@ -41,16 +41,16 @@
+@@= skipped -20, +20 lines =@@
  >Derived1 : Symbol(Derived1, Decl(narrowByClauseExpressionInSwitchTrue7.ts, 2, 1))
  
              base.d
@@ -52,7 +52,7 @@
      }
  
      switch (true) {
-@@ -59,9 +59,9 @@
+@@= skipped -18, +18 lines =@@
  >Derived1 : Symbol(Derived1, Decl(narrowByClauseExpressionInSwitchTrue7.ts, 2, 1))
  
              someDerived.d
@@ -64,7 +64,7 @@
  
              break;
          case someDerived instanceof Derived2:
-@@ -69,9 +69,9 @@
+@@= skipped -10, +10 lines =@@
  >Derived2 : Symbol(Derived2, Decl(narrowByClauseExpressionInSwitchTrue7.ts, 6, 1))
  
              someDerived.d
@@ -76,7 +76,7 @@
  
              break
          default:
-@@ -86,9 +86,9 @@
+@@= skipped -17, +17 lines =@@
  >Derived1 : Symbol(Derived1, Decl(narrowByClauseExpressionInSwitchTrue7.ts, 2, 1))
  
              someDerived.d
@@ -88,7 +88,7 @@
  
              // fallthrough
          case someDerived instanceof Derived2:
-@@ -118,14 +118,14 @@
+@@= skipped -32, +32 lines =@@
  >Derived1 : Symbol(Derived1, Decl(narrowByClauseExpressionInSwitchTrue7.ts, 2, 1))
  
              someDerived.d;
@@ -107,7 +107,7 @@
  
              break
          case someDerived instanceof Derived2:
-@@ -133,14 +133,14 @@
+@@= skipped -15, +15 lines =@@
  >Derived2 : Symbol(Derived2, Decl(narrowByClauseExpressionInSwitchTrue7.ts, 6, 1))
  
              someDerived.d;
@@ -126,7 +126,7 @@
      }
  
      switch (true) {
-@@ -149,14 +149,14 @@
+@@= skipped -16, +16 lines =@@
  >Derived1 : Symbol(Derived1, Decl(narrowByClauseExpressionInSwitchTrue7.ts, 2, 1))
  
              someDerived.d;
@@ -145,7 +145,7 @@
  
              break
          default:
-@@ -169,14 +169,14 @@
+@@= skipped -20, +20 lines =@@
  >Derived2 : Symbol(Derived2, Decl(narrowByClauseExpressionInSwitchTrue7.ts, 6, 1))
  
              someDerived.d;
@@ -164,7 +164,7 @@
      }
  
      switch (true) {
-@@ -185,14 +185,14 @@
+@@= skipped -16, +16 lines =@@
  >Derived1 : Symbol(Derived1, Decl(narrowByClauseExpressionInSwitchTrue7.ts, 2, 1))
  
              someDerived.d;
@@ -183,7 +183,7 @@
  
              break
          case someDerived instanceof Derived2:
-@@ -200,25 +200,25 @@
+@@= skipped -15, +15 lines =@@
  >Derived2 : Symbol(Derived2, Decl(narrowByClauseExpressionInSwitchTrue7.ts, 6, 1))
  
              someDerived.d;

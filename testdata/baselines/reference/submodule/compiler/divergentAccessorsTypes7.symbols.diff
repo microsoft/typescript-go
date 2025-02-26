@@ -1,6 +1,6 @@
 --- old.divergentAccessorsTypes7.symbols
 +++ new.divergentAccessorsTypes7.symbols
-@@ -8,13 +8,13 @@
+@@= skipped -8, +8 lines =@@
      constructor() {}
  
      set value(value: string | ((item: S) => string)) {}
@@ -16,7 +16,7 @@
  
          return null!;
      }
-@@ -38,9 +38,9 @@
+@@= skipped -30, +30 lines =@@
  }>();
  
  a.value = (item) => item.property
@@ -28,7 +28,7 @@
  >item : Symbol(item, Decl(divergentAccessorsTypes7.ts, 22, 11))
  >item.property : Symbol(property, Decl(divergentAccessorsTypes7.ts, 18, 20))
  >item : Symbol(item, Decl(divergentAccessorsTypes7.ts, 22, 11))
-@@ -48,7 +48,7 @@
+@@= skipped -10, +10 lines =@@
  
  a['value'] = (item) => item.property
  >a : Symbol(a, Decl(divergentAccessorsTypes7.ts, 18, 5))

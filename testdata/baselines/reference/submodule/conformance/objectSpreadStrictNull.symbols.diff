@@ -1,6 +1,6 @@
 --- old.objectSpreadStrictNull.symbols
 +++ new.objectSpreadStrictNull.symbols
-@@ -107,19 +107,19 @@
+@@= skipped -107, +107 lines =@@
  >Fields : Symbol(Fields, Decl(objectSpreadStrictNull.ts, 27, 44))
  
      foo: number;

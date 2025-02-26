@@ -1,6 +1,6 @@
 --- old.twoGenericInterfacesWithDifferentConstraints.symbols
 +++ new.twoGenericInterfacesWithDifferentConstraints.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
  
      x: T;
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(twoGenericInterfacesWithDifferentConstraints.ts, 0, 12), Decl(twoGenericInterfacesWithDifferentConstraints.ts, 4, 12))
  }
  
-@@ -17,7 +17,7 @@
+@@= skipped -10, +10 lines =@@
  >Number : Symbol(Number, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      y: T;
@@ -18,7 +18,7 @@
  >T : Symbol(T, Decl(twoGenericInterfacesWithDifferentConstraints.ts, 0, 12), Decl(twoGenericInterfacesWithDifferentConstraints.ts, 4, 12))
  }
  
-@@ -31,7 +31,7 @@
+@@= skipped -14, +14 lines =@@
  >Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
  
          x: T;
@@ -27,7 +27,7 @@
  >T : Symbol(T, Decl(twoGenericInterfacesWithDifferentConstraints.ts, 9, 16), Decl(twoGenericInterfacesWithDifferentConstraints.ts, 13, 16))
      }
  
-@@ -41,7 +41,7 @@
+@@= skipped -10, +10 lines =@@
  >A : Symbol(A, Decl(twoGenericInterfacesWithDifferentConstraints.ts, 0, 0), Decl(twoGenericInterfacesWithDifferentConstraints.ts, 2, 1))
  
          y: T;
@@ -36,7 +36,7 @@
  >T : Symbol(T, Decl(twoGenericInterfacesWithDifferentConstraints.ts, 9, 16), Decl(twoGenericInterfacesWithDifferentConstraints.ts, 13, 16))
      }
  }
-@@ -55,7 +55,7 @@
+@@= skipped -14, +14 lines =@@
  >Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
  
          x: T;
@@ -45,7 +45,7 @@
  >T : Symbol(T, Decl(twoGenericInterfacesWithDifferentConstraints.ts, 19, 16))
      }
  }
-@@ -69,7 +69,7 @@
+@@= skipped -14, +14 lines =@@
  >Number : Symbol(Number, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
          y: T;
@@ -54,7 +54,7 @@
  >T : Symbol(T, Decl(twoGenericInterfacesWithDifferentConstraints.ts, 25, 16))
      }
  }
-@@ -83,7 +83,7 @@
+@@= skipped -14, +14 lines =@@
  >Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
  
          x: T;
@@ -63,7 +63,7 @@
  >T : Symbol(T, Decl(twoGenericInterfacesWithDifferentConstraints.ts, 31, 23), Decl(twoGenericInterfacesWithDifferentConstraints.ts, 37, 23))
      }
  }
-@@ -97,7 +97,7 @@
+@@= skipped -14, +14 lines =@@
  >Number : Symbol(Number, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
          y: T;
@@ -72,7 +72,7 @@
  >T : Symbol(T, Decl(twoGenericInterfacesWithDifferentConstraints.ts, 31, 23), Decl(twoGenericInterfacesWithDifferentConstraints.ts, 37, 23))
      }
  }
-@@ -107,11 +107,11 @@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(twoGenericInterfacesWithDifferentConstraints.ts, 42, 12), Decl(twoGenericInterfacesWithDifferentConstraints.ts, 47, 12))
  
    u: T;
@@ -86,7 +86,7 @@
  >Constraint : Symbol(Constraint, Decl(twoGenericInterfacesWithDifferentConstraints.ts, 58, 1))
  >T : Symbol(T, Decl(twoGenericInterfacesWithDifferentConstraints.ts, 42, 12), Decl(twoGenericInterfacesWithDifferentConstraints.ts, 47, 12))
  }
-@@ -121,11 +121,11 @@
+@@= skipped -14, +14 lines =@@
  >T : Symbol(T, Decl(twoGenericInterfacesWithDifferentConstraints.ts, 42, 12), Decl(twoGenericInterfacesWithDifferentConstraints.ts, 47, 12))
  
    x: T;
@@ -100,7 +100,7 @@
  >Constraint : Symbol(Constraint, Decl(twoGenericInterfacesWithDifferentConstraints.ts, 58, 1))
  >T : Symbol(T, Decl(twoGenericInterfacesWithDifferentConstraints.ts, 42, 12), Decl(twoGenericInterfacesWithDifferentConstraints.ts, 47, 12))
  }
-@@ -135,7 +135,7 @@
+@@= skipped -14, +14 lines =@@
  >T : Symbol(T, Decl(twoGenericInterfacesWithDifferentConstraints.ts, 52, 12), Decl(twoGenericInterfacesWithDifferentConstraints.ts, 56, 12))
  
    x: T;
@@ -109,7 +109,7 @@
  >T : Symbol(T, Decl(twoGenericInterfacesWithDifferentConstraints.ts, 52, 12), Decl(twoGenericInterfacesWithDifferentConstraints.ts, 56, 12))
  }
  
-@@ -144,7 +144,7 @@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(twoGenericInterfacesWithDifferentConstraints.ts, 52, 12), Decl(twoGenericInterfacesWithDifferentConstraints.ts, 56, 12))
  
    y: T;

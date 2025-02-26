@@ -1,6 +1,6 @@
 --- old.enumAssignability.symbols
 +++ new.enumAssignability.symbols
-@@ -5,23 +5,23 @@
+@@= skipped -5, +5 lines =@@
  
  enum E { A }
  >E : Symbol(E, Decl(enumAssignability.ts, 0, 0))
@@ -30,7 +30,7 @@
  
  e = f; 
  >e : Symbol(e, Decl(enumAssignability.ts, 5, 3))
-@@ -56,7 +56,7 @@
+@@= skipped -51, +51 lines =@@
  >C : Symbol(C, Decl(enumAssignability.ts, 16, 19))
  
          foo: string;
@@ -39,7 +39,7 @@
      }
      var ac: C;
  >ac : Symbol(ac, Decl(enumAssignability.ts, 21, 7))
-@@ -66,7 +66,7 @@
+@@= skipped -10, +10 lines =@@
  >I : Symbol(I, Decl(enumAssignability.ts, 21, 14))
  
          foo: string;

@@ -1,6 +1,6 @@
 --- old.exportSpecifierReferencingOuterDeclaration3.symbols
 +++ new.exportSpecifierReferencingOuterDeclaration3.symbols
-@@ -18,10 +18,10 @@
+@@= skipped -18, +18 lines =@@
      export function foo(): X.foo;
  >foo : Symbol(foo, Decl(exportSpecifierReferencingOuterDeclaration3.ts, 3, 17))
  >X : Symbol(X, Decl(exportSpecifierReferencingOuterDeclaration3.ts, 1, 20))

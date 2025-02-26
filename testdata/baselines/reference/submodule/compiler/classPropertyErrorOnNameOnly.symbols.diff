@@ -1,6 +1,6 @@
 --- old.classPropertyErrorOnNameOnly.symbols
 +++ new.classPropertyErrorOnNameOnly.symbols
-@@ -14,7 +14,7 @@
+@@= skipped -14, +14 lines =@@
  >Example : Symbol(Example, Decl(classPropertyErrorOnNameOnly.ts, 2, 39))
  
    insideClass: FuncType = function(val) { // error span goes from here

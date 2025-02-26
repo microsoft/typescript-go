@@ -1,6 +1,6 @@
 --- old.superPropertyAccessNoError.symbols
 +++ new.superPropertyAccessNoError.symbols
-@@ -13,19 +13,19 @@
+@@= skipped -13, +13 lines =@@
  >SomeBaseClass : Symbol(SomeBaseClass, Decl(superPropertyAccessNoError.ts, 0, 0))
  
      public func() {
@@ -23,7 +23,7 @@
  
          return this;
  >this : Symbol(SomeBaseClass, Decl(superPropertyAccessNoError.ts, 0, 0))
-@@ -42,41 +42,41 @@
+@@= skipped -29, +29 lines =@@
  
          var x = super.func();
  >x : Symbol(x, Decl(superPropertyAccessNoError.ts, 25, 11), Decl(superPropertyAccessNoError.ts, 26, 11))
@@ -75,7 +75,7 @@
  
          var x: string;
  >x : Symbol(x, Decl(superPropertyAccessNoError.ts, 36, 11), Decl(superPropertyAccessNoError.ts, 37, 11))
-@@ -85,40 +85,40 @@
+@@= skipped -43, +43 lines =@@
      }
  
      set a(n) {
@@ -125,7 +125,7 @@
  
          var x: number;
  >x : Symbol(x, Decl(superPropertyAccessNoError.ts, 52, 11), Decl(superPropertyAccessNoError.ts, 53, 11))
-@@ -127,26 +127,26 @@
+@@= skipped -42, +42 lines =@@
      }
  
      static set a(n) {
@@ -158,7 +158,7 @@
      }
  }
  
-@@ -155,9 +155,9 @@
+@@= skipped -28, +28 lines =@@
  >SomeDerivedClass : Symbol(SomeDerivedClass, Decl(superPropertyAccessNoError.ts, 20, 1))
  
  instance.returnThis().fn();

@@ -1,6 +1,6 @@
 --- old.divergentAccessorsVisibility1.symbols
 +++ new.divergentAccessorsVisibility1.symbols
-@@ -5,205 +5,205 @@
+@@= skipped -5, +5 lines =@@
  >Base : Symbol(Base, Decl(divergentAccessorsVisibility1.ts, 0, 0))
  
      get PublicPublic() { return 0; }
@@ -279,7 +279,7 @@
      }
  }
  
-@@ -212,142 +212,142 @@
+@@= skipped -207, +207 lines =@@
  >Base : Symbol(Base, Decl(divergentAccessorsVisibility1.ts, 0, 0))
  
      test2() {
@@ -477,7 +477,7 @@
      }
  }
  
-@@ -361,273 +361,273 @@
+@@= skipped -149, +149 lines =@@
  >fn : Symbol(fn, Decl(divergentAccessorsVisibility1.ts, 95, 41))
  
      base.PublicPublic = 0;

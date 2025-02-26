@@ -1,6 +1,6 @@
 --- old.callSignatureWithoutAnnotationsOrBody.symbols
 +++ new.callSignatureWithoutAnnotationsOrBody.symbols
-@@ -16,7 +16,7 @@
+@@= skipped -16, +16 lines =@@
  
      ();
      f();
@@ -9,7 +9,7 @@
  }
  var i: I;
  >i : Symbol(i, Decl(callSignatureWithoutAnnotationsOrBody.ts, 9, 3))
-@@ -28,9 +28,9 @@
+@@= skipped -12, +12 lines =@@
  
  var r3 = i.f();
  >r3 : Symbol(r3, Decl(callSignatureWithoutAnnotationsOrBody.ts, 11, 3))

@@ -1,6 +1,6 @@
 --- old.extendedUnicodePlaneIdentifiers.symbols
 +++ new.extendedUnicodePlaneIdentifiers.symbols
-@@ -8,20 +8,20 @@
+@@= skipped -8, +8 lines =@@
  >𝑀 : Symbol(𝑀, Decl(extendedUnicodePlaneIdentifiers.ts, 1, 5))
  
  console.log(𝑀 + 𝑚); // 9
@@ -26,7 +26,7 @@
  }
  
  // lower 8 bits look like 'a'
-@@ -29,9 +29,9 @@
+@@= skipped -21, +21 lines =@@
  >ၡ : Symbol(ၡ, Decl(extendedUnicodePlaneIdentifiers.ts, 10, 5))
  
  console.log(ၡ ** ၡ);
@@ -38,7 +38,7 @@
  >ၡ : Symbol(ၡ, Decl(extendedUnicodePlaneIdentifiers.ts, 10, 5))
  >ၡ : Symbol(ၡ, Decl(extendedUnicodePlaneIdentifiers.ts, 10, 5))
  
-@@ -40,9 +40,9 @@
+@@= skipped -11, +11 lines =@@
  >ဒ : Symbol(ဒ, Decl(extendedUnicodePlaneIdentifiers.ts, 14, 5))
  
  console.log(ဒ ** ဒ);
@@ -50,7 +50,7 @@
  >ဒ : Symbol(ဒ, Decl(extendedUnicodePlaneIdentifiers.ts, 14, 5))
  >ဒ : Symbol(ဒ, Decl(extendedUnicodePlaneIdentifiers.ts, 14, 5))
  
-@@ -51,9 +51,9 @@
+@@= skipped -11, +11 lines =@@
  >ဒၡ𝑀 : Symbol(ဒၡ𝑀, Decl(extendedUnicodePlaneIdentifiers.ts, 18, 5))
  
  console.log(ဒၡ𝑀 ** ဒၡ𝑀);
@@ -62,7 +62,7 @@
  >ဒၡ𝑀 : Symbol(ဒၡ𝑀, Decl(extendedUnicodePlaneIdentifiers.ts, 18, 5))
  >ဒၡ𝑀 : Symbol(ဒၡ𝑀, Decl(extendedUnicodePlaneIdentifiers.ts, 18, 5))
  
-@@ -61,9 +61,9 @@
+@@= skipped -10, +10 lines =@@
  >ၡ𝑀ဒ : Symbol(ၡ𝑀ဒ, Decl(extendedUnicodePlaneIdentifiers.ts, 21, 5))
  
  console.log(ၡ𝑀ဒ ** ၡ𝑀ဒ);
@@ -74,7 +74,7 @@
  >ၡ𝑀ဒ : Symbol(ၡ𝑀ဒ, Decl(extendedUnicodePlaneIdentifiers.ts, 21, 5))
  >ၡ𝑀ဒ : Symbol(ၡ𝑀ဒ, Decl(extendedUnicodePlaneIdentifiers.ts, 21, 5))
  
-@@ -71,9 +71,9 @@
+@@= skipped -10, +10 lines =@@
  >𝑀ဒၡ : Symbol(𝑀ဒၡ, Decl(extendedUnicodePlaneIdentifiers.ts, 24, 5))
  
  console.log(𝑀ဒၡ ** 𝑀ဒၡ);

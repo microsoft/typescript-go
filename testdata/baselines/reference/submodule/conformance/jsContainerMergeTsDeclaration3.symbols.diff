@@ -1,6 +1,6 @@
 --- old.jsContainerMergeTsDeclaration3.symbols
 +++ new.jsContainerMergeTsDeclaration3.symbols
-@@ -2,14 +2,12 @@
+@@= skipped -2, +2 lines =@@
  
  === a.d.ts ===
  declare class A {}

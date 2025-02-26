@@ -1,6 +1,6 @@
 --- old.exportEqualsUmd.symbols
 +++ new.exportEqualsUmd.symbols
-@@ -2,6 +2,6 @@
+@@= skipped -2, +2 lines =@@
  
  === exportEqualsUmd.ts ===
  export = { ["hi"]: "there" };

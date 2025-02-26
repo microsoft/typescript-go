@@ -1,6 +1,6 @@
 --- old.mapConstructorOnReadonlyTuple.symbols
 +++ new.mapConstructorOnReadonlyTuple.symbols
-@@ -6,10 +6,8 @@
+@@= skipped -6, +6 lines =@@
  >const : Symbol(const)
  
  new Map(pairs);

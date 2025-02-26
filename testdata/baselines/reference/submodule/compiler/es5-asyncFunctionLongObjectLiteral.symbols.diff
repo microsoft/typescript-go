@@ -1,6 +1,6 @@
 --- old.es5-asyncFunctionLongObjectLiteral.symbols
 +++ new.es5-asyncFunctionLongObjectLiteral.symbols
-@@ -9,33 +9,33 @@
+@@= skipped -9, +9 lines =@@
      return {
          a: await Promise.resolve(0),
  >a : Symbol(a, Decl(es5-asyncFunctionLongObjectLiteral.ts, 3, 12))
@@ -44,7 +44,7 @@
  
      };
  }
-@@ -46,63 +46,63 @@
+@@= skipped -37, +37 lines =@@
      return {
          a: await Promise.resolve(0),
  >a : Symbol(a, Decl(es5-asyncFunctionLongObjectLiteral.ts, 13, 12))

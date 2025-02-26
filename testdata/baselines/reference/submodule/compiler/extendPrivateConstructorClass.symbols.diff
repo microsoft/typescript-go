@@ -1,6 +1,6 @@
 --- old.extendPrivateConstructorClass.symbols
 +++ new.extendPrivateConstructorClass.symbols
-@@ -13,8 +13,8 @@
+@@= skipped -13, +13 lines =@@
  
  class C extends abc.XYZ {
  >C : Symbol(C, Decl(extendPrivateConstructorClass.ts, 4, 1))

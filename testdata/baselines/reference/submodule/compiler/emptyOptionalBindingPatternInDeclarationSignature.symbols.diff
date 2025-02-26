@@ -1,6 +1,6 @@
 --- old.emptyOptionalBindingPatternInDeclarationSignature.symbols
 +++ new.emptyOptionalBindingPatternInDeclarationSignature.symbols
-@@ -23,19 +23,19 @@
+@@= skipped -23, +23 lines =@@
  >C1 : Symbol(C1, Decl(emptyOptionalBindingPatternInDeclarationSignature.ts, 5, 50))
  
      method({}?: { x: string }): void
@@ -24,7 +24,7 @@
  >x : Symbol(x, Decl(emptyOptionalBindingPatternInDeclarationSignature.ts, 12, 26))
  }
  
-@@ -43,11 +43,11 @@
+@@= skipped -20, +20 lines =@@
  >I1 : Symbol(I1, Decl(emptyOptionalBindingPatternInDeclarationSignature.ts, 13, 1))
  
      method({}?: { x: string }): void

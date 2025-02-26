@@ -1,6 +1,6 @@
 --- old.taggedTemplateStringsWithIncompatibleTypedTagsES6.symbols
 +++ new.taggedTemplateStringsWithIncompatibleTypedTagsES6.symbols
-@@ -6,24 +6,24 @@
+@@= skipped -6, +6 lines =@@
  
      (stringParts: TemplateStringsArray, ...rest: boolean[]): I;
  >stringParts : Symbol(stringParts, Decl(taggedTemplateStringsWithIncompatibleTypedTagsES6.ts, 1, 5))
@@ -30,7 +30,7 @@
  >x : Symbol(x, Decl(taggedTemplateStringsWithIncompatibleTypedTagsES6.ts, 5, 18))
  
      [x: number]: I;
-@@ -42,47 +42,33 @@
+@@= skipped -36, +36 lines =@@
  >f : Symbol(f, Decl(taggedTemplateStringsWithIncompatibleTypedTagsES6.ts, 9, 3))
  
  f `abc`.member

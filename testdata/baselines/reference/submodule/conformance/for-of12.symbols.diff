@@ -1,6 +1,6 @@
 --- old.for-of12.symbols
 +++ new.for-of12.symbols
-@@ -6,6 +6,4 @@
+@@= skipped -6, +6 lines =@@
  
  for (v of [0, ""].values()) { }
  >v : Symbol(v, Decl(for-of12.ts, 0, 3))

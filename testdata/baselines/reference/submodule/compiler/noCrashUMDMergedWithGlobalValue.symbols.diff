@@ -1,6 +1,6 @@
 --- old.noCrashUMDMergedWithGlobalValue.symbols
 +++ new.noCrashUMDMergedWithGlobalValue.symbols
-@@ -9,12 +9,12 @@
+@@= skipped -9, +9 lines =@@
  
  === /main.ts ===
  interface SomeInterface {

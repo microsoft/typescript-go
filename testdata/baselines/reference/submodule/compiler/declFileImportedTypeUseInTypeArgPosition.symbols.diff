@@ -1,6 +1,6 @@
 --- old.declFileImportedTypeUseInTypeArgPosition.symbols
 +++ new.declFileImportedTypeUseInTypeArgPosition.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(declFileImportedTypeUseInTypeArgPosition.ts, 0, 11))
  
  declare module 'mod1' {
@@ -9,7 +9,7 @@
  
      class Foo {
  >Foo : Symbol(Foo, Decl(declFileImportedTypeUseInTypeArgPosition.ts, 1, 23))
-@@ -14,7 +14,7 @@
+@@= skipped -8, +8 lines =@@
  }
  
  declare module 'moo' {
@@ -18,7 +18,7 @@
  
      import x = require('mod1');
  >x : Symbol(x, Decl(declFileImportedTypeUseInTypeArgPosition.ts, 6, 22))
-@@ -23,7 +23,7 @@
+@@= skipped -9, +9 lines =@@
  >p : Symbol(p, Decl(declFileImportedTypeUseInTypeArgPosition.ts, 8, 14))
  >List : Symbol(List, Decl(declFileImportedTypeUseInTypeArgPosition.ts, 0, 0))
  >x : Symbol(x, Decl(declFileImportedTypeUseInTypeArgPosition.ts, 6, 22))

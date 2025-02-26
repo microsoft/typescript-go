@@ -1,6 +1,6 @@
 --- old.indexerWithTuple.symbols
 +++ new.indexerWithTuple.symbols
-@@ -23,12 +23,12 @@
+@@= skipped -23, +23 lines =@@
  var ele10 = strNumTuple[0]; // string
  >ele10 : Symbol(ele10, Decl(indexerWithTuple.ts, 8, 3))
  >strNumTuple : Symbol(strNumTuple, Decl(indexerWithTuple.ts, 0, 3))
@@ -15,7 +15,7 @@
  
  var ele12 = strNumTuple[2]; // string | number
  >ele12 : Symbol(ele12, Decl(indexerWithTuple.ts, 10, 3))
-@@ -47,17 +47,17 @@
+@@= skipped -24, +24 lines =@@
  var ele15 = strNumTuple["0"]; // string
  >ele15 : Symbol(ele15, Decl(indexerWithTuple.ts, 13, 3))
  >strNumTuple : Symbol(strNumTuple, Decl(indexerWithTuple.ts, 0, 3))
@@ -36,7 +36,7 @@
  
  var ele17 = numTupleTuple[2]; // number | [string, number]
  >ele17 : Symbol(ele17, Decl(indexerWithTuple.ts, 16, 3))
-@@ -70,12 +70,12 @@
+@@= skipped -23, +23 lines =@@
  var eleUnion10 = unionTuple1[0]; // number
  >eleUnion10 : Symbol(eleUnion10, Decl(indexerWithTuple.ts, 19, 3))
  >unionTuple1 : Symbol(unionTuple1, Decl(indexerWithTuple.ts, 2, 3))
@@ -51,7 +51,7 @@
  
  var eleUnion12 = unionTuple1[2]; // string | number
  >eleUnion12 : Symbol(eleUnion12, Decl(indexerWithTuple.ts, 21, 3))
-@@ -94,22 +94,22 @@
+@@= skipped -24, +24 lines =@@
  var eleUnion15 = unionTuple1["0"]; // number
  >eleUnion15 : Symbol(eleUnion15, Decl(indexerWithTuple.ts, 24, 3))
  >unionTuple1 : Symbol(unionTuple1, Decl(indexerWithTuple.ts, 2, 3))
@@ -78,7 +78,7 @@
  
  var eleUnion22 = unionTuple2[2]; // string | number | boolean
  >eleUnion22 : Symbol(eleUnion22, Decl(indexerWithTuple.ts, 29, 3))
-@@ -128,12 +128,12 @@
+@@= skipped -34, +34 lines =@@
  var eleUnion25 = unionTuple2["0"]; // boolean
  >eleUnion25 : Symbol(eleUnion25, Decl(indexerWithTuple.ts, 32, 3))
  >unionTuple2 : Symbol(unionTuple2, Decl(indexerWithTuple.ts, 3, 3))

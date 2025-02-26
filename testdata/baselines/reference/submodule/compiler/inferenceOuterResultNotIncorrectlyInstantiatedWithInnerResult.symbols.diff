@@ -1,6 +1,6 @@
 --- old.inferenceOuterResultNotIncorrectlyInstantiatedWithInnerResult.symbols
 +++ new.inferenceOuterResultNotIncorrectlyInstantiatedWithInnerResult.symbols
-@@ -8,13 +8,13 @@
+@@= skipped -8, +8 lines =@@
  >B : Symbol(B, Decl(inferenceOuterResultNotIncorrectlyInstantiatedWithInnerResult.ts, 1, 20))
  
      constructor(public a: A, public b: B) { }
@@ -17,7 +17,7 @@
  >C : Symbol(C, Decl(inferenceOuterResultNotIncorrectlyInstantiatedWithInnerResult.ts, 4, 9))
  >c : Symbol(c, Decl(inferenceOuterResultNotIncorrectlyInstantiatedWithInnerResult.ts, 4, 12))
  >C : Symbol(C, Decl(inferenceOuterResultNotIncorrectlyInstantiatedWithInnerResult.ts, 4, 9))
-@@ -24,9 +24,9 @@
+@@= skipped -16, +16 lines =@@
  
          return new Test(this.b, c);
  >Test : Symbol(Test, Decl(inferenceOuterResultNotIncorrectlyInstantiatedWithInnerResult.ts, 0, 0))
@@ -29,7 +29,7 @@
  >c : Symbol(c, Decl(inferenceOuterResultNotIncorrectlyInstantiatedWithInnerResult.ts, 4, 12))
      }
  }
-@@ -37,7 +37,7 @@
+@@= skipped -13, +13 lines =@@
  >T : Symbol(T, Decl(inferenceOuterResultNotIncorrectlyInstantiatedWithInnerResult.ts, 10, 21))
  
      zip<A>(right: Supervisor<A>): Supervisor<[T, A]>;
@@ -38,7 +38,7 @@
  >A : Symbol(A, Decl(inferenceOuterResultNotIncorrectlyInstantiatedWithInnerResult.ts, 11, 8))
  >right : Symbol(right, Decl(inferenceOuterResultNotIncorrectlyInstantiatedWithInnerResult.ts, 11, 11))
  >Supervisor : Symbol(Supervisor, Decl(inferenceOuterResultNotIncorrectlyInstantiatedWithInnerResult.ts, 7, 1))
-@@ -57,19 +57,19 @@
+@@= skipped -20, +20 lines =@@
  
      constructor(
          readonly left: Supervisor<T0>,
@@ -61,7 +61,7 @@
  >A : Symbol(A, Decl(inferenceOuterResultNotIncorrectlyInstantiatedWithInnerResult.ts, 20, 8))
  >right : Symbol(right, Decl(inferenceOuterResultNotIncorrectlyInstantiatedWithInnerResult.ts, 20, 11))
  >Supervisor : Symbol(Supervisor, Decl(inferenceOuterResultNotIncorrectlyInstantiatedWithInnerResult.ts, 7, 1))
-@@ -91,7 +91,7 @@
+@@= skipped -34, +34 lines =@@
  >Assign : Symbol(Assign, Decl(inferenceOuterResultNotIncorrectlyInstantiatedWithInnerResult.ts, 23, 1))
  >T : Symbol(T, Decl(inferenceOuterResultNotIncorrectlyInstantiatedWithInnerResult.ts, 26, 12))
  >U : Symbol(U, Decl(inferenceOuterResultNotIncorrectlyInstantiatedWithInnerResult.ts, 26, 14))
@@ -70,7 +70,7 @@
  >T : Symbol(T, Decl(inferenceOuterResultNotIncorrectlyInstantiatedWithInnerResult.ts, 26, 12))
  >U : Symbol(U, Decl(inferenceOuterResultNotIncorrectlyInstantiatedWithInnerResult.ts, 26, 14))
  >U : Symbol(U, Decl(inferenceOuterResultNotIncorrectlyInstantiatedWithInnerResult.ts, 26, 14))
-@@ -101,7 +101,7 @@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(inferenceOuterResultNotIncorrectlyInstantiatedWithInnerResult.ts, 28, 11))
  
      constructor(public t: T) { }
@@ -79,7 +79,7 @@
  >T : Symbol(T, Decl(inferenceOuterResultNotIncorrectlyInstantiatedWithInnerResult.ts, 28, 11))
  }
  
-@@ -112,7 +112,7 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(inferenceOuterResultNotIncorrectlyInstantiatedWithInnerResult.ts, 32, 17))
  
      update(): Foo<Assign<T, { x: number }>> {
@@ -88,7 +88,7 @@
  >Foo : Symbol(Foo, Decl(inferenceOuterResultNotIncorrectlyInstantiatedWithInnerResult.ts, 30, 1))
  >Assign : Symbol(Assign, Decl(inferenceOuterResultNotIncorrectlyInstantiatedWithInnerResult.ts, 23, 1))
  >T : Symbol(T, Decl(inferenceOuterResultNotIncorrectlyInstantiatedWithInnerResult.ts, 32, 17))
-@@ -123,12 +123,9 @@
+@@= skipped -11, +11 lines =@@
  >Assign : Symbol(Assign, Decl(inferenceOuterResultNotIncorrectlyInstantiatedWithInnerResult.ts, 23, 1))
  >T : Symbol(T, Decl(inferenceOuterResultNotIncorrectlyInstantiatedWithInnerResult.ts, 32, 17))
  >x : Symbol(x, Decl(inferenceOuterResultNotIncorrectlyInstantiatedWithInnerResult.ts, 34, 28))

@@ -1,6 +1,6 @@
 --- old.allowsImportingTsExtension.symbols
 +++ new.allowsImportingTsExtension.symbols
-@@ -23,7 +23,6 @@
+@@= skipped -23, +23 lines =@@
  
  const aPromise = import("./a.ts"); // error
  >aPromise : Symbol(aPromise, Decl(b.ts, 4, 5))
@@ -8,7 +8,7 @@
  
  === c.ts ===
  import type { A } from "./a.d.ts"; // ok
-@@ -40,5 +39,4 @@
+@@= skipped -17, +16 lines =@@
  
  const aPromise = import("./a.d.ts"); // error
  >aPromise : Symbol(aPromise, Decl(c.ts, 4, 5))

@@ -1,6 +1,6 @@
 --- old.indexerReturningTypeParameter1.symbols
 +++ new.indexerReturningTypeParameter1.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >f : Symbol(f, Decl(indexerReturningTypeParameter1.ts, 0, 0))
  
      groupBy<T>(): { [key: string]: T[]; };
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(indexerReturningTypeParameter1.ts, 1, 12))
  >key : Symbol(key, Decl(indexerReturningTypeParameter1.ts, 1, 21))
  >T : Symbol(T, Decl(indexerReturningTypeParameter1.ts, 1, 12))
-@@ -16,15 +16,15 @@
+@@= skipped -11, +11 lines =@@
  
  var r = a.groupBy();
  >r : Symbol(r, Decl(indexerReturningTypeParameter1.ts, 4, 3))
@@ -28,7 +28,7 @@
  >T : Symbol(T, Decl(indexerReturningTypeParameter1.ts, 7, 12))
  >key : Symbol(key, Decl(indexerReturningTypeParameter1.ts, 7, 21))
  >T : Symbol(T, Decl(indexerReturningTypeParameter1.ts, 7, 12))
-@@ -38,7 +38,7 @@
+@@= skipped -22, +22 lines =@@
  
  var r2 = a2.groupBy();
  >r2 : Symbol(r2, Decl(indexerReturningTypeParameter1.ts, 12, 3))

@@ -1,6 +1,6 @@
 --- old.expandoFunctionNestedAssigmentsDeclared.symbols
 +++ new.expandoFunctionNestedAssigmentsDeclared.symbols
-@@ -2,11 +2,11 @@
+@@= skipped -2, +2 lines =@@
  
  === expandoFunctionNestedAssigmentsDeclared.ts ===
  function Foo(): void {
@@ -14,7 +14,7 @@
  
      var bla: {
  >bla : Symbol(bla, Decl(expandoFunctionNestedAssigmentsDeclared.ts, 4, 7), Decl(expandoFunctionNestedAssigmentsDeclared.ts, 30, 1))
-@@ -81,118 +81,118 @@
+@@= skipped -79, +79 lines =@@
  
  (Foo.bla = { foo: 1}).foo = (Foo.baz = 1) + (Foo.bar  = 0);
  >(Foo.bla = { foo: 1}).foo : Symbol(foo, Decl(expandoFunctionNestedAssigmentsDeclared.ts, 30, 12))

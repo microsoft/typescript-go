@@ -1,6 +1,6 @@
 --- old.es5ExportDefaultFunctionDeclaration.symbols
 +++ new.es5ExportDefaultFunctionDeclaration.symbols
-@@ -2,5 +2,5 @@
+@@= skipped -2, +2 lines =@@
  
  === es5ExportDefaultFunctionDeclaration.ts ===
  export default function f() { }

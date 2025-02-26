@@ -1,6 +1,6 @@
 --- old.typeValueConflict2.symbols
 +++ new.typeValueConflict2.symbols
-@@ -23,9 +23,9 @@
+@@= skipped -23, +23 lines =@@
      // Should error.  M1 should bind to the variable, not to the module.
      class B extends M1.A<string> {
  >B : Symbol(B, Decl(typeValueConflict2.ts, 7, 15))
@@ -12,7 +12,7 @@
      }
  }
  module M3 {
-@@ -34,9 +34,9 @@
+@@= skipped -11, +11 lines =@@
      // Shouldn't error
      class B extends M1.A<string> {
  >B : Symbol(B, Decl(typeValueConflict2.ts, 12, 11))

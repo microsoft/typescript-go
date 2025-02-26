@@ -1,6 +1,6 @@
 --- old.computedPropertyNamesOnOverloads_ES6.symbols
 +++ new.computedPropertyNamesOnOverloads_ES6.symbols
-@@ -11,16 +11,16 @@
+@@= skipped -11, +11 lines =@@
  >C : Symbol(C, Decl(computedPropertyNamesOnOverloads_ES6.ts, 1, 30))
  
      [methodName](v: string);

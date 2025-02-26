@@ -1,6 +1,6 @@
 --- old.commaOperatorWithSecondOperandObjectType.symbols
 +++ new.commaOperatorWithSecondOperandObjectType.symbols
-@@ -21,7 +21,7 @@
+@@= skipped -21, +21 lines =@@
  >CLASS : Symbol(CLASS, Decl(commaOperatorWithSecondOperandObjectType.ts, 4, 19))
  
      num: number;
@@ -9,7 +9,7 @@
  }
  
  //The second operand type is Object
-@@ -87,9 +87,9 @@
+@@= skipped -66, +66 lines =@@
  >Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
  
  STRING.toLowerCase(), new CLASS()
@@ -21,7 +21,7 @@
  >CLASS : Symbol(CLASS, Decl(commaOperatorWithSecondOperandObjectType.ts, 4, 19))
  
  var resultIsObject6 = (null, OBJECT);
-@@ -116,8 +116,8 @@
+@@= skipped -29, +29 lines =@@
  
  var resultIsObject11 = (STRING.toLowerCase(), new CLASS());
  >resultIsObject11 : Symbol(resultIsObject11, Decl(commaOperatorWithSecondOperandObjectType.ts, 37, 3))

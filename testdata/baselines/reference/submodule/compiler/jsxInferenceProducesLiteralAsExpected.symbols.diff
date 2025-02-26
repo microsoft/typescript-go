@@ -1,6 +1,6 @@
 --- old.jsxInferenceProducesLiteralAsExpected.symbols
 +++ new.jsxInferenceProducesLiteralAsExpected.symbols
-@@ -11,7 +11,7 @@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(jsxInferenceProducesLiteralAsExpected.tsx, 1, 27))
  >T : Symbol(T, Decl(jsxInferenceProducesLiteralAsExpected.tsx, 1, 27))
  >K : Symbol(K, Decl(jsxInferenceProducesLiteralAsExpected.tsx, 1, 35))
@@ -9,7 +9,7 @@
  >K : Symbol(K, Decl(jsxInferenceProducesLiteralAsExpected.tsx, 1, 35))
  >T : Symbol(T, Decl(jsxInferenceProducesLiteralAsExpected.tsx, 1, 27))
  
-@@ -19,24 +19,24 @@
+@@= skipped -8, +8 lines =@@
  >TestObject : Symbol(TestObject, Decl(jsxInferenceProducesLiteralAsExpected.tsx, 1, 95))
  
      a: string = '';

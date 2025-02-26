@@ -1,6 +1,6 @@
 --- old.superAccessCastedCall.symbols
 +++ new.superAccessCastedCall.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(superAccessCastedCall.ts, 0, 0))
  
      bar(): void {}
@@ -9,7 +9,7 @@
  }
  
  class Bar extends Foo {
-@@ -13,7 +13,7 @@
+@@= skipped -8, +8 lines =@@
  >Foo : Symbol(Foo, Decl(superAccessCastedCall.ts, 0, 0))
  
      x: Number;
@@ -18,7 +18,7 @@
  >Number : Symbol(Number, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      constructor() {
-@@ -21,23 +21,23 @@
+@@= skipped -8, +8 lines =@@
  >super : Symbol(Foo, Decl(superAccessCastedCall.ts, 0, 0))
  
          this.x = 2;
@@ -49,7 +49,7 @@
      }
  } 
  
-@@ -46,7 +46,7 @@
+@@= skipped -25, +25 lines =@@
  >Bar : Symbol(Bar, Decl(superAccessCastedCall.ts, 2, 1))
  
  b.bar()

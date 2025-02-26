@@ -1,6 +1,6 @@
 --- old.overloadReturnTypes.symbols
 +++ new.overloadReturnTypes.symbols
-@@ -43,17 +43,17 @@
+@@= skipped -43, +43 lines =@@
  >IFace : Symbol(IFace, Decl(overloadReturnTypes.ts, 14, 1))
  
  	attr(name:string):string;

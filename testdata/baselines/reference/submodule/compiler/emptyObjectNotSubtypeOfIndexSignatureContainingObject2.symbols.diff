@@ -1,6 +1,6 @@
 --- old.emptyObjectNotSubtypeOfIndexSignatureContainingObject2.symbols
 +++ new.emptyObjectNotSubtypeOfIndexSignatureContainingObject2.symbols
-@@ -81,14 +81,14 @@
+@@= skipped -81, +81 lines =@@
  >Foo : Symbol(Foo, Decl(emptyObjectNotSubtypeOfIndexSignatureContainingObject2.ts, 24, 1))
  
    foo: string;
@@ -17,7 +17,7 @@
  }
  
  export function fooToBar(
-@@ -108,9 +108,9 @@
+@@= skipped -27, +27 lines =@@
  >mapValues : Symbol(mapValues, Decl(emptyObjectNotSubtypeOfIndexSignatureContainingObject2.ts, 16, 77))
  >foos : Symbol(foos, Decl(emptyObjectNotSubtypeOfIndexSignatureContainingObject2.ts, 35, 25))
  >f : Symbol(f, Decl(emptyObjectNotSubtypeOfIndexSignatureContainingObject2.ts, 38, 29))
@@ -29,7 +29,7 @@
  
    const result = foos == null ? {} : mapValues(foos, f => f.foo);
  >result : Symbol(result, Decl(emptyObjectNotSubtypeOfIndexSignatureContainingObject2.ts, 39, 7))
-@@ -118,9 +118,9 @@
+@@= skipped -10, +10 lines =@@
  >mapValues : Symbol(mapValues, Decl(emptyObjectNotSubtypeOfIndexSignatureContainingObject2.ts, 16, 77))
  >foos : Symbol(foos, Decl(emptyObjectNotSubtypeOfIndexSignatureContainingObject2.ts, 35, 25))
  >f : Symbol(f, Decl(emptyObjectNotSubtypeOfIndexSignatureContainingObject2.ts, 39, 52))

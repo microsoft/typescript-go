@@ -1,6 +1,6 @@
 --- old.nestedClassDeclaration.symbols
 +++ new.nestedClassDeclaration.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >C : Symbol(C, Decl(nestedClassDeclaration.ts, 0, 0))
  
      x: string;

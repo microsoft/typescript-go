@@ -1,6 +1,6 @@
 --- old.exportImportNonInstantiatedModule.symbols
 +++ new.exportImportNonInstantiatedModule.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  
      export interface I { x: number }
  >I : Symbol(I, Decl(exportImportNonInstantiatedModule.ts, 0, 10))
@@ -9,7 +9,7 @@
  }
  
  module B {
-@@ -14,14 +14,14 @@
+@@= skipped -8, +8 lines =@@
  
      export import A1 = A
  >A1 : Symbol(A1, Decl(exportImportNonInstantiatedModule.ts, 4, 10))

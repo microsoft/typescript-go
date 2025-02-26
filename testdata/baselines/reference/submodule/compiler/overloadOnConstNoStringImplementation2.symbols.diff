@@ -1,6 +1,6 @@
 --- old.overloadOnConstNoStringImplementation2.symbols
 +++ new.overloadOnConstNoStringImplementation2.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >I : Symbol(I, Decl(overloadOnConstNoStringImplementation2.ts, 0, 0))
  
      x1(a: number, callback: (x: 'hi') => number);
@@ -9,7 +9,7 @@
  >a : Symbol(a, Decl(overloadOnConstNoStringImplementation2.ts, 1, 7))
  >callback : Symbol(callback, Decl(overloadOnConstNoStringImplementation2.ts, 1, 17))
  >x : Symbol(x, Decl(overloadOnConstNoStringImplementation2.ts, 1, 29))
-@@ -16,13 +16,13 @@
+@@= skipped -11, +11 lines =@@
  >I : Symbol(I, Decl(overloadOnConstNoStringImplementation2.ts, 0, 0))
  
      x1(a: number, callback: (x: 'hi') => number);
@@ -25,7 +25,7 @@
  >a : Symbol(a, Decl(overloadOnConstNoStringImplementation2.ts, 6, 7))
  >callback : Symbol(callback, Decl(overloadOnConstNoStringImplementation2.ts, 6, 17))
  >x : Symbol(x, Decl(overloadOnConstNoStringImplementation2.ts, 6, 29))
-@@ -50,26 +50,26 @@
+@@= skipped -34, +34 lines =@@
  >C : Symbol(C, Decl(overloadOnConstNoStringImplementation2.ts, 2, 1))
  
  c.x1(1, (x: 'hi') => { return 1; } );

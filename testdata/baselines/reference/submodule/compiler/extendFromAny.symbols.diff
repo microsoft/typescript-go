@@ -1,6 +1,6 @@
 --- old.extendFromAny.symbols
 +++ new.extendFromAny.symbols
-@@ -9,10 +9,10 @@
+@@= skipped -9, +9 lines =@@
  >Base : Symbol(Base, Decl(extendFromAny.ts, 0, 11))
  
      known = 1;
@@ -13,7 +13,7 @@
  }
  
  let c = new C();
-@@ -20,14 +20,14 @@
+@@= skipped -11, +11 lines =@@
  >C : Symbol(C, Decl(extendFromAny.ts, 0, 22))
  
  c.known.length; // error, 'known' has no 'length' property

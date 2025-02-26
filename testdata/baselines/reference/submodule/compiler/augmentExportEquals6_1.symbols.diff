@@ -1,6 +1,6 @@
 --- old.augmentExportEquals6_1.symbols
 +++ new.augmentExportEquals6_1.symbols
-@@ -25,11 +25,11 @@
+@@= skipped -25, +25 lines =@@
  
  // OK - './file1' is a namespace
  declare module "file1" {
@@ -14,7 +14,7 @@
  }
  
  === file3.ts ===
-@@ -40,11 +40,11 @@
+@@= skipped -15, +15 lines =@@
  let a: x.A;
  >a : Symbol(a, Decl(file3.ts, 2, 3))
  >x : Symbol(x, Decl(file3.ts, 0, 6))

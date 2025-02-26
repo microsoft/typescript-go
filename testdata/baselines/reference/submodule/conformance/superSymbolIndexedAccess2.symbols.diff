@@ -1,6 +1,6 @@
 --- old.superSymbolIndexedAccess2.symbols
 +++ new.superSymbolIndexedAccess2.symbols
-@@ -5,10 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(superSymbolIndexedAccess2.ts, 0, 0))
  
      [Symbol.isConcatSpreadable]() {
@@ -12,7 +12,7 @@
  
          return 0;
      }
-@@ -19,15 +16,9 @@
+@@= skipped -14, +11 lines =@@
  >Foo : Symbol(Foo, Decl(superSymbolIndexedAccess2.ts, 0, 0))
  
      [Symbol.isConcatSpreadable]() {

@@ -1,6 +1,6 @@
 --- old.promisesWithConstraints.symbols
 +++ new.promisesWithConstraints.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(lib.es5.d.ts, --, --), Decl(promisesWithConstraints.ts, 0, 18))
  
      then<U>(cb: (x: T) => Promise<U>): Promise<U>;
@@ -9,7 +9,7 @@
  >U : Symbol(U, Decl(promisesWithConstraints.ts, 1, 9))
  >cb : Symbol(cb, Decl(promisesWithConstraints.ts, 1, 12))
  >x : Symbol(x, Decl(promisesWithConstraints.ts, 1, 17))
-@@ -23,7 +23,7 @@
+@@= skipped -17, +17 lines =@@
  >x : Symbol(x, Decl(promisesWithConstraints.ts, 4, 30))
  
      then<U extends { x: any; }>(cb: (x: T) => Promise<U>): Promise<U>;
@@ -18,7 +18,7 @@
  >U : Symbol(U, Decl(promisesWithConstraints.ts, 5, 9))
  >x : Symbol(x, Decl(promisesWithConstraints.ts, 5, 20))
  >cb : Symbol(cb, Decl(promisesWithConstraints.ts, 5, 32))
-@@ -37,12 +37,12 @@
+@@= skipped -14, +14 lines =@@
  
  interface Foo { x; }
  >Foo : Symbol(Foo, Decl(promisesWithConstraints.ts, 6, 1))

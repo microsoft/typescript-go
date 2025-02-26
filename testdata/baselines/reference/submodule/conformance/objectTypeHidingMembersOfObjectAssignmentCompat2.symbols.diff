@@ -1,6 +1,6 @@
 --- old.objectTypeHidingMembersOfObjectAssignmentCompat2.symbols
 +++ new.objectTypeHidingMembersOfObjectAssignmentCompat2.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >I : Symbol(I, Decl(objectTypeHidingMembersOfObjectAssignmentCompat2.ts, 0, 0))
  
      toString(): number;
@@ -9,7 +9,7 @@
  }
  
  var i: I;
-@@ -28,7 +28,7 @@
+@@= skipped -23, +23 lines =@@
  >C : Symbol(C, Decl(objectTypeHidingMembersOfObjectAssignmentCompat2.ts, 7, 6))
  
      toString(): number { return 1; }

@@ -1,6 +1,6 @@
 --- old.noUnusedLocals_destructuringAssignment.symbols
 +++ new.noUnusedLocals_destructuringAssignment.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(noUnusedLocals_destructuringAssignment.ts, 0, 0))
  
      private x = 0;
@@ -13,7 +13,7 @@
  
          let x: number;
  >x : Symbol(x, Decl(noUnusedLocals_destructuringAssignment.ts, 4, 11))
-@@ -22,7 +22,7 @@
+@@= skipped -17, +17 lines =@@
      }
  
      private f(): Function {

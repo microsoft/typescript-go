@@ -1,6 +1,6 @@
 --- old.noImplicitAnyParametersInAmbientClass.symbols
 +++ new.noImplicitAnyParametersInAmbientClass.symbols
-@@ -6,90 +6,90 @@
+@@= skipped -6, +6 lines =@@
  
      // No implicit-'any' errors.
      public pub_f1(): void;
@@ -107,7 +107,7 @@
  >x : Symbol(x, Decl(noImplicitAnyParametersInAmbientClass.ts, 43, 21))
  >r : Symbol(r, Decl(noImplicitAnyParametersInAmbientClass.ts, 43, 23))
  
-@@ -97,90 +97,90 @@
+@@= skipped -91, +91 lines =@@
  
      // No implicit-'any' errors.
      private priv_f1(): void;

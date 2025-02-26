@@ -1,6 +1,6 @@
 --- old.augmentExportEquals2.symbols
 +++ new.augmentExportEquals2.symbols
-@@ -1,32 +1,9 @@
+@@= skipped -1, +1 lines =@@
  //// [tests/cases/compiler/augmentExportEquals2.ts] ////
  
  === file3.ts ===

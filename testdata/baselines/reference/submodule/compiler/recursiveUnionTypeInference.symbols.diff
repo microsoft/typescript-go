@@ -1,6 +1,6 @@
 --- old.recursiveUnionTypeInference.symbols
 +++ new.recursiveUnionTypeInference.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(recursiveUnionTypeInference.ts, 0, 14))
  
      x: T;

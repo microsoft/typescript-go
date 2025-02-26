@@ -1,6 +1,6 @@
 --- old.es6ClassTest4.symbols
 +++ new.es6ClassTest4.symbols
-@@ -5,25 +5,25 @@
+@@= skipped -5, +5 lines =@@
  >Point : Symbol(Point, Decl(es6ClassTest4.ts, 0, 0))
  {
      x: number;

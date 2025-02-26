@@ -1,6 +1,6 @@
 --- old.circularImportAlias.symbols
 +++ new.circularImportAlias.symbols
-@@ -4,33 +4,33 @@
+@@= skipped -4, +4 lines =@@
  // expected no error
  
  module B {
@@ -42,7 +42,7 @@
  }
  
  var c: { name: string };
-@@ -39,11 +39,11 @@
+@@= skipped -35, +35 lines =@@
  
  var c = new B.a.C();
  >c : Symbol(c, Decl(circularImportAlias.ts, 14, 3), Decl(circularImportAlias.ts, 15, 3))

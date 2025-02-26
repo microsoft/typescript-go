@@ -1,6 +1,6 @@
 --- old.inheritance.symbols
 +++ new.inheritance.symbols
-@@ -5,14 +5,14 @@
+@@= skipped -5, +5 lines =@@
  >B1 : Symbol(B1, Decl(inheritance.ts, 0, 0))
  
      public x;
@@ -17,7 +17,7 @@
  }
  
  
-@@ -31,7 +31,7 @@
+@@= skipped -26, +26 lines =@@
  >N : Symbol(N, Decl(inheritance.ts, 13, 1))
  
      public y:number;
@@ -26,7 +26,7 @@
  }
  
  class ND extends N { // any is assignable to number
-@@ -39,17 +39,17 @@
+@@= skipped -8, +8 lines =@@
  >N : Symbol(N, Decl(inheritance.ts, 13, 1))
  
      public y;
@@ -47,7 +47,7 @@
  }
  
  class Baad extends Good {
-@@ -57,10 +57,10 @@
+@@= skipped -18, +18 lines =@@
  >Good : Symbol(Good, Decl(inheritance.ts, 22, 1))
  
      public f(): number { return 0; }

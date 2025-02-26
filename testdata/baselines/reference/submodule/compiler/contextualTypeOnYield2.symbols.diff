@@ -1,6 +1,6 @@
 --- old.contextualTypeOnYield2.symbols
 +++ new.contextualTypeOnYield2.symbols
-@@ -3,7 +3,7 @@
+@@= skipped -3, +3 lines =@@
  === contextualTypeOnYield2.ts ===
  type OrGen = () => (number | Generator<string, (arg: number) => void, undefined>);
  >OrGen : Symbol(OrGen, Decl(contextualTypeOnYield2.ts, 0, 0))
@@ -9,7 +9,7 @@
  >arg : Symbol(arg, Decl(contextualTypeOnYield2.ts, 0, 48))
  
  const g: OrGen = function* () {
-@@ -12,8 +12,5 @@
+@@= skipped -9, +9 lines =@@
  
      return (num) => console.log(num);
  >num : Symbol(num, Decl(contextualTypeOnYield2.ts, 2, 12))

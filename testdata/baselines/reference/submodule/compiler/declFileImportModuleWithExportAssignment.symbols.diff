@@ -1,6 +1,6 @@
 --- old.declFileImportModuleWithExportAssignment.symbols
 +++ new.declFileImportModuleWithExportAssignment.symbols
-@@ -30,13 +30,13 @@
+@@= skipped -30, +30 lines =@@
  >connectExport : Symbol(connectExport, Decl(declFileImportModuleWithExportAssignment_0.ts, 3, 5))
  
          use: (mod: connectModule) => connectExport;
@@ -16,7 +16,7 @@
  >port : Symbol(port, Decl(declFileImportModuleWithExportAssignment_0.ts, 6, 17))
      }
  
-@@ -46,17 +46,17 @@
+@@= skipped -16, +16 lines =@@
  
      (): m2.connectExport;
  >m2 : Symbol(m2, Decl(declFileImportModuleWithExportAssignment_0.ts, 0, 0), Decl(declFileImportModuleWithExportAssignment_0.ts, 10, 3))

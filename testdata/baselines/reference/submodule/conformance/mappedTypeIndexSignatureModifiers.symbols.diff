@@ -1,6 +1,6 @@
 --- old.mappedTypeIndexSignatureModifiers.symbols
 +++ new.mappedTypeIndexSignatureModifiers.symbols
-@@ -19,7 +19,7 @@
+@@= skipped -19, +19 lines =@@
  >Obj2 : Symbol(Obj2, Decl(mappedTypeIndexSignatureModifiers.ts, 5, 34))
  
      concreteProp: 'hello';

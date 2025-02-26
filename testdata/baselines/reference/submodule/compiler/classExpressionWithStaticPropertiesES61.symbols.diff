@@ -1,6 +1,6 @@
 --- old.classExpressionWithStaticPropertiesES61.symbols
 +++ new.classExpressionWithStaticPropertiesES61.symbols
-@@ -6,15 +6,15 @@
+@@= skipped -6, +6 lines =@@
  >C : Symbol(C, Decl(classExpressionWithStaticPropertiesES61.ts, 0, 7))
  
      static a = 1;

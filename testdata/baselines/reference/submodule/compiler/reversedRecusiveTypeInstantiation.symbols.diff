@@ -1,6 +1,6 @@
 --- old.reversedRecusiveTypeInstantiation.symbols
 +++ new.reversedRecusiveTypeInstantiation.symbols
-@@ -7,15 +7,15 @@
+@@= skipped -7, +7 lines =@@
  >NumberArgPos2 : Symbol(NumberArgPos2, Decl(reversedRecusiveTypeInstantiation.ts, 0, 26))
  
     xPos1 : StringArgPos1
@@ -19,7 +19,7 @@
  >A : Symbol(A, Decl(reversedRecusiveTypeInstantiation.ts, 0, 0))
  >NumberArgPos2 : Symbol(NumberArgPos2, Decl(reversedRecusiveTypeInstantiation.ts, 0, 26))
  >StringArgPos1 : Symbol(StringArgPos1, Decl(reversedRecusiveTypeInstantiation.ts, 0, 12))
-@@ -26,10 +26,10 @@
+@@= skipped -19, +19 lines =@@
  >A : Symbol(A, Decl(reversedRecusiveTypeInstantiation.ts, 0, 0))
  
  a.zPos2Pos1.xPos1 = 1

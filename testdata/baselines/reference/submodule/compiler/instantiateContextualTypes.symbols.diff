@@ -1,6 +1,6 @@
 --- old.instantiateContextualTypes.symbols
 +++ new.instantiateContextualTypes.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >a : Symbol(a, Decl(instantiateContextualTypes.ts, 2, 19))
  
      value: a;
@@ -9,7 +9,7 @@
  >a : Symbol(a, Decl(instantiateContextualTypes.ts, 2, 19))
  }
  
-@@ -31,7 +31,6 @@
+@@= skipped -23, +23 lines =@@
  >fn : Symbol(fn, Decl(instantiateContextualTypes.ts, 4, 1))
  >handlers : Symbol(handlers, Decl(instantiateContextualTypes.ts, 9, 11))
  >value : Symbol(value, Decl(instantiateContextualTypes.ts, 10, 12))
@@ -17,7 +17,7 @@
  >value : Symbol(value, Decl(instantiateContextualTypes.ts, 10, 12))
  
  // #21382
-@@ -41,11 +40,11 @@
+@@= skipped -10, +9 lines =@@
  >T : Symbol(T, Decl(instantiateContextualTypes.ts, 14, 20))
  
    initialValues: T;
@@ -31,7 +31,7 @@
  >cur : Symbol(cur, Decl(instantiateContextualTypes.ts, 16, 15))
  >T : Symbol(T, Decl(instantiateContextualTypes.ts, 14, 20))
  >T : Symbol(T, Decl(instantiateContextualTypes.ts, 14, 20))
-@@ -55,7 +54,7 @@
+@@= skipped -14, +14 lines =@@
  >P : Symbol(P, Decl(instantiateContextualTypes.ts, 18, 24))
  >props : Symbol(props, Decl(instantiateContextualTypes.ts, 18, 41))
  >P : Symbol(P, Decl(instantiateContextualTypes.ts, 18, 24))
@@ -40,7 +40,7 @@
  >P : Symbol(P, Decl(instantiateContextualTypes.ts, 18, 24))
  
  declare class GenericComponent<Props = {}, Values = object>
-@@ -70,7 +69,7 @@
+@@= skipped -15, +15 lines =@@
  >Values : Symbol(Values, Decl(instantiateContextualTypes.ts, 19, 42))
  
    iv: Values;
@@ -49,7 +49,7 @@
  >Values : Symbol(Values, Decl(instantiateContextualTypes.ts, 19, 42))
  }
  
-@@ -128,12 +127,12 @@
+@@= skipped -58, +58 lines =@@
  >P : Symbol(P, Decl(instantiateContextualTypes.ts, 39, 26))
  
      actionType: ActionType<P>
@@ -64,7 +64,7 @@
  >Handler : Symbol(Handler, Decl(instantiateContextualTypes.ts, 33, 67))
  >S : Symbol(S, Decl(instantiateContextualTypes.ts, 39, 24))
  >P : Symbol(P, Decl(instantiateContextualTypes.ts, 39, 26))
-@@ -173,7 +172,7 @@
+@@= skipped -45, +45 lines =@@
  >AppState : Symbol(AppState, Decl(instantiateContextualTypes.ts, 49, 10))
  
      dummy: string
@@ -73,7 +73,7 @@
  }
  
  const defaultState: AppState = {
-@@ -418,17 +417,11 @@
+@@= skipped -245, +245 lines =@@
  >Interesting : Symbol(Interesting, Decl(instantiateContextualTypes.ts, 142, 36))
  
  	public compiles = () : Promise<DooDad> => {
@@ -93,7 +93,7 @@
  			if (1 < 2) {
  				return 'SOMETHING';
  			}
-@@ -436,32 +429,20 @@
+@@= skipped -18, +12 lines =@@
  		});
  	};
  	public doesnt = () : Promise<DooDad> => {
@@ -130,7 +130,7 @@
  			if (1 < 2) {
  				return 'SOMETHING';
  			}
-@@ -491,7 +472,7 @@
+@@= skipped -55, +43 lines =@@
  >target : Symbol(target, Decl(instantiateContextualTypes.ts, 176, 34))
  >T : Symbol(T, Decl(instantiateContextualTypes.ts, 176, 31))
  >partial : Symbol(partial, Decl(instantiateContextualTypes.ts, 176, 44))

@@ -1,6 +1,6 @@
 --- old.asyncMethodWithSuper_es6.symbols
 +++ new.asyncMethodWithSuper_es6.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(asyncMethodWithSuper_es6.ts, 0, 0))
  
      x() {
@@ -13,7 +13,7 @@
      }
  }
  
-@@ -18,213 +18,213 @@
+@@= skipped -13, +13 lines =@@
  
      // async method with only call/get on 'super' does not require a binding
      async simple() {
@@ -279,7 +279,7 @@
  
          const f = () => {};
  >f : Symbol(f, Decl(asyncMethodWithSuper_es6.ts, 111, 13))
-@@ -232,121 +232,121 @@
+@@= skipped -214, +214 lines =@@
          // element access (assign)
          super["x"] = f;
  >super : Symbol(A, Decl(asyncMethodWithSuper_es6.ts, 0, 0))
@@ -429,7 +429,7 @@
  
          const f = () => {};
  >f : Symbol(f, Decl(asyncMethodWithSuper_es6.ts, 171, 13))
-@@ -354,26 +354,26 @@
+@@= skipped -122, +122 lines =@@
          // element access (assign)
          super["x"] = f;
  >super : Symbol(A, Decl(asyncMethodWithSuper_es6.ts, 0, 0))
@@ -460,7 +460,7 @@
  >f : Symbol(f, Decl(asyncMethodWithSuper_es6.ts, 171, 13))
      }
  }
-@@ -383,25 +383,25 @@
+@@= skipped -29, +29 lines =@@
  >Base : Symbol(Base, Decl(asyncMethodWithSuper_es6.ts, 185, 1))
  
      set setter(x: any) {}
@@ -492,7 +492,7 @@
  >x : Symbol(x, Decl(asyncMethodWithSuper_es6.ts, 195, 18))
  }
  
-@@ -410,69 +410,69 @@
+@@= skipped -27, +27 lines =@@
  >Base : Symbol(Base, Decl(asyncMethodWithSuper_es6.ts, 185, 1))
  
      a() { return async () => super.method('') }

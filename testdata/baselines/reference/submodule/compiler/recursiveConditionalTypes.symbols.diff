@@ -1,6 +1,6 @@
 --- old.recursiveConditionalTypes.symbols
 +++ new.recursiveConditionalTypes.symbols
-@@ -226,7 +226,7 @@
+@@= skipped -226, +226 lines =@@
  interface Box<T> { value: T };
  >Box : Symbol(Box, Decl(recursiveConditionalTypes.ts, 55, 21))
  >T : Symbol(T, Decl(recursiveConditionalTypes.ts, 59, 14))
@@ -9,7 +9,7 @@
  >T : Symbol(T, Decl(recursiveConditionalTypes.ts, 59, 14))
  
  type RecBox<T> = T | Box<RecBox<T>>;
-@@ -625,8 +625,8 @@
+@@= skipped -399, +399 lines =@@
  >T : Symbol(T, Decl(recursiveConditionalTypes.ts, 167, 14))
  
      return value.length;  // Error

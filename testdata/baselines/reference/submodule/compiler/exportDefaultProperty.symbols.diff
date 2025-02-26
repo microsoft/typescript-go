@@ -1,6 +1,6 @@
 --- old.exportDefaultProperty.symbols
 +++ new.exportDefaultProperty.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  import X = fooBar.X;
  >X : Symbol(X, Decl(index.ts, 1, 28))
  >fooBar : Symbol(fooBar, Decl(index.ts, 1, 6))
@@ -9,7 +9,7 @@
  
  import X2 from "foobarx";
  >X2 : Symbol(X2, Decl(index.ts, 3, 6))
-@@ -30,9 +30,9 @@
+@@= skipped -22, +22 lines =@@
  >b : Symbol(b, Decl(index.ts, 8, 5))
  >B : Symbol(B, Decl(index.ts, 7, 6))
  >B : Symbol(B, Decl(index.ts, 7, 6))
@@ -21,7 +21,7 @@
  
  import fooLength from "./b";
  >fooLength : Symbol(fooLength, Decl(index.ts, 10, 6))
-@@ -56,20 +56,20 @@
+@@= skipped -26, +26 lines =@@
  >"foobar" : Symbol("foobar", Decl(declarations.d.ts, 3, 1))
  
      export default foo.bar;
@@ -48,7 +48,7 @@
  }
  
  === a.ts ===
-@@ -85,12 +85,12 @@
+@@= skipped -29, +29 lines =@@
  >b : Symbol(b, Decl(a.ts, 2, 37))
  }
  export default A.B;

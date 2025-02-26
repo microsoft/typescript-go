@@ -1,6 +1,6 @@
 --- old.staticPropertyNotInClassType.symbols
 +++ new.staticPropertyNotInClassType.symbols
-@@ -8,22 +8,22 @@
+@@= skipped -8, +8 lines =@@
  >C : Symbol(C, Decl(staticPropertyNotInClassType.ts, 0, 19), Decl(staticPropertyNotInClassType.ts, 7, 5))
  
          fn() { return this; }
@@ -29,7 +29,7 @@
      }
  
      module C {
-@@ -39,9 +39,9 @@
+@@= skipped -31, +31 lines =@@
  
      var r = c.fn();
  >r : Symbol(r, Decl(staticPropertyNotInClassType.ts, 14, 7))
@@ -41,7 +41,7 @@
  
      var r4 = c.foo; // error
  >r4 : Symbol(r4, Decl(staticPropertyNotInClassType.ts, 15, 7))
-@@ -65,24 +65,24 @@
+@@= skipped -26, +26 lines =@@
  >U : Symbol(U, Decl(staticPropertyNotInClassType.ts, 21, 14))
  
          fn() { return this; }
@@ -72,7 +72,7 @@
  >T : Symbol(T)
      }
  
-@@ -99,9 +99,9 @@
+@@= skipped -34, +34 lines =@@
  
      var r = c.fn();
  >r : Symbol(r, Decl(staticPropertyNotInClassType.ts, 34, 7))

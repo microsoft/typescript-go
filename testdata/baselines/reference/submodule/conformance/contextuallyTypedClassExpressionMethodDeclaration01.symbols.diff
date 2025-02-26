@@ -1,6 +1,6 @@
 --- old.contextuallyTypedClassExpressionMethodDeclaration01.symbols
 +++ new.contextuallyTypedClassExpressionMethodDeclaration01.symbols
-@@ -5,26 +5,26 @@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(contextuallyTypedClassExpressionMethodDeclaration01.ts, 0, 0))
  
      numProp: number;
@@ -31,7 +31,7 @@
  >arg : Symbol(arg, Decl(contextuallyTypedClassExpressionMethodDeclaration01.ts, 10, 12))
  >B : Symbol(B, Decl(contextuallyTypedClassExpressionMethodDeclaration01.ts, 2, 1))
  }
-@@ -35,14 +35,14 @@
+@@= skipped -30, +30 lines =@@
  
      return class {
          static method1(arg) {
@@ -48,7 +48,7 @@
  >arg : Symbol(arg, Decl(contextuallyTypedClassExpressionMethodDeclaration01.ts, 18, 23))
  
              arg.strProp = "hello";
-@@ -57,22 +57,22 @@
+@@= skipped -22, +22 lines =@@
  
      return class {
          static method1 = (arg) => {
@@ -77,7 +77,7 @@
          }
      }
  }
-@@ -83,22 +83,22 @@
+@@= skipped -26, +26 lines =@@
  
      return class {
          static method1 = function (arg) {

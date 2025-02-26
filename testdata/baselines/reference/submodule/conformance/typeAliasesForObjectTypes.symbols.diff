@@ -1,6 +1,6 @@
 --- old.typeAliasesForObjectTypes.symbols
 +++ new.typeAliasesForObjectTypes.symbols
-@@ -9,14 +9,14 @@
+@@= skipped -9, +9 lines =@@
  interface I1 extends T1 { y: string }
  >I1 : Symbol(I1, Decl(typeAliasesForObjectTypes.ts, 0, 23))
  >T1 : Symbol(T1, Decl(typeAliasesForObjectTypes.ts, 0, 0))

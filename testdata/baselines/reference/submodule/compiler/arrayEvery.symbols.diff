@@ -1,6 +1,6 @@
 --- old.arrayEvery.symbols
 +++ new.arrayEvery.symbols
-@@ -11,14 +11,14 @@
+@@= skipped -11, +11 lines =@@
  >x : Symbol(x, Decl(arrayEvery.ts, 2, 18))
  
  if (foo.every(isString)) {

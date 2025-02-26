@@ -1,6 +1,6 @@
 --- old.argumentsReferenceInConstructor6_Js.symbols
 +++ new.argumentsReferenceInConstructor6_Js.symbols
-@@ -9,9 +9,7 @@
+@@= skipped -9, +9 lines =@@
  		 * @type object
  		 */
  		this.foo = arguments;

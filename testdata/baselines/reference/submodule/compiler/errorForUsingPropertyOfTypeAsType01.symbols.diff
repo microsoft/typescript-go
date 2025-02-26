@@ -1,6 +1,6 @@
 --- old.errorForUsingPropertyOfTypeAsType01.symbols
 +++ new.errorForUsingPropertyOfTypeAsType01.symbols
-@@ -8,19 +8,19 @@
+@@= skipped -8, +8 lines =@@
  >Foo : Symbol(Foo, Decl(errorForUsingPropertyOfTypeAsType01.ts, 0, 17))
  
          bar: string;
@@ -24,7 +24,7 @@
  }
  
  namespace Test2 {
-@@ -30,19 +30,19 @@
+@@= skipped -22, +22 lines =@@
  >Foo : Symbol(Foo, Decl(errorForUsingPropertyOfTypeAsType01.ts, 9, 17))
  
          bar: string;
@@ -48,7 +48,7 @@
  }
  
  namespace Test3 {
-@@ -58,13 +58,13 @@
+@@= skipped -28, +28 lines =@@
      var x: Foo.bar = "";
  >x : Symbol(x, Decl(errorForUsingPropertyOfTypeAsType01.ts, 23, 7))
  >Foo : Symbol(Foo)
@@ -65,7 +65,7 @@
  }
  
  namespace Test4 {
-@@ -80,13 +80,13 @@
+@@= skipped -22, +22 lines =@@
      var x: Foo.bar = "";
  >x : Symbol(x, Decl(errorForUsingPropertyOfTypeAsType01.ts, 31, 7))
  >Foo : Symbol(Foo)
@@ -82,7 +82,7 @@
  }
  
  namespace Test5 {
-@@ -102,13 +102,13 @@
+@@= skipped -22, +22 lines =@@
      var x: Foo.bar = "";
  >x : Symbol(x, Decl(errorForUsingPropertyOfTypeAsType01.ts, 39, 7))
  >Foo : Symbol(Foo)

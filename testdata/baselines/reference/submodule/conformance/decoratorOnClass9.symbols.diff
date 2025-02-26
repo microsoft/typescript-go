@@ -1,6 +1,6 @@
 --- old.decoratorOnClass9.symbols
 +++ new.decoratorOnClass9.symbols
-@@ -16,20 +16,20 @@
+@@= skipped -16, +16 lines =@@
  >A : Symbol(A, Decl(decoratorOnClass9.ts, 0, 21))
  
      static x = 1;

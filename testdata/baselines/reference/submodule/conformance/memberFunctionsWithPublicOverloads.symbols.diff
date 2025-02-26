@@ -1,6 +1,6 @@
 --- old.memberFunctionsWithPublicOverloads.symbols
 +++ new.memberFunctionsWithPublicOverloads.symbols
-@@ -5,66 +5,66 @@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(memberFunctionsWithPublicOverloads.ts, 0, 0))
  
      public foo(x: number);
@@ -81,7 +81,7 @@
  >x : Symbol(x, Decl(memberFunctionsWithPublicOverloads.ts, 17, 22))
  >y : Symbol(y, Decl(memberFunctionsWithPublicOverloads.ts, 17, 29))
  }
-@@ -74,70 +74,70 @@
+@@= skipped -69, +69 lines =@@
  >T : Symbol(T, Decl(memberFunctionsWithPublicOverloads.ts, 20, 8))
  
      public foo(x: number);

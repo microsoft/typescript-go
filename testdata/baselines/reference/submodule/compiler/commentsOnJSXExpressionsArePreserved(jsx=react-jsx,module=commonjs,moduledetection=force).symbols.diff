@@ -1,6 +1,6 @@
 --- old.commentsOnJSXExpressionsArePreserved(jsx=react-jsx,module=commonjs,moduledetection=force).symbols
 +++ new.commentsOnJSXExpressionsArePreserved(jsx=react-jsx,module=commonjs,moduledetection=force).symbols
-@@ -9,7 +9,7 @@
+@@= skipped -9, +9 lines =@@
  >Component : Symbol(Component, Decl(commentsOnJSXExpressionsArePreserved.tsx, 1, 16))
  
      render() {

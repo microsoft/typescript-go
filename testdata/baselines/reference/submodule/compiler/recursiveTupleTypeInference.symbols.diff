@@ -1,6 +1,6 @@
 --- old.recursiveTupleTypeInference.symbols
 +++ new.recursiveTupleTypeInference.symbols
-@@ -36,7 +36,7 @@
+@@= skipped -36, +36 lines =@@
  >K : Symbol(K, Decl(recursiveTupleTypeInference.ts, 10, 47))
  
      b: number | null;

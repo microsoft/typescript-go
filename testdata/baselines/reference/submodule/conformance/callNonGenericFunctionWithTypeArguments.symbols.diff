@@ -1,6 +1,6 @@
 --- old.callNonGenericFunctionWithTypeArguments.symbols
 +++ new.callNonGenericFunctionWithTypeArguments.symbols
-@@ -32,7 +32,7 @@
+@@= skipped -32, +32 lines =@@
  >C : Symbol(C, Decl(callNonGenericFunctionWithTypeArguments.ts, 10, 23))
  
      f(x: number) {
@@ -9,7 +9,7 @@
  >x : Symbol(x, Decl(callNonGenericFunctionWithTypeArguments.ts, 13, 6))
  
          return null;
-@@ -40,15 +40,15 @@
+@@= skipped -8, +8 lines =@@
  }
  var r4 = (new C()).f<string>(1);
  >r4 : Symbol(r4, Decl(callNonGenericFunctionWithTypeArguments.ts, 17, 3))
@@ -28,7 +28,7 @@
  >x : Symbol(x, Decl(callNonGenericFunctionWithTypeArguments.ts, 20, 6))
  }
  var i: I;
-@@ -57,15 +57,15 @@
+@@= skipped -17, +17 lines =@@
  
  var r5 = i.f<string>(1);
  >r5 : Symbol(r5, Decl(callNonGenericFunctionWithTypeArguments.ts, 23, 3))
@@ -47,7 +47,7 @@
  >x : Symbol(x, Decl(callNonGenericFunctionWithTypeArguments.ts, 26, 6))
  
          return null;
-@@ -73,15 +73,15 @@
+@@= skipped -16, +16 lines =@@
  }
  var r6 = (new C2()).f<string>(1);
  >r6 : Symbol(r6, Decl(callNonGenericFunctionWithTypeArguments.ts, 30, 3))
@@ -66,7 +66,7 @@
  >x : Symbol(x, Decl(callNonGenericFunctionWithTypeArguments.ts, 33, 6))
  }
  var i2: I2;
-@@ -90,9 +90,9 @@
+@@= skipped -17, +17 lines =@@
  
  var r7 = i2.f<string>(1);
  >r7 : Symbol(r7, Decl(callNonGenericFunctionWithTypeArguments.ts, 36, 3))

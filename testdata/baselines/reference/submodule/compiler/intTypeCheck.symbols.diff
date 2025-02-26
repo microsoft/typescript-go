@@ -1,6 +1,6 @@
 --- old.intTypeCheck.symbols
 +++ new.intTypeCheck.symbols
-@@ -6,29 +6,29 @@
+@@= skipped -6, +6 lines =@@
  
      //Property Signatures
      p;
@@ -38,7 +38,7 @@
  >pa1 : Symbol(pa1, Decl(intTypeCheck.ts, 9, 9))
  >pa2 : Symbol(pa2, Decl(intTypeCheck.ts, 9, 13))
  }
-@@ -86,7 +86,7 @@
+@@= skipped -80, +80 lines =@@
  
      // Used to be indexer, now it is a computed property
      [p];
@@ -47,7 +47,7 @@
  
      //Index Signatures
      [p1: string];
-@@ -117,7 +117,7 @@
+@@= skipped -31, +31 lines =@@
  
  class Base { foo() { } }
  >Base : Symbol(Base, Decl(intTypeCheck.ts, 43, 16))
@@ -56,7 +56,7 @@
  
  interface i11 {
  >i11 : Symbol(i11, Decl(intTypeCheck.ts, 45, 24))
-@@ -170,7 +170,7 @@
+@@= skipped -53, +53 lines =@@
      
      // Used to be indexer, now it is a computed property
      [p];
@@ -65,7 +65,7 @@
  
      //Index Signatures
      [p1: string];
-@@ -182,34 +182,34 @@
+@@= skipped -12, +12 lines =@@
  
      //Property Signatures
      p;

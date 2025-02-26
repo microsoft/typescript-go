@@ -1,6 +1,6 @@
 --- old.looseThisTypeInFunctions.symbols
 +++ new.looseThisTypeInFunctions.symbols
-@@ -5,10 +5,10 @@
+@@= skipped -5, +5 lines =@@
  >I : Symbol(I, Decl(looseThisTypeInFunctions.ts, 0, 0))
  
      n: number;
@@ -13,7 +13,7 @@
  >this : Symbol(this, Decl(looseThisTypeInFunctions.ts, 2, 17))
  >m : Symbol(m, Decl(looseThisTypeInFunctions.ts, 2, 28))
  }
-@@ -16,7 +16,7 @@
+@@= skipped -11, +11 lines =@@
  >Unused : Symbol(Unused, Decl(looseThisTypeInFunctions.ts, 3, 1))
  
      implicitNoThis(m: number): number;
@@ -22,7 +22,7 @@
  >m : Symbol(m, Decl(looseThisTypeInFunctions.ts, 5, 19))
  }
  class C implements I {
-@@ -24,31 +24,31 @@
+@@= skipped -8, +8 lines =@@
  >I : Symbol(I, Decl(looseThisTypeInFunctions.ts, 0, 0))
  
      n: number;
@@ -62,7 +62,7 @@
  >this : Symbol(this, Decl(looseThisTypeInFunctions.ts, 15, 17))
  >m : Symbol(m, Decl(looseThisTypeInFunctions.ts, 15, 28))
  
-@@ -61,12 +61,12 @@
+@@= skipped -37, +37 lines =@@
  >C : Symbol(C, Decl(looseThisTypeInFunctions.ts, 6, 1))
  
  c.explicitVoid = c.explicitThis; // error, 'void' is missing everything
@@ -79,7 +79,7 @@
  
  let o = {
  >o : Symbol(o, Decl(looseThisTypeInFunctions.ts, 21, 3))
-@@ -81,7 +81,7 @@
+@@= skipped -20, +20 lines =@@
          return m + this.n.length; // error, 'length' does not exist on 'number'
  >m : Symbol(m, Decl(looseThisTypeInFunctions.ts, 23, 28))
  >this.n : Symbol(n, Decl(looseThisTypeInFunctions.ts, 21, 9))
@@ -88,7 +88,7 @@
  >n : Symbol(n, Decl(looseThisTypeInFunctions.ts, 21, 9))
  
      },
-@@ -109,17 +109,17 @@
+@@= skipped -28, +28 lines =@@
  
           return m + this.n.length;  // error, this.n: number, no member 'length'
  >m : Symbol(m, Decl(looseThisTypeInFunctions.ts, 31, 28))
@@ -110,7 +110,7 @@
  
  let n = x(12); // callee:void doesn't match this:I
  >n : Symbol(n, Decl(looseThisTypeInFunctions.ts, 36, 3))
-@@ -131,55 +131,55 @@
+@@= skipped -22, +22 lines =@@
  
  let y = u.implicitNoThis;
  >y : Symbol(y, Decl(looseThisTypeInFunctions.ts, 38, 3))

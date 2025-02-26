@@ -1,6 +1,6 @@
 --- old.coAndContraVariantInferences.symbols
 +++ new.coAndContraVariantInferences.symbols
-@@ -52,11 +52,11 @@
+@@= skipped -52, +52 lines =@@
  >TPayload : Symbol(TPayload, Decl(coAndContraVariantInferences.ts, 15, 38))
  
      name: TName,
@@ -14,7 +14,7 @@
  >TPayload : Symbol(TPayload, Decl(coAndContraVariantInferences.ts, 15, 38))
  }
  
-@@ -99,9 +99,9 @@
+@@= skipped -47, +47 lines =@@
  >action : Symbol(action, Decl(coAndContraVariantInferences.ts, 30, 17))
  >actionA : Symbol(actionA, Decl(coAndContraVariantInferences.ts, 20, 5))
  >actionB : Symbol(actionB, Decl(coAndContraVariantInferences.ts, 21, 5))

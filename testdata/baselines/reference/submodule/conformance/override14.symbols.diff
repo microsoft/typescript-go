@@ -1,6 +1,6 @@
 --- old.override14.symbols
 +++ new.override14.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(override14.ts, 0, 0))
  
      property = 1
@@ -9,7 +9,7 @@
  }
  
  class SubFoo extends Foo {
-@@ -13,6 +13,6 @@
+@@= skipped -8, +8 lines =@@
  >Foo : Symbol(Foo, Decl(override14.ts, 0, 0))
  
      declare property: number

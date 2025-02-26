@@ -1,6 +1,6 @@
 --- old.jsDeclarationsExportAssignmentExpressionPlusSecondary.symbols
 +++ new.jsDeclarationsExportAssignmentExpressionPlusSecondary.symbols
-@@ -12,10 +12,6 @@
+@@= skipped -12, +12 lines =@@
  
  };
  module.exports = {
@@ -11,7 +11,7 @@
      thing: "ok",
  >thing : Symbol(thing, Decl(index.js, 4, 18))
  
-@@ -30,10 +26,5 @@
+@@= skipped -18, +14 lines =@@
      }
  };
  module.exports.Strings = Strings;

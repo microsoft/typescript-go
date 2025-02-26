@@ -1,6 +1,6 @@
 --- old.reactTagNameComponentWithPropsNoOOM2.symbols
 +++ new.reactTagNameComponentWithPropsNoOOM2.symbols
-@@ -9,7 +9,7 @@
+@@= skipped -9, +9 lines =@@
  declare const Tag: keyof React.ReactHTML;
  >Tag : Symbol(Tag, Decl(reactTagNameComponentWithPropsNoOOM2.tsx, 3, 13))
  >React : Symbol(React, Decl(reactTagNameComponentWithPropsNoOOM2.tsx, 2, 6))
@@ -9,7 +9,7 @@
  
  const classes = "";
  >classes : Symbol(classes, Decl(reactTagNameComponentWithPropsNoOOM2.tsx, 5, 5))
-@@ -17,7 +17,7 @@
+@@= skipped -8, +8 lines =@@
  const rest: React.HTMLAttributes<HTMLElement> = {};
  >rest : Symbol(rest, Decl(reactTagNameComponentWithPropsNoOOM2.tsx, 6, 5))
  >React : Symbol(React, Decl(reactTagNameComponentWithPropsNoOOM2.tsx, 2, 6))

@@ -1,6 +1,6 @@
 --- old.jsxChildrenGenericContextualTypes.symbols
 +++ new.jsxChildrenGenericContextualTypes.symbols
-@@ -9,11 +9,11 @@
+@@= skipped -9, +9 lines =@@
  
      export interface ElementAttributesProperty { props: {}; }
  >ElementAttributesProperty : Symbol(ElementAttributesProperty, Decl(jsxChildrenGenericContextualTypes.tsx, 1, 31))
@@ -14,7 +14,7 @@
  
      export interface IntrinsicAttributes {}
  >IntrinsicAttributes : Symbol(IntrinsicAttributes, Decl(jsxChildrenGenericContextualTypes.tsx, 3, 63))
-@@ -34,8 +34,6 @@
+@@= skipped -25, +25 lines =@@
  >t : Symbol(t, Decl(jsxChildrenGenericContextualTypes.tsx, 7, 50))
  >T : Symbol(T, Decl(jsxChildrenGenericContextualTypes.tsx, 7, 14))
  >T : Symbol(T, Decl(jsxChildrenGenericContextualTypes.tsx, 7, 14))
@@ -23,7 +23,7 @@
  
  Elem({prop: {a: "x"}, children: i => ({a: "z"})});
  >Elem : Symbol(Elem, Decl(jsxChildrenGenericContextualTypes.tsx, 7, 5))
-@@ -66,9 +64,9 @@
+@@= skipped -32, +30 lines =@@
  interface LitProps<T> { prop: T, children: (x: this) => T }
  >LitProps : Symbol(LitProps, Decl(jsxChildrenGenericContextualTypes.tsx, 10, 57))
  >T : Symbol(T, Decl(jsxChildrenGenericContextualTypes.tsx, 12, 19))
@@ -35,7 +35,7 @@
  >x : Symbol(x, Decl(jsxChildrenGenericContextualTypes.tsx, 12, 44))
  >T : Symbol(T, Decl(jsxChildrenGenericContextualTypes.tsx, 12, 19))
  
-@@ -78,8 +76,6 @@
+@@= skipped -12, +12 lines =@@
  >p : Symbol(p, Decl(jsxChildrenGenericContextualTypes.tsx, 13, 35))
  >LitProps : Symbol(LitProps, Decl(jsxChildrenGenericContextualTypes.tsx, 10, 57))
  >T : Symbol(T, Decl(jsxChildrenGenericContextualTypes.tsx, 13, 17))

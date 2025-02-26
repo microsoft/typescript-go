@@ -1,6 +1,6 @@
 --- old.for-of16.symbols
 +++ new.for-of16.symbols
-@@ -5,10 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >MyStringIterator : Symbol(MyStringIterator, Decl(for-of16.ts, 0, 0))
  
      [Symbol.iterator]() {

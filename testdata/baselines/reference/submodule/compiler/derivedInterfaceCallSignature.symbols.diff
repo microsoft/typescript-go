@@ -1,6 +1,6 @@
 --- old.derivedInterfaceCallSignature.symbols
 +++ new.derivedInterfaceCallSignature.symbols
-@@ -9,23 +9,23 @@
+@@= skipped -9, +9 lines =@@
  >index : Symbol(index, Decl(derivedInterfaceCallSignature.ts, 1, 15))
  
      x(): (data: any, index?: number) => number;
@@ -29,7 +29,7 @@
  >data : Symbol(data, Decl(derivedInterfaceCallSignature.ts, 7, 16))
  >index : Symbol(index, Decl(derivedInterfaceCallSignature.ts, 7, 26))
  }
-@@ -35,65 +35,65 @@
+@@= skipped -26, +26 lines =@@
  >D3SvgPath : Symbol(D3SvgPath, Decl(derivedInterfaceCallSignature.ts, 0, 0))
  
      x(x: (data: any, index?: number) => number): D3SvgArea;
@@ -106,7 +106,7 @@
  >defined : Symbol(defined, Decl(derivedInterfaceCallSignature.ts, 22, 12))
  >data : Symbol(data, Decl(derivedInterfaceCallSignature.ts, 22, 22))
  >index : Symbol(index, Decl(derivedInterfaceCallSignature.ts, 22, 32))
-@@ -105,7 +105,7 @@
+@@= skipped -70, +70 lines =@@
  >D3SvgArea : Symbol(D3SvgArea, Decl(derivedInterfaceCallSignature.ts, 8, 1))
  
  area.interpolate('two')('one');

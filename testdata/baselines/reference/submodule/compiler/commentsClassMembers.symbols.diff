@@ -1,6 +1,6 @@
 --- old.commentsClassMembers.symbols
 +++ new.commentsClassMembers.symbols
-@@ -7,88 +7,88 @@
+@@= skipped -7, +7 lines =@@
  
      /** p1 is property of c1*/
      public p1: number;
@@ -117,7 +117,7 @@
  >value : Symbol(value, Decl(commentsClassMembers.ts, 27, 20))
      }
      /** Constructor method*/
-@@ -96,411 +96,411 @@
+@@= skipped -89, +89 lines =@@
      }
      /** s1 is static property of c1*/
      static s1: number;
@@ -669,7 +669,7 @@
  >value : Symbol(value, Decl(commentsClassMembers.ts, 166, 20))
      }
  }
-@@ -510,122 +510,122 @@
+@@= skipped -414, +414 lines =@@
  
  var i1_p = i1.p1;
  >i1_p : Symbol(i1_p, Decl(commentsClassMembers.ts, 172, 3))
@@ -832,7 +832,7 @@
  >i1_s_ncprop : Symbol(i1_s_ncprop, Decl(commentsClassMembers.ts, 190, 3))
  
  var i1_c = c1;
-@@ -636,72 +636,72 @@
+@@= skipped -126, +126 lines =@@
  >cProperties : Symbol(cProperties, Decl(commentsClassMembers.ts, 192, 14))
  
      private val: number;

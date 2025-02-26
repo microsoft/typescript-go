@@ -1,6 +1,6 @@
 --- old.multipleExportDefault1.symbols
 +++ new.multipleExportDefault1.symbols
-@@ -2,7 +2,7 @@
+@@= skipped -2, +2 lines =@@
  
  === multipleExportDefault1.ts ===
  export default function Foo (){

@@ -1,6 +1,6 @@
 --- old.classImplementsMethodWIthTupleArgs.symbols
 +++ new.classImplementsMethodWIthTupleArgs.symbols
-@@ -6,12 +6,12 @@
+@@= skipped -6, +6 lines =@@
  >Settable : Symbol(Settable, Decl(classImplementsMethodWIthTupleArgs.ts, 3, 1))
  
      set(option: Record<string, unknown>): void;
@@ -15,7 +15,7 @@
  >name : Symbol(name, Decl(classImplementsMethodWIthTupleArgs.ts, 2, 8))
  >value : Symbol(value, Decl(classImplementsMethodWIthTupleArgs.ts, 2, 21))
  }
-@@ -20,7 +20,7 @@
+@@= skipped -14, +14 lines =@@
  >Settable : Symbol(Settable, Decl(classImplementsMethodWIthTupleArgs.ts, 3, 1))
  
      set(...args: [option: Record<string, unknown>] | [name: string, value: unknown] | [name: string]): void;

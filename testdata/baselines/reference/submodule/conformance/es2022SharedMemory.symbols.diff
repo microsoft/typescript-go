@@ -1,6 +1,6 @@
 --- old.es2022SharedMemory.symbols
 +++ new.es2022SharedMemory.symbols
-@@ -4,9 +4,9 @@
+@@= skipped -4, +4 lines =@@
  const sab = new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * 1024);
  >sab : Symbol(sab, Decl(es2022SharedMemory.ts, 0, 5))
  >SharedArrayBuffer : Symbol(SharedArrayBuffer, Decl(lib.es2017.sharedmemory.d.ts, --, --), Decl(lib.es2017.sharedmemory.d.ts, --, --))
@@ -12,7 +12,7 @@
  
  const int32 = new Int32Array(sab);
  >int32 : Symbol(int32, Decl(es2022SharedMemory.ts, 1, 5))
-@@ -16,9 +16,9 @@
+@@= skipped -12, +12 lines =@@
  const sab64 = new SharedArrayBuffer(BigInt64Array.BYTES_PER_ELEMENT * 1024);
  >sab64 : Symbol(sab64, Decl(es2022SharedMemory.ts, 2, 5))
  >SharedArrayBuffer : Symbol(SharedArrayBuffer, Decl(lib.es2017.sharedmemory.d.ts, --, --), Decl(lib.es2017.sharedmemory.d.ts, --, --))
@@ -24,7 +24,7 @@
  
  const int64 = new BigInt64Array(sab64);
  >int64 : Symbol(int64, Decl(es2022SharedMemory.ts, 3, 5))
-@@ -27,17 +27,17 @@
+@@= skipped -11, +11 lines =@@
  
  const waitValue = Atomics.wait(int32, 0, 0);
  >waitValue : Symbol(waitValue, Decl(es2022SharedMemory.ts, 4, 5))
@@ -46,7 +46,7 @@
  >int32 : Symbol(int32, Decl(es2022SharedMemory.ts, 1, 5))
  
  const { async: async64, value: value64 } = Atomics.waitAsync(int64, 0, BigInt(0));
-@@ -45,9 +45,9 @@
+@@= skipped -18, +18 lines =@@
  >async64 : Symbol(async64, Decl(es2022SharedMemory.ts, 6, 7))
  >value : Symbol(value, Decl(lib.es2022.sharedmemory.d.ts, --, --), Decl(lib.es2022.sharedmemory.d.ts, --, --))
  >value64 : Symbol(value64, Decl(es2022SharedMemory.ts, 6, 23))

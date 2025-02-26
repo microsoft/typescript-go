@@ -1,6 +1,6 @@
 --- old.multivar.symbols
 +++ new.multivar.symbols
-@@ -34,7 +34,7 @@
+@@= skipped -34, +34 lines =@@
  >C : Symbol(C, Decl(multivar.ts, 8, 11))
  
          constructor (public b) {
@@ -9,7 +9,7 @@
          }
      }
  
-@@ -42,7 +42,7 @@
+@@= skipped -8, +8 lines =@@
  >C2 : Symbol(C2, Decl(multivar.ts, 13, 5))
  
          constructor (public b) {

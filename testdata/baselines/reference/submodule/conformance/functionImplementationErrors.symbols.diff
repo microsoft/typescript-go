@@ -1,6 +1,6 @@
 --- old.functionImplementationErrors.symbols
 +++ new.functionImplementationErrors.symbols
-@@ -74,21 +74,21 @@
+@@= skipped -74, +74 lines =@@
  
  class Base { private x; }
  >Base : Symbol(Base, Decl(functionImplementationErrors.ts, 42, 2))

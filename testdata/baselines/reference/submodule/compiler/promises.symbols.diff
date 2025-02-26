@@ -1,6 +1,6 @@
 --- old.promises.symbols
 +++ new.promises.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(lib.es5.d.ts, --, --), Decl(promises.ts, 0, 18))
  
      then<U>(success?: (value: T) => U): Promise<U>;
@@ -9,7 +9,7 @@
  >U : Symbol(U, Decl(promises.ts, 1, 9))
  >success : Symbol(success, Decl(promises.ts, 1, 12))
  >value : Symbol(value, Decl(promises.ts, 1, 23))
-@@ -16,7 +16,7 @@
+@@= skipped -10, +10 lines =@@
  >U : Symbol(U, Decl(promises.ts, 1, 9))
  
      then<U>(success?: (value: T) => Promise<U>): Promise<U>;
@@ -18,7 +18,7 @@
  >U : Symbol(U, Decl(promises.ts, 2, 9))
  >success : Symbol(success, Decl(promises.ts, 2, 12))
  >value : Symbol(value, Decl(promises.ts, 2, 23))
-@@ -27,7 +27,7 @@
+@@= skipped -11, +11 lines =@@
  >U : Symbol(U, Decl(promises.ts, 2, 9))
  
      value: T;

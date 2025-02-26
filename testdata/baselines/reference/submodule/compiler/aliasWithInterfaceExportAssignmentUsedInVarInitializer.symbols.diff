@@ -1,6 +1,6 @@
 --- old.aliasWithInterfaceExportAssignmentUsedInVarInitializer.symbols
 +++ new.aliasWithInterfaceExportAssignmentUsedInVarInitializer.symbols
-@@ -12,7 +12,7 @@
+@@= skipped -12, +12 lines =@@
  >c : Symbol(c, Decl(aliasWithInterfaceExportAssignmentUsedInVarInitializer_0.ts, 0, 0))
  
      q3: number;

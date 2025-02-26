@@ -1,6 +1,6 @@
 --- old.contextualOverloadListFromArrayUnion.symbols
 +++ new.contextualOverloadListFromArrayUnion.symbols
-@@ -6,13 +6,9 @@
+@@= skipped -6, +6 lines =@@
  
  export const yThen = y.map(item => item.length);
  >yThen : Symbol(yThen, Decl(one.ts, 1, 12))
@@ -14,7 +14,7 @@
  
  === two.ts ===
  declare const y: number[][] | string[];
-@@ -20,13 +16,9 @@
+@@= skipped -14, +10 lines =@@
  
  export const yThen = y.map(item => item.length);
  >yThen : Symbol(yThen, Decl(two.ts, 1, 12))
@@ -28,7 +28,7 @@
  
  === three.ts ===
  // #42504
-@@ -35,23 +27,22 @@
+@@= skipped -15, +11 lines =@@
  
      (entries: ResizeObserverEntry[], observer: ResizeObserver): void;
  >entries : Symbol(entries, Decl(three.ts, 2, 5))
@@ -56,7 +56,7 @@
  >entry : Symbol(entry, Decl(three.ts, 8, 44))
  
      entry
-@@ -70,7 +61,7 @@
+@@= skipped -35, +34 lines =@@
  
      (error: Error, result: null): unknown
  >error : Symbol(error, Decl(three.ts, 14, 5))
@@ -65,7 +65,7 @@
  >result : Symbol(result, Decl(three.ts, 14, 18))
  }
  
-@@ -133,9 +124,7 @@
+@@= skipped -63, +63 lines =@@
                      // must use postfix-!, since `error` and `result` don't have a
                      // causal relationship when the overloads are combined
                      results.push(result!)
@@ -75,7 +75,7 @@
  >result : Symbol(result, Decl(three.ts, 30, 24))
  
                      next()
-@@ -153,17 +142,14 @@
+@@= skipped -20, +18 lines =@@
  
      cb => setTimeout(() => cb(null, 1), 300),
  >cb : Symbol(cb, Decl(three.ts, 45, 8))
@@ -93,7 +93,7 @@
  >cb : Symbol(cb, Decl(three.ts, 47, 45))
  
  ], (error, results) => {
-@@ -174,16 +160,10 @@
+@@= skipped -21, +18 lines =@@
  >error : Symbol(error, Decl(three.ts, 49, 4))
  
          console.error(error)

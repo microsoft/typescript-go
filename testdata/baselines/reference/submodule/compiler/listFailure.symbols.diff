@@ -1,6 +1,6 @@
 --- old.listFailure.symbols
 +++ new.listFailure.symbols
-@@ -8,14 +8,14 @@
+@@= skipped -8, +8 lines =@@
  >Buffer : Symbol(Buffer, Decl(listFailure.ts, 0, 15))
  
      	lines: List<Line> = ListMakeHead<Line>();
@@ -17,7 +17,7 @@
  >lineText : Symbol(lineText, Decl(listFailure.ts, 5, 16))
  >List : Symbol(List, Decl(listFailure.ts, 24, 5))
  >Line : Symbol(Line, Decl(listFailure.ts, 37, 5))
-@@ -27,11 +27,11 @@
+@@= skipped -19, +19 lines =@@
  
              var lineEntry = this.lines.add(line);
  >lineEntry : Symbol(lineEntry, Decl(listFailure.ts, 8, 15))
@@ -33,7 +33,7 @@
  >line : Symbol(line, Decl(listFailure.ts, 7, 15))
  
              return lineEntry;
-@@ -77,32 +77,32 @@
+@@= skipped -50, +50 lines =@@
  >T : Symbol(T, Decl(listFailure.ts, 26, 15))
  
          public next: List<T>; 
@@ -73,7 +73,7 @@
  >head : Symbol(head, Decl(listFailure.ts, 34, 17))
  >List : Symbol(List, Decl(listFailure.ts, 24, 5))
  >T : Symbol(T, Decl(listFailure.ts, 26, 15))
-@@ -111,9 +111,9 @@
+@@= skipped -34, +34 lines =@@
  
              return (ListRemoveEntry(this.next));
  >ListRemoveEntry : Symbol(ListRemoveEntry, Decl(listFailure.ts, 12, 5))

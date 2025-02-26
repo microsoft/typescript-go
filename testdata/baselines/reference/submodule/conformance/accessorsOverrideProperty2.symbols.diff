@@ -1,6 +1,6 @@
 --- old.accessorsOverrideProperty2.symbols
 +++ new.accessorsOverrideProperty2.symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >Base : Symbol(Base, Decl(accessorsOverrideProperty2.ts, 0, 0))
  
    x = 1;
@@ -9,7 +9,7 @@
  }
  
  class Derived extends Base {
-@@ -13,14 +13,14 @@
+@@= skipped -8, +8 lines =@@
  >Base : Symbol(Base, Decl(accessorsOverrideProperty2.ts, 0, 0))
  
    get x() { return 2; } // should be an error
@@ -28,7 +28,7 @@
  >value : Symbol(value, Decl(accessorsOverrideProperty2.ts, 6, 8))
  }
  
-@@ -29,10 +29,10 @@
+@@= skipped -16, +16 lines =@@
  >Derived : Symbol(Derived, Decl(accessorsOverrideProperty2.ts, 2, 1))
  
  console.log(obj.x); // number

@@ -1,6 +1,6 @@
 --- old.defaultParameterAddsUndefinedWithStrictNullChecks.symbols
 +++ new.defaultParameterAddsUndefinedWithStrictNullChecks.symbols
-@@ -7,9 +7,9 @@
+@@= skipped -7, +7 lines =@@
  >addUndefined2 : Symbol(addUndefined2, Decl(defaultParameterAddsUndefinedWithStrictNullChecks.ts, 0, 31))
  
      return addUndefined1.length + (addUndefined2 || 0);
@@ -12,7 +12,7 @@
  >addUndefined2 : Symbol(addUndefined2, Decl(defaultParameterAddsUndefinedWithStrictNullChecks.ts, 0, 31))
  }
  function g(addUndefined = "J", addDefined: number) {
-@@ -18,9 +18,9 @@
+@@= skipped -11, +11 lines =@@
  >addDefined : Symbol(addDefined, Decl(defaultParameterAddsUndefinedWithStrictNullChecks.ts, 3, 30))
  
      return addUndefined.length + addDefined;
@@ -24,7 +24,7 @@
  >addDefined : Symbol(addDefined, Decl(defaultParameterAddsUndefinedWithStrictNullChecks.ts, 3, 30))
  }
  let total = f() + f('a', 1) + f('b') + f(undefined, 2);
-@@ -43,9 +43,9 @@
+@@= skipped -25, +25 lines =@@
  >b : Symbol(b, Decl(defaultParameterAddsUndefinedWithStrictNullChecks.ts, 9, 35))
  
      x.length;
@@ -36,7 +36,7 @@
  }
  
  function foo2(x = "string", b: number) {
-@@ -54,9 +54,9 @@
+@@= skipped -11, +11 lines =@@
  >b : Symbol(b, Decl(defaultParameterAddsUndefinedWithStrictNullChecks.ts, 13, 27))
  
      x.length; // ok, should be string
@@ -48,7 +48,7 @@
  }
  
  function foo3(x: string | undefined = "string", b: number) {
-@@ -65,9 +65,9 @@
+@@= skipped -11, +11 lines =@@
  >b : Symbol(b, Decl(defaultParameterAddsUndefinedWithStrictNullChecks.ts, 17, 47))
  
      x.length; // ok, should be string

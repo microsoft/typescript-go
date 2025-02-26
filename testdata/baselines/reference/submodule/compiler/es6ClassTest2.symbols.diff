@@ -1,6 +1,6 @@
 --- old.es6ClassTest2.symbols
 +++ new.es6ClassTest2.symbols
-@@ -5,20 +5,20 @@
+@@= skipped -5, +5 lines =@@
  >BasicMonster : Symbol(BasicMonster, Decl(es6ClassTest2.ts, 0, 0))
  
      constructor(public name: string, public health: number) {
@@ -25,7 +25,7 @@
  }
  
  var m1 = new BasicMonster("1", 100);
-@@ -30,35 +30,35 @@
+@@= skipped -25, +25 lines =@@
  >BasicMonster : Symbol(BasicMonster, Decl(es6ClassTest2.ts, 0, 0))
  
  m1.attack(m2);
@@ -72,7 +72,7 @@
  >target : Symbol(target, Decl(es6ClassTest2.ts, 23, 11))
  
        // WScript.Echo("Attacks " + target);
-@@ -67,17 +67,17 @@
+@@= skipped -37, +37 lines =@@
    // a curly body defines a getter in the same way that "get"
    // defines one in an object literal.
      get isAlive() {
@@ -94,7 +94,7 @@
  >value : Symbol(value, Decl(es6ClassTest2.ts, 34, 15))
  
          if (value < 0) {
-@@ -87,9 +87,9 @@
+@@= skipped -20, +20 lines =@@
  >Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
      }
          this._health = value
@@ -106,7 +106,7 @@
  >value : Symbol(value, Decl(es6ClassTest2.ts, 34, 15))
    }
  }
-@@ -103,21 +103,21 @@
+@@= skipped -16, +16 lines =@@
  >BasicMonster : Symbol(BasicMonster, Decl(es6ClassTest2.ts, 0, 0))
  
  m3.attack(m4);
@@ -134,7 +134,7 @@
  
  class OverloadedMonster {
  >OverloadedMonster : Symbol(OverloadedMonster, Decl(es6ClassTest2.ts, 46, 36))
-@@ -126,27 +126,27 @@
+@@= skipped -23, +23 lines =@@
  >name : Symbol(name, Decl(es6ClassTest2.ts, 49, 16))
  
      constructor(public name: string, public health?: number) {
@@ -168,7 +168,7 @@
  }
  
  var m5 = new OverloadedMonster("1");
-@@ -158,21 +158,21 @@
+@@= skipped -32, +32 lines =@@
  >OverloadedMonster : Symbol(OverloadedMonster, Decl(es6ClassTest2.ts, 46, 36))
  
  m5.attack(m6);
@@ -196,7 +196,7 @@
  
  class SplatMonster {
  >SplatMonster : Symbol(SplatMonster, Decl(es6ClassTest2.ts, 67, 36))
-@@ -181,7 +181,7 @@
+@@= skipped -23, +23 lines =@@
  >args : Symbol(args, Decl(es6ClassTest2.ts, 70, 16))
  
      roar(name: string, ...args: number[]) { }
@@ -205,7 +205,7 @@
  >name : Symbol(name, Decl(es6ClassTest2.ts, 71, 9))
  >args : Symbol(args, Decl(es6ClassTest2.ts, 71, 22))
  }
-@@ -194,13 +194,13 @@
+@@= skipped -13, +13 lines =@@
  >PrototypeMonster : Symbol(PrototypeMonster, Decl(es6ClassTest2.ts, 75, 31))
  
      age: number = 1;
@@ -222,7 +222,7 @@
  >foo : Symbol(foo, Decl(es6ClassTest2.ts, 72, 1))
  }
  
-@@ -213,13 +213,13 @@
+@@= skipped -19, +19 lines =@@
      }
  
      b(b: string) {
@@ -238,7 +238,7 @@
  
      }
  }
-@@ -234,21 +234,21 @@
+@@= skipped -21, +21 lines =@@
      }
  
      b() {
@@ -266,7 +266,7 @@
      }
  }
  
-@@ -256,13 +256,13 @@
+@@= skipped -22, +22 lines =@@
  >Statics : Symbol(Statics, Decl(es6ClassTest2.ts, 108, 1))
  
      static foo = 1;
@@ -283,7 +283,7 @@
  
          return "";
      }
-@@ -276,10 +276,10 @@
+@@= skipped -20, +20 lines =@@
  >IFoo : Symbol(IFoo, Decl(es6ClassTest2.ts, 119, 25))
  
      x: number;
@@ -296,7 +296,7 @@
  }
  
  class ImplementsInterface implements IFoo {
-@@ -287,21 +287,21 @@
+@@= skipped -11, +11 lines =@@
  >IFoo : Symbol(IFoo, Decl(es6ClassTest2.ts, 119, 25))
  
      public x: number;
@@ -324,7 +324,7 @@
      }
  }
  
-@@ -309,30 +309,30 @@
+@@= skipped -22, +22 lines =@@
  >Visibility : Symbol(Visibility, Decl(es6ClassTest2.ts, 133, 1))
  
      public foo() { }
@@ -364,7 +364,7 @@
      }
  }
  
-@@ -340,8 +340,8 @@
+@@= skipped -31, +31 lines =@@
  >BaseClassWithConstructor : Symbol(BaseClassWithConstructor, Decl(es6ClassTest2.ts, 145, 1))
  
      constructor(public x: number, public s: string) { }

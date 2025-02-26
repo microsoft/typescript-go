@@ -1,6 +1,6 @@
 --- old.mappedTypeNestedGenericInstantiation.symbols
 +++ new.mappedTypeNestedGenericInstantiation.symbols
-@@ -8,11 +8,11 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(mappedTypeNestedGenericInstantiation.ts, 2, 20))
  
    value(): T;
@@ -14,7 +14,7 @@
  >U : Symbol(U, Decl(mappedTypeNestedGenericInstantiation.ts, 4, 12))
  >func : Symbol(func, Decl(mappedTypeNestedGenericInstantiation.ts, 4, 15))
  >v : Symbol(v, Decl(mappedTypeNestedGenericInstantiation.ts, 4, 22))
-@@ -41,12 +41,12 @@
+@@= skipped -33, +33 lines =@@
  
  const v = chain({a: 1, b: 2}).mapValues(square).value();
  >v : Symbol(v, Decl(mappedTypeNestedGenericInstantiation.ts, 11, 5))

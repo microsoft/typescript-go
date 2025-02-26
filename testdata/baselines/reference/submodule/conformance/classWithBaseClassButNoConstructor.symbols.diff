@@ -1,6 +1,6 @@
 --- old.classWithBaseClassButNoConstructor.symbols
 +++ new.classWithBaseClassButNoConstructor.symbols
-@@ -13,7 +13,7 @@
+@@= skipped -13, +13 lines =@@
  >Base : Symbol(Base, Decl(classWithBaseClassButNoConstructor.ts, 0, 0))
  
      foo: string;
@@ -9,7 +9,7 @@
  }
  
  var r = C;
-@@ -47,7 +47,7 @@
+@@= skipped -34, +34 lines =@@
  >U : Symbol(U, Decl(classWithBaseClassButNoConstructor.ts, 16, 10))
  
      foo: U;
@@ -18,7 +18,7 @@
  >U : Symbol(U, Decl(classWithBaseClassButNoConstructor.ts, 16, 10))
  }
  
-@@ -71,7 +71,7 @@
+@@= skipped -24, +24 lines =@@
  >Base2 : Symbol(Base2, Decl(classWithBaseClassButNoConstructor.ts, 10, 18))
  
      foo: U;
@@ -27,7 +27,7 @@
  >U : Symbol(U, Decl(classWithBaseClassButNoConstructor.ts, 25, 11))
  }
  
-@@ -92,7 +92,7 @@
+@@= skipped -21, +21 lines =@@
  >Base2 : Symbol(Base2, Decl(classWithBaseClassButNoConstructor.ts, 10, 18))
  
      foo: string;

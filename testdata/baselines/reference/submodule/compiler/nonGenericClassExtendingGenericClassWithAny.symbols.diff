@@ -1,6 +1,6 @@
 --- old.nonGenericClassExtendingGenericClassWithAny.symbols
 +++ new.nonGenericClassExtendingGenericClassWithAny.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(nonGenericClassExtendingGenericClassWithAny.ts, 0, 10))
  
      t: T;

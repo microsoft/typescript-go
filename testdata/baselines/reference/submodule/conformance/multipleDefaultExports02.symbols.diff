@@ -1,6 +1,6 @@
 --- old.multipleDefaultExports02.symbols
 +++ new.multipleDefaultExports02.symbols
-@@ -2,12 +2,12 @@
+@@= skipped -2, +2 lines =@@
  
  === m1.ts ===
  export default function foo() {

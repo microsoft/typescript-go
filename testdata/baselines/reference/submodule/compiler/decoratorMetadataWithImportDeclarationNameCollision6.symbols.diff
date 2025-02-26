@@ -1,6 +1,6 @@
 --- old.decoratorMetadataWithImportDeclarationNameCollision6.symbols
 +++ new.decoratorMetadataWithImportDeclarationNameCollision6.symbols
-@@ -2,10 +2,10 @@
+@@= skipped -2, +2 lines =@@
  
  === db.ts ===
  export default class db {
@@ -13,7 +13,7 @@
      }
  }
  
-@@ -27,7 +27,7 @@
+@@= skipped -25, +25 lines =@@
  >MyClass : Symbol(MyClass, Decl(service.ts, 3, 1))
  
      db: database;
@@ -22,7 +22,7 @@
  >database : Symbol(database, Decl(service.ts, 0, 6))
  
      constructor(db: database) { // no collision
-@@ -35,17 +35,17 @@
+@@= skipped -8, +8 lines =@@
  >database : Symbol(database, Decl(service.ts, 0, 6))
  
          this.db = db;

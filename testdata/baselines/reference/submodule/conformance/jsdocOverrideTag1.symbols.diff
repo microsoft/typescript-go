@@ -1,6 +1,6 @@
 --- old.jsdocOverrideTag1.symbols
 +++ new.jsdocOverrideTag1.symbols
-@@ -10,14 +10,14 @@
+@@= skipped -10, +10 lines =@@
       * @returns {boolean}
       */
      foo (a) {
@@ -17,7 +17,7 @@
  
      }
  }
-@@ -33,24 +33,24 @@
+@@= skipped -23, +23 lines =@@
       * @returns {boolean}
       */
      foo (a) {
@@ -47,7 +47,7 @@
  
      }
  }
-@@ -61,7 +61,7 @@
+@@= skipped -28, +28 lines =@@
  
      /** @override */
      foo () {

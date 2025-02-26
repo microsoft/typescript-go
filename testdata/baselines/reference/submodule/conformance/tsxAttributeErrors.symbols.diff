@@ -1,6 +1,6 @@
 --- old.tsxAttributeErrors.symbols
 +++ new.tsxAttributeErrors.symbols
-@@ -11,7 +11,7 @@
+@@= skipped -11, +11 lines =@@
  >IntrinsicElements : Symbol(IntrinsicElements, Decl(tsxAttributeErrors.tsx, 1, 22))
  
  		div: {
@@ -9,7 +9,7 @@
  
  			text?: string;
  >text : Symbol(text, Decl(tsxAttributeErrors.tsx, 3, 8))
-@@ -21,18 +21,16 @@
+@@= skipped -10, +10 lines =@@
  		}
  
  		span: any;
@@ -29,7 +29,7 @@
  >width : Symbol(width, Decl(tsxAttributeErrors.tsx, 16, 4))
  
  // Error, number is not assignable to string
-@@ -41,12 +39,10 @@
+@@= skipped -20, +18 lines =@@
  >text : Symbol(text, Decl(tsxAttributeErrors.tsx, 19, 15))
  
  <div {...attribs} />;

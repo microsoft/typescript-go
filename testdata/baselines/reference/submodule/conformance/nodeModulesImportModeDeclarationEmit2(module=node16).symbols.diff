@@ -1,6 +1,6 @@
 --- old.nodeModulesImportModeDeclarationEmit2(module=node16).symbols
 +++ new.nodeModulesImportModeDeclarationEmit2(module=node16).symbols
-@@ -13,10 +13,10 @@
+@@= skipped -13, +13 lines =@@
  >ImportInterface : Symbol(ImportInterface, Decl(index.ts, 1, 13))
  
  import {type RequireInterface as Req} from "pkg" assert { "resolution-mode": "require" };
@@ -12,7 +12,7 @@
  >Imp : Symbol(Imp, Decl(index.ts, 6, 8))
  
  export interface Loc extends Req, Imp {}
-@@ -30,10 +30,6 @@
+@@= skipped -17, +17 lines =@@
  export type { ImportInterface } from "pkg" assert { "resolution-mode": "import" };
  >ImportInterface : Symbol(ImportInterface, Decl(index.ts, 10, 13))
  

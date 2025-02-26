@@ -1,6 +1,6 @@
 --- old.privacyGloImport.symbols
 +++ new.privacyGloImport.symbols
-@@ -68,51 +68,51 @@
+@@= skipped -68, +68 lines =@@
  
      export var m1_im1_private_v1_public = m1_im1_private.c1;
  >m1_im1_private_v1_public : Symbol(m1_im1_private_v1_public, Decl(privacyGloImport.ts, 38, 14))
@@ -68,7 +68,7 @@
  
  
      import m1_im2_private = m1_M2_private;
-@@ -121,51 +121,51 @@
+@@= skipped -53, +53 lines =@@
  
      export var m1_im2_private_v1_public = m1_im2_private.c1;
  >m1_im2_private_v1_public : Symbol(m1_im2_private_v1_public, Decl(privacyGloImport.ts, 49, 14))
@@ -136,7 +136,7 @@
  
      //import m1_im3_private = require("m1_M3_public");
      //export var m1_im3_private_v1_public = m1_im3_private.c1;
-@@ -243,12 +243,12 @@
+@@= skipped -122, +122 lines =@@
  
      import use_glo_M1_public = glo_M1_public;
  >use_glo_M1_public : Symbol(use_glo_M1_public, Decl(privacyGloImport.ts, 102, 36))
@@ -151,7 +151,7 @@
  
      export var use_glo_M1_public_v2_public: typeof use_glo_M1_public;
  >use_glo_M1_public_v2_public : Symbol(use_glo_M1_public_v2_public, Decl(privacyGloImport.ts, 105, 14))
-@@ -257,12 +257,12 @@
+@@= skipped -14, +14 lines =@@
      export var use_glo_M1_public_v3_public: ()=> use_glo_M1_public.c1;
  >use_glo_M1_public_v3_public : Symbol(use_glo_M1_public_v3_public, Decl(privacyGloImport.ts, 106, 14))
  >use_glo_M1_public : Symbol(use_glo_M1_public, Decl(privacyGloImport.ts, 102, 36))
@@ -166,7 +166,7 @@
  
      var use_glo_M1_public_v2_private: typeof use_glo_M1_public;
  >use_glo_M1_public_v2_private : Symbol(use_glo_M1_public_v2_private, Decl(privacyGloImport.ts, 108, 7))
-@@ -271,7 +271,7 @@
+@@= skipped -14, +14 lines =@@
      var use_glo_M1_public_v3_private: () => use_glo_M1_public.c1;
  >use_glo_M1_public_v3_private : Symbol(use_glo_M1_public_v3_private, Decl(privacyGloImport.ts, 109, 7))
  >use_glo_M1_public : Symbol(use_glo_M1_public, Decl(privacyGloImport.ts, 102, 36))
@@ -175,7 +175,7 @@
  
      import use_glo_M2_public = require("glo_M2_public");
  >use_glo_M2_public : Symbol(use_glo_M2_public, Decl(privacyGloImport.ts, 109, 65))
-@@ -279,7 +279,7 @@
+@@= skipped -8, +8 lines =@@
      export var use_glo_M2_public_v1_public: { new (): use_glo_M2_public.c1; };
  >use_glo_M2_public_v1_public : Symbol(use_glo_M2_public_v1_public, Decl(privacyGloImport.ts, 112, 14))
  >use_glo_M2_public : Symbol(use_glo_M2_public, Decl(privacyGloImport.ts, 109, 65))
@@ -184,7 +184,7 @@
  
      export var use_glo_M2_public_v2_public: typeof use_glo_M2_public;
  >use_glo_M2_public_v2_public : Symbol(use_glo_M2_public_v2_public, Decl(privacyGloImport.ts, 113, 14))
-@@ -288,12 +288,12 @@
+@@= skipped -9, +9 lines =@@
      export var use_glo_M2_public_v3_public: () => use_glo_M2_public.c1;
  >use_glo_M2_public_v3_public : Symbol(use_glo_M2_public_v3_public, Decl(privacyGloImport.ts, 114, 14))
  >use_glo_M2_public : Symbol(use_glo_M2_public, Decl(privacyGloImport.ts, 109, 65))
@@ -199,7 +199,7 @@
  
      var use_glo_M2_public_v2_private: typeof use_glo_M2_public;
  >use_glo_M2_public_v2_private : Symbol(use_glo_M2_public_v2_private, Decl(privacyGloImport.ts, 116, 7))
-@@ -302,7 +302,7 @@
+@@= skipped -14, +14 lines =@@
      var use_glo_M2_public_v3_private: () => use_glo_M2_public.c1;
  >use_glo_M2_public_v3_private : Symbol(use_glo_M2_public_v3_private, Decl(privacyGloImport.ts, 117, 7))
  >use_glo_M2_public : Symbol(use_glo_M2_public, Decl(privacyGloImport.ts, 109, 65))
@@ -208,7 +208,7 @@
  
      module m2 {
  >m2 : Symbol(m2, Decl(privacyGloImport.ts, 117, 65))
-@@ -310,7 +310,7 @@
+@@= skipped -8, +8 lines =@@
          //import errorImport = require("glo_M2_public");
          import nonerrorImport = glo_M1_public;
  >nonerrorImport : Symbol(nonerrorImport, Decl(privacyGloImport.ts, 119, 15))
@@ -217,7 +217,7 @@
  
          module m5 {
  >m5 : Symbol(m5, Decl(privacyGloImport.ts, 121, 46))
-@@ -318,7 +318,7 @@
+@@= skipped -8, +8 lines =@@
              //import m5_errorImport = require("glo_M2_public");
              import m5_nonerrorImport = glo_M1_public;
  >m5_nonerrorImport : Symbol(m5_nonerrorImport, Decl(privacyGloImport.ts, 123, 19))

@@ -1,6 +1,6 @@
 --- old.moduleExportDuplicateAlias.symbols
 +++ new.moduleExportDuplicateAlias.symbols
-@@ -3,35 +3,7 @@
+@@= skipped -3, +3 lines =@@
  === test.js ===
  const { apply } = require('./moduleExportAliasDuplicateAlias')
  >apply : Symbol(apply, Decl(test.js, 0, 7))

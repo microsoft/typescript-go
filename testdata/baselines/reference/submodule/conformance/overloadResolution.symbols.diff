@@ -1,6 +1,6 @@
 --- old.overloadResolution.symbols
 +++ new.overloadResolution.symbols
-@@ -5,31 +5,31 @@
+@@= skipped -5, +5 lines =@@
  >SomeBase : Symbol(SomeBase, Decl(overloadResolution.ts, 0, 0))
  
      private n;
@@ -37,7 +37,7 @@
  }
  
  
-@@ -250,8 +250,8 @@
+@@= skipped -245, +245 lines =@@
  >s : Symbol(s, Decl(overloadResolution.ts, 21, 3), Decl(overloadResolution.ts, 22, 3), Decl(overloadResolution.ts, 37, 3), Decl(overloadResolution.ts, 51, 3), Decl(overloadResolution.ts, 52, 3) ... and 3 more)
  >fn5 : Symbol(fn5, Decl(overloadResolution.ts, 84, 16), Decl(overloadResolution.ts, 87, 45), Decl(overloadResolution.ts, 88, 45))
  >n : Symbol(n, Decl(overloadResolution.ts, 91, 13))

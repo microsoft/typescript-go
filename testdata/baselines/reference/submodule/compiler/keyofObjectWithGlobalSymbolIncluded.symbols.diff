@@ -1,6 +1,6 @@
 --- old.keyofObjectWithGlobalSymbolIncluded.symbols
 +++ new.keyofObjectWithGlobalSymbolIncluded.symbols
-@@ -6,10 +6,6 @@
+@@= skipped -6, +6 lines =@@
  
      [Symbol.species]: Array
  >[Symbol.species] : Symbol([Symbol.species], Decl(keyofObjectWithGlobalSymbolIncluded.ts, 0, 13))

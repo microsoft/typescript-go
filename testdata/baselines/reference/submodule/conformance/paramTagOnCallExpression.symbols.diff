@@ -1,6 +1,6 @@
 --- old.paramTagOnCallExpression.symbols
 +++ new.paramTagOnCallExpression.symbols
-@@ -9,8 +9,5 @@
+@@= skipped -9, +9 lines =@@
  // from util
  /** @param {function} ctor - A big long explanation follows */
  exports.inherits = factory('inherits')

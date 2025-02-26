@@ -1,6 +1,6 @@
 --- old.superPropertyElementNoUnusedLexicalThisCapture.symbols
 +++ new.superPropertyElementNoUnusedLexicalThisCapture.symbols
-@@ -3,7 +3,7 @@
+@@= skipped -3, +3 lines =@@
  === superPropertyElementNoUnusedLexicalThisCapture.ts ===
  class A { x() {} }
  >A : Symbol(A, Decl(superPropertyElementNoUnusedLexicalThisCapture.ts, 0, 0))
@@ -9,7 +9,7 @@
  
  class B extends A {
  >B : Symbol(B, Decl(superPropertyElementNoUnusedLexicalThisCapture.ts, 0, 18))
-@@ -14,22 +14,22 @@
+@@= skipped -11, +11 lines =@@
  >super : Symbol(A, Decl(superPropertyElementNoUnusedLexicalThisCapture.ts, 0, 0))
      }
      foo() {

@@ -1,6 +1,6 @@
 --- old.moduleExportAlias.symbols
 +++ new.moduleExportAlias.symbols
-@@ -5,162 +5,94 @@
+@@= skipped -5, +5 lines =@@
  >b : Symbol(b, Decl(a.ts, 0, 0))
  
  b.func1;
@@ -163,7 +163,7 @@
  
  var someOtherVariable;
  >someOtherVariable : Symbol(someOtherVariable, Decl(b.js, 14, 3))
-@@ -168,156 +100,55 @@
+@@= skipped -163, +95 lines =@@
  var multipleDeclarationAlias3 = someOtherVariable = exports;
  >multipleDeclarationAlias3 : Symbol(multipleDeclarationAlias3, Decl(b.js, 15, 3))
  >someOtherVariable : Symbol(someOtherVariable, Decl(b.js, 14, 3))

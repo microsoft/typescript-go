@@ -1,6 +1,6 @@
 --- old.noInfer.symbols
 +++ new.noInfer.symbols
-@@ -156,12 +156,12 @@
+@@= skipped -156, +156 lines =@@
  
  declare class Animal { move(): void }
  >Animal : Symbol(Animal, Decl(noInfer.ts, 38, 25))
@@ -15,7 +15,7 @@
  
  declare function doSomething<T>(value: T, getDefault: () => NoInfer<T>): void;
  >doSomething : Symbol(doSomething, Decl(noInfer.ts, 41, 49))
-@@ -297,21 +297,21 @@
+@@= skipped -141, +141 lines =@@
  >T : Symbol(T, Decl(noInfer.ts, 71, 14))
  
      constructor(private clazz: ExampleClass<T>, private _value: NoInfer<T>) {}
@@ -42,7 +42,7 @@
      }
  }
  class OkClass2<T> {
-@@ -319,10 +319,10 @@
+@@= skipped -22, +22 lines =@@
  >T : Symbol(T, Decl(noInfer.ts, 78, 15))
  
      constructor(private clazz: ExampleClass<T>, public _value: NoInfer<T>) {}

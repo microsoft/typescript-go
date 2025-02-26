@@ -1,6 +1,6 @@
 --- old.unusedLocalsAndParametersTypeAliases.symbols
 +++ new.unusedLocalsAndParametersTypeAliases.symbols
-@@ -9,7 +9,7 @@
+@@= skipped -9, +9 lines =@@
  >I1 : Symbol(I1, Decl(unusedLocalsAndParametersTypeAliases.ts, 1, 27))
  
      getHandler: handler1;
@@ -9,7 +9,7 @@
  >handler1 : Symbol(handler1, Decl(unusedLocalsAndParametersTypeAliases.ts, 0, 0))
  }
  
-@@ -27,7 +27,7 @@
+@@= skipped -18, +18 lines =@@
  >handler3 : Symbol(handler3, Decl(unusedLocalsAndParametersTypeAliases.ts, 7, 34))
  
      getHandler: T;

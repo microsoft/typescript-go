@@ -1,6 +1,6 @@
 --- old.legacyNodeModulesExportsSpecifierGenerationConditions.symbols
 +++ new.legacyNodeModulesExportsSpecifierGenerationConditions.symbols
-@@ -4,7 +4,6 @@
+@@= skipped -4, +4 lines =@@
  export const a = async () => (await import("inner")).x();
  >a : Symbol(a, Decl(index.ts, 0, 12))
  >(await import("inner")).x : Symbol(x, Decl(index.d.ts, 0, 8))

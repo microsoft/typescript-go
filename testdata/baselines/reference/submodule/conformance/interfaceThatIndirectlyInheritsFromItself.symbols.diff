@@ -1,6 +1,6 @@
 --- old.interfaceThatIndirectlyInheritsFromItself.symbols
 +++ new.interfaceThatIndirectlyInheritsFromItself.symbols
-@@ -6,7 +6,7 @@
+@@= skipped -6, +6 lines =@@
  >Derived2 : Symbol(Derived2, Decl(interfaceThatIndirectlyInheritsFromItself.ts, 6, 1))
  
      x: string;
@@ -9,7 +9,7 @@
  }
  
  interface Derived extends Base {
-@@ -14,7 +14,7 @@
+@@= skipped -8, +8 lines =@@
  >Base : Symbol(Base, Decl(interfaceThatIndirectlyInheritsFromItself.ts, 0, 0))
  
      y: string;
@@ -18,7 +18,7 @@
  }
  
  interface Derived2 extends Derived {
-@@ -22,7 +22,7 @@
+@@= skipped -8, +8 lines =@@
  >Derived : Symbol(Derived, Decl(interfaceThatIndirectlyInheritsFromItself.ts, 2, 1))
  
      z: string;
@@ -27,7 +27,7 @@
  }
  
  module Generic {
-@@ -35,7 +35,7 @@
+@@= skipped -13, +13 lines =@@
  >T : Symbol(T, Decl(interfaceThatIndirectlyInheritsFromItself.ts, 13, 19))
  
          x: string;
@@ -36,7 +36,7 @@
      }
  
      interface Derived<T> extends Base<T> {
-@@ -45,7 +45,7 @@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(interfaceThatIndirectlyInheritsFromItself.ts, 17, 22))
  
          y: string;
@@ -45,7 +45,7 @@
      }
  
      interface Derived2<T> extends Derived<T> {
-@@ -55,6 +55,6 @@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(interfaceThatIndirectlyInheritsFromItself.ts, 21, 23))
  
          z: string;

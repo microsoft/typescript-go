@@ -1,6 +1,6 @@
 --- old.typeGuardsInExternalModule.symbols
 +++ new.typeGuardsInExternalModule.symbols
-@@ -16,9 +16,9 @@
+@@= skipped -16, +16 lines =@@
  
      num = var1.length; // string
  >num : Symbol(num, Decl(typeGuardsInExternalModule.ts, 4, 3))

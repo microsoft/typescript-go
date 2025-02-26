@@ -1,6 +1,6 @@
 --- old.jsxImportSourceNonPragmaComment.symbols
 +++ new.jsxImportSourceNonPragmaComment.symbols
-@@ -7,7 +7,7 @@
+@@= skipped -7, +7 lines =@@
  >css : Symbol(css, Decl(jsxImportSourceNonPragmaComment.tsx, 2, 8))
  
  export default function Component() {

@@ -1,6 +1,6 @@
 --- old.autoAccessor5(target=esnext).symbols
 +++ new.autoAccessor5(target=esnext).symbols
-@@ -5,20 +5,20 @@
+@@= skipped -5, +5 lines =@@
  >C1 : Symbol(C1, Decl(autoAccessor5.ts, 0, 0))
  
      accessor ["w"]: any;
@@ -29,7 +29,7 @@
  }
  
  declare var f: any;
-@@ -28,6 +28,6 @@
+@@= skipped -23, +23 lines =@@
  >C2 : Symbol(C2, Decl(autoAccessor5.ts, 7, 19))
  
      accessor [f()] = 1;

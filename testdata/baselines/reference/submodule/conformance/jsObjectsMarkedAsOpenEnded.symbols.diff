@@ -1,6 +1,6 @@
 --- old.jsObjectsMarkedAsOpenEnded.symbols
 +++ new.jsObjectsMarkedAsOpenEnded.symbols
-@@ -2,34 +2,28 @@
+@@= skipped -2, +2 lines =@@
  
  === a.js ===
  var variable = {};
@@ -39,7 +39,7 @@
  
      property: {}
  >property : Symbol(property, Decl(a.js, 11, 11))
-@@ -38,7 +32,7 @@
+@@= skipped -36, +30 lines =@@
  
  obj.property.a = 0;
  >obj.property : Symbol(property, Decl(a.js, 11, 11))
@@ -48,7 +48,7 @@
  >property : Symbol(property, Decl(a.js, 11, 11))
  
  var arr = [{}];
-@@ -53,23 +47,19 @@
+@@= skipped -15, +15 lines =@@
  
  === b.ts ===
  variable.a = 1;

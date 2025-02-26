@@ -1,6 +1,6 @@
 --- old.autoAccessor6(target=es2022,usedefineforclassfields=true).symbols
 +++ new.autoAccessor6(target=es2022,usedefineforclassfields=true).symbols
-@@ -5,7 +5,7 @@
+@@= skipped -5, +5 lines =@@
  >C1 : Symbol(C1, Decl(autoAccessor6.ts, 0, 0))
  
      accessor a: any;
@@ -9,7 +9,7 @@
  }
  
  class C2 extends C1 {
-@@ -13,7 +13,7 @@
+@@= skipped -8, +8 lines =@@
  >C1 : Symbol(C1, Decl(autoAccessor6.ts, 0, 0))
  
      a = 1;
@@ -18,7 +18,7 @@
  }
  
  class C3 extends C1 {
-@@ -21,9 +21,9 @@
+@@= skipped -8, +8 lines =@@
  >C1 : Symbol(C1, Decl(autoAccessor6.ts, 0, 0))
  
      get a() { return super.a; }

@@ -1,6 +1,6 @@
 --- old.noUsedBeforeDefinedErrorInTypeContext.symbols
 +++ new.noUsedBeforeDefinedErrorInTypeContext.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(noUsedBeforeDefinedErrorInTypeContext.ts, 2, 17))
  
      owner: T;

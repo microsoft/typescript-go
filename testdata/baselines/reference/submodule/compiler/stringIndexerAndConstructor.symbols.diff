@@ -1,6 +1,6 @@
 --- old.stringIndexerAndConstructor.symbols
 +++ new.stringIndexerAndConstructor.symbols
-@@ -9,7 +9,7 @@
+@@= skipped -9, +9 lines =@@
  
      constructor() { }
      static v() { }
@@ -9,7 +9,7 @@
  }
  
  interface I {
-@@ -21,8 +21,8 @@
+@@= skipped -12, +12 lines =@@
      (): boolean;
      new (): boolean;
      "": string;

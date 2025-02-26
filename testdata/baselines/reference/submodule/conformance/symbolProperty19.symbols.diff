@@ -1,6 +1,6 @@
 --- old.symbolProperty19.symbols
 +++ new.symbolProperty19.symbols
-@@ -6,16 +6,10 @@
+@@= skipped -6, +6 lines =@@
  
      [Symbol.iterator]: { p: null },
  >[Symbol.iterator] : Symbol([Symbol.iterator], Decl(symbolProperty19.ts, 0, 9))
@@ -17,7 +17,7 @@
  >p : Symbol(p, Decl(symbolProperty19.ts, 2, 37))
  >undefined : Symbol(undefined)
  }
-@@ -23,14 +17,8 @@
+@@= skipped -17, +11 lines =@@
  var it = i[Symbol.iterator];
  >it : Symbol(it, Decl(symbolProperty19.ts, 5, 3))
  >i : Symbol(i, Decl(symbolProperty19.ts, 0, 3))

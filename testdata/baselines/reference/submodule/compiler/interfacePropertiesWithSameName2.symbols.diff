@@ -1,6 +1,6 @@
 --- old.interfacePropertiesWithSameName2.symbols
 +++ new.interfacePropertiesWithSameName2.symbols
-@@ -5,20 +5,20 @@
+@@= skipped -5, +5 lines =@@
  >Mover : Symbol(Mover, Decl(interfacePropertiesWithSameName2.ts, 0, 0))
  
      move(): void;
@@ -25,7 +25,7 @@
  >frequency : Symbol(frequency, Decl(interfacePropertiesWithSameName2.ts, 6, 18))
  }
  
-@@ -37,44 +37,44 @@
+@@= skipped -32, +32 lines =@@
  >Mover : Symbol(Mover, Decl(interfacePropertiesWithSameName2.ts, 14, 33))
  
          move(): void;

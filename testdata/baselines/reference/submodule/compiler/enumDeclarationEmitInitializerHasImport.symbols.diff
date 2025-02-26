@@ -1,6 +1,6 @@
 --- old.enumDeclarationEmitInitializerHasImport.symbols
 +++ new.enumDeclarationEmitInitializerHasImport.symbols
-@@ -6,19 +6,19 @@
+@@= skipped -6, +6 lines =@@
  
  export const value = provider.Enum.Value1;
  >value : Symbol(value, Decl(consumer.ts, 2, 12))

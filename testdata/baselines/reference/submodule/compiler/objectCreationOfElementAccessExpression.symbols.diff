@@ -1,6 +1,6 @@
 --- old.objectCreationOfElementAccessExpression.symbols
 +++ new.objectCreationOfElementAccessExpression.symbols
-@@ -5,35 +5,35 @@
+@@= skipped -5, +5 lines =@@
  >Food : Symbol(Food, Decl(objectCreationOfElementAccessExpression.ts, 0, 0))
  
      private amount: number;
@@ -47,7 +47,7 @@
  
              return false;
          }
-@@ -48,7 +48,7 @@
+@@= skipped -43, +43 lines =@@
  
      constructor(name: string, public flavor: string) {
  >name : Symbol(name, Decl(objectCreationOfElementAccessExpression.ts, 17, 16))
@@ -56,7 +56,7 @@
  
          super(name);
  >super : Symbol(Food, Decl(objectCreationOfElementAccessExpression.ts, 0, 0))
-@@ -60,10 +60,10 @@
+@@= skipped -12, +12 lines =@@
  >MonsterFood : Symbol(MonsterFood, Decl(objectCreationOfElementAccessExpression.ts, 15, 1))
  
      private isDairyFree: boolean;
@@ -69,7 +69,7 @@
  
          super("Ice Cream", flavor);
  >super : Symbol(MonsterFood, Decl(objectCreationOfElementAccessExpression.ts, 15, 1))
-@@ -75,8 +75,8 @@
+@@= skipped -15, +15 lines =@@
  >MonsterFood : Symbol(MonsterFood, Decl(objectCreationOfElementAccessExpression.ts, 15, 1))
  
      constructor(public flavor: string, public isGlutenFree: boolean) {
@@ -80,7 +80,7 @@
  
          super("Cookie", flavor);
  >super : Symbol(MonsterFood, Decl(objectCreationOfElementAccessExpression.ts, 15, 1))
-@@ -89,7 +89,7 @@
+@@= skipped -14, +14 lines =@@
  
      constructor(name: string, public whereToBuy: number) {
  >name : Symbol(name, Decl(objectCreationOfElementAccessExpression.ts, 33, 16))
@@ -89,7 +89,7 @@
  
          super(name);
  >super : Symbol(Food, Decl(objectCreationOfElementAccessExpression.ts, 0, 0))
-@@ -101,7 +101,7 @@
+@@= skipped -12, +12 lines =@@
  >PetFood : Symbol(PetFood, Decl(objectCreationOfElementAccessExpression.ts, 31, 1))
  
      constructor(public whereToBuy: number) {
@@ -98,7 +98,7 @@
  
          super("Origen", whereToBuy);
  >super : Symbol(PetFood, Decl(objectCreationOfElementAccessExpression.ts, 31, 1))
-@@ -113,8 +113,8 @@
+@@= skipped -12, +12 lines =@@
  >PetFood : Symbol(PetFood, Decl(objectCreationOfElementAccessExpression.ts, 31, 1))
  
      constructor(public whereToBuy: number, public containsFish: boolean) {

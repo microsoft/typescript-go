@@ -1,6 +1,6 @@
 --- old.asOperator1.symbols
 +++ new.asOperator1.symbols
-@@ -10,8 +10,8 @@
+@@= skipped -10, +10 lines =@@
  
  var y = (null as string).length;
  >y : Symbol(y, Decl(asOperator1.ts, 2, 3))

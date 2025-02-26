@@ -1,6 +1,6 @@
 --- old.superPropertyAccessInSuperCall01.symbols
 +++ new.superPropertyAccessInSuperCall01.symbols
-@@ -8,7 +8,7 @@
+@@= skipped -8, +8 lines =@@
  >f : Symbol(f, Decl(superPropertyAccessInSuperCall01.ts, 1, 13))
  	}
  	public blah(): string { return ""; }
@@ -9,7 +9,7 @@
  }
  
  class B extends A {
-@@ -18,8 +18,8 @@
+@@= skipped -10, +10 lines =@@
  	constructor() {
  		super(super.blah())
  >super : Symbol(A, Decl(superPropertyAccessInSuperCall01.ts, 0, 0))

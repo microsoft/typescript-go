@@ -1,6 +1,6 @@
 --- old.noUnusedLocals_selfReference.symbols
 +++ new.noUnusedLocals_selfReference.symbols
-@@ -20,20 +20,20 @@
+@@= skipped -20, +20 lines =@@
  >C : Symbol(C, Decl(noUnusedLocals_selfReference.ts, 7, 1))
  
      m() { C; }
@@ -27,7 +27,7 @@
  >I : Symbol(I, Decl(noUnusedLocals_selfReference.ts, 11, 25))
  
  type T = { x: T };
-@@ -56,10 +56,10 @@
+@@= skipped -36, +36 lines =@@
  
  class P { private m() { this.m; } }
  >P : Symbol(P, Decl(noUnusedLocals_selfReference.ts, 19, 30))
@@ -41,7 +41,7 @@
  
  P;
  >P : Symbol(P, Decl(noUnusedLocals_selfReference.ts, 19, 30))
-@@ -71,6 +71,6 @@
+@@= skipped -15, +15 lines =@@
  
  class D { m() { g; } }
  >D : Symbol(D, Decl(noUnusedLocals_selfReference.ts, 25, 19))
