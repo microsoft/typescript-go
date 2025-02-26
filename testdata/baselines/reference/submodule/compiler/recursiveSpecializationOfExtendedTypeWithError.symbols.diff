@@ -1,6 +1,6 @@
 --- old.recursiveSpecializationOfExtendedTypeWithError.symbols
 +++ new.recursiveSpecializationOfExtendedTypeWithError.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >HTMLSelectElement : Symbol(HTMLSelectElement, Decl(recursiveSpecializationOfExtendedTypeWithError.ts, 0, 0))
  
      options: HTMLSelectElement;

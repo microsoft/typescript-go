@@ -1,6 +1,6 @@
 --- old.jsdocParamTag2.symbols
 +++ new.jsdocParamTag2.symbols
-@@= skipped -103, +103 lines =@@
+@@= skipped -102, +102 lines =@@
  >a : Symbol(a, Decl(0.js, 57, 16))
  
      console.log(arguments, a);

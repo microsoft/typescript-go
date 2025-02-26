@@ -1,6 +1,6 @@
 --- old.esDecorators-privateFieldAccess.symbols
 +++ new.esDecorators-privateFieldAccess.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >A : Symbol(A, Decl(esDecorators-privateFieldAccess.ts, 0, 21))
  
      #foo = 3;

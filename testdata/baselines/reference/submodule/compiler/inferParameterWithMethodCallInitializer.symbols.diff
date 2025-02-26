@@ -1,6 +1,6 @@
 --- old.inferParameterWithMethodCallInitializer.symbols
 +++ new.inferParameterWithMethodCallInitializer.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >Example : Symbol(Example, Decl(inferParameterWithMethodCallInitializer.ts, 2, 1))
  
      getNumber(): number {

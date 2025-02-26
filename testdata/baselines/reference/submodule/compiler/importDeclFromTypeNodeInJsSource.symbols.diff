@@ -1,6 +1,6 @@
 --- old.importDeclFromTypeNodeInJsSource.symbols
 +++ new.importDeclFromTypeNodeInJsSource.symbols
-@@= skipped -39, +39 lines =@@
+@@= skipped -38, +38 lines =@@
  >c : Symbol(c, Decl(events.d.ts, 13, 24))
      }
      export = a1.a2;

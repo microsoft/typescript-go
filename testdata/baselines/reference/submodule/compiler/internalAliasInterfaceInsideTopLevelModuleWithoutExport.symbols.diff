@@ -1,6 +1,6 @@
 --- old.internalAliasInterfaceInsideTopLevelModuleWithoutExport.symbols
 +++ new.internalAliasInterfaceInsideTopLevelModuleWithoutExport.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  import b = a.I;
  >b : Symbol(b, Decl(internalAliasInterfaceInsideTopLevelModuleWithoutExport.ts, 3, 1))
  >a : Symbol(a, Decl(internalAliasInterfaceInsideTopLevelModuleWithoutExport.ts, 0, 0))

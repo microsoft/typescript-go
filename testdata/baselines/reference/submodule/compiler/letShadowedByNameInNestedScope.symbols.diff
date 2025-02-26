@@ -1,6 +1,6 @@
 --- old.letShadowedByNameInNestedScope.symbols
 +++ new.letShadowedByNameInNestedScope.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  >_x : Symbol(_x, Decl(letShadowedByNameInNestedScope.ts, 4, 11))
  
          console.log(x);

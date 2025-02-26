@@ -1,6 +1,6 @@
 --- old.typeParameterLeak.symbols
 +++ new.typeParameterLeak.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  interface Box<T> { data: T }
  >Box : Symbol(Box, Decl(typeParameterLeak.ts, 0, 0))
  >T : Symbol(T, Decl(typeParameterLeak.ts, 2, 14))

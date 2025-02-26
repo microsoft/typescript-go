@@ -1,6 +1,6 @@
 --- old.jsxJsxsCjsTransformKeyPropCustomImport(jsx=react-jsxdev).symbols
 +++ new.jsxJsxsCjsTransformKeyPropCustomImport(jsx=react-jsxdev).symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  
  const a = <div key="foo" {...props}>text</div>;
  >a : Symbol(a, Decl(jsxJsxsCjsTransformKeyPropCustomImport.tsx, 2, 5))

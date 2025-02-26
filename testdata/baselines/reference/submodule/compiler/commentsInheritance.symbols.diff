@@ -1,6 +1,6 @@
 --- old.commentsInheritance.symbols
 +++ new.commentsInheritance.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  
      /** i1_p1*/
      i1_p1: number;

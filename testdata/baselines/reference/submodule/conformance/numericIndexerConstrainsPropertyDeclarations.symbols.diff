@@ -1,6 +1,6 @@
 --- old.numericIndexerConstrainsPropertyDeclarations.symbols
 +++ new.numericIndexerConstrainsPropertyDeclarations.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >Number : Symbol(Number, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      foo: number;

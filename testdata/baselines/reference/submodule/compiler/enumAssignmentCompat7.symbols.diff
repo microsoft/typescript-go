@@ -1,6 +1,6 @@
 --- old.enumAssignmentCompat7.symbols
 +++ new.enumAssignmentCompat7.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
      export enum E { A = 1 }
  >E : Symbol(E, Decl(enumAssignmentCompat7.ts, 0, 17))

@@ -1,6 +1,6 @@
 --- old.objectAssignLikeNonUnionResult.symbols
 +++ new.objectAssignLikeNonUnionResult.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Interface : Symbol(Interface, Decl(objectAssignLikeNonUnionResult.ts, 0, 0))
  
      field: number;

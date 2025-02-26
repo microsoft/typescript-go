@@ -1,6 +1,6 @@
 --- old.argsInScope.symbols
 +++ new.argsInScope.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(argsInScope.ts, 0, 0))
  
      P(ii:number, j:number, k:number) {

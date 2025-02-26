@@ -1,6 +1,6 @@
 --- old.requiredMappedTypeModifierTrumpsVariance.symbols
 +++ new.requiredMappedTypeModifierTrumpsVariance.symbols
-@@= skipped -44, +44 lines =@@
+@@= skipped -43, +43 lines =@@
  >T : Symbol(T, Decl(requiredMappedTypeModifierTrumpsVariance.ts, 10, 14))
  
      a: Required<T>;

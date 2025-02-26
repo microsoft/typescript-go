@@ -1,6 +1,6 @@
 --- old.crashDeclareGlobalTypeofExport.symbols
 +++ new.crashDeclareGlobalTypeofExport.symbols
-@@= skipped -26, +26 lines =@@
+@@= skipped -25, +25 lines =@@
       * A .default property for ES6 default import compatibility
       */
      default: Root;

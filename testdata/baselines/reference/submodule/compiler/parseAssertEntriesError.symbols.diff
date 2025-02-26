@@ -1,6 +1,6 @@
 --- old.parseAssertEntriesError.symbols
 +++ new.parseAssertEntriesError.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
      & import("pkg", { assert: {1234, "resolution-mode": "require"} }).RequireInterface
      & import("pkg", { assert: {1234, "resolution-mode": "import"} }).ImportInterface;

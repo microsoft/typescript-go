@@ -1,6 +1,6 @@
 --- old.super_inside-object-literal-getters-and-setters.symbols
 +++ new.super_inside-object-literal-getters-and-setters.symbols
-@@= skipped -33, +33 lines =@@
+@@= skipped -32, +32 lines =@@
  
  class F { public test(): string { return ""; } }
  >F : Symbol(F, Decl(super_inside-object-literal-getters-and-setters.ts, 13, 1))

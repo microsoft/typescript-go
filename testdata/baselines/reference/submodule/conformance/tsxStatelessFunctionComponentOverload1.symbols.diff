@@ -1,6 +1,6 @@
 --- old.tsxStatelessFunctionComponentOverload1.symbols
 +++ new.tsxStatelessFunctionComponentOverload1.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >OneThing : Symbol(OneThing, Decl(file.tsx, 0, 31), Decl(file.tsx, 2, 57), Decl(file.tsx, 3, 76), Decl(file.tsx, 4, 69), Decl(file.tsx, 5, 83))
  >k : Symbol(k, Decl(file.tsx, 2, 26))
  >yxx : Symbol(yxx, Decl(file.tsx, 2, 30))

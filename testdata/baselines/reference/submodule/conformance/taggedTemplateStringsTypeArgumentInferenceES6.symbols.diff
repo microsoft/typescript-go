@@ -1,6 +1,6 @@
 --- old.taggedTemplateStringsTypeArgumentInferenceES6.symbols
 +++ new.taggedTemplateStringsTypeArgumentInferenceES6.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  >noGenericParams : Symbol(noGenericParams, Decl(taggedTemplateStringsTypeArgumentInferenceES6.ts, 2, 12))
  >T : Symbol(T, Decl(taggedTemplateStringsTypeArgumentInferenceES6.ts, 5, 25))
  >n : Symbol(n, Decl(taggedTemplateStringsTypeArgumentInferenceES6.ts, 5, 28))

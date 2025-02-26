@@ -1,6 +1,6 @@
 --- old.genericClassStaticMethod.symbols
 +++ new.genericClassStaticMethod.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(genericClassStaticMethod.ts, 0, 10))
  
      static getFoo() {

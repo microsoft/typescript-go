@@ -1,6 +1,6 @@
 --- old.privateNameAndIndexSignature.symbols
 +++ new.privateNameAndIndexSignature.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >k : Symbol(k, Decl(privateNameAndIndexSignature.ts, 1, 5))
  
      #foo = 3;

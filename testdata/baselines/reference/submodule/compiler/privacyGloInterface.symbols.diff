@@ -1,6 +1,6 @@
 --- old.privacyGloInterface.symbols
 +++ new.privacyGloInterface.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >C1_public : Symbol(C1_public, Decl(privacyGloInterface.ts, 0, 11))
  
          private f1() {

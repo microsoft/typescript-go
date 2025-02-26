@@ -1,6 +1,6 @@
 --- old.missingFunctionImplementation2.symbols
 +++ new.missingFunctionImplementation2.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === missingFunctionImplementation2_a.ts ===
  export {};
  declare module "./missingFunctionImplementation2_b" {

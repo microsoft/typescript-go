@@ -1,6 +1,6 @@
 --- old.jsDeclarationsImportAliasExposedWithinNamespaceCjs.symbols
 +++ new.jsDeclarationsImportAliasExposedWithinNamespaceCjs.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === file2.js ===
  const {myTypes} = require('./file.js');
  >myTypes : Symbol(myTypes, Decl(file2.js, 0, 7))

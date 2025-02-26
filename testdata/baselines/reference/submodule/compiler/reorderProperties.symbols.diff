@@ -1,6 +1,6 @@
 --- old.reorderProperties.symbols
 +++ new.reorderProperties.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(reorderProperties.ts, 0, 12))
  
      x: T

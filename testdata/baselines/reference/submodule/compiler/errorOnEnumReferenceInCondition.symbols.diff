@@ -1,6 +1,6 @@
 --- old.errorOnEnumReferenceInCondition.symbols
 +++ new.errorOnEnumReferenceInCondition.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Nums : Symbol(Nums, Decl(errorOnEnumReferenceInCondition.ts, 0, 0))
  
      Zero = 0,

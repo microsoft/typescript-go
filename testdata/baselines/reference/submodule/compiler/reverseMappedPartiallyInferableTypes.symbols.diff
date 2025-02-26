@@ -1,6 +1,6 @@
 --- old.reverseMappedPartiallyInferableTypes.symbols
 +++ new.reverseMappedPartiallyInferableTypes.symbols
-@@= skipped -88, +88 lines =@@
+@@= skipped -87, +87 lines =@@
  >MyType : Symbol(MyType, Decl(reverseMappedPartiallyInferableTypes.ts, 25, 90))
  
      valid: boolean;

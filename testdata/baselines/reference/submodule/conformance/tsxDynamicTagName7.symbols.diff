@@ -1,6 +1,6 @@
 --- old.tsxDynamicTagName7.symbols
 +++ new.tsxDynamicTagName7.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === react.d.ts ===
  declare module 'react' {

@@ -1,6 +1,6 @@
 --- old.jsxSpreadFirstUnionNoErrors.symbols
 +++ new.jsxSpreadFirstUnionNoErrors.symbols
-@@= skipped -25, +25 lines =@@
+@@= skipped -24, +24 lines =@@
  >status : Symbol(status, Decl(jsxSpreadFirstUnionNoErrors.tsx, 3, 3), Decl(jsxSpreadFirstUnionNoErrors.tsx, 4, 3))
  
    ? <noscript />

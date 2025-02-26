@@ -1,6 +1,6 @@
 --- old.primitiveMembers.symbols
 +++ new.primitiveMembers.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >r : Symbol(r, Decl(primitiveMembers.ts, 1, 3))
  
  r.source;

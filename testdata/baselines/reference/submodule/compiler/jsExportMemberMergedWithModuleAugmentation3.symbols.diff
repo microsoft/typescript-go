@@ -1,6 +1,6 @@
 --- old.jsExportMemberMergedWithModuleAugmentation3.symbols
 +++ new.jsExportMemberMergedWithModuleAugmentation3.symbols
-@@= skipped -1, +1 lines =@@
+@@= skipped -0, +0 lines =@@
  //// [tests/cases/compiler/jsExportMemberMergedWithModuleAugmentation3.ts] ////
  
  === /x.js ===

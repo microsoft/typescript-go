@@ -1,6 +1,6 @@
 --- old.inferenceDoesNotAddUndefinedOrNull.symbols
 +++ new.inferenceDoesNotAddUndefinedOrNull.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >Node : Symbol(Node, Decl(lib.dom.d.ts, --, --), Decl(lib.dom.d.ts, --, --), Decl(inferenceDoesNotAddUndefinedOrNull.ts, 0, 63))
  
      forEachChild<T>(cbNode: (node: Node) => T | undefined, cbNodeArray?: (nodes: NodeArray<Node>) => T | undefined): T | undefined;

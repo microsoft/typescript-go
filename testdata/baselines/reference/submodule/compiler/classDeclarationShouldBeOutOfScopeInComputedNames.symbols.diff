@@ -1,6 +1,6 @@
 --- old.classDeclarationShouldBeOutOfScopeInComputedNames.symbols
 +++ new.classDeclarationShouldBeOutOfScopeInComputedNames.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(classDeclarationShouldBeOutOfScopeInComputedNames.ts, 0, 0))
  
      static readonly p1 = Symbol();

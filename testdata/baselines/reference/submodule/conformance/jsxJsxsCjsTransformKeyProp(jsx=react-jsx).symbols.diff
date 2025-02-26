@@ -1,6 +1,6 @@
 --- old.jsxJsxsCjsTransformKeyProp(jsx=react-jsx).symbols
 +++ new.jsxJsxsCjsTransformKeyProp(jsx=react-jsx).symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  
  const a = <div key="foo" {...props}>text</div>;
  >a : Symbol(a, Decl(jsxJsxsCjsTransformKeyProp.tsx, 2, 5))

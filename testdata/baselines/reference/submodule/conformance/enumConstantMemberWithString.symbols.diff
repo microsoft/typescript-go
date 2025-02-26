@@ -1,6 +1,6 @@
 --- old.enumConstantMemberWithString.symbols
 +++ new.enumConstantMemberWithString.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >T1 : Symbol(T1, Decl(enumConstantMemberWithString.ts, 0, 0))
  
      a = "1",

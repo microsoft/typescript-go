@@ -1,6 +1,6 @@
 --- old.classDoesNotDependOnPrivateMember.symbols
 +++ new.classDoesNotDependOnPrivateMember.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >C : Symbol(C, Decl(classDoesNotDependOnPrivateMember.ts, 1, 19))
  
          private x: I;

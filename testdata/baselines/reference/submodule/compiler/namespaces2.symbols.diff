@@ -1,6 +1,6 @@
 --- old.namespaces2.symbols
 +++ new.namespaces2.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  var c: A.B.C = new A.B.C();
  >c : Symbol(c, Decl(namespaces2.ts, 6, 3))
  >A : Symbol(A, Decl(namespaces2.ts, 0, 0))

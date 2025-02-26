@@ -1,6 +1,6 @@
 --- old.tsxStatelessFunctionComponentsWithTypeArguments5.symbols
 +++ new.tsxStatelessFunctionComponentsWithTypeArguments5.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >U : Symbol(U, Decl(file.tsx, 2, 27))
  >l : Symbol(l, Decl(file.tsx, 2, 30))
  >U : Symbol(U, Decl(file.tsx, 2, 27))

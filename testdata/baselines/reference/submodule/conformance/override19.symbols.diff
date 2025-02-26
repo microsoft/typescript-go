@@ -1,6 +1,6 @@
 --- old.override19.symbols
 +++ new.override19.symbols
-@@= skipped -30, +30 lines =@@
+@@= skipped -29, +29 lines =@@
  >A : Symbol(A, Decl(override19.ts, 4, 16))
  
      doSomething() {}

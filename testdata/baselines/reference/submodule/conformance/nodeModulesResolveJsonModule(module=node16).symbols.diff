@@ -1,6 +1,6 @@
 --- old.nodeModulesResolveJsonModule(module=node16).symbols
 +++ new.nodeModulesResolveJsonModule(module=node16).symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
  export const name = pkg.name;
  >name : Symbol(name, Decl(index.ts, 1, 12))

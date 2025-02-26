@@ -1,6 +1,6 @@
 --- old.commentsClass.symbols
 +++ new.commentsClass.symbols
-@@= skipped -50, +50 lines =@@
+@@= skipped -49, +49 lines =@@
  >c5 : Symbol(c5, Decl(commentsClass.ts, 19, 14))
  
      static s1: number;

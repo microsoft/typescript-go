@@ -1,6 +1,6 @@
 --- old.overloadErrorMatchesImplementationElaboaration.symbols
 +++ new.overloadErrorMatchesImplementationElaboaration.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >EventAggregator : Symbol(EventAggregator, Decl(overloadErrorMatchesImplementationElaboaration.ts, 0, 0))
  {
      publish(event: string, data?: any): void;

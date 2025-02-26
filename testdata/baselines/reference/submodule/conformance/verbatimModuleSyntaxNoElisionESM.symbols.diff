@@ -1,6 +1,6 @@
 --- old.verbatimModuleSyntaxNoElisionESM.symbols
 +++ new.verbatimModuleSyntaxNoElisionESM.symbols
-@@= skipped -55, +55 lines =@@
+@@= skipped -54, +54 lines =@@
  
  === /main5.ts ===
  export default class C {} // ok

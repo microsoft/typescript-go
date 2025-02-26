@@ -1,6 +1,6 @@
 --- old.outFilerootDirModuleNamesAmd.symbols
 +++ new.outFilerootDirModuleNamesAmd.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >foo : Symbol(foo, Decl(a.ts, 0, 6))
  
  export default class Foo {}

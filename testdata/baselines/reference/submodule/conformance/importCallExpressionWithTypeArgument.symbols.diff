@@ -1,6 +1,6 @@
 --- old.importCallExpressionWithTypeArgument.symbols
 +++ new.importCallExpressionWithTypeArgument.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  "use strict"
  var p1 = import<Promise<any>>("./0");  // error
  >p1 : Symbol(p1, Decl(1.ts, 1, 3))

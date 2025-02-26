@@ -1,6 +1,6 @@
 --- old.typeVariableTypeGuards.symbols
 +++ new.typeVariableTypeGuards.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >Foo : Symbol(Foo, Decl(typeVariableTypeGuards.ts, 0, 0))
  
      foo(): void

@@ -1,6 +1,6 @@
 --- old.keyofInferenceLowerPriorityThanReturn.symbols
 +++ new.keyofInferenceLowerPriorityThanReturn.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >Write : Symbol(Write, Decl(keyofInferenceLowerPriorityThanReturn.ts, 0, 0))
  
      protected dummy: Write;

@@ -1,6 +1,6 @@
 --- old.decrementOperatorWithAnyOtherTypeInvalidOperations.symbols
 +++ new.decrementOperatorWithAnyOtherTypeInvalidOperations.symbols
-@@= skipped -29, +29 lines =@@
+@@= skipped -28, +28 lines =@@
  >A : Symbol(A, Decl(decrementOperatorWithAnyOtherTypeInvalidOperations.ts, 9, 1))
  
      public a: any;

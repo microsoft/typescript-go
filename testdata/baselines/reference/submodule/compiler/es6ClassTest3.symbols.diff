@@ -1,6 +1,6 @@
 --- old.es6ClassTest3.symbols
 +++ new.es6ClassTest3.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >Visibility : Symbol(Visibility, Decl(es6ClassTest3.ts, 0, 10))
  
  	    public foo() { };

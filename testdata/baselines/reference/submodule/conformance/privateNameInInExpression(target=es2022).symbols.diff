@@ -1,6 +1,6 @@
 --- old.privateNameInInExpression(target=es2022).symbols
 +++ new.privateNameInInExpression(target=es2022).symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Foo : Symbol(Foo, Decl(privateNameInInExpression.ts, 0, 0))
  
      #field = 1;

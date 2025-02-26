@@ -1,6 +1,6 @@
 --- old.narrowingWithNonNullExpression.symbols
 +++ new.narrowingWithNonNullExpression.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === narrowingWithNonNullExpression.ts ===
  const m = ''.match('');
  >m : Symbol(m, Decl(narrowingWithNonNullExpression.ts, 0, 5))

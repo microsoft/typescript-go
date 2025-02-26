@@ -1,6 +1,6 @@
 --- old.overrideBaseIntersectionMethod.symbols
 +++ new.overrideBaseIntersectionMethod.symbols
-@@= skipped -19, +19 lines =@@
+@@= skipped -18, +18 lines =@@
  >Base : Symbol(Base, Decl(overrideBaseIntersectionMethod.ts, 4, 52))
  
    getLocation(): [number, number] {

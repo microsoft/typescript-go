@@ -1,6 +1,6 @@
 --- old.typeOfThisInAccessor.symbols
 +++ new.typeOfThisInAccessor.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(typeOfThisInAccessor.ts, 0, 0))
  
      get x() {

@@ -1,6 +1,6 @@
 --- old.classConstructorAccessibility2.symbols
 +++ new.classConstructorAccessibility2.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >BaseA : Symbol(BaseA, Decl(classConstructorAccessibility2.ts, 0, 0))
  
      public constructor(public x: number) { }

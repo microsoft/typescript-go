@@ -1,6 +1,6 @@
 --- old.unannotatedParametersAreOptional.symbols
 +++ new.unannotatedParametersAreOptional.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >C : Symbol(C, Decl(test.js, 1, 4))
  
    static m(x) {}

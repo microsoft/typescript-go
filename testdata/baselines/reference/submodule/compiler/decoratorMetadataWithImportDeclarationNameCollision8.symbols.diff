@@ -1,6 +1,6 @@
 --- old.decoratorMetadataWithImportDeclarationNameCollision8.symbols
 +++ new.decoratorMetadataWithImportDeclarationNameCollision8.symbols
-@@= skipped -18, +18 lines =@@
+@@= skipped -17, +17 lines =@@
  >MyClass : Symbol(MyClass, Decl(service.ts, 3, 1))
  
      db: database.db;

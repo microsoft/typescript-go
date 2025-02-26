@@ -1,6 +1,6 @@
 --- old.comparabilityTypeParametersRelatedByUnion.symbols
 +++ new.comparabilityTypeParametersRelatedByUnion.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(comparabilityTypeParametersRelatedByUnion.ts, 0, 8))
  
    constructor(readonly x: T) {}

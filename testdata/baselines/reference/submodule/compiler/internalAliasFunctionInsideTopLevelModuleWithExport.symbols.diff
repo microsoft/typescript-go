@@ -1,6 +1,6 @@
 --- old.internalAliasFunctionInsideTopLevelModuleWithExport.symbols
 +++ new.internalAliasFunctionInsideTopLevelModuleWithExport.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  export import b = a.foo;
  >b : Symbol(b, Decl(internalAliasFunctionInsideTopLevelModuleWithExport.ts, 4, 1))
  >a : Symbol(a, Decl(internalAliasFunctionInsideTopLevelModuleWithExport.ts, 0, 0))

@@ -1,6 +1,6 @@
 --- old.seeTag1.symbols
 +++ new.seeTag1.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Foo : Symbol(Foo, Decl(seeTag1.ts, 0, 0))
  
      foo: string

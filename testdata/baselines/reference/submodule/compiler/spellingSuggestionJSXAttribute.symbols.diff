@@ -1,6 +1,6 @@
 --- old.spellingSuggestionJSXAttribute.symbols
 +++ new.spellingSuggestionJSXAttribute.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  }
  class MyComp extends React.Component<{ className?: string, htmlFor?: string }> { }
  >MyComp : Symbol(MyComp, Decl(spellingSuggestionJSXAttribute.tsx, 5, 1))

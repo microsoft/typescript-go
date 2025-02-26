@@ -1,6 +1,6 @@
 --- old.exportDefaultInterfaceAndValue.symbols
 +++ new.exportDefaultInterfaceAndValue.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === exportDefaultInterfaceAndValue.ts ===
  export default interface A { a: string; }

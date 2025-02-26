@@ -1,6 +1,6 @@
 --- old.templateLiteralTypes7.symbols
 +++ new.templateLiteralTypes7.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >NMap : Symbol(NMap, Decl(templateLiteralTypes7.ts, 0, 0))
  
    1: 'A'

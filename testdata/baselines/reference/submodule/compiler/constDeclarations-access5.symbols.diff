@@ -1,6 +1,6 @@
 --- old.constDeclarations-access5.symbols
 +++ new.constDeclarations-access5.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  
  // Errors
  m.x = 1;

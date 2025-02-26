@@ -1,6 +1,6 @@
 --- old.logicalNotOperatorWithBooleanType.symbols
 +++ new.logicalNotOperatorWithBooleanType.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >A : Symbol(A, Decl(logicalNotOperatorWithBooleanType.ts, 3, 40))
  
      public a: boolean;

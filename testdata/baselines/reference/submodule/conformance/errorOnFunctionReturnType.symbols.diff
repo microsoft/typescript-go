@@ -1,6 +1,6 @@
 --- old.errorOnFunctionReturnType.symbols
 +++ new.errorOnFunctionReturnType.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >testPromise1 : Symbol(testPromise1, Decl(foo.js, 0, 0))
  
      console.log("Nope");

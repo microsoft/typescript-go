@@ -1,6 +1,6 @@
 --- old.interfaceDeclaration3.symbols
 +++ new.interfaceDeclaration3.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === interfaceDeclaration3.ts ===
  interface I1 { item:number; }
  >I1 : Symbol(I1, Decl(interfaceDeclaration3.ts, 0, 0))

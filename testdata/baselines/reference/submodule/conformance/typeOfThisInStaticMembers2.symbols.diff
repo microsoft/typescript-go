@@ -1,6 +1,6 @@
 --- old.typeOfThisInStaticMembers2.symbols
 +++ new.typeOfThisInStaticMembers2.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(typeOfThisInStaticMembers2.ts, 0, 0))
  
      static foo = this; // ok

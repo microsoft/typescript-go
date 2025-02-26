@@ -1,6 +1,6 @@
 --- old.override10.symbols
 +++ new.override10.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Base : Symbol(Base, Decl(override10.ts, 0, 0))
  
      abstract foo(): unknown;

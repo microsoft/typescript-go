@@ -1,6 +1,6 @@
 --- old.privateNamesUnique-5.symbols
 +++ new.privateNamesUnique-5.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >A : Symbol(A, Decl(privateNamesUnique-5.ts, 0, 0))
  
      #foo: number;

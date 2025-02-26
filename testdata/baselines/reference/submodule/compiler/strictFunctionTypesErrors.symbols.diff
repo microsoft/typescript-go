@@ -1,6 +1,6 @@
 --- old.strictFunctionTypesErrors.symbols
 +++ new.strictFunctionTypesErrors.symbols
-@@= skipped -294, +294 lines =@@
+@@= skipped -293, +293 lines =@@
  
  interface Animal { animal: void }
  >Animal : Symbol(Animal, Decl(strictFunctionTypesErrors.ts, 87, 8))

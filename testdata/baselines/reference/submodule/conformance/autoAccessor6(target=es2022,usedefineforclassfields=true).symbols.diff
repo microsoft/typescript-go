@@ -1,6 +1,6 @@
 --- old.autoAccessor6(target=es2022,usedefineforclassfields=true).symbols
 +++ new.autoAccessor6(target=es2022,usedefineforclassfields=true).symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C1 : Symbol(C1, Decl(autoAccessor6.ts, 0, 0))
  
      accessor a: any;

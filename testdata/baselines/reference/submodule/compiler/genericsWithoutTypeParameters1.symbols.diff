@@ -1,6 +1,6 @@
 --- old.genericsWithoutTypeParameters1.symbols
 +++ new.genericsWithoutTypeParameters1.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(genericsWithoutTypeParameters1.ts, 0, 8))
  
      foo(): T { return null }

@@ -1,6 +1,6 @@
 --- old.jsDeclarationsDefaultsErr.symbols
 +++ new.jsDeclarationsDefaultsErr.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >Cls : Symbol(Cls, Decl(index1.js, 0, 0))
  
      x = 12;

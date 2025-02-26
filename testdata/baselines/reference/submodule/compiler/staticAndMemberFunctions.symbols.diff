@@ -1,6 +1,6 @@
 --- old.staticAndMemberFunctions.symbols
 +++ new.staticAndMemberFunctions.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >T : Symbol(T, Decl(staticAndMemberFunctions.ts, 0, 0))
  
      static x() { }

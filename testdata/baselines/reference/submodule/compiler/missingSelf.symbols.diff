@@ -1,6 +1,6 @@
 --- old.missingSelf.symbols
 +++ new.missingSelf.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >CalcButton : Symbol(CalcButton, Decl(missingSelf.ts, 0, 0))
  {
      public a() { this.onClick(); }

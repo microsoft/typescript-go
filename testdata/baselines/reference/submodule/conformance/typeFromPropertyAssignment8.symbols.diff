@@ -1,6 +1,6 @@
 --- old.typeFromPropertyAssignment8.symbols
 +++ new.typeFromPropertyAssignment8.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === a.js ===
  var my = my || {};

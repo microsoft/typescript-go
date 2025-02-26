@@ -1,6 +1,6 @@
 --- old.noRepeatedPropertyNames.symbols
 +++ new.noRepeatedPropertyNames.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >C : Symbol(C, Decl(noRepeatedPropertyNames.ts, 1, 29))
  
      m() {

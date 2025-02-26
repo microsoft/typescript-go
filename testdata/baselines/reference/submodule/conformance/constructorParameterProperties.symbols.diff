@@ -1,6 +1,6 @@
 --- old.constructorParameterProperties.symbols
 +++ new.constructorParameterProperties.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(constructorParameterProperties.ts, 0, 0))
  
      y: string;

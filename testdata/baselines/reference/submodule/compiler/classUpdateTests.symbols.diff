@@ -1,6 +1,6 @@
 --- old.classUpdateTests.symbols
 +++ new.classUpdateTests.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >A : Symbol(A, Decl(classUpdateTests.ts, 0, 0))
  
  	public p1 = 0;

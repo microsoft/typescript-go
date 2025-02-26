@@ -1,6 +1,6 @@
 --- old.reExportAliasMakesInstantiated.symbols
 +++ new.reExportAliasMakesInstantiated.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
    import test1 = pack1.test1;
  >test1 : Symbol(test1, Decl(reExportAliasMakesInstantiated.ts, 4, 22))
  >pack1 : Symbol(pack1, Decl(reExportAliasMakesInstantiated.ts, 0, 0))

@@ -1,6 +1,6 @@
 --- old.superAccessInFatArrow1.symbols
 +++ new.superAccessInFatArrow1.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >A : Symbol(A, Decl(superAccessInFatArrow1.ts, 0, 13))
  
          foo() {

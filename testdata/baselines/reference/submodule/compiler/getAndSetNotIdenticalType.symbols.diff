@@ -1,6 +1,6 @@
 --- old.getAndSetNotIdenticalType.symbols
 +++ new.getAndSetNotIdenticalType.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(getAndSetNotIdenticalType.ts, 0, 0))
  
      get x(): number {

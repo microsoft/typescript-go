@@ -1,6 +1,6 @@
 --- old.awaitedType.symbols
 +++ new.awaitedType.symbols
-@@= skipped -95, +95 lines =@@
+@@= skipped -94, +94 lines =@@
  
  interface BadPromise { then(cb: (value: BadPromise) => void): void; }
  >BadPromise : Symbol(BadPromise, Decl(awaitedType.ts, 18, 50))

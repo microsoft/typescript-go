@@ -1,6 +1,6 @@
 --- old.avoidCycleWithVoidExpressionReturnedFromArrow.symbols
 +++ new.avoidCycleWithVoidExpressionReturnedFromArrow.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >HowlOptions : Symbol(HowlOptions, Decl(avoidCycleWithVoidExpressionReturnedFromArrow.ts, 0, 67))
  
    onplayerror?: HowlErrorCallback | undefined;

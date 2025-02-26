@@ -1,6 +1,6 @@
 --- old.privacyFunc.symbols
 +++ new.privacyFunc.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >C1_public : Symbol(C1_public, Decl(privacyFunc.ts, 0, 11))
  
          private f1() {

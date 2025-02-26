@@ -1,6 +1,6 @@
 --- old.parserEnumDeclaration3.d.symbols
 +++ new.parserEnumDeclaration3.d.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >E : Symbol(E, Decl(parserEnumDeclaration3.d.ts, 0, 0))
  
     A = 1

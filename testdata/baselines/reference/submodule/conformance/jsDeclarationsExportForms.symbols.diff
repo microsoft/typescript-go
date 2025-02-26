@@ -1,6 +1,6 @@
 --- old.jsDeclarationsExportForms.symbols
 +++ new.jsDeclarationsExportForms.symbols
-@@= skipped -49, +49 lines =@@
+@@= skipped -48, +48 lines =@@
  === cjs.js ===
  const ns = require("./cls");
  >ns : Symbol(ns, Decl(cjs.js, 0, 5))

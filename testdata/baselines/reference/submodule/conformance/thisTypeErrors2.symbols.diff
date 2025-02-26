@@ -1,6 +1,6 @@
 --- old.thisTypeErrors2.symbols
 +++ new.thisTypeErrors2.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  >Derived : Symbol(Derived, Decl(thisTypeErrors2.ts, 5, 1))
  
      n: number;

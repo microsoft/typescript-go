@@ -1,6 +1,6 @@
 --- old.callbackOnConstructor.symbols
 +++ new.callbackOnConstructor.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Preferences : Symbol(Preferences, Decl(callbackOnConstructor.js, 0, 0))
  
    assignability = "no"

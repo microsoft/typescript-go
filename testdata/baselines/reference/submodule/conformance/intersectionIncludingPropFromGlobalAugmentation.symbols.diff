@@ -1,6 +1,6 @@
 --- old.intersectionIncludingPropFromGlobalAugmentation.symbols
 +++ new.intersectionIncludingPropFromGlobalAugmentation.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  
  interface Test1 { toString: null | 'string'; }
  >Test1 : Symbol(Test1, Decl(intersectionIncludingPropFromGlobalAugmentation.ts, 0, 0))

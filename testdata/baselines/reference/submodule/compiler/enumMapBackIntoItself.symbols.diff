@@ -1,6 +1,6 @@
 --- old.enumMapBackIntoItself.symbols
 +++ new.enumMapBackIntoItself.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >TShirtSize : Symbol(TShirtSize, Decl(enumMapBackIntoItself.ts, 0, 0))
  
     Small,

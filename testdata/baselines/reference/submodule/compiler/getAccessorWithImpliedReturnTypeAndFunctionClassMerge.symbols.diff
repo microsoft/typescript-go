@@ -1,6 +1,6 @@
 --- old.getAccessorWithImpliedReturnTypeAndFunctionClassMerge.symbols
 +++ new.getAccessorWithImpliedReturnTypeAndFunctionClassMerge.symbols
-@@= skipped -50, +50 lines =@@
+@@= skipped -49, +49 lines =@@
  >T : Symbol(T, Decl(getAccessorWithImpliedReturnTypeAndFunctionClassMerge.ts, 14, 16))
  
      each(iterator: _.ListIterator<T, void>, context?: any): void;

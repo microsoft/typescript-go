@@ -1,6 +1,6 @@
 --- old.instantiationExpressions.symbols
 +++ new.instantiationExpressions.symbols
-@@= skipped -99, +99 lines =@@
+@@= skipped -98, +98 lines =@@
  >T : Symbol(T, Decl(instantiationExpressions.ts, 26, 16))
  
      static f<U>(x: U): U[];

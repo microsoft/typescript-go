@@ -1,6 +1,6 @@
 --- old.accessorsOverrideProperty8.symbols
 +++ new.accessorsOverrideProperty8.symbols
-@@= skipped -71, +71 lines =@@
+@@= skipped -70, +70 lines =@@
  >Base : Symbol(Base, Decl(accessorsOverrideProperty8.ts, 13, 5))
  
      get x() {

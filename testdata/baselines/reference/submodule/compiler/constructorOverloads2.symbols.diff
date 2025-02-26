@@ -1,6 +1,6 @@
 --- old.constructorOverloads2.symbols
 +++ new.constructorOverloads2.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  >x : Symbol(x, Decl(constructorOverloads2.ts, 3, 16))
      }
      bar1() {  /*WScript.Echo("base bar1");*/ }

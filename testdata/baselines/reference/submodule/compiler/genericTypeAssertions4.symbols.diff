@@ -1,6 +1,6 @@
 --- old.genericTypeAssertions4.symbols
 +++ new.genericTypeAssertions4.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(genericTypeAssertions4.ts, 0, 0))
  
      foo() { return ""; }

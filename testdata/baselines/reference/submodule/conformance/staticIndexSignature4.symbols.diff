@@ -1,6 +1,6 @@
 --- old.staticIndexSignature4.symbols
 +++ new.staticIndexSignature4.symbols
-@@= skipped -42, +42 lines =@@
+@@= skipped -41, +41 lines =@@
  >v : Symbol(v, Decl(staticIndexSignature4.ts, 15, 13))
  
      B.a = D.a

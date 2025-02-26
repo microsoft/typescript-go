@@ -1,6 +1,6 @@
 --- old.inlineJsxAndJsxFragPragmaOverridesCompilerOptions.symbols
 +++ new.inlineJsxAndJsxFragPragmaOverridesCompilerOptions.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === react.d.ts ===
  declare global {

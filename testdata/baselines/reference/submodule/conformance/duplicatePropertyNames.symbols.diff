@@ -1,6 +1,6 @@
 --- old.duplicatePropertyNames.symbols
 +++ new.duplicatePropertyNames.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >Number : Symbol(Number, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(duplicatePropertyNames.ts, 0, 0))
  
      foo: string;

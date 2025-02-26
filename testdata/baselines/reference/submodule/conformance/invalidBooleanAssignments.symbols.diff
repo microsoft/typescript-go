@@ -1,6 +1,6 @@
 --- old.invalidBooleanAssignments.symbols
 +++ new.invalidBooleanAssignments.symbols
-@@= skipped -23, +23 lines =@@
+@@= skipped -22, +22 lines =@@
  
  enum E { A }
  >E : Symbol(E, Decl(invalidBooleanAssignments.ts, 5, 28))

@@ -1,6 +1,6 @@
 --- old.castingTuple.symbols
 +++ new.castingTuple.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
  class A { a = 10; }
  >A : Symbol(A, Decl(castingTuple.ts, 0, 15))

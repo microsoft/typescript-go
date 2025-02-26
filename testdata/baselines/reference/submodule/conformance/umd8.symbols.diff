@@ -1,6 +1,6 @@
 --- old.umd8.symbols
 +++ new.umd8.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >Foo : Symbol(Foo, Decl(foo.d.ts, 6, 15))
  
  y.foo();

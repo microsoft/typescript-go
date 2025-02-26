@@ -1,6 +1,6 @@
 --- old.withExportDecl.symbols
 +++ new.withExportDecl.symbols
-@@= skipped -58, +58 lines =@@
+@@= skipped -57, +57 lines =@@
  >y : Symbol(y, Decl(withExportDecl.ts, 22, 41))
  
  exportedArrayVar.push({ x: 30, y : 'hello world' });

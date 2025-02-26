@@ -1,6 +1,6 @@
 --- old.systemNamespaceAliasEmit.symbols
 +++ new.systemNamespaceAliasEmit.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >AnEnum : Symbol(AnEnum, Decl(systemNamespaceAliasEmit.ts, 2, 1))
  
      ONE,

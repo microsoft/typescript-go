@@ -1,6 +1,6 @@
 --- old.circularIndexedAccessErrors.symbols
 +++ new.circularIndexedAccessErrors.symbols
-@@= skipped -41, +41 lines =@@
+@@= skipped -40, +40 lines =@@
  >T : Symbol(T, Decl(circularIndexedAccessErrors.ts, 12, 13))
  
      x: T["x"];

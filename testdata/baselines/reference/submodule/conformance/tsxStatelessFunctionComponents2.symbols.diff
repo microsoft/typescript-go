@@ -1,6 +1,6 @@
 --- old.tsxStatelessFunctionComponents2.symbols
 +++ new.tsxStatelessFunctionComponents2.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >name : Symbol(name, Decl(file.tsx, 2, 19))
  
  	return <div>Hello, {x}</div>;

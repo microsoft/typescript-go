@@ -1,6 +1,6 @@
 --- old.internalImportInstantiatedModuleNotReferencingInstance.symbols
 +++ new.internalImportInstantiatedModuleNotReferencingInstance.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
      export interface X { s: string }
  >X : Symbol(X, Decl(internalImportInstantiatedModuleNotReferencingInstance.ts, 0, 10))

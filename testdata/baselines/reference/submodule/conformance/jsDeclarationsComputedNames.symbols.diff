@@ -1,6 +1,6 @@
 --- old.jsDeclarationsComputedNames.symbols
 +++ new.jsDeclarationsComputedNames.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
  
  module.exports = {

@@ -1,6 +1,6 @@
 --- old.gettersAndSettersTypesAgree.symbols
 +++ new.gettersAndSettersTypesAgree.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(gettersAndSettersTypesAgree.ts, 0, 0))
  
      public get Foo() { return "foo";} // ok

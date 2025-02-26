@@ -1,6 +1,6 @@
 --- old.enumMergingErrors.symbols
 +++ new.enumMergingErrors.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  
      export enum E1 { A = 0 }
  >E1 : Symbol(E1, Decl(enumMergingErrors.ts, 1, 10), Decl(enumMergingErrors.ts, 6, 10), Decl(enumMergingErrors.ts, 11, 10))

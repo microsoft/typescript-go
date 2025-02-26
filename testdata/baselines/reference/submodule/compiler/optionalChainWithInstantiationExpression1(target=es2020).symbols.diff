@@ -1,6 +1,6 @@
 --- old.optionalChainWithInstantiationExpression1(target=es2020).symbols
 +++ new.optionalChainWithInstantiationExpression1(target=es2020).symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(optionalChainWithInstantiationExpression1.ts, 1, 19))
  
          static d: number;

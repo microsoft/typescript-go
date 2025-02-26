@@ -1,6 +1,6 @@
 --- old.emitClassExpressionInDeclarationFile.symbols
 +++ new.emitClassExpressionInDeclarationFile.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >simpleExample : Symbol(simpleExample, Decl(emitClassExpressionInDeclarationFile.ts, 0, 10))
  
      static getTags() { }

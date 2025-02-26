@@ -1,6 +1,6 @@
 --- old.tsxStatelessFunctionComponentOverload3.symbols
 +++ new.tsxStatelessFunctionComponentOverload3.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Context : Symbol(Context, Decl(file.tsx, 0, 0))
  
      color: any;

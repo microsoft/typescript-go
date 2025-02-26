@@ -1,6 +1,6 @@
 --- old.generics4.symbols
 +++ new.generics4.symbols
-@@= skipped -4, +4 lines =@@
+@@= skipped -3, +3 lines =@@
  class C<T> { private x: T; }
  >C : Symbol(C, Decl(generics4.ts, 0, 0))
  >T : Symbol(T, Decl(generics4.ts, 0, 8))

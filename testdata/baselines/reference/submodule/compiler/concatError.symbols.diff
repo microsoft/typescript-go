@@ -1,6 +1,6 @@
 --- old.concatError.symbols
 +++ new.concatError.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  
  fa = fa.concat([0]);
  >fa : Symbol(fa, Decl(concatError.ts, 7, 3))

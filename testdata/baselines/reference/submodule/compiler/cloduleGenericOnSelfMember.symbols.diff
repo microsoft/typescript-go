@@ -1,6 +1,6 @@
 --- old.cloduleGenericOnSelfMember.symbols
 +++ new.cloduleGenericOnSelfMember.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(cloduleGenericOnSelfMember.ts, 0, 18))
  
      field: T;

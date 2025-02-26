@@ -1,6 +1,6 @@
 --- old.jsxElementTypeLiteralWithGeneric.symbols
 +++ new.jsxElementTypeLiteralWithGeneric.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >React : Symbol(React, Decl(jsxElementTypeLiteralWithGeneric.tsx, 1, 6))
  
  declare global {

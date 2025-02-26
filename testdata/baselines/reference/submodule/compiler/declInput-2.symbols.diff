@@ -1,6 +1,6 @@
 --- old.declInput-2.symbols
 +++ new.declInput-2.symbols
-@@= skipped -20, +20 lines =@@
+@@= skipped -19, +19 lines =@@
  >D : Symbol(D, Decl(declInput-2.ts, 4, 19))
  
          private c: C; // don't generate

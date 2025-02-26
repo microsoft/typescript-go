@@ -1,6 +1,6 @@
 --- old.overloadsWithComputedNames.symbols
 +++ new.overloadsWithComputedNames.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >Person : Symbol(Person, Decl(overloadsWithComputedNames.ts, 0, 0))
  
      ["B"](a: number): string;

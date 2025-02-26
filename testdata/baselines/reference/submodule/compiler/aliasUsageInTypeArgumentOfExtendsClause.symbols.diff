@@ -1,6 +1,6 @@
 --- old.aliasUsageInTypeArgumentOfExtendsClause.symbols
 +++ new.aliasUsageInTypeArgumentOfExtendsClause.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >IHasVisualizationModel : Symbol(IHasVisualizationModel, Decl(aliasUsageInTypeArgumentOfExtendsClause_main.ts, 1, 78))
  
      VisualizationModel: typeof Backbone.Model;

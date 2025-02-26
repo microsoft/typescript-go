@@ -1,6 +1,6 @@
 --- old.typeSatisfaction_optionalMemberConformance.symbols
 +++ new.typeSatisfaction_optionalMemberConformance.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  
  // Should OK
  console.log(a.x.toFixed());

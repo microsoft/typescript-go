@@ -1,6 +1,6 @@
 --- old.bundlerNodeModules1(module=esnext).symbols
 +++ new.bundlerNodeModules1(module=esnext).symbols
-@@= skipped -1, +1 lines =@@
+@@= skipped -0, +0 lines =@@
  //// [tests/cases/conformance/moduleResolution/bundler/bundlerNodeModules1.ts] ////
  
 +=== /node_modules/dual/index.js ===

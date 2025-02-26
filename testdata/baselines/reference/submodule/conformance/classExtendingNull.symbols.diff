@@ -1,6 +1,6 @@
 --- old.classExtendingNull.symbols
 +++ new.classExtendingNull.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  
  class C3 extends null { x = 1; }
  >C3 : Symbol(C3, Decl(classExtendingNull.ts, 1, 27))

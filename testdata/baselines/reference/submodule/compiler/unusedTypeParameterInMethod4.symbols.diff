@@ -1,6 +1,6 @@
 --- old.unusedTypeParameterInMethod4.symbols
 +++ new.unusedTypeParameterInMethod4.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(unusedTypeParameterInMethod4.ts, 0, 0))
  
      public f1<X>() {

@@ -1,6 +1,6 @@
 --- old.unusedVariablesWithUnderscoreInForOfLoop.symbols
 +++ new.unusedVariablesWithUnderscoreInForOfLoop.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >b : Symbol(b, Decl(unusedVariablesWithUnderscoreInForOfLoop.ts, 1, 19))
  
          console.log(b);

@@ -1,6 +1,6 @@
 --- old.tsxInArrowFunction.symbols
 +++ new.tsxInArrowFunction.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >IntrinsicElements : Symbol(IntrinsicElements, Decl(tsxInArrowFunction.tsx, 1, 25))
  
          div: {

@@ -1,6 +1,6 @@
 --- old.objectBindingPatternKeywordIdentifiers04.symbols
 +++ new.objectBindingPatternKeywordIdentifiers04.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === objectBindingPatternKeywordIdentifiers04.ts ===
  var { "while": while } = { while: 1 }

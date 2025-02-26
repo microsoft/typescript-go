@@ -1,6 +1,6 @@
 --- old.objectLiteralShorthandPropertiesErrorWithModule.symbols
 +++ new.objectLiteralShorthandPropertiesErrorWithModule.symbols
-@@= skipped -23, +23 lines =@@
+@@= skipped -22, +22 lines =@@
  
          m.x  // error
  >m : Symbol(m, Decl(objectLiteralShorthandPropertiesErrorWithModule.ts, 8, 20))

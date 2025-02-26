@@ -1,6 +1,6 @@
 --- old.controlFlowPrivateClassField.symbols
 +++ new.controlFlowPrivateClassField.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Example : Symbol(Example, Decl(controlFlowPrivateClassField.ts, 0, 0))
  
      #test;

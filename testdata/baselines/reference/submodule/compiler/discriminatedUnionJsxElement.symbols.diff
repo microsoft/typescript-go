@@ -1,6 +1,6 @@
 --- old.discriminatedUnionJsxElement.symbols
 +++ new.discriminatedUnionJsxElement.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >MenuItemVariant : Symbol(MenuItemVariant, Decl(discriminatedUnionJsxElement.tsx, 2, 16))
  >ListItemVariant : Symbol(ListItemVariant, Decl(discriminatedUnionJsxElement.tsx, 11, 98))
  >ListItemVariant : Symbol(ListItemVariant, Decl(discriminatedUnionJsxElement.tsx, 11, 98))

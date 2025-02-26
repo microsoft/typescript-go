@@ -1,6 +1,6 @@
 --- old.collisionExportsRequireAndEnum.symbols
 +++ new.collisionExportsRequireAndEnum.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >require : Symbol(require, Decl(collisionExportsRequireAndEnum_externalmodule.ts, 0, 0))
  
      _thisVal1,

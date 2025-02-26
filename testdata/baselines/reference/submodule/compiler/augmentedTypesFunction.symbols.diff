@@ -1,6 +1,6 @@
 --- old.augmentedTypesFunction.symbols
 +++ new.augmentedTypesFunction.symbols
-@@= skipped -33, +33 lines =@@
+@@= skipped -32, +32 lines =@@
  
  class y3a { public foo() { } } // error
  >y3a : Symbol(y3a, Decl(augmentedTypesFunction.ts, 13, 12), Decl(augmentedTypesFunction.ts, 15, 18))

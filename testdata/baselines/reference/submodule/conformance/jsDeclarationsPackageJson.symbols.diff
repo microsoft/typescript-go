@@ -1,6 +1,6 @@
 --- old.jsDeclarationsPackageJson.symbols
 +++ new.jsDeclarationsPackageJson.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === index.js ===
  const j = require("./package.json");
  >j : Symbol(j, Decl(index.js, 0, 5))

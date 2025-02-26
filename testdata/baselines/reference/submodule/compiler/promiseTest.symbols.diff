@@ -1,6 +1,6 @@
 --- old.promiseTest.symbols
 +++ new.promiseTest.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(lib.es5.d.ts, --, --), Decl(promiseTest.ts, 0, 18))
  
      then<A>(success?: (value: T) => Promise<A>): Promise<A>;

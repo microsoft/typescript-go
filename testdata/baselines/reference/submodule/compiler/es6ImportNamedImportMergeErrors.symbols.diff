@@ -1,6 +1,6 @@
 --- old.es6ImportNamedImportMergeErrors.symbols
 +++ new.es6ImportNamedImportMergeErrors.symbols
-@@= skipped -24, +24 lines =@@
+@@= skipped -23, +23 lines =@@
  >a : Symbol(a, Decl(es6ImportNamedImportMergeErrors_1.ts, 0, 8), Decl(es6ImportNamedImportMergeErrors_1.ts, 0, 56))
  
  import { x as x1 } from "./es6ImportNamedImportMergeErrors_0";

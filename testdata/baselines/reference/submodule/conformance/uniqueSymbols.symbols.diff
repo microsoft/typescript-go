@@ -1,6 +1,6 @@
 --- old.uniqueSymbols.symbols
 +++ new.uniqueSymbols.symbols
-@@= skipped -158, +158 lines =@@
+@@= skipped -157, +157 lines =@@
  >C : Symbol(C, Decl(uniqueSymbols.ts, 57, 61))
  
      static readonly readonlyStaticCall = Symbol();

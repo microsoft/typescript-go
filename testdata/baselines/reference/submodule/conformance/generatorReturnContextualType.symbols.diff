@@ -1,6 +1,6 @@
 --- old.generatorReturnContextualType.symbols
 +++ new.generatorReturnContextualType.symbols
-@@= skipped -45, +45 lines =@@
+@@= skipped -44, +44 lines =@@
  >x : Symbol(x, Decl(generatorReturnContextualType.ts, 18, 43))
  
    return Promise.resolve({ x: 'x' });

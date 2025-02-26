@@ -1,6 +1,6 @@
 --- old.overloadTag2.symbols
 +++ new.overloadTag2.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Foo : Symbol(Foo, Decl(overloadTag2.js, 0, 0))
  
      #a = true ? 1 : "1"

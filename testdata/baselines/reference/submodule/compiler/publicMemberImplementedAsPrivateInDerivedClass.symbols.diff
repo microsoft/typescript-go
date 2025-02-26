@@ -1,6 +1,6 @@
 --- old.publicMemberImplementedAsPrivateInDerivedClass.symbols
 +++ new.publicMemberImplementedAsPrivateInDerivedClass.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Qux : Symbol(Qux, Decl(publicMemberImplementedAsPrivateInDerivedClass.ts, 0, 0))
  
   Bar: number;

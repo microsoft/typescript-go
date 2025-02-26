@@ -1,6 +1,6 @@
 --- old.exportNestedNamespaces2.symbols
 +++ new.exportNestedNamespaces2.symbols
-@@= skipped -1, +1 lines =@@
+@@= skipped -0, +0 lines =@@
  //// [tests/cases/conformance/salsa/exportNestedNamespaces2.ts] ////
  
  === mod.js ===

@@ -1,6 +1,6 @@
 --- old.unusedLocalsAndParametersDeferred.symbols
 +++ new.unusedLocalsAndParametersDeferred.symbols
-@@= skipped -70, +70 lines =@@
+@@= skipped -69, +69 lines =@@
  
      // Method declaration paramter
      method(a) {

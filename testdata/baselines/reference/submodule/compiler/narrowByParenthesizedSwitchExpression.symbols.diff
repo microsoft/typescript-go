@@ -1,6 +1,6 @@
 --- old.narrowByParenthesizedSwitchExpression.symbols
 +++ new.narrowByParenthesizedSwitchExpression.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Base : Symbol(Base, Decl(narrowByParenthesizedSwitchExpression.ts, 0, 0))
  
    type: "foo" | "bar";

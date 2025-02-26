@@ -1,6 +1,6 @@
 --- old.callGenericFunctionWithZeroTypeArguments.symbols
 +++ new.callGenericFunctionWithZeroTypeArguments.symbols
-@@= skipped -40, +40 lines =@@
+@@= skipped -39, +39 lines =@@
  >C : Symbol(C, Decl(callGenericFunctionWithZeroTypeArguments.ts, 9, 15))
  
      f<T>(x: T): T {

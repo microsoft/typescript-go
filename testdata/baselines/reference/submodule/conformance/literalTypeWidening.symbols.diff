@@ -1,6 +1,6 @@
 --- old.literalTypeWidening.symbols
 +++ new.literalTypeWidening.symbols
-@@= skipped -346, +346 lines =@@
+@@= skipped -345, +345 lines =@@
  >K : Symbol(K, Decl(literalTypeWidening.ts, 112, 20))
  
    keys.forEach(key => result[key] = true)

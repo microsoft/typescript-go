@@ -1,6 +1,6 @@
 --- old.decoratorReferenceOnOtherProperty.symbols
 +++ new.decoratorReferenceOnOtherProperty.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  >Bar : Symbol(Bar, Decl(index.ts, 2, 31))
  
    yoha(@foo yoha, bar: Yoha) {}

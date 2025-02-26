@@ -1,6 +1,6 @@
 --- old.bundlerConditionsExcludesNode(module=esnext).symbols
 +++ new.bundlerConditionsExcludesNode(module=esnext).symbols
-@@= skipped -1, +1 lines =@@
+@@= skipped -0, +0 lines =@@
  //// [tests/cases/conformance/moduleResolution/bundler/bundlerConditionsExcludesNode.ts] ////
  
 +=== /node_modules/conditions/index.node.js ===

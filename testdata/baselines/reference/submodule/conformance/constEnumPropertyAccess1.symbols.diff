@@ -1,6 +1,6 @@
 --- old.constEnumPropertyAccess1.symbols
 +++ new.constEnumPropertyAccess1.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >G : Symbol(G, Decl(constEnumPropertyAccess1.ts, 0, 0))
  
      A = 1,

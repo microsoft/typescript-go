@@ -1,6 +1,6 @@
 --- old.moduleNodeDefaultImports(module=nodenext).symbols
 +++ new.moduleNodeDefaultImports(module=nodenext).symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >a : Symbol(a, Decl(b.mts, 0, 6))
  
  import { default as b } from "./mod.cjs";

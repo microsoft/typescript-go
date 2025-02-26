@@ -1,6 +1,6 @@
 --- old.privateConstructorFunction.symbols
 +++ new.privateConstructorFunction.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >C : Symbol(C, Decl(privateConstructorFunction.js, 0, 1))
  
          this.x = 1

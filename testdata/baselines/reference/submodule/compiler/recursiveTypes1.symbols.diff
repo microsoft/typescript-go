@@ -1,6 +1,6 @@
 --- old.recursiveTypes1.symbols
 +++ new.recursiveTypes1.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >T : Symbol(T, Decl(recursiveTypes1.ts, 0, 17))
  
     X: T;

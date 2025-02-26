@@ -1,6 +1,6 @@
 --- old.aliasesInSystemModule2.symbols
 +++ new.aliasesInSystemModule2.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  import cls = alias.Class;
  >cls : Symbol(cls, Decl(aliasesInSystemModule2.ts, 0, 26))
  >alias : Symbol(alias, Decl(aliasesInSystemModule2.ts, 0, 8))

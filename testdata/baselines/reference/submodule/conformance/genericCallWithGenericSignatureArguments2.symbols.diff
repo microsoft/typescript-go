@@ -1,6 +1,6 @@
 --- old.genericCallWithGenericSignatureArguments2.symbols
 +++ new.genericCallWithGenericSignatureArguments2.symbols
-@@= skipped -115, +115 lines =@@
+@@= skipped -114, +114 lines =@@
  
      enum E { A }
  >E : Symbol(E, Decl(genericCallWithGenericSignatureArguments2.ts, 26, 5))

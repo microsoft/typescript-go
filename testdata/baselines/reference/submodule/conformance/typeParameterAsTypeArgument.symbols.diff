@@ -1,6 +1,6 @@
 --- old.typeParameterAsTypeArgument.symbols
 +++ new.typeParameterAsTypeArgument.symbols
-@@= skipped -31, +31 lines =@@
+@@= skipped -30, +30 lines =@@
  >U : Symbol(U, Decl(typeParameterAsTypeArgument.ts, 7, 10))
  
      x: T;

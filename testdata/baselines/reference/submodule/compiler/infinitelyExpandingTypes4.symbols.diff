@@ -1,6 +1,6 @@
 --- old.infinitelyExpandingTypes4.symbols
 +++ new.infinitelyExpandingTypes4.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  
      // ...
      groupBy<K>(keySelector: (item: T) => K): Query<Grouping<K, T>>;

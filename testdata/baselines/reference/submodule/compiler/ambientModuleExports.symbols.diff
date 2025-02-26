@@ -1,6 +1,6 @@
 --- old.ambientModuleExports.symbols
 +++ new.ambientModuleExports.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  }
  
  Foo.a();

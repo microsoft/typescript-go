@@ -1,6 +1,6 @@
 --- old.ModuleWithExportedAndNonExportedEnums.symbols
 +++ new.ModuleWithExportedAndNonExportedEnums.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
      export enum Color { Red, Blue }
  >Color : Symbol(Color, Decl(ModuleWithExportedAndNonExportedEnums.ts, 0, 10))

@@ -1,6 +1,6 @@
 --- old.esDecorators-preservesThis.symbols
 +++ new.esDecorators-preservesThis.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >DecoratorProvider : Symbol(DecoratorProvider, Decl(esDecorators-preservesThis.ts, 0, 0))
  
      decorate<T>(this: DecoratorProvider, v: T, ctx: DecoratorContext): T;

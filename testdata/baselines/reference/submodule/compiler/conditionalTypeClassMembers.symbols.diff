@@ -1,6 +1,6 @@
 --- old.conditionalTypeClassMembers.symbols
 +++ new.conditionalTypeClassMembers.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >MyRecord : Symbol(MyRecord, Decl(conditionalTypeClassMembers.ts, 0, 0))
  
      private a();

@@ -1,6 +1,6 @@
 --- old.accessorWithMismatchedAccessibilityModifiers.symbols
 +++ new.accessorWithMismatchedAccessibilityModifiers.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(accessorWithMismatchedAccessibilityModifiers.ts, 0, 0))
  
      get x() {

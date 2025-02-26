@@ -1,6 +1,6 @@
 --- old.discriminantsAndNullOrUndefined.symbols
 +++ new.discriminantsAndNullOrUndefined.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  
  interface A { kind: 'A'; }
  >A : Symbol(A, Decl(discriminantsAndNullOrUndefined.ts, 0, 0))

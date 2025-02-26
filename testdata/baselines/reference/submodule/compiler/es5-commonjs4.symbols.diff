@@ -1,6 +1,6 @@
 --- old.es5-commonjs4.symbols
 +++ new.es5-commonjs4.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === es5-commonjs4.ts ===
  export default class A

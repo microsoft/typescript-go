@@ -1,6 +1,6 @@
 --- old.conflictingTypeParameterSymbolTransfer.symbols
 +++ new.conflictingTypeParameterSymbolTransfer.symbols
-@@= skipped -51, +51 lines =@@
+@@= skipped -50, +50 lines =@@
  
      // should allow this access since t was declared as a property on Foo
      foo = this.t

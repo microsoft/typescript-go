@@ -1,6 +1,6 @@
 --- old.styledComponentsInstantiaionLimitNotReached.symbols
 +++ new.styledComponentsInstantiaionLimitNotReached.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >REACT_STATICS : Symbol(REACT_STATICS, Decl(styledComponentsInstantiaionLimitNotReached.ts, 1, 31))
  
      childContextTypes: true;

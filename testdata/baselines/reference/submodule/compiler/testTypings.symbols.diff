@@ -1,6 +1,6 @@
 --- old.testTypings.symbols
 +++ new.testTypings.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(testTypings.ts, 0, 22))
  
     compareTo(other: T);

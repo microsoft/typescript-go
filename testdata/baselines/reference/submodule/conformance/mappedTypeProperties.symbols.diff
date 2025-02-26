@@ -1,6 +1,6 @@
 --- old.mappedTypeProperties.symbols
 +++ new.mappedTypeProperties.symbols
-@@= skipped -72, +72 lines =@@
+@@= skipped -71, +71 lines =@@
  >I : Symbol(I, Decl(mappedTypeProperties.ts, 27, 1))
  
      [P in PlaceType]: any

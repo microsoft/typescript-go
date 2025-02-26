@@ -1,6 +1,6 @@
 --- old.parserRealSource12.symbols
 +++ new.parserRealSource12.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >IAstWalker : Symbol(IAstWalker, Decl(parserRealSource12.ts, 5, 19))
  
          walk(ast: AST, parent: AST): AST;

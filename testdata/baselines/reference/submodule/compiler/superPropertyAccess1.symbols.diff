@@ -1,6 +1,6 @@
 --- old.superPropertyAccess1.symbols
 +++ new.superPropertyAccess1.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(superPropertyAccess1.ts, 0, 0))
  
      public foo() { }

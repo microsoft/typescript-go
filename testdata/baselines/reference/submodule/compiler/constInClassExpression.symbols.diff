@@ -1,6 +1,6 @@
 --- old.constInClassExpression.symbols
 +++ new.constInClassExpression.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(constInClassExpression.ts, 0, 3))
  
      const a = 4;

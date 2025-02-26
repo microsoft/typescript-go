@@ -1,6 +1,6 @@
 --- old.overloadEquivalenceWithStatics.symbols
 +++ new.overloadEquivalenceWithStatics.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(overloadEquivalenceWithStatics.ts, 0, 9))
  
  static B<S>(v: A1<S>): A1<S>; // 1 

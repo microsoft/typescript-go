@@ -1,6 +1,6 @@
 --- old.topLevelBlockExpando.symbols
 +++ new.topLevelBlockExpando.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >Person : Symbol(Person, Decl(check.ts, 0, 0))
  
    first: string;

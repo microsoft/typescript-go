@@ -1,6 +1,6 @@
 --- old.parserClass1.symbols
 +++ new.parserClass1.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >NullLogger : Symbol(NullLogger, Decl(parserClass1.ts, 0, 0))
  
          public information(): boolean { return false; }

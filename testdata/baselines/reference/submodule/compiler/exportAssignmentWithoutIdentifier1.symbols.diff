@@ -1,6 +1,6 @@
 --- old.exportAssignmentWithoutIdentifier1.symbols
 +++ new.exportAssignmentWithoutIdentifier1.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
      //...
  }
  Greeter.prototype.greet = function () {

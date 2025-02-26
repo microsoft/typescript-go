@@ -1,6 +1,6 @@
 --- old.classVarianceCircularity.symbols
 +++ new.classVarianceCircularity.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  
      // Uncomment to create error
      console.log(b.Value);

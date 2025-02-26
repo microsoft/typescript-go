@@ -1,6 +1,6 @@
 --- old.localTypes1.symbols
 +++ new.localTypes1.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >E : Symbol(E, Decl(localTypes1.ts, 0, 15))
  
          A, B, C

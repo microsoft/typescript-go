@@ -1,6 +1,6 @@
 --- old.genericRestParameters2.symbols
 +++ new.genericRestParameters2.symbols
-@@= skipped -80, +80 lines =@@
+@@= skipped -79, +79 lines =@@
  f10(t1[0], t1[1], t1[2], t1[3]);
  >f10 : Symbol(f10, Decl(genericRestParameters2.ts, 11, 11))
  >t1 : Symbol(t1, Decl(genericRestParameters2.ts, 0, 13))

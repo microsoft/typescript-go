@@ -1,6 +1,6 @@
 --- old.declarationEmitUnnessesaryTypeReferenceNotAdded.symbols
 +++ new.declarationEmitUnnessesaryTypeReferenceNotAdded.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >process : Symbol(process, Decl(index.ts, 0, 38))
  
  export default function parseArgs(): minimist.ParsedArgs {

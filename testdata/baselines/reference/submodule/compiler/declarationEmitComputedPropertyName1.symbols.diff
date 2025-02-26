@@ -1,6 +1,6 @@
 --- old.declarationEmitComputedPropertyName1.symbols
 +++ new.declarationEmitComputedPropertyName1.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  >data : Symbol(data, Decl(declarationEmitComputedPropertyName1.ts, 4, 25))
  
      ["a_b_c"]: string;

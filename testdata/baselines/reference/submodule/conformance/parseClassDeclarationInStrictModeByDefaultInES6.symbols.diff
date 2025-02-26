@@ -1,6 +1,6 @@
 --- old.parseClassDeclarationInStrictModeByDefaultInES6.symbols
 +++ new.parseClassDeclarationInStrictModeByDefaultInES6.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(parseClassDeclarationInStrictModeByDefaultInES6.ts, 0, 0))
  
      interface = 10;

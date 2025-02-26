@@ -1,6 +1,6 @@
 --- old.generatorTypeCheck46.symbols
 +++ new.generatorTypeCheck46.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >x : Symbol(x, Decl(generatorTypeCheck46.ts, 0, 27))
  >T : Symbol(T, Decl(generatorTypeCheck46.ts, 0, 21))
  >fun : Symbol(fun, Decl(generatorTypeCheck46.ts, 0, 32))

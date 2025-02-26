@@ -1,6 +1,6 @@
 --- old.typePredicateStructuralMatch.symbols
 +++ new.typePredicateStructuralMatch.symbols
-@@= skipped -37, +37 lines =@@
+@@= skipped -36, +36 lines =@@
  >T : Symbol(T, Decl(typePredicateStructuralMatch.ts, 11, 26))
  
      return value.hasOwnProperty('data');

@@ -1,6 +1,6 @@
 --- old.destructuringParameterDeclaration1ES5iterable.symbols
 +++ new.destructuringParameterDeclaration1ES5iterable.symbols
-@@= skipped -81, +81 lines =@@
+@@= skipped -80, +80 lines =@@
  >F1 : Symbol(F1, Decl(destructuringParameterDeclaration1ES5iterable.ts, 19, 67))
  
      b5(z, y, [, a, b], {p, m: { q, r}});

@@ -1,6 +1,6 @@
 --- old.differentTypesWithSameName.symbols
 +++ new.differentTypesWithSameName.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >variable : Symbol(variable, Decl(differentTypesWithSameName.ts, 0, 10))
  
      s: string;

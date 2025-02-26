@@ -1,6 +1,6 @@
 --- old.importCallExpressionReturnPromiseOfAny.symbols
 +++ new.importCallExpressionReturnPromiseOfAny.symbols
-@@= skipped -36, +36 lines =@@
+@@= skipped -35, +35 lines =@@
  
  var p1: Promise<any> = import(getSpecifier());
  >p1 : Symbol(p1, Decl(1.ts, 10, 3), Decl(1.ts, 11, 3))

@@ -1,6 +1,6 @@
 --- old.pickOfLargeObjectUnionWorks.symbols
 +++ new.pickOfLargeObjectUnionWorks.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >Base : Symbol(Base, Decl(pickOfLargeObjectUnionWorks.ts, 2, 1))
  
      id: string;

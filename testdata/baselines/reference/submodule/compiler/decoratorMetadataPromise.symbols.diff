@@ -1,6 +1,6 @@
 --- old.decoratorMetadataPromise.symbols
 +++ new.decoratorMetadataPromise.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === decoratorMetadataPromise.ts ===
  declare const decorator: MethodDecorator;
  >decorator : Symbol(decorator, Decl(decoratorMetadataPromise.ts, 0, 13))

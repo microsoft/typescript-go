@@ -1,6 +1,6 @@
 --- old.declarationEmitWithDefaultAsComputedName2.symbols
 +++ new.declarationEmitWithDefaultAsComputedName2.symbols
-@@= skipped -39, +39 lines =@@
+@@= skipped -38, +38 lines =@@
  >obj : Symbol(obj, Decl(main.ts, 1, 12))
  
      [other2.default.name]: 1

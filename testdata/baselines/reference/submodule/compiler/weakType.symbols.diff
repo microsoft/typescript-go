@@ -1,6 +1,6 @@
 --- old.weakType.symbols
 +++ new.weakType.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Settings : Symbol(Settings, Decl(weakType.ts, 0, 0))
  
      timeout?: number;

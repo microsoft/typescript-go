@@ -1,6 +1,6 @@
 --- old.typeofAnExportedType.symbols
 +++ new.typeofAnExportedType.symbols
-@@= skipped -20, +20 lines =@@
+@@= skipped -19, +19 lines =@@
  >C : Symbol(C, Decl(typeofAnExportedType.ts, 3, 24))
  
      foo: string;

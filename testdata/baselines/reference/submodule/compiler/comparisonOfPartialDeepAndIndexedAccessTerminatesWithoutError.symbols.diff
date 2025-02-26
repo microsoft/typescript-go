@@ -1,6 +1,6 @@
 --- old.comparisonOfPartialDeepAndIndexedAccessTerminatesWithoutError.symbols
 +++ new.comparisonOfPartialDeepAndIndexedAccessTerminatesWithoutError.symbols
-@@= skipped -21, +21 lines =@@
+@@= skipped -20, +20 lines =@@
  >T : Symbol(T, Decl(comparisonOfPartialDeepAndIndexedAccessTerminatesWithoutError.ts, 3, 21))
  
      sortBy(...iteratees: Many<PartialDeep<T>>[]): Collection<T>;

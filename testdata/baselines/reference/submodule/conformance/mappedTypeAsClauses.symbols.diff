@@ -1,6 +1,6 @@
 --- old.mappedTypeAsClauses.symbols
 +++ new.mappedTypeAsClauses.symbols
-@@= skipped -137, +137 lines =@@
+@@= skipped -136, +136 lines =@@
  >Person : Symbol(Person, Decl(mappedTypeAsClauses.ts, 35, 2))
  
      readonly name: string;

@@ -1,6 +1,6 @@
 --- old.thisInTypeQuery.symbols
 +++ new.thisInTypeQuery.symbols
-@@= skipped -20, +20 lines =@@
+@@= skipped -19, +19 lines =@@
  >MyClass : Symbol(MyClass, Decl(thisInTypeQuery.ts, 6, 1))
  
      private map = {

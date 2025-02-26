@@ -1,6 +1,6 @@
 --- old.computedPropertyNames26_ES6.symbols
 +++ new.computedPropertyNames26_ES6.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Base : Symbol(Base, Decl(computedPropertyNames26_ES6.ts, 0, 0))
  
      bar() {

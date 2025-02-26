@@ -1,6 +1,6 @@
 --- old.errorForUsingPropertyOfTypeAsType03.symbols
 +++ new.errorForUsingPropertyOfTypeAsType03.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >Color : Symbol(Color, Decl(errorForUsingPropertyOfTypeAsType03.ts, 0, 17))
  
          Red,

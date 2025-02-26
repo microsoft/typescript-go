@@ -1,6 +1,6 @@
 --- old.declarationEmitComputedPropertyNameSymbol2.symbols
 +++ new.declarationEmitComputedPropertyNameSymbol2.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >Type : Symbol(Type, Decl(type.ts, 2, 1))
  >x : Symbol(x, Decl(type.ts, 3, 20))
  >[Foo.sym] : Symbol([Foo.sym], Decl(type.ts, 3, 26))

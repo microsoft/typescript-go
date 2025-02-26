@@ -1,6 +1,6 @@
 --- old.tryCatchFinallyControlFlow.symbols
 +++ new.tryCatchFinallyControlFlow.symbols
-@@= skipped -25, +25 lines =@@
+@@= skipped -24, +24 lines =@@
      finally {
          if (a != null && a.toFixed(0) == "123") { 
  >a : Symbol(a, Decl(tryCatchFinallyControlFlow.ts, 3, 7))

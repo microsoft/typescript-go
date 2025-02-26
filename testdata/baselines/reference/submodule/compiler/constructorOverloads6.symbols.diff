@@ -1,6 +1,6 @@
 --- old.constructorOverloads6.symbols
 +++ new.constructorOverloads6.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  
      }
  	bar1():void;

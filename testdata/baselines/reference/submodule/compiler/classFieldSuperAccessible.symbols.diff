@@ -1,6 +1,6 @@
 --- old.classFieldSuperAccessible.symbols
 +++ new.classFieldSuperAccessible.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  
      static {
          console.log(super.name);

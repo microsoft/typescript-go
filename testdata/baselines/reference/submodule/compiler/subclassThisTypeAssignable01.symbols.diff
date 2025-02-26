@@ -1,6 +1,6 @@
 --- old.subclassThisTypeAssignable01.symbols
 +++ new.subclassThisTypeAssignable01.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >State : Symbol(State, Decl(tile1.ts, 0, 26))
  
  	oninit?(vnode: Vnode<Attrs, State>): number;

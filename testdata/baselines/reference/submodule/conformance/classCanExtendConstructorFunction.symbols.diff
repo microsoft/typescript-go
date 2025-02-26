@@ -1,6 +1,6 @@
 --- old.classCanExtendConstructorFunction.symbols
 +++ new.classCanExtendConstructorFunction.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
   * @param {number} numberOxen
   */
  function Wagon(numberOxen) {

@@ -1,6 +1,6 @@
 --- old.unusedClassesinNamespace5.symbols
 +++ new.unusedClassesinNamespace5.symbols
-@@= skipped -18, +18 lines =@@
+@@= skipped -17, +17 lines =@@
  >c3 : Symbol(c3, Decl(unusedClassesinNamespace5.ts, 7, 5))
  
          public x: c1;

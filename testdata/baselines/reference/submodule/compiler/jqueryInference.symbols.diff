@@ -1,6 +1,6 @@
 --- old.jqueryInference.symbols
 +++ new.jqueryInference.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >U : Symbol(U, Decl(jqueryInference.ts, 1, 22))
  
      then(cb: (t: T) => void): void;

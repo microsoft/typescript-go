@@ -1,6 +1,6 @@
 --- old.underscoreThisInDerivedClass01.symbols
 +++ new.underscoreThisInDerivedClass01.symbols
-@@= skipped -29, +29 lines =@@
+@@= skipped -28, +28 lines =@@
  >_this : Symbol(_this, Decl(underscoreThisInDerivedClass01.ts, 19, 11))
  
          console.log("ruh-roh...");

@@ -1,6 +1,6 @@
 --- old.readonlyConstructorAssignment.symbols
 +++ new.readonlyConstructorAssignment.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >A : Symbol(A, Decl(readonlyConstructorAssignment.ts, 0, 0))
  
      constructor(readonly x: number) {

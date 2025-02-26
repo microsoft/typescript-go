@@ -1,6 +1,6 @@
 --- old.commonjsAccessExports.symbols
 +++ new.commonjsAccessExports.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === /a.js ===
  exports.x = 0;

@@ -1,6 +1,6 @@
 --- old.declFileTypeofEnum.symbols
 +++ new.declFileTypeofEnum.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >days : Symbol(days, Decl(declFileTypeofEnum.ts, 0, 0))
  
      monday,

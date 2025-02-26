@@ -1,6 +1,6 @@
 --- old.thisInTupleTypeParameterConstraints.symbols
 +++ new.thisInTupleTypeParameterConstraints.symbols
-@@= skipped -4, +4 lines =@@
+@@= skipped -3, +3 lines =@@
  /// <reference no-default-lib="true"/>
  
  interface Boolean {}

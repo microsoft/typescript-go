@@ -1,6 +1,6 @@
 --- old.subtypingWithCallSignaturesWithRestParameters.symbols
 +++ new.subtypingWithCallSignaturesWithRestParameters.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >Base : Symbol(Base, Decl(subtypingWithCallSignaturesWithRestParameters.ts, 0, 0))
  
      a: (...args: number[]) => number;

@@ -1,6 +1,6 @@
 --- old.moduleAugmentationInAmbientModule5.symbols
 +++ new.moduleAugmentationInAmbientModule5.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  
  let y = x.getA().x;
  >y : Symbol(y, Decl(f.ts, 4, 3))

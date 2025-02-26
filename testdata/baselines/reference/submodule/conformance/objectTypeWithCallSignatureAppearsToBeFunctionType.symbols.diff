@@ -1,6 +1,6 @@
 --- old.objectTypeWithCallSignatureAppearsToBeFunctionType.symbols
 +++ new.objectTypeWithCallSignatureAppearsToBeFunctionType.symbols
-@@= skipped -22, +22 lines =@@
+@@= skipped -21, +21 lines =@@
  >r2b : Symbol(r2b, Decl(objectTypeWithCallSignatureAppearsToBeFunctionType.ts, 9, 3))
  >x : Symbol(x, Decl(objectTypeWithCallSignatureAppearsToBeFunctionType.ts, 9, 10))
  >y : Symbol(y, Decl(objectTypeWithCallSignatureAppearsToBeFunctionType.ts, 9, 17))

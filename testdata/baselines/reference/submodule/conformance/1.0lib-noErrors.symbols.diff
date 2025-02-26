@@ -1,6 +1,6 @@
 --- old.1.0lib-noErrors.symbols
 +++ new.1.0lib-noErrors.symbols
-@@= skipped -23, +23 lines =@@
+@@= skipped -22, +22 lines =@@
  /////////////////////////////
  
  declare var NaN: number;

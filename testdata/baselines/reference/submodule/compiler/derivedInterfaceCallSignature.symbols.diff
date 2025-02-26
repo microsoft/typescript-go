@@ -1,6 +1,6 @@
 --- old.derivedInterfaceCallSignature.symbols
 +++ new.derivedInterfaceCallSignature.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >index : Symbol(index, Decl(derivedInterfaceCallSignature.ts, 1, 15))
  
      x(): (data: any, index?: number) => number;

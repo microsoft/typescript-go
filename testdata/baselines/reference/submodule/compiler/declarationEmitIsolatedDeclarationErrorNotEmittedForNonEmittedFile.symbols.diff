@@ -1,6 +1,6 @@
 --- old.declarationEmitIsolatedDeclarationErrorNotEmittedForNonEmittedFile.symbols
 +++ new.declarationEmitIsolatedDeclarationErrorNotEmittedForNonEmittedFile.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(config.d.ts, 0, 28))
  
      prop: T;

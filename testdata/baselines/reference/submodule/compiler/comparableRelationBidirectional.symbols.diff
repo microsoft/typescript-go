@@ -1,6 +1,6 @@
 --- old.comparableRelationBidirectional.symbols
 +++ new.comparableRelationBidirectional.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >AutomationMode : Symbol(AutomationMode, Decl(comparableRelationBidirectional.ts, 0, 0))
  
      NONE = "",

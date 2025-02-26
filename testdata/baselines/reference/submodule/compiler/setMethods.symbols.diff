@@ -1,6 +1,6 @@
 --- old.setMethods.symbols
 +++ new.setMethods.symbols
-@@= skipped -30, +30 lines =@@
+@@= skipped -29, +29 lines =@@
  };
  
  numberSet.union([]);

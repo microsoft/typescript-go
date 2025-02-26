@@ -1,6 +1,6 @@
 --- old.inferFromGenericFunctionReturnTypes2.symbols
 +++ new.inferFromGenericFunctionReturnTypes2.symbols
-@@= skipped -59, +59 lines =@@
+@@= skipped -58, +58 lines =@@
  >f1 : Symbol(f1, Decl(inferFromGenericFunctionReturnTypes2.ts, 10, 3))
  >Mapper : Symbol(Mapper, Decl(inferFromGenericFunctionReturnTypes2.ts, 0, 0))
  >s : Symbol(s, Decl(inferFromGenericFunctionReturnTypes2.ts, 10, 32))

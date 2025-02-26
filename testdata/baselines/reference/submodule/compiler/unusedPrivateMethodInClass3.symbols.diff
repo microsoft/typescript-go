@@ -1,6 +1,6 @@
 --- old.unusedPrivateMethodInClass3.symbols
 +++ new.unusedPrivateMethodInClass3.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >greeter : Symbol(greeter, Decl(unusedPrivateMethodInClass3.ts, 0, 0))
  
      private function1() {

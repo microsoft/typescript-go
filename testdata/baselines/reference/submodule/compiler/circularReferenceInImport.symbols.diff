@@ -1,6 +1,6 @@
 --- old.circularReferenceInImport.symbols
 +++ new.circularReferenceInImport.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === db.d.ts ===
  declare namespace Db {

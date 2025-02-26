@@ -1,6 +1,6 @@
 --- old.instantiateContextualTypes.symbols
 +++ new.instantiateContextualTypes.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >a : Symbol(a, Decl(instantiateContextualTypes.ts, 2, 19))
  
      value: a;

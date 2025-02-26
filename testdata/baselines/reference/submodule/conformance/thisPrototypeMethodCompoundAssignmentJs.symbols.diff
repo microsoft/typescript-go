@@ -1,6 +1,6 @@
 --- old.thisPrototypeMethodCompoundAssignmentJs.symbols
 +++ new.thisPrototypeMethodCompoundAssignmentJs.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === index.js ===
  Element.prototype.remove ??= function () {

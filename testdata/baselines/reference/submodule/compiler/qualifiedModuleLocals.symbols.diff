@@ -1,6 +1,6 @@
 --- old.qualifiedModuleLocals.symbols
 +++ new.qualifiedModuleLocals.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  }
  
  A.a();

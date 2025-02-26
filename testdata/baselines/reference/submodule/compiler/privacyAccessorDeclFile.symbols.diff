@@ -1,6 +1,6 @@
 --- old.privacyAccessorDeclFile.symbols
 +++ new.privacyAccessorDeclFile.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >publicClassWithWithPrivateGetAccessorTypes : Symbol(publicClassWithWithPrivateGetAccessorTypes, Decl(privacyAccessorDeclFile_externalModule.ts, 4, 1))
  
      static get myPublicStaticMethod(): privateClass { // Error

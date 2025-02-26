@@ -1,6 +1,6 @@
 --- old.lambdaParameterWithTupleArgsHasCorrectAssignability.symbols
 +++ new.lambdaParameterWithTupleArgsHasCorrectAssignability.symbols
-@@= skipped -22, +22 lines =@@
+@@= skipped -21, +21 lines =@@
  >MyTuple : Symbol(MyTuple, Decl(lambdaParameterWithTupleArgsHasCorrectAssignability.ts, 0, 22))
  
      from: GenericFunction<T> | undefined;

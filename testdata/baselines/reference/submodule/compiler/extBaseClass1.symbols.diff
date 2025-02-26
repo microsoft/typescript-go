@@ -1,6 +1,6 @@
 --- old.extBaseClass1.symbols
 +++ new.extBaseClass1.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >B : Symbol(B, Decl(extBaseClass1.ts, 0, 10))
  
  	    public x=10;

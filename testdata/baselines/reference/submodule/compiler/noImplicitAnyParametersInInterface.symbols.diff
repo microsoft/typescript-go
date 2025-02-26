@@ -1,6 +1,6 @@
 --- old.noImplicitAnyParametersInInterface.symbols
 +++ new.noImplicitAnyParametersInInterface.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  
      // No implicit-'any' errors.
      f1(): void;

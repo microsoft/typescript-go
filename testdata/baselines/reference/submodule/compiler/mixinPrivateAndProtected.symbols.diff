@@ -1,6 +1,6 @@
 --- old.mixinPrivateAndProtected.symbols
 +++ new.mixinPrivateAndProtected.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >A : Symbol(A, Decl(mixinPrivateAndProtected.ts, 2, 47))
  
      public pb: number = 2;

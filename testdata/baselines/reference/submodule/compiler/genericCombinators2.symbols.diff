@@ -1,6 +1,6 @@
 --- old.genericCombinators2.symbols
 +++ new.genericCombinators2.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >U : Symbol(U, Decl(genericCombinators2.ts, 0, 23))
  
      length: number;

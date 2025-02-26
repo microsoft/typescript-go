@@ -1,6 +1,6 @@
 --- old.computedPropertyNamesWithStaticProperty.symbols
 +++ new.computedPropertyNamesWithStaticProperty.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C1 : Symbol(C1, Decl(computedPropertyNamesWithStaticProperty.ts, 0, 0))
  
      static staticProp = 10;

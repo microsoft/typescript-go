@@ -1,6 +1,6 @@
 --- old.awaitInNonAsyncFunction.symbols
 +++ new.awaitInNonAsyncFunction.symbols
-@@= skipped -78, +78 lines =@@
+@@= skipped -77, +77 lines =@@
  >p : Symbol(p, Decl(awaitInNonAsyncFunction.ts, 28, 14))
    }
    method(p: Promise<number>) {

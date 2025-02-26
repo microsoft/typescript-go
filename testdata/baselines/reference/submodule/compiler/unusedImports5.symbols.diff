@@ -1,6 +1,6 @@
 --- old.unusedImports5.symbols
 +++ new.unusedImports5.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Calculator : Symbol(Calculator, Decl(file1.ts, 0, 0))
  
      handleChar() {}

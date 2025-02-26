@@ -1,6 +1,6 @@
 --- old.moduleAliasInterface.symbols
 +++ new.moduleAliasInterface.symbols
-@@= skipped -22, +22 lines =@@
+@@= skipped -21, +21 lines =@@
  
   import modes = _modes;
  >modes : Symbol(modes, Decl(moduleAliasInterface.ts, 12, 15))

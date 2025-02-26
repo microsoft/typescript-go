@@ -1,6 +1,6 @@
 --- old.decoratedClassExportsSystem1.symbols
 +++ new.decoratedClassExportsSystem1.symbols
-@@= skipped -17, +17 lines =@@
+@@= skipped -16, +16 lines =@@
  >Testing123 : Symbol(Testing123, Decl(a.ts, 1, 27))
  
      static prop0: string;

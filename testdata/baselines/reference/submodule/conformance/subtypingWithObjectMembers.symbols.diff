@@ -1,6 +1,6 @@
 --- old.subtypingWithObjectMembers.symbols
 +++ new.subtypingWithObjectMembers.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === subtypingWithObjectMembers.ts ===
  class Base { foo: string; }
  >Base : Symbol(Base, Decl(subtypingWithObjectMembers.ts, 0, 0))

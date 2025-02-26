@@ -1,6 +1,6 @@
 --- old.varianceProblingAndZeroOrderIndexSignatureRelationsAlign.symbols
 +++ new.varianceProblingAndZeroOrderIndexSignatureRelationsAlign.symbols
-@@= skipped -18, +18 lines =@@
+@@= skipped -17, +17 lines =@@
  >A : Symbol(A, Decl(varianceProblingAndZeroOrderIndexSignatureRelationsAlign.ts, 2, 13))
  
      readonly _tag: 'Left' = 'Left'

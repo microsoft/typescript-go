@@ -1,6 +1,6 @@
 --- old.tsxSpreadAttributesResolution7.symbols
 +++ new.tsxSpreadAttributesResolution7.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  
  class TextComponent extends React.Component<TextProps, {}> {
  >TextComponent : Symbol(TextComponent, Decl(file.tsx, 3, 71))

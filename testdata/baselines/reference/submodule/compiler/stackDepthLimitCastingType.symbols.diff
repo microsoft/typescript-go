@@ -1,6 +1,6 @@
 --- old.stackDepthLimitCastingType.symbols
 +++ new.stackDepthLimitCastingType.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >E : Symbol(E, Decl(index.d.ts, 2, 24))
  
          initialize(attributes?: T, options?: CombinedModelConstructorOptions<E, this>): void;

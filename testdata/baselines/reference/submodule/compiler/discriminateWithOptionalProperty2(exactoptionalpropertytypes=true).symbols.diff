@@ -1,6 +1,6 @@
 --- old.discriminateWithOptionalProperty2(exactoptionalpropertytypes=true).symbols
 +++ new.discriminateWithOptionalProperty2(exactoptionalpropertytypes=true).symbols
-@@= skipped -40, +40 lines =@@
+@@= skipped -39, +39 lines =@@
    const iterator = iterable[Symbol.asyncIterator]();
  >iterator : Symbol(iterator, Decl(discriminateWithOptionalProperty2.ts, 8, 7))
  >iterable : Symbol(iterable, Decl(discriminateWithOptionalProperty2.ts, 4, 47))

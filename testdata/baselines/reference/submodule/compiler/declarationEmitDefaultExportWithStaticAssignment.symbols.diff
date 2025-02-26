@@ -1,6 +1,6 @@
 --- old.declarationEmitDefaultExportWithStaticAssignment.symbols
 +++ new.declarationEmitDefaultExportWithStaticAssignment.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >Foo : Symbol(Foo, Decl(index1.ts, 0, 8))
  
  export default function Example() {}

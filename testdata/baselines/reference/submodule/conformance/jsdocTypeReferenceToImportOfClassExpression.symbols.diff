@@ -1,6 +1,6 @@
 --- old.jsdocTypeReferenceToImportOfClassExpression.symbols
 +++ new.jsdocTypeReferenceToImportOfClassExpression.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === MC.js ===
  const MW = require("./MW");
  >MW : Symbol(MW, Decl(MC.js, 0, 5))

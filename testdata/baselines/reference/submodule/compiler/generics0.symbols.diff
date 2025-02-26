@@ -1,6 +1,6 @@
 --- old.generics0.symbols
 +++ new.generics0.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(generics0.ts, 0, 12))
  
      x: T;

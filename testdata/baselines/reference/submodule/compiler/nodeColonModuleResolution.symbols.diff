@@ -1,6 +1,6 @@
 --- old.nodeColonModuleResolution.symbols
 +++ new.nodeColonModuleResolution.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === /a/b/node_modules/@types/node/ph.d.ts ===
  declare module 'ph' {

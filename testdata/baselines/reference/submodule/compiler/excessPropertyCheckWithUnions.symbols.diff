@@ -1,6 +1,6 @@
 --- old.excessPropertyCheckWithUnions.symbols
 +++ new.excessPropertyCheckWithUnions.symbols
-@@= skipped -260, +260 lines =@@
+@@= skipped -259, +259 lines =@@
  >IValue : Symbol(IValue, Decl(excessPropertyCheckWithUnions.ts, 85, 2))
  
    value: string

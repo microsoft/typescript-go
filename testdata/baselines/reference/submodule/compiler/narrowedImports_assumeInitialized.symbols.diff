@@ -1,6 +1,6 @@
 --- old.narrowedImports_assumeInitialized.symbols
 +++ new.narrowedImports_assumeInitialized.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >a : Symbol(a, Decl(b.ts, 0, 0))
  
  a.x;

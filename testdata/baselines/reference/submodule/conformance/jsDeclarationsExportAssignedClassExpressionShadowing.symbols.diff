@@ -1,6 +1,6 @@
 --- old.jsDeclarationsExportAssignedClassExpressionShadowing.symbols
 +++ new.jsDeclarationsExportAssignedClassExpressionShadowing.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(index.js, 0, 0))
  
      member = new Q();

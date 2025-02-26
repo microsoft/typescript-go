@@ -1,6 +1,6 @@
 --- old.reactJsxReactResolvedNodeNextEsm.symbols
 +++ new.reactJsxReactResolvedNodeNextEsm.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === file.tsx ===
  export const a = <div></div>;
  >a : Symbol(a, Decl(file.tsx, 0, 12))

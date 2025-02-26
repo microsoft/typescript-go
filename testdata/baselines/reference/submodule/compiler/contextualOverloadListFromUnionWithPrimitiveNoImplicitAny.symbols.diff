@@ -1,6 +1,6 @@
 --- old.contextualOverloadListFromUnionWithPrimitiveNoImplicitAny.symbols
 +++ new.contextualOverloadListFromUnionWithPrimitiveNoImplicitAny.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >FullRule : Symbol(FullRule, Decl(contextualOverloadListFromUnionWithPrimitiveNoImplicitAny.ts, 1, 76))
  
      validate: string | RegExp | Validate;

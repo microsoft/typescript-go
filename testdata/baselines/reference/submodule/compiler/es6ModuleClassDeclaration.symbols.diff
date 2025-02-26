@@ -1,6 +1,6 @@
 --- old.es6ModuleClassDeclaration.symbols
 +++ new.es6ModuleClassDeclaration.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
      constructor() {
      }
      private x = 10;

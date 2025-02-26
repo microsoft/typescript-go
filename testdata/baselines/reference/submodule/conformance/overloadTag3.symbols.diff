@@ -1,6 +1,6 @@
 --- old.overloadTag3.symbols
 +++ new.overloadTag3.symbols
-@@= skipped -17, +17 lines =@@
+@@= skipped -16, +16 lines =@@
       * @param {T} value
       */
      bar(value) { }

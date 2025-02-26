@@ -1,6 +1,6 @@
 --- old.restParametersOfNonArrayTypes.symbols
 +++ new.restParametersOfNonArrayTypes.symbols
-@@= skipped -22, +22 lines =@@
+@@= skipped -21, +21 lines =@@
  >C : Symbol(C, Decl(restParametersOfNonArrayTypes.ts, 4, 43))
  
      foo(...x: C) { }

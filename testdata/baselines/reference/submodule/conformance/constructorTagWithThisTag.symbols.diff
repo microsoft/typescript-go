@@ -1,6 +1,6 @@
 --- old.constructorTagWithThisTag.symbols
 +++ new.constructorTagWithThisTag.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >C : Symbol(C, Decl(classthisboth.js, 0, 0))
  
      this.e = this.m + 1

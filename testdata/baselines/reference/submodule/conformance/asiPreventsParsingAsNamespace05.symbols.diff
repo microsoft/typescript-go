@@ -1,6 +1,6 @@
 --- old.asiPreventsParsingAsNamespace05.symbols
 +++ new.asiPreventsParsingAsNamespace05.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  >namespace : Symbol(namespace, Decl(asiPreventsParsingAsNamespace05.ts, 0, 3))
  
  a.b.c

@@ -1,6 +1,6 @@
 --- old.es6ModuleConst.symbols
 +++ new.es6ModuleConst.symbols
-@@= skipped -60, +60 lines =@@
+@@= skipped -59, +59 lines =@@
  
      const n = m1.k;
  >n : Symbol(n, Decl(es6ModuleConst.ts, 13, 9))

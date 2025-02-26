@@ -1,6 +1,6 @@
 --- old.globalThis.symbols
 +++ new.globalThis.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === globalThis.ts ===
  var __e = Math.E;  // should not generate 'this.Math.E'
  >__e : Symbol(__e, Decl(globalThis.ts, 0, 3))

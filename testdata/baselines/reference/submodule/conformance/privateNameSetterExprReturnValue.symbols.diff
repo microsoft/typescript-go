@@ -1,6 +1,6 @@
 --- old.privateNameSetterExprReturnValue.symbols
 +++ new.privateNameSetterExprReturnValue.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(privateNameSetterExprReturnValue.ts, 0, 0))
  
      set #foo(a: number) {}

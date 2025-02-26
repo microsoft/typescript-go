@@ -1,6 +1,6 @@
 --- old.typeGuardOfFormTypeOfNumber.symbols
 +++ new.typeGuardOfFormTypeOfNumber.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === typeGuardOfFormTypeOfNumber.ts ===
  class C { private p: string };
  >C : Symbol(C, Decl(typeGuardOfFormTypeOfNumber.ts, 0, 0))

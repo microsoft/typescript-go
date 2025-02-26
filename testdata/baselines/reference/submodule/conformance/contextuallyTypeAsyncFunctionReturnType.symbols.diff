@@ -1,6 +1,6 @@
 --- old.contextuallyTypeAsyncFunctionReturnType.symbols
 +++ new.contextuallyTypeAsyncFunctionReturnType.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === contextuallyTypeAsyncFunctionReturnType.ts ===
  interface Obj { key: "value"; }
  >Obj : Symbol(Obj, Decl(contextuallyTypeAsyncFunctionReturnType.ts, 0, 0))

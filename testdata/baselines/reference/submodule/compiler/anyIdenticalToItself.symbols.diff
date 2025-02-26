@@ -1,6 +1,6 @@
 --- old.anyIdenticalToItself.symbols
 +++ new.anyIdenticalToItself.symbols
-@@= skipped -18, +18 lines =@@
+@@= skipped -17, +17 lines =@@
  >C : Symbol(C, Decl(anyIdenticalToItself.ts, 2, 35))
  
      get X(): any {

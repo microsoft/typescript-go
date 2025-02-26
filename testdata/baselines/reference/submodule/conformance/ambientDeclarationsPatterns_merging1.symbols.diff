@@ -1,6 +1,6 @@
 --- old.ambientDeclarationsPatterns_merging1.symbols
 +++ new.ambientDeclarationsPatterns_merging1.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  >onlyInA : Symbol(onlyInA, Decl(testA.ts, 0, 20))
  
  declare module "a.foo" {

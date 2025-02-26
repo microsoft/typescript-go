@@ -1,6 +1,6 @@
 --- old.genericWithIndexerOfTypeParameterType1.symbols
 +++ new.genericWithIndexerOfTypeParameterType1.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(genericWithIndexerOfTypeParameterType1.ts, 0, 16))
  
      private objects = <{ [objectId: string]: T; }>{};

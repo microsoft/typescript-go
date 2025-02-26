@@ -1,6 +1,6 @@
 --- old.declFileAccessors.symbols
 +++ new.declFileAccessors.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  
      /** getter property*/
      public get p3() {

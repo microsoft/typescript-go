@@ -1,6 +1,6 @@
 --- old.functionOverloadsRecursiveGenericReturnType.symbols
 +++ new.functionOverloadsRecursiveGenericReturnType.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >V : Symbol(V, Decl(functionOverloadsRecursiveGenericReturnType.ts, 0, 8))
  
      private id: V;

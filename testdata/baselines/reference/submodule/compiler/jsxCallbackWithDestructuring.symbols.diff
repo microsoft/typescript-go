@@ -1,6 +1,6 @@
 --- old.jsxCallbackWithDestructuring.symbols
 +++ new.jsxCallbackWithDestructuring.symbols
-@@= skipped -18, +18 lines =@@
+@@= skipped -17, +17 lines =@@
  >context : Symbol(context, Decl(jsxCallbackWithDestructuring.tsx, 3, 25))
  
      render(): {};

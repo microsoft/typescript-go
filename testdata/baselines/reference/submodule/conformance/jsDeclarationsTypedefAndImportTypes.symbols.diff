@@ -1,6 +1,6 @@
 --- old.jsDeclarationsTypedefAndImportTypes.symbols
 +++ new.jsDeclarationsTypedefAndImportTypes.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  
      constructor() {}
      item = 3;

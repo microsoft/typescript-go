@@ -1,6 +1,6 @@
 --- old.asyncArrowInClassES5.symbols
 +++ new.asyncArrowInClassES5.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >Test : Symbol(Test, Decl(asyncArrowInClassES5.ts, 0, 0))
  
      static member = async (x: string) => { };

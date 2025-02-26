@@ -1,6 +1,6 @@
 --- old.interfaceImplementation8.symbols
 +++ new.interfaceImplementation8.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >i1 : Symbol(i1, Decl(interfaceImplementation8.ts, 0, 0))
  
      name: string;

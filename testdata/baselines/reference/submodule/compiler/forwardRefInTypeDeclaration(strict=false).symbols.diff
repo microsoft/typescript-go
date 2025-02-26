@@ -1,6 +1,6 @@
 --- old.forwardRefInTypeDeclaration(strict=false).symbols
 +++ new.forwardRefInTypeDeclaration(strict=false).symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  // ignored anywhere in an interface (#35947)
  interface Foo2 { [s2]: number; }
  >Foo2 : Symbol(Foo2, Decl(forwardRefInTypeDeclaration.ts, 2, 15))

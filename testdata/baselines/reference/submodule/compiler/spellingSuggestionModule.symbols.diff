@@ -1,6 +1,6 @@
 --- old.spellingSuggestionModule.symbols
 +++ new.spellingSuggestionModule.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  foobar;
  
  declare module 'barfoo' { export const x: number; }

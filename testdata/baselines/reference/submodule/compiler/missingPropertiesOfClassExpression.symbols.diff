@@ -1,6 +1,6 @@
 --- old.missingPropertiesOfClassExpression.symbols
 +++ new.missingPropertiesOfClassExpression.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === missingPropertiesOfClassExpression.ts ===
  class George extends class { reset() { return this.y; } } {
  >George : Symbol(George, Decl(missingPropertiesOfClassExpression.ts, 0, 0))

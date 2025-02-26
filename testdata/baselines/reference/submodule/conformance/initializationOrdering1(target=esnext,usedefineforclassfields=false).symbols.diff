@@ -1,6 +1,6 @@
 --- old.initializationOrdering1(target=esnext,usedefineforclassfields=false).symbols
 +++ new.initializationOrdering1(target=esnext,usedefineforclassfields=false).symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Helper : Symbol(Helper, Decl(initializationOrdering1.ts, 0, 0))
  
      create(): boolean {

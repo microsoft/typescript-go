@@ -1,6 +1,6 @@
 --- old.multipleExportAssignments.symbols
 +++ new.multipleExportAssignments.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >connectExport : Symbol(connectExport, Decl(multipleExportAssignments.ts, 2, 1))
  
      use: (mod: connectModule) => connectExport;

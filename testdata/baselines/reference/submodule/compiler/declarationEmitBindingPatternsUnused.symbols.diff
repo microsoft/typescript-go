@@ -1,6 +1,6 @@
 --- old.declarationEmitBindingPatternsUnused.symbols
 +++ new.declarationEmitBindingPatternsUnused.symbols
-@@= skipped -163, +163 lines =@@
+@@= skipped -162, +162 lines =@@
  >Named : Symbol(Named, Decl(declarationEmitBindingPatternsUnused.ts, 0, 0))
  	}
  	set x({ name: alias }: Named) {

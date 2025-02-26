@@ -1,6 +1,6 @@
 --- old.classExpressionWithResolutionOfNamespaceOfSameName01.symbols
 +++ new.classExpressionWithResolutionOfNamespaceOfSameName01.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  >C : Symbol(C, Decl(classExpressionWithResolutionOfNamespaceOfSameName01.ts, 5, 7))
  
      prop: C.type;

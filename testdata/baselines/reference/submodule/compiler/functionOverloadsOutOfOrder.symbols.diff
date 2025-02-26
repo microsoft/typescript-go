@@ -1,6 +1,6 @@
 --- old.functionOverloadsOutOfOrder.symbols
 +++ new.functionOverloadsOutOfOrder.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >d : Symbol(d, Decl(functionOverloadsOutOfOrder.ts, 0, 0))
  
      private foo(n: number): string;

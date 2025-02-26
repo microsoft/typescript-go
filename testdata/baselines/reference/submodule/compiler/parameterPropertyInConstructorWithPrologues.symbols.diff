@@ -1,6 +1,6 @@
 --- old.parameterPropertyInConstructorWithPrologues.symbols
 +++ new.parameterPropertyInConstructorWithPrologues.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >Foo1 : Symbol(Foo1, Decl(parameterPropertyInConstructorWithPrologues.ts, 2, 10))
  
    constructor(private A: string) {

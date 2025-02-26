@@ -1,6 +1,6 @@
 --- old.emitArrowFunctionWhenUsingArguments17_ES6.symbols
 +++ new.emitArrowFunctionWhenUsingArguments17_ES6.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >arguments : Symbol(arguments, Decl(emitArrowFunctionWhenUsingArguments17_ES6.ts, 1, 25))
  
      if (Math.random()) {

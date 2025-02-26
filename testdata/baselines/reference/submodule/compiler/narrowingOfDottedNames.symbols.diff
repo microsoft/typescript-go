@@ -1,6 +1,6 @@
 --- old.narrowingOfDottedNames.symbols
 +++ new.narrowingOfDottedNames.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >A : Symbol(A, Decl(narrowingOfDottedNames.ts, 0, 0))
  
      prop!: { a: string; };

@@ -1,6 +1,6 @@
 --- old.incompatibleGenericTypes.symbols
 +++ new.incompatibleGenericTypes.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(incompatibleGenericTypes.ts, 0, 13))
  
    m1<U>(callback: (p: T) => U): I1<U>;

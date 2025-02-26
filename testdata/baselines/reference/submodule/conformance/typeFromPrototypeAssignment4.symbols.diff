@@ -1,6 +1,6 @@
 --- old.typeFromPrototypeAssignment4.symbols
 +++ new.typeFromPrototypeAssignment4.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === a.js ===
  function Multimap4() {

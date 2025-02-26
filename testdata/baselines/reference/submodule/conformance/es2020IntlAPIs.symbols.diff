@@ -1,6 +1,6 @@
 --- old.es2020IntlAPIs.symbols
 +++ new.es2020IntlAPIs.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  >locale : Symbol(locale, Decl(es2020IntlAPIs.ts, 4, 13))
  
    console.log(

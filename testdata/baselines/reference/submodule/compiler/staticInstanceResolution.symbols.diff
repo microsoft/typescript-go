@@ -1,6 +1,6 @@
 --- old.staticInstanceResolution.symbols
 +++ new.staticInstanceResolution.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Comment : Symbol(Comment, Decl(staticInstanceResolution.ts, 0, 0))
  
      public getDocCommentText()

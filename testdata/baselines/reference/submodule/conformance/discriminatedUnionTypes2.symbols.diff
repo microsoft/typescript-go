@@ -1,6 +1,6 @@
 --- old.discriminatedUnionTypes2.symbols
 +++ new.discriminatedUnionTypes2.symbols
-@@= skipped -126, +126 lines =@@
+@@= skipped -125, +125 lines =@@
  >Result : Symbol(Result, Decl(discriminatedUnionTypes2.ts, 33, 1))
  
      if (!x.error) {

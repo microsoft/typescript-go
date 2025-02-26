@@ -1,6 +1,6 @@
 --- old.arrayTypeInSignatureOfInterfaceAndClass.symbols
 +++ new.arrayTypeInSignatureOfInterfaceAndClass.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(arrayTypeInSignatureOfInterfaceAndClass.ts, 1, 18))
  
          then<U>(success?: (value: T) => Promise<U>, error?: (error: any) => Promise<U>, progress?: (progress: any) => void): Promise<U>;

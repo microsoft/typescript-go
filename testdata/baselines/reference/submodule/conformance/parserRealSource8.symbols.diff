@@ -1,6 +1,6 @@
 --- old.parserRealSource8.symbols
 +++ new.parserRealSource8.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >AssignScopeContext : Symbol(AssignScopeContext, Decl(parserRealSource8.ts, 5, 19))
  
          constructor (public scopeChain: ScopeChain,

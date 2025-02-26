@@ -1,6 +1,6 @@
 --- old.thisTypeInObjectLiterals2.symbols
 +++ new.thisTypeInObjectLiterals2.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  
          return this.a;
  >this.a : Symbol(a, Decl(thisTypeInObjectLiterals2.ts, 3, 12))

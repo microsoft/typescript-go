@@ -1,6 +1,6 @@
 --- old.allowSyntheticDefaultImportsCanPaintCrossModuleDeclaration.symbols
 +++ new.allowSyntheticDefaultImportsCanPaintCrossModuleDeclaration.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Color : Symbol(Color, Decl(color.ts, 0, 0))
  
      c: string;

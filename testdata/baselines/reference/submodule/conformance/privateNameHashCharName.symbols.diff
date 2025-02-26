@@ -1,6 +1,6 @@
 --- old.privateNameHashCharName.symbols
 +++ new.privateNameHashCharName.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >C : Symbol(C, Decl(privateNameHashCharName.ts, 0, 1))
  
      #

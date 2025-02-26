@@ -1,6 +1,6 @@
 --- old.evolvingArrayTypeInAssert.symbols
 +++ new.evolvingArrayTypeInAssert.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  >out : Symbol(out, Decl(evolvingArrayTypeInAssert.ts, 3, 7))
  
      out.push(100)

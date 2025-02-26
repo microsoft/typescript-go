@@ -1,6 +1,6 @@
 --- old.inheritanceStaticPropertyOverridingMethod.symbols
 +++ new.inheritanceStaticPropertyOverridingMethod.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >a : Symbol(a, Decl(inheritanceStaticPropertyOverridingMethod.ts, 0, 0))
  
      static x() {

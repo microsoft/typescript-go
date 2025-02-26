@@ -1,6 +1,6 @@
 --- old.importDecl.symbols
 +++ new.importDecl.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  
  export var x4 = m4.x;
  >x4 : Symbol(x4, Decl(importDecl_1.ts, 6, 10))

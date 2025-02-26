@@ -1,6 +1,6 @@
 --- old.checkJsxChildrenCanBeTupleType.symbols
 +++ new.checkJsxChildrenCanBeTupleType.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >ResizablePanelProps : Symbol(ResizablePanelProps, Decl(checkJsxChildrenCanBeTupleType.tsx, 2, 25))
  
    children: [React.ReactNode, React.ReactNode]

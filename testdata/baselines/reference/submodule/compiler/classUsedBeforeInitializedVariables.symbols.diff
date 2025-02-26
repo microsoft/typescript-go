@@ -1,6 +1,6 @@
 --- old.classUsedBeforeInitializedVariables.symbols
 +++ new.classUsedBeforeInitializedVariables.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Test : Symbol(Test, Decl(classUsedBeforeInitializedVariables.ts, 0, 0))
  
      p1 = 0;

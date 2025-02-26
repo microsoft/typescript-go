@@ -1,6 +1,6 @@
 --- old.useSharedArrayBuffer4.symbols
 +++ new.useSharedArrayBuffer4.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  
  var bar = foge.slice(1, 10);
  >bar : Symbol(bar, Decl(useSharedArrayBuffer4.ts, 1, 3))

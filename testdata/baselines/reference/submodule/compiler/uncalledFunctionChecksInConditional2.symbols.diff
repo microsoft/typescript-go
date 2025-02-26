@@ -1,6 +1,6 @@
 --- old.uncalledFunctionChecksInConditional2.symbols
 +++ new.uncalledFunctionChecksInConditional2.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  >perf : Symbol(perf, Decl(uncalledFunctionChecksInConditional2.ts, 1, 7))
  
      perf.measure &&

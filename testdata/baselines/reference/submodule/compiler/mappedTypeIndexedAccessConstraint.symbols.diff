@@ -1,6 +1,6 @@
 --- old.mappedTypeIndexedAccessConstraint.symbols
 +++ new.mappedTypeIndexedAccessConstraint.symbols
-@@= skipped -54, +54 lines =@@
+@@= skipped -53, +53 lines =@@
  >K : Symbol(K, Decl(mappedTypeIndexedAccessConstraint.ts, 10, 13))
  
      m1.toString();  // Error

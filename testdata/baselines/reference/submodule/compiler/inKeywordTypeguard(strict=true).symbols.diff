@@ -1,6 +1,6 @@
 --- old.inKeywordTypeguard(strict=true).symbols
 +++ new.inKeywordTypeguard(strict=true).symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === inKeywordTypeguard.ts ===
  class A { a: string; }
  >A : Symbol(A, Decl(inKeywordTypeguard.ts, 0, 0))

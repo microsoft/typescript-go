@@ -1,6 +1,6 @@
 --- old.commaOperatorsMultipleOperators.symbols
 +++ new.commaOperatorsMultipleOperators.symbols
-@@= skipped -78, +78 lines =@@
+@@= skipped -77, +77 lines =@@
  null, true, 1;
  ++NUMBER, STRING.charAt(0), new Object();
  >NUMBER : Symbol(NUMBER, Decl(commaOperatorsMultipleOperators.ts, 2, 3))

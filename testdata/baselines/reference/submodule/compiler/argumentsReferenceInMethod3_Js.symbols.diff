@@ -1,6 +1,6 @@
 --- old.argumentsReferenceInMethod3_Js.symbols
 +++ new.argumentsReferenceInMethod3_Js.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(a.js, 0, 0))
  
  	get arguments() {

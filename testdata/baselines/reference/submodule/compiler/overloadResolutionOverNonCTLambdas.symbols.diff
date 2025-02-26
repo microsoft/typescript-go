@@ -1,6 +1,6 @@
 --- old.overloadResolutionOverNonCTLambdas.symbols
 +++ new.overloadResolutionOverNonCTLambdas.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  
      var result= message.replace(/\{(\d+)\}/g, function(match, ...rest) {
  >result : Symbol(result, Decl(overloadResolutionOverNonCTLambdas.ts, 6, 7))

@@ -1,6 +1,6 @@
 --- old.varianceMeasurement.symbols
 +++ new.varianceMeasurement.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(varianceMeasurement.ts, 3, 15))
  
    x: T;

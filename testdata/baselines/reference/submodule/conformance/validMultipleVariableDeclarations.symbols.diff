@@ -1,6 +1,6 @@
 --- old.validMultipleVariableDeclarations.symbols
 +++ new.validMultipleVariableDeclarations.symbols
-@@= skipped -30, +30 lines =@@
+@@= skipped -29, +29 lines =@@
  
  interface Point { x: number; y: number; }
  >Point : Symbol(Point, Decl(validMultipleVariableDeclarations.ts, 13, 1))

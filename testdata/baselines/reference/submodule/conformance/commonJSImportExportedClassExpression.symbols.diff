@@ -1,6 +1,6 @@
 --- old.commonJSImportExportedClassExpression.symbols
 +++ new.commonJSImportExportedClassExpression.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === main.js ===
  const { K } = require("./mod1");
  >K : Symbol(K, Decl(main.js, 0, 7))

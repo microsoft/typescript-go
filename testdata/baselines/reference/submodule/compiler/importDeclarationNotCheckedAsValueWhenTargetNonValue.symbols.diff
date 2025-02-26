@@ -1,6 +1,6 @@
 --- old.importDeclarationNotCheckedAsValueWhenTargetNonValue.symbols
 +++ new.importDeclarationNotCheckedAsValueWhenTargetNonValue.symbols
-@@= skipped -17, +17 lines =@@
+@@= skipped -16, +16 lines =@@
  >common : Symbol(common, Decl(file.d.ts, 3, 32), Decl(file.d.ts, 6, 13))
  
                  createText: object;

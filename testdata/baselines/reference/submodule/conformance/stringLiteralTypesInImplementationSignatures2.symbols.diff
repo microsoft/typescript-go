@@ -1,6 +1,6 @@
 --- old.stringLiteralTypesInImplementationSignatures2.symbols
 +++ new.stringLiteralTypesInImplementationSignatures2.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  >C : Symbol(C, Decl(stringLiteralTypesInImplementationSignatures2.ts, 3, 25))
  
      foo(x: string);

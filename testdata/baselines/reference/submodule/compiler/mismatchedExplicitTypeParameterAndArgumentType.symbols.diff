@@ -1,6 +1,6 @@
 --- old.mismatchedExplicitTypeParameterAndArgumentType.symbols
 +++ new.mismatchedExplicitTypeParameterAndArgumentType.symbols
-@@= skipped -17, +17 lines =@@
+@@= skipped -16, +16 lines =@@
  >U : Symbol(U, Decl(mismatchedExplicitTypeParameterAndArgumentType.ts, 0, 15))
  
      xs.forEach(x => ys.push(f(x)));

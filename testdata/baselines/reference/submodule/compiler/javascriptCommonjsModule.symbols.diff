@@ -1,6 +1,6 @@
 --- old.javascriptCommonjsModule.symbols
 +++ new.javascriptCommonjsModule.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >Foo : Symbol(Foo, Decl(index.js, 0, 0))
  
  module.exports = Bar;

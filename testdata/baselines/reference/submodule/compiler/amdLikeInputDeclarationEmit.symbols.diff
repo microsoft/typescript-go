@@ -1,6 +1,6 @@
 --- old.amdLikeInputDeclarationEmit.symbols
 +++ new.amdLikeInputDeclarationEmit.symbols
-@@= skipped -18, +18 lines =@@
+@@= skipped -17, +17 lines =@@
  >BaseClass : Symbol(BaseClass, Decl(BaseClass.d.ts, 0, 33))
  
          static extends<A>(a: A): new () => A & BaseClass;

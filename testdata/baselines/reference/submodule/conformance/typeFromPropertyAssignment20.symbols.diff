@@ -1,6 +1,6 @@
 --- old.typeFromPropertyAssignment20.symbols
 +++ new.typeFromPropertyAssignment20.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >Async : Symbol(Async, Decl(bluebird.js, 1, 23))
  
              this._trampolineEnabled = true;

@@ -1,6 +1,6 @@
 --- old.this_inside-enum-should-not-be-allowed.symbols
 +++ new.this_inside-enum-should-not-be-allowed.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >TopLevelEnum : Symbol(TopLevelEnum, Decl(this_inside-enum-should-not-be-allowed.ts, 0, 0))
  
      ThisWasAllowedButShouldNotBe = this // Should not be allowed

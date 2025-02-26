@@ -1,6 +1,6 @@
 --- old.es2021LocalesObjectArgument.symbols
 +++ new.es2021LocalesObjectArgument.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === es2021LocalesObjectArgument.ts ===
  const enUS = new Intl.Locale("en-US");
  >enUS : Symbol(enUS, Decl(es2021LocalesObjectArgument.ts, 0, 5))

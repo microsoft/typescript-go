@@ -1,6 +1,6 @@
 --- old.typeOfThisInStatics.symbols
 +++ new.typeOfThisInStatics.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(typeOfThisInStatics.ts, 0, 0))
  
      static foo() {

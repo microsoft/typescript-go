@@ -1,6 +1,6 @@
 --- old.collisionCodeGenModuleWithAccessorChildren.symbols
 +++ new.collisionCodeGenModuleWithAccessorChildren.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >c : Symbol(c, Decl(collisionCodeGenModuleWithAccessorChildren.ts, 1, 21))
  
          private y;

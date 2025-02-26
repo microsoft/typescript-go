@@ -1,6 +1,6 @@
 --- old.arrowFunctionExpressions.symbols
 +++ new.arrowFunctionExpressions.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  var a = (p: string) => p.length;
  >a : Symbol(a, Decl(arrowFunctionExpressions.ts, 1, 3), Decl(arrowFunctionExpressions.ts, 2, 3))
  >p : Symbol(p, Decl(arrowFunctionExpressions.ts, 1, 9))

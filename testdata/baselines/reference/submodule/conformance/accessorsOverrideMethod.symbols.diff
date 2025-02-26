@@ -1,6 +1,6 @@
 --- old.accessorsOverrideMethod.symbols
 +++ new.accessorsOverrideMethod.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(accessorsOverrideMethod.ts, 0, 0))
  
      m() { }

@@ -1,6 +1,6 @@
 --- old.bluebirdStaticThis.symbols
 +++ new.bluebirdStaticThis.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  export declare class Promise<R> implements Promise.Thenable<R> {
  >Promise : Symbol(Promise, Decl(bluebirdStaticThis.ts, 0, 0), Decl(bluebirdStaticThis.ts, 108, 1))
  >R : Symbol(R, Decl(bluebirdStaticThis.ts, 4, 29))

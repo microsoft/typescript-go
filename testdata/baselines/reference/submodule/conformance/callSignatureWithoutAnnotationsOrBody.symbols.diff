@@ -1,6 +1,6 @@
 --- old.callSignatureWithoutAnnotationsOrBody.symbols
 +++ new.callSignatureWithoutAnnotationsOrBody.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  
      ();
      f();

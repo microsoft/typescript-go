@@ -1,6 +1,6 @@
 --- old.interfaceMergedUnconstrainedNoErrorIrrespectiveOfOrder.symbols
 +++ new.interfaceMergedUnconstrainedNoErrorIrrespectiveOfOrder.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >args : Symbol(args, Decl(working.ts, 2, 34))
  
          throttle(): Function<T>;

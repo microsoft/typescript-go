@@ -1,6 +1,6 @@
 --- old.destructureComputedProperty.symbols
 +++ new.destructureComputedProperty.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  
  class C { private p: number; }
  >C : Symbol(C, Decl(destructureComputedProperty.ts, 2, 26))

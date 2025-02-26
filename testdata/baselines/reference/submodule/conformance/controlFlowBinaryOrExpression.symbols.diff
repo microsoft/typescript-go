@@ -1,6 +1,6 @@
 --- old.controlFlowBinaryOrExpression.symbols
 +++ new.controlFlowBinaryOrExpression.symbols
-@@= skipped -28, +28 lines =@@
+@@= skipped -27, +27 lines =@@
  >NodeList : Symbol(NodeList, Decl(controlFlowBinaryOrExpression.ts, 8, 2))
  
      length: number;

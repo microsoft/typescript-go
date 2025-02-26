@@ -1,6 +1,6 @@
 --- old.arrayLiterals.symbols
 +++ new.arrayLiterals.symbols
-@@= skipped -25, +25 lines =@@
+@@= skipped -24, +24 lines =@@
  
  class C { private p; }
  >C : Symbol(C, Decl(arrayLiterals.ts, 14, 41))

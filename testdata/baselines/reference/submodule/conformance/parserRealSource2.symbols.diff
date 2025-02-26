@@ -1,6 +1,6 @@
 --- old.parserRealSource2.symbols
 +++ new.parserRealSource2.symbols
-@@= skipped -23, +23 lines =@@
+@@= skipped -22, +22 lines =@@
  >ErrorRecoverySet : Symbol(ErrorRecoverySet, Decl(parserRealSource2.ts, 9, 5))
  
          None = 0,

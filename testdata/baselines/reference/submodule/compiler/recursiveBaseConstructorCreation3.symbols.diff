@@ -1,6 +1,6 @@
 --- old.recursiveBaseConstructorCreation3.symbols
 +++ new.recursiveBaseConstructorCreation3.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(recursiveBaseConstructorCreation3.ts, 2, 18))
  
      foo: xyz;

@@ -1,6 +1,6 @@
 --- old.declInput4.symbols
 +++ new.declInput4.symbols
-@@= skipped -20, +20 lines =@@
+@@= skipped -19, +19 lines =@@
  >D : Symbol(D, Decl(declInput4.ts, 4, 19))
  
          public m1: number;

@@ -1,6 +1,6 @@
 --- old.decoratorMetadata.symbols
 +++ new.decoratorMetadata.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === service.ts ===
  export default class Service {

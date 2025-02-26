@@ -1,6 +1,6 @@
 --- old.es5DateAPIs.symbols
 +++ new.es5DateAPIs.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === es5DateAPIs.ts ===
  Date.UTC(2017); // should error

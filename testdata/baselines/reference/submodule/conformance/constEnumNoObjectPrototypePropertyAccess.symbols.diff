@@ -1,6 +1,6 @@
 --- old.constEnumNoObjectPrototypePropertyAccess.symbols
 +++ new.constEnumNoObjectPrototypePropertyAccess.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >Bebra : Symbol(Bebra, Decl(constEnumNoObjectPrototypePropertyAccess.ts, 0, 0))
  
  console.log(Bebra.constructor)

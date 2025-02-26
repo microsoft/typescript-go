@@ -1,6 +1,6 @@
 --- old.symbolType3.symbols
 +++ new.symbolType3.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === symbolType3.ts ===
  var s = Symbol();
  >s : Symbol(s, Decl(symbolType3.ts, 0, 3))

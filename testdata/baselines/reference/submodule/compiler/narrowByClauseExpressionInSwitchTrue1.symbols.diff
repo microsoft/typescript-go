@@ -1,6 +1,6 @@
 --- old.narrowByClauseExpressionInSwitchTrue1.symbols
 +++ new.narrowByClauseExpressionInSwitchTrue1.symbols
-@@= skipped -94, +94 lines =@@
+@@= skipped -93, +93 lines =@@
  >x : Symbol(x, Decl(narrowByClauseExpressionInSwitchTrue1.ts, 31, 3))
  
      x.trim();

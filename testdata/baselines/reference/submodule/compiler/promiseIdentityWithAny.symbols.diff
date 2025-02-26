@@ -1,6 +1,6 @@
 --- old.promiseIdentityWithAny.symbols
 +++ new.promiseIdentityWithAny.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >V : Symbol(V, Decl(promiseIdentityWithAny.ts, 0, 28))
  
      then<U, W>(callback: (x: T) => IPromise<U, W>): IPromise<U, W>;

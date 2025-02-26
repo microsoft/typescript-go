@@ -1,6 +1,6 @@
 --- old.propertyParameterWithQuestionMark.symbols
 +++ new.propertyParameterWithQuestionMark.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(propertyParameterWithQuestionMark.ts, 0, 0))
  
      constructor(public x?) { }

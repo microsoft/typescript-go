@@ -1,6 +1,6 @@
 --- old.infiniteExpansionThroughInstantiation2.symbols
 +++ new.infiniteExpansionThroughInstantiation2.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(infiniteExpansionThroughInstantiation2.ts, 3, 13))
  {
      x: T

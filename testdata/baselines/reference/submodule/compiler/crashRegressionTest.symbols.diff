@@ -1,6 +1,6 @@
 --- old.crashRegressionTest.symbols
 +++ new.crashRegressionTest.symbols
-@@= skipped -19, +19 lines =@@
+@@= skipped -18, +18 lines =@@
  >StringTemplate : Symbol(StringTemplate, Decl(crashRegressionTest.ts, 5, 5))
  
          private _templateStorage: TemplateStorage;

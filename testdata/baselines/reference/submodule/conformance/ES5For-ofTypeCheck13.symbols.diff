@@ -1,6 +1,6 @@
 --- old.ES5For-ofTypeCheck13.symbols
 +++ new.ES5For-ofTypeCheck13.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >Set : Symbol(Set, Decl(lib.es2015.collection.d.ts, --, --), Decl(lib.es2015.collection.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
  
  strSet.add('Hello')

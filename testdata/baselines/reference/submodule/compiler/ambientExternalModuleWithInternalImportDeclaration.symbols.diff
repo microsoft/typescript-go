@@ -1,6 +1,6 @@
 --- old.ambientExternalModuleWithInternalImportDeclaration.symbols
 +++ new.ambientExternalModuleWithInternalImportDeclaration.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  
  === ambientExternalModuleWithInternalImportDeclaration_0.ts ===
  declare module 'M' {

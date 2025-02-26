@@ -1,6 +1,6 @@
 --- old.newNamesInGlobalAugmentations1.symbols
 +++ new.newNamesInGlobalAugmentations1.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  >global : Symbol(global, Decl(f1.d.ts, 4, 1))
  
      interface SymbolConstructor {

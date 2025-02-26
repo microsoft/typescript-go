@@ -1,6 +1,6 @@
 --- old.errorElaboration.symbols
 +++ new.errorElaboration.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >T : Symbol(T, Decl(errorElaboration.ts, 2, 14))
  
      prop: T;

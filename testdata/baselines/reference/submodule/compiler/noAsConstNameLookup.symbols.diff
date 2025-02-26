@@ -1,6 +1,6 @@
 --- old.noAsConstNameLookup.symbols
 +++ new.noAsConstNameLookup.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  >runner : Symbol(runner, Decl(noAsConstNameLookup.ts, 3, 40))
  >FeatureRunner : Symbol(FeatureRunner, Decl(noAsConstNameLookup.ts, 3, 81))
  >W : Symbol(W, Decl(noAsConstNameLookup.ts, 3, 23))

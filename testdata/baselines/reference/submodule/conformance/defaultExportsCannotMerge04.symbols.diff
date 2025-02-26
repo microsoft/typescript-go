@@ -1,6 +1,6 @@
 --- old.defaultExportsCannotMerge04.symbols
 +++ new.defaultExportsCannotMerge04.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === defaultExportsCannotMerge04.ts ===
  export default function Foo() {

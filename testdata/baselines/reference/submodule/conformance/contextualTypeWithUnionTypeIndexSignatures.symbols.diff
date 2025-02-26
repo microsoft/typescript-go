@@ -1,6 +1,6 @@
 --- old.contextualTypeWithUnionTypeIndexSignatures.symbols
 +++ new.contextualTypeWithUnionTypeIndexSignatures.symbols
-@@= skipped -20, +20 lines =@@
+@@= skipped -19, +19 lines =@@
  >IWithNoStringIndexSignature : Symbol(IWithNoStringIndexSignature, Decl(contextualTypeWithUnionTypeIndexSignatures.ts, 7, 1))
  
      foo: string;

@@ -1,6 +1,6 @@
 --- old.classWithoutExplicitConstructor.symbols
 +++ new.classWithoutExplicitConstructor.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(classWithoutExplicitConstructor.ts, 0, 0))
  
      x = 1

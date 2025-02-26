@@ -1,6 +1,6 @@
 --- old.specializedInheritedConstructors1.symbols
 +++ new.specializedInheritedConstructors1.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >TModel : Symbol(TModel, Decl(specializedInheritedConstructors1.ts, 0, 22))
  
      model: TModel;

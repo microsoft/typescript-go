@@ -1,6 +1,6 @@
 --- old.parserharness.symbols
 +++ new.parserharness.symbols
-@@= skipped -24, +24 lines =@@
+@@= skipped -23, +23 lines =@@
  declare var assert: Harness.Assert;
  >assert : Symbol(assert, Decl(parserharness.ts, 20, 11))
  >Harness : Symbol(Harness, Decl(parserharness.ts, 52, 1))

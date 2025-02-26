@@ -1,6 +1,6 @@
 --- old.tsxElementResolution9.symbols
 +++ new.tsxElementResolution9.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
  	interface Element { something; }
  >Element : Symbol(Element, Decl(file.tsx, 0, 20))

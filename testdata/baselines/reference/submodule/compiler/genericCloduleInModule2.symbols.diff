@@ -1,6 +1,6 @@
 --- old.genericCloduleInModule2.symbols
 +++ new.genericCloduleInModule2.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(genericCloduleInModule2.ts, 1, 19))
  
          foo() { }

@@ -1,6 +1,6 @@
 --- old.modularizeLibrary_Dom.asynciterable.symbols
 +++ new.modularizeLibrary_Dom.asynciterable.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === modularizeLibrary_Dom.asynciterable.ts ===
  navigator.storage.getDirectory().then(async directory => {

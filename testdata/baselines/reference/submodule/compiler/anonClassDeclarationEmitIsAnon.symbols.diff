@@ -1,6 +1,6 @@
 --- old.anonClassDeclarationEmitIsAnon.symbols
 +++ new.anonClassDeclarationEmitIsAnon.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >Wrapped : Symbol(Wrapped, Decl(wrapClass.ts, 1, 10))
  
          foo() {

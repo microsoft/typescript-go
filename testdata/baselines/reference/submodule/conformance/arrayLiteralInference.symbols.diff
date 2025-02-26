@@ -1,6 +1,6 @@
 --- old.arrayLiteralInference.symbols
 +++ new.arrayLiteralInference.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >AppType : Symbol(AppType, Decl(arrayLiteralInference.ts, 0, 0))
  
      HeaderDetail = 'HeaderDetail',

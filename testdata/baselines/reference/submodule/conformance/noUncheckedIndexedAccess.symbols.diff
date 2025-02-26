@@ -1,6 +1,6 @@
 --- old.noUncheckedIndexedAccess.symbols
 +++ new.noUncheckedIndexedAccess.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  
  enum NumericEnum1 { A, B, C }
  >NumericEnum1 : Symbol(NumericEnum1, Decl(noUncheckedIndexedAccess.ts, 2, 52))

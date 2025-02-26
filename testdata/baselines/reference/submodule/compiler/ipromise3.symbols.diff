@@ -1,6 +1,6 @@
 --- old.ipromise3.symbols
 +++ new.ipromise3.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(ipromise3.ts, 0, 20))
  
      then<U>(success?: (value: T) => IPromise3<U>, error?: (error: any) => IPromise3<U>, progress?: (progress: any) => void ): IPromise3<U>;

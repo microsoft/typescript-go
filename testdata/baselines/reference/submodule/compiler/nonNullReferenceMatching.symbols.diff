@@ -1,6 +1,6 @@
 --- old.nonNullReferenceMatching.symbols
 +++ new.nonNullReferenceMatching.symbols
-@@= skipped -30, +30 lines =@@
+@@= skipped -29, +29 lines =@@
  >Component : Symbol(Component, Decl(nonNullReferenceMatching.ts, 9, 1))
  
      props!: ComponentProps;

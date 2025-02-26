@@ -1,6 +1,6 @@
 --- old.iterableArrayPattern1.symbols
 +++ new.iterableArrayPattern1.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >SymbolIterator : Symbol(SymbolIterator, Decl(iterableArrayPattern1.ts, 0, 0))
  
      next() {

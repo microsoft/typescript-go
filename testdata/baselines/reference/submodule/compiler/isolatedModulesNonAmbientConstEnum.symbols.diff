@@ -1,6 +1,6 @@
 --- old.isolatedModulesNonAmbientConstEnum.symbols
 +++ new.isolatedModulesNonAmbientConstEnum.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === file1.ts ===
  const enum E { X = 100 };
  >E : Symbol(E, Decl(file1.ts, 0, 0))

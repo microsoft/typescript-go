@@ -1,6 +1,6 @@
 --- old.typeReferenceDirectives8.symbols
 +++ new.typeReferenceDirectives8.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >bar : Symbol(bar, Decl(mod2.ts, 1, 12))
  >foo : Symbol(foo, Decl(mod2.ts, 0, 8))
  

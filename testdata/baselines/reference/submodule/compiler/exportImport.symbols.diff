@@ -1,6 +1,6 @@
 --- old.exportImport.symbols
 +++ new.exportImport.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  export function w(): e.w { // Should be OK
  >w : Symbol(w, Decl(consumer.ts, 0, 33))
  >e : Symbol(e, Decl(consumer.ts, 0, 0))

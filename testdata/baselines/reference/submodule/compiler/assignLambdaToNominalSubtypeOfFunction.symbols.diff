@@ -1,6 +1,6 @@
 --- old.assignLambdaToNominalSubtypeOfFunction.symbols
 +++ new.assignLambdaToNominalSubtypeOfFunction.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      x: number;

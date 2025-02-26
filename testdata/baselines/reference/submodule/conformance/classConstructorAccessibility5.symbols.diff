@@ -1,6 +1,6 @@
 --- old.classConstructorAccessibility5.symbols
 +++ new.classConstructorAccessibility5.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >Base : Symbol(Base, Decl(classConstructorAccessibility5.ts, 0, 0))
  
      static make() { new Base() } // ok

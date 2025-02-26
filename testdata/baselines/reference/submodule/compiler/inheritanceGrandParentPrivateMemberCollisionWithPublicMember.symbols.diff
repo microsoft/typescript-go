@@ -1,6 +1,6 @@
 --- old.inheritanceGrandParentPrivateMemberCollisionWithPublicMember.symbols
 +++ new.inheritanceGrandParentPrivateMemberCollisionWithPublicMember.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(inheritanceGrandParentPrivateMemberCollisionWithPublicMember.ts, 0, 0))
  
      private myMethod() { }

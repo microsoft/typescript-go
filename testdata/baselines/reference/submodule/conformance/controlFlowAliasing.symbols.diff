@@ -1,6 +1,6 @@
 --- old.controlFlowAliasing.symbols
 +++ new.controlFlowAliasing.symbols
-@@= skipped -169, +169 lines =@@
+@@= skipped -168, +168 lines =@@
      const isString = typeof obj[0] === 'string';
  >isString : Symbol(isString, Decl(controlFlowAliasing.ts, 63, 9))
  >obj : Symbol(obj, Decl(controlFlowAliasing.ts, 62, 13))

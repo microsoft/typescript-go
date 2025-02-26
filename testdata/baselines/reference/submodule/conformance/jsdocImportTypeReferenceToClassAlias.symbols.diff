@@ -1,6 +1,6 @@
 --- old.jsdocImportTypeReferenceToClassAlias.symbols
 +++ new.jsdocImportTypeReferenceToClassAlias.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(mod1.js, 0, 0))
  
      s() { }

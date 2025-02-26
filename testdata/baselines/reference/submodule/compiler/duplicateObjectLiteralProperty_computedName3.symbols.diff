@@ -1,6 +1,6 @@
 --- old.duplicateObjectLiteralProperty_computedName3.symbols
 +++ new.duplicateObjectLiteralProperty_computedName3.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  
  export enum E1 { A = "ENUM_KEY" }
  >E1 : Symbol(E1, Decl(a.ts, 1, 21))

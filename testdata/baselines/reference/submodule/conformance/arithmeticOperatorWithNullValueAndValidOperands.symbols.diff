@@ -1,6 +1,6 @@
 --- old.arithmeticOperatorWithNullValueAndValidOperands.symbols
 +++ new.arithmeticOperatorWithNullValueAndValidOperands.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >E : Symbol(E, Decl(arithmeticOperatorWithNullValueAndValidOperands.ts, 0, 0))
  
      a,

@@ -1,6 +1,6 @@
 --- old.superSymbolIndexedAccess6.symbols
 +++ new.superSymbolIndexedAccess6.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >Foo : Symbol(Foo, Decl(superSymbolIndexedAccess6.ts, 0, 16))
  
      static [symbol]() {

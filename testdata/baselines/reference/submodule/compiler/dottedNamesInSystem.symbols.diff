@@ -1,6 +1,6 @@
 --- old.dottedNamesInSystem.symbols
 +++ new.dottedNamesInSystem.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  >bar : Symbol(bar, Decl(dottedNamesInSystem.ts, 2, 1))
  
      return A.B.C.foo();

@@ -1,6 +1,6 @@
 --- old.symbolProperty21.symbols
 +++ new.symbolProperty21.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >U : Symbol(U, Decl(symbolProperty21.ts, 0, 14))
  
      [Symbol.unscopables]: T;

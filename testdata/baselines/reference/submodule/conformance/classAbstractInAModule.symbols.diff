@@ -1,6 +1,6 @@
 --- old.classAbstractInAModule.symbols
 +++ new.classAbstractInAModule.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  }
  
  new M.A;

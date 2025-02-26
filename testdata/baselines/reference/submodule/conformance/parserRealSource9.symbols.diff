@@ -1,6 +1,6 @@
 --- old.parserRealSource9.symbols
 +++ new.parserRealSource9.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >Binder : Symbol(Binder, Decl(parserRealSource9.ts, 5, 19))
  
          constructor (public checker: TypeChecker) { }

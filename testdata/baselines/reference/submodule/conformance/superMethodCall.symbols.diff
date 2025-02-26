@@ -1,6 +1,6 @@
 --- old.superMethodCall.symbols
 +++ new.superMethodCall.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Base : Symbol(Base, Decl(superMethodCall.ts, 0, 0))
  
      method?() { }

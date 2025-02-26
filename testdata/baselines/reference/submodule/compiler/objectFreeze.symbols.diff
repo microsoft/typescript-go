@@ -1,6 +1,6 @@
 --- old.objectFreeze.symbols
 +++ new.objectFreeze.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === objectFreeze.ts ===
  const f = Object.freeze(function foo(a: number, b: string) { return false; });
  >f : Symbol(f, Decl(objectFreeze.ts, 0, 5))

@@ -1,6 +1,6 @@
 --- old.inKeywordAndIntersection.symbols
 +++ new.inKeywordAndIntersection.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === inKeywordAndIntersection.ts ===
  class A { a = 0 }
  >A : Symbol(A, Decl(inKeywordAndIntersection.ts, 0, 0))

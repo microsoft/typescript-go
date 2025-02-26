@@ -1,6 +1,6 @@
 --- old.classBodyWithStatements.symbols
 +++ new.classBodyWithStatements.symbols
-@@= skipped -25, +25 lines =@@
+@@= skipped -24, +24 lines =@@
  >C3 : Symbol(C3, Decl(classBodyWithStatements.ts, 9, 10))
  
      x: number = y + 1; // ok, need a var in the statement production

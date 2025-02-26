@@ -1,6 +1,6 @@
 --- old.jsdocReadonly.symbols
 +++ new.jsdocReadonly.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
       * Order rules do not apply to JSDoc
       */
      x = 1

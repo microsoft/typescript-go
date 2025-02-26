@@ -1,6 +1,6 @@
 --- old.typeFromPropertyAssignment22.symbols
 +++ new.typeFromPropertyAssignment22.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Installer : Symbol(Installer, Decl(npm-install.js, 0, 0))
  
      this.args = 0

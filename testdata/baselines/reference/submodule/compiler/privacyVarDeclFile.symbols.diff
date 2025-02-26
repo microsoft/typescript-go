@@ -1,6 +1,6 @@
 --- old.privacyVarDeclFile.symbols
 +++ new.privacyVarDeclFile.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >publicInterfaceWithPrivatePropertyTypes : Symbol(publicInterfaceWithPrivatePropertyTypes, Decl(privacyVarDeclFile_externalModule.ts, 4, 1))
  
      myProperty: privateClass;  // Error

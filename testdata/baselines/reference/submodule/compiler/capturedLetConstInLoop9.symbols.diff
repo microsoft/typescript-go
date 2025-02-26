@@ -1,6 +1,6 @@
 --- old.capturedLetConstInLoop9.symbols
 +++ new.capturedLetConstInLoop9.symbols
-@@= skipped -55, +55 lines =@@
+@@= skipped -54, +54 lines =@@
  >A : Symbol(A, Decl(capturedLetConstInLoop9.ts, 24, 5))
  
          m() {

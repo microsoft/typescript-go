@@ -1,6 +1,6 @@
 --- old.mappedTypeOverlappingStringEnumKeys.symbols
 +++ new.mappedTypeOverlappingStringEnumKeys.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >TerrestrialAnimalTypes : Symbol(TerrestrialAnimalTypes, Decl(mappedTypeOverlappingStringEnumKeys.ts, 0, 0))
  
    CAT = "cat",

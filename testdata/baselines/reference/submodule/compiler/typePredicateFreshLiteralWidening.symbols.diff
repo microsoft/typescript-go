@@ -1,6 +1,6 @@
 --- old.typePredicateFreshLiteralWidening.symbols
 +++ new.typePredicateFreshLiteralWidening.symbols
-@@= skipped -75, +75 lines =@@
+@@= skipped -74, +74 lines =@@
  
  const filteredValues2 = values2.filter(isNotNull);
  >filteredValues2 : Symbol(filteredValues2, Decl(typePredicateFreshLiteralWidening.ts, 22, 5))

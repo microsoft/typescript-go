@@ -1,6 +1,6 @@
 --- old.contextualTypingOfTooShortOverloads.symbols
 +++ new.contextualTypingOfTooShortOverloads.symbols
-@@= skipped -29, +29 lines =@@
+@@= skipped -28, +28 lines =@@
  >MyApp : Symbol(MyApp, Decl(contextualTypingOfTooShortOverloads.ts, 10, 51))
  
  app.use((err: any, req, res, next) => { return; });

@@ -1,6 +1,6 @@
 --- old.callSignaturesShouldBeResolvedBeforeSpecialization.symbols
 +++ new.callSignaturesShouldBeResolvedBeforeSpecialization.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(callSignaturesShouldBeResolvedBeforeSpecialization.ts, 0, 13))
  
      field1: I1<boolean>;

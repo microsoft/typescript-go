@@ -1,6 +1,6 @@
 --- old.declarationFileForHtmlFileWithinDeclarationFile.symbols
 +++ new.declarationFileForHtmlFileWithinDeclarationFile.symbols
-@@= skipped -21, +21 lines =@@
+@@= skipped -20, +20 lines =@@
  >HTMLElement : Symbol(HTMLElement, Decl(lib.dom.d.ts, --, --), Decl(lib.dom.d.ts, --, --))
  
      connectedCallback(): void;

@@ -1,6 +1,6 @@
 --- old.jsDeclarationsClassStaticMethodAugmentation.symbols
 +++ new.jsDeclarationsClassStaticMethodAugmentation.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === source.js ===
  export class Clazz {

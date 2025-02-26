@@ -1,6 +1,6 @@
 --- old.additionOperatorWithAnyAndEveryType.symbols
 +++ new.additionOperatorWithAnyAndEveryType.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >C : Symbol(C, Decl(additionOperatorWithAnyAndEveryType.ts, 0, 18))
  
      public a: string;

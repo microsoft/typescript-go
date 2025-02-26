@@ -1,6 +1,6 @@
 --- old.asyncYieldStarContextualType.symbols
 +++ new.asyncYieldStarContextualType.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >E : Symbol(E, Decl(asyncYieldStarContextualType.ts, 1, 19))
  
      [Symbol.iterator](): Generator<E, T, unknown>

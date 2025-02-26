@@ -1,6 +1,6 @@
 --- old.moduleResolutionWithSuffixes_one_jsonModule.symbols
 +++ new.moduleResolutionWithSuffixes_one_jsonModule.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >foo : Symbol(foo, Decl(index.ts, 0, 6))
  
  console.log(foo.ios);

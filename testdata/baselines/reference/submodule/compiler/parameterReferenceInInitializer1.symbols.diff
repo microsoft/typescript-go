@@ -1,6 +1,6 @@
 --- old.parameterReferenceInInitializer1.symbols
 +++ new.parameterReferenceInInitializer1.symbols
-@@= skipped -17, +17 lines =@@
+@@= skipped -16, +16 lines =@@
  }
  interface Y { x: number }
  >Y : Symbol(Y, Decl(parameterReferenceInInitializer1.ts, 2, 1))

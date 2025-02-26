@@ -1,6 +1,6 @@
 --- old.enums.symbols
 +++ new.enums.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >SyntaxKind : Symbol(SyntaxKind, Decl(a.ts, 0, 0))
  
    ImportClause,

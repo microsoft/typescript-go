@@ -1,6 +1,6 @@
 --- old.indexer.symbols
 +++ new.indexer.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >JQueryElement : Symbol(JQueryElement, Decl(indexer.ts, 0, 0))
  
      id:string;

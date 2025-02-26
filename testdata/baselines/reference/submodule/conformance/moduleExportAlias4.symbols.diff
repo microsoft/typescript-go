@@ -1,6 +1,6 @@
 --- old.moduleExportAlias4.symbols
 +++ new.moduleExportAlias4.symbols
-@@= skipped -4, +4 lines =@@
+@@= skipped -3, +3 lines =@@
  // #24024
  var wat = require('./bug24024')
  >wat : Symbol(wat, Decl(bug24024.js, 1, 3))

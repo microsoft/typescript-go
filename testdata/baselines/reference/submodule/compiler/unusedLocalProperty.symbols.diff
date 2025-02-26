@@ -1,6 +1,6 @@
 --- old.unusedLocalProperty.symbols
 +++ new.unusedLocalProperty.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >Animal : Symbol(Animal, Decl(unusedLocalProperty.ts, 0, 45))
  
      constructor(private species: string) {

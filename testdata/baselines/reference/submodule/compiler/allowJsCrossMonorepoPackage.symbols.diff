@@ -1,6 +1,6 @@
 --- old.allowJsCrossMonorepoPackage.symbols
 +++ new.allowJsCrossMonorepoPackage.symbols
-@@= skipped -4, +4 lines =@@
+@@= skipped -3, +3 lines =@@
  import { x } from "shared";
  >x : Symbol(x, Decl(index.ts, 0, 8))
  

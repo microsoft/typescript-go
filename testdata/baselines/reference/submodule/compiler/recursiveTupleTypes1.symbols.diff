@@ -1,6 +1,6 @@
 --- old.recursiveTupleTypes1.symbols
 +++ new.recursiveTupleTypes1.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Tree1 : Symbol(Tree1, Decl(recursiveTupleTypes1.ts, 0, 0))
  
      children: [Tree1, Tree2];

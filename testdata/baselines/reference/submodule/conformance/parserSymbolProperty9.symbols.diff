@@ -1,6 +1,6 @@
 --- old.parserSymbolProperty9.symbols
 +++ new.parserSymbolProperty9.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
      [Symbol.toPrimitive]: string
  >[Symbol.toPrimitive] : Symbol([Symbol.toPrimitive], Decl(parserSymbolProperty9.ts, 0, 8))

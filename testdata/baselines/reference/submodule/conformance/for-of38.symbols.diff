@@ -1,6 +1,6 @@
 --- old.for-of38.symbols
 +++ new.for-of38.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === for-of38.ts ===
  var map = new Map([["", true]]);
  >map : Symbol(map, Decl(for-of38.ts, 0, 3))

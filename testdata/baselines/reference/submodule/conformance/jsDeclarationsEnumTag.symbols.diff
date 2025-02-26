@@ -1,6 +1,6 @@
 --- old.jsDeclarationsEnumTag.symbols
 +++ new.jsDeclarationsEnumTag.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === index.js ===
  /** @enum {string} */
  export const Target = {

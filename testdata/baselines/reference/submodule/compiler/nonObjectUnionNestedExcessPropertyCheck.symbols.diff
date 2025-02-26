@@ -1,6 +1,6 @@
 --- old.nonObjectUnionNestedExcessPropertyCheck.symbols
 +++ new.nonObjectUnionNestedExcessPropertyCheck.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >IProps : Symbol(IProps, Decl(nonObjectUnionNestedExcessPropertyCheck.ts, 0, 0))
  
      iconProp?: string;

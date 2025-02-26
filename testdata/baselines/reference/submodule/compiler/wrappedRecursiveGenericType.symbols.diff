@@ -1,6 +1,6 @@
 --- old.wrappedRecursiveGenericType.symbols
 +++ new.wrappedRecursiveGenericType.symbols
-@@= skipped -4, +4 lines =@@
+@@= skipped -3, +3 lines =@@
  interface X<T> { e: T; }
  >X : Symbol(X, Decl(wrappedRecursiveGenericType.ts, 0, 0))
  >T : Symbol(T, Decl(wrappedRecursiveGenericType.ts, 0, 12))

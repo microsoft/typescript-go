@@ -1,6 +1,6 @@
 --- old.declarationEmitDefaultExport3.symbols
 +++ new.declarationEmitDefaultExport3.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === declarationEmitDefaultExport3.ts ===
  export default function foo() {

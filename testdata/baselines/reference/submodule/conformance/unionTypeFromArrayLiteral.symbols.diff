@@ -1,6 +1,6 @@
 --- old.unionTypeFromArrayLiteral.symbols
 +++ new.unionTypeFromArrayLiteral.symbols
-@@= skipped -33, +33 lines =@@
+@@= skipped -32, +32 lines =@@
  } = ["hello", true, false, " hello", true, 10, "any"]; // Tuple
  class C { foo() { } }
  >C : Symbol(C, Decl(unionTypeFromArrayLiteral.ts, 13, 54))

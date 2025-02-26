@@ -1,6 +1,6 @@
 --- old.typeReferenceDirectives2.symbols
 +++ new.typeReferenceDirectives2.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(app.ts, 0, 0))
  
      x: $

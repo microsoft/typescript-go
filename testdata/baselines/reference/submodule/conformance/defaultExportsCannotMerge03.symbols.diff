@@ -1,6 +1,6 @@
 --- old.defaultExportsCannotMerge03.symbols
 +++ new.defaultExportsCannotMerge03.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === m1.ts ===
  export default class Decl {

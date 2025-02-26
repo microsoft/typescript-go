@@ -1,6 +1,6 @@
 --- old.collisionRestParameterClassMethod.symbols
 +++ new.collisionRestParameterClassMethod.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >c1 : Symbol(c1, Decl(collisionRestParameterClassMethod.ts, 0, 0))
  
      public foo(_i: number, ...restParameters) { //_i is error

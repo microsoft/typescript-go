@@ -1,6 +1,6 @@
 --- old.genericOfACloduleType1.symbols
 +++ new.genericOfACloduleType1.symbols
-@@= skipped -4, +4 lines =@@
+@@= skipped -3, +3 lines =@@
  class G<T>{ bar(x: T) { return x; } }
  >G : Symbol(G, Decl(genericOfACloduleType1.ts, 0, 0))
  >T : Symbol(T, Decl(genericOfACloduleType1.ts, 0, 8))

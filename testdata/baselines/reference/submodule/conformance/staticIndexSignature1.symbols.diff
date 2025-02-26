@@ -1,6 +1,6 @@
 --- old.staticIndexSignature1.symbols
 +++ new.staticIndexSignature1.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  >C : Symbol(C, Decl(staticIndexSignature1.ts, 0, 0))
  
  C.bar = 2;

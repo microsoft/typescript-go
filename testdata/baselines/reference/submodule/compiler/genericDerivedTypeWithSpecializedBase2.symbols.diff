@@ -1,6 +1,6 @@
 --- old.genericDerivedTypeWithSpecializedBase2.symbols
 +++ new.genericDerivedTypeWithSpecializedBase2.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >length : Symbol(length, Decl(genericDerivedTypeWithSpecializedBase2.ts, 0, 19))
  
      x: T;

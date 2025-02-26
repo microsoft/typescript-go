@@ -1,6 +1,6 @@
 --- old.reactImportUnusedInNewJSXEmit(jsx=react-jsxdev).symbols
 +++ new.reactImportUnusedInNewJSXEmit(jsx=react-jsxdev).symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >Bar : Symbol(Bar, Decl(index.tsx, 2, 26))
  
    return <div />;

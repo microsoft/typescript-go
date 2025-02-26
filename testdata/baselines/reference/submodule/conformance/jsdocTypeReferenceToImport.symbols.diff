@@ -1,6 +1,6 @@
 --- old.jsdocTypeReferenceToImport.symbols
 +++ new.jsdocTypeReferenceToImport.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === jsdocTypeReferenceToImport.js ===
  const C = require('./ex').C;
  >C : Symbol(C, Decl(jsdocTypeReferenceToImport.js, 0, 5))

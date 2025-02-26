@@ -1,6 +1,6 @@
 --- old.callNonGenericFunctionWithTypeArguments.symbols
 +++ new.callNonGenericFunctionWithTypeArguments.symbols
-@@= skipped -32, +32 lines =@@
+@@= skipped -31, +31 lines =@@
  >C : Symbol(C, Decl(callNonGenericFunctionWithTypeArguments.ts, 10, 23))
  
      f(x: number) {

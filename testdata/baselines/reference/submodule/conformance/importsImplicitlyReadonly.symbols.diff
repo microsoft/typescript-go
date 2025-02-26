@@ -1,6 +1,6 @@
 --- old.importsImplicitlyReadonly.symbols
 +++ new.importsImplicitlyReadonly.symbols
-@@= skipped -27, +27 lines =@@
+@@= skipped -26, +26 lines =@@
  >x : Symbol(x, Decl(a.ts, 0, 10))
  
  a1.y = 1;  // Error

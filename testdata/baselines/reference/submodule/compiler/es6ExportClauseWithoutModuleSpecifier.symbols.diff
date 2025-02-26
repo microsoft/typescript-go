@@ -1,6 +1,6 @@
 --- old.es6ExportClauseWithoutModuleSpecifier.symbols
 +++ new.es6ExportClauseWithoutModuleSpecifier.symbols
-@@= skipped -25, +25 lines =@@
+@@= skipped -24, +24 lines =@@
  >c : Symbol(c, Decl(client.ts, 0, 8))
  
  export { c as c2 } from "server";

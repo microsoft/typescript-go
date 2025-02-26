@@ -1,6 +1,6 @@
 --- old.vardecl.symbols
 +++ new.vardecl.symbols
-@@= skipped -43, +43 lines =@@
+@@= skipped -42, +42 lines =@@
  >y : Symbol(y, Decl(vardecl.ts, 18, 37))
  
  complicatedArrayVar.push({ x: 30, y : 'hello world' });

@@ -1,6 +1,6 @@
 --- old.nodeNextEsmImportsOfPackagesWithExtensionlessMains.symbols
 +++ new.nodeNextEsmImportsOfPackagesWithExtensionlessMains.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  
    return nullthrows(ip.address());
  >nullthrows : Symbol(nullthrows, Decl(index.ts, 1, 6))

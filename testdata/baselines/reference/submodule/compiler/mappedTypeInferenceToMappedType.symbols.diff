@@ -1,6 +1,6 @@
 --- old.mappedTypeInferenceToMappedType.symbols
 +++ new.mappedTypeInferenceToMappedType.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >T : Symbol(T, Decl(mappedTypeInferenceToMappedType.ts, 2, 19))
  
      someProp: T;

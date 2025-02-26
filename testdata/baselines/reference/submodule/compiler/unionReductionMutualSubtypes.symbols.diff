@@ -1,6 +1,6 @@
 --- old.unionReductionMutualSubtypes.symbols
 +++ new.unionReductionMutualSubtypes.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >ReturnVal : Symbol(ReturnVal, Decl(unionReductionMutualSubtypes.ts, 0, 0))
  
      something(): void;

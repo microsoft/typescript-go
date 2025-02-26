@@ -1,6 +1,6 @@
 --- old.mergedInheritedClassInterface.symbols
 +++ new.mergedInheritedClassInterface.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >BaseInterface : Symbol(BaseInterface, Decl(mergedInheritedClassInterface.ts, 0, 0))
  
      required: number;

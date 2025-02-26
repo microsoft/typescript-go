@@ -1,6 +1,6 @@
 --- old.importTypeLocalMissing.symbols
 +++ new.importTypeLocalMissing.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Point : Symbol(Point, Decl(foo.ts, 0, 0))
  
      x: number;

@@ -1,6 +1,6 @@
 --- old.requireOfJsonFileWithAmd.symbols
 +++ new.requireOfJsonFileWithAmd.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  
      let b = b2.b;
  >b : Symbol(b, Decl(file1.ts, 4, 7))

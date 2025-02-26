@@ -1,6 +1,6 @@
 --- old.autoAccessor3(target=es2015).symbols
 +++ new.autoAccessor3(target=es2015).symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C1 : Symbol(C1, Decl(autoAccessor3.ts, 0, 0))
  
      accessor "w": any;

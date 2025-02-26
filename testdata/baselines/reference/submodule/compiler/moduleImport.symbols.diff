@@ -1,6 +1,6 @@
 --- old.moduleImport.symbols
 +++ new.moduleImport.symbols
-@@= skipped -27, +27 lines =@@
+@@= skipped -26, +26 lines =@@
  	import ABC = A.B.C;
  >ABC : Symbol(ABC, Decl(moduleImport.ts, 7, 10))
  >A : Symbol(A, Decl(moduleImport.ts, 0, 0))

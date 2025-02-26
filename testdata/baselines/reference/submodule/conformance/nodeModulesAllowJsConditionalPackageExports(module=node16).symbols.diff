@@ -1,6 +1,6 @@
 --- old.nodeModulesAllowJsConditionalPackageExports(module=node16).symbols
 +++ new.nodeModulesAllowJsConditionalPackageExports(module=node16).symbols
-@@= skipped -33, +33 lines =@@
+@@= skipped -32, +32 lines =@@
  >ts : Symbol(ts, Decl(index.js, 10, 6))
  
  cjsi.mjsSource;

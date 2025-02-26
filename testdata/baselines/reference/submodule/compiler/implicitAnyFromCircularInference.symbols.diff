@@ -1,6 +1,6 @@
 --- old.implicitAnyFromCircularInference.symbols
 +++ new.implicitAnyFromCircularInference.symbols
-@@= skipped -63, +63 lines =@@
+@@= skipped -62, +62 lines =@@
  >A : Symbol(A, Decl(implicitAnyFromCircularInference.ts, 29, 1))
  
      s: string;

@@ -1,6 +1,6 @@
 --- old.thisInObjectJs.symbols
 +++ new.thisInObjectJs.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  >fun : Symbol(fun, Decl(index.js, 3, 9))
  
      this.x = 1

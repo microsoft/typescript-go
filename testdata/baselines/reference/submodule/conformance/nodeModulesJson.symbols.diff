@@ -1,6 +1,6 @@
 --- old.nodeModulesJson.symbols
 +++ new.nodeModulesJson.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >oops : Symbol(oops, Decl(index.d.ts, 0, 0))
  >json : Symbol(json, Decl(index.d.ts, 0, 21))
  

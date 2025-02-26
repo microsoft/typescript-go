@@ -1,6 +1,6 @@
 --- old.recursiveConditionalCrash3.symbols
 +++ new.recursiveConditionalCrash3.symbols
-@@= skipped -34, +34 lines =@@
+@@= skipped -33, +33 lines =@@
  >Base : Symbol(Base, Decl(recursiveConditionalCrash3.ts, 12, 1))
  
      id: string,

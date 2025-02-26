@@ -1,6 +1,6 @@
 --- old.exactSpellingSuggestion.symbols
 +++ new.exactSpellingSuggestion.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >U8 : Symbol(U8, Decl(exactSpellingSuggestion.ts, 0, 0))
  
      BIT_0 = 1 << 0,

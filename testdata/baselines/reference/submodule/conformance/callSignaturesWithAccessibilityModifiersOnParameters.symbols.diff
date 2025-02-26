@@ -1,6 +1,6 @@
 --- old.callSignaturesWithAccessibilityModifiersOnParameters.symbols
 +++ new.callSignaturesWithAccessibilityModifiersOnParameters.symbols
-@@= skipped -65, +65 lines =@@
+@@= skipped -64, +64 lines =@@
  >C : Symbol(C, Decl(callSignaturesWithAccessibilityModifiersOnParameters.ts, 12, 46))
  
      foo(public x, private y) { }

@@ -1,6 +1,6 @@
 --- old.thisTypeInFunctions2.symbols
 +++ new.thisTypeInFunctions2.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
      // this is a workaround for React
      init?: (this: this) => void;

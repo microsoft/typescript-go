@@ -1,6 +1,6 @@
 --- old.useSharedArrayBuffer6.symbols
 +++ new.useSharedArrayBuffer6.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  
  var length = SharedArrayBuffer.length;
  >length : Symbol(length, Decl(useSharedArrayBuffer6.ts, 3, 3))

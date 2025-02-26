@@ -1,6 +1,6 @@
 --- old.genericFunduleInModule.symbols
 +++ new.genericFunduleInModule.symbols
-@@= skipped -22, +22 lines =@@
+@@= skipped -21, +21 lines =@@
  var b: A.B;
  >b : Symbol(b, Decl(genericFunduleInModule.ts, 7, 3))
  >A : Symbol(A, Decl(genericFunduleInModule.ts, 0, 0))

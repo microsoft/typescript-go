@@ -1,6 +1,6 @@
 --- old.moduleAugmentationsBundledOutput1.symbols
 +++ new.moduleAugmentationsBundledOutput1.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >Cls : Symbol(Cls, Decl(m2.ts, 0, 8))
  
  (<any>Cls.prototype).foo = function() { return 1; };

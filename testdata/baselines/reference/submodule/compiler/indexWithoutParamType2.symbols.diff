@@ -1,6 +1,6 @@
 --- old.indexWithoutParamType2.symbols
 +++ new.indexWithoutParamType2.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
      // Used to be indexer, now it is a computed property
      [x]: string

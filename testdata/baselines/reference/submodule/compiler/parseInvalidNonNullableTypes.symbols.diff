@@ -1,6 +1,6 @@
 --- old.parseInvalidNonNullableTypes.symbols
 +++ new.parseInvalidNonNullableTypes.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >a : Symbol(a, Decl(parseInvalidNonNullableTypes.ts, 0, 12))
  
      return true;

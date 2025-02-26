@@ -1,6 +1,6 @@
 --- old.propertyAccessOnTypeParameterWithConstraints3.symbols
 +++ new.propertyAccessOnTypeParameterWithConstraints3.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >A : Symbol(A, Decl(propertyAccessOnTypeParameterWithConstraints3.ts, 0, 0))
  
      foo(): string { return ''; }

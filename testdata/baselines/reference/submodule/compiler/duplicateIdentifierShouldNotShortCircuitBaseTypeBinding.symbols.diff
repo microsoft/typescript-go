@@ -1,6 +1,6 @@
 --- old.duplicateIdentifierShouldNotShortCircuitBaseTypeBinding.symbols
 +++ new.duplicateIdentifierShouldNotShortCircuitBaseTypeBinding.symbols
-@@= skipped -1, +1 lines =@@
+@@= skipped -0, +0 lines =@@
  //// [tests/cases/compiler/duplicateIdentifierShouldNotShortCircuitBaseTypeBinding.ts] ////
  
  === duplicateIdentifierShouldNotShortCircuitBaseTypeBinding_0.ts ===

@@ -1,6 +1,6 @@
 --- old.exportImportAndClodule.symbols
 +++ new.exportImportAndClodule.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >L : Symbol(L, Decl(exportImportAndClodule.ts, 0, 10), Decl(exportImportAndClodule.ts, 3, 5))
  
          constructor(public name: string) { }

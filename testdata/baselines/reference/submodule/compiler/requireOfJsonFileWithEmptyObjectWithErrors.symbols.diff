@@ -1,6 +1,6 @@
 --- old.requireOfJsonFileWithEmptyObjectWithErrors.symbols
 +++ new.requireOfJsonFileWithEmptyObjectWithErrors.symbols
-@@= skipped -24, +24 lines =@@
+@@= skipped -23, +23 lines =@@
  >b : Symbol(b, Decl(file1.ts, 4, 7))
  }
  

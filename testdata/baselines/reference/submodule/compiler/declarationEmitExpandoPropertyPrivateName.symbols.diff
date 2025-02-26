@@ -1,6 +1,6 @@
 --- old.declarationEmitExpandoPropertyPrivateName.symbols
 +++ new.declarationEmitExpandoPropertyPrivateName.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  >f : Symbol(f, Decl(b.ts, 0, 8))
  
  export function q() {}

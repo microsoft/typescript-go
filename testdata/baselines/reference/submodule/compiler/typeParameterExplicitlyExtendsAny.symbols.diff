@@ -1,6 +1,6 @@
 --- old.typeParameterExplicitlyExtendsAny.symbols
 +++ new.typeParameterExplicitlyExtendsAny.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >t : Symbol(t, Decl(typeParameterExplicitlyExtendsAny.ts, 1, 7))
  
      t.toString; // ok

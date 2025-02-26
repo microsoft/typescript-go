@@ -1,6 +1,6 @@
 --- old.exportEqualErrorType.symbols
 +++ new.exportEqualErrorType.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >connect : Symbol(connect, Decl(exportEqualErrorType_1.ts, 0, 0))
  
  connect().use(connect.static('foo')); // Error  1      The property 'static' does not exist on value of type ''.

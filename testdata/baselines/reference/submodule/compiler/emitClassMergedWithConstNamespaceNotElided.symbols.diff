@@ -1,6 +1,6 @@
 --- old.emitClassMergedWithConstNamespaceNotElided.symbols
 +++ new.emitClassMergedWithConstNamespaceNotElided.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >LOCAL : Symbol(LOCAL, Decl(enum.d.ts, 0, 24))
  
          AUTO = 0,

@@ -1,6 +1,6 @@
 --- old.contextuallyTypedIife.symbols
 +++ new.contextuallyTypedIife.symbols
-@@= skipped -49, +49 lines =@@
+@@= skipped -48, +48 lines =@@
  // rest parameters
  ((...numbers) => numbers.every(n => n > 0))(5,6,7);
  >numbers : Symbol(numbers, Decl(contextuallyTypedIife.ts, 17, 2))

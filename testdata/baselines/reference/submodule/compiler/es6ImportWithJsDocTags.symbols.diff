@@ -1,6 +1,6 @@
 --- old.es6ImportWithJsDocTags.symbols
 +++ new.es6ImportWithJsDocTags.symbols
-@@= skipped -1, +1 lines =@@
+@@= skipped -0, +0 lines =@@
  //// [tests/cases/compiler/es6ImportWithJsDocTags.ts] ////
  
 -=== ./a.js ===

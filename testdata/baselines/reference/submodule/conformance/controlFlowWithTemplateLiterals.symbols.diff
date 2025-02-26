@@ -1,6 +1,6 @@
 --- old.controlFlowWithTemplateLiterals.symbols
 +++ new.controlFlowWithTemplateLiterals.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >envVar : Symbol(envVar, Decl(controlFlowWithTemplateLiterals.ts, 0, 13))
  
    envVar.slice(0)

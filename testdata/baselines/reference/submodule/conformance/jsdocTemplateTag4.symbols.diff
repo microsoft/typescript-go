@@ -1,6 +1,6 @@
 --- old.jsdocTemplateTag4.symbols
 +++ new.jsdocTemplateTag4.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  
      /** @type {Object<string, V>} TODO: Remove the prototype from the fresh object */
      this._map = {};

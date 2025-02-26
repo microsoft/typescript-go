@@ -1,6 +1,6 @@
 --- old.intersectionsAndOptionalProperties.symbols
 +++ new.intersectionsAndOptionalProperties.symbols
-@@= skipped -30, +30 lines =@@
+@@= skipped -29, +29 lines =@@
  >To : Symbol(To, Decl(intersectionsAndOptionalProperties.ts, 5, 6))
  
      field?: number;

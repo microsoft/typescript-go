@@ -1,6 +1,6 @@
 --- old.commonSourceDir6.symbols
 +++ new.commonSourceDir6.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  
  export var i = Math.sqrt(-1);
  >i : Symbol(i, Decl(foo.ts, 1, 10))

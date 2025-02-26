@@ -1,6 +1,6 @@
 --- old.discriminantsAndPrimitives.symbols
 +++ new.discriminantsAndPrimitives.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >Foo : Symbol(Foo, Decl(discriminantsAndPrimitives.ts, 0, 0))
  
      kind: "foo";

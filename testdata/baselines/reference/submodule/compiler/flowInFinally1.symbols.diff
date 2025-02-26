@@ -1,6 +1,6 @@
 --- old.flowInFinally1.symbols
 +++ new.flowInFinally1.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
    constructor() { }
    method() { }

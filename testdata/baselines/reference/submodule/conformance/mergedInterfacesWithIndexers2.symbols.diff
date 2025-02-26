@@ -1,6 +1,6 @@
 --- old.mergedInterfacesWithIndexers2.symbols
 +++ new.mergedInterfacesWithIndexers2.symbols
-@@= skipped -26, +26 lines =@@
+@@= skipped -25, +25 lines =@@
  >x : Symbol(x, Decl(mergedInterfacesWithIndexers2.ts, 12, 5))
  
      'a': number; //error

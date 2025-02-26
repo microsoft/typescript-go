@@ -1,6 +1,6 @@
 --- old.destructuringParameterDeclaration4.symbols
 +++ new.destructuringParameterDeclaration4.symbols
-@@= skipped -81, +81 lines =@@
+@@= skipped -80, +80 lines =@@
  >C : Symbol(C, Decl(destructuringParameterDeclaration4.ts, 26, 21))
  
      constructor(public ...temp) { }  // Error, rest parameter can't have properties

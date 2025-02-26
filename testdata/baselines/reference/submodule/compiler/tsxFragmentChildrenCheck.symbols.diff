@@ -1,6 +1,6 @@
 --- old.tsxFragmentChildrenCheck.symbols
 +++ new.tsxFragmentChildrenCheck.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >props : Symbol(props, Decl(my-component.tsx, 2, 28))
  
      return <span>my component</span>;

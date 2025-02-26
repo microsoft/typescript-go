@@ -1,6 +1,6 @@
 --- old.reactSFCAndFunctionResolvable.symbols
 +++ new.reactSFCAndFunctionResolvable.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >Radio : Symbol(Radio, Decl(reactSFCAndFunctionResolvable.tsx, 4, 13))
  >props : Symbol(props, Decl(reactSFCAndFunctionResolvable.tsx, 4, 22))
  >React : Symbol(React, Decl(reactSFCAndFunctionResolvable.tsx, 2, 6))

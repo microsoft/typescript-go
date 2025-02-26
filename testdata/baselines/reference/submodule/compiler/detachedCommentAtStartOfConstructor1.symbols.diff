@@ -1,6 +1,6 @@
 --- old.detachedCommentAtStartOfConstructor1.symbols
 +++ new.detachedCommentAtStartOfConstructor1.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >TestFile : Symbol(TestFile, Decl(detachedCommentAtStartOfConstructor1.ts, 0, 0))
  
      public message: string;

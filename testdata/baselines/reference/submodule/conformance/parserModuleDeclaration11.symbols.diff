@@ -1,6 +1,6 @@
 --- old.parserModuleDeclaration11.symbols
 +++ new.parserModuleDeclaration11.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >s : Symbol(s, Decl(parserModuleDeclaration11.ts, 2, 24))
  }
  string.foo("abc");

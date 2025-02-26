@@ -1,6 +1,6 @@
 --- old.iteratorSpreadInCall10.symbols
 +++ new.iteratorSpreadInCall10.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >SymbolIterator : Symbol(SymbolIterator, Decl(iteratorSpreadInCall10.ts, 0, 39))
  
      next() {

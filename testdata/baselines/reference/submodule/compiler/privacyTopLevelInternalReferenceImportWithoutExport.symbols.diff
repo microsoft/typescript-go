@@ -1,6 +1,6 @@
 --- old.privacyTopLevelInternalReferenceImportWithoutExport.symbols
 +++ new.privacyTopLevelInternalReferenceImportWithoutExport.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >e_private : Symbol(e_private, Decl(privacyTopLevelInternalReferenceImportWithoutExport.ts, 3, 5))
  
          Happy,

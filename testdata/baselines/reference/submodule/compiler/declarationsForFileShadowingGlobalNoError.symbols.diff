@@ -1,6 +1,6 @@
 --- old.declarationsForFileShadowingGlobalNoError.symbols
 +++ new.declarationsForFileShadowingGlobalNoError.symbols
-@@= skipped -29, +29 lines =@@
+@@= skipped -28, +28 lines =@@
  >Base : Symbol(Base, Decl(index.ts, 5, 22))
  
      get(domNode: DOMNode) {}

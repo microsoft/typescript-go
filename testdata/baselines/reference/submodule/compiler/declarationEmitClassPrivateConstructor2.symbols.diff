@@ -1,6 +1,6 @@
 --- old.declarationEmitClassPrivateConstructor2.symbols
 +++ new.declarationEmitClassPrivateConstructor2.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >ExportedClass1 : Symbol(ExportedClass1, Decl(declarationEmitClassPrivateConstructor2.ts, 1, 1))
  
      private constructor(public data: PrivateInterface) { }

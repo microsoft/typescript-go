@@ -1,6 +1,6 @@
 --- old.importedAliasedConditionalTypeInstantiation.symbols
 +++ new.importedAliasedConditionalTypeInstantiation.symbols
-@@= skipped -120, +120 lines =@@
+@@= skipped -119, +119 lines =@@
  >Handler : Symbol(Handler, Decl(index.d.ts, 0, 8))
  
          event(event: HandlerEvent<T>): this;

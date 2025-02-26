@@ -1,6 +1,6 @@
 --- old.typesWithSpecializedCallSignatures.symbols
 +++ new.typesWithSpecializedCallSignatures.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  
  class Base { foo: string }
  >Base : Symbol(Base, Decl(typesWithSpecializedCallSignatures.ts, 0, 0))

@@ -1,6 +1,6 @@
 --- old.varArgConstructorMemberParameter.symbols
 +++ new.varArgConstructorMemberParameter.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >Foo2 : Symbol(Foo2, Decl(varArgConstructorMemberParameter.ts, 2, 1))
  
      constructor (public args: string[]) { }

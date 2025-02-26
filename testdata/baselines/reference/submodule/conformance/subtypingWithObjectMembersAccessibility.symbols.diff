@@ -1,6 +1,6 @@
 --- old.subtypingWithObjectMembersAccessibility.symbols
 +++ new.subtypingWithObjectMembersAccessibility.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >Base : Symbol(Base, Decl(subtypingWithObjectMembersAccessibility.ts, 0, 0))
  
      foo: string;

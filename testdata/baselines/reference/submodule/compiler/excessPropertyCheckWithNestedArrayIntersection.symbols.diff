@@ -1,6 +1,6 @@
 --- old.excessPropertyCheckWithNestedArrayIntersection.symbols
 +++ new.excessPropertyCheckWithNestedArrayIntersection.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >ValueOnlyFields : Symbol(ValueOnlyFields, Decl(excessPropertyCheckWithNestedArrayIntersection.ts, 0, 0))
  
      fields: Array<{

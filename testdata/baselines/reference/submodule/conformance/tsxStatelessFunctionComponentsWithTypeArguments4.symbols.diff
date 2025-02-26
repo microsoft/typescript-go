@@ -1,6 +1,6 @@
 --- old.tsxStatelessFunctionComponentsWithTypeArguments4.symbols
 +++ new.tsxStatelessFunctionComponentsWithTypeArguments4.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  declare function OverloadComponent<U>(): JSX.Element;
  >OverloadComponent : Symbol(OverloadComponent, Decl(file.tsx, 0, 31), Decl(file.tsx, 2, 53), Decl(file.tsx, 3, 100))
  >U : Symbol(U, Decl(file.tsx, 2, 35))

@@ -1,6 +1,6 @@
 --- old.genericClassesRedeclaration.symbols
 +++ new.genericClassesRedeclaration.symbols
-@@= skipped -23, +23 lines =@@
+@@= skipped -22, +22 lines =@@
  >T : Symbol(T, Decl(genericClassesRedeclaration.ts, 5, 25), Decl(genericClassesRedeclaration.ts, 44, 25))
  
          getAllKeys(): string[];

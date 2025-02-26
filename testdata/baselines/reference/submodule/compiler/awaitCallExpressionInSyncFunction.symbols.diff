@@ -1,6 +1,6 @@
 --- old.awaitCallExpressionInSyncFunction.symbols
 +++ new.awaitCallExpressionInSyncFunction.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
     const foo = await(Promise.resolve(1));
  >foo : Symbol(foo, Decl(awaitCallExpressionInSyncFunction.ts, 1, 8))

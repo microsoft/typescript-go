@@ -1,6 +1,6 @@
 --- old.constEnumPreserveEmitNamedExport1.symbols
 +++ new.constEnumPreserveEmitNamedExport1.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(a.ts, 0, 0))
  
      Foo

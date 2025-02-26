@@ -1,6 +1,6 @@
 --- old.interfaceExtendsClassWithPrivate1.symbols
 +++ new.interfaceExtendsClassWithPrivate1.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(interfaceExtendsClassWithPrivate1.ts, 0, 0))
  
      public foo(x: any) { return x; }

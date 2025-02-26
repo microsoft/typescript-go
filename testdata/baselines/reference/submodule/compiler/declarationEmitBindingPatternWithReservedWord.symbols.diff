@@ -1,6 +1,6 @@
 --- old.declarationEmitBindingPatternWithReservedWord.symbols
 +++ new.declarationEmitBindingPatternWithReservedWord.symbols
-@@= skipped -32, +32 lines =@@
+@@= skipped -31, +31 lines =@@
  >LocaleData : Symbol(LocaleData, Decl(declarationEmitBindingPatternWithReservedWord.ts, 0, 0))
  
      app: unknown;

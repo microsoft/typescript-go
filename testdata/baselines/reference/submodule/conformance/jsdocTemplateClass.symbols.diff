@@ -1,6 +1,6 @@
 --- old.jsdocTemplateClass.symbols
 +++ new.jsdocTemplateClass.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  >x : Symbol(x, Decl(templateTagOnClasses.js, 8, 17))
  
          this.a = x

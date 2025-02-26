@@ -1,6 +1,6 @@
 --- old.intersectionSatisfiesConstraint.symbols
 +++ new.intersectionSatisfiesConstraint.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >FirstInterface : Symbol(FirstInterface, Decl(intersectionSatisfiesConstraint.ts, 0, 0))
  
      commonProperty: number

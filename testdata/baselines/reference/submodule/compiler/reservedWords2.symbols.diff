@@ -1,6 +1,6 @@
 --- old.reservedWords2.symbols
 +++ new.reservedWords2.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === reservedWords2.ts ===
  import while = require("dfdf");
  import * as  while from "foo"

@@ -1,6 +1,6 @@
 --- old.parser509668.symbols
 +++ new.parser509668.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
    // Doesn't work, but should
    constructor (public ...args: string[]) { }

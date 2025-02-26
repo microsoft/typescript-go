@@ -1,6 +1,6 @@
 --- old.aliasUsageInIndexerOfClass.symbols
 +++ new.aliasUsageInIndexerOfClass.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >IHasVisualizationModel : Symbol(IHasVisualizationModel, Decl(aliasUsageInIndexerOfClass_main.ts, 1, 65))
  
      VisualizationModel: typeof Backbone.Model;

@@ -1,6 +1,6 @@
 --- old.parserForOfStatement25.symbols
 +++ new.parserForOfStatement25.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  
  for (let [x = 'a' in {}] of [[]]) console.log(x)
  >x : Symbol(x, Decl(parserForOfStatement25.ts, 2, 10))

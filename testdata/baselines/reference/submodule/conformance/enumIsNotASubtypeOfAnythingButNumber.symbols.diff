@@ -1,6 +1,6 @@
 --- old.enumIsNotASubtypeOfAnythingButNumber.symbols
 +++ new.enumIsNotASubtypeOfAnythingButNumber.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  
  enum E { A }
  >E : Symbol(E, Decl(enumIsNotASubtypeOfAnythingButNumber.ts, 0, 0))

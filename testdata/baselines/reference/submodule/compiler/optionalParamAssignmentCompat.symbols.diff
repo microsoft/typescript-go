@@ -1,6 +1,6 @@
 --- old.optionalParamAssignmentCompat.symbols
 +++ new.optionalParamAssignmentCompat.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >I2 : Symbol(I2, Decl(optionalParamAssignmentCompat.ts, 2, 1))
  
      p1: I1;

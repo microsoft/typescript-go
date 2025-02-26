@@ -1,6 +1,6 @@
 --- old.parserClassDeclaration17.symbols
 +++ new.parserClassDeclaration17.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Enumerator : Symbol(Enumerator, Decl(parserClassDeclaration17.ts, 0, 0))
  
      public atEnd(): boolean;

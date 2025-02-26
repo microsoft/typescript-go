@@ -1,6 +1,6 @@
 --- old.comparisonOperatorWithNoRelationshipObjectsOnOptionalProperty.symbols
 +++ new.comparisonOperatorWithNoRelationshipObjectsOnOptionalProperty.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A1 : Symbol(A1, Decl(comparisonOperatorWithNoRelationshipObjectsOnOptionalProperty.ts, 0, 0))
  
      b?: number;

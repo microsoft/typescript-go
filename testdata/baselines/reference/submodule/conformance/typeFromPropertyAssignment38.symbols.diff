@@ -1,6 +1,6 @@
 --- old.typeFromPropertyAssignment38.symbols
 +++ new.typeFromPropertyAssignment38.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === typeFromPropertyAssignment38.ts ===
  function F() {}

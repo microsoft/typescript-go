@@ -1,6 +1,6 @@
 --- old.typesWithPublicConstructor.symbols
 +++ new.typesWithPublicConstructor.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  
  var r: () => void = c.constructor;
  >r : Symbol(r, Decl(typesWithPublicConstructor.ts, 7, 3))

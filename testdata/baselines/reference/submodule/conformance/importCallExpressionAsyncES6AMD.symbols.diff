@@ -1,6 +1,6 @@
 --- old.importCallExpressionAsyncES6AMD.symbols
 +++ new.importCallExpressionAsyncES6AMD.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
      const req = await import('./test') // ONE
  >req : Symbol(req, Decl(test.ts, 1, 9))

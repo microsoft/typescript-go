@@ -1,6 +1,6 @@
 --- old.errorMessagesIntersectionTypes03.symbols
 +++ new.errorMessagesIntersectionTypes03.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(errorMessagesIntersectionTypes03.ts, 0, 0))
  
      a;

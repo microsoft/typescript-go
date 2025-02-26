@@ -1,6 +1,6 @@
 --- old.accessorWithRestParam.symbols
 +++ new.accessorWithRestParam.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(accessorWithRestParam.ts, 0, 0))
  
      set X(...v) { }

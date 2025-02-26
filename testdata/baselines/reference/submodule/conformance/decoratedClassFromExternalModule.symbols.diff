@@ -1,6 +1,6 @@
 --- old.decoratedClassFromExternalModule.symbols
 +++ new.decoratedClassFromExternalModule.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >decorate : Symbol(decorate, Decl(decorated.ts, 0, 0))
  
  export default class Decorated { }

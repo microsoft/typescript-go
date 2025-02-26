@@ -1,6 +1,6 @@
 --- old.override2.symbols
 +++ new.override2.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >AB : Symbol(AB, Decl(override2.ts, 0, 0))
  
      abstract foo(v: string): void;

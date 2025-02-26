@@ -1,6 +1,6 @@
 --- old.enumShadowedInfinityNaN.symbols
 +++ new.enumShadowedInfinityNaN.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >En : Symbol(En, Decl(enumShadowedInfinityNaN.ts, 3, 20))
  
      X = Infinity

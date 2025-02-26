@@ -1,6 +1,6 @@
 --- old.exportAsNamespace3(module=umd).symbols
 +++ new.exportAsNamespace3(module=umd).symbols
-@@= skipped -41, +41 lines =@@
+@@= skipped -40, +40 lines =@@
  >foo : Symbol(foo, Decl(2.ts, 0, 6))
  
  foo.ns.a;

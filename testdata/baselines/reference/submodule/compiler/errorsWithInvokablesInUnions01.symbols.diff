@@ -1,6 +1,6 @@
 --- old.errorsWithInvokablesInUnions01.symbols
 +++ new.errorsWithInvokablesInUnions01.symbols
-@@= skipped -22, +22 lines =@@
+@@= skipped -21, +21 lines =@@
  >TScope : Symbol(TScope, Decl(errorsWithInvokablesInUnions01.ts, 8, 28))
  
      pre?: IDirectiveLinkFn<TScope>;

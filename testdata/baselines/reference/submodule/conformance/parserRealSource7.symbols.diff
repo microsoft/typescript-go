@@ -1,6 +1,6 @@
 --- old.parserRealSource7.symbols
 +++ new.parserRealSource7.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >Continuation : Symbol(Continuation, Decl(parserRealSource7.ts, 5, 19))
  
          public exceptionBlock = -1;

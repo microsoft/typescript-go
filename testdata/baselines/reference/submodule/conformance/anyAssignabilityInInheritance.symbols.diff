@@ -1,6 +1,6 @@
 --- old.anyAssignabilityInInheritance.symbols
 +++ new.anyAssignabilityInInheritance.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >x : Symbol(x, Decl(anyAssignabilityInInheritance.ts, 3, 5))
  
      foo: any; // ok, any identical to itself

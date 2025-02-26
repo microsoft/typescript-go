@@ -1,6 +1,6 @@
 --- old.collisionSuperAndParameter1.symbols
 +++ new.collisionSuperAndParameter1.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >Foo : Symbol(Foo, Decl(collisionSuperAndParameter1.ts, 0, 0))
  
      x() {

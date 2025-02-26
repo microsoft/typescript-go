@@ -1,6 +1,6 @@
 --- old.maxNodeModuleJsDepthDefaultsToZero.symbols
 +++ new.maxNodeModuleJsDepthDefaultsToZero.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  >foo : Symbol(foo, Decl(index.ts, 1, 6))
  
  foo.x // found in index.d.ts

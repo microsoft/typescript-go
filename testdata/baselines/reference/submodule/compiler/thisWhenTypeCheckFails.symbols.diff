@@ -1,6 +1,6 @@
 --- old.thisWhenTypeCheckFails.symbols
 +++ new.thisWhenTypeCheckFails.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >c : Symbol(c, Decl(thisWhenTypeCheckFails.ts, 0, 0))
  
      public n() {

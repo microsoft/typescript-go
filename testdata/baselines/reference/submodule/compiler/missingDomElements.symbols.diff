@@ -1,6 +1,6 @@
 --- old.missingDomElements.symbols
 +++ new.missingDomElements.symbols
-@@= skipped -33, +33 lines =@@
+@@= skipped -32, +32 lines =@@
  >Node : Symbol(Node, Decl(missingDomElements.ts, 10, 28))
  
      actuallyNotTheSame: number;    

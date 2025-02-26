@@ -1,6 +1,6 @@
 --- old.errorMessagesIntersectionTypes01.symbols
 +++ new.errorMessagesIntersectionTypes01.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Foo : Symbol(Foo, Decl(errorMessagesIntersectionTypes01.ts, 0, 0))
  
      fooProp: boolean;

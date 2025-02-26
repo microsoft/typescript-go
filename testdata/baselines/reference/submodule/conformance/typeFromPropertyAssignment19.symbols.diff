@@ -1,6 +1,6 @@
 --- old.typeFromPropertyAssignment19.symbols
 +++ new.typeFromPropertyAssignment19.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  const C = require("./semver")
  >C : Symbol(C, Decl(index.js, 1, 5))
  >require : Symbol(require, Decl(types.d.ts, 0, 11))

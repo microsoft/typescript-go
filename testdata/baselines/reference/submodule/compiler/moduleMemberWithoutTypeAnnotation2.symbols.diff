@@ -1,6 +1,6 @@
 --- old.moduleMemberWithoutTypeAnnotation2.symbols
 +++ new.moduleMemberWithoutTypeAnnotation2.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >IDiagnosticWriter : Symbol(IDiagnosticWriter, Decl(moduleMemberWithoutTypeAnnotation2.ts, 1, 39))
  
              Alert(output: string): void;

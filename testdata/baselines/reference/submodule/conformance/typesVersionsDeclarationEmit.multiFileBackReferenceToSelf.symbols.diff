@@ -1,6 +1,6 @@
 --- old.typesVersionsDeclarationEmit.multiFileBackReferenceToSelf.symbols
 +++ new.typesVersionsDeclarationEmit.multiFileBackReferenceToSelf.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  >vb : Symbol(vb, Decl(main.ts, 4, 12))
  >fb : Symbol(fb, Decl(main.ts, 1, 8))
  

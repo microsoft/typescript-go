@@ -1,6 +1,6 @@
 --- old.checkJsxChildrenProperty9.symbols
 +++ new.checkJsxChildrenProperty9.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  // OK
  let k1 = <div> <h2> Hello </h2> <h1> world </h1></div>;
  >k1 : Symbol(k1, Decl(file.tsx, 3, 3))

@@ -1,6 +1,6 @@
 --- old.moduleMergeConstructor.symbols
 +++ new.moduleMergeConstructor.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  
          constructor();
          method1(): any;

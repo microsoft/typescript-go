@@ -1,6 +1,6 @@
 --- old.privacyImportParseErrors.symbols
 +++ new.privacyImportParseErrors.symbols
-@@= skipped -88, +88 lines =@@
+@@= skipped -87, +87 lines =@@
  
      export var m1_im1_private_v1_public = m1_im1_private.c1;
  >m1_im1_private_v1_public : Symbol(m1_im1_private_v1_public, Decl(privacyImportParseErrors.ts, 38, 14))

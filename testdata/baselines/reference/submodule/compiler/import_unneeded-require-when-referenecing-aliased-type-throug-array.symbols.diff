@@ -1,6 +1,6 @@
 --- old.import_unneeded-require-when-referenecing-aliased-type-throug-array.symbols
 +++ new.import_unneeded-require-when-referenecing-aliased-type-throug-array.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  
  var p = testData[0].name;
  >p : Symbol(p, Decl(a.ts, 3, 3))

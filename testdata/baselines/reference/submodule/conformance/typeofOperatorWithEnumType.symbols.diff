@@ -1,6 +1,6 @@
 --- old.typeofOperatorWithEnumType.symbols
 +++ new.typeofOperatorWithEnumType.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  
  enum ENUM1 { A, B, "" };
  >ENUM1 : Symbol(ENUM1, Decl(typeofOperatorWithEnumType.ts, 2, 14))

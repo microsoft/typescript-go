@@ -1,6 +1,6 @@
 --- old.fluentInterfaces.symbols
 +++ new.fluentInterfaces.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(fluentInterfaces.ts, 0, 0))
  
      foo(): this;

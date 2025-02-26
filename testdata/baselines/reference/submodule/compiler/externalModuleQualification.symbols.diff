@@ -1,6 +1,6 @@
 --- old.externalModuleQualification.symbols
 +++ new.externalModuleQualification.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >C : Symbol(C, Decl(externalModuleQualification.ts, 1, 29))
  
      private previousDiffAction: NavigateAction;

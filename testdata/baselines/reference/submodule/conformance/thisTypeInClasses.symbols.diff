@@ -1,6 +1,6 @@
 --- old.thisTypeInClasses.symbols
 +++ new.thisTypeInClasses.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C1 : Symbol(C1, Decl(thisTypeInClasses.ts, 0, 0))
  
      x: this;

@@ -1,6 +1,6 @@
 --- old.voidAsNonAmbiguousReturnType.symbols
 +++ new.voidAsNonAmbiguousReturnType.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >main : Symbol(main, Decl(voidAsNonAmbiguousReturnType_1.ts, 1, 56))
  
   fs.mkdirSync('test'); // should not error - return types are the same

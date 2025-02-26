@@ -1,6 +1,6 @@
 --- old.arrayLiteralTypeInference.symbols
 +++ new.arrayLiteralTypeInference.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Action : Symbol(Action, Decl(arrayLiteralTypeInference.ts, 0, 0))
  
      id: number;

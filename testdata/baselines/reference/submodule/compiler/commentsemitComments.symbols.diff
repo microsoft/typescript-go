@@ -1,6 +1,6 @@
 --- old.commentsemitComments.symbols
 +++ new.commentsemitComments.symbols
-@@= skipped -31, +31 lines =@@
+@@= skipped -30, +30 lines =@@
  
      /** property comment */
      public b = 10;

@@ -1,6 +1,6 @@
 --- old.nodeModulesAllowJsImportHelpersCollisions1(module=nodenext).symbols
 +++ new.nodeModulesAllowJsImportHelpersCollisions1(module=nodenext).symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === subfolder/index.js ===
  // cjs format file
  import {default as _fs} from "fs";

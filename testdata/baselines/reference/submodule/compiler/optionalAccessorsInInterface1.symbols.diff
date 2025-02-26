@@ -1,6 +1,6 @@
 --- old.optionalAccessorsInInterface1.symbols
 +++ new.optionalAccessorsInInterface1.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >MyPropertyDescriptor : Symbol(MyPropertyDescriptor, Decl(optionalAccessorsInInterface1.ts, 0, 0))
  
      get? (): any;

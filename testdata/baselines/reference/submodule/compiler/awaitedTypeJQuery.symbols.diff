@@ -1,6 +1,6 @@
 --- old.awaitedTypeJQuery.symbols
 +++ new.awaitedTypeJQuery.symbols
-@@= skipped -32, +32 lines =@@
+@@= skipped -31, +31 lines =@@
  >SN : Symbol(SN, Decl(awaitedTypeJQuery.ts, 8, 11))
  
      then<ARD = never, AJD = never, AND = never,

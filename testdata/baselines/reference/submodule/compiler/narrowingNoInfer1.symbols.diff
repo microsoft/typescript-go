@@ -1,6 +1,6 @@
 --- old.narrowingNoInfer1.symbols
 +++ new.narrowingNoInfer1.symbols
-@@= skipped -35, +35 lines =@@
+@@= skipped -34, +34 lines =@@
  >B : Symbol(B, Decl(narrowingNoInfer1.ts, 9, 15))
  
    return items.map(f);

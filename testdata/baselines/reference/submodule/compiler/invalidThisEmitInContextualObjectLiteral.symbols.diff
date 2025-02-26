@@ -1,6 +1,6 @@
 --- old.invalidThisEmitInContextualObjectLiteral.symbols
 +++ new.invalidThisEmitInContextualObjectLiteral.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >IDef : Symbol(IDef, Decl(invalidThisEmitInContextualObjectLiteral.ts, 0, 0))
  
  	p1: (e:string) => void;

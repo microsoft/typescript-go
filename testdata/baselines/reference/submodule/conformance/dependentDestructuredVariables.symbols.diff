@@ -1,6 +1,6 @@
 --- old.dependentDestructuredVariables.symbols
 +++ new.dependentDestructuredVariables.symbols
-@@= skipped -22, +22 lines =@@
+@@= skipped -21, +21 lines =@@
  >kind : Symbol(kind, Decl(dependentDestructuredVariables.ts, 4, 14))
  
          payload.toFixed();

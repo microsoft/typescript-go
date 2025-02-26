@@ -1,6 +1,6 @@
 --- old.divergentAccessorsTypes6.symbols
 +++ new.divergentAccessorsTypes6.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >Element : Symbol(Element, Decl(divergentAccessorsTypes6.ts, 0, 10))
  
      get style(): CSSStyleDeclaration;

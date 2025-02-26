@@ -1,6 +1,6 @@
 --- old.moduleAugmentationGlobal1.symbols
 +++ new.moduleAugmentationGlobal1.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === f1.ts ===
  export class A {x: number;}
  >A : Symbol(A, Decl(f1.ts, 0, 0))

@@ -1,6 +1,6 @@
 --- old.classStaticBlock18(target=es2015).symbols
 +++ new.classStaticBlock18(target=es2015).symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
    return class {
      static foo = 1;

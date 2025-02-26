@@ -1,6 +1,6 @@
 --- old.constructorFunctionsStrict.symbols
 +++ new.constructorFunctionsStrict.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >x : Symbol(x, Decl(a.js, 1, 11))
  
      this.x = x

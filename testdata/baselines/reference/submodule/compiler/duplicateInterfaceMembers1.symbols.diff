@@ -1,6 +1,6 @@
 --- old.duplicateInterfaceMembers1.symbols
 +++ new.duplicateInterfaceMembers1.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Bar : Symbol(Bar, Decl(duplicateInterfaceMembers1.ts, 0, 0))
  
     x: number;

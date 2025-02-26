@@ -1,6 +1,6 @@
 --- old.genericConstraintOnExtendedBuiltinTypes.symbols
 +++ new.genericConstraintOnExtendedBuiltinTypes.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >ICloneable : Symbol(ICloneable, Decl(genericConstraintOnExtendedBuiltinTypes.ts, 0, 24))
  
          Clone(): any;

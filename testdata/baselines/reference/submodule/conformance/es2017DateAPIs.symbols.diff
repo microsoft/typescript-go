@@ -1,6 +1,6 @@
 --- old.es2017DateAPIs.symbols
 +++ new.es2017DateAPIs.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === es2017DateAPIs.ts ===
  Date.UTC(2017);

@@ -1,6 +1,6 @@
 --- old.classAbstractManyKeywords.symbols
 +++ new.classAbstractManyKeywords.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === classAbstractManyKeywords.ts ===
  export default abstract class A {}

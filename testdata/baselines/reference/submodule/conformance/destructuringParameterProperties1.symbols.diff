@@ -1,6 +1,6 @@
 --- old.destructuringParameterProperties1.symbols
 +++ new.destructuringParameterProperties1.symbols
-@@= skipped -80, +80 lines =@@
+@@= skipped -79, +79 lines =@@
  >c3 : Symbol(c3, Decl(destructuringParameterProperties1.ts, 26, 3))
  >C3 : Symbol(C3, Decl(destructuringParameterProperties1.ts, 12, 52))
  >x : Symbol(x, Decl(destructuringParameterProperties1.ts, 27, 13))

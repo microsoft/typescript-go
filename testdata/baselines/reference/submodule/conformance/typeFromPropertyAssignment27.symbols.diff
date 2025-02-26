@@ -1,6 +1,6 @@
 --- old.typeFromPropertyAssignment27.symbols
 +++ new.typeFromPropertyAssignment27.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === a.js ===
  // mixed prototype-assignment+function declaration
  function C() { this.p = 1; }

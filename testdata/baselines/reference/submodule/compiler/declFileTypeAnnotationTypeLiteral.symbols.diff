@@ -1,6 +1,6 @@
 --- old.declFileTypeAnnotationTypeLiteral.symbols
 +++ new.declFileTypeAnnotationTypeLiteral.symbols
-@@= skipped -37, +37 lines =@@
+@@= skipped -36, +36 lines =@@
      new (a: string): m.c;
  >a : Symbol(a, Decl(declFileTypeAnnotationTypeLiteral.ts, 17, 9))
  >m : Symbol(m, Decl(declFileTypeAnnotationTypeLiteral.ts, 3, 1))

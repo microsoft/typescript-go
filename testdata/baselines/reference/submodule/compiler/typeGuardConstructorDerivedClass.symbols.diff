@@ -1,6 +1,6 @@
 --- old.typeGuardConstructorDerivedClass.symbols
 +++ new.typeGuardConstructorDerivedClass.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >C1 : Symbol(C1, Decl(typeGuardConstructorDerivedClass.ts, 0, 0))
  
      property1: number;

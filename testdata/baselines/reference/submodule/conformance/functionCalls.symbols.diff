@@ -1,6 +1,6 @@
 --- old.functionCalls.symbols
 +++ new.functionCalls.symbols
-@@= skipped -31, +31 lines =@@
+@@= skipped -30, +30 lines =@@
  >Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      prop: number;

@@ -1,6 +1,6 @@
 --- old.umdGlobalConflict.symbols
 +++ new.umdGlobalConflict.symbols
-@@= skipped -25, +25 lines =@@
+@@= skipped -24, +24 lines =@@
  // Should be OK, first in wins
  const p: string = Alpha.x;
  >p : Symbol(p, Decl(global.ts, 1, 5))

@@ -1,6 +1,6 @@
 --- old.transformNestedGeneratorsWithTry.symbols
 +++ new.transformNestedGeneratorsWithTry.symbols
-@@= skipped -17, +17 lines =@@
+@@= skipped -16, +16 lines =@@
  
        try {
          await Bluebird.resolve(); // -- remove this and it compiles

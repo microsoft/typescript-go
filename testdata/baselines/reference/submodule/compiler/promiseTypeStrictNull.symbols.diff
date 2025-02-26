@@ -1,6 +1,6 @@
 --- old.promiseTypeStrictNull.symbols
 +++ new.promiseTypeStrictNull.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === promiseTypeStrictNull.ts ===
  declare var p: Promise<boolean>;
  >p : Symbol(p, Decl(promiseTypeStrictNull.ts, 0, 11))

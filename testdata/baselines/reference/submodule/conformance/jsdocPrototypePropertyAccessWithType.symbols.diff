@@ -1,6 +1,6 @@
 --- old.jsdocPrototypePropertyAccessWithType.symbols
 +++ new.jsdocPrototypePropertyAccessWithType.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === /a.js ===
  function C() { this.x = false; };
  >C : Symbol(C, Decl(a.js, 0, 0))

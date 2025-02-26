@@ -1,6 +1,6 @@
 --- old.protectedClassPropertyAccessibleWithinSubclass2.symbols
 +++ new.protectedClassPropertyAccessibleWithinSubclass2.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Base : Symbol(Base, Decl(protectedClassPropertyAccessibleWithinSubclass2.ts, 0, 0))
  
      protected x: string;

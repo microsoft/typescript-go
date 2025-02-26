@@ -1,6 +1,6 @@
 --- old.underscoreMapFirst.symbols
 +++ new.underscoreMapFirst.symbols
-@@= skipped -19, +19 lines =@@
+@@= skipped -18, +18 lines =@@
  >T : Symbol(T, Decl(underscoreMapFirst.ts, 2, 19))
  
          length: number;

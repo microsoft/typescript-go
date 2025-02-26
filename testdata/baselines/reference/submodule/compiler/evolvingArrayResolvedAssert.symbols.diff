@@ -1,6 +1,6 @@
 --- old.evolvingArrayResolvedAssert.symbols
 +++ new.evolvingArrayResolvedAssert.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >C : Symbol(C, Decl(evolvingArrayResolvedAssert.ts, 0, 3))
  
      if (C.hasOwnProperty(a)) {

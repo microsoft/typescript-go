@@ -1,6 +1,6 @@
 --- old.typeofThis.symbols
 +++ new.typeofThis.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Test : Symbol(Test, Decl(typeofThis.ts, 0, 0))
  
      data = {};

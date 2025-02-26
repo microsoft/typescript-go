@@ -1,6 +1,6 @@
 --- old.privatePropertyInUnion.symbols
 +++ new.privatePropertyInUnion.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >SyncableObject : Symbol(SyncableObject, Decl(privatePropertyInUnion.ts, 2, 28))
  
    private foo: unknown;

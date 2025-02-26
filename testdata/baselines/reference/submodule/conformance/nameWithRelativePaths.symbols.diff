@@ -1,6 +1,6 @@
 --- old.nameWithRelativePaths.symbols
 +++ new.nameWithRelativePaths.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >foo2 : Symbol(foo2, Decl(foo_3.ts, 1, 38))
  
  if(foo2.M2.x){

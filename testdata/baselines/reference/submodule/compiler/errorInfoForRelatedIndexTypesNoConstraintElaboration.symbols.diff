@@ -1,6 +1,6 @@
 --- old.errorInfoForRelatedIndexTypesNoConstraintElaboration.symbols
 +++ new.errorInfoForRelatedIndexTypesNoConstraintElaboration.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  class I<T1 extends keyof JSX.IntrinsicElements, T2 extends keyof JSX.IntrinsicElements> {
  >I : Symbol(I, Decl(errorInfoForRelatedIndexTypesNoConstraintElaboration.ts, 0, 0))
  >T1 : Symbol(T1, Decl(errorInfoForRelatedIndexTypesNoConstraintElaboration.ts, 2, 8))

@@ -1,6 +1,6 @@
 --- old.intersectionTypeNormalization.symbols
 +++ new.intersectionTypeNormalization.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === intersectionTypeNormalization.ts ===
  interface A { a: string }
  >A : Symbol(A, Decl(intersectionTypeNormalization.ts, 0, 0))

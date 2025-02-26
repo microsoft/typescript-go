@@ -1,6 +1,6 @@
 --- old.classBlockScoping.symbols
 +++ new.classBlockScoping.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  >Foo : Symbol(Foo, Decl(classBlockScoping.ts, 3, 9))
  
        static y = new Foo();

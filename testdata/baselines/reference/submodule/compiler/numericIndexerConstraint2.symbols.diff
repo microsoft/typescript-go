@@ -1,6 +1,6 @@
 --- old.numericIndexerConstraint2.symbols
 +++ new.numericIndexerConstraint2.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === numericIndexerConstraint2.ts ===
  class Foo { foo() { } }
  >Foo : Symbol(Foo, Decl(numericIndexerConstraint2.ts, 0, 0))

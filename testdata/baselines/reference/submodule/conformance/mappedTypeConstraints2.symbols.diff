@@ -1,6 +1,6 @@
 --- old.mappedTypeConstraints2.symbols
 +++ new.mappedTypeConstraints2.symbols
-@@= skipped -198, +198 lines =@@
+@@= skipped -197, +197 lines =@@
  >Bounds : Symbol(Bounds, Decl(mappedTypeConstraints2.ts, 50, 71))
  
      min: number;

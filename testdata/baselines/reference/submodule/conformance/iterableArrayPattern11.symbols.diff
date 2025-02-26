@@ -1,6 +1,6 @@
 --- old.iterableArrayPattern11.symbols
 +++ new.iterableArrayPattern11.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === iterableArrayPattern11.ts ===
  class Bar { x }
  >Bar : Symbol(Bar, Decl(iterableArrayPattern11.ts, 0, 0))

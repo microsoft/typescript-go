@@ -1,6 +1,6 @@
 --- old.classStaticBlock3(target=esnext).symbols
 +++ new.classStaticBlock3(target=esnext).symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >C : Symbol(C, Decl(classStaticBlock3.ts, 0, 12))
  
      static f1 = 1;

@@ -1,6 +1,6 @@
 --- old.constructorFunctionTypeIsAssignableToBaseType2.symbols
 +++ new.constructorFunctionTypeIsAssignableToBaseType2.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >Base : Symbol(Base, Decl(constructorFunctionTypeIsAssignableToBaseType2.ts, 0, 0))
  
      static foo: {

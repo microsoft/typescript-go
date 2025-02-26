@@ -1,6 +1,6 @@
 --- old.awaitUnion_es6.symbols
 +++ new.awaitUnion_es6.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
  declare let b: PromiseLike<number> | PromiseLike<string>;
  >b : Symbol(b, Decl(awaitUnion_es6.ts, 1, 11))

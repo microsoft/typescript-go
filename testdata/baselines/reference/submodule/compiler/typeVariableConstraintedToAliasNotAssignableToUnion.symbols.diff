@@ -1,6 +1,6 @@
 --- old.typeVariableConstraintedToAliasNotAssignableToUnion.symbols
 +++ new.typeVariableConstraintedToAliasNotAssignableToUnion.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >S : Symbol(S, Decl(typeVariableConstraintedToAliasNotAssignableToUnion.ts, 0, 25))
  
      _field: S;

@@ -1,6 +1,6 @@
 --- old.typeofModuleWithoutExports.symbols
 +++ new.typeofModuleWithoutExports.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >C : Symbol(C, Decl(typeofModuleWithoutExports.ts, 1, 14))
  
          foo: number;

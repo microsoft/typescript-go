@@ -1,6 +1,6 @@
 --- old.esDecorators-classDeclaration-commonjs-classNamespaceMerge.symbols
 +++ new.esDecorators-classDeclaration-commonjs-classNamespaceMerge.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >Example : Symbol(Example, Decl(esDecorators-classDeclaration-commonjs-classNamespaceMerge.ts, 0, 22), Decl(esDecorators-classDeclaration-commonjs-classNamespaceMerge.ts, 5, 1))
  
      static foo() {}

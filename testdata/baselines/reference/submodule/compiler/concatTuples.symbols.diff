@@ -1,6 +1,6 @@
 --- old.concatTuples.symbols
 +++ new.concatTuples.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
  ijs = ijs.concat([[3, 4], [5, 6]]);
  >ijs : Symbol(ijs, Decl(concatTuples.ts, 0, 3))

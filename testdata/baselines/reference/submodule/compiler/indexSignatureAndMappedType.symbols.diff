@@ -1,6 +1,6 @@
 --- old.indexSignatureAndMappedType.symbols
 +++ new.indexSignatureAndMappedType.symbols
-@@= skipped -80, +80 lines =@@
+@@= skipped -79, +79 lines =@@
  >IBaseEntity : Symbol(IBaseEntity, Decl(indexSignatureAndMappedType.ts, 22, 2))
  
      name: string;

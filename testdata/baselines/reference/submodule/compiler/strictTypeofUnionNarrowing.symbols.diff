@@ -1,6 +1,6 @@
 --- old.strictTypeofUnionNarrowing.symbols
 +++ new.strictTypeofUnionNarrowing.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  
      return typeof anything === "string" ? anything.toUpperCase() : "";
  >anything : Symbol(anything, Decl(strictTypeofUnionNarrowing.ts, 0, 20))

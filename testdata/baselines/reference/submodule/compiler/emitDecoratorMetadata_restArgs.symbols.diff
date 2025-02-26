@@ -1,6 +1,6 @@
 --- old.emitDecoratorMetadata_restArgs.symbols
 +++ new.emitDecoratorMetadata_restArgs.symbols
-@@= skipped -22, +22 lines =@@
+@@= skipped -21, +21 lines =@@
  >MyMethodDecorator : Symbol(MyMethodDecorator, Decl(emitDecoratorMetadata_restArgs.ts, 1, 13))
  
      method(...args) {}

@@ -1,6 +1,6 @@
 --- old.parserEqualsGreaterThanAfterFunction1.symbols
 +++ new.parserEqualsGreaterThanAfterFunction1.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === parserEqualsGreaterThanAfterFunction1.ts ===
  function =>

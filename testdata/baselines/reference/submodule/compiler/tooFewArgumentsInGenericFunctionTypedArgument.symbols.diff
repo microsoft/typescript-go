@@ -1,6 +1,6 @@
 --- old.tooFewArgumentsInGenericFunctionTypedArgument.symbols
 +++ new.tooFewArgumentsInGenericFunctionTypedArgument.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >U : Symbol(U, Decl(tooFewArgumentsInGenericFunctionTypedArgument.ts, 0, 23))
  
      length: number;

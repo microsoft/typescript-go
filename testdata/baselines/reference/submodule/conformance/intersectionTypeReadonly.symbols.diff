@@ -1,6 +1,6 @@
 --- old.intersectionTypeReadonly.symbols
 +++ new.intersectionTypeReadonly.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Base : Symbol(Base, Decl(intersectionTypeReadonly.ts, 0, 0))
  
      readonly value: number;

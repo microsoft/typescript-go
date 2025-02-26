@@ -1,6 +1,6 @@
 --- old.inferenceErasedSignatures.symbols
 +++ new.inferenceErasedSignatures.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >SomeBaseClass : Symbol(SomeBaseClass, Decl(inferenceErasedSignatures.ts, 0, 0))
  
      set<K extends keyof this>(key: K, value: this[K]): this[K];

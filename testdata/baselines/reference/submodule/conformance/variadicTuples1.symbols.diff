@@ -1,6 +1,6 @@
 --- old.variadicTuples1.symbols
 +++ new.variadicTuples1.symbols
-@@= skipped -257, +257 lines =@@
+@@= skipped -256, +256 lines =@@
      const a = t[0];  // string
  >a : Symbol(a, Decl(variadicTuples1.ts, 79, 9))
  >t : Symbol(t, Decl(variadicTuples1.ts, 78, 33))

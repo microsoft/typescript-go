@@ -1,6 +1,6 @@
 --- old.mergedInterfacesWithMultipleBases.symbols
 +++ new.mergedInterfacesWithMultipleBases.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >C : Symbol(C, Decl(mergedInterfacesWithMultipleBases.ts, 0, 0))
  
      a: number;

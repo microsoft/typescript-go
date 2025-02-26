@@ -1,6 +1,6 @@
 --- old.importCallExpressionES6UMD.symbols
 +++ new.importCallExpressionES6UMD.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
  === 1.ts ===
  import("./0");

@@ -1,6 +1,6 @@
 --- old.decoratorOnFunctionParameter.symbols
 +++ new.decoratorOnFunctionParameter.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
  class C { n = true; }
  >C : Symbol(C, Decl(decoratorOnFunctionParameter.ts, 0, 23))

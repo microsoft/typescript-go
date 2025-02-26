@@ -1,6 +1,6 @@
 --- old.instantiatedModule.symbols
 +++ new.instantiatedModule.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  
      export interface Point { x: number; y: number }
  >Point : Symbol(Point, Decl(instantiatedModule.ts, 2, 10), Decl(instantiatedModule.ts, 4, 14))

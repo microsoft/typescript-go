@@ -1,6 +1,6 @@
 --- old.privateNamesAndGenericClasses-2.symbols
 +++ new.privateNamesAndGenericClasses-2.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(privateNamesAndGenericClasses-2.ts, 0, 8))
  
      #foo: T;

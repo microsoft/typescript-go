@@ -1,6 +1,6 @@
 --- old.symbolProperty61.symbols
 +++ new.symbolProperty61.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === symbolProperty61.ts ===
  declare global {

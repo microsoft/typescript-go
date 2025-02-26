@@ -1,6 +1,6 @@
 --- old.classAbstractOverloads.symbols
 +++ new.classAbstractOverloads.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(classAbstractOverloads.ts, 0, 0))
  
      abstract foo();

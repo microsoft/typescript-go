@@ -1,6 +1,6 @@
 --- old.abstractPropertyInConstructor.symbols
 +++ new.abstractPropertyInConstructor.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >AbstractClass : Symbol(AbstractClass, Decl(abstractPropertyInConstructor.ts, 0, 0))
  
          this.method(parseInt(str));

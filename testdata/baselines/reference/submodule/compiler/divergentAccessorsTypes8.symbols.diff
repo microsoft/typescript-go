@@ -1,6 +1,6 @@
 --- old.divergentAccessorsTypes8.symbols
 +++ new.divergentAccessorsTypes8.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >Serializer : Symbol(Serializer, Decl(divergentAccessorsTypes8.ts, 0, 9))
  
    set value(v: string | number | boolean);

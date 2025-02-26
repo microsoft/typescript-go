@@ -1,6 +1,6 @@
 --- old.reactTransitiveImportHasValidDeclaration.symbols
 +++ new.reactTransitiveImportHasValidDeclaration.symbols
-@@= skipped -29, +29 lines =@@
+@@= skipped -28, +28 lines =@@
  >T : Symbol(T, Decl(index.d.ts, 2, 36), Decl(index.d.ts, 2, 29))
  
          css?: unknown;

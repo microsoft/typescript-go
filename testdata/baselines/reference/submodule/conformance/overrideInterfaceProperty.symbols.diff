@@ -1,6 +1,6 @@
 --- old.overrideInterfaceProperty.symbols
 +++ new.overrideInterfaceProperty.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >V : Symbol(V, Decl(overrideInterfaceProperty.ts, 0, 16))
  
      readonly size: number;

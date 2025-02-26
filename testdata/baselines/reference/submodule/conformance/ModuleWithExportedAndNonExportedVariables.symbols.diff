@@ -1,6 +1,6 @@
 --- old.ModuleWithExportedAndNonExportedVariables.symbols
 +++ new.ModuleWithExportedAndNonExportedVariables.symbols
-@@= skipped -17, +17 lines =@@
+@@= skipped -16, +16 lines =@@
  
  var x = A.x;
  >x : Symbol(x, Decl(ModuleWithExportedAndNonExportedVariables.ts, 6, 3), Decl(ModuleWithExportedAndNonExportedVariables.ts, 7, 3))

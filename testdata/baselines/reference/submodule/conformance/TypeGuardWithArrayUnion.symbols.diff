@@ -1,6 +1,6 @@
 --- old.TypeGuardWithArrayUnion.symbols
 +++ new.TypeGuardWithArrayUnion.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Message : Symbol(Message, Decl(TypeGuardWithArrayUnion.ts, 0, 0))
  
      value: string;

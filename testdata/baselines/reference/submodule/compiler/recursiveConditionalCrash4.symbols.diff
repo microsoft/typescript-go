@@ -1,6 +1,6 @@
 --- old.recursiveConditionalCrash4.symbols
 +++ new.recursiveConditionalCrash4.symbols
-@@= skipped -18, +18 lines =@@
+@@= skipped -17, +17 lines =@@
  > = It extends StrIter.Iterator
  >It : Symbol(It, Decl(recursiveConditionalCrash4.ts, 4, 33))
  >StrIter : Symbol(StrIter)

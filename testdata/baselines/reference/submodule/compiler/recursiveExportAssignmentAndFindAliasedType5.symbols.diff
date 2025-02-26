@@ -1,6 +1,6 @@
 --- old.recursiveExportAssignmentAndFindAliasedType5.symbols
 +++ new.recursiveExportAssignmentAndFindAliasedType5.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >b : Symbol(b, Decl(recursiveExportAssignmentAndFindAliasedType5_moduleA.ts, 2, 10))
  >ClassB : Symbol(ClassB, Decl(recursiveExportAssignmentAndFindAliasedType5_moduleA.ts, 0, 81))
  

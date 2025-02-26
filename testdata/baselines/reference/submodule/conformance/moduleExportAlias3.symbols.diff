@@ -1,6 +1,6 @@
 --- old.moduleExportAlias3.symbols
 +++ new.moduleExportAlias3.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >C : Symbol(C, Decl(bug24062.js, 0, 0))
  }
  module.exports = {

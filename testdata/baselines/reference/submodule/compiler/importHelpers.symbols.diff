@@ -1,6 +1,6 @@
 --- old.importHelpers.symbols
 +++ new.importHelpers.symbols
-@@= skipped -18, +18 lines =@@
+@@= skipped -17, +17 lines =@@
  >C : Symbol(C, Decl(external.ts, 3, 21))
  
      method(@dec x: number) {

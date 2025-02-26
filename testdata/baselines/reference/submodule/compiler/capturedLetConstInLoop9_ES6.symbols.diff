@@ -1,6 +1,6 @@
 --- old.capturedLetConstInLoop9_ES6.symbols
 +++ new.capturedLetConstInLoop9_ES6.symbols
-@@= skipped -55, +55 lines =@@
+@@= skipped -54, +54 lines =@@
  >A : Symbol(A, Decl(capturedLetConstInLoop9_ES6.ts, 24, 5))
  
          m() {

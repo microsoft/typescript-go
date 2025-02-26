@@ -1,6 +1,6 @@
 --- old.deepKeysIndexing.symbols
 +++ new.deepKeysIndexing.symbols
-@@= skipped -71, +71 lines =@@
+@@= skipped -70, +70 lines =@@
  >DeepObject : Symbol(DeepObject, Decl(deepKeysIndexing.ts, 0, 0))
  
    a: {

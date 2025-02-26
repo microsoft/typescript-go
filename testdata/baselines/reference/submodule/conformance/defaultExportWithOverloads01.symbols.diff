@@ -1,6 +1,6 @@
 --- old.defaultExportWithOverloads01.symbols
 +++ new.defaultExportWithOverloads01.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === defaultExportWithOverloads01.ts ===
  export default function f();

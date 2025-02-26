@@ -1,6 +1,6 @@
 --- old.stringLiteralPropertyNameWithLineContinuation1.symbols
 +++ new.stringLiteralPropertyNameWithLineContinuation1.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === stringLiteralPropertyNameWithLineContinuation1.ts ===
  var x = {'text\
  >x : Symbol(x, Decl(stringLiteralPropertyNameWithLineContinuation1.ts, 0, 3))

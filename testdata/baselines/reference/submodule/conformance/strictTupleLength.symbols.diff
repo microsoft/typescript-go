@@ -1,6 +1,6 @@
 --- old.strictTupleLength.symbols
 +++ new.strictTupleLength.symbols
-@@= skipped -33, +33 lines =@@
+@@= skipped -32, +32 lines =@@
  
  var lena: number = arr.length;
  >lena : Symbol(lena, Decl(strictTupleLength.ts, 8, 3))

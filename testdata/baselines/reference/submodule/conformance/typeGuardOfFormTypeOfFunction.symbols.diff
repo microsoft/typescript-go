@@ -1,6 +1,6 @@
 --- old.typeGuardOfFormTypeOfFunction.symbols
 +++ new.typeGuardOfFormTypeOfFunction.symbols
-@@= skipped -152, +152 lines =@@
+@@= skipped -151, +151 lines =@@
  >item : Symbol(item, Decl(typeGuardOfFormTypeOfFunction.ts, 67, 13))
  
              item.call(obj);

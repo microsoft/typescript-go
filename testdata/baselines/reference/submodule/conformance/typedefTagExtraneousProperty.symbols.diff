@@ -1,6 +1,6 @@
 --- old.typedefTagExtraneousProperty.symbols
 +++ new.typedefTagExtraneousProperty.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  
  /** @type {Mmap} */
  var y = { bye: "no" };

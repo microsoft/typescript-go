@@ -1,6 +1,6 @@
 --- old.innerTypeParameterShadowingOuterOne.symbols
 +++ new.innerTypeParameterShadowingOuterOne.symbols
-@@= skipped -19, +19 lines =@@
+@@= skipped -18, +18 lines =@@
  >T : Symbol(T, Decl(innerTypeParameterShadowingOuterOne.ts, 4, 15))
  
          x.toFixed();

@@ -1,6 +1,6 @@
 --- old.moduleAugmentationInDependency.symbols
 +++ new.moduleAugmentationInDependency.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === /node_modules/A/index.d.ts ===
  declare module "ext" {

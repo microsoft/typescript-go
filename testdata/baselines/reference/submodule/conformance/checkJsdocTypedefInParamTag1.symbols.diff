@@ -1,6 +1,6 @@
 --- old.checkJsdocTypedefInParamTag1.symbols
 +++ new.checkJsdocTypedefInParamTag1.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  >opts : Symbol(opts, Decl(0.js, 10, 13))
  
      opts.x;

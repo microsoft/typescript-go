@@ -1,6 +1,6 @@
 --- old.narrowingMutualSubtypes.symbols
 +++ new.narrowingMutualSubtypes.symbols
-@@= skipped -263, +263 lines =@@
+@@= skipped -262, +262 lines =@@
  
      // "accidentally" guards the first branch on the length
      if (Array.isArray(obj) && obj.length) {

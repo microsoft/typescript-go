@@ -1,6 +1,6 @@
 --- old.contextualTypedSpecialAssignment.symbols
 +++ new.contextualTypedSpecialAssignment.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  
  // property assignment
  var ns = {}

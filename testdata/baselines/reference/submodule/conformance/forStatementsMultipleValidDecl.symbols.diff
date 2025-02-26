@@ -1,6 +1,6 @@
 --- old.forStatementsMultipleValidDecl.symbols
 +++ new.forStatementsMultipleValidDecl.symbols
-@@= skipped -22, +22 lines =@@
+@@= skipped -21, +21 lines =@@
  }
  interface Point { x: number; y: number; }
  >Point : Symbol(Point, Decl(forStatementsMultipleValidDecl.ts, 9, 1))

@@ -1,6 +1,6 @@
 --- old.modularizeLibrary_NoErrorDuplicateLibOptions1.symbols
 +++ new.modularizeLibrary_NoErrorDuplicateLibOptions1.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >z : Symbol(z, Decl(modularizeLibrary_NoErrorDuplicateLibOptions1.ts, 1, 32))
  
      return Array.from(arguments);

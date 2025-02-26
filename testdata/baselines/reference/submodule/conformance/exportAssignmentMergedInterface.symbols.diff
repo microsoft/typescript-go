@@ -1,6 +1,6 @@
 --- old.exportAssignmentMergedInterface.symbols
 +++ new.exportAssignmentMergedInterface.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  
  var y: string = x.b;
  >y : Symbol(y, Decl(foo_1.ts, 4, 3))

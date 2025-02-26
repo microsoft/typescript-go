@@ -1,6 +1,6 @@
 --- old.nodeModulesImportAttributesTypeModeDeclarationEmit(module=nodenext).symbols
 +++ new.nodeModulesImportAttributesTypeModeDeclarationEmit(module=nodenext).symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >RequireInterface : Symbol(RequireInterface, Decl(require.d.ts, 0, 0))
  
      & import("pkg", { with: {"resolution-mode": "import"} }).ImportInterface;

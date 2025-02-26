@@ -1,6 +1,6 @@
 --- old.tsxStatelessFunctionComponentWithDefaultTypeParameter2.symbols
 +++ new.tsxStatelessFunctionComponentWithDefaultTypeParameter2.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >MyComponentProp : Symbol(MyComponentProp, Decl(file.tsx, 0, 31))
  
      values: string;

@@ -1,6 +1,6 @@
 --- old.memberVariableDeclarations1.symbols
 +++ new.memberVariableDeclarations1.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >Employee : Symbol(Employee, Decl(memberVariableDeclarations1.ts, 0, 0))
  
      public name: string;

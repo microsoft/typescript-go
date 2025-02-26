@@ -1,6 +1,6 @@
 --- old.controlFlowPropertyDeclarations.symbols
 +++ new.controlFlowPropertyDeclarations.symbols
-@@= skipped -27, +27 lines =@@
+@@= skipped -26, +26 lines =@@
  >mapFrom : Symbol(mapFrom, Decl(controlFlowPropertyDeclarations.ts, 13, 5))
  >HTMLDOMPropertyConfig : Symbol(HTMLDOMPropertyConfig, Decl(controlFlowPropertyDeclarations.ts, 4, 3))
  >propname : Symbol(propname, Decl(controlFlowPropertyDeclarations.ts, 8, 8))

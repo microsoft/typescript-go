@@ -1,6 +1,6 @@
 --- old.arrayFromAsync.symbols
 +++ new.arrayFromAsync.symbols
-@@= skipped -27, +27 lines =@@
+@@= skipped -26, +26 lines =@@
  >i : Symbol(i, Decl(arrayFromAsync.ts, 7, 12))
  
          yield Promise.resolve(i * 2);

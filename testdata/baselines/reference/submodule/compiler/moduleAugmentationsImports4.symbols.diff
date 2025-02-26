@@ -1,6 +1,6 @@
 --- old.moduleAugmentationsImports4.symbols
 +++ new.moduleAugmentationsImports4.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  
  let b = a.getB().x.toFixed();
  >b : Symbol(b, Decl(main.ts, 7, 3))

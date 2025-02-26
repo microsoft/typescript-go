@@ -1,6 +1,6 @@
 --- old.es6ClassTest8.symbols
 +++ new.es6ClassTest8.symbols
-@@= skipped -30, +30 lines =@@
+@@= skipped -29, +29 lines =@@
  >Vector : Symbol(Vector, Decl(es6ClassTest8.ts, 10, 1))
  
      static norm(v:Vector):Vector {return null;}

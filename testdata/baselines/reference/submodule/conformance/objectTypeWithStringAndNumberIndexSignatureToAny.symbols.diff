@@ -1,6 +1,6 @@
 --- old.objectTypeWithStringAndNumberIndexSignatureToAny.symbols
 +++ new.objectTypeWithStringAndNumberIndexSignatureToAny.symbols
-@@= skipped -51, +51 lines =@@
+@@= skipped -50, +50 lines =@@
  >Obj : Symbol(Obj, Decl(objectTypeWithStringAndNumberIndexSignatureToAny.ts, 28, 1))
  
      hello: string;

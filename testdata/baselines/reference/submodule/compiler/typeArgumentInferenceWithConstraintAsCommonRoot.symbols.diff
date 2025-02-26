@@ -1,6 +1,6 @@
 --- old.typeArgumentInferenceWithConstraintAsCommonRoot.symbols
 +++ new.typeArgumentInferenceWithConstraintAsCommonRoot.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === typeArgumentInferenceWithConstraintAsCommonRoot.ts ===
  interface Animal { x }
  >Animal : Symbol(Animal, Decl(typeArgumentInferenceWithConstraintAsCommonRoot.ts, 0, 0))

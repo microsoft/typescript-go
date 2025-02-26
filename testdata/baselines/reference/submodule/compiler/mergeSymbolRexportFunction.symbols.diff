@@ -1,6 +1,6 @@
 --- old.mergeSymbolRexportFunction.symbols
 +++ new.mergeSymbolRexportFunction.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  Row();
  >Row : Symbol(Row, Decl(main.ts, 0, 8))
  

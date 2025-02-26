@@ -1,6 +1,6 @@
 --- old.extendedInterfacesWithDuplicateTypeParameters.symbols
 +++ new.extendedInterfacesWithDuplicateTypeParameters.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >A : Symbol(A, Decl(extendedInterfacesWithDuplicateTypeParameters.ts, 0, 38), Decl(extendedInterfacesWithDuplicateTypeParameters.ts, 0, 40))
  
  	bar(): void;

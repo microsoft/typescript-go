@@ -1,6 +1,6 @@
 --- old.classAttributeInferenceTemplate.symbols
 +++ new.classAttributeInferenceTemplate.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >MyClass : Symbol(MyClass, Decl(classAttributeInferenceTemplate.ts, 0, 0))
  
      property;

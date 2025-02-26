@@ -1,6 +1,6 @@
 --- old.multipleInferenceContexts.symbols
 +++ new.multipleInferenceContexts.symbols
-@@= skipped -19, +19 lines =@@
+@@= skipped -18, +18 lines =@@
  >Data : Symbol(Data, Decl(multipleInferenceContexts.ts, 4, 37))
  
      data: Data;

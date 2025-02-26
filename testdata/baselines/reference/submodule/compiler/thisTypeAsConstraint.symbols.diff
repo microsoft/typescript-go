@@ -1,6 +1,6 @@
 --- old.thisTypeAsConstraint.symbols
 +++ new.thisTypeAsConstraint.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(thisTypeAsConstraint.ts, 0, 0))
  
    public m<T extends this>() {

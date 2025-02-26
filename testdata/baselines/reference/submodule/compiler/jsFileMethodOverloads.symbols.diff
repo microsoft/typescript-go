@@ -1,6 +1,6 @@
 --- old.jsFileMethodOverloads.symbols
 +++ new.jsFileMethodOverloads.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  >value : Symbol(value, Decl(jsFileMethodOverloads.js, 7, 14))
  
      this.value = value;

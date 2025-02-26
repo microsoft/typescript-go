@@ -1,6 +1,6 @@
 --- old.useBeforeDeclaration_propertyAssignment.symbols
 +++ new.useBeforeDeclaration_propertyAssignment.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(useBeforeDeclaration_propertyAssignment.ts, 0, 0))
  
      public a =  { b: this.b, ...this.c, [this.b]: `${this.c}`};

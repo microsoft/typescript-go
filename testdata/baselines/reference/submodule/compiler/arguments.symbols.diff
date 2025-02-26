@@ -1,6 +1,6 @@
 --- old.arguments.symbols
 +++ new.arguments.symbols
-@@= skipped -18, +18 lines =@@
+@@= skipped -17, +17 lines =@@
  >I : Symbol(I, Decl(arguments.ts, 5, 20))
  
      method(args: typeof arguments): void;

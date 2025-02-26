@@ -1,6 +1,6 @@
 --- old.tsxElementResolution17.symbols
 +++ new.tsxElementResolution17.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >s2 : Symbol(s2, Decl(consumer.tsx, 2, 33))
  
  <s1.MyElement />;

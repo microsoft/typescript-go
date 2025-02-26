@@ -1,6 +1,6 @@
 --- old.bitwiseNotOperatorWithNumberType.symbols
 +++ new.bitwiseNotOperatorWithNumberType.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  >A : Symbol(A, Decl(bitwiseNotOperatorWithNumberType.ts, 4, 36))
  
      public a: number;

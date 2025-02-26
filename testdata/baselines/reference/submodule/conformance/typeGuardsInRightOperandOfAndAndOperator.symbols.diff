@@ -1,6 +1,6 @@
 --- old.typeGuardsInRightOperandOfAndAndOperator.symbols
 +++ new.typeGuardsInRightOperandOfAndAndOperator.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  
      return typeof x === "string" && x.length === 10; // string
  >x : Symbol(x, Decl(typeGuardsInRightOperandOfAndAndOperator.ts, 2, 13))

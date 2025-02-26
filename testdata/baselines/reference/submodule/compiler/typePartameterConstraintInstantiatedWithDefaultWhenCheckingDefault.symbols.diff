@@ -1,6 +1,6 @@
 --- old.typePartameterConstraintInstantiatedWithDefaultWhenCheckingDefault.symbols
 +++ new.typePartameterConstraintInstantiatedWithDefaultWhenCheckingDefault.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >V : Symbol(V, Decl(typePartameterConstraintInstantiatedWithDefaultWhenCheckingDefault.ts, 1, 21))
  
      set(value: V): T;

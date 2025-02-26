@@ -1,6 +1,6 @@
 --- old.conditionalOperatorConditoinIsStringType.symbols
 +++ new.conditionalOperatorConditoinIsStringType.symbols
-@@= skipped -106, +106 lines =@@
+@@= skipped -105, +105 lines =@@
  >exprAny2 : Symbol(exprAny2, Decl(conditionalOperatorConditoinIsStringType.ts, 9, 3))
  
  condString.toUpperCase ? exprBoolean1 : exprBoolean2;

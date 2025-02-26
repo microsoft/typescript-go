@@ -1,6 +1,6 @@
 --- old.inlineSources2.symbols
 +++ new.inlineSources2.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >a : Symbol(a, Decl(a.ts, 0, 3))
  
  console.log(a);

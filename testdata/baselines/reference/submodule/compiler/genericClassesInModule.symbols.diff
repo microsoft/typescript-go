@@ -1,6 +1,6 @@
 --- old.genericClassesInModule.symbols
 +++ new.genericClassesInModule.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  
  var a = new Foo.B<Foo.A>();
  >a : Symbol(a, Decl(genericClassesInModule.ts, 7, 3))

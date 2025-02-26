@@ -1,6 +1,6 @@
 --- old.decoratorOnClassMethod13.symbols
 +++ new.decoratorOnClassMethod13.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >target : Symbol(target, Decl(decoratorOnClassMethod13.ts, 0, 24))
  >propertyKey : Symbol(propertyKey, Decl(decoratorOnClassMethod13.ts, 0, 36))
  >descriptor : Symbol(descriptor, Decl(decoratorOnClassMethod13.ts, 0, 57))

@@ -1,6 +1,6 @@
 --- old.es6ClassTest2.symbols
 +++ new.es6ClassTest2.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >BasicMonster : Symbol(BasicMonster, Decl(es6ClassTest2.ts, 0, 0))
  
      constructor(public name: string, public health: number) {

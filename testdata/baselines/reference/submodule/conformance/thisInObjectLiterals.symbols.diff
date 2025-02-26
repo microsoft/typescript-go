@@ -1,6 +1,6 @@
 --- old.thisInObjectLiterals.symbols
 +++ new.thisInObjectLiterals.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >MyClass : Symbol(MyClass, Decl(thisInObjectLiterals.ts, 0, 0))
  
      t: number;

@@ -1,6 +1,6 @@
 --- old.importUsedInExtendsList1.symbols
 +++ new.importUsedInExtendsList1.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  
  class Sub extends foo.Super { }
  >Sub : Symbol(Sub, Decl(importUsedInExtendsList1_1.ts, 1, 59))

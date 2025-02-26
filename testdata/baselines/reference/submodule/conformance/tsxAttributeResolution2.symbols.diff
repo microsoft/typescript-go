@@ -1,6 +1,6 @@
 --- old.tsxAttributeResolution2.symbols
 +++ new.tsxAttributeResolution2.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >IntrinsicElements : Symbol(IntrinsicElements, Decl(file.tsx, 1, 22))
  
  		test1: Attribs1;

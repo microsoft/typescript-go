@@ -1,6 +1,6 @@
 --- old.errorForUsingPropertyOfTypeAsType02.symbols
 +++ new.errorForUsingPropertyOfTypeAsType02.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
          let a: T.abc = x.abc;
  >a : Symbol(a, Decl(errorForUsingPropertyOfTypeAsType02.ts, 2, 11))
  >T : Symbol(T)

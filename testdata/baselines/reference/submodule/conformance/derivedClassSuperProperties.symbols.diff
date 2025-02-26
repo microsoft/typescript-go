@@ -1,6 +1,6 @@
 --- old.derivedClassSuperProperties.symbols
 +++ new.derivedClassSuperProperties.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >a : Symbol(a, Decl(derivedClassSuperProperties.ts, 3, 16))
  
      receivesAnything(param?) { }

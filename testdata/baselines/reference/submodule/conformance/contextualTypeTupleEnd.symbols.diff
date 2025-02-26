@@ -1,6 +1,6 @@
 --- old.contextualTypeTupleEnd.symbols
 +++ new.contextualTypeTupleEnd.symbols
-@@= skipped -118, +118 lines =@@
+@@= skipped -117, +117 lines =@@
  >x : Symbol(x, Decl(contextualTypeTupleEnd.ts, 27, 106))
  
      console.log(selectors);

@@ -1,6 +1,6 @@
 --- old.arrayFrom.symbols
 +++ new.arrayFrom.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >A : Symbol(A, Decl(arrayFrom.ts, 0, 0))
  
    a: string;

@@ -1,6 +1,6 @@
 --- old.jsxClassAttributeResolution.symbols
 +++ new.jsxClassAttributeResolution.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  >T : Symbol(T, Decl(index.d.ts, 0, 40))
  
      ref: T

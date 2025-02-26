@@ -1,6 +1,6 @@
 --- old.superCallBeforeThisAccessing3.symbols
 +++ new.superCallBeforeThisAccessing3.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >Base : Symbol(Base, Decl(superCallBeforeThisAccessing3.ts, 0, 0))
  
      private _t;

@@ -1,6 +1,6 @@
 --- old.noImplicitAnyStringIndexerOnObject.symbols
 +++ new.noImplicitAnyStringIndexerOnObject.symbols
-@@= skipped -216, +216 lines =@@
+@@= skipped -215, +215 lines =@@
  
  enum NumEnum { a, b }
  >NumEnum : Symbol(NumEnum, Decl(noImplicitAnyStringIndexerOnObject.ts, 71, 7))

@@ -1,6 +1,6 @@
 --- old.unionTypeReadonly.symbols
 +++ new.unionTypeReadonly.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Base : Symbol(Base, Decl(unionTypeReadonly.ts, 0, 0))
  
      readonly value: number;

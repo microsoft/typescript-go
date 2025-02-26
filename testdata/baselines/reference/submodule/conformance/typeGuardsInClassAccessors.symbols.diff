@@ -1,6 +1,6 @@
 --- old.typeGuardsInClassAccessors.symbols
 +++ new.typeGuardsInClassAccessors.symbols
-@@= skipped -19, +19 lines =@@
+@@= skipped -18, +18 lines =@@
  
      // Inside public accessor getter
      get p1() {

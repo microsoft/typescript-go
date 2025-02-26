@@ -1,6 +1,6 @@
 --- old.exportAssignmentGenericType.symbols
 +++ new.exportAssignmentGenericType.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  
  var y:number = x.test;
  >y : Symbol(y, Decl(foo_1.ts, 2, 3))

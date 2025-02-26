@@ -1,6 +1,6 @@
 --- old.discriminateWithOptionalProperty3(exactoptionalpropertytypes=false).symbols
 +++ new.discriminateWithOptionalProperty3(exactoptionalpropertytypes=false).symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2022.error.d.ts, --, --))
  
    originalError: Error;

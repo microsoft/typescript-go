@@ -1,6 +1,6 @@
 --- old.mappedTypes3.symbols
 +++ new.mappedTypes3.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >P : Symbol(P, Decl(mappedTypes3.ts, 0, 10))
  
      value: P;

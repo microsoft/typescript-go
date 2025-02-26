@@ -1,6 +1,6 @@
 --- old.contextualTypeCaching.symbols
 +++ new.contextualTypeCaching.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >T : Symbol(T, Decl(contextualTypeCaching.ts, 2, 23))
  
      callback: (response: T) => void;

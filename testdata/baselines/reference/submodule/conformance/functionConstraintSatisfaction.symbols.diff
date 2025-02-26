@@ -1,6 +1,6 @@
 --- old.functionConstraintSatisfaction.symbols
 +++ new.functionConstraintSatisfaction.symbols
-@@= skipped -25, +25 lines =@@
+@@= skipped -24, +24 lines =@@
  >C : Symbol(C, Decl(functionConstraintSatisfaction.ts, 7, 9))
  
      foo: string;

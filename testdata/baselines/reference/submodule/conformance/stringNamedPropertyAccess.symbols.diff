@@ -1,6 +1,6 @@
 --- old.stringNamedPropertyAccess.symbols
 +++ new.stringNamedPropertyAccess.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(stringNamedPropertyAccess.ts, 0, 0))
  
      "a b": number;

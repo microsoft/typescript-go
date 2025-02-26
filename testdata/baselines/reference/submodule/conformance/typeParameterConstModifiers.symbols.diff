@@ -1,6 +1,6 @@
 --- old.typeParameterConstModifiers.symbols
 +++ new.typeParameterConstModifiers.symbols
-@@= skipped -147, +147 lines =@@
+@@= skipped -146, +146 lines =@@
  >T : Symbol(T, Decl(typeParameterConstModifiers.ts, 35, 9))
  
      foo<const U>(x: U) { return x; }

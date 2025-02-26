@@ -1,6 +1,6 @@
 --- old.iterableTReturnTNext(strictbuiltiniteratorreturn=true).symbols
 +++ new.iterableTReturnTNext(strictbuiltiniteratorreturn=true).symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  const r1: number = map.values().next().value; // error when strictBuiltinIteratorReturn is true as result is potentially `{ done: true, value: undefined }`
  >r1 : Symbol(r1, Decl(iterableTReturnTNext.ts, 6, 5))
  >map.values().next().value : Symbol(value, Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --))

@@ -1,6 +1,6 @@
 --- old.classStaticBlock27.symbols
 +++ new.classStaticBlock27.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >Foo : Symbol(Foo, Decl(classStaticBlock27.ts, 2, 4))
  
      static prop = 1

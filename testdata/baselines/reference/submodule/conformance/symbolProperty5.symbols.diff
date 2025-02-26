@@ -1,6 +1,6 @@
 --- old.symbolProperty5.symbols
 +++ new.symbolProperty5.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
      [Symbol.iterator]: 0,
  >[Symbol.iterator] : Symbol([Symbol.iterator], Decl(symbolProperty5.ts, 0, 9))

@@ -1,6 +1,6 @@
 --- old.privateNameFieldAssignment.symbols
 +++ new.privateNameFieldAssignment.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(privateNameFieldAssignment.ts, 0, 0))
  
      #field = 0;

@@ -1,6 +1,6 @@
 --- old.commentsOverloads.symbols
 +++ new.commentsOverloads.symbols
-@@= skipped -99, +99 lines =@@
+@@= skipped -98, +98 lines =@@
  
      /** foo 1*/
      foo(a: number): number;

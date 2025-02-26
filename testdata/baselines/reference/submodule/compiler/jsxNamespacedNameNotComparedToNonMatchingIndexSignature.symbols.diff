@@ -1,6 +1,6 @@
 --- old.jsxNamespacedNameNotComparedToNonMatchingIndexSignature.symbols
 +++ new.jsxNamespacedNameNotComparedToNonMatchingIndexSignature.symbols
-@@= skipped -4, +4 lines =@@
+@@= skipped -3, +3 lines =@@
  /// <reference path="react16.d.ts" />
  
  declare module "react" {

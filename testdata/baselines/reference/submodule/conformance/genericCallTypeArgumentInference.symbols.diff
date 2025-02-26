@@ -1,6 +1,6 @@
 --- old.genericCallTypeArgumentInference.symbols
 +++ new.genericCallTypeArgumentInference.symbols
-@@= skipped -59, +59 lines =@@
+@@= skipped -58, +58 lines =@@
  >U : Symbol(U, Decl(genericCallTypeArgumentInference.ts, 20, 10))
  
      constructor(public t: T, public u: U) {

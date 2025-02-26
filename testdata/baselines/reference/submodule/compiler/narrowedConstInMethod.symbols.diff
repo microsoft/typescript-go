@@ -1,6 +1,6 @@
 --- old.narrowedConstInMethod.symbols
 +++ new.narrowedConstInMethod.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
          return {
              bar() { return x.length; }  // ok
  >bar : Symbol(bar, Decl(narrowedConstInMethod.ts, 4, 16))

@@ -1,6 +1,6 @@
 --- old.moduleAugmentationsImports2.symbols
 +++ new.moduleAugmentationsImports2.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  === b.ts ===
  export class B {x: number;}
  >B : Symbol(B, Decl(b.ts, 0, 0))

@@ -1,6 +1,6 @@
 --- old.narrowingInCaseClauseAfterCaseClauseWithReturn.symbols
 +++ new.narrowingInCaseClauseAfterCaseClauseWithReturn.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  
    switch (true) {
      case arg.toUpperCase() === "A":

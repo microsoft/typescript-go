@@ -1,6 +1,6 @@
 --- old.contextualTypeAppliedToVarArgs.symbols
 +++ new.contextualTypeAppliedToVarArgs.symbols
-@@= skipped -17, +17 lines =@@
+@@= skipped -16, +16 lines =@@
  
  
      Bar() {

@@ -1,6 +1,6 @@
 --- old.inferringClassMembersFromAssignments2.symbols
 +++ new.inferringClassMembersFromAssignments2.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === a.js ===
  OOOrder.prototype.m = function () {

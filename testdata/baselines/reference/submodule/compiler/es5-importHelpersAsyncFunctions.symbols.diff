@@ -1,6 +1,6 @@
 --- old.es5-importHelpersAsyncFunctions.symbols
 +++ new.es5-importHelpersAsyncFunctions.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  
  === tslib.d.ts ===
  export declare function __extends(d: Function, b: Function): void;

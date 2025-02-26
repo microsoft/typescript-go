@@ -1,6 +1,6 @@
 --- old.capturedParametersInInitializers2.symbols
 +++ new.capturedParametersInInitializers2.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >y : Symbol(y, Decl(capturedParametersInInitializers2.ts, 0, 13))
  
          static c = x;

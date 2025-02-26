@@ -1,6 +1,6 @@
 --- old.incrementOperatorWithNumberTypeInvalidOperations.symbols
 +++ new.incrementOperatorWithNumberTypeInvalidOperations.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  >A : Symbol(A, Decl(incrementOperatorWithNumberTypeInvalidOperations.ts, 4, 36))
  
      public a: number;

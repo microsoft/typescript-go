@@ -1,6 +1,6 @@
 --- old.inferrenceInfiniteLoopWithSubtyping.symbols
 +++ new.inferrenceInfiniteLoopWithSubtyping.symbols
-@@= skipped -25, +25 lines =@@
+@@= skipped -24, +24 lines =@@
  >EnumTypeComposer : Symbol(EnumTypeComposer, Decl(graphql-compose.d.ts, 3, 100))
  
    public setFields(fields: { [name: string]: { [key: string]: any } }): this;

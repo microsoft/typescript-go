@@ -1,6 +1,6 @@
 --- old.jsdocArrayObjectPromiseNoImplicitAny.symbols
 +++ new.jsdocArrayObjectPromiseNoImplicitAny.symbols
-@@= skipped -24, +24 lines =@@
+@@= skipped -23, +23 lines =@@
  /** @type {Promise} */
  var notAnyPromise = Promise.resolve(5);
  >notAnyPromise : Symbol(notAnyPromise, Decl(jsdocArrayObjectPromiseNoImplicitAny.js, 15, 3))

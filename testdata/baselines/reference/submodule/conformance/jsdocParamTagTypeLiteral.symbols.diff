@@ -1,6 +1,6 @@
 --- old.jsdocParamTagTypeLiteral.symbols
 +++ new.jsdocParamTagTypeLiteral.symbols
-@@= skipped -27, +27 lines =@@
+@@= skipped -26, +26 lines =@@
  >opts1 : Symbol(opts1, Decl(0.js, 16, 14))
  
      opts1.x;

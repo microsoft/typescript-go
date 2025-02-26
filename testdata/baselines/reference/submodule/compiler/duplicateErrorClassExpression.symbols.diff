@@ -1,6 +1,6 @@
 --- old.duplicateErrorClassExpression.symbols
 +++ new.duplicateErrorClassExpression.symbols
-@@= skipped -19, +19 lines =@@
+@@= skipped -18, +18 lines =@@
  >ABase : Symbol(ABase, Decl(duplicateErrorClassExpression.ts, 5, 1))
  
      a: string;

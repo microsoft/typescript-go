@@ -1,6 +1,6 @@
 --- old.typeFromJSInitializer4.symbols
 +++ new.typeFromJSInitializer4.symbols
-@@= skipped -46, +46 lines =@@
+@@= skipped -45, +45 lines =@@
  
      // l should be any[]
      l.push(1)

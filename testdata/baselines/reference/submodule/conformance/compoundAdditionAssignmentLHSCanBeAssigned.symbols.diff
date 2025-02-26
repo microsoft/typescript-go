@@ -1,6 +1,6 @@
 --- old.compoundAdditionAssignmentLHSCanBeAssigned.symbols
 +++ new.compoundAdditionAssignmentLHSCanBeAssigned.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === compoundAdditionAssignmentLHSCanBeAssigned.ts ===
  enum E { a, b }
  >E : Symbol(E, Decl(compoundAdditionAssignmentLHSCanBeAssigned.ts, 0, 0))

@@ -1,6 +1,6 @@
 --- old.typeParameterConstModifiersWithIntersection.symbols
 +++ new.typeParameterConstModifiersWithIntersection.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >type : Symbol(type, Decl(typeParameterConstModifiersWithIntersection.ts, 2, 29))
  
    useIt: T1;

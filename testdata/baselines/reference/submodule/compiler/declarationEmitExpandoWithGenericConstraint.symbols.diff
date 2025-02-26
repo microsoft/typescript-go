@@ -1,6 +1,6 @@
 --- old.declarationEmitExpandoWithGenericConstraint.symbols
 +++ new.declarationEmitExpandoWithGenericConstraint.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === declarationEmitExpandoWithGenericConstraint.ts ===
  export interface Point {

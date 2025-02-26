@@ -1,6 +1,6 @@
 --- old.privacyTypeParameterOfFunction.symbols
 +++ new.privacyTypeParameterOfFunction.symbols
-@@= skipped -26, +26 lines =@@
+@@= skipped -25, +25 lines =@@
  
      // TypeParameter_0_of_method_from_exported_interface_has_or_is_using_private_type_1
      myMethod<T extends privateClass>(): privateClass;

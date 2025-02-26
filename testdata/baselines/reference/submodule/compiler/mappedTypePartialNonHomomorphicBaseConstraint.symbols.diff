@@ -1,6 +1,6 @@
 --- old.mappedTypePartialNonHomomorphicBaseConstraint.symbols
 +++ new.mappedTypePartialNonHomomorphicBaseConstraint.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >D : Symbol(D, Decl(mappedTypePartialNonHomomorphicBaseConstraint.ts, 2, 12))
  
    getErrors(): Errors<D> {

@@ -1,6 +1,6 @@
 --- old.contextuallyTypeGeneratorReturnTypeFromUnion.symbols
 +++ new.contextuallyTypeGeneratorReturnTypeFromUnion.symbols
-@@= skipped -28, +28 lines =@@
+@@= skipped -27, +27 lines =@@
  
      const next = yield await Promise.resolve('')
  >next : Symbol(next, Decl(contextuallyTypeGeneratorReturnTypeFromUnion.ts, 12, 9))

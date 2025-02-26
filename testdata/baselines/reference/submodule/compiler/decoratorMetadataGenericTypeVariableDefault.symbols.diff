@@ -1,6 +1,6 @@
 --- old.decoratorMetadataGenericTypeVariableDefault.symbols
 +++ new.decoratorMetadataGenericTypeVariableDefault.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  
    @Decorate
    member: TypeVariable;

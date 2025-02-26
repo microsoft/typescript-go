@@ -1,6 +1,6 @@
 --- old.enumInitializersWithExponents.symbols
 +++ new.enumInitializersWithExponents.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >E : Symbol(E, Decl(enumInitializersWithExponents.ts, 0, 0))
  
      a = 1e3, // ok

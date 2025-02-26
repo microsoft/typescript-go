@@ -1,6 +1,6 @@
 --- old.augmentExportEquals6_1.symbols
 +++ new.augmentExportEquals6_1.symbols
-@@= skipped -25, +25 lines =@@
+@@= skipped -24, +24 lines =@@
  
  // OK - './file1' is a namespace
  declare module "file1" {

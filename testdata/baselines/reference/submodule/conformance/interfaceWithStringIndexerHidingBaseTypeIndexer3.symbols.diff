@@ -1,6 +1,6 @@
 --- old.interfaceWithStringIndexerHidingBaseTypeIndexer3.symbols
 +++ new.interfaceWithStringIndexerHidingBaseTypeIndexer3.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >a : Symbol(a, Decl(interfaceWithStringIndexerHidingBaseTypeIndexer3.ts, 1, 18))
  
      1: {

@@ -1,6 +1,6 @@
 --- old.declarationEmitLateBoundAssignments.symbols
 +++ new.declarationEmitLateBoundAssignments.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === declarationEmitLateBoundAssignments.ts ===
  export function foo() {}

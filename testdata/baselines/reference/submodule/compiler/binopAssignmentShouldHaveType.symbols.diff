@@ -1,6 +1,6 @@
 --- old.binopAssignmentShouldHaveType.symbols
 +++ new.binopAssignmentShouldHaveType.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >Bug : Symbol(Bug, Decl(binopAssignmentShouldHaveType.ts, 2, 13))
  
    getName():string {

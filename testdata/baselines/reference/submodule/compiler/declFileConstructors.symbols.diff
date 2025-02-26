@@ -1,6 +1,6 @@
 --- old.declFileConstructors.symbols
 +++ new.declFileConstructors.symbols
-@@= skipped -34, +34 lines =@@
+@@= skipped -33, +33 lines =@@
  
          return a + rests.join("");
  >a : Symbol(a, Decl(declFileConstructors_0.ts, 15, 16))

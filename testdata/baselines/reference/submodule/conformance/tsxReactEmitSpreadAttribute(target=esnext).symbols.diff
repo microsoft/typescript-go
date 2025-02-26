@@ -1,6 +1,6 @@
 --- old.tsxReactEmitSpreadAttribute(target=esnext).symbols
 +++ new.tsxReactEmitSpreadAttribute(target=esnext).symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >a : Symbol(a, Decl(test.tsx, 2, 19))
  
      return <div className={"T1"} { ...a }>T1</div>;

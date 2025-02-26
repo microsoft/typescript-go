@@ -1,6 +1,6 @@
 --- old.assignmentCompatWithConstructSignaturesWithOptionalParameters.symbols
 +++ new.assignmentCompatWithConstructSignaturesWithOptionalParameters.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >Base : Symbol(Base, Decl(assignmentCompatWithConstructSignaturesWithOptionalParameters.ts, 0, 0))
  
      a: new () => number;

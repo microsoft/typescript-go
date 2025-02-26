@@ -1,6 +1,6 @@
 --- old.reexportDefaultIsCallable.symbols
 +++ new.reexportDefaultIsCallable.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === schema.d.ts ===
  export default class Schema {}

@@ -1,6 +1,6 @@
 --- old.getterErrorMessageNotDuplicated.symbols
 +++ new.getterErrorMessageNotDuplicated.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Thing : Symbol(Thing, Decl(getterErrorMessageNotDuplicated.ts, 0, 0))
  
      get style(): Foo;

@@ -1,6 +1,6 @@
 --- old.enumLiteralsSubtypeReduction.symbols
 +++ new.enumLiteralsSubtypeReduction.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >E : Symbol(E, Decl(enumLiteralsSubtypeReduction.ts, 0, 0))
  
      E0,

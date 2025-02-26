@@ -1,6 +1,6 @@
 --- old.exportAssignmentTopLevelEnumdule.symbols
 +++ new.exportAssignmentTopLevelEnumdule.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  
  if(color === foo.green){
  >color : Symbol(color, Decl(foo_1.ts, 1, 3))

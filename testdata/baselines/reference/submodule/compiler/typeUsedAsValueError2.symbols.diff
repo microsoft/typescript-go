@@ -1,6 +1,6 @@
 --- old.typeUsedAsValueError2.symbols
 +++ new.typeUsedAsValueError2.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >HelloNamespace : Symbol(HelloNamespace, Decl(world.ts, 0, 50))
  
  HelloInterface.world;

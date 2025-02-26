@@ -1,6 +1,6 @@
 --- old.typeParametersAvailableInNestedScope.symbols
 +++ new.typeParametersAvailableInNestedScope.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(typeParametersAvailableInNestedScope.ts, 0, 8))
  
      data: T;

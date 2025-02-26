@@ -1,6 +1,6 @@
 --- old.constEnumNoPreserveDeclarationReexport.symbols
 +++ new.constEnumNoPreserveDeclarationReexport.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >MyConstEnum : Symbol(MyConstEnum, Decl(ConstEnum.d.ts, 0, 0))
  
      Foo,

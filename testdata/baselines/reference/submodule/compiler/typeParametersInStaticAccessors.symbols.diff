@@ -1,6 +1,6 @@
 --- old.typeParametersInStaticAccessors.symbols
 +++ new.typeParametersInStaticAccessors.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(typeParametersInStaticAccessors.ts, 0, 10))
  
      static get Foo(): () => T { return null; }

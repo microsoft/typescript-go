@@ -1,6 +1,6 @@
 --- old.importCallExpressionInUMD3.symbols
 +++ new.importCallExpressionInUMD3.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >B : Symbol(B, Decl(0.ts, 0, 0))
  
      print() { return "I am B"}

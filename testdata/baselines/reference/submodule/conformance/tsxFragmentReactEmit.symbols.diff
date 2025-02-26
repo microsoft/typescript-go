@@ -1,6 +1,6 @@
 --- old.tsxFragmentReactEmit.symbols
 +++ new.tsxFragmentReactEmit.symbols
-@@= skipped -22, +22 lines =@@
+@@= skipped -21, +21 lines =@@
  < /*starting wrap*/ ></ /*ending wrap*/>; // comments in the tags
  <>hi</>; // text inside
  <><span>hi</span><div>bye</div></>; // children

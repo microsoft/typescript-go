@@ -1,6 +1,6 @@
 --- old.usePromiseFinally.symbols
 +++ new.usePromiseFinally.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === usePromiseFinally.ts ===
  let promise1 = new Promise(function(resolve, reject) {})
  >promise1 : Symbol(promise1, Decl(usePromiseFinally.ts, 0, 3))

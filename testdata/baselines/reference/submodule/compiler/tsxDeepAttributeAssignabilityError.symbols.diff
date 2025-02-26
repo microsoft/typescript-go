@@ -1,6 +1,6 @@
 --- old.tsxDeepAttributeAssignabilityError.symbols
 +++ new.tsxDeepAttributeAssignabilityError.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >MyProps : Symbol(MyProps, Decl(my-component.tsx, 0, 30))
  
      x: string;

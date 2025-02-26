@@ -1,6 +1,6 @@
 --- old.dottedSymbolResolution1.symbols
 +++ new.dottedSymbolResolution1.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >JQuery : Symbol(JQuery, Decl(dottedSymbolResolution1.ts, 0, 0))
  
      find(selector: string): JQuery;

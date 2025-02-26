@@ -1,6 +1,6 @@
 --- old.noCrashOnThisTypeUsage.symbols
 +++ new.noCrashOnThisTypeUsage.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >IListenable : Symbol(IListenable, Decl(noCrashOnThisTypeUsage.ts, 0, 0))
  
      changeListeners: Function[] | null

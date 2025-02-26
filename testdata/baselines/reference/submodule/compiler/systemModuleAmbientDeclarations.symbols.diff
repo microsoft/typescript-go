@@ -1,6 +1,6 @@
 --- old.systemModuleAmbientDeclarations.symbols
 +++ new.systemModuleAmbientDeclarations.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  
  declare enum E {X = 1};
  >E : Symbol(E, Decl(file1.ts, 2, 18))

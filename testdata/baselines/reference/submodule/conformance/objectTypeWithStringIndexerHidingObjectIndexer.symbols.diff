@@ -1,6 +1,6 @@
 --- old.objectTypeWithStringIndexerHidingObjectIndexer.symbols
 +++ new.objectTypeWithStringIndexerHidingObjectIndexer.symbols
-@@= skipped -22, +22 lines =@@
+@@= skipped -21, +21 lines =@@
  >C : Symbol(C, Decl(objectTypeWithStringIndexerHidingObjectIndexer.ts, 7, 14))
  
      foo: string;

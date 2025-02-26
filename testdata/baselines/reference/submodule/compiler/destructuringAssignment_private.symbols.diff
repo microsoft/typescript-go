@@ -1,6 +1,6 @@
 --- old.destructuringAssignment_private.symbols
 +++ new.destructuringAssignment_private.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(destructuringAssignment_private.ts, 0, 0))
  
      private x = 0;

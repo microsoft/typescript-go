@@ -1,6 +1,6 @@
 --- old.bestCommonTypeWithOptionalProperties.symbols
 +++ new.bestCommonTypeWithOptionalProperties.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === bestCommonTypeWithOptionalProperties.ts ===
  interface X { foo: string }
  >X : Symbol(X, Decl(bestCommonTypeWithOptionalProperties.ts, 0, 0))

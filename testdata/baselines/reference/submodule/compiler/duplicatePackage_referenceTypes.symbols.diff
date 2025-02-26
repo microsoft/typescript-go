@@ -1,6 +1,6 @@
 --- old.duplicatePackage_referenceTypes.symbols
 +++ new.duplicatePackage_referenceTypes.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  let foo: Foo = a.foo;
  >foo : Symbol(foo, Decl(index.ts, 3, 3))
  >Foo : Symbol(Foo, Decl(index.ts, 1, 8))

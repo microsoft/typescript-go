@@ -1,6 +1,6 @@
 --- old.extendedUnicodePlaneIdentifiers.symbols
 +++ new.extendedUnicodePlaneIdentifiers.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >𝑀 : Symbol(𝑀, Decl(extendedUnicodePlaneIdentifiers.ts, 1, 5))
  
  console.log(𝑀 + 𝑚); // 9

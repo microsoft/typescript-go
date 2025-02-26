@@ -1,6 +1,6 @@
 --- old.importHelpersES6.symbols
 +++ new.importHelpersES6.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >A : Symbol(A, Decl(a.ts, 0, 21))
  
      #x: number = 1;

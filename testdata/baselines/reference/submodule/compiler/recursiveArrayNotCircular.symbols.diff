@@ -1,6 +1,6 @@
 --- old.recursiveArrayNotCircular.symbols
 +++ new.recursiveArrayNotCircular.symbols
-@@= skipped -17, +17 lines =@@
+@@= skipped -16, +16 lines =@@
  >ActionType : Symbol(ActionType, Decl(recursiveArrayNotCircular.ts, 0, 75))
  
      Foo,

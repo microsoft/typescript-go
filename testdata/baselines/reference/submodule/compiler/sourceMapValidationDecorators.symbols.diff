@@ -1,6 +1,6 @@
 --- old.sourceMapValidationDecorators.symbols
 +++ new.sourceMapValidationDecorators.symbols
-@@= skipped -61, +61 lines =@@
+@@= skipped -60, +60 lines =@@
  >ParameterDecorator2 : Symbol(ParameterDecorator2, Decl(sourceMapValidationDecorators.ts, 4, 101))
  
        public greeting: string, 

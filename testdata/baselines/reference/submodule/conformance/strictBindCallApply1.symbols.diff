@@ -1,6 +1,6 @@
 --- old.strictBindCallApply1.symbols
 +++ new.strictBindCallApply1.symbols
-@@= skipped -23, +23 lines =@@
+@@= skipped -22, +22 lines =@@
  
  let f00 = foo.bind(undefined);
  >f00 : Symbol(f00, Decl(strictBindCallApply1.ts, 7, 3))

@@ -1,6 +1,6 @@
 --- old.circularlyReferentialInterfaceAccessNoCrash.symbols
 +++ new.circularlyReferentialInterfaceAccessNoCrash.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >K : Symbol(K, Decl(circularlyReferentialInterfaceAccessNoCrash.ts, 2, 15))
  
    p1: T;

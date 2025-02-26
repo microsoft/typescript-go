@@ -1,6 +1,6 @@
 --- old.inferTypeParameterConstraints.symbols
 +++ new.inferTypeParameterConstraints.symbols
-@@= skipped -58, +58 lines =@@
+@@= skipped -57, +57 lines =@@
  >V : Symbol(V, Decl(inferTypeParameterConstraints.ts, 20, 16))
  
    protected fake(): V {

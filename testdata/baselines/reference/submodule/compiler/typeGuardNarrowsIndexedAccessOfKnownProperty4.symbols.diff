@@ -1,6 +1,6 @@
 --- old.typeGuardNarrowsIndexedAccessOfKnownProperty4.symbols
 +++ new.typeGuardNarrowsIndexedAccessOfKnownProperty4.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Foo : Symbol(Foo, Decl(typeGuardNarrowsIndexedAccessOfKnownProperty4.ts, 0, 0))
  
      x: number | undefined;

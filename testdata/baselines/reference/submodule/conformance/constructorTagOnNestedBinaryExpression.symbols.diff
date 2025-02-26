@@ -1,6 +1,6 @@
 --- old.constructorTagOnNestedBinaryExpression.symbols
 +++ new.constructorTagOnNestedBinaryExpression.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >c : Symbol(c, Decl(constructorTagOnNestedBinaryExpression.js, 2, 7))
  
      console.log(this)

@@ -1,6 +1,6 @@
 --- old.constructorFunctions.symbols
 +++ new.constructorFunctions.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C1 : Symbol(C1, Decl(index.js, 0, 0))
  
      if (!(this instanceof C1)) return new C1();

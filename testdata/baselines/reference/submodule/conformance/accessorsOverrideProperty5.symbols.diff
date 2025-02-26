@@ -1,6 +1,6 @@
 --- old.accessorsOverrideProperty5.symbols
 +++ new.accessorsOverrideProperty5.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >I : Symbol(I, Decl(accessorsOverrideProperty5.ts, 0, 0))
  
      p: number

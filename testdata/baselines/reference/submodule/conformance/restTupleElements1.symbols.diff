@@ -1,6 +1,6 @@
 --- old.restTupleElements1.symbols
 +++ new.restTupleElements1.symbols
-@@= skipped -30, +30 lines =@@
+@@= skipped -29, +29 lines =@@
  
  type T09 = [...string?];  // Error
  >T09 : Symbol(T09, Decl(restTupleElements1.ts, 8, 23))

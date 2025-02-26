@@ -1,6 +1,6 @@
 --- old.generatedContextualTyping.symbols
 +++ new.generatedContextualTyping.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === generatedContextualTyping.ts ===
  class Base { private p; }
  >Base : Symbol(Base, Decl(generatedContextualTyping.ts, 0, 0))

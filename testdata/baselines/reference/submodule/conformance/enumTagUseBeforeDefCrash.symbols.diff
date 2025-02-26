@@ -1,6 +1,6 @@
 --- old.enumTagUseBeforeDefCrash.symbols
 +++ new.enumTagUseBeforeDefCrash.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
   * @enum {number}
   */
  var foo = { };

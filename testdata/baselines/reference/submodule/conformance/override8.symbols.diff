@@ -1,6 +1,6 @@
 --- old.override8.symbols
 +++ new.override8.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >B : Symbol(B, Decl(override8.ts, 0, 0))
  
      a: string

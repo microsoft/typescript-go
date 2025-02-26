@@ -1,6 +1,6 @@
 --- old.mixingApparentTypeOverrides.symbols
 +++ new.mixingApparentTypeOverrides.symbols
-@@= skipped -18, +18 lines =@@
+@@= skipped -17, +17 lines =@@
  >Base : Symbol(Base, Decl(mixingApparentTypeOverrides.ts, 1, 43))
  
      _tag: string;

@@ -1,6 +1,6 @@
 --- old.libReferenceNoLibBundle.symbols
 +++ new.libReferenceNoLibBundle.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === fakelib.ts ===
  interface Object { }

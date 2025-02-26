@@ -1,6 +1,6 @@
 --- old.typeParameterFixingWithContextSensitiveArguments.symbols
 +++ new.typeParameterFixingWithContextSensitiveArguments.symbols
-@@= skipped -21, +21 lines =@@
+@@= skipped -20, +20 lines =@@
  
  interface A { a: A; }
  >A : Symbol(A, Decl(typeParameterFixingWithContextSensitiveArguments.ts, 0, 74))

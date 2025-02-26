@@ -1,6 +1,6 @@
 --- old.propertiesAndIndexers.symbols
 +++ new.propertiesAndIndexers.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >Y : Symbol(Y, Decl(propertiesAndIndexers.ts, 0, 15))
  
      n: number;

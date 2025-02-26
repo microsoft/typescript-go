@@ -1,6 +1,6 @@
 --- old.objectLiteralErrors.symbols
 +++ new.objectLiteralErrors.symbols
-@@= skipped -34, +34 lines =@@
+@@= skipped -33, +33 lines =@@
  
  var e7 = { 'a': 0, a: 0 };
  >e7 : Symbol(e7, Decl(objectLiteralErrors.ts, 7, 3))

@@ -1,6 +1,6 @@
 --- old.genericSetterInClassTypeJsDoc.symbols
 +++ new.genericSetterInClassTypeJsDoc.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >Box : Symbol(Box, Decl(genericSetterInClassTypeJsDoc.js, 0, 0))
  
      #value;

@@ -1,6 +1,6 @@
 --- old.numericEnumMappedType.symbols
 +++ new.numericEnumMappedType.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  
  enum E1 { ONE, TWO, THREE }
  >E1 : Symbol(E1, Decl(numericEnumMappedType.ts, 0, 0))

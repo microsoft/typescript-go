@@ -1,6 +1,6 @@
 --- old.ifDoWhileStatements.symbols
 +++ new.ifDoWhileStatements.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >I : Symbol(I, Decl(ifDoWhileStatements.ts, 0, 0))
  
      id: number;

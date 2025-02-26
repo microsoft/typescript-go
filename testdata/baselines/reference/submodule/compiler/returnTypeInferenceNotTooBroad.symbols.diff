@@ -1,6 +1,6 @@
 --- old.returnTypeInferenceNotTooBroad.symbols
 +++ new.returnTypeInferenceNotTooBroad.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  >T : Symbol(T, Decl(returnTypeInferenceNotTooBroad.ts, 1, 15))
  
      low?: number;

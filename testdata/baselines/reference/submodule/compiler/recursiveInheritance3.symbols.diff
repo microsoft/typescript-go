@@ -1,6 +1,6 @@
 --- old.recursiveInheritance3.symbols
 +++ new.recursiveInheritance3.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >I : Symbol(I, Decl(recursiveInheritance3.ts, 3, 1))
  
      public foo(x: any) { return x; }

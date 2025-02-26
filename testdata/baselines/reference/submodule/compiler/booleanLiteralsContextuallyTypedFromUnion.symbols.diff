@@ -1,6 +1,6 @@
 --- old.booleanLiteralsContextuallyTypedFromUnion.symbols
 +++ new.booleanLiteralsContextuallyTypedFromUnion.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === booleanLiteralsContextuallyTypedFromUnion.tsx ===
  interface A { isIt: true; text: string; }
  >A : Symbol(A, Decl(booleanLiteralsContextuallyTypedFromUnion.tsx, 0, 0))

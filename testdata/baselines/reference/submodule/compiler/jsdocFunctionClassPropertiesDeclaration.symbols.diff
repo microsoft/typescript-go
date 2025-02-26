@@ -1,6 +1,6 @@
 --- old.jsdocFunctionClassPropertiesDeclaration.symbols
 +++ new.jsdocFunctionClassPropertiesDeclaration.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >y : Symbol(y, Decl(a.js, 4, 22))
  
      if (!(this instanceof Foo)) {

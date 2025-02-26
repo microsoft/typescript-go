@@ -1,6 +1,6 @@
 --- old.objectTypeWithCallSignatureHidingMembersOfExtendedFunction.symbols
 +++ new.objectTypeWithCallSignatureHidingMembersOfExtendedFunction.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(objectTypeWithCallSignatureHidingMembersOfExtendedFunction.ts, 0, 0))
  
      data: number;

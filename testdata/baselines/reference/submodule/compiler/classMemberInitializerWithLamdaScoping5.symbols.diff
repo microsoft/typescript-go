@@ -1,6 +1,6 @@
 --- old.classMemberInitializerWithLamdaScoping5.symbols
 +++ new.classMemberInitializerWithLamdaScoping5.symbols
-@@= skipped -18, +18 lines =@@
+@@= skipped -17, +17 lines =@@
      }
  
      messageHandler = (message: string) => {

@@ -1,6 +1,6 @@
 --- old.systemDefaultImportCallable.symbols
 +++ new.systemDefaultImportCallable.symbols
-@@= skipped -20, +20 lines =@@
+@@= skipped -19, +19 lines =@@
      var repeat: typeof core.String.repeat;
  >repeat : Symbol(repeat, Decl(core-js.d.ts, 6, 7))
  >core.String.repeat : Symbol(repeat, Decl(core-js.d.ts, 1, 17))

@@ -1,6 +1,6 @@
 --- old.moduleAugmentationExtendAmbientModule2.symbols
 +++ new.moduleAugmentationExtendAmbientModule2.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  
  let y = x.map(x => x + 1);
  >y : Symbol(y, Decl(main.ts, 5, 3))

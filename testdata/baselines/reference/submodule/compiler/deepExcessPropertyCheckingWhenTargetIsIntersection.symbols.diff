@@ -1,6 +1,6 @@
 --- old.deepExcessPropertyCheckingWhenTargetIsIntersection.symbols
 +++ new.deepExcessPropertyCheckingWhenTargetIsIntersection.symbols
-@@= skipped -25, +25 lines =@@
+@@= skipped -24, +24 lines =@@
  >ITestProps : Symbol(ITestProps, Decl(deepExcessPropertyCheckingWhenTargetIsIntersection.ts, 6, 1))
  
    ariaLabel?: string;

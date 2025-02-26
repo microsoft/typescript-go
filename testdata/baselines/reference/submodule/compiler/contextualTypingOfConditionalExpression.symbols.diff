@@ -1,6 +1,6 @@
 --- old.contextualTypingOfConditionalExpression.symbols
 +++ new.contextualTypingOfConditionalExpression.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >x : Symbol(x, Decl(contextualTypingOfConditionalExpression.ts, 0, 3))
  >a : Symbol(a, Decl(contextualTypingOfConditionalExpression.ts, 0, 8))
  >a : Symbol(a, Decl(contextualTypingOfConditionalExpression.ts, 0, 37))

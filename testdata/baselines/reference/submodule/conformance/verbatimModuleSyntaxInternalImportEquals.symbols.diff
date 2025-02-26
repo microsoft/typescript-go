@@ -1,6 +1,6 @@
 --- old.verbatimModuleSyntaxInternalImportEquals.symbols
 +++ new.verbatimModuleSyntaxInternalImportEquals.symbols
-@@= skipped -18, +18 lines =@@
+@@= skipped -17, +17 lines =@@
  import f2 = Foo.foo;
  >f2 : Symbol(f2, Decl(verbatimModuleSyntaxInternalImportEquals.ts, 6, 1))
  >Foo : Symbol(Foo, Decl(verbatimModuleSyntaxInternalImportEquals.ts, 1, 24))

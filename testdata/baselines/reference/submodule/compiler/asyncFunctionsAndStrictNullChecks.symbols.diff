@@ -1,6 +1,6 @@
 --- old.asyncFunctionsAndStrictNullChecks.symbols
 +++ new.asyncFunctionsAndStrictNullChecks.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >TResult : Symbol(TResult, Decl(asyncFunctionsAndStrictNullChecks.ts, 1, 23))
  
          then<U>(success?: (value: TResult) => IPromise<U>, error?: (error: any) => IPromise<U>, progress?: (progress: any) => void): IPromise<U>;

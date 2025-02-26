@@ -1,6 +1,6 @@
 --- old.returnTypeParameterWithModules.symbols
 +++ new.returnTypeParameterWithModules.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  >A : Symbol(A, Decl(returnTypeParameterWithModules.ts, 1, 27))
  
          return Array.prototype.reduce.apply(ar, e ? [f, e] : [f]);

@@ -1,6 +1,6 @@
 --- old.contextualOverloadListFromArrayUnion.symbols
 +++ new.contextualOverloadListFromArrayUnion.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
  export const yThen = y.map(item => item.length);
  >yThen : Symbol(yThen, Decl(one.ts, 1, 12))

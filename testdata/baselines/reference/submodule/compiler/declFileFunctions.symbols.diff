@@ -1,6 +1,6 @@
 --- old.declFileFunctions.symbols
 +++ new.declFileFunctions.symbols
-@@= skipped -25, +25 lines =@@
+@@= skipped -24, +24 lines =@@
  
      return a + rests.join("");
  >a : Symbol(a, Decl(declFileFunctions_0.ts, 9, 38))

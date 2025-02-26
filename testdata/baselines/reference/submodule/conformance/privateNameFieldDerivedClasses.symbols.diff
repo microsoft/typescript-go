@@ -1,6 +1,6 @@
 --- old.privateNameFieldDerivedClasses.symbols
 +++ new.privateNameFieldDerivedClasses.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Base : Symbol(Base, Decl(privateNameFieldDerivedClasses.ts, 0, 0))
  
      #prop: number = 123;

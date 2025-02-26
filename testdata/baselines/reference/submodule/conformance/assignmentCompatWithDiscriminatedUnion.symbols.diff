@@ -1,6 +1,6 @@
 --- old.assignmentCompatWithDiscriminatedUnion.symbols
 +++ new.assignmentCompatWithDiscriminatedUnion.symbols
-@@= skipped -314, +314 lines =@@
+@@= skipped -313, +313 lines =@@
  >Blue : Symbol(Blue, Decl(assignmentCompatWithDiscriminatedUnion.ts, 107, 19))
  
          color: 'blue'

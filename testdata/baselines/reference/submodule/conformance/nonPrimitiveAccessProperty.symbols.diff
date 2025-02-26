@@ -1,6 +1,6 @@
 --- old.nonPrimitiveAccessProperty.symbols
 +++ new.nonPrimitiveAccessProperty.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >a : Symbol(a, Decl(nonPrimitiveAccessProperty.ts, 0, 3))
  
  a.toString();

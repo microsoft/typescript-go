@@ -1,6 +1,6 @@
 --- old.jsxDeclarationsWithEsModuleInteropNoCrash.symbols
 +++ new.jsxDeclarationsWithEsModuleInteropNoCrash.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  
    bar: PropTypes.bool,
  >bar : Symbol(bar, Decl(jsxDeclarationsWithEsModuleInteropNoCrash.jsx, 4, 19))

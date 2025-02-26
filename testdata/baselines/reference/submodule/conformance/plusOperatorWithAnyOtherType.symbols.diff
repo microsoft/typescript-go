@@ -1,6 +1,6 @@
 --- old.plusOperatorWithAnyOtherType.symbols
 +++ new.plusOperatorWithAnyOtherType.symbols
-@@= skipped -35, +35 lines =@@
+@@= skipped -34, +34 lines =@@
  >A : Symbol(A, Decl(plusOperatorWithAnyOtherType.ts, 11, 1))
  
      public a: any;

@@ -1,6 +1,6 @@
 --- old.inferentialTypingUsingApparentType3.symbols
 +++ new.inferentialTypingUsingApparentType3.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(inferentialTypingUsingApparentType3.ts, 0, 16))
  
      clean(input: T): T

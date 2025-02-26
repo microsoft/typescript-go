@@ -1,6 +1,6 @@
 --- old.assignmentCompatWithObjectMembersAccessibility.symbols
 +++ new.assignmentCompatWithObjectMembersAccessibility.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >Base : Symbol(Base, Decl(assignmentCompatWithObjectMembersAccessibility.ts, 2, 23))
  
          public foo: string;

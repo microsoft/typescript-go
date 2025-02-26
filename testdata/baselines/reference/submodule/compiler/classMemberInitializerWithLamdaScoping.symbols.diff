@@ -1,6 +1,6 @@
 --- old.classMemberInitializerWithLamdaScoping.symbols
 +++ new.classMemberInitializerWithLamdaScoping.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >Test : Symbol(Test, Decl(classMemberInitializerWithLamdaScoping.ts, 2, 2))
  
      constructor(private field: string) {

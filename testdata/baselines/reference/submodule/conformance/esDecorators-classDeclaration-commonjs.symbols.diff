@@ -1,6 +1,6 @@
 --- old.esDecorators-classDeclaration-commonjs.symbols
 +++ new.esDecorators-classDeclaration-commonjs.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >Example : Symbol(Example, Decl(esDecorators-classDeclaration-commonjs.ts, 0, 22))
  
      static foo() {}

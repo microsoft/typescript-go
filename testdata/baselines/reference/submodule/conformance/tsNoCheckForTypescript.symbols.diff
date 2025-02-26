@@ -1,6 +1,6 @@
 --- old.tsNoCheckForTypescript.symbols
 +++ new.tsNoCheckForTypescript.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >Aleph : Symbol(Aleph, Decl(file.ts, 2, 24))
  
      q: number;

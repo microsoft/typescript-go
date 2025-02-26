@@ -1,6 +1,6 @@
 --- old.amdModuleName1.symbols
 +++ new.amdModuleName1.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(amdModuleName1.ts, 0, 0))
  
      x: number;

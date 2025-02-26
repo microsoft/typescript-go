@@ -1,6 +1,6 @@
 --- old.inOperatorWithValidOperands.symbols
 +++ new.inOperatorWithValidOperands.symbols
-@@= skipped -105, +105 lines =@@
+@@= skipped -104, +104 lines =@@
  
  interface X { x: number }
  >X : Symbol(X, Decl(inOperatorWithValidOperands.ts, 34, 1))

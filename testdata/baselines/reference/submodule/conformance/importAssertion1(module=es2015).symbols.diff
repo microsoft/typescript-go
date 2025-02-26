@@ -1,6 +1,6 @@
 --- old.importAssertion1(module=es2015).symbols
 +++ new.importAssertion1(module=es2015).symbols
-@@= skipped -58, +58 lines =@@
+@@= skipped -57, +57 lines =@@
  === 3.ts ===
  const a = import('./0')
  >a : Symbol(a, Decl(3.ts, 0, 5))

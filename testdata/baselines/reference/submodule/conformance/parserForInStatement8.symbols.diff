@@ -1,6 +1,6 @@
 --- old.parserForInStatement8.symbols
 +++ new.parserForInStatement8.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  for (let [x = 'a' in {}] in { '': 0 }) console.log(x)
  >x : Symbol(x, Decl(parserForInStatement8.ts, 2, 10))
  >'' : Symbol('', Decl(parserForInStatement8.ts, 2, 29))

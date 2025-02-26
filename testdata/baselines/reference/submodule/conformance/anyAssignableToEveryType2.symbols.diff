@@ -1,6 +1,6 @@
 --- old.anyAssignableToEveryType2.symbols
 +++ new.anyAssignableToEveryType2.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >x : Symbol(x, Decl(anyAssignableToEveryType2.ts, 3, 5))
  
      foo: any; // ok, any identical to itself

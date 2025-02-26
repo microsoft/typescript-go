@@ -1,6 +1,6 @@
 --- old.typeofImportInstantiationExpression.symbols
 +++ new.typeofImportInstantiationExpression.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >Record : Symbol(Record, Decl(lib.es5.d.ts, --, --))
  
      "__is_argument__"?: true;

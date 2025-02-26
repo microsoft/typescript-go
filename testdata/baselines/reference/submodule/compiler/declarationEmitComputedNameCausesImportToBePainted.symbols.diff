@@ -1,6 +1,6 @@
 --- old.declarationEmitComputedNameCausesImportToBePainted.symbols
 +++ new.declarationEmitComputedNameCausesImportToBePainted.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >Context : Symbol(Context, Decl(context.ts, 0, 28))
  
    [Key]: string;

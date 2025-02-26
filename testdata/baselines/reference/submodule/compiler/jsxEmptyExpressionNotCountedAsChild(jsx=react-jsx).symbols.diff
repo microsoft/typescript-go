@@ -1,6 +1,6 @@
 --- old.jsxEmptyExpressionNotCountedAsChild(jsx=react-jsx).symbols
 +++ new.jsxEmptyExpressionNotCountedAsChild(jsx=react-jsx).symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >Props : Symbol(Props, Decl(jsxEmptyExpressionNotCountedAsChild.tsx, 1, 30))
  
      children: React.ReactElement<any>

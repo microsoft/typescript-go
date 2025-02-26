@@ -1,6 +1,6 @@
 --- old.mappedTypeModifiers.symbols
 +++ new.mappedTypeModifiers.symbols
-@@= skipped -371, +371 lines =@@
+@@= skipped -370, +370 lines =@@
  >prop : Symbol(prop, Decl(mappedTypeModifiers.ts, 76, 12))
  
      (x["other"] || 0).toFixed();

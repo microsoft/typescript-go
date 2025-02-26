@@ -1,6 +1,6 @@
 --- old.classStaticBlock17.symbols
 +++ new.classStaticBlock17.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  >A : Symbol(A, Decl(classStaticBlock17.ts, 0, 65))
  
    #x: number;

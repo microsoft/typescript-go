@@ -1,6 +1,6 @@
 --- old.decoratorMetadataTypeOnlyImport.symbols
 +++ new.decoratorMetadataTypeOnlyImport.symbols
-@@= skipped -1, +1 lines =@@
+@@= skipped -0, +0 lines =@@
  //// [tests/cases/compiler/decoratorMetadataTypeOnlyImport.ts] ////
  
 -=== ./a.ts ===

@@ -1,6 +1,6 @@
 --- old.classExpression3.symbols
 +++ new.classExpression3.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === classExpression3.ts ===
  let C = class extends class extends class { a = 1 } { b = 2 } { c = 3 };
  >C : Symbol(C, Decl(classExpression3.ts, 0, 3))

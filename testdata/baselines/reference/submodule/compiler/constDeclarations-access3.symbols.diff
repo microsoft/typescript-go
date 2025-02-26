@@ -1,6 +1,6 @@
 --- old.constDeclarations-access3.symbols
 +++ new.constDeclarations-access3.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  
  // Errors
  M.x = 1;

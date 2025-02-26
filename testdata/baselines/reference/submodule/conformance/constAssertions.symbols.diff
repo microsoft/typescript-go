@@ -1,6 +1,6 @@
 --- old.constAssertions.symbols
 +++ new.constAssertions.symbols
-@@= skipped -131, +131 lines =@@
+@@= skipped -130, +130 lines =@@
  let o2 = { a: 1, 'b': 2, ['c']: 3, d() {}, ['e' + '']: 4 } as const;
  >o2 : Symbol(o2, Decl(constAssertions.ts, 36, 3))
  >a : Symbol(a, Decl(constAssertions.ts, 36, 10))

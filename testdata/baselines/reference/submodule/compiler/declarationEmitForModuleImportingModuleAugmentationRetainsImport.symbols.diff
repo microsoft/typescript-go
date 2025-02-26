@@ -1,6 +1,6 @@
 --- old.declarationEmitForModuleImportingModuleAugmentationRetainsImport.symbols
 +++ new.declarationEmitForModuleImportingModuleAugmentationRetainsImport.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >ParentThing : Symbol(ParentThing, Decl(child1.ts, 0, 8))
  
  declare module './parent' {

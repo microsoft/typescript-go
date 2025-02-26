@@ -1,6 +1,6 @@
 --- old.capturedLetConstInLoop10.symbols
 +++ new.capturedLetConstInLoop10.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(capturedLetConstInLoop10.ts, 0, 0))
  
      foo() {

@@ -1,6 +1,6 @@
 --- old.genericClassWithStaticFactory.symbols
 +++ new.genericClassWithStaticFactory.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(genericClassWithStaticFactory.ts, 2, 22))
  
          public next: List<T>;

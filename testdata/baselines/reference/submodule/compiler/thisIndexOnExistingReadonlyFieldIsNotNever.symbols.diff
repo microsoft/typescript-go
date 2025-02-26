@@ -1,6 +1,6 @@
 --- old.thisIndexOnExistingReadonlyFieldIsNotNever.symbols
 +++ new.thisIndexOnExistingReadonlyFieldIsNotNever.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >S : Symbol(S, Decl(thisIndexOnExistingReadonlyFieldIsNotNever.ts, 0, 26))
  
      readonly props: Readonly<{ children?: unknown }> & Readonly<P>;

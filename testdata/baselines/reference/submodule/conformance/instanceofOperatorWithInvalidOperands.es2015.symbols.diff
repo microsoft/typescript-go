@@ -1,6 +1,6 @@
 --- old.instanceofOperatorWithInvalidOperands.es2015.symbols
 +++ new.instanceofOperatorWithInvalidOperands.es2015.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(instanceofOperatorWithInvalidOperands.es2015.ts, 0, 0))
  
      foo() { }

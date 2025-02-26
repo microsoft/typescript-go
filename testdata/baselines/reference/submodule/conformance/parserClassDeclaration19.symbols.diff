@@ -1,6 +1,6 @@
 --- old.parserClassDeclaration19.symbols
 +++ new.parserClassDeclaration19.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(parserClassDeclaration19.ts, 0, 0))
  
      foo();

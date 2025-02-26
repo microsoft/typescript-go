@@ -1,6 +1,6 @@
 --- old.reactReduxLikeDeferredInferenceAllowsAssignment.symbols
 +++ new.reactReduxLikeDeferredInferenceAllowsAssignment.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  >context : Symbol(context, Decl(reactReduxLikeDeferredInferenceAllowsAssignment.ts, 2, 23))
  
    readonly props: Readonly<P> & Readonly<{ children?: {} }>;

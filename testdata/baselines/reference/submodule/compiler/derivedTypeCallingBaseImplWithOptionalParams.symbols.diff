@@ -1,6 +1,6 @@
 --- old.derivedTypeCallingBaseImplWithOptionalParams.symbols
 +++ new.derivedTypeCallingBaseImplWithOptionalParams.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >MyInterface : Symbol(MyInterface, Decl(derivedTypeCallingBaseImplWithOptionalParams.ts, 0, 0))
  
      myMethod(...myList: any[]);

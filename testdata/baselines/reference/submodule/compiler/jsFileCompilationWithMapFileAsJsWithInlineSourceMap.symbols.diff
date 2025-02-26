@@ -1,6 +1,6 @@
 --- old.jsFileCompilationWithMapFileAsJsWithInlineSourceMap.symbols
 +++ new.jsFileCompilationWithMapFileAsJsWithInlineSourceMap.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >c : Symbol(c, Decl(a.ts, 0, 0))
  }
  

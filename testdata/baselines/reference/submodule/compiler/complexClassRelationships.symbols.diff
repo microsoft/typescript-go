@@ -1,6 +1,6 @@
 --- old.complexClassRelationships.symbols
 +++ new.complexClassRelationships.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >Base : Symbol(Base, Decl(complexClassRelationships.ts, 11, 1))
  
      public static createEmpty(): Derived {

@@ -1,6 +1,6 @@
 --- old.declFileForClassWithMultipleBaseClasses.symbols
 +++ new.declFileForClassWithMultipleBaseClasses.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(declFileForClassWithMultipleBaseClasses.ts, 0, 0))
  
      foo() { }

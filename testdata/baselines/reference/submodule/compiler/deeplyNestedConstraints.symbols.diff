@@ -1,6 +1,6 @@
 --- old.deeplyNestedConstraints.symbols
 +++ new.deeplyNestedConstraints.symbols
-@@= skipped -24, +24 lines =@@
+@@= skipped -23, +23 lines =@@
  >E : Symbol(E, Decl(deeplyNestedConstraints.ts, 6, 17))
  
      setArray2<K extends E[keyof E]>(_: K, array: Extract<M[K], ArrayLike<any>>) {

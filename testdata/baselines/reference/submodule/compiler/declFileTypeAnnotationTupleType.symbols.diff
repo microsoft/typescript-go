@@ -1,6 +1,6 @@
 --- old.declFileTypeAnnotationTupleType.symbols
 +++ new.declFileTypeAnnotationTupleType.symbols
-@@= skipped -25, +25 lines =@@
+@@= skipped -24, +24 lines =@@
  >k : Symbol(k, Decl(declFileTypeAnnotationTupleType.ts, 12, 3))
  >c : Symbol(c, Decl(declFileTypeAnnotationTupleType.ts, 0, 0))
  >m : Symbol(m, Decl(declFileTypeAnnotationTupleType.ts, 1, 1))

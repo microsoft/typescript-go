@@ -1,6 +1,6 @@
 --- old.fakeInfinity3.symbols
 +++ new.fakeInfinity3.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Foo : Symbol(Foo, Decl(fakeInfinity3.ts, 0, 0))
  
      A = 1e999,

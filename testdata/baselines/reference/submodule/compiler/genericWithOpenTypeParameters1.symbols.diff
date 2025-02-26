@@ -1,6 +1,6 @@
 --- old.genericWithOpenTypeParameters1.symbols
 +++ new.genericWithOpenTypeParameters1.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(genericWithOpenTypeParameters1.ts, 0, 8))
  
     foo(x: T): T { return null; }

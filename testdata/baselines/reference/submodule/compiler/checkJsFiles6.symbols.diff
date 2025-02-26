@@ -1,6 +1,6 @@
 --- old.checkJsFiles6.symbols
 +++ new.checkJsFiles6.symbols
-@@= skipped -1, +0 lines =@@
+@@= skipped -0, +-1 lines =@@
 -<no content>
 @@= skipped --1, +1 lines =@@
 +//// [tests/cases/compiler/checkJsFiles6.ts] ////

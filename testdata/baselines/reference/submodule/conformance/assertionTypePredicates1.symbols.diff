@@ -1,6 +1,6 @@
 --- old.assertionTypePredicates1.symbols
 +++ new.assertionTypePredicates1.symbols
-@@= skipped -46, +46 lines =@@
+@@= skipped -45, +45 lines =@@
  >x : Symbol(x, Decl(assertionTypePredicates1.ts, 9, 13))
  
          x.length;

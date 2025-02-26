@@ -1,6 +1,6 @@
 --- old.contextuallyTypedJsxAttribute.symbols
 +++ new.contextuallyTypedJsxAttribute.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Elements : Symbol(Elements, Decl(index.tsx, 0, 0))
  
    foo: { callback?: (value: number) => void };

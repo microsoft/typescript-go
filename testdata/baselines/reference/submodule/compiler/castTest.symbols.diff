@@ -1,6 +1,6 @@
 --- old.castTest.symbols
 +++ new.castTest.symbols
-@@= skipped -33, +33 lines =@@
+@@= skipped -32, +32 lines =@@
  >Point : Symbol(Point, Decl(castTest.ts, 10, 37))
  {
      x: number;

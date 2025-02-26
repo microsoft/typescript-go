@@ -1,6 +1,6 @@
 --- old.jsDeclarationsExportAssignedClassExpressionAnonymousWithSub.symbols
 +++ new.jsDeclarationsExportAssignedClassExpressionAnonymousWithSub.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === index.js ===
  module.exports = class {

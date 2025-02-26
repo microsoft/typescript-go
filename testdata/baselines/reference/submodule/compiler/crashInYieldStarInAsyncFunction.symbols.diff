@@ -1,6 +1,6 @@
 --- old.crashInYieldStarInAsyncFunction.symbols
 +++ new.crashInYieldStarInAsyncFunction.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  
      [Symbol.asyncIterator]() {
  >[Symbol.asyncIterator] : Symbol([Symbol.asyncIterator], Decl(crashInYieldStarInAsyncFunction.ts, 1, 11))

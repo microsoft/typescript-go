@@ -1,6 +1,6 @@
 --- old.octalIntegerLiteralError.symbols
 +++ new.octalIntegerLiteralError.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >obj1 : Symbol(obj1, Decl(octalIntegerLiteralError.ts, 4, 3))
  
      0O45436: "hi",

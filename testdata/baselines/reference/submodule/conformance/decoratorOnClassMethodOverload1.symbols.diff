@@ -1,6 +1,6 @@
 --- old.decoratorOnClassMethodOverload1.symbols
 +++ new.decoratorOnClassMethodOverload1.symbols
-@@= skipped -19, +19 lines =@@
+@@= skipped -18, +18 lines =@@
  >dec : Symbol(dec, Decl(decoratorOnClassMethodOverload1.ts, 0, 0))
  
      method()

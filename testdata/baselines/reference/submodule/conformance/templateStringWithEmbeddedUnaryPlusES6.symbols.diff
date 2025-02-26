@@ -1,6 +1,6 @@
 --- old.templateStringWithEmbeddedUnaryPlusES6.symbols
 +++ new.templateStringWithEmbeddedUnaryPlusES6.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === templateStringWithEmbeddedUnaryPlusES6.ts ===
  var x = `abc${ +Infinity }def`;
  >x : Symbol(x, Decl(templateStringWithEmbeddedUnaryPlusES6.ts, 0, 3))

@@ -1,6 +1,6 @@
 --- old.enumFromExternalModule.symbols
 +++ new.enumFromExternalModule.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  
  var x = f.Mode.Open;
  >x : Symbol(x, Decl(enumFromExternalModule_1.ts, 3, 3))

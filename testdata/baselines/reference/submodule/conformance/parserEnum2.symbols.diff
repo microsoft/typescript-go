@@ -1,6 +1,6 @@
 --- old.parserEnum2.symbols
 +++ new.parserEnum2.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >SignatureFlags : Symbol(SignatureFlags, Decl(parserEnum2.ts, 0, 0))
  
          None = 0,

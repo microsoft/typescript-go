@@ -1,6 +1,6 @@
 --- old.transformsElideNullUndefinedType.symbols
 +++ new.transformsElideNullUndefinedType.symbols
-@@= skipped -56, +56 lines =@@
+@@= skipped -55, +55 lines =@@
  >C1 : Symbol(C1, Decl(transformsElideNullUndefinedType.ts, 19, 32))
  
      m0(): null { return null; }

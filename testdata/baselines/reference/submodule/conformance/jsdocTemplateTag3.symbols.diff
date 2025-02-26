@@ -1,6 +1,6 @@
 --- old.jsdocTemplateTag3.symbols
 +++ new.jsdocTemplateTag3.symbols
-@@= skipped -22, +22 lines =@@
+@@= skipped -21, +21 lines =@@
  >x : Symbol(x, Decl(a.js, 12, 22))
  
      if(t.a + t.b.length > u.a - u.b.length && v.c) {

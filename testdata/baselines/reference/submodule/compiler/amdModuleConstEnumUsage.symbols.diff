@@ -1,6 +1,6 @@
 --- old.amdModuleConstEnumUsage.symbols
 +++ new.amdModuleConstEnumUsage.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >CharCode : Symbol(CharCode, Decl(cc.ts, 0, 0))
  
      A,

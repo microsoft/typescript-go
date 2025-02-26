@@ -1,6 +1,6 @@
 --- old.classAbstractExtends.symbols
 +++ new.classAbstractExtends.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(classAbstractExtends.ts, 0, 0))
  
      foo() {}

@@ -1,6 +1,6 @@
 --- old.instancePropertiesInheritedIntoClassType.symbols
 +++ new.instancePropertiesInheritedIntoClassType.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >C : Symbol(C, Decl(instancePropertiesInheritedIntoClassType.ts, 0, 19))
  
          x: string;

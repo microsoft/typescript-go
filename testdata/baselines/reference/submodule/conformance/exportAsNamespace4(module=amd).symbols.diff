@@ -1,6 +1,6 @@
 --- old.exportAsNamespace4(module=amd).symbols
 +++ new.exportAsNamespace4(module=amd).symbols
-@@= skipped -26, +26 lines =@@
+@@= skipped -25, +25 lines =@@
  >foo1 : Symbol(foo1, Decl(2.ts, 1, 6))
  
  foo.a;

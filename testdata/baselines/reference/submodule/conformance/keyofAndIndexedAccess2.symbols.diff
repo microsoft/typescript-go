@@ -1,6 +1,6 @@
 --- old.keyofAndIndexedAccess2.symbols
 +++ new.keyofAndIndexedAccess2.symbols
-@@= skipped -92, +92 lines =@@
+@@= skipped -91, +91 lines =@@
  >x : Symbol(x, Decl(keyofAndIndexedAccess2.ts, 12, 53))
  
      b.x;

@@ -1,6 +1,6 @@
 --- old.jsdocInTypeScript.symbols
 +++ new.jsdocInTypeScript.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(jsdocInTypeScript.ts, 2, 19))
  
      prop: number;

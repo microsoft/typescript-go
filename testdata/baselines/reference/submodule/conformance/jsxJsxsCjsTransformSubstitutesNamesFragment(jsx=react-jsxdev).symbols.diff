@@ -1,6 +1,6 @@
 --- old.jsxJsxsCjsTransformSubstitutesNamesFragment(jsx=react-jsxdev).symbols
 +++ new.jsxJsxsCjsTransformSubstitutesNamesFragment(jsx=react-jsxdev).symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >a : Symbol(a, Decl(jsxJsxsCjsTransformSubstitutesNamesFragment.tsx, 1, 5))
  
    <p></p>

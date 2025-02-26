@@ -1,6 +1,6 @@
 --- old.TwoInternalModulesThatMergeEachWithExportedAndNonExportedClassesOfTheSameName.symbols
 +++ new.TwoInternalModulesThatMergeEachWithExportedAndNonExportedClassesOfTheSameName.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >Point : Symbol(Point, Decl(TwoInternalModulesThatMergeEachWithExportedAndNonExportedClassesOfTheSameName.ts, 0, 10))
  
          x: number;

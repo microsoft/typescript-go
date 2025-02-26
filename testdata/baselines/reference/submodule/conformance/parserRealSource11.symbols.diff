@@ -1,6 +1,6 @@
 --- old.parserRealSource11.symbols
 +++ new.parserRealSource11.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >ASTSpan : Symbol(ASTSpan, Decl(parserRealSource11.ts, 5, 19))
  
          public minChar: number = -1;  // -1 = "undefined" or "compiler generated"

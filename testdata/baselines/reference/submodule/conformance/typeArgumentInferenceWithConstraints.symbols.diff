@@ -1,6 +1,6 @@
 --- old.typeArgumentInferenceWithConstraints.symbols
 +++ new.typeArgumentInferenceWithConstraints.symbols
-@@= skipped -73, +73 lines =@@
+@@= skipped -72, +72 lines =@@
  someGenerics2a<string>((n) => n.substr(0));
  >someGenerics2a : Symbol(someGenerics2a, Decl(typeArgumentInferenceWithConstraints.ts, 17, 36))
  >n : Symbol(n, Decl(typeArgumentInferenceWithConstraints.ts, 23, 24))

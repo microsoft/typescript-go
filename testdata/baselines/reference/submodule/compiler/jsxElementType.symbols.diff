@@ -1,6 +1,6 @@
 --- old.jsxElementType.symbols
 +++ new.jsxElementType.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  
    | React.ReactElement<any>
  >React : Symbol(React, Decl(jsxElementType.tsx, 1, 6))

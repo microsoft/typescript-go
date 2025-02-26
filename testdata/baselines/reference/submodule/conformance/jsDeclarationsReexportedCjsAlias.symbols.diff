@@ -1,6 +1,6 @@
 --- old.jsDeclarationsReexportedCjsAlias.symbols
 +++ new.jsDeclarationsReexportedCjsAlias.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === main.js ===
  const { SomeClass, SomeClass: Another } = require('./lib');
  >SomeClass : Symbol(SomeClass, Decl(main.js, 0, 7))

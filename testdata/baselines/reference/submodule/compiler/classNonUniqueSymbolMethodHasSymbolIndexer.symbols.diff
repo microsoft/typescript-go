@@ -1,6 +1,6 @@
 --- old.classNonUniqueSymbolMethodHasSymbolIndexer.symbols
 +++ new.classNonUniqueSymbolMethodHasSymbolIndexer.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >A : Symbol(A, Decl(classNonUniqueSymbolMethodHasSymbolIndexer.ts, 0, 24))
  
      [a]() { return 1 };

@@ -1,6 +1,6 @@
 --- old.objectLiteralFunctionArgContextualTyping2.symbols
 +++ new.objectLiteralFunctionArgContextualTyping2.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >I2 : Symbol(I2, Decl(objectLiteralFunctionArgContextualTyping2.ts, 0, 0))
  
      value: string;

@@ -1,6 +1,6 @@
 --- old.constEnumExternalModule.symbols
 +++ new.constEnumExternalModule.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
  var v = A.V;
  >v : Symbol(v, Decl(m2.ts, 1, 3))

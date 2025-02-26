@@ -1,6 +1,6 @@
 --- old.declInput3.symbols
 +++ new.declInput3.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >bar : Symbol(bar, Decl(declInput3.ts, 2, 1))
  
    public f() { return ''; }

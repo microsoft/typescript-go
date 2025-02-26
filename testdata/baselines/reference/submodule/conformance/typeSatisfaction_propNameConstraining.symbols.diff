@@ -1,6 +1,6 @@
 --- old.typeSatisfaction_propNameConstraining.symbols
 +++ new.typeSatisfaction_propNameConstraining.symbols
-@@= skipped -24, +24 lines =@@
+@@= skipped -23, +23 lines =@@
  // Should be OK -- retain info that a is number and b is string
  let a = p.a.toFixed();
  >a : Symbol(a, Decl(typeSatisfaction_propNameConstraining.ts, 9, 3))

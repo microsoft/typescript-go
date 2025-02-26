@@ -1,6 +1,6 @@
 --- old.innerAliases2.symbols
 +++ new.innerAliases2.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >UsefulClass : Symbol(UsefulClass, Decl(innerAliases2.ts, 0, 18))
  
                                  public foo() {

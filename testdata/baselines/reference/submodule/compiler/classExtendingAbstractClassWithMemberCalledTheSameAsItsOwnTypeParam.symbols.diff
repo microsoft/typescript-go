@@ -1,6 +1,6 @@
 --- old.classExtendingAbstractClassWithMemberCalledTheSameAsItsOwnTypeParam.symbols
 +++ new.classExtendingAbstractClassWithMemberCalledTheSameAsItsOwnTypeParam.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >IObserver : Symbol(IObserver, Decl(classExtendingAbstractClassWithMemberCalledTheSameAsItsOwnTypeParam.ts, 0, 0))
  
  	handleChange<T, TChange>(observable: IObservable<T, TChange>, change: TChange): void;

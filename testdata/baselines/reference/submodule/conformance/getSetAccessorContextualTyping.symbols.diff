@@ -1,6 +1,6 @@
 --- old.getSetAccessorContextualTyping.symbols
 +++ new.getSetAccessorContextualTyping.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >C : Symbol(C, Decl(getSetAccessorContextualTyping.ts, 0, 0))
  
      set X(x: number) { }

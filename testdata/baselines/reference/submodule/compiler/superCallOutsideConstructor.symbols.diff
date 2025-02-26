@@ -1,6 +1,6 @@
 --- old.superCallOutsideConstructor.symbols
 +++ new.superCallOutsideConstructor.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(superCallOutsideConstructor.ts, 0, 0))
  
      foo() { }

@@ -1,6 +1,6 @@
 --- old.declFileTypeAnnotationVisibilityErrorVariableDeclaration.symbols
 +++ new.declFileTypeAnnotationVisibilityErrorVariableDeclaration.symbols
-@@= skipped -56, +56 lines =@@
+@@= skipped -55, +55 lines =@@
      var x3: m2.public2;
  >x3 : Symbol(x3, Decl(declFileTypeAnnotationVisibilityErrorVariableDeclaration.ts, 25, 7))
  >m2 : Symbol(m2, Decl(declFileTypeAnnotationVisibilityErrorVariableDeclaration.ts, 18, 34))

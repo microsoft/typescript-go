@@ -1,6 +1,6 @@
 --- old.thisInFunctionCall.symbols
 +++ new.thisInFunctionCall.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Test : Symbol(Test, Decl(thisInFunctionCall.ts, 0, 0))
  
    data: number[]

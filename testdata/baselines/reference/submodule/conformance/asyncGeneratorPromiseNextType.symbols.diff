@@ -1,6 +1,6 @@
 --- old.asyncGeneratorPromiseNextType.symbols
 +++ new.asyncGeneratorPromiseNextType.symbols
-@@= skipped -28, +28 lines =@@
+@@= skipped -27, +27 lines =@@
  >p : Symbol(p, Decl(asyncGeneratorPromiseNextType.ts, 7, 13))
  
              pending.push(p);

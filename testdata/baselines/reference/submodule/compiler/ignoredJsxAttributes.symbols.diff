@@ -1,6 +1,6 @@
 --- old.ignoredJsxAttributes.symbols
 +++ new.ignoredJsxAttributes.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >Props : Symbol(Props, Decl(ignoredJsxAttributes.tsx, 4, 31))
  
      foo: string;

@@ -1,6 +1,6 @@
 --- old.errorsInGenericTypeReference.symbols
 +++ new.errorsInGenericTypeReference.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  >testClass1 : Symbol(testClass1, Decl(errorsInGenericTypeReference.ts, 2, 16))
  
      method<T>(): void { }

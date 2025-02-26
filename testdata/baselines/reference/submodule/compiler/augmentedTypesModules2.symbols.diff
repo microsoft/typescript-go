@@ -1,6 +1,6 @@
 --- old.augmentedTypesModules2.symbols
 +++ new.augmentedTypesModules2.symbols
-@@= skipped -54, +54 lines =@@
+@@= skipped -53, +53 lines =@@
  module m2f { export interface I { foo(): void } } 
  >m2f : Symbol(m2f, Decl(augmentedTypesModules2.ts, 20, 14), Decl(augmentedTypesModules2.ts, 22, 19))
  >I : Symbol(I, Decl(augmentedTypesModules2.ts, 23, 12))

@@ -1,6 +1,6 @@
 --- old.controlFlowIfStatement.symbols
 +++ new.controlFlowIfStatement.symbols
-@@= skipped -84, +84 lines =@@
+@@= skipped -83, +83 lines =@@
  >data : Symbol(data, Decl(controlFlowIfStatement.ts, 36, 14))
  
          return JSON.parse(data);

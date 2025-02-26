@@ -1,6 +1,6 @@
 --- old.computedPropertyNamesSourceMap2_ES5.symbols
 +++ new.computedPropertyNamesSourceMap2_ES5.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >v : Symbol(v, Decl(computedPropertyNamesSourceMap2_ES5.ts, 0, 3))
  
      ["hello"]() {

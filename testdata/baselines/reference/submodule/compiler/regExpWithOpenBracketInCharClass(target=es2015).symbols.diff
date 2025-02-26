@@ -1,6 +1,6 @@
 --- old.regExpWithOpenBracketInCharClass(target=es2015).symbols
 +++ new.regExpWithOpenBracketInCharClass(target=es2015).symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === regExpWithOpenBracketInCharClass.ts ===
  const regexes: RegExp[] = [
  >regexes : Symbol(regexes, Decl(regExpWithOpenBracketInCharClass.ts, 0, 5))

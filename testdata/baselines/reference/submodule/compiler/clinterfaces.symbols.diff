@@ -1,6 +1,6 @@
 --- old.clinterfaces.symbols
 +++ new.clinterfaces.symbols
-@@= skipped -22, +22 lines =@@
+@@= skipped -21, +21 lines =@@
  >T : Symbol(T, Decl(clinterfaces.ts, 7, 14), Decl(clinterfaces.ts, 11, 10))
  
      a: string;

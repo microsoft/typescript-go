@@ -1,6 +1,6 @@
 --- old.innerTypeParameterShadowingOuterOne2.symbols
 +++ new.innerTypeParameterShadowingOuterOne2.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
  
      g<T extends Number>() {

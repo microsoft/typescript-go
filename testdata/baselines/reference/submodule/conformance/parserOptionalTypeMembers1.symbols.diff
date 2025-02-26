@@ -1,6 +1,6 @@
 --- old.parserOptionalTypeMembers1.symbols
 +++ new.parserOptionalTypeMembers1.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >PropertyDescriptor2 : Symbol(PropertyDescriptor2, Decl(parserOptionalTypeMembers1.ts, 0, 0))
  
      configurable?: boolean;

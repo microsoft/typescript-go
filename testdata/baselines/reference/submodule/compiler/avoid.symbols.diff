@@ -1,6 +1,6 @@
 --- old.avoid.symbols
 +++ new.avoid.symbols
-@@= skipped -27, +27 lines =@@
+@@= skipped -26, +26 lines =@@
  >C : Symbol(C, Decl(avoid.ts, 7, 6))
  
      g() {

@@ -1,6 +1,6 @@
 --- old.declarationMapsMultifile.symbols
 +++ new.declarationMapsMultifile.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Foo : Symbol(Foo, Decl(a.ts, 0, 0))
  
      doThing(x: {a: number}) {

@@ -1,6 +1,6 @@
 --- old.internalAliasClassInsideLocalModuleWithoutExportAccessError.symbols
 +++ new.internalAliasClassInsideLocalModuleWithoutExportAccessError.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >c : Symbol(c, Decl(internalAliasClassInsideLocalModuleWithoutExportAccessError.ts, 0, 17))
  
          foo(a: number) {

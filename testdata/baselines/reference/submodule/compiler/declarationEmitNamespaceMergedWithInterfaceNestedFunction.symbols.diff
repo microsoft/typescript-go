@@ -1,6 +1,6 @@
 --- old.declarationEmitNamespaceMergedWithInterfaceNestedFunction.symbols
 +++ new.declarationEmitNamespaceMergedWithInterfaceNestedFunction.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Foo : Symbol(Foo, Decl(declarationEmitNamespaceMergedWithInterfaceNestedFunction.ts, 0, 0))
  
      item: Bar;

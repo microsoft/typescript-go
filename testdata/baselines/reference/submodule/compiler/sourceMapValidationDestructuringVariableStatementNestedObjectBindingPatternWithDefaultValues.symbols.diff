@@ -1,6 +1,6 @@
 --- old.sourceMapValidationDestructuringVariableStatementNestedObjectBindingPatternWithDefaultValues.symbols
 +++ new.sourceMapValidationDestructuringVariableStatementNestedObjectBindingPatternWithDefaultValues.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >Robot : Symbol(Robot, Decl(sourceMapValidationDestructuringVariableStatementNestedObjectBindingPatternWithDefaultValues.ts, 2, 1))
  
      name: string;

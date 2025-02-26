@@ -1,6 +1,6 @@
 --- old.circularImportAlias.symbols
 +++ new.circularImportAlias.symbols
-@@= skipped -4, +4 lines =@@
+@@= skipped -3, +3 lines =@@
  // expected no error
  
  module B {

@@ -1,6 +1,6 @@
 --- old.classOrder1.symbols
 +++ new.classOrder1.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(classOrder1.ts, 0, 0))
  
      public foo() {

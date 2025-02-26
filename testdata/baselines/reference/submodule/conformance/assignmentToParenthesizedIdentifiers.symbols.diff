@@ -1,6 +1,6 @@
 --- old.assignmentToParenthesizedIdentifiers.symbols
 +++ new.assignmentToParenthesizedIdentifiers.symbols
-@@= skipped -23, +23 lines =@@
+@@= skipped -22, +22 lines =@@
  >y : Symbol(y, Decl(assignmentToParenthesizedIdentifiers.ts, 7, 14))
  }
  M.y = 3; // OK

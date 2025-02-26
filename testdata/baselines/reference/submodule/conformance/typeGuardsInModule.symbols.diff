@@ -1,6 +1,6 @@
 --- old.typeGuardsInModule.symbols
 +++ new.typeGuardsInModule.symbols
-@@= skipped -22, +22 lines =@@
+@@= skipped -21, +21 lines =@@
      num = typeof var1 === "string" && var1.length; // string
  >num : Symbol(num, Decl(typeGuardsInModule.ts, 4, 3))
  >var1 : Symbol(var1, Decl(typeGuardsInModule.ts, 6, 3))

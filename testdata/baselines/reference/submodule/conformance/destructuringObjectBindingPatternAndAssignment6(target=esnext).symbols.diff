@@ -1,6 +1,6 @@
 --- old.destructuringObjectBindingPatternAndAssignment6(target=esnext).symbols
 +++ new.destructuringObjectBindingPatternAndAssignment6(target=esnext).symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  >bVal : Symbol(bVal, Decl(destructuringObjectBindingPatternAndAssignment6.ts, 3, 18))
  
  	return { [a]: 1, [b]: 1 };

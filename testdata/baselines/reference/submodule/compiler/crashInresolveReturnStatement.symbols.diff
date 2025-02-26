@@ -1,6 +1,6 @@
 --- old.crashInresolveReturnStatement.symbols
 +++ new.crashInresolveReturnStatement.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >WorkItemToolbar : Symbol(WorkItemToolbar, Decl(crashInresolveReturnStatement.ts, 0, 0))
  
      public onToolbarItemClick() {

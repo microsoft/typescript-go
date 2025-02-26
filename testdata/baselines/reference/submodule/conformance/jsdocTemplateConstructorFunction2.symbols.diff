@@ -1,6 +1,6 @@
 --- old.jsdocTemplateConstructorFunction2.symbols
 +++ new.jsdocTemplateConstructorFunction2.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  
      /** @type {T} */
      this.u

@@ -1,6 +1,6 @@
 --- old.multipleClassPropertyModifiers.symbols
 +++ new.multipleClassPropertyModifiers.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(multipleClassPropertyModifiers.ts, 0, 0))
  
      public static p1;

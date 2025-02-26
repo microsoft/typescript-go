@@ -1,6 +1,6 @@
 --- old.esDecorators-contextualTypes.2.symbols
 +++ new.esDecorators-contextualTypes.2.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >boundMethodLogger : Symbol(boundMethodLogger, Decl(esDecorators-contextualTypes.2.ts, 10, 13))
  
      foo() {

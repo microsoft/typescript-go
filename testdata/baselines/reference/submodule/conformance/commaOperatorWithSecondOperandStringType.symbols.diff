@@ -1,6 +1,6 @@
 --- old.commaOperatorWithSecondOperandStringType.symbols
 +++ new.commaOperatorWithSecondOperandStringType.symbols
-@@= skipped -82, +82 lines =@@
+@@= skipped -81, +81 lines =@@
  >undefined : Symbol(undefined)
  
  ["a", "b"], NUMBER.toString();

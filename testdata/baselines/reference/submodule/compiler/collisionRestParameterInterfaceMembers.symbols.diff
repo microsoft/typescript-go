@@ -1,6 +1,6 @@
 --- old.collisionRestParameterInterfaceMembers.symbols
 +++ new.collisionRestParameterInterfaceMembers.symbols
-@@= skipped -36, +36 lines =@@
+@@= skipped -35, +35 lines =@@
  >i3 : Symbol(i3, Decl(collisionRestParameterInterfaceMembers.ts, 14, 1))
  
      foo (_i: number, ...restParameters); // no error - no code gen

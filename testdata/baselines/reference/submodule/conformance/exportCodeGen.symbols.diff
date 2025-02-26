@@ -1,6 +1,6 @@
 --- old.exportCodeGen.symbols
 +++ new.exportCodeGen.symbols
-@@= skipped -60, +60 lines =@@
+@@= skipped -59, +59 lines =@@
  
      export enum Color { Red }
  >Color : Symbol(Color, Decl(exportCodeGen.ts, 32, 10))

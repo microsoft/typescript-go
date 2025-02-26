@@ -1,6 +1,6 @@
 --- old.unusedIdentifiersConsolidated1.symbols
 +++ new.unusedIdentifiersConsolidated1.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  >unusedtypeparameter : Symbol(unusedtypeparameter, Decl(unusedIdentifiersConsolidated1.ts, 4, 30))
  
      private unusedprivatevariable: string;

@@ -1,6 +1,6 @@
 --- old.jsDeclarationsClasses.symbols
 +++ new.jsDeclarationsClasses.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >B : Symbol(B, Decl(index.js, 0, 17))
  
      static cat = "cat";

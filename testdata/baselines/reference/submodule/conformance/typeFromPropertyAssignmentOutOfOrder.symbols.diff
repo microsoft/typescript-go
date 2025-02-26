@@ -1,6 +1,6 @@
 --- old.typeFromPropertyAssignmentOutOfOrder.symbols
 +++ new.typeFromPropertyAssignmentOutOfOrder.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === index.js ===
  First.Item = class I {}

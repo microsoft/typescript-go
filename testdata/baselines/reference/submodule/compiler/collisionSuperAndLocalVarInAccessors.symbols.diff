@@ -1,6 +1,6 @@
 --- old.collisionSuperAndLocalVarInAccessors.symbols
 +++ new.collisionSuperAndLocalVarInAccessors.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >Foo : Symbol(Foo, Decl(collisionSuperAndLocalVarInAccessors.ts, 0, 16))
  
      get prop1(): number {

@@ -66,7 +66,8 @@ func getBaselineDiff(t *testing.T, actual string, fileName string) string {
 	// lines in our baselines from causing knock-on header changes later in the diff.
 	s := b.String()
 
-	var aCurLine, bCurLine int
+	aCurLine := 1
+	bCurLine := 1
 	s = fixUnifiedDiff.ReplaceAllStringFunc(s, func(match string) string {
 		var aLine, aLineCount, bLine, bLineCount int
 		if _, err := fmt.Sscanf(match, "@@ -%d,%d +%d,%d @@", &aLine, &aLineCount, &bLine, &bLineCount); err != nil {

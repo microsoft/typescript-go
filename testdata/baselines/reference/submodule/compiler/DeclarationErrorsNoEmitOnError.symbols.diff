@@ -1,6 +1,6 @@
 --- old.DeclarationErrorsNoEmitOnError.symbols
 +++ new.DeclarationErrorsNoEmitOnError.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >I : Symbol(I, Decl(DeclarationErrorsNoEmitOnError.ts, 0, 23))
  
      f: T;   

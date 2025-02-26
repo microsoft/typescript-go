@@ -1,6 +1,6 @@
 --- old.noImplicitAnyInContextuallyTypesFunctionParamter.symbols
 +++ new.noImplicitAnyInContextuallyTypesFunctionParamter.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >regexMatchList : Symbol(regexMatchList, Decl(noImplicitAnyInContextuallyTypesFunctionParamter.ts, 0, 3))
  
  regexMatchList.forEach(match => ''.replace(match, ''));

@@ -1,6 +1,6 @@
 --- old.derivedClassOverridesWithoutSubtype.symbols
 +++ new.derivedClassOverridesWithoutSubtype.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Base : Symbol(Base, Decl(derivedClassOverridesWithoutSubtype.ts, 0, 0))
  
      x: {

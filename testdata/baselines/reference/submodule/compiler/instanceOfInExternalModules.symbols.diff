@@ -1,6 +1,6 @@
 --- old.instanceOfInExternalModules.symbols
 +++ new.instanceOfInExternalModules.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  
      return value instanceof Bar.Foo;
  >value : Symbol(value, Decl(instanceOfInExternalModules_1.ts, 2, 15))

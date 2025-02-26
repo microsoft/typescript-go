@@ -1,6 +1,6 @@
 --- old.commonJsIsolatedModules.symbols
 +++ new.commonJsIsolatedModules.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === index.js ===
  module.exports = {}

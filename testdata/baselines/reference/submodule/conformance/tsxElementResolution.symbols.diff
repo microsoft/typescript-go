@@ -1,6 +1,6 @@
 --- old.tsxElementResolution.symbols
 +++ new.tsxElementResolution.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >IntrinsicElements : Symbol(IntrinsicElements, Decl(tsxElementResolution.tsx, 0, 23))
  
  		foundFirst: { x: string };

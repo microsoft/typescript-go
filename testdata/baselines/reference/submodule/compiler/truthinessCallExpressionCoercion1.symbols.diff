@@ -1,6 +1,6 @@
 --- old.truthinessCallExpressionCoercion1.symbols
 +++ new.truthinessCallExpressionCoercion1.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
      // error
      required ? console.log('required') : undefined;
  >required : Symbol(required, Decl(truthinessCallExpressionCoercion1.ts, 0, 54))

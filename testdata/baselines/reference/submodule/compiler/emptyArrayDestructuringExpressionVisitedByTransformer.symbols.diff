@@ -1,6 +1,6 @@
 --- old.emptyArrayDestructuringExpressionVisitedByTransformer.symbols
 +++ new.emptyArrayDestructuringExpressionVisitedByTransformer.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === emptyArrayDestructuringExpressionVisitedByTransformer.ts ===
  var a = [] = [1].map(_ => _);
  >a : Symbol(a, Decl(emptyArrayDestructuringExpressionVisitedByTransformer.ts, 0, 3))

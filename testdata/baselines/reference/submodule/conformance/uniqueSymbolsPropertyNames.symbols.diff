@@ -1,6 +1,6 @@
 --- old.uniqueSymbolsPropertyNames.symbols
 +++ new.uniqueSymbolsPropertyNames.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >OpTypes : Symbol(OpTypes, Decl(uniqueSymbolsPropertyNames.ts, 0, 0))
  
    readonly equal: unique symbol;

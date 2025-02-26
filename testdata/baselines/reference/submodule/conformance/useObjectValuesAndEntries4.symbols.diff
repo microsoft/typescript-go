@@ -1,6 +1,6 @@
 --- old.useObjectValuesAndEntries4.symbols
 +++ new.useObjectValuesAndEntries4.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  
  for (var x of Object.values(o)) {
  >x : Symbol(x, Decl(useObjectValuesAndEntries4.ts, 2, 8))

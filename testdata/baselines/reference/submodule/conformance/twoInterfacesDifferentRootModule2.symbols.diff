@@ -1,6 +1,6 @@
 --- old.twoInterfacesDifferentRootModule2.symbols
 +++ new.twoInterfacesDifferentRootModule2.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >A : Symbol(A, Decl(twoInterfacesDifferentRootModule2.ts, 2, 10))
  
          foo: string;

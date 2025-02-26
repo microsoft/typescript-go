@@ -1,6 +1,6 @@
 --- old.fatArrowSelf.symbols
 +++ new.fatArrowSelf.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  >EventEmitter : Symbol(EventEmitter, Decl(fatArrowSelf.ts, 3, 5))
  
           public addListener(type:string, listener:ListenerCallback) {

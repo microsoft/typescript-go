@@ -1,6 +1,6 @@
 --- old.unionTypeMembers.symbols
 +++ new.unionTypeMembers.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(unionTypeMembers.ts, 0, 13))
  
      commonMethodType(a: string): string;

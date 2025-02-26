@@ -1,6 +1,6 @@
 --- old.enumIndexer.symbols
 +++ new.enumIndexer.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >MyEnumType : Symbol(MyEnumType, Decl(enumIndexer.ts, 0, 0))
  
      foo, bar

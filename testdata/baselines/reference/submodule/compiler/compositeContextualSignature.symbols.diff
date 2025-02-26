@@ -1,6 +1,6 @@
 --- old.compositeContextualSignature.symbols
 +++ new.compositeContextualSignature.symbols
-@@= skipped -23, +23 lines =@@
+@@= skipped -22, +22 lines =@@
          1,
          () => {
              console.log('Hello')

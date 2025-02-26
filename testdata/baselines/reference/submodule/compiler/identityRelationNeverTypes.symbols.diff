@@ -1,6 +1,6 @@
 --- old.identityRelationNeverTypes.symbols
 +++ new.identityRelationNeverTypes.symbols
-@@= skipped -19, +19 lines =@@
+@@= skipped -18, +18 lines =@@
  >TContext : Symbol(TContext, Decl(identityRelationNeverTypes.ts, 4, 20))
  
      _context: TContext;

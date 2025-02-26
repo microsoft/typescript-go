@@ -1,6 +1,6 @@
 --- old.jsdocFunctionType.symbols
 +++ new.jsdocFunctionType.symbols
-@@= skipped -17, +17 lines =@@
+@@= skipped -16, +16 lines =@@
  >x : Symbol(x, Decl(functions.js, 8, 3))
  >id1 : Symbol(id1, Decl(functions.js, 0, 0))
  >n : Symbol(n, Decl(functions.js, 8, 22))

@@ -1,6 +1,6 @@
 --- old.declarationEmitConstantNoWidening.symbols
 +++ new.declarationEmitConstantNoWidening.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >Bar : Symbol(Bar, Decl(declarationEmitConstantNoWidening.ts, 0, 25))
  
      readonly type = FOO; // Should be widening literal "FOO" - so either `typeof "FOO"` or = "FOO"

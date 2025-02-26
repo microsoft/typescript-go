@@ -1,6 +1,6 @@
 --- old.infinitelyExpandingTypesNonGenericBase.symbols
 +++ new.infinitelyExpandingTypesNonGenericBase.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >V : Symbol(V, Decl(infinitelyExpandingTypesNonGenericBase.ts, 0, 20))
  
      property: Options<V>;

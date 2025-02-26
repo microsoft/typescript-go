@@ -1,6 +1,6 @@
 --- old.objectTypesIdentityWithGenericCallSignaturesDifferingByReturnType2.symbols
 +++ new.objectTypesIdentityWithGenericCallSignaturesDifferingByReturnType2.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >A : Symbol(A, Decl(objectTypesIdentityWithGenericCallSignaturesDifferingByReturnType2.ts, 0, 0))
  
      foo<T extends Date>(x: T): string { return null; }

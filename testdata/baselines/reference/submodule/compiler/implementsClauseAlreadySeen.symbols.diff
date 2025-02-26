@@ -1,6 +1,6 @@
 --- old.implementsClauseAlreadySeen.symbols
 +++ new.implementsClauseAlreadySeen.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >C : Symbol(C, Decl(implementsClauseAlreadySeen.ts, 0, 0))
  
      baz() { }

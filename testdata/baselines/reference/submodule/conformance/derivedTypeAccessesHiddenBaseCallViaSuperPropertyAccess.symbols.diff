@@ -1,6 +1,6 @@
 --- old.derivedTypeAccessesHiddenBaseCallViaSuperPropertyAccess.symbols
 +++ new.derivedTypeAccessesHiddenBaseCallViaSuperPropertyAccess.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Base : Symbol(Base, Decl(derivedTypeAccessesHiddenBaseCallViaSuperPropertyAccess.ts, 0, 0))
  
      foo(x: { a: number }): { a: number } {

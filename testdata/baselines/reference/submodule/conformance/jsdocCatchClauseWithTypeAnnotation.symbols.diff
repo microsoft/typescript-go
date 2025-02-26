@@ -1,6 +1,6 @@
 --- old.jsdocCatchClauseWithTypeAnnotation.symbols
 +++ new.jsdocCatchClauseWithTypeAnnotation.symbols
-@@= skipped -41, +41 lines =@@
+@@= skipped -40, +40 lines =@@
  
      try { } catch (/** @type {unknown} */ err) { console.log(err); } // should be OK
  >err : Symbol(err, Decl(foo.js, 17, 19))

@@ -1,6 +1,6 @@
 --- old.moduleAugmentationDoesNamespaceMergeOfReexport.symbols
 +++ new.moduleAugmentationDoesNamespaceMergeOfReexport.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >Foo : Symbol(Foo, Decl(file.ts, 0, 23), Decl(augment.ts, 3, 27))
  
          x: number;

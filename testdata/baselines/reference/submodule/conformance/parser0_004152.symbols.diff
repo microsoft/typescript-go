@@ -1,6 +1,6 @@
 --- old.parser0_004152.symbols
 +++ new.parser0_004152.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Game : Symbol(Game, Decl(parser0_004152.ts, 0, 0))
  
      private position = new DisplayPosition([), 3, 3, 3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 0], NoMove, 0);

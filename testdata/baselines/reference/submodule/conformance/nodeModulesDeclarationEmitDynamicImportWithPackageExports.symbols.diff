@@ -1,6 +1,6 @@
 --- old.nodeModulesDeclarationEmitDynamicImportWithPackageExports.symbols
 +++ new.nodeModulesDeclarationEmitDynamicImportWithPackageExports.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  // esm format file
  export const a = await import("package/cjs");
  >a : Symbol(a, Decl(other.ts, 1, 12))

@@ -1,6 +1,6 @@
 --- old.importCallExpressionInSystem3.symbols
 +++ new.importCallExpressionInSystem3.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >B : Symbol(B, Decl(0.ts, 0, 0))
  
      print() { return "I am B"}

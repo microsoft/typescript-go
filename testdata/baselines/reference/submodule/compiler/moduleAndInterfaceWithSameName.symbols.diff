@@ -1,6 +1,6 @@
 --- old.moduleAndInterfaceWithSameName.symbols
 +++ new.moduleAndInterfaceWithSameName.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  >Bar : Symbol(Bar, Decl(moduleAndInterfaceWithSameName.ts, 0, 13), Decl(moduleAndInterfaceWithSameName.ts, 3, 5))
  
          y: string;

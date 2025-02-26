@@ -1,6 +1,6 @@
 --- old.controlFlowStringIndex.symbols
 +++ new.controlFlowStringIndex.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  >A : Symbol(A, Decl(controlFlowStringIndex.ts, 0, 0))
  
  if (value.foo !== null) {

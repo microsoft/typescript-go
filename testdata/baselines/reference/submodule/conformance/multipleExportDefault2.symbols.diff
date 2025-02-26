@@ -1,6 +1,6 @@
 --- old.multipleExportDefault2.symbols
 +++ new.multipleExportDefault2.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  };
  
  export default function Foo() { }

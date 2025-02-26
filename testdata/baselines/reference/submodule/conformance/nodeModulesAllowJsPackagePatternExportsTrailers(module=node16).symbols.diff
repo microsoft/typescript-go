@@ -1,6 +1,6 @@
 --- old.nodeModulesAllowJsPackagePatternExportsTrailers(module=node16).symbols
 +++ new.nodeModulesAllowJsPackagePatternExportsTrailers(module=node16).symbols
-@@= skipped -72, +72 lines =@@
+@@= skipped -71, +71 lines =@@
  >type : Symbol(type, Decl(index.d.ts, 3, 6))
  
  export { cjs };

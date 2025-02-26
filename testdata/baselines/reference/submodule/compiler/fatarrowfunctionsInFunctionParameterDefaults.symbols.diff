@@ -1,6 +1,6 @@
 --- old.fatarrowfunctionsInFunctionParameterDefaults.symbols
 +++ new.fatarrowfunctionsInFunctionParameterDefaults.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  }
  
  fn.call(4); // Should be 4

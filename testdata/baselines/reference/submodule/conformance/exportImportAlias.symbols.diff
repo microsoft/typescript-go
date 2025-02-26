@@ -1,6 +1,6 @@
 --- old.exportImportAlias.symbols
 +++ new.exportImportAlias.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >Point : Symbol(Point, Decl(exportImportAlias.ts, 4, 32))
  
          constructor(public x: number, public y: number) { }

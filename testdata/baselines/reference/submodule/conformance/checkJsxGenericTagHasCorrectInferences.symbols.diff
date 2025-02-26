@@ -1,6 +1,6 @@
 --- old.checkJsxGenericTagHasCorrectInferences.symbols
 +++ new.checkJsxGenericTagHasCorrectInferences.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(file.tsx, 1, 20))
  
    initialValues: T;

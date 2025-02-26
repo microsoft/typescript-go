@@ -1,6 +1,6 @@
 --- old.jsxIssuesErrorWhenTagExpectsTooManyArguments.symbols
 +++ new.jsxIssuesErrorWhenTagExpectsTooManyArguments.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >MyProps : Symbol(MyProps, Decl(jsxIssuesErrorWhenTagExpectsTooManyArguments.tsx, 2, 31))
  
      x: number;

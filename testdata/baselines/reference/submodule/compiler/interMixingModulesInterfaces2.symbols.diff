@@ -1,6 +1,6 @@
 --- old.interMixingModulesInterfaces2.symbols
 +++ new.interMixingModulesInterfaces2.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >B : Symbol(B, Decl(interMixingModulesInterfaces2.ts, 0, 10))
  
          name: string;

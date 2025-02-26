@@ -1,6 +1,6 @@
 --- old.multipleDeclarations.symbols
 +++ new.multipleDeclarations.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(input.js, 0, 0))
  
      this.m = null;

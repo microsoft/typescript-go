@@ -1,6 +1,6 @@
 --- old.collisionThisExpressionAndPropertyNameAsConstuctorParameter.symbols
 +++ new.collisionThisExpressionAndPropertyNameAsConstuctorParameter.symbols
-@@= skipped -21, +21 lines =@@
+@@= skipped -20, +20 lines =@@
  >Foo3 : Symbol(Foo3, Decl(collisionThisExpressionAndPropertyNameAsConstuctorParameter.ts, 6, 1))
  
      constructor(private _this: number) { // Error

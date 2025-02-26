@@ -1,6 +1,6 @@
 --- old.instantiateNonGenericTypeWithTypeArguments.symbols
 +++ new.instantiateNonGenericTypeWithTypeArguments.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >C : Symbol(C, Decl(instantiateNonGenericTypeWithTypeArguments.ts, 0, 0))
  
      x: string;

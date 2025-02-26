@@ -1,6 +1,6 @@
 --- old.genericDefaults.symbols
 +++ new.genericDefaults.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === genericDefaults.ts ===
  interface A { a: number; }
  >A : Symbol(A, Decl(genericDefaults.ts, 0, 0))

@@ -1,6 +1,6 @@
 --- old.functionOverloads6.symbols
 +++ new.functionOverloads6.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >foo : Symbol(foo, Decl(functionOverloads6.ts, 0, 0))
  
     static fnOverload();

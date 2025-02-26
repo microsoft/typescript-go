@@ -1,6 +1,6 @@
 --- old.indexSignatures1.symbols
 +++ new.indexSignatures1.symbols
-@@= skipped -135, +135 lines =@@
+@@= skipped -134, +134 lines =@@
  
  const y2 = dom.data123;
  >y2 : Symbol(y2, Decl(indexSignatures1.ts, 47, 5))

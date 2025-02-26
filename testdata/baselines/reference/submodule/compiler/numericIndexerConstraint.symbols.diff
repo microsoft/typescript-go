@@ -1,6 +1,6 @@
 --- old.numericIndexerConstraint.symbols
 +++ new.numericIndexerConstraint.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(numericIndexerConstraint.ts, 0, 0))
  
      0: number;

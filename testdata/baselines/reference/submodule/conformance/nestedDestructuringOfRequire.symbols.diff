@@ -1,6 +1,6 @@
 --- old.nestedDestructuringOfRequire.symbols
 +++ new.nestedDestructuringOfRequire.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === main.js ===
  const {
      chalk: { grey }

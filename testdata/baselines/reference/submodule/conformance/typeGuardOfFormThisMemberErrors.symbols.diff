@@ -1,6 +1,6 @@
 --- old.typeGuardOfFormThisMemberErrors.symbols
 +++ new.typeGuardOfFormThisMemberErrors.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >FileSystemObject : Symbol(FileSystemObject, Decl(typeGuardOfFormThisMemberErrors.ts, 1, 16))
  
  		isFSO: this is FileSystemObject;

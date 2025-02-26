@@ -1,6 +1,6 @@
 --- old.nonPrimitiveAsProperty.symbols
 +++ new.nonPrimitiveAsProperty.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >WithNonPrimitive : Symbol(WithNonPrimitive, Decl(nonPrimitiveAsProperty.ts, 0, 0))
  
      foo: object

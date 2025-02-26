@@ -1,6 +1,6 @@
 --- old.signatureCombiningRestParameters2.symbols
 +++ new.signatureCombiningRestParameters2.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Console : Symbol(Console, Decl(lib.dom.d.ts, --, --), Decl(signatureCombiningRestParameters2.ts, 0, 0))
  
    log(message?: any, ...optionalParams: any[]): void;

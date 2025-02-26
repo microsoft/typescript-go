@@ -1,6 +1,6 @@
 --- old.decoratorMetadataConditionalType.symbols
 +++ new.decoratorMetadataConditionalType.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >d : Symbol(d, Decl(decoratorMetadataConditionalType.ts, 0, 0))
  
      public attributes: T extends { attributes: infer A } ? A : undefined;

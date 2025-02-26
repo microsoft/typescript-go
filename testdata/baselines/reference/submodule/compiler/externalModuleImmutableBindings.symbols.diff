@@ -1,6 +1,6 @@
 --- old.externalModuleImmutableBindings.symbols
 +++ new.externalModuleImmutableBindings.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >n : Symbol(n, Decl(f2.ts, 3, 3))
  
  stuff.x = 0;

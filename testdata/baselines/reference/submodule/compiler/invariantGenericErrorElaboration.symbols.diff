@@ -1,6 +1,6 @@
 --- old.invariantGenericErrorElaboration.symbols
 +++ new.invariantGenericErrorElaboration.symbols
-@@= skipped -19, +19 lines =@@
+@@= skipped -18, +18 lines =@@
  >A : Symbol(A, Decl(invariantGenericErrorElaboration.ts, 5, 18))
  
    constraint: Constraint<this>

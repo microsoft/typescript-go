@@ -1,6 +1,6 @@
 --- old.generatorES6_6.symbols
 +++ new.generatorES6_6.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(generatorES6_6.ts, 0, 0))
  
    *[Symbol.iterator]() {

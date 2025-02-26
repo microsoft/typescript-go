@@ -1,6 +1,6 @@
 --- old.classStaticBlock5(target=es2015).symbols
 +++ new.classStaticBlock5(target=es2015).symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >B : Symbol(B, Decl(classStaticBlock5.ts, 0, 0))
  
      static a = 1;

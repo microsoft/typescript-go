@@ -1,6 +1,6 @@
 --- old.parenthesizedContexualTyping2.symbols
 +++ new.parenthesizedContexualTyping2.symbols
-@@= skipped -130, +130 lines =@@
+@@= skipped -129, +129 lines =@@
  var i = fun((Math.random() < 0.5 ? x => { x<number>(undefined); return x; } : x => undefined), 10);
  >i : Symbol(i, Decl(parenthesizedContexualTyping2.ts, 25, 3))
  >fun : Symbol(fun, Decl(parenthesizedContexualTyping2.ts, 6, 48), Decl(parenthesizedContexualTyping2.ts, 8, 38), Decl(parenthesizedContexualTyping2.ts, 9, 51))

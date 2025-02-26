@@ -1,6 +1,6 @@
 --- old.superCallParameterContextualTyping1.symbols
 +++ new.superCallParameterContextualTyping1.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >T2 : Symbol(T2, Decl(superCallParameterContextualTyping1.ts, 0, 11))
  
      constructor(private map: (value: T1) => T2) {

@@ -1,6 +1,6 @@
 --- old.ambientDeclarationsExternal.symbols
 +++ new.ambientDeclarationsExternal.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  
  var n = imp3.x;
  >n : Symbol(n, Decl(consumer.ts, 6, 3), Decl(consumer.ts, 7, 3))

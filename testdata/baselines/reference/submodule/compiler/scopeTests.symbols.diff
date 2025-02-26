@@ -1,6 +1,6 @@
 --- old.scopeTests.symbols
 +++ new.scopeTests.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === scopeTests.ts ===
  class C { private v; public p; static s; }
  >C : Symbol(C, Decl(scopeTests.ts, 0, 0))

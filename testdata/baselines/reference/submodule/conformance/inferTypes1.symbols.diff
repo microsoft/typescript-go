@@ -1,6 +1,6 @@
 --- old.inferTypes1.symbols
 +++ new.inferTypes1.symbols
-@@= skipped -70, +70 lines =@@
+@@= skipped -69, +69 lines =@@
  >C : Symbol(C, Decl(inferTypes1.ts, 16, 1))
  
      x = 0;

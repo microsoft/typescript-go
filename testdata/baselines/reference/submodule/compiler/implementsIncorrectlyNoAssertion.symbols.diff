@@ -1,6 +1,6 @@
 --- old.implementsIncorrectlyNoAssertion.symbols
 +++ new.implementsIncorrectlyNoAssertion.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Foo : Symbol(Foo, Decl(implementsIncorrectlyNoAssertion.ts, 0, 0))
  
      x: string;

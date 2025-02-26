@@ -1,6 +1,6 @@
 --- old.unionAndIntersectionInference1.symbols
 +++ new.unionAndIntersectionInference1.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  
  interface Y { 'i am a very certain type': Y }
  >Y : Symbol(Y, Decl(unionAndIntersectionInference1.ts, 0, 0))

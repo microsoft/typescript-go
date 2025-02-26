@@ -1,6 +1,6 @@
 --- old.collisionSuperAndLocalVarInProperty.symbols
 +++ new.collisionSuperAndLocalVarInProperty.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >Foo : Symbol(Foo, Decl(collisionSuperAndLocalVarInProperty.ts, 0, 16))
  
     public prop1 = {

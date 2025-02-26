@@ -1,6 +1,6 @@
 --- old.moduleElementsInWrongContext.symbols
 +++ new.moduleElementsInWrongContext.symbols
-@@= skipped -17, +17 lines =@@
+@@= skipped -16, +16 lines =@@
  >K : Symbol(K, Decl(moduleElementsInWrongContext.ts, 6, 16))
  
      declare module "ambient" {

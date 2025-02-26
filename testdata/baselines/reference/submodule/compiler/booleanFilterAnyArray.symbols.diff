@@ -1,6 +1,6 @@
 --- old.booleanFilterAnyArray.symbols
 +++ new.booleanFilterAnyArray.symbols
-@@= skipped -24, +24 lines =@@
+@@= skipped -23, +23 lines =@@
  >T : Symbol(T, Decl(booleanFilterAnyArray.ts, 6, 14))
  
      filter<S extends T>(cb1: (value: T) => value is S): T extends any ? Ari<any> : Ari<S>;

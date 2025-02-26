@@ -1,6 +1,6 @@
 --- old.genericReversingTypeParameters.symbols
 +++ new.genericReversingTypeParameters.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >V : Symbol(V, Decl(genericReversingTypeParameters.ts, 0, 14))
  
      private inverseBiMap: BiMap<V, K>;

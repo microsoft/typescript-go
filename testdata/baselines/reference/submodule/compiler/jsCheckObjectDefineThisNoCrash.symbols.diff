@@ -1,6 +1,6 @@
 --- old.jsCheckObjectDefineThisNoCrash.symbols
 +++ new.jsCheckObjectDefineThisNoCrash.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
      constructor() {
          // Neither of the following should be recognized as declarations yet
          Object.defineProperty(this, "_prop", { value: {} });

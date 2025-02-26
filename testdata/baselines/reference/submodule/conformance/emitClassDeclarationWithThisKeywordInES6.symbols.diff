@@ -1,6 +1,6 @@
 --- old.emitClassDeclarationWithThisKeywordInES6.symbols
 +++ new.emitClassDeclarationWithThisKeywordInES6.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >B : Symbol(B, Decl(emitClassDeclarationWithThisKeywordInES6.ts, 0, 0))
  
      x = 10;

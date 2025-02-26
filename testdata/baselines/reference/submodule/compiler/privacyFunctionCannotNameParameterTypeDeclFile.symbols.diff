@@ -1,6 +1,6 @@
 --- old.privacyFunctionCannotNameParameterTypeDeclFile.symbols
 +++ new.privacyFunctionCannotNameParameterTypeDeclFile.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >publicClassWithWithPrivateParmeterTypes : Symbol(publicClassWithWithPrivateParmeterTypes, Decl(privacyFunctionCannotNameParameterTypeDeclFile_consumer.ts, 0, 87))
  
      static myPublicStaticMethod(param = exporter.createExportedWidget1()) { // Error

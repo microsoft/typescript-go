@@ -1,6 +1,6 @@
 --- old.superCallParameterContextualTyping3.symbols
 +++ new.superCallParameterContextualTyping3.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(superCallParameterContextualTyping3.ts, 0, 25))
  
      method(parameter: T): void;

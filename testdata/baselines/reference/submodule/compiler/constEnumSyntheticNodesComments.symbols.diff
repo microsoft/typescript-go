@@ -1,6 +1,6 @@
 --- old.constEnumSyntheticNodesComments.symbols
 +++ new.constEnumSyntheticNodesComments.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === constEnumSyntheticNodesComments.ts ===
  const enum En { A, B, C, D }
  >En : Symbol(En, Decl(constEnumSyntheticNodesComments.ts, 0, 0))

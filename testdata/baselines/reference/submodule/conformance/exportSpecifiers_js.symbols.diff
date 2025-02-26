@@ -1,6 +1,6 @@
 --- old.exportSpecifiers_js.symbols
 +++ new.exportSpecifiers_js.symbols
-@@= skipped -1, +1 lines =@@
+@@= skipped -0, +0 lines =@@
  //// [tests/cases/conformance/externalModules/typeOnly/exportSpecifiers_js.ts] ////
  
 -=== ./a.js ===

@@ -1,6 +1,6 @@
 --- old.moduleResolutionWithExtensions_notSupported.symbols
 +++ new.moduleResolutionWithExtensions_notSupported.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  import js from "./js"; // OK because it's an untyped module.
  >js : Symbol(js, Decl(a.ts, 2, 6))
  

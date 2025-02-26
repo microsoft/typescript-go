@@ -1,6 +1,6 @@
 --- old.optionalParamArgsTest.symbols
 +++ new.optionalParamArgsTest.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >I1 : Symbol(I1, Decl(optionalParamArgsTest.ts, 0, 0))
  
      C1M1():number;

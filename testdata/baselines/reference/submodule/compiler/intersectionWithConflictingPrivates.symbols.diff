@@ -1,6 +1,6 @@
 --- old.intersectionWithConflictingPrivates.symbols
 +++ new.intersectionWithConflictingPrivates.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === intersectionWithConflictingPrivates.ts ===
  class A { private x: unknown; y?: string; }
  >A : Symbol(A, Decl(intersectionWithConflictingPrivates.ts, 0, 0))

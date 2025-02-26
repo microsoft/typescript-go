@@ -1,6 +1,6 @@
 --- old.collisionCodeGenModuleWithMemberInterfaceConflict.symbols
 +++ new.collisionCodeGenModuleWithMemberInterfaceConflict.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  }
  var foo = new m1.m2();
  >foo : Symbol(foo, Decl(collisionCodeGenModuleWithMemberInterfaceConflict.ts, 6, 3))

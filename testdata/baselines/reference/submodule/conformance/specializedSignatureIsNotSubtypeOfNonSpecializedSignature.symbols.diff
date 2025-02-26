@@ -1,6 +1,6 @@
 --- old.specializedSignatureIsNotSubtypeOfNonSpecializedSignature.symbols
 +++ new.specializedSignatureIsNotSubtypeOfNonSpecializedSignature.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >C : Symbol(C, Decl(specializedSignatureIsNotSubtypeOfNonSpecializedSignature.ts, 1, 27))
  
      foo(x: 'a');

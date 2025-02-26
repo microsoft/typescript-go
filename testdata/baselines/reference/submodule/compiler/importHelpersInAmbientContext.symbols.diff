@@ -1,6 +1,6 @@
 --- old.importHelpersInAmbientContext.symbols
 +++ new.importHelpersInAmbientContext.symbols
-@@= skipped -34, +34 lines =@@
+@@= skipped -33, +33 lines =@@
  >Foo : Symbol(Foo, Decl(a.d.ts, 12, 1))
  
      a: number; b: string;

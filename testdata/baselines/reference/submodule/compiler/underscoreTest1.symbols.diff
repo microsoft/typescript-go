@@ -1,6 +1,6 @@
 --- old.underscoreTest1.symbols
 +++ new.underscoreTest1.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >x : Symbol(x, Decl(underscoreTest1_underscoreTests.ts, 3, 23))
  
  _.each([1, 2, 3], (num) => alert(num.toString()));

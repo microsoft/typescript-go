@@ -1,6 +1,6 @@
 --- old.typeGuardsWithInstanceOfByConstructorSignature.symbols
 +++ new.typeGuardsWithInstanceOfByConstructorSignature.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >A : Symbol(A, Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 2, 1), Decl(typeGuardsWithInstanceOfByConstructorSignature.ts, 6, 11))
  
      foo: string;

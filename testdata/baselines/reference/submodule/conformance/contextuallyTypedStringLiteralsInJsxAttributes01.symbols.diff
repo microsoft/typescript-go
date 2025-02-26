@@ -1,6 +1,6 @@
 --- old.contextuallyTypedStringLiteralsInJsxAttributes01.symbols
 +++ new.contextuallyTypedStringLiteralsInJsxAttributes01.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >IntrinsicElements : Symbol(IntrinsicElements, Decl(contextuallyTypedStringLiteralsInJsxAttributes01.tsx, 0, 15))
  
          span: {};

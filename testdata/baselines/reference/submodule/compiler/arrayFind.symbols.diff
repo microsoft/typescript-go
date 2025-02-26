@@ -1,6 +1,6 @@
 --- old.arrayFind.symbols
 +++ new.arrayFind.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  
  const foundNumber: number | undefined = arrayOfStringsNumbersAndBooleans.find(isNumber);
  >foundNumber : Symbol(foundNumber, Decl(arrayFind.ts, 6, 5))

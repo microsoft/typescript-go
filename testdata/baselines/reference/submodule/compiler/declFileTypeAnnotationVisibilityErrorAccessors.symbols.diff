@@ -1,6 +1,6 @@
 --- old.declFileTypeAnnotationVisibilityErrorAccessors.symbols
 +++ new.declFileTypeAnnotationVisibilityErrorAccessors.symbols
-@@= skipped -25, +25 lines =@@
+@@= skipped -24, +24 lines =@@
  
          // getter with annotation
          get foo1(): private1 {

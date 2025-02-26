@@ -1,6 +1,6 @@
 --- old.jsDeclarationsExportAssignedConstructorFunctionWithSub.symbols
 +++ new.jsDeclarationsExportAssignedConstructorFunctionWithSub.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
   * @param {number} p
   */
  module.exports = function (p) {

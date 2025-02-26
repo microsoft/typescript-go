@@ -1,6 +1,6 @@
 --- old.accessors_spec_section-4.5_inference.symbols
 +++ new.accessors_spec_section-4.5_inference.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >LanguageSpec_section_4_5_inference : Symbol(LanguageSpec_section_4_5_inference, Decl(accessors_spec_section-4.5_inference.ts, 1, 21))
  
      public set InferredGetterFromSetterAnnotation(a: A) { }

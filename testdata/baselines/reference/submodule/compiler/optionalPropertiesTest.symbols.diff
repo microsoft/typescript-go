@@ -1,6 +1,6 @@
 --- old.optionalPropertiesTest.symbols
 +++ new.optionalPropertiesTest.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >IFoo : Symbol(IFoo, Decl(optionalPropertiesTest.ts, 0, 50))
  {
      id: number;

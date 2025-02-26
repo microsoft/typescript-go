@@ -1,6 +1,6 @@
 --- old.jsDeclarationEmitExportAssignedFunctionWithExtraTypedefsMembers.symbols
 +++ new.jsDeclarationEmitExportAssignedFunctionWithExtraTypedefsMembers.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
   * @param {Options} options
   */
  module.exports = function loader(options) {}

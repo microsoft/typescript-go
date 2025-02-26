@@ -1,6 +1,6 @@
 --- old.deeplyNestedCheck.symbols
 +++ new.deeplyNestedCheck.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >X : Symbol(X, Decl(deeplyNestedCheck.ts, 2, 23))
  
    child(path: string): DataSnapshot;

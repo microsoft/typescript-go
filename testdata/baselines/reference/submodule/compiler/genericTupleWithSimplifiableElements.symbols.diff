@@ -1,6 +1,6 @@
 --- old.genericTupleWithSimplifiableElements.symbols
 +++ new.genericTupleWithSimplifiableElements.symbols
-@@= skipped -26, +26 lines =@@
+@@= skipped -25, +25 lines =@@
  >SS : Symbol(SS, Decl(genericTupleWithSimplifiableElements.ts, 8, 8))
  
      f() {

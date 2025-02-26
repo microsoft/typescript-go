@@ -1,6 +1,6 @@
 --- old.callChain.symbols
 +++ new.callChain.symbols
-@@= skipped -160, +160 lines =@@
+@@= skipped -159, +159 lines =@@
  
  // GH#36031
  o2?.b()!.toString;

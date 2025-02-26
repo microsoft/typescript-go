@@ -1,6 +1,6 @@
 --- old.enumLiteralTypes3.symbols
 +++ new.enumLiteralTypes3.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === enumLiteralTypes3.ts ===
  const enum Choice { Unknown, Yes, No };
  >Choice : Symbol(Choice, Decl(enumLiteralTypes3.ts, 0, 0))

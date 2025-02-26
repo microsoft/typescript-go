@@ -1,6 +1,6 @@
 --- old.missingTypeArguments3.symbols
 +++ new.missingTypeArguments3.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(missingTypeArguments3.ts, 2, 25))
  
          OrderByDescending(keySelector?: string): OrderedEnumerable<T>;

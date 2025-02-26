@@ -1,6 +1,6 @@
 --- old.declarationEmitDoesNotUseReexportedNamespaceAsLocal.symbols
 +++ new.declarationEmitDoesNotUseReexportedNamespaceAsLocal.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  export const x = add(import("./sub"));
  >x : Symbol(x, Decl(index.ts, 0, 12))
  >add : Symbol(add, Decl(index.ts, 1, 27))

@@ -1,6 +1,6 @@
 --- old.decoratorOnClass6.es6.symbols
 +++ new.decoratorOnClass6.es6.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  >C : Symbol(C, Decl(decoratorOnClass6.es6.ts, 0, 38))
  
      static x() { return C.y; }

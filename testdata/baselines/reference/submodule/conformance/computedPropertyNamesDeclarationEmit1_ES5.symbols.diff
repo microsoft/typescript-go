@@ -1,6 +1,6 @@
 --- old.computedPropertyNamesDeclarationEmit1_ES5.symbols
 +++ new.computedPropertyNamesDeclarationEmit1_ES5.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(computedPropertyNamesDeclarationEmit1_ES5.ts, 0, 0))
  
      ["" + ""]() { }

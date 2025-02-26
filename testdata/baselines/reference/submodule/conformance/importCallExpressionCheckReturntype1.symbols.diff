@@ -1,6 +1,6 @@
 --- old.importCallExpressionCheckReturntype1.symbols
 +++ new.importCallExpressionCheckReturntype1.symbols
-@@= skipped -17, +17 lines =@@
+@@= skipped -16, +16 lines =@@
  
  let p1: Promise<typeof anotherModule> = import("./defaultPath");
  >p1 : Symbol(p1, Decl(1.ts, 3, 3))

@@ -1,6 +1,6 @@
 --- old.moduleDuplicateIdentifiers.symbols
 +++ new.moduleDuplicateIdentifiers.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >Bar : Symbol(Bar, Decl(moduleDuplicateIdentifiers.ts, 1, 20), Decl(moduleDuplicateIdentifiers.ts, 5, 1))
  
  	_brand1: any;

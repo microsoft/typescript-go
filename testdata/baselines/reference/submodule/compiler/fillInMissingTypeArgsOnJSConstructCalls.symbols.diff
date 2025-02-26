@@ -1,6 +1,6 @@
 --- old.fillInMissingTypeArgsOnJSConstructCalls.symbols
 +++ new.fillInMissingTypeArgsOnJSConstructCalls.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === BaseA.js ===
  export default class BaseA {

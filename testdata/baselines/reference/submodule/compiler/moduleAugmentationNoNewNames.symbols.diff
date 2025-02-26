@@ -1,6 +1,6 @@
 --- old.moduleAugmentationNoNewNames.symbols
 +++ new.moduleAugmentationNoNewNames.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Observable : Symbol(Observable, Decl(map.ts, 0, 8))
  
  (<any>Observable.prototype).map = function() { }

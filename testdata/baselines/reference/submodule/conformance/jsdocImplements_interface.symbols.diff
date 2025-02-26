@@ -1,6 +1,6 @@
 --- old.jsdocImplements_interface.symbols
 +++ new.jsdocImplements_interface.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(defs.d.ts, 0, 0))
  
      mNumber(): number;

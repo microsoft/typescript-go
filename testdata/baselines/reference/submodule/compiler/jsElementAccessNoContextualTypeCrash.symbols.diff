@@ -1,6 +1,6 @@
 --- old.jsElementAccessNoContextualTypeCrash.symbols
 +++ new.jsElementAccessNoContextualTypeCrash.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === jsElementAccessNoContextualTypeCrash.js ===
  var Common = {};

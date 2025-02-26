@@ -1,6 +1,6 @@
 --- old.checkJsdocTypeTagOnObjectProperty1.symbols
 +++ new.checkJsdocTypeTagOnObjectProperty1.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >lol : Symbol(lol, Decl(0.js, 1, 3))
  
  const obj = {

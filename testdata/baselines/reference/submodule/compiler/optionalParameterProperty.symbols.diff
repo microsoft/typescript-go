@@ -1,6 +1,6 @@
 --- old.optionalParameterProperty.symbols
 +++ new.optionalParameterProperty.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(optionalParameterProperty.ts, 0, 0))
  
      p: number;

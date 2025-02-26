@@ -1,6 +1,6 @@
 --- old.constIndexedAccess.symbols
 +++ new.constIndexedAccess.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >numbers : Symbol(numbers, Decl(constIndexedAccess.ts, 0, 0))
  
      zero,

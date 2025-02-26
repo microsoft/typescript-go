@@ -1,6 +1,6 @@
 --- old.interfaceWithPrivateMember.symbols
 +++ new.interfaceWithPrivateMember.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >I : Symbol(I, Decl(interfaceWithPrivateMember.ts, 0, 0))
  
      private x: string;

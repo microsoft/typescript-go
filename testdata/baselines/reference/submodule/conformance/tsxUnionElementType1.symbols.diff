@@ -1,6 +1,6 @@
 --- old.tsxUnionElementType1.symbols
 +++ new.tsxUnionElementType1.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >x : Symbol(x, Decl(file.tsx, 2, 21))
  
      return <div>hello</div>;

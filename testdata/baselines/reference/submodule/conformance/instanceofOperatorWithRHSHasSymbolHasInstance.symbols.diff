@@ -1,6 +1,6 @@
 --- old.instanceofOperatorWithRHSHasSymbolHasInstance.symbols
 +++ new.instanceofOperatorWithRHSHasSymbolHasInstance.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === instanceofOperatorWithRHSHasSymbolHasInstance.ts ===
  interface Point { x: number, y: number }
  >Point : Symbol(Point, Decl(instanceofOperatorWithRHSHasSymbolHasInstance.ts, 0, 0))

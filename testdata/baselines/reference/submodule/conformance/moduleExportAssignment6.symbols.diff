@@ -1,6 +1,6 @@
 --- old.moduleExportAssignment6.symbols
 +++ new.moduleExportAssignment6.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >x : Symbol(x, Decl(webpackLibNormalModule.js, 2, 16))
  
          this.x = x

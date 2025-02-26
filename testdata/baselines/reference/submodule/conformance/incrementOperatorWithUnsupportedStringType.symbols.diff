@@ -1,6 +1,6 @@
 --- old.incrementOperatorWithUnsupportedStringType.symbols
 +++ new.incrementOperatorWithUnsupportedStringType.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  >A : Symbol(A, Decl(incrementOperatorWithUnsupportedStringType.ts, 4, 37))
  
      public a: string;

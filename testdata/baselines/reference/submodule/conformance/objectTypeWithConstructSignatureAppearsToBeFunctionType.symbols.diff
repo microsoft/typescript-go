@@ -1,6 +1,6 @@
 --- old.objectTypeWithConstructSignatureAppearsToBeFunctionType.symbols
 +++ new.objectTypeWithConstructSignatureAppearsToBeFunctionType.symbols
-@@= skipped -25, +25 lines =@@
+@@= skipped -24, +24 lines =@@
  >r2c : Symbol(r2c, Decl(objectTypeWithConstructSignatureAppearsToBeFunctionType.ts, 9, 3))
  >x : Symbol(x, Decl(objectTypeWithConstructSignatureAppearsToBeFunctionType.ts, 9, 10))
  >y : Symbol(y, Decl(objectTypeWithConstructSignatureAppearsToBeFunctionType.ts, 9, 17))

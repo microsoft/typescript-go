@@ -1,6 +1,6 @@
 --- old.declarationEmitMixinPrivateProtected.symbols
 +++ new.declarationEmitMixinPrivateProtected.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >DisposableMixin : Symbol(DisposableMixin, Decl(first.ts, 2, 5))
  
      protected _onDispose() {

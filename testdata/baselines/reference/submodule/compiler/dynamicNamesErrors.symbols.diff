@@ -1,6 +1,6 @@
 --- old.dynamicNamesErrors.symbols
 +++ new.dynamicNamesErrors.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >T0 : Symbol(T0, Decl(dynamicNamesErrors.ts, 1, 13))
  
      [c0]: number;

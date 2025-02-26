@@ -1,6 +1,6 @@
 --- old.recursiveClassInstantiationsWithDefaultConstructors.symbols
 +++ new.recursiveClassInstantiationsWithDefaultConstructors.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >MemberName : Symbol(MemberName, Decl(recursiveClassInstantiationsWithDefaultConstructors.ts, 0, 20))
  
          public prefix: string = "";

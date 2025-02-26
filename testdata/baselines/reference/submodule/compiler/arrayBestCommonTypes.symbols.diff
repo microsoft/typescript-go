@@ -1,6 +1,6 @@
 --- old.arrayBestCommonTypes.symbols
 +++ new.arrayBestCommonTypes.symbols
-@@= skipped -24, +24 lines =@@
+@@= skipped -23, +23 lines =@@
  >f : Symbol(f, Decl(arrayBestCommonTypes.ts, 4, 34))
  
          public voidIfAny(x: boolean, y?: boolean): number;

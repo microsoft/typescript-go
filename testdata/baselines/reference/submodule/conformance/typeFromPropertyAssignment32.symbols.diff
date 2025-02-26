@@ -1,6 +1,6 @@
 --- old.typeFromPropertyAssignment32.symbols
 +++ new.typeFromPropertyAssignment32.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === expando.ts ===
  function ExpandoMerge(n: number) {

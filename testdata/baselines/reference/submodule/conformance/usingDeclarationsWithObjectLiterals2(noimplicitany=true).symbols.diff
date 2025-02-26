@@ -1,6 +1,6 @@
 --- old.usingDeclarationsWithObjectLiterals2(noimplicitany=true).symbols
 +++ new.usingDeclarationsWithObjectLiterals2(noimplicitany=true).symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
    using _ = { [Symbol.dispose]() {}, value: null };
  >_ : Symbol(_, Decl(usingDeclarationsWithObjectLiterals2.ts, 1, 7))
  >[Symbol.dispose] : Symbol([Symbol.dispose], Decl(usingDeclarationsWithObjectLiterals2.ts, 1, 13))

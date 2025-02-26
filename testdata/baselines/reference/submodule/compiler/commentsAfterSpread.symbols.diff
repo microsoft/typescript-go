@@ -1,6 +1,6 @@
 --- old.commentsAfterSpread.symbols
 +++ new.commentsAfterSpread.symbols
-@@= skipped -68, +68 lines =@@
+@@= skipped -67, +67 lines =@@
  >args : Symbol(args, Decl(commentsAfterSpread.ts, 30, 12))
  
    return args.length;

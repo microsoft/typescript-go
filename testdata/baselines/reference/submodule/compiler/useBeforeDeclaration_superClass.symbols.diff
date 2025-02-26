@@ -1,6 +1,6 @@
 --- old.useBeforeDeclaration_superClass.symbols
 +++ new.useBeforeDeclaration_superClass.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(useBeforeDeclaration_superClass.ts, 0, 0))
  
      x = 0;

@@ -1,6 +1,6 @@
 --- old.controlFlowGenericTypes.symbols
 +++ new.controlFlowGenericTypes.symbols
-@@= skipped -19, +19 lines =@@
+@@= skipped -18, +18 lines =@@
  >x : Symbol(x, Decl(controlFlowGenericTypes.ts, 0, 42))
  
          x.length;

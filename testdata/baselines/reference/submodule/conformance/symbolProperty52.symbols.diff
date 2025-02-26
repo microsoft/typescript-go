@@ -1,6 +1,6 @@
 --- old.symbolProperty52.symbols
 +++ new.symbolProperty52.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
      [Symbol.nonsense]: 0
  >[Symbol.nonsense] : Symbol([Symbol.nonsense], Decl(symbolProperty52.ts, 0, 11))

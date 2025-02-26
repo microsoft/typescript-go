@@ -1,6 +1,6 @@
 --- old.interfaceSubtyping.symbols
 +++ new.interfaceSubtyping.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >iface : Symbol(iface, Decl(interfaceSubtyping.ts, 0, 0))
  
      foo(): void;

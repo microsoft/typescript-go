@@ -1,6 +1,6 @@
 --- old.privateNameJsBadDeclaration.symbols
 +++ new.privateNameJsBadDeclaration.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === privateNameJsPrototype.js ===
  function A() { }

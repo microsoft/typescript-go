@@ -1,6 +1,6 @@
 --- old.commentOnClassAccessor2.symbols
 +++ new.commentOnClassAccessor2.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
     * Getter.
     */
    get bar(): number { return 1;}

@@ -1,6 +1,6 @@
 --- old.decoratorOnClassMethodThisParameter.symbols
 +++ new.decoratorOnClassMethodThisParameter.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >C : Symbol(C, Decl(decoratorOnClassMethodThisParameter.ts, 0, 97))
  
      method(@dec this: C) {}

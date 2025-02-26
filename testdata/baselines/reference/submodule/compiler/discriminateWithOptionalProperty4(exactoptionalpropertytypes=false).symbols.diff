@@ -1,6 +1,6 @@
 --- old.discriminateWithOptionalProperty4(exactoptionalpropertytypes=false).symbols
 +++ new.discriminateWithOptionalProperty4(exactoptionalpropertytypes=false).symbols
-@@= skipped -19, +19 lines =@@
+@@= skipped -18, +18 lines =@@
  >a : Symbol(a, Decl(discriminateWithOptionalProperty4.ts, 3, 17), Decl(discriminateWithOptionalProperty4.ts, 3, 17))
  
      ? z.a.toString()

@@ -1,6 +1,6 @@
 --- old.defaultPropertyAssignedClassWithPrototype.symbols
 +++ new.defaultPropertyAssignedClassWithPrototype.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === bug39167.js ===
  var test = {};

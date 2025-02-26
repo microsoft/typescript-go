@@ -1,6 +1,6 @@
 --- old.systemModuleConstEnumsSeparateCompilation.symbols
 +++ new.systemModuleConstEnumsSeparateCompilation.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  
  const enum TopLevelConstEnum { X }
  >TopLevelConstEnum : Symbol(TopLevelConstEnum, Decl(systemModuleConstEnumsSeparateCompilation.ts, 0, 29))

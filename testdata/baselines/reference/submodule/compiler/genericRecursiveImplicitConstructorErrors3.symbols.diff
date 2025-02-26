@@ -1,6 +1,6 @@
 --- old.genericRecursiveImplicitConstructorErrors3.symbols
 +++ new.genericRecursiveImplicitConstructorErrors3.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >C : Symbol(C, Decl(genericRecursiveImplicitConstructorErrors3.ts, 1, 33))
  
          static create<A,B,C>(arg1: any, arg2?: any, arg3?: any): MemberName {

@@ -1,6 +1,6 @@
 --- old.thisInModuleFunction1.symbols
 +++ new.thisInModuleFunction1.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  } 
  var z = bar.bar();
  >z : Symbol(z, Decl(thisInModuleFunction1.ts, 5, 3))

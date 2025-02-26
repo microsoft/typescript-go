@@ -1,6 +1,6 @@
 --- old.genericContextualTypes1.symbols
 +++ new.genericContextualTypes1.symbols
-@@= skipped -211, +211 lines =@@
+@@= skipped -210, +210 lines =@@
  >U : Symbol(U, Decl(genericContextualTypes1.ts, 32, 20))
  >a : Symbol(a, Decl(genericContextualTypes1.ts, 32, 44))
  >T : Symbol(T, Decl(genericContextualTypes1.ts, 32, 18))

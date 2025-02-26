@@ -1,6 +1,6 @@
 --- old.types.asyncGenerators.es2018.1.symbols
 +++ new.types.asyncGenerators.es2018.1.symbols
-@@= skipped -18, +18 lines =@@
+@@= skipped -17, +17 lines =@@
  >inferReturnType4 : Symbol(inferReturnType4, Decl(types.asyncGenerators.es2018.1.ts, 7, 1))
  
      yield Promise.resolve(1);

@@ -1,6 +1,6 @@
 --- old.genericInference2.symbols
 +++ new.genericInference2.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(genericInference2.ts, 1, 35))
  
             N: number; 

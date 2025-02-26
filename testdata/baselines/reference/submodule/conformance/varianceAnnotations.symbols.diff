@@ -1,6 +1,6 @@
 --- old.varianceAnnotations.symbols
 +++ new.varianceAnnotations.symbols
-@@= skipped -285, +285 lines =@@
+@@= skipped -284, +284 lines =@@
  >C : Symbol(C, Decl(varianceAnnotations.ts, 100, 32))
  
      in a = 0;  // Error

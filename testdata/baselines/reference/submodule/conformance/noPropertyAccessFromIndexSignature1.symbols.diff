@@ -1,6 +1,6 @@
 --- old.noPropertyAccessFromIndexSignature1.symbols
 +++ new.noPropertyAccessFromIndexSignature1.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(noPropertyAccessFromIndexSignature1.ts, 0, 0))
  
      foo: string

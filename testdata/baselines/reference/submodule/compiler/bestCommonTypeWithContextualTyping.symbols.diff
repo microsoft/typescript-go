@@ -1,6 +1,6 @@
 --- old.bestCommonTypeWithContextualTyping.symbols
 +++ new.bestCommonTypeWithContextualTyping.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Contextual : Symbol(Contextual, Decl(bestCommonTypeWithContextualTyping.ts, 0, 0))
  
      dummy;

@@ -1,6 +1,6 @@
 --- old.conditionalOperatorWithIdenticalBCT.symbols
 +++ new.conditionalOperatorWithIdenticalBCT.symbols
-@@= skipped -4, +4 lines =@@
+@@= skipped -3, +3 lines =@@
  //Cond ? Expr1 : Expr2,  Expr1 and Expr2 have identical best common type
  class X { propertyX: any; propertyX1: number; propertyX2: string };
  >X : Symbol(X, Decl(conditionalOperatorWithIdenticalBCT.ts, 0, 0))

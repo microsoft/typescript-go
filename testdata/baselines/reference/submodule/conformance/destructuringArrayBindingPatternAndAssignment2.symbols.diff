@@ -1,6 +1,6 @@
 --- old.destructuringArrayBindingPatternAndAssignment2.symbols
 +++ new.destructuringArrayBindingPatternAndAssignment2.symbols
-@@= skipped -26, +26 lines =@@
+@@= skipped -25, +25 lines =@@
  >Number : Symbol(Number, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      2: number;

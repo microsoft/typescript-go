@@ -1,6 +1,6 @@
 --- old.constructorDefaultValuesReferencingThis.symbols
 +++ new.constructorDefaultValuesReferencingThis.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(constructorDefaultValuesReferencingThis.ts, 0, 0))
  
      public baseProp = 1;

@@ -1,6 +1,6 @@
 --- old.intraExpressionInferences.symbols
 +++ new.intraExpressionInferences.symbols
-@@= skipped -29, +29 lines =@@
+@@= skipped -28, +28 lines =@@
      consume: n => n.toFixed()
  >consume : Symbol(consume, Decl(intraExpressionInferences.ts, 8, 21))
  >n : Symbol(n, Decl(intraExpressionInferences.ts, 9, 12))

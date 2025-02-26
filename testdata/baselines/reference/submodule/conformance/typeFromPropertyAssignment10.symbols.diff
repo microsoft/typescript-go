@@ -1,6 +1,6 @@
 --- old.typeFromPropertyAssignment10.symbols
 +++ new.typeFromPropertyAssignment10.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === module.js ===
  var Outer = Outer || {};

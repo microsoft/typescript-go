@@ -1,6 +1,6 @@
 --- old.typeGuardsInConditionalExpression.symbols
 +++ new.typeGuardsInConditionalExpression.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  >x : Symbol(x, Decl(typeGuardsInConditionalExpression.ts, 7, 13))
  
          ? x.length // string

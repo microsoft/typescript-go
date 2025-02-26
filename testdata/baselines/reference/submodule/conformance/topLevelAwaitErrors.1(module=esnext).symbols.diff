@@ -1,6 +1,6 @@
 --- old.topLevelAwaitErrors.1(module=esnext).symbols
 +++ new.topLevelAwaitErrors.1(module=esnext).symbols
-@@= skipped -34, +34 lines =@@
+@@= skipped -33, +33 lines =@@
  
      @await
      ["foo"]() {}

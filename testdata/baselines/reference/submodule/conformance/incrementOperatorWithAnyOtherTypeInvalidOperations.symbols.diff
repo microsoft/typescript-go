@@ -1,6 +1,6 @@
 --- old.incrementOperatorWithAnyOtherTypeInvalidOperations.symbols
 +++ new.incrementOperatorWithAnyOtherTypeInvalidOperations.symbols
-@@= skipped -29, +29 lines =@@
+@@= skipped -28, +28 lines =@@
  >A : Symbol(A, Decl(incrementOperatorWithAnyOtherTypeInvalidOperations.ts, 9, 1))
  
      public a: any;

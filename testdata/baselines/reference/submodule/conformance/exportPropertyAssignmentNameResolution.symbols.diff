@@ -1,6 +1,6 @@
 --- old.exportPropertyAssignmentNameResolution.symbols
 +++ new.exportPropertyAssignmentNameResolution.symbols
-@@= skipped -1, +1 lines =@@
+@@= skipped -0, +0 lines =@@
  //// [tests/cases/conformance/salsa/exportPropertyAssignmentNameResolution.ts] ////
  
  === bug24492.js ===

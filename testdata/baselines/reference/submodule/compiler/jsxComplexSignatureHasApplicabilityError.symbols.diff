@@ -1,6 +1,6 @@
 --- old.jsxComplexSignatureHasApplicabilityError.symbols
 +++ new.jsxComplexSignatureHasApplicabilityError.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >OptionValues : Symbol(OptionValues, Decl(jsxComplexSignatureHasApplicabilityError.tsx, 124, 1))
  
      value?: Option<T> | T;

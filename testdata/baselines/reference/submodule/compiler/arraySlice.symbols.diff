@@ -1,6 +1,6 @@
 --- old.arraySlice.symbols
 +++ new.arraySlice.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >arr : Symbol(arr, Decl(arraySlice.ts, 0, 3))
  
  arr.splice(1, 1);

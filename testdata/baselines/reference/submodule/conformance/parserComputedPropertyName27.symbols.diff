@@ -1,6 +1,6 @@
 --- old.parserComputedPropertyName27.symbols
 +++ new.parserComputedPropertyName27.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
      // No ASI
      [e]: number = 0

@@ -1,6 +1,6 @@
 --- old.reactImportDropped.symbols
 +++ new.reactImportDropped.symbols
-@@= skipped -25, +25 lines =@@
+@@= skipped -24, +24 lines =@@
  }
  
  declare global {

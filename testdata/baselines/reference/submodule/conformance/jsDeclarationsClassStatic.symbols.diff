@@ -1,6 +1,6 @@
 --- old.jsDeclarationsClassStatic.symbols
 +++ new.jsDeclarationsClassStatic.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === source.js ===
  class Handler {

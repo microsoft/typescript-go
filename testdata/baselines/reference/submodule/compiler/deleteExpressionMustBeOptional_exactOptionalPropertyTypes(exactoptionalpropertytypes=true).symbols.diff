@@ -1,6 +1,6 @@
 --- old.deleteExpressionMustBeOptional_exactOptionalPropertyTypes(exactoptionalpropertytypes=true).symbols
 +++ new.deleteExpressionMustBeOptional_exactOptionalPropertyTypes(exactoptionalpropertytypes=true).symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Foo : Symbol(Foo, Decl(deleteExpressionMustBeOptional_exactOptionalPropertyTypes.ts, 0, 0))
  
      a: number

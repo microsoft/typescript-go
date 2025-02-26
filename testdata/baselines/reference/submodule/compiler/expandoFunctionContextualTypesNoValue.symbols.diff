@@ -1,6 +1,6 @@
 --- old.expandoFunctionContextualTypesNoValue.symbols
 +++ new.expandoFunctionContextualTypesNoValue.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >Foo : Symbol(Foo, Decl(expandoFunctionContextualTypesNoValue.ts, 1, 23), Decl(expandoFunctionContextualTypesNoValue.ts, 1, 6))
  
  export function Foo() { }

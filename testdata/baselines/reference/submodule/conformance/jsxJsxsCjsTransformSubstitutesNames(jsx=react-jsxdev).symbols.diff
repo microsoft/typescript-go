@@ -1,6 +1,6 @@
 --- old.jsxJsxsCjsTransformSubstitutesNames(jsx=react-jsxdev).symbols
 +++ new.jsxJsxsCjsTransformSubstitutesNames(jsx=react-jsxdev).symbols
-@@= skipped -4, +4 lines =@@
+@@= skipped -3, +3 lines =@@
  /// <reference path="react16.d.ts" />
  const a = <div></div>
  >a : Symbol(a, Decl(jsxJsxsCjsTransformSubstitutesNames.tsx, 1, 5))

@@ -1,6 +1,6 @@
 --- old.classVarianceResolveCircularity2.symbols
 +++ new.classVarianceResolveCircularity2.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(classVarianceResolveCircularity2.ts, 4, 10))
  
      num!: number;

@@ -1,6 +1,6 @@
 --- old.nodeModulesTripleSlashReferenceModeDeclarationEmit1(module=nodenext).symbols
 +++ new.nodeModulesTripleSlashReferenceModeDeclarationEmit1(module=nodenext).symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  === /node_modules/pkg/require.d.ts ===
  export {};
  declare global {

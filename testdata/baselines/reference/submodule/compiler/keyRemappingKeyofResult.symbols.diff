@@ -1,6 +1,6 @@
 --- old.keyRemappingKeyofResult.symbols
 +++ new.keyRemappingKeyofResult.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === keyRemappingKeyofResult.ts ===
  const sym = Symbol("")
  >sym : Symbol(sym, Decl(keyRemappingKeyofResult.ts, 0, 5))

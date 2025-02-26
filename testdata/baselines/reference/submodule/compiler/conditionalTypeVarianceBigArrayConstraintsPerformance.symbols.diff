@@ -1,6 +1,6 @@
 --- old.conditionalTypeVarianceBigArrayConstraintsPerformance.symbols
 +++ new.conditionalTypeVarianceBigArrayConstraintsPerformance.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  
      T extends keyof JSX.IntrinsicElements
  >T : Symbol(T, Decl(conditionalTypeVarianceBigArrayConstraintsPerformance.ts, 2, 11))

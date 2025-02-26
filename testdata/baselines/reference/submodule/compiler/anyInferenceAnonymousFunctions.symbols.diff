@@ -1,6 +1,6 @@
 --- old.anyInferenceAnonymousFunctions.symbols
 +++ new.anyInferenceAnonymousFunctions.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >paired : Symbol(paired, Decl(anyInferenceAnonymousFunctions.ts, 0, 3))
  
  paired.reduce(function (a1, a2) {

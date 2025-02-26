@@ -1,6 +1,6 @@
 --- old.objectLiteralArraySpecialization.symbols
 +++ new.objectLiteralArraySpecialization.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  >T : Symbol(T, Decl(objectLiteralArraySpecialization.ts, 1, 25))
  
  	constructor(initialItems?: T[]);

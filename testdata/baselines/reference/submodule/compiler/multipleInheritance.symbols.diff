@@ -1,6 +1,6 @@
 --- old.multipleInheritance.symbols
 +++ new.multipleInheritance.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >B1 : Symbol(B1, Decl(multipleInheritance.ts, 0, 0))
  
      public x;

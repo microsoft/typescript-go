@@ -1,6 +1,6 @@
 --- old.typeGuardNarrowsIndexedAccessOfKnownProperty10.symbols
 +++ new.typeGuardNarrowsIndexedAccessOfKnownProperty10.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === typeGuardNarrowsIndexedAccessOfKnownProperty10.ts ===
  interface Foo { bar: any; }
  >Foo : Symbol(Foo, Decl(typeGuardNarrowsIndexedAccessOfKnownProperty10.ts, 0, 0))

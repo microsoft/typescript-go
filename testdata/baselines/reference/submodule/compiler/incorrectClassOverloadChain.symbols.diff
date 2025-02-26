@@ -1,6 +1,6 @@
 --- old.incorrectClassOverloadChain.symbols
 +++ new.incorrectClassOverloadChain.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(incorrectClassOverloadChain.ts, 0, 0))
  
      foo(): string;

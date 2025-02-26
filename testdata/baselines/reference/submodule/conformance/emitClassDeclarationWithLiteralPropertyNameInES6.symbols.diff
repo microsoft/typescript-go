@@ -1,6 +1,6 @@
 --- old.emitClassDeclarationWithLiteralPropertyNameInES6.symbols
 +++ new.emitClassDeclarationWithLiteralPropertyNameInES6.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >B : Symbol(B, Decl(emitClassDeclarationWithLiteralPropertyNameInES6.ts, 0, 0))
  
      "hello" = 10;

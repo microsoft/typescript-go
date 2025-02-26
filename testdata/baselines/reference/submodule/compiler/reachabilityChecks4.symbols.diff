@@ -1,6 +1,6 @@
 --- old.reachabilityChecks4.symbols
 +++ new.reachabilityChecks4.symbols
-@@= skipped -61, +61 lines =@@
+@@= skipped -60, +60 lines =@@
  >Transition : Symbol(Transition, Decl(reachabilityChecks4.ts, 31, 52))
  
    behavior: Behavior

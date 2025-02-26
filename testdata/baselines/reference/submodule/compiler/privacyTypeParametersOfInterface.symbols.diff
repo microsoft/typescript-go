@@ -1,6 +1,6 @@
 --- old.privacyTypeParametersOfInterface.symbols
 +++ new.privacyTypeParametersOfInterface.symbols
-@@= skipped -26, +26 lines =@@
+@@= skipped -25, +25 lines =@@
  >privateClass : Symbol(privateClass, Decl(privacyTypeParametersOfInterface.ts, 0, 0))
  
      myMethod(val: T): T; // Error

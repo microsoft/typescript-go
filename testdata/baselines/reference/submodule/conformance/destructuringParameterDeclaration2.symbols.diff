@@ -1,6 +1,6 @@
 --- old.destructuringParameterDeclaration2.symbols
 +++ new.destructuringParameterDeclaration2.symbols
-@@= skipped -27, +27 lines =@@
+@@= skipped -26, +26 lines =@@
  >F1 : Symbol(F1, Decl(destructuringParameterDeclaration2.ts, 7, 34))
  
      b0(z = 10, [[a, b], d, {u}] = [[1, 2], "string", { u: false }]);  // Error, no function body

@@ -1,6 +1,6 @@
 --- old.internalAliasVarInsideLocalModuleWithoutExportAccessError.symbols
 +++ new.internalAliasVarInsideLocalModuleWithoutExportAccessError.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
      import b = a.x;
  >b : Symbol(b, Decl(internalAliasVarInsideLocalModuleWithoutExportAccessError.ts, 4, 17))
  >a : Symbol(a, Decl(internalAliasVarInsideLocalModuleWithoutExportAccessError.ts, 0, 0))

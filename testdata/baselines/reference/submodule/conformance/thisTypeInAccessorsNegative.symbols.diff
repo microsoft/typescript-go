@@ -1,6 +1,6 @@
 --- old.thisTypeInAccessorsNegative.symbols
 +++ new.thisTypeInAccessorsNegative.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Foo : Symbol(Foo, Decl(thisTypeInAccessorsNegative.ts, 0, 0))
  
      n: number;

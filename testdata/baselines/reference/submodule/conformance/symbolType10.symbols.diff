@@ -1,6 +1,6 @@
 --- old.symbolType10.symbols
 +++ new.symbolType10.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === symbolType10.ts ===
  var s = Symbol.for("bitwise");
  >s : Symbol(s, Decl(symbolType10.ts, 0, 3))

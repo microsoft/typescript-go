@@ -1,6 +1,6 @@
 --- old.esDecorators-classDeclaration-exportModifier.2.symbols
 +++ new.esDecorators-classDeclaration-exportModifier.2.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  // ok
  @dec export default class C2 {}
  >dec : Symbol(dec, Decl(global.ts, 1, 3))

@@ -1,6 +1,6 @@
 --- old.overrideWithoutNoImplicitOverride1.symbols
 +++ new.overrideWithoutNoImplicitOverride1.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >AmbientClass : Symbol(AmbientClass, Decl(overrideWithoutNoImplicitOverride1.ts, 0, 0))
  
      override yadda(): void;

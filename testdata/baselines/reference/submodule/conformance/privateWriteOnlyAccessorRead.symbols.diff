@@ -1,6 +1,6 @@
 --- old.privateWriteOnlyAccessorRead.symbols
 +++ new.privateWriteOnlyAccessorRead.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Test : Symbol(Test, Decl(privateWriteOnlyAccessorRead.ts, 0, 0))
  
    set #value(v: { foo: { bar: number } }) {}

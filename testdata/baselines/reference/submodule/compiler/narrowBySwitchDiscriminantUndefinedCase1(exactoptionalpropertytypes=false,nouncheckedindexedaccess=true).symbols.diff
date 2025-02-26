@@ -1,6 +1,6 @@
 --- old.narrowBySwitchDiscriminantUndefinedCase1(exactoptionalpropertytypes=false,nouncheckedindexedaccess=true).symbols
 +++ new.narrowBySwitchDiscriminantUndefinedCase1(exactoptionalpropertytypes=false,nouncheckedindexedaccess=true).symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >A : Symbol(A, Decl(narrowBySwitchDiscriminantUndefinedCase1.ts, 0, 0))
  
    optionalProp?: "hello";

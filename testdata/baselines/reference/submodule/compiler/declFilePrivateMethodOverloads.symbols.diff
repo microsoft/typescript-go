@@ -1,6 +1,6 @@
 --- old.declFilePrivateMethodOverloads.symbols
 +++ new.declFilePrivateMethodOverloads.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >IContext : Symbol(IContext, Decl(declFilePrivateMethodOverloads.ts, 0, 0))
  
      someMethod();

@@ -1,6 +1,6 @@
 --- old.tsxUnionElementType3.symbols
 +++ new.tsxUnionElementType3.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
  class RC1 extends React.Component<{x : number}, {}> {
  >RC1 : Symbol(RC1, Decl(file.tsx, 0, 32))

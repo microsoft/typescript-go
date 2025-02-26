@@ -1,6 +1,6 @@
 --- old.declarationFileNoCrashOnExtraExportModifier.symbols
 +++ new.declarationFileNoCrashOnExtraExportModifier.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >p : Symbol(p, Decl(input.ts, 2, 16))
  
      t: number;

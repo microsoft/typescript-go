@@ -1,6 +1,6 @@
 --- old.computedPropertiesNarrowed.symbols
 +++ new.computedPropertiesNarrowed.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === computedPropertiesNarrowed.ts ===
  const x: 0 | 1 = Math.random()? 0: 1;
  >x : Symbol(x, Decl(computedPropertiesNarrowed.ts, 0, 5))

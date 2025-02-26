@@ -1,6 +1,6 @@
 --- old.genericConstraintDeclaration.symbols
 +++ new.genericConstraintDeclaration.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(genericConstraintDeclaration.ts, 0, 11))
  
      static empty<T extends {}>(): List<T>{return null;}

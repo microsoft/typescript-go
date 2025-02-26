@@ -1,6 +1,6 @@
 --- old.importEquals3.symbols
 +++ new.importEquals3.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  import A = a.A; // Error
  >A : Symbol(A, Decl(b.ts, 0, 30))
  >a : Symbol(a, Decl(b.ts, 0, 11))

@@ -1,6 +1,6 @@
 --- old.narrowingOrderIndependent.symbols
 +++ new.narrowingOrderIndependent.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >A : Symbol(A, Decl(narrowingOrderIndependent.ts, 0, 0))
  
      constructor(public stringOrUndefined: string | undefined) {}

@@ -1,6 +1,6 @@
 --- old.commaOperatorLeftSideUnused.symbols
 +++ new.commaOperatorLeftSideUnused.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  >arr : Symbol(arr, Decl(commaOperatorLeftSideUnused.ts, 4, 5))
  
    switch(arr.length) {

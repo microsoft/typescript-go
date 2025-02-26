@@ -1,6 +1,6 @@
 --- old.jsFileImportPreservedWhenUsed.symbols
 +++ new.jsFileImportPreservedWhenUsed.symbols
-@@= skipped -17, +17 lines =@@
+@@= skipped -16, +16 lines =@@
  >LoDashStatic : Symbol(LoDashStatic, Decl(dash.d.ts, 0, 117))
  
      mapValues<T extends object, TResult>(obj: T | null | undefined, callback: ObjectIterator<T, TResult>): { [P in keyof T]: TResult };

@@ -1,6 +1,6 @@
 --- old.assignmentCompatWithConstructSignatures2.symbols
 +++ new.assignmentCompatWithConstructSignatures2.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(assignmentCompatWithConstructSignatures2.ts, 0, 0))
  
      f: new (x: number) => void;

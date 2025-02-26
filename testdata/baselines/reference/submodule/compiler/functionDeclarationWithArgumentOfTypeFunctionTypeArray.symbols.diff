@@ -1,6 +1,6 @@
 --- old.functionDeclarationWithArgumentOfTypeFunctionTypeArray.symbols
 +++ new.functionDeclarationWithArgumentOfTypeFunctionTypeArray.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >x : Symbol(x, Decl(functionDeclarationWithArgumentOfTypeFunctionTypeArray.ts, 0, 22))
  
      return args.length;

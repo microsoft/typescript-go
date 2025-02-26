@@ -1,6 +1,6 @@
 --- old.moduleVisibilityTest1.symbols
 +++ new.moduleVisibilityTest1.symbols
-@@= skipped -18, +18 lines =@@
+@@= skipped -17, +17 lines =@@
  import OuterInnerAlias = OuterMod.OuterInnerMod;
  >OuterInnerAlias : Symbol(OuterInnerAlias, Decl(moduleVisibilityTest1.ts, 6, 1))
  >OuterMod : Symbol(OuterMod, Decl(moduleVisibilityTest1.ts, 0, 0))

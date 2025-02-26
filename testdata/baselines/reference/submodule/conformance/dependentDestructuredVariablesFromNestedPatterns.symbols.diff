@@ -1,6 +1,6 @@
 --- old.dependentDestructuredVariablesFromNestedPatterns.symbols
 +++ new.dependentDestructuredVariablesFromNestedPatterns.symbols
-@@= skipped -45, +45 lines =@@
+@@= skipped -44, +44 lines =@@
  
    const promises = await Promise.allSettled(fn());
  >promises : Symbol(promises, Decl(dependentDestructuredVariablesFromNestedPatterns.ts, 19, 7))

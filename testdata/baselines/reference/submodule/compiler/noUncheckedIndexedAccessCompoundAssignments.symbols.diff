@@ -1,6 +1,6 @@
 --- old.noUncheckedIndexedAccessCompoundAssignments.symbols
 +++ new.noUncheckedIndexedAccessCompoundAssignments.symbols
-@@= skipped -4, +4 lines =@@
+@@= skipped -3, +3 lines =@@
  // Each line should have one error
  // for a total of 12 errors
  stringMap.foo++;

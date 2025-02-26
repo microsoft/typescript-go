@@ -1,6 +1,6 @@
 --- old.inheritanceStaticMembersCompatible.symbols
 +++ new.inheritanceStaticMembersCompatible.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >a : Symbol(a, Decl(inheritanceStaticMembersCompatible.ts, 0, 0))
  
      static x: a;

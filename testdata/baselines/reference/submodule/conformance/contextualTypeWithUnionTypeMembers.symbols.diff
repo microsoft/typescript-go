@@ -1,6 +1,6 @@
 --- old.contextualTypeWithUnionTypeMembers.symbols
 +++ new.contextualTypeWithUnionTypeMembers.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >T : Symbol(T, Decl(contextualTypeWithUnionTypeMembers.ts, 2, 13))
  
      commonMethodType(a: string): string;

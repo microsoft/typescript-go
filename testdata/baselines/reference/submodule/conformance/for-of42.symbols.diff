@@ -1,6 +1,6 @@
 --- old.for-of42.symbols
 +++ new.for-of42.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >y : Symbol(y, Decl(for-of42.ts, 0, 21))
  
  for (var {x: a, y: b} of array) {

@@ -1,6 +1,6 @@
 --- old.restParameterWithoutAnnotationIsAnyArray.symbols
 +++ new.restParameterWithoutAnnotationIsAnyArray.symbols
-@@= skipped -21, +21 lines =@@
+@@= skipped -20, +20 lines =@@
  >C : Symbol(C, Decl(restParameterWithoutAnnotationIsAnyArray.ts, 4, 28))
  
      foo(...x) { }

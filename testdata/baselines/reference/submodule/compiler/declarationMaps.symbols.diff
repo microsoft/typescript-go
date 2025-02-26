@@ -1,6 +1,6 @@
 --- old.declarationMaps.symbols
 +++ new.declarationMaps.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  >connectExport : Symbol(connectExport, Decl(declarationMaps.ts, 3, 5))
  
          use: (mod: connectModule) => connectExport;

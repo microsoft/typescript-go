@@ -1,6 +1,6 @@
 --- old.constDeclarations-validContexts.symbols
 +++ new.constDeclarations-validContexts.symbols
-@@= skipped -151, +151 lines =@@
+@@= skipped -150, +150 lines =@@
      }
  
      method() {

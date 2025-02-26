@@ -1,6 +1,6 @@
 --- old.functionAndInterfaceWithSeparateErrors.symbols
 +++ new.functionAndInterfaceWithSeparateErrors.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  >s : Symbol(s, Decl(functionAndInterfaceWithSeparateErrors.ts, 4, 5))
  
      prop: number;

@@ -1,6 +1,6 @@
 --- old.bundlerSyntaxRestrictions(module=preserve).symbols
 +++ new.bundlerSyntaxRestrictions(module=preserve).symbols
-@@= skipped -33, +33 lines =@@
+@@= skipped -32, +32 lines =@@
  === /mainJs.js ===
  import {} from "./a";
  import("./a");

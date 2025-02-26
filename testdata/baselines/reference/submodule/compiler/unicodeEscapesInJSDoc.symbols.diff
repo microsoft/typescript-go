@@ -1,6 +1,6 @@
 --- old.unicodeEscapesInJSDoc.symbols
 +++ new.unicodeEscapesInJSDoc.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >aa : Symbol(aa, Decl(file.js, 4, 15))
  
      console.log(a + aa);

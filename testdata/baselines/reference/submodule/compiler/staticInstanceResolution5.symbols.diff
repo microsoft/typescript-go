@@ -1,6 +1,6 @@
 --- old.staticInstanceResolution5.symbols
 +++ new.staticInstanceResolution5.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  var x = (w1: WinJS) => { };
  >x : Symbol(x, Decl(staticInstanceResolution5_1.ts, 3, 3))
  >w1 : Symbol(w1, Decl(staticInstanceResolution5_1.ts, 3, 9))

@@ -1,6 +1,6 @@
 --- old.jsFunctionWithPrototypeNoErrorTruncationNoCrash.symbols
 +++ new.jsFunctionWithPrototypeNoErrorTruncationNoCrash.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === index.js ===
  function Color(obj) {

@@ -1,6 +1,6 @@
 --- old.tsxDiscriminantPropertyInference.symbols
 +++ new.tsxDiscriminantPropertyInference.symbols
-@@= skipped -42, +42 lines =@@
+@@= skipped -41, +41 lines =@@
  >DiscriminatorTrue : Symbol(DiscriminatorTrue, Decl(tsxDiscriminantPropertyInference.tsx, 3, 1))
  >DiscriminatorFalse : Symbol(DiscriminatorFalse, Decl(tsxDiscriminantPropertyInference.tsx, 8, 1))
  >JSX : Symbol(JSX, Decl(tsxDiscriminantPropertyInference.tsx, 0, 0))

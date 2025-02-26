@@ -1,6 +1,6 @@
 --- old.duplicatePackage_subModule.symbols
 +++ new.duplicatePackage_subModule.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  const o: Foo = a.o;
  >o : Symbol(o, Decl(index.ts, 3, 5))
  >Foo : Symbol(Foo, Decl(index.ts, 0, 6))

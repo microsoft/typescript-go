@@ -1,6 +1,6 @@
 --- old.funduleUsedAcrossFileBoundary.symbols
 +++ new.funduleUsedAcrossFileBoundary.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  >T : Symbol(T, Decl(funduleUsedAcrossFileBoundary_file1.ts, 2, 22))
  
          foo: string;

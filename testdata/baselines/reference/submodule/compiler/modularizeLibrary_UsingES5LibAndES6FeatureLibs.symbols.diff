@@ -1,6 +1,6 @@
 --- old.modularizeLibrary_UsingES5LibAndES6FeatureLibs.symbols
 +++ new.modularizeLibrary_UsingES5LibAndES6FeatureLibs.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  >t : Symbol(t, Decl(modularizeLibrary_UsingES5LibAndES6FeatureLibs.ts, 1, 3))
  
  Reflect.ownKeys({});

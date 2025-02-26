@@ -1,6 +1,6 @@
 --- old.privacyCheckExternalModuleExportAssignmentOfGenericClass.symbols
 +++ new.privacyCheckExternalModuleExportAssignmentOfGenericClass.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >Bar : Symbol(Bar, Decl(privacyCheckExternalModuleExportAssignmentOfGenericClass_1.ts, 1, 13))
  
      foo: Foo<number>;

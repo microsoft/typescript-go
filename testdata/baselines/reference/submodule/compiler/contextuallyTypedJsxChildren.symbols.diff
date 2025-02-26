@@ -1,6 +1,6 @@
 --- old.contextuallyTypedJsxChildren.symbols
 +++ new.contextuallyTypedJsxChildren.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  >BaseProps : Symbol(BaseProps, Decl(contextuallyTypedJsxChildren.tsx, 5, 32))
  
      icon: string;

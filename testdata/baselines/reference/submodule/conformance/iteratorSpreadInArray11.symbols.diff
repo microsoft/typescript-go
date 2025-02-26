@@ -1,6 +1,6 @@
 --- old.iteratorSpreadInArray11.symbols
 +++ new.iteratorSpreadInArray11.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === iteratorSpreadInArray11.ts ===
  var iter: Iterable<number>;
  >iter : Symbol(iter, Decl(iteratorSpreadInArray11.ts, 0, 3))

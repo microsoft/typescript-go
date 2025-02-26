@@ -1,6 +1,6 @@
 --- old.inheritedGenericCallSignature.symbols
 +++ new.inheritedGenericCallSignature.symbols
-@@= skipped -25, +25 lines =@@
+@@= skipped -24, +24 lines =@@
  >T : Symbol(T, Decl(inheritedGenericCallSignature.ts, 11, 13))
  
      b: T;

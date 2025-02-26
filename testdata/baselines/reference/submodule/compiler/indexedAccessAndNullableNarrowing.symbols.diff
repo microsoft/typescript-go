@@ -1,6 +1,6 @@
 --- old.indexedAccessAndNullableNarrowing.symbols
 +++ new.indexedAccessAndNullableNarrowing.symbols
-@@= skipped -108, +108 lines =@@
+@@= skipped -107, +107 lines =@@
  >State : Symbol(State, Decl(indexedAccessAndNullableNarrowing.ts, 21, 37))
  
      setState<K extends keyof S>(key: K, value: S[K]): void;

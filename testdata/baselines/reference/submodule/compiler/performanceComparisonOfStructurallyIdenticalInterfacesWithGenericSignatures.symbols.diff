@@ -1,6 +1,6 @@
 --- old.performanceComparisonOfStructurallyIdenticalInterfacesWithGenericSignatures.symbols
 +++ new.performanceComparisonOfStructurallyIdenticalInterfacesWithGenericSignatures.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  >T : Symbol(T, Decl(performanceComparisonOfStructurallyIdenticalInterfacesWithGenericSignatures.ts, 2, 28))
  
      filter(callback: (newValue: T, oldValue: T) => boolean): InterfaceA<T>;

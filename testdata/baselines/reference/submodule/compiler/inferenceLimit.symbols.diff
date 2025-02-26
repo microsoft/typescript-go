@@ -1,6 +1,6 @@
 --- old.inferenceLimit.symbols
 +++ new.inferenceLimit.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
    constructor() {}
  
    public brokenMethod(field: string, value: string) {

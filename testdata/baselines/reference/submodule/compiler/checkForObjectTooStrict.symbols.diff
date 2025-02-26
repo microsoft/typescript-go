@@ -1,6 +1,6 @@
 --- old.checkForObjectTooStrict.symbols
 +++ new.checkForObjectTooStrict.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  
  class Bar extends Foo.Object { // should work
  >Bar : Symbol(Bar, Decl(checkForObjectTooStrict.ts, 6, 1))

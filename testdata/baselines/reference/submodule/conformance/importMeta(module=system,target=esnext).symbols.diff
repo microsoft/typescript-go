@@ -1,6 +1,6 @@
 --- old.importMeta(module=system,target=esnext).symbols
 +++ new.importMeta(module=system,target=esnext).symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
    const response = await fetch(new URL("../hamsters.jpg", import.meta.url).toString());
  >response : Symbol(response, Decl(example.ts, 2, 7))
  >fetch : Symbol(fetch, Decl(lib.dom.d.ts, --, --))

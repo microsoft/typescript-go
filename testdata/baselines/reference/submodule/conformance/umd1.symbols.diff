@@ -1,6 +1,6 @@
 --- old.umd1.symbols
 +++ new.umd1.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === a.ts ===
  /// <reference path="foo.d.ts" />
  Foo.fn();

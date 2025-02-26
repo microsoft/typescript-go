@@ -1,6 +1,6 @@
 --- old.declarationEmitTypeParamMergedWithPrivate.symbols
 +++ new.declarationEmitTypeParamMergedWithPrivate.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
      }
  
      public test(): T {

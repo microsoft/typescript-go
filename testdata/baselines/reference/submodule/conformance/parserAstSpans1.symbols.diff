@@ -1,6 +1,6 @@
 --- old.parserAstSpans1.symbols
 +++ new.parserAstSpans1.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  
      /** i1_p1*/
      i1_p1: number;

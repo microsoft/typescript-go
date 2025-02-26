@@ -1,6 +1,6 @@
 --- old.stringTrim.symbols
 +++ new.stringTrim.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
  trimmed = "abcde".trimEnd();
  >trimmed : Symbol(trimmed, Decl(stringTrim.ts, 0, 3))

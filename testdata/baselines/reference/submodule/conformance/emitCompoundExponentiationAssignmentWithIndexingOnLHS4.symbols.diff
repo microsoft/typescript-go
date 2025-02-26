@@ -1,6 +1,6 @@
 --- old.emitCompoundExponentiationAssignmentWithIndexingOnLHS4.symbols
 +++ new.emitCompoundExponentiationAssignmentWithIndexingOnLHS4.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  
      let idx = Math.floor(Math.random() * max);
  >idx : Symbol(idx, Decl(emitCompoundExponentiationAssignmentWithIndexingOnLHS4.ts, 3, 7))

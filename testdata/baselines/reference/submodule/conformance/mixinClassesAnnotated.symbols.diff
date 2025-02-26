@@ -1,6 +1,6 @@
 --- old.mixinClassesAnnotated.symbols
 +++ new.mixinClassesAnnotated.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >Base : Symbol(Base, Decl(mixinClassesAnnotated.ts, 0, 47))
  
      constructor(public x: number, public y: number) {}

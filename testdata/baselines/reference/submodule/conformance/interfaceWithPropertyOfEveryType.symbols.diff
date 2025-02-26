@@ -1,6 +1,6 @@
 --- old.interfaceWithPropertyOfEveryType.symbols
 +++ new.interfaceWithPropertyOfEveryType.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === interfaceWithPropertyOfEveryType.ts ===
  class C { foo: string; }
  >C : Symbol(C, Decl(interfaceWithPropertyOfEveryType.ts, 0, 0))

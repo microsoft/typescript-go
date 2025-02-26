@@ -1,6 +1,6 @@
 --- old.mergedInstantiationAssignment.symbols
 +++ new.mergedInstantiationAssignment.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >T : Symbol(T, Decl(mergedInstantiationAssignment.ts, 2, 20))
  
    set x(x: T) {}

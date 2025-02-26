@@ -1,6 +1,6 @@
 --- old.cloduleTest2.symbols
 +++ new.cloduleTest2.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
      declare class m3d { constructor(foo); foo(): void ; static bar(); }
  >m3d : Symbol(m3d, Decl(cloduleTest2.ts, 0, 11), Decl(cloduleTest2.ts, 1, 36))
  >foo : Symbol(foo, Decl(cloduleTest2.ts, 2, 36))

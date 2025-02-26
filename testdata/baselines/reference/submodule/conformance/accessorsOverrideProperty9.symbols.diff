@@ -1,6 +1,6 @@
 --- old.accessorsOverrideProperty9.symbols
 +++ new.accessorsOverrideProperty9.symbols
-@@= skipped -30, +30 lines =@@
+@@= skipped -29, +29 lines =@@
  >ApiItem : Symbol(ApiItem, Decl(accessorsOverrideProperty9.ts, 6, 91))
  
    public get members(): ReadonlyArray<ApiItem> {

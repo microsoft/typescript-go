@@ -1,6 +1,6 @@
 --- old.asyncArrowFunction7_es6.symbols
 +++ new.asyncArrowFunction7_es6.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === asyncArrowFunction7_es6.ts ===
  var bar = async (): Promise<void> => {
  >bar : Symbol(bar, Decl(asyncArrowFunction7_es6.ts, 0, 3))

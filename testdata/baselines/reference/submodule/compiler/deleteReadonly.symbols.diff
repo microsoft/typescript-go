@@ -1,6 +1,6 @@
 --- old.deleteReadonly.symbols
 +++ new.deleteReadonly.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(deleteReadonly.ts, 0, 0))
  
    readonly b

@@ -1,6 +1,6 @@
 --- old.constructorNameInAccessor.symbols
 +++ new.constructorNameInAccessor.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C1 : Symbol(C1, Decl(constructorNameInAccessor.ts, 0, 0))
  
      get constructor() { return }

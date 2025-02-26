@@ -1,6 +1,6 @@
 --- old.lastPropertyInLiteralWins.symbols
 +++ new.lastPropertyInLiteralWins.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Thing : Symbol(Thing, Decl(lastPropertyInLiteralWins.ts, 0, 0))
  
      thunk: (str: string) => void;

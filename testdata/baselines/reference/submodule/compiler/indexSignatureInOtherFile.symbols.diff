@@ -1,6 +1,6 @@
 --- old.indexSignatureInOtherFile.symbols
 +++ new.indexSignatureInOtherFile.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  >T : Symbol(T, Decl(other.ts, 0, 17), Decl(other.ts, 12, 17), Decl(other.ts, 17, 17))
  
    length: number;

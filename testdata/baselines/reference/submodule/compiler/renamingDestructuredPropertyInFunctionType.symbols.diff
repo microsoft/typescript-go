@@ -1,6 +1,6 @@
 --- old.renamingDestructuredPropertyInFunctionType.symbols
 +++ new.renamingDestructuredPropertyInFunctionType.symbols
-@@= skipped -171, +171 lines =@@
+@@= skipped -170, +170 lines =@@
  >I : Symbol(I, Decl(renamingDestructuredPropertyInFunctionType.ts, 32, 41))
  
    method1(arg: number): any; // OK

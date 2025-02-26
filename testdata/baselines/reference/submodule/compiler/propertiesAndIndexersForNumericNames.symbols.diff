@@ -1,6 +1,6 @@
 --- old.propertiesAndIndexersForNumericNames.symbols
 +++ new.propertiesAndIndexersForNumericNames.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
      // These all have numeric names; they should error
      // because their types are not compatible with the numeric indexer.
      public "1": string = "number"; // Error

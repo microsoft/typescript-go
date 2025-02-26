@@ -1,6 +1,6 @@
 --- old.typedGenericPrototypeMember.symbols
 +++ new.typedGenericPrototypeMember.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(typedGenericPrototypeMember.ts, 0, 11))
  
     add(item: T) { }

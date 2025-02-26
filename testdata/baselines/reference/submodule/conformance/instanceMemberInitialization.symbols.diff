@@ -1,6 +1,6 @@
 --- old.instanceMemberInitialization.symbols
 +++ new.instanceMemberInitialization.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(instanceMemberInitialization.ts, 0, 0))
  
      x = 1;

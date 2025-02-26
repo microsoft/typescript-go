@@ -1,6 +1,6 @@
 --- old.callSignatureWithoutReturnTypeAnnotationInference.symbols
 +++ new.callSignatureWithoutReturnTypeAnnotationInference.symbols
-@@= skipped -110, +110 lines =@@
+@@= skipped -109, +109 lines =@@
  >I : Symbol(I, Decl(callSignatureWithoutReturnTypeAnnotationInference.ts, 53, 17))
  
      foo: string;

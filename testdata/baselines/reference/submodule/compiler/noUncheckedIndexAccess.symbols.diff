@@ -1,6 +1,6 @@
 --- old.noUncheckedIndexAccess.symbols
 +++ new.noUncheckedIndexAccess.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Meat : Symbol(Meat, Decl(noUncheckedIndexAccess.ts, 0, 0))
  
      Sausage,

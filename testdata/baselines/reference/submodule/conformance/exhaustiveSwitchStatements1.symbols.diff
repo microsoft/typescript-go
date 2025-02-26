@@ -1,6 +1,6 @@
 --- old.exhaustiveSwitchStatements1.symbols
 +++ new.exhaustiveSwitchStatements1.symbols
-@@= skipped -59, +59 lines =@@
+@@= skipped -58, +58 lines =@@
  
  enum E { A, B }
  >E : Symbol(E, Decl(exhaustiveSwitchStatements1.ts, 29, 1))

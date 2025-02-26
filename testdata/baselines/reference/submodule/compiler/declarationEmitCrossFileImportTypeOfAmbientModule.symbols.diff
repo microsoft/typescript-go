@@ -1,6 +1,6 @@
 --- old.declarationEmitCrossFileImportTypeOfAmbientModule.symbols
 +++ new.declarationEmitCrossFileImportTypeOfAmbientModule.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === types/component.d.ts ===
  declare module '@namespace/component' {

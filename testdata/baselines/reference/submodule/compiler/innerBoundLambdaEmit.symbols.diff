@@ -1,6 +1,6 @@
 --- old.innerBoundLambdaEmit.symbols
 +++ new.innerBoundLambdaEmit.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  >T : Symbol(T, Decl(lib.es5.d.ts, --, --), Decl(innerBoundLambdaEmit.ts, 5, 16))
  
      toFoo(): M.Foo

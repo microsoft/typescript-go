@@ -1,6 +1,6 @@
 --- old.constDeclarations-access2.symbols
 +++ new.constDeclarations-access2.symbols
-@@= skipped -85, +85 lines =@@
+@@= skipped -84, +84 lines =@@
  >x : Symbol(x, Decl(constDeclarations-access2.ts, 0, 5))
  
  x.toString();

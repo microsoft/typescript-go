@@ -1,6 +1,6 @@
 --- old.expandoFunctionBlockShadowing.symbols
 +++ new.expandoFunctionBlockShadowing.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >X : Symbol(X, Decl(expandoFunctionBlockShadowing.ts, 0, 0))
  
  if (Math.random()) {

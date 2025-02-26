@@ -1,6 +1,6 @@
 --- old.declarationEmitMappedTypeTemplateTypeofSymbol.symbols
 +++ new.declarationEmitMappedTypeTemplateTypeofSymbol.symbols
-@@= skipped -23, +23 lines =@@
+@@= skipped -22, +22 lines =@@
  
  export const timestamp = x.now();
  >timestamp : Symbol(timestamp, Decl(b.ts, 1, 12))

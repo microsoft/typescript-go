@@ -1,6 +1,6 @@
 --- old.missingTypeArguments1.symbols
 +++ new.missingTypeArguments1.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  >T : Symbol(T, Decl(missingTypeArguments1.ts, 2, 8))
  
      p1: () => X;

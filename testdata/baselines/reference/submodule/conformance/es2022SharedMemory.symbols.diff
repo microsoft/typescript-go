@@ -1,6 +1,6 @@
 --- old.es2022SharedMemory.symbols
 +++ new.es2022SharedMemory.symbols
-@@= skipped -4, +4 lines =@@
+@@= skipped -3, +3 lines =@@
  const sab = new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * 1024);
  >sab : Symbol(sab, Decl(es2022SharedMemory.ts, 0, 5))
  >SharedArrayBuffer : Symbol(SharedArrayBuffer, Decl(lib.es2017.sharedmemory.d.ts, --, --), Decl(lib.es2017.sharedmemory.d.ts, --, --))

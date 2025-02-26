@@ -1,6 +1,6 @@
 --- old.functionCall7.symbols
 +++ new.functionCall7.symbols
-@@= skipped -4, +4 lines =@@
+@@= skipped -3, +3 lines =@@
  module m1 { export class c1 { public a; }}
  >m1 : Symbol(m1, Decl(functionCall7.ts, 0, 0))
  >c1 : Symbol(c1, Decl(functionCall7.ts, 0, 11))

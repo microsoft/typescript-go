@@ -1,6 +1,6 @@
 --- old.mergedDeclarations3.symbols
 +++ new.mergedDeclarations3.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >Color : Symbol(Color, Decl(mergedDeclarations3.ts, 0, 10), Decl(mergedDeclarations3.ts, 5, 10))
  
     Red, Green

@@ -1,6 +1,6 @@
 --- old.typeArgumentInferenceConstructSignatures.symbols
 +++ new.typeArgumentInferenceConstructSignatures.symbols
-@@= skipped -93, +93 lines =@@
+@@= skipped -92, +92 lines =@@
  new someGenerics2a<string>((n) => n.substr(0));
  >someGenerics2a : Symbol(someGenerics2a, Decl(typeArgumentInferenceConstructSignatures.ts, 25, 36), Decl(typeArgumentInferenceConstructSignatures.ts, 31, 3))
  >n : Symbol(n, Decl(typeArgumentInferenceConstructSignatures.ts, 34, 28))

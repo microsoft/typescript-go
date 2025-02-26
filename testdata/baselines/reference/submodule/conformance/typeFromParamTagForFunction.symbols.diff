@@ -1,6 +1,6 @@
 --- old.typeFromParamTagForFunction.symbols
 +++ new.typeFromParamTagForFunction.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  
  === a-ext.js ===
  exports.A = function () {

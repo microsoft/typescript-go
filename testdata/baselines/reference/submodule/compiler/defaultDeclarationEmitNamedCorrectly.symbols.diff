@@ -1,6 +1,6 @@
 --- old.defaultDeclarationEmitNamedCorrectly.symbols
 +++ new.defaultDeclarationEmitNamedCorrectly.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(defaultDeclarationEmitNamedCorrectly.ts, 0, 26))
  
      p: P;

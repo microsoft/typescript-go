@@ -1,6 +1,6 @@
 --- old.assignmentCompatWithCallSignatures6.symbols
 +++ new.assignmentCompatWithCallSignatures6.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  
  class Base { foo: string; }
  >Base : Symbol(Base, Decl(assignmentCompatWithCallSignatures6.ts, 0, 0))

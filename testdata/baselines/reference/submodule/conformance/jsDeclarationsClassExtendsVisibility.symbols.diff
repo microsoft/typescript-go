@@ -1,6 +1,6 @@
 --- old.jsDeclarationsClassExtendsVisibility.symbols
 +++ new.jsDeclarationsClassExtendsVisibility.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === cls.js ===
  const Bar = require("./bar");
  >Bar : Symbol(Bar, Decl(cls.js, 0, 5))

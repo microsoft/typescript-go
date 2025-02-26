@@ -1,6 +1,6 @@
 --- old.exportAssignmentInternalModule.symbols
 +++ new.exportAssignmentInternalModule.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
  var n: number = modM.x;
  >n : Symbol(n, Decl(exportAssignmentInternalModule_B.ts, 2, 3))

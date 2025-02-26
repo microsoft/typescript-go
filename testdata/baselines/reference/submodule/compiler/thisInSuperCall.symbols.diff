@@ -1,6 +1,6 @@
 --- old.thisInSuperCall.symbols
 +++ new.thisInSuperCall.symbols
-@@= skipped -24, +24 lines =@@
+@@= skipped -23, +23 lines =@@
  >Base : Symbol(Base, Decl(thisInSuperCall.ts, 0, 0))
  
      public p = 0;

@@ -1,6 +1,6 @@
 --- old.umd3.symbols
 +++ new.umd3.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Foo : Symbol(Foo, Decl(a.ts, 0, 6))
  
  Foo.fn();

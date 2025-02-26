@@ -1,6 +1,6 @@
 --- old.reactDefaultPropsInferenceSuccess.symbols
 +++ new.reactDefaultPropsInferenceSuccess.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >BaseProps : Symbol(BaseProps, Decl(reactDefaultPropsInferenceSuccess.tsx, 2, 26))
  
    when?: ((value: string) => boolean) | "a" | "b";

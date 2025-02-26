@@ -1,6 +1,6 @@
 --- old.exportClassExtendingIntersection.symbols
 +++ new.exportClassExtendingIntersection.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(BaseClass.ts, 2, 25))
  
      baseProperty: string;

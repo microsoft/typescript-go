@@ -1,6 +1,6 @@
 --- old.shadowedInternalModule.symbols
 +++ new.shadowedInternalModule.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  >Point : Symbol(Point, Decl(shadowedInternalModule.ts, 3, 14), Decl(shadowedInternalModule.ts, 3, 37))
  
          x: number;

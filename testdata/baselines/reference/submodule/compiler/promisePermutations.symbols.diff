@@ -1,6 +1,6 @@
 --- old.promisePermutations.symbols
 +++ new.promisePermutations.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(lib.es5.d.ts, --, --), Decl(promisePermutations.ts, 0, 18))
  
      then<U>(success?: (value: T) => Promise<U>, error?: (error: any) => Promise<U>, progress?: (progress: any) => void): Promise<U>;

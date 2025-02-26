@@ -1,6 +1,6 @@
 --- old.arrayLiterals3.symbols
 +++ new.arrayLiterals3.symbols
-@@= skipped -40, +40 lines =@@
+@@= skipped -39, +39 lines =@@
  >tup : Symbol(tup, Decl(arrayLiterals3.ts, 23, 67))
  
      0: number[]|string[];

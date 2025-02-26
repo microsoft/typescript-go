@@ -1,6 +1,6 @@
 --- old.declFileEnumUsedAsValue.symbols
 +++ new.declFileEnumUsedAsValue.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >e : Symbol(e, Decl(declFileEnumUsedAsValue.ts, 0, 0))
  
      a,

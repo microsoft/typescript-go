@@ -1,6 +1,6 @@
 --- old.importSpecifiers1.symbols
 +++ new.importSpecifiers1.symbols
-@@= skipped -25, +25 lines =@@
+@@= skipped -24, +24 lines =@@
  
  === /b.ts ===
  import { type as as } from "./mod.js";

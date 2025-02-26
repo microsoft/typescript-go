@@ -1,6 +1,6 @@
 --- old.parserRealSource10.symbols
 +++ new.parserRealSource10.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  
          // Keywords
          Any,

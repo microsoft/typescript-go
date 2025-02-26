@@ -1,6 +1,6 @@
 --- old.classAndVariableWithSameName.symbols
 +++ new.classAndVariableWithSameName.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === classAndVariableWithSameName.ts ===
  class C { foo: string; } // error
  >C : Symbol(C, Decl(classAndVariableWithSameName.ts, 0, 0))

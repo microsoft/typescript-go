@@ -1,6 +1,6 @@
 --- old.objectPropertyAsClass.symbols
 +++ new.objectPropertyAsClass.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >foo : Symbol(foo, Decl(index.js, 0, 12))
  
          this.x = 0;

@@ -1,6 +1,6 @@
 --- old.namespaceMergedWithFunctionWithOverloadsUsage.symbols
 +++ new.namespaceMergedWithFunctionWithOverloadsUsage.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  >Whatever : Symbol(Whatever, Decl(file.d.ts, 0, 23))
  
          prop: any;

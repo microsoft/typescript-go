@@ -1,6 +1,6 @@
 --- old.computedPropertyNameAndTypeParameterConflict.symbols
 +++ new.computedPropertyNameAndTypeParameterConflict.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >O : Symbol(O, Decl(computedPropertyNameAndTypeParameterConflict.ts, 1, 18))
  
      [O]: number;

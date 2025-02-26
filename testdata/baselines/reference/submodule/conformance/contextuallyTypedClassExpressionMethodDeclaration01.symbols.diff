@@ -1,6 +1,6 @@
 --- old.contextuallyTypedClassExpressionMethodDeclaration01.symbols
 +++ new.contextuallyTypedClassExpressionMethodDeclaration01.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(contextuallyTypedClassExpressionMethodDeclaration01.ts, 0, 0))
  
      numProp: number;

@@ -1,6 +1,6 @@
 --- old.derivedClassSuperStatementPosition.symbols
 +++ new.derivedClassSuperStatementPosition.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      prop = 1;

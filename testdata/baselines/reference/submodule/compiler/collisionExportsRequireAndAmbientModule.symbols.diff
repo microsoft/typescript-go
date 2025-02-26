@@ -1,6 +1,6 @@
 --- old.collisionExportsRequireAndAmbientModule.symbols
 +++ new.collisionExportsRequireAndAmbientModule.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  export function foo(): require.I {
  >foo : Symbol(foo, Decl(collisionExportsRequireAndAmbientModule_externalmodule.ts, 5, 1))
  >require : Symbol(require, Decl(collisionExportsRequireAndAmbientModule_externalmodule.ts, 0, 0))

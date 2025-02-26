@@ -1,6 +1,6 @@
 --- old.controlFlowIterationErrors.symbols
 +++ new.controlFlowIterationErrors.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >s : Symbol(s, Decl(controlFlowIterationErrors.ts, 2, 13))
  
      return s.length;

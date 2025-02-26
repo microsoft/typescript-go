@@ -1,6 +1,6 @@
 --- old.indexerWithTuple.symbols
 +++ new.indexerWithTuple.symbols
-@@= skipped -23, +23 lines =@@
+@@= skipped -22, +22 lines =@@
  var ele10 = strNumTuple[0]; // string
  >ele10 : Symbol(ele10, Decl(indexerWithTuple.ts, 8, 3))
  >strNumTuple : Symbol(strNumTuple, Decl(indexerWithTuple.ts, 0, 3))

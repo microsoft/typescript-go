@@ -1,6 +1,6 @@
 --- old.typeGuardOfFormInstanceOfOnInterface.symbols
 +++ new.typeGuardOfFormInstanceOfOnInterface.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  >C1 : Symbol(C1, Decl(typeGuardOfFormInstanceOfOnInterface.ts, 0, 0))
  
      prototype: C1;

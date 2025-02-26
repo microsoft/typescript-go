@@ -1,6 +1,6 @@
 --- old.identicalTypesNoDifferByCheckOrder.symbols
 +++ new.identicalTypesNoDifferByCheckOrder.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >SomeProps : Symbol(SomeProps, Decl(identicalTypesNoDifferByCheckOrder.ts, 0, 0))
  
      x?: string;

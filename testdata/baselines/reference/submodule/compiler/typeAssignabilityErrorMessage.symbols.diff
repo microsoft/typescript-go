@@ -1,6 +1,6 @@
 --- old.typeAssignabilityErrorMessage.symbols
 +++ new.typeAssignabilityErrorMessage.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >ThroughStream : Symbol(ThroughStream, Decl(typeAssignabilityErrorMessage.ts, 0, 0))
  
      a: string;

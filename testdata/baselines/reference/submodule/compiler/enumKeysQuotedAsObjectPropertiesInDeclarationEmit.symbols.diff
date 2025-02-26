@@ -1,6 +1,6 @@
 --- old.enumKeysQuotedAsObjectPropertiesInDeclarationEmit.symbols
 +++ new.enumKeysQuotedAsObjectPropertiesInDeclarationEmit.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >MouseButton : Symbol(MouseButton, Decl(enumKeysQuotedAsObjectPropertiesInDeclarationEmit.ts, 0, 0))
  
  	LEFT_BUTTON = 1,

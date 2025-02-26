@@ -1,6 +1,6 @@
 --- old.declareFileExportAssignment.symbols
 +++ new.declareFileExportAssignment.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  >connectExport : Symbol(connectExport, Decl(declareFileExportAssignment.ts, 3, 5))
  
          use: (mod: connectModule) => connectExport;

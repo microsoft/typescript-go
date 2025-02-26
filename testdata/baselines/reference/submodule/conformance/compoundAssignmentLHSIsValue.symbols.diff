@@ -1,6 +1,6 @@
 --- old.compoundAssignmentLHSIsValue.symbols
 +++ new.compoundAssignmentLHSIsValue.symbols
-@@= skipped -19, +19 lines =@@
+@@= skipped -18, +18 lines =@@
  >value : Symbol(value, Decl(compoundAssignmentLHSIsValue.ts, 1, 3))
      }
      foo() {

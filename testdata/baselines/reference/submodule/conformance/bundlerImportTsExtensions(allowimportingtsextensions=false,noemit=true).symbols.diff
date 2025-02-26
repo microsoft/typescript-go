@@ -1,6 +1,6 @@
 --- old.bundlerImportTsExtensions(allowimportingtsextensions=false,noemit=true).symbols
 +++ new.bundlerImportTsExtensions(allowimportingtsextensions=false,noemit=true).symbols
-@@= skipped -28, +28 lines =@@
+@@= skipped -27, +27 lines =@@
  
  export {};
  

@@ -1,6 +1,6 @@
 --- old.superInLambdas.symbols
 +++ new.superInLambdas.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >User : Symbol(User, Decl(superInLambdas.ts, 0, 0))
  
      name: string = "Bob";

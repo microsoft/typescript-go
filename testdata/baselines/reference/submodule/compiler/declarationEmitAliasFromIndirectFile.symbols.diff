@@ -1,6 +1,6 @@
 --- old.declarationEmitAliasFromIndirectFile.symbols
 +++ new.declarationEmitAliasFromIndirectFile.symbols
-@@= skipped -36, +36 lines =@@
+@@= skipped -35, +35 lines =@@
  import { Locale, CustomLocale, key as LocaleKey } from "./locale";
  >Locale : Symbol(Locale, Decl(instance.d.ts, 0, 8))
  >CustomLocale : Symbol(CustomLocale, Decl(instance.d.ts, 0, 16))

@@ -1,6 +1,6 @@
 --- old.es5-system.symbols
 +++ new.es5-system.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === es5-system.ts ===
  export default class A

@@ -1,6 +1,6 @@
 --- old.plainJSBinderErrors.symbols
 +++ new.plainJSBinderErrors.symbols
-@@= skipped -25, +25 lines =@@
+@@= skipped -24, +24 lines =@@
  >C : Symbol(C, Decl(plainJSBinderErrors.js, 9, 1))
  
      #constructor = 5

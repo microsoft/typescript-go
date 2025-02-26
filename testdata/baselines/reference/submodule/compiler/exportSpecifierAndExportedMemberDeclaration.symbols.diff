@@ -1,6 +1,6 @@
 --- old.exportSpecifierAndExportedMemberDeclaration.symbols
 +++ new.exportSpecifierAndExportedMemberDeclaration.symbols
-@@= skipped -20, +20 lines =@@
+@@= skipped -19, +19 lines =@@
      function Z(): X.I;
  >Z : Symbol(Z, Decl(exportSpecifierAndExportedMemberDeclaration.ts, 5, 22))
  >X : Symbol(X, Decl(exportSpecifierAndExportedMemberDeclaration.ts, 0, 21), Decl(exportSpecifierAndExportedMemberDeclaration.ts, 5, 12))

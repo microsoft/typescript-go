@@ -1,6 +1,6 @@
 --- old.localClassesInLoop.symbols
 +++ new.localClassesInLoop.symbols
-@@= skipped -18, +18 lines =@@
+@@= skipped -17, +17 lines =@@
  >C : Symbol(C, Decl(localClassesInLoop.ts, 4, 29))
  
      data.push(() => C);

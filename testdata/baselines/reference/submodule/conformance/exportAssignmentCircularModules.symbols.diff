@@ -1,6 +1,6 @@
 --- old.exportAssignmentCircularModules.symbols
 +++ new.exportAssignmentCircularModules.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  
  	export var x = foo0.x;
  >x : Symbol(x, Decl(foo_2.ts, 2, 11))

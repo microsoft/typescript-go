@@ -1,6 +1,6 @@
 --- old.autoAccessor7(target=esnext,usedefineforclassfields=false).symbols
 +++ new.autoAccessor7(target=esnext,usedefineforclassfields=false).symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C1 : Symbol(C1, Decl(autoAccessor7.ts, 0, 0))
  
      abstract accessor a: any;

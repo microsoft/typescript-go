@@ -1,6 +1,6 @@
 --- old.symbolDeclarationEmit12.symbols
 +++ new.symbolDeclarationEmit12.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >C : Symbol(C, Decl(symbolDeclarationEmit12.ts, 1, 19))
  
          [Symbol.iterator]: I;

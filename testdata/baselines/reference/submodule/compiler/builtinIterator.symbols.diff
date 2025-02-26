@@ -1,6 +1,6 @@
 --- old.builtinIterator.symbols
 +++ new.builtinIterator.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === builtinIterator.ts ===
  const iterator = Iterator.from([0, 1, 2]);
  >iterator : Symbol(iterator, Decl(builtinIterator.ts, 0, 5))

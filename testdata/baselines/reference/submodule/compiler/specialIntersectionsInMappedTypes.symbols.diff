@@ -1,6 +1,6 @@
 --- old.specialIntersectionsInMappedTypes.symbols
 +++ new.specialIntersectionsInMappedTypes.symbols
-@@= skipped -30, +30 lines =@@
+@@= skipped -29, +29 lines =@@
  };
  
  a.left.length;

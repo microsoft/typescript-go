@@ -1,6 +1,6 @@
 --- old.catchClauseWithTypeAnnotation.symbols
 +++ new.catchClauseWithTypeAnnotation.symbols
-@@= skipped -44, +44 lines =@@
+@@= skipped -43, +43 lines =@@
  
      try { } catch (x: unknown) { console.log(x); } // should be OK
  >x : Symbol(x, Decl(catchClauseWithTypeAnnotation.ts, 14, 19))

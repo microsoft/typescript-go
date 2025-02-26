@@ -1,6 +1,6 @@
 --- old.genericInterfaceImplementation.symbols
 +++ new.genericInterfaceImplementation.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(genericInterfaceImplementation.ts, 0, 18))
  
      get(): A;

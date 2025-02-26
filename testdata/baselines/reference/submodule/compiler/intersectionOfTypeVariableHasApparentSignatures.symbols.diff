@@ -1,6 +1,6 @@
 --- old.intersectionOfTypeVariableHasApparentSignatures.symbols
 +++ new.intersectionOfTypeVariableHasApparentSignatures.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >P : Symbol(P, Decl(intersectionOfTypeVariableHasApparentSignatures.ts, 0, 20))
  
      props: Readonly<P> & Readonly<{ children?: {} }>;

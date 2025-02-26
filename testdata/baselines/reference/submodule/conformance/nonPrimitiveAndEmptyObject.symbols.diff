@@ -1,6 +1,6 @@
 --- old.nonPrimitiveAndEmptyObject.symbols
 +++ new.nonPrimitiveAndEmptyObject.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >BarProps : Symbol(BarProps, Decl(nonPrimitiveAndEmptyObject.ts, 0, 0))
  
      barProp?: string;

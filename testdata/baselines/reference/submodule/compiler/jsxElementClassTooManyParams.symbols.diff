@@ -1,6 +1,6 @@
 --- old.jsxElementClassTooManyParams.symbols
 +++ new.jsxElementClassTooManyParams.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >TOther : Symbol(TOther, Decl(jsxElementClassTooManyParams.tsx, 2, 53))
  
          ref?: TClass;

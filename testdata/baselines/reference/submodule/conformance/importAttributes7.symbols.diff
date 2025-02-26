@@ -1,6 +1,6 @@
 --- old.importAttributes7.symbols
 +++ new.importAttributes7.symbols
-@@= skipped -21, +21 lines =@@
+@@= skipped -20, +20 lines =@@
  
      const a = import("./a", {
  >a : Symbol(a, Decl(b.ts, 3, 9))

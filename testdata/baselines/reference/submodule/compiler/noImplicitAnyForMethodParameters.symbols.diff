@@ -1,6 +1,6 @@
 --- old.noImplicitAnyForMethodParameters.symbols
 +++ new.noImplicitAnyForMethodParameters.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(noImplicitAnyForMethodParameters.ts, 0, 0))
  
      private foo(a); // OK - ambient class and private method - no error

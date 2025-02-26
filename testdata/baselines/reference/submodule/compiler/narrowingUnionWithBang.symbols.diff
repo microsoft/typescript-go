@@ -1,6 +1,6 @@
 --- old.narrowingUnionWithBang.symbols
 +++ new.narrowingUnionWithBang.symbols
-@@= skipped -61, +61 lines =@@
+@@= skipped -60, +60 lines =@@
  >name : Symbol(name, Decl(narrowingUnionWithBang.ts, 2, 5), Decl(narrowingUnionWithBang.ts, 3, 5), Decl(narrowingUnionWithBang.ts, 4, 5), Decl(narrowingUnionWithBang.ts, 5, 5), Decl(narrowingUnionWithBang.ts, 6, 5) ... and 5 more)
  
      console.log(working.thing!.message)

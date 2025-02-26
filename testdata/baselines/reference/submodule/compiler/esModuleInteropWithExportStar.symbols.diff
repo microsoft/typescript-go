@@ -1,6 +1,6 @@
 --- old.esModuleInteropWithExportStar.symbols
 +++ new.esModuleInteropWithExportStar.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  >x : Symbol(x, Decl(mjts.ts, 5, 8))
  
  export {x as y} from "./fs";

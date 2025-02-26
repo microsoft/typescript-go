@@ -1,6 +1,6 @@
 --- old.esModuleInteropDefaultMemberMustBeSyntacticallyDefaultExport.symbols
 +++ new.esModuleInteropDefaultMemberMustBeSyntacticallyDefaultExport.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Point : Symbol(Point, Decl(point.d.ts, 0, 0))
  
      x: number;

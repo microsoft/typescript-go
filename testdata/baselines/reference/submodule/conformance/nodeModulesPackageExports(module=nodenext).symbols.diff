@@ -1,6 +1,6 @@
 --- old.nodeModulesPackageExports(module=nodenext).symbols
 +++ new.nodeModulesPackageExports(module=nodenext).symbols
-@@= skipped -126, +126 lines =@@
+@@= skipped -125, +125 lines =@@
  >type : Symbol(type, Decl(index.d.ts, 3, 6))
  
  export { cjs };

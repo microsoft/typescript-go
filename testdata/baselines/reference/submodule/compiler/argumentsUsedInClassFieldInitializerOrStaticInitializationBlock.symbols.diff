@@ -1,6 +1,6 @@
 --- old.argumentsUsedInClassFieldInitializerOrStaticInitializationBlock.symbols
 +++ new.argumentsUsedInClassFieldInitializerOrStaticInitializationBlock.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >T : Symbol(T, Decl(argumentsUsedInClassFieldInitializerOrStaticInitializationBlock.ts, 1, 8))
  
       a = arguments

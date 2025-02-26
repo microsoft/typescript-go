@@ -1,6 +1,6 @@
 --- old.misspelledJsDocTypedefTags.symbols
 +++ new.misspelledJsDocTypedefTags.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === a.js ===
  /** @typedef {{ endTime: number, screenshots: number}} A.<b>*/
  Animation.AnimationModel.ScreenshotCapture.Request;

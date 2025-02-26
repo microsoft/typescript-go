@@ -1,6 +1,6 @@
 --- old.tsxStatelessFunctionComponents1.symbols
 +++ new.tsxStatelessFunctionComponents1.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >EmptyPropSFC : Symbol(EmptyPropSFC, Decl(file.tsx, 0, 0))
  
      return <div> Default Greeting </div>;

@@ -1,6 +1,6 @@
 --- old.nodeModuleReexportFromDottedPath.symbols
 +++ new.nodeModuleReexportFromDottedPath.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >PrismaClientOptions : Symbol(PrismaClientOptions, Decl(index.d.ts, 0, 0))
  
    rejectOnNotFound?: any;

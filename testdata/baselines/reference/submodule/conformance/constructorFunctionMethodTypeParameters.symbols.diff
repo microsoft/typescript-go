@@ -1,6 +1,6 @@
 --- old.constructorFunctionMethodTypeParameters.symbols
 +++ new.constructorFunctionMethodTypeParameters.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >t : Symbol(t, Decl(constructorFunctionMethodTypeParameters.js, 4, 13))
  
      this.t = t;

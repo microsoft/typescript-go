@@ -1,6 +1,6 @@
 --- old.privacyFunctionCannotNameReturnTypeDeclFile.symbols
 +++ new.privacyFunctionCannotNameReturnTypeDeclFile.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >publicClassWithWithPrivateParmeterTypes : Symbol(publicClassWithWithPrivateParmeterTypes, Decl(privacyFunctionReturnTypeDeclFile_consumer.ts, 0, 74))
  
      static myPublicStaticMethod() { // Error

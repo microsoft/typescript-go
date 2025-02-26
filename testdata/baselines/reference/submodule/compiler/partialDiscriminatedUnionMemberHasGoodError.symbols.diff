@@ -1,6 +1,6 @@
 --- old.partialDiscriminatedUnionMemberHasGoodError.symbols
 +++ new.partialDiscriminatedUnionMemberHasGoodError.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >TypeA : Symbol(TypeA, Decl(partialDiscriminatedUnionMemberHasGoodError.ts, 0, 0))
  
      type: "A";

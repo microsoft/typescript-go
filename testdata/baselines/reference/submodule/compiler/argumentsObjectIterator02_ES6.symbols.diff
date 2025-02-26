@@ -1,6 +1,6 @@
 --- old.argumentsObjectIterator02_ES6.symbols
 +++ new.argumentsObjectIterator02_ES6.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
      let blah = arguments[Symbol.iterator];
  >blah : Symbol(blah, Decl(argumentsObjectIterator02_ES6.ts, 1, 7))
  >arguments : Symbol(arguments)

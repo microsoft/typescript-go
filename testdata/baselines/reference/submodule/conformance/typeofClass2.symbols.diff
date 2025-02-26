@@ -1,6 +1,6 @@
 --- old.typeofClass2.symbols
 +++ new.typeofClass2.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  >x : Symbol(x, Decl(typeofClass2.ts, 3, 16))
  
      static foo(x: number);

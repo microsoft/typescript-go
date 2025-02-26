@@ -1,6 +1,6 @@
 --- old.exportImportMultipleFiles.symbols
 +++ new.exportImportMultipleFiles.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >lib : Symbol(lib, Decl(exportImportMultipleFiles_userCode.ts, 0, 0))
  
  lib.math.add(3, 4); // Shouldnt be error

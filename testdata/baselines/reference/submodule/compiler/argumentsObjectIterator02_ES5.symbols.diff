@@ -1,6 +1,6 @@
 --- old.argumentsObjectIterator02_ES5.symbols
 +++ new.argumentsObjectIterator02_ES5.symbols
-@@= skipped -19, +19 lines =@@
+@@= skipped -18, +18 lines =@@
  >blah : Symbol(blah, Decl(argumentsObjectIterator02_ES5.ts, 1, 7))
  
          result.push(arg + arg);

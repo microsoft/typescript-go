@@ -1,6 +1,6 @@
 --- old.outModuleTripleSlashRefs.symbols
 +++ new.outModuleTripleSlashRefs.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(a.ts, 0, 0))
  
  	member: typeof GlobalFoo;

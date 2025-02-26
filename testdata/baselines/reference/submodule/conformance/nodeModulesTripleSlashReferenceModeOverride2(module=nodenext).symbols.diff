@@ -1,6 +1,6 @@
 --- old.nodeModulesTripleSlashReferenceModeOverride2(module=nodenext).symbols
 +++ new.nodeModulesTripleSlashReferenceModeOverride2(module=nodenext).symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === /index.ts ===
  /// <reference types="pkg" />
  foo; // foo should resolve while bar should not, since index.js is esm

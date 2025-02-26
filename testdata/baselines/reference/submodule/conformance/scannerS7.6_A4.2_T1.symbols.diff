@@ -1,6 +1,6 @@
 --- old.scannerS7.6_A4.2_T1.symbols
 +++ new.scannerS7.6_A4.2_T1.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  
  //CHECK#А-Я
  var \u0410 = 1;

@@ -1,6 +1,6 @@
 --- old.recursiveConditionalTypes.symbols
 +++ new.recursiveConditionalTypes.symbols
-@@= skipped -226, +226 lines =@@
+@@= skipped -225, +225 lines =@@
  interface Box<T> { value: T };
  >Box : Symbol(Box, Decl(recursiveConditionalTypes.ts, 55, 21))
  >T : Symbol(T, Decl(recursiveConditionalTypes.ts, 59, 14))

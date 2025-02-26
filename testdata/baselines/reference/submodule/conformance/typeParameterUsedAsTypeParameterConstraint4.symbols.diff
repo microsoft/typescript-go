@@ -1,6 +1,6 @@
 --- old.typeParameterUsedAsTypeParameterConstraint4.symbols
 +++ new.typeParameterUsedAsTypeParameterConstraint4.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >U : Symbol(U, Decl(typeParameterUsedAsTypeParameterConstraint4.ts, 3, 10))
  
      z: W; // error

@@ -1,6 +1,6 @@
 --- old.parserRealSource4.symbols
 +++ new.parserRealSource4.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >BlockIntrinsics : Symbol(BlockIntrinsics, Decl(parserRealSource4.ts, 5, 19))
  
          public prototype = undefined;

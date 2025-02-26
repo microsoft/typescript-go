@@ -1,6 +1,6 @@
 --- old.giant.symbols
 +++ new.giant.symbols
-@@= skipped -28, +28 lines =@@
+@@= skipped -27, +27 lines =@@
  
      constructor () { }
      public pV;

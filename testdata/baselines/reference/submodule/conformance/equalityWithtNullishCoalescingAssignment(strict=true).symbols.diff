@@ -1,6 +1,6 @@
 --- old.equalityWithtNullishCoalescingAssignment(strict=true).symbols
 +++ new.equalityWithtNullishCoalescingAssignment(strict=true).symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >a : Symbol(a, Decl(equalityWithtNullishCoalescingAssignment.ts, 0, 12))
  
          console.log(a);

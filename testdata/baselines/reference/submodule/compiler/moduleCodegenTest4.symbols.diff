@@ -1,6 +1,6 @@
 --- old.moduleCodegenTest4.symbols
 +++ new.moduleCodegenTest4.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >x : Symbol(x, Decl(moduleCodegenTest4.ts, 0, 30))
  
  Baz.x = "goodbye";

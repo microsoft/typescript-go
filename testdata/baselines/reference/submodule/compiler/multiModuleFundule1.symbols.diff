@@ -1,6 +1,6 @@
 --- old.multiModuleFundule1.symbols
 +++ new.multiModuleFundule1.symbols
-@@= skipped -28, +28 lines =@@
+@@= skipped -27, +27 lines =@@
  
  var r3 = C.foo();
  >r3 : Symbol(r3, Decl(multiModuleFundule1.ts, 11, 3))

@@ -1,6 +1,6 @@
 --- old.generatorYieldContextualType.symbols
 +++ new.generatorYieldContextualType.symbols
-@@= skipped -50, +50 lines =@@
+@@= skipped -49, +49 lines =@@
  >Directive : Symbol(Directive, Decl(generatorYieldContextualType.ts, 10, 3), Decl(generatorYieldContextualType.ts, 18, 1))
  
    Back,

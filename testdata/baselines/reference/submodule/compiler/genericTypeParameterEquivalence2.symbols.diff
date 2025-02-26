@@ -1,6 +1,6 @@
 --- old.genericTypeParameterEquivalence2.symbols
 +++ new.genericTypeParameterEquivalence2.symbols
-@@= skipped -26, +26 lines =@@
+@@= skipped -25, +25 lines =@@
  
          return f(g.apply(null, a));
  >f : Symbol(f, Decl(genericTypeParameterEquivalence2.ts, 1, 26))

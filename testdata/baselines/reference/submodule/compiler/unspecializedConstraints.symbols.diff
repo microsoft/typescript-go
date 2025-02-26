@@ -1,6 +1,6 @@
 --- old.unspecializedConstraints.symbols
 +++ new.unspecializedConstraints.symbols
-@@= skipped -18, +18 lines =@@
+@@= skipped -17, +17 lines =@@
  >T : Symbol(T, Decl(unspecializedConstraints.ts, 5, 21))
  
          equals(other: T): boolean;

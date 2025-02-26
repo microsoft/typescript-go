@@ -1,6 +1,6 @@
 --- old.narrowingPastLastAssignment.symbols
 +++ new.narrowingPastLastAssignment.symbols
-@@= skipped -50, +50 lines =@@
+@@= skipped -49, +49 lines =@@
  >C : Symbol(C, Decl(narrowingPastLastAssignment.ts, 18, 7))
  
          foo() { x /* number */ }

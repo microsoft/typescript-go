@@ -1,6 +1,6 @@
 --- old.anyAsGenericFunctionCall.symbols
 +++ new.anyAsGenericFunctionCall.symbols
-@@= skipped -17, +17 lines =@@
+@@= skipped -16, +16 lines =@@
  
  class C { foo: string; }
  >C : Symbol(C, Decl(anyAsGenericFunctionCall.ts, 5, 27))

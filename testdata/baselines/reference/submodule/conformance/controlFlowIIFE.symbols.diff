@@ -1,6 +1,6 @@
 --- old.controlFlowIIFE.symbols
 +++ new.controlFlowIIFE.symbols
-@@= skipped -18, +18 lines =@@
+@@= skipped -17, +17 lines =@@
  >n : Symbol(n, Decl(controlFlowIIFE.ts, 5, 11))
  
              return x.length;

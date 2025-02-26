@@ -1,6 +1,6 @@
 --- old.distributiveConditionalTypeConstraints.symbols
 +++ new.distributiveConditionalTypeConstraints.symbols
-@@= skipped -125, +125 lines =@@
+@@= skipped -124, +124 lines =@@
  
  interface A { foo(): void; }
  >A : Symbol(A, Decl(distributiveConditionalTypeConstraints.ts, 38, 1))

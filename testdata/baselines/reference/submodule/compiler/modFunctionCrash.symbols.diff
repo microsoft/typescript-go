@@ -1,6 +1,6 @@
 --- old.modFunctionCrash.symbols
 +++ new.modFunctionCrash.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  
  
  Q.f(function() {this;});

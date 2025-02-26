@@ -1,6 +1,6 @@
 --- old.declFileTypeofInAnonymousType.symbols
 +++ new.declFileTypeofInAnonymousType.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >e : Symbol(e, Decl(declFileTypeofInAnonymousType.ts, 2, 5))
  
          weekday,

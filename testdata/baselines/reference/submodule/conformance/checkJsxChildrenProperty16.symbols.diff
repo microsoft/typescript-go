@@ -1,6 +1,6 @@
 --- old.checkJsxChildrenProperty16.symbols
 +++ new.checkJsxChildrenProperty16.symbols
-@@= skipped -30, +30 lines =@@
+@@= skipped -29, +29 lines =@@
  >Foo : Symbol(Foo, Decl(checkJsxChildrenProperty16.tsx, 11, 6))
  >props : Symbol(props, Decl(checkJsxChildrenProperty16.tsx, 13, 28))
  >Props : Symbol(Props, Decl(checkJsxChildrenProperty16.tsx, 4, 32))

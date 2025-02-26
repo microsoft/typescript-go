@@ -1,6 +1,6 @@
 --- old.duplicateLocalVariable4.symbols
 +++ new.duplicateLocalVariable4.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >E : Symbol(E, Decl(duplicateLocalVariable4.ts, 0, 0))
  
  a

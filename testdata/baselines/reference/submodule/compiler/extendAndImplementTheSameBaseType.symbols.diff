@@ -1,6 +1,6 @@
 --- old.extendAndImplementTheSameBaseType.symbols
 +++ new.extendAndImplementTheSameBaseType.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(extendAndImplementTheSameBaseType.ts, 0, 0))
  
      foo: number

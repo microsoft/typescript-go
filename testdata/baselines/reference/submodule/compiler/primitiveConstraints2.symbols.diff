@@ -1,6 +1,6 @@
 --- old.primitiveConstraints2.symbols
 +++ new.primitiveConstraints2.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(primitiveConstraints2.ts, 0, 8))
  
     public bar2<U extends T>(x: T, y: U): T {

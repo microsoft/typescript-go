@@ -1,6 +1,6 @@
 --- old.ModuleAndEnumWithSameNameAndCommonRoot.symbols
 +++ new.ModuleAndEnumWithSameNameAndCommonRoot.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >Point : Symbol(Point, Decl(ModuleAndEnumWithSameNameAndCommonRoot.ts, 0, 17))
  
          constructor(public x: number, public y: number) { }

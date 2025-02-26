@@ -1,6 +1,6 @@
 --- old.emitSuperCallBeforeEmitPropertyDeclaration1ES6.symbols
 +++ new.emitSuperCallBeforeEmitPropertyDeclaration1ES6.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(emitSuperCallBeforeEmitPropertyDeclaration1ES6.ts, 0, 0))
  
      blub = 6;

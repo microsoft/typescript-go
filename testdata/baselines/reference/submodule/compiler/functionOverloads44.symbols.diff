@@ -1,6 +1,6 @@
 --- old.functionOverloads44.symbols
 +++ new.functionOverloads44.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === functionOverloads44.ts ===
  interface Animal { animal }
  >Animal : Symbol(Animal, Decl(functionOverloads44.ts, 0, 0))

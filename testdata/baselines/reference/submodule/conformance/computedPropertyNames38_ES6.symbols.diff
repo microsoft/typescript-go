@@ -1,6 +1,6 @@
 --- old.computedPropertyNames38_ES6.symbols
 +++ new.computedPropertyNames38_ES6.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === computedPropertyNames38_ES6.ts ===
  class Foo { x }
  >Foo : Symbol(Foo, Decl(computedPropertyNames38_ES6.ts, 0, 0))

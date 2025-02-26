@@ -1,6 +1,6 @@
 --- old.letDeclarations-access.symbols
 +++ new.letDeclarations-access.symbols
-@@= skipped -82, +82 lines =@@
+@@= skipped -81, +81 lines =@@
  >x : Symbol(x, Decl(letDeclarations-access.ts, 0, 3))
  
  x.toString();

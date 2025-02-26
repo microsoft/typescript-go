@@ -1,6 +1,6 @@
 --- old.compoundAdditionAssignmentWithInvalidOperands.symbols
 +++ new.compoundAdditionAssignmentWithInvalidOperands.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === compoundAdditionAssignmentWithInvalidOperands.ts ===
  enum E { a, b }
  >E : Symbol(E, Decl(compoundAdditionAssignmentWithInvalidOperands.ts, 0, 0))

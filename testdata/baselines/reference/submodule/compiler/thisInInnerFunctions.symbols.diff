@@ -1,6 +1,6 @@
 --- old.thisInInnerFunctions.symbols
 +++ new.thisInInnerFunctions.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Foo : Symbol(Foo, Decl(thisInInnerFunctions.ts, 0, 0))
  
      x = "hello";

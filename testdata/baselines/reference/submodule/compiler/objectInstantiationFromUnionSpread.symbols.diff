@@ -1,6 +1,6 @@
 --- old.objectInstantiationFromUnionSpread.symbols
 +++ new.objectInstantiationFromUnionSpread.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >Success : Symbol(Success, Decl(objectInstantiationFromUnionSpread.ts, 0, 0))
  
    isSuccess: true;

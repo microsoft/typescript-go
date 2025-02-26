@@ -1,6 +1,6 @@
 --- old.tsxAttributeResolution10.symbols
 +++ new.tsxAttributeResolution10.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  >ElementAttributesProperty : Symbol(ElementAttributesProperty, Decl(react.d.ts, 3, 2))
  
  		props;

@@ -1,6 +1,6 @@
 --- old.sourceMapValidationDestructuringForObjectBindingPatternDefaultValues2.symbols
 +++ new.sourceMapValidationDestructuringForObjectBindingPatternDefaultValues2.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >Robot : Symbol(Robot, Decl(sourceMapValidationDestructuringForObjectBindingPatternDefaultValues2.ts, 2, 1))
  
      name: string;

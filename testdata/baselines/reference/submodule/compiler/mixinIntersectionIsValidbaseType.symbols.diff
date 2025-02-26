@@ -1,6 +1,6 @@
 --- old.mixinIntersectionIsValidbaseType.symbols
 +++ new.mixinIntersectionIsValidbaseType.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >Initable : Symbol(Initable, Decl(mixinIntersectionIsValidbaseType.ts, 0, 79))
  
      init(...args: any[]): void;

@@ -1,6 +1,6 @@
 --- old.readonlyArraysAndTuples.symbols
 +++ new.readonlyArraysAndTuples.symbols
-@@= skipped -97, +97 lines =@@
+@@= skipped -96, +96 lines =@@
  
  v[0] = 1;        // Error
  >v : Symbol(v, Decl(readonlyArraysAndTuples.ts, 28, 11))

@@ -1,6 +1,6 @@
 --- old.bitwiseNotOperatorWithAnyOtherType.symbols
 +++ new.bitwiseNotOperatorWithAnyOtherType.symbols
-@@= skipped -33, +33 lines =@@
+@@= skipped -32, +32 lines =@@
  >A : Symbol(A, Decl(bitwiseNotOperatorWithAnyOtherType.ts, 11, 1))
  
      public a: any;

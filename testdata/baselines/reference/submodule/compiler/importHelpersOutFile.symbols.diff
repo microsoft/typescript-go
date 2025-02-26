@@ -1,6 +1,6 @@
 --- old.importHelpersOutFile.symbols
 +++ new.importHelpersOutFile.symbols
-@@= skipped -22, +22 lines =@@
+@@= skipped -21, +21 lines =@@
  
  === tslib.d.ts ===
  export declare function __extends(d: Function, b: Function): void;

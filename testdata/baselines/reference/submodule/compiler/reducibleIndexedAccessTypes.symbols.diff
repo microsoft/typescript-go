@@ -1,6 +1,6 @@
 --- old.reducibleIndexedAccessTypes.symbols
 +++ new.reducibleIndexedAccessTypes.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  
  enum Type { A, B, C }
  >Type : Symbol(Type, Decl(reducibleIndexedAccessTypes.ts, 0, 0))

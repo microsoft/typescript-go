@@ -1,6 +1,6 @@
 --- old.implicitAnyGenericTypeInference.symbols
 +++ new.implicitAnyGenericTypeInference.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(implicitAnyGenericTypeInference.ts, 0, 19))
  
      compareTo<U>(x: T, y: U): U;

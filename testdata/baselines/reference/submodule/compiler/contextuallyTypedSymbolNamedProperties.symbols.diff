@@ -1,6 +1,6 @@
 --- old.contextuallyTypedSymbolNamedProperties.symbols
 +++ new.contextuallyTypedSymbolNamedProperties.symbols
-@@= skipped -48, +48 lines =@@
+@@= skipped -47, +47 lines =@@
  >[A] : Symbol([A], Decl(contextuallyTypedSymbolNamedProperties.ts, 13, 7))
  >A : Symbol(A, Decl(contextuallyTypedSymbolNamedProperties.ts, 2, 5))
  >ap : Symbol(ap, Decl(contextuallyTypedSymbolNamedProperties.ts, 14, 8))

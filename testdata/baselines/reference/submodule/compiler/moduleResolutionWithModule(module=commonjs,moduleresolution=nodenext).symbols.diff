@@ -1,6 +1,6 @@
 --- old.moduleResolutionWithModule(module=commonjs,moduleresolution=nodenext).symbols
 +++ new.moduleResolutionWithModule(module=commonjs,moduleresolution=nodenext).symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >p : Symbol(p, Decl(index.ts, 0, 6))
  
  p.thing();

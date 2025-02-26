@@ -1,6 +1,6 @@
 --- old.decoratorCallGeneric.symbols
 +++ new.decoratorCallGeneric.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(decoratorCallGeneric.ts, 0, 12))
  
      prototype: T,

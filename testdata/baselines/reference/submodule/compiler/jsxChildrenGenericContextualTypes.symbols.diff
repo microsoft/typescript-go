@@ -1,6 +1,6 @@
 --- old.jsxChildrenGenericContextualTypes.symbols
 +++ new.jsxChildrenGenericContextualTypes.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  
      export interface ElementAttributesProperty { props: {}; }
  >ElementAttributesProperty : Symbol(ElementAttributesProperty, Decl(jsxChildrenGenericContextualTypes.tsx, 1, 31))

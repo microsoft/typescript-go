@@ -1,6 +1,6 @@
 --- old.subtypeReductionUnionConstraints.symbols
 +++ new.subtypeReductionUnionConstraints.symbols
-@@= skipped -80, +80 lines =@@
+@@= skipped -79, +79 lines =@@
          const nodes: Node[] = node.children;
  >nodes : Symbol(nodes, Decl(subtypeReductionUnionConstraints.ts, 24, 13))
  >Node : Symbol(Node, Decl(subtypeReductionUnionConstraints.ts, 9, 1))

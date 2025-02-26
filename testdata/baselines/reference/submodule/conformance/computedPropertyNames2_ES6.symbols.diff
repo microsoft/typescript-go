@@ -1,6 +1,6 @@
 --- old.computedPropertyNames2_ES6.symbols
 +++ new.computedPropertyNames2_ES6.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >C : Symbol(C, Decl(computedPropertyNames2_ES6.ts, 1, 30))
  
      [methodName]() { }

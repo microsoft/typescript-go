@@ -1,6 +1,6 @@
 --- old.override14.symbols
 +++ new.override14.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Foo : Symbol(Foo, Decl(override14.ts, 0, 0))
  
      property = 1

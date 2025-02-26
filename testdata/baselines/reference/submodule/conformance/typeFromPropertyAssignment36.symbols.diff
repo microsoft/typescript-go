@@ -1,6 +1,6 @@
 --- old.typeFromPropertyAssignment36.symbols
 +++ new.typeFromPropertyAssignment36.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >d : Symbol(d, Decl(typeFromPropertyAssignment36.ts, 0, 24))
      }
      d.e = 12

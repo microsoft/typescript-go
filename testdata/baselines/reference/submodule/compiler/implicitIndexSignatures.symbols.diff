@@ -1,6 +1,6 @@
 --- old.implicitIndexSignatures.symbols
 +++ new.implicitIndexSignatures.symbols
-@@= skipped -175, +175 lines =@@
+@@= skipped -174, +174 lines =@@
  
      enum E1 { A, B }
  >E1 : Symbol(E1, Decl(implicitIndexSignatures.ts, 46, 15))

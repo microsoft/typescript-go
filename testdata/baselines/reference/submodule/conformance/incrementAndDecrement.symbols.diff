@@ -1,6 +1,6 @@
 --- old.incrementAndDecrement.symbols
 +++ new.incrementAndDecrement.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === incrementAndDecrement.ts ===
  enum E { A, B, C };
  >E : Symbol(E, Decl(incrementAndDecrement.ts, 0, 0))

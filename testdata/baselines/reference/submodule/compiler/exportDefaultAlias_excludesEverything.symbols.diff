@@ -1,6 +1,6 @@
 --- old.exportDefaultAlias_excludesEverything.symbols
 +++ new.exportDefaultAlias_excludesEverything.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === exportDefaultAlias_excludesEverything.ts ===
  export default interface A {}

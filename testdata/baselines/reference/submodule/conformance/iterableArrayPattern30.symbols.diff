@@ -1,6 +1,6 @@
 --- old.iterableArrayPattern30.symbols
 +++ new.iterableArrayPattern30.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >v1 : Symbol(v1, Decl(iterableArrayPattern30.ts, 0, 11))
  >k2 : Symbol(k2, Decl(iterableArrayPattern30.ts, 0, 18))
  >v2 : Symbol(v2, Decl(iterableArrayPattern30.ts, 0, 21))

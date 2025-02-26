@@ -1,6 +1,6 @@
 --- old.newOperator.symbols
 +++ new.newOperator.symbols
-@@= skipped -28, +28 lines =@@
+@@= skipped -27, +27 lines =@@
  
  // Use in LHS of expression?
  (new Date()).toString();

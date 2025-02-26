@@ -1,6 +1,6 @@
 --- old.privateNameAndPropertySignature.symbols
 +++ new.privateNameAndPropertySignature.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  >B : Symbol(B, Decl(privateNameAndPropertySignature.ts, 3, 1))
  
      #foo: string;

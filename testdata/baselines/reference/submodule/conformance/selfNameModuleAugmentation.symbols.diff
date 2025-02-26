@@ -1,6 +1,6 @@
 --- old.selfNameModuleAugmentation.symbols
 +++ new.selfNameModuleAugmentation.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === /node_modules/acorn-walk/dist/walk.d.ts ===
  export {};
  declare module 'acorn-walk' {

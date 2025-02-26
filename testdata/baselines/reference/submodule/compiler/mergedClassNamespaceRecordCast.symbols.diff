@@ -1,6 +1,6 @@
 --- old.mergedClassNamespaceRecordCast.symbols
 +++ new.mergedClassNamespaceRecordCast.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === mergedClassNamespaceRecordCast.ts ===
  class C1 { foo() {} }
  >C1 : Symbol(C1, Decl(mergedClassNamespaceRecordCast.ts, 0, 0))

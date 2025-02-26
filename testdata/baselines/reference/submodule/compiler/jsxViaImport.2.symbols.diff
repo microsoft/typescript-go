@@ -1,6 +1,6 @@
 --- old.jsxViaImport.2.symbols
 +++ new.jsxViaImport.2.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  
  class TestComponent extends React.Component<any, {}> {
  >TestComponent : Symbol(TestComponent, Decl(consumer.tsx, 1, 42))

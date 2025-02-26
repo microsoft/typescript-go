@@ -1,6 +1,6 @@
 --- old.es2015modulekind.symbols
 +++ new.es2015modulekind.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === es2015modulekind.ts ===
  export default class A

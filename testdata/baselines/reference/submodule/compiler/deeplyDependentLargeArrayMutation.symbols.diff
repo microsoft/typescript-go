@@ -1,6 +1,6 @@
 --- old.deeplyDependentLargeArrayMutation.symbols
 +++ new.deeplyDependentLargeArrayMutation.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  
      arr[arr.length] = 'value'; 
  >arr : Symbol(arr, Decl(foo.js, 2, 7))

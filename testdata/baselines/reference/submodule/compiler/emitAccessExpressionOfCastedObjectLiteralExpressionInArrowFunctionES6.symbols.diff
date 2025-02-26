@@ -1,6 +1,6 @@
 --- old.emitAccessExpressionOfCastedObjectLiteralExpressionInArrowFunctionES6.symbols
 +++ new.emitAccessExpressionOfCastedObjectLiteralExpressionInArrowFunctionES6.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  
  (x) => ({ "1": "one", "2": "two" } as { [key: string]: string }).x;
  >x : Symbol(x, Decl(emitAccessExpressionOfCastedObjectLiteralExpressionInArrowFunctionES6.ts, 1, 1))

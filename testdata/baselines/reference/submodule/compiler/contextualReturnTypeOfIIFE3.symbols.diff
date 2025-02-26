@@ -1,6 +1,6 @@
 --- old.contextualReturnTypeOfIIFE3.symbols
 +++ new.contextualReturnTypeOfIIFE3.symbols
-@@= skipped -20, +20 lines =@@
+@@= skipped -19, +19 lines =@@
  
  app.foo.bar = (function () {
  >app.foo.bar : Symbol(bar, Decl(contextualReturnTypeOfIIFE3.ts, 1, 12))

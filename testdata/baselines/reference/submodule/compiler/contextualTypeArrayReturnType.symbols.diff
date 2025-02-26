@@ -1,6 +1,6 @@
 --- old.contextualTypeArrayReturnType.symbols
 +++ new.contextualTypeArrayReturnType.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >IBookStyle : Symbol(IBookStyle, Decl(contextualTypeArrayReturnType.ts, 0, 0))
  
      initialLeftPageTransforms?: (width: number) => NamedTransform[];

@@ -1,6 +1,6 @@
 --- old.typeResolution.symbols
 +++ new.typeResolution.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  >ClassA : Symbol(ClassA, Decl(typeResolution.ts, 2, 37))
  
                  public AisIn1_1_1() {

@@ -1,6 +1,6 @@
 --- old.inferFromGenericFunctionReturnTypes3.symbols
 +++ new.inferFromGenericFunctionReturnTypes3.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  
  function truePromise(): Promise<true> {
  >truePromise : Symbol(truePromise, Decl(inferFromGenericFunctionReturnTypes3.ts, 0, 0))

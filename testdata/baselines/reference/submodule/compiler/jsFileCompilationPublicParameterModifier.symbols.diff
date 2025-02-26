@@ -1,6 +1,6 @@
 --- old.jsFileCompilationPublicParameterModifier.symbols
 +++ new.jsFileCompilationPublicParameterModifier.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === a.js ===
  class C { constructor(public x) { }}
  >C : Symbol(C, Decl(a.js, 0, 0))

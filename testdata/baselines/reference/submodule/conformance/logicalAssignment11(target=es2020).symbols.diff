@@ -1,6 +1,6 @@
 --- old.logicalAssignment11(target=es2020).symbols
 +++ new.logicalAssignment11(target=es2020).symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >x : Symbol(x, Decl(logicalAssignment11.ts, 0, 3))
  
  d.length;

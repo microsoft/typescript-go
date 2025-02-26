@@ -1,6 +1,6 @@
 --- old.overloadBindingAcrossDeclarationBoundaries2.symbols
 +++ new.overloadBindingAcrossDeclarationBoundaries2.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Opt1 : Symbol(Opt1, Decl(overloadBindingAcrossDeclarationBoundaries_file0.ts, 0, 0))
  
      p?: any;

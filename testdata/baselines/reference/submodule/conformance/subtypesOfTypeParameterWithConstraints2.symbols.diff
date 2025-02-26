@@ -1,6 +1,6 @@
 --- old.subtypesOfTypeParameterWithConstraints2.symbols
 +++ new.subtypesOfTypeParameterWithConstraints2.symbols
-@@= skipped -120, +120 lines =@@
+@@= skipped -119, +119 lines =@@
  
  interface I1 { foo: number; }
  >I1 : Symbol(I1, Decl(subtypesOfTypeParameterWithConstraints2.ts, 33, 1))

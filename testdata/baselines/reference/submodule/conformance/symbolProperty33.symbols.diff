@@ -1,6 +1,6 @@
 --- old.symbolProperty33.symbols
 +++ new.symbolProperty33.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >C2 : Symbol(C2, Decl(symbolProperty33.ts, 4, 1))
  
      [Symbol.toStringTag]() {

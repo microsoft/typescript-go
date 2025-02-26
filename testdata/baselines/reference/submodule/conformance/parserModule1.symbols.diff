@@ -1,6 +1,6 @@
 --- old.parserModule1.symbols
 +++ new.parserModule1.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >IDiagnosticWriter : Symbol(IDiagnosticWriter, Decl(parserModule1.ts, 1, 33))
  
              Alert(output: string): void;

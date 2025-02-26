@@ -1,6 +1,6 @@
 --- old.constEnumNamespaceReferenceCausesNoImport(isolatedmodules=true).symbols
 +++ new.constEnumNamespaceReferenceCausesNoImport(isolatedmodules=true).symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >ConstFooEnum : Symbol(ConstFooEnum, Decl(foo.ts, 0, 0))
  
      Some,

@@ -1,6 +1,6 @@
 --- old.commentsModules.symbols
 +++ new.commentsModules.symbols
-@@= skipped -59, +59 lines =@@
+@@= skipped -58, +58 lines =@@
      }
  } // trailing comment module
  m1.fooExport();

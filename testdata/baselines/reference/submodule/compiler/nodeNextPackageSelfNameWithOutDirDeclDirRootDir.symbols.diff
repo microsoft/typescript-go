@@ -1,6 +1,6 @@
 --- old.nodeNextPackageSelfNameWithOutDirDeclDirRootDir.symbols
 +++ new.nodeNextPackageSelfNameWithOutDirDeclDirRootDir.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >me : Symbol(me, Decl(index.ts, 0, 6))
  
  me.thing();

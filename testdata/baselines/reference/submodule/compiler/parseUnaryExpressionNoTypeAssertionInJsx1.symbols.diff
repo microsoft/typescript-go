@@ -1,6 +1,6 @@
 --- old.parseUnaryExpressionNoTypeAssertionInJsx1.symbols
 +++ new.parseUnaryExpressionNoTypeAssertionInJsx1.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
  const y = + <number> x;
  >y : Symbol(y, Decl(index.js, 1, 5))

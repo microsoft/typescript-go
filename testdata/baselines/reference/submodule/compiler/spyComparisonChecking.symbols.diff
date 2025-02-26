@@ -1,6 +1,6 @@
 --- old.spyComparisonChecking.symbols
 +++ new.spyComparisonChecking.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >params : Symbol(params, Decl(spyComparisonChecking.ts, 1, 5))
  
      identity: string;

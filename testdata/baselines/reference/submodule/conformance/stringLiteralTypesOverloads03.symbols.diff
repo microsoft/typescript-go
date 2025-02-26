@@ -1,6 +1,6 @@
 --- old.stringLiteralTypesOverloads03.symbols
 +++ new.stringLiteralTypesOverloads03.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Base : Symbol(Base, Decl(stringLiteralTypesOverloads03.ts, 0, 0))
  
      x: string;

@@ -1,6 +1,6 @@
 --- old.privacyTypeParameterOfFunctionDeclFile.symbols
 +++ new.privacyTypeParameterOfFunctionDeclFile.symbols
-@@= skipped -23, +23 lines =@@
+@@= skipped -22, +22 lines =@@
  >privateClass : Symbol(privateClass, Decl(privacyTypeParameterOfFunctionDeclFile.ts, 0, 0))
  
      myMethod<T extends privateClass>(): privateClass;  // Error

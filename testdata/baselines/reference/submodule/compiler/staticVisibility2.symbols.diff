@@ -1,6 +1,6 @@
 --- old.staticVisibility2.symbols
 +++ new.staticVisibility2.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Square : Symbol(Square, Decl(staticVisibility2.ts, 0, 0))
  
      static sideLength;

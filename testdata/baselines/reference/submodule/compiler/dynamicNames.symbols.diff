@@ -1,6 +1,6 @@
 --- old.dynamicNames.symbols
 +++ new.dynamicNames.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  >T0 : Symbol(T0, Decl(module.ts, 2, 27))
  
      [c0]: number;

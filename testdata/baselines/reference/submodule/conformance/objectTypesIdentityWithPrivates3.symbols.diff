@@ -1,6 +1,6 @@
 --- old.objectTypesIdentityWithPrivates3.symbols
 +++ new.objectTypesIdentityWithPrivates3.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
  interface T2 { z }
  >T2 : Symbol(T2, Decl(objectTypesIdentityWithPrivates3.ts, 0, 16))

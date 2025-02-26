@@ -1,6 +1,6 @@
 --- old.genericStaticAnyTypeFunction.symbols
 +++ new.genericStaticAnyTypeFunction.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(genericStaticAnyTypeFunction.ts, 0, 0))
  
      static one<T>(source: T, value: number): T {

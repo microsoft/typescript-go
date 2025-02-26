@@ -1,6 +1,6 @@
 --- old.comparisonOperatorWithOneOperandIsNull.symbols
 +++ new.comparisonOperatorWithOneOperandIsNull.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === comparisonOperatorWithOneOperandIsNull.ts ===
  enum E { a, b, c }
  >E : Symbol(E, Decl(comparisonOperatorWithOneOperandIsNull.ts, 0, 0))

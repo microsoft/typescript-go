@@ -1,6 +1,6 @@
 --- old.genericMethodOverspecialization.symbols
 +++ new.genericMethodOverspecialization.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >HTMLElement : Symbol(HTMLElement, Decl(lib.dom.d.ts, --, --), Decl(lib.dom.d.ts, --, --), Decl(genericMethodOverspecialization.ts, 0, 62))
  
      clientWidth: number;

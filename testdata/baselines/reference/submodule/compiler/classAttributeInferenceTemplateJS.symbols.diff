@@ -1,6 +1,6 @@
 --- old.classAttributeInferenceTemplateJS.symbols
 +++ new.classAttributeInferenceTemplateJS.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >MyClass : Symbol(MyClass, Decl(index.js, 0, 0))
  
      property;

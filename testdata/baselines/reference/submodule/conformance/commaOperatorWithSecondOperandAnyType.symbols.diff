@@ -1,6 +1,6 @@
 --- old.commaOperatorWithSecondOperandAnyType.symbols
 +++ new.commaOperatorWithSecondOperandAnyType.symbols
-@@= skipped -77, +77 lines =@@
+@@= skipped -76, +76 lines =@@
  
  "string", [null, 1];
  "string".charAt(0), [null, 1];

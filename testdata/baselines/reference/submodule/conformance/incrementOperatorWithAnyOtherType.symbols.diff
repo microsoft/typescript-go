@@ -1,6 +1,6 @@
 --- old.incrementOperatorWithAnyOtherType.symbols
 +++ new.incrementOperatorWithAnyOtherType.symbols
-@@= skipped -21, +21 lines =@@
+@@= skipped -20, +20 lines =@@
  >A : Symbol(A, Decl(incrementOperatorWithAnyOtherType.ts, 5, 23))
  
      public a: any;

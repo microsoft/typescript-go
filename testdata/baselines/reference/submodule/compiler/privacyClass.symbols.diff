@@ -1,6 +1,6 @@
 --- old.privacyClass.symbols
 +++ new.privacyClass.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  >m1_c_public : Symbol(m1_c_public, Decl(privacyClass.ts, 5, 5))
  
          private f1() {

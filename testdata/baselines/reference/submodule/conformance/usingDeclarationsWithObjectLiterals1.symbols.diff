@@ -1,6 +1,6 @@
 --- old.usingDeclarationsWithObjectLiterals1.symbols
 +++ new.usingDeclarationsWithObjectLiterals1.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >MyDisposable : Symbol(MyDisposable, Decl(usingDeclarationsWithObjectLiterals1.ts, 0, 0))
  
    value: number;

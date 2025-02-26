@@ -1,6 +1,6 @@
 --- old.varianceCallbacksAndIndexedAccesses.symbols
 +++ new.varianceCallbacksAndIndexedAccesses.symbols
-@@= skipped -39, +39 lines =@@
+@@= skipped -38, +38 lines =@@
  >T : Symbol(T, Decl(varianceCallbacksAndIndexedAccesses.ts, 8, 27))
  
      source: WindowLike<T>;

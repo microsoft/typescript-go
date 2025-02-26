@@ -1,6 +1,6 @@
 --- old.declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.symbols
 +++ new.declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.symbols
-@@= skipped -39, +39 lines =@@
+@@= skipped -38, +38 lines =@@
  >set : Symbol(set, Decl(declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.ts, 8, 13))
  >newU : Symbol(newU, Decl(declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.ts, 8, 21))
  >U : Symbol(U, Decl(declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.ts, 7, 20))

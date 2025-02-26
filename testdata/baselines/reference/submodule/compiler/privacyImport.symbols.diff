@@ -1,6 +1,6 @@
 --- old.privacyImport.symbols
 +++ new.privacyImport.symbols
-@@= skipped -68, +68 lines =@@
+@@= skipped -67, +67 lines =@@
  
      export var m1_im1_private_v1_public = m1_im1_private.c1;
  >m1_im1_private_v1_public : Symbol(m1_im1_private_v1_public, Decl(privacyImport.ts, 38, 14))

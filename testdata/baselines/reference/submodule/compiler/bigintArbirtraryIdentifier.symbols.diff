@@ -1,6 +1,6 @@
 --- old.bigintArbirtraryIdentifier.symbols
 +++ new.bigintArbirtraryIdentifier.symbols
-@@= skipped -22, +22 lines =@@
+@@= skipped -21, +21 lines =@@
  
  === badImport2.ts ===
  import { foo as 0n } from "./foo";

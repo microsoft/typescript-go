@@ -1,6 +1,6 @@
 --- old.jsDeclarationsFunctionLikeClasses.symbols
 +++ new.jsDeclarationsFunctionLikeClasses.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >y : Symbol(y, Decl(source.js, 4, 24))
  
      if (!(this instanceof Point)) {

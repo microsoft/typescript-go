@@ -1,6 +1,6 @@
 --- old.declarationEmitRetainsJsdocyComments.symbols
 +++ new.declarationEmitRetainsJsdocyComments.symbols
-@@= skipped -36, +36 lines =@@
+@@= skipped -35, +35 lines =@@
       * @param s  
       */
      bar(s: number) {

@@ -1,6 +1,6 @@
 --- old.autoAccessorExperimentalDecorators(target=esnext).symbols
 +++ new.autoAccessorExperimentalDecorators(target=esnext).symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  >dec : Symbol(dec, Decl(autoAccessorExperimentalDecorators.ts, 0, 11))
  
      accessor a: any;

@@ -1,6 +1,6 @@
 --- old.typeParameterUsedAsTypeParameterConstraint3.symbols
 +++ new.typeParameterUsedAsTypeParameterConstraint3.symbols
-@@= skipped -31, +31 lines =@@
+@@= skipped -30, +30 lines =@@
  >V : Symbol(V, Decl(typeParameterUsedAsTypeParameterConstraint3.ts, 23, 17))
  
      x: T;

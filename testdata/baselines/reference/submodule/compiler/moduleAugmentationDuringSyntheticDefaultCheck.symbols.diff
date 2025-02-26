@@ -1,6 +1,6 @@
 --- old.moduleAugmentationDuringSyntheticDefaultCheck.symbols
 +++ new.moduleAugmentationDuringSyntheticDefaultCheck.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  
  === node_modules/moment/index.d.ts ===
  declare function moment(): moment.Moment;

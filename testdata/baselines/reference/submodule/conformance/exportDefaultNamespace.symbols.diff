@@ -1,6 +1,6 @@
 --- old.exportDefaultNamespace.symbols
 +++ new.exportDefaultNamespace.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === exportDefaultNamespace.ts ===
  export default function someFunc() {

@@ -1,6 +1,6 @@
 --- old.taggedTemplateStringsWithTypedTagsES6.symbols
 +++ new.taggedTemplateStringsWithTypedTagsES6.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
      (stringParts: TemplateStringsArray, ...rest: number[]): I;
  >stringParts : Symbol(stringParts, Decl(taggedTemplateStringsWithTypedTagsES6.ts, 1, 5))

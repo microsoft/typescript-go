@@ -1,6 +1,6 @@
 --- old.classExpressionLoop.symbols
 +++ new.classExpressionLoop.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >i : Symbol(i, Decl(classExpressionLoop.ts, 1, 8))
  
      arr.push(class C {

@@ -1,6 +1,6 @@
 --- old.jsDeclarationEmitExportAssignedArray.symbols
 +++ new.jsDeclarationEmitExportAssignedArray.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === file.js ===
  module.exports = [{ name: 'other', displayName: 'Other', defaultEnabled: true }];

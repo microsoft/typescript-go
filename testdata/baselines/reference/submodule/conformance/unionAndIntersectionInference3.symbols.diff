@@ -1,6 +1,6 @@
 --- old.unionAndIntersectionInference3.symbols
 +++ new.unionAndIntersectionInference3.symbols
-@@= skipped -64, +64 lines =@@
+@@= skipped -63, +63 lines =@@
  >T : Symbol(T, Decl(unionAndIntersectionInference3.ts, 12, 15))
  
      test(value: T): void;

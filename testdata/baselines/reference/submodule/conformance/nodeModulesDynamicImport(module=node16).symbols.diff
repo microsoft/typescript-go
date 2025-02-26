@@ -1,6 +1,6 @@
 --- old.nodeModulesDynamicImport(module=node16).symbols
 +++ new.nodeModulesDynamicImport(module=node16).symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  
      const { readFile } = await import("fs");
  >readFile : Symbol(readFile, Decl(index.ts, 2, 11))

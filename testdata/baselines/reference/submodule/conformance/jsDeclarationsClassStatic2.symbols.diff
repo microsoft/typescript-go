@@ -1,6 +1,6 @@
 --- old.jsDeclarationsClassStatic2.symbols
 +++ new.jsDeclarationsClassStatic2.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Base : Symbol(Base, Decl(Foo.js, 0, 0))
  
    static foo = "";

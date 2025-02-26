@@ -1,6 +1,6 @@
 --- old.unionTypeReduction2.symbols
 +++ new.unionTypeReduction2.symbols
-@@= skipped -172, +172 lines =@@
+@@= skipped -171, +171 lines =@@
  >ReturnVal : Symbol(ReturnVal, Decl(unionTypeReduction2.ts, 49, 1))
  
      something(): void;

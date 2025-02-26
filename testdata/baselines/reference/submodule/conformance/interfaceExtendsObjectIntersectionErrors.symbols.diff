@@ -1,6 +1,6 @@
 --- old.interfaceExtendsObjectIntersectionErrors.symbols
 +++ new.interfaceExtendsObjectIntersectionErrors.symbols
-@@= skipped -23, +23 lines =@@
+@@= skipped -22, +22 lines =@@
  interface I1 extends T1 { a: string }
  >I1 : Symbol(I1, Decl(interfaceExtendsObjectIntersectionErrors.ts, 4, 45))
  >T1 : Symbol(T1, Decl(interfaceExtendsObjectIntersectionErrors.ts, 0, 0))

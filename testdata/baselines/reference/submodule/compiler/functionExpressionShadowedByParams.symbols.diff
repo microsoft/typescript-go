@@ -1,6 +1,6 @@
 --- old.functionExpressionShadowedByParams.symbols
 +++ new.functionExpressionShadowedByParams.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >b1 : Symbol(b1, Decl(functionExpressionShadowedByParams.ts, 0, 12))
  
     b1.toPrecision(2); // should not error

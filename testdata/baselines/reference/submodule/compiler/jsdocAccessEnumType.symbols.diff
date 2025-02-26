@@ -1,6 +1,6 @@
 --- old.jsdocAccessEnumType.symbols
 +++ new.jsdocAccessEnumType.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === /a.ts ===
  export enum E { A }
  >E : Symbol(E, Decl(a.ts, 0, 0))

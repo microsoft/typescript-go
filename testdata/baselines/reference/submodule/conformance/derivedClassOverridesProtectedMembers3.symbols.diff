@@ -1,6 +1,6 @@
 --- old.derivedClassOverridesProtectedMembers3.symbols
 +++ new.derivedClassOverridesProtectedMembers3.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  >Base : Symbol(Base, Decl(derivedClassOverridesProtectedMembers3.ts, 1, 36))
  
      a: typeof x;

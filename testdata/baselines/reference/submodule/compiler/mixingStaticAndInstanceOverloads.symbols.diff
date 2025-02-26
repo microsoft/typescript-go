@@ -1,6 +1,6 @@
 --- old.mixingStaticAndInstanceOverloads.symbols
 +++ new.mixingStaticAndInstanceOverloads.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
      // ERROR
      foo1(n: number);

@@ -1,6 +1,6 @@
 --- old.narrowFromAnyWithTypePredicate.symbols
 +++ new.narrowFromAnyWithTypePredicate.symbols
-@@= skipped -78, +78 lines =@@
+@@= skipped -77, +77 lines =@@
  >x : Symbol(x, Decl(narrowFromAnyWithTypePredicate.ts, 0, 11))
  
      x.message;

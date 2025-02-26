@@ -1,6 +1,6 @@
 --- old.declFileTypeAnnotationArrayType.symbols
 +++ new.declFileTypeAnnotationArrayType.symbols
-@@= skipped -39, +39 lines =@@
+@@= skipped -38, +38 lines =@@
  function foo3(): m.c[] {
  >foo3 : Symbol(foo3, Decl(declFileTypeAnnotationArrayType.ts, 17, 1))
  >m : Symbol(m, Decl(declFileTypeAnnotationArrayType.ts, 1, 1))

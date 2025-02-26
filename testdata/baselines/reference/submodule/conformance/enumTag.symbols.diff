@@ -1,6 +1,6 @@
 --- old.enumTag.symbols
 +++ new.enumTag.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === a.js ===
  /** @enum {string} */
  const Target = {

@@ -1,6 +1,6 @@
 --- old.nestedHomomorphicMappedTypesWithArrayConstraint1.symbols
 +++ new.nestedHomomorphicMappedTypesWithArrayConstraint1.symbols
-@@= skipped -20, +20 lines =@@
+@@= skipped -19, +19 lines =@@
  >TArgs : Symbol(TArgs, Decl(nestedHomomorphicMappedTypesWithArrayConstraint1.ts, 6, 26))
  
      calledWith(...args: Partial<MatchArguments<TArgs>>): boolean;

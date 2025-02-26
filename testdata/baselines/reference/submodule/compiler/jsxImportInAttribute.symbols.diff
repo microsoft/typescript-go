@@ -1,6 +1,6 @@
 --- old.jsxImportInAttribute.symbols
 +++ new.jsxImportInAttribute.symbols
-@@= skipped -18, +18 lines =@@
+@@= skipped -17, +17 lines =@@
  >"Test" : Symbol("Test", Decl(component.d.ts, 0, 0))
  
  	export default class Text { }

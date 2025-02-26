@@ -1,6 +1,6 @@
 --- old.TwoInternalModulesThatMergeEachWithExportedModulesOfTheSameName.symbols
 +++ new.TwoInternalModulesThatMergeEachWithExportedModulesOfTheSameName.symbols
-@@= skipped -26, +26 lines =@@
+@@= skipped -25, +25 lines =@@
  
  var x = A.B.x;
  >x : Symbol(x, Decl(TwoInternalModulesThatMergeEachWithExportedModulesOfTheSameName.ts, 11, 3), Decl(TwoInternalModulesThatMergeEachWithExportedModulesOfTheSameName.ts, 12, 3))

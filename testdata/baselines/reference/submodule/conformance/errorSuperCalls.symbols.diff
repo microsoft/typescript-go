@@ -1,6 +1,6 @@
 --- old.errorSuperCalls.symbols
 +++ new.errorSuperCalls.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  
      //super call in class member function with no base type
      fn() {

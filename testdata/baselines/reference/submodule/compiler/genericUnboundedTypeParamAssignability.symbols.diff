@@ -1,6 +1,6 @@
 --- old.genericUnboundedTypeParamAssignability.symbols
 +++ new.genericUnboundedTypeParamAssignability.symbols
-@@= skipped -18, +18 lines =@@
+@@= skipped -17, +17 lines =@@
  >T : Symbol(T, Decl(genericUnboundedTypeParamAssignability.ts, 4, 12))
  
    o.toString(); // no error

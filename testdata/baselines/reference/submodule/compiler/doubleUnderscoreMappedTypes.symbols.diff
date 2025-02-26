@@ -1,6 +1,6 @@
 --- old.doubleUnderscoreMappedTypes.symbols
 +++ new.doubleUnderscoreMappedTypes.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Properties : Symbol(Properties, Decl(doubleUnderscoreMappedTypes.ts, 0, 0))
  
      property1: string;

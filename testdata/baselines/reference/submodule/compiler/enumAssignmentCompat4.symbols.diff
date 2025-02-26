@@ -1,6 +1,6 @@
 --- old.enumAssignmentCompat4.symbols
 +++ new.enumAssignmentCompat4.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >MyEnum : Symbol(MyEnum, Decl(enumAssignmentCompat4.ts, 0, 13))
  
          BAR

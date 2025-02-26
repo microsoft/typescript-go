@@ -1,6 +1,6 @@
 --- old.collisionCodeGenModuleWithMethodChildren.symbols
 +++ new.collisionCodeGenModuleWithMethodChildren.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >c : Symbol(c, Decl(collisionCodeGenModuleWithMethodChildren.ts, 1, 21))
  
          fn(M, p = x) { }

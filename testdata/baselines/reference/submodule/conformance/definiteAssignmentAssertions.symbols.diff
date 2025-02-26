@@ -1,6 +1,6 @@
 --- old.definiteAssignmentAssertions.symbols
 +++ new.definiteAssignmentAssertions.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >C1 : Symbol(C1, Decl(definiteAssignmentAssertions.ts, 0, 0))
  
      a!: number;

@@ -1,6 +1,6 @@
 --- old.moduleDeclarationExportStarShadowingGlobalIsNameable.symbols
 +++ new.moduleDeclarationExportStarShadowingGlobalIsNameable.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >Account : Symbol(Account, Decl(account.ts, 0, 0))
  
      myAccNum: number;

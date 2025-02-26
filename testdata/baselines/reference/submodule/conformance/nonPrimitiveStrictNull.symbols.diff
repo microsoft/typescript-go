@@ -1,6 +1,6 @@
 --- old.nonPrimitiveStrictNull.symbols
 +++ new.nonPrimitiveStrictNull.symbols
-@@= skipped -17, +17 lines =@@
+@@= skipped -16, +16 lines =@@
  >e : Symbol(e, Decl(nonPrimitiveStrictNull.ts, 4, 3))
  
  a.toString; // error

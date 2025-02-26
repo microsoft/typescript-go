@@ -1,6 +1,6 @@
 --- old.inferFromGenericFunctionReturnTypes1.symbols
 +++ new.inferFromGenericFunctionReturnTypes1.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >A : Symbol(A, Decl(inferFromGenericFunctionReturnTypes1.ts, 3, 12))
  
    _store: A[];

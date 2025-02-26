@@ -1,6 +1,6 @@
 --- old.typeVariableConstraintIntersections.symbols
 +++ new.typeVariableConstraintIntersections.symbols
-@@= skipped -289, +289 lines =@@
+@@= skipped -288, +288 lines =@@
  >OptionHandlers : Symbol(OptionHandlers, Decl(typeVariableConstraintIntersections.ts, 76, 37))
  
    "one": option => option.s,

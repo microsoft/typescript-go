@@ -1,6 +1,6 @@
 --- old.propertiesOfGenericConstructorFunctions.symbols
 +++ new.propertiesOfGenericConstructorFunctions.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  
      /** @type {{ [s: string]: V }} */
      this._map = {};

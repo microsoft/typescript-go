@@ -1,6 +1,6 @@
 --- old.interfaceAssignmentCompat.symbols
 +++ new.interfaceAssignmentCompat.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >Color : Symbol(Color, Decl(interfaceAssignmentCompat.ts, 0, 10))
  
          Green,

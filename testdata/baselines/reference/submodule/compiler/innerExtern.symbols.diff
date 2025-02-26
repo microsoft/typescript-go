@@ -1,6 +1,6 @@
 --- old.innerExtern.symbols
 +++ new.innerExtern.symbols
-@@= skipped -17, +17 lines =@@
+@@= skipped -16, +16 lines =@@
  >C : Symbol(C, Decl(innerExtern.ts, 4, 21))
  
              x = BB.Elephant.X;

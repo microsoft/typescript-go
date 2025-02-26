@@ -1,6 +1,6 @@
 --- old.aliasUsageInFunctionExpression.symbols
 +++ new.aliasUsageInFunctionExpression.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >IHasVisualizationModel : Symbol(IHasVisualizationModel, Decl(aliasUsageInFunctionExpression_main.ts, 1, 69))
  
      VisualizationModel: typeof Backbone.Model;

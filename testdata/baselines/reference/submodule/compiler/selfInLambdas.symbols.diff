@@ -1,6 +1,6 @@
 --- old.selfInLambdas.symbols
 +++ new.selfInLambdas.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >MouseEvent : Symbol(MouseEvent, Decl(selfInLambdas.ts, 0, 0))
  
      x: number;

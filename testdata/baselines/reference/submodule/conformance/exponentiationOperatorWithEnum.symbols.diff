@@ -1,6 +1,6 @@
 --- old.exponentiationOperatorWithEnum.symbols
 +++ new.exponentiationOperatorWithEnum.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >E : Symbol(E, Decl(exponentiationOperatorWithEnum.ts, 0, 0))
  
      a,

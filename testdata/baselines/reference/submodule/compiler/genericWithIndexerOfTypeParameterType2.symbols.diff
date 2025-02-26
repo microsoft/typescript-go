@@ -1,6 +1,6 @@
 --- old.genericWithIndexerOfTypeParameterType2.symbols
 +++ new.genericWithIndexerOfTypeParameterType2.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >CollectionItem : Symbol(CollectionItem, Decl(genericWithIndexerOfTypeParameterType2.ts, 6, 1))
  
      _itemsByKey: { [key: string]: TItem; };

@@ -1,6 +1,6 @@
 --- old.returnTypePredicateIsInstantiateInContextOfTarget.symbols
 +++ new.returnTypePredicateIsInstantiateInContextOfTarget.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  
  class TestComponent extends React.Component<{ isAny: <T>(obj: any) => obj is T }> {
  >TestComponent : Symbol(TestComponent, Decl(returnTypePredicateIsInstantiateInContextOfTarget.tsx, 1, 31))

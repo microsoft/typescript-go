@@ -1,6 +1,6 @@
 --- old.checkJsxIntersectionElementPropsType.symbols
 +++ new.checkJsxIntersectionElementPropsType.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
      interface ElementAttributesProperty { props: {}; }
  >ElementAttributesProperty : Symbol(ElementAttributesProperty, Decl(checkJsxIntersectionElementPropsType.tsx, 0, 23))

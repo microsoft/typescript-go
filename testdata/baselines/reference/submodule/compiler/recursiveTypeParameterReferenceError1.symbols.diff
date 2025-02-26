@@ -1,6 +1,6 @@
 --- old.recursiveTypeParameterReferenceError1.symbols
 +++ new.recursiveTypeParameterReferenceError1.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(recursiveTypeParameterReferenceError1.ts, 1, 14))
  
      z: Foo<X<T>>; // error

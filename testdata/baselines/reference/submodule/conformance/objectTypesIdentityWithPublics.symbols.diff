@@ -1,6 +1,6 @@
 --- old.objectTypesIdentityWithPublics.symbols
 +++ new.objectTypesIdentityWithPublics.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >A : Symbol(A, Decl(objectTypesIdentityWithPublics.ts, 0, 0))
  
      public foo: string;

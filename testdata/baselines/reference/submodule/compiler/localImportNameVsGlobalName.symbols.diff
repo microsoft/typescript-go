@@ -1,6 +1,6 @@
 --- old.localImportNameVsGlobalName.symbols
 +++ new.localImportNameVsGlobalName.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
    export enum Key { UP, DOWN, LEFT, RIGHT }
  >Key : Symbol(Key, Decl(localImportNameVsGlobalName.ts, 0, 17))

@@ -1,6 +1,6 @@
 --- old.moduleExportAssignment.symbols
 +++ new.moduleExportAssignment.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === use.js ===
  var npmlog = require('./npmlog')
  >npmlog : Symbol(npmlog, Decl(use.js, 0, 3))

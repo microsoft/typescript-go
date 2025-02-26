@@ -1,6 +1,6 @@
 --- old.jsxIntrinsicElementsCompatability.symbols
 +++ new.jsxIntrinsicElementsCompatability.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >props : Symbol(props, Decl(jsxIntrinsicElementsCompatability.tsx, 2, 49))
  >element : Symbol(element, Decl(jsxIntrinsicElementsCompatability.tsx, 2, 57))
  >T : Symbol(T, Decl(jsxIntrinsicElementsCompatability.tsx, 2, 23))

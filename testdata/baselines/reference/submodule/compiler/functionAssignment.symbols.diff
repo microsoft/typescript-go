@@ -1,6 +1,6 @@
 --- old.functionAssignment.symbols
 +++ new.functionAssignment.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >foo : Symbol(foo, Decl(functionAssignment.ts, 1, 19))
  
      get(handler: (bar: number)=>void): void;

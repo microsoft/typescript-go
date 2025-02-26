@@ -1,6 +1,6 @@
 --- old.validNumberAssignments.symbols
 +++ new.validNumberAssignments.symbols
-@@= skipped -19, +19 lines =@@
+@@= skipped -18, +18 lines =@@
  
  enum E { A };
  >E : Symbol(E, Decl(validNumberAssignments.ts, 4, 18))

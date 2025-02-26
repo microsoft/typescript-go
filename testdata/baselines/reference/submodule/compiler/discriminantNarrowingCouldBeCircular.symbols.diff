@@ -1,6 +1,6 @@
 --- old.discriminantNarrowingCouldBeCircular.symbols
 +++ new.discriminantNarrowingCouldBeCircular.symbols
-@@= skipped -75, +75 lines =@@
+@@= skipped -74, +74 lines =@@
      if (!parents || !parent || !parents.includes(parent.a))
  >parents : Symbol(parents, Decl(discriminantNarrowingCouldBeCircular.ts, 19, 9))
  >parent : Symbol(parent, Decl(discriminantNarrowingCouldBeCircular.ts, 18, 9))

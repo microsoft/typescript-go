@@ -1,6 +1,6 @@
 --- old.mergeSymbolReexportInterface.symbols
 +++ new.mergeSymbolReexportInterface.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  >s : Symbol(s, Decl(main.ts, 2, 15))
  
   

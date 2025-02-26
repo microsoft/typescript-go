@@ -1,6 +1,6 @@
 --- old.restParameterAssignmentCompatibility.symbols
 +++ new.restParameterAssignmentCompatibility.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >T : Symbol(T, Decl(restParameterAssignmentCompatibility.ts, 0, 0))
  
      m(...p3) {

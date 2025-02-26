@@ -1,6 +1,6 @@
 --- old.decoratorMetadataWithTypeOnlyImport.symbols
 +++ new.decoratorMetadataWithTypeOnlyImport.symbols
-@@= skipped -18, +18 lines =@@
+@@= skipped -17, +17 lines =@@
  >MyComponent : Symbol(MyComponent, Decl(component.ts, 2, 27))
  
      constructor(public Service: Service) {

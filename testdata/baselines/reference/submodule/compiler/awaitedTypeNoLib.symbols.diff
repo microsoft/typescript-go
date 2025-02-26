@@ -1,6 +1,6 @@
 --- old.awaitedTypeNoLib.symbols
 +++ new.awaitedTypeNoLib.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  
    : T extends PromiseLike<unknown>
  >T : Symbol(T, Decl(awaitedTypeNoLib.ts, 0, 16))

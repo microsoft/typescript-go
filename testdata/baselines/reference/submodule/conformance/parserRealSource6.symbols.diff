@@ -1,6 +1,6 @@
 --- old.parserRealSource6.symbols
 +++ new.parserRealSource6.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >TypeCollectionContext : Symbol(TypeCollectionContext, Decl(parserRealSource6.ts, 5, 19))
  
          public script: Script = null;

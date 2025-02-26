@@ -1,6 +1,6 @@
 --- old.nestedLoopTypeGuards.symbols
 +++ new.nestedLoopTypeGuards.symbols
-@@= skipped -33, +33 lines =@@
+@@= skipped -32, +32 lines =@@
  >j : Symbol(j, Decl(nestedLoopTypeGuards.ts, 7, 20), Decl(nestedLoopTypeGuards.ts, 10, 24))
  
                      a.length; // Should not error here

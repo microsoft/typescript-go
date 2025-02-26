@@ -1,6 +1,6 @@
 --- old.localTypes5.symbols
 +++ new.localTypes5.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >X : Symbol(X, Decl(localTypes5.ts, 0, 19))
  
          m<B, C>() {

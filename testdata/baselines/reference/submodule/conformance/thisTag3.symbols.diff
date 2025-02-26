@@ -1,6 +1,6 @@
 --- old.thisTag3.symbols
 +++ new.thisTag3.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
       * @param {string} a
       */
      p = (a) => this.fn("" + a);

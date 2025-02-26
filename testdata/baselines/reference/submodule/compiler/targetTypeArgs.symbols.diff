@@ -1,6 +1,6 @@
 --- old.targetTypeArgs.symbols
 +++ new.targetTypeArgs.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  >x : Symbol(x, Decl(targetTypeArgs.ts, 4, 13))
  
  [1].forEach(function(v,i,a) { v });

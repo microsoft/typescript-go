@@ -1,6 +1,6 @@
 --- old.wrappedAndRecursiveConstraints3.symbols
 +++ new.wrappedAndRecursiveConstraints3.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >T : Symbol(T, Decl(wrappedAndRecursiveConstraints3.ts, 2, 8))
  
      foo<U extends T>(x: U) {

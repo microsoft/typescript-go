@@ -1,6 +1,6 @@
 --- old.defaultKeywordWithoutExport2.symbols
 +++ new.defaultKeywordWithoutExport2.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === defaultKeywordWithoutExport2.ts ===
  default function () {

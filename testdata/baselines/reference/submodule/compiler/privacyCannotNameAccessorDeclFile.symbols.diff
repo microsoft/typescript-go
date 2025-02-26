@@ -1,6 +1,6 @@
 --- old.privacyCannotNameAccessorDeclFile.symbols
 +++ new.privacyCannotNameAccessorDeclFile.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >publicClassWithWithPrivateGetAccessorTypes : Symbol(publicClassWithWithPrivateGetAccessorTypes, Decl(privacyCannotNameAccessorDeclFile_consumer.ts, 0, 74))
  
      static get myPublicStaticMethod() { // Error

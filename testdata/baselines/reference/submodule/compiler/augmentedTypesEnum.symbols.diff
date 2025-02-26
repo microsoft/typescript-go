@@ -1,6 +1,6 @@
 --- old.augmentedTypesEnum.symbols
 +++ new.augmentedTypesEnum.symbols
-@@= skipped -4, +4 lines =@@
+@@= skipped -3, +3 lines =@@
  // enum then var
  enum e1111 { One } // error
  >e1111 : Symbol(e1111, Decl(augmentedTypesEnum.ts, 0, 0))

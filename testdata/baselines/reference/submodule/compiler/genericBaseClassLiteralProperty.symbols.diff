@@ -1,6 +1,6 @@
 --- old.genericBaseClassLiteralProperty.symbols
 +++ new.genericBaseClassLiteralProperty.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(genericBaseClassLiteralProperty.ts, 0, 16))
  
      public _getValue1: { (): T; };

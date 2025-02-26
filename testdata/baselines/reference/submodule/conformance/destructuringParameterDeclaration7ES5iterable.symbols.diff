@@ -1,6 +1,6 @@
 --- old.destructuringParameterDeclaration7ES5iterable.symbols
 +++ new.destructuringParameterDeclaration7ES5iterable.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >ISomething : Symbol(ISomething, Decl(destructuringParameterDeclaration7ES5iterable.ts, 0, 0))
  
      foo: string,

@@ -1,6 +1,6 @@
 --- old.arraySigChecking.symbols
 +++ new.arraySigChecking.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
      interface iBar { t: any; }
  >iBar : Symbol(iBar, Decl(arraySigChecking.ts, 0, 18))

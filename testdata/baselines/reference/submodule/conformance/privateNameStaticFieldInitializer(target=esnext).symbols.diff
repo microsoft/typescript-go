@@ -1,6 +1,6 @@
 --- old.privateNameStaticFieldInitializer(target=esnext).symbols
 +++ new.privateNameStaticFieldInitializer(target=esnext).symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(privateNameStaticFieldInitializer.ts, 0, 0))
  
      static #field = 10;

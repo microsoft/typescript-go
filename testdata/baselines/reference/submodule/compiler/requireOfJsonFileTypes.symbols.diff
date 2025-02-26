@@ -1,6 +1,6 @@
 --- old.requireOfJsonFileTypes.symbols
 +++ new.requireOfJsonFileTypes.symbols
-@@= skipped -31, +31 lines =@@
+@@= skipped -30, +30 lines =@@
  
  booleanLiteral = b.a;
  >booleanLiteral : Symbol(booleanLiteral, Decl(file1.ts, 7, 3))

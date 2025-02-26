@@ -1,6 +1,6 @@
 --- old.nongenericPartialInstantiationsRelatedInBothDirections.symbols
 +++ new.nongenericPartialInstantiationsRelatedInBothDirections.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Foo : Symbol(Foo, Decl(nongenericPartialInstantiationsRelatedInBothDirections.ts, 0, 0))
  
      a: number;

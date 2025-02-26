@@ -1,6 +1,6 @@
 --- old.declarationEmitPathMappingMonorepo2.symbols
 +++ new.declarationEmitPathMappingMonorepo2.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  export default createSvgIcon("Hello", "ArrowLeft");
  >createSvgIcon : Symbol(createSvgIcon, Decl(index.ts, 0, 8))
  

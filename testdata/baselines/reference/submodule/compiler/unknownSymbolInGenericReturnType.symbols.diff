@@ -1,6 +1,6 @@
 --- old.unknownSymbolInGenericReturnType.symbols
 +++ new.unknownSymbolInGenericReturnType.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Linq : Symbol(Linq, Decl(unknownSymbolInGenericReturnType.ts, 0, 0))
  
      public static select<T, S>(values: T[], func: (v: T) => A): any[] {

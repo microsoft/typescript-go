@@ -1,6 +1,6 @@
 --- old.controlFlowBindingElement.symbols
 +++ new.controlFlowBindingElement.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  >data : Symbol(data, Decl(controlFlowBindingElement.ts, 1, 9))
      
      console.log(param); // should not trigger 'Unreachable code detected.'    

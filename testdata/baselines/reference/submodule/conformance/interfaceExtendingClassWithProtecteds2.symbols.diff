@@ -1,6 +1,6 @@
 --- old.interfaceExtendingClassWithProtecteds2.symbols
 +++ new.interfaceExtendingClassWithProtecteds2.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Foo : Symbol(Foo, Decl(interfaceExtendingClassWithProtecteds2.ts, 0, 0))
  
      protected x: string;

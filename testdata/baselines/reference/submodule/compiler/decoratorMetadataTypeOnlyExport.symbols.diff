@@ -1,6 +1,6 @@
 --- old.decoratorMetadataTypeOnlyExport.symbols
 +++ new.decoratorMetadataTypeOnlyExport.symbols
-@@= skipped -1, +1 lines =@@
+@@= skipped -0, +0 lines =@@
  //// [tests/cases/compiler/decoratorMetadataTypeOnlyExport.ts] ////
  
 -=== ./a.ts ===

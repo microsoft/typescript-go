@@ -1,6 +1,6 @@
 --- old.objectCreate2.symbols
 +++ new.objectCreate2.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  
  var n = Object.create(null);             // any
  >n : Symbol(n, Decl(objectCreate2.ts, 2, 3))

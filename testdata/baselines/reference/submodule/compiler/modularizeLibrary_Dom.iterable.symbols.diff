@@ -1,6 +1,6 @@
 --- old.modularizeLibrary_Dom.iterable.symbols
 +++ new.modularizeLibrary_Dom.iterable.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === modularizeLibrary_Dom.iterable.ts ===
  for (const element of document.getElementsByTagName("a")) {
  >element : Symbol(element, Decl(modularizeLibrary_Dom.iterable.ts, 0, 10))

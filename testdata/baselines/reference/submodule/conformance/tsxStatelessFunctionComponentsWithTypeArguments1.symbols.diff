@@ -1,6 +1,6 @@
 --- old.tsxStatelessFunctionComponentsWithTypeArguments1.symbols
 +++ new.tsxStatelessFunctionComponentsWithTypeArguments1.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >K : Symbol(K, Decl(file.tsx, 2, 44))
  >value : Symbol(value, Decl(file.tsx, 2, 61))
  >V : Symbol(V, Decl(file.tsx, 2, 46))

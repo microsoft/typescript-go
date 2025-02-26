@@ -1,6 +1,6 @@
 --- old.narrowFromAnyWithInstanceof.symbols
 +++ new.narrowFromAnyWithInstanceof.symbols
-@@= skipped -37, +37 lines =@@
+@@= skipped -36, +36 lines =@@
  >Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      x.message;

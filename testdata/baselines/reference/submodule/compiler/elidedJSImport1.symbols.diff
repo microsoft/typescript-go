@@ -1,6 +1,6 @@
 --- old.elidedJSImport1.symbols
 +++ new.elidedJSImport1.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >TruffleContract : Symbol(TruffleContract, Decl(caller.js, 1, 6))
  
  console.log(fs);

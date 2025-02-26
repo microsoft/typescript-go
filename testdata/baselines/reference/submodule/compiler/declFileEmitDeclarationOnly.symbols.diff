@@ -1,6 +1,6 @@
 --- old.declFileEmitDeclarationOnly.symbols
 +++ new.declFileEmitDeclarationOnly.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >HelloWorld : Symbol(HelloWorld, Decl(helloworld.ts, 2, 1))
  
    constructor(private name: string) {

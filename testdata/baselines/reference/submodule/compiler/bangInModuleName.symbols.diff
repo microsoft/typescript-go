@@ -1,6 +1,6 @@
 --- old.bangInModuleName.symbols
 +++ new.bangInModuleName.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  }
  
  declare module 'intern/dojo/node!http' {

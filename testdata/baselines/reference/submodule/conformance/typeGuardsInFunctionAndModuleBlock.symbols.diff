@@ -1,6 +1,6 @@
 --- old.typeGuardsInFunctionAndModuleBlock.symbols
 +++ new.typeGuardsInFunctionAndModuleBlock.symbols
-@@= skipped -24, +24 lines =@@
+@@= skipped -23, +23 lines =@@
  >x : Symbol(x, Decl(typeGuardsInFunctionAndModuleBlock.ts, 2, 13))
  
                  ? x.toString() // boolean

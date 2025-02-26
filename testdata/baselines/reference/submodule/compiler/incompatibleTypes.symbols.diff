@@ -1,6 +1,6 @@
 --- old.incompatibleTypes.symbols
 +++ new.incompatibleTypes.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >IFoo1 : Symbol(IFoo1, Decl(incompatibleTypes.ts, 0, 0))
  
      p1(): number;

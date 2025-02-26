@@ -1,6 +1,6 @@
 --- old.typeGuardFunction.symbols
 +++ new.typeGuardFunction.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(typeGuardFunction.ts, 0, 0))
  
      propA: number;

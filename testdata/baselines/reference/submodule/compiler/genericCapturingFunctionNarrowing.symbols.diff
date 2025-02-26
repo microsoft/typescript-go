@@ -1,6 +1,6 @@
 --- old.genericCapturingFunctionNarrowing.symbols
 +++ new.genericCapturingFunctionNarrowing.symbols
-@@= skipped -23, +23 lines =@@
+@@= skipped -22, +22 lines =@@
  >thing : Symbol(thing, Decl(genericCapturingFunctionNarrowing.ts, 0, 163))
  
          console.log(thing.foo);

@@ -1,6 +1,6 @@
 --- old.noImplicitAnyParametersInAmbientClass.symbols
 +++ new.noImplicitAnyParametersInAmbientClass.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
      // No implicit-'any' errors.
      public pub_f1(): void;

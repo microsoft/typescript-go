@@ -1,6 +1,6 @@
 --- old.typeGuardsObjectMethods.symbols
 +++ new.typeGuardsObjectMethods.symbols
-@@= skipped -26, +26 lines =@@
+@@= skipped -25, +25 lines =@@
          num = typeof var1 === "string" && var1.length; // string
  >num : Symbol(num, Decl(typeGuardsObjectMethods.ts, 4, 3))
  >var1 : Symbol(var1, Decl(typeGuardsObjectMethods.ts, 6, 3))

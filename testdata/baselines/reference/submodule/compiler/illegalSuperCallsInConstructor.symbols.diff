@@ -1,6 +1,6 @@
 --- old.illegalSuperCallsInConstructor.symbols
 +++ new.illegalSuperCallsInConstructor.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Base : Symbol(Base, Decl(illegalSuperCallsInConstructor.ts, 0, 0))
  
      x: string;

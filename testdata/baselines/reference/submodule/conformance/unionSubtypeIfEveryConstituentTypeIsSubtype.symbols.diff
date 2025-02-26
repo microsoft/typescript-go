@@ -1,6 +1,6 @@
 --- old.unionSubtypeIfEveryConstituentTypeIsSubtype.symbols
 +++ new.unionSubtypeIfEveryConstituentTypeIsSubtype.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >e : Symbol(e, Decl(unionSubtypeIfEveryConstituentTypeIsSubtype.ts, 0, 0))
  
      e1,

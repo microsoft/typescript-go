@@ -1,6 +1,6 @@
 --- old.derivedClassWithPrivateStaticShadowingPublicStatic.symbols
 +++ new.derivedClassWithPrivateStaticShadowingPublicStatic.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Base : Symbol(Base, Decl(derivedClassWithPrivateStaticShadowingPublicStatic.ts, 0, 0))
  
      public static x: string;

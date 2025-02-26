@@ -1,6 +1,6 @@
 --- old.throwInEnclosingStatements.symbols
 +++ new.throwInEnclosingStatements.symbols
-@@= skipped -62, +62 lines =@@
+@@= skipped -61, +61 lines =@@
  >T : Symbol(T, Decl(throwInEnclosingStatements.ts, 28, 8))
  
      private value: T;

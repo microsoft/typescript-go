@@ -1,6 +1,6 @@
 --- old.indexedAccessImplicitlyAny.symbols
 +++ new.indexedAccessImplicitlyAny.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === indexedAccessImplicitlyAny.ts ===
  interface I { foof: number };
  >I : Symbol(I, Decl(indexedAccessImplicitlyAny.ts, 0, 0))

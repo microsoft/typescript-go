@@ -1,6 +1,6 @@
 --- old.controlFlowUnionContainingTypeParameter1.symbols
 +++ new.controlFlowUnionContainingTypeParameter1.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >T : Symbol(T, Decl(controlFlowUnionContainingTypeParameter1.ts, 2, 16))
  
    typeguard(val: unknown): val is T {

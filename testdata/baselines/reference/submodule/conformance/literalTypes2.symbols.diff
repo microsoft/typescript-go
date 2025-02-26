@@ -1,6 +1,6 @@
 --- old.literalTypes2.symbols
 +++ new.literalTypes2.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >E : Symbol(E, Decl(literalTypes2.ts, 0, 0))
  
      A, B, C

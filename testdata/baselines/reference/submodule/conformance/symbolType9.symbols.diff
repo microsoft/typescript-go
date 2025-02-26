@@ -1,6 +1,6 @@
 --- old.symbolType9.symbols
 +++ new.symbolType9.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === symbolType9.ts ===
  var s = Symbol.for("equal");
  >s : Symbol(s, Decl(symbolType9.ts, 0, 3))

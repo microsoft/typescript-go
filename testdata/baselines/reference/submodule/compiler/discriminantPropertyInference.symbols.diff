@@ -1,6 +1,6 @@
 --- old.discriminantPropertyInference.symbols
 +++ new.discriminantPropertyInference.symbols
-@@= skipped -61, +61 lines =@@
+@@= skipped -60, +60 lines =@@
      cb: n => n.toFixed()
  >cb : Symbol(cb, Decl(discriminantPropertyInference.ts, 24, 16))
  >n : Symbol(n, Decl(discriminantPropertyInference.ts, 25, 7))

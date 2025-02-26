@@ -1,6 +1,6 @@
 --- old.blockScopedEnumVariablesUseBeforeDef_preserve.symbols
 +++ new.blockScopedEnumVariablesUseBeforeDef_preserve.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >foo1 : Symbol(foo1, Decl(blockScopedEnumVariablesUseBeforeDef_preserve.ts, 0, 0))
  
      return E.A

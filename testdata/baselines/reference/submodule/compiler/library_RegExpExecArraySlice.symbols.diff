@@ -1,6 +1,6 @@
 --- old.library_RegExpExecArraySlice.symbols
 +++ new.library_RegExpExecArraySlice.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >RegExpExecArray : Symbol(RegExpExecArray, Decl(lib.es5.d.ts, --, --))
  
  regExpExecArrayValue.slice();

@@ -1,6 +1,6 @@
 --- old.exportEqualsOfModule.symbols
 +++ new.exportEqualsOfModule.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === exportEqualsOfModule.ts ===
  declare module '~popsicle/dist/request' {

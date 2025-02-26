@@ -1,6 +1,6 @@
 --- old.asyncArrowFunctionCapturesThis_es6.symbols
 +++ new.asyncArrowFunctionCapturesThis_es6.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(asyncArrowFunctionCapturesThis_es6.ts, 0, 0))
  
     method() {

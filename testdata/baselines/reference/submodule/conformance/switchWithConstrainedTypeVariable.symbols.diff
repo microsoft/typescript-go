@@ -1,6 +1,6 @@
 --- old.switchWithConstrainedTypeVariable.symbols
 +++ new.switchWithConstrainedTypeVariable.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  
      case 'a':
        key.toLowerCase();

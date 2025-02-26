@@ -1,6 +1,6 @@
 --- old.emptyOptionalBindingPatternInDeclarationSignature.symbols
 +++ new.emptyOptionalBindingPatternInDeclarationSignature.symbols
-@@= skipped -23, +23 lines =@@
+@@= skipped -22, +22 lines =@@
  >C1 : Symbol(C1, Decl(emptyOptionalBindingPatternInDeclarationSignature.ts, 5, 50))
  
      method({}?: { x: string }): void

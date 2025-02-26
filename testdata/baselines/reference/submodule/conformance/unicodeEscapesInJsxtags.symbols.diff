@@ -1,6 +1,6 @@
 --- old.unicodeEscapesInJsxtags.symbols
 +++ new.unicodeEscapesInJsxtags.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >React : Symbol(React, Decl(file.tsx, 0, 6))
  
  declare global {

@@ -1,6 +1,6 @@
 --- old.typeInferenceWithTupleType.symbols
 +++ new.typeInferenceWithTupleType.symbols
-@@= skipped -24, +24 lines =@@
+@@= skipped -23, +23 lines =@@
  var combineEle1 = combineResult[0]; // string
  >combineEle1 : Symbol(combineEle1, Decl(typeInferenceWithTupleType.ts, 5, 3))
  >combineResult : Symbol(combineResult, Decl(typeInferenceWithTupleType.ts, 4, 3))

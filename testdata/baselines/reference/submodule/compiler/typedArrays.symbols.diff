@@ -1,6 +1,6 @@
 --- old.typedArrays.symbols
 +++ new.typedArrays.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  
      typedArrays[0] = Int8Array;
  >typedArrays : Symbol(typedArrays, Decl(typedArrays.ts, 1, 7))

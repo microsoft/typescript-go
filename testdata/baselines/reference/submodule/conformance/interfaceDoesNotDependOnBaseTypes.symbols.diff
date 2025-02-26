@@ -1,6 +1,6 @@
 --- old.interfaceDoesNotDependOnBaseTypes.symbols
 +++ new.interfaceDoesNotDependOnBaseTypes.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >x : Symbol(x, Decl(interfaceDoesNotDependOnBaseTypes.ts, 0, 3))
  
      x.push("");

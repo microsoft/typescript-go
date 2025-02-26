@@ -1,6 +1,6 @@
 --- old.privateFieldAssignabilityFromUnknown.symbols
 +++ new.privateFieldAssignabilityFromUnknown.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Class : Symbol(Class, Decl(privateFieldAssignabilityFromUnknown.ts, 0, 0))
  
    #field: any

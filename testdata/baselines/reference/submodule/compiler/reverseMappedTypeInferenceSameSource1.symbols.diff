@@ -1,6 +1,6 @@
 --- old.reverseMappedTypeInferenceSameSource1.symbols
 +++ new.reverseMappedTypeInferenceSameSource1.symbols
-@@= skipped -60, +60 lines =@@
+@@= skipped -59, +59 lines =@@
  >UnknownAction : Symbol(UnknownAction, Decl(reverseMappedTypeInferenceSameSource1.ts, 2, 2))
  
    reducer: Reducer<S, A> | ReducersMapObject<S, A>;

@@ -1,6 +1,6 @@
 --- old.localTypes3.symbols
 +++ new.localTypes3.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >Y : Symbol(Y, Decl(localTypes3.ts, 2, 18))
  
              constructor(public x: X, public y: Y) { }

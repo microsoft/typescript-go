@@ -1,6 +1,6 @@
 --- old.nestedLoops.symbols
 +++ new.nestedLoops.symbols
-@@= skipped -23, +23 lines =@@
+@@= skipped -22, +22 lines =@@
  >innerArray : Symbol(innerArray, Decl(nestedLoops.ts, 4, 11))
  
                  this.aFunction((newValue, oldValue) => {

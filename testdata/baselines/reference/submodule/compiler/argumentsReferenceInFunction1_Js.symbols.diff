@@ -1,6 +1,6 @@
 --- old.argumentsReferenceInFunction1_Js.symbols
 +++ new.argumentsReferenceInFunction1_Js.symbols
-@@= skipped -17, +17 lines =@@
+@@= skipped -16, +16 lines =@@
  
    var len = args.length;
  >len : Symbol(len, Decl(index.js, 4, 5))

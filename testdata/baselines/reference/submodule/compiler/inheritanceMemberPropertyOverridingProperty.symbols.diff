@@ -1,6 +1,6 @@
 --- old.inheritanceMemberPropertyOverridingProperty.symbols
 +++ new.inheritanceMemberPropertyOverridingProperty.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >a : Symbol(a, Decl(inheritanceMemberPropertyOverridingProperty.ts, 0, 0))
  
      x: () => string;

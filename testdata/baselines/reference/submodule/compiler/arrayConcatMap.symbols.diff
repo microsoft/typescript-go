@@ -1,6 +1,6 @@
 --- old.arrayConcatMap.symbols
 +++ new.arrayConcatMap.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === arrayConcatMap.ts ===
  var x = [].concat([{ a: 1 }], [{ a: 2 }])
  >x : Symbol(x, Decl(arrayConcatMap.ts, 0, 3))

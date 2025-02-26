@@ -1,6 +1,6 @@
 --- old.privateNameMethodAsync.symbols
 +++ new.privateNameMethodAsync.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(privateNameMethodAsync.ts, 0, 5))
  
      async #bar() { return await Promise.resolve(42); }

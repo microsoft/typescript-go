@@ -1,6 +1,6 @@
 --- old.recursiveExportAssignmentAndFindAliasedType1.symbols
 +++ new.recursiveExportAssignmentAndFindAliasedType1.symbols
-@@= skipped -23, +23 lines =@@
+@@= skipped -22, +22 lines =@@
  >self : Symbol(self, Decl(recursiveExportAssignmentAndFindAliasedType1_moduleDef.d.ts, 0, 26))
  }
  

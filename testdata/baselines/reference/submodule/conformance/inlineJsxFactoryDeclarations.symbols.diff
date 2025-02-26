@@ -1,6 +1,6 @@
 --- old.inlineJsxFactoryDeclarations.symbols
 +++ new.inlineJsxFactoryDeclarations.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === renderer.d.ts ===
  declare global {

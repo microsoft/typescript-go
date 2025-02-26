@@ -1,6 +1,6 @@
 --- old.destructureTupleWithVariableElement.symbols
 +++ new.destructureTupleWithVariableElement.symbols
-@@= skipped -18, +18 lines =@@
+@@= skipped -17, +17 lines =@@
  >strings : Symbol(strings, Decl(destructureTupleWithVariableElement.ts, 4, 5))
  
  s0.toUpperCase()

@@ -1,6 +1,6 @@
 --- old.mappedTypeErrors.symbols
 +++ new.mappedTypeErrors.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Shape : Symbol(Shape, Decl(mappedTypeErrors.ts, 0, 0))
  
      name: string;

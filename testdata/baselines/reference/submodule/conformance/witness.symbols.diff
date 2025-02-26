@@ -1,6 +1,6 @@
 --- old.witness.symbols
 +++ new.witness.symbols
-@@= skipped -21, +21 lines =@@
+@@= skipped -20, +20 lines =@@
  >InitClass : Symbol(InitClass, Decl(witness.ts, 5, 1))
  
      x = this.x;

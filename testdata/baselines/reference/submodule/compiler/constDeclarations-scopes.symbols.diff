@@ -1,6 +1,6 @@
 --- old.constDeclarations-scopes.symbols
 +++ new.constDeclarations-scopes.symbols
-@@= skipped -228, +228 lines =@@
+@@= skipped -227, +227 lines =@@
      }
  
      method() {

@@ -1,6 +1,6 @@
 --- old.classAbstractInstantiations2.symbols
 +++ new.classAbstractInstantiations2.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >B : Symbol(B, Decl(classAbstractInstantiations2.ts, 2, 1))
  
      foo(): number { return this.bar(); }

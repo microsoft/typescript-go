@@ -1,6 +1,6 @@
 --- old.emitThisInSuperMethodCall.symbols
 +++ new.emitThisInSuperMethodCall.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >User : Symbol(User, Decl(emitThisInSuperMethodCall.ts, 0, 0))
  
      sayHello() {

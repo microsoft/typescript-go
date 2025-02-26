@@ -1,6 +1,6 @@
 --- old.anonterface.symbols
 +++ new.anonterface.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >C : Symbol(C, Decl(anonterface.ts, 0, 10))
  
          m(fn:{ (n:number):string; },n2:number):string {

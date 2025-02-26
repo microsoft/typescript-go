@@ -1,6 +1,6 @@
 --- old.collisionRestParameterClassConstructor.symbols
 +++ new.collisionRestParameterClassConstructor.symbols
-@@= skipped -47, +47 lines =@@
+@@= skipped -46, +46 lines =@@
  >c3 : Symbol(c3, Decl(collisionRestParameterClassConstructor.ts, 21, 1))
  
      constructor(public _i: number, ...restParameters) { //_i is error

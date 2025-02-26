@@ -1,6 +1,6 @@
 --- old.autolift3.symbols
 +++ new.autolift3.symbols
-@@= skipped -29, +29 lines =@@
+@@= skipped -28, +28 lines =@@
  >path : Symbol(path, Decl(autolift3.ts, 13, 39))
  
                          return fso.toString();

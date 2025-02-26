@@ -1,6 +1,6 @@
 --- old.emitClassExpressionInDeclarationFile2.symbols
 +++ new.emitClassExpressionInDeclarationFile2.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >noPrivates : Symbol(noPrivates, Decl(emitClassExpressionInDeclarationFile2.ts, 0, 10))
  
      static getTags() { }

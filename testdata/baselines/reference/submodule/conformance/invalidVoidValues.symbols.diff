@@ -1,6 +1,6 @@
 --- old.invalidVoidValues.symbols
 +++ new.invalidVoidValues.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  
  enum E { A }
  >E : Symbol(E, Decl(invalidVoidValues.ts, 3, 9))

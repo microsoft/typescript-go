@@ -1,6 +1,6 @@
 --- old.isDeclarationVisibleNodeKinds.symbols
 +++ new.isDeclarationVisibleNodeKinds.symbols
-@@= skipped -147, +147 lines =@@
+@@= skipped -146, +146 lines =@@
  >T : Symbol(T, Decl(isDeclarationVisibleNodeKinds.ts, 58, 15))
  
          get createValidator9(): <T>(data: T) => T {

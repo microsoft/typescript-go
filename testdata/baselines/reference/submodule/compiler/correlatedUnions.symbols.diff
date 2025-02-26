@@ -1,6 +1,6 @@
 --- old.correlatedUnions.symbols
 +++ new.correlatedUnions.symbols
-@@= skipped -74, +74 lines =@@
+@@= skipped -73, +73 lines =@@
  >v : Symbol(v, Decl(correlatedUnions.ts, 18, 26))
  >f : Symbol(f, Decl(correlatedUnions.ts, 18, 33))
  >v : Symbol(v, Decl(correlatedUnions.ts, 18, 36))

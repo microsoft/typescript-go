@@ -1,6 +1,6 @@
 --- old.enumBasics.symbols
 +++ new.enumBasics.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >E1 : Symbol(E1, Decl(enumBasics.ts, 0, 0))
  
      A,

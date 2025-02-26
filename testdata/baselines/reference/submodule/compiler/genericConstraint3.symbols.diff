@@ -1,6 +1,6 @@
 --- old.genericConstraint3.symbols
 +++ new.genericConstraint3.symbols
-@@= skipped -4, +4 lines =@@
+@@= skipped -3, +3 lines =@@
  interface C<P> { x: P; }
  >C : Symbol(C, Decl(genericConstraint3.ts, 0, 0))
  >P : Symbol(P, Decl(genericConstraint3.ts, 0, 12))

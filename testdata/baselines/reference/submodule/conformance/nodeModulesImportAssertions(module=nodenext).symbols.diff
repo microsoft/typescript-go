@@ -1,6 +1,6 @@
 --- old.nodeModulesImportAssertions(module=nodenext).symbols
 +++ new.nodeModulesImportAssertions(module=nodenext).symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  
  const json2 = import("./package.json", { assert: { type: "json" } }); // should be fine
  >json2 : Symbol(json2, Decl(otherc.cts, 1, 5))

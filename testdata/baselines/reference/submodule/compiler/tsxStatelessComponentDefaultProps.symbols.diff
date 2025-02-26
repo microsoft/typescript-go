@@ -1,6 +1,6 @@
 --- old.tsxStatelessComponentDefaultProps.symbols
 +++ new.tsxStatelessComponentDefaultProps.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >Props : Symbol(Props, Decl(tsxStatelessComponentDefaultProps.tsx, 2, 26))
  
      text: string;

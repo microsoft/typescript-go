@@ -1,6 +1,6 @@
 --- old.superAccess.symbols
 +++ new.superAccess.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >MyBase : Symbol(MyBase, Decl(superAccess.ts, 0, 0))
  
      static S1: number = 5;

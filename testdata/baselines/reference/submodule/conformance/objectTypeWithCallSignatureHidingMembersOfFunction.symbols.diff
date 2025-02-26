@@ -1,6 +1,6 @@
 --- old.objectTypeWithCallSignatureHidingMembersOfFunction.symbols
 +++ new.objectTypeWithCallSignatureHidingMembersOfFunction.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  
      (): void;
      apply(a: any, b?: any): void;

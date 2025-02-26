@@ -1,6 +1,6 @@
 --- old.noImplicitReturnsInAsync2.symbols
 +++ new.noImplicitReturnsInAsync2.symbols
-@@= skipped -30, +30 lines =@@
+@@= skipped -29, +29 lines =@@
  async function test5(isError: boolean = true): Promise<any> { //should not be error
  >test5 : Symbol(test5, Decl(noImplicitReturnsInAsync2.ts, 12, 1))
  >isError : Symbol(isError, Decl(noImplicitReturnsInAsync2.ts, 15, 21))

@@ -1,6 +1,6 @@
 --- old.typeFromContextualThisType.symbols
 +++ new.typeFromContextualThisType.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >a : Symbol(a, Decl(bug25926.js, 1, 12))
  
          this.b = n => n;

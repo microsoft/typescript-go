@@ -1,6 +1,6 @@
 --- old.thisInAccessors.symbols
 +++ new.thisInAccessors.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >GetterOnly : Symbol(GetterOnly, Decl(thisInAccessors.ts, 0, 0))
  
      get Value() {

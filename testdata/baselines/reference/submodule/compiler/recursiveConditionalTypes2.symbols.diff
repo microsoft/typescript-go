@@ -1,6 +1,6 @@
 --- old.recursiveConditionalTypes2.symbols
 +++ new.recursiveConditionalTypes2.symbols
-@@= skipped -25, +25 lines =@@
+@@= skipped -24, +24 lines =@@
  >ClassSpec : Symbol(ClassSpec, Decl(recursiveConditionalTypes2.ts, 6, 10))
  
    public?: object;

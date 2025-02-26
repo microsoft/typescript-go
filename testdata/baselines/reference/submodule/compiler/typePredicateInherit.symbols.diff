@@ -1,6 +1,6 @@
 --- old.typePredicateInherit.symbols
 +++ new.typePredicateInherit.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(typePredicateInherit.ts, 0, 0))
  
    method1(): this is {

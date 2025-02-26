@@ -1,6 +1,6 @@
 --- old.accessorsOverrideProperty3.symbols
 +++ new.accessorsOverrideProperty3.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Animal : Symbol(Animal, Decl(accessorsOverrideProperty3.ts, 0, 0))
  
      sound: string

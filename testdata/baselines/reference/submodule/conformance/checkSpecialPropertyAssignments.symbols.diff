@@ -1,6 +1,6 @@
 --- old.checkSpecialPropertyAssignments.symbols
 +++ new.checkSpecialPropertyAssignments.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === bug24252.js ===
  var A = {};

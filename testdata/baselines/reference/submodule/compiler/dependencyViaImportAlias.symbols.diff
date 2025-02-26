@@ -1,6 +1,6 @@
 --- old.dependencyViaImportAlias.symbols
 +++ new.dependencyViaImportAlias.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  import A = a.A;
  >A : Symbol(A, Decl(B.ts, 0, 24))
  >a : Symbol(a, Decl(B.ts, 0, 0))

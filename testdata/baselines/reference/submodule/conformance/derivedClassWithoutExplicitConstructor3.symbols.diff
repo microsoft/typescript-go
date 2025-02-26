@@ -1,6 +1,6 @@
 --- old.derivedClassWithoutExplicitConstructor3.symbols
 +++ new.derivedClassWithoutExplicitConstructor3.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >Base : Symbol(Base, Decl(derivedClassWithoutExplicitConstructor3.ts, 0, 0))
  
      a = 1;

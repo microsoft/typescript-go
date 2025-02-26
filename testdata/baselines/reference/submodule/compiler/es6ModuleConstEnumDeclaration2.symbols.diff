@@ -1,6 +1,6 @@
 --- old.es6ModuleConstEnumDeclaration2.symbols
 +++ new.es6ModuleConstEnumDeclaration2.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >e1 : Symbol(e1, Decl(es6ModuleConstEnumDeclaration2.ts, 0, 0))
  
      a,

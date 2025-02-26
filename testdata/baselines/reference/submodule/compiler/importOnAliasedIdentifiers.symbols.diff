@@ -1,6 +1,6 @@
 --- old.importOnAliasedIdentifiers.symbols
 +++ new.importOnAliasedIdentifiers.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
      export interface X { s: string }
  >X : Symbol(X, Decl(importOnAliasedIdentifiers.ts, 0, 10), Decl(importOnAliasedIdentifiers.ts, 2, 14))

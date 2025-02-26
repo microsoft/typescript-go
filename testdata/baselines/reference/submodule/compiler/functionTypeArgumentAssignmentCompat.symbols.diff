@@ -1,6 +1,6 @@
 --- old.functionTypeArgumentAssignmentCompat.symbols
 +++ new.functionTypeArgumentAssignmentCompat.symbols
-@@= skipped -26, +26 lines =@@
+@@= skipped -25, +25 lines =@@
  
  var s = f("str").toUpperCase();
  >s : Symbol(s, Decl(functionTypeArgumentAssignmentCompat.ts, 9, 3))

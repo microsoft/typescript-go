@@ -1,6 +1,6 @@
 --- old.esnextmodulekindWithES5Target.symbols
 +++ new.esnextmodulekindWithES5Target.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(esnextmodulekindWithES5Target.ts, 0, 0))
  
      static s = 0;

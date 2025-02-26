@@ -1,6 +1,6 @@
 --- old.nonNullFullInference.symbols
 +++ new.nonNullFullInference.symbols
-@@= skipped -55, +55 lines =@@
+@@= skipped -54, +54 lines =@@
          }
  
          arr.push(n);

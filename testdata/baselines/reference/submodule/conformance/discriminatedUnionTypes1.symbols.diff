@@ -1,6 +1,6 @@
 --- old.discriminatedUnionTypes1.symbols
 +++ new.discriminatedUnionTypes1.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Square : Symbol(Square, Decl(discriminatedUnionTypes1.ts, 0, 0))
  
      kind: "square";

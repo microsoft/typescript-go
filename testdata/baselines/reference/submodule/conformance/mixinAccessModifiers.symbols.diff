@@ -1,6 +1,6 @@
 --- old.mixinAccessModifiers.symbols
 +++ new.mixinAccessModifiers.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >args : Symbol(args, Decl(mixinAccessModifiers.ts, 3, 14))
  
  	private p: string;

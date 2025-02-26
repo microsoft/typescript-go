@@ -1,6 +1,6 @@
 --- old.declFileMethods.symbols
 +++ new.declFileMethods.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
      /** This comment should appear for foo*/
      public foo() {

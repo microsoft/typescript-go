@@ -1,6 +1,6 @@
 --- old.unwitnessedTypeParameterVariance.symbols
 +++ new.unwitnessedTypeParameterVariance.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >O : Symbol(O, Decl(unwitnessedTypeParameterVariance.ts, 2, 25))
  
      read: (origin: O) => CalcValue<O>;

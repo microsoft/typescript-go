@@ -1,6 +1,6 @@
 --- old.filterNamespace_import.symbols
 +++ new.filterNamespace_import.symbols
-@@= skipped -20, +20 lines =@@
+@@= skipped -19, +19 lines =@@
  >NestedClass : Symbol(NestedClass, Decl(ns.ts, 4, 27))
  
        a!: string;

@@ -1,6 +1,6 @@
 --- old.jsFileESModuleWithEnumTag.symbols
 +++ new.jsFileESModuleWithEnumTag.symbols
-@@= skipped -4, +4 lines =@@
+@@= skipped -3, +3 lines =@@
  export {}; // mark as module
  /** @enum {number} */
  const ChangeDetectionStrategy = {

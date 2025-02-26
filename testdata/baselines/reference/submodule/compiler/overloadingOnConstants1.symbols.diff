@@ -1,6 +1,6 @@
 --- old.overloadingOnConstants1.symbols
 +++ new.overloadingOnConstants1.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === overloadingOnConstants1.ts ===
  class Base { foo() { } }
  >Base : Symbol(Base, Decl(overloadingOnConstants1.ts, 0, 0))

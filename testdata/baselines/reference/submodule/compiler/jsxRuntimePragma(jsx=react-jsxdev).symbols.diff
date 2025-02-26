@@ -1,6 +1,6 @@
 --- old.jsxRuntimePragma(jsx=react-jsxdev).symbols
 +++ new.jsxRuntimePragma(jsx=react-jsxdev).symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  
  export const HelloWorld = () => <h1>Hello world</h1>;
  >HelloWorld : Symbol(HelloWorld, Decl(one.tsx, 3, 12))

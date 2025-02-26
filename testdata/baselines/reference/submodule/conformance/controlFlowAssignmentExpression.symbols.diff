@@ -1,6 +1,6 @@
 --- old.controlFlowAssignmentExpression.symbols
 +++ new.controlFlowAssignmentExpression.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  
  x = x.length;
  >x : Symbol(x, Decl(controlFlowAssignmentExpression.ts, 0, 3))

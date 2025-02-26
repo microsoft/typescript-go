@@ -1,6 +1,6 @@
 --- old.convertKeywordsYes.symbols
 +++ new.convertKeywordsYes.symbols
-@@= skipped -341, +341 lines =@@
+@@= skipped -340, +340 lines =@@
  >bigInterface : Symbol(bigInterface, Decl(convertKeywordsYes.ts, 112, 2))
  
      constructor;

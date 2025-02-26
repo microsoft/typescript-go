@@ -1,6 +1,6 @@
 --- old.circularTypeofWithFunctionModule.symbols
 +++ new.circularTypeofWithFunctionModule.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  function maker (value: string): typeof maker.Bar {
  >maker : Symbol(maker, Decl(circularTypeofWithFunctionModule.ts, 2, 12), Decl(circularTypeofWithFunctionModule.ts, 6, 1))
  >value : Symbol(value, Decl(circularTypeofWithFunctionModule.ts, 4, 16))

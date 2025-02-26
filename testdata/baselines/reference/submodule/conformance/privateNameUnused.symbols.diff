@@ -1,6 +1,6 @@
 --- old.privateNameUnused.symbols
 +++ new.privateNameUnused.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(privateNameUnused.ts, 0, 0))
  
      #used = "used";

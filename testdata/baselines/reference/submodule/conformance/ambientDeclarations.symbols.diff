@@ -1,6 +1,6 @@
 --- old.ambientDeclarations.symbols
 +++ new.ambientDeclarations.symbols
-@@= skipped -65, +65 lines =@@
+@@= skipped -64, +64 lines =@@
  
      constructor();
      method(): cls;

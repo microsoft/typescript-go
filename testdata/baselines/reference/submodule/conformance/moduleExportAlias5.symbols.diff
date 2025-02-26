@@ -1,6 +1,6 @@
 --- old.moduleExportAlias5.symbols
 +++ new.moduleExportAlias5.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === bug24754.js ===
  // #24754
  const webpack = function (){

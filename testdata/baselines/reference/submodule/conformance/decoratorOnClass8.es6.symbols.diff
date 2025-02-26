@@ -1,6 +1,6 @@
 --- old.decoratorOnClass8.es6.symbols
 +++ new.decoratorOnClass8.es6.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  
  export default class {
      static y = 1;

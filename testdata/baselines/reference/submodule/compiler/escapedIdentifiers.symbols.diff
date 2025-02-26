@@ -1,6 +1,6 @@
 --- old.escapedIdentifiers.symbols
 +++ new.escapedIdentifiers.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  
  // var decl
  var \u0061 = 1;

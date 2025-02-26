@@ -1,6 +1,6 @@
 --- old.importTag2.symbols
 +++ new.importTag2.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Foo : Symbol(Foo, Decl(types.ts, 0, 0))
  
      a: number;

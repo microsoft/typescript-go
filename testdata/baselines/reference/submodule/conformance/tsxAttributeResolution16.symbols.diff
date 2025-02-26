@@ -1,6 +1,6 @@
 --- old.tsxAttributeResolution16.symbols
 +++ new.tsxAttributeResolution16.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >Address : Symbol(Address, Decl(file.tsx, 0, 32))
  
    street: string;

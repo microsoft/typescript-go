@@ -1,6 +1,6 @@
 --- old.awaitCallExpression4_es6.symbols
 +++ new.awaitCallExpression4_es6.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
  declare var p: Promise<boolean>;
  >p : Symbol(p, Decl(awaitCallExpression4_es6.ts, 1, 11))

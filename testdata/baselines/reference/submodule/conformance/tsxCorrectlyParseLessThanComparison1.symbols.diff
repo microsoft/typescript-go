@@ -1,6 +1,6 @@
 --- old.tsxCorrectlyParseLessThanComparison1.symbols
 +++ new.tsxCorrectlyParseLessThanComparison1.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >Element : Symbol(Element, Decl(tsxCorrectlyParseLessThanComparison1.tsx, 0, 20))
  
          div: string;

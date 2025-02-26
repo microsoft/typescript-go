@@ -1,6 +1,6 @@
 --- old.thisInInvalidContextsExternalModule.symbols
 +++ new.thisInInvalidContextsExternalModule.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >BaseErrClass : Symbol(BaseErrClass, Decl(thisInInvalidContextsExternalModule.ts, 0, 0))
  
      t;

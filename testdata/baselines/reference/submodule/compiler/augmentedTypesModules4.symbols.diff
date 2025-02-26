@@ -1,6 +1,6 @@
 --- old.augmentedTypesModules4.symbols
 +++ new.augmentedTypesModules4.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  
  enum m4a { One }
  >m4a : Symbol(m4a, Decl(augmentedTypesModules4.ts, 3, 11), Decl(augmentedTypesModules4.ts, 5, 25))

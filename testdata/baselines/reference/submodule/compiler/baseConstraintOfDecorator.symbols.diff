@@ -1,6 +1,6 @@
 --- old.baseConstraintOfDecorator.symbols
 +++ new.baseConstraintOfDecorator.symbols
-@@= skipped -31, +31 lines =@@
+@@= skipped -30, +30 lines =@@
  
  class MyClass { private x; }
  >MyClass : Symbol(MyClass, Decl(baseConstraintOfDecorator.ts, 7, 1))

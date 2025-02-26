@@ -1,6 +1,6 @@
 --- old.exportNamespace12.symbols
 +++ new.exportNamespace12.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >types : Symbol(types, Decl(main.ts, 1, 6))
  
  console.log(c) // Fails as expected, import is still allowed though.

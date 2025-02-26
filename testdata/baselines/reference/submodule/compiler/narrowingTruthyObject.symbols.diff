@@ -1,6 +1,6 @@
 --- old.narrowingTruthyObject.symbols
 +++ new.narrowingTruthyObject.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >x : Symbol(x, Decl(narrowingTruthyObject.ts, 0, 13))
  
          x.toString();

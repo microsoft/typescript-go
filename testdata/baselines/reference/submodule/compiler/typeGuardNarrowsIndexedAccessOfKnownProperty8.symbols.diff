@@ -1,6 +1,6 @@
 --- old.typeGuardNarrowsIndexedAccessOfKnownProperty8.symbols
 +++ new.typeGuardNarrowsIndexedAccessOfKnownProperty8.symbols
-@@= skipped -1, +1 lines =@@
+@@= skipped -0, +0 lines =@@
  //// [tests/cases/compiler/typeGuardNarrowsIndexedAccessOfKnownProperty8.ts] ////
  
 -=== ./a.ts ===

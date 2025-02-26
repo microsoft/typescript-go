@@ -1,6 +1,6 @@
 --- old.ramdaToolsNoInfinite.symbols
 +++ new.ramdaToolsNoInfinite.symbols
-@@= skipped -273, +273 lines =@@
+@@= skipped -272, +272 lines =@@
          T1[Tools.Pos<I>] extends R.Placeholder
  >T1 : Symbol(T1, Decl(ramdaToolsNoInfinite.ts, 88, 15))
  >Tools : Symbol(Tools, Decl(ramdaToolsNoInfinite.ts, 0, 0))

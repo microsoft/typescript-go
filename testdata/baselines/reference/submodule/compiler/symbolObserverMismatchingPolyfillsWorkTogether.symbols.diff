@@ -1,6 +1,6 @@
 --- old.symbolObserverMismatchingPolyfillsWorkTogether.symbols
 +++ new.symbolObserverMismatchingPolyfillsWorkTogether.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === symbolObserverMismatchingPolyfillsWorkTogether.ts ===
  interface SymbolConstructor {

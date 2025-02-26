@@ -1,6 +1,6 @@
 --- old.classExpressionTest1.symbols
 +++ new.classExpressionTest1.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >X : Symbol(X, Decl(classExpressionTest1.ts, 1, 12))
  
          f<T>() {

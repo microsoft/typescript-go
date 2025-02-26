@@ -1,6 +1,6 @@
 --- old.jsdocTypeTagCast.symbols
 +++ new.jsdocTypeTagCast.symbols
-@@= skipped -31, +31 lines =@@
+@@= skipped -30, +30 lines =@@
  
      constructor() {
          this.p = 42;

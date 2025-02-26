@@ -1,6 +1,6 @@
 --- old.quickinfoTypeAtReturnPositionsInaccurate.symbols
 +++ new.quickinfoTypeAtReturnPositionsInaccurate.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(quickinfoTypeAtReturnPositionsInaccurate.ts, 0, 15))
  
      private value!: T;

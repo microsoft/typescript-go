@@ -1,6 +1,6 @@
 --- old.inferringClassMembersFromAssignments5.symbols
 +++ new.inferringClassMembersFromAssignments5.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Base : Symbol(Base, Decl(a.js, 0, 0))
  
      m() {

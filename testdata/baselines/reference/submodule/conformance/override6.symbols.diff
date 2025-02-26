@@ -1,6 +1,6 @@
 --- old.override6.symbols
 +++ new.override6.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >B : Symbol(B, Decl(override6.ts, 0, 0))
  
      public baz: number = 1;

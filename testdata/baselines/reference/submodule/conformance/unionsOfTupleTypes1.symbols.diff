@@ -1,6 +1,6 @@
 --- old.unionsOfTupleTypes1.symbols
 +++ new.unionsOfTupleTypes1.symbols
-@@= skipped -140, +140 lines =@@
+@@= skipped -139, +139 lines =@@
      let t10 = t1[0];  // string
  >t10 : Symbol(t10, Decl(unionsOfTupleTypes1.ts, 34, 7))
  >t1 : Symbol(t1, Decl(unionsOfTupleTypes1.ts, 25, 12))

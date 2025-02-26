@@ -1,6 +1,6 @@
 --- old.exportNestedNamespaces.symbols
 +++ new.exportNestedNamespaces.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === mod.js ===
  exports.n = {};

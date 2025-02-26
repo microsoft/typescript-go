@@ -1,6 +1,6 @@
 --- old.undefinedIsSubtypeOfEverything.symbols
 +++ new.undefinedIsSubtypeOfEverything.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >Base : Symbol(Base, Decl(undefinedIsSubtypeOfEverything.ts, 0, 0))
  
      foo: typeof undefined;

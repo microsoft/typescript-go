@@ -1,6 +1,6 @@
 --- old.AmbientModuleAndAmbientFunctionWithTheSameNameAndCommonRoot.symbols
 +++ new.AmbientModuleAndAmbientFunctionWithTheSameNameAndCommonRoot.symbols
-@@= skipped -28, +28 lines =@@
+@@= skipped -27, +27 lines =@@
  
  var cl = Point.Origin;
  >cl : Symbol(cl, Decl(test.ts, 0, 3), Decl(test.ts, 1, 3), Decl(test.ts, 2, 3))

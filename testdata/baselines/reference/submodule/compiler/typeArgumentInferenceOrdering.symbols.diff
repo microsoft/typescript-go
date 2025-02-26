@@ -1,6 +1,6 @@
 --- old.typeArgumentInferenceOrdering.symbols
 +++ new.typeArgumentInferenceOrdering.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(typeArgumentInferenceOrdering.ts, 0, 0))
  
      y: I;

@@ -1,6 +1,6 @@
 --- old.jsxComponentTypeErrors.symbols
 +++ new.jsxComponentTypeErrors.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >Element : Symbol(Element, Decl(jsxComponentTypeErrors.tsx, 0, 15))
  
      type: 'element';

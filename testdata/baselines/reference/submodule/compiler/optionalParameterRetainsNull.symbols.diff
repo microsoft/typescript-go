@@ -1,6 +1,6 @@
 --- old.optionalParameterRetainsNull.symbols
 +++ new.optionalParameterRetainsNull.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === optionalParameterRetainsNull.ts ===
  interface Bar {  bar: number; foo: object | null;  }
  >Bar : Symbol(Bar, Decl(optionalParameterRetainsNull.ts, 0, 0))

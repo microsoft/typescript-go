@@ -1,6 +1,6 @@
 --- old.classExtendingClassLikeType.symbols
 +++ new.classExtendingClassLikeType.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >U : Symbol(U, Decl(classExtendingClassLikeType.ts, 0, 17))
  
      x: T;

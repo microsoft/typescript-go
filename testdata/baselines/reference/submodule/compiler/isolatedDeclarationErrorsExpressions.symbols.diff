@@ -1,6 +1,6 @@
 --- old.isolatedDeclarationErrorsExpressions.symbols
 +++ new.isolatedDeclarationErrorsExpressions.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  
  export const numberConstBad2 = Math.random();
  >numberConstBad2 : Symbol(numberConstBad2, Decl(isolatedDeclarationErrorsExpressions.ts, 3, 12))

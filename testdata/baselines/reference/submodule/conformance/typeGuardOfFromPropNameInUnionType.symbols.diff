@@ -1,6 +1,6 @@
 --- old.typeGuardOfFromPropNameInUnionType.symbols
 +++ new.typeGuardOfFromPropNameInUnionType.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === typeGuardOfFromPropNameInUnionType.ts ===
  class A { a: string; }
  >A : Symbol(A, Decl(typeGuardOfFromPropNameInUnionType.ts, 0, 0))

@@ -1,6 +1,6 @@
 --- old.parserForStatement9.symbols
 +++ new.parserForStatement9.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >x : Symbol(x, Decl(parserForStatement9.ts, 2, 10))
  >x : Symbol(x, Decl(parserForStatement9.ts, 2, 10))
  >x : Symbol(x, Decl(parserForStatement9.ts, 2, 10))

@@ -1,6 +1,6 @@
 --- old.noImplicitAnyModule.symbols
 +++ new.noImplicitAnyModule.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  
          // Should return error for implicit `any` on parameter.
          public f(x): any;

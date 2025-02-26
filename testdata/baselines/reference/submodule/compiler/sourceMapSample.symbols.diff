@@ -1,6 +1,6 @@
 --- old.sourceMapSample.symbols
 +++ new.sourceMapSample.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >Greeter : Symbol(Greeter, Decl(sourceMapSample.ts, 1, 17))
  
          constructor(public greeting: string) {

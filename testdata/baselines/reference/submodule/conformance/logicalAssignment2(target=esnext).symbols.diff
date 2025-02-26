@@ -1,6 +1,6 @@
 --- old.logicalAssignment2(target=esnext).symbols
 +++ new.logicalAssignment2(target=esnext).symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(logicalAssignment2.ts, 0, 0))
  
      foo: {

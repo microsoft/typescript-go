@@ -1,6 +1,6 @@
 --- old.twoGenericInterfacesDifferingByTypeParameterName2.symbols
 +++ new.twoGenericInterfacesDifferingByTypeParameterName2.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >U : Symbol(U, Decl(twoGenericInterfacesDifferingByTypeParameterName2.ts, 2, 14), Decl(twoGenericInterfacesDifferingByTypeParameterName2.ts, 6, 12))
  
      x: U;

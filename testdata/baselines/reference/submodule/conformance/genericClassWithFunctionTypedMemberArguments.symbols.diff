@@ -1,6 +1,6 @@
 --- old.genericClassWithFunctionTypedMemberArguments.symbols
 +++ new.genericClassWithFunctionTypedMemberArguments.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >T : Symbol(T, Decl(genericClassWithFunctionTypedMemberArguments.ts, 4, 12))
  
          foo<T>(x: (a: T) => T) {

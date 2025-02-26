@@ -1,6 +1,6 @@
 --- old.typeOfThisInStaticMembers8(target=es2022).symbols
 +++ new.typeOfThisInStaticMembers8(target=es2022).symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(typeOfThisInStaticMembers8.ts, 0, 0))
  
      static f = 1;

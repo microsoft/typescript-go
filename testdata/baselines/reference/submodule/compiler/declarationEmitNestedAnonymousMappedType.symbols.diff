@@ -1,6 +1,6 @@
 --- old.declarationEmitNestedAnonymousMappedType.symbols
 +++ new.declarationEmitNestedAnonymousMappedType.symbols
-@@= skipped -31, +31 lines =@@
+@@= skipped -30, +30 lines =@@
  >Property : Symbol(Property, Decl(declarationEmitNestedAnonymousMappedType.ts, 6, 20))
  
      return Object.create(null) as Part2;

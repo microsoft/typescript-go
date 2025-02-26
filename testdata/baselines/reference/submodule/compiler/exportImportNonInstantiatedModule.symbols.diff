@@ -1,6 +1,6 @@
 --- old.exportImportNonInstantiatedModule.symbols
 +++ new.exportImportNonInstantiatedModule.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
      export interface I { x: number }
  >I : Symbol(I, Decl(exportImportNonInstantiatedModule.ts, 0, 10))

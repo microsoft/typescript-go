@@ -1,6 +1,6 @@
 --- old.privateNameWhenNotUseDefineForClassFieldsInEsNext(target=esnext).symbols
 +++ new.privateNameWhenNotUseDefineForClassFieldsInEsNext(target=esnext).symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >TestWithStatics : Symbol(TestWithStatics, Decl(privateNameWhenNotUseDefineForClassFieldsInEsNext.ts, 0, 0))
  
      #prop = 0

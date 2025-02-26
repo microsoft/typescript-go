@@ -1,6 +1,6 @@
 --- old.inferringClassStaticMembersFromAssignments.symbols
 +++ new.inferringClassStaticMembersFromAssignments.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === a.js ===
  export class C1 { }

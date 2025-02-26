@@ -1,6 +1,6 @@
 --- old.tsxExternalModuleEmit2.symbols
 +++ new.tsxExternalModuleEmit2.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === modules.d.ts ===
  declare module 'mod' {

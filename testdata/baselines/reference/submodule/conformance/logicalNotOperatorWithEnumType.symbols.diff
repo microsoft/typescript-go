@@ -1,6 +1,6 @@
 --- old.logicalNotOperatorWithEnumType.symbols
 +++ new.logicalNotOperatorWithEnumType.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  
  enum ENUM { A, B, C };
  >ENUM : Symbol(ENUM, Decl(logicalNotOperatorWithEnumType.ts, 0, 0))

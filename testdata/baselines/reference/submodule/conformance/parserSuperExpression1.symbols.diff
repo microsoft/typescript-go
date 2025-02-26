@@ -1,6 +1,6 @@
 --- old.parserSuperExpression1.symbols
 +++ new.parserSuperExpression1.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(parserSuperExpression1.ts, 0, 0))
  
      private foo() {

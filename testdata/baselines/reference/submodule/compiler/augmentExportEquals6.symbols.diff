@@ -1,6 +1,6 @@
 --- old.augmentExportEquals6.symbols
 +++ new.augmentExportEquals6.symbols
-@@= skipped -22, +22 lines =@@
+@@= skipped -21, +21 lines =@@
  >x : Symbol(x, Decl(file2.ts, 0, 0))
  
  x.B.b = 1;

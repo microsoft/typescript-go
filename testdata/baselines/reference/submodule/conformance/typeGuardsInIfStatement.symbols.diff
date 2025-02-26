@@ -1,6 +1,6 @@
 --- old.typeGuardsInIfStatement.symbols
 +++ new.typeGuardsInIfStatement.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >x : Symbol(x, Decl(typeGuardsInIfStatement.ts, 4, 13))
  
          return x.length; // string

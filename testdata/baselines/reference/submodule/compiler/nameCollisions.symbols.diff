@@ -1,6 +1,6 @@
 --- old.nameCollisions.symbols
 +++ new.nameCollisions.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  >Bar : Symbol(Bar, Decl(nameCollisions.ts, 3, 14))
  
              test: number;

@@ -1,6 +1,6 @@
 --- old.circularConstraintYieldsAppropriateError.symbols
 +++ new.circularConstraintYieldsAppropriateError.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(circularConstraintYieldsAppropriateError.ts, 1, 15))
  
      bar: T

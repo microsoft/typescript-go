@@ -1,6 +1,6 @@
 --- old.classStaticBlock16.symbols
 +++ new.classStaticBlock16.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >C : Symbol(C, Decl(classStaticBlock16.ts, 0, 27))
  
    #x = 1

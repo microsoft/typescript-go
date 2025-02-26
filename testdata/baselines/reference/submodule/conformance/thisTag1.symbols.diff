@@ -1,6 +1,6 @@
 --- old.thisTag1.symbols
 +++ new.thisTag1.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >s : Symbol(s, Decl(a.js, 4, 11))
  
      return this.n + s.length

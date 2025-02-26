@@ -1,6 +1,6 @@
 --- old.propTypeValidatorInference.symbols
 +++ new.propTypeValidatorInference.symbols
-@@= skipped -56, +56 lines =@@
+@@= skipped -55, +55 lines =@@
  >Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      [nominalTypeHack]?: T;

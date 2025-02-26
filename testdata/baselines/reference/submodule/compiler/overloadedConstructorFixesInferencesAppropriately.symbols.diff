@@ -1,6 +1,6 @@
 --- old.overloadedConstructorFixesInferencesAppropriately.symbols
 +++ new.overloadedConstructorFixesInferencesAppropriately.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(overloadedConstructorFixesInferencesAppropriately.ts, 0, 14))
  
      v: T;

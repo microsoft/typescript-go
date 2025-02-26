@@ -1,6 +1,6 @@
 --- old.chainedSpecializationToObjectTypeLiteral.symbols
 +++ new.chainedSpecializationToObjectTypeLiteral.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(chainedSpecializationToObjectTypeLiteral.ts, 0, 19))
  
      each(iterator: (value: T) => void): void;

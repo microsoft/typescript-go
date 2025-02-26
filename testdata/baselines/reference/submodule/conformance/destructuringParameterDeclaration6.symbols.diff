@@ -1,6 +1,6 @@
 --- old.destructuringParameterDeclaration6.symbols
 +++ new.destructuringParameterDeclaration6.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  function a({while}) { }
  >a : Symbol(a, Decl(destructuringParameterDeclaration6.ts, 3, 12))
  >while : Symbol(while)

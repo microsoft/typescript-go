@@ -1,6 +1,6 @@
 --- old.assignmentCompatability_checking-apply-member-off-of-function-interface.symbols
 +++ new.assignmentCompatability_checking-apply-member-off-of-function-interface.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >Applicable : Symbol(Applicable, Decl(assignmentCompatability_checking-apply-member-off-of-function-interface.ts, 0, 0))
  
      apply(blah: any); // also works for 'apply'

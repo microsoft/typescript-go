@@ -1,6 +1,6 @@
 --- old.tsxDynamicTagName4.symbols
 +++ new.tsxDynamicTagName4.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >IntrinsicElements : Symbol(IntrinsicElements, Decl(tsxDynamicTagName4.tsx, 1, 22))
  
  		div: any

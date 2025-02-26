@@ -1,6 +1,6 @@
 --- old.overloadedStaticMethodSpecialization.symbols
 +++ new.overloadedStaticMethodSpecialization.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(overloadedStaticMethodSpecialization.ts, 0, 8))
  
      static B<S>(v: A<S>): A<S>;

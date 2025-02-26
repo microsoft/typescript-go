@@ -1,6 +1,6 @@
 --- old.typedefTagWrapping.symbols
 +++ new.typedefTagWrapping.symbols
-@@= skipped -42, +42 lines =@@
+@@= skipped -41, +41 lines =@@
  >obj : Symbol(obj, Decl(mod2.js, 13, 15))
  
    return obj.boo ? obj.num : obj.str;

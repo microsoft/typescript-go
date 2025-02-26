@@ -1,6 +1,6 @@
 --- old.initializersInDeclarations.symbols
 +++ new.initializersInDeclarations.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >Foo : Symbol(Foo, Decl(file1.d.ts, 0, 0))
  
  	name = "test";

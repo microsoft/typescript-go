@@ -1,6 +1,6 @@
 --- old.mixinAbstractClasses.2.symbols
 +++ new.mixinAbstractClasses.2.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Mixin : Symbol(Mixin, Decl(mixinAbstractClasses.2.ts, 2, 1), Decl(mixinAbstractClasses.2.ts, 0, 0))
  
      mixinMethod(): void;

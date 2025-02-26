@@ -1,6 +1,6 @@
 --- old.subtypesOfTypeParameterWithConstraints4.symbols
 +++ new.subtypesOfTypeParameterWithConstraints4.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  
  class Foo { foo: number; }
  >Foo : Symbol(Foo, Decl(subtypesOfTypeParameterWithConstraints4.ts, 0, 0))

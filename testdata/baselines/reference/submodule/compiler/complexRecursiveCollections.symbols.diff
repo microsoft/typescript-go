@@ -1,6 +1,6 @@
 --- old.complexRecursiveCollections.symbols
 +++ new.complexRecursiveCollections.symbols
-@@= skipped -4, +4 lines =@@
+@@= skipped -3, +3 lines =@@
  interface Ara<T> { t: T }
  >Ara : Symbol(Ara, Decl(complex.ts, 0, 0))
  >T : Symbol(T, Decl(complex.ts, 0, 14))

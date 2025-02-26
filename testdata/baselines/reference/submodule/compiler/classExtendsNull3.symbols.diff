@@ -1,6 +1,6 @@
 --- old.classExtendsNull3.symbols
 +++ new.classExtendsNull3.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C1 : Symbol(C1, Decl(classExtendsNull3.ts, 0, 0))
  
    static method() {

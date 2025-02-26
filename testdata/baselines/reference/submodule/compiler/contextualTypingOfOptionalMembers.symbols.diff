@@ -1,6 +1,6 @@
 --- old.contextualTypingOfOptionalMembers.symbols
 +++ new.contextualTypingOfOptionalMembers.symbols
-@@= skipped -18, +18 lines =@@
+@@= skipped -17, +17 lines =@@
  >Actions : Symbol(Actions, Decl(index.tsx, 4, 24))
  
      state?: State;

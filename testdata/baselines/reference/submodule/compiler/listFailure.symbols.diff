@@ -1,6 +1,6 @@
 --- old.listFailure.symbols
 +++ new.listFailure.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >Buffer : Symbol(Buffer, Decl(listFailure.ts, 0, 15))
  
      	lines: List<Line> = ListMakeHead<Line>();

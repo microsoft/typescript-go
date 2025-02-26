@@ -1,6 +1,6 @@
 --- old.ModuleWithExportedAndNonExportedFunctions.symbols
 +++ new.ModuleWithExportedAndNonExportedFunctions.symbols
-@@= skipped -48, +48 lines =@@
+@@= skipped -47, +47 lines =@@
  
  var fn = A.fn;
  >fn : Symbol(fn, Decl(ModuleWithExportedAndNonExportedFunctions.ts, 20, 3), Decl(ModuleWithExportedAndNonExportedFunctions.ts, 21, 3))

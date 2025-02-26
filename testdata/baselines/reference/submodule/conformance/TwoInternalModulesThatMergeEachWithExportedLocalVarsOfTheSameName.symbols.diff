@@ -1,6 +1,6 @@
 --- old.TwoInternalModulesThatMergeEachWithExportedLocalVarsOfTheSameName.symbols
 +++ new.TwoInternalModulesThatMergeEachWithExportedLocalVarsOfTheSameName.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >Point : Symbol(Point, Decl(part1.ts, 0, 17))
  
          x: number;

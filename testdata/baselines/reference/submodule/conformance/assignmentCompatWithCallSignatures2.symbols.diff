@@ -1,6 +1,6 @@
 --- old.assignmentCompatWithCallSignatures2.symbols
 +++ new.assignmentCompatWithCallSignatures2.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(assignmentCompatWithCallSignatures2.ts, 0, 0))
  
      f(x: number): void;

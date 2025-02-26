@@ -1,6 +1,6 @@
 --- old.mergedDeclarations4.symbols
 +++ new.mergedDeclarations4.symbols
-@@= skipped -17, +17 lines =@@
+@@= skipped -16, +16 lines =@@
  
      var r = f.hello;
  >r : Symbol(r, Decl(mergedDeclarations4.ts, 4, 7))

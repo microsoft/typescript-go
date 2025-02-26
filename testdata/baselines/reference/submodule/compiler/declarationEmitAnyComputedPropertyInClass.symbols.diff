@@ -1,6 +1,6 @@
 --- old.declarationEmitAnyComputedPropertyInClass.symbols
 +++ new.declarationEmitAnyComputedPropertyInClass.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >C : Symbol(C, Decl(main.ts, 0, 28))
  
      [Test.someKey]() {};

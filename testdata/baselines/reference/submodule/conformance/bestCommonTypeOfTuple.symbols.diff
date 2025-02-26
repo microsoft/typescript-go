@@ -1,6 +1,6 @@
 --- old.bestCommonTypeOfTuple.symbols
 +++ new.bestCommonTypeOfTuple.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  
  enum E1 { one }
  >E1 : Symbol(E1, Decl(bestCommonTypeOfTuple.ts, 4, 48))

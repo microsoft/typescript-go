@@ -1,6 +1,6 @@
 --- old.primtiveTypesAreIdentical.symbols
 +++ new.primtiveTypesAreIdentical.symbols
-@@= skipped -69, +69 lines =@@
+@@= skipped -68, +68 lines =@@
  
  enum E { A }
  >E : Symbol(E, Decl(primtiveTypesAreIdentical.ts, 21, 25))

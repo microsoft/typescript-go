@@ -1,6 +1,6 @@
 --- old.contextualThisTypeInJavascript.symbols
 +++ new.contextualThisTypeInJavascript.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >method : Symbol(method, Decl(context.js, 1, 12))
  
          this;

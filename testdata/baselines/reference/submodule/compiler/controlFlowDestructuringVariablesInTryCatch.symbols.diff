@@ -1,6 +1,6 @@
 --- old.controlFlowDestructuringVariablesInTryCatch.symbols
 +++ new.controlFlowDestructuringVariablesInTryCatch.symbols
-@@= skipped -32, +32 lines =@@
+@@= skipped -31, +31 lines =@@
  
  } catch {
      console.error("error");

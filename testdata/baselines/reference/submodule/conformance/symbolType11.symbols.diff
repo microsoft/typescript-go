@@ -1,6 +1,6 @@
 --- old.symbolType11.symbols
 +++ new.symbolType11.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === symbolType11.ts ===
  var s = Symbol.for("logical");
  >s : Symbol(s, Decl(symbolType11.ts, 0, 3))

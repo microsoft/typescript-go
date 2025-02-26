@@ -1,6 +1,6 @@
 --- old.typeInferenceTypePredicate2.symbols
 +++ new.typeInferenceTypePredicate2.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === typeInferenceTypePredicate2.ts ===
  [true, true, false, null]

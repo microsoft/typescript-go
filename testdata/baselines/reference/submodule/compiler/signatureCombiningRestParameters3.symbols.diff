@@ -1,6 +1,6 @@
 --- old.signatureCombiningRestParameters3.symbols
 +++ new.signatureCombiningRestParameters3.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >Options : Symbol(Options, Decl(signatureCombiningRestParameters3.ts, 0, 26))
  
    extendMarkSchema?:

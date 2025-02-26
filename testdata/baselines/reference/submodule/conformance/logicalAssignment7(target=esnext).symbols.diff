@@ -1,6 +1,6 @@
 --- old.logicalAssignment7(target=esnext).symbols
 +++ new.logicalAssignment7(target=esnext).symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >results1 : Symbol(results1, Decl(logicalAssignment7.ts, 0, 44))
  
      (results ||= results1 ||= []).push(100);

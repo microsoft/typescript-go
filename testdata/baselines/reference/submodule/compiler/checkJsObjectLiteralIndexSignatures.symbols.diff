@@ -1,6 +1,6 @@
 --- old.checkJsObjectLiteralIndexSignatures.symbols
 +++ new.checkJsObjectLiteralIndexSignatures.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  
  let n = Math.random();
  >n : Symbol(n, Decl(file.js, 2, 3))

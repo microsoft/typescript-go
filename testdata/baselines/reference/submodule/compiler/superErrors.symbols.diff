@@ -1,6 +1,6 @@
 --- old.superErrors.symbols
 +++ new.superErrors.symbols
-@@= skipped -19, +19 lines =@@
+@@= skipped -18, +18 lines =@@
  >User : Symbol(User, Decl(superErrors.ts, 5, 1))
  
      name: string = "Bob";

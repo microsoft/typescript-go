@@ -1,6 +1,6 @@
 --- old.requireOfJsonFileWithoutOutDir.symbols
 +++ new.requireOfJsonFileWithoutOutDir.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
  let x = b1.a;
  >x : Symbol(x, Decl(file1.ts, 1, 3))

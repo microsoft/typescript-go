@@ -1,6 +1,6 @@
 --- old.scopeCheckExtendedClassInsideStaticMethod1.symbols
 +++ new.scopeCheckExtendedClassInsideStaticMethod1.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === scopeCheckExtendedClassInsideStaticMethod1.ts ===
  class C { private v; public p; static s; }
  >C : Symbol(C, Decl(scopeCheckExtendedClassInsideStaticMethod1.ts, 0, 0))

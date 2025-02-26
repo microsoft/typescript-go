@@ -1,6 +1,6 @@
 --- old.semicolonsInModuleDeclarations.symbols
 +++ new.semicolonsInModuleDeclarations.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  var n1: ambiModule.i1;
  >n1 : Symbol(n1, Decl(semicolonsInModuleDeclarations.ts, 5, 3))
  >ambiModule : Symbol(ambiModule, Decl(semicolonsInModuleDeclarations.ts, 0, 0))

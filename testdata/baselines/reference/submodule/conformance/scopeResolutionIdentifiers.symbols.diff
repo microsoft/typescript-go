@@ -1,6 +1,6 @@
 --- old.scopeResolutionIdentifiers.symbols
 +++ new.scopeResolutionIdentifiers.symbols
-@@= skipped -52, +52 lines =@@
+@@= skipped -51, +51 lines =@@
  >C : Symbol(C, Decl(scopeResolutionIdentifiers.ts, 19, 1))
  
      s: Date;

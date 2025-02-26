@@ -1,6 +1,6 @@
 --- old.tsxStatelessFunctionComponents3.symbols
 +++ new.tsxStatelessFunctionComponents3.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  const Foo = (props: any) => <div/>;
  >Foo : Symbol(Foo, Decl(file.tsx, 2, 5))
  >props : Symbol(props, Decl(file.tsx, 2, 13))

@@ -1,6 +1,6 @@
 --- old.nonMergedDeclarationsAndOverloads.symbols
 +++ new.nonMergedDeclarationsAndOverloads.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(nonMergedDeclarationsAndOverloads.ts, 0, 0))
  
      m1: string;

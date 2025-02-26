@@ -1,6 +1,6 @@
 --- old.jsxParsingError2.symbols
 +++ new.jsxParsingError2.symbols
-@@= skipped -19, +19 lines =@@
+@@= skipped -18, +18 lines =@@
  // Issue error about missing span closing tag, not missing div closing tag
  let x1 = <div><span></div>;
  >x1 : Symbol(x1, Decl(Error1.tsx, 1, 3))

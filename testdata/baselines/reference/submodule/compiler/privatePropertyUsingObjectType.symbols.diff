@@ -1,6 +1,6 @@
 --- old.privatePropertyUsingObjectType.symbols
 +++ new.privatePropertyUsingObjectType.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >FilterManager : Symbol(FilterManager, Decl(privatePropertyUsingObjectType.ts, 0, 0))
  
      private _filterProviders: { index: IFilterProvider; };

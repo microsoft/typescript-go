@@ -1,6 +1,6 @@
 --- old.arrowFunctionWithObjectLiteralBody6.symbols
 +++ new.arrowFunctionWithObjectLiteralBody6.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === arrowFunctionWithObjectLiteralBody6.ts ===
  var a = () => <Error>{ name: "foo", message: "bar" };      
  >a : Symbol(a, Decl(arrowFunctionWithObjectLiteralBody6.ts, 0, 3))

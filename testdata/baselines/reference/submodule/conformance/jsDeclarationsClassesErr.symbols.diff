@@ -1,6 +1,6 @@
 --- old.jsDeclarationsClassesErr.symbols
 +++ new.jsDeclarationsClassesErr.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(index.js, 3, 15))
  
      field: T;

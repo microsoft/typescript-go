@@ -1,6 +1,6 @@
 --- old.emitClassDeclarationWithGetterSetterInES6.symbols
 +++ new.emitClassDeclarationWithGetterSetterInES6.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(emitClassDeclarationWithGetterSetterInES6.ts, 0, 0))
  
      _name: string;

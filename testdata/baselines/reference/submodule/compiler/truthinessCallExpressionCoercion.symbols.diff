@@ -1,6 +1,6 @@
 --- old.truthinessCallExpressionCoercion.symbols
 +++ new.truthinessCallExpressionCoercion.symbols
-@@= skipped -28, +28 lines =@@
+@@= skipped -27, +27 lines =@@
  
      function test() { return Math.random() > 0.5; }
  >test : Symbol(test, Decl(truthinessCallExpressionCoercion.ts, 14, 39))

@@ -1,6 +1,6 @@
 --- old.privacyFunctionReturnTypeDeclFile.symbols
 +++ new.privacyFunctionReturnTypeDeclFile.symbols
-@@= skipped -23, +23 lines =@@
+@@= skipped -22, +22 lines =@@
  >privateClass : Symbol(privateClass, Decl(privacyFunctionReturnTypeDeclFile_externalModule.ts, 0, 0))
  
      myMethod(): privateClass; // Error

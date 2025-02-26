@@ -1,6 +1,6 @@
 --- old.unicodeEscapesInNames01(target=es5).symbols
 +++ new.unicodeEscapesInNames01(target=es5).symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === identifierVariableWithEscape1.ts ===
  export let \u0078 = 10;

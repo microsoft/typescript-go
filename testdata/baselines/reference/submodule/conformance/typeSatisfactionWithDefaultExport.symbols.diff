@@ -1,6 +1,6 @@
 --- old.typeSatisfactionWithDefaultExport.symbols
 +++ new.typeSatisfactionWithDefaultExport.symbols
-@@= skipped -1, +1 lines =@@
+@@= skipped -0, +0 lines =@@
  //// [tests/cases/conformance/expressions/typeSatisfaction/typeSatisfactionWithDefaultExport.ts] ////
  
 -=== ./a.ts ===

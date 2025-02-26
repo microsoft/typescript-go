@@ -1,6 +1,6 @@
 --- old.jsxExcessPropsAndAssignability.symbols
 +++ new.jsxExcessPropsAndAssignability.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
      ComposedComponent: React.ComponentClass<ComposedComponentProps>,
  >ComposedComponent : Symbol(ComposedComponent, Decl(jsxExcessPropsAndAssignability.tsx, 4, 51))
  >React : Symbol(React, Decl(jsxExcessPropsAndAssignability.tsx, 2, 6))

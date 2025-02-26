@@ -1,6 +1,6 @@
 --- old.jsFileCompilationRestParamJsDocFunction.symbols
 +++ new.jsFileCompilationRestParamJsDocFunction.symbols
-@@= skipped -19, +19 lines =@@
+@@= skipped -18, +18 lines =@@
  
      var length = args.length;
  >length : Symbol(length, Decl(_apply.js, 11, 7))

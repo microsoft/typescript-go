@@ -1,6 +1,6 @@
 --- old.classStaticBlock28.symbols
 +++ new.classStaticBlock28.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  }
  
  console.log(foo)

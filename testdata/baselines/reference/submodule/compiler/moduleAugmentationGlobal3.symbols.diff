@@ -1,6 +1,6 @@
 --- old.moduleAugmentationGlobal3.symbols
 +++ new.moduleAugmentationGlobal3.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >A : Symbol(A, Decl(f2.ts, 1, 8))
  
  declare global {

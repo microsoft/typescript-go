@@ -1,6 +1,6 @@
 --- old.relatedViaDiscriminatedTypeNoError.symbols
 +++ new.relatedViaDiscriminatedTypeNoError.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Model : Symbol(Model, Decl(relatedViaDiscriminatedTypeNoError.ts, 0, 0))
  
      constructor(public flag: boolean) {}

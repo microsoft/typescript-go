@@ -1,6 +1,6 @@
 --- old.typeParametersAreIdenticalToThemselves.symbols
 +++ new.typeParametersAreIdenticalToThemselves.symbols
-@@= skipped -87, +87 lines =@@
+@@= skipped -86, +86 lines =@@
  >T : Symbol(T, Decl(typeParametersAreIdenticalToThemselves.ts, 20, 8))
  
      foo1(x: T);

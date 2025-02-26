@@ -1,6 +1,6 @@
 --- old.interfaceThatHidesBaseProperty.symbols
 +++ new.interfaceThatHidesBaseProperty.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Base : Symbol(Base, Decl(interfaceThatHidesBaseProperty.ts, 0, 0))
  
      x: { a: number };

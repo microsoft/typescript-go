@@ -1,6 +1,6 @@
 --- old.objectTypesIdentityWithGenericCallSignaturesOptionalParams3.symbols
 +++ new.objectTypesIdentityWithGenericCallSignaturesOptionalParams3.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >A : Symbol(A, Decl(objectTypesIdentityWithGenericCallSignaturesOptionalParams3.ts, 0, 0))
  
      foo<T, U>(x: T, y?: U): T { return null; }

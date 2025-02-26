@@ -1,6 +1,6 @@
 --- old.narrowByClauseExpressionInSwitchTrue3.symbols
 +++ new.narrowByClauseExpressionInSwitchTrue3.symbols
-@@= skipped -24, +24 lines =@@
+@@= skipped -23, +23 lines =@@
  >kind : Symbol(kind, Decl(narrowByClauseExpressionInSwitchTrue3.ts, 1, 7), Decl(narrowByClauseExpressionInSwitchTrue3.ts, 2, 7))
  
              return Math.PI * shape.radius ** 2;

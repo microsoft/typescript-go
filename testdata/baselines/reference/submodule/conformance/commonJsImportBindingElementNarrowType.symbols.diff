@@ -1,6 +1,6 @@
 --- old.commonJsImportBindingElementNarrowType.symbols
 +++ new.commonJsImportBindingElementNarrowType.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === /bar.js ===
  const { a } = require("./foo");
  >a : Symbol(a, Decl(bar.js, 0, 7))

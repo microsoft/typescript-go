@@ -1,6 +1,6 @@
 --- old.assignmentCompatInterfaceWithStringIndexSignature.symbols
 +++ new.assignmentCompatInterfaceWithStringIndexSignature.symbols
-@@= skipped -20, +20 lines =@@
+@@= skipped -19, +19 lines =@@
  >Foo : Symbol(Foo, Decl(assignmentCompatInterfaceWithStringIndexSignature.ts, 6, 1))
  
      public Boz(): void { }

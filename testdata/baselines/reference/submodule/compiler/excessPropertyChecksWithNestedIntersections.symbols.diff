@@ -1,6 +1,6 @@
 --- old.excessPropertyChecksWithNestedIntersections.symbols
 +++ new.excessPropertyChecksWithNestedIntersections.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >A : Symbol(A, Decl(excessPropertyChecksWithNestedIntersections.ts, 0, 0))
  
      x: string

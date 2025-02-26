@@ -1,6 +1,6 @@
 --- old.collisionArgumentsClassMethod.symbols
 +++ new.collisionArgumentsClassMethod.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >c1 : Symbol(c1, Decl(collisionArgumentsClassMethod.ts, 0, 0))
  
      public foo(i: number, ...arguments) { //arguments is error

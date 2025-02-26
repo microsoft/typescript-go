@@ -1,6 +1,6 @@
 --- old.varianceAnnotationValidation.symbols
 +++ new.varianceAnnotationValidation.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(varianceAnnotationValidation.ts, 4, 21))
  
  	createAnimal: () => T;

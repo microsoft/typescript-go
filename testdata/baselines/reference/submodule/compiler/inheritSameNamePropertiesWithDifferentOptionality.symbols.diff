@@ -1,6 +1,6 @@
 --- old.inheritSameNamePropertiesWithDifferentOptionality.symbols
 +++ new.inheritSameNamePropertiesWithDifferentOptionality.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(inheritSameNamePropertiesWithDifferentOptionality.ts, 0, 0))
  
      x?: number;

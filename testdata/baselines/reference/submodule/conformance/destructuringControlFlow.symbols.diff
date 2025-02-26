@@ -1,6 +1,6 @@
 --- old.destructuringControlFlow.symbols
 +++ new.destructuringControlFlow.symbols
-@@= skipped -34, +34 lines =@@
+@@= skipped -33, +33 lines =@@
      let a0 = obj[0];  // number | null
  >a0 : Symbol(a0, Decl(destructuringControlFlow.ts, 9, 7))
  >obj : Symbol(obj, Decl(destructuringControlFlow.ts, 8, 12))

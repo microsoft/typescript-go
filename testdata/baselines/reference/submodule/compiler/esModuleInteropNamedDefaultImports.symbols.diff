@@ -1,6 +1,6 @@
 --- old.esModuleInteropNamedDefaultImports.symbols
 +++ new.esModuleInteropNamedDefaultImports.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === mod.ts ===
  export default class Foo {}

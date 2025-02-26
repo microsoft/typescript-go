@@ -1,6 +1,6 @@
 --- old.typeGuardNarrowsIndexedAccessOfKnownProperty11.symbols
 +++ new.typeGuardNarrowsIndexedAccessOfKnownProperty11.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === typeGuardNarrowsIndexedAccessOfKnownProperty11.ts ===
  enum E { A, B }
  >E : Symbol(E, Decl(typeGuardNarrowsIndexedAccessOfKnownProperty11.ts, 0, 0))

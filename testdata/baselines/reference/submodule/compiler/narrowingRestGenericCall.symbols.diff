@@ -1,6 +1,6 @@
 --- old.narrowingRestGenericCall.symbols
 +++ new.narrowingRestGenericCall.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Slugs : Symbol(Slugs, Decl(narrowingRestGenericCall.ts, 0, 0))
  
    foo: string;

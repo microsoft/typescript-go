@@ -1,6 +1,6 @@
 --- old.enumTagImported.symbols
 +++ new.enumTagImported.symbols
-@@= skipped -25, +25 lines =@@
+@@= skipped -24, +24 lines =@@
  === mod1.js ===
  /** @enum {string} */
  export const TestEnum = {

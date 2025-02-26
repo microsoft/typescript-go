@@ -1,6 +1,6 @@
 --- old.noErrorsInCallback.symbols
 +++ new.noErrorsInCallback.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Bar : Symbol(Bar, Decl(noErrorsInCallback.ts, 0, 0))
  
      constructor(public foo: string) { }

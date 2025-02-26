@@ -1,6 +1,6 @@
 --- old.namespaceImportTypeQuery.symbols
 +++ new.namespaceImportTypeQuery.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  
  let A: typeof types.A;
  >A : Symbol(A, Decl(b.ts, 1, 3))

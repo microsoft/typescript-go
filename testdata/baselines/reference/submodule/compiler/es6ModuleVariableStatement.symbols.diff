@@ -1,6 +1,6 @@
 --- old.es6ModuleVariableStatement.symbols
 +++ new.es6ModuleVariableStatement.symbols
-@@= skipped -60, +60 lines =@@
+@@= skipped -59, +59 lines =@@
  
      var n = m1.k;
  >n : Symbol(n, Decl(es6ModuleVariableStatement.ts, 13, 7))

@@ -1,6 +1,6 @@
 --- old.controlFlowCaching.symbols
 +++ new.controlFlowCaching.symbols
-@@= skipped -113, +113 lines =@@
+@@= skipped -112, +112 lines =@@
  
          cosr = Math.abs(Math.cos(rotation * Math.PI / 180)),
  >cosr : Symbol(cosr, Decl(controlFlowCaching.ts, 20, 79))

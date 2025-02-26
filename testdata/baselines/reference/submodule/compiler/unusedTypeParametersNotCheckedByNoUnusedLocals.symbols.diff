@@ -1,6 +1,6 @@
 --- old.unusedTypeParametersNotCheckedByNoUnusedLocals.symbols
 +++ new.unusedTypeParametersNotCheckedByNoUnusedLocals.symbols
-@@= skipped -18, +18 lines =@@
+@@= skipped -17, +17 lines =@@
  >T : Symbol(T, Decl(unusedTypeParametersNotCheckedByNoUnusedLocals.ts, 6, 8))
  
      public m<V>() { }

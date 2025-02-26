@@ -1,6 +1,6 @@
 --- old.stringIndexerAndConstructor.symbols
 +++ new.stringIndexerAndConstructor.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  
      constructor() { }
      static v() { }

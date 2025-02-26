@@ -1,6 +1,6 @@
 --- old.typeofProperty.symbols
 +++ new.typeofProperty.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >I1 : Symbol(I1, Decl(typeofProperty.ts, 0, 0))
  
      a: number;

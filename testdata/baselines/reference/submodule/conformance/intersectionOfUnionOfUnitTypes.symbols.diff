@@ -1,6 +1,6 @@
 --- old.intersectionOfUnionOfUnitTypes.symbols
 +++ new.intersectionOfUnionOfUnitTypes.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  
  const enum E { A, B, C, D, E, F }
  >E : Symbol(E, Decl(intersectionOfUnionOfUnitTypes.ts, 0, 0))

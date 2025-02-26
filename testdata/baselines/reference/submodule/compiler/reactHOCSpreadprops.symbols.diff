@@ -1,6 +1,6 @@
 --- old.reactHOCSpreadprops.symbols
 +++ new.reactHOCSpreadprops.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >P : Symbol(P, Decl(reactHOCSpreadprops.tsx, 2, 11))
  >App : Symbol(App, Decl(reactHOCSpreadprops.tsx, 2, 14))
  >React : Symbol(React, Decl(reactHOCSpreadprops.tsx, 0, 0))

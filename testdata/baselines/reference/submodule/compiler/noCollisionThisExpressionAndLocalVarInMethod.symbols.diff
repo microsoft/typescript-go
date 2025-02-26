@@ -1,6 +1,6 @@
 --- old.noCollisionThisExpressionAndLocalVarInMethod.symbols
 +++ new.noCollisionThisExpressionAndLocalVarInMethod.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >a : Symbol(a, Decl(noCollisionThisExpressionAndLocalVarInMethod.ts, 0, 14))
  
      method1() {

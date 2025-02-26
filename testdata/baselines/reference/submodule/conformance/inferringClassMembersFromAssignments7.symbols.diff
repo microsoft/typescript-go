@@ -1,6 +1,6 @@
 --- old.inferringClassMembersFromAssignments7.symbols
 +++ new.inferringClassMembersFromAssignments7.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >this : Symbol(C, Decl(inferringClassMembersFromAssignments7.js, 0, 0))
  
          self.x = 1

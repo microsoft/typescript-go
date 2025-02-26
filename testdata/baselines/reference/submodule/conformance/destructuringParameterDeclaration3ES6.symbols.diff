@@ -1,6 +1,6 @@
 --- old.destructuringParameterDeclaration3ES6.symbols
 +++ new.destructuringParameterDeclaration3ES6.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  
  type arrayString = Array<String>
  >arrayString : Symbol(arrayString, Decl(destructuringParameterDeclaration3ES6.ts, 0, 0))

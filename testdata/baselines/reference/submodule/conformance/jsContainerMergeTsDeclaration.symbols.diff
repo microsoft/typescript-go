@@ -1,6 +1,6 @@
 --- old.jsContainerMergeTsDeclaration.symbols
 +++ new.jsContainerMergeTsDeclaration.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === a.js ===
  var /*1*/x = function foo() {

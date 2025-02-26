@@ -1,6 +1,6 @@
 --- old.jsxHasLiteralType.symbols
 +++ new.jsxHasLiteralType.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >Props : Symbol(Props, Decl(jsxHasLiteralType.tsx, 0, 31))
  
      x?: "a" | "b";

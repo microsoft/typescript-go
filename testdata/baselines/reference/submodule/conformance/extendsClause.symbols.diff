@@ -1,6 +1,6 @@
 --- old.extendsClause.symbols
 +++ new.extendsClause.symbols
-@@= skipped -32, +32 lines =@@
+@@= skipped -31, +31 lines =@@
  
  interface S extends types.C {}
  >S : Symbol(S, Decl(index.ts, 4, 24))

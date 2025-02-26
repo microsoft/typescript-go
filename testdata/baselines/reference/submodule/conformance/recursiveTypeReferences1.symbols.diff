@@ -1,6 +1,6 @@
 --- old.recursiveTypeReferences1.symbols
 +++ new.recursiveTypeReferences1.symbols
-@@= skipped -63, +63 lines =@@
+@@= skipped -62, +62 lines =@@
  interface Box<T> { value: T };
  >Box : Symbol(Box, Decl(recursiveTypeReferences1.ts, 19, 2))
  >T : Symbol(T, Decl(recursiveTypeReferences1.ts, 21, 14))

@@ -1,6 +1,6 @@
 --- old.controlFlowOptionalChain3.symbols
 +++ new.controlFlowOptionalChain3.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >Foo : Symbol(Foo, Decl(controlFlowOptionalChain3.tsx, 4, 26))
  
    bar: boolean;

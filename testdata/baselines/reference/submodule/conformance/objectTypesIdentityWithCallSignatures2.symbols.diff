@@ -1,6 +1,6 @@
 --- old.objectTypesIdentityWithCallSignatures2.symbols
 +++ new.objectTypesIdentityWithCallSignatures2.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >A : Symbol(A, Decl(objectTypesIdentityWithCallSignatures2.ts, 0, 0))
  
      foo(x: string): string { return null; }

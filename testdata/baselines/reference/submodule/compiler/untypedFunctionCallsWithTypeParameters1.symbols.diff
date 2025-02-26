@@ -1,6 +1,6 @@
 --- old.untypedFunctionCallsWithTypeParameters1.symbols
 +++ new.untypedFunctionCallsWithTypeParameters1.symbols
-@@= skipped -30, +30 lines =@@
+@@= skipped -29, +29 lines =@@
  >Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      prototype = null;

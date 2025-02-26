@@ -1,6 +1,6 @@
 --- old.implementGenericWithMismatchedTypes.symbols
 +++ new.implementGenericWithMismatchedTypes.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(implementGenericWithMismatchedTypes.ts, 3, 15))
  
      foo(x: T): T;

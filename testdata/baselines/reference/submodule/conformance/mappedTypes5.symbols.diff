@@ -1,6 +1,6 @@
 --- old.mappedTypes5.symbols
 +++ new.mappedTypes5.symbols
-@@= skipped -181, +181 lines =@@
+@@= skipped -180, +180 lines =@@
  >previous : Symbol(previous, Decl(mappedTypes5.ts, 36, 7))
  >Partial : Symbol(Partial, Decl(lib.es5.d.ts, --, --))
  >T : Symbol(T, Decl(mappedTypes5.ts, 35, 14))

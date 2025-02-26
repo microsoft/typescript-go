@@ -1,6 +1,6 @@
 --- old.noImplicitReturnsExclusions.symbols
 +++ new.noImplicitReturnsExclusions.symbols
-@@= skipped -128, +128 lines =@@
+@@= skipped -127, +127 lines =@@
  >HistoryItem : Symbol(HistoryItem, Decl(noImplicitReturnsExclusions.ts, 55, 1))
  
    input: {

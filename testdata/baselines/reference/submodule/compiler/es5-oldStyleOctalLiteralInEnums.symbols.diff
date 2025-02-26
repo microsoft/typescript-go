@@ -1,6 +1,6 @@
 --- old.es5-oldStyleOctalLiteralInEnums.symbols
 +++ new.es5-oldStyleOctalLiteralInEnums.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >E : Symbol(E, Decl(es5-oldStyleOctalLiteralInEnums.ts, 0, 0))
  
    x = -01,

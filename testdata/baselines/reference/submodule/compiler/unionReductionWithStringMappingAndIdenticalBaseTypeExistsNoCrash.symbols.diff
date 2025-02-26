@@ -1,6 +1,6 @@
 --- old.unionReductionWithStringMappingAndIdenticalBaseTypeExistsNoCrash.symbols
 +++ new.unionReductionWithStringMappingAndIdenticalBaseTypeExistsNoCrash.symbols
-@@= skipped -48, +48 lines =@@
+@@= skipped -47, +47 lines =@@
  
    > {
      type: T;

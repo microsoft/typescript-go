@@ -1,6 +1,6 @@
 --- old.baseTypeAfterDerivedType.symbols
 +++ new.baseTypeAfterDerivedType.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >Base : Symbol(Base, Decl(baseTypeAfterDerivedType.ts, 2, 1))
  
      method(...args: any[]): void;

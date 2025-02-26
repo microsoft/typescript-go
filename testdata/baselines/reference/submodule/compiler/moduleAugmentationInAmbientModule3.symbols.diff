@@ -1,6 +1,6 @@
 --- old.moduleAugmentationInAmbientModule3.symbols
 +++ new.moduleAugmentationInAmbientModule3.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >Observable : Symbol(Observable, Decl(main.ts, 2, 8))
  
  x.foo().x;

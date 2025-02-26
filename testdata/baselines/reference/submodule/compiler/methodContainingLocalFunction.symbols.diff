@@ -1,6 +1,6 @@
 --- old.methodContainingLocalFunction.symbols
 +++ new.methodContainingLocalFunction.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(methodContainingLocalFunction.ts, 1, 20))
  
      public exhibitBug() {

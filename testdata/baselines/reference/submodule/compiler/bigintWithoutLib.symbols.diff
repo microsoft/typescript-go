@@ -1,6 +1,6 @@
 --- old.bigintWithoutLib.symbols
 +++ new.bigintWithoutLib.symbols
-@@= skipped -19, +19 lines =@@
+@@= skipped -18, +18 lines =@@
  
  bigintVal = bigintVal.valueOf(); // should error - bigintVal inferred as {}
  >bigintVal : Symbol(bigintVal, Decl(bigintWithoutLib.ts, 3, 3))

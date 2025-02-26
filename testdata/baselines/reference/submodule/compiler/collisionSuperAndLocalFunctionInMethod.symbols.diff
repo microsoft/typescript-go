@@ -1,6 +1,6 @@
 --- old.collisionSuperAndLocalFunctionInMethod.symbols
 +++ new.collisionSuperAndLocalFunctionInMethod.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >Foo : Symbol(Foo, Decl(collisionSuperAndLocalFunctionInMethod.ts, 1, 1))
  
      x() {

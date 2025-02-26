@@ -1,6 +1,6 @@
 --- old.conditionalTypeDoesntSpinForever.symbols
 +++ new.conditionalTypeDoesntSpinForever.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >PubSubRecordIsStoredInRedisAsA : Symbol(PubSubRecordIsStoredInRedisAsA, Decl(conditionalTypeDoesntSpinForever.ts, 0, 0))
  
      redisHash = "redisHash",

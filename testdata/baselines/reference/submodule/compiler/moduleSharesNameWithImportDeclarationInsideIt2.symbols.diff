@@ -1,6 +1,6 @@
 --- old.moduleSharesNameWithImportDeclarationInsideIt2.symbols
 +++ new.moduleSharesNameWithImportDeclarationInsideIt2.symbols
-@@= skipped -18, +18 lines =@@
+@@= skipped -17, +17 lines =@@
      export import M = Z.M;
  >M : Symbol(M, Decl(moduleSharesNameWithImportDeclarationInsideIt2.ts, 5, 12))
  >Z : Symbol(Z, Decl(moduleSharesNameWithImportDeclarationInsideIt2.ts, 0, 0))

@@ -1,6 +1,6 @@
 --- old.privacyClassExtendsClauseDeclFile.symbols
 +++ new.privacyClassExtendsClauseDeclFile.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >publicClassInPublicModule : Symbol(publicClassInPublicModule, Decl(privacyClassExtendsClauseDeclFile_externalModule.ts, 0, 28))
  
          private f1() {

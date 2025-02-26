@@ -1,6 +1,6 @@
 --- old.baseCheck.symbols
 +++ new.baseCheck.symbols
-@@= skipped -30, +30 lines =@@
+@@= skipped -29, +29 lines =@@
      }
  
      m() {

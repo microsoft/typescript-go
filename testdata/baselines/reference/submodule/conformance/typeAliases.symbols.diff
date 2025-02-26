@@ -1,6 +1,6 @@
 --- old.typeAliases.symbols
 +++ new.typeAliases.symbols
-@@= skipped -55, +55 lines =@@
+@@= skipped -54, +54 lines =@@
  
  interface I6 { x : string }
  >I6 : Symbol(I6, Decl(typeAliases.ts, 20, 11))

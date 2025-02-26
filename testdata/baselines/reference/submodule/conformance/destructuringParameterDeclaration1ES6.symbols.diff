@@ -1,6 +1,6 @@
 --- old.destructuringParameterDeclaration1ES6.symbols
 +++ new.destructuringParameterDeclaration1ES6.symbols
-@@= skipped -84, +84 lines =@@
+@@= skipped -83, +83 lines =@@
  >F1 : Symbol(F1, Decl(destructuringParameterDeclaration1ES6.ts, 22, 67))
  
      b5(z, y, [, a, b], {p, m: { q, r}});

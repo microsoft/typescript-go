@@ -1,6 +1,6 @@
 --- old.override15.symbols
 +++ new.override15.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(override15.ts, 0, 0))
  
      doSomething() {}

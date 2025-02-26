@@ -1,6 +1,6 @@
 --- old.genericReduce.symbols
 +++ new.genericReduce.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
  var b = a.map(s => s.length);
  >b : Symbol(b, Decl(genericReduce.ts, 1, 3))

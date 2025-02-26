@@ -1,6 +1,6 @@
 --- old.enumLiteralUnionNotWidened.symbols
 +++ new.enumLiteralUnionNotWidened.symbols
-@@= skipped -4, +4 lines =@@
+@@= skipped -3, +3 lines =@@
  // repro from #22093
  enum A { one = "one", two = "two" };
  >A : Symbol(A, Decl(enumLiteralUnionNotWidened.ts, 0, 0))

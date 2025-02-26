@@ -1,6 +1,6 @@
 --- old.optionalFunctionArgAssignability.symbols
 +++ new.optionalFunctionArgAssignability.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(lib.es5.d.ts, --, --), Decl(optionalFunctionArgAssignability.ts, 0, 18))
  
      then<U>(onFulfill?: (value: T) => U, onReject?: (reason: any) => U): Promise<U>;

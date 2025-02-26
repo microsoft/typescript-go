@@ -1,6 +1,6 @@
 --- old.controlFlowArrayErrors.symbols
 +++ new.controlFlowArrayErrors.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  >x : Symbol(x, Decl(controlFlowArrayErrors.ts, 3, 7))
  
      x.push(5);

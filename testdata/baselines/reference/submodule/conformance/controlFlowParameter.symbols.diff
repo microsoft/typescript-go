@@ -1,6 +1,6 @@
 --- old.controlFlowParameter.symbols
 +++ new.controlFlowParameter.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
    })()
  ) {
    console.log("ok"); // should not trigger 'Unreachable code detected.'

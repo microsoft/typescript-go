@@ -1,6 +1,6 @@
 --- old.nameDelimitedBySlashes.symbols
 +++ new.nameDelimitedBySlashes.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
  var x = foo.foo + 42;
  >x : Symbol(x, Decl(foo_1.ts, 1, 3))

@@ -1,6 +1,6 @@
 --- old.enumClassification.symbols
 +++ new.enumClassification.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >E01 : Symbol(E01, Decl(enumClassification.ts, 0, 0))
  
      A

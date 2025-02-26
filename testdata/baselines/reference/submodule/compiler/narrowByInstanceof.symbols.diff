@@ -1,6 +1,6 @@
 --- old.narrowByInstanceof.symbols
 +++ new.narrowByInstanceof.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === narrowByInstanceof.ts ===
  interface A { a: string }
  >A : Symbol(A, Decl(narrowByInstanceof.ts, 0, 0))

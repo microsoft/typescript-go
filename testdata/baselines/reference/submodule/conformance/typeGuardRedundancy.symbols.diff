@@ -1,6 +1,6 @@
 --- old.typeGuardRedundancy.symbols
 +++ new.typeGuardRedundancy.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >r1 : Symbol(r1, Decl(typeGuardRedundancy.ts, 2, 3))
  >x : Symbol(x, Decl(typeGuardRedundancy.ts, 0, 3))
  >x : Symbol(x, Decl(typeGuardRedundancy.ts, 0, 3))

@@ -1,6 +1,6 @@
 --- old.declFileWithClassNameConflictingWithClassReferredByExtendsClause.symbols
 +++ new.declFileWithClassNameConflictingWithClassReferredByExtendsClause.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >W : Symbol(W, Decl(declFileWithClassNameConflictingWithClassReferredByExtendsClause.ts, 0, 25))
  
          id: number;

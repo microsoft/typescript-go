@@ -1,6 +1,6 @@
 --- old.typeofSimple.symbols
 +++ new.typeofSimple.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  interface I<T> { x: T; }
  >I : Symbol(I, Decl(typeofSimple.ts, 2, 20))
  >T : Symbol(T, Decl(typeofSimple.ts, 4, 12))

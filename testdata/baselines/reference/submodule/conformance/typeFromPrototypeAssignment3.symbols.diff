@@ -1,6 +1,6 @@
 --- old.typeFromPrototypeAssignment3.symbols
 +++ new.typeFromPrototypeAssignment3.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === bug26885.js ===
  function Multimap3() {

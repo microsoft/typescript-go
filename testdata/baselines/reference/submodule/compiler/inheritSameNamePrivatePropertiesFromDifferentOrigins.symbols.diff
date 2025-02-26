@@ -1,6 +1,6 @@
 --- old.inheritSameNamePrivatePropertiesFromDifferentOrigins.symbols
 +++ new.inheritSameNamePrivatePropertiesFromDifferentOrigins.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(inheritSameNamePrivatePropertiesFromDifferentOrigins.ts, 0, 0))
  
      private x: number;

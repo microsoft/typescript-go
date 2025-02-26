@@ -1,6 +1,6 @@
 --- old.discriminantPropertyCheck.symbols
 +++ new.discriminantPropertyCheck.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >Base : Symbol(Base, Decl(discriminantPropertyCheck.ts, 0, 26))
  
      bar: boolean;

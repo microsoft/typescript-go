@@ -1,6 +1,6 @@
 --- old.configFileExtendsAsList.symbols
 +++ new.configFileExtendsAsList.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >y : Symbol(y, Decl(index.ts, 1, 3))
  
  y.toLowerCase(); // strictNullChecks error

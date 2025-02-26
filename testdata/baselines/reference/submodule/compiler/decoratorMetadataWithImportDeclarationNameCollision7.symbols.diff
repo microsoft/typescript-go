@@ -1,6 +1,6 @@
 --- old.decoratorMetadataWithImportDeclarationNameCollision7.symbols
 +++ new.decoratorMetadataWithImportDeclarationNameCollision7.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === db.ts ===
  export default class db {

@@ -1,6 +1,6 @@
 --- old.conditionalOperatorConditionIsNumberType.symbols
 +++ new.conditionalOperatorConditionIsNumberType.symbols
-@@= skipped -109, +109 lines =@@
+@@= skipped -108, +108 lines =@@
  >exprBoolean2 : Symbol(exprBoolean2, Decl(conditionalOperatorConditionIsNumberType.ts, 10, 3))
  
  "string".length ? exprNumber1 : exprNumber2;

@@ -1,6 +1,6 @@
 --- old.instantiateGenericClassWithWrongNumberOfTypeArguments.symbols
 +++ new.instantiateGenericClassWithWrongNumberOfTypeArguments.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(instantiateGenericClassWithWrongNumberOfTypeArguments.ts, 3, 8))
  
      x: T;

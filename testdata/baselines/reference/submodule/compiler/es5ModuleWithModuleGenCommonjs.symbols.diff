@@ -1,6 +1,6 @@
 --- old.es5ModuleWithModuleGenCommonjs.symbols
 +++ new.es5ModuleWithModuleGenCommonjs.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
      }
  
      public B()

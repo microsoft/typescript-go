@@ -1,6 +1,6 @@
 --- old.symbolType12.symbols
 +++ new.symbolType12.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === symbolType12.ts ===
  var s = Symbol.for("assign");
  >s : Symbol(s, Decl(symbolType12.ts, 0, 3))

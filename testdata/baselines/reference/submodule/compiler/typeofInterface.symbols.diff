@@ -1,6 +1,6 @@
 --- old.typeofInterface.symbols
 +++ new.typeofInterface.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >I : Symbol(I, Decl(typeofInterface.ts, 0, 3), Decl(typeofInterface.ts, 0, 20))
  
      I: number;

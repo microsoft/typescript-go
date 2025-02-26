@@ -1,6 +1,6 @@
 --- old.classImplementsMethodWIthTupleArgs.symbols
 +++ new.classImplementsMethodWIthTupleArgs.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >Settable : Symbol(Settable, Decl(classImplementsMethodWIthTupleArgs.ts, 3, 1))
  
      set(option: Record<string, unknown>): void;

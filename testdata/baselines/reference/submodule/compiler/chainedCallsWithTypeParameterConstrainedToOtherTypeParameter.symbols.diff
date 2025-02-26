@@ -1,6 +1,6 @@
 --- old.chainedCallsWithTypeParameterConstrainedToOtherTypeParameter.symbols
 +++ new.chainedCallsWithTypeParameterConstrainedToOtherTypeParameter.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >A : Symbol(A, Decl(chainedCallsWithTypeParameterConstrainedToOtherTypeParameter.ts, 5, 1))
  
      constructor(public value: T) { }

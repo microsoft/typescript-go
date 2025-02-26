@@ -1,6 +1,6 @@
 --- old.classStaticBlock9(target=esnext).symbols
 +++ new.classStaticBlock9(target=esnext).symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(classStaticBlock9.ts, 0, 0))
  
      static bar = A.foo + 1

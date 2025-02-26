@@ -1,6 +1,6 @@
 --- old.renamingDestructuredPropertyInFunctionType2.symbols
 +++ new.renamingDestructuredPropertyInFunctionType2.symbols
-@@= skipped -129, +129 lines =@@
+@@= skipped -128, +128 lines =@@
  >I : Symbol(I, Decl(a.d.ts, 19, 30))
  
    method1(arg: number): any; 

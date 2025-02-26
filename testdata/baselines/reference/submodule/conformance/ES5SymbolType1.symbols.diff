@@ -1,6 +1,6 @@
 --- old.ES5SymbolType1.symbols
 +++ new.ES5SymbolType1.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >s : Symbol(s, Decl(ES5SymbolType1.ts, 0, 3))
  
  s.toString();

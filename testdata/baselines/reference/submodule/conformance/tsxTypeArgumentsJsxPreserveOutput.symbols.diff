@@ -1,6 +1,6 @@
 --- old.tsxTypeArgumentsJsxPreserveOutput.symbols
 +++ new.tsxTypeArgumentsJsxPreserveOutput.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  
  interface InterfaceProps { foo?: boolean; }
  >InterfaceProps : Symbol(InterfaceProps, Decl(foo.tsx, 2, 36))

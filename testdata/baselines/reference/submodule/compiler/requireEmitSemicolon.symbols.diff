@@ -1,6 +1,6 @@
 --- old.requireEmitSemicolon.symbols
 +++ new.requireEmitSemicolon.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >DB : Symbol(DB, Decl(requireEmitSemicolon_1.ts, 3, 24))
  
  	    public findPerson(id: number): P.Models.Person {

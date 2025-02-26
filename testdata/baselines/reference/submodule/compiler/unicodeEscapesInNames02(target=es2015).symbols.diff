@@ -1,6 +1,6 @@
 --- old.unicodeEscapesInNames02(target=es2015).symbols
 +++ new.unicodeEscapesInNames02(target=es2015).symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >\u{102A7} : Symbol(𐊧, Decl(extendedEscapesForAstralsInVarsAndClasses.ts, 1, 3), Decl(extendedEscapesForAstralsInVarsAndClasses.ts, 2, 3))
  
  if (Math.random()) {

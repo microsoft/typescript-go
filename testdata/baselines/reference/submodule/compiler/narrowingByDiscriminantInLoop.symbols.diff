@@ -1,6 +1,6 @@
 --- old.narrowingByDiscriminantInLoop.symbols
 +++ new.narrowingByDiscriminantInLoop.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >IDLTypeDescription : Symbol(IDLTypeDescription, Decl(narrowingByDiscriminantInLoop.ts, 2, 63))
  
      origin: string;

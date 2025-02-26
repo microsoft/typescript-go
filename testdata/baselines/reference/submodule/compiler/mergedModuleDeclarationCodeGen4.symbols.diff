@@ -1,6 +1,6 @@
 --- old.mergedModuleDeclarationCodeGen4.symbols
 +++ new.mergedModuleDeclarationCodeGen4.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  
          export module my.buz {
  >my : Symbol(my, Decl(mergedModuleDeclarationCodeGen4.ts, 1, 27), Decl(mergedModuleDeclarationCodeGen4.ts, 6, 9))

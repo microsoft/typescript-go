@@ -1,6 +1,6 @@
 --- old.covariantCallbacks.symbols
 +++ new.covariantCallbacks.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >T : Symbol(T, Decl(covariantCallbacks.ts, 2, 12))
  
      then(cb: (value: T) => void): void;

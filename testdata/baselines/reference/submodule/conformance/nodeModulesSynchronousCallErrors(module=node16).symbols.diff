@@ -1,6 +1,6 @@
 --- old.nodeModulesSynchronousCallErrors(module=node16).symbols
 +++ new.nodeModulesSynchronousCallErrors(module=node16).symbols
-@@= skipped -20, +20 lines =@@
+@@= skipped -19, +19 lines =@@
  
      const mod3 = await import ("../index.js");
  >mod3 : Symbol(mod3, Decl(index.ts, 6, 9))

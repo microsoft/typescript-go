@@ -1,6 +1,6 @@
 --- old.decoratorMetadataRestParameterWithImportedType.symbols
 +++ new.decoratorMetadataRestParameterWithImportedType.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >SomeClass : Symbol(SomeClass, Decl(aux.ts, 0, 0))
  
      field: string;

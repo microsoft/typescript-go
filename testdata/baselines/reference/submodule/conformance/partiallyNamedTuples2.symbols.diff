@@ -1,6 +1,6 @@
 --- old.partiallyNamedTuples2.symbols
 +++ new.partiallyNamedTuples2.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >Value : Symbol(Value, Decl(partiallyNamedTuples2.ts, 1, 54))
  
    get<Key extends GetKeys<Keys>>(...key: Key): GetResult<Keys, Key, Value>;

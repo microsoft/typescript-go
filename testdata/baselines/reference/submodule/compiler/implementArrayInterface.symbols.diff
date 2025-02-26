@@ -1,6 +1,6 @@
 --- old.implementArrayInterface.symbols
 +++ new.implementArrayInterface.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >T : Symbol(T, Decl(implementArrayInterface.ts, 0, 22))
  
      toString(): string;

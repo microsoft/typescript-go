@@ -1,6 +1,6 @@
 --- old.tslibMultipleMissingHelper.symbols
 +++ new.tslibMultipleMissingHelper.symbols
-@@= skipped -34, +34 lines =@@
+@@= skipped -33, +33 lines =@@
  >foo : Symbol(foo, Decl(index.ts, 0, 10))
  >Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
  

@@ -1,6 +1,6 @@
 --- old.tsxEmit3.symbols
 +++ new.tsxEmit3.symbols
-@@= skipped -57, +57 lines =@@
+@@= skipped -56, +56 lines =@@
  
  	// Emit M.S.Bar
  	S.Bar, <S.Bar />;

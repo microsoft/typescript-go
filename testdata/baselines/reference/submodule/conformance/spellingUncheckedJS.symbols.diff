@@ -1,6 +1,6 @@
 --- old.spellingUncheckedJS.symbols
 +++ new.spellingUncheckedJS.symbols
-@@= skipped -22, +22 lines =@@
+@@= skipped -21, +21 lines =@@
  >Classe : Symbol(Classe, Decl(spellingUncheckedJS.js, 10, 1))
  
      non = 'oui'

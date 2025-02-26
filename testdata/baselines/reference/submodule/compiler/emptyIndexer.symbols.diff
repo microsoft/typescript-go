@@ -1,6 +1,6 @@
 --- old.emptyIndexer.symbols
 +++ new.emptyIndexer.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >I1 : Symbol(I1, Decl(emptyIndexer.ts, 0, 0))
  
  	m(): number;

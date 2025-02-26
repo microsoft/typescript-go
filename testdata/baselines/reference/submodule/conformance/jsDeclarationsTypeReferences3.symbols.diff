@@ -1,6 +1,6 @@
 --- old.jsDeclarationsTypeReferences3.symbols
 +++ new.jsDeclarationsTypeReferences3.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  
  const Something = require("fs").Something;
  >Something : Symbol(Something, Decl(index.js, 2, 5))

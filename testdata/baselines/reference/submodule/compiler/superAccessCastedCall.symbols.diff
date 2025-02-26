@@ -1,6 +1,6 @@
 --- old.superAccessCastedCall.symbols
 +++ new.superAccessCastedCall.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Foo : Symbol(Foo, Decl(superAccessCastedCall.ts, 0, 0))
  
      bar(): void {}

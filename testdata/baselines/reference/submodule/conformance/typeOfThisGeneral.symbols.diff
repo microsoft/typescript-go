@@ -1,6 +1,6 @@
 --- old.typeOfThisGeneral.symbols
 +++ new.typeOfThisGeneral.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >MyTestClass : Symbol(MyTestClass, Decl(typeOfThisGeneral.ts, 0, 0))
  
      private canary: number;

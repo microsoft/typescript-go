@@ -1,6 +1,6 @@
 --- old.inOperatorWithFunction.symbols
 +++ new.inOperatorWithFunction.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  
  fn("a" in { "a": true });
  >fn : Symbol(fn, Decl(inOperatorWithFunction.ts, 0, 3))

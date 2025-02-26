@@ -1,6 +1,6 @@
 --- old.tsxAttributeQuickinfoTypesSameAsObjectLiteral.symbols
 +++ new.tsxAttributeQuickinfoTypesSameAsObjectLiteral.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >IntrinsicElements : Symbol(IntrinsicElements, Decl(tsxAttributeQuickinfoTypesSameAsObjectLiteral.tsx, 0, 15))
  
          span: {};

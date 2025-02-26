@@ -1,6 +1,6 @@
 --- old.computedPropertyNamesContextualType1_ES5.symbols
 +++ new.computedPropertyNamesContextualType1_ES5.symbols
-@@= skipped -20, +20 lines =@@
+@@= skipped -19, +19 lines =@@
      ["" + 0](y) { return y.length; },
  >["" + 0] : Symbol(["" + 0], Decl(computedPropertyNamesContextualType1_ES5.ts, 5, 12))
  >y : Symbol(y, Decl(computedPropertyNamesContextualType1_ES5.ts, 6, 13))

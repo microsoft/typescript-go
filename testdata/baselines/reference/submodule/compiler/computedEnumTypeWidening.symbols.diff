@@ -1,6 +1,6 @@
 --- old.computedEnumTypeWidening.symbols
 +++ new.computedEnumTypeWidening.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >E : Symbol(E, Decl(computedEnumTypeWidening.ts, 0, 45))
  
      A = computed(0),

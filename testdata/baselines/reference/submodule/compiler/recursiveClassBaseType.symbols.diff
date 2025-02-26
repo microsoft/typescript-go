@@ -1,6 +1,6 @@
 --- old.recursiveClassBaseType.symbols
 +++ new.recursiveClassBaseType.symbols
-@@= skipped -30, +30 lines =@@
+@@= skipped -29, +29 lines =@@
  >Base1 : Symbol(Base1, Decl(recursiveClassBaseType.ts, 6, 49))
  
      abstract root(): Derived1;

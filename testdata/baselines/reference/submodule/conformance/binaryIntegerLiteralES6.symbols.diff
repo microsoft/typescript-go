@@ -1,6 +1,6 @@
 --- old.binaryIntegerLiteralES6.symbols
 +++ new.binaryIntegerLiteralES6.symbols
-@@= skipped -59, +59 lines =@@
+@@= skipped -58, +58 lines =@@
  
  obj1[26];         // string
  >obj1 : Symbol(obj1, Decl(binaryIntegerLiteralES6.ts, 5, 3))

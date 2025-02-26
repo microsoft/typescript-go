@@ -1,6 +1,6 @@
 --- old.AmbientModuleAndNonAmbientClassWithSameNameAndCommonRoot.symbols
 +++ new.AmbientModuleAndNonAmbientClassWithSameNameAndCommonRoot.symbols
-@@= skipped -27, +27 lines =@@
+@@= skipped -26, +26 lines =@@
  >Point : Symbol(Point, Decl(module.d.ts, 0, 18), Decl(classPoint.ts, 0, 10))
  
          constructor(public x: number, public y: number) { }

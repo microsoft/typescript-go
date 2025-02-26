@@ -1,6 +1,6 @@
 --- old.taggedTemplateContextualTyping2.symbols
 +++ new.taggedTemplateContextualTyping2.symbols
-@@= skipped -23, +23 lines =@@
+@@= skipped -22, +22 lines =@@
  function tempTag2(templateStrs: TemplateStringsArray, f: FuncType1, x: number): number;
  >tempTag2 : Symbol(tempTag2, Decl(taggedTemplateContextualTyping2.ts, 1, 52), Decl(taggedTemplateContextualTyping2.ts, 3, 87), Decl(taggedTemplateContextualTyping2.ts, 4, 101))
  >templateStrs : Symbol(templateStrs, Decl(taggedTemplateContextualTyping2.ts, 3, 18))

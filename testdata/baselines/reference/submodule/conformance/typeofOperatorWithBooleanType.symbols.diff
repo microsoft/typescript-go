@@ -1,6 +1,6 @@
 --- old.typeofOperatorWithBooleanType.symbols
 +++ new.typeofOperatorWithBooleanType.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >A : Symbol(A, Decl(typeofOperatorWithBooleanType.ts, 3, 40))
  
      public a: boolean;

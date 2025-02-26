@@ -1,6 +1,6 @@
 --- old.inheritedConstructorPropertyContextualType.symbols
 +++ new.inheritedConstructorPropertyContextualType.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >State : Symbol(State, Decl(inheritedConstructorPropertyContextualType.ts, 0, 0))
  
      version: 2

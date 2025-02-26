@@ -1,6 +1,6 @@
 --- old.enumMemberReduction.symbols
 +++ new.enumMemberReduction.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >MyEnum : Symbol(MyEnum, Decl(enumMemberReduction.ts, 0, 0))
  
    A,

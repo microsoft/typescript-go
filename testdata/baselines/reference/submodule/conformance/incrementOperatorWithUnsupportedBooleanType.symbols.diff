@@ -1,6 +1,6 @@
 --- old.incrementOperatorWithUnsupportedBooleanType.symbols
 +++ new.incrementOperatorWithUnsupportedBooleanType.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >A : Symbol(A, Decl(incrementOperatorWithUnsupportedBooleanType.ts, 3, 40))
  
      public a: boolean;

@@ -1,6 +1,6 @@
 --- old.declarationEmitPrivateSymbolCausesVarDeclarationToBeEmitted.symbols
 +++ new.declarationEmitPrivateSymbolCausesVarDeclarationToBeEmitted.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >User : Symbol(User, Decl(declarationEmitPrivateSymbolCausesVarDeclarationToBeEmitted.ts, 0, 29))
  
      private [_data] : any;

@@ -1,6 +1,6 @@
 --- old.overEagerReturnTypeSpecialization.symbols
 +++ new.overEagerReturnTypeSpecialization.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >T : Symbol(T, Decl(overEagerReturnTypeSpecialization.ts, 2, 13))
  
      func<U>(callback: (value: T) => U): I1<U>;

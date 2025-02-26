@@ -1,6 +1,6 @@
 --- old.deeplyNestedMappedTypes.symbols
 +++ new.deeplyNestedMappedTypes.symbols
-@@= skipped -184, +184 lines =@@
+@@= skipped -183, +183 lines =@@
  
  export const Input = Type.Object({
  >Input : Symbol(Input, Decl(deeplyNestedMappedTypes.ts, 44, 24), Decl(deeplyNestedMappedTypes.ts, 49, 12))

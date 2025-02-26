@@ -1,6 +1,6 @@
 --- old.declarationEmitClassSetAccessorParamNameInJs.symbols
 +++ new.declarationEmitClassSetAccessorParamNameInJs.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
       * @param {string} baz Baz.
       */
      set bar(baz) {}

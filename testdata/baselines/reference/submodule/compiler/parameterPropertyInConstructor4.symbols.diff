@@ -1,6 +1,6 @@
 --- old.parameterPropertyInConstructor4.symbols
 +++ new.parameterPropertyInConstructor4.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(parameterPropertyInConstructor4.ts, 0, 0))
  
      constructor(public a: number[] = [], b: number) {

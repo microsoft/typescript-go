@@ -1,6 +1,6 @@
 --- old.genericIndexedAccessMethodIntersectionCanBeAccessed.symbols
 +++ new.genericIndexedAccessMethodIntersectionCanBeAccessed.symbols
-@@= skipped -46, +46 lines =@@
+@@= skipped -45, +45 lines =@@
  
  ) => {
      Object.keys(ServiceCtr).forEach(key => {

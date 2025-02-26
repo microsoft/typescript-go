@@ -1,6 +1,6 @@
 --- old.decoratorMetadataWithConstructorType.symbols
 +++ new.decoratorMetadataWithConstructorType.symbols
-@@= skipped -33, +33 lines =@@
+@@= skipped -32, +32 lines =@@
  >decorator : Symbol(decorator, Decl(decoratorMetadataWithConstructorType.ts, 6, 1))
  
      x: A = new A();

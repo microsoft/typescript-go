@@ -1,6 +1,6 @@
 --- old.unionTypeInference.symbols
 +++ new.unionTypeInference.symbols
-@@= skipped -114, +114 lines =@@
+@@= skipped -113, +113 lines =@@
  >T : Symbol(T, Decl(unionTypeInference.ts, 32, 21))
  
      then<U>(f: (x: T) => U | Foo<U>, g: U): Foo<U>;

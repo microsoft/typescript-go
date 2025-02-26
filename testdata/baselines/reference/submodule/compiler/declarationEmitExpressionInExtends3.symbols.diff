@@ -1,6 +1,6 @@
 --- old.declarationEmitExpressionInExtends3.symbols
 +++ new.declarationEmitExpressionInExtends3.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(declarationEmitExpressionInExtends3.ts, 0, 27))
  
  	x: T;

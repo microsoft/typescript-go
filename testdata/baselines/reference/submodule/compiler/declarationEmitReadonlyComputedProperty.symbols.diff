@@ -1,6 +1,6 @@
 --- old.declarationEmitReadonlyComputedProperty.symbols
 +++ new.declarationEmitReadonlyComputedProperty.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >Interface : Symbol(Interface, Decl(bug.ts, 0, 30))
  
    readonly [SYMBOL]: string; // remove readonly and @showEmit to see the expected error

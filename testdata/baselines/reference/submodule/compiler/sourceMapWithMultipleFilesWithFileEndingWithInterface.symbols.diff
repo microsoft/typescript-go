@@ -1,6 +1,6 @@
 --- old.sourceMapWithMultipleFilesWithFileEndingWithInterface.symbols
 +++ new.sourceMapWithMultipleFilesWithFileEndingWithInterface.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >Navigator : Symbol(Navigator, Decl(lib.dom.d.ts, --, --), Decl(lib.dom.d.ts, --, --), Decl(a.ts, 2, 1))
  
      getGamepads(func?: any): any;

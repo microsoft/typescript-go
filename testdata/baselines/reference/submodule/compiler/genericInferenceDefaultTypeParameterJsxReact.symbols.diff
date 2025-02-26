@@ -1,6 +1,6 @@
 --- old.genericInferenceDefaultTypeParameterJsxReact.symbols
 +++ new.genericInferenceDefaultTypeParameterJsxReact.symbols
-@@= skipped -36, +36 lines =@@
+@@= skipped -35, +35 lines =@@
  >Component : Symbol(Component, Decl(genericInferenceDefaultTypeParameterJsxReact.tsx, 6, 98))
  >onClick : Symbol(onClick, Decl(genericInferenceDefaultTypeParameterJsxReact.tsx, 12, 21))
  >e : Symbol(e, Decl(genericInferenceDefaultTypeParameterJsxReact.tsx, 12, 31))

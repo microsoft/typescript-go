@@ -1,6 +1,6 @@
 --- old.augmentExportEquals2_1.symbols
 +++ new.augmentExportEquals2_1.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  import "file2";
  let a: x.A; // should not work
  >a : Symbol(a, Decl(file3.ts, 2, 3))

@@ -1,6 +1,6 @@
 --- old.circularContextualReturnType.symbols
 +++ new.circularContextualReturnType.symbols
-@@= skipped -4, +4 lines =@@
+@@= skipped -3, +3 lines =@@
  // Repro from #17711
  
  Object.freeze({

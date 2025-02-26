@@ -1,6 +1,6 @@
 --- old.tsxAttributeResolution14.symbols
 +++ new.tsxAttributeResolution14.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >IntrinsicElements : Symbol(IntrinsicElements, Decl(react.d.ts, 1, 22))
  
          div: any;

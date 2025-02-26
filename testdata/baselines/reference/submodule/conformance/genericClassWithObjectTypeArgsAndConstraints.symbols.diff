@@ -1,6 +1,6 @@
 --- old.genericClassWithObjectTypeArgsAndConstraints.symbols
 +++ new.genericClassWithObjectTypeArgsAndConstraints.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >C : Symbol(C, Decl(genericClassWithObjectTypeArgsAndConstraints.ts, 0, 0))
  
      x: string;

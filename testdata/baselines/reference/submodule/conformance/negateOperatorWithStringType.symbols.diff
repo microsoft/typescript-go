@@ -1,6 +1,6 @@
 --- old.negateOperatorWithStringType.symbols
 +++ new.negateOperatorWithStringType.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  >A : Symbol(A, Decl(negateOperatorWithStringType.ts, 4, 40))
  
      public a: string;

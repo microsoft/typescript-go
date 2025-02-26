@@ -1,6 +1,6 @@
 --- old.staticOffOfInstance1.symbols
 +++ new.staticOffOfInstance1.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >List : Symbol(List, Decl(staticOffOfInstance1.ts, 0, 0))
  
    public Blah() {

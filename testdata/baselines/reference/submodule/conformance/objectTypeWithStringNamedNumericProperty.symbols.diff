@@ -1,6 +1,6 @@
 --- old.objectTypeWithStringNamedNumericProperty.symbols
 +++ new.objectTypeWithStringNamedNumericProperty.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >C : Symbol(C, Decl(objectTypeWithStringNamedNumericProperty.ts, 0, 0))
  
      "0.1": void;

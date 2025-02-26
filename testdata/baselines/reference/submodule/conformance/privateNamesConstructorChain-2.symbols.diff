@@ -1,6 +1,6 @@
 --- old.privateNamesConstructorChain-2.symbols
 +++ new.privateNamesConstructorChain-2.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(privateNamesConstructorChain-2.ts, 0, 13))
  
      #foo = 3;

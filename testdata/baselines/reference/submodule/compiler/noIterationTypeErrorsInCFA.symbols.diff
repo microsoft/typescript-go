@@ -1,6 +1,6 @@
 --- old.noIterationTypeErrorsInCFA.symbols
 +++ new.noIterationTypeErrorsInCFA.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >F : Symbol(F, Decl(noIterationTypeErrorsInCFA.ts, 0, 0))
  
      d(): void

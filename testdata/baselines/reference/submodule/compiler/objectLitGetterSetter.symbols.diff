@@ -1,6 +1,6 @@
 --- old.objectLitGetterSetter.symbols
 +++ new.objectLitGetterSetter.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >obj : Symbol(obj, Decl(objectLitGetterSetter.ts, 0, 15))
  
              Object.defineProperty(obj, "accProperty", <PropertyDescriptor>({

@@ -1,6 +1,6 @@
 --- old.privateNameStaticMethodAssignment.symbols
 +++ new.privateNameStaticMethodAssignment.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A3 : Symbol(A3, Decl(privateNameStaticMethodAssignment.ts, 0, 0))
  
      static #method() { };

@@ -1,6 +1,6 @@
 --- old.jsxChildrenArrayWrongType.symbols
 +++ new.jsxChildrenArrayWrongType.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >PropsType : Symbol(PropsType, Decl(index.tsx, 0, 0))
  
      children: [string, number] | boolean[];

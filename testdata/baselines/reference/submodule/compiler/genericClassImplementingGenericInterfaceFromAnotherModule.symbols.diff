@@ -1,6 +1,6 @@
 --- old.genericClassImplementingGenericInterfaceFromAnotherModule.symbols
 +++ new.genericClassImplementingGenericInterfaceFromAnotherModule.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
      export class Foo<T> implements foo.IFoo<T> { }
  >Foo : Symbol(Foo, Decl(genericClassImplementingGenericInterfaceFromAnotherModule.ts, 3, 12))
  >T : Symbol(T, Decl(genericClassImplementingGenericInterfaceFromAnotherModule.ts, 4, 21))

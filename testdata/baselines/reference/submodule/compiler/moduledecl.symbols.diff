@@ -1,6 +1,6 @@
 --- old.moduledecl.symbols
 +++ new.moduledecl.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  module c.a.b {
  >c : Symbol(c, Decl(moduledecl.ts, 4, 1))
  >a : Symbol(a, Decl(moduledecl.ts, 6, 9))

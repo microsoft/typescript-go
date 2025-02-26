@@ -1,6 +1,6 @@
 --- old.tsxElementResolution4.symbols
 +++ new.tsxElementResolution4.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >IntrinsicElements : Symbol(IntrinsicElements, Decl(file.tsx, 1, 22))
  
  	    div: { n: string; };

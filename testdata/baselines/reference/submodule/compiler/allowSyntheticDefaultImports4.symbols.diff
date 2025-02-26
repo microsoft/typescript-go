@@ -1,6 +1,6 @@
 --- old.allowSyntheticDefaultImports4.symbols
 +++ new.allowSyntheticDefaultImports4.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Foo : Symbol(Foo, Decl(b.d.ts, 0, 0))
  
  	member: string;

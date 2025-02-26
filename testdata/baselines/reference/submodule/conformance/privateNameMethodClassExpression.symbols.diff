@@ -1,6 +1,6 @@
 --- old.privateNameMethodClassExpression.symbols
 +++ new.privateNameMethodClassExpression.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(privateNameMethodClassExpression.ts, 0, 5))
  
      #field = this.#method();

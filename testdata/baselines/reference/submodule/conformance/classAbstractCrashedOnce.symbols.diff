@@ -1,6 +1,6 @@
 --- old.classAbstractCrashedOnce.symbols
 +++ new.classAbstractCrashedOnce.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >foo : Symbol(foo, Decl(classAbstractCrashedOnce.ts, 0, 0))
  
      protected abstract test();

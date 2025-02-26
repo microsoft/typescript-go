@@ -1,6 +1,6 @@
 --- old.exportAssignmentWithPrivacyError.symbols
 +++ new.exportAssignmentWithPrivacyError.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >connectexport : Symbol(connectexport, Decl(exportAssignmentWithPrivacyError.ts, 2, 1))
  
      use: (mod: connectmodule) => connectexport;

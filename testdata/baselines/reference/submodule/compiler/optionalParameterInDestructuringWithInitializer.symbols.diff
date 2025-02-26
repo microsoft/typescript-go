@@ -1,6 +1,6 @@
 --- old.optionalParameterInDestructuringWithInitializer.symbols
 +++ new.optionalParameterInDestructuringWithInitializer.symbols
-@@= skipped -158, +158 lines =@@
+@@= skipped -157, +157 lines =@@
  >Foo : Symbol(Foo, Decl(optionalParameterInDestructuringWithInitializer.ts, 37, 1))
  
    readonly bar?: number;

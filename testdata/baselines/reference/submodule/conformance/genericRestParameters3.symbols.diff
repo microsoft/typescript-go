@@ -1,6 +1,6 @@
 --- old.genericRestParameters3.symbols
 +++ new.genericRestParameters3.symbols
-@@= skipped -94, +94 lines =@@
+@@= skipped -93, +93 lines =@@
  >E : Symbol(E, Decl(genericRestParameters3.ts, 28, 20))
  
      hello: number;

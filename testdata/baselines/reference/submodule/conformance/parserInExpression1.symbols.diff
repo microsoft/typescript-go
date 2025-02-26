@@ -1,6 +1,6 @@
 --- old.parserInExpression1.symbols
 +++ new.parserInExpression1.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === parserInExpression1.ts ===
  console.log("a" in { "a": true });

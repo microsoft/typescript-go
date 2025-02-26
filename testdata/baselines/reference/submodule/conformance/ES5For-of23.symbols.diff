@@ -1,6 +1,6 @@
 --- old.ES5For-of23.symbols
 +++ new.ES5For-of23.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >_a : Symbol(_a, Decl(ES5For-of23.ts, 1, 7))
  
      console.log(x);

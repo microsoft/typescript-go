@@ -1,6 +1,6 @@
 --- old.tsxGenericAttributesType9.symbols
 +++ new.tsxGenericAttributesType9.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >P : Symbol(P, Decl(file.tsx, 2, 22))
  >Ctor : Symbol(Ctor, Decl(file.tsx, 2, 25))
  >React : Symbol(React, Decl(file.tsx, 0, 0))

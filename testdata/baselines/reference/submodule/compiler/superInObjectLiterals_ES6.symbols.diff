@@ -1,6 +1,6 @@
 --- old.superInObjectLiterals_ES6.symbols
 +++ new.superInObjectLiterals_ES6.symbols
-@@= skipped -50, +50 lines =@@
+@@= skipped -49, +49 lines =@@
  >A : Symbol(A, Decl(superInObjectLiterals_ES6.ts, 24, 2))
  
      method() { }

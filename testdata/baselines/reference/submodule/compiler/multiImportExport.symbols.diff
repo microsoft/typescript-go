@@ -1,6 +1,6 @@
 --- old.multiImportExport.symbols
 +++ new.multiImportExport.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  var addr = new Drawing.Math.Adder();
  >addr : Symbol(addr, Decl(consumer.ts, 1, 3))
  >Drawing.Math.Adder : Symbol(Adder, Decl(Math.ts, 2, 12))

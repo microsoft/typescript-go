@@ -1,6 +1,6 @@
 --- old.invalidNumberAssignments.symbols
 +++ new.invalidNumberAssignments.symbols
-@@= skipped -23, +23 lines =@@
+@@= skipped -22, +22 lines =@@
  
  class C { foo: string; }
  >C : Symbol(C, Decl(invalidNumberAssignments.ts, 5, 28))

@@ -1,6 +1,6 @@
 --- old.constructSignatureAssignabilityInInheritance2.symbols
 +++ new.constructSignatureAssignabilityInInheritance2.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  
  class Base { foo: string; }
  >Base : Symbol(Base, Decl(constructSignatureAssignabilityInInheritance2.ts, 0, 0))

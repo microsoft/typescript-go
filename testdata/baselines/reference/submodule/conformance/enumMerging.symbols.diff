@@ -1,6 +1,6 @@
 --- old.enumMerging.symbols
 +++ new.enumMerging.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >EImpl1 : Symbol(EImpl1, Decl(enumMerging.ts, 2, 11), Decl(enumMerging.ts, 5, 5))
  
          A, B, C

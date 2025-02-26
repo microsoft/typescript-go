@@ -1,6 +1,6 @@
 --- old.jsxFactoryMissingErrorInsideAClass.symbols
 +++ new.jsxFactoryMissingErrorInsideAClass.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(test.tsx, 0, 0))
  
      factory() {

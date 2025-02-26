@@ -1,6 +1,6 @@
 --- old.forwardRefInEnum.symbols
 +++ new.forwardRefInEnum.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
      // illegal case
      // forward reference to the element of the same enum
      X = Y, 

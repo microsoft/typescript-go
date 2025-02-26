@@ -1,6 +1,6 @@
 --- old.forgottenNew.symbols
 +++ new.forgottenNew.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  
  var logger = Tools.NullLogger();
  >logger : Symbol(logger, Decl(forgottenNew.ts, 4, 3))

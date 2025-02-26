@@ -1,6 +1,6 @@
 --- old.exportAsNamespace5.symbols
 +++ new.exportAsNamespace5.symbols
-@@= skipped -18, +18 lines =@@
+@@= skipped -17, +17 lines =@@
  type Alias = ns.Named;
  >Alias : Symbol(Alias, Decl(one.ts, 0, 23))
  >ns : Symbol(ns, Decl(one.ts, 0, 6))

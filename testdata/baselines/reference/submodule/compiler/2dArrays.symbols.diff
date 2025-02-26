@@ -1,6 +1,6 @@
 --- old.2dArrays.symbols
 +++ new.2dArrays.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >Ship : Symbol(Ship, Decl(2dArrays.ts, 1, 1))
  
      isSunk: boolean;

@@ -1,6 +1,6 @@
 --- old.optionalConstructorArgInSuper.symbols
 +++ new.optionalConstructorArgInSuper.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >opt : Symbol(opt, Decl(optionalConstructorArgInSuper.ts, 1, 16))
  
      foo(other?) { }

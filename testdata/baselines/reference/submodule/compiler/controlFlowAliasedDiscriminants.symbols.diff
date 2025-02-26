@@ -1,6 +1,6 @@
 --- old.controlFlowAliasedDiscriminants.symbols
 +++ new.controlFlowAliasedDiscriminants.symbols
-@@= skipped -63, +63 lines =@@
+@@= skipped -62, +62 lines =@@
  >isSuccess3 : Symbol(isSuccess3, Decl(controlFlowAliasedDiscriminants.ts, 17, 20))
  
      data1.toExponential();  // should ok

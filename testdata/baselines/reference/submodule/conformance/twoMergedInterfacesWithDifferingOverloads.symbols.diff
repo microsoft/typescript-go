@@ -1,6 +1,6 @@
 --- old.twoMergedInterfacesWithDifferingOverloads.symbols
 +++ new.twoMergedInterfacesWithDifferingOverloads.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >A : Symbol(A, Decl(twoMergedInterfacesWithDifferingOverloads.ts, 0, 0), Decl(twoMergedInterfacesWithDifferingOverloads.ts, 5, 1))
  
      foo(x: number): number;

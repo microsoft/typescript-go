@@ -1,6 +1,6 @@
 --- old.switchComparableCompatForBrands.symbols
 +++ new.switchComparableCompatForBrands.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >MyBrand : Symbol(MyBrand, Decl(switchComparableCompatForBrands.ts, 0, 0))
  {
      private _a: number;

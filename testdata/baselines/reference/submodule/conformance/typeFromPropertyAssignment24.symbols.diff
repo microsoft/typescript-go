@@ -1,6 +1,6 @@
 --- old.typeFromPropertyAssignment24.symbols
 +++ new.typeFromPropertyAssignment24.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === usage.js ===
  // note that usage is first in the compilation
  Outer.Inner.Message = function() {

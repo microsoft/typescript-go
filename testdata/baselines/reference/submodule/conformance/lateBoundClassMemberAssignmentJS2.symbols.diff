@@ -1,6 +1,6 @@
 --- old.lateBoundClassMemberAssignmentJS2.symbols
 +++ new.lateBoundClassMemberAssignmentJS2.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
      }
  
      method() {

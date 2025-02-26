@@ -1,6 +1,6 @@
 --- old.tsxEmit2.symbols
 +++ new.tsxEmit2.symbols
-@@= skipped -22, +22 lines =@@
+@@= skipped -21, +21 lines =@@
  
  var spreads1 = <div {...p1}>{p2}</div>;
  >spreads1 : Symbol(spreads1, Decl(file.tsx, 8, 3))

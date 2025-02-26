@@ -1,6 +1,6 @@
 --- old.noUncheckedIndexedAccessDestructuring.symbols
 +++ new.noUncheckedIndexedAccessDestructuring.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  >strArray : Symbol(strArray, Decl(noUncheckedIndexedAccessDestructuring.ts, 0, 13))
  
  s1.toString(); // Should error, s1 possibly undefined

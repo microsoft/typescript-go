@@ -1,6 +1,6 @@
 --- old.strictNullNotNullIndexTypeShouldWork.symbols
 +++ new.strictNullNotNullIndexTypeShouldWork.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(strictNullNotNullIndexTypeShouldWork.ts, 0, 0))
  
      params?: { name: string; };

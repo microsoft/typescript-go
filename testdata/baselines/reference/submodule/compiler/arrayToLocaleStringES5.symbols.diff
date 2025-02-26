@@ -1,6 +1,6 @@
 --- old.arrayToLocaleStringES5.symbols
 +++ new.arrayToLocaleStringES5.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  
  str = arr.toLocaleString(); // OK
  >str : Symbol(str, Decl(arrayToLocaleStringES5.ts, 0, 3))

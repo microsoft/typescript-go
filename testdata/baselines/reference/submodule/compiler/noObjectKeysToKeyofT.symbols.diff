@@ -1,6 +1,6 @@
 --- old.noObjectKeysToKeyofT.symbols
 +++ new.noObjectKeysToKeyofT.symbols
-@@= skipped -4, +4 lines =@@
+@@= skipped -3, +3 lines =@@
  // Do not change Object.keys to return keyof T.
  // The current return type (string[]) is intentional.
  Object.keys({ a: 0 }).push("b");

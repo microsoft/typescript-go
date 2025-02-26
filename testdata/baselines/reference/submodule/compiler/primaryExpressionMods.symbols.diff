@@ -1,6 +1,6 @@
 --- old.primaryExpressionMods.symbols
 +++ new.primaryExpressionMods.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  {
      export interface P { x: number; y: number; }
  >P : Symbol(P, Decl(primaryExpressionMods.ts, 1, 1))

@@ -1,6 +1,6 @@
 --- old.staticClassMemberError.symbols
 +++ new.staticClassMemberError.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(staticClassMemberError.ts, 0, 0))
  
  	static s;

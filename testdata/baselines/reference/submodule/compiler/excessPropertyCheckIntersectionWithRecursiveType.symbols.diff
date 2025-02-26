@@ -1,6 +1,6 @@
 --- old.excessPropertyCheckIntersectionWithRecursiveType.symbols
 +++ new.excessPropertyCheckIntersectionWithRecursiveType.symbols
-@@= skipped -233, +233 lines =@@
+@@= skipped -232, +232 lines =@@
  >User : Symbol(User, Decl(excessPropertyCheckIntersectionWithRecursiveType.ts, 69, 31))
  
    name: string;

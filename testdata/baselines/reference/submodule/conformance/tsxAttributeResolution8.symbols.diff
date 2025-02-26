@@ -1,6 +1,6 @@
 --- old.tsxAttributeResolution8.symbols
 +++ new.tsxAttributeResolution8.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >IntrinsicElements : Symbol(IntrinsicElements, Decl(file.tsx, 1, 22))
  
  		test1: {x: string};

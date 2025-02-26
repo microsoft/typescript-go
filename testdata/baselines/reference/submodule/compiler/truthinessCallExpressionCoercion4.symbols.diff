@@ -1,6 +1,6 @@
 --- old.truthinessCallExpressionCoercion4.symbols
 +++ new.truthinessCallExpressionCoercion4.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >fn : Symbol(fn, Decl(a.js, 0, 0))
  
  if (typeof module === 'object' && module.exports) {

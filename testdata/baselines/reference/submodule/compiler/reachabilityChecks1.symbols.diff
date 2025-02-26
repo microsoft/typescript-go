@@ -1,6 +1,6 @@
 --- old.reachabilityChecks1.symbols
 +++ new.reachabilityChecks1.symbols
-@@= skipped -54, +54 lines =@@
+@@= skipped -53, +53 lines =@@
  
          const enum E { X }
  >E : Symbol(E, Decl(reachabilityChecks1.ts, 29, 14))

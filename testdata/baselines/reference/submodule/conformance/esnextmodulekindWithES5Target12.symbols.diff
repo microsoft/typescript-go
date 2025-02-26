@@ -1,6 +1,6 @@
 --- old.esnextmodulekindWithES5Target12.symbols
 +++ new.esnextmodulekindWithES5Target12.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  >E : Symbol(E, Decl(esnextmodulekindWithES5Target12.ts, 5, 1), Decl(esnextmodulekindWithES5Target12.ts, 9, 1), Decl(esnextmodulekindWithES5Target12.ts, 13, 1), Decl(esnextmodulekindWithES5Target12.ts, 17, 1))
  
      w = 1

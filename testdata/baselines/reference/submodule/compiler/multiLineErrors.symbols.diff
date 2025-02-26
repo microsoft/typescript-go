@@ -1,6 +1,6 @@
 --- old.multiLineErrors.symbols
 +++ new.multiLineErrors.symbols
-@@= skipped -25, +25 lines =@@
+@@= skipped -24, +24 lines =@@
  >A1 : Symbol(A1, Decl(multiLineErrors.ts, 9, 1))
  
      x: { y: number; };

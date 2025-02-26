@@ -1,6 +1,6 @@
 --- old.ExportVariableOfGenericTypeWithInaccessibleTypeAsTypeArgument.symbols
 +++ new.ExportVariableOfGenericTypeWithInaccessibleTypeAsTypeArgument.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >B : Symbol(B, Decl(ExportVariableOfGenericTypeWithInaccessibleTypeAsTypeArgument.ts, 0, 10))
  
          id: number;

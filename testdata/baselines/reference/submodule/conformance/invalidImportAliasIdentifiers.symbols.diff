@@ -1,6 +1,6 @@
 --- old.invalidImportAliasIdentifiers.symbols
 +++ new.invalidImportAliasIdentifiers.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >C : Symbol(C, Decl(invalidImportAliasIdentifiers.ts, 4, 13))
  
      name: string;

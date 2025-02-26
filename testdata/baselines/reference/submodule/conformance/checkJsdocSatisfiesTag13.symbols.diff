@@ -1,6 +1,6 @@
 --- old.checkJsdocSatisfiesTag13.symbols
 +++ new.checkJsdocSatisfiesTag13.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >t1 : Symbol(t1, Decl(a.js, 1, 5))
  >f : Symbol(f, Decl(a.js, 1, 12))
  >s : Symbol(s, Decl(a.js, 1, 15))

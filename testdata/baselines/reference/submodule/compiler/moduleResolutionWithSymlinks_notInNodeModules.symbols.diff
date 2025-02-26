@@ -1,6 +1,6 @@
 --- old.moduleResolutionWithSymlinks_notInNodeModules.symbols
 +++ new.moduleResolutionWithSymlinks_notInNodeModules.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >x : Symbol(x, Decl(app.ts, 0, 8))
  
  import { x as x2 } from "./shared2/abc";

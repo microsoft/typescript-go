@@ -1,6 +1,6 @@
 --- old.checkJsxSubtleSkipContextSensitiveBug.symbols
 +++ new.checkJsxSubtleSkipContextSensitiveBug.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  
  interface ErrorResult { error: true }
  >ErrorResult : Symbol(ErrorResult, Decl(checkJsxSubtleSkipContextSensitiveBug.tsx, 1, 31))

@@ -1,6 +1,6 @@
 --- old.defaultParameterAddsUndefinedWithStrictNullChecks.symbols
 +++ new.defaultParameterAddsUndefinedWithStrictNullChecks.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >addUndefined2 : Symbol(addUndefined2, Decl(defaultParameterAddsUndefinedWithStrictNullChecks.ts, 0, 31))
  
      return addUndefined1.length + (addUndefined2 || 0);

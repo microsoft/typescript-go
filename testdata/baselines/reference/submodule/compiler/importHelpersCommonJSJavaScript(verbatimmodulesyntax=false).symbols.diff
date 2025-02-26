@@ -1,6 +1,6 @@
 --- old.importHelpersCommonJSJavaScript(verbatimmodulesyntax=false).symbols
 +++ new.importHelpersCommonJSJavaScript(verbatimmodulesyntax=false).symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === /node_modules/tslib/tslib.d.ts ===
  export declare var __extends: any;

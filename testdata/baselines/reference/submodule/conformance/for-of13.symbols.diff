@@ -1,6 +1,6 @@
 --- old.for-of13.symbols
 +++ new.for-of13.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
  for (v of [""].values()) { }
  >v : Symbol(v, Decl(for-of13.ts, 0, 3))

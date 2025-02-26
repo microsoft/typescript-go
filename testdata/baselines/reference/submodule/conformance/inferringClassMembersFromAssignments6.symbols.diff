@@ -1,6 +1,6 @@
 --- old.inferringClassMembersFromAssignments6.symbols
 +++ new.inferringClassMembersFromAssignments6.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
      var self = this
  >self : Symbol(self, Decl(inferringClassMembersFromAssignments6.js, 1, 7))

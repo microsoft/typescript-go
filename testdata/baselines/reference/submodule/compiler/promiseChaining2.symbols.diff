@@ -1,6 +1,6 @@
 --- old.promiseChaining2.symbols
 +++ new.promiseChaining2.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >length : Symbol(length, Decl(promiseChaining2.ts, 1, 24))
  
      constructor(public value: T) { }

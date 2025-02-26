@@ -1,6 +1,6 @@
 --- old.annotatedThisPropertyInitializerDoesntNarrow.symbols
 +++ new.annotatedThisPropertyInitializerDoesntNarrow.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
      constructor() {
          /** @type {{ [assetName: string]: number}} */
          this.assets = {};

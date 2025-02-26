@@ -1,6 +1,6 @@
 --- old.superAccess2.symbols
 +++ new.superAccess2.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >P : Symbol(P, Decl(superAccess2.ts, 0, 0))
  
      x() { }

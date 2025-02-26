@@ -1,6 +1,6 @@
 --- old.circularlyConstrainedMappedTypeContainingConditionalNoInfiniteInstantiationDepth.symbols
 +++ new.circularlyConstrainedMappedTypeContainingConditionalNoInfiniteInstantiationDepth.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  >context : Symbol(context, Decl(circularlyConstrainedMappedTypeContainingConditionalNoInfiniteInstantiationDepth.ts, 2, 25))
  
      readonly props: Readonly<P> & Readonly<{ children?: {} }>;

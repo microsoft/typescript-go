@@ -1,6 +1,6 @@
 --- old.declarationEmitToDeclarationDirWithCompositeOption.symbols
 +++ new.declarationEmitToDeclarationDirWithCompositeOption.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Foo : Symbol(Foo, Decl(test.ts, 0, 0))
  
      x: number;

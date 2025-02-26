@@ -1,6 +1,6 @@
 --- old.typeFromPropertyAssignment33.symbols
 +++ new.typeFromPropertyAssignment33.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === ns.ts ===
  namespace ExpandoMerge {

@@ -1,6 +1,6 @@
 --- old.initializersInAmbientEnums.symbols
 +++ new.initializersInAmbientEnums.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >E : Symbol(E, Decl(initializersInAmbientEnums.ts, 0, 0))
  
      a = 10,

@@ -1,6 +1,6 @@
 --- old.privateNamesIncompatibleModifiers.symbols
 +++ new.privateNamesIncompatibleModifiers.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(privateNamesIncompatibleModifiers.ts, 0, 0))
  
      public #foo = 3;         // Error

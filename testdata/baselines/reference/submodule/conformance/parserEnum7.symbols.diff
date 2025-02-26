@@ -1,6 +1,6 @@
 --- old.parserEnum7.symbols
 +++ new.parserEnum7.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >E : Symbol(E, Decl(parserEnum7.ts, 0, 0))
  
    1, 2, 3

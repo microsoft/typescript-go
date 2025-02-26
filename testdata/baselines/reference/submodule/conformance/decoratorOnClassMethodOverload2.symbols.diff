@@ -1,6 +1,6 @@
 --- old.decoratorOnClassMethodOverload2.symbols
 +++ new.decoratorOnClassMethodOverload2.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  >C : Symbol(C, Decl(decoratorOnClassMethodOverload2.ts, 0, 126))
  
      method()

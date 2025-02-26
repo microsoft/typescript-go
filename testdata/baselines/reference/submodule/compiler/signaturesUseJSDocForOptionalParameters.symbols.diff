@@ -1,6 +1,6 @@
 --- old.signaturesUseJSDocForOptionalParameters.symbols
 +++ new.signaturesUseJSDocForOptionalParameters.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >MyClass : Symbol(MyClass, Decl(jsDocOptionality.js, 0, 0))
  
    this.prop = null;

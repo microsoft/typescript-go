@@ -1,6 +1,6 @@
 --- old.jsdocReferenceGlobalTypeInCommonJs.symbols
 +++ new.jsdocReferenceGlobalTypeInCommonJs.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === a.js ===
  const other = require('./other');
  >other : Symbol(other, Decl(a.js, 0, 5))

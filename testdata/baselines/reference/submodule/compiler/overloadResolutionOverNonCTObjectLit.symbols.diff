@@ -1,6 +1,6 @@
 --- old.overloadResolutionOverNonCTObjectLit.symbols
 +++ new.overloadResolutionOverNonCTObjectLit.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >IToken : Symbol(IToken, Decl(overloadResolutionOverNonCTObjectLit.ts, 0, 13))
  
                                  startIndex:number;

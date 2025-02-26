@@ -1,6 +1,6 @@
 --- old.comparisonOperatorWithSubtypeObjectOnProperty.symbols
 +++ new.comparisonOperatorWithSubtypeObjectOnProperty.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Base : Symbol(Base, Decl(comparisonOperatorWithSubtypeObjectOnProperty.ts, 0, 0))
  
      public a: string;

@@ -1,6 +1,6 @@
 --- old.global.symbols
 +++ new.global.symbols
-@@= skipped -18, +18 lines =@@
+@@= skipped -17, +17 lines =@@
  >x : Symbol(x, Decl(global.ts, 6, 3))
  
  M.f(3);

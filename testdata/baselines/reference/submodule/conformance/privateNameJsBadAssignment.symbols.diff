@@ -1,6 +1,6 @@
 --- old.privateNameJsBadAssignment.symbols
 +++ new.privateNameJsBadAssignment.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(privateNameJsBadAssignment.js, 0, 18))
  
  A.prototype.#no = 2;         // Error (outside class body)

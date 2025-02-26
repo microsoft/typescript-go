@@ -1,6 +1,6 @@
 --- old.aliasOnMergedModuleInterface.symbols
 +++ new.aliasOnMergedModuleInterface.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >foo : Symbol(foo, Decl(aliasOnMergedModuleInterface_1.ts, 0, 0))
  
  z.bar("hello"); // This should be ok

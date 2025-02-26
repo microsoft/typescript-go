@@ -1,6 +1,6 @@
 --- old.privateNameFieldParenthesisLeftAssignment.symbols
 +++ new.privateNameFieldParenthesisLeftAssignment.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Foo : Symbol(Foo, Decl(privateNameFieldParenthesisLeftAssignment.ts, 0, 0))
  
      #p: number;

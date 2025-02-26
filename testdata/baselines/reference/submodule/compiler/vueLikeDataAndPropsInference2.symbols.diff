@@ -1,6 +1,6 @@
 --- old.vueLikeDataAndPropsInference2.symbols
 +++ new.vueLikeDataAndPropsInference2.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Instance : Symbol(Instance, Decl(vueLikeDataAndPropsInference2.ts, 0, 0))
  
      _instanceBrand: never

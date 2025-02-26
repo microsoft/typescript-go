@@ -1,6 +1,6 @@
 --- old.decoratorInstantiateModulesInFunctionBodies.symbols
 +++ new.decoratorInstantiateModulesInFunctionBodies.symbols
-@@= skipped -29, +29 lines =@@
+@@= skipped -28, +28 lines =@@
  >test : Symbol(test, Decl(b.ts, 0, 8))
  
      static whatever() {

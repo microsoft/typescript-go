@@ -1,6 +1,6 @@
 --- old.jsxFactoryQualifiedNameWithEs5.symbols
 +++ new.jsxFactoryQualifiedNameWithEs5.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  >Component : Symbol(Component, Decl(index.tsx, 3, 41))
  
      renderCallback() {

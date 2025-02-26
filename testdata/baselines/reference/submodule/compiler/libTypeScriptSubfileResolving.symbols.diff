@@ -1,6 +1,6 @@
 --- old.libTypeScriptSubfileResolving.symbols
 +++ new.libTypeScriptSubfileResolving.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  === /node_modules/@typescript/lib-dom/iterable.d.ts ===
  interface DOMIterable { abc: string }
  >DOMIterable : Symbol(DOMIterable, Decl(iterable.d.ts, 0, 0))

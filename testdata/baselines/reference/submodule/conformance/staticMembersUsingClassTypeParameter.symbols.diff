@@ -1,6 +1,6 @@
 --- old.staticMembersUsingClassTypeParameter.symbols
 +++ new.staticMembersUsingClassTypeParameter.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(staticMembersUsingClassTypeParameter.ts, 1, 8))
  
      static x: T;

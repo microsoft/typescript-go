@@ -1,6 +1,6 @@
 --- old.genericClasses4.symbols
 +++ new.genericClasses4.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >A : Symbol(A, Decl(genericClasses4.ts, 1, 13))
  {
      constructor(public x: A, public y: A) { }

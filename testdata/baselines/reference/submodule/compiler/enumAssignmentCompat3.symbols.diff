@@ -1,6 +1,6 @@
 --- old.enumAssignmentCompat3.symbols
 +++ new.enumAssignmentCompat3.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >E : Symbol(E, Decl(enumAssignmentCompat3.ts, 0, 17))
  
          a, b, c,

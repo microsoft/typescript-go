@@ -1,6 +1,6 @@
 --- old.defaultExportsGetExportedSystem.symbols
 +++ new.defaultExportsGetExportedSystem.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === a.ts ===
  export default class Foo {}

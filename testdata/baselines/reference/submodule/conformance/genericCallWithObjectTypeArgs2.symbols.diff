@@ -1,6 +1,6 @@
 --- old.genericCallWithObjectTypeArgs2.symbols
 +++ new.genericCallWithObjectTypeArgs2.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Base : Symbol(Base, Decl(genericCallWithObjectTypeArgs2.ts, 0, 0))
  
      x: string;

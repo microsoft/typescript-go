@@ -1,6 +1,6 @@
 --- old.baseTypeWrappingInstantiationChain.symbols
 +++ new.baseTypeWrappingInstantiationChain.symbols
-@@= skipped -25, +25 lines =@@
+@@= skipped -24, +24 lines =@@
  >T4 : Symbol(T4, Decl(baseTypeWrappingInstantiationChain.ts, 8, 16))
  
      method(t: T4) { }

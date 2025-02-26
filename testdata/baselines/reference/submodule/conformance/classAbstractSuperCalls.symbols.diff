@@ -1,6 +1,6 @@
 --- old.classAbstractSuperCalls.symbols
 +++ new.classAbstractSuperCalls.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(classAbstractSuperCalls.ts, 0, 0))
  
      foo() { return 1; }

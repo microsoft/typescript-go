@@ -1,6 +1,6 @@
 --- old.classExtendsItselfIndirectly2.symbols
 +++ new.classExtendsItselfIndirectly2.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === classExtendsItselfIndirectly2.ts ===
  class C extends N.E { foo: string; } // error
  >C : Symbol(C, Decl(classExtendsItselfIndirectly2.ts, 0, 0))

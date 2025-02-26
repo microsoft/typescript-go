@@ -1,6 +1,6 @@
 --- old.parameterInitializersForwardReferencing1.symbols
 +++ new.parameterInitializersForwardReferencing1.symbols
-@@= skipped -81, +81 lines =@@
+@@= skipped -80, +80 lines =@@
  >Foo : Symbol(Foo, Decl(parameterInitializersForwardReferencing1.ts, 30, 1))
  
      constructor(public x = 12, public y = x) {}

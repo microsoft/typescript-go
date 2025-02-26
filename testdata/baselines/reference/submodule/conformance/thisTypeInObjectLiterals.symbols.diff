@@ -1,6 +1,6 @@
 --- old.thisTypeInObjectLiterals.symbols
 +++ new.thisTypeInObjectLiterals.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >m : Symbol(m, Decl(thisTypeInObjectLiterals.ts, 1, 13))
  
          return this.d.length;

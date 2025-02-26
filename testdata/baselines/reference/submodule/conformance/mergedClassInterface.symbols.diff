@@ -1,6 +1,6 @@
 --- old.mergedClassInterface.symbols
 +++ new.mergedClassInterface.symbols
-@@= skipped -29, +29 lines =@@
+@@= skipped -28, +28 lines =@@
  >C5 : Symbol(C5, Decl(file1.ts, 14, 12), Decl(file1.ts, 18, 1), Decl(file1.ts, 22, 1), Decl(file1.ts, 26, 1))
  
      x1: number;

@@ -1,6 +1,6 @@
 --- old.stringLiteralTypesAsTags03.symbols
 +++ new.stringLiteralTypesAsTags03.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >Entity : Symbol(Entity, Decl(stringLiteralTypesAsTags03.ts, 0, 21))
  
      kind: Kind;

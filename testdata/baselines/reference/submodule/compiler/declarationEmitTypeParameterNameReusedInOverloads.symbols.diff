@@ -1,6 +1,6 @@
 --- old.declarationEmitTypeParameterNameReusedInOverloads.symbols
 +++ new.declarationEmitTypeParameterNameReusedInOverloads.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === declarationEmitTypeParameterNameReusedInOverloads.ts ===
  export class Base { foo: string; }
  >Base : Symbol(Base, Decl(declarationEmitTypeParameterNameReusedInOverloads.ts, 0, 0))

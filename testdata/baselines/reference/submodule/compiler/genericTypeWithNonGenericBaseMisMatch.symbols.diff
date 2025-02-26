@@ -1,6 +1,6 @@
 --- old.genericTypeWithNonGenericBaseMisMatch.symbols
 +++ new.genericTypeWithNonGenericBaseMisMatch.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >I : Symbol(I, Decl(genericTypeWithNonGenericBaseMisMatch.ts, 0, 0))
  
  	f: (a: { a: number }) => void

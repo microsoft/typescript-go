@@ -1,6 +1,6 @@
 --- old.sourceMapValidationWithComments.symbols
 +++ new.sourceMapValidationWithComments.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >DebugClass : Symbol(DebugClass, Decl(sourceMapValidationWithComments.ts, 0, 0))
  
      public static debugFunc() {

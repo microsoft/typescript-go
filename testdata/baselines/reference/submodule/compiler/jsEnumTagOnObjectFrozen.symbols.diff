@@ -1,6 +1,6 @@
 --- old.jsEnumTagOnObjectFrozen.symbols
 +++ new.jsEnumTagOnObjectFrozen.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Thing : Symbol(Thing, Decl(usage.js, 0, 7))
  >useThing : Symbol(useThing, Decl(usage.js, 0, 14))
  >cbThing : Symbol(cbThing, Decl(usage.js, 0, 24))

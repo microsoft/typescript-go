@@ -1,6 +1,6 @@
 --- old.internalAliasVarInsideTopLevelModuleWithoutExport.symbols
 +++ new.internalAliasVarInsideTopLevelModuleWithoutExport.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  import b = a.x;
  >b : Symbol(b, Decl(internalAliasVarInsideTopLevelModuleWithoutExport.ts, 2, 1))
  >a : Symbol(a, Decl(internalAliasVarInsideTopLevelModuleWithoutExport.ts, 0, 0))

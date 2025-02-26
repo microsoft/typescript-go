@@ -1,6 +1,6 @@
 --- old.readonlyMembers.symbols
 +++ new.readonlyMembers.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >X : Symbol(X, Decl(readonlyMembers.ts, 0, 0))
  
      readonly a: number;

@@ -1,6 +1,6 @@
 --- old.unionTypesAssignability.symbols
 +++ new.unionTypesAssignability.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  class D extends C { foo1() { } }
  >D : Symbol(D, Decl(unionTypesAssignability.ts, 1, 11))
  >C : Symbol(C, Decl(unionTypesAssignability.ts, 0, 39))

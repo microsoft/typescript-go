@@ -1,6 +1,6 @@
 --- old.generatorReturnTypeInferenceNonStrict.symbols
 +++ new.generatorReturnTypeInferenceNonStrict.symbols
-@@= skipped -77, +77 lines =@@
+@@= skipped -76, +76 lines =@@
  >g103 : Symbol(g103, Decl(generatorReturnTypeInferenceNonStrict.ts, 42, 1))
  
      if (Math.random()) return 1;

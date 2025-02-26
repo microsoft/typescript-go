@@ -1,6 +1,6 @@
 --- old.interfaceImplementation1.symbols
 +++ new.interfaceImplementation1.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >I1 : Symbol(I1, Decl(interfaceImplementation1.ts, 0, 0))
  
      iObj:{ };

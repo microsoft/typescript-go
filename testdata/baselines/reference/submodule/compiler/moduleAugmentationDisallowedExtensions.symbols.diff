@@ -1,6 +1,6 @@
 --- old.moduleAugmentationDisallowedExtensions.symbols
 +++ new.moduleAugmentationDisallowedExtensions.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  }
  
  declare module "./observable" {

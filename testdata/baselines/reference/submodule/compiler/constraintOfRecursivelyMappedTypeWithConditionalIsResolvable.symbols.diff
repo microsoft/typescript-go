@@ -1,6 +1,6 @@
 --- old.constraintOfRecursivelyMappedTypeWithConditionalIsResolvable.symbols
 +++ new.constraintOfRecursivelyMappedTypeWithConditionalIsResolvable.symbols
-@@= skipped -34, +34 lines =@@
+@@= skipped -33, +33 lines =@@
  >Map : Symbol(Map, Decl(constraintOfRecursivelyMappedTypeWithConditionalIsResolvable.ts, 0, 0))
  
      set<K extends keyof T>(key: K, value: T[K]): IImmutableMap<T>;

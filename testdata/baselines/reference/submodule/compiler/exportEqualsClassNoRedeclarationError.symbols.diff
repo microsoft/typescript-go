@@ -1,6 +1,6 @@
 --- old.exportEqualsClassNoRedeclarationError.symbols
 +++ new.exportEqualsClassNoRedeclarationError.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >SomeClass : Symbol(SomeClass, Decl(exportEqualsClassNoRedeclarationError.ts, 0, 0))
  
      static get someProp(): number {

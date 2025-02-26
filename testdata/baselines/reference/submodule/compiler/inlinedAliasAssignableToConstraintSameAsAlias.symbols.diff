@@ -1,6 +1,6 @@
 --- old.inlinedAliasAssignableToConstraintSameAsAlias.symbols
 +++ new.inlinedAliasAssignableToConstraintSameAsAlias.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >RelationFields : Symbol(RelationFields, Decl(inlinedAliasAssignableToConstraintSameAsAlias.ts, 0, 0))
  
    x: A;

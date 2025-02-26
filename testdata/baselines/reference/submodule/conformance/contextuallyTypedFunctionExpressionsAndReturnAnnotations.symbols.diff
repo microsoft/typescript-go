@@ -1,6 +1,6 @@
 --- old.contextuallyTypedFunctionExpressionsAndReturnAnnotations.symbols
 +++ new.contextuallyTypedFunctionExpressionsAndReturnAnnotations.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  
      var z = y.charAt(0); // Should be string
  >z : Symbol(z, Decl(contextuallyTypedFunctionExpressionsAndReturnAnnotations.ts, 4, 7))

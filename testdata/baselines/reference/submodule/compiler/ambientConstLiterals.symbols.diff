@@ -1,6 +1,6 @@
 --- old.ambientConstLiterals.symbols
 +++ new.ambientConstLiterals.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  
  enum E { A, B, C, "non identifier" }
  >E : Symbol(E, Decl(ambientConstLiterals.ts, 2, 1))

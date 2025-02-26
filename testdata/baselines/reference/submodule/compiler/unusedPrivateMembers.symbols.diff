@@ -1,6 +1,6 @@
 --- old.unusedPrivateMembers.symbols
 +++ new.unusedPrivateMembers.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Test1 : Symbol(Test1, Decl(unusedPrivateMembers.ts, 0, 0))
  
      private initializeInternal() {

@@ -1,6 +1,6 @@
 --- old.ambientErrors.symbols
 +++ new.ambientErrors.symbols
-@@= skipped -46, +46 lines =@@
+@@= skipped -45, +45 lines =@@
  >E1 : Symbol(E1, Decl(ambientErrors.ts, 19, 27))
  
      y = 4.23

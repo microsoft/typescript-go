@@ -1,6 +1,6 @@
 --- old.inheritedMembersAndIndexSignaturesFromDifferentBases.symbols
 +++ new.inheritedMembersAndIndexSignaturesFromDifferentBases.symbols
-@@= skipped -31, +31 lines =@@
+@@= skipped -30, +30 lines =@@
  >C : Symbol(C, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases.ts, 11, 1))
  
      m: {};

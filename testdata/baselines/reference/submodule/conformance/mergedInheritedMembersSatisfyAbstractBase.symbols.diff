@@ -1,6 +1,6 @@
 --- old.mergedInheritedMembersSatisfyAbstractBase.symbols
 +++ new.mergedInheritedMembersSatisfyAbstractBase.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >BaseClass : Symbol(BaseClass, Decl(mergedInheritedMembersSatisfyAbstractBase.ts, 0, 0))
  
    abstract bar: number;

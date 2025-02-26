@@ -1,6 +1,6 @@
 --- old.expandoFunctionExpressionsWithDynamicNames.symbols
 +++ new.expandoFunctionExpressionsWithDynamicNames.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >s : Symbol(s, Decl(expandoFunctionExpressionsWithDynamicNames.ts, 2, 5))
  
  export const expr = () => {}

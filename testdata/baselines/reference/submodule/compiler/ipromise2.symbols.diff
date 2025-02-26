@@ -1,6 +1,6 @@
 --- old.ipromise2.symbols
 +++ new.ipromise2.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(ipromise2.ts, 1, 30))
  
          then<U>(success?: (value: T) => IPromise<U>, error?: (error: any) => IPromise<U>, progress?: (progress: any) => void ): Windows.Foundation.IPromise<U>;

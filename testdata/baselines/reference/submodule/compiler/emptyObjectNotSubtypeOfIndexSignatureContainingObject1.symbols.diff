@@ -1,6 +1,6 @@
 --- old.emptyObjectNotSubtypeOfIndexSignatureContainingObject1.symbols
 +++ new.emptyObjectNotSubtypeOfIndexSignatureContainingObject1.symbols
-@@= skipped -81, +81 lines =@@
+@@= skipped -80, +80 lines =@@
  >Foo : Symbol(Foo, Decl(emptyObjectNotSubtypeOfIndexSignatureContainingObject1.ts, 24, 1))
  
    foo: string;

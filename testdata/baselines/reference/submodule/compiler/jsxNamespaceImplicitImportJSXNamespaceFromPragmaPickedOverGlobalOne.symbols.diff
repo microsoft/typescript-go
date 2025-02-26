@@ -1,6 +1,6 @@
 --- old.jsxNamespaceImplicitImportJSXNamespaceFromPragmaPickedOverGlobalOne.symbols
 +++ new.jsxNamespaceImplicitImportJSXNamespaceFromPragmaPickedOverGlobalOne.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >React : Symbol(React, Decl(index.d.ts, 1, 26))
  
  declare global {

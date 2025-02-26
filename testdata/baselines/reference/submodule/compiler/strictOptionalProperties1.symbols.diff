@@ -1,6 +1,6 @@
 --- old.strictOptionalProperties1.symbols
 +++ new.strictOptionalProperties1.symbols
-@@= skipped -99, +99 lines =@@
+@@= skipped -98, +98 lines =@@
  >a : Symbol(a, Decl(strictOptionalProperties1.ts, 9, 18))
      }
      if (obj.hasOwnProperty('a')) {

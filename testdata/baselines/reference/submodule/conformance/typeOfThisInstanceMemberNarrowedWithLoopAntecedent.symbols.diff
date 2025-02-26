@@ -1,6 +1,6 @@
 --- old.typeOfThisInstanceMemberNarrowedWithLoopAntecedent.symbols
 +++ new.typeOfThisInstanceMemberNarrowedWithLoopAntecedent.symbols
-@@= skipped -24, +24 lines =@@
+@@= skipped -23, +23 lines =@@
  >SomeClass : Symbol(SomeClass, Decl(typeOfThisInstanceMemberNarrowedWithLoopAntecedent.ts, 7, 2))
  
      state!: State;

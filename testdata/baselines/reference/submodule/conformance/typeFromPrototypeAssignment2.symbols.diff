@@ -1,6 +1,6 @@
 --- old.typeFromPrototypeAssignment2.symbols
 +++ new.typeFromPrototypeAssignment2.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >Multimap : Symbol(Multimap, Decl(a.js, 4, 7))
  
          this._map = {};

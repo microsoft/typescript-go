@@ -1,6 +1,6 @@
 --- old.isolatedModulesConstEnum.symbols
 +++ new.isolatedModulesConstEnum.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >EventName : Symbol(EventName, Decl(foo.d.ts, 0, 0))
  
      FOO = 1,

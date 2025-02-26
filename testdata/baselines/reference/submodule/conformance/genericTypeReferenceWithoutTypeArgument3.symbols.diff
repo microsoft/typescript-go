@@ -1,6 +1,6 @@
 --- old.genericTypeReferenceWithoutTypeArgument3.symbols
 +++ new.genericTypeReferenceWithoutTypeArgument3.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(genericTypeReferenceWithoutTypeArgument3.ts, 3, 16))
  
      foo: T;

@@ -1,6 +1,6 @@
 --- old.tsxStatelessFunctionComponentOverload5.symbols
 +++ new.tsxStatelessFunctionComponentOverload5.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >ClickableProps : Symbol(ClickableProps, Decl(file.tsx, 0, 31))
  
      children?: string;

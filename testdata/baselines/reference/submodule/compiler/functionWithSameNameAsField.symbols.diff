@@ -1,6 +1,6 @@
 --- old.functionWithSameNameAsField.symbols
 +++ new.functionWithSameNameAsField.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >TestProgressBar : Symbol(TestProgressBar, Decl(functionWithSameNameAsField.ts, 0, 0))
  
      public total: number;

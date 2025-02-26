@@ -1,6 +1,6 @@
 --- old.esNextWeakRefs_IterableWeakMap.symbols
 +++ new.esNextWeakRefs_IterableWeakMap.symbols
-@@= skipped -18, +18 lines =@@
+@@= skipped -17, +17 lines =@@
  
  }) => {
      set.delete(ref);

@@ -1,6 +1,6 @@
 --- old.assertionsAndNonReturningFunctions.symbols
 +++ new.assertionsAndNonReturningFunctions.symbols
-@@= skipped -59, +59 lines =@@
+@@= skipped -58, +58 lines =@@
  >x : Symbol(x, Decl(assertionsAndNonReturningFunctions.js, 30, 12))
  
          x.length;

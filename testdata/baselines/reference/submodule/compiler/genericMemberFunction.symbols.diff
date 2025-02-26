@@ -1,6 +1,6 @@
 --- old.genericMemberFunction.symbols
 +++ new.genericMemberFunction.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >C : Symbol(C, Decl(genericMemberFunction.ts, 0, 29))
  
    public parent<A, B extends A, C>(): FileWithErrors<A, B, C> {

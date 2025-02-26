@@ -1,6 +1,6 @@
 --- old.classConstructorAccessibility4.symbols
 +++ new.classConstructorAccessibility4.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
      private constructor() { }
  
      method() {

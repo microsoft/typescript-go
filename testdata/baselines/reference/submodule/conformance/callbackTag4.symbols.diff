@@ -1,6 +1,6 @@
 --- old.callbackTag4.symbols
 +++ new.callbackTag4.symbols
-@@= skipped -1, +1 lines =@@
+@@= skipped -0, +0 lines =@@
  //// [tests/cases/conformance/jsdoc/callbackTag4.ts] ////
  
 -=== ./a.js ===

@@ -1,6 +1,6 @@
 --- old.arrayAssignmentTest5.symbols
 +++ new.arrayAssignmentTest5.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >IToken : Symbol(IToken, Decl(arrayAssignmentTest5.ts, 2, 5))
  
          startIndex: number;

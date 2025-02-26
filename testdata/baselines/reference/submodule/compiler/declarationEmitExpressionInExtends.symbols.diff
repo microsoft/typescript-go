@@ -1,6 +1,6 @@
 --- old.declarationEmitExpressionInExtends.symbols
 +++ new.declarationEmitExpressionInExtends.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  >Q : Symbol(Q, Decl(declarationEmitExpressionInExtends.ts, 2, 1))
  
      s: string;    

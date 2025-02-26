@@ -1,6 +1,6 @@
 --- old.declarationEmitPartialNodeReuseTypeReferences.symbols
 +++ new.declarationEmitPartialNodeReuseTypeReferences.symbols
-@@= skipped -21, +21 lines =@@
+@@= skipped -20, +20 lines =@@
  >PrivateSpecialString : Symbol(PrivateSpecialString, Decl(a.ts, 0, 35))
  >p3 : Symbol(p3, Decl(a.ts, 6, 62))
  >N : Symbol(N, Decl(a.ts, 1, 35))

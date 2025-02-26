@@ -1,6 +1,6 @@
 --- old.excessiveStackDepthFlatArray.symbols
 +++ new.excessiveStackDepthFlatArray.symbols
-@@= skipped -42, +42 lines =@@
+@@= skipped -41, +41 lines =@@
  >T : Symbol(T, Decl(index.tsx, 10, 27))
  
      children?: ReactNode;

@@ -1,6 +1,6 @@
 --- old.decoratorOnClassMethod17.symbols
 +++ new.decoratorOnClassMethod17.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >Foo : Symbol(Foo, Decl(decoratorOnClassMethod17.ts, 0, 27))
  
      private prop @decorator

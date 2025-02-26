@@ -1,6 +1,6 @@
 --- old.looseThisTypeInFunctions.symbols
 +++ new.looseThisTypeInFunctions.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >I : Symbol(I, Decl(looseThisTypeInFunctions.ts, 0, 0))
  
      n: number;

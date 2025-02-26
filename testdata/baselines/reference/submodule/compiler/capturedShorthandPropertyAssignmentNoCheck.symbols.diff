@@ -1,6 +1,6 @@
 --- old.capturedShorthandPropertyAssignmentNoCheck.symbols
 +++ new.capturedShorthandPropertyAssignmentNoCheck.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >value : Symbol(value, Decl(capturedShorthandPropertyAssignmentNoCheck.ts, 1, 10))
  
      fns.push(() => ({ value }));

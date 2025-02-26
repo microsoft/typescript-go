@@ -1,6 +1,6 @@
 --- old.operatorsAndIntersectionTypes.symbols
 +++ new.operatorsAndIntersectionTypes.symbols
-@@= skipped -53, +53 lines =@@
+@@= skipped -52, +52 lines =@@
  
  const s2 = guid.toLowerCase();
  >s2 : Symbol(s2, Decl(operatorsAndIntersectionTypes.ts, 20, 5))

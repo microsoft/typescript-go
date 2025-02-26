@@ -1,6 +1,6 @@
 --- old.collectionPatternNoError.symbols
 +++ new.collectionPatternNoError.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  >Message : Symbol(Message, Decl(collectionPatternNoError.ts, 2, 1))
  
    clone(): this {

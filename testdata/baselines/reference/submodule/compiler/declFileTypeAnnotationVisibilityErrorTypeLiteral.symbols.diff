@@ -1,6 +1,6 @@
 --- old.declFileTypeAnnotationVisibilityErrorTypeLiteral.symbols
 +++ new.declFileTypeAnnotationVisibilityErrorTypeLiteral.symbols
-@@= skipped -25, +25 lines =@@
+@@= skipped -24, +24 lines =@@
          y: m2.public1;
  >y : Symbol(y, Decl(declFileTypeAnnotationVisibilityErrorTypeLiteral.ts, 9, 20))
  >m2 : Symbol(m2, Decl(declFileTypeAnnotationVisibilityErrorTypeLiteral.ts, 2, 5))

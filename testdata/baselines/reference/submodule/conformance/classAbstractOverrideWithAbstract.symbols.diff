@@ -1,6 +1,6 @@
 --- old.classAbstractOverrideWithAbstract.symbols
 +++ new.classAbstractOverrideWithAbstract.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(classAbstractOverrideWithAbstract.ts, 0, 0))
  
      foo() {}

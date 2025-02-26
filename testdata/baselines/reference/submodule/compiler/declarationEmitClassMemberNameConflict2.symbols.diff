@@ -1,6 +1,6 @@
 --- old.declarationEmitClassMemberNameConflict2.symbols
 +++ new.declarationEmitClassMemberNameConflict2.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >Hello : Symbol(Hello, Decl(declarationEmitClassMemberNameConflict2.ts, 0, 18))
  
      World

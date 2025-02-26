@@ -1,6 +1,6 @@
 --- old.elidedJSImport2(module=commonjs).symbols
 +++ new.elidedJSImport2(module=commonjs).symbols
-@@= skipped -25, +25 lines =@@
+@@= skipped -24, +24 lines =@@
  >Foo : Symbol(Foo, Decl(other.d.ts, 0, 0))
  
      bar: number;

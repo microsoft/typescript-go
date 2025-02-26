@@ -1,6 +1,6 @@
 --- old.declarationEmitComputedPropertyNameEnum3.symbols
 +++ new.declarationEmitComputedPropertyNameEnum3.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >Enum : Symbol(Enum, Decl(type.ts, 0, 22))
  
      A = "a",

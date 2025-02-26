@@ -1,6 +1,6 @@
 --- old.es2018ObjectAssign.symbols
 +++ new.es2018ObjectAssign.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === es2018ObjectAssign.ts ===
  const test = Object.assign({}, { test: true });
  >test : Symbol(test, Decl(es2018ObjectAssign.ts, 0, 5))

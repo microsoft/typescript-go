@@ -1,6 +1,6 @@
 --- old.asyncAwaitWithCapturedBlockScopeVar.symbols
 +++ new.asyncAwaitWithCapturedBlockScopeVar.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  
          await 1;
          ar.push(() => i);

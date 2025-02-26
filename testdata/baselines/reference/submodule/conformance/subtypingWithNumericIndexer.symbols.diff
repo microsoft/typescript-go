@@ -1,6 +1,6 @@
 --- old.subtypingWithNumericIndexer.symbols
 +++ new.subtypingWithNumericIndexer.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  
  interface Base { foo: string; }
  >Base : Symbol(Base, Decl(subtypingWithNumericIndexer.ts, 0, 0))

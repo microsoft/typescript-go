@@ -1,6 +1,6 @@
 --- old.topLevel.symbols
 +++ new.topLevel.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >IPoint : Symbol(IPoint, Decl(topLevel.ts, 0, 0))
  
      x:number;

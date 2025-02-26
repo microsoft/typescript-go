@@ -1,6 +1,6 @@
 --- old.nodeModulesAllowJs1(module=nodenext).symbols
 +++ new.nodeModulesAllowJs1(module=nodenext).symbols
-@@= skipped -318, +318 lines =@@
+@@= skipped -317, +317 lines =@@
  >x : Symbol(x, Decl(index.js, 85, 5))
  
  export {x};

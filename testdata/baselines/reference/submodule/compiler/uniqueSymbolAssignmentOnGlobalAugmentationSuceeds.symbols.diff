@@ -1,6 +1,6 @@
 --- old.uniqueSymbolAssignmentOnGlobalAugmentationSuceeds.symbols
 +++ new.uniqueSymbolAssignmentOnGlobalAugmentationSuceeds.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === uniqueSymbolAssignmentOnGlobalAugmentationSuceeds.ts ===
  const FOO_SYMBOL = Symbol('Foo');
  >FOO_SYMBOL : Symbol(FOO_SYMBOL, Decl(uniqueSymbolAssignmentOnGlobalAugmentationSuceeds.ts, 0, 5))

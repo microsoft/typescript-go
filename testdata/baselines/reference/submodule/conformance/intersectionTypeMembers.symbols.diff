@@ -1,6 +1,6 @@
 --- old.intersectionTypeMembers.symbols
 +++ new.intersectionTypeMembers.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
  interface A { a: string }
  >A : Symbol(A, Decl(intersectionTypeMembers.ts, 0, 0))

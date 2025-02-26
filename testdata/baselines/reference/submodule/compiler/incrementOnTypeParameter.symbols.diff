@@ -1,6 +1,6 @@
 --- old.incrementOnTypeParameter.symbols
 +++ new.incrementOnTypeParameter.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(incrementOnTypeParameter.ts, 0, 8))
  
      a: T;

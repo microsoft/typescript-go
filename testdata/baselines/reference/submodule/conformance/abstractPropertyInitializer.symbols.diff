@@ -1,6 +1,6 @@
 --- old.abstractPropertyInitializer.symbols
 +++ new.abstractPropertyInitializer.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(abstractPropertyInitializer.ts, 0, 0))
  
      abstract prop = 1

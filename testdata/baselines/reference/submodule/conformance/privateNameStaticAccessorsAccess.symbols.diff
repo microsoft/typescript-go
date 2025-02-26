@@ -1,6 +1,6 @@
 --- old.privateNameStaticAccessorsAccess.symbols
 +++ new.privateNameStaticAccessorsAccess.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >A2 : Symbol(A2, Decl(privateNameStaticAccessorsAccess.ts, 0, 9))
  
      static get #prop() { return ""; }

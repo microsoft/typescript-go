@@ -1,6 +1,6 @@
 --- old.exportedVariable1.symbols
 +++ new.exportedVariable1.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  
  var upper = foo.name.toUpperCase();
  >upper : Symbol(upper, Decl(exportedVariable1.ts, 1, 3))

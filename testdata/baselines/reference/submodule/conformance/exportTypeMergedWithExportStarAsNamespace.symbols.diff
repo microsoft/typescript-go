@@ -1,6 +1,6 @@
 --- old.exportTypeMergedWithExportStarAsNamespace.symbols
 +++ new.exportTypeMergedWithExportStarAsNamespace.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  export type MyType = Something.SubType<string>
  >MyType : Symbol(MyType, Decl(usage.ts, 1, 61))
  >Something : Symbol(Something, Decl(usage.ts, 0, 8))

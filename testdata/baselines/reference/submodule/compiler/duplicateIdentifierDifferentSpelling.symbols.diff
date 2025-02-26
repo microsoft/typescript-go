@@ -1,6 +1,6 @@
 --- old.duplicateIdentifierDifferentSpelling.symbols
 +++ new.duplicateIdentifierDifferentSpelling.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(duplicateIdentifierDifferentSpelling.ts, 0, 0))
  
    0b11 = '';

@@ -1,6 +1,6 @@
 --- old.classExtendingAny.symbols
 +++ new.classExtendingAny.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >Err : Symbol(Err, Decl(a.ts, 0, 11))
  
      payload: string

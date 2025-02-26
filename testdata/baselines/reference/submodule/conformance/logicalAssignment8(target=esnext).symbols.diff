@@ -1,6 +1,6 @@
 --- old.logicalAssignment8(target=esnext).symbols
 +++ new.logicalAssignment8(target=esnext).symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >results : Symbol(results, Decl(logicalAssignment8.ts, 2, 14))
  
      (results ||= bar?.value ?? []).push(100);

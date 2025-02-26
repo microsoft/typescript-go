@@ -1,6 +1,6 @@
 --- old.objectTypesIdentityWithGenericConstructSignaturesDifferingByConstraints3.symbols
 +++ new.objectTypesIdentityWithGenericConstructSignaturesDifferingByConstraints3.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  
  class One { foo: string }
  >One : Symbol(One, Decl(objectTypesIdentityWithGenericConstructSignaturesDifferingByConstraints3.ts, 0, 0))

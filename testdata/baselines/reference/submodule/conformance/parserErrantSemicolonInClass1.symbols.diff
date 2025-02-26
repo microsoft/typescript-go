@@ -1,6 +1,6 @@
 --- old.parserErrantSemicolonInClass1.symbols
 +++ new.parserErrantSemicolonInClass1.symbols
-@@= skipped -17, +17 lines =@@
+@@= skipped -16, +16 lines =@@
      }
  
      public pgF() { };

@@ -1,6 +1,6 @@
 --- old.typeFromJSConstructor.symbols
 +++ new.typeFromJSConstructor.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
      // arg: number
      this.arg = 0

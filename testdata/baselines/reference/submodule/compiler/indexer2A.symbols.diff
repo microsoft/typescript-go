@@ -1,6 +1,6 @@
 --- old.indexer2A.symbols
 +++ new.indexer2A.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  
      // Decided to enforce a semicolon after declarations
      hasOwnProperty(objectId: number): boolean

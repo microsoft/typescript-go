@@ -1,6 +1,6 @@
 --- old.classSideInheritance1.symbols
 +++ new.classSideInheritance1.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(classSideInheritance1.ts, 0, 0))
  
    static bar(): string {

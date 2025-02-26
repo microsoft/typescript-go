@@ -1,6 +1,6 @@
 --- old.invalidAssignmentsToVoid.symbols
 +++ new.invalidAssignmentsToVoid.symbols
-@@= skipped -18, +18 lines =@@
+@@= skipped -17, +17 lines =@@
  
  class C { foo: string; }
  >C : Symbol(C, Decl(invalidAssignmentsToVoid.ts, 4, 6))

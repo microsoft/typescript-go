@@ -1,6 +1,6 @@
 --- old.useBeforeDeclaration_jsx.symbols
 +++ new.useBeforeDeclaration_jsx.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >C : Symbol(C, Decl(useBeforeDeclaration_jsx.tsx, 2, 1))
  
      static a = <C.z></C.z>;

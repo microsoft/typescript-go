@@ -1,6 +1,6 @@
 --- old.numericIndexingResults.symbols
 +++ new.numericIndexingResults.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >x : Symbol(x, Decl(numericIndexingResults.ts, 1, 5))
  
      1 = '';

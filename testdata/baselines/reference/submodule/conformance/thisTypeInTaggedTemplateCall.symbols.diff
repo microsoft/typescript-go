@@ -1,6 +1,6 @@
 --- old.thisTypeInTaggedTemplateCall.symbols
 +++ new.thisTypeInTaggedTemplateCall.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Foo : Symbol(Foo, Decl(thisTypeInTaggedTemplateCall.ts, 0, 0))
  
      static m<T>(this: new () => T, strings: TemplateStringsArray | string) {

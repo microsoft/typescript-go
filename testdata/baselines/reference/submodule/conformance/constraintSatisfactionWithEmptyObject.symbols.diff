@@ -1,6 +1,6 @@
 --- old.constraintSatisfactionWithEmptyObject.symbols
 +++ new.constraintSatisfactionWithEmptyObject.symbols
-@@= skipped -28, +28 lines =@@
+@@= skipped -27, +27 lines =@@
  >Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      constructor(public x: T) { }

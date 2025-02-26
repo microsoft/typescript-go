@@ -1,6 +1,6 @@
 --- old.syntaxErrors.symbols
 +++ new.syntaxErrors.symbols
-@@= skipped -4, +4 lines =@@
+@@= skipped -3, +3 lines =@@
  declare class C<T> { t: T }
  >C : Symbol(C, Decl(dummyType.d.ts, 0, 0))
  >T : Symbol(T, Decl(dummyType.d.ts, 0, 16))

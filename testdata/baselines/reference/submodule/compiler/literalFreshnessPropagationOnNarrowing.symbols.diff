@@ -1,6 +1,6 @@
 --- old.literalFreshnessPropagationOnNarrowing.symbols
 +++ new.literalFreshnessPropagationOnNarrowing.symbols
-@@= skipped -63, +63 lines =@@
+@@= skipped -62, +62 lines =@@
      let a4: ElementOrArray = Array.isArray(elOrA) ? elOrA : [elOrA];
  >a4 : Symbol(a4, Decl(literalFreshnessPropagationOnNarrowing.ts, 21, 7))
  >ElementOrArray : Symbol(ElementOrArray, Decl(literalFreshnessPropagationOnNarrowing.ts, 11, 36))

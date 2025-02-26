@@ -1,6 +1,6 @@
 --- old.noUnusedLocals_potentialPredicateUnusedParam.symbols
 +++ new.noUnusedLocals_potentialPredicateUnusedParam.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >a : Symbol(a, Decl(noUnusedLocals_potentialPredicateUnusedParam.ts, 0, 39))
  
    return !!Math.random();

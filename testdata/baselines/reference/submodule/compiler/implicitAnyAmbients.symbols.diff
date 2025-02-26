@@ -1,6 +1,6 @@
 --- old.implicitAnyAmbients.symbols
 +++ new.implicitAnyAmbients.symbols
-@@= skipped -26, +26 lines =@@
+@@= skipped -25, +25 lines =@@
  >I : Symbol(I, Decl(implicitAnyAmbients.ts, 6, 29))
  
          foo(); // error

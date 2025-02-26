@@ -1,6 +1,6 @@
 --- old.templateStringWithEmbeddedNewOperatorES6.symbols
 +++ new.templateStringWithEmbeddedNewOperatorES6.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === templateStringWithEmbeddedNewOperatorES6.ts ===
  var x = `abc${ new String("Hi") }def`;
  >x : Symbol(x, Decl(templateStringWithEmbeddedNewOperatorES6.ts, 0, 3))

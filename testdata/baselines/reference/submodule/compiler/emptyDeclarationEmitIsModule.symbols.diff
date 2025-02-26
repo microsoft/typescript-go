@@ -1,6 +1,6 @@
 --- old.emptyDeclarationEmitIsModule.symbols
 +++ new.emptyDeclarationEmitIsModule.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >Bar : Symbol(Bar, Decl(index.ts, 0, 26))
  
      x: string

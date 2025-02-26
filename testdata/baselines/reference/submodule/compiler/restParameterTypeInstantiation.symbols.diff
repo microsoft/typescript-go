@@ -1,6 +1,6 @@
 --- old.restParameterTypeInstantiation.symbols
 +++ new.restParameterTypeInstantiation.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >TG : Symbol(TG, Decl(restParameterTypeInstantiation.ts, 2, 22))
  
    f: string

@@ -1,6 +1,6 @@
 --- old.jsxFactoryIdentifierAsParameter.symbols
 +++ new.jsxFactoryIdentifierAsParameter.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  >AppComponent : Symbol(AppComponent, Decl(test.tsx, 4, 1))
  
      render(createElement) {

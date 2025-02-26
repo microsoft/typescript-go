@@ -1,6 +1,6 @@
 --- old.jsdocImportTypeReferenceToCommonjsModule.symbols
 +++ new.jsdocImportTypeReferenceToCommonjsModule.symbols
-@@= skipped -17, +17 lines =@@
+@@= skipped -16, +16 lines =@@
  >a : Symbol(a, Decl(test.js, 1, 14))
  
      a.fix

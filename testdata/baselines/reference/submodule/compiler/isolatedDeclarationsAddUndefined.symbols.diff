@@ -1,6 +1,6 @@
 --- old.isolatedDeclarationsAddUndefined.symbols
 +++ new.isolatedDeclarationsAddUndefined.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >Bar : Symbol(Bar, Decl(file1.ts, 0, 11))
  
      c? = [2 as N] as const;

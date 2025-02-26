@@ -1,6 +1,6 @@
 --- old.esDecorators-contextualTypes.symbols
 +++ new.esDecorators-contextualTypes.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >c : Symbol(c, Decl(esDecorators-contextualTypes.ts, 2, 9))
  
      static f() {}

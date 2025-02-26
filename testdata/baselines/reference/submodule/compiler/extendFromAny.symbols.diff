@@ -1,6 +1,6 @@
 --- old.extendFromAny.symbols
 +++ new.extendFromAny.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >Base : Symbol(Base, Decl(extendFromAny.ts, 0, 11))
  
      known = 1;

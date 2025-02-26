@@ -1,6 +1,6 @@
 --- old.mergedDeclarations7.symbols
 +++ new.mergedDeclarations7.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === passport.d.ts ===
  declare module 'passport' {

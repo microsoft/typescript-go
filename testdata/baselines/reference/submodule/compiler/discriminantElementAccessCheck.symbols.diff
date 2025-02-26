@@ -1,6 +1,6 @@
 --- old.discriminantElementAccessCheck.symbols
 +++ new.discriminantElementAccessCheck.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >TypeA : Symbol(TypeA, Decl(discriminantElementAccessCheck.ts, 0, 23))
  
      kind: 'A';

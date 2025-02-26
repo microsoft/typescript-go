@@ -1,6 +1,6 @@
 --- old.classAbstractUsingAbstractMethods2.symbols
 +++ new.classAbstractUsingAbstractMethods2.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(classAbstractUsingAbstractMethods2.ts, 0, 0))
  
      abstract foo();

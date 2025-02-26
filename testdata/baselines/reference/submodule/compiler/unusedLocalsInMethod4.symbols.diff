@@ -1,6 +1,6 @@
 --- old.unusedLocalsInMethod4.symbols
 +++ new.unusedLocalsInMethod4.symbols
-@@= skipped -47, +47 lines =@@
+@@= skipped -46, +46 lines =@@
  >foo : Symbol(foo, Decl(unusedLocalsInMethod4.ts, 11, 21))
  
          console.log(x1);

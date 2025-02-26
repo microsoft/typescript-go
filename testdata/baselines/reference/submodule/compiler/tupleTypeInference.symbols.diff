@@ -1,6 +1,6 @@
 --- old.tupleTypeInference.symbols
 +++ new.tupleTypeInference.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >IQService : Symbol(IQService, Decl(tupleTypeInference.ts, 0, 26))
  
      all<T1, T2, T3>(x: [IPromise<T1>, IPromise<T2>, IPromise<T3>]): IPromise<[T1, T2, T3]>;

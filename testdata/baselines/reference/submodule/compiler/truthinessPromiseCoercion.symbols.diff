@@ -1,6 +1,6 @@
 --- old.truthinessPromiseCoercion.symbols
 +++ new.truthinessPromiseCoercion.symbols
-@@= skipped -32, +32 lines =@@
+@@= skipped -31, +31 lines =@@
  
      p ? f.arguments : f.arguments;
  >p : Symbol(p, Decl(truthinessPromiseCoercion.ts, 0, 13))

@@ -1,6 +1,6 @@
 --- old.protectedStaticClassPropertyAccessibleWithinSubclass2.symbols
 +++ new.protectedStaticClassPropertyAccessibleWithinSubclass2.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Base : Symbol(Base, Decl(protectedStaticClassPropertyAccessibleWithinSubclass2.ts, 0, 0))
  
      protected static x: string;

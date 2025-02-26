@@ -1,6 +1,6 @@
 --- old.newWithSpreadES5.symbols
 +++ new.newWithSpreadES5.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  >A : Symbol(A, Decl(newWithSpreadES5.ts, 3, 30))
  
      f: {

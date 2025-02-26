@@ -1,6 +1,6 @@
 --- old.genericRecursiveImplicitConstructorErrors1.symbols
 +++ new.genericRecursiveImplicitConstructorErrors1.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  >PullSymbol : Symbol(PullSymbol, Decl(genericRecursiveImplicitConstructorErrors1.ts, 0, 34))
  
    public addSpecialization<A,B,C>(signature: PullSignatureSymbol<A,B,C>, typeArguments: PullTypeSymbol<any,any,any>[]): void;

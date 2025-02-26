@@ -1,6 +1,6 @@
 --- old.jsxEmitWithAttributes.symbols
 +++ new.jsxEmitWithAttributes.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >Element : Symbol(Element, Decl(Element.ts, 0, 23))
  
          name: string;

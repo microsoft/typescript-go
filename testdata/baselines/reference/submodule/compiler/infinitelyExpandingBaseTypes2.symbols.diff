@@ -1,6 +1,6 @@
 --- old.infinitelyExpandingBaseTypes2.symbols
 +++ new.infinitelyExpandingBaseTypes2.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(infinitelyExpandingBaseTypes2.ts, 0, 12))
  {
     x : A<()=>T>

@@ -1,6 +1,6 @@
 --- old.assignmentCompatability10.symbols
 +++ new.assignmentCompatability10.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >interfaceWithPublicAndOptional : Symbol(interfaceWithPublicAndOptional, Decl(assignmentCompatability10.ts, 0, 18))
  >T : Symbol(T, Decl(assignmentCompatability10.ts, 1, 52))
  >U : Symbol(U, Decl(assignmentCompatability10.ts, 1, 54))

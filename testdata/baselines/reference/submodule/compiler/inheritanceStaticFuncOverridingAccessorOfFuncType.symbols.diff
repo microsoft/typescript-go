@@ -1,6 +1,6 @@
 --- old.inheritanceStaticFuncOverridingAccessorOfFuncType.symbols
 +++ new.inheritanceStaticFuncOverridingAccessorOfFuncType.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >a : Symbol(a, Decl(inheritanceStaticFuncOverridingAccessorOfFuncType.ts, 0, 0))
  
      static get x(): () => string {

@@ -1,6 +1,6 @@
 --- old.augmentedTypesModules3.symbols
 +++ new.augmentedTypesModules3.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  
  class m3a { foo() { } } // error, class isn't ambient or declared before the module
  >m3a : Symbol(m3a, Decl(augmentedTypesModules3.ts, 2, 12), Decl(augmentedTypesModules3.ts, 4, 25))

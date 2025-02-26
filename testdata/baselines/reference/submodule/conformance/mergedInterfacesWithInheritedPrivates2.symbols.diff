@@ -1,6 +1,6 @@
 --- old.mergedInterfacesWithInheritedPrivates2.symbols
 +++ new.mergedInterfacesWithInheritedPrivates2.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(mergedInterfacesWithInheritedPrivates2.ts, 0, 0))
  
      private x: number;

@@ -1,6 +1,6 @@
 --- old.assignmentCompatForEnums.symbols
 +++ new.assignmentCompatForEnums.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === assignmentCompatForEnums.ts ===
  enum TokenType { One, Two };
  >TokenType : Symbol(TokenType, Decl(assignmentCompatForEnums.ts, 0, 0))

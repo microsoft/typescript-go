@@ -1,6 +1,6 @@
 --- old.derivedClassTransitivity3.symbols
 +++ new.derivedClassTransitivity3.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >T : Symbol(T, Decl(derivedClassTransitivity3.ts, 2, 8))
  
      foo(x: T, y: T) { }

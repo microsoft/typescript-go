@@ -1,6 +1,6 @@
 --- old.classStaticBlock23(target=es2022).symbols
 +++ new.classStaticBlock23(target=es2022).symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === classStaticBlock23.ts ===
  const nums = [1, 2, 3].map(n => Promise.resolve(n))
  >nums : Symbol(nums, Decl(classStaticBlock23.ts, 0, 5))

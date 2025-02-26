@@ -1,6 +1,6 @@
 --- old.cloduleAcrossModuleDefinitions.symbols
 +++ new.cloduleAcrossModuleDefinitions.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >B : Symbol(B, Decl(cloduleAcrossModuleDefinitions.ts, 0, 10), Decl(cloduleAcrossModuleDefinitions.ts, 7, 10))
  
          foo() { }

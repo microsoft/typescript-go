@@ -1,6 +1,6 @@
 --- old.typeInferenceReturnTypeCallback.symbols
 +++ new.typeInferenceReturnTypeCallback.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(typeInferenceReturnTypeCallback.ts, 0, 16))
  
      map<B>(f: (t: A) => B): IList<B>;

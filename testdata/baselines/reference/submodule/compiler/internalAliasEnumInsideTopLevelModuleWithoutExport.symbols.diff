@@ -1,6 +1,6 @@
 --- old.internalAliasEnumInsideTopLevelModuleWithoutExport.symbols
 +++ new.internalAliasEnumInsideTopLevelModuleWithoutExport.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >weekend : Symbol(weekend, Decl(internalAliasEnumInsideTopLevelModuleWithoutExport.ts, 0, 17))
  
          Friday,

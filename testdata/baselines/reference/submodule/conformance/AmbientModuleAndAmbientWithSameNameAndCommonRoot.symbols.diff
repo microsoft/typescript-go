@@ -1,6 +1,6 @@
 --- old.AmbientModuleAndAmbientWithSameNameAndCommonRoot.symbols
 +++ new.AmbientModuleAndAmbientWithSameNameAndCommonRoot.symbols
-@@= skipped -31, +31 lines =@@
+@@= skipped -30, +30 lines =@@
  >y : Symbol(y, Decl(class.d.ts, 2, 30))
  
          x: number;

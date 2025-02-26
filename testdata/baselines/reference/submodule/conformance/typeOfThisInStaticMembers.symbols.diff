@@ -1,6 +1,6 @@
 --- old.typeOfThisInStaticMembers.symbols
 +++ new.typeOfThisInStaticMembers.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >x : Symbol(x, Decl(typeOfThisInStaticMembers.ts, 1, 16))
  
      static foo: number;

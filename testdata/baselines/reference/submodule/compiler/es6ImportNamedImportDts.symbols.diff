@@ -1,6 +1,6 @@
 --- old.es6ImportNamedImportDts.symbols
 +++ new.es6ImportNamedImportDts.symbols
-@@= skipped -53, +53 lines =@@
+@@= skipped -52, +52 lines =@@
  >a : Symbol(a, Decl(client.ts, 1, 8))
  
  import { a11 as b } from "./server";

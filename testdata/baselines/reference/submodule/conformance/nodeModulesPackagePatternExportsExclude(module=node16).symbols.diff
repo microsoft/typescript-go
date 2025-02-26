@@ -1,6 +1,6 @@
 --- old.nodeModulesPackagePatternExportsExclude(module=node16).symbols
 +++ new.nodeModulesPackagePatternExportsExclude(module=node16).symbols
-@@= skipped -186, +186 lines =@@
+@@= skipped -185, +185 lines =@@
  >type : Symbol(type, Decl(index.d.ts, 3, 6))
  
  export { cjs };

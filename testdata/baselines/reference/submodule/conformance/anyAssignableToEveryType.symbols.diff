@@ -1,6 +1,6 @@
 --- old.anyAssignableToEveryType.symbols
 +++ new.anyAssignableToEveryType.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >C : Symbol(C, Decl(anyAssignableToEveryType.ts, 0, 11))
  
      foo: string;

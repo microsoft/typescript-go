@@ -1,6 +1,6 @@
 --- old.controlFlowComputedPropertyNames.symbols
 +++ new.controlFlowComputedPropertyNames.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >key : Symbol(key, Decl(controlFlowComputedPropertyNames.ts, 0, 41))
  
          obj[key].toUpperCase();

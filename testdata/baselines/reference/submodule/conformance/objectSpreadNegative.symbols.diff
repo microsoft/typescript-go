@@ -1,6 +1,6 @@
 --- old.objectSpreadNegative.symbols
 +++ new.objectSpreadNegative.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >PrivateOptionalX : Symbol(PrivateOptionalX, Decl(objectSpreadNegative.ts, 0, 25))
  
      private x?: number;

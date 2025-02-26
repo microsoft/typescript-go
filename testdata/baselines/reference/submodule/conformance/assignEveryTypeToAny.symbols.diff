@@ -1,6 +1,6 @@
 --- old.assignEveryTypeToAny.symbols
 +++ new.assignEveryTypeToAny.symbols
-@@= skipped -63, +63 lines =@@
+@@= skipped -62, +62 lines =@@
  >E : Symbol(E, Decl(assignEveryTypeToAny.ts, 23, 7))
  
      A

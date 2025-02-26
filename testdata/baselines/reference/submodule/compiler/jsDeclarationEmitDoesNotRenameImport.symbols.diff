@@ -1,6 +1,6 @@
 --- old.jsDeclarationEmitDoesNotRenameImport.symbols
 +++ new.jsDeclarationEmitDoesNotRenameImport.symbols
-@@= skipped -39, +39 lines =@@
+@@= skipped -38, +38 lines =@@
  >super : Symbol(Test, Decl(Test.js, 0, 0))
  
          if (options.test) {

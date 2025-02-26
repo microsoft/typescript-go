@@ -1,6 +1,6 @@
 --- old.templateLiteralTypes4.symbols
 +++ new.templateLiteralTypes4.symbols
-@@= skipped -129, +129 lines =@@
+@@= skipped -128, +128 lines =@@
  // infer from literal enums
  const enum StringLiteralEnum { Zero = "0", True = "true", False = "false", Undefined = "undefined", Null = "null" }
  >StringLiteralEnum : Symbol(StringLiteralEnum, Decl(templateLiteralTypes4.ts, 32, 77))

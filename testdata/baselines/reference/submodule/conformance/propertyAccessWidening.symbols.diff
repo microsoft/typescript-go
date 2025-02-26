@@ -1,6 +1,6 @@
 --- old.propertyAccessWidening.symbols
 +++ new.propertyAccessWidening.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  
      const table = [{cells: headerNames }].concat(t);
  >table : Symbol(table, Decl(propertyAccessWidening.ts, 4, 9))

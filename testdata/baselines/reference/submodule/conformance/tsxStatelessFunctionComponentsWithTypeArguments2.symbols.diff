@@ -1,6 +1,6 @@
 --- old.tsxStatelessFunctionComponentsWithTypeArguments2.symbols
 +++ new.tsxStatelessFunctionComponentsWithTypeArguments2.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >prop : Symbol(prop, Decl(file.tsx, 2, 43))
  >U : Symbol(U, Decl(file.tsx, 2, 36))
  >"ignore-prop" : Symbol("ignore-prop", Decl(file.tsx, 2, 51))

@@ -1,6 +1,6 @@
 --- old.arrayOfFunctionTypes3.symbols
 +++ new.arrayOfFunctionTypes3.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  >C : Symbol(C, Decl(arrayOfFunctionTypes3.ts, 3, 16))
  
      foo: string;

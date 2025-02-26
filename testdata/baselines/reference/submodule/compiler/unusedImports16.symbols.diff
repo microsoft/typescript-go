@@ -1,6 +1,6 @@
 --- old.unusedImports16.symbols
 +++ new.unusedImports16.symbols
-@@= skipped -24, +24 lines =@@
+@@= skipped -23, +23 lines =@@
  >spec : Symbol(spec, Decl(index.d.ts, 4, 31))
  }
  declare global {

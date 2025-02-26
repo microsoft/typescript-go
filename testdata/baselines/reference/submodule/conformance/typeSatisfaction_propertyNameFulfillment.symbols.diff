@@ -1,6 +1,6 @@
 --- old.typeSatisfaction_propertyNameFulfillment.symbols
 +++ new.typeSatisfaction_propertyNameFulfillment.symbols
-@@= skipped -23, +23 lines =@@
+@@= skipped -22, +22 lines =@@
  // Should be OK -- retain info that a is number and b is string
  let a = p.a.toFixed();
  >a : Symbol(a, Decl(typeSatisfaction_propertyNameFulfillment.ts, 9, 3))

@@ -1,6 +1,6 @@
 --- old.superPropertyElementNoUnusedLexicalThisCapture.symbols
 +++ new.superPropertyElementNoUnusedLexicalThisCapture.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === superPropertyElementNoUnusedLexicalThisCapture.ts ===
  class A { x() {} }
  >A : Symbol(A, Decl(superPropertyElementNoUnusedLexicalThisCapture.ts, 0, 0))

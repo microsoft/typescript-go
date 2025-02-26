@@ -1,6 +1,6 @@
 --- old.callSignatureAssignabilityInInheritance3.symbols
 +++ new.callSignatureAssignabilityInInheritance3.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  
      class Base { foo: string; }
  >Base : Symbol(Base, Decl(callSignatureAssignabilityInInheritance3.ts, 3, 15))

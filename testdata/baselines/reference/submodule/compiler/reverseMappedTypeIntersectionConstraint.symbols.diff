@@ -1,6 +1,6 @@
 --- old.reverseMappedTypeIntersectionConstraint.symbols
 +++ new.reverseMappedTypeIntersectionConstraint.symbols
-@@= skipped -138, +138 lines =@@
+@@= skipped -137, +137 lines =@@
  >Stuff : Symbol(Stuff, Decl(reverseMappedTypeIntersectionConstraint.ts, 45, 8))
  
      field: number;

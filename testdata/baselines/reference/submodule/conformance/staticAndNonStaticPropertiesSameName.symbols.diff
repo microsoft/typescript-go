@@ -1,6 +1,6 @@
 --- old.staticAndNonStaticPropertiesSameName.symbols
 +++ new.staticAndNonStaticPropertiesSameName.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(staticAndNonStaticPropertiesSameName.ts, 0, 0))
  
      x: number;

@@ -1,6 +1,6 @@
 --- old.mapGroupBy.symbols
 +++ new.mapGroupBy.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === mapGroupBy.ts ===
  const basic = Map.groupBy([0, 2, 8], x => x < 5 ? 'small' : 'large');
  >basic : Symbol(basic, Decl(mapGroupBy.ts, 0, 5))

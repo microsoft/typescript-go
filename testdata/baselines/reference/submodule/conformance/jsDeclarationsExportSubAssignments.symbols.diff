@@ -1,6 +1,6 @@
 --- old.jsDeclarationsExportSubAssignments.symbols
 +++ new.jsDeclarationsExportSubAssignments.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  >Foo : Symbol(Foo, Decl(cls.js, 3, 2))
  
  module.exports = Foo;

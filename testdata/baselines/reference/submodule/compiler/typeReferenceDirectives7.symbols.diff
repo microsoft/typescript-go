@@ -1,6 +1,6 @@
 --- old.typeReferenceDirectives7.symbols
 +++ new.typeReferenceDirectives7.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  >y : Symbol(y, Decl(app.ts, 5, 10))
  >x : Symbol(x, Decl(app.ts, 4, 10))
  

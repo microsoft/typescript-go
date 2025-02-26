@@ -1,6 +1,6 @@
 --- old.typeQueryWithReservedWords.symbols
 +++ new.typeQueryWithReservedWords.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Controller : Symbol(Controller, Decl(typeQueryWithReservedWords.ts, 0, 0))
  
      create() {

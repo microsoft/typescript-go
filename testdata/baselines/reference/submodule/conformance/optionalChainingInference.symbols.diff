@@ -1,6 +1,6 @@
 --- old.optionalChainingInference.symbols
 +++ new.optionalChainingInference.symbols
-@@= skipped -27, +27 lines =@@
+@@= skipped -26, +26 lines =@@
  const b1 = { value: su?.length };
  >b1 : Symbol(b1, Decl(optionalChainingInference.ts, 7, 5))
  >value : Symbol(value, Decl(optionalChainingInference.ts, 7, 12))

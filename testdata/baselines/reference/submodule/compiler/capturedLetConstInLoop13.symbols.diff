@@ -1,6 +1,6 @@
 --- old.capturedLetConstInLoop13.symbols
 +++ new.capturedLetConstInLoop13.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
      constructor() {
          this.register("a", "b", "c");

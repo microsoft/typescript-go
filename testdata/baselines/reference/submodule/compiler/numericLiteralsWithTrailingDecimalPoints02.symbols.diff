@@ -1,6 +1,6 @@
 --- old.numericLiteralsWithTrailingDecimalPoints02.symbols
 +++ new.numericLiteralsWithTrailingDecimalPoints02.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === numericLiteralsWithTrailingDecimalPoints02.ts ===
  1..toString();

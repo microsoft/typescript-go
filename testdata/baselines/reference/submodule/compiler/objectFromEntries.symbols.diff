@@ -1,6 +1,6 @@
 --- old.objectFromEntries.symbols
 +++ new.objectFromEntries.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === objectFromEntries.ts ===
  const o = Object.fromEntries([['a', 1], ['b', 2], ['c', 3]]);
  >o : Symbol(o, Decl(objectFromEntries.ts, 0, 5))

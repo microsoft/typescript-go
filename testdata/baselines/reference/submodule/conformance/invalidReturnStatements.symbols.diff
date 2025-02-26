@@ -1,6 +1,6 @@
 --- old.invalidReturnStatements.symbols
 +++ new.invalidReturnStatements.symbols
-@@= skipped -20, +20 lines =@@
+@@= skipped -19, +19 lines =@@
  
  interface I { id: number }
  >I : Symbol(I, Decl(invalidReturnStatements.ts, 5, 24))

@@ -1,6 +1,6 @@
 --- old.impliedNodeFormatInterop1.symbols
 +++ new.impliedNodeFormatInterop1.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >HighlightAPI : Symbol(HighlightAPI, Decl(index.d.ts, 0, 31))
  
      highlight(code: string): string;

@@ -1,6 +1,6 @@
 --- old.jsDeclarationsFunctionClassesCjsExportAssignment.symbols
 +++ new.jsDeclarationsFunctionClassesCjsExportAssignment.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >timeout : Symbol(timeout, Decl(timer.js, 3, 15))
  
      this.timeout = timeout;

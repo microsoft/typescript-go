@@ -1,6 +1,6 @@
 --- old.importTsBeforeDTs.symbols
 +++ new.importTsBeforeDTs.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  
  var z2 = foo.y + 10; // Should resolve
  >z2 : Symbol(z2, Decl(foo_1.ts, 2, 3))

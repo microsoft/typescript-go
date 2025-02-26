@@ -1,6 +1,6 @@
 --- old.extractInferenceImprovement.symbols
 +++ new.extractInferenceImprovement.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >obj : Symbol(obj, Decl(extractInferenceImprovement.ts, 1, 44))
  >T : Symbol(T, Decl(extractInferenceImprovement.ts, 1, 22))
  >key : Symbol(key, Decl(extractInferenceImprovement.ts, 1, 51))

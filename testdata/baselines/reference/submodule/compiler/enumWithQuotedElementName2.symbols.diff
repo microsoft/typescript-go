@@ -1,6 +1,6 @@
 --- old.enumWithQuotedElementName2.symbols
 +++ new.enumWithQuotedElementName2.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >E : Symbol(E, Decl(enumWithQuotedElementName2.ts, 0, 0))
  
     "fo'o",

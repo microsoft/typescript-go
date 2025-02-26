@@ -1,6 +1,6 @@
 --- old.jsExportMemberMergedWithModuleAugmentation2.symbols
 +++ new.jsExportMemberMergedWithModuleAugmentation2.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === /test.js ===
  module.exports = {

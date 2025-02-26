@@ -1,6 +1,6 @@
 --- old.taggedTemplateStringsWithManyCallAndMemberExpressionsES6.symbols
 +++ new.taggedTemplateStringsWithManyCallAndMemberExpressionsES6.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
      (strs: TemplateStringsArray, ...subs: number[]): I;
  >strs : Symbol(strs, Decl(taggedTemplateStringsWithManyCallAndMemberExpressionsES6.ts, 1, 5))

@@ -1,6 +1,6 @@
 --- old.genericArray0.symbols
 +++ new.genericArray0.symbols
-@@= skipped -1, +1 lines =@@
+@@= skipped -0, +0 lines =@@
  //// [tests/cases/compiler/genericArray0.ts] ////
  
  === genericArray0.ts ===

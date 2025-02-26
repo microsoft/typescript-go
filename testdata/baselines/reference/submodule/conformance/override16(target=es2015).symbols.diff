@@ -1,6 +1,6 @@
 --- old.override16(target=es2015).symbols
 +++ new.override16(target=es2015).symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(override16.ts, 0, 0))
  
      foo?: string;

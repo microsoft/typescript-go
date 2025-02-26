@@ -1,6 +1,6 @@
 --- old.moduleMemberWithoutTypeAnnotation1.symbols
 +++ new.moduleMemberWithoutTypeAnnotation1.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >SyntaxCursor : Symbol(SyntaxCursor, Decl(moduleMemberWithoutTypeAnnotation1.ts, 0, 26))
  
          public currentNode(): SyntaxNode {

@@ -1,6 +1,6 @@
 --- old.topLevelThisAssignment.symbols
 +++ new.topLevelThisAssignment.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === a.js ===
  this.a = 10;

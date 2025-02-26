@@ -1,6 +1,6 @@
 --- old.declarationEmitForDefaultExportClassExtendingExpression01.symbols
 +++ new.declarationEmitForDefaultExportClassExtendingExpression01.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Greeter : Symbol(Greeter, Decl(declarationEmitForDefaultExportClassExtendingExpression01.ts, 0, 0))
  
      getGreeting(): string;

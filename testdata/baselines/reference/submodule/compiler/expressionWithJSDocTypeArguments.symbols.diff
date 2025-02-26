@@ -1,6 +1,6 @@
 --- old.expressionWithJSDocTypeArguments.symbols
 +++ new.expressionWithJSDocTypeArguments.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  class Bar<T> { constructor(public x: T) { } }
  >Bar : Symbol(Bar, Decl(expressionWithJSDocTypeArguments.ts, 2, 37))
  >T : Symbol(T, Decl(expressionWithJSDocTypeArguments.ts, 4, 10))

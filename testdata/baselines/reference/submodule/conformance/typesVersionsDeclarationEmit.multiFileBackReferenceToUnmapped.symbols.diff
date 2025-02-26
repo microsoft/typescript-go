@@ -1,6 +1,6 @@
 --- old.typesVersionsDeclarationEmit.multiFileBackReferenceToUnmapped.symbols
 +++ new.typesVersionsDeclarationEmit.multiFileBackReferenceToUnmapped.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  >va2 : Symbol(va2, Decl(main.ts, 4, 12))
  >fa2 : Symbol(fa2, Decl(main.ts, 1, 8))
  

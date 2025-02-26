@@ -1,6 +1,6 @@
 --- old.returnInConstructor1.symbols
 +++ new.returnInConstructor1.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(returnInConstructor1.ts, 0, 0))
  
      foo() { }

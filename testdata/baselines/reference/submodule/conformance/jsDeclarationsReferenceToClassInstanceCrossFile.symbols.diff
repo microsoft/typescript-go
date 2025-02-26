@@ -1,6 +1,6 @@
 --- old.jsDeclarationsReferenceToClassInstanceCrossFile.symbols
 +++ new.jsDeclarationsReferenceToClassInstanceCrossFile.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === test.js ===
  const {Render} = require("./index");
  >Render : Symbol(Render, Decl(test.js, 0, 7))

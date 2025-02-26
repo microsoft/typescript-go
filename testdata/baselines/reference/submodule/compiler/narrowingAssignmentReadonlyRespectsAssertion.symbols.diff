@@ -1,6 +1,6 @@
 --- old.narrowingAssignmentReadonlyRespectsAssertion.symbols
 +++ new.narrowingAssignmentReadonlyRespectsAssertion.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >T : Symbol(T, Decl(narrowingAssignmentReadonlyRespectsAssertion.ts, 2, 19))
  
    readonly val1: T | ReadonlyArray<T>;

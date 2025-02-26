@@ -1,6 +1,6 @@
 --- old.inferSetterParamType.symbols
 +++ new.inferSetterParamType.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Foo : Symbol(Foo, Decl(inferSetterParamType.ts, 0, 0))
  
      get bar() {

@@ -1,6 +1,6 @@
 --- old.jsDeclarationsExportAssignmentExpressionPlusSecondary.symbols
 +++ new.jsDeclarationsExportAssignmentExpressionPlusSecondary.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  
  };
  module.exports = {

@@ -1,6 +1,6 @@
 --- old.emitArrowFunctionWhenUsingArguments12.symbols
 +++ new.emitArrowFunctionWhenUsingArguments12.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(emitArrowFunctionWhenUsingArguments12.ts, 0, 0))
  
      f(arguments) {

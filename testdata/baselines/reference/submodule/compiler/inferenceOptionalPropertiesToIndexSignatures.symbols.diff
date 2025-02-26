@@ -1,6 +1,6 @@
 --- old.inferenceOptionalPropertiesToIndexSignatures.symbols
 +++ new.inferenceOptionalPropertiesToIndexSignatures.symbols
-@@= skipped -53, +53 lines =@@
+@@= skipped -52, +52 lines =@@
  
  const param2 = Math.random() < 0.5 ? 'value2' : null;
  >param2 : Symbol(param2, Decl(inferenceOptionalPropertiesToIndexSignatures.ts, 14, 5))

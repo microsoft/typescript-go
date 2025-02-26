@@ -1,6 +1,6 @@
 --- old.usingModuleWithExportImportInValuePosition.symbols
 +++ new.usingModuleWithExportImportInValuePosition.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >Point : Symbol(Point, Decl(usingModuleWithExportImportInValuePosition.ts, 1, 28))
  
          constructor(public x: number, public y: number) { }

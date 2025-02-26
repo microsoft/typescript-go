@@ -1,6 +1,6 @@
 --- old.apparentTypeSubtyping.symbols
 +++ new.apparentTypeSubtyping.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      x: U;

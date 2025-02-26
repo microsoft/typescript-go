@@ -1,6 +1,6 @@
 --- old.conditionalTypes1.symbols
 +++ new.conditionalTypes1.symbols
-@@= skipped -290, +290 lines =@@
+@@= skipped -289, +289 lines =@@
  >Item : Symbol(Item, Decl(conditionalTypes1.ts, 75, 1))
  
      id: number;

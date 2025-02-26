@@ -1,6 +1,6 @@
 --- old.coAndContraVariantInferences6.symbols
 +++ new.coAndContraVariantInferences6.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >ExactProps : Symbol(ExactProps, Decl(coAndContraVariantInferences6.ts, 0, 0))
  
    value: "A" | "B";

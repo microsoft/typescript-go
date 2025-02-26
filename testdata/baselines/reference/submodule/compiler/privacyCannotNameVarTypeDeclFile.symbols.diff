@@ -1,6 +1,6 @@
 --- old.privacyCannotNameVarTypeDeclFile.symbols
 +++ new.privacyCannotNameVarTypeDeclFile.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >publicClassWithWithPrivatePropertyTypes : Symbol(publicClassWithWithPrivatePropertyTypes, Decl(privacyCannotNameVarTypeDeclFile_consumer.ts, 0, 73))
  
      static myPublicStaticProperty = exporter.createExportedWidget1(); // Error

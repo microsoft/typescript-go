@@ -1,6 +1,6 @@
 --- old.callsOnComplexSignatures.symbols
 +++ new.callsOnComplexSignatures.symbols
-@@= skipped -19, +19 lines =@@
+@@= skipped -18, +18 lines =@@
  >Temp1 : Symbol(Temp1, Decl(callsOnComplexSignatures.tsx, 6, 37))
  
          getValue(name: stringType1): number;

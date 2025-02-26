@@ -1,6 +1,6 @@
 --- old.exportDefaultStripsFreshness.symbols
 +++ new.exportDefaultStripsFreshness.symbols
-@@= skipped -21, +21 lines =@@
+@@= skipped -20, +20 lines =@@
  >IFoo : Symbol(IFoo, Decl(index.ts, 0, 29))
  
      foo: string;

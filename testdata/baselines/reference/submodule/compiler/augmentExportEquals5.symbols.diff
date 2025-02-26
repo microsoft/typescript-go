@@ -1,6 +1,6 @@
 --- old.augmentExportEquals5.symbols
 +++ new.augmentExportEquals5.symbols
-@@= skipped -20, +20 lines =@@
+@@= skipped -19, +19 lines =@@
      function e(): e.Express;
  >e : Symbol(e, Decl(express.d.ts, 6, 26), Decl(express.d.ts, 7, 28), Decl(augmentation.ts, 1, 29))
  >e : Symbol(e, Decl(express.d.ts, 6, 26), Decl(express.d.ts, 7, 28), Decl(augmentation.ts, 1, 29))

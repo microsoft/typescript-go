@@ -1,6 +1,6 @@
 --- old.neverTypeErrors1.symbols
 +++ new.neverTypeErrors1.symbols
-@@= skipped -67, +67 lines =@@
+@@= skipped -66, +66 lines =@@
  >A : Symbol(A, Decl(neverTypeErrors1.ts, 27, 1))
  
      foo: "a";

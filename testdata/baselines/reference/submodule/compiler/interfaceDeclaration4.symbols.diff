@@ -1,6 +1,6 @@
 --- old.interfaceDeclaration4.symbols
 +++ new.interfaceDeclaration4.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  
      export interface I1 { item: string; }
  >I1 : Symbol(I1, Decl(interfaceDeclaration4.ts, 2, 12))

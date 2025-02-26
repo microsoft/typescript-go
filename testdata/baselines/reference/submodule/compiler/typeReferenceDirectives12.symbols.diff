@@ -1,6 +1,6 @@
 --- old.typeReferenceDirectives12.symbols
 +++ new.typeReferenceDirectives12.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  
  export const foo = new Cls().foo();
  >foo : Symbol(foo, Decl(mod2.ts, 4, 12))

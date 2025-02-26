@@ -1,6 +1,6 @@
 --- old.privateIdentifierChain.1.symbols
 +++ new.privateIdentifierChain.1.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(privateIdentifierChain.1.ts, 0, 0))
  
      a?: A

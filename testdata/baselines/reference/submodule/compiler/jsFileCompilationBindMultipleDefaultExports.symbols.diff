@@ -1,6 +1,6 @@
 --- old.jsFileCompilationBindMultipleDefaultExports.symbols
 +++ new.jsFileCompilationBindMultipleDefaultExports.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === a.js ===
  export default class a {

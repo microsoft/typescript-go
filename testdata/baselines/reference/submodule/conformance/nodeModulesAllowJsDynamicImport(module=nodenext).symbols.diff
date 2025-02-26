@@ -1,6 +1,6 @@
 --- old.nodeModulesAllowJsDynamicImport(module=nodenext).symbols
 +++ new.nodeModulesAllowJsDynamicImport(module=nodenext).symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  
      const { readFile } = await import("fs");
  >readFile : Symbol(readFile, Decl(index.js, 2, 11))

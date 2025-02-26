@@ -1,6 +1,6 @@
 --- old.typePredicatesInUnion3.symbols
 +++ new.typePredicatesInUnion3.symbols
-@@= skipped -105, +105 lines =@@
+@@= skipped -104, +104 lines =@@
  >Type1 : Symbol(Type1, Decl(typePredicatesInUnion3.ts, 36, 49))
  
      attribute: number | null = null;

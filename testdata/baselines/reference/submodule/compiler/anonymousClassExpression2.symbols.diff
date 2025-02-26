@@ -1,6 +1,6 @@
 --- old.anonymousClassExpression2.symbols
 +++ new.anonymousClassExpression2.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >A : Symbol(A, Decl(anonymousClassExpression2.ts, 3, 11))
  
          methodA() {

@@ -1,6 +1,6 @@
 --- old.for-inStatementsInvalid.symbols
 +++ new.for-inStatementsInvalid.symbols
-@@= skipped -85, +85 lines =@@
+@@= skipped -84, +84 lines =@@
  >A : Symbol(A, Decl(for-inStatementsInvalid.ts, 24, 67))
  
      biz() : number{

@@ -1,6 +1,6 @@
 --- old.inferenceShouldFailOnEvolvingArrays.symbols
 +++ new.inferenceShouldFailOnEvolvingArrays.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  >T : Symbol(T, Decl(inferenceShouldFailOnEvolvingArrays.ts, 2, 19))
  
      console.log(arg.length);

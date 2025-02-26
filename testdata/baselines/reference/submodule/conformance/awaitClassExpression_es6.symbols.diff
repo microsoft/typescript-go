@@ -1,6 +1,6 @@
 --- old.awaitClassExpression_es6.symbols
 +++ new.awaitClassExpression_es6.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
  declare var p: Promise<typeof C>;
  >p : Symbol(p, Decl(awaitClassExpression_es6.ts, 1, 11))

@@ -1,6 +1,6 @@
 --- old.typeOfThisInStaticMembers5(target=esnext).symbols
 +++ new.typeOfThisInStaticMembers5(target=esnext).symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(typeOfThisInStaticMembers5.ts, 0, 0))
  
      static create = () => new this("yep")

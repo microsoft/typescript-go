@@ -1,6 +1,6 @@
 --- old.es5ExportDefaultClassDeclaration4.symbols
 +++ new.es5ExportDefaultClassDeclaration4.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
      export var before: C;
  >before : Symbol(before, Decl(es5ExportDefaultClassDeclaration4.ts, 1, 14))

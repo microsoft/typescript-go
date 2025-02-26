@@ -1,6 +1,6 @@
 --- old.jsDeclarationsFunctionWithDefaultAssignedMember.symbols
 +++ new.jsDeclarationsFunctionWithDefaultAssignedMember.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === index.js ===
  function foo() {}

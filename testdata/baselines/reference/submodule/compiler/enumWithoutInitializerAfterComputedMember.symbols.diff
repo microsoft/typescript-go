@@ -1,6 +1,6 @@
 --- old.enumWithoutInitializerAfterComputedMember.symbols
 +++ new.enumWithoutInitializerAfterComputedMember.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >E : Symbol(E, Decl(enumWithoutInitializerAfterComputedMember.ts, 0, 0))
  
      a,

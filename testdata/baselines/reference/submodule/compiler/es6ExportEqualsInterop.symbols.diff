@@ -1,6 +1,6 @@
 --- old.es6ExportEqualsInterop.symbols
 +++ new.es6ExportEqualsInterop.symbols
-@@= skipped -36, +36 lines =@@
+@@= skipped -35, +35 lines =@@
  
  z1.a;
  z2.a;

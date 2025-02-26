@@ -1,6 +1,6 @@
 --- old.unreachableDeclarations(preserveconstenums=false).symbols
 +++ new.unreachableDeclarations(preserveconstenums=false).symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >aFunc : Symbol(aFunc, Decl(unreachableDeclarations.ts, 6, 11))
  
      console.log(EnumA.Value);

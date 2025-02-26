@@ -1,6 +1,6 @@
 --- old.typeOfThisInInstanceMember2.symbols
 +++ new.typeOfThisInInstanceMember2.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(typeOfThisInInstanceMember2.ts, 0, 8))
  
      x = this;

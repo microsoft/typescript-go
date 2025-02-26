@@ -1,6 +1,6 @@
 --- old.classInConvertedLoopES5.symbols
 +++ new.classInConvertedLoopES5.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >RowClass : Symbol(RowClass, Decl(classInConvertedLoopES5.ts, 1, 46))
  
      row = row;

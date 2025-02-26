@@ -1,6 +1,6 @@
 --- old.externModule.symbols
 +++ new.externModule.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >XDate : Symbol(XDate, Decl(externModule.ts, 0, 16))
  
  		public getDay():number;

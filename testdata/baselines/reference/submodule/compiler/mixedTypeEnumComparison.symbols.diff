@@ -1,6 +1,6 @@
 --- old.mixedTypeEnumComparison.symbols
 +++ new.mixedTypeEnumComparison.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >E : Symbol(E, Decl(mixedTypeEnumComparison.ts, 0, 0))
  
      S1 = "foo",

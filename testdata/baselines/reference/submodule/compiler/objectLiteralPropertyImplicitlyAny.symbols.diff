@@ -1,6 +1,6 @@
 --- old.objectLiteralPropertyImplicitlyAny.symbols
 +++ new.objectLiteralPropertyImplicitlyAny.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === objectLiteralPropertyImplicitlyAny.ts ===
  const foo = Symbol.for("foo");
  >foo : Symbol(foo, Decl(objectLiteralPropertyImplicitlyAny.ts, 0, 5))

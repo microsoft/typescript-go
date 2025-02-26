@@ -1,6 +1,6 @@
 --- old.unknownLikeUnionObjectFlagsNotPropagated.symbols
 +++ new.unknownLikeUnionObjectFlagsNotPropagated.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >MyType : Symbol(MyType, Decl(unknownLikeUnionObjectFlagsNotPropagated.ts, 0, 0))
  
  myVar?.toLocaleString;

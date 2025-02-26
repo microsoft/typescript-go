@@ -1,6 +1,6 @@
 --- old.commaOperatorWithSecondOperandNumberType.symbols
 +++ new.commaOperatorWithSecondOperandNumberType.symbols
-@@= skipped -81, +81 lines =@@
+@@= skipped -80, +80 lines =@@
  >NUMBER : Symbol(NUMBER, Decl(commaOperatorWithSecondOperandNumberType.ts, 2, 3))
  
  STRING.trim(), NUMBER = 1;

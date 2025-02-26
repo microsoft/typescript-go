@@ -1,6 +1,6 @@
 --- old.autoAccessorExperimentalDecorators(target=es2015).symbols
 +++ new.autoAccessorExperimentalDecorators(target=es2015).symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >dec : Symbol(dec, Decl(autoAccessorExperimentalDecorators.ts, 0, 11))
  >target : Symbol(target, Decl(autoAccessorExperimentalDecorators.ts, 0, 18))
  >key : Symbol(key, Decl(autoAccessorExperimentalDecorators.ts, 0, 30))

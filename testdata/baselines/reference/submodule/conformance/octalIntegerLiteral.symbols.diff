@@ -1,6 +1,6 @@
 --- old.octalIntegerLiteral.symbols
 +++ new.octalIntegerLiteral.symbols
-@@= skipped -59, +59 lines =@@
+@@= skipped -58, +58 lines =@@
  
  obj1["0o45436"];   // any
  >obj1 : Symbol(obj1, Decl(octalIntegerLiteral.ts, 5, 3))

@@ -1,6 +1,6 @@
 --- old.moduleAndInterfaceSharingName2.symbols
 +++ new.moduleAndInterfaceSharingName2.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  var z: X.Y.Z = null;
  >z : Symbol(z, Decl(moduleAndInterfaceSharingName2.ts, 6, 3))
  >X : Symbol(X, Decl(moduleAndInterfaceSharingName2.ts, 0, 0))

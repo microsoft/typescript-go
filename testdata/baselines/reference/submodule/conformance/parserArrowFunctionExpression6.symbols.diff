@@ -1,6 +1,6 @@
 --- old.parserArrowFunctionExpression6.symbols
 +++ new.parserArrowFunctionExpression6.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
      return true ? (q ? true : false) : (b = q.length, function() { });
  >q : Symbol(q, Decl(parserArrowFunctionExpression6.ts, 0, 13))
  >b : Symbol(b, Decl(parserArrowFunctionExpression6.ts, 0, 23))

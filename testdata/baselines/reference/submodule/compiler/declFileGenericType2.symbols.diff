@@ -1,6 +1,6 @@
 --- old.declFileGenericType2.symbols
 +++ new.declFileGenericType2.symbols
-@@= skipped -49, +49 lines =@@
+@@= skipped -48, +48 lines =@@
  >IModel : Symbol(IModel, Decl(declFileGenericType2.ts, 0, 27))
  
          getControllers(): mvc.IController<mvc.IModel>[];

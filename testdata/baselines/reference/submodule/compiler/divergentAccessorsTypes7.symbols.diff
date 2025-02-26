@@ -1,6 +1,6 @@
 --- old.divergentAccessorsTypes7.symbols
 +++ new.divergentAccessorsTypes7.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
      constructor() {}
  
      set value(value: string | ((item: S) => string)) {}

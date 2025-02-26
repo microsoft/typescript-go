@@ -1,6 +1,6 @@
 --- old.parser630933.symbols
 +++ new.parser630933.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
  var b = a.match(/\/ver=([^/]+)/);
  >b : Symbol(b, Decl(parser630933.ts, 1, 3))

@@ -1,6 +1,6 @@
 --- old.sourceMapValidationExportAssignment.symbols
 +++ new.sourceMapValidationExportAssignment.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >a : Symbol(a, Decl(sourceMapValidationExportAssignment.ts, 0, 0))
  
      public c;

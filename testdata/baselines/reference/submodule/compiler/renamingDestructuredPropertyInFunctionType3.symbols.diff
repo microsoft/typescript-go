@@ -1,6 +1,6 @@
 --- old.renamingDestructuredPropertyInFunctionType3.symbols
 +++ new.renamingDestructuredPropertyInFunctionType3.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === renamingDestructuredPropertyInFunctionType3.ts ===
  const sym = Symbol();
  >sym : Symbol(sym, Decl(renamingDestructuredPropertyInFunctionType3.ts, 0, 5))

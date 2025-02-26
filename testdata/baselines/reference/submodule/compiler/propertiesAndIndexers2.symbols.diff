@@ -1,6 +1,6 @@
 --- old.propertiesAndIndexers2.symbols
 +++ new.propertiesAndIndexers2.symbols
-@@= skipped -17, +17 lines =@@
+@@= skipped -16, +16 lines =@@
  >A : Symbol(A, Decl(propertiesAndIndexers2.ts, 0, 0))
  
      c: string;

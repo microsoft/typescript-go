@@ -1,6 +1,6 @@
 --- old.checkJsxChildrenProperty3.symbols
 +++ new.checkJsxChildrenProperty3.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >IUser : Symbol(IUser, Decl(file.tsx, 0, 32))
  
      Name: string;

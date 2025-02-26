@@ -1,6 +1,6 @@
 --- old.privacyClassImplementsClauseDeclFile.symbols
 +++ new.privacyClassImplementsClauseDeclFile.symbols
-@@= skipped -31, +31 lines =@@
+@@= skipped -30, +30 lines =@@
  
      class privateClassImplementingFromPrivateModuleInterface implements privateModule.publicInterfaceInPrivateModule {
  >privateClassImplementingFromPrivateModuleInterface : Symbol(privateClassImplementingFromPrivateModuleInterface, Decl(privacyClassImplementsClauseDeclFile_externalModule.ts, 14, 5))

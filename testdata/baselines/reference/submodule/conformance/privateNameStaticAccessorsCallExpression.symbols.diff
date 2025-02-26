@@ -1,6 +1,6 @@
 --- old.privateNameStaticAccessorsCallExpression.symbols
 +++ new.privateNameStaticAccessorsCallExpression.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(privateNameStaticAccessorsCallExpression.ts, 0, 0))
  
      static get #fieldFunc() {  return function() { A.#x = 10; } }

@@ -1,6 +1,6 @@
 --- old.importTypeAmdBundleRewrite.symbols
 +++ new.importTypeAmdBundleRewrite.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Foo : Symbol(Foo, Decl(c.ts, 0, 0))
  
      x: 12;

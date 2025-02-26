@@ -1,6 +1,6 @@
 --- old.disallowLineTerminatorBeforeArrow.symbols
 +++ new.disallowLineTerminatorBeforeArrow.symbols
-@@= skipped -150, +150 lines =@@
+@@= skipped -149, +149 lines =@@
          }
  
          public m = ()

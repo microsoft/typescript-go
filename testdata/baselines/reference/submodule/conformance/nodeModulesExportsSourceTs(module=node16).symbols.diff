@@ -1,6 +1,6 @@
 --- old.nodeModulesExportsSourceTs(module=node16).symbols
 +++ new.nodeModulesExportsSourceTs(module=node16).symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  export const a = (await import("inner")).x();
  >a : Symbol(a, Decl(index.ts, 2, 12))
  >(await import("inner")).x : Symbol(x, Decl(index.ts, 1, 8))

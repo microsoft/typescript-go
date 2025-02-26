@@ -1,6 +1,6 @@
 --- old.asyncIIFE.symbols
 +++ new.asyncIIFE.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
      (async () => {
          await 10
          throw new Error();

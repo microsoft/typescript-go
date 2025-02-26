@@ -1,6 +1,6 @@
 --- old.decoratorChecksFunctionBodies.symbols
 +++ new.decoratorChecksFunctionBodies.symbols
-@@= skipped -27, +27 lines =@@
+@@= skipped -26, +26 lines =@@
  
      })
      m() {

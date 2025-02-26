@@ -1,6 +1,6 @@
 --- old.taggedTemplatesWithTypeArguments2.symbols
 +++ new.taggedTemplatesWithTypeArguments2.symbols
-@@= skipped -63, +63 lines =@@
+@@= skipped -62, +62 lines =@@
  >C : Symbol(C, Decl(taggedTemplatesWithTypeArguments2.ts, 29, 20))
  
      a!: A; b!: B; c!: C;

@@ -1,6 +1,6 @@
 --- old.intrinsicKeyword.symbols
 +++ new.intrinsicKeyword.symbols
-@@= skipped -41, +41 lines =@@
+@@= skipped -40, +40 lines =@@
      let intrinsic: intrinsic.intrinsic;
  >intrinsic : Symbol(intrinsic, Decl(intrinsicKeyword.ts, 9, 7))
  >intrinsic : Symbol(intrinsic)

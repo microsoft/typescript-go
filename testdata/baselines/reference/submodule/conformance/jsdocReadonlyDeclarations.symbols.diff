@@ -1,6 +1,6 @@
 --- old.jsdocReadonlyDeclarations.symbols
 +++ new.jsdocReadonlyDeclarations.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
      /** @readonly */
      x = 6

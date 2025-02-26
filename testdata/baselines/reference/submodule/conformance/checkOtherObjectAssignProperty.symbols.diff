@@ -1,6 +1,6 @@
 --- old.checkOtherObjectAssignProperty.symbols
 +++ new.checkOtherObjectAssignProperty.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === importer.js ===
  const mod = require("./mod1");
  >mod : Symbol(mod, Decl(importer.js, 0, 5))

@@ -1,6 +1,6 @@
 --- old.exportAssignmentOfGenericType1.symbols
 +++ new.exportAssignmentOfGenericType1.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  
  var r: string = m.foo;
  >r : Symbol(r, Decl(exportAssignmentOfGenericType1_1.ts, 5, 3))

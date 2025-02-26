@@ -1,6 +1,6 @@
 --- old.parserInterfaceDeclaration9.symbols
 +++ new.parserInterfaceDeclaration9.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >I1 : Symbol(I1, Decl(parserInterfaceDeclaration9.ts, 0, 0))
  
      get foo(): number,

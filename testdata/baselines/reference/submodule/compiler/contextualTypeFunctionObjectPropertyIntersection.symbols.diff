@@ -1,6 +1,6 @@
 --- old.contextualTypeFunctionObjectPropertyIntersection.symbols
 +++ new.contextualTypeFunctionObjectPropertyIntersection.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  >type : Symbol(type, Decl(contextualTypeFunctionObjectPropertyIntersection.ts, 4, 40))
  
    schema: {

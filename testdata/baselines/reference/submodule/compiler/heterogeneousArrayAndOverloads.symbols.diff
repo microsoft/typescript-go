@@ -1,6 +1,6 @@
 --- old.heterogeneousArrayAndOverloads.symbols
 +++ new.heterogeneousArrayAndOverloads.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >arrTest : Symbol(arrTest, Decl(heterogeneousArrayAndOverloads.ts, 0, 0))
  
      test(arg1: number[]);

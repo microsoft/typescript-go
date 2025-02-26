@@ -1,6 +1,6 @@
 --- old.constructorFunctions3.symbols
 +++ new.constructorFunctions3.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Instance : Symbol(Instance, Decl(a.js, 0, 0))
  
      this.i = 'simple'

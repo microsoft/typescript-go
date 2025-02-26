@@ -1,6 +1,6 @@
 --- old.exportAssignmentClass.symbols
 +++ new.exportAssignmentClass.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  
  var x = d.p;
  >x : Symbol(x, Decl(exportAssignmentClass_B.ts, 3, 3))

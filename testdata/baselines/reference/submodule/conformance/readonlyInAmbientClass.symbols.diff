@@ -1,6 +1,6 @@
 --- old.readonlyInAmbientClass.symbols
 +++ new.readonlyInAmbientClass.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(readonlyInAmbientClass.ts, 0, 0))
  
  	constructor(readonly x: number);

@@ -1,6 +1,6 @@
 --- old.duplicatePackage.symbols
 +++ new.duplicatePackage.symbols
-@@= skipped -29, +29 lines =@@
+@@= skipped -28, +28 lines =@@
  
  === /node_modules/a/node_modules/x/index.d.ts ===
  export default class X {

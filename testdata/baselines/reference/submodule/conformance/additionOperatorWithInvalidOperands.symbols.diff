@@ -1,6 +1,6 @@
 --- old.additionOperatorWithInvalidOperands.symbols
 +++ new.additionOperatorWithInvalidOperands.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >C : Symbol(C, Decl(additionOperatorWithInvalidOperands.ts, 0, 18))
  
      public a: string;

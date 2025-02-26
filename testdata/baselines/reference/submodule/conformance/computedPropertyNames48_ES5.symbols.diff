@@ -1,6 +1,6 @@
 --- old.computedPropertyNames48_ES5.symbols
 +++ new.computedPropertyNames48_ES5.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  
  enum E { x }
  >E : Symbol(E, Decl(computedPropertyNames48_ES5.ts, 0, 61))

@@ -1,6 +1,6 @@
 --- old.usingDeclarationsWithIteratorObject.symbols
 +++ new.usingDeclarationsWithIteratorObject.symbols
-@@= skipped -18, +18 lines =@@
+@@= skipped -17, +17 lines =@@
  >Iterator : Symbol(Iterator, Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.esnext.iterator.d.ts, --, --))
  
      next() { return { done: true, value: undefined }; }

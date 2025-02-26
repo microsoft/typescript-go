@@ -1,6 +1,6 @@
 --- old.declarationEmitGlobalThisPreserved.symbols
 +++ new.declarationEmitGlobalThisPreserved.symbols
-@@= skipped -393, +393 lines =@@
+@@= skipped -392, +392 lines =@@
  >A : Symbol(A, Decl(declarationEmitGlobalThisPreserved.ts, 74, 81))
  
      method1(isNaN: typeof globalThis.isNaN) { return isNaN }

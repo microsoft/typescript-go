@@ -1,6 +1,6 @@
 --- old.enumConflictsWithGlobalIdentifier.symbols
 +++ new.enumConflictsWithGlobalIdentifier.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Position : Symbol(Position, Decl(enumConflictsWithGlobalIdentifier.ts, 0, 0))
  
      IgnoreRulesSpecific = 0,

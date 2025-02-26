@@ -1,6 +1,6 @@
 --- old.inheritedMembersAndIndexSignaturesFromDifferentBases2.symbols
 +++ new.inheritedMembersAndIndexSignaturesFromDifferentBases2.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  >B : Symbol(B, Decl(inheritedMembersAndIndexSignaturesFromDifferentBases2.ts, 2, 1))
  
      foo: number;

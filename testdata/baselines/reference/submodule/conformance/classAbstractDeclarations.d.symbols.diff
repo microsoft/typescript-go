@@ -1,6 +1,6 @@
 --- old.classAbstractDeclarations.d.symbols
 +++ new.classAbstractDeclarations.d.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >AA : Symbol(AA, Decl(classAbstractDeclarations.d.ts, 2, 1))
  
      abstract foo();

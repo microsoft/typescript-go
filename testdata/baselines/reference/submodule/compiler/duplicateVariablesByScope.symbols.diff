@@ -1,6 +1,6 @@
 --- old.duplicateVariablesByScope.symbols
 +++ new.duplicateVariablesByScope.symbols
-@@= skipped -42, +42 lines =@@
+@@= skipped -41, +41 lines =@@
  >C : Symbol(C, Decl(duplicateVariablesByScope.ts, 19, 1))
  
      foo() {

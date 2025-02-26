@@ -1,6 +1,6 @@
 --- old.exportDefaultAsyncFunction.symbols
 +++ new.exportDefaultAsyncFunction.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === exportDefaultAsyncFunction.ts ===
  export default async function foo(): Promise<void> {}

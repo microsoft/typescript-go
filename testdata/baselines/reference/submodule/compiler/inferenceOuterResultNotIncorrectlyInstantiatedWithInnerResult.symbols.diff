@@ -1,6 +1,6 @@
 --- old.inferenceOuterResultNotIncorrectlyInstantiatedWithInnerResult.symbols
 +++ new.inferenceOuterResultNotIncorrectlyInstantiatedWithInnerResult.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >B : Symbol(B, Decl(inferenceOuterResultNotIncorrectlyInstantiatedWithInnerResult.ts, 1, 20))
  
      constructor(public a: A, public b: B) { }

@@ -1,6 +1,6 @@
 --- old.narrowingOfQualifiedNames.symbols
 +++ new.narrowingOfQualifiedNames.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >IProperties : Symbol(IProperties, Decl(narrowingOfQualifiedNames.ts, 0, 0))
  
      foo?: {

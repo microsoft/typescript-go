@@ -1,6 +1,6 @@
 --- old.declFileTypeAnnotationVisibilityErrorParameterOfFunction.symbols
 +++ new.declFileTypeAnnotationVisibilityErrorParameterOfFunction.symbols
-@@= skipped -69, +69 lines =@@
+@@= skipped -68, +68 lines =@@
  >foo111 : Symbol(foo111, Decl(declFileTypeAnnotationVisibilityErrorParameterOfFunction.ts, 31, 5))
  >param : Symbol(param, Decl(declFileTypeAnnotationVisibilityErrorParameterOfFunction.ts, 33, 20))
  >m2 : Symbol(m2, Decl(declFileTypeAnnotationVisibilityErrorParameterOfFunction.ts, 26, 5))

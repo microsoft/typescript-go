@@ -1,6 +1,6 @@
 --- old.genericTypeConstraints.symbols
 +++ new.genericTypeConstraints.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Foo : Symbol(Foo, Decl(genericTypeConstraints.ts, 0, 0))
  
      fooMethod() {}

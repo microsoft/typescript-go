@@ -1,6 +1,6 @@
 --- old.moduleVisibilityTest4.symbols
 +++ new.moduleVisibilityTest4.symbols
-@@= skipped -18, +18 lines =@@
+@@= skipped -17, +17 lines =@@
  let a1: M.num;
  >a1 : Symbol(a1, Decl(moduleVisibilityTest4.ts, 8, 3))
  >M : Symbol(M, Decl(moduleVisibilityTest4.ts, 0, 0))

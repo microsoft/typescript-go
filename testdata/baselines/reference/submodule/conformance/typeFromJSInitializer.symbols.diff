@@ -1,6 +1,6 @@
 --- old.typeFromJSInitializer.symbols
 +++ new.typeFromJSInitializer.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
      // should get any on this-assignments in constructor
      this.unknown = null

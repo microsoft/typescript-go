@@ -1,6 +1,6 @@
 --- old.tsxGenericArrowFunctionParsing.symbols
 +++ new.tsxGenericArrowFunctionParsing.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
  	interface Element { isElement; }
  >Element : Symbol(Element, Decl(file.tsx, 0, 20))

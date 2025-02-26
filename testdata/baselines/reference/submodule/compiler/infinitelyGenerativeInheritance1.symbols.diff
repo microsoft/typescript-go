@@ -1,6 +1,6 @@
 --- old.infinitelyGenerativeInheritance1.symbols
 +++ new.infinitelyGenerativeInheritance1.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(infinitelyGenerativeInheritance1.ts, 0, 16))
  
        pop(): T

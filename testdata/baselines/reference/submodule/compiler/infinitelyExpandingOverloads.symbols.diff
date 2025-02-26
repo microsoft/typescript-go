@@ -1,6 +1,6 @@
 --- old.infinitelyExpandingOverloads.symbols
 +++ new.infinitelyExpandingOverloads.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(infinitelyExpandingOverloads.ts, 0, 32))
  
      target: KnockoutObservableBase2<T>;

@@ -1,6 +1,6 @@
 --- old.typeFromPropertyAssignment4.symbols
 +++ new.typeFromPropertyAssignment4.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === def.js ===
  var Outer = {};

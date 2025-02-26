@@ -1,6 +1,6 @@
 --- old.typeFromPropertyAssignment35.symbols
 +++ new.typeFromPropertyAssignment35.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >x : Symbol(x, Decl(bug26877.js, 1, 20))
  
      x._model

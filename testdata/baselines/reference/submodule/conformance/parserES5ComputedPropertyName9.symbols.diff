@@ -1,6 +1,6 @@
 --- old.parserES5ComputedPropertyName9.symbols
 +++ new.parserES5ComputedPropertyName9.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(parserES5ComputedPropertyName9.ts, 0, 0))
  
     [e]: Type

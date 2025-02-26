@@ -1,6 +1,6 @@
 --- old.indexedAccessKeyofNestedSimplifiedSubstituteUnwrapped.symbols
 +++ new.indexedAccessKeyofNestedSimplifiedSubstituteUnwrapped.symbols
-@@= skipped -18, +18 lines =@@
+@@= skipped -17, +17 lines =@@
  >T : Symbol(T, Decl(indexedAccessKeyofNestedSimplifiedSubstituteUnwrapped.ts, 3, 18))
  
  	call<K extends keyof T>(event: K, ...args: Params<T[K]>): void;

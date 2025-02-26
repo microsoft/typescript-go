@@ -1,6 +1,6 @@
 --- old.superPropertyInConstructorBeforeSuperCall.symbols
 +++ new.superPropertyInConstructorBeforeSuperCall.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >x : Symbol(x, Decl(superPropertyInConstructorBeforeSuperCall.ts, 1, 16))
  
      x(): string { return ""; }

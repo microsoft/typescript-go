@@ -1,6 +1,6 @@
 --- old.tsxLibraryManagedAttributes.symbols
 +++ new.tsxLibraryManagedAttributes.symbols
-@@= skipped -57, +57 lines =@@
+@@= skipped -56, +56 lines =@@
  >propFullName : Symbol(propFullName, Decl(tsxLibraryManagedAttributes.tsx, 9, 72))
  
      isRequired: PropTypeChecker<U, true>;

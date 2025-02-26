@@ -1,6 +1,6 @@
 --- old.parameterPropertyInConstructor3.symbols
 +++ new.parameterPropertyInConstructor3.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Foo : Symbol(Foo, Decl(parameterPropertyInConstructor3.ts, 0, 0))
  
    constructor(public constructor: string) {}

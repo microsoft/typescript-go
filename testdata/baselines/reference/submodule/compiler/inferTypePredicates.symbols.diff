@@ -1,6 +1,6 @@
 --- old.inferTypePredicates.symbols
 +++ new.inferTypePredicates.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  
  const filteredNumsTruthy: number[] = numsOrNull.filter(x => !!x);  // should error
  >filteredNumsTruthy : Symbol(filteredNumsTruthy, Decl(inferTypePredicates.ts, 3, 5))

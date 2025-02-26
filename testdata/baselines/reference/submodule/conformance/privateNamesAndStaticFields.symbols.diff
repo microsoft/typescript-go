@@ -1,6 +1,6 @@
 --- old.privateNamesAndStaticFields.symbols
 +++ new.privateNamesAndStaticFields.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(privateNamesAndStaticFields.ts, 0, 0))
  
      static #foo: number;

@@ -1,6 +1,6 @@
 --- old.typedArraysSubarray.symbols
 +++ new.typedArraysSubarray.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >Int8Array : Symbol(Int8Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      arr.subarray();

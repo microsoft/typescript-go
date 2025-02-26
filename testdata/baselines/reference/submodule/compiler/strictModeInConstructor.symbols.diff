@@ -1,6 +1,6 @@
 --- old.strictModeInConstructor.symbols
 +++ new.strictModeInConstructor.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >A : Symbol(A, Decl(strictModeInConstructor.ts, 0, 0))
  
      public s: number = 9;

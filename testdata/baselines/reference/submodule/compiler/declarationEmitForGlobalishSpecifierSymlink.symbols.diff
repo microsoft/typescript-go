@@ -1,6 +1,6 @@
 --- old.declarationEmitForGlobalishSpecifierSymlink.symbols
 +++ new.declarationEmitForGlobalishSpecifierSymlink.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >A : Symbol(A, Decl(impl.d.ts, 0, 26))
  
      Val

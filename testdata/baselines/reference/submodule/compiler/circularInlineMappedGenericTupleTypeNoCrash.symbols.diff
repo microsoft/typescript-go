@@ -1,6 +1,6 @@
 --- old.circularInlineMappedGenericTupleTypeNoCrash.symbols
 +++ new.circularInlineMappedGenericTupleTypeNoCrash.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >Elements : Symbol(Elements, Decl(circularInlineMappedGenericTupleTypeNoCrash.ts, 0, 10))
  
    public readonly elements: { [P in keyof Elements]: { bar: Elements[P] } };

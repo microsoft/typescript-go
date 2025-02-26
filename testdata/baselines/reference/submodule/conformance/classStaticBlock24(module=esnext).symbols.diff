@@ -1,6 +1,6 @@
 --- old.classStaticBlock24(module=esnext).symbols
 +++ new.classStaticBlock24(module=esnext).symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(classStaticBlock24.ts, 0, 0))
  
    static x: number;

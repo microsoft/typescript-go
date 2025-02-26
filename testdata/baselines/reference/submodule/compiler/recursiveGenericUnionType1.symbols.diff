@@ -1,6 +1,6 @@
 --- old.recursiveGenericUnionType1.symbols
 +++ new.recursiveGenericUnionType1.symbols
-@@= skipped -42, +42 lines =@@
+@@= skipped -41, +41 lines =@@
  var x: Test1.Container<number>;
  >x : Symbol(x, Decl(recursiveGenericUnionType1.ts, 14, 3))
  >Test1 : Symbol(Test1, Decl(recursiveGenericUnionType1.ts, 0, 0))

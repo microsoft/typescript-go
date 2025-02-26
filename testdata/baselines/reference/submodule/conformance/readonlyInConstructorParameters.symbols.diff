@@ -1,6 +1,6 @@
 --- old.readonlyInConstructorParameters.symbols
 +++ new.readonlyInConstructorParameters.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(readonlyInConstructorParameters.ts, 0, 0))
  
      constructor(readonly x: number) {}

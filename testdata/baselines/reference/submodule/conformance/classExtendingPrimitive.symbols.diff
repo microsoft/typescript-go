@@ -1,6 +1,6 @@
 --- old.classExtendingPrimitive.symbols
 +++ new.classExtendingPrimitive.symbols
-@@= skipped -33, +33 lines =@@
+@@= skipped -32, +32 lines =@@
  
  enum E { A }
  >E : Symbol(E, Decl(classExtendingPrimitive.ts, 10, 30))

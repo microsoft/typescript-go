@@ -1,6 +1,6 @@
 --- old.lateBoundAssignmentDeclarationSupport2.symbols
 +++ new.lateBoundAssignmentDeclarationSupport2.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === usage.js ===
  const x = require("./lateBoundAssignmentDeclarationSupport2.js");
  >x : Symbol(x, Decl(usage.js, 0, 5))

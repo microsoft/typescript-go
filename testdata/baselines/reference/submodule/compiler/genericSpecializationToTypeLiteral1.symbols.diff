@@ -1,6 +1,6 @@
 --- old.genericSpecializationToTypeLiteral1.symbols
 +++ new.genericSpecializationToTypeLiteral1.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(genericSpecializationToTypeLiteral1.ts, 0, 22))
  
      zip<TResult>(second: IEnumerable<T>, resultSelector: (first: T, second: T, index: number) => TResult): IEnumerable<TResult>;

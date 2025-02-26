@@ -1,6 +1,6 @@
 --- old.accessorWithES5.symbols
 +++ new.accessorWithES5.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(accessorWithES5.ts, 0, 0))
  
      get x() {

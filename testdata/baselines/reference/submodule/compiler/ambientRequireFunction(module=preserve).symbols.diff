@@ -1,6 +1,6 @@
 --- old.ambientRequireFunction(module=preserve).symbols
 +++ new.ambientRequireFunction(module=preserve).symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  const fs = require("fs");
  >fs : Symbol(fs, Decl(app.js, 2, 5))
  >require : Symbol(require, Decl(node.d.ts, 0, 0))

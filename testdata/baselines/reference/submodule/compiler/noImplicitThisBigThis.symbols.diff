@@ -1,6 +1,6 @@
 --- old.noImplicitThisBigThis.symbols
 +++ new.noImplicitThisBigThis.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >func1 : Symbol(func1, Decl(noImplicitThisBigThis.ts, 3, 12))
  
              return this;

@@ -1,6 +1,6 @@
 --- old.mergeSymbolReexportedTypeAliasInstantiation.symbols
 +++ new.mergeSymbolReexportedTypeAliasInstantiation.symbols
-@@= skipped -17, +17 lines =@@
+@@= skipped -16, +16 lines =@@
  >C : Symbol(C, Decl(main.ts, 0, 13))
  >s : Symbol(s, Decl(main.ts, 2, 15))
  

@@ -1,6 +1,6 @@
 --- old.nonExportedElementsOfMergedModules.symbols
 +++ new.nonExportedElementsOfMergedModules.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
      enum A { X }
  >A : Symbol(A, Decl(nonExportedElementsOfMergedModules.ts, 0, 12))

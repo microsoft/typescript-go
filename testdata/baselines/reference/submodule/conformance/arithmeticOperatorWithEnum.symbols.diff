@@ -1,6 +1,6 @@
 --- old.arithmeticOperatorWithEnum.symbols
 +++ new.arithmeticOperatorWithEnum.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >E : Symbol(E, Decl(arithmeticOperatorWithEnum.ts, 0, 0))
  
      a,

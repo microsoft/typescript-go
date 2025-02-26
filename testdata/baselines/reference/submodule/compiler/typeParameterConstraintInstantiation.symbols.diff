@@ -1,6 +1,6 @@
 --- old.typeParameterConstraintInstantiation.symbols
 +++ new.typeParameterConstraintInstantiation.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >T : Symbol(T, Decl(typeParameterConstraintInstantiation.ts, 2, 17))
  
      map<U extends T, V extends U[]>(f: (item: T) => U): V;

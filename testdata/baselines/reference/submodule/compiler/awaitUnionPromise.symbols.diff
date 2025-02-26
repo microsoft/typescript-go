@@ -1,6 +1,6 @@
 --- old.awaitUnionPromise.symbols
 +++ new.awaitUnionPromise.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(awaitUnionPromise.ts, 4, 27))
  
      next1(): Promise<T | AsyncEnumeratorDone>;

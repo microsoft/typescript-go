@@ -1,6 +1,6 @@
 --- old.mergedInterfaceFromMultipleFiles1.symbols
 +++ new.mergedInterfaceFromMultipleFiles1.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  
  interface D { bar(): number; }
  >D : Symbol(D, Decl(mergedInterfaceFromMultipleFiles1_1.ts, 0, 0))

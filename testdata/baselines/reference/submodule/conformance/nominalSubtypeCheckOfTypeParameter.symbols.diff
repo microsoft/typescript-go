@@ -1,6 +1,6 @@
 --- old.nominalSubtypeCheckOfTypeParameter.symbols
 +++ new.nominalSubtypeCheckOfTypeParameter.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >S : Symbol(S, Decl(nominalSubtypeCheckOfTypeParameter.ts, 0, 24))
  
      first: T

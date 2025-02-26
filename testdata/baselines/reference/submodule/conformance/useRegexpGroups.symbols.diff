@@ -1,6 +1,6 @@
 --- old.useRegexpGroups.symbols
 +++ new.useRegexpGroups.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
  let result = re.exec("2015-01-02");
  >result : Symbol(result, Decl(useRegexpGroups.ts, 1, 3))

@@ -1,6 +1,6 @@
 --- old.capturedLetConstInLoop2.symbols
 +++ new.capturedLetConstInLoop2.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  
          let a = arguments.length;
  >a : Symbol(a, Decl(capturedLetConstInLoop2.ts, 3, 11))

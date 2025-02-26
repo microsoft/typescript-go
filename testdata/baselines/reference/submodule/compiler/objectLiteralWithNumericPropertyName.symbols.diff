@@ -1,6 +1,6 @@
 --- old.objectLiteralWithNumericPropertyName.symbols
 +++ new.objectLiteralWithNumericPropertyName.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(objectLiteralWithNumericPropertyName.ts, 0, 0))
  
      0: string;

@@ -1,6 +1,6 @@
 --- old.classMemberInitializerScoping.symbols
 +++ new.classMemberInitializerScoping.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >CCC : Symbol(CCC, Decl(classMemberInitializerScoping.ts, 0, 12))
  
      y: number = aaa;

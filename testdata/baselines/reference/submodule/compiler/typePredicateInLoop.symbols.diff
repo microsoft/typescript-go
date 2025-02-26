@@ -1,6 +1,6 @@
 --- old.typePredicateInLoop.symbols
 +++ new.typePredicateInLoop.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >Type : Symbol(Type, Decl(typePredicateInLoop.ts, 0, 0))
  
    type: number;

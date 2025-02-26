@@ -1,6 +1,6 @@
 --- old.isolatedDeclarationErrorsObjects.symbols
 +++ new.isolatedDeclarationErrorsObjects.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  
      a: Math.random(),
  >a : Symbol(a, Decl(isolatedDeclarationErrorsObjects.ts, 5, 19))

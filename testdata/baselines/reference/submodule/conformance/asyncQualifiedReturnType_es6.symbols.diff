@@ -1,6 +1,6 @@
 --- old.asyncQualifiedReturnType_es6.symbols
 +++ new.asyncQualifiedReturnType_es6.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
      export class MyPromise<T> extends Promise<T> {
  >MyPromise : Symbol(MyPromise, Decl(asyncQualifiedReturnType_es6.ts, 0, 13))
  >T : Symbol(T, Decl(asyncQualifiedReturnType_es6.ts, 1, 27))

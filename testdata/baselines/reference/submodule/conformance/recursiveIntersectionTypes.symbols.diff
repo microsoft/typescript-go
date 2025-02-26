@@ -1,6 +1,6 @@
 --- old.recursiveIntersectionTypes.symbols
 +++ new.recursiveIntersectionTypes.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >Entity : Symbol(Entity, Decl(recursiveIntersectionTypes.ts, 0, 49))
  
      name: string;

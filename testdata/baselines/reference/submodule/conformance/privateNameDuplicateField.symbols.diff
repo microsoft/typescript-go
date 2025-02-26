@@ -1,6 +1,6 @@
 --- old.privateNameDuplicateField.symbols
 +++ new.privateNameDuplicateField.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >A_Field_Field : Symbol(A_Field_Field, Decl(privateNameDuplicateField.ts, 0, 18))
  
          #foo = "foo";

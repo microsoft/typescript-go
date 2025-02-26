@@ -1,6 +1,6 @@
 --- old.trailingCommasInFunctionParametersAndArguments.symbols
 +++ new.trailingCommasInFunctionParametersAndArguments.symbols
-@@= skipped -45, +45 lines =@@
+@@= skipped -44, +44 lines =@@
  
      // See trailingCommasInGetter.ts
      set x(value,) { }

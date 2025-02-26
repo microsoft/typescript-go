@@ -1,6 +1,6 @@
 --- old.truthinessCallExpressionCoercion3.symbols
 +++ new.truthinessCallExpressionCoercion3.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >I : Symbol(I, Decl(truthinessCallExpressionCoercion3.ts, 0, 0))
  
      always(): void

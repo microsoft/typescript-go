@@ -1,6 +1,6 @@
 --- old.errorForUsingPropertyOfTypeAsType01.symbols
 +++ new.errorForUsingPropertyOfTypeAsType01.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >Foo : Symbol(Foo, Decl(errorForUsingPropertyOfTypeAsType01.ts, 0, 17))
  
          bar: string;

@@ -1,6 +1,6 @@
 --- old.es6ImportNameSpaceImportWithExport.symbols
 +++ new.es6ImportNameSpaceImportWithExport.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  
  export var x = nameSpaceBinding.a;
  >x : Symbol(x, Decl(client.ts, 1, 10))

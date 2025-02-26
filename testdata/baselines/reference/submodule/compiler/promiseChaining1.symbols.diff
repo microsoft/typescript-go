@@ -1,6 +1,6 @@
 --- old.promiseChaining1.symbols
 +++ new.promiseChaining1.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >length : Symbol(length, Decl(promiseChaining1.ts, 1, 24))
  
      constructor(public value: T) { }

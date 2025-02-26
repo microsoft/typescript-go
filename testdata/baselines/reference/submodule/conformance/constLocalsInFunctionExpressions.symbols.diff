@@ -1,6 +1,6 @@
 --- old.constLocalsInFunctionExpressions.symbols
 +++ new.constLocalsInFunctionExpressions.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  
          const f = () => x.length;
  >f : Symbol(f, Decl(constLocalsInFunctionExpressions.ts, 5, 13))

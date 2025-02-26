@@ -1,6 +1,6 @@
 --- old.thisInFunctionCallJs.symbols
 +++ new.thisInFunctionCallJs.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
      constructor() {
          /** @type {number[]} */
          this.data = [1, 2, 3];

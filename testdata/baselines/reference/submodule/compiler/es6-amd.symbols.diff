@@ -1,6 +1,6 @@
 --- old.es6-amd.symbols
 +++ new.es6-amd.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
      }
  
      public B()

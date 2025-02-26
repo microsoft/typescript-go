@@ -1,6 +1,6 @@
 --- old.controlFlowDestructuringLoop.symbols
 +++ new.controlFlowDestructuringLoop.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  
  interface NumVal { val: number; }
  >NumVal : Symbol(NumVal, Decl(controlFlowDestructuringLoop.ts, 0, 0))

@@ -1,6 +1,6 @@
 --- old.staticAsIdentifier.symbols
 +++ new.staticAsIdentifier.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C1 : Symbol(C1, Decl(staticAsIdentifier.ts, 0, 0))
  
      static static

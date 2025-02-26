@@ -1,6 +1,6 @@
 --- old.collisionSuperAndPropertyNameAsConstuctorParameter.symbols
 +++ new.collisionSuperAndPropertyNameAsConstuctorParameter.symbols
-@@= skipped -22, +22 lines =@@
+@@= skipped -21, +21 lines =@@
  >a : Symbol(a, Decl(collisionSuperAndPropertyNameAsConstuctorParameter.ts, 0, 0))
  
      constructor(private _super: number) { // should be error

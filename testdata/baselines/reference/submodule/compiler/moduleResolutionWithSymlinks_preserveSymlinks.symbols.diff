@@ -1,6 +1,6 @@
 --- old.moduleResolutionWithSymlinks_preserveSymlinks.symbols
 +++ new.moduleResolutionWithSymlinks_preserveSymlinks.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  /// <reference types="linked" />
  
  import { C as C1 } from "linked";

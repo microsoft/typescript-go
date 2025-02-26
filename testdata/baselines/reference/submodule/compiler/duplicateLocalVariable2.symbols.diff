@@ -1,6 +1,6 @@
 --- old.duplicateLocalVariable2.symbols
 +++ new.duplicateLocalVariable2.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >TestCase : Symbol(TestCase, Decl(duplicateLocalVariable2.ts, 0, 0))
  
      constructor (public name: string, public test: ()=>boolean, public errorMessageRegEx?: string) {

@@ -1,6 +1,6 @@
 --- old.controlFlowOptionalChain.symbols
 +++ new.controlFlowOptionalChain.symbols
-@@= skipped -24, +24 lines =@@
+@@= skipped -23, +23 lines =@@
  >a : Symbol(a, Decl(controlFlowOptionalChain.ts, 7, 3))
  
  a.toString();

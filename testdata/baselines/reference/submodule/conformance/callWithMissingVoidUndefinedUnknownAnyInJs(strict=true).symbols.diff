@@ -1,6 +1,6 @@
 --- old.callWithMissingVoidUndefinedUnknownAnyInJs(strict=true).symbols
 +++ new.callWithMissingVoidUndefinedUnknownAnyInJs(strict=true).symbols
-@@= skipped -20, +20 lines =@@
+@@= skipped -19, +19 lines =@@
  interface I<T> { m(p: T): void; }
  >I : Symbol(I, Decl(defs.d.ts, 3, 34))
  >T : Symbol(T, Decl(defs.d.ts, 5, 12))

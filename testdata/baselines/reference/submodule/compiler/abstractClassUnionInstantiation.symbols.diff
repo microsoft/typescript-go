@@ -1,6 +1,6 @@
 --- old.abstractClassUnionInstantiation.symbols
 +++ new.abstractClassUnionInstantiation.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  
  abstract class AbstractA { a: string; }
  >AbstractA : Symbol(AbstractA, Decl(abstractClassUnionInstantiation.ts, 1, 18))

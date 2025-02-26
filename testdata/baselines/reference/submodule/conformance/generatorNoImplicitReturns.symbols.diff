@@ -1,6 +1,6 @@
 --- old.generatorNoImplicitReturns.symbols
 +++ new.generatorNoImplicitReturns.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >testGenerator : Symbol(testGenerator, Decl(generatorNoImplicitReturns.ts, 0, 0))
  
    if (Math.random() > 0.5) { 

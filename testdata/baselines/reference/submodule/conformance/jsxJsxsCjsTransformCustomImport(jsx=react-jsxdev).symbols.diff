@@ -1,6 +1,6 @@
 --- old.jsxJsxsCjsTransformCustomImport(jsx=react-jsxdev).symbols
 +++ new.jsxJsxsCjsTransformCustomImport(jsx=react-jsxdev).symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >a : Symbol(a, Decl(jsxJsxsCjsTransformCustomImport.tsx, 1, 5))
  
    <p></p>

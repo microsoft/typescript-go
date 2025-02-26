@@ -1,6 +1,6 @@
 --- old.emitMethodCalledNew.symbols
 +++ new.emitMethodCalledNew.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  >b : Symbol(b, Decl(emitMethodCalledNew.ts, 5, 12))
  
    "new"(x: number) { return x + 1 }

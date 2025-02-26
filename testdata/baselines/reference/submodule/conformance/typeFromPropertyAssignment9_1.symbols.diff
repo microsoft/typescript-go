@@ -1,6 +1,6 @@
 --- old.typeFromPropertyAssignment9_1.symbols
 +++ new.typeFromPropertyAssignment9_1.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === a.js ===
  var my = my ?? {};

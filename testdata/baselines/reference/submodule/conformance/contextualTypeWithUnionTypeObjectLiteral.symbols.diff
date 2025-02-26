@@ -1,6 +1,6 @@
 --- old.contextualTypeWithUnionTypeObjectLiteral.symbols
 +++ new.contextualTypeWithUnionTypeObjectLiteral.symbols
-@@= skipped -121, +121 lines =@@
+@@= skipped -120, +120 lines =@@
  >I11 : Symbol(I11, Decl(contextualTypeWithUnionTypeObjectLiteral.ts, 32, 2))
  
      commonMethodDifferentReturnType(a: string, b: number): string;

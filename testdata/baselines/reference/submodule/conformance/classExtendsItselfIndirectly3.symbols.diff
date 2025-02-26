@@ -1,6 +1,6 @@
 --- old.classExtendsItselfIndirectly3.symbols
 +++ new.classExtendsItselfIndirectly3.symbols
-@@= skipped -4, +4 lines =@@
+@@= skipped -3, +3 lines =@@
  class C extends E { foo: string; } // error
  >C : Symbol(C, Decl(classExtendsItselfIndirectly_file1.ts, 0, 0))
  >E : Symbol(E, Decl(classExtendsItselfIndirectly_file3.ts, 0, 0))

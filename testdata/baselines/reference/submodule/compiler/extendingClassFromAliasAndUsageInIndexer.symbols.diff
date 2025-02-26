@@ -1,6 +1,6 @@
 --- old.extendingClassFromAliasAndUsageInIndexer.symbols
 +++ new.extendingClassFromAliasAndUsageInIndexer.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  >IHasVisualizationModel : Symbol(IHasVisualizationModel, Decl(extendingClassFromAliasAndUsageInIndexer_main.ts, 2, 79))
  
      VisualizationModel: typeof Backbone.Model;

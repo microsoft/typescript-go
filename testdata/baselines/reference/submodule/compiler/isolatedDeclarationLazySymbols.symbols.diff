@@ -1,6 +1,6 @@
 --- old.isolatedDeclarationLazySymbols.symbols
 +++ new.isolatedDeclarationLazySymbols.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === isolatedDeclarationLazySymbols.ts ===
  export function foo() {

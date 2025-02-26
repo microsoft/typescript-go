@@ -1,6 +1,6 @@
 --- old.optionalArgsWithDefaultValues.symbols
 +++ new.optionalArgsWithDefaultValues.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >CCC : Symbol(CCC, Decl(optionalArgsWithDefaultValues.ts, 0, 50))
  
      public foo(x: number, y?:boolean=false, z?=0) {}

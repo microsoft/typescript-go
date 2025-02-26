@@ -1,6 +1,6 @@
 --- old.objectLitArrayDeclNoNew.symbols
 +++ new.objectLitArrayDeclNoNew.symbols
-@@= skipped -20, +20 lines =@@
+@@= skipped -19, +19 lines =@@
  >ILineTokens : Symbol(ILineTokens, Decl(objectLitArrayDeclNoNew.ts, 7, 5))
  
          tokens: IToken[];

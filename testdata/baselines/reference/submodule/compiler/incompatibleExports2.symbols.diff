@@ -1,6 +1,6 @@
 --- old.incompatibleExports2.symbols
 +++ new.incompatibleExports2.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
      export interface x { a: string } 
  >x : Symbol(x, Decl(incompatibleExports2.ts, 0, 22))

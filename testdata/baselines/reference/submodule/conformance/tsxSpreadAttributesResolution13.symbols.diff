@@ -1,6 +1,6 @@
 --- old.tsxSpreadAttributesResolution13.symbols
 +++ new.tsxSpreadAttributesResolution13.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >ComponentProps : Symbol(ComponentProps, Decl(file.tsx, 0, 32))
  
      property1: string;

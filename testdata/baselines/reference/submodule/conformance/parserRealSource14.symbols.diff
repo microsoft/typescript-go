@@ -1,6 +1,6 @@
 --- old.parserRealSource14.symbols
 +++ new.parserRealSource14.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  
          return (items === null || items.length === 0) ? null : items[items.length - 1];
  >items : Symbol(items, Decl(parserRealSource14.ts, 6, 27))

@@ -1,6 +1,6 @@
 --- old.reverseMappedUnionInference.symbols
 +++ new.reverseMappedUnionInference.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >Result : Symbol(Result, Decl(reverseMappedUnionInference.ts, 0, 23))
  
    matches: (node: any) => boolean;

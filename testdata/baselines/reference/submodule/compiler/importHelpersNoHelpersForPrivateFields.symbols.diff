@@ -1,6 +1,6 @@
 --- old.importHelpersNoHelpersForPrivateFields.symbols
 +++ new.importHelpersNoHelpersForPrivateFields.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Foo : Symbol(Foo, Decl(main.ts, 0, 0))
  
      #field = true;

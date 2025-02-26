@@ -1,6 +1,6 @@
 --- old.callOverloadViaElementAccessExpression.symbols
 +++ new.callOverloadViaElementAccessExpression.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(callOverloadViaElementAccessExpression.ts, 0, 0))
  
      foo(x: number): number;

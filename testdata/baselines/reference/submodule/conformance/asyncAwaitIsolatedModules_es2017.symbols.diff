@@ -1,6 +1,6 @@
 --- old.asyncAwaitIsolatedModules_es2017.symbols
 +++ new.asyncAwaitIsolatedModules_es2017.symbols
-@@= skipped -83, +83 lines =@@
+@@= skipped -82, +82 lines =@@
  >C : Symbol(C, Decl(asyncAwaitIsolatedModules_es2017.ts, 25, 2))
  
  	async m1() { }

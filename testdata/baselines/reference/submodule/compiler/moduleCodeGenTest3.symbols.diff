@@ -1,6 +1,6 @@
 --- old.moduleCodeGenTest3.symbols
 +++ new.moduleCodeGenTest3.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >x : Symbol(x, Decl(moduleCodeGenTest3.ts, 0, 23))
  
  Baz.x = "goodbye";

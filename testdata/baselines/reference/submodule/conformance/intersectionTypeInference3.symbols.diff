@@ -1,6 +1,6 @@
 --- old.intersectionTypeInference3.symbols
 +++ new.intersectionTypeInference3.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  
      [Symbol.species]: Kind;
  >[Symbol.species] : Symbol([Symbol.species], Decl(intersectionTypeInference3.ts, 2, 50))

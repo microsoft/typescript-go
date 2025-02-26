@@ -1,6 +1,6 @@
 --- old.defaultIndexProps2.symbols
 +++ new.defaultIndexProps2.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Foo : Symbol(Foo, Decl(defaultIndexProps2.ts, 0, 0))
  
  	public v = "Yo";

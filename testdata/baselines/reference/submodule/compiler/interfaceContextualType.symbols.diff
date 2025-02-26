@@ -1,6 +1,6 @@
 --- old.interfaceContextualType.symbols
 +++ new.interfaceContextualType.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >IOptions : Symbol(IOptions, Decl(interfaceContextualType.ts, 0, 0))
  
      italic?: boolean;

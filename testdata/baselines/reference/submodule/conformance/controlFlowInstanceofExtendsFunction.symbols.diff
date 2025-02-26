@@ -1,6 +1,6 @@
 --- old.controlFlowInstanceofExtendsFunction.symbols
 +++ new.controlFlowInstanceofExtendsFunction.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === controlFlowInstanceofExtendsFunction.ts ===
  declare global {

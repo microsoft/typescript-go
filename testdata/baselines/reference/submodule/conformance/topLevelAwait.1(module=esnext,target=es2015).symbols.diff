@@ -1,6 +1,6 @@
 --- old.topLevelAwait.1(module=esnext,target=es2015).symbols
 +++ new.topLevelAwait.1(module=esnext,target=es2015).symbols
-@@= skipped -42, +42 lines =@@
+@@= skipped -41, +41 lines =@@
  >C1 : Symbol(C1, Decl(index.ts, 16, 18))
  
      await() {}

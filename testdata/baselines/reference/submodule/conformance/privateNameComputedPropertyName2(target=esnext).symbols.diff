@@ -1,6 +1,6 @@
 --- old.privateNameComputedPropertyName2(target=esnext).symbols
 +++ new.privateNameComputedPropertyName2(target=esnext).symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >A : Symbol(A, Decl(privateNameComputedPropertyName2.ts, 0, 27))
  
      #x = 100;

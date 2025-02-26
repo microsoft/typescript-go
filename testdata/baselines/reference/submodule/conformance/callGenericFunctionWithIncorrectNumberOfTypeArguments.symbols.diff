@@ -1,6 +1,6 @@
 --- old.callGenericFunctionWithIncorrectNumberOfTypeArguments.symbols
 +++ new.callGenericFunctionWithIncorrectNumberOfTypeArguments.symbols
-@@= skipped -62, +62 lines =@@
+@@= skipped -61, +61 lines =@@
  >C : Symbol(C, Decl(callGenericFunctionWithIncorrectNumberOfTypeArguments.ts, 13, 44))
  
      f<T, U>(x: T, y: U): T {

@@ -1,6 +1,6 @@
 --- old.formatToPartsFractionalSecond.symbols
 +++ new.formatToPartsFractionalSecond.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === formatToPartsFractionalSecond.ts ===
  new Intl.DateTimeFormat().formatToParts().find((val) => val.type === 'fractionalSecond')

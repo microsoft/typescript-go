@@ -1,6 +1,6 @@
 --- old.scannerUnicodeEscapeInKeyword2.symbols
 +++ new.scannerUnicodeEscapeInKeyword2.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === file1.ts ===
  var \u0061wait = 12; // ok

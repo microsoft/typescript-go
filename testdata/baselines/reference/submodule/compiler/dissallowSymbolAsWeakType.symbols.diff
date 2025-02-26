@@ -1,6 +1,6 @@
 --- old.dissallowSymbolAsWeakType.symbols
 +++ new.dissallowSymbolAsWeakType.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >s : Symbol(s, Decl(dissallowSymbolAsWeakType.ts, 0, 5))
  
  ws.add(s);

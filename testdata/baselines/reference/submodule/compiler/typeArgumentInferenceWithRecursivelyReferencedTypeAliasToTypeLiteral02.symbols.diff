@@ -1,6 +1,6 @@
 --- old.typeArgumentInferenceWithRecursivelyReferencedTypeAliasToTypeLiteral02.symbols
 +++ new.typeArgumentInferenceWithRecursivelyReferencedTypeAliasToTypeLiteral02.symbols
-@@= skipped -28, +28 lines =@@
+@@= skipped -27, +27 lines =@@
  >TreeNodeMiddleman : Symbol(TreeNodeMiddleman, Decl(typeArgumentInferenceWithRecursivelyReferencedTypeAliasToTypeLiteral02.ts, 3, 1))
  
  nodes.map(n => n.name);

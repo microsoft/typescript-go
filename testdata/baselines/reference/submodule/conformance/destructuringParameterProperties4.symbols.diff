@@ -1,6 +1,6 @@
 --- old.destructuringParameterProperties4.symbols
 +++ new.destructuringParameterProperties4.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >V : Symbol(V, Decl(destructuringParameterProperties4.ts, 0, 14))
  
      constructor(private k: T, protected [a, b, c]: [T,U,V]) {

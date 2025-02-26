@@ -1,6 +1,6 @@
 --- old.recursiveTypeComparison.symbols
 +++ new.recursiveTypeComparison.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  
      // This member can't be of type T, Property<T>, or Observable<anything but T>
      needThisOne: Observable<T>;

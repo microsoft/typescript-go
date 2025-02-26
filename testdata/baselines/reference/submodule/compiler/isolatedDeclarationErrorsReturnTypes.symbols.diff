@@ -1,6 +1,6 @@
 --- old.isolatedDeclarationErrorsReturnTypes.symbols
 +++ new.isolatedDeclarationErrorsReturnTypes.symbols
-@@= skipped -76, +76 lines =@@
+@@= skipped -75, +75 lines =@@
  
      // Should Error
      fnExpression = function foo() { return 0; }

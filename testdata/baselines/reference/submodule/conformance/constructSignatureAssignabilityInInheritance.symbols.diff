@@ -1,6 +1,6 @@
 --- old.constructSignatureAssignabilityInInheritance.symbols
 +++ new.constructSignatureAssignabilityInInheritance.symbols
-@@= skipped -71, +71 lines =@@
+@@= skipped -70, +70 lines =@@
  
          // M's
          a: new (x: number) => void;

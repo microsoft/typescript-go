@@ -1,6 +1,6 @@
 --- old.destructuringTuple.symbols
 +++ new.destructuringTuple.symbols
-@@= skipped -23, +23 lines =@@
+@@= skipped -22, +22 lines =@@
  
  const [oops1] = [1, 2, 3].reduce((accu, el) => accu.concat(el), []);
  >oops1 : Symbol(oops1, Decl(destructuringTuple.ts, 10, 7))

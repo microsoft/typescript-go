@@ -1,6 +1,6 @@
 --- old.controlFlowPropertyInitializer.symbols
 +++ new.controlFlowPropertyInitializer.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >BestLanguage : Symbol(BestLanguage, Decl(controlFlowPropertyInitializer.ts, 2, 27))
  
      name = LANG;

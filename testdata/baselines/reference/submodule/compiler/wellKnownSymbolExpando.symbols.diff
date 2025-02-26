@@ -1,6 +1,6 @@
 --- old.wellKnownSymbolExpando.symbols
 +++ new.wellKnownSymbolExpando.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === wellKnownSymbolExpando.ts ===
  function f() {}

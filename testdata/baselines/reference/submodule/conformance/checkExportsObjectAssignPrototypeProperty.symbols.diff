@@ -1,6 +1,6 @@
 --- old.checkExportsObjectAssignPrototypeProperty.symbols
 +++ new.checkExportsObjectAssignPrototypeProperty.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >Person : Symbol(Person, Decl(validator.ts, 0, 12))
  
  m1.thing;

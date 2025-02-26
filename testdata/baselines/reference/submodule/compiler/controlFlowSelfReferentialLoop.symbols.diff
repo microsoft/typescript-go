@@ -1,6 +1,6 @@
 --- old.controlFlowSelfReferentialLoop.symbols
 +++ new.controlFlowSelfReferentialLoop.symbols
-@@= skipped -110, +110 lines =@@
+@@= skipped -109, +109 lines =@@
      for (k=0;k<x.length;k+=16) {
  >k : Symbol(k, Decl(controlFlowSelfReferentialLoop.ts, 21, 7))
  >k : Symbol(k, Decl(controlFlowSelfReferentialLoop.ts, 21, 7))

@@ -1,6 +1,6 @@
 --- old.implementingAnInterfaceExtendingClassWithPrivates2.symbols
 +++ new.implementingAnInterfaceExtendingClassWithPrivates2.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Foo : Symbol(Foo, Decl(implementingAnInterfaceExtendingClassWithPrivates2.ts, 0, 0))
  
      private x: string;

@@ -1,6 +1,6 @@
 --- old.unusedTypeParameters2.symbols
 +++ new.unusedTypeParameters2.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >typeparameter2 : Symbol(typeparameter2, Decl(unusedTypeParameters2.ts, 0, 29))
  
      private x: typeparameter2;

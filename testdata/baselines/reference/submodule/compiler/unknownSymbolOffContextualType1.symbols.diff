@@ -1,6 +1,6 @@
 --- old.unknownSymbolOffContextualType1.symbols
 +++ new.unknownSymbolOffContextualType1.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >Document : Symbol(Document, Decl(lib.dom.d.ts, --, --), Decl(lib.dom.d.ts, --, --), Decl(unknownSymbolOffContextualType1.ts, 0, 31))
  
      getElementById(elementId: string): HTMLElement;

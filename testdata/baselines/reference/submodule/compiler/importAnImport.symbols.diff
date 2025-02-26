@@ -1,6 +1,6 @@
 --- old.importAnImport.symbols
 +++ new.importAnImport.symbols
-@@= skipped -4, +4 lines =@@
+@@= skipped -3, +3 lines =@@
  module c.a.b {
  >c : Symbol(c, Decl(importAnImport.ts, 0, 0))
  >a : Symbol(a, Decl(importAnImport.ts, 0, 9))

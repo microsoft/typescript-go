@@ -1,6 +1,6 @@
 --- old.doYouNeedToChangeYourTargetLibraryES2016Plus.symbols
 +++ new.doYouNeedToChangeYourTargetLibraryES2016Plus.symbols
-@@= skipped -26, +26 lines =@@
+@@= skipped -25, +25 lines =@@
  
  const testIntlFormatToParts = new Intl.DateTimeFormat("en-US").formatToParts();
  >testIntlFormatToParts : Symbol(testIntlFormatToParts, Decl(doYouNeedToChangeYourTargetLibraryES2016Plus.ts, 9, 5))

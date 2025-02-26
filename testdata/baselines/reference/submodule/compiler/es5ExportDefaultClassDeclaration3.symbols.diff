@@ -1,6 +1,6 @@
 --- old.es5ExportDefaultClassDeclaration3.symbols
 +++ new.es5ExportDefaultClassDeclaration3.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === es5ExportDefaultClassDeclaration3.ts ===
  var before: C = new C();
  >before : Symbol(before, Decl(es5ExportDefaultClassDeclaration3.ts, 0, 3))

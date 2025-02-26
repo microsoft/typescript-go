@@ -1,6 +1,6 @@
 --- old.intersectionsOfLargeUnions2.symbols
 +++ new.intersectionsOfLargeUnions2.symbols
-@@= skipped -4, +4 lines =@@
+@@= skipped -3, +3 lines =@@
  // Repro from #24233
  
  declare global {

@@ -1,6 +1,6 @@
 --- old.internalAliasClass.symbols
 +++ new.internalAliasClass.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
      import b = a.c;
  >b : Symbol(b, Decl(internalAliasClass.ts, 5, 10))
  >a : Symbol(a, Decl(internalAliasClass.ts, 0, 0))

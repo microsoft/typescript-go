@@ -1,6 +1,6 @@
 --- old.nodeModulesImportMeta(module=nodenext).symbols
 +++ new.nodeModulesImportMeta(module=nodenext).symbols
-@@= skipped -4, +4 lines =@@
+@@= skipped -3, +3 lines =@@
  // cjs format file
  const x = import.meta.url;
  >x : Symbol(x, Decl(index.ts, 1, 5))

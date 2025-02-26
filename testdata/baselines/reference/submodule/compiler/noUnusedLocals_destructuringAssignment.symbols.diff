@@ -1,6 +1,6 @@
 --- old.noUnusedLocals_destructuringAssignment.symbols
 +++ new.noUnusedLocals_destructuringAssignment.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(noUnusedLocals_destructuringAssignment.ts, 0, 0))
  
      private x = 0;

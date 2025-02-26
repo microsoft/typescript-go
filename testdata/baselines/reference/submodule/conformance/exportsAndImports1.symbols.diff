@@ -1,6 +1,6 @@
 --- old.exportsAndImports1.symbols
 +++ new.exportsAndImports1.symbols
-@@= skipped -17, +17 lines =@@
+@@= skipped -16, +16 lines =@@
  >E : Symbol(E, Decl(t1.ts, 5, 1))
  
      A, B, C

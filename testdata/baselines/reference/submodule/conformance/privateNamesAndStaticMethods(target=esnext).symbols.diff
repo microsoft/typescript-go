@@ -1,6 +1,6 @@
 --- old.privateNamesAndStaticMethods(target=esnext).symbols
 +++ new.privateNamesAndStaticMethods(target=esnext).symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(privateNamesAndStaticMethods.ts, 0, 0))
  
      static #foo(a: number) {}

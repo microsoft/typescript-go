@@ -1,6 +1,6 @@
 --- old.jsDeclarationsClassMethod.symbols
 +++ new.jsDeclarationsClassMethod.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === jsDeclarationsClassMethod.js ===
  function C1() {

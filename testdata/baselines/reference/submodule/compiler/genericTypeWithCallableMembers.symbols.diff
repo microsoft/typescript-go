@@ -1,6 +1,6 @@
 --- old.genericTypeWithCallableMembers.symbols
 +++ new.genericTypeWithCallableMembers.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  >Constructable : Symbol(Constructable, Decl(genericTypeWithCallableMembers.ts, 0, 0))
  
      constructor(public data: T, public data2: Constructable) { }

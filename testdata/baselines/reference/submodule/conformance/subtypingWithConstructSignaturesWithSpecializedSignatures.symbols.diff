@@ -1,6 +1,6 @@
 --- old.subtypingWithConstructSignaturesWithSpecializedSignatures.symbols
 +++ new.subtypingWithConstructSignaturesWithSpecializedSignatures.symbols
-@@= skipped -82, +82 lines =@@
+@@= skipped -81, +81 lines =@@
  
          // M's
          a: {

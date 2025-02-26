@@ -1,6 +1,6 @@
 --- old.generatorAssignability.symbols
 +++ new.generatorAssignability.symbols
-@@= skipped -146, +146 lines =@@
+@@= skipped -145, +145 lines =@@
      const o = {[Symbol.asyncIterator]: syncGenerator};
  >o : Symbol(o, Decl(generatorAssignability.ts, 64, 9))
  >[Symbol.asyncIterator] : Symbol([Symbol.asyncIterator], Decl(generatorAssignability.ts, 64, 15))

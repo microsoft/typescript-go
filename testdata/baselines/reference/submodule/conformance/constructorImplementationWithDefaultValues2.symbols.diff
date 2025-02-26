@@ -1,6 +1,6 @@
 --- old.constructorImplementationWithDefaultValues2.symbols
 +++ new.constructorImplementationWithDefaultValues2.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >x : Symbol(x, Decl(constructorImplementationWithDefaultValues2.ts, 1, 16))
  
      constructor(public x: string = 1) { // error

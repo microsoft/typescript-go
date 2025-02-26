@@ -1,6 +1,6 @@
 --- old.copyrightWithoutNewLine1.symbols
 +++ new.copyrightWithoutNewLine1.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  
  var el = document.getElementById('content');
  >el : Symbol(el, Decl(copyrightWithoutNewLine1.ts, 4, 3))

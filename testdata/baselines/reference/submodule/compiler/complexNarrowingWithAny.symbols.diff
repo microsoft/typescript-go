@@ -1,6 +1,6 @@
 --- old.complexNarrowingWithAny.symbols
 +++ new.complexNarrowingWithAny.symbols
-@@= skipped -177, +177 lines =@@
+@@= skipped -176, +176 lines =@@
  >_View_AppComponent0 : Symbol(_View_AppComponent0, Decl(complexNarrowingWithAny.ts, 126, 1))
  
    _text_0:any;

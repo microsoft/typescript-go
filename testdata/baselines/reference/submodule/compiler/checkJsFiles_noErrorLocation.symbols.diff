@@ -1,6 +1,6 @@
 --- old.checkJsFiles_noErrorLocation.symbols
 +++ new.checkJsFiles_noErrorLocation.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  
    }
    foo() {

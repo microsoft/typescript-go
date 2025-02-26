@@ -1,6 +1,6 @@
 --- old.variance.symbols
 +++ new.variance.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >T : Symbol(T, Decl(variance.ts, 4, 14))
  
    prop: T extends unknown ? true : false;

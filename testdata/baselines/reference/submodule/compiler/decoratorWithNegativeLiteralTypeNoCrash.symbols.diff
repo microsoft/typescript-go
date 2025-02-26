@@ -1,6 +1,6 @@
 --- old.decoratorWithNegativeLiteralTypeNoCrash.symbols
 +++ new.decoratorWithNegativeLiteralTypeNoCrash.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >decorator : Symbol(decorator, Decl(decoratorWithNegativeLiteralTypeNoCrash.ts, 3, 1))
  
      public field1: -1 = -1;

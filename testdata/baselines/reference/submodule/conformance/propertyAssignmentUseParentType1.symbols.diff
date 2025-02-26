@@ -1,6 +1,6 @@
 --- old.propertyAssignmentUseParentType1.symbols
 +++ new.propertyAssignmentUseParentType1.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
      (): boolean
      num: 123;

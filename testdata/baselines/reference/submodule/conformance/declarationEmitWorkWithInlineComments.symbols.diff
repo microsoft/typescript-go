@@ -1,6 +1,6 @@
 --- old.declarationEmitWorkWithInlineComments.symbols
 +++ new.declarationEmitWorkWithInlineComments.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
    constructor(
      /** @internal */
      public isInternal1: string,

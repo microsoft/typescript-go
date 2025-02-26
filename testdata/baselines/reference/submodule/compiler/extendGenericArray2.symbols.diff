@@ -1,6 +1,6 @@
 --- old.extendGenericArray2.symbols
 +++ new.extendGenericArray2.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(extendGenericArray2.ts, 0, 15))
  
      x: T;

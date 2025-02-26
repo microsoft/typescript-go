@@ -1,6 +1,6 @@
 --- old.intraExpressionInferencesJsx.symbols
 +++ new.intraExpressionInferencesJsx.symbols
-@@= skipped -206, +206 lines =@@
+@@= skipped -205, +205 lines =@@
  >T : Symbol(T, Decl(intraExpressionInferencesJsx.tsx, 85, 16))
  
    a: (x: string) => T;

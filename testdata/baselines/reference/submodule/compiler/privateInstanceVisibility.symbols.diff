@@ -1,6 +1,6 @@
 --- old.privateInstanceVisibility.symbols
 +++ new.privateInstanceVisibility.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >Example : Symbol(Example, Decl(privateInstanceVisibility.ts, 0, 13))
   
          private someNumber: number;

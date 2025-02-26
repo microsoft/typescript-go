@@ -1,6 +1,6 @@
 --- old.extendGlobalThis2.symbols
 +++ new.extendGlobalThis2.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
      export function foo() { console.log("x"); }
  >foo : Symbol(foo, Decl(extendGlobalThis2.ts, 0, 22))

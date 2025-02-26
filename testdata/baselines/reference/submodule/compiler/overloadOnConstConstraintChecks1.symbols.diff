@@ -1,6 +1,6 @@
 --- old.overloadOnConstConstraintChecks1.symbols
 +++ new.overloadOnConstConstraintChecks1.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === overloadOnConstConstraintChecks1.ts ===
  class Base { foo() { } }
  >Base : Symbol(Base, Decl(overloadOnConstConstraintChecks1.ts, 0, 0))

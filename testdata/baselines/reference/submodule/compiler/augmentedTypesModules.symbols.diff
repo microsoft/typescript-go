@@ -1,6 +1,6 @@
 --- old.augmentedTypesModules.symbols
 +++ new.augmentedTypesModules.symbols
-@@= skipped -27, +27 lines =@@
+@@= skipped -26, +26 lines =@@
  
      export interface I { foo(): void; }
  >I : Symbol(I, Decl(augmentedTypesModules.ts, 10, 12))

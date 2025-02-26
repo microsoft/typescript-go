@@ -1,6 +1,6 @@
 --- old.arrowFunctionContexts.symbols
 +++ new.arrowFunctionContexts.symbols
-@@= skipped -56, +56 lines =@@
+@@= skipped -55, +55 lines =@@
  >E : Symbol(E, Decl(arrowFunctionContexts.ts, 25, 36))
  
      x = () => 4, // Error expected

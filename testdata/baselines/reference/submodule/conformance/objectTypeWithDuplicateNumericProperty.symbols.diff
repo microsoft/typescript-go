@@ -1,6 +1,6 @@
 --- old.objectTypeWithDuplicateNumericProperty.symbols
 +++ new.objectTypeWithDuplicateNumericProperty.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >C : Symbol(C, Decl(objectTypeWithDuplicateNumericProperty.ts, 0, 0))
  
      1;

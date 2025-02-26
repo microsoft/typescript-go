@@ -1,6 +1,6 @@
 --- old.typeArgumentInference.symbols
 +++ new.typeArgumentInference.symbols
-@@= skipped -66, +66 lines =@@
+@@= skipped -65, +65 lines =@@
  someGenerics2a<string>((n) => n.substr(0));
  >someGenerics2a : Symbol(someGenerics2a, Decl(typeArgumentInference.ts, 15, 32))
  >n : Symbol(n, Decl(typeArgumentInference.ts, 21, 24))

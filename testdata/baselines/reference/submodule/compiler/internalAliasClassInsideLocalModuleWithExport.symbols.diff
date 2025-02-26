@@ -1,6 +1,6 @@
 --- old.internalAliasClassInsideLocalModuleWithExport.symbols
 +++ new.internalAliasClassInsideLocalModuleWithExport.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >c : Symbol(c, Decl(internalAliasClassInsideLocalModuleWithExport.ts, 0, 17))
  
          foo(a: number) {

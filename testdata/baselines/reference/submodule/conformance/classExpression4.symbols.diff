@@ -1,6 +1,6 @@
 --- old.classExpression4.symbols
 +++ new.classExpression4.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(classExpression4.ts, 0, 3))
  
      foo() {

@@ -1,6 +1,6 @@
 --- old.typeSatisfaction_propertyValueConformance2(nouncheckedindexedaccess=true).symbols
 +++ new.typeSatisfaction_propertyValueConformance2(nouncheckedindexedaccess=true).symbols
-@@= skipped -34, +34 lines =@@
+@@= skipped -33, +33 lines =@@
  >x : Symbol(x, Decl(typeSatisfaction_propertyValueConformance2.ts, 3, 5))
  
  console.log(x.z);

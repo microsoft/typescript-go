@@ -1,6 +1,6 @@
 --- old.nullIsSubtypeOfEverythingButUndefined.symbols
 +++ new.nullIsSubtypeOfEverythingButUndefined.symbols
-@@= skipped -83, +83 lines =@@
+@@= skipped -82, +82 lines =@@
  
  interface I1 { foo: number; }
  >I1 : Symbol(I1, Decl(nullIsSubtypeOfEverythingButUndefined.ts, 31, 50))

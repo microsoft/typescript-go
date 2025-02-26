@@ -1,6 +1,6 @@
 --- old.importAliasInModuleAugmentation.symbols
 +++ new.importAliasInModuleAugmentation.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  
      export interface y { s: string }
  >y : Symbol(y, Decl(importAliasInModuleAugmentation.ts, 3, 16), Decl(importAliasInModuleAugmentation.ts, 3, 24))

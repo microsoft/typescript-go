@@ -1,6 +1,6 @@
 --- old.throwStatements.symbols
 +++ new.throwStatements.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >I : Symbol(I, Decl(throwStatements.ts, 0, 0))
  
      id: number;

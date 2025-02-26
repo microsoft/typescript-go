@@ -1,6 +1,6 @@
 --- old.referenceSatisfiesExpression.symbols
 +++ new.referenceSatisfiesExpression.symbols
-@@= skipped -44, +44 lines =@@
+@@= skipped -43, +43 lines =@@
  >g : Symbol(g, Decl(referenceSatisfiesExpression.ts, 16, 3))
  
    console.log(g)

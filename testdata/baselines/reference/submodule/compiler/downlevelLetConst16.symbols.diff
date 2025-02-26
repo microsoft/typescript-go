@@ -1,6 +1,6 @@
 --- old.downlevelLetConst16.symbols
 +++ new.downlevelLetConst16.symbols
-@@= skipped -90, +90 lines =@@
+@@= skipped -89, +89 lines =@@
  >A : Symbol(A, Decl(downlevelLetConst16.ts, 29, 1))
  
      m1() {

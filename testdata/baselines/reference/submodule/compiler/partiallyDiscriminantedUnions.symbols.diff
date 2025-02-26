@@ -1,6 +1,6 @@
 --- old.partiallyDiscriminantedUnions.symbols
 +++ new.partiallyDiscriminantedUnions.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >A1 : Symbol(A1, Decl(partiallyDiscriminantedUnions.ts, 0, 0))
  
      type: 'a';

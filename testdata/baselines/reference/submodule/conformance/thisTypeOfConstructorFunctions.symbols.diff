@@ -1,6 +1,6 @@
 --- old.thisTypeOfConstructorFunctions.symbols
 +++ new.thisTypeOfConstructorFunctions.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
   * @param {T} t
   */
  function Cp(t) {

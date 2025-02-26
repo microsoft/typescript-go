@@ -1,6 +1,6 @@
 --- old.importCallExpressionInCJS2.symbols
 +++ new.importCallExpressionInCJS2.symbols
-@@= skipped -23, +23 lines =@@
+@@= skipped -22, +22 lines =@@
  
          j = await import("./1");
  >j : Symbol(j, Decl(2.ts, 1, 7))

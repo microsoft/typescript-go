@@ -1,6 +1,6 @@
 --- old.typeParameterExtendingUnion2.symbols
 +++ new.typeParameterExtendingUnion2.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === typeParameterExtendingUnion2.ts ===
  class Animal { run() { } }
  >Animal : Symbol(Animal, Decl(typeParameterExtendingUnion2.ts, 0, 0))

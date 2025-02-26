@@ -1,6 +1,6 @@
 --- old.defaultPropsEmptyCurlyBecomesAnyForJs.symbols
 +++ new.defaultPropsEmptyCurlyBecomesAnyForJs.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === library.d.ts ===
  export class Foo<T = {}, U = {}> {

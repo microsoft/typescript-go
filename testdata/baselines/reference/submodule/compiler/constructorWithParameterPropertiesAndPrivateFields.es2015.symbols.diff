@@ -1,6 +1,6 @@
 --- old.constructorWithParameterPropertiesAndPrivateFields.es2015.symbols
 +++ new.constructorWithParameterPropertiesAndPrivateFields.es2015.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >A : Symbol(A, Decl(constructorWithParameterPropertiesAndPrivateFields.es2015.ts, 0, 0))
  
    readonly #privateField: string;

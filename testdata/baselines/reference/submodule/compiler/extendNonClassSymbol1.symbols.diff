@@ -1,6 +1,6 @@
 --- old.extendNonClassSymbol1.symbols
 +++ new.extendNonClassSymbol1.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === extendNonClassSymbol1.ts ===
  class A { foo() { } }
  >A : Symbol(A, Decl(extendNonClassSymbol1.ts, 0, 0))

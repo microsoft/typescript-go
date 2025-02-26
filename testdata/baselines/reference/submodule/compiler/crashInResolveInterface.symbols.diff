@@ -1,6 +1,6 @@
 --- old.crashInResolveInterface.symbols
 +++ new.crashInResolveInterface.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >C : Symbol(C, Decl(file2.ts, 1, 17), Decl(file2.ts, 4, 1))
  
      count(countTitle?: string): void;

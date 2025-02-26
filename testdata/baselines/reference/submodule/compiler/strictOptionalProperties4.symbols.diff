@@ -1,6 +1,6 @@
 --- old.strictOptionalProperties4.symbols
 +++ new.strictOptionalProperties4.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >x : Symbol(x, Decl(a.js, 5, 5))
  
  x.foo; // number | undefined

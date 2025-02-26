@@ -1,6 +1,6 @@
 --- old.exportPrivateType.symbols
 +++ new.exportPrivateType.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >C1 : Symbol(C1, Decl(exportPrivateType.ts, 0, 12))
  
          x: string;

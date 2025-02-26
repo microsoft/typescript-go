@@ -1,6 +1,6 @@
 --- old.typeOnlyMerge3.symbols
 +++ new.typeOnlyMerge3.symbols
-@@= skipped -28, +28 lines =@@
+@@= skipped -27, +27 lines =@@
  >A : Symbol(A, Decl(c.ts, 0, 8))
  
  A.displayName;

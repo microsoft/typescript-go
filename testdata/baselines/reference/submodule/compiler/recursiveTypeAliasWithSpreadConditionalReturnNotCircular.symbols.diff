@@ -1,6 +1,6 @@
 --- old.recursiveTypeAliasWithSpreadConditionalReturnNotCircular.symbols
 +++ new.recursiveTypeAliasWithSpreadConditionalReturnNotCircular.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(recursiveTypeAliasWithSpreadConditionalReturnNotCircular.ts, 1, 24))
  
  	zip1<O extends Array<Option<any>>>(...others: O): Option<[T, ...UnzipOptionArray1<O>]>;

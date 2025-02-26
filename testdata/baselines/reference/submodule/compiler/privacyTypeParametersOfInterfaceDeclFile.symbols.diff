@@ -1,6 +1,6 @@
 --- old.privacyTypeParametersOfInterfaceDeclFile.symbols
 +++ new.privacyTypeParametersOfInterfaceDeclFile.symbols
-@@= skipped -25, +25 lines =@@
+@@= skipped -24, +24 lines =@@
  >privateClass : Symbol(privateClass, Decl(privacyTypeParametersOfInterfaceDeclFile.ts, 0, 0))
  
      myMethod(val: T): T;

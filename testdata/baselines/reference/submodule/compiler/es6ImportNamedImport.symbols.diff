@@ -1,6 +1,6 @@
 --- old.es6ImportNamedImport.symbols
 +++ new.es6ImportNamedImport.symbols
-@@= skipped -106, +106 lines =@@
+@@= skipped -105, +105 lines =@@
  >z1 : Symbol(z1, Decl(es6ImportNamedImport_1.ts, 18, 8))
  
  import { z2 as z3 } from "./es6ImportNamedImport_0";

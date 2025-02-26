@@ -1,6 +1,6 @@
 --- old.awaitedTypeStrictNull.symbols
 +++ new.awaitedTypeStrictNull.symbols
-@@= skipped -95, +95 lines =@@
+@@= skipped -94, +94 lines =@@
  
  interface BadPromise { then(cb: (value: BadPromise) => void): void; }
  >BadPromise : Symbol(BadPromise, Decl(awaitedTypeStrictNull.ts, 18, 50))

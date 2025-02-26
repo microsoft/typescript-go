@@ -1,6 +1,6 @@
 --- old.emitStatementsBeforeSuperCallWithDefineFields.symbols
 +++ new.emitStatementsBeforeSuperCallWithDefineFields.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  
      // @ts-ignore
      constructor(public p: number) {

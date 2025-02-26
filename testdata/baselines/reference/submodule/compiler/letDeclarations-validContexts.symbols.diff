@@ -1,6 +1,6 @@
 --- old.letDeclarations-validContexts.symbols
 +++ new.letDeclarations-validContexts.symbols
-@@= skipped -151, +151 lines =@@
+@@= skipped -150, +150 lines =@@
      }
  
      method() {

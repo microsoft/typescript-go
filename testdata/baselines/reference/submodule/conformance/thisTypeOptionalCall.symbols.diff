@@ -1,6 +1,6 @@
 --- old.thisTypeOptionalCall.symbols
 +++ new.thisTypeOptionalCall.symbols
-@@= skipped -19, +19 lines =@@
+@@= skipped -18, +18 lines =@@
  >R : Symbol(R, Decl(thisTypeOptionalCall.ts, 0, 38))
  
      return fn?.bind(obj);

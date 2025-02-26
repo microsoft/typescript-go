@@ -1,6 +1,6 @@
 --- old.Protected8.symbols
 +++ new.Protected8.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >I : Symbol(I, Decl(Protected8.ts, 0, 0))
  
     protected

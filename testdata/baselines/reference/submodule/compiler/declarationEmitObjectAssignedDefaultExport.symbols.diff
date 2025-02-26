@@ -1,6 +1,6 @@
 --- old.declarationEmitObjectAssignedDefaultExport.symbols
 +++ new.declarationEmitObjectAssignedDefaultExport.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Statics : Symbol(Statics, Decl(index.d.ts, 0, 0))
  
      "$$whatever": string;

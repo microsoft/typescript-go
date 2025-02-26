@@ -1,6 +1,6 @@
 --- old.mappedTypesAndObjects.symbols
 +++ new.mappedTypesAndObjects.symbols
-@@= skipped -63, +63 lines =@@
+@@= skipped -62, +62 lines =@@
  >Base : Symbol(Base, Decl(mappedTypesAndObjects.ts, 14, 1))
  
      foo: { [key: string]: any };

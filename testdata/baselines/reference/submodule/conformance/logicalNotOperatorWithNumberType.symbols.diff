@@ -1,6 +1,6 @@
 --- old.logicalNotOperatorWithNumberType.symbols
 +++ new.logicalNotOperatorWithNumberType.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  >A : Symbol(A, Decl(logicalNotOperatorWithNumberType.ts, 4, 36))
  
      public a: number;

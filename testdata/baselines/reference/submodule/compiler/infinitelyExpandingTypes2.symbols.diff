@@ -1,6 +1,6 @@
 --- old.infinitelyExpandingTypes2.symbols
 +++ new.infinitelyExpandingTypes2.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(infinitelyExpandingTypes2.ts, 0, 14))
  
      x: Foo<Foo<T>>;

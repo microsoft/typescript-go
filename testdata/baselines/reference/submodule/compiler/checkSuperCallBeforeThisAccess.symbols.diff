@@ -1,6 +1,6 @@
 --- old.checkSuperCallBeforeThisAccess.symbols
 +++ new.checkSuperCallBeforeThisAccess.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(checkSuperCallBeforeThisAccess.ts, 0, 0))
  
      x = 1;

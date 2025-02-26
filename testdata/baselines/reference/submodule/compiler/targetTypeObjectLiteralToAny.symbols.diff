@@ -1,6 +1,6 @@
 --- old.targetTypeObjectLiteralToAny.symbols
 +++ new.targetTypeObjectLiteralToAny.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >result : Symbol(result, Decl(targetTypeObjectLiteralToAny.ts, 2, 4))
  					
  	TypeScriptKeywords.forEach(function(keyword) {						

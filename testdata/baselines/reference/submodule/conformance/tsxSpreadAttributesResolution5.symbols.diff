@@ -1,6 +1,6 @@
 --- old.tsxSpreadAttributesResolution5.symbols
 +++ new.tsxSpreadAttributesResolution5.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >PoisonedProp : Symbol(PoisonedProp, Decl(file.tsx, 0, 32))
  
      x: string;

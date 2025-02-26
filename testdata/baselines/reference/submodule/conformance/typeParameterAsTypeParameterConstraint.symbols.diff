@@ -1,6 +1,6 @@
 --- old.typeParameterAsTypeParameterConstraint.symbols
 +++ new.typeParameterAsTypeParameterConstraint.symbols
-@@= skipped -28, +28 lines =@@
+@@= skipped -27, +27 lines =@@
  >A : Symbol(A, Decl(typeParameterAsTypeParameterConstraint.ts, 6, 19))
  
      foo: string;

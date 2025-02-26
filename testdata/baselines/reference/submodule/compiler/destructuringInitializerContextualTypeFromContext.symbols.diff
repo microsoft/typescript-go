@@ -1,6 +1,6 @@
 --- old.destructuringInitializerContextualTypeFromContext.symbols
 +++ new.destructuringInitializerContextualTypeFromContext.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  >Props : Symbol(Props, Decl(destructuringInitializerContextualTypeFromContext.ts, 2, 1))
  
      name: "Apollo" | "Artemis" | "Dionysus" | "Persephone";

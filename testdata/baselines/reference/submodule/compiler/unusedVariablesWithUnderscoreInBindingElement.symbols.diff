@@ -1,6 +1,6 @@
 --- old.unusedVariablesWithUnderscoreInBindingElement.symbols
 +++ new.unusedVariablesWithUnderscoreInBindingElement.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >b1 : Symbol(b1, Decl(unusedVariablesWithUnderscoreInBindingElement.ts, 1, 15))
  
      console.log(b1);

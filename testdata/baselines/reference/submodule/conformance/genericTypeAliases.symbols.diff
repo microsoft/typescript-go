@@ -1,6 +1,6 @@
 --- old.genericTypeAliases.symbols
 +++ new.genericTypeAliases.symbols
-@@= skipped -132, +132 lines =@@
+@@= skipped -131, +131 lines =@@
  >B : Symbol(B, Decl(genericTypeAliases.ts, 41, 15))
  
      a: A;

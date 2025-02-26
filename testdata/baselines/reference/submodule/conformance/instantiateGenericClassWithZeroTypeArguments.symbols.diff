@@ -1,6 +1,6 @@
 --- old.instantiateGenericClassWithZeroTypeArguments.symbols
 +++ new.instantiateGenericClassWithZeroTypeArguments.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >T : Symbol(T, Decl(instantiateGenericClassWithZeroTypeArguments.ts, 2, 8))
  
      x: T;

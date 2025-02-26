@@ -1,6 +1,6 @@
 --- old.constEnumOnlyModuleMerging.symbols
 +++ new.constEnumOnlyModuleMerging.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  
      export const enum A { X }
  >A : Symbol(A, Decl(constEnumOnlyModuleMerging.ts, 4, 14))

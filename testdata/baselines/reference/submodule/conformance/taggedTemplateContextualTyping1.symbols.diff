@@ -1,6 +1,6 @@
 --- old.taggedTemplateContextualTyping1.symbols
 +++ new.taggedTemplateContextualTyping1.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  >tempTag1 : Symbol(tempTag1, Decl(taggedTemplateContextualTyping1.ts, 0, 48), Decl(taggedTemplateContextualTyping1.ts, 2, 79), Decl(taggedTemplateContextualTyping1.ts, 3, 92))
  >T : Symbol(T, Decl(taggedTemplateContextualTyping1.ts, 2, 18))
  >templateStrs : Symbol(templateStrs, Decl(taggedTemplateContextualTyping1.ts, 2, 21))

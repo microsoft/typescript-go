@@ -1,6 +1,6 @@
 --- old.for-of22.symbols
 +++ new.for-of22.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >FooIterator : Symbol(FooIterator, Decl(for-of22.ts, 0, 13))
  
      next() {

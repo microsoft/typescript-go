@@ -1,6 +1,6 @@
 --- old.contextSensitiveReturnTypeInference.symbols
 +++ new.contextSensitiveReturnTypeInference.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >IData : Symbol(IData, Decl(contextSensitiveReturnTypeInference.ts, 0, 0))
  
    bar: boolean

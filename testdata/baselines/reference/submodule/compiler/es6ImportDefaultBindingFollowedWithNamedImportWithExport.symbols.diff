@@ -1,6 +1,6 @@
 --- old.es6ImportDefaultBindingFollowedWithNamedImportWithExport.symbols
 +++ new.es6ImportDefaultBindingFollowedWithNamedImportWithExport.symbols
-@@= skipped -28, +28 lines =@@
+@@= skipped -27, +27 lines =@@
  
  export import defaultBinding3, { a as b } from "server";
  >defaultBinding3 : Symbol(defaultBinding3, Decl(client.ts, 3, 13))

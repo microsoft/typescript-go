@@ -1,6 +1,6 @@
 --- old.multiline.symbols
 +++ new.multiline.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  /**
   @ts-ignore */
  texts.push(100);

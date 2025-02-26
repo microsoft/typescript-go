@@ -1,6 +1,6 @@
 --- old.generatorTypeCheck3.symbols
 +++ new.generatorTypeCheck3.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === generatorTypeCheck3.ts ===
  function* g1(): IterableIterator<string> { }
  >g1 : Symbol(g1, Decl(generatorTypeCheck3.ts, 0, 0))

@@ -1,6 +1,6 @@
 --- old.twoGenericInterfacesWithTheSameNameButDifferentArity.symbols
 +++ new.twoGenericInterfacesWithTheSameNameButDifferentArity.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(twoGenericInterfacesWithTheSameNameButDifferentArity.ts, 0, 12), Decl(twoGenericInterfacesWithTheSameNameButDifferentArity.ts, 4, 12))
  
      x: T;

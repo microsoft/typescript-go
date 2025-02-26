@@ -1,6 +1,6 @@
 --- old.controlFlowInstanceofWithSymbolHasInstance.symbols
 +++ new.controlFlowInstanceofWithSymbolHasInstance.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === controlFlowInstanceofWithSymbolHasInstance.ts ===
  interface PromiseConstructor {

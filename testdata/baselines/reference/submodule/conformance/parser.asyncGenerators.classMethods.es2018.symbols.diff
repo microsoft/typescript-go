@@ -1,6 +1,6 @@
 --- old.parser.asyncGenerators.classMethods.es2018.symbols
 +++ new.parser.asyncGenerators.classMethods.es2018.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C1 : Symbol(C1, Decl(methodIsOk.ts, 0, 0))
  
      async * f() {

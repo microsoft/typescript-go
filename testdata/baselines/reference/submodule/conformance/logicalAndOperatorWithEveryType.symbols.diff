@@ -1,6 +1,6 @@
 --- old.logicalAndOperatorWithEveryType.symbols
 +++ new.logicalAndOperatorWithEveryType.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
  enum E { a, b, c }
  >E : Symbol(E, Decl(logicalAndOperatorWithEveryType.ts, 0, 0))

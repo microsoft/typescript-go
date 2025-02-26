@@ -1,6 +1,6 @@
 --- old.declarationEmitReexportedSymlinkReference.symbols
 +++ new.declarationEmitReexportedSymlinkReference.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  
  export const ADMIN = MetadataAccessor.create<boolean>('1');
  >ADMIN : Symbol(ADMIN, Decl(keys.ts, 2, 12))

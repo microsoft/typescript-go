@@ -1,6 +1,6 @@
 --- old.taggedTemplatesWithTypeArguments1.symbols
 +++ new.taggedTemplatesWithTypeArguments1.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  >Stuff : Symbol(Stuff, Decl(taggedTemplatesWithTypeArguments1.ts, 0, 92))
  
      x: number;

@@ -1,6 +1,6 @@
 --- old.useUnknownInCatchVariables01.symbols
 +++ new.useUnknownInCatchVariables01.symbols
-@@= skipped -23, +23 lines =@@
+@@= skipped -22, +22 lines =@@
          // works!
          // We've narrowed 'e' down to the type 'string'.
          console.log(e.toUpperCase());

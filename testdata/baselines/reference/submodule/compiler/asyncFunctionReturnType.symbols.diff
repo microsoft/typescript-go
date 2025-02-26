@@ -1,6 +1,6 @@
 --- old.asyncFunctionReturnType.symbols
 +++ new.asyncFunctionReturnType.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  
  async function fAsyncExplicit(): Promise<[number, boolean]> {
  >fAsyncExplicit : Symbol(fAsyncExplicit, Decl(asyncFunctionReturnType.ts, 3, 1))

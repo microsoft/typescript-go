@@ -1,6 +1,6 @@
 --- old.genericSpecializations2.symbols
 +++ new.genericSpecializations2.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(genericSpecializations2.ts, 0, 11))
  
      foo<T>(x: T): T { // no error on implementors because IFoo's T is different from foo's T

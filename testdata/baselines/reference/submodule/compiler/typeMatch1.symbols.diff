@@ -1,6 +1,6 @@
 --- old.typeMatch1.symbols
 +++ new.typeMatch1.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === typeMatch1.ts ===
  interface I { z; }
  >I : Symbol(I, Decl(typeMatch1.ts, 0, 0))

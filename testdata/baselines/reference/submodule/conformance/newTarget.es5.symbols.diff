@@ -1,6 +1,6 @@
 --- old.newTarget.es5.symbols
 +++ new.newTarget.es5.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
      constructor() {
          const a = new.target;
  >a : Symbol(a, Decl(newTarget.es5.ts, 2, 13))

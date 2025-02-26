@@ -1,6 +1,6 @@
 --- old.FunctionAndModuleWithSameNameAndCommonRoot.symbols
 +++ new.FunctionAndModuleWithSameNameAndCommonRoot.symbols
-@@= skipped -35, +35 lines =@@
+@@= skipped -34, +34 lines =@@
  
  var fn = A.Point;
  >fn : Symbol(fn, Decl(test.ts, 0, 3), Decl(test.ts, 1, 3), Decl(simple.ts, 11, 3), Decl(simple.ts, 12, 3))

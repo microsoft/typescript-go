@@ -1,6 +1,6 @@
 --- old.unionOfEnumInference.symbols
 +++ new.unionOfEnumInference.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  
  enum Enum { A, B, C }
  >Enum : Symbol(Enum, Decl(unionOfEnumInference.ts, 0, 0))

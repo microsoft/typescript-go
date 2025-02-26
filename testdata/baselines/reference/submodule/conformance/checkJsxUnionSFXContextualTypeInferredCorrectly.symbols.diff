@@ -1,6 +1,6 @@
 --- old.checkJsxUnionSFXContextualTypeInferredCorrectly.symbols
 +++ new.checkJsxUnionSFXContextualTypeInferredCorrectly.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >PS : Symbol(PS, Decl(checkJsxUnionSFXContextualTypeInferredCorrectly.tsx, 2, 26))
  
      multi: false

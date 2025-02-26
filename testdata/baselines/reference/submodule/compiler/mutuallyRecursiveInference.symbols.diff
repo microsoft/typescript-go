@@ -1,6 +1,6 @@
 --- old.mutuallyRecursiveInference.symbols
 +++ new.mutuallyRecursiveInference.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >A : Symbol(A, Decl(mutuallyRecursiveInference.ts, 0, 8))
  
      a: A;

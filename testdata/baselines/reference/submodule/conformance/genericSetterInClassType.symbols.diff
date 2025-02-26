@@ -1,6 +1,6 @@
 --- old.genericSetterInClassType.symbols
 +++ new.genericSetterInClassType.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(genericSetterInClassType.ts, 1, 12))
  
          get y(): T {

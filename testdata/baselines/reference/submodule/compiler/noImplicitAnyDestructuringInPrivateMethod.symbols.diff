@@ -1,6 +1,6 @@
 --- old.noImplicitAnyDestructuringInPrivateMethod.symbols
 +++ new.noImplicitAnyDestructuringInPrivateMethod.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >Bar : Symbol(Bar, Decl(noImplicitAnyDestructuringInPrivateMethod.ts, 2, 2))
  
      private bar({ a, }: Arg): number {

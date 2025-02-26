@@ -1,6 +1,6 @@
 --- old.objectSpreadRepeatedNullCheckPerf.symbols
 +++ new.objectSpreadRepeatedNullCheckPerf.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Props : Symbol(Props, Decl(objectSpreadRepeatedNullCheckPerf.ts, 0, 0))
  
      readonly a?: string

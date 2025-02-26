@@ -1,6 +1,6 @@
 --- old.controlFlowArrays.symbols
 +++ new.controlFlowArrays.symbols
-@@= skipped -30, +30 lines =@@
+@@= skipped -29, +29 lines =@@
  >x : Symbol(x, Decl(controlFlowArrays.ts, 11, 7))
  
      x.push(5);

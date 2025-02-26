@@ -1,6 +1,6 @@
 --- old.jsFileCompilationAwaitModifier.symbols
 +++ new.jsFileCompilationAwaitModifier.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Foo : Symbol(Foo, Decl(a.js, 0, 0))
  
      async a() {

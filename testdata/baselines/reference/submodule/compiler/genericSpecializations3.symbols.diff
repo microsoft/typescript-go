@@ -1,6 +1,6 @@
 --- old.genericSpecializations3.symbols
 +++ new.genericSpecializations3.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(genericSpecializations3.ts, 0, 15))
  
      foo(x: T): T;

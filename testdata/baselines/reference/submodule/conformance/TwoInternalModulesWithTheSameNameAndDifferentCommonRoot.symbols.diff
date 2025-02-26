@@ -1,6 +1,6 @@
 --- old.TwoInternalModulesWithTheSameNameAndDifferentCommonRoot.symbols
 +++ new.TwoInternalModulesWithTheSameNameAndDifferentCommonRoot.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >Point : Symbol(Point, Decl(part1.ts, 1, 21))
  
              x: number;

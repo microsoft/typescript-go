@@ -1,6 +1,6 @@
 --- old.jsxPartialSpread.symbols
 +++ new.jsxPartialSpread.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >Select : Symbol(Select, Decl(jsxPartialSpread.tsx, 1, 5))
  >p : Symbol(p, Decl(jsxPartialSpread.tsx, 1, 16))
  >value : Symbol(value, Decl(jsxPartialSpread.tsx, 1, 20))

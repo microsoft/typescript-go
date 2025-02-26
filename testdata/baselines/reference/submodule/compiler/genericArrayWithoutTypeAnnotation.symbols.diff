@@ -1,6 +1,6 @@
 --- old.genericArrayWithoutTypeAnnotation.symbols
 +++ new.genericArrayWithoutTypeAnnotation.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >Bar : Symbol(Bar, Decl(genericArrayWithoutTypeAnnotation.ts, 1, 1))
  
      public getBar(foo: IFoo[]) {

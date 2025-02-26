@@ -1,6 +1,6 @@
 --- old.switchStatements.symbols
 +++ new.switchStatements.symbols
-@@= skipped -45, +45 lines =@@
+@@= skipped -44, +44 lines =@@
  >M : Symbol(M, Decl(switchStatements.ts, 0, 0))
  
      case M.fn(1):

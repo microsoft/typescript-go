@@ -1,6 +1,6 @@
 --- old.arrayOfExportedClass.symbols
 +++ new.arrayOfExportedClass.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >Road : Symbol(Road, Decl(arrayOfExportedClass_1.ts, 1, 49))
  
      public cars: Car[];

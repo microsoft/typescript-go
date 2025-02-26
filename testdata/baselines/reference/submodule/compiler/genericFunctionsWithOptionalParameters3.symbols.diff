@@ -1,6 +1,6 @@
 --- old.genericFunctionsWithOptionalParameters3.symbols
 +++ new.genericFunctionsWithOptionalParameters3.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(genericFunctionsWithOptionalParameters3.ts, 0, 17))
  
      public add(x: T) { }

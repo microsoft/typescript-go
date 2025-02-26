@@ -1,6 +1,6 @@
 --- old.staticAnonymousTypeNotReferencingTypeParameter.symbols
 +++ new.staticAnonymousTypeNotReferencingTypeParameter.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  >Inner : Symbol(Inner, Decl(staticAnonymousTypeNotReferencingTypeParameter.ts, 3, 25))
  
      static y: T = x;

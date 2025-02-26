@@ -1,6 +1,6 @@
 --- old.computedPropertiesInDestructuring1.symbols
 +++ new.computedPropertiesInDestructuring1.symbols
-@@= skipped -82, +82 lines =@@
+@@= skipped -81, +81 lines =@@
  >bar : Symbol(bar, Decl(computedPropertiesInDestructuring1.ts, 23, 17))
  
  ({["bar"]: bar2} = {bar: "bar"});

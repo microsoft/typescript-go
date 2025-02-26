@@ -1,6 +1,6 @@
 --- old.flatArrayNoExcessiveStackDepth.symbols
 +++ new.flatArrayNoExcessiveStackDepth.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  
  const bar = foo.flatMap(bar => bar as Foo);
  >bar : Symbol(bar, Decl(flatArrayNoExcessiveStackDepth.ts, 3, 5))

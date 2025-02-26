@@ -1,6 +1,6 @@
 --- old.topLevelModuleDeclarationAndFile.symbols
 +++ new.topLevelModuleDeclarationAndFile.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  
  var z2 = foo.y() + 10; // Should resolve
  >z2 : Symbol(z2, Decl(foo_2.ts, 3, 3))

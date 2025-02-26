@@ -1,6 +1,6 @@
 --- old.augmentExportEquals3_1.symbols
 +++ new.augmentExportEquals3_1.symbols
-@@= skipped -24, +24 lines =@@
+@@= skipped -23, +23 lines =@@
  >x : Symbol(x, Decl(file2.ts, 0, 0))
  
  x.b = 1;

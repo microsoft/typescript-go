@@ -1,6 +1,6 @@
 --- old.excessPropertyCheckWithEmptyObject.symbols
 +++ new.excessPropertyCheckWithEmptyObject.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  
  // Excess property error expected here
  Object.defineProperty(window, "prop", { value: "v1.0.0", readonly: false });

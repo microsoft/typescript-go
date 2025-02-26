@@ -1,6 +1,6 @@
 --- old.binderUninitializedModuleExportsAssignment.symbols
 +++ new.binderUninitializedModuleExportsAssignment.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >loop1 : Symbol(loop1, Decl(loop.js, 0, 3))
  
  module.exports = loop2;

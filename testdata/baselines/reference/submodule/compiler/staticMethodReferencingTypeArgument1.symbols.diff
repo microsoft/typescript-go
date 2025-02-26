@@ -1,6 +1,6 @@
 --- old.staticMethodReferencingTypeArgument1.symbols
 +++ new.staticMethodReferencingTypeArgument1.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(staticMethodReferencingTypeArgument1.ts, 1, 22))
  
          next: List<T>;

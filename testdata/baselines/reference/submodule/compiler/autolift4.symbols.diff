@@ -1,6 +1,6 @@
 --- old.autolift4.symbols
 +++ new.autolift4.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Point : Symbol(Point, Decl(autolift4.ts, 0, 0))
  
      constructor(public x: number, public y: number) {

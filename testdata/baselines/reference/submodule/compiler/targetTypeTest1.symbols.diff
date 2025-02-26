@@ -1,6 +1,6 @@
 --- old.targetTypeTest1.symbols
 +++ new.targetTypeTest1.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === targetTypeTest1.ts ===
  declare class Point

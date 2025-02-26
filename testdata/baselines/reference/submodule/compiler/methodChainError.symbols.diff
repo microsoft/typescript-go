@@ -1,6 +1,6 @@
 --- old.methodChainError.symbols
 +++ new.methodChainError.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Builder : Symbol(Builder, Decl(methodChainError.ts, 0, 0))
  
      notMethod: string

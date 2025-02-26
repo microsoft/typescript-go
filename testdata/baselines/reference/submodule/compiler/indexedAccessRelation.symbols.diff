@@ -1,6 +1,6 @@
 --- old.indexedAccessRelation.symbols
 +++ new.indexedAccessRelation.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >S : Symbol(S, Decl(indexedAccessRelation.ts, 2, 16))
  
      setState<K extends keyof S>(state: Pick<S, K>) {}

@@ -1,6 +1,6 @@
 --- old.quickIntersectionCheckCorrectlyCachesErrors.symbols
 +++ new.quickIntersectionCheckCorrectlyCachesErrors.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >children : Symbol(children, Decl(quickIntersectionCheckCorrectlyCachesErrors.tsx, 1, 17))
  
      propTypes: { [K in keyof P]: null extends P ? K : K };

@@ -1,6 +1,6 @@
 --- old.classStaticBlock22(target=es2022).symbols
 +++ new.classStaticBlock22(target=es2022).symbols
-@@= skipped -37, +37 lines =@@
+@@= skipped -36, +36 lines =@@
  >D : Symbol(D, Decl(classStaticBlock22.ts, 21, 10))
  
        await = 1; // legal

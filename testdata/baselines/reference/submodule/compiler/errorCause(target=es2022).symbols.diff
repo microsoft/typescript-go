@@ -1,6 +1,6 @@
 --- old.errorCause(target=es2022).symbols
 +++ new.errorCause(target=es2022).symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2022.error.d.ts, --, --))
  
  err.cause;

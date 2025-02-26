@@ -1,6 +1,6 @@
 --- old.es2022IntlAPIs.symbols
 +++ new.es2022IntlAPIs.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  
    var formatter = new Intl.DateTimeFormat('en-US', {
  >formatter : Symbol(formatter, Decl(es2022IntlAPIs.ts, 3, 5))

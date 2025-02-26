@@ -1,6 +1,6 @@
 --- old.parserComputedPropertyName22.symbols
 +++ new.parserComputedPropertyName22.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(parserComputedPropertyName22.ts, 0, 0))
  
      [e]: number 

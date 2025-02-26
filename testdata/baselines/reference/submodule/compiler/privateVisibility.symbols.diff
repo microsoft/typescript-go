@@ -1,6 +1,6 @@
 --- old.privateVisibility.symbols
 +++ new.privateVisibility.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Foo : Symbol(Foo, Decl(privateVisibility.ts, 0, 0))
  
  	public pubMeth() {this.privMeth();}

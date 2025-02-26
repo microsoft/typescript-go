@@ -1,6 +1,6 @@
 --- old.commentsClassMembers.symbols
 +++ new.commentsClassMembers.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  
      /** p1 is property of c1*/
      public p1: number;

@@ -1,6 +1,6 @@
 --- old.staticIndexSignature7.symbols
 +++ new.staticIndexSignature7.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >index : Symbol(index, Decl(staticIndexSignature7.ts, 1, 12))
  
      static x = 12; // Should error, incompatible with index signature

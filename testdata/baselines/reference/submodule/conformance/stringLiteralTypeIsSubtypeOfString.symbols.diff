@@ -1,6 +1,6 @@
 --- old.stringLiteralTypeIsSubtypeOfString.symbols
 +++ new.stringLiteralTypeIsSubtypeOfString.symbols
-@@= skipped -122, +122 lines =@@
+@@= skipped -121, +121 lines =@@
  >String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      toString(): string { return null; }

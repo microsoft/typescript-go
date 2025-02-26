@@ -1,6 +1,6 @@
 --- old.cyclicModuleImport.symbols
 +++ new.cyclicModuleImport.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >SubModule : Symbol(SubModule, Decl(cyclicModuleImport.ts, 1, 46))
  
          public static StaticVar: number;

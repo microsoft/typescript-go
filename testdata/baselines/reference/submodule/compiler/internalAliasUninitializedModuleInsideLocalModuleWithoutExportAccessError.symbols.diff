@@ -1,6 +1,6 @@
 --- old.internalAliasUninitializedModuleInsideLocalModuleWithoutExportAccessError.symbols
 +++ new.internalAliasUninitializedModuleInsideLocalModuleWithoutExportAccessError.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >I : Symbol(I, Decl(internalAliasUninitializedModuleInsideLocalModuleWithoutExportAccessError.ts, 1, 21))
  
              foo();

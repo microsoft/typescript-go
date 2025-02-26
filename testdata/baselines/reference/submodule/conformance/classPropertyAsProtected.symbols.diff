@@ -1,6 +1,6 @@
 --- old.classPropertyAsProtected.symbols
 +++ new.classPropertyAsProtected.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(classPropertyAsProtected.ts, 0, 0))
  
      protected x: string;

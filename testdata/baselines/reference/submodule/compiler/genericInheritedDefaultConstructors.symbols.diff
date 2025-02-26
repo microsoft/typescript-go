@@ -1,6 +1,6 @@
 --- old.genericInheritedDefaultConstructors.symbols
 +++ new.genericInheritedDefaultConstructors.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(genericInheritedDefaultConstructors.ts, 1, 22))
  
      prototype: T;

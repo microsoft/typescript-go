@@ -1,6 +1,6 @@
 --- old.nodeModulesTypesVersionPackageExports(module=nodenext).symbols
 +++ new.nodeModulesTypesVersionPackageExports(module=nodenext).symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >mod : Symbol(mod, Decl(index.ts, 1, 6))
  
  mod.correctVersionApplied;

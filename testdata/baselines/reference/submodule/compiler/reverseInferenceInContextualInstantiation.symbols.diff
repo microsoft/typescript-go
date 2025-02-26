@@ -1,6 +1,6 @@
 --- old.reverseInferenceInContextualInstantiation.symbols
 +++ new.reverseInferenceInContextualInstantiation.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >x : Symbol(x, Decl(reverseInferenceInContextualInstantiation.ts, 1, 3))
  
  x.sort(compare); // Error, but shouldn't be

@@ -1,6 +1,6 @@
 --- old.typeAliasDeclarationEmit3.symbols
 +++ new.typeAliasDeclarationEmit3.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >foo : Symbol(foo, Decl(typeAliasDeclarationEmit3.ts, 1, 31))
  
          console.log('f1');

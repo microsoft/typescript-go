@@ -1,6 +1,6 @@
 --- old.classExpressionWithStaticPropertiesES63.symbols
 +++ new.classExpressionWithStaticPropertiesES63.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  >i : Symbol(i, Decl(classExpressionWithStaticPropertiesES63.ts, 2, 8))
  
      arr.push(class C {

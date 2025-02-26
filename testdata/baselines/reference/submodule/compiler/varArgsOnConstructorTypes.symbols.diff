@@ -1,6 +1,6 @@
 --- old.varArgsOnConstructorTypes.symbols
 +++ new.varArgsOnConstructorTypes.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >A : Symbol(A, Decl(varArgsOnConstructorTypes.ts, 0, 0))
  
      private p1: number;

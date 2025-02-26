@@ -1,6 +1,6 @@
 --- old.exportsAndImports4-es6.symbols
 +++ new.exportsAndImports4-es6.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >a : Symbol(a, Decl(t3.ts, 0, 0))
  
  a.default;

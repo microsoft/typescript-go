@@ -1,6 +1,6 @@
 --- old.arrayAssignmentTest1.symbols
 +++ new.arrayAssignmentTest1.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >I1 : Symbol(I1, Decl(arrayAssignmentTest1.ts, 0, 0))
  
  	IM1():void[];

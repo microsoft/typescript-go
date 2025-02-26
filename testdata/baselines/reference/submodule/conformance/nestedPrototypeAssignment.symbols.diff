@@ -1,6 +1,6 @@
 --- old.nestedPrototypeAssignment.symbols
 +++ new.nestedPrototypeAssignment.symbols
-@@= skipped -1, +1 lines =@@
+@@= skipped -0, +0 lines =@@
  //// [tests/cases/conformance/salsa/nestedPrototypeAssignment.ts] ////
  
  === mod.js ===

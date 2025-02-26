@@ -1,6 +1,6 @@
 --- old.spreadExpressionContextualType.symbols
 +++ new.spreadExpressionContextualType.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >Orange : Symbol(Orange, Decl(spreadExpressionContextualType.ts, 0, 0))
  
      name: string;

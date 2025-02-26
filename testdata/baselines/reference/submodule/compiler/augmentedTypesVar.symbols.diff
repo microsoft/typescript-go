@@ -1,6 +1,6 @@
 --- old.augmentedTypesVar.symbols
 +++ new.augmentedTypesVar.symbols
-@@= skipped -33, +33 lines =@@
+@@= skipped -32, +32 lines =@@
  
  class x4a { public foo() { } } // error
  >x4a : Symbol(x4a, Decl(augmentedTypesVar.ts, 15, 12))

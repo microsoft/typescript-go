@@ -1,6 +1,6 @@
 --- old.strictModeReservedWord.symbols
 +++ new.strictModeReservedWord.symbols
-@@= skipped -55, +55 lines =@@
+@@= skipped -54, +54 lines =@@
      var b: public.bar;
  >b : Symbol(b, Decl(strictModeReservedWord.ts, 16, 7))
  >public : Symbol(public)

@@ -1,6 +1,6 @@
 --- old.defaultExportInAwaitExpression01.symbols
 +++ new.defaultExportInAwaitExpression01.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === a.ts ===
  const x = new Promise( ( resolve, reject ) => { resolve( {} ); } );
  >x : Symbol(x, Decl(a.ts, 0, 5))

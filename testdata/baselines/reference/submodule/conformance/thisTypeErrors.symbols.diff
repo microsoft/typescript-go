@@ -1,6 +1,6 @@
 --- old.thisTypeErrors.symbols
 +++ new.thisTypeErrors.symbols
-@@= skipped -25, +25 lines =@@
+@@= skipped -24, +24 lines =@@
  >I1 : Symbol(I1, Decl(thisTypeErrors.ts, 7, 1))
  
      a: { x: this };

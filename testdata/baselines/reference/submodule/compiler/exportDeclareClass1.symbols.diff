@@ -1,6 +1,6 @@
 --- old.exportDeclareClass1.symbols
 +++ new.exportDeclareClass1.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >eaC : Symbol(eaC, Decl(exportDeclareClass1.ts, 0, 0))
  
          static tF() { };

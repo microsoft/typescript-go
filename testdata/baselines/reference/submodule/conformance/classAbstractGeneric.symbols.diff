@@ -1,6 +1,6 @@
 --- old.classAbstractGeneric.symbols
 +++ new.classAbstractGeneric.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(classAbstractGeneric.ts, 0, 17))
  
      t: T;

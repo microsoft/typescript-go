@@ -1,6 +1,6 @@
 --- old.moduleExportAssignment7.symbols
 +++ new.moduleExportAssignment7.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === mod.js ===
  class Thing  { x = 1 }
  >Thing : Symbol(Thing, Decl(mod.js, 0, 0))

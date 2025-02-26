@@ -1,6 +1,6 @@
 --- old.interfaceExtendingOptionalChain.symbols
 +++ new.interfaceExtendingOptionalChain.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  
  interface C1 extends Foo?.Bar {}
  >C1 : Symbol(C1, Decl(interfaceExtendingOptionalChain.ts, 2, 1))

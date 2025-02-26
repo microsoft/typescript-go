@@ -1,6 +1,6 @@
 --- old.thisInPropertyBoundDeclarations.symbols
 +++ new.thisInPropertyBoundDeclarations.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Bug : Symbol(Bug, Decl(thisInPropertyBoundDeclarations.ts, 0, 0))
  
      private name: string;

@@ -1,6 +1,6 @@
 --- old.inferSecondaryParameter.symbols
 +++ new.inferSecondaryParameter.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  
  interface Ib { m(test: string, fn: Function); }
  >Ib : Symbol(Ib, Decl(inferSecondaryParameter.ts, 0, 0))

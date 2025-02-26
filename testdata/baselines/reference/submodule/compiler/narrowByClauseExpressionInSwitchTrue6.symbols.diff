@@ -1,6 +1,6 @@
 --- old.narrowByClauseExpressionInSwitchTrue6.symbols
 +++ new.narrowByClauseExpressionInSwitchTrue6.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(narrowByClauseExpressionInSwitchTrue6.ts, 0, 0))
  
      kind: "a";

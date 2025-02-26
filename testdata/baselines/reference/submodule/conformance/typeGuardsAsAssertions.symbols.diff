@@ -1,6 +1,6 @@
 --- old.typeGuardsAsAssertions.symbols
 +++ new.typeGuardsAsAssertions.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  
  export interface None { readonly none: string; }
  >None : Symbol(None, Decl(typeGuardsAsAssertions.ts, 4, 41))

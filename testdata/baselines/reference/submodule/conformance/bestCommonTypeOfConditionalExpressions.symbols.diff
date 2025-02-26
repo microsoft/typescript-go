@@ -1,6 +1,6 @@
 --- old.bestCommonTypeOfConditionalExpressions.symbols
 +++ new.bestCommonTypeOfConditionalExpressions.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  
  class Base { foo: string; }
  >Base : Symbol(Base, Decl(bestCommonTypeOfConditionalExpressions.ts, 4, 33))

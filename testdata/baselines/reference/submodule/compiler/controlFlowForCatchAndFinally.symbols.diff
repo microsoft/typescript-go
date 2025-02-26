@@ -1,6 +1,6 @@
 --- old.controlFlowForCatchAndFinally.symbols
 +++ new.controlFlowForCatchAndFinally.symbols
-@@= skipped -77, +77 lines =@@
+@@= skipped -76, +76 lines =@@
  
  declare class Aborter { abort(): void };
  >Aborter : Symbol(Aborter, Decl(controlFlowForCatchAndFinally.ts, 20, 1))

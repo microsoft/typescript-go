@@ -1,6 +1,6 @@
 --- old.unaryPlus.symbols
 +++ new.unaryPlus.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  
  enum E { some, thing };
  >E : Symbol(E, Decl(unaryPlus.ts, 2, 19))

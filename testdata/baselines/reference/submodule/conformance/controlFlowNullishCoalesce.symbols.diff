@@ -1,6 +1,6 @@
 --- old.controlFlowNullishCoalesce.symbols
 +++ new.controlFlowNullishCoalesce.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >a : Symbol(a, Decl(controlFlowNullishCoalesce.ts, 1, 3))
  
  a.toString();

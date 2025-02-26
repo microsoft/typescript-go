@@ -1,6 +1,6 @@
 --- old.typeFromPropertyAssignment5.symbols
 +++ new.typeFromPropertyAssignment5.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === a.js ===
  export default function MyClass() {

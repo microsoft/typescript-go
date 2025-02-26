@@ -1,6 +1,6 @@
 --- old.expandoFunctionSymbolProperty.symbols
 +++ new.expandoFunctionSymbolProperty.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  
    (): void;
    readonly [symb]: boolean;

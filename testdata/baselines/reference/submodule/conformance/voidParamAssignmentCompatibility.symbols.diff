@@ -1,6 +1,6 @@
 --- old.voidParamAssignmentCompatibility.symbols
 +++ new.voidParamAssignmentCompatibility.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  >T : Symbol(T, Decl(voidParamAssignmentCompatibility.ts, 3, 14))
  
      method(value: T): void;

@@ -1,6 +1,6 @@
 --- old.tsxReactPropsInferenceSucceedsOnIntersections.symbols
 +++ new.tsxReactPropsInferenceSucceedsOnIntersections.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >ButtonProps : Symbol(ButtonProps, Decl(tsxReactPropsInferenceSucceedsOnIntersections.tsx, 2, 26))
  >T : Symbol(T, Decl(tsxReactPropsInferenceSucceedsOnIntersections.tsx, 4, 24))
  >React : Symbol(React, Decl(tsxReactPropsInferenceSucceedsOnIntersections.tsx, 2, 6))

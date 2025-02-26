@@ -1,6 +1,6 @@
 --- old.recursiveComplicatedClasses.symbols
 +++ new.recursiveComplicatedClasses.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Signature : Symbol(Signature, Decl(recursiveComplicatedClasses.ts, 0, 0))
  
      public parameters: ParameterSymbol[] = null;

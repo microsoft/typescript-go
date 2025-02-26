@@ -1,6 +1,6 @@
 --- old.conditionalTypeAssignabilityWhenDeferred.symbols
 +++ new.conditionalTypeAssignabilityWhenDeferred.symbols
-@@= skipped -108, +108 lines =@@
+@@= skipped -107, +107 lines =@@
    var x: T | null = Math.random() > 0.5 ? null : t;
  >x : Symbol(x, Decl(conditionalTypeAssignabilityWhenDeferred.ts, 31, 5))
  >T : Symbol(T, Decl(conditionalTypeAssignabilityWhenDeferred.ts, 30, 11))

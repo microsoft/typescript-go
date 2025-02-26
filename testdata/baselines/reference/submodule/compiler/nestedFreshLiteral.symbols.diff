@@ -1,6 +1,6 @@
 --- old.nestedFreshLiteral.symbols
 +++ new.nestedFreshLiteral.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >CSSProps : Symbol(CSSProps, Decl(nestedFreshLiteral.ts, 0, 0))
  
    color?: string

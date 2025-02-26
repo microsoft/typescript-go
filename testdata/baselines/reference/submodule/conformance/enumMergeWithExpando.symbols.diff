@@ -1,6 +1,6 @@
 --- old.enumMergeWithExpando.symbols
 +++ new.enumMergeWithExpando.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === lovefield-ts.d.ts ===
  // bug #27352, crashes from github.com/google/lovefield
  declare namespace lf {

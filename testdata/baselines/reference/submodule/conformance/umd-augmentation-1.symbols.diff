@@ -1,6 +1,6 @@
 --- old.umd-augmentation-1.symbols
 +++ new.umd-augmentation-1.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  
  let v = new m.Vector(3, 2);
  >v : Symbol(v, Decl(b.ts, 2, 3))

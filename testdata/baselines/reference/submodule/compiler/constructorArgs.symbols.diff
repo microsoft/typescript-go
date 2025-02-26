@@ -1,6 +1,6 @@
 --- old.constructorArgs.symbols
 +++ new.constructorArgs.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Options : Symbol(Options, Decl(constructorArgs.ts, 0, 0))
  
   value: number;

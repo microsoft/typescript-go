@@ -1,6 +1,6 @@
 --- old.twiceNestedKeyofIndexInference.symbols
 +++ new.twiceNestedKeyofIndexInference.symbols
-@@= skipped -101, +101 lines =@@
+@@= skipped -100, +100 lines =@@
  >State : Symbol(State, Decl(twiceNestedKeyofIndexInference.ts, 12, 130))
  
      a: {

@@ -1,6 +1,6 @@
 --- old.jsDeclarationsExportedClassAliases.symbols
 +++ new.jsDeclarationsExportedClassAliases.symbols
-@@= skipped -4, +4 lines =@@
+@@= skipped -3, +3 lines =@@
  // issue arises here on compilation
  const errors = require("./errors");
  >errors : Symbol(errors, Decl(index.js, 1, 5))

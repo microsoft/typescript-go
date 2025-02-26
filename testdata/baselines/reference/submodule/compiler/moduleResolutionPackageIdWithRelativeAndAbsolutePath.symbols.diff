@@ -1,6 +1,6 @@
 --- old.moduleResolutionPackageIdWithRelativeAndAbsolutePath.symbols
 +++ new.moduleResolutionPackageIdWithRelativeAndAbsolutePath.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >Option : Symbol(Option, Decl(Option.d.ts, 0, 0))
  
      someProperty: string;

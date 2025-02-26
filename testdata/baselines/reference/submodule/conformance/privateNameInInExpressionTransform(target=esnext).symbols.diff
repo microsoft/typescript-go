@@ -1,6 +1,6 @@
 --- old.privateNameInInExpressionTransform(target=esnext).symbols
 +++ new.privateNameInInExpressionTransform(target=esnext).symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Foo : Symbol(Foo, Decl(privateNameInInExpressionTransform.ts, 0, 0))
  
      #field = 1;

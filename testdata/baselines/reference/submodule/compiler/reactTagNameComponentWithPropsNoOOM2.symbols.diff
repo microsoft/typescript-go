@@ -1,6 +1,6 @@
 --- old.reactTagNameComponentWithPropsNoOOM2.symbols
 +++ new.reactTagNameComponentWithPropsNoOOM2.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  declare const Tag: keyof React.ReactHTML;
  >Tag : Symbol(Tag, Decl(reactTagNameComponentWithPropsNoOOM2.tsx, 3, 13))
  >React : Symbol(React, Decl(reactTagNameComponentWithPropsNoOOM2.tsx, 2, 6))

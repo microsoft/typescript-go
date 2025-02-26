@@ -1,6 +1,6 @@
 --- old.externalModuleReferenceDoubleUnderscore1.symbols
 +++ new.externalModuleReferenceDoubleUnderscore1.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === externalModuleReferenceDoubleUnderscore1.ts ===
  declare module 'timezonecomplete' {

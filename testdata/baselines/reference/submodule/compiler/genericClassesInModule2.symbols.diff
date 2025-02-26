@@ -1,6 +1,6 @@
 --- old.genericClassesInModule2.symbols
 +++ new.genericClassesInModule2.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T1 : Symbol(T1, Decl(genericClassesInModule2.ts, 0, 15))
  
      constructor( public callback: (self: A<T1>) => void) {

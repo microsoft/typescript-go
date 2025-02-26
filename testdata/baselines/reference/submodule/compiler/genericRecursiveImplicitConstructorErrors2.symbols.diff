@@ -1,6 +1,6 @@
 --- old.genericRecursiveImplicitConstructorErrors2.symbols
 +++ new.genericRecursiveImplicitConstructorErrors2.symbols
-@@= skipped -17, +17 lines =@@
+@@= skipped -16, +16 lines =@@
  >PullSymbolVisibility : Symbol(PullSymbolVisibility, Decl(genericRecursiveImplicitConstructorErrors2.ts, 3, 38))
  
      Private,

@@ -1,6 +1,6 @@
 --- old.vararg.symbols
 +++ new.vararg.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >C : Symbol(C, Decl(vararg.ts, 0, 10))
  
          public f(x:string,...rest:number[]) {

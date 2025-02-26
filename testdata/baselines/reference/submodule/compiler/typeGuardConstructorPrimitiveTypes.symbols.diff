@@ -1,6 +1,6 @@
 --- old.typeGuardConstructorPrimitiveTypes.symbols
 +++ new.typeGuardConstructorPrimitiveTypes.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >var1 : Symbol(var1, Decl(typeGuardConstructorPrimitiveTypes.ts, 1, 3))
  
  if (var1.constructor === String) {

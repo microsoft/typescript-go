@@ -1,6 +1,6 @@
 --- old.topLevelExports.symbols
 +++ new.topLevelExports.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >n : Symbol(n, Decl(topLevelExports.ts, 2, 13))
  
  void log(foo).toString();

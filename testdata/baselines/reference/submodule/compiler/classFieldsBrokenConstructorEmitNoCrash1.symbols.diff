@@ -1,6 +1,6 @@
 --- old.classFieldsBrokenConstructorEmitNoCrash1.symbols
 +++ new.classFieldsBrokenConstructorEmitNoCrash1.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Test : Symbol(Test, Decl(classFieldsBrokenConstructorEmitNoCrash1.ts, 0, 0))
  
    prop = 42;

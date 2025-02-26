@@ -1,6 +1,6 @@
 --- old.exportAssignmentEnum.symbols
 +++ new.exportAssignmentEnum.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
  var a = EnumE.A;
  >a : Symbol(a, Decl(exportAssignmentEnum_B.ts, 2, 3))

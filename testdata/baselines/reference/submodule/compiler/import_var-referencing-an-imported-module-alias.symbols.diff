@@ -1,6 +1,6 @@
 --- old.import_var-referencing-an-imported-module-alias.symbols
 +++ new.import_var-referencing-an-imported-module-alias.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  
  var v = new hostVar.Host();
  >v : Symbol(v, Decl(consumer.ts, 2, 3))

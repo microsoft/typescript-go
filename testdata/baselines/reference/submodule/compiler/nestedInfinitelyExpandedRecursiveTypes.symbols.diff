@@ -1,6 +1,6 @@
 --- old.nestedInfinitelyExpandedRecursiveTypes.symbols
 +++ new.nestedInfinitelyExpandedRecursiveTypes.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(nestedInfinitelyExpandedRecursiveTypes.ts, 0, 12))
  
        t: G<F<() => T>>;

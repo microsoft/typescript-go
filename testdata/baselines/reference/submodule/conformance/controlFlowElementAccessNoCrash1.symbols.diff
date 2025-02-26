@@ -1,6 +1,6 @@
 --- old.controlFlowElementAccessNoCrash1.symbols
 +++ new.controlFlowElementAccessNoCrash1.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >TestTscEdit : Symbol(TestTscEdit, Decl(controlFlowElementAccessNoCrash1.ts, 0, 0))
  
    caption: string;

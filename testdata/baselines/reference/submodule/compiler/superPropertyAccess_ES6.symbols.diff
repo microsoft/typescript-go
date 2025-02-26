@@ -1,6 +1,6 @@
 --- old.superPropertyAccess_ES6.symbols
 +++ new.superPropertyAccess_ES6.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >MyBase : Symbol(MyBase, Decl(superPropertyAccess_ES6.ts, 0, 0))
  
    getValue(): number { return 1; }

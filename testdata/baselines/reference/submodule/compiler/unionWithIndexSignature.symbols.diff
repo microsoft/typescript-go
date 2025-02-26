@@ -1,6 +1,6 @@
 --- old.unionWithIndexSignature.symbols
 +++ new.unionWithIndexSignature.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >NumList : Symbol(NumList, Decl(unionWithIndexSignature.ts, 0, 0))
  
    kind: 'n';

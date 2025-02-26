@@ -1,6 +1,6 @@
 --- old.controlFlowInOperator.symbols
 +++ new.controlFlowInOperator.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  
  type A = { [a]: number; };
  >A : Symbol(A, Decl(controlFlowInOperator.ts, 2, 14))

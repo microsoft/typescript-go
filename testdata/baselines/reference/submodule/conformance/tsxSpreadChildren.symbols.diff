@@ -1,6 +1,6 @@
 --- old.tsxSpreadChildren.symbols
 +++ new.tsxSpreadChildren.symbols
-@@= skipped -21, +21 lines =@@
+@@= skipped -20, +20 lines =@@
  >TodoProp : Symbol(TodoProp, Decl(tsxSpreadChildren.tsx, 6, 23))
  
      id: number;

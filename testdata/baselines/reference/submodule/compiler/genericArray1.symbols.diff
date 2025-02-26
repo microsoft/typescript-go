@@ -1,6 +1,6 @@
 --- old.genericArray1.symbols
 +++ new.genericArray1.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  
  var lengths = ["a", "b", "c"].map(x => x.length);
  >lengths : Symbol(lengths, Decl(genericArray1.ts, 12, 3))

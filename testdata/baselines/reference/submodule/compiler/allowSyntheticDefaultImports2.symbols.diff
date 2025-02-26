@@ -1,6 +1,6 @@
 --- old.allowSyntheticDefaultImports2.symbols
 +++ new.allowSyntheticDefaultImports2.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
  export var x = new Namespace.Foo();
  >x : Symbol(x, Decl(a.ts, 1, 10))

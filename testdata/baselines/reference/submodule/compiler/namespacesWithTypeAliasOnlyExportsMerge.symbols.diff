@@ -1,6 +1,6 @@
 --- old.namespacesWithTypeAliasOnlyExportsMerge.symbols
 +++ new.namespacesWithTypeAliasOnlyExportsMerge.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  declare const try1: Q.A;
  >try1 : Symbol(try1, Decl(constAndNS.ts, 5, 13))
  >Q : Symbol(Q, Decl(constAndNS.ts, 1, 13), Decl(constAndNS.ts, 1, 24))

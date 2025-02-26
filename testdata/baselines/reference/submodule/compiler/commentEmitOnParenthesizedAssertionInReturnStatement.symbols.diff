@@ -1,6 +1,6 @@
 --- old.commentEmitOnParenthesizedAssertionInReturnStatement.symbols
 +++ new.commentEmitOnParenthesizedAssertionInReturnStatement.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Foo : Symbol(Foo, Decl(commentEmitOnParenthesizedAssertionInReturnStatement.ts, 0, 0))
  
    client = {

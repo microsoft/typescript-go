@@ -1,6 +1,6 @@
 --- old.ParameterList8.symbols
 +++ new.ParameterList8.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C2 : Symbol(C2, Decl(ParameterList8.ts, 0, 0))
  
   constructor(public p1:string); // ERROR

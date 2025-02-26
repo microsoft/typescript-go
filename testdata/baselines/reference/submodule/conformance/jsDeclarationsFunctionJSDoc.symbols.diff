@@ -1,6 +1,6 @@
 --- old.jsDeclarationsFunctionJSDoc.symbols
 +++ new.jsDeclarationsFunctionJSDoc.symbols
-@@= skipped -30, +30 lines =@@
+@@= skipped -29, +29 lines =@@
           * Field is always null
           */
          this.field = b;

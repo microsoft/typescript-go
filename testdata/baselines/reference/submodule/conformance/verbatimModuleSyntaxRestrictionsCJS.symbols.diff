@@ -1,6 +1,6 @@
 --- old.verbatimModuleSyntaxRestrictionsCJS.symbols
 +++ new.verbatimModuleSyntaxRestrictionsCJS.symbols
-@@= skipped -32, +32 lines =@@
+@@= skipped -31, +31 lines =@@
  >funciton : Symbol(funciton, Decl(main.ts, 2, 8))
  
  import type { funciton as funciton2 } from "./decl"; // ok I guess?

@@ -1,6 +1,6 @@
 --- old.decoratorOnClassMethod8.symbols
 +++ new.decoratorOnClassMethod8.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  
      @dec method() {}
  >dec : Symbol(dec, Decl(decoratorOnClassMethod8.ts, 0, 0))

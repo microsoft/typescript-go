@@ -1,6 +1,6 @@
 --- old.mappedTypeRelationships.symbols
 +++ new.mappedTypeRelationships.symbols
-@@= skipped -843, +843 lines =@@
+@@= skipped -842, +842 lines =@@
  >SettingsTypes : Symbol(SettingsTypes, Decl(mappedTypeRelationships.ts, 190, 1))
  
    audio: {

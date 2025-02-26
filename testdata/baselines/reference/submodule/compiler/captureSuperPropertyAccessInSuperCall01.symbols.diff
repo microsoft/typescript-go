@@ -1,6 +1,6 @@
 --- old.captureSuperPropertyAccessInSuperCall01.symbols
 +++ new.captureSuperPropertyAccessInSuperCall01.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >f : Symbol(f, Decl(captureSuperPropertyAccessInSuperCall01.ts, 1, 13))
  	}
  	public blah(): string { return ""; }

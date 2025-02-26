@@ -1,6 +1,6 @@
 --- old.module_augmentUninstantiatedModule2.symbols
 +++ new.module_augmentUninstantiatedModule2.symbols
-@@= skipped -4, +4 lines =@@
+@@= skipped -3, +3 lines =@@
  declare var ng: ng.IAngularStatic;
  >ng : Symbol(ng, Decl(module_augmentUninstantiatedModule2.ts, 0, 11), Decl(module_augmentUninstantiatedModule2.ts, 0, 34))
  >ng : Symbol(ng, Decl(module_augmentUninstantiatedModule2.ts, 0, 11), Decl(module_augmentUninstantiatedModule2.ts, 0, 34))

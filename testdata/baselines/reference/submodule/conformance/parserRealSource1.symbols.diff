@@ -1,6 +1,6 @@
 --- old.parserRealSource1.symbols
 +++ new.parserRealSource1.symbols
-@@= skipped -19, +19 lines =@@
+@@= skipped -18, +18 lines =@@
  >IDiagnosticWriter : Symbol(IDiagnosticWriter, Decl(parserRealSource1.ts, 7, 33))
  
              Alert(output: string): void;

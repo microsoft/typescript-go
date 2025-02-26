@@ -1,6 +1,6 @@
 --- old.getterMissingReturnError.symbols
 +++ new.getterMissingReturnError.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >test : Symbol(test, Decl(getterMissingReturnError.ts, 0, 0))
  
      public get p2(){

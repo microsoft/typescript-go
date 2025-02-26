@@ -1,6 +1,6 @@
 --- old.privacyTypeParametersOfClass.symbols
 +++ new.privacyTypeParametersOfClass.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  >privateClass : Symbol(privateClass, Decl(privacyTypeParametersOfClass.ts, 0, 0))
  
      myMethod(val: T): T { // Error

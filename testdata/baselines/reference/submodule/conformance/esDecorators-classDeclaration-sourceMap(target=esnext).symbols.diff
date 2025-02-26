@@ -1,6 +1,6 @@
 --- old.esDecorators-classDeclaration-sourceMap(target=esnext).symbols
 +++ new.esDecorators-classDeclaration-sourceMap(target=esnext).symbols
-@@= skipped -20, +20 lines =@@
+@@= skipped -19, +19 lines =@@
  >dec : Symbol(dec, Decl(esDecorators-classDeclaration-sourceMap.ts, 0, 11))
  
      method() {}

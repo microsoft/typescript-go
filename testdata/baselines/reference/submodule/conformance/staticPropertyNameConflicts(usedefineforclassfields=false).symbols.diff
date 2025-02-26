@@ -1,6 +1,6 @@
 --- old.staticPropertyNameConflicts(usedefineforclassfields=false).symbols
 +++ new.staticPropertyNameConflicts(usedefineforclassfields=false).symbols
-@@= skipped -27, +27 lines =@@
+@@= skipped -26, +26 lines =@@
  >StaticName : Symbol(StaticName, Decl(staticPropertyNameConflicts.ts, 6, 11))
  
      static name: number; // error without useDefineForClassFields

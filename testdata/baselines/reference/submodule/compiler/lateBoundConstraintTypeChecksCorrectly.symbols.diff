@@ -1,6 +1,6 @@
 --- old.lateBoundConstraintTypeChecksCorrectly.symbols
 +++ new.lateBoundConstraintTypeChecksCorrectly.symbols
-@@= skipped -17, +17 lines =@@
+@@= skipped -16, +16 lines =@@
  >T : Symbol(T, Decl(lateBoundConstraintTypeChecksCorrectly.ts, 5, 21))
  
    [fooProp]: T;

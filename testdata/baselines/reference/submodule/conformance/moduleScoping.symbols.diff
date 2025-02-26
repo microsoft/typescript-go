@@ -1,6 +1,6 @@
 --- old.moduleScoping.symbols
 +++ new.moduleScoping.symbols
-@@= skipped -32, +32 lines =@@
+@@= skipped -31, +31 lines =@@
  
  var t3 = file3.v3;
  >t3 : Symbol(t3, Decl(file4.ts, 3, 3))

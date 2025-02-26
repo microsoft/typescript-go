@@ -1,6 +1,6 @@
 --- old.propertyAccessOfReadonlyIndexSignature.symbols
 +++ new.propertyAccessOfReadonlyIndexSignature.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >Test : Symbol(Test, Decl(propertyAccessOfReadonlyIndexSignature.ts, 0, 0))
  
  a.foo = 'baz';

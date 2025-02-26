@@ -1,6 +1,6 @@
 --- old.modularizeLibrary_ErrorFromUsingES6FeaturesWithOnlyES5Lib.symbols
 +++ new.modularizeLibrary_ErrorFromUsingES6FeaturesWithOnlyES5Lib.symbols
-@@= skipped -54, +54 lines =@@
+@@= skipped -53, +53 lines =@@
      }
  };
  o.hasOwnProperty(Symbol.hasInstance);

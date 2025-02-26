@@ -1,6 +1,6 @@
 --- old.instancePropertyInClassType.symbols
 +++ new.instancePropertyInClassType.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >C : Symbol(C, Decl(instancePropertyInClassType.ts, 0, 19))
  
          x: string;

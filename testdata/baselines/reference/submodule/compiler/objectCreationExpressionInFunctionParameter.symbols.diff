@@ -1,6 +1,6 @@
 --- old.objectCreationExpressionInFunctionParameter.symbols
 +++ new.objectCreationExpressionInFunctionParameter.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(objectCreationExpressionInFunctionParameter.ts, 0, 0))
  
      constructor(public a1: string) {

@@ -1,6 +1,6 @@
 --- old.qualifiedName_ImportDeclarations-entity-names-referencing-a-var.symbols
 +++ new.qualifiedName_ImportDeclarations-entity-names-referencing-a-var.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
      import p = Alpha.x;
  >p : Symbol(p, Decl(qualifiedName_ImportDeclarations-entity-names-referencing-a-var.ts, 4, 13))
  >Alpha : Symbol(Alpha, Decl(qualifiedName_ImportDeclarations-entity-names-referencing-a-var.ts, 0, 0))

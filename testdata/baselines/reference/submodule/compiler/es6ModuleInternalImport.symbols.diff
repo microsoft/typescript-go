@@ -1,6 +1,6 @@
 --- old.es6ModuleInternalImport.symbols
 +++ new.es6ModuleInternalImport.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  export import a1 = m.a;
  >a1 : Symbol(a1, Decl(es6ModuleInternalImport.ts, 2, 1))
  >m : Symbol(m, Decl(es6ModuleInternalImport.ts, 0, 0))

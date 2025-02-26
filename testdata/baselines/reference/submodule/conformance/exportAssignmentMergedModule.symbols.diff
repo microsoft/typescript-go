@@ -1,6 +1,6 @@
 --- old.exportAssignmentMergedModule.symbols
 +++ new.exportAssignmentMergedModule.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
  var a: number = foo.a();
  >a : Symbol(a, Decl(foo_1.ts, 1, 3))

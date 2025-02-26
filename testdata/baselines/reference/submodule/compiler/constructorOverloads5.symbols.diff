@@ -1,6 +1,6 @@
 --- old.constructorOverloads5.symbols
 +++ new.constructorOverloads5.symbols
-@@= skipped -29, +29 lines =@@
+@@= skipped -28, +28 lines =@@
  >flags : Symbol(flags, Decl(constructorOverloads5.ts, 7, 36))
  
          exec(string: string): string[];

@@ -1,6 +1,6 @@
 --- old.declFileGenericType.symbols
 +++ new.declFileGenericType.symbols
-@@= skipped -71, +71 lines =@@
+@@= skipped -70, +70 lines =@@
  >T : Symbol(T, Decl(declFileGenericType.ts, 13, 19))
  
          constructor(public val: T) { }

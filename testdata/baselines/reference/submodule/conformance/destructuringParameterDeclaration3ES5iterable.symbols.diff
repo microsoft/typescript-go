@@ -1,6 +1,6 @@
 --- old.destructuringParameterDeclaration3ES5iterable.symbols
 +++ new.destructuringParameterDeclaration3ES5iterable.symbols
-@@= skipped -112, +112 lines =@@
+@@= skipped -111, +111 lines =@@
  
  enum E { a, b }
  >E : Symbol(E, Decl(destructuringParameterDeclaration3ES5iterable.ts, 35, 22))

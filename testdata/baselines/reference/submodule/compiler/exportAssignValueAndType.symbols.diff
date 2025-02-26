@@ -1,6 +1,6 @@
 --- old.exportAssignValueAndType.symbols
 +++ new.exportAssignValueAndType.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
  	export interface Server { openPort: number; }
  >Server : Symbol(Server, Decl(exportAssignValueAndType.ts, 0, 21))

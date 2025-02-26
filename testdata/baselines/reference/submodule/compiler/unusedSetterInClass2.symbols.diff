@@ -1,6 +1,6 @@
 --- old.unusedSetterInClass2.symbols
 +++ new.unusedSetterInClass2.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >Employee : Symbol(Employee, Decl(unusedSetterInClass2.ts, 0, 0))
  
      private set p(_: number) {}

@@ -1,6 +1,6 @@
 --- old.declarationEmitClassMemberWithComputedPropertyName.symbols
 +++ new.declarationEmitClassMemberWithComputedPropertyName.symbols
-@@= skipped -21, +21 lines =@@
+@@= skipped -20, +20 lines =@@
  >Foo : Symbol(Foo, Decl(declarationEmitClassMemberWithComputedPropertyName.ts, 4, 27))
  
      static [k1](): number {

@@ -1,6 +1,6 @@
 --- old.constructorWithIncompleteTypeAnnotation.symbols
 +++ new.constructorWithIncompleteTypeAnnotation.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >filename : Symbol(filename, Decl(constructorWithIncompleteTypeAnnotation.ts, 2, 20))
  
          public ReadAllText(): string;

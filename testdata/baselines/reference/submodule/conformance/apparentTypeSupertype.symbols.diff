@@ -1,6 +1,6 @@
 --- old.apparentTypeSupertype.symbols
 +++ new.apparentTypeSupertype.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >Base : Symbol(Base, Decl(apparentTypeSupertype.ts, 0, 0))
  
      x: string;

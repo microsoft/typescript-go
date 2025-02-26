@@ -1,6 +1,6 @@
 --- old.es5-umd2.symbols
 +++ new.es5-umd2.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
      }
  
      public B()

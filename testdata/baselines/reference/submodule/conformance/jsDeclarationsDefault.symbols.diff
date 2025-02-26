@@ -1,6 +1,6 @@
 --- old.jsDeclarationsDefault.symbols
 +++ new.jsDeclarationsDefault.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
  === index2.js ===
  export default function foo() {

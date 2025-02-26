@@ -1,6 +1,6 @@
 --- old.propertyAccessNumericLiterals.es6.symbols
 +++ new.propertyAccessNumericLiterals.es6.symbols
-@@= skipped -1, +1 lines =@@
+@@= skipped -0, +0 lines =@@
  //// [tests/cases/conformance/es6/propertyAccess/propertyAccessNumericLiterals.es6.ts] ////
  
  === propertyAccessNumericLiterals.es6.ts ===

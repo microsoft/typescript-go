@@ -1,6 +1,6 @@
 --- old.circularReference.symbols
 +++ new.circularReference.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >C1 : Symbol(C1, Decl(foo2.ts, 1, 18))
  
  		m1: foo1.M1.C1;

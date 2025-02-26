@@ -1,6 +1,6 @@
 --- old.moduleAugmentationGlobal4.symbols
 +++ new.moduleAugmentationGlobal4.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === f1.ts ===
  declare global {

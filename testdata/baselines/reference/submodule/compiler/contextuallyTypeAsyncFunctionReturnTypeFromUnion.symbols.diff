@@ -1,6 +1,6 @@
 --- old.contextuallyTypeAsyncFunctionReturnTypeFromUnion.symbols
 +++ new.contextuallyTypeAsyncFunctionReturnTypeFromUnion.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >T : Symbol(T, Decl(contextuallyTypeAsyncFunctionReturnTypeFromUnion.ts, 2, 27))
  
    onDone: (a: T) => void;

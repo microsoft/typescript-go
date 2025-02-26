@@ -1,6 +1,6 @@
 --- old.commaOperatorWithSecondOperandObjectType.symbols
 +++ new.commaOperatorWithSecondOperandObjectType.symbols
-@@= skipped -21, +21 lines =@@
+@@= skipped -20, +20 lines =@@
  >CLASS : Symbol(CLASS, Decl(commaOperatorWithSecondOperandObjectType.ts, 4, 19))
  
      num: number;

@@ -1,6 +1,6 @@
 --- old.contextualSignatureInObjectFreeze.symbols
 +++ new.contextualSignatureInObjectFreeze.symbols
-@@= skipped -4, +4 lines =@@
+@@= skipped -3, +3 lines =@@
  // #49101
  
  Object.freeze({

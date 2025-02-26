@@ -1,6 +1,6 @@
 --- old.classWithMultipleBaseClasses.symbols
 +++ new.classWithMultipleBaseClasses.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(classWithMultipleBaseClasses.ts, 0, 0))
  
      foo() { }

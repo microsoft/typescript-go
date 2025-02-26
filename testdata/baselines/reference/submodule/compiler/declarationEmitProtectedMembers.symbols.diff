@@ -1,6 +1,6 @@
 --- old.declarationEmitProtectedMembers.symbols
 +++ new.declarationEmitProtectedMembers.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >C1 : Symbol(C1, Decl(declarationEmitProtectedMembers.ts, 0, 0))
  
      protected x: number;

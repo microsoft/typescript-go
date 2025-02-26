@@ -1,6 +1,6 @@
 --- old.es5andes6module.symbols
 +++ new.es5andes6module.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === es5andes6module.ts ===
  export default class A

@@ -1,6 +1,6 @@
 --- old.esModuleInteropTslibHelpers.symbols
 +++ new.esModuleInteropTslibHelpers.symbols
-@@= skipped -26, +26 lines =@@
+@@= skipped -25, +25 lines =@@
  
  === file3.ts ===
  import {default as resolve} from "path";

@@ -1,6 +1,6 @@
 --- old.noImplicitAnyMissingGetAccessor.symbols
 +++ new.noImplicitAnyMissingGetAccessor.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Parent : Symbol(Parent, Decl(noImplicitAnyMissingGetAccessor.ts, 0, 0))
  {
      public abstract set message(str);

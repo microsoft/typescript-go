@@ -1,6 +1,6 @@
 --- old.systemModuleNonTopLevelModuleMembers.symbols
 +++ new.systemModuleNonTopLevelModuleMembers.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  
  export enum TopLevelEnum {E}
  >TopLevelEnum : Symbol(TopLevelEnum, Decl(systemModuleNonTopLevelModuleMembers.ts, 2, 43))

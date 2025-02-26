@@ -1,6 +1,6 @@
 --- old.typeGuardsInRightOperandOfOrOrOperator.symbols
 +++ new.typeGuardsInRightOperandOfOrOrOperator.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  
      return typeof x !== "string" || x.length === 10; // string
  >x : Symbol(x, Decl(typeGuardsInRightOperandOfOrOrOperator.ts, 3, 13))

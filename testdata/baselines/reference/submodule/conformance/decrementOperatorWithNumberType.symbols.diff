@@ -1,6 +1,6 @@
 --- old.decrementOperatorWithNumberType.symbols
 +++ new.decrementOperatorWithNumberType.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >A : Symbol(A, Decl(decrementOperatorWithNumberType.ts, 2, 31))
  
      public a: number;

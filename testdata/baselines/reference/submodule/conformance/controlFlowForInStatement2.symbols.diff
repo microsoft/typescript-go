@@ -1,6 +1,6 @@
 --- old.controlFlowForInStatement2.symbols
 +++ new.controlFlowForInStatement2.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  
  type A = { [keywordA]: number };
  >A : Symbol(A, Decl(controlFlowForInStatement2.ts, 1, 21))

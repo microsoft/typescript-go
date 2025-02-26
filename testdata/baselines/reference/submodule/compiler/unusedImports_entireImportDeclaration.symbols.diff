@@ -1,6 +1,6 @@
 --- old.unusedImports_entireImportDeclaration.symbols
 +++ new.unusedImports_entireImportDeclaration.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  === /b.ts ===
  import d1, { a as a1, b as b1 } from "./a";
  >d1 : Symbol(d1, Decl(b.ts, 0, 6))

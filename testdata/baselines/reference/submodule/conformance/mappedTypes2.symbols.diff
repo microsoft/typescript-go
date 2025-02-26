@@ -1,6 +1,6 @@
 --- old.mappedTypes2.symbols
 +++ new.mappedTypes2.symbols
-@@= skipped -156, +156 lines =@@
+@@= skipped -155, +155 lines =@@
  >Point : Symbol(Point, Decl(mappedTypes2.ts, 28, 48))
  
      x: number;

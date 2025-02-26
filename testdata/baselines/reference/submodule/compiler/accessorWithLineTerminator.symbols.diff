@@ -1,6 +1,6 @@
 --- old.accessorWithLineTerminator.symbols
 +++ new.accessorWithLineTerminator.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  
      get
      x() { return 1 }

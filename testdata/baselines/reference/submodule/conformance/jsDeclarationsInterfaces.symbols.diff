@@ -1,6 +1,6 @@
 --- old.jsDeclarationsInterfaces.symbols
 +++ new.jsDeclarationsInterfaces.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >B : Symbol(B, Decl(index.js, 3, 21))
  
      cat: string;

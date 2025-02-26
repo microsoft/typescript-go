@@ -1,6 +1,6 @@
 --- old.variableDeclaratorResolvedDuringContextualTyping.symbols
 +++ new.variableDeclaratorResolvedDuringContextualTyping.symbols
-@@= skipped -46, +46 lines =@@
+@@= skipped -45, +45 lines =@@
  >oncancel : Symbol(oncancel, Decl(variableDeclaratorResolvedDuringContextualTyping.ts, 18, 110))
  
          static as(value: any): Promise;

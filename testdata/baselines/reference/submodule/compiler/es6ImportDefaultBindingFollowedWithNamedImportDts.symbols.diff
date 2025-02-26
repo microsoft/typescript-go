@@ -1,6 +1,6 @@
 --- old.es6ImportDefaultBindingFollowedWithNamedImportDts.symbols
 +++ new.es6ImportDefaultBindingFollowedWithNamedImportDts.symbols
-@@= skipped -33, +33 lines =@@
+@@= skipped -32, +32 lines =@@
  
  import defaultBinding3, { a11 as b } from "./server";
  >defaultBinding3 : Symbol(defaultBinding3, Decl(client.ts, 3, 6))

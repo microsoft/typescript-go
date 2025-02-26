@@ -1,6 +1,6 @@
 --- old.mergeThreeInterfaces2.symbols
 +++ new.mergeThreeInterfaces2.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >A : Symbol(A, Decl(mergeThreeInterfaces2.ts, 3, 11), Decl(mergeThreeInterfaces2.ts, 13, 11), Decl(mergeThreeInterfaces2.ts, 16, 5))
  
          foo: string;

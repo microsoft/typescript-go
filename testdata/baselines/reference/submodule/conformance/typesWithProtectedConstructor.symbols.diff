@@ -1,6 +1,6 @@
 --- old.typesWithProtectedConstructor.symbols
 +++ new.typesWithProtectedConstructor.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  
  var r: () => void = c.constructor;
  >r : Symbol(r, Decl(typesWithProtectedConstructor.ts, 5, 3))

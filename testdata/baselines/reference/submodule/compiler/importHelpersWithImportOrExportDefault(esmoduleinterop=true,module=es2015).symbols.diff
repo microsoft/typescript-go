@@ -1,6 +1,6 @@
 --- old.importHelpersWithImportOrExportDefault(esmoduleinterop=true,module=es2015).symbols
 +++ new.importHelpersWithImportOrExportDefault(esmoduleinterop=true,module=es2015).symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >default : Symbol(default, Decl(b.ts, 0, 8))
  
  export { default as a } from "./a";

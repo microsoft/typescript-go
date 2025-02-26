@@ -1,6 +1,6 @@
 --- old.assignmentCompatWithGenericCallSignaturesWithOptionalParameters.symbols
 +++ new.assignmentCompatWithGenericCallSignaturesWithOptionalParameters.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts, 3, 15))
  
          a: () => T;

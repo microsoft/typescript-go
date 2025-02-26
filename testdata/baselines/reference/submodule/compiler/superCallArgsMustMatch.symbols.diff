@@ -1,6 +1,6 @@
 --- old.superCallArgsMustMatch.symbols
 +++ new.superCallArgsMustMatch.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(superCallArgsMustMatch.ts, 0, 9))
  
      public foo: T;

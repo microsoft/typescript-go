@@ -1,6 +1,6 @@
 --- old.subtypingTransitivity.symbols
 +++ new.subtypingTransitivity.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >B : Symbol(B, Decl(subtypingTransitivity.ts, 0, 0))
  
      x: Object;

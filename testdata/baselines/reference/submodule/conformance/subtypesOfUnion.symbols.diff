@@ -1,6 +1,6 @@
 --- old.subtypesOfUnion.symbols
 +++ new.subtypesOfUnion.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === subtypesOfUnion.ts ===
  enum E { e1, e2 }
  >E : Symbol(E, Decl(subtypesOfUnion.ts, 0, 0))

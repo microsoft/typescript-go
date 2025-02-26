@@ -1,6 +1,6 @@
 --- old.firstMatchRegExpMatchArray.symbols
 +++ new.firstMatchRegExpMatchArray.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === firstMatchRegExpMatchArray.ts ===
  const match = ''.match(/ /)
  >match : Symbol(match, Decl(firstMatchRegExpMatchArray.ts, 0, 5))

@@ -1,6 +1,6 @@
 --- old.overloadOnConstInCallback1.symbols
 +++ new.overloadOnConstInCallback1.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(overloadOnConstInCallback1.ts, 0, 0))
  
      x1(a: number, callback: (x: 'hi') => number); // error

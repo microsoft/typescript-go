@@ -1,6 +1,6 @@
 --- old.jsDeclarationsImportAliasExposedWithinNamespace.symbols
 +++ new.jsDeclarationsImportAliasExposedWithinNamespace.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
   * @type {Object<string,*>}
   */
  const myTypes = {

@@ -1,6 +1,6 @@
 --- old.narrowingDestructuring.symbols
 +++ new.narrowingDestructuring.symbols
-@@= skipped -140, +140 lines =@@
+@@= skipped -139, +139 lines =@@
  
      if (typeof x[0] === 'number') {
  >x : Symbol(x, Decl(narrowingDestructuring.ts, 33, 77))

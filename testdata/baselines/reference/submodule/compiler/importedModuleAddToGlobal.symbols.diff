@@ -1,6 +1,6 @@
 --- old.importedModuleAddToGlobal.symbols
 +++ new.importedModuleAddToGlobal.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  
      import b = B;
  >b : Symbol(b, Decl(importedModuleAddToGlobal.ts, 2, 10))

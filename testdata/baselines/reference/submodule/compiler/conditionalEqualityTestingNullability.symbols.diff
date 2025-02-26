@@ -1,6 +1,6 @@
 --- old.conditionalEqualityTestingNullability.symbols
 +++ new.conditionalEqualityTestingNullability.symbols
-@@= skipped -22, +22 lines =@@
+@@= skipped -21, +21 lines =@@
  >T : Symbol(T, Decl(conditionalEqualityTestingNullability.ts, 5, 14))
  
      x : () => T

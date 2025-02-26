@@ -1,6 +1,6 @@
 --- old.parserindenter.symbols
 +++ new.parserindenter.symbols
-@@= skipped -26, +26 lines =@@
+@@= skipped -25, +25 lines =@@
  >Indenter : Symbol(Indenter, Decl(parserindenter.ts, 18, 19))
  
          private indentationBag: IndentationBag;

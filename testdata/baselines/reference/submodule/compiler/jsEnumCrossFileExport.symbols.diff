@@ -1,6 +1,6 @@
 --- old.jsEnumCrossFileExport.symbols
 +++ new.jsEnumCrossFileExport.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === enumDef.js ===
  var Host = {};

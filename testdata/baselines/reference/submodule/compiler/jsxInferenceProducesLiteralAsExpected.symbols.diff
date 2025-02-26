@@ -1,6 +1,6 @@
 --- old.jsxInferenceProducesLiteralAsExpected.symbols
 +++ new.jsxInferenceProducesLiteralAsExpected.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >T : Symbol(T, Decl(jsxInferenceProducesLiteralAsExpected.tsx, 1, 27))
  >T : Symbol(T, Decl(jsxInferenceProducesLiteralAsExpected.tsx, 1, 27))
  >K : Symbol(K, Decl(jsxInferenceProducesLiteralAsExpected.tsx, 1, 35))

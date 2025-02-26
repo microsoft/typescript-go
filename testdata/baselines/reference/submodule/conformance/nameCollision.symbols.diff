@@ -1,6 +1,6 @@
 --- old.nameCollision.symbols
 +++ new.nameCollision.symbols
-@@= skipped -29, +29 lines =@@
+@@= skipped -28, +28 lines =@@
  >B : Symbol(B, Decl(nameCollision.ts, 11, 10))
  
          name: string;

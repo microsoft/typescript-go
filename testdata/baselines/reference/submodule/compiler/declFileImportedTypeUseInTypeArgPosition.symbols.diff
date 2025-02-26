@@ -1,6 +1,6 @@
 --- old.declFileImportedTypeUseInTypeArgPosition.symbols
 +++ new.declFileImportedTypeUseInTypeArgPosition.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(declFileImportedTypeUseInTypeArgPosition.ts, 0, 11))
  
  declare module 'mod1' {

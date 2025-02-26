@@ -1,6 +1,6 @@
 --- old.declarationEmitUsingAlternativeContainingModules1.symbols
 +++ new.declarationEmitUsingAlternativeContainingModules1.symbols
-@@= skipped -118, +118 lines =@@
+@@= skipped -117, +117 lines =@@
  
  > {
    retry?: RetryValue<TError>;

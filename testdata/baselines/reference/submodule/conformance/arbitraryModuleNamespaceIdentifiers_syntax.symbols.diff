@@ -1,6 +1,6 @@
 --- old.arbitraryModuleNamespaceIdentifiers_syntax.symbols
 +++ new.arbitraryModuleNamespaceIdentifiers_syntax.symbols
-@@= skipped -23, +23 lines =@@
+@@= skipped -22, +22 lines =@@
  
  === values-bad-import.ts ===
  import { foo as "invalid 2" } from "./values-valid";

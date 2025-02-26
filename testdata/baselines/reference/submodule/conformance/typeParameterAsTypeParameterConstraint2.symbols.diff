@@ -1,6 +1,6 @@
 --- old.typeParameterAsTypeParameterConstraint2.symbols
 +++ new.typeParameterAsTypeParameterConstraint2.symbols
-@@= skipped -27, +27 lines =@@
+@@= skipped -26, +26 lines =@@
  >Number : Symbol(Number, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      x: number;

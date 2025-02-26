@@ -1,6 +1,6 @@
 --- old.importExportInternalComments.symbols
 +++ new.importExportInternalComments.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  /*1*/ import /*2*/ D /*3*/, /*4*/ { /*5*/ A /*6*/, /*7*/ B /*8*/ as /*9*/ C /*10*/ } /*11*/ from /*12*/ "foo";
  >D : Symbol(D, Decl(index.ts, 0, 12))
  >A : Symbol(A, Decl(index.ts, 0, 35))

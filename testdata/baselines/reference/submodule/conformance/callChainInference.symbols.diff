@@ -1,6 +1,6 @@
 --- old.callChainInference.symbols
 +++ new.callChainInference.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >Y : Symbol(Y, Decl(callChainInference.ts, 0, 0))
  
      foo<T>(this: T, arg: keyof T): void;

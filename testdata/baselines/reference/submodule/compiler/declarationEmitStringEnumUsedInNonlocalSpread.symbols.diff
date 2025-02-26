@@ -1,6 +1,6 @@
 --- old.declarationEmitStringEnumUsedInNonlocalSpread.symbols
 +++ new.declarationEmitStringEnumUsedInNonlocalSpread.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >TestEnum : Symbol(TestEnum, Decl(class.ts, 0, 0))
  
      Test1 = '123123',

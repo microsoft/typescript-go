@@ -1,6 +1,6 @@
 --- old.heterogeneousArrayLiterals.symbols
 +++ new.heterogeneousArrayLiterals.symbols
-@@= skipped -54, +54 lines =@@
+@@= skipped -53, +53 lines =@@
  
  class Base { foo: string; }
  >Base : Symbol(Base, Decl(heterogeneousArrayLiterals.ts, 18, 32))

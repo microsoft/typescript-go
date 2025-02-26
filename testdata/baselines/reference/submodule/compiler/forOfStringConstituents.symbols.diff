@@ -1,6 +1,6 @@
 --- old.forOfStringConstituents.symbols
 +++ new.forOfStringConstituents.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === forOfStringConstituents.ts ===
  interface A { x: 0; y: C[]; }
  >A : Symbol(A, Decl(forOfStringConstituents.ts, 0, 0))

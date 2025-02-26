@@ -1,6 +1,6 @@
 --- old.jsFileFunctionOverloads2.symbols
 +++ new.jsFileFunctionOverloads2.symbols
-@@= skipped -65, +65 lines =@@
+@@= skipped -64, +64 lines =@@
    for (let i = 0; i < array.length; i += 1) {
  >i : Symbol(i, Decl(jsFileFunctionOverloads2.js, 47, 10))
  >i : Symbol(i, Decl(jsFileFunctionOverloads2.js, 47, 10))

@@ -1,6 +1,6 @@
 --- old.genericCallbacksAndClassHierarchy.symbols
 +++ new.genericCallbacksAndClassHierarchy.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >T : Symbol(T, Decl(genericCallbacksAndClassHierarchy.ts, 1, 23))
  
          subscribe(callback: (newValue: T) => void ): any;

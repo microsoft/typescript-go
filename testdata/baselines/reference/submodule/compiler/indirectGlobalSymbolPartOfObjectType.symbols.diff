@@ -1,6 +1,6 @@
 --- old.indirectGlobalSymbolPartOfObjectType.symbols
 +++ new.indirectGlobalSymbolPartOfObjectType.symbols
-@@= skipped -4, +4 lines =@@
+@@= skipped -3, +3 lines =@@
  export { }
  const Symbol = globalThis.Symbol;
  >Symbol : Symbol(Symbol, Decl(indirectGlobalSymbolPartOfObjectType.ts, 1, 5))

@@ -1,6 +1,6 @@
 --- old.nonPrimitiveNarrow.symbols
 +++ new.nonPrimitiveNarrow.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Narrow : Symbol(Narrow, Decl(nonPrimitiveNarrow.ts, 0, 0))
  
      narrowed: boolean

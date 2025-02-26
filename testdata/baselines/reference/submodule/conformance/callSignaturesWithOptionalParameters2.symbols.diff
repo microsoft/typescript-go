@@ -1,6 +1,6 @@
 --- old.callSignaturesWithOptionalParameters2.symbols
 +++ new.callSignaturesWithOptionalParameters2.symbols
-@@= skipped -41, +41 lines =@@
+@@= skipped -40, +40 lines =@@
  >C : Symbol(C, Decl(callSignaturesWithOptionalParameters2.ts, 13, 11))
  
      foo(x?: number);

@@ -1,6 +1,6 @@
 --- old.promisesWithConstraints.symbols
 +++ new.promisesWithConstraints.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(lib.es5.d.ts, --, --), Decl(promisesWithConstraints.ts, 0, 18))
  
      then<U>(cb: (x: T) => Promise<U>): Promise<U>;

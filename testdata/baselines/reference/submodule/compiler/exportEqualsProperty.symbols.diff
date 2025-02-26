@@ -1,6 +1,6 @@
 --- old.exportEqualsProperty.symbols
 +++ new.exportEqualsProperty.symbols
-@@= skipped -25, +25 lines =@@
+@@= skipped -24, +24 lines =@@
  >b : Symbol(b, Decl(index.ts, 7, 5))
  >B : Symbol(B, Decl(index.ts, 4, 18))
  >B : Symbol(B, Decl(index.ts, 4, 18))

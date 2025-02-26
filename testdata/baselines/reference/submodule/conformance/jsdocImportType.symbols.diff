@@ -1,6 +1,6 @@
 --- old.jsdocImportType.symbols
 +++ new.jsdocImportType.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >c : Symbol(c, Decl(use.js, 3, 3))
  
  c.chunk;

@@ -1,6 +1,6 @@
 --- old.autoAccessor11.symbols
 +++ new.autoAccessor11.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(autoAccessor11.ts, 0, 0))
  
      accessor

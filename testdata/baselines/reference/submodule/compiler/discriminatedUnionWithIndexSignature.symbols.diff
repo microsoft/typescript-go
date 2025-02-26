@@ -1,6 +1,6 @@
 --- old.discriminatedUnionWithIndexSignature.symbols
 +++ new.discriminatedUnionWithIndexSignature.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >UnionAltA : Symbol(UnionAltA, Decl(discriminatedUnionWithIndexSignature.ts, 0, 0))
  
      type?: 'text';

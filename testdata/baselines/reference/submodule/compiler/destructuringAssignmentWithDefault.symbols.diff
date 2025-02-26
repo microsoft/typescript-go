@@ -1,6 +1,6 @@
 --- old.destructuringAssignmentWithDefault.symbols
 +++ new.destructuringAssignmentWithDefault.symbols
-@@= skipped -59, +59 lines =@@
+@@= skipped -58, +58 lines =@@
      let x1 = (options || {})[0];
  >x1 : Symbol(x1, Decl(destructuringAssignmentWithDefault.ts, 16, 7))
  >options : Symbol(options, Decl(destructuringAssignmentWithDefault.ts, 13, 12))

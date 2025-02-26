@@ -1,6 +1,6 @@
 --- old.visibilityOfCrossModuleTypeUsage.symbols
 +++ new.visibilityOfCrossModuleTypeUsage.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >run : Symbol(run, Decl(visibilityOfCrossModuleTypeUsage_fs.ts, 0, 73))
  >configuration : Symbol(configuration, Decl(visibilityOfCrossModuleTypeUsage_fs.ts, 1, 13))
  >commands : Symbol(commands, Decl(visibilityOfCrossModuleTypeUsage_fs.ts, 0, 0))

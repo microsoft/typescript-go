@@ -1,6 +1,6 @@
 --- old.destructuringParameterDeclaration5.symbols
 +++ new.destructuringParameterDeclaration5.symbols
-@@= skipped -18, +18 lines =@@
+@@= skipped -17, +17 lines =@@
  >Class : Symbol(Class, Decl(destructuringParameterDeclaration5.ts, 2, 15))
  
      foo: boolean;

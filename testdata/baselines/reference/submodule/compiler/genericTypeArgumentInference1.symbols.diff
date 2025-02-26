@@ -1,6 +1,6 @@
 --- old.genericTypeArgumentInference1.symbols
 +++ new.genericTypeArgumentInference1.symbols
-@@= skipped -20, +20 lines =@@
+@@= skipped -19, +19 lines =@@
  >Static : Symbol(Static, Decl(genericTypeArgumentInference1.ts, 3, 5))
  
          all<T>(list: T[], iterator?: Iterator<T, boolean>, context?: any): T;

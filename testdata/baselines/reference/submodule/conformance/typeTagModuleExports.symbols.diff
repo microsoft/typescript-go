@@ -1,6 +1,6 @@
 --- old.typeTagModuleExports.symbols
 +++ new.typeTagModuleExports.symbols
-@@= skipped -1, +1 lines =@@
+@@= skipped -0, +0 lines =@@
  //// [tests/cases/conformance/jsdoc/typeTagModuleExports.ts] ////
  
  === bug27327.js ===

@@ -1,6 +1,6 @@
 --- old.genericChainedCalls.symbols
 +++ new.genericChainedCalls.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(genericChainedCalls.ts, 0, 13))
  
      func<U>(callback: (value: T) => U): I1<T>;

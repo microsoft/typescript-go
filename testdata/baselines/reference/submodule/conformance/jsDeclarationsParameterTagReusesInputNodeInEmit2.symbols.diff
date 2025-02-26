@@ -1,6 +1,6 @@
 --- old.jsDeclarationsParameterTagReusesInputNodeInEmit2.symbols
 +++ new.jsDeclarationsParameterTagReusesInputNodeInEmit2.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  }
  
  const BaseFactory = () => {

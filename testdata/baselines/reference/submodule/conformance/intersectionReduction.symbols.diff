@@ -1,6 +1,6 @@
 --- old.intersectionReduction.symbols
 +++ new.intersectionReduction.symbols
-@@= skipped -381, +381 lines =@@
+@@= skipped -380, +380 lines =@@
  >A2 : Symbol(A2, Decl(intersectionReduction.ts, 107, 93))
  
      kind: "A";

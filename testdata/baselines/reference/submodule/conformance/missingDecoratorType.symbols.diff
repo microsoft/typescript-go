@@ -1,6 +1,6 @@
 --- old.missingDecoratorType.symbols
 +++ new.missingDecoratorType.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === a.ts ===
  interface Object { }

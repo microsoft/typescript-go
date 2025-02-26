@@ -1,6 +1,6 @@
 --- old.moduleResolutionWithSuffixes_one_jsModule.symbols
 +++ new.moduleResolutionWithSuffixes_one_jsModule.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  === /foo.ios.js ===
  "use strict";
  exports.__esModule = true;

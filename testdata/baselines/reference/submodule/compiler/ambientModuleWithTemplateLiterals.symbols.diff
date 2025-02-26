@@ -1,6 +1,6 @@
 --- old.ambientModuleWithTemplateLiterals.symbols
 +++ new.ambientModuleWithTemplateLiterals.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >Bar : Symbol(Bar, Decl(ambientModuleWithTemplateLiterals.ts, 0, 20))
  
          a = `1`,

@@ -1,6 +1,6 @@
 --- old.typeGuardOfFormIsType.symbols
 +++ new.typeGuardOfFormIsType.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C1 : Symbol(C1, Decl(typeGuardOfFormIsType.ts, 0, 0))
  
      p1: string;

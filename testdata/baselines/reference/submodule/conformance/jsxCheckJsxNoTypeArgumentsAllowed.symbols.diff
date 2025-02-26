@@ -1,6 +1,6 @@
 --- old.jsxCheckJsxNoTypeArgumentsAllowed.symbols
 +++ new.jsxCheckJsxNoTypeArgumentsAllowed.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  export declare class MyComp<P> extends React.Component<P, {}> {
  >MyComp : Symbol(MyComp, Decl(component.d.ts, 0, 31))
  >P : Symbol(P, Decl(component.d.ts, 1, 28))

@@ -1,6 +1,6 @@
 --- old.constEnum3.symbols
 +++ new.constEnum3.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === constEnum3.ts ===
  const enum TestType { foo, bar }
  >TestType : Symbol(TestType, Decl(constEnum3.ts, 0, 0))

@@ -1,6 +1,6 @@
 --- old.intlNumberFormatES2020.symbols
 +++ new.intlNumberFormatES2020.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >notation : Symbol(notation, Decl(intlNumberFormatES2020.ts, 1, 7))
  >style : Symbol(style, Decl(intlNumberFormatES2020.ts, 1, 17))
  >signDisplay : Symbol(signDisplay, Decl(intlNumberFormatES2020.ts, 1, 24))

@@ -1,6 +1,6 @@
 --- old.lateBoundMethodNameAssigmentJS.symbols
 +++ new.lateBoundMethodNameAssigmentJS.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === lateBoundMethodNameAssigmentJS.js ===
  const _symbol = Symbol("_sym");
  >_symbol : Symbol(_symbol, Decl(lateBoundMethodNameAssigmentJS.js, 0, 5))

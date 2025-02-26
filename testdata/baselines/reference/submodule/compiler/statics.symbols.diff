@@ -1,6 +1,6 @@
 --- old.statics.symbols
 +++ new.statics.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >C : Symbol(C, Decl(statics.ts, 0, 10))
  
          x: number;

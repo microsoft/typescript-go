@@ -1,6 +1,6 @@
 --- old.typeParameterEquality.symbols
 +++ new.typeParameterEquality.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(typeParameterEquality.ts, 0, 0))
  
      get x(): <T>(a: T) => T { return null; }

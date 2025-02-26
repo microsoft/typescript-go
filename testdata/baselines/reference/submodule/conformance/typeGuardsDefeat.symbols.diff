@@ -1,6 +1,6 @@
 --- old.typeGuardsDefeat.symbols
 +++ new.typeGuardsDefeat.symbols
-@@= skipped -20, +20 lines =@@
+@@= skipped -19, +19 lines =@@
  >f : Symbol(f, Decl(typeGuardsDefeat.ts, 2, 34))
  
          return x.length; // string

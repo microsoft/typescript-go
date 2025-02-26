@@ -1,6 +1,6 @@
 --- old.commonJSAliasedExport.symbols
 +++ new.commonJSAliasedExport.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === bug43713.js ===
  const { funky } = require('./commonJSAliasedExport');
  >funky : Symbol(funky, Decl(bug43713.js, 0, 7))

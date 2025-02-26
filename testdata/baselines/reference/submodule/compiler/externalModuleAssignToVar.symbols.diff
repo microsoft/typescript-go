@@ -1,6 +1,6 @@
 --- old.externalModuleAssignToVar.symbols
 +++ new.externalModuleAssignToVar.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >y1 : Symbol(y1, Decl(externalModuleAssignToVar_core.ts, 2, 3))
  >C : Symbol(C, Decl(externalModuleAssignToVar_core.ts, 2, 9))
  >ext : Symbol(ext, Decl(externalModuleAssignToVar_core.ts, 0, 0))

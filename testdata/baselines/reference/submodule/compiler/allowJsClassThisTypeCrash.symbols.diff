@@ -1,6 +1,6 @@
 --- old.allowJsClassThisTypeCrash.symbols
 +++ new.allowJsClassThisTypeCrash.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >f : Symbol(f, Decl(app.js, 0, 5))
  
  g.prototype.m = function () {

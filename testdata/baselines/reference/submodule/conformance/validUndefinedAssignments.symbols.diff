@@ -1,6 +1,6 @@
 --- old.validUndefinedAssignments.symbols
 +++ new.validUndefinedAssignments.symbols
-@@= skipped -32, +32 lines =@@
+@@= skipped -31, +31 lines =@@
  
  class C { foo: string }
  >C : Symbol(C, Decl(validUndefinedAssignments.ts, 8, 6))

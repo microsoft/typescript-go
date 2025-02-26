@@ -1,6 +1,6 @@
 --- old.ES5SymbolProperty1.symbols
 +++ new.ES5SymbolProperty1.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >SymbolConstructor : Symbol(SymbolConstructor, Decl(ES5SymbolProperty1.ts, 0, 0))
  
      foo: string;

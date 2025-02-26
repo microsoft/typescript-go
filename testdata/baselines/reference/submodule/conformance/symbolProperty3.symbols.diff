@@ -1,6 +1,6 @@
 --- old.symbolProperty3.symbols
 +++ new.symbolProperty3.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === symbolProperty3.ts ===
  var s = Symbol;
  >s : Symbol(s, Decl(symbolProperty3.ts, 0, 3))

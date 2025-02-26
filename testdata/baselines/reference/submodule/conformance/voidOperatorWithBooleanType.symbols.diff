@@ -1,6 +1,6 @@
 --- old.voidOperatorWithBooleanType.symbols
 +++ new.voidOperatorWithBooleanType.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >A : Symbol(A, Decl(voidOperatorWithBooleanType.ts, 3, 40))
  
      public a: boolean;

@@ -1,6 +1,6 @@
 --- old.implicitAnyGetAndSetAccessorWithAnyReturnType.symbols
 +++ new.implicitAnyGetAndSetAccessorWithAnyReturnType.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >GetAndSet : Symbol(GetAndSet, Decl(implicitAnyGetAndSetAccessorWithAnyReturnType.ts, 0, 0))
  
      getAndSet = null;             // error at "getAndSet"

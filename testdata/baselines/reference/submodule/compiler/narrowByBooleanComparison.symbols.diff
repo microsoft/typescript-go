@@ -1,6 +1,6 @@
 --- old.narrowByBooleanComparison.symbols
 +++ new.narrowByBooleanComparison.symbols
-@@= skipped -121, +121 lines =@@
+@@= skipped -120, +120 lines =@@
  
      if (typeof foo !== 'string' && Array.isArray(foo) === false) {
  >foo : Symbol(foo, Decl(narrowByBooleanComparison.ts, 50, 15))

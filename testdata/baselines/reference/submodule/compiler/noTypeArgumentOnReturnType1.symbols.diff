@@ -1,6 +1,6 @@
 --- old.noTypeArgumentOnReturnType1.symbols
 +++ new.noTypeArgumentOnReturnType1.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  >T : Symbol(T, Decl(noTypeArgumentOnReturnType1.ts, 0, 8))
   
   foo(): A{

@@ -1,6 +1,6 @@
 --- old.importCallExpressionDeclarationEmit3.symbols
 +++ new.importCallExpressionDeclarationEmit3.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >Zero : Symbol(Zero, Decl(1.ts, 1, 6))
  
  import("./0");

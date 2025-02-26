@@ -1,6 +1,6 @@
 --- old.parserRealSource5.symbols
 +++ new.parserRealSource5.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  >PrintContext : Symbol(PrintContext, Decl(parserRealSource5.ts, 5, 19))
  
          public builder = "";

@@ -1,6 +1,6 @@
 --- old.genericClassWithStaticsUsingTypeArguments.symbols
 +++ new.genericClassWithStaticsUsingTypeArguments.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >T : Symbol(T, Decl(genericClassWithStaticsUsingTypeArguments.ts, 1, 10))
  
      static a = (n: T) => { };

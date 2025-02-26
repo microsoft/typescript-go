@@ -1,6 +1,6 @@
 --- old.thisTypeInBasePropertyAndDerivedContainerOfBase01.symbols
 +++ new.thisTypeInBasePropertyAndDerivedContainerOfBase01.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >Foo : Symbol(Foo, Decl(thisTypeInBasePropertyAndDerivedContainerOfBase01.ts, 2, 1))
  
      item: T

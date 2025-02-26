@@ -1,6 +1,6 @@
 --- old.malformedTags.symbols
 +++ new.malformedTags.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
   */
  var isArray = Array.isArray;
  >isArray : Symbol(isArray, Decl(myFile02.js, 5, 3))

@@ -1,6 +1,6 @@
 --- old.declarationEmitClassAccessorsJs1.symbols
 +++ new.declarationEmitClassAccessorsJs1.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
     * @returns {string}
     */
    get path() {

@@ -1,6 +1,6 @@
 --- old.objectTypesWithOptionalProperties2.symbols
 +++ new.objectTypesWithOptionalProperties2.symbols
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  >I : Symbol(I, Decl(objectTypesWithOptionalProperties2.ts, 4, 1))
  
      x()?: number; // error

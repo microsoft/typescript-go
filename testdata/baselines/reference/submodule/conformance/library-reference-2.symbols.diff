@@ -1,6 +1,6 @@
 --- old.library-reference-2.symbols
 +++ new.library-reference-2.symbols
-@@= skipped -1, +1 lines =@@
+@@= skipped -0, +0 lines =@@
  //// [tests/cases/conformance/references/library-reference-2.ts] ////
  
  === /consumer.ts ===

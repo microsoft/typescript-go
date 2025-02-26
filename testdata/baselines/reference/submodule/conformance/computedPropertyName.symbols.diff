@@ -1,6 +1,6 @@
 --- old.computedPropertyName.symbols
 +++ new.computedPropertyName.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >Component : Symbol(Component, Decl(component.ts, 0, 48))
  
    [onInit]?(): void;

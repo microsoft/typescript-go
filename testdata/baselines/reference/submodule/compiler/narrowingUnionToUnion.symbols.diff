@@ -1,6 +1,6 @@
 --- old.narrowingUnionToUnion.symbols
 +++ new.narrowingUnionToUnion.symbols
-@@= skipped -76, +76 lines =@@
+@@= skipped -75, +75 lines =@@
  
  declare class X { x: string }
  >X : Symbol(X, Decl(narrowingUnionToUnion.ts, 28, 1))

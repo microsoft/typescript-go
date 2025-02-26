@@ -1,6 +1,6 @@
 --- old.methodsReturningThis.symbols
 +++ new.methodsReturningThis.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  
  // error: 'Class' doesn't have property 'notPresent'
  Class.prototype.containsError = function () { return this.notPresent; };

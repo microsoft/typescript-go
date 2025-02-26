@@ -1,6 +1,6 @@
 --- old.thisInLambda.symbols
 +++ new.thisInLambda.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Foo : Symbol(Foo, Decl(thisInLambda.ts, 0, 0))
  
      x = "hello";

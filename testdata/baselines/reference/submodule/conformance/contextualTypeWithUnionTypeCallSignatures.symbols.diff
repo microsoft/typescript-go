@@ -1,6 +1,6 @@
 --- old.contextualTypeWithUnionTypeCallSignatures.symbols
 +++ new.contextualTypeWithUnionTypeCallSignatures.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >IWithNoCallSignatures : Symbol(IWithNoCallSignatures, Decl(contextualTypeWithUnionTypeCallSignatures.ts, 0, 0))
  
      foo: string;

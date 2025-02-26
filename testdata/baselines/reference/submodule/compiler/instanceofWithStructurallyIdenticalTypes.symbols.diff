@@ -1,6 +1,6 @@
 --- old.instanceofWithStructurallyIdenticalTypes.symbols
 +++ new.instanceofWithStructurallyIdenticalTypes.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  
  class C1 { item: string }
  >C1 : Symbol(C1, Decl(instanceofWithStructurallyIdenticalTypes.ts, 0, 0))

@@ -1,6 +1,6 @@
 --- old.declFileTypeAnnotationTypeAlias.symbols
 +++ new.declFileTypeAnnotationTypeAlias.symbols
-@@= skipped -30, +30 lines =@@
+@@= skipped -29, +29 lines =@@
      export type MC = m.c;
  >MC : Symbol(MC, Decl(declFileTypeAnnotationTypeAlias.ts, 12, 5))
  >m : Symbol(m, Decl(declFileTypeAnnotationTypeAlias.ts, 7, 22))

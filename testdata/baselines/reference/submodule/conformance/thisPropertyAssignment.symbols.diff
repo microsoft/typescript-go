@@ -1,6 +1,6 @@
 --- old.thisPropertyAssignment.symbols
 +++ new.thisPropertyAssignment.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  // element access assignments to create declarations.
  
  this.x = {};

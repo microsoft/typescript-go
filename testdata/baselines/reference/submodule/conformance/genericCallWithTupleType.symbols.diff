@@ -1,6 +1,6 @@
 --- old.genericCallWithTupleType.symbols
 +++ new.genericCallWithTupleType.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >U : Symbol(U, Decl(genericCallWithTupleType.ts, 0, 14))
  
      tuple1: [T, U];

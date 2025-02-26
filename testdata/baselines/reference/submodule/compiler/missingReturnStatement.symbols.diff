@@ -1,6 +1,6 @@
 --- old.missingReturnStatement.symbols
 +++ new.missingReturnStatement.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >Bug : Symbol(Bug, Decl(missingReturnStatement.ts, 0, 13))
  
          public foo():string {

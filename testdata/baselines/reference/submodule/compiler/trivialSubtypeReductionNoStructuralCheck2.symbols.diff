@@ -1,6 +1,6 @@
 --- old.trivialSubtypeReductionNoStructuralCheck2.symbols
 +++ new.trivialSubtypeReductionNoStructuralCheck2.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >Wizard : Symbol(Wizard, Decl(trivialSubtypeReductionNoStructuralCheck2.ts, 0, 37))
  
    get steps() {

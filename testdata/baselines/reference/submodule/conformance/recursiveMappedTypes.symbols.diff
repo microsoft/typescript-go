@@ -1,6 +1,6 @@
 --- old.recursiveMappedTypes.symbols
 +++ new.recursiveMappedTypes.symbols
-@@= skipped -108, +108 lines =@@
+@@= skipped -107, +107 lines =@@
  >User : Symbol(User, Decl(recursiveMappedTypes.ts, 37, 56))
  
      avatar: string;

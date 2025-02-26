@@ -1,6 +1,6 @@
 --- old.genericFunctionCallSignatureReturnTypeMismatch.symbols
 +++ new.genericFunctionCallSignatureReturnTypeMismatch.symbols
-@@= skipped -23, +23 lines =@@
+@@= skipped -22, +22 lines =@@
  
  var s = f("str").toUpperCase();
  >s : Symbol(s, Decl(genericFunctionCallSignatureReturnTypeMismatch.ts, 7, 3))

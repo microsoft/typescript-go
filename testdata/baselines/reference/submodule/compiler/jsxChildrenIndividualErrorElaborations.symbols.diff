@@ -1,6 +1,6 @@
 --- old.jsxChildrenIndividualErrorElaborations.symbols
 +++ new.jsxChildrenIndividualErrorElaborations.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
  >Props : Symbol(Props, Decl(index.tsx, 1, 31))
  
    children: (x: number) => string;

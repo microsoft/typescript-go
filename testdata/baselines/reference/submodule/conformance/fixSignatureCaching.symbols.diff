@@ -1,6 +1,6 @@
 --- old.fixSignatureCaching.symbols
 +++ new.fixSignatureCaching.symbols
-@@= skipped -19, +19 lines =@@
+@@= skipped -18, +18 lines =@@
  >impl : Symbol(impl, Decl(fixSignatureCaching.ts, 6, 7))
  
      "phones": {

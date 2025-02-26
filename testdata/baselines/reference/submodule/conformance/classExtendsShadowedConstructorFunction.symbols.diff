@@ -1,6 +1,6 @@
 --- old.classExtendsShadowedConstructorFunction.symbols
 +++ new.classExtendsShadowedConstructorFunction.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
  === classExtendsShadowedConstructorFunction.ts ===
  class C { foo: string; }
  >C : Symbol(C, Decl(classExtendsShadowedConstructorFunction.ts, 0, 0))

@@ -1,6 +1,6 @@
 --- old.mergeTwoInterfaces2.symbols
 +++ new.mergeTwoInterfaces2.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >A : Symbol(A, Decl(mergeTwoInterfaces2.ts, 3, 11), Decl(mergeTwoInterfaces2.ts, 13, 11))
  
          foo: string;

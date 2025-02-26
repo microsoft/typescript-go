@@ -1,6 +1,6 @@
 --- old.genericCallWithObjectTypeArgs.symbols
 +++ new.genericCallWithObjectTypeArgs.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(genericCallWithObjectTypeArgs.ts, 0, 0))
  
      private x: string;

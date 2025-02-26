@@ -1,6 +1,6 @@
 --- old.parameterNamesInTypeParameterList.symbols
 +++ new.parameterNamesInTypeParameterList.symbols
-@@= skipped -36, +36 lines =@@
+@@= skipped -35, +35 lines =@@
  >A : Symbol(A, Decl(parameterNamesInTypeParameterList.ts, 10, 1))
  
  	m0<T extends typeof a>(a: T) {

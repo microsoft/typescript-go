@@ -1,6 +1,6 @@
 --- old.controlFlowDestructuringParameters.symbols
 +++ new.controlFlowDestructuringParameters.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  
  
  [{ x: 1 }].map(

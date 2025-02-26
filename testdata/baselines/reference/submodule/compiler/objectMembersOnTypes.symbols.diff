@@ -1,6 +1,6 @@
 --- old.objectMembersOnTypes.symbols
 +++ new.objectMembersOnTypes.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >x : Symbol(x, Decl(objectMembersOnTypes.ts, 2, 3))
  
  x.toString();

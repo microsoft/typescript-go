@@ -1,6 +1,6 @@
 --- old.indexersInClassType.symbols
 +++ new.indexersInClassType.symbols
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  >Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  
      1: Date;

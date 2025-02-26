@@ -1,6 +1,6 @@
 --- old.isolatedDeclarationErrors.symbols
 +++ new.isolatedDeclarationErrors.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === isolatedDeclarationErrors.ts ===
  function errorOnAssignmentBelowDecl(): void {}

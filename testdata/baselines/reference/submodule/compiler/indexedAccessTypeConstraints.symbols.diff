@@ -1,6 +1,6 @@
 --- old.indexedAccessTypeConstraints.symbols
 +++ new.indexedAccessTypeConstraints.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >T : Symbol(T, Decl(indexedAccessTypeConstraints.ts, 2, 16))
  
      content: T;

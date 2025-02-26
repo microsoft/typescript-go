@@ -1,6 +1,6 @@
 --- old.import_reference-exported-alias.symbols
 +++ new.import_reference-exported-alias.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  import Services = appJs.Services;
  >Services : Symbol(Services, Decl(file2.ts, 0, 32))
  >appJs : Symbol(appJs, Decl(file2.ts, 0, 0))

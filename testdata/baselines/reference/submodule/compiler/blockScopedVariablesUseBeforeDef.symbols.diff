@@ -1,6 +1,6 @@
 --- old.blockScopedVariablesUseBeforeDef.symbols
 +++ new.blockScopedVariablesUseBeforeDef.symbols
-@@= skipped -41, +41 lines =@@
+@@= skipped -40, +40 lines =@@
  >X : Symbol(X, Decl(blockScopedVariablesUseBeforeDef.ts, 15, 17))
  
          m() { return x;}

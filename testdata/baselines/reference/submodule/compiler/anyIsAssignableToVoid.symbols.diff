@@ -1,6 +1,6 @@
 --- old.anyIsAssignableToVoid.symbols
 +++ new.anyIsAssignableToVoid.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >P : Symbol(P, Decl(anyIsAssignableToVoid.ts, 0, 0))
  
      p: void;

@@ -1,6 +1,6 @@
 --- old.moduleExportAliasElementAccessExpression.symbols
 +++ new.moduleExportAliasElementAccessExpression.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >D : Symbol(D, Decl(moduleExportAliasElementAccessExpression.js, 0, 0))
  
  exports["D"] = D;

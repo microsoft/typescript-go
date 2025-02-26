@@ -1,6 +1,6 @@
 --- old.invalidUndefinedValues.symbols
 +++ new.invalidUndefinedValues.symbols
-@@= skipped -26, +26 lines =@@
+@@= skipped -25, +25 lines =@@
  
  class C { foo: string }
  >C : Symbol(C, Decl(invalidUndefinedValues.ts, 7, 9))

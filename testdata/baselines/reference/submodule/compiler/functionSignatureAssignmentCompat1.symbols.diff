@@ -1,6 +1,6 @@
 --- old.functionSignatureAssignmentCompat1.symbols
 +++ new.functionSignatureAssignmentCompat1.symbols
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >Parsers : Symbol(Parsers, Decl(functionSignatureAssignmentCompat1.ts, 2, 1))
  
      raw: ParserFunc;

@@ -1,6 +1,6 @@
 --- old.classdecl.symbols
 +++ new.classdecl.symbols
-@@= skipped -17, +17 lines =@@
+@@= skipped -16, +16 lines =@@
      }
  
      public pgF() { }

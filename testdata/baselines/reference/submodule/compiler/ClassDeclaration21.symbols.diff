@@ -1,6 +1,6 @@
 --- old.ClassDeclaration21.symbols
 +++ new.ClassDeclaration21.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C : Symbol(C, Decl(ClassDeclaration21.ts, 0, 0))
  
      0();

@@ -1,6 +1,6 @@
 --- old.nodeModulesTripleSlashReferenceModeOverride5(module=nodenext).symbols
 +++ new.nodeModulesTripleSlashReferenceModeOverride5(module=nodenext).symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
  // Both `foo` and `bar` should resolve, as _both_ entrypoints are included by the two
  // references above.
  foo;

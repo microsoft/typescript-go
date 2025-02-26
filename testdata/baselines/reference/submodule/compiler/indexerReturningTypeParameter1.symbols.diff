@@ -1,6 +1,6 @@
 --- old.indexerReturningTypeParameter1.symbols
 +++ new.indexerReturningTypeParameter1.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >f : Symbol(f, Decl(indexerReturningTypeParameter1.ts, 0, 0))
  
      groupBy<T>(): { [key: string]: T[]; };

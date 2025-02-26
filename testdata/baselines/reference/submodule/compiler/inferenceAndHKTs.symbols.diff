@@ -1,6 +1,6 @@
 --- old.inferenceAndHKTs.symbols
 +++ new.inferenceAndHKTs.symbols
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  >TypeLambda : Symbol(TypeLambda, Decl(inferenceAndHKTs.ts, 0, 0))
  
      readonly A: unknown;

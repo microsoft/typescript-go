@@ -1,6 +1,6 @@
 --- old.classFieldSuperNotAccessible.symbols
 +++ new.classFieldSuperNotAccessible.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >T : Symbol(T, Decl(classFieldSuperNotAccessible.ts, 0, 0))
  
      field = () => {}

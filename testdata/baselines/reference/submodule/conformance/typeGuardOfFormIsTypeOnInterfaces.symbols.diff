@@ -1,6 +1,6 @@
 --- old.typeGuardOfFormIsTypeOnInterfaces.symbols
 +++ new.typeGuardOfFormIsTypeOnInterfaces.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >C1 : Symbol(C1, Decl(typeGuardOfFormIsTypeOnInterfaces.ts, 0, 0))
  
      prototype: C1;

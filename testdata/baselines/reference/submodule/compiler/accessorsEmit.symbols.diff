@@ -1,6 +1,6 @@
 --- old.accessorsEmit.symbols
 +++ new.accessorsEmit.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >Test : Symbol(Test, Decl(accessorsEmit.ts, 0, 16))
  
      get Property(): Result {

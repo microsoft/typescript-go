@@ -1,6 +1,6 @@
 --- old.externalModuleExportingGenericClass.symbols
 +++ new.externalModuleExportingGenericClass.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  
  var v2: any = (new a()).foo;
  >v2 : Symbol(v2, Decl(externalModuleExportingGenericClass_file1.ts, 2, 3))

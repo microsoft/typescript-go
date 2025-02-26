@@ -1,6 +1,6 @@
 --- old.callSignatureWithOptionalParameterAndInitializer.symbols
 +++ new.callSignatureWithOptionalParameterAndInitializer.symbols
-@@= skipped -39, +39 lines =@@
+@@= skipped -38, +38 lines =@@
  >C : Symbol(C, Decl(callSignatureWithOptionalParameterAndInitializer.ts, 11, 9))
  
      foo(x?: number = 1) { }

@@ -1,6 +1,6 @@
 --- old.spreadObjectOrFalsy.symbols
 +++ new.spreadObjectOrFalsy.symbols
-@@= skipped -94, +94 lines =@@
+@@= skipped -93, +93 lines =@@
  >T : Symbol(T, Decl(spreadObjectOrFalsy.ts, 35, 21))
  
      data: T;

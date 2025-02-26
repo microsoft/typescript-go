@@ -1,6 +1,6 @@
 --- old.decoratorOnClassMethod11.symbols
 +++ new.decoratorOnClassMethod11.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  >C : Symbol(C, Decl(decoratorOnClassMethod11.ts, 0, 10))
  
          decorator(target: Object, key: string): void { }

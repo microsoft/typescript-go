@@ -1,6 +1,6 @@
 --- old.omitTypeTests01.symbols
 +++ new.omitTypeTests01.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Foo : Symbol(Foo, Decl(omitTypeTests01.ts, 0, 0))
  
      a: string;

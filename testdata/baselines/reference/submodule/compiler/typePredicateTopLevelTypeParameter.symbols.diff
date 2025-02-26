@@ -1,6 +1,6 @@
 --- old.typePredicateTopLevelTypeParameter.symbols
 +++ new.typePredicateTopLevelTypeParameter.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  
  const admins = ['Mike', 'Joe'].map(e => getPermissions(e));
  >admins : Symbol(admins, Decl(typePredicateTopLevelTypeParameter.ts, 7, 5))

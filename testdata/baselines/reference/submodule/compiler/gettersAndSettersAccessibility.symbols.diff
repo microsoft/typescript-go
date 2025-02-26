@@ -1,6 +1,6 @@
 --- old.gettersAndSettersAccessibility.symbols
 +++ new.gettersAndSettersAccessibility.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C99 : Symbol(C99, Decl(gettersAndSettersAccessibility.ts, 0, 0))
  
  	private get Baz():number { return 0; }

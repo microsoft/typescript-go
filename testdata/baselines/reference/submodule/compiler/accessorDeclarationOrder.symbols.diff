@@ -1,6 +1,6 @@
 --- old.accessorDeclarationOrder.symbols
 +++ new.accessorDeclarationOrder.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >C1 : Symbol(C1, Decl(accessorDeclarationOrder.ts, 0, 0))
  
      #name: string;

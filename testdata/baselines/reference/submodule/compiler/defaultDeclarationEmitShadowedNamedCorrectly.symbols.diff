@@ -1,6 +1,6 @@
 --- old.defaultDeclarationEmitShadowedNamedCorrectly.symbols
 +++ new.defaultDeclarationEmitShadowedNamedCorrectly.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >me : Symbol(me, Decl(this.ts, 0, 6))
  
  export interface Things<P, T> {

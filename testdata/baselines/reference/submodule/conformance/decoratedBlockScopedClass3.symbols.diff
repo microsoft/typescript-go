@@ -1,6 +1,6 @@
 --- old.decoratedBlockScopedClass3.symbols
 +++ new.decoratedBlockScopedClass3.symbols
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  >Foo : Symbol(Foo, Decl(a.ts, 2, 1))
  
      public static func(): Foo {

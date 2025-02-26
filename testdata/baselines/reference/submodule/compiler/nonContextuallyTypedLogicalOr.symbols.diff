@@ -1,6 +1,6 @@
 --- old.nonContextuallyTypedLogicalOr.symbols
 +++ new.nonContextuallyTypedLogicalOr.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Contextual : Symbol(Contextual, Decl(nonContextuallyTypedLogicalOr.ts, 0, 0))
  
      dummy;

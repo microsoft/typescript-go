@@ -1,6 +1,6 @@
 --- old.classAbstractProperties.symbols
 +++ new.classAbstractProperties.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >A : Symbol(A, Decl(classAbstractProperties.ts, 0, 0))
  
      abstract x : number;

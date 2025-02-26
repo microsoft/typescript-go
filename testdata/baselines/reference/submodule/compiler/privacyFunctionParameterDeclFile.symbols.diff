@@ -1,6 +1,6 @@
 --- old.privacyFunctionParameterDeclFile.symbols
 +++ new.privacyFunctionParameterDeclFile.symbols
-@@= skipped -23, +23 lines =@@
+@@= skipped -22, +22 lines =@@
  >publicClass : Symbol(publicClass, Decl(privacyFunctionParameterDeclFile_externalModule.ts, 1, 1))
  
      myMethod(param: privateClass): void; // Error

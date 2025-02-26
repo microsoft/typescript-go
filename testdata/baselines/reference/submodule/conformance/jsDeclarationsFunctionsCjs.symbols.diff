@@ -1,6 +1,6 @@
 --- old.jsDeclarationsFunctionsCjs.symbols
 +++ new.jsDeclarationsFunctionsCjs.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
  
  === index.js ===
  module.exports.a = function a() {}

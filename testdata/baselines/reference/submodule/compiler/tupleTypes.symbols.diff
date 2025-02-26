@@ -1,6 +1,6 @@
 --- old.tupleTypes.symbols
 +++ new.tupleTypes.symbols
-@@= skipped -19, +19 lines =@@
+@@= skipped -18, +18 lines =@@
  var t0 = t[0];   // number
  >t0 : Symbol(t0, Decl(tupleTypes.ts, 6, 3), Decl(tupleTypes.ts, 7, 3))
  >t : Symbol(t, Decl(tupleTypes.ts, 5, 3))

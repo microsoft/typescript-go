@@ -1,6 +1,6 @@
 --- old.assignmentCompatWithObjectMembers4.symbols
 +++ new.assignmentCompatWithObjectMembers4.symbols
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
  
      class Base { foo: string; }
  >Base : Symbol(Base, Decl(assignmentCompatWithObjectMembers4.ts, 2, 20))

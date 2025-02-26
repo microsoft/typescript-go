@@ -1,6 +1,6 @@
 --- old.overloadResolutionOnDefaultConstructor1.symbols
 +++ new.overloadResolutionOnDefaultConstructor1.symbols
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
  >Bar : Symbol(Bar, Decl(overloadResolutionOnDefaultConstructor1.ts, 0, 0))
  
      public clone() {

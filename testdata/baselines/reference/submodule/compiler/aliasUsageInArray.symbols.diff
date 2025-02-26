@@ -1,6 +1,6 @@
 --- old.aliasUsageInArray.symbols
 +++ new.aliasUsageInArray.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >IHasVisualizationModel : Symbol(IHasVisualizationModel, Decl(aliasUsageInArray_main.ts, 1, 56))
  
      VisualizationModel: typeof Backbone.Model;

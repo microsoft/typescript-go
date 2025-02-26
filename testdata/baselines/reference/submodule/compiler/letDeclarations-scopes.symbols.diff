@@ -1,6 +1,6 @@
 --- old.letDeclarations-scopes.symbols
 +++ new.letDeclarations-scopes.symbols
-@@= skipped -249, +249 lines =@@
+@@= skipped -248, +248 lines =@@
      }
  
      method() {
