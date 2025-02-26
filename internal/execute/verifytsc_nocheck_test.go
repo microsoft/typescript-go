@@ -1,6 +1,10 @@
 package execute_test
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/microsoft/typescript-go/internal/bundled"
+)
 
 type noCheckScenario struct {
 	subscenario string
@@ -9,6 +13,11 @@ type noCheckScenario struct {
 
 func TestNoCheck(t *testing.T) {
 	t.Parallel()
+	if !bundled.Embedded {
+		// Without embedding, we'd need to read all of the lib files out from disk into the MapFS.
+		// Just skip this for now.
+		t.Skip("bundled files are not embedded")
+	}
 	cases := []noCheckScenario{
 		{"syntax errors", `export const a = "hello`},
 		{"semantic errors", `export const a: number = "hello";`},

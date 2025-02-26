@@ -87,8 +87,7 @@ func (s *testSys) baselineOutput(baseline io.Writer) {
 }
 
 func (s *testSys) baselineFSwithDiff(baseline io.Writer) {
-	// todo: watch isnt implemented
-	// todo: not sure if this actually runs diff correctly, but don't really care atm because we aren't passing edits into the test, so we don't care abt diffs
+	// todo: baselines the entire fs, possibly doesn't correctly diff all cases of emitted files, since emit isn't fully implemented and doesn't always emit the same way as strada
 	snap := map[string]string{}
 
 	err := s.FS().WalkDir(s.GetCurrentDirectory(), func(path string, d vfs.DirEntry, e error) error {
