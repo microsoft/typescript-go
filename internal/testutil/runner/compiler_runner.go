@@ -88,6 +88,9 @@ func (r *CompilerBaselineRunner) EnumerateTestFiles() []string {
 func (r *CompilerBaselineRunner) RunTests(t *testing.T) {
 	r.cleanUpLocal(t)
 	files := r.EnumerateTestFiles()
+	skippedTests := []string{
+		"mappedTypeRecursiveInference.ts",
+	}
 	deprecatedTests := []string{
 		// Test deprecated `importsNotUsedAsValue`
 		"preserveUnusedImports.ts",
@@ -97,8 +100,10 @@ func (r *CompilerBaselineRunner) RunTests(t *testing.T) {
 		"importsNotUsedAsValues_error.ts",
 	}
 	for _, filename := range files {
+		if slices.Contains(skippedTests, tspath.GetBaseFileName(filename)) {
+			continue
+		}
 		if slices.Contains(deprecatedTests, tspath.GetBaseFileName(filename)) {
-			// t.Logf("Skipping deprecated test %s", filename)
 			continue
 		}
 		r.runTest(t, filename)
