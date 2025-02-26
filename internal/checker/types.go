@@ -115,6 +115,7 @@ type DeferredSymbolLinks struct {
 type AliasSymbolLinks struct {
 	immediateTarget             *ast.Symbol // Immediate target of an alias. May be another alias. Do not access directly, use `checker.getImmediateAliasedSymbol` instead.
 	aliasTarget                 *ast.Symbol // Resolved (non-alias) target of an alias
+	referenced                  bool        // True if alias symbol has been referenced as a value that can be emitted
 	typeOnlyDeclarationResolved bool        // True when typeOnlyDeclaration resolution in process
 	typeOnlyDeclaration         *ast.Node   // First resolved alias declaration that makes the symbol only usable in type constructs
 	typeOnlyExportStarName      string      // Set to the name of the symbol re-exported by an 'export type *' declaration, when different from the symbol name
@@ -126,6 +127,7 @@ type ModuleSymbolLinks struct {
 	resolvedExports       ast.SymbolTable      // Resolved exports of module or combined early- and late-bound static members of a class.
 	cjsExportMerged       *ast.Symbol          // Version of the symbol with all non export= exports merged with the export= target
 	typeOnlyExportStarMap map[string]*ast.Node // Set on a module symbol when some of its exports were resolved through a 'export type * from "mod"' declaration
+	exportsChecked        bool
 }
 
 type ReverseMappedSymbolLinks struct {
@@ -293,7 +295,6 @@ const (
 	NodeCheckFlagsMethodWithSuperPropertyAssignmentInAsync NodeCheckFlags = 1 << 8  // A method that contains a SuperProperty assignment in an async context.
 	NodeCheckFlagsCaptureArguments                         NodeCheckFlags = 1 << 9  // Lexical 'arguments' used in body
 	NodeCheckFlagsEnumValuesComputed                       NodeCheckFlags = 1 << 10 // Values for enum members have been computed, and any errors have been reported for them.
-	NodeCheckFlagsLexicalModuleMergesWithClass             NodeCheckFlags = 1 << 11 // Instantiated lexical module declaration is merged with a previous class declaration.
 	NodeCheckFlagsLoopWithCapturedBlockScopedBinding       NodeCheckFlags = 1 << 12 // Loop that contains block scoped variable captured in closure
 	NodeCheckFlagsContainsCapturedBlockScopeBinding        NodeCheckFlags = 1 << 13 // Part of a loop that contains block scoped variable captured in closure
 	NodeCheckFlagsCapturedBlockScopedBinding               NodeCheckFlags = 1 << 14 // Block-scoped binding that is captured in some function
