@@ -1,6 +1,7 @@
 package vfstest
 
 import (
+	"encoding/binary"
 	"io/fs"
 	"math/rand/v2"
 	"runtime"
@@ -8,6 +9,7 @@ import (
 	"sync"
 	"testing"
 	"testing/fstest"
+	"unicode/utf16"
 
 	"github.com/microsoft/typescript-go/internal/testutil"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -179,30 +181,6 @@ func TestInsensitiveDuplicatePath(t *testing.T) {
 	convertMapFS(testfs, true /*useCaseSensitiveFileNames*/)
 }
 
-func TestFromMapFS(t *testing.T) {
-	t.Parallel()
-
-	testfs := fstest.MapFS{
-		"foo/bar/baz": &fstest.MapFile{
-			Data: []byte("hello, world"),
-		},
-	}
-
-	fs := FromMapFS(testfs, false)
-
-	content, ok := fs.ReadFile("/foo/bar/baz")
-	assert.Assert(t, ok)
-	assert.Equal(t, content, "hello, world")
-
-	content, ok = fs.ReadFile("/FOO/bar/baZ")
-	assert.Assert(t, ok)
-	assert.Equal(t, content, "hello, world")
-
-	content, ok = fs.ReadFile("/does/not/exist")
-	assert.Assert(t, !ok)
-	assert.Equal(t, content, "")
-}
-
 func dirEntriesToNames(entries []fs.DirEntry) []string {
 	names := make([]string, len(entries))
 	for i, entry := range entries {
@@ -214,9 +192,7 @@ func dirEntriesToNames(entries []fs.DirEntry) []string {
 func TestWritableFS(t *testing.T) {
 	t.Parallel()
 
-	testfs := fstest.MapFS{}
-
-	fs := FromMapFS(testfs, false)
+	fs := FromMap[any](nil, false)
 
 	err := fs.WriteFile("/foo/bar/baz", "hello, world", false)
 	assert.NilError(t, err)
@@ -239,9 +215,7 @@ func TestWritableFS(t *testing.T) {
 func TestStress(t *testing.T) {
 	t.Parallel()
 
-	testfs := fstest.MapFS{}
-
-	fs := FromMapFS(testfs, false)
+	fs := FromMap[any](nil, false)
 
 	ops := []func(){
 		func() { _ = fs.WriteFile("/foo/bar/baz.txt", "hello, world", false) },
@@ -249,7 +223,7 @@ func TestStress(t *testing.T) {
 		func() { fs.DirectoryExists("/foo/bar") },
 		func() { fs.FileExists("/foo/bar") },
 		func() { fs.FileExists("/foo/bar/baz.txt") },
-		func() { fs.GetDirectories("/foo/bar") },
+		func() { fs.GetAccessibleEntries("/foo/bar") },
 		func() { fs.Realpath("/foo/bar/baz.txt") },
 		func() {
 			_ = fs.WalkDir("/", func(path string, d vfs.DirEntry, err error) error {
@@ -295,4 +269,240 @@ func TestParentDirFile(t *testing.T) {
 	testutil.AssertPanics(t, func() {
 		convertMapFS(testfs, false /*useCaseSensitiveFileNames*/)
 	}, `failed to create intermediate directories for "foo/oops": mkdir "foo": path exists but is not a directory`)
+}
+
+func TestFromMap(t *testing.T) {
+	t.Parallel()
+
+	t.Run("POSIX", func(t *testing.T) {
+		t.Parallel()
+
+		fs := FromMap(map[string]any{
+			"/string": "hello, world",
+			"/bytes":  []byte("hello, world"),
+			"/mapfile": &fstest.MapFile{
+				Data: []byte("hello, world"),
+			},
+		}, false)
+
+		content, ok := fs.ReadFile("/string")
+		assert.Assert(t, ok)
+		assert.Equal(t, content, "hello, world")
+
+		content, ok = fs.ReadFile("/bytes")
+		assert.Assert(t, ok)
+		assert.Equal(t, content, "hello, world")
+
+		content, ok = fs.ReadFile("/mapfile")
+		assert.Assert(t, ok)
+		assert.Equal(t, content, "hello, world")
+	})
+
+	t.Run("Windows", func(t *testing.T) {
+		t.Parallel()
+
+		fs := FromMap(map[string]any{
+			"c:/string": "hello, world",
+			"d:/bytes":  []byte("hello, world"),
+			"e:/mapfile": &fstest.MapFile{
+				Data: []byte("hello, world"),
+			},
+		}, false)
+
+		content, ok := fs.ReadFile("c:/string")
+		assert.Assert(t, ok)
+		assert.Equal(t, content, "hello, world")
+
+		content, ok = fs.ReadFile("d:/bytes")
+		assert.Assert(t, ok)
+		assert.Equal(t, content, "hello, world")
+
+		content, ok = fs.ReadFile("e:/mapfile")
+		assert.Assert(t, ok)
+		assert.Equal(t, content, "hello, world")
+	})
+
+	t.Run("Mixed", func(t *testing.T) {
+		t.Parallel()
+
+		testutil.AssertPanics(t, func() {
+			FromMap(map[string]any{
+				"/string":  "hello, world",
+				"c:/bytes": []byte("hello, world"),
+			}, false)
+		}, `mixed posix and windows paths`)
+	})
+
+	t.Run("NonRooted", func(t *testing.T) {
+		t.Parallel()
+
+		testutil.AssertPanics(t, func() {
+			FromMap(map[string]any{
+				"string": "hello, world",
+			}, false)
+		}, `non-rooted path "string"`)
+	})
+
+	t.Run("NonNormalized", func(t *testing.T) {
+		t.Parallel()
+
+		testutil.AssertPanics(t, func() {
+			FromMap(map[string]any{
+				"/string/": "hello, world",
+			}, false)
+		}, `non-normalized path "/string/"`)
+	})
+
+	t.Run("NonNormalized2", func(t *testing.T) {
+		t.Parallel()
+
+		testutil.AssertPanics(t, func() {
+			FromMap(map[string]any{
+				"/string/../foo": "hello, world",
+			}, false)
+		}, `non-normalized path "/string/../foo"`)
+	})
+
+	t.Run("InvalidFile", func(t *testing.T) {
+		t.Parallel()
+
+		testutil.AssertPanics(t, func() {
+			FromMap(map[string]any{
+				"/string": 1234,
+			}, false)
+		}, `invalid file type int`)
+	})
+}
+
+func TestVFSTestMapFS(t *testing.T) {
+	t.Parallel()
+
+	fs := FromMap(map[string]string{
+		"/foo.ts":        "hello, world",
+		"/dir1/file1.ts": "export const foo = 42;",
+		"/dir1/file2.ts": "export const foo = 42;",
+		"/dir2/file1.ts": "export const foo = 42;",
+	}, false /*useCaseSensitiveFileNames*/)
+
+	t.Run("ReadFile", func(t *testing.T) {
+		t.Parallel()
+
+		content, ok := fs.ReadFile("/foo.ts")
+		assert.Assert(t, ok)
+		assert.Equal(t, content, "hello, world")
+
+		content, ok = fs.ReadFile("/does/not/exist.ts")
+		assert.Assert(t, !ok)
+		assert.Equal(t, content, "")
+	})
+
+	t.Run("Realpath", func(t *testing.T) {
+		t.Parallel()
+
+		realpath := fs.Realpath("/foo.ts")
+		assert.Equal(t, realpath, "/foo.ts")
+
+		realpath = fs.Realpath("/Foo.ts")
+		assert.Equal(t, realpath, "/foo.ts")
+
+		realpath = fs.Realpath("/does/not/exist.ts")
+		assert.Equal(t, realpath, "/does/not/exist.ts")
+	})
+
+	t.Run("UseCaseSensitiveFileNames", func(t *testing.T) {
+		t.Parallel()
+
+		assert.Assert(t, !fs.UseCaseSensitiveFileNames())
+	})
+}
+
+func TestVFSTestMapFSWindows(t *testing.T) {
+	t.Parallel()
+
+	fs := FromMap(map[string]string{
+		"c:/foo.ts":        "hello, world",
+		"c:/dir1/file1.ts": "export const foo = 42;",
+		"c:/dir1/file2.ts": "export const foo = 42;",
+		"c:/dir2/file1.ts": "export const foo = 42;",
+	}, false)
+
+	t.Run("ReadFile", func(t *testing.T) {
+		t.Parallel()
+
+		content, ok := fs.ReadFile("c:/foo.ts")
+		assert.Assert(t, ok)
+		assert.Equal(t, content, "hello, world")
+
+		content, ok = fs.ReadFile("c:/does/not/exist.ts")
+		assert.Assert(t, !ok)
+		assert.Equal(t, content, "")
+	})
+
+	t.Run("Realpath", func(t *testing.T) {
+		t.Parallel()
+
+		realpath := fs.Realpath("c:/foo.ts")
+		assert.Equal(t, realpath, "c:/foo.ts")
+
+		realpath = fs.Realpath("c:/Foo.ts")
+		assert.Equal(t, realpath, "c:/foo.ts")
+
+		realpath = fs.Realpath("c:/does/not/exist.ts")
+		assert.Equal(t, realpath, "c:/does/not/exist.ts")
+	})
+}
+
+func TestBOM(t *testing.T) {
+	t.Parallel()
+
+	const expected = "hello, world"
+
+	tests := []struct {
+		name  string
+		order binary.ByteOrder
+		bom   [2]byte
+	}{
+		{"BigEndian", binary.BigEndian, [2]byte{0xFE, 0xFF}},
+		{"LittleEndian", binary.LittleEndian, [2]byte{0xFF, 0xFE}},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			var codePoints []uint16
+
+			for _, r := range expected {
+				codePoints = utf16.AppendRune(codePoints, r)
+			}
+
+			buf := tt.bom[:]
+
+			for _, r := range codePoints {
+				var err error
+				buf, err = binary.Append(buf, tt.order, r)
+				assert.NilError(t, err)
+			}
+
+			fs := FromMap(map[string][]byte{
+				"/foo.ts": buf,
+			}, true)
+
+			content, ok := fs.ReadFile("/foo.ts")
+			assert.Assert(t, ok)
+			assert.Equal(t, content, expected)
+		})
+	}
+
+	t.Run("UTF8", func(t *testing.T) {
+		t.Parallel()
+
+		fs := FromMap(map[string][]byte{
+			"/foo.ts": []byte("\xEF\xBB\xBF" + expected),
+		}, true)
+
+		content, ok := fs.ReadFile("/foo.ts")
+		assert.Assert(t, ok)
+		assert.Equal(t, content, expected)
+	})
 }
