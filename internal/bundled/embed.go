@@ -81,7 +81,7 @@ var rootEntries = []fs.DirEntry{
 	fs.FileInfoToDirEntry(&fileInfo{name: "libs", mode: fs.ModeDir}),
 }
 
-func (vfs *wrappedFS) GetEntries(path string) []fs.DirEntry {
+func (vfs *wrappedFS) GetEntries(path string) []vfs.DirEntry {
 	if rest, ok := splitPath(path); ok {
 		if rest == "" {
 			return slices.Clone(rootEntries)
@@ -92,6 +92,14 @@ func (vfs *wrappedFS) GetEntries(path string) []fs.DirEntry {
 		return []fs.DirEntry{}
 	}
 	return vfs.fs.GetEntries(path)
+}
+
+func (vfs *wrappedFS) Stat(path string) vfs.FileInfo {
+	// !!! probably ok since
+	// if path, ok := splitPath(path); ok {
+	// 	return embeddedVFS.Stat("/" + path)
+	// }
+	return vfs.fs.Stat(path)
 }
 
 func (vfs *wrappedFS) WalkDir(root string, walkFn vfs.WalkDirFunc) error {
