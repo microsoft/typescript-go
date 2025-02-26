@@ -250,13 +250,13 @@ func (s *Server) handleInitialized(req *lsproto.RequestMessage) error {
 		Logger:             s.logger,
 	})
 	s.converters = &converters{projectService: s.projectService}
-	return s.sendResult(req.ID, nil)
+	return nil
 }
 
 func (s *Server) handleDidOpen(req *lsproto.RequestMessage) error {
 	params := req.Params.(*lsproto.DidOpenTextDocumentParams)
 	s.projectService.OpenFile(documentUriToFileName(params.TextDocument.Uri), params.TextDocument.Text, languageKindToScriptKind(params.TextDocument.LanguageId), "")
-	return s.sendResult(req.ID, nil)
+	return nil
 }
 
 func (s *Server) handleDidChange(req *lsproto.RequestMessage) error {
@@ -285,19 +285,19 @@ func (s *Server) handleDidChange(req *lsproto.RequestMessage) error {
 	}
 
 	s.projectService.ChangeFile(documentUriToFileName(params.TextDocument.Uri), changes)
-	return s.sendResult(req.ID, nil)
+	return nil
 }
 
 func (s *Server) handleDidSave(req *lsproto.RequestMessage) error {
 	params := req.Params.(*lsproto.DidSaveTextDocumentParams)
 	s.projectService.MarkFileSaved(documentUriToFileName(params.TextDocument.Uri), *params.Text)
-	return s.sendResult(req.ID, nil)
+	return nil
 }
 
 func (s *Server) handleDidClose(req *lsproto.RequestMessage) error {
 	params := req.Params.(*lsproto.DidCloseTextDocumentParams)
 	s.projectService.CloseFile(documentUriToFileName(params.TextDocument.Uri))
-	return s.sendResult(req.ID, nil)
+	return nil
 }
 
 func (s *Server) handleDocumentDiagnostic(req *lsproto.RequestMessage) error {
