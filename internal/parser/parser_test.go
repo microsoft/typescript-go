@@ -31,8 +31,8 @@ func BenchmarkParse(b *testing.B) {
 		b.Run(f.Name(), func(b *testing.B) {
 			f.SkipIfNotExist(b)
 
-			fileName := f.Path()
-			path := tspath.ToPath(fileName, "", osvfs.FS().UseCaseSensitiveFileNames())
+			fileName := tspath.GetNormalizedAbsolutePath(f.Path(), "/")
+			path := tspath.ToPath(fileName, "/", osvfs.FS().UseCaseSensitiveFileNames())
 			sourceText := f.ReadFile(b)
 
 			for _, jsdoc := range jsdocModes {
