@@ -181,6 +181,52 @@ jobs:
       - run: ./built/local/tsgo -p ./_submodules/TypeScript/src/compiler --singleThreaded
       - run: ./built/local/tsgo -p ./_submodules/TypeScript/src/compiler
 
+  baselines:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
+        with:
+          node-version: 'lts/*'
+      - run: npm ci
+
+      - name: Remove all baselines
+        run: rm -rf testdata/baselines/reference
+
+      - name: Run tests
+        run: npx hereby test:all &> /dev/null || exit 0
+
+      - name: Accept baselines
+        run: |
+          npx hereby baseline-accept
+          git add testdata/baselines/reference
+
+      - name: Check baselines
+        id: check-baselines
+        run: |
+          function print_diff() {
+            if ! git diff --staged --exit-code --quiet --diff-filter=$1; then
+              echo "$2:"
+              git diff --staged --name-only --diff-filter=$1
+            fi
+          }
+
+          if ! git diff --staged --exit-code --quiet; then
+            print_diff ACR "Missing baselines"
+            print_diff MTUXB "Modified baselines"
+            print_diff D "Unused baselines"
+            git diff --staged > fix_baselines.patch
+            exit 1
+          fi
+
+      - name: Upload baseline diff artifact
+        if: ${{ failure() && steps.check-baselines.conclusion == 'failure' }}
+        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
+        with:
+          name: fix_baselines.patch
+          path: fix_baselines.patch
+
   required:
     runs-on: ubuntu-latest
     if: ${{ always() }}
