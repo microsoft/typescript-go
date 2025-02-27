@@ -125,7 +125,6 @@ func convertMapFS(input fstest.MapFS, useCaseSensitiveFileNames bool) *mapFS {
 	slices.SortFunc(inputKeys, comparePathsByParts)
 
 	for _, p := range inputKeys {
-		cp := m.getCanonicalPath(p)
 		file := input[p]
 
 		// Create all missing intermediate directories so we can attach the realpath to each of them.
@@ -134,14 +133,7 @@ func convertMapFS(input fstest.MapFS, useCaseSensitiveFileNames bool) *mapFS {
 		if err := m.mkdirAll(dirName(p), 0o777); err != nil {
 			panic(fmt.Sprintf("failed to create intermediate directories for %q: %v", p, err))
 		}
-		m.setEntry(p, cp, *file)
-
-		if file.Mode&fs.ModeSymlink != 0 {
-			if m.symlinks == nil {
-				m.symlinks = make(map[canonicalPath]canonicalPath)
-			}
-			m.symlinks[cp] = m.getCanonicalPath(string(file.Data))
-		}
+		m.setEntry(p, m.getCanonicalPath(p), *file)
 	}
 
 	return m
@@ -203,6 +195,13 @@ func (m *mapFS) setEntry(realpath string, canonical canonicalPath, file fstest.M
 		realpath: realpath,
 	}
 	m.set(canonical, &file)
+
+	if file.Mode&fs.ModeSymlink != 0 {
+		if m.symlinks == nil {
+			m.symlinks = make(map[canonicalPath]canonicalPath)
+		}
+		m.symlinks[canonical] = m.getCanonicalPath(string(file.Data))
+	}
 }
 
 func dirName(p string) string {
