@@ -592,4 +592,7 @@ func TestWritableFSSymlink(t *testing.T) {
 	content, ok = fs.ReadFile("/some/dir/other.ts")
 	assert.Assert(t, ok)
 	assert.Equal(t, content, "hello, world")
+
+	err = fs.WriteFile("/some/dirlink", "hello, world", false)
+	assert.Error(t, err, `write "some/dirlink": path exists but is not a regular file`)
 }
