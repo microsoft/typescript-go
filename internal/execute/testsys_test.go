@@ -99,7 +99,7 @@ func (s *testSys) baselineFSwithDiff(baseline io.Writer) {
 			return e
 		}
 		snap[path] = newContents
-		diffFSEntry(baseline, s.serializedDiff[path], newContents, path)
+		reportFSEntryDiff(baseline, s.serializedDiff[path], newContents, path)
 
 		return nil
 	})
@@ -111,7 +111,7 @@ func (s *testSys) baselineFSwithDiff(baseline io.Writer) {
 			_, ok := s.FS().ReadFile(path)
 			if !ok {
 				// report deleted
-				diffFSEntry(baseline, oldDirContents, "", path)
+				reportFSEntryDiff(baseline, oldDirContents, "", path)
 			}
 		}
 	}
@@ -119,7 +119,7 @@ func (s *testSys) baselineFSwithDiff(baseline io.Writer) {
 	fmt.Fprintln(baseline)
 }
 
-func diffFSEntry(baseline io.Writer, oldDirContent string, newDirContent string, path string) {
+func reportFSEntryDiff(baseline io.Writer, oldDirContent string, newDirContent string, path string) {
 	// todo handle more cases of fs changes
 	if oldDirContent == "" {
 		fmt.Fprint(baseline, "//// [", path, "] new file\n", newDirContent, "\n")
@@ -128,7 +128,7 @@ func diffFSEntry(baseline io.Writer, oldDirContent string, newDirContent string,
 	} else if newDirContent == oldDirContent {
 		fmt.Fprint(baseline, "//// [", path, "] no change\n")
 	} else {
-		fmt.Fprint(baseline, "//// [", path, "]\n", newDirContent, "\n")
+		fmt.Fprint(baseline, "//// [", path, "] modified. new content:\n", newDirContent, "\n")
 	}
 }
 
