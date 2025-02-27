@@ -386,7 +386,10 @@ func (m *mapFS) WriteFile(path string, data []byte, perm fs.FileMode) error {
 	}
 
 	cp := m.getCanonicalPath(path)
-	if _, newCp, ok := m.get(cp); ok {
+	if file, newCp, ok := m.get(cp); ok {
+		if !file.Mode.IsRegular() {
+			return fmt.Errorf("write %q: path exists but is not a regular file", path)
+		}
 		cp = newCp
 	}
 	m.setEntry(path, cp, fstest.MapFile{
