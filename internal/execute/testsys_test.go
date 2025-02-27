@@ -121,12 +121,14 @@ func (s *testSys) baselineFSwithDiff(baseline io.Writer) {
 
 func diffFSEntry(baseline io.Writer, oldDirContent string, newDirContent string, path string) {
 	// todo handle more cases of fs changes
-	if newDirContent == "" {
-		fmt.Fprint(baseline, `//// [`, path, `] deleted`, "\n")
+	if oldDirContent == "" {
+		fmt.Fprint(baseline, "//// [", path, "] new file\n", newDirContent, "\n")
+	} else if newDirContent == "" {
+		fmt.Fprint(baseline, "//// [", path, "] deleted\n")
 	} else if newDirContent == oldDirContent {
-		fmt.Fprint(baseline, `//// [`, path, `] no change`, "\n")
+		fmt.Fprint(baseline, "//// [", path, "] no change\n")
 	} else {
-		fmt.Fprint(baseline, `//// [`, path, `]\n`, newDirContent, "\n")
+		fmt.Fprint(baseline, "//// [", path, "]\n", newDirContent, "\n")
 	}
 }
 

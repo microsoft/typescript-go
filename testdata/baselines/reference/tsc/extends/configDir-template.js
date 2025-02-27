@@ -2,20 +2,24 @@
 currentDirectory::/home/src/projects/myproject
 useCaseSensitiveFileNames::true
 Input::--explainFiles
-//// [/home/src/projects/myproject/main.ts]\n
+//// [/home/src/projects/myproject/main.ts] new file
+
 	// some comment
 	export const y = 10;
 	import { x } from "@myscope/sometype";
 
-//// [/home/src/projects/myproject/root2/other/sometype2/index.d.ts]\n
+//// [/home/src/projects/myproject/root2/other/sometype2/index.d.ts] new file
+
 	export const k = 10;
 
-//// [/home/src/projects/myproject/src/secondary.ts]\n
+//// [/home/src/projects/myproject/src/secondary.ts] new file
+
 	// some comment
 	export const z = 10;
 	import { k } from "other/sometype2";
 
-//// [/home/src/projects/myproject/tsconfig.json]\n{
+//// [/home/src/projects/myproject/tsconfig.json] new file
+{
 	"extends": "../configs/first/tsconfig.json",
 	"compilerOptions": {
 		"declaration": true,
@@ -23,7 +27,8 @@ Input::--explainFiles
 		"traceResolution": true,
 	},
 }
-//// [/home/src/projects/myproject/types/sometype.ts]\n
+//// [/home/src/projects/myproject/types/sometype.ts] new file
+
 	export const x = 10;
 
 
@@ -160,11 +165,14 @@ src/secondary.ts(4,20): error TS2307: Cannot find module 'other/sometype2' or it
 Found 1 error in src/secondary.ts[90m:4[0m
 
 //// [/home/src/projects/myproject/main.ts] no change
-//// [/home/src/projects/myproject/outDir/main.js]\nexport const y = 10;
+//// [/home/src/projects/myproject/outDir/main.js] new file
+export const y = 10;
 
-//// [/home/src/projects/myproject/outDir/src/secondary.js]\nexport const z = 10;
+//// [/home/src/projects/myproject/outDir/src/secondary.js] new file
+export const z = 10;
 
-//// [/home/src/projects/myproject/outDir/types/sometype.js]\nexport const x = 10;
+//// [/home/src/projects/myproject/outDir/types/sometype.js] new file
+export const x = 10;
 
 //// [/home/src/projects/myproject/root2/other/sometype2/index.d.ts] no change
 //// [/home/src/projects/myproject/src/secondary.ts] no change

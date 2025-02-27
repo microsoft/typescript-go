@@ -2,9 +2,12 @@
 currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
 Input::--noCheck --outFile built
-//// [/home/src/workspaces/project/a.ts]\nexport const a = class { private p = 10; };
-//// [/home/src/workspaces/project/b.ts]\nexport const b = 10;
-//// [/home/src/workspaces/project/tsconfig.json]\n{
+//// [/home/src/workspaces/project/a.ts] new file
+export const a = class { private p = 10; };
+//// [/home/src/workspaces/project/b.ts] new file
+export const b = 10;
+//// [/home/src/workspaces/project/tsconfig.json] new file
+{
 	"compilerOptions": {
 		"declaration": true,
 	}
@@ -137,12 +140,14 @@ CompilerOptions::{
     "tscBuild": null
 }
 Output::
-//// [/home/src/workspaces/project/a.js]\nexport const a = class {
+//// [/home/src/workspaces/project/a.js] new file
+export const a = class {
     p = 10;
 };
 
 //// [/home/src/workspaces/project/a.ts] no change
-//// [/home/src/workspaces/project/b.js]\nexport const b = 10;
+//// [/home/src/workspaces/project/b.js] new file
+export const b = 10;
 
 //// [/home/src/workspaces/project/b.ts] no change
 //// [/home/src/workspaces/project/tsconfig.json] no change

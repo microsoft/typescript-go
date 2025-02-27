@@ -130,5 +130,6 @@ CompilerOptions::{
     "tscBuild": null
 }
 Output::
-//// [/home/src/workspaces/project/first.js] deleted
+//// [/home/src/workspaces/project/first.js] new file
+
 

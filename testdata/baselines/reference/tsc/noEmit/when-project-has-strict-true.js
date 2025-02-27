@@ -2,8 +2,10 @@
 currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
 Input::--noEmit
-//// [/home/src/workspaces/project/class1.ts]\nexport class class1 {}
-//// [/home/src/workspaces/project/tsconfig.json]\n{
+//// [/home/src/workspaces/project/class1.ts] new file
+export class class1 {}
+//// [/home/src/workspaces/project/tsconfig.json] new file
+{
 	"compilerOptions": {
 		"incremental": true,
 		"strict": true,
