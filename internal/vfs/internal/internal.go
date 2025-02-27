@@ -40,7 +40,7 @@ func (vfs *Common) RootAndPath(path string) (fsys fs.FS, rootName string, rest s
 	return vfs.RootFor(rootName), rootName, rest
 }
 
-func (vfs *Common) Stat(path string) fs.FileInfo {
+func (vfs *Common) Stat(path string) vfs.FileInfo {
 	fsys, _, rest := vfs.RootAndPath(path)
 	if fsys == nil {
 		return nil
@@ -108,7 +108,7 @@ func (vfs *Common) GetAccessibleEntries(path string) (result vfs.Entries) {
 	return result
 }
 
-func (vfs *Common) GetEntries(path string) []fs.DirEntry {
+func (vfs *Common) GetEntries(path string) []vfs.DirEntry {
 	fsys, _, rest := vfs.RootAndPath(path)
 	if fsys == nil {
 		return nil

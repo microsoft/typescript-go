@@ -81,7 +81,7 @@ var rootEntries = []fs.DirEntry{
 	fs.FileInfoToDirEntry(&fileInfo{name: "libs", mode: fs.ModeDir}),
 }
 
-func (vfs *wrappedFS) GetEntries(path string) []fs.DirEntry {
+func (vfs *wrappedFS) GetEntries(path string) []vfs.DirEntry {
 	if rest, ok := splitPath(path); ok {
 		if rest == "" {
 			return slices.Clone(rootEntries)
@@ -95,10 +95,17 @@ func (vfs *wrappedFS) GetEntries(path string) []fs.DirEntry {
 }
 
 func (vfs *wrappedFS) Stat(path string) vfs.FileInfo {
-	// !!! probably ok since
-	// if path, ok := splitPath(path); ok {
-	// 	return embeddedVFS.Stat("/" + path)
-	// }
+	if rest, ok := splitPath(path); ok {
+		if rest == "" || rest == "libs" {
+			return &fileInfo{name: rest, mode: fs.ModeDir}
+		}
+		if libName, ok := strings.CutPrefix(rest, "libs/"); ok {
+			if lib, ok := embeddedContents[libName]; ok {
+				return &fileInfo{name: libName, size: int64(len(lib))}
+			}
+		}
+		return nil
+	}
 	return vfs.fs.Stat(path)
 }
 
