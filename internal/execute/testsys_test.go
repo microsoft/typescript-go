@@ -18,9 +18,8 @@ func newTestSys(fileOrFolderList FileMap, cwd string, args ...string) *testSys {
 	if cwd == "" {
 		cwd = "/home/src/workspaces/project"
 	}
-	fs := bundled.WrapFS(vfstest.FromMap(fileOrFolderList, true /*useCaseSensitiveFileNames*/))
 	return &testSys{
-		fs:                 fs,
+		fs:                 bundled.WrapFS(vfstest.FromMap(fileOrFolderList, true /*useCaseSensitiveFileNames*/)),
 		defaultLibraryPath: bundled.LibPath(),
 		cwd:                cwd,
 		files:              slices.Collect(maps.Keys(fileOrFolderList)),

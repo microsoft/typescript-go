@@ -194,6 +194,7 @@ func performCompilation(sys System, cb cbType, config *tsoptions.ParsedCommandLi
 
 	emitResult := &compiler.EmitResult{EmitSkipped: true, Diagnostics: []*ast.Diagnostic{}}
 	if !options.ListFilesOnly.IsTrue() {
+		// !!! Emit is not yet fully implemented, will not emit unless `outfile` specified
 		emitResult = program.Emit(&compiler.EmitOptions{})
 	}
 	diagnostics = append(diagnostics, emitResult.Diagnostics...)
