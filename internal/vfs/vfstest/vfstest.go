@@ -174,9 +174,9 @@ func (m *mapFS) open(p canonicalPath) (fs.File, error) {
 	return m.m.Open(string(p))
 }
 
-func (m *mapFS) get(p canonicalPath) (*fstest.MapFile, bool) {
+func (m *mapFS) get(p canonicalPath) (*fstest.MapFile, canonicalPath, bool) {
 	if file, ok := m.m[string(p)]; ok && file.Mode&fs.ModeSymlink == 0 {
-		return file, ok
+		return file, p, ok
 	}
 
 	if target, ok := m.symlinks[p]; ok {
@@ -190,7 +190,7 @@ func (m *mapFS) get(p canonicalPath) (*fstest.MapFile, bool) {
 		}
 	}
 
-	return nil, false
+	return nil, p, false
 }
 
 func (m *mapFS) set(p canonicalPath, file *fstest.MapFile) {
@@ -214,9 +214,12 @@ func dirName(p string) string {
 }
 
 func (m *mapFS) mkdirAll(p string, perm fs.FileMode) error {
+	// TODO(jakebailey): this is wrong; we need to walk downward creating dirs, not upward.
+	// This doesn't matter for a VFS where we can add entries wherever, but if we have
+	// symlinks as parents, we have to evaluate them downward.
 	for ; p != ""; p = dirName(p) {
 		canonical := m.getCanonicalPath(p)
-		if other, ok := m.get(canonical); ok {
+		if other, _, ok := m.get(canonical); ok {
 			if other.Mode.IsDir() {
 				break
 			}
@@ -325,7 +328,7 @@ func (m *mapFS) ReadFile(name string) ([]byte, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 
-	file, ok := m.get(m.getCanonicalPath(name))
+	file, _, ok := m.get(m.getCanonicalPath(name))
 	if !ok {
 		return nil, fs.ErrNotExist
 	}
@@ -336,7 +339,7 @@ func (m *mapFS) Realpath(name string) (string, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 
-	file, ok := m.get(m.getCanonicalPath(name))
+	file, _, ok := m.get(m.getCanonicalPath(name))
 	if !ok {
 		return "", fs.ErrNotExist
 	}
@@ -370,7 +373,7 @@ func (m *mapFS) WriteFile(path string, data []byte, perm fs.FileMode) error {
 
 	if parent := dirName(path); parent != "" {
 		canonical := m.getCanonicalPath(parent)
-		parentFile, ok := m.get(canonical)
+		parentFile, _, ok := m.get(canonical)
 		if !ok {
 			return fmt.Errorf("write %q: parent directory does not exist", path)
 		}
