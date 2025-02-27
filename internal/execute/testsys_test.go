@@ -1,8 +1,10 @@
 package execute_test
 
 import (
+	"errors"
 	"fmt"
 	"io"
+	"io/fs"
 	"maps"
 	"slices"
 	"strings"
@@ -85,13 +87,13 @@ func (s *testSys) serializeState(baseline *strings.Builder, order serializeOutpu
 func (s *testSys) baselineFS(baseline *strings.Builder) {
 	baseline.WriteString("\n\nCurrentFiles::")
 	err := s.FS().WalkDir(s.GetCurrentDirectory(), func(path string, d vfs.DirEntry, e error) error {
-		if d == nil {
-			return nil
+		if e != nil {
+			return e
 		}
-		if !d.IsDir() {
+		if d.Type().IsRegular() {
 			contents, ok := s.FS().ReadFile(path)
 			if !ok {
-				return e
+				return nil
 			}
 			baseline.WriteString("\n//// [" + path + "]\n" + contents)
 		}
@@ -114,21 +116,25 @@ func (s *testSys) diff(baseline io.Writer) {
 	snap := map[string]string{}
 
 	err := s.FS().WalkDir(s.GetCurrentDirectory(), func(path string, d vfs.DirEntry, e error) error {
-		if d == nil {
+		if e != nil {
+			return e
+		}
+
+		if !d.Type().IsRegular() {
 			return nil
 		}
 
 		newContents, ok := s.FS().ReadFile(path)
 		if !ok {
-			return e
+			return nil
 		}
 		snap[path] = newContents
 		diffFSEntry(baseline, s.serializedDiff[path], newContents, path)
 
 		return nil
 	})
-	if err != nil {
-		panic("walkdir error during diff")
+	if err != nil && !errors.Is(err, fs.ErrNotExist) {
+		panic("walkdir error during diff: " + err.Error())
 	}
 	for path, oldDirContents := range s.serializedDiff {
 		if s.FS().FileExists(path) {

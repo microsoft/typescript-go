@@ -1,6 +1,7 @@
 package vfstest
 
 import (
+	"errors"
 	"fmt"
 	"io/fs"
 	"maps"
@@ -28,6 +29,7 @@ type mapFS struct {
 var (
 	_ iovfs.RealpathFS = (*mapFS)(nil)
 	_ iovfs.WritableFS = (*mapFS)(nil)
+	_ fs.ReadFileFS    = (*mapFS)(nil)
 )
 
 type sys struct {
@@ -45,7 +47,7 @@ func FromMap[File any](m map[string]File, useCaseSensitiveFileNames bool) vfs.FS
 	posix := false
 	windows := false
 
-	for p := range m {
+	checkPath := func(p string) {
 		if !tspath.IsRootedDiskPath(p) {
 			panic(fmt.Sprintf("non-rooted path %q", p))
 		}
@@ -61,12 +63,10 @@ func FromMap[File any](m map[string]File, useCaseSensitiveFileNames bool) vfs.FS
 		}
 	}
 
-	if posix && windows {
-		panic("mixed posix and windows paths")
-	}
-
 	mfs := make(fstest.MapFS, len(m))
 	for p, f := range m {
+		checkPath(p)
+
 		var file *fstest.MapFile
 		switch f := any(f).(type) {
 		case string:
@@ -79,8 +79,22 @@ func FromMap[File any](m map[string]File, useCaseSensitiveFileNames bool) vfs.FS
 			panic(fmt.Sprintf("invalid file type %T", f))
 		}
 
+		if file.Mode&fs.ModeSymlink != 0 {
+			target := string(file.Data)
+			checkPath(target)
+
+			target, _ = strings.CutPrefix(target, "/")
+			fileCopy := *file
+			fileCopy.Data = []byte(target)
+			file = &fileCopy
+		}
+
 		p, _ = strings.CutPrefix(p, "/")
 		mfs[p] = file
+	}
+
+	if posix && windows {
+		panic("mixed posix and windows paths")
 	}
 
 	return iovfs.From(convertMapFS(mfs, useCaseSensitiveFileNames), useCaseSensitiveFileNames)
@@ -120,6 +134,8 @@ func convertMapFS(input fstest.MapFS, useCaseSensitiveFileNames bool) *mapFS {
 		}
 		m.setEntry(p, m.getCanonicalPath(p), *file)
 	}
+
+	// TODO(jakebailey): collect list of dir symlinks, use for failing lookups
 
 	return m
 }
@@ -284,15 +300,45 @@ func (m *mapFS) Open(name string) (fs.File, error) {
 	}, nil
 }
 
+var ErrBrokenLink = errors.New("vfstest: broken link")
+
+func (m *mapFS) followSymlinks(name string) (*fstest.MapFile, error) {
+	var file *fstest.MapFile
+	for {
+		var ok bool
+		file, ok = m.get(m.getCanonicalPath(name))
+		if !ok {
+			if file == nil {
+				return nil, fs.ErrNotExist
+			}
+			return nil, ErrBrokenLink
+		}
+		if file.Mode&fs.ModeSymlink == 0 {
+			break
+		}
+		name = string(file.Data)
+	}
+	return file, nil
+}
+
+func (m *mapFS) ReadFile(name string) ([]byte, error) {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+
+	file, err := m.followSymlinks(name)
+	if err != nil {
+		return nil, err
+	}
+	return file.Data, nil
+}
+
 func (m *mapFS) Realpath(name string) (string, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 
-	// TODO: handle symlinks after https://go.dev/cl/385534 is available
-	// Don't bother going through fs.Stat.
-	file, ok := m.get(m.getCanonicalPath(name))
-	if !ok {
-		return "", fs.ErrNotExist
+	file, err := m.followSymlinks(name)
+	if err != nil {
+		return "", err
 	}
 	return file.Sys.(*sys).realpath, nil
 }
