@@ -513,8 +513,13 @@ func TestSymlink(t *testing.T) {
 	fs := FromMap(map[string]any{
 		"/foo.ts": "hello, world",
 		"/symlink.ts": &fstest.MapFile{
-			Data: []byte("/foo.ts"),
 			Mode: fs.ModeSymlink,
+			Data: []byte("/foo.ts"),
+		},
+		"/some/dir/file.ts": "hello, world",
+		"/some/dirlink": &fstest.MapFile{
+			Mode: fs.ModeSymlink,
+			Data: []byte("/some/dir"),
 		},
 	}, false)
 
@@ -524,6 +529,10 @@ func TestSymlink(t *testing.T) {
 		content, ok := fs.ReadFile("/symlink.ts")
 		assert.Assert(t, ok)
 		assert.Equal(t, content, "hello, world")
+
+		content, ok = fs.ReadFile("/some/dirlink/file.ts")
+		assert.Assert(t, ok)
+		assert.Equal(t, content, "hello, world")
 	})
 
 	t.Run("Realpath", func(t *testing.T) {
@@ -531,5 +540,11 @@ func TestSymlink(t *testing.T) {
 
 		realpath := fs.Realpath("/symlink.ts")
 		assert.Equal(t, realpath, "/foo.ts")
+
+		realpath = fs.Realpath("/some/dirlink")
+		assert.Equal(t, realpath, "/some/dir")
+
+		realpath = fs.Realpath("/some/dirlink/file.ts")
+		assert.Equal(t, realpath, "/some/dir/file.ts")
 	})
 }

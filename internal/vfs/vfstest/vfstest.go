@@ -1,7 +1,6 @@
 package vfstest
 
 import (
-	"errors"
 	"fmt"
 	"io/fs"
 	"maps"
@@ -24,6 +23,8 @@ type mapFS struct {
 	m  fstest.MapFS
 
 	useCaseSensitiveFileNames bool
+
+	symlinks map[canonicalPath]canonicalPath
 }
 
 var (
@@ -124,6 +125,7 @@ func convertMapFS(input fstest.MapFS, useCaseSensitiveFileNames bool) *mapFS {
 	slices.SortFunc(inputKeys, comparePathsByParts)
 
 	for _, p := range inputKeys {
+		cp := m.getCanonicalPath(p)
 		file := input[p]
 
 		// Create all missing intermediate directories so we can attach the realpath to each of them.
@@ -132,10 +134,15 @@ func convertMapFS(input fstest.MapFS, useCaseSensitiveFileNames bool) *mapFS {
 		if err := m.mkdirAll(dirName(p), 0o777); err != nil {
 			panic(fmt.Sprintf("failed to create intermediate directories for %q: %v", p, err))
 		}
-		m.setEntry(p, m.getCanonicalPath(p), *file)
-	}
+		m.setEntry(p, cp, *file)
 
-	// TODO(jakebailey): collect list of dir symlinks, use for failing lookups
+		if file.Mode&fs.ModeSymlink != 0 {
+			if m.symlinks == nil {
+				m.symlinks = make(map[canonicalPath]canonicalPath)
+			}
+			m.symlinks[cp] = m.getCanonicalPath(string(file.Data))
+		}
+	}
 
 	return m
 }
@@ -168,8 +175,22 @@ func (m *mapFS) open(p canonicalPath) (fs.File, error) {
 }
 
 func (m *mapFS) get(p canonicalPath) (*fstest.MapFile, bool) {
-	file, ok := m.m[string(p)]
-	return file, ok
+	if file, ok := m.m[string(p)]; ok && file.Mode&fs.ModeSymlink == 0 {
+		return file, ok
+	}
+
+	if target, ok := m.symlinks[p]; ok {
+		return m.get(target)
+	}
+
+	// This could be a path underneath a symlinked directory.
+	for other, target := range m.symlinks {
+		if len(other) < len(p) && other == p[:len(other)] && p[len(other)] == '/' {
+			return m.get(target + p[len(other):])
+		}
+	}
+
+	return nil, false
 }
 
 func (m *mapFS) set(p canonicalPath, file *fstest.MapFile) {
@@ -300,34 +321,13 @@ func (m *mapFS) Open(name string) (fs.File, error) {
 	}, nil
 }
 
-var ErrBrokenLink = errors.New("vfstest: broken link")
-
-func (m *mapFS) followSymlinks(name string) (*fstest.MapFile, error) {
-	var file *fstest.MapFile
-	for {
-		var ok bool
-		file, ok = m.get(m.getCanonicalPath(name))
-		if !ok {
-			if file == nil {
-				return nil, fs.ErrNotExist
-			}
-			return nil, ErrBrokenLink
-		}
-		if file.Mode&fs.ModeSymlink == 0 {
-			break
-		}
-		name = string(file.Data)
-	}
-	return file, nil
-}
-
 func (m *mapFS) ReadFile(name string) ([]byte, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 
-	file, err := m.followSymlinks(name)
-	if err != nil {
-		return nil, err
+	file, ok := m.get(m.getCanonicalPath(name))
+	if !ok {
+		return nil, fs.ErrNotExist
 	}
 	return file.Data, nil
 }
@@ -336,9 +336,9 @@ func (m *mapFS) Realpath(name string) (string, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 
-	file, err := m.followSymlinks(name)
-	if err != nil {
-		return "", err
+	file, ok := m.get(m.getCanonicalPath(name))
+	if !ok {
+		return "", fs.ErrNotExist
 	}
 	return file.Sys.(*sys).realpath, nil
 }
