@@ -373,12 +373,15 @@ func (m *mapFS) WriteFile(path string, data []byte, perm fs.FileMode) error {
 
 	if parent := dirName(path); parent != "" {
 		canonical := m.getCanonicalPath(parent)
-		parentFile, _, ok := m.get(canonical)
+		parentFile, parentPath, ok := m.get(canonical)
 		if !ok {
 			return fmt.Errorf("write %q: parent directory does not exist", path)
 		}
 		if !parentFile.Mode.IsDir() {
 			return fmt.Errorf("write %q: parent path exists but is not a directory", path)
+		}
+		if canonical != parentPath {
+			path = string(parentPath) + path[len(parent):]
 		}
 	}
 
