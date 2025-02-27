@@ -96,11 +96,8 @@ func (vfs *wrappedFS) GetEntries(path string) []vfs.DirEntry {
 
 func (vfs *wrappedFS) Stat(path string) vfs.FileInfo {
 	if rest, ok := splitPath(path); ok {
-		switch rest {
-		case "":
-			return &fileInfo{name: "", mode: fs.ModeDir}
-		case "libs":
-			return &fileInfo{name: "libs", mode: fs.ModeDir}
+		if rest == "" || rest == "libs" {
+			return &fileInfo{name: rest, mode: fs.ModeDir}
 		}
 		if libName, ok := strings.CutPrefix(rest, "libs/"); ok {
 			if lib, ok := embeddedContents[libName]; ok {
