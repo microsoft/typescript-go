@@ -174,19 +174,19 @@ func (m *mapFS) open(p canonicalPath) (fs.File, error) {
 	return m.m.Open(string(p))
 }
 
-func (m *mapFS) get(p canonicalPath) (*fstest.MapFile, canonicalPath, bool) {
+func (m *mapFS) getFollowingSymlinks(p canonicalPath) (*fstest.MapFile, canonicalPath, bool) {
 	if file, ok := m.m[string(p)]; ok && file.Mode&fs.ModeSymlink == 0 {
 		return file, p, ok
 	}
 
 	if target, ok := m.symlinks[p]; ok {
-		return m.get(target)
+		return m.getFollowingSymlinks(target)
 	}
 
 	// This could be a path underneath a symlinked directory.
 	for other, target := range m.symlinks {
 		if len(other) < len(p) && other == p[:len(other)] && p[len(other)] == '/' {
-			return m.get(target + p[len(other):])
+			return m.getFollowingSymlinks(target + p[len(other):])
 		}
 	}
 
@@ -219,7 +219,7 @@ func (m *mapFS) mkdirAll(p string, perm fs.FileMode) error {
 	// symlinks as parents, we have to evaluate them downward.
 	for ; p != ""; p = dirName(p) {
 		canonical := m.getCanonicalPath(p)
-		if other, _, ok := m.get(canonical); ok {
+		if other, _, ok := m.getFollowingSymlinks(canonical); ok {
 			if other.Mode.IsDir() {
 				break
 			}
@@ -328,7 +328,7 @@ func (m *mapFS) ReadFile(name string) ([]byte, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 
-	file, _, ok := m.get(m.getCanonicalPath(name))
+	file, _, ok := m.getFollowingSymlinks(m.getCanonicalPath(name))
 	if !ok {
 		return nil, fs.ErrNotExist
 	}
@@ -339,7 +339,7 @@ func (m *mapFS) Realpath(name string) (string, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 
-	file, _, ok := m.get(m.getCanonicalPath(name))
+	file, _, ok := m.getFollowingSymlinks(m.getCanonicalPath(name))
 	if !ok {
 		return "", fs.ErrNotExist
 	}
@@ -373,7 +373,7 @@ func (m *mapFS) WriteFile(path string, data []byte, perm fs.FileMode) error {
 
 	if parent := dirName(path); parent != "" {
 		canonical := m.getCanonicalPath(parent)
-		parentFile, parentPath, ok := m.get(canonical)
+		parentFile, parentPath, ok := m.getFollowingSymlinks(canonical)
 		if !ok {
 			return fmt.Errorf("write %q: parent directory does not exist", path)
 		}
@@ -386,7 +386,7 @@ func (m *mapFS) WriteFile(path string, data []byte, perm fs.FileMode) error {
 	}
 
 	cp := m.getCanonicalPath(path)
-	if file, newCp, ok := m.get(cp); ok {
+	if file, newCp, ok := m.getFollowingSymlinks(cp); ok {
 		if !file.Mode.IsRegular() {
 			return fmt.Errorf("write %q: path exists but is not a regular file", path)
 		}
