@@ -385,7 +385,11 @@ func (m *mapFS) WriteFile(path string, data []byte, perm fs.FileMode) error {
 		}
 	}
 
-	m.setEntry(path, m.getCanonicalPath(path), fstest.MapFile{
+	cp := m.getCanonicalPath(path)
+	if _, newCp, ok := m.get(cp); ok {
+		cp = newCp
+	}
+	m.setEntry(path, cp, fstest.MapFile{
 		Data:    data,
 		ModTime: time.Now(),
 		Mode:    perm &^ umask,

@@ -553,7 +553,11 @@ func TestWritableFSSymlink(t *testing.T) {
 	t.Parallel()
 
 	fs := FromMap(map[string]any{
-		"/some/dir/other.ts": "hello, world",
+		"/some/dir/other.ts": "NOTHING",
+		"/other.ts": &fstest.MapFile{
+			Mode: fs.ModeSymlink,
+			Data: []byte("/some/dir/other.ts"),
+		},
 		"/some/dirlink": &fstest.MapFile{
 			Mode: fs.ModeSymlink,
 			Data: []byte("/some/dir"),
@@ -577,4 +581,15 @@ func TestWritableFSSymlink(t *testing.T) {
 	content, ok = fs.ReadFile("/some/dirlink/file.ts")
 	assert.Assert(t, ok)
 	assert.Equal(t, content, "goodbye, world")
+
+	err = fs.WriteFile("/other.ts", "hello, world", false)
+	assert.NilError(t, err)
+
+	content, ok = fs.ReadFile("/other.ts")
+	assert.Assert(t, ok)
+	assert.Equal(t, content, "hello, world")
+
+	content, ok = fs.ReadFile("/some/dir/other.ts")
+	assert.Assert(t, ok)
+	assert.Equal(t, content, "hello, world")
 }
