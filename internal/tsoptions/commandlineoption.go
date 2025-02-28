@@ -112,7 +112,7 @@ var commandLineOptionElements = map[string]*CommandLineOption{
 		Kind: CommandLineOptionTypeString,
 	},
 	"moduleSuffixes": {
-		Name: "suffix",
+		Name: "moduleSuffixes",
 		Kind: CommandLineOptionTypeString,
 	},
 	"customConditions": {
@@ -156,6 +156,11 @@ var commandLineOptionElements = map[string]*CommandLineOption{
 		Kind:            CommandLineOptionTypeString,
 		isFilePath:      true,
 		extraValidation: true,
+	},
+	// Test infra options
+	"libFiles": {
+		Name: "libFiles",
+		Kind: CommandLineOptionTypeString,
 	},
 }
 

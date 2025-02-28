@@ -2,14 +2,13 @@ package checker_test
 
 import (
 	"testing"
-	"testing/fstest"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/tspath"
-	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 )
 
@@ -21,17 +20,13 @@ func TestGetSymbolAtLocation(t *testing.T) {
 }
 declare const foo: Foo;
 foo.bar;`
-	fs := vfstest.FromMapFS(fstest.MapFS{
-		"foo.ts": &fstest.MapFile{
-			Data: []byte(content),
-		},
-		"tsconfig.json": &fstest.MapFile{
-			Data: []byte(`
+	fs := vfstest.FromMap(map[string]string{
+		"/foo.ts": content,
+		"/tsconfig.json": `
 				{
 					"compilerOptions": {}
 				}
-			`),
-		},
+			`,
 	}, false /*useCaseSensitiveFileNames*/)
 	fs = bundled.WrapFS(fs)
 
@@ -39,7 +34,7 @@ foo.bar;`
 	host := compiler.NewCompilerHost(nil, cd, fs, bundled.LibPath())
 	opts := compiler.ProgramOptions{
 		Host:           host,
-		ConfigFilePath: "/tsconfig.json",
+		ConfigFileName: "/tsconfig.json",
 	}
 	p := compiler.NewProgram(opts)
 	p.BindSourceFiles()
@@ -61,7 +56,7 @@ func TestCheckSrcCompiler(t *testing.T) {
 	t.Parallel()
 
 	repo.SkipIfNoTypeScriptSubmodule(t)
-	fs := vfs.FromOS()
+	fs := osvfs.FS()
 	fs = bundled.WrapFS(fs)
 
 	rootPath := tspath.CombinePaths(tspath.NormalizeSlashes(repo.TypeScriptSubmodulePath), "src", "compiler")
@@ -69,7 +64,7 @@ func TestCheckSrcCompiler(t *testing.T) {
 	host := compiler.NewCompilerHost(nil, rootPath, fs, bundled.LibPath())
 	opts := compiler.ProgramOptions{
 		Host:           host,
-		ConfigFilePath: tspath.CombinePaths(rootPath, "tsconfig.json"),
+		ConfigFileName: tspath.CombinePaths(rootPath, "tsconfig.json"),
 	}
 	p := compiler.NewProgram(opts)
 	p.CheckSourceFiles()

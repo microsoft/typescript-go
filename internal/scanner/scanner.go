@@ -557,8 +557,7 @@ func (s *Scanner) Scan() ast.Kind {
 			if s.charAt(1) == '/' {
 				s.pos += 2
 				for {
-					ch := s.char()
-					if ch <= 0x7F {
+					if ch := s.char(); ch <= 0x7F {
 						if ch < 0 || ch == '\r' || ch == '\n' {
 							break
 						}
@@ -593,9 +592,9 @@ func (s *Scanner) Scan() ast.Kind {
 						}
 						s.pos++
 					} else {
-						ch, size := s.charAndSize()
-						if stringutil.IsLineBreak(ch) {
-							break
+						commentCh, size := s.charAndSize()
+						if stringutil.IsLineBreak(commentCh) {
+							s.tokenFlags |= ast.TokenFlagsPrecedingLineBreak
 						}
 						s.pos += size
 					}
@@ -1450,7 +1449,7 @@ func (s *Scanner) scanTemplateAndSetTokenValue(shouldEmitInvalidEscapeError bool
 		if ch == '\r' {
 			contents += s.text[start:s.pos]
 			s.pos++
-			if ch == '\n' {
+			if s.char() == '\n' {
 				s.pos++
 			}
 			contents += "\n"
@@ -2187,19 +2186,6 @@ func GetTokenPosOfNode(node *ast.Node, sourceFile *ast.SourceFile, includeJsDoc 
 
 	if includeJsDoc && len(node.JSDoc(sourceFile)) > 0 {
 		return GetTokenPosOfNode(node.JSDoc(sourceFile)[0], sourceFile, false /*includeJsDoc*/)
-	}
-
-	// For a syntax list, it is possible that one of its children has JSDocComment nodes, while
-	// the syntax list itself considers them as normal trivia. Therefore if we simply skip
-	// trivia for the list, we may have skipped the JSDocComment as well. So we should process its
-	// first child to determine the actual position of its first token.
-	if node.Kind == ast.KindSyntaxList {
-		if sourceFile == nil {
-			sourceFile = ast.GetSourceFileOfNode(node)
-		}
-		if first := node.AsSyntaxList().Children[0]; first != nil {
-			return GetTokenPosOfNode(first, sourceFile, includeJsDoc)
-		}
 	}
 
 	return SkipTriviaEx(

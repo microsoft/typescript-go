@@ -4,6 +4,7 @@ import (
 	"reflect"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -11,6 +12,9 @@ import (
 func parseTristate(value any) core.Tristate {
 	if value == nil {
 		return core.TSUnknown
+	}
+	if v, ok := value.(core.Tristate); ok {
+		return v
 	}
 	if value == true {
 		return core.TSTrue
@@ -32,11 +36,11 @@ func parseStringArray(value any) []string {
 	return nil
 }
 
-func parseStringMap(value any) map[string][]string {
-	if m, ok := value.(map[string]any); ok {
-		result := make(map[string][]string)
-		for k, v := range m {
-			result[k] = parseStringArray(v)
+func parseStringMap(value any) *collections.OrderedMap[string, []string] {
+	if m, ok := value.(*collections.OrderedMap[string, any]); ok {
+		result := collections.NewOrderedMapWithSizeHint[string, []string](m.Size())
+		for k, v := range m.Entries() {
+			result.Set(k, parseStringArray(v))
 		}
 		return result
 	}
@@ -59,15 +63,15 @@ func parseNumber(value any) *int {
 
 func parseProjectReference(json any) []core.ProjectReference {
 	var result []core.ProjectReference
-	if v, ok := json.(map[string]any); ok {
+	if v, ok := json.(*collections.OrderedMap[string, any]); ok {
 		var reference core.ProjectReference
-		if v, ok := v["path"]; ok {
+		if v, ok := v.Get("path"); ok {
 			reference.Path = v.(string)
 		}
-		if v, ok := v["originalPath"]; ok {
+		if v, ok := v.Get("originalPath"); ok {
 			reference.OriginalPath = v.(string)
 		}
-		if v, ok := v["circular"]; ok {
+		if v, ok := v.Get("circular"); ok {
 			reference.Circular = v.(bool)
 		}
 		result = append(result, reference)
@@ -75,51 +79,51 @@ func parseProjectReference(json any) []core.ProjectReference {
 	return result
 }
 
-func parseJsonToStringKey(json any) map[string]any {
-	result := make(map[string]any)
-	if m, ok := json.(map[string]any); ok {
-		if v, ok := m["include"]; ok {
+func parseJsonToStringKey(json any) *collections.OrderedMap[string, any] {
+	result := collections.NewOrderedMapWithSizeHint[string, any](6)
+	if m, ok := json.(*collections.OrderedMap[string, any]); ok {
+		if v, ok := m.Get("include"); ok {
 			if arr, ok := v.([]string); ok && len(arr) == 0 {
-				result["include"] = []any{}
+				result.Set("include", []any{})
 			} else {
-				result["include"] = v
+				result.Set("include", v)
 			}
 		}
-		if v, ok := m["exclude"]; ok {
+		if v, ok := m.Get("exclude"); ok {
 			if arr, ok := v.([]string); ok && len(arr) == 0 {
-				result["exclude"] = []any{}
+				result.Set("exclude", []any{})
 			} else {
-				result["exclude"] = v
+				result.Set("exclude", v)
 			}
 		}
-		if v, ok := m["files"]; ok {
+		if v, ok := m.Get("files"); ok {
 			if arr, ok := v.([]string); ok && len(arr) == 0 {
-				result["files"] = []any{}
+				result.Set("files", []any{})
 			} else {
-				result["files"] = v
+				result.Set("files", v)
 			}
 		}
-		if v, ok := m["references"]; ok {
+		if v, ok := m.Get("references"); ok {
 			if arr, ok := v.([]string); ok && len(arr) == 0 {
-				result["references"] = []any{}
+				result.Set("references", []any{})
 			} else {
-				result["references"] = v
+				result.Set("references", v)
 			}
 		}
-		if v, ok := m["extends"]; ok {
+		if v, ok := m.Get("extends"); ok {
 			if arr, ok := v.([]string); ok && len(arr) == 0 {
-				result["extends"] = []any{}
+				result.Set("extends", []any{})
 			} else if str, ok := v.(string); ok {
-				result["extends"] = []any{str}
+				result.Set("extends", []any{str})
 			} else {
-				result["extends"] = v
+				result.Set("extends", v)
 			}
 		}
-		if v, ok := m["compilerOptions"]; ok {
-			result["compilerOptions"] = v
+		if v, ok := m.Get("compilerOptions"); ok {
+			result.Set("compilerOptions", v)
 		}
-		if v, ok := m["excludes"]; ok {
-			result["excludes"] = v
+		if v, ok := m.Get("excludes"); ok {
+			result.Set("excludes", v)
 		}
 	}
 	return result
@@ -127,32 +131,28 @@ func parseJsonToStringKey(json any) map[string]any {
 
 type optionParser interface {
 	ParseOption(key string, value any) []*ast.Diagnostic
-	CommandLine() bool
 }
 
 type compilerOptionsParser struct {
 	*core.CompilerOptions
-	commandLine bool
 }
 
 func (o *compilerOptionsParser) ParseOption(key string, value any) []*ast.Diagnostic {
 	return ParseCompilerOptions(key, value, o.CompilerOptions)
 }
 
-func (o *compilerOptionsParser) CommandLine() bool { return o.commandLine }
-
 type watchOptionsParser struct {
 	*core.WatchOptions
-	commandLine bool
 }
 
 func (o *watchOptionsParser) ParseOption(key string, value any) []*ast.Diagnostic {
 	return ParseWatchOptions(key, value, o.WatchOptions)
 }
 
-func (o *watchOptionsParser) CommandLine() bool { return o.commandLine }
-
 func ParseCompilerOptions(key string, value any, allOptions *core.CompilerOptions) []*ast.Diagnostic {
+	if value == nil {
+		return nil
+	}
 	if allOptions == nil {
 		return nil
 	}
@@ -279,6 +279,8 @@ func ParseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 		allOptions.NoImplicitAny = parseTristate(value)
 	case "noImplicitThis":
 		allOptions.NoImplicitThis = parseTristate(value)
+	case "noLib":
+		allOptions.NoLib = parseTristate(value)
 	case "noPropertyAccessFromIndexSignature":
 		allOptions.NoPropertyAccessFromIndexSignature = parseTristate(value)
 	case "noUncheckedIndexedAccess":
@@ -399,11 +401,17 @@ func ParseWatchOptions(key string, value any, allOptions *core.WatchOptions) []*
 	}
 	switch key {
 	case "watchFile":
-		allOptions.FileKind = value.(core.WatchFileKind)
+		if value != nil {
+			allOptions.FileKind = value.(core.WatchFileKind)
+		}
 	case "watchDirectory":
-		allOptions.DirectoryKind = value.(core.WatchDirectoryKind)
+		if value != nil {
+			allOptions.DirectoryKind = value.(core.WatchDirectoryKind)
+		}
 	case "fallbackPolling":
-		allOptions.FallbackPolling = value.(core.PollingKind)
+		if value != nil {
+			allOptions.FallbackPolling = value.(core.PollingKind)
+		}
 	case "synchronousWatchDirectory":
 		allOptions.SyncWatchDir = parseTristate(value)
 	case "excludeDirectories":
@@ -436,25 +444,25 @@ func mergeCompilerOptions(targetOptions, sourceOptions *core.CompilerOptions) *c
 	return targetOptions
 }
 
-func convertToOptionsWithAbsolutePaths(optionsBase map[string]any, optionMap map[string]*CommandLineOption, cwd string) map[string]any {
+func convertToOptionsWithAbsolutePaths(optionsBase *collections.OrderedMap[string, any], optionMap map[string]*CommandLineOption, cwd string) *collections.OrderedMap[string, any] {
 	// !!! convert to options with absolute paths was previously done with `CompilerOptions` object, but for ease of implementation, we do it pre-conversion.
 	// !!! Revisit this choice if/when refactoring when conversion is done in tsconfig parsing
 	if optionsBase == nil {
 		return nil
 	}
-	for o, v := range optionsBase {
+	for o, v := range optionsBase.Entries() {
 		option := optionMap[o]
 		if option == nil || !option.isFilePath {
 			continue
 		}
 		if option.Kind == "list" {
 			if arr, ok := v.([]string); ok {
-				optionsBase[o] = core.Map(arr, func(item string) string {
+				optionsBase.Set(o, core.Map(arr, func(item string) string {
 					return tspath.GetNormalizedAbsolutePath(item, cwd)
-				})
+				}))
 			}
 		} else {
-			optionsBase[o] = tspath.GetNormalizedAbsolutePath(v.(string), cwd)
+			optionsBase.Set(o, tspath.GetNormalizedAbsolutePath(v.(string), cwd))
 		}
 	}
 	return optionsBase

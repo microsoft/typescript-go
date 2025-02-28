@@ -9,6 +9,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/testutil/fixtures"
+	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
 )
 
 func BenchmarkBind(b *testing.B) {
@@ -16,12 +18,13 @@ func BenchmarkBind(b *testing.B) {
 		b.Run(f.Name(), func(b *testing.B) {
 			f.SkipIfNotExist(b)
 
-			fileName := f.Path()
+			fileName := tspath.GetNormalizedAbsolutePath(f.Path(), "/")
+			path := tspath.ToPath(fileName, "/", osvfs.FS().UseCaseSensitiveFileNames())
 			sourceText := f.ReadFile(b)
 
 			sourceFiles := make([]*ast.SourceFile, b.N)
 			for i := range b.N {
-				sourceFiles[i] = parser.ParseSourceFile(fileName, sourceText, core.ScriptTargetESNext, scanner.JSDocParsingModeParseAll)
+				sourceFiles[i] = parser.ParseSourceFile(fileName, path, sourceText, core.ScriptTargetESNext, scanner.JSDocParsingModeParseAll)
 			}
 
 			compilerOptions := &core.CompilerOptions{Target: core.ScriptTargetESNext, ModuleKind: core.ModuleKindNodeNext}

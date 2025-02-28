@@ -197,15 +197,15 @@ func GetAssignmentTarget(node *Node) *Node {
 	}
 }
 
-func isLogicalBinaryOperator(token Kind) bool {
+func IsLogicalBinaryOperator(token Kind) bool {
 	return token == KindBarBarToken || token == KindAmpersandAmpersandToken
 }
 
 func IsLogicalOrCoalescingBinaryOperator(token Kind) bool {
-	return isLogicalBinaryOperator(token) || token == KindQuestionQuestionToken
+	return IsLogicalBinaryOperator(token) || token == KindQuestionQuestionToken
 }
 
-func isLogicalOrCoalescingBinaryExpression(expr *Node) bool {
+func IsLogicalOrCoalescingBinaryExpression(expr *Node) bool {
 	return IsBinaryExpression(expr) && IsLogicalOrCoalescingBinaryOperator(expr.AsBinaryExpression().OperatorToken.Kind)
 }
 
@@ -224,7 +224,7 @@ func IsLogicalExpression(node *Node) bool {
 		} else if node.Kind == KindPrefixUnaryExpression && node.AsPrefixUnaryExpression().Operator == KindExclamationToken {
 			node = node.AsPrefixUnaryExpression().Operand
 		} else {
-			return isLogicalOrCoalescingBinaryExpression(node)
+			return IsLogicalOrCoalescingBinaryExpression(node)
 		}
 	}
 }
@@ -833,11 +833,11 @@ func WalkUpParenthesizedTypes(node *TypeNode) *Node {
 
 // Walks up the parents of a node to find the containing SourceFile
 func GetSourceFileOfNode(node *Node) *SourceFile {
-	for node.Parent != nil {
+	for node != nil {
+		if node.Kind == KindSourceFile {
+			return node.AsSourceFile()
+		}
 		node = node.Parent
-	}
-	if node.Kind == KindSourceFile {
-		return node.AsSourceFile()
 	}
 	return nil
 }
@@ -858,8 +858,7 @@ func SetParentInChildren(parent *Node) {
 // Walks up the parents of a node to find the ancestor that matches the callback
 func FindAncestor(node *Node, callback func(*Node) bool) *Node {
 	for node != nil {
-		result := callback(node)
-		if result {
+		if callback(node) {
 			return node
 		}
 		node = node.Parent
@@ -1236,6 +1235,14 @@ func GetElementOrPropertyAccessArgumentExpressionOrName(node *Node) *Node {
 	panic("Unhandled case in GetElementOrPropertyAccessArgumentExpressionOrName")
 }
 
+func GetElementOrPropertyAccessName(node *Node) string {
+	name := getElementOrPropertyAccessArgumentExpressionOrName(node)
+	if name == nil {
+		return ""
+	}
+	return name.Text()
+}
+
 func IsExpressionWithTypeArgumentsInClassExtendsClause(node *Node) bool {
 	return TryGetClassExtendingExpressionWithTypeArguments(node) != nil
 }
@@ -1261,7 +1268,7 @@ func GetNameOfDeclaration(declaration *Node) *Node {
 	if declaration == nil {
 		return nil
 	}
-	nonAssignedName := getNonAssignedNameOfDeclaration(declaration)
+	nonAssignedName := GetNonAssignedNameOfDeclaration(declaration)
 	if nonAssignedName != nil {
 		return nonAssignedName
 	}
@@ -1271,7 +1278,8 @@ func GetNameOfDeclaration(declaration *Node) *Node {
 	return nil
 }
 
-func getNonAssignedNameOfDeclaration(declaration *Node) *Node {
+func GetNonAssignedNameOfDeclaration(declaration *Node) *Node {
+	// !!!
 	switch declaration.Kind {
 	case KindBinaryExpression:
 		if IsFunctionPropertyAssignment(declaration) {
@@ -1578,6 +1586,16 @@ func GetExternalModuleName(node *Node) *Expression {
 		return nil
 	}
 	panic("Unhandled case in getExternalModuleName")
+}
+
+func GetImportAttributes(node *Node) *Node {
+	switch node.Kind {
+	case KindImportDeclaration:
+		return node.AsImportDeclaration().Attributes
+	case KindExportDeclaration:
+		return node.AsExportDeclaration().Attributes
+	}
+	panic("Unhandled case in getImportAttributes")
 }
 
 func getImportTypeNodeLiteral(node *Node) *Node {
@@ -2128,4 +2146,74 @@ func NodeHasName(statement *Node, id *Node) bool {
 		return core.Some(declarations, func(d *Node) bool { return NodeHasName(d, id) })
 	}
 	return false
+}
+
+func IsInternalModuleImportEqualsDeclaration(node *Node) bool {
+	return IsImportEqualsDeclaration(node) && node.AsImportEqualsDeclaration().ModuleReference.Kind != KindExternalModuleReference
+}
+
+func GetAssertedTypeNode(node *Node) *Node {
+	switch node.Kind {
+	case KindAsExpression:
+		return node.AsAsExpression().Type
+	case KindSatisfiesExpression:
+		return node.AsSatisfiesExpression().Type
+	case KindTypeAssertionExpression:
+		return node.AsTypeAssertion().Type
+	}
+	panic("Unhandled case in getAssertedTypeNode")
+}
+
+func IsConstAssertion(node *Node) bool {
+	switch node.Kind {
+	case KindAsExpression, KindTypeAssertionExpression:
+		return IsConstTypeReference(GetAssertedTypeNode(node))
+	}
+	return false
+}
+
+func IsConstTypeReference(node *Node) bool {
+	return IsTypeReferenceNode(node) && len(node.TypeArguments()) == 0 && IsIdentifier(node.AsTypeReferenceNode().TypeName) && node.AsTypeReferenceNode().TypeName.Text() == "const"
+}
+
+func IsGlobalSourceFile(node *Node) bool {
+	return node.Kind == KindSourceFile && !IsExternalOrCommonJsModule(node.AsSourceFile())
+}
+
+func IsParameterLikeOrReturnTag(node *Node) bool {
+	switch node.Kind {
+	case KindParameter, KindTypeParameter, KindJSDocParameterTag, KindJSDocReturnTag:
+		return true
+	}
+	return false
+}
+
+func GetDeclarationOfKind(symbol *Symbol, kind Kind) *Node {
+	for _, declaration := range symbol.Declarations {
+		if declaration.Kind == kind {
+			return declaration
+		}
+	}
+	return nil
+}
+
+func FindConstructorDeclaration(node *ClassLikeDeclaration) *Node {
+	for _, member := range node.ClassLikeData().Members.Nodes {
+		if IsConstructorDeclaration(member) && NodeIsPresent(member.AsConstructorDeclaration().Body) {
+			return member
+		}
+	}
+	return nil
+}
+
+func GetFirstIdentifier(node *Node) *Node {
+	switch node.Kind {
+	case KindIdentifier:
+		return node
+	case KindQualifiedName:
+		return GetFirstIdentifier(node.AsQualifiedName().Left)
+	case KindPropertyAccessExpression:
+		return GetFirstIdentifier(node.AsPropertyAccessExpression().Expression)
+	}
+	panic("Unhandled case in GetFirstIdentifier")
 }
