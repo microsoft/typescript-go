@@ -130,8 +130,10 @@ func convertMapFS(input fstest.MapFS, useCaseSensitiveFileNames bool) *mapFS {
 		// Create all missing intermediate directories so we can attach the realpath to each of them.
 		// fstest.MapFS doesn't require this as it synthesizes directories on the fly, but it's a lot
 		// harder to reapply a realpath onto those when we're deep in some FileInfo method.
-		if err := m.mkdirAll(dirName(p), 0o777); err != nil {
-			panic(fmt.Sprintf("failed to create intermediate directories for %q: %v", p, err))
+		if dir := dirName(p); dir != "" {
+			if err := m.mkdirAll(dir, 0o777); err != nil {
+				panic(fmt.Sprintf("failed to create intermediate directories for %q: %v", p, err))
+			}
 		}
 		m.setEntry(p, m.getCanonicalPath(p), *file)
 	}
@@ -190,6 +192,10 @@ func (m *mapFS) set(p canonicalPath, file *fstest.MapFile) {
 }
 
 func (m *mapFS) setEntry(realpath string, canonical canonicalPath, file fstest.MapFile) {
+	if realpath == "" || canonical == "" {
+		panic("empty path")
+	}
+
 	file.Sys = &sys{
 		original: file.Sys,
 		realpath: realpath,
@@ -205,6 +211,7 @@ func (m *mapFS) setEntry(realpath string, canonical canonicalPath, file fstest.M
 }
 
 func dirName(p string) string {
+	// TODO: this uses path.Clean; we shouldn't depend on this, realy...
 	dir := path.Dir(p)
 	if dir == "." {
 		return ""
@@ -212,22 +219,56 @@ func dirName(p string) string {
 	return dir
 }
 
+func cutOffset(s string, sep byte, offset int) (before, after string) {
+	idx := strings.IndexByte(s[offset:], sep)
+	if idx < 0 {
+		return s, ""
+	}
+	return s[:idx+offset], s[idx+1+offset:]
+}
+
 func (m *mapFS) mkdirAll(p string, perm fs.FileMode) error {
-	// TODO(jakebailey): this is wrong; we need to walk downward creating dirs, not upward.
-	// This doesn't matter for a VFS where we can add entries wherever, but if we have
-	// symlinks as parents, we have to evaluate them downward.
-	for ; p != ""; p = dirName(p) {
-		canonical := m.getCanonicalPath(p)
-		if other, _, ok := m.getFollowingSymlinks(canonical); ok {
-			if other.Mode.IsDir() {
-				break
-			}
+	// TODO(jakebailey): test these edge cases
+
+	// Fast path; already exists.
+	if other, _, ok := m.getFollowingSymlinks(m.getCanonicalPath(p)); ok {
+		if !other.Mode.IsDir() {
 			return fmt.Errorf("mkdir %q: path exists but is not a directory", p)
 		}
-		m.setEntry(p, canonical, fstest.MapFile{
+		return nil
+	}
+
+	var toCreate []string
+	offset := 0
+	for {
+		dir, rest := cutOffset(p, '/', offset)
+		canonical := m.getCanonicalPath(dir)
+		if other, otherPath, ok := m.getFollowingSymlinks(canonical); ok {
+			if !other.Mode.IsDir() {
+				return fmt.Errorf("mkdir %q: path exists but is not a directory", dir)
+			}
+			if canonical != otherPath {
+				// We have a symlinked parent, reset and start again.
+				p = other.Sys.(*sys).realpath + "/" + rest
+				toCreate = toCreate[:0]
+				offset = 0
+				continue
+			}
+		} else {
+			toCreate = append(toCreate, dir)
+		}
+		offset = len(dir) + 1
+		if rest == "" {
+			break
+		}
+	}
+
+	for _, dir := range toCreate {
+		m.setEntry(dir, m.getCanonicalPath(dir), fstest.MapFile{
 			Mode: fs.ModeDir | perm&^umask,
 		})
 	}
+
 	return nil
 }
 
