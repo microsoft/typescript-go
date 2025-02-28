@@ -20,9 +20,8 @@ func newTestSys(fileOrFolderList FileMap, cwd string, args ...string) *testSys {
 	if cwd == "" {
 		cwd = "/home/src/workspaces/project"
 	}
-	fs := bundled.WrapFS(vfstest.FromMap(fileOrFolderList, true /*useCaseSensitiveFileNames*/))
 	return &testSys{
-		fs:                 fs,
+		fs:                 bundled.WrapFS(vfstest.FromMap(fileOrFolderList, true /*useCaseSensitiveFileNames*/)),
 		defaultLibraryPath: bundled.LibPath(),
 		cwd:                cwd,
 		files:              slices.Collect(maps.Keys(fileOrFolderList)),
@@ -68,14 +67,9 @@ func (s *testSys) EndWrite() {
 	s.currentWrite.Reset()
 }
 
-func (s *testSys) serializeState(baseline *strings.Builder, order serializeOutputOrder) {
-	if order == serializeOutputOrderBefore {
-		s.serializeOutput(baseline)
-	}
-	s.diff(baseline)
-	if order == serializeOutputOrderAfter {
-		s.serializeOutput(baseline)
-	}
+func (s *testSys) serializeState(baseline *strings.Builder) {
+	s.baselineOutput(baseline)
+	s.baselineFSwithDiff(baseline)
 	// todo watch
 	// this.serializeWatches(baseline);
 	// this.timeoutCallbacks.serialize(baseline);
@@ -84,35 +78,17 @@ func (s *testSys) serializeState(baseline *strings.Builder, order serializeOutpu
 	// this.service?.baseline();
 }
 
-func (s *testSys) baselineFS(baseline *strings.Builder) {
-	baseline.WriteString("\n\nCurrentFiles::")
-	err := s.FS().WalkDir(s.GetCurrentDirectory(), func(path string, d vfs.DirEntry, e error) error {
-		if e != nil {
-			return e
-		}
-		if d.Type().IsRegular() {
-			contents, ok := s.FS().ReadFile(path)
-			if !ok {
-				return nil
-			}
-			baseline.WriteString("\n//// [" + path + "]\n" + contents)
-		}
-		return nil
-	})
-	if err != nil {
-		panic("walkdir error during fs baseline")
-	}
-}
-
-func (s *testSys) serializeOutput(baseline io.Writer) {
+func (s *testSys) baselineOutput(baseline io.Writer) {
 	fmt.Fprint(baseline, "\nOutput::\n")
+	if len(s.output) == 0 {
+		fmt.Fprint(baseline, "No output\n")
+	}
 	// todo screen clears
 	s.baselineOutputs(baseline, 0, len(s.output))
 }
 
-func (s *testSys) diff(baseline io.Writer) {
-	// todo: watch isnt implemented
-	// todo: not sure if this actually runs diff correctly, but don't really care atm because we aren't passing edits into the test, so we don't care abt diffs
+func (s *testSys) baselineFSwithDiff(baseline io.Writer) {
+	// todo: baselines the entire fs, possibly doesn't correctly diff all cases of emitted files, since emit isn't fully implemented and doesn't always emit the same way as strada
 	snap := map[string]string{}
 
 	err := s.FS().WalkDir(s.GetCurrentDirectory(), func(path string, d vfs.DirEntry, e error) error {
@@ -129,7 +105,7 @@ func (s *testSys) diff(baseline io.Writer) {
 			return nil
 		}
 		snap[path] = newContents
-		diffFSEntry(baseline, s.serializedDiff[path], newContents, path)
+		reportFSEntryDiff(baseline, s.serializedDiff[path], newContents, path)
 
 		return nil
 	})
@@ -141,7 +117,7 @@ func (s *testSys) diff(baseline io.Writer) {
 			_, ok := s.FS().ReadFile(path)
 			if !ok {
 				// report deleted
-				diffFSEntry(baseline, oldDirContents, "", path)
+				reportFSEntryDiff(baseline, oldDirContents, "", path)
 			}
 		}
 	}
@@ -149,14 +125,16 @@ func (s *testSys) diff(baseline io.Writer) {
 	fmt.Fprintln(baseline)
 }
 
-func diffFSEntry(baseline io.Writer, oldDirContent string, newDirContent string, path string) {
+func reportFSEntryDiff(baseline io.Writer, oldDirContent string, newDirContent string, path string) {
 	// todo handle more cases of fs changes
-	if newDirContent == "" {
-		fmt.Fprint(baseline, `//// [`, path, `] deleted`, "\n")
+	if oldDirContent == "" {
+		fmt.Fprint(baseline, "//// [", path, "] new file\n", newDirContent, "\n")
+	} else if newDirContent == "" {
+		fmt.Fprint(baseline, "//// [", path, "] deleted\n")
 	} else if newDirContent == oldDirContent {
-		return
+		fmt.Fprint(baseline, "//// [", path, "] no change\n")
 	} else {
-		fmt.Fprint(baseline, `//// [`, path, `]\n`, newDirContent, "\n")
+		fmt.Fprint(baseline, "//// [", path, "] modified. new content:\n", newDirContent, "\n")
 	}
 }
 
