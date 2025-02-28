@@ -19,6 +19,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/tsoptions/tsoptionstest"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
 	"gotest.tools/v3/assert"
 )
 
@@ -514,13 +515,15 @@ func TestParseJsonConfigFileContent(t *testing.T) {
 		t.Run(rec.title+" with json api", func(t *testing.T) {
 			t.Parallel()
 			baselineParseConfigWith(t, rec.title+" with json api.js", rec.noSubmoduleBaseline, rec.input, func(config testConfig, host tsoptions.ParseConfigHost, basePath string) *tsoptions.ParsedCommandLine {
-				parsed, _ := tsoptions.ParseConfigFileTextToJson(config.configFileName, config.basePath, config.jsonText)
+				configFileName := tspath.GetNormalizedAbsolutePath(config.configFileName, basePath)
+				path := tspath.ToPath(config.configFileName, basePath, host.FS().UseCaseSensitiveFileNames())
+				parsed, _ := tsoptions.ParseConfigFileTextToJson(configFileName, path, config.jsonText)
 				return tsoptions.ParseJsonConfigFileContent(
 					parsed,
 					host,
 					basePath,
 					nil,
-					tspath.GetNormalizedAbsolutePath(config.configFileName, basePath),
+					configFileName,
 					/*resolutionStack*/ nil,
 					/*extraFileExtensions*/ nil,
 					/*extendedConfigCache*/ nil,
@@ -537,7 +540,9 @@ func TestParseJsonSourceFileConfigFileContent(t *testing.T) {
 		t.Run(rec.title+" with jsonSourceFile api", func(t *testing.T) {
 			t.Parallel()
 			baselineParseConfigWith(t, rec.title+" with jsonSourceFile api.js", rec.noSubmoduleBaseline, rec.input, func(config testConfig, host tsoptions.ParseConfigHost, basePath string) *tsoptions.ParsedCommandLine {
-				parsed := parser.ParseJSONText(config.configFileName, config.jsonText)
+				configFileName := tspath.GetNormalizedAbsolutePath(config.configFileName, basePath)
+				path := tspath.ToPath(config.configFileName, basePath, host.FS().UseCaseSensitiveFileNames())
+				parsed := parser.ParseJSONText(configFileName, path, config.jsonText)
 				tsConfigSourceFile := &tsoptions.TsConfigSourceFile{
 					SourceFile: parsed,
 				}
@@ -546,7 +551,7 @@ func TestParseJsonSourceFileConfigFileContent(t *testing.T) {
 					host,
 					host.GetCurrentDirectory(),
 					nil,
-					tspath.GetNormalizedAbsolutePath(config.configFileName, basePath),
+					configFileName,
 					/*resolutionStack*/ nil,
 					/*extraFileExtensions*/ nil,
 					/*extendedConfigCache*/ nil,
@@ -557,6 +562,7 @@ func TestParseJsonSourceFileConfigFileContent(t *testing.T) {
 }
 
 func baselineParseConfigWith(t *testing.T, baselineFileName string, noSubmoduleBaseline bool, input []testConfig, getParsed func(config testConfig, host tsoptions.ParseConfigHost, basePath string) *tsoptions.ParsedCommandLine) {
+	noSubmoduleBaseline = true
 	var baselineContent strings.Builder
 	for i, config := range input {
 		basePath := config.basePath
@@ -643,17 +649,18 @@ func TestParseSrcCompiler(t *testing.T) {
 	repo.SkipIfNoTypeScriptSubmodule(t)
 
 	compilerDir := tspath.NormalizeSlashes(filepath.Join(repo.TypeScriptSubmodulePath, "src", "compiler"))
-	tsconfigPath := tspath.CombinePaths(compilerDir, "tsconfig.json")
+	tsconfigFileName := tspath.CombinePaths(compilerDir, "tsconfig.json")
 
-	fs := vfs.FromOS()
+	fs := osvfs.FS()
 	host := &tsoptionstest.VfsParseConfigHost{
 		Vfs:              fs,
 		CurrentDirectory: compilerDir,
 	}
 
-	jsonText, ok := fs.ReadFile(tsconfigPath)
+	jsonText, ok := fs.ReadFile(tsconfigFileName)
 	assert.Assert(t, ok)
-	parsed := parser.ParseJSONText(tsconfigPath, jsonText)
+	tsconfigPath := tspath.ToPath(tsconfigFileName, compilerDir, fs.UseCaseSensitiveFileNames())
+	parsed := parser.ParseJSONText(tsconfigFileName, tsconfigPath, jsonText)
 
 	if len(parsed.Diagnostics()) > 0 {
 		for _, error := range parsed.Diagnostics() {
@@ -671,7 +678,7 @@ func TestParseSrcCompiler(t *testing.T) {
 		host,
 		host.GetCurrentDirectory(),
 		nil,
-		tsconfigPath,
+		tsconfigFileName,
 		/*resolutionStack*/ nil,
 		/*extraFileExtensions*/ nil,
 		/*extendedConfigCache*/ nil,
@@ -693,7 +700,7 @@ func TestParseSrcCompiler(t *testing.T) {
 		OutDir:                     tspath.NormalizeSlashes(filepath.Join(repo.TypeScriptSubmodulePath, "built", "local")),
 		Target:                     core.ScriptTargetES2020,
 		Types:                      []string{"node"},
-		ConfigFilePath:             tsconfigPath,
+		ConfigFilePath:             tsconfigFileName,
 		Declaration:                core.TSTrue,
 		DeclarationMap:             core.TSTrue,
 		AlwaysStrict:               core.TSTrue,
@@ -807,17 +814,18 @@ func BenchmarkParseSrcCompiler(b *testing.B) {
 	repo.SkipIfNoTypeScriptSubmodule(b)
 
 	compilerDir := tspath.NormalizeSlashes(filepath.Join(repo.TypeScriptSubmodulePath, "src", "compiler"))
-	tsconfigPath := tspath.CombinePaths(compilerDir, "tsconfig.json")
+	tsconfigFileName := tspath.CombinePaths(compilerDir, "tsconfig.json")
 
-	fs := vfs.FromOS()
+	fs := osvfs.FS()
 	host := &tsoptionstest.VfsParseConfigHost{
 		Vfs:              fs,
 		CurrentDirectory: compilerDir,
 	}
 
-	jsonText, ok := fs.ReadFile(tsconfigPath)
+	jsonText, ok := fs.ReadFile(tsconfigFileName)
 	assert.Assert(b, ok)
-	parsed := parser.ParseJSONText(tsconfigPath, jsonText)
+	tsconfigPath := tspath.ToPath(tsconfigFileName, compilerDir, fs.UseCaseSensitiveFileNames())
+	parsed := parser.ParseJSONText(tsconfigFileName, tsconfigPath, jsonText)
 
 	b.ReportAllocs()
 	b.ResetTimer()
@@ -830,7 +838,7 @@ func BenchmarkParseSrcCompiler(b *testing.B) {
 			host,
 			host.GetCurrentDirectory(),
 			nil,
-			tsconfigPath,
+			tsconfigFileName,
 			/*resolutionStack*/ nil,
 			/*extraFileExtensions*/ nil,
 			/*extendedConfigCache*/ nil,

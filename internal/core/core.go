@@ -4,8 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"iter"
+	"math"
 	"slices"
+	"sort"
 	"strings"
+	"unicode"
 	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/stringutil"
@@ -222,6 +225,26 @@ func Concatenate[T any](s1 []T, s2 []T) []T {
 	return slices.Concat(s1, s2)
 }
 
+func Splice[T any](s1 []T, start int, deleteCount int, items ...T) []T {
+	if start < 0 {
+		start = len(s1) + start
+	}
+	if start < 0 {
+		start = 0
+	}
+	if start > len(s1) {
+		start = len(s1)
+	}
+	if deleteCount < 0 {
+		deleteCount = 0
+	}
+	end := min(start+max(deleteCount, 0), len(s1))
+	if start == end && len(items) == 0 {
+		return s1
+	}
+	return slices.Concat(s1[:start], items, s1[end:])
+}
+
 func CountWhere[T any](slice []T, f func(T) bool) int {
 	count := 0
 	for _, value := range slice {
@@ -290,7 +313,7 @@ func Coalesce[T *U, U any](a T, b T) T {
 }
 
 func ComputeLineStarts(text string) []TextPos {
-	var result []TextPos
+	result := make([]TextPos, 0, strings.Count(text, "\n")+1)
 	pos := 0
 	lineStart := 0
 	for pos < len(text) {
@@ -318,6 +341,16 @@ func ComputeLineStarts(text string) []TextPos {
 	}
 	result = append(result, TextPos(lineStart))
 	return result
+}
+
+func PositionToLineAndCharacter(position int, lineStarts []TextPos) (line int, character int) {
+	line = sort.Search(len(lineStarts), func(i int) bool {
+		return int(lineStarts[i]) > position
+	}) - 1
+	if line < 0 {
+		line = 0
+	}
+	return line, position - int(lineStarts[line])
 }
 
 func Flatten[T any](array [][]T) []T {
@@ -366,4 +399,98 @@ func GetScriptKindFromFileName(fileName string) ScriptKind {
 		}
 	}
 	return ScriptKindUnknown
+}
+
+// Given a name and a list of names that are *not* equal to the name, return a spelling suggestion if there is one that is close enough.
+// Names less than length 3 only check for case-insensitive equality.
+//
+// find the candidate with the smallest Levenshtein distance,
+//
+//	except for candidates:
+//	  * With no name
+//	  * Whose length differs from the target name by more than 0.34 of the length of the name.
+//	  * Whose levenshtein distance is more than 0.4 of the length of the name
+//	    (0.4 allows 1 substitution/transposition for every 5 characters,
+//	     and 1 insertion/deletion at 3 characters)
+//
+// @internal
+func GetSpellingSuggestion[T any](name string, candidates []T, getName func(T) string) T {
+	maximumLengthDifference := max(2, int(float64(len(name))*0.34))
+	bestDistance := math.Floor(float64(len(name))*0.4) + 1 // If the best result is worse than this, don't bother.
+	runeName := []rune(name)
+	var bestCandidate T
+	for _, candidate := range candidates {
+		candidateName := getName(candidate)
+		maxLen := max(len(candidateName), len(name))
+		minLen := min(len(candidateName), len(name))
+		if candidateName != "" && maxLen-minLen <= maximumLengthDifference {
+			if candidateName == name {
+				continue
+			}
+			// Only consider candidates less than 3 characters long when they differ by case.
+			// Otherwise, don't bother, since a user would usually notice differences of a 2-character name.
+			if len(candidateName) < 3 && strings.ToLower(candidateName) != strings.ToLower(name) {
+				continue
+			}
+			distance := levenshteinWithMax(runeName, []rune(candidateName), bestDistance-0.1)
+			if distance < 0 {
+				continue
+			}
+			// Debug.assert(distance < bestDistance) // Else `levenshteinWithMax` should return undefined
+			bestDistance = distance
+			bestCandidate = candidate
+		}
+	}
+	return bestCandidate
+}
+
+func levenshteinWithMax(s1 []rune, s2 []rune, maxValue float64) float64 {
+	previous := make([]float64, len(s2)+1)
+	current := make([]float64, len(s2)+1)
+	big := maxValue + 0.01
+	for i := range previous {
+		previous[i] = float64(i)
+	}
+	for i := 1; i <= len(s1); i++ {
+		c1 := s1[i-1]
+		minJ := max(int(math.Ceil(float64(i)-maxValue)), 1)
+		maxJ := min(int(math.Floor(maxValue+float64(i))), len(s2))
+		colMin := float64(i)
+		current[0] = colMin
+		for j := 1; j < minJ; j++ {
+			current[j] = big
+		}
+		for j := minJ; j <= maxJ; j++ {
+			var substitutionDistance, dist float64
+			if unicode.ToLower(s1[i-1]) == unicode.ToLower(s2[j-1]) {
+				substitutionDistance = previous[j-1] + 0.1
+			} else {
+				substitutionDistance = previous[j-1] + 2
+			}
+			if c1 == s2[j-1] {
+				dist = previous[j-1]
+			} else {
+				dist = math.Min(previous[j]+1, math.Min(current[j-1]+1, substitutionDistance))
+			}
+			current[j] = dist
+			colMin = math.Min(colMin, dist)
+		}
+		for j := maxJ + 1; j <= len(s2); j++ {
+			current[j] = big
+		}
+		if colMin > maxValue {
+			// Give up -- everything in this column is > max and it can't get better in future columns.
+			return -1
+		}
+		previous, current = current, previous
+	}
+	res := previous[len(s2)]
+	if res > maxValue {
+		return -1
+	}
+	return res
+}
+
+func Identity[T any](t T) T {
+	return t
 }

@@ -10,36 +10,15 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-type sourceFileAffectingCompilerOptions struct {
-	// !!! generate this
-	target          core.ScriptTarget
-	jsx             core.JsxEmit
-	jsxImportSource string
-	importHelpers   core.Tristate
-	alwaysStrict    core.Tristate
-	moduleDetection core.ModuleDetectionKind
-}
-
-func getSourceFileAffectingCompilerOptions(options *core.CompilerOptions) sourceFileAffectingCompilerOptions {
-	return sourceFileAffectingCompilerOptions{
-		target:          options.Target,
-		jsx:             options.Jsx,
-		jsxImportSource: options.JsxImportSource,
-		importHelpers:   options.ImportHelpers,
-		alwaysStrict:    options.AlwaysStrict,
-		moduleDetection: options.ModuleDetection,
-	}
-}
-
 type registryKey struct {
-	sourceFileAffectingCompilerOptions
+	core.SourceFileAffectingCompilerOptions
 	path       tspath.Path
 	scriptKind core.ScriptKind
 }
 
 func newRegistryKey(options *core.CompilerOptions, path tspath.Path, scriptKind core.ScriptKind) registryKey {
 	return registryKey{
-		sourceFileAffectingCompilerOptions: getSourceFileAffectingCompilerOptions(options),
+		SourceFileAffectingCompilerOptions: options.SourceFileAffecting(),
 		path:                               path,
 		scriptKind:                         scriptKind,
 	}
@@ -64,7 +43,7 @@ func newDocumentRegistry(options tspath.ComparePathsOptions) *documentRegistry {
 	}
 }
 
-// GetDocument gets a SourceFile from the registry if it exists as the same version tracked
+// acquireDocument gets a SourceFile from the registry if it exists as the same version tracked
 // by the ScriptInfo. If it does not exist, or is out of date, it creates a new SourceFile and
 // stores it, tracking that the caller has referenced it. If an oldSourceFile is passed, the registry
 // will decrement its reference count and remove it from the registry if the count reaches 0.
@@ -75,17 +54,22 @@ func newDocumentRegistry(options tspath.ComparePathsOptions) *documentRegistry {
 // LanguageService instance over time, as well as across multiple instances. Here, we still
 // reuse files across multiple LanguageServices, but we only reuse them across Program updates
 // when the files haven't changed.
-func (r *documentRegistry) AcquireDocument(scriptInfo *ScriptInfo, compilerOptions *core.CompilerOptions, oldSourceFile *ast.SourceFile, oldCompilerOptions *core.CompilerOptions) *ast.SourceFile {
+func (r *documentRegistry) acquireDocument(scriptInfo *ScriptInfo, compilerOptions *core.CompilerOptions, oldSourceFile *ast.SourceFile, oldCompilerOptions *core.CompilerOptions) *ast.SourceFile {
 	key := newRegistryKey(compilerOptions, scriptInfo.path, scriptInfo.scriptKind)
 	document := r.getDocumentWorker(scriptInfo, compilerOptions, key)
 	if oldSourceFile != nil && oldCompilerOptions != nil {
 		oldKey := newRegistryKey(oldCompilerOptions, scriptInfo.path, oldSourceFile.ScriptKind)
-		r.ReleaseDocument(oldKey)
+		r.releaseDocumentWithKey(oldKey)
 	}
 	return document
 }
 
-func (r *documentRegistry) ReleaseDocument(key registryKey) {
+func (r *documentRegistry) releaseDocument(file *ast.SourceFile, compilerOptions *core.CompilerOptions) {
+	key := newRegistryKey(compilerOptions, file.Path(), file.ScriptKind)
+	r.releaseDocumentWithKey(key)
+}
+
+func (r *documentRegistry) releaseDocumentWithKey(key registryKey) {
 	if entryAny, ok := r.documents.Load(key); ok {
 		entry := entryAny.(*registryEntry)
 		entry.mu.Lock()
@@ -108,7 +92,7 @@ func (r *documentRegistry) getDocumentWorker(
 		// the script snapshot. If so, update it appropriately.
 		entry := entryAny.(*registryEntry)
 		if entry.sourceFile.Version != scriptInfo.version {
-			sourceFile := parser.ParseSourceFile(scriptInfo.fileName, scriptInfo.text, scriptTarget, scanner.JSDocParsingModeParseAll)
+			sourceFile := parser.ParseSourceFile(scriptInfo.fileName, scriptInfo.path, scriptInfo.text, scriptTarget, scanner.JSDocParsingModeParseAll)
 			sourceFile.Version = scriptInfo.version
 			entry.mu.Lock()
 			defer entry.mu.Unlock()
@@ -118,7 +102,7 @@ func (r *documentRegistry) getDocumentWorker(
 		return entry.sourceFile
 	} else {
 		// Have never seen this file with these settings. Create a new source file for it.
-		sourceFile := parser.ParseSourceFile(scriptInfo.fileName, scriptInfo.text, scriptTarget, scanner.JSDocParsingModeParseAll)
+		sourceFile := parser.ParseSourceFile(scriptInfo.fileName, scriptInfo.path, scriptInfo.text, scriptTarget, scanner.JSDocParsingModeParseAll)
 		sourceFile.Version = scriptInfo.version
 		entryAny, _ := r.documents.LoadOrStore(key, &registryEntry{
 			sourceFile: sourceFile,
@@ -130,4 +114,14 @@ func (r *documentRegistry) getDocumentWorker(
 		entry.refCount++
 		return entry.sourceFile
 	}
+}
+
+// size should only be used for testing.
+func (r *documentRegistry) size() int {
+	count := 0
+	r.documents.Range(func(_, _ any) bool {
+		count++
+		return true
+	})
+	return count
 }

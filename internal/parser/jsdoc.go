@@ -41,9 +41,11 @@ func (p *Parser) withJSDoc(node *ast.Node, hasJSDoc bool) {
 	ranges := getJSDocCommentRanges(&p.factory, p.jsdocCommentRangesSpace, node, p.sourceText)
 	p.jsdocCommentRangesSpace = ranges[:0]
 	jsDoc := p.nodeSlicePool.NewSlice(len(ranges))[:0]
+	pos := node.Pos()
 	for _, comment := range ranges {
-		if parsed := p.parseJSDocComment(node, comment.Pos(), comment.End()); parsed != nil {
+		if parsed := p.parseJSDocComment(node, comment.Pos(), comment.End(), pos); parsed != nil {
 			jsDoc = append(jsDoc, parsed)
+			pos = parsed.End()
 		}
 	}
 	if len(jsDoc) != 0 {
@@ -106,7 +108,7 @@ func (p *Parser) parseJSDocNameReference() *ast.Node {
 }
 
 // Pass end=-1 to parse the text to the end
-func (p *Parser) parseJSDocComment(parent *ast.Node, start int, end int) *ast.Node {
+func (p *Parser) parseJSDocComment(parent *ast.Node, start int, end int, fullStart int) *ast.Node {
 	if end == -1 {
 		end = len(p.sourceText)
 	}
@@ -136,7 +138,7 @@ func (p *Parser) parseJSDocComment(parent *ast.Node, start int, end int) *ast.No
 	p.setContextFlags(ast.NodeFlagsJSDoc, true)
 	p.parsingContexts = p.parsingContexts | ParsingContexts(PCJSDocComment)
 
-	comment := p.parseJSDocCommentWorker(start, end, initialIndent)
+	comment := p.parseJSDocCommentWorker(start, end, fullStart, initialIndent)
 	comment.Parent = parent
 	// move jsdoc diagnostics to jsdocDiagnostics -- for JS files only
 	if p.contextFlags&ast.NodeFlagsJavaScriptFile != 0 {
@@ -159,7 +161,7 @@ func (p *Parser) parseJSDocComment(parent *ast.Node, start int, end int) *ast.No
  * @param offset - the offset in the containing file
  * @param indent - the number of spaces to consider as the margin (applies to non-first lines only)
  */
-func (p *Parser) parseJSDocCommentWorker(start int, end int, indent int) *ast.Node {
+func (p *Parser) parseJSDocCommentWorker(start int, end int, fullStart int, indent int) *ast.Node {
 	// Initially we can parse out a tag.  We also have seen a starting asterisk.
 	// This is so that /** * @type */ doesn't parse.
 	tags := p.nodeSlicePool.NewSlice(1)[:0]
@@ -230,14 +232,14 @@ loop:
 			// only collect whitespace if we're already saving comments or have just crossed the comment indent margin
 			whitespace := p.scanner.TokenText()
 			if margin > -1 && indent+len(whitespace) > margin {
-				start := margin - indent
-				if start < 0 {
-					start += len(whitespace)
+				existingIndent := margin - indent
+				if existingIndent < 0 {
+					existingIndent += len(whitespace)
 				}
-				if start < 0 {
-					start = 0
+				if existingIndent < 0 {
+					existingIndent = 0
 				}
-				comments = append(comments, whitespace[start:])
+				comments = append(comments, whitespace[existingIndent:])
 			}
 			indent += len(whitespace)
 		case ast.KindEndOfFile:
@@ -285,13 +287,13 @@ loop:
 		p.finishNodeWithEnd(jsdocText, linkEnd, commentsPos)
 		commentParts = append(commentParts, jsdocText)
 	}
-	if len(commentParts) > 0 && tags != nil && commentsPos == -1 {
+	if len(commentParts) > 0 && len(tags) > 0 && commentsPos == -1 {
 		panic("having parsed tags implies that the end of the comment span should be set")
 	}
 	jsdocComment := p.factory.NewJSDoc(
 		p.newNodeList(core.NewTextRange(start, commentsPos), commentParts),
-		p.newNodeList(core.NewTextRange(tagsPos, tagsEnd), tags))
-	p.finishNodeWithEnd(jsdocComment, start, end)
+		core.IfElse(tagsPos != -1, p.newNodeList(core.NewTextRange(tagsPos, tagsEnd), tags), nil))
+	p.finishNodeWithEnd(jsdocComment, fullStart, end)
 	return jsdocComment
 }
 
@@ -336,7 +338,7 @@ func (p *Parser) isNextNonwhitespaceTokenEndOfFile() bool {
 
 func (p *Parser) skipWhitespace() {
 	if p.token == ast.KindWhitespaceTrivia || p.token == ast.KindNewLineTrivia {
-		if p.lookAhead(p.isNextNonwhitespaceTokenEndOfFile) {
+		if p.lookAhead((*Parser).isNextNonwhitespaceTokenEndOfFile) {
 			return
 			// Don't skip whitespace prior to EoF (or end of comment) - that shouldn't be included in any node's range
 		}
@@ -348,7 +350,7 @@ func (p *Parser) skipWhitespace() {
 
 func (p *Parser) skipWhitespaceOrAsterisk() string {
 	if p.token == ast.KindWhitespaceTrivia || p.token == ast.KindNewLineTrivia {
-		if p.lookAhead(p.isNextNonwhitespaceTokenEndOfFile) {
+		if p.lookAhead((*Parser).isNextNonwhitespaceTokenEndOfFile) {
 			return ""
 			// Don't skip whitespace prior to EoF (or end of comment) - that shouldn't be included in any node's range
 		}
@@ -723,7 +725,7 @@ func (p *Parser) parseParameterOrPropertyTag(start int, tagName *ast.IdentifierN
 	name, isBracketed := p.parseBracketNameInPropertyAndParamTag()
 	indentText := p.skipWhitespaceOrAsterisk()
 
-	if isNameFirst && p.lookAhead(func() bool { _, ok := p.parseJSDocLinkPrefix(); return !ok }) {
+	if isNameFirst && p.lookAhead(func(p *Parser) bool { _, ok := p.parseJSDocLinkPrefix(); return !ok }) {
 		typeExpression = p.tryParseTypeExpression()
 	}
 
@@ -800,7 +802,7 @@ func (p *Parser) parseTypeTag(previousTags []*ast.Node, start int, tagName *ast.
 }
 
 func (p *Parser) parseSeeTag(start int, tagName *ast.IdentifierNode, indent int, indentText string) *ast.Node {
-	isMarkdownOrJSDocLink := p.token == ast.KindOpenBracketToken || p.lookAhead(func() bool {
+	isMarkdownOrJSDocLink := p.token == ast.KindOpenBracketToken || p.lookAhead(func(p *Parser) bool {
 		return p.nextTokenJSDoc() == ast.KindAtToken && tokenIsIdentifierOrKeyword(p.nextTokenJSDoc()) && isJSDocLinkTag(p.scanner.TokenValue())
 	})
 	var nameExpression *ast.Node

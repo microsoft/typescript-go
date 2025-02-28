@@ -98,6 +98,7 @@ func TestPlugin(t *testing.T) {
 		prettyPath := filepath.ToSlash(rel)
 
 		t.Run(prettyPath, func(t *testing.T) {
+			t.Parallel()
 			diagsMap := diagsByPath[p]
 			diags := make([]*diagnostic, 0, len(diagsMap))
 			for diag := range diagsMap {
@@ -120,11 +121,11 @@ func TestPlugin(t *testing.T) {
 				return 0
 			})
 
-			fileContents, err := os.ReadFile(p)
-			assert.NilError(t, err)
+			fileContents, readErr := os.ReadFile(p)
+			assert.NilError(t, readErr)
 
-			goldenPath, err := filepath.Rel(testdataDir, p+".golden")
-			assert.NilError(t, err)
+			goldenPath, relErr := filepath.Rel(testdataDir, p+".golden")
+			assert.NilError(t, relErr)
 
 			expected := toGolden(fileContents, diags)
 
