@@ -48,7 +48,10 @@ func TestInsensitive(t *testing.T) {
 	entries, err := fs.ReadDir(vfs, "foo")
 	assert.NilError(t, err)
 	assert.DeepEqual(t, dirEntriesToNames(entries), []string{"bar", "bar2", "bar3"})
+
 	_, err = vfs.Realpath("does/not/exist")
+	assert.ErrorContains(t, err, "file does not exist")
+	_, err = fs.Stat(vfs, "does/not/exist")
 	assert.ErrorContains(t, err, "file does not exist")
 
 	// TODO: reenable in Go 1.25 when TestFS understands symlinks.
@@ -66,7 +69,10 @@ func TestInsensitive(t *testing.T) {
 	entries, err = fs.ReadDir(vfs, "Foo")
 	assert.NilError(t, err)
 	assert.DeepEqual(t, dirEntriesToNames(entries), []string{"bar", "bar2", "bar3"})
+
 	_, err = vfs.Realpath("Does/Not/Exist")
+	assert.ErrorContains(t, err, "file does not exist")
+	_, err = fs.Stat(vfs, "Does/Not/Exist")
 	assert.ErrorContains(t, err, "file does not exist")
 
 	// TODO: reenable in Go 1.25 when TestFS understands symlinks.
