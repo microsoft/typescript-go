@@ -234,21 +234,22 @@ func (m *mapFS) setEntry(realpath string, canonical canonicalPath, file fstest.M
 	}
 }
 
-func dirName(p string) string {
-	// TODO: this uses path.Clean; we shouldn't depend on this, realy...
-	dir := path.Dir(p)
-	if dir == "." {
-		return ""
-	}
-	return dir
-}
-
-func cutOffset(s string, sep byte, offset int) (before, after string) {
+func splitPath(s string, sep byte, offset int) (before, after string) {
 	idx := strings.IndexByte(s[offset:], sep)
 	if idx < 0 {
 		return s, ""
 	}
 	return s[:idx+offset], s[idx+1+offset:]
+}
+
+func dirName(p string) string {
+	dir, _ := path.Split(p)
+	return strings.TrimSuffix(dir, "/")
+}
+
+func baseName(p string) string {
+	_, file := path.Split(p)
+	return file
 }
 
 func (m *mapFS) mkdirAll(p string, perm fs.FileMode) error {
@@ -267,7 +268,7 @@ func (m *mapFS) mkdirAll(p string, perm fs.FileMode) error {
 	var toCreate []string
 	offset := 0
 	for {
-		dir, rest := cutOffset(p, '/', offset)
+		dir, rest := splitPath(p, '/', offset)
 		canonical := m.getCanonicalPath(dir)
 		other, otherPath, err := m.getFollowingSymlinks(canonical)
 		if err != nil {
@@ -309,7 +310,7 @@ type fileInfo struct {
 }
 
 func (fi *fileInfo) Name() string {
-	return path.Base(fi.realpath)
+	return baseName(fi.realpath)
 }
 
 func (fi *fileInfo) Sys() any {
