@@ -277,7 +277,7 @@ func (m *mapFS) mkdirAll(p string, perm fs.FileMode) error {
 			toCreate = append(toCreate, dir)
 		} else {
 			if !other.Mode.IsDir() {
-				return fmt.Errorf("mkdir %q: path exists but is not a directory", dir)
+				return fmt.Errorf("mkdir %q: path exists but is not a directory", otherPath)
 			}
 			if canonical != otherPath {
 				// We have a symlinked parent, reset and start again.

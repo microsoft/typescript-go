@@ -648,3 +648,17 @@ func TestWritableFSSymlinkChain(t *testing.T) {
 	assert.Assert(t, ok)
 	assert.Equal(t, content, "this is new.ts")
 }
+
+func TestWritableFSSymlinkChainNotDir(t *testing.T) {
+	t.Parallel()
+
+	fs := FromMap(map[string]any{
+		"/a": Symlink("/b"),
+		"/b": Symlink("/c"),
+		"/c": Symlink("/d"),
+		"/d": "hello, world",
+	}, false)
+
+	err := fs.WriteFile("/a/foo/bar/new.ts", "this is new.ts", false)
+	assert.Error(t, err, `mkdir "d": path exists but is not a directory`)
+}
