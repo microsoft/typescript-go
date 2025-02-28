@@ -1985,6 +1985,17 @@ func (c *Checker) checkSourceFile(sourceFile *ast.SourceFile) {
 		// !!!
 		c.checkSourceElements(sourceFile.Statements.Nodes)
 		c.checkDeferredNodes(sourceFile)
+		c.checkJSDocNodes(sourceFile)
+		if ast.IsExternalOrCommonJsModule(sourceFile) {
+			c.registerForUnusedIdentifiersCheck(sourceFile.AsNode())
+		}
+		// This relies on the results of other lazy diagnostics, so must be computed after them
+		if !sourceFile.IsDeclarationFile && (c.compilerOptions.NoUnusedLocals.IsTrue() || c.compilerOptions.NoUnusedParameters.IsTrue()) {
+			c.checkUnusedIdentifiers(links.identifierCheckNodes)
+		}
+		// if !node.IsDeclarationFile {
+		// 	c.checkPotentialUncheckedRenamedBindingElementsInTypes()
+		// }
 		links.typeChecked = true
 	}
 }
@@ -2191,6 +2202,61 @@ func (c *Checker) checkDeferredNode(node *ast.Node) {
 		}
 	}
 	c.currentNode = saveCurrentNode
+}
+
+func (c *Checker) checkJSDocNodes(sourceFile *ast.SourceFile) {
+	// !!!
+	// This performs minimal checking of JSDoc nodes to ensure that @link references to entities are recorded
+	// for purposes of checking unused identifiers. We pass down a location node because the binder doesn't currently
+	// set parent references in JSDoc nodes.
+	for location, jsdocs := range sourceFile.JSDocCache() {
+		for _, jsdoc := range jsdocs {
+			c.checkJSDocComments(jsdoc, location)
+			tags := jsdoc.AsJSDoc().Tags
+			if tags != nil {
+				for _, tag := range tags.Nodes {
+					c.checkJSDocComments(tag, location)
+				}
+			}
+		}
+	}
+}
+
+func (c *Checker) checkJSDocComments(node *ast.Node, location *ast.Node) {
+	for _, comment := range node.Comments() {
+		c.checkJSDocComment(comment, location)
+	}
+}
+
+func (c *Checker) checkJSDocComment(node *ast.Node, location *ast.Node) {
+	switch node.Kind {
+	case ast.KindJSDocLink, ast.KindJSDocLinkCode, ast.KindJSDocLinkPlain:
+		c.resolveJSDocMemberName(node.Name(), location)
+	}
+}
+
+func (c *Checker) resolveJSDocMemberName(name *ast.Node, location *ast.Node) *ast.Symbol {
+	if name != nil && ast.IsEntityName(name) {
+		meaning := ast.SymbolFlagsType | ast.SymbolFlagsNamespace | ast.SymbolFlagsValue
+		symbol := c.resolveEntityName(name, meaning, true /*ignoreErrors*/, true /*dontResolveAlias*/, location)
+		if symbol == nil && ast.IsQualifiedName(name) {
+			symbol := c.resolveJSDocMemberName(name.AsQualifiedName().Left, location)
+			if symbol != nil {
+				var t *Type
+				if symbol.Flags&ast.SymbolFlagsValue != 0 {
+					proto := c.getPropertyOfType(c.getTypeOfSymbol(symbol), "prototype")
+					if proto != nil {
+						t = c.getTypeOfSymbol(proto)
+					}
+				}
+				if t == nil {
+					t = c.getDeclaredTypeOfSymbol(symbol)
+				}
+				return c.getPropertyOfType(t, name.AsQualifiedName().Right.Text())
+			}
+		}
+	}
+	return nil
 }
 
 func (c *Checker) checkTypeParameter(node *ast.Node) {
@@ -3798,10 +3864,7 @@ func (c *Checker) checkBindingElement(node *ast.Node) {
 }
 
 func (c *Checker) checkClassDeclaration(node *ast.Node) {
-	var firstDecorator *ast.Node
-	if modifiers := node.Modifiers(); modifiers != nil {
-		firstDecorator = core.Find(modifiers.NodeList.Nodes, ast.IsDecorator)
-	}
+	firstDecorator := core.Find(node.ModifierNodes(), ast.IsDecorator)
 	if c.legacyDecorators && firstDecorator != nil && core.Some(node.Members(), func(p *ast.Node) bool {
 		return ast.HasStaticModifier(p) && ast.IsPrivateIdentifierClassElementDeclaration(p)
 	}) {
@@ -4655,7 +4718,7 @@ func (c *Checker) checkModuleDeclaration(node *ast.Node) {
 			}
 		}
 		if c.compilerOptions.VerbatimModuleSyntax.IsTrue() && ast.IsSourceFile(node.Parent) && node.ModifierFlags()&ast.ModifierFlagsExport != 0 && c.program.GetEmitModuleFormatOfFile(node.Parent.AsSourceFile()) == core.ModuleKindCommonJS {
-			exportModifier := core.Find(node.Modifiers().Nodes, func(m *ast.Node) bool { return m.Kind == ast.KindExportKeyword })
+			exportModifier := core.Find(node.ModifierNodes(), func(m *ast.Node) bool { return m.Kind == ast.KindExportKeyword })
 			c.error(exportModifier, diagnostics.A_top_level_export_modifier_cannot_be_used_on_value_declarations_in_a_CommonJS_module_when_verbatimModuleSyntax_is_enabled)
 		}
 	}
@@ -5439,9 +5502,61 @@ func (c *Checker) checkVarDeclaredNamesNotShadowed(node *ast.Node) {
 }
 
 func (c *Checker) checkDecorators(node *ast.Node) {
-	// !!!
+	// skip this check for nodes that cannot have decorators. These should have already had an error reported by
+	// checkGrammarModifiers.
+	if !ast.CanHaveDecorators(node) || !hasDecorators(node) || !nodeCanBeDecorated(c.legacyDecorators, node, node.Parent, node.Parent.Parent) {
+		return
+	}
+	firstDecorator := core.Find(node.ModifierNodes(), ast.IsDecorator)
+	if firstDecorator == nil {
+		return
+	}
+	c.markLinkedReferences(node, ReferenceHintDecorator, nil, nil)
+	for _, modifier := range node.ModifierNodes() {
+		if ast.IsDecorator(modifier) {
+			c.checkDecorator(modifier)
+		}
+	}
+}
 
-	c.markLinkedReferences(node, ReferenceHintDecorator, nil /*propSymbol*/, nil /*parentType*/)
+func (c *Checker) checkDecorator(node *ast.Node) {
+	c.checkGrammarDecorator(node.AsDecorator())
+	signature := c.getResolvedSignature(node, nil, CheckModeNormal)
+	c.checkDeprecatedSignature(signature, node)
+	returnType := c.getReturnTypeOfSignature(signature)
+	if returnType.flags&TypeFlagsAny != 0 {
+		return
+	}
+	// if we fail to get a signature and return type here, we will have already reported a grammar error in `checkDecorators`.
+	decoratorSignature := c.getDecoratorCallSignature(node)
+	if decoratorSignature == nil || decoratorSignature.resolvedReturnType == nil {
+		return
+	}
+	var headMessage *diagnostics.Message
+	expectedReturnType := decoratorSignature.resolvedReturnType
+	switch node.Parent.Kind {
+	case ast.KindClassDeclaration, ast.KindClassExpression:
+		headMessage = diagnostics.Decorator_function_return_type_0_is_not_assignable_to_type_1
+	case ast.KindPropertyDeclaration:
+		if !c.legacyDecorators {
+			headMessage = diagnostics.Decorator_function_return_type_0_is_not_assignable_to_type_1
+			break
+		}
+		fallthrough
+	case ast.KindParameter:
+		headMessage = diagnostics.Decorator_function_return_type_is_0_but_is_expected_to_be_void_or_any
+	case ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor:
+		headMessage = diagnostics.Decorator_function_return_type_0_is_not_assignable_to_type_1
+	default:
+		panic("Unhandled case in checkDecorator")
+	}
+	c.checkTypeAssignableTo(returnType, expectedReturnType, node.Expression(), headMessage)
+}
+
+func (c *Checker) getDecoratorCallSignature(decorator *ast.Node) *Signature {
+	// !!!
+	c.markLinkedReferences(decorator, ReferenceHintDecorator, nil /*propSymbol*/, nil /*parentType*/)
+	return c.anySignature
 }
 
 func (c *Checker) checkIteratedTypeOrElementType(use IterationUse, inputType *Type, sentType *Type, errorNode *ast.Node) *Type {
@@ -6235,6 +6350,256 @@ func (c *Checker) registerForUnusedIdentifiersCheck(node *ast.Node) {
 	sourceFile := ast.GetSourceFileOfNode(node)
 	links := c.sourceFileLinks.Get(sourceFile)
 	links.identifierCheckNodes = append(links.identifierCheckNodes, node)
+}
+
+func (c *Checker) checkUnusedIdentifiers(potentiallyUnusedIdentifiers []*ast.Node) {
+	for _, node := range potentiallyUnusedIdentifiers {
+		switch node.Kind {
+		case ast.KindClassDeclaration, ast.KindClassExpression:
+			c.checkUnusedClassMembers(node)
+			c.checkUnusedTypeParameters(node)
+		case ast.KindSourceFile, ast.KindModuleDeclaration, ast.KindBlock, ast.KindCaseBlock, ast.KindForStatement, ast.KindForInStatement,
+			ast.KindForOfStatement:
+			c.checkUnusedLocalsAndParameters(node)
+		case ast.KindConstructor, ast.KindFunctionExpression, ast.KindFunctionDeclaration, ast.KindArrowFunction, ast.KindMethodDeclaration,
+			ast.KindGetAccessor, ast.KindSetAccessor:
+			// Only report unused parameters on the implementation, not overloads.
+			if node.Body() != nil {
+				c.checkUnusedLocalsAndParameters(node)
+			}
+			c.checkUnusedTypeParameters(node)
+		case ast.KindMethodSignature, ast.KindCallSignature, ast.KindConstructSignature, ast.KindFunctionType, ast.KindConstructorType,
+			ast.KindTypeAliasDeclaration, ast.KindInterfaceDeclaration:
+			c.checkUnusedTypeParameters(node)
+		case ast.KindInferType:
+			c.checkUnusedInferTypeParameter(node)
+		default:
+			panic("Unhandled case in checkUnusedIdentifiers")
+		}
+	}
+}
+
+func (c *Checker) isReferenced(symbol *ast.Symbol) bool {
+	return c.symbolReferenceLinks.Get(symbol).referenceKinds != 0
+}
+
+type UnusedKind int32
+
+const (
+	UnusedKindLocal UnusedKind = iota
+	UnusedKindParameter
+)
+
+func (c *Checker) reportUnusedVariable(location *ast.Node, diagnostic *ast.Diagnostic) {
+	for ast.IsBindingElement(location) || ast.IsBindingPattern(location) {
+		location = location.Parent
+	}
+	c.reportUnused(location, core.IfElse(ast.IsParameter(location), UnusedKindParameter, UnusedKindLocal), diagnostic)
+}
+
+func (c *Checker) reportUnused(location *ast.Node, kind UnusedKind, diagnostic *ast.Diagnostic) {
+	if location.Flags&ast.NodeFlagsAmbient == 0 &&
+		(kind == UnusedKindLocal && c.compilerOptions.NoUnusedLocals.IsTrue() ||
+			(kind == UnusedKindParameter && c.compilerOptions.NoUnusedParameters.IsTrue())) {
+		c.diagnostics.Add(diagnostic)
+	}
+}
+
+func (c *Checker) checkUnusedClassMembers(node *ast.Node) {
+	for _, member := range node.Members() {
+		switch member.Kind {
+		case ast.KindMethodDeclaration, ast.KindPropertyDeclaration, ast.KindGetAccessor, ast.KindSetAccessor:
+			if ast.IsSetAccessorDeclaration(member) && member.Symbol().Flags&ast.SymbolFlagsGetAccessor != 0 {
+				break // Already would have reported an error on the getter.
+			}
+			symbol := c.getSymbolOfDeclaration(member)
+			if !c.isReferenced(symbol) && (hasEffectiveModifier(member, ast.ModifierFlagsPrivate) || member.Name() != nil && ast.IsPrivateIdentifier(member.Name())) && member.Flags&ast.NodeFlagsAmbient == 0 {
+				c.reportUnused(member, UnusedKindLocal, NewDiagnosticForNode(member.Name(), diagnostics.X_0_is_declared_but_its_value_is_never_read, c.symbolToString(symbol)))
+			}
+		case ast.KindConstructor:
+			for _, parameter := range member.AsConstructorDeclaration().Parameters.Nodes {
+				if !c.isReferenced(parameter.Symbol()) && ast.HasSyntacticModifier(parameter, ast.ModifierFlagsPrivate) {
+					c.reportUnused(parameter, UnusedKindLocal, NewDiagnosticForNode(parameter.Name(), diagnostics.Property_0_is_declared_but_its_value_is_never_read, ast.SymbolName(parameter.Symbol())))
+				}
+			}
+		case ast.KindIndexSignature, ast.KindSemicolonClassElement, ast.KindClassStaticBlockDeclaration:
+			// Can't be private
+		default:
+			panic("Unhandled case in checkUnusedClassMembers")
+		}
+	}
+}
+
+func (c *Checker) checkUnusedLocalsAndParameters(node *ast.Node) {
+	var variableParents core.Set[*ast.Node]
+	var importClauses map[*ast.Node][]*ast.Node
+	for _, local := range node.Locals() {
+		referenceKinds := c.symbolReferenceLinks.Get(local).referenceKinds
+		if local.Flags&ast.SymbolFlagsTypeParameter != 0 && (local.Flags&ast.SymbolFlagsVariable == 0 || referenceKinds&ast.SymbolFlagsVariable != 0) ||
+			local.Flags&ast.SymbolFlagsTypeParameter == 0 && (referenceKinds != 0 || local.ExportSymbol != nil) {
+			continue
+		}
+		for _, declaration := range local.Declarations {
+			switch {
+			case ast.IsVariableDeclaration(declaration) || ast.IsParameter(declaration) || ast.IsBindingElement(declaration):
+				variableParents.Add(ast.GetRootDeclaration(declaration).Parent)
+			case ast.IsImportClause(declaration) || ast.IsImportSpecifier(declaration) || ast.IsNamespaceImport(declaration):
+				if !isIdentifierThatStartsWithUnderscore(declaration.Name()) {
+					if importClauses == nil {
+						importClauses = make(map[*ast.Node][]*ast.Node)
+					}
+					importClause := importClauseFromImported(declaration)
+					importClauses[importClause] = append(importClauses[importClause], declaration)
+				}
+			default:
+				if !ast.IsAmbientModule(declaration) {
+					c.reportUnusedLocal(declaration, ast.SymbolName(local))
+				}
+			}
+		}
+	}
+	for declaration := range variableParents.Keys() {
+		if ast.IsVariableDeclarationList(declaration) {
+			c.reportUnusedVariables(declaration)
+		} else {
+			c.reportUnusedParameters(declaration)
+		}
+	}
+	for declaration, unuseds := range importClauses {
+		c.reportUnusedImports(declaration, unuseds)
+	}
+}
+
+func (c *Checker) reportUnusedLocal(node *ast.Node, name string) {
+	message := core.IfElse(isTypeDeclaration(node), diagnostics.X_0_is_declared_but_never_used, diagnostics.X_0_is_declared_but_its_value_is_never_read)
+	c.reportUnused(node, UnusedKindLocal, NewDiagnosticForNode(node, message, name))
+}
+
+func (c *Checker) reportUnusedVariables(node *ast.Node) {
+	declarations := node.AsVariableDeclarationList().Declarations.Nodes
+	if core.Every(declarations, c.isUnreferencedVariableDeclaration) {
+		if len(declarations) == 1 && ast.IsIdentifier(declarations[0].Name()) {
+			c.reportUnusedVariable(node, NewDiagnosticForNode(node, diagnostics.X_0_is_declared_but_its_value_is_never_read, declarations[0].Name().Text()))
+		} else {
+			c.reportUnusedVariable(node, NewDiagnosticForNode(node, diagnostics.All_variables_are_unused))
+		}
+	} else {
+		c.reportUnusedVariableDeclarations(declarations)
+	}
+}
+
+func (c *Checker) reportUnusedParameters(node *ast.Node) {
+	c.reportUnusedVariableDeclarations(node.Parameters())
+}
+
+func (c *Checker) reportUnusedBindingElements(node *ast.Node) {
+	declarations := node.AsBindingPattern().Elements.Nodes
+	if core.Every(declarations, c.isUnreferencedVariableDeclaration) {
+		if len(declarations) == 1 && ast.IsIdentifier(declarations[0].Name()) {
+			c.reportUnusedVariable(node, NewDiagnosticForNode(node, diagnostics.X_0_is_declared_but_its_value_is_never_read, declarations[0].Name().Text()))
+		} else {
+			c.reportUnusedVariable(node, NewDiagnosticForNode(node, diagnostics.All_destructured_elements_are_unused))
+		}
+	} else {
+		c.reportUnusedVariableDeclarations(declarations)
+	}
+}
+
+func (c *Checker) reportUnusedVariableDeclarations(declarations []*ast.Node) {
+	for _, declaration := range declarations {
+		if ast.IsBindingPattern(declaration.Name()) {
+			c.reportUnusedBindingElements(declaration.Name())
+		} else if c.isUnreferencedVariableDeclaration(declaration) {
+			c.reportUnusedVariable(declaration, NewDiagnosticForNode(declaration, diagnostics.X_0_is_declared_but_its_value_is_never_read, declaration.Name().Text()))
+		}
+	}
+}
+
+func (c *Checker) isUnreferencedVariableDeclaration(node *ast.Node) bool {
+	if ast.IsBindingPattern(node.Name()) {
+		return core.Every(node.Name().AsBindingPattern().Elements.Nodes, c.isUnreferencedVariableDeclaration)
+	}
+	if c.symbolReferenceLinks.Get(c.getSymbolOfDeclaration(node)).referenceKinds&ast.SymbolFlagsVariable != 0 {
+		return false
+	}
+	if (ast.IsParameter(node) ||
+		ast.IsVariableDeclaration(node) && (ast.IsForInOrOfStatement(node.Parent.Parent) || c.getCombinedNodeFlagsCached(node)&ast.NodeFlagsUsing != 0) ||
+		ast.IsBindingElement(node) && !(ast.IsObjectBindingPattern(node.Parent) && node.PropertyName() == nil)) &&
+		isIdentifierThatStartsWithUnderscore(node.Name()) {
+		return false
+	}
+	return true
+}
+
+func (c *Checker) reportUnusedImports(node *ast.Node, unuseds []*ast.Node) {
+	declarationCount := core.IfElse(node.Name() != nil, 1, 0)
+	namedBindings := node.AsImportClause().NamedBindings
+	if namedBindings != nil {
+		if ast.IsNamespaceImport(namedBindings) {
+			declarationCount++
+		} else {
+			declarationCount += len(namedBindings.AsNamedImports().Elements.Nodes)
+		}
+	}
+	if declarationCount == len(unuseds) {
+		if declarationCount == 1 {
+			c.reportUnused(node, UnusedKindLocal, NewDiagnosticForNode(node.Parent, diagnostics.X_0_is_declared_but_its_value_is_never_read, unuseds[0].Name().Text()))
+		} else {
+			c.reportUnused(node, UnusedKindLocal, NewDiagnosticForNode(node.Parent, diagnostics.All_imports_in_import_declaration_are_unused))
+		}
+	} else {
+		for _, unused := range unuseds {
+			c.reportUnusedLocal(unused, unused.Name().Text())
+		}
+	}
+}
+
+func isIdentifierThatStartsWithUnderscore(node *ast.Node) bool {
+	return ast.IsIdentifier(node) && node.Text() != "" && node.Text()[0] == '_'
+}
+
+func importClauseFromImported(node *ast.Node) *ast.Node {
+	switch node.Kind {
+	case ast.KindImportClause:
+		return node
+	case ast.KindNamespaceImport:
+		return node.Parent
+	default:
+		return node.Parent.Parent
+	}
+}
+
+func (c *Checker) checkUnusedInferTypeParameter(node *ast.Node) {
+	typeParameter := node.AsInferTypeNode().TypeParameter
+	if c.isUnreferencedTypeParameter(typeParameter) {
+		c.reportUnused(node, UnusedKindParameter, NewDiagnosticForNode(typeParameter, diagnostics.X_0_is_declared_but_never_used, typeParameter.Name().Text()))
+	}
+}
+
+func (c *Checker) checkUnusedTypeParameters(node *ast.Node) {
+	typeParameterList := node.TypeParameterList()
+	if typeParameterList == nil {
+		return
+	}
+	if core.Every(typeParameterList.Nodes, c.isUnreferencedTypeParameter) {
+		file := ast.GetSourceFileOfNode(node)
+		loc := rangeOfTypeParameters(file, typeParameterList)
+		if len(typeParameterList.Nodes) == 1 {
+			c.reportUnused(node, UnusedKindParameter, ast.NewDiagnostic(file, loc, diagnostics.X_0_is_declared_but_never_used, typeParameterList.Nodes[0].Name().Text()))
+		} else {
+			c.reportUnused(node, UnusedKindParameter, ast.NewDiagnostic(file, loc, diagnostics.All_type_parameters_are_unused))
+		}
+	} else {
+		for _, typeParameter := range typeParameterList.Nodes {
+			if c.isUnreferencedTypeParameter(typeParameter) {
+				c.reportUnused(node, UnusedKindParameter, NewDiagnosticForNode(typeParameter, diagnostics.X_0_is_declared_but_never_used, typeParameter.Name().Text()))
+			}
+		}
+	}
+}
+
+func (c *Checker) isUnreferencedTypeParameter(typeParameter *ast.Node) bool {
+	return c.symbolReferenceLinks.Get(c.getMergedSymbol(typeParameter.Symbol())).referenceKinds&ast.SymbolFlagsTypeParameter == 0 && !isIdentifierThatStartsWithUnderscore(typeParameter.Name())
 }
 
 func (c *Checker) checkExpressionStatement(node *ast.Node) {
@@ -7694,7 +8059,54 @@ func (c *Checker) resolveTaggedTemplateExpression(node *ast.Node, candidatesOutA
 }
 
 func (c *Checker) resolveDecorator(node *ast.Node, candidatesOutArray *[]*Signature, checkMode CheckMode) *Signature {
-	return c.unknownSignature // !!!
+	funcType := c.checkExpression(node.Expression())
+	apparentType := c.getApparentType(funcType)
+	if c.isErrorType(apparentType) {
+		return c.resolveErrorCall(node)
+	}
+	callSignatures := c.getSignaturesOfType(apparentType, SignatureKindCall)
+	numConstructSignatures := len(c.getSignaturesOfType(apparentType, SignatureKindConstruct))
+	if c.isUntypedFunctionCall(funcType, apparentType, len(callSignatures), numConstructSignatures) {
+		return c.resolveUntypedCall(node)
+	}
+	if c.isPotentiallyUncalledDecorator(node, callSignatures) && !ast.IsParenthesizedExpression(node.Expression()) {
+		nodeStr := scanner.GetTextOfNode(node.Expression())
+		c.error(node, diagnostics.X_0_accepts_too_few_arguments_to_be_used_as_a_decorator_here_Did_you_mean_to_call_it_first_and_write_0, nodeStr)
+		return c.resolveErrorCall(node)
+	}
+	headMessage := c.getDiagnosticHeadMessageForDecoratorResolution(node)
+	if len(callSignatures) == 0 {
+		diag := ast.NewDiagnosticChain(c.invocationErrorDetails(node.Expression(), apparentType, SignatureKindCall), headMessage)
+		c.diagnostics.Add(diag)
+		// !!!
+		// c.invocationErrorRecovery(apparentType, SignatureKindCall, diag)
+		return c.resolveErrorCall(node)
+	}
+	return c.resolveCall(node, callSignatures, candidatesOutArray, checkMode, SignatureFlagsNone, headMessage)
+}
+
+// Sometimes, we have a decorator that could accept zero arguments,
+// but is receiving too many arguments as part of the decorator invocation.
+// In those cases, a user may have meant to *call* the expression before using it as a decorator.
+func (c *Checker) isPotentiallyUncalledDecorator(decorator *ast.Node, signatures []*Signature) bool {
+	return len(signatures) != 0 && core.Every(signatures, func(sig *Signature) bool {
+		return sig.minArgumentCount == 0 && !signatureHasRestParameter(sig) && len(sig.parameters) < c.getDecoratorArgumentCount(decorator, sig)
+	})
+}
+
+// Gets the localized diagnostic head message to use for errors when resolving a decorator as a call expression.
+func (c *Checker) getDiagnosticHeadMessageForDecoratorResolution(node *ast.Node) *diagnostics.Message {
+	switch node.Parent.Kind {
+	case ast.KindClassDeclaration, ast.KindClassExpression:
+		return diagnostics.Unable_to_resolve_signature_of_class_decorator_when_called_as_an_expression
+	case ast.KindParameter:
+		return diagnostics.Unable_to_resolve_signature_of_parameter_decorator_when_called_as_an_expression
+	case ast.KindPropertyDeclaration:
+		return diagnostics.Unable_to_resolve_signature_of_property_decorator_when_called_as_an_expression
+	case ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor:
+		return diagnostics.Unable_to_resolve_signature_of_method_decorator_when_called_as_an_expression
+	}
+	panic("Unhandled case in getDiagnosticHeadMessageForDecoratorResolution")
 }
 
 func (c *Checker) resolveJsxOpeningLikeElement(node *ast.Node, candidatesOutArray *[]*Signature, checkMode CheckMode) *Signature {
@@ -13696,7 +14108,7 @@ func (c *Checker) resolveEntityName(name *ast.Node, meaning ast.SymbolFlags, ign
 		panic("Unknown entity name kind")
 	}
 	if symbol != nil && symbol != c.unknownSymbol {
-		if !ast.NodeIsSynthesized(name) && ast.IsEntityName(name) && (symbol.Flags&ast.SymbolFlagsAlias != 0 || name.Parent.Kind == ast.KindExportAssignment) {
+		if !ast.NodeIsSynthesized(name) && ast.IsEntityName(name) && (symbol.Flags&ast.SymbolFlagsAlias != 0 || name.Parent != nil && name.Parent.Kind == ast.KindExportAssignment) {
 			c.markSymbolOfAliasDeclarationIfTypeOnly(getAliasDeclarationFromName(name), symbol, nil /*finalTarget*/, true /*overwriteEmpty*/, nil, "")
 		}
 		if symbol.Flags&meaning == 0 && !dontResolveAlias {
