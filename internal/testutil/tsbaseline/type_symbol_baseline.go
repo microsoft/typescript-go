@@ -13,6 +13,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/testutil"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/testutil/harnessutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -52,10 +53,14 @@ func DoTypeAndSymbolBaseline(
 
 	fullWalker := newTypeWriterWalker(program, hasErrorBaseline)
 
-	t.Run("type", func(t *testing.T) {
-		checkBaselines(t, baselinePath, allFiles, fullWalker, header, opts, false /*isSymbolBaseline*/)
-	})
+	if !opts.IsSubmodule {
+		t.Run("type", func(t *testing.T) {
+			defer testutil.RecoverAndFail(t, "Panic on creating type baseline for test "+header)
+			checkBaselines(t, baselinePath, allFiles, fullWalker, header, opts, false /*isSymbolBaseline*/)
+		})
+	}
 	t.Run("symbol", func(t *testing.T) {
+		defer testutil.RecoverAndFail(t, "Panic on creating symbol baseline for test "+header)
 		checkBaselines(t, baselinePath, allFiles, fullWalker, header, opts, true /*isSymbolBaseline*/)
 	})
 }
@@ -70,9 +75,9 @@ func checkBaselines(
 	isSymbolBaseline bool,
 ) {
 	fullExtension := core.IfElse(isSymbolBaseline, ".symbols", ".types")
-	outputFileName := tspath.RemoveFileExtension(baselinePath)
+	outputFileName := tsExtension.ReplaceAllString(baselinePath, fullExtension)
 	fullBaseline := generateBaseline(allFiles, fullWalker, header, isSymbolBaseline)
-	baseline.Run(t, outputFileName+fullExtension, fullBaseline, opts)
+	baseline.Run(t, outputFileName, fullBaseline, opts)
 }
 
 func generateBaseline(
@@ -194,7 +199,6 @@ func iterateBaseline(allFiles []*harnessutil.TestFile, fullWalker *typeWriterWal
 
 type typeWriterWalker struct {
 	program              *compiler.Program
-	checker              *checker.Checker
 	hadErrorBaseline     bool
 	currentSourceFile    *ast.SourceFile
 	declarationTextCache map[*ast.Node]string
@@ -202,11 +206,16 @@ type typeWriterWalker struct {
 
 func newTypeWriterWalker(program *compiler.Program, hadErrorBaseline bool) *typeWriterWalker {
 	return &typeWriterWalker{
-		checker:              program.GetTypeChecker(),
 		program:              program,
 		hadErrorBaseline:     hadErrorBaseline,
 		declarationTextCache: make(map[*ast.Node]string),
 	}
+}
+
+func (walker *typeWriterWalker) getTypeCheckerForCurrentFile() *checker.Checker {
+	// If we don't use the right checker for the file, its contents won't be up to date
+	// since the types/symbols baselines appear to depend on files having been checked.
+	return walker.program.GetTypeCheckerForFile(walker.currentSourceFile)
 }
 
 type typeWriterResult struct {
@@ -246,18 +255,21 @@ func (walker *typeWriterWalker) visitNode(node *ast.Node, isSymbolWalk bool) []*
 func forEachASTNode(node *ast.Node) []*ast.Node {
 	var result []*ast.Node
 	work := []*ast.Node{node}
+
+	var resChildren []*ast.Node
+	addChild := func(child *ast.Node) bool {
+		resChildren = append(resChildren, child)
+		return false
+	}
+
 	for len(work) > 0 {
 		elem := work[len(work)-1]
 		work = work[:len(work)-1]
 		result = append(result, elem)
-
-		var resChildren []*ast.Node
-		elem.ForEachChild(func(child *ast.Node) bool {
-			resChildren = append(resChildren, child)
-			return false
-		})
+		elem.ForEachChild(addChild)
 		slices.Reverse(resChildren)
 		work = append(work, resChildren...)
+		resChildren = resChildren[:0]
 	}
 	return result
 }
@@ -266,6 +278,7 @@ func (walker *typeWriterWalker) writeTypeOrSymbol(node *ast.Node, isSymbolWalk b
 	actualPos := scanner.SkipTrivia(walker.currentSourceFile.Text, node.Pos())
 	line, _ := scanner.GetLineAndCharacterOfPosition(walker.currentSourceFile, actualPos)
 	sourceText := scanner.GetSourceTextOfNodeFromSourceFile(walker.currentSourceFile, node, false /*includeTrivia*/)
+	fileChecker := walker.getTypeCheckerForCurrentFile()
 
 	if !isSymbolWalk {
 		// Don't try to get the type of something that's already a type.
@@ -280,10 +293,10 @@ func (walker *typeWriterWalker) writeTypeOrSymbol(node *ast.Node, isSymbolWalk b
 		var t *checker.Type
 		// Workaround to ensure we output 'C' instead of 'typeof C' for base class expressions
 		if ast.IsExpressionWithTypeArgumentsInClassExtendsClause(node.Parent) {
-			t = walker.checker.GetTypeAtLocation(node.Parent)
+			t = fileChecker.GetTypeAtLocation(node.Parent)
 		}
 		if t == nil || checker.IsTypeAny(t) {
-			t = walker.checker.GetTypeAtLocation(node)
+			t = fileChecker.GetTypeAtLocation(node)
 		}
 		var typeString string
 		// var underline string
@@ -313,7 +326,7 @@ func (walker *typeWriterWalker) writeTypeOrSymbol(node *ast.Node, isSymbolWalk b
 			// typeString = writer.getText();
 			// underline = underliner.getText();
 			// reset();
-			typeString = walker.checker.TypeToString(t)
+			typeString = fileChecker.TypeToString(t)
 		}
 		return &typeWriterResult{
 			line:       line,
@@ -323,13 +336,13 @@ func (walker *typeWriterWalker) writeTypeOrSymbol(node *ast.Node, isSymbolWalk b
 		}
 	}
 
-	symbol := walker.checker.GetSymbolAtLocation(node)
+	symbol := fileChecker.GetSymbolAtLocation(node)
 	if symbol == nil {
 		return nil
 	}
 
 	var symbolString strings.Builder
-	symbolString.WriteString("Symbol(" + walker.checker.SymbolToString(symbol))
+	symbolString.WriteString("Symbol(" + fileChecker.SymbolToString(symbol))
 	count := 0
 	for _, declaration := range symbol.Declarations {
 		if count >= 5 {
