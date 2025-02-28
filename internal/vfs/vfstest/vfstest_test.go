@@ -526,6 +526,10 @@ func TestSymlink(t *testing.T) {
 		"/symlink.ts":       Symlink("/foo.ts"),
 		"/some/dir/file.ts": "hello, world",
 		"/some/dirlink":     Symlink("/some/dir"),
+		"/a":                Symlink("/b"),
+		"/b":                Symlink("/c"),
+		"/c":                Symlink("/d"),
+		"/d/existing.ts":    "this is existing.ts",
 	}, false)
 
 	t.Run("ReadFile", func(t *testing.T) {
@@ -538,6 +542,10 @@ func TestSymlink(t *testing.T) {
 		content, ok = fs.ReadFile("/some/dirlink/file.ts")
 		assert.Assert(t, ok)
 		assert.Equal(t, content, "hello, world")
+
+		content, ok = fs.ReadFile("/a/existing.ts")
+		assert.Assert(t, ok)
+		assert.Equal(t, content, "this is existing.ts")
 	})
 
 	t.Run("Realpath", func(t *testing.T) {
@@ -562,6 +570,10 @@ func TestWritableFSSymlink(t *testing.T) {
 		"/other.ts":          Symlink("/some/dir/other.ts"),
 		"/some/dirlink":      Symlink("/some/dir"),
 		"/brokenlink":        Symlink("/does/not/exist"),
+		"/a":                 Symlink("/b"),
+		"/b":                 Symlink("/c"),
+		"/c":                 Symlink("/d"),
+		"/d/existing.ts":     "hello, world",
 	}, false)
 
 	err := fs.WriteFile("/some/dirlink/file.ts", "hello, world", false)
@@ -612,4 +624,27 @@ func TestWritableFSSymlink(t *testing.T) {
 	content, ok = fs.ReadFile("/does/not/exist")
 	assert.Assert(t, ok)
 	assert.Equal(t, content, "hello, world")
+}
+
+func TestWritableFSSymlinkChain(t *testing.T) {
+	t.Parallel()
+
+	fs := FromMap(map[string]any{
+		"/a":             Symlink("/b"),
+		"/b":             Symlink("/c"),
+		"/c":             Symlink("/d"),
+		"/d/existing.ts": "hello, world",
+	}, false)
+
+	err := fs.WriteFile("/a/foo/bar/new.ts", "this is new.ts", false)
+	assert.NilError(t, err)
+	content, ok := fs.ReadFile("/a/foo/bar/new.ts")
+	assert.Assert(t, ok)
+	assert.Equal(t, content, "this is new.ts")
+	content, ok = fs.ReadFile("/b/foo/bar/new.ts")
+	assert.Assert(t, ok)
+	assert.Equal(t, content, "this is new.ts")
+	content, ok = fs.ReadFile("/d/foo/bar/new.ts")
+	assert.Assert(t, ok)
+	assert.Equal(t, content, "this is new.ts")
 }
