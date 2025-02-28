@@ -463,7 +463,8 @@ func (m *mapFS) WriteFile(path string, data []byte, perm fs.FileMode) error {
 	if err != nil {
 		var brokenSymlinkError *brokenSymlinkError
 		if !errors.Is(err, fs.ErrNotExist) && !errors.As(err, &brokenSymlinkError) {
-			return fmt.Errorf("write %q: %w", path, err)
+			// No other errors are possible.
+			panic(err)
 		}
 	} else {
 		if !file.Mode.IsRegular() {
