@@ -450,15 +450,12 @@ func (m *mapFS) WriteFile(path string, data []byte, perm fs.FileMode) error {
 
 	if parent := dirName(path); parent != "" {
 		canonical := m.getCanonicalPath(parent)
-		parentFile, parentPath, err := m.getFollowingSymlinks(canonical)
+		parentFile, _, err := m.getFollowingSymlinks(canonical)
 		if err != nil {
 			return fmt.Errorf("write %q: %w", path, err)
 		}
 		if !parentFile.Mode.IsDir() {
 			return fmt.Errorf("write %q: parent path exists but is not a directory", path)
-		}
-		if canonical != parentPath {
-			path = string(parentPath) + path[len(parent):]
 		}
 	}
 
