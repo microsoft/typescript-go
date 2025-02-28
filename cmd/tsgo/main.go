@@ -121,9 +121,6 @@ func main() {
 			os.Exit(int(execute.CommandLine(newSystem(), nil, args[1:])))
 		case "lsp":
 			os.Exit(runLSP(args[1:]))
-		case "watchTime":
-			watchTime(newSystem(), args[1:])
-			os.Exit(0)
 		}
 	}
 	opts := parseArgs()
