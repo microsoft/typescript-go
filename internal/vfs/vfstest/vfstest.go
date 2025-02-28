@@ -256,15 +256,8 @@ func (m *mapFS) mkdirAll(p string, perm fs.FileMode) error {
 		panic("empty path")
 	}
 
-	// TODO(jakebailey): test these edge cases
-
 	// Fast path; already exists.
-	other, _, err := m.getFollowingSymlinks(m.getCanonicalPath(p))
-	if err != nil {
-		if !errors.Is(err, fs.ErrNotExist) {
-			return err
-		}
-	} else {
+	if other, _, err := m.getFollowingSymlinks(m.getCanonicalPath(p)); err == nil {
 		if !other.Mode.IsDir() {
 			return fmt.Errorf("mkdir %q: path exists but is not a directory", p)
 		}
