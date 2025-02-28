@@ -1,6 +1,7 @@
 package vfstest
 
 import (
+	"errors"
 	"fmt"
 	"io/fs"
 	"maps"
@@ -168,23 +169,39 @@ func (m *mapFS) open(p canonicalPath) (fs.File, error) {
 	return m.m.Open(string(p))
 }
 
-func (m *mapFS) getFollowingSymlinks(p canonicalPath) (*fstest.MapFile, canonicalPath, bool) {
+func (m *mapFS) getFollowingSymlinks(p canonicalPath) (*fstest.MapFile, canonicalPath, error) {
+	return m.getFollowingSymlinksWorker(p, "", "")
+}
+
+type brokenSymlinkError struct {
+	from, to canonicalPath
+}
+
+func (e *brokenSymlinkError) Error() string {
+	return fmt.Sprintf("broken symlink %q -> %q", e.from, e.to)
+}
+
+func (m *mapFS) getFollowingSymlinksWorker(p canonicalPath, symlinkFrom, symlinkTo canonicalPath) (*fstest.MapFile, canonicalPath, error) {
 	if file, ok := m.m[string(p)]; ok && file.Mode&fs.ModeSymlink == 0 {
-		return file, p, ok
+		return file, p, nil
 	}
 
 	if target, ok := m.symlinks[p]; ok {
-		return m.getFollowingSymlinks(target)
+		return m.getFollowingSymlinksWorker(target, p, target)
 	}
 
 	// This could be a path underneath a symlinked directory.
 	for other, target := range m.symlinks {
 		if len(other) < len(p) && other == p[:len(other)] && p[len(other)] == '/' {
-			return m.getFollowingSymlinks(target + p[len(other):])
+			return m.getFollowingSymlinksWorker(target+p[len(other):], other, target)
 		}
 	}
 
-	return nil, p, false
+	err := fs.ErrNotExist
+	if symlinkFrom != "" {
+		err = &brokenSymlinkError{symlinkFrom, symlinkTo}
+	}
+	return nil, p, err
 }
 
 func (m *mapFS) set(p canonicalPath, file *fstest.MapFile) {
@@ -228,10 +245,19 @@ func cutOffset(s string, sep byte, offset int) (before, after string) {
 }
 
 func (m *mapFS) mkdirAll(p string, perm fs.FileMode) error {
+	if p == "" {
+		panic("empty path")
+	}
+
 	// TODO(jakebailey): test these edge cases
 
 	// Fast path; already exists.
-	if other, _, ok := m.getFollowingSymlinks(m.getCanonicalPath(p)); ok {
+	other, _, err := m.getFollowingSymlinks(m.getCanonicalPath(p))
+	if err != nil {
+		if !errors.Is(err, fs.ErrNotExist) {
+			return err
+		}
+	} else {
 		if !other.Mode.IsDir() {
 			return fmt.Errorf("mkdir %q: path exists but is not a directory", p)
 		}
@@ -243,7 +269,13 @@ func (m *mapFS) mkdirAll(p string, perm fs.FileMode) error {
 	for {
 		dir, rest := cutOffset(p, '/', offset)
 		canonical := m.getCanonicalPath(dir)
-		if other, otherPath, ok := m.getFollowingSymlinks(canonical); ok {
+		other, otherPath, err := m.getFollowingSymlinks(canonical)
+		if err != nil {
+			if !errors.Is(err, fs.ErrNotExist) {
+				return err
+			}
+			toCreate = append(toCreate, dir)
+		} else {
 			if !other.Mode.IsDir() {
 				return fmt.Errorf("mkdir %q: path exists but is not a directory", dir)
 			}
@@ -254,13 +286,11 @@ func (m *mapFS) mkdirAll(p string, perm fs.FileMode) error {
 				offset = 0
 				continue
 			}
-		} else {
-			toCreate = append(toCreate, dir)
 		}
-		offset = len(dir) + 1
 		if rest == "" {
 			break
 		}
+		offset = len(dir) + 1
 	}
 
 	for _, dir := range toCreate {
@@ -368,9 +398,9 @@ func (m *mapFS) ReadFile(name string) ([]byte, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 
-	file, _, ok := m.getFollowingSymlinks(m.getCanonicalPath(name))
-	if !ok {
-		return nil, fs.ErrNotExist
+	file, _, err := m.getFollowingSymlinks(m.getCanonicalPath(name))
+	if err != nil {
+		return nil, err
 	}
 	return file.Data, nil
 }
@@ -379,9 +409,9 @@ func (m *mapFS) Realpath(name string) (string, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 
-	file, _, ok := m.getFollowingSymlinks(m.getCanonicalPath(name))
-	if !ok {
-		return "", fs.ErrNotExist
+	file, _, err := m.getFollowingSymlinks(m.getCanonicalPath(name))
+	if err != nil {
+		return "", err
 	}
 	return file.Sys.(*sys).realpath, nil
 }
@@ -413,9 +443,9 @@ func (m *mapFS) WriteFile(path string, data []byte, perm fs.FileMode) error {
 
 	if parent := dirName(path); parent != "" {
 		canonical := m.getCanonicalPath(parent)
-		parentFile, parentPath, ok := m.getFollowingSymlinks(canonical)
-		if !ok {
-			return fmt.Errorf("write %q: parent directory does not exist", path)
+		parentFile, parentPath, err := m.getFollowingSymlinks(canonical)
+		if err != nil {
+			return fmt.Errorf("write %q: %w", path, err)
 		}
 		if !parentFile.Mode.IsDir() {
 			return fmt.Errorf("write %q: parent path exists but is not a directory", path)
@@ -425,13 +455,18 @@ func (m *mapFS) WriteFile(path string, data []byte, perm fs.FileMode) error {
 		}
 	}
 
-	cp := m.getCanonicalPath(path)
-	if file, newCp, ok := m.getFollowingSymlinks(cp); ok {
+	file, cp, err := m.getFollowingSymlinks(m.getCanonicalPath(path))
+	if err != nil {
+		var brokenSymlinkError *brokenSymlinkError
+		if !errors.Is(err, fs.ErrNotExist) && !errors.As(err, &brokenSymlinkError) {
+			return fmt.Errorf("write %q: %w", path, err)
+		}
+	} else {
 		if !file.Mode.IsRegular() {
 			return fmt.Errorf("write %q: path exists but is not a regular file", path)
 		}
-		cp = newCp
 	}
+
 	m.setEntry(path, cp, fstest.MapFile{
 		Data:    data,
 		ModTime: time.Now(),

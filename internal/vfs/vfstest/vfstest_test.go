@@ -562,6 +562,10 @@ func TestWritableFSSymlink(t *testing.T) {
 			Mode: fs.ModeSymlink,
 			Data: []byte("/some/dir"),
 		},
+		"/brokenlink": &fstest.MapFile{
+			Mode: fs.ModeSymlink,
+			Data: []byte("/does/not/exist"),
+		},
 	}, false)
 
 	err := fs.WriteFile("/some/dirlink/file.ts", "hello, world", false)
@@ -595,4 +599,21 @@ func TestWritableFSSymlink(t *testing.T) {
 
 	err = fs.WriteFile("/some/dirlink", "hello, world", false)
 	assert.Error(t, err, `write "some/dirlink": path exists but is not a regular file`)
+
+	// Can't write inside a broken dir symlink
+	err = fs.WriteFile("/brokenlink/file.ts", "hello, world", false)
+	assert.Error(t, err, `broken symlink "brokenlink" -> "does/not/exist"`)
+
+	err = fs.WriteFile("/brokenlink/also/wrong/file.ts", "hello, world", false)
+	assert.Error(t, err, `broken symlink "brokenlink" -> "does/not/exist"`)
+
+	// But we can write to a broken file symlink
+	err = fs.WriteFile("/brokenlink", "hello, world", false)
+	assert.NilError(t, err)
+	content, ok = fs.ReadFile("/brokenlink")
+	assert.Assert(t, ok)
+	assert.Equal(t, content, "hello, world")
+	content, ok = fs.ReadFile("/does/not/exist")
+	assert.Assert(t, ok)
+	assert.Equal(t, content, "hello, world")
 }
