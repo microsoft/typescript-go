@@ -511,16 +511,10 @@ func TestSymlink(t *testing.T) {
 	t.Parallel()
 
 	fs := FromMap(map[string]any{
-		"/foo.ts": "hello, world",
-		"/symlink.ts": &fstest.MapFile{
-			Mode: fs.ModeSymlink,
-			Data: []byte("/foo.ts"),
-		},
+		"/foo.ts":           "hello, world",
+		"/symlink.ts":       Symlink("/foo.ts"),
 		"/some/dir/file.ts": "hello, world",
-		"/some/dirlink": &fstest.MapFile{
-			Mode: fs.ModeSymlink,
-			Data: []byte("/some/dir"),
-		},
+		"/some/dirlink":     Symlink("/some/dir"),
 	}, false)
 
 	t.Run("ReadFile", func(t *testing.T) {
@@ -554,18 +548,9 @@ func TestWritableFSSymlink(t *testing.T) {
 
 	fs := FromMap(map[string]any{
 		"/some/dir/other.ts": "NOTHING",
-		"/other.ts": &fstest.MapFile{
-			Mode: fs.ModeSymlink,
-			Data: []byte("/some/dir/other.ts"),
-		},
-		"/some/dirlink": &fstest.MapFile{
-			Mode: fs.ModeSymlink,
-			Data: []byte("/some/dir"),
-		},
-		"/brokenlink": &fstest.MapFile{
-			Mode: fs.ModeSymlink,
-			Data: []byte("/does/not/exist"),
-		},
+		"/other.ts":          Symlink("/some/dir/other.ts"),
+		"/some/dirlink":      Symlink("/some/dir"),
+		"/brokenlink":        Symlink("/does/not/exist"),
 	}, false)
 
 	err := fs.WriteFile("/some/dirlink/file.ts", "hello, world", false)

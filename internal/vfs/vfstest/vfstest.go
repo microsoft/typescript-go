@@ -169,6 +169,13 @@ func (m *mapFS) open(p canonicalPath) (fs.File, error) {
 	return m.m.Open(string(p))
 }
 
+func Symlink(target string) *fstest.MapFile {
+	return &fstest.MapFile{
+		Data: []byte(target),
+		Mode: fs.ModeSymlink,
+	}
+}
+
 func (m *mapFS) getFollowingSymlinks(p canonicalPath) (*fstest.MapFile, canonicalPath, error) {
 	return m.getFollowingSymlinksWorker(p, "", "")
 }
