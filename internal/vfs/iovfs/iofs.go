@@ -160,8 +160,3 @@ func (vfs *ioFS) WriteFile(path string, content string, writeByteOrderMark bool)
 	}
 	return vfs.writeFile(path, content, writeByteOrderMark)
 }
-
-func (vfs *ioFS) Stat(path string) vfs.FileInfo {
-	_ = internal.RootLength(path) // Assert path is rooted
-	return vfs.common.Stat(path)
-}
