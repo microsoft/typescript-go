@@ -234,8 +234,8 @@ func (m *mapFS) setEntry(realpath string, canonical canonicalPath, file fstest.M
 	}
 }
 
-func splitPath(s string, sep byte, offset int) (before, after string) {
-	idx := strings.IndexByte(s[offset:], sep)
+func splitPath(s string, offset int) (before, after string) {
+	idx := strings.IndexByte(s[offset:], '/')
 	if idx < 0 {
 		return s, ""
 	}
@@ -268,7 +268,7 @@ func (m *mapFS) mkdirAll(p string, perm fs.FileMode) error {
 	var toCreate []string
 	offset := 0
 	for {
-		dir, rest := splitPath(p, '/', offset)
+		dir, rest := splitPath(p, offset)
 		canonical := m.getCanonicalPath(dir)
 		other, otherPath, err := m.getFollowingSymlinks(canonical)
 		if err != nil {
