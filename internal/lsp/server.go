@@ -20,6 +20,7 @@ type ServerOptions struct {
 	Out io.Writer
 	Err io.Writer
 
+	API                bool
 	Cwd                string
 	NewLine            core.NewLineKind
 	FS                 vfs.FS
@@ -34,6 +35,7 @@ func NewServer(opts *ServerOptions) *Server {
 		r:                  lsproto.NewBaseReader(opts.In),
 		w:                  lsproto.NewBaseWriter(opts.Out),
 		stderr:             opts.Err,
+		useAPI:             opts.API,
 		cwd:                opts.Cwd,
 		newLine:            opts.NewLine,
 		fs:                 opts.FS,
@@ -52,6 +54,7 @@ type Server struct {
 	requestMethod string
 	requestTime   time.Time
 
+	useAPI             bool
 	cwd                string
 	newLine            core.NewLineKind
 	fs                 vfs.FS
@@ -60,6 +63,7 @@ type Server struct {
 	initializeParams *lsproto.InitializeParams
 
 	logger         *project.Logger
+	api            *project.API
 	projectService *project.Service
 	converters     *converters
 }
@@ -93,6 +97,8 @@ func (s *Server) Run() error {
 	for {
 		req, err := s.read()
 		if err != nil {
+			s.requestMethod = ""
+			s.requestTime = time.Time{}
 			if errors.Is(err, lsproto.ErrInvalidRequest) {
 				if err := s.sendError(nil, err); err != nil {
 					return err
@@ -172,12 +178,39 @@ func (s *Server) handleMessage(req *lsproto.RequestMessage) error {
 	s.requestTime = time.Now()
 	s.requestMethod = string(req.Method)
 
-	params := req.Params
-	switch params.(type) {
+	switch params := req.Params.(type) {
 	case *lsproto.InitializeParams:
 		return s.sendError(req.ID, lsproto.ErrInvalidRequest)
 	case *lsproto.InitializedParams:
 		return s.handleInitialized(req)
+	case *lsproto.APIRequestParams:
+		if !s.useAPI {
+			break
+		}
+		if result, err := s.api.HandleRequest(req.ID, params); err != nil {
+			return s.sendError(req.ID, err)
+		} else {
+			return s.sendResult(req.ID, result)
+		}
+	default:
+		switch req.Method {
+		case lsproto.MethodShutdown:
+			if s.useAPI {
+				s.api.Close()
+			} else {
+				s.projectService.Close()
+			}
+			return s.sendResult(req.ID, nil)
+		case lsproto.MethodExit:
+			return nil
+		}
+	}
+
+	if s.useAPI {
+		return s.sendError(req.ID, lsproto.ErrInvalidRequest)
+	}
+
+	switch req.Params.(type) {
 	case *lsproto.DidOpenTextDocumentParams:
 		return s.handleDidOpen(req)
 	case *lsproto.DidChangeTextDocumentParams:
@@ -193,29 +226,28 @@ func (s *Server) handleMessage(req *lsproto.RequestMessage) error {
 	case *lsproto.DefinitionParams:
 		return s.handleDefinition(req)
 	default:
-		switch req.Method {
-		case lsproto.MethodShutdown:
-			s.projectService.Close()
-			return s.sendResult(req.ID, nil)
-		case lsproto.MethodExit:
-			return nil
-		default:
-			s.Log("unknown method", req.Method)
-			if req.ID != nil {
-				return s.sendError(req.ID, lsproto.ErrInvalidRequest)
-			}
-			return nil
+		s.Log("unknown method", req.Method)
+		if req.ID != nil {
+			return s.sendError(req.ID, lsproto.ErrInvalidRequest)
 		}
+		return nil
 	}
 }
 
 func (s *Server) handleInitialize(req *lsproto.RequestMessage) error {
 	s.initializeParams = req.Params.(*lsproto.InitializeParams)
+	serverInfo := &lsproto.ServerInfo{
+		Name:    "typescript-go",
+		Version: ptrTo(core.Version),
+	}
+	if s.useAPI {
+		return s.sendResult(req.ID, &lsproto.InitializeResult{
+			ServerInfo:   serverInfo,
+			Capabilities: lsproto.ServerCapabilities{},
+		})
+	}
 	return s.sendResult(req.ID, &lsproto.InitializeResult{
-		ServerInfo: &lsproto.ServerInfo{
-			Name:    "typescript-go",
-			Version: ptrTo(core.Version),
-		},
+		ServerInfo: serverInfo,
 		Capabilities: lsproto.ServerCapabilities{
 			TextDocumentSync: &lsproto.TextDocumentSyncOptionsOrTextDocumentSyncKind{
 				TextDocumentSyncOptions: &lsproto.TextDocumentSyncOptions{
@@ -245,10 +277,17 @@ func (s *Server) handleInitialize(req *lsproto.RequestMessage) error {
 
 func (s *Server) handleInitialized(req *lsproto.RequestMessage) error {
 	s.logger = project.NewLogger([]io.Writer{s.stderr}, project.LogLevelVerbose)
-	s.projectService = project.NewService(s, project.ServiceOptions{
-		DefaultLibraryPath: s.defaultLibraryPath,
-		Logger:             s.logger,
-	})
+	if s.useAPI {
+		s.api = project.NewAPI(s, project.ServiceOptions{
+			DefaultLibraryPath: s.defaultLibraryPath,
+			Logger:             s.logger,
+		})
+	} else {
+		s.projectService = project.NewService(s, project.ServiceOptions{
+			DefaultLibraryPath: s.defaultLibraryPath,
+			Logger:             s.logger,
+		})
+	}
 	s.converters = &converters{projectService: s.projectService}
 	return nil
 }

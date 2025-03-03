@@ -41,6 +41,7 @@
         "extension:watch": "npm run -w typescript-lsp watch"
     },
     "workspaces": [
+        "./_api",
         "./_extension"
     ],
     "packageManager": "npm@8.19.4",

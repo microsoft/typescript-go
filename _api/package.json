@@ -1,0 +1,9 @@
+{
+  "private": true,
+  "name": "typescript-api",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "json-rpc-2.0": "^1.7.0"
+  }
+}

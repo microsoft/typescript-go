@@ -122,6 +122,8 @@ func main() {
 			os.Exit(int(execute.CommandLine(newSystem(), nil, args[1:])))
 		case "lsp":
 			os.Exit(runLSP(args[1:]))
+		case "api":
+			os.Exit(runAPI(args[1:]))
 		}
 	}
 	opts := parseArgs()

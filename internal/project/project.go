@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
+	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
@@ -29,9 +30,20 @@ const (
 	KindAuxiliary
 )
 
+type ProjectHost interface {
+	tsoptions.ParseConfigHost
+	NewLine() string
+	DefaultLibraryPath() string
+	DocumentRegistry() *documentRegistry
+	GetScriptInfoByPath(path tspath.Path) *ScriptInfo
+	GetOrCreateScriptInfoForFile(fileName string, path tspath.Path, scriptKind core.ScriptKind) *ScriptInfo
+	OnDiscoveredSymlink(info *ScriptInfo)
+	Log(s string)
+}
+
 type Project struct {
-	projectService *Service
-	mu             sync.Mutex
+	host ProjectHost
+	mu   sync.Mutex
 
 	name string
 	kind Kind
@@ -58,25 +70,25 @@ type Project struct {
 	program         *compiler.Program
 }
 
-func NewConfiguredProject(configFileName string, configFilePath tspath.Path, projectService *Service) *Project {
-	project := NewProject(configFileName, KindConfigured, tspath.GetDirectoryPath(configFileName), projectService)
+func NewConfiguredProject(configFileName string, configFilePath tspath.Path, host ProjectHost) *Project {
+	project := NewProject(configFileName, KindConfigured, tspath.GetDirectoryPath(configFileName), host)
 	project.configFileName = configFileName
 	project.configFilePath = configFilePath
 	project.initialLoadPending = true
 	return project
 }
 
-func NewInferredProject(compilerOptions *core.CompilerOptions, currentDirectory string, projectRootPath tspath.Path, projectService *Service) *Project {
-	project := NewProject(projectNamer.next("/dev/null/inferredProject"), KindInferred, currentDirectory, projectService)
+func NewInferredProject(compilerOptions *core.CompilerOptions, currentDirectory string, projectRootPath tspath.Path, host ProjectHost) *Project {
+	project := NewProject(projectNamer.next("/dev/null/inferredProject"), KindInferred, currentDirectory, host)
 	project.rootPath = projectRootPath
 	project.compilerOptions = compilerOptions
 	return project
 }
 
-func NewProject(name string, kind Kind, currentDirectory string, projectService *Service) *Project {
-	projectService.log(fmt.Sprintf("Creating %sProject: %s, currentDirectory: %s", kind.String(), name, currentDirectory))
+func NewProject(name string, kind Kind, currentDirectory string, host ProjectHost) *Project {
+	host.Log(fmt.Sprintf("Creating %sProject: %s, currentDirectory: %s", kind.String(), name, currentDirectory))
 	project := &Project{
-		projectService:   projectService,
+		host:             host,
 		name:             name,
 		kind:             kind,
 		currentDirectory: currentDirectory,
@@ -89,12 +101,12 @@ func NewProject(name string, kind Kind, currentDirectory string, projectService 
 
 // FS implements LanguageServiceHost.
 func (p *Project) FS() vfs.FS {
-	return p.projectService.host.FS()
+	return p.host.FS()
 }
 
 // DefaultLibraryPath implements LanguageServiceHost.
 func (p *Project) DefaultLibraryPath() string {
-	return p.projectService.host.DefaultLibraryPath()
+	return p.host.DefaultLibraryPath()
 }
 
 // GetCompilerOptions implements LanguageServiceHost.
@@ -116,7 +128,7 @@ func (p *Project) GetProjectVersion() int {
 func (p *Project) GetRootFileNames() []string {
 	fileNames := make([]string, 0, p.rootFileNames.Size())
 	for path, fileName := range p.rootFileNames.Entries() {
-		if p.projectService.getScriptInfo(path) != nil {
+		if p.host.GetScriptInfoByPath(path) != nil {
 			fileNames = append(fileNames, fileName)
 		}
 	}
@@ -135,7 +147,7 @@ func (p *Project) GetSourceFile(fileName string, path tspath.Path, languageVersi
 			oldSourceFile = p.program.GetSourceFileByPath(scriptInfo.path)
 			oldCompilerOptions = p.program.GetCompilerOptions()
 		}
-		return p.projectService.documentRegistry.acquireDocument(scriptInfo, p.GetCompilerOptions(), oldSourceFile, oldCompilerOptions)
+		return p.host.DocumentRegistry().acquireDocument(scriptInfo, p.GetCompilerOptions(), oldSourceFile, oldCompilerOptions)
 	}
 	return nil
 }
@@ -148,7 +160,7 @@ func (p *Project) GetProgram() *compiler.Program {
 
 // NewLine implements LanguageServiceHost.
 func (p *Project) NewLine() string {
-	return p.projectService.host.NewLine()
+	return p.host.NewLine()
 }
 
 // Trace implements LanguageServiceHost.
@@ -158,7 +170,7 @@ func (p *Project) Trace(msg string) {
 
 // GetDefaultLibraryPath implements ls.Host.
 func (p *Project) GetDefaultLibraryPath() string {
-	return p.projectService.options.DefaultLibraryPath
+	return p.host.DefaultLibraryPath()
 }
 
 func (p *Project) Name() string {
@@ -178,7 +190,7 @@ func (p *Project) LanguageService() *ls.LanguageService {
 }
 
 func (p *Project) getOrCreateScriptInfoAndAttachToProject(fileName string, scriptKind core.ScriptKind) *ScriptInfo {
-	if scriptInfo := p.projectService.getOrCreateScriptInfoNotOpenedByClient(fileName, p.projectService.toPath(fileName), scriptKind); scriptInfo != nil {
+	if scriptInfo := p.host.GetOrCreateScriptInfoForFile(fileName, p.toPath(fileName), scriptKind); scriptInfo != nil {
 		scriptInfo.attachToProject(p)
 		return scriptInfo
 	}
@@ -230,7 +242,9 @@ func (p *Project) updateGraph() bool {
 	p.initialLoadPending = false
 
 	if p.kind == KindConfigured && p.reloadConfig {
-		p.projectService.loadConfiguredProject(p)
+		if err := p.loadConfig(); err != nil {
+			panic(fmt.Sprintf("failed to reload config: %v", err))
+		}
 		p.reloadConfig = false
 	}
 
@@ -248,7 +262,7 @@ func (p *Project) updateGraph() bool {
 	if p.program != oldProgram && oldProgram != nil {
 		for _, oldSourceFile := range oldProgram.GetSourceFiles() {
 			if p.program.GetSourceFileByPath(oldSourceFile.Path()) == nil {
-				p.projectService.documentRegistry.releaseDocument(oldSourceFile, oldProgram.GetCompilerOptions())
+				p.host.DocumentRegistry().releaseDocument(oldSourceFile, oldProgram.GetCompilerOptions())
 			}
 		}
 	}
@@ -315,7 +329,7 @@ func (p *Project) removeFile(info *ScriptInfo, fileExists bool, detachFromProjec
 func (p *Project) addRoot(info *ScriptInfo) {
 	// !!!
 	// if p.kind == KindInferred {
-	// 	p.projectService.startWatchingConfigFilesForInferredProjectRoot(info.path);
+	// 	p.host.startWatchingConfigFilesForInferredProjectRoot(info.path);
 	//  // handle JS toggling
 	// }
 	if p.isRoot(info) {
@@ -324,6 +338,75 @@ func (p *Project) addRoot(info *ScriptInfo) {
 	p.rootFileNames.Set(info.path, info.fileName)
 	info.attachToProject(p)
 	p.markAsDirty()
+}
+
+func (p *Project) loadConfig() error {
+	if p.kind != KindConfigured {
+		panic("loadConfig called on non-configured project")
+	}
+
+	if configFileContent, ok := p.host.FS().ReadFile(p.configFileName); ok {
+		configDir := tspath.GetDirectoryPath(p.configFileName)
+		tsConfigSourceFile := tsoptions.NewTsconfigSourceFileFromFilePath(p.configFileName, p.configFilePath, configFileContent)
+		parsedCommandLine := tsoptions.ParseJsonSourceFileConfigFileContent(
+			tsConfigSourceFile,
+			p.host,
+			configDir,
+			nil, /*existingOptions*/
+			p.configFileName,
+			nil, /*resolutionStack*/
+			nil, /*extraFileExtensions*/
+			nil, /*extendedConfigCache*/
+		)
+
+		p.logf("Config: %s : %s",
+			p.configFileName,
+			core.Must(core.StringifyJson(map[string]interface{}{
+				"rootNames":         parsedCommandLine.FileNames(),
+				"options":           parsedCommandLine.CompilerOptions(),
+				"projectReferences": parsedCommandLine.ProjectReferences(),
+			}, "    ", "  ")),
+		)
+
+		p.compilerOptions = parsedCommandLine.CompilerOptions()
+		p.setRootFiles(parsedCommandLine.FileNames())
+	} else {
+		p.compilerOptions = &core.CompilerOptions{}
+		return fmt.Errorf("could not read file %q", p.configFileName)
+	}
+
+	p.markAsDirty()
+	return nil
+}
+
+func (p *Project) setRootFiles(rootFileNames []string) {
+	newRootScriptInfos := make(map[tspath.Path]struct{}, len(rootFileNames))
+	for _, file := range rootFileNames {
+		scriptKind := p.getScriptKind(file)
+		scriptInfo := p.host.GetOrCreateScriptInfoForFile(file, p.toPath(file), scriptKind)
+		newRootScriptInfos[scriptInfo.path] = struct{}{}
+		if _, isRoot := p.rootFileNames.Get(scriptInfo.path); !isRoot {
+			p.addRoot(scriptInfo)
+			if scriptInfo.isOpen {
+				// !!!
+				// s.removeRootOfInferredProjectIfNowPartOfOtherProject(scriptInfo)
+			}
+		} else {
+			p.rootFileNames.Set(scriptInfo.path, file)
+		}
+	}
+
+	if p.rootFileNames.Size() > len(rootFileNames) {
+		for root := range p.rootFileNames.Keys() {
+			if _, ok := newRootScriptInfos[root]; !ok {
+				if info := p.host.GetScriptInfoByPath(root); info != nil {
+					p.removeFile(info, true /*fileExists*/, true /*detachFromProject*/)
+				} else {
+					p.rootFileNames.Delete(root)
+				}
+			}
+		}
+	}
 }
 
 func (p *Project) clearSourceMapperCache() {
@@ -357,5 +440,9 @@ func (p *Project) print(writeFileNames bool, writeFileExplanation bool, writeFil
 }
 
 func (p *Project) log(s string) {
-	p.projectService.log(s)
+	p.host.Log(s)
+}
+
+func (p *Project) logf(format string, args ...interface{}) {
+	p.log(fmt.Sprintf(format, args...))
 }

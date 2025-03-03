@@ -70,6 +70,15 @@ func (r *RequestMessage) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 
+	if r.Method == MethodAPI {
+		var params APIRequestParams
+		if err := json.Unmarshal(raw.Params, &params); err != nil {
+			return fmt.Errorf("%w: %w", ErrInvalidRequest, err)
+		}
+		r.Params = &params
+		return nil
+	}
+
 	var params any
 	var err error
 
