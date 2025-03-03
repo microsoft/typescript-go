@@ -18744,7 +18744,13 @@ func (c *Checker) instantiateSymbolTable(symbols ast.SymbolTable, m *TypeMapper,
 	if len(symbols) == 0 {
 		return nil
 	}
-	result := make(ast.SymbolTable)
+	resultCount := 0
+	for id, symbol := range symbols {
+		if c.isNamedMember(symbol, id) {
+			resultCount++
+		}
+	}
+	result := make(ast.SymbolTable, resultCount)
 	for id, symbol := range symbols {
 		if c.isNamedMember(symbol, id) {
 			if mappingThisOnly && isThisless(symbol) {
