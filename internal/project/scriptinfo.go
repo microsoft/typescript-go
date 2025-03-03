@@ -27,7 +27,7 @@ type ScriptInfo struct {
 	containingProjects []*Project
 }
 
-func newScriptInfo(fileName string, path tspath.Path, scriptKind core.ScriptKind) *ScriptInfo {
+func NewScriptInfo(fileName string, path tspath.Path, scriptKind core.ScriptKind) *ScriptInfo {
 	isDynamic := isDynamicFileName(fileName)
 	realpath := core.IfElse(isDynamic, path, "")
 	return &ScriptInfo{
@@ -68,7 +68,7 @@ func (s *ScriptInfo) open(newText string) {
 	}
 }
 
-func (s *ScriptInfo) setTextFromDisk(newText string) {
+func (s *ScriptInfo) SetTextFromDisk(newText string) {
 	if newText != s.text {
 		s.setText(newText)
 		s.matchesDiskText = true

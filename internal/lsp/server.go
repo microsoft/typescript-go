@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/microsoft/typescript-go/internal/api"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
@@ -63,7 +64,7 @@ type Server struct {
 	initializeParams *lsproto.InitializeParams
 
 	logger         *project.Logger
-	api            *project.API
+	api            *api.API
 	projectService *project.Service
 	converters     *converters
 }
@@ -177,21 +178,19 @@ func (s *Server) sendResponse(resp *lsproto.ResponseMessage) error {
 func (s *Server) handleMessage(req *lsproto.RequestMessage) error {
 	s.requestTime = time.Now()
 	s.requestMethod = string(req.Method)
-
-	switch params := req.Params.(type) {
-	case *lsproto.InitializeParams:
-		return s.sendError(req.ID, lsproto.ErrInvalidRequest)
-	case *lsproto.InitializedParams:
-		return s.handleInitialized(req)
-	case *lsproto.APIRequestParams:
-		if !s.useAPI {
-			break
-		}
-		if result, err := s.api.HandleRequest(req.ID, params); err != nil {
+	if s.useAPI && strings.HasPrefix(string(req.Method), "@ts/") {
+		if result, err := s.api.HandleRequest(int(req.ID.MustInt()), strings.TrimPrefix(string(req.Method), "@ts/"), req.Params.(json.RawMessage)); err != nil {
 			return s.sendError(req.ID, err)
 		} else {
 			return s.sendResult(req.ID, result)
 		}
+	}
+
+	switch req.Params.(type) {
+	case *lsproto.InitializeParams:
+		return s.sendError(req.ID, lsproto.ErrInvalidRequest)
+	case *lsproto.InitializedParams:
+		return s.handleInitialized(req)
 	default:
 		switch req.Method {
 		case lsproto.MethodShutdown:
@@ -278,14 +277,12 @@ func (s *Server) handleInitialize(req *lsproto.RequestMessage) error {
 func (s *Server) handleInitialized(req *lsproto.RequestMessage) error {
 	s.logger = project.NewLogger([]io.Writer{s.stderr}, project.LogLevelVerbose)
 	if s.useAPI {
-		s.api = project.NewAPI(s, project.ServiceOptions{
-			DefaultLibraryPath: s.defaultLibraryPath,
-			Logger:             s.logger,
+		s.api = api.NewAPI(s, api.APIOptions{
+			Logger: s.logger,
 		})
 	} else {
 		s.projectService = project.NewService(s, project.ServiceOptions{
-			DefaultLibraryPath: s.defaultLibraryPath,
-			Logger:             s.logger,
+			Logger: s.logger,
 		})
 	}
 	s.converters = &converters{projectService: s.projectService}

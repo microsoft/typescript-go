@@ -34,7 +34,7 @@ type ProjectHost interface {
 	tsoptions.ParseConfigHost
 	NewLine() string
 	DefaultLibraryPath() string
-	DocumentRegistry() *documentRegistry
+	DocumentRegistry() *DocumentRegistry
 	GetScriptInfoByPath(path tspath.Path) *ScriptInfo
 	GetOrCreateScriptInfoForFile(fileName string, path tspath.Path, scriptKind core.ScriptKind) *ScriptInfo
 	OnDiscoveredSymlink(info *ScriptInfo)
@@ -147,7 +147,7 @@ func (p *Project) GetSourceFile(fileName string, path tspath.Path, languageVersi
 			oldSourceFile = p.program.GetSourceFileByPath(scriptInfo.path)
 			oldCompilerOptions = p.program.GetCompilerOptions()
 		}
-		return p.host.DocumentRegistry().acquireDocument(scriptInfo, p.GetCompilerOptions(), oldSourceFile, oldCompilerOptions)
+		return p.host.DocumentRegistry().AcquireDocument(scriptInfo, p.GetCompilerOptions(), oldSourceFile, oldCompilerOptions)
 	}
 	return nil
 }
@@ -179,6 +179,10 @@ func (p *Project) Name() string {
 
 func (p *Project) Kind() Kind {
 	return p.kind
+}
+
+func (p *Project) Version() int {
+	return p.version
 }
 
 func (p *Project) CurrentProgram() *compiler.Program {
@@ -242,7 +246,7 @@ func (p *Project) updateGraph() bool {
 	p.initialLoadPending = false
 
 	if p.kind == KindConfigured && p.reloadConfig {
-		if err := p.loadConfig(); err != nil {
+		if err := p.LoadConfig(); err != nil {
 			panic(fmt.Sprintf("failed to reload config: %v", err))
 		}
 		p.reloadConfig = false
@@ -262,7 +266,7 @@ func (p *Project) updateGraph() bool {
 	if p.program != oldProgram && oldProgram != nil {
 		for _, oldSourceFile := range oldProgram.GetSourceFiles() {
 			if p.program.GetSourceFileByPath(oldSourceFile.Path()) == nil {
-				p.host.DocumentRegistry().releaseDocument(oldSourceFile, oldProgram.GetCompilerOptions())
+				p.host.DocumentRegistry().ReleaseDocument(oldSourceFile, oldProgram.GetCompilerOptions())
 			}
 		}
 	}
@@ -340,7 +344,7 @@ func (p *Project) addRoot(info *ScriptInfo) {
 	p.markAsDirty()
 }
 
-func (p *Project) loadConfig() error {
+func (p *Project) LoadConfig() error {
 	if p.kind != KindConfigured {
 		panic("loadConfig called on non-configured project")
 	}

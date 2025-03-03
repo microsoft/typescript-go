@@ -1,12 +1,13 @@
-package project
+package api
 
 import (
+	"encoding/json"
 	"fmt"
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -34,47 +35,51 @@ type ProjectData struct {
 	CompilerOptions *core.CompilerOptions `json:"compilerOptions"`
 }
 
-func NewProjectData(project *Project) *ProjectData {
+func NewProjectData(project *project.Project) *ProjectData {
 	return &ProjectData{
-		ConfigFileName:  project.configFileName,
+		ConfigFileName:  project.Name(),
 		RootFiles:       project.GetRootFileNames(),
 		CompilerOptions: project.GetCompilerOptions(),
 	}
 }
 
-type API struct {
-	host    ServiceHost
-	options ServiceOptions
-
-	documentRegistry *documentRegistry
-	scriptInfosMu    sync.RWMutex
-	scriptInfos      map[tspath.Path]*ScriptInfo
-
-	projects map[tspath.Path]*Project
+type APIOptions struct {
+	Logger *project.Logger
 }
 
-var _ ProjectHost = (*API)(nil)
+type API struct {
+	host    APIHost
+	options APIOptions
 
-func NewAPI(host ServiceHost, options ServiceOptions) *API {
+	documentRegistry *project.DocumentRegistry
+	scriptInfosMu    sync.RWMutex
+	scriptInfos      map[tspath.Path]*project.ScriptInfo
+
+	projects map[tspath.Path]*project.Project
+}
+
+var _ project.ProjectHost = (*API)(nil)
+
+func NewAPI(host APIHost, options APIOptions) *API {
 	return &API{
 		host:    host,
 		options: options,
-		documentRegistry: newDocumentRegistry(tspath.ComparePathsOptions{
+		documentRegistry: project.NewDocumentRegistry(tspath.ComparePathsOptions{
 			UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
 			CurrentDirectory:          host.GetCurrentDirectory(),
 		}),
-		scriptInfos: make(map[tspath.Path]*ScriptInfo),
-		projects:    make(map[tspath.Path]*Project),
+		scriptInfos: make(map[tspath.Path]*project.ScriptInfo),
+		projects:    make(map[tspath.Path]*project.Project),
 	}
 }
 
 // DefaultLibraryPath implements ProjectHost.
 func (api *API) DefaultLibraryPath() string {
-	return api.options.DefaultLibraryPath
+	return api.host.DefaultLibraryPath()
 }
 
 // DocumentRegistry implements ProjectHost.
-func (api *API) DocumentRegistry() *documentRegistry {
+func (api *API) DocumentRegistry() *project.DocumentRegistry {
 	return api.documentRegistry
 }
 
@@ -89,19 +94,19 @@ func (api *API) GetCurrentDirectory() string {
 }
 
 // GetOrCreateScriptInfoForFile implements ProjectHost.
-func (api *API) GetOrCreateScriptInfoForFile(fileName string, path tspath.Path, scriptKind core.ScriptKind) *ScriptInfo {
+func (api *API) GetOrCreateScriptInfoForFile(fileName string, path tspath.Path, scriptKind core.ScriptKind) *project.ScriptInfo {
 	return api.getOrCreateScriptInfo(fileName, path, scriptKind)
 }
 
 // GetScriptInfoByPath implements ProjectHost.
-func (api *API) GetScriptInfoByPath(path tspath.Path) *ScriptInfo {
+func (api *API) GetScriptInfoByPath(path tspath.Path) *project.ScriptInfo {
 	api.scriptInfosMu.RLock()
 	defer api.scriptInfosMu.RUnlock()
 	return api.scriptInfos[path]
 }
 
 // OnDiscoveredSymlink implements ProjectHost.
-func (api *API) OnDiscoveredSymlink(info *ScriptInfo) {
+func (api *API) OnDiscoveredSymlink(info *project.ScriptInfo) {
 	// !!!
 }
 
@@ -115,17 +120,22 @@ func (api *API) NewLine() string {
 	return api.host.NewLine()
 }
 
-func (api *API) HandleRequest(id *lsproto.ID, params *lsproto.APIRequestParams) (any, error) {
-	switch params.Method {
-	case lsproto.APIMethodParseConfigFile:
-		return api.ParseConfigFile(params.Params.(*lsproto.APIParseConfigFileParams).FileName)
-	case lsproto.APIMethodLoadProject:
-		return api.LoadProject(params.Params.(*lsproto.APILoadProjectParams).ConfigFileName)
-	case lsproto.APIMethodGetSymbolAtPosition:
-		params := params.Params.(*lsproto.APIGetSymbolAtPositionParams)
+func (api *API) HandleRequest(id int, method string, payload json.RawMessage) (any, error) {
+	params, err := unmarshalPayload(method, payload)
+	if err != nil {
+		return nil, err
+	}
+
+	switch Method(method) {
+	case MethodParseConfigFile:
+		return api.ParseConfigFile(params.(*ParseConfigFileParams).FileName)
+	case MethodLoadProject:
+		return api.LoadProject(params.(*LoadProjectParams).ConfigFileName)
+	case MethodGetSymbolAtPosition:
+		params := params.(*GetSymbolAtPositionParams)
 		return api.GetSymbolAtPosition(api.toPath(params.Project), params.FileName, int(params.Position))
 	default:
-		return nil, fmt.Errorf("unhandled API method %q", params.Method)
+		return nil, fmt.Errorf("unhandled API method %q", method)
 	}
 }
 
@@ -156,8 +166,8 @@ func (api *API) ParseConfigFile(configFileName string) (*tsoptions.ParsedCommand
 func (api *API) LoadProject(configFileName string) (*ProjectData, error) {
 	configFileName = api.toAbsoluteFileName(configFileName)
 	configFilePath := api.toPath(configFileName)
-	project := NewConfiguredProject(configFileName, configFilePath, api)
-	if err := project.loadConfig(); err != nil {
+	project := project.NewConfiguredProject(configFileName, configFilePath, api)
+	if err := project.LoadConfig(); err != nil {
 		return nil, err
 	}
 	api.projects[configFilePath] = project
@@ -170,13 +180,13 @@ func (api *API) GetSymbolAtPosition(project tspath.Path, fileName string, positi
 		if symbol == nil {
 			return nil, nil
 		}
-		data := NewSymbolData(symbol, project.version)
+		data := NewSymbolData(symbol, project.Version())
 		return data, nil
 	}
 	return nil, fmt.Errorf("project %q not found", project)
 }
 
-func (api *API) getOrCreateScriptInfo(fileName string, path tspath.Path, scriptKind core.ScriptKind) *ScriptInfo {
+func (api *API) getOrCreateScriptInfo(fileName string, path tspath.Path, scriptKind core.ScriptKind) *project.ScriptInfo {
 	api.scriptInfosMu.RLock()
 	info, ok := api.scriptInfos[path]
 	api.scriptInfosMu.RUnlock()
@@ -188,8 +198,8 @@ func (api *API) getOrCreateScriptInfo(fileName string, path tspath.Path, scriptK
 	if !ok {
 		return nil
 	}
-	info = newScriptInfo(fileName, path, scriptKind)
-	info.setTextFromDisk(content)
+	info = project.NewScriptInfo(fileName, path, scriptKind)
+	info.SetTextFromDisk(content)
 	api.scriptInfosMu.Lock()
 	defer api.scriptInfosMu.Unlock()
 	api.scriptInfos[path] = info

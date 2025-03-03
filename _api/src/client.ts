@@ -62,10 +62,7 @@ export class Client {
     }
 
     async request(method: string, params: any): Promise<any> {
-        const result = await this.jsonRPCClient.request("custom/api", {
-            method,
-            params,
-        });
+        const result = await this.jsonRPCClient.request(`@ts/${method}`, params);
         this.flushErrors();
         return result;
     }

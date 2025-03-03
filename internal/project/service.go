@@ -27,8 +27,7 @@ type assignProjectResult struct {
 }
 
 type ServiceOptions struct {
-	DefaultLibraryPath string
-	Logger             *Logger
+	Logger *Logger
 }
 
 var _ ProjectHost = (*Service)(nil)
@@ -46,7 +45,7 @@ type Service struct {
 	// if it exists
 	inferredProjects []*Project
 
-	documentRegistry *documentRegistry
+	documentRegistry *DocumentRegistry
 	scriptInfosMu    sync.RWMutex
 	scriptInfos      map[tspath.Path]*ScriptInfo
 	openFiles        map[tspath.Path]string // values are projectRootPath, if provided
@@ -55,6 +54,30 @@ type Service struct {
 	filenameToScriptInfoVersion map[tspath.Path]int
 	realpathToScriptInfosMu     sync.Mutex
 	realpathToScriptInfos       map[tspath.Path]map[*ScriptInfo]struct{}
+}
+
+func NewService(host ServiceHost, options ServiceOptions) *Service {
+	options.Logger.Info(fmt.Sprintf("currentDirectory:: %s useCaseSensitiveFileNames:: %t", host.GetCurrentDirectory(), host.FS().UseCaseSensitiveFileNames()))
+	options.Logger.Info("libs Location:: " + host.DefaultLibraryPath())
+	return &Service{
+		host:    host,
+		options: options,
+		comparePathsOptions: tspath.ComparePathsOptions{
+			UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
+			CurrentDirectory:          host.GetCurrentDirectory(),
+		},
+
+		configuredProjects: make(map[tspath.Path]*Project),
+
+		documentRegistry: NewDocumentRegistry(tspath.ComparePathsOptions{
+			UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
+			CurrentDirectory:          host.GetCurrentDirectory(),
+		}),
+		scriptInfos:                 make(map[tspath.Path]*ScriptInfo),
+		openFiles:                   make(map[tspath.Path]string),
+		filenameToScriptInfoVersion: make(map[tspath.Path]int),
+		realpathToScriptInfos:       make(map[tspath.Path]map[*ScriptInfo]struct{}),
+	}
 }
 
 // GetCurrentDirectory implements ProjectHost.
@@ -74,11 +97,11 @@ func (s *Service) NewLine() string {
 
 // DefaultLibraryPath implements ProjectHost.
 func (s *Service) DefaultLibraryPath() string {
-	return s.options.DefaultLibraryPath
+	return s.host.DefaultLibraryPath()
 }
 
 // DocumentRegistry implements ProjectHost.
-func (s *Service) DocumentRegistry() *documentRegistry {
+func (s *Service) DocumentRegistry() *DocumentRegistry {
 	return s.documentRegistry
 }
 
@@ -90,30 +113,6 @@ func (s *Service) FS() vfs.FS {
 // GetScriptInfoForFile implements ProjectHost.
 func (s *Service) GetOrCreateScriptInfoForFile(fileName string, path tspath.Path, scriptKind core.ScriptKind) *ScriptInfo {
 	return s.getOrCreateScriptInfoNotOpenedByClient(fileName, path, scriptKind)
-}
-
-func NewService(host ServiceHost, options ServiceOptions) *Service {
-	options.Logger.Info(fmt.Sprintf("currentDirectory:: %s useCaseSensitiveFileNames:: %t", host.GetCurrentDirectory(), host.FS().UseCaseSensitiveFileNames()))
-	options.Logger.Info("libs Location:: " + options.DefaultLibraryPath)
-	return &Service{
-		host:    host,
-		options: options,
-		comparePathsOptions: tspath.ComparePathsOptions{
-			UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
-			CurrentDirectory:          host.GetCurrentDirectory(),
-		},
-
-		configuredProjects: make(map[tspath.Path]*Project),
-
-		documentRegistry: newDocumentRegistry(tspath.ComparePathsOptions{
-			UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
-			CurrentDirectory:          host.GetCurrentDirectory(),
-		}),
-		scriptInfos:                 make(map[tspath.Path]*ScriptInfo),
-		openFiles:                   make(map[tspath.Path]string),
-		filenameToScriptInfoVersion: make(map[tspath.Path]int),
-		realpathToScriptInfos:       make(map[tspath.Path]map[*ScriptInfo]struct{}),
-	}
 }
 
 func (s *Service) Projects() []*Project {
@@ -178,7 +177,7 @@ func (s *Service) CloseFile(fileName string) {
 
 func (s *Service) MarkFileSaved(fileName string, text string) {
 	if info := s.GetScriptInfoByPath(s.toPath(fileName)); info != nil {
-		info.setTextFromDisk(text)
+		info.SetTextFromDisk(text)
 	}
 }
 
@@ -343,9 +342,9 @@ func (s *Service) getOrCreateScriptInfoWorker(fileName string, path tspath.Path,
 			}
 		}
 
-		info = newScriptInfo(fileName, path, scriptKind)
+		info = NewScriptInfo(fileName, path, scriptKind)
 		if fromDisk {
-			info.setTextFromDisk(fileContent)
+			info.SetTextFromDisk(fileContent)
 		}
 
 		s.scriptInfosMu.Lock()
@@ -622,7 +621,7 @@ func (s *Service) toPath(fileName string) tspath.Path {
 }
 
 func (s *Service) loadConfiguredProject(project *Project) {
-	if err := project.loadConfig(); err != nil {
+	if err := project.LoadConfig(); err != nil {
 		panic(fmt.Errorf("failed to load project %q: %w", project.configFileName, err))
 	}
 }
