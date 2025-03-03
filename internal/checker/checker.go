@@ -23360,7 +23360,7 @@ func (c *Checker) mapTypeEx(t *Type, f func(*Type) *Type, noReductions bool) *Ty
 	if u.origin != nil && u.origin.flags&TypeFlagsUnion != 0 {
 		types = u.origin.Types()
 	}
-	var mappedTypes []*Type
+	mappedTypes := make([]*Type, 0, 16)
 	var changed bool
 	for _, s := range types {
 		var mapped *Type
@@ -23377,7 +23377,7 @@ func (c *Checker) mapTypeEx(t *Type, f func(*Type) *Type, noReductions bool) *Ty
 		}
 	}
 	if changed {
-		return c.getUnionTypeEx(mappedTypes, core.IfElse(noReductions, UnionReductionNone, UnionReductionLiteral), nil /*alias*/, nil /*origin*/)
+		return c.getUnionTypeEx(slices.Clone(mappedTypes), core.IfElse(noReductions, UnionReductionNone, UnionReductionLiteral), nil /*alias*/, nil /*origin*/)
 	}
 	return t
 }
