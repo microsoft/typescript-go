@@ -3,6 +3,7 @@ package binder
 import (
 	"slices"
 	"strconv"
+	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
@@ -91,15 +92,32 @@ func BindSourceFile(file *ast.SourceFile, options *core.CompilerOptions) {
 	}
 }
 
+var binderPool = sync.Pool{
+	New: func() any {
+		b := &Binder{}
+		b.bindFunc = b.bind // Allocate closure once
+		return b
+	},
+}
+
+func getBinder() *Binder {
+	return binderPool.Get().(*Binder)
+}
+
+func putBinder(b *Binder) {
+	*b = Binder{bindFunc: b.bindFunc}
+	binderPool.Put(b)
+}
+
 func bindSourceFile(file *ast.SourceFile, options *core.CompilerOptions) {
 	file.BindOnce(func() {
-		b := Binder{}
+		b := getBinder()
+		defer putBinder(b)
 		b.file = file
 		b.options = options
 		b.languageVersion = options.GetEmitScriptTarget()
 		b.unreachableFlow.Flags = ast.FlowFlagsUnreachable
 		b.reportedUnreachableFlow.Flags = ast.FlowFlagsUnreachable
-		b.bindFunc = b.bind // Allocate closure once
 		b.bind(file.AsNode())
 		file.SymbolCount = b.symbolCount
 		file.ClassifiableNames = b.classifiableNames
