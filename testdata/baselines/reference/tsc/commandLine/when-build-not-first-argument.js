@@ -3,7 +3,6 @@ currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
 Input::--verbose --build
 
-
 ExitStatus:: 1
 
 CompilerOptions::{
