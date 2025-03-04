@@ -1,6 +1,7 @@
 package execute
 
 import (
+	"context"
 	"io"
 	"time"
 
@@ -10,7 +11,7 @@ import (
 type System interface {
 	Writer() io.Writer
 	EndWrite() // needed for testing
-	IsTestDone() bool
+	Context() context.Context
 	Now() time.Time
 	FS() vfs.FS
 	DefaultLibraryPath() string

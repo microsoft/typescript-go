@@ -1,6 +1,7 @@
 package execute_test
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"maps"
@@ -21,6 +22,7 @@ func newTestSys(fileOrFolderList FileMap, cwd string, args ...string) *testSys {
 	}
 	return &testSys{
 		fs:                 bundled.WrapFS(vfstest.FromMap(fileOrFolderList, true /*useCaseSensitiveFileNames*/)),
+		context:            context.WithValue(context.Background(), "done", true), // exit watch cycle if testing 
 		defaultLibraryPath: bundled.LibPath(),
 		cwd:                cwd,
 		files:              slices.Collect(maps.Keys(fileOrFolderList)),
@@ -31,10 +33,12 @@ func newTestSys(fileOrFolderList FileMap, cwd string, args ...string) *testSys {
 
 type testSys struct {
 	// todo: original has write to output as a string[] because the separations are needed for baselining
-	output             []string
-	currentWrite       *strings.Builder
-	serializedDiff     map[string]string
+	output         []string
+	currentWrite   *strings.Builder
+	serializedDiff map[string]string
+
 	fs                 vfs.FS
+	context            context.Context
 	defaultLibraryPath string
 	cwd                string
 	files              []string
@@ -48,6 +52,10 @@ func (s *testSys) IsTestDone() bool {
 func (s *testSys) Now() time.Time {
 	// todo: make a "test time" structure
 	return time.Now()
+}
+
+func (s *testSys) Context() context.Context {
+	return s.context
 }
 
 func (s *testSys) FS() vfs.FS {
