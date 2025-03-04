@@ -824,7 +824,7 @@ func NewChecker(program Program) *Checker {
 	c.exactOptionalPropertyTypes = c.compilerOptions.ExactOptionalPropertyTypes == core.TSTrue
 	c.canCollectSymbolAliasAccessabilityData = c.compilerOptions.VerbatimModuleSyntax.IsFalseOrUnknown()
 	c.arrayVariances = []VarianceFlags{VarianceFlagsCovariant}
-	c.globals = make(ast.SymbolTable, countLibDtsSymbols(c.files))
+	c.globals = make(ast.SymbolTable, countGlobalSymbols(c.files))
 	c.evaluate = createEvaluator(c.evaluateEntity)
 	c.stringLiteralTypes = make(map[string]*Type)
 	c.numberLiteralTypes = make(map[jsnum.Number]*Type)
@@ -1012,10 +1012,10 @@ func createFileIndexMap(files []*ast.SourceFile) map[*ast.SourceFile]int {
 	return result
 }
 
-func countLibDtsSymbols(files []*ast.SourceFile) int {
+func countGlobalSymbols(files []*ast.SourceFile) int {
 	count := 0
 	for _, file := range files {
-		if file.IsDeclarationFile && strings.HasPrefix(tspath.GetBaseFileName(file.FileName()), "lib.") {
+		if !ast.IsExternalOrCommonJsModule(file) {
 			count += len(file.Locals)
 		}
 	}
