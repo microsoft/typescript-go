@@ -6,9 +6,32 @@ $ go run github.com/microsoft/typescript-go/cmd/tsgo@latest
 
 For a list of intentional changes with respect to Typescript 5.7, see CHANGES.md.
 
+## What Works / What Doesn't (Yet)
+
+This is still a work in progress and is not yet at full feature parity with TypeScript.
+Please check this list carefully before logging a bug or assuming an intentional change.
+
+Language features known to not be implemented yet:
+
+ * `.js` files
+ * JSDoc interpretation
+ * Declaration emit
+ * JSX
+ * Module resolution
+
+The list of *currently prototyped* language service features is:
+ * Very basic project inference
+ * Error spans
+ * Go-to-definition
+ * Hover (quick info, but not signature help)
+
+Language service features known to not be implemented yet:
+ * Everything else
+ * In particular, UTF-16 support (files containing multi-code-point runes will get incorrect spans)
+
 ## Local development
 
-This repo uses Go and TypeScript. For a full development experience, you'll need to have both installed.
+This repo uses [Golang](https://go.dev/dl/) and TypeScript. For a full development experience, you'll need to have both installed.
 
 For tests and code generation, this repo contains a git submodule to the main TypeScript repo pointing to the commit being ported.
 When cloning, you'll want to clone with submodules:
@@ -38,6 +61,17 @@ Additional tasks are a work in progress.
 
 `hereby` is not required to work on the repo; the regular `go` tooling (e.g., `go build`, `go test ./...`) will work as expected.
 `hereby` tasks are provided as a convenience for those familiar with the TypeScript repo.
+
+### Running `tsgo`
+
+After running `hereby build`, you can run `built/local/tsgo`, which behaves mostly the same as `tsc`.
+
+### Running LSP Prototype
+
+To try the prototype LSP experience:
+ * Run VS Code in the repo workspace (`code .`)
+ * Rename `.vscode/launch.template.json` to `launch.json`
+ * F5 (or `Debug: Start Debugging` from the command palette)
 
 ## Contributing
 
