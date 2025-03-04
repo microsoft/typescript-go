@@ -6,7 +6,6 @@ import (
 	"slices"
 	"testing"
 
-	json2 "github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"gotest.tools/v3/assert"
 )
@@ -165,10 +164,6 @@ func TestOrderedMapUnmarshalJSON(t *testing.T) {
 	t.Run("UnmarshalJSON", func(t *testing.T) {
 		t.Parallel()
 		testOrderedMapUnmarshalJSON(t, json.Unmarshal)
-	})
-	t.Run("UnmarshalJSONV2", func(t *testing.T) {
-		t.Parallel()
-		testOrderedMapUnmarshalJSON(t, func(in []byte, out any) error { return json2.Unmarshal(in, out) })
 	})
 }
 

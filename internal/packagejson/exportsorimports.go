@@ -3,8 +3,6 @@ package packagejson
 import (
 	"encoding/json"
 
-	json2 "github.com/go-json-experiment/json"
-	"github.com/go-json-experiment/json/jsontext"
 	"github.com/microsoft/typescript-go/internal/collections"
 )
 
@@ -23,17 +21,10 @@ type ExportsOrImports struct {
 	objectKind objectKind
 }
 
-var (
-	_ json.Unmarshaler      = (*ExportsOrImports)(nil)
-	_ json2.UnmarshalerFrom = (*ExportsOrImports)(nil)
-)
+var _ json.Unmarshaler = (*ExportsOrImports)(nil)
 
 func (e *ExportsOrImports) UnmarshalJSON(data []byte) error {
 	return unmarshalJSONValue[ExportsOrImports](&e.JSONValue, data)
-}
-
-func (e *ExportsOrImports) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	return unmarshalJSONValueV2[ExportsOrImports](&e.JSONValue, dec)
 }
 
 func (e ExportsOrImports) AsObject() *collections.OrderedMap[string, ExportsOrImports] {

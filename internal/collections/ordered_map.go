@@ -11,9 +11,6 @@ import (
 	"reflect"
 	"slices"
 	"strconv"
-
-	json2 "github.com/go-json-experiment/json"
-	"github.com/go-json-experiment/json/jsontext"
 )
 
 // OrderedMap is an insertion ordered map.
@@ -244,10 +241,7 @@ func resolveKeyName(k reflect.Value) (string, error) {
 	panic("unexpected map key type")
 }
 
-var (
-	_ json.Unmarshaler      = (*OrderedMap[string, string])(nil)
-	_ json2.UnmarshalerFrom = (*OrderedMap[string, string])(nil)
-)
+var _ json.Unmarshaler = (*OrderedMap[string, string])(nil)
 
 func (m *OrderedMap[K, V]) UnmarshalJSON(data []byte) error {
 	if string(data) == "null" {
@@ -285,37 +279,6 @@ func (m *OrderedMap[K, V]) UnmarshalJSON(data []byte) error {
 		} else {
 			return fmt.Errorf("cannot unmarshal key into Map[%v, ...]", reflect.TypeFor[K]())
 		}
-	}
-	return nil
-}
-
-func (m *OrderedMap[K, V]) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	token, err := dec.ReadToken()
-	if err != nil {
-		return err
-	}
-	if token.Kind() == 'n' { // jsontext.Null.Kind()
-		// By convention, to approximate the behavior of Unmarshal itself,
-		// Unmarshalers implement UnmarshalJSON([]byte("null")) as a no-op.
-		// https://pkg.go.dev/encoding/json#Unmarshaler
-		return nil
-	}
-	if token.Kind() != '{' { // jsontext.ObjectStart.Kind()
-		return errors.New("cannot unmarshal non-object JSON value into Map")
-	}
-	for dec.PeekKind() != '}' { // jsontext.ObjectEnd.Kind()
-		var key K
-		var value V
-		if err := json2.UnmarshalDecode(dec, &key); err != nil {
-			return err
-		}
-		if err := json2.UnmarshalDecode(dec, &value); err != nil {
-			return err
-		}
-		m.Set(key, value)
-	}
-	if _, err := dec.ReadToken(); err != nil {
-		return err
 	}
 	return nil
 }

@@ -5,7 +5,6 @@ import (
 	"path/filepath"
 	"testing"
 
-	json2 "github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/repo"
@@ -27,17 +26,6 @@ func BenchmarkPackageJSON(b *testing.B) {
 				for b.Loop() {
 					var p packagejson.Fields
 					if err := json.Unmarshal(content, &p); err != nil {
-						b.Fatal(err)
-					}
-				}
-			})
-		})
-
-		b.Run("UnmarshalJSONV2", func(b *testing.B) {
-			b.Run(f.Name(), func(b *testing.B) {
-				for b.Loop() {
-					var p packagejson.Fields
-					if err := json2.Unmarshal(content, &p); err != nil {
 						b.Fatal(err)
 					}
 				}
