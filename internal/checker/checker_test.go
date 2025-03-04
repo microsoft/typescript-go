@@ -5,6 +5,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/bundled"
+	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -34,7 +35,7 @@ foo.bar;`
 	host := compiler.NewCompilerHost(nil, cd, fs, bundled.LibPath())
 	opts := compiler.ProgramOptions{
 		Host:           host,
-		ConfigFilePath: "/tsconfig.json",
+		ConfigFileName: "/tsconfig.json",
 	}
 	p := compiler.NewProgram(opts)
 	p.BindSourceFiles()
@@ -64,8 +65,30 @@ func TestCheckSrcCompiler(t *testing.T) {
 	host := compiler.NewCompilerHost(nil, rootPath, fs, bundled.LibPath())
 	opts := compiler.ProgramOptions{
 		Host:           host,
-		ConfigFilePath: tspath.CombinePaths(rootPath, "tsconfig.json"),
+		ConfigFileName: tspath.CombinePaths(rootPath, "tsconfig.json"),
 	}
 	p := compiler.NewProgram(opts)
 	p.CheckSourceFiles()
+}
+
+func BenchmarkNewChecker(b *testing.B) {
+	repo.SkipIfNoTypeScriptSubmodule(b)
+	fs := osvfs.FS()
+	fs = bundled.WrapFS(fs)
+
+	rootPath := tspath.CombinePaths(tspath.NormalizeSlashes(repo.TypeScriptSubmodulePath), "src", "compiler")
+
+	host := compiler.NewCompilerHost(nil, rootPath, fs, bundled.LibPath())
+	opts := compiler.ProgramOptions{
+		Host:           host,
+		ConfigFileName: tspath.CombinePaths(rootPath, "tsconfig.json"),
+	}
+	p := compiler.NewProgram(opts)
+
+	b.ReportAllocs()
+	b.ResetTimer()
+
+	for range b.N {
+		checker.NewChecker(p)
+	}
 }

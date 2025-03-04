@@ -2,7 +2,6 @@ package module
 
 import (
 	"fmt"
-	"path"
 	"slices"
 	"strings"
 
@@ -1132,7 +1131,7 @@ func (r *resolutionState) loadModuleFromFile(extensions extensions, candidate st
 }
 
 func (r *resolutionState) loadModuleFromFileNoImplicitExtensions(extensions extensions, candidate string, onlyRecordFailures bool) *resolved {
-	base := path.Base(candidate)
+	base := tspath.GetBaseFileName(candidate)
 	if !strings.Contains(base, ".") {
 		return continueSearching() // extensionless import, no lookups performed, since we don't support extensionless files
 	}
@@ -1812,7 +1811,7 @@ func GetAutomaticTypeDirectiveNames(options *core.CompilerOptions, host Resoluti
 	typeRoots, _ := options.GetEffectiveTypeRoots(host.GetCurrentDirectory())
 	for _, root := range typeRoots {
 		if host.FS().DirectoryExists(root) {
-			for _, typeDirectivePath := range host.FS().GetDirectories(root) {
+			for _, typeDirectivePath := range host.FS().GetAccessibleEntries(root).Directories {
 				normalized := tspath.NormalizePath(typeDirectivePath)
 				packageJsonPath := tspath.CombinePaths(root, normalized, "package.json")
 				isNotNeededPackage := false

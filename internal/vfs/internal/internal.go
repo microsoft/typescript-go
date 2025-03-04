@@ -8,10 +8,12 @@ import (
 	"unicode/utf16"
 
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
 type Common struct {
-	RootFor func(root string) fs.FS
+	RootFor  func(root string) fs.FS
+	Realpath func(path string) string
 }
 
 func RootLength(p string) int {
@@ -38,7 +40,7 @@ func (vfs *Common) RootAndPath(path string) (fsys fs.FS, rootName string, rest s
 	return vfs.RootFor(rootName), rootName, rest
 }
 
-func (vfs *Common) stat(path string) fs.FileInfo {
+func (vfs *Common) Stat(path string) vfs.FileInfo {
 	fsys, _, rest := vfs.RootAndPath(path)
 	if fsys == nil {
 		return nil
@@ -51,28 +53,62 @@ func (vfs *Common) stat(path string) fs.FileInfo {
 }
 
 func (vfs *Common) FileExists(path string) bool {
-	stat := vfs.stat(path)
+	stat := vfs.Stat(path)
 	return stat != nil && !stat.IsDir()
 }
 
 func (vfs *Common) DirectoryExists(path string) bool {
-	stat := vfs.stat(path)
+	stat := vfs.Stat(path)
 	return stat != nil && stat.IsDir()
 }
 
-func (vfs *Common) GetDirectories(path string) []string {
-	entries := vfs.GetEntries(path)
-	// TODO: should this really exist? ReadDir with manual filtering seems like a better idea.
-	var dirs []string
-	for _, entry := range entries {
-		if entry.IsDir() {
-			dirs = append(dirs, entry.Name())
+func (vfs *Common) GetAccessibleEntries(path string) (result vfs.Entries) {
+	addToResult := func(name string, mode fs.FileMode) (added bool) {
+		if mode.IsDir() {
+			result.Directories = append(result.Directories, name)
+			return true
+		}
+
+		if mode.IsRegular() {
+			result.Files = append(result.Files, name)
+			return true
+		}
+
+		return false
+	}
+
+	for _, entry := range vfs.GetEntries(path) {
+		entryType := entry.Type()
+
+		if addToResult(entry.Name(), entryType) {
+			continue
+		}
+
+		if entryType&fs.ModeSymlink != 0 {
+			// Easy case; UNIX-like system will clearly mark symlinks.
+			if stat := vfs.Stat(path + "/" + entry.Name()); stat != nil {
+				addToResult(entry.Name(), stat.Mode())
+			}
+			continue
+		}
+
+		if entryType&fs.ModeIrregular != 0 && vfs.Realpath != nil {
+			// Could be a Windows junction. Try Realpath.
+			// TODO(jakebailey): use syscall.Win32FileAttributeData instead
+			fullPath := path + "/" + entry.Name()
+			if realpath := vfs.Realpath(fullPath); fullPath != realpath {
+				if stat := vfs.Stat(realpath); stat != nil {
+					addToResult(entry.Name(), stat.Mode())
+				}
+			}
+			continue
 		}
 	}
-	return dirs
+
+	return result
 }
 
-func (vfs *Common) GetEntries(path string) []fs.DirEntry {
+func (vfs *Common) GetEntries(path string) []vfs.DirEntry {
 	fsys, _, rest := vfs.RootAndPath(path)
 	if fsys == nil {
 		return nil

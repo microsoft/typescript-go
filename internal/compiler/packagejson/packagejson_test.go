@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/testutil/filefixture"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 var packageJsonFixtures = []filefixture.Fixture{
@@ -45,8 +46,9 @@ func BenchmarkPackageJSON(b *testing.B) {
 
 		b.Run("ParseJSONText", func(b *testing.B) {
 			b.Run(f.Name(), func(b *testing.B) {
+				fileName := "/" + f.Name()
 				for range b.N {
-					parser.ParseJSONText(f.Name(), string(content))
+					parser.ParseJSONText(fileName, tspath.Path(fileName), string(content))
 				}
 			})
 		})

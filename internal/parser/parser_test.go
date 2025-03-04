@@ -14,6 +14,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/testutil/fixtures"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
 	"gotest.tools/v3/assert"
 )
 
@@ -30,14 +31,15 @@ func BenchmarkParse(b *testing.B) {
 		b.Run(f.Name(), func(b *testing.B) {
 			f.SkipIfNotExist(b)
 
-			fileName := f.Path()
+			fileName := tspath.GetNormalizedAbsolutePath(f.Path(), "/")
+			path := tspath.ToPath(fileName, "/", osvfs.FS().UseCaseSensitiveFileNames())
 			sourceText := f.ReadFile(b)
 
 			for _, jsdoc := range jsdocModes {
 				b.Run(jsdoc.name, func(b *testing.B) {
 					jsdocMode := jsdoc.mode
 					for range b.N {
-						ParseSourceFile(fileName, sourceText, core.ScriptTargetESNext, jsdocMode)
+						ParseSourceFile(fileName, path, sourceText, core.ScriptTargetESNext, jsdocMode)
 					}
 				})
 			}
@@ -72,12 +74,15 @@ func TestParseTypeScriptRepo(t *testing.T) {
 					sourceText, err := os.ReadFile(f.path)
 					assert.NilError(t, err)
 
+					fileName := tspath.GetNormalizedAbsolutePath(f.path, repo.TypeScriptSubmodulePath)
+					path := tspath.ToPath(f.path, repo.TypeScriptSubmodulePath, osvfs.FS().UseCaseSensitiveFileNames())
+
 					var sourceFile *ast.SourceFile
 
 					if strings.HasSuffix(f.name, ".json") {
-						sourceFile = ParseJSONText(f.path, string(sourceText))
+						sourceFile = ParseJSONText(fileName, path, string(sourceText))
 					} else {
-						sourceFile = ParseSourceFile(f.path, string(sourceText), core.ScriptTargetESNext, scanner.JSDocParsingModeParseAll)
+						sourceFile = ParseSourceFile(fileName, path, string(sourceText), core.ScriptTargetESNext, scanner.JSDocParsingModeParseAll)
 					}
 
 					if !test.ignoreErrors {

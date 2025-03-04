@@ -20,7 +20,7 @@ import (
 )
 
 type ProgramOptions struct {
-	ConfigFilePath               string
+	ConfigFileName               string
 	RootFiles                    []string
 	Host                         CompilerHost
 	Options                      *core.CompilerOptions
@@ -33,9 +33,10 @@ type Program struct {
 	host                         CompilerHost
 	programOptions               ProgramOptions
 	compilerOptions              *core.CompilerOptions
-	configFilePath               string
+	configFileName               string
 	nodeModules                  map[string]*ast.SourceFile
 	checkers                     []*checker.Checker
+	checkersOnce                 sync.Once
 	checkersByFile               map[*ast.SourceFile]*checker.Checker
 	currentDirectory             string
 	configFileParsingDiagnostics []*ast.Diagnostic
@@ -88,13 +89,14 @@ func NewProgram(options ProgramOptions) *Program {
 
 	rootFiles := options.RootFiles
 
-	p.configFilePath = options.ConfigFilePath
-	if p.configFilePath != "" {
-		jsonText, ok := p.host.FS().ReadFile(p.configFilePath)
+	p.configFileName = options.ConfigFileName
+	if p.configFileName != "" {
+		jsonText, ok := p.host.FS().ReadFile(p.configFileName)
 		if !ok {
 			panic("config file not found")
 		}
-		parsedConfig := parser.ParseJSONText(p.configFilePath, jsonText)
+		configFilePath := tspath.ToPath(p.configFileName, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
+		parsedConfig := parser.ParseJSONText(p.configFileName, configFilePath, jsonText)
 		if len(parsedConfig.Diagnostics()) > 0 {
 			p.configFileParsingDiagnostics = append(p.configFileParsingDiagnostics, parsedConfig.Diagnostics()...)
 			return p
@@ -109,7 +111,7 @@ func NewProgram(options ProgramOptions) *Program {
 			p.host,
 			p.host.GetCurrentDirectory(),
 			options.Options,
-			p.configFilePath,
+			p.configFileName,
 			/*resolutionStack*/ nil,
 			/*extraFileExtensions*/ nil,
 			/*extendedConfigCache*/ nil,
@@ -188,7 +190,7 @@ func (p *Program) BindSourceFiles() {
 
 func (p *Program) CheckSourceFiles() {
 	p.createCheckers()
-	wg := core.NewWorkGroup(false)
+	wg := core.NewWorkGroup(p.programOptions.SingleThreaded)
 	for index, checker := range p.checkers {
 		wg.Queue(func() {
 			for i := index; i < len(p.files); i += len(p.checkers) {
@@ -200,7 +202,7 @@ func (p *Program) CheckSourceFiles() {
 }
 
 func (p *Program) createCheckers() {
-	if len(p.checkers) == 0 {
+	p.checkersOnce.Do(func() {
 		p.checkers = make([]*checker.Checker, core.IfElse(p.programOptions.SingleThreaded, 1, 4))
 		for i := range p.checkers {
 			p.checkers[i] = checker.NewChecker(p)
@@ -209,7 +211,7 @@ func (p *Program) createCheckers() {
 		for i, file := range p.files {
 			p.checkersByFile[file] = p.checkers[i%len(p.checkers)]
 		}
-	}
+	})
 }
 
 // Return the type checker associated with the program.
@@ -225,7 +227,7 @@ func (p *Program) GetTypeChecker() *checker.Checker {
 // method returns the checker that was tasked with checking the file. Note that it isn't possible to mix
 // types obtained from different checkers, so only non-type data (such as diagnostics or string
 // representations of types) should be obtained from checkers returned by this method.
-func (p *Program) getTypeCheckerForFile(file *ast.SourceFile) *checker.Checker {
+func (p *Program) GetTypeCheckerForFile(file *ast.SourceFile) *checker.Checker {
 	p.createCheckers()
 	return p.checkersByFile[file]
 }
@@ -297,7 +299,7 @@ func (p *Program) getBindDiagnosticsForFile(sourceFile *ast.SourceFile) []*ast.D
 }
 
 func (p *Program) getSemanticDiagnosticsForFile(sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	diags := core.Concatenate(sourceFile.BindDiagnostics(), p.getTypeCheckerForFile(sourceFile).GetDiagnostics(sourceFile))
+	diags := core.Concatenate(sourceFile.BindDiagnostics(), p.GetTypeCheckerForFile(sourceFile).GetDiagnostics(sourceFile))
 	if len(sourceFile.CommentDirectives) == 0 {
 		return diags
 	}
@@ -390,81 +392,25 @@ func (p *Program) PrintSourceFileWithTypes() {
 	}
 }
 
-var unprefixedNodeCoreModules = map[string]bool{
-	"assert":              true,
-	"assert/strict":       true,
-	"async_hooks":         true,
-	"buffer":              true,
-	"child_process":       true,
-	"cluster":             true,
-	"console":             true,
-	"constants":           true,
-	"crypto":              true,
-	"dgram":               true,
-	"diagnostics_channel": true,
-	"dns":                 true,
-	"dns/promises":        true,
-	"domain":              true,
-	"events":              true,
-	"fs":                  true,
-	"fs/promises":         true,
-	"http":                true,
-	"http2":               true,
-	"https":               true,
-	"inspector":           true,
-	"inspector/promises":  true,
-	"module":              true,
-	"net":                 true,
-	"os":                  true,
-	"path":                true,
-	"path/posix":          true,
-	"path/win32":          true,
-	"perf_hooks":          true,
-	"process":             true,
-	"punycode":            true,
-	"querystring":         true,
-	"readline":            true,
-	"readline/promises":   true,
-	"repl":                true,
-	"stream":              true,
-	"stream/consumers":    true,
-	"stream/promises":     true,
-	"stream/web":          true,
-	"string_decoder":      true,
-	"sys":                 true,
-	"test/mock_loader":    true,
-	"timers":              true,
-	"timers/promises":     true,
-	"tls":                 true,
-	"trace_events":        true,
-	"tty":                 true,
-	"url":                 true,
-	"util":                true,
-	"util/types":          true,
-	"v8":                  true,
-	"vm":                  true,
-	"wasi":                true,
-	"worker_threads":      true,
-	"zlib":                true,
-}
-
-var exclusivelyPrefixedNodeCoreModules = map[string]bool{
-	"node:sea":            true,
-	"node:sqlite":         true,
-	"node:test":           true,
-	"node:test/reporters": true,
-}
-
 func (p *Program) GetEmitModuleFormatOfFile(sourceFile *ast.SourceFile) core.ModuleKind {
-	// !!!
-	// Must reimplement the below.
-	// Also, previous version is a method on `TypeCheckerHost`/`Program`.
+	return p.GetEmitModuleFormatOfFileWorker(sourceFile, p.compilerOptions)
+}
 
-	// mode, hadImpliedFormat := getImpliedNodeFormatForEmitWorker(sourceFile, options)
-	// if !hadImpliedFormat {
-	// 	mode = options.GetEmitModuleKind()
-	// }
-	return p.compilerOptions.GetEmitModuleKind()
+func (p *Program) GetEmitModuleFormatOfFileWorker(sourceFile *ast.SourceFile, options *core.CompilerOptions) core.ModuleKind {
+	result := p.GetImpliedNodeFormatForEmitWorker(sourceFile, options)
+	if result != core.ModuleKindNone {
+		return result
+	}
+	return options.GetEmitModuleKind()
+}
+
+func (p *Program) GetImpliedNodeFormatForEmit(sourceFile *ast.SourceFile) core.ResolutionMode {
+	return p.GetImpliedNodeFormatForEmitWorker(sourceFile, p.compilerOptions)
+}
+
+func (p *Program) GetImpliedNodeFormatForEmitWorker(sourceFile *ast.SourceFile, options *core.CompilerOptions) core.ResolutionMode {
+	// !!!
+	return core.ModuleKindNone
 }
 
 func (p *Program) CommonSourceDirectory() string {
@@ -569,6 +515,7 @@ type sourceMapEmitResult struct {
 
 func (p *Program) Emit(options *EmitOptions) *EmitResult {
 	// !!! performance measurement
+	p.BindSourceFiles()
 
 	host := &emitHost{program: p}
 
@@ -578,9 +525,9 @@ func (p *Program) Emit(options *EmitOptions) *EmitResult {
 		},
 	}
 	wg := core.NewWorkGroup(p.programOptions.SingleThreaded)
-
 	var emitters []*emitter
 	sourceFiles := getSourceFilesToEmit(host, options.TargetSourceFile, options.forceDtsEmit)
+
 	for _, sourceFile := range sourceFiles {
 		emitter := &emitter{
 			host:              host,

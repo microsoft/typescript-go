@@ -2,6 +2,7 @@ package ast
 
 import (
 	"slices"
+	"sync"
 	"sync/atomic"
 
 	"github.com/microsoft/typescript-go/internal/core"
@@ -197,12 +198,12 @@ func GetAssignmentTarget(node *Node) *Node {
 	}
 }
 
-func isLogicalBinaryOperator(token Kind) bool {
+func IsLogicalBinaryOperator(token Kind) bool {
 	return token == KindBarBarToken || token == KindAmpersandAmpersandToken
 }
 
 func IsLogicalOrCoalescingBinaryOperator(token Kind) bool {
-	return isLogicalBinaryOperator(token) || token == KindQuestionQuestionToken
+	return IsLogicalBinaryOperator(token) || token == KindQuestionQuestionToken
 }
 
 func IsLogicalOrCoalescingBinaryExpression(expr *Node) bool {
@@ -833,33 +834,53 @@ func WalkUpParenthesizedTypes(node *TypeNode) *Node {
 
 // Walks up the parents of a node to find the containing SourceFile
 func GetSourceFileOfNode(node *Node) *SourceFile {
-	for node.Parent != nil {
+	for node != nil {
+		if node.Kind == KindSourceFile {
+			return node.AsSourceFile()
+		}
 		node = node.Parent
-	}
-	if node.Kind == KindSourceFile {
-		return node.AsSourceFile()
 	}
 	return nil
 }
 
-func SetParentInChildren(parent *Node) {
-	var visit func(*Node) bool
-	visit = func(child *Node) bool {
-		child.Parent = parent
-		saveParent := parent
-		parent = child
-		parent.ForEachChild(visit)
-		parent = saveParent
+var setParentInChildrenPool = sync.Pool{
+	New: func() any {
+		return newParentInChildrenSetter()
+	},
+}
+
+func newParentInChildrenSetter() func(node *Node) bool {
+	// Consolidate state into one allocation.
+	// Similar to https://go.dev/cl/552375.
+	var state struct {
+		parent *Node
+		visit  func(*Node) bool
+	}
+
+	state.visit = func(node *Node) bool {
+		if state.parent != nil {
+			node.Parent = state.parent
+		}
+		saveParent := state.parent
+		state.parent = node
+		node.ForEachChild(state.visit)
+		state.parent = saveParent
 		return false
 	}
-	parent.ForEachChild(visit)
+
+	return state.visit
+}
+
+func SetParentInChildren(node *Node) {
+	fn := setParentInChildrenPool.Get().(func(node *Node) bool)
+	defer setParentInChildrenPool.Put(fn)
+	fn(node)
 }
 
 // Walks up the parents of a node to find the ancestor that matches the callback
 func FindAncestor(node *Node, callback func(*Node) bool) *Node {
 	for node != nil {
-		result := callback(node)
-		if result {
+		if callback(node) {
 			return node
 		}
 		node = node.Parent
@@ -1589,6 +1610,16 @@ func GetExternalModuleName(node *Node) *Expression {
 	panic("Unhandled case in getExternalModuleName")
 }
 
+func GetImportAttributes(node *Node) *Node {
+	switch node.Kind {
+	case KindImportDeclaration:
+		return node.AsImportDeclaration().Attributes
+	case KindExportDeclaration:
+		return node.AsExportDeclaration().Attributes
+	}
+	panic("Unhandled case in getImportAttributes")
+}
+
 func getImportTypeNodeLiteral(node *Node) *Node {
 	if IsImportTypeNode(node) {
 		importTypeNode := node.AsImportTypeNode()
@@ -2137,6 +2168,10 @@ func NodeHasName(statement *Node, id *Node) bool {
 		return core.Some(declarations, func(d *Node) bool { return NodeHasName(d, id) })
 	}
 	return false
+}
+
+func IsInternalModuleImportEqualsDeclaration(node *Node) bool {
+	return IsImportEqualsDeclaration(node) && node.AsImportEqualsDeclaration().ModuleReference.Kind != KindExternalModuleReference
 }
 
 func GetAssertedTypeNode(node *Node) *Node {

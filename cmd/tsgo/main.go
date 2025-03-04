@@ -10,6 +10,7 @@ import (
 	"runtime"
 	"runtime/pprof"
 	"slices"
+	"strconv"
 	"strings"
 	"time"
 
@@ -141,11 +142,11 @@ func main() {
 	fs := bundled.WrapFS(osvfs.FS())
 	defaultLibraryPath := bundled.LibPath()
 
-	configFilePath := tspath.ResolvePath(currentDirectory, opts.tsc.project)
-	if !fs.FileExists(configFilePath) {
-		configFilePath = tspath.CombinePaths(configFilePath, "tsconfig.json")
-		if !fs.FileExists(configFilePath) {
-			fmt.Fprintf(os.Stderr, "Error: The file %v does not exist.\n", configFilePath)
+	configFileName := tspath.ResolvePath(currentDirectory, opts.tsc.project)
+	if !fs.FileExists(configFileName) {
+		configFileName = tspath.CombinePaths(configFileName, "tsconfig.json")
+		if !fs.FileExists(configFileName) {
+			fmt.Fprintf(os.Stderr, "Error: The file %v does not exist.\n", configFileName)
 			os.Exit(1)
 		}
 	}
@@ -153,13 +154,13 @@ func main() {
 	// Set up CLI option overrides
 	compilerOptions := opts.toCompilerOptions(currentDirectory)
 
-	currentDirectory = tspath.GetDirectoryPath(configFilePath)
+	currentDirectory = tspath.GetDirectoryPath(configFileName)
 	// !!! is the working directory actually the config path?
 	host := ts.NewCompilerHost(compilerOptions, currentDirectory, fs, defaultLibraryPath)
 
 	parseStart := time.Now()
 	program := ts.NewProgram(ts.ProgramOptions{
-		ConfigFilePath: configFilePath,
+		ConfigFileName: configFileName,
 		Options:        compilerOptions,
 		SingleThreaded: opts.devel.singleThreaded,
 		Host:           host,
@@ -248,6 +249,7 @@ func main() {
 	}
 	stats.add("Total time", totalTime)
 	stats.add("Memory used", fmt.Sprintf("%vK", memStats.Alloc/1024))
+	stats.add("Memory allocs", strconv.FormatUint(memStats.Mallocs, 10))
 
 	stats.print()
 }

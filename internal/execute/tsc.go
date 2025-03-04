@@ -30,10 +30,13 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 		return ExitStatusDiagnosticsPresent_OutputsSkipped
 	}
 
-	// if commandLine.Options().Init != nil
-	// if commandLine.Options().Version != nil
-	// if commandLine.Options().Help != nil || commandLine.Options().All != nil
-	// if commandLine.Options().Watch != nil  && commandLine.Options().ListFilesOnly
+	if commandLine.CompilerOptions().Init.IsTrue() ||
+		commandLine.CompilerOptions().Version.IsTrue() ||
+		// commandLine.CompilerOptions().Help != nil ||
+		// commandLine.CompilerOptions().All != nil ||
+		commandLine.CompilerOptions().Watch.IsTrue() && commandLine.CompilerOptions().ListFilesOnly.IsTrue() {
+		return ExitStatusNotImplemented
+	}
 
 	if commandLine.CompilerOptions().Project != "" {
 		if len(commandLine.FileNames()) != 0 {
@@ -74,7 +77,7 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 	compilerOptionsFromCommandLine := commandLine.CompilerOptions()
 
 	if configFileName != "" {
-		extendedConfigCache := map[string]*tsoptions.ExtendedConfigCacheEntry{}
+		extendedConfigCache := map[tspath.Path]*tsoptions.ExtendedConfigCacheEntry{}
 		configParseResult, errors := getParsedCommandLineOfConfigFile(configFileName, compilerOptionsFromCommandLine, sys, extendedConfigCache)
 		if len(errors) != 0 {
 			// these are unrecoverable errors--exit to report them as diagnotics
@@ -83,17 +86,19 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 			}
 			return ExitStatusDiagnosticsPresent_OutputsGenerated
 		}
-		// if commandLineOptions.ShowConfig
+		if compilerOptionsFromCommandLine.ShowConfig.IsTrue() {
+			// write show config
+			return ExitStatusNotImplemented
+		}
 		// updateReportDiagnostic
 		if isWatchSet(configParseResult.CompilerOptions()) {
 			// todo watch
-			// return ExitStatusDiagnosticsPresent_OutputsSkipped
 			return ExitStatusNotImplementedWatch
 		} else if isIncrementalCompilation(configParseResult.CompilerOptions()) {
 			// todo performIncrementalCompilation
 			return ExitStatusNotImplementedIncremental
 		} else {
-			performCompilation(
+			return performCompilation(
 				sys,
 				cb,
 				configParseResult,
@@ -103,7 +108,7 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 	} else {
 		if compilerOptionsFromCommandLine.ShowConfig.IsTrue() {
 			// write show config
-			return ExitStatusNotImplementedIncremental
+			return ExitStatusNotImplemented
 		}
 		// todo update reportDiagnostic
 		if isWatchSet(compilerOptionsFromCommandLine) {
@@ -113,18 +118,14 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 		} else if isIncrementalCompilation(compilerOptionsFromCommandLine) {
 			// todo incremental
 			return ExitStatusNotImplementedIncremental
-		} else {
-			commandLine.SetCompilerOptions(compilerOptionsFromCommandLine)
-			performCompilation(
-				sys,
-				cb,
-				commandLine,
-				reportDiagnostic,
-			)
 		}
 	}
-
-	return ExitStatusSuccess
+	return performCompilation(
+		sys,
+		cb,
+		commandLine,
+		reportDiagnostic,
+	)
 }
 
 func findConfigFile(searchPath string, fileExists func(string) bool, configName string) string {
@@ -142,7 +143,7 @@ func findConfigFile(searchPath string, fileExists func(string) bool, configName 
 }
 
 // Reads the config file and reports errors. Exits if the config file cannot be found
-func getParsedCommandLineOfConfigFile(configFileName string, options *core.CompilerOptions, sys System, extendedConfigCache map[string]*tsoptions.ExtendedConfigCacheEntry) (*tsoptions.ParsedCommandLine, []*ast.Diagnostic) {
+func getParsedCommandLineOfConfigFile(configFileName string, options *core.CompilerOptions, sys System, extendedConfigCache map[tspath.Path]*tsoptions.ExtendedConfigCacheEntry) (*tsoptions.ParsedCommandLine, []*ast.Diagnostic) {
 	errors := []*ast.Diagnostic{}
 	configFileText, errors := tsoptions.TryReadFile(configFileName, sys.FS().ReadFile, errors)
 	if len(errors) > 0 {
@@ -150,9 +151,8 @@ func getParsedCommandLineOfConfigFile(configFileName string, options *core.Compi
 		return nil, errors
 	}
 
-	tsConfigSourceFile := tsoptions.NewTsconfigSourceFileFromFilePath(configFileName, configFileText)
 	cwd := sys.GetCurrentDirectory()
-	tsConfigSourceFile.SourceFile.SetPath(tspath.ToPath(configFileName, cwd, sys.FS().UseCaseSensitiveFileNames()))
+	tsConfigSourceFile := tsoptions.NewTsconfigSourceFileFromFilePath(configFileName, tspath.ToPath(configFileName, cwd, sys.FS().UseCaseSensitiveFileNames()), configFileText)
 	// tsConfigSourceFile.resolvedPath = tsConfigSourceFile.FileName()
 	// tsConfigSourceFile.originalFileName = tsConfigSourceFile.FileName()
 	return tsoptions.ParseJsonSourceFileConfigFileContent(
@@ -193,8 +193,8 @@ func performCompilation(sys System, cb cbType, config *tsoptions.ParsedCommandLi
 	}
 
 	emitResult := &compiler.EmitResult{EmitSkipped: true, Diagnostics: []*ast.Diagnostic{}}
-	if options.ListFilesOnly.IsFalse() {
-		// todo emit not fully implemented
+	if !options.ListFilesOnly.IsTrue() {
+		// !!! Emit is not yet fully implemented, will not emit unless `outfile` specified
 		emitResult = program.Emit(&compiler.EmitOptions{})
 	}
 	diagnostics = append(diagnostics, emitResult.Diagnostics...)

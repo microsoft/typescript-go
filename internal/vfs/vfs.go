@@ -21,11 +21,14 @@ type FS interface {
 	// DirectoryExists returns true if the path is a directory.
 	DirectoryExists(path string) bool
 
-	// GetDirectories returns the names of the directories in the specified directory.
-	GetDirectories(path string) []string
+	// GetAccessibleEntries returns the files/directories in the specified directory.
+	// If any entry is a symlink, it will be followed.
+	GetAccessibleEntries(path string) Entries
 
 	// GetEntries returns the entries in the specified directory.
-	GetEntries(path string) []fs.DirEntry
+	GetEntries(path string) []DirEntry
+
+	Stat(path string) FileInfo
 
 	// WalkDir walks the file tree rooted at root, calling walkFn for each file or directory in the tree.
 	// It is has the same behavior as [fs.WalkDir], but with paths as [string].
@@ -36,8 +39,18 @@ type FS interface {
 	Realpath(path string) string
 }
 
-// DirEntry is [fs.DirEntry].
-type DirEntry = fs.DirEntry
+type Entries struct {
+	Files       []string
+	Directories []string
+}
+
+type (
+	// DirEntry is [fs.DirEntry].
+	DirEntry = fs.DirEntry
+
+	// FileInfo is [fs.FileInfo].
+	FileInfo = fs.FileInfo
+)
 
 var (
 	ErrInvalid    = fs.ErrInvalid    // "invalid argument"
