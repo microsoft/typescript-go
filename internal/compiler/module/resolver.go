@@ -1030,7 +1030,7 @@ func (r *resolutionState) tryLoadModuleUsingPathsIfEligible() *resolved {
 		return continueSearching()
 	}
 	baseDirectory := getPathsBasePath(r.compilerOptions, r.resolver.host.GetCurrentDirectory())
-	pathPatterns := tryParsePatternsCached(r.resolver, r.compilerOptions.Paths)
+	pathPatterns := r.resolver.getParsedPatternsForPaths()
 	return r.tryLoadModuleUsingPaths(
 		r.extensions,
 		r.name,
@@ -1044,7 +1044,7 @@ func (r *resolutionState) tryLoadModuleUsingPathsIfEligible() *resolved {
 	)
 }
 
-func (r *resolutionState) tryLoadModuleUsingPaths(extensions extensions, moduleName string, containingDirectory string, paths *collections.OrderedMap[string, []string], pathPatterns parsedPatterns, loader resolutionKindSpecificLoader, onlyRecordFailures bool) *resolved {
+func (r *resolutionState) tryLoadModuleUsingPaths(extensions extensions, moduleName string, containingDirectory string, paths *collections.OrderedMap[string, []string], pathPatterns *parsedPatterns, loader resolutionKindSpecificLoader, onlyRecordFailures bool) *resolved {
 	if matchedPattern := matchPatternOrExact(pathPatterns, moduleName); matchedPattern.IsValid() {
 		matchedStar := matchedPattern.MatchedText(moduleName)
 		if r.resolver.traceEnabled() {
@@ -1701,21 +1701,14 @@ type parsedPatterns struct {
 	patterns           []core.Pattern
 }
 
-func tryParsePatternsCached(r *Resolver, paths *collections.OrderedMap[string, []string]) parsedPatterns {
-	var pathPatterns parsedPatterns
-	if cached, ok := r.parsedPatternsCache[paths]; ok {
-		pathPatterns = cached
-	} else {
-		pathPatterns = tryParsePatterns(paths)
-		if r.parsedPatternsCache == nil {
-			r.parsedPatternsCache = make(map[*collections.OrderedMap[string, []string]]parsedPatterns)
-		}
-		r.caches.parsedPatternsCache[paths] = pathPatterns
-	}
-	return pathPatterns
+func (r *Resolver) getParsedPatternsForPaths() *parsedPatterns {
+	r.parsedPatternsForPathsOnce.Do(func() {
+		r.parsedPatternsForPaths = tryParsePatterns(r.compilerOptions.Paths)
+	})
+	return r.parsedPatternsForPaths
 }
 
-func tryParsePatterns(pathMappings *collections.OrderedMap[string, []string]) parsedPatterns {
+func tryParsePatterns(pathMappings *collections.OrderedMap[string, []string]) *parsedPatterns {
 	paths := pathMappings.Keys()
 
 	numPatterns := 0
@@ -1744,13 +1737,13 @@ func tryParsePatterns(pathMappings *collections.OrderedMap[string, []string]) pa
 			}
 		}
 	}
-	return parsedPatterns{
+	return &parsedPatterns{
 		matchableStringSet: matchableStringSet,
 		patterns:           patterns,
 	}
 }
 
-func matchPatternOrExact(patterns parsedPatterns, candidate string) core.Pattern {
+func matchPatternOrExact(patterns *parsedPatterns, candidate string) core.Pattern {
 	if patterns.matchableStringSet.Has(candidate) {
 		return core.Pattern{
 			Text:      candidate,
