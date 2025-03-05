@@ -138,6 +138,13 @@ func FuzzParser(f *testing.F) {
 		// "tests/cases",
 	}
 
+	var extensions core.Set[string]
+	for _, es := range tspath.AllSupportedExtensionsWithJson {
+		for _, e := range es {
+			extensions.Add(e)
+		}
+	}
+
 	for _, test := range tests {
 		root := filepath.Join(repo.TypeScriptSubmodulePath, test)
 
@@ -145,34 +152,42 @@ func FuzzParser(f *testing.F) {
 			sourceText, err := os.ReadFile(file.path)
 			assert.NilError(f, err)
 
-			if file.name == "compiler/unicodeEscapesInNames01.ts" {
-				continue
+			for extension := range extensions.Keys() {
+				f.Add(extension, string(sourceText), int32(core.ScriptTargetESNext), int(scanner.JSDocParsingModeParseAll))
+				f.Add(extension, string(sourceText), int32(core.ScriptTargetESNext), int(scanner.JSDocParsingModeParseNone))
+				f.Add(extension, string(sourceText), int32(core.ScriptTargetESNext), int(scanner.JSDocParsingModeParseForTypeErrors))
 			}
-
-			f.Add(filepath.Base(file.path), string(sourceText), int32(core.ScriptTargetESNext))
 		}
 	}
 
-	f.Fuzz(func(t *testing.T, filename string, sourceText string, scriptTarget_ int32) {
+	f.Fuzz(func(t *testing.T, extension string, sourceText string, scriptTarget_ int32, jsdocParsingMode_ int) {
 		scriptTarget := core.ScriptTarget(scriptTarget_)
+		jsdocParsingMode := scanner.JSDocParsingMode(jsdocParsingMode_)
 
-		if filename == "" || tspath.TryGetExtensionFromPath(filename) == "" {
+		if !extensions.Has(extension) {
 			t.Skip()
 		}
 
 		if !utf8.ValidString(sourceText) {
-			t.Skip() // TODO: do something else
+			t.Skip()
 		}
 
 		if core.ScriptTargetNone < scriptTarget && scriptTarget > core.ScriptTargetLatest {
 			t.Skip()
 		}
 
-		if strings.HasSuffix(filename, ".json") {
-			ParseJSONText(filename, sourceText)
+		if scanner.JSDocParsingModeParseAll < jsdocParsingMode && jsdocParsingMode > scanner.JSDocParsingModeParseNone {
+			t.Skip()
+		}
+
+		fileName := "/index" + extension
+		path := tspath.Path(fileName)
+
+		if extension == ".json" {
+			ParseJSONText(fileName, path, sourceText)
 			return
 		}
 
-		ParseSourceFile(filename, sourceText, scriptTarget)
+		ParseSourceFile(fileName, path, sourceText, scriptTarget, jsdocParsingMode)
 	})
 }
