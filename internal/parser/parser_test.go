@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
-	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -161,10 +160,6 @@ func FuzzParser(f *testing.F) {
 		jsdocParsingMode := scanner.JSDocParsingMode(jsdocParsingMode_)
 
 		if !extensions.Has(extension) {
-			t.Skip()
-		}
-
-		if !utf8.ValidString(sourceText) {
 			t.Skip()
 		}
 
