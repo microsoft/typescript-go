@@ -13,35 +13,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
-type SymbolData struct {
-	Name           string `json:"name"`
-	Flags          uint32 `json:"flags"`
-	CheckFlags     uint32 `json:"checkFlags"`
-	ProjectVersion uint32 `json:"projectVersion"`
-}
-
-func NewSymbolData(symbol *ast.Symbol, projectVersion int) *SymbolData {
-	return &SymbolData{
-		Name:           symbol.Name,
-		Flags:          uint32(symbol.Flags),
-		CheckFlags:     uint32(symbol.CheckFlags),
-		ProjectVersion: uint32(projectVersion),
-	}
-}
-
-type ProjectData struct {
-	ConfigFileName  string                `json:"configFileName"`
-	RootFiles       []string              `json:"rootFiles"`
-	CompilerOptions *core.CompilerOptions `json:"compilerOptions"`
-}
-
-func NewProjectData(project *project.Project) *ProjectData {
-	return &ProjectData{
-		ConfigFileName:  project.Name(),
-		RootFiles:       project.GetRootFileNames(),
-		CompilerOptions: project.GetCompilerOptions(),
-	}
-}
+type weakValuedMap[T any] map[Handle[T]]*T
 
 type APIOptions struct {
 	Logger *project.Logger
@@ -56,6 +28,7 @@ type API struct {
 	scriptInfos      map[tspath.Path]*project.ScriptInfo
 
 	projects map[tspath.Path]*project.Project
+	symbols  weakValuedMap[ast.Symbol]
 }
 
 var _ project.ProjectHost = (*API)(nil)
@@ -70,6 +43,7 @@ func NewAPI(host APIHost, options APIOptions) *API {
 		}),
 		scriptInfos: make(map[tspath.Path]*project.ScriptInfo),
 		projects:    make(map[tspath.Path]*project.Project),
+		symbols:     make(weakValuedMap[ast.Symbol]),
 	}
 }
 
@@ -134,6 +108,9 @@ func (api *API) HandleRequest(id int, method string, payload json.RawMessage) (a
 	case MethodGetSymbolAtPosition:
 		params := params.(*GetSymbolAtPositionParams)
 		return api.GetSymbolAtPosition(api.toPath(params.Project), params.FileName, int(params.Position))
+	case MethodGetTypeOfSymbol:
+		params := params.(*GetTypeOfSymbolParams)
+		return api.GetTypeOfSymbol(api.toPath(params.Project), params.Symbol)
 	default:
 		return nil, fmt.Errorf("unhandled API method %q", method)
 	}
@@ -174,16 +151,34 @@ func (api *API) LoadProject(configFileName string) (*ProjectData, error) {
 	return NewProjectData(project), nil
 }
 
-func (api *API) GetSymbolAtPosition(project tspath.Path, fileName string, position int) (*SymbolData, error) {
-	if project, ok := api.projects[project]; ok {
-		symbol := project.LanguageService().GetSymbolAtPosition(fileName, position)
-		if symbol == nil {
-			return nil, nil
-		}
-		data := NewSymbolData(symbol, project.Version())
-		return data, nil
+func (api *API) GetSymbolAtPosition(projectPath tspath.Path, fileName string, position int) (*SymbolData, error) {
+	project, ok := api.projects[projectPath]
+	if !ok {
+		return nil, fmt.Errorf("project %q not found", projectPath)
 	}
-	return nil, fmt.Errorf("project %q not found", project)
+	symbol, err := project.LanguageService().GetSymbolAtPosition(fileName, position)
+	if err != nil || symbol == nil {
+		return nil, err
+	}
+	data := NewSymbolData(symbol, project.Version())
+	api.symbols[data.Id] = symbol
+	return data, nil
+}
+
+func (api *API) GetTypeOfSymbol(projectPath tspath.Path, symbolHandle Handle[ast.Symbol]) (*TypeData, error) {
+	project, ok := api.projects[projectPath]
+	if !ok {
+		return nil, fmt.Errorf("project %q not found", projectPath)
+	}
+	symbol, ok := api.symbols[symbolHandle]
+	if !ok {
+		return nil, fmt.Errorf("symbol %q not found", symbolHandle)
+	}
+	t := project.LanguageService().GetTypeOfSymbol(symbol)
+	if t == nil {
+		return nil, nil
+	}
+	return NewTypeData(t), nil
 }
 
 func (api *API) getOrCreateScriptInfo(fileName string, path tspath.Path, scriptKind core.ScriptKind) *project.ScriptInfo {

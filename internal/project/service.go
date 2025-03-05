@@ -82,7 +82,7 @@ func NewService(host ServiceHost, options ServiceOptions) *Service {
 
 // GetCurrentDirectory implements ProjectHost.
 func (s *Service) GetCurrentDirectory() string {
-	panic("unimplemented")
+	return s.host.GetCurrentDirectory()
 }
 
 // Log implements ProjectHost.

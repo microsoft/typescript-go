@@ -1,15 +1,15 @@
 import type { JSONRPCClient } from "json-rpc-2.0";
 import type { ChildProcessWithoutNullStreams } from "node:child_process";
-import {
-    LSPError,
-    LSPErrorCollection,
-} from "./errors.ts";
-import { createJSONRPCClient } from "./jsonRPC.ts";
 import type {
     ParsedCommandLine,
     ProjectData,
     SymbolData,
-} from "./types.ts";
+} from "../types.ts";
+import {
+    LSPError,
+    LSPErrorCollection,
+} from "./errors.ts";
+import { createJSONRPCClient } from "./lsp.ts";
 
 export class Client {
     initialized = false;

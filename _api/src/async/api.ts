@@ -1,23 +1,26 @@
-import type { ChildProcessWithoutNullStreams } from "node:child_process";
-import { Client } from "./client.ts";
-import { startServer } from "./server.ts";
+import type { ChildProcessWithoutNullStreams } from "child_process";
+import type { ParsedCommandLine } from "typescript";
+import type { APIOptions } from "../base/api.ts";
+import {
+    type API as BaseAPI,
+    Project as BaseProject,
+    Symbol as BaseSymbol,
+    Type as BaseType,
+} from "../base/api.ts";
 import type {
-    ParsedCommandLine,
     ProjectData,
     SymbolData,
-} from "./types.ts";
+    TypeData,
+} from "../types.ts";
+import { Client } from "./client.ts";
+import { startLSPServer } from "./lsp.ts";
 
-export interface APIOptions {
-    tsserverPath: string;
-    cwd?: string;
-    logServer?: (msg: string) => void;
-}
-
-export class API {
+export class API implements BaseAPI<true> {
     private server: ChildProcessWithoutNullStreams;
     private client: Client;
+
     constructor(options: APIOptions) {
-        this.client = new Client(this.server = startServer(options.tsserverPath, options.cwd ?? process.cwd(), options.logServer));
+        this.client = new Client(this.server = startLSPServer(options.tsserverPath, options.cwd ?? process.cwd(), options.logServer));
     }
 
     async parseConfigFile(fileName: string): Promise<ParsedCommandLine> {
@@ -44,19 +47,12 @@ export class API {
     }
 }
 
-export class Project {
+export class Project extends BaseProject<true> {
     private client: Client;
-    configFileName!: string;
-    commandLine!: ParsedCommandLine;
 
     constructor(client: Client, data: ProjectData) {
+        super(data);
         this.client = client;
-        this.loadData(data);
-    }
-
-    private loadData(data: ProjectData) {
-        this.configFileName = data.configFileName;
-        this.commandLine = data.commandLine;
     }
 
     async reload(): Promise<void> {
@@ -69,21 +65,27 @@ export class Project {
     }
 }
 
-export class Symbol {
+export class Symbol extends BaseSymbol<true> {
     private client: Client;
     private project: Project;
 
-    private projectVersion: number;
-    name: string;
-    flags: number;
-    checkFlags: number;
-
     constructor(client: Client, project: Project, data: SymbolData) {
+        super(data);
         this.client = client;
         this.project = project;
-        this.projectVersion = data.projectVersion;
-        this.name = data.name;
-        this.flags = data.flags;
-        this.checkFlags = data.checkFlags;
+    }
+
+    async getType(): Promise<Type | undefined> {
+        const data = await this.client.request("getTypeOfSymbol", { project: this.project.configFileName, symbol: this.id });
+        return data ? new Type(this.client, data) : undefined;
+    }
+}
+
+export class Type extends BaseType<true> {
+    private client: Client;
+
+    constructor(client: Client, data: TypeData) {
+        super(data);
+        this.client = client;
     }
 }
