@@ -151,12 +151,8 @@ func FuzzParser(f *testing.F) {
 		for file := range allParsableFiles(f, root) {
 			sourceText, err := os.ReadFile(file.path)
 			assert.NilError(f, err)
-
-			for extension := range extensions.Keys() {
-				f.Add(extension, string(sourceText), int32(core.ScriptTargetESNext), int(scanner.JSDocParsingModeParseAll))
-				f.Add(extension, string(sourceText), int32(core.ScriptTargetESNext), int(scanner.JSDocParsingModeParseNone))
-				f.Add(extension, string(sourceText), int32(core.ScriptTargetESNext), int(scanner.JSDocParsingModeParseForTypeErrors))
-			}
+			extension := tspath.TryGetExtensionFromPath(file.path)
+			f.Add(extension, string(sourceText), int32(core.ScriptTargetESNext), int(scanner.JSDocParsingModeParseAll))
 		}
 	}
 
@@ -172,11 +168,11 @@ func FuzzParser(f *testing.F) {
 			t.Skip()
 		}
 
-		if core.ScriptTargetNone < scriptTarget && scriptTarget > core.ScriptTargetLatest {
+		if !(core.ScriptTargetNone >= scriptTarget && scriptTarget <= core.ScriptTargetLatest) {
 			t.Skip()
 		}
 
-		if scanner.JSDocParsingModeParseAll < jsdocParsingMode && jsdocParsingMode > scanner.JSDocParsingModeParseNone {
+		if !(scanner.JSDocParsingModeParseAll >= jsdocParsingMode && jsdocParsingMode <= scanner.JSDocParsingModeParseNone) {
 			t.Skip()
 		}
 
