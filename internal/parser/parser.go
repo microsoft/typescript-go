@@ -2039,14 +2039,14 @@ func (p *Parser) parseModuleOrNamespaceDeclaration(pos int, hasJSDoc bool, modif
 	}
 	var body *ast.Node
 	if p.parseOptional(ast.KindDotToken) {
-		syntheticExportModifier := p.factory.NewModifier(ast.KindExportKeyword)
-		syntheticExportModifier.Loc = core.NewTextRange(p.nodePos(), p.nodePos())
-		syntheticExportModifier.Flags = ast.NodeFlagsSynthesized
+		syntheticExport := p.factory.NewModifier(ast.KindExportKeyword)
+		syntheticExport.Loc = core.NewTextRange(p.nodePos(), p.nodePos())
+		syntheticExport.Flags = ast.NodeFlagsSynthesized
 		nodes := p.nodeSlicePool.NewSlice(1)
-		nodes[0] = syntheticExportModifier
-		var modifiers *ast.ModifierList = p.newModifierList(syntheticExportModifier.Loc, nodes)
-		p.syntheticNodeLists.Add(syntheticExportModifier)
-		body = p.parseModuleOrNamespaceDeclaration(p.nodePos(), false /*hasJSDoc*/, modifiers, ast.NodeFlagsNestedNamespace|namespaceFlag)
+		nodes[0] = syntheticExport
+		syntheticModifiers := p.newModifierList(syntheticExport.Loc, nodes)
+		p.syntheticNodeLists.Add(syntheticExport)
+		body = p.parseModuleOrNamespaceDeclaration(p.nodePos(), false /*hasJSDoc*/, syntheticModifiers, ast.NodeFlagsNestedNamespace|namespaceFlag)
 	} else {
 		body = p.parseModuleBlock()
 	}
