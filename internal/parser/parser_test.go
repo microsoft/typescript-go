@@ -168,11 +168,11 @@ func FuzzParser(f *testing.F) {
 			t.Skip()
 		}
 
-		if !(core.ScriptTargetNone >= scriptTarget && scriptTarget <= core.ScriptTargetLatest) {
+		if scriptTarget < core.ScriptTargetNone || scriptTarget > core.ScriptTargetLatest {
 			t.Skip()
 		}
 
-		if !(scanner.JSDocParsingModeParseAll >= jsdocParsingMode && jsdocParsingMode <= scanner.JSDocParsingModeParseNone) {
+		if jsdocParsingMode < scanner.JSDocParsingModeParseAll || jsdocParsingMode > scanner.JSDocParsingModeParseNone {
 			t.Skip()
 		}
 
