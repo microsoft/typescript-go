@@ -18,7 +18,8 @@ func NewTypeEraserTransformer(emitContext *printer.EmitContext, compilerOptions 
 
 func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 	// !!! TransformFlags were traditionally used here to skip over subtrees that contain no TypeScript syntax
-	if ast.IsStatement(node) && ast.HasSyntacticModifier(node, ast.ModifierFlagsAmbient) {
+	if ast.IsStatement(node) && ast.HasSyntacticModifier(node, ast.ModifierFlagsAmbient) ||
+		node.Flags&ast.NodeFlagsSynthesized != 0 {
 		// !!! Use NotEmittedStatement to preserve comments
 		return nil
 	}

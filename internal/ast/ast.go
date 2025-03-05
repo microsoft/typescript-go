@@ -8579,6 +8579,7 @@ type SourceFile struct {
 	AmbientModuleNames          []string
 	CommentDirectives           []CommentDirective
 	jsdocCache                  map[*Node][]*Node
+	SyntheticNodeLists          core.Set[*Node]
 	Pragmas                     []Pragma
 	ReferencedFiles             []*FileReference
 	TypeReferenceDirectives     []*FileReference

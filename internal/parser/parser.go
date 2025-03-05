@@ -71,6 +71,7 @@ type Parser struct {
 	notParenthesizedArrow   core.Set[int]
 	nodeSlicePool           core.Pool[*ast.Node]
 	jsdocCache              map[*ast.Node][]*ast.Node
+	syntheticNodeLists      core.Set[*ast.Node]
 	possibleAwaitSpans      []int
 	jsdocCommentsSpace      []string
 	jsdocCommentRangesSpace []ast.CommentRange
@@ -324,6 +325,7 @@ func (p *Parser) finishSourceFile(result *ast.SourceFile, isDeclarationFile bool
 	result.ScriptKind = p.scriptKind
 	result.Flags |= p.sourceFlags
 	result.Identifiers = p.identifiers
+	result.SyntheticNodeLists = p.syntheticNodeLists
 	result.SetJSDocCache(p.jsdocCache)
 	p.jsdocCache = nil
 	p.identifiers = nil
@@ -2037,7 +2039,14 @@ func (p *Parser) parseModuleOrNamespaceDeclaration(pos int, hasJSDoc bool, modif
 	}
 	var body *ast.Node
 	if p.parseOptional(ast.KindDotToken) {
-		body = p.parseModuleOrNamespaceDeclaration(p.nodePos(), false /*hasJSDoc*/, nil /*modifiers*/, ast.NodeFlagsNestedNamespace|namespaceFlag)
+		syntheticExportModifier := p.factory.NewModifier(ast.KindExportKeyword)
+		syntheticExportModifier.Loc = core.NewTextRange(p.nodePos(), p.nodePos())
+		syntheticExportModifier.Flags = ast.NodeFlagsSynthesized
+		nodes := p.nodeSlicePool.NewSlice(1)
+		nodes[0] = syntheticExportModifier
+		var modifiers *ast.ModifierList = p.newModifierList(syntheticExportModifier.Loc, nodes)
+		p.syntheticNodeLists.Add(syntheticExportModifier)
+		body = p.parseModuleOrNamespaceDeclaration(p.nodePos(), false /*hasJSDoc*/, modifiers, ast.NodeFlagsNestedNamespace|namespaceFlag)
 	} else {
 		body = p.parseModuleBlock()
 	}
