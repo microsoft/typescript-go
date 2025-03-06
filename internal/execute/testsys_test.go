@@ -97,7 +97,8 @@ func (s *testSys) baselineOutput(baseline io.Writer) {
 		return
 	}
 	// todo screen clears
-	s.baselineOutputs(baseline)
+	s.printOutputs(baseline)
+	s.output = []string{}
 }
 
 func (s *testSys) baselineFSwithDiff(baseline io.Writer) {
@@ -151,15 +152,7 @@ func reportFSEntryDiff(baseline io.Writer, oldDirContent string, newDirContent s
 	}
 }
 
-func (s *testSys) baselineOutputs(baseline io.Writer) {
+func (s *testSys) printOutputs(baseline io.Writer) {
 	// todo sanitize sys output
 	fmt.Fprint(baseline, strings.Join(s.output, "\n"))
 }
-
-type serializeOutputOrder int
-
-const (
-	serializeOutputOrderNone   serializeOutputOrder = iota
-	serializeOutputOrderBefore serializeOutputOrder = 1
-	serializeOutputOrderAfter  serializeOutputOrder = 2
-)

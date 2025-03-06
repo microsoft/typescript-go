@@ -15,9 +15,10 @@ type watcher struct {
 	options          *tsoptions.ParsedCommandLine
 	reportDiagnostic diagnosticReporter
 
-	host         compiler.CompilerHost
-	program      *compiler.Program
-	prevModified map[string]time.Time
+	host           compiler.CompilerHost
+	program        *compiler.Program
+	prevModified   map[string]time.Time
+	configModified bool
 }
 
 func createWatcher(sys System, configParseResult *tsoptions.ParsedCommandLine, reportDiagnostic diagnosticReporter) *watcher {
@@ -48,6 +49,9 @@ func (w *watcher) hasErrorsInTsConfig() bool {
 			}
 			return true
 		}
+		if w.options.CompilerOptions() != configParseResult.CompilerOptions() {
+			w.configModified = true
+		}
 		w.options = configParseResult
 		w.host = compiler.NewCompilerHost(w.options.CompilerOptions(), w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath())
 	}
@@ -57,7 +61,7 @@ func (w *watcher) hasErrorsInTsConfig() bool {
 func (w *watcher) hasBeenModified(program *compiler.Program) bool {
 	// checks watcher's snapshot against program file modified times
 	currState := map[string]time.Time{}
-	filesModified := false
+	filesModified := w.configModified
 	for _, sourceFile := range program.SourceFiles() {
 		fileName := sourceFile.FileName()
 		s := w.sys.FS().Stat(fileName)
@@ -78,5 +82,8 @@ func (w *watcher) hasBeenModified(program *compiler.Program) bool {
 		filesModified = true
 	}
 	w.prevModified = currState
+
+	// reset state for next cycle
+	w.configModified = false
 	return filesModified
 }
