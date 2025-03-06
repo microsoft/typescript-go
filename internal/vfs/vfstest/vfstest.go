@@ -358,7 +358,8 @@ func (m *mapFS) Open(name string) (fs.File, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 
-	f, err := m.open(m.getCanonicalPath(name))
+	_, cp, _ := m.getFollowingSymlinks(m.getCanonicalPath(name))
+	f, err := m.open(cp)
 	if err != nil {
 		return nil, err
 	}
