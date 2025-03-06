@@ -12,9 +12,9 @@ import (
 )
 
 type testTscEdit struct {
-	edit            func(execute.System)
 	caption         string
 	commandLineArgs []string
+	edit            func(execute.System)
 }
 
 type tscInput struct {
@@ -23,8 +23,7 @@ type tscInput struct {
 	sys             *testSys
 
 	// for watch tests
-	data       map[string]string
-	edits       []*testTscEdit
+	data map[string]string
 }
 
 func (test *tscInput) verify(t *testing.T, scenario string) {
@@ -44,7 +43,7 @@ func (test *tscInput) verify(t *testing.T, scenario string) {
 			baselineBuilder.Write(compilerOptionsString)
 
 			test.sys.serializeState(baselineBuilder)
-			options, name := test.getBaselineName(scenario, "")
+			options, name := test.getBaselineName(scenario, false, "")
 			baseline.Run(t, name, baselineBuilder.String(), options)
 		})
 	})
@@ -54,16 +53,18 @@ func (test *tscInput) getTestName(scenario string) string {
 	return "tsc " + strings.Join(test.commandLineArgs, " ") + " " + scenario + ":: " + test.subScenario
 }
 
-func (test *tscInput) getBaselineName(scenario string, suffix string) (baseline.Options, string) {
+func (test *tscInput) getBaselineName(scenario string, watch bool, suffix string) (baseline.Options, string) {
 	commandName := "tsc"
 	// todo build
 	// if isBuildCommand(v.data.commandLineArgs) {
 	// 	commandName = "tsbuild"
 	// }
-	watch := ""
-	if test.data["watch"] != "" { watch = "Watch" }
+	w := ""
+	if watch {
+		w = "Watch"
+	}
 
-	return baseline.Options{Subfolder: filepath.Join(commandName+watch, scenario)},
+	return baseline.Options{Subfolder: filepath.Join(commandName+w, scenario)},
 		strings.ReplaceAll(test.subScenario, " ", "-") + suffix + ".js"
 }
 

@@ -92,16 +92,17 @@ func (s *testSys) baselineOutput(baseline io.Writer) {
 	fmt.Fprint(baseline, "\nOutput::\n")
 	if len(s.output) == 0 {
 		fmt.Fprint(baseline, "No output\n")
+		return
 	}
 	// todo screen clears
-	s.baselineOutputs(baseline, 0, len(s.output))
+	s.baselineOutputs(baseline)
 }
 
 func (s *testSys) baselineFSwithDiff(baseline io.Writer) {
 	// todo: baselines the entire fs, possibly doesn't correctly diff all cases of emitted files, since emit isn't fully implemented and doesn't always emit the same way as strada
 	snap := map[string]string{}
 
-	err := s.FS().WalkDir(s.GetCurrentDirectory(), func(path string, d vfs.DirEntry, e error) error {
+	err := s.FS().WalkDir("/", func(path string, d vfs.DirEntry, e error) error {
 		if !s.FS().FileExists(path) {
 			return nil
 		}
@@ -144,9 +145,9 @@ func reportFSEntryDiff(baseline io.Writer, oldDirContent string, newDirContent s
 	}
 }
 
-func (s *testSys) baselineOutputs(baseline io.Writer, start int, end int) {
+func (s *testSys) baselineOutputs(baseline io.Writer) {
 	// todo sanitize sys output
-	fmt.Fprint(baseline, strings.Join(s.output[start:end], "\n"))
+	fmt.Fprint(baseline, strings.Join(s.output, "\n"))
 }
 
 type serializeOutputOrder int
