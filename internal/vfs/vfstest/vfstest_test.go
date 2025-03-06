@@ -74,6 +74,8 @@ func TestInsensitive(t *testing.T) {
 	_, err = fs.Stat(vfs, "Does/Not/Exist")
 	assert.ErrorContains(t, err, "file does not exist")
 
+	// TODO: TestFS doesn't understand case-insensitive file systems.
+	// This same thing would happen with an os.Dir on Windows.
 	// assert.NilError(t, fstest.TestFS(vfs, "Foo/Bar/Baz"))
 }
 
