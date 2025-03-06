@@ -141,7 +141,6 @@ CompilerOptions::{
 
 
 Output::
-No output
 //// [/home/src/workspaces/project/a.ts] no change
 //// [/home/src/workspaces/project/tsconfig.json] no change
 
@@ -159,6 +158,9 @@ const a = "hello";
 Edit:: emit after fixing error
 
 Output::
+//// [/home/src/workspaces/project/a.js] new file
+const a = "hello";
+
 //// [/home/src/workspaces/project/a.ts] no change
 //// [/home/src/workspaces/project/tsconfig.json] modified. new content:
 {
@@ -172,6 +174,7 @@ Output::
 Edit:: no emit run after fixing error
 
 Output::
+//// [/home/src/workspaces/project/a.js] no change
 //// [/home/src/workspaces/project/a.ts] no change
 //// [/home/src/workspaces/project/tsconfig.json] modified. new content:
 {
@@ -186,7 +189,7 @@ Output::
 Edit:: introduce error
 
 Output::
-
+//// [/home/src/workspaces/project/a.js] no change
 //// [/home/src/workspaces/project/a.ts] modified. new content:
 const a = class { private p = 10; };
 //// [/home/src/workspaces/project/tsconfig.json] no change
@@ -196,6 +199,10 @@ const a = class { private p = 10; };
 Edit:: emit when error
 
 Output::
+//// [/home/src/workspaces/project/a.js] modified. new content:
+const a = class {
+    p = 10;
+};
 
 //// [/home/src/workspaces/project/a.ts] no change
 //// [/home/src/workspaces/project/tsconfig.json] modified. new content:
@@ -210,7 +217,7 @@ Output::
 Edit:: no emit run when error
 
 Output::
-
+//// [/home/src/workspaces/project/a.js] no change
 //// [/home/src/workspaces/project/a.ts] no change
 //// [/home/src/workspaces/project/tsconfig.json] modified. new content:
 {
