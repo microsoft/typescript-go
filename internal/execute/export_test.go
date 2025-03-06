@@ -18,14 +18,14 @@ func CommandLineTestWatch(sys System, cb cbType, commandLineArgs []string) (*tso
 }
 
 func RunWatchCycle(w *watcher) {
-	// this function should run watchCycle() without printing time-related output
-	if errorsInTsConfig(w) {
+	// this function should perform the same stuff as w.doCycle() without printing time-related output
+	if w.hasErrorsInTsConfig() {
 		// these are unrecoverable errors--report them and do not build
 		return
 	}
 	// todo: updateProgram()
 	w.program = compiler.NewProgramFromParsedCommandLine(w.options, w.host)
-	if hasBeenModified(w, w.program) {
+	if w.hasBeenModified(w.program) {
 		w.compileAndEmit()
 	}
 }
