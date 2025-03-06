@@ -1,8 +1,6 @@
 package execute
 
 import (
-	"fmt"
-
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 )
@@ -27,11 +25,6 @@ func RunWatchCycle(w *watcher) {
 	}
 	// todo: updateProgram()
 	w.program = compiler.NewProgramFromParsedCommandLine(w.options, w.host)
-	if w.program.Options().NoEmit.IsTrue() {
-		fmt.Fprint(w.sys.Writer(), "true")
-	} else {
-		fmt.Fprint(w.sys.Writer(), "false")
-	}
 	if hasBeenModified(w, w.program) {
 		w.compileAndEmit()
 	}
