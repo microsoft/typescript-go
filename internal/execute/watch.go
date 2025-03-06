@@ -63,7 +63,13 @@ func hasBeenModified(w *watcher, program *compiler.Program) bool {
 	filesModified := false
 	for _, sourceFile := range program.SourceFiles() {
 		fileName := sourceFile.FileName()
-		currState[fileName] = w.sys.FS().Stat(fileName).ModTime()
+		s := w.sys.FS().Stat(fileName)
+		if s == nil {
+			// do nothing; if file is in program.SourceFiles() but is not found when calling Stat, file has been very recently deleted.
+			// deleted files are handled outside of this loop
+			continue
+		}
+		currState[fileName] = s.ModTime()
 		if !filesModified {
 			if currState[fileName] != w.prevModified[fileName] {
 				filesModified = true
