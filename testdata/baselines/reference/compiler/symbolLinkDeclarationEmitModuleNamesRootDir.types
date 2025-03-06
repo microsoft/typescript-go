@@ -1,0 +1,24 @@
+//// [tests/cases/compiler/symbolLinkDeclarationEmitModuleNamesRootDir.ts] ////
+
+=== /monorepo/core/src/application.ts ===
+import { Constructor } from "@loopback/context";
+>Constructor : error
+
+export type ControllerClass = Constructor<any>;
+>ControllerClass : Constructor<any>
+
+=== /monorepo/core/src/usage.ts ===
+import { ControllerClass } from './application';
+>ControllerClass : error
+
+import { BindingKey } from '@loopback/context';
+>BindingKey : error
+
+export const CONTROLLER_CLASS = BindingKey.create<ControllerClass>(null as any); // line in question
+>CONTROLLER_CLASS : error
+>BindingKey.create<ControllerClass>(null as any) : error
+>BindingKey.create : error
+>BindingKey : error
+>create : error
+>null as any : any
+
