@@ -6,10 +6,12 @@ import (
 
 func CommandLineTest(sys System, cb cbType, commandLineArgs []string) (*tsoptions.ParsedCommandLine, ExitStatus) {
 	parsedCommandLine := tsoptions.ParseCommandLine(commandLineArgs, sys)
-	return parsedCommandLine, executeCommandLineWorker(sys, cb, parsedCommandLine)
+	e, _ := executeCommandLineWorker(sys, cb, parsedCommandLine)
+	return parsedCommandLine, e
 }
 
-func CommandLineTestWatch(sys System, cb cbType, commandLineArgs []string) (*tsoptions.ParsedCommandLine, ExitStatus) {
+func CommandLineTestWatch(sys System, cb cbType, commandLineArgs []string) (*tsoptions.ParsedCommandLine, *watcher) {
 	parsedCommandLine := tsoptions.ParseCommandLine(commandLineArgs, sys)
-	return parsedCommandLine, executeCommandLineWorker(sys, cb, parsedCommandLine)
+	_, w := executeCommandLineWorker(sys, cb, parsedCommandLine)
+	return parsedCommandLine, w
 }

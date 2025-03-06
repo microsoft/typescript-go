@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"io"
 	"os"
@@ -19,7 +18,6 @@ import (
 type osSys struct {
 	writer             io.Writer
 	fs                 vfs.FS
-	context            context.Context
 	defaultLibraryPath string
 	newLine            string
 	cwd                string
@@ -31,10 +29,6 @@ func (s *osSys) Now() time.Time {
 
 func (s *osSys) FS() vfs.FS {
 	return s.fs
-}
-
-func (s *osSys) Context() context.Context {
-	return s.context
 }
 
 func (s *osSys) DefaultLibraryPath() string {
@@ -68,7 +62,6 @@ func newSystem() *osSys {
 	return &osSys{
 		cwd:                tspath.NormalizePath(cwd),
 		fs:                 bundled.WrapFS(osvfs.FS()),
-		context:            context.Background(),
 		defaultLibraryPath: bundled.LibPath(),
 		writer:             os.Stdout,
 		newLine:            core.IfElse(runtime.GOOS == "windows", "\r\n", "\n"),
