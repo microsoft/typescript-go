@@ -560,6 +560,24 @@ func TestSymlink(t *testing.T) {
 		realpath = fs.Realpath("/some/dirlink/file.ts")
 		assert.Equal(t, realpath, "/some/dir/file.ts")
 	})
+
+	t.Run("FileExists", func(t *testing.T) {
+		t.Parallel()
+
+		assert.Assert(t, fs.FileExists("/symlink.ts"))
+		assert.Assert(t, fs.FileExists("/some/dirlink/file.ts"))
+		assert.Assert(t, fs.FileExists("/a/existing.ts"))
+	})
+
+	t.Run("DirectoryExists", func(t *testing.T) {
+		t.Parallel()
+
+		assert.Assert(t, fs.DirectoryExists("/some/dirlink"))
+		assert.Assert(t, fs.DirectoryExists("/d"))
+		assert.Assert(t, fs.DirectoryExists("/c"))
+		assert.Assert(t, fs.DirectoryExists("/b"))
+		assert.Assert(t, fs.DirectoryExists("/a"))
+	})
 }
 
 func TestWritableFSSymlink(t *testing.T) {
