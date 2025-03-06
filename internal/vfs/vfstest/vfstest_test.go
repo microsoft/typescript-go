@@ -54,8 +54,7 @@ func TestInsensitive(t *testing.T) {
 	_, err = fs.Stat(vfs, "does/not/exist")
 	assert.ErrorContains(t, err, "file does not exist")
 
-	// TODO: reenable in Go 1.25 when TestFS understands symlinks.
-	// assert.NilError(t, fstest.TestFS(vfs, "foo/bar/baz"))
+	assert.NilError(t, fstest.TestFS(vfs, "foo/bar/baz"))
 
 	insensitive, err := fs.ReadFile(vfs, "Foo/Bar/Baz")
 	assert.NilError(t, err)
@@ -75,7 +74,6 @@ func TestInsensitive(t *testing.T) {
 	_, err = fs.Stat(vfs, "Does/Not/Exist")
 	assert.ErrorContains(t, err, "file does not exist")
 
-	// TODO: reenable in Go 1.25 when TestFS understands symlinks.
 	// assert.NilError(t, fstest.TestFS(vfs, "Foo/Bar/Baz"))
 }
 
@@ -109,7 +107,6 @@ func TestInsensitiveUpper(t *testing.T) {
 	assert.NilError(t, err)
 	assert.DeepEqual(t, dirEntriesToNames(entries), []string{"Bar", "Bar2", "Bar3"})
 
-	// TODO: reenable in Go 1.25 when TestFS understands symlinks.
 	// assert.NilError(t, fstest.TestFS(vfs, "foo/bar/baz"))
 
 	insensitive, err := fs.ReadFile(vfs, "Foo/Bar/Baz")
@@ -122,8 +119,7 @@ func TestInsensitiveUpper(t *testing.T) {
 	assert.NilError(t, err)
 	assert.DeepEqual(t, dirEntriesToNames(entries), []string{"Bar", "Bar2", "Bar3"})
 
-	// TODO: reenable in Go 1.25 when TestFS understands symlinks.
-	// assert.NilError(t, fstest.TestFS(vfs, "Foo/Bar/Baz"))
+	assert.NilError(t, fstest.TestFS(vfs, "Foo/Bar/Baz"))
 }
 
 func TestSensitive(t *testing.T) {
@@ -153,8 +149,7 @@ func TestSensitive(t *testing.T) {
 	assert.NilError(t, err)
 	assert.Equal(t, sensitiveInfo.Sys(), 1234)
 
-	// TODO: reenable in Go 1.25 when TestFS understands symlinks.
-	// assert.NilError(t, fstest.TestFS(vfs, "foo/bar/baz"))
+	assert.NilError(t, fstest.TestFS(vfs, "foo/bar/baz"))
 
 	_, err = fs.ReadFile(vfs, "Foo/Bar/Baz")
 	assert.ErrorContains(t, err, "file does not exist")
