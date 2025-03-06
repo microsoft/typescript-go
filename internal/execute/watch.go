@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -15,37 +16,45 @@ func start(w *watcher) ExitStatus {
 	}
 	watchInterval := 1000 * time.Millisecond
 	for {
-		if d := w.sys.Context().Value("done"); d != nil && d.(bool) {
-			// "done" will be true in testsys
-			break
-		} 
-		if w.configFileName != "" {
-			// only need to reparse tsconfig options/update host if we are watching a config file
-			extendedConfigCache := map[tspath.Path]*tsoptions.ExtendedConfigCacheEntry{}
-			configParseResult, errors := getParsedCommandLineOfConfigFile(w.configFileName, w.options.CompilerOptions(), w.sys, extendedConfigCache)
-			if len(errors) > 0 {
-				// these are unrecoverable errors--report them and do not build
-				for _, e := range errors {
-					w.reportDiagnostic(e)
-				}
-				continue
-			}
-			w.options = configParseResult
-			w.host = compiler.NewCompilerHost(w.options.CompilerOptions(), w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath())
-		}
-		w.program = compiler.NewProgramFromParsedCommandLine(w.options, w.host)
-		if hasBeenModified(w, w.program) {
-			fmt.Fprint(w.sys.Writer(), "build starting at ", w.sys.Now(), w.sys.NewLine())
-			timeStart := w.sys.Now()
-			w.compileAndEmit()
-			fmt.Fprint(w.sys.Writer(), "build finished in", w.sys.Now().Sub(timeStart), w.sys.NewLine())
-		} else {
-			// print something???
-			fmt.Fprint(w.sys.Writer(), "no changes detected at ", w.sys.Now(), w.sys.NewLine())
-		}
+		watchCycle(w)
 		time.Sleep(watchInterval)
 	}
-	return ExitStatusSuccess
+}
+
+func watchCycle(w *watcher) {
+	if errorsInTsConfig(w) {
+		// these are unrecoverable errors--report them and do not build
+		return
+	}
+	// updateProgram()
+	w.program = compiler.NewProgramFromParsedCommandLine(w.options, w.host)
+	if hasBeenModified(w, w.program) {
+		fmt.Fprint(w.sys.Writer(), "build starting at ", w.sys.Now(), w.sys.NewLine())
+		timeStart := w.sys.Now()
+		w.compileAndEmit()
+		fmt.Fprint(w.sys.Writer(), "build finished in", w.sys.Now().Sub(timeStart), w.sys.NewLine())
+	} else {
+		// print something???
+		fmt.Fprint(w.sys.Writer(), "no changes detected at ", w.sys.Now(), w.sys.NewLine())
+	}
+}
+
+func errorsInTsConfig(w *watcher) bool {
+	// only need to check and reparse tsconfig options/update host if we are watching a config file
+	if w.configFileName != "" {
+		extendedConfigCache := map[tspath.Path]*tsoptions.ExtendedConfigCacheEntry{}
+		// !!! need to check that this merges compileroptions correctly. This differs from non-watch, since we allow overriding of previous options
+		configParseResult, errors := getParsedCommandLineOfConfigFile(w.configFileName, &core.CompilerOptions{}, w.sys, extendedConfigCache)
+		if len(errors) > 0 {
+			for _, e := range errors {
+				w.reportDiagnostic(e)
+			}
+			return true
+		}
+		w.options = configParseResult
+		w.host = compiler.NewCompilerHost(w.options.CompilerOptions(), w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath())
+	}
+	return false
 }
 
 func hasBeenModified(w *watcher, program *compiler.Program) bool {
