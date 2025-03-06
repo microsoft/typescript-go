@@ -106,9 +106,8 @@ func SplitLines(text string) []string {
 	return lines
 }
 
-const MAX_SMI_X86 int = 0x3fff_ffff
-
 func GuessIndentation(lines []string) int {
+	const MAX_SMI_X86 int = 0x3fff_ffff
 	indentation := MAX_SMI_X86
 	for _, line := range lines {
 		if len(line) == 0 {

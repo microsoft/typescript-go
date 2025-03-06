@@ -789,7 +789,7 @@ func (c *EmitContext) RequestEmitHelper(helper *EmitHelper) {
 }
 
 func (c *EmitContext) ReadEmitHelpers() []*EmitHelper {
-	helpers := slices.Collect(c.emitHelpers.Keys())
+	helpers := slices.Collect(maps.Keys(c.emitHelpers.Keys()))
 	c.emitHelpers.Clear()
 	return helpers
 }
