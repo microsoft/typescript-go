@@ -8,6 +8,7 @@ import (
 	"sync/atomic"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 )
 
@@ -22,7 +23,7 @@ type EmitContext struct {
 	emitNodes     core.LinkStore[*ast.Node, emitNode]
 	varScopeStack core.Stack[*varScope]
 	letScopeStack core.Stack[*varScope]
-	emitHelpers   core.Set[*EmitHelper]
+	emitHelpers   collections.OrderedSet[*EmitHelper]
 
 	isCustomPrologue           func(node *ast.Statement) bool
 	isHoistedFunction          func(node *ast.Statement) bool
@@ -789,7 +790,7 @@ func (c *EmitContext) RequestEmitHelper(helper *EmitHelper) {
 }
 
 func (c *EmitContext) ReadEmitHelpers() []*EmitHelper {
-	helpers := slices.Collect(maps.Keys(c.emitHelpers.Keys()))
+	helpers := slices.Collect(c.emitHelpers.Values())
 	c.emitHelpers.Clear()
 	return helpers
 }
