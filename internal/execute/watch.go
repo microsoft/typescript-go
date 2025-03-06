@@ -32,6 +32,6 @@ func (w *watcher) doCycle() {
 		fmt.Fprint(w.sys.Writer(), "build finished in", w.sys.Now().Sub(timeStart), w.sys.NewLine())
 	} else {
 		// print something???
-		fmt.Fprint(w.sys.Writer(), "no changes detected at ", w.sys.Now(), w.sys.NewLine())
+		// fmt.Fprint(w.sys.Writer(), "no changes detected at ", w.sys.Now(), w.sys.NewLine())
 	}
 }
