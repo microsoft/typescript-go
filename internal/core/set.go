@@ -1,10 +1,5 @@
 package core
 
-import (
-	"iter"
-	"maps"
-)
-
 type Set[T comparable] struct {
 	M map[T]struct{}
 }
@@ -36,8 +31,8 @@ func (s *Set[T]) Len() int {
 	return len(s.M)
 }
 
-func (s *Set[T]) Keys() iter.Seq[T] {
-	return maps.Keys(s.M)
+func (s *Set[T]) Keys() map[T]struct{} {
+	return s.M
 }
 
 func (s *Set[T]) Clear() {
