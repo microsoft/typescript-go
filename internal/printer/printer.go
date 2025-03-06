@@ -4048,7 +4048,7 @@ func (p *Printer) emitHelpers(node *ast.Node) bool {
 	shouldSkip := p.Options.NoEmitHelpers || (sourceFile != nil && p.emitContext.HasRecordedExternalHelpers(sourceFile))
 	helpers := slices.Clone(p.emitContext.GetEmitHelpers(node))
 	if len(helpers) > 0 {
-		slices.SortFunc(helpers, compareEmitHelpers)
+		slices.SortStableFunc(helpers, compareEmitHelpers)
 		for _, helper := range helpers {
 			if !helper.Scoped {
 				// Skip the helper if it can be skipped and the noEmitHelpers compiler
