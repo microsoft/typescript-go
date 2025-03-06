@@ -377,6 +377,8 @@ const (
 	KindJSDocImportTag
 	// Synthesized list
 	KindSyntaxList
+	// Synthesized JS nodes
+	KindJSTypeExpression
 	// Transformation nodes
 	KindNotEmittedStatement
 	KindPartiallyEmittedExpression

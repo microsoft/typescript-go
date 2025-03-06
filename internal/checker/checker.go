@@ -20849,6 +20849,8 @@ func (c *Checker) getTypeFromTypeNodeWorker(node *ast.Node) *Type {
 		return c.getTypeFromNamedTupleTypeNode(node)
 	case ast.KindParenthesizedType:
 		return c.getTypeFromTypeNode(node.AsParenthesizedTypeNode().Type)
+	case ast.KindJSTypeExpression:
+		return c.getTypeFromTypeNode(node.AsJSTypeExpression().Type)
 	case ast.KindRestType:
 		return c.getTypeFromRestTypeNode(node)
 	case ast.KindFunctionType, ast.KindConstructorType, ast.KindTypeLiteral:

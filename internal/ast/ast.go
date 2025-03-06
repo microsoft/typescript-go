@@ -1296,6 +1296,10 @@ func (n *Node) AsJSDocTypeTag() *JSDocTypeTag {
 	return n.data.(*JSDocTypeTag)
 }
 
+func (n *Node) AsJSTypeExpression() *JSTypeExpression {
+	return n.data.(*JSTypeExpression)
+}
+
 func (n *Node) AsJSDocUnknownTag() *JSDocUnknownTag {
 	return n.data.(*JSDocUnknownTag)
 }
@@ -7674,6 +7678,41 @@ func (node *JSDocOptionalType) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *JSDocOptionalType) Clone(f *NodeFactory) *Node {
 	return updateNode(f.NewJSDocOptionalType(node.Type), node.AsNode())
+}
+
+// JSTypeExpression
+type JSTypeExpression struct {
+	TypeNodeBase
+	Type *TypeNode
+}
+
+func (f *NodeFactory) NewJSTypeExpression(typeNode *TypeNode) *Node {
+	data := &JSTypeExpression{}
+	data.Type = typeNode
+	return newNode(KindJSTypeExpression, data)
+}
+
+func (f *NodeFactory) UpdateJSTypeExpression(node *JSTypeExpression, typeNode *TypeNode) *Node {
+	if typeNode != node.Type {
+		return updateNode(f.NewJSTypeExpression(typeNode), node.AsNode())
+	}
+	return node.AsNode()
+}
+
+func (node *JSTypeExpression) ForEachChild(v Visitor) bool {
+	return visit(v, node.Type)
+}
+
+func (node *JSTypeExpression) VisitEachChild(v *NodeVisitor) *Node {
+	return v.Factory.UpdateJSTypeExpression(node, v.visitNode(node.Type))
+}
+
+func (node *JSTypeExpression) Clone(f *NodeFactory) *Node {
+	return updateNode(f.NewJSTypeExpression(node.Type), node.AsNode())
+}
+
+func IsJSTypeExpression(node *Node) bool {
+	return node.Kind == KindJSTypeExpression
 }
 
 // JSDocTypeTag
