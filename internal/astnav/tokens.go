@@ -81,25 +81,6 @@ func getTokenAtPosition(
 		return node
 	}
 
-	visitNodes := func(nodes []*ast.Node) {
-		if len(nodes) > 0 && sourceFile.SyntheticNodeLists.Has(nodes[0]) {
-			nodes = core.Filter(nodes, func(node *ast.Node) bool {
-				return node.Flags&ast.NodeFlagsSynthesized == 0
-			})
-		}
-		index, match := core.BinarySearchUniqueFunc(nodes, position, func(middle int, node *ast.Node) int {
-			cmp := testNode(node)
-			if cmp < 0 {
-				left = node.End()
-			}
-			return cmp
-		})
-
-		if match {
-			next = nodes[index]
-		}
-	}
-
 	visitNodeList := func(nodeList *ast.NodeList, _ *ast.NodeVisitor) *ast.NodeList {
 		if nodeList != nil && !ast.PositionIsSynthesized(nodeList.End()) && !ast.PositionIsSynthesized(nodeList.Pos()) && len(nodeList.Nodes) > 0 && next == nil {
 			if nodeList.End() == position && includePrecedingTokenAtEndPosition != nil {
@@ -108,7 +89,23 @@ func getTokenAtPosition(
 			} else if nodeList.End() <= position {
 				left = nodeList.End()
 			} else if nodeList.Pos() <= position {
-				visitNodes(nodeList.Nodes)
+				nodes := nodeList.Nodes
+				if nodeList.Flags&ast.NodeFlagsSynthesized != 0 {
+					nodes = core.Filter(nodes, func(node *ast.Node) bool {
+						return node.Flags&ast.NodeFlagsSynthesized == 0
+					})
+				}
+				index, match := core.BinarySearchUniqueFunc(nodes, position, func(middle int, node *ast.Node) int {
+					cmp := testNode(node)
+					if cmp < 0 {
+						left = node.End()
+					}
+					return cmp
+				})
+
+				if match {
+					next = nodes[index]
+				}
 			}
 		}
 		return nodeList

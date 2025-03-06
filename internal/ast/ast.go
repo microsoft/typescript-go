@@ -93,6 +93,7 @@ func updateNode(updated *Node, original *Node) *Node {
 type NodeList struct {
 	Loc   core.TextRange
 	Nodes []*Node
+	Flags NodeFlags
 }
 
 func (f *NodeFactory) NewNodeList(nodes []*Node) *NodeList {
@@ -8579,7 +8580,6 @@ type SourceFile struct {
 	AmbientModuleNames          []string
 	CommentDirectives           []CommentDirective
 	jsdocCache                  map[*Node][]*Node
-	SyntheticNodeLists          core.Set[*Node]
 	Pragmas                     []Pragma
 	ReferencedFiles             []*FileReference
 	TypeReferenceDirectives     []*FileReference
