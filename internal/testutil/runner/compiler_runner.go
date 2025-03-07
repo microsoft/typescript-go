@@ -316,11 +316,6 @@ func newCompilerTest(
 }
 
 func (c *compilerTest) verifyDiagnostics(t *testing.T, suiteName string, isSubmodule bool) {
-	if isSubmodule {
-		// !!! Enable this when we're ready to diff test diagnostics
-		return
-	}
-
 	t.Run("error", func(t *testing.T) {
 		defer testutil.RecoverAndFail(t, "Panic on creating error baseline for test "+c.filename)
 		files := core.Concatenate(c.tsConfigFiles, core.Concatenate(c.toBeCompiled, c.otherFiles))
