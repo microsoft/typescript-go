@@ -8,12 +8,12 @@ For a list of intentional changes with respect to Typescript 5.7, see CHANGES.md
 
 ## What Works / What Doesn't Yet
 
-This is still a work in progress and is not yet at full feature parity with TypeScript.
-Please check this list carefully before logging a bug or assuming an intentional change.
+This is still a work in progress and is not yet at full feature parity with TypeScript. Bugs may exist. Please check this list carefully before logging a new issue or assuming an intentional change.
 
 Status overview:
 
  * Program creation (read `lib`, `target`, `reference`, `import`, `files`, `include`, and `exclude`): **done**. You should see the *same files*, with modules resolved to the *same locations*, as in a TypeScript 5.8 (TS5.8) invocation
+   * Not all resolution modes are supported yet
  * Parsing/scanning (read source text and determine syntax shape): **done**. You should see the exact same *syntax errors* as in a TS5.8 invocation
  * Commandline and `tsconfig.json` parsing: **done**, minus `--build` mode. Note that the entry point is slightly different (for now)
  * Type resolution (resolve computed types to a concrete internal representation): **done**. You should see the same types as in TS5.8
@@ -32,7 +32,9 @@ Status overview:
  * Project service: **not ready**
  * API: **not ready**
 
+
 Definitions:
+
  * **done** aka "believed done": We're not currently aware of any deficits or major left work to do. OK to log bugs
  * **in progress**: currently being worked on; some features may work and some might not. OK to log panics, but nothing else please
  * **prototype**: proof-of-concept only; do not log bugs
@@ -82,8 +84,7 @@ To try the prototype LSP experience:
  * Copy `.vscode/launch.template.json` to `.vscode/launch.json`
  * F5 (or `Debug: Start Debugging` from the command palette)
 
-This will launch a new VS Code instance which uses the Corsa LS as the backend.
-If correctly set up, you should see "typescript-go" as an option in the Output pane:
+This will launch a new VS Code instance which uses the Corsa LS as the backend. If correctly set up, you should see "typescript-go" as an option in the Output pane:
 
 ![LSP Prototype Screenshot](ls-screenshot.png)
 
