@@ -1,4 +1,4 @@
-# typescript-go
+# TypeScript 7
 
 ```console
 $ go run github.com/microsoft/typescript-go/cmd/tsgo@latest
@@ -6,32 +6,38 @@ $ go run github.com/microsoft/typescript-go/cmd/tsgo@latest
 
 For a list of intentional changes with respect to Typescript 5.7, see CHANGES.md.
 
-## What Works / What Doesn't (Yet)
+## What Works / What Doesn't Yet
 
 This is still a work in progress and is not yet at full feature parity with TypeScript.
 Please check this list carefully before logging a bug or assuming an intentional change.
 
-Language features known to not be implemented yet:
+Status overview:
 
- * `.js` files
- * JSDoc interpretation
- * Declaration emit
- * JSX
- * Module resolution
+ * Program creation (read `lib`, `target`, `reference`, `import`, `files`, `include`, and `exclude`): **done**. You should see the *same files*, with modules resolved to the *same locations*, as in a TypeScript 5.8 (TS5.8) invocation
+ * Parsing/scanning (read source text and determine syntax shape): **done**. You should see the exact same *syntax errors* as in a TS5.8 invocation
+ * Type resolution (resolve computed types to a concrete internal representation): **done**. You should see the same types as in TS5.8
+ * Type checking (check for problems in functions, classes, and statements): **done**. You should see the same errors, in the same locations, with the same messages, as TS 5.8
+    * Types printback in errors may display slightly differently; this is not considered a bug
+ * Emit (JS output): **in progress**. `target: esnext` (minimal downleveling) is well-supported but other targets may have gaps
+ * JavaScript-specific inference and JS Doc: **not ready**
+ * Watch mode: **prototype** (watches the correct files and rebuilds, but doesn't do incremental rechecking)
+ * Build mode / project references: **not ready**
+ * Declaration emit: **not ready**
+ * JSX: **not ready**
+ * Language service (LSP): **prototype** only, expect minimal functionality (errors, hover, go to def)
+   * UTF-16 files are **not ready**; only UTF-8 is currently supported at all
+ * Project service: **not ready**
+ * API: **not ready**
 
-The list of *currently prototyped* language service features is:
- * Very basic project inference
- * Error spans
- * Go-to-definition
- * Hover (quick info, but not signature help)
-
-Language service features known to not be implemented yet:
- * Everything else
- * In particular, UTF-16 support (files containing multi-code-point runes will get incorrect spans)
+Definitions:
+ * **done** aka "believed done": We're not currently aware of any deficits or major left work to do. OK to log bugs
+ * **in progress**: currently being worked on; some features may work and some might not. OK to log panics, but nothing else please
+ * **prototype**: proof-of-concept only; do not log bugs
+ * **not ready**: either haven't even started yet, or far enough from ready that you shouldn't bother messing with it yet
 
 ## Local development
 
-This repo uses [Golang](https://go.dev/dl/) and TypeScript. For a full development experience, you'll need to have both installed.
+This repo uses [Golang](https://go.dev/dl/) **1.24 or higher** and TypeScript (latest). For a full development experience, you'll need to have both installed.
 
 For tests and code generation, this repo contains a git submodule to the main TypeScript repo pointing to the commit being ported.
 When cloning, you'll want to clone with submodules:
@@ -77,6 +83,10 @@ This will launch a new VS Code instance which uses the Corsa LS as the backend.
 If correctly set up, you should see "typescript-go" as an option in the Output pane:
 
 ![LSP Prototype Screenshot](ls-screenshot.png)
+
+## Other Notes
+
+The long-term fate of this repo is likely to be merged into `microsoft/TypeScript` and closed; treat discussions/issues accordingly.
 
 ## Contributing
 
