@@ -232,7 +232,7 @@ func main() {
 	var unsupportedExtensions []string
 	for _, file := range program.SourceFiles() {
 		extension := tspath.TryGetExtensionFromPath(file.FileName())
-		if extension == ".js" || extension == ".jsx" || extension == ".tsx" {
+		if extension == ".tsx" || slices.Contains(tspath.SupportedJSExtensionsFlat, extension) {
 			unsupportedExtensions = core.AppendIfUnique(unsupportedExtensions, extension)
 		}
 	}
