@@ -2425,8 +2425,6 @@ func updateLastIndex(lastIndex int, match []int) int {
 	return lastIndex + match[0]
 }
 
-// TODO: This is very similar in purpose to `collectDynamicImportOrRequireOrJsDocImportCalls` in
-// internal/parser/references.go. We should consider consolidating these two functions.
 func ForEachDynamicImportOrRequireCall(
 	file *SourceFile,
 	includeTypeSpaceImports bool,
