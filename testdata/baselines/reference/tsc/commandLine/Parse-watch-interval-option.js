@@ -6,8 +6,8 @@ Input::-w --watchInterval 1000
 ExitStatus:: 1
 
 ParsedCommandLine::{
-    "ParsedConfig": {
-        "CompilerOptions": {
+    "parsedConfig": {
+        "compilerOptions": {
             "allowJs": null,
             "allowArbitraryExtensions": null,
             "allowSyntheticDefaultImports": null,
@@ -131,8 +131,8 @@ ParsedCommandLine::{
             "showConfig": null,
             "tscBuild": null
         },
-        "WatchOptions": {
-            "watchInterval": 1000,
+        "watchOptions": {
+            "watchInterval": null,
             "watchFile": 0,
             "watchDirectory": 0,
             "fallbackPolling": 0,
@@ -140,16 +140,16 @@ ParsedCommandLine::{
             "excludeDirectories": null,
             "excludeFiles": null
         },
-        "FileNames": [],
-        "ProjectReferences": null
+        "fileNames": [],
+        "projectReferences": null
     },
-    "ConfigFile": null,
-    "Errors": [],
-    "Raw": {
+    "configFile": null,
+    "errors": [],
+    "raw": {
         "watch": true,
         "watchInterval": 1000
     },
-    "CompileOnSave": null
+    "compileOnSave": null
 }
 Output::
 No output

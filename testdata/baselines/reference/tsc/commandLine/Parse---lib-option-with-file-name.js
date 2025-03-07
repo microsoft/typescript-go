@@ -8,8 +8,8 @@ export const Key = Symbol()
 ExitStatus:: 0
 
 ParsedCommandLine::{
-    "ParsedConfig": {
-        "CompilerOptions": {
+    "parsedConfig": {
+        "compilerOptions": {
             "allowJs": null,
             "allowArbitraryExtensions": null,
             "allowSyntheticDefaultImports": null,
@@ -135,7 +135,7 @@ ParsedCommandLine::{
             "showConfig": null,
             "tscBuild": null
         },
-        "WatchOptions": {
+        "watchOptions": {
             "watchInterval": null,
             "watchFile": 0,
             "watchDirectory": 0,
@@ -144,19 +144,19 @@ ParsedCommandLine::{
             "excludeDirectories": null,
             "excludeFiles": null
         },
-        "FileNames": [
+        "fileNames": [
             "first.ts"
         ],
-        "ProjectReferences": null
+        "projectReferences": null
     },
-    "ConfigFile": null,
-    "Errors": [],
-    "Raw": {
+    "configFile": null,
+    "errors": [],
+    "raw": {
         "lib": [
             "lib.es2015.d.ts"
         ]
     },
-    "CompileOnSave": null
+    "compileOnSave": null
 }
 Output::
 //// [/home/src/workspaces/project/first.js] new file
