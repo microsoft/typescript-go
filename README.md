@@ -15,17 +15,20 @@ Status overview:
 
  * Program creation (read `lib`, `target`, `reference`, `import`, `files`, `include`, and `exclude`): **done**. You should see the *same files*, with modules resolved to the *same locations*, as in a TypeScript 5.8 (TS5.8) invocation
  * Parsing/scanning (read source text and determine syntax shape): **done**. You should see the exact same *syntax errors* as in a TS5.8 invocation
+ * Commandline and `tsconfig.json` parsing: **done**, minus `--build` mode. Note that the entry point is slightly different (for now)
  * Type resolution (resolve computed types to a concrete internal representation): **done**. You should see the same types as in TS5.8
  * Type checking (check for problems in functions, classes, and statements): **done**. You should see the same errors, in the same locations, with the same messages, as TS 5.8
     * Types printback in errors may display slightly differently; this is not considered a bug
+ * Declaration emit: **not ready**. Coming soon!
  * Emit (JS output): **in progress**. `target: esnext` (minimal downleveling) is well-supported but other targets may have gaps
  * JavaScript-specific inference and JS Doc: **not ready**
  * Watch mode: **prototype** (watches the correct files and rebuilds, but doesn't do incremental rechecking)
  * Build mode / project references: **not ready**
- * Declaration emit: **not ready**
+ * Incremental build: **not ready**
  * JSX: **not ready**
- * Language service (LSP): **prototype** only, expect minimal functionality (errors, hover, go to def)
-   * UTF-16 files are **not ready**; only UTF-8 is currently supported at all
+ * Language service (LSP): **prototype** only, expect minimal functionality (errors, hover, go to def). More features soon!
+   * UTF-16 files in LSP are **not ready**; only UTF-8 is currently supported at all
+ * Formatter, smart indent: **not ready**
  * Project service: **not ready**
  * API: **not ready**
 
