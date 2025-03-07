@@ -45,14 +45,14 @@ func verifyWatch(t *testing.T, test *tscInput, scenario string, edits []*testTsc
 }
 
 func listToTsconfig(base string, tsconfigOpts ...string) (string, string) {
-	optionString := strings.Join(tsconfigOpts, ",\n        ")
+	optionString := strings.Join(tsconfigOpts, ",\n            ")
 	tsconfigText := `{
-		"compilerOptions": {
+	"compilerOptions": {
 `
-	after := "        "
+	after := "            "
 	if base != "" {
-		tsconfigText += "        " + base
-		after = ",\n        "
+		tsconfigText += "            " + base
+		after = ",\n            "
 	}
 	if len(tsconfigOpts) != 0 {
 		tsconfigText += after + optionString

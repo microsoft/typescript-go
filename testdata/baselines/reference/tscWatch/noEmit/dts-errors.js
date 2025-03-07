@@ -6,10 +6,10 @@ Input::-w
 const a = class { private p = 10; };
 //// [/home/src/workspaces/project/tsconfig.json] new file
 {
-		"compilerOptions": {
-        "noEmit": true,
-        "outFile": "../outFile.js",
-        "declaration": true
+	"compilerOptions": {
+            "noEmit": true,
+            "outFile": "../outFile.js",
+            "declaration": true
 	}
 }
 
@@ -165,9 +165,9 @@ const a = "hello";
 //// [/home/src/workspaces/project/a.ts] no change
 //// [/home/src/workspaces/project/tsconfig.json] modified. new content:
 {
-		"compilerOptions": {
-        "outFile": "../outFile.js",
-        "declaration": true
+	"compilerOptions": {
+            "outFile": "../outFile.js",
+            "declaration": true
 	}
 }
 
@@ -180,10 +180,10 @@ Output::
 //// [/home/src/workspaces/project/a.ts] no change
 //// [/home/src/workspaces/project/tsconfig.json] modified. new content:
 {
-		"compilerOptions": {
-        "noEmit": true,
-        "outFile": "../outFile.js",
-        "declaration": true
+	"compilerOptions": {
+            "noEmit": true,
+            "outFile": "../outFile.js",
+            "declaration": true
 	}
 }
 
@@ -210,9 +210,9 @@ const a = class {
 //// [/home/src/workspaces/project/a.ts] no change
 //// [/home/src/workspaces/project/tsconfig.json] modified. new content:
 {
-		"compilerOptions": {
-        "outFile": "../outFile.js",
-        "declaration": true
+	"compilerOptions": {
+            "outFile": "../outFile.js",
+            "declaration": true
 	}
 }
 
@@ -225,10 +225,10 @@ Output::
 //// [/home/src/workspaces/project/a.ts] no change
 //// [/home/src/workspaces/project/tsconfig.json] modified. new content:
 {
-		"compilerOptions": {
-        "noEmit": true,
-        "outFile": "../outFile.js",
-        "declaration": true
+	"compilerOptions": {
+            "noEmit": true,
+            "outFile": "../outFile.js",
+            "declaration": true
 	}
 }
 

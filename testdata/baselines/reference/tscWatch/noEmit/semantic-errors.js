@@ -6,9 +6,9 @@ Input::-w
 const a: number = "hello"
 //// [/home/src/workspaces/project/tsconfig.json] new file
 {
-		"compilerOptions": {
-        "noEmit": true,
-        "outFile": "../outFile.js"
+	"compilerOptions": {
+            "noEmit": true,
+            "outFile": "../outFile.js"
 	}
 }
 
@@ -169,8 +169,8 @@ const a = "hello";
 //// [/home/src/workspaces/project/a.ts] no change
 //// [/home/src/workspaces/project/tsconfig.json] modified. new content:
 {
-		"compilerOptions": {
-        "outFile": "../outFile.js"
+	"compilerOptions": {
+            "outFile": "../outFile.js"
 	}
 }
 
@@ -183,9 +183,9 @@ Output::
 //// [/home/src/workspaces/project/a.ts] no change
 //// [/home/src/workspaces/project/tsconfig.json] modified. new content:
 {
-		"compilerOptions": {
-        "noEmit": true,
-        "outFile": "../outFile.js"
+	"compilerOptions": {
+            "noEmit": true,
+            "outFile": "../outFile.js"
 	}
 }
 
@@ -218,8 +218,8 @@ Found 1 error in a.ts[90m:1[0m
 //// [/home/src/workspaces/project/a.ts] no change
 //// [/home/src/workspaces/project/tsconfig.json] modified. new content:
 {
-		"compilerOptions": {
-        "outFile": "../outFile.js"
+	"compilerOptions": {
+            "outFile": "../outFile.js"
 	}
 }
 
@@ -237,9 +237,9 @@ Found 1 error in a.ts[90m:1[0m
 //// [/home/src/workspaces/project/a.ts] no change
 //// [/home/src/workspaces/project/tsconfig.json] modified. new content:
 {
-		"compilerOptions": {
-        "noEmit": true,
-        "outFile": "../outFile.js"
+	"compilerOptions": {
+            "noEmit": true,
+            "outFile": "../outFile.js"
 	}
 }
 
