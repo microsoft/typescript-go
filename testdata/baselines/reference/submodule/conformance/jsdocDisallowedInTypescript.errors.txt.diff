@@ -64,7 +64,7 @@
 -!!! error TS8020: JSDoc types can only be used inside documentation comments.
 +                       ~~~~~~~~
 +!!! error TS2552: Cannot find name 'function'. Did you mean 'Function'?
-+!!! related TS2728 bundled:///libs/lib.es5.d.ts:--:--: 'Function' is declared here.
++!!! related TS2728 lib.es5.d.ts:--:--: 'Function' is declared here.
 +                               ~
 +!!! error TS1005: ',' expected.
 +                                   ~
@@ -84,7 +84,7 @@
 -!!! error TS8020: JSDoc types can only be used inside documentation comments.
 +                     ~~~~~~~~
 +!!! error TS2552: Cannot find name 'function'. Did you mean 'Function'?
-+!!! related TS2728 bundled:///libs/lib.es5.d.ts:--:--: 'Function' is declared here.
++!!! related TS2728 lib.es5.d.ts:--:--: 'Function' is declared here.
 +                             ~
 +!!! error TS1005: ',' expected.
 +                              ~~~~~~~~~~~~
@@ -110,7 +110,7 @@
 -!!! error TS8020: JSDoc types can only be used inside documentation comments.
 +           ~~~~~~~~
 +!!! error TS2552: Cannot find name 'function'. Did you mean 'Function'?
-+!!! related TS2728 bundled:///libs/lib.es5.d.ts:--:--: 'Function' is declared here.
++!!! related TS2728 lib.es5.d.ts:--:--: 'Function' is declared here.
 +                   ~
 +!!! error TS1005: ',' expected.
 +                    ~~~~~~

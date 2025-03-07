@@ -99,7 +99,7 @@
  !!! error TS2769:     Argument of type 'undefined' is not assignable to parameter of type 'C'.
 -!!! error TS2769:   Overload 2 of 2, '(this: (this: C, a: number, b: string) => string, thisArg: C): (a: number, b: string) => string', gave the following error.
 -!!! error TS2769:     Argument of type 'undefined' is not assignable to parameter of type 'C'.
-+!!! related TS2771 bundled:///libs/lib.es5.d.ts:--:--: The last overload is declared here.
++!!! related TS2771 lib.es5.d.ts:--:--: The last overload is declared here.
      
      let f15 = c.overloaded.bind(c);  // typeof C.prototype.overloaded
      let f16 = c.generic.bind(c);  // typeof C.prototype.generic
@@ -146,7 +146,7 @@
  !!! error TS2769:       Types of parameters 'args' and 'args' are incompatible.
  !!! error TS2769:         Type 'unknown[]' is not assignable to type 'T'.
  !!! error TS2769:           'unknown[]' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint 'unknown[]'.
-+!!! related TS2771 bundled:///libs/lib.es5.d.ts:--:--: The last overload is declared here.
++!!! related TS2771 lib.es5.d.ts:--:--: The last overload is declared here.
      }
      
      function baz<T extends 1 | 2>(callback: (this: 1, ...args: T extends 1 ? [unknown] : [unknown, unknown]) => void) {
@@ -165,7 +165,7 @@
 +!!! error TS2769:     The 'this' context of type '(...args: ) => void' is not assignable to method's 'this' of type '(...args: [unknown]) => void'.
 +!!! error TS2769:       Types of parameters 'args' and 'args' are incompatible.
 +!!! error TS2769:         Type '[unknown]' is not assignable to type ''.
-+!!! related TS2771 bundled:///libs/lib.es5.d.ts:--:--: The last overload is declared here.
++!!! related TS2771 lib.es5.d.ts:--:--: The last overload is declared here.
      }
      
      // Repro from #32964

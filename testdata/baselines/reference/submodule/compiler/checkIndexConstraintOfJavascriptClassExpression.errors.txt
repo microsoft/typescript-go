@@ -7,7 +7,7 @@ weird.js(9,17): error TS7006: Parameter 'error' implicitly has an 'any' type.
     someFunction(function(BaseClass) {
     ~~~~~~~~~~~~
 !!! error TS2552: Cannot find name 'someFunction'. Did you mean 'Function'?
-!!! related TS2728 bundled:///libs/lib.es5.d.ts:--:--: 'Function' is declared here.
+!!! related TS2728 lib.es5.d.ts:--:--: 'Function' is declared here.
                           ~~~~~~~~~
 !!! error TS7006: Parameter 'BaseClass' implicitly has an 'any' type.
         'use strict';

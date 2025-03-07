@@ -349,7 +349,7 @@ parserRealSource7.ts(828,13): error TS2304: Cannot find name 'popTypeCollectionS
 !!! error TS2304: Cannot find name 'Type'.
                                                 ~~~~~~~~~~~~~~~
 !!! error TS2552: Cannot find name 'TypeDeclaration'. Did you mean 'CSSStyleDeclaration'?
-!!! related TS2728 bundled:///libs/lib.dom.d.ts:--:--: 'CSSStyleDeclaration' is declared here.
+!!! related TS2728 lib.dom.d.ts:--:--: 'CSSStyleDeclaration' is declared here.
             type.extendsTypeLinks = getBaseTypeLinks(typeDecl.extendsList, type.extendsTypeLinks);
             type.implementsTypeLinks = getBaseTypeLinks(typeDecl.implementsList, type.implementsTypeLinks);
         }

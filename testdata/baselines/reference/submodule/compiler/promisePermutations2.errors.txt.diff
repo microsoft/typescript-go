@@ -27,16 +27,7 @@
          Types of parameters 'onfulfilled' and 'success' are incompatible.
            Types of parameters 'value' and 'value' are incompatible.
              Type 'number' is not assignable to type 'string'.
-@@= skipped -302, +302 lines =@@
-                                        ~~~~~~~~~
- !!! error TS2345: Argument of type '(x: any) => IPromise<string>' is not assignable to parameter of type '(error: any) => Promise<number>'.
- !!! error TS2345:   Property 'catch' is missing in type 'IPromise<string>' but required in type 'Promise<number>'.
--!!! related TS2728 lib.es5.d.ts:--:--: 'catch' is declared here.
-+!!! related TS2728 bundled:///libs/lib.es5.d.ts:--:--: 'catch' is declared here.
-     var s10g = s10.then(testFunctionP, nIPromise, sIPromise).then(sPromise, sIPromise, sIPromise); // ok
-     
-     var r11: IPromise<number>;
-@@= skipped -8, +8 lines =@@
+@@= skipped -310, +310 lines =@@
                          ~~~~~~~~~~~~~~
  !!! error TS2769: No overload matches this call.
  !!! error TS2769:   The last overload gave the following error.

@@ -15,7 +15,7 @@
 +!!! error TS2769: No overload matches this call.
 +!!! error TS2769:   The last overload gave the following error.
 +!!! error TS2769:     Type '{ a: number }' is not assignable to type 'undefined'.
-+!!! related TS2771 bundled:///libs/lib.es5.d.ts:--:--: The last overload is declared here.
++!!! related TS2771 lib.es5.d.ts:--:--: The last overload is declared here.
 +              .map(b => b.a);
 +                        ~
 +!!! error TS18048: 'b' is possibly 'undefined'.

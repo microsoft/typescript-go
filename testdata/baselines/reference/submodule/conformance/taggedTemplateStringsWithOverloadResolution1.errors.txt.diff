@@ -54,18 +54,16 @@
                  ~~
 -!!! error TS2345: Argument of type 'undefined[]' is not assignable to parameter of type 'TemplateStringsArray'.
 -!!! error TS2345:   Property 'raw' is missing in type 'undefined[]' but required in type 'TemplateStringsArray'.
--!!! related TS2728 lib.es5.d.ts:--:--: 'raw' is declared here.
--!!! related TS2793 taggedTemplateStringsWithOverloadResolution1.ts:5:10: The call would have succeeded against this implementation, but implementation signatures of overloads are not externally visible.
 +!!! error TS2741: Property 'raw' is missing in type 'undefined[]' but required in type 'TemplateStringsArray'.
-+!!! related TS2728 bundled:///libs/lib.es5.d.ts:--:--: 'raw' is declared here.
+ !!! related TS2728 lib.es5.d.ts:--:--: 'raw' is declared here.
+-!!! related TS2793 taggedTemplateStringsWithOverloadResolution1.ts:5:10: The call would have succeeded against this implementation, but implementation signatures of overloads are not externally visible.
      var b = foo([], 1);          // string
                  ~~
 -!!! error TS2345: Argument of type 'undefined[]' is not assignable to parameter of type 'TemplateStringsArray'.
 -!!! error TS2345:   Property 'raw' is missing in type 'undefined[]' but required in type 'TemplateStringsArray'.
--!!! related TS2728 lib.es5.d.ts:--:--: 'raw' is declared here.
--!!! related TS2793 taggedTemplateStringsWithOverloadResolution1.ts:5:10: The call would have succeeded against this implementation, but implementation signatures of overloads are not externally visible.
 +!!! error TS2741: Property 'raw' is missing in type 'undefined[]' but required in type 'TemplateStringsArray'.
-+!!! related TS2728 bundled:///libs/lib.es5.d.ts:--:--: 'raw' is declared here.
+ !!! related TS2728 lib.es5.d.ts:--:--: 'raw' is declared here.
+-!!! related TS2793 taggedTemplateStringsWithOverloadResolution1.ts:5:10: The call would have succeeded against this implementation, but implementation signatures of overloads are not externally visible.
      var c = foo([], 1, 2);       // boolean
                  ~~
  !!! error TS2769: No overload matches this call.
@@ -75,12 +73,11 @@
 -!!! error TS2769:   Overload 2 of 4, '(strs: TemplateStringsArray, x: number, y: string): {}', gave the following error.
 -!!! error TS2769:     Argument of type 'undefined[]' is not assignable to parameter of type 'TemplateStringsArray'.
 -!!! error TS2769:       Property 'raw' is missing in type 'undefined[]' but required in type 'TemplateStringsArray'.
--!!! related TS2728 lib.es5.d.ts:--:--: 'raw' is declared here.
--!!! related TS2728 lib.es5.d.ts:--:--: 'raw' is declared here.
--!!! related TS2793 taggedTemplateStringsWithOverloadResolution1.ts:5:10: The call would have succeeded against this implementation, but implementation signatures of overloads are not externally visible.
 +!!! error TS2769:   The last overload gave the following error.
 +!!! error TS2769:     Property 'raw' is missing in type 'undefined[]' but required in type 'TemplateStringsArray'.
-+!!! related TS2728 bundled:///libs/lib.es5.d.ts:--:--: 'raw' is declared here.
+ !!! related TS2728 lib.es5.d.ts:--:--: 'raw' is declared here.
+-!!! related TS2728 lib.es5.d.ts:--:--: 'raw' is declared here.
+-!!! related TS2793 taggedTemplateStringsWithOverloadResolution1.ts:5:10: The call would have succeeded against this implementation, but implementation signatures of overloads are not externally visible.
 +!!! related TS2771 taggedTemplateStringsWithOverloadResolution1.ts:4:10: The last overload is declared here.
      var d = foo([], 1, true);    // boolean (with error)
                  ~~
@@ -91,12 +88,11 @@
 -!!! error TS2769:   Overload 2 of 4, '(strs: TemplateStringsArray, x: number, y: string): {}', gave the following error.
 -!!! error TS2769:     Argument of type 'undefined[]' is not assignable to parameter of type 'TemplateStringsArray'.
 -!!! error TS2769:       Property 'raw' is missing in type 'undefined[]' but required in type 'TemplateStringsArray'.
--!!! related TS2728 lib.es5.d.ts:--:--: 'raw' is declared here.
--!!! related TS2728 lib.es5.d.ts:--:--: 'raw' is declared here.
--!!! related TS2793 taggedTemplateStringsWithOverloadResolution1.ts:5:10: The call would have succeeded against this implementation, but implementation signatures of overloads are not externally visible.
 +!!! error TS2769:   The last overload gave the following error.
 +!!! error TS2769:     Property 'raw' is missing in type 'undefined[]' but required in type 'TemplateStringsArray'.
-+!!! related TS2728 bundled:///libs/lib.es5.d.ts:--:--: 'raw' is declared here.
+ !!! related TS2728 lib.es5.d.ts:--:--: 'raw' is declared here.
+-!!! related TS2728 lib.es5.d.ts:--:--: 'raw' is declared here.
+-!!! related TS2793 taggedTemplateStringsWithOverloadResolution1.ts:5:10: The call would have succeeded against this implementation, but implementation signatures of overloads are not externally visible.
 +!!! related TS2771 taggedTemplateStringsWithOverloadResolution1.ts:4:10: The last overload is declared here.
      var e = foo([], 1, "2");     // {}
                  ~~
@@ -107,12 +103,11 @@
 -!!! error TS2769:   Overload 2 of 4, '(strs: TemplateStringsArray, x: number, y: string): {}', gave the following error.
 -!!! error TS2769:     Argument of type 'undefined[]' is not assignable to parameter of type 'TemplateStringsArray'.
 -!!! error TS2769:       Property 'raw' is missing in type 'undefined[]' but required in type 'TemplateStringsArray'.
--!!! related TS2728 lib.es5.d.ts:--:--: 'raw' is declared here.
--!!! related TS2728 lib.es5.d.ts:--:--: 'raw' is declared here.
--!!! related TS2793 taggedTemplateStringsWithOverloadResolution1.ts:5:10: The call would have succeeded against this implementation, but implementation signatures of overloads are not externally visible.
 +!!! error TS2769:   The last overload gave the following error.
 +!!! error TS2769:     Property 'raw' is missing in type 'undefined[]' but required in type 'TemplateStringsArray'.
-+!!! related TS2728 bundled:///libs/lib.es5.d.ts:--:--: 'raw' is declared here.
+ !!! related TS2728 lib.es5.d.ts:--:--: 'raw' is declared here.
+-!!! related TS2728 lib.es5.d.ts:--:--: 'raw' is declared here.
+-!!! related TS2793 taggedTemplateStringsWithOverloadResolution1.ts:5:10: The call would have succeeded against this implementation, but implementation signatures of overloads are not externally visible.
 +!!! related TS2771 taggedTemplateStringsWithOverloadResolution1.ts:4:10: The last overload is declared here.
      var f = foo([], 1, 2, 3);    // any (with error)
                            ~

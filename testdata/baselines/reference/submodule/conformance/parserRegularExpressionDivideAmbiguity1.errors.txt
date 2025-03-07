@@ -7,6 +7,6 @@ parserRegularExpressionDivideAmbiguity1.ts(2,12): error TS2304: Cannot find name
     /notregexp/a.foo();
      ~~~~~~~~~
 !!! error TS2552: Cannot find name 'notregexp'. Did you mean 'RegExp'?
-!!! related TS2728 bundled:///libs/lib.es5.d.ts:--:--: 'RegExp' is declared here.
+!!! related TS2728 lib.es5.d.ts:--:--: 'RegExp' is declared here.
                ~
 !!! error TS2304: Cannot find name 'a'.

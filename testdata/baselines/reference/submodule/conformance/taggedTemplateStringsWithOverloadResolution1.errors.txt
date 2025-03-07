@@ -24,31 +24,31 @@ taggedTemplateStringsWithOverloadResolution1.ts(14,23): error TS2554: Expected 1
     var a = foo([]);             // number
                 ~~
 !!! error TS2741: Property 'raw' is missing in type 'undefined[]' but required in type 'TemplateStringsArray'.
-!!! related TS2728 bundled:///libs/lib.es5.d.ts:--:--: 'raw' is declared here.
+!!! related TS2728 lib.es5.d.ts:--:--: 'raw' is declared here.
     var b = foo([], 1);          // string
                 ~~
 !!! error TS2741: Property 'raw' is missing in type 'undefined[]' but required in type 'TemplateStringsArray'.
-!!! related TS2728 bundled:///libs/lib.es5.d.ts:--:--: 'raw' is declared here.
+!!! related TS2728 lib.es5.d.ts:--:--: 'raw' is declared here.
     var c = foo([], 1, 2);       // boolean
                 ~~
 !!! error TS2769: No overload matches this call.
 !!! error TS2769:   The last overload gave the following error.
 !!! error TS2769:     Property 'raw' is missing in type 'undefined[]' but required in type 'TemplateStringsArray'.
-!!! related TS2728 bundled:///libs/lib.es5.d.ts:--:--: 'raw' is declared here.
+!!! related TS2728 lib.es5.d.ts:--:--: 'raw' is declared here.
 !!! related TS2771 taggedTemplateStringsWithOverloadResolution1.ts:4:10: The last overload is declared here.
     var d = foo([], 1, true);    // boolean (with error)
                 ~~
 !!! error TS2769: No overload matches this call.
 !!! error TS2769:   The last overload gave the following error.
 !!! error TS2769:     Property 'raw' is missing in type 'undefined[]' but required in type 'TemplateStringsArray'.
-!!! related TS2728 bundled:///libs/lib.es5.d.ts:--:--: 'raw' is declared here.
+!!! related TS2728 lib.es5.d.ts:--:--: 'raw' is declared here.
 !!! related TS2771 taggedTemplateStringsWithOverloadResolution1.ts:4:10: The last overload is declared here.
     var e = foo([], 1, "2");     // {}
                 ~~
 !!! error TS2769: No overload matches this call.
 !!! error TS2769:   The last overload gave the following error.
 !!! error TS2769:     Property 'raw' is missing in type 'undefined[]' but required in type 'TemplateStringsArray'.
-!!! related TS2728 bundled:///libs/lib.es5.d.ts:--:--: 'raw' is declared here.
+!!! related TS2728 lib.es5.d.ts:--:--: 'raw' is declared here.
 !!! related TS2771 taggedTemplateStringsWithOverloadResolution1.ts:4:10: The last overload is declared here.
     var f = foo([], 1, 2, 3);    // any (with error)
                           ~

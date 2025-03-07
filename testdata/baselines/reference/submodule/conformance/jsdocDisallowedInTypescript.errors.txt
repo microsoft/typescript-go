@@ -36,7 +36,7 @@ jsdocDisallowedInTypescript.ts(18,27): error TS2397: Declaration name conflicts 
     function hof(ctor: function(new: number, string)) {
                        ~~~~~~~~
 !!! error TS2552: Cannot find name 'function'. Did you mean 'Function'?
-!!! related TS2728 bundled:///libs/lib.es5.d.ts:--:--: 'Function' is declared here.
+!!! related TS2728 lib.es5.d.ts:--:--: 'Function' is declared here.
                                ~
 !!! error TS1005: ',' expected.
                                    ~
@@ -54,7 +54,7 @@ jsdocDisallowedInTypescript.ts(18,27): error TS2397: Declaration name conflicts 
     function hof2(f: function(this: number, string): string) {
                      ~~~~~~~~
 !!! error TS2552: Cannot find name 'function'. Did you mean 'Function'?
-!!! related TS2728 bundled:///libs/lib.es5.d.ts:--:--: 'Function' is declared here.
+!!! related TS2728 lib.es5.d.ts:--:--: 'Function' is declared here.
                              ~
 !!! error TS1005: ',' expected.
                               ~~~~~~~~~~~~
@@ -72,7 +72,7 @@ jsdocDisallowedInTypescript.ts(18,27): error TS2397: Declaration name conflicts 
     var g: function(number, number): number = (n,m) => n + m;
            ~~~~~~~~
 !!! error TS2552: Cannot find name 'function'. Did you mean 'Function'?
-!!! related TS2728 bundled:///libs/lib.es5.d.ts:--:--: 'Function' is declared here.
+!!! related TS2728 lib.es5.d.ts:--:--: 'Function' is declared here.
                    ~
 !!! error TS1005: ',' expected.
                     ~~~~~~

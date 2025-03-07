@@ -24,6 +24,6 @@ usingDeclarationsWithIteratorObject.ts(20,17): error TS2741: Property '[Symbol.d
         using it7 = i;
                     ~
 !!! error TS2741: Property '[Symbol.dispose]' is missing in type 'Iterator<string, undefined, any>' but required in type 'Disposable'.
-!!! related TS2728 bundled:///libs/lib.esnext.disposable.d.ts:--:--: '[Symbol.dispose]' is declared here.
+!!! related TS2728 lib.esnext.disposable.d.ts:--:--: '[Symbol.dispose]' is declared here.
     }
     

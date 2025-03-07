@@ -40,7 +40,7 @@ bigintWithLib.ts(46,26): error TS2345: Argument of type '123' is not assignable 
 !!! error TS2769:   The last overload gave the following error.
 !!! error TS2769:     Argument of type 'number[]' is not assignable to parameter of type 'ArrayBufferLike'.
 !!! error TS2769:       Type 'number[]' is missing the following properties from type 'SharedArrayBuffer': byteLength, [Symbol.species], [Symbol.toStringTag]
-!!! related TS2771 bundled:///libs/lib.es2020.bigint.d.ts:--:--: The last overload is declared here.
+!!! related TS2771 lib.es2020.bigint.d.ts:--:--: The last overload is declared here.
     bigIntArray = new BigInt64Array(new ArrayBuffer(80));
     bigIntArray = new BigInt64Array(new ArrayBuffer(80), 8);
     bigIntArray = new BigInt64Array(new ArrayBuffer(80), 8, 3);
@@ -60,7 +60,7 @@ bigintWithLib.ts(46,26): error TS2345: Argument of type '123' is not assignable 
 !!! error TS2769:   The last overload gave the following error.
 !!! error TS2769:     Argument of type 'number[]' is not assignable to parameter of type 'ArrayBufferLike'.
 !!! error TS2769:       Type 'number[]' is missing the following properties from type 'SharedArrayBuffer': byteLength, [Symbol.species], [Symbol.toStringTag]
-!!! related TS2771 bundled:///libs/lib.es2020.bigint.d.ts:--:--: The last overload is declared here.
+!!! related TS2771 lib.es2020.bigint.d.ts:--:--: The last overload is declared here.
     bigUintArray = new BigUint64Array(new ArrayBuffer(80));
     bigUintArray = new BigUint64Array(new ArrayBuffer(80), 8);
     bigUintArray = new BigUint64Array(new ArrayBuffer(80), 8, 3);

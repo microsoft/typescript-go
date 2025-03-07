@@ -38,7 +38,7 @@
 -!!! error TS2769:     Type 'number' is not assignable to type 'boolean'.
 +!!! error TS2769:   The last overload gave the following error.
 +!!! error TS2769:     Type 'true' is not assignable to type 'number'.
-+!!! related TS2771 bundled:///libs/lib.es2015.collection.d.ts:--:--: The last overload is declared here.
++!!! related TS2771 lib.es2015.collection.d.ts:--:--: The last overload is declared here.
      for (var [k, v] of map) {
          k;
          v;

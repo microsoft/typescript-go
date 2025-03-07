@@ -24,7 +24,7 @@ dissallowSymbolAsWeakType.ts(19,14): error TS2345: Argument of type 'symbol' is 
 !!! error TS2769: No overload matches this call.
 !!! error TS2769:   The last overload gave the following error.
 !!! error TS2769:     Type 'symbol' is not assignable to type 'object'.
-!!! related TS2771 bundled:///libs/lib.es2015.collection.d.ts:--:--: The last overload is declared here.
+!!! related TS2771 lib.es2015.collection.d.ts:--:--: The last overload is declared here.
     ws.add(s);
            ~
 !!! error TS2345: Argument of type 'symbol' is not assignable to parameter of type 'object'.
@@ -40,7 +40,7 @@ dissallowSymbolAsWeakType.ts(19,14): error TS2345: Argument of type 'symbol' is 
 !!! error TS2769: No overload matches this call.
 !!! error TS2769:   The last overload gave the following error.
 !!! error TS2769:     Type 'symbol' is not assignable to type 'object'.
-!!! related TS2771 bundled:///libs/lib.es2015.collection.d.ts:--:--: The last overload is declared here.
+!!! related TS2771 lib.es2015.collection.d.ts:--:--: The last overload is declared here.
     wm.set(s, true);
            ~
 !!! error TS2345: Argument of type 'symbol' is not assignable to parameter of type 'object'.

@@ -1,8 +1,0 @@
---- old.es5DateAPIs.errors.txt
-+++ new.es5DateAPIs.errors.txt
-@@= skipped -4, +4 lines =@@
-     Date.UTC(2017); // should error
-          ~~~
- !!! error TS2554: Expected 2-7 arguments, but got 1.
--!!! related TS6210 lib.es5.d.ts:--:--: An argument for 'monthIndex' was not provided.
-+!!! related TS6210 bundled:///libs/lib.es5.d.ts:--:--: An argument for 'monthIndex' was not provided.

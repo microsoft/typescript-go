@@ -5,4 +5,4 @@ usingDeclarations.14.ts(1,11): error TS2741: Property '[Symbol.dispose]' is miss
     using x = {};
               ~~
 !!! error TS2741: Property '[Symbol.dispose]' is missing in type '{}' but required in type 'Disposable'.
-!!! related TS2728 bundled:///libs/lib.esnext.disposable.d.ts:--:--: '[Symbol.dispose]' is declared here.
+!!! related TS2728 lib.esnext.disposable.d.ts:--:--: '[Symbol.dispose]' is declared here.

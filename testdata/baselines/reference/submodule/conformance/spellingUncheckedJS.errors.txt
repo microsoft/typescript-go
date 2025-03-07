@@ -77,17 +77,17 @@ spellingUncheckedJS.js(40,1): error TS2552: Cannot find name 'Jon'. Did you mean
     new Date().getGMTDate() // OK, from another file
                ~~~~~~~~~~
 !!! error TS2551: Property 'getGMTDate' does not exist on type 'Date'. Did you mean 'getDate'?
-!!! related TS2728 bundled:///libs/lib.es5.d.ts:--:--: 'getDate' is declared here.
+!!! related TS2728 lib.es5.d.ts:--:--: 'getDate' is declared here.
     
     // No suggestions for globals from other files
     const atoc = setIntegral(() => console.log('ok'), 500)
                  ~~~~~~~~~~~
 !!! error TS2552: Cannot find name 'setIntegral'. Did you mean 'setInterval'?
-!!! related TS2728 bundled:///libs/lib.dom.d.ts:--:--: 'setInterval' is declared here.
+!!! related TS2728 lib.dom.d.ts:--:--: 'setInterval' is declared here.
     AudioBuffin // etc
     ~~~~~~~~~~~
 !!! error TS2552: Cannot find name 'AudioBuffin'. Did you mean 'AudioBuffer'?
-!!! related TS2728 bundled:///libs/lib.dom.d.ts:--:--: 'AudioBuffer' is declared here.
+!!! related TS2728 lib.dom.d.ts:--:--: 'AudioBuffer' is declared here.
     Jimmy
     Jon
     ~~~

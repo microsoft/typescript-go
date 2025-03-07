@@ -1,7 +1,7 @@
 intersectionsOfLargeUnions2.ts(4,15): error TS2300: Duplicate identifier 'ElementTagNameMap'.
 intersectionsOfLargeUnions2.ts(31,15): error TS2536: Type 'T' cannot be used to index type 'HTMLElementTagNameMap'.
 intersectionsOfLargeUnions2.ts(31,15): error TS2536: Type 'P' cannot be used to index type 'HTMLElementTagNameMap[T]'.
-bundled:///libs/lib.dom.d.ts(27023,6): error TS2300: Duplicate identifier 'ElementTagNameMap'.
+lib.dom.d.ts(--,--): error TS2300: Duplicate identifier 'ElementTagNameMap'.
 
 
 ==== intersectionsOfLargeUnions2.ts (3 errors) ====
@@ -11,7 +11,7 @@ bundled:///libs/lib.dom.d.ts(27023,6): error TS2300: Duplicate identifier 'Eleme
         interface ElementTagNameMap {
                   ~~~~~~~~~~~~~~~~~
 !!! error TS2300: Duplicate identifier 'ElementTagNameMap'.
-!!! related TS6203 bundled:///libs/lib.dom.d.ts:--:--: 'ElementTagNameMap' was also declared here.
+!!! related TS6203 lib.dom.d.ts:--:--: 'ElementTagNameMap' was also declared here.
             [index: number]: HTMLElement
         }
     

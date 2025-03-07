@@ -27,13 +27,13 @@ destructuringTuple.ts(11,60): error TS2769: No overload matches this call.
 !!! error TS2769:   The last overload gave the following error.
 !!! error TS2769:     Type 'never[]' is not assignable to type '[]'.
 !!! error TS2769:       Target allows only 0 element(s) but source may have more.
-!!! related TS6502 bundled:///libs/lib.es5.d.ts:--:--: The expected type comes from the return type of this signature.
-!!! related TS2771 bundled:///libs/lib.es5.d.ts:--:--: The last overload is declared here.
+!!! related TS6502 lib.es5.d.ts:--:--: The expected type comes from the return type of this signature.
+!!! related TS2771 lib.es5.d.ts:--:--: The last overload is declared here.
                                                                ~~
 !!! error TS2769: No overload matches this call.
 !!! error TS2769:   The last overload gave the following error.
 !!! error TS2769:     Argument of type 'number' is not assignable to parameter of type 'ConcatArray<never>'.
-!!! related TS2771 bundled:///libs/lib.es5.d.ts:--:--: The last overload is declared here.
+!!! related TS2771 lib.es5.d.ts:--:--: The last overload is declared here.
     
     const [oops2] = [1, 2, 3].reduce((acc: number[], e) => acc.concat(e), []);
     

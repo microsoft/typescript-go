@@ -1446,7 +1446,7 @@ parserharness.ts(2030,32): error TS2304: Cannot find name 'Diff'.
 !!! error TS2769:       The types returned by 'slice(...)' are incompatible between these types.
 !!! error TS2769:         Type 'string[]' is not assignable to type 'undefined[]'.
 !!! error TS2769:           Type 'string' is not assignable to type 'undefined'.
-!!! related TS2771 bundled:///libs/lib.es5.d.ts:--:--: The last overload is declared here.
+!!! related TS2771 lib.es5.d.ts:--:--: The last overload is declared here.
                     this.code = lines.join("\n")
     
                     this.errors = [];

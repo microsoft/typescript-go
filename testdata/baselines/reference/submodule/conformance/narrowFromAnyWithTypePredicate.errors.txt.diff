@@ -27,20 +27,3 @@
      }
      
      if (isError(x)) { 
-@@= skipped -10, +7 lines =@@
-         x.mesage;
-           ~~~~~~
- !!! error TS2551: Property 'mesage' does not exist on type 'Error'. Did you mean 'message'?
--!!! related TS2728 lib.es5.d.ts:--:--: 'message' is declared here.
-+!!! related TS2728 bundled:///libs/lib.es5.d.ts:--:--: 'message' is declared here.
-     }
-     
-     if (isDate(x)) {
-@@= skipped -8, +8 lines =@@
-         x.getHuors();
-           ~~~~~~~~
- !!! error TS2551: Property 'getHuors' does not exist on type 'Date'. Did you mean 'getHours'?
--!!! related TS2728 lib.es5.d.ts:--:--: 'getHours' is declared here.
-+!!! related TS2728 bundled:///libs/lib.es5.d.ts:--:--: 'getHours' is declared here.
-     }
-     
