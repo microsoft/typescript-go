@@ -238,7 +238,7 @@ func main() {
 		}
 	}
 	if len(unsupportedExtensions) != 0 {
-		fmt.Fprintf(os.Stderr, "Warning: The project contains unsupported file types (%s), which are currently not type-checked.\n", strings.Join(unsupportedExtensions, ", "))
+		fmt.Fprintf(os.Stderr, "Warning: The project contains unsupported file types (%s), which are currently not fully type-checked.\n", strings.Join(unsupportedExtensions, ", "))
 	}
 
 	if compilerOptions.ListFiles.IsTrue() {
