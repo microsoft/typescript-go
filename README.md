@@ -66,7 +66,6 @@ Additional tasks are a work in progress.
 
 After running `hereby build`, you can run `built/local/tsgo`, which behaves mostly the same as `tsc`.
 
-
 ### Running LSP Prototype
 
 To try the prototype LSP experience:
