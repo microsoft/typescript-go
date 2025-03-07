@@ -42,7 +42,7 @@ Definitions:
 
 ## Local development
 
-This repo uses [Go 1.24 or higher](https://go.dev/dl/) and TypeScript (latest). For a full development experience, you'll need to have both installed.
+This repo uses [Go 1.24 or higher](https://go.dev/dl/), [Node.js with npm](https://nodejs.org/), and [`hereby`](https://www.npmjs.com/package/hereby).
 
 For tests and code generation, this repo contains a git submodule to the main TypeScript repo pointing to the commit being ported.
 When cloning, you'll want to clone with submodules:
