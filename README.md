@@ -27,7 +27,7 @@ Status overview:
  * Incremental build: **not ready**
  * JSX: **not ready**
  * Language service (LSP): **prototype** only, expect minimal functionality (errors, hover, go to def). More features soon!
-   * UTF-16 files in LSP are **not ready**; only UTF-8 is currently supported at all
+   * ASCII files only for now
  * Formatter, smart indent: **not ready**
  * Project service: **not ready**
  * API: **not ready**
@@ -40,7 +40,7 @@ Definitions:
 
 ## Local development
 
-This repo uses [Golang](https://go.dev/dl/) **1.24 or higher** and TypeScript (latest). For a full development experience, you'll need to have both installed.
+This repo uses [Go 1.24 or higher](https://go.dev/dl/) and TypeScript (latest). For a full development experience, you'll need to have both installed.
 
 For tests and code generation, this repo contains a git submodule to the main TypeScript repo pointing to the commit being ported.
 When cloning, you'll want to clone with submodules:
