@@ -234,7 +234,6 @@ func main() {
 		extension := tspath.TryGetExtensionFromPath(file.FileName())
 		if extension == ".js" || extension == ".jsx" || extension == ".tsx" {
 			unsupportedExtensions = core.AppendIfUnique(unsupportedExtensions, extension)
-			break
 		}
 	}
 	if len(unsupportedExtensions) != 0 {
