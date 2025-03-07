@@ -1,0 +1,16 @@
+--- old.null.errors.txt
++++ new.null.errors.txt
+@@= skipped -0, +0 lines =@@
++null.ts(2,7): error TS2365: Operator '+' cannot be applied to types '3' and 'null'.
+ null.ts(3,7): error TS2365: Operator '+' cannot be applied to types '3' and 'null'.
+ 
+ 
+-==== null.ts (1 errors) ====
++==== null.ts (2 errors) ====
+     var x=null; 
+     var y=3+x;  
++          ~~~
++!!! error TS2365: Operator '+' cannot be applied to types '3' and 'null'.
+     var z=3+null; 
+           ~~~~~~
+ !!! error TS2365: Operator '+' cannot be applied to types '3' and 'null'.

@@ -1,0 +1,20 @@
+--- old.additionOperatorWithNullValueAndInvalidOperator.errors.txt
++++ new.additionOperatorWithNullValueAndInvalidOperator.errors.txt
+@@= skipped -5, +5 lines =@@
+ additionOperatorWithNullValueAndInvalidOperator.ts(16,10): error TS2365: Operator '+' cannot be applied to types 'null' and 'void'.
+ additionOperatorWithNullValueAndInvalidOperator.ts(19,10): error TS2365: Operator '+' cannot be applied to types 'null' and 'Number'.
+ additionOperatorWithNullValueAndInvalidOperator.ts(20,10): error TS2365: Operator '+' cannot be applied to types 'null' and 'boolean'.
+-additionOperatorWithNullValueAndInvalidOperator.ts(21,10): error TS2365: Operator '+' cannot be applied to types 'null' and '{ a: string; }'.
++additionOperatorWithNullValueAndInvalidOperator.ts(21,10): error TS2365: Operator '+' cannot be applied to types 'null' and '{ a: string }'.
+ additionOperatorWithNullValueAndInvalidOperator.ts(22,11): error TS2365: Operator '+' cannot be applied to types 'null' and 'void'.
+ additionOperatorWithNullValueAndInvalidOperator.ts(23,11): error TS2365: Operator '+' cannot be applied to types 'null' and '() => void'.
+ 
+@@= skipped -44, +44 lines =@@
+ !!! error TS2365: Operator '+' cannot be applied to types 'null' and 'boolean'.
+     var r9 = null + { a: '' };
+              ~~~~~~~~~~~~~~~~
+-!!! error TS2365: Operator '+' cannot be applied to types 'null' and '{ a: string; }'.
++!!! error TS2365: Operator '+' cannot be applied to types 'null' and '{ a: string }'.
+     var r10 = null + foo();
+               ~~~~~~~~~~~~
+ !!! error TS2365: Operator '+' cannot be applied to types 'null' and 'void'.

@@ -1,0 +1,17 @@
+--- old.computedPropertyNamesContextualType10_ES5.errors.txt
++++ new.computedPropertyNamesContextualType10_ES5.errors.txt
+@@= skipped -0, +0 lines =@@
+-computedPropertyNamesContextualType10_ES5.ts(5,5): error TS2322: Type '{ [x: number]: string | number; }' is not assignable to type 'I'.
++computedPropertyNamesContextualType10_ES5.ts(5,5): error TS2322: Type '{ [x: number]: string | number }' is not assignable to type 'I'.
+   'number' index signatures are incompatible.
+     Type 'string | number' is not assignable to type 'boolean'.
+       Type 'string' is not assignable to type 'boolean'.
+@@= skipped -10, +10 lines =@@
+     
+     var o: I = {
+         ~
+-!!! error TS2322: Type '{ [x: number]: string | number; }' is not assignable to type 'I'.
++!!! error TS2322: Type '{ [x: number]: string | number }' is not assignable to type 'I'.
+ !!! error TS2322:   'number' index signatures are incompatible.
+ !!! error TS2322:     Type 'string | number' is not assignable to type 'boolean'.
+ !!! error TS2322:       Type 'string' is not assignable to type 'boolean'.

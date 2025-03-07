@@ -1,0 +1,11 @@
+error TS2351: This expression is not constructable.
+  Type 'B' has no construct signatures.
+
+
+!!! error TS2351: This expression is not constructable.
+!!! error TS2351:   Type 'B' has no construct signatures.
+==== newAbstractInstance.ts (0 errors) ====
+    abstract class B { }
+    declare const b: B;
+    new b();
+    

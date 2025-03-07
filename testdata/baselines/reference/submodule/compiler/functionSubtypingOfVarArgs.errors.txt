@@ -1,0 +1,20 @@
+functionSubtypingOfVarArgs.ts(5,30): error TS2345: Argument of type '(...args: any[]) => void' is not assignable to parameter of type 'undefined'.
+
+
+==== functionSubtypingOfVarArgs.ts (1 errors) ====
+    class EventBase {
+        private _listeners = [];
+    
+        add(listener: (...args: any[]) => void): void {
+            this._listeners.push(listener);
+                                 ~~~~~~~~
+!!! error TS2345: Argument of type '(...args: any[]) => void' is not assignable to parameter of type 'undefined'.
+        }
+    }
+    
+    class StringEvent extends EventBase { // should work
+        add(listener: (items: string) => void ) { // valid, items is subtype of args
+            super.add(listener);
+        }
+    }
+    

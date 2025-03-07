@@ -1,0 +1,21 @@
+--- old.capturedShorthandPropertyAssignmentNoCheck.errors.txt
++++ new.capturedShorthandPropertyAssignmentNoCheck.errors.txt
+@@= skipped -0, +-1 lines =@@
+-<no content>
+@@= skipped --1, +1 lines =@@
++capturedShorthandPropertyAssignmentNoCheck.ts(3,14): error TS2345: Argument of type '() => { value: number }' is not assignable to parameter of type 'undefined'.
++capturedShorthandPropertyAssignmentNoCheck.ts(5,30): error TS2722: Cannot invoke an object which is possibly 'undefined'.
++
++
++==== capturedShorthandPropertyAssignmentNoCheck.ts (2 errors) ====
++    const fns = [];
++    for (const value of [1, 2, 3]) {
++        fns.push(() => ({ value }));
++                 ~~~~~~~~~~~~~~~~~
++!!! error TS2345: Argument of type '() => { value: number }' is not assignable to parameter of type 'undefined'.
++    }
++    const result = fns.map(fn => fn());
++                                 ~~
++!!! error TS2722: Cannot invoke an object which is possibly 'undefined'.
++    console.log(result)
++    

@@ -1,0 +1,11 @@
+--- old.interfaceMayNotBeExtendedWitACall.errors.txt
++++ new.interfaceMayNotBeExtendedWitACall.errors.txt
+@@= skipped -4, +4 lines =@@
+     interface color {}
+     
+     interface blue extends color() { // error
+-                           ~~~~~~~
++                           ~~~~~
+ !!! error TS2499: An interface can only extend an identifier/qualified-name with optional type arguments.
+     
+     }

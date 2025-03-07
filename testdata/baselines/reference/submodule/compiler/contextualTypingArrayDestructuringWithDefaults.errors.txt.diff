@@ -1,0 +1,17 @@
+--- old.contextualTypingArrayDestructuringWithDefaults.errors.txt
++++ new.contextualTypingArrayDestructuringWithDefaults.errors.txt
+@@= skipped -0, +0 lines =@@
+-contextualTypingArrayDestructuringWithDefaults.ts(8,10): error TS2322: Type '{ a: number; }' is not assignable to type '1'.
++contextualTypingArrayDestructuringWithDefaults.ts(8,10): error TS2322: Type '{ a: number }' is not assignable to type '1'.
+ 
+ 
+ ==== contextualTypingArrayDestructuringWithDefaults.ts (1 errors) ====
+@@= skipped -10, +10 lines =@@
+     function foo() {
+         let {length = {a: 1}}: [number] = [1];
+              ~~~~~~
+-!!! error TS2322: Type '{ a: number; }' is not assignable to type '1'.
++!!! error TS2322: Type '{ a: number }' is not assignable to type '1'.
+         return length;
+     }
+     

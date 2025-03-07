@@ -1,0 +1,26 @@
+--- old.parserRealSource1.errors.txt
++++ new.parserRealSource1.errors.txt
+@@= skipped -0, +0 lines =@@
+-parserRealSource1.ts(4,21): error TS6053: File 'typescript.ts' not found.
++parserRealSource1.ts(93,35): error TS2345: Argument of type 'string' is not assignable to parameter of type 'undefined'.
+ 
+ 
+ ==== parserRealSource1.ts (1 errors) ====
+@@= skipped -5, +5 lines =@@
+     // See LICENSE.txt in the project root for complete license information.
+     
+     ///<reference path='typescript.ts' />
+-                        ~~~~~~~~~~~~~
+-!!! error TS6053: File 'typescript.ts' not found.
+     
+     module TypeScript {
+         export module CompilerDiagnostics {
+@@= skipped -91, +89 lines =@@
+             public fatal(): boolean { return false; }
+             public log(s: string): void {
+                 this.logContents.push(s);
++                                      ~
++!!! error TS2345: Argument of type 'string' is not assignable to parameter of type 'undefined'.
+             }
+         }
+     

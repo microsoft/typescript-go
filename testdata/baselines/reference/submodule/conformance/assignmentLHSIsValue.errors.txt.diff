@@ -1,0 +1,11 @@
+--- old.assignmentLHSIsValue.errors.txt
++++ new.assignmentLHSIsValue.errors.txt
+@@= skipped -141, +141 lines =@@
+     
+     // function calls
+     foo() = value;
+-    ~~~~~
++    ~~~
+ !!! error TS2364: The left-hand side of an assignment expression must be a variable or a property access.
+     
+     // parentheses, the containted expression is value

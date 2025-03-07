@@ -1,0 +1,31 @@
+--- old.stringLiteralsAssignedToStringMappings.errors.txt
++++ new.stringLiteralsAssignedToStringMappings.errors.txt
+@@= skipped -0, +0 lines =@@
+-stringLiteralsAssignedToStringMappings.ts(7,1): error TS2322: Type 'string' is not assignable to type 'Uppercase<Lowercase<string>>'.
+-stringLiteralsAssignedToStringMappings.ts(15,1): error TS2322: Type 'string' is not assignable to type 'Uppercase<Lowercase<`${number}`>>'.
+-stringLiteralsAssignedToStringMappings.ts(16,1): error TS2322: Type 'string' is not assignable to type 'Uppercase<Lowercase<`${number}`>>'.
++stringLiteralsAssignedToStringMappings.ts(7,1): error TS2322: Type '"a"' is not assignable to type 'Uppercase<Lowercase<string>>'.
++stringLiteralsAssignedToStringMappings.ts(15,1): error TS2322: Type '"a"' is not assignable to type 'Uppercase<Lowercase<`${number}`>>'.
++stringLiteralsAssignedToStringMappings.ts(16,1): error TS2322: Type '"A"' is not assignable to type 'Uppercase<Lowercase<`${number}`>>'.
+ 
+ 
+ ==== stringLiteralsAssignedToStringMappings.ts (3 errors) ====
+@@= skipped -11, +11 lines =@@
+     // bad
+     x = "a";
+     ~
+-!!! error TS2322: Type 'string' is not assignable to type 'Uppercase<Lowercase<string>>'.
++!!! error TS2322: Type '"a"' is not assignable to type 'Uppercase<Lowercase<string>>'.
+     
+     declare var y: Uppercase<Lowercase<`${number}`>>;
+     
+@@= skipped -10, +10 lines =@@
+     // bad
+     y = "a";
+     ~
+-!!! error TS2322: Type 'string' is not assignable to type 'Uppercase<Lowercase<`${number}`>>'.
++!!! error TS2322: Type '"a"' is not assignable to type 'Uppercase<Lowercase<`${number}`>>'.
+     y = "A";
+     ~
+-!!! error TS2322: Type 'string' is not assignable to type 'Uppercase<Lowercase<`${number}`>>'.
++!!! error TS2322: Type '"A"' is not assignable to type 'Uppercase<Lowercase<`${number}`>>'.

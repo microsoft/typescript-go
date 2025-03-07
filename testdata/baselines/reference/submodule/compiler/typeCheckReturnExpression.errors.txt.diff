@@ -1,0 +1,12 @@
+--- old.typeCheckReturnExpression.errors.txt
++++ new.typeCheckReturnExpression.errors.txt
+@@= skipped -0, +-1 lines =@@
+-typeCheckReturnExpression.ts(1,11): error TS7011: Function expression, which lacks return-type annotation, implicitly has an 'any' return type.
+-
+-
+-==== typeCheckReturnExpression.ts (1 errors) ====
+-    var foo = () => undefined;
+-              ~~~~~~~~~~~~~~~
+-!!! error TS7011: Function expression, which lacks return-type annotation, implicitly has an 'any' return type.
+@@= skipped --1, +1 lines =@@
++<no content>

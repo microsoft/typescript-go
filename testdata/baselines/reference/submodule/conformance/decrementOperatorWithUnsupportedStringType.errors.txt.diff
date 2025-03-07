@@ -1,0 +1,62 @@
+--- old.decrementOperatorWithUnsupportedStringType.errors.txt
++++ new.decrementOperatorWithUnsupportedStringType.errors.txt
+@@= skipped -11, +11 lines =@@
+ decrementOperatorWithUnsupportedStringType.ts(35,26): error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
+ decrementOperatorWithUnsupportedStringType.ts(36,26): error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
+ decrementOperatorWithUnsupportedStringType.ts(37,26): error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
+-decrementOperatorWithUnsupportedStringType.ts(38,26): error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
++decrementOperatorWithUnsupportedStringType.ts(38,28): error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
+ decrementOperatorWithUnsupportedStringType.ts(39,26): error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
+ decrementOperatorWithUnsupportedStringType.ts(41,24): error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
+ decrementOperatorWithUnsupportedStringType.ts(42,24): error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
+ decrementOperatorWithUnsupportedStringType.ts(43,24): error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
+ decrementOperatorWithUnsupportedStringType.ts(44,24): error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
+-decrementOperatorWithUnsupportedStringType.ts(45,24): error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
++decrementOperatorWithUnsupportedStringType.ts(45,26): error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
+ decrementOperatorWithUnsupportedStringType.ts(46,24): error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
+ decrementOperatorWithUnsupportedStringType.ts(49,3): error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
+ decrementOperatorWithUnsupportedStringType.ts(50,3): error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
+@@= skipped -91, +91 lines =@@
+                              ~~~~~~~~~~
+ !!! error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
+     var ResultIsNumber14 = --foo();
+-                             ~~~~~
++                             ~~~
+ !!! error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
+     var ResultIsNumber15 = --A.foo();
+-                             ~~~~~~~
++                               ~~~
+ !!! error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
+     var ResultIsNumber16 = --(STRING + STRING);
+                              ~~~~~~~~~~~~~~~~~
+@@= skipped -19, +19 lines =@@
+                            ~~~~~~~~~~
+ !!! error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
+     var ResultIsNumber20 = foo()--;
+-                           ~~~~~
++                           ~~~
+ !!! error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
+     var ResultIsNumber21 = A.foo()--;
+-                           ~~~~~~~
++                             ~~~
+ !!! error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
+     var ResultIsNumber22 = (STRING + STRING)--;
+                            ~~~~~~~~~~~~~~~~~
+@@= skipped -23, +23 lines =@@
+       ~~~~~~~~~~
+ !!! error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
+     --foo();
+-      ~~~~~
++      ~~~
+ !!! error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
+     --objA.a;
+       ~~~~~~
+@@= skipped -25, +25 lines =@@
+     ~~~~~~~~~~
+ !!! error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
+     foo()--;
+-    ~~~~~
++    ~~~
+ !!! error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
+     objA.a--;
+     ~~~~~~

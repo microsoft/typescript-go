@@ -1,0 +1,46 @@
+--- old.genericCallWithFunctionTypedArguments.errors.txt
++++ new.genericCallWithFunctionTypedArguments.errors.txt
+@@= skipped -1, +1 lines =@@
+   Type 'string' is not assignable to type '1'.
+ genericCallWithFunctionTypedArguments.ts(30,23): error TS2345: Argument of type '(x: T) => string' is not assignable to parameter of type '(a: 1) => string'.
+   Types of parameters 'x' and 'a' are incompatible.
+-    Type 'number' is not assignable to type 'T'.
++    Type '1' is not assignable to type 'T'.
+       'T' could be instantiated with an arbitrary type which could be unrelated to 'number'.
+ genericCallWithFunctionTypedArguments.ts(33,23): error TS2345: Argument of type '(x: T) => string' is not assignable to parameter of type '(a: 1) => string'.
+   Types of parameters 'x' and 'a' are incompatible.
+-    Type 'number' is not assignable to type 'T'.
++    Type '1' is not assignable to type 'T'.
+       'T' could be instantiated with an arbitrary type which could be unrelated to 'number'.
+ genericCallWithFunctionTypedArguments.ts(34,24): error TS2345: Argument of type '(x: T) => string' is not assignable to parameter of type '(a: 1) => string'.
+   Types of parameters 'x' and 'a' are incompatible.
+-    Type 'number' is not assignable to type 'T'.
++    Type '1' is not assignable to type 'T'.
+       'T' could be instantiated with an arbitrary type which could be unrelated to 'number'.
+ genericCallWithFunctionTypedArguments.ts(35,23): error TS2345: Argument of type '(a: number) => string' is not assignable to parameter of type '(a: number) => 1'.
+   Type 'string' is not assignable to type '1'.
+@@= skipped -51, +51 lines =@@
+                           ~~~~~~~~~~~~
+ !!! error TS2345: Argument of type '(x: T) => string' is not assignable to parameter of type '(a: 1) => string'.
+ !!! error TS2345:   Types of parameters 'x' and 'a' are incompatible.
+-!!! error TS2345:     Type 'number' is not assignable to type 'T'.
++!!! error TS2345:     Type '1' is not assignable to type 'T'.
+ !!! error TS2345:       'T' could be instantiated with an arbitrary type which could be unrelated to 'number'.
+         var r10 = foo2(1, (x) => ''); // string
+     
+@@= skipped -8, +8 lines =@@
+                           ~~~~~~~~~~~~
+ !!! error TS2345: Argument of type '(x: T) => string' is not assignable to parameter of type '(a: 1) => string'.
+ !!! error TS2345:   Types of parameters 'x' and 'a' are incompatible.
+-!!! error TS2345:     Type 'number' is not assignable to type 'T'.
++!!! error TS2345:     Type '1' is not assignable to type 'T'.
+ !!! error TS2345:       'T' could be instantiated with an arbitrary type which could be unrelated to 'number'.
+         var r11b = foo3(1, (x: T) => '', 1); // error
+                            ~~~~~~~~~~~~
+ !!! error TS2345: Argument of type '(x: T) => string' is not assignable to parameter of type '(a: 1) => string'.
+ !!! error TS2345:   Types of parameters 'x' and 'a' are incompatible.
+-!!! error TS2345:     Type 'number' is not assignable to type 'T'.
++!!! error TS2345:     Type '1' is not assignable to type 'T'.
+ !!! error TS2345:       'T' could be instantiated with an arbitrary type which could be unrelated to 'number'.
+         var r12 = foo3(1, function (a) { return '' }, 1); // error
+                           ~~~~~~~~

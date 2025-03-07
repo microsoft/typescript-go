@@ -1,0 +1,14 @@
+--- old.propertyAccess1.errors.txt
++++ new.propertyAccess1.errors.txt
+@@= skipped -0, +0 lines =@@
+-propertyAccess1.ts(3,5): error TS2339: Property 'b' does not exist on type '{ a: number; }'.
++propertyAccess1.ts(3,5): error TS2339: Property 'b' does not exist on type '{ a: number }'.
+ 
+ 
+ ==== propertyAccess1.ts (1 errors) ====
+@@= skipped -5, +5 lines =@@
+     foo.a = 4;
+     foo.b = 5;
+         ~
+-!!! error TS2339: Property 'b' does not exist on type '{ a: number; }'.
++!!! error TS2339: Property 'b' does not exist on type '{ a: number }'.

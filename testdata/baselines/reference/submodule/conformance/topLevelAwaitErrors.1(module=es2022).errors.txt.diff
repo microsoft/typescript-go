@@ -1,0 +1,22 @@
+--- old.topLevelAwaitErrors.1(module=es2022).errors.txt
++++ new.topLevelAwaitErrors.1(module=es2022).errors.txt
+@@= skipped -0, +0 lines =@@
+-topLevelAwaitErrors.1.ts(4,8): error TS2695: Left side of comma operator is unused and has no side effects.
+ topLevelAwaitErrors.1.ts(4,10): error TS1109: Expression expected.
+ topLevelAwaitErrors.1.ts(5,14): error TS1005: '>' expected.
+ topLevelAwaitErrors.1.ts(5,16): error TS2693: 'string' only refers to a type, but is being used as a value here.
+@@= skipped -19, +18 lines =@@
+ topLevelAwaitErrors.1.ts(42,20): error TS1109: Expression expected.
+ 
+ 
+-==== topLevelAwaitErrors.1.ts (20 errors) ====
++==== topLevelAwaitErrors.1.ts (19 errors) ====
+     export {};
+     
+     // reparse call as invalid await should error
+     await (1,);
+-           ~
+-!!! error TS2695: Left side of comma operator is unused and has no side effects.
+              ~
+ !!! error TS1109: Expression expected.
+     await <number, string>(1);

@@ -1,0 +1,24 @@
+--- old.constructorOverloads4.errors.txt
++++ new.constructorOverloads4.errors.txt
+@@= skipped -0, +0 lines =@@
+-constructorOverloads4.ts(10,1): error TS2349: This expression is not callable.
++error TS2349: This expression is not callable.
+   Type 'Function' has no call signatures.
+ 
+ 
+-==== constructorOverloads4.ts (1 errors) ====
++!!! error TS2349: This expression is not callable.
++!!! error TS2349:   Type 'Function' has no call signatures.
++==== constructorOverloads4.ts (0 errors) ====
+     declare module M {    
+         export class Function {
+             constructor(...args: string[]);
+@@= skipped -12, +14 lines =@@
+     
+     
+     (new M.Function("return 5"))();
+-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-!!! error TS2349: This expression is not callable.
+-!!! error TS2349:   Type 'Function' has no call signatures.
+     M.Function("yo");
+     

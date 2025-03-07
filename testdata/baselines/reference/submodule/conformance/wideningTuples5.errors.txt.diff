@@ -1,0 +1,15 @@
+--- old.wideningTuples5.errors.txt
++++ new.wideningTuples5.errors.txt
+@@= skipped -0, +-1 lines =@@
+-wideningTuples5.ts(1,6): error TS7031: Binding element 'a' implicitly has an 'any' type.
+-wideningTuples5.ts(1,9): error TS7031: Binding element 'b' implicitly has an 'any' type.
+-
+-
+-==== wideningTuples5.ts (2 errors) ====
+-    var [a, b] = [undefined, null];
+-         ~
+-!!! error TS7031: Binding element 'a' implicitly has an 'any' type.
+-            ~
+-!!! error TS7031: Binding element 'b' implicitly has an 'any' type.
+@@= skipped --1, +1 lines =@@
++<no content>

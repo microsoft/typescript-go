@@ -1,0 +1,57 @@
+--- old.assignmentCompatWithObjectMembersOptionality.errors.txt
++++ new.assignmentCompatWithObjectMembersOptionality.errors.txt
+@@= skipped -1, +1 lines =@@
+   Property 'opt' is optional in type 'D' but required in type 'C'.
+ assignmentCompatWithObjectMembersOptionality.ts(74,5): error TS2322: Type 'E' is not assignable to type 'C'.
+   Property 'opt' is optional in type 'E' but required in type 'C'.
+-assignmentCompatWithObjectMembersOptionality.ts(78,5): error TS2322: Type 'D' is not assignable to type '{ opt: Base; }'.
+-  Property 'opt' is optional in type 'D' but required in type '{ opt: Base; }'.
+-assignmentCompatWithObjectMembersOptionality.ts(79,5): error TS2322: Type 'E' is not assignable to type '{ opt: Base; }'.
+-  Property 'opt' is optional in type 'E' but required in type '{ opt: Base; }'.
+-assignmentCompatWithObjectMembersOptionality.ts(83,5): error TS2322: Type 'D' is not assignable to type '{ opt: Base; }'.
+-  Property 'opt' is optional in type 'D' but required in type '{ opt: Base; }'.
+-assignmentCompatWithObjectMembersOptionality.ts(84,5): error TS2322: Type 'E' is not assignable to type '{ opt: Base; }'.
+-  Property 'opt' is optional in type 'E' but required in type '{ opt: Base; }'.
++assignmentCompatWithObjectMembersOptionality.ts(78,5): error TS2322: Type 'D' is not assignable to type '{ opt: Base }'.
++  Property 'opt' is optional in type 'D' but required in type '{ opt: Base }'.
++assignmentCompatWithObjectMembersOptionality.ts(79,5): error TS2322: Type 'E' is not assignable to type '{ opt: Base }'.
++  Property 'opt' is optional in type 'E' but required in type '{ opt: Base }'.
++assignmentCompatWithObjectMembersOptionality.ts(83,5): error TS2322: Type 'D' is not assignable to type '{ opt: Base }'.
++  Property 'opt' is optional in type 'D' but required in type '{ opt: Base }'.
++assignmentCompatWithObjectMembersOptionality.ts(84,5): error TS2322: Type 'E' is not assignable to type '{ opt: Base }'.
++  Property 'opt' is optional in type 'E' but required in type '{ opt: Base }'.
+ 
+ 
+ ==== assignmentCompatWithObjectMembersOptionality.ts (6 errors) ====
+@@= skipped -96, +96 lines =@@
+     
+         a = d; // error
+         ~
+-!!! error TS2322: Type 'D' is not assignable to type '{ opt: Base; }'.
+-!!! error TS2322:   Property 'opt' is optional in type 'D' but required in type '{ opt: Base; }'.
++!!! error TS2322: Type 'D' is not assignable to type '{ opt: Base }'.
++!!! error TS2322:   Property 'opt' is optional in type 'D' but required in type '{ opt: Base }'.
+         a = e; // error
+         ~
+-!!! error TS2322: Type 'E' is not assignable to type '{ opt: Base; }'.
+-!!! error TS2322:   Property 'opt' is optional in type 'E' but required in type '{ opt: Base; }'.
++!!! error TS2322: Type 'E' is not assignable to type '{ opt: Base }'.
++!!! error TS2322:   Property 'opt' is optional in type 'E' but required in type '{ opt: Base }'.
+         a = f; // ok
+         a = c; // ok
+     
+         b = d; // error
+         ~
+-!!! error TS2322: Type 'D' is not assignable to type '{ opt: Base; }'.
+-!!! error TS2322:   Property 'opt' is optional in type 'D' but required in type '{ opt: Base; }'.
++!!! error TS2322: Type 'D' is not assignable to type '{ opt: Base }'.
++!!! error TS2322:   Property 'opt' is optional in type 'D' but required in type '{ opt: Base }'.
+         b = e; // error
+         ~
+-!!! error TS2322: Type 'E' is not assignable to type '{ opt: Base; }'.
+-!!! error TS2322:   Property 'opt' is optional in type 'E' but required in type '{ opt: Base; }'.
++!!! error TS2322: Type 'E' is not assignable to type '{ opt: Base }'.
++!!! error TS2322:   Property 'opt' is optional in type 'E' but required in type '{ opt: Base }'.
+         b = f; // ok
+         b = a; // ok
+         b = c; // ok

@@ -1,0 +1,17 @@
+--- old.interfaceWithStringIndexerHidingBaseTypeIndexer2.errors.txt
++++ new.interfaceWithStringIndexerHidingBaseTypeIndexer2.errors.txt
+@@= skipped -0, +0 lines =@@
+-interfaceWithStringIndexerHidingBaseTypeIndexer2.ts(17,5): error TS2411: Property '1' of type '{ a: number; }' is not assignable to 'number' index type '{ a: number; b: number; }'.
++interfaceWithStringIndexerHidingBaseTypeIndexer2.ts(17,5): error TS2411: Property '1' of type '{ a: number }' is not assignable to 'number' index type '{ a: number, b: number }'.
+ 
+ 
+ ==== interfaceWithStringIndexerHidingBaseTypeIndexer2.ts (1 errors) ====
+@@= skipped -19, +19 lines =@@
+         // error
+         1: {
+         ~
+-!!! error TS2411: Property '1' of type '{ a: number; }' is not assignable to 'number' index type '{ a: number; b: number; }'.
++!!! error TS2411: Property '1' of type '{ a: number }' is not assignable to 'number' index type '{ a: number, b: number }'.
+             a: number;
+         }
+     }

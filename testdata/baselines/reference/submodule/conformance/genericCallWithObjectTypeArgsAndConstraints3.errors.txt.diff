@@ -1,0 +1,11 @@
+--- old.genericCallWithObjectTypeArgsAndConstraints3.errors.txt
++++ new.genericCallWithObjectTypeArgsAndConstraints3.errors.txt
+@@= skipped -22, +22 lines =@@
+                                    ~
+ !!! error TS2741: Property 'y' is missing in type 'Derived2' but required in type 'Derived'.
+ !!! related TS2728 genericCallWithObjectTypeArgsAndConstraints3.ts:7:5: 'y' is declared here.
+-!!! related TS6500 genericCallWithObjectTypeArgsAndConstraints3.ts:13:39: The expected type comes from property 'y' which is declared here on type '{ x: Derived; y: Derived; }'
++!!! related TS6500 genericCallWithObjectTypeArgsAndConstraints3.ts:13:39: The expected type comes from property 'y' which is declared here on type '{ x: Derived, y: Derived }'
+     
+     function f2<T extends Base, U extends { x: T; y: T }>(a: U) {
+         var r: T;

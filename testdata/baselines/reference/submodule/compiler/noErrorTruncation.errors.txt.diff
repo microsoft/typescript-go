@@ -1,0 +1,17 @@
+--- old.noErrorTruncation.errors.txt
++++ new.noErrorTruncation.errors.txt
+@@= skipped -0, +0 lines =@@
+-noErrorTruncation.ts(10,7): error TS2322: Type 'number' is not assignable to type 'SomeLongOptionA | SomeLongOptionB | SomeLongOptionC | SomeLongOptionD | SomeLongOptionE | SomeLongOptionF'.
++noErrorTruncation.ts(10,7): error TS2322: Type '42' is not assignable to type 'SomeLongOptionA | SomeLongOptionB | SomeLongOptionC | SomeLongOptionD | SomeLongOptionE | SomeLongOptionF'.
+ 
+ 
+ ==== noErrorTruncation.ts (1 errors) ====
+@@= skipped -12, +12 lines =@@
+     
+     const x: SomeLongOptionA
+           ~
+-!!! error TS2322: Type 'number' is not assignable to type 'SomeLongOptionA | SomeLongOptionB | SomeLongOptionC | SomeLongOptionD | SomeLongOptionE | SomeLongOptionF'.
++!!! error TS2322: Type '42' is not assignable to type 'SomeLongOptionA | SomeLongOptionB | SomeLongOptionC | SomeLongOptionD | SomeLongOptionE | SomeLongOptionF'.
+            | SomeLongOptionB
+            | SomeLongOptionC
+            | SomeLongOptionD

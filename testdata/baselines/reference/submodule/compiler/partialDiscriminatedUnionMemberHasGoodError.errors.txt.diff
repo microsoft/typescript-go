@@ -1,0 +1,20 @@
+--- old.partialDiscriminatedUnionMemberHasGoodError.errors.txt
++++ new.partialDiscriminatedUnionMemberHasGoodError.errors.txt
+@@= skipped -0, +0 lines =@@
+-partialDiscriminatedUnionMemberHasGoodError.ts(20,13): error TS2322: Type '{ type: "A"; }' is not assignable to type 'ValidType'.
+-  Property 'param' is missing in type '{ type: "A"; }' but required in type 'TypeA'.
++partialDiscriminatedUnionMemberHasGoodError.ts(20,13): error TS2322: Type '{ type: "A" }' is not assignable to type 'ValidType'.
++  Property 'param' is missing in type '{ type: "A" }' but required in type 'TypeA'.
+ 
+ 
+ ==== partialDiscriminatedUnionMemberHasGoodError.ts (1 errors) ====
+@@= skipped -27, +27 lines =@@
+     ~~~~~~~~~~~~~~~~~
+         }]
+     ~~~~~
+-!!! error TS2322: Type '{ type: "A"; }' is not assignable to type 'ValidType'.
+-!!! error TS2322:   Property 'param' is missing in type '{ type: "A"; }' but required in type 'TypeA'.
++!!! error TS2322: Type '{ type: "A" }' is not assignable to type 'ValidType'.
++!!! error TS2322:   Property 'param' is missing in type '{ type: "A" }' but required in type 'TypeA'.
+ !!! related TS2728 partialDiscriminatedUnionMemberHasGoodError.ts:3:5: 'param' is declared here.
+     });

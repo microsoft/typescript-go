@@ -1,0 +1,28 @@
+--- old.derivedClassWithoutExplicitConstructor2.errors.txt
++++ new.derivedClassWithoutExplicitConstructor2.errors.txt
+@@= skipped -0, +0 lines =@@
+-derivedClassWithoutExplicitConstructor2.ts(13,9): error TS2554: Expected 1-3 arguments, but got 0.
+-derivedClassWithoutExplicitConstructor2.ts(30,9): error TS2554: Expected 1-3 arguments, but got 0.
++derivedClassWithoutExplicitConstructor2.ts(13,13): error TS2554: Expected 1-3 arguments, but got 0.
++derivedClassWithoutExplicitConstructor2.ts(30,13): error TS2554: Expected 1-3 arguments, but got 0.
+ 
+ 
+ ==== derivedClassWithoutExplicitConstructor2.ts (2 errors) ====
+@@= skipped -15, +15 lines =@@
+     }
+     
+     var r = new Derived(); // error
+-            ~~~~~~~~~~~~~
++                ~~~~~~~
+ !!! error TS2554: Expected 1-3 arguments, but got 0.
+ !!! related TS6210 derivedClassWithoutExplicitConstructor2.ts:3:17: An argument for 'x' was not provided.
+     var r2 = new Derived(1); 
+@@= skipped -20, +20 lines =@@
+     }
+     
+     var d = new D(); // error
+-            ~~~~~~~
++                ~
+ !!! error TS2554: Expected 1-3 arguments, but got 0.
+ !!! related TS6210 derivedClassWithoutExplicitConstructor2.ts:20:17: An argument for 'x' was not provided.
+     var d2 = new D(new Date()); // ok

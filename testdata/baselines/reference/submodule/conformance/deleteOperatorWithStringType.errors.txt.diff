@@ -1,0 +1,42 @@
+--- old.deleteOperatorWithStringType.errors.txt
++++ new.deleteOperatorWithStringType.errors.txt
+@@= skipped -3, +3 lines =@@
+ deleteOperatorWithStringType.ts(23,31): error TS2703: The operand of a 'delete' operator must be a property reference.
+ deleteOperatorWithStringType.ts(24,31): error TS2703: The operand of a 'delete' operator must be a property reference.
+ deleteOperatorWithStringType.ts(30,31): error TS2703: The operand of a 'delete' operator must be a property reference.
+-deleteOperatorWithStringType.ts(31,32): error TS2703: The operand of a 'delete' operator must be a property reference.
++deleteOperatorWithStringType.ts(31,34): error TS2703: The operand of a 'delete' operator must be a property reference.
+ deleteOperatorWithStringType.ts(32,33): error TS2703: The operand of a 'delete' operator must be a property reference.
+-deleteOperatorWithStringType.ts(33,32): error TS2703: The operand of a 'delete' operator must be a property reference.
++deleteOperatorWithStringType.ts(33,39): error TS2703: The operand of a 'delete' operator must be a property reference.
+ deleteOperatorWithStringType.ts(36,32): error TS2703: The operand of a 'delete' operator must be a property reference.
+ deleteOperatorWithStringType.ts(36,39): error TS2703: The operand of a 'delete' operator must be a property reference.
+ deleteOperatorWithStringType.ts(37,32): error TS2703: The operand of a 'delete' operator must be a property reference.
+@@= skipped -55, +55 lines =@@
+     var ResultIsBoolean7 = delete M.n;
+     var ResultIsBoolean8 = delete STRING1[0];
+     var ResultIsBoolean9 = delete foo();
+-                                  ~~~~~
++                                  ~~~
+ !!! error TS2703: The operand of a 'delete' operator must be a property reference.
+     var ResultIsBoolean10 = delete A.foo();
+-                                   ~~~~~~~
++                                     ~~~
+ !!! error TS2703: The operand of a 'delete' operator must be a property reference.
+     var ResultIsBoolean11 = delete (STRING + STRING);
+                                     ~~~~~~~~~~~~~~~
+ !!! error TS2703: The operand of a 'delete' operator must be a property reference.
+     var ResultIsBoolean12 = delete STRING.charAt(0);
+-                                   ~~~~~~~~~~~~~~~~
++                                          ~~~~~~
+ !!! error TS2703: The operand of a 'delete' operator must be a property reference.
+     
+     // multiple delete  operator
+@@= skipped -37, +37 lines =@@
+            ~~~~~~~
+ !!! error TS2703: The operand of a 'delete' operator must be a property reference.
+     delete foo();
+-           ~~~~~
++           ~~~
+ !!! error TS2703: The operand of a 'delete' operator must be a property reference.
+     delete objA.a,M.n;

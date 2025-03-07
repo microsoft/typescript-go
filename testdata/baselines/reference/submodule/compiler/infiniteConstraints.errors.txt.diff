@@ -1,0 +1,15 @@
+--- old.infiniteConstraints.errors.txt
++++ new.infiniteConstraints.errors.txt
+@@= skipped -39, +39 lines =@@
+     const shouldBeError = ensureNoDuplicates({main: value("dup"), alternate: value("dup")});
+                                               ~~~~
+ !!! error TS2322: Type 'Value<"dup">' is not assignable to type 'never'.
+-!!! related TS6500 infiniteConstraints.ts:31:43: The expected type comes from property 'main' which is declared here on type '{ main: never; alternate: never; }'
++!!! related TS6500 infiniteConstraints.ts:31:43: The expected type comes from property 'main' which is declared here on type '{ main: never, alternate: never }'
+                                                                   ~~~~~~~~~
+ !!! error TS2322: Type 'Value<"dup">' is not assignable to type 'never'.
+-!!! related TS6500 infiniteConstraints.ts:31:63: The expected type comes from property 'alternate' which is declared here on type '{ main: never; alternate: never; }'
++!!! related TS6500 infiniteConstraints.ts:31:63: The expected type comes from property 'alternate' which is declared here on type '{ main: never, alternate: never }'
+     
+     // Repro from #26448
+     

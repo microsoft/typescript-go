@@ -1,0 +1,22 @@
+--- old.interfaceDeclaration4.errors.txt
++++ new.interfaceDeclaration4.errors.txt
+@@= skipped -5, +5 lines =@@
+ interfaceDeclaration4.ts(36,7): error TS2420: Class 'C3' incorrectly implements interface 'I1'.
+   Property 'item' is missing in type 'C3' but required in type 'I1'.
+ interfaceDeclaration4.ts(39,14): error TS1005: '{' expected.
+-interfaceDeclaration4.ts(39,15): error TS1434: Unexpected keyword or identifier.
+ interfaceDeclaration4.ts(39,15): error TS2304: Cannot find name 'I1'.
++interfaceDeclaration4.ts(39,18): error TS1005: ';' expected.
+ 
+ 
+ ==== interfaceDeclaration4.ts (6 errors) ====
+@@= skipped -59, +59 lines =@@
+                  ~
+ !!! error TS1005: '{' expected.
+                   ~~
+-!!! error TS1434: Unexpected keyword or identifier.
+-                  ~~
+ !!! error TS2304: Cannot find name 'I1'.
++                     ~
++!!! error TS1005: ';' expected.
+     

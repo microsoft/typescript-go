@@ -1,0 +1,41 @@
+--- old.anonymousModules.errors.txt
++++ new.anonymousModules.errors.txt
+@@= skipped -0, +0 lines =@@
+ anonymousModules.ts(1,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+-anonymousModules.ts(1,8): error TS1437: Namespace must be given a name.
++anonymousModules.ts(1,8): error TS1005: ';' expected.
+ anonymousModules.ts(4,2): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+-anonymousModules.ts(4,9): error TS1437: Namespace must be given a name.
++anonymousModules.ts(4,9): error TS1005: ';' expected.
+ anonymousModules.ts(10,2): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+-anonymousModules.ts(10,9): error TS1437: Namespace must be given a name.
++anonymousModules.ts(10,9): error TS1005: ';' expected.
+ 
+ 
+ ==== anonymousModules.ts (6 errors) ====
+@@= skipped -10, +10 lines =@@
+     ~~~~~~
+ !!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+            ~
+-!!! error TS1437: Namespace must be given a name.
++!!! error TS1005: ';' expected.
+     	export var foo = 1;
+     
+     	module {
+     	~~~~~~
+ !!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+     	       ~
+-!!! error TS1437: Namespace must be given a name.
++!!! error TS1005: ';' expected.
+     		export var bar = 1;
+     	}
+     
+@@= skipped -17, +17 lines =@@
+     	~~~~~~
+ !!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+     	       ~
+-!!! error TS1437: Namespace must be given a name.
++!!! error TS1005: ';' expected.
+     		var x = bar;
+     	}
+     }

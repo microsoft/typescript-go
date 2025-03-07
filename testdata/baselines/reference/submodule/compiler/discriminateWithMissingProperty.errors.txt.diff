@@ -1,0 +1,16 @@
+--- old.discriminateWithMissingProperty.errors.txt
++++ new.discriminateWithMissingProperty.errors.txt
+@@= skipped -0, +0 lines =@@
+-discriminateWithMissingProperty.ts(12,5): error TS2345: Argument of type '{ mode: "numeric"; data: Uint8Array<ArrayBuffer>; }' is not assignable to parameter of type 'Arg'.
++discriminateWithMissingProperty.ts(12,5): error TS2345: Argument of type '{ mode: "numeric", data: Uint8Array<ArrayBuffer> }' is not assignable to parameter of type 'Arg'.
+   Types of property 'data' are incompatible.
+     Type 'Uint8Array<ArrayBuffer>' is not assignable to type 'number'.
+ 
+@@= skipped -16, +16 lines =@@
+     declare function foo(arg: Arg): void;
+     foo({ mode: "numeric", data: new Uint8Array([30]) }); // Should error
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-!!! error TS2345: Argument of type '{ mode: "numeric"; data: Uint8Array<ArrayBuffer>; }' is not assignable to parameter of type 'Arg'.
++!!! error TS2345: Argument of type '{ mode: "numeric", data: Uint8Array<ArrayBuffer> }' is not assignable to parameter of type 'Arg'.
+ !!! error TS2345:   Types of property 'data' are incompatible.
+ !!! error TS2345:     Type 'Uint8Array<ArrayBuffer>' is not assignable to type 'number'.

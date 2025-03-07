@@ -1,0 +1,216 @@
+--- old.parserharness.errors.txt
++++ new.parserharness.errors.txt
+@@= skipped -0, +0 lines =@@
+-parserharness.ts(16,21): error TS6053: File '../compiler/io.ts' not found.
+-parserharness.ts(17,21): error TS6053: File '../compiler/typescript.ts' not found.
+-parserharness.ts(18,21): error TS6053: File '../services/typescriptServices.ts' not found.
+-parserharness.ts(19,21): error TS6053: File 'diff.ts' not found.
+ parserharness.ts(21,21): error TS2749: 'Harness.Assert' refers to a value, but is being used as a type here. Did you mean 'typeof Harness.Assert'?
+ parserharness.ts(25,17): error TS2304: Cannot find name 'IIO'.
+ parserharness.ts(41,12): error TS2304: Cannot find name 'ActiveXObject'.
+@@= skipped -11, +7 lines =@@
+ parserharness.ts(351,17): error TS2662: Cannot find name 'errorHandlerStack'. Did you mean the static member 'Runnable.errorHandlerStack'?
+ parserharness.ts(354,17): error TS2662: Cannot find name 'errorHandlerStack'. Did you mean the static member 'Runnable.errorHandlerStack'?
+ parserharness.ts(354,35): error TS2662: Cannot find name 'errorHandlerStack'. Did you mean the static member 'Runnable.errorHandlerStack'?
++parserharness.ts(383,25): error TS2322: Type 'false' is not assignable to type 'null'.
++parserharness.ts(387,25): error TS2322: Type 'true' is not assignable to type 'null'.
++parserharness.ts(422,21): error TS2322: Type 'false' is not assignable to type 'null'.
++parserharness.ts(430,21): error TS2322: Type 'true' is not assignable to type 'null'.
+ parserharness.ts(691,50): error TS2304: Cannot find name 'ITextWriter'.
+ parserharness.ts(716,47): error TS2503: Cannot find namespace 'TypeScript'.
+ parserharness.ts(721,62): error TS2304: Cannot find name 'ITextWriter'.
+@@= skipped -13, +17 lines =@@
+ parserharness.ts(781,23): error TS2503: Cannot find namespace 'TypeScript'.
+ parserharness.ts(794,49): error TS2304: Cannot find name 'TypeScript'.
+ parserharness.ts(795,49): error TS2304: Cannot find name 'TypeScript'.
++parserharness.ts(817,21): error TS2322: Type 'CompilerError[]' is not assignable to type 'null'.
++parserharness.ts(820,24): error TS18047: 'errors' is possibly 'null'.
++parserharness.ts(973,21): error TS2322: Type 'CompilerError[]' is not assignable to type 'null'.
++parserharness.ts(976,21): error TS18047: 'errors' is possibly 'null'.
++parserharness.ts(977,75): error TS18047: 'errors' is possibly 'null'.
+ parserharness.ts(987,53): error TS2304: Cannot find name 'TypeScript'.
+ parserharness.ts(987,89): error TS2304: Cannot find name 'TypeScript'.
+ parserharness.ts(987,115): error TS2503: Cannot find namespace 'TypeScript'.
+@@= skipped -35, +40 lines =@@
+ parserharness.ts(1080,74): error TS2503: Cannot find namespace 'TypeScript'.
+ parserharness.ts(1107,173): error TS2503: Cannot find namespace 'TypeScript'.
+ parserharness.ts(1176,132): error TS2503: Cannot find namespace 'TypeScript'.
++parserharness.ts(1178,63): error TS2769: No overload matches this call.
++  The last overload gave the following error.
++    Argument of type 'string[]' is not assignable to parameter of type 'ConcatArray<undefined>'.
++      The types returned by 'slice(...)' are incompatible between these types.
++        Type 'string[]' is not assignable to type 'undefined[]'.
++          Type 'string' is not assignable to type 'undefined'.
+ parserharness.ts(1193,29): error TS2304: Cannot find name 'WScript'.
+ parserharness.ts(1256,126): error TS2503: Cannot find namespace 'TypeScript'.
+ parserharness.ts(1257,25): error TS2503: Cannot find namespace 'TypeScript'.
+@@= skipped -17, +23 lines =@@
+ parserharness.ts(1340,38): error TS2503: Cannot find namespace 'TypeScript'.
+ parserharness.ts(1344,165): error TS2503: Cannot find namespace 'TypeScript'.
+ parserharness.ts(1345,26): error TS2503: Cannot find namespace 'TypeScript'.
++parserharness.ts(1393,41): error TS2345: Argument of type 'string' is not assignable to parameter of type 'undefined'.
+ parserharness.ts(1426,25): error TS2503: Cannot find namespace 'TypeScript'.
+ parserharness.ts(1430,9): error TS1128: Declaration or statement expected.
+ parserharness.ts(1430,17): error TS2304: Cannot find name 'optionRegex'.
+ parserharness.ts(1440,29): error TS2304: Cannot find name 'optionRegex'.
++parserharness.ts(1441,27): error TS2345: Argument of type '{ flag: any, value: any }' is not assignable to parameter of type 'undefined'.
+ parserharness.ts(1461,23): error TS2503: Cannot find namespace 'TypeScript'.
+ parserharness.ts(1466,36): error TS2304: Cannot find name 'optionRegex'.
+ parserharness.ts(1484,21): error TS2304: Cannot find name 'optionRegex'.
++parserharness.ts(1530,13): error TS2322: Type '"0.ts"' is not assignable to type 'null'.
++parserharness.ts(1533,17): error TS2403: Subsequent variable declarations must have the same type.  Variable 'newTestFile' must be of type '{ content: string, name: never, fileOptions: {}, originalFilePath: string, references: IFileReference[] }', but here has type '{ content: string, name: null, fileOptions: {}, originalFilePath: string, references: IFileReference[] }'.
+ parserharness.ts(1548,57): error TS2503: Cannot find namespace 'TypeScript'.
+ parserharness.ts(1571,32): error TS2304: Cannot find name 'TypeScript'.
+ parserharness.ts(1582,59): error TS2503: Cannot find namespace 'TypeScript'.
+@@= skipped -30, +34 lines =@@
+ parserharness.ts(1785,25): error TS2503: Cannot find namespace 'Services'.
+ parserharness.ts(1787,38): error TS2503: Cannot find namespace 'Services'.
+ parserharness.ts(1787,68): error TS2503: Cannot find namespace 'Services'.
++parserharness.ts(1790,33): error TS2345: Argument of type '{ edit: TextEdit, index: number }' is not assignable to parameter of type 'undefined'.
+ parserharness.ts(2030,32): error TS2304: Cannot find name 'Diff'.
+ 
+ 
+-==== parserharness.ts (110 errors) ====
++==== parserharness.ts (121 errors) ====
+     //﻿
+     // Copyright (c) Microsoft Corporation.  All rights reserved.
+     // 
+@@= skipped -20, +21 lines =@@
+     //
+     
+     ///<reference path='..\compiler\io.ts'/>
+-                        ~~~~~~~~~~~~~~~~~
+-!!! error TS6053: File '../compiler/io.ts' not found.
+     ///<reference path='..\compiler\typescript.ts'/>
+-                        ~~~~~~~~~~~~~~~~~~~~~~~~~
+-!!! error TS6053: File '../compiler/typescript.ts' not found.
+     ///<reference path='..\services\typescriptServices.ts' />
+-                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-!!! error TS6053: File '../services/typescriptServices.ts' not found.
+     ///<reference path='diff.ts'/>
+-                        ~~~~~~~
+-!!! error TS6053: File 'diff.ts' not found.
+     
+     declare var assert: Harness.Assert;
+                         ~~~~~~~~~~~~~~
+@@= skipped -395, +387 lines =@@
+                     var async = this.runBlock(<any>function (e) {
+                         if (e) {
+                             that.passed = false;
++                            ~~~~~~~~~~~
++!!! error TS2322: Type 'false' is not assignable to type 'null'.
+                             that.error = e;
+                             emitLog('error', { desc: this.description, pass: false }, e);
+                         } else {
+                             that.passed = true;
++                            ~~~~~~~~~~~
++!!! error TS2322: Type 'true' is not assignable to type 'null'.
+     
+                             emitLog('pass', { desc: this.description, pass: true });
+                         }
+@@= skipped -39, +43 lines =@@
+                     Runnable.currentStack.pop();
+                     if (e) {
+                         that.passed = false;
++                        ~~~~~~~~~~~
++!!! error TS2322: Type 'false' is not assignable to type 'null'.
+                         that.error = e;
+                         var metadata: IScenarioMetadata = { id: undefined, desc: this.description, pass: false, bugs: assert.bugIds };
+                         // Report all bugs affecting this scenario
+@@= skipped -8, +10 lines =@@
+                         done();
+                     } else {
+                         that.passed = true; // so far so good.
++                        ~~~~~~~~~~~
++!!! error TS2322: Type 'true' is not assignable to type 'null'.
+                         that.runChildren(done);
+                     }
+                 });
+@@= skipped -413, +415 lines =@@
+                     var errors = null;
+                     compileString(testCode, 'test.ts', function (compilerResult) {
+                         errors = compilerResult.errors;
++                        ~~~~~~
++!!! error TS2322: Type 'CompilerError[]' is not assignable to type 'null'.
+                     })
+     
+                     return errors.length === 0;
++                           ~~~~~~
++!!! error TS18047: 'errors' is possibly 'null'.
+                 }
+     
+                 public isSubtypeOf(other: Type) {
+@@= skipped -156, +160 lines =@@
+                     var errors = null;
+                     compileString(code, 'test.ts', function (compilerResult) {
+                         errors = compilerResult.errors;
++                        ~~~~~~
++!!! error TS2322: Type 'CompilerError[]' is not assignable to type 'null'.
+                     })
+     
+                     if (errors.length > 0)
++                        ~~~~~~
++!!! error TS18047: 'errors' is possibly 'null'.
+                         throw new Error("Type definition contains errors: " + errors.join(","));
++                                                                              ~~~~~~
++!!! error TS18047: 'errors' is possibly 'null'.
+     
+                     var matchingIdentifiers: Type[] = [];
+     
+@@= skipped -275, +281 lines =@@
+ !!! error TS2503: Cannot find namespace 'TypeScript'.
+                     var lines = [];
+                     fileResults.forEach(v => lines = lines.concat(v.file.lines));
++                                                                  ~~~~~~~~~~~~
++!!! error TS2769: No overload matches this call.
++!!! error TS2769:   The last overload gave the following error.
++!!! error TS2769:     Argument of type 'string[]' is not assignable to parameter of type 'ConcatArray<undefined>'.
++!!! error TS2769:       The types returned by 'slice(...)' are incompatible between these types.
++!!! error TS2769:         Type 'string[]' is not assignable to type 'undefined[]'.
++!!! error TS2769:           Type 'string' is not assignable to type 'undefined'.
++!!! related TS2771 bundled:///libs/lib.es5.d.ts:--:--: The last overload is declared here.
+                     this.code = lines.join("\n")
+     
+                     this.errors = [];
+@@= skipped -249, +257 lines =@@
+                         dependencies.forEach(dep => {
+                             addUnit(dep.content, dep.name, false, Harness.Compiler.isDeclareFile(dep.name));
+                             addedFiles.push(dep.name);
++                                            ~~~~~~~~
++!!! error TS2345: Argument of type 'string' is not assignable to parameter of type 'undefined'.
+                         });
+                     };
+                     var postcompile = () => {
+@@= skipped -56, +58 lines =@@
+                                 ~~~~~~~~~~~
+ !!! error TS2304: Cannot find name 'optionRegex'.
+                     opts.push({ flag: match[1], value: match[2] });
++                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++!!! error TS2345: Argument of type '{ flag: any, value: any }' is not assignable to parameter of type 'undefined'.
+                 }
+     
+                 return opts;
+@@= skipped -95, +97 lines =@@
+     
+                 // normalize the filename for the single file case
+                 currentFileName = files.length > 0 ? currentFileName : '0.ts';
++                ~~~~~~~~~~~~~~~
++!!! error TS2322: Type '"0.ts"' is not assignable to type 'null'.
+     
+                 // EOF, push whatever remains
+                 var newTestFile = {
++                    ~~~~~~~~~~~
++!!! error TS2403: Subsequent variable declarations must have the same type.  Variable 'newTestFile' must be of type '{ content: string, name: never, fileOptions: {}, originalFilePath: string, references: IFileReference[] }', but here has type '{ content: string, name: null, fileOptions: {}, originalFilePath: string, references: IFileReference[] }'.
++!!! related TS6203 parserharness.ts:1497:29: 'newTestFile' was also declared here.
+                     content: currentFileContent || '',
+                     name: currentFileName,
+                     fileOptions: currentFileOptions,
+@@= skipped -306, +311 lines =@@
+                     var result = [];
+                     for (var i = 0; i < edits.length; i++) {
+                         result.push({ edit: edits[i], index: i });
++                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++!!! error TS2345: Argument of type '{ edit: TextEdit, index: number }' is not assignable to parameter of type 'undefined'.
+                     }
+                     return result;
+                 }

@@ -1,0 +1,33 @@
+error TS2318: Cannot find global type 'Array'.
+error TS2318: Cannot find global type 'Function'.
+error TS2318: Cannot find global type 'IArguments'.
+error TS2318: Cannot find global type 'RegExp'.
+error TS2318: Cannot find global type 'String'.
+error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
+error TS2552: Cannot find name 'Number'. Did you mean 'number'?
+error TS2552: Cannot find name 'Object'. Did you mean 'object'?
+renamingDestructuredPropertyInFunctionType3.ts(1,13): error TS2304: Cannot find name 'Symbol'.
+renamingDestructuredPropertyInFunctionType3.ts(2,10): error TS2304: Cannot find name 'Record'.
+
+
+!!! error TS2318: Cannot find global type 'Array'.
+!!! error TS2318: Cannot find global type 'Function'.
+!!! error TS2318: Cannot find global type 'IArguments'.
+!!! error TS2318: Cannot find global type 'RegExp'.
+!!! error TS2318: Cannot find global type 'String'.
+!!! error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
+!!! error TS2552: Cannot find name 'Number'. Did you mean 'number'?
+!!! error TS2552: Cannot find name 'Object'. Did you mean 'object'?
+==== renamingDestructuredPropertyInFunctionType3.ts (2 errors) ====
+    const sym = Symbol();
+                ~~~~~~
+!!! error TS2304: Cannot find name 'Symbol'.
+    type O = Record<symbol, unknown>
+             ~~~~~~
+!!! error TS2304: Cannot find name 'Record'.
+    type F14 = ({ [sym]: string }: O) => void; // Error
+    type G14 = new ({ [sym]: string }: O) => void; // Error
+    
+    const f13 =  ({ [sym]: string }: O) => { };
+    function f14 ({ [sym]: string }: O) { };
+    

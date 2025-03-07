@@ -1,0 +1,18 @@
+templateStringInPropertyName1.ts(2,5): error TS1136: Property assignment expected.
+templateStringInPropertyName1.ts(2,8): error TS1005: ',' expected.
+templateStringInPropertyName1.ts(2,10): error TS1134: Variable declaration expected.
+templateStringInPropertyName1.ts(3,1): error TS1128: Declaration or statement expected.
+
+
+==== templateStringInPropertyName1.ts (4 errors) ====
+    var x = {
+        `a`: 321
+        ~~~
+!!! error TS1136: Property assignment expected.
+           ~
+!!! error TS1005: ',' expected.
+             ~~~
+!!! error TS1134: Variable declaration expected.
+    }
+    ~
+!!! error TS1128: Declaration or statement expected.

@@ -1,0 +1,19 @@
+--- old.typeGuardsWithInstanceOfByConstructorSignature.errors.txt
++++ new.typeGuardsWithInstanceOfByConstructorSignature.errors.txt
+@@= skipped -0, +0 lines =@@
+ typeGuardsWithInstanceOfByConstructorSignature.ts(12,10): error TS2339: Property 'bar' does not exist on type 'A'.
+ typeGuardsWithInstanceOfByConstructorSignature.ts(18,10): error TS2339: Property 'bar' does not exist on type 'A'.
+-typeGuardsWithInstanceOfByConstructorSignature.ts(33,5): error TS2322: Type 'string' is not assignable to type 'number'.
++typeGuardsWithInstanceOfByConstructorSignature.ts(33,5): error TS2322: Type '"str"' is not assignable to type 'number'.
+ typeGuardsWithInstanceOfByConstructorSignature.ts(34,10): error TS2339: Property 'bar' does not exist on type 'B<number>'.
+ typeGuardsWithInstanceOfByConstructorSignature.ts(41,10): error TS2339: Property 'bar' does not exist on type 'B<any>'.
+ typeGuardsWithInstanceOfByConstructorSignature.ts(66,10): error TS2339: Property 'bar2' does not exist on type 'C1'.
+@@= skipped -64, +64 lines =@@
+         obj3.foo = 1;
+         obj3.foo = "str";
+         ~~~~~~~~
+-!!! error TS2322: Type 'string' is not assignable to type 'number'.
++!!! error TS2322: Type '"str"' is not assignable to type 'number'.
+         obj3.bar = "str";
+              ~~~
+ !!! error TS2339: Property 'bar' does not exist on type 'B<number>'.

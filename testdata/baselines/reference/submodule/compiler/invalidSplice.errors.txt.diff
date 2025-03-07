@@ -1,0 +1,12 @@
+--- old.invalidSplice.errors.txt
++++ new.invalidSplice.errors.txt
+@@= skipped -0, +-1 lines =@@
+-<no content>
+@@= skipped --1, +1 lines =@@
++invalidSplice.ts(1,25): error TS2345: Argument of type '4' is not assignable to parameter of type 'undefined'.
++
++
++==== invalidSplice.ts (1 errors) ====
++    var arr = [].splice(0,3,4,5);
++                            ~
++!!! error TS2345: Argument of type '4' is not assignable to parameter of type 'undefined'.

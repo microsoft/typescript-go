@@ -1,0 +1,13 @@
+--- old.duplicateNumericIndexers.errors.txt
++++ new.duplicateNumericIndexers.errors.txt
+@@= skipped -9, +9 lines =@@
+ duplicateNumericIndexers.ts(25,5): error TS2374: Duplicate index signature for type 'number'.
+ duplicateNumericIndexers.ts(29,5): error TS2374: Duplicate index signature for type 'number'.
+ duplicateNumericIndexers.ts(30,5): error TS2374: Duplicate index signature for type 'number'.
+-lib.es5.d.ts(--,--): error TS2374: Duplicate index signature for type 'number'.
+-lib.es5.d.ts(--,--): error TS2374: Duplicate index signature for type 'number'.
++bundled:///libs/lib.es5.d.ts(531,5): error TS2374: Duplicate index signature for type 'number'.
++bundled:///libs/lib.es5.d.ts(1503,5): error TS2374: Duplicate index signature for type 'number'.
+ 
+ 
+ ==== duplicateNumericIndexers.ts (12 errors) ====

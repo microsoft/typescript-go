@@ -1,0 +1,11 @@
+parseCommaSeparatedNewlineNew.ts(1,2): error TS2304: Cannot find name 'a'.
+parseCommaSeparatedNewlineNew.ts(2,4): error TS1109: Expression expected.
+
+
+==== parseCommaSeparatedNewlineNew.ts (2 errors) ====
+    (a,
+     ~
+!!! error TS2304: Cannot find name 'a'.
+    new)
+       ~
+!!! error TS1109: Expression expected.

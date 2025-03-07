@@ -1,0 +1,17 @@
+--- old.matchReturnTypeInAllBranches.errors.txt
++++ new.matchReturnTypeInAllBranches.errors.txt
+@@= skipped -0, +0 lines =@@
+-matchReturnTypeInAllBranches.ts(30,13): error TS2322: Type 'number' is not assignable to type 'boolean'.
++matchReturnTypeInAllBranches.ts(30,13): error TS2322: Type '12345' is not assignable to type 'boolean'.
+ 
+ 
+ ==== matchReturnTypeInAllBranches.ts (1 errors) ====
+@@= skipped -32, +32 lines =@@
+             {
+                 return 12345;
+                 ~~~~~~
+-!!! error TS2322: Type 'number' is not assignable to type 'boolean'.
++!!! error TS2322: Type '12345' is not assignable to type 'boolean'.
+             }
+         }
+     }

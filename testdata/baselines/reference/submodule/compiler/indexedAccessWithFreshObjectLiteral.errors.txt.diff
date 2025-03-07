@@ -1,0 +1,17 @@
+--- old.indexedAccessWithFreshObjectLiteral.errors.txt
++++ new.indexedAccessWithFreshObjectLiteral.errors.txt
+@@= skipped -0, +0 lines =@@
+-indexedAccessWithFreshObjectLiteral.ts(34,10): error TS2339: Property 'z' does not exist on type '{ a: number; b: string; c: boolean; }'.
++indexedAccessWithFreshObjectLiteral.ts(34,10): error TS2339: Property 'z' does not exist on type '{ a: number, b: string, c: boolean }'.
+ 
+ 
+ ==== indexedAccessWithFreshObjectLiteral.ts (1 errors) ====
+@@= skipped -44, +44 lines =@@
+     ~~~~~~~~~~~~~~
+       }[id]
+     ~~~~~~~
+-!!! error TS2339: Property 'z' does not exist on type '{ a: number; b: string; c: boolean; }'.
++!!! error TS2339: Property 'z' does not exist on type '{ a: number, b: string, c: boolean }'.
+     }
+     
+     function corge(id: string) {

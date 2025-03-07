@@ -1,0 +1,26 @@
+--- old.stringMappingOverPatternLiterals.errors.txt
++++ new.stringMappingOverPatternLiterals.errors.txt
+@@= skipped -12, +12 lines =@@
+ stringMappingOverPatternLiterals.ts(52,5): error TS2322: Type 'Lowercase<string>' is not assignable to type 'Uppercase<string>'.
+ stringMappingOverPatternLiterals.ts(53,5): error TS2322: Type 'string' is not assignable to type 'Lowercase<string>'.
+ stringMappingOverPatternLiterals.ts(54,5): error TS2322: Type 'Uppercase<string>' is not assignable to type 'Lowercase<string>'.
+-stringMappingOverPatternLiterals.ts(56,5): error TS2322: Type 'string' is not assignable to type 'Uppercase<string>'.
+-stringMappingOverPatternLiterals.ts(57,5): error TS2322: Type 'string' is not assignable to type 'Lowercase<string>'.
++stringMappingOverPatternLiterals.ts(56,5): error TS2322: Type '"AbC"' is not assignable to type 'Uppercase<string>'.
++stringMappingOverPatternLiterals.ts(57,5): error TS2322: Type '"AbC"' is not assignable to type 'Lowercase<string>'.
+ stringMappingOverPatternLiterals.ts(78,5): error TS2322: Type 'Uppercase<string>' is not assignable to type 'Uppercase<Lowercase<string>>'.
+   Type 'string' is not assignable to type 'Lowercase<string>'.
+ stringMappingOverPatternLiterals.ts(79,5): error TS2322: Type 'Uppercase<string>' is not assignable to type 'Uppercase<Lowercase<string>>'.
+@@= skipped -112, +112 lines =@@
+     
+         x2 = "AbC";
+         ~~
+-!!! error TS2322: Type 'string' is not assignable to type 'Uppercase<string>'.
++!!! error TS2322: Type '"AbC"' is not assignable to type 'Uppercase<string>'.
+         x3 = "AbC";
+         ~~
+-!!! error TS2322: Type 'string' is not assignable to type 'Lowercase<string>'.
++!!! error TS2322: Type '"AbC"' is not assignable to type 'Lowercase<string>'.
+     }
+     
+     // Mappings over mappings

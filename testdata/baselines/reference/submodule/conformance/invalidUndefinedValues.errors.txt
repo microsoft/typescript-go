@@ -1,0 +1,74 @@
+invalidUndefinedValues.ts(3,1): error TS2322: Type '1' is not assignable to type 'undefined'.
+invalidUndefinedValues.ts(4,1): error TS2322: Type '""' is not assignable to type 'undefined'.
+invalidUndefinedValues.ts(5,1): error TS2322: Type 'true' is not assignable to type 'undefined'.
+invalidUndefinedValues.ts(7,1): error TS2322: Type 'void' is not assignable to type 'undefined'.
+invalidUndefinedValues.ts(12,1): error TS2322: Type '{ new(): C, prototype: C }' is not assignable to type 'undefined'.
+invalidUndefinedValues.ts(13,1): error TS2322: Type 'C' is not assignable to type 'undefined'.
+invalidUndefinedValues.ts(17,1): error TS2322: Type 'I' is not assignable to type 'undefined'.
+invalidUndefinedValues.ts(20,1): error TS2322: Type '{ x: number }' is not assignable to type 'undefined'.
+invalidUndefinedValues.ts(22,1): error TS2322: Type '{ f: () => void }' is not assignable to type 'undefined'.
+invalidUndefinedValues.ts(25,5): error TS2322: Type 'T' is not assignable to type 'undefined'.
+invalidUndefinedValues.ts(27,1): error TS2322: Type '<T>(a: T) => void' is not assignable to type 'undefined'.
+invalidUndefinedValues.ts(30,1): error TS2322: Type '{ readonly [x: number]: string, readonly A: E.A }' is not assignable to type 'undefined'.
+invalidUndefinedValues.ts(31,1): error TS2322: Type 'E.A' is not assignable to type 'undefined'.
+
+
+==== invalidUndefinedValues.ts (13 errors) ====
+    var x: typeof undefined;
+    
+    x = 1;
+    ~
+!!! error TS2322: Type '1' is not assignable to type 'undefined'.
+    x = '';
+    ~
+!!! error TS2322: Type '""' is not assignable to type 'undefined'.
+    x = true;
+    ~
+!!! error TS2322: Type 'true' is not assignable to type 'undefined'.
+    var a: void;
+    x = a;
+    ~
+!!! error TS2322: Type 'void' is not assignable to type 'undefined'.
+    x = null;
+    
+    class C { foo: string }
+    var b: C;
+    x = C;
+    ~
+!!! error TS2322: Type '{ new(): C, prototype: C }' is not assignable to type 'undefined'.
+    x = b;
+    ~
+!!! error TS2322: Type 'C' is not assignable to type 'undefined'.
+    
+    interface I { foo: string }
+    var c: I;
+    x = c;
+    ~
+!!! error TS2322: Type 'I' is not assignable to type 'undefined'.
+    
+    module M { export var x = 1; }
+    x = M;
+    ~
+!!! error TS2322: Type '{ x: number }' is not assignable to type 'undefined'.
+    
+    x = { f() { } }
+    ~
+!!! error TS2322: Type '{ f: () => void }' is not assignable to type 'undefined'.
+    
+    function f<T>(a: T) {
+        x = a;
+        ~
+!!! error TS2322: Type 'T' is not assignable to type 'undefined'.
+!!! related TS2208 invalidUndefinedValues.ts:24:12: This type parameter might need an `extends undefined` constraint.
+    }
+    x = f;
+    ~
+!!! error TS2322: Type '<T>(a: T) => void' is not assignable to type 'undefined'.
+    
+    enum E { A }
+    x = E;
+    ~
+!!! error TS2322: Type '{ readonly [x: number]: string, readonly A: E.A }' is not assignable to type 'undefined'.
+    x = E.A;
+    ~
+!!! error TS2322: Type 'E.A' is not assignable to type 'undefined'.

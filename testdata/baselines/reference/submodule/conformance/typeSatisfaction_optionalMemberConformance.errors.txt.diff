@@ -1,0 +1,15 @@
+--- old.typeSatisfaction_optionalMemberConformance.errors.txt
++++ new.typeSatisfaction_optionalMemberConformance.errors.txt
+@@= skipped -0, +0 lines =@@
+-typeSatisfaction_optionalMemberConformance.ts(7,11): error TS2339: Property 'y' does not exist on type '{ x: number; }'.
++typeSatisfaction_optionalMemberConformance.ts(7,11): error TS2339: Property 'y' does not exist on type '{ x: number }'.
+ 
+ 
+ ==== typeSatisfaction_optionalMemberConformance.ts (1 errors) ====
+@@= skipped -9, +9 lines =@@
+     // Should error
+     let p = a.y;
+               ~
+-!!! error TS2339: Property 'y' does not exist on type '{ x: number; }'.
++!!! error TS2339: Property 'y' does not exist on type '{ x: number }'.
+     

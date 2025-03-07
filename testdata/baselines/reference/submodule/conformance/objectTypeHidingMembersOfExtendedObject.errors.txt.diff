@@ -1,0 +1,21 @@
+--- old.objectTypeHidingMembersOfExtendedObject.errors.txt
++++ new.objectTypeHidingMembersOfExtendedObject.errors.txt
+@@= skipped -0, +0 lines =@@
+ objectTypeHidingMembersOfExtendedObject.ts(10,5): error TS2411: Property 'data' of type 'A' is not assignable to 'string' index type 'Object'.
+-lib.es5.d.ts(--,--): error TS2411: Property 'constructor' of type 'Function' is not assignable to 'string' index type 'Object'.
+-lib.es5.d.ts(--,--): error TS2411: Property 'toString' of type '() => string' is not assignable to 'string' index type 'Object'.
+-lib.es5.d.ts(--,--): error TS2411: Property 'toLocaleString' of type '() => string' is not assignable to 'string' index type 'Object'.
+-lib.es5.d.ts(--,--): error TS2411: Property 'valueOf' of type '() => Object' is not assignable to 'string' index type 'Object'.
+-lib.es5.d.ts(--,--): error TS2411: Property 'hasOwnProperty' of type '(v: PropertyKey) => boolean' is not assignable to 'string' index type 'Object'.
+-lib.es5.d.ts(--,--): error TS2411: Property 'isPrototypeOf' of type '(v: Object) => boolean' is not assignable to 'string' index type 'Object'.
+-lib.es5.d.ts(--,--): error TS2411: Property 'propertyIsEnumerable' of type '(v: PropertyKey) => boolean' is not assignable to 'string' index type 'Object'.
++bundled:///libs/lib.es5.d.ts(125,5): error TS2411: Property 'constructor' of type 'Function' is not assignable to 'string' index type 'Object'.
++bundled:///libs/lib.es5.d.ts(128,5): error TS2411: Property 'toString' of type '() => string' is not assignable to 'string' index type 'Object'.
++bundled:///libs/lib.es5.d.ts(131,5): error TS2411: Property 'toLocaleString' of type '() => string' is not assignable to 'string' index type 'Object'.
++bundled:///libs/lib.es5.d.ts(134,5): error TS2411: Property 'valueOf' of type '() => Object' is not assignable to 'string' index type 'Object'.
++bundled:///libs/lib.es5.d.ts(140,5): error TS2411: Property 'hasOwnProperty' of type '(v: PropertyKey) => boolean' is not assignable to 'string' index type 'Object'.
++bundled:///libs/lib.es5.d.ts(146,5): error TS2411: Property 'isPrototypeOf' of type '(v: Object) => boolean' is not assignable to 'string' index type 'Object'.
++bundled:///libs/lib.es5.d.ts(152,5): error TS2411: Property 'propertyIsEnumerable' of type '(v: PropertyKey) => boolean' is not assignable to 'string' index type 'Object'.
+ 
+ 
+ ==== objectTypeHidingMembersOfExtendedObject.ts (1 errors) ====

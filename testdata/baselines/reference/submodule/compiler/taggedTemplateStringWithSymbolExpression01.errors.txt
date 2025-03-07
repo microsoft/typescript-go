@@ -1,0 +1,13 @@
+taggedTemplateStringWithSymbolExpression01.ts(6,28): error TS2731: Implicit conversion of a 'symbol' to a 'string' will fail at runtime. Consider wrapping this expression in 'String(...)'.
+
+
+==== taggedTemplateStringWithSymbolExpression01.ts (1 errors) ====
+    // taggedTemplateStringWithSymbolExpression01.ts
+    
+    declare function foo(template: any, val: symbol): number;
+    let x!: symbol;
+    
+    let result: number = foo`${x}`;
+                               ~
+!!! error TS2731: Implicit conversion of a 'symbol' to a 'string' will fail at runtime. Consider wrapping this expression in 'String(...)'.
+    

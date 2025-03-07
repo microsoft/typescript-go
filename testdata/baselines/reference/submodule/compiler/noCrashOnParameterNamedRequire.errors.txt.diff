@@ -1,0 +1,16 @@
+--- old.noCrashOnParameterNamedRequire.errors.txt
++++ new.noCrashOnParameterNamedRequire.errors.txt
+@@= skipped -0, +0 lines =@@
+-index.js(2,25): error TS2307: Cannot find module './mod' or its corresponding type declarations.
++index.js(2,17): error TS2721: Cannot invoke an object which is possibly 'null'.
+ 
+ 
+ ==== index.js (1 errors) ====
+     (function(require, module, exports){
+         const mod = require("./mod");
+-                            ~~~~~~~
+-!!! error TS2307: Cannot find module './mod' or its corresponding type declarations.
++                    ~~~~~~~
++!!! error TS2721: Cannot invoke an object which is possibly 'null'.
+         mod.foo;
+     })(null, null, null);

@@ -1,0 +1,17 @@
+--- old.jsPropertyAssignedAfterMethodDeclaration.errors.txt
++++ new.jsPropertyAssignedAfterMethodDeclaration.errors.txt
+@@= skipped -0, +0 lines =@@
+-/a.js(4,9): error TS2322: Type 'number' is not assignable to type '() => void'.
++/a.js(4,9): error TS2322: Type '0' is not assignable to type '() => void'.
+ 
+ 
+ ==== /a.js (1 errors) ====
+@@= skipped -6, +6 lines =@@
+             // Should not be treated as a declaration. Should be an error.
+             this.a = 0;
+             ~~~~~~
+-!!! error TS2322: Type 'number' is not assignable to type '() => void'.
++!!! error TS2322: Type '0' is not assignable to type '() => void'.
+         }
+     };
+     

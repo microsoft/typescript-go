@@ -1,0 +1,11 @@
+--- old.invalidTypeOfTarget.errors.txt
++++ new.invalidTypeOfTarget.errors.txt
+@@= skipped -35, +35 lines =@@
+     var x7: typeof function f() { };
+                    ~~~~~~~~
+ !!! error TS2552: Cannot find name 'function'. Did you mean 'Function'?
+-!!! related TS2728 lib.es5.d.ts:--:--: 'Function' is declared here.
++!!! related TS2728 bundled:///libs/lib.es5.d.ts:--:--: 'Function' is declared here.
+                             ~
+ !!! error TS1005: ',' expected.
+                              ~

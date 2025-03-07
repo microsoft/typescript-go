@@ -1,0 +1,30 @@
+--- old.nonPrimitiveInGeneric.errors.txt
++++ new.nonPrimitiveInGeneric.errors.txt
+@@= skipped -0, +0 lines =@@
+ nonPrimitiveInGeneric.ts(2,9): error TS2322: Type 'T' is not assignable to type 'object'.
+-nonPrimitiveInGeneric.ts(9,17): error TS2345: Argument of type 'number' is not assignable to parameter of type 'object'.
++nonPrimitiveInGeneric.ts(9,17): error TS2345: Argument of type '123' is not assignable to parameter of type 'object'.
+ nonPrimitiveInGeneric.ts(10,17): error TS2345: Argument of type 'string' is not assignable to parameter of type 'object'.
+-nonPrimitiveInGeneric.ts(18,7): error TS2345: Argument of type 'number' is not assignable to parameter of type 'object'.
++nonPrimitiveInGeneric.ts(18,7): error TS2345: Argument of type '123' is not assignable to parameter of type 'object'.
+ nonPrimitiveInGeneric.ts(19,7): error TS2345: Argument of type 'string' is not assignable to parameter of type 'object'.
+ nonPrimitiveInGeneric.ts(25,8): error TS2344: Type 'number' does not satisfy the constraint 'object'.
+ nonPrimitiveInGeneric.ts(26,8): error TS2344: Type 'string' does not satisfy the constraint 'object'.
+@@= skipped -21, +21 lines =@@
+     generic<object>(a);
+     generic<object>(123); // expect error
+                     ~~~
+-!!! error TS2345: Argument of type 'number' is not assignable to parameter of type 'object'.
++!!! error TS2345: Argument of type '123' is not assignable to parameter of type 'object'.
+     generic<object>(b); // expect error
+                     ~
+ !!! error TS2345: Argument of type 'string' is not assignable to parameter of type 'object'.
+@@= skipped -13, +13 lines =@@
+     bound(a);
+     bound(123); // expect error
+           ~~~
+-!!! error TS2345: Argument of type 'number' is not assignable to parameter of type 'object'.
++!!! error TS2345: Argument of type '123' is not assignable to parameter of type 'object'.
+     bound(b); // expect error
+           ~
+ !!! error TS2345: Argument of type 'string' is not assignable to parameter of type 'object'.

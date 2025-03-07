@@ -1,0 +1,16 @@
+--- old.functionCall14.errors.txt
++++ new.functionCall14.errors.txt
+@@= skipped -0, +0 lines =@@
+-functionCall14.ts(5,5): error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
++functionCall14.ts(5,5): error TS2345: Argument of type '1' is not assignable to parameter of type 'string'.
+ 
+ 
+ ==== functionCall14.ts (1 errors) ====
+@@= skipped -7, +7 lines =@@
+     foo();
+     foo(1, 'bar');
+         ~
+-!!! error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
++!!! error TS2345: Argument of type '1' is not assignable to parameter of type 'string'.
+     foo('foo', 1, 3);
+     

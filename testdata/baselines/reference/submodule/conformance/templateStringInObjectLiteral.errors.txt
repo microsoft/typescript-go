@@ -1,0 +1,19 @@
+templateStringInObjectLiteral.ts(3,5): error TS1136: Property assignment expected.
+templateStringInObjectLiteral.ts(3,8): error TS1005: ',' expected.
+templateStringInObjectLiteral.ts(3,10): error TS1134: Variable declaration expected.
+templateStringInObjectLiteral.ts(4,1): error TS1128: Declaration or statement expected.
+
+
+==== templateStringInObjectLiteral.ts (4 errors) ====
+    var x = {
+        a: `abc${ 123 }def`,
+        `b`: 321
+        ~~~
+!!! error TS1136: Property assignment expected.
+           ~
+!!! error TS1005: ',' expected.
+             ~~~
+!!! error TS1134: Variable declaration expected.
+    }
+    ~
+!!! error TS1128: Declaration or statement expected.

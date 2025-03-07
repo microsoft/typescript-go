@@ -1,0 +1,33 @@
+--- old.valuesMergingAcrossModules.errors.txt
++++ new.valuesMergingAcrossModules.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS2349: This expression is not callable.
++  Type '{ readonly displayName: "A" }' has no call signatures.
+ c.ts(1,10): error TS2440: Import declaration conflicts with local declaration of 'A'.
+-c.ts(6,1): error TS2349: This expression is not callable.
+-  Type 'typeof A' has no call signatures.
+ 
+ 
++!!! error TS2349: This expression is not callable.
++!!! error TS2349:   Type '{ readonly displayName: "A" }' has no call signatures.
+ ==== a.ts (0 errors) ====
+     function A() {}
+     export { A };
+@@= skipped -11, +13 lines =@@
+     type A = 0;
+     export { A };
+     
+-==== c.ts (2 errors) ====
++==== c.ts (1 errors) ====
+     import { A } from "./b";
+              ~
+ !!! error TS2440: Import declaration conflicts with local declaration of 'A'.
+@@= skipped -9, +9 lines =@@
+     }
+     
+     A();
+-    ~
+-!!! error TS2349: This expression is not callable.
+-!!! error TS2349:   Type 'typeof A' has no call signatures.
+     A.displayName;
+     

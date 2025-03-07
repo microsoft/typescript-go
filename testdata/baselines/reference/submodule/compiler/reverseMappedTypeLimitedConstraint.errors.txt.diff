@@ -1,0 +1,26 @@
+--- old.reverseMappedTypeLimitedConstraint.errors.txt
++++ new.reverseMappedTypeLimitedConstraint.errors.txt
+@@= skipped -0, +0 lines =@@
+-reverseMappedTypeLimitedConstraint.ts(5,13): error TS2353: Object literal may only specify known properties, and 'y' does not exist in type '{ x: 1; }'.
+-reverseMappedTypeLimitedConstraint.ts(14,3): error TS2353: Object literal may only specify known properties, and 'z' does not exist in type '{ x: number; y: "y"; }'.
++reverseMappedTypeLimitedConstraint.ts(5,13): error TS2353: Object literal may only specify known properties, and 'y' does not exist in type '{ x: 1 }'.
++reverseMappedTypeLimitedConstraint.ts(14,3): error TS2353: Object literal may only specify known properties, and 'z' does not exist in type '{ x: number, y: "y" }'.
+ 
+ 
+ ==== reverseMappedTypeLimitedConstraint.ts (2 errors) ====
+@@= skipped -8, +8 lines =@@
+     
+     foo_({x: 1, y: 'foo'});
+                 ~
+-!!! error TS2353: Object literal may only specify known properties, and 'y' does not exist in type '{ x: 1; }'.
++!!! error TS2353: Object literal may only specify known properties, and 'y' does not exist in type '{ x: 1 }'.
+     
+     // -----------------------------------------------------------------------------------------
+     
+@@= skipped -11, +11 lines =@@
+       y: "y",
+       z: "z",
+       ~
+-!!! error TS2353: Object literal may only specify known properties, and 'z' does not exist in type '{ x: number; y: "y"; }'.
++!!! error TS2353: Object literal may only specify known properties, and 'z' does not exist in type '{ x: number, y: "y" }'.
+     });

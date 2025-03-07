@@ -1,0 +1,11 @@
+wideningTuples2.ts(3,21): error TS2322: Type 'string' is not assignable to type 'undefined'.
+
+
+==== wideningTuples2.ts (1 errors) ====
+    var foo: () => [any] = function bar() {
+        let intermediate = bar();
+        intermediate = [""];
+                        ~~
+!!! error TS2322: Type 'string' is not assignable to type 'undefined'.
+        return [undefined];
+    };

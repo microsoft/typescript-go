@@ -1,0 +1,8 @@
+--- old.redefineArray.errors.txt
++++ new.redefineArray.errors.txt
+@@= skipped -4, +4 lines =@@
+     Array = function (n:number, s:string) {return n;};
+     ~~~~~
+ !!! error TS2741: Property 'isArray' is missing in type '<T>(n: number, s: string) => number' but required in type 'ArrayConstructor'.
+-!!! related TS2728 lib.es5.d.ts:--:--: 'isArray' is declared here.
++!!! related TS2728 bundled:///libs/lib.es5.d.ts:--:--: 'isArray' is declared here.

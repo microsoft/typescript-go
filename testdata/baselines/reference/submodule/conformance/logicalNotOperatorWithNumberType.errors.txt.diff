@@ -1,0 +1,19 @@
+--- old.logicalNotOperatorWithNumberType.errors.txt
++++ new.logicalNotOperatorWithNumberType.errors.txt
+@@= skipped -0, +0 lines =@@
+ logicalNotOperatorWithNumberType.ts(23,25): error TS2872: This kind of expression is always truthy.
+ logicalNotOperatorWithNumberType.ts(24,25): error TS2872: This kind of expression is always truthy.
+-logicalNotOperatorWithNumberType.ts(45,1): error TS2695: Left side of comma operator is unused and has no side effects.
+ 
+ 
+-==== logicalNotOperatorWithNumberType.ts (3 errors) ====
++==== logicalNotOperatorWithNumberType.ts (2 errors) ====
+     // ! operator on number type
+     var NUMBER: number;
+     var NUMBER1: number[] = [1, 2];
+@@= skipped -52, +51 lines =@@
+     !objA.a;
+     !M.n;
+     !objA.a, M.n;
+-    ~~~~~~~
+-!!! error TS2695: Left side of comma operator is unused and has no side effects.

@@ -1,0 +1,12 @@
+--- old.contextualTyping2.errors.txt
++++ new.contextualTyping2.errors.txt
+@@= skipped -0, +0 lines =@@
+-contextualTyping2.ts(1,32): error TS2353: Object literal may only specify known properties, and 'name' does not exist in type '{ id: number; }'.
++contextualTyping2.ts(1,32): error TS2353: Object literal may only specify known properties, and 'name' does not exist in type '{ id: number }'.
+ 
+ 
+ ==== contextualTyping2.ts (1 errors) ====
+     var foo: {id:number;} = {id:4, name:"foo"};
+                                    ~~~~
+-!!! error TS2353: Object literal may only specify known properties, and 'name' does not exist in type '{ id: number; }'.
++!!! error TS2353: Object literal may only specify known properties, and 'name' does not exist in type '{ id: number }'.

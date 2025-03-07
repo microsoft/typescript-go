@@ -1,0 +1,40 @@
+privateClassPropertyAccessibleWithinClass.ts(20,32): error TS2322: Type 'string' is not assignable to type 'null'.
+privateClassPropertyAccessibleWithinClass.ts(26,17): error TS2322: Type 'string' is not assignable to type 'null'.
+
+
+==== privateClassPropertyAccessibleWithinClass.ts (2 errors) ====
+    // no errors
+    
+    class C {
+        private x: string;
+        private get y() { return this.x; }
+        private set y(x) { this.y = this.x; }
+        private foo() { return this.foo; }
+    
+        private static x: string;
+        private static get y() { return this.x; }
+        private static set y(x) { this.y = this.x; }
+        private static foo() { return this.foo; }
+        private static bar() { this.foo(); }
+    }
+    
+    // added level of function nesting
+    class C2 {
+        private x: string;
+        private get y() { () => this.x; return null; }
+        private set y(x) { () => { this.y = this.x; } }
+                                   ~~~~~~
+!!! error TS2322: Type 'string' is not assignable to type 'null'.
+        private foo() { () => this.foo; }
+    
+        private static x: string;
+        private static get y() { () => this.x; return null; }
+        private static set y(x) {
+            () => { this.y = this.x; }
+                    ~~~~~~
+!!! error TS2322: Type 'string' is not assignable to type 'null'.
+         }
+        private static foo() { () => this.foo; }
+        private static bar() { () => this.foo(); }
+    }
+    

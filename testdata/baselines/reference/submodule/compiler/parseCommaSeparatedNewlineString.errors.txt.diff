@@ -1,0 +1,15 @@
+--- old.parseCommaSeparatedNewlineString.errors.txt
++++ new.parseCommaSeparatedNewlineString.errors.txt
+@@= skipped -0, +0 lines =@@
+ parseCommaSeparatedNewlineString.ts(1,2): error TS2304: Cannot find name 'a'.
+-parseCommaSeparatedNewlineString.ts(1,2): error TS2695: Left side of comma operator is unused and has no side effects.
+ 
+ 
+-==== parseCommaSeparatedNewlineString.ts (2 errors) ====
++==== parseCommaSeparatedNewlineString.ts (1 errors) ====
+     (a,
+      ~
+ !!! error TS2304: Cannot find name 'a'.
+-     ~
+-!!! error TS2695: Left side of comma operator is unused and has no side effects.
+     '')

@@ -1,0 +1,33 @@
+--- old.deleteOperatorWithNumberType.errors.txt
++++ new.deleteOperatorWithNumberType.errors.txt
+@@= skipped -3, +3 lines =@@
+ deleteOperatorWithNumberType.ts(23,31): error TS2703: The operand of a 'delete' operator must be a property reference.
+ deleteOperatorWithNumberType.ts(24,31): error TS2703: The operand of a 'delete' operator must be a property reference.
+ deleteOperatorWithNumberType.ts(30,31): error TS2703: The operand of a 'delete' operator must be a property reference.
+-deleteOperatorWithNumberType.ts(31,32): error TS2703: The operand of a 'delete' operator must be a property reference.
++deleteOperatorWithNumberType.ts(31,34): error TS2703: The operand of a 'delete' operator must be a property reference.
+ deleteOperatorWithNumberType.ts(32,33): error TS2703: The operand of a 'delete' operator must be a property reference.
+ deleteOperatorWithNumberType.ts(35,32): error TS2703: The operand of a 'delete' operator must be a property reference.
+ deleteOperatorWithNumberType.ts(35,39): error TS2703: The operand of a 'delete' operator must be a property reference.
+@@= skipped -54, +54 lines =@@
+     var ResultIsBoolean7 = delete M.n;
+     var ResultIsBoolean8 = delete NUMBER1[0];
+     var ResultIsBoolean9 = delete foo();
+-                                  ~~~~~
++                                  ~~~
+ !!! error TS2703: The operand of a 'delete' operator must be a property reference.
+     var ResultIsBoolean10 = delete A.foo();
+-                                   ~~~~~~~
++                                     ~~~
+ !!! error TS2703: The operand of a 'delete' operator must be a property reference.
+     var ResultIsBoolean11 = delete (NUMBER + NUMBER);
+                                     ~~~~~~~~~~~~~~~
+@@= skipped -34, +34 lines =@@
+            ~~~~~~~
+ !!! error TS2703: The operand of a 'delete' operator must be a property reference.
+     delete foo();
+-           ~~~~~
++           ~~~
+ !!! error TS2703: The operand of a 'delete' operator must be a property reference.
+     delete objA.a;
+     delete M.n;

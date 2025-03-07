@@ -1,0 +1,23 @@
+--- old.constructBigint.errors.txt
++++ new.constructBigint.errors.txt
+@@= skipped -0, +0 lines =@@
+ constructBigint.ts(6,8): error TS2345: Argument of type 'symbol' is not assignable to parameter of type 'string | number | bigint | boolean'.
+-constructBigint.ts(7,8): error TS2345: Argument of type '{ e: number; m: number; }' is not assignable to parameter of type 'string | number | bigint | boolean'.
++constructBigint.ts(7,8): error TS2345: Argument of type '{ e: number, m: number }' is not assignable to parameter of type 'string | number | bigint | boolean'.
+ constructBigint.ts(8,8): error TS2345: Argument of type 'null' is not assignable to parameter of type 'string | number | bigint | boolean'.
+ constructBigint.ts(9,8): error TS2345: Argument of type 'undefined' is not assignable to parameter of type 'string | number | bigint | boolean'.
+ 
+@@= skipped -10, +10 lines =@@
+     BigInt(false);
+     
+     BigInt(Symbol());
+-           ~~~~~~~~
++           ~~~~~~
+ !!! error TS2345: Argument of type 'symbol' is not assignable to parameter of type 'string | number | bigint | boolean'.
+     BigInt({ e: 1, m: 1 })
+            ~~~~~~~~~~~~~~
+-!!! error TS2345: Argument of type '{ e: number; m: number; }' is not assignable to parameter of type 'string | number | bigint | boolean'.
++!!! error TS2345: Argument of type '{ e: number, m: number }' is not assignable to parameter of type 'string | number | bigint | boolean'.
+     BigInt(null);
+            ~~~~
+ !!! error TS2345: Argument of type 'null' is not assignable to parameter of type 'string | number | bigint | boolean'.

@@ -1,0 +1,27 @@
+--- old.importWithTrailingSlash.errors.txt
++++ new.importWithTrailingSlash.errors.txt
+@@= skipped -0, +0 lines =@@
+-/a/b/test.ts(3,3): error TS2339: Property 'a' does not exist on type '{ aIndex: number; }'.
+-/a/test.ts(3,3): error TS2339: Property 'a' does not exist on type '{ aIndex: number; }'.
++/a/b/test.ts(3,3): error TS2339: Property 'a' does not exist on type '{ aIndex: number }'.
++/a/test.ts(3,3): error TS2339: Property 'a' does not exist on type '{ aIndex: number }'.
+ 
+ 
+ ==== /a.ts (0 errors) ====
+@@= skipped -12, +12 lines =@@
+     import aIndex from "./";
+     a.a;
+       ~
+-!!! error TS2339: Property 'a' does not exist on type '{ aIndex: number; }'.
++!!! error TS2339: Property 'a' does not exist on type '{ aIndex: number }'.
+     aIndex.aIndex;
+     
+ ==== /a/b/test.ts (1 errors) ====
+@@= skipped -8, +8 lines =@@
+     import aIndex from "../";
+     a.a;
+       ~
+-!!! error TS2339: Property 'a' does not exist on type '{ aIndex: number; }'.
++!!! error TS2339: Property 'a' does not exist on type '{ aIndex: number }'.
+     aIndex.aIndex;
+     

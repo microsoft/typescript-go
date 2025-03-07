@@ -1,0 +1,15 @@
+crashInEmitTokenWithComment.ts(5,4): error TS2345: Argument of type '(__0: {}) => undefined' is not assignable to parameter of type 'string'.
+crashInEmitTokenWithComment.ts(5,7): error TS2537: Type '{}' has no matching index signature for type 'string'.
+
+
+==== crashInEmitTokenWithComment.ts (2 errors) ====
+    // GH#32358
+    const fn = (param: string) => undefined;
+    
+    const foo = {bar: 'a'};
+    fn(({[foo.bar]: c}) => undefined);
+       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS2345: Argument of type '(__0: {}) => undefined' is not assignable to parameter of type 'string'.
+!!! related TS6212 crashInEmitTokenWithComment.ts:5:4: Did you mean to call this expression?
+          ~~~~~~~
+!!! error TS2537: Type '{}' has no matching index signature for type 'string'.

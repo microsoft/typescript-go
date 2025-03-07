@@ -1,0 +1,38 @@
+--- old.instancePropertiesInheritedIntoClassType.errors.txt
++++ new.instancePropertiesInheritedIntoClassType.errors.txt
+@@= skipped -0, +0 lines =@@
+-instancePropertiesInheritedIntoClassType.ts(19,16): error TS6234: This expression is not callable because it is a 'get' accessor. Did you mean to use it without '()'?
++error TS6234: This expression is not callable because it is a 'get' accessor. Did you mean to use it without '()'?
+   Type 'Number' has no call signatures.
+-instancePropertiesInheritedIntoClassType.ts(41,16): error TS6234: This expression is not callable because it is a 'get' accessor. Did you mean to use it without '()'?
++error TS6234: This expression is not callable because it is a 'get' accessor. Did you mean to use it without '()'?
+   Type 'String' has no call signatures.
+ 
+ 
+-==== instancePropertiesInheritedIntoClassType.ts (2 errors) ====
++!!! error TS6234: This expression is not callable because it is a 'get' accessor. Did you mean to use it without '()'?
++!!! error TS6234:   Type 'Number' has no call signatures.
++!!! error TS6234: This expression is not callable because it is a 'get' accessor. Did you mean to use it without '()'?
++!!! error TS6234:   Type 'String' has no call signatures.
++==== instancePropertiesInheritedIntoClassType.ts (0 errors) ====
+     module NonGeneric {
+         class C {
+             x: string;
+@@= skipped -23, +27 lines =@@
+         var r3 = r.y;
+         r.y = 4;
+         var r6 = d.y(); // error
+-                   ~
+-!!! error TS6234: This expression is not callable because it is a 'get' accessor. Did you mean to use it without '()'?
+-!!! error TS6234:   Type 'Number' has no call signatures.
+     
+     }
+     
+@@= skipped -25, +22 lines =@@
+         var r3 = r.y;
+         r.y = '';
+         var r6 = d.y(); // error
+-                   ~
+-!!! error TS6234: This expression is not callable because it is a 'get' accessor. Did you mean to use it without '()'?
+-!!! error TS6234:   Type 'String' has no call signatures.
+     }

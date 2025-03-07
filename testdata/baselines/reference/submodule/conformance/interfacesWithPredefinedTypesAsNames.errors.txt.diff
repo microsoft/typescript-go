@@ -1,0 +1,20 @@
+--- old.interfacesWithPredefinedTypesAsNames.errors.txt
++++ new.interfacesWithPredefinedTypesAsNames.errors.txt
+@@= skipped -2, +2 lines =@@
+ interfacesWithPredefinedTypesAsNames.ts(3,11): error TS2427: Interface name cannot be 'string'.
+ interfacesWithPredefinedTypesAsNames.ts(4,11): error TS2427: Interface name cannot be 'boolean'.
+ interfacesWithPredefinedTypesAsNames.ts(5,1): error TS2304: Cannot find name 'interface'.
+-interfacesWithPredefinedTypesAsNames.ts(5,11): error TS2427: Interface name cannot be 'void'.
++interfacesWithPredefinedTypesAsNames.ts(5,11): error TS1005: ';' expected.
+ interfacesWithPredefinedTypesAsNames.ts(6,11): error TS2427: Interface name cannot be 'unknown'.
+ interfacesWithPredefinedTypesAsNames.ts(7,11): error TS2427: Interface name cannot be 'never'.
+ 
+@@= skipped -22, +22 lines =@@
+     ~~~~~~~~~
+ !!! error TS2304: Cannot find name 'interface'.
+               ~~~~
+-!!! error TS2427: Interface name cannot be 'void'.
++!!! error TS1005: ';' expected.
+     interface unknown {}
+               ~~~~~~~
+ !!! error TS2427: Interface name cannot be 'unknown'.

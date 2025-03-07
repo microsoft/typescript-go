@@ -1,0 +1,32 @@
+parametersSyntaxErrorNoCrash3.ts(3,17): error TS2391: Function implementation is missing or not immediately following the declaration.
+parametersSyntaxErrorNoCrash3.ts(4,11): error TS2300: Duplicate identifier '(Missing)'.
+parametersSyntaxErrorNoCrash3.ts(4,11): error TS2300: Duplicate identifier '(Missing)'.
+parametersSyntaxErrorNoCrash3.ts(4,13): error TS1005: ':' expected.
+parametersSyntaxErrorNoCrash3.ts(4,22): error TS2300: Duplicate identifier '(Missing)'.
+parametersSyntaxErrorNoCrash3.ts(4,22): error TS2300: Duplicate identifier '(Missing)'.
+parametersSyntaxErrorNoCrash3.ts(5,1): error TS1005: ':' expected.
+parametersSyntaxErrorNoCrash3.ts(5,2): error TS1005: ')' expected.
+
+
+==== parametersSyntaxErrorNoCrash3.ts (8 errors) ====
+    // https://github.com/microsoft/TypeScript/issues/59449
+    
+    export function getHtml({
+                    ~~~~~~~
+!!! error TS2391: Function implementation is missing or not immediately following the declaration.
+        return  " string" // a long string;
+              
+!!! error TS2300: Duplicate identifier '(Missing)'.
+              
+!!! error TS2300: Duplicate identifier '(Missing)'.
+                ~~~~~~~~~
+!!! error TS1005: ':' expected.
+                         
+!!! error TS2300: Duplicate identifier '(Missing)'.
+                         
+!!! error TS2300: Duplicate identifier '(Missing)'.
+    }
+    ~
+!!! error TS1005: ':' expected.
+     
+!!! error TS1005: ')' expected.

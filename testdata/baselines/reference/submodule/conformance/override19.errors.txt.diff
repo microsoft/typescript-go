@@ -1,0 +1,25 @@
+--- old.override19.errors.txt
++++ new.override19.errors.txt
+@@= skipped -0, +0 lines =@@
+-override19.ts(12,13): error TS4113: This member cannot have an 'override' modifier because it is not declared in the base class 'A & { context: Context; }'.
+-override19.ts(16,14): error TS4117: This member cannot have an 'override' modifier because it is not declared in the base class 'A & { context: Context; }'. Did you mean 'doSomething'?
++override19.ts(12,13): error TS4113: This member cannot have an 'override' modifier because it is not declared in the base class 'A & { context: Context }'.
++override19.ts(16,14): error TS4117: This member cannot have an 'override' modifier because it is not declared in the base class 'A & { context: Context }'. Did you mean 'doSomething'?
+ 
+ 
+ ==== override19.ts (2 errors) ====
+@@= skipped -15, +15 lines =@@
+     class B extends CreateMixin(Context, A) {
+        override foo() {} // Remove override
+                 ~~~
+-!!! error TS4113: This member cannot have an 'override' modifier because it is not declared in the base class 'A & { context: Context; }'.
++!!! error TS4113: This member cannot have an 'override' modifier because it is not declared in the base class 'A & { context: Context }'.
+     }
+     
+     class C extends CreateMixin(Context, A) {
+         override doSomethang() {} // Suggestion 'doSomething'
+                  ~~~~~~~~~~~
+-!!! error TS4117: This member cannot have an 'override' modifier because it is not declared in the base class 'A & { context: Context; }'. Did you mean 'doSomething'?
++!!! error TS4117: This member cannot have an 'override' modifier because it is not declared in the base class 'A & { context: Context }'. Did you mean 'doSomething'?
+     }
+     

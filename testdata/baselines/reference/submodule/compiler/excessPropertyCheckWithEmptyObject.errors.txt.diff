@@ -1,0 +1,17 @@
+--- old.excessPropertyCheckWithEmptyObject.errors.txt
++++ new.excessPropertyCheckWithEmptyObject.errors.txt
+@@= skipped -0, +0 lines =@@
+ excessPropertyCheckWithEmptyObject.ts(4,58): error TS2353: Object literal may only specify known properties, and 'readonly' does not exist in type 'PropertyDescriptor & ThisType<any>'.
+ excessPropertyCheckWithEmptyObject.ts(9,30): error TS2353: Object literal may only specify known properties, and 'y' does not exist in type 'A & ThisType<any>'.
+-excessPropertyCheckWithEmptyObject.ts(14,34): error TS2353: Object literal may only specify known properties, and 'y' does not exist in type 'Empty & { x: number; }'.
++excessPropertyCheckWithEmptyObject.ts(14,34): error TS2353: Object literal may only specify known properties, and 'y' does not exist in type 'Empty & { x: number }'.
+ 
+ 
+ ==== excessPropertyCheckWithEmptyObject.ts (3 errors) ====
+@@= skipped -22, +22 lines =@@
+     // Excess property error expected here
+     let x: Empty & { x: number } = { y: "hello" };
+                                      ~
+-!!! error TS2353: Object literal may only specify known properties, and 'y' does not exist in type 'Empty & { x: number; }'.
++!!! error TS2353: Object literal may only specify known properties, and 'y' does not exist in type 'Empty & { x: number }'.
+     

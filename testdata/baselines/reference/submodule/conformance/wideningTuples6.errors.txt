@@ -1,0 +1,12 @@
+wideningTuples6.ts(2,1): error TS2322: Type '""' is not assignable to type 'undefined'.
+wideningTuples6.ts(3,1): error TS2322: Type '""' is not assignable to type 'null'.
+
+
+==== wideningTuples6.ts (2 errors) ====
+    var [a, b] = [undefined, null];
+    a = "";
+    ~
+!!! error TS2322: Type '""' is not assignable to type 'undefined'.
+    b = "";
+    ~
+!!! error TS2322: Type '""' is not assignable to type 'null'.

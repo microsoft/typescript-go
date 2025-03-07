@@ -1,0 +1,16 @@
+--- old.ES5For-of7.errors.txt
++++ new.ES5For-of7.errors.txt
+@@= skipped -0, +0 lines =@@
+-ES5For-of7.ts(6,9): error TS2403: Subsequent variable declarations must have the same type.  Variable 'x' must be of type 'any', but here has type 'any[]'.
++ES5For-of7.ts(6,9): error TS2403: Subsequent variable declarations must have the same type.  Variable 'x' must be of type 'undefined', but here has type 'undefined[]'.
+ 
+ 
+ ==== ES5For-of7.ts (1 errors) ====
+@@= skipped -8, +8 lines =@@
+     for (var v of []) {
+         var x = [w, v];
+             ~
+-!!! error TS2403: Subsequent variable declarations must have the same type.  Variable 'x' must be of type 'any', but here has type 'any[]'.
++!!! error TS2403: Subsequent variable declarations must have the same type.  Variable 'x' must be of type 'undefined', but here has type 'undefined[]'.
+ !!! related TS6203 ES5For-of7.ts:2:9: 'x' was also declared here.
+     }

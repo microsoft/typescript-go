@@ -1,0 +1,38 @@
+--- old.divergentAccessorsTypes8.errors.txt
++++ new.divergentAccessorsTypes8.errors.txt
+@@= skipped -0, +0 lines =@@
+ divergentAccessorsTypes8.ts(20,1): error TS2322: Type 'CSSStyleDeclaration' is not assignable to type 'string'.
+-divergentAccessorsTypes8.ts(86,1): error TS2322: Type 'number' is not assignable to type 'string'.
++divergentAccessorsTypes8.ts(86,1): error TS2322: Type '42' is not assignable to type 'string'.
+ divergentAccessorsTypes8.ts(124,1): error TS2322: Type '42' is not assignable to type '"hello"'.
+ divergentAccessorsTypes8.ts(128,1): error TS2322: Type '"hello"' is not assignable to type '42'.
+-divergentAccessorsTypes8.ts(146,1): error TS2322: Type 'number' is not assignable to type 'boolean'.
+-divergentAccessorsTypes8.ts(148,1): error TS2322: Type 'string' is not assignable to type 'boolean'.
++divergentAccessorsTypes8.ts(146,1): error TS2322: Type '42' is not assignable to type 'boolean'.
++divergentAccessorsTypes8.ts(148,1): error TS2322: Type '""' is not assignable to type 'boolean'.
+ divergentAccessorsTypes8.ts(149,1): error TS2322: Type 'null' is not assignable to type 'boolean'.
+ 
+ 
+@@= skipped -96, +96 lines =@@
+     const iv2 = i['prop2'];
+     i['prop2'] = 42;
+     ~~~~~~~~~~
+-!!! error TS2322: Type 'number' is not assignable to type 'string'.
++!!! error TS2322: Type '42' is not assignable to type 'string'.
+     i['prop2'] = "hello";
+     
+     class Three {
+@@= skipped -66, +66 lines =@@
+     const sv1 = s1[k1]
+     s1[k1] = 42
+     ~~~~~~
+-!!! error TS2322: Type 'number' is not assignable to type 'boolean'.
++!!! error TS2322: Type '42' is not assignable to type 'boolean'.
+     s1[k1] = true
+     s1[k1] = ''
+     ~~~~~~
+-!!! error TS2322: Type 'string' is not assignable to type 'boolean'.
++!!! error TS2322: Type '""' is not assignable to type 'boolean'.
+     s1[k1] = null
+     ~~~~~~
+ !!! error TS2322: Type 'null' is not assignable to type 'boolean'.

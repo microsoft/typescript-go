@@ -1,0 +1,20 @@
+--- old.scannerS7.2_A1.5_T2.errors.txt
++++ new.scannerS7.2_A1.5_T2.errors.txt
+@@= skipped -18, +18 lines =@@
+       $ERROR('#1: eval("\\u00A0var x\\u00A0= 1\\u00A0"); x === 1. Actual: ' + (x));
+       ~~~~~~
+ !!! error TS2552: Cannot find name '$ERROR'. Did you mean 'Error'?
+-!!! related TS2728 lib.es5.d.ts:--:--: 'Error' is declared here.
++!!! related TS2728 bundled:///libs/lib.es5.d.ts:--:--: 'Error' is declared here.
+     }
+     
+     //CHECK#2
+@@= skipped -9, +9 lines =@@
+       $ERROR('#2:  var x = 1 ; x === 1. Actual: ' + (x));
+       ~~~~~~
+ !!! error TS2552: Cannot find name '$ERROR'. Did you mean 'Error'?
+-!!! related TS2728 lib.es5.d.ts:--:--: 'Error' is declared here.
++!!! related TS2728 bundled:///libs/lib.es5.d.ts:--:--: 'Error' is declared here.
+     }
+     
+     

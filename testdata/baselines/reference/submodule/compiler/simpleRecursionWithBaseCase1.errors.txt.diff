@@ -1,0 +1,19 @@
+--- old.simpleRecursionWithBaseCase1.errors.txt
++++ new.simpleRecursionWithBaseCase1.errors.txt
+@@= skipped -0, +0 lines =@@
+ simpleRecursionWithBaseCase1.ts(8,21): error TS2554: Expected 1 arguments, but got 0.
+ simpleRecursionWithBaseCase1.ts(13,20): error TS2554: Expected 1 arguments, but got 0.
+-simpleRecursionWithBaseCase1.ts(19,20): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
++simpleRecursionWithBaseCase1.ts(19,20): error TS2345: Argument of type '"hello world"' is not assignable to parameter of type 'number'.
+ simpleRecursionWithBaseCase1.ts(27,16): error TS2304: Cannot find name 'notfoundsymbol'.
+ simpleRecursionWithBaseCase1.ts(31,10): error TS7023: 'fn5' implicitly has return type 'any' because it does not have a return type annotation and is referenced directly or indirectly in one of its return expressions.
+ 
+@@= skipped -31, +31 lines =@@
+         } else {
+             return fn1("hello world");
+                        ~~~~~~~~~~~~~
+-!!! error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
++!!! error TS2345: Argument of type '"hello world"' is not assignable to parameter of type 'number'.
+         }
+     }
+     

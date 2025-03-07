@@ -1,0 +1,17 @@
+--- old.primitiveConstraints2.errors.txt
++++ new.primitiveConstraints2.errors.txt
+@@= skipped -0, +0 lines =@@
+-primitiveConstraints2.ts(8,11): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
++primitiveConstraints2.ts(8,11): error TS2345: Argument of type '""' is not assignable to parameter of type 'number'.
+ primitiveConstraints2.ts(9,8): error TS2344: Type 'string' does not satisfy the constraint 'number'.
+ 
+ 
+@@= skipped -11, +11 lines =@@
+     var x = new C<number>();
+     x.bar2(2, ""); // should error
+               ~~
+-!!! error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
++!!! error TS2345: Argument of type '""' is not assignable to parameter of type 'number'.
+     x.bar2<string>(2, ""); // should error
+            ~~~~~~
+ !!! error TS2344: Type 'string' does not satisfy the constraint 'number'.

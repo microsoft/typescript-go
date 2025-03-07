@@ -1,0 +1,15 @@
+--- old.unusedInvalidTypeArguments.errors.txt
++++ new.unusedInvalidTypeArguments.errors.txt
+@@= skipped -48, +48 lines =@@
+     declare var g: any;
+     type U = number;
+     g<U>();
+-    ~~~~~~
++    ~
+ !!! error TS2347: Untyped function calls may not accept type arguments.
+     g<InvalidReference>(); // Should get error for type argument
+-    ~~~~~~~~~~~~~~~~~~~~~
++    ~
+ !!! error TS2347: Untyped function calls may not accept type arguments.
+       ~~~~~~~~~~~~~~~~
+ !!! error TS2304: Cannot find name 'InvalidReference'.

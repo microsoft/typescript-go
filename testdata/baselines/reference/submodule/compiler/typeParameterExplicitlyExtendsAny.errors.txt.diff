@@ -1,0 +1,40 @@
+--- old.typeParameterExplicitlyExtendsAny.errors.txt
++++ new.typeParameterExplicitlyExtendsAny.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS2349: This expression is not callable.
++  Type '{}' has no call signatures.
++error TS2351: This expression is not constructable.
++  Type '{}' has no construct signatures.
+ typeParameterExplicitlyExtendsAny.ts(3,7): error TS2339: Property 'blah' does not exist on type 'T'.
+ typeParameterExplicitlyExtendsAny.ts(9,7): error TS2339: Property 'blah' does not exist on type 'T'.
+ typeParameterExplicitlyExtendsAny.ts(14,7): error TS2339: Property 'children' does not exist on type 'T'.
+-typeParameterExplicitlyExtendsAny.ts(15,5): error TS2349: This expression is not callable.
+-  Type '{}' has no call signatures.
+-typeParameterExplicitlyExtendsAny.ts(16,9): error TS2351: This expression is not constructable.
+-  Type '{}' has no construct signatures.
+ typeParameterExplicitlyExtendsAny.ts(30,14): error TS2339: Property 'children' does not exist on type 'T'.
+ 
+ 
+-==== typeParameterExplicitlyExtendsAny.ts (6 errors) ====
++!!! error TS2349: This expression is not callable.
++!!! error TS2349:   Type '{}' has no call signatures.
++!!! error TS2351: This expression is not constructable.
++!!! error TS2351:   Type '{}' has no construct signatures.
++==== typeParameterExplicitlyExtendsAny.ts (4 errors) ====
+     function fee<T>() {
+         var t: T;
+         t.blah; // Error
+@@= skipped -29, +33 lines =@@
+           ~~~~~~~~
+ !!! error TS2339: Property 'children' does not exist on type 'T'.
+         x();
+-        ~
+-!!! error TS2349: This expression is not callable.
+-!!! error TS2349:   Type '{}' has no call signatures.
+         new x();
+-            ~
+-!!! error TS2351: This expression is not constructable.
+-!!! error TS2351:   Type '{}' has no construct signatures.
+         x[100];
+         x['hello'];
+     }

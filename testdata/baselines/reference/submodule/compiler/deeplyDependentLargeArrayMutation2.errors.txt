@@ -1,0 +1,1231 @@
+foo.js(9,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(10,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(11,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(12,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(13,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(14,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(15,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(16,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(17,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(18,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(19,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(20,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(21,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(22,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(23,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(24,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(25,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(26,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(27,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(28,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(29,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(30,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(31,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(32,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(33,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(34,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(35,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(36,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(37,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(38,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(39,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(40,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(41,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(42,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(43,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(44,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(45,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(46,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(47,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(48,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(49,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(50,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(51,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(52,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(53,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(54,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(55,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(56,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(57,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(58,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(59,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(60,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(61,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(62,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(63,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(64,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(65,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(66,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(67,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(68,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(69,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(70,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(71,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(72,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(73,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(74,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(75,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(76,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(77,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(78,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(79,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(80,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(81,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(82,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(83,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(84,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(85,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(86,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(87,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(88,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(89,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(90,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(91,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(92,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(93,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(94,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(95,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(96,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(97,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(98,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(99,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(100,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(101,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(102,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(103,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(104,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(105,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(106,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(107,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(108,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(109,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(110,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(111,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(112,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(113,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(114,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(115,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(116,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(117,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(118,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(119,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(120,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(121,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(122,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(123,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(124,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(125,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(126,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(127,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(128,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(129,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(130,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(131,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(132,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(133,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(134,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(135,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(136,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(137,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(138,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(139,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(140,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(141,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(142,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(143,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(144,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(145,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(146,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(147,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(148,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(149,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(150,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(151,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(152,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(153,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(154,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(155,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(156,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(157,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(158,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(159,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(160,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(161,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(162,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(163,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(164,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(165,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(166,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(167,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(168,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(169,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(170,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(171,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(172,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(173,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(174,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(175,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(176,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(177,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(178,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(179,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(180,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(181,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(182,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(183,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(184,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(185,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(186,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(187,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(188,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(189,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(190,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(191,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(192,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(193,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(194,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(195,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(196,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(197,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(198,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(199,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(200,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(201,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(202,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(203,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(204,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(205,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(206,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(207,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(208,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(209,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(210,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(211,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(212,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(213,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(214,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(215,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(216,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(217,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(218,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(219,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(220,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(221,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(222,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(223,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(224,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(225,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(226,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(227,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(228,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(229,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(230,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(231,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(232,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(233,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(234,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(235,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(236,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(237,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(238,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(239,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(240,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(241,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(242,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(243,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(244,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(245,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(246,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(247,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(248,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(249,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(250,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(251,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(252,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(253,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(254,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(255,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(256,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(257,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(258,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(259,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(260,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(261,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(262,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(263,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(264,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(265,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(266,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(267,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(268,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(269,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(270,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(271,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(272,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(273,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(274,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(275,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(276,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(277,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(278,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(279,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(280,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(281,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(282,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(283,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(284,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(285,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(286,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(287,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(288,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(289,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(290,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(291,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(292,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(293,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(294,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(295,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(296,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(297,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(298,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(299,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(300,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(301,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(302,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(303,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(304,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(305,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(306,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(307,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(308,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(309,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(310,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(311,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+foo.js(312,16): error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+
+
+==== foo.js (304 errors) ====
+    // Looking at this test and thinking "that's silly, nobody would write code like that" and thinking it's OK to break this test?
+    // You'd be wrong - https://raw.githubusercontent.com/archilogic-com/3dio-js/master/build/3dio.js and plenty of other codebases
+    // have js code exactly like this! This pattern (even at this size!) with a few more embellishments is a common way to encode
+    // polygons or verticies into a buffer from a formulaic object definition! So while this is a lot more regular than a real piece
+    // of code, this is still representative of a common pattern.
+    function build() {
+        let i = 0;
+        const arr = [];
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        arr[i++] = arr[i] + 1;
+                   ~~~~~~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types 'undefined' and '1'.
+        return arr;
+    }
+    
+    const a = build();

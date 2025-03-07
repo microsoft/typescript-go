@@ -1,0 +1,20 @@
+--- old.logicalNotOperatorWithBooleanType.errors.txt
++++ new.logicalNotOperatorWithBooleanType.errors.txt
+@@= skipped -0, +0 lines =@@
+ logicalNotOperatorWithBooleanType.ts(21,25): error TS2872: This kind of expression is always truthy.
+-logicalNotOperatorWithBooleanType.ts(36,1): error TS2695: Left side of comma operator is unused and has no side effects.
+ 
+ 
+-==== logicalNotOperatorWithBooleanType.ts (2 errors) ====
++==== logicalNotOperatorWithBooleanType.ts (1 errors) ====
+     // ! operator on boolean type
+     var BOOLEAN: boolean;
+     
+@@= skipped -40, +39 lines =@@
+     !BOOLEAN;
+     !foo();
+     !true, false;
+-    ~~~~~
+-!!! error TS2695: Left side of comma operator is unused and has no side effects.
+     !objA.a;
+     !M.n;

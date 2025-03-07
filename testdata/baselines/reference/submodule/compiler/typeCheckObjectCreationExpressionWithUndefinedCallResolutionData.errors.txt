@@ -1,0 +1,15 @@
+file1.ts(3,16): error TS18048: 'classes' is possibly 'undefined'.
+
+
+==== file2.ts (0 errors) ====
+    import f = require('./file1');
+    f.foo();
+    
+==== file1.ts (1 errors) ====
+    export function foo() {
+    var classes = undefined;
+        return new classes(null);
+                   ~~~~~~~
+!!! error TS18048: 'classes' is possibly 'undefined'.
+    }
+    

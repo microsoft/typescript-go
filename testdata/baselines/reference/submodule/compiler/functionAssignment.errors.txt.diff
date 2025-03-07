@@ -1,0 +1,17 @@
+--- old.functionAssignment.errors.txt
++++ new.functionAssignment.errors.txt
+@@= skipped -0, +0 lines =@@
+-functionAssignment.ts(22,5): error TS2322: Type 'number' is not assignable to type 'string'.
++functionAssignment.ts(22,5): error TS2322: Type '4' is not assignable to type 'string'.
+ functionAssignment.ts(34,17): error TS2339: Property 'length' does not exist on type 'number'.
+ 
+ 
+@@= skipped -25, +25 lines =@@
+         var n = '';
+         n = 4;
+         ~
+-!!! error TS2322: Type 'number' is not assignable to type 'string'.
++!!! error TS2322: Type '4' is not assignable to type 'string'.
+     });
+     
+     function f3(a: { a: number; b: number; }) { }

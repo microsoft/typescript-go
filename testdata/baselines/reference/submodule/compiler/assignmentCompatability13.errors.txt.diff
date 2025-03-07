@@ -1,0 +1,18 @@
+--- old.assignmentCompatability13.errors.txt
++++ new.assignmentCompatability13.errors.txt
+@@= skipped -0, +0 lines =@@
+-assignmentCompatability13.ts(9,1): error TS2322: Type 'interfaceWithPublicAndOptional<number, string>' is not assignable to type '{ two: string; }'.
+-  Property 'two' is optional in type 'interfaceWithPublicAndOptional<number, string>' but required in type '{ two: string; }'.
++assignmentCompatability13.ts(9,1): error TS2322: Type 'interfaceWithPublicAndOptional<number, string>' is not assignable to type '{ two: string }'.
++  Property 'two' is optional in type 'interfaceWithPublicAndOptional<number, string>' but required in type '{ two: string }'.
+ 
+ 
+ ==== assignmentCompatability13.ts (1 errors) ====
+@@= skipped -12, +12 lines =@@
+     }
+     __test2__.__val__obj = __test1__.__val__obj4
+     ~~~~~~~~~~~~~~~~~~~~
+-!!! error TS2322: Type 'interfaceWithPublicAndOptional<number, string>' is not assignable to type '{ two: string; }'.
+-!!! error TS2322:   Property 'two' is optional in type 'interfaceWithPublicAndOptional<number, string>' but required in type '{ two: string; }'.
++!!! error TS2322: Type 'interfaceWithPublicAndOptional<number, string>' is not assignable to type '{ two: string }'.
++!!! error TS2322:   Property 'two' is optional in type 'interfaceWithPublicAndOptional<number, string>' but required in type '{ two: string }'.

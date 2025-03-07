@@ -1,0 +1,20 @@
+--- old.bigintIndex.errors.txt
++++ new.bigintIndex.errors.txt
+@@= skipped -0, +0 lines =@@
+ a.ts(2,6): error TS1268: An index signature parameter type must be 'string', 'number', 'symbol', or a template literal type.
+ a.ts(8,11): error TS2538: Type 'bigint' cannot be used as an index type.
+ a.ts(9,17): error TS2538: Type 'bigint' cannot be used as an index type.
+-a.ts(15,1): error TS2322: Type 'bigint' is not assignable to type 'string | number | symbol'.
++a.ts(15,1): error TS2322: Type '123n' is not assignable to type 'string | number | symbol'.
+ a.ts(20,12): error TS2538: Type 'bigint' cannot be used as an index type.
+ 
+ 
+@@= skipped -27, +27 lines =@@
+     key = Symbol();
+     key = 123n; // should error
+     ~~~
+-!!! error TS2322: Type 'bigint' is not assignable to type 'string | number | symbol'.
++!!! error TS2322: Type '123n' is not assignable to type 'string | number | symbol'.
+     
+     // Show correct usage of bigint index: explicitly convert to string
+     const bigNum: bigint = 0n;

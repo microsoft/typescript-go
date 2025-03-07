@@ -1,0 +1,21 @@
+--- old.parserUnterminatedGeneric2.errors.txt
++++ new.parserUnterminatedGeneric2.errors.txt
+@@= skipped -0, +0 lines =@@
+-parserUnterminatedGeneric2.ts(2,5): error TS1435: Unknown keyword or identifier. Did you mean 'interface ICompiledExpression'?
+ parserUnterminatedGeneric2.ts(2,5): error TS2304: Cannot find name 'interfaceICompiledExpression'.
++parserUnterminatedGeneric2.ts(2,34): error TS1005: ';' expected.
+ parserUnterminatedGeneric2.ts(3,42): error TS1005: '=>' expected.
+ parserUnterminatedGeneric2.ts(4,9): error TS2304: Cannot find name 'assign'.
+ parserUnterminatedGeneric2.ts(4,16): error TS2304: Cannot find name 'context'.
+@@= skipped -18, +18 lines =@@
+     declare module ng {
+         interfaceICompiledExpression {
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-!!! error TS1435: Unknown keyword or identifier. Did you mean 'interface ICompiledExpression'?
+-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ !!! error TS2304: Cannot find name 'interfaceICompiledExpression'.
++                                     ~
++!!! error TS1005: ';' expected.
+             (context: any, locals?: any): any;
+                                              ~
+ !!! error TS1005: '=>' expected.

@@ -1,0 +1,28 @@
+--- old.parser512325.errors.txt
++++ new.parser512325.errors.txt
+@@= skipped -0, +0 lines =@@
+ parser512325.ts(1,11): error TS2304: Cannot find name 'a'.
+-parser512325.ts(1,11): error TS2695: Left side of comma operator is unused and has no side effects.
+ parser512325.ts(1,15): error TS2304: Cannot find name 'b'.
+-parser512325.ts(1,15): error TS2695: Left side of comma operator is unused and has no side effects.
+ parser512325.ts(1,18): error TS2304: Cannot find name 'c'.
+ parser512325.ts(1,22): error TS1005: ';' expected.
+ parser512325.ts(1,25): error TS2304: Cannot find name 'a'.
+@@= skipped -8, +6 lines =@@
+ parser512325.ts(1,29): error TS2304: Cannot find name 'c'.
+ 
+ 
+-==== parser512325.ts (9 errors) ====
++==== parser512325.ts (7 errors) ====
+     var tt = (a, (b, c)) => a+b+c;
+               ~
+ !!! error TS2304: Cannot find name 'a'.
+-              ~
+-!!! error TS2695: Left side of comma operator is unused and has no side effects.
+                   ~
+ !!! error TS2304: Cannot find name 'b'.
+-                  ~
+-!!! error TS2695: Left side of comma operator is unused and has no side effects.
+                      ~
+ !!! error TS2304: Cannot find name 'c'.
+                          ~~

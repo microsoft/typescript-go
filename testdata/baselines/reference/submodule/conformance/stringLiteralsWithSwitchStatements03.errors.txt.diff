@@ -1,0 +1,31 @@
+--- old.stringLiteralsWithSwitchStatements03.errors.txt
++++ new.stringLiteralsWithSwitchStatements03.errors.txt
+@@= skipped -2, +2 lines =@@
+ stringLiteralsWithSwitchStatements03.ts(10,34): error TS2872: This kind of expression is always truthy.
+ stringLiteralsWithSwitchStatements03.ts(12,10): error TS2678: Type '"bar"' is not comparable to type '"foo"'.
+ stringLiteralsWithSwitchStatements03.ts(14,10): error TS2678: Type '"baz"' is not comparable to type '"foo"'.
+-stringLiteralsWithSwitchStatements03.ts(14,11): error TS2695: Left side of comma operator is unused and has no side effects.
+-stringLiteralsWithSwitchStatements03.ts(14,11): error TS2695: Left side of comma operator is unused and has no side effects.
+ stringLiteralsWithSwitchStatements03.ts(18,12): error TS2872: This kind of expression is always truthy.
+ stringLiteralsWithSwitchStatements03.ts(20,10): error TS2678: Type '"bar" | "baz"' is not comparable to type '"foo"'.
+   Type '"baz"' is not comparable to type '"foo"'.
+@@= skipped -13, +11 lines =@@
+   Type '"baz"' is not comparable to type '"foo"'.
+ 
+ 
+-==== stringLiteralsWithSwitchStatements03.ts (12 errors) ====
++==== stringLiteralsWithSwitchStatements03.ts (10 errors) ====
+     let x: "foo";
+     let y: "foo" | "bar"; 
+     let z: "bar";
+@@= skipped -24, +24 lines =@@
+         case (x, y, ("baz")):
+              ~~~~~~~~~~~~~~~
+ !!! error TS2678: Type '"baz"' is not comparable to type '"foo"'.
+-              ~
+-!!! error TS2695: Left side of comma operator is unused and has no side effects.
+-              ~~~~
+-!!! error TS2695: Left side of comma operator is unused and has no side effects.
+             x;
+             y;
+             break;

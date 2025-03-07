@@ -1,0 +1,13 @@
+--- old.importCallExpressionNestedES2015.errors.txt
++++ new.importCallExpressionNestedES2015.errors.txt
+@@= skipped -7, +7 lines =@@
+ ==== index.ts (2 errors) ====
+     async function foo() {
+         return await import((await import("./foo")).default);
+-                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++                     ~~~~~~
+ !!! error TS1323: Dynamic imports are only supported when the '--module' flag is set to 'es2020', 'es2022', 'esnext', 'commonjs', 'amd', 'system', 'umd', 'node16', or 'nodenext'.
+-                                   ~~~~~~~~~~~~~~~
++                                   ~~~~~~
+ !!! error TS1323: Dynamic imports are only supported when the '--module' flag is set to 'es2020', 'es2022', 'esnext', 'commonjs', 'amd', 'system', 'umd', 'node16', or 'nodenext'.
+     }

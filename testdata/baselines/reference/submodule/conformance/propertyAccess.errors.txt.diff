@@ -1,0 +1,61 @@
+--- old.propertyAccess.errors.txt
++++ new.propertyAccess.errors.txt
+@@= skipped -0, +0 lines =@@
+-propertyAccess.ts(11,55): error TS2353: Object literal may only specify known properties, and ''three'' does not exist in type '{ [n: number]: string; }'.
+-propertyAccess.ts(45,14): error TS2339: Property 'qqq' does not exist on type '{ 10: string; x: string; y: number; z: { n: string; m: number; o: () => boolean; }; 'literal property': number; }'.
+-propertyAccess.ts(80,19): error TS2538: Type '{ name: string; }' cannot be used as an index type.
+-propertyAccess.ts(117,18): error TS2538: Type '{ name: string; }' cannot be used as an index type.
+-propertyAccess.ts(140,22): error TS2538: Type '{ name: string; }' cannot be used as an index type.
++propertyAccess.ts(11,55): error TS2353: Object literal may only specify known properties, and 'three' does not exist in type '{ [n: number]: string }'.
++propertyAccess.ts(45,14): error TS2339: Property 'qqq' does not exist on type '{ 10: string, x: string, y: number, z: { n: string, m: number, o: () => boolean }, 'literal property': number }'.
++propertyAccess.ts(80,19): error TS2538: Type '{ name: string }' cannot be used as an index type.
++propertyAccess.ts(117,18): error TS2538: Type '{ name: string }' cannot be used as an index type.
++propertyAccess.ts(140,22): error TS2538: Type '{ name: string }' cannot be used as an index type.
+ propertyAccess.ts(149,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'x3' must be of type 'A | B', but here has type 'A'.
+ 
+ 
+@@= skipped -18, +18 lines =@@
+     
+     var numIndex: { [n: number]: string } = { 3: 'three', 'three': 'three' };
+                                                           ~~~~~~~
+-!!! error TS2353: Object literal may only specify known properties, and ''three'' does not exist in type '{ [n: number]: string; }'.
++!!! error TS2353: Object literal may only specify known properties, and 'three' does not exist in type '{ [n: number]: string }'.
+     var strIndex: { [n: string]: Compass } = { 'N': Compass.North, 'E': Compass.East };
+     var bothIndex:
+         {
+@@= skipped -36, +36 lines =@@
+     // Dotted property access of property that doesn't exist on value's apparent type
+     var cc = obj.qqq; // error
+                  ~~~
+-!!! error TS2339: Property 'qqq' does not exist on type '{ 10: string; x: string; y: number; z: { n: string; m: number; o: () => boolean; }; 'literal property': number; }'.
++!!! error TS2339: Property 'qqq' does not exist on type '{ 10: string, x: string, y: number, z: { n: string, m: number, o: () => boolean }, 'literal property': number }'.
+     
+     // Bracket notation property access using string literal value on type with property of that literal name
+     var dd = obj['literal property'];
+@@= skipped -37, +37 lines =@@
+     // Bracket notation property access using value of other type on type with numeric index signature and no string index signature
+     var ll = numIndex[someObject]; // Error
+                       ~~~~~~~~~~
+-!!! error TS2538: Type '{ name: string; }' cannot be used as an index type.
++!!! error TS2538: Type '{ name: string }' cannot be used as an index type.
+     
+     // Bracket notation property access using string value on type with string index signature and no numeric index signature
+     var mm = strIndex['N'];
+@@= skipped -39, +39 lines =@@
+     // Bracket notation property access using values of other types on type with no index signatures
+     var uu = noIndex[someObject]; // Error
+                      ~~~~~~~~~~
+-!!! error TS2538: Type '{ name: string; }' cannot be used as an index type.
++!!! error TS2538: Type '{ name: string }' cannot be used as an index type.
+     
+     // Bracket notation property access using numeric value on type with numeric index signature and string index signature
+     var vv = noIndex[32];
+@@= skipped -25, +25 lines =@@
+     // Bracket notation property access using value of other type on type with numeric index signature and no string index signature and string index signature
+     var zzzz = bothIndex[someObject]; // Error
+                          ~~~~~~~~~~
+-!!! error TS2538: Type '{ name: string; }' cannot be used as an index type.
++!!! error TS2538: Type '{ name: string }' cannot be used as an index type.
+     
+     var x1 = numIndex[stringOrNumber];
+     var x1: any;

@@ -1,0 +1,8 @@
+parseCommaSeparatedNewlineNumber.ts(1,2): error TS2304: Cannot find name 'a'.
+
+
+==== parseCommaSeparatedNewlineNumber.ts (1 errors) ====
+    (a,
+     ~
+!!! error TS2304: Cannot find name 'a'.
+    1)

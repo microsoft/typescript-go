@@ -1,0 +1,16 @@
+--- old.wideningTuples2.errors.txt
++++ new.wideningTuples2.errors.txt
+@@= skipped -0, +-1 lines =@@
+-<no content>
+@@= skipped --1, +1 lines =@@
++wideningTuples2.ts(3,21): error TS2322: Type 'string' is not assignable to type 'undefined'.
++
++
++==== wideningTuples2.ts (1 errors) ====
++    var foo: () => [any] = function bar() {
++        let intermediate = bar();
++        intermediate = [""];
++                        ~~
++!!! error TS2322: Type 'string' is not assignable to type 'undefined'.
++        return [undefined];
++    };

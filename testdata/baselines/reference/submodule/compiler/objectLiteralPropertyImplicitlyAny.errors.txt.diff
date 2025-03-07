@@ -1,0 +1,14 @@
+--- old.objectLiteralPropertyImplicitlyAny.errors.txt
++++ new.objectLiteralPropertyImplicitlyAny.errors.txt
+@@= skipped -0, +-1 lines =@@
+-objectLiteralPropertyImplicitlyAny.ts(2,13): error TS7018: Object literal's property '[foo]' implicitly has an 'any' type.
+-
+-
+-==== objectLiteralPropertyImplicitlyAny.ts (1 errors) ====
+-    const foo = Symbol.for("foo");
+-    const o = { [foo]: undefined };
+-                ~~~~~~~~~~~~~~~~
+-!!! error TS7018: Object literal's property '[foo]' implicitly has an 'any' type.
+-    
+@@= skipped --1, +1 lines =@@
++<no content>

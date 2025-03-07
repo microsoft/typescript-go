@@ -1,0 +1,14 @@
+--- old.contextualTyping41.errors.txt
++++ new.contextualTyping41.errors.txt
+@@= skipped -0, +0 lines =@@
+-contextualTyping41.ts(1,11): error TS2352: Conversion of type '() => string' to type '{ (): number; (i: number): number; }' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
++contextualTyping41.ts(1,11): error TS2352: Conversion of type '() => string' to type '{ (): number, (i: number): number }' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+   Type 'string' is not comparable to type 'number'.
+ 
+ 
+ ==== contextualTyping41.ts (1 errors) ====
+     var foo = <{():number; (i:number):number; }> (function(){return "err";});
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-!!! error TS2352: Conversion of type '() => string' to type '{ (): number; (i: number): number; }' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
++!!! error TS2352: Conversion of type '() => string' to type '{ (): number, (i: number): number }' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+ !!! error TS2352:   Type 'string' is not comparable to type 'number'.

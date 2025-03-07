@@ -1,0 +1,11 @@
+--- old.mappedTypeInferenceErrors.errors.txt
++++ new.mappedTypeInferenceErrors.errors.txt
+@@= skipped -19, +19 lines =@@
+             baz: 42
+             ~~~
+ !!! error TS2322: Type 'number' is not assignable to type '() => unknown'.
+-!!! related TS6500 mappedTypeInferenceErrors.ts:16:9: The expected type comes from property 'baz' which is declared here on type 'ComputedOf<{ bar: unknown; baz: unknown; }>'
++!!! related TS6500 mappedTypeInferenceErrors.ts:16:9: The expected type comes from property 'baz' which is declared here on type 'ComputedOf<{ bar: unknown, baz: unknown }>'
+         }
+     });
+     

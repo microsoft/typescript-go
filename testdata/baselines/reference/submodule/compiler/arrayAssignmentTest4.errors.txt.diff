@@ -1,0 +1,18 @@
+--- old.arrayAssignmentTest4.errors.txt
++++ new.arrayAssignmentTest4.errors.txt
+@@= skipped -0, +0 lines =@@
+-arrayAssignmentTest4.ts(22,1): error TS2322: Type '() => any' is not assignable to type 'any[]'.
++arrayAssignmentTest4.ts(22,1): error TS2322: Type '() => null' is not assignable to type 'any[]'.
+ arrayAssignmentTest4.ts(23,1): error TS2740: Type 'C3' is missing the following properties from type 'any[]': length, pop, push, concat, and 16 more.
+ 
+ 
+@@= skipped -25, +25 lines =@@
+     
+     arr_any = function () { return null;} // should be an error - is
+     ~~~~~~~
+-!!! error TS2322: Type '() => any' is not assignable to type 'any[]'.
++!!! error TS2322: Type '() => null' is not assignable to type 'any[]'.
++!!! related TS6212 arrayAssignmentTest4.ts:22:1: Did you mean to call this expression?
+     arr_any = c3; // should be an error - is
+     ~~~~~~~
+ !!! error TS2740: Type 'C3' is missing the following properties from type 'any[]': length, pop, push, concat, and 16 more.

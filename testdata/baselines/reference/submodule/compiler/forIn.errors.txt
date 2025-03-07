@@ -1,0 +1,42 @@
+forIn.ts(2,10): error TS2404: The left-hand side of a 'for...in' statement cannot use a type annotation.
+forIn.ts(3,14): error TS18047: 'arr' is possibly 'null'.
+forIn.ts(4,14): error TS18047: 'arr' is possibly 'null'.
+forIn.ts(8,14): error TS18047: 'arr' is possibly 'null'.
+forIn.ts(9,14): error TS18047: 'arr' is possibly 'null'.
+forIn.ts(20,4): error TS2304: Cannot find name 'k'.
+
+
+==== forIn.ts (6 errors) ====
+    var arr = null;
+    for (var i:number in arr) { // error
+             ~
+!!! error TS2404: The left-hand side of a 'for...in' statement cannot use a type annotation.
+        var x1 = arr[i];
+                 ~~~
+!!! error TS18047: 'arr' is possibly 'null'.
+        var y1 = arr[i];
+                 ~~~
+!!! error TS18047: 'arr' is possibly 'null'.
+    }
+    
+    for (var j in arr) { // ok
+        var x2 = arr[j];
+                 ~~~
+!!! error TS18047: 'arr' is possibly 'null'.
+        var y2 = arr[j];
+                 ~~~
+!!! error TS18047: 'arr' is possibly 'null'.
+    }
+    
+    var arr2 = [];
+    for (j in arr2) { // ok
+        var x3 = arr2[j];
+        var y3 = arr2[j];
+    }
+    
+    for (var l in arr) { 
+       // error in the body
+       k[l] = 1;
+       ~
+!!! error TS2304: Cannot find name 'k'.
+    }

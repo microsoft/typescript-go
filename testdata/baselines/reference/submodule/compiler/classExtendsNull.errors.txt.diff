@@ -1,0 +1,11 @@
+--- old.classExtendsNull.errors.txt
++++ new.classExtendsNull.errors.txt
+@@= skipped -4, +4 lines =@@
+     class C extends null {
+         constructor() {
+             super();
+-            ~~~~~~~
++            ~~~~~
+ !!! error TS17005: A constructor cannot contain a 'super' call when its class extends 'null'.
+             return Object.create(null);
+         }
