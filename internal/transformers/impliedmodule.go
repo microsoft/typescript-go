@@ -23,7 +23,6 @@ func NewImpliedModuleTransformer(emitContext *printer.EmitContext, compilerOptio
 	return tx.newTransformer(tx.visit, emitContext)
 }
 
-// Visits source elements that are not top-level or top-level nested statements.
 func (tx *ImpliedModuleTransformer) visit(node *ast.Node) *ast.Node {
 	switch node.Kind {
 	case ast.KindSourceFile:
