@@ -18,18 +18,16 @@ Status overview:
  * Commandline and `tsconfig.json` parsing: **done**, minus `--build` mode. Note that the entry point is slightly different (for now)
  * Type resolution (resolve computed types to a concrete internal representation): **done**. You should see the same types as in TS5.8
  * Type checking (check for problems in functions, classes, and statements): **done**. You should see the same errors, in the same locations, with the same messages, as TS 5.8
-    * Types printback in errors may display slightly differently; this is not considered a bug
+    * Types printback in errors may display slightly differently; this is in progress
+ * JavaScript-specific inference and JS Doc: **not ready**
+ * JSX: **not ready**
  * Declaration emit: **not ready**. Coming soon!
  * Emit (JS output): **in progress**. `target: esnext` (minimal downleveling) is well-supported but other targets may have gaps
- * JavaScript-specific inference and JS Doc: **not ready**
  * Watch mode: **prototype** (watches the correct files and rebuilds, but doesn't do incremental rechecking)
  * Build mode / project references: **not ready**
  * Incremental build: **not ready**
- * JSX: **not ready**
  * Language service (LSP): **prototype** only, expect minimal functionality (errors, hover, go to def). More features soon!
    * ASCII files only for now
- * Formatter, smart indent: **not ready**
- * Project service: **not ready**
  * API: **not ready**
 
 
@@ -76,6 +74,7 @@ Additional tasks are a work in progress.
 ### Running `tsgo`
 
 After running `hereby build`, you can run `built/local/tsgo`, which behaves mostly the same as `tsc`.
+This is mainly a testing entry point; for higher fidelity with regular `tsc`, run `tsgo tsc [flags]`
 
 ### Running LSP Prototype
 
