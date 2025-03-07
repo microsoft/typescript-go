@@ -186,14 +186,14 @@ func main() {
 
 	var bindTime, checkTime time.Duration
 
-	diagnostics := program.GetConfigFileParsingDiagnostics()
-	if len(diagnostics) != 0 {
-		printDiagnostics(diagnostics, host, compilerOptions)
+	diags := program.GetConfigFileParsingDiagnostics()
+	if len(diags) != 0 {
+		printDiagnostics(diags, host, compilerOptions)
 		os.Exit(1)
 	}
 
-	diagnostics = program.GetSyntacticDiagnostics(nil)
-	if len(diagnostics) == 0 {
+	diags = program.GetSyntacticDiagnostics(nil)
+	if len(diags) == 0 {
 		if opts.devel.printTypes {
 			program.PrintSourceFileWithTypes()
 		} else {
@@ -204,7 +204,7 @@ func main() {
 			// !!! the checker already reads noCheck, but do it here just for stats printing for now
 			if compilerOptions.NoCheck.IsFalseOrUnknown() {
 				checkStart := time.Now()
-				diagnostics = slices.Concat(program.GetGlobalDiagnostics(), program.GetSemanticDiagnostics(nil))
+				diags = slices.Concat(program.GetGlobalDiagnostics(), program.GetSemanticDiagnostics(nil))
 				checkTime = time.Since(checkStart)
 			}
 		}
@@ -214,7 +214,7 @@ func main() {
 	if compilerOptions.NoEmit.IsFalseOrUnknown() {
 		emitStart := time.Now()
 		result := program.Emit(&ts.EmitOptions{})
-		diagnostics = append(diagnostics, result.Diagnostics...)
+		diags = append(diags, result.Diagnostics...)
 		emitTime = time.Since(emitStart)
 	}
 
@@ -225,8 +225,20 @@ func main() {
 	runtime.GC()
 	runtime.ReadMemStats(&memStats)
 
-	if !opts.devel.quiet && len(diagnostics) != 0 {
-		printDiagnostics(ts.SortAndDeduplicateDiagnostics(diagnostics), host, compilerOptions)
+	if !opts.devel.quiet && len(diags) != 0 {
+		printDiagnostics(ts.SortAndDeduplicateDiagnostics(diags), host, compilerOptions)
+	}
+
+	var unsupportedExtensions []string
+	for _, file := range program.SourceFiles() {
+		extension := tspath.TryGetExtensionFromPath(file.FileName())
+		if extension == ".js" || extension == ".jsx" || extension == ".tsx" {
+			unsupportedExtensions = core.AppendIfUnique(unsupportedExtensions, extension)
+			break
+		}
+	}
+	if len(unsupportedExtensions) != 0 {
+		fmt.Fprintf(os.Stderr, "Warning: The project contains unsupported file types (%s), which are currently not type-checked.\n", strings.Join(unsupportedExtensions, ", "))
 	}
 
 	if compilerOptions.ListFiles.IsTrue() {
