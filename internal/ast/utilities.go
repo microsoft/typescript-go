@@ -1,8 +1,8 @@
 package ast
 
 import (
-	"regexp"
 	"slices"
+	"strings"
 	"sync"
 	"sync/atomic"
 
@@ -2416,13 +2416,31 @@ func nodeContainsPosition(node *Node, position int) bool {
 	return node.Kind >= KindFirstNode && node.Pos() <= position && (position < node.End() || position == node.End() && node.Kind == KindEndOfFile)
 }
 
-var importOrRequireRegExp = regexp.MustCompile(`import|require`)
+func findImportOrRequire(text string, start int) (index int, size int) {
+	index = max(start, 0)
+	n := len(text)
+	for index < n {
+		next := strings.IndexAny(text[index:], "ir")
+		if next < 0 {
+			break
+		}
+		index += next
 
-func updateLastIndex(lastIndex int, match []int) int {
-	if match == nil {
-		return -1
+		var expected string
+		if text[index] == 'i' {
+			size = 6
+			expected = "import"
+		} else {
+			size = 7
+			expected = "require"
+		}
+		if index+size <= n && text[index:index+size] == expected {
+			return
+		}
+		index++
 	}
-	return lastIndex + match[0]
+
+	return -1, 0
 }
 
 func ForEachDynamicImportOrRequireCall(
@@ -2432,7 +2450,7 @@ func ForEachDynamicImportOrRequireCall(
 	cb func(node *Node, argument *Expression) bool,
 ) bool {
 	isJavaScriptFile := IsInJSFile(file.AsNode())
-	lastIndex := updateLastIndex(0, importOrRequireRegExp.FindStringIndex(file.Text))
+	lastIndex, size := findImportOrRequire(file.Text, 0)
 	for lastIndex >= 0 {
 		node := GetNodeAtPosition(file, lastIndex, isJavaScriptFile && includeTypeSpaceImports)
 		if isJavaScriptFile && IsRequireCall(node, requireStringLiteralLikeArgument) {
@@ -2455,8 +2473,9 @@ func ForEachDynamicImportOrRequireCall(
 				}
 			}
 		}
-		lastIndex++
-		lastIndex = updateLastIndex(lastIndex, importOrRequireRegExp.FindStringIndex(file.Text[lastIndex:]))
+		// skip past import/require
+		lastIndex += size
+		lastIndex, size = findImportOrRequire(file.Text, lastIndex)
 	}
 	return false
 }
