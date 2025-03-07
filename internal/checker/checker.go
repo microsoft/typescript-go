@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -518,7 +519,10 @@ type Host interface{}
 
 // Checker
 
+var nextCheckerID atomic.Uint32
+
 type Checker struct {
+	id                                        uint32
 	program                                   Program
 	host                                      Host
 	compilerOptions                           *core.CompilerOptions
@@ -803,6 +807,7 @@ type Checker struct {
 
 func NewChecker(program Program) *Checker {
 	c := &Checker{}
+	c.id = nextCheckerID.Add(1)
 	c.program = program
 	// c.host = program.host
 	c.compilerOptions = program.Options()
