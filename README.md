@@ -90,7 +90,8 @@ This will launch a new VS Code instance which uses the Corsa LS as the backend. 
 
 ## Other Notes
 
-The long-term fate of this repo is likely to be merged into `microsoft/TypeScript` and closed; treat discussions/issues accordingly.
+Long-term, we expect this repo is that its contents will be merged into `microsoft/TypeScript`.
+As a result, the repo and issue tracker for typescript-go will eventually be closed, so treat discussions/issues accordingly.
 
 ## Contributing
 
