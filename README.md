@@ -6,7 +6,7 @@ $ go run github.com/microsoft/typescript-go/cmd/tsgo@latest
 
 For a list of intentional changes with respect to Typescript 5.7, see CHANGES.md.
 
-## What Works / What Doesn't Yet
+## What Works So Far?
 
 This is still a work in progress and is not yet at full feature parity with TypeScript. Bugs may exist. Please check this list carefully before logging a new issue or assuming an intentional change.
 
