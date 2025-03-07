@@ -8,13 +8,13 @@ import (
 )
 
 type ParsedCommandLine struct {
-	ParsedConfig *core.ParsedOptions `json:"ParsedConfig"`
+	ParsedConfig *core.ParsedOptions `json:"parsedConfig"`
 
-	ConfigFile *TsConfigSourceFile `json:"ConfigFile"` // TsConfigSourceFile, used in Program and ExecuteCommandLine
-	Errors     []*ast.Diagnostic   `json:"Errors"`
-	Raw        any                 `json:"Raw"`
+	ConfigFile *TsConfigSourceFile `json:"configFile"` // TsConfigSourceFile, used in Program and ExecuteCommandLine
+	Errors     []*ast.Diagnostic   `json:"errors"`
+	Raw        any                 `json:"raw"`
 	// WildcardDirectories map[string]watchDirectoryFlags
-	CompileOnSave *bool `json:"CompileOnSave"`
+	CompileOnSave *bool `json:"compileOnSave"`
 	// TypeAquisition *core.TypeAcquisition
 }
 
