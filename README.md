@@ -80,9 +80,10 @@ After running `hereby build`, you can run `built/local/tsgo`, which behaves most
 ### Running LSP Prototype
 
 To try the prototype LSP experience:
- * Run VS Code in the repo workspace (`code .`)
- * Copy `.vscode/launch.template.json` to `.vscode/launch.json`
- * F5 (or `Debug: Start Debugging` from the command palette)
+
+* Run VS Code in the repo workspace (`code .`)
+* Copy `.vscode/launch.template.json` to `.vscode/launch.json`
+* <kbd>F5</kbd> (or `Debug: Start Debugging` from the command palette)
 
 This will launch a new VS Code instance which uses the Corsa LS as the backend. If correctly set up, you should see "typescript-go" as an option in the Output pane:
 
