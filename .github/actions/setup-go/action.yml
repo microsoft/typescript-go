@@ -28,7 +28,6 @@ runs:
         key: ts-setup-go-${{ runner.os }}-${{ steps.install-go.outputs.go-version }}-${{ hashFiles('**/go.sum', '**/Herebyfile.mjs', '**/.custom-gcl.yml') }}-${{ github.workflow }}-${{ inputs.cache-name }}
         restore-keys: |
           ts-setup-go-${{ runner.os }}-${{ steps.install-go.outputs.go-version }}-${{ hashFiles('**/go.sum', '**/Herebyfile.mjs', '**/.custom-gcl.yml') }}
-          ts-setup-go-${{ runner.os }}-${{ steps.install-go.outputs.go-version }}
         path: |
           ~/go/pkg/mod
           ~/.cache/go-build
