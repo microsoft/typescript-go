@@ -12826,6 +12826,10 @@ func (c *Checker) GetDiagnostics(sourceFile *ast.SourceFile) []*ast.Diagnostic {
 	return c.diagnostics.GetDiagnostics()
 }
 
+func (c *Checker) GetDiagnosticsWithoutCheck(sourceFile *ast.SourceFile) []*ast.Diagnostic {
+	return c.diagnostics.GetDiagnosticsForFile(sourceFile.FileName())
+}
+
 func (c *Checker) GetGlobalDiagnostics() []*ast.Diagnostic {
 	return c.diagnostics.GetGlobalDiagnostics()
 }
