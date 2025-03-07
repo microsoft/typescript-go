@@ -1,9 +1,9 @@
 package core
 
 type ParsedOptions struct {
-	CompilerOptions *CompilerOptions
-	WatchOptions    *WatchOptions
+	CompilerOptions *CompilerOptions `json:"CompilerOptions"`
+	WatchOptions    *WatchOptions    `json:"WatchOptions"`
 
-	FileNames         []string
-	ProjectReferences []ProjectReference
+	FileNames         []string           `json:"FileNames"`
+	ProjectReferences []ProjectReference `json:"ProjectReferences"`
 }
