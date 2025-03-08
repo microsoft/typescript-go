@@ -116,6 +116,25 @@ func (api *API) HandleRequest(id int, method string, payload json.RawMessage) (a
 	}
 }
 
+func (api *API) HandleBinaryRequest(id int, method string, payload []byte) ([]byte, error) {
+	params, err := unmarshalPayload(method, payload)
+	if err != nil {
+		return nil, err
+	}
+
+	switch Method(method) {
+	case MethodGetSourceFile:
+		params := params.(*GetSourceFileParams)
+		sourceFile, err := api.GetSourceFile(api.toPath(params.Project), params.FileName)
+		if err != nil {
+			return nil, err
+		}
+		return EncodeSourceFile(sourceFile)
+	default:
+		return nil, fmt.Errorf("unhandled API method %q", method)
+	}
+}
+
 func (api *API) Close() {
 	// !!!
 }
@@ -179,6 +198,18 @@ func (api *API) GetTypeOfSymbol(projectPath tspath.Path, symbolHandle Handle[ast
 		return nil, nil
 	}
 	return NewTypeData(t), nil
+}
+
+func (api *API) GetSourceFile(projectPath tspath.Path, fileName string) (*ast.SourceFile, error) {
+	project, ok := api.projects[projectPath]
+	if !ok {
+		return nil, fmt.Errorf("project %q not found", projectPath)
+	}
+	sourceFile := project.GetProgram().GetSourceFile(fileName)
+	if sourceFile == nil {
+		return nil, nil
+	}
+	return sourceFile, nil
 }
 
 func (api *API) getOrCreateScriptInfo(fileName string, path tspath.Path, scriptKind core.ScriptKind) *project.ScriptInfo {

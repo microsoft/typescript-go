@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"strconv"
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
@@ -116,14 +117,23 @@ func (s *Server) Run() error {
 		messageType := string(line[:index])
 		offset := index + 1
 		switch messageType {
-		case "request":
+		case "request", "request-bin":
 			index = bytes.IndexByte(line[offset:], '\t')
 			if index == -1 {
 				return fmt.Errorf("%w: missing method or payload: %q", ErrInvalidRequest, line)
 			}
 			method := string(line[offset : offset+index])
 			payload := line[offset+index+1 : len(line)-1]
-			if result, err := s.handleRequest(method, payload); err != nil {
+
+			var result any
+			var err error
+			if messageType == "request-bin" {
+				err = s.handleBinaryRequest(method, payload)
+			} else {
+				result, err = s.handleRequest(method, payload)
+			}
+
+			if err != nil {
 				if err := s.sendError(method, err); err != nil {
 					return err
 				}
@@ -154,6 +164,36 @@ func (s *Server) enableCallback(callback string) error {
 		return fmt.Errorf("unknown callback: %s", callback)
 	}
 	return nil
+}
+
+func (s *Server) handleBinaryRequest(method string, payload []byte) error {
+	s.requestId++
+	data, err := s.api.HandleBinaryRequest(s.requestId, method, payload)
+	if err != nil {
+		return err
+	}
+	if _, err = s.w.WriteString("response-bin\t"); err != nil {
+		return err
+	}
+	if _, err = s.w.WriteString(method); err != nil {
+		return err
+	}
+	if err = s.w.WriteByte('\t'); err != nil {
+		return err
+	}
+	if _, err = s.w.WriteString(strconv.Itoa(len(data))); err != nil {
+		return err
+	}
+	if err = s.w.WriteByte('\n'); err != nil {
+		return err
+	}
+	if _, err = s.w.Write(data); err != nil {
+		return err
+	}
+	if err = s.w.WriteByte('\n'); err != nil {
+		return err
+	}
+	return s.w.Flush()
 }
 
 func (s *Server) handleRequest(method string, payload []byte) (any, error) {

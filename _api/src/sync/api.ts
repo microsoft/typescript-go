@@ -1,7 +1,8 @@
-import type { APIOptions as BaseAPIOptions } from "../base/api.ts";
 import {
     type API as BaseAPI,
+    type APIOptions as BaseAPIOptions,
     Project as BaseProject,
+    SourceFile as BaseSourceFile,
     Symbol as BaseSymbol,
     Type as BaseType,
 } from "../base/api.ts";
@@ -79,9 +80,24 @@ export class Project extends BaseProject<false> {
         this.loadData(this.client.request("loadProject", { configFileName: this.configFileName }));
     }
 
+    getSourceFile(fileName: string): SourceFile | undefined {
+        const data = this.client.requestBinary("getSourceFile", { project: this.configFileName, fileName });
+        return data ? new SourceFile(this.client, this, data) : undefined;
+    }
+
     getSymbolAtPosition(fileName: string, position: number): Symbol | undefined {
         const data = this.client.request("getSymbolAtPosition", { project: this.configFileName, fileName, position });
         return data ? new Symbol(this.client, this, data) : undefined;
+    }
+}
+
+export class SourceFile extends BaseSourceFile<false> {
+    private client: Client;
+    private project: Project;
+    constructor(client: Client, project: Project, data: Buffer) {
+        super(data);
+        this.client = client;
+        this.project = project;
     }
 }
 

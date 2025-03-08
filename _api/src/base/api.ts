@@ -5,6 +5,7 @@ import type {
     SymbolData,
     TypeData,
 } from "../types.ts";
+import { Node } from "./node.ts";
 
 export interface APIOptions {
     tsserverPath: string;
@@ -33,7 +34,19 @@ export abstract class Project<Async extends boolean> {
     }
 
     abstract reload(): MaybeAsync<Async, void>;
+    abstract getSourceFile(fileName: string): MaybeAsync<Async, SourceFile<Async> | undefined>;
     abstract getSymbolAtPosition(fileName: string, position: number): MaybeAsync<Async, Symbol<Async> | undefined>;
+}
+
+export abstract class SourceFile<Async extends boolean> extends Node {
+    constructor(data: Buffer) {
+        const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
+        super(view, 1, undefined!);
+    }
+
+    nodeCount(): number {
+        return (this.view.byteLength / (Node.NODE_LEN * 4)) - 1;
+    }
 }
 
 export abstract class Symbol<Async extends boolean> {

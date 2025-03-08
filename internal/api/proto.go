@@ -30,6 +30,7 @@ const (
 	MethodLoadProject         Method = "loadProject"
 	MethodGetSymbolAtPosition Method = "getSymbolAtPosition"
 	MethodGetTypeOfSymbol     Method = "getTypeOfSymbol"
+	MethodGetSourceFile       Method = "getSourceFile"
 )
 
 var unmarshalers = map[Method]func([]byte) (any, error){
@@ -37,6 +38,7 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodLoadProject:         unmarshallerFor[LoadProjectParams],
 	MethodGetSymbolAtPosition: unmarshallerFor[GetSymbolAtPositionParams],
 	MethodGetTypeOfSymbol:     unmarshallerFor[GetTypeOfSymbolParams],
+	MethodGetSourceFile:       unmarshallerFor[GetSourceFileParams],
 }
 
 type ParseConfigFileParams struct {
@@ -98,6 +100,11 @@ func NewTypeData(t *checker.Type) *TypeData {
 		Id:    NewHandle(t),
 		Flags: uint32(t.Flags()),
 	}
+}
+
+type GetSourceFileParams struct {
+	Project  string `json:"project"`
+	FileName string `json:"fileName"`
 }
 
 func unmarshalPayload(method string, payload json.RawMessage) (any, error) {

@@ -324,6 +324,7 @@ func (p *Parser) finishSourceFile(result *ast.SourceFile, isDeclarationFile bool
 	result.ScriptKind = p.scriptKind
 	result.Flags |= p.sourceFlags
 	result.Identifiers = p.identifiers
+	result.NodeCount = p.factory.NodeCount()
 	result.SetJSDocCache(p.jsdocCache)
 	p.jsdocCache = nil
 	p.identifiers = nil

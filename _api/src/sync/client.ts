@@ -28,6 +28,10 @@ export class Client {
         return JSON.parse(this.channel.requestSync(method, JSON.stringify(payload)));
     }
 
+    requestBinary(method: string, payload: any): Buffer {
+        return this.channel.requestBinarySync(method, JSON.stringify(payload));
+    }
+
     close(): void {
         this.channel.murderInColdBlood();
     }
