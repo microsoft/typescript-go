@@ -4,8 +4,8 @@ invalidStringAssignments.ts(5,5): error TS2322: Type 'string' is not assignable 
 invalidStringAssignments.ts(6,5): error TS2322: Type 'string' is not assignable to type 'undefined'.
 invalidStringAssignments.ts(9,5): error TS2322: Type 'string' is not assignable to type 'C'.
 invalidStringAssignments.ts(12,5): error TS2322: Type 'string' is not assignable to type 'I'.
-invalidStringAssignments.ts(14,5): error TS2322: Type '1' is not assignable to type '{ baz: string }'.
-invalidStringAssignments.ts(15,5): error TS2322: Type '1' is not assignable to type '{ 0: number }'.
+invalidStringAssignments.ts(14,5): error TS2322: Type 'number' is not assignable to type '{ baz: string }'.
+invalidStringAssignments.ts(15,5): error TS2322: Type 'number' is not assignable to type '{ 0: number }'.
 invalidStringAssignments.ts(18,1): error TS2631: Cannot assign to 'M' because it is a namespace.
 invalidStringAssignments.ts(21,5): error TS2322: Type 'string' is not assignable to type 'T'.
   'T' could be instantiated with an arbitrary type which could be unrelated to 'string'.
@@ -41,10 +41,10 @@ invalidStringAssignments.ts(26,5): error TS2322: Type 'string' is not assignable
     
     var g: { baz: string } = 1;
         ~
-!!! error TS2322: Type '1' is not assignable to type '{ baz: string }'.
+!!! error TS2322: Type 'number' is not assignable to type '{ baz: string }'.
     var g2: { 0: number } = 1;
         ~~
-!!! error TS2322: Type '1' is not assignable to type '{ 0: number }'.
+!!! error TS2322: Type 'number' is not assignable to type '{ 0: number }'.
     
     module M { export var x = 1; }
     M = x;

@@ -1,5 +1,5 @@
-referencer.js(3,27): error TS2350: Only a void function can be called with the 'new' keyword.
-source.js(40,20): error TS2350: Only a void function can be called with the 'new' keyword.
+referencer.js(3,23): error TS2350: Only a void function can be called with the 'new' keyword.
+source.js(40,16): error TS2350: Only a void function can be called with the 'new' keyword.
 
 
 ==== source.js (1 errors) ====
@@ -43,7 +43,7 @@ source.js(40,20): error TS2350: Only a void function can be called with the 'new
     export function Point2D(x, y) {
         if (!(this instanceof Point2D)) {
             return new Point2D(x, y);
-                       ~~~~~~~
+                   ~~~~~~~~~~~~~~~~~
 !!! error TS2350: Only a void function can be called with the 'new' keyword.
         }
         Vec.call(this, 2);
@@ -77,7 +77,7 @@ source.js(40,20): error TS2350: Only a void function can be called with the 'new
     import {Point2D} from "./source";
     
     export const origin = new Point2D(0, 0);
-                              ~~~~~~~
+                          ~~~~~~~~~~~~~~~~~
 !!! error TS2350: Only a void function can be called with the 'new' keyword.
     // export const res = Point2D(2, 3).dot(origin); // TODO: when __proto__ works, validate this
     

@@ -1,9 +1,6 @@
 --- old.typeParameterAsTypeParameterConstraint2.errors.txt
 +++ new.typeParameterAsTypeParameterConstraint2.errors.txt
-@@= skipped -0, +0 lines =@@
--typeParameterAsTypeParameterConstraint2.ts(6,8): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
-+typeParameterAsTypeParameterConstraint2.ts(6,8): error TS2345: Argument of type '""' is not assignable to parameter of type 'number'.
- typeParameterAsTypeParameterConstraint2.ts(7,8): error TS2345: Argument of type '{}' is not assignable to parameter of type 'number'.
+@@= skipped -2, +2 lines =@@
  typeParameterAsTypeParameterConstraint2.ts(13,17): error TS2345: Argument of type 'NumberVariant' is not assignable to parameter of type 'number'.
  typeParameterAsTypeParameterConstraint2.ts(16,11): error TS2322: Type 'string' is not assignable to type 'number'.
  typeParameterAsTypeParameterConstraint2.ts(17,11): error TS2322: Type '{}' is not assignable to type 'number'.
@@ -15,16 +12,7 @@
  
  
  ==== typeParameterAsTypeParameterConstraint2.ts (6 errors) ====
-@@= skipped -15, +15 lines =@@
-     
-     foo(1, '');
-            ~~
--!!! error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
-+!!! error TS2345: Argument of type '""' is not assignable to parameter of type 'number'.
-     foo(1, {});
-            ~~
- !!! error TS2345: Argument of type '{}' is not assignable to parameter of type 'number'.
-@@= skipped -17, +17 lines =@@
+@@= skipped -30, +30 lines =@@
      foo2(1, { length: '' });
                ~~~~~~
  !!! error TS2322: Type 'string' is not assignable to type 'number'.

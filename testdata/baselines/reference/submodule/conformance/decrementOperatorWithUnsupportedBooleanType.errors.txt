@@ -9,9 +9,9 @@ decrementOperatorWithUnsupportedBooleanType.ts(28,23): error TS2356: An arithmet
 decrementOperatorWithUnsupportedBooleanType.ts(31,25): error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
 decrementOperatorWithUnsupportedBooleanType.ts(32,26): error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
 decrementOperatorWithUnsupportedBooleanType.ts(33,26): error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
-decrementOperatorWithUnsupportedBooleanType.ts(34,28): error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
+decrementOperatorWithUnsupportedBooleanType.ts(34,26): error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
 decrementOperatorWithUnsupportedBooleanType.ts(36,24): error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
-decrementOperatorWithUnsupportedBooleanType.ts(37,26): error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
+decrementOperatorWithUnsupportedBooleanType.ts(37,24): error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
 decrementOperatorWithUnsupportedBooleanType.ts(38,24): error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
 decrementOperatorWithUnsupportedBooleanType.ts(39,24): error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
 decrementOperatorWithUnsupportedBooleanType.ts(42,3): error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
@@ -83,17 +83,17 @@ decrementOperatorWithUnsupportedBooleanType.ts(54,11): error TS2356: An arithmet
                              ~~~
 !!! error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
     var ResultIsNumber11 = --foo();
-                             ~~~
+                             ~~~~~
 !!! error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
     var ResultIsNumber12 = --A.foo();
-                               ~~~
+                             ~~~~~~~
 !!! error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
     
     var ResultIsNumber13 = foo()--;
-                           ~~~
+                           ~~~~~
 !!! error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
     var ResultIsNumber14 = A.foo()--;
-                             ~~~
+                           ~~~~~~~
 !!! error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
     var ResultIsNumber15 = objA.a--;
                            ~~~~~~
@@ -110,7 +110,7 @@ decrementOperatorWithUnsupportedBooleanType.ts(54,11): error TS2356: An arithmet
       ~~~~~~~
 !!! error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
     --foo();
-      ~~~
+      ~~~~~
 !!! error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
     --objA.a;
       ~~~~~~
@@ -129,7 +129,7 @@ decrementOperatorWithUnsupportedBooleanType.ts(54,11): error TS2356: An arithmet
     ~~~~~~~
 !!! error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
     foo()--;
-    ~~~
+    ~~~~~
 !!! error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
     objA.a--;
     ~~~~~~

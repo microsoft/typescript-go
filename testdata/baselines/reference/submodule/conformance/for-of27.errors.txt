@@ -8,7 +8,7 @@ error TS2552: Cannot find name 'Number'. Did you mean 'number'?
 error TS2552: Cannot find name 'Object'. Did you mean 'object'?
 for-of27.ts(2,5): error TS1166: A computed property name in a class property declaration must have a simple literal type or a 'unique symbol' type.
 for-of27.ts(2,6): error TS2304: Cannot find name 'Symbol'.
-for-of27.ts(5,19): error TS2488: Type 'MyStringIterator' must have a '[Symbol.iterator]()' method that returns an iterator.
+for-of27.ts(5,15): error TS2488: Type 'MyStringIterator' must have a '[Symbol.iterator]()' method that returns an iterator.
 
 
 !!! error TS2318: Cannot find global type 'Array'.
@@ -29,5 +29,5 @@ for-of27.ts(5,19): error TS2488: Type 'MyStringIterator' must have a '[Symbol.it
     }
     
     for (var v of new MyStringIterator) { }
-                      ~~~~~~~~~~~~~~~~
+                  ~~~~~~~~~~~~~~~~~~~~
 !!! error TS2488: Type 'MyStringIterator' must have a '[Symbol.iterator]()' method that returns an iterator.

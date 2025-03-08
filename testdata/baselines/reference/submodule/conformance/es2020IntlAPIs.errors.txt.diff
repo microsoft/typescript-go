@@ -1,37 +1,16 @@
 --- old.es2020IntlAPIs.errors.txt
 +++ new.es2020IntlAPIs.errors.txt
 @@= skipped -0, +0 lines =@@
--es2020IntlAPIs.ts(45,1): error TS2554: Expected 1-2 arguments, but got 0.
--es2020IntlAPIs.ts(48,1): error TS2554: Expected 2 arguments, but got 0.
--es2020IntlAPIs.ts(49,1): error TS2554: Expected 2 arguments, but got 1.
+ es2020IntlAPIs.ts(45,1): error TS2554: Expected 1-2 arguments, but got 0.
+ es2020IntlAPIs.ts(48,1): error TS2554: Expected 2 arguments, but got 0.
+ es2020IntlAPIs.ts(49,1): error TS2554: Expected 2 arguments, but got 1.
 -es2020IntlAPIs.ts(50,29): error TS2345: Argument of type '{}' is not assignable to parameter of type 'DisplayNamesOptions'.
 -  Property 'type' is missing in type '{}' but required in type 'DisplayNamesOptions'.
-+es2020IntlAPIs.ts(45,10): error TS2554: Expected 1-2 arguments, but got 0.
-+es2020IntlAPIs.ts(48,10): error TS2554: Expected 2 arguments, but got 0.
-+es2020IntlAPIs.ts(49,10): error TS2554: Expected 2 arguments, but got 1.
 +es2020IntlAPIs.ts(50,29): error TS2741: Property 'type' is missing in type '{}' but required in type 'DisplayNamesOptions'.
  
  
  ==== es2020IntlAPIs.ts (4 errors) ====
-@@= skipped -50, +49 lines =@@
-     console.log(Intl.DisplayNames.supportedLocalesOf(locales1, options1).join(', '));
-     
-     new Intl.Locale(); // should error
--    ~~~~~~~~~~~~~~~~~
-+             ~~~~~~
- !!! error TS2554: Expected 1-2 arguments, but got 0.
- !!! related TS6210 lib.es2020.intl.d.ts:--:--: An argument for 'tag' was not provided.
-     new Intl.Locale(new Intl.Locale('en-US'));
-     
-     new Intl.DisplayNames(); // TypeError: invalid_argument
--    ~~~~~~~~~~~~~~~~~~~~~~~
-+             ~~~~~~~~~~~~
- !!! error TS2554: Expected 2 arguments, but got 0.
- !!! related TS6210 lib.es2020.intl.d.ts:--:--: An argument for 'locales' was not provided.
-     new Intl.DisplayNames('en'); // TypeError: invalid_argument
--    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+             ~~~~~~~~~~~~
- !!! error TS2554: Expected 2 arguments, but got 1.
+@@= skipped -65, +64 lines =@@
  !!! related TS6210 lib.es2020.intl.d.ts:--:--: An argument for 'options' was not provided.
      new Intl.DisplayNames('en', {}); // TypeError: invalid_argument
                                  ~~

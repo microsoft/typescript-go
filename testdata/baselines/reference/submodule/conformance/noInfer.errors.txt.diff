@@ -1,17 +1,15 @@
 --- old.noInfer.errors.txt
 +++ new.noInfer.errors.txt
-@@= skipped -2, +2 lines =@@
- noInfer.ts(37,14): error TS2322: Type '"bar"' is not assignable to type '"foo"'.
+@@= skipped -3, +3 lines =@@
  noInfer.ts(38,15): error TS2322: Type '"bar"' is not assignable to type '"foo"'.
  noInfer.ts(39,15): error TS2322: Type '"bar"' is not assignable to type '"foo"'.
--noInfer.ts(47,30): error TS2741: Property 'woof' is missing in type 'Animal' but required in type 'Dog'.
+ noInfer.ts(47,30): error TS2741: Property 'woof' is missing in type 'Animal' but required in type 'Dog'.
 -noInfer.ts(53,16): error TS2345: Argument of type '{ x: number; }' is not assignable to parameter of type '{ x: number; y: number; }'.
 -  Property 'y' is missing in type '{ x: number; }' but required in type '{ x: number; y: number; }'.
 -noInfer.ts(58,22): error TS2353: Object literal may only specify known properties, and 'y' does not exist in type '{ x: number; }'.
 -noInfer.ts(59,14): error TS2353: Object literal may only specify known properties, and 'y' does not exist in type '{ x: number; }'.
 -noInfer.ts(66,14): error TS2345: Argument of type '{}' is not assignable to parameter of type '{ foo: number; }'.
 -  Property 'foo' is missing in type '{}' but required in type '{ foo: number; }'.
-+noInfer.ts(47,34): error TS2741: Property 'woof' is missing in type 'Animal' but required in type 'Dog'.
 +noInfer.ts(53,16): error TS2741: Property 'y' is missing in type '{ x: number }' but required in type '{ x: number, y: number }'.
 +noInfer.ts(58,22): error TS2353: Object literal may only specify known properties, and 'y' does not exist in type '{ x: number }'.
 +noInfer.ts(59,14): error TS2353: Object literal may only specify known properties, and 'y' does not exist in type '{ x: number }'.
@@ -19,7 +17,7 @@
  
  
  ==== noInfer.ts (10 errors) ====
-@@= skipped -56, +54 lines =@@
+@@= skipped -55, +53 lines =@@
      foo4('foo', { x: 'bar' }) // error
                    ~
  !!! error TS2322: Type '"bar"' is not assignable to type '"foo"'.
@@ -33,16 +31,7 @@
      
      declare class Animal { move(): void }
      declare class Dog extends Animal { woof(): void }
-@@= skipped -13, +13 lines =@@
-     doSomething(new Animal(), () => new Animal()); // ok
-     doSomething(new Animal(), () => new Dog()); // ok
-     doSomething(new Dog(), () => new Animal()); // error
--                                 ~~~~~~~~~~~~
-+                                     ~~~~~~
- !!! error TS2741: Property 'woof' is missing in type 'Animal' but required in type 'Dog'.
- !!! related TS2728 noInfer.ts:42:36: 'woof' is declared here.
- !!! related TS6502 noInfer.ts:43:55: The expected type comes from the return type of this signature.
-@@= skipped -11, +11 lines =@@
+@@= skipped -24, +24 lines =@@
      const g = { x: 3, y: 2 };
      assertEqual(g, { x: 3 }); // error
                     ~~~~~~~~

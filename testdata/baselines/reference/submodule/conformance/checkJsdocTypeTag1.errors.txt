@@ -1,5 +1,5 @@
-0.js(10,1): error TS2322: Type '"hello"' is not assignable to type 'number'.
-0.js(14,1): error TS2322: Type '"hi"' is not assignable to type 'number'.
+0.js(10,1): error TS2322: Type 'string' is not assignable to type 'number'.
+0.js(14,1): error TS2322: Type 'string' is not assignable to type 'number'.
 
 
 ==== 0.js (2 errors) ====
@@ -14,13 +14,13 @@
     var anyT = 2;
     anyT = "hello";
     ~~~~
-!!! error TS2322: Type '"hello"' is not assignable to type 'number'.
+!!! error TS2322: Type 'string' is not assignable to type 'number'.
     
     /** @type {?} */
     var anyT1 = 2;
     anyT1 = "hi";
     ~~~~~
-!!! error TS2322: Type '"hi"' is not assignable to type 'number'.
+!!! error TS2322: Type 'string' is not assignable to type 'number'.
     
     /** @type {Function} */
     const x = (a) => a + 1;

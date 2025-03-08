@@ -14,8 +14,4 @@
 +!!! error TS2417: Class static side '{ new(): C, prototype: C }' incorrectly extends base class static side 'null'.
        constructor() {
          super();
--        ~~~~~~~
-+        ~~~~~
- !!! error TS17005: A constructor cannot contain a 'super' call when its class extends 'null'.
-       }
-     }
+         ~~~~~~~

@@ -146,37 +146,37 @@ index.mjs(84,14): error TS2712: A dynamic import call in ES5 requires the 'Promi
     
     // These shouldn't work - dynamic `import()` always uses the esm resolver, which does not have extension resolution
     const _m35 = import("./");
-                 ~~~~~~
+                 ~~~~~~~~~~~~
 !!! error TS2712: A dynamic import call in ES5 requires the 'Promise' constructor.  Make sure you have a declaration for the 'Promise' constructor or include 'ES2015' in your '--lib' option.
     const _m36 = import("./index");
-                 ~~~~~~
+                 ~~~~~~~~~~~~~~~~~
 !!! error TS2712: A dynamic import call in ES5 requires the 'Promise' constructor.  Make sure you have a declaration for the 'Promise' constructor or include 'ES2015' in your '--lib' option.
     const _m37 = import("./subfolder");
-                 ~~~~~~
+                 ~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2712: A dynamic import call in ES5 requires the 'Promise' constructor.  Make sure you have a declaration for the 'Promise' constructor or include 'ES2015' in your '--lib' option.
     const _m38 = import("./subfolder/");
-                 ~~~~~~
+                 ~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2712: A dynamic import call in ES5 requires the 'Promise' constructor.  Make sure you have a declaration for the 'Promise' constructor or include 'ES2015' in your '--lib' option.
     const _m39 = import("./subfolder/index");
-                 ~~~~~~
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2712: A dynamic import call in ES5 requires the 'Promise' constructor.  Make sure you have a declaration for the 'Promise' constructor or include 'ES2015' in your '--lib' option.
     const _m40 = import("./subfolder2");
-                 ~~~~~~
+                 ~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2712: A dynamic import call in ES5 requires the 'Promise' constructor.  Make sure you have a declaration for the 'Promise' constructor or include 'ES2015' in your '--lib' option.
     const _m41 = import("./subfolder2/");
-                 ~~~~~~
+                 ~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2712: A dynamic import call in ES5 requires the 'Promise' constructor.  Make sure you have a declaration for the 'Promise' constructor or include 'ES2015' in your '--lib' option.
     const _m42 = import("./subfolder2/index");
-                 ~~~~~~
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2712: A dynamic import call in ES5 requires the 'Promise' constructor.  Make sure you have a declaration for the 'Promise' constructor or include 'ES2015' in your '--lib' option.
     const _m43 = import("./subfolder2/another");
-                 ~~~~~~
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2712: A dynamic import call in ES5 requires the 'Promise' constructor.  Make sure you have a declaration for the 'Promise' constructor or include 'ES2015' in your '--lib' option.
     const _m44 = import("./subfolder2/another/");
-                 ~~~~~~
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2712: A dynamic import call in ES5 requires the 'Promise' constructor.  Make sure you have a declaration for the 'Promise' constructor or include 'ES2015' in your '--lib' option.
     const _m45 = import("./subfolder2/another/index");
-                 ~~~~~~
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2712: A dynamic import call in ES5 requires the 'Promise' constructor.  Make sure you have a declaration for the 'Promise' constructor or include 'ES2015' in your '--lib' option.
     // esm format file
     const x = 1;
@@ -257,37 +257,37 @@ index.mjs(84,14): error TS2712: A dynamic import call in ES5 requires the 'Promi
     
     // These shouldn't work - dynamic `import()` always uses the esm resolver, which does not have extension resolution
     const _m35 = import("./");
-                 ~~~~~~
+                 ~~~~~~~~~~~~
 !!! error TS2712: A dynamic import call in ES5 requires the 'Promise' constructor.  Make sure you have a declaration for the 'Promise' constructor or include 'ES2015' in your '--lib' option.
     const _m36 = import("./index");
-                 ~~~~~~
+                 ~~~~~~~~~~~~~~~~~
 !!! error TS2712: A dynamic import call in ES5 requires the 'Promise' constructor.  Make sure you have a declaration for the 'Promise' constructor or include 'ES2015' in your '--lib' option.
     const _m37 = import("./subfolder");
-                 ~~~~~~
+                 ~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2712: A dynamic import call in ES5 requires the 'Promise' constructor.  Make sure you have a declaration for the 'Promise' constructor or include 'ES2015' in your '--lib' option.
     const _m38 = import("./subfolder/");
-                 ~~~~~~
+                 ~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2712: A dynamic import call in ES5 requires the 'Promise' constructor.  Make sure you have a declaration for the 'Promise' constructor or include 'ES2015' in your '--lib' option.
     const _m39 = import("./subfolder/index");
-                 ~~~~~~
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2712: A dynamic import call in ES5 requires the 'Promise' constructor.  Make sure you have a declaration for the 'Promise' constructor or include 'ES2015' in your '--lib' option.
     const _m40 = import("./subfolder2");
-                 ~~~~~~
+                 ~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2712: A dynamic import call in ES5 requires the 'Promise' constructor.  Make sure you have a declaration for the 'Promise' constructor or include 'ES2015' in your '--lib' option.
     const _m41 = import("./subfolder2/");
-                 ~~~~~~
+                 ~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2712: A dynamic import call in ES5 requires the 'Promise' constructor.  Make sure you have a declaration for the 'Promise' constructor or include 'ES2015' in your '--lib' option.
     const _m42 = import("./subfolder2/index");
-                 ~~~~~~
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2712: A dynamic import call in ES5 requires the 'Promise' constructor.  Make sure you have a declaration for the 'Promise' constructor or include 'ES2015' in your '--lib' option.
     const _m43 = import("./subfolder2/another");
-                 ~~~~~~
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2712: A dynamic import call in ES5 requires the 'Promise' constructor.  Make sure you have a declaration for the 'Promise' constructor or include 'ES2015' in your '--lib' option.
     const _m44 = import("./subfolder2/another/");
-                 ~~~~~~
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2712: A dynamic import call in ES5 requires the 'Promise' constructor.  Make sure you have a declaration for the 'Promise' constructor or include 'ES2015' in your '--lib' option.
     const _m45 = import("./subfolder2/another/index");
-                 ~~~~~~
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2712: A dynamic import call in ES5 requires the 'Promise' constructor.  Make sure you have a declaration for the 'Promise' constructor or include 'ES2015' in your '--lib' option.
     // cjs format file
     const x = 1;
@@ -367,37 +367,37 @@ index.mjs(84,14): error TS2712: A dynamic import call in ES5 requires the 'Promi
     
     // These shouldn't work - dynamic `import()` always uses the esm resolver, which does not have extension resolution
     const _m35 = import("./");
-                 ~~~~~~
+                 ~~~~~~~~~~~~
 !!! error TS2712: A dynamic import call in ES5 requires the 'Promise' constructor.  Make sure you have a declaration for the 'Promise' constructor or include 'ES2015' in your '--lib' option.
     const _m36 = import("./index");
-                 ~~~~~~
+                 ~~~~~~~~~~~~~~~~~
 !!! error TS2712: A dynamic import call in ES5 requires the 'Promise' constructor.  Make sure you have a declaration for the 'Promise' constructor or include 'ES2015' in your '--lib' option.
     const _m37 = import("./subfolder");
-                 ~~~~~~
+                 ~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2712: A dynamic import call in ES5 requires the 'Promise' constructor.  Make sure you have a declaration for the 'Promise' constructor or include 'ES2015' in your '--lib' option.
     const _m38 = import("./subfolder/");
-                 ~~~~~~
+                 ~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2712: A dynamic import call in ES5 requires the 'Promise' constructor.  Make sure you have a declaration for the 'Promise' constructor or include 'ES2015' in your '--lib' option.
     const _m39 = import("./subfolder/index");
-                 ~~~~~~
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2712: A dynamic import call in ES5 requires the 'Promise' constructor.  Make sure you have a declaration for the 'Promise' constructor or include 'ES2015' in your '--lib' option.
     const _m40 = import("./subfolder2");
-                 ~~~~~~
+                 ~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2712: A dynamic import call in ES5 requires the 'Promise' constructor.  Make sure you have a declaration for the 'Promise' constructor or include 'ES2015' in your '--lib' option.
     const _m41 = import("./subfolder2/");
-                 ~~~~~~
+                 ~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2712: A dynamic import call in ES5 requires the 'Promise' constructor.  Make sure you have a declaration for the 'Promise' constructor or include 'ES2015' in your '--lib' option.
     const _m42 = import("./subfolder2/index");
-                 ~~~~~~
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2712: A dynamic import call in ES5 requires the 'Promise' constructor.  Make sure you have a declaration for the 'Promise' constructor or include 'ES2015' in your '--lib' option.
     const _m43 = import("./subfolder2/another");
-                 ~~~~~~
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2712: A dynamic import call in ES5 requires the 'Promise' constructor.  Make sure you have a declaration for the 'Promise' constructor or include 'ES2015' in your '--lib' option.
     const _m44 = import("./subfolder2/another/");
-                 ~~~~~~
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2712: A dynamic import call in ES5 requires the 'Promise' constructor.  Make sure you have a declaration for the 'Promise' constructor or include 'ES2015' in your '--lib' option.
     const _m45 = import("./subfolder2/another/index");
-                 ~~~~~~
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2712: A dynamic import call in ES5 requires the 'Promise' constructor.  Make sure you have a declaration for the 'Promise' constructor or include 'ES2015' in your '--lib' option.
     
     // esm format file

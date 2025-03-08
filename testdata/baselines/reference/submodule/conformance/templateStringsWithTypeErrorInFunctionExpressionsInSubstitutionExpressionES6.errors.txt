@@ -6,7 +6,7 @@ error TS2318: Cannot find global type 'String'.
 error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
 error TS2552: Cannot find name 'Number'. Did you mean 'number'?
 error TS2552: Cannot find name 'Object'. Did you mean 'object'?
-templateStringsWithTypeErrorInFunctionExpressionsInSubstitutionExpressionES6.ts(1,27): error TS2322: Type '"bad"' is not assignable to type 'number'.
+templateStringsWithTypeErrorInFunctionExpressionsInSubstitutionExpressionES6.ts(1,27): error TS2322: Type 'string' is not assignable to type 'number'.
 
 
 !!! error TS2318: Cannot find global type 'Array'.
@@ -20,4 +20,4 @@ templateStringsWithTypeErrorInFunctionExpressionsInSubstitutionExpressionES6.ts(
 ==== templateStringsWithTypeErrorInFunctionExpressionsInSubstitutionExpressionES6.ts (1 errors) ====
     `${function (x: number) { x = "bad"; } }`;
                               ~
-!!! error TS2322: Type '"bad"' is not assignable to type 'number'.
+!!! error TS2322: Type 'string' is not assignable to type 'number'.

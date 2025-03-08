@@ -1,9 +1,8 @@
 --- old.builtinIterator.errors.txt
 +++ new.builtinIterator.errors.txt
 @@= skipped -0, +0 lines =@@
--builtinIterator.ts(38,1): error TS2511: Cannot create an instance of an abstract class.
+ builtinIterator.ts(38,1): error TS2511: Cannot create an instance of an abstract class.
 -builtinIterator.ts(40,7): error TS2515: Non-abstract class 'C' does not implement inherited abstract member next from class 'Iterator<number, undefined, unknown>'.
-+builtinIterator.ts(38,5): error TS2511: Cannot create an instance of an abstract class.
 +builtinIterator.ts(40,7): error TS2515: Non-abstract class 'C' does not implement inherited abstract member 'next' from class 'Iterator<number, undefined, unknown>'.
  builtinIterator.ts(44,3): error TS2416: Property 'next' in type 'BadIterator1' is not assignable to the same property in base type 'Iterator<number, undefined, unknown>'.
 -  Type '() => { readonly done: false; readonly value: 0; } | { readonly done: true; readonly value: "a string"; }' is not assignable to type '(value?: unknown) => IteratorResult<number, undefined>'.
@@ -56,13 +55,7 @@
          Types of parameters '__0' and '__0' are incompatible.
            Type '[] | [undefined]' is not assignable to type '[] | [boolean]'.
              Type '[undefined]' is not assignable to type '[] | [boolean]'.
-@@= skipped -78, +78 lines =@@
-     
-     // error cases
-     new Iterator<number>();
--    ~~~~~~~~~~~~~~~~~~~~~~
-+        ~~~~~~~~
- !!! error TS2511: Cannot create an instance of an abstract class.
+@@= skipped -83, +83 lines =@@
      
      class C extends Iterator<number> {}
            ~
@@ -85,7 +78,7 @@
  !!! error TS2416:           Types of property 'value' are incompatible.
  !!! error TS2416:             Type '"a string"' is not assignable to type 'undefined'.
          if (Math.random() < .5) {
-@@= skipped -30, +30 lines =@@
+@@= skipped -25, +25 lines =@@
        next() {
        ~~~~
  !!! error TS2416: Property 'next' in type 'BadIterator2' is not assignable to the same property in base type 'Iterator<number, undefined, unknown>'.

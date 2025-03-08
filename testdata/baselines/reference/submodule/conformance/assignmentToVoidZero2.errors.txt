@@ -4,7 +4,7 @@ assignmentToVoidZero2.js(4,3): error TS2339: Property 'x' does not exist on type
 assignmentToVoidZero2.js(5,3): error TS2339: Property 'y' does not exist on type '{}'.
 assignmentToVoidZero2.js(6,3): error TS2339: Property 'x' does not exist on type '{}'.
 assignmentToVoidZero2.js(6,9): error TS2339: Property 'y' does not exist on type '{}'.
-assignmentToVoidZero2.js(12,13): error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
+assignmentToVoidZero2.js(12,9): error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
 importer.js(1,22): error TS2306: File 'assignmentToVoidZero2.js' is not a module.
 
 
@@ -33,7 +33,7 @@ importer.js(1,22): error TS2306: File 'assignmentToVoidZero2.js' is not a module
         this.q = void 0
     }
     var c = new C()
-                ~
+            ~~~~~~~
 !!! error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
     c.p + c.q
     

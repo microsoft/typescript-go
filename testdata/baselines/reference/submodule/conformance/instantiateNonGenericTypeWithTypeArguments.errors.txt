@@ -1,7 +1,7 @@
 instantiateNonGenericTypeWithTypeArguments.ts(8,15): error TS2558: Expected 0 type arguments, but got 1.
 instantiateNonGenericTypeWithTypeArguments.ts(11,17): error TS2558: Expected 0 type arguments, but got 1.
 instantiateNonGenericTypeWithTypeArguments.ts(14,16): error TS2558: Expected 0 type arguments, but got 1.
-instantiateNonGenericTypeWithTypeArguments.ts(18,14): error TS2347: Untyped function calls may not accept type arguments.
+instantiateNonGenericTypeWithTypeArguments.ts(18,10): error TS2347: Untyped function calls may not accept type arguments.
 
 
 ==== instantiateNonGenericTypeWithTypeArguments.ts (4 errors) ====
@@ -29,5 +29,5 @@ instantiateNonGenericTypeWithTypeArguments.ts(18,14): error TS2347: Untyped func
     var a: any;
     // BUG 790977
     var r2 = new a<number>();
-                 ~
+             ~~~~~~~~~~~~~~~
 !!! error TS2347: Untyped function calls may not accept type arguments.

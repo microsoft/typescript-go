@@ -21,12 +21,12 @@ untypedFunctionCallsWithTypeParameters1.ts(41,4): error TS2558: Expected 0 type 
 !!! error TS2558: Expected 0 type arguments, but got 1.
     var y: any = x;
     var r2 = y<string>();
-             ~
+             ~~~~~~~~~~~
 !!! error TS2347: Untyped function calls may not accept type arguments.
     
     var c: Function;
     var r3 = c<number>(); // should be an error
-             ~
+             ~~~~~~~~~~~
 !!! error TS2347: Untyped function calls may not accept type arguments.
     
     class C implements Function {
@@ -45,7 +45,7 @@ untypedFunctionCallsWithTypeParameters1.ts(41,4): error TS2558: Expected 0 type 
     class C2 extends Function { } // error
     var c3: C2;
     var r5 = c3<number>(); // error
-             ~~
+             ~~~~~~~~~~~~
 !!! error TS2347: Untyped function calls may not accept type arguments.
     
     interface I {

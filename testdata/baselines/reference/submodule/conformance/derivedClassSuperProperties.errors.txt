@@ -460,7 +460,7 @@ derivedClassSuperProperties.ts(397,21): error TS2401: A 'super' call must be a r
             prop = true;
             constructor() {
                 for(super();;) {}
-                    ~~~~~
+                    ~~~~~~~
 !!! error TS2401: A 'super' call must be a root-level statement within a constructor of a derived class that contains initialized properties, parameter properties, or private identifiers.
             }
         },
@@ -468,9 +468,9 @@ derivedClassSuperProperties.ts(397,21): error TS2401: A 'super' call must be a r
             prop = true;
             constructor() {
                 for(a; super();) {}
-                       ~~~~~
+                       ~~~~~~~
 !!! error TS1345: An expression of type 'void' cannot be tested for truthiness.
-                       ~~~~~
+                       ~~~~~~~
 !!! error TS2401: A 'super' call must be a root-level statement within a constructor of a derived class that contains initialized properties, parameter properties, or private identifiers.
             }
         },
@@ -478,7 +478,7 @@ derivedClassSuperProperties.ts(397,21): error TS2401: A 'super' call must be a r
             prop = true;
             constructor() {
                 for(a; b; super()) {}
-                          ~~~~~
+                          ~~~~~~~
 !!! error TS2401: A 'super' call must be a root-level statement within a constructor of a derived class that contains initialized properties, parameter properties, or private identifiers.
             }
         },
@@ -486,7 +486,7 @@ derivedClassSuperProperties.ts(397,21): error TS2401: A 'super' call must be a r
             prop = true;
             constructor() {
                 for(; ; super()) { break; }
-                        ~~~~~
+                        ~~~~~~~
 !!! error TS2401: A 'super' call must be a root-level statement within a constructor of a derived class that contains initialized properties, parameter properties, or private identifiers.
             }
         },
@@ -494,9 +494,9 @@ derivedClassSuperProperties.ts(397,21): error TS2401: A 'super' call must be a r
             prop = true;
             constructor() {
                 for (const x of super()) {}
-                                ~~~~~
+                                ~~~~~~~
 !!! error TS2401: A 'super' call must be a root-level statement within a constructor of a derived class that contains initialized properties, parameter properties, or private identifiers.
-                                ~~~~~
+                                ~~~~~~~
 !!! error TS2495: Type 'void' is not an array type or a string type.
             }
         },
@@ -504,9 +504,9 @@ derivedClassSuperProperties.ts(397,21): error TS2401: A 'super' call must be a r
             prop = true;
             constructor() {
                 while (super()) {}
-                       ~~~~~
+                       ~~~~~~~
 !!! error TS1345: An expression of type 'void' cannot be tested for truthiness.
-                       ~~~~~
+                       ~~~~~~~
 !!! error TS2401: A 'super' call must be a root-level statement within a constructor of a derived class that contains initialized properties, parameter properties, or private identifiers.
             }
         },
@@ -514,9 +514,9 @@ derivedClassSuperProperties.ts(397,21): error TS2401: A 'super' call must be a r
             prop = true;
             constructor() {
                 do {} while (super());
-                             ~~~~~
+                             ~~~~~~~
 !!! error TS1345: An expression of type 'void' cannot be tested for truthiness.
-                             ~~~~~
+                             ~~~~~~~
 !!! error TS2401: A 'super' call must be a root-level statement within a constructor of a derived class that contains initialized properties, parameter properties, or private identifiers.
             }
         },
@@ -524,9 +524,9 @@ derivedClassSuperProperties.ts(397,21): error TS2401: A 'super' call must be a r
             prop = true;
             constructor() {
                 if (super()) {}
-                    ~~~~~
+                    ~~~~~~~
 !!! error TS1345: An expression of type 'void' cannot be tested for truthiness.
-                    ~~~~~
+                    ~~~~~~~
 !!! error TS2401: A 'super' call must be a root-level statement within a constructor of a derived class that contains initialized properties, parameter properties, or private identifiers.
             }
         },
@@ -534,7 +534,7 @@ derivedClassSuperProperties.ts(397,21): error TS2401: A 'super' call must be a r
             prop = true;
             constructor() {
                 switch (super()) {}
-                        ~~~~~
+                        ~~~~~~~
 !!! error TS2401: A 'super' call must be a root-level statement within a constructor of a derived class that contains initialized properties, parameter properties, or private identifiers.
             }
         },

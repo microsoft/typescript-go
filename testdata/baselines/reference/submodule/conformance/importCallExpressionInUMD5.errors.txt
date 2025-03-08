@@ -27,7 +27,7 @@ error TS2552: Cannot find name 'Object'. Did you mean 'object'?
     async function func() {
         const packageName = '.';
         const packageJson = await import(packageName + '/package.json');
-                                  ~~~~~~
+                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2711: A dynamic import call returns a 'Promise'. Make sure you have a declaration for 'Promise' or include 'ES2015' in your '--lib' option.
     }
     

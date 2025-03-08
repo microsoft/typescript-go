@@ -1,4 +1,4 @@
-a.js(7,13): error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
+a.js(7,9): error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
 a.js(22,5): error TS7034: Variable 'n' implicitly has type 'any' in some locations where its type cannot be determined.
 a.js(25,26): error TS7005: Variable 'n' implicitly has an 'any' type.
 a.js(27,5): error TS2322: Type 'undefined' is not assignable to type 'null'.
@@ -19,7 +19,7 @@ a.js(56,17): error TS7006: Parameter 'v' implicitly has an 'any' type.
         this.empty = []
     }
     var a = new A()
-                ~
+            ~~~~~~~
 !!! error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
     a.unknown = 1
     a.unknown = true

@@ -11,7 +11,7 @@
 +error TS2552: Cannot find name 'Number'. Did you mean 'number'?
 +error TS2552: Cannot find name 'Object'. Did you mean 'object'?
 +for-of30.ts(11,6): error TS2304: Cannot find name 'Symbol'.
-+for-of30.ts(16,19): error TS2488: Type 'MyStringIterator' must have a '[Symbol.iterator]()' method that returns an iterator.
++for-of30.ts(16,15): error TS2488: Type 'MyStringIterator' must have a '[Symbol.iterator]()' method that returns an iterator.
  
  
 -==== for-of30.ts (1 errors) ====
@@ -38,7 +38,6 @@
      }
      
      for (var v of new MyStringIterator) { }
--                  ~~~~~~~~~~~~~~~~~~~~
+                   ~~~~~~~~~~~~~~~~~~~~
 -!!! error TS2767: The 'return' property of an iterator must be a method.
-+                      ~~~~~~~~~~~~~~~~
 +!!! error TS2488: Type 'MyStringIterator' must have a '[Symbol.iterator]()' method that returns an iterator.

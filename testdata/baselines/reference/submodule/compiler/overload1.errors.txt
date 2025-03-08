@@ -5,7 +5,7 @@ overload1.ts(32,5): error TS2554: Expected 1-2 arguments, but got 0.
 overload1.ts(33,1): error TS2322: Type 'C' is not assignable to type 'string'.
 overload1.ts(34,9): error TS2769: No overload matches this call.
   The last overload gave the following error.
-    Argument of type '2' is not assignable to parameter of type 'string'.
+    Argument of type 'number' is not assignable to parameter of type 'string'.
 
 
 ==== overload1.ts (6 errors) ====
@@ -57,7 +57,7 @@ overload1.ts(34,9): error TS2769: No overload matches this call.
             ~
 !!! error TS2769: No overload matches this call.
 !!! error TS2769:   The last overload gave the following error.
-!!! error TS2769:     Argument of type '2' is not assignable to parameter of type 'string'.
+!!! error TS2769:     Argument of type 'number' is not assignable to parameter of type 'string'.
 !!! related TS2771 overload1.ts:21:9: The last overload is declared here.
     z=x.h("hello",0); // good
     

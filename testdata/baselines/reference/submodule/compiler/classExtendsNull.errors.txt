@@ -5,7 +5,7 @@ classExtendsNull.ts(3,9): error TS17005: A constructor cannot contain a 'super' 
     class C extends null {
         constructor() {
             super();
-            ~~~~~
+            ~~~~~~~
 !!! error TS17005: A constructor cannot contain a 'super' call when its class extends 'null'.
             return Object.create(null);
         }

@@ -1,4 +1,4 @@
-example.js(5,10): error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
+example.js(5,2): error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
 
 
 ==== example.js (1 errors) ====
@@ -7,6 +7,6 @@ example.js(5,10): error TS7009: 'new' expression, whose target lacks a construct
       Foo() { this.bar = "bar" }
     };
     (new obj.Foo()).bar
-             ~~~
+     ~~~~~~~~~~~~~
 !!! error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
     

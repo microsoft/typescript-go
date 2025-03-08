@@ -3,10 +3,10 @@
 @@= skipped -0, +-1 lines =@@
 -<no content>
 @@= skipped --1, +1 lines =@@
-+input.js(10,9): error TS2322: Type '"frankly, complete nonsense"' is not assignable to type '() => void'.
-+input.js(18,1): error TS2322: Type 'false' is not assignable to type '() => void'.
-+input.js(28,9): error TS2322: Type '"even more nonsense"' is not assignable to type '() => void'.
-+input.js(31,1): error TS2322: Type 'true' is not assignable to type '() => void'.
++input.js(10,9): error TS2322: Type 'string' is not assignable to type '() => void'.
++input.js(18,1): error TS2322: Type 'boolean' is not assignable to type '() => void'.
++input.js(28,9): error TS2322: Type 'string' is not assignable to type '() => void'.
++input.js(31,1): error TS2322: Type 'boolean' is not assignable to type '() => void'.
 +
 +
 +==== input.js (4 errors) ====
@@ -21,7 +21,7 @@
 +            this.m = this.m.bind(this);
 +            this.mistake = 'frankly, complete nonsense';
 +            ~~~~~~~~~~~~
-+!!! error TS2322: Type '"frankly, complete nonsense"' is not assignable to type '() => void'.
++!!! error TS2322: Type 'string' is not assignable to type '() => void'.
 +        }
 +        m() {
 +        }
@@ -31,7 +31,7 @@
 +    let x = new X();
 +    X.prototype.mistake = false;
 +    ~~~~~~~~~~~~~~~~~~~
-+!!! error TS2322: Type 'false' is not assignable to type '() => void'.
++!!! error TS2322: Type 'boolean' is not assignable to type '() => void'.
 +    x.m();
 +    x.mistake;
 +    class Y {
@@ -43,12 +43,12 @@
 +            this.m = this.m.bind(this);
 +            this.mistake = 'even more nonsense';
 +            ~~~~~~~~~~~~
-+!!! error TS2322: Type '"even more nonsense"' is not assignable to type '() => void'.
++!!! error TS2322: Type 'string' is not assignable to type '() => void'.
 +        }
 +    }
 +    Y.prototype.mistake = true;
 +    ~~~~~~~~~~~~~~~~~~~
-+!!! error TS2322: Type 'true' is not assignable to type '() => void'.
++!!! error TS2322: Type 'boolean' is not assignable to type '() => void'.
 +    let y = new Y();
 +    y.m();
 +    y.mistake();

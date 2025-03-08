@@ -5,7 +5,7 @@ interfaceMayNotBeExtendedWitACall.ts(3,24): error TS2499: An interface can only 
     interface color {}
     
     interface blue extends color() { // error
-                           ~~~~~
+                           ~~~~~~~
 !!! error TS2499: An interface can only extend an identifier/qualified-name with optional type arguments.
     
     }

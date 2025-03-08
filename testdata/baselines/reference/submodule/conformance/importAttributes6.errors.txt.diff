@@ -4,8 +4,7 @@
 -mod.mts(1,37): error TS2322: Type '{ field: 0; }' is not assignable to type 'ImportAttributes'.
 +mod.mts(1,37): error TS2322: Type '{ field: 0 }' is not assignable to type 'ImportAttributes'.
    Property 'field' is incompatible with index signature.
--    Type 'number' is not assignable to type 'string'.
-+    Type '0' is not assignable to type 'string'.
+     Type 'number' is not assignable to type 'string'.
 +mod.mts(1,37): error TS2856: Import attributes are not allowed on statements that compile to CommonJS 'require' calls.
  mod.mts(1,51): error TS2858: Import attribute values must be string literal expressions.
 +mod.mts(2,37): error TS2856: Import attributes are not allowed on statements that compile to CommonJS 'require' calls.
@@ -29,9 +28,8 @@
 +    Type '{ a: number }' is not assignable to type 'string'.
 +mod.mts(5,37): error TS2856: Import attributes are not allowed on statements that compile to CommonJS 'require' calls.
  mod.mts(5,51): error TS2858: Import attribute values must be string literal expressions.
--mod.mts(6,65): error TS2858: Import attribute values must be string literal expressions.
 +mod.mts(6,37): error TS2856: Import attributes are not allowed on statements that compile to CommonJS 'require' calls.
-+mod.mts(6,68): error TS2858: Import attribute values must be string literal expressions.
+ mod.mts(6,65): error TS2858: Import attribute values must be string literal expressions.
  
  
 -==== mod.mts (10 errors) ====
@@ -41,8 +39,7 @@
 -!!! error TS2322: Type '{ field: 0; }' is not assignable to type 'ImportAttributes'.
 +!!! error TS2322: Type '{ field: 0 }' is not assignable to type 'ImportAttributes'.
  !!! error TS2322:   Property 'field' is incompatible with index signature.
--!!! error TS2322:     Type 'number' is not assignable to type 'string'.
-+!!! error TS2322:     Type '0' is not assignable to type 'string'.
+ !!! error TS2322:     Type 'number' is not assignable to type 'string'.
 +                                        ~~~~~~~~~~~~~~~~~
 +!!! error TS2856: Import attributes are not allowed on statements that compile to CommonJS 'require' calls.
                                                        ~
@@ -84,9 +81,8 @@
                                                        ~~~~~~~~
  !!! error TS2858: Import attribute values must be string literal expressions.
      import * as thing6 from "./mod.mjs" with { type: "json", field: 0..toString() };
--                                                                    ~~~~~~~~~~~~~
 +                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 +!!! error TS2856: Import attributes are not allowed on statements that compile to CommonJS 'require' calls.
-+                                                                       ~~~~~~~~
+                                                                     ~~~~~~~~~~~~~
  !!! error TS2858: Import attribute values must be string literal expressions.
      

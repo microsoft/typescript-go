@@ -112,7 +112,7 @@ intersectionsAndEmptyObjects.ts(86,6): error TS2711: A dynamic import call retur
                                 ~~~~~~~
 !!! error TS2583: Cannot find name 'Promise'. Do you need to change your target library? Try changing the 'lib' compiler option to 'es2015' or later.
     mock(import('./ex'))
-         ~~~~~~
+         ~~~~~~~~~~~~~~
 !!! error TS2711: A dynamic import call returns a 'Promise'. Make sure you have a declaration for 'Promise' or include 'ES2015' in your '--lib' option.
     
 ==== ex.d.ts (0 errors) ====

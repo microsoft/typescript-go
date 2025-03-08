@@ -7,7 +7,7 @@ error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
 error TS2552: Cannot find name 'Number'. Did you mean 'number'?
 error TS2552: Cannot find name 'Object'. Did you mean 'object'?
 for-of22.ts(9,6): error TS2304: Cannot find name 'Symbol'.
-for-of22.ts(15,19): error TS2488: Type 'FooIterator' must have a '[Symbol.iterator]()' method that returns an iterator.
+for-of22.ts(15,15): error TS2488: Type 'FooIterator' must have a '[Symbol.iterator]()' method that returns an iterator.
 
 
 !!! error TS2318: Cannot find global type 'Array'.
@@ -36,7 +36,7 @@ for-of22.ts(15,19): error TS2488: Type 'FooIterator' must have a '[Symbol.iterat
     
     v;
     for (var v of new FooIterator) {
-                      ~~~~~~~~~~~
+                  ~~~~~~~~~~~~~~~
 !!! error TS2488: Type 'FooIterator' must have a '[Symbol.iterator]()' method that returns an iterator.
         
     }

@@ -15,7 +15,7 @@
 +iterableArrayPattern15.ts(16,17): error TS2488: Type '{}' must have a '[Symbol.iterator]()' method that returns an iterator.
 +iterableArrayPattern15.ts(16,18): error TS2339: Property '0' does not exist on type '{}'.
 +iterableArrayPattern15.ts(16,21): error TS2339: Property '1' does not exist on type '{}'.
-+iterableArrayPattern15.ts(17,12): error TS2488: Type 'FooIterator' must have a '[Symbol.iterator]()' method that returns an iterator.
++iterableArrayPattern15.ts(17,8): error TS2488: Type 'FooIterator' must have a '[Symbol.iterator]()' method that returns an iterator.
 +
 +
 +!!! error TS2318: Cannot find global type 'Array'.
@@ -52,5 +52,5 @@
 +                        ~
 +!!! error TS2339: Property '1' does not exist on type '{}'.
 +    fun(...new FooIterator);
-+               ~~~~~~~~~~~
++           ~~~~~~~~~~~~~~~
 +!!! error TS2488: Type 'FooIterator' must have a '[Symbol.iterator]()' method that returns an iterator.

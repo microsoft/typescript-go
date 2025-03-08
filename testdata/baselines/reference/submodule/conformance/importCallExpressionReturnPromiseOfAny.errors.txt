@@ -46,27 +46,27 @@ error TS2552: Cannot find name 'Object'. Did you mean 'object'?
     declare const moduleFile: number;
     
     import(`${directory}\\${moduleFile}`);
-    ~~~~~~
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2711: A dynamic import call returns a 'Promise'. Make sure you have a declaration for 'Promise' or include 'ES2015' in your '--lib' option.
     import(getSpecifier());
-    ~~~~~~
+    ~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2711: A dynamic import call returns a 'Promise'. Make sure you have a declaration for 'Promise' or include 'ES2015' in your '--lib' option.
     
     var p1 = import(ValidSomeCondition() ? "./0" : "externalModule");
-             ~~~~~~
+             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2711: A dynamic import call returns a 'Promise'. Make sure you have a declaration for 'Promise' or include 'ES2015' in your '--lib' option.
     var p1: Promise<any> = import(getSpecifier());
             ~~~~~~~
 !!! error TS2583: Cannot find name 'Promise'. Do you need to change your target library? Try changing the 'lib' compiler option to 'es2015' or later.
-                           ~~~~~~
+                           ~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2711: A dynamic import call returns a 'Promise'. Make sure you have a declaration for 'Promise' or include 'ES2015' in your '--lib' option.
     var p11: Promise<typeof defaultModule> = import(getSpecifier());
              ~~~~~~~
 !!! error TS2583: Cannot find name 'Promise'. Do you need to change your target library? Try changing the 'lib' compiler option to 'es2015' or later.
-                                             ~~~~~~
+                                             ~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2711: A dynamic import call returns a 'Promise'. Make sure you have a declaration for 'Promise' or include 'ES2015' in your '--lib' option.
     const p2 = import(whatToLoad ? getSpecifier() : "defaulPath") as Promise<typeof defaultModule>;
-               ~~~~~~
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2711: A dynamic import call returns a 'Promise'. Make sure you have a declaration for 'Promise' or include 'ES2015' in your '--lib' option.
                                                                      ~~~~~~~
 !!! error TS2583: Cannot find name 'Promise'. Do you need to change your target library? Try changing the 'lib' compiler option to 'es2015' or later.
@@ -80,7 +80,7 @@ error TS2552: Cannot find name 'Object'. Did you mean 'object'?
     var p3: Promise<typeof defaultModule> = import(j=getSpecifier());
             ~~~~~~~
 !!! error TS2583: Cannot find name 'Promise'. Do you need to change your target library? Try changing the 'lib' compiler option to 'es2015' or later.
-                                            ~~~~~~
+                                            ~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2711: A dynamic import call returns a 'Promise'. Make sure you have a declaration for 'Promise' or include 'ES2015' in your '--lib' option.
     
     function * loadModule(directories: string[]) {
@@ -89,7 +89,7 @@ error TS2552: Cannot find name 'Object'. Did you mean 'object'?
 !!! error TS2488: Type '{}' must have a '[Symbol.iterator]()' method that returns an iterator.
             const path = `${directory}\\moduleFile`;
             import(yield path);
-            ~~~~~~
+            ~~~~~~~~~~~~~~~~~~
 !!! error TS2711: A dynamic import call returns a 'Promise'. Make sure you have a declaration for 'Promise' or include 'ES2015' in your '--lib' option.
         }
     }

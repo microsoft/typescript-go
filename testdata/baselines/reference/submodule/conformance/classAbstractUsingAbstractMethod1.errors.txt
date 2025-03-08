@@ -1,4 +1,4 @@
-classAbstractUsingAbstractMethod1.ts(16,9): error TS2511: Cannot create an instance of an abstract class.
+classAbstractUsingAbstractMethod1.ts(16,5): error TS2511: Cannot create an instance of an abstract class.
 
 
 ==== classAbstractUsingAbstractMethod1.ts (1 errors) ====
@@ -18,6 +18,6 @@ classAbstractUsingAbstractMethod1.ts(16,9): error TS2511: Cannot create an insta
     a.foo();
     
     a = new C; // error, cannot instantiate abstract class.
-            ~
+        ~~~~~
 !!! error TS2511: Cannot create an instance of an abstract class.
     a.foo();

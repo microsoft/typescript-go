@@ -29,29 +29,29 @@ error TS2552: Cannot find name 'Object'. Did you mean 'object'?
     
 ==== 1.ts (6 errors) ====
     import("./0");
-    ~~~~~~
+    ~~~~~~~~~~~~~
 !!! error TS2711: A dynamic import call returns a 'Promise'. Make sure you have a declaration for 'Promise' or include 'ES2015' in your '--lib' option.
     var p1 = import("./0");
-             ~~~~~~
+             ~~~~~~~~~~~~~
 !!! error TS2711: A dynamic import call returns a 'Promise'. Make sure you have a declaration for 'Promise' or include 'ES2015' in your '--lib' option.
     p1.then(zero => {
         return zero.foo();
     });
     
     export var p2 = import("./0");
-                    ~~~~~~
+                    ~~~~~~~~~~~~~
 !!! error TS2711: A dynamic import call returns a 'Promise'. Make sure you have a declaration for 'Promise' or include 'ES2015' in your '--lib' option.
     
     function foo() {
         const p2 = import("./0");
-                   ~~~~~~
+                   ~~~~~~~~~~~~~
 !!! error TS2711: A dynamic import call returns a 'Promise'. Make sure you have a declaration for 'Promise' or include 'ES2015' in your '--lib' option.
     }
     
     class C {
         method() {
             const loadAsync = import ("./0");
-                              ~~~~~~
+                              ~~~~~~~~~~~~~~
 !!! error TS2711: A dynamic import call returns a 'Promise'. Make sure you have a declaration for 'Promise' or include 'ES2015' in your '--lib' option.
         }
     }
@@ -59,7 +59,7 @@ error TS2552: Cannot find name 'Object'. Did you mean 'object'?
     export class D {
         method() {
             const loadAsync = import ("./0");
-                              ~~~~~~
+                              ~~~~~~~~~~~~~~
 !!! error TS2711: A dynamic import call returns a 'Promise'. Make sure you have a declaration for 'Promise' or include 'ES2015' in your '--lib' option.
         }
     }

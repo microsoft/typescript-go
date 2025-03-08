@@ -10,19 +10,16 @@
  
  
  ==== objectCreationOfElementAccessExpression.ts (4 errors) ====
-@@= skipped -59, +59 lines =@@
-     var foods = new PetFood[new IceCream('Mint chocolate chip') , Cookie('Chocolate chip', false) , new Cookie('Peanut butter', true)];
+@@= skipped -60, +60 lines =@@
                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  !!! error TS2538: Type 'Cookie' cannot be used as an index type.
--                                                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -!!! error TS2348: Value of type 'typeof Cookie' is not callable. Did you mean to include 'new'?
-+                                                                  ~~~~~~
 +!!! error TS2348: Value of type '{ new(flavor: string, isGlutenFree: boolean): Cookie, prototype: Cookie }' is not callable. Did you mean to include 'new'?
      var foods2: MonsterFood[] = new PetFood[new IceCream('Mint chocolate chip') , Cookie('Chocolate chip', false) , new Cookie('Peanut butter', true)];
                                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  !!! error TS2538: Type 'Cookie' cannot be used as an index type.
--                                                                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                                                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -!!! error TS2348: Value of type 'typeof Cookie' is not callable. Did you mean to include 'new'?
-+                                                                                  ~~~~~~
 +!!! error TS2348: Value of type '{ new(flavor: string, isGlutenFree: boolean): Cookie, prototype: Cookie }' is not callable. Did you mean to include 'new'?
      

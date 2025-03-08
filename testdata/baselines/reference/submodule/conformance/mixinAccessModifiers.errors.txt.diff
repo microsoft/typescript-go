@@ -59,26 +59,7 @@
  !!! error TS2339:   The intersection 'Private & Public' was reduced to 'never' because property 'p' exists in multiple constituents and is private in some.
      }
      
-@@= skipped -37, +37 lines =@@
-     // Can't derive from type with inaccessible properties
-     
-     class C1 extends Mix(Private, Private2) {}
--                     ~~~~~~~~~~~~~~~~~~~~~~
-+                     ~~~
- !!! error TS2509: Base constructor return type 'never' is not an object type or intersection of object types with statically known members.
- !!! error TS2509:   The intersection 'Private & Private2' was reduced to 'never' because property 'p' exists in multiple constituents and is private in some.
-     class C2 extends Mix(Private, Protected) {}
--                     ~~~~~~~~~~~~~~~~~~~~~~~
-+                     ~~~
- !!! error TS2509: Base constructor return type 'never' is not an object type or intersection of object types with statically known members.
- !!! error TS2509:   The intersection 'Private & Protected' was reduced to 'never' because property 'p' exists in multiple constituents and is private in some.
-     class C3 extends Mix(Private, Public) {}
--                     ~~~~~~~~~~~~~~~~~~~~
-+                     ~~~
- !!! error TS2509: Base constructor return type 'never' is not an object type or intersection of object types with statically known members.
- !!! error TS2509:   The intersection 'Private & Public' was reduced to 'never' because property 'p' exists in multiple constituents and is private in some.
-     
-@@= skipped -36, +36 lines =@@
+@@= skipped -73, +73 lines =@@
      	static g() {
      		C4.s;  // Error, not in class deriving from Protected2
      		   ~

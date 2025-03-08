@@ -12,7 +12,7 @@ inferTypePredicates.ts(53,6): error TS2339: Property 'filter' does not exist on 
   Property 'filter' does not exist on type 'undefined'.
 inferTypePredicates.ts(65,28): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
   Type 'undefined' is not assignable to type 'string'.
-inferTypePredicates.ts(90,8): error TS2345: Argument of type '10' is not assignable to parameter of type 'string'.
+inferTypePredicates.ts(90,8): error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
 inferTypePredicates.ts(113,7): error TS2322: Type 'string | number' is not assignable to type 'string'.
   Type 'number' is not assignable to type 'string'.
 inferTypePredicates.ts(115,7): error TS2322: Type 'string | number' is not assignable to type 'number'.
@@ -134,7 +134,7 @@ inferTypePredicates.ts(205,7): error TS2741: Property 'z' is missing in type 'C1
     const a = [1, "foo", 2, "bar"].filter(x => typeof x === "string");
     a.push(10);
            ~~
-!!! error TS2345: Argument of type '10' is not assignable to parameter of type 'string'.
+!!! error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
     
     // Defer to explicit type guards, even when they're incorrect.
     function backwardsGuard(x: number|string): x is number {

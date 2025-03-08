@@ -30,7 +30,7 @@
 +==== importCallExpressionShouldNotGetParen.ts (4 errors) ====
 +    const localeName = "zh-CN";
 +    import(`./locales/${localeName}.js`).then(bar => {
-+    ~~~~~~
++    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 +!!! error TS2711: A dynamic import call returns a 'Promise'. Make sure you have a declaration for 'Promise' or include 'ES2015' in your '--lib' option.
 +                                              ~~~
 +!!! error TS7006: Parameter 'bar' implicitly has an 'any' type.
@@ -38,7 +38,7 @@
 +    });
 +    
 +    import("./locales/" + localeName + ".js").then(bar => {
-+    ~~~~~~
++    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 +!!! error TS2711: A dynamic import call returns a 'Promise'. Make sure you have a declaration for 'Promise' or include 'ES2015' in your '--lib' option.
 +                                                   ~~~
 +!!! error TS7006: Parameter 'bar' implicitly has an 'any' type.

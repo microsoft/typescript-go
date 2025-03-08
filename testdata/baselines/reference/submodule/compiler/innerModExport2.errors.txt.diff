@@ -2,11 +2,10 @@
 +++ new.innerModExport2.errors.txt
 @@= skipped -0, +0 lines =@@
  innerModExport2.ts(5,5): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
--innerModExport2.ts(5,12): error TS1437: Namespace must be given a name.
+ innerModExport2.ts(5,12): error TS1437: Namespace must be given a name.
 -innerModExport2.ts(7,20): error TS2395: Individual declarations in merged declaration 'export_var' must be all exported or all local.
 -innerModExport2.ts(13,9): error TS2395: Individual declarations in merged declaration 'export_var' must be all exported or all local.
 -innerModExport2.ts(20,7): error TS2551: Property 'NonExportFunc' does not exist on type 'typeof Outer'. Did you mean 'ExportFunc'?
-+innerModExport2.ts(5,12): error TS1005: ';' expected.
 +innerModExport2.ts(20,7): error TS2551: Property 'NonExportFunc' does not exist on type '{ export_var: number, ExportFunc: () => number, outer_var_export: number, outerFuncExport: () => number }'. Did you mean 'ExportFunc'?
  
  
@@ -15,12 +14,8 @@
      module Outer {
      
          // inner mod 1
-@@= skipped -13, +11 lines =@@
-         ~~~~~~
- !!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-                ~
--!!! error TS1437: Namespace must be given a name.
-+!!! error TS1005: ';' expected.
+@@= skipped -16, +14 lines =@@
+ !!! error TS1437: Namespace must be given a name.
              var non_export_var = 0;
              export var export_var = 1;
 -                       ~~~~~~~~~~
@@ -36,7 +31,7 @@
      
          export var outer_var_export = 0;
          export function outerFuncExport() { return 0; }
-@@= skipped -21, +17 lines =@@
+@@= skipped -18, +14 lines =@@
      
      Outer.NonExportFunc();
            ~~~~~~~~~~~~~

@@ -233,12 +233,10 @@
 -                         ~~~~~
 -!!! error TS17012: 'targe' is not a valid meta-property for keyword 'new'. Did you mean 'target'?
      const nullaryDynamicImport = import()
--                                 ~~~~~~~~
-+                                 ~~~~~~
+                                  ~~~~~~~~
  !!! message TS1450: Dynamic imports can only accept a module specifier and an optional set of attributes as arguments
      const trinaryDynamicImport = import('1', '2', '3')
--                                 ~~~~~~~~~~~~~~~~~~~~~
-+                                 ~~~~~~
+                                  ~~~~~~~~~~~~~~~~~~~~~
  !!! message TS1450: Dynamic imports can only accept a module specifier and an optional set of attributes as arguments
 +                                        ~~~
 +!!! error TS2307: Cannot find module '1' or its corresponding type declarations.

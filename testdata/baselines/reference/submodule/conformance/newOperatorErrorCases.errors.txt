@@ -1,5 +1,5 @@
 newOperatorErrorCases.ts(26,16): error TS1005: ',' expected.
-newOperatorErrorCases.ts(36,13): error TS2350: Only a void function can be called with the 'new' keyword.
+newOperatorErrorCases.ts(36,9): error TS2350: Only a void function can be called with the 'new' keyword.
 
 
 ==== newOperatorErrorCases.ts (2 errors) ====
@@ -41,6 +41,6 @@ newOperatorErrorCases.ts(36,13): error TS2350: Only a void function can be calle
     // Construct expression of non-void returning function
     function fnNumber(): number { return 32; }
     var s = new fnNumber(); // Error
-                ~~~~~~~~
+            ~~~~~~~~~~~~~~
 !!! error TS2350: Only a void function can be called with the 'new' keyword.
     

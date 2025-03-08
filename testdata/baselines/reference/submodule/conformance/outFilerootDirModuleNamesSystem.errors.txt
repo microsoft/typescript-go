@@ -30,6 +30,6 @@ src/b.ts(5,1): error TS2711: A dynamic import call returns a 'Promise'. Make sur
     
     // https://github.com/microsoft/TypeScript/issues/37429
     import("./a");
-    ~~~~~~
+    ~~~~~~~~~~~~~
 !!! error TS2711: A dynamic import call returns a 'Promise'. Make sure you have a declaration for 'Promise' or include 'ES2015' in your '--lib' option.
     

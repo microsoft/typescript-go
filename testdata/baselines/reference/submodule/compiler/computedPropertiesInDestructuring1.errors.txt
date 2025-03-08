@@ -9,8 +9,8 @@ computedPropertiesInDestructuring1.ts(15,15): error TS2537: Type '{ bar: number 
 computedPropertiesInDestructuring1.ts(16,16): error TS2537: Type '{ bar: number }' has no matching index signature for type 'string'.
 computedPropertiesInDestructuring1.ts(17,16): error TS2537: Type '{ bar: number }' has no matching index signature for type 'string'.
 computedPropertiesInDestructuring1.ts(20,8): error TS2538: Type 'error' cannot be used as an index type.
+computedPropertiesInDestructuring1.ts(21,8): error TS2538: Type 'error' cannot be used as an index type.
 computedPropertiesInDestructuring1.ts(21,12): error TS2339: Property 'toExponential' does not exist on type 'string'.
-computedPropertiesInDestructuring1.ts(21,12): error TS2538: Type 'error' cannot be used as an index type.
 computedPropertiesInDestructuring1.ts(24,4): error TS2537: Type '{ bar: string }' has no matching index signature for type 'string'.
 computedPropertiesInDestructuring1.ts(28,4): error TS2537: Type '{ bar: string }' has no matching index signature for type 'string'.
 computedPropertiesInDestructuring1.ts(30,4): error TS2537: Type '{ bar: string }' has no matching index signature for type 'string'.
@@ -33,14 +33,14 @@ computedPropertiesInDestructuring1.ts(34,5): error TS2365: Operator '+' cannot b
     
     let foo2 = () => "bar";
     let {[foo2()]: bar3} = {bar: "bar"};
-          ~~~~
+          ~~~~~~
 !!! error TS2537: Type '{ bar: string }' has no matching index signature for type 'string'.
     
     let [{[foo]: bar4}] = [{bar: "bar"}];
            ~~~
 !!! error TS2537: Type '{ bar: string }' has no matching index signature for type 'string'.
     let [{[foo2()]: bar5}] = [{bar: "bar"}];
-           ~~~~
+           ~~~~~~
 !!! error TS2537: Type '{ bar: string }' has no matching index signature for type 'string'.
     
     function f1({["bar"]: x}: { bar: number }) {}
@@ -48,24 +48,24 @@ computedPropertiesInDestructuring1.ts(34,5): error TS2365: Operator '+' cannot b
                   ~~~
 !!! error TS2537: Type '{ bar: number }' has no matching index signature for type 'string'.
     function f3({[foo2()]: x}: { bar: number }) {}
-                  ~~~~
+                  ~~~~~~
 !!! error TS2537: Type '{ bar: number }' has no matching index signature for type 'string'.
     function f4([{[foo]: x}]: [{ bar: number }]) {}
                    ~~~
 !!! error TS2537: Type '{ bar: number }' has no matching index signature for type 'string'.
     function f5([{[foo2()]: x}]: [{ bar: number }]) {}
-                   ~~~~
+                   ~~~~~~
 !!! error TS2537: Type '{ bar: number }' has no matching index signature for type 'string'.
     
     // report errors on type errors in computed properties used in destructuring
     let [{[foo()]: bar6}] = [{bar: "bar"}];
-           ~~~
+           ~~~~~
 !!! error TS2538: Type 'error' cannot be used as an index type.
     let [{[foo.toExponential()]: bar7}] = [{bar: "bar"}];
+           ~~~~~~~~~~~~~~~~~~~
+!!! error TS2538: Type 'error' cannot be used as an index type.
                ~~~~~~~~~~~~~
 !!! error TS2339: Property 'toExponential' does not exist on type 'string'.
-               ~~~~~~~~~~~~~
-!!! error TS2538: Type 'error' cannot be used as an index type.
     
     // destructuring assignment
     ({[foo]: bar} = {bar: "bar"});
@@ -75,18 +75,18 @@ computedPropertiesInDestructuring1.ts(34,5): error TS2365: Operator '+' cannot b
     ({["bar"]: bar2} = {bar: "bar"});
     
     ({[foo2()]: bar3} = {bar: "bar"});
-       ~~~~
+       ~~~~~~
 !!! error TS2537: Type '{ bar: string }' has no matching index signature for type 'string'.
     
     [{[foo]: bar4}] = [{bar: "bar"}];
        ~~~
 !!! error TS2537: Type '{ bar: string }' has no matching index signature for type 'string'.
     [{[foo2()]: bar5}] = [{bar: "bar"}];
-       ~~~~
+       ~~~~~~
 !!! error TS2537: Type '{ bar: string }' has no matching index signature for type 'string'.
     
     [{[foo()]: bar4}] = [{bar: "bar"}];
-       ~~~
+       ~~~~~
 !!! error TS2538: Type 'error' cannot be used as an index type.
     [{[(1 + {})]: bar4}] = [{bar: "bar"}];
        ~~~~~~~~

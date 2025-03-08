@@ -3,7 +3,7 @@ noInfer.ts(36,14): error TS2322: Type '"bar"' is not assignable to type '"foo"'.
 noInfer.ts(37,14): error TS2322: Type '"bar"' is not assignable to type '"foo"'.
 noInfer.ts(38,15): error TS2322: Type '"bar"' is not assignable to type '"foo"'.
 noInfer.ts(39,15): error TS2322: Type '"bar"' is not assignable to type '"foo"'.
-noInfer.ts(47,34): error TS2741: Property 'woof' is missing in type 'Animal' but required in type 'Dog'.
+noInfer.ts(47,30): error TS2741: Property 'woof' is missing in type 'Animal' but required in type 'Dog'.
 noInfer.ts(53,16): error TS2741: Property 'y' is missing in type '{ x: number }' but required in type '{ x: number, y: number }'.
 noInfer.ts(58,22): error TS2353: Object literal may only specify known properties, and 'y' does not exist in type '{ x: number }'.
 noInfer.ts(59,14): error TS2353: Object literal may only specify known properties, and 'y' does not exist in type '{ x: number }'.
@@ -70,7 +70,7 @@ noInfer.ts(66,14): error TS2741: Property 'foo' is missing in type '{}' but requ
     doSomething(new Animal(), () => new Animal()); // ok
     doSomething(new Animal(), () => new Dog()); // ok
     doSomething(new Dog(), () => new Animal()); // error
-                                     ~~~~~~
+                                 ~~~~~~~~~~~~
 !!! error TS2741: Property 'woof' is missing in type 'Animal' but required in type 'Dog'.
 !!! related TS2728 noInfer.ts:42:36: 'woof' is declared here.
 !!! related TS6502 noInfer.ts:43:55: The expected type comes from the return type of this signature.

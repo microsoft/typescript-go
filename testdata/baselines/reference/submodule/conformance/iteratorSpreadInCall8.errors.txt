@@ -9,8 +9,8 @@ error TS2552: Cannot find name 'Object'. Did you mean 'object'?
 iteratorSpreadInCall8.ts(8,20): error TS2304: Cannot find name 'Symbol'.
 iteratorSpreadInCall8.ts(13,6): error TS2304: Cannot find name 'Symbol'.
 iteratorSpreadInCall8.ts(26,6): error TS2304: Cannot find name 'Symbol'.
-iteratorSpreadInCall8.ts(31,16): error TS2488: Type 'SymbolIterator' must have a '[Symbol.iterator]()' method that returns an iterator.
-iteratorSpreadInCall8.ts(31,39): error TS2488: Type '_StringIterator' must have a '[Symbol.iterator]()' method that returns an iterator.
+iteratorSpreadInCall8.ts(31,12): error TS2488: Type 'SymbolIterator' must have a '[Symbol.iterator]()' method that returns an iterator.
+iteratorSpreadInCall8.ts(31,35): error TS2488: Type '_StringIterator' must have a '[Symbol.iterator]()' method that returns an iterator.
 
 
 !!! error TS2318: Cannot find global type 'Array'.
@@ -59,7 +59,7 @@ iteratorSpreadInCall8.ts(31,39): error TS2488: Type '_StringIterator' must have 
     }
     
     new Foo(...new SymbolIterator, ...new _StringIterator);
-                   ~~~~~~~~~~~~~~
+               ~~~~~~~~~~~~~~~~~~
 !!! error TS2488: Type 'SymbolIterator' must have a '[Symbol.iterator]()' method that returns an iterator.
-                                          ~~~~~~~~~~~~~~~
+                                      ~~~~~~~~~~~~~~~~~~~
 !!! error TS2488: Type '_StringIterator' must have a '[Symbol.iterator]()' method that returns an iterator.

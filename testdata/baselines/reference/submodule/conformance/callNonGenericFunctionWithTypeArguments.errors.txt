@@ -64,10 +64,10 @@ callNonGenericFunctionWithTypeArguments.ts(43,10): error TS2347: Untyped functio
     
     var a;
     var r8 = a<number>();
-             ~
+             ~~~~~~~~~~~
 !!! error TS2347: Untyped function calls may not accept type arguments.
     
     var a2: any;
     var r8 = a2<number>();
-             ~~
+             ~~~~~~~~~~~~
 !!! error TS2347: Untyped function calls may not accept type arguments.

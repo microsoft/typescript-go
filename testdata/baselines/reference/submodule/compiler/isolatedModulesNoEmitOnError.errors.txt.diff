@@ -1,7 +1,6 @@
 --- old.isolatedModulesNoEmitOnError.errors.txt
 +++ new.isolatedModulesNoEmitOnError.errors.txt
 @@= skipped -0, +0 lines =@@
--file1.ts(1,14): error TS2322: Type 'number' is not assignable to type 'string'.
 +error TS2318: Cannot find global type 'Array'.
 +error TS2318: Cannot find global type 'Function'.
 +error TS2318: Cannot find global type 'IArguments'.
@@ -10,7 +9,7 @@
 +error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
 +error TS2552: Cannot find name 'Number'. Did you mean 'number'?
 +error TS2552: Cannot find name 'Object'. Did you mean 'object'?
-+file1.ts(1,14): error TS2322: Type '3' is not assignable to type 'string'.
+ file1.ts(1,14): error TS2322: Type 'number' is not assignable to type 'string'.
  
  
 +!!! error TS2318: Cannot find global type 'Array'.
@@ -24,5 +23,3 @@
  ==== file1.ts (1 errors) ====
      export const x: string = 3;
                   ~
--!!! error TS2322: Type 'number' is not assignable to type 'string'.
-+!!! error TS2322: Type '3' is not assignable to type 'string'.

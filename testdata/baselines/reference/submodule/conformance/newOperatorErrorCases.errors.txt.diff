@@ -3,8 +3,7 @@
 @@= skipped -0, +0 lines =@@
  newOperatorErrorCases.ts(26,16): error TS1005: ',' expected.
 -newOperatorErrorCases.ts(26,16): error TS2695: Left side of comma operator is unused and has no side effects.
--newOperatorErrorCases.ts(36,9): error TS2350: Only a void function can be called with the 'new' keyword.
-+newOperatorErrorCases.ts(36,13): error TS2350: Only a void function can be called with the 'new' keyword.
+ newOperatorErrorCases.ts(36,9): error TS2350: Only a void function can be called with the 'new' keyword.
  
  
 -==== newOperatorErrorCases.ts (3 errors) ====
@@ -21,11 +20,3 @@
      
      // Generic construct expression with no parentheses
      var c1 = new T;
-@@= skipped -12, +10 lines =@@
-     // Construct expression of non-void returning function
-     function fnNumber(): number { return 32; }
-     var s = new fnNumber(); // Error
--            ~~~~~~~~~~~~~~
-+                ~~~~~~~~
- !!! error TS2350: Only a void function can be called with the 'new' keyword.
-     

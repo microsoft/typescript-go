@@ -2,7 +2,7 @@ classAbstractConstructorAssignability.ts(7,5): error TS2322: Type '{ new(): B, p
   Cannot assign an abstract constructor type to a non-abstract constructor type.
 classAbstractConstructorAssignability.ts(9,5): error TS2322: Type '{ new(): B, prototype: B }' is not assignable to type '{ new(): C, prototype: C }'.
   Cannot assign an abstract constructor type to a non-abstract constructor type.
-classAbstractConstructorAssignability.ts(12,5): error TS2511: Cannot create an instance of an abstract class.
+classAbstractConstructorAssignability.ts(12,1): error TS2511: Cannot create an instance of an abstract class.
 
 
 ==== classAbstractConstructorAssignability.ts (3 errors) ====
@@ -24,6 +24,6 @@ classAbstractConstructorAssignability.ts(12,5): error TS2511: Cannot create an i
     
     new AA;
     new BB;
-        ~~
+    ~~~~~~
 !!! error TS2511: Cannot create an instance of an abstract class.
     new CC;

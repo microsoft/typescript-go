@@ -13,10 +13,9 @@
 -                  Type at position 1 in source is not compatible with type at position 1 in target.
 -                    Type 'boolean' is not assignable to type 'number'.
 -  Overload 2 of 4, '(entries?: readonly (readonly [string, number])[]): Map<string, number>', gave the following error.
--    Type 'boolean' is not assignable to type 'number'.
 +iterableArrayPattern28.ts(2,52): error TS2769: No overload matches this call.
 +  The last overload gave the following error.
-+    Type 'true' is not assignable to type 'number'.
+     Type 'boolean' is not assignable to type 'number'.
  
  
  ==== iterableArrayPattern28.ts (1 errors) ====
@@ -36,7 +35,6 @@
 -!!! error TS2769:                   Type at position 1 in source is not compatible with type at position 1 in target.
 -!!! error TS2769:                     Type 'boolean' is not assignable to type 'number'.
 -!!! error TS2769:   Overload 2 of 4, '(entries?: readonly (readonly [string, number])[]): Map<string, number>', gave the following error.
--!!! error TS2769:     Type 'boolean' is not assignable to type 'number'.
 +!!! error TS2769:   The last overload gave the following error.
-+!!! error TS2769:     Type 'true' is not assignable to type 'number'.
+ !!! error TS2769:     Type 'boolean' is not assignable to type 'number'.
 +!!! related TS2771 lib.es2015.collection.d.ts:--:--: The last overload is declared here.

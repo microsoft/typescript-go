@@ -7,12 +7,7 @@
  constructBigint.ts(8,8): error TS2345: Argument of type 'null' is not assignable to parameter of type 'string | number | bigint | boolean'.
  constructBigint.ts(9,8): error TS2345: Argument of type 'undefined' is not assignable to parameter of type 'string | number | bigint | boolean'.
  
-@@= skipped -10, +10 lines =@@
-     BigInt(false);
-     
-     BigInt(Symbol());
--           ~~~~~~~~
-+           ~~~~~~
+@@= skipped -14, +14 lines =@@
  !!! error TS2345: Argument of type 'symbol' is not assignable to parameter of type 'string | number | bigint | boolean'.
      BigInt({ e: 1, m: 1 })
             ~~~~~~~~~~~~~~

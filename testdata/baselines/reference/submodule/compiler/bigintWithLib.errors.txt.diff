@@ -1,8 +1,7 @@
 --- old.bigintWithLib.errors.txt
 +++ new.bigintWithLib.errors.txt
 @@= skipped -0, +0 lines =@@
--bigintWithLib.ts(4,1): error TS2350: Only a void function can be called with the 'new' keyword.
-+bigintWithLib.ts(4,5): error TS2350: Only a void function can be called with the 'new' keyword.
+ bigintWithLib.ts(4,1): error TS2350: Only a void function can be called with the 'new' keyword.
  bigintWithLib.ts(19,33): error TS2769: No overload matches this call.
 -  Overload 1 of 3, '(length?: number): BigInt64Array<ArrayBuffer>', gave the following error.
 -    Argument of type 'number[]' is not assignable to parameter of type 'number'.
@@ -35,23 +34,7 @@
      Argument of type 'number[]' is not assignable to parameter of type 'ArrayBufferLike'.
        Type 'number[]' is missing the following properties from type 'SharedArrayBuffer': byteLength, [Symbol.species], [Symbol.toStringTag]
  bigintWithLib.ts(36,13): error TS2540: Cannot assign to 'length' because it is a read-only property.
--bigintWithLib.ts(43,25): error TS2345: Argument of type 'number' is not assignable to parameter of type 'bigint'.
--bigintWithLib.ts(46,26): error TS2345: Argument of type 'number' is not assignable to parameter of type 'bigint'.
-+bigintWithLib.ts(43,25): error TS2345: Argument of type '-1' is not assignable to parameter of type 'bigint'.
-+bigintWithLib.ts(46,26): error TS2345: Argument of type '123' is not assignable to parameter of type 'bigint'.
- 
- 
- ==== bigintWithLib.ts (7 errors) ====
-@@= skipped -37, +17 lines =@@
-     let bigintVal: bigint = BigInt(123);
-     bigintVal = BigInt("456");
-     new BigInt(123); // should error
--    ~~~~~~~~~~~~~~~
-+        ~~~~~~
- !!! error TS2350: Only a void function can be called with the 'new' keyword.
-     bigintVal = BigInt.asIntN(8, 0xFFFFn);
-     bigintVal = BigInt.asUintN(8, 0xFFFFn);
-@@= skipped -19, +19 lines =@@
+@@= skipped -56, +36 lines =@@
      bigIntArray = new BigInt64Array([1, 2, 3]); // should error
                                      ~~~~~~~~~
  !!! error TS2769: No overload matches this call.
@@ -95,18 +78,3 @@
      bigUintArray = new BigUint64Array(new ArrayBuffer(80));
      bigUintArray = new BigUint64Array(new ArrayBuffer(80), 8);
      bigUintArray = new BigUint64Array(new ArrayBuffer(80), 8, 3);
-@@= skipped -28, +19 lines =@@
-     dataView.setBigInt64(1, -1n, true);
-     dataView.setBigInt64(1, -1); // should error
-                             ~~
--!!! error TS2345: Argument of type 'number' is not assignable to parameter of type 'bigint'.
-+!!! error TS2345: Argument of type '-1' is not assignable to parameter of type 'bigint'.
-     dataView.setBigUint64(2, 123n);
-     dataView.setBigUint64(2, 123n, true);
-     dataView.setBigUint64(2, 123); // should error
-                              ~~~
--!!! error TS2345: Argument of type 'number' is not assignable to parameter of type 'bigint'.
-+!!! error TS2345: Argument of type '123' is not assignable to parameter of type 'bigint'.
-     bigintVal = dataView.getBigInt64(1);
-     bigintVal = dataView.getBigInt64(1, true);
-     bigintVal = dataView.getBigUint64(2);

@@ -1,4 +1,4 @@
-optionalBindingParametersInOverloads2.ts(8,7): error TS2322: Type 'false' is not assignable to type 'string'.
+optionalBindingParametersInOverloads2.ts(8,7): error TS2322: Type 'boolean' is not assignable to type 'string'.
 optionalBindingParametersInOverloads2.ts(8,23): error TS2322: Type 'string' is not assignable to type 'boolean'.
 
 
@@ -12,7 +12,7 @@ optionalBindingParametersInOverloads2.ts(8,23): error TS2322: Type 'string' is n
     
     foo({ x: false, y: 0, z: "" });
           ~
-!!! error TS2322: Type 'false' is not assignable to type 'string'.
+!!! error TS2322: Type 'boolean' is not assignable to type 'string'.
 !!! related TS6500 optionalBindingParametersInOverloads2.ts:1:30: The expected type comes from property 'x' which is declared here on type '{ x: string, y: number, z: boolean }'
                           ~
 !!! error TS2322: Type 'string' is not assignable to type 'boolean'.

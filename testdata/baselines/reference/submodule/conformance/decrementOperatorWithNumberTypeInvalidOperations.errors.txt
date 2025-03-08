@@ -7,10 +7,10 @@ decrementOperatorWithNumberTypeInvalidOperations.ts(26,23): error TS2357: The op
 decrementOperatorWithNumberTypeInvalidOperations.ts(27,23): error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
 decrementOperatorWithNumberTypeInvalidOperations.ts(28,23): error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
 decrementOperatorWithNumberTypeInvalidOperations.ts(31,25): error TS2357: The operand of an increment or decrement operator must be a variable or a property access.
-decrementOperatorWithNumberTypeInvalidOperations.ts(32,28): error TS2357: The operand of an increment or decrement operator must be a variable or a property access.
+decrementOperatorWithNumberTypeInvalidOperations.ts(32,26): error TS2357: The operand of an increment or decrement operator must be a variable or a property access.
 decrementOperatorWithNumberTypeInvalidOperations.ts(33,26): error TS2357: The operand of an increment or decrement operator must be a variable or a property access.
 decrementOperatorWithNumberTypeInvalidOperations.ts(35,24): error TS2357: The operand of an increment or decrement operator must be a variable or a property access.
-decrementOperatorWithNumberTypeInvalidOperations.ts(36,26): error TS2357: The operand of an increment or decrement operator must be a variable or a property access.
+decrementOperatorWithNumberTypeInvalidOperations.ts(36,24): error TS2357: The operand of an increment or decrement operator must be a variable or a property access.
 decrementOperatorWithNumberTypeInvalidOperations.ts(37,24): error TS2357: The operand of an increment or decrement operator must be a variable or a property access.
 decrementOperatorWithNumberTypeInvalidOperations.ts(40,3): error TS2357: The operand of an increment or decrement operator must be a variable or a property access.
 decrementOperatorWithNumberTypeInvalidOperations.ts(41,3): error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
@@ -68,20 +68,20 @@ decrementOperatorWithNumberTypeInvalidOperations.ts(46,1): error TS2357: The ope
     
     // number type expressions
     var ResultIsNumber9 = --foo();
-                            ~~~
+                            ~~~~~
 !!! error TS2357: The operand of an increment or decrement operator must be a variable or a property access.
     var ResultIsNumber10 = --A.foo();
-                               ~~~
+                             ~~~~~~~
 !!! error TS2357: The operand of an increment or decrement operator must be a variable or a property access.
     var ResultIsNumber11 = --(NUMBER + NUMBER);
                              ~~~~~~~~~~~~~~~~~
 !!! error TS2357: The operand of an increment or decrement operator must be a variable or a property access.
     
     var ResultIsNumber12 = foo()--;
-                           ~~~
+                           ~~~~~
 !!! error TS2357: The operand of an increment or decrement operator must be a variable or a property access.
     var ResultIsNumber13 = A.foo()--;
-                             ~~~
+                           ~~~~~~~
 !!! error TS2357: The operand of an increment or decrement operator must be a variable or a property access.
     var ResultIsNumber14 = (NUMBER + NUMBER)--;
                            ~~~~~~~~~~~~~~~~~
@@ -95,7 +95,7 @@ decrementOperatorWithNumberTypeInvalidOperations.ts(46,1): error TS2357: The ope
       ~~~~~~~
 !!! error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
     --foo();
-      ~~~
+      ~~~~~
 !!! error TS2357: The operand of an increment or decrement operator must be a variable or a property access.
     
     1--;
@@ -105,5 +105,5 @@ decrementOperatorWithNumberTypeInvalidOperations.ts(46,1): error TS2357: The ope
     ~~~~~~~
 !!! error TS2356: An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type.
     foo()--;
-    ~~~
+    ~~~~~
 !!! error TS2357: The operand of an increment or decrement operator must be a variable or a property access.

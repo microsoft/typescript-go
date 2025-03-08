@@ -10,7 +10,7 @@ mappedTypeProperties.ts(37,5): error TS7061: A mapped type may not declare prope
 mappedTypeProperties.ts(40,5): error TS1166: A computed property name in a class property declaration must have a simple literal type or a 'unique symbol' type.
 mappedTypeProperties.ts(40,6): error TS2304: Cannot find name 'P'.
 mappedTypeProperties.ts(40,6): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
-mappedTypeProperties.ts(40,11): error TS2322: Type '"a"' is not assignable to type 'object'.
+mappedTypeProperties.ts(40,11): error TS2322: Type 'string' is not assignable to type 'object'.
 mappedTypeProperties.ts(40,17): error TS2363: The right-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
 
 
@@ -80,7 +80,7 @@ mappedTypeProperties.ts(40,17): error TS2363: The right-hand side of an arithmet
          ~~~~~~~~
 !!! error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
               ~~~
-!!! error TS2322: Type '"a"' is not assignable to type 'object'.
+!!! error TS2322: Type 'string' is not assignable to type 'object'.
                     ~~~
 !!! error TS2363: The right-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
     }

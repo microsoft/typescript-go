@@ -57,10 +57,10 @@ neverTypeErrors2.ts(24,17): error TS2407: The right-hand side of a 'for...in' st
     }
     
     for (const n of f4()) {}
-                    ~~
+                    ~~~~
 !!! error TS2488: Type 'never' must have a '[Symbol.iterator]()' method that returns an iterator.
     for (const n in f4()) {}
-                    ~~
+                    ~~~~
 !!! error TS2407: The right-hand side of a 'for...in' statement must be of type 'any', an object type or a type parameter, but here has type 'never'.
     
     function f5() {

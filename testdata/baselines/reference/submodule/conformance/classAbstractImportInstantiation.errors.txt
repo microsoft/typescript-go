@@ -1,5 +1,5 @@
-classAbstractImportInstantiation.ts(4,9): error TS2511: Cannot create an instance of an abstract class.
-classAbstractImportInstantiation.ts(9,5): error TS2511: Cannot create an instance of an abstract class.
+classAbstractImportInstantiation.ts(4,5): error TS2511: Cannot create an instance of an abstract class.
+classAbstractImportInstantiation.ts(9,1): error TS2511: Cannot create an instance of an abstract class.
 
 
 ==== classAbstractImportInstantiation.ts (2 errors) ====
@@ -7,13 +7,13 @@ classAbstractImportInstantiation.ts(9,5): error TS2511: Cannot create an instanc
         export abstract class A {}
         
         new A;
-            ~
+        ~~~~~
 !!! error TS2511: Cannot create an instance of an abstract class.
     }
     
     import myA = M.A;
     
     new myA;
-        ~~~
+    ~~~~~~~
 !!! error TS2511: Cannot create an instance of an abstract class.
     

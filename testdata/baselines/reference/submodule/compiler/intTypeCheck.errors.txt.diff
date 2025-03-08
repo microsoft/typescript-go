@@ -31,12 +31,7 @@
  intTypeCheck.ts(112,5): error TS2322: Type '{}' is not assignable to type 'i2'.
    Type '{}' provides no match for the signature '(): any'.
  intTypeCheck.ts(113,5): error TS2322: Type 'Object' is not assignable to type 'i2'.
-   The 'Object' type is assignable to very few other types. Did you mean to use the 'any' type instead?
-     Type 'Object' provides no match for the signature '(): any'.
--intTypeCheck.ts(114,17): error TS2350: Only a void function can be called with the 'new' keyword.
-+intTypeCheck.ts(114,21): error TS2350: Only a void function can be called with the 'new' keyword.
- intTypeCheck.ts(115,5): error TS2322: Type 'Base' is not assignable to type 'i2'.
-   Type 'Base' provides no match for the signature '(): any'.
+@@= skipped -22, +29 lines =@@
  intTypeCheck.ts(120,5): error TS2322: Type 'boolean' is not assignable to type 'i2'.
  intTypeCheck.ts(120,21): error TS1109: Expression expected.
  intTypeCheck.ts(120,22): error TS2693: 'i2' only refers to a type, but is being used as a value here.
@@ -85,14 +80,7 @@
  intTypeCheck.ts(168,5): error TS2322: Type '{}' is not assignable to type 'i6'.
    Type '{}' provides no match for the signature '(): any'.
  intTypeCheck.ts(169,5): error TS2322: Type 'Object' is not assignable to type 'i6'.
-   The 'Object' type is assignable to very few other types. Did you mean to use the 'any' type instead?
-     Type 'Object' provides no match for the signature '(): any'.
--intTypeCheck.ts(170,17): error TS2350: Only a void function can be called with the 'new' keyword.
-+intTypeCheck.ts(170,21): error TS2350: Only a void function can be called with the 'new' keyword.
- intTypeCheck.ts(171,5): error TS2322: Type 'Base' is not assignable to type 'i6'.
-   Type 'Base' provides no match for the signature '(): any'.
- intTypeCheck.ts(173,5): error TS2322: Type '() => void' is not assignable to type 'i6'.
-@@= skipped -70, +66 lines =@@
+@@= skipped -48, +37 lines =@@
  intTypeCheck.ts(176,5): error TS2322: Type 'boolean' is not assignable to type 'i6'.
  intTypeCheck.ts(176,21): error TS1109: Expression expected.
  intTypeCheck.ts(176,22): error TS2693: 'i6' only refers to a type, but is being used as a value here.
@@ -166,16 +154,7 @@
      //
      // Call signatures
      //
-@@= skipped -17, +14 lines =@@
- !!! error TS2322:   The 'Object' type is assignable to very few other types. Did you mean to use the 'any' type instead?
- !!! error TS2322:     Type 'Object' provides no match for the signature '(): any'.
-     var obj14: i2 = new obj11;
--                    ~~~~~~~~~
-+                        ~~~~~
- !!! error TS2350: Only a void function can be called with the 'new' keyword.
-     var obj15: i2 = new Base;
-         ~~~~~
-@@= skipped -18, +18 lines =@@
+@@= skipped -35, +32 lines =@@
                           ~~
  !!! error TS2693: 'i2' only refers to a type, but is being used as a value here.
      var obj21: i2 = new {};
@@ -268,16 +247,7 @@
      //
      // Interface Derived I2
      //
-@@= skipped -17, +14 lines =@@
- !!! error TS2322:   The 'Object' type is assignable to very few other types. Did you mean to use the 'any' type instead?
- !!! error TS2322:     Type 'Object' provides no match for the signature '(): any'.
-     var obj58: i6 = new obj55;
--                    ~~~~~~~~~
-+                        ~~~~~
- !!! error TS2350: Only a void function can be called with the 'new' keyword.
-     var obj59: i6 = new Base;
-         ~~~~~
-@@= skipped -21, +21 lines =@@
+@@= skipped -38, +35 lines =@@
                           ~~
  !!! error TS2693: 'i6' only refers to a type, but is being used as a value here.
      var obj65: i6 = new {};

@@ -8,7 +8,7 @@ superCallBeforeThisAccessing4.ts(12,9): error TS17005: A constructor cannot cont
         constructor() {
             this._t;
             super();
-            ~~~~~
+            ~~~~~~~
 !!! error TS17005: A constructor cannot contain a 'super' call when its class extends 'null'.
         }
     }
@@ -17,7 +17,7 @@ superCallBeforeThisAccessing4.ts(12,9): error TS17005: A constructor cannot cont
         private _t;
         constructor() {
             super();
-            ~~~~~
+            ~~~~~~~
 !!! error TS17005: A constructor cannot contain a 'super' call when its class extends 'null'.
             this._t;
         }

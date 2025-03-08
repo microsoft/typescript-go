@@ -18,5 +18,5 @@ arrayTypeOfFunctionTypes2.ts(16,11): error TS2348: Value of type 'new() => strin
     var r5 = x2[1];
     var r6 = new r5();
     var r6b = r5();
-              ~~
+              ~~~~
 !!! error TS2348: Value of type 'new() => string' is not callable. Did you mean to include 'new'?

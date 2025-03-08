@@ -1,17 +1,17 @@
 overloadResolutionConstructors.ts(27,9): error TS2769: No overload matches this call.
   The last overload gave the following error.
     Argument of type '{}' is not assignable to parameter of type 'number'.
-overloadResolutionConstructors.ts(43,15): error TS2345: Argument of type '""' is not assignable to parameter of type 'number'.
+overloadResolutionConstructors.ts(43,15): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
 overloadResolutionConstructors.ts(67,9): error TS2558: Expected 3 type arguments, but got 4.
-overloadResolutionConstructors.ts(77,25): error TS2345: Argument of type '3' is not assignable to parameter of type 'string'.
-overloadResolutionConstructors.ts(78,25): error TS2345: Argument of type '""' is not assignable to parameter of type 'number'.
+overloadResolutionConstructors.ts(77,25): error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
+overloadResolutionConstructors.ts(78,25): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
 overloadResolutionConstructors.ts(88,9): error TS2344: Type 'boolean' does not satisfy the constraint 'number'.
 overloadResolutionConstructors.ts(91,9): error TS2769: No overload matches this call.
   The last overload gave the following error.
-    Argument of type 'true' is not assignable to parameter of type 'number'.
+    Argument of type 'boolean' is not assignable to parameter of type 'number'.
 overloadResolutionConstructors.ts(92,15): error TS2769: No overload matches this call.
   The last overload gave the following error.
-    Argument of type 'true' is not assignable to parameter of type 'string'.
+    Argument of type 'boolean' is not assignable to parameter of type 'string'.
 overloadResolutionConstructors.ts(100,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'n' must be of type 'number', but here has type 'string'.
 overloadResolutionConstructors.ts(100,26): error TS2339: Property 'toFixed' does not exist on type 'string'.
 
@@ -66,7 +66,7 @@ overloadResolutionConstructors.ts(100,26): error TS2339: Property 'toFixed' does
     // Generic and non - generic overload where non - generic overload is the only candidate when called with type arguments
     new fn2<Date>('', 0); // Error
                   ~~
-!!! error TS2345: Argument of type '""' is not assignable to parameter of type 'number'.
+!!! error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
     
     // Generic and non - generic overload where non - generic overload is the only candidate when called without type arguments
     new fn2('', 0); // OK
@@ -104,10 +104,10 @@ overloadResolutionConstructors.ts(100,26): error TS2339: Property 'toFixed' does
     new fn4<string, number>('', 3);
     new fn4<string, number>(3, ''); // Error
                             ~
-!!! error TS2345: Argument of type '3' is not assignable to parameter of type 'string'.
+!!! error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
     new fn4<number, string>('', 3); // Error
                             ~~
-!!! error TS2345: Argument of type '""' is not assignable to parameter of type 'number'.
+!!! error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
     new fn4<number, string>(3, ''); 
     
     // Generic overloads with constraints called without type arguments but with types that satisfy the constraints
@@ -126,13 +126,13 @@ overloadResolutionConstructors.ts(100,26): error TS2339: Property 'toFixed' does
             ~~~~
 !!! error TS2769: No overload matches this call.
 !!! error TS2769:   The last overload gave the following error.
-!!! error TS2769:     Argument of type 'true' is not assignable to parameter of type 'number'.
+!!! error TS2769:     Argument of type 'boolean' is not assignable to parameter of type 'number'.
 !!! related TS2771 overloadResolutionConstructors.ts:72:5: The last overload is declared here.
     new fn4(null, true); // Error
                   ~~~~
 !!! error TS2769: No overload matches this call.
 !!! error TS2769:   The last overload gave the following error.
-!!! error TS2769:     Argument of type 'true' is not assignable to parameter of type 'string'.
+!!! error TS2769:     Argument of type 'boolean' is not assignable to parameter of type 'string'.
 !!! related TS2771 overloadResolutionConstructors.ts:72:5: The last overload is declared here.
     
     // Non - generic overloads where contextual typing of function arguments has errors

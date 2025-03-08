@@ -3,7 +3,7 @@ interfacesWithPredefinedTypesAsNames.ts(2,11): error TS2427: Interface name cann
 interfacesWithPredefinedTypesAsNames.ts(3,11): error TS2427: Interface name cannot be 'string'.
 interfacesWithPredefinedTypesAsNames.ts(4,11): error TS2427: Interface name cannot be 'boolean'.
 interfacesWithPredefinedTypesAsNames.ts(5,1): error TS2304: Cannot find name 'interface'.
-interfacesWithPredefinedTypesAsNames.ts(5,11): error TS1005: ';' expected.
+interfacesWithPredefinedTypesAsNames.ts(5,11): error TS2427: Interface name cannot be 'void'.
 interfacesWithPredefinedTypesAsNames.ts(6,11): error TS2427: Interface name cannot be 'unknown'.
 interfacesWithPredefinedTypesAsNames.ts(7,11): error TS2427: Interface name cannot be 'never'.
 
@@ -25,7 +25,7 @@ interfacesWithPredefinedTypesAsNames.ts(7,11): error TS2427: Interface name cann
     ~~~~~~~~~
 !!! error TS2304: Cannot find name 'interface'.
               ~~~~
-!!! error TS1005: ';' expected.
+!!! error TS2427: Interface name cannot be 'void'.
     interface unknown {}
               ~~~~~~~
 !!! error TS2427: Interface name cannot be 'unknown'.

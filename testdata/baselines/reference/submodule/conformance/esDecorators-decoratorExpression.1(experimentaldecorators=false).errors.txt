@@ -1,24 +1,24 @@
 esDecorators-decoratorExpression.1.ts(3,4): error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
-esDecorators-decoratorExpression.1.ts(5,8): error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
-esDecorators-decoratorExpression.1.ts(7,8): error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
+esDecorators-decoratorExpression.1.ts(5,4): error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
+esDecorators-decoratorExpression.1.ts(7,4): error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
 esDecorators-decoratorExpression.1.ts(9,4): error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
-esDecorators-decoratorExpression.1.ts(11,7): error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
+esDecorators-decoratorExpression.1.ts(11,4): error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
 esDecorators-decoratorExpression.1.ts(13,4): error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
 esDecorators-decoratorExpression.1.ts(15,4): error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
 esDecorators-decoratorExpression.1.ts(17,4): error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
 esDecorators-decoratorExpression.1.ts(19,4): error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
-esDecorators-decoratorExpression.1.ts(21,6): error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
+esDecorators-decoratorExpression.1.ts(21,4): error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
 esDecorators-decoratorExpression.1.ts(23,4): error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
 esDecorators-decoratorExpression.1.ts(25,14): error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
-esDecorators-decoratorExpression.1.ts(27,18): error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
-esDecorators-decoratorExpression.1.ts(29,18): error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
+esDecorators-decoratorExpression.1.ts(27,14): error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
+esDecorators-decoratorExpression.1.ts(29,14): error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
 esDecorators-decoratorExpression.1.ts(31,14): error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
-esDecorators-decoratorExpression.1.ts(33,17): error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
+esDecorators-decoratorExpression.1.ts(33,14): error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
 esDecorators-decoratorExpression.1.ts(35,14): error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
 esDecorators-decoratorExpression.1.ts(37,14): error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
 esDecorators-decoratorExpression.1.ts(39,14): error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
 esDecorators-decoratorExpression.1.ts(41,14): error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
-esDecorators-decoratorExpression.1.ts(43,16): error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
+esDecorators-decoratorExpression.1.ts(43,14): error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
 esDecorators-decoratorExpression.1.ts(45,14): error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
 
 
@@ -31,12 +31,12 @@ esDecorators-decoratorExpression.1.ts(45,14): error TS1497: Expression must be e
 !!! related TS1498 esDecorators-decoratorExpression.1.ts:3:4: Invalid syntax in decorator.
     
     { @new x class C {} }
-           ~
+       ~~~~~
 !!! error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
-!!! related TS1498 esDecorators-decoratorExpression.1.ts:5:8: Invalid syntax in decorator.
+!!! related TS1498 esDecorators-decoratorExpression.1.ts:5:4: Invalid syntax in decorator.
     
     { @x().y() class C {} }
-           ~
+       ~~~~~~~
 !!! error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
 !!! related TS1498 esDecorators-decoratorExpression.1.ts:7:4: Invalid syntax in decorator.
     
@@ -46,7 +46,7 @@ esDecorators-decoratorExpression.1.ts(45,14): error TS1497: Expression must be e
 !!! related TS1498 esDecorators-decoratorExpression.1.ts:9:5: Invalid syntax in decorator.
     
     { @x?.y() class C {} }
-          ~
+       ~~~~~~
 !!! error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
 !!! related TS1498 esDecorators-decoratorExpression.1.ts:11:5: Invalid syntax in decorator.
     
@@ -56,29 +56,29 @@ esDecorators-decoratorExpression.1.ts(45,14): error TS1497: Expression must be e
 !!! related TS1498 esDecorators-decoratorExpression.1.ts:13:4: Invalid syntax in decorator.
     
     { @x?.() class C {} }
-       ~
+       ~~~~~
 !!! error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
 !!! related TS1498 esDecorators-decoratorExpression.1.ts:15:5: Invalid syntax in decorator.
     
     { @x`` class C {} }
-       ~
+       ~~~
 !!! error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
 !!! related TS1498 esDecorators-decoratorExpression.1.ts:17:4: Invalid syntax in decorator.
     
     { @x``() class C {} }
-       ~~~
+       ~~~~~
 !!! error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
 !!! related TS1498 esDecorators-decoratorExpression.1.ts:19:4: Invalid syntax in decorator.
     
     { @x.y`` class C {} }
-         ~
-!!! error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
-!!! related TS1498 esDecorators-decoratorExpression.1.ts:21:6: Invalid syntax in decorator.
-    
-    { @x.y``() class C {} }
        ~~~~~
 !!! error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
-!!! related TS1498 esDecorators-decoratorExpression.1.ts:23:6: Invalid syntax in decorator.
+!!! related TS1498 esDecorators-decoratorExpression.1.ts:21:4: Invalid syntax in decorator.
+    
+    { @x.y``() class C {} }
+       ~~~~~~~
+!!! error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
+!!! related TS1498 esDecorators-decoratorExpression.1.ts:23:4: Invalid syntax in decorator.
     
     { class C { @x().y m() {} } }
                  ~~~~~
@@ -86,12 +86,12 @@ esDecorators-decoratorExpression.1.ts(45,14): error TS1497: Expression must be e
 !!! related TS1498 esDecorators-decoratorExpression.1.ts:25:14: Invalid syntax in decorator.
     
     { class C { @new x m() {} } }
-                     ~
+                 ~~~~~
 !!! error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
-!!! related TS1498 esDecorators-decoratorExpression.1.ts:27:18: Invalid syntax in decorator.
+!!! related TS1498 esDecorators-decoratorExpression.1.ts:27:14: Invalid syntax in decorator.
     
     { class C { @x().y() m() {} } }
-                     ~
+                 ~~~~~~~
 !!! error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
 !!! related TS1498 esDecorators-decoratorExpression.1.ts:29:14: Invalid syntax in decorator.
     
@@ -101,7 +101,7 @@ esDecorators-decoratorExpression.1.ts(45,14): error TS1497: Expression must be e
 !!! related TS1498 esDecorators-decoratorExpression.1.ts:31:15: Invalid syntax in decorator.
     
     { class C { @x?.y() m() {} } }
-                    ~
+                 ~~~~~~
 !!! error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
 !!! related TS1498 esDecorators-decoratorExpression.1.ts:33:15: Invalid syntax in decorator.
     
@@ -111,27 +111,27 @@ esDecorators-decoratorExpression.1.ts(45,14): error TS1497: Expression must be e
 !!! related TS1498 esDecorators-decoratorExpression.1.ts:35:14: Invalid syntax in decorator.
     
     { class C { @x?.() m() {} } }
-                 ~
+                 ~~~~~
 !!! error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
 !!! related TS1498 esDecorators-decoratorExpression.1.ts:37:15: Invalid syntax in decorator.
     
     { class C { @x`` m() {} } }
-                 ~
+                 ~~~
 !!! error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
 !!! related TS1498 esDecorators-decoratorExpression.1.ts:39:14: Invalid syntax in decorator.
     
     { class C { @x``() m() {} } }
-                 ~~~
+                 ~~~~~
 !!! error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
 !!! related TS1498 esDecorators-decoratorExpression.1.ts:41:14: Invalid syntax in decorator.
     
     { class C { @x.y`` m() {} } }
-                   ~
-!!! error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
-!!! related TS1498 esDecorators-decoratorExpression.1.ts:43:16: Invalid syntax in decorator.
-    
-    { class C { @x.y``() m() {} } }
                  ~~~~~
 !!! error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
-!!! related TS1498 esDecorators-decoratorExpression.1.ts:45:16: Invalid syntax in decorator.
+!!! related TS1498 esDecorators-decoratorExpression.1.ts:43:14: Invalid syntax in decorator.
+    
+    { class C { @x.y``() m() {} } }
+                 ~~~~~~~
+!!! error TS1497: Expression must be enclosed in parentheses to be used as a decorator.
+!!! related TS1498 esDecorators-decoratorExpression.1.ts:45:14: Invalid syntax in decorator.
     

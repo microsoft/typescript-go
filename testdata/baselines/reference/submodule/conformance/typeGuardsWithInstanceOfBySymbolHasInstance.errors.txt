@@ -1,6 +1,6 @@
 typeGuardsWithInstanceOfBySymbolHasInstance.ts(13,10): error TS2339: Property 'bar' does not exist on type 'A'.
 typeGuardsWithInstanceOfBySymbolHasInstance.ts(19,10): error TS2339: Property 'bar' does not exist on type 'A'.
-typeGuardsWithInstanceOfBySymbolHasInstance.ts(35,5): error TS2322: Type '"str"' is not assignable to type 'number'.
+typeGuardsWithInstanceOfBySymbolHasInstance.ts(35,5): error TS2322: Type 'string' is not assignable to type 'number'.
 typeGuardsWithInstanceOfBySymbolHasInstance.ts(36,10): error TS2339: Property 'bar' does not exist on type 'B<number>'.
 typeGuardsWithInstanceOfBySymbolHasInstance.ts(43,10): error TS2339: Property 'bar' does not exist on type 'B<any>'.
 typeGuardsWithInstanceOfBySymbolHasInstance.ts(69,10): error TS2339: Property 'bar2' does not exist on type 'C1'.
@@ -67,7 +67,7 @@ typeGuardsWithInstanceOfBySymbolHasInstance.ts(198,11): error TS2551: Property '
         obj3.foo = 1;
         obj3.foo = "str";
         ~~~~~~~~
-!!! error TS2322: Type '"str"' is not assignable to type 'number'.
+!!! error TS2322: Type 'string' is not assignable to type 'number'.
         obj3.bar = "str";
              ~~~
 !!! error TS2339: Property 'bar' does not exist on type 'B<number>'.

@@ -1,17 +1,17 @@
 overloadResolution.ts(27,5): error TS2769: No overload matches this call.
   The last overload gave the following error.
     Argument of type '{}' is not assignable to parameter of type 'number'.
-overloadResolution.ts(41,11): error TS2345: Argument of type '""' is not assignable to parameter of type 'number'.
+overloadResolution.ts(41,11): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
 overloadResolution.ts(63,5): error TS2558: Expected 3 type arguments, but got 4.
-overloadResolution.ts(70,21): error TS2345: Argument of type '3' is not assignable to parameter of type 'string'.
-overloadResolution.ts(71,21): error TS2345: Argument of type '""' is not assignable to parameter of type 'number'.
+overloadResolution.ts(70,21): error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
+overloadResolution.ts(71,21): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
 overloadResolution.ts(81,5): error TS2344: Type 'boolean' does not satisfy the constraint 'number'.
 overloadResolution.ts(84,5): error TS2769: No overload matches this call.
   The last overload gave the following error.
-    Argument of type 'true' is not assignable to parameter of type 'number'.
+    Argument of type 'boolean' is not assignable to parameter of type 'number'.
 overloadResolution.ts(85,11): error TS2769: No overload matches this call.
   The last overload gave the following error.
-    Argument of type 'true' is not assignable to parameter of type 'string'.
+    Argument of type 'boolean' is not assignable to parameter of type 'string'.
 overloadResolution.ts(91,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'n' must be of type 'number', but here has type 'string'.
 overloadResolution.ts(91,22): error TS2339: Property 'toFixed' does not exist on type 'string'.
 
@@ -64,7 +64,7 @@ overloadResolution.ts(91,22): error TS2339: Property 'toFixed' does not exist on
     // Generic and non - generic overload where non - generic overload is the only candidate when called with type arguments
     fn2<Date>('', 0); // Error
               ~~
-!!! error TS2345: Argument of type '""' is not assignable to parameter of type 'number'.
+!!! error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
     
     // Generic and non - generic overload where non - generic overload is the only candidate when called without type arguments
     fn2('', 0); // OK
@@ -97,10 +97,10 @@ overloadResolution.ts(91,22): error TS2339: Property 'toFixed' does not exist on
     fn4<string, number>('', 3);
     fn4<string, number>(3, ''); // Error
                         ~
-!!! error TS2345: Argument of type '3' is not assignable to parameter of type 'string'.
+!!! error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
     fn4<number, string>('', 3); // Error
                         ~~
-!!! error TS2345: Argument of type '""' is not assignable to parameter of type 'number'.
+!!! error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
     fn4<number, string>(3, ''); 
     
     // Generic overloads with constraints called without type arguments but with types that satisfy the constraints
@@ -119,13 +119,13 @@ overloadResolution.ts(91,22): error TS2339: Property 'toFixed' does not exist on
         ~~~~
 !!! error TS2769: No overload matches this call.
 !!! error TS2769:   The last overload gave the following error.
-!!! error TS2769:     Argument of type 'true' is not assignable to parameter of type 'number'.
+!!! error TS2769:     Argument of type 'boolean' is not assignable to parameter of type 'number'.
 !!! related TS2771 overloadResolution.ts:67:10: The last overload is declared here.
     fn4(null, true); // Error
               ~~~~
 !!! error TS2769: No overload matches this call.
 !!! error TS2769:   The last overload gave the following error.
-!!! error TS2769:     Argument of type 'true' is not assignable to parameter of type 'string'.
+!!! error TS2769:     Argument of type 'boolean' is not assignable to parameter of type 'string'.
 !!! related TS2771 overloadResolution.ts:67:10: The last overload is declared here.
     
     // Non - generic overloads where contextual typing of function arguments has errors

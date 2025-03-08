@@ -155,7 +155,7 @@ compoundExponentiationAssignmentLHSIsValue.ts(85,1): error TS2362: The left-hand
     
     // function calls
     foo() **= value;
-    ~~~
+    ~~~~~
 !!! error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
     
     // parentheses, the containted expression is value

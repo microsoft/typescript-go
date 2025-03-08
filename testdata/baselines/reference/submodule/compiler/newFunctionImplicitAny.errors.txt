@@ -1,4 +1,4 @@
-newFunctionImplicitAny.ts(4,16): error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
+newFunctionImplicitAny.ts(4,12): error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
 
 
 ==== newFunctionImplicitAny.ts (1 errors) ====
@@ -6,5 +6,5 @@ newFunctionImplicitAny.ts(4,16): error TS7009: 'new' expression, whose target la
     
     function Test() { }
     var test = new Test();
-                   ~~~~
+               ~~~~~~~~~~
 !!! error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.

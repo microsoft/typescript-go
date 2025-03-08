@@ -7,7 +7,7 @@ deleteOperatorWithAnyOtherType.ts(30,31): error TS2703: The operand of a 'delete
 deleteOperatorWithAnyOtherType.ts(33,31): error TS2703: The operand of a 'delete' operator must be a property reference.
 deleteOperatorWithAnyOtherType.ts(34,31): error TS2703: The operand of a 'delete' operator must be a property reference.
 deleteOperatorWithAnyOtherType.ts(42,32): error TS2703: The operand of a 'delete' operator must be a property reference.
-deleteOperatorWithAnyOtherType.ts(43,34): error TS2703: The operand of a 'delete' operator must be a property reference.
+deleteOperatorWithAnyOtherType.ts(43,32): error TS2703: The operand of a 'delete' operator must be a property reference.
 deleteOperatorWithAnyOtherType.ts(44,33): error TS2703: The operand of a 'delete' operator must be a property reference.
 deleteOperatorWithAnyOtherType.ts(45,33): error TS2365: Operator '+' cannot be applied to types 'null' and 'undefined'.
 deleteOperatorWithAnyOtherType.ts(45,33): error TS2703: The operand of a 'delete' operator must be a property reference.
@@ -84,10 +84,10 @@ deleteOperatorWithAnyOtherType.ts(57,8): error TS2703: The operand of a 'delete'
     var ResultIsBoolean12 = delete objA.a;
     var ResultIsBoolean13 = delete M.n;
     var ResultIsBoolean14 = delete foo();
-                                   ~~~
+                                   ~~~~~
 !!! error TS2703: The operand of a 'delete' operator must be a property reference.
     var ResultIsBoolean15 = delete A.foo();
-                                     ~~~
+                                   ~~~~~~~
 !!! error TS2703: The operand of a 'delete' operator must be a property reference.
     var ResultIsBoolean16 = delete (ANY + ANY1);
                                     ~~~~~~~~~~

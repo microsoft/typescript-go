@@ -1,5 +1,5 @@
-arrayTypeOfFunctionTypes.ts(11,15): error TS2350: Only a void function can be called with the 'new' keyword.
-arrayTypeOfFunctionTypes.ts(16,15): error TS2350: Only a void function can be called with the 'new' keyword.
+arrayTypeOfFunctionTypes.ts(11,11): error TS2350: Only a void function can be called with the 'new' keyword.
+arrayTypeOfFunctionTypes.ts(16,11): error TS2350: Only a void function can be called with the 'new' keyword.
 
 
 ==== arrayTypeOfFunctionTypes.ts (2 errors) ====
@@ -14,12 +14,12 @@ arrayTypeOfFunctionTypes.ts(16,15): error TS2350: Only a void function can be ca
     var r3 = x2[1];
     var r4 = r3();
     var r4b = new r3(); // error
-                  ~~
+              ~~~~~~~~
 !!! error TS2350: Only a void function can be called with the 'new' keyword.
     
     var x3: Array<() => string>;
     var r5 = x2[1];
     var r6 = r5();
     var r6b = new r5(); // error
-                  ~~
+              ~~~~~~~~
 !!! error TS2350: Only a void function can be called with the 'new' keyword.

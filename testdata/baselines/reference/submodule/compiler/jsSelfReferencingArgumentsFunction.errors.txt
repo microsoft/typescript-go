@@ -1,4 +1,4 @@
-foo.js(4,16): error TS2350: Only a void function can be called with the 'new' keyword.
+foo.js(4,12): error TS2350: Only a void function can be called with the 'new' keyword.
 
 
 ==== foo.js (1 errors) ====
@@ -6,7 +6,7 @@ foo.js(4,16): error TS2350: Only a void function can be called with the 'new' ke
     function Foo() {
         arguments;
         return new Foo();
-                   ~~~
+               ~~~~~~~~~
 !!! error TS2350: Only a void function can be called with the 'new' keyword.
     }
     

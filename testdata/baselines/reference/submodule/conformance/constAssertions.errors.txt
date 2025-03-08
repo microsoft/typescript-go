@@ -75,7 +75,7 @@ constAssertions.ts(118,3): error TS2322: Type '3' is not assignable to type '2'.
              ~~~~~~~~~~~~~~
 !!! error TS1355: A 'const' assertions can only be applied to references to enum members, or string, number, boolean, array, or object literals.
     let e3 = id(1) as const;  // Error
-             ~~
+             ~~~~~
 !!! error TS1355: A 'const' assertions can only be applied to references to enum members, or string, number, boolean, array, or object literals.
     
     let t1 = 'foo' as const;

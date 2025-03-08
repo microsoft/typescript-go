@@ -74,7 +74,7 @@ derivedClassSuperStatementPosition.ts(90,13): error TS2401: A 'super' call must 
         constructor() {
             Math.random()
                 ? super(1)
-                  ~~~~~
+                  ~~~~~~~~
 !!! error TS2401: A 'super' call must be a root-level statement within a constructor of a derived class that contains initialized properties, parameter properties, or private identifiers.
                 : super(0);
         }
@@ -85,7 +85,7 @@ derivedClassSuperStatementPosition.ts(90,13): error TS2401: A 'super' call must 
         constructor() {
             if (Math.random()) {
                 super(1);
-                ~~~~~
+                ~~~~~~~~
 !!! error TS2401: A 'super' call must be a root-level statement within a constructor of a derived class that contains initialized properties, parameter properties, or private identifiers.
             }
             else {
@@ -99,7 +99,7 @@ derivedClassSuperStatementPosition.ts(90,13): error TS2401: A 'super' call must 
         constructor(private paramProp = 2) {
             {
                 super();
-                ~~~~~
+                ~~~~~~~
 !!! error TS2401: A 'super' call must be a root-level statement within a constructor of a derived class that contains initialized properties, parameter properties, or private identifiers.
             }
         }
@@ -110,7 +110,7 @@ derivedClassSuperStatementPosition.ts(90,13): error TS2401: A 'super' call must 
         constructor(private paramProp = 2) {
             if (Math.random()) {
                 super(1);
-                ~~~~~
+                ~~~~~~~~
 !!! error TS2401: A 'super' call must be a root-level statement within a constructor of a derived class that contains initialized properties, parameter properties, or private identifiers.
             } else {
                 super(0);

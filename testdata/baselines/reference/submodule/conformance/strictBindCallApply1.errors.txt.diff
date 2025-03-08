@@ -1,19 +1,8 @@
 --- old.strictBindCallApply1.errors.txt
 +++ new.strictBindCallApply1.errors.txt
-@@= skipped -0, +0 lines =@@
--strictBindCallApply1.ts(11,35): error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
-+strictBindCallApply1.ts(11,35): error TS2345: Argument of type '20' is not assignable to parameter of type 'string'.
- strictBindCallApply1.ts(17,15): error TS2554: Expected 3 arguments, but got 2.
--strictBindCallApply1.ts(18,35): error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
-+strictBindCallApply1.ts(18,35): error TS2345: Argument of type '20' is not assignable to parameter of type 'string'.
- strictBindCallApply1.ts(19,44): error TS2554: Expected 3 arguments, but got 4.
- strictBindCallApply1.ts(22,32): error TS2345: Argument of type '[number]' is not assignable to parameter of type '[a: number, b: string]'.
-   Source has 1 element(s) but target requires 2.
- strictBindCallApply1.ts(23,37): error TS2322: Type 'number' is not assignable to type 'string'.
- strictBindCallApply1.ts(24,32): error TS2345: Argument of type '[number, string, number]' is not assignable to parameter of type '[a: number, b: string]'.
+@@= skipped -8, +8 lines =@@
    Source has 3 element(s) but target allows only 2.
--strictBindCallApply1.ts(41,29): error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
-+strictBindCallApply1.ts(41,29): error TS2345: Argument of type '20' is not assignable to parameter of type 'string'.
+ strictBindCallApply1.ts(41,29): error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
  strictBindCallApply1.ts(42,22): error TS2769: No overload matches this call.
 -  Overload 1 of 2, '(this: (this: C, a: number, b: string) => string, thisArg: C): (a: number, b: string) => string', gave the following error.
 +  The last overload gave the following error.
@@ -21,23 +10,9 @@
 -  Overload 2 of 2, '(this: (this: C, a: number, b: string) => string, thisArg: C): (a: number, b: string) => string', gave the following error.
 -    Argument of type 'undefined' is not assignable to parameter of type 'C'.
  strictBindCallApply1.ts(48,17): error TS2554: Expected 3 arguments, but got 2.
--strictBindCallApply1.ts(49,29): error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
-+strictBindCallApply1.ts(49,29): error TS2345: Argument of type '20' is not assignable to parameter of type 'string'.
+ strictBindCallApply1.ts(49,29): error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
  strictBindCallApply1.ts(50,38): error TS2554: Expected 3 arguments, but got 4.
- strictBindCallApply1.ts(51,22): error TS2345: Argument of type 'undefined' is not assignable to parameter of type 'C'.
- strictBindCallApply1.ts(54,26): error TS2345: Argument of type '[number]' is not assignable to parameter of type '[a: number, b: string]'.
-@@= skipped -22, +20 lines =@@
- strictBindCallApply1.ts(56,26): error TS2345: Argument of type '[number, string, number]' is not assignable to parameter of type '[a: number, b: string]'.
-   Source has 3 element(s) but target allows only 2.
- strictBindCallApply1.ts(57,23): error TS2345: Argument of type 'undefined' is not assignable to parameter of type 'C'.
--strictBindCallApply1.ts(62,33): error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
-+strictBindCallApply1.ts(62,33): error TS2345: Argument of type '20' is not assignable to parameter of type 'string'.
- strictBindCallApply1.ts(65,3): error TS2554: Expected 3 arguments, but got 2.
--strictBindCallApply1.ts(66,15): error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
-+strictBindCallApply1.ts(66,15): error TS2345: Argument of type '20' is not assignable to parameter of type 'string'.
- strictBindCallApply1.ts(67,24): error TS2554: Expected 3 arguments, but got 4.
- strictBindCallApply1.ts(70,12): error TS2345: Argument of type '[number]' is not assignable to parameter of type '[a: number, b: string]'.
-   Source has 1 element(s) but target requires 2.
+@@= skipped -23, +21 lines =@@
  strictBindCallApply1.ts(71,17): error TS2322: Type 'number' is not assignable to type 'string'.
  strictBindCallApply1.ts(72,12): error TS2345: Argument of type '[number, string, number]' is not assignable to parameter of type '[a: number, b: string]'.
    Source has 3 element(s) but target allows only 2.
@@ -67,30 +42,7 @@
  
  
  ==== strictBindCallApply1.ts (26 errors) ====
-@@= skipped -39, +35 lines =@@
-     let f02 = foo.bind(undefined, 10, "hello");
-     let f03 = foo.bind(undefined, 10, 20);  // Error
-                                       ~~
--!!! error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
-+!!! error TS2345: Argument of type '20' is not assignable to parameter of type 'string'.
-     
-     let f04 = overloaded.bind(undefined);  // typeof overloaded
-     let f05 = generic.bind(undefined);  // typeof generic
-@@= skipped -11, +11 lines =@@
- !!! error TS2554: Expected 3 arguments, but got 2.
-     let c02 = foo.call(undefined, 10, 20);  // Error
-                                       ~~
--!!! error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
-+!!! error TS2345: Argument of type '20' is not assignable to parameter of type 'string'.
-     let c03 = foo.call(undefined, 10, "hello", 30);  // Error
-                                                ~~
- !!! error TS2554: Expected 3 arguments, but got 4.
-@@= skipped -35, +35 lines =@@
-     let f12 = c.foo.bind(c, 10, "hello");
-     let f13 = c.foo.bind(c, 10, 20);  // Error
-                                 ~~
--!!! error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
-+!!! error TS2345: Argument of type '20' is not assignable to parameter of type 'string'.
+@@= skipped -80, +76 lines =@@
      let f14 = c.foo.bind(undefined);  // Error
                           ~~~~~~~~~
  !!! error TS2769: No overload matches this call.
@@ -103,34 +55,7 @@
      
      let f15 = c.overloaded.bind(c);  // typeof C.prototype.overloaded
      let f16 = c.generic.bind(c);  // typeof C.prototype.generic
-@@= skipped -18, +17 lines =@@
- !!! error TS2554: Expected 3 arguments, but got 2.
-     let c12 = c.foo.call(c, 10, 20);  // Error
-                                 ~~
--!!! error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
-+!!! error TS2345: Argument of type '20' is not assignable to parameter of type 'string'.
-     let c13 = c.foo.call(c, 10, "hello", 30);  // Error
-                                          ~~
- !!! error TS2554: Expected 3 arguments, but got 4.
-@@= skipped -29, +29 lines =@@
-     let f22 = C.bind(undefined, 10, "hello");
-     let f23 = C.bind(undefined, 10, 20);  // Error
-                                     ~~
--!!! error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
-+!!! error TS2345: Argument of type '20' is not assignable to parameter of type 'string'.
-     
-     C.call(c, 10, "hello");
-     C.call(c, 10);  // Error
-@@= skipped -8, +8 lines =@@
- !!! error TS2554: Expected 3 arguments, but got 2.
-     C.call(c, 10, 20);  // Error
-                   ~~
--!!! error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
-+!!! error TS2345: Argument of type '20' is not assignable to parameter of type 'string'.
-     C.call(c, 10, "hello", 30);  // Error
-                            ~~
- !!! error TS2554: Expected 3 arguments, but got 4.
-@@= skipped -21, +21 lines =@@
+@@= skipped -72, +71 lines =@@
      function bar<T extends unknown[]>(callback: (this: 1, ...args: T) => void) {
          callback.bind(1);
          callback.bind(2); // Error

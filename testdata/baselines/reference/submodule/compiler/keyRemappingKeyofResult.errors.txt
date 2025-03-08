@@ -11,13 +11,13 @@ keyRemappingKeyofResult.ts(4,13): error TS2304: Cannot find name 'Exclude'.
 keyRemappingKeyofResult.ts(7,50): error TS2304: Cannot find name 'Record'.
 keyRemappingKeyofResult.ts(14,13): error TS2304: Cannot find name 'Exclude'.
 keyRemappingKeyofResult.ts(31,54): error TS2304: Cannot find name 'Record'.
-keyRemappingKeyofResult.ts(41,5): error TS2322: Type '"str"' is not assignable to type 'keyof Remapped'.
+keyRemappingKeyofResult.ts(41,5): error TS2322: Type 'string' is not assignable to type 'keyof Remapped'.
   Type '"str"' is not assignable to type 'never'.
 keyRemappingKeyofResult.ts(55,29): error TS2304: Cannot find name 'PropertyKey'.
 keyRemappingKeyofResult.ts(55,55): error TS2304: Cannot find name 'Record'.
 keyRemappingKeyofResult.ts(56,41): error TS2304: Cannot find name 'PropertyKey'.
-keyRemappingKeyofResult.ts(68,5): error TS2322: Type '"str"' is not assignable to type 'keyof Remapped'.
-  Type '"str"' is not assignable to type 'DistributiveNonIndex<K>'.
+keyRemappingKeyofResult.ts(68,5): error TS2322: Type 'string' is not assignable to type 'keyof Remapped'.
+  Type 'string' is not assignable to type 'DistributiveNonIndex<K>'.
 
 
 !!! error TS2318: Cannot find global type 'Array'.
@@ -81,7 +81,7 @@ keyRemappingKeyofResult.ts(68,5): error TS2322: Type '"str"' is not assignable t
         x = sym;
         x = "str";
         ~
-!!! error TS2322: Type '"str"' is not assignable to type 'keyof Remapped'.
+!!! error TS2322: Type 'string' is not assignable to type 'keyof Remapped'.
 !!! error TS2322:   Type '"str"' is not assignable to type 'never'.
     }
     
@@ -117,8 +117,8 @@ keyRemappingKeyofResult.ts(68,5): error TS2322: Type '"str"' is not assignable t
         x = sym;
         x = "str";
         ~
-!!! error TS2322: Type '"str"' is not assignable to type 'keyof Remapped'.
-!!! error TS2322:   Type '"str"' is not assignable to type 'DistributiveNonIndex<K>'.
+!!! error TS2322: Type 'string' is not assignable to type 'keyof Remapped'.
+!!! error TS2322:   Type 'string' is not assignable to type 'DistributiveNonIndex<K>'.
     }
     
     export {};

@@ -9,7 +9,7 @@
 -a.js(19,1): error TS2322: Type '10' is not assignable to type '1'.
 +a.js(7,44): error TS7006: Parameter 'n' implicitly has an 'any' type.
 +a.js(11,24): error TS7006: Parameter 'm' implicitly has an 'any' type.
-+a.js(14,13): error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
++a.js(14,9): error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
  
  
 -==== a.js (6 errors) ====
@@ -34,7 +34,7 @@
 -!!! error TS2339: Property 'x' does not exist on type 'typeof A'.
      }
      var a = new A()
-+                ~
++            ~~~~~~~
 +!!! error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
      a.y('no') // error
 -        ~~~~

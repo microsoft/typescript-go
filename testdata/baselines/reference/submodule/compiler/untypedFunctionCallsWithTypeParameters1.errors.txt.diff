@@ -23,22 +23,7 @@
      // none of these function calls should be allowed
      var x = function () { return; };
      var r1 = x<number>();
-@@= skipped -18, +20 lines =@@
- !!! error TS2558: Expected 0 type arguments, but got 1.
-     var y: any = x;
-     var r2 = y<string>();
--             ~~~~~~~~~~~
-+             ~
- !!! error TS2347: Untyped function calls may not accept type arguments.
-     
-     var c: Function;
-     var r3 = c<number>(); // should be an error
--             ~~~~~~~~~~~
-+             ~
- !!! error TS2347: Untyped function calls may not accept type arguments.
-     
-     class C implements Function {
-@@= skipped -20, +20 lines =@@
+@@= skipped -38, +40 lines =@@
      
      var c2: C;
      var r4 = c2<number>(); // should be an error
@@ -48,9 +33,3 @@
      
      class C2 extends Function { } // error
      var c3: C2;
-     var r5 = c3<number>(); // error
--             ~~~~~~~~~~~~
-+             ~~
- !!! error TS2347: Untyped function calls may not accept type arguments.
-     
-     interface I {

@@ -1,18 +1,18 @@
 genericCallWithGenericSignatureArguments2.ts(10,51): error TS2345: Argument of type '(x: string) => string' is not assignable to parameter of type '(x: number) => number'.
   Types of parameters 'x' and 'x' are incompatible.
     Type 'number' is not assignable to type 'string'.
-genericCallWithGenericSignatureArguments2.ts(15,25): error TS2345: Argument of type 'Date' is not assignable to parameter of type 'T'.
+genericCallWithGenericSignatureArguments2.ts(15,21): error TS2345: Argument of type 'Date' is not assignable to parameter of type 'T'.
   'Date' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint 'Date'.
-genericCallWithGenericSignatureArguments2.ts(16,22): error TS2345: Argument of type '1' is not assignable to parameter of type 'T'.
+genericCallWithGenericSignatureArguments2.ts(16,22): error TS2345: Argument of type 'number' is not assignable to parameter of type 'T'.
   'T' could be instantiated with an arbitrary type which could be unrelated to 'number'.
 genericCallWithGenericSignatureArguments2.ts(25,23): error TS2345: Argument of type '(a: T) => T' is not assignable to parameter of type '(x: Date) => Date'.
   Types of parameters 'a' and 'x' are incompatible.
     Type 'Date' is not assignable to type 'T'.
       'T' could be instantiated with an arbitrary type which could be unrelated to 'Date'.
 genericCallWithGenericSignatureArguments2.ts(37,43): error TS2322: Type 'F.A' is not assignable to type 'E.A'.
-genericCallWithGenericSignatureArguments2.ts(50,25): error TS2345: Argument of type 'Date' is not assignable to parameter of type 'T'.
+genericCallWithGenericSignatureArguments2.ts(50,21): error TS2345: Argument of type 'Date' is not assignable to parameter of type 'T'.
   'Date' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint 'Date'.
-genericCallWithGenericSignatureArguments2.ts(51,22): error TS2345: Argument of type '1' is not assignable to parameter of type 'T'.
+genericCallWithGenericSignatureArguments2.ts(51,22): error TS2345: Argument of type 'number' is not assignable to parameter of type 'T'.
   'T' could be instantiated with an arbitrary type which could be unrelated to 'number'.
 genericCallWithGenericSignatureArguments2.ts(60,23): error TS2345: Argument of type '(a: T) => T' is not assignable to parameter of type '(x: Date) => Date'.
   Types of parameters 'a' and 'x' are incompatible.
@@ -42,12 +42,12 @@ genericCallWithGenericSignatureArguments2.ts(67,57): error TS2304: Cannot find n
             var r7 = foo((a: T) => a, (b: T) => b); // T => T
             // BUG 835518
             var r9 = r7(new Date()); // should be ok
-                            ~~~~
+                        ~~~~~~~~~~
 !!! error TS2345: Argument of type 'Date' is not assignable to parameter of type 'T'.
 !!! error TS2345:   'Date' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint 'Date'.
             var r10 = r7(1); // error
                          ~
-!!! error TS2345: Argument of type '1' is not assignable to parameter of type 'T'.
+!!! error TS2345: Argument of type 'number' is not assignable to parameter of type 'T'.
 !!! error TS2345:   'T' could be instantiated with an arbitrary type which could be unrelated to 'number'.
         }
     
@@ -91,12 +91,12 @@ genericCallWithGenericSignatureArguments2.ts(67,57): error TS2304: Cannot find n
         function other2<T extends Date>(x: T) {
             var r7 = foo((a: T) => a, (b: T) => b); 
             var r9 = r7(new Date()); 
-                            ~~~~
+                        ~~~~~~~~~~
 !!! error TS2345: Argument of type 'Date' is not assignable to parameter of type 'T'.
 !!! error TS2345:   'Date' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint 'Date'.
             var r10 = r7(1); 
                          ~
-!!! error TS2345: Argument of type '1' is not assignable to parameter of type 'T'.
+!!! error TS2345: Argument of type 'number' is not assignable to parameter of type 'T'.
 !!! error TS2345:   'T' could be instantiated with an arbitrary type which could be unrelated to 'number'.
         }
     

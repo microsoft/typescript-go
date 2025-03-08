@@ -1,4 +1,4 @@
-optionalBindingParametersInOverloads1.ts(8,6): error TS2322: Type 'false' is not assignable to type 'string'.
+optionalBindingParametersInOverloads1.ts(8,6): error TS2322: Type 'boolean' is not assignable to type 'string'.
 optionalBindingParametersInOverloads1.ts(8,16): error TS2322: Type 'string' is not assignable to type 'boolean'.
 
 
@@ -12,6 +12,6 @@ optionalBindingParametersInOverloads1.ts(8,16): error TS2322: Type 'string' is n
     
     foo([false, 0, ""]);
          ~~~~~
-!!! error TS2322: Type 'false' is not assignable to type 'string'.
+!!! error TS2322: Type 'boolean' is not assignable to type 'string'.
                    ~~
 !!! error TS2322: Type 'string' is not assignable to type 'boolean'.

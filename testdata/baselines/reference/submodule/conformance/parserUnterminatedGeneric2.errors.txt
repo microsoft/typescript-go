@@ -1,5 +1,5 @@
+parserUnterminatedGeneric2.ts(2,5): error TS1434: Unexpected keyword or identifier.
 parserUnterminatedGeneric2.ts(2,5): error TS2304: Cannot find name 'interfaceICompiledExpression'.
-parserUnterminatedGeneric2.ts(2,34): error TS1005: ';' expected.
 parserUnterminatedGeneric2.ts(3,42): error TS1005: '=>' expected.
 parserUnterminatedGeneric2.ts(4,9): error TS2304: Cannot find name 'assign'.
 parserUnterminatedGeneric2.ts(4,16): error TS2304: Cannot find name 'context'.
@@ -19,9 +19,9 @@ parserUnterminatedGeneric2.ts(8,54): error TS1005: '>' expected.
     declare module ng {
         interfaceICompiledExpression {
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS1434: Unexpected keyword or identifier.
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2304: Cannot find name 'interfaceICompiledExpression'.
-                                     ~
-!!! error TS1005: ';' expected.
             (context: any, locals?: any): any;
                                              ~
 !!! error TS1005: '=>' expected.

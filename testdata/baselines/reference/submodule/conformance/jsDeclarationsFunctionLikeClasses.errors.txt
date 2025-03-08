@@ -1,4 +1,4 @@
-source.js(7,20): error TS2350: Only a void function can be called with the 'new' keyword.
+source.js(7,16): error TS2350: Only a void function can be called with the 'new' keyword.
 
 
 ==== source.js (1 errors) ====
@@ -9,7 +9,7 @@ source.js(7,20): error TS2350: Only a void function can be called with the 'new'
     export function Point(x, y) {
         if (!(this instanceof Point)) {
             return new Point(x, y);
-                       ~~~~~
+                   ~~~~~~~~~~~~~~~
 !!! error TS2350: Only a void function can be called with the 'new' keyword.
         }
         this.x = x;

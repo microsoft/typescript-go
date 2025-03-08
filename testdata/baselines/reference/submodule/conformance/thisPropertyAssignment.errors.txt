@@ -8,7 +8,7 @@ a.js(15,3): error TS2683: 'this' implicitly has type 'any' because it does not h
 a.js(16,3): error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
 a.js(17,3): error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
 a.js(18,3): error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
-a.js(21,15): error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
+a.js(21,11): error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
 
 
 ==== a.js (9 errors) ====
@@ -51,7 +51,7 @@ a.js(21,15): error TS7009: 'new' expression, whose target lacks a construct sign
     }
     
     const f = new F();
-                  ~
+              ~~~~~~~
 !!! error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
     f.a;
     f.b;

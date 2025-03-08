@@ -33,7 +33,7 @@
 !!! error TS1286: ESM syntax is not allowed in a CommonJS module when 'verbatimModuleSyntax' is enabled.
     import type { funciton as funciton2 } from "./decl"; // ok I guess?
     import("./decl"); // error
-    ~~~~~~
+    ~~~~~~~~~~~~~~~~
 !!! error TS1286: ESM syntax is not allowed in a CommonJS module when 'verbatimModuleSyntax' is enabled.
     type T = typeof import("./decl"); // ok
     export {}; // error

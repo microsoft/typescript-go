@@ -67,7 +67,7 @@ indexSignatures1.ts(183,1): error TS7053: Element implicitly has an 'any' type b
 indexSignatures1.ts(277,7): error TS2322: Type '"&"' is not assignable to type '`&:${string}`'.
 indexSignatures1.ts(281,35): error TS2353: Object literal may only specify known properties, and 'someKey' does not exist in type 'PseudoDeclaration'.
 indexSignatures1.ts(286,7): error TS2322: Type '"two"' is not assignable to type '`/${string}`'.
-indexSignatures1.ts(289,7): error TS2322: Type '123' is not assignable to type 'PathsObject'.
+indexSignatures1.ts(289,7): error TS2322: Type 'number' is not assignable to type 'PathsObject'.
 indexSignatures1.ts(312,43): error TS2353: Object literal may only specify known properties, and '[sym]' does not exist in type '{ [key: number]: string }'.
 
 
@@ -481,7 +481,7 @@ indexSignatures1.ts(312,43): error TS2353: Object literal may only specify known
     type PathsObject = { [P in FieldPattern]: object; };
     const pathObject: PathsObject = 123;  // Error
           ~~~~~~~~~~
-!!! error TS2322: Type '123' is not assignable to type 'PathsObject'.
+!!! error TS2322: Type 'number' is not assignable to type 'PathsObject'.
     
     type IdType = `${number}-${number}-${number}-${number}`
     const id: IdType = '0000-0000-0000-0001';

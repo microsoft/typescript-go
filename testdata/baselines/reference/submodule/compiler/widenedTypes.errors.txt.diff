@@ -5,12 +5,10 @@
  widenedTypes.ts(4,1): error TS18050: The value 'null' cannot be used here.
  widenedTypes.ts(5,7): error TS18050: The value 'null' cannot be used here.
 -widenedTypes.ts(9,14): error TS2695: Left side of comma operator is unused and has no side effects.
--widenedTypes.ts(10,1): error TS2322: Type 'string' is not assignable to type 'number'.
--widenedTypes.ts(17,1): error TS2322: Type 'string' is not assignable to type 'number'.
-+widenedTypes.ts(10,1): error TS2322: Type '""' is not assignable to type 'number'.
+ widenedTypes.ts(10,1): error TS2322: Type 'string' is not assignable to type 'number'.
 +widenedTypes.ts(12,5): error TS2322: Type '3' is not assignable to type 'undefined'.
 +widenedTypes.ts(13,1): error TS2322: Type '3' is not assignable to type 'undefined'.
-+widenedTypes.ts(17,1): error TS2322: Type '""' is not assignable to type 'number'.
+ widenedTypes.ts(17,1): error TS2322: Type 'string' is not assignable to type 'number'.
 +widenedTypes.ts(19,37): error TS2322: Type 'string' is not assignable to type 'undefined'.
  widenedTypes.ts(22,22): error TS2322: Type 'number' is not assignable to type 'string'.
  widenedTypes.ts(23,39): error TS2322: Type 'number' is not assignable to type 'string'.
@@ -29,8 +27,7 @@
 -!!! error TS2695: Left side of comma operator is unused and has no side effects.
      t[3] = "";
      ~~~~
--!!! error TS2322: Type 'string' is not assignable to type 'number'.
-+!!! error TS2322: Type '""' is not assignable to type 'number'.
+ !!! error TS2322: Type 'string' is not assignable to type 'number'.
      
      var x: typeof undefined = 3;
 +        ~
@@ -41,10 +38,8 @@
      
      var y;
      var u = [3, (y = null)];
-     u[3] = "";
-     ~~~~
--!!! error TS2322: Type 'string' is not assignable to type 'number'.
-+!!! error TS2322: Type '""' is not assignable to type 'number'.
+@@= skipped -16, +18 lines =@@
+ !!! error TS2322: Type 'string' is not assignable to type 'number'.
      
      var ob: { x: typeof undefined } = { x: "" };
 +                                        ~

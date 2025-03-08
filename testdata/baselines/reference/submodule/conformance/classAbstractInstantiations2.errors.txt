@@ -1,8 +1,8 @@
-classAbstractInstantiations2.ts(10,5): error TS2511: Cannot create an instance of an abstract class.
+classAbstractInstantiations2.ts(10,1): error TS2511: Cannot create an instance of an abstract class.
 classAbstractInstantiations2.ts(13,5): error TS2322: Type '{ new(): B, prototype: B }' is not assignable to type '{ new(): A, prototype: A }'.
   Cannot assign an abstract constructor type to a non-abstract constructor type.
-classAbstractInstantiations2.ts(17,9): error TS2511: Cannot create an instance of an abstract class.
-classAbstractInstantiations2.ts(21,5): error TS2511: Cannot create an instance of an abstract class.
+classAbstractInstantiations2.ts(17,5): error TS2511: Cannot create an instance of an abstract class.
+classAbstractInstantiations2.ts(21,1): error TS2511: Cannot create an instance of an abstract class.
 classAbstractInstantiations2.ts(23,15): error TS2449: Class 'C' used before its declaration.
 classAbstractInstantiations2.ts(26,7): error TS2515: Non-abstract class 'C' does not implement inherited abstract member 'bar' from class 'B'.
 classAbstractInstantiations2.ts(46,5): error TS2391: Function implementation is missing or not immediately following the declaration.
@@ -21,7 +21,7 @@ classAbstractInstantiations2.ts(50,5): error TS1244: Abstract methods can only a
     }
     
     new B; // error
-        ~
+    ~~~~~
 !!! error TS2511: Cannot create an instance of an abstract class.
     
     var BB: typeof B = B;
@@ -33,13 +33,13 @@ classAbstractInstantiations2.ts(50,5): error TS1244: Abstract methods can only a
     
     function constructB(Factory : typeof B) {
         new Factory; // error -- Factory is of type typeof B.
-            ~~~~~~~
+        ~~~~~~~~~~~
 !!! error TS2511: Cannot create an instance of an abstract class.
     }
     
     var BB = B;
     new BB; // error -- BB is of type typeof B.
-        ~~
+    ~~~~~~
 !!! error TS2511: Cannot create an instance of an abstract class.
     
     var x : any = C;

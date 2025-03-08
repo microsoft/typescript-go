@@ -7,13 +7,13 @@ badExport2.ts(1,20): error TS1128: Declaration or statement expected.
 badImport.ts(1,10): error TS1003: Identifier expected.
 badImport.ts(1,10): error TS1141: String literal expected.
 badImport.ts(1,20): error TS1128: Declaration or statement expected.
+badImport.ts(1,22): error TS1434: Unexpected keyword or identifier.
 badImport.ts(1,22): error TS2304: Cannot find name 'from'.
-badImport.ts(1,27): error TS1005: ';' expected.
 badImport2.ts(1,17): error TS1003: Identifier expected.
 badImport2.ts(1,17): error TS1141: String literal expected.
 badImport2.ts(1,20): error TS1128: Declaration or statement expected.
+badImport2.ts(1,22): error TS1434: Unexpected keyword or identifier.
 badImport2.ts(1,22): error TS2304: Cannot find name 'from'.
-badImport2.ts(1,27): error TS1005: ';' expected.
 
 
 ==== foo.ts (0 errors) ====
@@ -33,9 +33,9 @@ badImport2.ts(1,27): error TS1005: ';' expected.
                        ~
 !!! error TS1128: Declaration or statement expected.
                          ~~~~
+!!! error TS1434: Unexpected keyword or identifier.
+                         ~~~~
 !!! error TS2304: Cannot find name 'from'.
-                              ~~~~~~~
-!!! error TS1005: ';' expected.
     
 ==== badImport2.ts (5 errors) ====
     import { foo as 0n } from "./foo";
@@ -46,9 +46,9 @@ badImport2.ts(1,27): error TS1005: ';' expected.
                        ~
 !!! error TS1128: Declaration or statement expected.
                          ~~~~
+!!! error TS1434: Unexpected keyword or identifier.
+                         ~~~~
 !!! error TS2304: Cannot find name 'from'.
-                              ~~~~~~~
-!!! error TS1005: ';' expected.
     
 ==== badExport.ts (3 errors) ====
     export { foo as 0n };

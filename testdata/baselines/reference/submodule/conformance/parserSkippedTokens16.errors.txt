@@ -1,7 +1,7 @@
 parserSkippedTokens16.ts(1,1): error TS2552: Cannot find name 'foo'. Did you mean 'Foo'?
 parserSkippedTokens16.ts(1,6): error TS1005: ';' expected.
+parserSkippedTokens16.ts(1,8): error TS1434: Unexpected keyword or identifier.
 parserSkippedTokens16.ts(1,8): error TS2304: Cannot find name 'Bar'.
-parserSkippedTokens16.ts(1,12): error TS1005: ';' expected.
 parserSkippedTokens16.ts(2,22): error TS1127: Invalid character.
 parserSkippedTokens16.ts(3,3): error TS1109: Expression expected.
 parserSkippedTokens16.ts(6,5): error TS1138: Parameter declaration expected.
@@ -16,9 +16,9 @@ parserSkippedTokens16.ts(8,14): error TS1109: Expression expected.
          ~
 !!! error TS1005: ';' expected.
            ~~~
+!!! error TS1434: Unexpected keyword or identifier.
+           ~~~
 !!! error TS2304: Cannot find name 'Bar'.
-               ~
-!!! error TS1005: ';' expected.
     function Foo      () ¬   { }
                          ~~
 !!! error TS1127: Invalid character.

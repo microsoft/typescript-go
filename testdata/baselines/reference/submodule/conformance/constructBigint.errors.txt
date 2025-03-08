@@ -11,7 +11,7 @@ constructBigint.ts(9,8): error TS2345: Argument of type 'undefined' is not assig
     BigInt(false);
     
     BigInt(Symbol());
-           ~~~~~~
+           ~~~~~~~~
 !!! error TS2345: Argument of type 'symbol' is not assignable to parameter of type 'string | number | bigint | boolean'.
     BigInt({ e: 1, m: 1 })
            ~~~~~~~~~~~~~~

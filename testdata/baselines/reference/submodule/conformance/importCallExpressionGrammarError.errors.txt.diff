@@ -42,7 +42,7 @@
      
      var a = ["./0"];
      import(...["PathModule"]);
-+    ~~~~~~
++    ~~~~~~~~~~~~~~~~~~~~~~~~~
 +!!! error TS2711: A dynamic import call returns a 'Promise'. Make sure you have a declaration for 'Promise' or include 'ES2015' in your '--lib' option.
             ~~~~~~~~~~~~~~~~~
  !!! error TS1325: Argument of dynamic import cannot be spread element.
@@ -50,20 +50,19 @@
 +!!! error TS2488: Type '[string]' must have a '[Symbol.iterator]()' method that returns an iterator.
      
      var p1 = import(...a);
-+             ~~~~~~
++             ~~~~~~~~~~~~
 +!!! error TS2711: A dynamic import call returns a 'Promise'. Make sure you have a declaration for 'Promise' or include 'ES2015' in your '--lib' option.
                      ~~~~
  !!! error TS1325: Argument of dynamic import cannot be spread element.
 +                       ~
 +!!! error TS2488: Type '{}' must have a '[Symbol.iterator]()' method that returns an iterator.
      const p2 = import();
--               ~~~~~~~~
-+               ~~~~~~
+                ~~~~~~~~
  !!! message TS1450: Dynamic imports can only accept a module specifier and an optional set of attributes as arguments
-+               ~~~~~~
++               ~~~~~~~~
 +!!! error TS2711: A dynamic import call returns a 'Promise'. Make sure you have a declaration for 'Promise' or include 'ES2015' in your '--lib' option.
      const p4 = import("pathToModule", "secondModule");
-+               ~~~~~~
++               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 +!!! error TS2711: A dynamic import call returns a 'Promise'. Make sure you have a declaration for 'Promise' or include 'ES2015' in your '--lib' option.
                        ~~~~~~~~~~~~~~
  !!! error TS2307: Cannot find module 'pathToModule' or its corresponding type declarations.

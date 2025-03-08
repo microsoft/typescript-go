@@ -7,11 +7,8 @@
 -classAbstractConstructorAssignability.ts(9,5): error TS2322: Type 'typeof B' is not assignable to type 'typeof C'.
 +classAbstractConstructorAssignability.ts(9,5): error TS2322: Type '{ new(): B, prototype: B }' is not assignable to type '{ new(): C, prototype: C }'.
    Cannot assign an abstract constructor type to a non-abstract constructor type.
--classAbstractConstructorAssignability.ts(12,1): error TS2511: Cannot create an instance of an abstract class.
-+classAbstractConstructorAssignability.ts(12,5): error TS2511: Cannot create an instance of an abstract class.
+ classAbstractConstructorAssignability.ts(12,1): error TS2511: Cannot create an instance of an abstract class.
  
- 
- ==== classAbstractConstructorAssignability.ts (3 errors) ====
 @@= skipped -13, +13 lines =@@
      
      var AA : typeof A = B;
@@ -27,8 +24,3 @@
  !!! error TS2322:   Cannot assign an abstract constructor type to a non-abstract constructor type.
      
      new AA;
-     new BB;
--    ~~~~~~
-+        ~~
- !!! error TS2511: Cannot create an instance of an abstract class.
-     new CC;

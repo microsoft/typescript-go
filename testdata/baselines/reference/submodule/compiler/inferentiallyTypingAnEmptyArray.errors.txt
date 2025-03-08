@@ -19,5 +19,5 @@ inferentiallyTypingAnEmptyArray.ts(17,1): error TS2532: Object is possibly 'unde
     // the undefined[] type.
     declare function foo<T>(arr: T[]): T;
     foo([]).bar;
-    ~~~
+    ~~~~~~~
 !!! error TS2532: Object is possibly 'undefined'.

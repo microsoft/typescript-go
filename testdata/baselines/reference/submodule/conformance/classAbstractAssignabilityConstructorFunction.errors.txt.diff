@@ -5,7 +5,7 @@
 +classAbstractAssignabilityConstructorFunction.ts(7,1): error TS2322: Type '{ new(): A, prototype: A }' is not assignable to type 'new() => A'.
    Cannot assign an abstract constructor type to a non-abstract constructor type.
 -classAbstractAssignabilityConstructorFunction.ts(8,1): error TS2322: Type 'string' is not assignable to type 'new () => A'.
-+classAbstractAssignabilityConstructorFunction.ts(8,1): error TS2322: Type '"asdf"' is not assignable to type 'new() => A'.
++classAbstractAssignabilityConstructorFunction.ts(8,1): error TS2322: Type 'string' is not assignable to type 'new() => A'.
  
  
  ==== classAbstractAssignabilityConstructorFunction.ts (2 errors) ====
@@ -19,4 +19,4 @@
      AAA = "asdf";
      ~~~
 -!!! error TS2322: Type 'string' is not assignable to type 'new () => A'.
-+!!! error TS2322: Type '"asdf"' is not assignable to type 'new() => A'.
++!!! error TS2322: Type 'string' is not assignable to type 'new() => A'.

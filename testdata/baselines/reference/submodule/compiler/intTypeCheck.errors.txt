@@ -24,7 +24,7 @@ intTypeCheck.ts(112,5): error TS2322: Type '{}' is not assignable to type 'i2'.
 intTypeCheck.ts(113,5): error TS2322: Type 'Object' is not assignable to type 'i2'.
   The 'Object' type is assignable to very few other types. Did you mean to use the 'any' type instead?
     Type 'Object' provides no match for the signature '(): any'.
-intTypeCheck.ts(114,21): error TS2350: Only a void function can be called with the 'new' keyword.
+intTypeCheck.ts(114,17): error TS2350: Only a void function can be called with the 'new' keyword.
 intTypeCheck.ts(115,5): error TS2322: Type 'Base' is not assignable to type 'i2'.
   Type 'Base' provides no match for the signature '(): any'.
 intTypeCheck.ts(120,5): error TS2322: Type 'boolean' is not assignable to type 'i2'.
@@ -59,7 +59,7 @@ intTypeCheck.ts(168,5): error TS2322: Type '{}' is not assignable to type 'i6'.
 intTypeCheck.ts(169,5): error TS2322: Type 'Object' is not assignable to type 'i6'.
   The 'Object' type is assignable to very few other types. Did you mean to use the 'any' type instead?
     Type 'Object' provides no match for the signature '(): any'.
-intTypeCheck.ts(170,21): error TS2350: Only a void function can be called with the 'new' keyword.
+intTypeCheck.ts(170,17): error TS2350: Only a void function can be called with the 'new' keyword.
 intTypeCheck.ts(171,5): error TS2322: Type 'Base' is not assignable to type 'i6'.
   Type 'Base' provides no match for the signature '(): any'.
 intTypeCheck.ts(173,5): error TS2322: Type '() => void' is not assignable to type 'i6'.
@@ -236,7 +236,7 @@ intTypeCheck.ts(204,22): error TS2693: 'i8' only refers to a type, but is being 
 !!! error TS2322:   The 'Object' type is assignable to very few other types. Did you mean to use the 'any' type instead?
 !!! error TS2322:     Type 'Object' provides no match for the signature '(): any'.
     var obj14: i2 = new obj11;
-                        ~~~~~
+                    ~~~~~~~~~
 !!! error TS2350: Only a void function can be called with the 'new' keyword.
     var obj15: i2 = new Base;
         ~~~~~
@@ -351,7 +351,7 @@ intTypeCheck.ts(204,22): error TS2693: 'i8' only refers to a type, but is being 
 !!! error TS2322:   The 'Object' type is assignable to very few other types. Did you mean to use the 'any' type instead?
 !!! error TS2322:     Type 'Object' provides no match for the signature '(): any'.
     var obj58: i6 = new obj55;
-                        ~~~~~
+                    ~~~~~~~~~
 !!! error TS2350: Only a void function can be called with the 'new' keyword.
     var obj59: i6 = new Base;
         ~~~~~

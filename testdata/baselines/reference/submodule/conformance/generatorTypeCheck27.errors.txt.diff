@@ -34,6 +34,6 @@
 +            yield x => x.length;
 +    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 +        } ();
-+    ~~~~~
++    ~~~~~~~~
 +!!! error TS2488: Type '{}' must have a '[Symbol.iterator]()' method that returns an iterator.
 +    }

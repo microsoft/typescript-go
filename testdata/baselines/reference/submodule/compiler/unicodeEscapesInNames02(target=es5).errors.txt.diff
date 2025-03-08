@@ -23,21 +23,9 @@
 -extendedEscapesForAstralsInVarsAndClasses.ts(6,8): error TS1128: Declaration or statement expected.
 +extendedEscapesForAstralsInVarsAndClasses.ts(6,7): error TS1128: Declaration or statement expected.
  extendedEscapesForAstralsInVarsAndClasses.ts(9,5): error TS1127: Invalid character.
--extendedEscapesForAstralsInVarsAndClasses.ts(9,6): error TS1434: Unexpected keyword or identifier.
-+extendedEscapesForAstralsInVarsAndClasses.ts(9,7): error TS1005: ';' expected.
+ extendedEscapesForAstralsInVarsAndClasses.ts(9,6): error TS1434: Unexpected keyword or identifier.
  extendedEscapesForAstralsInVarsAndClasses.ts(9,11): error TS1351: An identifier or keyword cannot immediately follow a numeric literal.
- extendedEscapesForAstralsInVarsAndClasses.ts(9,15): error TS2809: Declaration or statement expected. This '=' follows a block of statements, so if you intended to write a destructuring assignment, you might need to wrap the whole assignment in parentheses.
- extendedEscapesForAstralsInVarsAndClasses.ts(13,5): error TS1127: Invalid character.
-@@= skipped -24, +23 lines =@@
- extendedEscapesForAstralsInVarsAndClasses.ts(14,19): error TS1005: ';' expected.
- extendedEscapesForAstralsInVarsAndClasses.ts(15,9): error TS2532: Object is possibly 'undefined'.
- extendedEscapesForAstralsInVarsAndClasses.ts(15,14): error TS1127: Invalid character.
--extendedEscapesForAstralsInVarsAndClasses.ts(15,15): error TS1434: Unexpected keyword or identifier.
-+extendedEscapesForAstralsInVarsAndClasses.ts(15,16): error TS1005: ';' expected.
- extendedEscapesForAstralsInVarsAndClasses.ts(15,20): error TS1351: An identifier or keyword cannot immediately follow a numeric literal.
- extendedEscapesForAstralsInVarsAndClasses.ts(15,24): error TS2809: Declaration or statement expected. This '=' follows a block of statements, so if you intended to write a destructuring assignment, you might need to wrap the whole assignment in parentheses.
- extendedEscapesForAstralsInVarsAndClasses.ts(17,5): error TS2304: Cannot find name 'methodA'.
-@@= skipped -8, +8 lines =@@
+@@= skipped -32, +31 lines =@@
  extendedEscapesForAstralsInVarsAndClasses.ts(18,21): error TS1127: Invalid character.
  extendedEscapesForAstralsInVarsAndClasses.ts(20,1): error TS1128: Declaration or statement expected.
  extendedEscapesForAstralsInVarsAndClasses.ts(22,13): error TS1127: Invalid character.
@@ -50,12 +38,11 @@
 +extendedEscapesForAstralsInVarsAndClasses.ts(22,15): error TS1134: Variable declaration expected.
 +extendedEscapesForAstralsInVarsAndClasses.ts(22,17): error TS1389: 'new' is not allowed as a variable declaration name.
 +extendedEscapesForAstralsInVarsAndClasses.ts(22,27): error TS1127: Invalid character.
-+extendedEscapesForAstralsInVarsAndClasses.ts(22,29): error TS1005: ';' expected.
++extendedEscapesForAstralsInVarsAndClasses.ts(22,28): error TS1434: Unexpected keyword or identifier.
 +extendedEscapesForAstralsInVarsAndClasses.ts(22,33): error TS1351: An identifier or keyword cannot immediately follow a numeric literal.
 +extendedEscapesForAstralsInVarsAndClasses.ts(22,49): error TS2339: Property 'methodA' does not exist on type 'Foo'.
  extendedEscapesForAstralsInVarsAndClasses.ts(24,2): error TS1127: Invalid character.
--extendedEscapesForAstralsInVarsAndClasses.ts(24,3): error TS1434: Unexpected keyword or identifier.
-+extendedEscapesForAstralsInVarsAndClasses.ts(24,4): error TS1005: ';' expected.
+ extendedEscapesForAstralsInVarsAndClasses.ts(24,3): error TS1434: Unexpected keyword or identifier.
  extendedEscapesForAstralsInVarsAndClasses.ts(24,8): error TS1351: An identifier or keyword cannot immediately follow a numeric literal.
  extendedEscapesForAstralsInVarsAndClasses.ts(24,12): error TS1128: Declaration or statement expected.
  
@@ -94,13 +81,8 @@
 -        
 +        ~
  !!! error TS1127: Invalid character.
--         ~
--!!! error TS1434: Unexpected keyword or identifier.
-+          ~
-+!!! error TS1005: ';' expected.
-               ~~
- !!! error TS1351: An identifier or keyword cannot immediately follow a numeric literal.
-                   ~
+          ~
+ !!! error TS1434: Unexpected keyword or identifier.
 @@= skipped -19, +19 lines =@@
      
      class Foo {
@@ -117,13 +99,8 @@
 -                 
 +                 ~
  !!! error TS1127: Invalid character.
--                  ~
--!!! error TS1434: Unexpected keyword or identifier.
-+                   ~
-+!!! error TS1005: ';' expected.
-                        ~~
- !!! error TS1351: An identifier or keyword cannot immediately follow a numeric literal.
-                            ~
+                   ~
+ !!! error TS1434: Unexpected keyword or identifier.
 @@= skipped -15, +15 lines =@@
                    ~
  !!! error TS1005: ';' expected.
@@ -149,10 +126,10 @@
 -                               
 +                              ~
  !!! error TS1127: Invalid character.
-                                 ~
--!!! error TS1434: Unexpected keyword or identifier.
+-                                ~
++                               ~
+ !!! error TS1434: Unexpected keyword or identifier.
 -                                     ~~
-+!!! error TS1005: ';' expected.
 +                                    ~~
  !!! error TS1351: An identifier or keyword cannot immediately follow a numeric literal.
 -                                                     ~~~~~~~
@@ -163,13 +140,8 @@
 -     
 +     ~
  !!! error TS1127: Invalid character.
--      ~
--!!! error TS1434: Unexpected keyword or identifier.
-+       ~
-+!!! error TS1005: ';' expected.
-            ~~
- !!! error TS1351: An identifier or keyword cannot immediately follow a numeric literal.
-                ~~
+       ~
+ !!! error TS1434: Unexpected keyword or identifier.
 @@= skipped -27, +27 lines =@@
      
  ==== astralAsSurrogatePair.ts (6 errors) ====

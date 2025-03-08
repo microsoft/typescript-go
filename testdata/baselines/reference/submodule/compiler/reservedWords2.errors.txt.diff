@@ -20,8 +20,7 @@
  reservedWords2.ts(5,10): error TS1359: Identifier expected. 'throw' is a reserved word that cannot be used here.
  reservedWords2.ts(5,18): error TS1005: '=>' expected.
  reservedWords2.ts(6,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
--reservedWords2.ts(6,8): error TS2819: Namespace name cannot be 'void'.
-+reservedWords2.ts(6,8): error TS1005: ';' expected.
+ reservedWords2.ts(6,8): error TS2819: Namespace name cannot be 'void'.
  reservedWords2.ts(7,11): error TS2300: Duplicate identifier '(Missing)'.
 +reservedWords2.ts(7,11): error TS2300: Duplicate identifier '(Missing)'.
  reservedWords2.ts(7,11): error TS1005: ':' expected.
@@ -75,12 +74,7 @@
               ~~~~~
  !!! error TS1359: Identifier expected. 'throw' is a reserved word that cannot be used here.
                       ~
-@@= skipped -9, +13 lines =@@
-     ~~~~~~
- !!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-            ~~~~
--!!! error TS2819: Namespace name cannot be 'void'.
-+!!! error TS1005: ';' expected.
+@@= skipped -13, +17 lines =@@
      var {while, return} = { while: 1, return: 2 };
                
  !!! error TS2300: Duplicate identifier '(Missing)'.
@@ -108,7 +102,7 @@
                                   ~
  !!! error TS1005: ':' expected.
      var [debugger, if] = [1, 2];
-@@= skipped -31, +39 lines =@@
+@@= skipped -27, +35 lines =@@
      enum void {}
          
  !!! error TS2567: Enum declarations can only merge with namespace or other enum declarations.

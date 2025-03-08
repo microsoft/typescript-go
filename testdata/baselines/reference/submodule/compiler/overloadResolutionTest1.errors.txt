@@ -6,7 +6,7 @@ overloadResolutionTest1.ts(18,16): error TS2769: No overload matches this call.
     Type 'string' is not assignable to type 'boolean'.
 overloadResolutionTest1.ts(24,15): error TS2769: No overload matches this call.
   The last overload gave the following error.
-    Type 'true' is not assignable to type 'string'.
+    Type 'boolean' is not assignable to type 'string'.
 
 
 ==== overloadResolutionTest1.ts (3 errors) ====
@@ -49,6 +49,6 @@ overloadResolutionTest1.ts(24,15): error TS2769: No overload matches this call.
                   ~
 !!! error TS2769: No overload matches this call.
 !!! error TS2769:   The last overload gave the following error.
-!!! error TS2769:     Type 'true' is not assignable to type 'string'.
+!!! error TS2769:     Type 'boolean' is not assignable to type 'string'.
 !!! related TS6500 overloadResolutionTest1.ts:22:20: The expected type comes from property 'a' which is declared here on type '{ a: string }'
 !!! related TS2771 overloadResolutionTest1.ts:22:10: The last overload is declared here.

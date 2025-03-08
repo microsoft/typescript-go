@@ -60,11 +60,11 @@ objectCreationOfElementAccessExpression.ts(54,79): error TS2348: Value of type '
     var foods = new PetFood[new IceCream('Mint chocolate chip') , Cookie('Chocolate chip', false) , new Cookie('Peanut butter', true)];
                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2538: Type 'Cookie' cannot be used as an index type.
-                                                                  ~~~~~~
+                                                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2348: Value of type '{ new(flavor: string, isGlutenFree: boolean): Cookie, prototype: Cookie }' is not callable. Did you mean to include 'new'?
     var foods2: MonsterFood[] = new PetFood[new IceCream('Mint chocolate chip') , Cookie('Chocolate chip', false) , new Cookie('Peanut butter', true)];
                                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2538: Type 'Cookie' cannot be used as an index type.
-                                                                                  ~~~~~~
+                                                                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2348: Value of type '{ new(flavor: string, isGlutenFree: boolean): Cookie, prototype: Cookie }' is not callable. Did you mean to include 'new'?
     

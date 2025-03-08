@@ -1,6 +1,6 @@
 index.ts(3,3): error TS2769: No overload matches this call.
   The last overload gave the following error.
-    Argument of type '0' is not assignable to parameter of type 'Function'.
+    Argument of type 'number' is not assignable to parameter of type 'Function'.
 
 
 ==== index.ts (1 errors) ====
@@ -10,7 +10,7 @@ index.ts(3,3): error TS2769: No overload matches this call.
       ~
 !!! error TS2769: No overload matches this call.
 !!! error TS2769:   The last overload gave the following error.
-!!! error TS2769:     Argument of type '0' is not assignable to parameter of type 'Function'.
+!!! error TS2769:     Argument of type 'number' is not assignable to parameter of type 'Function'.
 !!! related TS2771 file.d.ts:8:18: The last overload is declared here.
 ==== file.d.ts (0 errors) ====
     declare namespace Foo {

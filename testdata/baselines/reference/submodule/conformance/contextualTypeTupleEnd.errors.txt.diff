@@ -27,13 +27,11 @@
      type Funcs = [...((arg: number) => void)[], (arg: string) => void];
      
      declare function num(x: number): void;
-@@= skipped -14, +24 lines =@@
-     declare function f1(...args: Funcs): void;
+@@= skipped -15, +25 lines =@@
      
      f1();  // Error
--    ~~~~
+     ~~~~
 -!!! error TS2345: Argument of type '[]' is not assignable to parameter of type '[...((arg: number) => void)[], (arg: string) => void]'.
-+    ~~
 +!!! error TS2345: Argument of type '[]' is not assignable to parameter of type '[...(arg: number) => void[], (arg: string) => void]'.
  !!! error TS2345:   Source has 0 element(s) but target requires 1.
      f1(x => str(x));
@@ -54,7 +52,7 @@
      
      const a0: Funcs = [];  // Error
            ~~
-@@= skipped -41, +53 lines =@@
+@@= skipped -40, +52 lines =@@
      
      example(
          x => x.foo,  // Error

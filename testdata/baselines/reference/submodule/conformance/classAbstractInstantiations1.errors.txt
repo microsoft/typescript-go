@@ -1,6 +1,6 @@
-classAbstractInstantiations1.ts(11,5): error TS2511: Cannot create an instance of an abstract class.
-classAbstractInstantiations1.ts(12,5): error TS2511: Cannot create an instance of an abstract class.
-classAbstractInstantiations1.ts(14,5): error TS2511: Cannot create an instance of an abstract class.
+classAbstractInstantiations1.ts(11,1): error TS2511: Cannot create an instance of an abstract class.
+classAbstractInstantiations1.ts(12,1): error TS2511: Cannot create an instance of an abstract class.
+classAbstractInstantiations1.ts(14,1): error TS2511: Cannot create an instance of an abstract class.
 
 
 ==== classAbstractInstantiations1.ts (3 errors) ====
@@ -15,14 +15,14 @@ classAbstractInstantiations1.ts(14,5): error TS2511: Cannot create an instance o
     abstract class C extends B {}
     
     new A;
-        ~
+    ~~~~~
 !!! error TS2511: Cannot create an instance of an abstract class.
     new A(1); // should report 1 error
-        ~
+    ~~~~~~~~
 !!! error TS2511: Cannot create an instance of an abstract class.
     new B;
     new C;
-        ~
+    ~~~~~
 !!! error TS2511: Cannot create an instance of an abstract class.
     
     var a : A;

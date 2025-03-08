@@ -40,19 +40,17 @@
      
      // Error specifier is not assignable to string
      import(getSpecifier());
--           ~~~~~~~~~~~~~~
-+    ~~~~~~
++    ~~~~~~~~~~~~~~~~~~~~~~
 +!!! error TS2711: A dynamic import call returns a 'Promise'. Make sure you have a declaration for 'Promise' or include 'ES2015' in your '--lib' option.
-+           ~~~~~~~~~~~~
+            ~~~~~~~~~~~~~~
  !!! error TS7036: Dynamic import's specifier must be of type 'string', but here has type 'boolean'.
      var p1 = import(getSpecifier());
--                    ~~~~~~~~~~~~~~
-+             ~~~~~~
++             ~~~~~~~~~~~~~~~~~~~~~~
 +!!! error TS2711: A dynamic import call returns a 'Promise'. Make sure you have a declaration for 'Promise' or include 'ES2015' in your '--lib' option.
-+                    ~~~~~~~~~~~~
+                     ~~~~~~~~~~~~~~
  !!! error TS7036: Dynamic import's specifier must be of type 'string', but here has type 'boolean'.
      const p2 = import(whatToLoad ? getSpecifier() : "defaulPath")
-+               ~~~~~~
++               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 +!!! error TS2711: A dynamic import call returns a 'Promise'. Make sure you have a declaration for 'Promise' or include 'ES2015' in your '--lib' option.
                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -!!! error TS7036: Dynamic import's specifier must be of type 'string', but here has type 'boolean | "defaulPath"'.
@@ -62,13 +60,13 @@
      });
      
      var p3 = import(["path1", "path2"]);
-+             ~~~~~~
++             ~~~~~~~~~~~~~~~~~~~~~~~~~~
 +!!! error TS2711: A dynamic import call returns a 'Promise'. Make sure you have a declaration for 'Promise' or include 'ES2015' in your '--lib' option.
                      ~~~~~~~~~~~~~~~~~~
 -!!! error TS7036: Dynamic import's specifier must be of type 'string', but here has type 'string[]'.
 +!!! error TS7036: Dynamic import's specifier must be of type 'string', but here has type '{}'.
      var p4 = import(()=>"PathToModule");
-+             ~~~~~~
++             ~~~~~~~~~~~~~~~~~~~~~~~~~~
 +!!! error TS2711: A dynamic import call returns a 'Promise'. Make sure you have a declaration for 'Promise' or include 'ES2015' in your '--lib' option.
                      ~~~~~~~~~~~~~~~~~~
  !!! error TS7036: Dynamic import's specifier must be of type 'string', but here has type '() => string'.

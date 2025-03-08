@@ -21,9 +21,10 @@ g.ts(30,17): error TS1539: A 'bigint' literal cannot be used as a property name.
 g.ts(31,18): error TS2322: Type 'string' is not assignable to type 'number'.
 g.ts(32,3): error TS2538: Type 'bigint' cannot be used as an index type.
 g.ts(33,4): error TS2538: Type 'bigint' cannot be used as an index type.
+g.ts(35,1): error TS1434: Unexpected keyword or identifier.
 g.ts(35,2): error TS1353: A bigint literal must be an integer.
-q.ts(2,19): error TS2322: Type 'Q' is not assignable to type 'string | number | symbol'.
-  Type '6n' is not assignable to type 'string | number | symbol'.
+q.ts(2,19): error TS2322: Type 'bigint' is not assignable to type 'string | number | symbol'.
+  Type 'bigint' is not assignable to type 'string | number | symbol'.
 
 
 ==== a.ts (6 errors) ====
@@ -55,7 +56,7 @@ q.ts(2,19): error TS2322: Type 'Q' is not assignable to type 'string | number | 
                 ~~
 !!! error TS1539: A 'bigint' literal cannot be used as a property name.
     
-==== g.ts (18 errors) ====
+==== g.ts (19 errors) ====
     interface G {
         2n: string;
         ~~
@@ -128,6 +129,8 @@ q.ts(2,19): error TS2322: Type 'Q' is not assignable to type 'string | number | 
 !!! error TS2538: Type 'bigint' cannot be used as an index type.
     
     g.2n; // not valid JS
+    ~
+!!! error TS1434: Unexpected keyword or identifier.
      ~~~
 !!! error TS1353: A bigint literal must be an integer.
     
@@ -135,6 +138,6 @@ q.ts(2,19): error TS2322: Type 'Q' is not assignable to type 'string | number | 
     type Q = 6n | 7n | 8n;
     type T = { [t in  Q]: string };
                       ~
-!!! error TS2322: Type 'Q' is not assignable to type 'string | number | symbol'.
-!!! error TS2322:   Type '6n' is not assignable to type 'string | number | symbol'.
+!!! error TS2322: Type 'bigint' is not assignable to type 'string | number | symbol'.
+!!! error TS2322:   Type 'bigint' is not assignable to type 'string | number | symbol'.
     

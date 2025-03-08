@@ -1,4 +1,4 @@
-privateNameFieldsESNext.ts(8,9): error TS2322: Type '"hello"' is not assignable to type 'number'.
+privateNameFieldsESNext.ts(8,9): error TS2322: Type 'string' is not assignable to type 'number'.
 
 
 ==== privateNameFieldsESNext.ts (1 errors) ====
@@ -11,7 +11,7 @@ privateNameFieldsESNext.ts(8,9): error TS2322: Type '"hello"' is not assignable 
             console.log(this.#a);
             this.#a = "hello";
             ~~~~~~~
-!!! error TS2322: Type '"hello"' is not assignable to type 'number'.
+!!! error TS2322: Type 'string' is not assignable to type 'number'.
             console.log(this.#b);
         }
         static #m = "test";

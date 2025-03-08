@@ -49,20 +49,20 @@
 -!!! related TS2728 anotherModule.ts:1:14: 'D' is declared here.
 +            ~~~~~~~
 +!!! error TS2583: Cannot find name 'Promise'. Do you need to change your target library? Try changing the 'lib' compiler option to 'es2015' or later.
-+                                            ~~~~~~
++                                            ~~~~~~~~~~~~~~~~~~~~~~~
 +!!! error TS2711: A dynamic import call returns a 'Promise'. Make sure you have a declaration for 'Promise' or include 'ES2015' in your '--lib' option.
      let p2 = import("./defaultPath") as Promise<typeof anotherModule>;
 -             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -!!! error TS2352: Conversion of type 'Promise<typeof import("defaultPath")>' to type 'Promise<typeof import("anotherModule")>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
 -!!! error TS2352:   Property 'D' is missing in type 'typeof import("defaultPath")' but required in type 'typeof import("anotherModule")'.
 -!!! related TS2728 anotherModule.ts:1:14: 'D' is declared here.
-+             ~~~~~~
++             ~~~~~~~~~~~~~~~~~~~~~~~
 +!!! error TS2711: A dynamic import call returns a 'Promise'. Make sure you have a declaration for 'Promise' or include 'ES2015' in your '--lib' option.
 +                                        ~~~~~~~
 +!!! error TS2583: Cannot find name 'Promise'. Do you need to change your target library? Try changing the 'lib' compiler option to 'es2015' or later.
      let p3: Promise<any> = import("./defaultPath");
 +            ~~~~~~~
 +!!! error TS2583: Cannot find name 'Promise'. Do you need to change your target library? Try changing the 'lib' compiler option to 'es2015' or later.
-+                           ~~~~~~
++                           ~~~~~~~~~~~~~~~~~~~~~~~
 +!!! error TS2711: A dynamic import call returns a 'Promise'. Make sure you have a declaration for 'Promise' or include 'ES2015' in your '--lib' option.
      

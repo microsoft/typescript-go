@@ -12,10 +12,8 @@
 +intersectionPropertyCheck.ts(7,3): error TS2322: Type 'T & { a: boolean }' is not assignable to type '{ a?: string | undefined }'.
    Types of property 'a' are incompatible.
      Type 'boolean' is not assignable to type 'string'.
--intersectionPropertyCheck.ts(17,22): error TS2322: Type 'boolean' is not assignable to type 'string[]'.
-+intersectionPropertyCheck.ts(17,22): error TS2322: Type 'true' is not assignable to type 'string[]'.
- 
- 
+ intersectionPropertyCheck.ts(17,22): error TS2322: Type 'boolean' is not assignable to type 'string[]'.
+@@= skipped -10, +10 lines =@@
  ==== intersectionPropertyCheck.ts (4 errors) ====
      let obj: { a: { x: string } } & { c: number } = { a: { x: 'hello', y: 2 }, c: 5 };  // Nested excess property
                                                                         ~
@@ -41,12 +39,3 @@
  !!! error TS2322:   Types of property 'a' are incompatible.
  !!! error TS2322:     Type 'boolean' is not assignable to type 'string'.
      }
-@@= skipped -37, +37 lines =@@
-     function test<T extends object>(value: T): Test {
-       return { ...value, hi: true }
-                          ~~
--!!! error TS2322: Type 'boolean' is not assignable to type 'string[]'.
-+!!! error TS2322: Type 'true' is not assignable to type 'string[]'.
- !!! related TS6500 intersectionPropertyCheck.ts:13:12: The expected type comes from property 'hi' which is declared here on type 'Test'
-     }
-     

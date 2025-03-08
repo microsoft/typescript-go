@@ -17,16 +17,7 @@
      import esmy from "./decl"; // error
             ~~~~
  !!! error TS1286: ESM syntax is not allowed in a CommonJS module when 'verbatimModuleSyntax' is enabled.
-@@= skipped -12, +12 lines =@@
- !!! error TS1286: ESM syntax is not allowed in a CommonJS module when 'verbatimModuleSyntax' is enabled.
-     import type { funciton as funciton2 } from "./decl"; // ok I guess?
-     import("./decl"); // error
--    ~~~~~~~~~~~~~~~~
-+    ~~~~~~
- !!! error TS1286: ESM syntax is not allowed in a CommonJS module when 'verbatimModuleSyntax' is enabled.
-     type T = typeof import("./decl"); // ok
-     export {}; // error
-@@= skipped -13, +13 lines =@@
+@@= skipped -25, +25 lines =@@
          export type T = number;
      }
      export namespace Values { // error

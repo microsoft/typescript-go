@@ -35,6 +35,7 @@
  computedPropertiesInDestructuring1_ES6.ts(21,8): error TS2538: Type 'any' cannot be used as an index type.
 -computedPropertiesInDestructuring1_ES6.ts(22,8): error TS2538: Type 'any' cannot be used as an index type.
 +computedPropertiesInDestructuring1_ES6.ts(22,5): error TS2488: Type '[{ bar: string }]' must have a '[Symbol.iterator]()' method that returns an iterator.
++computedPropertiesInDestructuring1_ES6.ts(22,8): error TS2538: Type 'error' cannot be used as an index type.
  computedPropertiesInDestructuring1_ES6.ts(22,12): error TS2339: Property 'toExponential' does not exist on type 'string'.
 -computedPropertiesInDestructuring1_ES6.ts(25,4): error TS2537: Type '{ bar: string; }' has no matching index signature for type 'string'.
 -computedPropertiesInDestructuring1_ES6.ts(29,4): error TS2537: Type '{ bar: string; }' has no matching index signature for type 'string'.
@@ -42,7 +43,6 @@
 -computedPropertiesInDestructuring1_ES6.ts(32,4): error TS2537: Type '{ bar: string; }' has no matching index signature for type 'string'.
 -computedPropertiesInDestructuring1_ES6.ts(34,4): error TS2349: This expression is not callable.
 -  Type 'String' has no call signatures.
-+computedPropertiesInDestructuring1_ES6.ts(22,12): error TS2538: Type 'error' cannot be used as an index type.
 +computedPropertiesInDestructuring1_ES6.ts(25,4): error TS2537: Type '{ bar: string }' has no matching index signature for type 'string'.
 +computedPropertiesInDestructuring1_ES6.ts(29,4): error TS2537: Type '{ bar: string }' has no matching index signature for type 'string'.
 +computedPropertiesInDestructuring1_ES6.ts(31,1): error TS2488: Type '[{ bar: string }]' must have a '[Symbol.iterator]()' method that returns an iterator.
@@ -75,12 +75,11 @@
      
      let {["bar"]: bar2} = {bar: "bar"};
      let {[11]: bar2_1} = {11: "bar"};
-     
+@@= skipped -34, +56 lines =@@
      let foo2 = () => "bar";
      let {[foo2()]: bar3} = {bar: "bar"};
--          ~~~~~~
+           ~~~~~~
 -!!! error TS2537: Type '{ bar: string; }' has no matching index signature for type 'string'.
-+          ~~~~
 +!!! error TS2537: Type '{ bar: string }' has no matching index signature for type 'string'.
      
      let [{[foo]: bar4}] = [{bar: "bar"}];
@@ -90,11 +89,10 @@
 -!!! error TS2537: Type '{ bar: string; }' has no matching index signature for type 'string'.
 +!!! error TS2537: Type '{ bar: string }' has no matching index signature for type 'string'.
      let [{[foo2()]: bar5}] = [{bar: "bar"}];
--           ~~~~~~
--!!! error TS2537: Type '{ bar: string; }' has no matching index signature for type 'string'.
 +        ~~~~~~~~~~~~~~~~~~
 +!!! error TS2488: Type '[{ bar: string }]' must have a '[Symbol.iterator]()' method that returns an iterator.
-+           ~~~~
+            ~~~~~~
+-!!! error TS2537: Type '{ bar: string; }' has no matching index signature for type 'string'.
 +!!! error TS2537: Type '{ bar: string }' has no matching index signature for type 'string'.
      
      function f1({["bar"]: x}: { bar: number }) {}
@@ -103,9 +101,8 @@
 -!!! error TS2537: Type '{ bar: number; }' has no matching index signature for type 'string'.
 +!!! error TS2537: Type '{ bar: number }' has no matching index signature for type 'string'.
      function f3({[foo2()]: x}: { bar: number }) {}
--                  ~~~~~~
+                   ~~~~~~
 -!!! error TS2537: Type '{ bar: number; }' has no matching index signature for type 'string'.
-+                  ~~~~
 +!!! error TS2537: Type '{ bar: number }' has no matching index signature for type 'string'.
      function f4([{[foo]: x}]: [{ bar: number }]) {}
 +                ~~~~~~~~~~~~
@@ -114,31 +111,29 @@
 -!!! error TS2537: Type '{ bar: number; }' has no matching index signature for type 'string'.
 +!!! error TS2537: Type '{ bar: number }' has no matching index signature for type 'string'.
      function f5([{[foo2()]: x}]: [{ bar: number }]) {}
--                   ~~~~~~
--!!! error TS2537: Type '{ bar: number; }' has no matching index signature for type 'string'.
 +                ~~~~~~~~~~~~~~~
 +!!! error TS2488: Type '[{ bar: number }]' must have a '[Symbol.iterator]()' method that returns an iterator.
-+                   ~~~~
+                    ~~~~~~
+-!!! error TS2537: Type '{ bar: number; }' has no matching index signature for type 'string'.
 +!!! error TS2537: Type '{ bar: number }' has no matching index signature for type 'string'.
      
      // report errors on type errors in computed properties used in destructuring
      let [{[foo()]: bar6}] = [{bar: "bar"}];
-+        ~~~~~~~~~~~~~~~~~
-+!!! error TS2488: Type '[{ bar: string }]' must have a '[Symbol.iterator]()' method that returns an iterator.
-            ~~~
+-           ~~~
 -!!! error TS2349: This expression is not callable.
 -!!! error TS2349:   Type 'String' has no call signatures.
--           ~~~~~
++        ~~~~~~~~~~~~~~~~~
++!!! error TS2488: Type '[{ bar: string }]' must have a '[Symbol.iterator]()' method that returns an iterator.
+            ~~~~~
  !!! error TS2538: Type 'any' cannot be used as an index type.
      let [{[foo.toExponential()]: bar7}] = [{bar: "bar"}];
--           ~~~~~~~~~~~~~~~~~~~
--!!! error TS2538: Type 'any' cannot be used as an index type.
 +        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 +!!! error TS2488: Type '[{ bar: string }]' must have a '[Symbol.iterator]()' method that returns an iterator.
+            ~~~~~~~~~~~~~~~~~~~
+-!!! error TS2538: Type 'any' cannot be used as an index type.
++!!! error TS2538: Type 'error' cannot be used as an index type.
                 ~~~~~~~~~~~~~
  !!! error TS2339: Property 'toExponential' does not exist on type 'string'.
-+               ~~~~~~~~~~~~~
-+!!! error TS2538: Type 'error' cannot be used as an index type.
      
      // destructuring assignment
      ({[foo]: bar} = {bar: "bar"});
@@ -149,9 +144,8 @@
      ({["bar"]: bar2} = {bar: "bar"});
      
      ({[foo2()]: bar3} = {bar: "bar"});
--       ~~~~~~
+        ~~~~~~
 -!!! error TS2537: Type '{ bar: string; }' has no matching index signature for type 'string'.
-+       ~~~~
 +!!! error TS2537: Type '{ bar: string }' has no matching index signature for type 'string'.
      
      [{[foo]: bar4}] = [{bar: "bar"}];
@@ -161,20 +155,19 @@
 -!!! error TS2537: Type '{ bar: string; }' has no matching index signature for type 'string'.
 +!!! error TS2537: Type '{ bar: string }' has no matching index signature for type 'string'.
      [{[foo2()]: bar5}] = [{bar: "bar"}];
--       ~~~~~~
--!!! error TS2537: Type '{ bar: string; }' has no matching index signature for type 'string'.
 +    ~~~~~~~~~~~~~~~~~~
 +!!! error TS2488: Type '[{ bar: string }]' must have a '[Symbol.iterator]()' method that returns an iterator.
-+       ~~~~
+        ~~~~~~
+-!!! error TS2537: Type '{ bar: string; }' has no matching index signature for type 'string'.
 +!!! error TS2537: Type '{ bar: string }' has no matching index signature for type 'string'.
      
      [{[foo()]: bar4}] = [{bar: "bar"}];
-+    ~~~~~~~~~~~~~~~~~
-+!!! error TS2488: Type '[{ bar: string }]' must have a '[Symbol.iterator]()' method that returns an iterator.
-        ~~~
+-       ~~~
 -!!! error TS2349: This expression is not callable.
 -!!! error TS2349:   Type 'String' has no call signatures.
--       ~~~~~
++    ~~~~~~~~~~~~~~~~~
++!!! error TS2488: Type '[{ bar: string }]' must have a '[Symbol.iterator]()' method that returns an iterator.
+        ~~~~~
  !!! error TS2538: Type 'any' cannot be used as an index type.
      [{[(1 + {})]: bar4}] = [{bar: "bar"}];
 +    ~~~~~~~~~~~~~~~~~~~~

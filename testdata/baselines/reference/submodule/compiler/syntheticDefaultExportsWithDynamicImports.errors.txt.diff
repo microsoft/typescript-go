@@ -30,5 +30,5 @@
 +    
 +==== index.ts (1 errors) ====
 +    import("package").then(({default: foo}) => foo(42));
-+    ~~~~~~
++    ~~~~~~~~~~~~~~~~~
 +!!! error TS2711: A dynamic import call returns a 'Promise'. Make sure you have a declaration for 'Promise' or include 'ES2015' in your '--lib' option.

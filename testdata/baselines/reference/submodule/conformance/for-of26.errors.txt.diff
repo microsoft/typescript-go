@@ -12,7 +12,7 @@
 +error TS2552: Cannot find name 'Number'. Did you mean 'number'?
 +error TS2552: Cannot find name 'Object'. Did you mean 'object'?
 +for-of26.ts(5,6): error TS2304: Cannot find name 'Symbol'.
-+for-of26.ts(11,19): error TS2488: Type 'MyStringIterator' must have a '[Symbol.iterator]()' method that returns an iterator.
++for-of26.ts(11,15): error TS2488: Type 'MyStringIterator' must have a '[Symbol.iterator]()' method that returns an iterator.
 +
 +
 +!!! error TS2318: Cannot find global type 'Array'.
@@ -37,5 +37,5 @@
 +    
 +    var x: any;
 +    for (var v of new MyStringIterator) { }
-+                      ~~~~~~~~~~~~~~~~
++                  ~~~~~~~~~~~~~~~~~~~~
 +!!! error TS2488: Type 'MyStringIterator' must have a '[Symbol.iterator]()' method that returns an iterator.

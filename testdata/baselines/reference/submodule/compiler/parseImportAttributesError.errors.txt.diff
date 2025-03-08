@@ -21,29 +21,21 @@
  /index.ts(5,80): error TS1005: ';' expected.
  /index.ts(5,91): error TS1128: Declaration or statement expected.
  /index.ts(5,93): error TS1128: Declaration or statement expected.
- /index.ts(5,94): error TS1128: Declaration or statement expected.
- /index.ts(5,95): error TS1128: Declaration or statement expected.
--/index.ts(5,96): error TS1434: Unexpected keyword or identifier.
- /index.ts(5,96): error TS2304: Cannot find name 'RequireInterface'.
--/index.ts(5,112): error TS1128: Declaration or statement expected.
-+/index.ts(5,112): error TS1005: ';' expected.
+@@= skipped -21, +21 lines =@@
+ /index.ts(5,112): error TS1128: Declaration or statement expected.
  /index.ts(6,34): error TS1340: Module 'pkg' does not refer to a type, but is used as a type here. Did you mean 'typeof import('pkg')'?
  /index.ts(6,57): error TS1478: Identifier or string literal expected.
 -/index.ts(6,57): error TS2695: Left side of comma operator is unused and has no side effects.
  /index.ts(6,80): error TS1005: ';' expected.
  /index.ts(6,90): error TS1128: Declaration or statement expected.
  /index.ts(6,92): error TS1128: Declaration or statement expected.
- /index.ts(6,93): error TS1128: Declaration or statement expected.
- /index.ts(6,94): error TS1128: Declaration or statement expected.
--/index.ts(6,95): error TS1434: Unexpected keyword or identifier.
- /index.ts(6,95): error TS2304: Cannot find name 'ImportInterface'.
--/index.ts(6,110): error TS1128: Declaration or statement expected.
-+/index.ts(6,110): error TS1005: ';' expected.
+@@= skipped -11, +10 lines =@@
+ /index.ts(6,110): error TS1128: Declaration or statement expected.
  
  
 -==== /index.ts (33 errors) ====
 +!!! error TS2468: Cannot find global value 'Promise'.
-+==== /index.ts (29 errors) ====
++==== /index.ts (31 errors) ====
      export type LocalInterface =
          & import("pkg", { with: {1234, "resolution-mode": "require"} }).RequireInterface
            ~~~~~~~~~~~~~~~~~~~~~~~
@@ -55,11 +47,11 @@
                                                          ~
  !!! error TS1005: ';' expected.
                                                                     ~
-@@= skipped -54, +50 lines =@@
+@@= skipped -22, +21 lines =@@
                                                                          ~~~~~~~~~~~~~~~~
  !!! error TS2304: Cannot find name 'RequireInterface'.
          & import("pkg", { with: {1234, "resolution-mode": "import"} }).ImportInterface;
-+          ~~~~~~
++          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 +!!! error TS2712: A dynamic import call in ES5 requires the 'Promise' constructor.  Make sure you have a declaration for the 'Promise' constructor or include 'ES2015' in your '--lib' option.
                                       ~
  !!! error TS1005: ':' expected.
@@ -77,18 +69,7 @@
                                                                                     ~
  !!! error TS1005: ';' expected.
                                                                                                ~
-@@= skipped -23, +23 lines =@@
-                                                                                                   ~
- !!! error TS1128: Declaration or statement expected.
-                                                                                                    ~~~~~~~~~~~~~~~~
--!!! error TS1434: Unexpected keyword or identifier.
--                                                                                                   ~~~~~~~~~~~~~~~~
- !!! error TS2304: Cannot find name 'RequireInterface'.
-                                                                                                                    ~
--!!! error TS1128: Declaration or statement expected.
-+!!! error TS1005: ';' expected.
-     export const b = (null as any as import("pkg", { with: {1234, "resolution-mode": "import"} }).ImportInterface);
-                                      ~~~~~~~~~~~~~~~~~~~~~~~
+@@= skipped -33, +33 lines =@@
  !!! error TS1340: Module 'pkg' does not refer to a type, but is used as a type here. Did you mean 'typeof import('pkg')'?
                                                              ~~~~
  !!! error TS1478: Identifier or string literal expected.
@@ -97,16 +78,3 @@
                                                                                     ~
  !!! error TS1005: ';' expected.
                                                                                               ~
-@@= skipped -23, +19 lines =@@
-                                                                                                  ~
- !!! error TS1128: Declaration or statement expected.
-                                                                                                   ~~~~~~~~~~~~~~~
--!!! error TS1434: Unexpected keyword or identifier.
--                                                                                                  ~~~~~~~~~~~~~~~
- !!! error TS2304: Cannot find name 'ImportInterface'.
-                                                                                                                  ~
--!!! error TS1128: Declaration or statement expected.
-+!!! error TS1005: ';' expected.
-     
- ==== /node_modules/pkg/package.json (0 errors) ====
-     {

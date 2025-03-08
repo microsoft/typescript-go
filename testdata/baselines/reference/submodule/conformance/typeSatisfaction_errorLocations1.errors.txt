@@ -16,16 +16,16 @@ typeSatisfaction_errorLocations1.ts(16,5): error TS2345: Argument of type '{ a: 
 typeSatisfaction_errorLocations1.ts(18,5): error TS2345: Argument of type '[{ a: true }]' is not assignable to parameter of type 'T'.
   '[{ a: true }]' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint '{ a: true }[]'.
 typeSatisfaction_errorLocations1.ts(21,43): error TS2322: Type 'number' is not assignable to type 'boolean'.
-typeSatisfaction_errorLocations1.ts(23,23): error TS2322: Type 'true' is not assignable to type 'number'.
-typeSatisfaction_errorLocations1.ts(25,20): error TS1360: Type '1' does not satisfy the expected type 'boolean'.
+typeSatisfaction_errorLocations1.ts(23,23): error TS2322: Type 'boolean' is not assignable to type 'number'.
+typeSatisfaction_errorLocations1.ts(25,20): error TS1360: Type 'number' does not satisfy the expected type 'boolean'.
 typeSatisfaction_errorLocations1.ts(26,7): error TS2322: Type '1' is not assignable to type 'true'.
 typeSatisfaction_errorLocations1.ts(29,18): error TS2322: Type 'string' is not assignable to type 'number'.
 typeSatisfaction_errorLocations1.ts(31,20): error TS4104: The type '[10, "20"]' is 'readonly' and cannot be assigned to the mutable type 'number[]'.
 typeSatisfaction_errorLocations1.ts(34,9): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
-typeSatisfaction_errorLocations1.ts(36,9): error TS2345: Argument of type '"10"' is not assignable to parameter of type 'number'.
-typeSatisfaction_errorLocations1.ts(39,3): error TS2322: Type '"foo"' is not assignable to type 'number'.
-typeSatisfaction_errorLocations1.ts(43,3): error TS2322: Type '"foo"' is not assignable to type 'number'.
-typeSatisfaction_errorLocations1.ts(43,16): error TS1360: Type '"foo"' does not satisfy the expected type 'number'.
+typeSatisfaction_errorLocations1.ts(36,9): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+typeSatisfaction_errorLocations1.ts(39,3): error TS2322: Type 'string' is not assignable to type 'number'.
+typeSatisfaction_errorLocations1.ts(43,3): error TS2322: Type 'string' is not assignable to type 'number'.
+typeSatisfaction_errorLocations1.ts(43,16): error TS1360: Type 'string' does not satisfy the expected type 'number'.
 typeSatisfaction_errorLocations1.ts(46,22): error TS2741: Property 'a' is missing in type '{}' but required in type '{ a: true }'.
 typeSatisfaction_errorLocations1.ts(47,24): error TS2322: Type 'number' is not assignable to type 'true'.
 typeSatisfaction_errorLocations1.ts(48,21): error TS2322: Type '{ a: number }' is not assignable to type '{ a: true }'.
@@ -89,11 +89,11 @@ typeSatisfaction_errorLocations1.ts(48,21): error TS2322: Type '{ a: number }' i
     
     const obj2 = { a: 10, b: true } satisfies Record<string, number>;
                           ~
-!!! error TS2322: Type 'true' is not assignable to type 'number'.
+!!! error TS2322: Type 'boolean' is not assignable to type 'number'.
     
     const literal1 = 1 satisfies boolean;
                        ~~~~~~~~~
-!!! error TS1360: Type '1' does not satisfy the expected type 'boolean'.
+!!! error TS1360: Type 'number' does not satisfy the expected type 'boolean'.
     const literal2: true = 1 satisfies number;
           ~~~~~~~~
 !!! error TS2322: Type '1' is not assignable to type 'true'.
@@ -114,20 +114,20 @@ typeSatisfaction_errorLocations1.ts(48,21): error TS2322: Type '{ a: number }' i
     const tuple3 = ["10", "20"] as const;
     fn4(10, ...(tuple3 satisfies readonly string[]));
             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS2345: Argument of type '"10"' is not assignable to parameter of type 'number'.
+!!! error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
     
     function fn5(): number {
       return "foo" satisfies unknown;
       ~~~~~~
-!!! error TS2322: Type '"foo"' is not assignable to type 'number'.
+!!! error TS2322: Type 'string' is not assignable to type 'number'.
     }
     
     function fn6(): number {
       return "foo" satisfies number;
       ~~~~~~
-!!! error TS2322: Type '"foo"' is not assignable to type 'number'.
+!!! error TS2322: Type 'string' is not assignable to type 'number'.
                    ~~~~~~~~~
-!!! error TS1360: Type '"foo"' does not satisfy the expected type 'number'.
+!!! error TS1360: Type 'string' does not satisfy the expected type 'number'.
     }
     
     ((): { a: true } => ({}) satisfies unknown)();

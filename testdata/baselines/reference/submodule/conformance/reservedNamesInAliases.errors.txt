@@ -3,7 +3,7 @@ reservedNamesInAliases.ts(3,6): error TS2457: Type alias name cannot be 'number'
 reservedNamesInAliases.ts(4,6): error TS2457: Type alias name cannot be 'boolean'.
 reservedNamesInAliases.ts(5,6): error TS2457: Type alias name cannot be 'string'.
 reservedNamesInAliases.ts(6,1): error TS2304: Cannot find name 'type'.
-reservedNamesInAliases.ts(6,6): error TS1005: ';' expected.
+reservedNamesInAliases.ts(6,6): error TS2457: Type alias name cannot be 'void'.
 reservedNamesInAliases.ts(6,11): error TS1109: Expression expected.
 reservedNamesInAliases.ts(6,13): error TS2693: 'I' only refers to a type, but is being used as a value here.
 reservedNamesInAliases.ts(7,6): error TS2457: Type alias name cannot be 'object'.
@@ -27,7 +27,7 @@ reservedNamesInAliases.ts(7,6): error TS2457: Type alias name cannot be 'object'
     ~~~~
 !!! error TS2304: Cannot find name 'type'.
          ~~~~
-!!! error TS1005: ';' expected.
+!!! error TS2457: Type alias name cannot be 'void'.
               ~
 !!! error TS1109: Expression expected.
                 ~

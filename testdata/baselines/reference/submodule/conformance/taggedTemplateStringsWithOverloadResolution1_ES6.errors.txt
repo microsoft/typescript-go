@@ -12,7 +12,7 @@ taggedTemplateStringsWithOverloadResolution1_ES6.ts(3,20): error TS2304: Cannot 
 taggedTemplateStringsWithOverloadResolution1_ES6.ts(4,20): error TS2304: Cannot find name 'TemplateStringsArray'.
 taggedTemplateStringsWithOverloadResolution1_ES6.ts(12,20): error TS2769: No overload matches this call.
   The last overload gave the following error.
-    Argument of type 'true' is not assignable to parameter of type 'string'.
+    Argument of type 'boolean' is not assignable to parameter of type 'string'.
 taggedTemplateStringsWithOverloadResolution1_ES6.ts(14,23): error TS2554: Expected 1-3 arguments, but got 4.
 
 
@@ -48,7 +48,7 @@ taggedTemplateStringsWithOverloadResolution1_ES6.ts(14,23): error TS2554: Expect
                        ~~~~
 !!! error TS2769: No overload matches this call.
 !!! error TS2769:   The last overload gave the following error.
-!!! error TS2769:     Argument of type 'true' is not assignable to parameter of type 'string'.
+!!! error TS2769:     Argument of type 'boolean' is not assignable to parameter of type 'string'.
 !!! related TS2771 taggedTemplateStringsWithOverloadResolution1_ES6.ts:4:10: The last overload is declared here.
     var e = foo([], 1, "2");     // {}
     var f = foo([], 1, 2, 3);    // any (with error)

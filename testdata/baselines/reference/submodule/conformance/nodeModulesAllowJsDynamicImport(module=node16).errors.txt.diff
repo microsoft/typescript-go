@@ -13,14 +13,14 @@
 +    // cjs format file
 +    export async function main() {
 +        const { readFile } = await import("fs");
-+                                   ~~~~~~
++                                   ~~~~~~~~~~~~
 +!!! error TS2712: A dynamic import call in ES5 requires the 'Promise' constructor.  Make sure you have a declaration for the 'Promise' constructor or include 'ES2015' in your '--lib' option.
 +    }
 +==== index.js (1 errors) ====
 +    // esm format file
 +    export async function main() {
 +        const { readFile } = await import("fs");
-+                                   ~~~~~~
++                                   ~~~~~~~~~~~~
 +!!! error TS2712: A dynamic import call in ES5 requires the 'Promise' constructor.  Make sure you have a declaration for the 'Promise' constructor or include 'ES2015' in your '--lib' option.
 +    }
 +==== package.json (0 errors) ====

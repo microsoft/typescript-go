@@ -1,5 +1,5 @@
-expando.ts(12,1): error TS2322: Type 'false' is not assignable to type 'number'.
-expando.ts(13,1): error TS2322: Type 'false' is not assignable to type 'number'.
+expando.ts(12,1): error TS2322: Type 'boolean' is not assignable to type 'number'.
+expando.ts(13,1): error TS2322: Type 'boolean' is not assignable to type 'number'.
 
 
 ==== ns.ts (0 errors) ====
@@ -31,10 +31,10 @@ expando.ts(13,1): error TS2322: Type 'false' is not assignable to type 'number'.
     ExpandoMerge.p7 = 777777;
     ExpandoMerge.p8 = false; // type error
     ~~~~~~~~~~~~~~~
-!!! error TS2322: Type 'false' is not assignable to type 'number'.
+!!! error TS2322: Type 'boolean' is not assignable to type 'number'.
     ExpandoMerge.p9 = false; // type error
     ~~~~~~~~~~~~~~~
-!!! error TS2322: Type 'false' is not assignable to type 'number'.
+!!! error TS2322: Type 'boolean' is not assignable to type 'number'.
     var n = ExpandoMerge.p1 + ExpandoMerge.p2 + ExpandoMerge.p3 + ExpandoMerge.p4 + ExpandoMerge.p5 + ExpandoMerge.p6 + ExpandoMerge.p7 + ExpandoMerge.p8 + ExpandoMerge.p9 + ExpandoMerge.m(12) + ExpandoMerge(1001);
     
     

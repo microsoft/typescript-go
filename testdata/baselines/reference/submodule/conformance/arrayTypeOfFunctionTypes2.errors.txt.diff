@@ -6,11 +6,9 @@
  
  
  ==== arrayTypeOfFunctionTypes2.ts (1 errors) ====
-@@= skipped -17, +17 lines =@@
-     var r5 = x2[1];
+@@= skipped -18, +18 lines =@@
      var r6 = new r5();
      var r6b = r5();
--              ~~~~
+               ~~~~
 -!!! error TS2348: Value of type 'new () => string' is not callable. Did you mean to include 'new'?
-+              ~~
 +!!! error TS2348: Value of type 'new() => string' is not callable. Did you mean to include 'new'?

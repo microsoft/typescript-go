@@ -21,7 +21,7 @@ otherc.cts(2,22): error TS2307: Cannot find module './package.json' or its corre
                                       ~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2823: Import attributes are only supported when the '--module' option is set to 'esnext', 'nodenext', or 'preserve'.
     const json2 = import("./package.json", { with: { type: "json" } }); // should be fine
-                  ~~~~~~
+                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2712: A dynamic import call in ES5 requires the 'Promise' constructor.  Make sure you have a declaration for the 'Promise' constructor or include 'ES2015' in your '--lib' option.
                          ~~~~~~~~~~~~~~~~
 !!! error TS2307: Cannot find module './package.json' or its corresponding type declarations.

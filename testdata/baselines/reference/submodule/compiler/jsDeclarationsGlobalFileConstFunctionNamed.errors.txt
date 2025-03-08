@@ -1,4 +1,4 @@
-file.js(15,46): error TS2350: Only a void function can be called with the 'new' keyword.
+file.js(15,42): error TS2350: Only a void function can be called with the 'new' keyword.
 
 
 ==== file.js (1 errors) ====
@@ -17,7 +17,7 @@ file.js(15,46): error TS2350: Only a void function can be called with the 'new' 
     
     const SelfReference = function Named() {
         if (!(this instanceof Named)) return new Named();
-                                                 ~~~~~
+                                             ~~~~~~~~~~~
 !!! error TS2350: Only a void function can be called with the 'new' keyword.
         this.x = 1;
     }

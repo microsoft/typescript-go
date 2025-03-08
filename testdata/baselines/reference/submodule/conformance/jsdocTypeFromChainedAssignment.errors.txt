@@ -1,6 +1,6 @@
 a.js(7,44): error TS7006: Parameter 'n' implicitly has an 'any' type.
 a.js(11,24): error TS7006: Parameter 'm' implicitly has an 'any' type.
-a.js(14,13): error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
+a.js(14,9): error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
 
 
 ==== a.js (3 errors) ====
@@ -22,7 +22,7 @@ a.js(14,13): error TS7009: 'new' expression, whose target lacks a construct sign
         return m + this.x
     }
     var a = new A()
-                ~
+            ~~~~~~~
 !!! error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
     a.y('no') // error
     a.z('not really') // error

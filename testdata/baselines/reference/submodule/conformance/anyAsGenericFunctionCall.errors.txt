@@ -10,16 +10,16 @@ anyAsGenericFunctionCall.ts(10,9): error TS2347: Untyped function calls may not 
     
     var x: any;
     var a = x<number>();
-            ~
+            ~~~~~~~~~~~
 !!! error TS2347: Untyped function calls may not accept type arguments.
     var b = x<string>('hello');
-            ~
+            ~~~~~~~~~~~~~~~~~~
 !!! error TS2347: Untyped function calls may not accept type arguments.
     
     class C { foo: string; }
     var c = x<C>(x);
-            ~
+            ~~~~~~~
 !!! error TS2347: Untyped function calls may not accept type arguments.
     var d = x<any>(x);
-            ~
+            ~~~~~~~~~
 !!! error TS2347: Untyped function calls may not accept type arguments.

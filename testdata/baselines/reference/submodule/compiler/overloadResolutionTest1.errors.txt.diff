@@ -17,12 +17,10 @@
 -  Overload 1 of 2, '(bar: { a: number; }): number', gave the following error.
 -    Type 'boolean' is not assignable to type 'number'.
 -  Overload 2 of 2, '(bar: { a: string; }): string', gave the following error.
--    Type 'boolean' is not assignable to type 'string'.
 +  The last overload gave the following error.
-+    Type 'true' is not assignable to type 'string'.
+     Type 'boolean' is not assignable to type 'string'.
  
  
- ==== overloadResolutionTest1.ts (3 errors) ====
 @@= skipped -24, +18 lines =@@
      var x111 = foo([{a:"s"}]); // error - does not match any signature
                       ~
@@ -64,11 +62,10 @@
 -!!! error TS2769:   Overload 1 of 2, '(bar: { a: number; }): number', gave the following error.
 -!!! error TS2769:     Type 'boolean' is not assignable to type 'number'.
 -!!! error TS2769:   Overload 2 of 2, '(bar: { a: string; }): string', gave the following error.
--!!! error TS2769:     Type 'boolean' is not assignable to type 'string'.
++!!! error TS2769:   The last overload gave the following error.
+ !!! error TS2769:     Type 'boolean' is not assignable to type 'string'.
 -!!! related TS6500 overloadResolutionTest1.ts:21:20: The expected type comes from property 'a' which is declared here on type '{ a: number; }'
 -!!! related TS6500 overloadResolutionTest1.ts:22:20: The expected type comes from property 'a' which is declared here on type '{ a: string; }'
 -!!! related TS2793 overloadResolutionTest1.ts:23:10: The call would have succeeded against this implementation, but implementation signatures of overloads are not externally visible.
-+!!! error TS2769:   The last overload gave the following error.
-+!!! error TS2769:     Type 'true' is not assignable to type 'string'.
 +!!! related TS6500 overloadResolutionTest1.ts:22:20: The expected type comes from property 'a' which is declared here on type '{ a: string }'
 +!!! related TS2771 overloadResolutionTest1.ts:22:10: The last overload is declared here.

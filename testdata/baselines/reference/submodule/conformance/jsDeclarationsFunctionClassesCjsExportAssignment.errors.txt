@@ -1,4 +1,4 @@
-context.js(34,18): error TS2350: Only a void function can be called with the 'new' keyword.
+context.js(34,14): error TS2350: Only a void function can be called with the 'new' keyword.
 context.js(48,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 hook.js(10,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 timer.js(7,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
@@ -63,7 +63,7 @@ timer.js(7,1): error TS2580: Cannot find name 'module'. Do you need to install t
     function Context(input) {
         if (!(this instanceof Context)) {
           return new Context(input)
-                     ~~~~~~~
+                 ~~~~~~~~~~~~~~~~~~
 !!! error TS2350: Only a void function can be called with the 'new' keyword.
         }
         this.state = this.construct(input);

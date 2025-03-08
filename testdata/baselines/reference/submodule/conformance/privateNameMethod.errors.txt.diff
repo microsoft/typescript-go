@@ -1,7 +1,6 @@
 --- old.privateNameMethod.errors.txt
 +++ new.privateNameMethod.errors.txt
 @@= skipped -0, +0 lines =@@
--privateNameMethod.ts(7,22): error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
 +error TS2318: Cannot find global type 'Array'.
 +error TS2318: Cannot find global type 'CallableFunction'.
 +error TS2318: Cannot find global type 'Function'.
@@ -12,7 +11,7 @@
 +error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
 +error TS2552: Cannot find name 'Number'. Did you mean 'number'?
 +error TS2552: Cannot find name 'Object'. Did you mean 'object'?
-+privateNameMethod.ts(7,22): error TS2345: Argument of type '1' is not assignable to parameter of type 'string'.
+ privateNameMethod.ts(7,22): error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
  privateNameMethod.ts(8,14): error TS2554: Expected 1 arguments, but got 0.
  
  
@@ -29,12 +28,3 @@
  ==== privateNameMethod.ts (2 errors) ====
      class A1 {
          #method(param: string): string {
-@@= skipped -10, +30 lines =@@
-             this.#method("")
-             this.#method(1) // Error
-                          ~
--!!! error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
-+!!! error TS2345: Argument of type '1' is not assignable to parameter of type 'string'.
-             this.#method()  // Error 
-                  ~~~~~~~
- !!! error TS2554: Expected 1 arguments, but got 0.

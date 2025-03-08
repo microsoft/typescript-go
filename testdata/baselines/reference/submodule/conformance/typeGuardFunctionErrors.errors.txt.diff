@@ -2,17 +2,14 @@
 +++ new.typeGuardFunctionErrors.errors.txt
 @@= skipped -0, +0 lines =@@
  typeGuardFunctionErrors.ts(1,7): error TS2300: Duplicate identifier 'A'.
--typeGuardFunctionErrors.ts(14,5): error TS2322: Type 'string' is not assignable to type 'boolean'.
 +typeGuardFunctionErrors.ts(1,7): error TS2300: Duplicate identifier 'A'.
-+typeGuardFunctionErrors.ts(14,5): error TS2322: Type '""' is not assignable to type 'boolean'.
+ typeGuardFunctionErrors.ts(14,5): error TS2322: Type 'string' is not assignable to type 'boolean'.
  typeGuardFunctionErrors.ts(17,55): error TS2749: 'x' refers to a value, but is being used as a type here. Did you mean 'typeof x'?
  typeGuardFunctionErrors.ts(17,57): error TS1144: '{' or ';' expected.
--typeGuardFunctionErrors.ts(17,60): error TS1434: Unexpected keyword or identifier.
-+typeGuardFunctionErrors.ts(17,60): error TS1005: ';' expected.
-+typeGuardFunctionErrors.ts(17,62): error TS1005: ';' expected.
++typeGuardFunctionErrors.ts(17,57): error TS1228: A type predicate is only allowed in return type position for functions and methods.
+ typeGuardFunctionErrors.ts(17,60): error TS1434: Unexpected keyword or identifier.
  typeGuardFunctionErrors.ts(21,33): error TS2749: 'x' refers to a value, but is being used as a type here. Did you mean 'typeof x'?
  typeGuardFunctionErrors.ts(25,33): error TS1225: Cannot find parameter 'x'.
- typeGuardFunctionErrors.ts(29,10): error TS2391: Function implementation is missing or not immediately following the declaration.
 @@= skipped -31, +33 lines =@@
  typeGuardFunctionErrors.ts(95,11): error TS1005: ',' expected.
  typeGuardFunctionErrors.ts(95,14): error TS1005: ',' expected.
@@ -23,20 +20,15 @@
  typeGuardFunctionErrors.ts(96,21): error TS1005: ',' expected.
  typeGuardFunctionErrors.ts(97,20): error TS2749: 'b' refers to a value, but is being used as a type here. Did you mean 'typeof b'?
  typeGuardFunctionErrors.ts(97,22): error TS1144: '{' or ';' expected.
--typeGuardFunctionErrors.ts(97,25): error TS1434: Unexpected keyword or identifier.
-+typeGuardFunctionErrors.ts(97,25): error TS1005: ';' expected.
-+typeGuardFunctionErrors.ts(97,27): error TS1005: ';' expected.
++typeGuardFunctionErrors.ts(97,22): error TS1228: A type predicate is only allowed in return type position for functions and methods.
+ typeGuardFunctionErrors.ts(97,25): error TS1434: Unexpected keyword or identifier.
  typeGuardFunctionErrors.ts(103,25): error TS1228: A type predicate is only allowed in return type position for functions and methods.
--typeGuardFunctionErrors.ts(104,9): error TS2322: Type 'boolean' is not assignable to type 'D'.
-+typeGuardFunctionErrors.ts(104,9): error TS2322: Type 'true' is not assignable to type 'D'.
- typeGuardFunctionErrors.ts(104,9): error TS2409: Return type of constructor signature must be assignable to the instance type of the class.
- typeGuardFunctionErrors.ts(106,20): error TS1228: A type predicate is only allowed in return type position for functions and methods.
- typeGuardFunctionErrors.ts(109,20): error TS1228: A type predicate is only allowed in return type position for functions and methods.
+ typeGuardFunctionErrors.ts(104,9): error TS2322: Type 'boolean' is not assignable to type 'D'.
 @@= skipped -15, +17 lines =@@
  typeGuardFunctionErrors.ts(115,18): error TS1228: A type predicate is only allowed in return type position for functions and methods.
  typeGuardFunctionErrors.ts(119,22): error TS2304: Cannot find name 'p1'.
  typeGuardFunctionErrors.ts(119,25): error TS1005: ';' expected.
-+typeGuardFunctionErrors.ts(119,28): error TS1005: ';' expected.
++typeGuardFunctionErrors.ts(119,25): error TS1228: A type predicate is only allowed in return type position for functions and methods.
  typeGuardFunctionErrors.ts(120,1): error TS1128: Declaration or statement expected.
  typeGuardFunctionErrors.ts(123,20): error TS1229: A type predicate cannot reference a rest parameter.
  typeGuardFunctionErrors.ts(128,34): error TS1230: A type predicate cannot reference element 'p1' in a binding pattern.
@@ -74,27 +66,16 @@
          propA: number;
      }
      
-@@= skipped -18, +20 lines =@@
-     function hasANonBooleanReturnStatement(x): x is A {
-         return '';
-         ~~~~~~
--!!! error TS2322: Type 'string' is not assignable to type 'boolean'.
-+!!! error TS2322: Type '""' is not assignable to type 'boolean'.
-     }
-     
-     function hasTypeGuardTypeInsideTypeGuardType(x): x is x is A {
-@@= skipped -9, +9 lines =@@
+@@= skipped -26, +28 lines =@@
+ !!! error TS2749: 'x' refers to a value, but is being used as a type here. Did you mean 'typeof x'?
                                                              ~~
  !!! error TS1144: '{' or ';' expected.
++                                                            ~~~
++!!! error TS1228: A type predicate is only allowed in return type position for functions and methods.
                                                                 ~
--!!! error TS1434: Unexpected keyword or identifier.
-+!!! error TS1005: ';' expected.
-+                                                                 ~
-+!!! error TS1005: ';' expected.
+ !!! error TS1434: Unexpected keyword or identifier.
          return true;
-     }
-     
-@@= skipped -133, +135 lines =@@
+@@= skipped -134, +136 lines =@@
  !!! error TS1005: ',' expected.
                   ~
  !!! error TS2300: Duplicate identifier 'A'.
@@ -103,32 +84,21 @@
      function b2(a: b is A) {};
                     ~
  !!! error TS2749: 'b' refers to a value, but is being used as a type here. Did you mean 'typeof b'?
-@@= skipped -13, +15 lines =@@
+@@= skipped -12, +14 lines =@@
+ !!! error TS2749: 'b' refers to a value, but is being used as a type here. Did you mean 'typeof b'?
                           ~~
  !!! error TS1144: '{' or ';' expected.
++                         ~~~
++!!! error TS1228: A type predicate is only allowed in return type position for functions and methods.
                              ~
--!!! error TS1434: Unexpected keyword or identifier.
-+!!! error TS1005: ';' expected.
-+                              ~
-+!!! error TS1005: ';' expected.
+ !!! error TS1434: Unexpected keyword or identifier.
          return true;
-     };
-     
-@@= skipped -11, +13 lines =@@
- !!! error TS1228: A type predicate is only allowed in return type position for functions and methods.
-             return true;
-             ~~~~~~
--!!! error TS2322: Type 'boolean' is not assignable to type 'D'.
-+!!! error TS2322: Type 'true' is not assignable to type 'D'.
-             ~~~~~~
- !!! error TS2409: Return type of constructor signature must be assignable to the instance type of the class.
-         }
-@@= skipped -30, +30 lines =@@
+@@= skipped -42, +44 lines =@@
  !!! error TS2304: Cannot find name 'p1'.
                              ~~
  !!! error TS1005: ';' expected.
-+                               ~
-+!!! error TS1005: ';' expected.
++                            ~~~
++!!! error TS1228: A type predicate is only allowed in return type position for functions and methods.
      }
      ~
  !!! error TS1128: Declaration or statement expected.

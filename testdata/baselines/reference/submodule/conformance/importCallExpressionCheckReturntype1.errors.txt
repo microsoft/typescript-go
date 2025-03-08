@@ -37,16 +37,16 @@ error TS2552: Cannot find name 'Object'. Did you mean 'object'?
     let p1: Promise<typeof anotherModule> = import("./defaultPath");
             ~~~~~~~
 !!! error TS2583: Cannot find name 'Promise'. Do you need to change your target library? Try changing the 'lib' compiler option to 'es2015' or later.
-                                            ~~~~~~
+                                            ~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2711: A dynamic import call returns a 'Promise'. Make sure you have a declaration for 'Promise' or include 'ES2015' in your '--lib' option.
     let p2 = import("./defaultPath") as Promise<typeof anotherModule>;
-             ~~~~~~
+             ~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2711: A dynamic import call returns a 'Promise'. Make sure you have a declaration for 'Promise' or include 'ES2015' in your '--lib' option.
                                         ~~~~~~~
 !!! error TS2583: Cannot find name 'Promise'. Do you need to change your target library? Try changing the 'lib' compiler option to 'es2015' or later.
     let p3: Promise<any> = import("./defaultPath");
             ~~~~~~~
 !!! error TS2583: Cannot find name 'Promise'. Do you need to change your target library? Try changing the 'lib' compiler option to 'es2015' or later.
-                           ~~~~~~
+                           ~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2711: A dynamic import call returns a 'Promise'. Make sure you have a declaration for 'Promise' or include 'ES2015' in your '--lib' option.
     

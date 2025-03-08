@@ -1,4 +1,4 @@
-classAbstractInAModule.ts(6,7): error TS2511: Cannot create an instance of an abstract class.
+classAbstractInAModule.ts(6,1): error TS2511: Cannot create an instance of an abstract class.
 
 
 ==== classAbstractInAModule.ts (1 errors) ====
@@ -8,6 +8,6 @@ classAbstractInAModule.ts(6,7): error TS2511: Cannot create an instance of an ab
     }
     
     new M.A;
-          ~
+    ~~~~~~~
 !!! error TS2511: Cannot create an instance of an abstract class.
     new M.B;

@@ -2,8 +2,7 @@
 +++ new.variadicTuples1.errors.txt
 @@= skipped -0, +0 lines =@@
  variadicTuples1.ts(52,5): error TS2555: Expected at least 3 arguments, but got 2.
--variadicTuples1.ts(53,17): error TS2345: Argument of type 'number' is not assignable to parameter of type 'boolean'.
-+variadicTuples1.ts(53,17): error TS2345: Argument of type '45' is not assignable to parameter of type 'boolean'.
+ variadicTuples1.ts(53,17): error TS2345: Argument of type 'number' is not assignable to parameter of type 'boolean'.
 +variadicTuples1.ts(61,25): error TS2345: Argument of type '2' is not assignable to parameter of type 'never'.
  variadicTuples1.ts(62,5): error TS2345: Argument of type '[]' is not assignable to parameter of type '[...unknown[], number]'.
    Source has 0 element(s) but target requires 1.
@@ -29,16 +28,7 @@
  variadicTuples1.ts(181,5): error TS2322: Type 'T' is not assignable to type '[...U]'.
    Type 'string[]' is not assignable to type '[...U]'.
      Source provides no match for variadic element at position 0 in target.
-@@= skipped -21, +21 lines =@@
- variadicTuples1.ts(191,5): error TS2322: Type '[...T]' is not assignable to type '[...U]'.
-   Type 'T' is not assignable to type 'U'.
-     'T' is assignable to the constraint of type 'U', but 'U' could be instantiated with a different subtype of constraint 'readonly string[]'.
--variadicTuples1.ts(203,5): error TS2322: Type 'string' is not assignable to type 'keyof [1, 2, ...T]'.
-+variadicTuples1.ts(203,5): error TS2322: Type '"2"' is not assignable to type 'keyof [1, 2, ...T]'.
-   Type '"2"' is not assignable to type '"0" | "1" | keyof T[]'.
- variadicTuples1.ts(213,5): error TS2322: Type '[...T, ...T]' is not assignable to type '[unknown, unknown]'.
-   Type '[] | [unknown] | [unknown, unknown]' is not assignable to type '[unknown, unknown]'.
-@@= skipped -15, +15 lines =@@
+@@= skipped -36, +36 lines =@@
      Type 'boolean' is not assignable to type 'number'.
  
  
@@ -47,27 +37,15 @@
      // Variadics in tuple types
      
      type TV0<T extends unknown[]> = [string, ...T];
-@@= skipped -58, +58 lines =@@
- !!! related TS6210 variadicTuples1.ts:45:45: An argument for 'c' was not provided.
-         foo1(...t1, 45);  // Error
-                     ~~
--!!! error TS2345: Argument of type 'number' is not assignable to parameter of type 'boolean'.
-+!!! error TS2345: Argument of type '45' is not assignable to parameter of type 'boolean'.
-     }
-     
-     declare function foo3<T extends unknown[]>(x: number, ...args: [...T, number]): T;
-@@= skipped -9, +9 lines =@@
+@@= skipped -67, +67 lines =@@
          foo3(1, 2);
          foo3(1, 'hello', true, 2);
          foo3(1, ...u, 'hi', 2);
 +                            ~
 +!!! error TS2345: Argument of type '2' is not assignable to parameter of type 'never'.
          foo3(1);
--        ~~~~~~~
-+        ~~~~
+         ~~~~~~~
  !!! error TS2345: Argument of type '[]' is not assignable to parameter of type '[...unknown[], number]'.
- !!! error TS2345:   Source has 0 element(s) but target requires 1.
-     }
 @@= skipped -117, +119 lines =@@
          t = m;
          t = r;  // Error
@@ -103,12 +81,3 @@
          r = t;
          r = m;
      }
-@@= skipped -60, +60 lines =@@
-         k3 = '1';
-         k3 = '2';  // Error
-         ~~
--!!! error TS2322: Type 'string' is not assignable to type 'keyof [1, 2, ...T]'.
-+!!! error TS2322: Type '"2"' is not assignable to type 'keyof [1, 2, ...T]'.
- !!! error TS2322:   Type '"2"' is not assignable to type '"0" | "1" | keyof T[]'.
-     }
-     

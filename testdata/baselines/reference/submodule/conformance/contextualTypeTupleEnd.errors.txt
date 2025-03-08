@@ -25,7 +25,7 @@ contextualTypeTupleEnd.ts(52,22): error TS7006: Parameter 'c' implicitly has an 
     declare function f1(...args: Funcs): void;
     
     f1();  // Error
-    ~~
+    ~~~~
 !!! error TS2345: Argument of type '[]' is not assignable to parameter of type '[...(arg: number) => void[], (arg: string) => void]'.
 !!! error TS2345:   Source has 0 element(s) but target requires 1.
     f1(x => str(x));

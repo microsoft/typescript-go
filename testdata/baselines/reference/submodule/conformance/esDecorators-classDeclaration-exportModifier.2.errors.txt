@@ -1,8 +1,8 @@
+file13.ts(2,1): error TS1434: Unexpected keyword or identifier.
 file13.ts(2,1): error TS2304: Cannot find name 'abstract'.
-file13.ts(2,10): error TS1005: ';' expected.
 file14.ts(2,1): error TS1128: Declaration or statement expected.
+file14.ts(2,8): error TS1434: Unexpected keyword or identifier.
 file14.ts(2,8): error TS2304: Cannot find name 'abstract'.
-file14.ts(2,17): error TS1005: ';' expected.
 file15.ts(2,16): error TS2304: Cannot find name 'abstract'.
 file15.ts(2,25): error TS1005: ';' expected.
 file3.ts(2,8): error TS1206: Decorators are not valid here.
@@ -74,9 +74,9 @@ file7.ts(2,21): error TS8038: Decorators may not appear after 'export' or 'expor
     // error
     abstract @dec class C13 {}
     ~~~~~~~~
+!!! error TS1434: Unexpected keyword or identifier.
+    ~~~~~~~~
 !!! error TS2304: Cannot find name 'abstract'.
-             ~
-!!! error TS1005: ';' expected.
     
 ==== file14.ts (3 errors) ====
     // error
@@ -84,9 +84,9 @@ file7.ts(2,21): error TS8038: Decorators may not appear after 'export' or 'expor
     ~~~~~~
 !!! error TS1128: Declaration or statement expected.
            ~~~~~~~~
+!!! error TS1434: Unexpected keyword or identifier.
+           ~~~~~~~~
 !!! error TS2304: Cannot find name 'abstract'.
-                    ~
-!!! error TS1005: ';' expected.
     
 ==== file15.ts (2 errors) ====
     // error

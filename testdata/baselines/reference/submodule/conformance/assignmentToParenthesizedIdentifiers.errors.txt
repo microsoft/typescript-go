@@ -1,8 +1,8 @@
-assignmentToParenthesizedIdentifiers.ts(4,1): error TS2322: Type '""' is not assignable to type 'number'.
-assignmentToParenthesizedIdentifiers.ts(5,1): error TS2322: Type '""' is not assignable to type 'number'.
-assignmentToParenthesizedIdentifiers.ts(13,1): error TS2322: Type '""' is not assignable to type 'number'.
-assignmentToParenthesizedIdentifiers.ts(14,1): error TS2322: Type '""' is not assignable to type 'number'.
-assignmentToParenthesizedIdentifiers.ts(15,1): error TS2322: Type '""' is not assignable to type 'number'.
+assignmentToParenthesizedIdentifiers.ts(4,1): error TS2322: Type 'string' is not assignable to type 'number'.
+assignmentToParenthesizedIdentifiers.ts(5,1): error TS2322: Type 'string' is not assignable to type 'number'.
+assignmentToParenthesizedIdentifiers.ts(13,1): error TS2322: Type 'string' is not assignable to type 'number'.
+assignmentToParenthesizedIdentifiers.ts(14,1): error TS2322: Type 'string' is not assignable to type 'number'.
+assignmentToParenthesizedIdentifiers.ts(15,1): error TS2322: Type 'string' is not assignable to type 'number'.
 assignmentToParenthesizedIdentifiers.ts(17,1): error TS2631: Cannot assign to 'M' because it is a namespace.
 assignmentToParenthesizedIdentifiers.ts(18,2): error TS2631: Cannot assign to 'M' because it is a namespace.
 assignmentToParenthesizedIdentifiers.ts(25,5): error TS2631: Cannot assign to 'M3' because it is a namespace.
@@ -11,13 +11,13 @@ assignmentToParenthesizedIdentifiers.ts(32,13): error TS2322: Type 'string' is n
 assignmentToParenthesizedIdentifiers.ts(33,13): error TS2322: Type 'string' is not assignable to type 'number'.
 assignmentToParenthesizedIdentifiers.ts(37,1): error TS2630: Cannot assign to 'fn' because it is a function.
 assignmentToParenthesizedIdentifiers.ts(38,2): error TS2630: Cannot assign to 'fn' because it is a function.
-assignmentToParenthesizedIdentifiers.ts(43,5): error TS2322: Type '""' is not assignable to type 'number'.
-assignmentToParenthesizedIdentifiers.ts(44,5): error TS2322: Type '""' is not assignable to type 'number'.
-assignmentToParenthesizedIdentifiers.ts(48,5): error TS2322: Type '""' is not assignable to type 'number'.
-assignmentToParenthesizedIdentifiers.ts(49,5): error TS2322: Type '""' is not assignable to type 'number'.
-assignmentToParenthesizedIdentifiers.ts(54,5): error TS2322: Type '""' is not assignable to type 'number'.
-assignmentToParenthesizedIdentifiers.ts(55,5): error TS2322: Type '""' is not assignable to type 'number'.
-assignmentToParenthesizedIdentifiers.ts(56,5): error TS2322: Type '""' is not assignable to type 'number'.
+assignmentToParenthesizedIdentifiers.ts(43,5): error TS2322: Type 'string' is not assignable to type 'number'.
+assignmentToParenthesizedIdentifiers.ts(44,5): error TS2322: Type 'string' is not assignable to type 'number'.
+assignmentToParenthesizedIdentifiers.ts(48,5): error TS2322: Type 'string' is not assignable to type 'number'.
+assignmentToParenthesizedIdentifiers.ts(49,5): error TS2322: Type 'string' is not assignable to type 'number'.
+assignmentToParenthesizedIdentifiers.ts(54,5): error TS2322: Type 'string' is not assignable to type 'number'.
+assignmentToParenthesizedIdentifiers.ts(55,5): error TS2322: Type 'string' is not assignable to type 'number'.
+assignmentToParenthesizedIdentifiers.ts(56,5): error TS2322: Type 'string' is not assignable to type 'number'.
 assignmentToParenthesizedIdentifiers.ts(62,1): error TS2628: Cannot assign to 'E' because it is an enum.
 assignmentToParenthesizedIdentifiers.ts(63,2): error TS2628: Cannot assign to 'E' because it is an enum.
 assignmentToParenthesizedIdentifiers.ts(69,1): error TS2629: Cannot assign to 'C' because it is a class.
@@ -30,10 +30,10 @@ assignmentToParenthesizedIdentifiers.ts(70,2): error TS2629: Cannot assign to 'C
     (x) = 3; // OK
     x = ''; // Error
     ~
-!!! error TS2322: Type '""' is not assignable to type 'number'.
+!!! error TS2322: Type 'string' is not assignable to type 'number'.
     (x) = ''; // Error
     ~~~
-!!! error TS2322: Type '""' is not assignable to type 'number'.
+!!! error TS2322: Type 'string' is not assignable to type 'number'.
     
     module M {
         export var y: number;
@@ -43,13 +43,13 @@ assignmentToParenthesizedIdentifiers.ts(70,2): error TS2629: Cannot assign to 'C
     (M.y) = 3; // OK
     M.y = ''; // Error
     ~~~
-!!! error TS2322: Type '""' is not assignable to type 'number'.
+!!! error TS2322: Type 'string' is not assignable to type 'number'.
     (M).y = ''; // Error
     ~~~~~
-!!! error TS2322: Type '""' is not assignable to type 'number'.
+!!! error TS2322: Type 'string' is not assignable to type 'number'.
     (M.y) = ''; // Error
     ~~~~~
-!!! error TS2322: Type '""' is not assignable to type 'number'.
+!!! error TS2322: Type 'string' is not assignable to type 'number'.
     
     M = { y: 3 }; // Error
     ~
@@ -98,32 +98,32 @@ assignmentToParenthesizedIdentifiers.ts(70,2): error TS2629: Cannot assign to 'C
         (x) = 3; // OK
         x = ''; // Error
         ~
-!!! error TS2322: Type '""' is not assignable to type 'number'.
+!!! error TS2322: Type 'string' is not assignable to type 'number'.
         (x) = ''; // Error
         ~~~
-!!! error TS2322: Type '""' is not assignable to type 'number'.
+!!! error TS2322: Type 'string' is not assignable to type 'number'.
     
         (y).t = 3; // OK
         (y.t) = 3; // OK
         (y).t = ''; // Error
         ~~~~~
-!!! error TS2322: Type '""' is not assignable to type 'number'.
+!!! error TS2322: Type 'string' is not assignable to type 'number'.
         (y.t) = ''; // Error
         ~~~~~
-!!! error TS2322: Type '""' is not assignable to type 'number'.
+!!! error TS2322: Type 'string' is not assignable to type 'number'.
     
         y['t'] = 3; // OK
         (y)['t'] = 3; // OK
         (y['t']) = 3; // OK
         y['t'] = ''; // Error
         ~~~~~~
-!!! error TS2322: Type '""' is not assignable to type 'number'.
+!!! error TS2322: Type 'string' is not assignable to type 'number'.
         (y)['t'] = ''; // Error
         ~~~~~~~~
-!!! error TS2322: Type '""' is not assignable to type 'number'.
+!!! error TS2322: Type 'string' is not assignable to type 'number'.
         (y['t']) = ''; // Error
         ~~~~~~~~
-!!! error TS2322: Type '""' is not assignable to type 'number'.
+!!! error TS2322: Type 'string' is not assignable to type 'number'.
     }
     
     enum E {

@@ -1,62 +1,7 @@
 --- old.shorthandPropertyAssignmentsInDestructuring.errors.txt
 +++ new.shorthandPropertyAssignmentsInDestructuring.errors.txt
-@@= skipped -0, +0 lines =@@
--shorthandPropertyAssignmentsInDestructuring.ts(38,9): error TS2322: Type 'number' is not assignable to type 'string'.
--shorthandPropertyAssignmentsInDestructuring.ts(44,12): error TS2322: Type 'number' is not assignable to type 'string'.
--shorthandPropertyAssignmentsInDestructuring.ts(70,5): error TS2322: Type 'number' is not assignable to type 'string'.
--shorthandPropertyAssignmentsInDestructuring.ts(75,8): error TS2322: Type 'number' is not assignable to type 'string'.
--shorthandPropertyAssignmentsInDestructuring.ts(80,5): error TS2322: Type 'number' is not assignable to type 'string'.
-+shorthandPropertyAssignmentsInDestructuring.ts(38,9): error TS2322: Type '5' is not assignable to type 'string'.
-+shorthandPropertyAssignmentsInDestructuring.ts(44,12): error TS2322: Type '5' is not assignable to type 'string'.
-+shorthandPropertyAssignmentsInDestructuring.ts(70,5): error TS2322: Type '5' is not assignable to type 'string'.
-+shorthandPropertyAssignmentsInDestructuring.ts(75,8): error TS2322: Type '5' is not assignable to type 'string'.
-+shorthandPropertyAssignmentsInDestructuring.ts(80,5): error TS2322: Type '5' is not assignable to type 'string'.
- shorthandPropertyAssignmentsInDestructuring.ts(80,20): error TS2322: Type 'number' is not assignable to type 'string'.
--shorthandPropertyAssignmentsInDestructuring.ts(85,8): error TS2322: Type 'number' is not assignable to type 'string'.
-+shorthandPropertyAssignmentsInDestructuring.ts(85,8): error TS2322: Type '5' is not assignable to type 'string'.
- shorthandPropertyAssignmentsInDestructuring.ts(85,26): error TS2322: Type 'number' is not assignable to type 'string'.
- shorthandPropertyAssignmentsInDestructuring.ts(111,14): error TS1312: Did you mean to use a ':'? An '=' can only follow a property name when the containing object literal is part of a destructuring pattern.
- 
-@@= skipped -48, +48 lines =@@
-     	var s3: string;
-     	for ({ s3 = 5 } of [{ s3: "" }]) {
-     	       ~~
--!!! error TS2322: Type 'number' is not assignable to type 'string'.
-+!!! error TS2322: Type '5' is not assignable to type 'string'.
-     	}
-     });
-     
-@@= skipped -8, +8 lines =@@
-     	var s3: string;
-     	for ({ s3:s3 = 5 } of [{ s3: "" }]) {
-     	          ~~
--!!! error TS2322: Type 'number' is not assignable to type 'string'.
-+!!! error TS2322: Type '5' is not assignable to type 'string'.
-     	}
-     });
-     
-@@= skipped -28, +28 lines =@@
-     	let y1: string;
-     	({ y1 = 5 } = {})
-     	   ~~
--!!! error TS2322: Type 'number' is not assignable to type 'string'.
-+!!! error TS2322: Type '5' is not assignable to type 'string'.
-     });
-     
-     (function() {
-     	let y1: string;
-     	({ y1:y1 = 5 } = {})
-     	      ~~
--!!! error TS2322: Type 'number' is not assignable to type 'string'.
-+!!! error TS2322: Type '5' is not assignable to type 'string'.
-     });
-     
-     (function() {
-     	let y2: string, y3: { x: string };
-     	({ y2 = 5, y3 = { x: 1 } } = {})
-     	   ~~
--!!! error TS2322: Type 'number' is not assignable to type 'string'.
-+!!! error TS2322: Type '5' is not assignable to type 'string'.
+@@= skipped -101, +101 lines =@@
+ !!! error TS2322: Type 'number' is not assignable to type 'string'.
      	                  ~
  !!! error TS2322: Type 'number' is not assignable to type 'string'.
 -!!! related TS6500 shorthandPropertyAssignmentsInDestructuring.ts:79:24: The expected type comes from property 'x' which is declared here on type '{ x: string; }'
@@ -64,11 +9,8 @@
      });
      
      (function() {
-     	let y2: string, y3: { x: string };
-     	({ y2:y2 = 5, y3:y3 = { x: 1 } } = {})
-     	      ~~
--!!! error TS2322: Type 'number' is not assignable to type 'string'.
-+!!! error TS2322: Type '5' is not assignable to type 'string'.
+@@= skipped -10, +10 lines =@@
+ !!! error TS2322: Type 'number' is not assignable to type 'string'.
      	                        ~
  !!! error TS2322: Type 'number' is not assignable to type 'string'.
 -!!! related TS6500 shorthandPropertyAssignmentsInDestructuring.ts:84:24: The expected type comes from property 'x' which is declared here on type '{ x: string; }'
