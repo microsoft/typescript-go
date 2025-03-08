@@ -132,7 +132,7 @@ ParsedCommandLine::{
             "tscBuild": null
         },
         "watchOptions": {
-            "watchInterval": null,
+            "watchInterval": 1000,
             "watchFile": 0,
             "watchDirectory": 0,
             "fallbackPolling": 0,
