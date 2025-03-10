@@ -111,20 +111,17 @@ func getTokenAtPosition(
 		return nodeList
 	}
 
-	nodeVisitor := &ast.NodeVisitor{
-		Visit: core.Identity[*ast.Node],
-		Hooks: ast.NodeVisitorHooks{
-			VisitNode:  visitNode,
-			VisitToken: visitNode,
-			VisitNodes: visitNodeList,
-			VisitModifiers: func(modifiers *ast.ModifierList, visitor *ast.NodeVisitor) *ast.ModifierList {
-				if modifiers != nil {
-					visitNodeList(&modifiers.NodeList, visitor)
-				}
-				return modifiers
-			},
+	nodeVisitor := ast.NewNodeVisitor(core.Identity, nil, ast.NodeVisitorHooks{
+		VisitNode:  visitNode,
+		VisitToken: visitNode,
+		VisitNodes: visitNodeList,
+		VisitModifiers: func(modifiers *ast.ModifierList, visitor *ast.NodeVisitor) *ast.ModifierList {
+			if modifiers != nil {
+				visitNodeList(&modifiers.NodeList, visitor)
+			}
+			return modifiers
 		},
-	}
+	})
 
 	for {
 		visitEachChildAndJSDoc(current, sourceFile, nodeVisitor)
@@ -196,31 +193,26 @@ func findRightmostNode(node *ast.Node, sourceFile *ast.SourceFile) *ast.Node {
 		}
 		return node
 	}
-	visitor := &ast.NodeVisitor{
-		Visit: func(node *ast.Node) *ast.Node {
-			return node
-		},
-		Hooks: ast.NodeVisitorHooks{
-			VisitNode:  visitNode,
-			VisitToken: visitNode,
-			VisitNodes: func(nodeList *ast.NodeList, visitor *ast.NodeVisitor) *ast.NodeList {
-				if nodeList != nil {
-					if rightmost := ast.FindLastVisibleNode(nodeList.Nodes); rightmost != nil {
-						next = rightmost
-					}
+	visitor := ast.NewNodeVisitor(core.Identity, nil, ast.NodeVisitorHooks{
+		VisitNode:  visitNode,
+		VisitToken: visitNode,
+		VisitNodes: func(nodeList *ast.NodeList, visitor *ast.NodeVisitor) *ast.NodeList {
+			if nodeList != nil {
+				if rightmost := ast.FindLastVisibleNode(nodeList.Nodes); rightmost != nil {
+					next = rightmost
 				}
-				return nodeList
-			},
-			VisitModifiers: func(modifiers *ast.ModifierList, visitor *ast.NodeVisitor) *ast.ModifierList {
-				if modifiers != nil {
-					if rightmost := ast.FindLastVisibleNode(modifiers.Nodes); rightmost != nil {
-						next = rightmost
-					}
-				}
-				return modifiers
-			},
+			}
+			return nodeList
 		},
-	}
+		VisitModifiers: func(modifiers *ast.ModifierList, visitor *ast.NodeVisitor) *ast.ModifierList {
+			if modifiers != nil {
+				if rightmost := ast.FindLastVisibleNode(modifiers.Nodes); rightmost != nil {
+					next = rightmost
+				}
+			}
+			return modifiers
+		},
+	})
 
 	for {
 		current.VisitEachChild(visitor)

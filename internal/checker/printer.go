@@ -145,7 +145,7 @@ func (p *Printer) printTypeNoAlias(t *Type) {
 	switch {
 	case t.flags&TypeFlagsIntrinsic != 0:
 		p.print(t.AsIntrinsicType().intrinsicName)
-	case t.flags&TypeFlagsLiteral != 0:
+	case t.flags&(TypeFlagsLiteral|TypeFlagsEnum) != 0:
 		p.printLiteralType(t)
 	case t.flags&TypeFlagsUniqueESSymbol != 0:
 		p.printUniqueESSymbolType(t)
@@ -182,7 +182,7 @@ func (p *Printer) printRecursive(t *Type, f func(*Printer, *Type)) {
 }
 
 func (p *Printer) printLiteralType(t *Type) {
-	if t.flags&TypeFlagsEnumLiteral != 0 {
+	if t.flags&(TypeFlagsEnumLiteral|TypeFlagsEnum) != 0 {
 		p.printEnumLiteral(t)
 	} else {
 		p.printValue(t.AsLiteralType().value)
@@ -364,27 +364,20 @@ func (p *Printer) printAnonymousType(t *Type) {
 		}
 	}
 	p.print("{")
-	var tail bool
+	hasMembers := false
 	for _, sig := range callSignatures {
-		if tail {
-			p.print(",")
-		}
 		p.print(" ")
 		p.printSignature(sig, ": ")
-		tail = true
+		p.print(";")
+		hasMembers = true
 	}
 	for _, sig := range constructSignatures {
-		if tail {
-			p.print(",")
-		}
 		p.print(" new")
 		p.printSignature(sig, ": ")
-		tail = true
+		p.print(";")
+		hasMembers = true
 	}
 	for _, info := range p.c.getIndexInfosOfType(t) {
-		if tail {
-			p.print(",")
-		}
 		if info.isReadonly {
 			p.print(" readonly")
 		}
@@ -394,12 +387,10 @@ func (p *Printer) printAnonymousType(t *Type) {
 		p.printType(info.keyType)
 		p.print("]: ")
 		p.printType(info.valueType)
-		tail = true
+		p.print(";")
+		hasMembers = true
 	}
 	for _, prop := range props {
-		if tail {
-			p.print(",")
-		}
 		if p.c.isReadonlySymbol(prop) {
 			p.print(" readonly")
 		}
@@ -410,9 +401,10 @@ func (p *Printer) printAnonymousType(t *Type) {
 		}
 		p.print(": ")
 		p.printType(p.c.getTypeOfSymbol(prop))
-		tail = true
+		p.print(";")
+		hasMembers = true
 	}
-	if tail {
+	if hasMembers {
 		p.print(" ")
 	}
 	p.print("}")

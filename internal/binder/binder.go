@@ -146,7 +146,7 @@ func (b *Binder) declareSymbol(symbolTable ast.SymbolTable, parent *ast.Symbol, 
 
 func (b *Binder) declareSymbolEx(symbolTable ast.SymbolTable, parent *ast.Symbol, node *ast.Node, includes ast.SymbolFlags, excludes ast.SymbolFlags, isReplaceableByMethod bool, isComputedName bool) *ast.Symbol {
 	// Debug.assert(isComputedName || !ast.HasDynamicName(node))
-	isDefaultExport := ast.HasSyntacticModifier(node, ast.ModifierFlagsDefault) || ast.IsExportSpecifier(node) && ModuleExportNameIsDefault(node.AsExportSpecifier().Name())
+	isDefaultExport := ast.HasSyntacticModifier(node, ast.ModifierFlagsDefault) || ast.IsExportSpecifier(node) && ast.ModuleExportNameIsDefault(node.AsExportSpecifier().Name())
 	// The exported symbol for an export default function/class node is always named "default"
 	var name string
 	switch {
@@ -361,10 +361,6 @@ func (b *Binder) getDisplayName(node *ast.Node) string {
 		return name
 	}
 	return "(Missing)"
-}
-
-func ModuleExportNameIsDefault(node *ast.Node) bool {
-	return node.Text() == ast.InternalSymbolNameDefault
 }
 
 func GetSymbolNameForPrivateIdentifier(containingClassSymbol *ast.Symbol, description string) string {
@@ -970,10 +966,7 @@ func (b *Binder) bindFunctionOrConstructorType(node *ast.Node) {
 }
 
 func addLateBoundAssignmentDeclarationToSymbol(node *ast.Node, symbol *ast.Symbol) {
-	if symbol.AssignmentDeclarationMembers == nil {
-		symbol.AssignmentDeclarationMembers = make(map[ast.NodeId]*ast.Node)
-	}
-	symbol.AssignmentDeclarationMembers[ast.GetNodeId(node)] = node
+	symbol.AssignmentDeclarationMembers.Add(node)
 }
 
 func (b *Binder) bindFunctionPropertyAssignment(node *ast.Node) {
@@ -2809,16 +2802,6 @@ func GetErrorRangeForNode(sourceFile *ast.SourceFile, node *ast.Node) core.TextR
 		ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor, ast.KindTypeAliasDeclaration, ast.KindPropertyDeclaration,
 		ast.KindPropertySignature, ast.KindNamespaceImport:
 		errorNode = ast.GetNameOfDeclaration(node)
-	case ast.KindCallExpression, ast.KindNewExpression:
-		errorNode = node.Expression()
-		if ast.IsPropertyAccessExpression(errorNode) {
-			errorNode = errorNode.Name()
-		}
-	case ast.KindTaggedTemplateExpression:
-		errorNode = node.AsTaggedTemplateExpression().Tag
-		if ast.IsPropertyAccessExpression(errorNode) {
-			errorNode = errorNode.Name()
-		}
 	case ast.KindArrowFunction:
 		return getErrorRangeForArrowFunction(sourceFile, node)
 	case ast.KindCaseClause, ast.KindDefaultClause:
