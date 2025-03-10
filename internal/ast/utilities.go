@@ -80,6 +80,17 @@ func PositionIsSynthesized(pos int) bool {
 	return pos < 0
 }
 
+func FindLastVisibleNode(nodes []*Node) *Node {
+	fromEnd := 1
+	for fromEnd <= len(nodes) && nodes[len(nodes)-fromEnd].Flags&NodeFlagsSynthesized != 0 {
+		fromEnd++
+	}
+	if fromEnd <= len(nodes) {
+		return nodes[len(nodes)-fromEnd]
+	}
+	return nil
+}
+
 func NodeKindIs(node *Node, kinds ...Kind) bool {
 	return slices.Contains(kinds, node.Kind)
 }

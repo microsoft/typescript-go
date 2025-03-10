@@ -10,7 +10,7 @@
  parserRealSource13.ts(123,26): error TS2304: Cannot find name 'AST'.
  parserRealSource13.ts(123,39): error TS2304: Cannot find name 'AST'.
 -parserRealSource13.ts(128,33): error TS2339: Property 'getAstWalkerFactory' does not exist on type 'typeof TypeScript'.
-+parserRealSource13.ts(128,33): error TS2339: Property 'getAstWalkerFactory' does not exist on type '{}'.
++parserRealSource13.ts(128,33): error TS2339: Property 'getAstWalkerFactory' does not exist on type '{ AstWalkerWithDetailCallback: { walk: (script: Script, callback: AstWalkerDetailCallback) => void; }; }'.
  parserRealSource13.ts(132,51): error TS2304: Cannot find name 'AST'.
  parserRealSource13.ts(135,36): error TS2304: Cannot find name 'NodeType'.
  
@@ -31,7 +31,7 @@
              var walker = TypeScript.getAstWalkerFactory().getWalker(pre, post);
                                      ~~~~~~~~~~~~~~~~~~~
 -!!! error TS2339: Property 'getAstWalkerFactory' does not exist on type 'typeof TypeScript'.
-+!!! error TS2339: Property 'getAstWalkerFactory' does not exist on type '{}'.
++!!! error TS2339: Property 'getAstWalkerFactory' does not exist on type '{ AstWalkerWithDetailCallback: { walk: (script: Script, callback: AstWalkerDetailCallback) => void; }; }'.
              walker.walk(script, null);
          }
      

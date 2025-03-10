@@ -64,7 +64,7 @@ func getTokenAtPosition(
 	visitNode := func(node *ast.Node, _ *ast.NodeVisitor) *ast.Node {
 		// We can't abort visiting children, so once a match is found, we set `next`
 		// and do nothing on subsequent visits.
-		if node != nil && next == nil {
+		if node != nil && node.Flags&ast.NodeFlagsSynthesized == 0 && next == nil {
 			switch testNode(node) {
 			case -1:
 				if !ast.IsJSDocKind(node.Kind) {
@@ -81,29 +81,31 @@ func getTokenAtPosition(
 		return node
 	}
 
-	visitNodes := func(nodes []*ast.Node) {
-		index, match := core.BinarySearchUniqueFunc(nodes, position, func(middle int, node *ast.Node) int {
-			cmp := testNode(node)
-			if cmp < 0 {
-				left = node.End()
-			}
-			return cmp
-		})
-
-		if match {
-			next = nodes[index]
-		}
-	}
-
 	visitNodeList := func(nodeList *ast.NodeList, _ *ast.NodeVisitor) *ast.NodeList {
-		if nodeList != nil && len(nodeList.Nodes) > 0 && next == nil {
+		if nodeList != nil && !ast.PositionIsSynthesized(nodeList.End()) && !ast.PositionIsSynthesized(nodeList.Pos()) && len(nodeList.Nodes) > 0 && next == nil {
 			if nodeList.End() == position && includePrecedingTokenAtEndPosition != nil {
 				left = nodeList.End()
 				prevSubtree = nodeList.Nodes[len(nodeList.Nodes)-1]
 			} else if nodeList.End() <= position {
 				left = nodeList.End()
 			} else if nodeList.Pos() <= position {
-				visitNodes(nodeList.Nodes)
+				nodes := nodeList.Nodes
+				if nodeList.Flags&ast.NodeFlagsSynthesized != 0 {
+					nodes = core.Filter(nodes, func(node *ast.Node) bool {
+						return node.Flags&ast.NodeFlagsSynthesized == 0
+					})
+				}
+				index, match := core.BinarySearchUniqueFunc(nodes, position, func(middle int, node *ast.Node) int {
+					cmp := testNode(node)
+					if cmp < 0 {
+						left = node.End()
+					}
+					return cmp
+				})
+
+				if match {
+					next = nodes[index]
+				}
 			}
 		}
 		return nodeList
@@ -195,14 +197,18 @@ func findRightmostNode(node *ast.Node, sourceFile *ast.SourceFile) *ast.Node {
 		VisitNode:  visitNode,
 		VisitToken: visitNode,
 		VisitNodes: func(nodeList *ast.NodeList, visitor *ast.NodeVisitor) *ast.NodeList {
-			if nodeList != nil && len(nodeList.Nodes) > 0 {
-				next = nodeList.Nodes[len(nodeList.Nodes)-1]
+			if nodeList != nil {
+				if rightmost := ast.FindLastVisibleNode(nodeList.Nodes); rightmost != nil {
+					next = rightmost
+				}
 			}
 			return nodeList
 		},
 		VisitModifiers: func(modifiers *ast.ModifierList, visitor *ast.NodeVisitor) *ast.ModifierList {
-			if modifiers != nil && len(modifiers.Nodes) > 0 {
-				next = modifiers.Nodes[len(modifiers.Nodes)-1]
+			if modifiers != nil {
+				if rightmost := ast.FindLastVisibleNode(modifiers.Nodes); rightmost != nil {
+					next = rightmost
+				}
 			}
 			return modifiers
 		},
