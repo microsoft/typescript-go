@@ -669,7 +669,7 @@ func (c *Checker) compareNodes(n1, n2 *ast.Node) int {
 	return n1.Pos() - n2.Pos()
 }
 
-func compareTypes(t1, t2 *Type) int {
+func CompareTypes(t1, t2 *Type) int {
 	if t1 == t2 {
 		return 0
 	}
@@ -754,7 +754,7 @@ func compareTypes(t1, t2 *Type) int {
 		} else if o2 == nil {
 			return -1
 		} else {
-			if c := compareTypes(o1, o2); c != 0 {
+			if c := CompareTypes(o1, o2); c != 0 {
 				return c
 			}
 		}
@@ -792,17 +792,17 @@ func compareTypes(t1, t2 *Type) int {
 			return c
 		}
 	case t1.flags&TypeFlagsIndex != 0:
-		if c := compareTypes(t1.AsIndexType().target, t2.AsIndexType().target); c != 0 {
+		if c := CompareTypes(t1.AsIndexType().target, t2.AsIndexType().target); c != 0 {
 			return c
 		}
 		if c := int(t1.AsIndexType().flags) - int(t2.AsIndexType().flags); c != 0 {
 			return c
 		}
 	case t1.flags&TypeFlagsIndexedAccess != 0:
-		if c := compareTypes(t1.AsIndexedAccessType().objectType, t2.AsIndexedAccessType().objectType); c != 0 {
+		if c := CompareTypes(t1.AsIndexedAccessType().objectType, t2.AsIndexedAccessType().objectType); c != 0 {
 			return c
 		}
-		if c := compareTypes(t1.AsIndexedAccessType().indexType, t2.AsIndexedAccessType().indexType); c != 0 {
+		if c := CompareTypes(t1.AsIndexedAccessType().indexType, t2.AsIndexedAccessType().indexType); c != 0 {
 			return c
 		}
 	case t1.flags&TypeFlagsConditional != 0:
@@ -813,10 +813,10 @@ func compareTypes(t1, t2 *Type) int {
 			return c
 		}
 	case t1.flags&TypeFlagsSubstitution != 0:
-		if c := compareTypes(t1.AsSubstitutionType().baseType, t2.AsSubstitutionType().baseType); c != 0 {
+		if c := CompareTypes(t1.AsSubstitutionType().baseType, t2.AsSubstitutionType().baseType); c != 0 {
 			return c
 		}
-		if c := compareTypes(t1.AsSubstitutionType().constraint, t2.AsSubstitutionType().constraint); c != 0 {
+		if c := CompareTypes(t1.AsSubstitutionType().constraint, t2.AsSubstitutionType().constraint); c != 0 {
 			return c
 		}
 	case t1.flags&TypeFlagsTemplateLiteral != 0:
@@ -827,7 +827,7 @@ func compareTypes(t1, t2 *Type) int {
 			return c
 		}
 	case t1.flags&TypeFlagsStringMapping != 0:
-		if c := compareTypes(t1.AsStringMappingType().target, t2.AsStringMappingType().target); c != 0 {
+		if c := CompareTypes(t1.AsStringMappingType().target, t2.AsStringMappingType().target); c != 0 {
 			return c
 		}
 	}
@@ -917,7 +917,7 @@ func compareTypeLists(s1, s2 []*Type) int {
 		return len(s1) - len(s2)
 	}
 	for i, t1 := range s1 {
-		if c := compareTypes(t1, s2[i]); c != 0 {
+		if c := CompareTypes(t1, s2[i]); c != 0 {
 			return c
 		}
 	}
@@ -943,10 +943,10 @@ func compareTypeMappers(m1, m2 *TypeMapper) int {
 	case TypeMapperKindSimple:
 		m1 := m1.data.(*SimpleTypeMapper)
 		m2 := m2.data.(*SimpleTypeMapper)
-		if c := compareTypes(m1.source, m2.source); c != 0 {
+		if c := CompareTypes(m1.source, m2.source); c != 0 {
 			return c
 		}
-		return compareTypes(m1.target, m2.target)
+		return CompareTypes(m1.target, m2.target)
 	case TypeMapperKindArray:
 		m1 := m1.data.(*ArrayTypeMapper)
 		m2 := m2.data.(*ArrayTypeMapper)
