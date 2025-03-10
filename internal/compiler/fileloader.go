@@ -81,11 +81,8 @@ func processAllProgramFiles(
 
 func (p *fileLoader) addRootTasks(files []string, isLib bool) {
 	for _, fileName := range files {
-		if core.Tristate.IsTrue(p.compilerOptions.AllowNonTsExtensions) ||
-			core.Some(p.supportedExtensions, func(extension string) bool {
-				return strings.HasSuffix(fileName, extension)
-			}) {
-			absPath := tspath.GetNormalizedAbsolutePath(fileName, p.host.GetCurrentDirectory())
+		absPath := tspath.GetNormalizedAbsolutePath(fileName, p.host.GetCurrentDirectory())
+		if core.Tristate.IsTrue(p.compilerOptions.AllowNonTsExtensions) || slices.Contains(p.supportedExtensions, tspath.TryGetExtensionFromPath(absPath)) {
 			p.rootTasks = append(p.rootTasks, &parseTask{normalizedFilePath: absPath, isLib: isLib})
 		}
 	}
