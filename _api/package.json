@@ -6,5 +6,8 @@
   "dependencies": {
     "json-rpc-2.0": "^1.7.0",
     "libsyncrpc": "file:../../libsyncrpc"
+  },
+  "devDependencies": {
+    "ts-morph": "^25.0.1"
   }
 }
