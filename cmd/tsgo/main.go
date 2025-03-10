@@ -113,7 +113,7 @@ func parseArgs() *cliOptions {
 	flag.Parse()
 
 	if len(flag.Args()) > 0 {
-		fmt.Fprintf(os.Stderr, "Unknown arguments: %v\n", flag.Args())
+		fmt.Fprintf(os.Stderr, "Unknown positional arguments %v; try tsgo tsc <args>\n", flag.Args())
 		os.Exit(1)
 	}
 
