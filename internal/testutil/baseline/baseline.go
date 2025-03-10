@@ -43,9 +43,8 @@ func Run(t *testing.T, fileName string, actual string, opts Options) {
 			}
 		}
 		writeComparison(t, diff, diffFileName, false /*useSubmodule*/, opts)
-	} else {
-		writeComparison(t, actual, fileName, false /*useSubmodule*/, opts)
 	}
+	writeComparison(t, actual, fileName, false /*useSubmodule*/, opts)
 }
 
 func getBaselineDiff(t *testing.T, actual string, fileName string) string {

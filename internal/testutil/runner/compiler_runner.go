@@ -89,7 +89,6 @@ func (r *CompilerBaselineRunner) RunTests(t *testing.T) {
 	r.cleanUpLocal(t)
 	files := r.EnumerateTestFiles()
 	skippedTests := []string{
-		// "checkJsFiles6.ts",
 		"mappedTypeRecursiveInference.ts", // Needed until we have type printer with truncation limit.
 	}
 	deprecatedTests := []string{
