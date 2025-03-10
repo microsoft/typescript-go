@@ -488,6 +488,8 @@ func (n *Node) Type() *Node {
 		return n.AsTemplateLiteralTypeSpan().Type
 	case KindJSDocTypeExpression:
 		return n.AsJSDocTypeExpression().Type
+	case KindJSTypeExpression:
+		return n.AsJSTypeExpression().Type
 	case KindJSDocNullableType:
 		return n.AsJSDocNullableType().Type
 	case KindJSDocNonNullableType:
@@ -7743,6 +7745,7 @@ func (node *JSDocOptionalType) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewJSDocOptionalType(node.Type), node.AsNode(), f.hooks)
 }
 
+// TODO: This name is WAAAAAAAAAAAAY too close to JSDocTypeExpression. Either rename it or remove it or use an existing node
 // JSTypeExpression
 type JSTypeExpression struct {
 	TypeNodeBase
@@ -7752,12 +7755,12 @@ type JSTypeExpression struct {
 func (f *NodeFactory) NewJSTypeExpression(typeNode *TypeNode) *Node {
 	data := &JSTypeExpression{}
 	data.Type = typeNode
-	return newNode(KindJSTypeExpression, data)
+	return newNode(KindJSTypeExpression, data, f.hooks)
 }
 
 func (f *NodeFactory) UpdateJSTypeExpression(node *JSTypeExpression, typeNode *TypeNode) *Node {
 	if typeNode != node.Type {
-		return updateNode(f.NewJSTypeExpression(typeNode), node.AsNode())
+		return updateNode(f.NewJSTypeExpression(typeNode), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
@@ -7771,7 +7774,7 @@ func (node *JSTypeExpression) VisitEachChild(v *NodeVisitor) *Node {
 }
 
 func (node *JSTypeExpression) Clone(f *NodeFactory) *Node {
-	return updateNode(f.NewJSTypeExpression(node.Type), node.AsNode())
+	return updateNode(f.NewJSTypeExpression(node.Type), node.AsNode(), f.hooks)
 }
 
 func IsJSTypeExpression(node *Node) bool {

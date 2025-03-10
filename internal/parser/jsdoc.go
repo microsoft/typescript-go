@@ -57,6 +57,10 @@ func (p *Parser) withJSDoc(node *ast.Node, hasJSDoc bool) {
 			node.Flags |= ast.NodeFlagsDeprecated
 		}
 		if p.scriptKind == core.ScriptKindJS || p.scriptKind == core.ScriptKindJSX {
+			// TODO: This will attach type-system information, but it doesn't have a plan for attaching
+			// non-type-system tags to the right place.
+			// The most likely place this will be a problem is TSDoc, if TSDoc lets people write their tags
+			// on arrow initialisers of constants.
 			p.attachJSDoc(node, jsDoc)
 		}
 		p.jsdocCache[node] = jsDoc
@@ -70,23 +74,30 @@ func (p *Parser) attachJSDoc(host *ast.Node, jsDoc []*ast.Node) {
 	for _, j := range jsDoc {
 		isLast := j == jsDoc[len(jsDoc)-1]
 		tags := j.AsJSDoc().Tags
-		if tags != nil {
-			for _, tag := range j.AsJSDoc().Tags.Nodes {
-				if isLast && tag.Kind == ast.KindJSDocTypeTag {
-					// TODO: This is somehow messing up symbols of patterns I'm NOT changing
-					if host.Kind == ast.KindVariableStatement && host.AsVariableStatement().DeclarationList != nil {
-						// TODO: Could still clone the node and mark it synthetic
-						for _, declaration := range host.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes {
-							if declaration.AsVariableDeclaration().Type == nil {
-								t := p.factory.NewJSDocTypeExpression(tag.AsJSDocTypeTag().TypeExpression)
-								// TODO: What other flags? Copy from decl? from tag's typeexpression?
-								t.Flags |= p.contextFlags | ast.NodeFlagsSynthesized
-								t.Loc = core.NewTextRange(t.Type().Pos(), t.Type().End())
-								declaration.AsVariableDeclaration().Type = t
-							}
+		if tags == nil {
+			continue
+		}
+		for _, tag := range j.AsJSDoc().Tags.Nodes {
+			if !isLast {
+				// TODO: @overload and unattached tags support goes here
+				continue
+			}
+			switch tag.Kind {
+			case ast.KindJSDocTypeTag:
+				if host.Kind == ast.KindVariableStatement && host.AsVariableStatement().DeclarationList != nil {
+					// TODO: Could still clone the node and mark it synthetic
+					for _, declaration := range host.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes {
+						if declaration.AsVariableDeclaration().Type == nil {
+							t := p.factory.NewJSTypeExpression(tag.AsJSDocTypeTag().TypeExpression.Type())
+							// TODO: What other flags? Copy from decl? from tag's typeexpression?
+							t.Flags |= p.contextFlags | ast.NodeFlagsSynthesized
+							t.Loc = core.NewTextRange(t.Type().Pos(), t.Type().End())
+							declaration.AsVariableDeclaration().Type = t
 						}
 					}
 				}
+				// for a certain host, like a parameter declaration, with an initialiser that itself has jsdoc,
+				// those jsdoc are related to 
 			}
 		}
 	}
