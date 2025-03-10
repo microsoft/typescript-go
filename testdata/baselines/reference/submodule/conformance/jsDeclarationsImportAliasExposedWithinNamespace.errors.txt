@@ -6,6 +6,8 @@ error TS2318: Cannot find global type 'String'.
 error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
 error TS2552: Cannot find name 'Number'. Did you mean 'number'?
 error TS2552: Cannot find name 'Object'. Did you mean 'object'?
+file.js(4,11): error TS2552: Cannot find name 'Object'. Did you mean 'object'?
+file2.js(6,11): error TS2552: Cannot find name 'Object'. Did you mean 'object'?
 
 
 !!! error TS2318: Cannot find global type 'Array'.
@@ -16,11 +18,13 @@ error TS2552: Cannot find name 'Object'. Did you mean 'object'?
 !!! error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
 !!! error TS2552: Cannot find name 'Number'. Did you mean 'number'?
 !!! error TS2552: Cannot find name 'Object'. Did you mean 'object'?
-==== file.js (0 errors) ====
+==== file.js (1 errors) ====
     /**
      * @namespace myTypes
      * @global
      * @type {Object<string,*>}
+              ~~~~~~
+!!! error TS2552: Cannot find name 'Object'. Did you mean 'object'?
      */
     const myTypes = {
         // SOME PROPS HERE
@@ -37,13 +41,15 @@ error TS2552: Cannot find name 'Object'. Did you mean 'object'?
     /** @typedef {myTypes.typeB|Function} myTypes.typeC */
     
     export {myTypes};
-==== file2.js (0 errors) ====
+==== file2.js (1 errors) ====
     import {myTypes} from './file.js';
     
     /**
      * @namespace testFnTypes
      * @global
      * @type {Object<string,*>}
+              ~~~~~~
+!!! error TS2552: Cannot find name 'Object'. Did you mean 'object'?
      */
     const testFnTypes = {
         // SOME PROPS HERE

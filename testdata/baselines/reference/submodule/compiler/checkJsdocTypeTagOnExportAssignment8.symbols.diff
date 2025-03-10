@@ -1,0 +1,11 @@
+--- old.checkJsdocTypeTagOnExportAssignment8.symbols
++++ new.checkJsdocTypeTagOnExportAssignment8.symbols
+@@= skipped -9, +9 lines =@@
+  */
+ 
+ /** @type {Foo} */
++>Foo : Symbol(Foo)
++
+ export default {
+     a: 'a',
+ >a : Symbol(a, Decl(a.js, 7, 16))

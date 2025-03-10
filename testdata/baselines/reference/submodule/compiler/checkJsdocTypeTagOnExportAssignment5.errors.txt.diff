@@ -1,0 +1,24 @@
+--- old.checkJsdocTypeTagOnExportAssignment5.errors.txt
++++ new.checkJsdocTypeTagOnExportAssignment5.errors.txt
+@@= skipped -0, +-1 lines =@@
+-<no content>
+@@= skipped --1, +1 lines =@@
++a.js(7,12): error TS2304: Cannot find name 'Foo'.
++
++
++==== a.js (1 errors) ====
++    /**
++     * @typedef {Object} Foo
++     * @property {number} a
++     * @property {number} b
++     */
++    
++    /** @type {Foo} */
++               ~~~
++!!! error TS2304: Cannot find name 'Foo'.
++    export default { a: 1, b: 1 };
++    
++==== b.js (0 errors) ====
++    import a from "./a";
++    a;
++    

@@ -3,6 +3,14 @@
 @@= skipped -0, +-1 lines =@@
 -<no content>
 @@= skipped --1, +1 lines =@@
++index.js(24,15): error TS2304: Cannot find name 'T'.
++index.js(24,19): error TS2304: Cannot find name 'U'.
++index.js(30,15): error TS2304: Cannot find name 'T'.
++index.js(30,19): error TS2304: Cannot find name 'U'.
++index.js(38,17): error TS2304: Cannot find name 'U'.
++index.js(48,17): error TS2304: Cannot find name 'U'.
++index.js(104,15): error TS2304: Cannot find name 'T'.
++index.js(104,19): error TS2304: Cannot find name 'U'.
 +index.js(138,14): error TS2339: Property 'p1' does not exist on type 'K'.
 +index.js(139,14): error TS2339: Property 'p2' does not exist on type 'K'.
 +index.js(143,21): error TS2339: Property 'p1' does not exist on type 'K'.
@@ -11,7 +19,7 @@
 +index.js(179,14): error TS2339: Property 'another2' does not exist on type 'O'.
 +
 +
-+==== index.js (6 errors) ====
++==== index.js (14 errors) ====
 +    export class A {}
 +    
 +    export class B {
@@ -36,12 +44,20 @@
 +    export class E {
 +        /**
 +         * @type {T & U}
++                  ~
++!!! error TS2304: Cannot find name 'T'.
++                      ~
++!!! error TS2304: Cannot find name 'U'.
 +         */
 +        field;
 +    
 +        // @readonly is currently unsupported, it seems - included here just in case that changes
 +        /**
 +         * @type {T & U}
++                  ~
++!!! error TS2304: Cannot find name 'T'.
++                      ~
++!!! error TS2304: Cannot find name 'U'.
 +         * @readonly
 +         */
 +        readonlyField;
@@ -50,6 +66,8 @@
 +    
 +        /**
 +         * @return {U}
++                    ~
++!!! error TS2304: Cannot find name 'U'.
 +         */
 +        get f1() { return /** @type {*} */(null); }
 +    
@@ -60,6 +78,8 @@
 +    
 +        /**
 +         * @return {U}
++                    ~
++!!! error TS2304: Cannot find name 'U'.
 +         */
 +        get f2() { return /** @type {*} */(null); }
 +    
@@ -116,6 +136,10 @@
 +    export class F {
 +        /**
 +         * @type {T & U}
++                  ~
++!!! error TS2304: Cannot find name 'T'.
++                      ~
++!!! error TS2304: Cannot find name 'U'.
 +         */
 +        field;
 +        /**

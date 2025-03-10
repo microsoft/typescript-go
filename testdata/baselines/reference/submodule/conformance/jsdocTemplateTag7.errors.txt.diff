@@ -3,11 +3,11 @@
 @@= skipped -0, +0 lines =@@
 -a.js(2,14): error TS1277: 'const' modifier can only appear on a type parameter of a function, method or class
 -a.js(12,14): error TS1273: 'private' modifier cannot appear on a type parameter
++a.js(14,14): error TS2304: Cannot find name 'T'.
 +a.js(16,12): error TS7006: Parameter 'x' implicitly has an 'any' type.
  
  
--==== a.js (2 errors) ====
-+==== a.js (1 errors) ====
+ ==== a.js (2 errors) ====
      /**
       * @template const T
 -                 ~~~~~
@@ -15,7 +15,7 @@
       * @typedef {[T]} X
       */
      
-@@= skipped -16, +13 lines =@@
+@@= skipped -16, +14 lines =@@
      
      /**
       * @template private T
@@ -23,6 +23,8 @@
 -!!! error TS1273: 'private' modifier cannot appear on a type parameter
       * @param {T} x
       * @returns {T}
++                 ~
++!!! error TS2304: Cannot find name 'T'.
       */
      function f(x) {
 +               ~

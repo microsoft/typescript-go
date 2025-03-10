@@ -31,8 +31,6 @@
 +  Not all constituents of type '() => void | null' are callable.
 +    Type 'null' has no call signatures.
 +controlFlowInstanceof.ts(105,5): error TS2721: Cannot invoke an object which is possibly 'null'.
-+uglify.js(5,5): error TS2358: The left-hand side of an 'instanceof' expression must be of type 'any', an object type or a type parameter.
-+uglify.js(6,7): error TS2339: Property 'val' does not exist on type 'number'.
 +
 +
 +!!! error TS2318: Cannot find global type 'Array'.
@@ -190,16 +188,12 @@
 +    }
 +    
 +    // Repro from #27550 (based on uglify code)
-+==== uglify.js (2 errors) ====
++==== uglify.js (0 errors) ====
 +    /** @constructor */
 +    function AtTop(val) { this.val = val }
 +    /** @type {*} */
 +    var v = 1;
 +    if (v instanceof AtTop) {
-+        ~
-+!!! error TS2358: The left-hand side of an 'instanceof' expression must be of type 'any', an object type or a type parameter.
 +        v.val
-+          ~~~
-+!!! error TS2339: Property 'val' does not exist on type 'number'.
 +    }
 +    

@@ -1,0 +1,24 @@
+a.js(6,12): error TS2304: Cannot find name 'A'.
+a.js(13,12): error TS2304: Cannot find name 'B'.
+
+
+==== a.js (2 errors) ====
+    /**
+     * @typedef {object} A
+     * @property {number} [value]
+     */
+    
+    /** @type {A} */
+               ~
+!!! error TS2304: Cannot find name 'A'.
+    const a = { value: undefined }; // error
+    
+    /**
+     * @typedef {{ value?: number }} B
+     */
+    
+    /** @type {B} */
+               ~
+!!! error TS2304: Cannot find name 'B'.
+    const b = { value: undefined }; // error
+    

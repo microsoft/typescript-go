@@ -13,7 +13,19 @@
 +error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
 +error TS2552: Cannot find name 'Number'. Did you mean 'number'?
 +error TS2552: Cannot find name 'Object'. Did you mean 'object'?
++index.js(2,12): error TS2304: Cannot find name 'String'.
++index.js(3,12): error TS2304: Cannot find name 'Number'.
++index.js(4,12): error TS2304: Cannot find name 'Boolean'.
++index.js(5,12): error TS2304: Cannot find name 'Void'.
++index.js(6,12): error TS2304: Cannot find name 'Undefined'.
++index.js(7,12): error TS2304: Cannot find name 'Null'.
++index.js(9,12): error TS2304: Cannot find name 'Function'.
++index.js(10,12): error TS2304: Cannot find name 'function'.
++index.js(11,12): error TS2304: Cannot find name 'array'.
++index.js(12,12): error TS2304: Cannot find name 'promise'.
 +index.js(12,33): error TS2583: Cannot find name 'Promise'. Do you need to change your target library? Try changing the 'lib' compiler option to 'es2015' or later.
++index.js(13,12): error TS2304: Cannot find name 'Object'.
++index.js(30,12): error TS2304: Cannot find name 'event'.
 +
 +
 +!!! error TS2318: Cannot find global type 'Array'.
@@ -26,22 +38,44 @@
 +!!! error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
 +!!! error TS2552: Cannot find name 'Number'. Did you mean 'number'?
 +!!! error TS2552: Cannot find name 'Object'. Did you mean 'object'?
-+==== index.js (1 errors) ====
++==== index.js (13 errors) ====
 +    // these are recognized as TS concepts by the checker
 +    /** @type {String} */const a = "";
++               ~~~~~~
++!!! error TS2304: Cannot find name 'String'.
 +    /** @type {Number} */const b = 0;
++               ~~~~~~
++!!! error TS2304: Cannot find name 'Number'.
 +    /** @type {Boolean} */const c = true;
++               ~~~~~~~
++!!! error TS2304: Cannot find name 'Boolean'.
 +    /** @type {Void} */const d = undefined;
++               ~~~~
++!!! error TS2304: Cannot find name 'Void'.
 +    /** @type {Undefined} */const e = undefined;
++               ~~~~~~~~~
++!!! error TS2304: Cannot find name 'Undefined'.
 +    /** @type {Null} */const f = null;
++               ~~~~
++!!! error TS2304: Cannot find name 'Null'.
 +    
 +    /** @type {Function} */const g = () => void 0;
++               ~~~~~~~~
++!!! error TS2304: Cannot find name 'Function'.
 +    /** @type {function} */const h = () => void 0;
++               ~~~~~~~~
++!!! error TS2304: Cannot find name 'function'.
 +    /** @type {array} */const i = [];
++               ~~~~~
++!!! error TS2304: Cannot find name 'array'.
 +    /** @type {promise} */const j = Promise.resolve(0);
++               ~~~~~~~
++!!! error TS2304: Cannot find name 'promise'.
 +                                    ~~~~~~~
 +!!! error TS2583: Cannot find name 'Promise'. Do you need to change your target library? Try changing the 'lib' compiler option to 'es2015' or later.
 +    /** @type {Object<string, string>} */const k = {x: "x"};
++               ~~~~~~
++!!! error TS2304: Cannot find name 'Object'.
 +    
 +    
 +    // these are not recognized as anything and should just be lookup failures
@@ -59,3 +93,5 @@
 +    
 +    // or, in the case of `event` likely erroneously refers to the type of the global Event object
 +    /** @type {event} */const q = undefined;
++               ~~~~~
++!!! error TS2304: Cannot find name 'event'.

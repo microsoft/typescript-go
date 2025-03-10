@@ -1,0 +1,21 @@
+--- old.exportDefaultWithJSDoc1.errors.txt
++++ new.exportDefaultWithJSDoc1.errors.txt
+@@= skipped -0, +-1 lines =@@
+-<no content>
+@@= skipped --1, +1 lines =@@
++a.js(6,12): error TS2304: Cannot find name 'NumberLike'.
++
++
++==== a.js (1 errors) ====
++    /**
++     * A number, or a string containing a number.
++     * @typedef {(number|string)} NumberLike
++     */
++    
++    /** @type {NumberLike[]} */export default ([ ]);
++               ~~~~~~~~~~
++!!! error TS2304: Cannot find name 'NumberLike'.
++    
++==== b.ts (0 errors) ====
++    import A from './a'
++    A[0]

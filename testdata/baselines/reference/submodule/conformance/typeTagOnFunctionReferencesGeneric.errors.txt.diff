@@ -1,0 +1,27 @@
+--- old.typeTagOnFunctionReferencesGeneric.errors.txt
++++ new.typeTagOnFunctionReferencesGeneric.errors.txt
+@@= skipped -0, +-1 lines =@@
+-<no content>
+@@= skipped --1, +1 lines =@@
++typeTagOnFunctionReferencesGeneric.js(11,11): error TS2304: Cannot find name 'IFn'.
++
++
++==== typeTagOnFunctionReferencesGeneric.js (1 errors) ====
++    /**
++     * @typedef {<T>(m : T) => T} IFn
++     */
++    
++    /**@type {IFn}*/
++    export function inJs(l) {
++        return l;
++    }
++    inJs(1); // lints error. Why?
++    
++    /**@type {IFn}*/
++              ~~~
++!!! error TS2304: Cannot find name 'IFn'.
++    const inJsArrow = (j) => {
++        return j;
++    }
++    inJsArrow(2); // no error gets linted as expected
++    

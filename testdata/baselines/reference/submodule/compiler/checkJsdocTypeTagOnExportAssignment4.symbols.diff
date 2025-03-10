@@ -1,0 +1,17 @@
+--- old.checkJsdocTypeTagOnExportAssignment4.symbols
++++ new.checkJsdocTypeTagOnExportAssignment4.symbols
+@@= skipped -2, +2 lines =@@
+ === checkJsdocTypeTagOnExportAssignment4.js ===
+ 
+ === a.js ===
+-
+ /**
+  * @typedef {number} Foo
+  */
+ 
+ /** @type {Foo} */
++>Foo : Symbol(Foo)
++
+ export default "";
+ 
+ 

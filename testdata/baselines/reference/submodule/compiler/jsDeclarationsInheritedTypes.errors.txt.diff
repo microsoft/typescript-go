@@ -1,0 +1,51 @@
+--- old.jsDeclarationsInheritedTypes.errors.txt
++++ new.jsDeclarationsInheritedTypes.errors.txt
+@@= skipped -0, +-1 lines =@@
+-<no content>
+@@= skipped --1, +1 lines =@@
++a.js(13,15): error TS2304: Cannot find name 'A'.
++a.js(20,15): error TS2304: Cannot find name 'A'.
++a.js(27,15): error TS2304: Cannot find name 'A'.
++a.js(27,19): error TS2304: Cannot find name 'B'.
++
++
++==== a.js (4 errors) ====
++    /**
++     * @typedef A
++     * @property {string} a
++     */
++    
++    /**
++     * @typedef B
++     * @property {number} b
++     */
++    
++     class C1 {
++        /**
++         * @type {A}
++                  ~
++!!! error TS2304: Cannot find name 'A'.
++         */
++        value;
++    }
++    
++    class C2 extends C1 {
++        /**
++         * @type {A}
++                  ~
++!!! error TS2304: Cannot find name 'A'.
++         */
++        value;
++    }
++    
++    class C3 extends C1 {
++        /**
++         * @type {A & B}
++                  ~
++!!! error TS2304: Cannot find name 'A'.
++                      ~
++!!! error TS2304: Cannot find name 'B'.
++         */
++        value;
++    }
++    

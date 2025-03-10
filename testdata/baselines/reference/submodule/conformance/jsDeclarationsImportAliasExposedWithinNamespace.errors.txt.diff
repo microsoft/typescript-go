@@ -10,8 +10,11 @@
 +error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
 +error TS2552: Cannot find name 'Number'. Did you mean 'number'?
 +error TS2552: Cannot find name 'Object'. Did you mean 'object'?
++file.js(4,11): error TS2552: Cannot find name 'Object'. Did you mean 'object'?
++file2.js(6,11): error TS2552: Cannot find name 'Object'. Did you mean 'object'?
  
  
+-==== file.js (0 errors) ====
 +!!! error TS2318: Cannot find global type 'Array'.
 +!!! error TS2318: Cannot find global type 'Function'.
 +!!! error TS2318: Cannot find global type 'IArguments'.
@@ -20,18 +23,29 @@
 +!!! error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
 +!!! error TS2552: Cannot find name 'Number'. Did you mean 'number'?
 +!!! error TS2552: Cannot find name 'Object'. Did you mean 'object'?
- ==== file.js (0 errors) ====
++==== file.js (1 errors) ====
      /**
       * @namespace myTypes
-@@= skipped -21, +36 lines =@@
-     /** @typedef {myTypes.typeB|Function} myTypes.typeC */
-     
+      * @global
+      * @type {Object<string,*>}
++              ~~~~~~
++!!! error TS2552: Cannot find name 'Object'. Did you mean 'object'?
+      */
+     const myTypes = {
+         // SOME PROPS HERE
+@@= skipped -23, +42 lines =@@
      export {myTypes};
--==== file2.js (1 errors) ====
-+==== file2.js (0 errors) ====
+ ==== file2.js (1 errors) ====
      import {myTypes} from './file.js';
 -            ~~~~~~~
 -!!! error TS18042: 'myTypes' is a type and cannot be imported in JavaScript files. Use 'import("./file.js").myTypes' in a JSDoc type annotation.
      
      /**
       * @namespace testFnTypes
+      * @global
+      * @type {Object<string,*>}
++              ~~~~~~
++!!! error TS2552: Cannot find name 'Object'. Did you mean 'object'?
+      */
+     const testFnTypes = {
+         // SOME PROPS HERE

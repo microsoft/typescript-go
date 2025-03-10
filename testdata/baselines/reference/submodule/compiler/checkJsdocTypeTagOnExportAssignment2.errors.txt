@@ -1,0 +1,19 @@
+b.js(1,12): error TS2739: Type '{ c: boolean; }' is missing the following properties from type 'Foo': a, b
+
+
+==== a.ts (0 errors) ====
+    export interface Foo {
+        a: number;
+        b: number;
+    }
+    
+==== b.js (1 errors) ====
+    /** @type {import("./a").Foo} */
+               ~~~~~~~~~~~~~~~~~
+!!! error TS2739: Type '{ c: boolean; }' is missing the following properties from type 'Foo': a, b
+    export default { c: false };
+    
+==== c.js (0 errors) ====
+    import b from "./b";
+    b;
+    

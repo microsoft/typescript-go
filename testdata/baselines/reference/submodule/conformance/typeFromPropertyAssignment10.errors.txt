@@ -6,6 +6,7 @@ error TS2318: Cannot find global type 'String'.
 error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
 error TS2552: Cannot find name 'Number'. Did you mean 'number'?
 error TS2552: Cannot find name 'Object'. Did you mean 'object'?
+main.js(4,12): error TS2503: Cannot find namespace 'Outer'.
 someview.js(10,14): error TS2339: Property 'y' does not exist on type 'Inner'.
 
 
@@ -55,11 +56,13 @@ someview.js(10,14): error TS2339: Property 'y' does not exist on type 'Inner'.
         };
         return Application;
     })();
-==== main.js (0 errors) ====
+==== main.js (1 errors) ====
     var app = new Outer.app.Application();
     var inner = new Outer.app.Inner();
     inner.y;
     /** @type {Outer.app.Inner} */
+               ~~~~~
+!!! error TS2503: Cannot find namespace 'Outer'.
     var x;
     x.y;
     Outer.app.statische(101); // Infinity, duh

@@ -3,17 +3,20 @@
 @@= skipped -0, +-1 lines =@@
 -<no content>
 @@= skipped --1, +1 lines =@@
++index.js(4,14): error TS2304: Cannot find name 'T'.
 +index.js(6,17): error TS7006: Parameter 'predicate' implicitly has an 'any' type.
 +index.js(14,4): error TS7006: Parameter 'pose' implicitly has an 'any' type.
 +index.js(22,4): error TS7006: Parameter 'pose' implicitly has an 'any' type.
 +index.js(22,10): error TS7006: Parameter '_' implicitly has an 'any' type.
 +
 +
-+==== index.js (4 errors) ====
++==== index.js (5 errors) ====
 +    /**
 +     * @template T
 +     * @param {(value: T, index: number) => boolean} predicate
 +     * @returns {T}
++                 ~
++!!! error TS2304: Cannot find name 'T'.
 +     */
 +    function filter(predicate) {
 +                    ~~~~~~~~~

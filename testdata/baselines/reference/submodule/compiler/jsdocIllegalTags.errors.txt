@@ -1,0 +1,15 @@
+/a.js(6,18): error TS1093: Type annotation cannot appear on a constructor declaration.
+
+
+==== /a.js (1 errors) ====
+    class C {
+        /** @template T */
+        constructor() { }
+    }
+    class D {
+        /** @return {number} */
+                     ~~~~~~
+!!! error TS1093: Type annotation cannot appear on a constructor declaration.
+        constructor() {}
+    }
+    

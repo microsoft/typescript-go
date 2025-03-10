@@ -4,9 +4,10 @@
 -<no content>
 @@= skipped --1, +1 lines =@@
 +/a.js(14,9): error TS7006: Parameter 'value' implicitly has an 'any' type.
++/a.js(17,12): error TS2315: Type 'Foo' is not generic.
 +
 +
-+==== /a.js (1 errors) ====
++==== /a.js (2 errors) ====
 +    /**
 +     * @template T
 +     */
@@ -26,6 +27,8 @@
 +    }
 +    
 +    /** @type {Foo<number>} */
++               ~~~~~~~~~~~
++!!! error TS2315: Type 'Foo' is not generic.
 +    let foo;
 +    foo = new Foo();
 +    

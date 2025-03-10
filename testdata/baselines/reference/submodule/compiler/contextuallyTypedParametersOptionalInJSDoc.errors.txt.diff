@@ -6,16 +6,18 @@
 -index.js(28,15): error TS2345: Argument of type 'number | undefined' is not assignable to parameter of type 'number'.
 -  Type 'undefined' is not assignable to type 'number'.
 +index.js(5,20): error TS7006: Parameter 'num' implicitly has an 'any' type.
++index.js(11,12): error TS2304: Cannot find name 'Fn'.
 +index.js(16,17): error TS7006: Parameter 'a' implicitly has an 'any' type.
 +index.js(16,20): error TS7006: Parameter 'b' implicitly has an 'any' type.
 +index.js(18,5): error TS2554: Expected 2 arguments, but got 1.
++index.js(22,12): error TS2304: Cannot find name 'Fn'.
 +index.js(27,17): error TS7006: Parameter 'a' implicitly has an 'any' type.
 +index.js(27,20): error TS7006: Parameter 'b' implicitly has an 'any' type.
 +index.js(29,5): error TS2554: Expected 2 arguments, but got 1.
  
  
 -==== index.js (2 errors) ====
-+==== index.js (7 errors) ====
++==== index.js (9 errors) ====
      /**
       * 
       * @param {number} num 
@@ -26,7 +28,13 @@
      
      /**
       * @typedef {(a: string, b: number) => void} Fn
-@@= skipped -20, +25 lines =@@
+      */
+     
+     /** @type {Fn} */
++               ~~
++!!! error TS2304: Cannot find name 'Fn'.
+     const fn1 =
+       /**
         * @param [b]
         */
        function self(a, b) {
@@ -45,7 +53,11 @@
          self("", undefined);
        };
      
-@@= skipped -14, +18 lines =@@
+     /** @type {Fn} */
++               ~~
++!!! error TS2304: Cannot find name 'Fn'.
+     const fn2 =
+       /**
         * @param {number} [b]
         */
        function self(a, b) {

@@ -6,6 +6,7 @@ error TS2318: Cannot find global type 'String'.
 error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
 error TS2552: Cannot find name 'Number'. Did you mean 'number'?
 error TS2552: Cannot find name 'Object'. Did you mean 'object'?
+b.js(3,12): error TS2503: Cannot find namespace 'MC'.
 
 
 !!! error TS2318: Cannot find global type 'Array'.
@@ -23,9 +24,11 @@ error TS2552: Cannot find name 'Object'. Did you mean 'object'?
     }
     MyClass.bar
     
-==== b.js (0 errors) ====
+==== b.js (1 errors) ====
     import MC from './a'
     MC.bar
     /** @type {MC.bar} */
+               ~~
+!!! error TS2503: Cannot find namespace 'MC'.
     var x
     

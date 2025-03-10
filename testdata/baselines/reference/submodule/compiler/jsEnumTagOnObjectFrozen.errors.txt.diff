@@ -4,9 +4,10 @@
 -<no content>
 @@= skipped --1, +1 lines =@@
 +usage.js(1,38): error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
++usage.js(12,16): error TS2304: Cannot find name 'LogEntry'.
 +
 +
-+==== usage.js (1 errors) ====
++==== usage.js (2 errors) ====
 +    const { Thing, useThing, cbThing } = require("./index");
 +                                         ~~~~~~~
 +!!! error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
@@ -21,6 +22,8 @@
 +    
 +    cbThing(type => {
 +        /** @type {LogEntry} */
++                   ~~~~~~~~
++!!! error TS2304: Cannot find name 'LogEntry'.
 +        const logEntry = {
 +            time: Date.now(),
 +            type,

@@ -11,13 +11,11 @@
 ->MyComponent.defaultProps : Symbol(defaultProps, Decl(input.js, 4, 23))
 ->MyComponent : Symbol(MyComponent, Decl(input.js, 9, 5), Decl(input.js, 9, 50))
 ->defaultProps : Symbol(defaultProps, Decl(input.js, 4, 23))
-+>MyComponent.defaultProps : Symbol(defaultProps, Decl(input.js, 9, 50))
 +>MyComponent : Symbol(MyComponent, Decl(input.js, 9, 5))
-+>defaultProps : Symbol(defaultProps, Decl(input.js, 9, 50))
  
      color: "red"
  >color : Symbol(color, Decl(input.js, 11, 28))
-@@= skipped -13, +13 lines =@@
+@@= skipped -13, +11 lines =@@
  };
  
  const MyComponent2 = () => null;

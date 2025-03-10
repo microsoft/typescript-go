@@ -4,9 +4,12 @@
 -<no content>
 @@= skipped --1, +1 lines =@@
 +index.js(8,26): error TS7006: Parameter 'key' implicitly has an 'any' type.
++index.js(9,3): error TS2322: Type '() => string | Set<string> | undefined' is not assignable to type '() => string'.
++  Type 'string | Set<string> | undefined' is not assignable to type 'string'.
++    Type 'undefined' is not assignable to type 'string'.
 +
 +
-+==== index.js (1 errors) ====
++==== index.js (2 errors) ====
 +    /** @type {Map<string, string | Set<string>>} */
 +    const cache = new Map()
 +    
@@ -18,6 +21,10 @@
 +                             ~~~
 +!!! error TS7006: Parameter 'key' implicitly has an 'any' type.
 +      return () => {
++      ~~~~~~
++!!! error TS2322: Type '() => string | Set<string> | undefined' is not assignable to type '() => string'.
++!!! error TS2322:   Type 'string | Set<string> | undefined' is not assignable to type 'string'.
++!!! error TS2322:     Type 'undefined' is not assignable to type 'string'.
 +        return /** @type {string} */ (cache.get(key))
 +      }
 +    }

@@ -1,18 +1,26 @@
+a.js(4,14): error TS2304: Cannot find name 'T'.
 a.js(6,13): error TS7006: Parameter 'x' implicitly has an 'any' type.
+a.js(16,14): error TS2304: Cannot find name 'T'.
 a.js(18,13): error TS7006: Parameter 'x' implicitly has an 'any' type.
+a.js(28,14): error TS2304: Cannot find name 'T'.
 a.js(30,13): error TS7006: Parameter 'x' implicitly has an 'any' type.
+a.js(39,14): error TS2304: Cannot find name 'T'.
 a.js(41,13): error TS7006: Parameter 'x' implicitly has an 'any' type.
+a.js(50,14): error TS2304: Cannot find name 'T'.
 a.js(52,13): error TS7006: Parameter 'obj' implicitly has an 'any' type.
 a.js(65,17): error TS7006: Parameter 'x' implicitly has an 'any' type.
 a.js(71,9): error TS7006: Parameter 'x' implicitly has an 'any' type.
+a.js(82,14): error TS2304: Cannot find name 'T'.
 a.js(84,13): error TS7019: Rest parameter 'args' implicitly has an 'any[]' type.
 
 
-==== a.js (8 errors) ====
+==== a.js (14 errors) ====
     /**
      * @template const T
      * @param {T} x
      * @returns {T}
+                 ~
+!!! error TS2304: Cannot find name 'T'.
      */
     function f1(x) {
                 ~
@@ -27,6 +35,8 @@ a.js(84,13): error TS7019: Rest parameter 'args' implicitly has an 'any[]' type.
      * @template const T, U
      * @param {T} x
      * @returns {T}
+                 ~
+!!! error TS2304: Cannot find name 'T'.
      */
     function f2(x) {
                 ~
@@ -41,6 +51,8 @@ a.js(84,13): error TS7019: Rest parameter 'args' implicitly has an 'any[]' type.
      * @template const T
      * @param {T} x
      * @returns {T[]}
+                 ~
+!!! error TS2304: Cannot find name 'T'.
      */
     function f3(x) {
                 ~
@@ -54,6 +66,8 @@ a.js(84,13): error TS7019: Rest parameter 'args' implicitly has an 'any[]' type.
      * @template const T
      * @param {[T, T]} x
      * @returns {T}
+                 ~
+!!! error TS2304: Cannot find name 'T'.
      */
     function f4(x) {
                 ~
@@ -67,6 +81,8 @@ a.js(84,13): error TS7019: Rest parameter 'args' implicitly has an 'any[]' type.
      * @template const T
      * @param {{ x: T, y: T}} obj
      * @returns {T}
+                 ~
+!!! error TS2304: Cannot find name 'T'.
      */
     function f5(obj) {
                 ~~~
@@ -105,6 +121,8 @@ a.js(84,13): error TS7019: Rest parameter 'args' implicitly has an 'any[]' type.
      * @template {readonly unknown[]} const T
      * @param {T} args
      * @returns {T}
+                 ~
+!!! error TS2304: Cannot find name 'T'.
      */
     function f6(...args) {
                 ~~~~~~~

@@ -1,9 +1,10 @@
 templateTagOnClasses.js(10,14): error TS2339: Property 'a' does not exist on type 'Foo'.
+templateTagOnClasses.js(17,17): error TS2304: Cannot find name 'T'.
 templateTagOnClasses.js(25,3): error TS2339: Property 'a' does not exist on type 'Foo'.
 templateTagOnClasses.js(25,9): error TS2339: Property 'a' does not exist on type 'Foo'.
 
 
-==== templateTagOnClasses.js (3 errors) ====
+==== templateTagOnClasses.js (4 errors) ====
     /**
      * @template T
      * @typedef {(t: T) => T} Id
@@ -23,6 +24,8 @@ templateTagOnClasses.js(25,9): error TS2339: Property 'a' does not exist on type
          * @param {Id<T>} y
          * @param {Id2} alpha
          * @return {T}
+                    ~
+!!! error TS2304: Cannot find name 'T'.
          */
         foo(x, y, alpha) {
             return alpha(y(x))

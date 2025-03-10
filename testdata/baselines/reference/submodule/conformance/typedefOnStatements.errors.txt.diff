@@ -22,14 +22,15 @@
 +typedefOnStatements.js(71,45): error TS7006: Parameter 'o' implicitly has an 'any' type.
 +typedefOnStatements.js(71,47): error TS7006: Parameter 'p' implicitly has an 'any' type.
 +typedefOnStatements.js(71,49): error TS7006: Parameter 'q' implicitly has an 'any' type.
++typedefOnStatements.js(73,16): error TS2304: Cannot find name 'Alpha'.
  
  
 -==== typedefOnStatements.js (4 errors) ====
-+==== typedefOnStatements.js (20 errors) ====
++==== typedefOnStatements.js (21 errors) ====
      /** @typedef {{a: string}} A */
      ;
      /** @typedef {{ b: string }} B */
-@@= skipped -41, +57 lines =@@
+@@= skipped -41, +58 lines =@@
  !!! error TS1104: A 'continue' statement can only be used within an enclosing iteration statement.
      /** @typedef {{ m: string }} M */
      with (name) {
@@ -78,4 +79,8 @@
 +!!! error TS7006: Parameter 'q' implicitly has an 'any' type.
          console.log(a.a, b.b, c.c, d.d, e.e, f.f, g.g, h.h, i.i, j.j, k.k, l.l, m.m, n.n, o.o, p.p, q.q)
          /** @type {Alpha} */
++                   ~~~~~
++!!! error TS2304: Cannot find name 'Alpha'.
          var alpha = { alpha: "aleph" }
+         /** @typedef {{ alpha: string }} Alpha */
+         return

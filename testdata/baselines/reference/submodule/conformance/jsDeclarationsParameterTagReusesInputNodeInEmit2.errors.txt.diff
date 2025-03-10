@@ -12,6 +12,8 @@
 +error TS2552: Cannot find name 'Number'. Did you mean 'number'?
 +error TS2552: Cannot find name 'Object'. Did you mean 'object'?
 +base.js(11,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
++file.js(6,14): error TS2304: Cannot find name 'InstanceType'.
++file.js(6,27): error TS2749: 'BaseFactory' refers to a value, but is being used as a type here. Did you mean 'typeof BaseFactory'?
 +
 +
 +!!! error TS2318: Cannot find global type 'Array'.
@@ -37,13 +39,17 @@
 +    ~~~~~~
 +!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +    
-+==== file.js (0 errors) ====
++==== file.js (2 errors) ====
 +    /** @typedef {typeof import('./base')} BaseFactory */
 +    
 +    /**
 +     *
 +     * @param {InstanceType<BaseFactory["Base"]>} base
 +     * @returns {InstanceType<BaseFactory["Base"]>}
++                 ~~~~~~~~~~~~
++!!! error TS2304: Cannot find name 'InstanceType'.
++                              ~~~~~~~~~~~
++!!! error TS2749: 'BaseFactory' refers to a value, but is being used as a type here. Did you mean 'typeof BaseFactory'?
 +     */
 +    const test = (base) => {
 +        return base;

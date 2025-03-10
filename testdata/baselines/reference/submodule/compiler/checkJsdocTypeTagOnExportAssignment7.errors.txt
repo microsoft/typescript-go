@@ -1,0 +1,21 @@
+a.js(9,12): error TS2304: Cannot find name 'Foo'.
+
+
+==== a.js (1 errors) ====
+    /**
+     * @typedef {Object} Foo
+     * @property {number} a
+     * @property {number} b
+     */
+    
+    const abc = { a: 1, b: 1, c: 1 };
+    
+    /** @type {Foo} */
+               ~~~
+!!! error TS2304: Cannot find name 'Foo'.
+    export default abc;
+    
+==== b.js (0 errors) ====
+    import a from "./a";
+    a;
+    

@@ -1,3 +1,11 @@
+index.js(24,15): error TS2304: Cannot find name 'T'.
+index.js(24,19): error TS2304: Cannot find name 'U'.
+index.js(30,15): error TS2304: Cannot find name 'T'.
+index.js(30,19): error TS2304: Cannot find name 'U'.
+index.js(38,17): error TS2304: Cannot find name 'U'.
+index.js(48,17): error TS2304: Cannot find name 'U'.
+index.js(104,15): error TS2304: Cannot find name 'T'.
+index.js(104,19): error TS2304: Cannot find name 'U'.
 index.js(138,14): error TS2339: Property 'p1' does not exist on type 'K'.
 index.js(139,14): error TS2339: Property 'p2' does not exist on type 'K'.
 index.js(143,21): error TS2339: Property 'p1' does not exist on type 'K'.
@@ -6,7 +14,7 @@ index.js(165,14): error TS2339: Property 'another' does not exist on type 'N'.
 index.js(179,14): error TS2339: Property 'another2' does not exist on type 'O'.
 
 
-==== index.js (6 errors) ====
+==== index.js (14 errors) ====
     export class A {}
     
     export class B {
@@ -31,12 +39,20 @@ index.js(179,14): error TS2339: Property 'another2' does not exist on type 'O'.
     export class E {
         /**
          * @type {T & U}
+                  ~
+!!! error TS2304: Cannot find name 'T'.
+                      ~
+!!! error TS2304: Cannot find name 'U'.
          */
         field;
     
         // @readonly is currently unsupported, it seems - included here just in case that changes
         /**
          * @type {T & U}
+                  ~
+!!! error TS2304: Cannot find name 'T'.
+                      ~
+!!! error TS2304: Cannot find name 'U'.
          * @readonly
          */
         readonlyField;
@@ -45,6 +61,8 @@ index.js(179,14): error TS2339: Property 'another2' does not exist on type 'O'.
     
         /**
          * @return {U}
+                    ~
+!!! error TS2304: Cannot find name 'U'.
          */
         get f1() { return /** @type {*} */(null); }
     
@@ -55,6 +73,8 @@ index.js(179,14): error TS2339: Property 'another2' does not exist on type 'O'.
     
         /**
          * @return {U}
+                    ~
+!!! error TS2304: Cannot find name 'U'.
          */
         get f2() { return /** @type {*} */(null); }
     
@@ -111,6 +131,10 @@ index.js(179,14): error TS2339: Property 'another2' does not exist on type 'O'.
     export class F {
         /**
          * @type {T & U}
+                  ~
+!!! error TS2304: Cannot find name 'T'.
+                      ~
+!!! error TS2304: Cannot find name 'U'.
          */
         field;
         /**

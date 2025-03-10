@@ -61,12 +61,34 @@ func (p *Parser) withJSDoc(node *ast.Node, hasJSDoc bool) {
 			// non-type-system tags to the right place.
 			// The most likely place this will be a problem is TSDoc, if TSDoc lets people write their tags
 			// on arrow initialisers of constants.
+			// The most likely solution is to re-implement getJSDocCommentsAndTags exclusively for external use.
+			// TODO: In general Strada has multiple ownership of JSDoc tags. I'm going to NOT do this and see what breaks. (Probably same as above)
 			p.attachJSDoc(node, jsDoc)
 		}
 		p.jsdocCache[node] = jsDoc
 	}
 }
 
+// for a variable-like host, like a parameter declaration, with an initialiser that itself has jsdoc,
+// those jsdoc also belong to the parameter declaration:
+// function f(p = /** @type {number} */ 1) {}
+// is equivalent to /** @param {number} p */ ...
+// and function f(/** @type {number} */ p = 1) {}
+// this is true of all tags, not just type tags.
+// HOWEVER, I think it's fine to not support this at first. It is confusing and seems wrong.
+
+// looking upward, there are 3 cases that iterate (plus param/type param):
+// 1. parent is property access/assignment/declaration/export assignment/return/namespace x.y.z/almost any assignment (!):
+//    - check parent for jsdoc as well
+// 2. parent.parent is a variable statement and parent is almost any assignment (!):
+//    - check parent.parent for jsdoc as well
+// 3. parent.parent.parent is a variable statement or parent.parent.parent is a variable statement whose initialiser is the host
+//    - check parent.parent.parent for jsdoc as well
+
+// inverting this to looking downward, cases (2) and (3) are covered by the existing code, mostly
+// Case 1 means that property access et al need look down to their children in the same way
+
+// And all the cases might need to be recursive (but probably not in practise)
 func (p *Parser) attachJSDoc(host *ast.Node, jsDoc []*ast.Node) {
 	// 1. modify the attached node
 	// 1b. Tags that modify their host node should only be taken from the last JSDoc (@overload is 'attached' but actually emits a separate signature node)
@@ -83,24 +105,86 @@ func (p *Parser) attachJSDoc(host *ast.Node, jsDoc []*ast.Node) {
 				continue
 			}
 			switch tag.Kind {
+			// TODO: All/most of these need to apply to param/return et amici as well
 			case ast.KindJSDocTypeTag:
 				if host.Kind == ast.KindVariableStatement && host.AsVariableStatement().DeclarationList != nil {
 					// TODO: Could still clone the node and mark it synthetic
 					for _, declaration := range host.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes {
 						if declaration.AsVariableDeclaration().Type == nil {
-							t := p.factory.NewJSTypeExpression(tag.AsJSDocTypeTag().TypeExpression.Type())
-							// TODO: What other flags? Copy from decl? from tag's typeexpression?
-							t.Flags |= p.contextFlags | ast.NodeFlagsSynthesized
-							t.Loc = core.NewTextRange(t.Type().Pos(), t.Type().End())
-							declaration.AsVariableDeclaration().Type = t
+							declaration.AsVariableDeclaration().Type = p.makeNewType(tag.AsJSDocTypeTag().TypeExpression)
 						}
 					}
+				} else if host.Kind == ast.KindPropertyDeclaration {
+					decl := host.AsPropertyDeclaration()
+					if decl.Type == nil {
+						decl.Type = p.makeNewType(tag.AsJSDocTypeTag().TypeExpression)
+					}
+				} else if host.Kind == ast.KindPropertyAssignment {
+					prop := host.AsPropertyAssignment()
+					prop.Initializer = p.makeNewTypeAssertion(p.makeNewType(tag.AsJSDocTypeTag().TypeExpression), prop.Initializer)
+				} else if host.Kind == ast.KindExportAssignment {
+					export := host.AsExportAssignment()
+					export.Expression = p.makeNewTypeAssertion(p.makeNewType(tag.AsJSDocTypeTag().TypeExpression), export.Expression)
+				} else if host.Kind == ast.KindReturnStatement {
+					ret := host.AsReturnStatement()
+					ret.Expression = p.makeNewTypeAssertion(p.makeNewType(tag.AsJSDocTypeTag().TypeExpression), ret.Expression)
 				}
-				// for a certain host, like a parameter declaration, with an initialiser that itself has jsdoc,
-				// those jsdoc are related to 
+			case ast.KindJSDocParameterTag:
+				// TODO
+			case ast.KindJSDocReturnTag:
+				if fun, ok := p.getFunctionLikeHost(host); ok {
+					if fun.Type() == nil {
+						fun.FunctionLikeData().Type = p.makeNewType(tag.AsJSDocReturnTag().TypeExpression)
+					}
+				}
 			}
 		}
 	}
+}
+
+func (p *Parser) getFunctionLikeHost(host *ast.Node) (*ast.Node, bool) {
+	fun := host
+	if host.Kind == ast.KindVariableStatement && host.AsVariableStatement().DeclarationList != nil {
+		// NOTE: This takes the first decl but in Strada it applied to every decl
+		for _, declaration := range host.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes {
+			if ast.IsFunctionLike(declaration.Initializer()) {
+				fun = declaration.Initializer()
+				break
+			}
+		}
+	} else if host.Kind == ast.KindPropertyAssignment {
+		fun = host.AsPropertyAssignment().Initializer
+	} else if host.Kind == ast.KindPropertyDeclaration {
+		fun = host.AsPropertyDeclaration().Initializer
+	} else if host.Kind == ast.KindExportAssignment {
+		fun = host.AsExportAssignment().Expression
+	} else if host.Kind == ast.KindReturnStatement {
+		fun = host.AsReturnStatement().Expression
+	}
+	if ast.IsFunctionLike(fun) {
+		return fun, true
+	}
+	return nil, false
+}
+
+// TODO: assertions don't have the same error reporting behaviour as actual annotations.
+// I need to decide whether it's OK to have different errors. (Yeah, it's OK.)
+func (p *Parser) makeNewTypeAssertion(t *ast.TypeNode, e *ast.Node) *ast.Node {
+	assert := p.factory.NewTypeAssertion(t, e)
+	assert.Flags |= p.contextFlags | ast.NodeFlagsSynthesized
+	assert.Loc = core.NewTextRange(assert.Type().Pos(), assert.Type().End())
+	return assert
+}
+
+func (p *Parser) makeNewType(typeExpression *ast.TypeNode) *ast.Node {
+	if typeExpression == nil {
+		return nil
+	}
+	t := p.factory.NewJSTypeExpression(typeExpression.Type())
+	// TODO: What other flags? Copy from decl? from tag's typeexpression?
+	t.Flags |= p.contextFlags | ast.NodeFlagsSynthesized
+	t.Loc = core.NewTextRange(t.Type().Pos(), t.Type().End())
+	return t
 }
 
 func (p *Parser) parseJSDocTypeExpression(mayOmitBraces bool) *ast.Node {
