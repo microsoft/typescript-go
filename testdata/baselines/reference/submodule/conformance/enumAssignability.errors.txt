@@ -12,7 +12,7 @@ enumAssignability.ts(38,9): error TS2322: Type 'E.A' is not assignable to type '
 enumAssignability.ts(39,5): error TS2322: Type 'E.A' is not assignable to type 'C'.
 enumAssignability.ts(40,5): error TS2322: Type 'E.A' is not assignable to type 'I'.
 enumAssignability.ts(41,9): error TS2322: Type 'E.A' is not assignable to type 'number[]'.
-enumAssignability.ts(42,9): error TS2322: Type 'E.A' is not assignable to type '{ foo: string }'.
+enumAssignability.ts(42,9): error TS2322: Type 'E.A' is not assignable to type '{ foo: string; }'.
 enumAssignability.ts(43,9): error TS2322: Type 'E.A' is not assignable to type '<T>(x: T) => T'.
 enumAssignability.ts(45,9): error TS2322: Type 'E.A' is not assignable to type 'String'.
 enumAssignability.ts(48,9): error TS2322: Type 'E.A' is not assignable to type 'T'.
@@ -99,7 +99,7 @@ enumAssignability.ts(52,13): error TS2322: Type 'E.A' is not assignable to type 
 !!! error TS2322: Type 'E.A' is not assignable to type 'number[]'.
         var n: { foo: string } = e;
             ~
-!!! error TS2322: Type 'E.A' is not assignable to type '{ foo: string }'.
+!!! error TS2322: Type 'E.A' is not assignable to type '{ foo: string; }'.
         var o: <T>(x: T) => T = e;
             ~
 !!! error TS2322: Type 'E.A' is not assignable to type '<T>(x: T) => T'.

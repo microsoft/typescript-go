@@ -1,6 +1,6 @@
 nullishCoalescingOperatorInParameterBindingPattern.2.ts(3,6): error TS2373: Parameter '{ [a() ?? "d"]: c = "" }' cannot reference identifier 'a' declared after it.
 nullishCoalescingOperatorInParameterBindingPattern.2.ts(3,6): error TS2538: Type 'any' cannot be used as an index type.
-nullishCoalescingOperatorInParameterBindingPattern.2.ts(6,6): error TS2537: Type '{ d?: any }' has no matching index signature for type 'string'.
+nullishCoalescingOperatorInParameterBindingPattern.2.ts(6,6): error TS2537: Type '{ d?: any; }' has no matching index signature for type 'string'.
 nullishCoalescingOperatorInParameterBindingPattern.2.ts(6,31): error TS2373: Parameter 'd' cannot reference identifier 'x' declared after it.
 
 
@@ -16,6 +16,6 @@ nullishCoalescingOperatorInParameterBindingPattern.2.ts(6,31): error TS2373: Par
     const x = "";
     (({ [a() ?? "d"]: c = "", d = x }) => { var x; })();
          ~~~~~~~~~~
-!!! error TS2537: Type '{ d?: any }' has no matching index signature for type 'string'.
+!!! error TS2537: Type '{ d?: any; }' has no matching index signature for type 'string'.
                                   ~
 !!! error TS2373: Parameter 'd' cannot reference identifier 'x' declared after it.

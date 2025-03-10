@@ -40,7 +40,7 @@ errorElaboration.ts(23,19): error TS2339: Property 'bar' does not exist on type 
       return {foo: "bar"};
               ~~~
 !!! error TS2322: Type '"bar"' is not assignable to type '"foo"'.
-!!! related TS6500 errorElaboration.ts:16:18: The expected type comes from property 'foo' which is declared here on type '{ foo: "foo" }'
+!!! related TS6500 errorElaboration.ts:16:18: The expected type comes from property 'foo' which is declared here on type '{ foo: "foo"; }'
     }
     
     // Repro for #32358

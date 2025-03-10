@@ -21,7 +21,7 @@ overloadResolutionTest1.ts(24,15): error TS2769: No overload matches this call.
 !!! error TS2769: No overload matches this call.
 !!! error TS2769:   The last overload gave the following error.
 !!! error TS2769:     Type 'string' is not assignable to type 'boolean'.
-!!! related TS6500 overloadResolutionTest1.ts:2:19: The expected type comes from property 'a' which is declared here on type '{ a: boolean }'
+!!! related TS6500 overloadResolutionTest1.ts:2:19: The expected type comes from property 'a' which is declared here on type '{ a: boolean; }'
 !!! related TS2771 overloadResolutionTest1.ts:2:10: The last overload is declared here.
     var x1111 = foo([{a:null}]); // works - ambiguous call is resolved to be the first in the overload set so this returns a string
     
@@ -38,7 +38,7 @@ overloadResolutionTest1.ts(24,15): error TS2769: No overload matches this call.
 !!! error TS2769: No overload matches this call.
 !!! error TS2769:   The last overload gave the following error.
 !!! error TS2769:     Type 'string' is not assignable to type 'boolean'.
-!!! related TS6500 overloadResolutionTest1.ts:13:20: The expected type comes from property 'a' which is declared here on type '{ a: boolean }'
+!!! related TS6500 overloadResolutionTest1.ts:13:20: The expected type comes from property 'a' which is declared here on type '{ a: boolean; }'
 !!! related TS2771 overloadResolutionTest1.ts:13:10: The last overload is declared here.
     
     
@@ -50,5 +50,5 @@ overloadResolutionTest1.ts(24,15): error TS2769: No overload matches this call.
 !!! error TS2769: No overload matches this call.
 !!! error TS2769:   The last overload gave the following error.
 !!! error TS2769:     Type 'boolean' is not assignable to type 'string'.
-!!! related TS6500 overloadResolutionTest1.ts:22:20: The expected type comes from property 'a' which is declared here on type '{ a: string }'
+!!! related TS6500 overloadResolutionTest1.ts:22:20: The expected type comes from property 'a' which is declared here on type '{ a: string; }'
 !!! related TS2771 overloadResolutionTest1.ts:22:10: The last overload is declared here.

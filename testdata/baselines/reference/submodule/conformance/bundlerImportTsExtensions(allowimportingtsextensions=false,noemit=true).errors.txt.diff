@@ -58,6 +58,7 @@
 +/project/e.txt(4,15): error TS1434: Unexpected keyword or identifier.
 +/project/e.txt(4,15): error TS2304: Cannot find name 'GitHub'.
 +/project/e.txt(4,22): error TS2304: Cannot find name 'Copilot'.
++/project/e.txt(4,22): error TS2695: Left side of comma operator is unused and has no side effects.
 +/project/e.txt(4,31): error TS2304: Cannot find name 'Nov'.
 +/project/e.txt(4,35): error TS1005: ';' expected.
  
@@ -68,7 +69,7 @@
  ==== /project/a.ts (0 errors) ====
      export {};
      
-@@= skipped -34, +68 lines =@@
+@@= skipped -34, +69 lines =@@
  ==== /project/d/index.ts (0 errors) ====
      export {};
      
@@ -94,7 +95,7 @@
      export {};
      
 -==== /project/e.txt (0 errors) ====
-+==== /project/e.txt (41 errors) ====
++==== /project/e.txt (42 errors) ====
      The letter e is for elephant
 +    ~~~
 +!!! error TS1434: Unexpected keyword or identifier.
@@ -177,6 +178,8 @@
 +!!! error TS2304: Cannot find name 'GitHub'.
 +                         ~~~~~~~
 +!!! error TS2304: Cannot find name 'Copilot'.
++                         ~~~~~~~
++!!! error TS2695: Left side of comma operator is unused and has no side effects.
 +                                  ~~~
 +!!! error TS2304: Cannot find name 'Nov'.
 +                                      ~~~~
@@ -220,7 +223,7 @@
      
      // These should not resolve, but preventing them has
      // relatively little utility compared to the cost of
-@@= skipped -53, +135 lines =@@
+@@= skipped -53, +137 lines =@@
      import {} from "./e";
      import {} from "./e.txt";
      

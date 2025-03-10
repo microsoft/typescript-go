@@ -56,8 +56,8 @@
 +inKeywordTypeguard.ts(193,11): error TS2339: Property 'a' does not exist on type 'T & object'.
 +inKeywordTypeguard.ts(194,11): error TS2339: Property 'b' does not exist on type 'T & object'.
 +inKeywordTypeguard.ts(195,11): error TS2339: Property 'c' does not exist on type 'T & object'.
-+inKeywordTypeguard.ts(205,11): error TS2339: Property 'b' does not exist on type '{ a: string }'.
-+inKeywordTypeguard.ts(206,11): error TS2339: Property 'c' does not exist on type '{ a: string }'.
++inKeywordTypeguard.ts(205,11): error TS2339: Property 'b' does not exist on type '{ a: string; }'.
++inKeywordTypeguard.ts(206,11): error TS2339: Property 'c' does not exist on type '{ a: string; }'.
 +inKeywordTypeguard.ts(251,13): error TS2304: Cannot find name 'Symbol'.
 +inKeywordTypeguard.ts(255,11): error TS2339: Property 'a' does not exist on type 'object'.
 +inKeywordTypeguard.ts(265,11): error TS2339: Property 'a' does not exist on type 'object'.
@@ -216,10 +216,10 @@
              x.a;
              x.b;
 +              ~
-+!!! error TS2339: Property 'b' does not exist on type '{ a: string }'.
++!!! error TS2339: Property 'b' does not exist on type '{ a: string; }'.
              x.c;
 +              ~
-+!!! error TS2339: Property 'c' does not exist on type '{ a: string }'.
++!!! error TS2339: Property 'c' does not exist on type '{ a: string; }'.
          }
      }
      

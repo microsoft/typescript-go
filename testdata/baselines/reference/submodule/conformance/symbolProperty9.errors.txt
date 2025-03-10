@@ -12,7 +12,7 @@ symbolProperty9.ts(5,5): error TS1169: A computed property name in an interface 
 symbolProperty9.ts(5,6): error TS2304: Cannot find name 'Symbol'.
 symbolProperty9.ts(10,5): error TS2322: Type 'I' is not assignable to type 'C'.
   'number' index signatures are incompatible.
-    Property 'y' is missing in type '{ x: any }' but required in type '{ x: any, y: any }'.
+    Property 'y' is missing in type '{ x: any; }' but required in type '{ x: any; y: any; }'.
 
 
 !!! error TS2318: Cannot find global type 'Array'.
@@ -45,5 +45,5 @@ symbolProperty9.ts(10,5): error TS2322: Type 'I' is not assignable to type 'C'.
         ~
 !!! error TS2322: Type 'I' is not assignable to type 'C'.
 !!! error TS2322:   'number' index signatures are incompatible.
-!!! error TS2322:     Property 'y' is missing in type '{ x: any }' but required in type '{ x: any, y: any }'.
+!!! error TS2322:     Property 'y' is missing in type '{ x: any; }' but required in type '{ x: any; y: any; }'.
 !!! related TS2728 symbolProperty9.ts:2:29: 'y' is declared here.

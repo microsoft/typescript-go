@@ -20,6 +20,7 @@ taggedTemplateStringsTypeArgumentInferenceES6.ts(54,33): error TS2304: Cannot fi
 taggedTemplateStringsTypeArgumentInferenceES6.ts(59,33): error TS2304: Cannot find name 'TemplateStringsArray'.
 taggedTemplateStringsTypeArgumentInferenceES6.ts(72,9): error TS2304: Cannot find name 'Date'.
 taggedTemplateStringsTypeArgumentInferenceES6.ts(75,58): error TS2304: Cannot find name 'Date'.
+taggedTemplateStringsTypeArgumentInferenceES6.ts(76,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'a9e' must be of type '{ x: number; z: error; y?: undefined; } | { z?: undefined; x: number; y: string; }', but here has type '{}'.
 
 
 !!! error TS2318: Cannot find global type 'Array'.
@@ -31,7 +32,7 @@ taggedTemplateStringsTypeArgumentInferenceES6.ts(75,58): error TS2304: Cannot fi
 !!! error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
 !!! error TS2552: Cannot find name 'Number'. Did you mean 'number'?
 !!! error TS2552: Cannot find name 'Object'. Did you mean 'object'?
-==== taggedTemplateStringsTypeArgumentInferenceES6.ts (13 errors) ====
+==== taggedTemplateStringsTypeArgumentInferenceES6.ts (14 errors) ====
     // Generic tag with one parameter
     function noParams<T>(n: T) { }
     noParams ``;
@@ -134,6 +135,9 @@ taggedTemplateStringsTypeArgumentInferenceES6.ts(75,58): error TS2304: Cannot fi
                                                              ~~~~
 !!! error TS2304: Cannot find name 'Date'.
     var a9e: {};
+        ~~~
+!!! error TS2403: Subsequent variable declarations must have the same type.  Variable 'a9e' must be of type '{ x: number; z: error; y?: undefined; } | { z?: undefined; x: number; y: string; }', but here has type '{}'.
+!!! related TS6203 taggedTemplateStringsTypeArgumentInferenceES6.ts:75:5: 'a9e' was also declared here.
     
     // Generic tag with multiple parameters of generic type passed arguments with a single best common type
     var a9d = someGenerics9 `${ { x: 3 }}${ { x: 6 }}${ { x: 6 } }`;

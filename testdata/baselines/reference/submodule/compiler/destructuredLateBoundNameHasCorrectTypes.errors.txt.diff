@@ -1,8 +1,6 @@
 --- old.destructuredLateBoundNameHasCorrectTypes.errors.txt
 +++ new.destructuredLateBoundNameHasCorrectTypes.errors.txt
 @@= skipped -0, +0 lines =@@
--destructuredLateBoundNameHasCorrectTypes.ts(11,8): error TS2339: Property 'prop2' does not exist on type '{ prop: string; }'.
--destructuredLateBoundNameHasCorrectTypes.ts(11,37): error TS2353: Object literal may only specify known properties, and 'prop' does not exist in type '{ prop2: any; }'.
 +error TS2318: Cannot find global type 'Array'.
 +error TS2318: Cannot find global type 'Function'.
 +error TS2318: Cannot find global type 'IArguments'.
@@ -13,8 +11,8 @@
 +error TS2552: Cannot find name 'Object'. Did you mean 'object'?
 +destructuredLateBoundNameHasCorrectTypes.ts(1,8): error TS2304: Cannot find name 'Symbol'.
 +destructuredLateBoundNameHasCorrectTypes.ts(1,8): error TS2538: Type 'error' cannot be used as an index type.
-+destructuredLateBoundNameHasCorrectTypes.ts(11,8): error TS2339: Property 'prop2' does not exist on type '{ prop: string }'.
-+destructuredLateBoundNameHasCorrectTypes.ts(11,37): error TS2353: Object literal may only specify known properties, and 'prop' does not exist in type '{ prop2: any }'.
+ destructuredLateBoundNameHasCorrectTypes.ts(11,8): error TS2339: Property 'prop2' does not exist on type '{ prop: string; }'.
+ destructuredLateBoundNameHasCorrectTypes.ts(11,37): error TS2353: Object literal may only specify known properties, and 'prop' does not exist in type '{ prop2: any; }'.
  
  
 -==== destructuredLateBoundNameHasCorrectTypes.ts (2 errors) ====
@@ -35,13 +33,3 @@
      void destructured;
      
      const named = "prop";
-@@= skipped -14, +36 lines =@@
-     
-     let { [notPresent]: computed2 } = { prop: "b" };
-            ~~~~~~~~~~
--!!! error TS2339: Property 'prop2' does not exist on type '{ prop: string; }'.
-+!!! error TS2339: Property 'prop2' does not exist on type '{ prop: string }'.
-                                         ~~~~
--!!! error TS2353: Object literal may only specify known properties, and 'prop' does not exist in type '{ prop2: any; }'.
-+!!! error TS2353: Object literal may only specify known properties, and 'prop' does not exist in type '{ prop2: any }'.
-     

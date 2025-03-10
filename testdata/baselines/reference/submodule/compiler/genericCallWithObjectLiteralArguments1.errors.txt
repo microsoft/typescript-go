@@ -11,20 +11,20 @@ genericCallWithObjectLiteralArguments1.ts(7,31): error TS2322: Type 'number' is 
     var x = foo({ x: 3, y: "" }, 4);
                         ~
 !!! error TS2322: Type 'string' is not assignable to type 'number'.
-!!! related TS6500 genericCallWithObjectLiteralArguments1.ts:1:28: The expected type comes from property 'y' which is declared here on type '{ x: number, y: number }'
+!!! related TS6500 genericCallWithObjectLiteralArguments1.ts:1:28: The expected type comes from property 'y' which is declared here on type '{ x: number; y: number; }'
     var x2 = foo<number>({ x: 3, y: "" }, 4); 
                                  ~
 !!! error TS2322: Type 'string' is not assignable to type 'number'.
-!!! related TS6500 genericCallWithObjectLiteralArguments1.ts:1:28: The expected type comes from property 'y' which is declared here on type '{ x: number, y: number }'
+!!! related TS6500 genericCallWithObjectLiteralArguments1.ts:1:28: The expected type comes from property 'y' which is declared here on type '{ x: number; y: number; }'
     var x3 = foo<string>({ x: 3, y: "" }, 4); 
                            ~
 !!! error TS2322: Type 'number' is not assignable to type 'string'.
-!!! related TS6500 genericCallWithObjectLiteralArguments1.ts:1:22: The expected type comes from property 'x' which is declared here on type '{ x: string, y: string }'
+!!! related TS6500 genericCallWithObjectLiteralArguments1.ts:1:22: The expected type comes from property 'x' which is declared here on type '{ x: string; y: string; }'
     var x4 = foo<number>({ x: "", y: 4 }, "");
                            ~
 !!! error TS2322: Type 'string' is not assignable to type 'number'.
-!!! related TS6500 genericCallWithObjectLiteralArguments1.ts:1:22: The expected type comes from property 'x' which is declared here on type '{ x: number, y: number }'
+!!! related TS6500 genericCallWithObjectLiteralArguments1.ts:1:22: The expected type comes from property 'x' which is declared here on type '{ x: number; y: number; }'
     var x5 = foo<string>({ x: "", y: 4 }, "");
                                   ~
 !!! error TS2322: Type 'number' is not assignable to type 'string'.
-!!! related TS6500 genericCallWithObjectLiteralArguments1.ts:1:28: The expected type comes from property 'y' which is declared here on type '{ x: string, y: string }'
+!!! related TS6500 genericCallWithObjectLiteralArguments1.ts:1:28: The expected type comes from property 'y' which is declared here on type '{ x: string; y: string; }'

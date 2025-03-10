@@ -10,10 +10,10 @@
 +spellingUncheckedJS.js(9,5): error TS2578: Unused '@ts-expect-error' directive.
 +spellingUncheckedJS.js(16,21): error TS2551: Property 'none' does not exist on type 'Classe'. Did you mean 'non'?
 +spellingUncheckedJS.js(22,22): error TS2339: Property 'none' does not exist on type 'Classe'.
-+spellingUncheckedJS.js(30,8): error TS2551: Property 'spaaaace' does not exist on type '{ spaaace: number }'. Did you mean 'spaaace'?
-+spellingUncheckedJS.js(31,8): error TS2551: Property 'spaace' does not exist on type '{ spaaace: number }'. Did you mean 'spaaace'?
-+spellingUncheckedJS.js(32,8): error TS2339: Property 'fresh' does not exist on type '{ spaaace: number }'.
-+spellingUncheckedJS.js(33,7): error TS2551: Property 'puuuce' does not exist on type '{ puuce: number }'. Did you mean 'puuce'?
++spellingUncheckedJS.js(30,8): error TS2551: Property 'spaaaace' does not exist on type '{ spaaace: number; }'. Did you mean 'spaaace'?
++spellingUncheckedJS.js(31,8): error TS2551: Property 'spaace' does not exist on type '{ spaaace: number; }'. Did you mean 'spaaace'?
++spellingUncheckedJS.js(32,8): error TS2339: Property 'fresh' does not exist on type '{ spaaace: number; }'.
++spellingUncheckedJS.js(33,7): error TS2551: Property 'puuuce' does not exist on type '{ puuce: number; }'. Did you mean 'puuce'?
 +spellingUncheckedJS.js(34,12): error TS2551: Property 'getGMTDate' does not exist on type 'Date'. Did you mean 'getDate'?
 +spellingUncheckedJS.js(37,14): error TS2552: Cannot find name 'setIntegral'. Did you mean 'setInterval'?
 +spellingUncheckedJS.js(38,1): error TS2552: Cannot find name 'AudioBuffin'. Did you mean 'AudioBuffer'?
@@ -66,18 +66,18 @@
 +    }
 +    object.spaaaace // error on read
 +           ~~~~~~~~
-+!!! error TS2551: Property 'spaaaace' does not exist on type '{ spaaace: number }'. Did you mean 'spaaace'?
++!!! error TS2551: Property 'spaaaace' does not exist on type '{ spaaace: number; }'. Did you mean 'spaaace'?
 +!!! related TS2728 spellingUncheckedJS.js:28:5: 'spaaace' is declared here.
 +    object.spaace = 12 // error on write
 +           ~~~~~~
-+!!! error TS2551: Property 'spaace' does not exist on type '{ spaaace: number }'. Did you mean 'spaaace'?
++!!! error TS2551: Property 'spaace' does not exist on type '{ spaaace: number; }'. Did you mean 'spaaace'?
 +!!! related TS2728 spellingUncheckedJS.js:28:5: 'spaaace' is declared here.
 +    object.fresh = 12 // OK
 +           ~~~~~
-+!!! error TS2339: Property 'fresh' does not exist on type '{ spaaace: number }'.
++!!! error TS2339: Property 'fresh' does not exist on type '{ spaaace: number; }'.
 +    other.puuuce // OK, from another file
 +          ~~~~~~
-+!!! error TS2551: Property 'puuuce' does not exist on type '{ puuce: number }'. Did you mean 'puuce'?
++!!! error TS2551: Property 'puuuce' does not exist on type '{ puuce: number; }'. Did you mean 'puuce'?
 +!!! related TS2728 other.js:5:5: 'puuce' is declared here.
 +    new Date().getGMTDate() // OK, from another file
 +               ~~~~~~~~~~

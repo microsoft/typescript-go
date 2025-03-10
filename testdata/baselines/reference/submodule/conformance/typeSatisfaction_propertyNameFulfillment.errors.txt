@@ -1,5 +1,5 @@
 typeSatisfaction_propertyNameFulfillment.ts(6,5): error TS2353: Object literal may only specify known properties, and 'x' does not exist in type 'Record<Keys, unknown>'.
-typeSatisfaction_propertyNameFulfillment.ts(13,11): error TS2339: Property 'd' does not exist on type '{ a: number, b: string, x: number }'.
+typeSatisfaction_propertyNameFulfillment.ts(13,11): error TS2339: Property 'd' does not exist on type '{ a: number; b: string; x: number; }'.
 
 
 ==== typeSatisfaction_propertyNameFulfillment.ts (2 errors) ====
@@ -19,5 +19,5 @@ typeSatisfaction_propertyNameFulfillment.ts(13,11): error TS2339: Property 'd' d
     // Should error even though 'd' is in 'Keys'
     let d = p.d;
               ~
-!!! error TS2339: Property 'd' does not exist on type '{ a: number, b: string, x: number }'.
+!!! error TS2339: Property 'd' does not exist on type '{ a: number; b: string; x: number; }'.
     

@@ -20,8 +20,6 @@ destructuringParameterDeclaration1ES6.ts(30,13): error TS2488: Type '[[undefined
 destructuringParameterDeclaration1ES6.ts(30,14): error TS2488: Type '[undefined]' must have a '[Symbol.iterator]()' method that returns an iterator.
 destructuringParameterDeclaration1ES6.ts(30,22): error TS2488: Type '[[undefined, undefined]]' must have a '[Symbol.iterator]()' method that returns an iterator.
 destructuringParameterDeclaration1ES6.ts(30,23): error TS2488: Type '[undefined, undefined]' must have a '[Symbol.iterator]()' method that returns an iterator.
-destructuringParameterDeclaration1ES6.ts(33,4): error TS2345: Argument of type '"string"' is not assignable to parameter of type 'null'.
-destructuringParameterDeclaration1ES6.ts(34,4): error TS2345: Argument of type '"string"' is not assignable to parameter of type 'null'.
 destructuringParameterDeclaration1ES6.ts(43,13): error TS2488: Type '[any, any, [[any]]]' must have a '[Symbol.iterator]()' method that returns an iterator.
 destructuringParameterDeclaration1ES6.ts(43,20): error TS2488: Type '[[any]]' must have a '[Symbol.iterator]()' method that returns an iterator.
 destructuringParameterDeclaration1ES6.ts(43,21): error TS2488: Type '[any]' must have a '[Symbol.iterator]()' method that returns an iterator.
@@ -47,7 +45,7 @@ destructuringParameterDeclaration1ES6.ts(96,34): error TS2300: Duplicate identif
 !!! error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
 !!! error TS2552: Cannot find name 'Number'. Did you mean 'number'?
 !!! error TS2552: Cannot find name 'Object'. Did you mean 'object'?
-==== destructuringParameterDeclaration1ES6.ts (29 errors) ====
+==== destructuringParameterDeclaration1ES6.ts (27 errors) ====
     // Conformance for emitting ES6
     
     // A parameter declaration may specify either an identifier or a binding pattern.
@@ -108,11 +106,7 @@ destructuringParameterDeclaration1ES6.ts(96,34): error TS2300: Duplicate identif
     
     b1([1, 2, 3]);  // z is widen to the type any[]
     b2("string", { x: 200, y: "string" });
-       ~~~~~~~~
-!!! error TS2345: Argument of type '"string"' is not assignable to parameter of type 'null'.
     b2("string", { x: 200, y: true });
-       ~~~~~~~~
-!!! error TS2345: Argument of type '"string"' is not assignable to parameter of type 'null'.
     
     
     // If the declaration specifies a binding pattern, the parameter type is the implied type of that binding pattern (section 5.1.3)

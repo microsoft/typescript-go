@@ -13,6 +13,7 @@
 +error TS2318: Cannot find global type 'IArguments'.
 +error TS2318: Cannot find global type 'RegExp'.
 +error TS2318: Cannot find global type 'String'.
++error TS2318: Cannot find global type 'TemplateStringsArray'.
 +error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
 +error TS2552: Cannot find name 'Number'. Did you mean 'number'?
 +error TS2552: Cannot find name 'Object'. Did you mean 'object'?
@@ -25,6 +26,7 @@
 +!!! error TS2318: Cannot find global type 'IArguments'.
 +!!! error TS2318: Cannot find global type 'RegExp'.
 +!!! error TS2318: Cannot find global type 'String'.
++!!! error TS2318: Cannot find global type 'TemplateStringsArray'.
 +!!! error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
 +!!! error TS2552: Cannot find name 'Number'. Did you mean 'number'?
 +!!! error TS2552: Cannot find name 'Object'. Did you mean 'object'?
@@ -36,7 +38,7 @@
          g: I;
          h: I;
          member: I;
-@@= skipped -21, +33 lines =@@
+@@= skipped -21, +35 lines =@@
      f `abc`
      
      f `abc${1}def${2}ghi`;

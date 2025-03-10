@@ -1,5 +1,5 @@
-contextualTypeForInitalizedVariablesFiltersUndefined.ts(7,9): error TS2339: Property 's' does not exist on type '{ s: string } | undefined'.
-contextualTypeForInitalizedVariablesFiltersUndefined.ts(8,16): error TS2339: Property 's' does not exist on type '{ s: string } | undefined'.
+contextualTypeForInitalizedVariablesFiltersUndefined.ts(7,9): error TS2339: Property 's' does not exist on type '{ s: string; } | undefined'.
+contextualTypeForInitalizedVariablesFiltersUndefined.ts(8,16): error TS2339: Property 's' does not exist on type '{ s: string; } | undefined'.
 
 
 ==== contextualTypeForInitalizedVariablesFiltersUndefined.ts (2 errors) ====
@@ -11,8 +11,8 @@ contextualTypeForInitalizedVariablesFiltersUndefined.ts(8,16): error TS2339: Pro
     declare var t: { s: string } | undefined;
     const { s } = t;
             ~
-!!! error TS2339: Property 's' does not exist on type '{ s: string } | undefined'.
+!!! error TS2339: Property 's' does not exist on type '{ s: string; } | undefined'.
     function fst({ s } = t) { }
                    ~
-!!! error TS2339: Property 's' does not exist on type '{ s: string } | undefined'.
+!!! error TS2339: Property 's' does not exist on type '{ s: string; } | undefined'.
     

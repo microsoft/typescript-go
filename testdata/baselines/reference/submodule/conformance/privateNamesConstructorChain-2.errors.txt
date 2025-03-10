@@ -6,7 +6,7 @@ error TS2318: Cannot find global type 'String'.
 error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
 error TS2552: Cannot find name 'Number'. Did you mean 'number'?
 error TS2552: Cannot find name 'Object'. Did you mean 'object'?
-privateNamesConstructorChain-2.ts(6,15): error TS2339: Property '#bar' does not exist on type '{ new<T>(): Child<T>, prototype: Child<any> }'.
+privateNamesConstructorChain-2.ts(6,15): error TS2339: Property '#bar' does not exist on type '{ new<T>(): Child<T>; prototype: Child<any>; }'.
 
 
 !!! error TS2318: Cannot find global type 'Array'.
@@ -25,7 +25,7 @@ privateNamesConstructorChain-2.ts(6,15): error TS2339: Property '#bar' does not 
             new Child<string>().#foo; // OK (`#foo` was added when `Parent`'s constructor was called on `child`)
             Child.#bar;       // Error: not found
                   ~~~~
-!!! error TS2339: Property '#bar' does not exist on type '{ new<T>(): Child<T>, prototype: Child<any> }'.
+!!! error TS2339: Property '#bar' does not exist on type '{ new<T>(): Child<T>; prototype: Child<any>; }'.
         }
     }
     

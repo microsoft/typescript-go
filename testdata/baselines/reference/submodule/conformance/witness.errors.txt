@@ -1,7 +1,13 @@
 witness.ts(4,21): error TS2372: Parameter 'pInit' cannot reference itself.
 witness.ts(8,14): error TS2729: Property 'x' is used before its initialization.
 witness.ts(20,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'a' must be of type 'any', but here has type 'never'.
+witness.ts(28,12): error TS2695: Left side of comma operator is unused and has no side effects.
 witness.ts(29,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'co1' must be of type 'any', but here has type 'number'.
+witness.ts(30,12): error TS2695: Left side of comma operator is unused and has no side effects.
+witness.ts(30,12): error TS2695: Left side of comma operator is unused and has no side effects.
+witness.ts(32,12): error TS2695: Left side of comma operator is unused and has no side effects.
+witness.ts(32,12): error TS2695: Left side of comma operator is unused and has no side effects.
+witness.ts(32,12): error TS2695: Left side of comma operator is unused and has no side effects.
 witness.ts(33,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'co3' must be of type 'any', but here has type 'number'.
 witness.ts(37,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'as1' must be of type 'any', but here has type 'number'.
 witness.ts(39,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'as2' must be of type 'any', but here has type 'number'.
@@ -10,12 +16,12 @@ witness.ts(50,11): error TS2873: This kind of expression is always falsy.
 witness.ts(57,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'and1' must be of type 'any', but here has type 'string'.
 witness.ts(58,12): error TS2873: This kind of expression is always falsy.
 witness.ts(68,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'fnCallResult' must be of type 'never', but here has type 'any'.
-witness.ts(110,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'propAcc1' must be of type 'any', but here has type '{ m: any }'.
+witness.ts(110,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'propAcc1' must be of type 'any', but here has type '{ m: any; }'.
 witness.ts(121,14): error TS2729: Property 'n' is used before its initialization.
 witness.ts(128,19): error TS2729: Property 'q' is used before its initialization.
 
 
-==== witness.ts (15 errors) ====
+==== witness.ts (21 errors) ====
     // Initializers
     var varInit = varInit; // any
     var pInit: any;
@@ -52,13 +58,25 @@ witness.ts(128,19): error TS2729: Property 'q' is used before its initialization
     
     // Comma
     var co1 = (co1, 3);
+               ~~~
+!!! error TS2695: Left side of comma operator is unused and has no side effects.
     var co1: number;
         ~~~
 !!! error TS2403: Subsequent variable declarations must have the same type.  Variable 'co1' must be of type 'any', but here has type 'number'.
 !!! related TS6203 witness.ts:28:5: 'co1' was also declared here.
     var co2 = (3, 4, co2);
+               ~
+!!! error TS2695: Left side of comma operator is unused and has no side effects.
+               ~~~~
+!!! error TS2695: Left side of comma operator is unused and has no side effects.
     var co2: any;
     var co3 = (co1, co2, co3, co1);
+               ~~~
+!!! error TS2695: Left side of comma operator is unused and has no side effects.
+               ~~~~~~~~
+!!! error TS2695: Left side of comma operator is unused and has no side effects.
+               ~~~~~~~~~~~~~
+!!! error TS2695: Left side of comma operator is unused and has no side effects.
     var co3: number;
         ~~~
 !!! error TS2403: Subsequent variable declarations must have the same type.  Variable 'co3' must be of type 'any', but here has type 'number'.
@@ -160,7 +178,7 @@ witness.ts(128,19): error TS2729: Property 'q' is used before its initialization
     };
     var propAcc1: { m: any; }
         ~~~~~~~~
-!!! error TS2403: Subsequent variable declarations must have the same type.  Variable 'propAcc1' must be of type 'any', but here has type '{ m: any }'.
+!!! error TS2403: Subsequent variable declarations must have the same type.  Variable 'propAcc1' must be of type 'any', but here has type '{ m: any; }'.
 !!! related TS6203 witness.ts:107:5: 'propAcc1' was also declared here.
     
     // Property access of module member

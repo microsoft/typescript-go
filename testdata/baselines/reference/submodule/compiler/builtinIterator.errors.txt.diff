@@ -5,34 +5,10 @@
 -builtinIterator.ts(40,7): error TS2515: Non-abstract class 'C' does not implement inherited abstract member next from class 'Iterator<number, undefined, unknown>'.
 +builtinIterator.ts(40,7): error TS2515: Non-abstract class 'C' does not implement inherited abstract member 'next' from class 'Iterator<number, undefined, unknown>'.
  builtinIterator.ts(44,3): error TS2416: Property 'next' in type 'BadIterator1' is not assignable to the same property in base type 'Iterator<number, undefined, unknown>'.
--  Type '() => { readonly done: false; readonly value: 0; } | { readonly done: true; readonly value: "a string"; }' is not assignable to type '(value?: unknown) => IteratorResult<number, undefined>'.
--    Type '{ readonly done: false; readonly value: 0; } | { readonly done: true; readonly value: "a string"; }' is not assignable to type 'IteratorResult<number, undefined>'.
--      Type '{ readonly done: true; readonly value: "a string"; }' is not assignable to type 'IteratorResult<number, undefined>'.
--        Type '{ readonly done: true; readonly value: "a string"; }' is not assignable to type 'IteratorReturnResult<undefined>'.
-+  Type '() => { readonly done: false, readonly value: 0 } | { readonly done: true, readonly value: "a string" }' is not assignable to type '(value?: unknown) => IteratorResult<number, undefined>'.
-+    Type '{ readonly done: false, readonly value: 0 } | { readonly done: true, readonly value: "a string" }' is not assignable to type 'IteratorResult<number, undefined>'.
-+      Type '{ readonly done: true, readonly value: "a string" }' is not assignable to type 'IteratorResult<number, undefined>'.
-+        Type '{ readonly done: true, readonly value: "a string" }' is not assignable to type 'IteratorReturnResult<undefined>'.
-           Types of property 'value' are incompatible.
-             Type '"a string"' is not assignable to type 'undefined'.
- builtinIterator.ts(54,3): error TS2416: Property 'next' in type 'BadIterator2' is not assignable to the same property in base type 'Iterator<number, undefined, unknown>'.
--  Type '() => { done: boolean; value: number; }' is not assignable to type '(value?: unknown) => IteratorResult<number, undefined>'.
--    Type '{ done: boolean; value: number; }' is not assignable to type 'IteratorResult<number, undefined>'.
--      Type '{ done: boolean; value: number; }' is not assignable to type 'IteratorYieldResult<number>'.
-+  Type '() => { done: boolean, value: number }' is not assignable to type '(value?: unknown) => IteratorResult<number, undefined>'.
-+    Type '{ done: boolean, value: number }' is not assignable to type 'IteratorResult<number, undefined>'.
-+      Type '{ done: boolean, value: number }' is not assignable to type 'IteratorYieldResult<number>'.
-         Types of property 'done' are incompatible.
-           Type 'boolean' is not assignable to type 'false'.
- builtinIterator.ts(60,3): error TS2416: Property 'next' in type 'BadIterator3' is not assignable to the same property in base type 'Iterator<number, undefined, unknown>'.
--  Type '() => { done: boolean; value: number; } | { done: boolean; value: string; }' is not assignable to type '(value?: unknown) => IteratorResult<number, undefined>'.
--    Type '{ done: boolean; value: number; } | { done: boolean; value: string; }' is not assignable to type 'IteratorResult<number, undefined>'.
--      Type '{ done: boolean; value: number; }' is not assignable to type 'IteratorResult<number, undefined>'.
--        Type '{ done: boolean; value: number; }' is not assignable to type 'IteratorYieldResult<number>'.
-+  Type '() => { done: boolean, value: number } | { done: boolean, value: string }' is not assignable to type '(value?: unknown) => IteratorResult<number, undefined>'.
-+    Type '{ done: boolean, value: number } | { done: boolean, value: string }' is not assignable to type 'IteratorResult<number, undefined>'.
-+      Type '{ done: boolean, value: number }' is not assignable to type 'IteratorResult<number, undefined>'.
-+        Type '{ done: boolean, value: number }' is not assignable to type 'IteratorYieldResult<number>'.
+   Type '() => { readonly done: false; readonly value: 0; } | { readonly done: true; readonly value: "a string"; }' is not assignable to type '(value?: unknown) => IteratorResult<number, undefined>'.
+     Type '{ readonly done: false; readonly value: 0; } | { readonly done: true; readonly value: "a string"; }' is not assignable to type 'IteratorResult<number, undefined>'.
+@@= skipped -19, +19 lines =@@
+         Type '{ done: boolean; value: number; }' is not assignable to type 'IteratorYieldResult<number>'.
            Types of property 'done' are incompatible.
              Type 'boolean' is not assignable to type 'false'.
 -builtinIterator.ts(70,29): error TS2345: Argument of type 'Generator<string, number, boolean>' is not assignable to parameter of type 'Iterator<string, unknown, undefined> | Iterable<string, unknown, undefined>'.
@@ -55,7 +31,7 @@
          Types of parameters '__0' and '__0' are incompatible.
            Type '[] | [undefined]' is not assignable to type '[] | [boolean]'.
              Type '[undefined]' is not assignable to type '[] | [boolean]'.
-@@= skipped -83, +83 lines =@@
+@@= skipped -64, +64 lines =@@
      
      class C extends Iterator<number> {}
            ~
@@ -64,49 +40,7 @@
      
      // it's unfortunate that these are an error
      class BadIterator1 extends Iterator<number> {
-       next() {
-       ~~~~
- !!! error TS2416: Property 'next' in type 'BadIterator1' is not assignable to the same property in base type 'Iterator<number, undefined, unknown>'.
--!!! error TS2416:   Type '() => { readonly done: false; readonly value: 0; } | { readonly done: true; readonly value: "a string"; }' is not assignable to type '(value?: unknown) => IteratorResult<number, undefined>'.
--!!! error TS2416:     Type '{ readonly done: false; readonly value: 0; } | { readonly done: true; readonly value: "a string"; }' is not assignable to type 'IteratorResult<number, undefined>'.
--!!! error TS2416:       Type '{ readonly done: true; readonly value: "a string"; }' is not assignable to type 'IteratorResult<number, undefined>'.
--!!! error TS2416:         Type '{ readonly done: true; readonly value: "a string"; }' is not assignable to type 'IteratorReturnResult<undefined>'.
-+!!! error TS2416:   Type '() => { readonly done: false, readonly value: 0 } | { readonly done: true, readonly value: "a string" }' is not assignable to type '(value?: unknown) => IteratorResult<number, undefined>'.
-+!!! error TS2416:     Type '{ readonly done: false, readonly value: 0 } | { readonly done: true, readonly value: "a string" }' is not assignable to type 'IteratorResult<number, undefined>'.
-+!!! error TS2416:       Type '{ readonly done: true, readonly value: "a string" }' is not assignable to type 'IteratorResult<number, undefined>'.
-+!!! error TS2416:         Type '{ readonly done: true, readonly value: "a string" }' is not assignable to type 'IteratorReturnResult<undefined>'.
- !!! error TS2416:           Types of property 'value' are incompatible.
- !!! error TS2416:             Type '"a string"' is not assignable to type 'undefined'.
-         if (Math.random() < .5) {
-@@= skipped -25, +25 lines =@@
-       next() {
-       ~~~~
- !!! error TS2416: Property 'next' in type 'BadIterator2' is not assignable to the same property in base type 'Iterator<number, undefined, unknown>'.
--!!! error TS2416:   Type '() => { done: boolean; value: number; }' is not assignable to type '(value?: unknown) => IteratorResult<number, undefined>'.
--!!! error TS2416:     Type '{ done: boolean; value: number; }' is not assignable to type 'IteratorResult<number, undefined>'.
--!!! error TS2416:       Type '{ done: boolean; value: number; }' is not assignable to type 'IteratorYieldResult<number>'.
-+!!! error TS2416:   Type '() => { done: boolean, value: number }' is not assignable to type '(value?: unknown) => IteratorResult<number, undefined>'.
-+!!! error TS2416:     Type '{ done: boolean, value: number }' is not assignable to type 'IteratorResult<number, undefined>'.
-+!!! error TS2416:       Type '{ done: boolean, value: number }' is not assignable to type 'IteratorYieldResult<number>'.
- !!! error TS2416:         Types of property 'done' are incompatible.
- !!! error TS2416:           Type 'boolean' is not assignable to type 'false'.
-         return { done: false, value: 0 };
-@@= skipped -13, +13 lines =@@
-       next() {
-       ~~~~
- !!! error TS2416: Property 'next' in type 'BadIterator3' is not assignable to the same property in base type 'Iterator<number, undefined, unknown>'.
--!!! error TS2416:   Type '() => { done: boolean; value: number; } | { done: boolean; value: string; }' is not assignable to type '(value?: unknown) => IteratorResult<number, undefined>'.
--!!! error TS2416:     Type '{ done: boolean; value: number; } | { done: boolean; value: string; }' is not assignable to type 'IteratorResult<number, undefined>'.
--!!! error TS2416:       Type '{ done: boolean; value: number; }' is not assignable to type 'IteratorResult<number, undefined>'.
--!!! error TS2416:         Type '{ done: boolean; value: number; }' is not assignable to type 'IteratorYieldResult<number>'.
-+!!! error TS2416:   Type '() => { done: boolean, value: number } | { done: boolean, value: string }' is not assignable to type '(value?: unknown) => IteratorResult<number, undefined>'.
-+!!! error TS2416:     Type '{ done: boolean, value: number } | { done: boolean, value: string }' is not assignable to type 'IteratorResult<number, undefined>'.
-+!!! error TS2416:       Type '{ done: boolean, value: number }' is not assignable to type 'IteratorResult<number, undefined>'.
-+!!! error TS2416:         Type '{ done: boolean, value: number }' is not assignable to type 'IteratorYieldResult<number>'.
- !!! error TS2416:           Types of property 'done' are incompatible.
- !!! error TS2416:             Type 'boolean' is not assignable to type 'false'.
-         if (Math.random() < .5) {
-@@= skipped -17, +17 lines =@@
+@@= skipped -55, +55 lines =@@
      declare const g1: Generator<string, number, boolean>;
      const iter1 = Iterator.from(g1);
                                  ~~

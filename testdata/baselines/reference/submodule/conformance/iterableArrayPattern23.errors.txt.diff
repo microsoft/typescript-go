@@ -1,7 +1,6 @@
 --- old.iterableArrayPattern23.errors.txt
 +++ new.iterableArrayPattern23.errors.txt
 @@= skipped -0, +0 lines =@@
--iterableArrayPattern23.ts(2,1): error TS2488: Type '{ 0: string; 1: true; }' must have a '[Symbol.iterator]()' method that returns an iterator.
 +error TS2318: Cannot find global type 'Array'.
 +error TS2318: Cannot find global type 'Function'.
 +error TS2318: Cannot find global type 'IArguments'.
@@ -10,7 +9,7 @@
 +error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
 +error TS2552: Cannot find name 'Number'. Did you mean 'number'?
 +error TS2552: Cannot find name 'Object'. Did you mean 'object'?
-+iterableArrayPattern23.ts(2,1): error TS2488: Type '{ 0: string, 1: true }' must have a '[Symbol.iterator]()' method that returns an iterator.
+ iterableArrayPattern23.ts(2,1): error TS2488: Type '{ 0: string; 1: true; }' must have a '[Symbol.iterator]()' method that returns an iterator.
  
  
 +!!! error TS2318: Cannot find global type 'Array'.
@@ -24,6 +23,3 @@
  ==== iterableArrayPattern23.ts (1 errors) ====
      var a: string, b: boolean;
      [a, b] = { 0: "", 1: true };
-     ~~~~~~
--!!! error TS2488: Type '{ 0: string; 1: true; }' must have a '[Symbol.iterator]()' method that returns an iterator.
-+!!! error TS2488: Type '{ 0: string, 1: true }' must have a '[Symbol.iterator]()' method that returns an iterator.

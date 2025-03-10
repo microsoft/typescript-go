@@ -11,7 +11,7 @@ objectLiteralErrors.ts(11,21): error TS1117: An object literal cannot have multi
 objectLiteralErrors.ts(12,21): error TS1117: An object literal cannot have multiple properties with the same name.
 objectLiteralErrors.ts(13,19): error TS1117: An object literal cannot have multiple properties with the same name.
 objectLiteralErrors.ts(14,19): error TS1117: An object literal cannot have multiple properties with the same name.
-objectLiteralErrors.ts(16,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'e14' must be of type '{ 0: number, 0x0: number }', but here has type '{ 0: number, 0o0: number }'.
+objectLiteralErrors.ts(16,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'e14' must be of type '{ 0: number; 0x0: number; }', but here has type '{ 0: number; 0o0: number; }'.
 objectLiteralErrors.ts(17,23): error TS1117: An object literal cannot have multiple properties with the same name.
 objectLiteralErrors.ts(19,25): error TS1117: An object literal cannot have multiple properties with the same name.
 objectLiteralErrors.ts(22,12): error TS2300: Duplicate identifier 'a'.
@@ -79,7 +79,7 @@ objectLiteralErrors.ts(34,13): error TS2300: Duplicate identifier '0'.
 objectLiteralErrors.ts(34,23): error TS1119: An object literal cannot have property and accessor with the same name.
 objectLiteralErrors.ts(34,23): error TS2300: Duplicate identifier '0'.
 objectLiteralErrors.ts(34,23): error TS2300: Duplicate identifier '0'.
-objectLiteralErrors.ts(36,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'f14' must be of type '{ 0: number, readonly 0x0: number }', but here has type '{ 0: number, readonly 0o0: number }'.
+objectLiteralErrors.ts(36,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'f14' must be of type '{ 0: number; readonly 0x0: number; }', but here has type '{ 0: number; readonly 0o0: number; }'.
 objectLiteralErrors.ts(37,13): error TS2300: Duplicate identifier '"100"'.
 objectLiteralErrors.ts(37,13): error TS2300: Duplicate identifier '"100"'.
 objectLiteralErrors.ts(37,27): error TS1119: An object literal cannot have property and accessor with the same name.
@@ -140,7 +140,7 @@ objectLiteralErrors.ts(50,5): error TS18016: Private identifiers are not allowed
     var e14 = { 0: 0, 0x0: 0 };
     var e14 = { 0: 0, 0o0: 0 };
         ~~~
-!!! error TS2403: Subsequent variable declarations must have the same type.  Variable 'e14' must be of type '{ 0: number, 0x0: number }', but here has type '{ 0: number, 0o0: number }'.
+!!! error TS2403: Subsequent variable declarations must have the same type.  Variable 'e14' must be of type '{ 0: number; 0x0: number; }', but here has type '{ 0: number; 0o0: number; }'.
 !!! related TS6203 objectLiteralErrors.ts:15:5: 'e14' was also declared here.
     var e15 = { "100": 0, 1e2: 0 };
                           ~~~
@@ -297,7 +297,7 @@ objectLiteralErrors.ts(50,5): error TS18016: Private identifiers are not allowed
     var f14 = { 0: 0, get 0x0() { return 0; } };
     var f14 = { 0: 0, get 0o0() { return 0; } };
         ~~~
-!!! error TS2403: Subsequent variable declarations must have the same type.  Variable 'f14' must be of type '{ 0: number, readonly 0x0: number }', but here has type '{ 0: number, readonly 0o0: number }'.
+!!! error TS2403: Subsequent variable declarations must have the same type.  Variable 'f14' must be of type '{ 0: number; readonly 0x0: number; }', but here has type '{ 0: number; readonly 0o0: number; }'.
 !!! related TS6203 objectLiteralErrors.ts:35:5: 'f14' was also declared here.
     var f15 = { "100": 0, get 1e2() { return 0; } };
                 ~~~~~

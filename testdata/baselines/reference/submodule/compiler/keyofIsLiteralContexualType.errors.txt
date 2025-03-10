@@ -1,6 +1,6 @@
 keyofIsLiteralContexualType.ts(5,37): error TS2322: Type 'string' is not assignable to type 'keyof T'.
   Type '"c"' is not assignable to type '"a" | "b"'.
-keyofIsLiteralContexualType.ts(13,11): error TS2339: Property 'b' does not exist on type 'Pick<{ a: number, b: number, c: number }, "a" | "c">'.
+keyofIsLiteralContexualType.ts(13,11): error TS2339: Property 'b' does not exist on type 'Pick<{ a: number; b: number; c: number; }, "a" | "c">'.
 
 
 ==== keyofIsLiteralContexualType.ts (2 errors) ====
@@ -21,4 +21,4 @@ keyofIsLiteralContexualType.ts(13,11): error TS2339: Property 'b' does not exist
     let x = pick({ a: 10, b: 20, c: 30 }, ["a", "c"]);
     let b = x.b;  // Error
               ~
-!!! error TS2339: Property 'b' does not exist on type 'Pick<{ a: number, b: number, c: number }, "a" | "c">'.
+!!! error TS2339: Property 'b' does not exist on type 'Pick<{ a: number; b: number; c: number; }, "a" | "c">'.

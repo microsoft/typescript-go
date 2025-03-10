@@ -1,12 +1,10 @@
-error TS2351: This expression is not constructable.
+staticMemberExportAccess.ts(14,39): error TS2351: This expression is not constructable.
   Type 'Sammy' has no construct signatures.
 staticMemberExportAccess.ts(17,18): error TS2576: Property 'bar' does not exist on type 'Sammy'. Did you mean to access the static member 'Sammy.bar' instead?
 staticMemberExportAccess.ts(18,18): error TS2339: Property 'x' does not exist on type 'Sammy'.
 
 
-!!! error TS2351: This expression is not constructable.
-!!! error TS2351:   Type 'Sammy' has no construct signatures.
-==== staticMemberExportAccess.ts (2 errors) ====
+==== staticMemberExportAccess.ts (3 errors) ====
     class Sammy {
        foo() { return "hi"; }
       static bar() {
@@ -21,6 +19,9 @@ staticMemberExportAccess.ts(18,18): error TS2339: Property 'x' does not exist on
     }
     var $: JQueryStatic;
     var instanceOfClassSammy: Sammy = new $.sammy(); // should be error
+                                          ~~~~~~~
+!!! error TS2351: This expression is not constructable.
+!!! error TS2351:   Type 'Sammy' has no construct signatures.
     var r1 = instanceOfClassSammy.foo(); // r1 is string
     var r2 = $.sammy.foo();
     var r3 = $.sammy.bar(); // error

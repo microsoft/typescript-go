@@ -5,12 +5,10 @@
  propertyAssignment.ts(4,14): error TS2304: Cannot find name 'index'.
 -propertyAssignment.ts(12,1): error TS2322: Type '{ x: number; }' is not assignable to type 'new () => any'.
 -  Type '{ x: number; }' provides no match for the signature 'new (): any'.
--propertyAssignment.ts(14,1): error TS2322: Type '{ x: number; }' is not assignable to type '() => void'.
--  Type '{ x: number; }' provides no match for the signature '(): void'.
-+propertyAssignment.ts(12,1): error TS2322: Type '{ x: number }' is not assignable to type 'new() => any'.
-+  Type '{ x: number }' provides no match for the signature 'new(): any'.
-+propertyAssignment.ts(14,1): error TS2322: Type '{ x: number }' is not assignable to type '() => void'.
-+  Type '{ x: number }' provides no match for the signature '(): void'.
++propertyAssignment.ts(12,1): error TS2322: Type '{ x: number; }' is not assignable to type 'new() => any'.
++  Type '{ x: number; }' provides no match for the signature 'new(): any'.
+ propertyAssignment.ts(14,1): error TS2322: Type '{ x: number; }' is not assignable to type '() => void'.
+   Type '{ x: number; }' provides no match for the signature '(): void'.
  
  
 -==== propertyAssignment.ts (4 errors) ====
@@ -30,12 +28,8 @@
      ~~~~
 -!!! error TS2322: Type '{ x: number; }' is not assignable to type 'new () => any'.
 -!!! error TS2322:   Type '{ x: number; }' provides no match for the signature 'new (): any'.
-+!!! error TS2322: Type '{ x: number }' is not assignable to type 'new() => any'.
-+!!! error TS2322:   Type '{ x: number }' provides no match for the signature 'new(): any'.
++!!! error TS2322: Type '{ x: number; }' is not assignable to type 'new() => any'.
++!!! error TS2322:   Type '{ x: number; }' provides no match for the signature 'new(): any'.
      foo2 = bar2; 
      foo3 = bar3; // should be an error
      ~~~~
--!!! error TS2322: Type '{ x: number; }' is not assignable to type '() => void'.
--!!! error TS2322:   Type '{ x: number; }' provides no match for the signature '(): void'.
-+!!! error TS2322: Type '{ x: number }' is not assignable to type '() => void'.
-+!!! error TS2322:   Type '{ x: number }' provides no match for the signature '(): void'.

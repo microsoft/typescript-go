@@ -1,6 +1,6 @@
-genericDerivedTypeWithSpecializedBase2.ts(11,1): error TS2322: Type 'B<number>' is not assignable to type 'A<{ length: number, foo: number }>'.
+genericDerivedTypeWithSpecializedBase2.ts(11,1): error TS2322: Type 'B<number>' is not assignable to type 'A<{ length: number; foo: number; }>'.
   Types of property 'x' are incompatible.
-    Type 'string' is not assignable to type '{ length: number, foo: number }'.
+    Type 'string' is not assignable to type '{ length: number; foo: number; }'.
 
 
 ==== genericDerivedTypeWithSpecializedBase2.ts (1 errors) ====
@@ -16,7 +16,7 @@ genericDerivedTypeWithSpecializedBase2.ts(11,1): error TS2322: Type 'B<number>' 
     var y: B<number>;
     x = y;  // error
     ~
-!!! error TS2322: Type 'B<number>' is not assignable to type 'A<{ length: number, foo: number }>'.
+!!! error TS2322: Type 'B<number>' is not assignable to type 'A<{ length: number; foo: number; }>'.
 !!! error TS2322:   Types of property 'x' are incompatible.
-!!! error TS2322:     Type 'string' is not assignable to type '{ length: number, foo: number }'.
+!!! error TS2322:     Type 'string' is not assignable to type '{ length: number; foo: number; }'.
     

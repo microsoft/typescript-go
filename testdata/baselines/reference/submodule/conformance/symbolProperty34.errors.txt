@@ -7,7 +7,7 @@ error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
 error TS2552: Cannot find name 'Number'. Did you mean 'number'?
 error TS2552: Cannot find name 'Object'. Did you mean 'object'?
 symbolProperty34.ts(1,18): error TS2449: Class 'C2' used before its declaration.
-symbolProperty34.ts(2,5): error TS2411: Property '[Symbol.toStringTag]' of type '() => { x: string }' is not assignable to 'symbol' index type '() => { x: number }'.
+symbolProperty34.ts(2,5): error TS2411: Property '[Symbol.toStringTag]' of type '() => { x: string; }' is not assignable to 'symbol' index type '() => { x: number; }'.
 symbolProperty34.ts(2,6): error TS2304: Cannot find name 'Symbol'.
 
 
@@ -26,7 +26,7 @@ symbolProperty34.ts(2,6): error TS2304: Cannot find name 'Symbol'.
 !!! related TS2728 symbolProperty34.ts:6:7: 'C2' is declared here.
         [Symbol.toStringTag]() {
         ~~~~~~~~~~~~~~~~~~~~
-!!! error TS2411: Property '[Symbol.toStringTag]' of type '() => { x: string }' is not assignable to 'symbol' index type '() => { x: number }'.
+!!! error TS2411: Property '[Symbol.toStringTag]' of type '() => { x: string; }' is not assignable to 'symbol' index type '() => { x: number; }'.
          ~~~~~~
 !!! error TS2304: Cannot find name 'Symbol'.
             return { x: "" };

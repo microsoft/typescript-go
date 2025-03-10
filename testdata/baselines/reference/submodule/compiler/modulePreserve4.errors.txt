@@ -6,7 +6,7 @@
 /main1.ts(29,16): error TS2306: File '/g.js' is not a module.
 /main1.ts(31,21): error TS2306: File '/g.js' is not a module.
 /main2.mts(1,13): error TS2305: Module '""/a.js""' has no exported member 'y'.
-/main2.mts(4,4): error TS2339: Property 'default' does not exist on type '{ readonly x: 0 }'.
+/main2.mts(4,4): error TS2339: Property 'default' does not exist on type '{ readonly x: 0; }'.
 /main2.mts(5,12): error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 /main2.mts(19,16): error TS2306: File '/g.js' is not a module.
 /main2.mts(20,21): error TS2306: File '/g.js' is not a module.
@@ -103,7 +103,7 @@
     a1.x;
     a1.default.x; // Arguably should exist but doesn't
        ~~~~~~~
-!!! error TS2339: Property 'default' does not exist on type '{ readonly x: 0 }'.
+!!! error TS2339: Property 'default' does not exist on type '{ readonly x: 0; }'.
     const a2 = require("./a"); // Error in TS
                ~~~~~~~
 !!! error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.

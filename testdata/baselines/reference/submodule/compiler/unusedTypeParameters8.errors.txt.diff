@@ -1,19 +1,15 @@
 --- old.unusedTypeParameters8.errors.txt
 +++ new.unusedTypeParameters8.errors.txt
-@@= skipped -0, +0 lines =@@
+@@= skipped -0, +-1 lines =@@
 -b.ts(1,12): error TS6133: 'T' is declared but its value is never read.
-+a.ts(1,8): error TS6196: 'T' is declared but never used.
-+b.ts(1,12): error TS6196: 'T' is declared but never used.
- 
- 
+-
+-
 -==== a.ts (0 errors) ====
-+==== a.ts (1 errors) ====
-     class C<T> { }
-+           ~~~
-+!!! error TS6196: 'T' is declared but never used.
-     
- ==== b.ts (1 errors) ====
-     interface C<T> { }
-                ~~~
+-    class C<T> { }
+-    
+-==== b.ts (1 errors) ====
+-    interface C<T> { }
+-               ~~~
 -!!! error TS6133: 'T' is declared but its value is never read.
-+!!! error TS6196: 'T' is declared but never used.
+@@= skipped --1, +1 lines =@@
++<no content>

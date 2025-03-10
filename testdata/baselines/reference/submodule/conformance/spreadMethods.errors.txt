@@ -1,7 +1,7 @@
-spreadMethods.ts(16,4): error TS2339: Property 'm' does not exist on type '{ p: number }'.
-spreadMethods.ts(17,4): error TS2339: Property 'g' does not exist on type '{ p: number }'.
-spreadMethods.ts(19,5): error TS2339: Property 'm' does not exist on type '{ p: number }'.
-spreadMethods.ts(20,5): error TS2339: Property 'g' does not exist on type '{ p: number }'.
+spreadMethods.ts(16,4): error TS2339: Property 'm' does not exist on type '{ p: number; }'.
+spreadMethods.ts(17,4): error TS2339: Property 'g' does not exist on type '{ p: number; }'.
+spreadMethods.ts(19,5): error TS2339: Property 'm' does not exist on type '{ p: number; }'.
+spreadMethods.ts(20,5): error TS2339: Property 'g' does not exist on type '{ p: number; }'.
 
 
 ==== spreadMethods.ts (4 errors) ====
@@ -22,17 +22,17 @@ spreadMethods.ts(20,5): error TS2339: Property 'g' does not exist on type '{ p: 
     sk.p;
     sk.m(); // error
        ~
-!!! error TS2339: Property 'm' does not exist on type '{ p: number }'.
+!!! error TS2339: Property 'm' does not exist on type '{ p: number; }'.
     sk.g; // error
        ~
-!!! error TS2339: Property 'g' does not exist on type '{ p: number }'.
+!!! error TS2339: Property 'g' does not exist on type '{ p: number; }'.
     ssk.p;
     ssk.m(); // error
         ~
-!!! error TS2339: Property 'm' does not exist on type '{ p: number }'.
+!!! error TS2339: Property 'm' does not exist on type '{ p: number; }'.
     ssk.g; // error
         ~
-!!! error TS2339: Property 'g' does not exist on type '{ p: number }'.
+!!! error TS2339: Property 'g' does not exist on type '{ p: number; }'.
     
     let i: I = { p: 12, m() { }, get g() { return 0; } };
     let si = { ...i };

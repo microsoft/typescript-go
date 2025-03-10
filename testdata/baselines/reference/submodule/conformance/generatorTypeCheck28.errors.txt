@@ -8,7 +8,7 @@ error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
 error TS2552: Cannot find name 'Number'. Did you mean 'number'?
 error TS2552: Cannot find name 'Object'. Did you mean 'object'?
 generatorTypeCheck28.ts(1,16): error TS2304: Cannot find name 'IterableIterator'.
-generatorTypeCheck28.ts(2,13): error TS2488: Type '{ [x: number]: () => {} }' must have a '[Symbol.iterator]()' method that returns an iterator.
+generatorTypeCheck28.ts(2,13): error TS2488: Type '{ [x: number]: () => {}; }' must have a '[Symbol.iterator]()' method that returns an iterator.
 generatorTypeCheck28.ts(3,11): error TS2304: Cannot find name 'Symbol'.
 
 
@@ -37,5 +37,5 @@ generatorTypeCheck28.ts(3,11): error TS2304: Cannot find name 'Symbol'.
     ~~~~~~~~~
         };
     ~~~~~
-!!! error TS2488: Type '{ [x: number]: () => {} }' must have a '[Symbol.iterator]()' method that returns an iterator.
+!!! error TS2488: Type '{ [x: number]: () => {}; }' must have a '[Symbol.iterator]()' method that returns an iterator.
     }

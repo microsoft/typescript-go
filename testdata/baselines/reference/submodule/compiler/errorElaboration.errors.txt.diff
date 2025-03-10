@@ -29,16 +29,7 @@
      let a: () => Container<Ref<string>>;
      foo(a);
          ~
-@@= skipped -14, +16 lines =@@
-       return {foo: "bar"};
-               ~~~
- !!! error TS2322: Type '"bar"' is not assignable to type '"foo"'.
--!!! related TS6500 errorElaboration.ts:16:18: The expected type comes from property 'foo' which is declared here on type '{ foo: "foo"; }'
-+!!! related TS6500 errorElaboration.ts:16:18: The expected type comes from property 'foo' which is declared here on type '{ foo: "foo" }'
-     }
-     
-     // Repro for #32358
-@@= skipped -8, +8 lines =@@
+@@= skipped -22, +24 lines =@@
      const foo = { bar: 'a' };
            ~~~
  !!! error TS2300: Duplicate identifier 'foo'.

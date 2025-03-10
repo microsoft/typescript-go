@@ -1,8 +1,8 @@
 narrowingOfQualifiedNames.ts(33,25): error TS2532: Object is possibly 'undefined'.
-narrowingOfQualifiedNames.ts(33,33): error TS2339: Property 'c' does not exist on type '{ c?: string | undefined } | undefined'.
+narrowingOfQualifiedNames.ts(33,33): error TS2339: Property 'c' does not exist on type '{ c?: string | undefined; } | undefined'.
   Property 'c' does not exist on type 'undefined'.
 narrowingOfQualifiedNames.ts(38,29): error TS2532: Object is possibly 'undefined'.
-narrowingOfQualifiedNames.ts(38,37): error TS2339: Property 'c' does not exist on type '{ c?: string | undefined } | undefined'.
+narrowingOfQualifiedNames.ts(38,37): error TS2339: Property 'c' does not exist on type '{ c?: string | undefined; } | undefined'.
   Property 'c' does not exist on type 'undefined'.
 
 
@@ -43,7 +43,7 @@ narrowingOfQualifiedNames.ts(38,37): error TS2339: Property 'c' does not exist o
                             ~~~~~~~
 !!! error TS2532: Object is possibly 'undefined'.
                                     ~
-!!! error TS2339: Property 'c' does not exist on type '{ c?: string | undefined } | undefined'.
+!!! error TS2339: Property 'c' does not exist on type '{ c?: string | undefined; } | undefined'.
 !!! error TS2339:   Property 'c' does not exist on type 'undefined'.
     
             for(const _ of [1]) {
@@ -53,7 +53,7 @@ narrowingOfQualifiedNames.ts(38,37): error TS2339: Property 'c' does not exist o
                                 ~~~~~~~
 !!! error TS2532: Object is possibly 'undefined'.
                                         ~
-!!! error TS2339: Property 'c' does not exist on type '{ c?: string | undefined } | undefined'.
+!!! error TS2339: Property 'c' does not exist on type '{ c?: string | undefined; } | undefined'.
 !!! error TS2339:   Property 'c' does not exist on type 'undefined'.
     
                 if (foo.a.b) {

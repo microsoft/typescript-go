@@ -9,8 +9,8 @@ error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
 error TS2552: Cannot find name 'Number'. Did you mean 'number'?
 error TS2552: Cannot find name 'Object'. Did you mean 'object'?
 index.ts(3,18): error TS2304: Cannot find name 'Symbol'.
-index.ts(4,1): error TS7053: Element implicitly has an 'any' type because expression of type 'error' can't be used to index type '{ (): void, bar: number }'.
-index.ts(6,19): error TS7053: Element implicitly has an 'any' type because expression of type 'error' can't be used to index type '{ (): void, bar: number }'.
+index.ts(4,1): error TS7053: Element implicitly has an 'any' type because expression of type 'error' can't be used to index type '{ (): void; bar: number; }'.
+index.ts(6,19): error TS7053: Element implicitly has an 'any' type because expression of type 'error' can't be used to index type '{ (): void; bar: number; }'.
 
 
 !!! error TS2318: Cannot find global type 'Array'.
@@ -31,9 +31,9 @@ index.ts(6,19): error TS7053: Element implicitly has an 'any' type because expre
 !!! error TS2304: Cannot find name 'Symbol'.
     foo[_private] = "ok";
     ~~~~~~~~~~~~~
-!!! error TS7053: Element implicitly has an 'any' type because expression of type 'error' can't be used to index type '{ (): void, bar: number }'.
+!!! error TS7053: Element implicitly has an 'any' type because expression of type 'error' can't be used to index type '{ (): void; bar: number; }'.
     
     const x: string = foo[_private];
                       ~~~~~~~~~~~~~
-!!! error TS7053: Element implicitly has an 'any' type because expression of type 'error' can't be used to index type '{ (): void, bar: number }'.
+!!! error TS7053: Element implicitly has an 'any' type because expression of type 'error' can't be used to index type '{ (): void; bar: number; }'.
     

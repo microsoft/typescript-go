@@ -7,10 +7,9 @@
 +LazySet.js(13,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +index.js(1,7): error TS2451: Cannot redeclare block-scoped variable 'LazySet'.
 +index.js(1,17): error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-+index.js(5,1): error TS18048: 'stringSet' is possibly 'undefined'.
 +
 +
-+==== index.js (3 errors) ====
++==== index.js (2 errors) ====
 +    const LazySet = require("./LazySet");
 +          ~~~~~~~
 +!!! error TS2451: Cannot redeclare block-scoped variable 'LazySet'.
@@ -21,8 +20,6 @@
 +    /** @type {LazySet} */
 +    const stringSet = undefined;
 +    stringSet.addAll(stringSet);
-+    ~~~~~~~~~
-+!!! error TS18048: 'stringSet' is possibly 'undefined'.
 +    
 +    
 +==== LazySet.js (2 errors) ====

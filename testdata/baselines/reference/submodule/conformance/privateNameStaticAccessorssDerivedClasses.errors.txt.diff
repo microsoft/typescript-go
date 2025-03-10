@@ -12,9 +12,9 @@
 +error TS2552: Cannot find name 'Number'. Did you mean 'number'?
 +error TS2552: Cannot find name 'Object'. Did you mean 'object'?
 +privateNameStaticAccessorssDerivedClasses.ts(4,9): error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.
-+privateNameStaticAccessorssDerivedClasses.ts(4,23): error TS2339: Property '#prop' does not exist on type '{ new(): Derived, method: (x: ???) => void, prototype: Derived }'.
++privateNameStaticAccessorssDerivedClasses.ts(4,23): error TS2339: Property '#prop' does not exist on type '{ new(): Derived; method: (x: ???) => void; prototype: Derived; }'.
 +privateNameStaticAccessorssDerivedClasses.ts(9,9): error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.
-+privateNameStaticAccessorssDerivedClasses.ts(9,23): error TS2339: Property '#prop' does not exist on type '{ new(): Derived, method: (x: ???) => void, prototype: Derived }'.
++privateNameStaticAccessorssDerivedClasses.ts(9,23): error TS2339: Property '#prop' does not exist on type '{ new(): Derived; method: (x: ???) => void; prototype: Derived; }'.
  
  
 -==== privateNameStaticAccessorssDerivedClasses.ts (2 errors) ====
@@ -35,7 +35,7 @@
 +!!! error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.
                            ~~~~~
 -!!! error TS2339: Property '#prop' does not exist on type 'typeof Derived'.
-+!!! error TS2339: Property '#prop' does not exist on type '{ new(): Derived, method: (x: ???) => void, prototype: Derived }'.
++!!! error TS2339: Property '#prop' does not exist on type '{ new(): Derived; method: (x: ???) => void; prototype: Derived; }'.
          }
      }
      class Derived extends Base {
@@ -45,7 +45,7 @@
 +!!! error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.
                            ~~~~~
 -!!! error TS2339: Property '#prop' does not exist on type 'typeof Derived'.
-+!!! error TS2339: Property '#prop' does not exist on type '{ new(): Derived, method: (x: ???) => void, prototype: Derived }'.
++!!! error TS2339: Property '#prop' does not exist on type '{ new(): Derived; method: (x: ???) => void; prototype: Derived; }'.
          }
      }
      

@@ -10,6 +10,8 @@ error TS2552: Cannot find name 'Object'. Did you mean 'object'?
 invalidLetInForOfAndForIn_ES6.ts(5,13): error TS1005: ',' expected.
 invalidLetInForOfAndForIn_ES6.ts(5,13): error TS2488: Type '{}' must have a '[Symbol.iterator]()' method that returns an iterator.
 invalidLetInForOfAndForIn_ES6.ts(5,14): error TS1181: Array element destructuring pattern expected.
+invalidLetInForOfAndForIn_ES6.ts(5,14): error TS2695: Left side of comma operator is unused and has no side effects.
+invalidLetInForOfAndForIn_ES6.ts(5,14): error TS2695: Left side of comma operator is unused and has no side effects.
 invalidLetInForOfAndForIn_ES6.ts(5,19): error TS1005: ';' expected.
 invalidLetInForOfAndForIn_ES6.ts(5,20): error TS1128: Declaration or statement expected.
 
@@ -23,7 +25,7 @@ invalidLetInForOfAndForIn_ES6.ts(5,20): error TS1128: Declaration or statement e
 !!! error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
 !!! error TS2552: Cannot find name 'Number'. Did you mean 'number'?
 !!! error TS2552: Cannot find name 'Object'. Did you mean 'object'?
-==== invalidLetInForOfAndForIn_ES6.ts (5 errors) ====
+==== invalidLetInForOfAndForIn_ES6.ts (7 errors) ====
     // This should be an error
     // More details: http://www.ecma-international.org/ecma-262/6.0/#sec-iteration-statements
     
@@ -35,6 +37,10 @@ invalidLetInForOfAndForIn_ES6.ts(5,20): error TS1128: Declaration or statement e
 !!! error TS2488: Type '{}' must have a '[Symbol.iterator]()' method that returns an iterator.
                  ~
 !!! error TS1181: Array element destructuring pattern expected.
+                 ~
+!!! error TS2695: Left side of comma operator is unused and has no side effects.
+                 ~~~
+!!! error TS2695: Left side of comma operator is unused and has no side effects.
                       ~
 !!! error TS1005: ';' expected.
                        ~

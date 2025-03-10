@@ -1,4 +1,4 @@
-mappedTypeAsStringTemplate.ts(7,5): error TS2741: Property 'xy' is missing in type '{ x: number }' but required in type '{ xy: number }'.
+mappedTypeAsStringTemplate.ts(7,5): error TS2741: Property 'xy' is missing in type '{ x: number; }' but required in type '{ xy: number; }'.
 
 
 ==== mappedTypeAsStringTemplate.ts (1 errors) ====
@@ -10,5 +10,5 @@ mappedTypeAsStringTemplate.ts(7,5): error TS2741: Property 'xy' is missing in ty
     
     foo(c);
         ~
-!!! error TS2741: Property 'xy' is missing in type '{ x: number }' but required in type '{ xy: number }'.
+!!! error TS2741: Property 'xy' is missing in type '{ x: number; }' but required in type '{ xy: number; }'.
     

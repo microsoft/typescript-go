@@ -15,9 +15,9 @@ mappedTypeErrors.ts(59,9): error TS2403: Subsequent variable declarations must h
 mappedTypeErrors.ts(60,9): error TS2403: Subsequent variable declarations must have the same type.  Variable 'x' must be of type '{ [P in keyof T]: T[P] }', but here has type '{ readonly [P in keyof T]: T[P] }'.
 mappedTypeErrors.ts(61,9): error TS2403: Subsequent variable declarations must have the same type.  Variable 'x' must be of type '{ [P in keyof T]: T[P] }', but here has type '{ readonly [P in keyof T]?: T[P] | undefined }'.
 mappedTypeErrors.ts(66,9): error TS2403: Subsequent variable declarations must have the same type.  Variable 'x' must be of type '{ [P in keyof T]: T[P] }', but here has type '{ [P in keyof T]: T[P][] }'.
-mappedTypeErrors.ts(75,45): error TS2741: Property 'y' is missing in type '{ x: number }' but required in type 'Readonly<{ x: number, y: number }>'.
-mappedTypeErrors.ts(77,59): error TS2353: Object literal may only specify known properties, and 'z' does not exist in type 'Readonly<{ x: number, y: number }>'.
-mappedTypeErrors.ts(83,58): error TS2353: Object literal may only specify known properties, and 'z' does not exist in type 'Partial<{ x: number, y: number }>'.
+mappedTypeErrors.ts(75,45): error TS2741: Property 'y' is missing in type '{ x: number; }' but required in type 'Readonly<{ x: number; y: number; }>'.
+mappedTypeErrors.ts(77,59): error TS2353: Object literal may only specify known properties, and 'z' does not exist in type 'Readonly<{ x: number; y: number; }>'.
+mappedTypeErrors.ts(83,58): error TS2353: Object literal may only specify known properties, and 'z' does not exist in type 'Partial<{ x: number; y: number; }>'.
 mappedTypeErrors.ts(105,17): error TS2322: Type 'undefined' is not assignable to type 'string'.
 mappedTypeErrors.ts(106,17): error TS2353: Object literal may only specify known properties, and 'c' does not exist in type 'Pick<Foo, keyof Foo>'.
 mappedTypeErrors.ts(123,14): error TS2322: Type 'undefined' is not assignable to type 'string'.
@@ -143,12 +143,12 @@ mappedTypeErrors.ts(152,17): error TS2339: Property 'foo' does not exist on type
     function f20() {
         let x1 = objAndReadonly({ x: 0, y: 0 }, { x: 1 });  // Error
                                                 ~~~~~~~~
-!!! error TS2741: Property 'y' is missing in type '{ x: number }' but required in type 'Readonly<{ x: number, y: number }>'.
+!!! error TS2741: Property 'y' is missing in type '{ x: number; }' but required in type 'Readonly<{ x: number; y: number; }>'.
 !!! related TS2728 mappedTypeErrors.ts:75:37: 'y' is declared here.
         let x2 = objAndReadonly({ x: 0, y: 0 }, { x: 1, y: 1 });
         let x3 = objAndReadonly({ x: 0, y: 0 }, { x: 1, y: 1, z: 1 });  // Error
                                                               ~
-!!! error TS2353: Object literal may only specify known properties, and 'z' does not exist in type 'Readonly<{ x: number, y: number }>'.
+!!! error TS2353: Object literal may only specify known properties, and 'z' does not exist in type 'Readonly<{ x: number; y: number; }>'.
     }
     
     function f21() {
@@ -156,7 +156,7 @@ mappedTypeErrors.ts(152,17): error TS2339: Property 'foo' does not exist on type
         let x2 = objAndPartial({ x: 0, y: 0 }, { x: 1, y: 1 });
         let x3 = objAndPartial({ x: 0, y: 0 }, { x: 1, y: 1, z: 1 });  // Error
                                                              ~
-!!! error TS2353: Object literal may only specify known properties, and 'z' does not exist in type 'Partial<{ x: number, y: number }>'.
+!!! error TS2353: Object literal may only specify known properties, and 'z' does not exist in type 'Partial<{ x: number; y: number; }>'.
     }
     
     // Verify use of Pick<T, K> for setState functions (#12793)
@@ -222,7 +222,7 @@ mappedTypeErrors.ts(152,17): error TS2339: Property 'foo' does not exist on type
     let x3: { [P in keyof T2]: T2[P]} = { a: 'no' };  // Error
                                           ~
 !!! error TS2322: Type 'string' is not assignable to type 'number'.
-!!! related TS6500 mappedTypeErrors.ts:126:13: The expected type comes from property 'a' which is declared here on type '{ [x: string]: any, a?: number | undefined }'
+!!! related TS6500 mappedTypeErrors.ts:126:13: The expected type comes from property 'a' which is declared here on type '{ [x: string]: any; a?: number | undefined; }'
     
     // Repro from #13044
     

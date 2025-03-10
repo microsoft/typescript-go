@@ -56,14 +56,14 @@ varianceAnnotations.ts(117,1): error TS2322: Type 'Baz<unknown>' is not assignab
   Type 'unknown' is not assignable to type 'string'.
 varianceAnnotations.ts(136,7): error TS2322: Type 'Parent<unknown>' is not assignable to type 'Parent<string>'.
   Type 'unknown' is not assignable to type 'string'.
-varianceAnnotations.ts(160,68): error TS2345: Argument of type 'ActionObject<{ type: "PLAY", value: number }>' is not assignable to parameter of type 'ActionObject<{ type: "PLAY", value: number } | { type: "RESET" }>'.
+varianceAnnotations.ts(160,68): error TS2345: Argument of type 'ActionObject<{ type: "PLAY"; value: number; }>' is not assignable to parameter of type 'ActionObject<{ type: "PLAY"; value: number; } | { type: "RESET"; }>'.
   Types of property 'exec' are incompatible.
-    Type '(meta: StateNode<any, { type: "PLAY", value: number }>) => void' is not assignable to type '(meta: StateNode<any, { type: "PLAY", value: number } | { type: "RESET" }>) => void'.
+    Type '(meta: StateNode<any, { type: "PLAY"; value: number; }>) => void' is not assignable to type '(meta: StateNode<any, { type: "PLAY"; value: number; } | { type: "RESET"; }>) => void'.
       Types of parameters 'meta' and 'meta' are incompatible.
-        Type 'StateNode<any, { type: "PLAY", value: number } | { type: "RESET" }>' is not assignable to type 'StateNode<any, { type: "PLAY", value: number }>'.
+        Type 'StateNode<any, { type: "PLAY"; value: number; } | { type: "RESET"; }>' is not assignable to type 'StateNode<any, { type: "PLAY"; value: number; }>'.
           Types of property '_storedEvent' are incompatible.
-            Type '{ type: "PLAY", value: number } | { type: "RESET" }' is not assignable to type '{ type: "PLAY", value: number }'.
-              Property 'value' is missing in type '{ type: "RESET" }' but required in type '{ type: "PLAY", value: number }'.
+            Type '{ type: "PLAY"; value: number; } | { type: "RESET"; }' is not assignable to type '{ type: "PLAY"; value: number; }'.
+              Property 'value' is missing in type '{ type: "RESET"; }' but required in type '{ type: "PLAY"; value: number; }'.
 
 
 ==== varianceAnnotations.ts (31 errors) ====
@@ -316,14 +316,14 @@ varianceAnnotations.ts(160,68): error TS2345: Argument of type 'ActionObject<{ t
     
     createMachine<{ type: "PLAY"; value: number } | { type: "RESET" }>(qq);  // Error
                                                                        ~~
-!!! error TS2345: Argument of type 'ActionObject<{ type: "PLAY", value: number }>' is not assignable to parameter of type 'ActionObject<{ type: "PLAY", value: number } | { type: "RESET" }>'.
+!!! error TS2345: Argument of type 'ActionObject<{ type: "PLAY"; value: number; }>' is not assignable to parameter of type 'ActionObject<{ type: "PLAY"; value: number; } | { type: "RESET"; }>'.
 !!! error TS2345:   Types of property 'exec' are incompatible.
-!!! error TS2345:     Type '(meta: StateNode<any, { type: "PLAY", value: number }>) => void' is not assignable to type '(meta: StateNode<any, { type: "PLAY", value: number } | { type: "RESET" }>) => void'.
+!!! error TS2345:     Type '(meta: StateNode<any, { type: "PLAY"; value: number; }>) => void' is not assignable to type '(meta: StateNode<any, { type: "PLAY"; value: number; } | { type: "RESET"; }>) => void'.
 !!! error TS2345:       Types of parameters 'meta' and 'meta' are incompatible.
-!!! error TS2345:         Type 'StateNode<any, { type: "PLAY", value: number } | { type: "RESET" }>' is not assignable to type 'StateNode<any, { type: "PLAY", value: number }>'.
+!!! error TS2345:         Type 'StateNode<any, { type: "PLAY"; value: number; } | { type: "RESET"; }>' is not assignable to type 'StateNode<any, { type: "PLAY"; value: number; }>'.
 !!! error TS2345:           Types of property '_storedEvent' are incompatible.
-!!! error TS2345:             Type '{ type: "PLAY", value: number } | { type: "RESET" }' is not assignable to type '{ type: "PLAY", value: number }'.
-!!! error TS2345:               Property 'value' is missing in type '{ type: "RESET" }' but required in type '{ type: "PLAY", value: number }'.
+!!! error TS2345:             Type '{ type: "PLAY"; value: number; } | { type: "RESET"; }' is not assignable to type '{ type: "PLAY"; value: number; }'.
+!!! error TS2345:               Property 'value' is missing in type '{ type: "RESET"; }' but required in type '{ type: "PLAY"; value: number; }'.
 !!! related TS2728 varianceAnnotations.ts:158:48: 'value' is declared here.
     
     // Repros from #48618

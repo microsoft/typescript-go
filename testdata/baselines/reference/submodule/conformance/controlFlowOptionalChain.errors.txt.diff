@@ -13,36 +13,36 @@
 +    Type 'undefined' has no call signatures.
  controlFlowOptionalChain.ts(39,1): error TS2722: Cannot invoke an object which is possibly 'undefined'.
  controlFlowOptionalChain.ts(52,5): error TS18048: 'o2' is possibly 'undefined'.
-+controlFlowOptionalChain.ts(52,8): error TS2339: Property 'f' does not exist on type '{ f: (x: any) => x is number } | undefined'.
++controlFlowOptionalChain.ts(52,8): error TS2339: Property 'f' does not exist on type '{ f: (x: any) => x is number; } | undefined'.
 +  Property 'f' does not exist on type 'undefined'.
  controlFlowOptionalChain.ts(57,1): error TS18048: 'o2' is possibly 'undefined'.
-+controlFlowOptionalChain.ts(57,4): error TS2339: Property 'f' does not exist on type '{ f: (x: any) => x is number } | undefined'.
++controlFlowOptionalChain.ts(57,4): error TS2339: Property 'f' does not exist on type '{ f: (x: any) => x is number; } | undefined'.
 +  Property 'f' does not exist on type 'undefined'.
  controlFlowOptionalChain.ts(68,5): error TS18048: 'o3' is possibly 'undefined'.
-+controlFlowOptionalChain.ts(68,8): error TS2339: Property 'x' does not exist on type '{ x: 2, y: number } | undefined'.
++controlFlowOptionalChain.ts(68,8): error TS2339: Property 'x' does not exist on type '{ x: 2; y: number; } | undefined'.
 +  Property 'x' does not exist on type 'undefined'.
  controlFlowOptionalChain.ts(72,1): error TS18048: 'o3' is possibly 'undefined'.
-+controlFlowOptionalChain.ts(72,4): error TS2339: Property 'x' does not exist on type '{ x: 1, y: string } | { x: 2, y: number } | undefined'.
++controlFlowOptionalChain.ts(72,4): error TS2339: Property 'x' does not exist on type '{ x: 1; y: string; } | { x: 2; y: number; } | undefined'.
 +  Property 'x' does not exist on type 'undefined'.
  controlFlowOptionalChain.ts(83,5): error TS18048: 'o4.x' is possibly 'undefined'.
-+controlFlowOptionalChain.ts(83,10): error TS2339: Property 'y' does not exist on type '{ y: boolean } | undefined'.
++controlFlowOptionalChain.ts(83,10): error TS2339: Property 'y' does not exist on type '{ y: boolean; } | undefined'.
 +  Property 'y' does not exist on type 'undefined'.
  controlFlowOptionalChain.ts(87,1): error TS18048: 'o4.x' is possibly 'undefined'.
-+controlFlowOptionalChain.ts(87,6): error TS2339: Property 'y' does not exist on type '{ y: boolean } | undefined'.
++controlFlowOptionalChain.ts(87,6): error TS2339: Property 'y' does not exist on type '{ y: boolean; } | undefined'.
 +  Property 'y' does not exist on type 'undefined'.
  controlFlowOptionalChain.ts(104,5): error TS18048: 'o5.x' is possibly 'undefined'.
-+controlFlowOptionalChain.ts(104,10): error TS2339: Property 'y' does not exist on type '{ y: { z?: { w: boolean } | undefined } } | undefined'.
++controlFlowOptionalChain.ts(104,10): error TS2339: Property 'y' does not exist on type '{ y: { z?: { w: boolean; } | undefined; }; } | undefined'.
 +  Property 'y' does not exist on type 'undefined'.
  controlFlowOptionalChain.ts(105,5): error TS18048: 'o5.x' is possibly 'undefined'.
 -controlFlowOptionalChain.ts(105,5): error TS18048: 'o5.x.y.z' is possibly 'undefined'.
-+controlFlowOptionalChain.ts(105,10): error TS2339: Property 'y' does not exist on type '{ y: { z?: { w: boolean } | undefined } } | undefined'.
++controlFlowOptionalChain.ts(105,10): error TS2339: Property 'y' does not exist on type '{ y: { z?: { w: boolean; } | undefined; }; } | undefined'.
 +  Property 'y' does not exist on type 'undefined'.
  controlFlowOptionalChain.ts(111,1): error TS18048: 'o5.x' is possibly 'undefined'.
-+controlFlowOptionalChain.ts(111,6): error TS2339: Property 'y' does not exist on type '{ y: { z?: { w: boolean } | undefined } } | undefined'.
++controlFlowOptionalChain.ts(111,6): error TS2339: Property 'y' does not exist on type '{ y: { z?: { w: boolean; } | undefined; }; } | undefined'.
 +  Property 'y' does not exist on type 'undefined'.
  controlFlowOptionalChain.ts(112,1): error TS18048: 'o5.x' is possibly 'undefined'.
 -controlFlowOptionalChain.ts(112,1): error TS18048: 'o5.x.y.z' is possibly 'undefined'.
-+controlFlowOptionalChain.ts(112,6): error TS2339: Property 'y' does not exist on type '{ y: { z?: { w: boolean } | undefined } } | undefined'.
++controlFlowOptionalChain.ts(112,6): error TS2339: Property 'y' does not exist on type '{ y: { z?: { w: boolean; } | undefined; }; } | undefined'.
 +  Property 'y' does not exist on type 'undefined'.
  controlFlowOptionalChain.ts(130,5): error TS18048: 'o6' is possibly 'undefined'.
 +controlFlowOptionalChain.ts(130,8): error TS2339: Property 'f' does not exist on type 'Base | undefined'.
@@ -206,7 +206,7 @@
          ~~
  !!! error TS18048: 'o2' is possibly 'undefined'.
 +           ~
-+!!! error TS2339: Property 'f' does not exist on type '{ f: (x: any) => x is number } | undefined'.
++!!! error TS2339: Property 'f' does not exist on type '{ f: (x: any) => x is number; } | undefined'.
 +!!! error TS2339:   Property 'f' does not exist on type 'undefined'.
      }
      x;
@@ -216,7 +216,7 @@
      ~~
  !!! error TS18048: 'o2' is possibly 'undefined'.
 +       ~
-+!!! error TS2339: Property 'f' does not exist on type '{ f: (x: any) => x is number } | undefined'.
++!!! error TS2339: Property 'f' does not exist on type '{ f: (x: any) => x is number; } | undefined'.
 +!!! error TS2339:   Property 'f' does not exist on type 'undefined'.
      
      declare const o3: { x: 1, y: string } | { x: 2, y: number } | undefined;
@@ -226,7 +226,7 @@
          ~~
  !!! error TS18048: 'o3' is possibly 'undefined'.
 +           ~
-+!!! error TS2339: Property 'x' does not exist on type '{ x: 2, y: number } | undefined'.
++!!! error TS2339: Property 'x' does not exist on type '{ x: 2; y: number; } | undefined'.
 +!!! error TS2339:   Property 'x' does not exist on type 'undefined'.
      }
      o3;
@@ -235,7 +235,7 @@
      ~~
  !!! error TS18048: 'o3' is possibly 'undefined'.
 +       ~
-+!!! error TS2339: Property 'x' does not exist on type '{ x: 1, y: string } | { x: 2, y: number } | undefined'.
++!!! error TS2339: Property 'x' does not exist on type '{ x: 1; y: string; } | { x: 2; y: number; } | undefined'.
 +!!! error TS2339:   Property 'x' does not exist on type 'undefined'.
      
      declare const o4: { x?: { y: boolean } };
@@ -245,7 +245,7 @@
          ~~~~
  !!! error TS18048: 'o4.x' is possibly 'undefined'.
 +             ~
-+!!! error TS2339: Property 'y' does not exist on type '{ y: boolean } | undefined'.
++!!! error TS2339: Property 'y' does not exist on type '{ y: boolean; } | undefined'.
 +!!! error TS2339:   Property 'y' does not exist on type 'undefined'.
      }
      o4.x;
@@ -254,7 +254,7 @@
      ~~~~
  !!! error TS18048: 'o4.x' is possibly 'undefined'.
 +         ~
-+!!! error TS2339: Property 'y' does not exist on type '{ y: boolean } | undefined'.
++!!! error TS2339: Property 'y' does not exist on type '{ y: boolean; } | undefined'.
 +!!! error TS2339:   Property 'y' does not exist on type 'undefined'.
      
      declare const o5: { x?: { y: { z?: { w: boolean } } } };
@@ -264,7 +264,7 @@
          ~~~~
  !!! error TS18048: 'o5.x' is possibly 'undefined'.
 +             ~
-+!!! error TS2339: Property 'y' does not exist on type '{ y: { z?: { w: boolean } | undefined } } | undefined'.
++!!! error TS2339: Property 'y' does not exist on type '{ y: { z?: { w: boolean; } | undefined; }; } | undefined'.
 +!!! error TS2339:   Property 'y' does not exist on type 'undefined'.
          o5.x.y.z.w;
          ~~~~
@@ -272,7 +272,7 @@
 -        ~~~~~~~~
 -!!! error TS18048: 'o5.x.y.z' is possibly 'undefined'.
 +             ~
-+!!! error TS2339: Property 'y' does not exist on type '{ y: { z?: { w: boolean } | undefined } } | undefined'.
++!!! error TS2339: Property 'y' does not exist on type '{ y: { z?: { w: boolean; } | undefined; }; } | undefined'.
 +!!! error TS2339:   Property 'y' does not exist on type 'undefined'.
      }
      o5.x;
@@ -282,7 +282,7 @@
      ~~~~
  !!! error TS18048: 'o5.x' is possibly 'undefined'.
 +         ~
-+!!! error TS2339: Property 'y' does not exist on type '{ y: { z?: { w: boolean } | undefined } } | undefined'.
++!!! error TS2339: Property 'y' does not exist on type '{ y: { z?: { w: boolean; } | undefined; }; } | undefined'.
 +!!! error TS2339:   Property 'y' does not exist on type 'undefined'.
      o5.x.y.z.w;
      ~~~~
@@ -290,7 +290,7 @@
 -    ~~~~~~~~
 -!!! error TS18048: 'o5.x.y.z' is possibly 'undefined'.
 +         ~
-+!!! error TS2339: Property 'y' does not exist on type '{ y: { z?: { w: boolean } | undefined } } | undefined'.
++!!! error TS2339: Property 'y' does not exist on type '{ y: { z?: { w: boolean; } | undefined; }; } | undefined'.
 +!!! error TS2339:   Property 'y' does not exist on type 'undefined'.
      
      interface Base {

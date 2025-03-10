@@ -6,6 +6,7 @@ nameCollisions.ts(10,12): error TS2300: Duplicate identifier 'z'.
 nameCollisions.ts(10,12): error TS2300: Duplicate identifier 'z'.
 nameCollisions.ts(13,9): error TS2300: Duplicate identifier 'z'.
 nameCollisions.ts(13,9): error TS2300: Duplicate identifier 'z'.
+nameCollisions.ts(15,12): error TS2434: A namespace declaration cannot be located prior to a class or function with which it is merged.
 nameCollisions.ts(24,9): error TS2300: Duplicate identifier 'f'.
 nameCollisions.ts(24,9): error TS2300: Duplicate identifier 'f'.
 nameCollisions.ts(25,14): error TS2300: Duplicate identifier 'f'.
@@ -20,7 +21,7 @@ nameCollisions.ts(36,14): error TS2814: Function with bodies can only merge with
 nameCollisions.ts(37,11): error TS2813: Class declaration cannot implement overload list for 'C2'.
 
 
-==== nameCollisions.ts (20 errors) ====
+==== nameCollisions.ts (21 errors) ====
     module T {
         var x = 2;
             ~
@@ -52,6 +53,8 @@ nameCollisions.ts(37,11): error TS2813: Class declaration cannot implement overl
 !!! error TS2300: Duplicate identifier 'z'.
     
         module y {
+               ~
+!!! error TS2434: A namespace declaration cannot be located prior to a class or function with which it is merged.
             var b;
         }
     

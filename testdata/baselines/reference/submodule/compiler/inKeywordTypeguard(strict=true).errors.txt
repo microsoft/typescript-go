@@ -63,8 +63,8 @@ inKeywordTypeguard.ts(190,11): error TS2339: Property 'a' does not exist on type
 inKeywordTypeguard.ts(193,11): error TS2339: Property 'a' does not exist on type 'T & object'.
 inKeywordTypeguard.ts(194,11): error TS2339: Property 'b' does not exist on type 'T & object'.
 inKeywordTypeguard.ts(195,11): error TS2339: Property 'c' does not exist on type 'T & object'.
-inKeywordTypeguard.ts(205,11): error TS2339: Property 'b' does not exist on type '{ a: string }'.
-inKeywordTypeguard.ts(206,11): error TS2339: Property 'c' does not exist on type '{ a: string }'.
+inKeywordTypeguard.ts(205,11): error TS2339: Property 'b' does not exist on type '{ a: string; }'.
+inKeywordTypeguard.ts(206,11): error TS2339: Property 'c' does not exist on type '{ a: string; }'.
 inKeywordTypeguard.ts(251,13): error TS2304: Cannot find name 'Symbol'.
 inKeywordTypeguard.ts(255,11): error TS2339: Property 'a' does not exist on type 'object'.
 inKeywordTypeguard.ts(256,9): error TS7053: Element implicitly has an 'any' type because expression of type '"a"' can't be used to index type '{}'.
@@ -413,10 +413,10 @@ inKeywordTypeguard.ts(376,34): error TS2304: Cannot find name 'Record'.
             x.a;
             x.b;
               ~
-!!! error TS2339: Property 'b' does not exist on type '{ a: string }'.
+!!! error TS2339: Property 'b' does not exist on type '{ a: string; }'.
             x.c;
               ~
-!!! error TS2339: Property 'c' does not exist on type '{ a: string }'.
+!!! error TS2339: Property 'c' does not exist on type '{ a: string; }'.
         }
     }
     

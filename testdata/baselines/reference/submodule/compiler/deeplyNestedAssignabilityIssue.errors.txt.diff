@@ -16,7 +16,7 @@
 +    [7m 2[0m     a: number;
 +    [7m  [0m [96m    ~[0m
 +
-+  [96mdeeplyNestedAssignabilityIssue.ts[0m:[93m9[0m:[93m17[0m - The expected type comes from property 'thing' which is declared here on type '{ thing: A }'
++  [96mdeeplyNestedAssignabilityIssue.ts[0m:[93m9[0m:[93m17[0m - The expected type comes from property 'thing' which is declared here on type '{ thing: A; }'
 +    [7m 9[0m                 thing: A;
 +    [7m  [0m [96m                ~~~~~[0m
 +
@@ -34,27 +34,10 @@
 +    [7m 2[0m     a: number;
 +    [7m  [0m [96m    ~[0m
 +
-+  [96mdeeplyNestedAssignabilityIssue.ts[0m:[93m12[0m:[93m17[0m - The expected type comes from property 'another' which is declared here on type '{ another: A }'
++  [96mdeeplyNestedAssignabilityIssue.ts[0m:[93m12[0m:[93m17[0m - The expected type comes from property 'another' which is declared here on type '{ another: A; }'
      [7m12[0m                 another: A;
      [7m  [0m [96m                ~~~~~~~[0m
 -    The expected type comes from property 'another' which is declared here on type '{ another: A; }'
  
  
  ==== deeplyNestedAssignabilityIssue.ts (2 errors) ====
-@@= skipped -49, +48 lines =@@
-                     ~~~~~
- !!! error TS2741: Property 'a' is missing in type '{}' but required in type 'A'.
- !!! related TS2728 deeplyNestedAssignabilityIssue.ts:2:5: 'a' is declared here.
--!!! related TS6500 deeplyNestedAssignabilityIssue.ts:9:17: The expected type comes from property 'thing' which is declared here on type '{ thing: A; }'
-+!!! related TS6500 deeplyNestedAssignabilityIssue.ts:9:17: The expected type comes from property 'thing' which is declared here on type '{ thing: A }'
-                 },
-                 yetstill: {
-                     another: {}
-                     ~~~~~~~
- !!! error TS2741: Property 'a' is missing in type '{}' but required in type 'A'.
- !!! related TS2728 deeplyNestedAssignabilityIssue.ts:2:5: 'a' is declared here.
--!!! related TS6500 deeplyNestedAssignabilityIssue.ts:12:17: The expected type comes from property 'another' which is declared here on type '{ another: A; }'
-+!!! related TS6500 deeplyNestedAssignabilityIssue.ts:12:17: The expected type comes from property 'another' which is declared here on type '{ another: A }'
-                 }
-             }
-         }

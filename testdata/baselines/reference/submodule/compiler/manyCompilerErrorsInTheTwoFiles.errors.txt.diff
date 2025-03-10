@@ -4,7 +4,7 @@
 +[96ma.ts[0m:[93m1[0m:[93m12[0m - [91merror[0m[90m TS1109: [0mExpression expected.
 +
 +[7m1[0m const a =!@#!@$
-+[7m [0m [91m           [0m
++[7m [0m [91m           ~[0m
 +
 +[96ma.ts[0m:[93m1[0m:[93m12[0m - [91merror[0m[90m TS1005: [0m',' expected.
 +
@@ -29,12 +29,13 @@
  [96ma.ts[0m:[93m1[0m:[93m16[0m - [91merror[0m[90m TS1109: [0mExpression expected.
  
  [7m1[0m const a =!@#!@$
- [7m [0m [91m               [0m
+-[7m [0m [91m               [0m
++[7m [0m [91m               ~[0m
 +
 +[96ma.ts[0m:[93m2[0m:[93m13[0m - [91merror[0m[90m TS1109: [0mExpression expected.
 +
 +[7m2[0m const b = !@#!@#!@#!
-+[7m [0m [91m            [0m
++[7m [0m [91m            ~[0m
 +
 +[96ma.ts[0m:[93m2[0m:[93m13[0m - [91merror[0m[90m TS1005: [0m',' expected.
 +
@@ -59,7 +60,7 @@
 +[96ma.ts[0m:[93m2[0m:[93m16[0m - [91merror[0m[90m TS1109: [0mExpression expected.
 +
 +[7m2[0m const b = !@#!@#!@#!
-+[7m [0m [91m               [0m
++[7m [0m [91m               ~[0m
 +
 +[96ma.ts[0m:[93m2[0m:[93m16[0m - [91merror[0m[90m TS1005: [0m';' expected.
 +
@@ -79,7 +80,7 @@
 +[96ma.ts[0m:[93m2[0m:[93m19[0m - [91merror[0m[90m TS1109: [0mExpression expected.
 +
 +[7m2[0m const b = !@#!@#!@#!
-+[7m [0m [91m                  [0m
++[7m [0m [91m                  ~[0m
 +
 +[96ma.ts[0m:[93m2[0m:[93m19[0m - [91merror[0m[90m TS1005: [0m';' expected.
 +
@@ -114,7 +115,8 @@
  [96ma.ts[0m:[93m4[0m:[93m22[0m - [91merror[0m[90m TS1002: [0mUnterminated string literal.
  
  [7m4[0m HERE's A shouty thing
- [7m [0m [91m                     [0m
+-[7m [0m [91m                     [0m
++[7m [0m [91m                     ~[0m
 +
  [96ma.ts[0m:[93m5[0m:[93m1[0m - [91merror[0m[90m TS1434: [0mUnexpected keyword or identifier.
  

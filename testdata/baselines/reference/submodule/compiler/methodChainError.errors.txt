@@ -1,11 +1,9 @@
-error TS2349: This expression is not callable.
-  Type 'String' has no call signatures.
 methodChainError.ts(10,6): error TS2554: Expected 1 arguments, but got 0.
+methodChainError.ts(16,6): error TS2349: This expression is not callable.
+  Type 'String' has no call signatures.
 
 
-!!! error TS2349: This expression is not callable.
-!!! error TS2349:   Type 'String' has no call signatures.
-==== methodChainError.ts (1 errors) ====
+==== methodChainError.ts (2 errors) ====
     class Builder {
         notMethod: string
         method(param: string): Builder {
@@ -25,4 +23,7 @@ methodChainError.ts(10,6): error TS2554: Expected 1 arguments, but got 0.
     new Builder()
         .method("a")
         .notMethod()
+         ~~~~~~~~~
+!!! error TS2349: This expression is not callable.
+!!! error TS2349:   Type 'String' has no call signatures.
         .method("a");

@@ -3,9 +3,10 @@ logicalNotOperatorWithAnyOtherType.ts(34,25): error TS2873: This kind of express
 logicalNotOperatorWithAnyOtherType.ts(45,27): error TS2365: Operator '+' cannot be applied to types 'null' and 'undefined'.
 logicalNotOperatorWithAnyOtherType.ts(46,27): error TS2365: Operator '+' cannot be applied to types 'null' and 'null'.
 logicalNotOperatorWithAnyOtherType.ts(47,27): error TS2365: Operator '+' cannot be applied to types 'undefined' and 'undefined'.
+logicalNotOperatorWithAnyOtherType.ts(57,1): error TS2695: Left side of comma operator is unused and has no side effects.
 
 
-==== logicalNotOperatorWithAnyOtherType.ts (5 errors) ====
+==== logicalNotOperatorWithAnyOtherType.ts (6 errors) ====
     // ! operator on any type
     
     var ANY: any;
@@ -73,5 +74,7 @@ logicalNotOperatorWithAnyOtherType.ts(47,27): error TS2365: Operator '+' cannot 
     !ANY1;
     !ANY2[0];
     !ANY, ANY1;
+    ~~~~
+!!! error TS2695: Left side of comma operator is unused and has no side effects.
     !objA.a;
     !M.n;

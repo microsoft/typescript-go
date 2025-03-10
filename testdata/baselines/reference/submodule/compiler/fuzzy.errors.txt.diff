@@ -6,7 +6,7 @@
    Property 'alsoWorks' is missing in type 'C' but required in type 'I'.
 -fuzzy.ts(25,20): error TS2352: Conversion of type '{ oneI: this; }' to type 'R' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
 -  Property 'anything' is missing in type '{ oneI: this; }' but required in type 'R'.
-+fuzzy.ts(25,20): error TS2741: Property 'anything' is missing in type '{ oneI: this }' but required in type 'R'.
++fuzzy.ts(25,20): error TS2741: Property 'anything' is missing in type '{ oneI: this; }' but required in type 'R'.
  
  
  ==== fuzzy.ts (3 errors) ====
@@ -16,7 +16,7 @@
                         ~~~~~~~~~~~~~~~~~~~
 -!!! error TS2352: Conversion of type '{ oneI: this; }' to type 'R' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
 -!!! error TS2352:   Property 'anything' is missing in type '{ oneI: this; }' but required in type 'R'.
-+!!! error TS2741: Property 'anything' is missing in type '{ oneI: this }' but required in type 'R'.
++!!! error TS2741: Property 'anything' is missing in type '{ oneI: this; }' but required in type 'R'.
  !!! related TS2728 fuzzy.ts:9:9: 'anything' is declared here.
              }
          }

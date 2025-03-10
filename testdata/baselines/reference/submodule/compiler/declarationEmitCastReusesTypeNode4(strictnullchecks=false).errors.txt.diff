@@ -3,17 +3,20 @@
 @@= skipped -0, +-1 lines =@@
 -<no content>
 @@= skipped --1, +1 lines =@@
++input.js(5,7): error TS7005: Variable 'something' implicitly has an 'any' type.
 +input.js(13,77): error TS7006: Parameter 'req' implicitly has an 'any' type.
 +input.js(21,64): error TS7006: Parameter 'req' implicitly has an 'any' type.
 +input.js(37,88): error TS7006: Parameter 'b' implicitly has an 'any' type.
 +
 +
-+==== input.js (3 errors) ====
++==== input.js (4 errors) ====
 +    /**
 +     * @typedef {{ } & { name?: string }} P
 +     */
 +    
 +    const something = /** @type {*} */(null);
++          ~~~~~~~~~
++!!! error TS7005: Variable 'something' implicitly has an 'any' type.
 +    
 +    export let vLet = /** @type {P} */(something);
 +    export const vConst = /** @type {P} */(something);

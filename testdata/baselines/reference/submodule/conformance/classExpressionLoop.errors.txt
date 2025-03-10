@@ -1,13 +1,1 @@
-classExpressionLoop.ts(3,20): error TS2345: Argument of type '{ new(): C, prototype: C }' is not assignable to parameter of type 'undefined'.
-
-
-==== classExpressionLoop.ts (1 errors) ====
-    let arr = [];
-    for (let i = 0; i < 10; ++i) {
-        arr.push(class C {
-                       ~
-!!! error TS2345: Argument of type '{ new(): C, prototype: C }' is not assignable to parameter of type 'undefined'.
-            prop = i;
-        });
-    }
-    
+<no content>

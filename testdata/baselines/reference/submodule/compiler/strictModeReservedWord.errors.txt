@@ -1,5 +1,3 @@
-error TS2349: This expression is not callable.
-  Type 'String' has no call signatures.
 strictModeReservedWord.ts(1,5): error TS2480: 'let' is not allowed to be used as a name in 'let' or 'const' declarations.
 strictModeReservedWord.ts(5,9): error TS1212: Identifier expected. 'public' is a reserved word in strict mode.
 strictModeReservedWord.ts(5,9): error TS1212: Identifier expected. 'public' is a reserved word in strict mode.
@@ -65,11 +63,11 @@ strictModeReservedWord.ts(22,12): error TS2503: Cannot find namespace 'interface
 strictModeReservedWord.ts(23,5): error TS2552: Cannot find name 'ublic'. Did you mean 'public'?
 strictModeReservedWord.ts(24,5): error TS1212: Identifier expected. 'static' is a reserved word in strict mode.
 strictModeReservedWord.ts(24,5): error TS1212: Identifier expected. 'static' is a reserved word in strict mode.
+strictModeReservedWord.ts(24,5): error TS2349: This expression is not callable.
+  Type 'String' has no call signatures.
 
 
-!!! error TS2349: This expression is not callable.
-!!! error TS2349:   Type 'String' has no call signatures.
-==== strictModeReservedWord.ts (65 errors) ====
+==== strictModeReservedWord.ts (66 errors) ====
     let let = 10;
         ~~~
 !!! error TS2480: 'let' is not allowed to be used as a name in 'let' or 'const' declarations.
@@ -225,6 +223,9 @@ strictModeReservedWord.ts(24,5): error TS1212: Identifier expected. 'static' is 
 !!! error TS1212: Identifier expected. 'static' is a reserved word in strict mode.
         ~~~~~~
 !!! error TS1212: Identifier expected. 'static' is a reserved word in strict mode.
+        ~~~~~~
+!!! error TS2349: This expression is not callable.
+!!! error TS2349:   Type 'String' has no call signatures.
     }
     
     

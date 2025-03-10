@@ -10,25 +10,16 @@
  parserRealSource8.ts(162,28): error TS2304: Cannot find name 'Type'.
  parserRealSource8.ts(163,30): error TS2304: Cannot find name 'WithSymbol'.
 -parserRealSource8.ts(170,40): error TS2339: Property 'SymbolScopeBuilder' does not exist on type 'typeof TypeScript'.
-+parserRealSource8.ts(170,40): error TS2339: Property 'SymbolScopeBuilder' does not exist on type '{ AssignScopeContext: { new(scopeChain: ScopeChain, typeFlow: TypeFlow, modDeclChain: ModuleDeclaration[]): AssignScopeContext, prototype: AssignScopeContext }, pushAssignScope: (scope: SymbolScope, context: AssignScopeContext, type: Type, classType: Type, fnc: FuncDecl) => void, popAssignScope: (context: AssignScopeContext) => void, instanceCompare: (a: Symbol, b: Symbol) => Symbol, instanceFilterStop: (s: Symbol) => error, ScopeSearchFilter: { new(select: (a: Symbol, b: Symbol) => Symbol, stop: (s: Symbol) => boolean): ScopeSearchFilter, prototype: ScopeSearchFilter }, instanceFilter: ScopeSearchFilter, preAssignModuleScopes: (ast: AST, context: AssignScopeContext) => void, preAssignClassScopes: (ast: AST, context: AssignScopeContext) => void, preAssignInterfaceScopes: (ast: AST, context: AssignScopeContext) => void, preAssignWithScopes: (ast: AST, context: AssignScopeContext) => void, preAssignFuncDeclScopes: (ast: AST, context: AssignScopeContext) => void, preAssignCatchScopes: (ast: AST, context: AssignScopeContext) => void, preAssignScopes: (ast: AST, parent: AST, walker: IAstWalker) => AST, postAssignScopes: (ast: AST, parent: AST, walker: IAstWalker) => AST }'.
++parserRealSource8.ts(170,40): error TS2339: Property 'SymbolScopeBuilder' does not exist on type '{ AssignScopeContext: { new(scopeChain: ScopeChain, typeFlow: TypeFlow, modDeclChain: ModuleDeclaration[]): AssignScopeContext; prototype: AssignScopeContext; }; pushAssignScope: (scope: SymbolScope, context: AssignScopeContext, type: Type, classType: Type, fnc: FuncDecl) => void; popAssignScope: (context: AssignScopeContext) => void; instanceCompare: (a: Symbol, b: Symbol) => Symbol; instanceFilterStop: (s: Symbol) => error; ScopeSearchFilter: { new(select: (a: Symbol, b: Symbol) => Symbol, stop: (s: Symbol) => boolean): ScopeSearchFilter; prototype: ScopeSearchFilter; }; instanceFilter: ScopeSearchFilter; preAssignModuleScopes: (ast: AST, context: AssignScopeContext) => void; preAssignClassScopes: (ast: AST, context: AssignScopeContext) => void; preAssignInterfaceScopes: (ast: AST, context: AssignScopeContext) => void; preAssignWithScopes: (ast: AST, context: AssignScopeContext) => void; preAssignFuncDeclScopes: (ast: AST, context: AssignScopeContext) => void; preAssignCatchScopes: (ast: AST, context: AssignScopeContext) => void; preAssignScopes: (ast: AST, parent: AST, walker: IAstWalker) => AST; postAssignScopes: (ast: AST, parent: AST, walker: IAstWalker) => AST; }'.
  parserRealSource8.ts(176,50): error TS2304: Cannot find name 'AST'.
  parserRealSource8.ts(177,25): error TS2304: Cannot find name 'FuncDecl'.
  parserRealSource8.ts(185,24): error TS2304: Cannot find name 'hasFlag'.
-@@= skipped -24, +24 lines =@@
- parserRealSource8.ts(256,51): error TS2304: Cannot find name 'NodeType'.
- parserRealSource8.ts(257,23): error TS2304: Cannot find name 'FuncDecl'.
- parserRealSource8.ts(257,42): error TS2339: Property 'declAST' does not exist on type 'Symbol'.
-+parserRealSource8.ts(271,29): error TS18047: 'funcScope' is possibly 'null'.
-+parserRealSource8.ts(275,29): error TS18047: 'funcScope' is possibly 'null'.
- parserRealSource8.ts(284,38): error TS2304: Cannot find name 'FncFlags'.
- parserRealSource8.ts(286,55): error TS2304: Cannot find name 'NodeType'.
- parserRealSource8.ts(289,116): error TS2339: Property 'getType' does not exist on type 'Symbol'.
-@@= skipped -65, +67 lines =@@
+@@= skipped -89, +89 lines =@@
  parserRealSource8.ts(454,35): error TS2304: Cannot find name 'Catch'.
  
  
 -==== parserRealSource8.ts (130 errors) ====
-+==== parserRealSource8.ts (131 errors) ====
++==== parserRealSource8.ts (129 errors) ====
      // Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
      // See LICENSE.txt in the project root for complete license information.
      
@@ -43,22 +34,7 @@
              var withScope = new TypeScript.SymbolScopeBuilder(withType.members, withType.ambientMembers, null, null, context.scopeChain.scope, withType.symbol);
                                             ~~~~~~~~~~~~~~~~~~
 -!!! error TS2339: Property 'SymbolScopeBuilder' does not exist on type 'typeof TypeScript'.
-+!!! error TS2339: Property 'SymbolScopeBuilder' does not exist on type '{ AssignScopeContext: { new(scopeChain: ScopeChain, typeFlow: TypeFlow, modDeclChain: ModuleDeclaration[]): AssignScopeContext, prototype: AssignScopeContext }, pushAssignScope: (scope: SymbolScope, context: AssignScopeContext, type: Type, classType: Type, fnc: FuncDecl) => void, popAssignScope: (context: AssignScopeContext) => void, instanceCompare: (a: Symbol, b: Symbol) => Symbol, instanceFilterStop: (s: Symbol) => error, ScopeSearchFilter: { new(select: (a: Symbol, b: Symbol) => Symbol, stop: (s: Symbol) => boolean): ScopeSearchFilter, prototype: ScopeSearchFilter }, instanceFilter: ScopeSearchFilter, preAssignModuleScopes: (ast: AST, context: AssignScopeContext) => void, preAssignClassScopes: (ast: AST, context: AssignScopeContext) => void, preAssignInterfaceScopes: (ast: AST, context: AssignScopeContext) => void, preAssignWithScopes: (ast: AST, context: AssignScopeContext) => void, preAssignFuncDeclScopes: (ast: AST, context: AssignScopeContext) => void, preAssignCatchScopes: (ast: AST, context: AssignScopeContext) => void, preAssignScopes: (ast: AST, parent: AST, walker: IAstWalker) => AST, postAssignScopes: (ast: AST, parent: AST, walker: IAstWalker) => AST }'.
++!!! error TS2339: Property 'SymbolScopeBuilder' does not exist on type '{ AssignScopeContext: { new(scopeChain: ScopeChain, typeFlow: TypeFlow, modDeclChain: ModuleDeclaration[]): AssignScopeContext; prototype: AssignScopeContext; }; pushAssignScope: (scope: SymbolScope, context: AssignScopeContext, type: Type, classType: Type, fnc: FuncDecl) => void; popAssignScope: (context: AssignScopeContext) => void; instanceCompare: (a: Symbol, b: Symbol) => Symbol; instanceFilterStop: (s: Symbol) => error; ScopeSearchFilter: { new(select: (a: Symbol, b: Symbol) => Symbol, stop: (s: Symbol) => boolean): ScopeSearchFilter; prototype: ScopeSearchFilter; }; instanceFilter: ScopeSearchFilter; preAssignModuleScopes: (ast: AST, context: AssignScopeContext) => void; preAssignClassScopes: (ast: AST, context: AssignScopeContext) => void; preAssignInterfaceScopes: (ast: AST, context: AssignScopeContext) => void; preAssignWithScopes: (ast: AST, context: AssignScopeContext) => void; preAssignFuncDeclScopes: (ast: AST, context: AssignScopeContext) => void; preAssignCatchScopes: (ast: AST, context: AssignScopeContext) => void; preAssignScopes: (ast: AST, parent: AST, walker: IAstWalker) => AST; postAssignScopes: (ast: AST, parent: AST, walker: IAstWalker) => AST; }'.
      
              pushAssignScope(withScope, context, null, null, null);
              withType.containedScope = withScope;
-@@= skipped -148, +148 lines =@@
-                 if (nameText && nameText != "__missing" && !funcDecl.isAccessor()) {
-                     if (isStatic) {
-                         fgSym = funcScope.findLocal(nameText, false, false);
-+                                ~~~~~~~~~
-+!!! error TS18047: 'funcScope' is possibly 'null'.
-                     }
-                     else {
-                         // REVIEW: This logic should be symmetric with preCollectClassTypes
-                         fgSym = funcScope.findLocal(nameText, false, false);
-+                                ~~~~~~~~~
-+!!! error TS18047: 'funcScope' is possibly 'null'.
-                     }
-                 }
-     

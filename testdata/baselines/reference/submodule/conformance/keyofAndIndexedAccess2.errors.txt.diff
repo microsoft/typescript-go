@@ -1,68 +1,22 @@
 --- old.keyofAndIndexedAccess2.errors.txt
 +++ new.keyofAndIndexedAccess2.errors.txt
-@@= skipped -3, +3 lines =@@
- keyofAndIndexedAccess2.ts(8,5): error TS2322: Type '1' is not assignable to type 'never'.
- keyofAndIndexedAccess2.ts(9,5): error TS2322: Type '2' is not assignable to type 'never'.
- keyofAndIndexedAccess2.ts(10,5): error TS2322: Type '"x"' is not assignable to type 'never'.
--keyofAndIndexedAccess2.ts(14,5): error TS2739: Type '{ [key: string]: number; }' is missing the following properties from type '{ x: number; y: number; }': x, y
--keyofAndIndexedAccess2.ts(15,5): error TS2322: Type 'T' is not assignable to type '{ x: number; y: number; }'.
--  Type '{ [key: string]: number; }' is missing the following properties from type '{ x: number; y: number; }': x, y
--keyofAndIndexedAccess2.ts(18,5): error TS2322: Type '{ x: number; y: number; }' is not assignable to type 'T'.
--  '{ x: number; y: number; }' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint '{ [key: string]: number; }'.
--keyofAndIndexedAccess2.ts(19,5): error TS2322: Type '{ [key: string]: number; }' is not assignable to type 'T'.
--  '{ [key: string]: number; }' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint '{ [key: string]: number; }'.
-+keyofAndIndexedAccess2.ts(14,5): error TS2739: Type '{ [key: string]: number }' is missing the following properties from type '{ x: number, y: number }': x, y
-+keyofAndIndexedAccess2.ts(15,5): error TS2322: Type 'T' is not assignable to type '{ x: number, y: number }'.
-+  Type '{ [key: string]: number }' is missing the following properties from type '{ x: number, y: number }': x, y
-+keyofAndIndexedAccess2.ts(18,5): error TS2322: Type '{ x: number, y: number }' is not assignable to type 'T'.
-+  '{ x: number, y: number }' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint '{ [key: string]: number }'.
-+keyofAndIndexedAccess2.ts(19,5): error TS2322: Type '{ [key: string]: number }' is not assignable to type 'T'.
-+  '{ [key: string]: number }' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint '{ [key: string]: number }'.
+@@= skipped -13, +13 lines =@@
  keyofAndIndexedAccess2.ts(26,7): error TS2339: Property 'x' does not exist on type 'T'.
  keyofAndIndexedAccess2.ts(27,5): error TS2322: Type 'number' is not assignable to type 'T[keyof T]'.
    'number' is assignable to the constraint of type 'T[keyof T]', but 'T[keyof T]' could be instantiated with a different subtype of constraint 'number'.
 -keyofAndIndexedAccess2.ts(31,5): error TS2322: Type '{ [key: string]: number; }' is not assignable to type '{ [P in K]: number; }'.
 -keyofAndIndexedAccess2.ts(38,5): error TS2322: Type '{ [x: string]: number; }' is not assignable to type '{ [P in K]: number; }'.
-+keyofAndIndexedAccess2.ts(31,5): error TS2322: Type '{ [key: string]: number }' is not assignable to type '{ [P in K]: number }'.
-+keyofAndIndexedAccess2.ts(38,5): error TS2322: Type '{ [x: string]: number }' is not assignable to type '{ [P in K]: number }'.
++keyofAndIndexedAccess2.ts(31,5): error TS2322: Type '{ [key: string]: number; }' is not assignable to type '{ [P in K]: number }'.
++keyofAndIndexedAccess2.ts(38,5): error TS2322: Type '{ [x: string]: number; }' is not assignable to type '{ [P in K]: number }'.
  keyofAndIndexedAccess2.ts(50,3): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type 'Item'.
    No index signature with a parameter of type 'string' was found on type 'Item'.
  keyofAndIndexedAccess2.ts(51,3): error TS2322: Type '123' is not assignable to type 'never'.
-@@= skipped -57, +57 lines =@@
-     function f2<T extends { [key: string]: number }>(a: { x: number, y: number }, b: { [key: string]: number }, c: T, k: keyof T) {
-         a = b;  // Error, index signature in source doesn't imply properties are present
-         ~
--!!! error TS2739: Type '{ [key: string]: number; }' is missing the following properties from type '{ x: number; y: number; }': x, y
-+!!! error TS2739: Type '{ [key: string]: number }' is missing the following properties from type '{ x: number, y: number }': x, y
-         a = c;  // Error, index signature in source doesn't imply properties are present
-         ~
--!!! error TS2322: Type 'T' is not assignable to type '{ x: number; y: number; }'.
--!!! error TS2322:   Type '{ [key: string]: number; }' is missing the following properties from type '{ x: number; y: number; }': x, y
-+!!! error TS2322: Type 'T' is not assignable to type '{ x: number, y: number }'.
-+!!! error TS2322:   Type '{ [key: string]: number }' is missing the following properties from type '{ x: number, y: number }': x, y
-         b = a;
-         b = c;
-         c = a;  // Error, constraint on target doesn't imply any properties or signatures
-         ~
--!!! error TS2322: Type '{ x: number; y: number; }' is not assignable to type 'T'.
--!!! error TS2322:   '{ x: number; y: number; }' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint '{ [key: string]: number; }'.
-+!!! error TS2322: Type '{ x: number, y: number }' is not assignable to type 'T'.
-+!!! error TS2322:   '{ x: number, y: number }' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint '{ [key: string]: number }'.
-         c = b;  // Error, constraint on target doesn't imply any properties or signatures
-         ~
--!!! error TS2322: Type '{ [key: string]: number; }' is not assignable to type 'T'.
--!!! error TS2322:   '{ [key: string]: number; }' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint '{ [key: string]: number; }'.
-+!!! error TS2322: Type '{ [key: string]: number }' is not assignable to type 'T'.
-+!!! error TS2322:   '{ [key: string]: number }' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint '{ [key: string]: number }'.
-         a.x;
-         b.x;
-         c.x;
-@@= skipped -33, +33 lines =@@
+@@= skipped -80, +80 lines =@@
      function f3<K extends string>(a: { [P in K]: number }, b: { [key: string]: number }, k: K) {
          a = b;  // Error, index signature doesn't imply properties are present
          ~
 -!!! error TS2322: Type '{ [key: string]: number; }' is not assignable to type '{ [P in K]: number; }'.
-+!!! error TS2322: Type '{ [key: string]: number }' is not assignable to type '{ [P in K]: number }'.
++!!! error TS2322: Type '{ [key: string]: number; }' is not assignable to type '{ [P in K]: number }'.
          b = a;
          a[k];
          a[k] = 1;
@@ -71,7 +25,7 @@
          a = b;  // Error, index signature doesn't imply properties are present
          ~
 -!!! error TS2322: Type '{ [x: string]: number; }' is not assignable to type '{ [P in K]: number; }'.
-+!!! error TS2322: Type '{ [x: string]: number }' is not assignable to type '{ [P in K]: number }'.
++!!! error TS2322: Type '{ [x: string]: number; }' is not assignable to type '{ [P in K]: number }'.
          b = a;
      }
      

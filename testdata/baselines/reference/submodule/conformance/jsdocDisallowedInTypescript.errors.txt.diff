@@ -21,6 +21,7 @@
 +jsdocDisallowedInTypescript.ts(7,28): error TS1005: ',' expected.
 +jsdocDisallowedInTypescript.ts(7,32): error TS1109: Expression expected.
 +jsdocDisallowedInTypescript.ts(7,34): error TS2693: 'number' only refers to a type, but is being used as a value here.
++jsdocDisallowedInTypescript.ts(7,34): error TS2695: Left side of comma operator is unused and has no side effects.
 +jsdocDisallowedInTypescript.ts(7,42): error TS2693: 'string' only refers to a type, but is being used as a value here.
 +jsdocDisallowedInTypescript.ts(7,48): error TS1005: ';' expected.
 +jsdocDisallowedInTypescript.ts(7,49): error TS1128: Declaration or statement expected.
@@ -33,6 +34,7 @@
 +jsdocDisallowedInTypescript.ts(15,8): error TS2552: Cannot find name 'function'. Did you mean 'Function'?
 +jsdocDisallowedInTypescript.ts(15,16): error TS1005: ',' expected.
 +jsdocDisallowedInTypescript.ts(15,17): error TS2693: 'number' only refers to a type, but is being used as a value here.
++jsdocDisallowedInTypescript.ts(15,17): error TS2695: Left side of comma operator is unused and has no side effects.
 +jsdocDisallowedInTypescript.ts(15,25): error TS2693: 'number' only refers to a type, but is being used as a value here.
 +jsdocDisallowedInTypescript.ts(15,32): error TS1005: ';' expected.
 +jsdocDisallowedInTypescript.ts(15,34): error TS2693: 'number' only refers to a type, but is being used as a value here.
@@ -46,7 +48,7 @@
  
  
 -==== jsdocDisallowedInTypescript.ts (16 errors) ====
-+==== jsdocDisallowedInTypescript.ts (26 errors) ====
++==== jsdocDisallowedInTypescript.ts (28 errors) ====
      // grammar error from checker
      var ara: Array.<number> = [1,2,3];
 -                  ~
@@ -71,6 +73,8 @@
 +!!! error TS1109: Expression expected.
 +                                     ~~~~~~
 +!!! error TS2693: 'number' only refers to a type, but is being used as a value here.
++                                     ~~~~~~
++!!! error TS2695: Left side of comma operator is unused and has no side effects.
 +                                             ~~~~~~
 +!!! error TS2693: 'string' only refers to a type, but is being used as a value here.
 +                                                   ~
@@ -115,6 +119,8 @@
 +!!! error TS1005: ',' expected.
 +                    ~~~~~~
 +!!! error TS2693: 'number' only refers to a type, but is being used as a value here.
++                    ~~~~~~
++!!! error TS2695: Left side of comma operator is unused and has no side effects.
 +                            ~~~~~~
 +!!! error TS2693: 'number' only refers to a type, but is being used as a value here.
 +                                   ~

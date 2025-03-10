@@ -1,4 +1,4 @@
-indexedAccessWithFreshObjectLiteral.ts(34,10): error TS2339: Property 'z' does not exist on type '{ a: number, b: string, c: boolean }'.
+indexedAccessWithFreshObjectLiteral.ts(34,10): error TS2339: Property 'z' does not exist on type '{ a: number; b: string; c: boolean; }'.
 
 
 ==== indexedAccessWithFreshObjectLiteral.ts (1 errors) ====
@@ -45,7 +45,7 @@ indexedAccessWithFreshObjectLiteral.ts(34,10): error TS2339: Property 'z' does n
     ~~~~~~~~~~~~~~
       }[id]
     ~~~~~~~
-!!! error TS2339: Property 'z' does not exist on type '{ a: number, b: string, c: boolean }'.
+!!! error TS2339: Property 'z' does not exist on type '{ a: number; b: string; c: boolean; }'.
     }
     
     function corge(id: string) {

@@ -17,8 +17,8 @@
 +symbolProperty35.ts(5,6): error TS2304: Cannot find name 'Symbol'.
 +symbolProperty35.ts(8,11): error TS2430: Interface 'I3' incorrectly extends interface 'I2'.
 +  'number' index signatures are incompatible.
-+    Type '() => { x: string }' is not assignable to type '() => { x: number }'.
-+      Type '{ x: string }' is not assignable to type '{ x: number }'.
++    Type '() => { x: string; }' is not assignable to type '() => { x: number; }'.
++      Type '{ x: string; }' is not assignable to type '{ x: number; }'.
 +        Types of property 'x' are incompatible.
 +          Type 'string' is not assignable to type 'number'.
  
@@ -54,7 +54,7 @@
 -!!! error TS2320:   Named property '[Symbol.toStringTag]' of types 'I1' and 'I2' are not identical.
 +!!! error TS2430: Interface 'I3' incorrectly extends interface 'I2'.
 +!!! error TS2430:   'number' index signatures are incompatible.
-+!!! error TS2430:     Type '() => { x: string }' is not assignable to type '() => { x: number }'.
-+!!! error TS2430:       Type '{ x: string }' is not assignable to type '{ x: number }'.
++!!! error TS2430:     Type '() => { x: string; }' is not assignable to type '() => { x: number; }'.
++!!! error TS2430:       Type '{ x: string; }' is not assignable to type '{ x: number; }'.
 +!!! error TS2430:         Types of property 'x' are incompatible.
 +!!! error TS2430:           Type 'string' is not assignable to type 'number'.

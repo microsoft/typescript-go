@@ -56,6 +56,6 @@ contextualTypeBasedOnIntersectionWithAnyInTheMix4.ts(48,15): error TS2322: Type 
       a: () => ({ prop: "bar" }),
                   ~~~~
 !!! error TS2322: Type '"bar"' is not assignable to type '"foo"'.
-!!! related TS6500 contextualTypeBasedOnIntersectionWithAnyInTheMix4.ts:37:21: The expected type comes from property 'prop' which is declared here on type '{ prop: "foo" }'
+!!! related TS6500 contextualTypeBasedOnIntersectionWithAnyInTheMix4.ts:37:21: The expected type comes from property 'prop' which is declared here on type '{ prop: "foo"; }'
     });
     

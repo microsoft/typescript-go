@@ -1,7 +1,6 @@
 --- old.symbolProperty30.errors.txt
 +++ new.symbolProperty30.errors.txt
 @@= skipped -0, +0 lines =@@
--symbolProperty30.ts(2,5): error TS2411: Property '[Symbol.toStringTag]' of type '() => { x: string; }' is not assignable to 'symbol' index type '() => { x: number; }'.
 +error TS2318: Cannot find global type 'Array'.
 +error TS2318: Cannot find global type 'Function'.
 +error TS2318: Cannot find global type 'IArguments'.
@@ -10,7 +9,7 @@
 +error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
 +error TS2552: Cannot find name 'Number'. Did you mean 'number'?
 +error TS2552: Cannot find name 'Object'. Did you mean 'object'?
-+symbolProperty30.ts(2,5): error TS2411: Property '[Symbol.toStringTag]' of type '() => { x: string }' is not assignable to 'symbol' index type '() => { x: number }'.
+ symbolProperty30.ts(2,5): error TS2411: Property '[Symbol.toStringTag]' of type '() => { x: string; }' is not assignable to 'symbol' index type '() => { x: number; }'.
 +symbolProperty30.ts(2,6): error TS2304: Cannot find name 'Symbol'.
  
  
@@ -27,8 +26,7 @@
      class C1 {
          [Symbol.toStringTag]() {
          ~~~~~~~~~~~~~~~~~~~~
--!!! error TS2411: Property '[Symbol.toStringTag]' of type '() => { x: string; }' is not assignable to 'symbol' index type '() => { x: number; }'.
-+!!! error TS2411: Property '[Symbol.toStringTag]' of type '() => { x: string }' is not assignable to 'symbol' index type '() => { x: number }'.
+ !!! error TS2411: Property '[Symbol.toStringTag]' of type '() => { x: string; }' is not assignable to 'symbol' index type '() => { x: number; }'.
 +         ~~~~~~
 +!!! error TS2304: Cannot find name 'Symbol'.
              return { x: "" };

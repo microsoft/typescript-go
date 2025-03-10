@@ -1,4 +1,4 @@
-mappedTypeWithCombinedTypeMappers.ts(18,7): error TS2322: Type 'string' is not assignable to type '{ important: boolean }'.
+mappedTypeWithCombinedTypeMappers.ts(18,7): error TS2322: Type 'string' is not assignable to type '{ important: boolean; }'.
 
 
 ==== mappedTypeWithCombinedTypeMappers.ts (1 errors) ====
@@ -21,5 +21,5 @@ mappedTypeWithCombinedTypeMappers.ts(18,7): error TS2322: Type 'string' is not a
     
     const shouldFail: { important: boolean } = output.x.children;
           ~~~~~~~~~~
-!!! error TS2322: Type 'string' is not assignable to type '{ important: boolean }'.
+!!! error TS2322: Type 'string' is not assignable to type '{ important: boolean; }'.
     

@@ -2,7 +2,7 @@ fuzzy.ts(13,18): error TS2420: Class 'C' incorrectly implements interface 'I'.
   Property 'alsoWorks' is missing in type 'C' but required in type 'I'.
 fuzzy.ts(21,34): error TS2322: Type 'this' is not assignable to type 'I'.
   Property 'alsoWorks' is missing in type 'C' but required in type 'I'.
-fuzzy.ts(25,20): error TS2741: Property 'anything' is missing in type '{ oneI: this }' but required in type 'R'.
+fuzzy.ts(25,20): error TS2741: Property 'anything' is missing in type '{ oneI: this; }' but required in type 'R'.
 
 
 ==== fuzzy.ts (3 errors) ====
@@ -41,7 +41,7 @@ fuzzy.ts(25,20): error TS2741: Property 'anything' is missing in type '{ oneI: t
             worksToo():R {
                 return <R>({ oneI: this });
                        ~~~~~~~~~~~~~~~~~~~
-!!! error TS2741: Property 'anything' is missing in type '{ oneI: this }' but required in type 'R'.
+!!! error TS2741: Property 'anything' is missing in type '{ oneI: this; }' but required in type 'R'.
 !!! related TS2728 fuzzy.ts:9:9: 'anything' is declared here.
             }
         }

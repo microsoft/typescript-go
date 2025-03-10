@@ -1,9 +1,10 @@
 typeofOperatorWithAnyOtherType.ts(46,32): error TS2365: Operator '+' cannot be applied to types 'null' and 'undefined'.
 typeofOperatorWithAnyOtherType.ts(47,32): error TS2365: Operator '+' cannot be applied to types 'null' and 'null'.
 typeofOperatorWithAnyOtherType.ts(48,32): error TS2365: Operator '+' cannot be applied to types 'undefined' and 'undefined'.
+typeofOperatorWithAnyOtherType.ts(58,1): error TS2695: Left side of comma operator is unused and has no side effects.
 
 
-==== typeofOperatorWithAnyOtherType.ts (3 errors) ====
+==== typeofOperatorWithAnyOtherType.ts (4 errors) ====
     // typeof  operator on any type
     
     var ANY: any;
@@ -68,6 +69,8 @@ typeofOperatorWithAnyOtherType.ts(48,32): error TS2365: Operator '+' cannot be a
     typeof ANY1;
     typeof ANY2[0];
     typeof ANY, ANY1;
+    ~~~~~~~~~~
+!!! error TS2695: Left side of comma operator is unused and has no side effects.
     typeof obj1;
     typeof obj1.x;
     typeof objA.a;

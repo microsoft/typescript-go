@@ -1,26 +1,15 @@
 --- old.qualify.errors.txt
 +++ new.qualify.errors.txt
-@@= skipped -5, +5 lines =@@
-   Type 'I4' provides no match for the signature '(): I3'.
+@@= skipped -6, +6 lines =@@
  qualify.ts(48,13): error TS2322: Type 'I4' is not assignable to type '(k: I3) => void'.
    Type 'I4' provides no match for the signature '(k: I3): void'.
--qualify.ts(49,13): error TS2741: Property 'k' is missing in type 'I4' but required in type '{ k: I3; }'.
+ qualify.ts(49,13): error TS2741: Property 'k' is missing in type 'I4' but required in type '{ k: I3; }'.
 -qualify.ts(58,5): error TS2741: Property 'p' is missing in type 'I' but required in type 'T.I'.
-+qualify.ts(49,13): error TS2741: Property 'k' is missing in type 'I4' but required in type '{ k: I3 }'.
 +qualify.ts(58,5): error TS2741: Property 'p' is missing in type 'I' but required in type 'I'.
  
  
  ==== qualify.ts (8 errors) ====
-@@= skipped -70, +70 lines =@@
- !!! error TS2322:   Type 'I4' provides no match for the signature '(k: I3): void'.
-             var v6:{k:K1.I3;}=v1;
-                 ~~
--!!! error TS2741: Property 'k' is missing in type 'I4' but required in type '{ k: I3; }'.
-+!!! error TS2741: Property 'k' is missing in type 'I4' but required in type '{ k: I3 }'.
- !!! related TS2728 qualify.ts:49:17: 'k' is declared here.
-         }
-     }
-@@= skipped -12, +12 lines =@@
+@@= skipped -81, +81 lines =@@
      var y:I;
      var x:T.I=y;
          ~

@@ -1,6 +1,6 @@
 controlFlowOptionalChain3.tsx(5,19): error TS2307: Cannot find module 'react' or its corresponding type declarations.
 controlFlowOptionalChain3.tsx(36,31): error TS18048: 'options' is possibly 'undefined'.
-controlFlowOptionalChain3.tsx(36,39): error TS2339: Property 'b' does not exist on type '{ a?: boolean | undefined, b?: boolean | undefined } | undefined'.
+controlFlowOptionalChain3.tsx(36,39): error TS2339: Property 'b' does not exist on type '{ a?: boolean | undefined; b?: boolean | undefined; } | undefined'.
   Property 'b' does not exist on type 'undefined'.
 
 
@@ -46,7 +46,7 @@ controlFlowOptionalChain3.tsx(36,39): error TS2339: Property 'b' does not exist 
                                   ~~~~~~~
 !!! error TS18048: 'options' is possibly 'undefined'.
                                           ~
-!!! error TS2339: Property 'b' does not exist on type '{ a?: boolean | undefined, b?: boolean | undefined } | undefined'.
+!!! error TS2339: Property 'b' does not exist on type '{ a?: boolean | undefined; b?: boolean | undefined; } | undefined'.
 !!! error TS2339:   Property 'b' does not exist on type 'undefined'.
         options;
       }

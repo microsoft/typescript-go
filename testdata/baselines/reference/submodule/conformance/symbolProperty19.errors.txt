@@ -10,8 +10,8 @@ symbolProperty19.ts(2,6): error TS2304: Cannot find name 'Symbol'.
 symbolProperty19.ts(3,6): error TS2304: Cannot find name 'Symbol'.
 symbolProperty19.ts(6,12): error TS2304: Cannot find name 'Symbol'.
 symbolProperty19.ts(7,11): error TS2349: This expression is not callable.
-  Not all constituents of type '{ p: null } | () => { p: undefined }' are callable.
-    Type '{ p: null }' has no call signatures.
+  Not all constituents of type '{ p: any; } | () => { p: any; }' are callable.
+    Type '{ p: any; }' has no call signatures.
 symbolProperty19.ts(7,13): error TS2304: Cannot find name 'Symbol'.
 
 
@@ -39,7 +39,7 @@ symbolProperty19.ts(7,13): error TS2304: Cannot find name 'Symbol'.
     var str = i[Symbol.toStringTag]();
               ~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2349: This expression is not callable.
-!!! error TS2349:   Not all constituents of type '{ p: null } | () => { p: undefined }' are callable.
-!!! error TS2349:     Type '{ p: null }' has no call signatures.
+!!! error TS2349:   Not all constituents of type '{ p: any; } | () => { p: any; }' are callable.
+!!! error TS2349:     Type '{ p: any; }' has no call signatures.
                 ~~~~~~
 !!! error TS2304: Cannot find name 'Symbol'.

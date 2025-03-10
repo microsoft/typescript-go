@@ -1,4 +1,4 @@
-typeSatisfaction_propertyValueConformance2.ts(12,15): error TS2339: Property 'z' does not exist on type '{ m: boolean }'.
+typeSatisfaction_propertyValueConformance2.ts(12,15): error TS2339: Property 'z' does not exist on type '{ m: boolean; }'.
 typeSatisfaction_propertyValueConformance2.ts(22,5): error TS2322: Type 'string' is not assignable to type 'boolean'.
 
 
@@ -16,7 +16,7 @@ typeSatisfaction_propertyValueConformance2.ts(22,5): error TS2322: Type 'string'
     checkM(x);
     console.log(x.z);
                   ~
-!!! error TS2339: Property 'z' does not exist on type '{ m: boolean }'.
+!!! error TS2339: Property 'z' does not exist on type '{ m: boolean; }'.
     // Should be OK under --noUncheckedIndexedAccess
     const m: boolean = x.m;
     

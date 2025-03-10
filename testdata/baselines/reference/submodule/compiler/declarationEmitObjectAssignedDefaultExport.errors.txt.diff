@@ -7,6 +7,7 @@
 +error TS2318: Cannot find global type 'IArguments'.
 +error TS2318: Cannot find global type 'RegExp'.
 +error TS2318: Cannot find global type 'String'.
++error TS2318: Cannot find global type 'TemplateStringsArray'.
 +error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
 +error TS2552: Cannot find name 'Number'. Did you mean 'number'?
 +error TS2552: Cannot find name 'Object'. Did you mean 'object'?
@@ -21,6 +22,7 @@
 +!!! error TS2318: Cannot find global type 'IArguments'.
 +!!! error TS2318: Cannot find global type 'RegExp'.
 +!!! error TS2318: Cannot find global type 'String'.
++!!! error TS2318: Cannot find global type 'TemplateStringsArray'.
 +!!! error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
 +!!! error TS2552: Cannot find name 'Number'. Did you mean 'number'?
 +!!! error TS2552: Cannot find name 'Object'. Did you mean 'object'?
@@ -39,7 +41,7 @@
      import * as hoistNonReactStatics from "hoist-non-react-statics";
      export interface DefaultTheme {}
      export type StyledComponent<TTag extends string, TTheme = DefaultTheme, TStyle = {}, TWhatever = never> =
-@@= skipped -23, +43 lines =@@
+@@= skipped -23, +45 lines =@@
      }
      export interface StyledInterface {
          div: (a: TemplateStringsArray) => StyledComponent<"div">;

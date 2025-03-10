@@ -9,4 +9,4 @@ objectLitTargetTypeCallSite.ts(5,10): error TS2322: Type 'boolean' is not assign
     process({a:true,b:"y"});
              ~
 !!! error TS2322: Type 'boolean' is not assignable to type 'number'.
-!!! related TS6500 objectLitTargetTypeCallSite.ts:1:23: The expected type comes from property 'a' which is declared here on type '{ a: number, b: string }'
+!!! related TS6500 objectLitTargetTypeCallSite.ts:1:23: The expected type comes from property 'a' which is declared here on type '{ a: number; b: string; }'

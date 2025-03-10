@@ -20,7 +20,7 @@ mappedTypeInferenceErrors.ts(16,9): error TS2322: Type 'number' is not assignabl
             baz: 42
             ~~~
 !!! error TS2322: Type 'number' is not assignable to type '() => unknown'.
-!!! related TS6500 mappedTypeInferenceErrors.ts:16:9: The expected type comes from property 'baz' which is declared here on type 'ComputedOf<{ bar: unknown, baz: unknown }>'
+!!! related TS6500 mappedTypeInferenceErrors.ts:16:9: The expected type comes from property 'baz' which is declared here on type 'ComputedOf<{ bar: unknown; baz: unknown; }>'
         }
     });
     

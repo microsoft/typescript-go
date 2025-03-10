@@ -6,7 +6,7 @@ everyTypeWithAnnotationAndInvalidInitializer.ts(40,5): error TS2741: Property 'i
 everyTypeWithAnnotationAndInvalidInitializer.ts(41,5): error TS2741: Property 'id' is missing in type 'D<unknown>' but required in type 'C'.
 everyTypeWithAnnotationAndInvalidInitializer.ts(42,5): error TS2739: Type 'C' is missing the following properties from type 'D<string>': source, recurse, wrapped
 everyTypeWithAnnotationAndInvalidInitializer.ts(43,28): error TS2322: Type 'string' is not assignable to type 'number'.
-everyTypeWithAnnotationAndInvalidInitializer.ts(44,5): error TS2322: Type 'C' is not assignable to type '{ id: string }'.
+everyTypeWithAnnotationAndInvalidInitializer.ts(44,5): error TS2322: Type 'C' is not assignable to type '{ id: string; }'.
   Types of property 'id' are incompatible.
     Type 'number' is not assignable to type 'string'.
 everyTypeWithAnnotationAndInvalidInitializer.ts(46,5): error TS2322: Type '(x: number) => boolean' is not assignable to type '(x: string) => number'.
@@ -16,7 +16,7 @@ everyTypeWithAnnotationAndInvalidInitializer.ts(47,5): error TS2322: Type '(x: n
   Types of parameters 'x' and 'x' are incompatible.
     Type 'string' is not assignable to type 'number'.
 everyTypeWithAnnotationAndInvalidInitializer.ts(48,32): error TS2322: Type 'string' is not assignable to type 'number'.
-everyTypeWithAnnotationAndInvalidInitializer.ts(50,5): error TS2719: Type '{ A: { new(): A, prototype: A }, F2: (x: number) => string }' is not assignable to type '{ A: { new(): A, prototype: A }, F2: (x: number) => string }'. Two different types with this name exist, but they are unrelated.
+everyTypeWithAnnotationAndInvalidInitializer.ts(50,5): error TS2719: Type '{ A: { new(): A; prototype: A; }; F2: (x: number) => string; }' is not assignable to type '{ A: { new(): A; prototype: A; }; F2: (x: number) => string; }'. Two different types with this name exist, but they are unrelated.
   The types returned by 'new A()' are incompatible between these types.
     Property 'name' is missing in type 'A' but required in type 'A'.
 everyTypeWithAnnotationAndInvalidInitializer.ts(51,5): error TS2741: Property 'name' is missing in type 'A' but required in type 'A'.
@@ -89,7 +89,7 @@ everyTypeWithAnnotationAndInvalidInitializer.ts(52,5): error TS2322: Type '(x: n
 !!! related TS6500 everyTypeWithAnnotationAndInvalidInitializer.ts:2:5: The expected type comes from property 'id' which is declared here on type 'I'
     var anOtherObjectLiteral: { id: string } = new C();
         ~~~~~~~~~~~~~~~~~~~~
-!!! error TS2322: Type 'C' is not assignable to type '{ id: string }'.
+!!! error TS2322: Type 'C' is not assignable to type '{ id: string; }'.
 !!! error TS2322:   Types of property 'id' are incompatible.
 !!! error TS2322:     Type 'number' is not assignable to type 'string'.
     
@@ -110,7 +110,7 @@ everyTypeWithAnnotationAndInvalidInitializer.ts(52,5): error TS2322: Type '(x: n
     
     var aModule: typeof M = N;
         ~~~~~~~
-!!! error TS2719: Type '{ A: { new(): A, prototype: A }, F2: (x: number) => string }' is not assignable to type '{ A: { new(): A, prototype: A }, F2: (x: number) => string }'. Two different types with this name exist, but they are unrelated.
+!!! error TS2719: Type '{ A: { new(): A; prototype: A; }; F2: (x: number) => string; }' is not assignable to type '{ A: { new(): A; prototype: A; }; F2: (x: number) => string; }'. Two different types with this name exist, but they are unrelated.
 !!! error TS2719:   The types returned by 'new A()' are incompatible between these types.
 !!! error TS2719:     Property 'name' is missing in type 'A' but required in type 'A'.
 !!! related TS2728 everyTypeWithAnnotationAndInvalidInitializer.ts:20:9: 'name' is declared here.

@@ -1,17 +1,17 @@
-objectSpreadStrictNull.ts(14,9): error TS2322: Type '{ sn: number | undefined }' is not assignable to type '{ sn: string | number }'.
+objectSpreadStrictNull.ts(14,9): error TS2322: Type '{ sn: number | undefined; }' is not assignable to type '{ sn: string | number; }'.
   Types of property 'sn' are incompatible.
     Type 'number | undefined' is not assignable to type 'string | number'.
       Type 'undefined' is not assignable to type 'string | number'.
-objectSpreadStrictNull.ts(15,9): error TS2322: Type '{ sn: number | undefined }' is not assignable to type '{ sn: string | number }'.
+objectSpreadStrictNull.ts(15,9): error TS2322: Type '{ sn: number | undefined; }' is not assignable to type '{ sn: string | number; }'.
   Types of property 'sn' are incompatible.
     Type 'number | undefined' is not assignable to type 'string | number'.
       Type 'undefined' is not assignable to type 'string | number'.
-objectSpreadStrictNull.ts(18,9): error TS2322: Type '{ sn: string | number | undefined }' is not assignable to type '{ sn: string | number | boolean }'.
+objectSpreadStrictNull.ts(18,9): error TS2322: Type '{ sn: string | number | undefined; }' is not assignable to type '{ sn: string | number | boolean; }'.
   Types of property 'sn' are incompatible.
     Type 'string | number | undefined' is not assignable to type 'string | number | boolean'.
       Type 'undefined' is not assignable to type 'string | number | boolean'.
 objectSpreadStrictNull.ts(28,26): error TS2322: Type 'undefined' is not assignable to type 'string'.
-objectSpreadStrictNull.ts(42,5): error TS2322: Type '{ foo: number | undefined, bar: string | undefined }' is not assignable to type 'Fields'.
+objectSpreadStrictNull.ts(42,5): error TS2322: Type '{ foo: number | undefined; bar: string | undefined; }' is not assignable to type 'Fields'.
   Types of property 'foo' are incompatible.
     Type 'number | undefined' is not assignable to type 'number'.
       Type 'undefined' is not assignable to type 'number'.
@@ -33,13 +33,13 @@ objectSpreadStrictNull.ts(42,5): error TS2322: Type '{ foo: number | undefined, 
         // undefined
         let undefinedUnionStops: { sn: string | number } = { ...definiteBoolean, ...definiteString, ...undefinedNumber };
             ~~~~~~~~~~~~~~~~~~~
-!!! error TS2322: Type '{ sn: number | undefined }' is not assignable to type '{ sn: string | number }'.
+!!! error TS2322: Type '{ sn: number | undefined; }' is not assignable to type '{ sn: string | number; }'.
 !!! error TS2322:   Types of property 'sn' are incompatible.
 !!! error TS2322:     Type 'number | undefined' is not assignable to type 'string | number'.
 !!! error TS2322:       Type 'undefined' is not assignable to type 'string | number'.
         let undefinedUnionDuplicates: { sn: string | number } = { ...definiteBoolean, ...definiteString, ...undefinedString, ...undefinedNumber };
             ~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS2322: Type '{ sn: number | undefined }' is not assignable to type '{ sn: string | number }'.
+!!! error TS2322: Type '{ sn: number | undefined; }' is not assignable to type '{ sn: string | number; }'.
 !!! error TS2322:   Types of property 'sn' are incompatible.
 !!! error TS2322:     Type 'number | undefined' is not assignable to type 'string | number'.
 !!! error TS2322:       Type 'undefined' is not assignable to type 'string | number'.
@@ -47,7 +47,7 @@ objectSpreadStrictNull.ts(42,5): error TS2322: Type '{ foo: number | undefined, 
     
         let undefinedWithOptionalContinues: { sn: string | number | boolean } = { ...definiteBoolean, ...undefinedString, ...optionalNumber };
             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS2322: Type '{ sn: string | number | undefined }' is not assignable to type '{ sn: string | number | boolean }'.
+!!! error TS2322: Type '{ sn: string | number | undefined; }' is not assignable to type '{ sn: string | number | boolean; }'.
 !!! error TS2322:   Types of property 'sn' are incompatible.
 !!! error TS2322:     Type 'string | number | undefined' is not assignable to type 'string | number | boolean'.
 !!! error TS2322:       Type 'undefined' is not assignable to type 'string | number | boolean'.
@@ -79,7 +79,7 @@ objectSpreadStrictNull.ts(42,5): error TS2322: Type '{ foo: number | undefined, 
         // error: not optional, undefined remains
         fields = { ...fields, ...nearlyPartialFields };
         ~~~~~~
-!!! error TS2322: Type '{ foo: number | undefined, bar: string | undefined }' is not assignable to type 'Fields'.
+!!! error TS2322: Type '{ foo: number | undefined; bar: string | undefined; }' is not assignable to type 'Fields'.
 !!! error TS2322:   Types of property 'foo' are incompatible.
 !!! error TS2322:     Type 'number | undefined' is not assignable to type 'number'.
 !!! error TS2322:       Type 'undefined' is not assignable to type 'number'.

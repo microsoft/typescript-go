@@ -4,10 +4,10 @@ noInfer.ts(37,14): error TS2322: Type '"bar"' is not assignable to type '"foo"'.
 noInfer.ts(38,15): error TS2322: Type '"bar"' is not assignable to type '"foo"'.
 noInfer.ts(39,15): error TS2322: Type '"bar"' is not assignable to type '"foo"'.
 noInfer.ts(47,30): error TS2741: Property 'woof' is missing in type 'Animal' but required in type 'Dog'.
-noInfer.ts(53,16): error TS2741: Property 'y' is missing in type '{ x: number }' but required in type '{ x: number, y: number }'.
-noInfer.ts(58,22): error TS2353: Object literal may only specify known properties, and 'y' does not exist in type '{ x: number }'.
-noInfer.ts(59,14): error TS2353: Object literal may only specify known properties, and 'y' does not exist in type '{ x: number }'.
-noInfer.ts(66,14): error TS2741: Property 'foo' is missing in type '{}' but required in type '{ foo: number }'.
+noInfer.ts(53,16): error TS2741: Property 'y' is missing in type '{ x: number; }' but required in type '{ x: number; y: number; }'.
+noInfer.ts(58,22): error TS2353: Object literal may only specify known properties, and 'y' does not exist in type '{ x: number; }'.
+noInfer.ts(59,14): error TS2353: Object literal may only specify known properties, and 'y' does not exist in type '{ x: number; }'.
+noInfer.ts(66,14): error TS2741: Property 'foo' is missing in type '{}' but required in type '{ foo: number; }'.
 
 
 ==== noInfer.ts (10 errors) ====
@@ -57,11 +57,11 @@ noInfer.ts(66,14): error TS2741: Property 'foo' is missing in type '{}' but requ
     foo4('foo', { x: 'bar' }) // error
                   ~
 !!! error TS2322: Type '"bar"' is not assignable to type '"foo"'.
-!!! related TS6500 noInfer.ts:31:52: The expected type comes from property 'x' which is declared here on type '{ x: "foo" }'
+!!! related TS6500 noInfer.ts:31:52: The expected type comes from property 'x' which is declared here on type '{ x: "foo"; }'
     foo5('foo', { x: 'bar' }) // error
                   ~
 !!! error TS2322: Type '"bar"' is not assignable to type '"foo"'.
-!!! related TS6500 noInfer.ts:32:60: The expected type comes from property 'x' which is declared here on type '{ x: "foo" }'
+!!! related TS6500 noInfer.ts:32:60: The expected type comes from property 'x' which is declared here on type '{ x: "foo"; }'
     
     declare class Animal { move(): void }
     declare class Dog extends Animal { woof(): void }
@@ -81,7 +81,7 @@ noInfer.ts(66,14): error TS2741: Property 'foo' is missing in type '{}' but requ
     const g = { x: 3, y: 2 };
     assertEqual(g, { x: 3 }); // error
                    ~~~~~~~~
-!!! error TS2741: Property 'y' is missing in type '{ x: number }' but required in type '{ x: number, y: number }'.
+!!! error TS2741: Property 'y' is missing in type '{ x: number; }' but required in type '{ x: number; y: number; }'.
 !!! related TS2728 noInfer.ts:52:19: 'y' is declared here.
     
     declare function invoke<T, R>(func: (value: T) => R, value: NoInfer<T>): R;
@@ -89,10 +89,10 @@ noInfer.ts(66,14): error TS2741: Property 'foo' is missing in type '{}' but requ
     
     invoke(test, { x: 1, y: 2 }); // error
                          ~
-!!! error TS2353: Object literal may only specify known properties, and 'y' does not exist in type '{ x: number }'.
+!!! error TS2353: Object literal may only specify known properties, and 'y' does not exist in type '{ x: number; }'.
     test({ x: 1, y: 2 }); // error
                  ~
-!!! error TS2353: Object literal may only specify known properties, and 'y' does not exist in type '{ x: number }'.
+!!! error TS2353: Object literal may only specify known properties, and 'y' does not exist in type '{ x: number; }'.
     
     type Component<Props> = { props: Props; };
     declare function doWork<Props>(Component: Component<Props>, props: NoInfer<Props>): void;
@@ -101,7 +101,7 @@ noInfer.ts(66,14): error TS2741: Property 'foo' is missing in type '{}' but requ
     doWork(comp, { foo: 42 }); // ok
     doWork(comp, {}); // error
                  ~~
-!!! error TS2741: Property 'foo' is missing in type '{}' but required in type '{ foo: number }'.
+!!! error TS2741: Property 'foo' is missing in type '{}' but required in type '{ foo: number; }'.
 !!! related TS2728 noInfer.ts:63:33: 'foo' is declared here.
     
     declare function mutate<T>(callback: (a: NoInfer<T>, b: number) => T): T;

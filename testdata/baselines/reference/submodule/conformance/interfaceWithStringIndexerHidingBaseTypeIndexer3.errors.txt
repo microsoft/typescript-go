@@ -1,4 +1,4 @@
-interfaceWithStringIndexerHidingBaseTypeIndexer3.ts(13,5): error TS2411: Property '2' of type '{ a: number }' is not assignable to 'number' index type '{ a: number, b: number }'.
+interfaceWithStringIndexerHidingBaseTypeIndexer3.ts(13,5): error TS2411: Property '2' of type '{ a: number; }' is not assignable to 'number' index type '{ a: number; b: number; }'.
 
 
 ==== interfaceWithStringIndexerHidingBaseTypeIndexer3.ts (1 errors) ====
@@ -16,7 +16,7 @@ interfaceWithStringIndexerHidingBaseTypeIndexer3.ts(13,5): error TS2411: Propert
         // error
         2: {
         ~
-!!! error TS2411: Property '2' of type '{ a: number }' is not assignable to 'number' index type '{ a: number, b: number }'.
+!!! error TS2411: Property '2' of type '{ a: number; }' is not assignable to 'number' index type '{ a: number; b: number; }'.
             a: number;
         }
     }

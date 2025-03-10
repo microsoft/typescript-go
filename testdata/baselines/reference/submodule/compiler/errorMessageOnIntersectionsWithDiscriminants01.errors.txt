@@ -1,7 +1,7 @@
 errorMessageOnIntersectionsWithDiscriminants01.ts(8,1): error TS2322: Type 'A' is not assignable to type 'B'.
-  Type '{ test: true } & { foo: 1 }' is not assignable to type 'B'.
-    Type '{ test: true } & { foo: 1 }' is not assignable to type '{ test: true } & { bar: 1 }'.
-      Property 'bar' is missing in type '{ test: true } & { foo: 1 }' but required in type '{ bar: 1 }'.
+  Type '{ test: true; } & { foo: 1; }' is not assignable to type 'B'.
+    Type '{ test: true; } & { foo: 1; }' is not assignable to type '{ test: true; } & { bar: 1; }'.
+      Property 'bar' is missing in type '{ test: true; } & { foo: 1; }' but required in type '{ bar: 1; }'.
 
 
 ==== errorMessageOnIntersectionsWithDiscriminants01.ts (1 errors) ====
@@ -15,8 +15,8 @@ errorMessageOnIntersectionsWithDiscriminants01.ts(8,1): error TS2322: Type 'A' i
     b = a;
     ~
 !!! error TS2322: Type 'A' is not assignable to type 'B'.
-!!! error TS2322:   Type '{ test: true } & { foo: 1 }' is not assignable to type 'B'.
-!!! error TS2322:     Type '{ test: true } & { foo: 1 }' is not assignable to type '{ test: true } & { bar: 1 }'.
-!!! error TS2322:       Property 'bar' is missing in type '{ test: true } & { foo: 1 }' but required in type '{ bar: 1 }'.
+!!! error TS2322:   Type '{ test: true; } & { foo: 1; }' is not assignable to type 'B'.
+!!! error TS2322:     Type '{ test: true; } & { foo: 1; }' is not assignable to type '{ test: true; } & { bar: 1; }'.
+!!! error TS2322:       Property 'bar' is missing in type '{ test: true; } & { foo: 1; }' but required in type '{ bar: 1; }'.
 !!! related TS2728 errorMessageOnIntersectionsWithDiscriminants01.ts:3:28: 'bar' is declared here.
     

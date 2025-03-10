@@ -2,9 +2,10 @@ logicalNotOperatorWithStringType.ts(22,25): error TS2873: This kind of expressio
 logicalNotOperatorWithStringType.ts(23,25): error TS2872: This kind of expression is always truthy.
 logicalNotOperatorWithStringType.ts(24,25): error TS2872: This kind of expression is always truthy.
 logicalNotOperatorWithStringType.ts(40,2): error TS2873: This kind of expression is always falsy.
+logicalNotOperatorWithStringType.ts(44,1): error TS2695: Left side of comma operator is unused and has no side effects.
 
 
-==== logicalNotOperatorWithStringType.ts (4 errors) ====
+==== logicalNotOperatorWithStringType.ts (5 errors) ====
     // ! operator on string type
     var STRING: string;
     var STRING1: string[] = ["", "abc"];
@@ -57,3 +58,5 @@ logicalNotOperatorWithStringType.ts(40,2): error TS2873: This kind of expression
     !STRING1;
     !foo();
     !objA.a,M.n;
+    ~~~~~~~
+!!! error TS2695: Left side of comma operator is unused and has no side effects.

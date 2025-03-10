@@ -1,15 +1,15 @@
-a.ts(2,5): error TS2339: Property 'default' does not exist on type '{ foo: () => any, bar: () => any }'.
-a.ts(3,5): error TS2339: Property 'default' does not exist on type '{ foo: () => any, bar: () => any }'.
+a.ts(2,5): error TS2339: Property 'default' does not exist on type '{ foo: () => any; bar: () => any; }'.
+a.ts(3,5): error TS2339: Property 'default' does not exist on type '{ foo: () => any; bar: () => any; }'.
 
 
 ==== a.ts (2 errors) ====
     import Foo = require("./b");
     Foo.default.bar();
         ~~~~~~~
-!!! error TS2339: Property 'default' does not exist on type '{ foo: () => any, bar: () => any }'.
+!!! error TS2339: Property 'default' does not exist on type '{ foo: () => any; bar: () => any; }'.
     Foo.default.default.foo();
         ~~~~~~~
-!!! error TS2339: Property 'default' does not exist on type '{ foo: () => any, bar: () => any }'.
+!!! error TS2339: Property 'default' does not exist on type '{ foo: () => any; bar: () => any; }'.
 ==== b.d.ts (0 errors) ====
     export function foo();
     

@@ -12,7 +12,7 @@ emitArrowFunctionES6.ts(11,11): error TS2488: Type '{}' must have a '[Symbol.ite
 emitArrowFunctionES6.ts(12,11): error TS2488: Type '[any, any]' must have a '[Symbol.iterator]()' method that returns an iterator.
 emitArrowFunctionES6.ts(13,11): error TS2488: Type '[any?, ...any[]]' must have a '[Symbol.iterator]()' method that returns an iterator.
 emitArrowFunctionES6.ts(14,11): error TS2488: Type '[number?]' must have a '[Symbol.iterator]()' method that returns an iterator.
-emitArrowFunctionES6.ts(19,12): error TS2488: Type '[{ done: any, value: any }]' must have a '[Symbol.iterator]()' method that returns an iterator.
+emitArrowFunctionES6.ts(19,12): error TS2488: Type '[{ done: any; value: any; }]' must have a '[Symbol.iterator]()' method that returns an iterator.
 
 
 !!! error TS2318: Cannot find global type 'Array'.
@@ -55,5 +55,5 @@ emitArrowFunctionES6.ts(19,12): error TS2488: Type '[{ done: any, value: any }]'
     var p9 = ({ a: { b = 1 } = { b: 1 } }) => { };
     var p10 = ([{ value, done }]) => { };
                ~~~~~~~~~~~~~~~~~
-!!! error TS2488: Type '[{ done: any, value: any }]' must have a '[Symbol.iterator]()' method that returns an iterator.
+!!! error TS2488: Type '[{ done: any; value: any; }]' must have a '[Symbol.iterator]()' method that returns an iterator.
     

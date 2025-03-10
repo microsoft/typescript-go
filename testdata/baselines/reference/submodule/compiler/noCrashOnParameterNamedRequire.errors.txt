@@ -1,10 +1,1 @@
-index.js(2,17): error TS2721: Cannot invoke an object which is possibly 'null'.
-
-
-==== index.js (1 errors) ====
-    (function(require, module, exports){
-        const mod = require("./mod");
-                    ~~~~~~~
-!!! error TS2721: Cannot invoke an object which is possibly 'null'.
-        mod.foo;
-    })(null, null, null);
+<no content>

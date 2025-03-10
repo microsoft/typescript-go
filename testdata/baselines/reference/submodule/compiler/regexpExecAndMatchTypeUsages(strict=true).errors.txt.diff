@@ -11,20 +11,18 @@
 +  Property 'length' does not exist on type 'undefined'.
  regexpExecAndMatchTypeUsages.ts(6,5): error TS18048: 'matchResult.groups' is possibly 'undefined'.
 -regexpExecAndMatchTypeUsages.ts(6,5): error TS2532: Object is possibly 'undefined'.
--regexpExecAndMatchTypeUsages.ts(7,5): error TS2412: Type 'undefined' is not assignable to type '{ [key: string]: string; }' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the type of the target.
-+regexpExecAndMatchTypeUsages.ts(6,5): error TS7053: Element implicitly has an 'any' type because expression of type '"someVariable"' can't be used to index type '{ [key: string]: string } | undefined'.
-+  Property 'someVariable' does not exist on type '{ [key: string]: string } | undefined'.
-+regexpExecAndMatchTypeUsages.ts(7,5): error TS2412: Type 'undefined' is not assignable to type '{ [key: string]: string }' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the type of the target.
++regexpExecAndMatchTypeUsages.ts(6,5): error TS7053: Element implicitly has an 'any' type because expression of type '"someVariable"' can't be used to index type '{ [key: string]: string; } | undefined'.
++  Property 'someVariable' does not exist on type '{ [key: string]: string; } | undefined'.
+ regexpExecAndMatchTypeUsages.ts(7,5): error TS2412: Type 'undefined' is not assignable to type '{ [key: string]: string; }' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the type of the target.
  regexpExecAndMatchTypeUsages.ts(10,5): error TS2532: Object is possibly 'undefined'.
 +regexpExecAndMatchTypeUsages.ts(10,21): error TS2339: Property 'length' does not exist on type 'string | undefined'.
 +  Property 'length' does not exist on type 'undefined'.
  regexpExecAndMatchTypeUsages.ts(13,5): error TS18048: 'execResult.groups' is possibly 'undefined'.
 -regexpExecAndMatchTypeUsages.ts(13,5): error TS2532: Object is possibly 'undefined'.
--regexpExecAndMatchTypeUsages.ts(14,5): error TS2412: Type 'undefined' is not assignable to type '{ [key: string]: string; }' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the type of the target.
++regexpExecAndMatchTypeUsages.ts(13,5): error TS7053: Element implicitly has an 'any' type because expression of type '"someVariable"' can't be used to index type '{ [key: string]: string; } | undefined'.
++  Property 'someVariable' does not exist on type '{ [key: string]: string; } | undefined'.
+ regexpExecAndMatchTypeUsages.ts(14,5): error TS2412: Type 'undefined' is not assignable to type '{ [key: string]: string; }' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the type of the target.
 -regexpExecAndMatchTypeUsages.ts(20,9): error TS2375: Type 'RegExpMatchArray' is not assignable to type 'RegExpExecArray' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
-+regexpExecAndMatchTypeUsages.ts(13,5): error TS7053: Element implicitly has an 'any' type because expression of type '"someVariable"' can't be used to index type '{ [key: string]: string } | undefined'.
-+  Property 'someVariable' does not exist on type '{ [key: string]: string } | undefined'.
-+regexpExecAndMatchTypeUsages.ts(14,5): error TS2412: Type 'undefined' is not assignable to type '{ [key: string]: string }' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the type of the target.
 +regexpExecAndMatchTypeUsages.ts(20,9): error TS2322: Type 'RegExpMatchArray' is not assignable to type 'RegExpExecArray'.
    Property 'index' is optional in type 'RegExpMatchArray' but required in type 'RegExpExecArray'.
  
@@ -55,14 +53,12 @@
  !!! error TS18048: 'matchResult.groups' is possibly 'undefined'.
          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -!!! error TS2532: Object is possibly 'undefined'.
-+!!! error TS7053: Element implicitly has an 'any' type because expression of type '"someVariable"' can't be used to index type '{ [key: string]: string } | undefined'.
-+!!! error TS7053:   Property 'someVariable' does not exist on type '{ [key: string]: string } | undefined'.
++!!! error TS7053: Element implicitly has an 'any' type because expression of type '"someVariable"' can't be used to index type '{ [key: string]: string; } | undefined'.
++!!! error TS7053:   Property 'someVariable' does not exist on type '{ [key: string]: string; } | undefined'.
          matchResult.groups = undefined;
          ~~~~~~~~~~~~~~~~~~
--!!! error TS2412: Type 'undefined' is not assignable to type '{ [key: string]: string; }' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the type of the target.
-+!!! error TS2412: Type 'undefined' is not assignable to type '{ [key: string]: string }' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the type of the target.
-     
-         execResult[0].length;
+ !!! error TS2412: Type 'undefined' is not assignable to type '{ [key: string]: string; }' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the type of the target.
+@@= skipped -36, +54 lines =@@
          execResult[999].length;
          ~~~~~~~~~~~~~~~
  !!! error TS2532: Object is possibly 'undefined'.
@@ -76,16 +72,12 @@
  !!! error TS18048: 'execResult.groups' is possibly 'undefined'.
          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -!!! error TS2532: Object is possibly 'undefined'.
-+!!! error TS7053: Element implicitly has an 'any' type because expression of type '"someVariable"' can't be used to index type '{ [key: string]: string } | undefined'.
-+!!! error TS7053:   Property 'someVariable' does not exist on type '{ [key: string]: string } | undefined'.
++!!! error TS7053: Element implicitly has an 'any' type because expression of type '"someVariable"' can't be used to index type '{ [key: string]: string; } | undefined'.
++!!! error TS7053:   Property 'someVariable' does not exist on type '{ [key: string]: string; } | undefined'.
          execResult.groups = undefined;
          ~~~~~~~~~~~~~~~~~
--!!! error TS2412: Type 'undefined' is not assignable to type '{ [key: string]: string; }' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the type of the target.
-+!!! error TS2412: Type 'undefined' is not assignable to type '{ [key: string]: string }' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the type of the target.
-     
-         if (Math.random()) {
-             matchResult = execResult;
-@@= skipped -53, +75 lines =@@
+ !!! error TS2412: Type 'undefined' is not assignable to type '{ [key: string]: string; }' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the type of the target.
+@@= skipped -17, +21 lines =@@
          else {
              execResult = matchResult
              ~~~~~~~~~~

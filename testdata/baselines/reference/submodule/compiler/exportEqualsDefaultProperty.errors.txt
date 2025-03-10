@@ -1,4 +1,4 @@
-imp.ts(2,5): error TS2339: Property 'toExponential' does not exist on type '{ greeting: string, default: number }'.
+imp.ts(2,5): error TS2339: Property 'toExponential' does not exist on type '{ greeting: string; default: number; }'.
 
 
 ==== exp.ts (0 errors) ====
@@ -13,5 +13,5 @@ imp.ts(2,5): error TS2339: Property 'toExponential' does not exist on type '{ gr
     import foo from "./exp";
     foo.toExponential(2);
         ~~~~~~~~~~~~~
-!!! error TS2339: Property 'toExponential' does not exist on type '{ greeting: string, default: number }'.
+!!! error TS2339: Property 'toExponential' does not exist on type '{ greeting: string; default: number; }'.
     

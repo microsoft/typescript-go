@@ -3,8 +3,8 @@
 @@= skipped -0, +0 lines =@@
 -mergedDeclarations3.ts(37,7): error TS2339: Property 'x' does not exist on type 'typeof foo'.
 -mergedDeclarations3.ts(39,7): error TS2339: Property 'z' does not exist on type 'typeof foo'.
-+mergedDeclarations3.ts(37,7): error TS2339: Property 'x' does not exist on type '{ (): void, y: number }'.
-+mergedDeclarations3.ts(39,7): error TS2339: Property 'z' does not exist on type '{ (): void, y: number }'.
++mergedDeclarations3.ts(37,7): error TS2339: Property 'x' does not exist on type '{ (): void; y: number; }'.
++mergedDeclarations3.ts(39,7): error TS2339: Property 'z' does not exist on type '{ (): void; y: number; }'.
  
  
  ==== mergedDeclarations3.ts (2 errors) ====
@@ -13,9 +13,9 @@
      M.foo.x // error
            ~
 -!!! error TS2339: Property 'x' does not exist on type 'typeof foo'.
-+!!! error TS2339: Property 'x' does not exist on type '{ (): void, y: number }'.
++!!! error TS2339: Property 'x' does not exist on type '{ (): void; y: number; }'.
      M.foo.y // ok
      M.foo.z // error
            ~
 -!!! error TS2339: Property 'z' does not exist on type 'typeof foo'.
-+!!! error TS2339: Property 'z' does not exist on type '{ (): void, y: number }'.
++!!! error TS2339: Property 'z' does not exist on type '{ (): void; y: number; }'.

@@ -1,4 +1,4 @@
-computedEnumTypeWidening.ts(76,1): error TS2719: Type '' is not assignable to type ''. Two different types with this name exist, but they are unrelated.
+computedEnumTypeWidening.ts(76,1): error TS2322: Type 'MyDeclaredEnum.B' is not assignable to type 'MyDeclaredEnum.A'.
 
 
 ==== computedEnumTypeWidening.ts (1 errors) ====
@@ -79,5 +79,5 @@ computedEnumTypeWidening.ts(76,1): error TS2719: Type '' is not assignable to ty
     let val2 = MyDeclaredEnum.A;
     val2 = MyDeclaredEnum.B;
     ~~~~
-!!! error TS2719: Type '' is not assignable to type ''. Two different types with this name exist, but they are unrelated.
+!!! error TS2322: Type 'MyDeclaredEnum.B' is not assignable to type 'MyDeclaredEnum.A'.
     

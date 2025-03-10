@@ -1,21 +1,15 @@
 --- old.typeFromJSInitializer4.errors.txt
 +++ new.typeFromJSInitializer4.errors.txt
 @@= skipped -0, +0 lines =@@
--a.js(5,12): error TS7006: Parameter 'a' implicitly has an 'any' type.
--a.js(5,29): error TS7006: Parameter 'l' implicitly has an 'any[]' type.
--a.js(17,5): error TS2322: Type 'string' is not assignable to type 'number'.
 +a.js(2,5): error TS7034: Variable 'n' implicitly has type 'any' in some locations where its type cannot be determined.
+ a.js(5,12): error TS7006: Parameter 'a' implicitly has an 'any' type.
 +a.js(5,26): error TS7005: Variable 'n' implicitly has an 'any' type.
-+a.js(9,5): error TS2322: Type '1' is not assignable to type 'null'.
-+a.js(10,5): error TS2322: Type 'true' is not assignable to type 'null'.
-+a.js(11,5): error TS2322: Type '{}' is not assignable to type 'null'.
-+a.js(12,5): error TS2322: Type '"ok"' is not assignable to type 'null'.
-+a.js(20,12): error TS2345: Argument of type '1' is not assignable to parameter of type 'undefined'.
-+a.js(21,12): error TS2345: Argument of type '"ok"' is not assignable to parameter of type 'undefined'.
+ a.js(5,29): error TS7006: Parameter 'l' implicitly has an 'any[]' type.
+-a.js(17,5): error TS2322: Type 'string' is not assignable to type 'number'.
  
  
 -==== a.js (3 errors) ====
-+==== a.js (8 errors) ====
++==== a.js (4 errors) ====
      /** @type {number | undefined} */
      var n;
 +        ~
@@ -23,29 +17,14 @@
      
      // should get any on parameter initialisers
      function f(a = null, b = n, l = []) {
--               ~~~~~~~~
--!!! error TS7006: Parameter 'a' implicitly has an 'any' type.
--                                ~~~~~~
--!!! error TS7006: Parameter 'l' implicitly has an 'any[]' type.
+                ~~~~~~~~
+ !!! error TS7006: Parameter 'a' implicitly has an 'any' type.
 +                             ~
 +!!! error TS7005: Variable 'n' implicitly has an 'any' type.
+                                 ~~~~~~
+ !!! error TS7006: Parameter 'l' implicitly has an 'any[]' type.
          // a should be any
-         a = undefined
-         a = null
-         a = 1
-+        ~
-+!!! error TS2322: Type '1' is not assignable to type 'null'.
-         a = true
-+        ~
-+!!! error TS2322: Type 'true' is not assignable to type 'null'.
-         a = {}
-+        ~
-+!!! error TS2322: Type '{}' is not assignable to type 'null'.
-         a = 'ok'
-+        ~
-+!!! error TS2322: Type '"ok"' is not assignable to type 'null'.
-     
-         // b should be number | undefined, not any
+@@= skipped -24, +29 lines =@@
          b = 1
          b = undefined
          b = 'error'
@@ -54,10 +33,3 @@
      
          // l should be any[]
          l.push(1)
-+               ~
-+!!! error TS2345: Argument of type '1' is not assignable to parameter of type 'undefined'.
-         l.push('ok')
-+               ~~~~
-+!!! error TS2345: Argument of type '"ok"' is not assignable to parameter of type 'undefined'.
-     }
-     

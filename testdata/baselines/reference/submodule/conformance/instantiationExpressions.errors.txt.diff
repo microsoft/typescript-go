@@ -2,22 +2,17 @@
 +++ new.instantiationExpressions.errors.txt
 @@= skipped -0, +0 lines =@@
  instantiationExpressions.ts(6,16): error TS1099: Type argument list cannot be empty.
--instantiationExpressions.ts(9,17): error TS2635: Type '{ <T>(x: T): T; <T>(x: T, n: number): T; <T, U>(t: [T, U]): [T, U]; }' has no signatures for which the type argument list is applicable.
+ instantiationExpressions.ts(9,17): error TS2635: Type '{ <T>(x: T): T; <T>(x: T, n: number): T; <T, U>(t: [T, U]): [T, U]; }' has no signatures for which the type argument list is applicable.
 -instantiationExpressions.ts(12,21): error TS1099: Type argument list cannot be empty.
--instantiationExpressions.ts(15,22): error TS2635: Type '{ <T>(x: T): T; <T>(x: T, n: number): T; <T, U>(t: [T, U]): [T, U]; }' has no signatures for which the type argument list is applicable.
-+instantiationExpressions.ts(9,17): error TS2635: Type '{ <T>(x: T): T, <T>(x: T, n: number): T, <T, U>(t: [T, U]): [T, U] }' has no signatures for which the type argument list is applicable.
-+instantiationExpressions.ts(15,22): error TS2635: Type '{ <T>(x: T): T, <T>(x: T, n: number): T, <T, U>(t: [T, U]): [T, U] }' has no signatures for which the type argument list is applicable.
+ instantiationExpressions.ts(15,22): error TS2635: Type '{ <T>(x: T): T; <T>(x: T, n: number): T; <T, U>(t: [T, U]): [T, U]; }' has no signatures for which the type argument list is applicable.
  instantiationExpressions.ts(18,21): error TS1099: Type argument list cannot be empty.
  instantiationExpressions.ts(20,22): error TS2635: Type 'ArrayConstructor' has no signatures for which the type argument list is applicable.
 -instantiationExpressions.ts(23,24): error TS1099: Type argument list cannot be empty.
  instantiationExpressions.ts(25,25): error TS2635: Type 'ArrayConstructor' has no signatures for which the type argument list is applicable.
--instantiationExpressions.ts(50,16): error TS2635: Type '{ x: string; y: string; }' has no signatures for which the type argument list is applicable.
--instantiationExpressions.ts(82,16): error TS2635: Type '{ x: string; } & { y: string; }' has no signatures for which the type argument list is applicable.
-+instantiationExpressions.ts(50,16): error TS2635: Type '{ x: string, y: string }' has no signatures for which the type argument list is applicable.
-+instantiationExpressions.ts(82,16): error TS2635: Type '{ x: string } & { y: string }' has no signatures for which the type argument list is applicable.
+ instantiationExpressions.ts(50,16): error TS2635: Type '{ x: string; y: string; }' has no signatures for which the type argument list is applicable.
+ instantiationExpressions.ts(82,16): error TS2635: Type '{ x: string; } & { y: string; }' has no signatures for which the type argument list is applicable.
  instantiationExpressions.ts(106,16): error TS2635: Type '(a: string, b: number) => string[]' has no signatures for which the type argument list is applicable.
--instantiationExpressions.ts(114,16): error TS2635: Type '{ x: string; } | { y: string; }' has no signatures for which the type argument list is applicable.
-+instantiationExpressions.ts(114,16): error TS2635: Type '{ x: string } | { y: string }' has no signatures for which the type argument list is applicable.
+ instantiationExpressions.ts(114,16): error TS2635: Type '{ x: string; } | { y: string; }' has no signatures for which the type argument list is applicable.
  instantiationExpressions.ts(126,16): error TS2635: Type '(a: string, b: number) => string[]' has no signatures for which the type argument list is applicable.
 -instantiationExpressions.ts(130,16): error TS2635: Type 'new (a: string, b: number) => string[]' has no signatures for which the type argument list is applicable.
 +instantiationExpressions.ts(130,16): error TS2635: Type 'new(a: string, b: number) => string[]' has no signatures for which the type argument list is applicable.
@@ -32,12 +27,7 @@
      declare function fx<T>(x: T): T;
      declare function fx<T>(x: T, n: number): T;
      declare function fx<T, U>(t: [T, U]): [T, U];
-@@= skipped -30, +28 lines =@@
-         let f2 = fx<string, number>;  // (t: [string, number]) => [string, number]
-         let f3 = fx<string, number, boolean>;  // Error
-                     ~~~~~~~~~~~~~~~~~~~~~~~
--!!! error TS2635: Type '{ <T>(x: T): T; <T>(x: T, n: number): T; <T, U>(t: [T, U]): [T, U]; }' has no signatures for which the type argument list is applicable.
-+!!! error TS2635: Type '{ <T>(x: T): T, <T>(x: T, n: number): T, <T, U>(t: [T, U]): [T, U] }' has no signatures for which the type argument list is applicable.
+@@= skipped -34, +32 lines =@@
      }
      
      type T10 = typeof fx<>;  // Error
@@ -46,13 +36,7 @@
      type T11 = typeof fx<string>;  // { (x: string): string; (x: string, n: number): string; }
      type T12 = typeof fx<string, number>;  // (t: [string, number]) => [string, number]
      type T13 = typeof fx<string, number, boolean>;  // Error
-                          ~~~~~~~~~~~~~~~~~~~~~~~
--!!! error TS2635: Type '{ <T>(x: T): T; <T>(x: T, n: number): T; <T, U>(t: [T, U]): [T, U]; }' has no signatures for which the type argument list is applicable.
-+!!! error TS2635: Type '{ <T>(x: T): T, <T>(x: T, n: number): T, <T, U>(t: [T, U]): [T, U] }' has no signatures for which the type argument list is applicable.
-     
-     function f2() {
-         const A0 = Array<>;  // Error
-@@= skipped -23, +21 lines =@@
+@@= skipped -19, +17 lines =@@
      }
      
      type T20 = typeof Array<>;  // Error
@@ -61,34 +45,7 @@
      type T21 = typeof Array<string>;  // new (...) => string[]
      type T22 = typeof Array<string, number>;  // Error
                              ~~~~~~~~~~~~~~
-@@= skipped -32, +30 lines =@@
-     function f13(f: { x: string, y: string }) {
-         let fs = f<string>;  // Error, no applicable signatures
-                    ~~~~~~
--!!! error TS2635: Type '{ x: string; y: string; }' has no signatures for which the type argument list is applicable.
-+!!! error TS2635: Type '{ x: string, y: string }' has no signatures for which the type argument list is applicable.
-     }
-     
-     function f14(f: { new <T>(a: T): T, new <U>(a: U, b: number): U[] }) {
-@@= skipped -34, +34 lines =@@
-     function f23(f: { x: string } & { y: string }) {
-         let fs = f<string>;  // Error, no applicable signatures
-                    ~~~~~~
--!!! error TS2635: Type '{ x: string; } & { y: string; }' has no signatures for which the type argument list is applicable.
-+!!! error TS2635: Type '{ x: string } & { y: string }' has no signatures for which the type argument list is applicable.
-     }
-     
-     function f24(f: (new <T>(a: T) => T) & (new <U>(a: U, b: number) => U[])) {
-@@= skipped -36, +36 lines =@@
-     function f33(f: { x: string } | { y: string }) {
-         let fs = f<string>;  // Error, no applicable signatures
-                    ~~~~~~
--!!! error TS2635: Type '{ x: string; } | { y: string; }' has no signatures for which the type argument list is applicable.
-+!!! error TS2635: Type '{ x: string } | { y: string }' has no signatures for which the type argument list is applicable.
-     }
-     
-     function f34(f: (new <T>(a: T) => T) | (new <U>(a: U, b: number) => U[])) {
-@@= skipped -20, +20 lines =@@
+@@= skipped -122, +120 lines =@@
      function f37(f: (<T>(a: T) => T) | (new (a: string, b: number) => string[])) {
          let fs = f<string>;  // Error, 'new (a: string, b: number) => string[]' has no applicable signatures
                     ~~~~~~

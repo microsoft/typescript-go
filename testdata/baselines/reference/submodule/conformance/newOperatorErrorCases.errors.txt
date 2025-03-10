@@ -1,8 +1,9 @@
 newOperatorErrorCases.ts(26,16): error TS1005: ',' expected.
+newOperatorErrorCases.ts(26,16): error TS2695: Left side of comma operator is unused and has no side effects.
 newOperatorErrorCases.ts(36,9): error TS2350: Only a void function can be called with the 'new' keyword.
 
 
-==== newOperatorErrorCases.ts (2 errors) ====
+==== newOperatorErrorCases.ts (3 errors) ====
     class C0 {
     
     }
@@ -31,6 +32,8 @@ newOperatorErrorCases.ts(36,9): error TS2350: Only a void function can be called
     var b = new C0 32, ''; // Parse error
                    ~~
 !!! error TS1005: ',' expected.
+                   ~~
+!!! error TS2695: Left side of comma operator is unused and has no side effects.
     
     // Generic construct expression with no parentheses
     var c1 = new T;

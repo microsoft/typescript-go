@@ -6,7 +6,7 @@ qualify.ts(47,13): error TS2322: Type 'I4' is not assignable to type '() => I3'.
   Type 'I4' provides no match for the signature '(): I3'.
 qualify.ts(48,13): error TS2322: Type 'I4' is not assignable to type '(k: I3) => void'.
   Type 'I4' provides no match for the signature '(k: I3): void'.
-qualify.ts(49,13): error TS2741: Property 'k' is missing in type 'I4' but required in type '{ k: I3 }'.
+qualify.ts(49,13): error TS2741: Property 'k' is missing in type 'I4' but required in type '{ k: I3; }'.
 qualify.ts(58,5): error TS2741: Property 'p' is missing in type 'I' but required in type 'I'.
 
 
@@ -76,7 +76,7 @@ qualify.ts(58,5): error TS2741: Property 'p' is missing in type 'I' but required
 !!! error TS2322:   Type 'I4' provides no match for the signature '(k: I3): void'.
             var v6:{k:K1.I3;}=v1;
                 ~~
-!!! error TS2741: Property 'k' is missing in type 'I4' but required in type '{ k: I3 }'.
+!!! error TS2741: Property 'k' is missing in type 'I4' but required in type '{ k: I3; }'.
 !!! related TS2728 qualify.ts:49:17: 'k' is declared here.
         }
     }

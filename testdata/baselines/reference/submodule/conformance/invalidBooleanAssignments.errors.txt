@@ -1,7 +1,6 @@
 invalidBooleanAssignments.ts(3,5): error TS2322: Type 'boolean' is not assignable to type 'number'.
 invalidBooleanAssignments.ts(4,5): error TS2322: Type 'boolean' is not assignable to type 'string'.
 invalidBooleanAssignments.ts(5,5): error TS2322: Type 'boolean' is not assignable to type 'void'.
-invalidBooleanAssignments.ts(6,5): error TS2322: Type 'true' is not assignable to type 'undefined'.
 invalidBooleanAssignments.ts(9,5): error TS2322: Type 'true' is not assignable to type 'E.A'.
 invalidBooleanAssignments.ts(12,5): error TS2322: Type 'boolean' is not assignable to type 'C'.
 invalidBooleanAssignments.ts(15,5): error TS2322: Type 'boolean' is not assignable to type 'I'.
@@ -12,7 +11,7 @@ invalidBooleanAssignments.ts(24,5): error TS2322: Type 'boolean' is not assignab
 invalidBooleanAssignments.ts(26,1): error TS2630: Cannot assign to 'i' because it is a function.
 
 
-==== invalidBooleanAssignments.ts (11 errors) ====
+==== invalidBooleanAssignments.ts (10 errors) ====
     var x = true;
     
     var a: number = x;
@@ -25,8 +24,6 @@ invalidBooleanAssignments.ts(26,1): error TS2630: Cannot assign to 'i' because i
         ~
 !!! error TS2322: Type 'boolean' is not assignable to type 'void'.
     var d: typeof undefined = x;
-        ~
-!!! error TS2322: Type 'true' is not assignable to type 'undefined'.
     
     enum E { A }
     var e: E = x;

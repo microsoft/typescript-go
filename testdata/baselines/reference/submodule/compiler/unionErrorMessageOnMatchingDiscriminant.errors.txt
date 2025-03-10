@@ -1,4 +1,4 @@
-unionErrorMessageOnMatchingDiscriminant.ts(21,5): error TS2322: Type 'null' is not assignable to type '{ a: string }'.
+unionErrorMessageOnMatchingDiscriminant.ts(21,5): error TS2322: Type 'null' is not assignable to type '{ a: string; }'.
 
 
 ==== unionErrorMessageOnMatchingDiscriminant.ts (1 errors) ====
@@ -24,5 +24,5 @@ unionErrorMessageOnMatchingDiscriminant.ts(21,5): error TS2322: Type 'null' is n
         type: 'a',
         data: null
         ~~~~
-!!! error TS2322: Type 'null' is not assignable to type '{ a: string }'.
+!!! error TS2322: Type 'null' is not assignable to type '{ a: string; }'.
     };

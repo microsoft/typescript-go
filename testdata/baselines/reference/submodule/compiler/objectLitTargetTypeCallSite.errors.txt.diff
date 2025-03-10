@@ -1,8 +1,0 @@
---- old.objectLitTargetTypeCallSite.errors.txt
-+++ new.objectLitTargetTypeCallSite.errors.txt
-@@= skipped -8, +8 lines =@@
-     process({a:true,b:"y"});
-              ~
- !!! error TS2322: Type 'boolean' is not assignable to type 'number'.
--!!! related TS6500 objectLitTargetTypeCallSite.ts:1:23: The expected type comes from property 'a' which is declared here on type '{ a: number; b: string; }'
-+!!! related TS6500 objectLitTargetTypeCallSite.ts:1:23: The expected type comes from property 'a' which is declared here on type '{ a: number, b: string }'

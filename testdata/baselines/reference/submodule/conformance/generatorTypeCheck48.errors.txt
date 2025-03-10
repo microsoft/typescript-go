@@ -7,6 +7,8 @@ error TS2318: Cannot find global type 'String'.
 error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
 error TS2552: Cannot find name 'Number'. Did you mean 'number'?
 error TS2552: Cannot find name 'Object'. Did you mean 'object'?
+generatorTypeCheck48.ts(1,11): error TS7055: 'g', which lacks return-type annotation, implicitly has an 'any' yield type.
+generatorTypeCheck48.ts(5,11): error TS7055: 'h', which lacks return-type annotation, implicitly has an 'any' yield type.
 
 
 !!! error TS2318: Cannot find global type 'Array'.
@@ -18,12 +20,16 @@ error TS2552: Cannot find name 'Object'. Did you mean 'object'?
 !!! error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
 !!! error TS2552: Cannot find name 'Number'. Did you mean 'number'?
 !!! error TS2552: Cannot find name 'Object'. Did you mean 'object'?
-==== generatorTypeCheck48.ts (0 errors) ====
+==== generatorTypeCheck48.ts (2 errors) ====
     function* g() {
+              ~
+!!! error TS7055: 'g', which lacks return-type annotation, implicitly has an 'any' yield type.
         yield;
     }
     
     function* h() {
+              ~
+!!! error TS7055: 'h', which lacks return-type annotation, implicitly has an 'any' yield type.
         yield undefined;
     }
     

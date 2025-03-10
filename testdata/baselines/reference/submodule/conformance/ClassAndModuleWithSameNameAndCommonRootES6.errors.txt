@@ -3,11 +3,11 @@ error TS2318: Cannot find global type 'Function'.
 error TS2318: Cannot find global type 'IArguments'.
 error TS2318: Cannot find global type 'RegExp'.
 error TS2318: Cannot find global type 'String'.
-error TS2351: This expression is not constructable.
-  Type '{ Origin: any }' has no construct signatures.
 error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
 error TS2552: Cannot find name 'Number'. Did you mean 'number'?
 error TS2552: Cannot find name 'Object'. Did you mean 'object'?
+module.ts(3,33): error TS2351: This expression is not constructable.
+  Type '{ Origin: any; }' has no construct signatures.
 test.ts(2,16): error TS2339: Property 'Y' does not exist on type '{}'.
 test.ts(3,12): error TS2339: Property 'Y' does not exist on type '{}'.
 
@@ -17,8 +17,6 @@ test.ts(3,12): error TS2339: Property 'Y' does not exist on type '{}'.
 !!! error TS2318: Cannot find global type 'IArguments'.
 !!! error TS2318: Cannot find global type 'RegExp'.
 !!! error TS2318: Cannot find global type 'String'.
-!!! error TS2351: This expression is not constructable.
-!!! error TS2351:   Type '{ Origin: any }' has no construct signatures.
 !!! error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
 !!! error TS2552: Cannot find name 'Number'. Did you mean 'number'?
 !!! error TS2552: Cannot find name 'Object'. Did you mean 'object'?
@@ -34,10 +32,13 @@ test.ts(3,12): error TS2339: Property 'Y' does not exist on type '{}'.
         }
     }
     
-==== module.ts (0 errors) ====
+==== module.ts (1 errors) ====
     module X.Y {
         export module Point {
             export var Origin = new Point(0, 0);
+                                    ~~~~~
+!!! error TS2351: This expression is not constructable.
+!!! error TS2351:   Type '{ Origin: any; }' has no construct signatures.
         }
     }
     

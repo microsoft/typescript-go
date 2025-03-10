@@ -1,7 +1,6 @@
 --- old.computedPropertyNamesContextualType10_ES6.errors.txt
 +++ new.computedPropertyNamesContextualType10_ES6.errors.txt
 @@= skipped -0, +0 lines =@@
--computedPropertyNamesContextualType10_ES6.ts(5,5): error TS2322: Type '{ [x: number]: string | number; }' is not assignable to type 'I'.
 +error TS2318: Cannot find global type 'Array'.
 +error TS2318: Cannot find global type 'Function'.
 +error TS2318: Cannot find global type 'IArguments'.
@@ -10,7 +9,7 @@
 +error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
 +error TS2552: Cannot find name 'Number'. Did you mean 'number'?
 +error TS2552: Cannot find name 'Object'. Did you mean 'object'?
-+computedPropertyNamesContextualType10_ES6.ts(5,5): error TS2322: Type '{ [x: number]: string | number }' is not assignable to type 'I'.
+ computedPropertyNamesContextualType10_ES6.ts(5,5): error TS2322: Type '{ [x: number]: string | number; }' is not assignable to type 'I'.
    'number' index signatures are incompatible.
      Type 'string | number' is not assignable to type 'boolean'.
        Type 'string' is not assignable to type 'boolean'.
@@ -27,12 +26,3 @@
  ==== computedPropertyNamesContextualType10_ES6.ts (1 errors) ====
      interface I {
          [s: number]: boolean;
-@@= skipped -10, +26 lines =@@
-     
-     var o: I = {
-         ~
--!!! error TS2322: Type '{ [x: number]: string | number; }' is not assignable to type 'I'.
-+!!! error TS2322: Type '{ [x: number]: string | number }' is not assignable to type 'I'.
- !!! error TS2322:   'number' index signatures are incompatible.
- !!! error TS2322:     Type 'string | number' is not assignable to type 'boolean'.
- !!! error TS2322:       Type 'string' is not assignable to type 'boolean'.

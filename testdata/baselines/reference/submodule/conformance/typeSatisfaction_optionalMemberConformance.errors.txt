@@ -1,4 +1,4 @@
-typeSatisfaction_optionalMemberConformance.ts(7,11): error TS2339: Property 'y' does not exist on type '{ x: number }'.
+typeSatisfaction_optionalMemberConformance.ts(7,11): error TS2339: Property 'y' does not exist on type '{ x: number; }'.
 
 
 ==== typeSatisfaction_optionalMemberConformance.ts (1 errors) ====
@@ -10,5 +10,5 @@ typeSatisfaction_optionalMemberConformance.ts(7,11): error TS2339: Property 'y' 
     // Should error
     let p = a.y;
               ~
-!!! error TS2339: Property 'y' does not exist on type '{ x: number }'.
+!!! error TS2339: Property 'y' does not exist on type '{ x: number; }'.
     

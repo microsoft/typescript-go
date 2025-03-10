@@ -18,7 +18,7 @@
    Type at position 1 in source is not compatible with type at position 1 in target.
      Type 'undefined' is not assignable to type 'string'.
 -strictOptionalProperties1.ts(99,7): error TS2375: Type '{ foo: undefined; bar: string; }' is not assignable to type 'InputProps' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
-+strictOptionalProperties1.ts(99,7): error TS2322: Type '{ foo: undefined, bar: string }' is not assignable to type 'InputProps'.
++strictOptionalProperties1.ts(99,7): error TS2322: Type '{ foo: undefined; bar: string; }' is not assignable to type 'InputProps'.
    Types of property 'foo' are incompatible.
      Type 'undefined' is not assignable to type 'string'.
 -strictOptionalProperties1.ts(105,7): error TS2322: Type '[number, undefined]' is not assignable to type '[number, string?, boolean?]'.
@@ -34,7 +34,7 @@
    Type at position 1 in source is not compatible with type at position 1 in target.
      Type 'undefined' is not assignable to type 'string'.
 -strictOptionalProperties1.ts(111,7): error TS2375: Type '{ foo: undefined; }' is not assignable to type '{ foo?: number; }' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
-+strictOptionalProperties1.ts(111,7): error TS2322: Type '{ foo: undefined }' is not assignable to type '{ foo?: number | undefined }'.
++strictOptionalProperties1.ts(111,7): error TS2322: Type '{ foo: undefined; }' is not assignable to type '{ foo?: number | undefined; }'.
    Types of property 'foo' are incompatible.
      Type 'undefined' is not assignable to type 'number'.
  strictOptionalProperties1.ts(119,5): error TS2411: Property 'bar' of type 'string | undefined' is not assignable to 'string' index type 'string'.
@@ -45,20 +45,16 @@
  strictOptionalProperties1.ts(194,1): error TS2412: Type 'string | boolean | undefined' is not assignable to type 'string | number' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the type of the target.
    Type 'undefined' is not assignable to type 'string | number'.
 -strictOptionalProperties1.ts(195,1): error TS2375: Type '{ name: string; email: undefined; }' is not assignable to type 'U2' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
-+strictOptionalProperties1.ts(195,1): error TS2322: Type '{ name: string, email: undefined }' is not assignable to type 'U2'.
++strictOptionalProperties1.ts(195,1): error TS2322: Type '{ name: string; email: undefined; }' is not assignable to type 'U2'.
    Types of property 'email' are incompatible.
      Type 'undefined' is not assignable to type 'string | number'.
  strictOptionalProperties1.ts(206,13): error TS2451: Cannot redeclare block-scoped variable 'e'.
--strictOptionalProperties1.ts(210,1): error TS2322: Type '{ a: number; b: string | undefined; }' is not assignable to type '{ [x: string]: string | number; }'.
 +strictOptionalProperties1.ts(206,13): error TS2451: Cannot redeclare block-scoped variable 'e'.
-+strictOptionalProperties1.ts(210,1): error TS2322: Type '{ a: number, b: string | undefined }' is not assignable to type '{ [x: string]: string | number }'.
+ strictOptionalProperties1.ts(210,1): error TS2322: Type '{ a: number; b: string | undefined; }' is not assignable to type '{ [x: string]: string | number; }'.
    Property 'b' is incompatible with index signature.
      Type 'string | undefined' is not assignable to type 'string | number'.
-       Type 'undefined' is not assignable to type 'string | number'.
--strictOptionalProperties1.ts(211,1): error TS2322: Type 'string | boolean | undefined' is not assignable to type '{ [x: string]: string | number; }'.
--  Type 'undefined' is not assignable to type '{ [x: string]: string | number; }'.
-+strictOptionalProperties1.ts(211,1): error TS2322: Type 'string | boolean | undefined' is not assignable to type '{ [x: string]: string | number }'.
-+  Type 'undefined' is not assignable to type '{ [x: string]: string | number }'.
+@@= skipped -42, +44 lines =@@
+   Type 'undefined' is not assignable to type '{ [x: string]: string | number; }'.
  
  
 -==== strictOptionalProperties1.ts (23 errors) ====
@@ -66,7 +62,7 @@
      function f1(obj: { a?: string, b?: string | undefined }) {
          let a = obj.a;  // string | undefined
          let b = obj.b;  // string | undefined
-@@= skipped -121, +123 lines =@@
+@@= skipped -79, +79 lines =@@
      function f4a(t1: [number, string?], t2: [number, string?, string?]) {
          t1 = t2;  // Wasn't an error, but should be
          ~~
@@ -101,7 +97,7 @@
 -!!! error TS2375: Type '{ foo: undefined; bar: string; }' is not assignable to type 'InputProps' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
 -!!! error TS2375:   Types of property 'foo' are incompatible.
 -!!! error TS2375:     Type 'undefined' is not assignable to type 'string'.
-+!!! error TS2322: Type '{ foo: undefined, bar: string }' is not assignable to type 'InputProps'.
++!!! error TS2322: Type '{ foo: undefined; bar: string; }' is not assignable to type 'InputProps'.
 +!!! error TS2322:   Types of property 'foo' are incompatible.
 +!!! error TS2322:     Type 'undefined' is not assignable to type 'string'.
      const completeProps: Props = { ...defaultProps, ...inputProps };
@@ -135,7 +131,7 @@
 -!!! error TS2375: Type '{ foo: undefined; }' is not assignable to type '{ foo?: number; }' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
 -!!! error TS2375:   Types of property 'foo' are incompatible.
 -!!! error TS2375:     Type 'undefined' is not assignable to type 'number'.
-+!!! error TS2322: Type '{ foo: undefined }' is not assignable to type '{ foo?: number | undefined }'.
++!!! error TS2322: Type '{ foo: undefined; }' is not assignable to type '{ foo?: number | undefined; }'.
 +!!! error TS2322:   Types of property 'foo' are incompatible.
 +!!! error TS2322:     Type 'undefined' is not assignable to type 'number'.
      const y: { foo: number } = { foo: 123, ...x };
@@ -157,7 +153,7 @@
 -!!! error TS2375: Type '{ name: string; email: undefined; }' is not assignable to type 'U2' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
 -!!! error TS2375:   Types of property 'email' are incompatible.
 -!!! error TS2375:     Type 'undefined' is not assignable to type 'string | number'.
-+!!! error TS2322: Type '{ name: string, email: undefined }' is not assignable to type 'U2'.
++!!! error TS2322: Type '{ name: string; email: undefined; }' is not assignable to type 'U2'.
 +!!! error TS2322:   Types of property 'email' are incompatible.
 +!!! error TS2322:     Type 'undefined' is not assignable to type 'string | number'.
          name: 'hi',
@@ -172,19 +168,3 @@
      
      a = b;
      a = c;
-     a = d;  // Error
-     ~
--!!! error TS2322: Type '{ a: number; b: string | undefined; }' is not assignable to type '{ [x: string]: string | number; }'.
-+!!! error TS2322: Type '{ a: number, b: string | undefined }' is not assignable to type '{ [x: string]: string | number }'.
- !!! error TS2322:   Property 'b' is incompatible with index signature.
- !!! error TS2322:     Type 'string | undefined' is not assignable to type 'string | number'.
- !!! error TS2322:       Type 'undefined' is not assignable to type 'string | number'.
-     a = e;  // Error
-     ~
--!!! error TS2322: Type 'string | boolean | undefined' is not assignable to type '{ [x: string]: string | number; }'.
--!!! error TS2322:   Type 'undefined' is not assignable to type '{ [x: string]: string | number; }'.
-+!!! error TS2322: Type 'string | boolean | undefined' is not assignable to type '{ [x: string]: string | number }'.
-+!!! error TS2322:   Type 'undefined' is not assignable to type '{ [x: string]: string | number }'.
-     
-     // Repro from #46004
-     

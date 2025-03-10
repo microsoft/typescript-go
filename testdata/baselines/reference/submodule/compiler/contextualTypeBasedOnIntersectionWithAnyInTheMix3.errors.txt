@@ -1,6 +1,6 @@
-contextualTypeBasedOnIntersectionWithAnyInTheMix3.ts(26,7): error TS2322: Type '() => { a: number }' is not assignable to type '() => { a: 1 } & () => { a: any }'.
-  Type '() => { a: number }' is not assignable to type '() => { a: 1 }'.
-    Type '{ a: number }' is not assignable to type '{ a: 1 }'.
+contextualTypeBasedOnIntersectionWithAnyInTheMix3.ts(26,7): error TS2322: Type '() => { a: number; }' is not assignable to type '() => { a: 1; } & () => { a: any; }'.
+  Type '() => { a: number; }' is not assignable to type '() => { a: 1; }'.
+    Type '{ a: number; }' is not assignable to type '{ a: 1; }'.
       Types of property 'a' are incompatible.
         Type 'number' is not assignable to type '1'.
 
@@ -33,9 +33,9 @@ contextualTypeBasedOnIntersectionWithAnyInTheMix3.ts(26,7): error TS2322: Type '
     const c: { a: any } & { a: 1 } = { a: 1 };
     const d: (() => { a: 1 }) & (() => { a: any }) = () => ({
           ~
-!!! error TS2322: Type '() => { a: number }' is not assignable to type '() => { a: 1 } & () => { a: any }'.
-!!! error TS2322:   Type '() => { a: number }' is not assignable to type '() => { a: 1 }'.
-!!! error TS2322:     Type '{ a: number }' is not assignable to type '{ a: 1 }'.
+!!! error TS2322: Type '() => { a: number; }' is not assignable to type '() => { a: 1; } & () => { a: any; }'.
+!!! error TS2322:   Type '() => { a: number; }' is not assignable to type '() => { a: 1; }'.
+!!! error TS2322:     Type '{ a: number; }' is not assignable to type '{ a: 1; }'.
 !!! error TS2322:       Types of property 'a' are incompatible.
 !!! error TS2322:         Type 'number' is not assignable to type '1'.
       a: 1,

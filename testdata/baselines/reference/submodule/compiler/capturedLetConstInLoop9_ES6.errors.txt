@@ -7,8 +7,8 @@ error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
 error TS2552: Cannot find name 'Number'. Did you mean 'number'?
 error TS2552: Cannot find name 'Object'. Did you mean 'object'?
 capturedLetConstInLoop9_ES6.ts(38,19): error TS2488: Type '{}' must have a '[Symbol.iterator]()' method that returns an iterator.
-capturedLetConstInLoop9_ES6.ts(49,17): error TS2488: Type '[{ x: number, y: number }]' must have a '[Symbol.iterator]()' method that returns an iterator.
-capturedLetConstInLoop9_ES6.ts(68,17): error TS2488: Type '[{ x1: number, y: error }]' must have a '[Symbol.iterator]()' method that returns an iterator.
+capturedLetConstInLoop9_ES6.ts(49,17): error TS2488: Type '[{ x: number; y: number; }]' must have a '[Symbol.iterator]()' method that returns an iterator.
+capturedLetConstInLoop9_ES6.ts(68,17): error TS2488: Type '[{ x1: number; y: error; }]' must have a '[Symbol.iterator]()' method that returns an iterator.
 capturedLetConstInLoop9_ES6.ts(68,52): error TS2339: Property 'length' does not exist on type '{}'.
 capturedLetConstInLoop9_ES6.ts(132,23): error TS2339: Property 'length' does not exist on type '{}'.
 capturedLetConstInLoop9_ES6.ts(134,27): error TS2339: Property 'length' does not exist on type '{}'.
@@ -76,7 +76,7 @@ capturedLetConstInLoop9_ES6.ts(135,48): error TS2339: Property 'length' does not
             for (let b of []) {
                 var [{x, y:z}] = [{x:1, y:2}];
                     ~~~~~~~~~~
-!!! error TS2488: Type '[{ x: number, y: number }]' must have a '[Symbol.iterator]()' method that returns an iterator.
+!!! error TS2488: Type '[{ x: number; y: number; }]' must have a '[Symbol.iterator]()' method that returns an iterator.
                 if (b === 1) {
                     break;
                 }
@@ -97,7 +97,7 @@ capturedLetConstInLoop9_ES6.ts(135,48): error TS2339: Property 'length' does not
             for (let b of []) {
                 var [{x1, y:z1}] = [{x1:1, y:arguments.length}];
                     ~~~~~~~~~~~~
-!!! error TS2488: Type '[{ x1: number, y: error }]' must have a '[Symbol.iterator]()' method that returns an iterator.
+!!! error TS2488: Type '[{ x1: number; y: error; }]' must have a '[Symbol.iterator]()' method that returns an iterator.
                                                        ~~~~~~
 !!! error TS2339: Property 'length' does not exist on type '{}'.
                 if (b === 1) {
