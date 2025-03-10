@@ -2560,7 +2560,7 @@ func (p *Printer) getBinaryExpressionPrecedence(node *ast.BinaryExpression) (lef
 	default:
 		panic(fmt.Sprintf("unhandled precedence: %v", precedence))
 	}
-	return
+	return leftPrec, rightPrec
 }
 
 func (p *Printer) emitBinaryExpression(node *ast.BinaryExpression) {
