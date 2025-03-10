@@ -8,13 +8,13 @@ import (
 )
 
 type ParsedCommandLine struct {
-	ParsedConfig *core.ParsedOptions
+	ParsedConfig *core.ParsedOptions `json:"parsedConfig"`
 
-	ConfigFile *ast.SourceFile // TsConfigSourceFile, used in Program and ExecuteCommandLine
-	Errors     []*ast.Diagnostic
-	Raw        any
+	ConfigFile *TsConfigSourceFile `json:"configFile"` // TsConfigSourceFile, used in Program and ExecuteCommandLine
+	Errors     []*ast.Diagnostic   `json:"errors"`
+	Raw        any                 `json:"raw"`
 	// WildcardDirectories map[string]watchDirectoryFlags
-	CompileOnSave *bool
+	CompileOnSave *bool `json:"compileOnSave"`
 	// TypeAquisition *core.TypeAcquisition
 }
 
@@ -41,7 +41,7 @@ func (p *ParsedCommandLine) ProjectReferences() []core.ProjectReference {
 func (p *ParsedCommandLine) GetConfigFileParsingDiagnostics() []*ast.Diagnostic {
 	if p.ConfigFile != nil {
 		// todo: !!! should be ConfigFile.ParseDiagnostics, check if they are the same
-		return slices.Concat(p.ConfigFile.Diagnostics(), p.Errors)
+		return slices.Concat(p.ConfigFile.SourceFile.Diagnostics(), p.Errors)
 	}
 	return p.Errors
 }

@@ -2,6 +2,30 @@
 currentDirectory::/home/src/projects/myproject
 useCaseSensitiveFileNames::true
 Input::--explainFiles
+//// [/home/src/projects/configs/first/tsconfig.json] new file
+{
+	"extends": "../second/tsconfig.json",
+	"include": ["${configDir}/src"],
+	"compilerOptions": {
+		"typeRoots": ["root1", "${configDir}/root2", "root3"],
+		"types": [],
+	},
+}
+//// [/home/src/projects/configs/second/tsconfig.json] new file
+{
+	"files": ["${configDir}/main.ts"],
+	"compilerOptions": {
+		"declarationDir": "${configDir}/decls",
+		"paths": {
+			"@myscope/*": ["${configDir}/types/*"],
+			"other/*": ["other/*"],
+		},
+		"baseUrl": "${configDir}",
+	},
+	"watchOptions": {
+		"excludeFiles": ["${configDir}/main.ts"],
+	},
+}
 //// [/home/src/projects/myproject/main.ts] new file
 
 	// some comment
@@ -164,15 +188,26 @@ src/secondary.ts(4,20): error TS2307: Cannot find module 'other/sometype2' or it
 
 Found 1 error in src/secondary.ts[90m:4[0m
 
+//// [/home/src/projects/configs/first/tsconfig.json] no change
+//// [/home/src/projects/configs/second/tsconfig.json] no change
 //// [/home/src/projects/myproject/main.ts] no change
 //// [/home/src/projects/myproject/outDir/main.js] new file
-export const y = 10;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.y = void 0;
+exports.y = 10;
 
 //// [/home/src/projects/myproject/outDir/src/secondary.js] new file
-export const z = 10;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.z = void 0;
+exports.z = 10;
 
 //// [/home/src/projects/myproject/outDir/types/sometype.js] new file
-export const x = 10;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.x = void 0;
+exports.x = 10;
 
 //// [/home/src/projects/myproject/root2/other/sometype2/index.d.ts] no change
 //// [/home/src/projects/myproject/src/secondary.ts] no change
