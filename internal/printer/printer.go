@@ -839,7 +839,7 @@ func (p *Printer) emitNumericLiteral(node *ast.NumericLiteral) {
 
 func (p *Printer) emitBigIntLiteral(node *ast.BigIntLiteral) {
 	p.enterNode(node.AsNode())
-	p.emitLiteral(node.AsNode(), getLiteralTextFlagsAllowNumericSeparator)
+	p.emitLiteral(node.AsNode(), getLiteralTextFlagsNone) // TODO: Preserve numeric literal separators after Strada migration
 	p.exitNode(node.AsNode())
 }
 
