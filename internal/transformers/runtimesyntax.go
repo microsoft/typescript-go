@@ -716,7 +716,7 @@ func (tx *RuntimeSyntaxTransformer) getParameterProperties(constructor *ast.Node
 }
 
 func (tx *RuntimeSyntaxTransformer) visitClassDeclaration(node *ast.ClassDeclaration) *ast.Node {
-	modifiers := tx.visitor.VisitModifiers(extractModifiers(tx.emitContext, node.Modifiers(), ^ast.ModifierFlagsExportDefault))
+	modifiers := tx.visitor.VisitModifiers(node.Modifiers())
 	name := tx.visitor.VisitNode(node.Name())
 	heritageClauses := tx.visitor.VisitNodes(node.HeritageClauses)
 	members := tx.visitor.VisitNodes(node.Members)
