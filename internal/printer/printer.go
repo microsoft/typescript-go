@@ -2268,7 +2268,7 @@ func (p *Printer) emitCallee(callee *ast.Expression, parentNode *ast.Node) {
 		// Parenthesize `new C` inside of a CallExpression so it is treated as `(new C)()` and not `new C()`
 		p.emitExpression(callee, ast.OperatorPrecedenceParentheses)
 	} else {
-		p.emitExpression(callee, ast.OperatorPrecedenceMember)
+		p.emitExpression(callee, core.IfElse(ast.IsOptionalChain(parentNode), ast.OperatorPrecedenceOptionalChain, ast.OperatorPrecedenceMember))
 	}
 }
 
@@ -2486,10 +2486,10 @@ func (p *Printer) getLiteralKindOfBinaryPlusOperand(node *ast.Expression) ast.Ki
 	return ast.KindUnknown
 }
 
-func (p *Printer) emitBinaryExpression(node *ast.BinaryExpression) {
+func (p *Printer) getBinaryExpressionPrecedence(node *ast.BinaryExpression) (leftPrec ast.OperatorPrecedence, rightPrec ast.OperatorPrecedence) {
 	precedence := ast.GetExpressionPrecedence(node.AsNode())
-	leftPrec := precedence
-	rightPrec := precedence
+	leftPrec = precedence
+	rightPrec = precedence
 	switch precedence {
 	case ast.OperatorPrecedenceComma:
 		// No need to parenthesize the right operand when the binary operator and
@@ -2560,10 +2560,15 @@ func (p *Printer) emitBinaryExpression(node *ast.BinaryExpression) {
 	default:
 		panic(fmt.Sprintf("unhandled precedence: %v", precedence))
 	}
+	return leftPrec, rightPrec
+}
+
+func (p *Printer) emitBinaryExpression(node *ast.BinaryExpression) {
+	leftPrec, rightPrec := p.getBinaryExpressionPrecedence(node)
 	p.enterNode(node.AsNode())
 	p.emitExpression(node.Left, leftPrec)
 	linesBeforeOperator := p.getLinesBetweenNodes(node.AsNode(), node.Left, node.OperatorToken)
-	linesAfterOperator := p.getLinesBetweenNodes(node.AsNode(), node.Left, node.OperatorToken)
+	linesAfterOperator := p.getLinesBetweenNodes(node.AsNode(), node.OperatorToken, node.Right)
 	p.writeLinesAndIndent(linesBeforeOperator, node.OperatorToken.Kind != ast.KindCommaToken /*writeSpaceIfNotIndenting*/)
 	p.emitTokenNode(node.OperatorToken)
 	p.writeLinesAndIndent(linesAfterOperator, true /*writeSpaceIfNotIndenting*/) // Binary operators should have a space before the comment starts
