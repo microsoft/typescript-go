@@ -1,3 +1,6 @@
+import { SymbolFlags } from "#symbolFlags";
+import type { SourceFile as SourceFileNode } from "../ast/ast.ts";
+import { RemoteNode } from "../ast/node.ts";
 import type {
     MaybeAsync,
     ParsedCommandLine,
@@ -5,12 +8,11 @@ import type {
     SymbolData,
     TypeData,
 } from "../types.ts";
-import { Node } from "./node.ts";
 
 export interface APIOptions {
     tsserverPath: string;
     cwd?: string;
-    logServer?: (msg: string) => void;
+    logFile?: string;
 }
 
 export interface API<Async extends boolean> {
@@ -34,25 +36,23 @@ export abstract class Project<Async extends boolean> {
     }
 
     abstract reload(): MaybeAsync<Async, void>;
-    abstract getSourceFile(fileName: string): MaybeAsync<Async, SourceFile<Async> | undefined>;
+    abstract getSourceFile(fileName: string): MaybeAsync<Async, SourceFileNode | undefined>;
     abstract getSymbolAtPosition(fileName: string, position: number): MaybeAsync<Async, Symbol<Async> | undefined>;
 }
 
-export abstract class SourceFile<Async extends boolean> extends Node {
+export abstract class SourceFile extends RemoteNode {
     constructor(data: Buffer) {
         const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
         super(view, 1, undefined!);
     }
-
-    nodeCount(): number {
-        return (this.view.byteLength / (Node.NODE_LEN * 4)) - 1;
-    }
 }
+
+export { SymbolFlags };
 
 export abstract class Symbol<Async extends boolean> {
     protected id: number;
     name: string;
-    flags: number;
+    flags: SymbolFlags;
     checkFlags: number;
 
     constructor(data: SymbolData) {

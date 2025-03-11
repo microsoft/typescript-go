@@ -1,3 +1,4 @@
+import type { SourceFile as SourceFileNode } from "../ast/ast.ts";
 import {
     type API as BaseAPI,
     type APIOptions as BaseAPIOptions,
@@ -16,42 +17,12 @@ import type {
 import { Client } from "./client.ts";
 
 export interface APIOptions extends BaseAPIOptions {
-    fs?: {
-        directoryExists?: (directoryName: string) => boolean | undefined;
-        fileExists?: (fileName: string) => boolean | undefined;
-        getAccessibleEntries?: (directoryName: string) => FileSystemEntries | undefined;
-        getEntries?: (directoryName: string) => FileSystemEntries | undefined;
-        readFile?: (fileName: string) => string | null | undefined;
-        realpath?: (path: string) => string | undefined;
-    };
 }
 
 export class API implements BaseAPI<false> {
     private client: Client;
     constructor(options: APIOptions) {
         this.client = new Client(options);
-        if (options.fs) {
-            if (options.fs) {
-                if (options.fs.directoryExists) {
-                    this.client.registerCallback("directoryExists", options.fs.directoryExists);
-                }
-                if (options.fs.fileExists) {
-                    this.client.registerCallback("fileExists", options.fs.fileExists);
-                }
-                if (options.fs.getAccessibleEntries) {
-                    this.client.registerCallback("getAccessibleEntries", options.fs.getAccessibleEntries);
-                }
-                if (options.fs.getEntries) {
-                    this.client.registerCallback("getEntries", options.fs.getEntries);
-                }
-                if (options.fs.readFile) {
-                    this.client.registerCallback("readFile", options.fs.readFile);
-                }
-                if (options.fs.realpath) {
-                    this.client.registerCallback("realpath", options.fs.realpath);
-                }
-            }
-        }
     }
 
     parseConfigFile(fileName: string): ParsedCommandLine {
@@ -80,18 +51,26 @@ export class Project extends BaseProject<false> {
         this.loadData(this.client.request("loadProject", { configFileName: this.configFileName }));
     }
 
-    getSourceFile(fileName: string): SourceFile | undefined {
+    getSourceFile(fileName: string): SourceFileNode | undefined {
         const data = this.client.requestBinary("getSourceFile", { project: this.configFileName, fileName });
-        return data ? new SourceFile(this.client, this, data) : undefined;
+        return data ? new SourceFile(this.client, this, data) as unknown as SourceFileNode : undefined;
     }
 
-    getSymbolAtPosition(fileName: string, position: number): Symbol | undefined {
-        const data = this.client.request("getSymbolAtPosition", { project: this.configFileName, fileName, position });
-        return data ? new Symbol(this.client, this, data) : undefined;
+    getSymbolAtPosition(requests: readonly { fileName: string; position: number; }[]): (Symbol | undefined)[];
+    getSymbolAtPosition(fileName: string, position: number): Symbol | undefined;
+    getSymbolAtPosition(...params: [fileName: string, position: number] | [readonly { fileName: string; position: number; }[]]): Symbol | undefined | (Symbol | undefined)[] {
+        if (params.length === 2) {
+            const data = this.client.request("getSymbolAtPosition", { project: this.configFileName, fileName: params[0], position: params[1] });
+            return data ? new Symbol(this.client, this, data) : undefined;
+        }
+        else {
+            const data = this.client.request("getSymbolAtPosition", params[0].map(({ fileName, position }) => ({ project: this.configFileName, fileName, position })));
+            return data.map((d: SymbolData | null) => d ? new Symbol(this.client, this, d) : undefined);
+        }
     }
 }
 
-export class SourceFile extends BaseSourceFile<false> {
+export class SourceFile extends BaseSourceFile {
     private client: Client;
     private project: Project;
     constructor(client: Client, project: Project, data: Buffer) {

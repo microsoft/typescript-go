@@ -275,7 +275,7 @@ func (s *Server) handleInitialize(req *lsproto.RequestMessage) error {
 }
 
 func (s *Server) handleInitialized(req *lsproto.RequestMessage) error {
-	s.logger = project.NewLogger([]io.Writer{s.stderr}, project.LogLevelVerbose)
+	s.logger = project.NewLogger([]io.Writer{s.stderr}, "", project.LogLevelVerbose)
 	if s.useAPI {
 		s.api = api.NewAPI(s, api.APIOptions{
 			Logger: s.logger,

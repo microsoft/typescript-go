@@ -1,8 +1,17 @@
 import { SyncRpcChannel } from "libsyncrpc";
+import type { FileSystemEntries } from "../types.ts";
 
 export interface ClientOptions {
     tsserverPath: string;
     cwd?: string;
+    logFile?: string;
+    fs?: {
+        directoryExists?: (directoryName: string) => boolean | undefined;
+        fileExists?: (fileName: string) => boolean | undefined;
+        getAccessibleEntries?: (directoryName: string) => FileSystemEntries | undefined;
+        readFile?: (fileName: string) => string | null | undefined;
+        realpath?: (path: string) => string | undefined;
+    };
 }
 
 export class Client {
@@ -14,6 +23,14 @@ export class Client {
             "-cwd",
             options.cwd ?? process.cwd(),
         ]);
+
+        this.channel.requestSync(
+            "configure",
+            JSON.stringify({
+                logFile: options.logFile,
+                callbacks: Object.keys(options.fs ?? {}),
+            }),
+        );
     }
 
     registerCallback(method: string, callback: (payload: any) => any): void {
@@ -25,7 +42,16 @@ export class Client {
     }
 
     request(method: string, payload: any): any {
-        return JSON.parse(this.channel.requestSync(method, JSON.stringify(payload)));
+        console.time("encode payload");
+        const encodedPayload = JSON.stringify(payload);
+        console.timeEnd("encode payload");
+        console.time("request");
+        const result = this.channel.requestSync(method, encodedPayload);
+        console.timeEnd("request");
+        console.time("decode result");
+        const decodedResult = JSON.parse(result);
+        console.timeEnd("decode result");
+        return decodedResult;
     }
 
     requestBinary(method: string, payload: any): Buffer {

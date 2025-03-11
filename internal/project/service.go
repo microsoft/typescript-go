@@ -198,7 +198,7 @@ func (s *Service) EnsureDefaultProjectForFile(fileName string) (*ScriptInfo, *Pr
 }
 
 func (s *Service) Close() {
-	// !!!
+	s.options.Logger.Close()
 }
 
 // SourceFileCount should only be used for testing.

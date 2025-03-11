@@ -1,4 +1,4 @@
-import { SyntaxKind } from "../syntaxKind.ts";
+import { SyntaxKind } from "#ast/syntax";
 
 export interface TextRange {
     pos: number;
@@ -8,6 +8,13 @@ export interface TextRange {
 export interface Node extends ReadonlyTextRange {
     readonly kind: SyntaxKind;
     readonly parent: Node;
+
+    forEachChild<T>(cbNode: (node: Node) => T | undefined): T | undefined;
+}
+
+export interface SourceFile extends Node {
+    kind: SyntaxKind.SourceFile;
+    readonly statements: NodeArray<Statement>;
 }
 
 export type TriviaSyntaxKind =
@@ -297,8 +304,7 @@ export interface ReadonlyTextRange {
     readonly end: number;
 }
 
-export interface NodeArray<T> extends ReadonlyTextRange, Iterable<T> {
-    readonly hasTrailingComma: boolean;
+export interface NodeArray<T> extends ReadonlyTextRange, ReadonlyArray<T> {
     readonly length: number;
     readonly pos: number;
     readonly end: number;
@@ -401,7 +407,7 @@ export interface Identifier extends PrimaryExpression, Declaration {
      * Prefer to use `id.unescapedText`. (Note: This is available only in services, not internally to the TypeScript compiler.)
      * Text of identifier, but if the identifier begins with two underscores, this will begin with three.
      */
-    readonly escapedText: string;
+    readonly text: string;
 }
 
 export interface QualifiedName extends Node {
@@ -432,9 +438,6 @@ export type DeclarationName =
     | EntityNameExpression;
 
 export interface Declaration extends Node {
-    _declarationBrand: any;
-    /** @internal */ symbol: Symbol; // Symbol declared by node (initialized by binding)
-    /** @internal */ localSymbol?: Symbol; // Local symbol declared by node (initialized by binding only for exported nodes)
 }
 
 export interface NamedDeclaration extends Declaration {

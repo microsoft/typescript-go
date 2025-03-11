@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/binary"
 	"fmt"
+	"slices"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -25,6 +26,40 @@ const (
 	NodeDataTypeExtendedDataIndex
 )
 
+const (
+	EncodedHeaderLength = 6 * 4
+)
+
+type stringTable struct {
+	data    *strings.Builder
+	offsets []int32
+}
+
+func newStringTable(stringLength int, stringCount int) *stringTable {
+	builder := &strings.Builder{}
+	builder.Grow(stringLength)
+	return &stringTable{
+		data:    builder,
+		offsets: make([]int32, 0, stringCount),
+	}
+}
+
+func (t *stringTable) add(s string) int32 {
+	offset := int32(t.data.Len())
+	t.offsets = append(t.offsets, offset)
+	t.data.WriteString(s)
+	return int32(len(t.offsets) - 1)
+}
+
+func (t *stringTable) encode() (result []byte, err error) {
+	result = make([]byte, 0, len(t.offsets)*4+t.data.Len())
+	if result, err = appendInt32s(result, t.offsets...); err != nil {
+		return nil, err
+	}
+	result = append(result, t.data.String()...)
+	return result, nil
+}
+
 // EncodeSourceFile encodes a source file into a byte slice.
 // The encoded format is a sequence of int32 values, where each node is represented by 5 values:
 // - kind: the node kind
@@ -34,52 +69,43 @@ const (
 // - parent: the index of the parent node (0 if there is no parent)
 // The first encoded node is a zero element that is not part of the source file.
 func EncodeSourceFile(sourceFile *ast.SourceFile) ([]byte, error) {
-	buf := make([]byte, 0, (sourceFile.NodeCount+1)*EncodedNodeLength*4)
-
-	current := sourceFile.AsNode()
-	var currentNodeList *ast.NodeList
 	var err error
-	var parentIndex, nodeIndex, currentIndex int32
+	var parentIndex, nodeCount, prevIndex int32
+
+	strs := newStringTable(sourceFile.TextLength, sourceFile.TextCount)
+	nodes := make([]byte, 0, (sourceFile.NodeCount+1)*EncodedNodeLength*4)
 
 	visitor := &ast.NodeVisitor{
 		Hooks: ast.NodeVisitorHooks{
-			VisitNodes: func(nodes *ast.NodeList, visitor *ast.NodeVisitor) *ast.NodeList {
-				if nodes == nil || len(nodes.Nodes) == 0 {
-					return nodes
+			VisitNodes: func(nodeList *ast.NodeList, visitor *ast.NodeVisitor) *ast.NodeList {
+				if nodeList == nil || len(nodeList.Nodes) == 0 {
+					return nodeList
 				}
 
-				nodeIndex++
-				if nodes.Nodes[0].Parent == current {
-					// this is the first child of the last node we visited
-					parentIndex = nodeIndex - 1
-				} else if nodes.Nodes[0].Parent == current.Parent {
-					// this is the next sibling of `current`
-					b0, b1, b2, b3 := uint8(nodeIndex), uint8(nodeIndex>>8), uint8(nodeIndex>>16), uint8(nodeIndex>>24)
-					buf[currentIndex*EncodedNodeLength*4+EncodedNext*4] = b0
-					buf[currentIndex*EncodedNodeLength*4+EncodedNext*4+1] = b1
-					buf[currentIndex*EncodedNodeLength*4+EncodedNext*4+2] = b2
-					buf[currentIndex*EncodedNodeLength*4+EncodedNext*4+3] = b3
+				nodeCount++
+				if prevIndex != 0 {
+					// this is the next sibling of `prevNode`
+					b0, b1, b2, b3 := uint8(nodeCount), uint8(nodeCount>>8), uint8(nodeCount>>16), uint8(nodeCount>>24)
+					nodes[prevIndex*EncodedNodeLength*4+EncodedNext*4] = b0
+					nodes[prevIndex*EncodedNodeLength*4+EncodedNext*4+1] = b1
+					nodes[prevIndex*EncodedNodeLength*4+EncodedNext*4+2] = b2
+					nodes[prevIndex*EncodedNodeLength*4+EncodedNext*4+3] = b3
 				}
 
-				saveNodeList := currentNodeList
-				saveParentIndex := parentIndex
-				saveCurrent := current
-				saveCurrentIndex := currentIndex
-
-				currentNodeList = nodes
-				currentIndex = nodeIndex
-
-				if buf, err = appendInt32s(buf, int32(-1), int32(nodes.Pos()), int32(nodes.End()), 0, parentIndex, int32(len(nodes.Nodes))); err != nil {
+				if nodes, err = appendInt32s(nodes, int32(-1), int32(nodeList.Pos()), int32(nodeList.End()), 0, parentIndex, int32(len(nodeList.Nodes))); err != nil {
 					return nil
 				}
 
-				visitor.VisitSlice(nodes.Nodes)
+				saveParentIndex := parentIndex
 
+				currentIndex := nodeCount
+				prevIndex = 0
+				parentIndex = currentIndex
+				visitor.VisitSlice(nodeList.Nodes)
+				prevIndex = currentIndex
 				parentIndex = saveParentIndex
-				current = saveCurrent
-				currentIndex = saveCurrentIndex
-				currentNodeList = saveNodeList
-				return nodes
+
+				return nodeList
 			},
 			VisitModifiers: func(modifiers *ast.ModifierList, visitor *ast.NodeVisitor) *ast.ModifierList {
 				if modifiers != nil && len(modifiers.Nodes) > 0 {
@@ -90,45 +116,40 @@ func EncodeSourceFile(sourceFile *ast.SourceFile) ([]byte, error) {
 		},
 	}
 	visitor.Visit = func(node *ast.Node) *ast.Node {
-		nodeIndex++
-		if node.Parent != nil {
-			if node.Parent == current || currentNodeList != nil && currentNodeList.Nodes[0] == node {
-				// this is the first child of the last node we visited
-				parentIndex = nodeIndex - 1
-			} else if node.Parent == current.Parent {
-				// this is the next sibling of `current`
-				b0, b1, b2, b3 := uint8(nodeIndex), uint8(nodeIndex>>8), uint8(nodeIndex>>16), uint8(nodeIndex>>24)
-				buf[currentIndex*EncodedNodeLength*4+EncodedNext*4] = b0
-				buf[currentIndex*EncodedNodeLength*4+EncodedNext*4+1] = b1
-				buf[currentIndex*EncodedNodeLength*4+EncodedNext*4+2] = b2
-				buf[currentIndex*EncodedNodeLength*4+EncodedNext*4+3] = b3
-			}
+		nodeCount++
+		if prevIndex != 0 {
+			// this is the next sibling of `prevNode`
+			b0, b1, b2, b3 := uint8(nodeCount), uint8(nodeCount>>8), uint8(nodeCount>>16), uint8(nodeCount>>24)
+			nodes[prevIndex*EncodedNodeLength*4+EncodedNext*4] = b0
+			nodes[prevIndex*EncodedNodeLength*4+EncodedNext*4+1] = b1
+			nodes[prevIndex*EncodedNodeLength*4+EncodedNext*4+2] = b2
+			nodes[prevIndex*EncodedNodeLength*4+EncodedNext*4+3] = b3
 		}
-		current = node
-		currentIndex = nodeIndex
-		saveParentIndex := parentIndex
-		saveCurrentIndex := currentIndex
 
-		if buf, err = appendInt32s(buf, int32(current.Kind), int32(current.Pos()), int32(current.End()), 0, parentIndex, getNodeData(current)); err != nil {
+		if nodes, err = appendInt32s(nodes, int32(node.Kind), int32(node.Pos()), int32(node.End()), 0, parentIndex, getNodeData(node, strs)); err != nil {
 			visitor.Visit = nil
 			return nil
 		}
 
+		saveParentIndex := parentIndex
+
+		currentIndex := nodeCount
+		prevIndex = 0
+		parentIndex = currentIndex
 		visitor.VisitEachChild(node)
+		prevIndex = currentIndex
 		parentIndex = saveParentIndex
-		current = node
-		currentIndex = saveCurrentIndex
 		return node
 	}
 
 	// kind, pos, end, next, parent
-	if buf, err = appendInt32s(buf, 0, 0, 0, 0, 0, 0); err != nil {
+	if nodes, err = appendInt32s(nodes, 0, 0, 0, 0, 0, 0); err != nil {
 		return nil, err
 	}
 
-	nodeIndex++
+	nodeCount++
 	parentIndex++
-	if buf, err = appendInt32s(buf, int32(sourceFile.Kind), int32(sourceFile.Pos()), int32(sourceFile.End()), 0, 0, 0); err != nil {
+	if nodes, err = appendInt32s(nodes, int32(sourceFile.Kind), int32(sourceFile.Pos()), int32(sourceFile.End()), 0, 0, 0); err != nil {
 		return nil, err
 	}
 
@@ -137,7 +158,35 @@ func EncodeSourceFile(sourceFile *ast.SourceFile) ([]byte, error) {
 		return nil, err
 	}
 
-	return buf, nil
+	headerLength := EncodedHeaderLength
+	offsetStringTableOffsets := headerLength
+	offsetStringTableData := headerLength + len(strs.offsets)*4
+	offsetNodes := offsetStringTableData + strs.data.Len()
+	offsetExtendedDataOffsets := 0
+	offsetExtendedDataData := 0
+
+	header := []int32{
+		0,
+		int32(offsetStringTableOffsets),
+		int32(offsetStringTableData),
+		int32(offsetExtendedDataOffsets),
+		int32(offsetExtendedDataData),
+		int32(offsetNodes),
+	}
+
+	var headerBytes, strsBytes []byte
+	if headerBytes, err = appendInt32s(nil, header...); err != nil {
+		return nil, err
+	}
+	if strsBytes, err = strs.encode(); err != nil {
+		return nil, err
+	}
+
+	return slices.Concat(
+		headerBytes,
+		strsBytes,
+		nodes,
+	), nil
 }
 
 func appendInt32s(buf []byte, values ...int32) ([]byte, error) {
@@ -150,39 +199,46 @@ func appendInt32s(buf []byte, values ...int32) ([]byte, error) {
 	return buf, nil
 }
 
-func FormatEncodedSourceFile(encoded []int32) string {
+func readInt32(buf []byte, offset int) int32 {
+	return int32(binary.LittleEndian.Uint32(buf[offset : offset+4]))
+}
+
+func FormatEncodedSourceFile(encoded []byte) string {
 	var result strings.Builder
 	var getIndent func(parentIndex int32) string
+	offsetNodes := readInt32(encoded, 5*4)
 	getIndent = func(parentIndex int32) string {
 		if parentIndex == 0 {
 			return ""
 		}
-		return "  " + getIndent(encoded[parentIndex*EncodedNodeLength+EncodedParent])
+		return "  " + getIndent(readInt32(encoded, int(offsetNodes)+int(parentIndex)*EncodedNodeLength*4+EncodedParent*4))
 	}
-	for i := EncodedNodeLength; i < len(encoded); i += EncodedNodeLength {
-		kind := encoded[i+EncodedKind]
-		pos := encoded[i+EncodedPos]
-		end := encoded[i+EncodedEnd]
-		parentIndex := encoded[i+EncodedParent]
+	j := 1
+	for i := int(offsetNodes) + EncodedNodeLength*4; i < len(encoded); i += EncodedNodeLength * 4 {
+		kind := readInt32(encoded, i+EncodedKind*4)
+		pos := readInt32(encoded, i+EncodedPos*4)
+		end := readInt32(encoded, i+EncodedEnd*4)
+		parentIndex := readInt32(encoded, i+EncodedParent*4)
 		result.WriteString(getIndent(parentIndex))
 		if kind == -1 {
 			result.WriteString("NodeList")
 		} else {
 			result.WriteString(ast.Kind(kind).String())
 		}
-		fmt.Fprintf(&result, " [%d, %d), i=%d, next=%d", pos, end, i/EncodedNodeLength, encoded[i+EncodedNext])
+		fmt.Fprintf(&result, " [%d, %d), i=%d, next=%d", pos, end, j, encoded[i+EncodedNext*4])
 		result.WriteString("\n")
+		j++
 	}
 	return result.String()
 }
 
-func getNodeData(node *ast.Node) int32 {
+func getNodeData(node *ast.Node, strs *stringTable) int32 {
 	t := getNodeDataType(node)
 	switch t {
 	case NodeDataTypeChildren:
 		return t | getNodeDefinedData(node) | int32(getChildrenPropertyMask(node))
 	case NodeDataTypeStringIndex:
-		return t | getNodeDefinedData(node) /* | TODO */
+		return t | getNodeDefinedData(node) | recordNodeStrings(node, strs)
 	case NodeDataTypeExtendedDataIndex:
 		return t | getNodeDefinedData(node) /* | TODO */
 	default:
@@ -594,6 +650,31 @@ func getNodeDefinedData(node *ast.Node) int32 {
 		return int32(boolToByte(n.MultiLine))<<24 | int32(boolToByte(n.Token == ast.KindAssertKeyword))<<25
 	}
 	return 0
+}
+
+func recordNodeStrings(node *ast.Node, strs *stringTable) int32 {
+	switch node.Kind {
+	case ast.KindJsxText:
+		return strs.add(node.AsJsxText().Text)
+	case ast.KindIdentifier:
+		return strs.add(node.AsIdentifier().Text)
+	case ast.KindPrivateIdentifier:
+		return strs.add(node.AsPrivateIdentifier().Text)
+	case ast.KindStringLiteral:
+		return strs.add(node.AsStringLiteral().Text)
+	case ast.KindNumericLiteral:
+		return strs.add(node.AsNumericLiteral().Text)
+	case ast.KindBigIntLiteral:
+		return strs.add(node.AsBigIntLiteral().Text)
+	case ast.KindRegularExpressionLiteral:
+		return strs.add(node.AsRegularExpressionLiteral().Text)
+	case ast.KindNoSubstitutionTemplateLiteral:
+		return strs.add(node.AsNoSubstitutionTemplateLiteral().Text)
+	case ast.KindJSDocText:
+		return strs.add(node.AsJSDocText().Text)
+	default:
+		panic(fmt.Sprintf("Unexpected node kind %v", node.Kind))
+	}
 }
 
 func boolToByte(b bool) byte {

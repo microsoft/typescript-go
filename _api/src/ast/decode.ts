@@ -1,14 +1,15 @@
-import { SyntaxKind } from "../syntaxKind.ts";
+import { SyntaxKind } from "#ast/syntax";
 
 export type NodeDataType = typeof NodeDataTypeChildren | typeof NodeDataTypeString | typeof NodeDataTypeExtended;
-export const NodeDataTypeMask = 0xc0000000;
 export const NodeDataTypeChildren = 0x00000000;
 export const NodeDataTypeString = 0x40000000;
 export const NodeDataTypeExtended = 0x80000000;
 
-export const NodeChildMask = 0xff;
+export const NodeDataTypeMask = 0xc0_00_00_00;
+export const NodeChildMask = 0x00_00_00_ff;
+export const NodeStringIndexMask = 0x00_ff_ff_ff;
 
-export const childProperties: Readonly<Record<SyntaxKind, readonly string[]>> = {
+export const childProperties: Readonly<Partial<Record<SyntaxKind, readonly string[]>>> = {
     [SyntaxKind.QualifiedName]: ["left", "right"],
     [SyntaxKind.TypeParameter]: ["modifiers", "name", "constraint", "defaultType"],
     [SyntaxKind.IfStatement]: ["expression", "thenStatement", "elseStatement"],

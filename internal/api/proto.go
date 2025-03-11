@@ -26,6 +26,7 @@ func NewHandle[T any](v *T) Handle[T] {
 }
 
 const (
+	MethodConfigure           Method = "configure"
 	MethodParseConfigFile     Method = "parseConfigFile"
 	MethodLoadProject         Method = "loadProject"
 	MethodGetSymbolAtPosition Method = "getSymbolAtPosition"
@@ -36,9 +37,14 @@ const (
 var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodParseConfigFile:     unmarshallerFor[ParseConfigFileParams],
 	MethodLoadProject:         unmarshallerFor[LoadProjectParams],
-	MethodGetSymbolAtPosition: unmarshallerFor[GetSymbolAtPositionParams],
-	MethodGetTypeOfSymbol:     unmarshallerFor[GetTypeOfSymbolParams],
 	MethodGetSourceFile:       unmarshallerFor[GetSourceFileParams],
+	MethodGetSymbolAtPosition: batchEnabledUnmarshallerFor[GetSymbolAtPositionParams],
+	MethodGetTypeOfSymbol:     batchEnabledUnmarshallerFor[GetTypeOfSymbolParams],
+}
+
+type ConfigureParams struct {
+	Callbacks []string `json:"callbacks"`
+	LogFile   string   `json:"logFile"`
 }
 
 type ParseConfigFileParams struct {
@@ -113,6 +119,17 @@ func unmarshalPayload(method string, payload json.RawMessage) (any, error) {
 		return nil, fmt.Errorf("unknown API method %q", method)
 	}
 	return unmarshaler(payload)
+}
+
+func batchEnabledUnmarshallerFor[T any](data []byte) (any, error) {
+	if data[0] != '[' {
+		return unmarshallerFor[T](data)
+	}
+	var v []*T
+	if err := json.Unmarshal(data, &v); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal %T: %w", (*T)(nil), err)
+	}
+	return &v, nil
 }
 
 func unmarshallerFor[T any](data []byte) (any, error) {

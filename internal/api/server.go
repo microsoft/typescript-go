@@ -9,6 +9,7 @@ import (
 	"io"
 	"strconv"
 	"sync"
+	"time"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/project"
@@ -70,7 +71,7 @@ func NewServer(options *ServerOptions) *Server {
 		fs:                 bundled.WrapFS(osvfs.FS()),
 		defaultLibraryPath: options.DefaultLibraryPath,
 	}
-	logger := project.NewLogger([]io.Writer{options.Err}, project.LogLevelVerbose)
+	logger := project.NewLogger([]io.Writer{options.Err}, "", project.LogLevelVerbose)
 	api := NewAPI(server, APIOptions{
 		Logger: logger,
 	})
@@ -124,7 +125,7 @@ func (s *Server) Run() error {
 			}
 			method := string(line[offset : offset+index])
 			payload := line[offset+index+1 : len(line)-1]
-
+			now := time.Now()
 			var result any
 			var err error
 			if messageType == "request-bin" {
@@ -133,14 +134,17 @@ func (s *Server) Run() error {
 				result, err = s.handleRequest(method, payload)
 			}
 
+			s.logger.PerfTrace(fmt.Sprintf("%s handled - %s", method, time.Since(now)))
+			now = time.Now()
 			if err != nil {
 				if err := s.sendError(method, err); err != nil {
 					return err
 				}
-			} else {
+			} else if result != nil {
 				if err := s.sendResponse(method, result); err != nil {
 					return err
 				}
+				s.logger.PerfTrace(fmt.Sprintf("%s sent - %s", method, time.Since(now)))
 			}
 		default:
 			return fmt.Errorf("%w: expected request, recieved: %s", ErrInvalidRequest, messageType)
@@ -198,10 +202,28 @@ func (s *Server) handleBinaryRequest(method string, payload []byte) error {
 
 func (s *Server) handleRequest(method string, payload []byte) (any, error) {
 	s.requestId++
-	if method == "registerCallback" {
-		return nil, s.enableCallback(string(payload))
+	if method == "configure" {
+		return nil, s.handleConfigure(payload)
 	}
 	return s.api.HandleRequest(s.requestId, method, payload)
+}
+
+func (s *Server) handleConfigure(payload []byte) error {
+	var params *ConfigureParams
+	if err := json.Unmarshal(payload, &params); err != nil {
+		return fmt.Errorf("%w: %w", ErrInvalidRequest, err)
+	}
+	for _, callback := range params.Callbacks {
+		if err := s.enableCallback(callback); err != nil {
+			return err
+		}
+	}
+	if params.LogFile != "" {
+		s.logger.SetFile(params.LogFile)
+	} else {
+		s.logger.SetFile("")
+	}
+	return s.sendResponse("configure", nil)
 }
 
 func (s *Server) sendResponse(method string, result any) error {

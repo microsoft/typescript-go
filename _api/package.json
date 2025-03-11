@@ -3,6 +3,16 @@
   "name": "typescript-api",
   "version": "1.0.0",
   "type": "module",
+  "imports": {
+    "#ast/syntax": {
+      "types": "./src/ast/syntaxKind.enum.ts",
+      "default": "./src/ast/syntaxKind.js"
+    },
+    "#symbolFlags": {
+      "types": "./src/base/symbolFlags.enum.ts",
+      "default": "./src/base/symbolFlags.js"
+    }
+  },
   "dependencies": {
     "json-rpc-2.0": "^1.7.0",
     "libsyncrpc": "file:../../libsyncrpc"
