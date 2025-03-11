@@ -3753,7 +3753,7 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 			// type references (which are intended by be compared structurally). Obtain the variance
 			// information for the type parameters and relate the type arguments accordingly.
 			variances := r.c.getVariances(source.Target())
-			// We return Ternary.Maybe for a recursive invocation of getVariances (signalled by emptyArray). This
+			// We return Ternary.Maybe for a recursive invocation of getVariances (signaled by emptyArray). This
 			// effectively means we measure variance only from type parameter occurrences that aren't nested in
 			// recursive instantiations of the generic type.
 			if len(variances) == 0 {
@@ -4728,7 +4728,7 @@ func (r *Relater) reportError(message *diagnostics.Message, args ...any) {
 			return
 		}
 		// Transform a property incompatibility message for property 'x' followed by some elaboration message
-		// followed by a signature return type incompatibility message into a single return type incompatiblity
+		// followed by a signature return type incompatibility message into a single return type incompatibility
 		// message for 'x()' or 'x(...)'
 		var arg string
 		switch r.getChainMessage(1) {
