@@ -19,19 +19,21 @@ package printer
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/stringutil"
 )
 
 type PrinterOptions struct {
 	// RemoveComments                bool
 	NewLine core.NewLineKind
 	// OmitTrailingSemicolon         bool
-	// NoEmitHelpers                 bool
+	NoEmitHelpers bool
 	// Module                        core.ModuleKind
 	// ModuleResolution              core.ModuleResolutionKind
 	// Target                        core.ScriptTarget
@@ -108,16 +110,19 @@ type PrintHandlers struct {
 
 type Printer struct {
 	PrintHandlers
-	Options            PrinterOptions
-	emitContext        *EmitContext
-	currentSourceFile  *ast.SourceFile
-	nextListElementPos int
-	writer             EmitTextWriter
-	ownWriter          EmitTextWriter
-	writeKind          WriteKind
-	commentsDisabled   bool
-	inExtends          bool // whether we are emitting the `extends` clause of a ConditionalType or InferType
-	nameGenerator      NameGenerator
+	Options                           PrinterOptions
+	emitContext                       *EmitContext
+	currentSourceFile                 *ast.SourceFile
+	uniqueHelperNames                 map[string]*ast.IdentifierNode
+	externalHelpersModuleName         *ast.IdentifierNode
+	nextListElementPos                int
+	writer                            EmitTextWriter
+	ownWriter                         EmitTextWriter
+	writeKind                         WriteKind
+	commentsDisabled                  bool
+	inExtends                         bool // whether we are emitting the `extends` clause of a ConditionalType or InferType
+	nameGenerator                     NameGenerator
+	makeFileLevelOptimisticUniqueName func(string) string
 }
 
 func NewPrinter(options PrinterOptions, handlers PrintHandlers, emitContext *EmitContext) *Printer {
@@ -302,6 +307,20 @@ func (p *Printer) writeLine() {
 func (p *Printer) writeLineRepeat(count int) {
 	for range count {
 		p.writeLine()
+	}
+}
+
+func (p *Printer) writeLines(text string) {
+	lines := stringutil.SplitLines(text)
+	indentation := stringutil.GuessIndentation(lines)
+	for _, line := range lines {
+		if indentation > 0 {
+			line = line[indentation:]
+		}
+		if len(line) > 0 {
+			p.writeLine()
+			p.write(line)
+		}
 	}
 }
 
@@ -648,8 +667,7 @@ func (p *Printer) hasCommentsAtPosition(pos int) bool {
 }
 
 func (p *Printer) shouldEmitIndirectCall(node *ast.Node) bool {
-	// !!! return getInternalEmitFlags(node)&InternalEmitFlagsIndirectCall != 0
-	return false
+	return p.emitContext.EmitFlags(node)&EFIndirectCall != 0
 }
 
 func (p *Printer) shouldAllowTrailingComma(node *ast.Node, list *ast.NodeList) bool {
@@ -909,13 +927,54 @@ func (p *Printer) emitIdentifierNameNode(node *ast.IdentifierNode) {
 	p.emitIdentifierName(node.AsIdentifier())
 }
 
+func (p *Printer) getUniqueHelperName(name string) *ast.IdentifierNode {
+	helperName := p.uniqueHelperNames[name]
+	if helperName == nil {
+		helperName := p.emitContext.NewUniqueName(name, AutoGenerateOptions{Flags: GeneratedIdentifierFlagsFileLevel | GeneratedIdentifierFlagsOptimistic})
+		p.generateName(helperName)
+		p.uniqueHelperNames[name] = helperName
+		return helperName
+	}
+	return helperName.Clone(p.emitContext.Factory)
+}
+
 func (p *Printer) emitIdentifierReference(node *ast.Identifier) {
+	if (p.externalHelpersModuleName != nil || p.uniqueHelperNames != nil) &&
+		p.emitContext.EmitFlags(node.AsNode())&EFHelperName != 0 {
+		if p.externalHelpersModuleName != nil {
+			// Substitute `__helper` with `tslib_1.__helper`
+			helper := p.emitContext.Factory.NewPropertyAccessExpression(
+				p.externalHelpersModuleName.Clone(p.emitContext.Factory),
+				nil, /*questionDotToken*/
+				node.Clone(p.emitContext.Factory),
+				ast.NodeFlagsNone,
+			)
+			p.emitContext.AssignCommentAndSourceMapRanges(helper, node.AsNode())
+			p.emitPropertyAccessExpression(helper.AsPropertyAccessExpression())
+			return
+		}
+		if p.uniqueHelperNames != nil {
+			// Substitute `__helper` with `__helper_1` if there is a conflict in an ES module.
+			helperName := p.getUniqueHelperName(node.Text)
+			p.emitContext.AssignCommentAndSourceMapRanges(helperName, node.AsNode())
+			node = helperName.AsIdentifier()
+		}
+	}
+
 	p.enterNode(node.AsNode())
 	p.emitIdentifierText(node)
 	p.exitNode(node.AsNode())
 }
 
 func (p *Printer) emitBindingIdentifier(node *ast.Identifier) {
+	if p.uniqueHelperNames != nil &&
+		p.emitContext.EmitFlags(node.AsNode())&EFHelperName != 0 {
+		// Substitute `__helper` with `__helper_1` if there is a conflict in an ES module.
+		helperName := p.getUniqueHelperName(node.Text)
+		p.emitContext.AssignCommentAndSourceMapRanges(helperName, node.AsNode())
+		node = helperName.AsIdentifier()
+	}
+
 	p.enterNode(node.AsNode())
 	p.emitIdentifierText(node)
 	p.exitNode(node.AsNode())
@@ -1187,11 +1246,6 @@ func (p *Printer) emitTypeParameterNode(node *ast.TypeParameterDeclarationNode) 
 }
 
 func (p *Printer) emitParameterName(node *ast.BindingName) {
-	// A JSDocFunctionType may have a parameter with a Name that is nil
-	if node == nil {
-		return
-	}
-
 	savedWriteKind := p.writeKind
 	p.writeKind = WriteKindParameter
 	p.emitBindingName(node)
@@ -2214,7 +2268,7 @@ func (p *Printer) emitCallee(callee *ast.Expression, parentNode *ast.Node) {
 		// Parenthesize `new C` inside of a CallExpression so it is treated as `(new C)()` and not `new C()`
 		p.emitExpression(callee, ast.OperatorPrecedenceParentheses)
 	} else {
-		p.emitExpression(callee, ast.OperatorPrecedenceMember)
+		p.emitExpression(callee, core.IfElse(ast.IsOptionalChain(parentNode), ast.OperatorPrecedenceOptionalChain, ast.OperatorPrecedenceMember))
 	}
 }
 
@@ -2432,10 +2486,10 @@ func (p *Printer) getLiteralKindOfBinaryPlusOperand(node *ast.Expression) ast.Ki
 	return ast.KindUnknown
 }
 
-func (p *Printer) emitBinaryExpression(node *ast.BinaryExpression) {
+func (p *Printer) getBinaryExpressionPrecedence(node *ast.BinaryExpression) (leftPrec ast.OperatorPrecedence, rightPrec ast.OperatorPrecedence) {
 	precedence := ast.GetExpressionPrecedence(node.AsNode())
-	leftPrec := precedence
-	rightPrec := precedence
+	leftPrec = precedence
+	rightPrec = precedence
 	switch precedence {
 	case ast.OperatorPrecedenceComma:
 		// No need to parenthesize the right operand when the binary operator and
@@ -2506,10 +2560,15 @@ func (p *Printer) emitBinaryExpression(node *ast.BinaryExpression) {
 	default:
 		panic(fmt.Sprintf("unhandled precedence: %v", precedence))
 	}
+	return leftPrec, rightPrec
+}
+
+func (p *Printer) emitBinaryExpression(node *ast.BinaryExpression) {
+	leftPrec, rightPrec := p.getBinaryExpressionPrecedence(node)
 	p.enterNode(node.AsNode())
 	p.emitExpression(node.Left, leftPrec)
 	linesBeforeOperator := p.getLinesBetweenNodes(node.AsNode(), node.Left, node.OperatorToken)
-	linesAfterOperator := p.getLinesBetweenNodes(node.AsNode(), node.Left, node.OperatorToken)
+	linesAfterOperator := p.getLinesBetweenNodes(node.AsNode(), node.OperatorToken, node.Right)
 	p.writeLinesAndIndent(linesBeforeOperator, node.OperatorToken.Kind != ast.KindCommaToken /*writeSpaceIfNotIndenting*/)
 	p.emitTokenNode(node.OperatorToken)
 	p.writeLinesAndIndent(linesAfterOperator, true /*writeSpaceIfNotIndenting*/) // Binary operators should have a space before the comment starts
@@ -3999,13 +4058,64 @@ func (p *Printer) emitJSDocNode(node *ast.Node) {
 // Top-level nodes
 //
 
-func (p *Printer) emitPrologueDirectives(statements *ast.StatementList) int {
+func (p *Printer) emitShebangIfNeeded(node *ast.SourceFile) {
 	// !!!
-	return 0
 }
 
-func (p *Printer) emitHelpers(node *ast.Node) {
-	// !!!
+func (p *Printer) emitPrologueDirectives(statements *ast.StatementList) int {
+	for i, statement := range statements.Nodes {
+		if ast.IsPrologueDirective(statement) {
+			p.writeLine()
+			p.emitStatement(statement)
+		} else {
+			return i
+		}
+	}
+	return len(statements.Nodes)
+}
+
+func compareEmitHelpers(x *EmitHelper, y *EmitHelper) int {
+	if x == y {
+		return 0
+	}
+	if x.Priority == y.Priority {
+		return 0
+	}
+	if x.Priority == nil {
+		return 1
+	}
+	if y.Priority == nil {
+		return -1
+	}
+	return x.Priority.Value - y.Priority.Value
+}
+
+func (p *Printer) emitHelpers(node *ast.Node) bool {
+	helpersEmitted := false
+	sourceFile := p.currentSourceFile
+	shouldSkip := p.Options.NoEmitHelpers || (sourceFile != nil && p.emitContext.HasRecordedExternalHelpers(sourceFile))
+	helpers := slices.Clone(p.emitContext.GetEmitHelpers(node))
+	if len(helpers) > 0 {
+		slices.SortStableFunc(helpers, compareEmitHelpers)
+		for _, helper := range helpers {
+			if !helper.Scoped {
+				// Skip the helper if it can be skipped and the noEmitHelpers compiler
+				// option is set, or if it can be imported and the importHelpers compiler
+				// option is set.
+				if shouldSkip {
+					continue
+				}
+			}
+			if helper.TextCallback != nil {
+				p.writeLines(helper.TextCallback(p.makeFileLevelOptimisticUniqueName))
+			} else {
+				p.writeLines(helper.Text)
+			}
+			helpersEmitted = true
+		}
+	}
+
+	return helpersEmitted
 }
 
 func (p *Printer) emitSourceFile(node *ast.SourceFile) {
@@ -4018,11 +4128,12 @@ func (p *Printer) emitSourceFile(node *ast.SourceFile) {
 
 	p.pushNameGenerationScope(node.AsNode())
 	p.generateAllNames(node.Statements)
-	p.emitHelpers(node.AsNode())
 
-	index := -1
+	index := 0
 	if node.ScriptKind != core.ScriptKindJSON {
-		index = core.FindIndex(node.Statements.Nodes, isNotPrologueDirective)
+		p.emitShebangIfNeeded(node)
+		index = p.emitPrologueDirectives(node.Statements)
+		p.emitHelpers(node.AsNode())
 	}
 
 	// !!! Emit triple-slash directives
@@ -4031,7 +4142,7 @@ func (p *Printer) emitSourceFile(node *ast.SourceFile) {
 		node.AsNode(),
 		node.Statements,
 		LFMultiLine,
-		core.IfElse(index >= 0, index, len(node.Statements.Nodes)),
+		index,
 		-1, /*count*/
 	)
 	p.popNameGenerationScope(node.AsNode())
@@ -4302,12 +4413,22 @@ func (p *Printer) EmitSourceFile(sourceFile *ast.SourceFile) string {
 
 func (p *Printer) setSourceFile(sourceFile *ast.SourceFile) {
 	p.currentSourceFile = sourceFile
+	p.uniqueHelperNames = nil
+	p.externalHelpersModuleName = nil
+	if sourceFile != nil {
+		if p.emitContext.EmitFlags(p.emitContext.MostOriginal(sourceFile.AsNode()))&EFExternalHelpers != 0 {
+			p.uniqueHelperNames = make(map[string]*ast.IdentifierNode)
+		}
+		p.externalHelpersModuleName = p.emitContext.GetExternalHelpersModuleName(sourceFile)
+	}
+
 	// !!!
 }
 
 func (p *Printer) Write(node *ast.Node, sourceFile *ast.SourceFile, writer EmitTextWriter) {
 	savedCurrentSourceFile := p.currentSourceFile
 	savedWriter := p.writer
+	savedUniqueHelperNames := p.uniqueHelperNames
 
 	p.setSourceFile(sourceFile)
 	p.writer = writer
@@ -4492,6 +4613,7 @@ func (p *Printer) Write(node *ast.Node, sourceFile *ast.SourceFile, writer EmitT
 
 	p.writer = savedWriter
 	p.currentSourceFile = savedCurrentSourceFile
+	p.uniqueHelperNames = savedUniqueHelperNames
 }
 
 //
@@ -4670,7 +4792,7 @@ func (p *Printer) generateName(name *ast.MemberName) {
 // Returns a value indicating whether a name is unique globally or within the current file.
 func (p *Printer) isFileLevelUniqueNameInCurrentFile(name string, _ bool) bool {
 	if p.currentSourceFile != nil {
-		return isFileLevelUniqueName(p.currentSourceFile, name, p.HasGlobalName)
+		return IsFileLevelUniqueName(p.currentSourceFile, name, p.HasGlobalName)
 	} else {
 		return true
 	}

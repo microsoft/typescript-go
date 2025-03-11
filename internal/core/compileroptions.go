@@ -7,7 +7,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-//go:generate go run golang.org/x/tools/cmd/stringer -type=ModuleKind,ScriptTarget -output=compileroptions_stringer_generated.go
+//go:generate go tool golang.org/x/tools/cmd/stringer -type=ModuleKind,ScriptTarget -output=compileroptions_stringer_generated.go
 
 type CompilerOptions struct {
 	AllowJs                                   Tristate                                  `json:"allowJs"`
@@ -252,26 +252,42 @@ func (options *CompilerOptions) GetAreDeclarationMapsEnabled() bool {
 	return false
 }
 
+func (options *CompilerOptions) HasJsonModuleEmitEnabled() bool {
+	switch options.GetEmitModuleKind() {
+	case ModuleKindNone, ModuleKindSystem, ModuleKindUMD:
+		return false
+	}
+	return true
+}
+
 // SourceFileAffectingCompilerOptions are the CompilerOptions values that when
 // changed require a new SourceFile be created.
 type SourceFileAffectingCompilerOptions struct {
 	// !!! generate this
-	Target          ScriptTarget
-	Jsx             JsxEmit
-	JsxImportSource string
-	ImportHelpers   Tristate
-	AlwaysStrict    Tristate
-	ModuleDetection ModuleDetectionKind
+	Target               ScriptTarget
+	Jsx                  JsxEmit
+	JsxImportSource      string
+	ImportHelpers        Tristate
+	AlwaysStrict         Tristate
+	ModuleDetection      ModuleDetectionKind
+	AllowUnreachableCode Tristate
+	AllowUnusedLabels    Tristate
+	PreserveConstEnums   Tristate
+	IsolatedModules      Tristate
 }
 
 func (options *CompilerOptions) SourceFileAffecting() SourceFileAffectingCompilerOptions {
 	return SourceFileAffectingCompilerOptions{
-		Target:          options.Target,
-		Jsx:             options.Jsx,
-		JsxImportSource: options.JsxImportSource,
-		ImportHelpers:   options.ImportHelpers,
-		AlwaysStrict:    options.AlwaysStrict,
-		ModuleDetection: options.ModuleDetection,
+		Target:               options.Target,
+		Jsx:                  options.Jsx,
+		JsxImportSource:      options.JsxImportSource,
+		ImportHelpers:        options.ImportHelpers,
+		AlwaysStrict:         options.AlwaysStrict,
+		ModuleDetection:      options.ModuleDetection,
+		AllowUnreachableCode: options.AllowUnreachableCode,
+		AllowUnusedLabels:    options.AllowUnusedLabels,
+		PreserveConstEnums:   options.PreserveConstEnums,
+		IsolatedModules:      options.IsolatedModules,
 	}
 }
 
