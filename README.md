@@ -62,23 +62,23 @@ This is still a work in progress and is not yet at full feature parity with Type
 
 Status overview:
 
- * Program creation (read `lib`, `target`, `reference`, `import`, `files`, `include`, and `exclude`): **done**. You should see the *same files*, with modules resolved to the *same locations*, as in a TypeScript 5.8 (TS5.8) invocation
+ * [x] Program creation (read `lib`, `target`, `reference`, `import`, `files`, `include`, and `exclude`). You should see the *same files*, with modules resolved to the *same locations*, as in a TypeScript 5.8 (TS5.8) invocation
    * Not all resolution modes are supported yet
- * Parsing/scanning (read source text and determine syntax shape): **done**. You should see the exact same *syntax errors* as in a TS5.8 invocation
- * Commandline and `tsconfig.json` parsing: **mostly done**. Note that the entry point is slightly different (for now)
- * Type resolution (resolve computed types to a concrete internal representation): **done**. You should see the same types as in TS5.8
- * Type checking (check for problems in functions, classes, and statements): **done**. You should see the same errors, in the same locations, with the same messages, as TS 5.8
-    * Types printback in errors may display slightly differently; this is in progress
- * JavaScript-specific inference and JS Doc: **not ready**
- * JSX: **not ready**
- * Declaration emit: **not ready**. Coming soon!
- * Emit (JS output): **in progress**. `target: esnext` (minimal downleveling) is well-supported but other targets may have gaps
- * Watch mode: **prototype** (watches the correct files and rebuilds, but doesn't do incremental rechecking)
- * Build mode / project references: **not ready**
- * Incremental build: **not ready**
- * Language service (LSP): **prototype** only, expect minimal functionality (errors, hover, go to def). More features soon!
+ * [x] Parsing/scanning (read source text and determine syntax shape). You should see the exact same *syntax errors* as in a TS5.8 invocation
+ * 🚧 Commandline and `tsconfig.json` parsing: **mostly done**. Note that the entry point is slightly different (for now)
+ * [x] Type resolution (resolve computed types to a concrete internal representation). You should see the same types as in TS5.8
+ * [x] Type checking (check for problems in functions, classes, and statements). You should see the same errors, in the same locations, with the same messages, as TS 5.8
+    * [ ] Types printback in errors may display slightly differently; this is in progress
+ * [ ] JavaScript-specific inference and JS Doc
+ * [ ] JSX
+ * 🚧 Declaration emit. Coming soon!
+ * 🚧 Emit (JS output): **in progress**. `target: esnext` (minimal downleveling) is well-supported but other targets may have gaps
+ * 🚧 Watch mode: **prototype** (watches the correct files and rebuilds, but doesn't do incremental rechecking)
+ * [ ] Build mode / project references
+ * [ ] Incremental build
+ * 🚧 Language service (LSP): **prototype** only, expect minimal functionality (errors, hover, go to def). More features soon!
    * ASCII files only for now
- * API: **not ready**
+ * [ ] API
 
 Definitions:
 
