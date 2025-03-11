@@ -8,7 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 )
 
-//go:generate go run golang.org/x/tools/cmd/stringer -type=SignatureKind -output=stringer_generated.go
+//go:generate go tool golang.org/x/tools/cmd/stringer -type=SignatureKind -output=stringer_generated.go
 
 // ParseFlags
 
@@ -348,8 +348,9 @@ type SourceFileLinks struct {
 // Signature specific links
 
 type SignatureLinks struct {
-	resolvedSignature *Signature // Cached signature of signature node or call expression
-	effectsSignature  *Signature // Signature with possible control flow effects
+	resolvedSignature  *Signature // Cached signature of signature node or call expression
+	effectsSignature   *Signature // Signature with possible control flow effects
+	decoratorSignature *Signature // Signature for decorator as if invoked by the runtime
 }
 
 // jsxFlag: JsxOpeningElement | JsxClosingElement

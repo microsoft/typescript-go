@@ -10,6 +10,7 @@ import (
 	"runtime"
 	"runtime/pprof"
 	"slices"
+	"strconv"
 	"strings"
 	"time"
 
@@ -110,6 +111,11 @@ func parseArgs() *cliOptions {
 	flag.BoolVar(&opts.devel.printTypes, "printTypes", false, "Print types defined in 'main.ts'.")
 	flag.StringVar(&opts.devel.pprofDir, "pprofDir", "", "Generate pprof CPU/memory profiles to the given directory.")
 	flag.Parse()
+
+	if len(flag.Args()) > 0 {
+		fmt.Fprintf(os.Stderr, "Unknown positional arguments %v. Current compiler is not identical to tsc but can be partially emulated by running:\n\ntsgo tsc <args>\n", flag.Args())
+		os.Exit(1)
+	}
 
 	return opts
 }
@@ -228,6 +234,17 @@ func main() {
 		printDiagnostics(ts.SortAndDeduplicateDiagnostics(diagnostics), host, compilerOptions)
 	}
 
+	var unsupportedExtensions []string
+	for _, file := range program.SourceFiles() {
+		extension := tspath.TryGetExtensionFromPath(file.FileName())
+		if extension == tspath.ExtensionTsx || slices.Contains(tspath.SupportedJSExtensionsFlat, extension) {
+			unsupportedExtensions = core.AppendIfUnique(unsupportedExtensions, extension)
+		}
+	}
+	if len(unsupportedExtensions) != 0 {
+		fmt.Fprintf(os.Stderr, "Warning: The project contains unsupported file types (%s), which are currently not fully type-checked.\n", strings.Join(unsupportedExtensions, ", "))
+	}
+
 	if compilerOptions.ListFiles.IsTrue() {
 		listFiles(program)
 	}
@@ -248,6 +265,7 @@ func main() {
 	}
 	stats.add("Total time", totalTime)
 	stats.add("Memory used", fmt.Sprintf("%vK", memStats.Alloc/1024))
+	stats.add("Memory allocs", strconv.FormatUint(memStats.Mallocs, 10))
 
 	stats.print()
 }

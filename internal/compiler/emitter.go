@@ -2,7 +2,7 @@ package compiler
 
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/checker"
+	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/printer"
@@ -38,35 +38,80 @@ func (e *emitter) emit() {
 	e.emitBuildInfo(e.paths.buildInfoPath)
 }
 
+func (e *emitter) getModuleTransformer(emitContext *printer.EmitContext, resolver binder.ReferenceResolver) *transformers.Transformer {
+	options := e.host.Options()
+
+	switch options.GetEmitModuleKind() {
+	case core.ModuleKindPreserve:
+		// `ESModuleTransformer` contains logic for preserving CJS input syntax in `--module preserve`
+		return transformers.NewESModuleTransformer(emitContext, options, resolver)
+
+	case core.ModuleKindESNext,
+		core.ModuleKindES2022,
+		core.ModuleKindES2020,
+		core.ModuleKindES2015,
+		core.ModuleKindNode16,
+		core.ModuleKindNodeNext,
+		core.ModuleKindCommonJS:
+		return transformers.NewImpliedModuleTransformer(emitContext, options, resolver)
+
+	default:
+		return transformers.NewCommonJSModuleTransformer(emitContext, options, resolver)
+	}
+}
+
+func (e *emitter) getScriptTransformers(emitContext *printer.EmitContext, sourceFile *ast.SourceFile) []*transformers.Transformer {
+	var tx []*transformers.Transformer
+	options := e.host.Options()
+
+	// JS files don't use reference calculations as they don't do import ellision, no need to calculate it
+	importElisionEnabled := !options.VerbatimModuleSyntax.IsTrue() && !ast.IsInJSFile(sourceFile.AsNode())
+
+	var emitResolver printer.EmitResolver
+	var referenceResolver binder.ReferenceResolver
+	if importElisionEnabled {
+		emitResolver = e.host.GetEmitResolver(sourceFile, false /*skipDiagnostics*/) // !!! conditionally skip diagnostics
+		emitResolver.MarkLinkedReferencesRecursively(sourceFile)
+		referenceResolver = emitResolver
+	} else {
+		referenceResolver = binder.NewReferenceResolver(binder.ReferenceResolverHooks{})
+	}
+
+	// erase types
+	tx = append(tx, transformers.NewTypeEraserTransformer(emitContext, options))
+
+	// elide impors
+	if importElisionEnabled {
+		tx = append(tx, transformers.NewImportElisionTransformer(emitContext, options, emitResolver))
+	}
+
+	// transform `enum`, `namespace`, and parameter properties
+	tx = append(tx, transformers.NewRuntimeSyntaxTransformer(emitContext, options, referenceResolver))
+
+	// transform module syntax
+	tx = append(tx, e.getModuleTransformer(emitContext, referenceResolver))
+	return tx
+}
+
 func (e *emitter) emitJsFile(sourceFile *ast.SourceFile, jsFilePath string, sourceMapFilePath string) {
 	options := e.host.Options()
 
 	if sourceFile == nil || e.emitOnly != emitAll && e.emitOnly != emitOnlyJs || len(jsFilePath) == 0 {
 		return
 	}
+
 	if options.NoEmit == core.TSTrue || e.host.IsEmitBlocked(jsFilePath) {
 		return
 	}
 
-	// JS files don't use reference calculations as they don't do import ellision, no need to calculate it
-	importElisionEnabled := !options.VerbatimModuleSyntax.IsTrue() && !ast.IsInJSFile(sourceFile.AsNode())
-
-	var emitResolver checker.EmitResolver
-	if importElisionEnabled {
-		emitResolver = e.host.GetEmitResolver(sourceFile, false /*skipDiagnostics*/) // !!! conditionally skip diagnostics
-		emitResolver.MarkLinkedReferencesRecursively(sourceFile)
-	}
-
-	// !!! transform the source files?
 	emitContext := printer.NewEmitContext()
-	sourceFile = transformers.NewTypeEraserTransformer(emitContext, options).TransformSourceFile(sourceFile)
-	if importElisionEnabled {
-		sourceFile = transformers.NewImportElisionTransformer(emitContext, options, emitResolver).TransformSourceFile(sourceFile)
+	for _, transformer := range e.getScriptTransformers(emitContext, sourceFile) {
+		sourceFile = transformer.TransformSourceFile(sourceFile)
 	}
-	sourceFile = transformers.NewRuntimeSyntaxTransformer(emitContext, options).TransformSourceFile(sourceFile)
 
 	printerOptions := printer.PrinterOptions{
-		NewLine: options.NewLine,
+		NewLine:       options.NewLine,
+		NoEmitHelpers: options.NoEmitHelpers.IsTrue(),
 		// !!!
 	}
 
@@ -116,21 +161,6 @@ func (e *emitter) printSourceFile(jsFilePath string, sourceMapFilePath string, s
 	// Reset state
 	e.writer.Clear()
 	return !data.SkippedDtsWrite
-}
-
-func getOutputExtension(fileName string, jsx core.JsxEmit) string {
-	switch {
-	case tspath.FileExtensionIs(fileName, tspath.ExtensionJson):
-		return tspath.ExtensionJson
-	case jsx == core.JsxEmitPreserve && tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionJsx, tspath.ExtensionTsx}):
-		return tspath.ExtensionJsx
-	case tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionMts, tspath.ExtensionMjs}):
-		return tspath.ExtensionMjs
-	case tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionCts, tspath.ExtensionCjs}):
-		return tspath.ExtensionCjs
-	default:
-		return tspath.ExtensionJs
-	}
 }
 
 func getSourceFilePathInNewDir(fileName string, newDirPath string, currentDirectory string, commonSourceDirectory string, useCaseSensitiveFileNames bool) string {
@@ -185,7 +215,7 @@ type outputPaths struct {
 func getOutputPathsFor(sourceFile *ast.SourceFile, host EmitHost, forceDtsEmit bool) *outputPaths {
 	options := host.Options()
 	// !!! bundle not implemented, may be deprecated
-	ownOutputFilePath := getOwnEmitOutputFilePath(sourceFile.FileName(), host, getOutputExtension(sourceFile.FileName(), options.Jsx))
+	ownOutputFilePath := getOwnEmitOutputFilePath(sourceFile.FileName(), host, core.GetOutputExtension(sourceFile.FileName(), options.Jsx))
 	isJsonFile := ast.IsJsonSourceFile(sourceFile)
 	// If json file emits to the same location skip writing it, if emitDeclarationOnly skip writing it
 	isJsonEmittedToSameLocation := isJsonFile &&

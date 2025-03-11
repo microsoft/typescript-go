@@ -82,7 +82,7 @@ func CompileFiles(
 	testConfig TestConfiguration,
 	tsconfigOptions *core.CompilerOptions,
 	currentDirectory string,
-	symlinks any,
+	symlinks map[string]string,
 ) *CompilationResult {
 	var compilerOptions core.CompilerOptions
 	if tsconfigOptions != nil {
@@ -129,15 +129,7 @@ func CompileFiles(
 	// }
 
 	// !!!
-	// docs := append(inputFiles, otherFiles...) // !!! Convert to `TextDocument`
-	// const fs = vfs.createFromFileSystem(IO, !useCaseSensitiveFileNames, { documents: docs, cwd: currentDirectory });
-	// if (symlinks) {
-	// 	fs.apply(symlinks);
-	// }
-
 	// ts.assign(options, ts.convertToOptionsWithAbsolutePaths(options, path => ts.getNormalizedAbsolutePath(path, currentDirectory)));
-
-	// !!! Port vfs usage closer to original
 
 	// Create fake FS for testing
 	testfs := map[string]any{}
@@ -152,6 +144,11 @@ func CompileFiles(
 		testfs[fileName] = &fstest.MapFile{
 			Data: []byte(file.Content),
 		}
+	}
+	for src, target := range symlinks {
+		srcFileName := tspath.GetNormalizedAbsolutePath(src, currentDirectory)
+		targetFileName := tspath.GetNormalizedAbsolutePath(target, currentDirectory)
+		testfs[srcFileName] = vfstest.Symlink(targetFileName)
 	}
 
 	fs := vfstest.FromMap(testfs, harnessOptions.UseCaseSensitiveFileNames)
@@ -672,7 +669,7 @@ func getValueOfOptionString(t *testing.T, option string, value string) tsoptions
 
 func getCommandLineOption(option string) *tsoptions.CommandLineOption {
 	return core.Find(tsoptions.OptionsDeclarations, func(optionDecl *tsoptions.CommandLineOption) bool {
-		return strings.ToLower(optionDecl.Name) == strings.ToLower(option)
+		return strings.EqualFold(optionDecl.Name, option)
 	})
 }
 
