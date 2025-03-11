@@ -123,7 +123,7 @@ func TestImportElision(t *testing.T) {
 			emitResolver.MarkLinkedReferencesRecursively(file)
 
 			emitContext := printer.NewEmitContext()
-			file = NewTypeEraserTransformer(emitContext, compilerOptions).TransformSourceFile(file)
+			file = NewTypeEraserTransformer(emitContext, file, compilerOptions).TransformSourceFile(file)
 			file = NewImportElisionTransformer(emitContext, compilerOptions, emitResolver).TransformSourceFile(file)
 			emittestutil.CheckEmit(t, nil, file, rec.output)
 		})

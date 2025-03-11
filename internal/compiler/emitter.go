@@ -78,7 +78,7 @@ func (e *emitter) getScriptTransformers(emitContext *printer.EmitContext, source
 	}
 
 	// erase types
-	tx = append(tx, transformers.NewTypeEraserTransformer(emitContext, options))
+	tx = append(tx, transformers.NewTypeEraserTransformer(emitContext, sourceFile, options))
 
 	// elide impors
 	if importElisionEnabled {

@@ -118,7 +118,6 @@ func cloneNode(updated *Node, original *Node, hooks NodeFactoryHooks) *Node {
 type NodeList struct {
 	Loc   core.TextRange
 	Nodes []*Node
-	Flags NodeFlags
 }
 
 func (f *NodeFactory) NewNodeList(nodes []*Node) *NodeList {
@@ -8647,6 +8646,7 @@ type SourceFile struct {
 	AmbientModuleNames          []string
 	CommentDirectives           []CommentDirective
 	jsdocCache                  map[*Node][]*Node
+	ParserTransforms            core.Set[*Node]
 	Pragmas                     []Pragma
 	ReferencedFiles             []*FileReference
 	TypeReferenceDirectives     []*FileReference

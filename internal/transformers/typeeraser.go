@@ -9,17 +9,18 @@ import (
 type TypeEraserTransformer struct {
 	Transformer
 	compilerOptions *core.CompilerOptions
+	sourceFile      *ast.SourceFile
 }
 
-func NewTypeEraserTransformer(emitContext *printer.EmitContext, compilerOptions *core.CompilerOptions) *Transformer {
-	tx := &TypeEraserTransformer{compilerOptions: compilerOptions}
+func NewTypeEraserTransformer(emitContext *printer.EmitContext, sourceFile *ast.SourceFile, compilerOptions *core.CompilerOptions) *Transformer {
+	tx := &TypeEraserTransformer{compilerOptions: compilerOptions, sourceFile: sourceFile}
 	return tx.newTransformer(tx.visit, emitContext)
 }
 
 func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 	// !!! TransformFlags were traditionally used here to skip over subtrees that contain no TypeScript syntax
 	if ast.IsStatement(node) && ast.HasSyntacticModifier(node, ast.ModifierFlagsAmbient) ||
-		node.Flags&ast.NodeFlagsSynthesized != 0 {
+		node.Flags&ast.NodeFlagsSynthesized != 0 && tx.sourceFile.ParserTransforms.Has(node) {
 		// !!! Use NotEmittedStatement to preserve comments
 		return nil
 	}
