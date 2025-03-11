@@ -227,7 +227,6 @@ func main() {
 
 	var memStats runtime.MemStats
 	runtime.GC()
-	runtime.GC()
 	runtime.ReadMemStats(&memStats)
 
 	if !opts.devel.quiet && len(diagnostics) != 0 {
