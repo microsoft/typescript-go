@@ -3,7 +3,7 @@
 [Not sure what this is? Read the announcement post!](https://devblogs.microsoft.com/typescript/typescript-native-port/)
 
 This repo is very much under active development; as such there are no published artifacts at this time.
-Interested developers can clone and run locally to try out things as they becomes available.
+Interested developers can clone and run locally to try out things as they become available.
 
 ## How to Build and Run
 
