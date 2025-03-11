@@ -2866,7 +2866,7 @@ func (p *Printer) emitExpression(node *ast.Expression, precedence ast.OperatorPr
 	case ast.KindSyntaxList:
 		panic("SyntaxList should not be printed")
 
-	//Transformation nodes
+	// Transformation nodes
 	case ast.KindNotEmittedStatement:
 		return
 	case ast.KindPartiallyEmittedExpression:
