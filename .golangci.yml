@@ -30,6 +30,7 @@ linters:
     - intrange
     - makezero
     - mirror
+    - misspell
     - musttag
     - nolintlint
     - paralleltest
@@ -63,6 +64,13 @@ linters-settings:
   custom:
     customlint:
       type: module
+
+  misspell:
+    locale: US
+    ignore-words:
+      - behaviour
+      - cancelled
+      - misspelt
 
 #   revive:
 #     enable-all-rules: true
