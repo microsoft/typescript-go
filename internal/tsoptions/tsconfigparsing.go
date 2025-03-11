@@ -496,7 +496,7 @@ func commandLineOptionsToMap(options []*CommandLineOption) map[string]*CommandLi
 
 var commandLineCompilerOptionsMap map[string]*CommandLineOption = commandLineOptionsToMap(OptionsDeclarations)
 
-func convertMapToOptions[O optionParser](optionsNameMap map[string]*CommandLineOption, options *collections.OrderedMap[string, any], basePath string, result O) O {
+func convertMapToOptions[O optionParser](options *collections.OrderedMap[string, any], result O) O {
 	// this assumes any `key`, `value` pair in `options` will have `value` already be the correct type. this function should no error handling
 	for key, value := range options.Entries() {
 		result.ParseOption(key, value)
@@ -617,6 +617,7 @@ func convertObjectLiteralExpressionToJson(
 			continue
 		}
 
+		// !!!
 		// if ast.IsQuestionToken(element) {
 		// 	errors = append(errors, ast.NewDiagnostic(sourceFile, element.Loc, diagnostics.Property_assignment_expected))
 		// }
@@ -1179,8 +1180,9 @@ func parseJsonConfigFileContentWorker(
 			FileNames:         getFileNames(basePathForFileNames),
 			ProjectReferences: getProjectReferences(basePathForFileNames),
 		},
-		Raw:    parsedConfig.raw,
-		Errors: errors,
+		ConfigFile: sourceFile,
+		Raw:        parsedConfig.raw,
+		Errors:     errors,
 	}
 }
 
@@ -1449,8 +1451,8 @@ func getFileNamesFromConfigSpecs(
 	validatedExcludeSpecs := configFileSpecs.validatedExcludeSpecs
 	// Rather than re-query this for each file and filespec, we query the supported extensions
 	// once and store it on the expansion context.
-	supportedExtensions := getSupportedExtensions(options, extraFileExtensions)
-	supportedExtensionsWithJsonIfResolveJsonModule := getSupportedExtensionsWithJsonIfResolveJsonModule(options, supportedExtensions)
+	supportedExtensions := GetSupportedExtensions(options, extraFileExtensions)
+	supportedExtensionsWithJsonIfResolveJsonModule := GetSupportedExtensionsWithJsonIfResolveJsonModule(options, supportedExtensions)
 	// Literal files are always included verbatim. An "include" or "exclude" specification cannot
 	// remove a literal file.
 	for _, fileName := range validatedFilesSpec {
@@ -1516,7 +1518,7 @@ func getFileNamesFromConfigSpecs(
 	return files
 }
 
-func getSupportedExtensions(options *core.CompilerOptions, extraFileExtensions []fileExtensionInfo) [][]string {
+func GetSupportedExtensions(options *core.CompilerOptions, extraFileExtensions []fileExtensionInfo) [][]string {
 	needJsExtensions := options.GetAllowJs()
 	if len(extraFileExtensions) == 0 {
 		if needJsExtensions {
@@ -1542,7 +1544,7 @@ func getSupportedExtensions(options *core.CompilerOptions, extraFileExtensions [
 	return extensions
 }
 
-func getSupportedExtensionsWithJsonIfResolveJsonModule(options *core.CompilerOptions, supportedExtensions [][]string) [][]string {
+func GetSupportedExtensionsWithJsonIfResolveJsonModule(options *core.CompilerOptions, supportedExtensions [][]string) [][]string {
 	if options == nil || !options.GetResolveJsonModule() {
 		return supportedExtensions
 	}

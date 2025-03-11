@@ -24,28 +24,12 @@ const (
 
 func Run(t *testing.T, fileName string, actual string, opts Options) {
 	if opts.IsSubmodule {
+		opts.Subfolder = filepath.Join(submoduleFolder, opts.Subfolder)
 		diff := getBaselineDiff(t, actual, fileName)
 		diffFileName := fileName + ".diff"
-		opts.Subfolder = filepath.Join(submoduleFolder, opts.Subfolder)
-		referenceFileName := referencePath(fileName, opts.Subfolder)
-		expected := NoContent
-		if content, err := os.ReadFile(referenceFileName); err == nil {
-			expected = string(content)
-		}
-		// Write original baseline in addition to diff baseline, if needed, but don't fail if they don't match
-		if actual != expected {
-			localFileName := localPath(fileName, opts.Subfolder)
-			if err := os.MkdirAll(filepath.Dir(localFileName), 0o755); err != nil {
-				t.Fatal(fmt.Errorf("failed to create directories for the local baseline file %s: %w", localFileName, err))
-			}
-			if err := os.WriteFile(localFileName, []byte(actual), 0o644); err != nil {
-				t.Fatal(fmt.Errorf("failed to write the local baseline file %s: %w", localFileName, err))
-			}
-		}
-		writeComparison(t, diff, diffFileName, false /*useSubmodule*/, opts)
-	} else {
-		writeComparison(t, actual, fileName, false /*useSubmodule*/, opts)
+		writeComparison(t, diff, diffFileName, false, opts)
 	}
+	writeComparison(t, actual, fileName, false, opts)
 }
 
 func getBaselineDiff(t *testing.T, actual string, fileName string) string {
@@ -59,7 +43,7 @@ func getBaselineDiff(t *testing.T, actual string, fileName string) string {
 	}
 	var b strings.Builder
 	if err := diff.Text("old."+fileName, "new."+fileName, expected, actual, &b); err != nil {
-		t.Fatalf("failed to diff the actual and expected content: %v", err)
+		return fmt.Sprintf("failed to diff the actual and expected content: %v\n", err)
 	}
 
 	// Remove line numbers from unified diff headers; this avoids adding/deleting
@@ -109,26 +93,36 @@ func writeComparison(t *testing.T, actual string, relativeFileName string, useSu
 		referenceFileName = referencePath(relativeFileName, opts.Subfolder)
 	}
 
-	expected := NoContent
-	if content, err := os.ReadFile(referenceFileName); err == nil {
-		expected = string(content)
+	if err := os.MkdirAll(filepath.Dir(localFileName), 0o755); err != nil {
+		t.Error(fmt.Errorf("failed to create directories for the local baseline file %s: %w", localFileName, err))
+		return
 	}
 
 	if _, err := os.Stat(localFileName); err == nil {
 		if err := os.Remove(localFileName); err != nil {
-			t.Fatal(fmt.Errorf("failed to remove the local baseline file %s: %w", localFileName, err))
+			t.Error(fmt.Errorf("failed to remove the local baseline file %s: %w", localFileName, err))
+			return
 		}
 	}
-	if actual != expected {
-		if err := os.MkdirAll(filepath.Dir(localFileName), 0o755); err != nil {
-			t.Fatal(fmt.Errorf("failed to create directories for the local baseline file %s: %w", localFileName, err))
-		}
+
+	expected := NoContent
+	foundExpected := false
+	if content, err := os.ReadFile(referenceFileName); err == nil {
+		expected = string(content)
+		foundExpected = true
+	}
+
+	if expected != actual || actual == NoContent && foundExpected {
 		if actual == NoContent {
 			if err := os.WriteFile(localFileName+".delete", []byte{}, 0o644); err != nil {
-				t.Fatal(fmt.Errorf("failed to write the local baseline file %s: %w", localFileName+".delete", err))
+				t.Error(fmt.Errorf("failed to write the local baseline file %s: %w", localFileName+".delete", err))
+				return
 			}
-		} else if err := os.WriteFile(localFileName, []byte(actual), 0o644); err != nil {
-			t.Fatal(fmt.Errorf("failed to write the local baseline file %s: %w", localFileName, err))
+		} else {
+			if err := os.WriteFile(localFileName, []byte(actual), 0o644); err != nil {
+				t.Error(fmt.Errorf("failed to write the local baseline file %s: %w", localFileName, err))
+				return
+			}
 		}
 
 		if _, err := os.Stat(referenceFileName); err != nil {

@@ -69,15 +69,6 @@ func tokenIsIdentifierOrKeywordOrGreaterThan(token ast.Kind) bool {
 	return token == ast.KindGreaterThanToken || tokenIsIdentifierOrKeyword(token)
 }
 
-func isCommonJSContainingModuleKind(kind core.ModuleKind) bool {
-	return kind == core.ModuleKindCommonJS || kind == core.ModuleKindNode16 || kind == core.ModuleKindNodeNext
-}
-
-/** @internal */
-func isEffectiveExternalModule(node *ast.SourceFile, compilerOptions *core.CompilerOptions) bool {
-	return ast.IsExternalModule(node) || (isCommonJSContainingModuleKind(compilerOptions.GetEmitModuleKind()) && node.CommonJsModuleIndicator != nil)
-}
-
 func hasOverrideModifier(node *ast.Node) bool {
 	return ast.HasSyntacticModifier(node, ast.ModifierFlagsOverride)
 }
@@ -437,7 +428,7 @@ func isShorthandAmbientModule(node *ast.Node) bool {
 }
 
 func getAliasDeclarationFromName(node *ast.Node) *ast.Node {
-	switch node.Kind {
+	switch node.Parent.Kind {
 	case ast.KindImportClause, ast.KindImportSpecifier, ast.KindNamespaceImport, ast.KindExportSpecifier, ast.KindExportAssignment,
 		ast.KindImportEqualsDeclaration, ast.KindNamespaceExport:
 		return node.Parent
@@ -498,26 +489,6 @@ func isRightSideOfQualifiedNameOrPropertyAccess(node *ast.Node) bool {
 		return parent.AsMetaProperty().Name() == node
 	}
 	return false
-}
-
-func getNamespaceDeclarationNode(node *ast.Node) *ast.Node {
-	switch node.Kind {
-	case ast.KindImportDeclaration:
-		importClause := node.AsImportDeclaration().ImportClause
-		if importClause != nil && ast.IsNamespaceImport(importClause.AsImportClause().NamedBindings) {
-			return importClause.AsImportClause().NamedBindings
-		}
-	case ast.KindImportEqualsDeclaration:
-		return node
-	case ast.KindExportDeclaration:
-		exportClause := node.AsExportDeclaration().ExportClause
-		if exportClause != nil && ast.IsNamespaceExport(exportClause) {
-			return exportClause
-		}
-	default:
-		panic("Unhandled case in getNamespaceDeclarationNode")
-	}
-	return nil
 }
 
 func getSourceFileOfModule(module *ast.Symbol) *ast.SourceFile {
@@ -1986,9 +1957,9 @@ func forEachYieldExpression(body *ast.Node, visitor func(expr *ast.Node)) {
 }
 
 func skipTypeChecking(sourceFile *ast.SourceFile, options *core.CompilerOptions) bool {
-	return options.NoCheck == core.TSTrue ||
-		options.SkipLibCheck == core.TSTrue && tspath.IsDeclarationFileName(sourceFile.FileName()) ||
-		options.SkipDefaultLibCheck == core.TSTrue && sourceFile.HasNoDefaultLib ||
+	return options.NoCheck.IsTrue() ||
+		options.SkipLibCheck.IsTrue() && tspath.IsDeclarationFileName(sourceFile.FileName()) ||
+		options.SkipDefaultLibCheck.IsTrue() && sourceFile.HasNoDefaultLib ||
 		!canIncludeBindAndCheckDiagnostics(sourceFile, options)
 }
 
@@ -2246,3 +2217,72 @@ var getFeatureMap = sync.OnceValue(func() map[string][]FeatureMapEntry {
 		},
 	}
 })
+
+func rangeOfTypeParameters(sourceFile *ast.SourceFile, typeParameters *ast.NodeList) core.TextRange {
+	return core.NewTextRange(typeParameters.Pos()-1, min(len(sourceFile.Text), scanner.SkipTrivia(sourceFile.Text, typeParameters.End())+1))
+}
+
+func tryGetPropertyAccessOrIdentifierToString(expr *ast.Node) string {
+	switch {
+	case ast.IsPropertyAccessExpression(expr):
+		baseStr := tryGetPropertyAccessOrIdentifierToString(expr.Expression())
+		if baseStr != "" {
+			return baseStr + "." + entityNameToString(expr.Name())
+		}
+	case ast.IsElementAccessExpression(expr):
+		baseStr := tryGetPropertyAccessOrIdentifierToString(expr.Expression())
+		if baseStr != "" && ast.IsPropertyName(expr.AsElementAccessExpression().ArgumentExpression) {
+			return baseStr + "." + getPropertyNameForPropertyNameNode(expr.AsElementAccessExpression().ArgumentExpression)
+		}
+	case ast.IsIdentifier(expr):
+		return expr.Text()
+	case ast.IsJsxNamespacedName(expr):
+		return entityNameToString(expr)
+	}
+	return ""
+}
+
+func getInvokedExpression(node *ast.Node) *ast.Node {
+	switch node.Kind {
+	case ast.KindTaggedTemplateExpression:
+		return node.AsTaggedTemplateExpression().Tag
+	case ast.KindJsxOpeningElement, ast.KindJsxSelfClosingElement:
+		return node.TagName()
+	case ast.KindBinaryExpression:
+		return node.AsBinaryExpression().Right
+	default:
+		return node.Expression()
+	}
+}
+
+func getFirstJSDocTag(node *ast.Node, f func(*ast.Node) bool) *ast.Node {
+	for _, jsdoc := range node.JSDoc(nil) {
+		tags := jsdoc.AsJSDoc().Tags
+		if tags != nil {
+			for _, tag := range tags.Nodes {
+				if f(tag) {
+					return tag
+				}
+			}
+		}
+	}
+	return nil
+}
+
+func getJSDocDeprecatedTag(node *ast.Node) *ast.Node {
+	return getFirstJSDocTag(node, ast.IsJSDocDeprecatedTag)
+}
+
+func allDeclarationsInSameSourceFile(symbol *ast.Symbol) bool {
+	if len(symbol.Declarations) > 1 {
+		var sourceFile *ast.SourceFile
+		for i, d := range symbol.Declarations {
+			if i == 0 {
+				sourceFile = ast.GetSourceFileOfNode(d)
+			} else if ast.GetSourceFileOfNode(d) != sourceFile {
+				return false
+			}
+		}
+	}
+	return true
+}

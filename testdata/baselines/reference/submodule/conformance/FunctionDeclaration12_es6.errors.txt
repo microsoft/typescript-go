@@ -1,0 +1,10 @@
+FunctionDeclaration12_es6.ts(1,20): error TS1359: Identifier expected. 'yield' is a reserved word that cannot be used here.
+FunctionDeclaration12_es6.ts(1,20): error TS1359: Identifier expected. 'yield' is a reserved word that cannot be used here.
+
+
+==== FunctionDeclaration12_es6.ts (2 errors) ====
+    var v = function * yield() { }
+                       ~~~~~
+!!! error TS1359: Identifier expected. 'yield' is a reserved word that cannot be used here.
+                       ~~~~~
+!!! error TS1359: Identifier expected. 'yield' is a reserved word that cannot be used here.

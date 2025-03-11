@@ -1,11 +1,14 @@
 package execute_test
 
 import (
+	"errors"
 	"fmt"
 	"io"
+	"io/fs"
 	"maps"
 	"slices"
 	"strings"
+	"time"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -30,13 +33,24 @@ func newTestSys(fileOrFolderList FileMap, cwd string, args ...string) *testSys {
 
 type testSys struct {
 	// todo: original has write to output as a string[] because the separations are needed for baselining
-	output             []string
-	currentWrite       *strings.Builder
-	serializedDiff     map[string]string
+	output         []string
+	currentWrite   *strings.Builder
+	serializedDiff map[string]string
+
 	fs                 vfs.FS
 	defaultLibraryPath string
 	cwd                string
 	files              []string
+}
+
+func (s *testSys) IsTestDone() bool {
+	// todo: test is done if there are no edits left. Edits are not yet implemented
+	return true
+}
+
+func (s *testSys) Now() time.Time {
+	// todo: make a "test time" structure
+	return time.Now()
 }
 
 func (s *testSys) FS() vfs.FS {
@@ -80,31 +94,37 @@ func (s *testSys) baselineOutput(baseline io.Writer) {
 	fmt.Fprint(baseline, "\nOutput::\n")
 	if len(s.output) == 0 {
 		fmt.Fprint(baseline, "No output\n")
+		return
 	}
 	// todo screen clears
-	s.baselineOutputs(baseline, 0, len(s.output))
+	s.printOutputs(baseline)
+	s.output = []string{}
 }
 
 func (s *testSys) baselineFSwithDiff(baseline io.Writer) {
 	// todo: baselines the entire fs, possibly doesn't correctly diff all cases of emitted files, since emit isn't fully implemented and doesn't always emit the same way as strada
 	snap := map[string]string{}
 
-	err := s.FS().WalkDir(s.GetCurrentDirectory(), func(path string, d vfs.DirEntry, e error) error {
-		if !s.FS().FileExists(path) {
+	err := s.FS().WalkDir("/", func(path string, d vfs.DirEntry, e error) error {
+		if e != nil {
+			return e
+		}
+
+		if !d.Type().IsRegular() {
 			return nil
 		}
 
 		newContents, ok := s.FS().ReadFile(path)
 		if !ok {
-			return e
+			return nil
 		}
 		snap[path] = newContents
 		reportFSEntryDiff(baseline, s.serializedDiff[path], newContents, path)
 
 		return nil
 	})
-	if err != nil {
-		panic("walkdir error during diff")
+	if err != nil && !errors.Is(err, fs.ErrNotExist) {
+		panic("walkdir error during diff: " + err.Error())
 	}
 	for path, oldDirContents := range s.serializedDiff {
 		if s.FS().FileExists(path) {
@@ -132,15 +152,7 @@ func reportFSEntryDiff(baseline io.Writer, oldDirContent string, newDirContent s
 	}
 }
 
-func (s *testSys) baselineOutputs(baseline io.Writer, start int, end int) {
+func (s *testSys) printOutputs(baseline io.Writer) {
 	// todo sanitize sys output
-	fmt.Fprint(baseline, strings.Join(s.output[start:end], "\n"))
+	fmt.Fprint(baseline, strings.Join(s.output, "\n"))
 }
-
-type serializeOutputOrder int
-
-const (
-	serializeOutputOrderNone   serializeOutputOrder = iota
-	serializeOutputOrderBefore serializeOutputOrder = 1
-	serializeOutputOrderAfter  serializeOutputOrder = 2
-)

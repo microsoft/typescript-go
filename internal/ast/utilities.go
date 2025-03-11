@@ -2,9 +2,12 @@ package ast
 
 import (
 	"slices"
+	"strings"
+	"sync"
 	"sync/atomic"
 
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 // Atomic ids
@@ -842,17 +845,38 @@ func GetSourceFileOfNode(node *Node) *SourceFile {
 	return nil
 }
 
-func SetParentInChildren(parent *Node) {
-	var visit func(*Node) bool
-	visit = func(child *Node) bool {
-		child.Parent = parent
-		saveParent := parent
-		parent = child
-		parent.ForEachChild(visit)
-		parent = saveParent
+var setParentInChildrenPool = sync.Pool{
+	New: func() any {
+		return newParentInChildrenSetter()
+	},
+}
+
+func newParentInChildrenSetter() func(node *Node) bool {
+	// Consolidate state into one allocation.
+	// Similar to https://go.dev/cl/552375.
+	var state struct {
+		parent *Node
+		visit  func(*Node) bool
+	}
+
+	state.visit = func(node *Node) bool {
+		if state.parent != nil {
+			node.Parent = state.parent
+		}
+		saveParent := state.parent
+		state.parent = node
+		node.ForEachChild(state.visit)
+		state.parent = saveParent
 		return false
 	}
-	parent.ForEachChild(visit)
+
+	return state.visit
+}
+
+func SetParentInChildren(node *Node) {
+	fn := setParentInChildrenPool.Get().(func(node *Node) bool)
+	defer setParentInChildrenPool.Put(fn)
+	fn(node)
 }
 
 // Walks up the parents of a node to find the ancestor that matches the callback
@@ -1420,6 +1444,33 @@ func IsExternalModule(file *SourceFile) bool {
 
 func IsExternalOrCommonJsModule(file *SourceFile) bool {
 	return file.ExternalModuleIndicator != nil || file.CommonJsModuleIndicator != nil
+}
+
+// TODO: Should we deprecate `IsExternalOrCommonJsModule` in favor of this function?
+func IsEffectiveExternalModule(node *SourceFile, compilerOptions *core.CompilerOptions) bool {
+	return IsExternalModule(node) || (isCommonJSContainingModuleKind(compilerOptions.GetEmitModuleKind()) && node.CommonJsModuleIndicator != nil)
+}
+
+func IsEffectiveExternalModuleWorker(node *SourceFile, moduleKind core.ModuleKind) bool {
+	return IsExternalModule(node) || (isCommonJSContainingModuleKind(moduleKind) && node.CommonJsModuleIndicator != nil)
+}
+
+func isCommonJSContainingModuleKind(kind core.ModuleKind) bool {
+	return kind == core.ModuleKindCommonJS || kind == core.ModuleKindNode16 || kind == core.ModuleKindNodeNext
+}
+
+func IsExternalModuleIndicator(node *Statement) bool {
+	return HasSyntacticModifier(node, ModifierFlagsExport) ||
+		IsImportEqualsDeclaration(node) && IsExternalModuleReference(node.AsImportEqualsDeclaration().ModuleReference) ||
+		IsImportDeclaration(node) || IsExportAssignment(node) || IsExportDeclaration(node)
+}
+
+func IsExportNamespaceAsDefaultDeclaration(node *Node) bool {
+	if IsExportDeclaration(node) {
+		decl := node.AsExportDeclaration()
+		return IsNamespaceExport(decl.ExportClause) && ModuleExportNameIsDefault(decl.ExportClause.Name())
+	}
+	return false
 }
 
 func IsGlobalScopeAugmentation(node *Node) bool {
@@ -2216,4 +2267,229 @@ func GetFirstIdentifier(node *Node) *Node {
 		return GetFirstIdentifier(node.AsPropertyAccessExpression().Expression)
 	}
 	panic("Unhandled case in GetFirstIdentifier")
+}
+
+func GetNamespaceDeclarationNode(node *Node) *Node {
+	switch node.Kind {
+	case KindImportDeclaration:
+		importClause := node.AsImportDeclaration().ImportClause
+		if importClause != nil && importClause.AsImportClause().NamedBindings != nil && IsNamespaceImport(importClause.AsImportClause().NamedBindings) {
+			return importClause.AsImportClause().NamedBindings
+		}
+	case KindImportEqualsDeclaration:
+		return node
+	case KindExportDeclaration:
+		exportClause := node.AsExportDeclaration().ExportClause
+		if exportClause != nil && IsNamespaceExport(exportClause) {
+			return exportClause
+		}
+	default:
+		panic("Unhandled case in getNamespaceDeclarationNode")
+	}
+	return nil
+}
+
+func ModuleExportNameIsDefault(node *Node) bool {
+	return node.Text() == InternalSymbolNameDefault
+}
+
+func IsDefaultImport(node *Node /*ImportDeclaration | ImportEqualsDeclaration | ExportDeclaration | JSDocImportTag*/) bool {
+	var importClause *Node
+	switch node.Kind {
+	case KindImportDeclaration:
+		importClause = node.AsImportDeclaration().ImportClause
+	case KindJSDocImportTag:
+		importClause = node.AsJSDocImportTag().ImportClause
+	}
+	return importClause != nil && importClause.AsImportClause().name != nil
+}
+
+func GetEmitModuleFormatOfFileWorker(sourceFile *SourceFile, options *core.CompilerOptions) core.ModuleKind {
+	result := GetImpliedNodeFormatForEmitWorker(sourceFile, options)
+	if result != core.ModuleKindNone {
+		return result
+	}
+	return options.GetEmitModuleKind()
+}
+
+func GetImpliedNodeFormatForEmitWorker(sourceFile *SourceFile, options *core.CompilerOptions) core.ResolutionMode {
+	moduleKind := options.GetEmitModuleKind()
+	if core.ModuleKindNode16 <= moduleKind && moduleKind <= core.ModuleKindNodeNext {
+		return sourceFile.ImpliedNodeFormat
+	}
+	if sourceFile.ImpliedNodeFormat == core.ModuleKindCommonJS &&
+		( /*sourceFile.packageJsonScope.contents.packageJsonContent.type == "commonjs" ||*/ // !!!
+		tspath.FileExtensionIsOneOf(sourceFile.FileName(), []string{tspath.ExtensionCjs, tspath.ExtensionCts})) {
+		return core.ModuleKindCommonJS
+	}
+	if sourceFile.ImpliedNodeFormat == core.ModuleKindESNext &&
+		( /*sourceFile.packageJsonScope?.contents.packageJsonContent.type === "module" ||*/ // !!!
+		tspath.FileExtensionIsOneOf(sourceFile.fileName, []string{tspath.ExtensionMjs, tspath.ExtensionMts})) {
+		return core.ModuleKindESNext
+	}
+	return core.ModuleKindNone
+}
+
+func GetDeclarationContainer(node *Node) *Node {
+	return FindAncestor(GetRootDeclaration(node), func(node *Node) bool {
+		switch node.Kind {
+		case KindVariableDeclaration,
+			KindVariableDeclarationList,
+			KindImportSpecifier,
+			KindNamedImports,
+			KindNamespaceImport,
+			KindImportClause:
+			return false
+		default:
+			return true
+		}
+	}).Parent
+}
+
+// Indicates that a symbol is an alias that does not merge with a local declaration.
+// OR Is a JSContainer which may merge an alias with a local declaration
+func IsNonLocalAlias(symbol *Symbol, excludes SymbolFlags) bool {
+	if symbol == nil {
+		return false
+	}
+	return symbol.Flags&(SymbolFlagsAlias|excludes) == SymbolFlagsAlias ||
+		symbol.Flags&SymbolFlagsAlias != 0 && symbol.Flags&SymbolFlagsAssignment != 0
+}
+
+// An alias symbol is created by one of the following declarations:
+//
+//	import <symbol> = ...
+//	import <symbol> from ...
+//	import * as <symbol> from ...
+//	import { x as <symbol> } from ...
+//	export { x as <symbol> } from ...
+//	export * as ns <symbol> from ...
+//	export = <EntityNameExpression>
+//	export default <EntityNameExpression>
+func IsAliasSymbolDeclaration(node *Node) bool {
+	switch node.Kind {
+	case KindImportEqualsDeclaration, KindNamespaceExportDeclaration, KindNamespaceImport, KindNamespaceExport,
+		KindImportSpecifier, KindExportSpecifier:
+		return true
+	case KindImportClause:
+		return node.AsImportClause().Name() != nil
+	case KindExportAssignment:
+		return ExportAssignmentIsAlias(node)
+	}
+	return false
+}
+
+func IsParseTreeNode(node *Node) bool {
+	return node.Flags&NodeFlagsSynthesized == 0
+}
+
+// Returns a token if position is in [start-of-leading-trivia, end), includes JSDoc only in JS files
+func GetNodeAtPosition(file *SourceFile, position int, isJavaScriptFile bool) *Node {
+	current := file.AsNode()
+	for {
+		var child *Node
+		if isJavaScriptFile {
+			for _, jsDoc := range current.JSDoc(file) {
+				if nodeContainsPosition(jsDoc, position) {
+					child = jsDoc
+					break
+				}
+			}
+		}
+		if child == nil {
+			current.ForEachChild(func(node *Node) bool {
+				if nodeContainsPosition(node, position) {
+					child = node
+					return true
+				}
+				return false
+			})
+		}
+		if child == nil {
+			return current
+		}
+		current = child
+	}
+}
+
+func nodeContainsPosition(node *Node, position int) bool {
+	return node.Kind >= KindFirstNode && node.Pos() <= position && (position < node.End() || position == node.End() && node.Kind == KindEndOfFile)
+}
+
+func findImportOrRequire(text string, start int) (index int, size int) {
+	index = max(start, 0)
+	n := len(text)
+	for index < n {
+		next := strings.IndexAny(text[index:], "ir")
+		if next < 0 {
+			break
+		}
+		index += next
+
+		var expected string
+		if text[index] == 'i' {
+			size = 6
+			expected = "import"
+		} else {
+			size = 7
+			expected = "require"
+		}
+		if index+size <= n && text[index:index+size] == expected {
+			return
+		}
+		index++
+	}
+
+	return -1, 0
+}
+
+func ForEachDynamicImportOrRequireCall(
+	file *SourceFile,
+	includeTypeSpaceImports bool,
+	requireStringLiteralLikeArgument bool,
+	cb func(node *Node, argument *Expression) bool,
+) bool {
+	isJavaScriptFile := IsInJSFile(file.AsNode())
+	lastIndex, size := findImportOrRequire(file.Text, 0)
+	for lastIndex >= 0 {
+		node := GetNodeAtPosition(file, lastIndex, isJavaScriptFile && includeTypeSpaceImports)
+		if isJavaScriptFile && IsRequireCall(node, requireStringLiteralLikeArgument) {
+			if cb(node, node.Arguments()[0]) {
+				return true
+			}
+		} else if IsImportCall(node) && len(node.Arguments()) > 0 && (!requireStringLiteralLikeArgument || IsStringLiteralLike(node.Arguments()[0])) {
+			if cb(node, node.Arguments()[0]) {
+				return true
+			}
+		} else if includeTypeSpaceImports && IsLiteralImportTypeNode(node) {
+			if cb(node, node.AsImportTypeNode().Argument.AsLiteralTypeNode().Literal) {
+				return true
+			}
+		} else if includeTypeSpaceImports && node.Kind == KindJSDocImportTag {
+			moduleNameExpr := GetExternalModuleName(node)
+			if moduleNameExpr != nil && IsStringLiteral(moduleNameExpr) && moduleNameExpr.Text() != "" {
+				if cb(node, moduleNameExpr) {
+					return true
+				}
+			}
+		}
+		// skip past import/require
+		lastIndex += size
+		lastIndex, size = findImportOrRequire(file.Text, lastIndex)
+	}
+	return false
+}
+
+func IsRequireCall(node *Node, requireStringLiteralLikeArgument bool) bool {
+	if !IsCallExpression(node) {
+		return false
+	}
+	call := node.AsCallExpression()
+	if !IsIdentifier(call.Expression) || call.Expression.Text() != "require" {
+		return false
+	}
+	if len(call.Arguments.Nodes) != 1 {
+		return false
+	}
+	return !requireStringLiteralLikeArgument || IsStringLiteralLike(call.Arguments.Nodes[0])
 }

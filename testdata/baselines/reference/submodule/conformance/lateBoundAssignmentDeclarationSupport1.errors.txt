@@ -1,0 +1,18 @@
+usage.js(1,11): error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+
+
+==== usage.js (1 errors) ====
+    const x = require("./lateBoundAssignmentDeclarationSupport1.js");
+              ~~~~~~~
+!!! error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+    const y = x["my-fake-sym"];
+    const z = x[x.S];
+    
+==== lateBoundAssignmentDeclarationSupport1.js (0 errors) ====
+    // currently unsupported
+    const _sym = Symbol();
+    const _str = "my-fake-sym";
+    
+    exports[_sym] = "ok";
+    exports[_str] = "ok";
+    exports.S = _sym;
