@@ -716,7 +716,14 @@ func (tx *RuntimeSyntaxTransformer) getParameterProperties(constructor *ast.Node
 }
 
 func (tx *RuntimeSyntaxTransformer) visitClassDeclaration(node *ast.ClassDeclaration) *ast.Node {
-	modifiers := tx.visitor.VisitModifiers(node.Modifiers())
+	exported := tx.isExportOfNamespace(node.AsNode())
+	var modifiers *ast.ModifierList
+	if exported {
+		modifiers = tx.visitor.VisitModifiers(extractModifiers(tx.emitContext, node.Modifiers(), ^ast.ModifierFlagsExportDefault))
+	} else {
+		modifiers = tx.visitor.VisitModifiers(node.Modifiers())
+	}
+
 	name := tx.visitor.VisitNode(node.Name())
 	heritageClauses := tx.visitor.VisitNodes(node.HeritageClauses)
 	members := tx.visitor.VisitNodes(node.Members)
@@ -745,7 +752,7 @@ func (tx *RuntimeSyntaxTransformer) visitClassDeclaration(node *ast.ClassDeclara
 	}
 
 	updated := tx.factory.UpdateClassDeclaration(node, modifiers, name, nil /*typeParameters*/, heritageClauses, members)
-	if tx.isExportOfNamespace(node.AsNode()) {
+	if exported {
 		export := tx.createExportStatementForDeclaration(node.AsNode())
 		return tx.factory.NewSyntaxList([]*ast.Node{updated, export})
 	}
