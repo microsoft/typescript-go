@@ -13,24 +13,24 @@ For tests and code generation, this repo contains a git submodule to the main Ty
 When cloning, you'll want to clone with submodules:
 
 ```console
-$ git clone --recurse-submodules https://github.com/microsoft/typescript-go.git
+git clone --recurse-submodules https://github.com/microsoft/typescript-go.git
 ```
 
 If you have already cloned the repo, you can initialize the submodule with:
 
 ```console
-$ git submodule update --init --recursive
+git submodule update --init --recursive
 ```
 
 With the submodule in place and `npm ci`, you can run tasks via `hereby`, similar to the TypeScript repo:
 
 ```console
-$ hereby build          # Verify that the project builds
-$ hereby test           # Run all tests
-$ hereby install-tools  # Install additional tools such as linters
-$ hereby lint           # Run all linters
-$ hereby format         # Format all code
-$ hereby generate       # Generate all Go code (e.g. diagnostics, committed to repo)
+hereby build          # Verify that the project builds
+hereby test           # Run all tests
+hereby install-tools  # Install additional tools such as linters
+hereby lint           # Run all linters
+hereby format         # Format all code
+hereby generate       # Generate all Go code (e.g. diagnostics, committed to repo)
 ```
 
 Additional tasks are a work in progress.
@@ -47,14 +47,13 @@ This is mainly a testing entry point; for higher fidelity with regular `tsc`, ru
 
 To try the prototype LSP experience:
 
-* Run VS Code in the repo workspace (`code .`)
-* Copy `.vscode/launch.template.json` to `.vscode/launch.json`
-* <kbd>F5</kbd> (or `Debug: Start Debugging` from the command palette)
+- Run VS Code in the repo workspace (`code .`)
+- Copy `.vscode/launch.template.json` to `.vscode/launch.json`
+- <kbd>F5</kbd> (or `Debug: Start Debugging` from the command palette)
 
 This will launch a new VS Code instance which uses the Corsa LS as the backend. If correctly set up, you should see "typescript-go" as an option in the Output pane:
 
 ![LSP Prototype Screenshot](.github/ls-screenshot.png)
-
 
 ## What Works So Far?
 
@@ -62,30 +61,30 @@ This is still a work in progress and is not yet at full feature parity with Type
 
 Status overview:
 
- * Program creation (read `lib`, `target`, `reference`, `import`, `files`, `include`, and `exclude`): **done**. You should see the *same files*, with modules resolved to the *same locations*, as in a TypeScript 5.8 (TS5.8) invocation
-   * Not all resolution modes are supported yet
- * Parsing/scanning (read source text and determine syntax shape): **done**. You should see the exact same *syntax errors* as in a TS5.8 invocation
- * Commandline and `tsconfig.json` parsing: **mostly done**. Note that the entry point is slightly different (for now)
- * Type resolution (resolve computed types to a concrete internal representation): **done**. You should see the same types as in TS5.8
- * Type checking (check for problems in functions, classes, and statements): **done**. You should see the same errors, in the same locations, with the same messages, as TS 5.8
-    * Types printback in errors may display slightly differently; this is in progress
- * JavaScript-specific inference and JS Doc: **not ready**
- * JSX: **not ready**
- * Declaration emit: **not ready**. Coming soon!
- * Emit (JS output): **in progress**. `target: esnext` (minimal downleveling) is well-supported but other targets may have gaps
- * Watch mode: **prototype** (watches the correct files and rebuilds, but doesn't do incremental rechecking)
- * Build mode / project references: **not ready**
- * Incremental build: **not ready**
- * Language service (LSP): **prototype** only, expect minimal functionality (errors, hover, go to def). More features soon!
-   * ASCII files only for now
- * API: **not ready**
+- Program creation (read `lib`, `target`, `reference`, `import`, `files`, `include`, and `exclude`): **done**. You should see the _same files_, with modules resolved to the _same locations_, as in a TypeScript 5.8 (TS5.8) invocation
+  - Not all resolution modes are supported yet
+- Parsing/scanning (read source text and determine syntax shape): **done**. You should see the exact same _syntax errors_ as in a TS5.8 invocation
+- Commandline and `tsconfig.json` parsing: **mostly done**. Note that the entry point is slightly different (for now)
+- Type resolution (resolve computed types to a concrete internal representation): **done**. You should see the same types as in TS5.8
+- Type checking (check for problems in functions, classes, and statements): **done**. You should see the same errors, in the same locations, with the same messages, as TS 5.8
+  - Types printback in errors may display slightly differently; this is in progress
+- JavaScript-specific inference and JS Doc: **not ready**
+- JSX: **not ready**
+- Declaration emit: **not ready**. Coming soon!
+- Emit (JS output): **in progress**. `target: esnext` (minimal downleveling) is well-supported but other targets may have gaps
+- Watch mode: **prototype** (watches the correct files and rebuilds, but doesn't do incremental rechecking)
+- Build mode / project references: **not ready**
+- Incremental build: **not ready**
+- Language service (LSP): **prototype** only, expect minimal functionality (errors, hover, go to def). More features soon!
+  - ASCII files only for now
+- API: **not ready**
 
 Definitions:
 
- * **done** aka "believed done": We're not currently aware of any deficits or major left work to do. OK to log bugs
- * **in progress**: currently being worked on; some features may work and some might not. OK to log panics, but nothing else please
- * **prototype**: proof-of-concept only; do not log bugs
- * **not ready**: either haven't even started yet, or far enough from ready that you shouldn't bother messing with it yet
+- **done** aka "believed done": We're not currently aware of any deficits or major left work to do. OK to log bugs
+- **in progress**: currently being worked on; some features may work and some might not. OK to log panics, but nothing else please
+- **prototype**: proof-of-concept only; do not log bugs
+- **not ready**: either haven't even started yet, or far enough from ready that you shouldn't bother messing with it yet
 
 ## Other Notes
 
@@ -96,7 +95,7 @@ For a list of intentional changes with respect to TypeScript 5.7, see CHANGES.md
 
 ## Contributing
 
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a
+This project welcomes contributions and suggestions. Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
 the rights to use your contribution. For details, visit [Contributor License Agreements](https://cla.opensource.microsoft.com).
 
@@ -115,3 +114,4 @@ trademarks or logos is subject to and must follow
 [Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/legal/intellectualproperty/trademarks/usage/general).
 Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship.
 Any use of third-party trademarks or logos are subject to those third-party's policies.
+
