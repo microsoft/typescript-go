@@ -258,8 +258,9 @@ func (n *Node) Text() string {
 		return n.AsJsxNamespacedName().Namespace.Text() + ":" + n.AsJsxNamespacedName().Name().Text()
 	case KindRegularExpressionLiteral:
 		return n.AsRegularExpressionLiteral().Text
+	default:
+		panic(fmt.Sprintf("Unhandled case in Node.Text: %T", n.data))
 	}
-	panic(fmt.Sprintf("Unhandled case in Node.Text: %T", n.data))
 }
 
 func (n *Node) Expression() *Node {
@@ -328,8 +329,9 @@ func (n *Node) Expression() *Node {
 		return n.AsExportAssignment().Expression
 	case KindDecorator:
 		return n.AsDecorator().Expression
+	default:
+		panic("Unhandled case in Node.Expression")
 	}
-	panic("Unhandled case in Node.Expression")
 }
 
 func (n *Node) ArgumentList() *NodeList {
@@ -338,8 +340,9 @@ func (n *Node) ArgumentList() *NodeList {
 		return n.AsCallExpression().Arguments
 	case KindNewExpression:
 		return n.AsNewExpression().Arguments
+	default:
+		panic("Unhandled case in Node.Arguments")
 	}
-	panic("Unhandled case in Node.Arguments")
 }
 
 func (n *Node) Arguments() []*Node {
@@ -370,8 +373,9 @@ func (n *Node) TypeArgumentList() *NodeList {
 		return n.AsJsxOpeningElement().TypeArguments
 	case KindJsxSelfClosingElement:
 		return n.AsJsxSelfClosingElement().TypeArguments
+	default:
+		panic("Unhandled case in Node.TypeArguments")
 	}
-	panic("Unhandled case in Node.TypeArguments")
 }
 
 func (n *Node) TypeArguments() []*Node {
@@ -423,8 +427,9 @@ func (n *Node) MemberList() *NodeList {
 		return n.AsTypeLiteralNode().Members
 	case KindMappedType:
 		return n.AsMappedTypeNode().Members
+	default:
+		panic("Unhandled case in Node.MemberList")
 	}
-	panic("Unhandled case in Node.MemberList")
 }
 
 func (n *Node) Members() []*Node {
@@ -526,8 +531,9 @@ func (n *Node) Initializer() *Node {
 		return n.AsForInOrOfStatement().Initializer
 	case KindJsxAttribute:
 		return n.AsJsxAttribute().Initializer
+	default:
+		panic("Unhandled case in Node.Initializer")
 	}
-	panic("Unhandled case in Node.Initializer")
 }
 
 func (n *Node) TagName() *Node {
@@ -580,8 +586,9 @@ func (n *Node) TagName() *Node {
 		return n.AsJSDocSatisfiesTag().TagName
 	case KindJSDocImportTag:
 		return n.AsJSDocImportTag().TagName
+	default:
+		panic("Unhandled case in Node.TagName: " + n.Kind.String())
 	}
-	panic("Unhandled case in Node.TagName: " + n.Kind.String())
 }
 
 func (n *Node) PropertyName() *Node {
@@ -592,8 +599,9 @@ func (n *Node) PropertyName() *Node {
 		return n.AsExportSpecifier().PropertyName
 	case KindBindingElement:
 		return n.AsBindingElement().PropertyName
+	default:
+		return nil
 	}
-	return nil
 }
 
 func (n *Node) PropertyNameOrName() *Node {
@@ -616,8 +624,9 @@ func (n *Node) IsTypeOnly() bool {
 		return n.AsExportDeclaration().IsTypeOnly
 	case KindExportSpecifier:
 		return n.AsExportSpecifier().IsTypeOnly
+	default:
+		return false
 	}
-	return false
 }
 
 func (n *Node) CommentList() *NodeList {
@@ -666,8 +675,9 @@ func (n *Node) CommentList() *NodeList {
 		return n.AsJSDocSatisfiesTag().Comment
 	case KindJSDocImportTag:
 		return n.AsJSDocImportTag().Comment
+	default:
+		panic("Unhandled case in Node.CommentList: " + n.Kind.String())
 	}
-	panic("Unhandled case in Node.CommentList: " + n.Kind.String())
 }
 
 func (n *Node) Comments() []*Node {
@@ -686,8 +696,9 @@ func (n *Node) Label() *Node {
 		return n.AsBreakStatement().Label
 	case KindContinueStatement:
 		return n.AsContinueStatement().Label
+	default:
+		panic("Unhandled case in Node.Label: " + n.Kind.String())
 	}
-	panic("Unhandled case in Node.Label: " + n.Kind.String())
 }
 
 // Determines if `n` contains `descendant` by walking up the `Parent` pointers from `descendant`. This method panics if
