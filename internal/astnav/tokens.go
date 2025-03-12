@@ -64,7 +64,7 @@ func getTokenAtPosition(
 	visitNode := func(node *ast.Node, _ *ast.NodeVisitor) *ast.Node {
 		// We can't abort visiting children, so once a match is found, we set `next`
 		// and do nothing on subsequent visits.
-		if node != nil && node.Flags&ast.NodeFlagsSynthesized == 0 && next == nil {
+		if node != nil && node.Flags&ast.NodeFlagsReparsed == 0 && next == nil {
 			switch testNode(node) {
 			case -1:
 				if !ast.IsJSDocKind(node.Kind) {
@@ -91,7 +91,7 @@ func getTokenAtPosition(
 			} else if nodeList.Pos() <= position {
 				nodes := nodeList.Nodes
 				index, match := core.BinarySearchUniqueFunc(nodes, position, func(middle int, node *ast.Node) int {
-					if node.Flags&ast.NodeFlagsSynthesized != 0 {
+					if node.Flags&ast.NodeFlagsReparsed != 0 {
 						return 0
 					}
 					cmp := testNode(node)
@@ -100,10 +100,10 @@ func getTokenAtPosition(
 					}
 					return cmp
 				})
-				if match && nodes[index].Flags&ast.NodeFlagsSynthesized != 0 {
+				if match && nodes[index].Flags&ast.NodeFlagsReparsed != 0 {
 					// filter and search again
 					nodes = core.Filter(nodes, func(node *ast.Node) bool {
-						return node.Flags&ast.NodeFlagsSynthesized == 0
+						return node.Flags&ast.NodeFlagsReparsed == 0
 					})
 					index, match = core.BinarySearchUniqueFunc(nodes, position, func(middle int, node *ast.Node) int {
 						cmp := testNode(node)

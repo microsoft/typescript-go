@@ -49,7 +49,7 @@ func NewEmitContext() *EmitContext {
 }
 
 func (c *EmitContext) onCreate(node *ast.Node) {
-	node.Flags |= ast.NodeFlagsTransformed
+	node.Flags |= ast.NodeFlagsSynthesized
 }
 
 func (c *EmitContext) onUpdate(updated *ast.Node, original *ast.Node) {

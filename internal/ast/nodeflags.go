@@ -7,8 +7,8 @@ const (
 	NodeFlagsLet                             NodeFlags = 1 << 0  // Variable declaration
 	NodeFlagsConst                           NodeFlags = 1 << 1  // Variable declaration
 	NodeFlagsUsing                           NodeFlags = 1 << 2  // Variable declaration
-	NodeFlagsSynthesized                     NodeFlags = 1 << 3  // Node was synthesized during parsing
-	NodeFlagsTransformed                     NodeFlags = 1 << 4  // Node was synthesized during transformation
+	NodeFlagsReparsed                        NodeFlags = 1 << 3  // Node was synthesized during parsing
+	NodeFlagsSynthesized                     NodeFlags = 1 << 4  // Node was synthesized during transformation
 	NodeFlagsOptionalChain                   NodeFlags = 1 << 5  // Chained MemberExpression rooted to a pseudo-OptionalExpression
 	NodeFlagsExportContext                   NodeFlags = 1 << 6  // Export context (initialized by binding)
 	NodeFlagsContainsThis                    NodeFlags = 1 << 7  // Interface contains references to "this"

@@ -4737,7 +4737,7 @@ func (c *Checker) checkModuleDeclaration(node *ast.Node) {
 	}
 	if ast.IsIdentifier(node.Name()) {
 		c.checkCollisionsForDeclarationName(node, node.Name())
-		if node.AsModuleDeclaration().NamespaceFlags&(ast.NamespaceFlagsNamespace|ast.NamespaceFlagsGlobalAugmentation) == 0 {
+		if node.AsModuleDeclaration().Keyword == ast.KindModuleKeyword {
 			tokenRange := getNonModifierTokenRangeOfNode(node)
 			c.suggestionDiagnostics.Add(ast.NewDiagnostic(ast.GetSourceFileOfNode(node), tokenRange, diagnostics.A_namespace_declaration_should_not_be_declared_using_the_module_keyword_Please_use_the_namespace_keyword_instead))
 		}
