@@ -10813,7 +10813,7 @@ interface HTMLImageElement extends HTMLElement {
     /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLImageElement/sizes) */
     sizes: string;
     /**
-     * The address or URL of the a media resource that is to be considered.
+     * The address or URL of the media resource that is to be considered.
      *
      * [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLImageElement/src)
      */
@@ -10946,7 +10946,7 @@ interface HTMLInputElement extends HTMLElement, PopoverInvokerElement {
      */
     selectionStart: number | null;
     size: number;
-    /** The address or URL of the a media resource that is to be considered. */
+    /** The address or URL of the media resource that is to be considered. */
     src: string;
     /** Defines an increment or jump between values that you want to allow the user to enter. When used with the max and min attributes, lets you control the range and increment (for example, allow only even numbers) that the user can enter into an input field. */
     step: string;
@@ -11396,7 +11396,7 @@ interface HTMLMediaElement extends HTMLElement {
      */
     readonly sinkId: string;
     /**
-     * The address or URL of the a media resource that is to be considered.
+     * The address or URL of the media resource that is to be considered.
      *
      * [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLMediaElement/src)
      */
@@ -12268,7 +12268,7 @@ interface HTMLSourceElement extends HTMLElement {
     /** Gets or sets the intended media type of the media source. */
     media: string;
     sizes: string;
-    /** The address or URL of the a media resource that is to be considered. */
+    /** The address or URL of the media resource that is to be considered. */
     src: string;
     srcset: string;
     /** Gets or sets the MIME type of a media resource. */
