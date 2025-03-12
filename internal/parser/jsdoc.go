@@ -977,9 +977,9 @@ func (p *Parser) parseJSDocTypeNameWithNamespace(nested bool) *ast.Node {
 	typeNameOrNamespaceName := p.parseJSDocIdentifierName(nil)
 	if p.parseOptional(ast.KindDotToken) {
 		body := p.parseJSDocTypeNameWithNamespace(true)
-		var flags ast.NodeFlags
+		var flags ast.NamespaceFlags
 		if nested {
-			flags = ast.NodeFlagsNestedNamespace
+			flags = ast.NamespaceFlagsNestedNamespace
 		}
 		jsDocNamespaceNode := p.factory.NewModuleDeclaration(nil, typeNameOrNamespaceName, body, flags)
 		p.finishNode(jsDocNamespaceNode, start)

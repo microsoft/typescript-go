@@ -1970,12 +1970,12 @@ func (p *Parser) parseEnumDeclaration(pos int, hasJSDoc bool, modifiers *ast.Mod
 }
 
 func (p *Parser) parseModuleDeclaration(pos int, hasJSDoc bool, modifiers *ast.ModifierList) *ast.Statement {
-	var flags ast.NodeFlags
+	var flags ast.NamespaceFlags
 	if p.token == ast.KindGlobalKeyword {
 		// global augmentation
 		return p.parseAmbientExternalModuleDeclaration(pos, hasJSDoc, modifiers)
 	} else if p.parseOptional(ast.KindNamespaceKeyword) {
-		flags |= ast.NodeFlagsNamespace
+		flags |= ast.NamespaceFlagsNamespace
 	} else {
 		p.parseExpected(ast.KindModuleKeyword)
 		if p.token == ast.KindStringLiteral {
@@ -1986,13 +1986,13 @@ func (p *Parser) parseModuleDeclaration(pos int, hasJSDoc bool, modifiers *ast.M
 }
 
 func (p *Parser) parseAmbientExternalModuleDeclaration(pos int, hasJSDoc bool, modifiers *ast.ModifierList) *ast.Node {
-	var flags ast.NodeFlags
+	var flags ast.NamespaceFlags
 	var name *ast.Node
 	saveHasAwaitIdentifier := p.statementHasAwaitIdentifier
 	if p.token == ast.KindGlobalKeyword {
 		// parse 'global' as name of global scope augmentation
 		name = p.parseIdentifier()
-		flags |= ast.NodeFlagsGlobalAugmentation
+		flags |= ast.NamespaceFlagsGlobalAugmentation
 	} else {
 		// parse string literal
 		name = p.parseLiteralExpression(true /*intern*/)
@@ -2024,13 +2024,13 @@ func (p *Parser) parseModuleBlock() *ast.Node {
 	return result
 }
 
-func (p *Parser) parseModuleOrNamespaceDeclaration(pos int, hasJSDoc bool, modifiers *ast.ModifierList, flags ast.NodeFlags) *ast.Node {
+func (p *Parser) parseModuleOrNamespaceDeclaration(pos int, hasJSDoc bool, modifiers *ast.ModifierList, flags ast.NamespaceFlags) *ast.Node {
 	saveHasAwaitIdentifier := p.statementHasAwaitIdentifier
 	// If we are parsing a dotted namespace name, we want to
 	// propagate the 'Namespace' flag across the names if set.
-	namespaceFlag := flags & ast.NodeFlagsNamespace
+	namespaceFlag := flags & ast.NamespaceFlagsNamespace
 	var name *ast.Node
-	if flags&ast.NodeFlagsNestedNamespace != 0 {
+	if flags&ast.NamespaceFlagsNestedNamespace != 0 {
 		name = p.parseIdentifierName()
 	} else {
 		name = p.parseIdentifier()
@@ -2043,7 +2043,7 @@ func (p *Parser) parseModuleOrNamespaceDeclaration(pos int, hasJSDoc bool, modif
 		nodes := p.nodeSlicePool.NewSlice(1)
 		nodes[0] = syntheticExport
 		syntheticModifiers := p.newModifierList(syntheticExport.Loc, nodes)
-		body = p.parseModuleOrNamespaceDeclaration(p.nodePos(), false /*hasJSDoc*/, syntheticModifiers, ast.NodeFlagsNestedNamespace|namespaceFlag)
+		body = p.parseModuleOrNamespaceDeclaration(p.nodePos(), false /*hasJSDoc*/, syntheticModifiers, ast.NamespaceFlagsNestedNamespace|namespaceFlag)
 	} else {
 		body = p.parseModuleBlock()
 	}

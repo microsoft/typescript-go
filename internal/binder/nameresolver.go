@@ -58,7 +58,7 @@ loop:
 					// This restriction does not apply to JSDoc comment types because they are parented
 					// at a higher level than type parameters would normally be
 					if meaning&result.Flags&ast.SymbolFlagsType != 0 && lastLocation.Kind != ast.KindJSDoc {
-						useResult = result.Flags&ast.SymbolFlagsTypeParameter != 0 && (lastLocation.Flags&ast.NodeFlagsSynthesized != 0 ||
+						useResult = result.Flags&ast.SymbolFlagsTypeParameter != 0 && (lastLocation.Flags&ast.NodeFlagsTransformed != 0 ||
 							lastLocation == location.Type() ||
 							ast.IsParameterLikeOrReturnTag(lastLocation))
 					}
@@ -72,7 +72,7 @@ loop:
 							// however it is detected separately when checking initializers of parameters
 							// to make sure that they reference no variables declared after them.
 							useResult = lastLocation.Kind == ast.KindParameter ||
-								lastLocation.Flags&ast.NodeFlagsSynthesized != 0 ||
+								lastLocation.Flags&ast.NodeFlagsTransformed != 0 ||
 								lastLocation == location.Type() && ast.FindAncestor(result.ValueDeclaration, ast.IsParameter) != nil
 						}
 					}

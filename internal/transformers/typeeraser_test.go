@@ -98,7 +98,7 @@ func TestTypeEraser(t *testing.T) {
 			if rec.vms {
 				compilerOptions.VerbatimModuleSyntax = core.TSTrue
 			}
-			emittestutil.CheckEmit(t, nil, NewTypeEraserTransformer(printer.NewEmitContext(), file, compilerOptions).TransformSourceFile(file), rec.output)
+			emittestutil.CheckEmit(t, nil, NewTypeEraserTransformer(printer.NewEmitContext(), compilerOptions).TransformSourceFile(file), rec.output)
 		})
 	}
 }

@@ -501,7 +501,7 @@ func getSourceFileOfModule(module *ast.Symbol) *ast.SourceFile {
 
 func getNonAugmentationDeclaration(symbol *ast.Symbol) *ast.Node {
 	return core.Find(symbol.Declarations, func(d *ast.Node) bool {
-		return !isExternalModuleAugmentation(d) && !(ast.IsModuleDeclaration(d) && ast.IsGlobalScopeAugmentation(d))
+		return !isExternalModuleAugmentation(d) && !ast.IsGlobalScopeAugmentation(d)
 	})
 }
 

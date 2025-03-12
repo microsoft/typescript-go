@@ -1487,7 +1487,7 @@ func IsExportNamespaceAsDefaultDeclaration(node *Node) bool {
 }
 
 func IsGlobalScopeAugmentation(node *Node) bool {
-	return node.Flags&NodeFlagsGlobalAugmentation != 0
+	return IsModuleDeclaration(node) && node.AsModuleDeclaration().NamespaceFlags&NamespaceFlagsGlobalAugmentation != 0
 }
 
 func IsModuleAugmentationExternal(node *Node) bool {
@@ -2441,7 +2441,7 @@ func IsAliasSymbolDeclaration(node *Node) bool {
 }
 
 func IsParseTreeNode(node *Node) bool {
-	return node.Flags&NodeFlagsSynthesized == 0
+	return node.Flags&NodeFlagsTransformed == 0
 }
 
 // Returns a token if position is in [start-of-leading-trivia, end), includes JSDoc only in JS files

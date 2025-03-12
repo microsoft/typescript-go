@@ -3401,22 +3401,23 @@ type ModuleDeclaration struct {
 	ModifiersBase
 	LocalsContainerBase
 	BodyBase
-	name *ModuleName // ModuleName
+	name           *ModuleName // ModuleName
+	NamespaceFlags NamespaceFlags
 }
 
-func (f *NodeFactory) NewModuleDeclaration(modifiers *ModifierList, name *ModuleName, body *ModuleBody, flags NodeFlags) *Node {
+func (f *NodeFactory) NewModuleDeclaration(modifiers *ModifierList, name *ModuleName, body *ModuleBody, flags NamespaceFlags) *Node {
 	data := &ModuleDeclaration{}
 	data.modifiers = modifiers
 	data.name = name
 	data.Body = body
+	data.NamespaceFlags = flags
 	node := newNode(KindModuleDeclaration, data, f.hooks)
-	node.Flags |= flags & (NodeFlagsNamespace | NodeFlagsNestedNamespace | NodeFlagsGlobalAugmentation)
 	return node
 }
 
 func (f *NodeFactory) UpdateModuleDeclaration(node *ModuleDeclaration, modifiers *ModifierList, name *ModuleName, body *ModuleBody) *Node {
 	if modifiers != node.modifiers || name != node.name || body != node.Body {
-		return updateNode(f.NewModuleDeclaration(modifiers, name, body, node.Flags), node.AsNode(), f.hooks)
+		return updateNode(f.NewModuleDeclaration(modifiers, name, body, node.NamespaceFlags), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
@@ -3430,7 +3431,7 @@ func (node *ModuleDeclaration) VisitEachChild(v *NodeVisitor) *Node {
 }
 
 func (node *ModuleDeclaration) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewModuleDeclaration(node.Modifiers(), node.Name(), node.Body, node.Flags), node.AsNode(), f.hooks)
+	return cloneNode(f.NewModuleDeclaration(node.Modifiers(), node.Name(), node.Body, node.NamespaceFlags), node.AsNode(), f.hooks)
 }
 
 func (node *ModuleDeclaration) Name() *DeclarationName {

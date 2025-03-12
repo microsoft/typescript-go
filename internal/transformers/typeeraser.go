@@ -13,7 +13,7 @@ type TypeEraserTransformer struct {
 	currentNode     *ast.Node
 }
 
-func NewTypeEraserTransformer(emitContext *printer.EmitContext, sourceFile *ast.SourceFile, compilerOptions *core.CompilerOptions) *Transformer {
+func NewTypeEraserTransformer(emitContext *printer.EmitContext, compilerOptions *core.CompilerOptions) *Transformer {
 	tx := &TypeEraserTransformer{compilerOptions: compilerOptions}
 	return tx.newTransformer(tx.visit, emitContext)
 }
