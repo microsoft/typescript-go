@@ -142,15 +142,9 @@ func (n Number) Remainder(d Number) Number {
 		return n
 	}
 
-	// Calculate the quotient of the division.
-	quotient := math.Trunc(float64(n / d))
-
-	// Calculate the remainder using the quotient.
-	// This directly implements the JS remainder definition:  r = n - (d * q)
-	r := n - Number(float64(d)*quotient)
-
+	r := Number(math.Mod(float64(n), float64(d)))
 	if r == 0 {
-		return Number(math.Copysign(0, float64(n)))
+		return negativeZero
 	}
 
 	return r
