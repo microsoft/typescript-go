@@ -8,18 +8,26 @@
 +index.js(30,15): error TS2304: Cannot find name 'T'.
 +index.js(30,19): error TS2304: Cannot find name 'U'.
 +index.js(38,17): error TS2304: Cannot find name 'U'.
++index.js(43,16): error TS2304: Cannot find name 'U'.
 +index.js(48,17): error TS2304: Cannot find name 'U'.
++index.js(53,16): error TS2304: Cannot find name 'U'.
++index.js(58,16): error TS2304: Cannot find name 'T'.
++index.js(59,16): error TS2304: Cannot find name 'U'.
 +index.js(104,15): error TS2304: Cannot find name 'T'.
 +index.js(104,19): error TS2304: Cannot find name 'U'.
++index.js(108,16): error TS2304: Cannot find name 'T'.
++index.js(109,16): error TS2304: Cannot find name 'U'.
 +index.js(138,14): error TS2339: Property 'p1' does not exist on type 'K'.
 +index.js(139,14): error TS2339: Property 'p2' does not exist on type 'K'.
 +index.js(143,21): error TS2339: Property 'p1' does not exist on type 'K'.
 +index.js(151,14): error TS2339: Property 'prop' does not exist on type 'M'.
++index.js(161,16): error TS2304: Cannot find name 'T'.
 +index.js(165,14): error TS2339: Property 'another' does not exist on type 'N'.
++index.js(175,16): error TS2304: Cannot find name 'U'.
 +index.js(179,14): error TS2339: Property 'another2' does not exist on type 'O'.
 +
 +
-+==== index.js (14 errors) ====
++==== index.js (22 errors) ====
 +    export class A {}
 +    
 +    export class B {
@@ -73,6 +81,8 @@
 +    
 +        /**
 +         * @param {U} _p
++                   ~
++!!! error TS2304: Cannot find name 'U'.
 +         */
 +        set f1(_p) {}
 +    
@@ -85,12 +95,18 @@
 +    
 +        /**
 +         * @param {U} _p
++                   ~
++!!! error TS2304: Cannot find name 'U'.
 +         */
 +        set f3(_p) {}
 +    
 +        /**
 +         * @param {T} a
++                   ~
++!!! error TS2304: Cannot find name 'T'.
 +         * @param {U} b
++                   ~
++!!! error TS2304: Cannot find name 'U'.
 +         */
 +        constructor(a, b) {}
 +    
@@ -144,7 +160,11 @@
 +        field;
 +        /**
 +         * @param {T} a
++                   ~
++!!! error TS2304: Cannot find name 'T'.
 +         * @param {U} b
++                   ~
++!!! error TS2304: Cannot find name 'U'.
 +         */
 +        constructor(a, b) {}
 +    
@@ -205,6 +225,8 @@
 +    export class N extends L {
 +        /**
 +         * @param {T} param 
++                   ~
++!!! error TS2304: Cannot find name 'T'.
 +         */
 +        constructor(param) {
 +            super();
@@ -221,6 +243,8 @@
 +    export class O extends N {
 +        /**
 +         * @param {U} param 
++                   ~
++!!! error TS2304: Cannot find name 'U'.
 +         */
 +        constructor(param) {
 +            super(param);

@@ -3,13 +3,15 @@
 @@= skipped -0, +0 lines =@@
 -github20832.js(2,15): error TS2304: Cannot find name 'U'.
 -github20832.js(17,12): error TS2304: Cannot find name 'V'.
++github20832.js(5,12): error TS2304: Cannot find name 'U'.
 +github20832.js(6,13): error TS2304: Cannot find name 'T'.
 +github20832.js(12,11): error TS2304: Cannot find name 'T'.
++github20832.js(21,12): error TS2304: Cannot find name 'V'.
 +github20832.js(26,12): error TS2304: Cannot find name 'Cb'.
  
  
 -==== github20832.js (2 errors) ====
-+==== github20832.js (3 errors) ====
++==== github20832.js (5 errors) ====
      // #20832
      /** @typedef {U} T - should be "error, can't find type named 'U' */
 -                  ~
@@ -17,6 +19,8 @@
      /**
       * @template U
       * @param {U} x
++               ~
++!!! error TS2304: Cannot find name 'U'.
       * @return {T}
 +                ~
 +!!! error TS2304: Cannot find name 'T'.
@@ -38,7 +42,11 @@
       */
      /**
       * @template V
-@@= skipped -32, +33 lines =@@
+      * @param {V} vvvvv
++               ~
++!!! error TS2304: Cannot find name 'V'.
+      */
+     function g(vvvvv) {
      }
      
      /** @type {Cb} */

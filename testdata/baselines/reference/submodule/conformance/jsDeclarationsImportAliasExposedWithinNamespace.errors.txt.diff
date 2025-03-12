@@ -4,6 +4,7 @@
 -file2.js(1,9): error TS18042: 'myTypes' is a type and cannot be imported in JavaScript files. Use 'import("./file.js").myTypes' in a JSDoc type annotation.
 +file.js(4,11): error TS2315: Type 'Object' is not generic.
 +file2.js(6,11): error TS2315: Type 'Object' is not generic.
++file2.js(17,12): error TS2503: Cannot find namespace 'testFnTypes'.
  
  
 -==== file.js (0 errors) ====
@@ -17,9 +18,12 @@
       */
      const myTypes = {
          // SOME PROPS HERE
-@@= skipped -23, +26 lines =@@
+@@= skipped -21, +25 lines =@@
+     /** @typedef {myTypes.typeB|Function} myTypes.typeC */
+     
      export {myTypes};
- ==== file2.js (1 errors) ====
+-==== file2.js (1 errors) ====
++==== file2.js (2 errors) ====
      import {myTypes} from './file.js';
 -            ~~~~~~~
 -!!! error TS18042: 'myTypes' is a type and cannot be imported in JavaScript files. Use 'import("./file.js").myTypes' in a JSDoc type annotation.
@@ -33,3 +37,12 @@
       */
      const testFnTypes = {
          // SOME PROPS HERE
+@@= skipped -20, +20 lines =@@
+      * @function testFn
+      * @description A test function.
+      * @param {testFnTypes.input} input - Input.
++               ~~~~~~~~~~~
++!!! error TS2503: Cannot find namespace 'testFnTypes'.
+      * @returns {number|null} Result.
+      */
+     function testFn(input) {

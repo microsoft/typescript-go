@@ -1,9 +1,12 @@
+templateTagWithNestedTypeLiteral.js(2,12): error TS2304: Cannot find name 'T'.
 templateTagWithNestedTypeLiteral.js(30,12): error TS2304: Cannot find name 'A'.
 
 
-==== templateTagWithNestedTypeLiteral.js (1 errors) ====
+==== templateTagWithNestedTypeLiteral.js (2 errors) ====
     /**
      * @param {T} t
+               ~
+!!! error TS2304: Cannot find name 'T'.
      * @template T
      */
     function Zet(t) {

@@ -7,18 +7,38 @@
 -  Property 'b' is missing in type '{ a: number; }' but required in type '{ a: number; b: string; }'.
 -a.js(24,15): error TS2304: Cannot find name 'NoLongerAllowed'.
 -a.js(25,2): error TS1069: Unexpected token. A type parameter name was expected without curly braces.
++a.js(6,12): error TS2304: Cannot find name 'T'.
++a.js(7,12): error TS2304: Cannot find name 'U'.
++a.js(8,12): error TS2304: Cannot find name 'V'.
++a.js(9,12): error TS2304: Cannot find name 'W'.
++a.js(10,12): error TS2304: Cannot find name 'X'.
 +a.js(11,13): error TS2304: Cannot find name 'W'.
 +a.js(11,17): error TS2304: Cannot find name 'X'.
++a.js(26,12): error TS2304: Cannot find name 'T'.
  
  
 -==== a.js (5 errors) ====
-+==== a.js (2 errors) ====
++==== a.js (8 errors) ====
      /**
       * @template {{ a: number, b: string }} T,U A Comment
       * @template {{ c: boolean }} V uh ... are comments even supported??
-@@= skipped -17, +13 lines =@@
+      * @template W
+      * @template X That last one had no comment
+      * @param {T} t
++               ~
++!!! error TS2304: Cannot find name 'T'.
+      * @param {U} u
++               ~
++!!! error TS2304: Cannot find name 'U'.
+      * @param {V} v
++               ~
++!!! error TS2304: Cannot find name 'V'.
       * @param {W} w
++               ~
++!!! error TS2304: Cannot find name 'W'.
       * @param {X} x
++               ~
++!!! error TS2304: Cannot find name 'X'.
       * @return {W | X}
 +                ~
 +!!! error TS2304: Cannot find name 'W'.
@@ -34,7 +54,7 @@
              return w;
          }
          return x;
-@@= skipped -14, +14 lines =@@
+@@= skipped -31, +43 lines =@@
      
      f({ a: 12, b: 'hi', c: null }, undefined, { c: false, d: 12, b: undefined }, 101, 'nope');
      f({ a: 12  }, undefined, undefined, 101, 'nope');
@@ -51,5 +71,8 @@
 -     ~
 -!!! error TS1069: Unexpected token. A type parameter name was expected without curly braces.
       * @param {T} x
++               ~
++!!! error TS2304: Cannot find name 'T'.
       */
      function g(x) { }
+     

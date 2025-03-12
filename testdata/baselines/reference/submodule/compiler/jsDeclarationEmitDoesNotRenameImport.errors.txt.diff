@@ -3,6 +3,7 @@
 @@= skipped -0, +-1 lines =@@
 -<no content>
 @@= skipped --1, +1 lines =@@
++index.js(10,16): error TS2304: Cannot find name 'Options'.
 +index.js(15,18): error TS2339: Property 'test' does not exist on type 'X'.
 +
 +
@@ -14,7 +15,7 @@
 +    /** @module Test */
 +    class Test {}
 +    export default Test;
-+==== index.js (1 errors) ====
++==== index.js (2 errors) ====
 +    import Test from './test/Test.js'
 +    
 +    /**
@@ -25,6 +26,8 @@
 +    class X extends Test {
 +        /**
 +         * @param {Options} options
++                   ~~~~~~~
++!!! error TS2304: Cannot find name 'Options'.
 +         */
 +        constructor(options) {
 +            super();

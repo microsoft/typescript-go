@@ -1,0 +1,55 @@
+0.js(9,12): error TS2304: Cannot find name 'Opts'.
+0.js(22,12): error TS2304: Cannot find name 'AnotherOpts'.
+0.js(37,12): error TS2304: Cannot find name 'Opts1'.
+
+
+==== 0.js (3 errors) ====
+    // @ts-check
+    /**
+     * @typedef {Object} Opts
+     * @property {string} x
+     * @property {string=} y
+     * @property {string} [z]
+     * @property {string} [w="hi"]
+     *
+     * @param {Opts} opts
+               ~~~~
+!!! error TS2304: Cannot find name 'Opts'.
+     */
+    function foo(opts) {
+        opts.x;
+    }
+    
+    foo({x: 'abc'});
+    
+    /**
+     * @typedef {Object} AnotherOpts
+     * @property anotherX {string}
+     * @property anotherY {string=}
+     * 
+     * @param {AnotherOpts} opts
+               ~~~~~~~~~~~
+!!! error TS2304: Cannot find name 'AnotherOpts'.
+     */
+    function foo1(opts) {
+        opts.anotherX;
+    }
+    
+    foo1({anotherX: "world"});
+    
+    /**
+     * @typedef {object} Opts1
+     * @property {string} x
+     * @property {string=} y
+     * @property {string} [z]
+     * @property {string} [w="hi"]
+     *
+     * @param {Opts1} opts
+               ~~~~~
+!!! error TS2304: Cannot find name 'Opts1'.
+     */
+    function foo2(opts) {
+        opts.x;
+    }
+    foo2({x: 'abc'});
+    

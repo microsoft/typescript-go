@@ -3,14 +3,15 @@
 @@= skipped -0, +-1 lines =@@
 -<no content>
 @@= skipped --1, +1 lines =@@
++index.js(10,12): error TS2304: Cannot find name 'Funcs'.
++index.js(10,18): error TS2304: Cannot find name 'A'.
++index.js(10,21): error TS2304: Cannot find name 'B'.
 +index.js(11,15): error TS2304: Cannot find name 'A'.
 +index.js(11,18): error TS2304: Cannot find name 'B'.
-+index.js(13,14): error TS7006: Parameter 'fns' implicitly has an 'any' type.
 +index.js(14,3): error TS2322: Type 'null' is not assignable to type '[A, B]'.
-+index.js(21,8): error TS7006: Parameter 'a' implicitly has an 'any' type.
 +
 +
-+==== index.js (5 errors) ====
++==== index.js (6 errors) ====
 +    /**
 +     * @typedef {{ [K in keyof B]: { fn: (a: A, b: B) => void; thing: B[K]; } }} Funcs
 +     * @template A
@@ -21,6 +22,12 @@
 +     * @template A
 +     * @template {Record<string, unknown>} B
 +     * @param {Funcs<A, B>} fns
++               ~~~~~
++!!! error TS2304: Cannot find name 'Funcs'.
++                     ~
++!!! error TS2304: Cannot find name 'A'.
++                        ~
++!!! error TS2304: Cannot find name 'B'.
 +     * @returns {[A, B]}
 +                  ~
 +!!! error TS2304: Cannot find name 'A'.
@@ -28,8 +35,6 @@
 +!!! error TS2304: Cannot find name 'B'.
 +     */
 +    function foo(fns) {
-+                 ~~~
-+!!! error TS7006: Parameter 'fns' implicitly has an 'any' type.
 +      return /** @type {any} */ (null);
 +      ~~~~~~
 +!!! error TS2322: Type 'null' is not assignable to type '[A, B]'.
@@ -40,8 +45,6 @@
 +        fn:
 +          /** @param {string} a */
 +          (a) => {},
-+           ~
-+!!! error TS7006: Parameter 'a' implicitly has an 'any' type.
 +        thing: "asd",
 +      },
 +    });

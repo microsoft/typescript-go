@@ -3,9 +3,12 @@
 @@= skipped -0, +-1 lines =@@
 -<no content>
 @@= skipped --1, +1 lines =@@
++context.js(29,12): error TS2304: Cannot find name 'Input'.
 +context.js(34,14): error TS2350: Only a void function can be called with the 'new' keyword.
++context.js(40,16): error TS2304: Cannot find name 'Input'.
 +context.js(42,18): error TS2304: Cannot find name 'State'.
 +context.js(48,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
++hook.js(5,12): error TS2304: Cannot find name 'HookHandler'.
 +hook.js(10,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +timer.js(7,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +
@@ -20,12 +23,14 @@
 +    module.exports = Timer;
 +    ~~~~~~
 +!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-+==== hook.js (1 errors) ====
++==== hook.js (2 errors) ====
 +    /**
 +     * @typedef {(arg: import("./context")) => void} HookHandler
 +     */
 +    /**
 +     * @param {HookHandler} handle
++               ~~~~~~~~~~~
++!!! error TS2304: Cannot find name 'HookHandler'.
 +     */
 +    function Hook(handle) {
 +        this.handle = handle;
@@ -34,7 +39,7 @@
 +    ~~~~~~
 +!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +    
-+==== context.js (3 errors) ====
++==== context.js (5 errors) ====
 +    /**
 +     * Imports
 +     *
@@ -64,6 +69,8 @@
 +     *
 +     * @class
 +     * @param {Input} input
++               ~~~~~
++!!! error TS2304: Cannot find name 'Input'.
 +     */
 +    
 +    function Context(input) {
@@ -77,6 +84,8 @@
 +    Context.prototype = {
 +        /**
 +         * @param {Input} input
++                   ~~~~~
++!!! error TS2304: Cannot find name 'Input'.
 +         * @param {HookHandler=} handle
 +         * @returns {State}
 +                     ~~~~~

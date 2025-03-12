@@ -1,15 +1,16 @@
-first.js(21,19): error TS2507: Type '{ (numberOxen: any): void; circle: (wagons: any) => any; }' is not a constructor function type.
+first.js(21,19): error TS2507: Type '{ (numberOxen: number): void; circle: (wagons: any) => any; }' is not a constructor function type.
 first.js(24,14): error TS2339: Property 'foonly' does not exist on type 'Sql'.
 first.js(44,4): error TS2339: Property 'numberOxen' does not exist on type 'Sql'.
 first.js(44,20): error TS2339: Property 'foonly' does not exist on type 'Sql'.
 first.js(47,24): error TS2507: Type '(numberEaten: number) => void' is not a constructor function type.
-generic.js(9,23): error TS2507: Type '(flavour: any) => void' is not a constructor function type.
+generic.js(3,12): error TS2304: Cannot find name 'T'.
+generic.js(9,23): error TS2507: Type '(flavour: T) => void' is not a constructor function type.
 generic.js(11,21): error TS2339: Property 'flavour' does not exist on type 'Chowder'.
 generic.js(17,27): error TS2554: Expected 0 arguments, but got 1.
 generic.js(18,9): error TS2339: Property 'flavour' does not exist on type 'Chowder'.
 generic.js(20,32): error TS2554: Expected 0 arguments, but got 1.
 second.ts(8,25): error TS2507: Type '(numberEaten: number) => void' is not a constructor function type.
-second.ts(14,25): error TS2507: Type '{ (numberOxen: any): void; circle: (wagons: any) => any; }' is not a constructor function type.
+second.ts(14,25): error TS2507: Type '{ (numberOxen: number): void; circle: (wagons: any) => any; }' is not a constructor function type.
 second.ts(26,3): error TS2339: Property 'numberOxen' does not exist on type 'Conestoga'.
 
 
@@ -36,7 +37,7 @@ second.ts(26,3): error TS2339: Property 'numberOxen' does not exist on type 'Con
     // ok
     class Sql extends Wagon {
                       ~~~~~
-!!! error TS2507: Type '{ (numberOxen: any): void; circle: (wagons: any) => any; }' is not a constructor function type.
+!!! error TS2507: Type '{ (numberOxen: number): void; circle: (wagons: any) => any; }' is not a constructor function type.
         constructor() {
             super(); // error: not enough arguments
             this.foonly = 12
@@ -92,7 +93,7 @@ second.ts(26,3): error TS2339: Property 'numberOxen' does not exist on type 'Con
     // ok
     class Conestoga extends Wagon {
                             ~~~~~
-!!! error TS2507: Type '{ (numberOxen: any): void; circle: (wagons: any) => any; }' is not a constructor function type.
+!!! error TS2507: Type '{ (numberOxen: number): void; circle: (wagons: any) => any; }' is not a constructor function type.
         constructor(public drunkOO: true) {
             // error: wrong type
             super('nope');
@@ -108,10 +109,12 @@ second.ts(26,3): error TS2339: Property 'numberOxen' does not exist on type 'Con
       ~~~~~~~~~~
 !!! error TS2339: Property 'numberOxen' does not exist on type 'Conestoga'.
     
-==== generic.js (5 errors) ====
+==== generic.js (6 errors) ====
     /**
      * @template T
      * @param {T} flavour
+               ~
+!!! error TS2304: Cannot find name 'T'.
      */
     function Soup(flavour) {
         this.flavour = flavour
@@ -119,7 +122,7 @@ second.ts(26,3): error TS2339: Property 'numberOxen' does not exist on type 'Con
     /** @extends {Soup<{ claim: "ignorant" | "malicious" }>} */
     class Chowder extends Soup {
                           ~~~~
-!!! error TS2507: Type '(flavour: any) => void' is not a constructor function type.
+!!! error TS2507: Type '(flavour: T) => void' is not a constructor function type.
         log() {
             return this.flavour
                         ~~~~~~~

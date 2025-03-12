@@ -4,10 +4,12 @@
 -<no content>
 @@= skipped --1, +1 lines =@@
 +index.js(1,39): error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
++index.js(15,16): error TS2304: Cannot find name 'TaskGroup'.
++index.js(16,16): error TS2304: Cannot find name 'TaskNode'.
 +index.js(21,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +
 +
-+==== index.js (2 errors) ====
++==== index.js (4 errors) ====
 +    const {taskGroups, taskNameToGroup} = require('./module.js');
 +                                          ~~~~~~~
 +!!! error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
@@ -25,7 +27,11 @@
 +    class MainThreadTasks {
 +        /**
 +         * @param {TaskGroup} x
++                   ~~~~~~~~~
++!!! error TS2304: Cannot find name 'TaskGroup'.
 +         * @param {TaskNode} y
++                   ~~~~~~~~
++!!! error TS2304: Cannot find name 'TaskNode'.
 +         */
 +        constructor(x, y){}
 +    }

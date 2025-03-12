@@ -5,10 +5,11 @@
 +indices.js(1,12): error TS2315: Type 'Object' is not generic.
 +indices.js(3,12): error TS2315: Type 'Object' is not generic.
 +indices.js(5,12): error TS2315: Type 'Object' is not generic.
++indices.js(7,13): error TS2315: Type 'Object' is not generic.
  
  
 -==== indices.js (1 errors) ====
-+==== indices.js (3 errors) ====
++==== indices.js (4 errors) ====
      /** @type {Object.<string, number>} */
 +               ~~~~~~~~~~~~~~~~~~~~~~~
 +!!! error TS2315: Type 'Object' is not generic.
@@ -22,6 +23,8 @@
 +!!! error TS2315: Type 'Object' is not generic.
      var o3;
      /** @param {Object.<string, boolean>} o */
++                ~~~~~~~~~~~~~~~~~~~~~~~~
++!!! error TS2315: Type 'Object' is not generic.
      function f(o) {
          o.foo = 1; // error
 -        ~~~~~

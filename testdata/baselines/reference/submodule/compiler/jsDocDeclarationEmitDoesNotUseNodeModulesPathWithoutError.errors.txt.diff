@@ -3,7 +3,7 @@
 @@= skipped -0, +-1 lines =@@
 -<no content>
 @@= skipped --1, +1 lines =@@
-+index.js(9,49): error TS7006: Parameter 'init' implicitly has an 'any' type.
++index.js(7,16): error TS2552: Cannot find name 'LionRequestInit'. Did you mean 'RequestInit'?
 +
 +
 +==== package.json (0 errors) ====
@@ -40,10 +40,10 @@
 +    export class NewAjax {
 +        /**
 +         * @param {LionRequestInit} [init]
++                   ~~~~~~~~~~~~~~~
++!!! error TS2552: Cannot find name 'LionRequestInit'. Did you mean 'RequestInit'?
 +         */
 +        case5_unexpectedlyResolvesPathToNodeModules(init) {}
-+                                                    ~~~~
-+!!! error TS7006: Parameter 'init' implicitly has an 'any' type.
 +    }
 +    
 +    /**

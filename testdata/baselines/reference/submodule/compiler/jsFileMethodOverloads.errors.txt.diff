@@ -3,19 +3,23 @@
 @@= skipped -0, +-1 lines =@@
 -<no content>
 @@= skipped --1, +1 lines =@@
++jsFileMethodOverloads.js(6,14): error TS2304: Cannot find name 'T'.
 +jsFileMethodOverloads.js(9,10): error TS2339: Property 'value' does not exist on type 'Example'.
 +jsFileMethodOverloads.js(26,24): error TS2339: Property 'value' does not exist on type 'Example'.
++jsFileMethodOverloads.js(40,18): error TS2304: Cannot find name 'T'.
 +jsFileMethodOverloads.js(44,25): error TS2339: Property 'value' does not exist on type 'Example'.
 +jsFileMethodOverloads.js(44,39): error TS2339: Property 'value' does not exist on type 'Example'.
 +
 +
-+==== jsFileMethodOverloads.js (4 errors) ====
++==== jsFileMethodOverloads.js (6 errors) ====
 +    /**
 +     * @template T
 +     */
 +     class Example {
 +      /**
 +       * @param {T} value 
++                 ~
++!!! error TS2304: Cannot find name 'T'.
 +       */
 +      constructor(value) {
 +        this.value = value;
@@ -54,6 +58,8 @@
 +       */
 +      /**
 +       * @param {(y: T) => unknown} [fn]
++                     ~
++!!! error TS2304: Cannot find name 'T'.
 +       * @returns {unknown}
 +       */
 +      transform(fn) {

@@ -1,30 +1,32 @@
+a.js(3,12): error TS2304: Cannot find name 'T'.
 a.js(4,14): error TS2304: Cannot find name 'T'.
-a.js(6,13): error TS7006: Parameter 'x' implicitly has an 'any' type.
+a.js(15,12): error TS2304: Cannot find name 'T'.
 a.js(16,14): error TS2304: Cannot find name 'T'.
-a.js(18,13): error TS7006: Parameter 'x' implicitly has an 'any' type.
+a.js(27,12): error TS2304: Cannot find name 'T'.
 a.js(28,14): error TS2304: Cannot find name 'T'.
-a.js(30,13): error TS7006: Parameter 'x' implicitly has an 'any' type.
+a.js(38,13): error TS2304: Cannot find name 'T'.
+a.js(38,16): error TS2304: Cannot find name 'T'.
 a.js(39,14): error TS2304: Cannot find name 'T'.
-a.js(41,13): error TS7006: Parameter 'x' implicitly has an 'any' type.
+a.js(49,17): error TS2304: Cannot find name 'T'.
+a.js(49,23): error TS2304: Cannot find name 'T'.
 a.js(50,14): error TS2304: Cannot find name 'T'.
-a.js(52,13): error TS7006: Parameter 'obj' implicitly has an 'any' type.
-a.js(65,17): error TS7006: Parameter 'x' implicitly has an 'any' type.
-a.js(71,9): error TS7006: Parameter 'x' implicitly has an 'any' type.
+a.js(63,16): error TS2304: Cannot find name 'T'.
+a.js(69,16): error TS2304: Cannot find name 'U'.
+a.js(81,12): error TS2304: Cannot find name 'T'.
 a.js(82,14): error TS2304: Cannot find name 'T'.
-a.js(84,13): error TS7019: Rest parameter 'args' implicitly has an 'any[]' type.
 
 
-==== a.js (14 errors) ====
+==== a.js (16 errors) ====
     /**
      * @template const T
      * @param {T} x
+               ~
+!!! error TS2304: Cannot find name 'T'.
      * @returns {T}
                  ~
 !!! error TS2304: Cannot find name 'T'.
      */
     function f1(x) {
-                ~
-!!! error TS7006: Parameter 'x' implicitly has an 'any' type.
         return x;
     }
     const t1 = f1("a");
@@ -34,13 +36,13 @@ a.js(84,13): error TS7019: Rest parameter 'args' implicitly has an 'any[]' type.
     /**
      * @template const T, U
      * @param {T} x
+               ~
+!!! error TS2304: Cannot find name 'T'.
      * @returns {T}
                  ~
 !!! error TS2304: Cannot find name 'T'.
      */
     function f2(x) {
-                ~
-!!! error TS7006: Parameter 'x' implicitly has an 'any' type.
         return x;
     };
     const t4 = f2('a');
@@ -50,13 +52,13 @@ a.js(84,13): error TS7019: Rest parameter 'args' implicitly has an 'any[]' type.
     /**
      * @template const T
      * @param {T} x
+               ~
+!!! error TS2304: Cannot find name 'T'.
      * @returns {T[]}
                  ~
 !!! error TS2304: Cannot find name 'T'.
      */
     function f3(x) {
-                ~
-!!! error TS7006: Parameter 'x' implicitly has an 'any' type.
         return [x];
     }
     const t7 = f3("hello");
@@ -65,13 +67,15 @@ a.js(84,13): error TS7019: Rest parameter 'args' implicitly has an 'any[]' type.
     /**
      * @template const T
      * @param {[T, T]} x
+                ~
+!!! error TS2304: Cannot find name 'T'.
+                   ~
+!!! error TS2304: Cannot find name 'T'.
      * @returns {T}
                  ~
 !!! error TS2304: Cannot find name 'T'.
      */
     function f4(x) {
-                ~
-!!! error TS7006: Parameter 'x' implicitly has an 'any' type.
         return x[0];
     }
     const t9 = f4([[1, "x"], [2, "y"]]);
@@ -80,13 +84,15 @@ a.js(84,13): error TS7019: Rest parameter 'args' implicitly has an 'any[]' type.
     /**
      * @template const T
      * @param {{ x: T, y: T}} obj
+                    ~
+!!! error TS2304: Cannot find name 'T'.
+                          ~
+!!! error TS2304: Cannot find name 'T'.
      * @returns {T}
                  ~
 !!! error TS2304: Cannot find name 'T'.
      */
     function f5(obj) {
-                ~~~
-!!! error TS7006: Parameter 'obj' implicitly has an 'any' type.
         return obj.x;
     }
     const t11 = f5({ x: [1, "x"], y: [2, "y"] });
@@ -98,18 +104,18 @@ a.js(84,13): error TS7019: Rest parameter 'args' implicitly has an 'any[]' type.
     class C {
         /**
          * @param {T} x
+                   ~
+!!! error TS2304: Cannot find name 'T'.
          */
         constructor(x) {}
-                    ~
-!!! error TS7006: Parameter 'x' implicitly has an 'any' type.
     
         /**
          * @template const U
          * @param {U} x
+                   ~
+!!! error TS2304: Cannot find name 'U'.
          */
         foo(x) {
-            ~
-!!! error TS7006: Parameter 'x' implicitly has an 'any' type.
             return x;
         }
     }
@@ -120,13 +126,13 @@ a.js(84,13): error TS7019: Rest parameter 'args' implicitly has an 'any[]' type.
     /**
      * @template {readonly unknown[]} const T
      * @param {T} args
+               ~
+!!! error TS2304: Cannot find name 'T'.
      * @returns {T}
                  ~
 !!! error TS2304: Cannot find name 'T'.
      */
     function f6(...args) {
-                ~~~~~~~
-!!! error TS7019: Rest parameter 'args' implicitly has an 'any[]' type.
         return args;
     }
     const t15 = f6(1, 'b', { a: 1, b: 'x' });

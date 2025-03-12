@@ -12,10 +12,16 @@
 +file.js(8,12): error TS2304: Cannot find name 'A'.
 +file.js(10,12): error TS2304: Cannot find name 'A'.
 +file.js(12,12): error TS2304: Cannot find name 'A'.
++file.js(46,12): error TS2304: Cannot find name 'T'.
++file.js(47,12): error TS2304: Cannot find name 'U'.
++file.js(54,12): error TS2304: Cannot find name 'T'.
++file.js(55,12): error TS2304: Cannot find name 'U'.
++file.js(62,12): error TS2304: Cannot find name 'T'.
++file.js(63,12): error TS2304: Cannot find name 'U'.
  
  
 -==== file.js (7 errors) ====
-+==== file.js (4 errors) ====
++==== file.js (10 errors) ====
      /**
       * @template {string | number} [T=string] - ok: defaults are permitted
       * @typedef {[T]} A
@@ -41,7 +47,7 @@
      const aNumber = [0];
      
      /**
-@@= skipped -31, +34 lines =@@
+@@= skipped -31, +40 lines =@@
      
      /**
       * @template {string | number} [T] - error: default requires an `=type`
@@ -72,16 +78,31 @@
       * @template [U=T]
       * @typedef {[T, U]} G
       */
-@@= skipped -39, +31 lines =@@
+@@= skipped -32, +24 lines =@@
+      * @template T
+      * @template [U=T] - ok: default can reference earlier type parameter
+      * @param {T} a
++               ~
++!!! error TS2304: Cannot find name 'T'.
+      * @param {U} b
++               ~
++!!! error TS2304: Cannot find name 'U'.
+      */
+     function f1(a, b) {}
+     
       /**
       * @template {string | number} [T=string]
       * @template U - error: Required type parameters cannot follow optional type parameters
 -                 ~
 -!!! error TS2706: Required type parameters may not follow optional type parameters.
       * @param {T} a
++               ~
++!!! error TS2304: Cannot find name 'T'.
       * @param {U} b
++               ~
++!!! error TS2304: Cannot find name 'U'.
       */
-@@= skipped -9, +7 lines =@@
+     function f2(a, b) {}
      
      /**
       * @template [T=U] - error: Type parameter defaults can only reference previously declared type parameters.
@@ -89,4 +110,11 @@
 -!!! error TS2744: Type parameter defaults can only reference previously declared type parameters.
       * @template [U=T]
       * @param {T} a
++               ~
++!!! error TS2304: Cannot find name 'T'.
       * @param {U} b
++               ~
++!!! error TS2304: Cannot find name 'U'.
+      */
+     function f3(a, b) {}
+     

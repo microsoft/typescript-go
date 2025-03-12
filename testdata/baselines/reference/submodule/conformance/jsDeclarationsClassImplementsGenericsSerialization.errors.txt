@@ -1,0 +1,28 @@
+lib.js(7,16): error TS2304: Cannot find name 'T'.
+
+
+==== interface.ts (0 errors) ====
+    export interface Encoder<T> {
+        encode(value: T): Uint8Array
+    }
+==== lib.js (1 errors) ====
+    /**
+     * @template T
+     * @implements {IEncoder<T>}
+     */
+    export class Encoder {
+        /**
+         * @param {T} value 
+                   ~
+!!! error TS2304: Cannot find name 'T'.
+         */
+        encode(value) {
+            return new Uint8Array(0)
+        }
+    }
+    
+    
+    /**
+     * @template T
+     * @typedef {import('./interface').Encoder<T>} IEncoder
+     */

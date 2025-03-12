@@ -1,14 +1,11 @@
-a.js(2,12): error TS7006: Parameter 'a' implicitly has an 'any' type.
 a.js(7,1): error TS2554: Expected 1 arguments, but got 0.
 a.js(13,12): error TS7006: Parameter 'a' implicitly has an 'any' type.
 a.js(18,1): error TS2554: Expected 1 arguments, but got 0.
 
 
-==== a.js (4 errors) ====
+==== a.js (3 errors) ====
     /** @param {number=} a */
     function f(a) {
-               ~
-!!! error TS7006: Parameter 'a' implicitly has an 'any' type.
         a = 1
         a = null // should not be allowed
         a = undefined

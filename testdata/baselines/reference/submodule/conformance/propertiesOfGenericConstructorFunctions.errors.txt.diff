@@ -3,15 +3,19 @@
 @@= skipped -0, +-1 lines =@@
 -<no content>
 @@= skipped --1, +1 lines =@@
++propertiesOfGenericConstructorFunctions.js(5,12): error TS2304: Cannot find name 'V'.
 +propertiesOfGenericConstructorFunctions.js(14,12): error TS2749: 'Multimap' refers to a value, but is being used as a type here. Did you mean 'typeof Multimap'?
++propertiesOfGenericConstructorFunctions.js(31,12): error TS2304: Cannot find name 'T'.
 +
 +
-+==== propertiesOfGenericConstructorFunctions.js (1 errors) ====
++==== propertiesOfGenericConstructorFunctions.js (3 errors) ====
 +    /**
 +     * @template {string} K
 +     * @template V
 +     * @param {string} ik
 +     * @param {V} iv
++               ~
++!!! error TS2304: Cannot find name 'V'.
 +     */
 +    function Multimap(ik, iv) {
 +        /** @type {{ [s: string]: V }} */
@@ -40,6 +44,8 @@
 +     * @class
 +     * @template T
 +     * @param {T} t
++               ~
++!!! error TS2304: Cannot find name 'T'.
 +     */
 +    function Cp(t) {
 +        this.x = 1

@@ -130,9 +130,16 @@ func (p *Parser) attachJSDoc(host *ast.Node, jsDoc []*ast.Node) {
 					ret.Expression = p.makeNewTypeAssertion(p.makeNewType(tag.AsJSDocTypeTag().TypeExpression), ret.Expression)
 				}
 			case ast.KindJSDocParameterTag:
-				// TODO
+				if fun, ok := getFunctionLikeHost(host); ok {
+					jsparam := tag.AsJSDocParameterTag()
+					if param, ok := findMatchingParameter(fun, jsparam); ok {
+						if param.Type() == nil {
+							param.AsParameterDeclaration().Type = p.makeNewType(jsparam.TypeExpression)
+						}
+					}
+				}
 			case ast.KindJSDocReturnTag:
-				if fun, ok := p.getFunctionLikeHost(host); ok {
+				if fun, ok := getFunctionLikeHost(host); ok {
 					if fun.Type() == nil {
 						fun.FunctionLikeData().Type = p.makeNewType(tag.AsJSDocReturnTag().TypeExpression)
 					}
@@ -142,7 +149,16 @@ func (p *Parser) attachJSDoc(host *ast.Node, jsDoc []*ast.Node) {
 	}
 }
 
-func (p *Parser) getFunctionLikeHost(host *ast.Node) (*ast.Node, bool) {
+func findMatchingParameter(fun *ast.Node, jsparam *ast.JSDocParameterTag) (*ast.Node, bool) {
+	for _, parameter := range fun.Parameters() {
+		if parameter.Name().Kind == ast.KindIdentifier && parameter.Name().Text() == jsparam.Name().Text() {
+			return parameter, true
+		}
+	}
+	return nil, false
+}
+
+func getFunctionLikeHost(host *ast.Node) (*ast.Node, bool) {
 	fun := host
 	if host.Kind == ast.KindVariableStatement && host.AsVariableStatement().DeclarationList != nil {
 		// NOTE: This takes the first decl but in Strada it applied to every decl

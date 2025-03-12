@@ -3,10 +3,10 @@
 @@= skipped -0, +-1 lines =@@
 -<no content>
 @@= skipped --1, +1 lines =@@
-+a.js(6,12): error TS7006: Parameter 'p' implicitly has an 'any' type.
-+a.js(6,15): error TS7006: Parameter 'q' implicitly has an 'any' type.
-+a.js(6,18): error TS7006: Parameter 'r' implicitly has an 'any' type.
++a.js(7,5): error TS2322: Type 'undefined' is not assignable to type 'number'.
++a.js(11,5): error TS2322: Type 'undefined' is not assignable to type 'number'.
 +a.js(13,1): error TS2554: Expected 3 arguments, but got 0.
++a.js(14,3): error TS2345: Argument of type 'undefined' is not assignable to parameter of type 'number'.
 +
 +
 +==== a.js (4 errors) ====
@@ -16,22 +16,22 @@
 +     * @param {number} [r=101]
 +     */
 +    function f(p, q, r) {
-+               ~
-+!!! error TS7006: Parameter 'p' implicitly has an 'any' type.
-+                  ~
-+!!! error TS7006: Parameter 'q' implicitly has an 'any' type.
-+                     ~
-+!!! error TS7006: Parameter 'r' implicitly has an 'any' type.
 +        p = undefined
++        ~
++!!! error TS2322: Type 'undefined' is not assignable to type 'number'.
 +        q = undefined
 +        // note that, unlike TS, JSDOC [r=101] retains | undefined because
 +        // there's no code emitted to get rid of it.
 +        r = undefined
++        ~
++!!! error TS2322: Type 'undefined' is not assignable to type 'number'.
 +    }
 +    f()
 +    ~
 +!!! error TS2554: Expected 3 arguments, but got 0.
 +!!! related TS6210 a.js:6:12: An argument for 'p' was not provided.
 +    f(undefined, undefined, undefined)
++      ~~~~~~~~~
++!!! error TS2345: Argument of type 'undefined' is not assignable to parameter of type 'number'.
 +    f(1, 2, 3)
 +    

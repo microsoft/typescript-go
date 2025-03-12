@@ -1,0 +1,29 @@
+genericSetterInClassTypeJsDoc.js(7,17): error TS2304: Cannot find name 'T'.
+
+
+==== genericSetterInClassTypeJsDoc.js (1 errors) ====
+    /**
+     * @template T
+     */
+     class Box {
+        #value;
+    
+        /** @param {T} initialValue */
+                    ~
+!!! error TS2304: Cannot find name 'T'.
+        constructor(initialValue) {
+            this.#value = initialValue;
+        }
+        
+        /** @type {T} */
+        get value() {
+            return this.#value;
+        }
+    
+        set value(value) {
+            this.#value = value;
+        }
+    }
+    
+    new Box(3).value = 3;
+    

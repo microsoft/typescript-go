@@ -1,0 +1,26 @@
+--- old.jsDeclarationsTypedefFunction.errors.txt
++++ new.jsDeclarationsTypedefFunction.errors.txt
+@@= skipped -0, +-1 lines =@@
+-<no content>
+@@= skipped --1, +1 lines =@@
++foo.js(10,12): error TS2304: Cannot find name 'ResolveRejectMap'.
++
++
++==== foo.js (1 errors) ====
++    /**
++     * @typedef {{
++     *   [id: string]: [Function, Function];
++     * }} ResolveRejectMap
++     */
++    
++    let id = 0
++    
++    /**
++     * @param {ResolveRejectMap} handlers
++               ~~~~~~~~~~~~~~~~
++!!! error TS2304: Cannot find name 'ResolveRejectMap'.
++     * @returns {Promise<any>}
++     */
++    const send = handlers => new Promise((resolve, reject) => {
++      handlers[++id] = [resolve, reject]
++    })

@@ -2,18 +2,28 @@
 +++ new.jsdocTemplateTag.errors.txt
 @@= skipped -0, +0 lines =@@
 -forgot.js(23,1): error TS2322: Type '(keyframes: any[]) => void' is not assignable to type '(keyframes: Keyframe[] | PropertyIndexedKeyframes, options?: number | KeyframeAnimationOptions) => Animation'.
++forgot.js(2,12): error TS2304: Cannot find name 'T'.
++forgot.js(11,12): error TS2304: Cannot find name 'T'.
 +forgot.js(13,14): error TS2552: Cannot find name 'function'. Did you mean 'Function'?
 +forgot.js(23,1): error TS2322: Type '(keyframes: Keyframe[] | PropertyIndexedKeyframes) => void' is not assignable to type '(keyframes: Keyframe[] | PropertyIndexedKeyframes, options?: number | KeyframeAnimationOptions) => Animation'.
    Type 'void' is not assignable to type 'Animation'.
  
  
 -==== forgot.js (1 errors) ====
-+==== forgot.js (2 errors) ====
++==== forgot.js (4 errors) ====
      /**
       * @param {T} a
++               ~
++!!! error TS2304: Cannot find name 'T'.
       * @template T
-@@= skipped -15, +16 lines =@@
+      */
+     function f(a) {
+@@= skipped -13, +18 lines =@@
+     
+     /**
       * @param {T} a
++               ~
++!!! error TS2304: Cannot find name 'T'.
       * @template T
       * @returns {function(): T}
 +                 ~~~~~~~~
@@ -22,7 +32,7 @@
       */
      function g(a) {
          return () => a
-@@= skipped -11, +14 lines =@@
+@@= skipped -13, +18 lines =@@
       */
      Element.prototype.animate = function(keyframes) {};
      ~~~~~~~~~~~~~~~~~~~~~~~~~

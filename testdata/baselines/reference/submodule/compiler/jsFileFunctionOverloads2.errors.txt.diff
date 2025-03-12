@@ -3,10 +3,12 @@
 @@= skipped -0, +-1 lines =@@
 -<no content>
 @@= skipped --1, +1 lines =@@
++jsFileFunctionOverloads2.js(24,12): error TS2304: Cannot find name 'T'.
 +jsFileFunctionOverloads2.js(25,14): error TS2304: Cannot find name 'T'.
++jsFileFunctionOverloads2.js(49,44): error TS2461: Type 'unknown' is not an array type.
 +
 +
-+==== jsFileFunctionOverloads2.js (1 errors) ====
++==== jsFileFunctionOverloads2.js (3 errors) ====
 +    // Also works if all @overload tags are combined in one comment.
 +    /**
 +     * @overload
@@ -31,6 +33,8 @@
 +    /**
 +     * @template T
 +     * @param {T} x 
++               ~
++!!! error TS2304: Cannot find name 'T'.
 +     * @returns {T}
 +                 ~
 +!!! error TS2304: Cannot find name 'T'.
@@ -58,6 +62,8 @@
 +      const result = [];
 +      for (let i = 0; i < array.length; i += 1) {
 +        result.push(.../** @type {unknown[]} */(iterable(array[i])));
++                                               ~~~~~~~~~~~~~~~~~~~~
++!!! error TS2461: Type 'unknown' is not an array type.
 +      }
 +      return result;
 +    }

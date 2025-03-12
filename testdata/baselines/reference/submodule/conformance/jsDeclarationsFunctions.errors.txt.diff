@@ -3,11 +3,14 @@
 @@= skipped -0, +-1 lines =@@
 -<no content>
 @@= skipped --1, +1 lines =@@
++index.js(18,12): error TS2304: Cannot find name 'T'.
++index.js(19,12): error TS2304: Cannot find name 'U'.
 +index.js(20,13): error TS2304: Cannot find name 'T'.
 +index.js(20,17): error TS2304: Cannot find name 'U'.
++index.js(26,12): error TS2304: Cannot find name 'T'.
 +
 +
-+==== index.js (2 errors) ====
++==== index.js (5 errors) ====
 +    export function a() {}
 +    
 +    export function b() {}
@@ -26,7 +29,11 @@
 +    /**
 +     * @template T,U
 +     * @param {T} a
++               ~
++!!! error TS2304: Cannot find name 'T'.
 +     * @param {U} b
++               ~
++!!! error TS2304: Cannot find name 'U'.
 +     * @return {T & U} 
 +                ~
 +!!! error TS2304: Cannot find name 'T'.
@@ -38,6 +45,8 @@
 +    /**
 +     * @template T
 +     * @param {T} a
++               ~
++!!! error TS2304: Cannot find name 'T'.
 +     */
 +    export function f(a) {
 +        return a;

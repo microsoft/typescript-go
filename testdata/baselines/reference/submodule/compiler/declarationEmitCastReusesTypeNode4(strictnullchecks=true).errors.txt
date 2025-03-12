@@ -1,9 +1,7 @@
-input.js(13,77): error TS7006: Parameter 'req' implicitly has an 'any' type.
-input.js(21,64): error TS7006: Parameter 'req' implicitly has an 'any' type.
-input.js(37,88): error TS7006: Parameter 'b' implicitly has an 'any' type.
+input.js(34,12): error TS2304: Cannot find name 'P'.
 
 
-==== input.js (3 errors) ====
+==== input.js (1 errors) ====
     /**
      * @typedef {{ } & { name?: string }} P
      */
@@ -17,8 +15,6 @@ input.js(37,88): error TS7006: Parameter 'b' implicitly has an 'any' type.
     
     /** @param {number} req */
     export function fnWithRequiredDefaultParam(p = /** @type {P} */(something), req) {}
-                                                                                ~~~
-!!! error TS7006: Parameter 'req' implicitly has an 'any' type.
     
     export class C {
         field = /** @type {P} */(something);
@@ -27,8 +23,6 @@ input.js(37,88): error TS7006: Parameter 'b' implicitly has an 'any' type.
         method(p = /** @type {P} */(something)) {}
         /** @param {number} req */
         methodWithRequiredDefault(p = /** @type {P} */(something), req) {}
-                                                                   ~~~
-!!! error TS7006: Parameter 'req' implicitly has an 'any' type.
     
         constructor(ctorField = /** @type {P} */(something)) {}
     
@@ -42,8 +36,8 @@ input.js(37,88): error TS7006: Parameter 'b' implicitly has an 'any' type.
     /**
      * 
      * @param {P} x
+               ~
+!!! error TS2304: Cannot find name 'P'.
      * @param {number} b
      */
     export function fnWithPartialAnnotationOnDefaultparam(x = /** @type {P} */(something), b) {}
-                                                                                           ~
-!!! error TS7006: Parameter 'b' implicitly has an 'any' type.

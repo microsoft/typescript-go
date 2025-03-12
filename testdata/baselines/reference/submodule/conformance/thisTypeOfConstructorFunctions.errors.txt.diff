@@ -3,17 +3,21 @@
 @@= skipped -0, +-1 lines =@@
 -<no content>
 @@= skipped --1, +1 lines =@@
++thisTypeOfConstructorFunctions.js(4,12): error TS2304: Cannot find name 'T'.
 +thisTypeOfConstructorFunctions.js(15,18): error TS2526: A 'this' type is available only in a non-static member of a class or interface.
++thisTypeOfConstructorFunctions.js(24,12): error TS2304: Cannot find name 'T'.
 +thisTypeOfConstructorFunctions.js(38,12): error TS2749: 'Cpp' refers to a value, but is being used as a type here. Did you mean 'typeof Cpp'?
 +thisTypeOfConstructorFunctions.js(41,12): error TS2749: 'Cp' refers to a value, but is being used as a type here. Did you mean 'typeof Cp'?
 +thisTypeOfConstructorFunctions.js(43,12): error TS2749: 'Cp' refers to a value, but is being used as a type here. Did you mean 'typeof Cp'?
 +
 +
-+==== thisTypeOfConstructorFunctions.js (4 errors) ====
++==== thisTypeOfConstructorFunctions.js (6 errors) ====
 +    /**
 +     * @class
 +     * @template T
 +     * @param {T} t
++               ~
++!!! error TS2304: Cannot find name 'T'.
 +     */
 +    function Cp(t) {
 +        /** @type {this} */
@@ -36,6 +40,8 @@
 +     * @class
 +     * @template T
 +     * @param {T} t
++               ~
++!!! error TS2304: Cannot find name 'T'.
 +     */
 +    function Cpp(t) {
 +        this.y = t

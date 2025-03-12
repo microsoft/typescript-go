@@ -12,6 +12,20 @@ index.ts(17,22): error TS2306: File 'mod.js' is not a module.
 index.ts(18,22): error TS2306: File 'mod.js' is not a module.
 index.ts(19,22): error TS2306: File 'mod.js' is not a module.
 index.ts(20,22): error TS2306: File 'mod.js' is not a module.
+main.js(2,19): error TS2306: File 'mod.js' is not a module.
+main.js(3,19): error TS2306: File 'mod.js' is not a module.
+main.js(4,19): error TS2306: File 'mod.js' is not a module.
+main.js(5,19): error TS2306: File 'mod.js' is not a module.
+main.js(6,19): error TS2306: File 'mod.js' is not a module.
+main.js(7,19): error TS2306: File 'mod.js' is not a module.
+main.js(8,19): error TS2306: File 'mod.js' is not a module.
+main.js(15,26): error TS2306: File 'mod.js' is not a module.
+main.js(16,26): error TS2306: File 'mod.js' is not a module.
+main.js(17,26): error TS2306: File 'mod.js' is not a module.
+main.js(18,26): error TS2306: File 'mod.js' is not a module.
+main.js(19,26): error TS2306: File 'mod.js' is not a module.
+main.js(20,26): error TS2306: File 'mod.js' is not a module.
+main.js(21,26): error TS2306: File 'mod.js' is not a module.
 mod.js(6,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 
 
@@ -31,15 +45,29 @@ mod.js(6,1): error TS2580: Cannot find name 'module'. Do you need to install typ
         baz() { return 5 },
         literal: "",
     }
-==== main.js (0 errors) ====
+==== main.js (14 errors) ====
     /**
      * @param {import("./mod").Thing} a
+                      ~~~~~~~
+!!! error TS2306: File 'mod.js' is not a module.
      * @param {import("./mod").AnotherThing} b
+                      ~~~~~~~
+!!! error TS2306: File 'mod.js' is not a module.
      * @param {import("./mod").foo} c
+                      ~~~~~~~
+!!! error TS2306: File 'mod.js' is not a module.
      * @param {import("./mod").qux} d
+                      ~~~~~~~
+!!! error TS2306: File 'mod.js' is not a module.
      * @param {import("./mod").baz} e
+                      ~~~~~~~
+!!! error TS2306: File 'mod.js' is not a module.
      * @param {import("./mod").buz} f
+                      ~~~~~~~
+!!! error TS2306: File 'mod.js' is not a module.
      * @param {import("./mod").literal} g
+                      ~~~~~~~
+!!! error TS2306: File 'mod.js' is not a module.
      */
     function jstypes(a, b, c, d, e, f, g) {
         return a.x + b.y + c() + d() + e() + f() + g.length
@@ -47,12 +75,26 @@ mod.js(6,1): error TS2580: Cannot find name 'module'. Do you need to install typ
     
     /**
      * @param {typeof import("./mod").Thing} a
+                             ~~~~~~~
+!!! error TS2306: File 'mod.js' is not a module.
      * @param {typeof import("./mod").AnotherThing} b
+                             ~~~~~~~
+!!! error TS2306: File 'mod.js' is not a module.
      * @param {typeof import("./mod").foo} c
+                             ~~~~~~~
+!!! error TS2306: File 'mod.js' is not a module.
      * @param {typeof import("./mod").qux} d
+                             ~~~~~~~
+!!! error TS2306: File 'mod.js' is not a module.
      * @param {typeof import("./mod").baz} e
+                             ~~~~~~~
+!!! error TS2306: File 'mod.js' is not a module.
      * @param {typeof import("./mod").buz} f
+                             ~~~~~~~
+!!! error TS2306: File 'mod.js' is not a module.
      * @param {typeof import("./mod").literal} g
+                             ~~~~~~~
+!!! error TS2306: File 'mod.js' is not a module.
      */
     function jsvalues(a, b, c, d, e, f, g) {
         return a.length + b.length + c() + d() + e() + f() + g.length

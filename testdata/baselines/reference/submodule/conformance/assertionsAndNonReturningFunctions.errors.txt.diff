@@ -3,10 +3,11 @@
 @@= skipped -0, +0 lines =@@
 +assertionsAndNonReturningFunctions.js(3,12): error TS2304: Cannot find name 'AssertFunc'.
  assertionsAndNonReturningFunctions.js(46,9): error TS7027: Unreachable code detected.
--assertionsAndNonReturningFunctions.js(58,5): error TS7027: Unreachable code detected.
+ assertionsAndNonReturningFunctions.js(58,5): error TS7027: Unreachable code detected.
  
  
- ==== assertionsAndNonReturningFunctions.js (2 errors) ====
+-==== assertionsAndNonReturningFunctions.js (2 errors) ====
++==== assertionsAndNonReturningFunctions.js (3 errors) ====
      /** @typedef {(check: boolean) => asserts check} AssertFunc */
      
      /** @type {AssertFunc} */
@@ -15,11 +16,3 @@
      const assert = check => {
          if (!check) throw new Error();
      }
-@@= skipped -62, +64 lines =@@
-             case false: return 0;
-         }
-         b;  // Unreachable
--        ~~
--!!! error TS7027: Unreachable code detected.
-     }
-     

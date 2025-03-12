@@ -1,7 +1,10 @@
+index.js(23,12): error TS2749: 'Target' refers to a value, but is being used as a type here. Did you mean 'typeof Target'?
+index.js(24,12): error TS2749: 'Second' refers to a value, but is being used as a type here. Did you mean 'typeof Second'?
+index.js(25,12): error TS2749: 'Fs' refers to a value, but is being used as a type here. Did you mean 'typeof Fs'?
 index.js(34,16): error TS2749: 'Target' refers to a value, but is being used as a type here. Did you mean 'typeof Target'?
 
 
-==== index.js (1 errors) ====
+==== index.js (4 errors) ====
     /** @enum {string} */
     export const Target = {
         START: "start",
@@ -25,8 +28,14 @@ index.js(34,16): error TS2749: 'Target' refers to a value, but is being used as 
     
     /**
      * @param {Target} t
+               ~~~~~~
+!!! error TS2749: 'Target' refers to a value, but is being used as a type here. Did you mean 'typeof Target'?
      * @param {Second} s
+               ~~~~~~
+!!! error TS2749: 'Second' refers to a value, but is being used as a type here. Did you mean 'typeof Second'?
      * @param {Fs} f
+               ~~
+!!! error TS2749: 'Fs' refers to a value, but is being used as a type here. Did you mean 'typeof Fs'?
      */
     export function consume(t,s,f) {
         /** @type {string} */

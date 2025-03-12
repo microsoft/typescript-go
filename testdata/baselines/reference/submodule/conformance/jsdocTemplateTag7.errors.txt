@@ -1,5 +1,5 @@
+a.js(13,12): error TS2304: Cannot find name 'T'.
 a.js(14,14): error TS2304: Cannot find name 'T'.
-a.js(16,12): error TS7006: Parameter 'x' implicitly has an 'any' type.
 
 
 ==== a.js (2 errors) ====
@@ -16,13 +16,13 @@ a.js(16,12): error TS7006: Parameter 'x' implicitly has an 'any' type.
     /**
      * @template private T
      * @param {T} x
+               ~
+!!! error TS2304: Cannot find name 'T'.
      * @returns {T}
                  ~
 !!! error TS2304: Cannot find name 'T'.
      */
     function f(x) {
-               ~
-!!! error TS7006: Parameter 'x' implicitly has an 'any' type.
         return x;
     }
     

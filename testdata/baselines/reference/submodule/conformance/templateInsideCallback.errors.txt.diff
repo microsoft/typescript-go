@@ -15,7 +15,7 @@
 -templateInsideCallback.js(33,16): error TS2304: Cannot find name 'T'.
 -templateInsideCallback.js(38,5): error TS8039: A JSDoc '@template' tag may not follow a '@typedef', '@callback', or '@overload' tag
 -templateInsideCallback.js(39,12): error TS2304: Cannot find name 'T'.
-+templateInsideCallback.js(47,18): error TS7006: Parameter 'array' implicitly has an 'any' type.
++templateInsideCallback.js(51,44): error TS2461: Type 'unknown' is not an array type.
  
  
 -!!! error TS-1: Pre-emit (11) and post-emit (13) diagnostic counts do not match! This can indicate that a semantic _error_ was added by the emit resolver - such an error may not be reflected on the command line or in the editor, but may be captured in a baseline here!
@@ -89,12 +89,12 @@
       * @returns {T[]}
       */
      /**
-@@= skipped -27, +17 lines =@@
-      * @returns {unknown[]}
-      */
-     function flatMap(array, iterable = identity) {
-+                     ~~~~~
-+!!! error TS7006: Parameter 'array' implicitly has an 'any' type.
-       /** @type {unknown[]} */
+@@= skipped -31, +21 lines =@@
        const result = [];
        for (let i = 0; i < array.length; i += 1) {
+         result.push(.../** @type {unknown[]} */(iterable(array[i])));
++                                               ~~~~~~~~~~~~~~~~~~~~
++!!! error TS2461: Type 'unknown' is not an array type.
+       }
+       return result;
+     }

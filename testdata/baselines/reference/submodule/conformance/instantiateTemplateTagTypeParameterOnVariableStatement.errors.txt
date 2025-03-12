@@ -1,11 +1,14 @@
+instantiateTemplateTagTypeParameterOnVariableStatement.js(3,12): error TS2304: Cannot find name 'T'.
 instantiateTemplateTagTypeParameterOnVariableStatement.js(4,18): error TS2304: Cannot find name 'T'.
 instantiateTemplateTagTypeParameterOnVariableStatement.js(4,24): error TS2304: Cannot find name 'T'.
 
 
-==== instantiateTemplateTagTypeParameterOnVariableStatement.js (2 errors) ====
+==== instantiateTemplateTagTypeParameterOnVariableStatement.js (3 errors) ====
     /**
      * @template T
      * @param {T} a
+               ~
+!!! error TS2304: Cannot find name 'T'.
      * @returns {(b: T) => T}
                      ~
 !!! error TS2304: Cannot find name 'T'.
