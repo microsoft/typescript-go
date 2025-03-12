@@ -25,9 +25,9 @@ func runLSP(args []string) (exitCode int) {
 	}
 
 	if !*stdio {
-		_, err := fmt.Fprintln(os.Stderr, "only stdio is supported")
-		if err != nil {
-			panic(err)
+		errStdio := errors.New("stdio not supported")
+		if _, err := fmt.Fprintln(os.Stderr); err != nil {
+			fmt.Printf("stderr unavailable, exiting with error %v\n", errStdio)
 		}
 		return 1
 	}
