@@ -12,6 +12,7 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"syscall"
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -24,6 +25,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
+
+	"golang.org/x/sys/windows"
 )
 
 func printDiagnostic(d *ast.Diagnostic, level int, comparePathOptions tspath.ComparePathsOptions) {
@@ -120,7 +123,23 @@ func parseArgs() *cliOptions {
 	return opts
 }
 
+func enableVirtualTerminalProcessing() {
+	hStdout, err := syscall.GetStdHandle(syscall.STD_OUTPUT_HANDLE)
+	if err == nil && hStdout != syscall.InvalidHandle {
+		var mode uint32
+		err = windows.GetConsoleMode(windows.Handle(hStdout), &mode)
+		if err == nil {
+			windows.SetConsoleMode(windows.Handle(hStdout), mode|windows.ENABLE_VIRTUAL_TERMINAL_PROCESSING)
+		}
+	}
+}
+
 func main() {
+	if runtime.GOOS == "windows" {
+		// TypeScript uses ANSI escape sequences which cmd.exe won't parse without enabling virtual terminal mode.
+		enableVirtualTerminalProcessing()
+	}
+
 	if args := os.Args[1:]; len(args) > 0 {
 		switch args[0] {
 		case "tsc":
