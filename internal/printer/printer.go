@@ -833,13 +833,13 @@ func (p *Printer) emitLiteral(node *ast.LiteralLikeNode, flags getLiteralTextFla
 
 func (p *Printer) emitNumericLiteral(node *ast.NumericLiteral) {
 	p.enterNode(node.AsNode())
-	p.emitLiteral(node.AsNode(), getLiteralTextFlagsNone)
+	p.emitLiteral(node.AsNode(), getLiteralTextFlagsAllowNumericSeparator)
 	p.exitNode(node.AsNode())
 }
 
 func (p *Printer) emitBigIntLiteral(node *ast.BigIntLiteral) {
 	p.enterNode(node.AsNode())
-	p.emitLiteral(node.AsNode(), getLiteralTextFlagsNone)
+	p.emitLiteral(node.AsNode(), getLiteralTextFlagsNone) // TODO: Preserve numeric literal separators after Strada migration
 	p.exitNode(node.AsNode())
 }
 
@@ -2713,6 +2713,27 @@ func (p *Printer) emitMetaProperty(node *ast.MetaProperty) {
 	p.exitNode(node.AsNode())
 }
 
+func (p *Printer) emitPartiallyEmittedExpression(node *ast.PartiallyEmittedExpression, precedence ast.OperatorPrecedence) {
+	// avoid reprinting parens for nested partially emitted expressions
+	var stack core.Stack[*ast.PartiallyEmittedExpression]
+	for {
+		stack.Push(node)
+		p.enterNode(node.AsNode())
+		if !ast.IsPartiallyEmittedExpression(node.Expression) {
+			break
+		}
+		node = node.Expression.AsPartiallyEmittedExpression()
+	}
+
+	p.emitExpression(node.Expression, precedence)
+
+	// unwind stack
+	for stack.Len() > 0 {
+		p.exitNode(node.AsNode())
+		node = stack.Pop()
+	}
+}
+
 func (p *Printer) willEmitLeadingNewLine(node *ast.Expression) bool {
 	return false // !!! check if node will emit a leading comment that contains a trailing newline
 }
@@ -2845,16 +2866,17 @@ func (p *Printer) emitExpression(node *ast.Expression, precedence ast.OperatorPr
 	case ast.KindSyntaxList:
 		panic("SyntaxList should not be printed")
 
-		// !!!
-		//////Transformation nodes
-		////case ast.KindNotEmittedStatement:
-		////	return
-		////case ast.KindPartiallyEmittedExpression:
-		////	p.emitPartiallyEmittedExpression(node.AsPartiallyEmittedExpression())
-		////case ast.KindCommaListExpression:
-		////	p.emitCommaList(node.AsCommaListExpression())
-		////case ast.KindSyntheticReferenceExpression:
-		////	return Debug.fail("SyntheticReferenceExpression should not be printed")
+	// Transformation nodes
+	case ast.KindNotEmittedStatement:
+		return
+	case ast.KindPartiallyEmittedExpression:
+		p.emitPartiallyEmittedExpression(node.AsPartiallyEmittedExpression(), precedence)
+
+	// !!!
+	////case ast.KindCommaListExpression:
+	////	p.emitCommaList(node.AsCommaListExpression())
+	////case ast.KindSyntheticReferenceExpression:
+	////	return Debug.fail("SyntheticReferenceExpression should not be printed")
 
 	default:
 		panic(fmt.Sprintf("unexpected Expression: %v", node.Kind))
