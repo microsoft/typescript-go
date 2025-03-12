@@ -431,6 +431,7 @@ class C extends B {
     }
 }`},
 	}
+
 	for _, rec := range data {
 		t.Run(rec.title, func(t *testing.T) {
 			t.Parallel()
