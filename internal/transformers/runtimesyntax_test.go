@@ -421,8 +421,16 @@ func TestParameterPropertyTransformer(t *testing.T) {
         this.x = x;
     }
 }`},
+		{title: "parameter properties with super call", input: `class B {} class C extends B { constructor(public x) { super(); } }`, output: `class B {
+}
+class C extends B {
+    x;
+    constructor(x) {
+        super();
+        this.x = x;
+    }
+}`},
 	}
-
 	for _, rec := range data {
 		t.Run(rec.title, func(t *testing.T) {
 			t.Parallel()
