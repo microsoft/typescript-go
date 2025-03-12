@@ -12,7 +12,6 @@ import (
 	"slices"
 	"strconv"
 	"strings"
-	"syscall"
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -124,8 +123,8 @@ func parseArgs() *cliOptions {
 }
 
 func enableVirtualTerminalProcessing() {
-	hStdout, err := syscall.GetStdHandle(syscall.STD_OUTPUT_HANDLE)
-	if err == nil && hStdout != syscall.InvalidHandle {
+	hStdout, err := windows.GetStdHandle(windows.STD_OUTPUT_HANDLE)
+	if err == nil && hStdout != windows.InvalidHandle {
 		var mode uint32
 		err = windows.GetConsoleMode(windows.Handle(hStdout), &mode)
 		if err == nil {
