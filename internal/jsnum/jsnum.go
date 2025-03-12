@@ -117,6 +117,10 @@ func (x Number) Floor() Number {
 	return Number(math.Floor(float64(x)))
 }
 
+func (x Number) Ceil() Number {
+	return Number(math.Ceil(float64(x)))
+}
+
 func (x Number) Abs() Number {
 	return Number(math.Abs(float64(x)))
 }
