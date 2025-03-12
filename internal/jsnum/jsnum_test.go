@@ -8,44 +8,14 @@ import (
 	"gotest.tools/v3/assert"
 )
 
-// floatTolerance is the tolerance used for floating-point comparisons.
-const floatTolerance = 1e-15
-
 func assertEqualNumber(t *testing.T, got, want Number) {
 	t.Helper()
 
 	if got.IsNaN() || want.IsNaN() {
-		assert.Equal(t, got.IsNaN(), want.IsNaN(), "NaN check failed - got: %v, want: %v", got, want)
-		return // If either is NaN, we only check for NaN-ness
+		assert.Equal(t, got.IsNaN(), want.IsNaN(), "got: %v, want: %v", got, want)
+	} else {
+		assert.Equal(t, got, want)
 	}
-
-	gotFloat := float64(got)
-	wantFloat := float64(want)
-
-	// Special handling for 0 and -0
-	if gotFloat == 0 && wantFloat == 0 {
-		gotSign := math.Signbit(gotFloat)
-		wantSign := math.Signbit(wantFloat)
-		if gotSign != wantSign {
-			gotSignedZero := "0"
-			if gotSign {
-				gotSignedZero = "-0"
-			}
-			wantSignedZero := "0"
-			if wantSign {
-				wantSignedZero = "-0"
-			}
-
-			t.Errorf("Sign bit mismatch: got %s, want %s", gotSignedZero, wantSignedZero)
-		}
-		return
-	}
-
-	if math.Abs(gotFloat-wantFloat) < floatTolerance {
-		return
-	}
-
-	assert.Equal(t, got, want, "Values differ - got: %v, want: %v", got, want)
 }
 
 func numberFromBits(b uint64) Number {
