@@ -383,6 +383,15 @@ func TestNamespaceTransformer(t *testing.T) {
 (function (N) {
     ({ x: N.x } = { x: 1 });
 })(N || (N = {}));`},
+
+		{title: "identifier reference in template", input: `namespace N {
+    export var x = 1;
+    ` + "`" + `${x}` + "`" + `
+}`, output: `var N;
+(function (N) {
+    N.x = 1;
+    ` + "`" + `${N.x}` + "`" + `;
+})(N || (N = {}));`},
 	}
 
 	for _, rec := range data {
@@ -395,6 +404,37 @@ func TestNamespaceTransformer(t *testing.T) {
 			emitContext := printer.NewEmitContext()
 			resolver := binder.NewReferenceResolver(binder.ReferenceResolverHooks{})
 			emittestutil.CheckEmit(t, emitContext, NewRuntimeSyntaxTransformer(emitContext, options, resolver).TransformSourceFile(file), rec.output)
+		})
+	}
+}
+
+func TestParameterPropertyTransformer(t *testing.T) {
+	t.Parallel()
+	data := []struct {
+		title  string
+		input  string
+		output string
+	}{
+		{title: "parameter properties", input: "class C { constructor(public x) { } }", output: `class C {
+    x;
+    constructor(x) {
+        this.x = x;
+    }
+}`},
+	}
+
+	for _, rec := range data {
+		t.Run(rec.title, func(t *testing.T) {
+			t.Parallel()
+			options := &core.CompilerOptions{}
+			file := parsetestutil.ParseTypeScript(rec.input, false /*jsx*/)
+			parsetestutil.CheckDiagnostics(t, file)
+			binder.BindSourceFile(file, options)
+			emitContext := printer.NewEmitContext()
+			resolver := binder.NewReferenceResolver(binder.ReferenceResolverHooks{})
+			file = NewTypeEraserTransformer(emitContext, options).TransformSourceFile(file)
+			file = NewRuntimeSyntaxTransformer(emitContext, options, resolver).TransformSourceFile(file)
+			emittestutil.CheckEmit(t, emitContext, file, rec.output)
 		})
 	}
 }
