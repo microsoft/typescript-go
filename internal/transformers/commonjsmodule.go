@@ -347,7 +347,7 @@ func (tx *CommonJSModuleTransformer) transformCommonJSModule(node *ast.SourceFil
 	// initialize exports for function declarations, e.g.:
 	//  exports.f = f;
 	//  function f() {}
-	for f := range tx.currentModuleInfo.exportedFunctions.Keys() {
+	for f := range tx.currentModuleInfo.exportedFunctions.Values() {
 		statements = tx.appendExportsOfClassOrFunctionDeclaration(statements, f.AsNode())
 	}
 
@@ -1664,7 +1664,7 @@ func (tx *CommonJSModuleTransformer) visitCallExpression(node *ast.CallExpressio
 		updated := tx.factory.UpdateCallExpression(
 			node,
 			expression,
-			nil, /*questionDotToken*/
+			node.QuestionDotToken,
 			nil, /*typeArguments*/
 			tx.visitor.VisitNodes(node.Arguments),
 		)
@@ -1897,7 +1897,7 @@ func (tx *CommonJSModuleTransformer) visitIdentifier(node *ast.IdentifierNode) *
 
 // Visits an identifier in an expression position that might reference an imported or exported symbol.
 func (tx *CommonJSModuleTransformer) visitExpressionIdentifier(node *ast.IdentifierNode) *ast.Node {
-	if info := tx.emitContext.GetAutoGenerateInfo(node); !(info != nil && info.Flags.HasAllowNameSubstitution()) &&
+	if info := tx.emitContext.GetAutoGenerateInfo(node); !(info != nil && !info.Flags.HasAllowNameSubstitution()) &&
 		!isHelperName(tx.emitContext, node) &&
 		!isLocalName(tx.emitContext, node) &&
 		!isDeclarationNameOfEnumOrNamespace(tx.emitContext, node) {
@@ -1910,6 +1910,7 @@ func (tx *CommonJSModuleTransformer) visitExpressionIdentifier(node *ast.Identif
 				ast.NodeFlagsNone,
 			)
 			tx.emitContext.AssignCommentAndSourceMapRanges(reference, node)
+			reference.Loc = node.Loc
 			return reference
 		}
 
@@ -1923,6 +1924,7 @@ func (tx *CommonJSModuleTransformer) visitExpressionIdentifier(node *ast.Identif
 					ast.NodeFlagsNone,
 				)
 				tx.emitContext.AssignCommentAndSourceMapRanges(reference, node)
+				reference.Loc = node.Loc
 				return reference
 			}
 			if ast.IsImportSpecifier(importDeclaration) {
@@ -1946,6 +1948,7 @@ func (tx *CommonJSModuleTransformer) visitExpressionIdentifier(node *ast.Identif
 					)
 				}
 				tx.emitContext.AssignCommentAndSourceMapRanges(reference, node)
+				reference.Loc = node.Loc
 				return reference
 			}
 		}

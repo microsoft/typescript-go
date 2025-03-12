@@ -2,38 +2,22 @@
 +++ new.jsDeclarationsImportAliasExposedWithinNamespace.errors.txt
 @@= skipped -0, +0 lines =@@
 -file2.js(1,9): error TS18042: 'myTypes' is a type and cannot be imported in JavaScript files. Use 'import("./file.js").myTypes' in a JSDoc type annotation.
-+error TS2318: Cannot find global type 'Array'.
-+error TS2318: Cannot find global type 'Function'.
-+error TS2318: Cannot find global type 'IArguments'.
-+error TS2318: Cannot find global type 'RegExp'.
-+error TS2318: Cannot find global type 'String'.
-+error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
-+error TS2552: Cannot find name 'Number'. Did you mean 'number'?
-+error TS2552: Cannot find name 'Object'. Did you mean 'object'?
-+file.js(4,11): error TS2552: Cannot find name 'Object'. Did you mean 'object'?
-+file2.js(6,11): error TS2552: Cannot find name 'Object'. Did you mean 'object'?
++file.js(4,11): error TS2315: Type 'Object' is not generic.
++file2.js(6,11): error TS2315: Type 'Object' is not generic.
  
  
 -==== file.js (0 errors) ====
-+!!! error TS2318: Cannot find global type 'Array'.
-+!!! error TS2318: Cannot find global type 'Function'.
-+!!! error TS2318: Cannot find global type 'IArguments'.
-+!!! error TS2318: Cannot find global type 'RegExp'.
-+!!! error TS2318: Cannot find global type 'String'.
-+!!! error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
-+!!! error TS2552: Cannot find name 'Number'. Did you mean 'number'?
-+!!! error TS2552: Cannot find name 'Object'. Did you mean 'object'?
 +==== file.js (1 errors) ====
      /**
       * @namespace myTypes
       * @global
       * @type {Object<string,*>}
-+              ~~~~~~
-+!!! error TS2552: Cannot find name 'Object'. Did you mean 'object'?
++              ~~~~~~~~~~~~~~~~
++!!! error TS2315: Type 'Object' is not generic.
       */
      const myTypes = {
          // SOME PROPS HERE
-@@= skipped -23, +42 lines =@@
+@@= skipped -23, +26 lines =@@
      export {myTypes};
  ==== file2.js (1 errors) ====
      import {myTypes} from './file.js';
@@ -44,8 +28,8 @@
       * @namespace testFnTypes
       * @global
       * @type {Object<string,*>}
-+              ~~~~~~
-+!!! error TS2552: Cannot find name 'Object'. Did you mean 'object'?
++              ~~~~~~~~~~~~~~~~
++!!! error TS2315: Type 'Object' is not generic.
       */
      const testFnTypes = {
          // SOME PROPS HERE

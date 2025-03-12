@@ -1,30 +1,14 @@
-error TS2318: Cannot find global type 'Array'.
-error TS2318: Cannot find global type 'Function'.
-error TS2318: Cannot find global type 'IArguments'.
-error TS2318: Cannot find global type 'RegExp'.
-error TS2318: Cannot find global type 'String'.
-error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
-error TS2552: Cannot find name 'Number'. Did you mean 'number'?
-error TS2552: Cannot find name 'Object'. Did you mean 'object'?
-file.js(4,11): error TS2552: Cannot find name 'Object'. Did you mean 'object'?
-file2.js(6,11): error TS2552: Cannot find name 'Object'. Did you mean 'object'?
+file.js(4,11): error TS2315: Type 'Object' is not generic.
+file2.js(6,11): error TS2315: Type 'Object' is not generic.
 
 
-!!! error TS2318: Cannot find global type 'Array'.
-!!! error TS2318: Cannot find global type 'Function'.
-!!! error TS2318: Cannot find global type 'IArguments'.
-!!! error TS2318: Cannot find global type 'RegExp'.
-!!! error TS2318: Cannot find global type 'String'.
-!!! error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
-!!! error TS2552: Cannot find name 'Number'. Did you mean 'number'?
-!!! error TS2552: Cannot find name 'Object'. Did you mean 'object'?
 ==== file.js (1 errors) ====
     /**
      * @namespace myTypes
      * @global
      * @type {Object<string,*>}
-              ~~~~~~
-!!! error TS2552: Cannot find name 'Object'. Did you mean 'object'?
+              ~~~~~~~~~~~~~~~~
+!!! error TS2315: Type 'Object' is not generic.
      */
     const myTypes = {
         // SOME PROPS HERE
@@ -48,8 +32,8 @@ file2.js(6,11): error TS2552: Cannot find name 'Object'. Did you mean 'object'?
      * @namespace testFnTypes
      * @global
      * @type {Object<string,*>}
-              ~~~~~~
-!!! error TS2552: Cannot find name 'Object'. Did you mean 'object'?
+              ~~~~~~~~~~~~~~~~
+!!! error TS2315: Type 'Object' is not generic.
      */
     const testFnTypes = {
         // SOME PROPS HERE
