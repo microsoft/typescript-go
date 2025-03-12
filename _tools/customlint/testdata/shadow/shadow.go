@@ -268,7 +268,7 @@ func F17(read func() (v any, err error), sendError func(error) error) error {
 		v, err := read()
 		if err != nil {
 			if err == errSome {
-				// OK: use after asignnent above; switching to = below would not be observable.
+				// OK: use after assignment above; switching to = below would not be observable.
 				if err := sendError(err); err != nil {
 					return err
 				}
@@ -287,7 +287,7 @@ func F17b(read func() (v any, err error), sendError func(error) error) error {
 			return err
 		}
 		if v == "bad value" {
-			// OK: use after asignnent above; switching to = below would not be observable.
+			// OK: use after assignment above; switching to = below would not be observable.
 			if err := sendError(err); err != nil {
 				return err
 			}
@@ -302,7 +302,7 @@ func F18(index int) int {
 		}
 
 		if index == 1 {
-			// Dubuious; did this mean to keep the value for another execution?
+			// Dubious; did this mean to keep the value for another execution?
 			index := 2
 			println(index)
 			return index

@@ -454,7 +454,7 @@ func IsCommaExpression(node *Node) bool {
 
 func IsCommaSequence(node *Node) bool {
 	// !!!
-	// New compiler just has binary expressinons.
+	// New compiler just has binary expressions.
 	// Maybe this should consider KindCommaListExpression even though we don't generate them.
 	return IsCommaExpression(node)
 }

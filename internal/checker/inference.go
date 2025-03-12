@@ -198,7 +198,7 @@ func (c *Checker) inferFromTypes(n *InferenceState, source *Type, target *Type) 
 		} else if target.flags&TypeFlagsIndexedAccess != 0 {
 			indexType := c.getSimplifiedType(target.AsIndexedAccessType().indexType, false /*writing*/)
 			// Generally simplifications of instantiable indexes are avoided to keep relationship checking correct, however if our target is an access, we can consider
-			// that key of that access to be "instantiated", since we're looking to find the infernce goal in any way we can.
+			// that key of that access to be "instantiated", since we're looking to find the inference goal in any way we can.
 			if indexType.flags&TypeFlagsInstantiable != 0 {
 				simplified := c.distributeIndexOverObjectType(c.getSimplifiedType(target.AsIndexedAccessType().objectType, false /*writing*/), indexType, false /*writing*/)
 				if simplified != nil && simplified != target {
@@ -1039,7 +1039,7 @@ func (c *Checker) resolveReverseMappedTypeMembers(t *Type) {
 		if constraintTarget.flags&TypeFlagsIndexedAccess != 0 && constraintTarget.AsIndexedAccessType().objectType.flags&TypeFlagsTypeParameter != 0 && constraintTarget.AsIndexedAccessType().indexType.flags&TypeFlagsTypeParameter != 0 {
 			// A reverse mapping of `{[K in keyof T[K_1]]: T[K_1]}` is the same as that of `{[K in keyof T]: T}`, since all we care about is
 			// inferring to the "type parameter" (or indexed access) shared by the constraint and template. So, to reduce the number of
-			// type identities produced, we simplify such indexed access occurences
+			// type identities produced, we simplify such indexed access occurrences
 			newTypeParam := constraintTarget.AsIndexedAccessType().objectType
 			newMappedType := c.replaceIndexedAccess(r.mappedType, constraintTarget, newTypeParam)
 			links.mappedType = newMappedType

@@ -58,7 +58,7 @@ const (
 	OperatorPrecedenceLogicalOR
 	// LogicalANDExpression:
 	//     BitwiseORExpression
-	//     LogicalANDExprerssion `&&` BitwiseORExpression
+	//     LogicalANDExpression `&&` BitwiseORExpression
 	OperatorPrecedenceLogicalAND
 	// BitwiseORExpression:
 	//     BitwiseXORExpression
