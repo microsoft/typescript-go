@@ -13,7 +13,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
 )
 
-func runLSP(args []string) int {
+func runLSP(args []string) (exitCode int) {
 	lspFlags := flag.NewFlagSet("lsp", flag.ContinueOnError)
 	stdio := lspFlags.Bool("stdio", false, "use stdio for communication")
 	pipe := lspFlags.String("pipe", "", "use named pipe for communication")
@@ -25,7 +25,10 @@ func runLSP(args []string) int {
 	}
 
 	if !*stdio {
-		fmt.Fprintln(os.Stderr, "only stdio is supported")
+		_, err := fmt.Fprintln(os.Stderr, "only stdio is supported")
+		if err != nil {
+			panic(err)
+		}
 		return 1
 	}
 
