@@ -26,7 +26,7 @@ type API struct {
 	scriptInfosMu    sync.RWMutex
 	scriptInfos      map[tspath.Path]*project.ScriptInfo
 
-	projects  map[tspath.Path]*project.Project
+	projects  []*project.Project
 	symbolsMu sync.Mutex
 	symbols   map[Handle[ast.Symbol]]*ast.Symbol
 }
@@ -42,7 +42,6 @@ func NewAPI(host APIHost, options APIOptions) *API {
 			CurrentDirectory:          host.GetCurrentDirectory(),
 		}),
 		scriptInfos: make(map[tspath.Path]*project.ScriptInfo),
-		projects:    make(map[tspath.Path]*project.Project),
 		symbols:     make(map[Handle[ast.Symbol]]*ast.Symbol),
 	}
 }
@@ -105,7 +104,7 @@ func (api *API) HandleRequest(id int, method string, payload json.RawMessage) ([
 	switch Method(method) {
 	case MethodGetSourceFile:
 		params := params.(*GetSourceFileParams)
-		sourceFile, err := api.GetSourceFile(api.toPath(params.Project), params.FileName)
+		sourceFile, err := api.GetSourceFile(params.Project, params.FileName)
 		if err != nil {
 			return nil, err
 		}
@@ -116,11 +115,11 @@ func (api *API) HandleRequest(id int, method string, payload json.RawMessage) ([
 		return encodeJSON(api.LoadProject(params.(*LoadProjectParams).ConfigFileName))
 	case MethodGetSymbolAtPosition:
 		return encodeJSON(handleBatchableRequest(params, func(params *GetSymbolAtPositionParams) (any, error) {
-			return api.GetSymbolAtPosition(api.toPath(params.Project), params.FileName, int(params.Position))
+			return api.GetSymbolAtPosition(params.Project, params.FileName, int(params.Position))
 		}))
 	case MethodGetTypeOfSymbol:
 		return encodeJSON(handleBatchableRequest(params, func(params *GetTypeOfSymbolParams) (any, error) {
-			return api.GetTypeOfSymbol(api.toPath(params.Project), params.Symbol)
+			return api.GetTypeOfSymbol(params.Project, params.Symbol)
 		}))
 	default:
 		return nil, fmt.Errorf("unhandled API method %q", method)
@@ -159,15 +158,16 @@ func (api *API) LoadProject(configFileName string) (*ProjectData, error) {
 		return nil, err
 	}
 	project.GetProgram()
-	api.projects[configFilePath] = project
-	return NewProjectData(project), nil
+	id := len(api.projects)
+	api.projects = append(api.projects, project)
+	return NewProjectData(project, id), nil
 }
 
-func (api *API) GetSymbolAtPosition(projectPath tspath.Path, fileName string, position int) (*SymbolData, error) {
-	project, ok := api.projects[projectPath]
-	if !ok {
-		return nil, fmt.Errorf("project %q not found", projectPath)
+func (api *API) GetSymbolAtPosition(projectId int, fileName string, position int) (*SymbolData, error) {
+	if projectId >= len(api.projects) {
+		return nil, fmt.Errorf("project not found")
 	}
+	project := api.projects[projectId]
 	symbol, err := project.LanguageService().GetSymbolAtPosition(fileName, position)
 	if err != nil || symbol == nil {
 		return nil, err
@@ -179,11 +179,11 @@ func (api *API) GetSymbolAtPosition(projectPath tspath.Path, fileName string, po
 	return data, nil
 }
 
-func (api *API) GetTypeOfSymbol(projectPath tspath.Path, symbolHandle Handle[ast.Symbol]) (*TypeData, error) {
-	project, ok := api.projects[projectPath]
-	if !ok {
-		return nil, fmt.Errorf("project %q not found", projectPath)
+func (api *API) GetTypeOfSymbol(projectId int, symbolHandle Handle[ast.Symbol]) (*TypeData, error) {
+	if projectId >= len(api.projects) {
+		return nil, fmt.Errorf("project not found")
 	}
+	project := api.projects[projectId]
 	symbol, ok := api.symbols[symbolHandle]
 	if !ok {
 		return nil, fmt.Errorf("symbol %q not found", symbolHandle)
@@ -195,14 +195,14 @@ func (api *API) GetTypeOfSymbol(projectPath tspath.Path, symbolHandle Handle[ast
 	return NewTypeData(t), nil
 }
 
-func (api *API) GetSourceFile(projectPath tspath.Path, fileName string) (*ast.SourceFile, error) {
-	project, ok := api.projects[projectPath]
-	if !ok {
-		return nil, fmt.Errorf("project %q not found", projectPath)
+func (api *API) GetSourceFile(projectId int, fileName string) (*ast.SourceFile, error) {
+	if projectId >= len(api.projects) {
+		return nil, fmt.Errorf("project not found")
 	}
+	project := api.projects[projectId]
 	sourceFile := project.GetProgram().GetSourceFile(fileName)
 	if sourceFile == nil {
-		return nil, nil
+		return nil, fmt.Errorf("source file %q not found", fileName)
 	}
 	return sourceFile, nil
 }

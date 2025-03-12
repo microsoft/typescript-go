@@ -11,6 +11,7 @@ export interface ParsedCommandLine {
 }
 
 export interface ProjectData {
+    id: number;
     configFileName: string;
     compilerOptions: Record<string, unknown>;
     rootFiles: string[];

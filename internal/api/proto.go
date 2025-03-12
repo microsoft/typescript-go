@@ -56,13 +56,15 @@ type LoadProjectParams struct {
 }
 
 type ProjectData struct {
+	Id              int                   `json:"id"`
 	ConfigFileName  string                `json:"configFileName"`
 	RootFiles       []string              `json:"rootFiles"`
 	CompilerOptions *core.CompilerOptions `json:"compilerOptions"`
 }
 
-func NewProjectData(project *project.Project) *ProjectData {
+func NewProjectData(project *project.Project, id int) *ProjectData {
 	return &ProjectData{
+		Id:              id,
 		ConfigFileName:  project.Name(),
 		RootFiles:       project.GetRootFileNames(),
 		CompilerOptions: project.GetCompilerOptions(),
@@ -70,7 +72,7 @@ func NewProjectData(project *project.Project) *ProjectData {
 }
 
 type GetSymbolAtPositionParams struct {
-	Project  string `json:"project"`
+	Project  int    `json:"project"`
 	FileName string `json:"fileName"`
 	Position uint32 `json:"position"`
 }
@@ -92,7 +94,7 @@ func NewSymbolData(symbol *ast.Symbol, projectVersion int) *SymbolData {
 }
 
 type GetTypeOfSymbolParams struct {
-	Project string             `json:"project"`
+	Project int                `json:"project"`
 	Symbol  Handle[ast.Symbol] `json:"symbol"`
 }
 
@@ -109,7 +111,7 @@ func NewTypeData(t *checker.Type) *TypeData {
 }
 
 type GetSourceFileParams struct {
-	Project  string `json:"project"`
+	Project  int    `json:"project"`
 	FileName string `json:"fileName"`
 }
 

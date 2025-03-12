@@ -21,11 +21,13 @@ export interface API<Async extends boolean> {
 }
 
 export abstract class Project<Async extends boolean> {
+    id: number;
     configFileName!: string;
     compilerOptions!: Record<string, unknown>;
     rootFiles!: readonly string[];
 
     constructor(data: ProjectData) {
+        this.id = data.id;
         this.loadData(data);
     }
 

@@ -52,7 +52,7 @@ export class Project extends BaseProject<false> {
     }
 
     getSourceFile(fileName: string): SourceFileNode | undefined {
-        const data = this.client.requestBinary("getSourceFile", { project: this.configFileName, fileName });
+        const data = this.client.requestBinary("getSourceFile", { project: this.id, fileName });
         return data ? new SourceFile(this.client, this, data) as unknown as SourceFileNode : undefined;
     }
 
@@ -60,11 +60,11 @@ export class Project extends BaseProject<false> {
     getSymbolAtPosition(fileName: string, position: number): Symbol | undefined;
     getSymbolAtPosition(...params: [fileName: string, position: number] | [readonly { fileName: string; position: number; }[]]): Symbol | undefined | (Symbol | undefined)[] {
         if (params.length === 2) {
-            const data = this.client.request("getSymbolAtPosition", { project: this.configFileName, fileName: params[0], position: params[1] });
+            const data = this.client.request("getSymbolAtPosition", { project: this.id, fileName: params[0], position: params[1] });
             return data ? new Symbol(this.client, this, data) : undefined;
         }
         else {
-            const data = this.client.request("getSymbolAtPosition", params[0].map(({ fileName, position }) => ({ project: this.configFileName, fileName, position })));
+            const data = this.client.request("getSymbolAtPosition", params[0].map(({ fileName, position }) => ({ project: this.id, fileName, position })));
             return data.map((d: SymbolData | null) => d ? new Symbol(this.client, this, d) : undefined);
         }
     }
@@ -91,7 +91,7 @@ export class Symbol extends BaseSymbol<false> {
     }
 
     getType(): Type | undefined {
-        const data = this.client.request("getTypeOfSymbol", { project: this.project.configFileName, symbol: this.id });
+        const data = this.client.request("getTypeOfSymbol", { project: this.project.id, symbol: this.id });
         return data ? new Type(this.client, data) : undefined;
     }
 }
