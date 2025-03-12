@@ -169,9 +169,7 @@ func main() {
 	compilerOptions := opts.toCompilerOptions(currentDirectory)
 
 	currentDirectory = tspath.GetDirectoryPath(configFileName)
-	// TODO: Verify if using the config file's directory as the working directory is the correct behavior.
-	// In the original TypeScript implementation, the working directory might be different.
-	// This could potentially cause issues with relative path resolution.
+	// !!! is the working directory actually the config path?
 	host := ts.NewCompilerHost(compilerOptions, currentDirectory, fs, defaultLibraryPath)
 
 	parseStart := time.Now()
@@ -217,10 +215,7 @@ func main() {
 			_ = program.GetBindDiagnostics(nil)
 			bindTime = time.Since(bindStart)
 
-			// TODO: Refactor this code to avoid redundant noCheck checking.
-			// The checker already reads the noCheck option internally,
-			// but we're checking it here again just for stats printing purposes.
-			// This should be consolidated in a future update.
+			// !!! the checker already reads noCheck, but do it here just for stats printing for now
 			if compilerOptions.NoCheck.IsFalseOrUnknown() {
 				checkStart := time.Now()
 				diagnostics = slices.Concat(program.GetGlobalDiagnostics(), program.GetSemanticDiagnostics(nil))
@@ -354,9 +349,9 @@ type profileSession struct {
 	memFile     *os.File
 }
 
-func beginProfiling(profileDir string) (*profileSession, error) {
+func beginProfiling(profileDir string) *profileSession {
 	if err := os.MkdirAll(profileDir, 0o755); err != nil {
-		return nil, fmt.Errorf("failed to create profile directory: %w", err)
+		panic(err)
 	}
 
 	pid := os.Getpid()
@@ -365,18 +360,15 @@ func beginProfiling(profileDir string) (*profileSession, error) {
 	memProfilePath := filepath.Join(profileDir, fmt.Sprintf("%d-memprofile.pb.gz", pid))
 	cpuFile, err := os.Create(cpuProfilePath)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create CPU profile file: %w", err)
+		panic(err)
 	}
 	memFile, err := os.Create(memProfilePath)
 	if err != nil {
-		cpuFile.Close()
-		return nil, fmt.Errorf("failed to create memory profile file: %w", err)
+		panic(err)
 	}
 
 	if err := pprof.StartCPUProfile(cpuFile); err != nil {
-		cpuFile.Close()
-		memFile.Close()
-		return nil, fmt.Errorf("failed to start CPU profiling: %w", err)
+		panic(err)
 	}
 
 	return &profileSession{
@@ -384,14 +376,14 @@ func beginProfiling(profileDir string) (*profileSession, error) {
 		memFilePath: memProfilePath,
 		cpuFile:     cpuFile,
 		memFile:     memFile,
-	}, nil
+	}
 }
 
-func (p *profileSession) stop() error {
+func (p *profileSession) stop() {
 	pprof.StopCPUProfile()
 	err := pprof.Lookup("allocs").WriteTo(p.memFile, 0)
 	if err != nil {
-		return fmt.Errorf("failed to write memory profile: %w", err)
+		panic(err)
 	}
 
 	p.cpuFile.Close()
@@ -399,5 +391,4 @@ func (p *profileSession) stop() error {
 
 	fmt.Printf("CPU profile: %v\n", p.cpuFilePath)
 	fmt.Printf("Memory profile: %v\n", p.memFilePath)
-	return nil
 }
