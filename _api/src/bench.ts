@@ -10,35 +10,37 @@ import { isIdentifier } from "./ast/nodeTests.ts";
 import { SymbolFlags } from "./base/api.ts";
 import { API } from "./sync/api.ts";
 {
-    const api = new API({
-        tsserverPath: new URL("../../built/local/tsgo", import.meta.url).pathname,
-        cwd: dirname(new URL(import.meta.url).pathname),
-        logFile: "tsgo.log",
-    });
-    const project = api.loadProject("../../../TypeScript/src/compiler/tsconfig.json");
-    const file = project.getSourceFile("debug.ts")!;
     // bench("native - batched", () => {
-    const symbolRequests: { fileName: string; position: number; }[] = [];
-    file.forEachChild(function visitNode(node) {
-        if (isIdentifier(node)) {
-            symbolRequests.push({ fileName: "debug.ts", position: node.pos });
-        }
-        node.forEachChild(child => visitNode(child));
+    //     const symbolRequests: { fileName: string; position: number; }[] = [];
+    //     file.forEachChild(function visitNode(node) {
+    //         if (isIdentifier(node)) {
+    //             symbolRequests.push({ fileName: "checker.ts", position: node.pos });
+    //         }
+    //         node.forEachChild(child => visitNode(child));
+    //     });
+
+    //     project.getSymbolAtPosition(symbolRequests);
+    // });
+
+    bench("native - many calls", () => {
+        const api = new API({
+            tsserverPath: new URL("../../built/local/tsgo", import.meta.url).pathname,
+            cwd: dirname(new URL(import.meta.url).pathname),
+            // logFile: "tsgo.log",
+        });
+        const project = api.loadProject("../../../TypeScript/src/compiler/tsconfig.json");
+        const file = project.getSourceFile("checker.ts")!;
+
+        file.forEachChild(function visitNode(node) {
+            if (isIdentifier(node)) {
+                const symbol = project.getSymbolAtPosition("checker.ts", node.pos);
+                if (symbol?.flags! & SymbolFlags.Value) {
+                    symbol?.getType();
+                }
+            }
+            node.forEachChild(child => visitNode(child));
+        });
     });
-
-    project.getSymbolAtPosition(symbolRequests);
-    // });
-
-    // bench("native - many calls", () => {
-    // const symbolRequests: { fileName: string; position: number; }[] = [];
-    // file.forEachChild(function visitNode(node) {
-    //     if (isIdentifier(node)) {
-    //         project.getSymbolAtPosition("debug.ts", node.pos);
-    //     }
-    //     node.forEachChild(child => visitNode(child));
-    // });
-    // project.getSymbolAtPosition(symbolRequests);
-    // });
 }
 
 // {
@@ -79,4 +81,4 @@ import { API } from "./sync/api.ts";
 //         });
 //     });
 // }
-// await run();
+await run();

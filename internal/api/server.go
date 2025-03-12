@@ -3,11 +3,11 @@ package api
 import (
 	"bufio"
 	"bytes"
+	"encoding/binary"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
-	"strconv"
 	"sync"
 	"time"
 
@@ -102,46 +102,47 @@ func (s *Server) NewLine() string {
 
 func (s *Server) Run() error {
 	for {
-		line, err := s.r.ReadBytes('\n')
+		messageType, err := s.r.ReadBytes('\t')
 		if err != nil {
 			if errors.Is(err, io.EOF) {
 				return nil
 			}
 			return err
 		}
-
-		index := bytes.IndexByte(line, '\t')
-		if index == -1 {
-			return fmt.Errorf("%w: missing message type or method: %q", ErrInvalidRequest, line)
+		method, err := s.r.ReadBytes('\t')
+		if err != nil {
+			return err
 		}
 
-		messageType := string(line[:index])
-		offset := index + 1
-		switch messageType {
-		case "request", "request-bin":
-			index = bytes.IndexByte(line[offset:], '\t')
-			if index == -1 {
-				return fmt.Errorf("%w: missing method or payload: %q", ErrInvalidRequest, line)
-			}
-			method := string(line[offset : offset+index])
-			payload := line[offset+index+1 : len(line)-1]
+		var size uint32
+		if err = binary.Read(s.r, binary.LittleEndian, &size); err != nil {
+			return fmt.Errorf("%w: expected payload size: %w", ErrInvalidRequest, err)
+		}
+		messageType = messageType[:len(messageType)-1]
+		method = method[:len(method)-1]
+
+		payload := make([]byte, size)
+		bytesRead, err := io.ReadFull(s.r, payload)
+		if err != nil {
+			return err
+		}
+		if bytesRead != int(size) {
+			return fmt.Errorf("%w: expected %d bytes, read %d", ErrInvalidRequest, size, bytesRead)
+		}
+
+		switch string(messageType) {
+		case "request":
 			now := time.Now()
-			var result any
-			var err error
-			if messageType == "request-bin" {
-				err = s.handleBinaryRequest(method, payload)
-			} else {
-				result, err = s.handleRequest(method, payload)
-			}
+			result, err := s.handleRequest(string(method), payload)
 
 			s.logger.PerfTrace(fmt.Sprintf("%s handled - %s", method, time.Since(now)))
 			now = time.Now()
 			if err != nil {
-				if err := s.sendError(method, err); err != nil {
+				if err := s.sendError(string(method), err); err != nil {
 					return err
 				}
-			} else if result != nil {
-				if err := s.sendResponse(method, result); err != nil {
+			} else {
+				if err := s.sendResponse(string(method), result); err != nil {
 					return err
 				}
 				s.logger.PerfTrace(fmt.Sprintf("%s sent - %s", method, time.Since(now)))
@@ -170,37 +171,7 @@ func (s *Server) enableCallback(callback string) error {
 	return nil
 }
 
-func (s *Server) handleBinaryRequest(method string, payload []byte) error {
-	s.requestId++
-	data, err := s.api.HandleBinaryRequest(s.requestId, method, payload)
-	if err != nil {
-		return err
-	}
-	if _, err = s.w.WriteString("response-bin\t"); err != nil {
-		return err
-	}
-	if _, err = s.w.WriteString(method); err != nil {
-		return err
-	}
-	if err = s.w.WriteByte('\t'); err != nil {
-		return err
-	}
-	if _, err = s.w.WriteString(strconv.Itoa(len(data))); err != nil {
-		return err
-	}
-	if err = s.w.WriteByte('\n'); err != nil {
-		return err
-	}
-	if _, err = s.w.Write(data); err != nil {
-		return err
-	}
-	if err = s.w.WriteByte('\n'); err != nil {
-		return err
-	}
-	return s.w.Flush()
-}
-
-func (s *Server) handleRequest(method string, payload []byte) (any, error) {
+func (s *Server) handleRequest(method string, payload []byte) ([]byte, error) {
 	s.requestId++
 	if method == "configure" {
 		return nil, s.handleConfigure(payload)
@@ -223,27 +194,23 @@ func (s *Server) handleConfigure(payload []byte) error {
 	} else {
 		s.logger.SetFile("")
 	}
-	return s.sendResponse("configure", nil)
+	return nil
 }
 
-func (s *Server) sendResponse(method string, result any) error {
-	payload, err := json.Marshal(result)
-	if err != nil {
+func (s *Server) sendResponse(method string, result []byte) error {
+	if _, err := s.w.WriteString("response\t"); err != nil {
 		return err
 	}
-	if _, err = s.w.Write([]byte("response\t")); err != nil {
+	if _, err := s.w.WriteString(method); err != nil {
 		return err
 	}
-	if _, err = s.w.Write([]byte(method)); err != nil {
+	if err := s.w.WriteByte('\t'); err != nil {
 		return err
 	}
-	if _, err = s.w.Write([]byte("\t")); err != nil {
+	if err := binary.Write(s.w, binary.LittleEndian, uint32(len(result))); err != nil {
 		return err
 	}
-	if _, err = s.w.Write(payload); err != nil {
-		return err
-	}
-	if _, err = s.w.Write([]byte("\n")); err != nil {
+	if _, err := s.w.Write(result); err != nil {
 		return err
 	}
 	return s.w.Flush()

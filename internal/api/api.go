@@ -94,37 +94,13 @@ func (api *API) NewLine() string {
 	return api.host.NewLine()
 }
 
-func (api *API) HandleRequest(id int, method string, payload json.RawMessage) (any, error) {
+func (api *API) HandleRequest(id int, method string, payload json.RawMessage) ([]byte, error) {
 	now := time.Now()
 	params, err := unmarshalPayload(method, payload)
 	if err != nil {
 		return nil, err
 	}
 	api.options.Logger.PerfTrace(fmt.Sprintf("%s unmarshal - %s", method, time.Since(now)))
-
-	switch Method(method) {
-	case MethodParseConfigFile:
-		return api.ParseConfigFile(params.(*ParseConfigFileParams).FileName)
-	case MethodLoadProject:
-		return api.LoadProject(params.(*LoadProjectParams).ConfigFileName)
-	case MethodGetSymbolAtPosition:
-		return handleBatchableRequest(params, func(params *GetSymbolAtPositionParams) (any, error) {
-			return api.GetSymbolAtPosition(api.toPath(params.Project), params.FileName, int(params.Position))
-		})
-	case MethodGetTypeOfSymbol:
-		return handleBatchableRequest(params, func(params *GetTypeOfSymbolParams) (any, error) {
-			return api.GetTypeOfSymbol(api.toPath(params.Project), params.Symbol)
-		})
-	default:
-		return nil, fmt.Errorf("unhandled API method %q", method)
-	}
-}
-
-func (api *API) HandleBinaryRequest(id int, method string, payload []byte) ([]byte, error) {
-	params, err := unmarshalPayload(method, payload)
-	if err != nil {
-		return nil, err
-	}
 
 	switch Method(method) {
 	case MethodGetSourceFile:
@@ -134,6 +110,18 @@ func (api *API) HandleBinaryRequest(id int, method string, payload []byte) ([]by
 			return nil, err
 		}
 		return EncodeSourceFile(sourceFile)
+	case MethodParseConfigFile:
+		return encodeJSON(api.ParseConfigFile(params.(*ParseConfigFileParams).FileName))
+	case MethodLoadProject:
+		return encodeJSON(api.LoadProject(params.(*LoadProjectParams).ConfigFileName))
+	case MethodGetSymbolAtPosition:
+		return encodeJSON(handleBatchableRequest(params, func(params *GetSymbolAtPositionParams) (any, error) {
+			return api.GetSymbolAtPosition(api.toPath(params.Project), params.FileName, int(params.Position))
+		}))
+	case MethodGetTypeOfSymbol:
+		return encodeJSON(handleBatchableRequest(params, func(params *GetTypeOfSymbolParams) (any, error) {
+			return api.GetTypeOfSymbol(api.toPath(params.Project), params.Symbol)
+		}))
 	default:
 		return nil, fmt.Errorf("unhandled API method %q", method)
 	}
@@ -271,4 +259,11 @@ func handleBatchableRequest[T any](params any, executeRequest func(T) (any, erro
 		}
 		return results, nil
 	}
+}
+
+func encodeJSON(v any, err error) ([]byte, error) {
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(v)
 }

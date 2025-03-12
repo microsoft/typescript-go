@@ -73,7 +73,7 @@ export class Project extends BaseProject<false> {
 export class SourceFile extends BaseSourceFile {
     private client: Client;
     private project: Project;
-    constructor(client: Client, project: Project, data: Buffer) {
+    constructor(client: Client, project: Project, data: Uint8Array) {
         super(data);
         this.client = client;
         this.project = project;

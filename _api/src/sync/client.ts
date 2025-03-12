@@ -16,6 +16,8 @@ export interface ClientOptions {
 
 export class Client {
     private channel: SyncRpcChannel;
+    private decoder = new TextDecoder();
+    private encoder = new TextEncoder();
 
     constructor(options: ClientOptions) {
         this.channel = new SyncRpcChannel(options.tsserverPath, [
@@ -35,27 +37,21 @@ export class Client {
 
     registerCallback(method: string, callback: (payload: any) => any): void {
         this.channel.registerCallback(method, (_, arg) => {
-            const result = callback(JSON.parse(arg));
+            const result = callback(JSON.parse(this.decoder.decode(arg)));
             return JSON.stringify(result) ?? "";
         });
         this.channel.requestSync("registerCallback", method);
     }
 
     request(method: string, payload: any): any {
-        console.time("encode payload");
         const encodedPayload = JSON.stringify(payload);
-        console.timeEnd("encode payload");
-        console.time("request");
         const result = this.channel.requestSync(method, encodedPayload);
-        console.timeEnd("request");
-        console.time("decode result");
         const decodedResult = JSON.parse(result);
-        console.timeEnd("decode result");
         return decodedResult;
     }
 
-    requestBinary(method: string, payload: any): Buffer {
-        return this.channel.requestBinarySync(method, JSON.stringify(payload));
+    requestBinary(method: string, payload: any): Uint8Array {
+        return this.channel.requestBinarySync(method, this.encoder.encode(JSON.stringify(payload)));
     }
 
     close(): void {

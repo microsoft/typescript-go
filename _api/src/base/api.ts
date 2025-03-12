@@ -41,7 +41,7 @@ export abstract class Project<Async extends boolean> {
 }
 
 export abstract class SourceFile extends RemoteNode {
-    constructor(data: Buffer) {
+    constructor(data: Uint8Array) {
         const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
         super(view, 1, undefined!);
     }
