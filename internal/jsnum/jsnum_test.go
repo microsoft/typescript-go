@@ -335,7 +335,8 @@ func TestRemainder(t *testing.T) {
 	for _, test := range tests {
 		t.Run(fmt.Sprintf("%v %% %v", test.x, test.y), func(t *testing.T) {
 			t.Parallel()
-			assertEqualNumber(t, test.x.Remainder(test.y), test.want)
+			actual := test.x.Remainder(test.y)
+			assertEqualNumber(t, actual, test.want)
 		})
 	}
 }
