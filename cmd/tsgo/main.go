@@ -135,7 +135,7 @@ func enableVirtualTerminalProcessing() {
 
 func main() {
 	if runtime.GOOS == "windows" {
-		// TypeScript uses ANSI escape sequences which cmd.exe won't parse without enabling virtual terminal mode.
+		// TypeScript uses ANSI escape sequences which cmd.exe won't parse without enabling virtual terminal processing.
 		enableVirtualTerminalProcessing()
 	}
 
