@@ -82,7 +82,7 @@ func getTokenAtPosition(
 	}
 
 	visitNodeList := func(nodeList *ast.NodeList, _ *ast.NodeVisitor) *ast.NodeList {
-		if nodeList != nil && !ast.PositionIsSynthesized(nodeList.End()) && !ast.PositionIsSynthesized(nodeList.Pos()) && len(nodeList.Nodes) > 0 && next == nil {
+		if nodeList != nil && len(nodeList.Nodes) > 0 && next == nil {
 			if nodeList.End() == position && includePrecedingTokenAtEndPosition != nil {
 				left = nodeList.End()
 				prevSubtree = nodeList.Nodes[len(nodeList.Nodes)-1]
