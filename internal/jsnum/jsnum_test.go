@@ -19,6 +19,10 @@ func assertEqualNumber(t *testing.T, got, want Number) {
 	} else {
 		assert.Equal(t, got, want)
 	}
+		assert.Equal(t, got.IsNaN(), want.IsNaN(), "NaN check failed - got: %v, want: %v", got, want)
+		return // If either is NaN, we only check for NaN-ness
+	}
+
 }
 
 func numberFromBits(b uint64) Number {
