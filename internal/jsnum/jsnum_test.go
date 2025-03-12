@@ -299,7 +299,8 @@ func TestRemainder(t *testing.T) {
 		{-5, -2, -1},
 		// edge cases with small numbers
 		{1e-10, 1, 1e-10},
-		{1, 1e-10, 0}, // should be 0, or very close to 0
+		{1, 1e-10, 9.999996356780269e-11},
+		{1, 2e-13, 1.999696262544366e-13},
 	}
 
 	for _, test := range tests {
