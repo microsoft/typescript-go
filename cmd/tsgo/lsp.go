@@ -14,13 +14,13 @@ import (
 )
 
 func runLSP(args []string) (exitCode int) {
-	lspFlags := flag.NewFlagSet("lsp", flag.ContinueOnError)
-	stdio := lspFlags.Bool("stdio", false, "use stdio for communication")
-	pipe := lspFlags.String("pipe", "", "use named pipe for communication")
+	flags := flag.NewFlagSet("lsp", flag.ContinueOnError)
+	stdio := flags.Bool("stdio", false, "use stdio for communication")
+	pipe := flags.String("pipe", "", "use named pipe for communication")
 	_ = pipe
-	socket := lspFlags.String("socket", "", "use socket for communication")
+	socket := flags.String("socket", "", "use socket for communication")
 	_ = socket
-	if err := lspFlags.Parse(args); err != nil {
+	if err := flags.Parse(args); err != nil {
 		return 2
 	}
 
