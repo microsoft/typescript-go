@@ -8,6 +8,9 @@ import (
 	"gotest.tools/v3/assert"
 )
 
+// floatTolerance is the tolerance used for floating-point comparisons.
+const floatTolerance = 1e-15
+
 func assertEqualNumber(t *testing.T, got, want Number) {
 	t.Helper()
 
