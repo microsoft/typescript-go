@@ -316,6 +316,20 @@ func TestRemainder(t *testing.T) {
 		{123, negativeZero, NaN()},
 		{0, 123, 0},
 		{negativeZero, 123, negativeZero},
+		{-1, 2, -1},
+		// more exhaustive tests for zero and negative zero
+		{negativeZero, 1, negativeZero},
+		{negativeZero, 2, negativeZero},
+		{1, 1, 0},
+		{1, 2, 1},
+		{-1, 1, negativeZero},
+		{5, 2, 1},
+		{5, -2, 1},  // sign of divisor shouldn't matter
+		{-5, 2, -1}, // retain sign of dividend
+		{-5, -2, -1},
+		// edge cases with small numbers
+		{1e-10, 1, 1e-10},
+		{1, 1e-10, 0}, // should be 0, or very close to 0
 	}
 
 	for _, test := range tests {
