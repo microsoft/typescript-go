@@ -947,6 +947,27 @@ var E;
 })(E || (exports.E = E = {}));
 E.A;`,
 		},
+		{
+			title: "Identifier#4 (preserve location)",
+			input: `import { a } from "other";
+x ||
+  a`,
+			output: `"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const other_1 = require("other");
+x ||
+    other_1.a;`,
+		},
+		{
+			title: "Identifier#5 (from import specifier)",
+			input: `import { and } from "./_namespaces/ts.js";
+const isNotOverloadAndNotAccessor = and(isNotOverload, isNotAccessor);
+`,
+			output: `"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const ts_js_1 = require("./_namespaces/ts.js");
+const isNotOverloadAndNotAccessor = (0, ts_js_1.and)(isNotOverload, isNotAccessor);`,
+		},
 
 		{
 			title: "Other",
