@@ -810,6 +810,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const other_1 = require("other");
 ({ a: other_1.a });`,
 		},
+		{
+			title: "ShorthandPropertyAssignment#2",
+			input: `import { a } from "other"
+({
+    a,
+})`,
+			output: `"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const other_1 = require("other");
+({
+    a: other_1.a,
+});`,
+		},
 
 		// CallExpression
 		{
@@ -967,6 +980,17 @@ const isNotOverloadAndNotAccessor = and(isNotOverload, isNotAccessor);
 Object.defineProperty(exports, "__esModule", { value: true });
 const ts_js_1 = require("./_namespaces/ts.js");
 const isNotOverloadAndNotAccessor = (0, ts_js_1.and)(isNotOverload, isNotAccessor);`,
+		},
+
+		{
+			title: "Identifier#6 (in template literal)",
+			input: `export var x = 1;
+` + "`" + `${x}` + "`" + `;`,
+			output: `"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.x = void 0;
+exports.x = 1;
+` + "`" + `${exports.x}` + "`" + `;`,
 		},
 
 		{

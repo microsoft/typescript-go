@@ -4,9 +4,11 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/testutil/emittestutil"
 	"github.com/microsoft/typescript-go/internal/testutil/parsetestutil"
+	"github.com/microsoft/typescript-go/internal/transformers"
 )
 
 func TestEmit(t *testing.T) {
@@ -19,8 +21,10 @@ func TestEmit(t *testing.T) {
 	}{
 		{title: "StringLiteral#1", input: `;"test"`, output: ";\n\"test\";"},
 		{title: "StringLiteral#2", input: `;'test'`, output: ";\n'test';"},
-		{title: "NumericLiteral", input: `0`, output: `0;`},
-		{title: "BigIntLiteral", input: `0n`, output: `0n;`},
+		{title: "NumericLiteral#1", input: `0`, output: `0;`},
+		{title: "NumericLiteral#2", input: `10_000`, output: `10_000;`},
+		{title: "BigIntLiteral#1", input: `0n`, output: `0n;`},
+		{title: "BigIntLiteral#2", input: `10_000n`, output: `10000n;`}, // TODO: Preserve numeric literal separators after Strada migration
 		{title: "BooleanLiteral#1", input: `true`, output: `true;`},
 		{title: "BooleanLiteral#2", input: `false`, output: `false;`},
 		{title: "NoSubstitutionTemplateLiteral", input: "``", output: "``;"},
@@ -209,7 +213,7 @@ func TestEmit(t *testing.T) {
 		{title: "CaseClause#2", input: `switch (a) {case b:;}`, output: "switch (a) {\n    case b: ;\n}"},
 		{title: "DefaultClause#1", input: `switch (a) {default:}`, output: "switch (a) {\n    default:\n}"},
 		{title: "DefaultClause#2", input: `switch (a) {default:;}`, output: "switch (a) {\n    default: ;\n}"},
-		{title: "LabeledStatement", input: `a:;`, output: "a:\n    ;"},
+		{title: "LabeledStatement", input: `a:;`, output: "a: ;"},
 		{title: "ThrowStatement", input: `throw a`, output: "throw a;"},
 		{title: "TryStatement#1", input: `try {} catch {}`, output: "try { }\ncatch { }"},
 		{title: "TryStatement#2", input: `try {} finally {}`, output: "try { }\nfinally { }"},
@@ -2422,4 +2426,22 @@ func TestTrailingCommaAfterTransform(t *testing.T) {
 	file = visitor.VisitSourceFile(file)
 
 	emittestutil.CheckEmit(t, emitContext, file.AsSourceFile(), "[a,];")
+}
+
+func TestPartiallyEmittedExpression(t *testing.T) {
+	t.Parallel()
+
+	compilerOptions := &core.CompilerOptions{}
+
+	file := parsetestutil.ParseTypeScript(`return ((container.parent
+    .left as PropertyAccessExpression)
+    .expression as PropertyAccessExpression)
+    .expression;`, false /*jsx*/)
+
+	emitContext := printer.NewEmitContext()
+	file = transformers.NewTypeEraserTransformer(emitContext, compilerOptions).TransformSourceFile(file)
+	emittestutil.CheckEmit(t, emitContext, file.AsSourceFile(), `return container.parent
+    .left
+    .expression
+    .expression;`)
 }
