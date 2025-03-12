@@ -1,12 +1,9 @@
 package api
 
 import (
-	"bytes"
-	"encoding/binary"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"unsafe"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -41,8 +38,8 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodParseConfigFile:     unmarshallerFor[ParseConfigFileParams],
 	MethodLoadProject:         unmarshallerFor[LoadProjectParams],
 	MethodGetSourceFile:       unmarshallerFor[GetSourceFileParams],
-	MethodGetSymbolAtPosition: decodeGetSymbolAtPositionParams,
-	MethodGetTypeOfSymbol:     decodeGetTypeOfSymbolParams,
+	MethodGetSymbolAtPosition: batchEnabledUnmarshallerFor[GetSymbolAtPositionParams],
+	MethodGetTypeOfSymbol:     batchEnabledUnmarshallerFor[GetTypeOfSymbolParams],
 }
 
 type ConfigureParams struct {
@@ -75,9 +72,9 @@ func NewProjectData(project *project.Project, id int) *ProjectData {
 }
 
 type GetSymbolAtPositionParams struct {
-	Project  uint16 `json:"project"`
-	Position uint32 `json:"position"`
+	Project  int    `json:"project"`
 	FileName string `json:"fileName"`
+	Position uint32 `json:"position"`
 }
 
 type SymbolData struct {
@@ -87,7 +84,7 @@ type SymbolData struct {
 	CheckFlags uint32             `json:"checkFlags"`
 }
 
-func NewSymbolData(symbol *ast.Symbol) *SymbolData {
+func NewSymbolData(symbol *ast.Symbol, projectVersion int) *SymbolData {
 	return &SymbolData{
 		Id:         NewHandle(symbol),
 		Name:       symbol.Name,
@@ -96,38 +93,9 @@ func NewSymbolData(symbol *ast.Symbol) *SymbolData {
 	}
 }
 
-func decodeGetSymbolAtPositionParams(data []byte) (any, error) {
-	var v GetSymbolAtPositionParams
-	reader := bytes.NewReader(data)
-	if err := binary.Read(reader, binary.LittleEndian, &v.Project); err != nil {
-		return nil, fmt.Errorf("failed to read Project: %w", err)
-	}
-	if err := binary.Read(reader, binary.LittleEndian, &v.Position); err != nil {
-		return nil, fmt.Errorf("failed to read Position: %w", err)
-	}
-	fileName, err := io.ReadAll(reader)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read fileName: %w", err)
-	}
-	v.FileName = string(fileName)
-	return &v, nil
-}
-
 type GetTypeOfSymbolParams struct {
-	Project uint16             `json:"project"`
+	Project int                `json:"project"`
 	Symbol  Handle[ast.Symbol] `json:"symbol"`
-}
-
-func decodeGetTypeOfSymbolParams(data []byte) (any, error) {
-	var v GetTypeOfSymbolParams
-	reader := bytes.NewReader(data)
-	if err := binary.Read(reader, binary.LittleEndian, &v.Project); err != nil {
-		return nil, fmt.Errorf("failed to read Project: %w", err)
-	}
-	if err := binary.Read(reader, binary.LittleEndian, &v.Symbol); err != nil {
-		return nil, fmt.Errorf("failed to read Symbol: %w", err)
-	}
-	return &v, nil
 }
 
 type TypeData struct {

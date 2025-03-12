@@ -198,22 +198,7 @@ func (s *Server) handleConfigure(payload []byte) error {
 }
 
 func (s *Server) sendResponse(method string, result []byte) error {
-	return s.write("response", method, result)
-}
-
-func (s *Server) sendError(method string, err error) error {
-	payload, err := json.Marshal(err.Error())
-	if err != nil {
-		return err
-	}
-	return s.write("error", method, payload)
-}
-
-func (s *Server) write(messageType, method string, payload []byte) error {
-	if _, err := s.w.WriteString(messageType); err != nil {
-		return err
-	}
-	if _, err := s.w.WriteString("\t"); err != nil {
+	if _, err := s.w.WriteString("response\t"); err != nil {
 		return err
 	}
 	if _, err := s.w.WriteString(method); err != nil {
@@ -222,10 +207,33 @@ func (s *Server) write(messageType, method string, payload []byte) error {
 	if err := s.w.WriteByte('\t'); err != nil {
 		return err
 	}
-	if err := binary.Write(s.w, binary.LittleEndian, uint32(len(payload))); err != nil {
+	if err := binary.Write(s.w, binary.LittleEndian, uint32(len(result))); err != nil {
 		return err
 	}
-	if _, err := s.w.Write(payload); err != nil {
+	if _, err := s.w.Write(result); err != nil {
+		return err
+	}
+	return s.w.Flush()
+}
+
+func (s *Server) sendError(method string, err error) error {
+	payload, err := json.Marshal(err.Error())
+	if err != nil {
+		return err
+	}
+	if _, err = s.w.Write([]byte("error\t")); err != nil {
+		return err
+	}
+	if _, err = s.w.Write([]byte(method)); err != nil {
+		return err
+	}
+	if _, err = s.w.Write([]byte("\t")); err != nil {
+		return err
+	}
+	if _, err = s.w.Write(payload); err != nil {
+		return err
+	}
+	if _, err = s.w.Write([]byte("\n")); err != nil {
 		return err
 	}
 	return s.w.Flush()

@@ -1,11 +1,13 @@
 import { SymbolFlags } from "#symbolFlags";
 import type { SourceFile as SourceFileNode } from "../ast/ast.ts";
 import { RemoteNode } from "../ast/node.ts";
-import type { MaybeAsync } from "../types.ts";
 import type {
-    ConfigResponse,
-    ProjectResponse,
-} from "./proto.ts";
+    MaybeAsync,
+    ParsedCommandLine,
+    ProjectData,
+    SymbolData,
+    TypeData,
+} from "../types.ts";
 
 export interface APIOptions {
     tsserverPath: string;
@@ -14,7 +16,7 @@ export interface APIOptions {
 }
 
 export interface API<Async extends boolean> {
-    parseConfigFile(fileName: string): MaybeAsync<Async, ConfigResponse>;
+    parseConfigFile(fileName: string): MaybeAsync<Async, ParsedCommandLine>;
     loadProject(configFileName: string): MaybeAsync<Async, Project<Async>>;
 }
 
@@ -24,12 +26,12 @@ export abstract class Project<Async extends boolean> {
     compilerOptions!: Record<string, unknown>;
     rootFiles!: readonly string[];
 
-    constructor(data: ProjectResponse) {
+    constructor(data: ProjectData) {
         this.id = data.id;
         this.loadData(data);
     }
 
-    loadData(data: ProjectResponse): void {
+    loadData(data: ProjectData): void {
         this.configFileName = data.configFileName;
         this.compilerOptions = data.compilerOptions;
         this.rootFiles = data.rootFiles;
@@ -37,7 +39,7 @@ export abstract class Project<Async extends boolean> {
 
     abstract reload(): MaybeAsync<Async, void>;
     abstract getSourceFile(fileName: string): MaybeAsync<Async, SourceFileNode | undefined>;
-    abstract getSymbolAtPosition(fileName: string, position: number): MaybeAsync<Async, Symbol | undefined>;
+    abstract getSymbolAtPosition(fileName: string, position: number): MaybeAsync<Async, Symbol<Async> | undefined>;
 }
 
 export abstract class SourceFile extends RemoteNode {
@@ -49,46 +51,28 @@ export abstract class SourceFile extends RemoteNode {
 
 export { SymbolFlags };
 
-export abstract class Symbol {
-    private data: Uint8Array;
-    private view: DataView;
-    private decoder: TextDecoder;
+export abstract class Symbol<Async extends boolean> {
+    protected id: number;
+    name: string;
+    flags: SymbolFlags;
+    checkFlags: number;
 
-    constructor(data: Uint8Array, decoder: TextDecoder) {
-        this.data = data;
-        this.view = new DataView(data.buffer, data.byteOffset, data.byteLength);
-        this.decoder = decoder;
+    constructor(data: SymbolData) {
+        this.id = data.id;
+        this.name = data.name;
+        this.flags = data.flags;
+        this.checkFlags = data.checkFlags;
     }
 
-    get id(): number {
-        return this.view.getUint32(0, true);
-    }
-
-    get flags(): number {
-        return this.view.getUint32(4, true);
-    }
-
-    get checkFlags(): number {
-        return this.view.getUint32(8, true);
-    }
-
-    get name(): string {
-        return this.decoder.decode(this.data.subarray(12));
-    }
+    abstract getType(): MaybeAsync<Async, Type<Async> | undefined>;
 }
 
 export abstract class Type<Async extends boolean> {
-    private view: DataView;
+    protected id: number;
+    flags: number;
 
-    constructor(data: Uint8Array) {
-        this.view = new DataView(data.buffer, data.byteOffset, data.byteLength);
-    }
-
-    get id(): number {
-        return this.view.getUint32(0, true);
-    }
-
-    get flags(): number {
-        return this.view.getUint32(4, true);
+    constructor(data: TypeData) {
+        this.id = data.id;
+        this.flags = data.flags;
     }
 }

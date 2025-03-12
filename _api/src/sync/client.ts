@@ -1,8 +1,4 @@
 import { SyncRpcChannel } from "libsyncrpc";
-import {
-    encodeGetSymbolAtPositionRequest,
-    encodeGetTypeOfSymbolRequest,
-} from "../base/binary.ts";
 import type { FileSystemEntries } from "../types.ts";
 
 export interface ClientOptions {
@@ -20,8 +16,8 @@ export interface ClientOptions {
 
 export class Client {
     private channel: SyncRpcChannel;
-    decoder: TextDecoder = new TextDecoder();
-    encoder: TextEncoder = new TextEncoder();
+    private decoder = new TextDecoder();
+    private encoder = new TextEncoder();
 
     constructor(options: ClientOptions) {
         this.channel = new SyncRpcChannel(options.tsserverPath, [
@@ -37,20 +33,14 @@ export class Client {
                 callbacks: Object.keys(options.fs ?? {}),
             }),
         );
-        for (const callback in options.fs) {
-            this.channel.registerCallback(callback, (_, arg) => {
-                const result = options.fs?.[callback as keyof typeof options.fs]?.(JSON.parse(this.decoder.decode(arg)));
-                return JSON.stringify(result) ?? "";
-            });
-        }
     }
 
-    getSymbolAtPosition(projectId: number, fileName: string, position: number): Uint8Array {
-        return this.channel.requestBinarySync("getSymbolAtPosition", encodeGetSymbolAtPositionRequest(projectId, fileName, position, this.encoder));
-    }
-
-    getTypeOfSymbol(projectId: number, symbolId: number): Uint8Array {
-        return this.channel.requestBinarySync("getTypeOfSymbol", encodeGetTypeOfSymbolRequest(projectId, symbolId));
+    registerCallback(method: string, callback: (payload: any) => any): void {
+        this.channel.registerCallback(method, (_, arg) => {
+            const result = callback(JSON.parse(this.decoder.decode(arg)));
+            return JSON.stringify(result) ?? "";
+        });
+        this.channel.requestSync("registerCallback", method);
     }
 
     request(method: string, payload: any): any {

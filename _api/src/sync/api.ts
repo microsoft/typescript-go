@@ -8,11 +8,12 @@ import {
     Type as BaseType,
 } from "../base/api.ts";
 import type {
-    ConfigResponse,
-    ProjectResponse,
-    SymbolResponse,
-    TypeResponse,
-} from "../base/proto.ts";
+    FileSystemEntries,
+    ParsedCommandLine,
+    ProjectData,
+    SymbolData,
+    TypeData,
+} from "../types.ts";
 import { Client } from "./client.ts";
 
 export interface APIOptions extends BaseAPIOptions {
@@ -24,7 +25,7 @@ export class API implements BaseAPI<false> {
         this.client = new Client(options);
     }
 
-    parseConfigFile(fileName: string): ConfigResponse {
+    parseConfigFile(fileName: string): ParsedCommandLine {
         return this.client.request("parseConfigFile", { fileName });
     }
 
@@ -41,7 +42,7 @@ export class API implements BaseAPI<false> {
 export class Project extends BaseProject<false> {
     private client: Client;
 
-    constructor(client: Client, data: ProjectResponse) {
+    constructor(client: Client, data: ProjectData) {
         super(data);
         this.client = client;
     }
@@ -59,18 +60,13 @@ export class Project extends BaseProject<false> {
     getSymbolAtPosition(fileName: string, position: number): Symbol | undefined;
     getSymbolAtPosition(...params: [fileName: string, position: number] | [readonly { fileName: string; position: number; }[]]): Symbol | undefined | (Symbol | undefined)[] {
         if (params.length === 2) {
-            const data = this.client.getSymbolAtPosition(this.id, params[0], params[1]);
-            return data.length ? new Symbol(this.client, data) : undefined;
+            const data = this.client.request("getSymbolAtPosition", { project: this.id, fileName: params[0], position: params[1] });
+            return data ? new Symbol(this.client, this, data) : undefined;
         }
         else {
-            // const data = this.client.request("getSymbolAtPosition", params[0].map(({ fileName, position }) => ({ project: this.id, fileName, position })));
-            // return data.map((d: SymbolResponse | null) => d ? new Symbol(this.client, this, d) : undefined);
+            const data = this.client.request("getSymbolAtPosition", params[0].map(({ fileName, position }) => ({ project: this.id, fileName, position })));
+            return data.map((d: SymbolData | null) => d ? new Symbol(this.client, this, d) : undefined);
         }
-    }
-
-    getTypeOfSymbol(symbol: Symbol): Type | undefined {
-        const data = this.client.getTypeOfSymbol(this.id, symbol.id);
-        return data ? new Type(this.client, data) : undefined;
     }
 }
 
@@ -84,18 +80,25 @@ export class SourceFile extends BaseSourceFile {
     }
 }
 
-export class Symbol extends BaseSymbol {
+export class Symbol extends BaseSymbol<false> {
     private client: Client;
+    private project: Project;
 
-    constructor(client: Client, data: Uint8Array) {
-        super(data, client.decoder);
+    constructor(client: Client, project: Project, data: SymbolData) {
+        super(data);
         this.client = client;
+        this.project = project;
+    }
+
+    getType(): Type | undefined {
+        const data = this.client.request("getTypeOfSymbol", { project: this.project.id, symbol: this.id });
+        return data ? new Type(this.client, data) : undefined;
     }
 }
 
 export class Type extends BaseType<false> {
     private client: Client;
-    constructor(client: Client, data: Uint8Array) {
+    constructor(client: Client, data: TypeData) {
         super(data);
         this.client = client;
     }

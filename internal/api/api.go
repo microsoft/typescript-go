@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"sync"
 	"time"
@@ -94,7 +93,7 @@ func (api *API) NewLine() string {
 	return api.host.NewLine()
 }
 
-func (api *API) HandleRequest(id int, method string, payload []byte) ([]byte, error) {
+func (api *API) HandleRequest(id int, method string, payload json.RawMessage) ([]byte, error) {
 	now := time.Now()
 	params, err := unmarshalPayload(method, payload)
 	if err != nil {
@@ -115,15 +114,13 @@ func (api *API) HandleRequest(id int, method string, payload []byte) ([]byte, er
 	case MethodLoadProject:
 		return encodeJSON(api.LoadProject(params.(*LoadProjectParams).ConfigFileName))
 	case MethodGetSymbolAtPosition:
-		params := params.(*GetSymbolAtPositionParams)
-		// return encodeJSON(handleBatchableRequest(params, func(params *GetSymbolAtPositionParams) (any, error) {
-		return api.GetSymbolAtPosition(int(params.Project), params.FileName, int(params.Position))
-		// }))
+		return encodeJSON(handleBatchableRequest(params, func(params *GetSymbolAtPositionParams) (any, error) {
+			return api.GetSymbolAtPosition(params.Project, params.FileName, int(params.Position))
+		}))
 	case MethodGetTypeOfSymbol:
-		params := params.(*GetTypeOfSymbolParams)
-		// return encodeJSON(handleBatchableRequest(params, func(params *GetTypeOfSymbolParams) (any, error) {
-		return api.GetTypeOfSymbol(int(params.Project), params.Symbol)
-		// }))
+		return encodeJSON(handleBatchableRequest(params, func(params *GetTypeOfSymbolParams) (any, error) {
+			return api.GetTypeOfSymbol(params.Project, params.Symbol)
+		}))
 	default:
 		return nil, fmt.Errorf("unhandled API method %q", method)
 	}
@@ -166,29 +163,25 @@ func (api *API) LoadProject(configFileName string) (*ProjectData, error) {
 	return NewProjectData(project, id), nil
 }
 
-func (api *API) GetSymbolAtPosition(projectId int, fileName string, position int) ([]byte, error) {
+func (api *API) GetSymbolAtPosition(projectId int, fileName string, position int) (*SymbolData, error) {
 	if projectId >= len(api.projects) {
-		return nil, errors.New("project not found")
+		return nil, fmt.Errorf("project not found")
 	}
 	project := api.projects[projectId]
 	symbol, err := project.LanguageService().GetSymbolAtPosition(fileName, position)
 	if err != nil || symbol == nil {
 		return nil, err
 	}
-	id := NewHandle(symbol)
-	data, err := EncodeSymbolResponse(symbol, id)
-	if err != nil {
-		return nil, err
-	}
+	data := NewSymbolData(symbol, project.Version())
 	api.symbolsMu.Lock()
 	defer api.symbolsMu.Unlock()
-	api.symbols[id] = symbol
+	api.symbols[data.Id] = symbol
 	return data, nil
 }
 
-func (api *API) GetTypeOfSymbol(projectId int, symbolHandle Handle[ast.Symbol]) ([]byte, error) {
+func (api *API) GetTypeOfSymbol(projectId int, symbolHandle Handle[ast.Symbol]) (*TypeData, error) {
 	if projectId >= len(api.projects) {
-		return nil, errors.New("project not found")
+		return nil, fmt.Errorf("project not found")
 	}
 	project := api.projects[projectId]
 	symbol, ok := api.symbols[symbolHandle]
@@ -199,17 +192,12 @@ func (api *API) GetTypeOfSymbol(projectId int, symbolHandle Handle[ast.Symbol]) 
 	if t == nil {
 		return nil, nil
 	}
-	// return NewTypeData(t), nil
-	data, err := EncodeTypeResponse(t, NewHandle(t))
-	if err != nil {
-		return nil, err
-	}
-	return data, nil
+	return NewTypeData(t), nil
 }
 
 func (api *API) GetSourceFile(projectId int, fileName string) (*ast.SourceFile, error) {
 	if projectId >= len(api.projects) {
-		return nil, errors.New("project not found")
+		return nil, fmt.Errorf("project not found")
 	}
 	project := api.projects[projectId]
 	sourceFile := project.GetProgram().GetSourceFile(fileName)

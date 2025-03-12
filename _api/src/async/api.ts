@@ -8,10 +8,10 @@ import {
     Type as BaseType,
 } from "../base/api.ts";
 import type {
-    ProjectResponse,
-    SymbolResponse,
-    TypeResponse,
-} from "../base/proto.ts";
+    ProjectData,
+    SymbolData,
+    TypeData,
+} from "../types.ts";
 import { Client } from "./client.ts";
 import { startLSPServer } from "./lsp.ts";
 
@@ -50,7 +50,7 @@ export class API implements BaseAPI<true> {
 export class Project extends BaseProject<true> {
     private client: Client;
 
-    constructor(client: Client, data: ProjectResponse) {
+    constructor(client: Client, data: ProjectData) {
         super(data);
         this.client = client;
     }
@@ -69,7 +69,7 @@ export class Symbol extends BaseSymbol<true> {
     private client: Client;
     private project: Project;
 
-    constructor(client: Client, project: Project, data: SymbolResponse) {
+    constructor(client: Client, project: Project, data: SymbolData) {
         super(data);
         this.client = client;
         this.project = project;
@@ -84,7 +84,7 @@ export class Symbol extends BaseSymbol<true> {
 export class Type extends BaseType<true> {
     private client: Client;
 
-    constructor(client: Client, data: TypeResponse) {
+    constructor(client: Client, data: TypeData) {
         super(data);
         this.client = client;
     }

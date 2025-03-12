@@ -35,7 +35,7 @@ import { API } from "./sync/api.ts";
             if (isIdentifier(node)) {
                 const symbol = project.getSymbolAtPosition("checker.ts", node.pos);
                 if (symbol?.flags! & SymbolFlags.Value) {
-                    project.getTypeOfSymbol(symbol!);
+                    symbol?.getType();
                 }
             }
             node.forEachChild(child => visitNode(child));

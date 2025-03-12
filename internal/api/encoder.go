@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/checker"
 )
 
 // EncodedNodeLength is the number of int32 values that represent a single node in the encoded format.
@@ -683,23 +682,4 @@ func boolToByte(b bool) byte {
 		return 1
 	}
 	return 0
-}
-
-func EncodeSymbolResponse(symbol *ast.Symbol, handle Handle[ast.Symbol]) ([]byte, error) {
-	var err error
-	result := make([]byte, 0, 12+len(symbol.Name))
-	if result, err = appendInt32s(result, int32(handle), int32(symbol.Flags), int32(symbol.CheckFlags)); err != nil {
-		return nil, err
-	}
-	result = append(result, symbol.Name...)
-	return result, nil
-}
-
-func EncodeTypeResponse(t *checker.Type, handle Handle[checker.Type]) ([]byte, error) {
-	var err error
-	result := make([]byte, 0, 8)
-	if result, err = appendInt32s(result, int32(handle), int32(t.Flags())); err != nil {
-		return nil, err
-	}
-	return result, nil
 }
