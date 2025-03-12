@@ -94,6 +94,10 @@ As a result, the repo and issue tracker for typescript-go will eventually be clo
 
 For a list of intentional changes with respect to TypeScript 5.7, see CHANGES.md.
 
+## Star History
+
+![Star History Chart](https://api.star-history.com/svg?repos=microsoft/typescript-go&type=Date)]
+
 ## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
