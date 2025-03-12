@@ -8646,7 +8646,6 @@ type SourceFile struct {
 	AmbientModuleNames          []string
 	CommentDirectives           []CommentDirective
 	jsdocCache                  map[*Node][]*Node
-	ParserTransforms            core.Set[*Node]
 	Pragmas                     []Pragma
 	ReferencedFiles             []*FileReference
 	TypeReferenceDirectives     []*FileReference

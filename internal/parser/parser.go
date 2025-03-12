@@ -71,7 +71,6 @@ type Parser struct {
 	notParenthesizedArrow   core.Set[int]
 	nodeSlicePool           core.Pool[*ast.Node]
 	jsdocCache              map[*ast.Node][]*ast.Node
-	syntheticNodes          core.Set[*ast.Node]
 	possibleAwaitSpans      []int
 	jsdocCommentsSpace      []string
 	jsdocCommentRangesSpace []ast.CommentRange
@@ -325,7 +324,6 @@ func (p *Parser) finishSourceFile(result *ast.SourceFile, isDeclarationFile bool
 	result.ScriptKind = p.scriptKind
 	result.Flags |= p.sourceFlags
 	result.Identifiers = p.identifiers
-	result.ParserTransforms = p.syntheticNodes
 	result.SetJSDocCache(p.jsdocCache)
 	p.jsdocCache = nil
 	p.identifiers = nil
@@ -2042,7 +2040,6 @@ func (p *Parser) parseModuleOrNamespaceDeclaration(pos int, hasJSDoc bool, modif
 		syntheticExport := p.factory.NewModifier(ast.KindExportKeyword)
 		syntheticExport.Loc = core.NewTextRange(p.nodePos(), p.nodePos())
 		syntheticExport.Flags = ast.NodeFlagsSynthesized
-		p.syntheticNodes.Add(syntheticExport)
 		nodes := p.nodeSlicePool.NewSlice(1)
 		nodes[0] = syntheticExport
 		syntheticModifiers := p.newModifierList(syntheticExport.Loc, nodes)
