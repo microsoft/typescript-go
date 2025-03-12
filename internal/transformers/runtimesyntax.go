@@ -853,7 +853,7 @@ func (tx *RuntimeSyntaxTransformer) visitConstructorBody(body *ast.Block, constr
 	}
 
 	var superPath []int
-	if ast.IsClassLike(grandparentOfBody) && ast.GetExtendsHeritageClauseElement(grandparentOfBody) != nil {
+	if ast.IsClassLike(grandparentOfConstructor) && ast.GetExtendsHeritageClauseElement(grandparentOfConstructor) != nil {
 		superPath = findSuperStatementIndexPath(rest, 0)
 	}
 
