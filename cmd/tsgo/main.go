@@ -256,7 +256,11 @@ func main() {
 	var stats table
 
 	stats.add("Files", len(program.SourceFiles()))
+	stats.add("Lines", program.LineCount())
+	stats.add("Identifiers", program.IdentifierCount())
+	stats.add("Symbols", program.SymbolCount())
 	stats.add("Types", program.TypeCount())
+	stats.add("Instantiations", program.InstantiationCount())
 	stats.add("Parse time", parseTime)
 	if bindTime != 0 {
 		stats.add("Bind time", bindTime)
@@ -305,6 +309,14 @@ func (t *table) print() {
 
 func formatDuration(d time.Duration) string {
 	return fmt.Sprintf("%.3fs", d.Seconds())
+}
+
+func identifierCount(p *ts.Program) int {
+	count := 0
+	for _, file := range p.SourceFiles() {
+		count += file.IdentifierCount
+	}
+	return count
 }
 
 func listFiles(p *ts.Program) {
