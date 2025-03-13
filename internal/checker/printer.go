@@ -348,7 +348,27 @@ func (p *Printer) printTupleType(t *Type) {
 	p.print("]")
 }
 
+func (c *Checker) isClassInstanceSide(t *Type) bool {
+	return t.symbol != nil && t.symbol.Flags&ast.SymbolFlagsClass != 0 && (t == c.getDeclaredTypeOfClassOrInterface(t.symbol) || (t.flags&TypeFlagsObject != 0 && t.objectFlags&ObjectFlagsIsClassInstanceClone != 0))
+}
+
 func (p *Printer) printAnonymousType(t *Type) {
+	// !!! logic partially taken from createAnonymousTypeNode
+	if symbol := t.symbol; symbol != nil {
+		if symbol.Flags&ast.SymbolFlagsClass != 0 &&
+			p.c.getBaseTypeVariableOfClass(symbol) != nil &&
+			!(symbol.ValueDeclaration != nil && ast.IsClassLike(symbol.ValueDeclaration) && p.flags&TypeFormatFlagsWriteClassExpressionAsTypeLiteral != 0 && !ast.IsClassDeclaration(symbol.ValueDeclaration)) ||
+			symbol.Flags&(ast.SymbolFlagsEnum|ast.SymbolFlagsValueModule) != 0 {
+			if name := symbol.Name; scanner.IsValidIdentifier(name, p.c.languageVersion) {
+				if !p.c.isClassInstanceSide(t) {
+					p.print("typeof ")
+				}
+				p.print(name)
+				return
+			}
+		}
+	}
+
 	props := p.c.getPropertiesOfObjectType(t)
 	callSignatures := p.c.getSignaturesOfType(t, SignatureKindCall)
 	constructSignatures := p.c.getSignaturesOfType(t, SignatureKindConstruct)
