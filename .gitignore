@@ -191,5 +191,4 @@ custom-gcl.hash
 # macOS Finder metadata
 .DS_Store
 
-# intelliJ
-.idea/
+.idea
