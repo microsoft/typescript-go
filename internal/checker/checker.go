@@ -792,18 +792,18 @@ type Checker struct {
 	getGlobalClassGetterDecoratorContextType  func() *Type
 	getGlobalClassSetterDecoratorContextType  func() *Type
 	getGlobalClassAccessorDecoratorContextType func() *Type
-	getGlobalClassAccessorDecoratorTargetType func() *Type
-	getGlobalClassAccessorDecoratorResultType func() *Type
-	getGlobalClassFieldDecoratorContextType   func() *Type
-	syncIterationTypesResolver                *IterationTypesResolver
-	asyncIterationTypesResolver               *IterationTypesResolver
-	isPrimitiveOrObjectOrEmptyType            func(*Type) bool
-	containsMissingType                       func(*Type) bool
-	couldContainTypeVariables                 func(*Type) bool
-	isStringIndexSignatureOnlyType            func(*Type) bool
-	markNodeAssignments                       func(*ast.Node) bool
-	emitResolver                              *emitResolver
-	emitResolverOnce                          sync.Once
+	getGlobalClassAccessorDecoratorTargetType  func() *Type
+	getGlobalClassAccessorDecoratorResultType  func() *Type
+	getGlobalClassFieldDecoratorContextType    func() *Type
+	syncIterationTypesResolver                 *IterationTypesResolver
+	asyncIterationTypesResolver                *IterationTypesResolver
+	isPrimitiveOrObjectOrEmptyType             func(*Type) bool
+	containsMissingType                        func(*Type) bool
+	couldContainTypeVariables                  func(*Type) bool
+	isStringIndexSignatureOnlyType             func(*Type) bool
+	markNodeAssignments                        func(*ast.Node) bool
+	emitResolver                               *emitResolver
+	emitResolverOnce                           sync.Once
 }
 
 func NewChecker(program Program) *Checker {
