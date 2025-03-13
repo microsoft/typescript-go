@@ -261,6 +261,8 @@ func main() {
 	stats.add("Symbols", program.SymbolCount())
 	stats.add("Types", program.TypeCount())
 	stats.add("Instantiations", program.InstantiationCount())
+	stats.add("Memory used", fmt.Sprintf("%vK", memStats.Alloc/1024))
+	stats.add("Memory allocs", strconv.FormatUint(memStats.Mallocs, 10))
 	stats.add("Parse time", parseTime)
 	if bindTime != 0 {
 		stats.add("Bind time", bindTime)
@@ -272,8 +274,6 @@ func main() {
 		stats.add("Emit time", emitTime)
 	}
 	stats.add("Total time", totalTime)
-	stats.add("Memory used", fmt.Sprintf("%vK", memStats.Alloc/1024))
-	stats.add("Memory allocs", strconv.FormatUint(memStats.Mallocs, 10))
 
 	stats.print()
 }
