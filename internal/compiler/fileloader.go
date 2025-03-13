@@ -274,11 +274,14 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(file *ast.SourceFile) 
 
 			// Don't add the file if it has a bad extension (e.g. 'tsx' if we don't have '--allowJs')
 			// This may still end up being an untyped module -- the file won't be included but imports will be allowed.
-			allowedExtensions := []string{".ts", ".tsx", ".mts", ".cts"}
+			// tspath.TSImplementationExtensions with optional json should be used here
+			hasAllowedExtension := false
 			if core.Tristate.IsTrue(p.compilerOptions.ResolveJsonModule) {
-				allowedExtensions = append(allowedExtensions, ".json")
+				hasAllowedExtension = tspath.FileExtensionIsOneOf(resolvedFileName, tspath.SupportedTSExtensionsWithJsonFlat)
+			} else {
+				hasAllowedExtension = tspath.FileExtensionIsOneOf(resolvedFileName, tspath.SupportedTSExtensionsFlat)
 			}
-			shouldAddFile := resolution.IsResolved() && tspath.FileExtensionIsOneOf(resolvedFileName, allowedExtensions)
+			shouldAddFile := resolution.IsResolved() && hasAllowedExtension
 			// TODO(ercornel): !!!: other checks on whether or not to add the file
 
 			if shouldAddFile {
