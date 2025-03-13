@@ -4750,9 +4750,9 @@ func (p *Printer) Write(node *ast.Node, sourceFile *ast.SourceFile, writer EmitT
 
 func (p *Printer) emitCommentsBeforeNode(node *ast.Node) {
 	flags := p.emitContext.EmitFlags(node)
-	commentRnage := getCommentRange(node)
-	pos := commentRnage.Pos()
-	end := commentRnage.End()
+	commentRange := getCommentRange(node)
+	pos := commentRange.Pos()
+	end := commentRange.End()
 
 	p.hasWrittenComment = false
 
@@ -4791,9 +4791,9 @@ func (p *Printer) emitCommentsBeforeNode(node *ast.Node) {
 
 func (p *Printer) emitCommentsAfterNode(node *ast.Node, saved savedContainter) {
 	flags := p.emitContext.EmitFlags(node)
-	commentRnage := getCommentRange(node)
-	pos := commentRnage.Pos()
-	end := commentRnage.End()
+	commentRange := getCommentRange(node)
+	pos := commentRange.Pos()
+	end := commentRange.End()
 
 	if flags&EFNoNestedComments != 0 {
 		p.commentsDisabled = false
