@@ -101,15 +101,16 @@ jobs:
           path: testdata/baselines/local
 
   lint:
-    fail-fast: false
-    matrix:
-      include:
-        - os: ubuntu-latest
-        - os: windows-latest
-        - os: macos-latest
-        - os: ubuntu-latest
-            name: 'noembed'
-            noembed: true
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+          - os: windows-latest
+          - os: macos-latest
+          - os: ubuntu-latest
+              name: 'noembed'
+              noembed: true
 
     name: test (${{ matrix.name || matrix.os }})
 
