@@ -4,8 +4,8 @@
 -<no content>
 @@= skipped --1, +1 lines =@@
 +prototypePropertyAssignmentMergedTypeReference.js(7,22): error TS2749: 'f' refers to a value, but is being used as a type here. Did you mean 'typeof f'?
-+prototypePropertyAssignmentMergedTypeReference.js(8,5): error TS2322: Type '() => number' is not assignable to type 'new() => f'.
-+  Type '() => number' provides no match for the signature 'new(): f'.
++prototypePropertyAssignmentMergedTypeReference.js(8,5): error TS2322: Type '() => number' is not assignable to type 'new () => f'.
++  Type '() => number' provides no match for the signature 'new (): f'.
 +
 +
 +==== prototypePropertyAssignmentMergedTypeReference.js (2 errors) ====
@@ -20,7 +20,7 @@
 +!!! error TS2749: 'f' refers to a value, but is being used as a type here. Did you mean 'typeof f'?
 +    var x = f;
 +        ~
-+!!! error TS2322: Type '() => number' is not assignable to type 'new() => f'.
-+!!! error TS2322:   Type '() => number' provides no match for the signature 'new(): f'.
++!!! error TS2322: Type '() => number' is not assignable to type 'new () => f'.
++!!! error TS2322:   Type '() => number' provides no match for the signature 'new (): f'.
 +    
 +    

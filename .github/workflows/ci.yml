@@ -154,11 +154,8 @@ jobs:
         with:
           cache-name: tidy
 
-      - run: go mod tidy
-      - run: go -C ./_tools mod tidy
-
-      - run: git add .
-      - run: git diff --staged --exit-code --stat
+      - run: go mod tidy -diff
+      - run: go -C ./_tools mod tidy -diff
 
   smoke:
     runs-on: ubuntu-latest
@@ -180,6 +177,16 @@ jobs:
 
       - run: ./built/local/tsgo -p ./_submodules/TypeScript/src/compiler --singleThreaded
       - run: ./built/local/tsgo -p ./_submodules/TypeScript/src/compiler
+
+  misc:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: ./.github/actions/setup-go
+        with:
+          cache-name: misc
+
+      - run: go -C ./_tools run ./cmd/checkmodpaths $PWD
 
   required:
     runs-on: ubuntu-latest

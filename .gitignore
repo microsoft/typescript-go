@@ -142,6 +142,7 @@ dist
 *.dll
 *.so
 *.dylib
+*.wasm
 
 # Test binary, built with `go test -c`
 *.test
@@ -186,3 +187,8 @@ custom-gcl.exe
 custom-gcl.hash
 
 /built
+
+# macOS Finder metadata
+.DS_Store
+
+.idea

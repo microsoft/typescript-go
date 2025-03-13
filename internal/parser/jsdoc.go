@@ -151,7 +151,8 @@ func (p *Parser) attachJSDoc(host *ast.Node, jsDoc []*ast.Node) {
 
 func findMatchingParameter(fun *ast.Node, jsparam *ast.JSDocParameterTag) (*ast.Node, bool) {
 	for _, parameter := range fun.Parameters() {
-		if parameter.Name().Kind == ast.KindIdentifier && parameter.Name().Text() == jsparam.Name().Text() {
+		if parameter.Name().Kind == ast.KindIdentifier && jsparam.Name().Kind == ast.KindIdentifier &&
+			parameter.Name().Text() == jsparam.Name().Text() {
 			return parameter, true
 		}
 	}
