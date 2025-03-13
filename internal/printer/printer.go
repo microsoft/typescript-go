@@ -4919,6 +4919,9 @@ func (p *Printer) shouldWriteComment(pos int) bool {
 		return parser.IsJSDocLikeText(text) || parser.IsPinnedComment(text)
 	}
 
+	return true
+}
+
 func (p *Printer) forEachLeadingCommentToEmit(
 	pos int,
 	cb func(ast.CommentRange, int),
