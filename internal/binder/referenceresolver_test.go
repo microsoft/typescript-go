@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-const Identifier = "some-identifier"
+const identifier = "some-identifier"
 
 func TestNewReferenceResolver(t *testing.T) {
 	hooks := ReferenceResolverHooks{}
@@ -159,7 +159,7 @@ func TestGetReferencedValueDeclarations(t *testing.T) {
 	}
 	resolver := NewReferenceResolver(hooks)
 	NF := ast.NodeFactory{}
-	node := NF.NewIdentifier(Identifier)
+	node := NF.NewIdentifier(identifier)
 	declarations := resolver.GetReferencedValueDeclarations(node)
 	assert.Assert(t, len(declarations) == 0)
 }

@@ -379,7 +379,7 @@ func (b *Binder) declareModuleMember(node *ast.Node, symbolFlags ast.SymbolFlags
 	// and an associated export symbol with all the correct flags set on it. There are 2 main reasons:
 	//
 	//   1. We treat locals and exports of the same name as mutually exclusive within a container.
-	//      That means the binder will issue a Duplicate Identifier error if you mix locals and exports
+	//      That means the binder will issue a Duplicate identifier error if you mix locals and exports
 	//      with the same name in the same container.
 	//      TODO: Make this a more specific error and decouple it from the exclusion logic.
 	//   2. When we checkIdentifier in the checker, we set its resolved symbol to the local symbol,
@@ -1027,8 +1027,8 @@ func (b *Binder) bindVariableDeclarationOrBindingElement(node *ast.Node) {
 			// If node is a binding element in parameter declaration, we need to use ParameterExcludes.
 			// Using ParameterExcludes flag allows the compiler to report an error on duplicate identifiers in Parameter Declaration
 			// For example:
-			//      function foo([a,a]) {} // Duplicate Identifier error
-			//      function bar(a,a) {}   // Duplicate Identifier error, parameter declaration in this case is handled in bindParameter
+			//      function foo([a,a]) {} // Duplicate identifier error
+			//      function bar(a,a) {}   // Duplicate identifier error, parameter declaration in this case is handled in bindParameter
 			//                             // which correctly set excluded symbols
 			b.declareSymbolAndAddToSymbolTable(node, ast.SymbolFlagsFunctionScopedVariable, ast.SymbolFlagsParameterExcludes)
 		default:
@@ -1271,7 +1271,7 @@ func (b *Binder) checkStrictModeBinaryExpression(node *ast.Node) {
 }
 
 func (b *Binder) checkStrictModeCatchClause(node *ast.Node) {
-	// It is a SyntaxError if a TryStatement with a Catch occurs within strict code and the Identifier of the
+	// It is a SyntaxError if a TryStatement with a Catch occurs within strict code and the identifier of the
 	// Catch production is eval or arguments
 	clause := node.AsCatchClause()
 	if b.inStrictMode && clause.VariableDeclaration != nil {
@@ -1465,7 +1465,7 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 	} else if containerFlags&ContainerFlagsIsInterface != 0 {
 		b.seenThisKeyword = false
 		b.bindChildren(node)
-		// ContainsThis cannot overlap with HasExtendedUnicodeEscape on Identifier
+		// ContainsThis cannot overlap with HasExtendedUnicodeEscape on identifier
 		if b.seenThisKeyword {
 			node.Flags |= ast.NodeFlagsContainsThis
 		} else {
