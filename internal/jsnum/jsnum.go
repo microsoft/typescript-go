@@ -129,24 +129,7 @@ var negativeZero = Number(math.Copysign(0, -1))
 
 // https://tc39.es/ecma262/2024/multipage/ecmascript-data-types-and-values.html#sec-numeric-types-number-remainder
 func (n Number) Remainder(d Number) Number {
-	switch {
-	case n.IsNaN() || d.IsNaN():
-		return NaN()
-	case n.IsInf():
-		return NaN()
-	case d.IsInf():
-		return n
-	case d == 0:
-		return NaN()
-	case n == 0:
-		return n
-	}
-
 	r := Number(math.Mod(float64(n), float64(d)))
-	if r == 0 {
-		return negativeZero
-	}
-
 	return r
 }
 
