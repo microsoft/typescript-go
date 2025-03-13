@@ -112,7 +112,7 @@ jobs:
               name: 'noembed'
               noembed: true
 
-    name: test (${{ matrix.name || matrix.os }})
+    name: lint (${{ matrix.name || matrix.os }})
 
     runs-on: ${{ matrix.os }}
 
