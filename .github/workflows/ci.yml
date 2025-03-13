@@ -109,8 +109,8 @@ jobs:
           - os: windows-latest
           - os: macos-latest
           - os: ubuntu-latest
-              name: 'noembed'
-              noembed: true
+            name: 'noembed'
+            noembed: true
 
     name: lint (${{ matrix.name || matrix.os }})
 
