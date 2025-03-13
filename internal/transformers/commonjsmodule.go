@@ -1371,7 +1371,7 @@ func (tx *CommonJSModuleTransformer) visitAssignmentExpression(node *ast.BinaryE
 	return tx.visitor.VisitEachChild(node.AsNode())
 }
 
-// Visits a destructuring asssignment which might target an exported identifier.
+// Visits a destructuring assignment which might target an exported identifier.
 func (tx *CommonJSModuleTransformer) visitDestructuringAssignment(node *ast.BinaryExpression) *ast.Node {
 	return tx.factory.UpdateBinaryExpression(
 		node,
@@ -1530,7 +1530,7 @@ func (tx *CommonJSModuleTransformer) visitCommaExpression(node *ast.BinaryExpres
 	return tx.factory.UpdateBinaryExpression(node, left, node.OperatorToken, right)
 }
 
-// Visits a prefix unary expression that might modifify an exported identifier.
+// Visits a prefix unary expression that might modify an exported identifier.
 func (tx *CommonJSModuleTransformer) visitPrefixUnaryExpression(node *ast.PrefixUnaryExpression, resultIsDiscarded bool) *ast.Node {
 	// When we see a prefix increment expression whose operand is an exported
 	// symbol, we should ensure all exports of that symbol are updated with the correct
@@ -1568,7 +1568,7 @@ func (tx *CommonJSModuleTransformer) visitPrefixUnaryExpression(node *ast.Prefix
 	return tx.visitor.VisitEachChild(node.AsNode())
 }
 
-// Visits a postfix unary expression that might modifify an exported identifier.
+// Visits a postfix unary expression that might modify an exported identifier.
 func (tx *CommonJSModuleTransformer) visitPostfixUnaryExpression(node *ast.PostfixUnaryExpression, resultIsDiscarded bool) *ast.Node {
 	// When we see a postfix increment expression whose operand is an exported
 	// symbol, we should ensure all exports of that symbol are updated with the correct

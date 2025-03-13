@@ -17729,7 +17729,7 @@ func (c *Checker) isValidBaseType(t *Type) bool {
 			return c.isValidBaseType(constraint)
 		}
 	}
-	// TODO: Given that we allow type parmeters here now, is this `!isGenericMappedType(type)` check really needed?
+	// TODO: Given that we allow type parameters here now, is this `!isGenericMappedType(type)` check really needed?
 	// There's no reason a `T` should be allowed while a `Readonly<T>` should not.
 	return t.flags&(TypeFlagsObject|TypeFlagsNonPrimitive|TypeFlagsAny) != 0 && !c.isGenericMappedType(t) ||
 		t.flags&TypeFlagsIntersection != 0 && core.Every(t.Types(), c.isValidBaseType)
@@ -17997,7 +17997,7 @@ func (c *Checker) getSignaturesOfSymbol(symbol *ast.Symbol) []*Signature {
 			}
 		}
 		// If this is a function or method declaration, get the signature from the @type tag for the sake of optional parameters.
-		// Exclude contextually-typed kinds because we already apply the @type tag to the context, plus applying it here to the initializer would supress checks that the two are compatible.
+		// Exclude contextually-typed kinds because we already apply the @type tag to the context, plus applying it here to the initializer would suppress checks that the two are compatible.
 		result = append(result, c.getSignatureFromDeclaration(decl))
 	}
 	return result
