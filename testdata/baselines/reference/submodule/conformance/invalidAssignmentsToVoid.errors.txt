@@ -5,7 +5,7 @@ invalidAssignmentsToVoid.ts(5,1): error TS2322: Type '{}' is not assignable to t
 invalidAssignmentsToVoid.ts(9,1): error TS2322: Type '{ new (): C; prototype: C; }' is not assignable to type 'void'.
 invalidAssignmentsToVoid.ts(10,1): error TS2322: Type 'C' is not assignable to type 'void'.
 invalidAssignmentsToVoid.ts(14,1): error TS2322: Type 'I' is not assignable to type 'void'.
-invalidAssignmentsToVoid.ts(17,1): error TS2322: Type '{ x: number; }' is not assignable to type 'void'.
+invalidAssignmentsToVoid.ts(17,1): error TS2322: Type 'typeof M' is not assignable to type 'void'.
 invalidAssignmentsToVoid.ts(20,5): error TS2322: Type 'T' is not assignable to type 'void'.
 invalidAssignmentsToVoid.ts(22,5): error TS2322: Type '<T>(a: T) => void' is not assignable to type 'void'.
 
@@ -43,7 +43,7 @@ invalidAssignmentsToVoid.ts(22,5): error TS2322: Type '<T>(a: T) => void' is not
     module M { export var x = 1; }
     x = M;
     ~
-!!! error TS2322: Type '{ x: number; }' is not assignable to type 'void'.
+!!! error TS2322: Type 'typeof M' is not assignable to type 'void'.
     
     function f<T>(a: T) {
         x = a;

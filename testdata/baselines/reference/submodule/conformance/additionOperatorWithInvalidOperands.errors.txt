@@ -16,7 +16,7 @@ additionOperatorWithInvalidOperands.ts(36,11): error TS2365: Operator '+' cannot
 additionOperatorWithInvalidOperands.ts(37,11): error TS2365: Operator '+' cannot be applied to types 'number' and '{ new (): C; foo: () => void; prototype: C; }'.
 additionOperatorWithInvalidOperands.ts(38,11): error TS2365: Operator '+' cannot be applied to types 'E' and 'C'.
 additionOperatorWithInvalidOperands.ts(39,11): error TS2365: Operator '+' cannot be applied to types 'E' and 'void'.
-additionOperatorWithInvalidOperands.ts(40,11): error TS2365: Operator '+' cannot be applied to types 'E' and '{ a: any; }'.
+additionOperatorWithInvalidOperands.ts(40,11): error TS2365: Operator '+' cannot be applied to types 'E' and 'typeof M'.
 
 
 ==== additionOperatorWithInvalidOperands.ts (19 errors) ====
@@ -97,4 +97,4 @@ additionOperatorWithInvalidOperands.ts(40,11): error TS2365: Operator '+' cannot
 !!! error TS2365: Operator '+' cannot be applied to types 'E' and 'void'.
     var r20 = E.a + M;
               ~~~~~~~
-!!! error TS2365: Operator '+' cannot be applied to types 'E' and '{ a: any; }'.
+!!! error TS2365: Operator '+' cannot be applied to types 'E' and 'typeof M'.
