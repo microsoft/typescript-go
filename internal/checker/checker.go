@@ -791,7 +791,7 @@ type Checker struct {
 	getGlobalClassMethodDecoratorContextType  func() *Type
 	getGlobalClassGetterDecoratorContextType  func() *Type
 	getGlobalClassSetterDecoratorContextType  func() *Type
-	getGlobalClassAccessorDecoratorContxtType func() *Type
+	getGlobalClassAccessorDecoratorContextType func() *Type
 	getGlobalClassAccessorDecoratorTargetType func() *Type
 	getGlobalClassAccessorDecoratorResultType func() *Type
 	getGlobalClassFieldDecoratorContextType   func() *Type
@@ -1001,7 +1001,7 @@ func NewChecker(program Program) *Checker {
 	c.getGlobalClassMethodDecoratorContextType = c.getGlobalTypeResolver("ClassMethodDecoratorContext", 2 /*arity*/, true /*reportErrors*/)
 	c.getGlobalClassGetterDecoratorContextType = c.getGlobalTypeResolver("ClassGetterDecoratorContext", 2 /*arity*/, true /*reportErrors*/)
 	c.getGlobalClassSetterDecoratorContextType = c.getGlobalTypeResolver("ClassSetterDecoratorContext", 2 /*arity*/, true /*reportErrors*/)
-	c.getGlobalClassAccessorDecoratorContxtType = c.getGlobalTypeResolver("ClassAccessorDecoratorContext", 2 /*arity*/, true /*reportErrors*/)
+	c.getGlobalClassAccessorDecoratorContextType = c.getGlobalTypeResolver("ClassAccessorDecoratorContext", 2 /*arity*/, true /*reportErrors*/)
 	c.getGlobalClassAccessorDecoratorTargetType = c.getGlobalTypeResolver("ClassAccessorDecoratorTarget", 2 /*arity*/, true /*reportErrors*/)
 	c.getGlobalClassAccessorDecoratorResultType = c.getGlobalTypeResolver("ClassAccessorDecoratorResult", 2 /*arity*/, true /*reportErrors*/)
 	c.getGlobalClassFieldDecoratorContextType = c.getGlobalTypeResolver("ClassFieldDecoratorContext", 2 /*arity*/, true /*reportErrors*/)
@@ -5525,7 +5525,7 @@ func (c *Checker) checkVarDeclaredNamesNotShadowed(node *ast.Node) {
 				namesShareScope := container != nil && (ast.IsBlock(container) && ast.IsFunctionLike(container.Parent) ||
 					ast.IsModuleBlock(container) || ast.IsModuleDeclaration(container) || ast.IsSourceFile(container))
 				// here we know that function scoped variable is "shadowed" by block scoped one
-				// a var declatation can't hoist past a lexical declaration and it results in a SyntaxError at runtime
+				// a var declaration can't hoist past a lexical declaration and it results in a SyntaxError at runtime
 				if !namesShareScope {
 					name := c.symbolToString(localDeclarationSymbol)
 					c.error(node, diagnostics.Cannot_initialize_outer_scoped_variable_0_in_the_same_scope_as_block_scoped_declaration_1, name, name)
@@ -20210,7 +20210,7 @@ func isReservedMemberName(name string) bool {
 }
 
 func (c *Checker) symbolIsValue(symbol *ast.Symbol) bool {
-	return c.symbolIsValueEx(symbol, false /*includeTyoeOnlyMembers*/)
+	return c.symbolIsValueEx(symbol, false /*includeTypeOnlyMembers*/)
 }
 
 func (c *Checker) symbolIsValueEx(symbol *ast.Symbol, includeTypeOnlyMembers bool) bool {
@@ -20357,7 +20357,7 @@ func (c *Checker) instantiateTypeWorker(t *Type, m *TypeMapper, alias *TypeAlias
 	return t
 }
 
-// Handles instantion of the following object types:
+// Handles instantiation of the following object types:
 // AnonymousType (ObjectFlagsAnonymous)
 // TypeReference with node != nil (ObjectFlagsReference)
 // SingleSignatureType (ObjectFlagsSingleSignatureType)
@@ -27739,7 +27739,7 @@ func (c *Checker) newClassSetterDecoratorContextType(classType *Type, valueType 
 }
 
 func (c *Checker) newClassAccessorDecoratorContextType(thisType *Type, valueType *Type) *Type {
-	return c.tryCreateTypeReference(c.getGlobalClassAccessorDecoratorContxtType(), []*Type{thisType, valueType})
+	return c.tryCreateTypeReference(c.getGlobalClassAccessorDecoratorContextType(), []*Type{thisType, valueType})
 }
 
 func (c *Checker) newClassFieldDecoratorContextType(thisType *Type, valueType *Type) *Type {
@@ -28487,7 +28487,7 @@ func (c *Checker) removeNullableByIntersection(t *Type, targetFacts TypeFacts, o
 	// By default we intersect with a union of {} and the opposite nullable.
 	emptyAndOtherUnion := c.getUnionType([]*Type{c.emptyObjectType, otherType})
 	// For each constituent type that can compare equal to the target nullable, intersect with the above union
-	// if the type doesn't already include the opppsite nullable and the constituent can compare equal to the
+	// if the type doesn't already include the oppsite nullable and the constituent can compare equal to the
 	// opposite nullable; otherwise, just intersect with {}.
 	return c.mapType(t, func(t *Type) *Type {
 		if c.hasTypeFacts(t, targetFacts) {
