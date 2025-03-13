@@ -116,6 +116,25 @@ func getIndentString(indent int) string {
 	}
 }
 
+func getIndentSize() int {
+	return len(getIndentString(1))
+}
+
+func calculateIndent(text string, pos int, end int) int {
+	var currentLineIndent int
+	for pos < end && stringutil.IsWhiteSpaceSingleLine(rune(text[pos])) {
+		if text[pos] == '\t' {
+			// Tabs = TabSize = indent size and go to next tabStop
+			currentLineIndent += getIndentSize() - (currentLineIndent % getIndentSize())
+		} else {
+			// Single space
+			currentLineIndent++
+		}
+		pos++
+	}
+	return currentLineIndent
+}
+
 func (w *textWriter) writeText(s string) {
 	if s != "" {
 		if w.lineStart {

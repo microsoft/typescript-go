@@ -30,8 +30,8 @@ import (
 )
 
 type PrinterOptions struct {
-	// RemoveComments                bool
-	NewLine core.NewLineKind
+	RemoveComments bool
+	NewLine        core.NewLineKind
 	// OmitTrailingSemicolon         bool
 	NoEmitHelpers bool
 	// Module                        core.ModuleKind
@@ -119,10 +119,26 @@ type Printer struct {
 	writer                            EmitTextWriter
 	ownWriter                         EmitTextWriter
 	writeKind                         WriteKind
-	commentsDisabled                  bool
 	inExtends                         bool // whether we are emitting the `extends` clause of a ConditionalType or InferType
 	nameGenerator                     NameGenerator
 	makeFileLevelOptimisticUniqueName func(string) string
+
+	// Comments
+	commentsDisabled            bool
+	hasWrittenComment           bool
+	containerPos                int
+	containerEnd                int
+	declarationListContainerEnd int
+	detachedCommentsInfo        []struct {
+		nodePos               int
+		detachedCommentEndPos int
+	}
+	savedContainerStack []savedContainter
+}
+type savedContainter struct {
+	containerPos                int
+	containerEnd                int
+	declarationListContainerEnd int
 }
 
 func NewPrinter(options PrinterOptions, handlers PrintHandlers, emitContext *EmitContext) *Printer {
@@ -130,6 +146,11 @@ func NewPrinter(options PrinterOptions, handlers PrintHandlers, emitContext *Emi
 		PrintHandlers: handlers,
 		Options:       options,
 		emitContext:   emitContext,
+
+		commentsDisabled:            options.RemoveComments,
+		containerPos:                -1,
+		containerEnd:                -1,
+		declarationListContainerEnd: -1,
 	}
 	// wire up name generator
 	if printer.emitContext == nil {
@@ -4727,19 +4748,368 @@ func (p *Printer) Write(node *ast.Node, sourceFile *ast.SourceFile, writer EmitT
 //
 
 func (p *Printer) emitCommentsBeforeNode(node *ast.Node) {
-	// !!!
+	flags := p.emitContext.EmitFlags(node)
+	commentRange := getCommentRange(node)
+	pos := commentRange.Pos()
+	end := commentRange.End()
+
+	p.hasWrittenComment = false
+
+	// We have to explicitly check that the node is JsxText because if the compilerOptions.jsx is "preserve" we will not do any transformation.
+	// It is expensive to walk entire tree just to set one kind of node to have no comments.
+	skipLeadingComments := pos < 0 || (flags&EFNoLeadingComments) != 0 || node.Kind == ast.KindJsxText
+	skipTrailingComments := end < 0 || (flags&EFNoTrailingComments) != 0 || node.Kind == ast.KindJsxText
+
+	// Save current container state on the stack.
+	if (pos > 0 || end > 0) && pos != end {
+		// Emit leading comments if the position is not synthesized and the node
+		// has not opted out from emitting leading comments.
+		if !skipLeadingComments {
+			p.emitLeadingComments(pos, node.Kind != ast.KindNotEmittedStatement)
+		}
+
+		if !skipLeadingComments || (pos >= 0 && (flags&EFNoLeadingComments) != 0) {
+			// Advance the container position if comments get emitted or if they've been disabled explicitly using NoLeadingComments.
+			p.containerPos = pos
+		}
+
+		if !skipTrailingComments || (end >= 0 && (flags^EFNoTrailingComments) != 0) {
+			p.containerEnd = end
+
+			// To avoid invalid comment emit in a down-level binding pattern, we
+			// keep track of the last declaration list container's end
+			if node.Kind == ast.KindVariableDeclarationList {
+				p.declarationListContainerEnd = end
+			}
+		}
+	}
+
+	// TODO:
+	// forEach(getSyntheticLeadingComments(node), emitLeadingSynthesizedComment);
 }
 
-func (p *Printer) emitCommentsAfterNode(node *ast.Node) {
-	// !!!
+func (p *Printer) emitCommentsAfterNode(node *ast.Node, saved savedContainter) {
+	flags := p.emitContext.EmitFlags(node)
+	commentRange := getCommentRange(node)
+	pos := commentRange.Pos()
+	end := commentRange.End()
+
+	if flags&EFNoNestedComments != 0 {
+		p.commentsDisabled = false
+	}
+	p.emitTrailingCommentsOfNode(node, flags, pos, end, saved)
+
+	// TODO: getTypeNode
+	// const typeNode = getTypeNode(node);
+	// if (typeNode) {
+	//	p.emitTrailingCommentsOfNode(node, flags, typeNode.pos, typeNode.end, saved)
+	// }
+}
+
+func (p *Printer) emitTrailingCommentsOfNode(node *ast.Node, emitFlags EmitFlags, pos int, end int, saved savedContainter) {
+	skipTrailingComments := end < 0 || (emitFlags&EFNoTrailingComments) != 0 || node.Kind == ast.KindJsxText
+	// TODO:
+	// forEach(getSyntheticTrailingComments(node), emitTrailingSynthesizedComment);
+	if (pos > 0 || end > 0) && pos != end {
+		p.containerPos = saved.containerPos
+		p.containerEnd = saved.containerEnd
+		p.declarationListContainerEnd = saved.declarationListContainerEnd
+
+		if !skipTrailingComments && node.Kind != ast.KindNotEmittedStatement {
+			p.emitTrailingComments(end)
+		}
+	}
+}
+
+func (p *Printer) emitTrailingComments(pos int) {
+	p.forEachTrailingCommentToEmit(pos, p.emitTrailingComment)
 }
 
 func (p *Printer) emitLeadingCommentsOfPosition(pos int, prefixSpace bool) {
-	// !!!
+	if p.commentsDisabled || pos == -1 {
+		return
+	}
+
+	if prefixSpace {
+		p.writeSpace()
+	}
+
+	p.emitLeadingComments(pos, true /* isEmittedNode */)
 }
 
-func (p *Printer) emitTrailingCommentsOfPosition(pos int, prefixSpace bool, forceNoNewLine bool) {
-	// !!!
+func (p *Printer) emitTrailingCommentsOfPosition(pos int, prefixSpace, forceNoNewLine bool) {
+	if p.commentsDisabled {
+		return
+	}
+
+	var cb func(ast.CommentRange)
+
+	if prefixSpace {
+		cb = p.emitTrailingComment
+	} else if forceNoNewLine {
+		cb = p.emitTrailingCommentOfPositionNoNewline
+	} else {
+		cb = p.emitTrailingCommentOfPosition
+	}
+
+	p.forEachTrailingCommentToEmit(pos, cb)
+}
+
+func (p *Printer) emitTrailingCommentOfPositionNoNewline(commentRange ast.CommentRange) {
+	if p.currentSourceFile == nil {
+		return
+	}
+	// trailing comments are emitted at space/*trailing comment1 */space/*trailing comment2*/
+
+	// TODO: invoke `emitPos` to emit a mapping
+	// emitPos(commentPos);
+	p.writeCommentRange(commentRange)
+	// emitPos(commentEnd);
+
+	if commentRange.Kind == ast.KindSingleLineCommentTrivia {
+		p.writeLine() // still write a newline for single-line comments, so closing tokens aren't written on the same line
+	}
+}
+
+func (p *Printer) emitTrailingCommentOfPosition(commentRange ast.CommentRange) {
+	if p.currentSourceFile == nil {
+		return
+	}
+	// trailing comments are emitted at space/*trailing comment1 */space/*trailing comment2*/
+
+	// TODO: invoke `emitPos` to emit a mapping
+	// emitPos(commentPos);
+	p.writeCommentRange(commentRange)
+	// emitPos(commentEnd);
+
+	if commentRange.HasTrailingNewLine {
+		p.writeLine()
+	} else {
+		p.writeSpace()
+	}
+}
+
+func (p *Printer) emitLeadingComments(pos int, isEmittedNode bool) {
+	p.hasWrittenComment = false
+
+	if isEmittedNode {
+		if pos == 0 && p.currentSourceFile.IsDeclarationFile {
+			p.forEachLeadingCommentToEmit(pos, p.emitNonTripleSlashLeadingComment)
+		} else {
+			p.forEachLeadingCommentToEmit(pos, p.emitLeadingComment)
+		}
+	} else if pos == 0 {
+		// If the node will not be emitted in JS, remove all the comments(normal, pinned and ///) associated with the node,
+		// unless it is a triple slash comment at the top of the file.
+		// For Example:
+		//      /// <reference-path ...>
+		//      declare var x;
+		//      /// <reference-path ...>
+		//      interface F {}
+		//  The first /// will NOT be removed while the second one will be removed even though both node will not be emitted
+
+		p.forEachLeadingCommentToEmit(pos, p.emitTripleSlashLeadingComment)
+	}
+}
+
+func (p *Printer) shouldWriteComment() bool {
+	// !!! TODO: printerOptions.onlyPrintJsDocStyble
+	return true
+}
+
+func (p *Printer) forEachLeadingCommentToEmit(
+	pos int,
+	cb func(ast.CommentRange, int),
+) {
+	if p.currentSourceFile != nil && (p.containerPos == -1 || p.containerEnd == -1) {
+		if p.hasDetachedComments(pos) {
+			p.forEachLeadingCommentWithoutDetachedComments(cb)
+		} else {
+			p.forEachLeadingCommentRange(p.currentSourceFile.Text, pos, cb)
+		}
+	}
+}
+
+func (p *Printer) forEachTrailingCommentToEmit(
+	end int,
+	cb func(ast.CommentRange),
+) {
+	if p.currentSourceFile != nil && (p.containerPos == -1 || (end != p.containerEnd && p.containerEnd != p.declarationListContainerEnd)) {
+		p.forEachTrailingCommentRange(p.currentSourceFile.Text, end, cb)
+	}
+}
+
+func (p *Printer) hasDetachedComments(pos int) bool {
+	length := len(p.detachedCommentsInfo)
+	return length > 0 && p.detachedCommentsInfo[length-1].nodePos == pos
+}
+
+func (p *Printer) forEachLeadingCommentWithoutDetachedComments(cb func(ast.CommentRange, int)) {
+	if p.currentSourceFile == nil {
+		return
+	}
+
+	length := len(p.detachedCommentsInfo)
+	pos := p.detachedCommentsInfo[length-1].detachedCommentEndPos
+	if length > 1 {
+		p.detachedCommentsInfo = p.detachedCommentsInfo[:length-1]
+	} else {
+		p.detachedCommentsInfo = nil
+	}
+
+	p.forEachLeadingCommentRange(p.currentSourceFile.Text, pos, cb)
+}
+
+func (p *Printer) forEachLeadingCommentRange(
+	text string,
+	pos int,
+	cb func(ast.CommentRange, int),
+) {
+	for commentRange := range scanner.GetLeadingCommentRanges(p.emitContext.Factory, text, pos) {
+		cb(commentRange, pos)
+	}
+}
+
+func (p *Printer) forEachTrailingCommentRange(
+	text string,
+	pos int,
+	cb func(ast.CommentRange),
+) {
+	for commentRange := range scanner.GetTrailingCommentRanges(p.emitContext.Factory, text, pos) {
+		cb(commentRange)
+	}
+}
+
+func (p *Printer) emitLeadingComment(commentRange ast.CommentRange, rangePos int) {
+	if p.currentSourceFile == nil || !p.shouldWriteComment() {
+		return
+	}
+	if !p.hasWrittenComment {
+		// TODO: p.emitNewLineBeforeLeadingCommentOfPosition(getCurrentLineMap(), writer, rangePos, commentPos);
+		p.hasWrittenComment = true
+	}
+
+	// Leading comments are emitted at /*leading comment1 */space/*leading comment*/space
+	// TODO: invoke `emitPos` to emit a mapping
+	// emitPos(commentPos);
+	p.writeCommentRange(commentRange)
+	// emitPos(commentEnd);
+
+	if commentRange.HasTrailingNewLine {
+		p.writeLine()
+	} else if commentRange.Kind == ast.KindMultiLineCommentTrivia {
+		p.writeSpace()
+	}
+}
+
+func (p *Printer) emitTrailingComment(commentRange ast.CommentRange) {
+	if p.currentSourceFile == nil || !p.shouldWriteComment() {
+		return
+	}
+	// trailing comments are emitted at space/*trailing comment1 */space/*trailing comment2*/
+	if !p.writer.IsAtStartOfLine() {
+		p.writeSpace()
+	}
+
+	// TODO: invoke `emitPos` to emit a mapping
+	// emitPos(commentPos);
+	p.writeCommentRange(commentRange)
+	// emitPos(commentEnd);
+
+	if commentRange.HasTrailingNewLine {
+		p.writeLine()
+	}
+}
+
+func (p *Printer) emitNonTripleSlashLeadingComment(commentRange ast.CommentRange, rangePos int) {
+	// !!! TODO
+}
+
+func (p *Printer) emitTripleSlashLeadingComment(commentRange ast.CommentRange, rangePos int) {
+	// !!! TODO
+}
+
+func (p *Printer) writeCommentRange(commentRange ast.CommentRange) {
+	text := p.currentSourceFile.Text
+	lineMap := p.currentSourceFile.LineMap()
+	commentPos, commentEnd := commentRange.Pos(), commentRange.End()
+
+	if text[commentPos] == '*' {
+		firstline, _ := core.PositionToLineAndCharacter(commentRange.Pos(), lineMap)
+		lineCount := len(lineMap)
+		firstlineIndent := -1
+
+		for pos, currentLine := commentPos, firstline; pos < commentEnd; currentLine++ {
+			var nextLineStart int
+			if (currentLine + 1) == lineCount {
+				nextLineStart = len(text) + 1
+			} else {
+				nextLineStart = int(lineMap[currentLine+1])
+			}
+			if pos != commentPos {
+				// If we are not emitting first line, we need to write the spaces to adjust the alignment
+				if firstlineIndent == -1 {
+					firstlineIndent = calculateIndent(text, int(lineMap[firstline]), commentPos)
+				}
+
+				// These are number of spaces writer is going to write at current indent
+				currentWriterIndentSpacing := p.writer.GetIndent() * getIndentSize()
+
+				// Number of spaces we want to be writing
+				// eg: Assume writer indent
+				// module m {
+				//         /* starts at character 9 this is line 1
+				//    * starts at character pos 4 line                        --1  = 8 - 8 + 3
+				//   More left indented comment */                            --2  = 8 - 8 + 2
+				//     class c { }
+				// }
+				// module m {
+				//     /* this is line 1 -- Assume current writer indent 8
+				//      * line                                                --3 = 8 - 4 + 5
+				//            More right indented comment */                  --4 = 8 - 4 + 11
+				//     class c { }
+				// }
+				spacesToEmit := currentWriterIndentSpacing - firstlineIndent + calculateIndent(text, pos, nextLineStart)
+				if spacesToEmit > 0 {
+					numberOfSingleSpacesToEmit := spacesToEmit % getIndentSize()
+					indentSizeSpaceString := getIndentString((spacesToEmit - numberOfSingleSpacesToEmit) / getIndentSize())
+
+					// Write indent size string ( in eg 1: = "", 2: "" , 3: string with 8 spaces 4: string with 12 spaces
+					p.writer.RawWrite(indentSizeSpaceString)
+
+					// Emit the single spaces (in eg: 1: 3 spaces, 2: 2 spaces, 3: 1 space, 4: 3 spaces)
+					for numberOfSingleSpacesToEmit > 0 {
+						p.writer.RawWrite(" ")
+						numberOfSingleSpacesToEmit--
+					}
+				} else {
+					p.writer.RawWrite("")
+				}
+			}
+
+			// Write the comment line text
+			p.writeTrimmedCurrentLine(text, commentEnd, pos, nextLineStart)
+
+			pos = nextLineStart
+		}
+	} else {
+		p.writeComment(text[commentPos:commentEnd])
+	}
+}
+
+func (p *Printer) writeTrimmedCurrentLine(text string, commentEnd int, pos int, nextLineStart int) {
+	end := min(commentEnd, nextLineStart-1)
+	currentLineText := strings.TrimFunc(text[pos:end], stringutil.IsWhiteSpaceSingleLine)
+	if currentLineText != "" {
+		// trimmed forward and ending spaces text
+		p.writeComment(currentLineText)
+		if end != commentEnd {
+			p.writeLine()
+		}
+	} else {
+		// Empty string - make sure we write empty line
+		p.writeLine()
+	}
 }
 
 //
@@ -4913,13 +5283,23 @@ func (p *Printer) enterNode(node *ast.Node) {
 		p.OnBeforeEmitNode(node)
 	}
 
+	p.savedContainerStack = append(p.savedContainerStack, savedContainter{
+		containerPos:                p.containerPos,
+		containerEnd:                p.containerEnd,
+		declarationListContainerEnd: p.declarationListContainerEnd,
+	})
+
 	p.emitCommentsBeforeNode(node)
 	p.emitSourceMapsBeforeNode(node)
 }
 
 func (p *Printer) exitNode(node *ast.Node) {
+	last := len(p.savedContainerStack) - 1
+
 	p.emitSourceMapsAfterNode(node)
-	p.emitCommentsAfterNode(node)
+	p.emitCommentsAfterNode(node, p.savedContainerStack[last])
+
+	p.savedContainerStack = p.savedContainerStack[:last]
 
 	if p.OnAfterEmitNode != nil {
 		p.OnAfterEmitNode(node)
@@ -4931,13 +5311,23 @@ func (p *Printer) enterToken(node *ast.Node) {
 		p.OnBeforeEmitToken(node)
 	}
 
+	p.savedContainerStack = append(p.savedContainerStack, savedContainter{
+		containerPos:                p.containerPos,
+		containerEnd:                p.containerEnd,
+		declarationListContainerEnd: p.declarationListContainerEnd,
+	})
+
 	p.emitCommentsBeforeNode(node)
 	p.emitSourceMapsBeforeNode(node)
 }
 
 func (p *Printer) exitToken(node *ast.Node) {
+	last := len(p.savedContainerStack) - 1
+
 	p.emitSourceMapsAfterNode(node)
-	p.emitCommentsAfterNode(node)
+	p.emitCommentsAfterNode(node, p.savedContainerStack[last])
+
+	p.savedContainerStack = p.savedContainerStack[:last]
 
 	if p.OnAfterEmitToken != nil {
 		p.OnAfterEmitToken(node)
