@@ -113,7 +113,7 @@ func (p *Parser) parseJSDocComment(parent *ast.Node, start int, end int, fullSta
 		end = len(p.sourceText)
 	}
 	// Check for /** (JSDoc opening part)
-	if !isJSDocLikeText(p.sourceText[start:]) {
+	if !IsJSDocLikeText(p.sourceText[start:]) {
 		// TODO: This should be a panic, unless parseSingleJSDocComment is calling this (not ported yet)
 		return nil
 	}

@@ -65,6 +65,10 @@ func isKeywordOrPunctuation(token ast.Kind) bool {
 	return ast.IsKeywordKind(token) || ast.IsPunctuationKind(token)
 }
 
-func isJSDocLikeText(text string) bool {
+func IsJSDocLikeText(text string) bool {
 	return len(text) >= 4 && text[1] == '*' && text[2] == '*' && text[3] != '/'
+}
+
+func IsPinnedComment(text string) bool {
+	return len(text) > 2 && text[0] == '/' && text[1] == '*' && text[2] == '!'
 }
