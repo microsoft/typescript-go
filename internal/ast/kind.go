@@ -379,6 +379,7 @@ const (
 	KindSyntaxList
 	// Synthesized JS nodes
 	KindJSTypeExpression
+	KindJSTypeAliasDeclaration
 	// Transformation nodes
 	KindNotEmittedStatement
 	KindPartiallyEmittedExpression

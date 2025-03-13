@@ -100,12 +100,25 @@ func (p *Parser) attachJSDoc(host *ast.Node, jsDoc []*ast.Node) {
 			continue
 		}
 		for _, tag := range j.AsJSDoc().Tags.Nodes {
+			switch tag.Kind {
+			case ast.KindJSDocTypedefTag:
+				// TODO: Maybe save an Original pointer
+				// TODO: Look for neighbouring template tags to fill in typeparameters
+				// TODO: Figure out the mechanism for putting statements into a container node list
+				export := p.factory.NewModifier(ast.KindExportKeyword)
+				export.Loc = core.NewTextRange(p.nodePos(), p.nodePos())
+				export.Flags = ast.NodeFlagsSynthesized
+				nodes := p.nodeSlicePool.NewSlice(1)
+				nodes[0] = export
+				modifiers := p.newModifierList(export.Loc, nodes)
+				jstype := p.factory.NewJSTypeAliasDeclaration(modifiers, tag.AsJSDocTypedefTag().Name(), nil /*typeParameters*/, tag.AsJSDocTypedefTag().TypeExpression)
+				p.reparseList = append(p.reparseList, jstype)
+			}
 			if !isLast {
 				// TODO: @overload and unattached tags support goes here
 				continue
 			}
 			switch tag.Kind {
-			// TODO: All/most of these need to apply to param/return et amici as well
 			case ast.KindJSDocTypeTag:
 				if host.Kind == ast.KindVariableStatement && host.AsVariableStatement().DeclarationList != nil {
 					// TODO: Could still clone the node and mark it synthetic
