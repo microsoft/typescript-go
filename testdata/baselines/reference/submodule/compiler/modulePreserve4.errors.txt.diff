@@ -5,14 +5,14 @@
 -/f.cts(1,1): error TS1286: ESM syntax is not allowed in a CommonJS module when 'verbatimModuleSyntax' is enabled.
 -/main1.ts(1,13): error TS2305: Module '"./a"' has no exported member 'y'.
 +/g.js(1,1): error TS2304: Cannot find name 'exports'.
-+/main1.ts(1,13): error TS2305: Module '""/a""' has no exported member 'y'.
++/main1.ts(1,13): error TS2305: Module '"/a"' has no exported member 'y'.
  /main1.ts(3,12): error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
  /main1.ts(19,4): error TS2339: Property 'default' does not exist on type '() => void'.
 -/main1.ts(23,8): error TS1192: Module '"/e"' has no default export.
 -/main2.mts(1,13): error TS2305: Module '"./a"' has no exported member 'y'.
 +/main1.ts(29,16): error TS2306: File '/g.js' is not a module.
 +/main1.ts(31,21): error TS2306: File '/g.js' is not a module.
-+/main2.mts(1,13): error TS2305: Module '""/a""' has no exported member 'y'.
++/main2.mts(1,13): error TS2305: Module '"/a"' has no exported member 'y'.
  /main2.mts(4,4): error TS2339: Property 'default' does not exist on type 'typeof import("/a")'.
  /main2.mts(5,12): error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 -/main2.mts(14,8): error TS1192: Module '"/e"' has no default export.
@@ -27,7 +27,7 @@
 -/main3.cjs(17,8): error TS1293: ESM syntax is not allowed in a CommonJS module when 'module' is set to 'preserve'.
 +/main2.mts(19,16): error TS2306: File '/g.js' is not a module.
 +/main2.mts(20,21): error TS2306: File '/g.js' is not a module.
-+/main3.cjs(1,13): error TS2305: Module '""/a""' has no exported member 'y'.
++/main3.cjs(1,13): error TS2305: Module '"/a"' has no exported member 'y'.
 +/main3.cjs(3,12): error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +/main3.cjs(6,12): error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +/main3.cjs(9,12): error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
@@ -62,7 +62,7 @@
      import { x, y } from "./a"; // No y
                  ~
 -!!! error TS2305: Module '"./a"' has no exported member 'y'.
-+!!! error TS2305: Module '""/a""' has no exported member 'y'.
++!!! error TS2305: Module '"/a"' has no exported member 'y'.
      import a1 = require("./a"); // { x: 0 }
      const a2 = require("./a"); // Error in TS
                 ~~~~~~~
@@ -91,7 +91,7 @@
      import { x, y } from "./a"; // No y
                  ~
 -!!! error TS2305: Module '"./a"' has no exported member 'y'.
-+!!! error TS2305: Module '""/a""' has no exported member 'y'.
++!!! error TS2305: Module '"/a"' has no exported member 'y'.
      import a1 = require("./a"); // { x: 0 }
      a1.x;
      a1.default.x; // Arguably should exist but doesn't
@@ -118,7 +118,7 @@
 -!!! error TS1293: ESM syntax is not allowed in a CommonJS module when 'module' is set to 'preserve'.
                  ~
 -!!! error TS2305: Module '"./a"' has no exported member 'y'.
-+!!! error TS2305: Module '""/a""' has no exported member 'y'.
++!!! error TS2305: Module '"/a"' has no exported member 'y'.
      import a1 = require("./a"); // Error in JS
 -    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -!!! error TS8002: 'import ... =' can only be used in TypeScript files.

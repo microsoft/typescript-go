@@ -1,8 +1,8 @@
 error TS2468: Cannot find global value 'Promise'.
 /index.ts(2,51): error TS1453: `resolution-mode` should be either `require` or `import`.
-/index.ts(3,64): error TS2694: Namespace '""/node_modules/pkg/require""' has no exported member 'ImportInterface'.
+/index.ts(3,64): error TS2694: Namespace '"/node_modules/pkg/require"' has no exported member 'ImportInterface'.
 /index.ts(5,78): error TS1453: `resolution-mode` should be either `require` or `import`.
-/index.ts(6,91): error TS2694: Namespace '""/node_modules/pkg/require""' has no exported member 'ImportInterface'.
+/index.ts(6,91): error TS2694: Namespace '"/node_modules/pkg/require"' has no exported member 'ImportInterface'.
 /other.ts(3,7): error TS1340: Module 'pkg' does not refer to a type, but is used as a type here. Did you mean 'typeof import('pkg')'?
 /other.ts(3,22): error TS1005: 'with' expected.
 /other.ts(3,39): error TS1005: ';' expected.
@@ -33,10 +33,10 @@ error TS2468: Cannot find global value 'Promise'.
 /other.ts(7,94): error TS1128: Declaration or statement expected.
 /other2.ts(3,32): error TS1455: `resolution-mode` is the only valid key for type import assertions.
 /other2.ts(4,32): error TS1455: `resolution-mode` is the only valid key for type import assertions.
-/other2.ts(4,52): error TS2694: Namespace '""/node_modules/pkg/require""' has no exported member 'ImportInterface'.
+/other2.ts(4,52): error TS2694: Namespace '"/node_modules/pkg/require"' has no exported member 'ImportInterface'.
 /other2.ts(6,59): error TS1455: `resolution-mode` is the only valid key for type import assertions.
 /other2.ts(7,59): error TS1455: `resolution-mode` is the only valid key for type import assertions.
-/other2.ts(7,79): error TS2694: Namespace '""/node_modules/pkg/require""' has no exported member 'ImportInterface'.
+/other2.ts(7,79): error TS2694: Namespace '"/node_modules/pkg/require"' has no exported member 'ImportInterface'.
 /other3.ts(3,7): error TS1340: Module 'pkg' does not refer to a type, but is used as a type here. Did you mean 'typeof import('pkg')'?
 /other3.ts(3,21): error TS1005: '{' expected.
 /other3.ts(3,23): error TS2538: Type '{ "resolution-mode": "require"; }' cannot be used as an index type.
@@ -75,10 +75,10 @@ error TS2468: Cannot find global value 'Promise'.
 /other4.ts(10,73): error TS1005: ',' expected.
 /other5.ts(2,31): error TS1456: Type import assertions should have exactly one key - `resolution-mode` - with value `import` or `require`.
 /other5.ts(3,31): error TS1456: Type import assertions should have exactly one key - `resolution-mode` - with value `import` or `require`.
-/other5.ts(3,37): error TS2694: Namespace '""/node_modules/pkg/require""' has no exported member 'ImportInterface'.
+/other5.ts(3,37): error TS2694: Namespace '"/node_modules/pkg/require"' has no exported member 'ImportInterface'.
 /other5.ts(5,58): error TS1456: Type import assertions should have exactly one key - `resolution-mode` - with value `import` or `require`.
 /other5.ts(6,58): error TS1456: Type import assertions should have exactly one key - `resolution-mode` - with value `import` or `require`.
-/other5.ts(6,64): error TS2694: Namespace '""/node_modules/pkg/require""' has no exported member 'ImportInterface'.
+/other5.ts(6,64): error TS2694: Namespace '"/node_modules/pkg/require"' has no exported member 'ImportInterface'.
 
 
 !!! error TS2468: Cannot find global value 'Promise'.
@@ -102,14 +102,14 @@ error TS2468: Cannot find global value 'Promise'.
 !!! error TS1453: `resolution-mode` should be either `require` or `import`.
         & import("pkg", { assert: {"resolution-mode": "import"} }).ImportInterface;
                                                                    ~~~~~~~~~~~~~~~
-!!! error TS2694: Namespace '""/node_modules/pkg/require""' has no exported member 'ImportInterface'.
+!!! error TS2694: Namespace '"/node_modules/pkg/require"' has no exported member 'ImportInterface'.
     
     export const a = (null as any as import("pkg", { assert: {"resolution-mode": "foobar"} }).RequireInterface);
                                                                                  ~~~~~~~~
 !!! error TS1453: `resolution-mode` should be either `require` or `import`.
     export const b = (null as any as import("pkg", { assert: {"resolution-mode": "import"} }).ImportInterface);
                                                                                               ~~~~~~~~~~~~~~~
-!!! error TS2694: Namespace '""/node_modules/pkg/require""' has no exported member 'ImportInterface'.
+!!! error TS2694: Namespace '"/node_modules/pkg/require"' has no exported member 'ImportInterface'.
 ==== /other.ts (28 errors) ====
     // missing assert:
     export type LocalInterface =
@@ -187,7 +187,7 @@ error TS2468: Cannot find global value 'Promise'.
                                    ~~~~~
 !!! error TS1455: `resolution-mode` is the only valid key for type import assertions.
                                                        ~~~~~~~~~~~~~~~
-!!! error TS2694: Namespace '""/node_modules/pkg/require""' has no exported member 'ImportInterface'.
+!!! error TS2694: Namespace '"/node_modules/pkg/require"' has no exported member 'ImportInterface'.
     
     export const a = (null as any as import("pkg", { assert: {"bad": "require"} }).RequireInterface);
                                                               ~~~~~
@@ -196,7 +196,7 @@ error TS2468: Cannot find global value 'Promise'.
                                                               ~~~~~
 !!! error TS1455: `resolution-mode` is the only valid key for type import assertions.
                                                                                   ~~~~~~~~~~~~~~~
-!!! error TS2694: Namespace '""/node_modules/pkg/require""' has no exported member 'ImportInterface'.
+!!! error TS2694: Namespace '"/node_modules/pkg/require"' has no exported member 'ImportInterface'.
 ==== /other3.ts (17 errors) ====
     // Array instead of object-y thing
     export type LocalInterface =
@@ -306,7 +306,7 @@ error TS2468: Cannot find global value 'Promise'.
                                   ~~
 !!! error TS1456: Type import assertions should have exactly one key - `resolution-mode` - with value `import` or `require`.
                                         ~~~~~~~~~~~~~~~
-!!! error TS2694: Namespace '""/node_modules/pkg/require""' has no exported member 'ImportInterface'.
+!!! error TS2694: Namespace '"/node_modules/pkg/require"' has no exported member 'ImportInterface'.
     
     export const a = (null as any as import("pkg", { assert: {} }).RequireInterface);
                                                              ~~
@@ -315,5 +315,5 @@ error TS2468: Cannot find global value 'Promise'.
                                                              ~~
 !!! error TS1456: Type import assertions should have exactly one key - `resolution-mode` - with value `import` or `require`.
                                                                    ~~~~~~~~~~~~~~~
-!!! error TS2694: Namespace '""/node_modules/pkg/require""' has no exported member 'ImportInterface'.
+!!! error TS2694: Namespace '"/node_modules/pkg/require"' has no exported member 'ImportInterface'.
     

@@ -42,7 +42,7 @@ func (c *Checker) symbolToString(s *ast.Symbol) string {
 		}
 	}
 	if len(s.Name) == 0 || s.Name[0] != '\xFE' {
-		return "\"" + s.Name + "\"" // !!! Implement escaping
+		return s.Name // !!! Implement escaping
 	}
 	switch s.Name {
 	case ast.InternalSymbolNameClass:

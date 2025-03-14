@@ -9,7 +9,7 @@ interfaceExtendsObjectIntersectionErrors.ts(9,11): error TS2430: Interface 'I3' 
   Types of property 'length' are incompatible.
     Type 'string' is not assignable to type 'number'.
 interfaceExtendsObjectIntersectionErrors.ts(10,11): error TS2430: Interface 'I4' incorrectly extends interface '[string, number]'.
-  Types of property '"0"' are incompatible.
+  Types of property '0' are incompatible.
     Type 'number' is not assignable to type 'string'.
 interfaceExtendsObjectIntersectionErrors.ts(11,11): error TS2430: Interface 'I5' incorrectly extends interface 'T5'.
   Types of property 'c' are incompatible.
@@ -81,7 +81,7 @@ interfaceExtendsObjectIntersectionErrors.ts(47,26): error TS2312: An interface c
     interface I4 extends T4 { 0: number }
               ~~
 !!! error TS2430: Interface 'I4' incorrectly extends interface '[string, number]'.
-!!! error TS2430:   Types of property '"0"' are incompatible.
+!!! error TS2430:   Types of property '0' are incompatible.
 !!! error TS2430:     Type 'number' is not assignable to type 'string'.
     interface I5 extends T5 { c: number }
               ~~
