@@ -878,7 +878,7 @@ func NewChecker(program Program) *Checker {
 	c.autoType = c.newIntrinsicTypeEx(TypeFlagsAny, "any", ObjectFlagsNonInferrableType)
 	c.wildcardType = c.newIntrinsicType(TypeFlagsAny, "any")
 	c.blockedStringType = c.newIntrinsicType(TypeFlagsAny, "any")
-	c.errorType = c.newIntrinsicType(TypeFlagsAny, "error")
+	c.errorType = c.newIntrinsicType(TypeFlagsAny, "any")
 	c.unresolvedType = c.newIntrinsicType(TypeFlagsAny, "unresolved")
 	c.nonInferrableAnyType = c.newIntrinsicTypeEx(TypeFlagsAny, "any", ObjectFlagsContainsWideningType)
 	c.intrinsicMarkerType = c.newIntrinsicType(TypeFlagsAny, "intrinsic")

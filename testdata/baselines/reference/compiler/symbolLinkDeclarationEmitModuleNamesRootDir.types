@@ -2,14 +2,14 @@
 
 === /monorepo/core/src/application.ts ===
 import { Constructor } from "@loopback/context";
->Constructor : error
+>Constructor : any
 
 export type ControllerClass = Constructor<any>;
 >ControllerClass : ControllerClass
 
 === /monorepo/core/src/usage.ts ===
 import { ControllerClass } from './application';
->ControllerClass : error
+>ControllerClass : any
 
 import { BindingKey } from '@loopback/context';
 >BindingKey : typeof BindingKey
@@ -30,7 +30,7 @@ export type Constructor<T> = (...args: any[]) => T;
 
 === /monorepo/context/src/bindingkey.d.ts ===
 import { Constructor } from "./value-promise"
->Constructor : error
+>Constructor : any
 
 export declare class BindingKey<T> {
 >BindingKey : BindingKey<T>
