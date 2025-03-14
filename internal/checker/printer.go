@@ -18,7 +18,7 @@ func (c *Checker) getTypePrecedence(t *Type) ast.TypePrecedence {
 			return ast.TypePrecedenceIntersection
 		case t.flags&TypeFlagsUnion != 0 && t.flags&TypeFlagsBoolean == 0:
 			return ast.TypePrecedenceUnion
-		case t.flags&TypeFlagsIndex != 0:
+		case t.flags&TypeFlagsIndex != 0 || isInferTypeParameter(t):
 			return ast.TypePrecedenceTypeOperator
 		case c.isArrayType(t):
 			return ast.TypePrecedencePostfix
@@ -98,11 +98,12 @@ func (c *Checker) valueToString(value any) string {
 }
 
 type Printer struct {
-	c        *Checker
-	flags    TypeFormatFlags
-	sb       strings.Builder
-	printing core.Set[*Type]
-	depth    int
+	c                *Checker
+	flags            TypeFormatFlags
+	sb               strings.Builder
+	printing         core.Set[*Type]
+	depth            int32
+	extendsTypeDepth int32
 }
 
 func (c *Checker) newPrinter(flags TypeFormatFlags) *Printer {
@@ -161,6 +162,8 @@ func (p *Printer) printTypeNoAlias(t *Type) {
 		p.printRecursive(t, (*Printer).printIndexType)
 	case t.flags&TypeFlagsIndexedAccess != 0:
 		p.printRecursive(t, (*Printer).printIndexedAccessType)
+	case t.flags&TypeFlagsConditional != 0:
+		p.printRecursive(t, (*Printer).printConditionalType)
 	case t.flags&TypeFlagsTemplateLiteral != 0:
 		p.printTemplateLiteralType(t)
 	case t.flags&TypeFlagsStringMapping != 0:
@@ -197,7 +200,7 @@ func (p *Printer) printValue(value any) {
 		p.printNumberLiteral(value)
 	case bool:
 		p.printBooleanLiteral(value)
-	case PseudoBigInt:
+	case jsnum.PseudoBigInt:
 		p.printBigIntLiteral(value)
 	}
 }
@@ -216,11 +219,8 @@ func (p *Printer) printBooleanLiteral(b bool) {
 	p.print(core.IfElse(b, "true", "false"))
 }
 
-func (p *Printer) printBigIntLiteral(b PseudoBigInt) {
-	if b.negative {
-		p.print("-")
-	}
-	p.print(b.base10Value)
+func (p *Printer) printBigIntLiteral(b jsnum.PseudoBigInt) {
+	p.print(b.String())
 }
 
 func (p *Printer) printUniqueESSymbolType(t *Type) {
@@ -364,7 +364,6 @@ func (p *Printer) printAnonymousType(t *Type) {
 			}
 		}
 	}
-
 	props := p.c.getPropertiesOfObjectType(t)
 	callSignatures := p.c.getSignaturesOfType(t, SignatureKindCall)
 	constructSignatures := p.c.getSignaturesOfType(t, SignatureKindConstruct)
@@ -434,7 +433,7 @@ func (p *Printer) printSignature(sig *Signature, returnSeparator string) {
 			if tail {
 				p.print(", ")
 			}
-			p.printName(tp.symbol)
+			p.printTypeParameterAndConstraint(tp)
 			tail = true
 		}
 		p.print(">")
@@ -483,12 +482,24 @@ func (p *Printer) printTypePredicate(pred *TypePredicate) {
 }
 
 func (p *Printer) printTypeParameter(t *Type) {
-	if t.AsTypeParameter().isThisType {
+	switch {
+	case t.AsTypeParameter().isThisType:
 		p.print("this")
-	} else if t.symbol != nil {
+	case p.extendsTypeDepth > 0 && isInferTypeParameter(t):
+		p.print("infer ")
+		p.printTypeParameterAndConstraint(t)
+	case t.symbol != nil:
 		p.printName(t.symbol)
-	} else {
+	default:
 		p.print("???")
+	}
+}
+
+func (p *Printer) printTypeParameterAndConstraint(t *Type) {
+	p.printName(t.symbol)
+	if constraint := p.c.getConstraintOfTypeParameter(t); constraint != nil {
+		p.print(" extends ")
+		p.printType(constraint)
 	}
 }
 
@@ -536,6 +547,18 @@ func (p *Printer) printIndexedAccessType(t *Type) {
 	p.print("[")
 	p.printType(t.AsIndexedAccessType().indexType)
 	p.print("]")
+}
+
+func (p *Printer) printConditionalType(t *Type) {
+	p.printType(t.AsConditionalType().checkType)
+	p.print(" extends ")
+	p.extendsTypeDepth++
+	p.printType(t.AsConditionalType().extendsType)
+	p.extendsTypeDepth--
+	p.print(" ? ")
+	p.printType(p.c.getTrueTypeFromConditionalType(t))
+	p.print(" : ")
+	p.printType(p.c.getFalseTypeFromConditionalType(t))
 }
 
 func (p *Printer) printMappedType(t *Type) {
@@ -662,4 +685,8 @@ func (c *Checker) formatUnionTypes(types []*Type) []*Type {
 		result = append(result, c.undefinedType)
 	}
 	return result
+}
+
+func isInferTypeParameter(t *Type) bool {
+	return t.flags&TypeFlagsTypeParameter != 0 && t.symbol != nil && core.Some(t.symbol.Declarations, func(d *ast.Node) bool { return ast.IsInferTypeNode(d.Parent) })
 }
