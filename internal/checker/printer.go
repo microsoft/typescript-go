@@ -348,10 +348,6 @@ func (p *Printer) printTupleType(t *Type) {
 	p.print("]")
 }
 
-func (c *Checker) isClassInstanceSide(t *Type) bool {
-	return t.symbol != nil && t.symbol.Flags&ast.SymbolFlagsClass != 0 && (t == c.getDeclaredTypeOfClassOrInterface(t.symbol) || (t.flags&TypeFlagsObject != 0 && t.objectFlags&ObjectFlagsIsClassInstanceClone != 0))
-}
-
 func (p *Printer) printAnonymousType(t *Type) {
 	if t.symbol != nil && len(t.symbol.Name) != 0 {
 		if t.symbol.Flags&(ast.SymbolFlagsClass|ast.SymbolFlagsEnum|ast.SymbolFlagsValueModule) != 0 {
