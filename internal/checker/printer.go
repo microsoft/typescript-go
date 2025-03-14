@@ -98,11 +98,12 @@ func (c *Checker) valueToString(value any) string {
 }
 
 type Printer struct {
-	c        *Checker
-	flags    TypeFormatFlags
-	sb       strings.Builder
-	printing core.Set[*Type]
-	depth    int
+	c                *Checker
+	flags            TypeFormatFlags
+	sb               strings.Builder
+	printing         core.Set[*Type]
+	depth            int32
+	extendsTypeDepth int32
 }
 
 func (c *Checker) newPrinter(flags TypeFormatFlags) *Printer {
@@ -487,7 +488,7 @@ func (p *Printer) printTypeParameter(t *Type) {
 	switch {
 	case t.AsTypeParameter().isThisType:
 		p.print("this")
-	case isInferTypeParameter(t):
+	case p.extendsTypeDepth > 0 && isInferTypeParameter(t):
 		p.print("infer ")
 		p.printTypeParameterAndConstraint(t)
 	case t.symbol != nil:
@@ -554,7 +555,9 @@ func (p *Printer) printIndexedAccessType(t *Type) {
 func (p *Printer) printConditionalType(t *Type) {
 	p.printType(t.AsConditionalType().checkType)
 	p.print(" extends ")
+	p.extendsTypeDepth++
 	p.printType(t.AsConditionalType().extendsType)
+	p.extendsTypeDepth--
 	p.print(" ? ")
 	p.printType(p.c.getTrueTypeFromConditionalType(t))
 	p.print(" : ")
