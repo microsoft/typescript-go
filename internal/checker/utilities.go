@@ -1403,7 +1403,7 @@ func isJsxOpeningLikeElement(node *ast.Node) bool {
 	return ast.IsJsxOpeningElement(node) || ast.IsJsxSelfClosingElement(node)
 }
 
-// Deprecated in favor of `ast.IsObjectLiteralElement`
+// Deprecated: use [ast.IsObjectLiteralElement] instead.
 func isObjectLiteralElementLike(node *ast.Node) bool {
 	return ast.IsObjectLiteralElement(node)
 }

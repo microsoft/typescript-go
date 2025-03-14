@@ -1575,11 +1575,13 @@ func (c *Checker) getSuggestedLibForNonExistentName(name string) string {
 	return ""
 }
 
-func (c *Checker) getPrimitiveAliasSymbols() {
-	var symbols []*ast.Symbol
-	for _, name := range []string{"string", "number", "boolean", "object", "bigint", "symbol"} {
+func (c *Checker) getPrimitiveAliasSymbols() []*ast.Symbol {
+	names := []string{"string", "number", "boolean", "object", "bigint", "symbol"}
+	symbols := make([]*ast.Symbol, 0, len(names))
+	for _, name := range names {
 		symbols = append(symbols, c.newSymbol(ast.SymbolFlagsTypeAlias, name))
 	}
+	return symbols
 }
 
 func (c *Checker) getSuggestedSymbolForNonexistentSymbol(location *ast.Node, outerName string, meaning ast.SymbolFlags) *ast.Symbol {
@@ -9913,7 +9915,7 @@ func (c *Checker) checkSatisfiesExpressionWorker(expression *ast.Node, target *a
 	if c.isErrorType(targetType) {
 		return targetType
 	}
-	errorNode := ast.FindAncestor(target.Parent, func(n *ast.Node) bool { return ast.IsSatisfiesExpression(n) })
+	errorNode := ast.FindAncestor(target.Parent, ast.IsSatisfiesExpression)
 	c.checkTypeAssignableToAndOptionallyElaborate(exprType, targetType, errorNode, expression, diagnostics.Type_0_does_not_satisfy_the_expected_type_1, nil)
 	return exprType
 }
@@ -11412,7 +11414,7 @@ func (c *Checker) checkThisBeforeSuper(node *ast.Node, container *ast.Node, diag
 	// If a containing class does not have extends clause or the class extends null
 	// skip checking whether super statement is called before "this" accessing.
 	if baseTypeNode != nil && !c.classDeclarationExtendsNull(containingClassDecl) {
-		if node.FlowNodeData() != nil && !c.isPostSuperFlowNode(node.FlowNodeData().FlowNode, false /*noCacheCheck*/) {
+		if node.FlowNodeData() != nil && !c.isPostSuperFlowNode(node.FlowNodeData().FlowNode, false /*noCacheCheck*/, nil) {
 			c.error(node, diagnosticMessage)
 		}
 	}

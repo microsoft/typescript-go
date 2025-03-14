@@ -1435,7 +1435,6 @@ func getFileNamesFromConfigSpecs(
 	host vfs.FS,
 	extraFileExtensions []fileExtensionInfo,
 ) []string {
-	extraFileExtensions = []fileExtensionInfo{}
 	basePath = tspath.NormalizePath(basePath)
 	keyMappper := func(value string) string { return tspath.GetCanonicalFileName(value, host.UseCaseSensitiveFileNames()) }
 	// Literal file names (provided via the "files" array in tsconfig.json) are stored in a

@@ -121,15 +121,19 @@ func parseArgs() *cliOptions {
 }
 
 func main() {
+	os.Exit(runMain())
+}
+
+func runMain() int {
 	// TypeScript uses ANSI escape sequences which cmd.exe won't parse without enabling virtual terminal processing.
 	enableVirtualTerminalProcessing()
 
 	if args := os.Args[1:]; len(args) > 0 {
 		switch args[0] {
 		case "tsc":
-			os.Exit(int(execute.CommandLine(newSystem(), nil, args[1:])))
+			return int(execute.CommandLine(newSystem(), nil, args[1:]))
 		case "lsp":
-			os.Exit(runLSP(args[1:]))
+			return runLSP(args[1:])
 		}
 	}
 	opts := parseArgs()
@@ -144,7 +148,7 @@ func main() {
 	currentDirectory, err := os.Getwd()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error getting current directory: %v\n", err)
-		os.Exit(1)
+		return 1
 	}
 
 	fs := bundled.WrapFS(osvfs.FS())
@@ -155,7 +159,7 @@ func main() {
 		configFileName = tspath.CombinePaths(configFileName, "tsconfig.json")
 		if !fs.FileExists(configFileName) {
 			fmt.Fprintf(os.Stderr, "Error: The file %v does not exist.\n", configFileName)
-			os.Exit(1)
+			return 1
 		}
 	}
 
@@ -179,7 +183,7 @@ func main() {
 
 	if compilerOptions.ListFilesOnly.IsTrue() {
 		listFiles(program)
-		os.Exit(0)
+		return 0
 	}
 
 	if compilerOptions.ShowConfig.IsTrue() {
@@ -187,9 +191,9 @@ func main() {
 		enc.SetIndent("", "    ")
 		if err := enc.Encode(compilerOptions); err != nil {
 			fmt.Fprintf(os.Stderr, "Error encoding JSON: %v\n", err)
-			os.Exit(1)
+			return 1
 		}
-		os.Exit(0)
+		return 0
 	}
 
 	var bindTime, checkTime time.Duration
@@ -197,7 +201,7 @@ func main() {
 	diagnostics := program.GetConfigFileParsingDiagnostics()
 	if len(diagnostics) != 0 {
 		printDiagnostics(diagnostics, host, compilerOptions)
-		os.Exit(1)
+		return 1
 	}
 
 	diagnostics = program.GetSyntacticDiagnostics(nil)
@@ -234,8 +238,12 @@ func main() {
 	runtime.GC()
 	runtime.ReadMemStats(&memStats)
 
-	if !opts.devel.quiet && len(diagnostics) != 0 {
-		printDiagnostics(ts.SortAndDeduplicateDiagnostics(diagnostics), host, compilerOptions)
+	exitCode := 0
+	if len(diagnostics) != 0 {
+		if !opts.devel.quiet {
+			printDiagnostics(ts.SortAndDeduplicateDiagnostics(diagnostics), host, compilerOptions)
+		}
+		exitCode = 1
 	}
 
 	var unsupportedExtensions []string
@@ -272,6 +280,8 @@ func main() {
 	stats.add("Memory allocs", strconv.FormatUint(memStats.Mallocs, 10))
 
 	stats.print()
+
+	return exitCode
 }
 
 type tableRow struct {

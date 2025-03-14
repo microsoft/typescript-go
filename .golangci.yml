@@ -9,9 +9,6 @@ linters:
   enable:
     # Enabled
     - asasalint
-    - inamedparam
-    - nakedret
-    - govet
     - bidichk
     - bodyclose
     - canonicalheader
@@ -23,24 +20,29 @@ linters:
     - errorlint
     - fatcontext
     - gocheckcompilerdirectives
+    - gocritic
     - goprintffuncname
     - gosimple
+    - govet
     - grouper
+    - inamedparam
     - ineffassign
     - intrange
     - makezero
     - mirror
     - musttag
+    - nakedret
     - nolintlint
     - paralleltest
     - perfsprint
     - predeclared
     - reassign
-    - tenv
+    - staticcheck
     - testableexamples
     - tparallel
     - unconvert
     - usestdlibvars
+    - usetesting
     - whitespace
 
     - customlint
@@ -50,12 +52,9 @@ linters:
 
     # Check
     # - exhaustive
-    # - gocritic
     # - gosec
     # - revive
-    # - staticcheck
     # - stylecheck
-    # - testifylint
     # - unparam
     # - unused
 
@@ -68,6 +67,26 @@ linters-settings:
     ignorePackageGlobs:
       - encoding/*
       - github.com/go-json-experiment/*
+
+  gocritic:
+    enabled-checks:
+      - emptyFallthrough
+    disabled-checks:
+      - appendAssign
+      - assignOp
+      - commentFormatting
+      - dupBranchBody
+      - elseif
+      - ifElseChain
+      - singleCaseSwitch
+      - valSwap
+
+  staticcheck:
+    checks:
+      - '*'
+      - '-SA9003'
+      - '-SA1019' # TODO: reenable
+
 #   revive:
 #     enable-all-rules: true
 #     rules:
