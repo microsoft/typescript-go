@@ -4918,7 +4918,6 @@ func (p *Printer) shouldWriteComment(pos int) bool {
 		text := p.currentSourceFile.Text[pos:]
 		return parser.IsJSDocLikeText(text) || parser.IsPinnedComment(text)
 	}
-
 	return true
 }
 
