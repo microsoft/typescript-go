@@ -175,7 +175,7 @@ type Node struct {
 	Kind   Kind
 	Flags  NodeFlags
 	Loc    core.TextRange
-	id     atomic.Uint32
+	id     atomic.Uint64
 	Parent *Node
 	data   nodeData
 }
@@ -197,12 +197,11 @@ func (n *Node) DeclarationData() *DeclarationBase         { return n.data.Declar
 func (n *Node) ExportableData() *ExportableBase           { return n.data.ExportableData() }
 func (n *Node) LocalsContainerData() *LocalsContainerBase { return n.data.LocalsContainerData() }
 func (n *Node) FunctionLikeData() *FunctionLikeBase       { return n.data.FunctionLikeData() }
-func (n *Node) Parameters() []*ParameterDeclarationNode {
-	return n.data.FunctionLikeData().Parameters.Nodes
-}
-func (n *Node) ClassLikeData() *ClassLikeBase     { return n.data.ClassLikeData() }
-func (n *Node) BodyData() *BodyBase               { return n.data.BodyData() }
-func (n *Node) LiteralLikeData() *LiteralLikeBase { return n.data.LiteralLikeData() }
+func (n *Node) ParameterList() *ParameterList             { return n.data.FunctionLikeData().Parameters }
+func (n *Node) Parameters() []*ParameterDeclarationNode   { return n.ParameterList().Nodes }
+func (n *Node) ClassLikeData() *ClassLikeBase             { return n.data.ClassLikeData() }
+func (n *Node) BodyData() *BodyBase                       { return n.data.BodyData() }
+func (n *Node) LiteralLikeData() *LiteralLikeBase         { return n.data.LiteralLikeData() }
 func (n *Node) TemplateLiteralLikeData() *TemplateLiteralLikeBase {
 	return n.data.TemplateLiteralLikeData()
 }
@@ -303,6 +302,8 @@ func (n *Node) Expression() *Node {
 		return n.AsAwaitExpression().Expression
 	case KindYieldExpression:
 		return n.AsYieldExpression().Expression
+	case KindPartiallyEmittedExpression:
+		return n.AsPartiallyEmittedExpression().Expression
 	case KindIfStatement:
 		return n.AsIfStatement().Expression
 	case KindDoStatement:
@@ -1191,6 +1192,10 @@ func (n *Node) AsTemplateExpression() *TemplateExpression {
 
 func (n *Node) AsYieldExpression() *YieldExpression {
 	return n.data.(*YieldExpression)
+}
+
+func (n *Node) AsPartiallyEmittedExpression() *PartiallyEmittedExpression {
+	return n.data.(*PartiallyEmittedExpression)
 }
 
 func (n *Node) AsSpreadElement() *SpreadElement {
@@ -2495,6 +2500,10 @@ func (node *TryStatement) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *TryStatement) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewTryStatement(node.TryBlock, node.CatchClause, node.FinallyBlock), node.AsNode(), f.hooks)
+}
+
+func IsTryStatement(node *Node) bool {
+	return node.Kind == KindTryStatement
 }
 
 // CatchClause
@@ -6950,6 +6959,42 @@ func (node *SyntheticExpression) Clone(f *NodeFactory) *Node {
 
 func IsSyntheticExpression(node *Node) bool {
 	return node.Kind == KindSyntheticExpression
+}
+
+// PartiallyEmittedExpression
+
+type PartiallyEmittedExpression struct {
+	ExpressionBase
+	Expression *Expression // Expression
+}
+
+func (f *NodeFactory) NewPartiallyEmittedExpression(expression *Expression) *Node {
+	data := &PartiallyEmittedExpression{}
+	data.Expression = expression
+	return newNode(KindPartiallyEmittedExpression, data, f.hooks)
+}
+
+func (f *NodeFactory) UpdatePartiallyEmittedExpression(node *PartiallyEmittedExpression, expression *Expression) *Node {
+	if expression != node.Expression {
+		return updateNode(f.NewPartiallyEmittedExpression(expression), node.AsNode(), f.hooks)
+	}
+	return node.AsNode()
+}
+
+func (node *PartiallyEmittedExpression) ForEachChild(v Visitor) bool {
+	return visit(v, node.Expression)
+}
+
+func (node *PartiallyEmittedExpression) VisitEachChild(v *NodeVisitor) *Node {
+	return v.Factory.UpdatePartiallyEmittedExpression(node, v.visitNode(node.Expression))
+}
+
+func (node *PartiallyEmittedExpression) Clone(f *NodeFactory) *Node {
+	return cloneNode(f.NewPartiallyEmittedExpression(node.Expression), node.AsNode(), f.hooks)
+}
+
+func IsPartiallyEmittedExpression(node *Node) bool {
+	return node.Kind == KindPartiallyEmittedExpression
 }
 
 /// A JSX expression of the form <TagName attrs>...</TagName>

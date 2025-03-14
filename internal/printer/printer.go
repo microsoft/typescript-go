@@ -833,13 +833,13 @@ func (p *Printer) emitLiteral(node *ast.LiteralLikeNode, flags getLiteralTextFla
 
 func (p *Printer) emitNumericLiteral(node *ast.NumericLiteral) {
 	p.enterNode(node.AsNode())
-	p.emitLiteral(node.AsNode(), getLiteralTextFlagsNone)
+	p.emitLiteral(node.AsNode(), getLiteralTextFlagsAllowNumericSeparator)
 	p.exitNode(node.AsNode())
 }
 
 func (p *Printer) emitBigIntLiteral(node *ast.BigIntLiteral) {
 	p.enterNode(node.AsNode())
-	p.emitLiteral(node.AsNode(), getLiteralTextFlagsNone)
+	p.emitLiteral(node.AsNode(), getLiteralTextFlagsNone) // TODO: Preserve numeric literal separators after Strada migration
 	p.exitNode(node.AsNode())
 }
 
@@ -1294,7 +1294,7 @@ func (p *Printer) emitTypeParameters(parentNode *ast.Node, nodes *ast.TypeParame
 		return
 	}
 
-	p.emitList((*Printer).emitTypeParameterNode, parentNode, nodes, LFTypeParameters|core.IfElse(p.shouldAllowTrailingComma(parentNode, nodes), LFAllowTrailingComma, LFNone))
+	p.emitList((*Printer).emitTypeParameterNode, parentNode, nodes, LFTypeParameters|core.IfElse(ast.IsArrowFunction(parentNode) /*p.shouldAllowTrailingComma(parentNode, nodes)*/, LFAllowTrailingComma, LFNone)) // TODO: preserve trailing comma after Strada migration
 }
 
 func (p *Printer) emitTypeAnnotation(node *ast.TypeNode) {
@@ -1320,7 +1320,7 @@ func (p *Printer) emitInitializer(node *ast.Expression, equalTokenPos int, conte
 
 func (p *Printer) emitParameters(parentNode *ast.Node, parameters *ast.ParameterList) {
 	p.generateAllNames(parameters)
-	p.emitList((*Printer).emitParameterNode, parentNode, parameters, LFParameters|core.IfElse(p.shouldAllowTrailingComma(parentNode, parameters), LFAllowTrailingComma, LFNone))
+	p.emitList((*Printer).emitParameterNode, parentNode, parameters, LFParameters /*|core.IfElse(p.shouldAllowTrailingComma(parentNode, parameters), LFAllowTrailingComma, LFNone)*/) // TODO: preserve trailing comma after Strada migration
 }
 
 func canEmitSimpleArrowHead(parentNode *ast.Node, parameters *ast.ParameterList) bool {
@@ -1656,7 +1656,7 @@ func (p *Printer) emitTypeArguments(parentNode *ast.Node, nodes *ast.TypeArgumen
 	if nodes == nil {
 		return
 	}
-	p.emitList((*Printer).emitTypeArgument, parentNode, nodes, LFTypeArguments|core.IfElse(p.shouldAllowTrailingComma(parentNode, nodes), LFAllowTrailingComma, LFNone) /*, typeArgumentParenthesizerRuleSelector */)
+	p.emitList((*Printer).emitTypeArgument, parentNode, nodes, LFTypeArguments /*|core.IfElse(p.shouldAllowTrailingComma(parentNode, nodes), LFAllowTrailingComma, LFNone)*/) // TODO: preserve trailing comma after Strada migration
 }
 
 func (p *Printer) emitTypeReference(node *ast.TypeReferenceNode) {
@@ -2713,6 +2713,27 @@ func (p *Printer) emitMetaProperty(node *ast.MetaProperty) {
 	p.exitNode(node.AsNode())
 }
 
+func (p *Printer) emitPartiallyEmittedExpression(node *ast.PartiallyEmittedExpression, precedence ast.OperatorPrecedence) {
+	// avoid reprinting parens for nested partially emitted expressions
+	var stack core.Stack[*ast.PartiallyEmittedExpression]
+	for {
+		stack.Push(node)
+		p.enterNode(node.AsNode())
+		if !ast.IsPartiallyEmittedExpression(node.Expression) {
+			break
+		}
+		node = node.Expression.AsPartiallyEmittedExpression()
+	}
+
+	p.emitExpression(node.Expression, precedence)
+
+	// unwind stack
+	for stack.Len() > 0 {
+		p.exitNode(node.AsNode())
+		node = stack.Pop()
+	}
+}
+
 func (p *Printer) willEmitLeadingNewLine(node *ast.Expression) bool {
 	return false // !!! check if node will emit a leading comment that contains a trailing newline
 }
@@ -2845,16 +2866,17 @@ func (p *Printer) emitExpression(node *ast.Expression, precedence ast.OperatorPr
 	case ast.KindSyntaxList:
 		panic("SyntaxList should not be printed")
 
-		// !!!
-		//////Transformation nodes
-		////case ast.KindNotEmittedStatement:
-		////	return
-		////case ast.KindPartiallyEmittedExpression:
-		////	p.emitPartiallyEmittedExpression(node.AsPartiallyEmittedExpression())
-		////case ast.KindCommaListExpression:
-		////	p.emitCommaList(node.AsCommaListExpression())
-		////case ast.KindSyntheticReferenceExpression:
-		////	return Debug.fail("SyntheticReferenceExpression should not be printed")
+	// Transformation nodes
+	case ast.KindNotEmittedStatement:
+		return
+	case ast.KindPartiallyEmittedExpression:
+		p.emitPartiallyEmittedExpression(node.AsPartiallyEmittedExpression(), precedence)
+
+	// !!!
+	////case ast.KindCommaListExpression:
+	////	p.emitCommaList(node.AsCommaListExpression())
+	////case ast.KindSyntheticReferenceExpression:
+	////	return Debug.fail("SyntheticReferenceExpression should not be printed")
 
 	default:
 		panic(fmt.Sprintf("unexpected Expression: %v", node.Kind))
@@ -3135,7 +3157,15 @@ func (p *Printer) emitLabeledStatement(node *ast.LabeledStatement) {
 	p.enterNode(node.AsNode())
 	p.emitLabelIdentifier(node.Label.AsIdentifier())
 	p.emitTokenWithComment(ast.KindColonToken, node.Label.End(), WriteKindPunctuation, node.AsNode())
-	p.emitEmbeddedStatement(node.AsNode(), node.Statement)
+
+	// TODO: use emitEmbeddedStatement rather than writeSpace/emitStatement here after Strada migration as it is
+	//       more consistent with similar emit elsewhere. writeSpace/emitStatement is used here to reduce spurious
+	//       diffs when testing the Strada migration.
+	////p.emitEmbeddedStatement(node.AsNode(), node.Statement)
+
+	p.writeSpace()
+	p.emitStatement(node.Statement)
+
 	p.exitNode(node.AsNode())
 }
 
@@ -4216,7 +4246,7 @@ func (p *Printer) emitListRange(emit func(p *Printer, node *ast.Node), parentNod
 			end = length
 		}
 
-		p.emitListItems(emit, parentNode, children.Nodes[start:end], format, children.HasTrailingComma(), children.Loc)
+		p.emitListItems(emit, parentNode, children.Nodes[start:end], format, p.hasTrailingComma(parentNode, children), children.Loc)
 	}
 
 	if p.OnAfterEmitNodeList != nil {
@@ -4229,6 +4259,82 @@ func (p *Printer) emitListRange(emit func(p *Printer, node *ast.Node), parentNod
 		}
 		p.writePunctuation(getClosingBracket(format))
 	}
+}
+
+func (p *Printer) hasTrailingComma(parentNode *ast.Node, children *ast.NodeList) bool {
+	// NodeList.HasTrailingComma() is unreliable on transformed nodes as some nodes may have been removed. In the event
+	// we believe we may need to emit a trailing comma, we must first look to the respective node list on the original
+	// node first.
+	if !children.HasTrailingComma() {
+		return false
+	}
+
+	originalParent := p.emitContext.MostOriginal(parentNode)
+	if originalParent == parentNode {
+		// if this node is the original node, we can trust the result
+		return true
+	}
+
+	if originalParent.Kind != parentNode.Kind {
+		// if the original node is some other kind of node, we cannot correlate the list
+		return false
+	}
+
+	// find the respective node list on the original parent
+	originalList := children
+	switch originalParent.Kind {
+	case ast.KindObjectLiteralExpression:
+		originalList = originalParent.AsObjectLiteralExpression().Properties
+	case ast.KindArrayLiteralExpression:
+		originalList = originalParent.AsArrayLiteralExpression().Elements
+	case ast.KindCallExpression, ast.KindNewExpression:
+		switch children {
+		case parentNode.TypeArgumentList():
+			originalList = originalParent.TypeArgumentList()
+		case parentNode.ArgumentList():
+			originalList = originalParent.ArgumentList()
+		}
+	case ast.KindConstructor,
+		ast.KindMethodDeclaration,
+		ast.KindGetAccessor,
+		ast.KindSetAccessor,
+		ast.KindFunctionDeclaration,
+		ast.KindFunctionExpression,
+		ast.KindArrowFunction,
+		ast.KindFunctionType,
+		ast.KindConstructorType,
+		ast.KindCallSignature,
+		ast.KindConstructSignature:
+		switch children {
+		case parentNode.TypeParameterList():
+			originalList = originalParent.TypeParameterList()
+		case parentNode.ParameterList():
+			originalList = originalParent.ParameterList()
+		}
+	case ast.KindClassDeclaration, ast.KindClassExpression, ast.KindInterfaceDeclaration, ast.KindTypeAliasDeclaration:
+		switch children {
+		case parentNode.TypeParameterList():
+			originalList = originalParent.TypeParameterList()
+		}
+	case ast.KindObjectBindingPattern, ast.KindArrayBindingPattern:
+		switch children {
+		case parentNode.AsBindingPattern().Elements:
+			originalList = originalParent.AsBindingPattern().Elements
+		}
+	case ast.KindNamedImports:
+		originalList = originalParent.AsNamedImports().Elements
+	case ast.KindNamedExports:
+		originalList = originalParent.AsNamedExports().Elements
+	case ast.KindImportAttributes:
+		originalList = originalParent.AsImportAttributes().Attributes
+	}
+
+	// if we have the original list, we can use it's result.
+	if originalList != nil {
+		return originalList.HasTrailingComma()
+	}
+
+	return false
 }
 
 func (p *Printer) writeDelimiter(format ListFormat) {

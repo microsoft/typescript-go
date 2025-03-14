@@ -304,8 +304,8 @@ func (c *Checker) isEnumTypeRelatedTo(source *ast.Symbol, target *ast.Symbol, er
 				c.enumRelation[key] = RelationComparisonResultFailed
 				return false
 			}
-			sourceValue := c.getEnumMemberValue(ast.GetDeclarationOfKind(sourceProperty, ast.KindEnumMember)).value
-			targetValue := c.getEnumMemberValue(ast.GetDeclarationOfKind(targetProperty, ast.KindEnumMember)).value
+			sourceValue := c.getEnumMemberValue(ast.GetDeclarationOfKind(sourceProperty, ast.KindEnumMember)).Value
+			targetValue := c.getEnumMemberValue(ast.GetDeclarationOfKind(targetProperty, ast.KindEnumMember)).Value
 			if sourceValue != targetValue {
 				// If we have 2 enums with *known* values that differ, they are incompatible.
 				if sourceValue != nil && targetValue != nil {
@@ -2297,7 +2297,7 @@ func (c *Checker) getEffectiveConstraintOfIntersection(types []*Type, targetIsUn
 }
 
 func (c *Checker) templateLiteralTypesDefinitelyUnrelated(source *TemplateLiteralType, target *TemplateLiteralType) bool {
-	// Two template literal types with diffences in their starting or ending text spans are definitely unrelated.
+	// Two template literal types with differences in their starting or ending text spans are definitely unrelated.
 	sourceStart := source.texts[0]
 	targetStart := target.texts[0]
 	sourceEnd := source.texts[len(source.texts)-1]
@@ -4728,7 +4728,7 @@ func (r *Relater) reportError(message *diagnostics.Message, args ...any) {
 			return
 		}
 		// Transform a property incompatibility message for property 'x' followed by some elaboration message
-		// followed by a signature return type incompatibility message into a single return type incompatiblity
+		// followed by a signature return type incompatibility message into a single return type incompatibility
 		// message for 'x()' or 'x(...)'
 		var arg string
 		switch r.getChainMessage(1) {

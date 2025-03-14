@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/evaluator"
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
@@ -1148,7 +1149,7 @@ func (c *Checker) narrowTypeBySwitchOnTrue(f *FlowState, t *Type, data *ast.Flow
 		}
 	}
 	// If our current set has a default, then none the other cases were hit either.
-	// There's no point in narrowing by the the other cases in the set, since we can
+	// There's no point in narrowing by the other cases in the set, since we can
 	// get here through other paths.
 	if hasDefaultClause {
 		for i := clauseEnd; i < len(clauses); i++ {
@@ -1622,7 +1623,7 @@ func (c *Checker) writeFlowCacheKey(b *KeyBuilder, node *ast.Node, declaredType 
 		}
 		if flowContainer != nil {
 			b.WriteByte('@')
-			b.WriteInt(int(ast.GetNodeId(flowContainer)))
+			b.WriteNode(flowContainer)
 		}
 		return true
 	case ast.KindNonNullExpression, ast.KindParenthesizedExpression:
@@ -1656,7 +1657,7 @@ func (c *Checker) writeFlowCacheKey(b *KeyBuilder, node *ast.Node, declaredType 
 		}
 	case ast.KindObjectBindingPattern, ast.KindArrayBindingPattern, ast.KindFunctionDeclaration,
 		ast.KindFunctionExpression, ast.KindArrowFunction, ast.KindMethodDeclaration:
-		b.WriteInt(int(ast.GetNodeId(node)))
+		b.WriteNode(node)
 		b.WriteByte('#')
 		b.WriteType(declaredType)
 		return true
@@ -1729,7 +1730,7 @@ func tryGetNameFromType(t *Type) (string, bool) {
 	case t.flags&TypeFlagsUniqueESSymbol != 0:
 		return t.AsUniqueESSymbolType().name, true
 	case t.flags&TypeFlagsStringOrNumberLiteral != 0:
-		return anyToString(t.AsLiteralType().value), true
+		return evaluator.AnyToString(t.AsLiteralType().value), true
 	}
 	return "", false
 }
@@ -1754,7 +1755,7 @@ func (c *Checker) getDestructuringPropertyName(node *ast.Node) (string, bool) {
 func (c *Checker) getLiteralPropertyNameText(name *ast.Node) (string, bool) {
 	t := c.getLiteralTypeFromPropertyName(name)
 	if t.flags&(TypeFlagsStringLiteral|TypeFlagsNumberLiteral) != 0 {
-		return anyToString(t.AsLiteralType().value), true
+		return evaluator.AnyToString(t.AsLiteralType().value), true
 	}
 	return "", false
 }

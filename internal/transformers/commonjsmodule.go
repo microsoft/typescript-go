@@ -158,9 +158,8 @@ func (tx *CommonJSModuleTransformer) visitNoStack(node *ast.Node, resultIsDiscar
 		node = tx.visitVoidExpression(node.AsVoidExpression())
 	case ast.KindParenthesizedExpression:
 		node = tx.visitParenthesizedExpression(node.AsParenthesizedExpression(), resultIsDiscarded)
-	// !!! To support comment emit
-	////case ast.KindPartiallyEmittedExpression:
-	////	node = tx.visitPartiallyEmittedExpression(node.AsPartiallyEmittedExpression(), resultIsDiscarded)
+	case ast.KindPartiallyEmittedExpression:
+		node = tx.visitPartiallyEmittedExpression(node.AsPartiallyEmittedExpression(), resultIsDiscarded)
 	case ast.KindCallExpression:
 		node = tx.visitCallExpression(node.AsCallExpression())
 	case ast.KindTaggedTemplateExpression:
@@ -1324,6 +1323,12 @@ func (tx *CommonJSModuleTransformer) visitParenthesizedExpression(node *ast.Pare
 	return tx.factory.UpdateParenthesizedExpression(node, expression)
 }
 
+// Visits a partially emitted expression whose value may be discarded at runtime.
+func (tx *CommonJSModuleTransformer) visitPartiallyEmittedExpression(node *ast.PartiallyEmittedExpression, resultIsDiscarded bool) *ast.Node {
+	expression := core.IfElse(resultIsDiscarded, tx.discardedValueVisitor, tx.visitor).VisitNode(node.Expression)
+	return tx.factory.UpdatePartiallyEmittedExpression(node, expression)
+}
+
 // Visits a binary expression whose value may be discarded, or which might contain an assignment to an exported
 // identifier.
 func (tx *CommonJSModuleTransformer) visitBinaryExpression(node *ast.BinaryExpression, resultIsDiscarded bool) *ast.Node {
@@ -1875,6 +1880,7 @@ func (tx *CommonJSModuleTransformer) visitShorthandPropertyAssignment(node *ast.
 			)
 		}
 		assignment := tx.factory.NewPropertyAssignment(nil /*modifiers*/, name, nil /*postfixToken*/, expression)
+		assignment.Loc = node.Loc
 		tx.emitContext.AssignCommentAndSourceMapRanges(assignment, node.AsNode())
 		return assignment
 	}
@@ -1910,6 +1916,7 @@ func (tx *CommonJSModuleTransformer) visitExpressionIdentifier(node *ast.Identif
 				ast.NodeFlagsNone,
 			)
 			tx.emitContext.AssignCommentAndSourceMapRanges(reference, node)
+			reference.Loc = node.Loc
 			return reference
 		}
 
@@ -1923,6 +1930,7 @@ func (tx *CommonJSModuleTransformer) visitExpressionIdentifier(node *ast.Identif
 					ast.NodeFlagsNone,
 				)
 				tx.emitContext.AssignCommentAndSourceMapRanges(reference, node)
+				reference.Loc = node.Loc
 				return reference
 			}
 			if ast.IsImportSpecifier(importDeclaration) {
@@ -1946,6 +1954,7 @@ func (tx *CommonJSModuleTransformer) visitExpressionIdentifier(node *ast.Identif
 					)
 				}
 				tx.emitContext.AssignCommentAndSourceMapRanges(reference, node)
+				reference.Loc = node.Loc
 				return reference
 			}
 		}
