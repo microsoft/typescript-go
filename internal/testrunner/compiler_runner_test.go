@@ -19,11 +19,8 @@ func TestLocal(t *testing.T) {
 
 	testTypes := []CompilerTestType{TestTypeRegression, TestTypeConformance}
 	for _, testType := range testTypes {
-		t.Run(testType.String(), func(t *testing.T) {
-			t.Parallel()
-			runner := NewCompilerBaselineRunner(testType, false /*isSubmodule*/)
-			runner.RunTests(t)
-		})
+		runner := NewCompilerBaselineRunner(testType, false /*isSubmodule*/)
+		runner.RunTests(t)
 	}
 }
 
@@ -41,10 +38,7 @@ func TestSubmodule(t *testing.T) {
 
 	testTypes := []CompilerTestType{TestTypeRegression, TestTypeConformance}
 	for _, testType := range testTypes {
-		t.Run(testType.String(), func(t *testing.T) {
-			t.Parallel()
-			runner := NewCompilerBaselineRunner(testType, true /*isSubmodule*/)
-			runner.RunTests(t)
-		})
+		runner := NewCompilerBaselineRunner(testType, true /*isSubmodule*/)
+		runner.RunTests(t)
 	}
 }
