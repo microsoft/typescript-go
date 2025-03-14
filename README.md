@@ -1,4 +1,5 @@
 # TypeScript 7
+`typescript-go` is a transpiler written in Go that transpiles TypeScript to JavaScript.
 
 [Not sure what this is? Read the announcement post!](https://devblogs.microsoft.com/typescript/typescript-native-port/)
 
