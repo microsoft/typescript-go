@@ -31,3 +31,7 @@ js1.b;
 >js1 : Symbol(js1, Decl(user.js, 11, 5))
 >b : Symbol(b, Decl(user.js, 10, 12))
 
+=== /json.json ===
+{ "a": 0 }
+>"a" : Symbol(a, Decl(json.json, 0, 1))
+
