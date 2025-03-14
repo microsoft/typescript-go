@@ -578,7 +578,7 @@ func (b *Binder) bind(node *ast.Node) bool {
 	//     function foo();
 	//
 	// Here the current node is "foo", which is a container, but the scope of "MyType" should
-	// not be inside "foo". Therefore, we always bind @typedef before bind the parent node,
+	// not be inside "foo". Therefore we always bind @typedef before bind the parent node,
 	// and skip binding this tag later when binding all the other jsdoc tags.
 
 	// First we bind declaration nodes to a symbol if possible. We'll both create a symbol
