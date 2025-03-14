@@ -5,6 +5,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/repo"
 	"gotest.tools/v3/assert"
 )
 
@@ -17,6 +18,10 @@ func TestSubmodule(t *testing.T) { runTests(t, true) } //nolint:paralleltest
 
 func runTests(t *testing.T, isSubmodule bool) {
 	t.Parallel()
+
+	if isSubmodule {
+		repo.SkipIfNoTypeScriptSubmodule(t)
+	}
 
 	if !bundled.Embedded {
 		// Without embedding, we'd need to read all of the lib files out from disk into the MapFS.
