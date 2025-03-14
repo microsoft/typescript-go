@@ -20,7 +20,10 @@ func GetBuildInfo(buildInfoFile string, buildInfoText string) (*BuildInfo, error
 	return &buildInfo, nil
 }
 
-func GetBuildInfoText(buildInfo BuildInfo) string {
-	data, _ := json.MarshalIndent(buildInfo, "", "    ")
-	return string(data)
+func GetBuildInfoText(buildInfo BuildInfo) (string, error) {
+	data, err := json.MarshalIndent(buildInfo, "", "    ")
+	if err != nil {
+		return "", err
+	}
+	return string(data), nil
 }
