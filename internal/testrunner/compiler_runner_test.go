@@ -8,7 +8,7 @@ import (
 )
 
 // Runs the new compiler tests and produces baselines (e.g. `test1.symbols`).
-func TestCompilerBaselinesLocal(t *testing.T) {
+func TestLocal(t *testing.T) {
 	t.Parallel()
 
 	if !bundled.Embedded {
@@ -29,7 +29,7 @@ func TestCompilerBaselinesLocal(t *testing.T) {
 
 // Runs the old compiler tests, and produces new baselines (e.g. `test1.symbols`)
 // and a diff between the new and old baselines (e.g. `test1.symbols.diff`).
-func TestCompilerBaselinesSubmodule(t *testing.T) {
+func TestSubmodule(t *testing.T) {
 	t.Parallel()
 	repo.SkipIfNoTypeScriptSubmodule(t)
 
