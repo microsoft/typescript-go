@@ -1,4 +1,4 @@
-d.ts(2,7): error TS2339: Property 'A' does not exist on type 'typeof import("b.ts")'.
+d.ts(2,7): error TS2339: Property 'A' does not exist on type 'typeof import("b")'.
 
 
 ==== a.ts (0 errors) ====
@@ -14,5 +14,5 @@ d.ts(2,7): error TS2339: Property 'A' does not exist on type 'typeof import("b.t
     import { a } from './c';
     new a.A(); // Error
           ~
-!!! error TS2339: Property 'A' does not exist on type 'typeof import("b.ts")'.
+!!! error TS2339: Property 'A' does not exist on type 'typeof import("b")'.
     
