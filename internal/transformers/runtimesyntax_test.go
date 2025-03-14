@@ -77,7 +77,7 @@ func TestEnumTransformer(t *testing.T) {
     E[E["A"] = 1] = "A";
     E[E["B"] = 2] = "B";
     E[E["C"] = 3] = "C";
-    E["D"] = 'x';
+    E["D"] = "x";
 })(E || (E = {}));`},
 
 		{title: "autonumber enum #8", input: "enum E {A,B=2,C}", output: `var E;
@@ -89,7 +89,7 @@ func TestEnumTransformer(t *testing.T) {
 
 		{title: "autonumber enum #9", input: "enum E {A='x',B=2,C}", output: `var E;
 (function (E) {
-    E["A"] = 'x';
+    E["A"] = "x";
     E[E["B"] = 2] = "B";
     E[E["C"] = 3] = "C";
 })(E || (E = {}));`},
@@ -97,7 +97,7 @@ func TestEnumTransformer(t *testing.T) {
 		{title: "autonumber enum #10", input: "enum E {A='x',B=y,C}", output: `var E;
 (function (E) {
     var auto;
-    E["A"] = 'x';
+    E["A"] = "x";
     E[E["B"] = auto = y] = "B";
     E[E["C"] = ++auto] = "C";
 })(E || (E = {}));`},
@@ -105,7 +105,7 @@ func TestEnumTransformer(t *testing.T) {
 		{title: "autonumber enum #11", input: "enum E {A='x',B=1,C,D=y,E,F=3,G}", output: `var E;
 (function (E) {
     var auto;
-    E["A"] = 'x';
+    E["A"] = "x";
     E[E["B"] = 1] = "B";
     E[E["C"] = 2] = "C";
     E[E["D"] = auto = y] = "D";
@@ -122,24 +122,30 @@ func TestEnumTransformer(t *testing.T) {
 
 		{title: "autonumber enum #13", input: "enum E {A='x',B}", output: `var E;
 (function (E) {
-    E["A"] = 'x';
+    E["A"] = "x";
     E["B"] = void 0;
 })(E || (E = {}));`},
 
 		{title: "autonumber enum #14", input: "enum E {A,B,C=A|B,D}", output: `var E;
 (function (E) {
-    var auto;
     E[E["A"] = 0] = "A";
     E[E["B"] = 1] = "B";
-    E[E["C"] = auto = E.A | E.B] = "C";
-    E[E["D"] = ++auto] = "D";
+    E[E["C"] = 1] = "C";
+    E[E["D"] = 2] = "D";
 })(E || (E = {}));`},
 
-		{title: "string enum", input: "enum E {A = 'x',B = 'y',C = 'z'}", output: `var E;
+		{title: "string enum #1", input: "enum E {A = 'x',B = 'y',C = 'z'}", output: `var E;
 (function (E) {
-    E["A"] = 'x';
-    E["B"] = 'y';
-    E["C"] = 'z';
+    E["A"] = "x";
+    E["B"] = "y";
+    E["C"] = "z";
+})(E || (E = {}));`},
+
+		{title: "string enum #2", input: "enum E {A = 'x',B = 'y',C = `a${A}b${B}c`}", output: `var E;
+(function (E) {
+    E["A"] = "x";
+    E["B"] = "y";
+    E["C"] = "axbyc";
 })(E || (E = {}));`},
 
 		{title: "number enum", input: "enum E {A = 0,B = 1,C = 2}", output: `var E;
@@ -152,8 +158,7 @@ func TestEnumTransformer(t *testing.T) {
 		{title: "enum self reference #1", input: "enum E {A,B=A}", output: `var E;
 (function (E) {
     E[E["A"] = 0] = "A";
-    E["B"] = E.A;
-    if (typeof E.B !== "string") E[E.B] = "B";
+    E[E["B"] = 0] = "B";
 })(E || (E = {}));`},
 
 		{title: "enum self reference #2", input: "enum E {A=x,B=A}", output: `var E;
@@ -178,6 +183,12 @@ func TestEnumTransformer(t *testing.T) {
     if (typeof E["A"] !== "string") E[E["A"]] = "A";
     E["B "] = E.A;
     if (typeof E["B "] !== "string") E[E["B "]] = "B ";
+})(E || (E = {}));`},
+
+		{title: "enum self reference #5", input: "enum E {A,B=E.A}", output: `var E;
+(function (E) {
+    E[E["A"] = 0] = "A";
+    E[E["B"] = 0] = "B";
 })(E || (E = {}));`},
 
 		{title: "export enum", input: "export enum E {A, B}", output: `export { E };
@@ -210,8 +221,8 @@ var E;
 }`, output: `var E;
 (function (E) {
     E[E["A"] = 0] = "A";
-    E[E["B"] = 1 << 0] = "B";
-    E[E["C"] = 1 << 1] = "C";
+    E[E["B"] = 1] = "B";
+    E[E["C"] = 2] = "C";
     E[E["D"] = 3] = "D";
 })(E || (E = {}));`},
 	}
@@ -383,6 +394,15 @@ func TestNamespaceTransformer(t *testing.T) {
 (function (N) {
     ({ x: N.x } = { x: 1 });
 })(N || (N = {}));`},
+
+		{title: "identifier reference in template", input: `namespace N {
+    export var x = 1;
+    ` + "`" + `${x}` + "`" + `
+}`, output: `var N;
+(function (N) {
+    N.x = 1;
+    ` + "`" + `${N.x}` + "`" + `;
+})(N || (N = {}));`},
 	}
 
 	for _, rec := range data {
@@ -395,6 +415,37 @@ func TestNamespaceTransformer(t *testing.T) {
 			emitContext := printer.NewEmitContext()
 			resolver := binder.NewReferenceResolver(binder.ReferenceResolverHooks{})
 			emittestutil.CheckEmit(t, emitContext, NewRuntimeSyntaxTransformer(emitContext, options, resolver).TransformSourceFile(file), rec.output)
+		})
+	}
+}
+
+func TestParameterPropertyTransformer(t *testing.T) {
+	t.Parallel()
+	data := []struct {
+		title  string
+		input  string
+		output string
+	}{
+		{title: "parameter properties", input: "class C { constructor(public x) { } }", output: `class C {
+    x;
+    constructor(x) {
+        this.x = x;
+    }
+}`},
+	}
+
+	for _, rec := range data {
+		t.Run(rec.title, func(t *testing.T) {
+			t.Parallel()
+			options := &core.CompilerOptions{}
+			file := parsetestutil.ParseTypeScript(rec.input, false /*jsx*/)
+			parsetestutil.CheckDiagnostics(t, file)
+			binder.BindSourceFile(file, options)
+			emitContext := printer.NewEmitContext()
+			resolver := binder.NewReferenceResolver(binder.ReferenceResolverHooks{})
+			file = NewTypeEraserTransformer(emitContext, options).TransformSourceFile(file)
+			file = NewRuntimeSyntaxTransformer(emitContext, options, resolver).TransformSourceFile(file)
+			emittestutil.CheckEmit(t, emitContext, file, rec.output)
 		})
 	}
 }

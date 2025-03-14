@@ -13,8 +13,8 @@ import (
 // Atomic ids
 
 var (
-	nextNodeId   atomic.Uint32
-	nextSymbolId atomic.Uint32
+	nextNodeId   atomic.Uint64
+	nextSymbolId atomic.Uint64
 )
 
 func GetNodeId(node *Node) NodeId {
@@ -790,6 +790,8 @@ func IsOuterExpression(node *Expression, kinds OuterExpressionKinds) bool {
 		return kinds&OEKExpressionsWithTypeArguments != 0
 	case KindNonNullExpression:
 		return kinds&OEKNonNullAssertions != 0
+	case KindPartiallyEmittedExpression:
+		return kinds&OEKPartiallyEmittedExpressions != 0
 	}
 	return false
 }
@@ -1495,6 +1497,50 @@ func GetContainingClass(node *Node) *Node {
 	return FindAncestor(node.Parent, IsClassLike)
 }
 
+func GetExtendsHeritageClauseElement(node *Node) *ExpressionWithTypeArgumentsNode {
+	return core.FirstOrNil(GetExtendsHeritageClauseElements(node))
+}
+
+func GetExtendsHeritageClauseElements(node *Node) []*ExpressionWithTypeArgumentsNode {
+	return getHeritageElements(node, KindExtendsKeyword)
+}
+
+func GetImplementsHeritageClauseElements(node *Node) []*ExpressionWithTypeArgumentsNode {
+	return getHeritageElements(node, KindImplementsKeyword)
+}
+
+func getHeritageElements(node *Node, kind Kind) []*Node {
+	clause := getHeritageClause(node, kind)
+	if clause != nil {
+		return clause.AsHeritageClause().Types.Nodes
+	}
+	return nil
+}
+
+func getHeritageClause(node *Node, kind Kind) *Node {
+	clauses := getHeritageClauses(node)
+	if clauses != nil {
+		for _, clause := range clauses.Nodes {
+			if clause.AsHeritageClause().Token == kind {
+				return clause
+			}
+		}
+	}
+	return nil
+}
+
+func getHeritageClauses(node *Node) *NodeList {
+	switch node.Kind {
+	case KindClassDeclaration:
+		return node.AsClassDeclaration().HeritageClauses
+	case KindClassExpression:
+		return node.AsClassExpression().HeritageClauses
+	case KindInterfaceDeclaration:
+		return node.AsInterfaceDeclaration().HeritageClauses
+	}
+	return nil
+}
+
 func IsPartOfTypeQuery(node *Node) bool {
 	for node.Kind == KindQualifiedName || node.Kind == KindIdentifier {
 		node = node.Parent
@@ -1844,6 +1890,10 @@ func isJSXTagName(node *Node) bool {
 	return false
 }
 
+func IsSuperCall(node *Node) bool {
+	return IsCallExpression(node) && node.AsCallExpression().Expression.Kind == KindSuperKeyword
+}
+
 func IsImportCall(node *Node) bool {
 	return IsCallExpression(node) && node.AsCallExpression().Expression.Kind == KindImportKeyword
 }
@@ -2031,7 +2081,7 @@ func IsBreakOrContinueStatement(node *Node) bool {
 // virtual `Parent` pointers that can be used to walk up the tree. Since `getModuleInstanceStateForAliasTarget` may
 // potentially walk up out of the provided `Node`, merely setting the parent pointers for a given `ModuleDeclaration`
 // prior to invoking `GetModuleInstanceState` is not sufficient. It is, however, necessary that the `Parent` pointers
-// for all ancestors of the `Node` provided to `GetModuleInstanceState` have ben set.
+// for all ancestors of the `Node` provided to `GetModuleInstanceState` have been set.
 
 // Push a virtual parent pointer onto `ancestors` and return it.
 func pushAncestor(ancestors []*Node, parent *Node) []*Node {

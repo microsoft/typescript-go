@@ -570,11 +570,12 @@ func (s *Scanner) Scan() ast.Kind {
 						s.pos += size
 					}
 				}
-				s.processCommentDirective(s.tokenStart, s.pos)
+				s.processCommentDirective(s.tokenStart, s.pos, false)
 				continue
 			}
 			if s.charAt(1) == '*' {
 				s.pos += 2
+				lastline := s.tokenStart
 				isJSDoc := s.char() == '*' && s.charAt(1) != '/'
 				for {
 					ch = s.char()
@@ -587,21 +588,25 @@ func (s *Scanner) Scan() ast.Kind {
 							s.pos += 2
 							break
 						}
+						s.pos++
 						if ch == '\r' || ch == '\n' {
+							lastline = s.pos
 							s.tokenFlags |= ast.TokenFlagsPrecedingLineBreak
 						}
-						s.pos++
 					} else {
 						commentCh, size := s.charAndSize()
+						s.pos += size
 						if stringutil.IsLineBreak(commentCh) {
+							lastline = s.pos
 							s.tokenFlags |= ast.TokenFlagsPrecedingLineBreak
 						}
-						s.pos += size
 					}
 				}
 				if isJSDoc && s.shouldParseJSDoc() {
 					s.tokenFlags |= ast.TokenFlagsPrecedingJSDocComment
 				}
+
+				s.processCommentDirective(lastline, s.pos, true)
 				continue
 			}
 			if s.charAt(1) == '=' {
@@ -858,9 +863,17 @@ func (s *Scanner) Scan() ast.Kind {
 	}
 }
 
-func (s *Scanner) processCommentDirective(start int, end int) {
+func (s *Scanner) processCommentDirective(start int, end int, multiline bool) {
 	// Skip starting slashes and whitespace
-	pos := start + 2
+	pos := start
+	if multiline {
+		for pos < len(s.text) && (s.text[pos] == '*' || s.text[pos] == '/') {
+			pos++
+		}
+	} else {
+		// Skip "//" for single line comments
+		pos += 2
+	}
 	for pos < len(s.text) && (s.text[pos] == ' ' || s.text[pos] == '\t') {
 		pos++
 	}
@@ -1647,9 +1660,14 @@ func (s *Scanner) scanNumber() ast.Kind {
 				s.tokenFlags |= ast.TokenFlagsContainsLeadingZero
 				fixedPart = digits
 			} else {
+				s.tokenValue = jsnum.FromString(digits).String()
 				s.tokenFlags |= ast.TokenFlagsOctal
-				s.tokenValue = "0o" + digits
-				s.errorAt(diagnostics.Octal_literals_are_not_allowed_Use_the_syntax_0, start, s.pos-start, digits)
+				withMinus := s.token == ast.KindMinusToken
+				literal := core.IfElse(withMinus, "-", "") + "0o" + s.tokenValue
+				if withMinus {
+					start--
+				}
+				s.errorAt(diagnostics.Octal_literals_are_not_allowed_Use_the_syntax_0, start, s.pos-start, literal)
 				return ast.KindNumericLiteral
 			}
 		}
@@ -1849,14 +1867,6 @@ func (s *Scanner) scanBigIntSuffix() ast.Kind {
 		s.tokenValue += "n"
 		// !!! Convert all bigint tokens to their normalized decimal representation
 		return ast.KindBigIntLiteral
-	}
-	// !!! Once core.StringToNumber supports parsing of non-decimal values we should also convert non-decimal
-	// tokens to their normalized decimal representation
-	if len(s.tokenValue) >= 2 {
-		firstTwo := s.tokenValue[:2]
-		if firstTwo == "0x" || firstTwo == "0o" || firstTwo == "0b" {
-			return ast.KindNumericLiteral
-		}
 	}
 	s.tokenValue = jsnum.FromString(s.tokenValue).String()
 	return ast.KindNumericLiteral
