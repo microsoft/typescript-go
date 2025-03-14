@@ -90,7 +90,7 @@ func getTokenAtPosition(
 				left = nodeList.End()
 			} else if nodeList.Pos() <= position {
 				nodes := nodeList.Nodes
-				index, match := core.BinarySearchUniqueFunc(nodes, position, func(middle int, node *ast.Node) int {
+				index, match := core.BinarySearchUniqueFunc(nodes, func(middle int, node *ast.Node) int {
 					if node.Flags&ast.NodeFlagsReparsed != 0 {
 						return 0
 					}
@@ -105,7 +105,7 @@ func getTokenAtPosition(
 					nodes = core.Filter(nodes, func(node *ast.Node) bool {
 						return node.Flags&ast.NodeFlagsReparsed == 0
 					})
-					index, match = core.BinarySearchUniqueFunc(nodes, position, func(middle int, node *ast.Node) int {
+					index, match = core.BinarySearchUniqueFunc(nodes, func(middle int, node *ast.Node) int {
 						cmp := testNode(node)
 						if cmp < 0 {
 							left = node.End()
