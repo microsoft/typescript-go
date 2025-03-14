@@ -2856,6 +2856,8 @@ func (c *Checker) checkObjectTypeForDuplicateDeclarations(node *ast.Node, checkP
 				names = privateNames
 			}
 			if prev := names[symbol.Name]; prev != 0 {
+				// Check that each private identifier is used only for instance members or only for static members. It is an
+				// error for an instance and a static member to have the same private identifier.
 				if (prev & DeclarationMeaningPrivateStatic) != (meaning & DeclarationMeaningPrivateStatic) {
 					c.error(location, diagnostics.Duplicate_identifier_0_Static_and_instance_elements_cannot_share_the_same_private_name, c.symbolToString(symbol))
 				} else {
