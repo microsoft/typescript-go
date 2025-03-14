@@ -1,0 +1,36 @@
+--- old.functionType.types
++++ new.functionType.types
+@@= skipped -2, +2 lines =@@
+ === functionType.ts ===
+ function salt() {}
+ >salt : () => void
+->     : ^^^^^^^^^^
+ 
+ salt.apply("hello", []);
+ >salt.apply("hello", []) : any
+->salt.apply : (this: Function, thisArg: any, argArray?: any) => any
+->           : ^    ^^        ^^       ^^   ^^        ^^^   ^^^^^   
++>salt.apply : (thisArg: any, argArray?: any) => any
+ >salt : () => void
+->     : ^^^^^^^^^^
+->apply : (this: Function, thisArg: any, argArray?: any) => any
+->      : ^    ^^        ^^       ^^   ^^        ^^^   ^^^^^   
++>apply : (thisArg: any, argArray?: any) => any
+ >"hello" : "hello"
+->        : ^^^^^^^
+ >[] : undefined[]
+->   : ^^^^^^^^^^^
+ 
+ (new Function("return 5"))();
+ >(new Function("return 5"))() : any
+ >(new Function("return 5")) : Function
+->                           : ^^^^^^^^
+ >new Function("return 5") : Function
+->                         : ^^^^^^^^
+ >Function : FunctionConstructor
+->         : ^^^^^^^^^^^^^^^^^^^
+ >"return 5" : "return 5"
+->           : ^^^^^^^^^^
+  
+  
+ 

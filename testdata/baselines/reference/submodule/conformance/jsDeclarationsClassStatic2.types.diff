@@ -1,0 +1,55 @@
+--- old.jsDeclarationsClassStatic2.types
++++ new.jsDeclarationsClassStatic2.types
+@@= skipped -2, +2 lines =@@
+ === Foo.js ===
+ class Base {
+ >Base : Base
+->     : ^^^^
+ 
+   static foo = "";
+ >foo : string
+->    : ^^^^^^
+ >"" : ""
+->   : ^^
+ }
+ export class Foo extends Base {}
+ >Foo : Foo
+->    : ^^^
+ >Base : Base
+->     : ^^^^
+ 
+ Foo.foo = "foo";
+ >Foo.foo = "foo" : "foo"
+->                : ^^^^^
+ >Foo.foo : string
+->        : ^^^^^^
+ >Foo : typeof Foo
+->    : ^^^^^^^^^^
+ >foo : string
+->    : ^^^^^^
+ >"foo" : "foo"
+->      : ^^^^^
+ 
+ === Bar.ts ===
+ import { Foo } from "./Foo.js";
+ >Foo : typeof Foo
+->    : ^^^^^^^^^^
+ 
+ class Bar extends Foo {}
+ >Bar : Bar
+->    : ^^^
+ >Foo : Foo
+->    : ^^^
+ 
+ Bar.foo = "foo";
+ >Bar.foo = "foo" : "foo"
+->                : ^^^^^
+ >Bar.foo : string
+->        : ^^^^^^
+ >Bar : typeof Bar
+->    : ^^^^^^^^^^
+ >foo : string
+->    : ^^^^^^
+ >"foo" : "foo"
+->      : ^^^^^
+ 

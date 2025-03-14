@@ -1,0 +1,29 @@
+--- old.argumentsReferenceInMethod6_Js.types
++++ new.argumentsReferenceInMethod6_Js.types
+@@= skipped -2, +2 lines =@@
+ === /a.js ===
+ class A {
+ >A : A
+->  : ^
+ 
+ 	m() {
+->m : (...args: any[]) => void
+->  : ^^^^^^^^^^^^^^^^^^^^^^^^
++>m : () => void
+ 
+ 		/**
+ 		 * @type object
+ 		 */
+ 		this.foo = arguments;
+ >this.foo = arguments : IArguments
+->                     : ^^^^^^^^^^
+ >this.foo : any
+ >this : this
+->     : ^^^^
+ >foo : any
+->    : ^^^
+ >arguments : IArguments
+->          : ^^^^^^^^^^
+ 	}
+ }
+ 

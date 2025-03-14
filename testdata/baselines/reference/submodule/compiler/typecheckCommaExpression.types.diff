@@ -1,0 +1,14 @@
+--- old.typecheckCommaExpression.types
++++ new.typecheckCommaExpression.types
+@@= skipped -2, +2 lines =@@
+ === typecheckCommaExpression.ts ===
+ (a, b)
+ >(a, b) : any
+->       : ^^^
+ >a, b : any
+->     : ^^^
+ >a : any
+->  : ^^^
+ >b : any
+->  : ^^^
+ 

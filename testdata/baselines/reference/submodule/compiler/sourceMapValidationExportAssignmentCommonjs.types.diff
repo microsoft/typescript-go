@@ -1,0 +1,15 @@
+--- old.sourceMapValidationExportAssignmentCommonjs.types
++++ new.sourceMapValidationExportAssignmentCommonjs.types
+@@= skipped -2, +2 lines =@@
+ === sourceMapValidationExportAssignmentCommonjs.ts ===
+ class a {
+ >a : a
+->  : ^
+ 
+     public c;
+ >c : any
+ }
+ export = a;
+ >a : a
+->  : ^
+ 

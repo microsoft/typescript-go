@@ -1,0 +1,15 @@
+--- old.globalThisGlobalExportAsGlobal.types
++++ new.globalThisGlobalExportAsGlobal.types
+@@= skipped -3, +3 lines =@@
+ // https://github.com/microsoft/TypeScript/issues/33754
+ declare global {
+ >global : typeof global
+->       : ^^^^^^^^^^^^^
+ 
+     export { globalThis as global }
+ >globalThis : typeof globalThis
+->           : ^^^^^^^^^^^^^^^^^
+ >global : typeof globalThis
+->       : ^^^^^^^^^^^^^^^^^
+ }
+ 

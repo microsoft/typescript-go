@@ -1,0 +1,16 @@
+--- old.parserGreaterThanTokenAmbiguity3.types
++++ new.parserGreaterThanTokenAmbiguity3.types
+@@= skipped -2, +2 lines =@@
+ === parserGreaterThanTokenAmbiguity3.ts ===
+ 1 >/**/> 2;
+ >1 >/**/> 2 : boolean
+->           : ^^^^^^^
+ >1 > : boolean
+->    : ^^^^^^^
+ >1 : 1
+->  : ^
+ > : any
+-> : ^^^
+ >2 : 2
+->  : ^
+ 

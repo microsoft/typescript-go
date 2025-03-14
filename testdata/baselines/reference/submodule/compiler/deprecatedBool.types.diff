@@ -1,0 +1,12 @@
+--- old.deprecatedBool.types
++++ new.deprecatedBool.types
+@@= skipped -2, +2 lines =@@
+ === deprecatedBool.ts ===
+ var b4: boolean;
+ >b4 : boolean
+->   : ^^^^^^^
+ 
+ var bool: boolean;
+ >bool : boolean
+->     : ^^^^^^^
+ 

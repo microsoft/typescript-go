@@ -1,0 +1,9 @@
+--- old.parserParameterList12.types
++++ new.parserParameterList12.types
+@@= skipped -2, +2 lines =@@
+ === parserParameterList12.ts ===
+ function F(a,) {
+ >F : (a: any) => void
+->  : ^ ^^^^^^^^^^^^^^
+ >a : any
+ }

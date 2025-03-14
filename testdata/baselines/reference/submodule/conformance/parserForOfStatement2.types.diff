@@ -1,0 +1,8 @@
+--- old.parserForOfStatement2.types
++++ new.parserForOfStatement2.types
+@@= skipped -2, +2 lines =@@
+ === parserForOfStatement2.ts ===
+ for (var of X) {
+ >X : any
+->  : ^^^
+ }

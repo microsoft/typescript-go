@@ -1,0 +1,20 @@
+--- old.emitRestParametersFunction.types
++++ new.emitRestParametersFunction.types
+@@= skipped -2, +2 lines =@@
+ === emitRestParametersFunction.ts ===
+ function bar(...rest) { }
+ >bar : (...rest: any[]) => void
+->    : ^^^^    ^^^^^^^^^^^^^^^^
+ >rest : any[]
+->     : ^^^^^
+ 
+ function foo(x: number, y: string, ...rest) { }
+ >foo : (x: number, y: string, ...rest: any[]) => void
+->    : ^ ^^      ^^ ^^      ^^^^^    ^^^^^^^^^^^^^^^^
+ >x : number
+->  : ^^^^^^
+ >y : string
+->  : ^^^^^^
+ >rest : any[]
+->     : ^^^^^
+ 

@@ -1,0 +1,14 @@
+--- old.declarationEmitPrivateAsync.types
++++ new.declarationEmitPrivateAsync.types
+@@= skipped -2, +2 lines =@@
+ === declarationEmitPrivateAsync.ts ===
+ export class Foo {
+ >Foo : Foo
+->    : ^^^
+ 
+     private async baz() {
+ >baz : () => Promise<void>
+->    : ^^^^^^^^^^^^^^^^^^^
+ 
+         return;
+     }

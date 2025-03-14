@@ -1,0 +1,18 @@
+--- old.errorForConflictingExportEqualsValue.types
++++ new.errorForConflictingExportEqualsValue.types
+@@= skipped -2, +2 lines =@@
+ === /a.ts ===
+ export var x;
+ >x : any
+->  : ^^^
+ 
+ export = x;
+ >x : any
+->  : ^^^
+ 
+ import("./a");
+ >import("./a") : Promise<any>
+->              : ^^^^^^^^^^^^
+ >"./a" : "./a"
+->      : ^^^^^
+ 

@@ -1,0 +1,10 @@
+--- old.parser_continueInIterationStatement1.types
++++ new.parser_continueInIterationStatement1.types
+@@= skipped -2, +2 lines =@@
+ === parser_continueInIterationStatement1.ts ===
+ while (true) {
+ >true : true
+->     : ^^^^
+ 
+   continue;
+ }

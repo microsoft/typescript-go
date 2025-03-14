@@ -1,0 +1,10 @@
+--- old.noCheckDoesNotReportError.types
++++ new.noCheckDoesNotReportError.types
+@@= skipped -2, +2 lines =@@
+ === noCheckDoesNotReportError.ts ===
+ export const a: number = "not ok";
+ >a : number
+->  : ^^^^^^
+ >"not ok" : "not ok"
+->         : ^^^^^^^^
+ 

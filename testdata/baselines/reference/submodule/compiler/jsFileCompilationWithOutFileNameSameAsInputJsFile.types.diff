@@ -1,0 +1,15 @@
+--- old.jsFileCompilationWithOutFileNameSameAsInputJsFile.types
++++ new.jsFileCompilationWithOutFileNameSameAsInputJsFile.types
+@@= skipped -2, +2 lines =@@
+ === /a.ts ===
+ class c {
+ >c : c
+->  : ^
+ }
+ 
+ === /b.js ===
+ function foo() {
+ >foo : () => void
+->    : ^^^^^^^^^^
+ }
+ 

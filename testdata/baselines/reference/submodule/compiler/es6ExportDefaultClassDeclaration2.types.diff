@@ -1,0 +1,9 @@
+--- old.es6ExportDefaultClassDeclaration2.types
++++ new.es6ExportDefaultClassDeclaration2.types
+@@= skipped -3, +3 lines =@@
+ export default class {
+     method() { }
+ >method : () => void
+->       : ^^^^^^^^^^
+ }
+ 

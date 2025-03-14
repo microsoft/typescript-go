@@ -1,0 +1,29 @@
+--- old.indexer2.types
++++ new.indexer2.types
+@@= skipped -1, +1 lines =@@
+ 
+ === indexer2.ts ===
+ interface IHeapObjectProperty {}
++>IHeapObjectProperty : IHeapObjectProperty
++
+ interface IDirectChildrenMap { 
++>IDirectChildrenMap : IDirectChildrenMap
++
+         hasOwnProperty(objectId: number) : boolean; 
+ >hasOwnProperty : (objectId: number) => boolean
+->               : ^        ^^      ^^^^^       
+ >objectId : number
+->         : ^^^^^^
+ 
+         [objectId: number] : IHeapObjectProperty[]; 
+ >objectId : number
+->         : ^^^^^^
+ }    
+ var directChildrenMap = <IDirectChildrenMap>{}; 
+ >directChildrenMap : IDirectChildrenMap
+->                  : ^^^^^^^^^^^^^^^^^^
+ ><IDirectChildrenMap>{} : IDirectChildrenMap
+->                       : ^^^^^^^^^^^^^^^^^^
+ >{} : {}
+->   : ^^
+ 

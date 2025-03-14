@@ -1,0 +1,98 @@
+--- old.nestedBlockScopedBindings1.types
++++ new.nestedBlockScopedBindings1.types
+@@= skipped -2, +2 lines =@@
+ === nestedBlockScopedBindings1.ts ===
+ function a0() {
+ >a0 : () => void
+->   : ^^^^^^^^^^
+     {
+         let x = 1;
+ >x : number
+->  : ^^^^^^
+ >1 : 1
+->  : ^
+     }
+     {
+         let x = 1;
+ >x : number
+->  : ^^^^^^
+ >1 : 1
+->  : ^
+     }
+ }
+ 
+ function a1() {
+ >a1 : () => void
+->   : ^^^^^^^^^^
+     {
+         let x;
+ >x : any
+@@= skipped -27, +21 lines =@@
+     {
+         let x = 1;
+ >x : number
+->  : ^^^^^^
+ >1 : 1
+->  : ^
+     }
+ }
+ 
+ function a2() {
+ >a2 : () => void
+->   : ^^^^^^^^^^
+     {
+         let x = 1;
+ >x : number
+->  : ^^^^^^
+ >1 : 1
+->  : ^
+     }
+     {
+         let x;
+@@= skipped -24, +19 lines =@@
+ 
+ function a3() {
+ >a3 : () => void
+->   : ^^^^^^^^^^
+     {
+         let x = 1;
+ >x : number
+->  : ^^^^^^
+ >1 : 1
+->  : ^
+     }
+     switch (1) {
+ >1 : 1
+->  : ^
+ 
+         case 1:
+ >1 : 1
+->  : ^
+ 
+             let x;
+ >x : any
+@@= skipped -26, +21 lines =@@
+ 
+ function a4() {
+ >a4 : () => void
+->   : ^^^^^^^^^^
+     {
+         let x;
+ >x : any
+     }
+     switch (1) {
+ >1 : 1
+->  : ^
+ 
+         case 1:
+ >1 : 1
+->  : ^
+ 
+             let x = 1;
+ >x : number
+->  : ^^^^^^
+ >1 : 1
+->  : ^
+ 
+             break;
+     }

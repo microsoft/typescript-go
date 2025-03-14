@@ -1,0 +1,12 @@
+--- old.parserForOfStatement14.types
++++ new.parserForOfStatement14.types
+@@= skipped -2, +2 lines =@@
+ === parserForOfStatement14.ts ===
+ for (let [a, b] of X) {
+ >a : any
+->  : ^^^
+ >b : any
+->  : ^^^
+ >X : any
+->  : ^^^
+ }

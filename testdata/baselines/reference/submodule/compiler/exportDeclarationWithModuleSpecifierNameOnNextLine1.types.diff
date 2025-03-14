@@ -1,0 +1,35 @@
+--- old.exportDeclarationWithModuleSpecifierNameOnNextLine1.types
++++ new.exportDeclarationWithModuleSpecifierNameOnNextLine1.types
+@@= skipped -2, +2 lines =@@
+ === t1.ts ===
+ export var x = "x";
+ >x : string
+->  : ^^^^^^
+ >"x" : "x"
+->    : ^^^
+ 
+ === t2.ts ===
+ export { x } from
+ >x : string
+->  : ^^^^^^
+ 
+     "./t1";
+ 
+@@= skipped -19, +16 lines =@@
+ === t4.ts ===
+ export { x as a } from
+ >x : string
+->  : ^^^^^^
+ >a : string
+->  : ^^^^^^
+ 
+     "./t1";
+ 
+ === t5.ts ===
+ export { x as a, } from
+ >x : string
+->  : ^^^^^^
+ >a : string
+->  : ^^^^^^
+ 
+     "./t1";

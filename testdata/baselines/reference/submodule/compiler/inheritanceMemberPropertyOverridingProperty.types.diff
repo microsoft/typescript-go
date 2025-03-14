@@ -1,0 +1,23 @@
+--- old.inheritanceMemberPropertyOverridingProperty.types
++++ new.inheritanceMemberPropertyOverridingProperty.types
+@@= skipped -2, +2 lines =@@
+ === inheritanceMemberPropertyOverridingProperty.ts ===
+ class a {
+ >a : a
+->  : ^
+ 
+     x: () => string;
+ >x : () => string
+->  : ^^^^^^      
+ }
+ 
+ class b extends a {
+ >b : b
+->  : ^
+ >a : a
+->  : ^
+ 
+     x: () => string;
+ >x : () => string
+->  : ^^^^^^      
+ }

@@ -1,0 +1,71 @@
+--- old.nodeModulesAllowJsExportAssignment(module=node16).types
++++ new.nodeModulesAllowJsExportAssignment(module=node16).types
+@@= skipped -3, +3 lines =@@
+ // cjs format file
+ const a = {};
+ >a : {}
+->  : ^^
+ >{} : {}
+->   : ^^
+ 
+ export = a;
+ >a : {}
+->  : ^^
+ 
+ === subfolder/file.js ===
+ // cjs format file
+ const a = {};
+ >a : {}
+->  : ^^
+ >{} : {}
+->   : ^^
+ 
+ module.exports = a;
+ >module.exports = a : {}
+->                   : ^^
+->module.exports : {}
+->               : ^^
+->module : { exports: {}; }
+->       : ^^^^^^^^^^^^^^^^
+->exports : {}
+->        : ^^
++>module.exports : any
++>module : any
++>exports : any
+ >a : {}
+->  : ^^
+ 
+ === index.js ===
+ // esm format file
+ const a = {};
+ >a : {}
+->  : ^^
+ >{} : {}
+->   : ^^
+ 
+ export = a;
+ >a : {}
+->  : ^^
+ 
+ === file.js ===
+ // esm format file
+ import "fs";
+ const a = {};
+ >a : {}
+->  : ^^
+ >{} : {}
+->   : ^^
+ 
+ module.exports = a;
+->module.exports = a : any
+->                   : ^^^
++>module.exports = a : {}
+ >module.exports : any
+->               : ^^^
+ >module : any
+->       : ^^^
+ >exports : any
+->        : ^^^
+ >a : {}
+->  : ^^
+ 

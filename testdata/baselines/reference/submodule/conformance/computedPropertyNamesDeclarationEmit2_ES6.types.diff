@@ -1,0 +1,40 @@
+--- old.computedPropertyNamesDeclarationEmit2_ES6.types
++++ new.computedPropertyNamesDeclarationEmit2_ES6.types
+@@= skipped -2, +2 lines =@@
+ === computedPropertyNamesDeclarationEmit2_ES6.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+     static ["" + ""]() { }
+ >["" + ""] : () => void
+->          : ^^^^^^^^^^
+ >"" + "" : string
+->        : ^^^^^^
+ >"" : ""
+->   : ^^
+ >"" : ""
+->   : ^^
+ 
+     static get ["" + ""]() { return 0; }
+ >["" + ""] : number
+->          : ^^^^^^
+ >"" + "" : string
+->        : ^^^^^^
+ >"" : ""
+->   : ^^
+ >"" : ""
+->   : ^^
+ >0 : 0
+->  : ^
+ 
+     static set ["" + ""](x) { }
+ >["" + ""] : any
+ >"" + "" : string
+->        : ^^^^^^
+ >"" : ""
+->   : ^^
+ >"" : ""
+->   : ^^
+ >x : any
+ }

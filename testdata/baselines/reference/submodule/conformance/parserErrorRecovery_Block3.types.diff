@@ -1,0 +1,17 @@
+--- old.parserErrorRecovery_Block3.types
++++ new.parserErrorRecovery_Block3.types
+@@= skipped -2, +2 lines =@@
+ === parserErrorRecovery_Block3.ts ===
+ class C  {
+ >C : C
+->  : ^
+ 
+     private a(): boolean {
+ >a : () => boolean
+->  : ^^^^^^       
+ 
+     private b(): boolean {
+ >b : () => boolean
+->  : ^^^^^^       
+     }
+ }

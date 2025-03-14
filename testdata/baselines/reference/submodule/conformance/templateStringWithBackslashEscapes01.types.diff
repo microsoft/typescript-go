@@ -1,0 +1,31 @@
+--- old.templateStringWithBackslashEscapes01.types
++++ new.templateStringWithBackslashEscapes01.types
+@@= skipped -2, +2 lines =@@
+ === templateStringWithBackslashEscapes01.ts ===
+ var a = `hello\world`;
+ >a : string
+->  : ^^^^^^
+ >`hello\world` : "helloworld"
+->              : ^^^^^^^^^^^^
+ 
+ var b = `hello\\world`;
+ >b : string
+->  : ^^^^^^
+->`hello\\world` : "hello\\world"
+->               : ^^^^^^^^^^^^^^
++>`hello\\world` : "hello\world"
+ 
+ var c = `hello\\\world`;
+ >c : string
+->  : ^^^^^^
+->`hello\\\world` : "hello\\world"
+->                : ^^^^^^^^^^^^^^
++>`hello\\\world` : "hello\world"
+ 
+ var d = `hello\\\\world`;
+ >d : string
+->  : ^^^^^^
+->`hello\\\\world` : "hello\\\\world"
+->                 : ^^^^^^^^^^^^^^^^
++>`hello\\\\world` : "hello\\world"
+ 

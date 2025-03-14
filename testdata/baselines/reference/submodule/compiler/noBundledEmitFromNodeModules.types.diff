@@ -1,0 +1,13 @@
+--- old.noBundledEmitFromNodeModules.types
++++ new.noBundledEmitFromNodeModules.types
+@@= skipped -2, +2 lines =@@
+ === /a.ts ===
+ import { C } from "projB";
+ >C : typeof C
+->  : ^^^^^^^^
+ 
+ === /node_modules/projB/index.ts ===
+ export class C {}
+ >C : C
+->  : ^
+ 

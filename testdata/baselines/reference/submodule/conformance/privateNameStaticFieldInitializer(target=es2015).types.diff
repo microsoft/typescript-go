@@ -1,0 +1,16 @@
+--- old.privateNameStaticFieldInitializer(target=es2015).types
++++ new.privateNameStaticFieldInitializer(target=es2015).types
+@@= skipped -2, +2 lines =@@
+ === privateNameStaticFieldInitializer.ts ===
+ class A {
+ >A : A
+->  : ^
+ 
+     static #field = 10;
+ >#field : number
+->       : ^^^^^^
+ >10 : 10
+->   : ^^
+ 
+     static #uninitialized;
+ >#uninitialized : any

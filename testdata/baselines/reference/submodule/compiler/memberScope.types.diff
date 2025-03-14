@@ -1,0 +1,27 @@
+--- old.memberScope.types
++++ new.memberScope.types
+@@= skipped -2, +2 lines =@@
+ === memberScope.ts ===
+ module Salt {
+ >Salt : typeof Salt
+->     : ^^^^^^^^^^^
+ 
+   export class Pepper {}
+ >Pepper : Pepper
+->       : ^^^^^^
+ 
+   export module Basil { }
++>Basil : any
++
+   var z = Basil.Pepper;
+ >z : any
+->  : ^^^
+ >Basil.Pepper : any
+->             : ^^^
+ >Basil : any
+->      : ^^^
+ >Pepper : any
+->       : ^^^
+ }
+ 
+ 

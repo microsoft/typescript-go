@@ -1,0 +1,14 @@
+--- old.parserStrictMode15.types
++++ new.parserStrictMode15.types
+@@= skipped -2, +2 lines =@@
+ === parserStrictMode15.ts ===
+ "use strict";
+ >"use strict" : "use strict"
+->             : ^^^^^^^^^^^^
+ 
+ delete a;
+ >delete a : boolean
+->         : ^^^^^^^
+ >a : any
+->  : ^^^
+ 

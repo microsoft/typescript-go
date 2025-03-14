@@ -1,0 +1,32 @@
+--- old.conditionalExpressionNewLine8.types
++++ new.conditionalExpressionNewLine8.types
+@@= skipped -2, +2 lines =@@
+ === conditionalExpressionNewLine8.ts ===
+ var v = a 
+ >v : any
+->  : ^^^
+ >a   ? b ? d : e  : c ? f : g : any
+->                             : ^^^
+ >a : any
+->  : ^^^
+ 
+   ? b ? d : e
+ >b ? d : e : any
+->          : ^^^
+ >b : any
+->  : ^^^
+ >d : any
+->  : ^^^
+ >e : any
+->  : ^^^
+ 
+   : c ? f : g;
+ >c ? f : g : any
+->          : ^^^
+ >c : any
+->  : ^^^
+ >f : any
+->  : ^^^
+ >g : any
+->  : ^^^
+ 

@@ -1,0 +1,10 @@
+--- old.anyAsFunctionCall.types
++++ new.anyAsFunctionCall.types
+@@= skipped -16, +16 lines =@@
+ >x('hello') : any
+ >x : any
+ >'hello' : "hello"
+->        : ^^^^^^^
+ 
+ var c = x(x);
+ >c : any

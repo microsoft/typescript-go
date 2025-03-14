@@ -1,0 +1,12 @@
+--- old.parserForInStatement4.types
++++ new.parserForInStatement4.types
+@@= skipped -2, +2 lines =@@
+ === parserForInStatement4.ts ===
+ for (var a = 1 in X) {
+ >a : string
+->  : ^^^^^^
+ >1 : 1
+->  : ^
+ >X : any
+->  : ^^^
+ }

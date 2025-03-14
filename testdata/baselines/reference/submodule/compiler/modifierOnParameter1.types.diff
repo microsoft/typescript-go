@@ -1,0 +1,12 @@
+--- old.modifierOnParameter1.types
++++ new.modifierOnParameter1.types
+@@= skipped -2, +2 lines =@@
+ === modifierOnParameter1.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+    constructor(declare p) { }
+ >p : any
+->  : ^^^
+ }

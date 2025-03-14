@@ -1,0 +1,12 @@
+--- old.noErrorUsingImportExportModuleAugmentationInDeclarationFile1.types
++++ new.noErrorUsingImportExportModuleAugmentationInDeclarationFile1.types
+@@= skipped -2, +2 lines =@@
+ === 0.d.ts ===
+ export = a;
+ >a : number
+->  : ^^^^^^
+ 
+ declare var a: number;
+ >a : number
+->  : ^^^^^^
+ 

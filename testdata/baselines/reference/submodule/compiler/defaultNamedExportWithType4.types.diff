@@ -1,0 +1,18 @@
+--- old.defaultNamedExportWithType4.types
++++ new.defaultNamedExportWithType4.types
+@@= skipped -1, +1 lines =@@
+ 
+ === defaultNamedExportWithType4.ts ===
+ interface Foo {}
++>Foo : Foo
++
+ const Foo = {};
+ >Foo : {}
+->    : ^^
+ >{} : {}
+->   : ^^
+ 
+ export default Foo;
+ >Foo : Foo
+->    : ^^^
+ 

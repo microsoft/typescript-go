@@ -1,0 +1,14 @@
+--- old.exportEqualsAmd.types
++++ new.exportEqualsAmd.types
+@@= skipped -2, +2 lines =@@
+ === exportEqualsAmd.ts ===
+ export = { ["hi"]: "there" };
+ >{ ["hi"]: "there" } : { hi: string; }
+->                    : ^^^^^^^^^^^^^^^
+ >["hi"] : string
+->       : ^^^^^^
+ >"hi" : "hi"
+->     : ^^^^
+ >"there" : "there"
+->        : ^^^^^^^
+ 

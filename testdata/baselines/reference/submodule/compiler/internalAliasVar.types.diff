@@ -1,0 +1,34 @@
+--- old.internalAliasVar.types
++++ new.internalAliasVar.types
+@@= skipped -2, +2 lines =@@
+ === internalAliasVar.ts ===
+ module a {
+ >a : typeof a
+->  : ^^^^^^^^
+ 
+     export var x = 10;
+ >x : number
+->  : ^^^^^^
+ >10 : 10
+->   : ^^
+ }
+ 
+ module c {
+ >c : typeof c
+->  : ^^^^^^^^
+ 
+     import b = a.x;
+ >b : number
+->  : ^^^^^^
+ >a : typeof a
+->  : ^^^^^^^^
+ >x : number
+->  : ^^^^^^
+ 
+     export var bVal = b;
+ >bVal : number
+->     : ^^^^^^
+ >b : number
+->  : ^^^^^^
+ }
+ 

@@ -1,0 +1,10 @@
+--- old.parser509677.types
++++ new.parser509677.types
+@@= skipped -2, +2 lines =@@
+ === parser509677.ts ===
+ var n: { y: string };
+ >n : { y: string; }
+->  : ^^^^^      ^^^
+ >y : string
+->  : ^^^^^^
+ 

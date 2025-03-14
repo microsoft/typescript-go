@@ -1,0 +1,16 @@
+--- old.noDuplicateJsdoc1.types
++++ new.noDuplicateJsdoc1.types
+@@= skipped -3, +3 lines =@@
+ /** doc */
+ const a = b = () => 0;
+ >a : () => number
+->  : ^^^^^^^^^^^^
+ >b = () => 0 : () => number
+->            : ^^^^^^^^^^^^
+ >b : any
+->  : ^^^
+ >() => 0 : () => number
+->        : ^^^^^^^^^^^^
+ >0 : 0
+->  : ^
+ 

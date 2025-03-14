@@ -1,0 +1,20 @@
+--- old.parserParameterList17.types
++++ new.parserParameterList17.types
+@@= skipped -2, +2 lines =@@
+ === parserParameterList17.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+    constructor(a = 4);
+ >a : number
+->  : ^^^^^^
+ >4 : 4
+->  : ^
+ 
+    constructor(a, b) { }
+ >a : any
+->  : ^^^
+ >b : any
+->  : ^^^
+ }

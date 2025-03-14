@@ -1,0 +1,10 @@
+--- old.optionsOutAndNoModuleGen.types
++++ new.optionsOutAndNoModuleGen.types
+@@= skipped -2, +2 lines =@@
+ === optionsOutAndNoModuleGen.ts ===
+ export var x = 10;
+ >x : number
+->  : ^^^^^^
+ >10 : 10
+->   : ^^
+ 

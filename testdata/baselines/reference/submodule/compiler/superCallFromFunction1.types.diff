@@ -1,0 +1,24 @@
+--- old.superCallFromFunction1.types
++++ new.superCallFromFunction1.types
+@@= skipped -2, +2 lines =@@
+ === superCallFromFunction1.ts ===
+ function foo() {
+ >foo : () => void
+->    : ^^^^^^^^^^
+ 
+     super(value => String(value));
+ >super(value => String(value)) : void
+->                              : ^^^^
+ >super : any
+->      : ^^^
+ >value => String(value) : (value: any) => string
+->                       : ^     ^^^^^^^^^^^^^^^^
+ >value : any
+->      : ^^^
+ >String(value) : string
+->              : ^^^^^^
+ >String : StringConstructor
+->       : ^^^^^^^^^^^^^^^^^
+ >value : any
+->      : ^^^
+ }

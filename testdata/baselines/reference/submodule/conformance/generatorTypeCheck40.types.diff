@@ -1,0 +1,16 @@
+--- old.generatorTypeCheck40.types
++++ new.generatorTypeCheck40.types
+@@= skipped -2, +2 lines =@@
+ === generatorTypeCheck40.ts ===
+ function* g() {
+ >g : () => Generator<number, void, unknown>
+->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+     class C extends (yield 0) { }
+ >C : C
+->  : ^
+ >(yield 0) : any
+ >yield 0 : any
+ >0 : 0
+->  : ^
+ }

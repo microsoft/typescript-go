@@ -1,0 +1,18 @@
+--- old.tsxDynamicTagName1.types
++++ new.tsxDynamicTagName1.types
+@@= skipped -2, +2 lines =@@
+ === tsxDynamicTagName1.tsx ===
+ var CustomTag = "h1";
+ >CustomTag : string
+->          : ^^^^^^
+ >"h1" : "h1"
+->     : ^^^^
+ 
+ <CustomTag> Hello World </CustomTag>  // No error
+-><CustomTag> Hello World </CustomTag> : error
++><CustomTag> Hello World </CustomTag> : any
+ >CustomTag : string
+->          : ^^^^^^
+ >CustomTag : string
+->          : ^^^^^^
+ 

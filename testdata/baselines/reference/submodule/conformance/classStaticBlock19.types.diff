@@ -1,0 +1,14 @@
+--- old.classStaticBlock19.types
++++ new.classStaticBlock19.types
+@@= skipped -2, +2 lines =@@
+ === classStaticBlock19.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+     @decorator
+ >decorator : any
+->          : ^^^
+ 
+     static {
+         // something

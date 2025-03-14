@@ -1,0 +1,8 @@
+--- old.parserWithStatement1.d.types
++++ new.parserWithStatement1.d.types
+@@= skipped -2, +2 lines =@@
+ === parserWithStatement1.d.ts ===
+ with (foo) {
+ >foo : any
+->    : ^^^
+ }

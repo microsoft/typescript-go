@@ -1,0 +1,8 @@
+--- old.moduleResolutionWithExtensions_notSupported3.types
++++ new.moduleResolutionWithExtensions_notSupported3.types
+@@= skipped -2, +2 lines =@@
+ === /a.ts ===
+ import jsx from "./jsx";
+ >jsx : any
+->    : ^^^
+ 

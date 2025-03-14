@@ -1,0 +1,13 @@
+--- old.exportDefaultParenthesizeES6.types
++++ new.exportDefaultParenthesizeES6.types
+@@= skipped -2, +2 lines =@@
+ === classexpr.ts ===
+ export default (class Foo {} as any);
+ >(class Foo {} as any) : any
+->                      : ^^^
+ >class Foo {} as any : any
+ >class Foo {} : typeof Foo
+->             : ^^^^^^^^^^
+ >Foo : typeof Foo
+->    : ^^^^^^^^^^
+ 

@@ -1,0 +1,8 @@
+--- old.parser_continueInIterationStatement2.types
++++ new.parser_continueInIterationStatement2.types
+@@= skipped -5, +5 lines =@@
+ }
+ while (true);
+ >true : true
+->     : ^^^^
+ 

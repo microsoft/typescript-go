@@ -1,0 +1,48 @@
+--- old.es5-asyncFunctionReturnStatements.types
++++ new.es5-asyncFunctionReturnStatements.types
+@@= skipped -10, +10 lines =@@
+ 
+ async function returnStatement0(): Promise<any> {
+ >returnStatement0 : () => Promise<any>
+->                 : ^^^^^^            
+ 
+     return;
+ }
+ 
+ async function returnStatement1(): Promise<any> {
+ >returnStatement1 : () => Promise<any>
+->                 : ^^^^^^            
+ 
+     return x;
+ >x : any
+@@= skipped -15, +13 lines =@@
+ 
+ async function returnStatement2(): Promise<any> {
+ >returnStatement2 : () => Promise<any>
+->                 : ^^^^^^            
+ 
+     return await x;
+ >await x : any
+@@= skipped -9, +8 lines =@@
+ 
+ async function returnStatement3(): Promise<any> {
+ >returnStatement3 : () => Promise<any>
+->                 : ^^^^^^            
+ 
+     { return; }
+ }
+ 
+ async function returnStatement4(): Promise<any> {
+ >returnStatement4 : () => Promise<any>
+->                 : ^^^^^^            
+ 
+     await x;
+ >await x : any
+@@= skipped -18, +16 lines =@@
+ 
+ async function returnStatement5(): Promise<any>{
+ >returnStatement5 : () => Promise<any>
+->                 : ^^^^^^            
+ 
+     { return await x; }
+ >await x : any

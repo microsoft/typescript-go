@@ -1,0 +1,10 @@
+--- old.parserVariableStatement1.d.types
++++ new.parserVariableStatement1.d.types
+@@= skipped -2, +2 lines =@@
+ === parserVariableStatement1.d.ts ===
+ var v = 1;
+ >v : number
+->  : ^^^^^^
+ >1 : 1
+->  : ^
+ 

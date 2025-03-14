@@ -1,0 +1,8 @@
+--- old.parserModuleDeclaration1.d.types
++++ new.parserModuleDeclaration1.d.types
+@@= skipped -2, +2 lines =@@
+ === parserModuleDeclaration1.d.ts ===
+ module "Foo" {
+ >"Foo" : typeof import("Foo")
+->      : ^^^^^^^^^^^^^^^^^^^^
+ }

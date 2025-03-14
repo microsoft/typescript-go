@@ -1,0 +1,34 @@
+--- old.contextuallyTypeLogicalAnd01.types
++++ new.contextuallyTypeLogicalAnd01.types
+@@= skipped -2, +2 lines =@@
+ === contextuallyTypeLogicalAnd01.ts ===
+ let x: (a: string) => string;
+ >x : (a: string) => string
+->  : ^ ^^      ^^^^^      
+ >a : string
+->  : ^^^^^^
+ 
+ let y = true;
+ >y : boolean
+->  : ^^^^^^^
+ >true : true
+->     : ^^^^
+ 
+ x = y && (a => a);
+ >x = y && (a => a) : (a: string) => string
+->                  : ^ ^^^^^^^^^^^^^^^^^^^
+ >x : (a: string) => string
+->  : ^ ^^      ^^^^^      
+ >y && (a => a) : (a: string) => string
+->              : ^ ^^^^^^^^^^^^^^^^^^^
+ >y : true
+->  : ^^^^
+ >(a => a) : (a: string) => string
+->         : ^ ^^^^^^^^^^^^^^^^^^^
+ >a => a : (a: string) => string
+->       : ^ ^^^^^^^^^^^^^^^^^^^
+ >a : string
+->  : ^^^^^^
+ >a : string
+->  : ^^^^^^
+ 

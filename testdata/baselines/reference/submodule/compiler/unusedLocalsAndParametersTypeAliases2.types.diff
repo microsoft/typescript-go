@@ -1,0 +1,26 @@
+--- old.unusedLocalsAndParametersTypeAliases2.types
++++ new.unusedLocalsAndParametersTypeAliases2.types
+@@= skipped -3, +3 lines =@@
+ // unused
+ type handler1 = () => void;
+ >handler1 : handler1
+->         : ^^^^^^^^
+ 
+ 
+ function foo() {
+ >foo : () => void
+->    : ^^^^^^^^^^
+ 
+     type handler2 = () => void;
+->handler2 : () => void
+->         : ^^^^^^    
++>handler2 : handler2
+ 
+     foo();
+ >foo() : void
+->      : ^^^^
+ >foo : () => void
+->    : ^^^^^^^^^^
+ }
+ 
+ export {}

@@ -1,0 +1,81 @@
+--- old.duplicateAnonymousModuleClasses.types
++++ new.duplicateAnonymousModuleClasses.types
+@@= skipped -2, +2 lines =@@
+ === duplicateAnonymousModuleClasses.ts ===
+ module F {
+ >F : typeof F
+->  : ^^^^^^^^
+ 
+     class Helper {
+ >Helper : Helper
+->       : ^^^^^^
+ 
+     }
+ 
+@@= skipped -13, +11 lines =@@
+ 
+ module F {
+ >F : typeof F
+->  : ^^^^^^^^
+     
+     // Should not be an error
+     class Helper {
+ >Helper : Helper
+->       : ^^^^^^
+ 
+     }
+ 
+@@= skipped -13, +11 lines =@@
+ 
+ module Foo {
+ >Foo : typeof Foo
+->    : ^^^^^^^^^^
+ 
+     class Helper {
+ >Helper : Helper
+->       : ^^^^^^
+ 
+     }
+ 
+@@= skipped -13, +11 lines =@@
+ 
+ module Foo {
+ >Foo : typeof Foo
+->    : ^^^^^^^^^^
+     
+     // Should not be an error
+     class Helper {
+ >Helper : Helper
+->       : ^^^^^^
+ 
+     }
+ 
+@@= skipped -13, +11 lines =@@
+ 
+ module Gar {
+ >Gar : typeof Gar
+->    : ^^^^^^^^^^
+ 
+     module Foo {
+ >Foo : typeof Foo
+->    : ^^^^^^^^^^
+ 
+         class Helper {
+ >Helper : Helper
+->       : ^^^^^^
+ 
+         }
+ 
+@@= skipped -17, +14 lines =@@
+ 
+     module Foo {
+ >Foo : typeof Foo
+->    : ^^^^^^^^^^
+     
+         // Should not be an error
+         class Helper {
+ >Helper : Helper
+->       : ^^^^^^
+ 
+         }
+ 

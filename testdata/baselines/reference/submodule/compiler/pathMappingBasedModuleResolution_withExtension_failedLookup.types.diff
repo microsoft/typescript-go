@@ -1,0 +1,8 @@
+--- old.pathMappingBasedModuleResolution_withExtension_failedLookup.types
++++ new.pathMappingBasedModuleResolution_withExtension_failedLookup.types
+@@= skipped -2, +2 lines =@@
+ === /a.ts ===
+ import { foo } from "foo";
+ >foo : any
+->    : ^^^
+ 

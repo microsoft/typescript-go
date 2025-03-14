@@ -1,0 +1,12 @@
+--- old.strictModeReservedWordInImportEqualDeclaration.types
++++ new.strictModeReservedWordInImportEqualDeclaration.types
+@@= skipped -2, +2 lines =@@
+ === strictModeReservedWordInImportEqualDeclaration.ts ===
+ "use strict"
+ >"use strict" : "use strict"
+->             : ^^^^^^^^^^^^
+ 
+ import public = require("1");
+ >public : any
+->       : ^^^
+ 

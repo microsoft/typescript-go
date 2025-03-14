@@ -1,0 +1,44 @@
+--- old.circularBaseConstraint.types
++++ new.circularBaseConstraint.types
+@@= skipped -0, +0 lines =@@
+ //// [tests/cases/compiler/circularBaseConstraint.ts] ////
+ 
+-=== Performance Stats ===
+-Instantiation count: 2,500
+-
+ === circularBaseConstraint.ts ===
+ // Repro from #54610
+ 
+ type A<T> = T;
+ >A : T
+->  : ^
++>T : T
+ 
+ type B<T> = T extends any[]
+ >B : B<T>
+->  : ^^^^
++>T : T
+ 
+     ? never
+     : A<T> extends infer key
++>key : key
++
+     ? key extends keyof T
+         ? B<T[key]>
+         : never
+@@= skipped -22, +21 lines =@@
+ 
+ function foo<T>() {
+ >foo : <T>() => void
+->    : ^ ^^^^^^^^^^^
++>T : T
+ 
+     `${a}` as B<T>;
+ >`${a}` as B<T> : B<T>
+->               : ^^^^
+ >`${a}` : string
+->       : ^^^^^^
+ >a : any
+->  : ^^^
+ }
+ 

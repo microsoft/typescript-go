@@ -1,0 +1,22 @@
+--- old.multipleExportDefault3.types
++++ new.multipleExportDefault3.types
+@@= skipped -2, +2 lines =@@
+ === multipleExportDefault3.ts ===
+ export default {
+ >{    uhoh: "another default",} : { uhoh: string; }
+->                               : ^^^^^^^^^^^^^^^^^
+ 
+     uhoh: "another default",
+ >uhoh : string
+->     : ^^^^^^
+ >"another default" : "another default"
+->                  : ^^^^^^^^^^^^^^^^^
+ 
+ };
+ 
+ export default class C { }
+->C : import("multipleExportDefault3").default
+->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++>C : default
+ 
+ 

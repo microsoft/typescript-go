@@ -1,0 +1,8 @@
+--- old.parserTryStatement1.d.types
++++ new.parserTryStatement1.d.types
+@@= skipped -4, +4 lines =@@
+ }
+ catch (e) {
+ >e : any
+->  : ^^^
+ }

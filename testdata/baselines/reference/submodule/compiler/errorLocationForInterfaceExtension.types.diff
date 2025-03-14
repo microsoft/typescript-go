@@ -1,0 +1,13 @@
+--- old.errorLocationForInterfaceExtension.types
++++ new.errorLocationForInterfaceExtension.types
+@@= skipped -2, +2 lines =@@
+ === errorLocationForInterfaceExtension.ts ===
+ var n = '';
+ >n : string
+->  : ^^^^^^
+ >'' : ""
+->   : ^^
+ 
+ interface x extends string { }
++>x : x
+ 

@@ -1,0 +1,92 @@
+--- old.typeOfThisInFunctionExpression.types
++++ new.typeOfThisInFunctionExpression.types
+@@= skipped -4, +4 lines =@@
+ 
+ function fn() {
+ >fn : () => void
+->   : ^^^^^^^^^^
+ 
+     var p = this;
+ >p : any
+@@= skipped -12, +11 lines =@@
+ 
+ var t = function () {
+ >t : () => void
+->  : ^^^^^^^^^^
+ >function () {    var p = this;    var p: any;} : () => void
+->                                               : ^^^^^^^^^^
+ 
+     var p = this;
+ >p : any
+@@= skipped -14, +12 lines =@@
+ 
+ var t2 = function f() {
+ >t2 : () => void
+->   : ^^^^^^^^^^
+ >function f() {    var x = this;    var x: any;} : () => void
+->                                                : ^^^^^^^^^^
+ >f : () => void
+->  : ^^^^^^^^^^
+ 
+     var x = this;
+ >x : any
+@@= skipped -16, +13 lines =@@
+ 
+ class C {
+ >C : C
+->  : ^
+ 
+     x = function () {
+ >x : () => void
+->  : ^^^^^^^^^^
+ >function () {        var q: any;        var q = this;    } : () => void
+->                                                           : ^^^^^^^^^^
+ 
+         var q: any;
+ >q : any
+@@= skipped -17, +14 lines =@@
+     }
+     y = function ff() {
+ >y : () => void
+->  : ^^^^^^^^^^
+ >function ff() {        var q: any;        var q = this;    } : () => void
+->                                                             : ^^^^^^^^^^
+ >ff : () => void
+->   : ^^^^^^^^^^
+ 
+         var q: any;
+ >q : any
+@@= skipped -17, +14 lines =@@
+ 
+ module M {
+ >M : typeof M
+->  : ^^^^^^^^
+ 
+     function fn() {
+ >fn : () => void
+->   : ^^^^^^^^^^
+ 
+         var p = this;
+ >p : any
+@@= skipped -16, +14 lines =@@
+ 
+     var t = function () {
+ >t : () => void
+->  : ^^^^^^^^^^
+ >function () {        var p = this;        var p: any;    } : () => void
+->                                                           : ^^^^^^^^^^
+ 
+         var p = this;
+ >p : any
+@@= skipped -14, +12 lines =@@
+ 
+     var t2 = function f() {
+ >t2 : () => void
+->   : ^^^^^^^^^^
+ >function f() {        var x = this;        var x: any;    } : () => void
+->                                                            : ^^^^^^^^^^
+ >f : () => void
+->  : ^^^^^^^^^^
+ 
+         var x = this;
+ >x : any

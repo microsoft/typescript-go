@@ -1,0 +1,56 @@
+--- old.unaryOperatorsInStrictMode.types
++++ new.unaryOperatorsInStrictMode.types
+@@= skipped -2, +2 lines =@@
+ === unaryOperatorsInStrictMode.ts ===
+ "use strict"
+ >"use strict" : "use strict"
+->             : ^^^^^^^^^^^^
+ 
+ ++eval;
+ >++eval : number
+->       : ^^^^^^
+ >eval : any
+->     : ^^^
+ 
+ --eval;
+ >--eval : number
+->       : ^^^^^^
+ >eval : any
+->     : ^^^
+ 
+ ++arguments;
+ >++arguments : number
+->            : ^^^^^^
+ >arguments : any
+->          : ^^^
+ 
+ --arguments;
+ >--arguments : number
+->            : ^^^^^^
+ >arguments : any
+->          : ^^^
+ 
+ eval++;
+ >eval++ : number
+->       : ^^^^^^
+ >eval : any
+->     : ^^^
+ 
+ eval--;
+ >eval-- : number
+->       : ^^^^^^
+ >eval : any
+->     : ^^^
+ 
+ arguments++;
+ >arguments++ : number
+->            : ^^^^^^
+ >arguments : any
+->          : ^^^
+ 
+ arguments--;
+ >arguments-- : number
+->            : ^^^^^^
+ >arguments : any
+->          : ^^^
+ 

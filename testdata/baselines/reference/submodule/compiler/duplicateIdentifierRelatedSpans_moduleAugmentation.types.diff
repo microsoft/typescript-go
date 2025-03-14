@@ -1,0 +1,35 @@
+--- old.duplicateIdentifierRelatedSpans_moduleAugmentation.types
++++ new.duplicateIdentifierRelatedSpans_moduleAugmentation.types
+@@= skipped -2, +2 lines =@@
+ === /dir/a.ts ===
+ export const x = 0;
+ >x : 0
+->  : ^
+ >0 : 0
+->  : ^
+ 
+ === /dir/b.ts ===
+ export {};
+ 
+ declare module "./a" {
+ >"./a" : typeof import("/dir/a")
+->      : ^^^^^^^^^^^^^^^^^^^^^^^
+ 
+     export const x = 0;
+ >x : 0
+->  : ^
+ >0 : 0
+->  : ^
+ }
+ 
+ declare module "../dir/a" {
+ >"../dir/a" : typeof import("/dir/a")
+->           : ^^^^^^^^^^^^^^^^^^^^^^^
+ 
+     export const x = 0;
+ >x : 0
+->  : ^
+ >0 : 0
+->  : ^
+ }
+ 

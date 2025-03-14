@@ -1,0 +1,10 @@
+--- old.generatorTypeCheck16.types
++++ new.generatorTypeCheck16.types
+@@= skipped -2, +2 lines =@@
+ === generatorTypeCheck16.ts ===
+ function* g() {
+ >g : () => Generator<never, void, unknown>
+->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+     return;
+ }

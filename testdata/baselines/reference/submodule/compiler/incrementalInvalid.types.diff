@@ -1,0 +1,11 @@
+--- old.incrementalInvalid.types
++++ new.incrementalInvalid.types
+@@= skipped -2, +2 lines =@@
+ === incrementalInvalid.ts ===
+ const x = 10;
+ >x : 10
+->  : ^^
+ >10 : 10
+->   : ^^
+ 
+ 

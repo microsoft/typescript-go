@@ -1,0 +1,52 @@
+--- old.jsDeclarationsExportAssignmentWithKeywordName.types
++++ new.jsDeclarationsExportAssignmentWithKeywordName.types
+@@= skipped -2, +2 lines =@@
+ === index.js ===
+ var x = 12;
+ >x : number
+->  : ^^^^^^
+ >12 : 12
+->   : ^^
+ 
+ module.exports = {
+ >module.exports = {    extends: 'base',    more: {        others: ['strs']    },    x} : { extends: string; more: { others: string[]; }; x: number; }
+->                                                                                      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+->module.exports : { extends: string; more: { others: string[]; }; x: number; }
+->               : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+->module : { exports: { extends: string; more: { others: string[]; }; x: number; }; }
+->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+->exports : { extends: string; more: { others: string[]; }; x: number; }
+->        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++>module.exports : any
++>module : any
++>exports : any
+ >{    extends: 'base',    more: {        others: ['strs']    },    x} : { extends: string; more: { others: string[]; }; x: number; }
+->                                                                     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+     extends: 'base',
+ >extends : string
+->        : ^^^^^^
+ >'base' : "base"
+->       : ^^^^^^
+ 
+     more: {
+ >more : { others: string[]; }
+->     : ^^^^^^^^^^^^^^^^^^^^^
+ >{        others: ['strs']    } : { others: string[]; }
+->                               : ^^^^^^^^^^^^^^^^^^^^^
+ 
+         others: ['strs']
+ >others : string[]
+->       : ^^^^^^^^
+ >['strs'] : string[]
+->         : ^^^^^^^^
+ >'strs' : "strs"
+->       : ^^^^^^
+ 
+     },
+     x
+->x : number
+->  : ^^^^^^
++>x : any
+ 
+ };

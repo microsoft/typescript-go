@@ -1,0 +1,14 @@
+--- old.restParamModifier.types
++++ new.restParamModifier.types
+@@= skipped -2, +2 lines =@@
+ === restParamModifier.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+     constructor(...public rest: string[]) {}
+ >public : any[]
+->       : ^^^^^
+ >rest : string[]
+->     : ^^^^^^^^
+ }

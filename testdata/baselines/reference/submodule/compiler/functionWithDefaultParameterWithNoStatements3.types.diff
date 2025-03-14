@@ -1,0 +1,20 @@
+--- old.functionWithDefaultParameterWithNoStatements3.types
++++ new.functionWithDefaultParameterWithNoStatements3.types
+@@= skipped -2, +2 lines =@@
+ === functionWithDefaultParameterWithNoStatements3.ts ===
+ function foo(a = "") { }
+ >foo : (a?: string) => void
+->    : ^ ^^^^^^^^^^^^^^^^^^
+ >a : string
+->  : ^^^^^^
+ >"" : ""
+->   : ^^
+ 
+ function bar(a = "") {
+ >bar : (a?: string) => void
+->    : ^ ^^^^^^^^^^^^^^^^^^
+ >a : string
+->  : ^^^^^^
+ >"" : ""
+->   : ^^
+ }

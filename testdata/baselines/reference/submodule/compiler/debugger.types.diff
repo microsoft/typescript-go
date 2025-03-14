@@ -1,0 +1,10 @@
+--- old.debugger.types
++++ new.debugger.types
+@@= skipped -4, +4 lines =@@
+ 
+ function foo() {
+ >foo : () => void
+->    : ^^^^^^^^^^
+ 
+     debugger;
+ 

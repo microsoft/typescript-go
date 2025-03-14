@@ -1,0 +1,10 @@
+--- old.unicodeExtendedEscapesInTemplates08(target=es6).types
++++ new.unicodeExtendedEscapesInTemplates08(target=es6).types
+@@= skipped -5, +5 lines =@@
+ // (FFFF == 65535)
+ var x = `\u{FFFF}`;
+ >x : string
+->  : ^^^^^^
+ >`\u{FFFF}` : "￿"
+->           : ^^^
+ 

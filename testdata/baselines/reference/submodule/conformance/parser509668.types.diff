@@ -1,0 +1,13 @@
+--- old.parser509668.types
++++ new.parser509668.types
+@@= skipped -2, +2 lines =@@
+ === parser509668.ts ===
+ class Foo3 {
+ >Foo3 : Foo3
+->     : ^^^^
+ 
+   // Doesn't work, but should
+   constructor (public ...args: string[]) { }
+ >args : string[]
+->     : ^^^^^^^^
+ }

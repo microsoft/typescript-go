@@ -1,0 +1,22 @@
+--- old.jsFileCompilationErrorOnDeclarationsWithJsFileReferenceWithNoOut.types
++++ new.jsFileCompilationErrorOnDeclarationsWithJsFileReferenceWithNoOut.types
+@@= skipped -2, +2 lines =@@
+ === a.ts ===
+ class c {
+ >c : c
+->  : ^
+ }
+ 
+ === b.ts ===
+@@= skipped -8, +7 lines =@@
+ // b.d.ts should have c.d.ts as the reference path
+ function foo() {
+ >foo : () => void
+->    : ^^^^^^^^^^
+ }
+ 
+ === c.js ===
+ function bar() {
+ >bar : () => void
+->    : ^^^^^^^^^^
+ }

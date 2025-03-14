@@ -1,0 +1,15 @@
+--- old.asyncSetter_es5.types
++++ new.asyncSetter_es5.types
+@@= skipped -2, +2 lines =@@
+ === asyncSetter_es5.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+   async set foo(value) {
+ >foo : any
+->    : ^^^
+ >value : any
+->      : ^^^
+   }
+ }

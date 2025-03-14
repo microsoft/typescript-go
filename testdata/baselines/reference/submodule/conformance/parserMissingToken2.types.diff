@@ -1,0 +1,8 @@
+--- old.parserMissingToken2.types
++++ new.parserMissingToken2.types
+@@= skipped -2, +2 lines =@@
+ === parserMissingToken2.ts ===
+ / b;
+ >/ b : RegExp
+->    : ^^^^^^
+ 

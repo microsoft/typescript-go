@@ -1,0 +1,10 @@
+--- old.unmetTypeConstraintInJSDocImportCall.types
++++ new.unmetTypeConstraintInJSDocImportCall.types
+@@= skipped -7, +7 lines =@@
+ 
+ export default {};
+ >{} : {}
+->   : ^^
+ 
+ === file2.js ===
+ 

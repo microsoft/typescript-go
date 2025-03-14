@@ -1,0 +1,14 @@
+--- old.declarationEmitUnknownImport.types
++++ new.declarationEmitUnknownImport.types
+@@= skipped -2, +2 lines =@@
+ === declarationEmitUnknownImport.ts ===
+ import Foo = SomeNonExistingName
+ >Foo : any
+->    : ^^^
+ >SomeNonExistingName : any
+->                    : ^^^
+ 
+ export {Foo}
+ >Foo : any
+->    : ^^^
+ 

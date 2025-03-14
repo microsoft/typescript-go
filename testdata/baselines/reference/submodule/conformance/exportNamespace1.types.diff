@@ -1,0 +1,28 @@
+--- old.exportNamespace1.types
++++ new.exportNamespace1.types
+@@= skipped -2, +2 lines =@@
+ === a.ts ===
+ export class A {}
+ >A : A
+->  : ^
+ 
+ === b.ts ===
+ export type { A } from './a';
+->A : import("a").A
+->  : ^^^^^^^^^^^^^
++>A : A
+ 
+ === c.ts ===
+ 
+@@= skipped -14, +12 lines =@@
+ === d.ts ===
+ import { A } from './c';
+ >A : typeof A
+->  : ^^^^^^^^
+ 
+ new A(); // Error
+ >new A() : A
+->        : ^
+ >A : typeof A
+->  : ^^^^^^^^
+ 

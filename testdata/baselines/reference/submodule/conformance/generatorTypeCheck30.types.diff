@@ -1,0 +1,34 @@
+--- old.generatorTypeCheck30.types
++++ new.generatorTypeCheck30.types
+@@= skipped -1, +1 lines =@@
+ 
+ === generatorTypeCheck30.ts ===
+ function* g2(): Iterator<Iterable<(x: string) => number>> {
+->g2 : () => Iterator<Iterable<(x: string) => number>>
+->   : ^^^^^^                                         
++>g2 : () => Iterator<Iterable<(x: string) => number, any, any>, any, any>
+ >x : string
+->  : ^^^^^^
+ 
+     yield function* () {
+ >yield function* () {        yield x => x.length;    } () : any
+ >function* () {        yield x => x.length;    } () : Generator<(x: string) => number, void, any>
+->                                                   : ^^^^^^^^^^^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ >function* () {        yield x => x.length;    } : () => Generator<(x: string) => number, void, any>
+->                                                : ^^^^^^^^^^^^^^^^^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+         yield x => x.length;
+ >yield x => x.length : any
+ >x => x.length : (x: string) => number
+->              : ^ ^^^^^^^^^^^^^^^^^^^
+ >x : string
+->  : ^^^^^^
+ >x.length : number
+->         : ^^^^^^
+ >x : string
+->  : ^^^^^^
+ >length : number
+->       : ^^^^^^
+ 
+     } ()
+ }

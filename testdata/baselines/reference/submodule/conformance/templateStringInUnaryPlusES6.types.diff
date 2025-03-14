@@ -1,0 +1,14 @@
+--- old.templateStringInUnaryPlusES6.types
++++ new.templateStringInUnaryPlusES6.types
+@@= skipped -2, +2 lines =@@
+ === templateStringInUnaryPlusES6.ts ===
+ var x = +`abc${ 123 }def`;
+ >x : number
+->  : ^^^^^^
+ >+`abc${ 123 }def` : number
+->                  : ^^^^^^
+ >`abc${ 123 }def` : "abc123def"
+->                 : ^^^^^^^^^^^
+ >123 : 123
+->    : ^^^
+ 

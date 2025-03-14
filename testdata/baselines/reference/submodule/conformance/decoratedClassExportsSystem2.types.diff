@@ -1,0 +1,26 @@
+--- old.decoratedClassExportsSystem2.types
++++ new.decoratedClassExportsSystem2.types
+@@= skipped -2, +2 lines =@@
+ === a.ts ===
+ declare function forwardRef(x: any): any;
+ >forwardRef : (x: any) => any
+->           : ^ ^^   ^^^^^   
+ >x : any
+ 
+ declare var Something: any;
+@@= skipped -10, +9 lines =@@
+ >Something({ v: () => Testing123 }) : any
+ >Something : any
+ >{ v: () => Testing123 } : { v: () => typeof Testing123; }
+->                        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ >v : () => typeof Testing123
+->  : ^^^^^^^^^^^^^^^^^^^^^^^
+ >() => Testing123 : () => typeof Testing123
+->                 : ^^^^^^^^^^^^^^^^^^^^^^^
+ >Testing123 : typeof Testing123
+->           : ^^^^^^^^^^^^^^^^^
+ 
+ export class Testing123 { }
+ >Testing123 : Testing123
+->           : ^^^^^^^^^^
+ 

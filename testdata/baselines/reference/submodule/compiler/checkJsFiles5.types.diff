@@ -1,0 +1,18 @@
+--- old.checkJsFiles5.types
++++ new.checkJsFiles5.types
+@@= skipped -3, +3 lines =@@
+ // @ts-nocheck
+ var x = "string";
+ >x : string
+->  : ^^^^^^
+ >"string" : "string"
+->         : ^^^^^^^^
+ 
+ x = 0;
+ >x = 0 : 0
+->      : ^
+ >x : string
+->  : ^^^^^^
+ >0 : 0
+->  : ^
+ 

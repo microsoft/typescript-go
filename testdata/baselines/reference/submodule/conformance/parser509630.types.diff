@@ -1,0 +1,21 @@
+--- old.parser509630.types
++++ new.parser509630.types
+@@= skipped -2, +2 lines =@@
+ === parser509630.ts ===
+ class Type {
+ >Type : Type
+->     : ^^^^
+ 
+     public examples = [ // typing here
+ >examples : any[]
+->         : ^^^^^
+ >[ : undefined[]
+->  : ^^^^^^^^^^^
+ }
+ class Any extends Type {
+ >Any : Any
+->    : ^^^
+ >Type : Type
+->     : ^^^^
+ }
+ 

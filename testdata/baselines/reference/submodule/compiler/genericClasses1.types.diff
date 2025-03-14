@@ -1,0 +1,32 @@
+--- old.genericClasses1.types
++++ new.genericClasses1.types
+@@= skipped -2, +2 lines =@@
+ === genericClasses1.ts ===
+ class C<T> {
+ >C : C<T>
+->  : ^^^^
++>T : T
+ 
+ 	public x: T;
+ >x : T
+->  : ^
+ }
+ 
+ var v1 = new C<string>();
+ >v1 : C<string>
+->   : ^^^^^^^^^
+ >new C<string>() : C<string>
+->                : ^^^^^^^^^
+ >C : typeof C
+->  : ^^^^^^^^
+ 
+ var y = v1.x; // should be 'string'
+ >y : string
+->  : ^^^^^^
+ >v1.x : string
+->     : ^^^^^^
+ >v1 : C<string>
+->   : ^^^^^^^^^
+ >x : string
+->  : ^^^^^^
+ 

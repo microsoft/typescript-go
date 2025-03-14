@@ -1,0 +1,42 @@
+--- old.moduleAugmentationWithNonExistentNamedImport.types
++++ new.moduleAugmentationWithNonExistentNamedImport.types
+@@= skipped -2, +2 lines =@@
+ === foo.d.ts ===
+ export = Foo;
+ >Foo : typeof Foo
+->    : ^^^^^^^^^^
+ 
+ export as namespace Foo;
+ >Foo : typeof Foo
+->    : ^^^^^^^^^^
+ 
+ declare namespace Foo {
+ >Foo : typeof Foo
+->    : ^^^^^^^^^^
+ 
+     function foo();
+ >foo : () => any
+->    : ^^^^^^^^^
+ }
+ 
+ declare global {
+ >global : any
+->       : ^^^
+ 
+     namespace Bar { }
++>Bar : any
+ }
+ 
+ === bar.d.ts ===
+ import { Bar } from './foo';
+ >Bar : any
+->    : ^^^
+ 
+ export = Bar;
+ >Bar : any
+->    : ^^^
+ 
+ export as namespace Bar;
+ >Bar : any
+->    : ^^^
+ 

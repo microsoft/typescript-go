@@ -1,0 +1,17 @@
+--- old.DeclarationErrorsNoEmitOnError.types
++++ new.DeclarationErrorsNoEmitOnError.types
+@@= skipped -2, +2 lines =@@
+ === DeclarationErrorsNoEmitOnError.ts ===
+ type T = { x : number }
+ >T : T
+->  : ^
+ >x : number
+->  : ^^^^^^
+ 
+ export interface I {
++>I : I
++
+     f: T;   
+ >f : T
+->  : ^
+ }

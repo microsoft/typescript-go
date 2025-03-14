@@ -1,0 +1,21 @@
+--- old.staticGetterAndSetter.types
++++ new.staticGetterAndSetter.types
+@@= skipped -2, +2 lines =@@
+ === staticGetterAndSetter.ts ===
+ class Foo {
+ >Foo : Foo
+->    : ^^^
+ 
+     static get Foo():number { return 0; }
+ >Foo : number
+->    : ^^^^^^
+ >0 : 0
+->  : ^
+ 
+     static set Foo(n: number) {}
+ >Foo : number
+->    : ^^^^^^
+ >n : number
+->  : ^^^^^^
+ }
+ 

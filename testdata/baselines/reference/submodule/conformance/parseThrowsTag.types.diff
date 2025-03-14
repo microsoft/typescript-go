@@ -1,0 +1,8 @@
+--- old.parseThrowsTag.types
++++ new.parseThrowsTag.types
+@@= skipped -3, +3 lines =@@
+ /** @throws {Error} comment */
+ function f() {}
+ >f : () => void
+->  : ^^^^^^^^^^
+ 

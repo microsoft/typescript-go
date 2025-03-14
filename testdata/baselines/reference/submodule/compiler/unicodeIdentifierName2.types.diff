@@ -1,0 +1,16 @@
+--- old.unicodeIdentifierName2.types
++++ new.unicodeIdentifierName2.types
+@@= skipped -2, +2 lines =@@
+ === unicodeIdentifierName2.ts ===
+ var a₁ = "hello"; alert(a₁)
+ >a : any
+->  : ^^^
+ >"hello" : "hello"
+->        : ^^^^^^^
+ >alert(a₁) : void
+->          : ^^^^
+ >alert : (message?: any) => void
+->      : ^       ^^^   ^^^^^    
+ >a : any
+->  : ^^^
+ 

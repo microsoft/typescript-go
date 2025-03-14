@@ -1,0 +1,15 @@
+--- old.privateNamesNotAllowedAsParameters.types
++++ new.privateNamesNotAllowedAsParameters.types
+@@= skipped -2, +2 lines =@@
+ === privateNamesNotAllowedAsParameters.ts ===
+ class A {
+ >A : A
+->  : ^
+ 
+     setFoo(#foo: string) {}
+ >setFoo : (#foo: string) => void
+->       : ^    ^^      ^^^^^^^^^
+ >#foo : string
+->     : ^^^^^^
+ }
+ 

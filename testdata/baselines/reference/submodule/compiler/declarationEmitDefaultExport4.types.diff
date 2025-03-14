@@ -1,0 +1,8 @@
+--- old.declarationEmitDefaultExport4.types
++++ new.declarationEmitDefaultExport4.types
+@@= skipped -3, +3 lines =@@
+ export default function () {
+     return 1;
+ >1 : 1
+->  : ^
+ }

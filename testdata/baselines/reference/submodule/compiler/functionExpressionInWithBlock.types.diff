@@ -1,0 +1,24 @@
+--- old.functionExpressionInWithBlock.types
++++ new.functionExpressionInWithBlock.types
+@@= skipped -2, +2 lines =@@
+ === functionExpressionInWithBlock.ts ===
+ function x() {
+ >x : () => void
+->  : ^^^^^^^^^^
+ 
+  with({}) {
+ >{} : {}
+->   : ^^
+ 
+   function f() {
+ >f : any
+->  : ^^^
+ 
+    () => this;
+ >() => this : any
+->           : ^^^
+ >this : any
+->     : ^^^
+   }
+  }
+ }

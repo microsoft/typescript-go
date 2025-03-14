@@ -1,0 +1,10 @@
+--- old.scannerUnicodeEscapeInKeyword1.types
++++ new.scannerUnicodeEscapeInKeyword1.types
+@@= skipped -2, +2 lines =@@
+ === scannerUnicodeEscapeInKeyword1.ts ===
+ \u0076ar x = "hello";
+ >x : string
+->  : ^^^^^^
+ >"hello" : "hello"
+->        : ^^^^^^^
+ 

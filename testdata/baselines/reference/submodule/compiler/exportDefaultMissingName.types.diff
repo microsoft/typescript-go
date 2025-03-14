@@ -1,0 +1,8 @@
+--- old.exportDefaultMissingName.types
++++ new.exportDefaultMissingName.types
+@@= skipped -2, +2 lines =@@
+ === exportDefaultMissingName.ts ===
+ export default xyzzy;
+ >xyzzy : any
+->      : ^^^
+ 

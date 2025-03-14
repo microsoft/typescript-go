@@ -1,0 +1,15 @@
+--- old.unusedFunctionsinNamespaces2.types
++++ new.unusedFunctionsinNamespaces2.types
+@@= skipped -2, +2 lines =@@
+ === unusedFunctionsinNamespaces2.ts ===
+ namespace Validation {
+ >Validation : typeof Validation
+->           : ^^^^^^^^^^^^^^^^^
+ 
+     var function1 = function() {
+ >function1 : () => void
+->          : ^^^^^^^^^^
+ >function() {    } : () => void
+->                  : ^^^^^^^^^^
+     }
+ }

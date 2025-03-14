@@ -1,0 +1,18 @@
+--- old.commentInNamespaceDeclarationWithIdentifierPathName.types
++++ new.commentInNamespaceDeclarationWithIdentifierPathName.types
+@@= skipped -2, +2 lines =@@
+ === commentInNamespaceDeclarationWithIdentifierPathName.ts ===
+ namespace hello.hi.world
+ >hello : typeof hello
+->      : ^^^^^^^^^^^^
+ >hi : typeof hi
+->   : ^^^^^^^^^
+ >world : typeof world
+->      : ^^^^^^^^^^^^
+ {
+     function foo() {}
+ >foo : () => void
+->    : ^^^^^^^^^^
+ 
+     // TODO, blah
+ }

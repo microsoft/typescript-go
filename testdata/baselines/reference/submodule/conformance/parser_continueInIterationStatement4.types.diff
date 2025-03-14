@@ -1,0 +1,12 @@
+--- old.parser_continueInIterationStatement4.types
++++ new.parser_continueInIterationStatement4.types
+@@= skipped -2, +2 lines =@@
+ === parser_continueInIterationStatement4.ts ===
+ for (var i in something) {
+ >i : string
+->  : ^^^^^^
+ >something : any
+->          : ^^^
+ 
+   continue;
+ }

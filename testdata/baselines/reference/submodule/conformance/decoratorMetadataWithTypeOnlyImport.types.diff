@@ -1,0 +1,36 @@
+--- old.decoratorMetadataWithTypeOnlyImport.types
++++ new.decoratorMetadataWithTypeOnlyImport.types
+@@= skipped -2, +2 lines =@@
+ === service.ts ===
+ export class Service {
+ >Service : Service
+->        : ^^^^^^^
+ }
+ === component.ts ===
+ import type { Service } from "./service";
+ >Service : Service
+->        : ^^^^^^^
+ 
+ declare var decorator: any;
+ >decorator : any
+@@= skipped -15, +13 lines =@@
+ 
+ class MyComponent {
+ >MyComponent : MyComponent
+->            : ^^^^^^^^^^^
+ 
+     constructor(public Service: Service) {
+ >Service : Service
+->        : ^^^^^^^
+     }
+ 
+     @decorator
+@@= skipped -12, +10 lines =@@
+ 
+     method(x: this) {
+ >method : (x: this) => void
+->       : ^ ^^    ^^^^^^^^^
+ >x : this
+->  : ^^^^
+     }
+ }

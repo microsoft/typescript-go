@@ -1,0 +1,10 @@
+--- old.jsFileCompilationNonNullAssertion.types
++++ new.jsFileCompilationNonNullAssertion.types
+@@= skipped -2, +2 lines =@@
+ === /src/a.js ===
+ 0!
+ >0! : 0
+->   : ^
+ >0 : 0
+->  : ^
+ 

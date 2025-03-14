@@ -1,0 +1,43 @@
+--- old.doNotemitTripleSlashComments.types
++++ new.doNotemitTripleSlashComments.types
+@@= skipped -8, +8 lines =@@
+ 
+ function bar() { }
+ >bar : () => void
+->    : ^^^^^^^^^^
+ 
+ 
+ 
+@@= skipped -10, +9 lines =@@
+ /// <amd-dependency path="/js/libs/hgn.js!app/templates/home" name="compiler"/>
+ var x = 10;
+ >x : number
+->  : ^^^^^^
+ >10 : 10
+->   : ^^
+ 
+ /// <reference path="file1.ts" />
+ var y = "hello";
+ >y : string
+->  : ^^^^^^
+ >"hello" : "hello"
+->        : ^^^^^^^
+ 
+ 
+ /// <reference path="file2.ts" />
+@@= skipped -19, +15 lines =@@
+ 
+ function foo() { }
+ >foo : () => void
+->    : ^^^^^^^^^^
+ 
+ 
+ /// <reference path="file0.ts" />
+@@= skipped -8, +7 lines =@@
+ 
+ var z = "world";
+ >z : string
+->  : ^^^^^^
+ >"world" : "world"
+->        : ^^^^^^^
+ 

@@ -1,0 +1,18 @@
+--- old.defaultNamedExportWithType1.types
++++ new.defaultNamedExportWithType1.types
+@@= skipped -2, +2 lines =@@
+ === defaultNamedExportWithType1.ts ===
+ type Foo = number;
+ >Foo : number
+->    : ^^^^^^
+ 
+ export const Foo = 1;
+ >Foo : 1
+->    : ^
+ >1 : 1
+->  : ^
+ 
+ export default Foo;
+ >Foo : number
+->    : ^^^^^^
+ 

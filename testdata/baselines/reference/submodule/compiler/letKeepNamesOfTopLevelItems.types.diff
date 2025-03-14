@@ -1,0 +1,18 @@
+--- old.letKeepNamesOfTopLevelItems.types
++++ new.letKeepNamesOfTopLevelItems.types
+@@= skipped -5, +5 lines =@@
+ 
+ function foo() {
+ >foo : () => void
+->    : ^^^^^^^^^^
+ 
+     let x;
+ >x : any
+@@= skipped -8, +7 lines =@@
+ 
+ module A {
+ >A : typeof A
+->  : ^^^^^^^^
+ 
+     let x;
+ >x : any

@@ -1,0 +1,38 @@
+--- old.jsFileCompilationBindErrors.types
++++ new.jsFileCompilationBindErrors.types
+@@= skipped -2, +2 lines =@@
+ === a.js ===
+ let C = "sss";
+ >C : string
+->  : ^^^^^^
+ >"sss" : "sss"
+->      : ^^^^^
+ 
+ let C = 0;  // Error: Cannot redeclare block-scoped variable 'C'.
+ >C : number
+->  : ^^^^^^
+ >0 : 0
+->  : ^
+ 
+ function f() {
+ >f : () => void
+->  : ^^^^^^^^^^
+ 
+     return;
+     return;  // Error: Unreachable code detected.
+@@= skipped -20, +15 lines =@@
+ 
+ function b() {
+ >b : () => void
+->  : ^^^^^^^^^^
+ 
+     "use strict";
+ >"use strict" : "use strict"
+->             : ^^^^^^^^^^^^
+ 
+     var arguments = 0;  // Error: Invalid use of 'arguments' in strict mode.
+ >arguments : number
+->          : ^^^^^^
+ >0 : 0
+->  : ^
+ }

@@ -1,0 +1,32 @@
+--- old.logicalOrExpressionIsContextuallyTyped.types
++++ new.logicalOrExpressionIsContextuallyTyped.types
+@@= skipped -7, +7 lines =@@
+ 
+ var r: { a: string } = { a: '', b: 123 } || { a: '', b: true };
+ >r : { a: string; }
+->  : ^^^^^      ^^^
+ >a : string
+->  : ^^^^^^
+ >{ a: '', b: 123 } || { a: '', b: true } : { a: string; b: number; } | { a: string; b: boolean; }
+->                                        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ >{ a: '', b: 123 } : { a: string; b: number; }
+->                  : ^^^^^^^^^^^^^^^^^^^^^^^^^
+ >a : string
+->  : ^^^^^^
+ >'' : ""
+->   : ^^
+ >b : number
+->  : ^^^^^^
+ >123 : 123
+->    : ^^^
+ >{ a: '', b: true } : { a: string; b: boolean; }
+->                   : ^^^^^^^^^^^^^^^^^^^^^^^^^^
+ >a : string
+->  : ^^^^^^
+ >'' : ""
+->   : ^^
+ >b : boolean
+->  : ^^^^^^^
+ >true : true
+->     : ^^^^
+ 

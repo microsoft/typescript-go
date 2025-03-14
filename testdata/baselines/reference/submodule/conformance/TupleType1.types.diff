@@ -1,0 +1,8 @@
+--- old.TupleType1.types
++++ new.TupleType1.types
+@@= skipped -2, +2 lines =@@
+ === TupleType1.ts ===
+ var v: [number]
+ >v : [number]
+->  : ^^^^^^^^
+ 

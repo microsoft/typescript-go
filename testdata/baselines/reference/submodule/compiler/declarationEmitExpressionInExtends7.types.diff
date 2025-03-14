@@ -1,0 +1,8 @@
+--- old.declarationEmitExpressionInExtends7.types
++++ new.declarationEmitExpressionInExtends7.types
+@@= skipped -2, +2 lines =@@
+ === declarationEmitExpressionInExtends7.ts ===
+ export default class extends SomeUndefinedFunction {}
+ >SomeUndefinedFunction : any
+->                      : ^^^
+ 

@@ -1,0 +1,14 @@
+--- old.destructuringTypeAssertionsES5_1.types
++++ new.destructuringTypeAssertionsES5_1.types
+@@= skipped -2, +2 lines =@@
+ === destructuringTypeAssertionsES5_1.ts ===
+ var { x } = <any>foo();
+ >x : any
+->  : ^^^
+ ><any>foo() : any
+->           : ^^^
+ >foo() : any
+->      : ^^^
+ >foo : any
+->    : ^^^
+ 

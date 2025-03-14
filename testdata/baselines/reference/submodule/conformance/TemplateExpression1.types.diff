@@ -1,0 +1,12 @@
+--- old.TemplateExpression1.types
++++ new.TemplateExpression1.types
+@@= skipped -2, +2 lines =@@
+ === TemplateExpression1.ts ===
+ var v = `foo ${ a 
+ >v : string
+->  : ^^^^^^
+ >`foo ${ a : string
+->          : ^^^^^^
+ >a : any
+->  : ^^^
+ 

@@ -1,0 +1,18 @@
+--- old.es6ExportAssignment3.types
++++ new.es6ExportAssignment3.types
+@@= skipped -2, +2 lines =@@
+ === a.d.ts ===
+ declare var a: number;
+ >a : number
+->  : ^^^^^^
+ 
+ export = a;  // OK, in ambient context
+ >a : number
+->  : ^^^^^^
+ 
+ === b.ts ===
+ import * as a from "a";
+->a : number
+->  : ^^^^^^
++>a : any
+ 

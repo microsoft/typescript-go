@@ -1,0 +1,10 @@
+--- old.unusedSemicolonInClass.types
++++ new.unusedSemicolonInClass.types
+@@= skipped -2, +2 lines =@@
+ === unusedSemicolonInClass.ts ===
+ class Unused {
+ >Unused : Unused
+->       : ^^^^^^
+ 
+     ;
+ }

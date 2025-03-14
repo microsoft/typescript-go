@@ -1,0 +1,8 @@
+--- old.importAssertion4.types
++++ new.importAssertion4.types
+@@= skipped -2, +2 lines =@@
+ === importAssertion4.ts ===
+ import * as f from "./first" assert
+ >f : any
+->  : ^^^
+ 

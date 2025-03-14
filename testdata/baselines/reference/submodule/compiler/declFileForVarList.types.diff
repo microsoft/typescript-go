@@ -1,0 +1,24 @@
+--- old.declFileForVarList.types
++++ new.declFileForVarList.types
+@@= skipped -4, +4 lines =@@
+ >x : any
+ >y : any
+ >z : number
+->  : ^^^^^^
+ >1 : 1
+->  : ^
+ 
+ var x1 = 1, y2 = 2, z2 = 3;
+ >x1 : number
+->   : ^^^^^^
+ >1 : 1
+->  : ^
+ >y2 : number
+->   : ^^^^^^
+ >2 : 2
+->  : ^
+ >z2 : number
+->   : ^^^^^^
+ >3 : 3
+->  : ^
+ 

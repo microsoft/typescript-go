@@ -1,0 +1,10 @@
+--- old.jsFileCompilationPublicParameterModifier.types
++++ new.jsFileCompilationPublicParameterModifier.types
+@@= skipped -2, +2 lines =@@
+ === a.js ===
+ class C { constructor(public x) { }}
+ >C : C
+->  : ^
+ >x : any
+->  : ^^^
+ 

@@ -1,0 +1,8 @@
+--- old.throwWithoutNewLine1.types
++++ new.throwWithoutNewLine1.types
+@@= skipped -2, +2 lines =@@
+ === throwWithoutNewLine1.ts ===
+ throw
+ > : any
+-> : ^^^
+ 

@@ -1,0 +1,14 @@
+--- old.binaryArithmatic3.types
++++ new.binaryArithmatic3.types
+@@= skipped -2, +2 lines =@@
+ === binaryArithmatic3.ts ===
+ var v = undefined | undefined;
+ >v : number
+->  : ^^^^^^
+ >undefined | undefined : number
+->                      : ^^^^^^
+ >undefined : undefined
+->          : ^^^^^^^^^
+ >undefined : undefined
+->          : ^^^^^^^^^
+ 

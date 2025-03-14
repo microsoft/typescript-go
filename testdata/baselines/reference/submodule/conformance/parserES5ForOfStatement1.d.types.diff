@@ -1,0 +1,10 @@
+--- old.parserES5ForOfStatement1.d.types
++++ new.parserES5ForOfStatement1.d.types
+@@= skipped -2, +2 lines =@@
+ === parserES5ForOfStatement1.d.ts ===
+ for (var i of e) {
+ >i : any
+->  : ^^^
+ >e : any
+->  : ^^^
+ }

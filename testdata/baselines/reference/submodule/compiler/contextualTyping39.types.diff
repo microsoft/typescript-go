@@ -1,0 +1,14 @@
+--- old.contextualTyping39.types
++++ new.contextualTyping39.types
+@@= skipped -2, +2 lines =@@
+ === contextualTyping39.ts ===
+ var foo = <{ (): number; }> function() { return "err"; };
+ >foo : () => number
+->    : ^^^^^^      
+ ><{ (): number; }> function() { return "err"; } : () => number
+->                                               : ^^^^^^      
+ >function() { return "err"; } : () => string
+->                             : ^^^^^^^^^^^^
+ >"err" : "err"
+->      : ^^^^^
+ 

@@ -1,0 +1,22 @@
+--- old.contextualTyping4.types
++++ new.contextualTyping4.types
+@@= skipped -2, +2 lines =@@
+ === contextualTyping4.ts ===
+ class foo { public bar:{id:number;} = {id:5, name:"foo"}; }
+ >foo : foo
+->    : ^^^
+ >bar : { id: number; }
+->    : ^^^^^^      ^^^
+ >id : number
+->   : ^^^^^^
+ >{id:5, name:"foo"} : { id: number; name: string; }
+->                   : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ >id : number
+->   : ^^^^^^
+ >5 : 5
+->  : ^
+ >name : string
+->     : ^^^^^^
+ >"foo" : "foo"
+->      : ^^^^^
+ 

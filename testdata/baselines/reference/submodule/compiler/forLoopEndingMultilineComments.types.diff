@@ -1,0 +1,30 @@
+--- old.forLoopEndingMultilineComments.types
++++ new.forLoopEndingMultilineComments.types
+@@= skipped -5, +5 lines =@@
+ 
+ export function consoleTestResultHandler(testResult: any): boolean {
+ >consoleTestResultHandler : (testResult: any) => boolean
+->                         : ^          ^^   ^^^^^       
+ >testResult : any
+ 
+     // needed to get colors to show up when passing through Grunt
+     void a;
+ >void a : undefined
+->       : ^^^^^^^^^
+ >a : any
+ 
+     for (const q of a) {
+@@= skipped -15, +13 lines =@@
+ 
+         void a;
+ >void a : undefined
+->       : ^^^^^^^^^
+ >a : any
+ 
+         /* eslint-disable no-console */
+@@= skipped -14, +13 lines =@@
+ 
+     return true;
+ >true : true
+->     : ^^^^
+ }

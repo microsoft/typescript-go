@@ -1,0 +1,8 @@
+--- old.exportClassNameWithObjectUMD.types
++++ new.exportClassNameWithObjectUMD.types
+@@= skipped -2, +2 lines =@@
+ === exportClassNameWithObjectUMD.ts ===
+ export class Object {}
+ >Object : Object
+->       : ^^^^^^
+ 

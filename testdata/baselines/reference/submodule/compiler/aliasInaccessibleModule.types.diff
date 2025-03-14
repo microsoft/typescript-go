@@ -1,0 +1,17 @@
+--- old.aliasInaccessibleModule.types
++++ new.aliasInaccessibleModule.types
+@@= skipped -2, +2 lines =@@
+ === aliasInaccessibleModule.ts ===
+ module M {
+ >M : typeof M
+->  : ^^^^^^^^
+ 
+     module N {
++>N : any
+     }
+     export import X = N;
+ >X : any
+->  : ^^^
+->N : error
++>N : any
+ }

@@ -1,0 +1,33 @@
+--- old.nestedBlockScopedBindings14.types
++++ new.nestedBlockScopedBindings14.types
+@@= skipped -5, +5 lines =@@
+ 
+ for (; false;) {
+ >false : false
+->      : ^^^^^
+ 
+     let x;
+ >x : any
+ 
+     () => x;
+ >() => x : () => any
+->        : ^^^^^^^^^
+ >x : any
+ }
+ 
+@@= skipped -16, +14 lines =@@
+ 
+ for (; false;) {
+ >false : false
+->      : ^^^^^
+ 
+     let y;
+ >y : any
+ 
+     y = 1;
+ >y = 1 : 1
+->      : ^
+ >y : any
+ >1 : 1
+->  : ^
+ }

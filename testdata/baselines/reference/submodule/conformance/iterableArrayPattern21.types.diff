@@ -1,0 +1,20 @@
+--- old.iterableArrayPattern21.types
++++ new.iterableArrayPattern21.types
+@@= skipped -2, +2 lines =@@
+ === iterableArrayPattern21.ts ===
+ var [a, b] = { 0: "", 1: true };
+ >a : any
+->  : ^^^
+ >b : any
+->  : ^^^
+ >{ 0: "", 1: true } : { 0: string; 1: boolean; }
+->                   : ^^^^^^^^^^^^^^^^^^^^^^^^^^
+ >0 : string
+->  : ^^^^^^
+ >"" : ""
+->   : ^^
+ >1 : boolean
+->  : ^^^^^^^
+ >true : true
+->     : ^^^^
+ 

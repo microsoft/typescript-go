@@ -1,0 +1,35 @@
+--- old.stringIndexerAndConstructor.types
++++ new.stringIndexerAndConstructor.types
+@@= skipped -2, +2 lines =@@
+ === stringIndexerAndConstructor.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+     [s: string]: number;
+ >s : string
+->  : ^^^^^^
+ 
+     constructor() { }
+     static v() { }
+ >v : () => void
+->  : ^^^^^^^^^^
+ }
+ 
+ interface I {
++>I : I
++
+     [s: string]: number;
+ >s : string
+->  : ^^^^^^
+ 
+     (): boolean;
+     new (): boolean;
+     "": string;
+ >"" : string
+->   : ^^^^^^
+ 
+     d: string;
+ >d : string
+->  : ^^^^^^
+ }

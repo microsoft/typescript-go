@@ -1,0 +1,12 @@
+--- old.parserES5ComputedPropertyName8.types
++++ new.parserES5ComputedPropertyName8.types
+@@= skipped -2, +2 lines =@@
+ === parserES5ComputedPropertyName8.ts ===
+ var v: { [e]: number };
+ >v : { [x: number]: number; }
+->  : ^^^^^^^^^^^^^^^^^^^^^^^^
+ >[e] : number
+->    : ^^^^^^
+ >e : any
+->  : ^^^
+ 

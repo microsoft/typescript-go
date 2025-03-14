@@ -1,0 +1,15 @@
+--- old.templateStringWithEmbeddedTypeOfOperator.types
++++ new.templateStringWithEmbeddedTypeOfOperator.types
+@@= skipped -2, +2 lines =@@
+ === templateStringWithEmbeddedTypeOfOperator.ts ===
+ var x = `abc${ typeof "hi" }def`;
+ >x : string
+->  : ^^^^^^
+ >`abc${ typeof "hi" }def` : string
+->                         : ^^^^^^
+->typeof "hi" : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
+->            : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++>typeof "hi" : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >"hi" : "hi"
+->     : ^^^^
+ 

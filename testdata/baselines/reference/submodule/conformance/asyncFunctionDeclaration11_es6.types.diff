@@ -1,0 +1,8 @@
+--- old.asyncFunctionDeclaration11_es6.types
++++ new.asyncFunctionDeclaration11_es6.types
+@@= skipped -2, +2 lines =@@
+ === asyncFunctionDeclaration11_es6.ts ===
+ async function await(): Promise<void> {
+ >await : () => Promise<void>
+->      : ^^^^^^             
+ }

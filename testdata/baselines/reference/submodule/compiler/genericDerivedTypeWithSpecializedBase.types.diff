@@ -1,0 +1,42 @@
+--- old.genericDerivedTypeWithSpecializedBase.types
++++ new.genericDerivedTypeWithSpecializedBase.types
+@@= skipped -2, +2 lines =@@
+ === genericDerivedTypeWithSpecializedBase.ts ===
+ class A<T> {
+ >A : A<T>
+->  : ^^^^
++>T : T
+ 
+     x: T;
+ >x : T
+->  : ^
+ }
+ 
+ class B<U> extends A<string> {
+ >B : B<U>
+->  : ^^^^
++>U : U
+ >A : A<string>
+->  : ^^^^^^^^^
+ 
+     y: U;
+ >y : U
+->  : ^
+ }
+ 
+ var x: A<number>;
+ >x : A<number>
+->  : ^^^^^^^^^
+ 
+ var y: B<number>;
+ >y : B<number>
+->  : ^^^^^^^^^
+ 
+ x = y;  // error
+ >x = y : B<number>
+->      : ^^^^^^^^^
+ >x : A<number>
+->  : ^^^^^^^^^
+ >y : B<number>
+->  : ^^^^^^^^^
+ 

@@ -1,0 +1,10 @@
+--- old.extendsJavaScript.types
++++ new.extendsJavaScript.types
+@@= skipped -5, +5 lines =@@
+  */
+ class MyClass {
+ >MyClass : MyClass
+->        : ^^^^^^^
+ 
+ }
+ 

@@ -1,0 +1,26 @@
+--- old.esmModeDeclarationFileWithExportAssignment.types
++++ new.esmModeDeclarationFileWithExportAssignment.types
+@@= skipped -2, +2 lines =@@
+ === other.d.mts ===
+ declare function example(): 5;
+ >example : () => 5
+->        : ^^^^^^ 
+ 
+ export = example;
+ >example : () => 5
+->        : ^^^^^^ 
+ 
+ === main.mts ===
+ import example from "./other.mjs";
+->example : any
+->        : ^^^
++>example : () => 5
+ 
+ example();
+->example() : any
+->          : ^^^
+->example : any
+->        : ^^^
++>example() : 5
++>example : () => 5
+ 

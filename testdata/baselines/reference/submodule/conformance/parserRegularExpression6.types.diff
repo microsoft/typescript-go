@@ -1,0 +1,18 @@
+--- old.parserRegularExpression6.types
++++ new.parserRegularExpression6.types
+@@= skipped -5, +5 lines =@@
+ 
+ a /= 1; // parse as infix
+ >a /= 1 : number
+->       : ^^^^^^
+ >a : any
+ >1 : 1
+->  : ^
+ 
+ a = /=/; // parse as regexp
+ >a = /=/ : RegExp
+->        : ^^^^^^
+ >a : any
+ >/=/ : RegExp
+->    : ^^^^^^
+ 

@@ -1,0 +1,17 @@
+--- old.anyPlusAny1.types
++++ new.anyPlusAny1.types
+@@= skipped -5, +5 lines =@@
+ 
+ x.name = "hello";
+ >x.name = "hello" : "hello"
+->                 : ^^^^^^^
+ >x.name : any
+ >x : any
+->  : ^^^
+ >name : any
+->     : ^^^
+ >"hello" : "hello"
+->        : ^^^^^^^
+ 
+ var z = x + x;
+ >z : any

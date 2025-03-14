@@ -1,0 +1,12 @@
+--- old.parserComputedPropertyName14.types
++++ new.parserComputedPropertyName14.types
+@@= skipped -2, +2 lines =@@
+ === parserComputedPropertyName14.ts ===
+ var v: { [e](): number };
+ >v : { [x: number]: () => number; }
+->  : ^^^^^^^^^^^^^^^^^^^^^      ^^^
+ >[e] : () => number
+->    : ^^^^^^      
+ >e : any
+->  : ^^^
+ 

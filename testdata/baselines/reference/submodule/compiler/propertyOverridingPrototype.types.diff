@@ -1,0 +1,26 @@
+--- old.propertyOverridingPrototype.types
++++ new.propertyOverridingPrototype.types
+@@= skipped -2, +2 lines =@@
+ === propertyOverridingPrototype.ts ===
+ class Base {
+ >Base : Base
+->     : ^^^^
+ 
+     foo() {
+ >foo : () => void
+->    : ^^^^^^^^^^
+     }
+ }
+ 
+ class Derived extends Base {
+ >Derived : Derived
+->        : ^^^^^^^
+ >Base : Base
+->     : ^^^^
+ 
+     foo: () => { };
+ >foo : () => {}
+->    : ^^^^^^  
+ }
+ 
+ 

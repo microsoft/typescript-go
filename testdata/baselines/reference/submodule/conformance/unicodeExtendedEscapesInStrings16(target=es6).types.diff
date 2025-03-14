@@ -1,0 +1,10 @@
+--- old.unicodeExtendedEscapesInStrings16(target=es6).types
++++ new.unicodeExtendedEscapesInStrings16(target=es6).types
+@@= skipped -2, +2 lines =@@
+ === unicodeExtendedEscapesInStrings16.ts ===
+ var x = "\u{ABCD}\u{EF12}\u{3456}\u{7890}";
+ >x : string
+->  : ^^^^^^
+ >"\u{ABCD}\u{EF12}\u{3456}\u{7890}" : "ꯍ㑖碐"
+->                                   : ^^^^^^
+ 

@@ -1,0 +1,18 @@
+--- old.duplicateConstructorOverloadSignature.types
++++ new.duplicateConstructorOverloadSignature.types
+@@= skipped -2, +2 lines =@@
+ === duplicateConstructorOverloadSignature.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+     constructor(x: number);
+ >x : number
+->  : ^^^^^^
+ 
+     constructor(x: number);
+ >x : number
+->  : ^^^^^^
+ 
+     constructor(x: any) { }
+ >x : any

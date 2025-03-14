@@ -1,0 +1,10 @@
+--- old.plainJSGrammarErrors2.types
++++ new.plainJSGrammarErrors2.types
+@@= skipped -11, +11 lines =@@
+  */
+ export { default as A } from "./a";
+ >default : 1
+->        : ^
+ >A : 1
+->  : ^
+ 

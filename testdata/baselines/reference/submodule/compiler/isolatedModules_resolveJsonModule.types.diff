@@ -1,0 +1,13 @@
+--- old.isolatedModules_resolveJsonModule.types
++++ new.isolatedModules_resolveJsonModule.types
+@@= skipped -2, +2 lines =@@
+ === /a.ts ===
+ import j = require("./j.json");
+ >j : {}
+->  : ^^
+ 
+ === /j.json ===
+ {}
+ >{} : {}
+->   : ^^
+ 

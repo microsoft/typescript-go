@@ -1,0 +1,47 @@
+--- old.constructorWithExpressionLessReturn.types
++++ new.constructorWithExpressionLessReturn.types
+@@= skipped -2, +2 lines =@@
+ === constructorWithExpressionLessReturn.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+     constructor() {
+         return;
+@@= skipped -9, +8 lines =@@
+ 
+ class D {
+ >D : D
+->  : ^
+ 
+     x: number;
+ >x : number
+->  : ^^^^^^
+ 
+     constructor() {
+         return;
+@@= skipped -13, +11 lines =@@
+ 
+ class E {
+ >E : E
+->  : ^
+ 
+     constructor(public x: number) {
+ >x : number
+->  : ^^^^^^
+ 
+         return;
+     }
+@@= skipped -12, +10 lines =@@
+ 
+ class F<T> {
+ >F : F<T>
+->  : ^^^^
++>T : T
+ 
+     constructor(public x: T) {
+ >x : T
+->  : ^
+ 
+         return;
+     }

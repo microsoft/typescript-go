@@ -1,0 +1,10 @@
+--- old.moduleSameValueDuplicateExportedBindings1.types
++++ new.moduleSameValueDuplicateExportedBindings1.types
+@@= skipped -11, +11 lines =@@
+ === c.ts ===
+ export var foo = 42;
+ >foo : number
+->    : ^^^^^^
+ >42 : 42
+->   : ^^
+ 

@@ -1,0 +1,20 @@
+--- old.parserES5SymbolProperty6.types
++++ new.parserES5SymbolProperty6.types
+@@= skipped -2, +2 lines =@@
+ === parserES5SymbolProperty6.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+     [Symbol.toStringTag]: string = "";
+ >[Symbol.toStringTag] : string
+->                     : ^^^^^^
+ >Symbol.toStringTag : any
+->                   : ^^^
+ >Symbol : any
+->       : ^^^
+ >toStringTag : any
+->            : ^^^
+ >"" : ""
+->   : ^^
+ }

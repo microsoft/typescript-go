@@ -1,0 +1,49 @@
+--- old.sourceMap-Comments2.types
++++ new.sourceMap-Comments2.types
+@@= skipped -2, +2 lines =@@
+ === sourceMap-Comments2.ts ===
+ function foo(str: string, num: number): void {
+ >foo : (str: string, num: number) => void
+->    : ^   ^^      ^^   ^^      ^^^^^    
+ >str : string
+->    : ^^^^^^
+ >num : number
+->    : ^^^^^^
+ 
+     return;
+ }
+@@= skipped -14, +11 lines =@@
+  */
+ function bar(str: string, num: number): void {
+ >bar : (str: string, num: number) => void
+->    : ^   ^^      ^^   ^^      ^^^^^    
+ >str : string
+->    : ^^^^^^
+ >num : number
+->    : ^^^^^^
+ 
+     return;
+ }
+@@= skipped -12, +9 lines =@@
+ // some sort of comment
+ function baz(str: string, num: number): void {
+ >baz : (str: string, num: number) => void
+->    : ^   ^^      ^^   ^^      ^^^^^    
+ >str : string
+->    : ^^^^^^
+ >num : number
+->    : ^^^^^^
+ 
+     return;
+ }
+ 
+ function qat(str: string, num: number): void {
+ >qat : (str: string, num: number) => void
+->    : ^   ^^      ^^   ^^      ^^^^^    
+ >str : string
+->    : ^^^^^^
+ >num : number
+->    : ^^^^^^
+ 
+     return;
+ }

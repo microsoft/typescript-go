@@ -1,0 +1,24 @@
+--- old.typeParameterEquality.types
++++ new.typeParameterEquality.types
+@@= skipped -2, +2 lines =@@
+ === typeParameterEquality.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+     get x(): <T>(a: T) => T { return null; }
+ >x : <T>(a: T) => T
+->  : ^ ^^ ^^ ^^^^^ 
++>T : T
+ >a : T
+->  : ^
+ 
+     set x(p: <U>(a: U) => U) {}
+ >x : <T>(a: T) => T
+->  : ^ ^^ ^^ ^^^^^ 
+ >p : <U>(a: U) => U
+->  : ^ ^^ ^^ ^^^^^ 
++>U : U
+ >a : U
+->  : ^
+ }

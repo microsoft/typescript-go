@@ -1,0 +1,8 @@
+--- old.exportClassNameWithObjectAMD.types
++++ new.exportClassNameWithObjectAMD.types
+@@= skipped -2, +2 lines =@@
+ === exportClassNameWithObjectAMD.ts ===
+ export class Object {}
+ >Object : Object
+->       : ^^^^^^
+ 

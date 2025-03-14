@@ -1,0 +1,10 @@
+--- old.missingRequiredDeclare.d.types
++++ new.missingRequiredDeclare.d.types
+@@= skipped -2, +2 lines =@@
+ === missingRequiredDeclare.d.ts ===
+ var x = 1;
+ >x : number
+->  : ^^^^^^
+ >1 : 1
+->  : ^
+ 

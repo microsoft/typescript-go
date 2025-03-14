@@ -1,0 +1,12 @@
+--- old.typeAliasDeclareKeyword01.d.types
++++ new.typeAliasDeclareKeyword01.d.types
+@@= skipped -2, +2 lines =@@
+ === typeAliasDeclareKeyword01.d.ts ===
+ type Foo = number;
+ >Foo : number
+->    : ^^^^^^
+ 
+ declare type Bar = string;
+ >Bar : string
+->    : ^^^^^^
+ 

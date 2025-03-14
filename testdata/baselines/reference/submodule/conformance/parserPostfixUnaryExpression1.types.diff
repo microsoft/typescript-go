@@ -1,0 +1,14 @@
+--- old.parserPostfixUnaryExpression1.types
++++ new.parserPostfixUnaryExpression1.types
+@@= skipped -2, +2 lines =@@
+ === parserPostfixUnaryExpression1.ts ===
+ foo ++ ++;
+ >foo ++ : number
+->       : ^^^^^^
+ >foo : any
+->    : ^^^
+ >++ : number
+->   : ^^^^^^
+ > : any
+-> : ^^^
+ 

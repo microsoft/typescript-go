@@ -1,0 +1,21 @@
+--- old.parser_duplicateLabel2.types
++++ new.parser_duplicateLabel2.types
+@@= skipped -2, +2 lines =@@
+ === parser_duplicateLabel2.ts ===
+ target:
+ >target : any
+->       : ^^^
+ 
+ while (true) {
+ >true : true
+->     : ^^^^
+ 
+   target:
+ >target : any
+->       : ^^^
+ 
+   while (true) {
+ >true : true
+->     : ^^^^
+   }
+ }

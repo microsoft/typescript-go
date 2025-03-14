@@ -1,0 +1,25 @@
+--- old.noUnusedLocals_potentialPredicateUnusedParam.types
++++ new.noUnusedLocals_potentialPredicateUnusedParam.types
+@@= skipped -2, +2 lines =@@
+ === noUnusedLocals_potentialPredicateUnusedParam.ts ===
+ function potentialPredicateUnusedParam(a: unknown) {
+ >potentialPredicateUnusedParam : (a: unknown) => boolean
+->                              : ^ ^^       ^^^^^^^^^^^^
+ >a : unknown
+->  : ^^^^^^^
+ 
+   return !!Math.random();
+ >!!Math.random() : boolean
+->                : ^^^^^^^
+ >!Math.random() : boolean
+->               : ^^^^^^^
+ >Math.random() : number
+->              : ^^^^^^
+ >Math.random : () => number
+->            : ^^^^^^      
+ >Math : Math
+->     : ^^^^
+ >random : () => number
+->       : ^^^^^^      
+ }
+ 

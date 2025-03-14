@@ -1,0 +1,8 @@
+--- old.TupleType6.types
++++ new.TupleType6.types
+@@= skipped -2, +2 lines =@@
+ === TupleType6.ts ===
+ var v: [number,,]
+ >v : [number, any]
+->  : ^^^^^^^^^^^^^
+ 

@@ -1,0 +1,15 @@
+--- old.parserSetAccessorWithTypeAnnotation1.types
++++ new.parserSetAccessorWithTypeAnnotation1.types
+@@= skipped -2, +2 lines =@@
+ === parserSetAccessorWithTypeAnnotation1.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+    set foo(v): number {
+ >foo : any
+->    : ^^^
+ >v : any
+->  : ^^^
+    }
+ }

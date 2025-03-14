@@ -1,0 +1,24 @@
+--- old.es5-commonjs.types
++++ new.es5-commonjs.types
+@@= skipped -1, +1 lines =@@
+ 
+ === es5-commonjs.ts ===
+ export default class A
+->A : A
+->  : ^
++>A : default
+ {
+     constructor ()
+     {
+@@= skipped -10, +9 lines =@@
+ 
+     public B()
+ >B : () => number
+->  : ^^^^^^^^^^^^
+     {
+         return 42;
+ >42 : 42
+->   : ^^
+     }
+ }
+ 

@@ -1,0 +1,10 @@
+--- old.VariableDeclaration10_es6.types
++++ new.VariableDeclaration10_es6.types
+@@= skipped -2, +2 lines =@@
+ === VariableDeclaration10_es6.ts ===
+ let a: number = 1
+ >a : number
+->  : ^^^^^^
+ >1 : 1
+->  : ^
+ 

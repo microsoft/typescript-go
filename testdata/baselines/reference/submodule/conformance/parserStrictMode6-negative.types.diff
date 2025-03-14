@@ -1,0 +1,10 @@
+--- old.parserStrictMode6-negative.types
++++ new.parserStrictMode6-negative.types
+@@= skipped -2, +2 lines =@@
+ === parserStrictMode6-negative.ts ===
+ eval++;
+ >eval++ : number
+->       : ^^^^^^
+ >eval : any
+->     : ^^^
+ 

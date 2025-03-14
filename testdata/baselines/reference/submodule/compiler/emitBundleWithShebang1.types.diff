@@ -1,0 +1,14 @@
+--- old.emitBundleWithShebang1.types
++++ new.emitBundleWithShebang1.types
+@@= skipped -3, +3 lines =@@
+ #!/usr/bin/env gjs
+ class Doo {}
+ >Doo : Doo
+->    : ^^^
+ 
+ class Scooby extends Doo {}
+ >Scooby : Scooby
+->       : ^^^^^^
+ >Doo : Doo
+->    : ^^^
+ 

@@ -1,0 +1,10 @@
+--- old.varArgWithNoParamName.types
++++ new.varArgWithNoParamName.types
+@@= skipped -2, +2 lines =@@
+ === varArgWithNoParamName.ts ===
+ function t1(...) {}
+ >t1 : (...: any[]) => void
+->   : ^^^^^^^^^^^^^^^^^^^^
+ > : any[]
+-> : ^^^^^
+ 

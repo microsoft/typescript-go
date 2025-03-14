@@ -1,0 +1,13 @@
+--- old.cachedModuleResolution7.types
++++ new.cachedModuleResolution7.types
+@@= skipped -2, +2 lines =@@
+ === /a/b/c/lib.ts ===
+ import {x} from "foo";
+ >x : any
+->  : ^^^
+ 
+ === /a/b/c/d/e/app.ts ===
+ import {x} from "foo";
+ >x : any
+->  : ^^^
+ 

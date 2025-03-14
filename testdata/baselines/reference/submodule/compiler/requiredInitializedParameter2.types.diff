@@ -1,0 +1,27 @@
+--- old.requiredInitializedParameter2.types
++++ new.requiredInitializedParameter2.types
+@@= skipped -1, +1 lines =@@
+ 
+ === requiredInitializedParameter2.ts ===
+ interface I1 {
++>I1 : I1
++
+     method();
+ >method : () => any
+->       : ^^^^^^^^^
+ }
+ 
+ class C1 implements I1 {
+ >C1 : C1
+->   : ^^
+ 
+     method(a = 0, b) { }
+ >method : (a: number, b: any) => void
+->       : ^ ^^^^^^^^^^ ^^^^^^^^^^^^^^
+ >a : number
+->  : ^^^^^^
+ >0 : 0
+->  : ^
+ >b : any
+->  : ^^^
+ }

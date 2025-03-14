@@ -1,0 +1,14 @@
+--- old.declarationEmitParameterProperty.types
++++ new.declarationEmitParameterProperty.types
+@@= skipped -2, +2 lines =@@
+ === declarationEmitParameterProperty.ts ===
+ export class Foo {
+ >Foo : Foo
+->    : ^^^
+ 
+   constructor(public bar?: string) {
+ >bar : string | undefined
+->    : ^^^^^^^^^^^^^^^^^^
+   }
+ }
+ 

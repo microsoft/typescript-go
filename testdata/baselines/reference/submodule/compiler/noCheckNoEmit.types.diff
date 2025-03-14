@@ -1,0 +1,10 @@
+--- old.noCheckNoEmit.types
++++ new.noCheckNoEmit.types
+@@= skipped -2, +2 lines =@@
+ === noCheckNoEmit.ts ===
+ export const a: number = "not ok";
+ >a : number
+->  : ^^^^^^
+ >"not ok" : "not ok"
+->         : ^^^^^^^^
+ 

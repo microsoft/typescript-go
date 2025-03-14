@@ -1,0 +1,10 @@
+--- old.asyncFunctionDeclaration14_es5.types
++++ new.asyncFunctionDeclaration14_es5.types
+@@= skipped -2, +2 lines =@@
+ === asyncFunctionDeclaration14_es5.ts ===
+ async function foo(): Promise<void> {
+ >foo : () => Promise<void>
+->    : ^^^^^^             
+ 
+   return;
+ }

@@ -1,0 +1,12 @@
+--- old.classMemberWithMissingIdentifier.types
++++ new.classMemberWithMissingIdentifier.types
+@@= skipped -2, +2 lines =@@
+ === classMemberWithMissingIdentifier.ts ===
+ class C { 
+ >C : C
+->  : ^
+ 
+     public {};
+ > : any
+-> : ^^^
+ }

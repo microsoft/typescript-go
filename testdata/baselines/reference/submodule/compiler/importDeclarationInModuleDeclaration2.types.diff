@@ -1,0 +1,10 @@
+--- old.importDeclarationInModuleDeclaration2.types
++++ new.importDeclarationInModuleDeclaration2.types
+@@= skipped -2, +2 lines =@@
+ === check.js ===
+ function container() {
+ >container : () => void
+->          : ^^^^^^^^^^
+ 
+     import "fs";
+ }

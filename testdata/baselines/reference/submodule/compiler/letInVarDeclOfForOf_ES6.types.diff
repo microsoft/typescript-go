@@ -1,0 +1,30 @@
+--- old.letInVarDeclOfForOf_ES6.types
++++ new.letInVarDeclOfForOf_ES6.types
+@@= skipped -3, +3 lines =@@
+ // should not be an error
+ for (var let of [1,2,3]) {}
+ >let : number
+->    : ^^^^^^
+ >[1,2,3] : number[]
+->        : ^^^^^^^^
+ >1 : 1
+->  : ^
+ >2 : 2
+->  : ^
+ >3 : 3
+->  : ^
+ 
+ {
+ 	for (var let of [1,2,3]) {}
+ >let : number
+->    : ^^^^^^
+ >[1,2,3] : number[]
+->        : ^^^^^^^^
+ >1 : 1
+->  : ^
+ >2 : 2
+->  : ^
+ >3 : 3
+->  : ^
+ }
+ 

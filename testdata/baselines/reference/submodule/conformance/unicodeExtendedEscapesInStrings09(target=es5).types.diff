@@ -1,0 +1,10 @@
+--- old.unicodeExtendedEscapesInStrings09(target=es5).types
++++ new.unicodeExtendedEscapesInStrings09(target=es5).types
+@@= skipped -5, +5 lines =@@
+ // (10000 == 65536)
+ var x = "\u{10000}";
+ >x : string
+->  : ^^^^^^
+ >"\u{10000}" : "𐀀"
+->            : ^^^^
+ 

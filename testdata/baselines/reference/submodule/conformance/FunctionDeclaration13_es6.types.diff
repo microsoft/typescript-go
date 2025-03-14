@@ -1,0 +1,14 @@
+--- old.FunctionDeclaration13_es6.types
++++ new.FunctionDeclaration13_es6.types
+@@= skipped -2, +2 lines =@@
+ === FunctionDeclaration13_es6.ts ===
+ function * foo() {
+ >foo : () => Generator<never, void, unknown>
+->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+    // Legal to use 'yield' in a type context.
+    var v: yield;
+ >v : yield
+->  : ^^^^^
+ }
+ 

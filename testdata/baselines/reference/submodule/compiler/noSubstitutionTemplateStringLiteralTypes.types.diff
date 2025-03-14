@@ -1,0 +1,10 @@
+--- old.noSubstitutionTemplateStringLiteralTypes.types
++++ new.noSubstitutionTemplateStringLiteralTypes.types
+@@= skipped -2, +2 lines =@@
+ === noSubstitutionTemplateStringLiteralTypes.ts ===
+ const x: `foo` = "foo";
+ >x : "foo"
+->  : ^^^^^
+ >"foo" : "foo"
+->      : ^^^^^
+ 

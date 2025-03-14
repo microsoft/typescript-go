@@ -1,0 +1,14 @@
+--- old.unusedVariablesinNamespaces1.types
++++ new.unusedVariablesinNamespaces1.types
+@@= skipped -2, +2 lines =@@
+ === unusedVariablesinNamespaces1.ts ===
+ namespace Validation {
+ >Validation : typeof Validation
+->           : ^^^^^^^^^^^^^^^^^
+ 
+     const lettersRegexp = /^[A-Za-z]+$/;
+ >lettersRegexp : RegExp
+->              : ^^^^^^
+ >/^[A-Za-z]+$/ : RegExp
+->              : ^^^^^^
+ }

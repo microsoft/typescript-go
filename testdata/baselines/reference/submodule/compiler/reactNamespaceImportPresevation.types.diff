@@ -1,0 +1,29 @@
+--- old.reactNamespaceImportPresevation.types
++++ new.reactNamespaceImportPresevation.types
+@@= skipped -2, +2 lines =@@
+ === modules.d.ts ===
+ declare module "my-React-Lib" {
+ >"my-React-Lib" : typeof import("my-React-Lib")
+->               : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+     var a: any;
+ >a : any
+ 
+     export = a;
+ >a : any
+->  : ^^^
+ }
+ 
+ === test.tsx ===
+@@= skipped -18, +16 lines =@@
+ >foo : any
+ 
+ <foo data/>;
+-><foo data/> : error
++><foo data/> : any
+ >foo : any
+->    : ^^^
+->data : true
+->     : ^^^^
++>data : any
+ 

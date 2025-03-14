@@ -1,0 +1,12 @@
+--- old.classImplementsClass1.types
++++ new.classImplementsClass1.types
+@@= skipped -2, +2 lines =@@
+ === classImplementsClass1.ts ===
+ class A { }
+ >A : A
+->  : ^
+ 
+ class C implements A { }
+ >C : C
+->  : ^
+ 

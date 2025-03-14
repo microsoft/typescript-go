@@ -1,0 +1,10 @@
+--- old.for-of32.types
++++ new.for-of32.types
+@@= skipped -2, +2 lines =@@
+ === for-of32.ts ===
+ for (var v of v) { }
+ >v : any
+->  : ^^^
+ >v : any
+->  : ^^^
+ 

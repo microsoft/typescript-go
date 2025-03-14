@@ -1,0 +1,28 @@
+--- old.packageJsonMain.types
++++ new.packageJsonMain.types
+@@= skipped -2, +2 lines =@@
+ === /a.ts ===
+ import foo = require("foo");
+ >foo : any
+->    : ^^^
+ 
+ import bar = require("bar");
+ >bar : any
+->    : ^^^
+ 
+ import baz = require("baz");
+ >baz : any
+->    : ^^^
+ 
+ foo + bar + baz;
+->foo + bar + baz : error
+->foo + bar : error
+->foo : error
+->bar : error
+->baz : error
++>foo + bar + baz : any
++>foo + bar : any
++>foo : any
++>bar : any
++>baz : any
+ 

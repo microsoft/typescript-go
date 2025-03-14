@@ -1,0 +1,20 @@
+--- old.excessPropertyErrorsSuppressed.types
++++ new.excessPropertyErrorsSuppressed.types
+@@= skipped -2, +2 lines =@@
+ === excessPropertyErrorsSuppressed.ts ===
+ var x: { a: string } = { a: "hello", b: 42 };  // No error
+ >x : { a: string; }
+->  : ^^^^^      ^^^
+ >a : string
+->  : ^^^^^^
+ >{ a: "hello", b: 42 } : { a: string; b: number; }
+->                      : ^^^^^^^^^^^^^^^^^^^^^^^^^
+ >a : string
+->  : ^^^^^^
+ >"hello" : "hello"
+->        : ^^^^^^^
+ >b : number
+->  : ^^^^^^
+ >42 : 42
+->   : ^^
+ 

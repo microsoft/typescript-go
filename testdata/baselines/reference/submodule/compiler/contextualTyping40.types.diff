@@ -1,0 +1,16 @@
+--- old.contextualTyping40.types
++++ new.contextualTyping40.types
+@@= skipped -2, +2 lines =@@
+ === contextualTyping40.ts ===
+ var foo = <{():number; (i:number):number; }> function(){return 1;};
+ >foo : { (): number; (i: number): number; }
+->    : ^^^^^^      ^^^ ^^      ^^^      ^^^
+ ><{():number; (i:number):number; }> function(){return 1;} : { (): number; (i: number): number; }
+->                                                         : ^^^^^^      ^^^ ^^      ^^^      ^^^
+ >i : number
+->  : ^^^^^^
+ >function(){return 1;} : () => number
+->                      : ^^^^^^^^^^^^
+ >1 : 1
+->  : ^
+ 

@@ -1,0 +1,21 @@
+--- old.commentOnArrayElement2.types
++++ new.commentOnArrayElement2.types
+@@= skipped -2, +2 lines =@@
+ === commentOnArrayElement2.ts ===
+ const array = [
+ >array : number[]
+->      : ^^^^^^^^
+ >[    /* element 1*/    1 /* end of element 1 */,    2    /* end of element 2 */] : number[]
+->                                                                                 : ^^^^^^^^
+ 
+     /* element 1*/
+     1 /* end of element 1 */,
+ >1 : 1
+->  : ^
+ 
+     2
+ >2 : 2
+->  : ^
+ 
+     /* end of element 2 */
+ ];

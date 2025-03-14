@@ -1,0 +1,16 @@
+--- old.parser566700.types
++++ new.parser566700.types
+@@= skipped -2, +2 lines =@@
+ === parser566700.ts ===
+ var v = ()({});
+ >v : any
+->  : ^^^
+ >()({}) : any
+->       : ^^^
+ >() : any
+->   : ^^^
+ > : any
+-> : ^^^
+ >{} : {}
+->   : ^^
+ 

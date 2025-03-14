@@ -1,0 +1,10 @@
+--- old.extendsTag4.types
++++ new.extendsTag4.types
+@@= skipped -5, +5 lines =@@
+  */
+ class A {
+ >A : A
+->  : ^
+ 
+     constructor() {}
+ }

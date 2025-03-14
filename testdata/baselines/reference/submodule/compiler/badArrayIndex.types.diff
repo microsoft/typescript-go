@@ -1,0 +1,14 @@
+--- old.badArrayIndex.types
++++ new.badArrayIndex.types
+@@= skipped -2, +2 lines =@@
+ === badArrayIndex.ts ===
+ var results = number[];
+ >results : any
+->        : ^^^
+ >number[] : any
+->         : ^^^
+ >number : any
+->       : ^^^
+ > : any
+-> : ^^^
+ 

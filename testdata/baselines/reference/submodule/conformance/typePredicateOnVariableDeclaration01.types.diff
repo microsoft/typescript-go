@@ -1,0 +1,8 @@
+--- old.typePredicateOnVariableDeclaration01.types
++++ new.typePredicateOnVariableDeclaration01.types
+@@= skipped -2, +2 lines =@@
+ === typePredicateOnVariableDeclaration01.ts ===
+ var x: this is string;
+ >x : boolean
+->  : ^^^^^^^
+ 

@@ -1,0 +1,20 @@
+--- old.sourceMapForFunctionInInternalModuleWithCommentPrecedingStatement01.types
++++ new.sourceMapForFunctionInInternalModuleWithCommentPrecedingStatement01.types
+@@= skipped -2, +2 lines =@@
+ === sourceMapForFunctionInInternalModuleWithCommentPrecedingStatement01.ts ===
+ module Q {
+ >Q : typeof Q
+->  : ^^^^^^^^
+ 
+     function P() {
+ >P : () => void
+->  : ^^^^^^^^^^
+ 
+         // Test this
+         var a = 1;
+ >a : number
+->  : ^^^^^^
+ >1 : 1
+->  : ^
+     }
+ }

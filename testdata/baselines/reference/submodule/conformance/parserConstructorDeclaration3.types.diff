@@ -1,0 +1,10 @@
+--- old.parserConstructorDeclaration3.types
++++ new.parserConstructorDeclaration3.types
+@@= skipped -2, +2 lines =@@
+ === parserConstructorDeclaration3.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+   export constructor() { }
+ }

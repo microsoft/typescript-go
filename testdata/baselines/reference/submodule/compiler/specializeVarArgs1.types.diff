@@ -1,0 +1,53 @@
+--- old.specializeVarArgs1.types
++++ new.specializeVarArgs1.types
+@@= skipped -1, +1 lines =@@
+ 
+ === specializeVarArgs1.ts ===
+ interface Observable<T>{ }
++>Observable : Observable<T>
++>T : T
+ 
+  
+ 
+ interface ObservableArray<T> extends Observable<T[]>
++>ObservableArray : ObservableArray<T>
++>T : T
+ 
+ {
+ 
+     push(...values: T[]);
+ >push : (...values: T[]) => any
+->     : ^^^^      ^^   ^^^^^^^^
+ >values : T[]
+->       : ^^^
+ 
+ }
+ 
+@@= skipped -19, +21 lines =@@
+ 
+ function observableArray<T>(): ObservableArray<T> { return null;}
+ >observableArray : <T>() => ObservableArray<T>
+->                : ^ ^^^^^^^                  
++>T : T
+ 
+  
+ 
+ var a =  observableArray<string>();
+ >a : ObservableArray<string>
+->  : ^^^^^^^^^^^^^^^^^^^^^^^
+ >observableArray<string>() : ObservableArray<string>
+->                          : ^^^^^^^^^^^^^^^^^^^^^^^
+ >observableArray : <T>() => ObservableArray<T>
+->                : ^ ^^^^^^^                  
+ 
+ a.push('Some Value');
+ >a.push('Some Value') : any
+ >a.push : (...values: string[]) => any
+->       : ^^^^      ^^^^^^^^^^^^^^^^^^
+ >a : ObservableArray<string>
+->  : ^^^^^^^^^^^^^^^^^^^^^^^
+ >push : (...values: string[]) => any
+->     : ^^^^      ^^^^^^^^^^^^^^^^^^
+ >'Some Value' : "Some Value"
+->             : ^^^^^^^^^^^^
+ 

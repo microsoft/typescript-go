@@ -1,0 +1,15 @@
+--- old.abstractPropertyInitializer.types
++++ new.abstractPropertyInitializer.types
+@@= skipped -2, +2 lines =@@
+ === abstractPropertyInitializer.ts ===
+ abstract class C {
+ >C : C
+->  : ^
+ 
+     abstract prop = 1
+ >prop : number
+->     : ^^^^^^
+ >1 : 1
+->  : ^
+ }
+ 

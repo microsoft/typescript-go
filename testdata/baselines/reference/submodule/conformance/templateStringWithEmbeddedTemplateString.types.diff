@@ -1,0 +1,18 @@
+--- old.templateStringWithEmbeddedTemplateString.types
++++ new.templateStringWithEmbeddedTemplateString.types
+@@= skipped -2, +2 lines =@@
+ === templateStringWithEmbeddedTemplateString.ts ===
+ var x = `123${ `456 ${ " | " } 654` }321 123${ `456 ${ " | " } 654` }321`;
+ >x : string
+->  : ^^^^^^
+ >`123${ `456 ${ " | " } 654` }321 123${ `456 ${ " | " } 654` }321` : "123456  |  654321 123456  |  654321"
+->                                                                  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ >`456 ${ " | " } 654` : "456  |  654"
+->                     : ^^^^^^^^^^^^^
+ >" | " : " | "
+->      : ^^^^^
+ >`456 ${ " | " } 654` : "456  |  654"
+->                     : ^^^^^^^^^^^^^
+ >" | " : " | "
+->      : ^^^^^
+ 

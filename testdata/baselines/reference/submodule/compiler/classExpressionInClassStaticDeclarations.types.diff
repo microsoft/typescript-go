@@ -1,0 +1,16 @@
+--- old.classExpressionInClassStaticDeclarations.types
++++ new.classExpressionInClassStaticDeclarations.types
+@@= skipped -2, +2 lines =@@
+ === classExpressionInClassStaticDeclarations.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+     static D = class extends C {};
+ >D : typeof (Anonymous class)
+->  : ^^^^^^^^^^^^^^^^^^^^^^^^
+ >class extends C {} : typeof (Anonymous class)
+->                   : ^^^^^^^^^^^^^^^^^^^^^^^^
+ >C : C
+->  : ^
+ }

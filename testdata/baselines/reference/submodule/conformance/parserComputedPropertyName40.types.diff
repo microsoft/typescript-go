@@ -1,0 +1,20 @@
+--- old.parserComputedPropertyName40.types
++++ new.parserComputedPropertyName40.types
+@@= skipped -2, +2 lines =@@
+ === parserComputedPropertyName40.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+     [a ? "" : ""]() {}
+ >[a ? "" : ""] : () => void
+->              : ^^^^^^^^^^
+ >a ? "" : "" : ""
+->            : ^^
+ >a : any
+->  : ^^^
+ >"" : ""
+->   : ^^
+ >"" : ""
+->   : ^^
+ }

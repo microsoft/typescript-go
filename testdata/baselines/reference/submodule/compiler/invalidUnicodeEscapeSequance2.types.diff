@@ -1,0 +1,10 @@
+--- old.invalidUnicodeEscapeSequance2.types
++++ new.invalidUnicodeEscapeSequance2.types
+@@= skipped -2, +2 lines =@@
+ === invalidUnicodeEscapeSequance2.ts ===
+ var arg\uxxxx
+ >arg : any
+->    : ^^^
+ >uxxxx : any
+->      : ^^^
+ 

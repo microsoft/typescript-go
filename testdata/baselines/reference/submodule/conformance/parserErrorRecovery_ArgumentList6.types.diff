@@ -1,0 +1,10 @@
+--- old.parserErrorRecovery_ArgumentList6.types
++++ new.parserErrorRecovery_ArgumentList6.types
+@@= skipped -2, +2 lines =@@
+ === parserErrorRecovery_ArgumentList6.ts ===
+ Foo(,
+ >Foo(, : any
+->      : ^^^
+ >Foo : any
+->    : ^^^
+ 

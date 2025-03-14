@@ -1,0 +1,29 @@
+--- old.staticPropertyAndFunctionWithSameName.types
++++ new.staticPropertyAndFunctionWithSameName.types
+@@= skipped -2, +2 lines =@@
+ === staticPropertyAndFunctionWithSameName.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+     static f: number;
+ >f : number
+->  : ^^^^^^
+ 
+     f: number;
+ >f : number
+->  : ^^^^^^
+ }
+ 
+ class D {
+ >D : D
+->  : ^
+ 
+     static f: number;
+ >f : number
+->  : ^^^^^^
+ 
+     f() { }
+ >f : () => void
+->  : ^^^^^^^^^^
+ }

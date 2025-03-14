@@ -1,0 +1,16 @@
+--- old.templateStringWithEmbeddedMultiplicationES6.types
++++ new.templateStringWithEmbeddedMultiplicationES6.types
+@@= skipped -2, +2 lines =@@
+ === templateStringWithEmbeddedMultiplicationES6.ts ===
+ var x = `abc${ 7 * 6 }def`;
+ >x : string
+->  : ^^^^^^
+ >`abc${ 7 * 6 }def` : "abc42def"
+->                   : ^^^^^^^^^^
+ >7 * 6 : number
+->      : ^^^^^^
+ >7 : 7
+->  : ^
+ >6 : 6
+->  : ^
+ 

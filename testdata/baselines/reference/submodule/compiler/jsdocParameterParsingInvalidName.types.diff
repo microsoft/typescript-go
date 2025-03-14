@@ -1,0 +1,17 @@
+--- old.jsdocParameterParsingInvalidName.types
++++ new.jsdocParameterParsingInvalidName.types
+@@= skipped -2, +2 lines =@@
+ === jsdocParameterParsingInvalidName.ts ===
+ class c {
+ >c : c
+->  : ^
+ 
+     /**
+      * @param {string} [`foo]
+      */
+     method(foo) {
+ >method : (foo: any) => void
+->       : ^   ^^^^^^^^^^^^^^
+ >foo : any
+     }
+ }

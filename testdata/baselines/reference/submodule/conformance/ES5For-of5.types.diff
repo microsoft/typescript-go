@@ -1,0 +1,10 @@
+--- old.ES5For-of5.types
++++ new.ES5For-of5.types
+@@= skipped -3, +3 lines =@@
+ for (var _a of []) {
+ >_a : any
+ >[] : undefined[]
+->   : ^^^^^^^^^^^
+ 
+     var x = _a;
+ >x : any

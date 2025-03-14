@@ -1,0 +1,14 @@
+--- old.importTypeNonString.types
++++ new.importTypeNonString.types
+@@= skipped -2, +2 lines =@@
+ === importTypeNonString.ts ===
+ export const x: import({x: 12}) = undefined as any;
+ >x : any
+->  : ^^^
+ >x : 12
+->  : ^^
+ >undefined as any : any
+->                 : ^^^
+ >undefined : undefined
+->          : ^^^^^^^^^
+ 

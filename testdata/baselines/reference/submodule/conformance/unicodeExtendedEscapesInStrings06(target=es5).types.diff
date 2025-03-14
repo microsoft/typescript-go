@@ -1,0 +1,10 @@
+--- old.unicodeExtendedEscapesInStrings06(target=es5).types
++++ new.unicodeExtendedEscapesInStrings06(target=es5).types
+@@= skipped -4, +4 lines =@@
+ //  1. Assert: 0 ≤ cp ≤ 0x10FFFF.
+ var x = "\u{10FFFF}";
+ >x : string
+->  : ^^^^^^
+ >"\u{10FFFF}" : "􏿿"
+->             : ^^^^
+ 

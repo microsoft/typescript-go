@@ -1,0 +1,15 @@
+--- old.structuralTypeInDeclareFileForModule.types
++++ new.structuralTypeInDeclareFileForModule.types
+@@= skipped -2, +2 lines =@@
+ === structuralTypeInDeclareFileForModule.ts ===
+ module M { export var x; }
+ >M : typeof M
+->  : ^^^^^^^^
+ >x : any
+ 
+ var m = M;
+ >m : typeof M
+->  : ^^^^^^^^
+ >M : typeof M
+->  : ^^^^^^^^
+ 

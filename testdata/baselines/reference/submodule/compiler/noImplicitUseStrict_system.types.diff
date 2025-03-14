@@ -1,0 +1,10 @@
+--- old.noImplicitUseStrict_system.types
++++ new.noImplicitUseStrict_system.types
+@@= skipped -2, +2 lines =@@
+ === noImplicitUseStrict_system.ts ===
+ export var x = 0;
+ >x : number
+->  : ^^^^^^
+ >0 : 0
+->  : ^
+ 

@@ -1,0 +1,22 @@
+--- old.parserClassDeclaration17.types
++++ new.parserClassDeclaration17.types
+@@= skipped -2, +2 lines =@@
+ === parserClassDeclaration17.ts ===
+ declare class Enumerator {
+ >Enumerator : Enumerator
+->           : ^^^^^^^^^^
+ 
+     public atEnd(): boolean;
+ >atEnd : () => boolean
+->      : ^^^^^^       
+ 
+     public moveNext();
+ >moveNext : () => any
+->         : ^^^^^^^^^
+ 
+     public item(): any;
+ >item : () => any
+->     : ^^^^^^   
+ 
+     constructor (o: any);
+ >o : any

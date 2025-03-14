@@ -1,0 +1,35 @@
+--- old.parserModuleDeclaration11.types
++++ new.parserModuleDeclaration11.types
+@@= skipped -2, +2 lines =@@
+ === parserModuleDeclaration11.ts ===
+ declare module string {
+ >string : typeof string
+->       : ^^^^^^^^^^^^^
+ 
+     interface X { }
++>X : X
++
+     export function foo(s: string);
+ >foo : (s: string) => any
+->    : ^ ^^      ^^^^^^^^
+ >s : string
+->  : ^^^^^^
+ }
+ string.foo("abc");
+ >string.foo("abc") : any
+ >string.foo : (s: string) => any
+->           : ^ ^^      ^^^^^^^^
+ >string : typeof string
+->       : ^^^^^^^^^^^^^
+ >foo : (s: string) => any
+->    : ^ ^^      ^^^^^^^^
+ >"abc" : "abc"
+->      : ^^^^^
+ 
+ var x: string.X;
+->x : string.X
+->  : ^^^^^^^^
++>x : X
+ >string : any
+->       : ^^^
+ 

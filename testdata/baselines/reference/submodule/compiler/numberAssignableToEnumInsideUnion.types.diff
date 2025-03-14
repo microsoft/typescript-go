@@ -1,0 +1,22 @@
+--- old.numberAssignableToEnumInsideUnion.types
++++ new.numberAssignableToEnumInsideUnion.types
+@@= skipped -2, +2 lines =@@
+ === numberAssignableToEnumInsideUnion.ts ===
+ enum E { A, B }
+ >E : E
+->  : ^
+ >A : E.A
+->  : ^^^
+ >B : E.B
+->  : ^^^
+ 
+ let n: number;
+ >n : number
+->  : ^^^^^^
+ 
+ let z: E | boolean = n;
+ >z : boolean | E
+->  : ^^^^^^^^^^^
+ >n : number
+->  : ^^^^^^
+ 

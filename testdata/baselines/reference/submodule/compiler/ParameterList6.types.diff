@@ -1,0 +1,15 @@
+--- old.ParameterList6.types
++++ new.ParameterList6.types
+@@= skipped -2, +2 lines =@@
+ === ParameterList6.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+   constructor(C: (public A) => any) {
+ >C : (A: any) => any
+->  : ^ ^^^^^^^^^^   
+ >A : any
+->  : ^^^
+   }
+ }

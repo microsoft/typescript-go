@@ -1,0 +1,20 @@
+--- old.ambientStatement1.types
++++ new.ambientStatement1.types
+@@= skipped -2, +2 lines =@@
+ === ambientStatement1.ts ===
+     declare module M1 {
+ >M1 : typeof M1
+->   : ^^^^^^^^^
+ 
+     	while(true);
+ >true : true
+->     : ^^^^
+     
+     	export var v1 = () => false;
+ >v1 : () => boolean
+->   : ^^^^^^^^^^^^^
+ >() => false : () => boolean
+->            : ^^^^^^^^^^^^^
+ >false : false
+->      : ^^^^^
+     }

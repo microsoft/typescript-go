@@ -1,0 +1,10 @@
+--- old.regularExpressionGroupNameSuggestions.types
++++ new.regularExpressionGroupNameSuggestions.types
+@@= skipped -2, +2 lines =@@
+ === regularExpressionGroupNameSuggestions.ts ===
+ const regex = /(?<foo>)\k<Foo>/;
+ >regex : RegExp
+->      : ^^^^^^
+ >/(?<foo>)\k<Foo>/ : RegExp
+->                  : ^^^^^^
+ 

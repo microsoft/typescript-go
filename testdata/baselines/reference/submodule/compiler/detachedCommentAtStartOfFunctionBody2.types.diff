@@ -1,0 +1,33 @@
+--- old.detachedCommentAtStartOfFunctionBody2.types
++++ new.detachedCommentAtStartOfFunctionBody2.types
+@@= skipped -2, +2 lines =@@
+ === detachedCommentAtStartOfFunctionBody2.ts ===
+ class TestFile {
+ >TestFile : TestFile
+->         : ^^^^^^^^
+ 
+     foo(message: string): () => string {
+ >foo : (message: string) => () => string
+->    : ^       ^^      ^^^^^            
+ >message : string
+->        : ^^^^^^
+ 
+         /// <summary>Test summary</summary>
+         /// <param name="message" type="String" />
+@@= skipped -14, +11 lines =@@
+ 
+         return () => message + this.name;
+ >() => message + this.name : () => string
+->                          : ^^^^^^^^^^^^
+ >message + this.name : string
+->                    : ^^^^^^
+ >message : string
+->        : ^^^^^^
+ >this.name : any
+->          : ^^^
+ >this : this
+->     : ^^^^
+ >name : any
+->     : ^^^
+     }
+ }

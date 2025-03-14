@@ -1,0 +1,14 @@
+--- old.separate1-1.types
++++ new.separate1-1.types
+@@= skipped -2, +2 lines =@@
+ === separate1-1.ts ===
+ X.f();
+ >X.f() : any
+->      : ^^^
+ >X.f : any
+->    : ^^^
+ >X : any
+->  : ^^^
+ >f : any
+->  : ^^^
+ 

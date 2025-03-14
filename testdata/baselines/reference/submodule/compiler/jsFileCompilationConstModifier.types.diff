@@ -1,0 +1,10 @@
+--- old.jsFileCompilationConstModifier.types
++++ new.jsFileCompilationConstModifier.types
+@@= skipped -2, +2 lines =@@
+ === a.js ===
+ const c = 10;
+ >c : 10
+->  : ^^
+ >10 : 10
+->   : ^^
+ 

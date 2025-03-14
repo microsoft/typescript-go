@@ -1,0 +1,10 @@
+--- old.ts-expect-error-nocheck-js.types
++++ new.ts-expect-error-nocheck-js.types
+@@= skipped -5, +5 lines =@@
+ // @ts-expect-error
+ const a = 1;
+ >a : 1
+->  : ^
+ >1 : 1
+->  : ^
+ 

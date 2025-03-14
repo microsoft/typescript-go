@@ -1,0 +1,16 @@
+--- old.exportNonInitializedVariablesInIfThenStatementNoCrash1(module=esnext).types
++++ new.exportNonInitializedVariablesInIfThenStatementNoCrash1(module=esnext).types
+@@= skipped -4, +4 lines =@@
+ 
+ if (true)
+ >true : true
+->     : ^^^^
+ 
+ export const cssExports: CssExports;
+ >cssExports : CssExports
+->           : ^^^^^^^^^^
+ 
+ export default cssExports;
+ >cssExports : CssExports
+->           : ^^^^^^^^^^
+ 

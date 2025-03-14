@@ -1,0 +1,12 @@
+--- old.continueTarget1.types
++++ new.continueTarget1.types
+@@= skipped -2, +2 lines =@@
+ === continueTarget1.ts ===
+ target:
+ >target : any
+->       : ^^^
+ 
+   continue target;
+ >target : any
+->       : ^^^
+ 

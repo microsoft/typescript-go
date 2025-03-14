@@ -1,0 +1,26 @@
+--- old.jsdocLinkTag6.types
++++ new.jsdocLinkTag6.types
+@@= skipped -2, +2 lines =@@
+ === /a.ts ===
+ class A {
+ >A : A
+->  : ^
+ 
+     foo() {}
+ >foo : () => void
+->    : ^^^^^^^^^^
+ }
+ class B extends A {
+ >B : B
+->  : ^
+ >A : A
+->  : ^
+ 
+     /**
+      * @override {@link A.foo}
+      */
+     foo() {}
+ >foo : () => void
+->    : ^^^^^^^^^^
+ }
+ 

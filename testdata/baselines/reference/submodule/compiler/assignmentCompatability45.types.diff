@@ -1,0 +1,33 @@
+--- old.assignmentCompatability45.types
++++ new.assignmentCompatability45.types
+@@= skipped -2, +2 lines =@@
+ === assignmentCompatability45.ts ===
+ abstract class A {}
+ >A : A
+->  : ^
+ 
+ class B extends A {
+ >B : B
+->  : ^
+ >A : A
+->  : ^
+ 
+     constructor(x: number) {
+ >x : number
+->  : ^^^^^^
+ 
+         super();
+ >super() : void
+->        : ^^^^
+ >super : typeof A
+->      : ^^^^^^^^
+     }
+ }
+ const b: typeof A = B;
+ >b : typeof A
+->  : ^^^^^^^^
+->A : typeof A
+->  : ^^^^^^^^
+ >B : typeof B
+->  : ^^^^^^^^
+ 

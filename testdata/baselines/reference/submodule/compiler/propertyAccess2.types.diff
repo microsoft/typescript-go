@@ -1,0 +1,18 @@
+--- old.propertyAccess2.types
++++ new.propertyAccess2.types
+@@= skipped -2, +2 lines =@@
+ === propertyAccess2.ts ===
+ var foo: number;
+ >foo : number
+->    : ^^^^^^
+ 
+ foo.toBAZ();
+ >foo.toBAZ() : any
+->            : ^^^
+ >foo.toBAZ : any
+->          : ^^^
+ >foo : number
+->    : ^^^^^^
+ >toBAZ : any
+->      : ^^^
+ 

@@ -1,0 +1,10 @@
+--- old.parserUnaryExpression4.types
++++ new.parserUnaryExpression4.types
+@@= skipped -2, +2 lines =@@
+ === parserUnaryExpression4.ts ===
+ ++{};
+ >++{} : number
+->     : ^^^^^^
+ >{} : {}
+->   : ^^
+ 

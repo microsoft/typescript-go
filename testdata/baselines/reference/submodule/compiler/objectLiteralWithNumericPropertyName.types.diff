@@ -1,0 +1,26 @@
+--- old.objectLiteralWithNumericPropertyName.types
++++ new.objectLiteralWithNumericPropertyName.types
+@@= skipped -1, +1 lines =@@
+ 
+ === objectLiteralWithNumericPropertyName.ts ===
+ interface A {
++>A : A
++
+     0: string;
+ >0 : string
+->  : ^^^^^^
+ }
+ var x: A = {
+ >x : A
+->  : ^
+ >{    0: 3} : { 0: number; }
+->           : ^^^^^^^^^^^^^^
+ 
+     0: 3
+ >0 : number
+->  : ^^^^^^
+ >3 : 3
+->  : ^
+ 
+ };
+ 

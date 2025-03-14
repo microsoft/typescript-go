@@ -1,0 +1,12 @@
+--- old.declarationEmitReadonly.types
++++ new.declarationEmitReadonly.types
+@@= skipped -2, +2 lines =@@
+ === declarationEmitReadonly.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+     constructor(readonly x: number) {}
+ >x : number
+->  : ^^^^^^
+ }

@@ -1,0 +1,16 @@
+--- old.emptyAssignmentPatterns01_ES5iterable.types
++++ new.emptyAssignmentPatterns01_ES5iterable.types
+@@= skipped -7, +7 lines =@@
+ >({} = a) : any
+ >{} = a : any
+ >{} : {}
+->   : ^^
+ >a : any
+ 
+ ([] = a);
+ >([] = a) : any
+ >[] = a : any
+ >[] : []
+->   : ^^
+ >a : any
+ 

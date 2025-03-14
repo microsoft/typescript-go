@@ -1,0 +1,22 @@
+--- old.templateStringInConditionalES6.types
++++ new.templateStringInConditionalES6.types
+@@= skipped -2, +2 lines =@@
+ === templateStringInConditionalES6.ts ===
+ var x = `abc${ " " }def` ? `abc${ " " }def` : `abc${ " " }def`;
+ >x : string
+->  : ^^^^^^
+ >`abc${ " " }def` ? `abc${ " " }def` : `abc${ " " }def` : "abc def"
+->                                                       : ^^^^^^^^^
+ >`abc${ " " }def` : "abc def"
+->                 : ^^^^^^^^^
+ >" " : " "
+->    : ^^^
+ >`abc${ " " }def` : "abc def"
+->                 : ^^^^^^^^^
+ >" " : " "
+->    : ^^^
+ >`abc${ " " }def` : "abc def"
+->                 : ^^^^^^^^^
+ >" " : " "
+->    : ^^^
+ 

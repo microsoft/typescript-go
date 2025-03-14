@@ -1,0 +1,18 @@
+--- old.emitBundleWithShebangAndPrologueDirectives1.types
++++ new.emitBundleWithShebangAndPrologueDirectives1.types
+@@= skipped -3, +3 lines =@@
+ #!/usr/bin/env gjs
+ "use strict"
+ >"use strict" : "use strict"
+->             : ^^^^^^^^^^^^
+ 
+ class Doo {}
+ >Doo : Doo
+->    : ^^^
+ 
+ class Scooby extends Doo {}
+ >Scooby : Scooby
+->       : ^^^^^^
+ >Doo : Doo
+->    : ^^^
+ 

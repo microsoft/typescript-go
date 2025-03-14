@@ -1,0 +1,14 @@
+--- old.parserMemberFunctionDeclaration2.types
++++ new.parserMemberFunctionDeclaration2.types
+@@= skipped -2, +2 lines =@@
+ === parserMemberFunctionDeclaration2.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+     static static Foo() { }
+ >static : any
+->       : ^^^
+ >Foo : () => void
+->    : ^^^^^^^^^^
+ }

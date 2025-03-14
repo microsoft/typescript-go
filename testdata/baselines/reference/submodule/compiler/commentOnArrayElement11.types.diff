@@ -1,0 +1,16 @@
+--- old.commentOnArrayElement11.types
++++ new.commentOnArrayElement11.types
+@@= skipped -2, +2 lines =@@
+ === commentOnArrayElement11.ts ===
+ const array = [
+ >array : any[]
+->      : ^^^^^
+ >[    , /* comment */] : undefined[]
+->                      : ^^^^^^^^^^^
+ 
+     , /* comment */
+ > : undefined
+-> : ^^^^^^^^^
+ 
+ ];
+ 

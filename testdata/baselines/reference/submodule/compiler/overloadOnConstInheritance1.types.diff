@@ -1,0 +1,36 @@
+--- old.overloadOnConstInheritance1.types
++++ new.overloadOnConstInheritance1.types
+@@= skipped -1, +1 lines =@@
+ 
+ === overloadOnConstInheritance1.ts ===
+ interface Base {
++>Base : Base
++
+     addEventListener(x: string): any;
+ >addEventListener : { (x: string): any; (x: "foo"): string; }
+->                 : ^^^ ^^      ^^^   ^^^ ^^     ^^^      ^^^
+ >x : string
+->  : ^^^^^^
+ 
+     addEventListener(x: 'foo'): string;
+ >addEventListener : { (x: string): any; (x: "foo"): string; }
+->                 : ^^^ ^^      ^^^   ^^^ ^^     ^^^      ^^^
+ >x : "foo"
+->  : ^^^^^
+ }
+ interface Deriver extends Base {
++>Deriver : Deriver
++
+     addEventListener(x: string): any;
+ >addEventListener : { (x: string): any; (x: "bar"): string; }
+->                 : ^^^ ^^      ^^^   ^^^ ^^     ^^^      ^^^
+ >x : string
+->  : ^^^^^^
+ 
+     addEventListener(x: 'bar'): string;
+ >addEventListener : { (x: string): any; (x: "bar"): string; }
+->                 : ^^^ ^^      ^^^   ^^^ ^^     ^^^      ^^^
+ >x : "bar"
+->  : ^^^^^
+ }
+ 

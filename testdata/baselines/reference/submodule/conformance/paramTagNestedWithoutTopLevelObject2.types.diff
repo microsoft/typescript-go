@@ -1,0 +1,22 @@
+--- old.paramTagNestedWithoutTopLevelObject2.types
++++ new.paramTagNestedWithoutTopLevelObject2.types
+@@= skipped -6, +6 lines =@@
+  */
+ function g(xyz) {
+ >g : (xyz: any) => any
+->  : ^   ^^^^^^^^^^^^^
+ >xyz : any
+->    : ^^^
+ 
+     return xyz.bar.p;
+ >xyz.bar.p : any
+->          : ^^^
+ >xyz.bar : any
+->        : ^^^
+ >xyz : any
+->    : ^^^
+ >bar : any
+->    : ^^^
+ >p : any
+->  : ^^^
+ }

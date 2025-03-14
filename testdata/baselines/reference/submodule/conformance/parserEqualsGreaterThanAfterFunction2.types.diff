@@ -1,0 +1,12 @@
+--- old.parserEqualsGreaterThanAfterFunction2.types
++++ new.parserEqualsGreaterThanAfterFunction2.types
+@@= skipped -2, +2 lines =@@
+ === parserEqualsGreaterThanAfterFunction2.ts ===
+ function (a => b;
+ > : (a: any, b: any) => any
+-> : ^ ^^^^^^^ ^^^^^^^^^^^^^
+ >a : any
+->  : ^^^
+ >b : any
+->  : ^^^
+ 

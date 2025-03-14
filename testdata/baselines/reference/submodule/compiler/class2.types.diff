@@ -1,0 +1,12 @@
+--- old.class2.types
++++ new.class2.types
+@@= skipped -2, +2 lines =@@
+ === class2.ts ===
+ class foo { constructor() { static f = 3; } }
+ >foo : foo
+->    : ^^^
+ >f : number
+->  : ^^^^^^
+ >3 : 3
+->  : ^
+ 

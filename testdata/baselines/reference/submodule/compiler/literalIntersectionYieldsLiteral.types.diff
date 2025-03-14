@@ -1,0 +1,18 @@
+--- old.literalIntersectionYieldsLiteral.types
++++ new.literalIntersectionYieldsLiteral.types
+@@= skipped -2, +2 lines =@@
+ === literalIntersectionYieldsLiteral.ts ===
+ const x: { type: string } & { type: "string" } = { type: "string" };
+ >x : { type: string; } & { type: "string"; }
+->  : ^^^^^^^^      ^^^^^^^^^^^^^^        ^^^
+ >type : string
+->     : ^^^^^^
+ >type : "string"
+->     : ^^^^^^^^
+ >{ type: "string" } : { type: "string"; }
+->                   : ^^^^^^^^^^^^^^^^^^^
+ >type : "string"
+->     : ^^^^^^^^
+ >"string" : "string"
+->         : ^^^^^^^^
+ 

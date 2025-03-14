@@ -1,0 +1,31 @@
+--- old.nestedNamespace.types
++++ new.nestedNamespace.types
+@@= skipped -2, +2 lines =@@
+ === a.ts ===
+ export namespace types {
+ >types : typeof types
+->      : ^^^^^^^^^^^^
+ 
+   export class A {}
+ >A : A
+->  : ^
+ }
+ 
+ === b.ts ===
+ import type * as a from './a';
+->a : typeof a
+->  : ^^^^^^^^
++>a : typeof import("a")
+ 
+ interface B extends a.types.A {}
+->a.types : typeof a.types
+->        : ^^^^^^^^^^^^^^
+->a : typeof a
+->  : ^^^^^^^^
+->types : typeof a.types
+->      : ^^^^^^^^^^^^^^
++>B : B
++>a.types : typeof types
++>a : typeof import("a")
++>types : typeof types
+ 

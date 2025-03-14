@@ -1,0 +1,18 @@
+--- old.decoratorMetadataGenericTypeVariable.types
++++ new.decoratorMetadataGenericTypeVariable.types
+@@= skipped -2, +2 lines =@@
+ === decoratorMetadataGenericTypeVariable.ts ===
+ export class C<TypeVariable> {
+ >C : C<TypeVariable>
+->  : ^^^^^^^^^^^^^^^
++>TypeVariable : TypeVariable
+ 
+   @Decorate
+ >Decorate : any
+->         : ^^^
+ 
+   member: TypeVariable;
+ >member : TypeVariable
+->       : ^^^^^^^^^^^^
+ }
+ 

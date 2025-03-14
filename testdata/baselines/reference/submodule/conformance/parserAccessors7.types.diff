@@ -1,0 +1,14 @@
+--- old.parserAccessors7.types
++++ new.parserAccessors7.types
+@@= skipped -2, +2 lines =@@
+ === parserAccessors7.ts ===
+ var v = { get foo(v: number) { } };
+ >v : { readonly foo: void; }
+->  : ^^^^^^^^^^^^^^^^^^^^^^^
+ >{ get foo(v: number) { } } : { readonly foo: void; }
+->                           : ^^^^^^^^^^^^^^^^^^^^^^^
+ >foo : void
+->    : ^^^^
+ >v : number
+->  : ^^^^^^
+ 

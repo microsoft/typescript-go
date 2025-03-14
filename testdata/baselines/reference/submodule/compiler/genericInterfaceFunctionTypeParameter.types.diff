@@ -1,0 +1,28 @@
+--- old.genericInterfaceFunctionTypeParameter.types
++++ new.genericInterfaceFunctionTypeParameter.types
+@@= skipped -1, +1 lines =@@
+ 
+ === genericInterfaceFunctionTypeParameter.ts ===
+ export interface IFoo<A> { }
++>IFoo : IFoo<A>
++>A : A
++
+ export function foo<A>(fn: (ifoo: IFoo<A>) => void) {
+ >foo : <A>(fn: (ifoo: IFoo<A>) => void) => void
+->    : ^ ^^  ^^                       ^^^^^^^^^
++>A : A
+ >fn : (ifoo: IFoo<A>) => void
+->   : ^    ^^       ^^^^^    
+ >ifoo : IFoo<A>
+->     : ^^^^^^^
+ 
+     foo(fn); // Invocation is necessary to repro (!)
+ >foo(fn) : void
+->        : ^^^^
+ >foo : <A>(fn: (ifoo: IFoo<A>) => void) => void
+->    : ^ ^^  ^^                       ^^^^^^^^^
+ >fn : (ifoo: IFoo<A>) => void
+->   : ^    ^^       ^^^^^    
+ }
+ 
+ 

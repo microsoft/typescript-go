@@ -1,0 +1,13 @@
+--- old.nodeNextModuleResolution2.types
++++ new.nodeNextModuleResolution2.types
+@@= skipped -2, +2 lines =@@
+ === /a/node_modules/foo/index.d.ts ===
+ export declare let x: number
+ >x : number
+->  : ^^^^^^
+ 
+ === /a/b/c/d/e/app.mts ===
+ import {x} from "foo";
+ >x : number
+->  : ^^^^^^
+ 

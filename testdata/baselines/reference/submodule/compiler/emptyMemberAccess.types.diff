@@ -1,0 +1,22 @@
+--- old.emptyMemberAccess.types
++++ new.emptyMemberAccess.types
+@@= skipped -2, +2 lines =@@
+ === emptyMemberAccess.ts ===
+ function getObj() {
+ >getObj : () => void
+->       : ^^^^^^^^^^
+ 
+    ().toString();
+ >().toString() : any
+->              : ^^^
+ >().toString : any
+->            : ^^^
+ >() : any
+->   : ^^^
+ > : any
+-> : ^^^
+ >toString : any
+->         : ^^^
+ 
+ }
+  

@@ -1,0 +1,8 @@
+--- old.systemModule12.types
++++ new.systemModule12.types
+@@= skipped -3, +3 lines =@@
+ ///<amd-module name='NamedModule'/>
+ import n from 'file1'
+ >n : any
+->  : ^^^
+ 

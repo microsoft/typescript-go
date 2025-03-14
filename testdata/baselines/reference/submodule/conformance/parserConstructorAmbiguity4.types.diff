@@ -1,0 +1,20 @@
+--- old.parserConstructorAmbiguity4.types
++++ new.parserConstructorAmbiguity4.types
+@@= skipped -2, +2 lines =@@
+ === parserConstructorAmbiguity4.ts ===
+ new Date<A ? B : C
+ >new Date<A ? B : C : any
+->                   : ^^^
+ >new Date<A : boolean
+->           : ^^^^^^^
+ >new Date : Date
+->         : ^^^^
+ >Date : DateConstructor
+->     : ^^^^^^^^^^^^^^^
+ >A : any
+->  : ^^^
+ >B : any
+->  : ^^^
+ >C : any
+->  : ^^^
+ 

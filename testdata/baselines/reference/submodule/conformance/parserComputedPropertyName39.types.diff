@@ -1,0 +1,18 @@
+--- old.parserComputedPropertyName39.types
++++ new.parserComputedPropertyName39.types
+@@= skipped -2, +2 lines =@@
+ === parserComputedPropertyName39.ts ===
+ "use strict";
+ >"use strict" : "use strict"
+->             : ^^^^^^^^^^^^
+ 
+ class C {
+ >C : C
+->  : ^
+ 
+     [public]() { }
+ >[public] : () => void
+->         : ^^^^^^^^^^
+ >public : any
+->       : ^^^
+ }

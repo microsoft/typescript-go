@@ -1,0 +1,18 @@
+--- old.umdDependencyCommentName1.types
++++ new.umdDependencyCommentName1.types
+@@= skipped -4, +4 lines =@@
+ 
+ import m1 = require("m2")
+ >m1 : any
+->   : ^^^
+ 
+ m1.f();
+ >m1.f() : any
+->       : ^^^
+ >m1.f : any
+->     : ^^^
+ >m1 : any
+->   : ^^^
+ >f : any
+->  : ^^^
+ 

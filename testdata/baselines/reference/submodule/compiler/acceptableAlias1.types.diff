@@ -1,0 +1,26 @@
+--- old.acceptableAlias1.types
++++ new.acceptableAlias1.types
+@@= skipped -2, +2 lines =@@
+ === acceptableAlias1.ts ===
+ module M {
+ >M : typeof M
+->  : ^^^^^^^^
+ 
+     export module N {
++>N : any
+     }
+     export import X = N;
+ >X : any
+->  : ^^^
+->N : error
++>N : any
+ }
+ 
+ import r = M.X;
+ >r : any
+->  : ^^^
+ >M : typeof M
+->  : ^^^^^^^^
+ >X : any
+->  : ^^^
+ 

@@ -1,0 +1,23 @@
+--- old.jsNegativeElementAccessNotBound.types
++++ new.jsNegativeElementAccessNotBound.types
+@@= skipped -2, +2 lines =@@
+ === jsNegativeELementAccessNotBound.js ===
+ var indexMap = {};
+ >indexMap : {}
+->         : ^^
+ >{} : {}
+->   : ^^
+ 
+ indexMap[-1] = 0;
+ >indexMap[-1] = 0 : 0
+->                 : ^
+ >indexMap[-1] : any
+ >indexMap : {}
+->         : ^^
+ >-1 : -1
+->   : ^^
+ >1 : 1
+->  : ^
+ >0 : 0
+->  : ^
+ 

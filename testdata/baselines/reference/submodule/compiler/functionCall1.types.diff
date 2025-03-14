@@ -1,0 +1,16 @@
+--- old.functionCall1.types
++++ new.functionCall1.types
+@@= skipped -2, +2 lines =@@
+ === functionCall1.ts ===
+ function foo():any{return ""};
+ >foo : () => any
+->    : ^^^^^^   
+ >"" : ""
+->   : ^^
+ 
+ var x = foo();
+ >x : any
+ >foo() : any
+ >foo : () => any
+->    : ^^^^^^   
+ 

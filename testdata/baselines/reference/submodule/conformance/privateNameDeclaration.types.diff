@@ -1,0 +1,34 @@
+--- old.privateNameDeclaration.types
++++ new.privateNameDeclaration.types
+@@= skipped -2, +2 lines =@@
+ === privateNameDeclaration.ts ===
+ class A {
+ >A : A
+->  : ^
+ 
+     #foo: string;
+ >#foo : string
+->     : ^^^^^^
+ 
+     #bar = 6;
+ >#bar : number
+->     : ^^^^^^
+ >6 : 6
+->  : ^
+ 
+     baz: string;
+ >baz : string
+->    : ^^^^^^
+ 
+     qux = 6;
+ >qux : number
+->    : ^^^^^^
+ >6 : 6
+->  : ^
+ 
+     quux(): void {
+ >quux : () => void
+->     : ^^^^^^    
+ 
+     }
+ }

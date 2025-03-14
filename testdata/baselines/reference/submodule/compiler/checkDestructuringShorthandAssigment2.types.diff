@@ -1,0 +1,28 @@
+--- old.checkDestructuringShorthandAssigment2.types
++++ new.checkDestructuringShorthandAssigment2.types
+@@= skipped -4, +4 lines =@@
+ 
+ let o: any, k: any;
+ >o : any
+->  : ^^^
+ >k : any
+->  : ^^^
+ 
+ let { x } = { x: 1, ...o, [k]: 1 };
+ >x : any
+->  : ^^^
+ >{ x: 1, ...o, [k]: 1 } : any
+->                       : ^^^
+ >x : number
+->  : ^^^^^^
+ >1 : 1
+->  : ^
+ >o : any
+->  : ^^^
+ >[k] : number
+->    : ^^^^^^
+ >k : any
+->  : ^^^
+ >1 : 1
+->  : ^
+ 

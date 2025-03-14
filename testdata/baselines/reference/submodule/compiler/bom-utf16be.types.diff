@@ -1,0 +1,10 @@
+--- old.bom-utf16be.types
++++ new.bom-utf16be.types
+@@= skipped -2, +2 lines =@@
+ === bom-utf16be.ts ===
+ var x=10;
+ >x : number
+->  : ^^^^^^
+ >10 : 10
+->   : ^^
+ 

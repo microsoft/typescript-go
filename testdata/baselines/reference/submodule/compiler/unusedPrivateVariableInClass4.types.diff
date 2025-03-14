@@ -1,0 +1,33 @@
+--- old.unusedPrivateVariableInClass4.types
++++ new.unusedPrivateVariableInClass4.types
+@@= skipped -2, +2 lines =@@
+ === unusedPrivateVariableInClass4.ts ===
+ class greeter {
+ >greeter : greeter
+->        : ^^^^^^^
+ 
+     private x: string;
+ >x : string
+->  : ^^^^^^
+ 
+     private y: string;
+ >y : string
+->  : ^^^^^^
+ 
+     public  z: string;
+ >z : string
+->  : ^^^^^^
+ 
+     public method1() {
+ >method1 : () => void
+->        : ^^^^^^^^^^
+ 
+         this.x;
+ >this.x : string
+->       : ^^^^^^
+ >this : this
+->     : ^^^^
+ >x : string
+->  : ^^^^^^
+     }
+ }

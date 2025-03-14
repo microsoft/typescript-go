@@ -1,0 +1,24 @@
+--- old.taggedTemplatesWithIncompleteNoSubstitutionTemplate2.types
++++ new.taggedTemplatesWithIncompleteNoSubstitutionTemplate2.types
+@@= skipped -2, +2 lines =@@
+ === taggedTemplatesWithIncompleteNoSubstitutionTemplate2.ts ===
+ function f(x: TemplateStringsArray, y: string, z: string) {
+ >f : (x: TemplateStringsArray, y: string, z: string) => void
+->  : ^ ^^                    ^^ ^^      ^^ ^^      ^^^^^^^^^
+ >x : TemplateStringsArray
+->  : ^^^^^^^^^^^^^^^^^^^^
+ >y : string
+->  : ^^^^^^
+ >z : string
+->  : ^^^^^^
+ }
+ 
+ // Incomplete call, not enough parameters, at EOF.
+ f `
+ >f ` : void
+->    : ^^^^
+ >f : (x: TemplateStringsArray, y: string, z: string) => void
+->  : ^ ^^                    ^^ ^^      ^^ ^^      ^^^^^^^^^
+ >` : ""
+->  : ^^
+ 

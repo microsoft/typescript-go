@@ -1,0 +1,19 @@
+--- old.decoratorOnVar.types
++++ new.decoratorOnVar.types
+@@= skipped -2, +2 lines =@@
+ === decoratorOnVar.ts ===
+ declare function dec<T>(target: T): T;
+ >dec : <T>(target: T) => T
+->    : ^ ^^      ^^ ^^^^^ 
++>T : T
+ >target : T
+->       : ^
+ 
+ @dec
+ >dec : <T>(target: T) => T
+->    : ^ ^^      ^^ ^^^^^ 
+ 
+ var x: number;
+ >x : number
+->  : ^^^^^^
+ 

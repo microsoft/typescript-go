@@ -1,0 +1,50 @@
+--- old.parenthesizedJSDocCastDoesNotNarrow.types
++++ new.parenthesizedJSDocCastDoesNotNarrow.types
+@@= skipped -2, +2 lines =@@
+ === index.js ===
+ let value = "";
+ >value : string
+->      : ^^^^^^
+ >"" : ""
+->   : ^^
+ 
+ switch (/** @type {"foo" | "bar"} */ (value)) {
+->(value) : "foo" | "bar"
+->        : ^^^^^^^^^^^^^
++>(value) : string
+ >value : string
+->      : ^^^^^^
+ 
+   case "bar":
+ >"bar" : "bar"
+->      : ^^^^^
+ 
+     value;
+->value : string
+->      : ^^^^^^
++>value : "bar"
+ 
+     break;
+ 
+   case "foo":
+ >"foo" : "foo"
+->      : ^^^^^
+ 
+     value;
+->value : string
+->      : ^^^^^^
++>value : "foo"
+ 
+     break;
+ 
+   case "invalid":
+ >"invalid" : "invalid"
+->          : ^^^^^^^^^
+ 
+     value;
+->value : string
+->      : ^^^^^^
++>value : "invalid"
+ 
+     break;
+ }

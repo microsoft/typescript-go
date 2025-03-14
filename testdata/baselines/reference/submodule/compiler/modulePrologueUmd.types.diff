@@ -1,0 +1,12 @@
+--- old.modulePrologueUmd.types
++++ new.modulePrologueUmd.types
+@@= skipped -2, +2 lines =@@
+ === modulePrologueUmd.ts ===
+ "use strict";
+ >"use strict" : "use strict"
+->             : ^^^^^^^^^^^^
+ 
+ export class Foo {}
+ >Foo : Foo
+->    : ^^^
+ 

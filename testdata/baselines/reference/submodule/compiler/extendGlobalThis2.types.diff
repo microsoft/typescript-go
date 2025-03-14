@@ -1,0 +1,23 @@
+--- old.extendGlobalThis2.types
++++ new.extendGlobalThis2.types
+@@= skipped -2, +2 lines =@@
+ === extendGlobalThis2.ts ===
+ namespace globalThis {
+ >globalThis : typeof globalThis
+->           : ^^^^^^^^^^^^^^^^^
+ 
+     export function foo() { console.log("x"); }
+ >foo : () => void
+->    : ^^^^^^^^^^
+ >console.log("x") : void
+->                 : ^^^^
+ >console.log : (...data: any[]) => void
+->            : ^^^^    ^^     ^^^^^    
+ >console : Console
+->        : ^^^^^^^
+ >log : (...data: any[]) => void
+->    : ^^^^    ^^     ^^^^^    
+ >"x" : "x"
+->    : ^^^
+ }
+ 

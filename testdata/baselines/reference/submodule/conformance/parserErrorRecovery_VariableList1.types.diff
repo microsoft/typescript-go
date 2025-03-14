@@ -1,0 +1,9 @@
+--- old.parserErrorRecovery_VariableList1.types
++++ new.parserErrorRecovery_VariableList1.types
+@@= skipped -2, +2 lines =@@
+ === parserErrorRecovery_VariableList1.ts ===
+ var a,
+ >a : any
+->  : ^^^
+ 
+ return;

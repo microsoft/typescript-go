@@ -1,0 +1,8 @@
+--- old.parserExportAssignment1.types
++++ new.parserExportAssignment1.types
+@@= skipped -2, +2 lines =@@
+ === parserExportAssignment1.ts ===
+ export = foo
+ >foo : any
+->    : ^^^
+ 

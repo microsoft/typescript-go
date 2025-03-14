@@ -1,0 +1,9 @@
+--- old.forInStatement1.types
++++ new.forInStatement1.types
+@@= skipped -5, +5 lines =@@
+ 
+ for (var a in expr) {
+ >a : string
+->  : ^^^^^^
+ >expr : any
+ }

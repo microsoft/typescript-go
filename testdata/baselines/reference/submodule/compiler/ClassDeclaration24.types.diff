@@ -1,0 +1,8 @@
+--- old.ClassDeclaration24.types
++++ new.ClassDeclaration24.types
+@@= skipped -2, +2 lines =@@
+ === ClassDeclaration24.ts ===
+ class any {
+ >any : any
+->    : ^^^
+ }

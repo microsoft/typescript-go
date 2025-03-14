@@ -1,0 +1,15 @@
+--- old.arrowFunctionWithObjectLiteralBody4.types
++++ new.arrowFunctionWithObjectLiteralBody4.types
+@@= skipped -2, +2 lines =@@
+ === arrowFunctionWithObjectLiteralBody4.ts ===
+ var v = a => <any><any>{}
+ >v : (a: any) => any
+->  : ^ ^^^^^^^^^^   
+ >a => <any><any>{} : (a: any) => any
+->                  : ^ ^^^^^^^^^^   
+ >a : any
+ ><any><any>{} : any
+ ><any>{} : any
+ >{} : {}
+->   : ^^
+ 

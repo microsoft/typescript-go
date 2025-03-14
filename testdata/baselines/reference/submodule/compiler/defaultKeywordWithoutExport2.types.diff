@@ -1,0 +1,9 @@
+--- old.defaultKeywordWithoutExport2.types
++++ new.defaultKeywordWithoutExport2.types
+@@= skipped -2, +2 lines =@@
+ === defaultKeywordWithoutExport2.ts ===
+ default function () {
+ > : () => void
+-> : ^^^^^^^^^^
+ 
+ }

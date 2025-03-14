@@ -1,0 +1,14 @@
+--- old.parserErrorRecovery_ArgumentList2.types
++++ new.parserErrorRecovery_ArgumentList2.types
+@@= skipped -2, +2 lines =@@
+ === parserErrorRecovery_ArgumentList2.ts ===
+ function foo() {
+ >foo : () => void
+->    : ^^^^^^^^^^
+ 
+    bar(;
+ >bar( : any
+->     : ^^^
+ >bar : any
+->    : ^^^
+ }

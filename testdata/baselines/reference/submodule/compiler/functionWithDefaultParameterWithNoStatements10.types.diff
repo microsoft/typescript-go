@@ -1,0 +1,24 @@
+--- old.functionWithDefaultParameterWithNoStatements10.types
++++ new.functionWithDefaultParameterWithNoStatements10.types
+@@= skipped -2, +2 lines =@@
+ === functionWithDefaultParameterWithNoStatements10.ts ===
+ function foo(a = [0]) { }
+ >foo : (a?: number[]) => void
+->    : ^ ^^^^^^^^^^^^^^^^^^^^
+ >a : number[]
+->  : ^^^^^^^^
+ >[0] : number[]
+->    : ^^^^^^^^
+ >0 : 0
+->  : ^
+ 
+ function bar(a = [0]) {
+ >bar : (a?: number[]) => void
+->    : ^ ^^^^^^^^^^^^^^^^^^^^
+ >a : number[]
+->  : ^^^^^^^^
+ >[0] : number[]
+->    : ^^^^^^^^
+ >0 : 0
+->  : ^
+ }

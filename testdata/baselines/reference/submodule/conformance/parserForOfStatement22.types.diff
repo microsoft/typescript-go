@@ -1,0 +1,18 @@
+--- old.parserForOfStatement22.types
++++ new.parserForOfStatement22.types
+@@= skipped -2, +2 lines =@@
+ === parserForOfStatement22.ts ===
+ var async;
+ >async : any
+->      : ^^^
+ 
+ for (async of [1, 2]) {}
+ >async : any
+->      : ^^^
+ >[1, 2] : number[]
+->       : ^^^^^^^^
+ >1 : 1
+->  : ^
+ >2 : 2
+->  : ^
+ 

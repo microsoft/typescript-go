@@ -1,0 +1,58 @@
+--- old.exportsAndImportsWithContextualKeywordNames02.types
++++ new.exportsAndImportsWithContextualKeywordNames02.types
+@@= skipped -2, +2 lines =@@
+ === t1.ts ===
+ let as = 100;
+ >as : number
+->   : ^^^^^^
+ >100 : 100
+->    : ^^^
+ 
+ export { as as return, as };
+ >as : number
+->   : ^^^^^^
+ >return : number
+->       : ^^^^^^
+ >as : number
+->   : ^^^^^^
+ 
+ === t2.ts ===
+ import * as as from "./t1";
+->as : typeof as
+->   : ^^^^^^^^^
++>as : typeof import("t1")
+ 
+ var x = as.as;
+ >x : number
+->  : ^^^^^^
+ >as.as : number
+->      : ^^^^^^
+->as : typeof as
+->   : ^^^^^^^^^
++>as : typeof import("t1")
+ >as : number
+->   : ^^^^^^
+ 
+ var y = as.return;
+ >y : number
+->  : ^^^^^^
+ >as.return : number
+->          : ^^^^^^
+->as : typeof as
+->   : ^^^^^^^^^
++>as : typeof import("t1")
+ >return : number
+->       : ^^^^^^
+ 
+ === t3.ts ===
+ import { as as as } from "./t1";
+ >as : number
+->   : ^^^^^^
+ >as : number
+->   : ^^^^^^
+ 
+ === t4.ts ===
+ import { as } from "./t1";
+ >as : number
+->   : ^^^^^^
+ 

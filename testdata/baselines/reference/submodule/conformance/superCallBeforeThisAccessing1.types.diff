@@ -1,0 +1,55 @@
+--- old.superCallBeforeThisAccessing1.types
++++ new.superCallBeforeThisAccessing1.types
+@@= skipped -5, +5 lines =@@
+ 
+ class Base {
+ >Base : Base
+->     : ^^^^
+ 
+     constructor(c) { }
+ >c : any
+ }
+ class D extends Base {
+ >D : D
+->  : ^
+ >Base : Base
+->     : ^^^^
+ 
+     private _t;
+ >_t : any
+@@= skipped -17, +14 lines =@@
+     constructor() {
+         super(i);
+ >super(i) : void
+->         : ^^^^
+ >super : typeof Base
+->      : ^^^^^^^^^^^
+ >i : any
+ 
+         var s = {
+ >s : { t: any; }
+->  : ^^^^^^^^^^^
+ >{            t: this._t        } : { t: any; }
+->                                 : ^^^^^^^^^^^
+ 
+             t: this._t
+ >t : any
+ >this._t : any
+ >this : this
+->     : ^^^^
+ >_t : any
+->   : ^^^
+         }
+         var i = Factory.create(s);
+ >i : any
+ >Factory.create(s) : any
+ >Factory.create : any
+ >Factory : any
+->        : ^^^
+ >create : any
+->       : ^^^
+ >s : { t: any; }
+->  : ^^^^^^^^^^^
+     }
+ }
+ 

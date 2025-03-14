@@ -1,0 +1,10 @@
+--- old.declarationEmitInvalidReferenceAllowJs.types
++++ new.declarationEmitInvalidReferenceAllowJs.types
+@@= skipped -3, +3 lines =@@
+ /// <reference path="invalid" />
+ var x = 0; 
+ >x : number
+->  : ^^^^^^
+ >0 : 0
+->  : ^
+ 

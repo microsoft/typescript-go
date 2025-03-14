@@ -1,0 +1,36 @@
+--- old.emitArrowFunctionWhenUsingArguments18.types
++++ new.emitArrowFunctionWhenUsingArguments18.types
+@@= skipped -2, +2 lines =@@
+ === emitArrowFunctionWhenUsingArguments18.ts ===
+ function f() {
+ >f : () => () => IArguments
+->  : ^^^^^^^^^^^^^^^^^^^^^^
+ 
+     var { arguments: args } = { arguments };
+ >arguments : any
+->          : ^^^
+ >args : IArguments
+->     : ^^^^^^^^^^
+ >{ arguments } : { arguments: IArguments; }
+->              : ^^^^^^^^^^^^^^^^^^^^^^^^^^
+->arguments : IArguments
+->          : ^^^^^^^^^^
++>arguments : any
+ 
+     if (Math.random()) {
+ >Math.random() : number
+->              : ^^^^^^
+ >Math.random : () => number
+->            : ^^^^^^      
+ >Math : Math
+->     : ^^^^
+ >random : () => number
+->       : ^^^^^^      
+ 
+         return () => arguments;
+ >() => arguments : () => IArguments
+->                : ^^^^^^^^^^^^^^^^
+ >arguments : IArguments
+->          : ^^^^^^^^^^
+     }
+ }

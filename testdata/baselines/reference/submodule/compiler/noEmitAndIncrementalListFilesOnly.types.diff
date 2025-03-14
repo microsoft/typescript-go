@@ -1,0 +1,10 @@
+--- old.noEmitAndIncrementalListFilesOnly.types
++++ new.noEmitAndIncrementalListFilesOnly.types
+@@= skipped -2, +2 lines =@@
+ === /a.ts ===
+ const x = 10;
+ >x : 10
+->  : ^^
+ >10 : 10
+->   : ^^
+ 

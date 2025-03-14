@@ -1,0 +1,10 @@
+--- old.logicalNotExpression1.types
++++ new.logicalNotExpression1.types
+@@= skipped -2, +2 lines =@@
+ === logicalNotExpression1.ts ===
+ !foo;
+ >!foo : boolean
+->     : ^^^^^^^
+ >foo : any
+->    : ^^^
+ 

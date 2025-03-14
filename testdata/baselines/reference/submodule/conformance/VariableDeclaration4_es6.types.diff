@@ -1,0 +1,8 @@
+--- old.VariableDeclaration4_es6.types
++++ new.VariableDeclaration4_es6.types
+@@= skipped -2, +2 lines =@@
+ === VariableDeclaration4_es6.ts ===
+ const a: number
+ >a : number
+->  : ^^^^^^
+ 

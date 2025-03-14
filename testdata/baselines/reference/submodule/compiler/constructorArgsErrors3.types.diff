@@ -1,0 +1,14 @@
+--- old.constructorArgsErrors3.types
++++ new.constructorArgsErrors3.types
+@@= skipped -2, +2 lines =@@
+ === constructorArgsErrors3.ts ===
+ class foo {
+ >foo : foo
+->    : ^^^
+ 
+     constructor (public public a: number) {
+ >a : number
+->  : ^^^^^^
+     }
+ }
+ 

@@ -1,0 +1,50 @@
+--- old.declaredExternalModule.types
++++ new.declaredExternalModule.types
+@@= skipped -2, +2 lines =@@
+ === declaredExternalModule.ts ===
+ declare module 'connect' {
+ >'connect' : typeof import("connect")
+->          : ^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+     interface connectModule {
++>connectModule : connectModule
+ 
+         (res, req, next): void;
+ >res : any
+@@= skipped -12, +12 lines =@@
+     }
+ 
+     interface connectExport {
++>connectExport : connectExport
+ 
+         use: (mod: connectModule) => connectExport;
+ >use : (mod: connectModule) => connectExport
+->    : ^   ^^             ^^^^^             
+ >mod : connectModule
+->    : ^^^^^^^^^^^^^
+ 
+         listen: (port: number) => void;
+ >listen : (port: number) => void
+->       : ^    ^^      ^^^^^    
+ >port : number
+->     : ^^^^^^
+ 
+     }
+ 
+     var server: {
+->server : { (): connectExport; test1: connectModule; test2(): connectModule; }
+->       : ^^^^^^             ^^^^^^^^^             ^^^^^^^^^^^             ^^^
++>server : { (): connectExport; test1: connectModule; test2: () => connectModule; }
+ 
+         (): connectExport;
+ 
+         test1: connectModule;   // No error
+ >test1 : connectModule
+->      : ^^^^^^^^^^^^^
+ 
+         test2(): connectModule; // ERROR: Return type of method from exported interface has or is using private type ''connect'.connectModule'.
+ >test2 : () => connectModule
+->      : ^^^^^^             
+ 
+     };
+ }

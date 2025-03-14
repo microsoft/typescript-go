@@ -1,0 +1,8 @@
+--- old.scannerES3NumericLiteral7.types
++++ new.scannerES3NumericLiteral7.types
+@@= skipped -2, +2 lines =@@
+ === scannerES3NumericLiteral7.ts ===
+ 1e+0
+ >1e+0 : 1
+->     : ^
+ 

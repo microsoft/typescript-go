@@ -1,0 +1,18 @@
+--- old.functionCall2.types
++++ new.functionCall2.types
+@@= skipped -2, +2 lines =@@
+ === functionCall2.ts ===
+ function foo():number{return 1}; 
+ >foo : () => number
+->    : ^^^^^^      
+ >1 : 1
+->  : ^
+ 
+ var x = foo();
+ >x : number
+->  : ^^^^^^
+ >foo() : number
+->      : ^^^^^^
+ >foo : () => number
+->    : ^^^^^^      
+ 

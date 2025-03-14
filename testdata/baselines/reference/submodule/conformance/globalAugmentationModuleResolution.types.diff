@@ -1,0 +1,12 @@
+--- old.globalAugmentationModuleResolution.types
++++ new.globalAugmentationModuleResolution.types
+@@= skipped -4, +4 lines =@@
+ 
+ declare global {
+ >global : typeof global
+->       : ^^^^^^^^^^^^^
+ 
+   var x: number;
+ >x : number
+->  : ^^^^^^
+ }

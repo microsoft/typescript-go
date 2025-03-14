@@ -1,0 +1,8 @@
+--- old.requireOfJsonFileWithoutResolveJsonModuleAndPathMapping.types
++++ new.requireOfJsonFileWithoutResolveJsonModuleAndPathMapping.types
+@@= skipped -2, +2 lines =@@
+ === /a.ts ===
+ import foobar from "foo/bar/foobar.json";
+ >foobar : any
+->       : ^^^
+ 

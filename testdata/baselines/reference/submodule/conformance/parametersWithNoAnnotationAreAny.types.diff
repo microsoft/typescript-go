@@ -1,0 +1,112 @@
+--- old.parametersWithNoAnnotationAreAny.types
++++ new.parametersWithNoAnnotationAreAny.types
+@@= skipped -2, +2 lines =@@
+ === parametersWithNoAnnotationAreAny.ts ===
+ function foo(x) { return x; }
+ >foo : (x: any) => any
+->    : ^ ^^^^^^^^^^^^^
+ >x : any
+ >x : any
+ 
+ var f = function foo(x) { return x; }
+ >f : (x: any) => any
+->  : ^ ^^^^^^^^^^^^^
+ >function foo(x) { return x; } : (x: any) => any
+->                              : ^ ^^^^^^^^^^^^^
+ >foo : (x: any) => any
+->    : ^ ^^^^^^^^^^^^^
+ >x : any
+ >x : any
+ 
+ var f2 = (x) => x;
+ >f2 : (x: any) => any
+->   : ^ ^^^^^^^^^^^^^
+ >(x) => x : (x: any) => any
+->         : ^ ^^^^^^^^^^^^^
+ >x : any
+ >x : any
+ 
+ var f3 = <T>(x) => x;
+ >f3 : <T>(x: any) => any
+->   : ^ ^^ ^^^^^^^^^^^^^
+ ><T>(x) => x : <T>(x: any) => any
+->            : ^ ^^ ^^^^^^^^^^^^^
++>T : T
+ >x : any
+ >x : any
+ 
+ class C {
+ >C : C
+->  : ^
+ 
+     foo(x) {
+ >foo : (x: any) => any
+->    : ^ ^^^^^^^^^^^^^
+ >x : any
+ 
+         return x;
+@@= skipped -45, +36 lines =@@
+ }
+ 
+ interface I {
++>I : I
++
+     foo(x);
+ >foo : (x: any) => any
+->    : ^ ^^^^^^^^^^^^^
+ >x : any
+ 
+     foo2(x, y);
+ >foo2 : (x: any, y: any) => any
+->     : ^ ^^^^^^^ ^^^^^^^^^^^^^
+ >x : any
+ >y : any
+ }
+ 
+ var a: {
+->a : { foo(x: any): any; }
+->  : ^^^^^^ ^^^^^^^^^^^^^^
++>a : { foo: (x: any) => any; }
+ 
+     foo(x);
+ >foo : (x: any) => any
+->    : ^ ^^^^^^^^^^^^^
+ >x : any
+ }
+ 
+ var b = {
+->b : { foo(x: any): any; a: (x: any) => any; b: (x: any) => any; }
+->  : ^^^^^^ ^^^^^^^^^^^^^^^^^ ^^^^^^^^^^^^^^^^^^^ ^^^^^^^^^^^^^^^^
+->{    foo(x) {        return x;    },    a: function foo(x) {        return x;    },    b: (x) => x} : { foo(x: any): any; a: (x: any) => any; b: (x: any) => any; }
+->                                                                                                    : ^^^^^^ ^^^^^^^^^^^^^^^^^ ^^^^^^^^^^^^^^^^^^^ ^^^^^^^^^^^^^^^^
++>b : { foo: (x: any) => any; a: (x: any) => any; b: (x: any) => any; }
++>{    foo(x) {        return x;    },    a: function foo(x) {        return x;    },    b: (x) => x} : { foo: (x: any) => any; a: (x: any) => any; b: (x: any) => any; }
+ 
+     foo(x) {
+ >foo : (x: any) => any
+->    : ^ ^^^^^^^^^^^^^
+ >x : any
+ 
+         return x;
+@@= skipped -39, +34 lines =@@
+     },
+     a: function foo(x) {
+ >a : (x: any) => any
+->  : ^ ^^^^^^^^^^^^^
+ >function foo(x) {        return x;    } : (x: any) => any
+->                                        : ^ ^^^^^^^^^^^^^
+ >foo : (x: any) => any
+->    : ^ ^^^^^^^^^^^^^
+ >x : any
+ 
+         return x;
+@@= skipped -13, +10 lines =@@
+     },
+     b: (x) => x
+ >b : (x: any) => any
+->  : ^ ^^^^^^^^^^^^^
+ >(x) => x : (x: any) => any
+->         : ^ ^^^^^^^^^^^^^
+ >x : any
+ >x : any
+ }

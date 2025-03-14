@@ -1,0 +1,18 @@
+--- old.nullAssignedToUndefined.types
++++ new.nullAssignedToUndefined.types
+@@= skipped -2, +2 lines =@@
+ === nullAssignedToUndefined.ts ===
+ var x = undefined = null; // error
+ >x : any
+->  : ^^^
+ >undefined = null : null
+->                 : ^^^^
+ >undefined : any
+->          : ^^^
+ 
+ var y: typeof undefined = null; // ok, widened
+ >y : any
+->  : ^^^
+->undefined : undefined
+->          : ^^^^^^^^^
+ 

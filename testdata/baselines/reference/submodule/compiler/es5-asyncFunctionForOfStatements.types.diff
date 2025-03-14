@@ -1,0 +1,216 @@
+--- old.es5-asyncFunctionForOfStatements.types
++++ new.es5-asyncFunctionForOfStatements.types
+@@= skipped -10, +10 lines =@@
+ 
+ async function forOfStatement0() {
+ >forOfStatement0 : () => Promise<void>
+->                : ^^^^^^^^^^^^^^^^^^^
+ 
+     for (x of y) { z; }
+ >x : any
+@@= skipped -10, +9 lines =@@
+ 
+ async function forOfStatement1() {
+ >forOfStatement1 : () => Promise<void>
+->                : ^^^^^^^^^^^^^^^^^^^
+ 
+     for (x of await y) { z; }
+ >x : any
+@@= skipped -11, +10 lines =@@
+ 
+ async function forOfStatement2() {
+ >forOfStatement2 : () => Promise<void>
+->                : ^^^^^^^^^^^^^^^^^^^
+ 
+     for (x of y) { await z; }
+ >x : any
+@@= skipped -11, +10 lines =@@
+ 
+ async function forOfStatement3() {
+ >forOfStatement3 : () => Promise<void>
+->                : ^^^^^^^^^^^^^^^^^^^
+ 
+     for ((await x).a of y) { z; }
+ >(await x).a : any
+ >(await x) : any
+->          : ^^^
+ >await x : any
+ >x : any
+ >a : any
+->  : ^^^
+ >y : any
+ >z : any
+ }
+ 
+ async function forOfStatement4() {
+ >forOfStatement4 : () => Promise<void>
+->                : ^^^^^^^^^^^^^^^^^^^
+ 
+     for (x.a of await y) { z; }
+ >x.a : any
+ >x : any
+->  : ^^^
+ >a : any
+->  : ^^^
+ >await y : any
+ >y : any
+ >z : any
+@@= skipped -31, +25 lines =@@
+ 
+ async function forOfStatement5() {
+ >forOfStatement5 : () => Promise<void>
+->                : ^^^^^^^^^^^^^^^^^^^
+ 
+     for (x.a of y) { await z; }
+ >x.a : any
+ >x : any
+->  : ^^^
+ >a : any
+->  : ^^^
+ >y : any
+ >await z : any
+ >z : any
+@@= skipped -15, +12 lines =@@
+ 
+ async function forOfStatement6() {
+ >forOfStatement6 : () => Promise<void>
+->                : ^^^^^^^^^^^^^^^^^^^
+ 
+     for (var b of y) { z; }
+ >b : any
+@@= skipped -10, +9 lines =@@
+ 
+ async function forOfStatement7() {
+ >forOfStatement7 : () => Promise<void>
+->                : ^^^^^^^^^^^^^^^^^^^
+ 
+     for (var c of await y) { z; }
+ >c : any
+@@= skipped -11, +10 lines =@@
+ 
+ async function forOfStatement8() {
+ >forOfStatement8 : () => Promise<void>
+->                : ^^^^^^^^^^^^^^^^^^^
+ 
+     for (var d of y) { await z; }
+ >d : any
+@@= skipped -11, +10 lines =@@
+ 
+ async function forOfStatement9() {
+ >forOfStatement9 : () => Promise<void>
+->                : ^^^^^^^^^^^^^^^^^^^
+ 
+     for ([x] of await y) { z; }
+ >[x] : [any]
+->    : ^^^^^
+ >x : any
+ >await y : any
+ >y : any
+@@= skipped -13, +11 lines =@@
+ 
+ async function forOfStatement10() {
+ >forOfStatement10 : () => Promise<void>
+->                 : ^^^^^^^^^^^^^^^^^^^
+ 
+     for ([x] of y) { await z; }
+ >[x] : [any]
+->    : ^^^^^
+ >x : any
+ >y : any
+ >await z : any
+@@= skipped -13, +11 lines =@@
+ 
+ async function forOfStatement11() {
+ >forOfStatement11 : () => Promise<void>
+->                 : ^^^^^^^^^^^^^^^^^^^
+ 
+     for ([x = await a] of y) { z; }
+ >[x = await a] : [any]
+->              : ^^^^^
+ >x = await a : any
+ >x : any
+ >await a : any
+@@= skipped -15, +13 lines =@@
+ 
+ async function forOfStatement12() {
+ >forOfStatement12 : () => Promise<void>
+->                 : ^^^^^^^^^^^^^^^^^^^
+ 
+     for ([x = a] of await y) { z; }
+ >[x = a] : [any]
+->        : ^^^^^
+ >x = a : any
+ >x : any
+ >a : any
+@@= skipped -15, +13 lines =@@
+ 
+ async function forOfStatement13() {
+ >forOfStatement13 : () => Promise<void>
+->                 : ^^^^^^^^^^^^^^^^^^^
+ 
+     for ([x = a] of y) { await z; }
+ >[x = a] : [any]
+->        : ^^^^^
+ >x = a : any
+ >x : any
+ >a : any
+@@= skipped -15, +13 lines =@@
+ 
+ async function forOfStatement14() {
+ >forOfStatement14 : () => Promise<void>
+->                 : ^^^^^^^^^^^^^^^^^^^
+ 
+     for ({ x } of await y) { z; }
+ >{ x } : { x: any; }
+->      : ^^^^^^^^^^^
+ >x : any
+ >await y : any
+ >y : any
+@@= skipped -13, +11 lines =@@
+ 
+ async function forOfStatement15() {
+ >forOfStatement15 : () => Promise<void>
+->                 : ^^^^^^^^^^^^^^^^^^^
+ 
+     for ({ x } of y) { await z; }
+ >{ x } : { x: any; }
+->      : ^^^^^^^^^^^
+ >x : any
+ >y : any
+ >await z : any
+@@= skipped -13, +11 lines =@@
+ 
+ async function forOfStatement16() {
+ >forOfStatement16 : () => Promise<void>
+->                 : ^^^^^^^^^^^^^^^^^^^
+ 
+     for ({ x = await a } of y) { z; }
+ >{ x = await a } : { x?: any; }
+->                : ^^^^^^^^^^^^
+ >x : any
+ >await a : any
+ >a : any
+@@= skipped -14, +12 lines =@@
+ 
+ async function forOfStatement17() {
+ >forOfStatement17 : () => Promise<void>
+->                 : ^^^^^^^^^^^^^^^^^^^
+ 
+     for ({ x = a } of await y) { z; }
+ >{ x = a } : { x?: any; }
+->          : ^^^^^^^^^^^^
+ >x : any
+ >a : any
+ >await y : any
+@@= skipped -14, +12 lines =@@
+ 
+ async function forOfStatement18() {
+ >forOfStatement18 : () => Promise<void>
+->                 : ^^^^^^^^^^^^^^^^^^^
+ 
+     for ({ x = a } of y) { await z; }
+ >{ x = a } : { x?: any; }
+->          : ^^^^^^^^^^^^
+ >x : any
+ >a : any
+ >y : any

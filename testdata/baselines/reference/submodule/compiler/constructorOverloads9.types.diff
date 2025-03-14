@@ -1,0 +1,31 @@
+--- old.constructorOverloads9.types
++++ new.constructorOverloads9.types
+@@= skipped -2, +2 lines =@@
+ === constructorOverloads9.ts ===
+ export class C {
+ >C : C
+->  : ^
+ 
+     a;
+ >a : any
+@@= skipped -8, +7 lines =@@
+     constructor();
+     constructor(x = '') {
+ >x : string
+->  : ^^^^^^
+ >'' : ""
+->   : ^^
+ 
+         this.a = x;
+ >this.a = x : string
+->           : ^^^^^^
+ >this.a : any
+ >this : this
+->     : ^^^^
+ >a : any
+->  : ^^^
+ >x : string
+->  : ^^^^^^
+     }
+ }
+ 

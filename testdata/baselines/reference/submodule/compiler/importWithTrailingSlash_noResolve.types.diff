@@ -1,0 +1,8 @@
+--- old.importWithTrailingSlash_noResolve.types
++++ new.importWithTrailingSlash_noResolve.types
+@@= skipped -2, +2 lines =@@
+ === /a.ts ===
+ import foo from "./foo/";
+ >foo : any
+->    : ^^^
+ 

@@ -1,0 +1,18 @@
+--- old.module_augmentExistingVariable.types
++++ new.module_augmentExistingVariable.types
+@@= skipped -2, +2 lines =@@
+ === module_augmentExistingVariable.ts ===
+ var console: any;
+ >console : any
+->        : ^^^
+ 
+ module console {
+ >console : typeof console
+->        : ^^^^^^^^^^^^^^
+ 
+     export var x = 2;
+ >x : number
+->  : ^^^^^^
+ >2 : 2
+->  : ^
+ }

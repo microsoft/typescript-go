@@ -1,0 +1,16 @@
+--- old.objectLiteralWithSemicolons1.types
++++ new.objectLiteralWithSemicolons1.types
+@@= skipped -2, +2 lines =@@
+ === objectLiteralWithSemicolons1.ts ===
+ var v = { a; b; c }
+ >v : { a: any; b: any; c: any; }
+->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ >{ a; b; c } : { a: any; b: any; c: any; }
+->            : ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ >a : any
+->  : ^^^
+ >b : any
+->  : ^^^
+ >c : any
+->  : ^^^
+ 

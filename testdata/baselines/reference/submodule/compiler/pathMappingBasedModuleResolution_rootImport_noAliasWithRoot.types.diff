@@ -1,0 +1,22 @@
+--- old.pathMappingBasedModuleResolution_rootImport_noAliasWithRoot.types
++++ new.pathMappingBasedModuleResolution_rootImport_noAliasWithRoot.types
+@@= skipped -2, +2 lines =@@
+ === /root/src/foo.ts ===
+ export function foo() {}
+ >foo : () => void
+->    : ^^^^^^^^^^
+ 
+ === /root/src/bar.js ===
+ export function bar() {}
+ >bar : () => void
+->    : ^^^^^^^^^^
+ 
+ === /root/a.ts ===
+ import { foo } from "/foo";
+ >foo : () => void
+->    : ^^^^^^^^^^
+ 
+ import { bar } from "/bar";
+ >bar : () => void
+->    : ^^^^^^^^^^
+ 

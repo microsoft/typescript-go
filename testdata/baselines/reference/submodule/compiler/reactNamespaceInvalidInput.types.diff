@@ -1,0 +1,13 @@
+--- old.reactNamespaceInvalidInput.types
++++ new.reactNamespaceInvalidInput.types
+@@= skipped -2, +2 lines =@@
+ === reactNamespaceInvalidInput.tsx ===
+ <foo data/>;
+ ><foo data/> : any
+->            : ^^^
+ >foo : any
+->    : ^^^
+->data : true
+->     : ^^^^
++>data : any
+ 

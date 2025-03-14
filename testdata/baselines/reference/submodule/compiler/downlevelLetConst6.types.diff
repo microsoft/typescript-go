@@ -1,0 +1,8 @@
+--- old.downlevelLetConst6.types
++++ new.downlevelLetConst6.types
+@@= skipped -2, +2 lines =@@
+ === downlevelLetConst6.ts ===
+ let
+ >let : any
+->    : ^^^
+ 

@@ -1,0 +1,20 @@
+--- old.wideningTuples3.types
++++ new.wideningTuples3.types
+@@= skipped -2, +2 lines =@@
+ === wideningTuples3.ts ===
+ var a: [any];
+ >a : [any]
+->  : ^^^^^
+ 
+ var b = a = [undefined, null];
+ >b : [any, any]
+->  : ^^^^^^^^^^
+ >a = [undefined, null] : [undefined, null]
+->                      : ^^^^^^^^^^^^^^^^^
+ >a : [any]
+->  : ^^^^^
+ >[undefined, null] : [undefined, null]
+->                  : ^^^^^^^^^^^^^^^^^
+ >undefined : undefined
+->          : ^^^^^^^^^
+ 

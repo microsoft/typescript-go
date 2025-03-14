@@ -1,0 +1,18 @@
+--- old.for-of11.types
++++ new.for-of11.types
+@@= skipped -2, +2 lines =@@
+ === for-of11.ts ===
+ var v: string;
+ >v : string
+->  : ^^^^^^
+ 
+ for (v of [0, ""]) { }
+ >v : string
+->  : ^^^^^^
+ >[0, ""] : (string | number)[]
+->        : ^^^^^^^^^^^^^^^^^^^
+ >0 : 0
+->  : ^
+ >"" : ""
+->   : ^^
+ 

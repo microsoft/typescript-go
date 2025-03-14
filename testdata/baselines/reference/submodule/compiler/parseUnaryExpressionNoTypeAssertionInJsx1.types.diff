@@ -1,0 +1,26 @@
+--- old.parseUnaryExpressionNoTypeAssertionInJsx1.types
++++ new.parseUnaryExpressionNoTypeAssertionInJsx1.types
+@@= skipped -2, +2 lines =@@
+ === index.js ===
+ const x = "oops";
+ >x : "oops"
+->  : ^^^^^^
+ >"oops" : "oops"
+->       : ^^^^^^
+ 
+ const y = + <number> x;
+ >y : number
+->  : ^^^^^^
+->+ <number> x; : number
+->              : ^^^^^^
+-><number> x; : any
+->            : ^^^
+->number : any
+->       : ^^^
++>+ <number> x : number
++><number> x : number
++>x : "oops"
+ 
+-> : any
+-> : ^^^
+-

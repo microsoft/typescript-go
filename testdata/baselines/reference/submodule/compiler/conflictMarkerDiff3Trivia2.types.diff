@@ -1,0 +1,28 @@
+--- old.conflictMarkerDiff3Trivia2.types
++++ new.conflictMarkerDiff3Trivia2.types
+@@= skipped -2, +2 lines =@@
+ === conflictMarkerDiff3Trivia2.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+   foo() {
+ >foo : () => void
+->    : ^^^^^^^^^^
+ 
+ <<<<<<< B
+      a();
+ >a() : any
+->    : ^^^
+ >a : any
+->  : ^^^
+   }
+ ||||||| merged common ancestors
+      c();
+@@= skipped -23, +19 lines =@@
+ 
+   public bar() { }
+ >bar : () => void
+->    : ^^^^^^^^^^
+ }
+ 

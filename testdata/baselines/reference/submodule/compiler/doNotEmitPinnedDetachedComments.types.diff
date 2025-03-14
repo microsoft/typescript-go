@@ -1,0 +1,40 @@
+--- old.doNotEmitPinnedDetachedComments.types
++++ new.doNotEmitPinnedDetachedComments.types
+@@= skipped -2, +2 lines =@@
+ === doNotEmitPinnedDetachedComments.ts ===
+ var x = 10;
+ >x : number
+->  : ^^^^^^
+ >10 : 10
+->   : ^^
+ 
+ /*! Single Line comment */
+ 
+ function baz() { }
+ >baz : () => void
+->    : ^^^^^^^^^^
+ 
+ 
+ /*!
+@@= skipped -22, +19 lines =@@
+ 
+ function bar() {
+ >bar : () => void
+->    : ^^^^^^^^^^
+ 
+     /*!
+         Remove this comment
+@@= skipped -10, +9 lines =@@
+ 
+ function foo() {
+ >foo : () => number
+->    : ^^^^^^^^^^^^
+ 
+     /*! Remove this */
+ 
+     return 0;
+ >0 : 0
+->  : ^
+ }
+ 
+ 

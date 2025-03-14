@@ -1,0 +1,46 @@
+--- old.assignmentCompatInterfaceWithStringIndexSignature.types
++++ new.assignmentCompatInterfaceWithStringIndexSignature.types
+@@= skipped -1, +1 lines =@@
+ 
+ === assignmentCompatInterfaceWithStringIndexSignature.ts ===
+ interface IHandler {
++>IHandler : IHandler
++
+     (e): boolean;
+ >e : any
+->  : ^^^
+ }
+ 
+ interface IHandlerMap {
++>IHandlerMap : IHandlerMap
++
+     [type: string]: IHandler;
+ >type : string
+->     : ^^^^^^
+ }
+ 
+ class Foo {
+ >Foo : Foo
+->    : ^^^
+ 
+     public Boz(): void { }
+ >Boz : () => void
+->    : ^^^^^^    
+ }
+ 
+ function Biz(map: IHandlerMap) { }
+ >Biz : (map: IHandlerMap) => void
+->    : ^   ^^           ^^^^^^^^^
+ >map : IHandlerMap
+->    : ^^^^^^^^^^^
+ 
+ Biz(new Foo());
+ >Biz(new Foo()) : void
+->               : ^^^^
+ >Biz : (map: IHandlerMap) => void
+->    : ^   ^^           ^^^^^^^^^
+ >new Foo() : Foo
+->          : ^^^
+ >Foo : typeof Foo
+->    : ^^^^^^^^^^
+ 

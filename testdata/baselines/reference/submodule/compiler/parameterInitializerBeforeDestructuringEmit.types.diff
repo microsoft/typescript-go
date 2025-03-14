@@ -1,0 +1,77 @@
+--- old.parameterInitializerBeforeDestructuringEmit.types
++++ new.parameterInitializerBeforeDestructuringEmit.types
+@@= skipped -1, +1 lines =@@
+ 
+ === parameterInitializerBeforeDestructuringEmit.ts ===
+ interface Foo {
++>Foo : Foo
++
+     bar?: any;
+ >bar : any
+ 
+@@= skipped -8, +10 lines =@@
+ }
+ 
+ function foobar({ bar = {}, ...opts }: Foo = {}) {
+->foobar : ({ bar, ...opts }?: Foo) => void
+->       : ^                ^^^   ^^^^^^^^^
++>foobar : (__0?: Foo) => void
+ >bar : any
+->    : ^^^
+ >{} : {}
+->   : ^^
+ >opts : { baz?: any; }
+->     : ^^^^^^^^   ^^^
+ >{} : {}
+->   : ^^
+ 
+     "use strict";
+ >"use strict" : "use strict"
+->             : ^^^^^^^^^^^^
+ 
+     "Some other prologue";
+ >"Some other prologue" : "Some other prologue"
+->                      : ^^^^^^^^^^^^^^^^^^^^^
+ 
+     opts.baz(bar);
+ >opts.baz(bar) : any
+ >opts.baz : any
+ >opts : { baz?: any; }
+->     : ^^^^^^^^   ^^^
+ >baz : any
+->    : ^^^
+ >bar : any
+ }
+ 
+ class C {
+ >C : C
+->  : ^
+ 
+     constructor({ bar = {}, ...opts }: Foo = {}) {
+ >bar : any
+->    : ^^^
+ >{} : {}
+->   : ^^
+ >opts : { baz?: any; }
+->     : ^^^^^^^^   ^^^
+ >{} : {}
+->   : ^^
+ 
+         "use strict";
+ >"use strict" : "use strict"
+->             : ^^^^^^^^^^^^
+ 
+         "Some other prologue";
+ >"Some other prologue" : "Some other prologue"
+->                      : ^^^^^^^^^^^^^^^^^^^^^
+ 
+         opts.baz(bar);
+ >opts.baz(bar) : any
+ >opts.baz : any
+ >opts : { baz?: any; }
+->     : ^^^^^^^^   ^^^
+ >baz : any
+->    : ^^^
+ >bar : any
+     }
+ }

@@ -1,0 +1,12 @@
+--- old.misspelledNewMetaProperty.types
++++ new.misspelledNewMetaProperty.types
+@@= skipped -2, +2 lines =@@
+ === misspelledNewMetaProperty.ts ===
+ function foo(){new.targ}
+ >foo : () => void
+->    : ^^^^^^^^^^
+ >new.targ : () => void
+->         : ^^^^^^^^^^
+ >targ : () => void
+->     : ^^^^^^^^^^
+ 

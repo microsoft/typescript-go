@@ -1,0 +1,12 @@
+--- old.parserMemberAccessorDeclaration13.types
++++ new.parserMemberAccessorDeclaration13.types
+@@= skipped -2, +2 lines =@@
+ === parserMemberAccessorDeclaration13.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+    set Foo() { }
+ >Foo : any
+->    : ^^^
+ }

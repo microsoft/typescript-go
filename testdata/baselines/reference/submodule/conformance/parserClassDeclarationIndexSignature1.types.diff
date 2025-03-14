@@ -1,0 +1,12 @@
+--- old.parserClassDeclarationIndexSignature1.types
++++ new.parserClassDeclarationIndexSignature1.types
+@@= skipped -2, +2 lines =@@
+ === parserClassDeclarationIndexSignature1.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+     [index:number]:number
+ >index : number
+->      : ^^^^^^
+ }

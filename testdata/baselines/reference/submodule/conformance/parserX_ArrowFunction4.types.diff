@@ -1,0 +1,12 @@
+--- old.parserX_ArrowFunction4.types
++++ new.parserX_ArrowFunction4.types
+@@= skipped -2, +2 lines =@@
+ === parserX_ArrowFunction4.ts ===
+ var v = (a, b) => {
+ >v : (a: any, b: any) => void
+->  : ^ ^^^^^^^ ^^^^^^^^^^^^^^
+ >(a, b) => {   } : (a: any, b: any) => void
+->                : ^ ^^^^^^^ ^^^^^^^^^^^^^^
+ >a : any
+ >b : any
+    

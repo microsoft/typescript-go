@@ -1,0 +1,8 @@
+--- old.parserFunctionDeclaration2.types
++++ new.parserFunctionDeclaration2.types
+@@= skipped -2, +2 lines =@@
+ === parserFunctionDeclaration2.ts ===
+ declare function Foo() {
+ >Foo : () => void
+->    : ^^^^^^^^^^
+ }

@@ -1,0 +1,29 @@
+--- old.parserNotRegex2.types
++++ new.parserNotRegex2.types
+@@= skipped -11, +11 lines =@@
+ 
+ const x = (A / 2);
+ >x : number
+->  : ^^^^^^
+ >(A / 2) : number
+->        : ^^^^^^
+ >A / 2 : number
+->      : ^^^^^^
+ >A : any
+ >2 : 2
+->  : ^
+ 
+ B(
+ >B(    C(),    () => { },    () => { }) : any
+@@= skipped -19, +15 lines =@@
+ 
+     () => { },
+ >() => { } : () => void
+->          : ^^^^^^^^^^
+ 
+     () => { }
+ >() => { } : () => void
+->          : ^^^^^^^^^^
+ 
+ );
+ 

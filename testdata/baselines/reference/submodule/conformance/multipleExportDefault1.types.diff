@@ -1,0 +1,22 @@
+--- old.multipleExportDefault1.types
++++ new.multipleExportDefault1.types
+@@= skipped -2, +2 lines =@@
+ === multipleExportDefault1.ts ===
+ export default function Foo (){
+ >Foo : () => void
+->    : ^^^^^^^^^^
+     
+ }
+ 
+ export default {
+ >{    uhoh: "another default",} : { uhoh: string; }
+->                               : ^^^^^^^^^^^^^^^^^
+ 
+     uhoh: "another default",
+ >uhoh : string
+->     : ^^^^^^
+ >"another default" : "another default"
+->                  : ^^^^^^^^^^^^^^^^^
+ 
+ };
+ 

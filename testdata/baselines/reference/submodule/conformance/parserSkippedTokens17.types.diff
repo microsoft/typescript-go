@@ -1,0 +1,12 @@
+--- old.parserSkippedTokens17.types
++++ new.parserSkippedTokens17.types
+@@= skipped -2, +2 lines =@@
+ === parserSkippedTokens17.ts ===
+ foo(a, \
+ >foo(a, \ : any
+->         : ^^^
+ >foo : any
+->    : ^^^
+ >a : any
+->  : ^^^
+ 

@@ -1,0 +1,10 @@
+--- old.commentsAtEndOfFile1.types
++++ new.commentsAtEndOfFile1.types
+@@= skipped -2, +2 lines =@@
+ === commentsAtEndOfFile1.ts ===
+ Input:
+ >Input : any
+->      : ^^^
+ 
+ ;
+ //Testing two

@@ -1,0 +1,14 @@
+--- old.conflictMarkerTrivia4.types
++++ new.conflictMarkerTrivia4.types
+@@= skipped -2, +2 lines =@@
+ === conflictMarkerTrivia4.ts ===
+ const x = <div>
+ >x : div
+->  : ^^^
+ ><div> : div
+->      : ^^^
+ 
+ <<<<<<< HEAD
+ > : any
+-> : ^^^
+ 

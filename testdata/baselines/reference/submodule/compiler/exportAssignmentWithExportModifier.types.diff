@@ -1,0 +1,12 @@
+--- old.exportAssignmentWithExportModifier.types
++++ new.exportAssignmentWithExportModifier.types
+@@= skipped -2, +2 lines =@@
+ === exportAssignmentWithExportModifier.ts ===
+ var x;
+ >x : any
+->  : ^^^
+ 
+ export export = x;
+ >x : any
+->  : ^^^
+ 

@@ -1,0 +1,32 @@
+--- old.parserEnumDeclaration6.types
++++ new.parserEnumDeclaration6.types
+@@= skipped -2, +2 lines =@@
+ === parserEnumDeclaration6.ts ===
+ enum E {
+ >E : E
+->  : ^
+ 
+     A = 1,
+ >A : E.A
+->  : ^^^
+ >1 : 1
+->  : ^
+ 
+     B,
+ >B : E.B
+->  : ^^^
+ 
+     C = 1 << 1,
+ >C : E.B
+->  : ^^^
+ >1 << 1 : number
+->       : ^^^^^^
+ >1 : 1
+->  : ^
+ >1 : 1
+->  : ^
+ 
+     D,
+ >D : E.D
+->  : ^^^
+ }

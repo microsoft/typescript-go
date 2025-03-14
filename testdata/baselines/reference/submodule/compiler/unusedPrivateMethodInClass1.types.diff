@@ -1,0 +1,19 @@
+--- old.unusedPrivateMethodInClass1.types
++++ new.unusedPrivateMethodInClass1.types
+@@= skipped -2, +2 lines =@@
+ === unusedPrivateMethodInClass1.ts ===
+ class greeter {
+ >greeter : greeter
+->        : ^^^^^^^
+ 
+     private function1() {
+ >function1 : () => void
+->          : ^^^^^^^^^^
+ 
+         var y = 10;
+ >y : number
+->  : ^^^^^^
+ >10 : 10
+->   : ^^
+     }
+ }

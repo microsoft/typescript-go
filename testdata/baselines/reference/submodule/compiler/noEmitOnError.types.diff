@@ -1,0 +1,10 @@
+--- old.noEmitOnError.types
++++ new.noEmitOnError.types
+@@= skipped -2, +2 lines =@@
+ === noEmitOnError.ts ===
+ var x: number = "";
+ >x : number
+->  : ^^^^^^
+ >"" : ""
+->   : ^^
+ 

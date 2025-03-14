@@ -1,0 +1,14 @@
+--- old.noEmitHelpers.types
++++ new.noEmitHelpers.types
+@@= skipped -2, +2 lines =@@
+ === noEmitHelpers.ts ===
+ class A { }
+ >A : A
+->  : ^
+ 
+ class B extends A { }
+ >B : B
+->  : ^
+ >A : A
+->  : ^
+ 

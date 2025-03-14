@@ -1,0 +1,32 @@
+--- old.classWithOptionalParameter.types
++++ new.classWithOptionalParameter.types
+@@= skipped -4, +4 lines =@@
+ 
+ class C {
+ >C : C
+->  : ^
+ 
+     x?: string;
+ >x : string
+->  : ^^^^^^
+ 
+     f?() {}
+ >f : () => void
+->  : ^^^^^^^^^^
+ }
+ 
+ class C2<T> {
+ >C2 : C2<T>
+->   : ^^^^^
++>T : T
+ 
+     x?: T;
+ >x : T
+->  : ^
+ 
+     f?(x: T) {}
+ >f : (x: T) => void
+->  : ^ ^^ ^^^^^^^^^
+ >x : T
+->  : ^
+ }

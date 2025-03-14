@@ -1,0 +1,60 @@
+--- old.paramTagWrapping.types
++++ new.paramTagWrapping.types
+@@= skipped -9, +9 lines =@@
+  * Arg z.
+  */
+ function good(x, y, z) {
+->good : (x: number, y: number, z: number) => void
+->     : ^ ^^      ^^ ^^      ^^ ^^      ^^^^^^^^^
+->x : number
+->  : ^^^^^^
+->y : number
+->  : ^^^^^^
+->z : number
+->  : ^^^^^^
++>good : (x: any, y: any, z: any) => void
++>x : any
++>y : any
++>z : any
+ }
+ 
+ good(1, 2, 3)
+ >good(1, 2, 3) : void
+->              : ^^^^
+->good : (x: number, y: number, z: number) => void
+->     : ^ ^^      ^^ ^^      ^^ ^^      ^^^^^^^^^
++>good : (x: any, y: any, z: any) => void
+ >1 : 1
+->  : ^
+ >2 : 2
+->  : ^
+ >3 : 3
+->  : ^
+ 
+ 
+ === bad.js ===
+@@= skipped -34, +25 lines =@@
+  */
+ function bad(x, y, z) {
+ >bad : (x: any, y: any, z: any) => void
+->    : ^ ^^^^^^^ ^^^^^^^ ^^^^^^^^^^^^^^
+ >x : any
+->  : ^^^
+ >y : any
+->  : ^^^
+ >z : any
+->  : ^^^
+ }
+ 
+ bad(1, 2, 3)
+ >bad(1, 2, 3) : void
+->             : ^^^^
+ >bad : (x: any, y: any, z: any) => void
+->    : ^ ^^^^^^^ ^^^^^^^ ^^^^^^^^^^^^^^
+ >1 : 1
+->  : ^
+ >2 : 2
+->  : ^
+ >3 : 3
+->  : ^
+ 

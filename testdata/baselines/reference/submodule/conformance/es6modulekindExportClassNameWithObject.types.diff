@@ -1,0 +1,8 @@
+--- old.es6modulekindExportClassNameWithObject.types
++++ new.es6modulekindExportClassNameWithObject.types
+@@= skipped -2, +2 lines =@@
+ === es6modulekindExportClassNameWithObject.ts ===
+ export class Object {}
+ >Object : Object
+->       : ^^^^^^
+ 

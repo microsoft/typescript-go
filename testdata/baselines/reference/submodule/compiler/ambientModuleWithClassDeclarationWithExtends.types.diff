@@ -1,0 +1,18 @@
+--- old.ambientModuleWithClassDeclarationWithExtends.types
++++ new.ambientModuleWithClassDeclarationWithExtends.types
+@@= skipped -2, +2 lines =@@
+ === ambientModuleWithClassDeclarationWithExtends.ts ===
+ declare module foo {
+ >foo : typeof foo
+->    : ^^^^^^^^^^
+ 
+     class A { }
+ >A : A
+->  : ^
+ 
+     class B extends A { }
+ >B : B
+->  : ^
+ >A : A
+->  : ^
+ }

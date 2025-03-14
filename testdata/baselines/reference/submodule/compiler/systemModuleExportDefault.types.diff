@@ -1,0 +1,19 @@
+--- old.systemModuleExportDefault.types
++++ new.systemModuleExportDefault.types
+@@= skipped -6, +6 lines =@@
+ === file2.ts ===
+ export default function foo() {}
+ >foo : () => void
+->    : ^^^^^^^^^^
+ 
+ === file3.ts ===
+ 
+@@= skipped -8, +7 lines =@@
+ 
+ === file4.ts ===
+ export default class C {}
+->C : C
+->  : ^
++>C : default
+ 
+ 

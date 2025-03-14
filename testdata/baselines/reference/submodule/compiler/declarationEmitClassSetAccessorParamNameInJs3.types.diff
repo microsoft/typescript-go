@@ -1,0 +1,23 @@
+--- old.declarationEmitClassSetAccessorParamNameInJs3.types
++++ new.declarationEmitClassSetAccessorParamNameInJs3.types
+@@= skipped -2, +2 lines =@@
+ === foo.js ===
+ export class Foo {
+ >Foo : Foo
+->    : ^^^
+ 
+     /**
+      * Bar.
+@@= skipped -8, +7 lines =@@
+      * @param {{ prop: string | undefined }} baz Baz.
+      */
+     set bar({ prop = 'foo' }) {}
+->bar : { prop: string | undefined; }
+->    : ^^^^^^^^                  ^^^
++>bar : any
+ >prop : string
+->     : ^^^^^^
+ >'foo' : "foo"
+->      : ^^^^^
+ }
+ 

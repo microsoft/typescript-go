@@ -1,0 +1,16 @@
+--- old.typeCheckExportsVariable.types
++++ new.typeCheckExportsVariable.types
+@@= skipped -2, +2 lines =@@
+ === typeCheckExportsVariable.ts ===
+ let exports: number;
+ >exports : number
+->        : ^^^^^^
+ 
+ exports = '';
+ >exports = '' : ""
+->             : ^^
+ >exports : number
+->        : ^^^^^^
+ >'' : ""
+->   : ^^
+ 

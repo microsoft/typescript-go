@@ -1,0 +1,10 @@
+--- old.parserReturnStatement3.types
++++ new.parserReturnStatement3.types
+@@= skipped -2, +2 lines =@@
+ === parserReturnStatement3.ts ===
+ function f() {
+ >f : () => void
+->  : ^^^^^^^^^^
+ 
+    return;
+ }

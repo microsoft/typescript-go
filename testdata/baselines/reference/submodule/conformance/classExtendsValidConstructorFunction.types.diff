@@ -1,0 +1,22 @@
+--- old.classExtendsValidConstructorFunction.types
++++ new.classExtendsValidConstructorFunction.types
+@@= skipped -2, +2 lines =@@
+ === classExtendsValidConstructorFunction.ts ===
+ function foo() { }
+ >foo : () => void
+->    : ^^^^^^^^^^
+ 
+ var x = new foo(); // can be used as a constructor function
+ >x : any
+->  : ^^^
+ >new foo() : any
+->          : ^^^
+ >foo : () => void
+->    : ^^^^^^^^^^
+ 
+ class C extends foo { } // error, cannot extend it though
+ >C : C
+->  : ^
+ >foo : () => void
+->    : ^^^^^^^^^^
+ 

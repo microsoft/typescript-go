@@ -1,0 +1,36 @@
+--- old.recursiveBaseConstructorCreation2.types
++++ new.recursiveBaseConstructorCreation2.types
+@@= skipped -2, +2 lines =@@
+ === recursiveBaseConstructorCreation2.ts ===
+ declare class base
+ >base : base
+->     : ^^^^
+ {
+ }
+ declare class abc extends base
+ >abc : abc
+->    : ^^^
+ >base : base
+->     : ^^^^
+ {
+    foo: xyz;
+ >foo : xyz
+->    : ^^^
+ }
+ declare class xyz extends abc
+ >xyz : xyz
+->    : ^^^
+ >abc : abc
+->    : ^^^
+ {
+ }
+  
+ var bar = new xyz(); // Error: Invalid 'new' expression.
+ >bar : xyz
+->    : ^^^
+ >new xyz() : xyz
+->          : ^^^
+ >xyz : typeof xyz
+->    : ^^^^^^^^^^
+  
+ 

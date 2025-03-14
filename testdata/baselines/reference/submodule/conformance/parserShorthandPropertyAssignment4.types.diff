@@ -1,0 +1,14 @@
+--- old.parserShorthandPropertyAssignment4.types
++++ new.parserShorthandPropertyAssignment4.types
+@@= skipped -2, +2 lines =@@
+ === parserShorthandPropertyAssignment4.ts ===
+ var v = { 0 };
+ >v : { 0: any; }
+->  : ^^^^^^^^^^^
+ >{ 0 } : { 0: any; }
+->      : ^^^^^^^^^^^
+ >0 : any
+->  : ^^^
+ > : any
+-> : ^^^
+ 

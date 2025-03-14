@@ -1,0 +1,8 @@
+--- old.parserWhileStatement1.d.types
++++ new.parserWhileStatement1.d.types
+@@= skipped -2, +2 lines =@@
+ === parserWhileStatement1.d.ts ===
+ while (e) {
+ >e : any
+->  : ^^^
+ }

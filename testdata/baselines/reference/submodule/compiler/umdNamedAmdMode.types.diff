@@ -1,0 +1,10 @@
+--- old.umdNamedAmdMode.types
++++ new.umdNamedAmdMode.types
+@@= skipped -3, +3 lines =@@
+ /// <amd-module name="a"/>
+ export const a = 1;
+ >a : 1
+->  : ^
+ >1 : 1
+->  : ^
+ 

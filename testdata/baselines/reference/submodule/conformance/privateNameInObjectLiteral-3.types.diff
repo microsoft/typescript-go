@@ -1,0 +1,20 @@
+--- old.privateNameInObjectLiteral-3.types
++++ new.privateNameInObjectLiteral-3.types
+@@= skipped -2, +2 lines =@@
+ === privateNameInObjectLiteral-3.ts ===
+ const obj = {
+ >obj : {}
+->    : ^^
+ >{    get #foo() {        return ""    }} : {}
+->                                         : ^^
+ 
+     get #foo() {
+ >#foo : string
+->     : ^^^^^^
+ 
+         return ""
+ >"" : ""
+->   : ^^
+     }
+ };
+ 

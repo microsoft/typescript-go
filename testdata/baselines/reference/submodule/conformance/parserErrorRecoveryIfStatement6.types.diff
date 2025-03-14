@@ -1,0 +1,30 @@
+--- old.parserErrorRecoveryIfStatement6.types
++++ new.parserErrorRecoveryIfStatement6.types
+@@= skipped -2, +2 lines =@@
+ === parserErrorRecoveryIfStatement6.ts ===
+ class Foo {
+ >Foo : Foo
+->    : ^^^
+ 
+   f1() {
+ >f1 : () => void
+->   : ^^^^^^^^^^
+ 
+     if (a.b) {
+ >a.b : any
+->    : ^^^
+ >a : any
+->  : ^^^
+ >b : any
+->  : ^^^
+   }
+   public f2() {
+ >f2 : () => void
+->   : ^^^^^^^^^^
+   }
+   f3() {
+ >f3 : () => void
+->   : ^^^^^^^^^^
+   }
+ }
+ 

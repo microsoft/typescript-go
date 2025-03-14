@@ -1,0 +1,69 @@
+--- old.tsxSpreadAttributesResolution17.types
++++ new.tsxSpreadAttributesResolution17.types
+@@= skipped -2, +2 lines =@@
+ === file.tsx ===
+ declare global {
+ >global : any
+->       : ^^^
+ 
+     namespace JSX {
++>JSX : any
++
+         interface Element {}
++>Element : Element
++
+         interface ElementAttributesProperty { props: {} }
++>ElementAttributesProperty : ElementAttributesProperty
+ >props : {}
+->      : ^^
+     }
+ }
+ declare var React: any;
+ >React : any
+->      : ^^^
+ 
+ export class Empty extends React.Component<{}, {}> {
+ >Empty : Empty
+->      : ^^^^^
+ >React.Component : any
+->                : ^^^
+ >React : any
+->      : ^^^
+ >Component : any
+->          : ^^^
+ 
+     render() {
+->render : () => JSX.Element
+->       : ^^^^^^^^^^^^^^^^^
++>render : () => any
+ 
+         return <div>Hello</div>;
+-><div>Hello</div> : JSX.Element
+->                 : ^^^^^^^^^^^
++><div>Hello</div> : any
+ >div : any
+->    : ^^^
+ >div : any
+->    : ^^^
+     }
+ }
+ 
+ declare const obj: { a: number | undefined } | undefined;
+ >obj : { a: number | undefined; } | undefined
+->    : ^^^^^                  ^^^^^^^^^^^^^^^
+ >a : number | undefined
+->  : ^^^^^^^^^^^^^^^^^^
+ 
+ // OK
+ let unionedSpread = <Empty {...obj} />;
+->unionedSpread : JSX.Element
+->              : ^^^^^^^^^^^
+-><Empty {...obj} /> : JSX.Element
+->                   : ^^^^^^^^^^^
++>unionedSpread : any
++><Empty {...obj} /> : any
+ >Empty : typeof Empty
+->      : ^^^^^^^^^^^^
+ >obj : { a: number | undefined; } | undefined
+->    : ^^^^^                  ^^^^^^^^^^^^^^^
+ 

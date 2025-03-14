@@ -1,0 +1,30 @@
+--- old.javascriptImportDefaultBadExport.types
++++ new.javascriptImportDefaultBadExport.types
+@@= skipped -2, +2 lines =@@
+ === /a.js ===
+ const alias = {};
+ >alias : {}
+->      : ^^
+ >{} : {}
+->   : ^^
+ 
+ module.exports = alias;
+ >module.exports = alias : {}
+->                       : ^^
+->module.exports : {}
+->               : ^^
+->module : { exports: {}; }
+->       : ^^^^^^^^^^^^^^^^
+->exports : {}
+->        : ^^
++>module.exports : any
++>module : any
++>exports : any
+ >alias : {}
+->      : ^^
+ 
+ === /b.js ===
+ import a from "./a";
+ >a : any
+->  : ^^^
+ 

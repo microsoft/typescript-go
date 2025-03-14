@@ -1,0 +1,41 @@
+--- old.moduleMerge.types
++++ new.moduleMerge.types
+@@= skipped -4, +4 lines =@@
+ 
+ module A
+ >A : typeof A
+->  : ^^^^^^^^
+ {
+     class B
+ >B : B
+->  : ^
+     {
+         public Hello(): string
+ >Hello : () => string
+->      : ^^^^^^      
+         {
+             return "from private B";
+ >"from private B" : "from private B"
+->                 : ^^^^^^^^^^^^^^^^
+         }
+     }
+ }
+ 
+ module A
+ >A : typeof A
+->  : ^^^^^^^^
+ {
+     export class B
+ >B : B
+->  : ^
+     {
+         public Hello(): string
+ >Hello : () => string
+->      : ^^^^^^      
+         {
+             return "from export B";
+ >"from export B" : "from export B"
+->                : ^^^^^^^^^^^^^^^
+         }
+     }
+ }

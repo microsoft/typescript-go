@@ -1,0 +1,12 @@
+--- old.breakTarget6.types
++++ new.breakTarget6.types
+@@= skipped -2, +2 lines =@@
+ === breakTarget6.ts ===
+ while (true) {
+ >true : true
+->     : ^^^^
+ 
+   break target;
+ >target : any
+->       : ^^^
+ }

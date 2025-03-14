@@ -1,0 +1,21 @@
+--- old.promiseDefinitionTest.types
++++ new.promiseDefinitionTest.types
+@@= skipped -2, +2 lines =@@
+ === promiseDefinitionTest.ts ===
+ class Promise<T> {}
+ >Promise : Promise<T>
+->        : ^^^^^^^^^^
++>T : T
+ 
+ async function foo() {}
+ >foo : () => Promise<void>
+->    : ^^^^^^^^^^^^^^^^^^^
+ 
+ const x = foo();
+ >x : Promise<void>
+->  : ^^^^^^^^^^^^^
+ >foo() : Promise<void>
+->      : ^^^^^^^^^^^^^
+ >foo : () => Promise<void>
+->    : ^^^^^^^^^^^^^^^^^^^
+ 

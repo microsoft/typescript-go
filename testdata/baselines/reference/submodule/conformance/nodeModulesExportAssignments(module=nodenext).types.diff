@@ -1,0 +1,26 @@
+--- old.nodeModulesExportAssignments(module=nodenext).types
++++ new.nodeModulesExportAssignments(module=nodenext).types
+@@= skipped -3, +3 lines =@@
+ // cjs format file
+ const a = {};
+ >a : {}
+->  : ^^
+ >{} : {}
+->   : ^^
+ 
+ export = a;
+ >a : {}
+->  : ^^
+ 
+ === index.ts ===
+ // esm format file
+ const a = {};
+ >a : {}
+->  : ^^
+ >{} : {}
+->   : ^^
+ 
+ export = a;
+ >a : {}
+->  : ^^
+ 

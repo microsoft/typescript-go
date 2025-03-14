@@ -1,0 +1,16 @@
+--- old.systemModule3.types
++++ new.systemModule3.types
+@@= skipped -6, +6 lines =@@
+ === file2.ts ===
+ export default function f() {}
+ >f : () => void
+->  : ^^^^^^^^^^
+ 
+ === file3.ts ===
+ export default class C {}
+->C : C
+->  : ^
++>C : default
+ 
+ === file4.ts ===
+ 

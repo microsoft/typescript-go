@@ -1,0 +1,34 @@
+--- old.staticInterfaceAssignmentCompat.types
++++ new.staticInterfaceAssignmentCompat.types
+@@= skipped -2, +2 lines =@@
+ === staticInterfaceAssignmentCompat.ts ===
+ class Shape {
+ >Shape : Shape
+->      : ^^^^^
+ 
+     static create(): Shape {
+ >create : () => Shape
+->       : ^^^^^^     
+ 
+         return new Shape();
+ >new Shape() : Shape
+->            : ^^^^^
+ >Shape : typeof Shape
+->      : ^^^^^^^^^^^^
+     }
+ }
+ 
+ interface ShapeFactory {
++>ShapeFactory : ShapeFactory
++
+     create(): Shape;
+ >create : () => Shape
+->       : ^^^^^^     
+ }
+ 
+ var x: ShapeFactory = Shape;
+ >x : ShapeFactory
+->  : ^^^^^^^^^^^^
+ >Shape : typeof Shape
+->      : ^^^^^^^^^^^^
+ 

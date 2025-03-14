@@ -1,0 +1,20 @@
+--- old.templateStringInPropertyAssignmentES6.types
++++ new.templateStringInPropertyAssignmentES6.types
+@@= skipped -2, +2 lines =@@
+ === templateStringInPropertyAssignmentES6.ts ===
+ var x = {
+ >x : { a: string; }
+->  : ^^^^^^^^^^^^^^
+ >{    a: `abc${ 123 }def${ 456 }ghi`} : { a: string; }
+->                                     : ^^^^^^^^^^^^^^
+ 
+     a: `abc${ 123 }def${ 456 }ghi`
+ >a : string
+->  : ^^^^^^
+ >`abc${ 123 }def${ 456 }ghi` : "abc123def456ghi"
+->                            : ^^^^^^^^^^^^^^^^^
+ >123 : 123
+->    : ^^^
+ >456 : 456
+->    : ^^^
+ }

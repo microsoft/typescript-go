@@ -1,0 +1,14 @@
+--- old.idInProp.types
++++ new.idInProp.types
+@@= skipped -2, +2 lines =@@
+ === idInProp.ts ===
+ function f() {
+ >f : () => void
+->  : ^^^^^^^^^^
+ 
+ var t: { (f: any) : any; };
+ >t : (f: any) => any
+->  : ^ ^^   ^^^^^   
+ >f : any
+ 
+ }

@@ -1,0 +1,20 @@
+--- old.localVariablesReturnedFromCatchBlocks.types
++++ new.localVariablesReturnedFromCatchBlocks.types
+@@= skipped -2, +2 lines =@@
+ === localVariablesReturnedFromCatchBlocks.ts ===
+ function f() {
+ >f : () => any
+->  : ^^^^^^^^^
+ 
+     try {
+     } catch (e) {
+@@= skipped -10, +9 lines =@@
+ >stack2 : any
+ >e.stack : any
+ >e : any
+->  : ^^^
+ >stack : any
+->      : ^^^
+ 
+         return stack2; //error TS2095: Could not find symbol 'stack2'.
+ >stack2 : any

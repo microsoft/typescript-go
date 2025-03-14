@@ -1,0 +1,33 @@
+--- old.parserArrowFunctionExpression17.types
++++ new.parserArrowFunctionExpression17.types
+@@= skipped -2, +2 lines =@@
+ === fileJs.js ===
+ a ? b : (c) : d => e // Not legal JS; "Unexpected token ':'" at last colon
+ >a ? b : (c) : d => e : any
+->                     : ^^^
+ >a : any
+->  : ^^^
+ >b : any
+->  : ^^^
+ >(c) : d => e : (c: any) => d
+->             : ^ ^^^^^^^^^^ 
+ >c : any
+->  : ^^^
+ >e : any
+->  : ^^^
+ 
+ === fileTs.ts ===
+ a ? b : (c) : d => e
+ >a ? b : (c) : d => e : any
+->                     : ^^^
+ >a : any
+->  : ^^^
+ >b : any
+->  : ^^^
+ >(c) : d => e : (c: any) => d
+->             : ^ ^^^^^^^^^^ 
+ >c : any
+->  : ^^^
+ >e : any
+->  : ^^^
+ 

@@ -1,0 +1,18 @@
+--- old.templateStringInTaggedTemplateES6.types
++++ new.templateStringInTaggedTemplateES6.types
+@@= skipped -2, +2 lines =@@
+ === templateStringInTaggedTemplateES6.ts ===
+ `I AM THE ${ `${ `TAG` } ` } PORTION`    `I ${ "AM" } THE TEMPLATE PORTION`
+ >`I AM THE ${ `${ `TAG` } ` } PORTION`    `I ${ "AM" } THE TEMPLATE PORTION` : any
+->                                                                            : ^^^
+ >`I AM THE ${ `${ `TAG` } ` } PORTION` : string
+->                                      : ^^^^^^
+ >`${ `TAG` } ` : "TAG "
+->              : ^^^^^^
+ >`TAG` : "TAG"
+->      : ^^^^^
+ >`I ${ "AM" } THE TEMPLATE PORTION` : string
+->                                   : ^^^^^^
+ >"AM" : "AM"
+->     : ^^^^
+ 

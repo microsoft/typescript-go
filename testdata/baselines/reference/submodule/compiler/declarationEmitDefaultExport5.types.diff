@@ -1,0 +1,12 @@
+--- old.declarationEmitDefaultExport5.types
++++ new.declarationEmitDefaultExport5.types
+@@= skipped -2, +2 lines =@@
+ === declarationEmitDefaultExport5.ts ===
+ export default 1 + 2;
+ >1 + 2 : number
+->      : ^^^^^^
+ >1 : 1
+->  : ^
+ >2 : 2
+->  : ^
+ 

@@ -1,0 +1,10 @@
+--- old.nullKeyword.types
++++ new.nullKeyword.types
+@@= skipped -2, +2 lines =@@
+ === nullKeyword.ts ===
+ null.foo;
+ >null.foo : any
+->         : ^^^
+ >foo : any
+->    : ^^^
+ 

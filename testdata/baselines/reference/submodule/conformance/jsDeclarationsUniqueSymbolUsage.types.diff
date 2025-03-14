@@ -1,0 +1,33 @@
+--- old.jsDeclarationsUniqueSymbolUsage.types
++++ new.jsDeclarationsUniqueSymbolUsage.types
+@@= skipped -2, +2 lines =@@
+ === a.js ===
+ export const kSymbol = Symbol("my-symbol");
+ >kSymbol : unique symbol
+->        : ^^^^^^^^^^^^^
+ >Symbol("my-symbol") : unique symbol
+->                    : ^^^^^^^^^^^^^
+ >Symbol : SymbolConstructor
+->       : ^^^^^^^^^^^^^^^^^
+ >"my-symbol" : "my-symbol"
+->            : ^^^^^^^^^^^
+ 
+ /**
+  * @typedef {{[kSymbol]: true}} WithSymbol
+@@= skipped -17, +13 lines =@@
+  * @param {import('./a').WithSymbol} value 
+  */
+ export function b(value) {
+->b : (value: import("./a").WithSymbol) => import("./a").WithSymbol
+->  : ^     ^^                        ^^^^^                        
+->value : import("a").WithSymbol
+->      : ^^^^^^^^^^^^^^^^^^^^^^
++>b : (value: any) => any
++>value : any
+ 
+     return value;
+->value : import("a").WithSymbol
+->      : ^^^^^^^^^^^^^^^^^^^^^^
++>value : any
+ }
+ 

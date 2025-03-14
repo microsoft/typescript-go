@@ -1,0 +1,34 @@
+--- old.declarationEmitInferredTypeAlias3.types
++++ new.declarationEmitInferredTypeAlias3.types
+@@= skipped -2, +2 lines =@@
+ === 0.ts ===
+ {
+     type Data = string | boolean;
+->Data : string | boolean
+->     : ^^^^^^^^^^^^^^^^
++>Data : Data
+ 
+     let obj: Data = true;
+->obj : string | boolean
+->    : ^^^^^^^^^^^^^^^^
++>obj : Data
+ >true : true
+->     : ^^^^
+ }
+ export { }
+ 
+ === 1.ts ===
+ var x = "hi" || 5;
+ >x : string | number
+->  : ^^^^^^^^^^^^^^^
+ >"hi" || 5 : "hi" | 5
+->          : ^^^^^^^^
+ >"hi" : "hi"
+->     : ^^^^
+ >5 : 5
+->  : ^
+ 
+ export default x;
+ >x : string | number
+->  : ^^^^^^^^^^^^^^^
+ 

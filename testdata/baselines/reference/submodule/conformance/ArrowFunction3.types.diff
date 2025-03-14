@@ -1,0 +1,13 @@
+--- old.ArrowFunction3.types
++++ new.ArrowFunction3.types
+@@= skipped -2, +2 lines =@@
+ === ArrowFunction3.ts ===
+ var v = (a): => {
+ >v : any
+->  : ^^^
+ >(a) : any
+->    : ^^^
+ >a : any
+->  : ^^^
+    
+ };

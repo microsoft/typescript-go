@@ -1,0 +1,18 @@
+--- old.objectBindingPatternKeywordIdentifiers04.types
++++ new.objectBindingPatternKeywordIdentifiers04.types
+@@= skipped -2, +2 lines =@@
+ === objectBindingPatternKeywordIdentifiers04.ts ===
+ var { "while": while } = { while: 1 }
+ > : number
+-> : ^^^^^^
+ >while : any
+->      : ^^^
+ > : number
+-> : ^^^^^^
+ >{ while: 1 } : { while: number; }
+->             : ^^^^^^^^^^^^^^^^^^
+ >while : number
+->      : ^^^^^^
+ >1 : 1
+->  : ^
+ 

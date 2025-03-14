@@ -1,0 +1,8 @@
+--- old.exportClassNameWithObjectCommonJS.types
++++ new.exportClassNameWithObjectCommonJS.types
+@@= skipped -2, +2 lines =@@
+ === exportClassNameWithObjectCommonJS.ts ===
+ export class Object {}
+ >Object : Object
+->       : ^^^^^^
+ 

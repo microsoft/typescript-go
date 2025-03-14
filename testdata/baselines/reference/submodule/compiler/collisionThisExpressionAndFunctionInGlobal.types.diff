@@ -1,0 +1,20 @@
+--- old.collisionThisExpressionAndFunctionInGlobal.types
++++ new.collisionThisExpressionAndFunctionInGlobal.types
+@@= skipped -2, +2 lines =@@
+ === collisionThisExpressionAndFunctionInGlobal.ts ===
+ function _this() { //Error
+ >_this : () => number
+->      : ^^^^^^^^^^^^
+ 
+     return 10;
+ >10 : 10
+->   : ^^
+ }
+ var f = () => this;
+ >f : () => typeof globalThis
+->  : ^^^^^^^^^^^^^^^^^^^^^^^
+ >() => this : () => typeof globalThis
+->           : ^^^^^^^^^^^^^^^^^^^^^^^
+ >this : typeof globalThis
+->     : ^^^^^^^^^^^^^^^^^
+ 

@@ -1,0 +1,12 @@
+--- old.ArrowFunctionExpression1.types
++++ new.ArrowFunctionExpression1.types
+@@= skipped -2, +2 lines =@@
+ === ArrowFunctionExpression1.ts ===
+ var v = (public x: string) => { };
+ >v : (x: string) => void
+->  : ^ ^^      ^^^^^^^^^
+ >(public x: string) => { } : (x: string) => void
+->                          : ^ ^^      ^^^^^^^^^
+ >x : string
+->  : ^^^^^^
+ 

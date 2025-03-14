@@ -1,0 +1,29 @@
+--- old.typeReferenceDirectives4.types
++++ new.typeReferenceDirectives4.types
+@@= skipped -5, +5 lines =@@
+ 
+ let x: $;
+ >x : $
+->  : ^
+ 
+ let y = () => x
+ >y : () => $
+->  : ^^^^^^^
+ >() => x : () => $
+->        : ^^^^^^^
+ >x : $
+->  : ^
+ 
+ === /ref.d.ts ===
+ interface $ { x }
++>$ : $
+ >x : any
+ 
+-=== /types/lib/index.d.ts ===
+-declare let $: { x: number }
+->$ : { x: number; }
+->  : ^^^^^      ^^^
+->x : number
+->  : ^^^^^^
+-
+-

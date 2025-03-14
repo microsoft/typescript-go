@@ -1,0 +1,24 @@
+--- old.decoratorOnClassProperty3.types
++++ new.decoratorOnClassProperty3.types
+@@= skipped -2, +2 lines =@@
+ === decoratorOnClassProperty3.ts ===
+ declare function dec(target: any, propertyKey: string): void;
+ >dec : (target: any, propertyKey: string) => void
+->    : ^      ^^   ^^           ^^      ^^^^^    
+ >target : any
+->       : ^^^
+ >propertyKey : string
+->            : ^^^^^^
+ 
+ class C {
+ >C : C
+->  : ^
+ 
+     public @dec prop;
+ >public : any
+->       : ^^^
+ >dec : (target: any, propertyKey: string) => void
+->    : ^      ^^   ^^           ^^      ^^^^^    
+ >prop : any
+->     : ^^^
+ }

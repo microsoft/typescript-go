@@ -1,0 +1,15 @@
+--- old.filesEmittingIntoSameOutputWithOutOption.types
++++ new.filesEmittingIntoSameOutputWithOutOption.types
+@@= skipped -2, +2 lines =@@
+ === a.ts ===
+ export class c {
+ >c : c
+->  : ^
+ }
+ 
+ === b.ts ===
+ function foo() {
+ >foo : () => void
+->    : ^^^^^^^^^^
+ }
+ 

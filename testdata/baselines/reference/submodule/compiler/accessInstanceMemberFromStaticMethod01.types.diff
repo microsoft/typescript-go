@@ -1,0 +1,23 @@
+--- old.accessInstanceMemberFromStaticMethod01.types
++++ new.accessInstanceMemberFromStaticMethod01.types
+@@= skipped -2, +2 lines =@@
+ === accessInstanceMemberFromStaticMethod01.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+     static foo: string;
+ >foo : string
+->    : ^^^^^^
+ 
+     bar() {
+ >bar : () => void
+->    : ^^^^^^^^^^
+ 
+         let k = foo;
+ >k : any
+->  : ^^^
+ >foo : any
+->    : ^^^
+     }
+ }

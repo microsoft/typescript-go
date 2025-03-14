@@ -1,0 +1,105 @@
+--- old.esDecorators-classDeclaration-sourceMap(target=es2015).types
++++ new.esDecorators-classDeclaration-sourceMap(target=es2015).types
+@@= skipped -11, +11 lines =@@
+ 
+ class C {
+ >C : C
+->  : ^
+ 
+     @dec
+ >dec : any
+@@= skipped -10, +9 lines =@@
+ 
+     method() {}
+ >method : () => void
+->       : ^^^^^^^^^^
+ 
+     @dec
+ >dec : any
+@@= skipped -10, +9 lines =@@
+ 
+     get x() { return 1; }
+ >x : number
+->  : ^^^^^^
+ >1 : 1
+->  : ^
+ 
+     @dec
+ >dec : any
+@@= skipped -12, +10 lines =@@
+ 
+     set x(value: number) { }
+ >x : number
+->  : ^^^^^^
+ >value : number
+->      : ^^^^^^
+ 
+     @dec
+ >dec : any
+@@= skipped -12, +10 lines =@@
+ 
+     y = 1;
+ >y : number
+->  : ^^^^^^
+ >1 : 1
+->  : ^
+ 
+     @dec
+ >dec : any
+@@= skipped -12, +10 lines =@@
+ 
+     accessor z = 1;
+ >z : number
+->  : ^^^^^^
+ >1 : 1
+->  : ^
+ 
+     @dec
+ >dec : any
+@@= skipped -12, +10 lines =@@
+ 
+     static #method() {}
+ >#method : () => void
+->        : ^^^^^^^^^^
+ 
+     @dec
+ >dec : any
+@@= skipped -10, +9 lines =@@
+ 
+     static get #x() { return 1; }
+ >#x : number
+->   : ^^^^^^
+ >1 : 1
+->  : ^
+ 
+     @dec
+ >dec : any
+@@= skipped -12, +10 lines =@@
+ 
+     static set #x(value: number) { }
+ >#x : number
+->   : ^^^^^^
+ >value : number
+->      : ^^^^^^
+ 
+     @dec
+ >dec : any
+@@= skipped -12, +10 lines =@@
+ 
+     static #y = 1;
+ >#y : number
+->   : ^^^^^^
+ >1 : 1
+->  : ^
+ 
+     @dec
+ >dec : any
+@@= skipped -12, +10 lines =@@
+ 
+     static accessor #z = 1;
+ >#z : number
+->   : ^^^^^^
+ >1 : 1
+->  : ^
+ }
+ 

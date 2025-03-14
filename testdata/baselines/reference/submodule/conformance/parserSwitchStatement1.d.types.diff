@@ -1,0 +1,8 @@
+--- old.parserSwitchStatement1.d.types
++++ new.parserSwitchStatement1.d.types
+@@= skipped -2, +2 lines =@@
+ === parserSwitchStatement1.d.ts ===
+ switch (foo) {
+ >foo : any
+->    : ^^^
+ }

@@ -1,0 +1,32 @@
+--- old.metadataOfEventAlias.types
++++ new.metadataOfEventAlias.types
+@@= skipped -1, +1 lines =@@
+ 
+ === event.ts ===
+ export interface Event { title: string };
++>Event : Event
+ >title : string
+->      : ^^^^^^
+ 
+ === test.ts ===
+ import { Event } from './event';
+ >Event : any
+->      : ^^^
+ 
+ function Input(target: any, key: string): void { }
+ >Input : (target: any, key: string) => void
+->      : ^      ^^   ^^   ^^      ^^^^^    
+ >target : any
+ >key : string
+->    : ^^^^^^
+ 
+ export class SomeClass {
+ >SomeClass : SomeClass
+->          : ^^^^^^^^^
+ 
+     @Input event: Event;
+ >Input : (target: any, key: string) => void
+->      : ^      ^^   ^^   ^^      ^^^^^    
+ >event : Event
+->      : ^^^^^
+ }

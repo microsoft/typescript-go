@@ -1,0 +1,17 @@
+--- old.sourceMapValidationLambdaSpanningMultipleLines.types
++++ new.sourceMapValidationLambdaSpanningMultipleLines.types
+@@= skipped -2, +2 lines =@@
+ === sourceMapValidationLambdaSpanningMultipleLines.ts ===
+ ((item: string) =>
+ >((item: string) =>    item) : (item: string) => string
+->                            : ^    ^^      ^^^^^^^^^^^
+ >(item: string) =>    item : (item: string) => string
+->                          : ^    ^^      ^^^^^^^^^^^
+ >item : string
+->     : ^^^^^^
+ 
+     item
+ >item : string
+->     : ^^^^^^
+ 
+ )

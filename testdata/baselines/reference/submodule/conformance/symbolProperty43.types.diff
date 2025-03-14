@@ -1,0 +1,32 @@
+--- old.symbolProperty43.types
++++ new.symbolProperty43.types
+@@= skipped -2, +2 lines =@@
+ === symbolProperty43.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+     [Symbol.iterator](x: string): string;
+ >[Symbol.iterator] : { (x: string): string; (x: number): number; }
+->                  : ^^^ ^^      ^^^      ^^^ ^^      ^^^      ^^^
+ >Symbol.iterator : unique symbol
+->                : ^^^^^^^^^^^^^
+ >Symbol : SymbolConstructor
+->       : ^^^^^^^^^^^^^^^^^
+ >iterator : unique symbol
+->         : ^^^^^^^^^^^^^
+ >x : string
+->  : ^^^^^^
+ 
+     [Symbol.iterator](x: number): number;
+ >[Symbol.iterator] : { (x: string): string; (x: number): number; }
+->                  : ^^^ ^^      ^^^      ^^^ ^^      ^^^      ^^^
+ >Symbol.iterator : unique symbol
+->                : ^^^^^^^^^^^^^
+ >Symbol : SymbolConstructor
+->       : ^^^^^^^^^^^^^^^^^
+ >iterator : unique symbol
+->         : ^^^^^^^^^^^^^
+ >x : number
+->  : ^^^^^^
+ }

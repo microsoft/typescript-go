@@ -1,0 +1,16 @@
+--- old.readonlyReadonly.types
++++ new.readonlyReadonly.types
+@@= skipped -2, +2 lines =@@
+ === readonlyReadonly.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+     readonly readonly x: number;
+ >x : number
+->  : ^^^^^^
+ 
+     constructor(readonly readonly y: number) {}
+ >y : number
+->  : ^^^^^^
+ }

@@ -1,0 +1,14 @@
+--- old.MemberFunctionDeclaration3_es6.types
++++ new.MemberFunctionDeclaration3_es6.types
+@@= skipped -2, +2 lines =@@
+ === MemberFunctionDeclaration3_es6.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+    *[foo]() { }
+ >[foo] : () => Generator<never, void, unknown>
+->      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ >foo : any
+->    : ^^^
+ }

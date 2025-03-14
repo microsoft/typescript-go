@@ -1,0 +1,10 @@
+--- old.commentOnParameter1.types
++++ new.commentOnParameter1.types
+@@= skipped -2, +2 lines =@@
+ === commentOnParameter1.ts ===
+ function commentedParameters(
+ >commentedParameters : (a: any, b: any) => void
+->                    : ^ ^^^^^^^ ^^^^^^^^^^^^^^
+ 
+ /* Parameter a */
+ a

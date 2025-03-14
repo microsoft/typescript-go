@@ -1,0 +1,25 @@
+--- old.cjsImportInES2015.types
++++ new.cjsImportInES2015.types
+@@= skipped -2, +2 lines =@@
+ === /project/index.ts ===
+ import type SpecialError = require("cjs-dep");
+ >SpecialError : typeof SpecialError
+->             : ^^^^^^^^^^^^^^^^^^^
+ 
+ function handleError(err: SpecialError) {}
+ >handleError : (err: SpecialError) => void
+->            : ^   ^^            ^^^^^^^^^
+ >err : SpecialError
+->    : ^^^^^^^^^^^^
+ 
+ === /project/node_modules/cjs-dep/index.d.ts ===
+ declare class SpecialError extends Error {}
+ >SpecialError : SpecialError
+->             : ^^^^^^^^^^^^
+ >Error : Error
+->      : ^^^^^
+ 
+ export = SpecialError;
+ >SpecialError : SpecialError
+->             : ^^^^^^^^^^^^
+ 

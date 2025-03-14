@@ -1,0 +1,8 @@
+--- old.parserClassDeclaration2.types
++++ new.parserClassDeclaration2.types
+@@= skipped -2, +2 lines =@@
+ === parserClassDeclaration2.ts ===
+ class C implements A implements B {
+ >C : C
+->  : ^
+ }

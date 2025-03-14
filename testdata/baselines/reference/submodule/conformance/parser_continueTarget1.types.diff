@@ -1,0 +1,12 @@
+--- old.parser_continueTarget1.types
++++ new.parser_continueTarget1.types
+@@= skipped -2, +2 lines =@@
+ === parser_continueTarget1.ts ===
+ target:
+ >target : any
+->       : ^^^
+ 
+   continue target;
+ >target : any
+->       : ^^^
+ 

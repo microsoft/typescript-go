@@ -1,0 +1,41 @@
+--- old.constDeclarationShadowedByVarDeclaration3.types
++++ new.constDeclarationShadowedByVarDeclaration3.types
+@@= skipped -3, +3 lines =@@
+ // Ensure only checking for const declarations shadowed by vars
+ class Rule {
+ >Rule : Rule
+->     : ^^^^
+ 
+     public regex: RegExp = new RegExp('');
+ >regex : RegExp
+->      : ^^^^^^
+ >new RegExp('') : RegExp
+->               : ^^^^^^
+ >RegExp : RegExpConstructor
+->       : ^^^^^^^^^^^^^^^^^
+ >'' : ""
+->   : ^^
+ 
+     public name: string = '';
+ >name : string
+->     : ^^^^^^
+ >'' : ""
+->   : ^^
+ 
+     constructor(name: string) {
+ >name : string
+->     : ^^^^^^
+ 
+         this.name = name;
+ >this.name = name : string
+->                 : ^^^^^^
+ >this.name : string
+->          : ^^^^^^
+ >this : this
+->     : ^^^^
+ >name : string
+->     : ^^^^^^
+ >name : string
+->     : ^^^^^^
+     }
+ }

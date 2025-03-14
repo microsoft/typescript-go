@@ -1,0 +1,21 @@
+--- old.asiPreventsParsingAsNamespace01.types
++++ new.asiPreventsParsingAsNamespace01.types
+@@= skipped -2, +2 lines =@@
+ === asiPreventsParsingAsNamespace01.ts ===
+ var namespace: number;
+ >namespace : number
+->          : ^^^^^^
+ 
+ var n: string;
+ >n : string
+->  : ^^^^^^
+ 
+ namespace    // this is the identifier 'namespace'
+ >namespace : number
+->          : ^^^^^^
+ 
+ n            // this is the identifier 'n'
+ >n : string
+->  : ^^^^^^
+ 
+ { }          // this is a block body

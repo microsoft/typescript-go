@@ -1,0 +1,88 @@
+--- old.moduleResolutionWithSuffixes_one_jsModule.types
++++ new.moduleResolutionWithSuffixes_one_jsModule.types
+@@= skipped -1, +1 lines =@@
+ 
+ === /index.ts ===
+ import { ios } from "./foo.js";
+->ios : () => void
+->    : ^^^^^^^^^^
++>ios : any
+ 
+ === /foo.ios.js ===
+ "use strict";
+ >"use strict" : "use strict"
+->             : ^^^^^^^^^^^^
+ 
+ exports.__esModule = true;
+ >exports.__esModule = true : true
+->                          : ^^^^
+->exports.__esModule : true
+->                   : ^^^^
+->exports : typeof import("/foo.ios")
+->        : ^^^^^^^^^^^^^^^^^^^^^^^^^
+->__esModule : true
+->           : ^^^^
++>exports.__esModule : any
++>exports : any
++>__esModule : any
+ >true : true
+->     : ^^^^
+ 
+ function ios() {}
+ >ios : () => void
+->    : ^^^^^^^^^^
+ 
+ exports.ios = ios;
+ >exports.ios = ios : () => void
+->                  : ^^^^^^^^^^
+->exports.ios : () => void
+->            : ^^^^^^^^^^
+->exports : typeof import("/foo.ios")
+->        : ^^^^^^^^^^^^^^^^^^^^^^^^^
++>exports.ios : any
++>exports : any
++>ios : any
+ >ios : () => void
+->    : ^^^^^^^^^^
+->ios : () => void
+->    : ^^^^^^^^^^
+ 
+ === /foo.js ===
+ "use strict";
+ >"use strict" : "use strict"
+->             : ^^^^^^^^^^^^
+ 
+ exports.__esModule = true;
+ >exports.__esModule = true : true
+->                          : ^^^^
+->exports.__esModule : true
+->                   : ^^^^
+->exports : typeof import("/foo")
+->        : ^^^^^^^^^^^^^^^^^^^^^
+->__esModule : true
+->           : ^^^^
++>exports.__esModule : any
++>exports : any
++>__esModule : any
+ >true : true
+->     : ^^^^
+ 
+ function base() {}
+ >base : () => void
+->     : ^^^^^^^^^^
+ 
+ exports.base = base;
+ >exports.base = base : () => void
+->                    : ^^^^^^^^^^
+->exports.base : () => void
+->             : ^^^^^^^^^^
+->exports : typeof import("/foo")
+->        : ^^^^^^^^^^^^^^^^^^^^^
++>exports.base : any
++>exports : any
++>base : any
+ >base : () => void
+->     : ^^^^^^^^^^
+->base : () => void
+->     : ^^^^^^^^^^
+ 

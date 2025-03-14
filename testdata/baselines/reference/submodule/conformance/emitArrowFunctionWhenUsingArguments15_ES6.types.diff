@@ -1,0 +1,37 @@
+--- old.emitArrowFunctionWhenUsingArguments15_ES6.types
++++ new.emitArrowFunctionWhenUsingArguments15_ES6.types
+@@= skipped -2, +2 lines =@@
+ === emitArrowFunctionWhenUsingArguments15_ES6.ts ===
+ function f() {
+ >f : () => () => number
+->  : ^^^^^^^^^^^^^^^^^^
+ 
+     var arguments = "hello";
+ >arguments : string
+->          : ^^^^^^
+ >"hello" : "hello"
+->        : ^^^^^^^
+ 
+     if (Math.random()) {
+ >Math.random() : number
+->              : ^^^^^^
+ >Math.random : () => number
+->            : ^^^^^^      
+ >Math : Math
+->     : ^^^^
+ >random : () => number
+->       : ^^^^^^      
+ 
+         const arguments = 100;
+ >arguments : 100
+->          : ^^^
+ >100 : 100
+->    : ^^^
+ 
+         return () => arguments;
+ >() => arguments : () => number
+->                : ^^^^^^^^^^^^
+ >arguments : 100
+->          : ^^^
+     }
+ }

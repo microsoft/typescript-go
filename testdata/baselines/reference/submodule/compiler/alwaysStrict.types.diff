@@ -1,0 +1,14 @@
+--- old.alwaysStrict.types
++++ new.alwaysStrict.types
+@@= skipped -2, +2 lines =@@
+ === alwaysStrict.ts ===
+ function f() {
+ >f : () => void
+->  : ^^^^^^^^^^
+ 
+     var arguments = [];
+ >arguments : any[]
+->          : ^^^^^
+ >[] : undefined[]
+->   : ^^^^^^^^^^^
+ }

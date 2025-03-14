@@ -1,0 +1,33 @@
+--- old.strictModeEnumMemberNameReserved.types
++++ new.strictModeEnumMemberNameReserved.types
+@@= skipped -2, +2 lines =@@
+ === strictModeEnumMemberNameReserved.ts ===
+ "use strict";
+ >"use strict" : "use strict"
+->             : ^^^^^^^^^^^^
+ 
+ enum E {
+->E : E
+->  : ^
++>E : E.static
+ 
+     static
+ >static : E.static
+->       : ^^^^^^^^
+ }
+ 
+ const x1: E.static = E.static;
+->x1 : E
+->   : ^
++>x1 : E.static
+ >E : any
+->  : ^^^
+->E.static : E
+->         : ^
++>E.static : E.static
+ >E : typeof E
+->  : ^^^^^^^^
+->static : E
+->       : ^
++>static : E.static
+ 

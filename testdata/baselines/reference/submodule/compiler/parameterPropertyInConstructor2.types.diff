@@ -1,0 +1,24 @@
+--- old.parameterPropertyInConstructor2.types
++++ new.parameterPropertyInConstructor2.types
+@@= skipped -2, +2 lines =@@
+ === parameterPropertyInConstructor2.ts ===
+ module mod {
+ >mod : typeof mod
+->    : ^^^^^^^^^^
+ 
+   class Customers {
+ >Customers : Customers
+->          : ^^^^^^^^^
+ 
+     constructor(public names: string);
+ >names : string
+->      : ^^^^^^
+ 
+     constructor(public names: string, public ages: number) {
+ >names : string
+->      : ^^^^^^
+ >ages : number
+->     : ^^^^^^
+     }
+   }
+ }

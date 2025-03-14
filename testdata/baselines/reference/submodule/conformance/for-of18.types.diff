@@ -1,0 +1,58 @@
+--- old.for-of18.types
++++ new.for-of18.types
+@@= skipped -2, +2 lines =@@
+ === for-of18.ts ===
+ class MyStringIterator {
+ >MyStringIterator : MyStringIterator
+->                 : ^^^^^^^^^^^^^^^^
+ 
+     next() {
+ >next : () => { value: string; done: boolean; }
+->     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+         return {
+ >{            value: "",            done: false        } : { value: string; done: boolean; }
+->                                                        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+             value: "",
+ >value : string
+->      : ^^^^^^
+ >"" : ""
+->   : ^^
+ 
+             done: false
+ >done : boolean
+->     : ^^^^^^^
+ >false : false
+->      : ^^^^^
+ 
+         };
+     }
+     [Symbol.iterator]() {
+ >[Symbol.iterator] : () => this
+->                  : ^^^^^^^^^^
+ >Symbol.iterator : unique symbol
+->                : ^^^^^^^^^^^^^
+ >Symbol : SymbolConstructor
+->       : ^^^^^^^^^^^^^^^^^
+ >iterator : unique symbol
+->         : ^^^^^^^^^^^^^
+ 
+         return this;
+ >this : this
+->     : ^^^^
+     }
+ }
+ 
+ var v: string;
+ >v : string
+->  : ^^^^^^
+ 
+ for (v of new MyStringIterator) { } // Should succeed
+ >v : string
+->  : ^^^^^^
+ >new MyStringIterator : MyStringIterator
+->                     : ^^^^^^^^^^^^^^^^
+ >MyStringIterator : typeof MyStringIterator
+->                 : ^^^^^^^^^^^^^^^^^^^^^^^
+ 

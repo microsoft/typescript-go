@@ -1,0 +1,34 @@
+--- old.symbolType13.types
++++ new.symbolType13.types
+@@= skipped -2, +2 lines =@@
+ === symbolType13.ts ===
+ var s = Symbol();
+ >s : symbol
+->  : ^^^^^^
+ >Symbol() : symbol
+->         : ^^^^^^
+ >Symbol : SymbolConstructor
+->       : ^^^^^^^^^^^^^^^^^
+ 
+ var x: any;
+ >x : any
+->  : ^^^
+ 
+ for (s in {}) { }
+ >s : symbol
+->  : ^^^^^^
+ >{} : {}
+->   : ^^
+ 
+ for (x in s) { }
+ >x : any
+->  : ^^^
+ >s : symbol
+->  : ^^^^^^
+ 
+ for (var y in s) { }
+ >y : string
+->  : ^^^^^^
+ >s : symbol
+->  : ^^^^^^
+ 

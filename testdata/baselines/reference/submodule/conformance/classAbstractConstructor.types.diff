@@ -1,0 +1,10 @@
+--- old.classAbstractConstructor.types
++++ new.classAbstractConstructor.types
+@@= skipped -2, +2 lines =@@
+ === classAbstractConstructor.ts ===
+ abstract class A {
+ >A : A
+->  : ^
+ 
+     abstract constructor() {}
+ }

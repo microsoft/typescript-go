@@ -1,0 +1,12 @@
+--- old.parser509698.types
++++ new.parser509698.types
+@@= skipped -3, +3 lines =@@
+ /// <style requireSemi="on" />
+ declare function foo(): void;
+ >foo : () => void
+->    : ^^^^^^    
+ 
+ declare function bar(): void;
+ >bar : () => void
+->    : ^^^^^^    
+ 

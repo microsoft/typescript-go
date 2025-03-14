@@ -1,0 +1,26 @@
+--- old.parser_continueTarget5.types
++++ new.parser_continueTarget5.types
+@@= skipped -2, +2 lines =@@
+ === parser_continueTarget5.ts ===
+ target:
+ >target : any
+->       : ^^^
+ 
+ while (true) {
+ >true : true
+->     : ^^^^
+ 
+   function f() {
+ >f : () => void
+->  : ^^^^^^^^^^
+ 
+     while (true) {
+ >true : true
+->     : ^^^^
+ 
+       continue target;
+ >target : any
+->       : ^^^
+     }
+   }
+ }

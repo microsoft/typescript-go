@@ -1,0 +1,25 @@
+--- old.constDeclarationShadowedByVarDeclaration2.types
++++ new.constDeclarationShadowedByVarDeclaration2.types
+@@= skipped -3, +3 lines =@@
+ // No errors, const declaration is not shadowed
+ function outer() {
+ >outer : () => void
+->      : ^^^^^^^^^^
+ 
+     const x = 0;
+ >x : 0
+->  : ^
+ >0 : 0
+->  : ^
+ 
+     function inner() {
+ >inner : () => void
+->      : ^^^^^^^^^^
+ 
+         var x = "inner";
+ >x : string
+->  : ^^^^^^
+ >"inner" : "inner"
+->        : ^^^^^^^
+     }
+ }

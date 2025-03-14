@@ -1,0 +1,22 @@
+--- old.templateStringInPropertyNameES6_2.types
++++ new.templateStringInPropertyNameES6_2.types
+@@= skipped -2, +2 lines =@@
+ === templateStringInPropertyNameES6_2.ts ===
+ var x = {
+ >x : any
+->  : ^^^
+ >{    `abc${ 123 }def${ 456 }ghi` : any
+->                                 : ^^^
+ >{ : {}
+->  : ^^
+ 
+     `abc${ 123 }def${ 456 }ghi`: 321
+ >`abc${ 123 }def${ 456 }ghi` : string
+->                            : ^^^^^^
+ >123 : 123
+->    : ^^^
+ >456 : 456
+->    : ^^^
+ >321 : 321
+->    : ^^^
+ }

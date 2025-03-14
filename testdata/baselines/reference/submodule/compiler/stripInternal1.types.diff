@@ -1,0 +1,17 @@
+--- old.stripInternal1.types
++++ new.stripInternal1.types
+@@= skipped -2, +2 lines =@@
+ === stripInternal1.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+   foo(): void { }
+ >foo : () => void
+->    : ^^^^^^    
+ 
+   // @internal
+   bar(): void { }
+ >bar : () => void
+->    : ^^^^^^    
+ }

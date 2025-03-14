@@ -1,0 +1,16 @@
+--- old.tsxAttributeResolution13.types
++++ new.tsxAttributeResolution13.types
+@@= skipped -2, +2 lines =@@
+ === test.tsx ===
+ function Test() { }
+ >Test : () => void
+->     : ^^^^^^^^^^
+ 
+ <Test></Test>
+-><Test></Test> : error
++><Test></Test> : any
+ >Test : () => void
+->     : ^^^^^^^^^^
+ >Test : () => void
+->     : ^^^^^^^^^^
+ 

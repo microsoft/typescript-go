@@ -1,0 +1,46 @@
+--- old.iteratorSpreadInArray8.types
++++ new.iteratorSpreadInArray8.types
+@@= skipped -2, +2 lines =@@
+ === iteratorSpreadInArray8.ts ===
+ class SymbolIterator {
+ >SymbolIterator : SymbolIterator
+->               : ^^^^^^^^^^^^^^
+ 
+     next() {
+ >next : () => { value: symbol; done: boolean; }
+->     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+         return {
+ >{            value: Symbol(),            done: false        } : { value: symbol; done: boolean; }
+->                                                              : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+             value: Symbol(),
+ >value : symbol
+->      : ^^^^^^
+ >Symbol() : symbol
+->         : ^^^^^^
+ >Symbol : SymbolConstructor
+->       : ^^^^^^^^^^^^^^^^^
+ 
+             done: false
+ >done : boolean
+->     : ^^^^^^^
+ >false : false
+->      : ^^^^^
+ 
+         };
+     }
+@@= skipped -30, +22 lines =@@
+ 
+ var array = [...new SymbolIterator];
+ >array : any[]
+->      : ^^^^^
+ >[...new SymbolIterator] : any[]
+->                        : ^^^^^
+ >...new SymbolIterator : any
+->                      : ^^^
+ >new SymbolIterator : SymbolIterator
+->                   : ^^^^^^^^^^^^^^
+ >SymbolIterator : typeof SymbolIterator
+->               : ^^^^^^^^^^^^^^^^^^^^^
+ 

@@ -1,0 +1,49 @@
+--- old.spreadObjectNoCircular1.types
++++ new.spreadObjectNoCircular1.types
+@@= skipped -2, +2 lines =@@
+ === spreadObjectNoCircular1.ts ===
+ type Box = {
+ >Box : Box
+->    : ^^^
+ 
+   content?: Foo | Box;
+->content : Foo | Box | undefined
+->        : ^^^^^^^^^^^^^^^^^^^^^
++>content : Box | Foo | undefined
+ 
+ };
+ 
+ declare const b: Box;
+ >b : Box
+->  : ^^^
+ 
+ class Foo {
+ >Foo : Foo
+->    : ^^^
+ 
+   get foo() {
+->foo : { content: Foo | Box; }
+->    : ^^^^^^^^^^^         ^^^
++>foo : { content: Box | Foo; }
+ 
+     return {
+->{      content: this as Foo | Box,      ...b,    } : { content: Foo | Box; }
+->                                                   : ^^^^^^^^^^^         ^^^
++>{      content: this as Foo | Box,      ...b,    } : { content: Box | Foo; }
+ 
+       content: this as Foo | Box,
+->content : Foo | Box
+->        : ^^^^^^^^^
+->this as Foo | Box : Foo | Box
+->                  : ^^^^^^^^^
++>content : Box | Foo
++>this as Foo | Box : Box | Foo
+ >this : this
+->     : ^^^^
+ 
+       ...b,
+ >b : Box
+->  : ^^^
+ 
+     };
+   }

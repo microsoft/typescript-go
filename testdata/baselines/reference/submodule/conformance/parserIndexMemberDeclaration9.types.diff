@@ -1,0 +1,12 @@
+--- old.parserIndexMemberDeclaration9.types
++++ new.parserIndexMemberDeclaration9.types
+@@= skipped -2, +2 lines =@@
+ === parserIndexMemberDeclaration9.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+    export [x: string]: string;
+ >x : string
+->  : ^^^^^^
+ }

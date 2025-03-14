@@ -1,0 +1,12 @@
+--- old.varAndFunctionShareName.types
++++ new.varAndFunctionShareName.types
+@@= skipped -2, +2 lines =@@
+ === varAndFunctionShareName.ts ===
+ var myFn;
+ >myFn : any
+->     : ^^^
+ 
+ function myFn(): any { }
+ >myFn : () => any
+->     : ^^^^^^   
+ 

@@ -1,0 +1,25 @@
+--- old.exportAssignedTypeAsTypeAnnotation.types
++++ new.exportAssignedTypeAsTypeAnnotation.types
+@@= skipped -3, +3 lines =@@
+ ///<reference path='exportAssignedTypeAsTypeAnnotation_0.ts'/>
+ import test = require('exportAssignedTypeAsTypeAnnotation_0');
+ >test : any
+->     : ^^^
+ 
+ var t2: test; // should not raise a 'container type' error
+ >t2 : test
+->   : ^^^^
+ 
+ === exportAssignedTypeAsTypeAnnotation_0.ts ===
+ interface x {
++>x : x
++
+     (): Date;
+     foo: string;
+ >foo : string
+->    : ^^^^^^
+ }
+ export = x;
+ >x : x
+->  : ^
+  

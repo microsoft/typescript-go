@@ -1,0 +1,20 @@
+--- old.parserErrorRecovery_ObjectLiteral3.types
++++ new.parserErrorRecovery_ObjectLiteral3.types
+@@= skipped -2, +2 lines =@@
+ === parserErrorRecovery_ObjectLiteral3.ts ===
+ var v = { a: 
+ >v : { a: any; return: any; }
+->  : ^^^^^^^^^^^^^^^^^^^^^^^^
+ >{ a: return; : { a: any; return: any; }
+->             : ^^^^^^^^^^^^^^^^^^^^^^^^
+ >a : any
+->  : ^^^
+ 
+ return;
+ > : any
+-> : ^^^
+ >return : any
+->       : ^^^
+ > : any
+-> : ^^^
+ 

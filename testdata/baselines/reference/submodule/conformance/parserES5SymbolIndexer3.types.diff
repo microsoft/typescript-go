@@ -1,0 +1,12 @@
+--- old.parserES5SymbolIndexer3.types
++++ new.parserES5SymbolIndexer3.types
+@@= skipped -2, +2 lines =@@
+ === parserES5SymbolIndexer3.ts ===
+ var x: {
+ >x : { [s: symbol]: string; }
+->  : ^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+     [s: symbol]: string;
+ >s : symbol
+->  : ^^^^^^
+ }

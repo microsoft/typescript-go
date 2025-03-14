@@ -1,0 +1,42 @@
+--- old.multipleDefaultExports01.types
++++ new.multipleDefaultExports01.types
+@@= skipped -1, +1 lines =@@
+ 
+ === m1.ts ===
+ export default class foo {
+->foo : bar
+->    : ^^^
++>foo : default
+ 
+ }
+ 
+ export default function bar() {
+->bar : typeof bar
+->    : ^^^^^^^^^^
++>bar : typeof default
+ 
+ }
+ 
+ var x = 10;
+ >x : number
+->  : ^^^^^^
+ >10 : 10
+->   : ^^
+ 
+ export default x;
+ >x : number
+->  : ^^^^^^
+ 
+ === m2.ts ===
+ import Entity from "./m1"
+->Entity : typeof Entity
+->       : ^^^^^^^^^^^^^
++>Entity : typeof default
+ 
+ Entity();
+ >Entity() : void
+->         : ^^^^
+->Entity : typeof Entity
+->       : ^^^^^^^^^^^^^
++>Entity : typeof default
+ 

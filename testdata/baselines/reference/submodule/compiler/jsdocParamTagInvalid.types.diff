@@ -1,0 +1,10 @@
+--- old.jsdocParamTagInvalid.types
++++ new.jsdocParamTagInvalid.types
+@@= skipped -3, +3 lines =@@
+ /** @param {string} colour */
+ function f(color) {}
+ >f : (color: any) => void
+->  : ^     ^^^^^^^^^^^^^^
+ >color : any
+->      : ^^^
+ 

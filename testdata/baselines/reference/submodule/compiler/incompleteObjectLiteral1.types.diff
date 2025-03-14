@@ -1,0 +1,18 @@
+--- old.incompleteObjectLiteral1.types
++++ new.incompleteObjectLiteral1.types
+@@= skipped -2, +2 lines =@@
+ === incompleteObjectLiteral1.ts ===
+ var tt = { aa; }
+ >tt : { aa: any; }
+->   : ^^^^^^^^^^^^
+ >{ aa; } : { aa: any; }
+->        : ^^^^^^^^^^^^
+ >aa : any
+->   : ^^^
+ 
+ var x = tt;
+ >x : { aa: any; }
+->  : ^^^^^^^^^^^^
+ >tt : { aa: any; }
+->   : ^^^^^^^^^^^^
+ 

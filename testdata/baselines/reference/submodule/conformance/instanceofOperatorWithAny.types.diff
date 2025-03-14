@@ -1,0 +1,12 @@
+--- old.instanceofOperatorWithAny.types
++++ new.instanceofOperatorWithAny.types
+@@= skipped -5, +5 lines =@@
+ 
+ var r: boolean = a instanceof a;
+ >r : boolean
+->  : ^^^^^^^
+ >a instanceof a : boolean
+->               : ^^^^^^^
+ >a : any
+ >a : any
+ 

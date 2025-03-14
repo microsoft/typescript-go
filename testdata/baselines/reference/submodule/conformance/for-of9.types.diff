@@ -1,0 +1,22 @@
+--- old.for-of9.types
++++ new.for-of9.types
+@@= skipped -2, +2 lines =@@
+ === for-of9.ts ===
+ var v: string;
+ >v : string
+->  : ^^^^^^
+ 
+ for (v of ["hello"]) { }
+ >v : string
+->  : ^^^^^^
+ >["hello"] : string[]
+->          : ^^^^^^^^
+ >"hello" : "hello"
+->        : ^^^^^^^
+ 
+ for (v of "hello") { }
+ >v : string
+->  : ^^^^^^
+ >"hello" : "hello"
+->        : ^^^^^^^
+ 

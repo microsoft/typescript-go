@@ -1,0 +1,18 @@
+--- old.destructuringInVariableDeclarations6.types
++++ new.destructuringInVariableDeclarations6.types
+@@= skipped -2, +2 lines =@@
+ === destructuringInVariableDeclarations6.ts ===
+ let { toString } = 1;
+ >toString : (radix?: number) => string
+->         : ^     ^^^      ^^^^^      
+ >1 : 1
+->  : ^
+ {
+     let { toFixed } = 1;
+ >toFixed : (fractionDigits?: number) => string
+->        : ^              ^^^      ^^^^^      
+ >1 : 1
+->  : ^
+ }
+ export {};
+ 

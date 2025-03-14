@@ -1,0 +1,22 @@
+--- old.jsFileCompilationEmitBlockedCorrectly.types
++++ new.jsFileCompilationEmitBlockedCorrectly.types
+@@= skipped -2, +2 lines =@@
+ === a.ts ===
+ class c {
+ >c : c
+->  : ^
+ }
+ 
+ === b.ts ===
+ // this should be emitted
+ class d {
+ >d : d
+->  : ^
+ }
+ 
+ === a.js ===
+ function foo() {
+ >foo : () => void
+->    : ^^^^^^^^^^
+ }
+ 

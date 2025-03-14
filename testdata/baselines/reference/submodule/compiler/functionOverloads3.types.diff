@@ -1,0 +1,8 @@
+--- old.functionOverloads3.types
++++ new.functionOverloads3.types
+@@= skipped -2, +2 lines =@@
+ === functionOverloads3.ts ===
+ function foo():string;
+ >foo : () => string
+->    : ^^^^^^      
+ 

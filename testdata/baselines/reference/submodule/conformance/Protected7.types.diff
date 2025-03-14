@@ -1,0 +1,12 @@
+--- old.Protected7.types
++++ new.Protected7.types
+@@= skipped -2, +2 lines =@@
+ === Protected7.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+   protected private m() { }
+ >m : () => void
+->  : ^^^^^^^^^^
+ }

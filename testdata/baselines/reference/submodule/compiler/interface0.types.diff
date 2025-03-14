@@ -1,0 +1,24 @@
+--- old.interface0.types
++++ new.interface0.types
+@@= skipped -1, +1 lines =@@
+ 
+ === interface0.ts ===
+ interface Generic<T> {
++>Generic : Generic<T>
++>T : T
++
+     x: T;
+ >x : T
+->  : ^
+ }
+ 
+ var y: Generic<number> = { x: 3 };
+ >y : Generic<number>
+->  : ^^^^^^^^^^^^^^^
+ >{ x: 3 } : { x: number; }
+->         : ^^^^^^^^^^^^^^
+ >x : number
+->  : ^^^^^^
+ >3 : 3
+->  : ^
+ 

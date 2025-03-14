@@ -1,0 +1,12 @@
+--- old.ExportAssignment8.types
++++ new.ExportAssignment8.types
+@@= skipped -2, +2 lines =@@
+ === ExportAssignment8.ts ===
+ export = B;
+ >B : any
+->  : ^^^
+ 
+ export class C {
+ >C : C
+->  : ^
+ }

@@ -1,0 +1,48 @@
+--- old.decoratorOnFunctionParameter.types
++++ new.decoratorOnFunctionParameter.types
+@@= skipped -2, +2 lines =@@
+ === decoratorOnFunctionParameter.ts ===
+ declare const dec: any;
+ >dec : any
+->    : ^^^
+ 
+ class C { n = true; }
+ >C : C
+->  : ^
+ >n : boolean
+->  : ^^^^^^^
+ >true : true
+->     : ^^^^
+ 
+ function direct(@dec this: C) { return this.n; }
+->direct : (this: C) => boolean
+->       : ^    ^^ ^^^^^^^^^^^^
++>direct : () => boolean
+ >dec : any
+->    : ^^^
+ >this : C
+->     : ^
+ >this.n : boolean
+->       : ^^^^^^^
+ >this : C
+->     : ^
+ >n : boolean
+->  : ^^^^^^^
+ 
+ function called(@dec() this: C) { return this.n; }
+->called : (this: C) => boolean
+->       : ^    ^^ ^^^^^^^^^^^^
++>called : () => boolean
+ >dec() : any
+->      : ^^^
+ >dec : any
+->    : ^^^
+ >this : C
+->     : ^
+ >this.n : boolean
+->       : ^^^^^^^
+ >this : C
+->     : ^
+ >n : boolean
+->  : ^^^^^^^
+ 

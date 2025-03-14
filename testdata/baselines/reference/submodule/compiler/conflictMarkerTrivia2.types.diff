@@ -1,0 +1,28 @@
+--- old.conflictMarkerTrivia2.types
++++ new.conflictMarkerTrivia2.types
+@@= skipped -2, +2 lines =@@
+ === conflictMarkerTrivia2.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+   foo() {
+ >foo : () => void
+->    : ^^^^^^^^^^
+ 
+ <<<<<<< B
+      a();
+ >a() : any
+->    : ^^^
+ >a : any
+->  : ^^^
+   }
+ =======
+      b();
+@@= skipped -20, +16 lines =@@
+ 
+   public bar() { }
+ >bar : () => void
+->    : ^^^^^^^^^^
+ }
+ 

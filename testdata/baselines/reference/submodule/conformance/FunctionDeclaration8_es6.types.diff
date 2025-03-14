@@ -1,0 +1,16 @@
+--- old.FunctionDeclaration8_es6.types
++++ new.FunctionDeclaration8_es6.types
+@@= skipped -2, +2 lines =@@
+ === FunctionDeclaration8_es6.ts ===
+ var v = { [yield]: foo }
+ >v : { [x: number]: any; }
+->  : ^^^^^^^^^^^^^^^^^^^^^
+ >{ [yield]: foo } : { [x: number]: any; }
+->                 : ^^^^^^^^^^^^^^^^^^^^^
+ >[yield] : any
+->        : ^^^
+ >yield : any
+->      : ^^^
+ >foo : any
+->    : ^^^
+ 

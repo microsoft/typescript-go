@@ -1,0 +1,42 @@
+--- old.nodeModulesAllowJsTopLevelAwait(module=nodenext).types
++++ new.nodeModulesAllowJsTopLevelAwait(module=nodenext).types
+@@= skipped -3, +3 lines =@@
+ // cjs format file
+ const x = await 1;
+ >x : 1
+->  : ^
+ >await 1 : 1
+->        : ^
+ >1 : 1
+->  : ^
+ 
+ export {x};
+ >x : 1
+->  : ^
+ 
+ for await (const y of []) {}
+ >y : any
+->  : ^^^
+ >[] : undefined[]
+->   : ^^^^^^^^^^^
+ 
+ === index.js ===
+ // esm format file
+ const x = await 1;
+ >x : 1
+->  : ^
+ >await 1 : 1
+->        : ^
+ >1 : 1
+->  : ^
+ 
+ export {x};
+ >x : 1
+->  : ^
+ 
+ for await (const y of []) {}
+ >y : any
+->  : ^^^
+ >[] : undefined[]
+->   : ^^^^^^^^^^^
+ 

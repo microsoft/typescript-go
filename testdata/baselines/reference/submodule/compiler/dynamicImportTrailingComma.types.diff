@@ -1,0 +1,16 @@
+--- old.dynamicImportTrailingComma.types
++++ new.dynamicImportTrailingComma.types
+@@= skipped -2, +2 lines =@@
+ === dynamicImportTrailingComma.ts ===
+ const path = './foo';
+ >path : "./foo"
+->     : ^^^^^^^
+ >'./foo' : "./foo"
+->        : ^^^^^^^
+ 
+ import(path,);
+ >import(path,) : Promise<any>
+->              : ^^^^^^^^^^^^
+ >path : "./foo"
+->     : ^^^^^^^
+ 

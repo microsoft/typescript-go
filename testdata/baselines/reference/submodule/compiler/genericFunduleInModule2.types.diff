@@ -1,0 +1,55 @@
+--- old.genericFunduleInModule2.types
++++ new.genericFunduleInModule2.types
+@@= skipped -2, +2 lines =@@
+ === genericFunduleInModule2.ts ===
+ module A {
+ >A : typeof A
+->  : ^^^^^^^^
+ 
+     export function B<T>(x: T) { return x; }
+ >B : typeof B
+->  : ^^^^^^^^
++>T : T
+ >x : T
+->  : ^
+ >x : T
+->  : ^
+ }
+ 
+ module A {
+ >A : typeof A
+->  : ^^^^^^^^
+ 
+     export module B {
+ >B : typeof B
+->  : ^^^^^^^^
+ 
+         export var x = 1;
+ >x : number
+->  : ^^^^^^
+ >1 : 1
+->  : ^
+     }
+ }
+ 
+ var b: A.B;
+->b : A.B
+->  : ^^^
++>b : B
+ >A : any
+->  : ^^^
+ 
+ A.B(1);
+ >A.B(1) : 1
+->       : ^
+->A.B : typeof A.B
+->    : ^^^^^^^^^^
++>A.B : typeof B
+ >A : typeof A
+->  : ^^^^^^^^
+->B : typeof A.B
+->  : ^^^^^^^^^^
++>B : typeof B
+ >1 : 1
+->  : ^
+ 

@@ -1,0 +1,20 @@
+--- old.classMemberWithMissingIdentifier2.types
++++ new.classMemberWithMissingIdentifier2.types
+@@= skipped -2, +2 lines =@@
+ === classMemberWithMissingIdentifier2.ts ===
+ class C { 
+ >C : C
+->  : ^
+ 
+     public {[name:string]:VariableDeclaration};
+ > : any
+-> : ^^^
+ >[name:string] : any[]
+->              : ^^^^^
+ >name : void
+->     : ^^^^
+ >string : any
+->       : ^^^
+ >VariableDeclaration : any
+->                    : ^^^
+ }

@@ -1,0 +1,14 @@
+--- old.parserES5ComputedPropertyName7.types
++++ new.parserES5ComputedPropertyName7.types
+@@= skipped -2, +2 lines =@@
+ === parserES5ComputedPropertyName7.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+    [e]
+ >[e] : any
+->    : ^^^
+ >e : any
+->  : ^^^
+ }

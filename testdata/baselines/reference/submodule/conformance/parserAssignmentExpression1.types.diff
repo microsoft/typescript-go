@@ -1,0 +1,16 @@
+--- old.parserAssignmentExpression1.types
++++ new.parserAssignmentExpression1.types
+@@= skipped -2, +2 lines =@@
+ === parserAssignmentExpression1.ts ===
+ (foo()) = bar;
+ >(foo()) = bar : any
+->              : ^^^
+ >(foo()) : any
+->        : ^^^
+ >foo() : any
+->      : ^^^
+ >foo : any
+->    : ^^^
+ >bar : any
+->    : ^^^
+ 

@@ -1,0 +1,52 @@
+--- old.implicitAnyAnyReturningFunction.types
++++ new.implicitAnyAnyReturningFunction.types
+@@= skipped -2, +2 lines =@@
+ === implicitAnyAnyReturningFunction.ts ===
+ function A() {
+ >A : () => any
+->  : ^^^^^^   
+ 
+     return <any>"";
+ ><any>"" : any
+ >"" : ""
+->   : ^^
+ }
+ 
+ function B() {
+ >B : () => any
+->  : ^^^^^^^^^
+ 
+     var someLocal: any = {};
+ >someLocal : any
+ >{} : {}
+->   : ^^
+ 
+     return someLocal;
+ >someLocal : any
+@@= skipped -23, +19 lines =@@
+ 
+ class C {
+ >C : C
+->  : ^
+ 
+     public A() {
+ >A : () => any
+->  : ^^^^^^   
+ 
+         return <any>"";
+ ><any>"" : any
+ >"" : ""
+->   : ^^
+     }
+ 
+     public B() {
+ >B : () => any
+->  : ^^^^^^^^^
+ 
+         var someLocal: any = {};
+ >someLocal : any
+ >{} : {}
+->   : ^^
+ 
+         return someLocal;
+ >someLocal : any

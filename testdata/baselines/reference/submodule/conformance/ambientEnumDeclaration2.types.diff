@@ -1,0 +1,29 @@
+--- old.ambientEnumDeclaration2.types
++++ new.ambientEnumDeclaration2.types
+@@= skipped -5, +5 lines =@@
+ 
+ declare enum E {
+ >E : E
+->  : ^
+ 
+     a, // E.a
+ >a : E.a
+->  : ^^^
+ 
+     b, // E.b
+ >b : E.b
+->  : ^^^
+ }
+ 
+ declare const enum E1 {
+ >E1 : E1
+->   : ^^
+ 
+     a, // E.a = 0
+ >a : E1.a
+->  : ^^^^
+ 
+     b, // E.b = 1
+ >b : E1.b
+->  : ^^^^
+ }

@@ -1,0 +1,14 @@
+--- old.continueNotInIterationStatement2.types
++++ new.continueNotInIterationStatement2.types
+@@= skipped -2, +2 lines =@@
+ === continueNotInIterationStatement2.ts ===
+ while (true) {
+ >true : true
+->     : ^^^^
+ 
+   function f() {
+ >f : () => void
+->  : ^^^^^^^^^^
+ 
+     continue;
+   }

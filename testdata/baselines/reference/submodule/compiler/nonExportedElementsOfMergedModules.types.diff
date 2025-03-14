@@ -1,0 +1,61 @@
+--- old.nonExportedElementsOfMergedModules.types
++++ new.nonExportedElementsOfMergedModules.types
+@@= skipped -2, +2 lines =@@
+ === nonExportedElementsOfMergedModules.ts ===
+ module One {
+ >One : typeof One
+->    : ^^^^^^^^^^
+ 
+     enum A { X }
+->A : A
+->  : ^
++>A : A.X
+ >X : A.X
+->  : ^^^
+ 
+     module B {
+ >B : typeof B
+->  : ^^^^^^^^
+ 
+         export var x;
+ >x : any
+->  : ^^^
+     }
+ }
+ 
+ module One {
+ >One : typeof One
+->    : ^^^^^^^^^^
+ 
+     enum A { Y }
+->A : A
+->  : ^
++>A : A.Y
+ >Y : A.Y
+->  : ^^^
+ 
+     module B {
+ >B : typeof B
+->  : ^^^^^^^^
+ 
+         export var y;
+ >y : any
+->  : ^^^
+     }
+     B.x;
+ >B.x : any
+->    : ^^^
+ >B : typeof B
+->  : ^^^^^^^^
+ >x : any
+->  : ^^^
+ 
+     B.y;
+ >B.y : any
+->    : ^^^
+ >B : typeof B
+->  : ^^^^^^^^
+ >y : any
+->  : ^^^
+ }
+ 

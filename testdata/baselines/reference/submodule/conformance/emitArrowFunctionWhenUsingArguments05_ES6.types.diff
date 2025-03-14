@@ -1,0 +1,16 @@
+--- old.emitArrowFunctionWhenUsingArguments05_ES6.types
++++ new.emitArrowFunctionWhenUsingArguments05_ES6.types
+@@= skipped -2, +2 lines =@@
+ === emitArrowFunctionWhenUsingArguments05_ES6.ts ===
+ function f(arguments) {
+ >f : (arguments: any) => void
+->  : ^         ^^^^^^^^^^^^^^
+ >arguments : any
+ 
+     var a = () => arguments;
+ >a : () => any
+->  : ^^^^^^^^^
+ >() => arguments : () => any
+->                : ^^^^^^^^^
+ >arguments : any
+ }

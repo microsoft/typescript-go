@@ -1,0 +1,24 @@
+--- old.baseTypePrivateMemberClash.types
++++ new.baseTypePrivateMemberClash.types
+@@= skipped -2, +2 lines =@@
+ === baseTypePrivateMemberClash.ts ===
+ class X {
+ >X : X
+->  : ^
+ 
+     private m: number;
+ >m : number
+->  : ^^^^^^
+ }
+ class Y {
+ >Y : Y
+->  : ^
+ 
+     private m: string;
+ >m : string
+->  : ^^^^^^
+ }
+ 
+ interface Z extends X, Y { }
++>Z : Z
++

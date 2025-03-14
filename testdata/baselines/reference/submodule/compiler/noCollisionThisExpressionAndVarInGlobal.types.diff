@@ -1,0 +1,18 @@
+--- old.noCollisionThisExpressionAndVarInGlobal.types
++++ new.noCollisionThisExpressionAndVarInGlobal.types
+@@= skipped -2, +2 lines =@@
+ === noCollisionThisExpressionAndVarInGlobal.ts ===
+ var _this = 1;
+ >_this : number
+->      : ^^^^^^
+ >1 : 1
+->  : ^
+ 
+ var f = () => _this;
+ >f : () => number
+->  : ^^^^^^^^^^^^
+ >() => _this : () => number
+->            : ^^^^^^^^^^^^
+ >_this : number
+->      : ^^^^^^
+ 

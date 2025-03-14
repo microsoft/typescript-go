@@ -1,0 +1,8 @@
+--- old.untypedModuleImport_noImplicitAny.types
++++ new.untypedModuleImport_noImplicitAny.types
+@@= skipped -2, +2 lines =@@
+ === /a.ts ===
+ import * as foo from "foo";
+ >foo : any
+->    : ^^^
+ 

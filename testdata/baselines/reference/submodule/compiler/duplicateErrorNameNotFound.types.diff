@@ -1,0 +1,13 @@
+--- old.duplicateErrorNameNotFound.types
++++ new.duplicateErrorNameNotFound.types
+@@= skipped -2, +2 lines =@@
+ === duplicateErrorNameNotFound.ts ===
+ type RoomInterfae = {};
+ >RoomInterfae : RoomInterfae
+->             : ^^^^^^^^^^^^
+ 
+ export type {
+     RoomInterface
+ >RoomInterface : any
+->              : ^^^
+ }

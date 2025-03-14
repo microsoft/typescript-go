@@ -1,0 +1,16 @@
+--- old.classHeritageWithTrailingSeparator.types
++++ new.classHeritageWithTrailingSeparator.types
+@@= skipped -2, +2 lines =@@
+ === classHeritageWithTrailingSeparator.ts ===
+ class C { foo: number }
+ >C : C
+->  : ^
+ >foo : number
+->    : ^^^^^^
+ 
+ class D extends C, {
+ >D : D
+->  : ^
+ >C : C
+->  : ^
+ }

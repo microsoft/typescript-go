@@ -1,0 +1,18 @@
+--- old.interfaceExtendingOptionalChain.types
++++ new.interfaceExtendingOptionalChain.types
+@@= skipped -2, +2 lines =@@
+ === interfaceExtendingOptionalChain.ts ===
+ namespace Foo {
+ >Foo : typeof Foo
+->    : ^^^^^^^^^^
+ 
+     export class Bar {}
+ >Bar : Bar
+->    : ^^^
+ }
+ 
+ interface C1 extends Foo?.Bar {}
++>C1 : C1
+ >Foo : typeof Foo
+->    : ^^^^^^^^^^
+ 

@@ -1,0 +1,14 @@
+--- old.for-of2.types
++++ new.for-of2.types
+@@= skipped -2, +2 lines =@@
+ === for-of2.ts ===
+ const v;
+ >v : any
+->  : ^^^
+ 
+ for (v of []) { }
+ >v : any
+->  : ^^^
+ >[] : undefined[]
+->   : ^^^^^^^^^^^
+ 

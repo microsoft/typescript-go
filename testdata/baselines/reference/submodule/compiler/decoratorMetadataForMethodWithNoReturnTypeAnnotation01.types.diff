@@ -1,0 +1,24 @@
+--- old.decoratorMetadataForMethodWithNoReturnTypeAnnotation01.types
++++ new.decoratorMetadataForMethodWithNoReturnTypeAnnotation01.types
+@@= skipped -5, +5 lines =@@
+ 
+ class MyClass {
+ >MyClass : MyClass
+->        : ^^^^^^^
+ 
+     constructor(test: string, test2: number) {
+ >test : string
+->     : ^^^^^^
+ >test2 : number
+->      : ^^^^^^
+ 
+     }
+ 
+@@= skipped -15, +12 lines =@@
+ 
+     doSomething() {
+ >doSomething : () => void
+->            : ^^^^^^^^^^
+ 
+     }
+ }

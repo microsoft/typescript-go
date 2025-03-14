@@ -1,0 +1,20 @@
+--- old.letIdentifierInElementAccess01.types
++++ new.letIdentifierInElementAccess01.types
+@@= skipped -3, +3 lines =@@
+ var let: any = {};
+ >let : any
+ >{} : {}
+->   : ^^
+ 
+ (let[0] = 100);
+ >(let[0] = 100) : 100
+->               : ^^^
+ >let[0] = 100 : 100
+->             : ^^^
+ >let[0] : any
+ >let : any
+ >0 : 0
+->  : ^
+ >100 : 100
+->    : ^^^
+ 

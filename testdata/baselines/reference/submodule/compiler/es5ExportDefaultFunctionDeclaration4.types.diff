@@ -1,0 +1,29 @@
+--- old.es5ExportDefaultFunctionDeclaration4.types
++++ new.es5ExportDefaultFunctionDeclaration4.types
+@@= skipped -2, +2 lines =@@
+ === es5ExportDefaultFunctionDeclaration4.ts ===
+ declare module "bar" {
+ >"bar" : typeof import("bar")
+->      : ^^^^^^^^^^^^^^^^^^^^
+ 
+     var before: typeof func;
+->before : () => typeof func
+->       : ^^^^^^           
+->func : () => typeof func
+->     : ^^^^^^           
++>before : () => ???
+ 
+     export default function func(): typeof func;
+->func : () => typeof func
+->     : ^^^^^^           
+->func : () => typeof func
+->     : ^^^^^^           
++>func : () => ???
+ 
+     var after: typeof func;
+->after : () => typeof func
+->      : ^^^^^^           
+->func : () => typeof func
+->     : ^^^^^^           
++>after : () => ???
+ }

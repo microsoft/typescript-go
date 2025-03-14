@@ -1,0 +1,10 @@
+--- old.breakInIterationOrSwitchStatement1.types
++++ new.breakInIterationOrSwitchStatement1.types
+@@= skipped -2, +2 lines =@@
+ === breakInIterationOrSwitchStatement1.ts ===
+ while (true) {
+ >true : true
+->     : ^^^^
+ 
+   break;
+ }

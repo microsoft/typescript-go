@@ -1,0 +1,8 @@
+--- old.voidConstructor.types
++++ new.voidConstructor.types
+@@= skipped -2, +2 lines =@@
+ === voidConstructor.ts ===
+ var foo:{ new ( ): void; }
+ >foo : new () => void
+->    : ^^^^^^^^^^    
+ 

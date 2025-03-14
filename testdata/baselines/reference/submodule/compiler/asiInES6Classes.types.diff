@@ -1,0 +1,36 @@
+--- old.asiInES6Classes.types
++++ new.asiInES6Classes.types
+@@= skipped -2, +2 lines =@@
+ === asiInES6Classes.ts ===
+ class Foo {
+ >Foo : Foo
+->    : ^^^
+ 
+  
+ 
+     defaults = {
+ >defaults : { done: boolean; }
+->         : ^^^^^^^^^^^^^^^^^^
+ >{        done: false    } : { done: boolean; }
+->                          : ^^^^^^^^^^^^^^^^^^
+ 
+         done: false
+ >done : boolean
+->     : ^^^^^^^
+ >false : false
+->      : ^^^^^
+ 
+     }
+ 
+@@= skipped -22, +17 lines =@@
+ 
+     bar() {
+ >bar : () => number
+->    : ^^^^^^^^^^^^
+ 
+         return 3;
+ >3 : 3
+->  : ^
+ 
+     }
+ 

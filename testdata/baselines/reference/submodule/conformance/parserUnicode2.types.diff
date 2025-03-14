@@ -1,0 +1,10 @@
+--- old.parserUnicode2.types
++++ new.parserUnicode2.types
+@@= skipped -2, +2 lines =@@
+ === parserUnicode2.ts ===
+ var 才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüß才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüßAbcd123 = 1;
+ >才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüß才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüßAbcd123 : number
+->                                                                          : ^^^^^^
+ >1 : 1
+->  : ^
+ 

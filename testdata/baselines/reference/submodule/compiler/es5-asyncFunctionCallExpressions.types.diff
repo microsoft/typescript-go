@@ -1,0 +1,212 @@
+--- old.es5-asyncFunctionCallExpressions.types
++++ new.es5-asyncFunctionCallExpressions.types
+@@= skipped -10, +10 lines =@@
+ 
+ async function callExpression0() {
+ >callExpression0 : () => Promise<void>
+->                : ^^^^^^^^^^^^^^^^^^^
+ 
+     await x(y, z);
+ >await x(y, z) : any
+@@= skipped -12, +11 lines =@@
+ 
+ async function callExpression1() {
+ >callExpression1 : () => Promise<void>
+->                : ^^^^^^^^^^^^^^^^^^^
+ 
+     (await x)(y, z);
+ >(await x)(y, z) : any
+@@= skipped -13, +12 lines =@@
+ 
+ async function callExpression2() {
+ >callExpression2 : () => Promise<void>
+->                : ^^^^^^^^^^^^^^^^^^^
+ 
+     x(await y, z);
+ >x(await y, z) : any
+@@= skipped -12, +11 lines =@@
+ 
+ async function callExpression3() {
+ >callExpression3 : () => Promise<void>
+->                : ^^^^^^^^^^^^^^^^^^^
+ 
+     x(y, await z);
+ >x(y, await z) : any
+@@= skipped -12, +11 lines =@@
+ 
+ async function callExpression4() {
+ >callExpression4 : () => Promise<void>
+->                : ^^^^^^^^^^^^^^^^^^^
+ 
+     await x(...y, z);
+ >await x(...y, z) : any
+@@= skipped -13, +12 lines =@@
+ 
+ async function callExpression5() {
+ >callExpression5 : () => Promise<void>
+->                : ^^^^^^^^^^^^^^^^^^^
+ 
+     (await x)(...y, z);
+ >(await x)(...y, z) : any
+@@= skipped -14, +13 lines =@@
+ 
+ async function callExpression6() {
+ >callExpression6 : () => Promise<void>
+->                : ^^^^^^^^^^^^^^^^^^^
+ 
+     x(...(await y), z);
+ >x(...(await y), z) : any
+@@= skipped -14, +13 lines =@@
+ 
+ async function callExpression7() {
+ >callExpression7 : () => Promise<void>
+->                : ^^^^^^^^^^^^^^^^^^^
+ 
+     x(...y, await z);
+ >x(...y, await z) : any
+@@= skipped -13, +12 lines =@@
+ 
+ async function callExpression8() {
+ >callExpression8 : () => Promise<void>
+->                : ^^^^^^^^^^^^^^^^^^^
+ 
+     x(await y, ...z);
+ >x(await y, ...z) : any
+@@= skipped -13, +12 lines =@@
+ 
+ async function callExpression9() {
+ >callExpression9 : () => Promise<void>
+->                : ^^^^^^^^^^^^^^^^^^^
+ 
+     x(y, ...(await z));
+ >x(y, ...(await z)) : any
+@@= skipped -14, +13 lines =@@
+ 
+ async function callExpression10() {
+ >callExpression10 : () => Promise<void>
+->                 : ^^^^^^^^^^^^^^^^^^^
+ 
+     await x.a(y, z);
+ >await x.a(y, z) : any
+ >x.a(y, z) : any
+ >x.a : any
+ >x : any
+->  : ^^^
+ >a : any
+->  : ^^^
+ >y : any
+ >z : any
+ }
+ 
+ async function callExpression11() {
+ >callExpression11 : () => Promise<void>
+->                 : ^^^^^^^^^^^^^^^^^^^
+ 
+     (await x.a)(y, z);
+ >(await x.a)(y, z) : any
+@@= skipped -24, +20 lines =@@
+ >await x.a : any
+ >x.a : any
+ >x : any
+->  : ^^^
+ >a : any
+->  : ^^^
+ >y : any
+ >z : any
+ }
+ 
+ async function callExpression12() {
+ >callExpression12 : () => Promise<void>
+->                 : ^^^^^^^^^^^^^^^^^^^
+ 
+     (await x).a(y, z);
+ >(await x).a(y, z) : any
+ >(await x).a : any
+ >(await x) : any
+->          : ^^^
+ >await x : any
+ >x : any
+ >a : any
+->  : ^^^
+ >y : any
+ >z : any
+ }
+ 
+ async function callExpression13() {
+ >callExpression13 : () => Promise<void>
+->                 : ^^^^^^^^^^^^^^^^^^^
+ 
+     x.a(await y, z);
+ >x.a(await y, z) : any
+ >x.a : any
+ >x : any
+->  : ^^^
+ >a : any
+->  : ^^^
+ >await y : any
+ >y : any
+ >z : any
+@@= skipped -42, +34 lines =@@
+ 
+ async function callExpression14() {
+ >callExpression14 : () => Promise<void>
+->                 : ^^^^^^^^^^^^^^^^^^^
+ 
+     x.a(y, await z);
+ >x.a(y, await z) : any
+ >x.a : any
+ >x : any
+->  : ^^^
+ >a : any
+->  : ^^^
+ >y : any
+ >await z : any
+ >z : any
+@@= skipped -16, +13 lines =@@
+ 
+ async function callExpression15() {
+ >callExpression15 : () => Promise<void>
+->                 : ^^^^^^^^^^^^^^^^^^^
+ 
+     await x[a](y, z);
+ >await x[a](y, z) : any
+@@= skipped -14, +13 lines =@@
+ 
+ async function callExpression16() {
+ >callExpression16 : () => Promise<void>
+->                 : ^^^^^^^^^^^^^^^^^^^
+ 
+     (await x[a])(y, z);
+ >(await x[a])(y, z) : any
+@@= skipped -15, +14 lines =@@
+ 
+ async function callExpression17() {
+ >callExpression17 : () => Promise<void>
+->                 : ^^^^^^^^^^^^^^^^^^^
+ 
+     (await x)[a](y, z);
+ >(await x)[a](y, z) : any
+@@= skipped -15, +14 lines =@@
+ 
+ async function callExpression18() {
+ >callExpression18 : () => Promise<void>
+->                 : ^^^^^^^^^^^^^^^^^^^
+ 
+     x[await a](y, z);
+ >x[await a](y, z) : any
+@@= skipped -14, +13 lines =@@
+ 
+ async function callExpression19() {
+ >callExpression19 : () => Promise<void>
+->                 : ^^^^^^^^^^^^^^^^^^^
+ 
+     x[a](await y, z);
+ >x[a](await y, z) : any
+@@= skipped -14, +13 lines =@@
+ 
+ async function callExpression20() {
+ >callExpression20 : () => Promise<void>
+->                 : ^^^^^^^^^^^^^^^^^^^
+ 
+     x[a](y, await z);
+ >x[a](y, await z) : any

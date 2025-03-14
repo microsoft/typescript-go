@@ -1,0 +1,18 @@
+--- old.parameterPropertyInConstructor4.types
++++ new.parameterPropertyInConstructor4.types
+@@= skipped -2, +2 lines =@@
+ === parameterPropertyInConstructor4.ts ===
+ export class C {
+ >C : C
+->  : ^
+ 
+     constructor(public a: number[] = [], b: number) {
+ >a : number[]
+->  : ^^^^^^^^
+ >[] : never[]
+->   : ^^^^^^^
+ >b : number
+->  : ^^^^^^
+     }
+ }
+ 

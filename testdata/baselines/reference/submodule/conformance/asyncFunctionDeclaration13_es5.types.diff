@@ -1,0 +1,14 @@
+--- old.asyncFunctionDeclaration13_es5.types
++++ new.asyncFunctionDeclaration13_es5.types
+@@= skipped -2, +2 lines =@@
+ === asyncFunctionDeclaration13_es5.ts ===
+ async function foo(): Promise<void> {
+ >foo : () => Promise<void>
+->    : ^^^^^^             
+ 
+    // Legal to use 'await' in a type context.
+    var v: await;
+ >v : await
+->  : ^^^^^
+ }
+ 

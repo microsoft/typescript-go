@@ -1,0 +1,20 @@
+--- old.genericArrayAssignment1.types
++++ new.genericArrayAssignment1.types
+@@= skipped -2, +2 lines =@@
+ === genericArrayAssignment1.ts ===
+ var s: string[];
+ >s : string[]
+->  : ^^^^^^^^
+ 
+ var n: number[];
+ >n : number[]
+->  : ^^^^^^^^
+ 
+ s = n;
+ >s = n : number[]
+->      : ^^^^^^^^
+ >s : string[]
+->  : ^^^^^^^^
+ >n : number[]
+->  : ^^^^^^^^
+ 

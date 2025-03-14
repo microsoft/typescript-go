@@ -1,0 +1,14 @@
+--- old.accessorWithoutBody2.types
++++ new.accessorWithoutBody2.types
+@@= skipped -2, +2 lines =@@
+ === accessorWithoutBody2.ts ===
+ var v = { set foo(a) }
+ >v : { foo: any; }
+->  : ^^^^^^^^^^^^^
+ >{ set foo(a) } : { foo: any; }
+->               : ^^^^^^^^^^^^^
+ >foo : any
+->    : ^^^
+ >a : any
+->  : ^^^
+ 

@@ -1,0 +1,10 @@
+--- old.asyncConstructor_es6.types
++++ new.asyncConstructor_es6.types
+@@= skipped -2, +2 lines =@@
+ === asyncConstructor_es6.ts ===
+ class C {  
+ >C : C
+->  : ^
+ 
+   async constructor() {    
+   }

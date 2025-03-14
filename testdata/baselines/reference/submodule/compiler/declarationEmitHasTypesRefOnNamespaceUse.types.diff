@@ -1,0 +1,16 @@
+--- old.declarationEmitHasTypesRefOnNamespaceUse.types
++++ new.declarationEmitHasTypesRefOnNamespaceUse.types
+@@= skipped -2, +2 lines =@@
+ === /src/index.ts ===
+ class Src implements NS.Dep { }
+ >Src : Src
+->    : ^^^
+ >NS : any
+->   : ^^^
+ 
+-=== /deps/dep/dep.d.ts ===
+-
+-declare namespace NS {
+-    interface Dep {
+-    }
+-}

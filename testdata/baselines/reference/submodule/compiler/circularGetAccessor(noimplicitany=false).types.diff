@@ -1,0 +1,19 @@
+--- old.circularGetAccessor(noimplicitany=false).types
++++ new.circularGetAccessor(noimplicitany=false).types
+@@= skipped -2, +2 lines =@@
+ === circularGetAccessor.ts ===
+ declare class C {
+ >C : C
+->  : ^
+ 
+     get foo(): typeof this.foo;
+ >foo : any
+->    : ^^^
+->this.foo : any
+->         : ^^^
+ >this : this
+->     : ^^^^
+->foo : any
+->    : ^^^
+ }
+ 

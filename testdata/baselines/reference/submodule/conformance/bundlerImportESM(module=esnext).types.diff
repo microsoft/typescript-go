@@ -1,0 +1,20 @@
+--- old.bundlerImportESM(module=esnext).types
++++ new.bundlerImportESM(module=esnext).types
+@@= skipped -2, +2 lines =@@
+ === /esm.mts ===
+ export const esm = 0;
+ >esm : 0
+->    : ^
+ >0 : 0
+->  : ^
+ 
+ === /not-actually-cjs.cts ===
+ import { esm } from "./esm.mjs";
+ >esm : 0
+->    : ^
+ 
+ === /still-not-cjs.ts ===
+ import { esm } from "./esm.mjs";
+ >esm : 0
+->    : ^
+ 

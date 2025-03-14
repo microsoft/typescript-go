@@ -1,0 +1,42 @@
+--- old.captureThisInSuperCall.types
++++ new.captureThisInSuperCall.types
+@@= skipped -2, +2 lines =@@
+ === captureThisInSuperCall.ts ===
+ class A {
+ >A : A
+->  : ^
+ 
+     constructor(p:any) {}
+ >p : any
+@@= skipped -8, +7 lines =@@
+ 
+ class B extends A {
+ >B : B
+->  : ^
+ >A : A
+->  : ^
+ 
+     constructor() { super({ test: () => this.someMethod()}); } 
+ >super({ test: () => this.someMethod()}) : void
+->                                        : ^^^^
+ >super : typeof A
+->      : ^^^^^^^^
+ >{ test: () => this.someMethod()} : { test: () => void; }
+->                                 : ^^^^^^^^^^^^^^^^^^^^^
+ >test : () => void
+->     : ^^^^^^^^^^
+ >() => this.someMethod() : () => void
+->                        : ^^^^^^^^^^
+ >this.someMethod() : void
+->                  : ^^^^
+ >this.someMethod : () => void
+->                : ^^^^^^^^^^
+ >this : this
+->     : ^^^^
+ >someMethod : () => void
+->           : ^^^^^^^^^^
+ 
+     someMethod() {}
+ >someMethod : () => void
+->           : ^^^^^^^^^^
+ }

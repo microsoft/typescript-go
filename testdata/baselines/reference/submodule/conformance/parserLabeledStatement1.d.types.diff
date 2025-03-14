@@ -1,0 +1,14 @@
+--- old.parserLabeledStatement1.d.types
++++ new.parserLabeledStatement1.d.types
+@@= skipped -2, +2 lines =@@
+ === parserLabeledStatement1.d.ts ===
+ foo:
+ >foo : any
+->    : ^^^
+ 
+   bar();
+ >bar() : any
+->      : ^^^
+ >bar : any
+->    : ^^^
+ 

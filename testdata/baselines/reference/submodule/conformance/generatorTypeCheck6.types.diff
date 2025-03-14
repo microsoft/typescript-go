@@ -1,0 +1,8 @@
+--- old.generatorTypeCheck6.types
++++ new.generatorTypeCheck6.types
+@@= skipped -2, +2 lines =@@
+ === generatorTypeCheck6.ts ===
+ function* g1(): number { }
+ >g1 : () => number
+->   : ^^^^^^      
+ 

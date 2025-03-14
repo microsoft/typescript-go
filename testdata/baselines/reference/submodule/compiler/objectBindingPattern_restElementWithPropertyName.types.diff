@@ -1,0 +1,12 @@
+--- old.objectBindingPattern_restElementWithPropertyName.types
++++ new.objectBindingPattern_restElementWithPropertyName.types
+@@= skipped -2, +2 lines =@@
+ === objectBindingPattern_restElementWithPropertyName.ts ===
+ const { ...a: b } = {};
+ >a : any
+->  : ^^^
+ >b : {}
+->  : ^^
+ >{} : {}
+->   : ^^
+ 

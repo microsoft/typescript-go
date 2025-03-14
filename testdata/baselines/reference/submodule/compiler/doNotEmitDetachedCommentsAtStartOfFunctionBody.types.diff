@@ -1,0 +1,54 @@
+--- old.doNotEmitDetachedCommentsAtStartOfFunctionBody.types
++++ new.doNotEmitDetachedCommentsAtStartOfFunctionBody.types
+@@= skipped -2, +2 lines =@@
+ === doNotEmitDetachedCommentsAtStartOfFunctionBody.ts ===
+ function foo1() {
+ >foo1 : () => number
+->     : ^^^^^^^^^^^^
+ 
+     // Single line comment
+ 
+     return 42;
+ >42 : 42
+->   : ^^
+ }
+ 
+ function foo2() {
+ >foo2 : () => number
+->     : ^^^^^^^^^^^^
+ 
+     /*
+ 
+@@= skipped -21, +18 lines =@@
+ 
+     return 42;
+ >42 : 42
+->   : ^^
+ }
+ 
+ function foo3() {
+ >foo3 : () => number
+->     : ^^^^^^^^^^^^
+ 
+     // Single line comment with more than one blank line
+ 
+ 
+     return 42;
+ >42 : 42
+->   : ^^
+ }
+ 
+ function foo4() {
+ >foo4 : () => number
+->     : ^^^^^^^^^^^^
+ 
+     /*
+ 
+@@= skipped -26, +22 lines =@@
+ 
+     return 42;
+ >42 : 42
+->   : ^^
+ }
+ 
+ 

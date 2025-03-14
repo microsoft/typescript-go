@@ -1,0 +1,17 @@
+--- old.classImplementsClass7.types
++++ new.classImplementsClass7.types
+@@= skipped -2, +2 lines =@@
+ === classImplementsClass7.ts ===
+ class A {
+ >A : A
+->  : ^
+ 
+     private x: number;
+ >x : number
+->  : ^^^^^^
+ }
+ 
+ class B implements A {}
+ >B : B
+->  : ^
+ 

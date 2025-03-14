@@ -1,0 +1,28 @@
+--- old.declarationEmitThisPredicatesWithPrivateName01.types
++++ new.declarationEmitThisPredicatesWithPrivateName01.types
+@@= skipped -2, +2 lines =@@
+ === declarationEmitThisPredicatesWithPrivateName01.ts ===
+ export class C {
+ >C : C
+->  : ^
+ 
+     m(): this is D {
+ >m : () => this is D
+->  : ^^^^^^         
+ 
+         return this instanceof D;
+ >this instanceof D : boolean
+->                  : ^^^^^^^
+ >this : this
+->     : ^^^^
+ >D : typeof D
+->  : ^^^^^^^^
+     }
+ }
+ 
+ class D extends C {
+ >D : D
+->  : ^
+ >C : C
+->  : ^
+ }

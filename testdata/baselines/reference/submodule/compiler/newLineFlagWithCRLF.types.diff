@@ -1,0 +1,19 @@
+--- old.newLineFlagWithCRLF.types
++++ new.newLineFlagWithCRLF.types
+@@= skipped -2, +2 lines =@@
+ === newLineFlagWithCRLF.ts ===
+ var x=1;
+ >x : number
+->  : ^^^^^^
+ >1 : 1
+->  : ^
+ 
+ x=2;
+ >x=2 : 2
+->    : ^
+ >x : number
+->  : ^^^^^^
+ >2 : 2
+->  : ^
+ 
+ 

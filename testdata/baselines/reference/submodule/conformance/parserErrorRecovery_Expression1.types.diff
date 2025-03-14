@@ -1,0 +1,16 @@
+--- old.parserErrorRecovery_Expression1.types
++++ new.parserErrorRecovery_Expression1.types
+@@= skipped -2, +2 lines =@@
+ === parserErrorRecovery_Expression1.ts ===
+ var v = ()({});
+ >v : any
+->  : ^^^
+ >()({}) : any
+->       : ^^^
+ >() : any
+->   : ^^^
+ > : any
+-> : ^^^
+ >{} : {}
+->   : ^^
+ 

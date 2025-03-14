@@ -1,0 +1,12 @@
+--- old.esnextmodulekindWithES5Target4.types
++++ new.esnextmodulekindWithES5Target4.types
+@@= skipped -2, +2 lines =@@
+ === esnextmodulekindWithES5Target4.ts ===
+ class E { }
+ >E : E
+->  : ^
+ 
+ export default E;
+ >E : E
+->  : ^
+ 

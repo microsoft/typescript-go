@@ -1,0 +1,35 @@
+--- old.addMoreCallSignaturesToBaseSignature2.types
++++ new.addMoreCallSignaturesToBaseSignature2.types
+@@= skipped -1, +1 lines =@@
+ 
+ === addMoreCallSignaturesToBaseSignature2.ts ===
+ interface Foo {
++>Foo : Foo
++
+     (bar:number): string;
+ >bar : number
+->    : ^^^^^^
+ }
+ 
+ interface Bar extends Foo {
++>Bar : Bar
++
+     (key: string): string;
+ >key : string
+->    : ^^^^^^
+ }
+ 
+ var a: Bar;
+ >a : Bar
+->  : ^^^
+ 
+ var kitty = a(1);
+ >kitty : string
+->      : ^^^^^^
+ >a(1) : string
+->     : ^^^^^^
+ >a : Bar
+->  : ^^^
+ >1 : 1
+->  : ^
+ 

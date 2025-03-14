@@ -1,0 +1,9 @@
+--- old.topLevelAwaitErrors.6(module=esnext).types
++++ new.topLevelAwaitErrors.6(module=esnext).types
+@@= skipped -3, +3 lines =@@
+ // await in exported function name should fail
+ export function await() {
+ >await : () => void
+->      : ^^^^^^^^^^
+ }
+ 

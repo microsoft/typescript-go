@@ -1,0 +1,12 @@
+--- old.YieldStarExpression1_es6.types
++++ new.YieldStarExpression1_es6.types
+@@= skipped -2, +2 lines =@@
+ === YieldStarExpression1_es6.ts ===
+ yield * [];
+ >yield * [] : number
+->           : ^^^^^^
+ >yield : any
+->      : ^^^
+ >[] : undefined[]
+->   : ^^^^^^^^^^^
+ 

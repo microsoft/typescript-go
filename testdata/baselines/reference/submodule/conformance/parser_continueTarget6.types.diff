@@ -1,0 +1,12 @@
+--- old.parser_continueTarget6.types
++++ new.parser_continueTarget6.types
+@@= skipped -2, +2 lines =@@
+ === parser_continueTarget6.ts ===
+ while (true) {
+ >true : true
+->     : ^^^^
+ 
+   continue target;
+ >target : any
+->       : ^^^
+ }

@@ -1,0 +1,21 @@
+--- old.missingCommaInTemplateStringsArray.types
++++ new.missingCommaInTemplateStringsArray.types
+@@= skipped -2, +2 lines =@@
+ === missingCommaInTemplateStringsArray.ts ===
+ var array = [
+ >array : any[]
+->      : ^^^^^
+ >[    `template string 1`    `template string 2`  ] : any[]
+->                                                   : ^^^^^
+ 
+     `template string 1`
+ >`template string 1`    `template string 2` : any
+->                                           : ^^^
+ >`template string 1` : "template string 1"
+->                    : ^^^^^^^^^^^^^^^^^^^
+ 
+     `template string 2`
+ >`template string 2` : "template string 2"
+->                    : ^^^^^^^^^^^^^^^^^^^
+ 
+   ];

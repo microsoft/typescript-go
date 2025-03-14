@@ -1,0 +1,14 @@
+--- old.moduleAugmentationGlobal6.types
++++ new.moduleAugmentationGlobal6.types
+@@= skipped -2, +2 lines =@@
+ === moduleAugmentationGlobal6.ts ===
+ declare global {
+ >global : typeof global
+->       : ^^^^^^^^^^^^^
+ 
+     interface Array<T> { x }
++>Array : Array<T>
++>T : T
+ >x : any
+->  : ^^^
+ }

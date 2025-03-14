@@ -1,0 +1,8 @@
+--- old.parserDoStatement1.d.types
++++ new.parserDoStatement1.d.types
+@@= skipped -4, +4 lines =@@
+ }
+ while (e);
+ >e : any
+->  : ^^^
+ 

@@ -1,0 +1,10 @@
+--- old.unterminatedRegexAtEndOfSource1.types
++++ new.unterminatedRegexAtEndOfSource1.types
+@@= skipped -2, +2 lines =@@
+ === unterminatedRegexAtEndOfSource1.ts ===
+ var a = /
+ >a : RegExp
+->  : ^^^^^^
+ >/ : RegExp
+->  : ^^^^^^
+ 

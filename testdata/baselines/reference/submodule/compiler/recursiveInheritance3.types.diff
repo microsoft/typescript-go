@@ -1,0 +1,32 @@
+--- old.recursiveInheritance3.types
++++ new.recursiveInheritance3.types
+@@= skipped -2, +2 lines =@@
+ === recursiveInheritance3.ts ===
+ class C implements I {
+ >C : C
+->  : ^
+ 
+     public foo(x: any) { return x; }
+ >foo : (x: any) => any
+->    : ^ ^^   ^^^^^^^^
+ >x : any
+->  : ^^^
+ >x : any
+->  : ^^^
+ 
+     private x = 1;
+ >x : number
+->  : ^^^^^^
+ >1 : 1
+->  : ^
+ }
+ 
+ interface I extends C {
++>I : I
++
+     other(x: any): any;
+ >other : (x: any) => any
+->      : ^ ^^   ^^^^^   
+ >x : any
+->  : ^^^
+ }

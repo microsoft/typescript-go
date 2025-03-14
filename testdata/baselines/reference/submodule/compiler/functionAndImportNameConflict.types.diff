@@ -1,0 +1,18 @@
+--- old.functionAndImportNameConflict.types
++++ new.functionAndImportNameConflict.types
+@@= skipped -2, +2 lines =@@
+ === f1.ts ===
+ export function f() {
+ >f : () => void
+->  : ^^^^^^^^^^
+ }
+ 
+ === f2.ts ===
+ import {f} from './f1';
+ >f : () => void
+->  : ^^^^^^^^^^
+ 
+ export function f() {
+ >f : () => void
+->  : ^^^^^^^^^^
+ }

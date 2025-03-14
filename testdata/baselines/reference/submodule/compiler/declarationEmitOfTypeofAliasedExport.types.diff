@@ -1,0 +1,31 @@
+--- old.declarationEmitOfTypeofAliasedExport.types
++++ new.declarationEmitOfTypeofAliasedExport.types
+@@= skipped -2, +2 lines =@@
+ === /a.ts ===
+ class C {}
+ >C : C
+->  : ^
+ 
+ export { C as D }
+ >C : typeof C
+->  : ^^^^^^^^
+ >D : typeof C
+->  : ^^^^^^^^
+ 
+ === /b.ts ===
+ import * as a from "./a";
+->a : typeof a
+->  : ^^^^^^^^
++>a : typeof import("/a")
+ 
+ export default a.D;
+->a.D : typeof a.D
+->    : ^^^^^^^^^^
+->a : typeof a
+->  : ^^^^^^^^
+->D : typeof a.D
+->  : ^^^^^^^^^^
++>a.D : typeof C
++>a : typeof import("/a")
++>D : typeof C
+ 

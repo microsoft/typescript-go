@@ -1,0 +1,35 @@
+--- old.ES5SymbolProperty6.types
++++ new.ES5SymbolProperty6.types
+@@= skipped -2, +2 lines =@@
+ === ES5SymbolProperty6.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+     [Symbol.iterator]() { }
+ >[Symbol.iterator] : () => void
+->                  : ^^^^^^^^^^
+ >Symbol.iterator : any
+->                : ^^^
+ >Symbol : any
+->       : ^^^
+ >iterator : any
+->         : ^^^
+ }
+ 
+ (new C)[Symbol.iterator]
+ >(new C)[Symbol.iterator] : () => void
+->                         : ^^^^^^^^^^
+ >(new C) : C
+->        : ^
+ >new C : C
+->      : ^
+ >C : typeof C
+->  : ^^^^^^^^
+ >Symbol.iterator : any
+->                : ^^^
+ >Symbol : any
+->       : ^^^
+ >iterator : any
+->         : ^^^
+ 

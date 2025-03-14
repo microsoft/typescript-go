@@ -1,0 +1,23 @@
+--- old.parserSymbolIndexer5.types
++++ new.parserSymbolIndexer5.types
+@@= skipped -2, +2 lines =@@
+ === parserSymbolIndexer5.ts ===
+ var x = {
+ >x : { [x: number]: any; "": any; }
+->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ >{    [s: symbol]: ""} : { [x: number]: any; "": any; }
+->                      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+     [s: symbol]: ""
+ >[s : any
+->   : ^^^
+ >s : any
+->  : ^^^
+ >symbol : any
+->       : ^^^
+ >"" : any
+->   : ^^^
+ }
+ > : any
+-> : ^^^
+ 

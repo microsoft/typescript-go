@@ -1,0 +1,10 @@
+--- old.continueInIterationStatement1.types
++++ new.continueInIterationStatement1.types
+@@= skipped -2, +2 lines =@@
+ === continueInIterationStatement1.ts ===
+ while (true) {
+ >true : true
+->     : ^^^^
+ 
+   continue;
+ }

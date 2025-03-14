@@ -1,0 +1,25 @@
+--- old.taggedTemplateStringsWithMultilineTemplateES6.types
++++ new.taggedTemplateStringsWithMultilineTemplateES6.types
+@@= skipped -2, +2 lines =@@
+ === taggedTemplateStringsWithMultilineTemplateES6.ts ===
+ function f(...args: any[]): void {
+ >f : (...args: any[]) => void
+->  : ^^^^    ^^     ^^^^^    
+ >args : any[]
+->     : ^^^^^
+ }
+ 
+ f `
+ >f `\` : void
+->      : ^^^^
+ >f : (...args: any[]) => void
+->  : ^^^^    ^^     ^^^^^    
+->`\` : "\n\n"
+->    : ^^^^^^
++>`\` : "
+ 
++"
++
+ \
+ 
+ `;

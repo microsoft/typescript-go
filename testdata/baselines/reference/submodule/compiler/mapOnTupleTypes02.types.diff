@@ -1,0 +1,34 @@
+--- old.mapOnTupleTypes02.types
++++ new.mapOnTupleTypes02.types
+@@= skipped -2, +2 lines =@@
+ === mapOnTupleTypes02.ts ===
+ export type Point = [number, number];
+ >Point : Point
+->      : ^^^^^
+ 
+ export function increment(point: Point) {
+ >increment : (point: Point) => number[]
+->          : ^     ^^     ^^^^^^^^^^^^^
+ >point : Point
+->      : ^^^^^
+ 
+   return point.map(d => d + 1);
+ >point.map(d => d + 1) : number[]
+->                      : ^^^^^^^^
+ >point.map : <U>(callbackfn: (value: number, index: number, array: number[]) => U, thisArg?: any) => U[]
+->          : ^ ^^          ^^^     ^^^^^^^^^^     ^^      ^^     ^^^^^^^^^^^^^^^^^^       ^^^   ^^^^^^^^
+ >point : Point
+->      : ^^^^^
+ >map : <U>(callbackfn: (value: number, index: number, array: number[]) => U, thisArg?: any) => U[]
+->    : ^ ^^          ^^^     ^^^^^^^^^^     ^^      ^^     ^^^^^^^^^^^^^^^^^^       ^^^   ^^^^^^^^
+ >d => d + 1 : (d: number) => number
+->           : ^ ^^^^^^^^^^^^^^^^^^^
+ >d : number
+->  : ^^^^^^
+ >d + 1 : number
+->      : ^^^^^^
+ >d : number
+->  : ^^^^^^
+ >1 : 1
+->  : ^
+ }

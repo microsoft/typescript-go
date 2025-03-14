@@ -1,0 +1,12 @@
+--- old.FunctionExpression2_es6.types
++++ new.FunctionExpression2_es6.types
+@@= skipped -2, +2 lines =@@
+ === FunctionExpression2_es6.ts ===
+ var v = function * foo() { }
+ >v : () => Generator<never, void, unknown>
+->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ >function * foo() { } : () => Generator<never, void, unknown>
+->                     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ >foo : () => Generator<never, void, unknown>
+->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 

@@ -1,0 +1,26 @@
+--- old.tsxPreserveEmit3.types
++++ new.tsxPreserveEmit3.types
+@@= skipped -1, +1 lines =@@
+ 
+ === file.tsx ===
+ declare module JSX {
++>JSX : any
++
+ 	interface Element { }
++>Element : Element
++
+ 	interface IntrinsicElements {
++>IntrinsicElements : IntrinsicElements
++
+ 		[s: string]: any;
+ >s : string
+->  : ^^^^^^
+ 	}
+ }
+ 
+@@= skipped -16, +21 lines =@@
+ // This import should be elided
+ import {React} from "./test";
+ >React : any
+->      : ^^^
+ 

@@ -1,0 +1,10 @@
+--- old.regularExpressionWithNonBMPFlags.types
++++ new.regularExpressionWithNonBMPFlags.types
+@@= skipped -8, +8 lines =@@
+ // See https://en.wikipedia.org/wiki/Mathematical_Alphanumeric_Symbols
+ const 𝘳𝘦𝘨𝘦𝘹 = /(?𝘴𝘪-𝘮:^𝘧𝘰𝘰.)/𝘨𝘮𝘶;
+ >𝘳𝘦𝘨𝘦𝘹 : RegExp
+->           : ^^^^^^
+ >/(?𝘴𝘪-𝘮:^𝘧𝘰𝘰.)/𝘨𝘮𝘶 : RegExp
+->                            : ^^^^^^
+ 

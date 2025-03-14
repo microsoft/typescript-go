@@ -1,0 +1,12 @@
+--- old.parserParenthesizedVariableAndFunctionInTernary.types
++++ new.parserParenthesizedVariableAndFunctionInTernary.types
+@@= skipped -7, +7 lines =@@
+ >c : any
+ >true ? (a) : function() {} : any
+ >true : true
+->     : ^^^^
+ >(a) : any
+ >a : any
+ >function() {} : () => void
+->              : ^^^^^^^^^^
+ 

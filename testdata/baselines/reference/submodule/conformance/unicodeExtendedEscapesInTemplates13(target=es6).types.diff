@@ -1,0 +1,10 @@
+--- old.unicodeExtendedEscapesInTemplates13(target=es6).types
++++ new.unicodeExtendedEscapesInTemplates13(target=es6).types
+@@= skipped -2, +2 lines =@@
+ === unicodeExtendedEscapesInTemplates13.ts ===
+ var x = `\u{DDDDD}`;
+ >x : string
+->  : ^^^^^^
+ >`\u{DDDDD}` : "󝷝"
+->            : ^^^^
+ 

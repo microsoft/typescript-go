@@ -1,0 +1,28 @@
+--- old.generatorOverloads4.types
++++ new.generatorOverloads4.types
+@@= skipped -2, +2 lines =@@
+ === generatorOverloads4.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+     f(s: string): Iterable<any>;
+->f : { (s: string): Iterable<any>; (s: number): Iterable<any>; }
+->  : ^^^ ^^      ^^^             ^^^ ^^      ^^^             ^^^
++>f : { (s: string): Iterable<any, any, any>; (s: number): Iterable<any, any, any>; }
+ >s : string
+->  : ^^^^^^
+ 
+     f(s: number): Iterable<any>;
+->f : { (s: string): Iterable<any>; (s: number): Iterable<any>; }
+->  : ^^^ ^^      ^^^             ^^^ ^^      ^^^             ^^^
++>f : { (s: string): Iterable<any, any, any>; (s: number): Iterable<any, any, any>; }
+ >s : number
+->  : ^^^^^^
+ 
+     *f(s: any): Iterable<any> { }
+->f : { (s: string): Iterable<any>; (s: number): Iterable<any>; }
+->  : ^^^ ^^      ^^^             ^^^ ^^      ^^^             ^^^
++>f : { (s: string): Iterable<any, any, any>; (s: number): Iterable<any, any, any>; }
+ >s : any
+ }

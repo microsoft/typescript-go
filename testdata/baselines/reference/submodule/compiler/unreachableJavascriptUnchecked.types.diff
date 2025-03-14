@@ -1,0 +1,16 @@
+--- old.unreachableJavascriptUnchecked.types
++++ new.unreachableJavascriptUnchecked.types
+@@= skipped -2, +2 lines =@@
+ === unreachable.js ===
+ function unreachable() {
+ >unreachable : () => 1 | 2
+->            : ^^^^^^^^^^^
+ 
+     return 1;
+ >1 : 1
+->  : ^
+ 
+     return 2;
+ >2 : 2
+->  : ^
+ }

@@ -1,0 +1,23 @@
+--- old.esDecorators-classDeclaration-commonjs.types
++++ new.esDecorators-classDeclaration-commonjs.types
+@@= skipped -8, +8 lines =@@
+ 
+ export class Example {
+ >Example : Example
+->        : ^^^^^^^
+ 
+     static foo() {}
+ >foo : () => void
+->    : ^^^^^^^^^^
+ }
+ 
+ Example.foo();
+ >Example.foo() : void
+->              : ^^^^
+ >Example.foo : () => void
+->            : ^^^^^^^^^^
+ >Example : typeof Example
+->        : ^^^^^^^^^^^^^^
+ >foo : () => void
+->    : ^^^^^^^^^^
+ 

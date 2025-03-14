@@ -1,0 +1,29 @@
+--- old.arbitraryModuleNamespaceIdentifiers_importEmpty.types
++++ new.arbitraryModuleNamespaceIdentifiers_importEmpty.types
+@@= skipped -5, +5 lines =@@
+ import {
+   "missing" as x,
+ >x : any
+->  : ^^^
+ 
+   "(missing)" as y,
+ >y : any
+->  : ^^^
+ 
+   "" as z,
+ >z : any
+->  : ^^^
+ 
+ } from "./arbitraryModuleNamespaceIdentifiers_importEmpty";
+ const xyz = [x, y, z];
+ >xyz : any[]
+->    : ^^^^^
+ >[x, y, z] : any[]
+->          : ^^^^^
+ >x : any
+->  : ^^^
+ >y : any
+->  : ^^^
+ >z : any
+->  : ^^^
+ 

@@ -1,0 +1,8 @@
+--- old.parserThrowStatement1.d.types
++++ new.parserThrowStatement1.d.types
+@@= skipped -2, +2 lines =@@
+ === parserThrowStatement1.d.ts ===
+ throw e;
+ >e : any
+->  : ^^^
+ 

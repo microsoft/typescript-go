@@ -1,0 +1,20 @@
+--- old.contextualTyping8.types
++++ new.contextualTyping8.types
+@@= skipped -2, +2 lines =@@
+ === contextualTyping8.ts ===
+ var foo:{id:number;}[] = [<{id:number;}>({})];
+ >foo : { id: number; }[]
+->    : ^^^^^^      ^^^^^
+ >id : number
+->   : ^^^^^^
+ >[<{id:number;}>({})] : { id: number; }[]
+->                     : ^^^^^^      ^^^^^
+ ><{id:number;}>({}) : { id: number; }
+->                   : ^^^^^^      ^^^
+ >id : number
+->   : ^^^^^^
+ >({}) : {}
+->     : ^^
+ >{} : {}
+->   : ^^
+ 

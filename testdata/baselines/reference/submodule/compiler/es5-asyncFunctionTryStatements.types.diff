@@ -1,0 +1,96 @@
+--- old.es5-asyncFunctionTryStatements.types
++++ new.es5-asyncFunctionTryStatements.types
+@@= skipped -10, +10 lines =@@
+ 
+ async function tryCatch0() {
+ >tryCatch0 : () => Promise<void>
+->          : ^^^^^^^^^^^^^^^^^^^
+ 
+     var x: any, y: any;
+ >x : any
+@@= skipped -20, +19 lines =@@
+ 
+ async function tryCatch1() {
+ >tryCatch1 : () => Promise<void>
+->          : ^^^^^^^^^^^^^^^^^^^
+ 
+     var x: any, y: any;
+ >x : any
+@@= skipped -21, +20 lines =@@
+ 
+ async function tryCatch2() {
+ >tryCatch2 : () => Promise<void>
+->          : ^^^^^^^^^^^^^^^^^^^
+ 
+     var x: any, y: any;
+ >x : any
+@@= skipped -21, +20 lines =@@
+ 
+ async function tryCatch3(): Promise<Function> {
+ >tryCatch3 : () => Promise<Function>
+->          : ^^^^^^                 
+ 
+     var x: any, y: any;
+ >x : any
+@@= skipped -16, +15 lines =@@
+ 
+         return () => e;
+ >() => e : () => any
+->        : ^^^^^^^^^
+ >e : any
+     }
+ }
+ async function tryFinally0() {
+ >tryFinally0 : () => Promise<void>
+->            : ^^^^^^^^^^^^^^^^^^^
+ 
+     var x: any, y: any;
+ >x : any
+@@= skipped -24, +22 lines =@@
+ 
+ async function tryFinally1() {
+ >tryFinally1 : () => Promise<void>
+->            : ^^^^^^^^^^^^^^^^^^^
+ 
+     var x: any, y: any;
+ >x : any
+@@= skipped -19, +18 lines =@@
+ 
+ async function tryFinally2() {
+ >tryFinally2 : () => Promise<void>
+->            : ^^^^^^^^^^^^^^^^^^^
+ 
+     var x: any, y: any;
+ >x : any
+@@= skipped -19, +18 lines =@@
+ 
+ async function tryCatchFinally0() {
+ >tryCatchFinally0 : () => Promise<void>
+->                 : ^^^^^^^^^^^^^^^^^^^
+ 
+     var x: any, y: any, z: any;
+ >x : any
+@@= skipped -25, +24 lines =@@
+ 
+ async function tryCatchFinally1() {
+ >tryCatchFinally1 : () => Promise<void>
+->                 : ^^^^^^^^^^^^^^^^^^^
+ 
+     var x: any, y: any, z: any;
+ >x : any
+@@= skipped -26, +25 lines =@@
+ 
+ async function tryCatchFinally2() {
+ >tryCatchFinally2 : () => Promise<void>
+->                 : ^^^^^^^^^^^^^^^^^^^
+ 
+     var x: any, y: any, z: any;
+ >x : any
+@@= skipped -26, +25 lines =@@
+ 
+ async function tryCatchFinally3() {
+ >tryCatchFinally3 : () => Promise<void>
+->                 : ^^^^^^^^^^^^^^^^^^^
+ 
+     var x: any, y: any, z: any;
+ >x : any

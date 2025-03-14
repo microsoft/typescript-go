@@ -1,0 +1,38 @@
+--- old.nestedThisContainer.types
++++ new.nestedThisContainer.types
+@@= skipped -6, +6 lines =@@
+ const foo: Foo = {};
+ >foo : any
+ >{} : {}
+->   : ^^
+ 
+ foo.bar = function () {
+ >foo.bar = function () {    const self: Foo = this;} : () => void
+->                                                    : ^^^^^^^^^^
+ >foo.bar : any
+ >foo : any
+->    : ^^^
+ >bar : any
+->    : ^^^
+ >function () {    const self: Foo = this;} : () => void
+->                                          : ^^^^^^^^^^
+ 
+     const self: Foo = this;
+ >self : any
+@@= skipped -21, +16 lines =@@
+ 
+ foo.zab = (function () {
+ >foo.zab = (function () {    const self: Foo = this;}) : () => void
+->                                                      : ^^^^^^^^^^
+ >foo.zab : any
+ >foo : any
+->    : ^^^
+ >zab : any
+->    : ^^^
+ >(function () {    const self: Foo = this;}) : () => void
+->                                            : ^^^^^^^^^^
+ >function () {    const self: Foo = this;} : () => void
+->                                          : ^^^^^^^^^^
+ 
+     const self: Foo = this;
+ >self : any

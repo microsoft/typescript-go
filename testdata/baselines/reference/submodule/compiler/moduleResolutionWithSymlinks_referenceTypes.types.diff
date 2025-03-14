@@ -1,0 +1,12 @@
+--- old.moduleResolutionWithSymlinks_referenceTypes.types
++++ new.moduleResolutionWithSymlinks_referenceTypes.types
+@@= skipped -7, +7 lines =@@
+ === /node_modules/@types/library-a/index.d.ts ===
+ declare class MyClass { private x: number; }
+ >MyClass : MyClass
+->        : ^^^^^^^
+ >x : number
+->  : ^^^^^^
+ 
+ === /node_modules/@types/library-b/index.d.ts ===
+ 

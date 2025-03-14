@@ -1,0 +1,26 @@
+--- old.thisInModuleFunction1.types
++++ new.thisInModuleFunction1.types
+@@= skipped -1, +1 lines =@@
+ 
+ === thisInModuleFunction1.ts ===
+ module bar {
+->bar : typeof globalThis.bar
+->    : ^^^^^^^^^^^^^^^^^^^^^
++>bar : typeof bar
+ 
+  export function bar() {
+ >bar : () => any
+->    : ^^^^^^^^^
+ 
+   return this;
+ >this : any
+@@= skipped -15, +13 lines =@@
+ >z : any
+ >bar.bar() : any
+ >bar.bar : () => any
+->        : ^^^^^^^^^
+ >bar : typeof bar
+->    : ^^^^^^^^^^
+ >bar : () => any
+->    : ^^^^^^^^^
+ 

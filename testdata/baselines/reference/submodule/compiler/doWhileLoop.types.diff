@@ -1,0 +1,10 @@
+--- old.doWhileLoop.types
++++ new.doWhileLoop.types
+@@= skipped -2, +2 lines =@@
+ === doWhileLoop.ts ===
+ do { } while (false);
+ >false : false
+->      : ^^^^^
+ 
+ var n;
+ >n : any

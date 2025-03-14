@@ -1,0 +1,22 @@
+--- old.sourceFileMergeWithFunction.types
++++ new.sourceFileMergeWithFunction.types
+@@= skipped -3, +3 lines =@@
+ /// <reference path="types.d.ts" />
+ declare function foo(): any;
+ >foo : typeof import("types")
+->    : ^^^^^^^^^^^^^^^^^^^^^^
+ 
+ === types.d.ts ===
+ declare function foo(props: any): any;
+ >foo : (props: any) => any
+->    : ^     ^^   ^^^^^   
+ >props : any
+ 
+ export default foo;
+ >foo : (props: any) => any
+->    : ^     ^^   ^^^^^   
+ 
+ export as namespace foo;
+ >foo : typeof import("types")
+->    : ^^^^^^^^^^^^^^^^^^^^^^
+ 

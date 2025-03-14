@@ -1,0 +1,24 @@
+--- old.incorrectClassOverloadChain.types
++++ new.incorrectClassOverloadChain.types
+@@= skipped -2, +2 lines =@@
+ === incorrectClassOverloadChain.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+     foo(): string;
+ >foo : { (): string; (x: any): number; }
+->    : ^^^^^^      ^^^ ^^^^^^^^      ^^^
+ 
+     foo(x): number;
+ >foo : { (): string; (x: any): number; }
+->    : ^^^^^^      ^^^ ^^^^^^^^      ^^^
+ >x : any
+->  : ^^^
+ 
+     x = 1;
+ >x : number
+->  : ^^^^^^
+ >1 : 1
+->  : ^
+ }

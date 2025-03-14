@@ -1,0 +1,19 @@
+--- old.reexportMissingDefault3.types
++++ new.reexportMissingDefault3.types
+@@= skipped -2, +2 lines =@@
+ === b.ts ===
+ export const b = null;
+ >b : any
+->  : ^^^
+ 
+ === a.ts ===
+ export { b } from "./b";
+ >b : any
+->  : ^^^
+ 
+ export { default as a } from "./b";
+ >default : any
+->        : ^^^
+ >a : any
+->  : ^^^
+ 

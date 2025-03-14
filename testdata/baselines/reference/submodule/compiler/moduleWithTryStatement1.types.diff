@@ -1,0 +1,18 @@
+--- old.moduleWithTryStatement1.types
++++ new.moduleWithTryStatement1.types
+@@= skipped -2, +2 lines =@@
+ === moduleWithTryStatement1.ts ===
+ module M {
+ >M : typeof M
+->  : ^^^^^^^^
+ 
+   try {
+   }
+@@= skipped -10, +9 lines =@@
+ }
+ var v = M;
+ >v : typeof M
+->  : ^^^^^^^^
+ >M : typeof M
+->  : ^^^^^^^^
+ 

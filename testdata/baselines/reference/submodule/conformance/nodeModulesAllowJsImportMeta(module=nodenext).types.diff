@@ -1,0 +1,38 @@
+--- old.nodeModulesAllowJsImportMeta(module=nodenext).types
++++ new.nodeModulesAllowJsImportMeta(module=nodenext).types
+@@= skipped -3, +3 lines =@@
+ // cjs format file
+ const x = import.meta.url;
+ >x : string
+->  : ^^^^^^
+ >import.meta.url : string
+->                : ^^^^^^
+ >import.meta : ImportMeta
+->            : ^^^^^^^^^^
+ >meta : ImportMeta
+->     : ^^^^^^^^^^
+ >url : string
+->    : ^^^^^^
+ 
+ export {x};
+ >x : string
+->  : ^^^^^^
+ 
+ === index.js ===
+ // esm format file
+ const x = import.meta.url;
+ >x : string
+->  : ^^^^^^
+ >import.meta.url : string
+->                : ^^^^^^
+ >import.meta : ImportMeta
+->            : ^^^^^^^^^^
+ >meta : ImportMeta
+->     : ^^^^^^^^^^
+ >url : string
+->    : ^^^^^^
+ 
+ export {x};
+ >x : string
+->  : ^^^^^^
+ 

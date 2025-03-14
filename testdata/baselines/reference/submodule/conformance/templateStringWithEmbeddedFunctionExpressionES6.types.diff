@@ -1,0 +1,19 @@
+--- old.templateStringWithEmbeddedFunctionExpressionES6.types
++++ new.templateStringWithEmbeddedFunctionExpressionES6.types
+@@= skipped -2, +2 lines =@@
+ === templateStringWithEmbeddedFunctionExpressionES6.ts ===
+ var x = `abc${ function y() { return y; } }def`;
+ >x : string
+->  : ^^^^^^
+ >`abc${ function y() { return y; } }def` : string
+->                                        : ^^^^^^
+->function y() { return y; } : () => any
+->                           : ^^^^^^^^^
+->y : () => any
+->  : ^^^^^^^^^
+->y : () => any
+->  : ^^^^^^^^^
++>function y() { return y; } : () => ???
++>y : () => ???
++>y : () => ???
+ 

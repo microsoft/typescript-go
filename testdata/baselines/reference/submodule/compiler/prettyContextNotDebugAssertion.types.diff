@@ -1,0 +1,8 @@
+--- old.prettyContextNotDebugAssertion.types
++++ new.prettyContextNotDebugAssertion.types
+@@= skipped -2, +2 lines =@@
+ === index.ts ===
+ if (true) {
+ >true : true
+->     : ^^^^
+ 

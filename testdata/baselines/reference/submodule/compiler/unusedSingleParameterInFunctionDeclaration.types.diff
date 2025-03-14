@@ -1,0 +1,16 @@
+--- old.unusedSingleParameterInFunctionDeclaration.types
++++ new.unusedSingleParameterInFunctionDeclaration.types
+@@= skipped -2, +2 lines =@@
+ === unusedSingleParameterInFunctionDeclaration.ts ===
+ function greeter(person: string) {
+ >greeter : (person: string) => void
+->        : ^      ^^      ^^^^^^^^^
+ >person : string
+->       : ^^^^^^
+ 
+     var unused = 20;
+ >unused : number
+->       : ^^^^^^
+ >20 : 20
+->   : ^^
+ }

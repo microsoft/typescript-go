@@ -1,0 +1,10 @@
+--- old.unicodeIdentifierNames.types
++++ new.unicodeIdentifierNames.types
+@@= skipped -4, +4 lines =@@
+ // impossible to use a single baseline file to match the result of both. this test should be enabled once this issue is resolved.
+ var 才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüß才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüßAbcd123 = 1;
+ >才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüß才能ソЫⅨ蒤郳र्क्ड्राüışğİliيونيكودöÄüßAbcd123 : number
+->                                                                          : ^^^^^^
+ >1 : 1
+->  : ^
+ 

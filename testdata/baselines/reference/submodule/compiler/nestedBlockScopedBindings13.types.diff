@@ -1,0 +1,31 @@
+--- old.nestedBlockScopedBindings13.types
++++ new.nestedBlockScopedBindings13.types
+@@= skipped -2, +2 lines =@@
+ === nestedBlockScopedBindings13.ts ===
+ for (; false;) {
+ >false : false
+->      : ^^^^^
+ 
+     let x;
+ >x : any
+ 
+     () => x;
+ >() => x : () => any
+->        : ^^^^^^^^^
+ >x : any
+ }
+ 
+ for (; false;) {
+ >false : false
+->      : ^^^^^
+ 
+     let y;
+ >y : any
+ 
+     y = 1;
+ >y = 1 : 1
+->      : ^
+ >y : any
+ >1 : 1
+->  : ^
+ }

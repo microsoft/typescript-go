@@ -1,0 +1,8 @@
+--- old.FunctionDeclaration1_es6.types
++++ new.FunctionDeclaration1_es6.types
+@@= skipped -2, +2 lines =@@
+ === FunctionDeclaration1_es6.ts ===
+ function * foo() {
+ >foo : () => Generator<never, void, unknown>
+->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ }

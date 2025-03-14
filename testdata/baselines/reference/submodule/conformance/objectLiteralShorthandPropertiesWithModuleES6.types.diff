@@ -1,0 +1,28 @@
+--- old.objectLiteralShorthandPropertiesWithModuleES6.types
++++ new.objectLiteralShorthandPropertiesWithModuleES6.types
+@@= skipped -2, +2 lines =@@
+ === objectLiteralShorthandPropertiesWithModuleES6.ts ===
+ module m {
+ >m : typeof m
+->  : ^^^^^^^^
+ 
+     export var x;
+ >x : any
+@@= skipped -8, +7 lines =@@
+ 
+ module m {
+ >m : typeof m
+->  : ^^^^^^^^
+ 
+     var z = x;
+ >z : any
+@@= skipped -8, +7 lines =@@
+ 
+     var y = {
+ >y : { a: any; x: any; }
+->  : ^^^^^^^^^^^^^^^^^^^
+ >{        a: x,        x    } : { a: any; x: any; }
+->                             : ^^^^^^^^^^^^^^^^^^^
+ 
+         a: x,
+ >a : any

@@ -1,0 +1,20 @@
+--- old.dynamicRequire.types
++++ new.dynamicRequire.types
+@@= skipped -2, +2 lines =@@
+ === a.js ===
+ function foo(name) {
+ >foo : (name: any) => void
+->    : ^    ^^^^^^^^^^^^^^
+ >name : any
+ 
+     var s = require("t/" + name)
+@@= skipped -8, +7 lines =@@
+ >require("t/" + name) : any
+ >require : any
+ >"t/" + name : string
+->            : ^^^^^^
+ >"t/" : "t/"
+->     : ^^^^
+ >name : any
+ }
+ 

@@ -1,0 +1,13 @@
+--- old.parserErrorRecovery_SourceUnit1.types
++++ new.parserErrorRecovery_SourceUnit1.types
+@@= skipped -2, +2 lines =@@
+ === parserErrorRecovery_SourceUnit1.ts ===
+ class C {
+ >C : C
+->  : ^
+ }
+ }
+ class D {
+ >D : D
+->  : ^
+ }

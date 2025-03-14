@@ -1,0 +1,8 @@
+--- old.exnextmodulekindExportClassNameWithObject.types
++++ new.exnextmodulekindExportClassNameWithObject.types
+@@= skipped -2, +2 lines =@@
+ === exnextmodulekindExportClassNameWithObject.ts ===
+ export class Object {}
+ >Object : Object
+->       : ^^^^^^
+ 

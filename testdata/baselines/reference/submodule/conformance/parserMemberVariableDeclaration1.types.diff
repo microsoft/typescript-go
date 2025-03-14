@@ -1,0 +1,12 @@
+--- old.parserMemberVariableDeclaration1.types
++++ new.parserMemberVariableDeclaration1.types
+@@= skipped -2, +2 lines =@@
+ === parserMemberVariableDeclaration1.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+   public public Foo;
+ >Foo : any
+->    : ^^^
+ }

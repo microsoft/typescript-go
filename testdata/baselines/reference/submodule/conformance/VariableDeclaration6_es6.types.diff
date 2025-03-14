@@ -1,0 +1,8 @@
+--- old.VariableDeclaration6_es6.types
++++ new.VariableDeclaration6_es6.types
+@@= skipped -2, +2 lines =@@
+ === VariableDeclaration6_es6.ts ===
+ let
+ >let : any
+->    : ^^^
+ 

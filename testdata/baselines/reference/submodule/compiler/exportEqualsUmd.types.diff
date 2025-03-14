@@ -1,0 +1,14 @@
+--- old.exportEqualsUmd.types
++++ new.exportEqualsUmd.types
+@@= skipped -2, +2 lines =@@
+ === exportEqualsUmd.ts ===
+ export = { ["hi"]: "there" };
+ >{ ["hi"]: "there" } : { hi: string; }
+->                    : ^^^^^^^^^^^^^^^
+ >["hi"] : string
+->       : ^^^^^^
+ >"hi" : "hi"
+->     : ^^^^
+ >"there" : "there"
+->        : ^^^^^^^
+ 

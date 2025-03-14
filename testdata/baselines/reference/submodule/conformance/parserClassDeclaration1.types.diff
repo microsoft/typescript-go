@@ -1,0 +1,12 @@
+--- old.parserClassDeclaration1.types
++++ new.parserClassDeclaration1.types
+@@= skipped -2, +2 lines =@@
+ === parserClassDeclaration1.ts ===
+ class C extends A extends B {
+ >C : C
+->  : ^
+ >A : any
+->  : ^^^
+ >B : any
+->  : ^^^
+ }

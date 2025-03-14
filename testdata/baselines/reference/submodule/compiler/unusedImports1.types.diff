@@ -1,0 +1,15 @@
+--- old.unusedImports1.types
++++ new.unusedImports1.types
+@@= skipped -2, +2 lines =@@
+ === file1.ts ===
+ export class Calculator {
+ >Calculator : Calculator
+->           : ^^^^^^^^^^
+ 
+ }
+ 
+ === file2.ts ===
+ import {Calculator} from "./file1"
+ >Calculator : typeof Calculator
+->           : ^^^^^^^^^^^^^^^^^
+ 

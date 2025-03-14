@@ -1,0 +1,17 @@
+--- old.missingCloseBrace.types
++++ new.missingCloseBrace.types
+@@= skipped -2, +2 lines =@@
+ === missingCloseBrace.ts ===
+ function base_init() {
+ >base_init : () => void
+->          : ^^^^^^^^^^
+     {
+ 
+     }
+ 
+     function me() {
+ >me : () => void
+->   : ^^^^^^^^^^
+ 
+     }
+ 

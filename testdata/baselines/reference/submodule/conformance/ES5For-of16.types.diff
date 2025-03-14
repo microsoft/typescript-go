@@ -1,0 +1,26 @@
+--- old.ES5For-of16.types
++++ new.ES5For-of16.types
+@@= skipped -3, +3 lines =@@
+ for (let v of []) {
+ >v : any
+ >[] : undefined[]
+->   : ^^^^^^^^^^^
+ 
+     v;
+ >v : any
+@@= skipped -8, +7 lines =@@
+     for (let v of []) {
+ >v : any
+ >[] : undefined[]
+->   : ^^^^^^^^^^^
+ 
+         var x = v;
+ >x : any
+@@= skipped -8, +7 lines =@@
+ 
+         v++;
+ >v++ : number
+->    : ^^^^^^
+ >v : any
+     }
+ }

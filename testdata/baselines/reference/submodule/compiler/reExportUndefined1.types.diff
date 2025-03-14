@@ -1,0 +1,8 @@
+--- old.reExportUndefined1.types
++++ new.reExportUndefined1.types
+@@= skipped -2, +2 lines =@@
+ === a.ts ===
+ export { undefined };
+ >undefined : undefined
+->          : ^^^^^^^^^
+ 

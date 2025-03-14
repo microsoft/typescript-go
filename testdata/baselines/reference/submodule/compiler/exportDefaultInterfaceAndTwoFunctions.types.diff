@@ -1,0 +1,18 @@
+--- old.exportDefaultInterfaceAndTwoFunctions.types
++++ new.exportDefaultInterfaceAndTwoFunctions.types
+@@= skipped -1, +1 lines =@@
+ 
+ === exportDefaultInterfaceAndTwoFunctions.ts ===
+ export default interface A { a: string; }
++>A : default
+ >a : string
+->  : ^^^^^^
+ 
+ export default function() { return 1; }
+ >1 : 1
+->  : ^
+ 
+ export default function() { return 2; }
+ >2 : 2
+->  : ^
+ 

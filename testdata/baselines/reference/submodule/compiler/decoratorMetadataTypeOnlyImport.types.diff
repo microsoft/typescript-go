@@ -1,0 +1,36 @@
+--- old.decoratorMetadataTypeOnlyImport.types
++++ new.decoratorMetadataTypeOnlyImport.types
+@@= skipped -0, +0 lines =@@
+ //// [tests/cases/compiler/decoratorMetadataTypeOnlyImport.ts] ////
+ 
+-=== ./a.ts ===
++=== a.ts ===
+ import { List } from 'unknown-module';
+ >List : any
+->     : ^^^
+ 
+ export type MyList = List<number>;
+ >MyList : List<number>
+->       : ^^^^^^^^^^^^
+ 
+-=== ./b.ts ===
++=== b.ts ===
+ import { type MyList } from './a';
+ >MyList : any
+->       : ^^^
+ 
+ declare var Decorator: any;
+ >Decorator : any
+->          : ^^^
+ 
+ class Foo {
+ >Foo : Foo
+->    : ^^^
+ 
+   @Decorator myList?: MyList;
+ >Decorator : any
+->          : ^^^
+ >myList : List<number>
+->       : ^^^^^^^^^^^^
+ }
+ 

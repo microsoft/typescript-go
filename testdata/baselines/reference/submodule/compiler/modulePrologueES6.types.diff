@@ -1,0 +1,12 @@
+--- old.modulePrologueES6.types
++++ new.modulePrologueES6.types
+@@= skipped -2, +2 lines =@@
+ === modulePrologueES6.ts ===
+ "use strict";
+ >"use strict" : "use strict"
+->             : ^^^^^^^^^^^^
+ 
+ export class Foo {}
+ >Foo : Foo
+->    : ^^^
+ 

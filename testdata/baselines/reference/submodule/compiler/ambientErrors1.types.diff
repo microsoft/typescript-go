@@ -1,0 +1,10 @@
+--- old.ambientErrors1.types
++++ new.ambientErrors1.types
+@@= skipped -2, +2 lines =@@
+ === ambientErrors1.ts ===
+ declare var x = 4;
+ >x : number
+->  : ^^^^^^
+ >4 : 4
+->  : ^
+ 

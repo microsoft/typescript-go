@@ -1,0 +1,13 @@
+--- old.parserInvalidIdentifiersInVariableStatements1.types
++++ new.parserInvalidIdentifiersInVariableStatements1.types
+@@= skipped -3, +3 lines =@@
+ var export;
+ var foo;
+ >foo : any
+->    : ^^^
+ 
+ var class;
+ var bar;
+ >bar : any
+->    : ^^^
+ 

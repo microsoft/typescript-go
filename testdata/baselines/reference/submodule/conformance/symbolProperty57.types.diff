@@ -1,0 +1,37 @@
+--- old.symbolProperty57.types
++++ new.symbolProperty57.types
+@@= skipped -2, +2 lines =@@
+ === symbolProperty57.ts ===
+ var obj = {
+ >obj : { [Symbol.iterator]: number; }
+->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ >{    [Symbol.iterator]: 0} : { [Symbol.iterator]: number; }
+->                           : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+     [Symbol.iterator]: 0
+ >[Symbol.iterator] : number
+->                  : ^^^^^^
+ >Symbol.iterator : unique symbol
+->                : ^^^^^^^^^^^^^
+ >Symbol : SymbolConstructor
+->       : ^^^^^^^^^^^^^^^^^
+ >iterator : unique symbol
+->         : ^^^^^^^^^^^^^
+ >0 : 0
+->  : ^
+ 
+ };
+ 
+ // Should give type 'any'.
+ obj[Symbol["nonsense"]];
+->obj[Symbol["nonsense"]] : error
++>obj[Symbol["nonsense"]] : any
+ >obj : { [Symbol.iterator]: number; }
+->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+->Symbol["nonsense"] : error
++>Symbol["nonsense"] : any
+ >Symbol : SymbolConstructor
+->       : ^^^^^^^^^^^^^^^^^
+ >"nonsense" : "nonsense"
+->           : ^^^^^^^^^^
+ 

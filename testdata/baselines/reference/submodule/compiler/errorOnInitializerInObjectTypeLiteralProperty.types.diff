@@ -1,0 +1,28 @@
+--- old.errorOnInitializerInObjectTypeLiteralProperty.types
++++ new.errorOnInitializerInObjectTypeLiteralProperty.types
+@@= skipped -2, +2 lines =@@
+ === errorOnInitializerInObjectTypeLiteralProperty.ts ===
+ var Foo: {
+ >Foo : { bar: number; }
+->    : ^^^^^^^      ^^^
+ 
+     bar: number = 5;
+ >bar : number
+->    : ^^^^^^
+ >5 : 5
+->  : ^
+ 
+ };
+ 
+ let Bar: {
+ >Bar : { bar: number; }
+->    : ^^^^^^^      ^^^
+ 
+     bar: number = 5;
+ >bar : number
+->    : ^^^^^^
+ >5 : 5
+->  : ^
+ 
+ };
+ 

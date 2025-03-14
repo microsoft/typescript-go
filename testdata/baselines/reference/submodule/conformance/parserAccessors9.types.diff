@@ -1,0 +1,16 @@
+--- old.parserAccessors9.types
++++ new.parserAccessors9.types
+@@= skipped -2, +2 lines =@@
+ === parserAccessors9.ts ===
+ var v = { set foo(a, b) { } }
+ >v : { foo: any; }
+->  : ^^^^^^^^^^^^^
+ >{ set foo(a, b) { } } : { foo: any; }
+->                      : ^^^^^^^^^^^^^
+ >foo : any
+->    : ^^^
+ >a : any
+->  : ^^^
+ >b : any
+->  : ^^^
+ 

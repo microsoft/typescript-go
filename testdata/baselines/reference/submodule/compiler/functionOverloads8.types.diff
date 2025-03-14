@@ -1,0 +1,21 @@
+--- old.functionOverloads8.types
++++ new.functionOverloads8.types
+@@= skipped -2, +2 lines =@@
+ === functionOverloads8.ts ===
+ function foo();
+ >foo : { (): any; (foo: string): any; }
+->    : ^^^^^^^^^^^^   ^^      ^^^^^^^^^
+ 
+ function foo(foo:string);
+ >foo : { (): any; (foo: string): any; }
+->    : ^^^^^^^^^^^^   ^^      ^^^^^^^^^
+ >foo : string
+->    : ^^^^^^
+ 
+ function foo(foo?:any){ return '' }
+ >foo : { (): any; (foo: string): any; }
+->    : ^^^^^^^^^^^^   ^^      ^^^^^^^^^
+ >foo : any
+ >'' : ""
+->   : ^^
+ 

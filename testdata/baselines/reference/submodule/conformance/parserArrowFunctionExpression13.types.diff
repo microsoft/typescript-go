@@ -1,0 +1,33 @@
+--- old.parserArrowFunctionExpression13.types
++++ new.parserArrowFunctionExpression13.types
+@@= skipped -2, +2 lines =@@
+ === fileJs.js ===
+ a ? () => a() : (): any => null; // Not legal JS; "Unexpected token ')'" at last paren
+ >a ? () => a() : (): any => null : () => any
+->                                : ^^^^^^^^^
+ >a : any
+->  : ^^^
+ >() => a() : () => any
+->          : ^^^^^^^^^
+ >a() : any
+->    : ^^^
+ >a : any
+->  : ^^^
+ >(): any => null : () => any
+->                : ^^^^^^   
+ 
+ === fileTs.ts ===
+ a ? () => a() : (): any => null;
+ >a ? () => a() : (): any => null : () => any
+->                                : ^^^^^^^^^
+ >a : any
+->  : ^^^
+ >() => a() : () => any
+->          : ^^^^^^^^^
+ >a() : any
+->    : ^^^
+ >a : any
+->  : ^^^
+ >(): any => null : () => any
+->                : ^^^^^^   
+ 

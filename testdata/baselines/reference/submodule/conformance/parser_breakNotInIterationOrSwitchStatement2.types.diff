@@ -1,0 +1,14 @@
+--- old.parser_breakNotInIterationOrSwitchStatement2.types
++++ new.parser_breakNotInIterationOrSwitchStatement2.types
+@@= skipped -2, +2 lines =@@
+ === parser_breakNotInIterationOrSwitchStatement2.ts ===
+ while (true) {
+ >true : true
+->     : ^^^^
+ 
+   function f() {
+ >f : () => void
+->  : ^^^^^^^^^^
+ 
+     break;
+   }

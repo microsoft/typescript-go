@@ -1,0 +1,35 @@
+--- old.destructuringReassignsRightHandSide.types
++++ new.destructuringReassignsRightHandSide.types
+@@= skipped -3, +3 lines =@@
+ var foo: any = { foo: 1, bar: 2 };
+ >foo : any
+ >{ foo: 1, bar: 2 } : { foo: number; bar: number; }
+->                   : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ >foo : number
+->    : ^^^^^^
+ >1 : 1
+->  : ^
+ >bar : number
+->    : ^^^^^^
+ >2 : 2
+->  : ^
+ 
+ var bar: any;
+ >bar : any
+@@= skipped -18, +13 lines =@@
+ >({ foo, bar } = foo) : any
+ >{ foo, bar } = foo : any
+ >{ foo, bar } : { foo: any; bar: any; }
+->             : ^^^^^^^^^^^^^^^^^^^^^^^
+ >foo : any
+ >bar : any
+ >foo : any
+@@= skipped -8, +7 lines =@@
+ // reassignment in subsequent var
+ var { foo, baz } = foo;
+ >foo : any
+->    : ^^^
+ >baz : any
+->    : ^^^
+ >foo : any
+ 

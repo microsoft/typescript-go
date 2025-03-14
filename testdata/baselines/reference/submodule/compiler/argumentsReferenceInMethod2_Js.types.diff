@@ -1,0 +1,36 @@
+--- old.argumentsReferenceInMethod2_Js.types
++++ new.argumentsReferenceInMethod2_Js.types
+@@= skipped -2, +2 lines =@@
+ === /a.js ===
+ class A {
+ >A : A
+->  : ^
+ 
+ 	/**
+ 	 * @param {object} [foo={}]
+ 	 */
+ 	m(foo = {}) {
+->m : (foo?: object) => void
+->  : ^   ^^^      ^^^^^^^^^
+->foo : any
++>m : (foo?: {}) => void
++>foo : {}
+ >{} : {}
+->   : ^^
+ 
+ 		/**
+ 		 * @type object
+ 		 */
+ 		this["arguments"] = foo;
+->this["arguments"] = foo : any
++>this["arguments"] = foo : {}
+ >this["arguments"] : any
+ >this : this
+->     : ^^^^
+ >"arguments" : "arguments"
+->            : ^^^^^^^^^^^
+->foo : any
++>foo : {}
+ 	}
+ }
+ 

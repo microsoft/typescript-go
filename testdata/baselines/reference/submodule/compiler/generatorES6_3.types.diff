@@ -1,0 +1,15 @@
+--- old.generatorES6_3.types
++++ new.generatorES6_3.types
+@@= skipped -2, +2 lines =@@
+ === generatorES6_3.ts ===
+ var v = function*() {
+ >v : () => Generator<number, void, unknown>
+->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ >function*() {    yield 0} : () => Generator<number, void, unknown>
+->                          : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+     yield 0
+ >yield 0 : any
+ >0 : 0
+->  : ^
+ }

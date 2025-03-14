@@ -1,0 +1,10 @@
+--- old.commentOnBlock1.types
++++ new.commentOnBlock1.types
+@@= skipped -3, +3 lines =@@
+ // asdf
+ function f() {
+ >f : () => void
+->  : ^^^^^^^^^^
+ 
+  /*asdf*/{}
+ }

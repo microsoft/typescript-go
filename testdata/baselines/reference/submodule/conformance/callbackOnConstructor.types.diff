@@ -1,0 +1,43 @@
+--- old.callbackOnConstructor.types
++++ new.callbackOnConstructor.types
+@@= skipped -2, +2 lines =@@
+ === callbackOnConstructor.js ===
+ export class Preferences {
+ >Preferences : Preferences
+->            : ^^^^^^^^^^^
+ 
+   assignability = "no"
+ >assignability : string
+->              : ^^^^^^
+ >"no" : "no"
+->     : ^^^^
+ 
+   /**
+    * @callback ValueGetter_2
+@@= skipped -19, +16 lines =@@
+ 
+ /** @type {ValueGetter_2} */
+ var ooscope2 = s => s.length > 0
+->ooscope2 : (name: string) => boolean | number | string | undefined
+->         : ^    ^^      ^^^^^                                     
+->s => s.length > 0 : (s: string) => string | number | boolean
+->                  : ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+->s : string
+->  : ^^^^^^
++>ooscope2 : (s: any) => boolean
++>s => s.length > 0 : (s: any) => boolean
++>s : any
+ >s.length > 0 : boolean
+->             : ^^^^^^^
+->s.length : number
+->         : ^^^^^^
+->s : string
+->  : ^^^^^^
+->length : number
+->       : ^^^^^^
++>s.length : any
++>s : any
++>length : any
+ >0 : 0
+->  : ^
+ 

@@ -1,0 +1,25 @@
+--- old.collisionCodeGenModuleWithEnumMemberConflict.types
++++ new.collisionCodeGenModuleWithEnumMemberConflict.types
+@@= skipped -2, +2 lines =@@
+ === collisionCodeGenModuleWithEnumMemberConflict.ts ===
+ module m1 {
+ >m1 : typeof m1
+->   : ^^^^^^^^^
+ 
+     enum e {
+->e : e
+->  : ^
++>e : e.m1
+ 
+         m1, 
+ >m1 : e.m1
+->   : ^^^^
+ 
+         m2 = m1
+ >m2 : e.m1
+->   : ^^^^
+->m1 : e
+->   : ^
++>m1 : e.m1
+     }
+ }

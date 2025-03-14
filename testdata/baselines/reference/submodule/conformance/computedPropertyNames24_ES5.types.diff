@@ -1,0 +1,35 @@
+--- old.computedPropertyNames24_ES5.types
++++ new.computedPropertyNames24_ES5.types
+@@= skipped -2, +2 lines =@@
+ === computedPropertyNames24_ES5.ts ===
+ class Base {
+ >Base : Base
+->     : ^^^^
+ 
+     bar() {
+ >bar : () => number
+->    : ^^^^^^^^^^^^
+ 
+         return 0;
+ >0 : 0
+->  : ^
+     }
+ }
+ class C extends Base {
+ >C : C
+->  : ^
+ >Base : Base
+->     : ^^^^
+ 
+     [super.bar()]() { }
+ >[super.bar()] : () => void
+->              : ^^^^^^^^^^
+ >super.bar() : any
+->            : ^^^
+ >super.bar : any
+->          : ^^^
+ >super : any
+->      : ^^^
+ >bar : any
+->    : ^^^
+ }

@@ -1,0 +1,10 @@
+--- old.arrowFunctionInExpressionStatement1.types
++++ new.arrowFunctionInExpressionStatement1.types
+@@= skipped -2, +2 lines =@@
+ === arrowFunctionInExpressionStatement1.ts ===
+ () => 0;
+ >() => 0 : () => number
+->        : ^^^^^^^^^^^^
+ >0 : 0
+->  : ^
+ 

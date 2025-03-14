@@ -1,0 +1,10 @@
+--- old.declarationEmitInvalidReference.types
++++ new.declarationEmitInvalidReference.types
+@@= skipped -3, +3 lines =@@
+ /// <reference path="invalid.ts" />
+ var x = 0;
+ >x : number
+->  : ^^^^^^
+ >0 : 0
+->  : ^
+ 

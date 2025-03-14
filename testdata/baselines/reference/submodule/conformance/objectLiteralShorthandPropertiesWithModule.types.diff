@@ -1,0 +1,28 @@
+--- old.objectLiteralShorthandPropertiesWithModule.types
++++ new.objectLiteralShorthandPropertiesWithModule.types
+@@= skipped -4, +4 lines =@@
+ 
+ module m {
+ >m : typeof m
+->  : ^^^^^^^^
+ 
+     export var x;
+ >x : any
+@@= skipped -8, +7 lines =@@
+ 
+ module m {
+ >m : typeof m
+->  : ^^^^^^^^
+ 
+     var z = x;
+ >z : any
+@@= skipped -8, +7 lines =@@
+ 
+     var y = {
+ >y : { a: any; x: any; }
+->  : ^^^^^^^^^^^^^^^^^^^
+ >{        a: x,        x    } : { a: any; x: any; }
+->                             : ^^^^^^^^^^^^^^^^^^^
+ 
+         a: x,
+ >a : any

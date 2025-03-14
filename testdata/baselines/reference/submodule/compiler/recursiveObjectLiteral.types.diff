@@ -1,0 +1,10 @@
+--- old.recursiveObjectLiteral.types
++++ new.recursiveObjectLiteral.types
+@@= skipped -3, +3 lines =@@
+ var a = { f: a };
+ >a : any
+ >{ f: a } : { f: any; }
+->         : ^^^^^^^^^^^
+ >f : any
+ >a : any
+ 

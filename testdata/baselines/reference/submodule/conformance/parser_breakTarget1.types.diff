@@ -1,0 +1,12 @@
+--- old.parser_breakTarget1.types
++++ new.parser_breakTarget1.types
+@@= skipped -2, +2 lines =@@
+ === parser_breakTarget1.ts ===
+ target:
+ >target : any
+->       : ^^^
+ 
+   break target;
+ >target : any
+->       : ^^^
+ 

@@ -1,0 +1,22 @@
+--- old.incompatibleExports2.types
++++ new.incompatibleExports2.types
+@@= skipped -2, +2 lines =@@
+ === incompatibleExports2.ts ===
+ declare module "foo" { 
+ >"foo" : typeof import("foo")
+->      : ^^^^^^^^^^^^^^^^^^^^
+ 
+     export interface x { a: string } 
++>x : x
+ >a : string
+->  : ^^^^^^
+ 
+     interface y { a: Date }
++>y : y
+ >a : Date
+->  : ^^^^
+ 
+     export = y;
+ >y : y
+->  : ^
+ }

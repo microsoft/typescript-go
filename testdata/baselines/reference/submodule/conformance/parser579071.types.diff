@@ -1,0 +1,10 @@
+--- old.parser579071.types
++++ new.parser579071.types
+@@= skipped -2, +2 lines =@@
+ === parser579071.ts ===
+ var x = /fo(o/;
+ >x : RegExp
+->  : ^^^^^^
+ >/fo(o/ : RegExp
+->       : ^^^^^^
+ 

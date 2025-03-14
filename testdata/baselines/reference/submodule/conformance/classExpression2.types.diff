@@ -1,0 +1,18 @@
+--- old.classExpression2.types
++++ new.classExpression2.types
+@@= skipped -2, +2 lines =@@
+ === classExpression2.ts ===
+ class D { }
+ >D : D
+->  : ^
+ 
+ var v = class C extends D {};
+ >v : typeof C
+->  : ^^^^^^^^
+ >class C extends D {} : typeof C
+->                     : ^^^^^^^^
+ >C : typeof C
+->  : ^^^^^^^^
+ >D : D
+->  : ^
+ 

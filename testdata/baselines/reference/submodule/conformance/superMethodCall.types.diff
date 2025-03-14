@@ -1,0 +1,54 @@
+--- old.superMethodCall.types
++++ new.superMethodCall.types
+@@= skipped -2, +2 lines =@@
+ === superMethodCall.ts ===
+ class Base {
+ >Base : Base
+->     : ^^^^
+ 
+     method?() { }
+->method : (() => void) | undefined
+->       : ^^^^^^^^^^^^^^^^^^^^^^^^
++>method : () => void | undefined
+ }
+ 
+ class Derived extends Base {
+ >Derived : Derived
+->        : ^^^^^^^
+ >Base : Base
+->     : ^^^^
+ 
+     method() {
+ >method : () => void | undefined
+->       : ^^^^^^^^^^^^^^^^^^^^^^
+ 
+         return super.method?.();
+ >super.method?.() : void | undefined
+->                 : ^^^^^^^^^^^^^^^^
+->super.method : (() => void) | undefined
+->             : ^^^^^^^^^^^^^^^^^^^^^^^^
++>super.method : () => void | undefined
+ >super : Base
+->      : ^^^^
+->method : (() => void) | undefined
+->       : ^^^^^^^^^^^^^^^^^^^^^^^^
++>method : () => void | undefined
+     }
+ 
+     async asyncMethod() {
+ >asyncMethod : () => Promise<void | undefined>
+->            : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+         return super.method?.();
+ >super.method?.() : void | undefined
+->                 : ^^^^^^^^^^^^^^^^
+->super.method : (() => void) | undefined
+->             : ^^^^^^^^^^^^^^^^^^^^^^^^
++>super.method : () => void | undefined
+ >super : Base
+->      : ^^^^
+->method : (() => void) | undefined
+->       : ^^^^^^^^^^^^^^^^^^^^^^^^
++>method : () => void | undefined
+     }
+ }

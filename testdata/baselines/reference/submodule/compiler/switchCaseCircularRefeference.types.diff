@@ -1,0 +1,32 @@
+--- old.switchCaseCircularRefeference.types
++++ new.switchCaseCircularRefeference.types
+@@= skipped -4, +4 lines =@@
+ 
+ function f(x: {a: "A", b} | {a: "C", e}) {
+ >f : (x: { a: "A"; b: any; } | { a: "C"; e: any; }) => void
+->  : ^ ^^             ^^^                   ^^^   ^^^^^^^^^
+ >x : { a: "A"; b: any; } | { a: "C"; e: any; }
+->  : ^^^^^   ^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^^^
+ >a : "A"
+->  : ^^^
+ >b : any
+->  : ^^^
+ >a : "C"
+->  : ^^^
+ >e : any
+->  : ^^^
+ 
+     switch (x.a) {
+ >x.a : "A" | "C"
+->    : ^^^^^^^^^
+ >x : { a: "A"; b: any; } | { a: "C"; e: any; }
+->  : ^^^^^   ^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^^^
+ >a : "A" | "C"
+->  : ^^^^^^^^^
+ 
+     case x:
+ >x : { a: "A"; b: any; } | { a: "C"; e: any; }
+->  : ^^^^^   ^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^^^
+ 
+         break;
+     }

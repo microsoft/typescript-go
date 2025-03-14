@@ -1,0 +1,16 @@
+--- old.partiallyAmbientFundule.types
++++ new.partiallyAmbientFundule.types
+@@= skipped -2, +2 lines =@@
+ === partiallyAmbientFundule.ts ===
+ declare module foo {
+ >foo : typeof foo
+->    : ^^^^^^^^^^
+ 
+     export function x(): any;
+ >x : () => any
+->  : ^^^^^^   
+ }
+ function foo () { } // Legal, because module is ambient
+ >foo : typeof foo
+->    : ^^^^^^^^^^
+ 

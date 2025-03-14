@@ -1,0 +1,8 @@
+--- old.parser_breakInIterationOrSwitchStatement2.types
++++ new.parser_breakInIterationOrSwitchStatement2.types
+@@= skipped -5, +5 lines =@@
+ }
+ while (true);
+ >true : true
+->     : ^^^^
+ 

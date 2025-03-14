@@ -1,0 +1,31 @@
+--- old.es6ImportDefaultBindingFollowedWithNamespaceBinding.types
++++ new.es6ImportDefaultBindingFollowedWithNamespaceBinding.types
+@@= skipped -2, +2 lines =@@
+ === es6ImportDefaultBindingFollowedWithNamespaceBinding_0.ts ===
+ export var a = 10;
+ >a : number
+->  : ^^^^^^
+ >10 : 10
+->   : ^^
+ 
+ === es6ImportDefaultBindingFollowedWithNamespaceBinding_1.ts ===
+ import defaultBinding, * as nameSpaceBinding  from "es6ImportDefaultBindingFollowedWithNamespaceBinding_0";
+ >defaultBinding : any
+->               : ^^^
+->nameSpaceBinding : typeof nameSpaceBinding
+->                 : ^^^^^^^^^^^^^^^^^^^^^^^
++>nameSpaceBinding : any
+ 
+ var x: number = nameSpaceBinding.a;
+ >x : number
+->  : ^^^^^^
+->nameSpaceBinding.a : number
+->                   : ^^^^^^
+->nameSpaceBinding : typeof nameSpaceBinding
+->                 : ^^^^^^^^^^^^^^^^^^^^^^^
+->a : number
+->  : ^^^^^^
++>nameSpaceBinding.a : any
++>nameSpaceBinding : any
++>a : any
+ 

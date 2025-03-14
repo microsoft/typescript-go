@@ -1,0 +1,8 @@
+--- old.importAttributes4.types
++++ new.importAttributes4.types
+@@= skipped -2, +2 lines =@@
+ === importAttributes4.ts ===
+ import * as f from "./first" with
+ >f : any
+->  : ^^^
+ 

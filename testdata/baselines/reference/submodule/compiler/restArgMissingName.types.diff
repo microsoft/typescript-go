@@ -1,0 +1,10 @@
+--- old.restArgMissingName.types
++++ new.restArgMissingName.types
+@@= skipped -2, +2 lines =@@
+ === restArgMissingName.ts ===
+ function sum (...) {} 
+ >sum : (...: any[]) => void
+->    : ^^^^^^^^^^^^^^^^^^^^
+ > : any[]
+-> : ^^^^^
+ 

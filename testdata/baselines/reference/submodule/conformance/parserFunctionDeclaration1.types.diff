@@ -1,0 +1,12 @@
+--- old.parserFunctionDeclaration1.types
++++ new.parserFunctionDeclaration1.types
+@@= skipped -2, +2 lines =@@
+ === parserFunctionDeclaration1.ts ===
+ declare module M {
+ >M : typeof M
+->  : ^^^^^^^^
+ 
+   declare function F();
+ >F : () => any
+->  : ^^^^^^^^^
+ }

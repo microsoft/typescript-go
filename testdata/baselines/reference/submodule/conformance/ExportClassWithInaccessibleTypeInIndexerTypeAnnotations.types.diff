@@ -1,0 +1,35 @@
+--- old.ExportClassWithInaccessibleTypeInIndexerTypeAnnotations.types
++++ new.ExportClassWithInaccessibleTypeInIndexerTypeAnnotations.types
+@@= skipped -2, +2 lines =@@
+ === ExportClassWithInaccessibleTypeInIndexerTypeAnnotations.ts ===
+ module A {
+ >A : typeof A
+->  : ^^^^^^^^
+ 
+     class Point {
+ >Point : Point
+->      : ^^^^^
+ 
+         x: number;
+ >x : number
+->  : ^^^^^^
+ 
+         y: number;
+ >y : number
+->  : ^^^^^^
+     }
+ 
+     export class points {
+ >points : points
+->       : ^^^^^^
+ 
+         [idx: number]: Point;
+ >idx : number
+->    : ^^^^^^
+ 
+         [idx: string]: Point;
+ >idx : string
+->    : ^^^^^^
+     }
+ }
+ 

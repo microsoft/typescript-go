@@ -1,0 +1,14 @@
+--- old.missingReturnStatement1.types
++++ new.missingReturnStatement1.types
+@@= skipped -2, +2 lines =@@
+ === missingReturnStatement1.ts ===
+ class Foo {
+ >Foo : Foo
+->    : ^^^
+ 
+     foo(): number {
+ >foo : () => number
+->    : ^^^^^^      
+ 
+         //return 4;
+     }

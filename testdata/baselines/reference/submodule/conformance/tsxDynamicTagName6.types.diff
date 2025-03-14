@@ -1,0 +1,43 @@
+--- old.tsxDynamicTagName6.types
++++ new.tsxDynamicTagName6.types
+@@= skipped -1, +1 lines =@@
+ 
+ === tsxDynamicTagName6.tsx ===
+ declare module JSX {
++>JSX : any
++
+ 	interface Element { }
++>Element : Element
++
+ 	interface IntrinsicElements {
++>IntrinsicElements : IntrinsicElements
++
+ 		div: any
+ >div : any
+ 	}
+@@= skipped -9, +15 lines =@@
+ 
+ const t = {tag:'h1'}
+ >t : { tag: string; }
+->  : ^^^^^^^^^^^^^^^^
+ >{tag:'h1'} : { tag: string; }
+->           : ^^^^^^^^^^^^^^^^
+ >tag : string
+->    : ^^^^^^
+ >'h1' : "h1"
+->     : ^^^^
+ 
+ const foo = <t.tag/>  // No error
+->foo : JSX.Element
+->    : ^^^^^^^^^^^
+-><t.tag/> : JSX.Element
+->         : ^^^^^^^^^^^
++>foo : any
++><t.tag/> : any
+ >t.tag : string
+->      : ^^^^^^
+ >t : { tag: string; }
+->  : ^^^^^^^^^^^^^^^^
+ >tag : string
+->    : ^^^^^^
+ 

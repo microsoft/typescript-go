@@ -1,0 +1,10 @@
+--- old.parserForInStatement1.d.types
++++ new.parserForInStatement1.d.types
+@@= skipped -2, +2 lines =@@
+ === parserForInStatement1.d.ts ===
+ for (var i in e) {
+ >i : string
+->  : ^^^^^^
+ >e : any
+->  : ^^^
+ }

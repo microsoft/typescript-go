@@ -1,0 +1,25 @@
+--- old.nonPrimitiveIndexingWithForInSupressError.types
++++ new.nonPrimitiveIndexingWithForInSupressError.types
+@@= skipped -2, +2 lines =@@
+ === nonPrimitiveIndexingWithForInSupressError.ts ===
+ var a: object;
+ >a : object
+->  : ^^^^^^
+ 
+ for (var key in a) {
+ >key : string
+->    : ^^^^^^
+ >a : object
+->  : ^^^^^^
+ 
+     var value = a[key];
+ >value : any
+->      : ^^^
+ >a[key] : any
+->       : ^^^
+ >a : object
+->  : ^^^^^^
+ >key : string
+->    : ^^^^^^
+ }
+ 

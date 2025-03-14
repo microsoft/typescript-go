@@ -1,0 +1,44 @@
+--- old.commentOnBinaryOperator2.types
++++ new.commentOnBinaryOperator2.types
+@@= skipped -2, +2 lines =@@
+ === commentOnBinaryOperator2.ts ===
+ var a = 'some'
+ >a : string
+->  : ^^^^^^
+ >'some'    // comment    + 'text' : string
+->                                 : ^^^^^^
+ >'some' : "some"
+->       : ^^^^^^
+ 
+     // comment
+     + 'text';
+ >'text' : "text"
+->       : ^^^^^^
+ 
+ var b = 'some'
+ >b : string
+->  : ^^^^^^
+ >'some'    /* comment */    + 'text' : string
+->                                    : ^^^^^^
+ >'some' : "some"
+->       : ^^^^^^
+ 
+     /* comment */
+     + 'text';
+ >'text' : "text"
+->       : ^^^^^^
+ 
+ var c = 'some'
+ >c : string
+->  : ^^^^^^
+ >'some'    /* comment */    + /*comment1*/    'text' : string
+->                                                    : ^^^^^^
+ >'some' : "some"
+->       : ^^^^^^
+ 
+     /* comment */
+     + /*comment1*/
+     'text';
+ >'text' : "text"
+->       : ^^^^^^
+ 

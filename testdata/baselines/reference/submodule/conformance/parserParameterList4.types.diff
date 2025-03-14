@@ -1,0 +1,10 @@
+--- old.parserParameterList4.types
++++ new.parserParameterList4.types
+@@= skipped -2, +2 lines =@@
+ === parserParameterList4.ts ===
+ function F(public A) {
+ >F : (A: any) => void
+->  : ^ ^^^^^^^^^^^^^^
+ >A : any
+->  : ^^^
+ }

@@ -1,0 +1,87 @@
+--- old.moduleElementsInWrongContext.types
++++ new.moduleElementsInWrongContext.types
+@@= skipped -2, +2 lines =@@
+ === moduleElementsInWrongContext.ts ===
+ {
+     module M { }
++>M : any
++
+     export namespace N {
++>N : any
++
+         export interface I { }
++>I : I
+     }
+ 
+     namespace Q.K { }
++>Q : any
++>K : any
+ 
+     declare module "ambient" {
+->"ambient" : typeof Foo
+->          : ^^^^^^^^^^
++>"ambient" : typeof import("ambient")
+ 
+     }
+ 
+     export = M;
+ >M : any
+->  : ^^^
+ 
+     var v;
+ >v : any
+->  : ^^^
+ 
+     function foo() { }
+ >foo : () => void
+->    : ^^^^^^^^^^
+ 
+     export * from "ambient";
+     export { foo };
+ >foo : () => void
+->    : ^^^^^^^^^^
+ 
+     export { baz as b } from "ambient";
+ >baz : any
+->    : ^^^
+ >b : any
+->  : ^^^
+ 
+     export default v;
+ >v : any
+->  : ^^^
+ 
+     export default class C { }
+ >C : C
+->  : ^
+ 
+     export function bee() { }
+ >bee : () => void
+->    : ^^^^^^^^^^
+ 
+     import I = M;
+ >I : any
+->  : ^^^
+ >M : any
+->  : ^^^
+ 
+     import I2 = require("foo");
+ >I2 : any
+->   : ^^^
+ 
+     import * as Foo from "ambient";
+->Foo : typeof Foo
+->    : ^^^^^^^^^^
++>Foo : typeof import("ambient")
+ 
+     import bar from "ambient";
+->bar : any
+->    : ^^^
++>bar : typeof import("ambient")
+ 
+     import { baz } from "ambient";
+ >baz : any
+->    : ^^^
+ 
+     import "ambient";
+ }

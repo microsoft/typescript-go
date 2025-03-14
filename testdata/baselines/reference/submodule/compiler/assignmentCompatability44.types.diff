@@ -1,0 +1,19 @@
+--- old.assignmentCompatability44.types
++++ new.assignmentCompatability44.types
+@@= skipped -2, +2 lines =@@
+ === assignmentCompatability44.ts ===
+ class Foo {
+ >Foo : Foo
+->    : ^^^
+ 
+     constructor(x: number) {}
+ >x : number
+->  : ^^^^^^
+ }
+ 
+ const foo: { new(): Foo } = Foo;
+ >foo : new () => Foo
+->    : ^^^^^^^^^^   
+ >Foo : typeof Foo
+->    : ^^^^^^^^^^
+ 

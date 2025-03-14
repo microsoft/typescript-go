@@ -1,0 +1,12 @@
+--- old.ambientClassOverloadForFunction.types
++++ new.ambientClassOverloadForFunction.types
+@@= skipped -2, +2 lines =@@
+ === ambientClassOverloadForFunction.ts ===
+ declare class foo{};
+ >foo : foo
+->    : ^^^
+ 
+ function foo() { return null; }
+ >foo : typeof foo
+->    : ^^^^^^^^^^
+ 

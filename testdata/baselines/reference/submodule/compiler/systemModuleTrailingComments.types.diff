@@ -1,0 +1,11 @@
+--- old.systemModuleTrailingComments.types
++++ new.systemModuleTrailingComments.types
+@@= skipped -2, +2 lines =@@
+ === systemModuleTrailingComments.ts ===
+ export const test = "TEST";
+ >test : "TEST"
+->     : ^^^^^^
+ >"TEST" : "TEST"
+->       : ^^^^^^
+ 
+ //some comment

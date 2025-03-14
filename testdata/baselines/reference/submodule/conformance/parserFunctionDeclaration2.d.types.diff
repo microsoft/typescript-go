@@ -1,0 +1,8 @@
+--- old.parserFunctionDeclaration2.d.types
++++ new.parserFunctionDeclaration2.d.types
+@@= skipped -2, +2 lines =@@
+ === parserFunctionDeclaration2.d.ts ===
+ function F() {
+ >F : () => void
+->  : ^^^^^^^^^^
+ }

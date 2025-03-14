@@ -1,0 +1,22 @@
+--- old.functionOverloads1.types
++++ new.functionOverloads1.types
+@@= skipped -2, +2 lines =@@
+ === functionOverloads1.ts ===
+ function foo();
+ >foo : { (): any; (): string; }
+->    : ^^^^^^^^^^^^^^^      ^^^
+ 
+ 1+1;
+ >1+1 : number
+->    : ^^^^^^
+ >1 : 1
+->  : ^
+ >1 : 1
+->  : ^
+ 
+ function foo():string { return "a" }
+ >foo : { (): any; (): string; }
+->    : ^^^^^^^^^^^^^^^      ^^^
+ >"a" : "a"
+->    : ^^^
+ 

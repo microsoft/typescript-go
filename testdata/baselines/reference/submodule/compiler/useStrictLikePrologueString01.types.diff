@@ -1,0 +1,16 @@
+--- old.useStrictLikePrologueString01.types
++++ new.useStrictLikePrologueString01.types
+@@= skipped -2, +2 lines =@@
+ === useStrictLikePrologueString01.ts ===
+ "hey!"
+ >"hey!" : "hey!"
+->       : ^^^^^^
+ 
+ " use strict "
+ >" use strict " : " use strict "
+->               : ^^^^^^^^^^^^^^
+ 
+ export function f() {   
+ >f : () => void
+->  : ^^^^^^^^^^
+ }

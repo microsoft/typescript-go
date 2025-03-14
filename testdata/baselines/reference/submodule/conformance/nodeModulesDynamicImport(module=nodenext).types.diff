@@ -1,0 +1,34 @@
+--- old.nodeModulesDynamicImport(module=nodenext).types
++++ new.nodeModulesDynamicImport(module=nodenext).types
+@@= skipped -3, +3 lines =@@
+ // cjs format file
+ export async function main() {
+ >main : () => Promise<void>
+->     : ^^^^^^^^^^^^^^^^^^^
+ 
+     const { readFile } = await import("fs");
+ >readFile : any
+->         : ^^^
+ >await import("fs") : any
+ >import("fs") : Promise<any>
+->             : ^^^^^^^^^^^^
+ >"fs" : "fs"
+->     : ^^^^
+ }
+ === index.ts ===
+ // esm format file
+ export async function main() {
+ >main : () => Promise<void>
+->     : ^^^^^^^^^^^^^^^^^^^
+ 
+     const { readFile } = await import("fs");
+ >readFile : any
+->         : ^^^
+ >await import("fs") : any
+ >import("fs") : Promise<any>
+->             : ^^^^^^^^^^^^
+ >"fs" : "fs"
+->     : ^^^^
+ }
+ === types.d.ts ===
+ declare module "fs";

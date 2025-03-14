@@ -1,0 +1,16 @@
+--- old.exportRedeclarationTypeAliases.types
++++ new.exportRedeclarationTypeAliases.types
+@@= skipped -2, +2 lines =@@
+ === exportRedeclarationTypeAliases.ts ===
+ export type Foo = number;
+ >Foo : number
+->    : ^^^^^^
+ 
+ export function Foo(): number;
+ >Foo : () => number
+->    : ^^^^^^      
+ 
+ export function Foo(): any {}
+ >Foo : () => number
+->    : ^^^^^^      
+ 

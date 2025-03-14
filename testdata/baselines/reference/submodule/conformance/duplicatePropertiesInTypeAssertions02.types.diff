@@ -1,0 +1,16 @@
+--- old.duplicatePropertiesInTypeAssertions02.types
++++ new.duplicatePropertiesInTypeAssertions02.types
+@@= skipped -2, +2 lines =@@
+ === duplicatePropertiesInTypeAssertions02.ts ===
+ let x = {} as {a: number; a: number};
+ >x : { a: number; }
+->  : ^^^^^      ^^^
+ >{} as {a: number; a: number} : { a: number; }
+->                             : ^^^^^      ^^^
+ >{} : {}
+->   : ^^
+ >a : number
+->  : ^^^^^^
+ >a : number
+->  : ^^^^^^
+ 

@@ -1,0 +1,23 @@
+--- old.parenthesizedArrowExpressionASI.types
++++ new.parenthesizedArrowExpressionASI.types
+@@= skipped -2, +2 lines =@@
+ === parenthesizedArrowExpressionASI.ts ===
+ const x = (a: any[]) => (
+ >x : (a: any[]) => number
+->  : ^ ^^     ^^^^^^^^^^^
+ >(a: any[]) => (    // comment    undefined as number) : (a: any[]) => number
+->                                                      : ^ ^^     ^^^^^^^^^^^
+ >a : any[]
+->  : ^^^^^
+ >(    // comment    undefined as number) : number
+->                                        : ^^^^^^
+ 
+     // comment
+     undefined as number
+ >undefined as number : number
+->                    : ^^^^^^
+ >undefined : undefined
+->          : ^^^^^^^^^
+ 
+ );
+ 

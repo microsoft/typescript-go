@@ -1,0 +1,19 @@
+--- old.parserStrictMode11.types
++++ new.parserStrictMode11.types
+@@= skipped -2, +2 lines =@@
+ === parserStrictMode11.ts ===
+ "use strict";
+ >"use strict" : "use strict"
+->             : ^^^^^^^^^^^^
+ 
+ var v = function f(eval) {
+ >v : (eval: any) => void
+->  : ^    ^^^^^^^^^^^^^^
+ >function f(eval) {} : (eval: any) => void
+->                    : ^    ^^^^^^^^^^^^^^
+ >f : (eval: any) => void
+->  : ^    ^^^^^^^^^^^^^^
+ >eval : any
+->     : ^^^
+ 
+ };

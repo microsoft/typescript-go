@@ -1,0 +1,10 @@
+--- old.unicodeExtendedEscapesInRegularExpressions06(target=es5).types
++++ new.unicodeExtendedEscapesInRegularExpressions06(target=es5).types
+@@= skipped -4, +4 lines =@@
+ //  1. Assert: 0 ≤ cp ≤ 0x10FFFF.
+ var x = /\u{10FFFF}/gu;
+ >x : RegExp
+->  : ^^^^^^
+ >/\u{10FFFF}/gu : RegExp
+->               : ^^^^^^
+ 

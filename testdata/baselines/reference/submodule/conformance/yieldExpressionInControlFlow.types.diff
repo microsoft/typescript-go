@@ -1,0 +1,56 @@
+--- old.yieldExpressionInControlFlow.types
++++ new.yieldExpressionInControlFlow.types
+@@= skipped -2, +2 lines =@@
+ === bug25149.js ===
+ function* f() {
+ >f : () => Generator<any, void, any>
+->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+     var o
+ >o : any
+->  : ^^^
+ 
+     while (true) {
+ >true : true
+->     : ^^^^
+ 
+         o = yield o
+ >o = yield o : any
+->            : ^^^
+ >o : any
+->  : ^^^
+ >yield o : any
+->        : ^^^
+ >o : any
+->  : ^^^
+     }
+ }
+ 
+@@= skipped -26, +19 lines =@@
+ // fails in Typescript too
+ function* g() {
+ >g : () => Generator<any, void, any>
+->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+     var o = []
+ >o : any[]
+->  : ^^^^^
+ >[] : undefined[]
+->   : ^^^^^^^^^^^
+ 
+     while (true) {
+ >true : true
+->     : ^^^^
+ 
+         o = yield* o
+ >o = yield* o : any
+->             : ^^^
+ >o : any[]
+->  : ^^^^^
+ >yield* o : any
+->         : ^^^
+ >o : any
+->  : ^^^
+     }
+ }
+ 

@@ -1,0 +1,26 @@
+--- old.privateNameHashCharName.types
++++ new.privateNameHashCharName.types
+@@= skipped -4, +4 lines =@@
+ 
+ class C {
+ >C : C
+->  : ^
+ 
+     #
+-># : any
+->  : ^^^
+ 
+     m() {
+ >m : () => void
+->  : ^^^^^^^^^^
+ 
+         this.#
+->this.# : any
+->       : ^^^
++>this. : any
+ >this : this
+->     : ^^^^
++> : any
+     }
+ }
+ 

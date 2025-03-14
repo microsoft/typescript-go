@@ -1,0 +1,23 @@
+--- old.nestedRedeclarationInES6AMD.types
++++ new.nestedRedeclarationInES6AMD.types
+@@= skipped -2, +2 lines =@@
+ === nestedRedeclarationInES6AMD.ts ===
+ function a() {
+ >a : () => void
+->  : ^^^^^^^^^^
+     {
+         let status = 1;
+ >status : number
+->       : ^^^^^^
+ >1 : 1
+->  : ^
+ 
+         status = 2;
+ >status = 2 : 2
+->           : ^
+ >status : number
+->       : ^^^^^^
+ >2 : 2
+->  : ^
+     }
+ }

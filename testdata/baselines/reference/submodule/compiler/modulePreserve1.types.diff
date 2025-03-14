@@ -1,0 +1,30 @@
+--- old.modulePreserve1.types
++++ new.modulePreserve1.types
+@@= skipped -2, +2 lines =@@
+ === /main.ts ===
+ import { A } from "./a";
+ >A : typeof A
+->  : ^^^^^^^^
+ 
+ import B = require("./b");
+ >B : typeof B
+->  : ^^^^^^^^
+ 
+ export { A, B };
+ >A : typeof A
+->  : ^^^^^^^^
+ >B : typeof B
+->  : ^^^^^^^^
+ 
+ === /a.ts ===
+ export class A {}
+ >A : A
+->  : ^
+ 
+ === /b.ts ===
+ export = class B {}
+ >class B {} : typeof B
+->           : ^^^^^^^^
+ >B : typeof B
+->  : ^^^^^^^^
+ 

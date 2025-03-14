@@ -1,0 +1,14 @@
+--- old.parserAccessors5.types
++++ new.parserAccessors5.types
+@@= skipped -2, +2 lines =@@
+ === parserAccessors5.ts ===
+ declare class C {
+ >C : C
+->  : ^
+ 
+   get foo() { return 0; }
+ >foo : number
+->    : ^^^^^^
+ >0 : 0
+->  : ^
+ }

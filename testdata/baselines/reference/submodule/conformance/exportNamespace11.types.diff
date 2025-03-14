@@ -1,0 +1,34 @@
+--- old.exportNamespace11.types
++++ new.exportNamespace11.types
+@@= skipped -1, +1 lines =@@
+ 
+ === main.ts ===
+ import * as intermediate from './intermediate'
+->intermediate : typeof intermediate
+->             : ^^^^^^^^^^^^^^^^^^^
++>intermediate : typeof import("intermediate")
+ 
+ const ghost: intermediate.Ghost = new intermediate.Ghost()
+->ghost : intermediate.Ghost
+->      : ^^^^^^^^^^^^^^^^^^
++>ghost : Ghost
+ >intermediate : any
+->             : ^^^
+ >new intermediate.Ghost() : any
+->                         : ^^^
+ >intermediate.Ghost : any
+->                   : ^^^
+->intermediate : typeof intermediate
+->             : ^^^^^^^^^^^^^^^^^^^
++>intermediate : typeof import("intermediate")
+ >Ghost : any
+->      : ^^^
+ 
+ === intermediate.ts ===
+ 
+@@= skipped -24, +17 lines =@@
+ === ghost.ts ===
+ export class Ghost {}
+ >Ghost : Ghost
+->      : ^^^^^
+ 

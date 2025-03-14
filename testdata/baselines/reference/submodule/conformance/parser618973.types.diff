@@ -1,0 +1,13 @@
+--- old.parser618973.types
++++ new.parser618973.types
+@@= skipped -2, +2 lines =@@
+ === parser618973.ts ===
+ export export class Foo {
+ >Foo : Foo
+->    : ^^^
+ 
+   public Bar() {
+ >Bar : () => void
+->    : ^^^^^^^^^^
+   }
+ }

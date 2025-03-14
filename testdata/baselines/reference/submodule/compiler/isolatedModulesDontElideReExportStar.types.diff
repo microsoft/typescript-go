@@ -1,0 +1,10 @@
+--- old.isolatedModulesDontElideReExportStar.types
++++ new.isolatedModulesDontElideReExportStar.types
+@@= skipped -2, +2 lines =@@
+ === /a.ts ===
+ export type T = number;
+ >T : number
+->  : ^^^^^^
+ 
+ === /b.ts ===
+ 

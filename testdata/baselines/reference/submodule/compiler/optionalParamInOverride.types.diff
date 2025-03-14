@@ -1,0 +1,24 @@
+--- old.optionalParamInOverride.types
++++ new.optionalParamInOverride.types
+@@= skipped -2, +2 lines =@@
+ === optionalParamInOverride.ts ===
+ class Z {
+ >Z : Z
+->  : ^
+ 
+     public func(): void { }
+ >func : () => void
+->     : ^^^^^^    
+ }
+ class Y extends Z {
+ >Y : Y
+->  : ^
+ >Z : Z
+->  : ^
+ 
+     public func(value?: any): void { }
+ >func : (value?: any) => void
+->     : ^     ^^^   ^^^^^    
+ >value : any
+ }
+ 

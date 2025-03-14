@@ -1,0 +1,12 @@
+--- old.binaryArithmatic1.types
++++ new.binaryArithmatic1.types
+@@= skipped -2, +2 lines =@@
+ === binaryArithmatic1.ts ===
+ var v = 4 | null;
+ >v : number
+->  : ^^^^^^
+ >4 | null : number
+->         : ^^^^^^
+ >4 : 4
+->  : ^
+ 

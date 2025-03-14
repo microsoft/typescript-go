@@ -1,0 +1,28 @@
+--- old.unusedClassesinNamespace3.types
++++ new.unusedClassesinNamespace3.types
+@@= skipped -2, +2 lines =@@
+ === unusedClassesinNamespace3.ts ===
+ namespace Validation {
+ >Validation : typeof Validation
+->           : ^^^^^^^^^^^^^^^^^
+ 
+     class c1 {
+ >c1 : c1
+->   : ^^
+ 
+     }
+ 
+     export class c2 {
+ >c2 : c2
+->   : ^^
+ 
+     }
+ 
+     export let a = new c1();
+ >a : c1
+->  : ^^
+ >new c1() : c1
+->         : ^^
+ >c1 : typeof c1
+->   : ^^^^^^^^^
+ }

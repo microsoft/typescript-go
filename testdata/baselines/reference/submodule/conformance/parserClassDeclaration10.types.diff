@@ -1,0 +1,13 @@
+--- old.parserClassDeclaration10.types
++++ new.parserClassDeclaration10.types
+@@= skipped -2, +2 lines =@@
+ === parserClassDeclaration10.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+    constructor();
+    foo();
+ >foo : () => any
+->    : ^^^^^^^^^
+ }

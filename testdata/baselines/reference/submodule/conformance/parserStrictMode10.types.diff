@@ -1,0 +1,14 @@
+--- old.parserStrictMode10.types
++++ new.parserStrictMode10.types
+@@= skipped -2, +2 lines =@@
+ === parserStrictMode10.ts ===
+ "use strict";
+ >"use strict" : "use strict"
+->             : ^^^^^^^^^^^^
+ 
+ function f(eval) {
+ >f : (eval: any) => void
+->  : ^    ^^^^^^^^^^^^^^
+ >eval : any
+->     : ^^^
+ }

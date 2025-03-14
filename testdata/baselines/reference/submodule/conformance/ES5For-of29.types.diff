@@ -1,0 +1,32 @@
+--- old.ES5For-of29.types
++++ new.ES5For-of29.types
+@@= skipped -2, +2 lines =@@
+ === ES5For-of29.ts ===
+ for (const {x: a = 0, y: b = 1} of [2, 3]) {
+ >x : any
+->  : ^^^
+ >a : any
+->  : ^^^
+ >0 : 0
+->  : ^
+ >y : any
+->  : ^^^
+ >b : any
+->  : ^^^
+ >1 : 1
+->  : ^
+ >[2, 3] : number[]
+->       : ^^^^^^^^
+ >2 : 2
+->  : ^
+ >3 : 3
+->  : ^
+ 
+     a;
+ >a : any
+->  : ^^^
+ 
+     b;
+ >b : any
+->  : ^^^
+ }

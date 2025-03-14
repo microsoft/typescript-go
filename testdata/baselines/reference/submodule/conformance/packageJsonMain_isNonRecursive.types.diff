@@ -1,0 +1,8 @@
+--- old.packageJsonMain_isNonRecursive.types
++++ new.packageJsonMain_isNonRecursive.types
+@@= skipped -2, +2 lines =@@
+ === /a.ts ===
+ import foo = require("foo");
+ >foo : any
+->    : ^^^
+ 

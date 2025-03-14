@@ -1,0 +1,13 @@
+--- old.unusedParametersinConstructor1.types
++++ new.unusedParametersinConstructor1.types
+@@= skipped -2, +2 lines =@@
+ === unusedParametersinConstructor1.ts ===
+ class greeter {
+ >greeter : greeter
+->        : ^^^^^^^
+ 
+     constructor(param1: string) {
+ >param1 : string
+->       : ^^^^^^
+     }
+ }

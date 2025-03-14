@@ -1,0 +1,18 @@
+--- old.jsdocImportTypeResolution.types
++++ new.jsdocImportTypeResolution.types
+@@= skipped -2, +2 lines =@@
+ === module.js ===
+ export class MyClass {
+ >MyClass : MyClass
+->        : ^^^^^^^
+ }
+ 
+ === usage.js ===
+@@= skipped -10, +9 lines =@@
+  */
+ /** @type {options} */
+ let v;
+->v : options
+->  : ^^^^^^^
++>v : any
+ 

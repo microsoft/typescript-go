@@ -1,0 +1,48 @@
+--- old.genericPrototypeProperty2.types
++++ new.genericPrototypeProperty2.types
+@@= skipped -1, +1 lines =@@
+ 
+ === genericPrototypeProperty2.ts ===
+ interface EventTarget { x } 
++>EventTarget : EventTarget
+ >x : any
+ 
+ class BaseEvent {
+ >BaseEvent : BaseEvent
+->          : ^^^^^^^^^
+ 
+     target: EventTarget;
+ >target : EventTarget
+->       : ^^^^^^^^^^^
+ }
+ 
+ class MyEvent<T extends EventTarget> extends BaseEvent {
+ >MyEvent : MyEvent<T>
+->        : ^^^^^^^^^^
++>T : T
+ >BaseEvent : BaseEvent
+->          : ^^^^^^^^^
+ 
+     target: T;
+ >target : T
+->       : ^
+ }
+ class BaseEventWrapper {
+ >BaseEventWrapper : BaseEventWrapper
+->                 : ^^^^^^^^^^^^^^^^
+ 
+     t: BaseEvent;
+ >t : BaseEvent
+->  : ^^^^^^^^^
+ }
+ 
+ class MyEventWrapper extends BaseEventWrapper {
+ >MyEventWrapper : MyEventWrapper
+->               : ^^^^^^^^^^^^^^
+ >BaseEventWrapper : BaseEventWrapper
+->                 : ^^^^^^^^^^^^^^^^
+ 
+     t: MyEvent<any>; // any satisfies constraint and passes assignability check between 'target' properties
+ >t : MyEvent<any>
+->  : ^^^^^^^^^^^^
+ }

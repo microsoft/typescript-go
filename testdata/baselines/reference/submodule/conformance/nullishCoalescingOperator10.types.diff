@@ -1,0 +1,21 @@
+--- old.nullishCoalescingOperator10.types
++++ new.nullishCoalescingOperator10.types
+@@= skipped -2, +2 lines =@@
+ === nullishCoalescingOperator10.ts ===
+ declare function f(): string | undefined;
+ >f : () => string | undefined
+->  : ^^^^^^                  
+ 
+ let gg = f() ?? 'foo'
+ >gg : string
+->   : ^^^^^^
+ >f() ?? 'foo' : string
+->             : ^^^^^^
+ >f() : string | undefined
+->    : ^^^^^^^^^^^^^^^^^^
+ >f : () => string | undefined
+->  : ^^^^^^                  
+ >'foo' : "foo"
+->      : ^^^^^
+ 
+ 

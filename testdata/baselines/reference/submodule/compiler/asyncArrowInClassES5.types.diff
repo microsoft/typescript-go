@@ -1,0 +1,17 @@
+--- old.asyncArrowInClassES5.types
++++ new.asyncArrowInClassES5.types
+@@= skipped -5, +5 lines =@@
+ 
+ class Test {
+ >Test : Test
+->     : ^^^^
+ 
+     static member = async (x: string) => { };
+ >member : (x: string) => Promise<void>
+->       : ^ ^^      ^^^^^^^^^^^^^^^^^^
+ >async (x: string) => { } : (x: string) => Promise<void>
+->                         : ^ ^^      ^^^^^^^^^^^^^^^^^^
+ >x : string
+->  : ^^^^^^
+ }
+ 

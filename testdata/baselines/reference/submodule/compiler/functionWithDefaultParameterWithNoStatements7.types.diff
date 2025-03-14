@@ -1,0 +1,20 @@
+--- old.functionWithDefaultParameterWithNoStatements7.types
++++ new.functionWithDefaultParameterWithNoStatements7.types
+@@= skipped -2, +2 lines =@@
+ === functionWithDefaultParameterWithNoStatements7.ts ===
+ function foo(a = false) { }
+ >foo : (a?: boolean) => void
+->    : ^ ^^^^^^^^^^^^^^^^^^^
+ >a : boolean
+->  : ^^^^^^^
+ >false : false
+->      : ^^^^^
+ 
+ function bar(a = false) {
+ >bar : (a?: boolean) => void
+->    : ^ ^^^^^^^^^^^^^^^^^^^
+ >a : boolean
+->  : ^^^^^^^
+ >false : false
+->      : ^^^^^
+ }

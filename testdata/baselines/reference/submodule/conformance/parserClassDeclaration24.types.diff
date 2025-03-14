@@ -1,0 +1,8 @@
+--- old.parserClassDeclaration24.types
++++ new.parserClassDeclaration24.types
+@@= skipped -2, +2 lines =@@
+ === parserClassDeclaration24.ts ===
+ class any {
+ >any : any
+->    : ^^^
+ }

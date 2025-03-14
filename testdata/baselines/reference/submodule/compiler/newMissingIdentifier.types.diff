@@ -1,0 +1,14 @@
+--- old.newMissingIdentifier.types
++++ new.newMissingIdentifier.types
+@@= skipped -2, +2 lines =@@
+ === newMissingIdentifier.ts ===
+ var x = new ();
+ >x : any
+->  : ^^^
+ >new () : any
+->       : ^^^
+ >() : any
+->   : ^^^
+ > : any
+-> : ^^^
+ 

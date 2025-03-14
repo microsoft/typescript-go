@@ -1,0 +1,22 @@
+--- old.classIndexer2.types
++++ new.classIndexer2.types
+@@= skipped -2, +2 lines =@@
+ === classIndexer2.ts ===
+ class C123 {
+ >C123 : C123
+->     : ^^^^
+ 
+     [s: string]: number;
+ >s : string
+->  : ^^^^^^
+ 
+     x: number;
+ >x : number
+->  : ^^^^^^
+ 
+     y: string;
+ >y : string
+->  : ^^^^^^
+ 
+     constructor() {
+     }

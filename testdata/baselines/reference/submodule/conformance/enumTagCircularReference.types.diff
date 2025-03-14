@@ -1,0 +1,14 @@
+--- old.enumTagCircularReference.types
++++ new.enumTagCircularReference.types
+@@= skipped -3, +3 lines =@@
+ /** @enum {E} */
+ const E = { x: 0 };
+ >E : { x: number; }
+->  : ^^^^^^^^^^^^^^
+ >{ x: 0 } : { x: number; }
+->         : ^^^^^^^^^^^^^^
+ >x : number
+->  : ^^^^^^
+ >0 : 0
+->  : ^
+ 

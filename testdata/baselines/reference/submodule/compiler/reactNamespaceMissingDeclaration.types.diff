@@ -1,0 +1,13 @@
+--- old.reactNamespaceMissingDeclaration.types
++++ new.reactNamespaceMissingDeclaration.types
+@@= skipped -3, +3 lines =@@
+ // Error myReactLib not declared
+ <foo data/>
+ ><foo data/> : any
+->            : ^^^
+ >foo : any
+->    : ^^^
+->data : true
+->     : ^^^^
++>data : any
+ 

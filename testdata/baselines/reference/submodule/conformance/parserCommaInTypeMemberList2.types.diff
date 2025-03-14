@@ -1,0 +1,34 @@
+--- old.parserCommaInTypeMemberList2.types
++++ new.parserCommaInTypeMemberList2.types
+@@= skipped -2, +2 lines =@@
+ === parserCommaInTypeMemberList2.ts ===
+ var s = $.extend< { workItem: any }, { workItem: any, width: string }>({ workItem: this._workItem }, {});
+ >s : any
+->  : ^^^
+ >$.extend< { workItem: any }, { workItem: any, width: string }>({ workItem: this._workItem }, {}) : any
+->                                                                                                 : ^^^
+ >$.extend : any
+->         : ^^^
+ >$ : any
+->  : ^^^
+ >extend : any
+->       : ^^^
+ >workItem : any
+->         : ^^^
+ >workItem : any
+->         : ^^^
+ >width : string
+->      : ^^^^^^
+ >{ workItem: this._workItem } : { workItem: any; }
+->                             : ^^^^^^^^^^^^^^^^^^
+ >workItem : any
+->         : ^^^
+ >this._workItem : any
+->               : ^^^
+ >this : typeof globalThis
+->     : ^^^^^^^^^^^^^^^^^
+ >_workItem : any
+->          : ^^^
+ >{} : {}
+->   : ^^
+ 

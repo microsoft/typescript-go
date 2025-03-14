@@ -1,0 +1,20 @@
+--- old.superCallBeforeThisAccessing5.types
++++ new.superCallBeforeThisAccessing5.types
+@@= skipped -2, +2 lines =@@
+ === superCallBeforeThisAccessing5.ts ===
+ class D extends null {
+ >D : D
+->  : ^
+ 
+     private _t;
+ >_t : any
+@@= skipped -9, +8 lines =@@
+         this._t;  // No error
+ >this._t : any
+ >this : this
+->     : ^^^^
+ >_t : any
+->   : ^^^
+     }
+ }
+ 

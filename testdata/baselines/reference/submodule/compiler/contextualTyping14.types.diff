@@ -1,0 +1,18 @@
+--- old.contextualTyping14.types
++++ new.contextualTyping14.types
+@@= skipped -2, +2 lines =@@
+ === contextualTyping14.ts ===
+ class foo { public bar:(a:number)=>number = function(a){return a}; }
+ >foo : foo
+->    : ^^^
+ >bar : (a: number) => number
+->    : ^ ^^      ^^^^^      
+ >a : number
+->  : ^^^^^^
+ >function(a){return a} : (a: number) => number
+->                      : ^ ^^^^^^^^^^^^^^^^^^^
+ >a : number
+->  : ^^^^^^
+ >a : number
+->  : ^^^^^^
+ 

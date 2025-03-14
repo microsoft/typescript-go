@@ -1,0 +1,10 @@
+--- old.unicodeExtendedEscapesInRegularExpressions13(target=es6).types
++++ new.unicodeExtendedEscapesInRegularExpressions13(target=es6).types
+@@= skipped -2, +2 lines =@@
+ === unicodeExtendedEscapesInRegularExpressions13.ts ===
+ var x = /\u{DDDDD}/gu;
+ >x : RegExp
+->  : ^^^^^^
+ >/\u{DDDDD}/gu : RegExp
+->              : ^^^^^^
+ 

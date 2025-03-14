@@ -1,0 +1,18 @@
+--- old.conditionalExpressionNewLine3.types
++++ new.conditionalExpressionNewLine3.types
+@@= skipped -2, +2 lines =@@
+ === conditionalExpressionNewLine3.ts ===
+ var v = a ?
+ >v : any
+->  : ^^^
+ >a ?  b : c : any
+->           : ^^^
+ >a : any
+->  : ^^^
+ 
+   b : c;
+ >b : any
+->  : ^^^
+ >c : any
+->  : ^^^
+ 

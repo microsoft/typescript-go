@@ -1,0 +1,25 @@
+--- old.nonPrimitiveIndexingWithForInNoImplicitAny.types
++++ new.nonPrimitiveIndexingWithForInNoImplicitAny.types
+@@= skipped -2, +2 lines =@@
+ === nonPrimitiveIndexingWithForInNoImplicitAny.ts ===
+ var a: object;
+ >a : object
+->  : ^^^^^^
+ 
+ for (var key in a) {
+ >key : string
+->    : ^^^^^^
+ >a : object
+->  : ^^^^^^
+ 
+     var value = a[key]; // error
+ >value : any
+->      : ^^^
+ >a[key] : any
+->       : ^^^
+ >a : object
+->  : ^^^^^^
+ >key : string
+->    : ^^^^^^
+ }
+ 

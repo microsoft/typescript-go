@@ -1,0 +1,39 @@
+--- old.enumExportMergingES6.types
++++ new.enumExportMergingES6.types
+@@= skipped -2, +2 lines =@@
+ === enumExportMergingES6.ts ===
+ export enum Animals {
+ >Animals : Animals
+->        : ^^^^^^^
+ 
+ 	Cat = 1
+ >Cat : Animals.Cat
+->    : ^^^^^^^^^^^
+ >1 : 1
+->  : ^
+ }
+ export enum Animals {
+ >Animals : Animals
+->        : ^^^^^^^
+ 
+ 	Dog = 2
+ >Dog : Animals.Dog
+->    : ^^^^^^^^^^^
+ >2 : 2
+->  : ^
+ }
+ export enum Animals {
+ >Animals : Animals
+->        : ^^^^^^^
+ 
+ 	CatDog = Cat | Dog
+ >CatDog : Animals.CatDog
+->       : ^^^^^^^^^^^^^^
+ >Cat | Dog : number
+->          : ^^^^^^
+ >Cat : Animals.Cat
+->    : ^^^^^^^^^^^
+ >Dog : Animals.Dog
+->    : ^^^^^^^^^^^
+ }
+ 

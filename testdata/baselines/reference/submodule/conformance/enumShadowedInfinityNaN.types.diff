@@ -1,0 +1,43 @@
+--- old.enumShadowedInfinityNaN.types
++++ new.enumShadowedInfinityNaN.types
+@@= skipped -5, +5 lines =@@
+ {
+   let Infinity = {};
+ >Infinity : {}
+->         : ^^
+ >{} : {}
+->   : ^^
+ 
+   enum En {
+->En : En
+->   : ^^
++>En : En.X
+ 
+     X = Infinity
+ >X : En.X
+->  : ^^^^
+ >Infinity : {}
+->         : ^^
+   }
+ }
+ 
+ {
+   let NaN = {};
+ >NaN : {}
+->    : ^^
+ >{} : {}
+->   : ^^
+ 
+   enum En {
+->En : En
+->   : ^^
++>En : En.X
+ 
+     X = NaN
+ >X : En.X
+->  : ^^^^
+ >NaN : {}
+->    : ^^
+   }
+ }
+ 

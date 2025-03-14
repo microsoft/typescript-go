@@ -1,0 +1,32 @@
+--- old.privateNameLateSuper.types
++++ new.privateNameLateSuper.types
+@@= skipped -2, +2 lines =@@
+ === privateNameLateSuper.ts ===
+ class B {}
+ >B : B
+->  : ^
+ 
+ class A extends B {
+ >A : A
+->  : ^
+ >B : B
+->  : ^
+ 
+     #x;
+ >#x : any
+@@= skipped -14, +11 lines =@@
+     constructor() {
+         void 0;
+ >void 0 : undefined
+->       : ^^^^^^^^^
+ >0 : 0
+->  : ^
+ 
+         super();
+ >super() : void
+->        : ^^^^
+ >super : typeof B
+->      : ^^^^^^^^
+     }
+ }
+ 

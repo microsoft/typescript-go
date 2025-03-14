@@ -1,0 +1,16 @@
+--- old.commentOnClassMethod1.types
++++ new.commentOnClassMethod1.types
+@@= skipped -2, +2 lines =@@
+ === commentOnClassMethod1.ts ===
+ class WebControls {
+ >WebControls : WebControls
+->            : ^^^^^^^^^^^
+ 
+     /**
+      * Render a control
+      */
+     createControl(): any {
+ >createControl : () => any
+->              : ^^^^^^   
+     }
+ }

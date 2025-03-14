@@ -1,0 +1,45 @@
+--- old.parserArrowFunctionExpression12.types
++++ new.parserArrowFunctionExpression12.types
+@@= skipped -2, +2 lines =@@
+ === fileJs.js ===
+ a ? (b) => (c): d => e // Legal JS
+ >a ? (b) => (c): d => e : (b: any) => any
+->                       : ^ ^^^^^^^^^^^^^
+ >a : any
+->  : ^^^
+ >(b) => (c) : (b: any) => any
+->           : ^ ^^^^^^^^^^^^^
+ >b : any
+->  : ^^^
+ >(c) : any
+->    : ^^^
+ >c : any
+->  : ^^^
+ >d => e : (d: any) => any
+->       : ^ ^^^^^^^^^^^^^
+ >d : any
+->  : ^^^
+ >e : any
+->  : ^^^
+ 
+ === fileTs.ts ===
+ a ? (b) => (c): d => e
+ >a ? (b) => (c): d => e : (b: any) => any
+->                       : ^ ^^^^^^^^^^^^^
+ >a : any
+->  : ^^^
+ >(b) => (c) : (b: any) => any
+->           : ^ ^^^^^^^^^^^^^
+ >b : any
+->  : ^^^
+ >(c) : any
+->    : ^^^
+ >c : any
+->  : ^^^
+ >d => e : (d: any) => any
+->       : ^ ^^^^^^^^^^^^^
+ >d : any
+->  : ^^^
+ >e : any
+->  : ^^^
+ 

@@ -1,0 +1,23 @@
+--- old.destructuringWithNewExpression.types
++++ new.destructuringWithNewExpression.types
+@@= skipped -2, +2 lines =@@
+ === destructuringWithNewExpression.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+     x = 0;
+ >x : number
+->  : ^^^^^^
+ >0 : 0
+->  : ^
+ }
+ 
+ var { x } = new C;
+ >x : number
+->  : ^^^^^^
+ >new C : C
+->      : ^
+ >C : typeof C
+->  : ^^^^^^^^
+ 

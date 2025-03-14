@@ -1,0 +1,38 @@
+--- old.exportNamespace6.types
++++ new.exportNamespace6.types
+@@= skipped -2, +2 lines =@@
+ === /a.ts ===
+ export class A {}
+ >A : A
+->  : ^
+ 
+ export class B {}
+ >B : B
+->  : ^
+ 
+ === /b.ts ===
+ 
+@@= skipped -17, +15 lines =@@
+ === /d.ts ===
+ import { A, B } from "./c";
+ >A : typeof A
+->  : ^^^^^^^^
+ >B : typeof B
+->  : ^^^^^^^^
+ 
+ let _: A = new A();  // Error
+ >_ : A
+->  : ^
+ >new A() : A
+->        : ^
+ >A : typeof A
+->  : ^^^^^^^^
+ 
+ let __: B = new B(); // Error
+ >__ : B
+->   : ^
+ >new B() : B
+->        : ^
+ >B : typeof B
+->  : ^^^^^^^^
+ 

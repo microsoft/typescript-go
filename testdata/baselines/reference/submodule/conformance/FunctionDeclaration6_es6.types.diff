@@ -1,0 +1,12 @@
+--- old.FunctionDeclaration6_es6.types
++++ new.FunctionDeclaration6_es6.types
+@@= skipped -2, +2 lines =@@
+ === FunctionDeclaration6_es6.ts ===
+ function*foo(a = yield) {
+ >foo : (a?: any) => Generator<never, void, unknown>
+->    : ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ >a : any
+->  : ^^^
+ >yield : any
+->      : ^^^
+ }

@@ -1,0 +1,138 @@
+--- old.classFieldSuperNotAccessibleJs.types
++++ new.classFieldSuperNotAccessibleJs.types
+@@= skipped -4, +4 lines =@@
+ 
+ class YaddaBase {
+ >YaddaBase : YaddaBase
+->          : ^^^^^^^^^
+ 
+     constructor() {
+         this.roots = "hi";
+ >this.roots = "hi" : "hi"
+->                  : ^^^^
+ >this.roots : any
+->           : ^^^
+ >this : this
+->     : ^^^^
+ >roots : any
+->      : ^^^
+ >"hi" : "hi"
+->     : ^^^^
+ 
+         /** @type number */
+         this.justProp;
+->this.justProp : number
+->              : ^^^^^^
++>this.justProp : any
+ >this : this
+->     : ^^^^
+->justProp : number
+->         : ^^^^^^
++>justProp : any
+ 
+         /** @type string */
+         this['literalElementAccess'];
+ >this['literalElementAccess'] : any
+->                             : ^^^
+ >this : this
+->     : ^^^^
+ >'literalElementAccess' : "literalElementAccess"
+->                       : ^^^^^^^^^^^^^^^^^^^^^^
+ 
+         this.b()
+ >this.b() : void
+->         : ^^^^
+ >this.b : () => void
+->       : ^^^^^^^^^^
+ >this : this
+->     : ^^^^
+ >b : () => void
+->  : ^^^^^^^^^^
+     }
+     accessor b = () => {
+ >b : () => void
+->  : ^^^^^^^^^^
+ >() => {        this.foo = 10    } : () => void
+->                                  : ^^^^^^^^^^
+ 
+         this.foo = 10
+ >this.foo = 10 : 10
+->              : ^^
+->this.foo : number | undefined
+->         : ^^^^^^^^^^^^^^^^^^
++>this.foo : any
+ >this : this
+->     : ^^^^
+->foo : number | undefined
+->    : ^^^^^^^^^^^^^^^^^^
++>foo : any
+ >10 : 10
+->   : ^^
+     }
+ }
+ 
+ class DerivedYadda extends YaddaBase {
+ >DerivedYadda : DerivedYadda
+->             : ^^^^^^^^^^^^
+ >YaddaBase : YaddaBase
+->          : ^^^^^^^^^
+ 
+     get rootTests() {
+->rootTests : string
+->          : ^^^^^^
++>rootTests : any
+ 
+         return super.roots;
+->super.roots : string
+->            : ^^^^^^
++>super.roots : any
+ >super : YaddaBase
+->      : ^^^^^^^^^
+->roots : string
+->      : ^^^^^^
++>roots : any
+     }
+     get fooTests() {
+->fooTests : number | undefined
+->         : ^^^^^^^^^^^^^^^^^^
++>fooTests : any
+ 
+         return super.foo;
+->super.foo : number | undefined
+->          : ^^^^^^^^^^^^^^^^^^
++>super.foo : any
+ >super : YaddaBase
+->      : ^^^^^^^^^
+->foo : number | undefined
+->    : ^^^^^^^^^^^^^^^^^^
++>foo : any
+     }
+     get justPropTests() {
+->justPropTests : number
+->              : ^^^^^^
++>justPropTests : any
+ 
+         return super.justProp;
+->super.justProp : number
+->               : ^^^^^^
++>super.justProp : any
+ >super : YaddaBase
+->      : ^^^^^^^^^
+->justProp : number
+->         : ^^^^^^
++>justProp : any
+     }
+     get literalElementAccessTests() {
+ >literalElementAccessTests : any
+->                          : ^^^
+ 
+         return super.literalElementAccess;
+ >super.literalElementAccess : any
+->                           : ^^^
+ >super : YaddaBase
+->      : ^^^^^^^^^
+ >literalElementAccess : any
+->                     : ^^^
+     }
+ }
+ 

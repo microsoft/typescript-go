@@ -1,0 +1,22 @@
+--- old.ES5For-of19.types
++++ new.ES5For-of19.types
+@@= skipped -3, +3 lines =@@
+ for (let v of []) {
+ >v : any
+ >[] : undefined[]
+->   : ^^^^^^^^^^^
+ 
+     v;
+ >v : any
+ 
+     function foo() {
+ >foo : () => void
+->    : ^^^^^^^^^^
+ 
+         for (const v of []) {
+ >v : any
+ >[] : undefined[]
+->   : ^^^^^^^^^^^
+ 
+             v;
+ >v : any

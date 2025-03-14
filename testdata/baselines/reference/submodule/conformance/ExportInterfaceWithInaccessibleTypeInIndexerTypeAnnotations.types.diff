@@ -1,0 +1,33 @@
+--- old.ExportInterfaceWithInaccessibleTypeInIndexerTypeAnnotations.types
++++ new.ExportInterfaceWithInaccessibleTypeInIndexerTypeAnnotations.types
+@@= skipped -1, +1 lines =@@
+ 
+ === ExportInterfaceWithInaccessibleTypeInIndexerTypeAnnotations.ts ===
+ module A {
++>A : any
+ 
+     interface Point {
++>Point : Point
++
+         x: number;
+ >x : number
+->  : ^^^^^^
+ 
+         y: number;
+ >y : number
+->  : ^^^^^^
+     }
+ 
+     export interface points {
++>points : points
+ 
+         [idx: number]: Point;
+ >idx : number
+->    : ^^^^^^
+ 
+         [idx: string]: Point;
+ >idx : string
+->    : ^^^^^^
+     }
+ }
+ 

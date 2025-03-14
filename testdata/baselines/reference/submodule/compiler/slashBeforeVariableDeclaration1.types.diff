@@ -1,0 +1,8 @@
+--- old.slashBeforeVariableDeclaration1.types
++++ new.slashBeforeVariableDeclaration1.types
+@@= skipped -2, +2 lines =@@
+ === slashBeforeVariableDeclaration1.ts ===
+ \ declare var v;
+ >v : any
+->  : ^^^
+ 

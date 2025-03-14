@@ -1,0 +1,28 @@
+--- old.functionWithDefaultParameterWithNoStatements12.types
++++ new.functionWithDefaultParameterWithNoStatements12.types
+@@= skipped -2, +2 lines =@@
+ === functionWithDefaultParameterWithNoStatements12.ts ===
+ var v: any[];
+ >v : any[]
+->  : ^^^^^
+ 
+ function foo(a = (v)) { }
+ >foo : (a?: any[]) => void
+->    : ^ ^^^^^^^^^^^^^^^^^
+ >a : any[]
+->  : ^^^^^
+ >(v) : any[]
+->    : ^^^^^
+ >v : any[]
+->  : ^^^^^
+ 
+ function bar(a = (v)) {
+ >bar : (a?: any[]) => void
+->    : ^ ^^^^^^^^^^^^^^^^^
+ >a : any[]
+->  : ^^^^^
+ >(v) : any[]
+->    : ^^^^^
+ >v : any[]
+->  : ^^^^^
+ }

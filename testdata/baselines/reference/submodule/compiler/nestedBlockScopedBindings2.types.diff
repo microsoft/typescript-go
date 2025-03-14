@@ -1,0 +1,300 @@
+--- old.nestedBlockScopedBindings2.types
++++ new.nestedBlockScopedBindings2.types
+@@= skipped -2, +2 lines =@@
+ === nestedBlockScopedBindings2.ts ===
+ function a0() {
+ >a0 : () => void
+->   : ^^^^^^^^^^
+     {
+         let x = 1;
+ >x : number
+->  : ^^^^^^
+ >1 : 1
+->  : ^
+ 
+         () => x;
+ >() => x : () => number
+->        : ^^^^^^^^^^^^
+ >x : number
+->  : ^^^^^^
+     }
+     {
+         let x = 1;
+ >x : number
+->  : ^^^^^^
+ >1 : 1
+->  : ^
+     }
+ }
+ 
+ function a1() {
+ >a1 : () => void
+->   : ^^^^^^^^^^
+     {
+         let x;
+ >x : any
+@@= skipped -33, +25 lines =@@
+     {
+         let x = 1;
+ >x : number
+->  : ^^^^^^
+ >1 : 1
+->  : ^
+ 
+         () => x;
+ >() => x : () => number
+->        : ^^^^^^^^^^^^
+ >x : number
+->  : ^^^^^^
+     }
+ }
+ 
+ function a2() {
+ >a2 : () => void
+->   : ^^^^^^^^^^
+     {
+         let x = 1;
+ >x : number
+->  : ^^^^^^
+ >1 : 1
+->  : ^
+ 
+         () => x;
+ >() => x : () => number
+->        : ^^^^^^^^^^^^
+ >x : number
+->  : ^^^^^^
+     }
+     {
+         let x;
+@@= skipped -34, +25 lines =@@
+ 
+         () => x;
+ >() => x : () => any
+->        : ^^^^^^^^^
+ >x : any
+     }
+ }
+@@= skipped -8, +7 lines =@@
+ 
+ function a3() {
+ >a3 : () => void
+->   : ^^^^^^^^^^
+     {
+         let x = 1;
+ >x : number
+->  : ^^^^^^
+ >1 : 1
+->  : ^
+ 
+         () => x;
+ >() => x : () => number
+->        : ^^^^^^^^^^^^
+ >x : number
+->  : ^^^^^^
+     }
+     switch (1) {
+ >1 : 1
+->  : ^
+ 
+         case 1:
+ >1 : 1
+->  : ^
+ 
+             let x;
+ >x : any
+ 
+             () => x;
+ >() => x : () => any
+->        : ^^^^^^^^^
+ >x : any
+ 
+             break;
+@@= skipped -37, +29 lines =@@
+ 
+ function a4() {
+ >a4 : () => void
+->   : ^^^^^^^^^^
+     {
+         let x;
+ >x : any
+     }
+     switch (1) {
+ >1 : 1
+->  : ^
+ 
+         case 1:
+ >1 : 1
+->  : ^
+ 
+             let x;
+ >x : any
+ 
+             () => x;
+ >() => x : () => any
+->        : ^^^^^^^^^
+ >x : any
+ 
+             break;
+@@= skipped -28, +24 lines =@@
+ 
+ function a5() {
+ >a5 : () => void
+->   : ^^^^^^^^^^
+     {
+         let x;
+ >x : any
+ 
+         () => x;
+ >() => x : () => any
+->        : ^^^^^^^^^
+ >x : any
+     }
+     switch (1) {
+ >1 : 1
+->  : ^
+ 
+         case 1:
+ >1 : 1
+->  : ^
+ 
+             let x;
+ >x : any
+@@= skipped -27, +23 lines =@@
+ 
+ function a6() {
+ >a6 : () => void
+->   : ^^^^^^^^^^
+ 
+     switch (1) {
+ >1 : 1
+->  : ^
+ 
+         case 1:
+ >1 : 1
+->  : ^
+ 
+             let x;
+ >x : any
+@@= skipped -17, +14 lines =@@
+     }
+     switch (1) {
+ >1 : 1
+->  : ^
+ 
+         case 1:
+ >1 : 1
+->  : ^
+ 
+             let x;
+ >x : any
+@@= skipped -15, +13 lines =@@
+ 
+ function a7() {
+ >a7 : () => void
+->   : ^^^^^^^^^^
+ 
+     switch (1) {
+ >1 : 1
+->  : ^
+ 
+         case 1:
+ >1 : 1
+->  : ^
+ 
+             let x;
+ >x : any
+ 
+             () => x;
+ >() => x : () => any
+->        : ^^^^^^^^^
+ >x : any
+ 
+             break;
+     }
+     switch (1) {
+ >1 : 1
+->  : ^
+ 
+         case 1:
+ >1 : 1
+->  : ^
+ 
+             let x;
+ >x : any
+@@= skipped -37, +31 lines =@@
+ 
+ function a8() {
+ >a8 : () => void
+->   : ^^^^^^^^^^
+ 
+     switch (1) {
+ >1 : 1
+->  : ^
+ 
+         case 1:
+ >1 : 1
+->  : ^
+ 
+             let x;
+ >x : any
+@@= skipped -17, +14 lines =@@
+     }
+     switch (1) {
+ >1 : 1
+->  : ^
+ 
+         case 1:
+ >1 : 1
+->  : ^
+ 
+             let x;
+ >x : any
+ 
+             () => x;
+ >() => x : () => any
+->        : ^^^^^^^^^
+ >x : any
+ 
+             break;
+@@= skipped -20, +17 lines =@@
+ 
+ function a9() {
+ >a9 : () => void
+->   : ^^^^^^^^^^
+ 
+     switch (1) {
+ >1 : 1
+->  : ^
+ 
+         case 1:
+ >1 : 1
+->  : ^
+ 
+             let x;
+ >x : any
+ 
+             () => x;
+ >() => x : () => any
+->        : ^^^^^^^^^
+ >x : any
+ 
+             break;
+     }
+     switch (1) {
+ >1 : 1
+->  : ^
+ 
+         case 1:
+ >1 : 1
+->  : ^
+ 
+             let x;
+ >x : any
+ 
+             () => x;
+ >() => x : () => any
+->        : ^^^^^^^^^
+ >x : any
+ 
+             break;

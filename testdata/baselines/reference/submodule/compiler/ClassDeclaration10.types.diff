@@ -1,0 +1,13 @@
+--- old.ClassDeclaration10.types
++++ new.ClassDeclaration10.types
+@@= skipped -2, +2 lines =@@
+ === ClassDeclaration10.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+    constructor();
+    foo();
+ >foo : () => any
+->    : ^^^^^^^^^
+ }

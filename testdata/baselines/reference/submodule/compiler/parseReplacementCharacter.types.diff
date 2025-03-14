@@ -1,0 +1,24 @@
+--- old.parseReplacementCharacter.types
++++ new.parseReplacementCharacter.types
+@@= skipped -2, +2 lines =@@
+ === parseReplacementCharacter.ts ===
+ "oops �� oops";
+ >"oops �� oops" : "oops �� oops"
+->               : ^^^^^^^^^^^^^^
+ 
+ 'oops �� oops';
+ >'oops �� oops' : "oops �� oops"
+->               : ^^^^^^^^^^^^^^
+ 
+ `oops �� oops`;
+ >`oops �� oops` : "oops �� oops"
+->               : ^^^^^^^^^^^^^^
+ 
+ `${"oops �� oops"}`;
+ >`${"oops �� oops"}` : "oops �� oops"
+->                    : ^^^^^^^^^^^^^^
+ >"oops �� oops" : "oops �� oops"
+->               : ^^^^^^^^^^^^^^
+ 
+ // oops �� oops
+ /* oops �� oops */

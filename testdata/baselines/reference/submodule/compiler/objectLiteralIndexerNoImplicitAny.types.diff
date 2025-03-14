@@ -1,0 +1,23 @@
+--- old.objectLiteralIndexerNoImplicitAny.types
++++ new.objectLiteralIndexerNoImplicitAny.types
+@@= skipped -1, +1 lines =@@
+ 
+ === objectLiteralIndexerNoImplicitAny.ts ===
+ interface I {
++>I : I
++
+     [s: string]: any;
+ >s : string
+->  : ^^^^^^
+ }
+ 
+ var x: I = {
+ >x : I
+->  : ^
+ >{    p: null} : { p: null; }
+->              : ^^^^^^^^^^^^
+ 
+     p: null
+ >p : null
+->  : ^^^^
+ }

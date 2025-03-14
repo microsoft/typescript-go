@@ -1,0 +1,10 @@
+--- old.parserObjectType2.types
++++ new.parserObjectType2.types
+@@= skipped -2, +2 lines =@@
+ === parserObjectType2.ts ===
+ var v: { x: number };
+ >v : { x: number; }
+->  : ^^^^^      ^^^
+ >x : number
+->  : ^^^^^^
+ 

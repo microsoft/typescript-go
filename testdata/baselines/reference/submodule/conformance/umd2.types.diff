@@ -1,0 +1,32 @@
+--- old.umd2.types
++++ new.umd2.types
+@@= skipped -2, +2 lines =@@
+ === a.ts ===
+ Foo.fn();
+ >Foo.fn() : any
+->         : ^^^
+ >Foo.fn : any
+->       : ^^^
+ >Foo : any
+->    : ^^^
+ >fn : any
+->   : ^^^
+ 
+ let x: Foo.Thing;
+->x : Foo.Thing
+->  : ^^^^^^^^^
++>x : Thing
+ >Foo : any
+->    : ^^^
+ 
+ let y: number = x.n;
+ >y : number
+->  : ^^^^^^
+ >x.n : any
+->    : ^^^
+->x : Foo.Thing
+->  : ^^^^^^^^^
++>x : Thing
+ >n : any
+->  : ^^^
+ 

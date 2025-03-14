@@ -1,0 +1,12 @@
+--- old.FunctionDeclaration3_es6.types
++++ new.FunctionDeclaration3_es6.types
+@@= skipped -2, +2 lines =@@
+ === FunctionDeclaration3_es6.ts ===
+ function f(yield = yield) {
+ >f : (yield?: any) => void
+->  : ^     ^^^^^^^^^^^^^^^
+ >yield : any
+->      : ^^^
+ >yield : any
+->      : ^^^
+ }

@@ -1,0 +1,88 @@
+--- old.constructorWithAssignableReturnExpression.types
++++ new.constructorWithAssignableReturnExpression.types
+@@= skipped -4, +4 lines =@@
+ 
+ class C {
+ >C : C
+->  : ^
+ 
+     constructor() {
+         return 1;
+ >1 : 1
+->  : ^
+     }
+ }
+ 
+ class D {
+ >D : D
+->  : ^
+ 
+     x: number;
+ >x : number
+->  : ^^^^^^
+ 
+     constructor() {
+         return 1; // error
+ >1 : 1
+->  : ^
+     }
+ }
+ 
+ class E {
+ >E : E
+->  : ^
+ 
+     x: number;
+ >x : number
+->  : ^^^^^^
+ 
+     constructor() {
+         return { x: 1 };
+ >{ x: 1 } : { x: number; }
+->         : ^^^^^^^^^^^^^^
+ >x : number
+->  : ^^^^^^
+ >1 : 1
+->  : ^
+     }
+ }
+ 
+ class F<T> {
+ >F : F<T>
+->  : ^^^^
++>T : T
+ 
+     x: T;
+ >x : T
+->  : ^
+ 
+     constructor() {
+         return { x: 1 }; // error
+ >{ x: 1 } : { x: number; }
+->         : ^^^^^^^^^^^^^^
+ >x : number
+->  : ^^^^^^
+ >1 : 1
+->  : ^
+     }
+ }
+ 
+ class G<T> {
+ >G : G<T>
+->  : ^^^^
++>T : T
+ 
+     x: T;
+ >x : T
+->  : ^
+ 
+     constructor() {
+         return { x: <T>null };
+ >{ x: <T>null } : { x: T; }
+->               : ^^^^^ ^^^
+ >x : T
+->  : ^
+ ><T>null : T
+->        : ^
+     }
+ }

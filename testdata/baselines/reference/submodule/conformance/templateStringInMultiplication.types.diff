@@ -1,0 +1,16 @@
+--- old.templateStringInMultiplication.types
++++ new.templateStringInMultiplication.types
+@@= skipped -2, +2 lines =@@
+ === templateStringInMultiplication.ts ===
+ var x = 1 * `abc${ 1 }def`;
+ >x : number
+->  : ^^^^^^
+ >1 * `abc${ 1 }def` : number
+->                   : ^^^^^^
+ >1 : 1
+->  : ^
+ >`abc${ 1 }def` : "abc1def"
+->               : ^^^^^^^^^
+ >1 : 1
+->  : ^
+ 

@@ -1,0 +1,28 @@
+--- old.destructuringObjectBindingPatternAndAssignment5.types
++++ new.destructuringObjectBindingPatternAndAssignment5.types
+@@= skipped -2, +2 lines =@@
+ === destructuringObjectBindingPatternAndAssignment5.ts ===
+ function a () {
+ >a : () => void
+->  : ^^^^^^^^^^
+ 
+     let x: number;
+ >x : number
+->  : ^^^^^^
+ 
+     let y: any
+ >y : any
+@@= skipped -13, +11 lines =@@
+ >({ x, ...y } = ({ } as any)) : any
+ >{ x, ...y } = ({ } as any) : any
+ >{ x, ...y } : any
+->x : number
+->  : ^^^^^^
++>x : any
+ >y : any
+ >({ } as any) : any
+ >{ } as any : any
+ >{ } : {}
+->    : ^^
+ }
+ 

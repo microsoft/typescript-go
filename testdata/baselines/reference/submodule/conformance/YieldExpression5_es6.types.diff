@@ -1,0 +1,15 @@
+--- old.YieldExpression5_es6.types
++++ new.YieldExpression5_es6.types
+@@= skipped -2, +2 lines =@@
+ === YieldExpression5_es6.ts ===
+ function* foo() {
+ >foo : () => Generator<any, void, any>
+->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+   yield*
+ >yield* : any
+->       : ^^^
+ }
+ > : any
+-> : ^^^
+ 

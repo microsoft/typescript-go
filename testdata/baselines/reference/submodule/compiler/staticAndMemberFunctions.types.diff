@@ -1,0 +1,16 @@
+--- old.staticAndMemberFunctions.types
++++ new.staticAndMemberFunctions.types
+@@= skipped -2, +2 lines =@@
+ === staticAndMemberFunctions.ts ===
+ class T {
+ >T : T
+->  : ^
+ 
+     static x() { }
+ >x : () => void
+->  : ^^^^^^^^^^
+ 
+     public y() { }
+ >y : () => void
+->  : ^^^^^^^^^^
+ }

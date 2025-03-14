@@ -1,0 +1,14 @@
+--- old.topLevelAwaitErrors.3(module=esnext).types
++++ new.topLevelAwaitErrors.3(module=esnext).types
+@@= skipped -5, +5 lines =@@
+ // reparse binding pattern as await should fail
+ var {await} = {await:1};
+ >await : number
+->      : ^^^^^^
+ >{await:1} : { await: number; }
+->          : ^^^^^^^^^^^^^^^^^^
+ >await : number
+->      : ^^^^^^
+ >1 : 1
+->  : ^
+ 

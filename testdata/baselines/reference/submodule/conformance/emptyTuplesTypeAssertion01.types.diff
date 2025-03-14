@@ -1,0 +1,22 @@
+--- old.emptyTuplesTypeAssertion01.types
++++ new.emptyTuplesTypeAssertion01.types
+@@= skipped -2, +2 lines =@@
+ === emptyTuplesTypeAssertion01.ts ===
+ let x = <[]>[];
+ >x : []
+->  : ^^
+ ><[]>[] : []
+->       : ^^
+ >[] : []
+->   : ^^
+ 
+ let y = x[0];
+ >y : undefined
+->  : ^^^^^^^^^
+ >x[0] : undefined
+->     : ^^^^^^^^^
+ >x : []
+->  : ^^
+ >0 : 0
+->  : ^
+ 

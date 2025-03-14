@@ -1,0 +1,10 @@
+--- old.unicodeExtendedEscapesInStrings18(target=es6).types
++++ new.unicodeExtendedEscapesInStrings18(target=es6).types
+@@= skipped -2, +2 lines =@@
+ === unicodeExtendedEscapesInStrings18.ts ===
+ var x = "\u{65}\u{65}";
+ >x : string
+->  : ^^^^^^
+ >"\u{65}\u{65}" : "ee"
+->               : ^^^^
+ 

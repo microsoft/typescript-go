@@ -1,0 +1,19 @@
+--- old.noImplicitAnyAndPrivateMembersWithoutTypeAnnotations.types
++++ new.noImplicitAnyAndPrivateMembersWithoutTypeAnnotations.types
+@@= skipped -3, +3 lines =@@
+ /// <reference path="test.d.ts" />
+ var x = new Something();
+ >x : Something
+->  : ^^^^^^^^^
+ >new Something() : Something
+->                : ^^^^^^^^^
+ >Something : typeof Something
+->          : ^^^^^^^^^^^^^^^^
+ 
+ === test.d.ts ===
+ declare class Something
+ >Something : Something
+->          : ^^^^^^^^^
+ {
+     private static someStaticVar;
+ >someStaticVar : any

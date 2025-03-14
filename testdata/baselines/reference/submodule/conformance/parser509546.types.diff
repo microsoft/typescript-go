@@ -1,0 +1,10 @@
+--- old.parser509546.types
++++ new.parser509546.types
+@@= skipped -2, +2 lines =@@
+ === parser509546.ts ===
+ export class Logger { 
+ >Logger : Logger
+->       : ^^^^^^
+ 
+      public
+ >public : any

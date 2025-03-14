@@ -1,0 +1,21 @@
+--- old.nonexistentPropertyUnavailableOnPromisedType.types
++++ new.nonexistentPropertyUnavailableOnPromisedType.types
+@@= skipped -2, +2 lines =@@
+ === nonexistentPropertyUnavailableOnPromisedType.ts ===
+ function f(x: Promise<number>) {
+ >f : (x: Promise<number>) => void
+->  : ^ ^^               ^^^^^^^^^
+ >x : Promise<number>
+->  : ^^^^^^^^^^^^^^^
+ 
+     x.toLowerCase();
+ >x.toLowerCase() : any
+->                : ^^^
+ >x.toLowerCase : any
+->              : ^^^
+ >x : Promise<number>
+->  : ^^^^^^^^^^^^^^^
+ >toLowerCase : any
+->            : ^^^
+ }
+ 

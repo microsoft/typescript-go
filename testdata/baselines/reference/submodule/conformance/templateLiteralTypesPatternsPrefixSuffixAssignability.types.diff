@@ -1,0 +1,28 @@
+--- old.templateLiteralTypesPatternsPrefixSuffixAssignability.types
++++ new.templateLiteralTypesPatternsPrefixSuffixAssignability.types
+@@= skipped -2, +2 lines =@@
+ === templateLiteralTypesPatternsPrefixSuffixAssignability.ts ===
+ const s1: `:${string}:` = ":"; // should error
+ >s1 : `:${string}:`
+->   : ^^^^^^^^^^^^^
+ >":" : ":"
+->    : ^^^
+ 
+ const s2: `:${string}:` = "::"; // ok
+ >s2 : `:${string}:`
+->   : ^^^^^^^^^^^^^
+ >"::" : "::"
+->     : ^^^^
+ 
+ const s3: `:${string}:${string}:` = "::"; // should error
+ >s3 : `:${string}:${string}:`
+->   : ^^^^^^^^^^^^^^^^^^^^^^^
+ >"::" : "::"
+->     : ^^^^
+ 
+ const s4: `:${string}:${string}:` = ":::"; // ok
+ >s4 : `:${string}:${string}:`
+->   : ^^^^^^^^^^^^^^^^^^^^^^^
+ >":::" : ":::"
+->      : ^^^^^
+ 

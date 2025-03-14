@@ -1,0 +1,16 @@
+--- old.parserClassDeclaration13.types
++++ new.parserClassDeclaration13.types
+@@= skipped -2, +2 lines =@@
+ === parserClassDeclaration13.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+    foo();
+ >foo : () => any
+->    : ^^^^^^^^^
+ 
+    bar() { }
+ >bar : () => void
+->    : ^^^^^^^^^^
+ }

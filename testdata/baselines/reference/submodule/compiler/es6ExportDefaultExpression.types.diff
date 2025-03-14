@@ -1,0 +1,14 @@
+--- old.es6ExportDefaultExpression.types
++++ new.es6ExportDefaultExpression.types
+@@= skipped -2, +2 lines =@@
+ === es6ExportDefaultExpression.ts ===
+ export default (1 + 2);
+ >(1 + 2) : number
+->        : ^^^^^^
+ >1 + 2 : number
+->      : ^^^^^^
+ >1 : 1
+->  : ^
+ >2 : 2
+->  : ^
+ 

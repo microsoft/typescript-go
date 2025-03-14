@@ -1,0 +1,14 @@
+--- old.ES5For-ofTypeCheck14.types
++++ new.ES5For-ofTypeCheck14.types
+@@= skipped -2, +2 lines =@@
+ === ES5For-ofTypeCheck14.ts ===
+ var union: string | Set<number>
+ >union : string | Set<number>
+->      : ^^^^^^^^^^^^^^^^^^^^
+ 
+ for (const e of union) { }
+ >e : string
+->  : ^^^^^^
+ >union : string | Set<number>
+->      : ^^^^^^^^^^^^^^^^^^^^
+ 

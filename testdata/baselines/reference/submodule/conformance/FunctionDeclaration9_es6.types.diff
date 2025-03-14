@@ -1,0 +1,19 @@
+--- old.FunctionDeclaration9_es6.types
++++ new.FunctionDeclaration9_es6.types
+@@= skipped -2, +2 lines =@@
+ === FunctionDeclaration9_es6.ts ===
+ function * foo() {
+ >foo : () => Generator<any, void, unknown>
+->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+   var v = { [yield]: foo }
+ >v : { [x: number]: () => Generator<any, void, unknown>; }
+->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ >{ [yield]: foo } : { [x: number]: () => Generator<any, void, unknown>; }
+->                 : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ >[yield] : () => Generator<any, void, unknown>
+->        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ >yield : any
+ >foo : () => Generator<any, void, unknown>
+->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ }

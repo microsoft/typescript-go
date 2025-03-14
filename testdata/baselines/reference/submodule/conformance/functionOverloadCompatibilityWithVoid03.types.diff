@@ -1,0 +1,18 @@
+--- old.functionOverloadCompatibilityWithVoid03.types
++++ new.functionOverloadCompatibilityWithVoid03.types
+@@= skipped -2, +2 lines =@@
+ === functionOverloadCompatibilityWithVoid03.ts ===
+ function f(x: string): void;
+ >f : (x: string) => void
+->  : ^ ^^      ^^^^^    
+ >x : string
+->  : ^^^^^^
+ 
+ function f(x: string): void {
+ >f : (x: string) => void
+->  : ^ ^^      ^^^^^    
+ >x : string
+->  : ^^^^^^
+ 
+     return;
+ } 

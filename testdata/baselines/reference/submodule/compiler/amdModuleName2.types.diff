@@ -1,0 +1,30 @@
+--- old.amdModuleName2.types
++++ new.amdModuleName2.types
+@@= skipped -4, +4 lines =@@
+ ///<amd-module name='SecondModuleName'/>
+ class Foo {
+ >Foo : Foo
+->    : ^^^
+ 
+     x: number;
+ >x : number
+->  : ^^^^^^
+ 
+     constructor() {
+         this.x = 5;
+ >this.x = 5 : 5
+->           : ^
+ >this.x : number
+->       : ^^^^^^
+ >this : this
+->     : ^^^^
+ >x : number
+->  : ^^^^^^
+ >5 : 5
+->  : ^
+     }
+ }
+ export = Foo;
+ >Foo : Foo
+->    : ^^^
+ 

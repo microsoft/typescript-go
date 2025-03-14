@@ -1,0 +1,23 @@
+--- old.staticGetter2.types
++++ new.staticGetter2.types
+@@= skipped -3, +3 lines =@@
+ // once caused stack overflow
+ class C {
+ >C : C
+->  : ^
+ 
+     static x() {
+ >x : () => typeof C
+->  : ^^^^^^^^^^^^^^
+ 
+         var r = this;
+ >r : typeof C
+->  : ^^^^^^^^
+ >this : typeof C
+->     : ^^^^^^^^
+ 
+         return this;
+ >this : typeof C
+->     : ^^^^^^^^
+     }
+ }

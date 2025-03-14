@@ -1,0 +1,10 @@
+--- old.topLevelAwaitErrors.2(module=es2022).types
++++ new.topLevelAwaitErrors.2(module=es2022).types
+@@= skipped -5, +5 lines =@@
+ // reparse variable name as await should fail
+ var await = 1;
+ >await : number
+->      : ^^^^^^
+ >1 : 1
+->  : ^
+ 

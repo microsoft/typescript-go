@@ -1,0 +1,16 @@
+--- old.propertyNamedPrototype.types
++++ new.propertyNamedPrototype.types
+@@= skipped -2, +2 lines =@@
+ === propertyNamedPrototype.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+     prototype: number; // ok
+ >prototype : number
+->          : ^^^^^^
+ 
+     static prototype: C; // error
+ >prototype : C
+->          : ^
+ }

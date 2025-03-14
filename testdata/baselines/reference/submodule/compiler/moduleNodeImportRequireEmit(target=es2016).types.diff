@@ -1,0 +1,10 @@
+--- old.moduleNodeImportRequireEmit(target=es2016).types
++++ new.moduleNodeImportRequireEmit(target=es2016).types
+@@= skipped -4, +4 lines =@@
+ // This should emit a call to createRequire(import.meta.url)
+ import foo = require("foo");
+ >foo : any
+->    : ^^^
+ 
+ foo;
+ >foo : any

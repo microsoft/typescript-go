@@ -1,0 +1,21 @@
+--- old.unusedVariablesinBlocks1.types
++++ new.unusedVariablesinBlocks1.types
+@@= skipped -2, +2 lines =@@
+ === unusedVariablesinBlocks1.ts ===
+ function f1 () {
+ >f1 : () => void
+->   : ^^^^^^^^^^
+ 
+     let x = 10;
+ >x : number
+->  : ^^^^^^
+ >10 : 10
+->   : ^^
+     {
+         let x = 11;
+ >x : number
+->  : ^^^^^^
+ >11 : 11
+->   : ^^
+     }
+ }

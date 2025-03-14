@@ -1,0 +1,13 @@
+--- old.parserClassDeclaration7.types
++++ new.parserClassDeclaration7.types
+@@= skipped -2, +2 lines =@@
+ === parserClassDeclaration7.ts ===
+ declare module M {
+ >M : typeof M
+->  : ^^^^^^^^
+ 
+   declare class C {
+ >C : C
+->  : ^
+   }
+ }

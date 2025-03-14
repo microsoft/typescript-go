@@ -1,0 +1,10 @@
+--- old.jsdocTypedefNoCrash.types
++++ new.jsdocTypedefNoCrash.types
+@@= skipped -6, +6 lines =@@
+  */
+ export const foo = 5;
+ >foo : 5
+->    : ^
+ >5 : 5
+->  : ^
+ 

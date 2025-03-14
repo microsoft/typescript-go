@@ -1,0 +1,10 @@
+--- old.parserAccessibilityAfterStatic5.types
++++ new.parserAccessibilityAfterStatic5.types
+@@= skipped -2, +2 lines =@@
+ === parserAccessibilityAfterStatic5.ts ===
+ class Outer
+ >Outer : Outer
+->      : ^^^^^
+ {
+ static public
+ >public : any

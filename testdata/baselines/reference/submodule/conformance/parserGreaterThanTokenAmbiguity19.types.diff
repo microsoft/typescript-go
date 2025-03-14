@@ -1,0 +1,16 @@
+--- old.parserGreaterThanTokenAmbiguity19.types
++++ new.parserGreaterThanTokenAmbiguity19.types
+@@= skipped -2, +2 lines =@@
+ === parserGreaterThanTokenAmbiguity19.ts ===
+ 1 >>>
+ >1 >>> : number
+->      : ^^^^^^
+ >1 : 1
+->  : ^
+ 
+ = 2;
+ > : any
+-> : ^^^
+ >2 : 2
+->  : ^
+ 

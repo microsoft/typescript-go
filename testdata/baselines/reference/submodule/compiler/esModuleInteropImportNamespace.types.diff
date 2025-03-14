@@ -1,0 +1,32 @@
+--- old.esModuleInteropImportNamespace.types
++++ new.esModuleInteropImportNamespace.types
+@@= skipped -2, +2 lines =@@
+ === foo.d.ts ===
+ declare function foo(): void;
+ >foo : () => void
+->    : ^^^^^^    
+ 
+ declare namespace foo {}
++>foo : () => void
++
+ export = foo;
+ >foo : () => void
+->    : ^^^^^^    
+ 
+ === index.ts ===
+ import * as foo from "./foo";
+->foo : { default: () => void; }
+->    : ^^^^^^^^^^^^^^^^^    ^^^
++>foo : () => void
+ 
+ foo.default;
+->foo.default : () => void
+->            : ^^^^^^    
+->foo : { default: () => void; }
+->    : ^^^^^^^^^^^^^^^^^    ^^^
+->default : () => void
+->        : ^^^^^^    
++>foo.default : any
++>foo : () => void
++>default : any
+ 

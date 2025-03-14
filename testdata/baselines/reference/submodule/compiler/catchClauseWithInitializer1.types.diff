@@ -1,0 +1,10 @@
+--- old.catchClauseWithInitializer1.types
++++ new.catchClauseWithInitializer1.types
+@@= skipped -4, +4 lines =@@
+ }
+ catch (e = 1) {
+ >e : any
+->  : ^^^
+ >1 : 1
+->  : ^
+ }

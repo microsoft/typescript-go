@@ -1,0 +1,35 @@
+--- old.emitDecoratorMetadata_object.types
++++ new.emitDecoratorMetadata_object.types
+@@= skipped -2, +2 lines =@@
+ === emitDecoratorMetadata_object.ts ===
+ declare const MyClassDecorator: ClassDecorator;
+ >MyClassDecorator : ClassDecorator
+->                 : ^^^^^^^^^^^^^^
+ 
+ declare const MyMethodDecorator: MethodDecorator;
+ >MyMethodDecorator : MethodDecorator
+->                  : ^^^^^^^^^^^^^^^
+ 
+ @MyClassDecorator
+ >MyClassDecorator : ClassDecorator
+->                 : ^^^^^^^^^^^^^^
+ 
+ class A {
+ >A : A
+->  : ^
+ 
+     constructor(hi: object) {}
+ >hi : object
+->   : ^^^^^^
+ 
+     @MyMethodDecorator
+ >MyMethodDecorator : MethodDecorator
+->                  : ^^^^^^^^^^^^^^^
+ 
+     method(there: object) {}
+ >method : (there: object) => void
+->       : ^     ^^      ^^^^^^^^^
+ >there : object
+->      : ^^^^^^
+ }
+ 

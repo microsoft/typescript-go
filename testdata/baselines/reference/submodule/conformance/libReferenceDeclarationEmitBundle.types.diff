@@ -1,0 +1,15 @@
+--- old.libReferenceDeclarationEmitBundle.types
++++ new.libReferenceDeclarationEmitBundle.types
+@@= skipped -3, +3 lines =@@
+ /// <reference lib="dom" preserve="true" />
+ export declare const elem: HTMLElement;
+ >elem : HTMLElement
+->     : ^^^^^^^^^^^
+ 
+ === file2.ts ===
+ /// <reference lib="dom" preserve="true" />
+ export {}
+ declare const elem: HTMLElement;
+ >elem : HTMLElement
+->     : ^^^^^^^^^^^
+ 

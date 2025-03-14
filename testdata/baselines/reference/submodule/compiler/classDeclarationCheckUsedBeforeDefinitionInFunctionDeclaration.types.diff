@@ -1,0 +1,18 @@
+--- old.classDeclarationCheckUsedBeforeDefinitionInFunctionDeclaration.types
++++ new.classDeclarationCheckUsedBeforeDefinitionInFunctionDeclaration.types
+@@= skipped -2, +2 lines =@@
+ === classDeclarationCheckUsedBeforeDefinitionInFunctionDeclaration.ts ===
+ function f() {
+ >f : () => void
+->  : ^^^^^^^^^^
+ 
+     new C2(); // OK
+ >new C2() : C2
+->         : ^^
+ >C2 : typeof C2
+->   : ^^^^^^^^^
+ }    
+ class C2 { }
+ >C2 : C2
+->   : ^^
+ 

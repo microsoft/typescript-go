@@ -1,0 +1,10 @@
+--- old.requireOfAnEmptyFile1.types
++++ new.requireOfAnEmptyFile1.types
+@@= skipped -2, +2 lines =@@
+ === requireOfAnEmptyFile1_a.ts ===
+ import fs = require('./requireOfAnEmptyFile1_b');
+ >fs : any
+->   : ^^^
+ 
+ === requireOfAnEmptyFile1_b.ts ===
+ 

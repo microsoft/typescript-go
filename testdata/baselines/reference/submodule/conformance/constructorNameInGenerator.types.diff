@@ -1,0 +1,13 @@
+--- old.constructorNameInGenerator.types
++++ new.constructorNameInGenerator.types
+@@= skipped -2, +2 lines =@@
+ === constructorNameInGenerator.ts ===
+ class C2 {
+ >C2 : C2
+->   : ^^
+ 
+     *constructor() {}
+ >constructor : () => Generator<never, void, unknown>
+->            : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ }
+ 

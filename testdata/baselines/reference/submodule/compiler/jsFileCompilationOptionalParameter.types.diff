@@ -1,0 +1,10 @@
+--- old.jsFileCompilationOptionalParameter.types
++++ new.jsFileCompilationOptionalParameter.types
+@@= skipped -2, +2 lines =@@
+ === a.js ===
+ function F(p?) { }
+ >F : (p?: any) => void
+->  : ^ ^^^^^^^^^^^^^^^
+ >p : any
+->  : ^^^
+ 

@@ -1,0 +1,54 @@
+--- old.importElisionEnum.types
++++ new.importElisionEnum.types
+@@= skipped -2, +2 lines =@@
+ === enum.ts ===
+ export enum MyEnum {
+ >MyEnum : MyEnum
+->       : ^^^^^^
+ 
+   a = 0,
+ >a : MyEnum.a
+->  : ^^^^^^^^
+ >0 : 0
+->  : ^
+ 
+   b,
+ >b : MyEnum.b
+->  : ^^^^^^^^
+ 
+   c,
+ >c : MyEnum.c
+->  : ^^^^^^^^
+ 
+   d
+ >d : MyEnum.d
+->  : ^^^^^^^^
+ }
+ 
+ === index.ts ===
+ import { MyEnum as MyEnumFromModule } from "./enum";
+->MyEnum : typeof MyEnumFromModule
+->       : ^^^^^^^^^^^^^^^^^^^^^^^
+->MyEnumFromModule : typeof MyEnumFromModule
+->                 : ^^^^^^^^^^^^^^^^^^^^^^^
++>MyEnum : typeof MyEnum
++>MyEnumFromModule : typeof MyEnum
+ 
+ enum MyEnum {
+->MyEnum : MyEnum
+->       : ^^^^^^
++>MyEnum : MyEnum.a
+ 
+   a = MyEnumFromModule.a
+ >a : MyEnum.a
+->  : ^^^^^^^^
+->MyEnumFromModule.a : MyEnumFromModule.a
+->                   : ^^^^^^^^^^^^^^^^^^
+->MyEnumFromModule : typeof MyEnumFromModule
+->                 : ^^^^^^^^^^^^^^^^^^^^^^^
+->a : MyEnumFromModule.a
+->  : ^^^^^^^^^^^^^^^^^^
++>MyEnumFromModule.a : MyEnum.a
++>MyEnumFromModule : typeof MyEnum
++>a : MyEnum.a
+ }

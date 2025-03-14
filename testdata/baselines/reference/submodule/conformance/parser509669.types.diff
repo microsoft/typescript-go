@@ -1,0 +1,12 @@
+--- old.parser509669.types
++++ new.parser509669.types
+@@= skipped -2, +2 lines =@@
+ === parser509669.ts ===
+ function foo():any {
+ >foo : () => any
+->    : ^^^^^^   
+ 
+  return ():void {};
+ >():void {} : () => void
+->           : ^^^^^^    
+ }

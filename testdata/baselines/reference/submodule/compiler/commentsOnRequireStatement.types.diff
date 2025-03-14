@@ -1,0 +1,30 @@
+--- old.commentsOnRequireStatement.types
++++ new.commentsOnRequireStatement.types
+@@= skipped -2, +2 lines =@@
+ === 0.ts ===
+ export var subject = 10;
+ >subject : number
+->        : ^^^^^^
+ >10 : 10
+->   : ^^
+ 
+ === 1.ts ===
+ export var subject1 = 10;
+ >subject1 : number
+->         : ^^^^^^
+ >10 : 10
+->   : ^^
+ 
+ === 2.ts ===
+ /* blah0 */
+@@= skipped -18, +14 lines =@@
+ // blah 
+ export {subject} from './0';
+ >subject : number
+->        : ^^^^^^
+ 
+ /* blah1 */
+ export {subject1} from './1';
+ >subject1 : number
+->         : ^^^^^^
+ 

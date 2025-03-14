@@ -1,0 +1,10 @@
+--- old.parserForOfStatement9.types
++++ new.parserForOfStatement9.types
+@@= skipped -2, +2 lines =@@
+ === parserForOfStatement9.ts ===
+ for (let v of X) {
+ >v : any
+->  : ^^^
+ >X : any
+->  : ^^^
+ }

@@ -1,0 +1,12 @@
+--- old.explicitAnyAfterSpreadNoImplicitAnyError.types
++++ new.explicitAnyAfterSpreadNoImplicitAnyError.types
+@@= skipped -4, +4 lines =@@
+ >({ a: [], ...(null as any) }) : any
+ >{ a: [], ...(null as any) } : any
+ >a : undefined[]
+->  : ^^^^^^^^^^^
+ >[] : undefined[]
+->   : ^^^^^^^^^^^
+ >(null as any) : any
+ >null as any : any
+ 

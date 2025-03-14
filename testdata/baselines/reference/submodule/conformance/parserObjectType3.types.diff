@@ -1,0 +1,10 @@
+--- old.parserObjectType3.types
++++ new.parserObjectType3.types
+@@= skipped -2, +2 lines =@@
+ === parserObjectType3.ts ===
+ var v: {
+ >v : { x: any; y: any; }
+->  : ^^^^^^^^^^^^^^^^^^^
+ 
+   x; 
+ >x : any

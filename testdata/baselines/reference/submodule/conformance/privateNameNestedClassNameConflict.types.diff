@@ -1,0 +1,23 @@
+--- old.privateNameNestedClassNameConflict.types
++++ new.privateNameNestedClassNameConflict.types
+@@= skipped -2, +2 lines =@@
+ === privateNameNestedClassNameConflict.ts ===
+ class A {
+ >A : A
+->  : ^
+ 
+     #foo: string;
+ >#foo : string
+->     : ^^^^^^
+ 
+     constructor() {
+         class A {
+ >A : A
+->  : ^
+ 
+             #foo: string;
+ >#foo : string
+->     : ^^^^^^
+         }
+     }
+ }

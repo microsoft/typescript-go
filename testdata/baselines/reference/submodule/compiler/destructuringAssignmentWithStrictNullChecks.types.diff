@@ -1,0 +1,20 @@
+--- old.destructuringAssignmentWithStrictNullChecks.types
++++ new.destructuringAssignmentWithStrictNullChecks.types
+@@= skipped -2, +2 lines =@@
+ === destructuringAssignmentWithStrictNullChecks.ts ===
+ let bar: {};
+ >bar : {}
+->    : ^^
+ 
+ ({ ...bar } = {});
+ >({ ...bar } = {}) : {}
+->                  : ^^
+ >{ ...bar } = {} : {}
+->                : ^^
+ >{ ...bar } : {}
+->           : ^^
+ >bar : {}
+->    : ^^
+ >{} : {}
+->   : ^^
+ 

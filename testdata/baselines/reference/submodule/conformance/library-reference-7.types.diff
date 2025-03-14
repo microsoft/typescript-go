@@ -1,0 +1,23 @@
+--- old.library-reference-7.types
++++ new.library-reference-7.types
+@@= skipped -3, +3 lines =@@
+ /// <reference types="jquery" />
+ $.foo();
+ >$.foo() : void
+->        : ^^^^
+ >$.foo : () => void
+->      : ^^^^^^    
+->$ : { foo(): void; }
+->  : ^^^^^^^^^    ^^^
++>$ : { foo: () => void; }
+ >foo : () => void
+->    : ^^^^^^    
+ 
+ === /src/node_modules/jquery/index.d.ts ===
+ declare var $: { foo(): void };
+->$ : { foo(): void; }
+->  : ^^^^^^^^^    ^^^
++>$ : { foo: () => void; }
+ >foo : () => void
+->    : ^^^^^^    
+ 

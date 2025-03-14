@@ -1,0 +1,33 @@
+--- old.declFileModuleContinuation.types
++++ new.declFileModuleContinuation.types
+@@= skipped -1, +1 lines =@@
+ 
+ === declFileModuleContinuation.ts ===
+ module A.C {
++>A : typeof A
++>C : any
++
+     export interface Z {
++>Z : Z
+     }
+ }
+ 
+ module A.B.C {
+ >A : typeof A
+->  : ^^^^^^^^
+ >B : typeof B
+->  : ^^^^^^^^
+ >C : typeof C
+->  : ^^^^^^^^
+ 
+     export class W implements A.C.Z {
+ >W : W
+->  : ^
+ >A.C : any
+->    : ^^^
+ >A : typeof A
+->  : ^^^^^^^^
+ >C : any
+->  : ^^^
+     }
+ }

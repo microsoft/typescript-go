@@ -1,0 +1,34 @@
+--- old.externalModuleResolution.types
++++ new.externalModuleResolution.types
+@@= skipped -1, +1 lines =@@
+ 
+ === consumer.ts ===
+ import x = require('./foo');
+->x : typeof x
+->  : ^^^^^^^^
++>x : typeof M2
+ 
+ x.Y // .ts should be picked
+ >x.Y : number
+->    : ^^^^^^
+->x : typeof x
+->  : ^^^^^^^^
++>x : typeof M2
+ >Y : number
+->  : ^^^^^^
+ 
+ === foo.ts ===
+ module M2 {
+ >M2 : typeof M2
+->   : ^^^^^^^^^
+ 
+     export var Y = 1;
+ >Y : number
+->  : ^^^^^^
+ >1 : 1
+->  : ^
+ }
+ export = M2
+ >M2 : typeof M2
+->   : ^^^^^^^^^
+ 

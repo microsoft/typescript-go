@@ -1,0 +1,22 @@
+--- old.parserComputedPropertyName41.types
++++ new.parserComputedPropertyName41.types
+@@= skipped -2, +2 lines =@@
+ === parserComputedPropertyName41.ts ===
+ var v = {
+ >v : {}
+->  : ^^
+ >{    [0 in []]: true} : {}
+->                      : ^^
+ 
+     [0 in []]: true
+ >[0 in []] : boolean
+->          : ^^^^^^^
+ >0 in [] : boolean
+->        : ^^^^^^^
+ >0 : 0
+->  : ^
+ >[] : undefined[]
+->   : ^^^^^^^^^^^
+ >true : true
+->     : ^^^^
+ }

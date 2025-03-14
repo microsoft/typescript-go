@@ -1,0 +1,8 @@
+--- old.commentOnImportStatement1.types
++++ new.commentOnImportStatement1.types
+@@= skipped -4, +4 lines =@@
+ 
+ import foo = require('./foo');
+ >foo : any
+->    : ^^^
+ 

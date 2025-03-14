@@ -1,0 +1,12 @@
+--- old.MemberFunctionDeclaration6_es6.types
++++ new.MemberFunctionDeclaration6_es6.types
+@@= skipped -2, +2 lines =@@
+ === MemberFunctionDeclaration6_es6.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+    *foo
+ >foo : () => any
+->    : ^^^^^^^^^
+ }

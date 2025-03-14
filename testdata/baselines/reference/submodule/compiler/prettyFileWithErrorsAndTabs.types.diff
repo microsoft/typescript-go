@@ -1,0 +1,27 @@
+--- old.prettyFileWithErrorsAndTabs.types
++++ new.prettyFileWithErrorsAndTabs.types
+@@= skipped -2, +2 lines =@@
+ === prettyFileWithErrorsAndTabs.ts ===
+ function f() {
+ >f : () => void
+->  : ^^^^^^^^^^
+ 	{
+ 		const x: string = 12;
+ >x : string
+->  : ^^^^^^
+ >12 : 12
+->   : ^^
+ 
+ 		const y: string = 12;
+ >y : string
+->  : ^^^^^^
+ >12 : 12
+->   : ^^
+ 
+ 		const z: string = 12;
+ >z : string
+->  : ^^^^^^
+ >12 : 12
+->   : ^^
+ 	}
+ }

@@ -1,0 +1,33 @@
+--- old.jsxFactoryIdentifierWithAbsentParameter.types
++++ new.jsxFactoryIdentifierWithAbsentParameter.types
+@@= skipped -1, +1 lines =@@
+ 
+ === test.tsx ===
+ declare module JSX {
++>JSX : any
++
+     interface IntrinsicElements {
++>IntrinsicElements : IntrinsicElements
++
+         [s: string]: any;
+ >s : string
+->  : ^^^^^^
+     }
+ }
+ 
+ export class AppComponent {
+ >AppComponent : AppComponent
+->             : ^^^^^^^^^^^^
+ 
+     render() {
+ >render : () => any
+->       : ^^^^^^^^^
+ 
+         return <div />;
+ ><div /> : any
+->        : ^^^
+ >div : any
+->    : ^^^
+     }
+ }
+ 

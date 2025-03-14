@@ -1,0 +1,12 @@
+--- old.destructuringVoid.types
++++ new.destructuringVoid.types
+@@= skipped -2, +2 lines =@@
+ === destructuringVoid.ts ===
+ declare const v: void;
+ >v : void
+->  : ^^^^
+ 
+ const {} = v;
+ >v : void
+->  : ^^^^
+ 

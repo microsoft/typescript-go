@@ -1,0 +1,21 @@
+--- old.es5-declaration-amd.types
++++ new.es5-declaration-amd.types
+@@= skipped -2, +2 lines =@@
+ === es5-declaration-amd.ts ===
+ class A
+ >A : A
+->  : ^
+ {
+     constructor ()
+     {
+@@= skipped -9, +8 lines =@@
+ 
+     public B()
+ >B : () => number
+->  : ^^^^^^^^^^^^
+     {
+         return 42;
+ >42 : 42
+->   : ^^
+     }
+ }

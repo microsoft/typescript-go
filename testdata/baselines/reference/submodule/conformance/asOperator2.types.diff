@@ -1,0 +1,12 @@
+--- old.asOperator2.types
++++ new.asOperator2.types
+@@= skipped -2, +2 lines =@@
+ === asOperator2.ts ===
+ var x = 23 as string;
+ >x : string
+->  : ^^^^^^
+ >23 as string : string
+->             : ^^^^^^
+ >23 : 23
+->   : ^^
+ 

@@ -1,0 +1,28 @@
+--- old.InvalidNonInstantiatedModule.types
++++ new.InvalidNonInstantiatedModule.types
+@@= skipped -1, +1 lines =@@
+ 
+ === InvalidNonInstantiatedModule.ts ===
+ module M {
++>M : any
++
+     export interface Point { x: number; y: number }
++>Point : Point
+ >x : number
+->  : ^^^^^^
+ >y : number
+->  : ^^^^^^
+ }
+ 
+ var m = M; // Error, not instantiated can not be used as var
+ >m : any
+->  : ^^^
+ >M : any
+->  : ^^^
+ 
+ var x: typeof M; // Error only a namespace
+ >x : any
+->  : ^^^
+->M : any
+->  : ^^^
+ 

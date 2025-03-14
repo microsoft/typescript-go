@@ -1,0 +1,34 @@
+--- old.checkSuperCallBeforeThisAccessing5.types
++++ new.checkSuperCallBeforeThisAccessing5.types
+@@= skipped -2, +2 lines =@@
+ === checkSuperCallBeforeThisAccessing5.ts ===
+ class Based { constructor(...arg) { } }
+ >Based : Based
+->      : ^^^^^
+ >arg : any[]
+->    : ^^^^^
+ 
+ class Derived extends Based {
+ >Derived : Derived
+->        : ^^^^^^^
+ >Based : Based
+->      : ^^^^^
+ 
+     public x: number;
+ >x : number
+->  : ^^^^^^
+ 
+     constructor() {
+         super(this.x);
+ >super(this.x) : void
+->              : ^^^^
+ >super : typeof Based
+->      : ^^^^^^^^^^^^
+ >this.x : number
+->       : ^^^^^^
+ >this : this
+->     : ^^^^
+ >x : number
+->  : ^^^^^^
+     }
+ }

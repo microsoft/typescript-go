@@ -1,0 +1,15 @@
+--- old.moduleNoneOutFile.types
++++ new.moduleNoneOutFile.types
+@@= skipped -2, +2 lines =@@
+ === first.ts ===
+ class Foo {}
+ >Foo : Foo
+->    : ^^^
+ 
+ === second.ts ===
+ class Bar extends Foo {}
+ >Bar : Bar
+->    : ^^^
+ >Foo : Foo
+->    : ^^^
+ 

@@ -1,0 +1,19 @@
+--- old.nodeAllowJsPackageSelfName2.types
++++ new.nodeAllowJsPackageSelfName2.types
+@@= skipped -2, +2 lines =@@
+ === /src/foo.js ===
+ export const foo = 1;
+ >foo : 1
+->    : ^
+ >1 : 1
+->  : ^
+ 
+ === /test/foo.js ===
+ import { foo } from "js-self-name-import/foo.js";
+ >foo : 1
+->    : ^
+ 
++=== /types/src/foo.d.ts ===
++export const foo: 1;
++>foo : 1
++

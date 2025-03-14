@@ -1,0 +1,17 @@
+--- old.decoratorOnClass4.es6.types
++++ new.decoratorOnClass4.es6.types
+@@= skipped -2, +2 lines =@@
+ === decoratorOnClass4.es6.ts ===
+ declare function dec<T>(target: T): T;
+ >dec : <T>(target: T) => T
+->    : ^ ^^      ^^ ^^^^^ 
++>T : T
+ >target : T
+->       : ^
+ 
+ @dec
+ >dec : <T>(target: T) => T
+->    : ^ ^^      ^^ ^^^^^ 
+ 
+ export default class {
+ }

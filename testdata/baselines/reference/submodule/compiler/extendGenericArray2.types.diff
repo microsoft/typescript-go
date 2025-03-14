@@ -1,0 +1,34 @@
+--- old.extendGenericArray2.types
++++ new.extendGenericArray2.types
+@@= skipped -1, +1 lines =@@
+ 
+ === extendGenericArray2.ts ===
+ interface IFoo<T> {
++>IFoo : IFoo<T>
++>T : T
++
+     x: T;
+ >x : T
+->  : ^
+ }
+ 
+ interface Array<T> extends IFoo<T> { }
++>Array : T[]
++>T : T
+ 
+ var arr: string[] = [];
+ >arr : string[]
+->    : ^^^^^^^^
+ >[] : undefined[]
+->   : ^^^^^^^^^^^
+ 
+ var y: number = arr.x;
+ >y : number
+->  : ^^^^^^
+ >arr.x : string
+->      : ^^^^^^
+ >arr : string[]
+->    : ^^^^^^^^
+ >x : string
+->  : ^^^^^^
+ 

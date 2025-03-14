@@ -1,0 +1,22 @@
+--- old.invalidContinueInDownlevelAsync.types
++++ new.invalidContinueInDownlevelAsync.types
+@@= skipped -2, +2 lines =@@
+ === invalidContinueInDownlevelAsync.ts ===
+ async function func() {
+ >func : () => Promise<void>
+->     : ^^^^^^^^^^^^^^^^^^^
+ 
+     if (true) {
+ >true : true
+->     : ^^^^
+ 
+         continue;
+     }
+     else {
+         await 1;
+ >await 1 : 1
+->        : ^
+ >1 : 1
+->  : ^
+     }
+ }

@@ -1,0 +1,43 @@
+--- old.computedPropertyNamesContextualType9_ES6.types
++++ new.computedPropertyNamesContextualType9_ES6.types
+@@= skipped -1, +1 lines =@@
+ 
+ === computedPropertyNamesContextualType9_ES6.ts ===
+ interface I {
++>I : I
++
+     [s: string]: boolean;
+ >s : string
+->  : ^^^^^^
+ 
+     [s: number]: boolean;
+ >s : number
+->  : ^^^^^^
+ }
+ 
+ var o: I = {
+ >o : I
+->  : ^
+ >{    [+"foo"]: "",    [+"bar"]: 0} : { [x: number]: string | number; }
+->                                   : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+     [+"foo"]: "",
+ >[+"foo"] : string
+->         : ^^^^^^
+ >+"foo" : number
+->       : ^^^^^^
+ >"foo" : "foo"
+->      : ^^^^^
+ >"" : ""
+->   : ^^
+ 
+     [+"bar"]: 0
+ >[+"bar"] : number
+->         : ^^^^^^
+ >+"bar" : number
+->       : ^^^^^^
+ >"bar" : "bar"
+->      : ^^^^^
+ >0 : 0
+->  : ^
+ }

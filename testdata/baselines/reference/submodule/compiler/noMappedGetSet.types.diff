@@ -1,0 +1,20 @@
+--- old.noMappedGetSet.types
++++ new.noMappedGetSet.types
+@@= skipped -2, +2 lines =@@
+ === noMappedGetSet.ts ===
+ type OH_NO = {
+ >OH_NO : OH_NO
+->      : ^^^^^
+ 
+     get [K in WAT](): string
+ >[K in WAT] : string
+->           : ^^^^^^
+ >K in WAT : boolean
+->         : ^^^^^^^
+ >K : any
+->  : ^^^
+ >WAT : any
+->    : ^^^
+ 
+ };
+ 

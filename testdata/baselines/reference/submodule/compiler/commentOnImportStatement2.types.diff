@@ -1,0 +1,8 @@
+--- old.commentOnImportStatement2.types
++++ new.commentOnImportStatement2.types
+@@= skipped -3, +3 lines =@@
+ /* not copyright */
+ import foo = require('./foo');
+ >foo : any
+->    : ^^^
+ 

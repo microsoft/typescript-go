@@ -1,0 +1,14 @@
+--- old.importWithTypeArguments.types
++++ new.importWithTypeArguments.types
+@@= skipped -2, +2 lines =@@
+ === importWithTypeArguments.ts ===
+ import<T>
+ >import<T> : any
+->          : ^^^
+ 
+ const a = import<string, number>
+ >a : any
+->  : ^^^
+ >import<string, number> : any
+->                       : ^^^
+ 

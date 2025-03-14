@@ -1,0 +1,24 @@
+--- old.parser519458.types
++++ new.parser519458.types
+@@= skipped -2, +2 lines =@@
+ === parser519458.ts ===
+ import rect = module("rect"); var bar = new rect.Rect();
+ >rect : any
+->     : ^^^
+ >module : any
+->       : ^^^
+ >("rect") : "rect"
+->         : ^^^^^^
+ >"rect" : "rect"
+->       : ^^^^^^
+ >bar : any
+->    : ^^^
+ >new rect.Rect() : any
+->                : ^^^
+ >rect.Rect : any
+->          : ^^^
+ >rect : any
+->     : ^^^
+ >Rect : any
+->     : ^^^
+ 

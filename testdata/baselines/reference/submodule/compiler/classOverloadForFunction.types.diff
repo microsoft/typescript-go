@@ -1,0 +1,12 @@
+--- old.classOverloadForFunction.types
++++ new.classOverloadForFunction.types
+@@= skipped -2, +2 lines =@@
+ === classOverloadForFunction.ts ===
+ class foo { };
+ >foo : foo
+->    : ^^^
+ 
+ function foo() {}
+ >foo : typeof foo
+->    : ^^^^^^^^^^
+ 

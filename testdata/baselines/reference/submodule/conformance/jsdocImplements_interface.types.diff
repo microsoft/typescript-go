@@ -1,0 +1,47 @@
+--- old.jsdocImplements_interface.types
++++ new.jsdocImplements_interface.types
+@@= skipped -1, +1 lines =@@
+ 
+ === /defs.d.ts ===
+ interface A {
++>A : A
++
+     mNumber(): number;
+ >mNumber : () => number
+->        : ^^^^^^      
+ }
+ === /a.js ===
+ /** @implements A */
+ class B {
+ >B : B
+->  : ^
+ 
+     mNumber() {
+ >mNumber : () => number
+->        : ^^^^^^^^^^^^
+ 
+         return 0;
+ >0 : 0
+->  : ^
+     }
+ }
+ /** @implements {A} */
+ class B2 {
+ >B2 : B2
+->   : ^^
+ 
+     mNumber() {
+ >mNumber : () => string
+->        : ^^^^^^^^^^^^
+ 
+         return "";
+ >"" : ""
+->   : ^^
+     }
+ }
+ /** @implements A */
+ class B3 {
+ >B3 : B3
+->   : ^^
+ }
+ 

@@ -1,0 +1,21 @@
+--- old.duplicateTypeParameters2.types
++++ new.duplicateTypeParameters2.types
+@@= skipped -2, +2 lines =@@
+ === duplicateTypeParameters2.ts ===
+ class A { public foo() { } }
+ >A : A
+->  : ^
+ >foo : () => void
+->    : ^^^^^^^^^^
+ 
+ class B { public bar() { } }
+ >B : B
+->  : ^
+ >bar : () => void
+->    : ^^^^^^^^^^
+ 
+ interface I<T extends A, T extends B> {}
++>I : I<T>
++>T : T
++>T : T
++

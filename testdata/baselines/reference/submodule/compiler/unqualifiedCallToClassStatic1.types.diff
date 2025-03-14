@@ -1,0 +1,22 @@
+--- old.unqualifiedCallToClassStatic1.types
++++ new.unqualifiedCallToClassStatic1.types
+@@= skipped -2, +2 lines =@@
+ === unqualifiedCallToClassStatic1.ts ===
+ class Vector {
+ >Vector : Vector
+->       : ^^^^^^
+ 
+  static foo = () => {
+ >foo : () => void
+->    : ^^^^^^^^^^
+ >() => {  // 'foo' cannot be called in an unqualified manner.  foo(); } : () => void
+->                                                                       : ^^^^^^^^^^
+ 
+   // 'foo' cannot be called in an unqualified manner.
+   foo();
+ >foo() : any
+->      : ^^^
+ >foo : any
+->    : ^^^
+  }
+ }

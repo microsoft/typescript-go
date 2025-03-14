@@ -1,0 +1,20 @@
+--- old.illegalModifiersOnClassElements.types
++++ new.illegalModifiersOnClassElements.types
+@@= skipped -2, +2 lines =@@
+ === illegalModifiersOnClassElements.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+     declare foo = 1;
+ >foo : number
+->    : ^^^^^^
+ >1 : 1
+->  : ^
+ 
+     export bar = 1;
+ >bar : number
+->    : ^^^^^^
+ >1 : 1
+->  : ^
+ }

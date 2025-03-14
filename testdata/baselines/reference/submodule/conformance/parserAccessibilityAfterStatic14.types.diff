@@ -1,0 +1,14 @@
+--- old.parserAccessibilityAfterStatic14.types
++++ new.parserAccessibilityAfterStatic14.types
+@@= skipped -2, +2 lines =@@
+ === parserAccessibilityAfterStatic14.ts ===
+ class Outer
+ >Outer : Outer
+->      : ^^^^^
+ {
+ static public<T>() {}
+ >public : <T>() => void
+->       : ^ ^^^^^^^^^^^
++>T : T
+ }
+ 

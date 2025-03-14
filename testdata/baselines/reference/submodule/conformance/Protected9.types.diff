@@ -1,0 +1,10 @@
+--- old.Protected9.types
++++ new.Protected9.types
+@@= skipped -2, +2 lines =@@
+ === Protected9.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+    constructor(protected p) { }
+ >p : any

@@ -1,0 +1,10 @@
+--- old.emitPinnedCommentsOnTopOfFile.types
++++ new.emitPinnedCommentsOnTopOfFile.types
+@@= skipped -8, +8 lines =@@
+ 
+ var x = 10;
+ >x : number
+->  : ^^^^^^
+ >10 : 10
+->   : ^^
+ 

@@ -1,0 +1,69 @@
+--- old.constEnumOnlyModuleMerging.types
++++ new.constEnumOnlyModuleMerging.types
+@@= skipped -2, +2 lines =@@
+ === constEnumOnlyModuleMerging.ts ===
+ module Outer {
+ >Outer : typeof Outer
+->      : ^^^^^^^^^^^^
+ 
+     export var x = 1;
+ >x : number
+->  : ^^^^^^
+ >1 : 1
+->  : ^
+ }
+ 
+ module Outer {
++>Outer : typeof Outer
++
+     export const enum A { X }
+->A : A
+->  : ^
++>A : A.X
+ >X : A.X
+->  : ^^^
+ }
+ 
+ module B {
+ >B : typeof B
+->  : ^^^^^^^^
+ 
+     import O = Outer;
+->O : typeof O
+->  : ^^^^^^^^
+->Outer : typeof O
+->      : ^^^^^^^^
++>O : typeof Outer
++>Outer : typeof Outer
+ 
+     var x = O.A.X;
+->x : O.A
+->  : ^^^
+->O.A.X : O.A
+->      : ^^^
+->O.A : typeof O.A
+->    : ^^^^^^^^^^
+->O : typeof O
+->  : ^^^^^^^^
+->A : typeof O.A
+->  : ^^^^^^^^^^
+->X : O.A
+->  : ^^^
++>x : A.X
++>O.A.X : A.X
++>O.A : typeof A
++>O : typeof Outer
++>A : typeof A
++>X : A.X
+ 
+     var y = O.x;
+ >y : number
+->  : ^^^^^^
+ >O.x : number
+->    : ^^^^^^
+->O : typeof O
+->  : ^^^^^^^^
++>O : typeof Outer
+ >x : number
+->  : ^^^^^^
+ }

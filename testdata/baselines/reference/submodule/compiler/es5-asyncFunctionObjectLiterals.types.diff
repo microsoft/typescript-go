@@ -1,0 +1,107 @@
+--- old.es5-asyncFunctionObjectLiterals.types
++++ new.es5-asyncFunctionObjectLiterals.types
+@@= skipped -10, +10 lines =@@
+ 
+ async function objectLiteral0() {
+ >objectLiteral0 : () => Promise<void>
+->               : ^^^^^^^^^^^^^^^^^^^
+ 
+     x = {
+ >x = {        a: await y,        b: z    } : { a: any; b: any; }
+->                                          : ^^^^^^^^^^^^^^^^^^^
+ >x : any
+ >{        a: await y,        b: z    } : { a: any; b: any; }
+->                                      : ^^^^^^^^^^^^^^^^^^^
+ 
+         a: await y,
+ >a : any
+@@= skipped -23, +20 lines =@@
+ 
+ async function objectLiteral1() {
+ >objectLiteral1 : () => Promise<void>
+->               : ^^^^^^^^^^^^^^^^^^^
+ 
+     x = {
+ >x = {        a: y,        b: await z    } : { a: any; b: any; }
+->                                          : ^^^^^^^^^^^^^^^^^^^
+ >x : any
+ >{        a: y,        b: await z    } : { a: any; b: any; }
+->                                      : ^^^^^^^^^^^^^^^^^^^
+ 
+         a: y,
+ >a : any
+@@= skipped -23, +20 lines =@@
+ 
+ async function objectLiteral2() {
+ >objectLiteral2 : () => Promise<void>
+->               : ^^^^^^^^^^^^^^^^^^^
+ 
+     x = {
+ >x = {        [await a]: y,        b: z    } : { [x: number]: any; b: any; }
+->                                            : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ >x : any
+ >{        [await a]: y,        b: z    } : { [x: number]: any; b: any; }
+->                                        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+         [await a]: y,
+ >[await a] : any
+@@= skipped -24, +21 lines =@@
+ 
+ async function objectLiteral3() {
+ >objectLiteral3 : () => Promise<void>
+->               : ^^^^^^^^^^^^^^^^^^^
+ 
+     x = {
+ >x = {        [a]: await y,        b: z    } : { [x: number]: any; b: any; }
+->                                            : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ >x : any
+ >{        [a]: await y,        b: z    } : { [x: number]: any; b: any; }
+->                                        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+         [a]: await y,
+ >[a] : any
+@@= skipped -24, +21 lines =@@
+ 
+ async function objectLiteral4() {
+ >objectLiteral4 : () => Promise<void>
+->               : ^^^^^^^^^^^^^^^^^^^
+ 
+     x = {
+ >x = {        a: await y,        [b]: z    } : { [x: number]: any; a: any; }
+->                                            : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ >x : any
+ >{        a: await y,        [b]: z    } : { [x: number]: any; a: any; }
+->                                        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+         a: await y,
+ >a : any
+@@= skipped -24, +21 lines =@@
+ 
+ async function objectLiteral5() {
+ >objectLiteral5 : () => Promise<void>
+->               : ^^^^^^^^^^^^^^^^^^^
+ 
+     x = {
+ >x = {        a: y,        [await b]: z    } : { [x: number]: any; a: any; }
+->                                            : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ >x : any
+ >{        a: y,        [await b]: z    } : { [x: number]: any; a: any; }
+->                                        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+         a: y,
+ >a : any
+@@= skipped -24, +21 lines =@@
+ 
+ async function objectLiteral6() {
+ >objectLiteral6 : () => Promise<void>
+->               : ^^^^^^^^^^^^^^^^^^^
+ 
+     x = {
+ >x = {        a: y,        [b]: await z    } : { [x: number]: any; a: any; }
+->                                            : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ >x : any
+ >{        a: y,        [b]: await z    } : { [x: number]: any; a: any; }
+->                                        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+         a: y,
+ >a : any

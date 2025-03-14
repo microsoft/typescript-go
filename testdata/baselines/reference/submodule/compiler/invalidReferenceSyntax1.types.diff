@@ -1,0 +1,9 @@
+--- old.invalidReferenceSyntax1.types
++++ new.invalidReferenceSyntax1.types
+@@= skipped -3, +3 lines =@@
+ /// <reference path="missingquote.ts />
+ class C {
+ >C : C
+->  : ^
+ 
+ }

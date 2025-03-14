@@ -1,0 +1,13 @@
+--- old.asyncGetter_es6.types
++++ new.asyncGetter_es6.types
+@@= skipped -2, +2 lines =@@
+ === asyncGetter_es6.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+   async get foo() {
+ >foo : void
+->    : ^^^^
+   }
+ }

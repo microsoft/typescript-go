@@ -1,0 +1,8 @@
+--- old.downlevelLetConst4.types
++++ new.downlevelLetConst4.types
+@@= skipped -2, +2 lines =@@
+ === downlevelLetConst4.ts ===
+ const a: number
+ >a : number
+->  : ^^^^^^
+ 

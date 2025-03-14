@@ -1,0 +1,11 @@
+--- old.jsFileCompilationTypeParameterSyntaxOfClassExpression.types
++++ new.jsFileCompilationTypeParameterSyntaxOfClassExpression.types
+@@= skipped -2, +2 lines =@@
+ === a.js ===
+ const Bar = class<T> {};
+ >Bar : typeof Bar
+->    : ^^^^^^^^^^
+ >class<T> {} : typeof Bar
+->            : ^^^^^^^^^^
++>T : T
+ 

@@ -1,0 +1,34 @@
+--- old.declarationEmitImportInExportAssignmentModule.types
++++ new.declarationEmitImportInExportAssignmentModule.types
+@@= skipped -2, +2 lines =@@
+ === declarationEmitImportInExportAssignmentModule.ts ===
+ module m {
+ >m : typeof m
+->  : ^^^^^^^^
+ 
+     export module c {
+->c : typeof m.c
+->  : ^^^^^^^^^^
++>c : typeof c
+ 
+         export class c {
+ >c : c
+->  : ^
+         }
+     }
+     import x = c;
+ >x : typeof c
+->  : ^^^^^^^^
+ >c : typeof c
+->  : ^^^^^^^^
+ 
+     export var a: typeof x;
+ >a : typeof c
+->  : ^^^^^^^^
+->x : typeof c
+->  : ^^^^^^^^
+ }
+ export = m;
+ >m : typeof m
+->  : ^^^^^^^^
+ 

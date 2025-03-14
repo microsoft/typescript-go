@@ -1,0 +1,26 @@
+--- old.es5-asyncFunctionConditionals.types
++++ new.es5-asyncFunctionConditionals.types
+@@= skipped -10, +10 lines =@@
+ 
+ async function conditional0() {
+ >conditional0 : () => Promise<void>
+->             : ^^^^^^^^^^^^^^^^^^^
+ 
+     a = (await x) ? y : z;
+ >a = (await x) ? y : z : any
+@@= skipped -15, +14 lines =@@
+ 
+ async function conditional1() {
+ >conditional1 : () => Promise<void>
+->             : ^^^^^^^^^^^^^^^^^^^
+ 
+     a = x ? await y : z;
+ >a = x ? await y : z : any
+@@= skipped -14, +13 lines =@@
+ 
+ async function conditional2() {
+ >conditional2 : () => Promise<void>
+->             : ^^^^^^^^^^^^^^^^^^^
+ 
+     a = x ? y : await z;
+ >a = x ? y : await z : any

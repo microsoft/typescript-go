@@ -1,0 +1,10 @@
+--- old.classWithSemicolonClassElement2.types
++++ new.classWithSemicolonClassElement2.types
+@@= skipped -2, +2 lines =@@
+ === classWithSemicolonClassElement2.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+     ;
+     ;

@@ -1,0 +1,37 @@
+--- old.typeArgumentInferenceWithClassExpression2.types
++++ new.typeArgumentInferenceWithClassExpression2.types
+@@= skipped -2, +2 lines =@@
+ === typeArgumentInferenceWithClassExpression2.ts ===
+ function foo<T>(x = class { prop: T }): T {
+ >foo : <T>(x?: typeof (Anonymous class)) => T
+->    : ^ ^^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
++>T : T
+ >x : typeof (Anonymous class)
+->  : ^^^^^^^^^^^^^^^^^^^^^^^^
+ >class { prop: T } : typeof (Anonymous class)
+->                  : ^^^^^^^^^^^^^^^^^^^^^^^^
+ >prop : T
+->     : ^
+ 
+     return undefined;
+ >undefined : undefined
+->          : ^^^^^^^^^
+ }
+ 
+ // Should not infer string because it is a static property
+ foo(class { static prop = "hello" }).length;
+ >foo(class { static prop = "hello" }).length : any
+->                                            : ^^^
+ >foo(class { static prop = "hello" }) : unknown
+->                                     : ^^^^^^^
+ >foo : <T>(x?: typeof (Anonymous class)) => T
+->    : ^ ^^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
+ >class { static prop = "hello" } : typeof (Anonymous class)
+->                                : ^^^^^^^^^^^^^^^^^^^^^^^^
+ >prop : string
+->     : ^^^^^^
+ >"hello" : "hello"
+->        : ^^^^^^^
+ >length : any
+->       : ^^^
+ 

@@ -1,0 +1,12 @@
+--- old.parserUnaryExpression3.types
++++ new.parserUnaryExpression3.types
+@@= skipped -2, +2 lines =@@
+ === parserUnaryExpression3.ts ===
+ ++[0];
+ >++[0] : number
+->      : ^^^^^^
+ >[0] : [number]
+->    : ^^^^^^^^
+ >0 : 0
+->  : ^
+ 

@@ -1,0 +1,12 @@
+--- old.shorthandPropertyUndefined.types
++++ new.shorthandPropertyUndefined.types
+@@= skipped -2, +2 lines =@@
+ === shorthandPropertyUndefined.ts ===
+ var a = { b };
+ >a : { b: any; }
+->  : ^^^^^^^^^^^
+ >{ b } : { b: any; }
+->      : ^^^^^^^^^^^
+ >b : any
+->  : ^^^
+ 

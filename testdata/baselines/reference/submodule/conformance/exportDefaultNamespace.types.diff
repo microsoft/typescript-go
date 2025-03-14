@@ -1,0 +1,28 @@
+--- old.exportDefaultNamespace.types
++++ new.exportDefaultNamespace.types
+@@= skipped -1, +1 lines =@@
+ 
+ === exportDefaultNamespace.ts ===
+ export default function someFunc() {
+->someFunc : typeof someFunc
+->         : ^^^^^^^^^^^^^^^
++>someFunc : { (): string; someProp: string; }
+ 
+     return 'hello!';
+ >'hello!' : "hello!"
+->         : ^^^^^^^^
+ }
+ 
+ someFunc.someProp = 'yo';
+ >someFunc.someProp = 'yo' : "yo"
+->                         : ^^^^
+ >someFunc.someProp : string
+->                  : ^^^^^^
+->someFunc : typeof someFunc
+->         : ^^^^^^^^^^^^^^^
++>someFunc : { (): string; someProp: string; }
+ >someProp : string
+->         : ^^^^^^
+ >'yo' : "yo"
+->     : ^^^^
+ 

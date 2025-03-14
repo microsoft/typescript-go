@@ -1,0 +1,10 @@
+--- old.parserErrantEqualsGreaterThanAfterFunction1.types
++++ new.parserErrantEqualsGreaterThanAfterFunction1.types
+@@= skipped -2, +2 lines =@@
+ === parserErrantEqualsGreaterThanAfterFunction1.ts ===
+ function f() => 4;
+ >f : () => any
+->  : ^^^^^^^^^
+ >4 : 4
+->  : ^
+ 

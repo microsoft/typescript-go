@@ -1,0 +1,18 @@
+--- old.spellingSuggestionGlobal1.types
++++ new.spellingSuggestionGlobal1.types
+@@= skipped -3, +3 lines =@@
+ export {}
+ declare global { const x: any }
+ >global : typeof global
+->       : ^^^^^^^^^^^^^
+ >x : any
+->  : ^^^
+ 
+ global.x // should not suggest `global` (GH#42209)
+ >global.x : any
+->         : ^^^
+ >global : any
+->       : ^^^
+ >x : any
+->  : ^^^
+ 

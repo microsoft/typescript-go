@@ -1,0 +1,49 @@
+--- old.checkJsFiles7.types
++++ new.checkJsFiles7.types
+@@= skipped -2, +2 lines =@@
+ === a.js ===
+ class C {
+ >C : C
+->  : ^
+ 
+ 	constructor() {
+ 		/** @type {boolean} */
+ 		this.a = true;
+ >this.a = true : true
+->              : ^^^^
+->this.a : boolean
+->       : ^^^^^^^
++>this.a : any
+ >this : this
+->     : ^^^^
+->a : boolean
+->  : ^^^^^^^
++>a : any
+ >true : true
+->     : ^^^^
+ 
+ 		this.a = !!this.a;
+ >this.a = !!this.a : boolean
+->                  : ^^^^^^^
+->this.a : boolean
+->       : ^^^^^^^
++>this.a : any
+ >this : this
+->     : ^^^^
+->a : boolean
+->  : ^^^^^^^
++>a : any
+ >!!this.a : boolean
+->         : ^^^^^^^
+ >!this.a : boolean
+->        : ^^^^^^^
+->this.a : true
+->       : ^^^^
++>this.a : any
+ >this : this
+->     : ^^^^
+->a : true
+->  : ^^^^
++>a : any
+ 	}
+ }

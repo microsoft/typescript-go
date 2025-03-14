@@ -1,0 +1,23 @@
+--- old.functionExpressionWithResolutionOfTypeNamedArguments01.types
++++ new.functionExpressionWithResolutionOfTypeNamedArguments01.types
+@@= skipped -1, +1 lines =@@
+ 
+ === functionExpressionWithResolutionOfTypeNamedArguments01.ts ===
+ interface arguments {
++>arguments : arguments
+ }
+ 
+ var x = function f() {
+ >x : () => void
+->  : ^^^^^^^^^^
+ >function f() {    <arguments>arguments;} : () => void
+->                                         : ^^^^^^^^^^
+ >f : () => void
+->  : ^^^^^^^^^^
+ 
+     <arguments>arguments;
+ ><arguments>arguments : arguments
+->                     : ^^^^^^^^^
+ >arguments : IArguments
+->          : ^^^^^^^^^^
+ }

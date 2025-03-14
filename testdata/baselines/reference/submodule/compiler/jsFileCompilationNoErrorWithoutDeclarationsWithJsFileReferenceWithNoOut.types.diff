@@ -1,0 +1,22 @@
+--- old.jsFileCompilationNoErrorWithoutDeclarationsWithJsFileReferenceWithNoOut.types
++++ new.jsFileCompilationNoErrorWithoutDeclarationsWithJsFileReferenceWithNoOut.types
+@@= skipped -2, +2 lines =@@
+ === a.ts ===
+ class c {
+ >c : c
+->  : ^
+ }
+ 
+ === b.ts ===
+@@= skipped -8, +7 lines =@@
+ // no error on above reference path since not emitting declarations
+ function foo() {
+ >foo : () => void
+->    : ^^^^^^^^^^
+ }
+ 
+ === c.js ===
+ function bar() {
+ >bar : () => void
+->    : ^^^^^^^^^^
+ }

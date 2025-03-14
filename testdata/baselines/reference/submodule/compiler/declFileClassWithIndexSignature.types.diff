@@ -1,0 +1,12 @@
+--- old.declFileClassWithIndexSignature.types
++++ new.declFileClassWithIndexSignature.types
+@@= skipped -2, +2 lines =@@
+ === declFileClassWithIndexSignature.ts ===
+ class BlockIntrinsics {
+ >BlockIntrinsics : BlockIntrinsics
+->                : ^^^^^^^^^^^^^^^
+ 
+     [s: string]: string;
+ >s : string
+->  : ^^^^^^
+ }

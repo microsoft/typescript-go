@@ -1,0 +1,66 @@
+--- old.argumentsReferenceInConstructor5_Js.types
++++ new.argumentsReferenceInConstructor5_Js.types
+@@= skipped -2, +2 lines =@@
+ === /a.js ===
+ const bar = {
+ >bar : { arguments: {}; }
+->    : ^^^^^^^^^^^^^^^^^^
+ >{	arguments: {}} : { arguments: {}; }
+->                 : ^^^^^^^^^^^^^^^^^^
+ 
+ 	arguments: {}
+ >arguments : {}
+->          : ^^
+ >{} : {}
+->   : ^^
+ }
+ 
+ class A {
+ >A : A
+->  : ^
+ 
+ 	/**
+ 	 * Constructor
+@@= skipped -21, +16 lines =@@
+ 	 * @param {object} [foo={}]
+ 	 */
+ 	constructor(foo = {}) {
+->foo : any
++>foo : {}
+ >{} : {}
+->   : ^^
+ 
+ 		/**
+ 		 * @type object
+ 		 */
+ 		this.foo = foo;
+->this.foo = foo : any
++>this.foo = foo : {}
+ >this.foo : any
+ >this : this
+->     : ^^^^
+ >foo : any
+->    : ^^^
+->foo : any
++>foo : {}
+ 
+ 		/**
+ 		 * @type object
+ 		 */
+ 		this.bar = bar.arguments;
+ >this.bar = bar.arguments : {}
+->                         : ^^
+ >this.bar : any
+ >this : this
+->     : ^^^^
+ >bar : any
+->    : ^^^
+ >bar.arguments : {}
+->              : ^^
+ >bar : { arguments: {}; }
+->    : ^^^^^^^^^^^^^^^^^^
+ >arguments : {}
+->          : ^^
+ 	}
+ }
+ 

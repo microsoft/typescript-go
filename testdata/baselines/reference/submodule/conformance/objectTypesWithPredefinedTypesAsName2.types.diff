@@ -1,0 +1,10 @@
+--- old.objectTypesWithPredefinedTypesAsName2.types
++++ new.objectTypesWithPredefinedTypesAsName2.types
+@@= skipped -4, +4 lines =@@
+ 
+ class void {} // parse error unlike the others
+ >void {} : undefined
+->        : ^^^^^^^^^
+ >{} : {}
+->   : ^^
+ 

@@ -1,0 +1,13 @@
+--- old.commonSourceDir3.types
++++ new.commonSourceDir3.types
+@@= skipped -2, +2 lines =@@
+ === A:/foo/bar.ts ===
+ var x: number;
+ >x : number
+->  : ^^^^^^
+ 
+ === a:/foo/baz.ts ===
+ var y: number;
+ >y : number
+->  : ^^^^^^
+ 

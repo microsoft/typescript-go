@@ -1,0 +1,15 @@
+--- old.parserErrorRecovery_ModuleElement2.types
++++ new.parserErrorRecovery_ModuleElement2.types
+@@= skipped -2, +2 lines =@@
+ === parserErrorRecovery_ModuleElement2.ts ===
+ function foo() {
+ >foo : () => void
+->    : ^^^^^^^^^^
+ }
+ 
+ function foo() {
+ >foo : () => void
+->    : ^^^^^^^^^^
+ }
+ 
+ )

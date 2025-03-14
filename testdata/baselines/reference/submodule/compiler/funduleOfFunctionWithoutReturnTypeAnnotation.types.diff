@@ -1,0 +1,27 @@
+--- old.funduleOfFunctionWithoutReturnTypeAnnotation.types
++++ new.funduleOfFunctionWithoutReturnTypeAnnotation.types
+@@= skipped -2, +2 lines =@@
+ === funduleOfFunctionWithoutReturnTypeAnnotation.ts ===
+ function fn() {
+ >fn : typeof fn
+->   : ^^^^^^^^^
+ 
+     return fn.n;
+ >fn.n : number
+->     : ^^^^^^
+ >fn : typeof fn
+->   : ^^^^^^^^^
+ >n : number
+->  : ^^^^^^
+ }
+ module fn {
+ >fn : typeof fn
+->   : ^^^^^^^^^
+ 
+     export var n = 1;
+ >n : number
+->  : ^^^^^^
+ >1 : 1
+->  : ^
+ }
+ 

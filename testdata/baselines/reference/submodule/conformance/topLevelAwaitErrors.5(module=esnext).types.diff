@@ -1,0 +1,9 @@
+--- old.topLevelAwaitErrors.5(module=esnext).types
++++ new.topLevelAwaitErrors.5(module=esnext).types
+@@= skipped -3, +3 lines =@@
+ // await in exported class name should fail
+ export class await {
+ >await : await
+->      : ^^^^^
+ }
+ 

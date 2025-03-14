@@ -1,0 +1,28 @@
+--- old.parserAmbiguityWithBinaryOperator4.types
++++ new.parserAmbiguityWithBinaryOperator4.types
+@@= skipped -2, +2 lines =@@
+ === parserAmbiguityWithBinaryOperator4.ts ===
+ function g() {
+ >g : () => void
+->  : ^^^^^^^^^^
+ 
+     var a, b, c;
+ >a : any
+->  : ^^^
+ >b : any
+->  : ^^^
+ >c : any
+->  : ^^^
+ 
+     if (a<b, b>(c + 1)) { }
+ >a<b, b>(c + 1) : any
+->               : ^^^
+ >a : any
+->  : ^^^
+ >c + 1 : any
+->      : ^^^
+ >c : any
+->  : ^^^
+ >1 : 1
+->  : ^
+ }

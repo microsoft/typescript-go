@@ -1,0 +1,10 @@
+--- old.deprecatedCompilerOptions3.types
++++ new.deprecatedCompilerOptions3.types
+@@= skipped -2, +2 lines =@@
+ === /foo/a.ts ===
+ const a = 1;
+ >a : 1
+->  : ^
+ >1 : 1
+->  : ^
+ 

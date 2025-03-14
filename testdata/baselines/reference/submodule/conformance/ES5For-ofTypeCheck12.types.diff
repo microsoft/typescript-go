@@ -1,0 +1,10 @@
+--- old.ES5For-ofTypeCheck12.types
++++ new.ES5For-ofTypeCheck12.types
+@@= skipped -2, +2 lines =@@
+ === ES5For-ofTypeCheck12.ts ===
+ for (const v of 0) { }
+ >v : any
+->  : ^^^
+ >0 : 0
+->  : ^
+ 

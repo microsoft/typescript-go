@@ -1,0 +1,10 @@
+--- old.alwaysStrictModule6.types
++++ new.alwaysStrictModule6.types
+@@= skipped -3, +3 lines =@@
+ // Targeting ES5
+ export const a = 1; 
+ >a : 1
+->  : ^
+ >1 : 1
+->  : ^
+ 

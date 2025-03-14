@@ -1,0 +1,10 @@
+--- old.isolatedModulesWithDeclarationFile.types
++++ new.isolatedModulesWithDeclarationFile.types
+@@= skipped -2, +2 lines =@@
+ === file1.d.ts ===
+ declare function foo(): void;
+ >foo : () => void
+->    : ^^^^^^    
+ 
+ === file1.ts ===
+ export var x;

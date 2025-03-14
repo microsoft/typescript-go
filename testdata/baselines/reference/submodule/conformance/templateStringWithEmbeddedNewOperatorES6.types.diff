@@ -1,0 +1,16 @@
+--- old.templateStringWithEmbeddedNewOperatorES6.types
++++ new.templateStringWithEmbeddedNewOperatorES6.types
+@@= skipped -2, +2 lines =@@
+ === templateStringWithEmbeddedNewOperatorES6.ts ===
+ var x = `abc${ new String("Hi") }def`;
+ >x : string
+->  : ^^^^^^
+ >`abc${ new String("Hi") }def` : string
+->                              : ^^^^^^
+ >new String("Hi") : String
+->                 : ^^^^^^
+ >String : StringConstructor
+->       : ^^^^^^^^^^^^^^^^^
+ >"Hi" : "Hi"
+->     : ^^^^
+ 

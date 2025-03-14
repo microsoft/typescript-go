@@ -1,0 +1,26 @@
+--- old.templateStringInFunctionParameterTypeES6.types
++++ new.templateStringInFunctionParameterTypeES6.types
+@@= skipped -2, +2 lines =@@
+ === templateStringInFunctionParameterTypeES6.ts ===
+ function f(`hello`);
+ >f : { (: any): any; (x: string): any; }
+->  : ^^^^^^^^^^^^^^^^^ ^^      ^^^^^^^^^
+ > : any
+-> : ^^^
+ 
+ function f(x: string);
+ >f : { (: any): any; (x: string): any; }
+->  : ^^^^^^^^^^^^^^^^^ ^^      ^^^^^^^^^
+ >x : string
+->  : ^^^^^^
+ 
+ function f(x: string) {
+ >f : { (: any): any; (x: string): any; }
+->  : ^^^^^^^^^^^^^^^^^ ^^      ^^^^^^^^^
+ >x : string
+->  : ^^^^^^
+ 
+     return x;
+ >x : string
+->  : ^^^^^^
+ }

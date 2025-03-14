@@ -1,0 +1,18 @@
+--- old.propertyAccess7.types
++++ new.propertyAccess7.types
+@@= skipped -2, +2 lines =@@
+ === propertyAccess7.ts ===
+ var foo: string;
+ >foo : string
+->    : ^^^^^^
+ 
+ foo.toUpperCase();
+ >foo.toUpperCase() : string
+->                  : ^^^^^^
+ >foo.toUpperCase : () => string
+->                : ^^^^^^      
+ >foo : string
+->    : ^^^^^^
+ >toUpperCase : () => string
+->            : ^^^^^^      
+ 

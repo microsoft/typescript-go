@@ -1,0 +1,18 @@
+--- old.parserMemberAccessOffOfGenericType1.types
++++ new.parserMemberAccessOffOfGenericType1.types
+@@= skipped -2, +2 lines =@@
+ === parserMemberAccessOffOfGenericType1.ts ===
+ var v = List<number>.makeChild();
+ >v : any
+->  : ^^^
+ >List<number>.makeChild() : any
+->                         : ^^^
+ >List<number>.makeChild : any
+->                       : ^^^
+ >List<number> : any
+->             : ^^^
+ >List : any
+->     : ^^^
+ >makeChild : any
+->          : ^^^
+ 

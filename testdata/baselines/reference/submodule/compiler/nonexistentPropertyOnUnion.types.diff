@@ -1,0 +1,21 @@
+--- old.nonexistentPropertyOnUnion.types
++++ new.nonexistentPropertyOnUnion.types
+@@= skipped -2, +2 lines =@@
+ === nonexistentPropertyOnUnion.ts ===
+ function f(x: string | Promise<string>) {
+ >f : (x: string | Promise<string>) => void
+->  : ^ ^^                        ^^^^^^^^^
+ >x : string | Promise<string>
+->  : ^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+     x.toLowerCase();
+ >x.toLowerCase() : any
+->                : ^^^
+ >x.toLowerCase : any
+->              : ^^^
+ >x : string | Promise<string>
+->  : ^^^^^^^^^^^^^^^^^^^^^^^^
+ >toLowerCase : any
+->            : ^^^
+ }
+ 

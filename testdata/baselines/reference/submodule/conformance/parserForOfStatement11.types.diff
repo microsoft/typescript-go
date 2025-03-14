@@ -1,0 +1,12 @@
+--- old.parserForOfStatement11.types
++++ new.parserForOfStatement11.types
+@@= skipped -2, +2 lines =@@
+ === parserForOfStatement11.ts ===
+ for (const [a, b] of X) {
+ >a : any
+->  : ^^^
+ >b : any
+->  : ^^^
+ >X : any
+->  : ^^^
+ }

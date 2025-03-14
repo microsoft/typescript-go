@@ -1,0 +1,14 @@
+--- old.errorForBareSpecifierWithImplicitModuleResolutionNone.types
++++ new.errorForBareSpecifierWithImplicitModuleResolutionNone.types
+@@= skipped -4, +4 lines =@@
+ 
+ import { thing } from "non-existent-module";
+ >thing : any
+->      : ^^^
+ 
+ thing()
+ >thing() : any
+->        : ^^^
+ >thing : any
+->      : ^^^
+ 

@@ -1,0 +1,8 @@
+--- old.typeReferenceDirectiveWithFailedFromTypeRoot.types
++++ new.typeReferenceDirectiveWithFailedFromTypeRoot.types
+@@= skipped -2, +2 lines =@@
+ === /a.ts ===
+ a;
+ >a : any
+->  : ^^^
+ 

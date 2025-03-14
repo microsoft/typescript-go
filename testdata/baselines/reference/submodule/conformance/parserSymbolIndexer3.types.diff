@@ -1,0 +1,12 @@
+--- old.parserSymbolIndexer3.types
++++ new.parserSymbolIndexer3.types
+@@= skipped -2, +2 lines =@@
+ === parserSymbolIndexer3.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+     static [s: symbol]: string;
+ >s : symbol
+->  : ^^^^^^
+ }

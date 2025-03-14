@@ -1,0 +1,43 @@
+--- old.for-of58.types
++++ new.for-of58.types
+@@= skipped -2, +2 lines =@@
+ === for-of58.ts ===
+ type X = { x: 'x' };
+ >X : X
+->  : ^
+ >x : "x"
+->  : ^^^
+ 
+ type Y = { y: 'y' };
+ >Y : Y
+->  : ^
+ >y : "y"
+->  : ^^^
+ 
+ declare const arr: X[] & Y[];
+ >arr : X[] & Y[]
+->    : ^^^^^^^^^
+ 
+ for (const item of arr) {
+ >item : X & Y
+->     : ^^^^^
+ >arr : X[] & Y[]
+->    : ^^^^^^^^^
+ 
+     item.x;
+ >item.x : "x"
+->       : ^^^
+ >item : X & Y
+->     : ^^^^^
+ >x : "x"
+->  : ^^^
+ 
+     item.y;
+ >item.y : "y"
+->       : ^^^
+ >item : X & Y
+->     : ^^^^^
+ >y : "y"
+->  : ^^^
+ }
+ 

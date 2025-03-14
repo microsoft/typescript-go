@@ -1,0 +1,20 @@
+--- old.classDoesNotDependOnPrivateMember.types
++++ new.classDoesNotDependOnPrivateMember.types
+@@= skipped -2, +2 lines =@@
+ === classDoesNotDependOnPrivateMember.ts ===
+ module M {
+ >M : typeof M
+->  : ^^^^^^^^
+ 
+     interface I { }
++>I : I
++
+     export class C {
+ >C : C
+->  : ^
+ 
+         private x: I;
+ >x : I
+->  : ^
+     }
+ }

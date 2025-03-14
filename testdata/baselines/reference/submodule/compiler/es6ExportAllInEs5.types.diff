@@ -1,0 +1,32 @@
+--- old.es6ExportAllInEs5.types
++++ new.es6ExportAllInEs5.types
+@@= skipped -2, +2 lines =@@
+ === server.ts ===
+ export class c {
+ >c : c
+->  : ^
+ }
+ export interface i {
++>i : i
+ }
+ export module m {
+ >m : typeof m
+->  : ^^^^^^^^
+ 
+     export var x = 10;
+ >x : number
+->  : ^^^^^^
+ >10 : 10
+->   : ^^
+ }
+ export var x = 10;
+ >x : number
+->  : ^^^^^^
+ >10 : 10
+->   : ^^
+ 
+ export module uninstantiated {
++>uninstantiated : any
+ }
+ 
+ === client.ts ===

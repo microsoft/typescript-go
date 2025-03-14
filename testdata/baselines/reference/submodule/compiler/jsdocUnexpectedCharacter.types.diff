@@ -1,0 +1,10 @@
+--- old.jsdocUnexpectedCharacter.types
++++ new.jsdocUnexpectedCharacter.types
+@@= skipped -3, +3 lines =@@
+ /** @x # */
+ var UI = {};
+ >UI : {}
+->   : ^^
+ >{} : {}
+->   : ^^
+ 

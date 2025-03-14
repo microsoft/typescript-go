@@ -1,0 +1,215 @@
+--- old.downlevelLetConst17.types
++++ new.downlevelLetConst17.types
+@@= skipped -2, +2 lines =@@
+ === downlevelLetConst17.ts ===
+ 'use strict'
+ >'use strict' : "use strict"
+->             : ^^^^^^^^^^^^
+ 
+ declare function use(a: any);
+ >use : (a: any) => any
+->    : ^ ^^   ^^^^^^^^
+ >a : any
+ 
+ var x;
+@@= skipped -12, +10 lines =@@
+ 
+ for (let x = 10; ;) {
+ >x : number
+->  : ^^^^^^
+ >10 : 10
+->   : ^^
+ 
+     use(x);
+ >use(x) : any
+ >use : (a: any) => any
+->    : ^ ^^   ^^^^^^^^
+ >x : number
+->  : ^^^^^^
+ }
+ use(x);
+ >use(x) : any
+ >use : (a: any) => any
+->    : ^ ^^   ^^^^^^^^
+ >x : any
+ 
+ for (const x = 10; ;) {
+ >x : 10
+->  : ^^
+ >10 : 10
+->   : ^^
+ 
+     use(x);
+ >use(x) : any
+ >use : (a: any) => any
+->    : ^ ^^   ^^^^^^^^
+ >x : 10
+->  : ^^
+ }
+ 
+ for (; ;) {
+     let x = 10;
+ >x : number
+->  : ^^^^^^
+ >10 : 10
+->   : ^^
+ 
+     use(x);
+ >use(x) : any
+ >use : (a: any) => any
+->    : ^ ^^   ^^^^^^^^
+ >x : number
+->  : ^^^^^^
+ 
+     x = 1;
+ >x = 1 : 1
+->      : ^
+ >x : number
+->  : ^^^^^^
+ >1 : 1
+->  : ^
+ }
+ 
+ for (; ;) {
+     const x = 10;
+ >x : 10
+->  : ^^
+ >10 : 10
+->   : ^^
+ 
+     use(x);
+ >use(x) : any
+ >use : (a: any) => any
+->    : ^ ^^   ^^^^^^^^
+ >x : 10
+->  : ^^
+ }
+ 
+ for (let x; ;) {
+@@= skipped -75, +55 lines =@@
+     use(x);
+ >use(x) : any
+ >use : (a: any) => any
+->    : ^ ^^   ^^^^^^^^
+ >x : any
+ 
+     x = 1;
+ >x = 1 : 1
+->      : ^
+ >x : any
+ >1 : 1
+->  : ^
+ }
+ 
+ for (; ;) {
+@@= skipped -18, +15 lines =@@
+     use(x);
+ >use(x) : any
+ >use : (a: any) => any
+->    : ^ ^^   ^^^^^^^^
+ >x : any
+ 
+     x = 1;
+ >x = 1 : 1
+->      : ^
+ >x : any
+ >1 : 1
+->  : ^
+ }
+ 
+ while (true) {
+ >true : true
+->     : ^^^^
+ 
+     let x;
+ >x : any
+@@= skipped -21, +17 lines =@@
+     use(x);
+ >use(x) : any
+ >use : (a: any) => any
+->    : ^ ^^   ^^^^^^^^
+ >x : any
+ }
+ 
+ while (true) {
+ >true : true
+->     : ^^^^
+ 
+     const x = true;
+ >x : true
+->  : ^^^^
+ >true : true
+->     : ^^^^
+ 
+     use(x);
+ >use(x) : any
+ >use : (a: any) => any
+->    : ^ ^^   ^^^^^^^^
+ >x : true
+->  : ^^^^
+ }
+ 
+ do {
+@@= skipped -29, +23 lines =@@
+     use(x);
+ >use(x) : any
+ >use : (a: any) => any
+->    : ^ ^^   ^^^^^^^^
+ >x : any
+ 
+ } while (true);
+ >true : true
+->     : ^^^^
+ 
+ do {
+     let x;
+@@= skipped -14, +12 lines =@@
+     use(x);
+ >use(x) : any
+ >use : (a: any) => any
+->    : ^ ^^   ^^^^^^^^
+ >x : any
+ 
+ } while (true);
+ >true : true
+->     : ^^^^
+ 
+ for (let x in []) {
+ >x : string
+->  : ^^^^^^
+ >[] : undefined[]
+->   : ^^^^^^^^^^^
+ 
+     use(x);
+ >use(x) : any
+ >use : (a: any) => any
+->    : ^ ^^   ^^^^^^^^
+ >x : string
+->  : ^^^^^^
+ }
+ 
+ for (const x in []) {
+ >x : string
+->  : ^^^^^^
+ >[] : undefined[]
+->   : ^^^^^^^^^^^
+ 
+     use(x);
+ >use(x) : any
+ >use : (a: any) => any
+->    : ^ ^^   ^^^^^^^^
+ >x : string
+->  : ^^^^^^
+ }
+ 
+ for (const x of []) {
+ >x : any
+ >[] : undefined[]
+->   : ^^^^^^^^^^^
+ 
+     use(x);
+ >use(x) : any
+ >use : (a: any) => any
+->    : ^ ^^   ^^^^^^^^
+ >x : any
+ }

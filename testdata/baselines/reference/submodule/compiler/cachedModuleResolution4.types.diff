@@ -1,0 +1,20 @@
+--- old.cachedModuleResolution4.types
++++ new.cachedModuleResolution4.types
+@@= skipped -2, +2 lines =@@
+ === /a/b/foo.d.ts ===
+ export declare let x: number
+ >x : number
+->  : ^^^^^^
+ 
+ === /a/b/c/lib.ts ===
+ import {x} from "foo";
+->x : number
+->  : ^^^^^^
++>x : any
+ 
+ === /a/b/c/d/e/app.ts ===
+ import {x} from "foo";
+->x : number
+->  : ^^^^^^
++>x : any
+ 

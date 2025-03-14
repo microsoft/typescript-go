@@ -1,0 +1,12 @@
+--- old.parserExportAssignment5.types
++++ new.parserExportAssignment5.types
+@@= skipped -2, +2 lines =@@
+ === parserExportAssignment5.ts ===
+ module M {
+ >M : typeof M
+->  : ^^^^^^^^
+ 
+     export = A;
+ >A : any
+->  : ^^^
+ }

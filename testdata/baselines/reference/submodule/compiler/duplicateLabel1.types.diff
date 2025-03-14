@@ -1,0 +1,16 @@
+--- old.duplicateLabel1.types
++++ new.duplicateLabel1.types
+@@= skipped -2, +2 lines =@@
+ === duplicateLabel1.ts ===
+ target:
+ >target : any
+->       : ^^^
+ 
+ target:
+ >target : any
+->       : ^^^
+ 
+ while (true) {
+ >true : true
+->     : ^^^^
+ }

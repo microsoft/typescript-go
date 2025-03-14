@@ -1,0 +1,16 @@
+--- old.topFunctionTypeNotCallable.types
++++ new.topFunctionTypeNotCallable.types
+@@= skipped -4, +4 lines =@@
+ 
+ declare let foo: (...args: never) => void;
+ >foo : (...args: never) => void
+->    : ^^^^    ^^     ^^^^^    
+ >args : never
+->     : ^^^^^
+ 
+ foo(); // error
+ >foo() : void
+->      : ^^^^
+ >foo : (...args: never) => void
+->    : ^^^^    ^^     ^^^^^    
+ 

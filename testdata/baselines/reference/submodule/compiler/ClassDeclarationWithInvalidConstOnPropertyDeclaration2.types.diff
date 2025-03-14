@@ -1,0 +1,17 @@
+--- old.ClassDeclarationWithInvalidConstOnPropertyDeclaration2.types
++++ new.ClassDeclarationWithInvalidConstOnPropertyDeclaration2.types
+@@= skipped -2, +2 lines =@@
+ === ClassDeclarationWithInvalidConstOnPropertyDeclaration2.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+     const
+ >const : any
+ 
+     x = 10;
+ >x : number
+->  : ^^^^^^
+ >10 : 10
+->   : ^^
+ }

@@ -1,0 +1,10 @@
+--- old.invalidUnicodeEscapeSequance3.types
++++ new.invalidUnicodeEscapeSequance3.types
+@@= skipped -2, +2 lines =@@
+ === invalidUnicodeEscapeSequance3.ts ===
+ a\u
+ >a : any
+->  : ^^^
+ >u : any
+->  : ^^^
+ 

@@ -1,0 +1,12 @@
+--- old.systemModule4.types
++++ new.systemModule4.types
+@@= skipped -2, +2 lines =@@
+ === systemModule4.ts ===
+ export var x = 1;
+ >x : number
+->  : ^^^^^^
+ >1 : 1
+->  : ^
+ 
+ export var y;
+ >y : any

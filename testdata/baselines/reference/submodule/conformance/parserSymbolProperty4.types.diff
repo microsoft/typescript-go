@@ -1,0 +1,18 @@
+--- old.parserSymbolProperty4.types
++++ new.parserSymbolProperty4.types
+@@= skipped -2, +2 lines =@@
+ === parserSymbolProperty4.ts ===
+ declare class C {
+ >C : C
+->  : ^
+ 
+     [Symbol.toPrimitive]: string;
+ >[Symbol.toPrimitive] : string
+->                     : ^^^^^^
+ >Symbol.toPrimitive : unique symbol
+->                   : ^^^^^^^^^^^^^
+ >Symbol : SymbolConstructor
+->       : ^^^^^^^^^^^^^^^^^
+ >toPrimitive : unique symbol
+->            : ^^^^^^^^^^^^^
+ }

@@ -1,0 +1,10 @@
+--- old.es5-commonjs6.types
++++ new.es5-commonjs6.types
+@@= skipped -3, +3 lines =@@
+ export default "test";
+ var __esModule = 1;
+ >__esModule : number
+->           : ^^^^^^
+ >1 : 1
+->  : ^
+ 

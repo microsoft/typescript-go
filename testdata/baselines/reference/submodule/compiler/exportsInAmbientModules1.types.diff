@@ -1,0 +1,18 @@
+--- old.exportsInAmbientModules1.types
++++ new.exportsInAmbientModules1.types
+@@= skipped -2, +2 lines =@@
+ === external.d.ts ===
+ export var x: number
+ >x : number
+->  : ^^^^^^
+ 
+ === main.ts ===
+ declare module "M" {
+ >"M" : typeof import("M")
+->    : ^^^^^^^^^^^^^^^^^^
+ 
+     export {x} from "external"
+->x : number
+->  : ^^^^^^
++>x : any
+ }

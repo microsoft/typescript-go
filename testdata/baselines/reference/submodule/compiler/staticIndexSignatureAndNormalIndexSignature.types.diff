@@ -1,0 +1,16 @@
+--- old.staticIndexSignatureAndNormalIndexSignature.types
++++ new.staticIndexSignatureAndNormalIndexSignature.types
+@@= skipped -2, +2 lines =@@
+ === staticIndexSignatureAndNormalIndexSignature.ts ===
+ class Foo {
+ >Foo : Foo
+->    : ^^^
+ 
+     [p: string]: any;
+ >p : string
+->  : ^^^^^^
+ 
+     static [p: string]: number;
+ >p : string
+->  : ^^^^^^
+ }

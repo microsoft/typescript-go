@@ -1,0 +1,18 @@
+--- old.jsdocAugments_errorInExtendsExpression.types
++++ new.jsdocAugments_errorInExtendsExpression.types
+@@= skipped -2, +2 lines =@@
+ === /a.js ===
+ class A {}
+ >A : A
+->  : ^
+ 
+ /** @augments A */
+ class B extends err() {}
+ >B : B
+->  : ^
+->err() : A
+->      : ^
++>err() : any
+ >err : any
+->    : ^^^
+ 

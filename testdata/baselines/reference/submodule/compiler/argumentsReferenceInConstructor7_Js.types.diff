@@ -1,0 +1,32 @@
+--- old.argumentsReferenceInConstructor7_Js.types
++++ new.argumentsReferenceInConstructor7_Js.types
+@@= skipped -2, +2 lines =@@
+ === /a.js ===
+ class A {
+ >A : A
+->  : ^
+ 
+ 	constructor() {
+ 		/**
+@@= skipped -8, +7 lines =@@
+ 		 */
+ 		this.callee = arguments.callee;
+ >this.callee = arguments.callee : Function
+->                               : ^^^^^^^^
+->this.callee : Function
+->            : ^^^^^^^^
++>this.callee : any
+ >this : this
+->     : ^^^^
+->callee : Function
+->       : ^^^^^^^^
++>callee : any
+ >arguments.callee : Function
+->                 : ^^^^^^^^
+ >arguments : IArguments
+->          : ^^^^^^^^^^
+ >callee : Function
+->       : ^^^^^^^^
+ 	}
+ }
+ 

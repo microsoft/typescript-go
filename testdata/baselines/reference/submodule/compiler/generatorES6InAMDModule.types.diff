@@ -1,0 +1,10 @@
+--- old.generatorES6InAMDModule.types
++++ new.generatorES6InAMDModule.types
+@@= skipped -2, +2 lines =@@
+ === generatorES6InAMDModule.ts ===
+ export function* foo() {
+ >foo : () => Generator<any, void, unknown>
+->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+     yield
+ >yield : any

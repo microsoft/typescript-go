@@ -1,0 +1,19 @@
+--- old.topLevelAwaitErrors.9(module=esnext).types
++++ new.topLevelAwaitErrors.9(module=esnext).types
+@@= skipped -3, +3 lines =@@
+ // await disallowed in un-alised named import
+ import { await } from "./other";
+ >await : any
+->      : ^^^
+ 
+ === other.ts ===
+ declare const _await: any;
+ >_await : any
+->       : ^^^
+ 
+ export { _await as await };
+ >_await : any
+->       : ^^^
+ >await : any
+->      : ^^^
+ 

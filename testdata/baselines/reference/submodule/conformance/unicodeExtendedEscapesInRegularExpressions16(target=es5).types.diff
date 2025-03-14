@@ -1,0 +1,10 @@
+--- old.unicodeExtendedEscapesInRegularExpressions16(target=es5).types
++++ new.unicodeExtendedEscapesInRegularExpressions16(target=es5).types
+@@= skipped -2, +2 lines =@@
+ === unicodeExtendedEscapesInRegularExpressions16.ts ===
+ var x = /\u{ABCD}\u{EF12}\u{3456}\u{7890}/gu;
+ >x : RegExp
+->  : ^^^^^^
+ >/\u{ABCD}\u{EF12}\u{3456}\u{7890}/gu : RegExp
+->                                     : ^^^^^^
+ 

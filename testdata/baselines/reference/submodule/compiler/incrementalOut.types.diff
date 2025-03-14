@@ -1,0 +1,11 @@
+--- old.incrementalOut.types
++++ new.incrementalOut.types
+@@= skipped -2, +2 lines =@@
+ === incrementalOut.ts ===
+ const x = 10;
+ >x : 10
+->  : ^^
+ >10 : 10
+->   : ^^
+ 
+ 

@@ -1,0 +1,34 @@
+--- old.functionTypeArgumentArrayAssignment.types
++++ new.functionTypeArgumentArrayAssignment.types
+@@= skipped -2, +2 lines =@@
+ === functionTypeArgumentArrayAssignment.ts ===
+ module test {
+ >test : typeof test
+->     : ^^^^^^^^^^^
+ 
+     interface Array<T> {
++>Array : Array<T>
++>T : T
++
+         foo: T;
+ >foo : T
+->    : ^
+ 
+         length: number;
+ >length : number
+->       : ^^^^^^
+     }
+ 
+     function map<U>() {
+ >map : <U>() => void
+->    : ^ ^^^^^^^^^^^
++>U : U
+ 
+         var ys: U[] = [];
+ >ys : U[]
+->   : ^^^
+ >[] : undefined[]
+->   : ^^^^^^^^^^^
+     }
+ }
+ 

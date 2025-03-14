@@ -1,0 +1,12 @@
+--- old.parserMemberFunctionDeclaration5.types
++++ new.parserMemberFunctionDeclaration5.types
+@@= skipped -2, +2 lines =@@
+ === parserMemberFunctionDeclaration5.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+     declare Foo() { }
+ >Foo : () => void
+->    : ^^^^^^^^^^
+ }

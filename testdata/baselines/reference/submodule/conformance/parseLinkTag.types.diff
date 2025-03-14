@@ -1,0 +1,10 @@
+--- old.parseLinkTag.types
++++ new.parseLinkTag.types
+@@= skipped -7, +7 lines =@@
+ /** @returns trailing @link tag {@link */
+ function f() {
+ >f : () => any
+->  : ^^^^^^^^^
+ 
+     return x
+ >x : any

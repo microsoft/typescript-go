@@ -1,0 +1,13 @@
+--- old.out-flag3.types
++++ new.out-flag3.types
+@@= skipped -2, +2 lines =@@
+ === a.ts ===
+ class A { }
+ >A : A
+->  : ^
+ 
+ === b.ts ===
+ class B { }
+ >B : B
+->  : ^
+ 

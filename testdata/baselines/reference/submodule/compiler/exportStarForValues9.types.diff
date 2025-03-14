@@ -1,0 +1,34 @@
+--- old.exportStarForValues9.types
++++ new.exportStarForValues9.types
+@@= skipped -1, +1 lines =@@
+ 
+ === file1.ts ===
+ export interface Foo { x }
++>Foo : Foo
+ >x : any
+ 
+ === file2.ts ===
+ export interface A { x }
++>A : A
+ >x : any
+ 
+ export * from "file1"
+ export * from "file3"
+ export var x = 1;
+ >x : number
+->  : ^^^^^^
+ >1 : 1
+->  : ^
+ 
+ === file3.ts ===
+ export interface B { x }
++>B : B
+ >x : any
+ 
+ export * from "file2"
+ export var x = 1;
+ >x : number
+->  : ^^^^^^
+ >1 : 1
+->  : ^
+ 

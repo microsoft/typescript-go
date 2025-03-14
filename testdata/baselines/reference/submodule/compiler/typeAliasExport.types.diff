@@ -1,0 +1,19 @@
+--- old.typeAliasExport.types
++++ new.typeAliasExport.types
+@@= skipped -2, +2 lines =@@
+ === typeAliasExport.ts ===
+ declare module "a" {
+ >"a" : typeof import("a")
+->    : ^^^^^^^^^^^^^^^^^^
+ 
+   export default undefined
+ >undefined : undefined
+->          : ^^^^^^^^^
+ 
+   export var a;
+ >a : any
+ 
+   export type a = typeof a;
+ >a : any
+->a : any
+ }

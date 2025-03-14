@@ -1,0 +1,17 @@
+--- old.importNonExportedMember8.types
++++ new.importNonExportedMember8.types
+@@= skipped -2, +2 lines =@@
+ === a.ts ===
+ class Foo {}
+ >Foo : Foo
+->    : ^^^
+ 
+ export = Foo;
+ >Foo : Foo
+->    : ^^^
+ 
+ === b.js ===
+ import { Foo } from './a';
+ >Foo : any
+->    : ^^^
+ 

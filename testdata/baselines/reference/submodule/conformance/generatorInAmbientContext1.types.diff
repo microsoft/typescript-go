@@ -1,0 +1,12 @@
+--- old.generatorInAmbientContext1.types
++++ new.generatorInAmbientContext1.types
+@@= skipped -2, +2 lines =@@
+ === generatorInAmbientContext1.ts ===
+ declare class C {
+ >C : C
+->  : ^
+ 
+     *generator(): any;
+ >generator : () => any
+->          : ^^^^^^   
+ }

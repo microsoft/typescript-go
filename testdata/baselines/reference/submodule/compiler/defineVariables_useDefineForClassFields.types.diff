@@ -1,0 +1,24 @@
+--- old.defineVariables_useDefineForClassFields.types
++++ new.defineVariables_useDefineForClassFields.types
+@@= skipped -2, +2 lines =@@
+ === defineVariables_useDefineForClassFields.ts ===
+ const a = () => b()
+ >a : () => any
+->  : ^^^^^^^^^
+ >() => b() : () => any
+->          : ^^^^^^^^^
+ >b() : any
+ >b : () => any
+->  : ^^^^^^^^^
+ 
+ const b = () => null
+ >b : () => any
+->  : ^^^^^^^^^
+ >() => null : () => any
+->           : ^^^^^^^^^
+ 
+ a()
+ >a() : any
+ >a : () => any
+->  : ^^^^^^^^^
+ 

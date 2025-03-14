@@ -1,0 +1,14 @@
+--- old.exportSameNameFuncVar.types
++++ new.exportSameNameFuncVar.types
+@@= skipped -2, +2 lines =@@
+ === exportSameNameFuncVar.ts ===
+ export var a = 10;
+ >a : number
+->  : ^^^^^^
+ >10 : 10
+->   : ^^
+ 
+ export function a() {
+ >a : () => void
+->  : ^^^^^^^^^^
+ }

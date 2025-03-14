@@ -1,0 +1,32 @@
+--- old.unclosedExportClause01.types
++++ new.unclosedExportClause01.types
+@@= skipped -2, +2 lines =@@
+ === t1.ts ===
+ export var x = "x";
+ >x : string
+->  : ^^^^^^
+ >"x" : "x"
+->    : ^^^
+ 
+ === t2.ts ===
+ export { x, from "./t1"
+ >x : string
+->  : ^^^^^^
+ 
+ === t3.ts ===
+ 
+@@= skipped -16, +13 lines =@@
+ === t4.ts ===
+ export { x as a from "./t1"
+ >x : string
+->  : ^^^^^^
+ >a : string
+->  : ^^^^^^
+ 
+ === t5.ts ===
+ export { x as a, from "./t1"
+ >x : string
+->  : ^^^^^^
+ >a : string
+->  : ^^^^^^
+ 

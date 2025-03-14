@@ -1,0 +1,66 @@
+--- old.jsDeclarationsTypeReferences4.types
++++ new.jsDeclarationsTypeReferences4.types
+@@= skipped -3, +3 lines =@@
+ /// <reference types="node" />
+ export const Something = 2; // to show conflict that can occur
+ >Something : 2
+->          : ^
+ >2 : 2
+->  : ^
+ 
+ // @ts-ignore
+ export namespace A {
+ >A : typeof A
+->  : ^^^^^^^^
+ 
+     // @ts-ignore
+     export namespace B {
+ >B : typeof B
+->  : ^^^^^^^^
+ 
+         const Something = require("fs").Something;
+->Something : typeof Something
+->          : ^^^^^^^^^^^^^^^^
+->require("fs").Something : typeof Something
+->                        : ^^^^^^^^^^^^^^^^
+->require("fs") : typeof import("fs")
+->              : ^^^^^^^^^^^^^^^^^^^
++>Something : any
++>require("fs").Something : any
++>require("fs") : any
+ >require : any
+->        : ^^^
+ >"fs" : "fs"
+->     : ^^^^
+->Something : typeof Something
+->          : ^^^^^^^^^^^^^^^^
++>Something : any
+ 
+         const thing = new Something();
+->thing : Something
+->      : ^^^^^^^^^
+->new Something() : Something
+->                : ^^^^^^^^^
+->Something : typeof Something
+->          : ^^^^^^^^^^^^^^^^
++>thing : any
++>new Something() : any
++>Something : any
+ 
+         // @ts-ignore
+         export { thing };
+->thing : Something
+->      : ^^^^^^^^^
++>thing : any
+     }
+ }
+ 
+ === node_modules/@types/node/index.d.ts ===
+ declare module "fs" {
+ >"fs" : typeof import("fs")
+->     : ^^^^^^^^^^^^^^^^^^^
+ 
+     export class Something {}
+ >Something : Something
+->          : ^^^^^^^^^
+ }

@@ -1,0 +1,45 @@
+--- old.trivialSubtypeReductionNoStructuralCheck2.types
++++ new.trivialSubtypeReductionNoStructuralCheck2.types
+@@= skipped -2, +2 lines =@@
+ === trivialSubtypeReductionNoStructuralCheck2.ts ===
+ declare const props: WizardStepProps;
+ >props : WizardStepProps
+->      : ^^^^^^^^^^^^^^^
+ 
+ export class Wizard {
+ >Wizard : Wizard
+->       : ^^^^^^
+ 
+   get steps() {
+ >steps : WizardStepProps
+->      : ^^^^^^^^^^^^^^^
+ 
+     return {
+ >{      wizard: this as Wizard,      ...props,    } as WizardStepProps : WizardStepProps
+->                                                                      : ^^^^^^^^^^^^^^^
+ >{      wizard: this as Wizard,      ...props,    } : { wizard: Wizard; }
+->                                                   : ^^^^^^^^^^      ^^^
+ 
+       wizard: this as Wizard,
+ >wizard : Wizard
+->       : ^^^^^^
+ >this as Wizard : Wizard
+->               : ^^^^^^
+ >this : this
+->     : ^^^^
+ 
+       ...props,
+ >props : WizardStepProps
+->      : ^^^^^^^^^^^^^^^
+ 
+     } as WizardStepProps;
+   }
+ }
+ 
+ export interface WizardStepProps {
++>WizardStepProps : WizardStepProps
++
+   wizard?: Wizard;
+ >wizard : Wizard | undefined
+->       : ^^^^^^^^^^^^^^^^^^
+ }

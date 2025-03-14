@@ -1,0 +1,18 @@
+--- old.jsFileCompilationBindMultipleDefaultExports.types
++++ new.jsFileCompilationBindMultipleDefaultExports.types
+@@= skipped -1, +1 lines =@@
+ 
+ === a.js ===
+ export default class a {
+->a : a
+->  : ^
++>a : default
+ }
+ export default var a = 10;
+ > : any
+-> : ^^^
+ >a : number
+->  : ^^^^^^
+ >10 : 10
+->   : ^^
+ 

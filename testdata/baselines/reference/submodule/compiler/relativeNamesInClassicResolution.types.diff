@@ -1,0 +1,15 @@
+--- old.relativeNamesInClassicResolution.types
++++ new.relativeNamesInClassicResolution.types
+@@= skipped -2, +2 lines =@@
+ === somefolder/a.ts ===
+ import {x} from "./b"
+ >x : any
+->  : ^^^
+ 
+ === b.ts ===
+ export let x = 1;
+ >x : number
+->  : ^^^^^^
+ >1 : 1
+->  : ^
+ 

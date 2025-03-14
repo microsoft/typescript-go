@@ -1,0 +1,14 @@
+--- old.for-of53.types
++++ new.for-of53.types
+@@= skipped -2, +2 lines =@@
+ === for-of53.ts ===
+ for (let v of []) {
+ >v : any
+->  : ^^^
+ >[] : undefined[]
+->   : ^^^^^^^^^^^
+ 
+     var v;
+ >v : any
+->  : ^^^
+ }

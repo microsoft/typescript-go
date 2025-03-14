@@ -1,0 +1,154 @@
+--- old.moduleMemberWithoutTypeAnnotation1.types
++++ new.moduleMemberWithoutTypeAnnotation1.types
+@@= skipped -2, +2 lines =@@
+ === moduleMemberWithoutTypeAnnotation1.ts ===
+ module TypeScript.Parser {
+ >TypeScript : typeof TypeScript
+->           : ^^^^^^^^^^^^^^^^^
+ >Parser : typeof Parser
+->       : ^^^^^^^^^^^^^
+ 
+     class SyntaxCursor {
+ >SyntaxCursor : SyntaxCursor
+->             : ^^^^^^^^^^^^
+ 
+         public currentNode(): SyntaxNode {
+ >currentNode : () => SyntaxNode
+->            : ^^^^^^          
+ 
+             return null;
+         }
+@@= skipped -19, +15 lines =@@
+ 
+ module TypeScript {
+ >TypeScript : typeof TypeScript
+->           : ^^^^^^^^^^^^^^^^^
+ 
+     export interface ISyntaxElement { };
++>ISyntaxElement : ISyntaxElement
++
+     export interface ISyntaxToken { };
++>ISyntaxToken : ISyntaxToken
+ 
+     export class PositionedElement {
+ >PositionedElement : PositionedElement
+->                  : ^^^^^^^^^^^^^^^^^
+ 
+         public childIndex(child: ISyntaxElement) {
+->childIndex : (child: ISyntaxElement) => void
+->           : ^     ^^              ^^^^^^^^^
++>childIndex : (child: ISyntaxElement) => any
+ >child : ISyntaxElement
+->      : ^^^^^^^^^^^^^^
+ 
+             return Syntax.childIndex();
+->Syntax.childIndex() : void
+->                    : ^^^^
+->Syntax.childIndex : () => void
+->                  : ^^^^^^^^^^
+->Syntax : typeof Syntax
+->       : ^^^^^^^^^^^^^
+->childIndex : () => void
+->           : ^^^^^^^^^^
++>Syntax.childIndex() : any
++>Syntax.childIndex : any
++>Syntax : any
++>childIndex : any
+         }
+     }
+ 
+     export class PositionedToken {
+ >PositionedToken : PositionedToken
+->                : ^^^^^^^^^^^^^^^
+ 
+         constructor(parent: PositionedElement, token: ISyntaxToken, fullStart: number) {
+ >parent : PositionedElement
+->       : ^^^^^^^^^^^^^^^^^
+ >token : ISyntaxToken
+->      : ^^^^^^^^^^^^
+ >fullStart : number
+->          : ^^^^^^
+         }
+     }
+ }
+ 
+ module TypeScript {
+ >TypeScript : typeof TypeScript
+->           : ^^^^^^^^^^^^^^^^^
+ 
+     export class SyntaxNode {
+ >SyntaxNode : SyntaxNode
+->           : ^^^^^^^^^^
+ 
+         public findToken(position: number, includeSkippedTokens: boolean = false): PositionedToken {
+ >findToken : (position: number, includeSkippedTokens?: boolean) => PositionedToken
+->          : ^        ^^      ^^                    ^^^       ^^^^^               
+ >position : number
+->         : ^^^^^^
+ >includeSkippedTokens : boolean
+->                     : ^^^^^^^
+ >false : false
+->      : ^^^^^
+ 
+             var positionedToken = this.findTokenInternal(null, position, 0);
+ >positionedToken : any
+ >this.findTokenInternal(null, position, 0) : any
+ >this.findTokenInternal : (x: any, y: any, z: any) => any
+->                       : ^ ^^^^^^^ ^^^^^^^ ^^^^^^^^^^^^^
+ >this : this
+->     : ^^^^
+ >findTokenInternal : (x: any, y: any, z: any) => any
+->                  : ^ ^^^^^^^ ^^^^^^^ ^^^^^^^^^^^^^
+ >position : number
+->         : ^^^^^^
+ >0 : 0
+->  : ^
+ 
+             return null;
+         }
+         findTokenInternal(x, y, z) {
+ >findTokenInternal : (x: any, y: any, z: any) => any
+->                  : ^ ^^^^^^^ ^^^^^^^ ^^^^^^^^^^^^^
+ >x : any
+ >y : any
+ >z : any
+@@= skipped -90, +69 lines =@@
+ 
+ module TypeScript.Syntax {
+ >TypeScript : typeof TypeScript
+->           : ^^^^^^^^^^^^^^^^^
+ >Syntax : typeof Syntax
+->       : ^^^^^^^^^^^^^
+ 
+     export function childIndex() { }
+ >childIndex : () => void
+->           : ^^^^^^^^^^
+ 
+     export class VariableWidthTokenWithTrailingTrivia implements ISyntaxToken {
+ >VariableWidthTokenWithTrailingTrivia : VariableWidthTokenWithTrailingTrivia
+->                                     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+         private findTokenInternal(parent: PositionedElement, position: number, fullStart: number) {
+ >findTokenInternal : (parent: PositionedElement, position: number, fullStart: number) => PositionedToken
+->                  : ^      ^^                 ^^        ^^      ^^         ^^      ^^^^^^^^^^^^^^^^^^^^
+ >parent : PositionedElement
+->       : ^^^^^^^^^^^^^^^^^
+ >position : number
+->         : ^^^^^^
+ >fullStart : number
+->          : ^^^^^^
+ 
+             return new PositionedToken(parent, this, fullStart);
+ >new PositionedToken(parent, this, fullStart) : PositionedToken
+->                                             : ^^^^^^^^^^^^^^^
+ >PositionedToken : typeof PositionedToken
+->                : ^^^^^^^^^^^^^^^^^^^^^^
+ >parent : PositionedElement
+->       : ^^^^^^^^^^^^^^^^^
+ >this : this
+->     : ^^^^
+ >fullStart : number
+->          : ^^^^^^
+         }
+     }
+ }

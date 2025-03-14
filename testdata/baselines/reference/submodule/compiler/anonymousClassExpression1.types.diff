@@ -1,0 +1,19 @@
+--- old.anonymousClassExpression1.types
++++ new.anonymousClassExpression1.types
+@@= skipped -2, +2 lines =@@
+ === anonymousClassExpression1.ts ===
+ function f() {
+ >f : () => boolean
+->  : ^^^^^^^^^^^^^
+ 
+     return typeof class {} === "function";
+ >typeof class {} === "function" : boolean
+->                               : ^^^^^^^
+->typeof class {} : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
+->                : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++>typeof class {} : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >class {} : typeof (Anonymous class)
+->         : ^^^^^^^^^^^^^^^^^^^^^^^^
+ >"function" : "function"
+->           : ^^^^^^^^^^
+ }

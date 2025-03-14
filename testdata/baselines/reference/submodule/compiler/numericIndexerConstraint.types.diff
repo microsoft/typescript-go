@@ -1,0 +1,16 @@
+--- old.numericIndexerConstraint.types
++++ new.numericIndexerConstraint.types
+@@= skipped -2, +2 lines =@@
+ === numericIndexerConstraint.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+     0: number;
+ >0 : number
+->  : ^^^^^^
+ 
+     [x: number]: RegExp;
+ >x : number
+->  : ^^^^^^
+ }

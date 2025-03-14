@@ -1,0 +1,21 @@
+--- old.library-reference-6.types
++++ new.library-reference-6.types
+@@= skipped -3, +3 lines =@@
+ /// <reference types="alpha" />
+ var x: string = alpha.a;
+ >x : string
+->  : ^^^^^^
+ >alpha.a : string
+->        : ^^^^^^
+ >alpha : { a: string; }
+->      : ^^^^^      ^^^
+ >a : string
+->  : ^^^^^^
+ 
+ === /node_modules/@types/alpha/index.d.ts ===
+ declare var alpha: { a: string };
+ >alpha : { a: string; }
+->      : ^^^^^      ^^^
+ >a : string
+->  : ^^^^^^
+ 

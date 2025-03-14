@@ -1,0 +1,18 @@
+--- old.propertyAccess3.types
++++ new.propertyAccess3.types
+@@= skipped -2, +2 lines =@@
+ === propertyAccess3.ts ===
+ var foo: boolean;
+ >foo : boolean
+->    : ^^^^^^^
+ 
+ foo.toBAZ();
+ >foo.toBAZ() : any
+->            : ^^^
+ >foo.toBAZ : any
+->          : ^^^
+ >foo : boolean
+->    : ^^^^^^^
+ >toBAZ : any
+->      : ^^^
+ 

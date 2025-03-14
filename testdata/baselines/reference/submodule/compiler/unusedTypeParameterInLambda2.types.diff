@@ -1,0 +1,28 @@
+--- old.unusedTypeParameterInLambda2.types
++++ new.unusedTypeParameterInLambda2.types
+@@= skipped -2, +2 lines =@@
+ === unusedTypeParameterInLambda2.ts ===
+ class A {
+ >A : A
+->  : ^
+ 
+     public f1() {
+ >f1 : () => <T, X>() => void
+->   : ^^^^^^^ ^^ ^^^^^^^^^^^
+ 
+         return <T, X>() => {
+ ><T, X>() => {            var a: X;            a;        } : <T, X>() => void
+->                                                          : ^ ^^ ^^^^^^^^^^^
++>T : T
++>X : X
+ 
+             var a: X;
+ >a : X
+->  : ^
+ 
+             a;
+ >a : X
+->  : ^
+         }
+     }
+ }

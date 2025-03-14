@@ -1,0 +1,14 @@
+--- old.exportEqualsCommonJs.types
++++ new.exportEqualsCommonJs.types
+@@= skipped -2, +2 lines =@@
+ === exportEqualsCommonJs.ts ===
+ export = { ["hi"]: "there" };
+ >{ ["hi"]: "there" } : { hi: string; }
+->                    : ^^^^^^^^^^^^^^^
+ >["hi"] : string
+->       : ^^^^^^
+ >"hi" : "hi"
+->     : ^^^^
+ >"there" : "there"
+->        : ^^^^^^^
+ 

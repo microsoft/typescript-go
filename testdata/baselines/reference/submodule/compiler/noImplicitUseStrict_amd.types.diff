@@ -1,0 +1,10 @@
+--- old.noImplicitUseStrict_amd.types
++++ new.noImplicitUseStrict_amd.types
+@@= skipped -2, +2 lines =@@
+ === noImplicitUseStrict_amd.ts ===
+ export var x = 0;
+ >x : number
+->  : ^^^^^^
+ >0 : 0
+->  : ^
+ 

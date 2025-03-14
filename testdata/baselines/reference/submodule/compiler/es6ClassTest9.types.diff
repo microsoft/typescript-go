@@ -1,0 +1,16 @@
+--- old.es6ClassTest9.types
++++ new.es6ClassTest9.types
+@@= skipped -2, +2 lines =@@
+ === es6ClassTest9.ts ===
+ declare class foo();
+ >foo : foo
+->    : ^^^
+ >() : any
+->   : ^^^
+ > : any
+-> : ^^^
+ 
+ function foo() {}
+ >foo : typeof foo
+->    : ^^^^^^^^^^
+ 

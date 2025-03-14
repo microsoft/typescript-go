@@ -1,0 +1,8 @@
+--- old.es6ExportDefaultFunctionDeclaration.types
++++ new.es6ExportDefaultFunctionDeclaration.types
+@@= skipped -2, +2 lines =@@
+ === es6ExportDefaultFunctionDeclaration.ts ===
+ export default function f() { }
+ >f : () => void
+->  : ^^^^^^^^^^
+ 

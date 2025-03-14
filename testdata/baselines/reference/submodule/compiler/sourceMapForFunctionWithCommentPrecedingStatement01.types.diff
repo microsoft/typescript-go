@@ -1,0 +1,15 @@
+--- old.sourceMapForFunctionWithCommentPrecedingStatement01.types
++++ new.sourceMapForFunctionWithCommentPrecedingStatement01.types
+@@= skipped -2, +2 lines =@@
+ === sourceMapForFunctionWithCommentPrecedingStatement01.ts ===
+ function P() {
+ >P : () => void
+->  : ^^^^^^^^^^
+ 
+     // Test this
+     var a = 1;
+ >a : number
+->  : ^^^^^^
+ >1 : 1
+->  : ^
+ }

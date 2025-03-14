@@ -1,0 +1,16 @@
+--- old.classDeclarationCheckUsedBeforeDefinitionInItself.types
++++ new.classDeclarationCheckUsedBeforeDefinitionInItself.types
+@@= skipped -2, +2 lines =@@
+ === classDeclarationCheckUsedBeforeDefinitionInItself.ts ===
+ class C3 { 
+ >C3 : C3
+->   : ^^
+ 
+     static intance = new C3();  // ok
+ >intance : C3
+->        : ^^
+ >new C3() : C3
+->         : ^^
+ >C3 : typeof C3
+->   : ^^^^^^^^^
+ }

@@ -1,0 +1,42 @@
+--- old.checkMergedGlobalUMDSymbol.types
++++ new.checkMergedGlobalUMDSymbol.types
+@@= skipped -2, +2 lines =@@
+ === three.d.ts ===
+ export namespace THREE {
+ >THREE : typeof THREE
+->      : ^^^^^^^^^^^^
+ 
+   export class Vector2 {}
+ >Vector2 : Vector2
+->        : ^^^^^^^
+ }
+ 
+ === global.d.ts ===
+ import * as _three from './three';
+->_three : typeof _three
+->       : ^^^^^^^^^^^^^
++>_three : typeof import("three")
+ 
+ export as namespace THREE;
+ >THREE : typeof import("global")
+->      : ^^^^^^^^^^^^^^^^^^^^^^^
+ 
+ declare global {
+ >global : typeof global
+->       : ^^^^^^^^^^^^^
+ 
+   export const THREE: typeof _three;
+->THREE : typeof _three
+->      : ^^^^^^^^^^^^^
+->_three : typeof _three
+->       : ^^^^^^^^^^^^^
++>THREE : typeof import("three")
+ }
+ 
+ === test.ts ===
+ const m = THREE
+ >m : typeof import("three")
+->  : ^^^^^^^^^^^^^^^^^^^^^^
+ >THREE : typeof import("three")
+->      : ^^^^^^^^^^^^^^^^^^^^^^
+ 

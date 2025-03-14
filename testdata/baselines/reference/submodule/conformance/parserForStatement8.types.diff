@@ -1,0 +1,10 @@
+--- old.parserForStatement8.types
++++ new.parserForStatement8.types
+@@= skipped -2, +2 lines =@@
+ === parserForStatement8.ts ===
+ for (this in b) {
+ >this : typeof globalThis
+->     : ^^^^^^^^^^^^^^^^^
+ >b : any
+->  : ^^^
+ }

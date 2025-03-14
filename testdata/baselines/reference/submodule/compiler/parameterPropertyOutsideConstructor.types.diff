@@ -1,0 +1,15 @@
+--- old.parameterPropertyOutsideConstructor.types
++++ new.parameterPropertyOutsideConstructor.types
+@@= skipped -2, +2 lines =@@
+ === parameterPropertyOutsideConstructor.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+     foo(public x) {
+ >foo : (x: any) => void
+->    : ^ ^^^^^^^^^^^^^^
+ >x : any
+->  : ^^^
+     }
+ }

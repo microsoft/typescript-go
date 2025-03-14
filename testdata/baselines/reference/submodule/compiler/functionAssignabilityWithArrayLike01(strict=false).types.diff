@@ -1,0 +1,14 @@
+--- old.functionAssignabilityWithArrayLike01(strict=false).types
++++ new.functionAssignabilityWithArrayLike01(strict=false).types
+@@= skipped -2, +2 lines =@@
+ === functionAssignabilityWithArrayLike01.ts ===
+ function func() {}
+ >func : () => void
+->     : ^^^^^^^^^^
+ 
+ const array: ArrayLike<any> = func;
+ >array : ArrayLike<any>
+->      : ^^^^^^^^^^^^^^
+ >func : () => void
+->     : ^^^^^^^^^^
+ 

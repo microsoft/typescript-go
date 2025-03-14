@@ -1,0 +1,10 @@
+--- old.classWithSemicolonClassElementES61.types
++++ new.classWithSemicolonClassElementES61.types
+@@= skipped -2, +2 lines =@@
+ === classWithSemicolonClassElementES61.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+     ;
+ }

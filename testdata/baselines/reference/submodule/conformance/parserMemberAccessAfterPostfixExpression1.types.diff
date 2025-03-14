@@ -1,0 +1,14 @@
+--- old.parserMemberAccessAfterPostfixExpression1.types
++++ new.parserMemberAccessAfterPostfixExpression1.types
+@@= skipped -2, +2 lines =@@
+ === parserMemberAccessAfterPostfixExpression1.ts ===
+ a--.toString()
+ >a-- : number
+->    : ^^^^^^
+ >a : any
+->  : ^^^
+ >toString() : any
+->           : ^^^
+ >toString : any
+->         : ^^^
+ 

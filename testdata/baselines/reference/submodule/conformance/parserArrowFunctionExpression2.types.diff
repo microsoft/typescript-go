@@ -1,0 +1,18 @@
+--- old.parserArrowFunctionExpression2.types
++++ new.parserArrowFunctionExpression2.types
+@@= skipped -2, +2 lines =@@
+ === parserArrowFunctionExpression2.ts ===
+ a = () => { } || a
+ >a = () => { } : () => void
+->              : ^^^^^^^^^^
+ >a : any
+->  : ^^^
+ >() => { } : () => void
+->          : ^^^^^^^^^^
+ >|| a : any
+->     : ^^^
+ > : any
+-> : ^^^
+ >a : any
+->  : ^^^
+ 

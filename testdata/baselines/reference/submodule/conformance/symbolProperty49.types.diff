@@ -1,0 +1,25 @@
+--- old.symbolProperty49.types
++++ new.symbolProperty49.types
+@@= skipped -2, +2 lines =@@
+ === symbolProperty49.ts ===
+ module M {
+ >M : typeof M
+->  : ^^^^^^^^
+ 
+     export var Symbol;
+ >Symbol : any
+ 
+     class C {
+ >C : C
+->  : ^
+ 
+         [Symbol.iterator]() { }
+ >[Symbol.iterator] : () => void
+->                  : ^^^^^^^^^^
+ >Symbol.iterator : any
+ >Symbol : any
+->       : ^^^
+ >iterator : any
+->         : ^^^
+     }
+ }

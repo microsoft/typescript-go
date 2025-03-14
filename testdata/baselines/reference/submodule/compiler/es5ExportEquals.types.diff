@@ -1,0 +1,12 @@
+--- old.es5ExportEquals.types
++++ new.es5ExportEquals.types
+@@= skipped -2, +2 lines =@@
+ === es5ExportEquals.ts ===
+ export function f() { }
+ >f : typeof f
+->  : ^^^^^^^^
+ 
+ export = f;
+ >f : typeof f
+->  : ^^^^^^^^
+ 

@@ -1,0 +1,13 @@
+--- old.moduleResolutionWithSuffixes_oneBlank.types
++++ new.moduleResolutionWithSuffixes_oneBlank.types
+@@= skipped -2, +2 lines =@@
+ === /index.ts ===
+ import { base } from "./foo";
+ >base : () => void
+->     : ^^^^^^^^^^
+ 
+ === /foo.ts ===
+ export function base() {}
+ >base : () => void
+->     : ^^^^^^^^^^
+ 

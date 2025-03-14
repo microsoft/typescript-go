@@ -1,0 +1,18 @@
+--- old.parserSymbolProperty9.types
++++ new.parserSymbolProperty9.types
+@@= skipped -2, +2 lines =@@
+ === parserSymbolProperty9.ts ===
+ var x: {
+ >x : { [Symbol.toPrimitive]: string; }
+->  : ^^^^^^^^^^^^^^^^^^^^^^^^      ^^^
+ 
+     [Symbol.toPrimitive]: string
+ >[Symbol.toPrimitive] : string
+->                     : ^^^^^^
+ >Symbol.toPrimitive : unique symbol
+->                   : ^^^^^^^^^^^^^
+ >Symbol : SymbolConstructor
+->       : ^^^^^^^^^^^^^^^^^
+ >toPrimitive : unique symbol
+->            : ^^^^^^^^^^^^^
+ }

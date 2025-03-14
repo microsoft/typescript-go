@@ -1,0 +1,14 @@
+--- old.assigningFunctionToTupleIssuesError.types
++++ new.assigningFunctionToTupleIssuesError.types
+@@= skipped -2, +2 lines =@@
+ === assigningFunctionToTupleIssuesError.ts ===
+ declare let a: () => void;
+ >a : () => void
+->  : ^^^^^^    
+ 
+ let b: [string] = a;
+ >b : [string]
+->  : ^^^^^^^^
+ >a : () => void
+->  : ^^^^^^    
+ 

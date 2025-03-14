@@ -1,0 +1,15 @@
+--- old.arrayLiteral2.types
++++ new.arrayLiteral2.types
+@@= skipped -2, +2 lines =@@
+ === arrayLiteral2.ts ===
+ var v30 = [1, 2], v31;
+ >v30 : number[]
+->    : ^^^^^^^^
+ >[1, 2] : number[]
+->       : ^^^^^^^^
+ >1 : 1
+->  : ^
+ >2 : 2
+->  : ^
+ >v31 : any
+ 

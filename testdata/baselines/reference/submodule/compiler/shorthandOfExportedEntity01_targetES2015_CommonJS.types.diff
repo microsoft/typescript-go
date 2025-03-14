@@ -1,0 +1,24 @@
+--- old.shorthandOfExportedEntity01_targetES2015_CommonJS.types
++++ new.shorthandOfExportedEntity01_targetES2015_CommonJS.types
+@@= skipped -2, +2 lines =@@
+ === shorthandOfExportedEntity01_targetES2015_CommonJS.ts ===
+ export const test = "test";
+ >test : "test"
+->     : ^^^^^^
+ >"test" : "test"
+->       : ^^^^^^
+ 
+ export function foo () {
+ >foo : () => void
+->    : ^^^^^^^^^^
+ 
+   const x = { test };
+ >x : { test: string; }
+->  : ^^^^^^^^^^^^^^^^^
+ >{ test } : { test: string; }
+->         : ^^^^^^^^^^^^^^^^^
+->test : string
+->     : ^^^^^^
++>test : any
+ }
+ 

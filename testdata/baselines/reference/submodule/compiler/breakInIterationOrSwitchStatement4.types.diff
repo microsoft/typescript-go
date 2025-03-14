@@ -1,0 +1,12 @@
+--- old.breakInIterationOrSwitchStatement4.types
++++ new.breakInIterationOrSwitchStatement4.types
+@@= skipped -2, +2 lines =@@
+ === breakInIterationOrSwitchStatement4.ts ===
+ for (var i in something) {
+ >i : string
+->  : ^^^^^^
+ >something : any
+->          : ^^^
+ 
+   break;
+ }

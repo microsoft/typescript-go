@@ -1,0 +1,16 @@
+--- old.parserFuzz1.types
++++ new.parserFuzz1.types
+@@= skipped -2, +2 lines =@@
+ === parserFuzz1.ts ===
+ cla <ss {
+ >cla <ss : boolean
+->        : ^^^^^^^
+ >cla : any
+->    : ^^^
+ >ss : any
+->   : ^^^
+ 
+   _ static try
+ >_ : any
+->  : ^^^
+ 

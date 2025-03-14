@@ -1,0 +1,44 @@
+--- old.continueInLoopsWithCapturedBlockScopedBindings1.types
++++ new.continueInLoopsWithCapturedBlockScopedBindings1.types
+@@= skipped -2, +2 lines =@@
+ === continueInLoopsWithCapturedBlockScopedBindings1.ts ===
+ function foo() {
+ >foo : () => void
+->    : ^^^^^^^^^^
+ 
+     for (const i of [0, 1]) {
+ >i : number
+->  : ^^^^^^
+ >[0, 1] : number[]
+->       : ^^^^^^^^
+ >0 : 0
+->  : ^
+ >1 : 1
+->  : ^
+ 
+         if (i === 0) {
+ >i === 0 : boolean
+->        : ^^^^^^^
+ >i : number
+->  : ^^^^^^
+ >0 : 0
+->  : ^
+ 
+             continue;
+         }
+@@= skipped -26, +18 lines =@@
+         // Trigger non-simple-loop emit
+         (() => {
+ >(() => {            return i;        })() : number
+->                                          : ^^^^^^
+ >(() => {            return i;        }) : () => number
+->                                        : ^^^^^^^^^^^^
+ >() => {            return i;        } : () => number
+->                                      : ^^^^^^^^^^^^
+ 
+             return i;
+ >i : number
+->  : ^^^^^^
+ 
+         })();
+     }

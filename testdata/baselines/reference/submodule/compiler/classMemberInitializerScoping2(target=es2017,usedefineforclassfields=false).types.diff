@@ -1,0 +1,25 @@
+--- old.classMemberInitializerScoping2(target=es2017,usedefineforclassfields=false).types
++++ new.classMemberInitializerScoping2(target=es2017,usedefineforclassfields=false).types
+@@= skipped -2, +2 lines =@@
+ === classMemberInitializerScoping2.ts ===
+ const x = 1
+ >x : 1
+->  : ^
+ >1 : 1
+->  : ^
+ 
+ class C {
+ >C : C
+->  : ^
+ 
+     p = x
+ >p : any
+->  : ^^^
+ >x : any
+->  : ^^^
+ 
+     constructor(x: string) { }
+ >x : string
+->  : ^^^^^^
+ }
+ 

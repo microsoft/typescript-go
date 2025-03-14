@@ -1,0 +1,19 @@
+--- old.parserShorthandPropertyAssignment5.types
++++ new.parserShorthandPropertyAssignment5.types
+@@= skipped -2, +2 lines =@@
+ === parserShorthandPropertyAssignment5.ts ===
+ var greet = "hello";
+ >greet : string
+->      : ^^^^^^
+ >"hello" : "hello"
+->        : ^^^^^^^
+ 
+ var obj = { greet? }; 
+ >obj : { greet: string; }
+->    : ^^^^^^^^^^^^^^^^^^
+ >{ greet? } : { greet: string; }
+->           : ^^^^^^^^^^^^^^^^^^
+->greet : string
+->      : ^^^^^^
++>greet : any
+ 

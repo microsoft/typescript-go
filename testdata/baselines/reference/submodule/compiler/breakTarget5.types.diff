@@ -1,0 +1,26 @@
+--- old.breakTarget5.types
++++ new.breakTarget5.types
+@@= skipped -2, +2 lines =@@
+ === breakTarget5.ts ===
+ target:
+ >target : any
+->       : ^^^
+ 
+ while (true) {
+ >true : true
+->     : ^^^^
+ 
+   function f() {
+ >f : () => void
+->  : ^^^^^^^^^^
+ 
+     while (true) {
+ >true : true
+->     : ^^^^
+ 
+       break target;
+ >target : any
+->       : ^^^
+     }
+   }
+ }

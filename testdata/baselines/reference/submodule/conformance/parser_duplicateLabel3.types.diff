@@ -1,0 +1,26 @@
+--- old.parser_duplicateLabel3.types
++++ new.parser_duplicateLabel3.types
+@@= skipped -2, +2 lines =@@
+ === parser_duplicateLabel3.ts ===
+ target:
+ >target : any
+->       : ^^^
+ 
+ while (true) {
+ >true : true
+->     : ^^^^
+ 
+   function f() {
+ >f : () => void
+->  : ^^^^^^^^^^
+ 
+     target:
+ >target : any
+->       : ^^^
+ 
+     while (true) {
+ >true : true
+->     : ^^^^
+     }
+   }
+ }

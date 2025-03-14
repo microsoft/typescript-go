@@ -1,0 +1,69 @@
+--- old.jsxAttributeInitializer(jsx=react).types
++++ new.jsxAttributeInitializer(jsx=react).types
+@@= skipped -2, +2 lines =@@
+ === a.tsx ===
+ declare var React: any;
+ >React : any
+->      : ^^^
+ 
+ <div>
+ ><div>    <div attr=<div /> />    <div attr=<div>foo</div> />    <div attr=<><div>foo</div></> />    <div attr= /></div> : any
+->                                                                                                                        : ^^^
+ >div : any
+->    : ^^^
+ 
+     <div attr=<div /> />
+ ><div attr=<div /> /> : any
+->                     : ^^^
+ >div : any
+->    : ^^^
+ >attr : any
+->     : ^^^
+ ><div /> : any
+->        : ^^^
+ >div : any
+->    : ^^^
+ 
+     <div attr=<div>foo</div> />
+ ><div attr=<div>foo</div> /> : any
+->                            : ^^^
+ >div : any
+->    : ^^^
+ >attr : any
+->     : ^^^
+ ><div>foo</div> : any
+->               : ^^^
+ >div : any
+->    : ^^^
+ >div : any
+->    : ^^^
+ 
+     <div attr=<><div>foo</div></> />
+ ><div attr=<><div>foo</div></> /> : any
+->                                 : ^^^
+ >div : any
+->    : ^^^
+ >attr : any
+->     : ^^^
+ ><><div>foo</div></> : any
+->                    : ^^^
+ ><div>foo</div> : any
+->               : ^^^
+ >div : any
+->    : ^^^
+ >div : any
+->    : ^^^
+ 
+     <div attr= />
+ ><div attr= /> : any
+->              : ^^^
+ >div : any
+->    : ^^^
+->attr : true
+->     : ^^^^
++>attr : any
+ 
+ </div>
+ >div : any
+->    : ^^^
+ 

@@ -1,0 +1,14 @@
+--- old.parserObjectCreationArrayLiteral4.types
++++ new.parserObjectCreationArrayLiteral4.types
+@@= skipped -2, +2 lines =@@
+ === parserObjectCreationArrayLiteral4.ts ===
+ new Foo[1]();
+ >new Foo[1]() : any
+->             : ^^^
+ >Foo[1] : any
+->       : ^^^
+ >Foo : any
+->    : ^^^
+ >1 : 1
+->  : ^
+ 

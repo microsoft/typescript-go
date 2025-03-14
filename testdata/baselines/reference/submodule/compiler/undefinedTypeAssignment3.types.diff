@@ -1,0 +1,8 @@
+--- old.undefinedTypeAssignment3.types
++++ new.undefinedTypeAssignment3.types
+@@= skipped -2, +2 lines =@@
+ === undefinedTypeAssignment3.ts ===
+ var undefined = null;
+ >undefined : any
+->          : ^^^
+ 

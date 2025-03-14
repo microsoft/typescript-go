@@ -1,0 +1,12 @@
+--- old.whileStatementInnerComments.types
++++ new.whileStatementInnerComments.types
+@@= skipped -2, +2 lines =@@
+ === whileStatementInnerComments.ts ===
+ /*a*/ while /*b*/ ( /*c*/ false /*d*/ ) /*e*/ {}
+ >false : false
+->      : ^^^^^
+ 
+ /*a*/ do /*b*/ {} /*c*/ while /*d*/ ( /*e*/ true /*f*/ );
+ >true : true
+->     : ^^^^
+ 

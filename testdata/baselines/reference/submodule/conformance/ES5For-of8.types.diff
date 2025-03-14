@@ -1,0 +1,46 @@
+--- old.ES5For-of8.types
++++ new.ES5For-of8.types
+@@= skipped -2, +2 lines =@@
+ === ES5For-of8.ts ===
+ function foo() {
+ >foo : () => { x: number; }
+->    : ^^^^^^^^^^^^^^^^^^^^
+ 
+     return { x: 0 };
+ >{ x: 0 } : { x: number; }
+->         : ^^^^^^^^^^^^^^
+ >x : number
+->  : ^^^^^^
+ >0 : 0
+->  : ^
+ }
+ for (foo().x of ['a', 'b', 'c']) {
+ >foo().x : number
+->        : ^^^^^^
+ >foo() : { x: number; }
+->      : ^^^^^^^^^^^^^^
+ >foo : () => { x: number; }
+->    : ^^^^^^^^^^^^^^^^^^^^
+ >x : number
+->  : ^^^^^^
+ >['a', 'b', 'c'] : string[]
+->                : ^^^^^^^^
+ >'a' : "a"
+->    : ^^^
+ >'b' : "b"
+->    : ^^^
+ >'c' : "c"
+->    : ^^^
+ 
+     var p = foo().x;
+ >p : number
+->  : ^^^^^^
+ >foo().x : number
+->        : ^^^^^^
+ >foo() : { x: number; }
+->      : ^^^^^^^^^^^^^^
+ >foo : () => { x: number; }
+->    : ^^^^^^^^^^^^^^^^^^^^
+ >x : number
+->  : ^^^^^^
+ }

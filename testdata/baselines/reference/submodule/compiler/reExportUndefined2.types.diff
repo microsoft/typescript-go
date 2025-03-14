@@ -1,0 +1,25 @@
+--- old.reExportUndefined2.types
++++ new.reExportUndefined2.types
+@@= skipped -5, +5 lines =@@
+ 
+ export { undefined };
+ >undefined : any
+->          : ^^^
+ 
+ === b.ts ===
+ import { undefined } from "./a";
+ >undefined : any
+->          : ^^^
+ 
+ declare function use(a: number);
+ >use : (a: number) => any
+->    : ^ ^^      ^^^^^^^^
+ >a : number
+->  : ^^^^^^
+ 
+ use(undefined);
+ >use(undefined) : any
+ >use : (a: number) => any
+->    : ^ ^^      ^^^^^^^^
+ >undefined : any
+ 

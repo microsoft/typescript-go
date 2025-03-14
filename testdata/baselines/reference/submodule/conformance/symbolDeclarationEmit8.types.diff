@@ -1,0 +1,22 @@
+--- old.symbolDeclarationEmit8.types
++++ new.symbolDeclarationEmit8.types
+@@= skipped -2, +2 lines =@@
+ === symbolDeclarationEmit8.ts ===
+ var obj = {
+ >obj : { [Symbol.isConcatSpreadable]: number; }
+->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ >{    [Symbol.isConcatSpreadable]: 0} : { [Symbol.isConcatSpreadable]: number; }
+->                                     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+     [Symbol.isConcatSpreadable]: 0
+ >[Symbol.isConcatSpreadable] : number
+->                            : ^^^^^^
+ >Symbol.isConcatSpreadable : unique symbol
+->                          : ^^^^^^^^^^^^^
+ >Symbol : SymbolConstructor
+->       : ^^^^^^^^^^^^^^^^^
+ >isConcatSpreadable : unique symbol
+->                   : ^^^^^^^^^^^^^
+ >0 : 0
+->  : ^
+ }

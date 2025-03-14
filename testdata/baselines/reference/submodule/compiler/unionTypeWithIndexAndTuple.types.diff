@@ -1,0 +1,34 @@
+--- old.unionTypeWithIndexAndTuple.types
++++ new.unionTypeWithIndexAndTuple.types
+@@= skipped -1, +1 lines =@@
+ 
+ === unionTypeWithIndexAndTuple.ts ===
+ interface I {
++>I : I
++
+     [index: number]: any;
+ >index : number
+->      : ^^^^^^
+ 
+     someOtherProperty: number;
+ >someOtherProperty : number
+->                  : ^^^^^^
+ }
+ function f(args: ["a"] | I) { }
+->f : (args: ["a"] | I) => void
+->  : ^    ^^         ^^^^^^^^^
++>f : (args: I | ["a"]) => void
+ >args : I | ["a"]
+->     : ^^^^^^^^^
+ 
+ f(["a"]);
+ >f(["a"]) : void
+->         : ^^^^
+->f : (args: ["a"] | I) => void
+->  : ^    ^^         ^^^^^^^^^
++>f : (args: I | ["a"]) => void
+ >["a"] : ["a"]
+->      : ^^^^^
+ >"a" : "a"
+->    : ^^^
+ 

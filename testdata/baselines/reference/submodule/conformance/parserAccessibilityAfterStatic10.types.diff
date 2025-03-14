@@ -1,0 +1,14 @@
+--- old.parserAccessibilityAfterStatic10.types
++++ new.parserAccessibilityAfterStatic10.types
+@@= skipped -2, +2 lines =@@
+ === parserAccessibilityAfterStatic10.ts ===
+ class Outer
+ >Outer : Outer
+->      : ^^^^^
+ {
+ static public intI<T>() {}
+ >intI : <T>() => void
+->     : ^ ^^^^^^^^^^^
++>T : T
+ }
+ 

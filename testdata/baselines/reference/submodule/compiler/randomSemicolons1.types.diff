@@ -1,0 +1,12 @@
+--- old.randomSemicolons1.types
++++ new.randomSemicolons1.types
+@@= skipped -3, +3 lines =@@
+ ; ;
+ var a = 1;
+ >a : number
+->  : ^^^^^^
+ >1 : 1
+->  : ^
+ 
+ ; 
+ 

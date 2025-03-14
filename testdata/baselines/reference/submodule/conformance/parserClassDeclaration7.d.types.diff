@@ -1,0 +1,8 @@
+--- old.parserClassDeclaration7.d.types
++++ new.parserClassDeclaration7.d.types
+@@= skipped -2, +2 lines =@@
+ === parserClassDeclaration7.d.ts ===
+ declare class C {
+ >C : C
+->  : ^
+ }

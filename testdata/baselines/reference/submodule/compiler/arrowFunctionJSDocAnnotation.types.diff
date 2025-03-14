@@ -1,0 +1,33 @@
+--- old.arrowFunctionJSDocAnnotation.types
++++ new.arrowFunctionJSDocAnnotation.types
+@@= skipped -5, +5 lines =@@
+  */
+ function identity(v) {
+ >identity : (v: any) => any
+->         : ^ ^^   ^^^^^^^^
+ >v : any
+ 
+     return v;
+@@= skipped -11, +10 lines =@@
+ >x : any
+ >identity(    /**     * @param {number} param     * @returns {number=}     */    param => param) : any
+ >identity : (v: any) => any
+->         : ^ ^^   ^^^^^^^^
+ 
+     /**
+      * @param {number} param
+      * @returns {number=}
+      */
+     param => param
+->param => param : (param: number) => number | undefined
+->               : ^     ^^      ^^^^^         ^^^^^^^^^
+->param : number
+->      : ^^^^^^
+->param : number
+->      : ^^^^^^
++>param => param : (param: any) => any
++>param : any
++>param : any
+ 
+ );
+ 

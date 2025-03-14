@@ -1,0 +1,22 @@
+--- old.declarationEmitClassSetAccessorParamNameInJs.types
++++ new.declarationEmitClassSetAccessorParamNameInJs.types
+@@= skipped -4, +4 lines =@@
+ 
+ export class Foo {
+ >Foo : Foo
+->    : ^^^
+ 
+     /**
+      * Bar.
+@@= skipped -8, +7 lines =@@
+      * @param {string} baz Baz.
+      */
+     set bar(baz) {}
+->bar : string
+->    : ^^^^^^
+->baz : string
+->    : ^^^^^^
++>bar : any
++>baz : any
+ }
+ 

@@ -1,0 +1,29 @@
+--- old.spreadNonPrimitive.types
++++ new.spreadNonPrimitive.types
+@@= skipped -2, +2 lines =@@
+ === spreadNonPrimitive.ts ===
+ declare let o: object;
+ >o : object
+->  : ^^^^^^
+ 
+ const x: { a: number, b: number } = { a: 1, ...o, b: 2 };
+ >x : { a: number; b: number; }
+->  : ^^^^^      ^^^^^      ^^^
+ >a : number
+->  : ^^^^^^
+ >b : number
+->  : ^^^^^^
+->{ a: 1, ...o, b: 2 } : { b: number; a: number; }
+->                     : ^^^^^^^^^^^^^^^^^^^^^^^^^
++>{ a: 1, ...o, b: 2 } : { a: number; b: number; }
+ >a : number
+->  : ^^^^^^
+ >1 : 1
+->  : ^
+ >o : object
+->  : ^^^^^^
+ >b : number
+->  : ^^^^^^
+ >2 : 2
+->  : ^
+ 

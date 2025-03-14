@@ -1,0 +1,20 @@
+--- old.parserTypeAssertionInObjectCreationExpression1.types
++++ new.parserTypeAssertionInObjectCreationExpression1.types
+@@= skipped -2, +2 lines =@@
+ === parserTypeAssertionInObjectCreationExpression1.ts ===
+ new <T>Foo()
+ >new <T>Foo() : boolean
+->             : ^^^^^^^
+ >new <T : boolean
+->       : ^^^^^^^
+ >new : any
+->    : ^^^
+ > : any
+-> : ^^^
+ >T : any
+->  : ^^^
+ >Foo() : any
+->      : ^^^
+ >Foo : any
+->    : ^^^
+ 

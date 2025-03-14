@@ -1,0 +1,12 @@
+--- old.exportAssignmentWithDeclareModifier.types
++++ new.exportAssignmentWithDeclareModifier.types
+@@= skipped -2, +2 lines =@@
+ === exportAssignmentWithDeclareModifier.ts ===
+ var x;
+ >x : any
+->  : ^^^
+ 
+ declare export = x;
+ >x : any
+->  : ^^^
+ 

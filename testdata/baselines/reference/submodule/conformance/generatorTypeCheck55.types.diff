@@ -1,0 +1,18 @@
+--- old.generatorTypeCheck55.types
++++ new.generatorTypeCheck55.types
+@@= skipped -2, +2 lines =@@
+ === generatorTypeCheck55.ts ===
+ function* g() {
+ >g : () => Generator<any, void, unknown>
+->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+     var x = class C extends (yield) {};
+ >x : typeof C
+->  : ^^^^^^^^
+ >class C extends (yield) {} : typeof C
+->                           : ^^^^^^^^
+ >C : typeof C
+->  : ^^^^^^^^
+ >(yield) : any
+ >yield : any
+ }

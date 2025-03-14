@@ -1,0 +1,21 @@
+--- old.topLevelLambda.types
++++ new.topLevelLambda.types
+@@= skipped -2, +2 lines =@@
+ === topLevelLambda.ts ===
+ module M {
+ >M : typeof M
+->  : ^^^^^^^^
+ 
+ 	var f = () => {this.window;}
+ >f : () => void
+->  : ^^^^^^^^^^
+ >() => {this.window;} : () => void
+->                     : ^^^^^^^^^^
+ >this.window : any
+->            : ^^^
+ >this : any
+->     : ^^^
+ >window : any
+->       : ^^^
+ }
+ 

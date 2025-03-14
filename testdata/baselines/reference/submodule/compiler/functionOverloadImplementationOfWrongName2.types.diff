@@ -1,0 +1,22 @@
+--- old.functionOverloadImplementationOfWrongName2.types
++++ new.functionOverloadImplementationOfWrongName2.types
+@@= skipped -2, +2 lines =@@
+ === functionOverloadImplementationOfWrongName2.ts ===
+ function foo(x);
+ >foo : { (x: any): any; (x: any, y: any): any; }
+->    : ^^^ ^^^^^^^^^^^^^^ ^^^^^^^ ^^^^^^^^^^^^^^
+ >x : any
+->  : ^^^
+ 
+ function bar() { }
+ >bar : () => void
+->    : ^^^^^^^^^^
+ 
+ function foo(x, y);
+ >foo : { (x: any): any; (x: any, y: any): any; }
+->    : ^^^ ^^^^^^^^^^^^^^ ^^^^^^^ ^^^^^^^^^^^^^^
+ >x : any
+->  : ^^^
+ >y : any
+->  : ^^^
+ 

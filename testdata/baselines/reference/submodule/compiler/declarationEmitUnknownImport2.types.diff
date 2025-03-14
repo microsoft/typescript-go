@@ -1,0 +1,16 @@
+--- old.declarationEmitUnknownImport2.types
++++ new.declarationEmitUnknownImport2.types
+@@= skipped -2, +2 lines =@@
+ === declarationEmitUnknownImport2.ts ===
+ import Foo From './Foo'; // Syntax error
+ >Foo : any
+->    : ^^^
+ >From : any
+->     : ^^^
+ >'./Foo' : "./Foo"
+->        : ^^^^^^^
+ 
+ export default Foo
+ >Foo : any
+->    : ^^^
+ 

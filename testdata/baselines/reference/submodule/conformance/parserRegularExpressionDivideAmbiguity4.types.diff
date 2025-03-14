@@ -1,0 +1,12 @@
+--- old.parserRegularExpressionDivideAmbiguity4.types
++++ new.parserRegularExpressionDivideAmbiguity4.types
+@@= skipped -2, +2 lines =@@
+ === parserRegularExpressionDivideAmbiguity4.ts ===
+ foo(/notregexp);
+ >foo(/notregexp) : any
+->                : ^^^
+ >foo : any
+->    : ^^^
+ >/notregexp : RegExp
+->           : ^^^^^^
+ 

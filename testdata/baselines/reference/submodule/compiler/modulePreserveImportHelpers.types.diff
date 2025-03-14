@@ -1,0 +1,37 @@
+--- old.modulePreserveImportHelpers.types
++++ new.modulePreserveImportHelpers.types
+@@= skipped -9, +9 lines =@@
+ 
+ export class A {}
+ >A : A
+->  : ^
+ 
+ === /b.cts ===
+ declare var dec: any
+@@= skipped -12, +11 lines =@@
+ 
+ class B {}
+ >B : B
+->  : ^
+ 
+ export {};
+ 
+@@= skipped -14, +13 lines =@@
+ 
+ export class C {}
+ >C : C
+->  : ^
+ 
+ === /node_modules/tslib/tslib.d.ts ===
+ export declare function __esDecorate(...args: any[]): any;
+ >__esDecorate : (...args: any[]) => any
+->             : ^^^^    ^^     ^^^^^   
+ >args : any[]
+->     : ^^^^^
+ 
+ export declare function __runInitializers(...args: any[]): any;
+ >__runInitializers : (...args: any[]) => any
+->                  : ^^^^    ^^     ^^^^^   
+ >args : any[]
+->     : ^^^^^
+ 

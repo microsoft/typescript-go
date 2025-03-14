@@ -1,0 +1,90 @@
+--- old.lambdaArgCrash.types
++++ new.lambdaArgCrash.types
+@@= skipped -2, +2 lines =@@
+ === lambdaArgCrash.ts ===
+ class Event {
+ >Event : Event
+->      : ^^^^^
+ 
+ 	 private _listeners: any[] = [];
+ >_listeners : any[]
+->           : ^^^^^
+ >[] : undefined[]
+->   : ^^^^^^^^^^^
+ 
+ 	 constructor () {
+ 
+@@= skipped -14, +11 lines =@@
+ 
+ 		 this._listeners = [];
+ >this._listeners = [] : undefined[]
+->                     : ^^^^^^^^^^^
+ >this._listeners : any[]
+->                : ^^^^^
+ >this : this
+->     : ^^^^
+ >_listeners : any[]
+->           : ^^^^^
+ >[] : undefined[]
+->   : ^^^^^^^^^^^
+ 
+ 	}
+ 
+ 	 add(listener: () => any): void {
+ >add : (listener: () => any) => void
+->    : ^        ^^         ^^^^^    
+ >listener : () => any
+->         : ^^^^^^   
+ 
+ 		 /// <summary>Registers a new listener for the event.</summary>
+ 
+@@= skipped -24, +17 lines =@@
+ 
+ 		 this._listeners.push(listener);
+ >this._listeners.push(listener) : number
+->                               : ^^^^^^
+ >this._listeners.push : (...items: any[]) => number
+->                     : ^^^^     ^^^^^^^^^^^^      
+ >this._listeners : any[]
+->                : ^^^^^
+ >this : this
+->     : ^^^^
+ >_listeners : any[]
+->           : ^^^^^
+ >push : (...items: any[]) => number
+->     : ^^^^     ^^^^^^^^^^^^      
+ >listener : () => any
+->         : ^^^^^^   
+ 
+ 	}
+ 
+@@= skipped -20, +13 lines =@@
+  
+ class ItemSetEvent extends Event {
+ >ItemSetEvent : ItemSetEvent
+->             : ^^^^^^^^^^^^
+ >Event : Event
+->      : ^^^^^
+ 
+ 	 add(listener: (items: ItemSet) => void ) {
+ >add : (listener: (items: ItemSet) => void) => void
+->    : ^        ^^                        ^^^^^^^^^
+ >listener : (items: ItemSet) => void
+->         : ^     ^^       ^^^^^    
+ >items : ItemSet
+->      : ^^^^^^^
+ 
+ 	 	super.add(listener);
+ >super.add(listener) : void
+->                    : ^^^^
+ >super.add : (listener: () => any) => void
+->          : ^        ^^         ^^^^^    
+ >super : Event
+->      : ^^^^^
+ >add : (listener: () => any) => void
+->    : ^        ^^         ^^^^^    
+ >listener : (items: ItemSet) => void
+->         : ^     ^^       ^^^^^    
+ 
+ 	}
+ 

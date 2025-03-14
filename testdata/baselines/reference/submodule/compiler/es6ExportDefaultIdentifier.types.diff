@@ -1,0 +1,12 @@
+--- old.es6ExportDefaultIdentifier.types
++++ new.es6ExportDefaultIdentifier.types
+@@= skipped -2, +2 lines =@@
+ === es6ExportDefaultIdentifier.ts ===
+ export function f() { }
+ >f : () => void
+->  : ^^^^^^^^^^
+ 
+ export default f;
+ >f : () => void
+->  : ^^^^^^^^^^
+ 

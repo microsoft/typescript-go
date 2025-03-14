@@ -1,0 +1,28 @@
+--- old.stringLiteralPropertyNameWithLineContinuation1.types
++++ new.stringLiteralPropertyNameWithLineContinuation1.types
+@@= skipped -2, +2 lines =@@
+ === stringLiteralPropertyNameWithLineContinuation1.ts ===
+ var x = {'text\
+ >x : { text: string; }
+->  : ^^^^^^^^^^^^^^^^^
+ >{'text\':'hello'} : { text: string; }
+->                  : ^^^^^^^^^^^^^^^^^
+ >'text\' : string
+->        : ^^^^^^
+ 
+ ':'hello'}
+ >'hello' : "hello"
+->        : ^^^^^^^
+ 
+ x.text = "bar"
+ >x.text = "bar" : "bar"
+->               : ^^^^^
+ >x.text : string
+->       : ^^^^^^
+ >x : { text: string; }
+->  : ^^^^^^^^^^^^^^^^^
+ >text : string
+->     : ^^^^^^
+ >"bar" : "bar"
+->      : ^^^^^
+ 

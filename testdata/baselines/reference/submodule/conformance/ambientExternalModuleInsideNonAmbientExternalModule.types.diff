@@ -1,0 +1,8 @@
+--- old.ambientExternalModuleInsideNonAmbientExternalModule.types
++++ new.ambientExternalModuleInsideNonAmbientExternalModule.types
+@@= skipped -2, +2 lines =@@
+ === ambientExternalModuleInsideNonAmbientExternalModule.ts ===
+ export declare module "M" { }
+ >"M" : any
+->    : ^^^
+ 

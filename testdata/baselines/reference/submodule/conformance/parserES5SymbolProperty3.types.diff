@@ -1,0 +1,18 @@
+--- old.parserES5SymbolProperty3.types
++++ new.parserES5SymbolProperty3.types
+@@= skipped -2, +2 lines =@@
+ === parserES5SymbolProperty3.ts ===
+ declare class C {
+ >C : C
+->  : ^
+ 
+     [Symbol.unscopables](): string;
+ >[Symbol.unscopables] : () => string
+->                     : ^^^^^^      
+ >Symbol.unscopables : any
+->                   : ^^^
+ >Symbol : any
+->       : ^^^
+ >unscopables : any
+->            : ^^^
+ }

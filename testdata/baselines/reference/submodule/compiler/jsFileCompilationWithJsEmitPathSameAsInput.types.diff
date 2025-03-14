@@ -1,0 +1,15 @@
+--- old.jsFileCompilationWithJsEmitPathSameAsInput.types
++++ new.jsFileCompilationWithJsEmitPathSameAsInput.types
+@@= skipped -2, +2 lines =@@
+ === a.ts ===
+ class c {
+ >c : c
+->  : ^
+ }
+ 
+ === a.js ===
+ function foo() {
+ >foo : () => void
+->    : ^^^^^^^^^^
+ }
+ 

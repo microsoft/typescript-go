@@ -1,0 +1,25 @@
+--- old.generatorES6_6.types
++++ new.generatorES6_6.types
+@@= skipped -2, +2 lines =@@
+ === generatorES6_6.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+   *[Symbol.iterator]() {
+ >[Symbol.iterator] : () => Generator<number, void, unknown>
+->                  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ >Symbol.iterator : unique symbol
+->                : ^^^^^^^^^^^^^
+ >Symbol : SymbolConstructor
+->       : ^^^^^^^^^^^^^^^^^
+ >iterator : unique symbol
+->         : ^^^^^^^^^^^^^
+ 
+     let a = yield 1;
+ >a : any
+ >yield 1 : any
+ >1 : 1
+->  : ^
+   }
+ }

@@ -1,0 +1,36 @@
+--- old.alwaysStrictModule2.types
++++ new.alwaysStrictModule2.types
+@@= skipped -2, +2 lines =@@
+ === a.ts ===
+ module M {
+ >M : typeof M
+->  : ^^^^^^^^
+ 
+     export function f() {
+ >f : () => void
+->  : ^^^^^^^^^^
+ 
+         var arguments = [];
+ >arguments : any[]
+->          : ^^^^^
+ >[] : undefined[]
+->   : ^^^^^^^^^^^
+     }
+ }
+ 
+ === b.ts ===
+ module M {
+ >M : typeof M
+->  : ^^^^^^^^
+ 
+     export function f2() {
+ >f2 : () => void
+->   : ^^^^^^^^^^
+ 
+         var arguments = [];
+ >arguments : any[]
+->          : ^^^^^
+ >[] : undefined[]
+->   : ^^^^^^^^^^^
+     }
+ }

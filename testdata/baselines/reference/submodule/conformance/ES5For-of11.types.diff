@@ -1,0 +1,8 @@
+--- old.ES5For-of11.types
++++ new.ES5For-of11.types
+@@= skipped -6, +6 lines =@@
+ for (v of []) { }
+ >v : any
+ >[] : undefined[]
+->   : ^^^^^^^^^^^
+ 

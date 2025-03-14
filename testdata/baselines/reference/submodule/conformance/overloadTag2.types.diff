@@ -1,0 +1,100 @@
+--- old.overloadTag2.types
++++ new.overloadTag2.types
+@@= skipped -2, +2 lines =@@
+ === overloadTag2.js ===
+ export class Foo {
+ >Foo : Foo
+->    : ^^^
+ 
+     #a = true ? 1 : "1"
+ >#a : string | number
+->   : ^^^^^^^^^^^^^^^
+->true ? 1 : "1" : 1 | "1"
+->               : ^^^^^^^
++>true ? 1 : "1" : "1" | 1
+ >true : true
+->     : ^^^^
+ >1 : 1
+->  : ^
+ >"1" : "1"
+->    : ^^^
+ 
+     #b
+ >#b : any
+->   : ^^^
+ 
+     /**
+      * Should not have an implicit any error, because constructor's return type is always implicit
+@@= skipped -39, +32 lines =@@
+      * @param {number | string} a
+      */
+     constructor(a, b) {
+->a : string | number
+->  : ^^^^^^^^^^^^^^^
++>a : any
+ >b : any
+->  : ^^^
+ 
+         this.#a = a
+->this.#a = a : string | number
+->            : ^^^^^^^^^^^^^^^
++>this.#a = a : any
+ >this.#a : string | number
+->        : ^^^^^^^^^^^^^^^
+ >this : this
+->     : ^^^^
+->a : string | number
+->  : ^^^^^^^^^^^^^^^
++>a : any
+ 
+         this.#b = b
+ >this.#b = b : any
+->            : ^^^
+ >this.#b : any
+->        : ^^^
+ >this : this
+->     : ^^^^
+ >b : any
+->  : ^^^
+     }
+ }
+ var a = new Foo()
+ >a : Foo
+->  : ^^^
+ >new Foo() : Foo
+->          : ^^^
+ >Foo : typeof Foo
+->    : ^^^^^^^^^^
+ 
+ var b = new Foo('str')
+ >b : Foo
+->  : ^^^
+ >new Foo('str') : Foo
+->               : ^^^
+ >Foo : typeof Foo
+->    : ^^^^^^^^^^
+ >'str' : "str"
+->      : ^^^^^
+ 
+ var c = new Foo(2)
+ >c : Foo
+->  : ^^^
+ >new Foo(2) : Foo
+->           : ^^^
+ >Foo : typeof Foo
+->    : ^^^^^^^^^^
+ >2 : 2
+->  : ^
+ 
+ var d = new Foo('str', 2)
+ >d : Foo
+->  : ^^^
+ >new Foo('str', 2) : Foo
+->                  : ^^^
+ >Foo : typeof Foo
+->    : ^^^^^^^^^^
+ >'str' : "str"
+->      : ^^^^^
+ >2 : 2
+->  : ^
+ 

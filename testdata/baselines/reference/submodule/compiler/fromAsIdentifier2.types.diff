@@ -1,0 +1,10 @@
+--- old.fromAsIdentifier2.types
++++ new.fromAsIdentifier2.types
+@@= skipped -2, +2 lines =@@
+ === fromAsIdentifier2.ts ===
+ "use strict";
+ >"use strict" : "use strict"
+->             : ^^^^^^^^^^^^
+ 
+ var from;
+ >from : any

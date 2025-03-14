@@ -1,0 +1,10 @@
+--- old.parserErrorRecovery_Block2.types
++++ new.parserErrorRecovery_Block2.types
+@@= skipped -2, +2 lines =@@
+ === parserErrorRecovery_Block2.ts ===
+ function f() {
+ >f : () => void
+->  : ^^^^^^^^^^
+ 
+     ¬
+     return;

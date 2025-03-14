@@ -1,0 +1,10 @@
+--- old.pathMappingBasedModuleResolution2_node.types
++++ new.pathMappingBasedModuleResolution2_node.types
+@@= skipped -2, +2 lines =@@
+ === root/src/folder1/file1.ts ===
+ export var x = 1;
+ >x : number
+->  : ^^^^^^
+ >1 : 1
+->  : ^
+ 

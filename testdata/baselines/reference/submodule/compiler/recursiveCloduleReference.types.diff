@@ -1,0 +1,32 @@
+--- old.recursiveCloduleReference.types
++++ new.recursiveCloduleReference.types
+@@= skipped -2, +2 lines =@@
+ === recursiveCloduleReference.ts ===
+ module M
+ >M : typeof M
+->  : ^^^^^^^^
+ {
+   export class C {
+ >C : C
+->  : ^
+   }
+   export module C {
+->C : typeof M.C
+->  : ^^^^^^^^^^
++>C : typeof C
+ 
+     export var C = M.C
+->C : typeof M.C
+->  : ^^^^^^^^^^
+->M.C : typeof M.C
+->    : ^^^^^^^^^^
++>C : typeof C
++>M.C : typeof C
+ >M : typeof M
+->  : ^^^^^^^^
+->C : typeof M.C
+->  : ^^^^^^^^^^
++>C : typeof C
+ 
+   };
+ };

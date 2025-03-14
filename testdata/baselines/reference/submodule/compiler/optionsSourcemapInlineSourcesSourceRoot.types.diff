@@ -1,0 +1,10 @@
+--- old.optionsSourcemapInlineSourcesSourceRoot.types
++++ new.optionsSourcemapInlineSourcesSourceRoot.types
+@@= skipped -2, +2 lines =@@
+ === optionsSourcemapInlineSourcesSourceRoot.ts ===
+ var a = 10;
+ >a : number
+->  : ^^^^^^
+ >10 : 10
+->   : ^^
+ 

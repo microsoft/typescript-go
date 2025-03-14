@@ -1,0 +1,8 @@
+--- old.parserIfStatement1.d.types
++++ new.parserIfStatement1.d.types
+@@= skipped -2, +2 lines =@@
+ === parserIfStatement1.d.ts ===
+ if (foo) {
+ >foo : any
+->    : ^^^
+ }

@@ -1,0 +1,18 @@
+--- old.typingsSuggestionBun1.types
++++ new.typingsSuggestionBun1.types
+@@= skipped -2, +2 lines =@@
+ === a.ts ===
+ const file = Bun.file("/a.ts");
+ >file : any
+->     : ^^^
+ >Bun.file("/a.ts") : any
+->                  : ^^^
+ >Bun.file : any
+->         : ^^^
+ >Bun : any
+->    : ^^^
+ >file : any
+->     : ^^^
+ >"/a.ts" : "/a.ts"
+->        : ^^^^^^^
+ 

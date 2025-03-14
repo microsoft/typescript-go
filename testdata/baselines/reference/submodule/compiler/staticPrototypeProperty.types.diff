@@ -1,0 +1,21 @@
+--- old.staticPrototypeProperty.types
++++ new.staticPrototypeProperty.types
+@@= skipped -2, +2 lines =@@
+ === staticPrototypeProperty.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+    static prototype() { }
+ >prototype : () => void
+->          : ^^^^^^^^^^
+ }
+  
+ class C2 {
+ >C2 : C2
+->   : ^^
+ 
+    static prototype;
+ >prototype : C2
+->          : ^^
+ }

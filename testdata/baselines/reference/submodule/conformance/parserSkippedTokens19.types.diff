@@ -1,0 +1,8 @@
+--- old.parserSkippedTokens19.types
++++ new.parserSkippedTokens19.types
+@@= skipped -2, +2 lines =@@
+ === parserSkippedTokens19.ts ===
+ \ declare var v;
+ >v : any
+->  : ^^^
+ 

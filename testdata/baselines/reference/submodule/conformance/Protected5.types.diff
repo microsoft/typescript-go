@@ -1,0 +1,12 @@
+--- old.Protected5.types
++++ new.Protected5.types
+@@= skipped -2, +2 lines =@@
+ === Protected5.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+   protected static m() { }
+ >m : () => void
+->  : ^^^^^^^^^^
+ }

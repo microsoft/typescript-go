@@ -1,0 +1,22 @@
+--- old.ES5For-of3.types
++++ new.ES5For-of3.types
+@@= skipped -2, +2 lines =@@
+ === ES5For-of3.ts ===
+ for (var v of ['a', 'b', 'c'])
+ >v : string
+->  : ^^^^^^
+ >['a', 'b', 'c'] : string[]
+->                : ^^^^^^^^
+ >'a' : "a"
+->    : ^^^
+ >'b' : "b"
+->    : ^^^
+ >'c' : "c"
+->    : ^^^
+ 
+     var x = v;
+ >x : string
+->  : ^^^^^^
+ >v : string
+->  : ^^^^^^
+ 

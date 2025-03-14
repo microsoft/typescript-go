@@ -1,0 +1,12 @@
+--- old.moduleKeywordRepeatError.types
++++ new.moduleKeywordRepeatError.types
+@@= skipped -4, +4 lines =@@
+ 
+ module.module { }
+ >module.module : any
+->              : ^^^
+ >module : any
+->       : ^^^
+ >module : any
+->       : ^^^
+ 

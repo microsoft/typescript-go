@@ -1,0 +1,45 @@
+--- old.symbolProperty2.types
++++ new.symbolProperty2.types
+@@= skipped -2, +2 lines =@@
+ === symbolProperty2.ts ===
+ var s = Symbol();
+ >s : symbol
+->  : ^^^^^^
+ >Symbol() : symbol
+->         : ^^^^^^
+ >Symbol : SymbolConstructor
+->       : ^^^^^^^^^^^^^^^^^
+ 
+ var x = {
+->x : { [x: symbol]: number | (() => void); }
+->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+->{    [s]: 0,    [s]() { },    get [s]() {        return 0;    }} : { [x: symbol]: number | (() => void); }
+->                                                                 : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++>x : { [x: symbol]: number | () => void; }
++>{    [s]: 0,    [s]() { },    get [s]() {        return 0;    }} : { [x: symbol]: number | () => void; }
+ 
+     [s]: 0,
+ >[s] : number
+->    : ^^^^^^
+ >s : symbol
+->  : ^^^^^^
+ >0 : 0
+->  : ^
+ 
+     [s]() { },
+ >[s] : () => void
+->    : ^^^^^^^^^^
+ >s : symbol
+->  : ^^^^^^
+ 
+     get [s]() {
+ >[s] : number
+->    : ^^^^^^
+ >s : symbol
+->  : ^^^^^^
+ 
+         return 0;
+ >0 : 0
+->  : ^
+     }
+ }

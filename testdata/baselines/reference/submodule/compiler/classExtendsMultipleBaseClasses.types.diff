@@ -1,0 +1,20 @@
+--- old.classExtendsMultipleBaseClasses.types
++++ new.classExtendsMultipleBaseClasses.types
+@@= skipped -2, +2 lines =@@
+ === classExtendsMultipleBaseClasses.ts ===
+ class A { }
+ >A : A
+->  : ^
+ 
+ class B { }
+ >B : B
+->  : ^
+ 
+ class C extends A,B { }
+ >C : C
+->  : ^
+ >A : A
+->  : ^
+ >B : A
+->  : ^
+ 

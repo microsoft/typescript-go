@@ -1,0 +1,15 @@
+--- old.parser585151.types
++++ new.parser585151.types
+@@= skipped -2, +2 lines =@@
+ === parser585151.ts ===
+ class Foo2 {
+ >Foo2 : Foo2
+->     : ^^^^
+ 
+   var icecream = "chocolate";
+ >icecream : string
+->         : ^^^^^^
+ >"chocolate" : "chocolate"
+->            : ^^^^^^^^^^^
+ }
+ 

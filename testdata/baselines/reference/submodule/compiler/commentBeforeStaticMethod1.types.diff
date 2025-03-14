@@ -1,0 +1,20 @@
+--- old.commentBeforeStaticMethod1.types
++++ new.commentBeforeStaticMethod1.types
+@@= skipped -2, +2 lines =@@
+ === commentBeforeStaticMethod1.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+   /**
+    * Returns bar
+    */
+   public static foo(): string {
+ >foo : () => string
+->    : ^^^^^^      
+ 
+     return "bar";
+ >"bar" : "bar"
+->      : ^^^^^
+   }
+ }

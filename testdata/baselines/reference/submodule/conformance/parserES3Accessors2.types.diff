@@ -1,0 +1,10 @@
+--- old.parserES3Accessors2.types
++++ new.parserES3Accessors2.types
+@@= skipped -2, +2 lines =@@
+ === parserES3Accessors2.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+     set Foo(a) { }
+ >Foo : any

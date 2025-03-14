@@ -1,0 +1,18 @@
+--- old.parseCommaSeparatedNewlineNew.types
++++ new.parseCommaSeparatedNewlineNew.types
+@@= skipped -2, +2 lines =@@
+ === parseCommaSeparatedNewlineNew.ts ===
+ (a,
+ >(a,new) : any
+->        : ^^^
+ >a,new : any
+->      : ^^^
+ >a : any
+->  : ^^^
+ 
+ new)
+ >new : any
+->    : ^^^
+ > : any
+-> : ^^^
+ 

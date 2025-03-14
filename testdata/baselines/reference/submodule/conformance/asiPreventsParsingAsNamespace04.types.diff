@@ -1,0 +1,18 @@
+--- old.asiPreventsParsingAsNamespace04.types
++++ new.asiPreventsParsingAsNamespace04.types
+@@= skipped -2, +2 lines =@@
+ === asiPreventsParsingAsNamespace04.ts ===
+ let module = 10;
+ >module : number
+->       : ^^^^^^
+ >10 : 10
+->   : ^^
+ 
+ module in {}
+ >module in {} : boolean
+->             : ^^^^^^^
+ >module : number
+->       : ^^^^^^
+ >{} : {}
+->   : ^^
+ 

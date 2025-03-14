@@ -1,0 +1,23 @@
+--- old.decoratorOnClassMethodParameter1.es6.types
++++ new.decoratorOnClassMethodParameter1.es6.types
+@@= skipped -2, +2 lines =@@
+ === decoratorOnClassMethodParameter1.es6.ts ===
+ declare function dec(target: Object, propertyKey: string | symbol, parameterIndex: number): void;
+ >dec : (target: Object, propertyKey: string | symbol, parameterIndex: number) => void
+->    : ^      ^^      ^^           ^^               ^^              ^^      ^^^^^    
+ >target : Object
+->       : ^^^^^^
+ >propertyKey : string | symbol
+->            : ^^^^^^^^^^^^^^^
+ >parameterIndex : number
+->               : ^^^^^^
+ 
+ export default class {
+     method(@dec p: number) {}
+ >method : (p: number) => void
+->       : ^ ^^      ^^^^^^^^^
+ >dec : (target: Object, propertyKey: string | symbol, parameterIndex: number) => void
+->    : ^      ^^      ^^           ^^               ^^              ^^      ^^^^^    
+ >p : number
+->  : ^^^^^^
+ }

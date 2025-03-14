@@ -1,0 +1,12 @@
+--- old.generatorInAmbientContext4.d.types
++++ new.generatorInAmbientContext4.d.types
+@@= skipped -2, +2 lines =@@
+ === generatorInAmbientContext4.d.ts ===
+ declare module M {
+ >M : typeof M
+->  : ^^^^^^^^
+ 
+     function *generator(): any;
+ >generator : () => any
+->          : ^^^^^^   
+ }

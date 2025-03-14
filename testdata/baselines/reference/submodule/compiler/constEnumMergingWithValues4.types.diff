@@ -1,0 +1,32 @@
+--- old.constEnumMergingWithValues4.types
++++ new.constEnumMergingWithValues4.types
+@@= skipped -1, +1 lines =@@
+ 
+ === m1.ts ===
+ module foo {
++>foo : typeof foo
++
+     const enum E { X }
+->E : E
+->  : ^
++>E : E.X
+ >X : E.X
+->  : ^^^
+ }
+ 
+ module foo {
+ >foo : typeof foo
+->    : ^^^^^^^^^^
+ 
+     var x = 1;
+ >x : number
+->  : ^^^^^^
+ >1 : 1
+->  : ^
+ }
+ 
+ 
+ export = foo
+ >foo : typeof foo
+->    : ^^^^^^^^^^
+ 

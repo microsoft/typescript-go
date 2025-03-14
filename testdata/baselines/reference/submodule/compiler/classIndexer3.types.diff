@@ -1,0 +1,30 @@
+--- old.classIndexer3.types
++++ new.classIndexer3.types
+@@= skipped -2, +2 lines =@@
+ === classIndexer3.ts ===
+ class C123 {
+ >C123 : C123
+->     : ^^^^
+ 
+     [s: string]: number;
+ >s : string
+->  : ^^^^^^
+ 
+     constructor() {
+     }
+@@= skipped -12, +10 lines =@@
+ 
+ class D123 extends C123 {
+ >D123 : D123
+->     : ^^^^
+ >C123 : C123
+->     : ^^^^
+ 
+     x: number;
+ >x : number
+->  : ^^^^^^
+ 
+     y: string;
+ >y : string
+->  : ^^^^^^
+ }

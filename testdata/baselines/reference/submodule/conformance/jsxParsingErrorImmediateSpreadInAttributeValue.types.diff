@@ -1,0 +1,40 @@
+--- old.jsxParsingErrorImmediateSpreadInAttributeValue.types
++++ new.jsxParsingErrorImmediateSpreadInAttributeValue.types
+@@= skipped -2, +2 lines =@@
+ === a.tsx ===
+ declare const React: any
+ >React : any
+->      : ^^^
+ 
+ declare namespace JSX {
++>JSX : any
++
+     interface IntrinsicElements {
++>IntrinsicElements : IntrinsicElements
++
+         [k: string]: any
+ >k : string
+->  : ^^^^^^
+     }
+ }
+ 
+ const X: any
+ >X : any
+->  : ^^^
+ 
+ const a: any
+ >a : any
+->  : ^^^
+ 
+ <X a={...a} />
+ ><X a={...a} /> : any
+->               : ^^^
+ >X : any
+->  : ^^^
+ >a : any
+->  : ^^^
+ > : any
+-> : ^^^
+ >a : any
+->  : ^^^
+ 

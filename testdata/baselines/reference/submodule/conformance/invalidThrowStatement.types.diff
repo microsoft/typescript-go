@@ -1,0 +1,10 @@
+--- old.invalidThrowStatement.types
++++ new.invalidThrowStatement.types
+@@= skipped -2, +2 lines =@@
+ === invalidThrowStatement.ts ===
+ throw; 
+ > : any
+-> : ^^^
+ 
+ export throw null;
+ 

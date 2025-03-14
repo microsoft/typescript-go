@@ -1,0 +1,16 @@
+--- old.newFunctionImplicitAny.types
++++ new.newFunctionImplicitAny.types
+@@= skipped -4, +4 lines =@@
+ 
+ function Test() { }
+ >Test : () => void
+->     : ^^^^^^^^^^
+ 
+ var test = new Test();
+ >test : any
+->     : ^^^
+ >new Test() : any
+->           : ^^^
+ >Test : () => void
+->     : ^^^^^^^^^^
+ 

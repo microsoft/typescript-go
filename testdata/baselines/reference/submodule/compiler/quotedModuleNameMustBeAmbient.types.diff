@@ -1,0 +1,12 @@
+--- old.quotedModuleNameMustBeAmbient.types
++++ new.quotedModuleNameMustBeAmbient.types
+@@= skipped -2, +2 lines =@@
+ === quotedModuleNameMustBeAmbient.ts ===
+ module 'M' {}
+ >'M' : typeof import("M")
+->    : ^^^^^^^^^^^^^^^^^^
+ 
+ declare module 'M2' {}
+ >'M2' : typeof import("M2")
+->     : ^^^^^^^^^^^^^^^^^^^
+ 

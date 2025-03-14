@@ -1,0 +1,77 @@
+--- old.override3.types
++++ new.override3.types
+@@= skipped -2, +2 lines =@@
+ === override3.ts ===
+ declare class B {
+ >B : B
+->  : ^
+ 
+     foo(): void
+ >foo : () => void
+->    : ^^^^^^    
+ 
+     bar(): void
+ >bar : () => void
+->    : ^^^^^^    
+ }
+ 
+ declare class D extends B {
+ >D : D
+->  : ^
+ >B : B
+->  : ^
+ 
+     foo (): void;
+ >foo : () => void
+->    : ^^^^^^    
+ 
+     override bar (): void;
+ >bar : () => void
+->    : ^^^^^^    
+ }
+ 
+ class DB extends B {
+ >DB : DB
+->   : ^^
+ >B : B
+->  : ^
+ 
+     override foo(): void {}
+ >foo : () => void
+->    : ^^^^^^    
+ 
+     override bar(): void {}
+ >bar : () => void
+->    : ^^^^^^    
+ }
+ 
+ class DD extends D {
+ >DD : DD
+->   : ^^
+ >D : D
+->  : ^
+ 
+     override foo(): void {}
+ >foo : () => void
+->    : ^^^^^^    
+ 
+     override bar(): void {}
+ >bar : () => void
+->    : ^^^^^^    
+ }
+ 
+ class EB extends D {
+ >EB : EB
+->   : ^^
+ >D : D
+->  : ^
+ 
+     foo(): void {}
+ >foo : () => void
+->    : ^^^^^^    
+ 
+     override bar(): void {}
+ >bar : () => void
+->    : ^^^^^^    
+ }
+ 

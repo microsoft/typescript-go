@@ -1,0 +1,20 @@
+--- old.for-inStatementsDestructuring4.types
++++ new.for-inStatementsDestructuring4.types
+@@= skipped -2, +2 lines =@@
+ === for-inStatementsDestructuring4.ts ===
+ var a, b;
+ >a : any
+->  : ^^^
+ >b : any
+->  : ^^^
+ 
+ for ({a, b} in []) { }
+ >{a, b} : { a: any; b: any; }
+->       : ^^^^^^^^^^^^^^^^^^^
+ >a : any
+->  : ^^^
+ >b : any
+->  : ^^^
+ >[] : undefined[]
+->   : ^^^^^^^^^^^
+ 

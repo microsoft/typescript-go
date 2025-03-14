@@ -1,0 +1,10 @@
+--- old.undeclaredVarEmit.types
++++ new.undeclaredVarEmit.types
+@@= skipped -2, +2 lines =@@
+ === undeclaredVarEmit.ts ===
+ f: number;
+ >f : any
+->  : ^^^
+ >number : any
+->       : ^^^
+ 

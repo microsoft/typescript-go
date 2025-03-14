@@ -1,0 +1,20 @@
+--- old.symbolDeclarationEmit2.types
++++ new.symbolDeclarationEmit2.types
+@@= skipped -2, +2 lines =@@
+ === symbolDeclarationEmit2.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+     [Symbol.toPrimitive] = "";
+ >[Symbol.toPrimitive] : string
+->                     : ^^^^^^
+ >Symbol.toPrimitive : unique symbol
+->                   : ^^^^^^^^^^^^^
+ >Symbol : SymbolConstructor
+->       : ^^^^^^^^^^^^^^^^^
+ >toPrimitive : unique symbol
+->            : ^^^^^^^^^^^^^
+ >"" : ""
+->   : ^^
+ }

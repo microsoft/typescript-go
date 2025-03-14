@@ -1,0 +1,12 @@
+--- old.classInsideBlock.types
++++ new.classInsideBlock.types
+@@= skipped -2, +2 lines =@@
+ === classInsideBlock.ts ===
+ function foo() {
+ >foo : () => void
+->    : ^^^^^^^^^^
+ 
+     class C { }
+ >C : C
+->  : ^
+ }

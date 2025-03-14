@@ -1,0 +1,23 @@
+--- old.functionOverloads10.types
++++ new.functionOverloads10.types
+@@= skipped -2, +2 lines =@@
+ === functionOverloads10.ts ===
+ function foo(foo:string, bar:number);
+ >foo : { (foo: string, bar: number): any; (foo: string): any; }
+->    : ^^^   ^^      ^^   ^^      ^^^^^^^^^   ^^      ^^^^^^^^^
+ >foo : string
+->    : ^^^^^^
+ >bar : number
+->    : ^^^^^^
+ 
+ function foo(foo:string);
+ >foo : { (foo: string, bar: number): any; (foo: string): any; }
+->    : ^^^   ^^      ^^   ^^      ^^^^^^^^^   ^^      ^^^^^^^^^
+ >foo : string
+->    : ^^^^^^
+ 
+ function foo(foo:any){ }
+ >foo : { (foo: string, bar: number): any; (foo: string): any; }
+->    : ^^^   ^^      ^^   ^^      ^^^^^^^^^   ^^      ^^^^^^^^^
+ >foo : any
+ 

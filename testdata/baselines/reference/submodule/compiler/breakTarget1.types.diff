@@ -1,0 +1,12 @@
+--- old.breakTarget1.types
++++ new.breakTarget1.types
+@@= skipped -2, +2 lines =@@
+ === breakTarget1.ts ===
+ target:
+ >target : any
+->       : ^^^
+ 
+   break target;
+ >target : any
+->       : ^^^
+ 

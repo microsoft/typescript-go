@@ -1,0 +1,27 @@
+--- old.accessorsOverrideMethod.types
++++ new.accessorsOverrideMethod.types
+@@= skipped -2, +2 lines =@@
+ === accessorsOverrideMethod.ts ===
+ class A {
+ >A : A
+->  : ^
+ 
+     m() { }
+ >m : () => void
+->  : ^^^^^^^^^^
+ }
+ class B extends A {
+ >B : B
+->  : ^
+ >A : A
+->  : ^
+ 
+     get m() { return () => 1 }
+ >m : () => number
+->  : ^^^^^^^^^^^^
+ >() => 1 : () => number
+->        : ^^^^^^^^^^^^
+ >1 : 1
+->  : ^
+ }
+ 

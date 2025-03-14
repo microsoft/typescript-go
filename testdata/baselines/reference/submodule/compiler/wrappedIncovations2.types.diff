@@ -1,0 +1,26 @@
+--- old.wrappedIncovations2.types
++++ new.wrappedIncovations2.types
+@@= skipped -5, +5 lines =@@
+ >this.  foo().  bar().  baz() : any
+ >this.  foo().  bar().  baz : any
+ >this.  foo().  bar() : any
+->                     : ^^^
+ >this.  foo().  bar : any
+ >this.  foo() : any
+->             : ^^^
+ >this.  foo : any
+ >this : typeof globalThis
+->     : ^^^^^^^^^^^^^^^^^
+ 
+   foo().
+ >foo : any
+->    : ^^^
+ 
+   bar().
+ >bar : any
+->    : ^^^
+ 
+   baz();
+ >baz : any
+->    : ^^^
+ 

@@ -1,0 +1,8 @@
+--- old.directReferenceToNull.types
++++ new.directReferenceToNull.types
+@@= skipped -2, +2 lines =@@
+ === directReferenceToNull.ts ===
+ var x: Null;
+ >x : Null
+->  : ^^^^
+ 

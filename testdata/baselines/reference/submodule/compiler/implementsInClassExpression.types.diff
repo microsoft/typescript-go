@@ -1,0 +1,23 @@
+--- old.implementsInClassExpression.types
++++ new.implementsInClassExpression.types
+@@= skipped -1, +1 lines =@@
+ 
+ === implementsInClassExpression.ts ===
+ interface Foo {
++>Foo : Foo
++
+     doThing(): void;
+ >doThing : () => void
+->        : ^^^^^^    
+ }
+ 
+ let cls = class implements Foo {
+ >cls : typeof cls
+->    : ^^^^^^^^^^
+ >class implements Foo {    doThing() { }} : typeof cls
+->                                         : ^^^^^^^^^^
+ 
+     doThing() { }
+ >doThing : () => void
+->        : ^^^^^^^^^^
+ }

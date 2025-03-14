@@ -1,0 +1,14 @@
+--- old.alwaysStrictES6.types
++++ new.alwaysStrictES6.types
+@@= skipped -2, +2 lines =@@
+ === alwaysStrictES6.ts ===
+ function f() {
+ >f : () => void
+->  : ^^^^^^^^^^
+ 
+     var arguments = [];
+ >arguments : any[]
+->          : ^^^^^
+ >[] : undefined[]
+->   : ^^^^^^^^^^^
+ }

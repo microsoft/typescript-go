@@ -1,0 +1,23 @@
+--- old.indexedAccessToThisTypeOnIntersection01.types
++++ new.indexedAccessToThisTypeOnIntersection01.types
+@@= skipped -1, +1 lines =@@
+ 
+ === indexedAccessToThisTypeOnIntersection01.ts ===
+ interface A {
++>A : A
++
+   a: string;
+ >a : string
+->  : ^^^^^^
+ 
+   getA: this['a'];
+ >getA : this["a"]
+->     : ^^^^^^^^^
+ }
+ 
+ type T = (A & { a: number })['getA'];
+ >T : never
+->  : ^^^^^
+ >a : number
+->  : ^^^^^^
+ 

@@ -1,0 +1,103 @@
+--- old.typePredicateWithThisParameter.types
++++ new.typePredicateWithThisParameter.types
+@@= skipped -3, +3 lines =@@
+ // Repro from #15310
+ 
+ interface Foo {
++>Foo : Foo
++
+     foo: string;
+ >foo : string
+->    : ^^^^^^
+ }
+ interface Bar {
++>Bar : Bar
++
+     bar: string;
+ >bar : string
+->    : ^^^^^^
+ }
+ 
+ function isFoo1(object: {}): object is Foo {
+ >isFoo1 : (object: {}) => object is Foo
+->       : ^      ^^  ^^^^^             
+ >object : {}
+->       : ^^
+ 
+     return 'foo' in object;
+ >'foo' in object : boolean
+->                : ^^^^^^^
+ >'foo' : "foo"
+->      : ^^^^^
+ >object : {}
+->       : ^^
+ }
+ 
+ function isFoo2(this: void, object: {}): object is Foo {
+->isFoo2 : (this: void, object: {}) => object is Foo
+->       : ^    ^^    ^^      ^^  ^^^^^             
++>isFoo2 : (object: {}) => object is Foo
+ >this : void
+->     : ^^^^
+ >object : {}
+->       : ^^
+ 
+     return 'foo' in object;
+ >'foo' in object : boolean
+->                : ^^^^^^^
+ >'foo' : "foo"
+->      : ^^^^^
+ >object : {}
+->       : ^^
+ }
+ 
+ declare let test: Foo | Bar;
+->test : Foo | Bar
+->     : ^^^^^^^^^
++>test : Bar | Foo
+ 
+ if (isFoo1(test)) {
+ >isFoo1(test) : boolean
+->             : ^^^^^^^
+ >isFoo1 : (object: {}) => object is Foo
+->       : ^      ^^  ^^^^^             
+->test : Foo | Bar
+->     : ^^^^^^^^^
++>test : Bar | Foo
+ 
+     test.foo = 'hi';
+ >test.foo = 'hi' : "hi"
+->                : ^^^^
+ >test.foo : string
+->         : ^^^^^^
+ >test : Foo
+->     : ^^^
+ >foo : string
+->    : ^^^^^^
+ >'hi' : "hi"
+->     : ^^^^
+ }
+ 
+ if (isFoo2(test)) {
+ >isFoo2(test) : boolean
+->             : ^^^^^^^
+->isFoo2 : (this: void, object: {}) => object is Foo
+->       : ^    ^^    ^^      ^^  ^^^^^             
+->test : Foo | Bar
+->     : ^^^^^^^^^
++>isFoo2 : (object: {}) => object is Foo
++>test : Bar | Foo
+ 
+     test.foo = 'hi';
+ >test.foo = 'hi' : "hi"
+->                : ^^^^
+ >test.foo : string
+->         : ^^^^^^
+ >test : Foo
+->     : ^^^
+ >foo : string
+->    : ^^^^^^
+ >'hi' : "hi"
+->     : ^^^^
+ }
+ 

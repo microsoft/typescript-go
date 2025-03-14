@@ -1,0 +1,8 @@
+--- old.continueInIterationStatement2.types
++++ new.continueInIterationStatement2.types
+@@= skipped -5, +5 lines =@@
+ }
+ while (true);
+ >true : true
+->     : ^^^^
+ 

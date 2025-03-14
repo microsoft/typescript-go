@@ -1,0 +1,8 @@
+--- old.parserIfStatement2.types
++++ new.parserIfStatement2.types
+@@= skipped -2, +2 lines =@@
+ === parserIfStatement2.ts ===
+ if (a) {
+ >a : any
+->  : ^^^
+ }

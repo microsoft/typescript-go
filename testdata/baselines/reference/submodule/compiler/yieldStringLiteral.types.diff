@@ -1,0 +1,15 @@
+--- old.yieldStringLiteral.types
++++ new.yieldStringLiteral.types
+@@= skipped -2, +2 lines =@@
+ === yieldStringLiteral.ts ===
+ function yieldString() {
+ >yieldString : () => void
+->            : ^^^^^^^^^^
+ 
+     yield 'literal';
+ >yield 'literal' : any
+->                : ^^^
+ >'literal' : "literal"
+->          : ^^^^^^^^^
+ }
+ 

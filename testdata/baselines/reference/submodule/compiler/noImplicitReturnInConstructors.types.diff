@@ -1,0 +1,10 @@
+--- old.noImplicitReturnInConstructors.types
++++ new.noImplicitReturnInConstructors.types
+@@= skipped -2, +2 lines =@@
+ === noImplicitReturnInConstructors.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+   constructor() {
+     return;

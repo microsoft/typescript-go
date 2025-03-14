@@ -1,0 +1,12 @@
+--- old.classAbstractMethodWithImplementation.types
++++ new.classAbstractMethodWithImplementation.types
+@@= skipped -2, +2 lines =@@
+ === classAbstractMethodWithImplementation.ts ===
+ abstract class A {
+ >A : A
+->  : ^
+ 
+     abstract foo() {}
+ >foo : () => void
+->    : ^^^^^^^^^^
+ }

@@ -1,0 +1,33 @@
+--- old.thisInSuperCall1.types
++++ new.thisInSuperCall1.types
+@@= skipped -2, +2 lines =@@
+ === thisInSuperCall1.ts ===
+ class Base { 
+ >Base : Base
+->     : ^^^^
+ 
+     constructor(a: any) {}
+ >a : any
+->  : ^^^
+ }
+ 
+ class Foo extends Base {
+ >Foo : Foo
+->    : ^^^
+ >Base : Base
+->     : ^^^^
+ 
+     constructor(public x: number) {
+ >x : number
+->  : ^^^^^^
+ 
+         super(this);
+ >super(this) : void
+->            : ^^^^
+ >super : typeof Base
+->      : ^^^^^^^^^^^
+ >this : this
+->     : ^^^^
+     }
+ }
+ 

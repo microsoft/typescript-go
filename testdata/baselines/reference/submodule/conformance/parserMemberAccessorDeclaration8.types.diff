@@ -1,0 +1,14 @@
+--- old.parserMemberAccessorDeclaration8.types
++++ new.parserMemberAccessorDeclaration8.types
+@@= skipped -2, +2 lines =@@
+ === parserMemberAccessorDeclaration8.ts ===
+ class C {
+ >C : C
+->  : ^
+ 
+     static static get Foo() { }
+ >static : any
+->       : ^^^
+ >Foo : void
+->    : ^^^^
+ }

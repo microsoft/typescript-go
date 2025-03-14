@@ -1,0 +1,14 @@
+--- old.emptyModuleName.types
++++ new.emptyModuleName.types
+@@= skipped -2, +2 lines =@@
+ === emptyModuleName.ts ===
+ import * as A from "";
+ >A : any
+->  : ^^^
+ 
+ class B extends A {
+ >B : B
+->  : ^
+ >A : any
+->  : ^^^
+ }

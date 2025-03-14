@@ -1,0 +1,125 @@
+--- old.parameterNamesInTypeParameterList.types
++++ new.parameterNamesInTypeParameterList.types
+@@= skipped -1, +1 lines =@@
+ 
+ === parameterNamesInTypeParameterList.ts ===
+ function f0<T extends typeof a>(a: T) {
+->f0 : <T extends typeof a>(a: T) => void
+->   : ^ ^^^^^^^^^        ^^ ^^ ^^^^^^^^^
+->a : any
+->  : ^^^
++>f0 : <T extends any>(a: T) => void
++>T : T
+ >a : T
+->  : ^
+ 
+ 	a.b;
+ >a.b : any
+->    : ^^^
+ >a : T
+->  : ^
+ >b : any
+->  : ^^^
+ }
+ 
+ function f1<T extends typeof a>({a}: {a:T}) {
+->f1 : <T extends typeof a>({ a }: { a: T; }) => void
+->   : ^ ^^^^^^^^^        ^^     ^^         ^^^^^^^^^
+->a : any
+->  : ^^^
++>f1 : <T extends any>(__0: { a: T; }) => void
++>T : T
+ >a : T
+->  : ^
+ >a : T
+->  : ^
+ 
+ 	a.b;
+ >a.b : any
+->    : ^^^
+ >a : T
+->  : ^
+ >b : any
+->  : ^^^
+ }
+ 
+ function f2<T extends typeof a>([a]: T[]) {
+->f2 : <T extends typeof a>([a]: T[]) => void
+->   : ^ ^^^^^^^^^        ^^   ^^   ^^^^^^^^^
+->a : any
+->  : ^^^
++>f2 : <T extends any>(__0: T[]) => void
++>T : T
+ >a : T
+->  : ^
+ 
+ 	a.b;
+ >a.b : any
+->    : ^^^
+ >a : T
+->  : ^
+ >b : any
+->  : ^^^
+ }
+ 
+ class A {
+ >A : A
+->  : ^
+ 
+ 	m0<T extends typeof a>(a: T) {
+->m0 : <T extends typeof a>(a: T) => void
+->   : ^ ^^^^^^^^^        ^^ ^^ ^^^^^^^^^
+->a : any
+->  : ^^^
++>m0 : <T extends any>(a: T) => void
++>T : T
+ >a : T
+->  : ^
+ 
+ 		a.b
+ >a.b : any
+->    : ^^^
+ >a : T
+->  : ^
+ >b : any
+->  : ^^^
+ 	}
+ 	m1<T extends typeof a>({a}: {a:T}) {
+->m1 : <T extends typeof a>({ a }: { a: T; }) => void
+->   : ^ ^^^^^^^^^        ^^     ^^         ^^^^^^^^^
+->a : any
+->  : ^^^
++>m1 : <T extends any>(__0: { a: T; }) => void
++>T : T
+ >a : T
+->  : ^
+ >a : T
+->  : ^
+ 
+ 		a.b
+ >a.b : any
+->    : ^^^
+ >a : T
+->  : ^
+ >b : any
+->  : ^^^
+ 	}
+ 	m2<T extends typeof a>([a]: T[]) {
+->m2 : <T extends typeof a>([a]: T[]) => void
+->   : ^ ^^^^^^^^^        ^^   ^^   ^^^^^^^^^
+->a : any
+->  : ^^^
++>m2 : <T extends any>(__0: T[]) => void
++>T : T
+ >a : T
+->  : ^
+ 
+ 		a.b
+ >a.b : any
+->    : ^^^
+ >a : T
+->  : ^
+ >b : any
+->  : ^^^
+ 	}
+ }

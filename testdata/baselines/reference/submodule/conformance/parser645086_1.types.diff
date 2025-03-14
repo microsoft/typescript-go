@@ -1,0 +1,12 @@
+--- old.parser645086_1.types
++++ new.parser645086_1.types
+@@= skipped -2, +2 lines =@@
+ === parser645086_1.ts ===
+ var v = /[]/]/
+ >v : RegExp
+->  : ^^^^^^
+ >/[]/ : RegExp
+->     : ^^^^^^
+ >/ : RegExp
+->  : ^^^^^^
+ 

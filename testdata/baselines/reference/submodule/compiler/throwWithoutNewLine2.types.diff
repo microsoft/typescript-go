@@ -1,0 +1,10 @@
+--- old.throwWithoutNewLine2.types
++++ new.throwWithoutNewLine2.types
+@@= skipped -3, +3 lines =@@
+ throw
+ a;
+ > : any
+-> : ^^^
+ >a : any
+->  : ^^^
+ 

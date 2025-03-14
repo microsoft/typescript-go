@@ -1,0 +1,19 @@
+--- old.templateStringWithEmbeddedConditional.types
++++ new.templateStringWithEmbeddedConditional.types
+@@= skipped -2, +2 lines =@@
+ === templateStringWithEmbeddedConditional.ts ===
+ var x = `abc${ true ? false : " " }def`;
+ >x : string
+->  : ^^^^^^
+ >`abc${ true ? false : " " }def` : string
+->                                : ^^^^^^
+->true ? false : " " : false | " "
+->                   : ^^^^^^^^^^^
++>true ? false : " " : " " | false
+ >true : true
+->     : ^^^^
+ >false : false
+->      : ^^^^^
+ >" " : " "
+->    : ^^^
+ 

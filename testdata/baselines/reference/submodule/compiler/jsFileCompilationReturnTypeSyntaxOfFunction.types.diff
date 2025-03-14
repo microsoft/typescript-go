@@ -1,0 +1,8 @@
+--- old.jsFileCompilationReturnTypeSyntaxOfFunction.types
++++ new.jsFileCompilationReturnTypeSyntaxOfFunction.types
+@@= skipped -2, +2 lines =@@
+ === a.js ===
+ function F(): number { }
+ >F : () => number
+->  : ^^^^^^      
+ 

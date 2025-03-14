@@ -1,0 +1,17 @@
+--- old.switchAssignmentCompat.types
++++ new.switchAssignmentCompat.types
+@@= skipped -2, +2 lines =@@
+ === switchAssignmentCompat.ts ===
+ class Foo { }
+ >Foo : Foo
+->    : ^^^
+ 
+ switch (0) {
+ >0 : 0
+->  : ^
+ 
+     case Foo: break; // Error expected
+ >Foo : typeof Foo
+->    : ^^^^^^^^^^
+ }
+ 

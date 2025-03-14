@@ -1,0 +1,35 @@
+--- old.generatorTypeCheck20.types
++++ new.generatorTypeCheck20.types
+@@= skipped -2, +2 lines =@@
+ === generatorTypeCheck20.ts ===
+ class Foo { x: number }
+ >Foo : Foo
+->    : ^^^
+ >x : number
+->  : ^^^^^^
+ 
+ class Baz { z: number }
+ >Baz : Baz
+->    : ^^^
+ >z : number
+->  : ^^^^^^
+ 
+ function* g(): IterableIterator<Foo> {
+->g : () => IterableIterator<Foo>
+->  : ^^^^^^                     
++>g : () => IterableIterator<Foo, any, any>
+ 
+     yield;
+ >yield : any
+->      : ^^^
+ 
+     yield * [new Baz];
+ >yield * [new Baz] : any
+->                  : ^^^
+ >[new Baz] : Baz[]
+->          : ^^^^^
+ >new Baz : Baz
+->        : ^^^
+ >Baz : typeof Baz
+->    : ^^^^^^^^^^
+ }

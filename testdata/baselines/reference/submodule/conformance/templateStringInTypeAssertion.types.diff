@@ -1,0 +1,10 @@
+--- old.templateStringInTypeAssertion.types
++++ new.templateStringInTypeAssertion.types
+@@= skipped -4, +4 lines =@@
+ >x : any
+ ><any>`abc${ 123 }def` : any
+ >`abc${ 123 }def` : "abc123def"
+->                 : ^^^^^^^^^^^
+ >123 : 123
+->    : ^^^
+ 

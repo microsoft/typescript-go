@@ -1,0 +1,32 @@
+--- old.parserOptionalTypeMembers1.types
++++ new.parserOptionalTypeMembers1.types
+@@= skipped -1, +1 lines =@@
+ 
+ === parserOptionalTypeMembers1.ts ===
+ interface PropertyDescriptor2 {
++>PropertyDescriptor2 : PropertyDescriptor2
++
+     configurable?: boolean;
+ >configurable : boolean
+->             : ^^^^^^^
+ 
+     enumerable?: boolean;
+ >enumerable : boolean
+->           : ^^^^^^^
+ 
+     value?: any;
+ >value : any
+ 
+     writable?: boolean;
+ >writable : boolean
+->         : ^^^^^^^
+ 
+     get?(): any;
+ >get : () => any
+->    : ^^^^^^   
+ 
+     set?(v: any): void;
+ >set : (v: any) => void
+->    : ^ ^^   ^^^^^    
+ >v : any
+ }

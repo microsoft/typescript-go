@@ -1,0 +1,17 @@
+--- old.parser642331_1.types
++++ new.parser642331_1.types
+@@= skipped -2, +2 lines =@@
+ === parser642331_1.ts ===
+ "use strict";
+ >"use strict" : "use strict"
+->             : ^^^^^^^^^^^^
+ 
+ class test {
+ >test : test
+->     : ^^^^
+ 
+     constructor (static) { }
+ >static : any
+->       : ^^^
+ }
+ 

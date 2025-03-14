@@ -1,0 +1,14 @@
+--- old.declarationEmitDefaultExport7.types
++++ new.declarationEmitDefaultExport7.types
+@@= skipped -2, +2 lines =@@
+ === declarationEmitDefaultExport7.ts ===
+ class A {}
+ >A : A
+->  : ^
+ 
+ export default new A();
+ >new A() : A
+->        : ^
+ >A : typeof A
+->  : ^^^^^^^^
+ 

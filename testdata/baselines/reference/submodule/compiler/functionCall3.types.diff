@@ -1,0 +1,20 @@
+--- old.functionCall3.types
++++ new.functionCall3.types
+@@= skipped -2, +2 lines =@@
+ === functionCall3.ts ===
+ function foo():any[]{return [1];} 
+ >foo : () => any[]
+->    : ^^^^^^     
+ >[1] : number[]
+->    : ^^^^^^^^
+ >1 : 1
+->  : ^
+ 
+ var x = foo();
+ >x : any[]
+->  : ^^^^^
+ >foo() : any[]
+->      : ^^^^^
+ >foo : () => any[]
+->    : ^^^^^^     
+ 

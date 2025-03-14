@@ -1,0 +1,15 @@
+--- old.jsFileCompilationWithEnabledCompositeOption.types
++++ new.jsFileCompilationWithEnabledCompositeOption.types
+@@= skipped -2, +2 lines =@@
+ === a.ts ===
+ class c {
+ >c : c
+->  : ^
+ }
+ 
+ === b.js ===
+ function foo() {
+ >foo : () => void
+->    : ^^^^^^^^^^
+ }
+ 

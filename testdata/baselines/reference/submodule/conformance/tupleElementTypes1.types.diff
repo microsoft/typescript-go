@@ -1,0 +1,16 @@
+--- old.tupleElementTypes1.types
++++ new.tupleElementTypes1.types
+@@= skipped -2, +2 lines =@@
+ === tupleElementTypes1.ts ===
+ var [a, b]: [number, any] = [undefined, undefined];
+ >a : number
+->  : ^^^^^^
+ >b : any
+->  : ^^^
+ >[undefined, undefined] : [undefined, undefined]
+->                       : ^^^^^^^^^^^^^^^^^^^^^^
+ >undefined : undefined
+->          : ^^^^^^^^^
+ >undefined : undefined
+->          : ^^^^^^^^^
+ 

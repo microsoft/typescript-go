@@ -1,0 +1,13 @@
+--- old.jsFileCompilationMethodOverloadSyntax.types
++++ new.jsFileCompilationMethodOverloadSyntax.types
+@@= skipped -2, +2 lines =@@
+ === a.js ===
+ class A {
+ >A : A
+->  : ^
+ 
+   foo();
+ >foo : () => any
+->    : ^^^^^^^^^
+ }
+ 

@@ -1,0 +1,14 @@
+--- old.templateStringWithEmbeddedArrowFunctionES6.types
++++ new.templateStringWithEmbeddedArrowFunctionES6.types
+@@= skipped -2, +2 lines =@@
+ === templateStringWithEmbeddedArrowFunctionES6.ts ===
+ var x = `abc${ x => x }def`;
+ >x : string
+->  : ^^^^^^
+ >`abc${ x => x }def` : string
+->                    : ^^^^^^
+ >x => x : (x: any) => any
+->       : ^ ^^^^^^^^^^^^^
+ >x : any
+ >x : any
+ 

@@ -1,0 +1,14 @@
+--- old.parse2.types
++++ new.parse2.types
+@@= skipped -2, +2 lines =@@
+ === parse2.ts ===
+ function foo() {
+ >foo : () => void
+->    : ^^^^^^^^^^
+ 
+  foo(
+ >foo( : void
+->     : ^^^^
+ >foo : () => void
+->    : ^^^^^^^^^^
+ }

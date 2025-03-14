@@ -1,0 +1,18 @@
+--- old.tslibInJs.types
++++ new.tslibInJs.types
+@@= skipped -2, +2 lines =@@
+ === main.js ===
+ "use strict";
+ >"use strict" : "use strict"
+->             : ^^^^^^^^^^^^
+ 
+ const { foo } = require("bar");
+ >foo : any
+->    : ^^^
+ >require("bar") : any
+->               : ^^^
+ >require : any
+->        : ^^^
+ >"bar" : "bar"
+->      : ^^^^^
+ 

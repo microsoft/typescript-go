@@ -1,0 +1,12 @@
+--- old.es6ImportWithoutFromClauseWithExport.types
++++ new.es6ImportWithoutFromClauseWithExport.types
+@@= skipped -2, +2 lines =@@
+ === server.ts ===
+ export var a = 10;
+ >a : number
+->  : ^^^^^^
+ >10 : 10
+->   : ^^
+ 
+ === client.ts ===
+ 

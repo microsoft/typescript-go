@@ -1,0 +1,29 @@
+--- old.importHelpersWithImportStarAs(esmoduleinterop=false,module=es2020).types
++++ new.importHelpersWithImportStarAs(esmoduleinterop=false,module=es2020).types
+@@= skipped -2, +2 lines =@@
+ === a.ts ===
+ export class A { }
+ >A : A
+->  : ^
+ 
+ === b.ts ===
+ import * as a from "./a";
+->a : typeof a
+->  : ^^^^^^^^
++>a : typeof import("a")
+ 
+ export { a };
+->a : typeof a
+->  : ^^^^^^^^
++>a : typeof import("a")
+ 
+ === tslib.d.ts ===
+ declare module "tslib" {
+ >"tslib" : typeof import("tslib")
+->        : ^^^^^^^^^^^^^^^^^^^^^^
+ 
+     function __importStar(m: any): void;
+ >__importStar : (m: any) => void
+->             : ^ ^^   ^^^^^    
+ >m : any
+ }

@@ -1,0 +1,14 @@
+--- old.sourceMapValidationLabeled.types
++++ new.sourceMapValidationLabeled.types
+@@= skipped -2, +2 lines =@@
+ === sourceMapValidationLabeled.ts ===
+ x:
+ >x : any
+->  : ^^^
+ 
+ var b = 10;
+ >b : number
+->  : ^^^^^^
+ >10 : 10
+->   : ^^
+ 

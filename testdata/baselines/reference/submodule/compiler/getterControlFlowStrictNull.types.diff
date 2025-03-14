@@ -1,0 +1,101 @@
+--- old.getterControlFlowStrictNull.types
++++ new.getterControlFlowStrictNull.types
+@@= skipped -2, +2 lines =@@
+ === getterControlFlowStrictNull.ts ===
+ class A {
+ >A : A
+->  : ^
+ 
+    a(): string | null {
+ >a : () => string | null
+->  : ^^^^^^             
+ 
+         if (Math.random() > 0.5) {
+ >Math.random() > 0.5 : boolean
+->                    : ^^^^^^^
+ >Math.random() : number
+->              : ^^^^^^
+ >Math.random : () => number
+->            : ^^^^^^      
+ >Math : Math
+->     : ^^^^
+ >random : () => number
+->       : ^^^^^^      
+ >0.5 : 0.5
+->    : ^^^
+ 
+             return '';
+ >'' : ""
+->   : ^^
+         }
+ 
+         // it does error here as expected
+@@= skipped -30, +21 lines =@@
+ }
+ class B {
+ >B : B
+->  : ^
+ 
+     get a(): string | null {
+ >a : string | null
+->  : ^^^^^^^^^^^^^
+ 
+         if (Math.random() > 0.5) {
+ >Math.random() > 0.5 : boolean
+->                    : ^^^^^^^
+ >Math.random() : number
+->              : ^^^^^^
+ >Math.random : () => number
+->            : ^^^^^^      
+ >Math : Math
+->     : ^^^^
+ >random : () => number
+->       : ^^^^^^      
+ >0.5 : 0.5
+->    : ^^^
+ 
+             return '';
+ >'' : ""
+->   : ^^
+         }
+ 
+         // it should error here because it returns undefined
+@@= skipped -30, +21 lines =@@
+ }
+ class C {
+ >C : C
+->  : ^
+ 
+     get a() {
+ >a : number
+->  : ^^^^^^
+ 
+         if (Math.random() > 0.5) {
+ >Math.random() > 0.5 : boolean
+->                    : ^^^^^^^
+ >Math.random() : number
+->              : ^^^^^^
+ >Math.random : () => number
+->            : ^^^^^^      
+ >Math : Math
+->     : ^^^^
+ >random : () => number
+->       : ^^^^^^      
+ >0.5 : 0.5
+->    : ^^^
+ 
+             return 0;
+ >0 : 0
+->  : ^
+         }
+ 
+         // it should error here because it returns undefined
+@@= skipped -30, +21 lines =@@
+ 
+     set a(value: number) {
+ >a : number
+->  : ^^^^^^
+ >value : number
+->      : ^^^^^^
+     }
+ }

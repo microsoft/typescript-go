@@ -1,0 +1,24 @@
+--- old.nameCollisionsInPropertyAssignments.types
++++ new.nameCollisionsInPropertyAssignments.types
+@@= skipped -2, +2 lines =@@
+ === nameCollisionsInPropertyAssignments.ts ===
+ var x = 1
+ >x : number
+->  : ^^^^^^
+ >1 : 1
+->  : ^
+ 
+ var y = { x() { x++; } }; 
+->y : { x(): void; }
+->  : ^^^^^^^^^^^^^^
+->{ x() { x++; } } : { x(): void; }
+->                 : ^^^^^^^^^^^^^^
++>y : { x: () => void; }
++>{ x() { x++; } } : { x: () => void; }
+ >x : () => void
+->  : ^^^^^^^^^^
+ >x++ : number
+->    : ^^^^^^
+ >x : number
+->  : ^^^^^^
+ 

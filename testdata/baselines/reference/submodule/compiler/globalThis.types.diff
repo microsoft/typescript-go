@@ -1,0 +1,14 @@
+--- old.globalThis.types
++++ new.globalThis.types
+@@= skipped -2, +2 lines =@@
+ === globalThis.ts ===
+ var __e = Math.E;  // should not generate 'this.Math.E'
+ >__e : number
+->    : ^^^^^^
+ >Math.E : number
+->       : ^^^^^^
+ >Math : Math
+->     : ^^^^
+ >E : number
+->  : ^^^^^^
+ 

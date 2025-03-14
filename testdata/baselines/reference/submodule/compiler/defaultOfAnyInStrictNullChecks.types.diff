@@ -1,0 +1,20 @@
+--- old.defaultOfAnyInStrictNullChecks.types
++++ new.defaultOfAnyInStrictNullChecks.types
+@@= skipped -4, +4 lines =@@
+ 
+ function foo() {
+ >foo : () => void
+->    : ^^^^^^^^^^
+ 
+     try {
+     }
+@@= skipped -11, +10 lines =@@
+ >s : any
+ >e.message : any
+ >e : any
+->  : ^^^
+ >message : any
+->        : ^^^
+     }
+ }
+ 

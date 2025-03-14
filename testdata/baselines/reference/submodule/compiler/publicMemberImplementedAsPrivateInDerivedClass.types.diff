@@ -1,0 +1,21 @@
+--- old.publicMemberImplementedAsPrivateInDerivedClass.types
++++ new.publicMemberImplementedAsPrivateInDerivedClass.types
+@@= skipped -1, +1 lines =@@
+ 
+ === publicMemberImplementedAsPrivateInDerivedClass.ts ===
+ interface Qux {
++>Qux : Qux
++
+  Bar: number;
+ >Bar : number
+->    : ^^^^^^
+ }
+ class Foo implements Qux {
+ >Foo : Foo
+->    : ^^^
+ 
+  private Bar: number;
+ >Bar : number
+->    : ^^^^^^
+ }
+ 

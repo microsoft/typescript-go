@@ -1,0 +1,24 @@
+--- old.generatorTypeCheck41.types
++++ new.generatorTypeCheck41.types
+@@= skipped -2, +2 lines =@@
+ === generatorTypeCheck41.ts ===
+ function* g() {
+ >g : () => Generator<number, void, unknown>
+->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+     let x = {
+ >x : { [x: number]: number; }
+->  : ^^^^^^^^^^^^^^^^^^^^^^^^
+ >{        [yield 0]: 0    } : { [x: number]: number; }
+->                           : ^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+         [yield 0]: 0
+ >[yield 0] : number
+->          : ^^^^^^
+ >yield 0 : any
+ >0 : 0
+->  : ^
+ >0 : 0
+->  : ^
+     }
+ }

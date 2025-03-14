@@ -1,0 +1,25 @@
+--- old.superWithTypeArgument.types
++++ new.superWithTypeArgument.types
+@@= skipped -2, +2 lines =@@
+ === superWithTypeArgument.ts ===
+ class C {
+ >C : C
+->  : ^
+     
+ }
+ 
+ class D<T> extends C {
+ >D : D<T>
+->  : ^^^^
++>T : T
+ >C : C
+->  : ^
+ 
+     constructor() {
+         super<T>();
+ >super<T>() : void
+->           : ^^^^
+ >super : typeof C
+->      : ^^^^^^^^
+     }
+ }
