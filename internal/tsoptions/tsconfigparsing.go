@@ -395,6 +395,9 @@ func convertJsonOption(
 			return normalizeNonListOptionValue(opt, basePath, validatedValue), errors
 		}
 	} else {
+		if opt.Kind == CommandLineOptionTypeEnum {
+			return nil, []*ast.Diagnostic{createDiagnosticForInvalidEnumType(opt, sourceFile, valueExpression)}
+		}
 		return nil, []*ast.Diagnostic{createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile, valueExpression, diagnostics.Compiler_option_0_requires_a_value_of_type_1, opt.Name, getCompilerOptionValueTypeString(opt))}
 	}
 }
