@@ -133,3 +133,17 @@ func changeAnyExtension(path string, ext string, extensions []string, ignoreCase
 func ChangeExtension(path string, newExtension string) string {
 	return changeAnyExtension(path, newExtension, extensionsToRemove /*ignoreCase*/, false)
 }
+
+func GetDeclarationEmitExtensionForPath(path string) string {
+	switch {
+	case FileExtensionIsOneOf(path, []string{ExtensionMjs, ExtensionMts}):
+		return ExtensionDmts
+	case FileExtensionIsOneOf(path, []string{ExtensionCjs, ExtensionCts}):
+		return ExtensionDcts
+	case FileExtensionIsOneOf(path, []string{ExtensionJson}):
+		// Drive-by redefinition of json declaration file output name so if it's ever enabled, it behaves well
+		return ".d.json.ts"
+	default:
+		return ExtensionDts
+	}
+}

@@ -195,13 +195,39 @@ func getOwnEmitOutputFilePath(fileName string, host EmitHost, extension string) 
 }
 
 func getSourceMapFilePath(jsFilePath string, options *core.CompilerOptions) string {
-	// !!!
-	return ""
+	if options.SourceMap.IsTrue() && options.InlineSourceMap.IsFalse() {
+		return jsFilePath + ".map"
+	} else {
+		return ""
+	}
 }
 
 func getDeclarationEmitOutputFilePath(file string, host EmitHost) string {
-	// !!!
-	return ""
+	return getDeclarationEmitOutputFilePathWorker(file, &core.CompilerOptions{}, host)
+}
+
+func getDeclarationEmitOutputFilePathWorker(file string, options *core.CompilerOptions, host EmitHost) string {
+	// Prefer declaration folder if specified
+	outputDir := options.DeclarationDir
+	if outputDir == "" {
+		outputDir = options.OutDir
+	}
+
+	var path string
+	if outputDir != "" {
+		path = getSourceFilePathInNewDir(
+			file,
+			outputDir,
+			host.GetCurrentDirectory(),
+			host.CommonSourceDirectory(),
+			host.UseCaseSensitiveFileNames(),
+		)
+	} else {
+		path = file
+	}
+
+	declarationExtension := tspath.GetDeclarationEmitExtensionForPath(path)
+	return tspath.RemoveFileExtension(path) + declarationExtension
 }
 
 type outputPaths struct {
