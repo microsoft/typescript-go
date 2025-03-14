@@ -131,7 +131,7 @@ func tryParseInt(s string) (Number, bool) {
 			}
 			i, err = strconv.ParseInt(rest, 2, 64)
 			hasIntResult = true
-		case "0o", "0O", "0":
+		case "0o", "0O":
 			if !isAllOctalDigits(rest) {
 				return NaN(), true
 			}
