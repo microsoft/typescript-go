@@ -517,21 +517,24 @@ func convertOptionsFromJson[O optionParser](optionsNameMap map[string]*CommandLi
 	var errors []*ast.Diagnostic
 	for key, value := range jsonMap.Entries() {
 		opt, ok := optionsNameMap[key]
+		if !ok {
+			// !!! TODO?: support suggestion
+			errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Unknown_compiler_option_0, key))
+			continue
+		}
+
 		commandLineOptionEnumMapVal := opt.EnumMap()
 		if commandLineOptionEnumMapVal != nil {
 			val, ok := commandLineOptionEnumMapVal.Get(strings.ToLower(value.(string)))
 			if ok {
 				errors = result.ParseOption(key, val)
 			}
-		} else if ok {
+		} else {
 			convertJson, err := convertJsonOption(opt, value, basePath, nil, nil, nil)
 			errors = append(errors, err...)
 			compilerOptionsErr := result.ParseOption(key, convertJson)
 			errors = append(errors, compilerOptionsErr...)
 		}
-		// else {
-		//     errors.push(createUnknownOptionError(id, diagnostics));
-		// }
 	}
 	return result, errors
 }
