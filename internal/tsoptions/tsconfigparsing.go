@@ -150,7 +150,8 @@ func parseOwnConfigOfJsonSourceFile(
 				}
 			} else if keyText != "" {
 				if parentOption.ElementOptions != nil {
-					propertySetErrors = append(propertySetErrors, ast.NewCompilerDiagnostic(diagnostics.Option_build_must_be_the_first_command_line_argument, keyText))
+					// !!! TODO: support suggestion
+					propertySetErrors = append(propertySetErrors, createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile, propertyAssignment.Name(), diagnostics.Unknown_compiler_option_0, keyText))
 				} else {
 					// errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Unknown_compiler_option_0_Did_you_mean_1, keyText, core.FindKey(parentOption.ElementOptions, keyText)))
 				}
