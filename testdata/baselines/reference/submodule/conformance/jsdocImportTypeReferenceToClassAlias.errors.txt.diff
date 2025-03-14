@@ -4,7 +4,6 @@
 -<no content>
 @@= skipped --1, +1 lines =@@
 +mod1.js(4,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-+test.js(2,13): error TS2304: Cannot find name 'X'.
 +
 +
 +==== mod1.js (1 errors) ====
@@ -15,11 +14,9 @@
 +    ~~~~~~
 +!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +    
-+==== test.js (1 errors) ====
++==== test.js (0 errors) ====
 +    /** @typedef {import('./mod1').C} X */
 +    /** @param {X} c */
-+                ~
-+!!! error TS2304: Cannot find name 'X'.
 +    function demo(c) {
 +        c.s
 +    }

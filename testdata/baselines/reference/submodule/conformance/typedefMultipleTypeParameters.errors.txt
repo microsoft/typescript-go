@@ -1,10 +1,7 @@
-a.js(9,12): error TS2304: Cannot find name 'Everything'.
-a.js(12,12): error TS2304: Cannot find name 'Everything'.
-a.js(15,12): error TS2304: Cannot find name 'Everything'.
 test.ts(1,23): error TS2304: Cannot find name 'Everything'.
 
 
-==== a.js (3 errors) ====
+==== a.js (0 errors) ====
     /**
      * @template {{ a: number, b: string }} T,U A Comment
      * @template {{ c: boolean }} V uh ... are comments even supported??
@@ -14,18 +11,12 @@ test.ts(1,23): error TS2304: Cannot find name 'Everything'.
      */
     
     /** @type {Everything<{ a: number, b: 'hi', c: never }, undefined, { c: true, d: 1 }, number, string>} */
-               ~~~~~~~~~~
-!!! error TS2304: Cannot find name 'Everything'.
     var tuvwx;
     
     /** @type {Everything<{ a: number  }, undefined, { c: 1, d: 1 }, number, string>} */
-               ~~~~~~~~~~
-!!! error TS2304: Cannot find name 'Everything'.
     var wrong;
     
     /** @type {Everything<{ a: number  }>} */
-               ~~~~~~~~~~
-!!! error TS2304: Cannot find name 'Everything'.
     var insufficient;
     
 ==== test.ts (1 errors) ====

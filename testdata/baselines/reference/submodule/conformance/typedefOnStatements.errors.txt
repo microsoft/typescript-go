@@ -1,27 +1,9 @@
 typedefOnStatements.js(26,1): error TS1105: A 'break' statement can only be used within an enclosing iteration or switch statement.
 typedefOnStatements.js(31,1): error TS1104: A 'continue' statement can only be used within an enclosing iteration statement.
 typedefOnStatements.js(33,1): error TS2410: The 'with' statement is not supported. All symbols in a 'with' block will have type 'any'.
-typedefOnStatements.js(53,12): error TS2304: Cannot find name 'A'.
-typedefOnStatements.js(54,12): error TS2304: Cannot find name 'B'.
-typedefOnStatements.js(55,12): error TS2304: Cannot find name 'C'.
-typedefOnStatements.js(56,12): error TS2304: Cannot find name 'D'.
-typedefOnStatements.js(57,12): error TS2304: Cannot find name 'E'.
-typedefOnStatements.js(58,12): error TS2304: Cannot find name 'F'.
-typedefOnStatements.js(59,12): error TS2304: Cannot find name 'G'.
-typedefOnStatements.js(60,12): error TS2304: Cannot find name 'H'.
-typedefOnStatements.js(61,12): error TS2304: Cannot find name 'I'.
-typedefOnStatements.js(62,12): error TS2304: Cannot find name 'J'.
-typedefOnStatements.js(63,12): error TS2304: Cannot find name 'K'.
-typedefOnStatements.js(64,12): error TS2304: Cannot find name 'L'.
-typedefOnStatements.js(65,12): error TS2304: Cannot find name 'M'.
-typedefOnStatements.js(66,12): error TS2304: Cannot find name 'N'.
-typedefOnStatements.js(67,12): error TS2304: Cannot find name 'O'.
-typedefOnStatements.js(68,12): error TS2304: Cannot find name 'P'.
-typedefOnStatements.js(69,12): error TS2304: Cannot find name 'Q'.
-typedefOnStatements.js(73,16): error TS2304: Cannot find name 'Alpha'.
 
 
-==== typedefOnStatements.js (21 errors) ====
+==== typedefOnStatements.js (3 errors) ====
     /** @typedef {{a: string}} A */
     ;
     /** @typedef {{ b: string }} B */
@@ -81,62 +63,26 @@ typedefOnStatements.js(73,16): error TS2304: Cannot find name 'Alpha'.
     
     /**
      * @param {A} a
-               ~
-!!! error TS2304: Cannot find name 'A'.
      * @param {B} b
-               ~
-!!! error TS2304: Cannot find name 'B'.
      * @param {C} c
-               ~
-!!! error TS2304: Cannot find name 'C'.
      * @param {D} d
-               ~
-!!! error TS2304: Cannot find name 'D'.
      * @param {E} e
-               ~
-!!! error TS2304: Cannot find name 'E'.
      * @param {F} f
-               ~
-!!! error TS2304: Cannot find name 'F'.
      * @param {G} g
-               ~
-!!! error TS2304: Cannot find name 'G'.
      * @param {H} h
-               ~
-!!! error TS2304: Cannot find name 'H'.
      * @param {I} i
-               ~
-!!! error TS2304: Cannot find name 'I'.
      * @param {J} j
-               ~
-!!! error TS2304: Cannot find name 'J'.
      * @param {K} k
-               ~
-!!! error TS2304: Cannot find name 'K'.
      * @param {L} l
-               ~
-!!! error TS2304: Cannot find name 'L'.
      * @param {M} m
-               ~
-!!! error TS2304: Cannot find name 'M'.
      * @param {N} n
-               ~
-!!! error TS2304: Cannot find name 'N'.
      * @param {O} o
-               ~
-!!! error TS2304: Cannot find name 'O'.
      * @param {P} p
-               ~
-!!! error TS2304: Cannot find name 'P'.
      * @param {Q} q
-               ~
-!!! error TS2304: Cannot find name 'Q'.
      */
     function proof (a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q) {
         console.log(a.a, b.b, c.c, d.d, e.e, f.f, g.g, h.h, i.i, j.j, k.k, l.l, m.m, n.n, o.o, p.p, q.q)
         /** @type {Alpha} */
-                   ~~~~~
-!!! error TS2304: Cannot find name 'Alpha'.
         var alpha = { alpha: "aleph" }
         /** @typedef {{ alpha: string }} Alpha */
         return

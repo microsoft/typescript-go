@@ -1,4 +1,3 @@
-referencer.js(4,12): error TS2749: 'Point' refers to a value, but is being used as a type here. Did you mean 'typeof Point'?
 source.js(7,16): error TS2350: Only a void function can be called with the 'new' keyword.
 
 
@@ -17,13 +16,11 @@ source.js(7,16): error TS2350: Only a void function can be called with the 'new'
         this.y = y;
     }
     
-==== referencer.js (1 errors) ====
+==== referencer.js (0 errors) ====
     import {Point} from "./source";
     
     /**
      * @param {Point} p
-               ~~~~~
-!!! error TS2749: 'Point' refers to a value, but is being used as a type here. Did you mean 'typeof Point'?
      */
     export function magnitude(p) {
         return Math.sqrt(p.x ** 2 + p.y ** 2);

@@ -4,10 +4,9 @@
 -<no content>
 @@= skipped --1, +1 lines =@@
 +input.js(5,7): error TS7005: Variable 'something' implicitly has an 'any' type.
-+input.js(34,12): error TS2304: Cannot find name 'P'.
 +
 +
-+==== input.js (2 errors) ====
++==== input.js (1 errors) ====
 +    /**
 +     * @typedef {{ } & { name?: string }} P
 +     */
@@ -44,8 +43,6 @@
 +    /**
 +     * 
 +     * @param {P} x
-+               ~
-+!!! error TS2304: Cannot find name 'P'.
 +     * @param {number} b
 +     */
 +    export function fnWithPartialAnnotationOnDefaultparam(x = /** @type {P} */(something), b) {}

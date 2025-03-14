@@ -1,10 +1,7 @@
-templateInsideCallback.js(15,11): error TS2304: Cannot find name 'Call'.
-templateInsideCallback.js(15,16): error TS2304: Cannot find name 'T'.
 templateInsideCallback.js(17,18): error TS7006: Parameter 'x' implicitly has an 'any' type.
-templateInsideCallback.js(51,44): error TS2461: Type 'unknown' is not an array type.
 
 
-==== templateInsideCallback.js (4 errors) ====
+==== templateInsideCallback.js (1 errors) ====
     /**
      * @typedef Oops
      * @template T
@@ -20,10 +17,6 @@ templateInsideCallback.js(51,44): error TS2461: Type 'unknown' is not an array t
     /**
      * @template T
      * @type {Call<T>}
-              ~~~~
-!!! error TS2304: Cannot find name 'Call'.
-                   ~
-!!! error TS2304: Cannot find name 'T'.
      */
     const identity = x => x;
                      ~
@@ -62,8 +55,6 @@ templateInsideCallback.js(51,44): error TS2461: Type 'unknown' is not an array t
       const result = [];
       for (let i = 0; i < array.length; i += 1) {
         result.push(.../** @type {unknown[]} */(iterable(array[i])));
-                                               ~~~~~~~~~~~~~~~~~~~~
-!!! error TS2461: Type 'unknown' is not an array type.
       }
       return result;
     }

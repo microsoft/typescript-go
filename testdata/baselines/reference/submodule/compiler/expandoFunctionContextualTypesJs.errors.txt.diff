@@ -3,16 +3,11 @@
 @@= skipped -0, +-1 lines =@@
 -<no content>
 @@= skipped --1, +1 lines =@@
-+input.js(8,12): error TS2304: Cannot find name 'StatelessComponent'.
-+input.js(8,31): error TS2304: Cannot find name 'MyComponentProps'.
-+input.js(26,12): error TS2304: Cannot find name 'StatelessComponent'.
-+input.js(26,31): error TS2304: Cannot find name 'MyComponentProps'.
-+input.js(32,21): error TS2304: Cannot find name 'MyComponentProps'.
 +input.js(48,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +input.js(52,24): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +
 +
-+==== input.js (7 errors) ====
++==== input.js (2 errors) ====
 +    /** @typedef {{ color: "red" | "blue" }} MyComponentProps */
 +    
 +    /**
@@ -21,10 +16,6 @@
 +    
 +     /**
 +      * @type {StatelessComponent<MyComponentProps>}
-+               ~~~~~~~~~~~~~~~~~~
-+!!! error TS2304: Cannot find name 'StatelessComponent'.
-+                                  ~~~~~~~~~~~~~~~~
-+!!! error TS2304: Cannot find name 'MyComponentProps'.
 +      */
 +    const MyComponent = () => /* @type {any} */(null);
 +    
@@ -43,18 +34,12 @@
 +    
 +    /**
 +      * @type {StatelessComponent<MyComponentProps>}
-+               ~~~~~~~~~~~~~~~~~~
-+!!! error TS2304: Cannot find name 'StatelessComponent'.
-+                                  ~~~~~~~~~~~~~~~~
-+!!! error TS2304: Cannot find name 'MyComponentProps'.
 +     */
 +    const check = MyComponent2;
 +    
 +    /**
 +     * 
 +     * @param {{ props: MyComponentProps }} p 
-+                        ~~~~~~~~~~~~~~~~
-+!!! error TS2304: Cannot find name 'MyComponentProps'.
 +     */
 +    function expectLiteral(p) {}
 +    

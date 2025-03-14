@@ -94,9 +94,7 @@ const TabbedShowLayout = () => {
 };
 
 TabbedShowLayout.defaultProps = {
->TabbedShowLayout.defaultProps : Symbol(defaultProps, Decl(jsDeclarationsReactComponents3.jsx, 2, 11))
 >TabbedShowLayout : Symbol(TabbedShowLayout, Decl(jsDeclarationsReactComponents3.jsx, 4, 5))
->defaultProps : Symbol(defaultProps, Decl(jsDeclarationsReactComponents3.jsx, 2, 11))
 
     tabs: "default value"
 >tabs : Symbol(tabs, Decl(jsDeclarationsReactComponents3.jsx, 12, 33))

@@ -1,9 +1,8 @@
 a.js(5,12): error TS7006: Parameter 'a' implicitly has an 'any' type.
 a.js(5,29): error TS7006: Parameter 'l' implicitly has an 'any[]' type.
-a.js(17,5): error TS2322: Type 'string' is not assignable to type 'number'.
 
 
-==== a.js (3 errors) ====
+==== a.js (2 errors) ====
     /** @type {number | undefined} */
     var n;
     
@@ -25,8 +24,6 @@ a.js(17,5): error TS2322: Type 'string' is not assignable to type 'number'.
         b = 1
         b = undefined
         b = 'error'
-        ~
-!!! error TS2322: Type 'string' is not assignable to type 'number'.
     
         // l should be any[]
         l.push(1)

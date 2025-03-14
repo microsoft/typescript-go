@@ -4,9 +4,6 @@
 -<no content>
 @@= skipped --1, +1 lines =@@
 +mod3.js(6,1): error TS2304: Cannot find name 'exports'.
-+use.js(1,29): error TS2694: Namespace '"mod1"' has no exported member 'Both'.
-+use.js(3,29): error TS2694: Namespace '"mod2"' has no exported member 'Both'.
-+use.js(5,29): error TS2694: Namespace '"mod3"' has no exported member 'Both'.
 +
 +
 +==== commonjs.d.ts (0 errors) ====
@@ -43,18 +40,12 @@
 +        this.p = 1
 +    }
 +    
-+==== use.js (3 errors) ====
++==== use.js (0 errors) ====
 +    /** @type {import('./mod1').Both} */
-+                                ~~~~
-+!!! error TS2694: Namespace '"mod1"' has no exported member 'Both'.
 +    var both1 = { type: 'a', x: 1 };
 +    /** @type {import('./mod2').Both} */
-+                                ~~~~
-+!!! error TS2694: Namespace '"mod2"' has no exported member 'Both'.
 +    var both2 = both1;
 +    /** @type {import('./mod3').Both} */
-+                                ~~~~
-+!!! error TS2694: Namespace '"mod3"' has no exported member 'Both'.
 +    var both3 = both2;
 +    
 +    

@@ -1,16 +1,13 @@
-folder/mod1.js(5,11): error TS2304: Cannot find name 'Item'.
 folder/mod1.js(8,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 index.js(3,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 
 
-==== folder/mod1.js (2 errors) ====
+==== folder/mod1.js (1 errors) ====
     /**
      * @typedef {{x: number}} Item
      */
     /**
      * @type {Item};
-              ~~~~
-!!! error TS2304: Cannot find name 'Item'.
      */
     const x = {x: 12};
     module.exports = x;

@@ -210,10 +210,10 @@ func (p *Parser) makeNewType(typeExpression *ast.TypeNode) *ast.Node {
 	if typeExpression == nil {
 		return nil
 	}
-	t := p.factory.NewJSTypeExpression(typeExpression.Type())
+
+	t := typeExpression.Clone(&p.factory)
 	// TODO: What other flags? Copy from decl? from tag's typeexpression?
-	t.Flags |= p.contextFlags | ast.NodeFlagsSynthesized
-	t.Loc = core.NewTextRange(t.Type().Pos(), t.Type().End())
+	t.Flags |= typeExpression.Flags | ast.NodeFlagsSynthesized
 	return t
 }
 

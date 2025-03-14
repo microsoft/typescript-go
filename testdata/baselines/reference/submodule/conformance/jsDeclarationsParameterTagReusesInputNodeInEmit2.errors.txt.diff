@@ -4,8 +4,6 @@
 -<no content>
 @@= skipped --1, +1 lines =@@
 +base.js(11,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-+file.js(5,25): error TS2749: 'BaseFactory' refers to a value, but is being used as a type here. Did you mean 'typeof BaseFactory'?
-+file.js(6,27): error TS2749: 'BaseFactory' refers to a value, but is being used as a type here. Did you mean 'typeof BaseFactory'?
 +
 +
 +==== base.js (1 errors) ====
@@ -23,17 +21,13 @@
 +    ~~~~~~
 +!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +    
-+==== file.js (2 errors) ====
++==== file.js (0 errors) ====
 +    /** @typedef {typeof import('./base')} BaseFactory */
 +    
 +    /**
 +     *
 +     * @param {InstanceType<BaseFactory["Base"]>} base
-+                            ~~~~~~~~~~~
-+!!! error TS2749: 'BaseFactory' refers to a value, but is being used as a type here. Did you mean 'typeof BaseFactory'?
 +     * @returns {InstanceType<BaseFactory["Base"]>}
-+                              ~~~~~~~~~~~
-+!!! error TS2749: 'BaseFactory' refers to a value, but is being used as a type here. Did you mean 'typeof BaseFactory'?
 +     */
 +    const test = (base) => {
 +        return base;
