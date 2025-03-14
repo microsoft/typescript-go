@@ -1,8 +1,0 @@
---- old.templateStringUnterminated1.types
-+++ new.templateStringUnterminated1.types
-@@= skipped -2, +2 lines =@@
- === templateStringUnterminated1.ts ===
- `
- >` : ""
-->  : ^^
- 

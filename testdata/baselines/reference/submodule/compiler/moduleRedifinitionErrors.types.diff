@@ -1,10 +1,7 @@
 --- old.moduleRedifinitionErrors.types
 +++ new.moduleRedifinitionErrors.types
-@@= skipped -2, +2 lines =@@
- === moduleRedifinitionErrors.ts ===
- class A {
+@@= skipped -4, +4 lines =@@
  >A : A
-->  : ^
  }
  module A {
 +>A : typeof A

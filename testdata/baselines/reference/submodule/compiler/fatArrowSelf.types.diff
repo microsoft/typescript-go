@@ -1,10 +1,7 @@
 --- old.fatArrowSelf.types
 +++ new.fatArrowSelf.types
-@@= skipped -2, +2 lines =@@
- === fatArrowSelf.ts ===
- module Events {
+@@= skipped -4, +4 lines =@@
  >Events : typeof Events
-->       : ^^^^^^^^^^^^^
  
      export interface ListenerCallback {
 +>ListenerCallback : ListenerCallback
@@ -12,79 +9,28 @@
          (value:any):void;
  >value : any
      }
-     export class EventEmitter {
- >EventEmitter : EventEmitter
-->             : ^^^^^^^^^^^^
- 
-          public addListener(type:string, listener:ListenerCallback) {
- >addListener : (type: string, listener: ListenerCallback) => void
-->            : ^    ^^      ^^        ^^                ^^^^^^^^^
- >type : string
-->     : ^^^^^^
- >listener : ListenerCallback
-->         : ^^^^^^^^^^^^^^^^
-          }
-     }
- }
- 
- module Consumer {
- >Consumer : typeof Consumer
-->         : ^^^^^^^^^^^^^^^
- 
-     class EventEmitterConsummer {
+@@= skipped -21, +23 lines =@@
  >EventEmitterConsummer : EventEmitterConsummer
-->                      : ^^^^^^^^^^^^^^^^^^^^^
  
          constructor (private emitter: Events.EventEmitter) { }
 ->emitter : Events.EventEmitter
-->        : ^^^^^^^^^^^^^^^^^^^
 +>emitter : EventEmitter
  >Events : any
-->       : ^^^
  
          private register() {
- >register : () => void
-->         : ^^^^^^^^^^
+@@= skipped -8, +8 lines =@@
  
              this.emitter.addListener('change', (e) => {
  >this.emitter.addListener('change', (e) => {                this.changed();            }) : void
-->                                                                                         : ^^^^
 ->this.emitter.addListener : (type: string, listener: Events.ListenerCallback) => void
-->                         : ^    ^^      ^^        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ->this.emitter : Events.EventEmitter
-->             : ^^^^^^^^^^^^^^^^^^^
 +>this.emitter.addListener : (type: string, listener: ListenerCallback) => void
 +>this.emitter : EventEmitter
  >this : this
-->     : ^^^^
 ->emitter : Events.EventEmitter
-->        : ^^^^^^^^^^^^^^^^^^^
 ->addListener : (type: string, listener: Events.ListenerCallback) => void
-->            : ^    ^^      ^^        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>emitter : EventEmitter
 +>addListener : (type: string, listener: ListenerCallback) => void
  >'change' : "change"
-->         : ^^^^^^^^
  >(e) => {                this.changed();            } : (e: any) => void
-->                                                     : ^ ^^^^^^^^^^^^^^
  >e : any
- 
-                 this.changed();
- >this.changed() : void
-->               : ^^^^
- >this.changed : () => void
-->             : ^^^^^^^^^^
- >this : this
-->     : ^^^^
- >changed : () => void
-->        : ^^^^^^^^^^
- 
-             });
-         }      
- 
-         private changed() {
- >changed : () => void
-->        : ^^^^^^^^^^
-         }
-     }
- }

@@ -11,11 +11,8 @@
 +
          x: number;
  >x : number
-->  : ^^^^^^
  
-         y: number;
- >y : number
-->  : ^^^^^^
+@@= skipped -10, +13 lines =@@
      }
  
      export interface points {
@@ -23,11 +20,3 @@
  
          [idx: number]: Point;
  >idx : number
-->    : ^^^^^^
- 
-         [idx: string]: Point;
- >idx : string
-->    : ^^^^^^
-     }
- }
- 

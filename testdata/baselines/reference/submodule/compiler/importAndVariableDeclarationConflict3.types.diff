@@ -5,29 +5,7 @@
  === importAndVariableDeclarationConflict3.ts ===
  module m {
 ->m : typeof globalThis.m
-->  : ^^^^^^^^^^^^^^^^^^^
 +>m : typeof m
  
    export var m = '';
  >m : string
-->  : ^^^^^^
- >'' : ""
-->   : ^^
- }
- 
- import x = m.m;
- >x : string
-->  : ^^^^^^
- >m : typeof m
-->  : ^^^^^^^^
- >m : string
-->  : ^^^^^^
- 
- import x = m.m;
- >x : string
-->  : ^^^^^^
- >m : typeof m
-->  : ^^^^^^^^
- >m : string
-->  : ^^^^^^
- 

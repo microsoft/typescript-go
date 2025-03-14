@@ -1,20 +1,15 @@
 --- old.moduleAugmentationGlobal4.types
 +++ new.moduleAugmentationGlobal4.types
-@@= skipped -2, +2 lines =@@
- === f1.ts ===
- declare global {
+@@= skipped -4, +4 lines =@@
  >global : any
-->       : ^^^
  
      interface Something {x}
 +>Something : Something
  >x : any
  }
  export {};
- === f2.ts ===
- declare global {
+@@= skipped -8, +9 lines =@@
  >global : any
-->       : ^^^
  
      interface Something {y}
 +>Something : Something

@@ -16,19 +16,14 @@
 +
  export { X };
  >X : any
-->  : ^^^
  
  export declare function foo(): X.foo;
 ->foo : () => X.foo
-->    : ^^^^^^     
 +>foo : () => foo
  >X : any
-->  : ^^^
  
  export declare function bar(): X.bar; // error
 ->bar : () => X.bar
-->    : ^^^^^^     
 +>bar : () => bar
  >X : any
-->  : ^^^
  

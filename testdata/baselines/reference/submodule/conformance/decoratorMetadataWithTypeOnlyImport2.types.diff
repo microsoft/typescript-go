@@ -1,37 +1,11 @@
 --- old.decoratorMetadataWithTypeOnlyImport2.types
 +++ new.decoratorMetadataWithTypeOnlyImport2.types
-@@= skipped -2, +2 lines =@@
- === services.ts ===
- export namespace Services {
- >Services : typeof Services
-->         : ^^^^^^^^^^^^^^^
- 
-   export class Service {}
- >Service : Service
-->        : ^^^^^^^
- }
- 
- === index.ts ===
- import type { Services } from './services';
- >Services : any
-->         : ^^^
- 
- declare const decorator: any;
- >decorator : any
- 
- export class Main {
- >Main : Main
-->     : ^^^^
- 
-   @decorator()
- >decorator() : any
+@@= skipped -22, +22 lines =@@
  >decorator : any
  
    field: Services.Service;
 ->field : Services.Service
-->      : ^^^^^^^^^^^^^^^^
 +>field : Service
  >Services : any
-->         : ^^^
  }
  

@@ -4,8 +4,6 @@
  === unicodeExtendedEscapesInTemplates12.ts ===
  var x = `\u{FFFFFFFF}`;
  >x : string
-->  : ^^^^^^
 ->`\u{FFFFFFFF}` : "\\u{FFFFFFFF}"
-->               : ^^^^^^^^^^^^^^^
 +>`\u{FFFFFFFF}` : "\u{FFFFFFFF}"
  

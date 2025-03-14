@@ -5,60 +5,42 @@
   */
  function callIt(func, arg) {
 ->callIt : (func: Type1, arg: string) => boolean
-->       : ^    ^^     ^^   ^^      ^^^^^       
 ->func : Type1
-->     : ^^^^^
 ->arg : string
-->    : ^^^^^^
 +>callIt : (func: any, arg: any) => any
 +>func : any
 +>arg : any
  
    return func(arg);
 ->func(arg) : boolean
-->          : ^^^^^^^
 ->func : Type1
-->     : ^^^^^
 ->arg : string
-->    : ^^^^^^
 +>func(arg) : any
 +>func : any
 +>arg : any
  }
  
  === mod2.js ===
-@@= skipped -31, +25 lines =@@
+@@= skipped -25, +25 lines =@@
   * @returns {string|number} The return.
   */
  function check(obj) {
 ->check : (obj: Type2) => string | number
-->      : ^   ^^     ^^^^^               
 ->obj : Type2
-->    : ^^^^^
 +>check : (obj: any) => any
 +>obj : any
  
    return obj.boo ? obj.num : obj.str;
 ->obj.boo ? obj.num : obj.str : string | number
-->                            : ^^^^^^^^^^^^^^^
 ->obj.boo : boolean
-->        : ^^^^^^^
 ->obj : Type2
-->    : ^^^^^
 ->boo : boolean
-->    : ^^^^^^^
 ->obj.num : number
-->        : ^^^^^^
 ->obj : Type2
-->    : ^^^^^
 ->num : number
-->    : ^^^^^^
 ->obj.str : string
-->        : ^^^^^^
 ->obj : Type2
-->    : ^^^^^
 ->str : string
-->    : ^^^^^^
 +>obj.boo ? obj.num : obj.str : any
 +>obj.boo : any
 +>obj : any
@@ -72,20 +54,15 @@
  }
  
  === mod3.js ===
-@@= skipped -45, +33 lines =@@
+@@= skipped -33, +33 lines =@@
   * @returns {string|number} The return.
   */
  function use1(func, bool, str, num) {
 ->use1 : (func: StringOrNumber1, bool: boolean, str: string, num: number) => string | number
-->     : ^    ^^               ^^    ^^       ^^   ^^      ^^   ^^      ^^^^^               
 ->func : StringOrNumber1
-->     : ^^^^^^^^^^^^^^^
 ->bool : boolean
-->     : ^^^^^^^
 ->str : string
-->    : ^^^^^^
 ->num : number
-->    : ^^^^^^
 +>use1 : (func: any, bool: any, str: any, num: any) => any
 +>func : any
 +>bool : any
@@ -94,15 +71,10 @@
  
    return func(bool, str, num)
 ->func(bool, str, num) : string | number
-->                     : ^^^^^^^^^^^^^^^
 ->func : StringOrNumber1
-->     : ^^^^^^^^^^^^^^^
 ->bool : boolean
-->     : ^^^^^^^
 ->str : string
-->    : ^^^^^^
 ->num : number
-->    : ^^^^^^
 +>func(bool, str, num) : any
 +>func : any
 +>bool : any
@@ -111,20 +83,15 @@
  }
  
  === mod4.js ===
-@@= skipped -42, +32 lines =@@
+@@= skipped -32, +32 lines =@@
   * @returns {string|number} The return.
   */
  function use2(func, bool, str, num) {
 ->use2 : (func: StringOrNumber2, bool: boolean, str: string, num: number) => string | number
-->     : ^    ^^               ^^    ^^       ^^   ^^      ^^   ^^      ^^^^^               
 ->func : StringOrNumber2
-->     : ^^^^^^^^^^^^^^^
 ->bool : boolean
-->     : ^^^^^^^
 ->str : string
-->    : ^^^^^^
 ->num : number
-->    : ^^^^^^
 +>use2 : (func: any, bool: any, str: any, num: any) => any
 +>func : any
 +>bool : any
@@ -133,15 +100,10 @@
  
    return func(bool, str, num)
 ->func(bool, str, num) : string | number
-->                     : ^^^^^^^^^^^^^^^
 ->func : StringOrNumber2
-->     : ^^^^^^^^^^^^^^^
 ->bool : boolean
-->     : ^^^^^^^
 ->str : string
-->    : ^^^^^^
 ->num : number
-->    : ^^^^^^
 +>func(bool, str, num) : any
 +>func : any
 +>bool : any
@@ -150,38 +112,26 @@
  }
  
  === mod5.js ===
-@@= skipped -42, +32 lines =@@
+@@= skipped -32, +32 lines =@@
   * @returns {string|number} The return.
   */
  function check5(obj) {
 ->check5 : (obj: Type5) => string | number
-->       : ^   ^^     ^^^^^               
 ->obj : Type5
-->    : ^^^^^
 +>check5 : (obj: any) => any
 +>obj : any
  
    return obj.boo ? obj.num : obj.str;
 ->obj.boo ? obj.num : obj.str : string | number
-->                            : ^^^^^^^^^^^^^^^
 ->obj.boo : boolean
-->        : ^^^^^^^
 ->obj : Type5
-->    : ^^^^^
 ->boo : boolean
-->    : ^^^^^^^
 ->obj.num : number
-->        : ^^^^^^
 ->obj : Type5
-->    : ^^^^^
 ->num : number
-->    : ^^^^^^
 ->obj.str : string
-->        : ^^^^^^
 ->obj : Type5
-->    : ^^^^^
 ->str : string
-->    : ^^^^^^
 +>obj.boo ? obj.num : obj.str : any
 +>obj.boo : any
 +>obj : any
@@ -195,25 +145,19 @@
  }
  
  === mod6.js ===
-@@= skipped -44, +32 lines =@@
+@@= skipped -32, +32 lines =@@
   * @returns {*} The return.
   */
  function check6(obj) {
 ->check6 : (obj: Type6) => any
-->       : ^   ^^     ^^^^^   
 ->obj : Type6
-->    : ^^^^^
 +>check6 : (obj: any) => any
 +>obj : any
  
    return obj.foo;
  >obj.foo : any
-->        : ^^^
 ->obj : Type6
-->    : ^^^^^
 +>obj : any
  >foo : any
-->    : ^^^
  }
- 
  

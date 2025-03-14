@@ -5,39 +5,29 @@
  === /cache/typescript-fsa/src/impl.d.ts ===
  export function getA(): A;
 ->getA : () => A
-->     : ^^^^^^ 
 +>getA : () => A.Val
  
  export enum A {
 ->A : A
-->  : ^
 +>A : A.Val
  
      Val
  >Val : A.Val
-->    : ^^^^^
- }
- === /cache/typescript-fsa/index.d.ts ===
- 
+@@= skipped -13, +13 lines =@@
  export * from "./src/impl";
  === /p1/index.ts ===
  import * as _whatever from "p2";
 ->_whatever : typeof _whatever
-->          : ^^^^^^^^^^^^^^^^
 +>_whatever : typeof import("/p2/index")
  
  import { getA } from "typescript-fsa";
 ->getA : () => import("/cache/typescript-fsa/index").A
-->     : ^^^^^^       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  ^
 +>getA : () => A.Val
  
  export const a = getA();
 ->a : import("/cache/typescript-fsa/index").A
-->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ->getA() : import("/cache/typescript-fsa/index").A
-->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ->getA : () => import("/cache/typescript-fsa/index").A
-->     : ^^^^^^       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  ^
 +>a : A.Val
 +>getA() : A.Val
 +>getA : () => A.Val
@@ -45,7 +35,6 @@
  === /p2/index.d.ts ===
  export const a: import("typescript-fsa").A;
 ->a : import("/cache/typescript-fsa/index").A
-->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>a : A.Val
  
  

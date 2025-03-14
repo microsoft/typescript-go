@@ -9,91 +9,30 @@
 +
      method(parameter: T): void;
  >method : (parameter: T) => void
-->       : ^         ^^ ^^^^^    
  >parameter : T
-->          : ^
- }
+@@= skipped -7, +10 lines =@@
  
  class CBase<T>  {
  >CBase : CBase<T>
-->      : ^^^^^^^^
 +>T : T
  
      constructor(param: ContextualType<T>) {
  >param : ContextualType<T>
-->      : ^^^^^^^^^^^^^^^^^
-     }
- 
-     foo(param: ContextualType<T>) {
- >foo : (param: ContextualType<T>) => void
-->    : ^     ^^                 ^^^^^^^^^
- >param : ContextualType<T>
-->      : ^^^^^^^^^^^^^^^^^
-     }
- }
- 
- class C extends CBase<string> {
- >C : C
-->  : ^
- >CBase : CBase<string>
-->      : ^^^^^^^^^^^^^
- 
-     constructor() {
-         // Should be okay.
-         // 'p' should have type 'string'.
+@@= skipped -21, +22 lines =@@
          super({
  >super({            method(p) {                p.length;            }        }) : void
-->                                                                               : ^^^^
  >super : typeof CBase
-->      : ^^^^^^^^^^^^
 ->{            method(p) {                p.length;            }        } : { method(p: string): void; }
-->                                                                        : ^^^^^^^^^ ^^^^^^^^^^^^^^^^^^
 +>{            method(p) {                p.length;            }        } : { method: (p: string) => void; }
  
              method(p) {
  >method : (p: string) => void
-->       : ^ ^^^^^^^^^^^^^^^^^
- >p : string
-->  : ^^^^^^
- 
-                 p.length;
- >p.length : number
-->         : ^^^^^^
- >p : string
-->  : ^^^^^^
- >length : number
-->       : ^^^^^^
-             }
-         });
- 
-@@= skipped -61, +49 lines =@@
-         // 'p' should have type 'string'.
-         super.foo({
- >super.foo({            method(p) {                p.length;            }        }) : void
-->                                                                                   : ^^^^
+@@= skipped -20, +20 lines =@@
  >super.foo : (param: ContextualType<string>) => void
-->          : ^     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
  >super : CBase<string>
-->      : ^^^^^^^^^^^^^
  >foo : (param: ContextualType<string>) => void
-->    : ^     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ->{            method(p) {                p.length;            }        } : { method(p: string): void; }
-->                                                                        : ^^^^^^^^^ ^^^^^^^^^^^^^^^^^^
 +>{            method(p) {                p.length;            }        } : { method: (p: string) => void; }
  
              method(p) {
  >method : (p: string) => void
-->       : ^ ^^^^^^^^^^^^^^^^^
- >p : string
-->  : ^^^^^^
- 
-                 p.length;
- >p.length : number
-->         : ^^^^^^
- >p : string
-->  : ^^^^^^
- >length : number
-->       : ^^^^^^
-             }
-         });
-     }

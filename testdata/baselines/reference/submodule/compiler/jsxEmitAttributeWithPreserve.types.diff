@@ -7,8 +7,6 @@
 -><foo data/> : error
 +><foo data/> : any
  >foo : any
-->    : ^^^
 ->data : true
-->     : ^^^^
 +>data : any
  

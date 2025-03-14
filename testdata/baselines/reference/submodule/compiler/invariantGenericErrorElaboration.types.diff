@@ -1,26 +1,7 @@
 --- old.invariantGenericErrorElaboration.types
 +++ new.invariantGenericErrorElaboration.types
-@@= skipped -4, +4 lines =@@
- 
- const wat: Runtype<any> = Num;
- >wat : Runtype<any>
-->    : ^^^^^^^^^^^^
+@@= skipped -15, +15 lines =@@
  >Num : Num
-->    : ^^^
- 
- const Foo = Obj({ foo: Num })
- >Foo : Obj<{ [_: string]: Runtype<any>; }>
-->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >Obj({ foo: Num }) : Obj<{ [_: string]: Runtype<any>; }>
-->                  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >Obj : <O extends { [_: string]: Runtype<any>; }>(fields: O) => Obj<O>
-->    : ^ ^^^^^^^^^                              ^^      ^^ ^^^^^      
- >{ foo: Num } : { foo: Num; }
-->             : ^^^^^^^^^^^^^
- >foo : Num
-->    : ^^^
- >Num : Num
-->    : ^^^
  
  interface Runtype<A> {
 +>Runtype : Runtype<A>
@@ -28,11 +9,8 @@
 +
    constraint: Constraint<this>
  >constraint : Constraint<this>
-->           : ^^^^^^^^^^^^^^^^
  
-   witness: A
- >witness : A
-->        : ^
+@@= skipped -8, +11 lines =@@
  }
  
  interface Num extends Runtype<number> {
@@ -40,11 +18,9 @@
 +
    tag: 'number'
  >tag : "number"
-->    : ^^^^^^^^
  }
- declare const Num: Num
+@@= skipped -7, +9 lines =@@
  >Num : Num
-->    : ^^^
  
  interface Obj<O extends { [_ in string]: Runtype<any> }> extends Runtype<{[K in keyof O]: O[K]['witness'] }> {}
 +>Obj : Obj<O>
@@ -54,12 +30,9 @@
 +
  declare function Obj<O extends { [_: string]: Runtype<any> }>(fields: O): Obj<O>;
  >Obj : <O extends { [_: string]: Runtype<any>; }>(fields: O) => Obj<O>
-->    : ^ ^^^^^^^^^                              ^^      ^^ ^^^^^      
 +>O : O
  >_ : string
-->  : ^^^^^^
  >fields : O
-->       : ^
  
  interface Constraint<A extends Runtype<any>> extends Runtype<A['witness']> {
 +>Constraint : Constraint<A>
@@ -67,12 +40,4 @@
 +
    underlying: A,
  >underlying : A
-->           : ^
- 
-   check: (x: A['witness']) => void,
- >check : (x: A["witness"]) => void
-->      : ^ ^^            ^^^^^    
- >x : A["witness"]
-->  : ^^^^^^^^^^^^
- }
  

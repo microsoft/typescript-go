@@ -1,47 +1,11 @@
 --- old.assignmentCompatForEnums.types
 +++ new.assignmentCompatForEnums.types
-@@= skipped -2, +2 lines =@@
- === assignmentCompatForEnums.ts ===
- enum TokenType { One, Two };
- >TokenType : TokenType
-->          : ^^^^^^^^^
- >One : TokenType.One
-->    : ^^^^^^^^^^^^^
- >Two : TokenType.Two
-->    : ^^^^^^^^^^^^^
- 
- var list = {};
- >list : {}
-->     : ^^
- >{} : {}
-->   : ^^
- 
- 
- function returnType(): TokenType { return null; }
- >returnType : () => TokenType
-->           : ^^^^^^         
- 
- function foo() {
- >foo : () => void
-->    : ^^^^^^^^^^
- 
-     var x = returnType();
- >x : TokenType
-->  : ^^^^^^^^^
- >returnType() : TokenType
-->             : ^^^^^^^^^
- >returnType : () => TokenType
-->           : ^^^^^^         
+@@= skipped -23, +23 lines =@@
  
      var x: TokenType = list['one'];
  >x : TokenType
-->  : ^^^^^^^^^
 ->list['one'] : error
 +>list['one'] : any
  >list : {}
-->     : ^^
  >'one' : "one"
-->      : ^^^^^
  }
- 
- 

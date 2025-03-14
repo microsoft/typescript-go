@@ -1,14 +1,6 @@
 --- old.mergedDeclarations5.types
 +++ new.mergedDeclarations5.types
-@@= skipped -2, +2 lines =@@
- === a.ts ===
- class A {
- >A : A
-->  : ^
- 
-     protected foo() {}
- >foo : () => void
-->    : ^^^^^^^^^^
+@@= skipped -8, +8 lines =@@
  }
  === b.ts ===
  interface A { }
@@ -16,11 +8,3 @@
  
  class B extends A {
  >B : B
-->  : ^
- >A : A
-->  : ^
- 
-     protected foo() {}
- >foo : () => void
-->    : ^^^^^^^^^^
- }

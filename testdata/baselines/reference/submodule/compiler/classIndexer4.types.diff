@@ -1,17 +1,6 @@
 --- old.classIndexer4.types
 +++ new.classIndexer4.types
-@@= skipped -2, +2 lines =@@
- === classIndexer4.ts ===
- class C123 {
- >C123 : C123
-->     : ^^^^
- 
-     [s: string]: number;
- >s : string
-->  : ^^^^^^
- 
-     constructor() {
-     }
+@@= skipped -11, +11 lines =@@
  }
  
  interface D123 extends C123 {
@@ -19,9 +8,4 @@
 +
      x: number;
  >x : number
-->  : ^^^^^^
  
-     y: string;
- >y : string
-->  : ^^^^^^
- }

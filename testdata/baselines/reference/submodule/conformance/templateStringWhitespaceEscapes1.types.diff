@@ -5,7 +5,6 @@
  === templateStringWhitespaceEscapes1.ts ===
  `\t\n\v\f\r`;
 ->`\t\n\v\f\r` : "\t\n\v\f\r"
-->             : ^^^^^^^^^^^^
 +>`\t\n\v\f\r` : "	
 +"
  

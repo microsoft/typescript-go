@@ -8,14 +8,8 @@
 +
      x: {
  >x : { a?: string; b: string; }
-->  : ^^^^^^      ^^^^^      ^^^
  
-         a?: string; b: string;
- >a : string
-->  : ^^^^^^
- >b : string
-->  : ^^^^^^
-     }
+@@= skipped -10, +12 lines =@@
  }
  
  interface Base2 {
@@ -23,14 +17,8 @@
 +
      x: {
  >x : { b: string; c?: number; }
-->  : ^^^^^      ^^^^^^      ^^^
  
-         b: string; c?: number;
- >b : string
-->  : ^^^^^^
- >c : number
-->  : ^^^^^^
-     }
+@@= skipped -10, +12 lines =@@
  }
  
  interface Derived extends Base, Base2 {
@@ -38,9 +26,7 @@
 +
      x: { b: string }
  >x : { b: string; }
-->  : ^^^^^      ^^^
  >b : string
-->  : ^^^^^^
  }
  
  interface Derived2 extends Base, Base2 { // error
@@ -48,11 +34,8 @@
 +
      x: { a: number; b: string }
  >x : { a: number; b: string; }
-->  : ^^^^^      ^^^^^      ^^^
  >a : number
-->  : ^^^^^^
- >b : string
-->  : ^^^^^^
+@@= skipped -13, +17 lines =@@
  }
  
  interface Derived3 extends Base, Base2 {
@@ -60,11 +43,4 @@
 +
      x: { a: string; b: string }
  >x : { a: string; b: string; }
-->  : ^^^^^      ^^^^^      ^^^
  >a : string
-->  : ^^^^^^
- >b : string
-->  : ^^^^^^
- }
- 
- 

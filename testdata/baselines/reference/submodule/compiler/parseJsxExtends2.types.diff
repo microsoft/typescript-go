@@ -1,23 +1,10 @@
 --- old.parseJsxExtends2.types
 +++ new.parseJsxExtends2.types
-@@= skipped -2, +2 lines =@@
- === index.tsx ===
- declare const React: any;
- >React : any
-->      : ^^^
- 
- export function Foo() {
- >Foo : () => any
-->    : ^^^^^^^^^
- 
-     // Error: T is not declared.
+@@= skipped -10, +10 lines =@@
      return <T extends/>
  ><T extends/> : any
-->             : ^^^
  >T : any
-->  : ^^^
 ->extends : true
-->        : ^^^^
 +>extends : any
  }
  

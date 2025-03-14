@@ -1,8 +1,0 @@
---- old.classWithEmptyTypeParameter.types
-+++ new.classWithEmptyTypeParameter.types
-@@= skipped -2, +2 lines =@@
- === classWithEmptyTypeParameter.ts ===
- class C<> {
- >C : C
-->  : ^
- }

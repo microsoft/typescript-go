@@ -17,7 +17,6 @@
 +
  		props;
  >props : any
-->      : ^^^
  	}
  }
  
@@ -26,45 +25,22 @@
 +
    foo: string;
  >foo : string
-->    : ^^^^^^
  }
- 
- === file.tsx ===
- export class MyComponent {  
- >MyComponent : MyComponent
-->            : ^^^^^^^^^^^
- 
-   render() {
- >render : () => void
-->       : ^^^^^^^^^^
-   }
- 
-   props: { foo: string; }
- >props : { foo: string; }
-->      : ^^^^^^^      ^^^
- >foo : string
-->    : ^^^^^^
+@@= skipped -28, +37 lines =@@
  }
  
  <MyComponent foo="bar" />; // ok  
 -><MyComponent foo="bar" /> : JSX.Element
-->                          : ^^^^^^^^^^^
 +><MyComponent foo="bar" /> : any
  >MyComponent : typeof MyComponent
-->            : ^^^^^^^^^^^^^^^^^^
 ->foo : string
-->    : ^^^^^^
 +>foo : any
  
  <MyComponent foo={0} />; // should be an error
 -><MyComponent foo={0} /> : JSX.Element
-->                        : ^^^^^^^^^^^
 +><MyComponent foo={0} /> : any
  >MyComponent : typeof MyComponent
-->            : ^^^^^^^^^^^^^^^^^^
 ->foo : number
-->    : ^^^^^^
 +>foo : any
  >0 : 0
-->  : ^
  

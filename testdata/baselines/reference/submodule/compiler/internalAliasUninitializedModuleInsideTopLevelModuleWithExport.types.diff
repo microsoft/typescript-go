@@ -14,33 +14,19 @@
 +
              foo();
  >foo : () => any
-->    : ^^^^^^^^^
          }
-     }
- }
- 
- export import b = a.b;
+@@= skipped -14, +20 lines =@@
  >b : any
-->  : ^^^
- >a : any
-->  : ^^^
- >b : any
-->  : ^^^
  
  export var x: b.I;
 ->x : b.I
-->  : ^^^
 +>x : I
  >b : any
-->  : ^^^
  
  x.foo();
  >x.foo() : any
  >x.foo : () => any
-->      : ^^^^^^^^^
 ->x : b.I
-->  : ^^^
 +>x : I
  >foo : () => any
-->    : ^^^^^^^^^
  

@@ -1,26 +1,10 @@
 --- old.emptyAssignmentPatterns01_ES5.types
 +++ new.emptyAssignmentPatterns01_ES5.types
-@@= skipped -7, +7 lines =@@
- >({} = a) : any
- >{} = a : any
- >{} : {}
-->   : ^^
- >a : any
- 
- ([] = a);
- >([] = a) : any
- >[] = a : any
- >[] : []
-->   : ^^
+@@= skipped -16, +16 lines =@@
  >a : any
  
  var [,] = [1,2];
 -> : undefined
--> : ^^^^^^^^^
  >[1,2] : [number, number]
-->      : ^^^^^^^^^^^^^^^^
  >1 : 1
-->  : ^
  >2 : 2
-->  : ^
- 

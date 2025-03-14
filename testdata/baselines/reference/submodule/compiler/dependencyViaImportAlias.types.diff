@@ -5,27 +5,21 @@
  === B.ts ===
  import a = require('A');
 ->a : typeof a
-->  : ^^^^^^^^
 +>a : any
  
  import A = a.A;
 ->A : typeof a.A
-->  : ^^^^^^^^^^
 ->a : typeof a
-->  : ^^^^^^^^
 ->A : a.A
-->  : ^^^
 +>A : any
 +>a : any
 +>A : any
  
  export = A;
 ->A : a.A
-->  : ^^^
 +>A : any
  
 -=== A.ts ===
 -export class A {
 ->A : A
-->  : ^
 -}

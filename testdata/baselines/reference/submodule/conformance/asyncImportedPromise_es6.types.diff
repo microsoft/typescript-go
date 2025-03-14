@@ -4,22 +4,13 @@
  === task.ts ===
  export class Task<T> extends Promise<T> { }
  >Task : Task<T>
-->     : ^^^^^^^
 +>T : T
  >Promise : Promise<T>
-->        : ^^^^^^^^^^
  
  === test.ts ===
- import { Task } from "./task";
- >Task : typeof Task
-->     : ^^^^^^^^^^^
- 
- class Test {
- >Test : Test
-->     : ^^^^
+@@= skipped -11, +12 lines =@@
  
      async example<T>(): Task<T> { return; }
  >example : <T>() => Task<T>
-->        : ^ ^^^^^^^       
 +>T : T
  }

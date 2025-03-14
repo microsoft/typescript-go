@@ -5,18 +5,13 @@
  === usage.ts ===
  import { parse } from "url";
 ->parse : () => import("url").Url
-->      : ^^^^^^       ^^^^^  ^^^
 +>parse : () => Url
  
  export const thing = () => parse();
 ->thing : () => import("url").Url
-->      : ^^^^^^^^^^^^^^^^^^^^^^^
 ->() => parse() : () => import("url").Url
-->              : ^^^^^^^^^^^^^^^^^^^^^^^
 ->parse() : import("url").Url
-->        : ^^^^^^^^^^^^^^^^^
 ->parse : () => import("url").Url
-->      : ^^^^^^       ^^^^^  ^^^
 +>thing : () => Url
 +>() => parse() : () => Url
 +>parse() : Url
@@ -24,14 +19,3 @@
  
  === node_modules/@types/node/index.d.ts ===
  declare module "url" {
- >"url" : typeof import("url")
-->      : ^^^^^^^^^^^^^^^^^^^^
- 
-     export class Url {}
- >Url : Url
-->    : ^^^
- 
-     export function parse(): Url; 
- >parse : () => Url
-->      : ^^^^^^   
- }

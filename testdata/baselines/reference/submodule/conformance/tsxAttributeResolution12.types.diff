@@ -17,75 +17,32 @@
 +
  		props;
  >props : any
-->      : ^^^
  	}
  	interface IntrinsicAttributes {
 +>IntrinsicAttributes : IntrinsicAttributes
 +
  		ref?: string;
  >ref : string
-->    : ^^^^^^
  	}
- }
- 
+@@= skipped -16, +25 lines =@@
  === file.tsx ===
  declare class Component<P, S>  {
  >Component : Component<P, S>
-->          : ^^^^^^^^^^^^^^^
 +>P : P
 +>S : S
  
  	constructor(props?: P, context?: any);
  >props : P
-->      : ^
- >context : any
-->        : ^^^
- 
- 	setState(f: (prevState: S, props: P) => S, callback?: () => any): void;
- >setState : { (f: (prevState: S, props: P) => S, callback?: () => any): void; (state: S, callback?: () => any): void; }
-->         : ^^^ ^^                             ^^        ^^^         ^^^    ^^^     ^^ ^^        ^^^         ^^^    ^^^
- >f : (prevState: S, props: P) => S
-->  : ^         ^^ ^^     ^^ ^^^^^ 
- >prevState : S
-->          : ^
- >props : P
-->      : ^
- >callback : () => any
-->         : ^^^^^^   
- 
- 	setState(state: S, callback?: () => any): void;
- >setState : { (f: (prevState: S, props: P) => S, callback?: () => any): void; (state: S, callback?: () => any): void; }
-->         : ^^^ ^^                             ^^        ^^^         ^^^    ^^^     ^^ ^^        ^^^         ^^^    ^^^
- >state : S
-->      : ^
- >callback : () => any
-->         : ^^^^^^   
- 
- 	forceUpdate(callBack?: () => any): void;
- >forceUpdate : (callBack?: () => any) => void
-->            : ^        ^^^         ^^^^^    
+@@= skipped -22, +24 lines =@@
  >callBack : () => any
-->         : ^^^^^^   
  
  	render(): JSX.Element;
 ->render : () => JSX.Element
-->       : ^^^^^^           
 +>render : () => Element
  >JSX : any
-->    : ^^^
  
  	props: P;
- >props : P
-->      : ^
- 
- 	state: S;
- >state : S
-->      : ^
- 
- 	context: {};
- >context : {}
-->        : ^^
- }
+@@= skipped -15, +15 lines =@@
  
  
  interface ComponentClass<P> {
@@ -94,46 +51,31 @@
 +
  	new (props?: P, context?: any): Component<P, any>;
  >props : P
-->      : ^
  >context : any
-->        : ^^^
- }
- 
- declare module TestMod {
+@@= skipped -9, +12 lines =@@
  >TestMod : typeof TestMod
-->        : ^^^^^^^^^^^^^^
  
  	interface TestClass extends ComponentClass<{reqd: any}> {
 +>TestClass : TestClass
  >reqd : any
-->     : ^^^
  	}
  	var Test: TestClass;
- >Test : TestClass
-->     : ^^^^^^^^^
- }
+@@= skipped -8, +9 lines =@@
  
  // Errors correctly
  const T = TestMod.Test;
 ->T : TestMod.TestClass
-->  : ^^^^^^^^^^^^^^^^^
 ->TestMod.Test : TestMod.TestClass
-->             : ^^^^^^^^^^^^^^^^^
 +>T : TestClass
 +>TestMod.Test : TestClass
  >TestMod : typeof TestMod
-->        : ^^^^^^^^^^^^^^
 ->Test : TestMod.TestClass
-->     : ^^^^^^^^^^^^^^^^^
 +>Test : TestClass
  
  var t1 = <T />;
 ->t1 : JSX.Element
-->   : ^^^^^^^^^^^
 -><T /> : JSX.Element
-->      : ^^^^^^^^^^^
 ->T : TestMod.TestClass
-->  : ^^^^^^^^^^^^^^^^^
 +>t1 : any
 +><T /> : any
 +>T : TestClass
@@ -141,18 +83,13 @@
  // Should error
  var t2 = <TestMod.Test />;
 ->t2 : JSX.Element
-->   : ^^^^^^^^^^^
 -><TestMod.Test /> : JSX.Element
-->                 : ^^^^^^^^^^^
 ->TestMod.Test : TestMod.TestClass
-->             : ^^^^^^^^^^^^^^^^^
 +>t2 : any
 +><TestMod.Test /> : any
 +>TestMod.Test : TestClass
  >TestMod : typeof TestMod
-->        : ^^^^^^^^^^^^^^
 ->Test : TestMod.TestClass
-->     : ^^^^^^^^^^^^^^^^^
 +>Test : TestClass
  
  

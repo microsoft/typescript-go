@@ -1,14 +1,7 @@
 --- old.clinterfaces.types
 +++ new.clinterfaces.types
-@@= skipped -2, +2 lines =@@
- === clinterfaces.ts ===
- module M {
- >M : typeof M
-->  : ^^^^^^^^
- 
-     class C { }
+@@= skipped -7, +7 lines =@@
  >C : C
-->  : ^
  
      interface C { }
 +>C : C
@@ -18,7 +11,6 @@
 +
      class D { }
  >D : D
-->  : ^
  }
  
  interface Foo<T> {
@@ -27,27 +19,22 @@
 +
      a: string;
  >a : string
-->  : ^^^^^^
  }
  
  class Foo<T>{
  >Foo : Foo<T>
-->    : ^^^^^^
 +>T : T
  
      b: number;
  >b : number
-->  : ^^^^^^
- }
+@@= skipped -19, +27 lines =@@
  
  class Bar<T>{
  >Bar : Bar<T>
-->    : ^^^^^^
 +>T : T
  
      b: number;
  >b : number
-->  : ^^^^^^
  }
  
  interface Bar<T> {
@@ -56,10 +43,4 @@
 +
      a: string;
  >a : string
-->  : ^^^^^^
  }
- 
- export = Foo;
- >Foo : Foo<T>
-->    : ^^^^^^
- 

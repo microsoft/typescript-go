@@ -1,65 +1,11 @@
 --- old.unionTypeWithRecursiveSubtypeReduction2.types
 +++ new.unionTypeWithRecursiveSubtypeReduction2.types
-@@= skipped -2, +2 lines =@@
- === unionTypeWithRecursiveSubtypeReduction2.ts ===
- class Module {
- >Module : Module
-->       : ^^^^^^
- 
-     public members: Class[];
- >members : Class[]
-->        : ^^^^^^^
- }
- 
- class Namespace {
- >Namespace : Namespace
-->          : ^^^^^^^^^
- 
-     public members: (Class | Property)[];
- >members : (Class | Property)[]
-->        : ^^^^^^^^^^^^^^^^^^^^
- }
- 
- class Class {
- >Class : Class
-->      : ^^^^^
- 
-     public parent: Namespace;
- >parent : Namespace
-->       : ^^^^^^^^^
- }
- 
- class Property {
+@@= skipped -25, +25 lines =@@
  >Property : Property
-->         : ^^^^^^^^
  
      public parent: Module | Class;
 ->parent : Module | Class
-->       : ^^^^^^^^^^^^^^
 +>parent : Class | Module
  }
  
  var c: Class;
- >c : Class
-->  : ^^^^^
- 
- var p: Property;
- >p : Property
-->  : ^^^^^^^^
- 
- c = p;
- >c = p : Property
-->      : ^^^^^^^^
- >c : Class
-->  : ^^^^^
- >p : Property
-->  : ^^^^^^^^
- 
- p = c;
- >p = c : Class
-->      : ^^^^^
- >p : Property
-->  : ^^^^^^^^
- >c : Class
-->  : ^^^^^
- 

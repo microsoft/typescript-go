@@ -1,161 +1,52 @@
 --- old.nullAssignableToEveryType.types
 +++ new.nullAssignableToEveryType.types
-@@= skipped -2, +2 lines =@@
- === nullAssignableToEveryType.ts ===
- class C {
- >C : C
-->  : ^
- 
-     foo: string;
- >foo : string
-->    : ^^^^^^
- }
- var ac: C;
+@@= skipped -10, +10 lines =@@
  >ac : C
-->   : ^
  
  interface I {
 +>I : I
 +
      foo: string;
  >foo : string
-->    : ^^^^^^
  }
- var ai: I;
+@@= skipped -7, +9 lines =@@
  >ai : I
-->   : ^
  
  enum E { A }
 ->E : E
-->  : ^
 +>E : E.A
  >A : E.A
-->  : ^^^
  
  var ae: E;
 ->ae : E
-->   : ^
 +>ae : E.A
  
  var b: number = null;
  >b : number
-->  : ^^^^^^
- 
- var c: string = null;
- >c : string
-->  : ^^^^^^
- 
- var d: boolean = null;
- >d : boolean
-->  : ^^^^^^^
- 
- var e: Date = null;
- >e : Date
-->  : ^^^^
- 
- var f: any = null;
- >f : any
- 
- var g: void = null;
- >g : void
-->  : ^^^^
- 
- var h: Object = null;
- >h : Object
-->  : ^^^^^^
- 
- var i: {} = null;
- >i : {}
-->  : ^^
- 
- var j: () => {} = null;
- >j : () => {}
-->  : ^^^^^^  
- 
- var k: Function = null;
- >k : Function
-->  : ^^^^^^^^
- 
- var l: (x: number) => string = null;
- >l : (x: number) => string
-->  : ^ ^^      ^^^^^      
- >x : number
-->  : ^^^^^^
- 
- ac = null;
- >ac = null : null
-->          : ^^^^
- >ac : C
-->   : ^
- 
- ai = null;
- >ai = null : null
-->          : ^^^^
- >ai : I
-->   : ^
+@@= skipped -50, +50 lines =@@
  
  ae = null;
  >ae = null : null
-->          : ^^^^
 ->ae : E
-->   : ^
 +>ae : E.A
  
  var m: number[] = null;
  >m : number[]
-->  : ^^^^^^^^
- 
- var n: { foo: string } = null;
- >n : { foo: string; }
-->  : ^^^^^^^      ^^^
- >foo : string
-->    : ^^^^^^
+@@= skipped -11, +11 lines =@@
  
  var o: <T>(x: T) => T = null;
  >o : <T>(x: T) => T
-->  : ^ ^^ ^^ ^^^^^ 
 +>T : T
  >x : T
-->  : ^
  
  var p: Number = null;
- >p : Number
-->  : ^^^^^^
- 
- var q: String = null;
- >q : String
-->  : ^^^^^^
+@@= skipped -10, +11 lines =@@
  
  function foo<T, U, V extends Date>(x: T, y: U, z: V) {
  >foo : <T, U, V extends Date>(x: T, y: U, z: V) => void
-->    : ^ ^^ ^^ ^^^^^^^^^    ^^ ^^ ^^ ^^ ^^ ^^ ^^^^^^^^^
 +>T : T
 +>U : U
 +>V : V
  >x : T
-->  : ^
  >y : U
-->  : ^
  >z : V
-->  : ^
- 
-     x = null;
- >x = null : null
-->         : ^^^^
- >x : T
-->  : ^
- 
-     y = null;
- >y = null : null
-->         : ^^^^
- >y : U
-->  : ^
- 
-     z = null;
- >z = null : null
-->         : ^^^^
- >z : V
-->  : ^
- }
- 
- //function foo<T, U extends T, V extends Date>(x: T, y: U, z: V) {

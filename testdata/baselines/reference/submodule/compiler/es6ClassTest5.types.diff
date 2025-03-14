@@ -1,28 +1,6 @@
 --- old.es6ClassTest5.types
 +++ new.es6ClassTest5.types
-@@= skipped -2, +2 lines =@@
- === es6ClassTest5.ts ===
- class C1T5 {
- >C1T5 : C1T5
-->     : ^^^^
- 
-     foo: (i: number, s: string) => number = 
- >foo : (i: number, s: string) => number
-->    : ^ ^^      ^^ ^^      ^^^^^      
- >i : number
-->  : ^^^^^^
- >s : string
-->  : ^^^^^^
- 
- 	   	(i) => {
- >(i) => {	        return i;	    } : (i: number) => number
-->                                 : ^ ^^^^^^^^^^^^^^^^^^^
- >i : number
-->  : ^^^^^^
- 
- 	        return i;
- >i : number
-->  : ^^^^^^
+@@= skipped -17, +17 lines =@@
  	    }
  }
  module C2T5 {}
@@ -30,12 +8,3 @@
  
  class  bigClass {
  >bigClass : bigClass
-->         : ^^^^^^^^
- 
-      public break = 1;
- >break : number
-->      : ^^^^^^
- >1 : 1
-->  : ^
- }
- 

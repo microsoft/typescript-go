@@ -1,20 +1,6 @@
 --- old.unusedImports10.types
 +++ new.unusedImports10.types
-@@= skipped -2, +2 lines =@@
- === unusedImports10.ts ===
- module A {
- >A : typeof A
-->  : ^^^^^^^^
- 
-     export class Calculator {
- >Calculator : Calculator
-->           : ^^^^^^^^^^
- 
-         public handelChar() {
- >handelChar : () => void
-->           : ^^^^^^^^^^
-         }
-     }
+@@= skipped -13, +13 lines =@@
  }
  
  module B {
@@ -22,9 +8,7 @@
 +
      import a = A;
 ->a : typeof a
-->  : ^^^^^^^^
 ->A : typeof a
-->  : ^^^^^^^^
 +>a : typeof A
 +>A : typeof A
  }

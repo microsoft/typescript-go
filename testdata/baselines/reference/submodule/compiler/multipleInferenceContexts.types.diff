@@ -4,7 +4,6 @@
  === multipleInferenceContexts.ts ===
  type ConstructorOptions<Data> =
  >ConstructorOptions : ConstructorOptions<Data>
-->                   : ^^^^^^^^^^^^^^^^^^^^^^^^
 +>Data : Data
  
      & ComponentOptionsProperties<Data>
@@ -16,11 +15,8 @@
 +
      data: Data;
  >data : Data
-->     : ^^^^
  
-     render(): unknown;
- >render : () => unknown
-->       : ^^^^^^       
+@@= skipped -13, +17 lines =@@
  }
  
  interface Instance<Data> {
@@ -29,75 +25,27 @@
 +
      get<K extends keyof Data>(name: K): unknown;
  >get : <K extends keyof Data>(name: K) => unknown
-->    : ^ ^^^^^^^^^          ^^    ^^ ^^^^^       
 +>K : K
  >name : K
-->     : ^
  }
  
  declare var Moon: {
 ->Moon : <Data>(options?: ConstructorOptions<Data>) => Instance<Data>
-->     : ^    ^^       ^^^                        ^^^^^              
 +>Moon : <Data>(options?: ConstructorOptions<Data> | undefined) => Instance<Data>
  
      <Data>(options?: ConstructorOptions<Data>): Instance<Data>;
 +>Data : Data
  >options : ConstructorOptions<Data> | undefined
-->        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
  
  };
- 
+@@= skipped -16, +21 lines =@@
  const r2 = Moon({
  >r2 : Instance<{ msg: string; }>
-->   : ^^^^^^^^^^^^^^^^^^^^^^^^^^
  >Moon({    data: { msg: "" },    render() {        const h = (x: unknown) => x;        return h(this.get("msg"));    },}) : Instance<{ msg: string; }>
-->                                                                                                                         : ^^^^^^^^^^^^^^^^^^^^^^^^^^
 ->Moon : <Data>(options?: ConstructorOptions<Data>) => Instance<Data>
-->     : ^    ^^       ^^^                        ^^^^^              
 ->{    data: { msg: "" },    render() {        const h = (x: unknown) => x;        return h(this.get("msg"));    },} : { data: { msg: string; }; render(): unknown; }
-->                                                                                                                   : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>Moon : <Data>(options?: ConstructorOptions<Data> | undefined) => Instance<Data>
 +>{    data: { msg: "" },    render() {        const h = (x: unknown) => x;        return h(this.get("msg"));    },} : { data: { msg: string; }; render: () => unknown; }
  
      data: { msg: "" },
  >data : { msg: string; }
-->     : ^^^^^^^^^^^^^^^^
- >{ msg: "" } : { msg: string; }
-->            : ^^^^^^^^^^^^^^^^
- >msg : string
-->    : ^^^^^^
- >"" : ""
-->   : ^^
- 
-     render() {
- >render : () => unknown
-->       : ^^^^^^^^^^^^^
- 
-         const h = (x: unknown) => x;
- >h : (x: unknown) => unknown
-->  : ^ ^^       ^^^^^^^^^^^^
- >(x: unknown) => x : (x: unknown) => unknown
-->                  : ^ ^^       ^^^^^^^^^^^^
- >x : unknown
-->  : ^^^^^^^
- >x : unknown
-->  : ^^^^^^^
- 
-         return h(this.get("msg"));
- >h(this.get("msg")) : unknown
-->                   : ^^^^^^^
- >h : (x: unknown) => unknown
-->  : ^ ^^       ^^^^^^^^^^^^
- >this.get("msg") : unknown
-->                : ^^^^^^^
- >this.get : <K extends "msg">(name: K) => unknown
-->         : ^ ^^^^^^^^^^^^^^^^    ^^^^^^^^       
- >this : Instance<{ msg: string; }>
-->     : ^^^^^^^^^^^^^^^^^^^^^^^^^^
- >get : <K extends "msg">(name: K) => unknown
-->    : ^ ^^^^^^^^^^^^^^^^    ^^^^^^^^       
- >"msg" : "msg"
-->      : ^^^^^
- 
-     },
- });

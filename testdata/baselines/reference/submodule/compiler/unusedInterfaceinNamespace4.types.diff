@@ -1,10 +1,7 @@
 --- old.unusedInterfaceinNamespace4.types
 +++ new.unusedInterfaceinNamespace4.types
-@@= skipped -2, +2 lines =@@
- === unusedInterfaceinNamespace4.ts ===
- namespace Validation {
+@@= skipped -4, +4 lines =@@
  >Validation : typeof Validation
-->           : ^^^^^^^^^^^^^^^^^
  
      interface i1 {
 +>i1 : i1
@@ -21,9 +18,3 @@
  
      }
  
-     export class c1 implements i3 {
- >c1 : c1
-->   : ^^
- 
-     }
- }

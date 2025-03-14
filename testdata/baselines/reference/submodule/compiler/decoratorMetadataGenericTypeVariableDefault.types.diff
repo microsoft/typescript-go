@@ -4,15 +4,7 @@
  === decoratorMetadataGenericTypeVariableDefault.ts ===
  export class C<TypeVariable = string> {
  >C : C<TypeVariable>
-->  : ^^^^^^^^^^^^^^^
 +>TypeVariable : TypeVariable
  
    @Decorate
  >Decorate : any
-->         : ^^^
- 
-   member: TypeVariable;
- >member : TypeVariable
-->       : ^^^^^^^^^^^^
- }
- 

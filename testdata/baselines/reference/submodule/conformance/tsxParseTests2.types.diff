@@ -17,13 +17,9 @@
  
  var x = </**/div></div>;
 ->x : JSX.Element
-->  : ^^^^^^^^^^^
 -></**/div></div> : JSX.Element
-->                : ^^^^^^^^^^^
 +>x : any
 +></**/div></div> : any
  >div : any
-->    : ^^^
  >div : any
-->    : ^^^
  

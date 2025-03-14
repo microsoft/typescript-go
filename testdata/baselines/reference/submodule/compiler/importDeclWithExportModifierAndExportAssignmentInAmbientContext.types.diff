@@ -1,10 +1,7 @@
 --- old.importDeclWithExportModifierAndExportAssignmentInAmbientContext.types
 +++ new.importDeclWithExportModifierAndExportAssignmentInAmbientContext.types
-@@= skipped -2, +2 lines =@@
- === importDeclWithExportModifierAndExportAssignmentInAmbientContext.ts ===
- declare module "m" {
+@@= skipped -4, +4 lines =@@
  >"m" : typeof import("m")
-->    : ^^^^^^^^^^^^^^^^^^
  
      module x {
 +>x : typeof x
@@ -15,14 +12,9 @@
      }
      export import a = x.c;
  >a : any
-->  : ^^^
  >x : typeof x
-->  : ^^^^^^^^
 ->c : a
-->  : ^
 +>c : c
  
      export = x;
  >x : typeof x
-->  : ^^^^^^^^
- }

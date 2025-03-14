@@ -11,26 +11,11 @@
  }
  
  class X { }
- >X : X
-->  : ^
- 
- export class A {
- >A : A
-->  : ^
- 
-     static X = X;
- >X : typeof X
-->  : ^^^^^^^^
- >X : typeof X
-->  : ^^^^^^^^
+@@= skipped -15, +18 lines =@@
  }
  
  export declare namespace Y {
 +>Y : typeof Y
  
  }
- 
- export class Y { }
- >Y : Y
-->  : ^
  

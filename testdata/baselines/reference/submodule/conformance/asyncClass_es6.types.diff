@@ -1,8 +1,0 @@
---- old.asyncClass_es6.types
-+++ new.asyncClass_es6.types
-@@= skipped -2, +2 lines =@@
- === asyncClass_es6.ts ===
- async class C {  
- >C : C
-->  : ^
- }

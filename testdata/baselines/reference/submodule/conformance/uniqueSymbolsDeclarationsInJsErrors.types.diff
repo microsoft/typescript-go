@@ -1,17 +1,10 @@
 --- old.uniqueSymbolsDeclarationsInJsErrors.types
 +++ new.uniqueSymbolsDeclarationsInJsErrors.types
-@@= skipped -2, +2 lines =@@
- === uniqueSymbolsDeclarationsInJsErrors.js ===
- class C {
- >C : C
-->  : ^
- 
-     /**
+@@= skipped -7, +7 lines =@@
       * @type {unique symbol}
       */
      static readwriteStaticType;
 ->readwriteStaticType : symbol
-->                    : ^^^^^^
 +>readwriteStaticType : any
  
      /**
@@ -20,7 +13,6 @@
       */
      static readonlyType;
 ->readonlyType : unique symbol
-->             : ^^^^^^^^^^^^^
 +>readonlyType : any
  
      /**
@@ -28,7 +20,6 @@
       */
      static readwriteType;
 ->readwriteType : symbol
-->              : ^^^^^^
 +>readwriteType : any
  }
  

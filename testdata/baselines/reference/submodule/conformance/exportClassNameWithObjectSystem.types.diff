@@ -1,8 +1,0 @@
---- old.exportClassNameWithObjectSystem.types
-+++ new.exportClassNameWithObjectSystem.types
-@@= skipped -2, +2 lines =@@
- === exportClassNameWithObjectSystem.ts ===
- export class Object {}
- >Object : Object
-->       : ^^^^^^
- 

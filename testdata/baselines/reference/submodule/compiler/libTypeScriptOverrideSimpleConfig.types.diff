@@ -1,26 +1,12 @@
 --- old.libTypeScriptOverrideSimpleConfig.types
 +++ new.libTypeScriptOverrideSimpleConfig.types
-@@= skipped -3, +3 lines =@@
- /// <reference lib="dom" />
- const a: ABC = { abc: "Hello" }
- >a : ABC
-->  : ^^^
- >{ abc: "Hello" } : { abc: string; }
-->                 : ^^^^^^^^^^^^^^^^
- >abc : string
-->    : ^^^^^^
- >"Hello" : "Hello"
-->        : ^^^^^^^
- 
+@@= skipped -10, +10 lines =@@
  // This should fail because libdom has been replaced
  // by the module above ^
  window.localStorage
 ->window.localStorage : any
-->                    : ^^^
 ->window : any
-->       : ^^^
 ->localStorage : any
-->             : ^^^
 +>window.localStorage : Storage
 +>window : Window & typeof globalThis
 +>localStorage : Storage
@@ -28,5 +14,4 @@
 -=== /somepath/node_modules/@typescript/lib-dom/index.d.ts ===
 -interface ABC { abc: string }
 ->abc : string
-->    : ^^^^^^
 -

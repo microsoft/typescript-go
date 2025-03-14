@@ -8,14 +8,9 @@
 +
  export const b = 1;
  >b : 1
-->  : ^
  >1 : 1
-->  : ^
- 
- // OK -- one is a type, one is a namespace, one is a value.
- type t = 0;
+@@= skipped -9, +11 lines =@@
  >t : 0
-->  : ^
  
  namespace t { interface I {} }
 +>t : any
@@ -23,11 +18,8 @@
 +
  export const t = 0;
  >t : 0
-->  : ^
  >0 : 0
-->  : ^
- 
- // Should get errors if they have some meaning in common.
+@@= skipped -8, +11 lines =@@
  
  // both types
  interface c {}
@@ -42,7 +34,6 @@
 +
  export class d {}
 ->d : import("mergedDeclarationExports").d
-->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>d : d
  
  // both namespaces

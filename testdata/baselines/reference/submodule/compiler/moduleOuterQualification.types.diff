@@ -16,7 +16,5 @@
      export interface Beta extends outer.Beta { }
 +>Beta : Beta
  >outer : any
-->      : ^^^
    }
  }
- 

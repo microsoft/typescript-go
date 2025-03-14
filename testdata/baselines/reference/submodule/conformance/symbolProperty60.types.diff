@@ -8,17 +8,8 @@
 +
      [Symbol.toStringTag]: string;
  >[Symbol.toStringTag] : string
-->                     : ^^^^^^
  >Symbol.toStringTag : unique symbol
-->                   : ^^^^^^^^^^^^^
- >Symbol : SymbolConstructor
-->       : ^^^^^^^^^^^^^^^^^
- >toStringTag : unique symbol
-->            : ^^^^^^^^^^^^^
- 
-     [key: string]: number;
- >key : string
-->    : ^^^^^^
+@@= skipped -11, +13 lines =@@
  }
  
  interface I2 {
@@ -26,35 +17,17 @@
 +
      [Symbol.toStringTag]: string;
  >[Symbol.toStringTag] : string
-->                     : ^^^^^^
  >Symbol.toStringTag : unique symbol
-->                   : ^^^^^^^^^^^^^
- >Symbol : SymbolConstructor
-->       : ^^^^^^^^^^^^^^^^^
- >toStringTag : unique symbol
-->            : ^^^^^^^^^^^^^
- 
-     [key: number]: boolean;
- >key : number
-->    : ^^^^^^
- }
- 
- declare const mySymbol: unique symbol;
+@@= skipped -14, +16 lines =@@
  >mySymbol : unique symbol
-->         : ^^^^^^^^^^^^^
  
  interface I3 {
 +>I3 : I3
 +
      [mySymbol]: string;
  >[mySymbol] : string
-->           : ^^^^^^
  >mySymbol : unique symbol
-->         : ^^^^^^^^^^^^^
- 
-     [key: string]: number;
- >key : string
-->    : ^^^^^^
+@@= skipped -9, +11 lines =@@
  }
  
  interface I4 {
@@ -62,11 +35,4 @@
 +
      [mySymbol]: string;
  >[mySymbol] : string
-->           : ^^^^^^
  >mySymbol : unique symbol
-->         : ^^^^^^^^^^^^^
- 
-     [key: number]: boolean;
- >key : number
-->    : ^^^^^^
- }

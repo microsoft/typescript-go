@@ -1,21 +1,10 @@
 --- old.taggedTemplateStringsWithMultilineTemplate.types
 +++ new.taggedTemplateStringsWithMultilineTemplate.types
-@@= skipped -2, +2 lines =@@
- === taggedTemplateStringsWithMultilineTemplate.ts ===
- function f(...args: any[]): void {
- >f : (...args: any[]) => void
-->  : ^^^^    ^^     ^^^^^    
- >args : any[]
-->     : ^^^^^
- }
- 
+@@= skipped -8, +8 lines =@@
  f `
  >f `\` : void
-->      : ^^^^
  >f : (...args: any[]) => void
-->  : ^^^^    ^^     ^^^^^    
 ->`\` : "\n\n"
-->    : ^^^^^^
 +>`\` : "
  
 +"

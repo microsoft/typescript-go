@@ -1,8 +1,0 @@
---- old.asiAmbientFunctionDeclaration.types
-+++ new.asiAmbientFunctionDeclaration.types
-@@= skipped -2, +2 lines =@@
- === asiAmbientFunctionDeclaration.ts ===
- declare function foo()
- >foo : () => any
-->    : ^^^^^^^^^
- 

@@ -8,18 +8,13 @@
 +
      a: number;
  >a : number
-->  : ^^^^^^
  }
- 
- === /foo.js ===
-@@= skipped -18, +19 lines =@@
+@@= skipped -17, +19 lines =@@
   * @param { Foo } foo
   */
  function f(foo) {}
 ->f : (foo: Foo) => void
-->  : ^   ^^^^^^^^^^^^^^
 ->foo : Foo
-->    : ^^^
 +>f : (foo: any) => void
 +>foo : any
  

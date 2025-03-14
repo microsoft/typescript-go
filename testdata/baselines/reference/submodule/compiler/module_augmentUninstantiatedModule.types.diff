@@ -1,10 +1,7 @@
 --- old.module_augmentUninstantiatedModule.types
 +++ new.module_augmentUninstantiatedModule.types
-@@= skipped -2, +2 lines =@@
- === module_augmentUninstantiatedModule.ts ===
- declare module "foo" {
+@@= skipped -4, +4 lines =@@
  >"foo" : typeof import("foo")
-->      : ^^^^^^^^^^^^^^^^^^^^
  
     namespace M {}
 +>M : any
@@ -12,14 +9,3 @@
     var M;
  >M : any
  
-    export = M;
- >M : any
-->  : ^^^
- }
- 
- declare module "bar" {
- >"bar" : typeof import("bar")
-->      : ^^^^^^^^^^^^^^^^^^^^
- 
-     module "foo" {}
- >"foo" : any

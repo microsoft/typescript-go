@@ -1,19 +1,9 @@
 --- old.exportDefaultClassAndValue.types
 +++ new.exportDefaultClassAndValue.types
-@@= skipped -2, +2 lines =@@
- === exportDefaultClassAndValue.ts ===
- const foo = 1
+@@= skipped -8, +8 lines =@@
  >foo : 1
-->    : ^
- >1 : 1
-->  : ^
- 
- export default foo
- >foo : 1
-->    : ^
  
  export default class Foo {}
 ->Foo : foo
-->    : ^^^
 +>Foo : default
  

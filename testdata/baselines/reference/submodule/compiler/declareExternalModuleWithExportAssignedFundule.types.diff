@@ -1,49 +1,10 @@
 --- old.declareExternalModuleWithExportAssignedFundule.types
 +++ new.declareExternalModuleWithExportAssignedFundule.types
-@@= skipped -2, +2 lines =@@
- === declareExternalModuleWithExportAssignedFundule.ts ===
- declare module "express" {
- >"express" : typeof import("express")
-->          : ^^^^^^^^^^^^^^^^^^^^^^^^
- 
-     export = express;
+@@= skipped -14, +14 lines =@@
  >express : typeof express
-->        : ^^^^^^^^^^^^^^
- 
-     function express(): express.ExpressServer;
- >express : typeof express
-->        : ^^^^^^^^^^^^^^
- >express : any
-->        : ^^^
- 
-     module express {
- >express : typeof express
-->        : ^^^^^^^^^^^^^^
  
          export interface ExpressServer {
 +>ExpressServer : ExpressServer
  
              enable(name: string): ExpressServer;
  >enable : (name: string) => ExpressServer
-->       : ^    ^^      ^^^^^             
- >name : string
-->     : ^^^^^^
- 
-             post(path: RegExp, handler: (req: Function) => void ): void;
- >post : (path: RegExp, handler: (req: Function) => void) => void
-->     : ^    ^^      ^^       ^^                       ^^^^^    
- >path : RegExp
-->     : ^^^^^^
- >handler : (req: Function) => void
-->        : ^   ^^        ^^^^^    
- >req : Function
-->    : ^^^^^^^^
- 
-         }
- 
-         export class ExpressServerRequest {
- >ExpressServerRequest : ExpressServerRequest
-->                     : ^^^^^^^^^^^^^^^^^^^^
- 
-         }
- 

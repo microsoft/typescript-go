@@ -1,43 +1,16 @@
 --- old.asiPreventsParsingAsNamespace05.types
 +++ new.asiPreventsParsingAsNamespace05.types
-@@= skipped -2, +2 lines =@@
- === asiPreventsParsingAsNamespace05.ts ===
- let namespace = 10;
+@@= skipped -17, +17 lines =@@
  >namespace : number
-->          : ^^^^^^
- >10 : 10
-->   : ^^
- 
- namespace a.b {
- >a : typeof a
-->  : ^^^^^^^^
- >b : typeof b
-->  : ^^^^^^^^
- 
-     export let c = 20;
- >c : number
-->  : ^^^^^^
- >20 : 20
-->   : ^^
- }
- 
- namespace
- >namespace : number
-->          : ^^^^^^
  
  a.b.c
 ->a.b.c : number
-->      : ^^^^^^
 ->a.b : typeof a.b
-->    : ^^^^^^^^^^
 +>a.b.c : any
 +>a.b : any
  >a : typeof a
-->  : ^^^^^^^^
 ->b : typeof a.b
-->  : ^^^^^^^^^^
 ->c : number
-->  : ^^^^^^
 +>b : any
 +>c : any
  {

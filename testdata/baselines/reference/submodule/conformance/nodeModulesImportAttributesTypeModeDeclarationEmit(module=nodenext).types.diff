@@ -5,7 +5,6 @@
  === /index.ts ===
  export type LocalInterface =
 ->LocalInterface : LocalInterface
-->               : ^^^^^^^^^^^^^^
 +>LocalInterface : any
  
      & import("pkg", { with: {"resolution-mode": "require"} }).RequireInterface
@@ -13,11 +12,8 @@
  
  export const a = (null as any as import("pkg", { with: {"resolution-mode": "require"} }).RequireInterface);
 ->a : import("/node_modules/pkg/require").RequireInterface
-->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ->(null as any as import("pkg", { with: {"resolution-mode": "require"} }).RequireInterface) : import("/node_modules/pkg/require").RequireInterface
-->                                                                                          : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ->null as any as import("pkg", { with: {"resolution-mode": "require"} }).RequireInterface : import("/node_modules/pkg/require").RequireInterface
-->                                                                                        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>a : RequireInterface
 +>(null as any as import("pkg", { with: {"resolution-mode": "require"} }).RequireInterface) : RequireInterface
 +>null as any as import("pkg", { with: {"resolution-mode": "require"} }).RequireInterface : RequireInterface
@@ -25,11 +21,8 @@
  
  export const b = (null as any as import("pkg", { with: {"resolution-mode": "import"} }).ImportInterface);
 ->b : import("/node_modules/pkg/import").ImportInterface
-->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ->(null as any as import("pkg", { with: {"resolution-mode": "import"} }).ImportInterface) : import("/node_modules/pkg/import").ImportInterface
-->                                                                                        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ->null as any as import("pkg", { with: {"resolution-mode": "import"} }).ImportInterface : import("/node_modules/pkg/import").ImportInterface
-->                                                                                      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>b : any
 +>(null as any as import("pkg", { with: {"resolution-mode": "import"} }).ImportInterface) : any
 +>null as any as import("pkg", { with: {"resolution-mode": "import"} }).ImportInterface : any

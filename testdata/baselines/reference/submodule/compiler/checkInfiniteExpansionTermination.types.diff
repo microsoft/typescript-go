@@ -9,7 +9,6 @@
 +
      n: IObservable<T[]>; // Needed, must be T[]
  >n : IObservable<T[]>
-->  : ^^^^^^^^^^^^^^^^
  }
  
  // Needed
@@ -26,18 +25,3 @@
  >y : any
  
  var values: IObservable<Foo>;
- >values : IObservable<Foo>
-->       : ^^^^^^^^^^^^^^^^
- 
- var values2: ISubject<Bar>;
- >values2 : ISubject<Bar>
-->        : ^^^^^^^^^^^^^
- 
- values = values2;
- >values = values2 : ISubject<Bar>
-->                 : ^^^^^^^^^^^^^
- >values : IObservable<Foo>
-->       : ^^^^^^^^^^^^^^^^
- >values2 : ISubject<Bar>
-->        : ^^^^^^^^^^^^^
- 

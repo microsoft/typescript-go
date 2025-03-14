@@ -5,11 +5,7 @@
  /** @type {Miracle} smallId */
  var sid = () => "!";
 ->sid : Miracle
-->    : ^^^^^^^
 +>sid : () => string
  >() => "!" : () => string
-->          : ^^^^^^^^^^^^
  >"!" : "!"
-->    : ^^^
- 
  

@@ -1,64 +1,39 @@
 --- old.newTargetNarrowing.types
 +++ new.newTargetNarrowing.types
-@@= skipped -2, +2 lines =@@
- === newTargetNarrowing.ts ===
- function foo(x: true) { }
- >foo : (x: true) => void
-->    : ^ ^^    ^^^^^^^^^
- >x : true
-->  : ^^^^
+@@= skipped -6, +6 lines =@@
  >true : true
-->     : ^^^^
  
  function f() {
 ->f : typeof f
-->  : ^^^^^^^^
 +>f : { (): void; marked: boolean; }
  
    if (new.target.marked === true) {
  >new.target.marked === true : boolean
-->                           : ^^^^^^^
  >new.target.marked : boolean
-->                  : ^^^^^^^
 ->new.target : typeof f
-->           : ^^^^^^^^
 ->target : typeof f
-->       : ^^^^^^^^
 +>new.target : { (): void; marked: boolean; }
 +>target : { (): void; marked: boolean; }
  >marked : boolean
-->       : ^^^^^^^
  >true : true
-->     : ^^^^
  
-     foo(new.target.marked);
+@@= skipped -14, +14 lines =@@
  >foo(new.target.marked) : void
-->                       : ^^^^
  >foo : (x: true) => void
-->    : ^ ^^    ^^^^^^^^^
  >new.target.marked : true
-->                  : ^^^^
 ->new.target : typeof f
-->           : ^^^^^^^^
 ->target : typeof f
-->       : ^^^^^^^^
 +>new.target : { (): void; marked: boolean; }
 +>target : { (): void; marked: boolean; }
  >marked : true
-->       : ^^^^
    }
  }
- 
+@@= skipped -9, +9 lines =@@
  f.marked = true;
  >f.marked = true : true
-->                : ^^^^
  >f.marked : boolean
-->         : ^^^^^^^
 ->f : typeof f
-->  : ^^^^^^^^
 +>f : { (): void; marked: boolean; }
  >marked : boolean
-->       : ^^^^^^^
  >true : true
-->     : ^^^^
  

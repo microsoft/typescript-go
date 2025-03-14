@@ -9,7 +9,6 @@
  {
      x: T
  >x : T
-->  : ^
  }
  
  interface BB extends AA<AA<BB>>

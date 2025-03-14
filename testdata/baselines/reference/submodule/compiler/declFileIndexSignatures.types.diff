@@ -8,14 +8,12 @@
 +
      [s: string]: string;
  >s : string
-->  : ^^^^^^
  }
  export interface INumberIndexSignature {
 +>INumberIndexSignature : INumberIndexSignature
 +
      [n: number]: number;
  >n : number
-->  : ^^^^^^
  }
  
  export interface IBothIndexSignature {
@@ -23,11 +21,8 @@
 +
      [s: string]: any;
  >s : string
-->  : ^^^^^^
  
-     [n: number]: number;
- >n : number
-->  : ^^^^^^
+@@= skipped -17, +23 lines =@@
  }
  
  export interface IIndexSignatureWithTypeParameter<T> {
@@ -36,7 +31,6 @@
 +
      [a: string]: T;
  >a : string
-->  : ^^^^^^
  }
  
  === declFileIndexSignatures_1.ts ===
@@ -45,14 +39,12 @@
 +
      [s: string]: string;
  >s : string
-->  : ^^^^^^
  }
  interface IGlobalNumberIndexSignature {
 +>IGlobalNumberIndexSignature : IGlobalNumberIndexSignature
 +
      [n: number]: number;
  >n : number
-->  : ^^^^^^
  }
  
  interface IGlobalBothIndexSignature {
@@ -60,11 +52,8 @@
 +
      [s: string]: any;
  >s : string
-->  : ^^^^^^
  
-     [n: number]: number;
- >n : number
-->  : ^^^^^^
+@@= skipped -23, +32 lines =@@
  }
  
  interface IGlobalIndexSignatureWithTypeParameter<T> {
@@ -73,5 +62,4 @@
 +
      [a: string]: T;
  >a : string
-->  : ^^^^^^
  }

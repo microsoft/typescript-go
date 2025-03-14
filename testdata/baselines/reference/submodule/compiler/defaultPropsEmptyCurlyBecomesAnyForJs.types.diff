@@ -4,118 +4,47 @@
  === library.d.ts ===
  export class Foo<T = {}, U = {}> {
  >Foo : Foo<T, U>
-->    : ^^^^^^^^^
 +>T : T
 +>U : U
  
      props: T;
  >props : T
-->      : ^
- 
-     state: U;
- >state : U
-->      : ^
- 
-     constructor(props: T, state: U);
- >props : T
-->      : ^
- >state : U
-->      : ^
- }
- 
- === component.js ===
- import { Foo } from "./library";
- >Foo : typeof Foo
-->    : ^^^^^^^^^^
+@@= skipped -18, +20 lines =@@
  
  export class MyFoo extends Foo {
  >MyFoo : MyFoo
-->      : ^^^^^
 ->Foo : Foo<any, any>
-->    : ^^^^^^^^^^^^^
 +>Foo : Foo<{}, {}>
  
      member;
  >member : any
-@@= skipped -35, +29 lines =@@
- === typed_component.ts ===
- import { MyFoo } from "./component";
- >MyFoo : typeof MyFoo
-->      : ^^^^^^^^^^^^
- 
- export class TypedFoo extends MyFoo {
- >TypedFoo : TypedFoo
-->         : ^^^^^^^^
- >MyFoo : MyFoo
-->      : ^^^^^
- 
-     constructor() {
-         super({x: "string", y: 42}, { value: undefined });
- >super({x: "string", y: 42}, { value: undefined }) : void
-->                                                  : ^^^^
- >super : typeof MyFoo
-->      : ^^^^^^^^^^^^
- >{x: "string", y: 42} : { x: string; y: number; }
-->                     : ^^^^^^^^^^^^^^^^^^^^^^^^^
- >x : string
-->  : ^^^^^^
- >"string" : "string"
-->         : ^^^^^^^^
- >y : number
-->  : ^^^^^^
- >42 : 42
-->   : ^^
- >{ value: undefined } : { value: undefined; }
-->                     : ^^^^^^^^^^^^^^^^^^^^^
- >value : undefined
-->      : ^^^^^^^^^
- >undefined : undefined
-->          : ^^^^^^^^^
+@@= skipped -29, +29 lines =@@
  
          this.props.x;
  >this.props.x : any
 ->this.props : any
-->           : ^^^
 +>this.props : {}
  >this : this
-->     : ^^^^
 ->props : any
-->      : ^^^
 +>props : {}
  >x : any
-->  : ^^^
  
          this.props.y;
  >this.props.y : any
 ->this.props : any
-->           : ^^^
 +>this.props : {}
  >this : this
-->     : ^^^^
 ->props : any
-->      : ^^^
 +>props : {}
  >y : any
-->  : ^^^
  
          this.state.value;
  >this.state.value : any
 ->this.state : any
-->           : ^^^
 +>this.state : {}
  >this : this
-->     : ^^^^
 ->state : any
-->      : ^^^
 +>state : {}
  >value : any
-->      : ^^^
  
          this.member;
- >this.member : any
- >this : this
-->     : ^^^^
- >member : any
-->       : ^^^
-     }
- }

@@ -8,14 +8,7 @@
  
  class C extends null {
  >C : C
-->  : ^
- 
-   constructor() {
-     super();
- >super() : void
-->        : ^^^^
- >super : any
-->      : ^^^
+@@= skipped -11, +12 lines =@@
    }
  }
  interface C extends Base {}

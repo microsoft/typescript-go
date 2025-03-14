@@ -5,41 +5,19 @@
  === enumMemberResolution.ts ===
  enum Position2 {
 ->Position2 : Position2
-->          : ^^^^^^^^^
 +>Position2 : Position2.IgnoreRulesSpecific
  
      IgnoreRulesSpecific = 0
  >IgnoreRulesSpecific : Position2.IgnoreRulesSpecific
-->                    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >0 : 0
-->  : ^
- }
- var x = IgnoreRulesSpecific. // error
- >x : any
-->  : ^^^
- >IgnoreRulesSpecific. : any
-->                     : ^^^
- >IgnoreRulesSpecific : any
-->                    : ^^^
- 
- var y = 1;
- > : any
--> : ^^^
- >y : number
-->  : ^^^^^^
+@@= skipped -17, +17 lines =@@
  >1 : 1
-->  : ^
  
  var z = Position2.IgnoreRulesSpecific; // no error
 ->z : Position2
-->  : ^^^^^^^^^
 ->Position2.IgnoreRulesSpecific : Position2
-->                              : ^^^^^^^^^
 +>z : Position2.IgnoreRulesSpecific
 +>Position2.IgnoreRulesSpecific : Position2.IgnoreRulesSpecific
  >Position2 : typeof Position2
-->          : ^^^^^^^^^^^^^^^^
 ->IgnoreRulesSpecific : Position2
-->                    : ^^^^^^^^^
 +>IgnoreRulesSpecific : Position2.IgnoreRulesSpecific
  

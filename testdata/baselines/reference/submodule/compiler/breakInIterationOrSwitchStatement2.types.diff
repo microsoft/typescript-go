@@ -1,8 +1,0 @@
---- old.breakInIterationOrSwitchStatement2.types
-+++ new.breakInIterationOrSwitchStatement2.types
-@@= skipped -5, +5 lines =@@
- }
- while (true);
- >true : true
-->     : ^^^^
- 

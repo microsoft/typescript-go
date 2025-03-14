@@ -5,15 +5,12 @@
  /** @param {...number} a */
  function f(...a) {
 ->f : (...a: number[]) => void
-->  : ^^^^ ^^        ^^^^^^^^^
 ->a : number[]
-->  : ^^^^^^^^
 +>f : (...a: any[]) => void
 +>a : any[]
  
      a; // number[]
 ->a : number[]
-->  : ^^^^^^^^
 +>a : any[]
  }
  

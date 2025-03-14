@@ -1,65 +1,20 @@
 --- old.contextualTypingWithGenericAndNonGenericSignature.types
 +++ new.contextualTypingWithGenericAndNonGenericSignature.types
-@@= skipped -4, +4 lines =@@
- 
- var f2: {
- >f2 : { (x: string, y: number): string; <T, U>(x: T, y: U): T; }
-->   : ^^^ ^^      ^^ ^^      ^^^      ^^^ ^^ ^^ ^^ ^^ ^^ ^^^ ^^^
- 
-     (x: string, y: number): string;
- >x : string
-->  : ^^^^^^
+@@= skipped -10, +10 lines =@@
  >y : number
-->  : ^^^^^^
  
      <T, U>(x: T, y: U): T
 +>T : T
 +>U : U
  >x : T
-->  : ^
  >y : U
-->  : ^
  
- };
- 
- f2 = (x, y) => { return x }
- >f2 = (x, y) => { return x } : (x: any, y: any) => any
-->                            : ^ ^^^^^^^ ^^^^^^^^^^^^^
- >f2 : { (x: string, y: number): string; <T, U>(x: T, y: U): T; }
-->   : ^^^ ^^      ^^ ^^      ^^^      ^^^ ^^ ^^ ^^ ^^ ^^ ^^^ ^^^
- >(x, y) => { return x } : (x: any, y: any) => any
-->                       : ^ ^^^^^^^ ^^^^^^^^^^^^^
- >x : any
- >y : any
- >x : any
- 
- var f3: {
+@@= skipped -17, +19 lines =@@
  >f3 : { <T, U>(x: T, y: U): T; (x: string, y: number): string; }
-->   : ^^^ ^^ ^^ ^^ ^^ ^^ ^^^ ^^^ ^^      ^^ ^^      ^^^      ^^^
  
      <T, U>(x: T, y: U): T
 +>T : T
 +>U : U
  >x : T
-->  : ^
  >y : U
-->  : ^
  
-     (x: string, y: number): string;
- >x : string
-->  : ^^^^^^
- >y : number
-->  : ^^^^^^
- 
- };
- 
- f3 = (x, y) => { return x }
- >f3 = (x, y) => { return x } : (x: any, y: any) => any
-->                            : ^ ^^^^^^^ ^^^^^^^^^^^^^
- >f3 : { <T, U>(x: T, y: U): T; (x: string, y: number): string; }
-->   : ^^^ ^^ ^^ ^^ ^^ ^^ ^^^ ^^^ ^^      ^^ ^^      ^^^      ^^^
- >(x, y) => { return x } : (x: any, y: any) => any
-->                       : ^ ^^^^^^^ ^^^^^^^^^^^^^
- >x : any
- >y : any
- >x : any

@@ -4,12 +4,10 @@
  === reverseMappedTypeInferenceSameSource1.ts ===
  type Action<T extends string = string> = {
  >Action : Action<T>
-->       : ^^^^^^^^^
 +>T : T
  
    type: T;
  >type : T
-->     : ^
  
  };
  interface UnknownAction extends Action {
@@ -17,27 +15,18 @@
 +
    [extraProps: string]: unknown;
  >extraProps : string
-->           : ^^^^^^
  }
  type Reducer<S = any, A extends Action = UnknownAction> = (
  >Reducer : Reducer<S, A>
-->        : ^^^^^^^^^^^^^
 +>S : S
 +>A : A
  
    state: S | undefined,
  >state : S | undefined
-->      : ^^^^^^^^^^^^^
- 
-   action: A,
- >action : A
-->       : ^
- 
- ) => S;
+@@= skipped -22, +27 lines =@@
  
  type ReducersMapObject<S = any, A extends Action = UnknownAction> = {
  >ReducersMapObject : ReducersMapObject<S, A>
-->                  : ^^^^^^^^^^^^^^^^^^^^^^^
 +>S : S
 +>A : A
  
@@ -53,76 +42,34 @@
 +
    reducer: Reducer<S, A> | ReducersMapObject<S, A>;
  >reducer : Reducer<S, A> | ReducersMapObject<S, A>
-->        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
  }
  
  declare function configureStore<S = any, A extends Action = UnknownAction>(
 ->configureStore : <S = any, A extends Action = UnknownAction>(options: ConfigureStoreOptions<S, A>) => void
-->               : ^ ^^^^^^^^ ^^^^^^^^^      ^^^^^^^^^^^^^^^^^^       ^^                           ^^^^^    
 +>configureStore : <S, A extends Action<string>>(options: ConfigureStoreOptions<S, A>) => void
 +>S : S
 +>A : A
  
    options: ConfigureStoreOptions<S, A>,
  >options : ConfigureStoreOptions<S, A>
-->        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
- ): void;
- 
- {
-   const reducer: Reducer<number> = () => 0;
- >reducer : Reducer<number, UnknownAction>
-->        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >() => 0 : () => number
-->        : ^^^^^^^^^^^^
- >0 : 0
-->  : ^
- 
+@@= skipped -26, +36 lines =@@
    const store1 = configureStore({ reducer });
  >store1 : void
-->       : ^^^^
  >configureStore({ reducer }) : void
-->                            : ^^^^
 ->configureStore : <S = any, A extends Action = UnknownAction>(options: ConfigureStoreOptions<S, A>) => void
-->               : ^ ^^^^^^^^ ^^^^^^^^^      ^^^^^^^^^^^^^^^^^^       ^^                           ^^^^^    
 +>configureStore : <S, A extends Action<string>>(options: ConfigureStoreOptions<S, A>) => void
  >{ reducer } : { reducer: Reducer<number, UnknownAction>; }
-->            : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ->reducer : Reducer<number, UnknownAction>
-->        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>reducer : any
  }
  
  const counterReducer1: Reducer<number> = () => 0;
- >counterReducer1 : Reducer<number, UnknownAction>
-->                : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >() => 0 : () => number
-->        : ^^^^^^^^^^^^
- >0 : 0
-->  : ^
- 
+@@= skipped -13, +13 lines =@@
  const store2 = configureStore({
  >store2 : void
-->       : ^^^^
  >configureStore({  reducer: {    counter1: counterReducer1,  },}) : void
-->                                                                 : ^^^^
 ->configureStore : <S = any, A extends Action = UnknownAction>(options: ConfigureStoreOptions<S, A>) => void
-->               : ^ ^^^^^^^^ ^^^^^^^^^      ^^^^^^^^^^^^^^^^^^       ^^                           ^^^^^    
 +>configureStore : <S, A extends Action<string>>(options: ConfigureStoreOptions<S, A>) => void
  >{  reducer: {    counter1: counterReducer1,  },} : { reducer: { counter1: Reducer<number, UnknownAction>; }; }
-->                                                 : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
  
    reducer: {
- >reducer : { counter1: Reducer<number, UnknownAction>; }
-->        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >{    counter1: counterReducer1,  } : { counter1: Reducer<number, UnknownAction>; }
-->                                   : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
-     counter1: counterReducer1,
- >counter1 : Reducer<number, UnknownAction>
-->         : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >counterReducer1 : Reducer<number, UnknownAction>
-->                : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
-   },
- });

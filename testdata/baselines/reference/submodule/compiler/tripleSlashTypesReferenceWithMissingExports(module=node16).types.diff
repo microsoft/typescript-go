@@ -6,18 +6,5 @@
  interface GlobalThing { a: number }
 +>GlobalThing : GlobalThing
  >a : number
-->  : ^^^^^^
  
  === usage.ts ===
- /// <reference types="pkg" />
- 
- const a: GlobalThing = { a: 0 };
- >a : GlobalThing
-->  : ^^^^^^^^^^^
- >{ a: 0 } : { a: number; }
-->         : ^^^^^^^^^^^^^^
- >a : number
-->  : ^^^^^^
- >0 : 0
-->  : ^
- 

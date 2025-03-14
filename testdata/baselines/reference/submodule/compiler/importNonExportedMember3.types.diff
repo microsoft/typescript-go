@@ -17,6 +17,3 @@
  
  === b.ts ===
  import { Foo } from './a';
- >Foo : any
-->    : ^^^
- 

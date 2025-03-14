@@ -15,9 +15,7 @@
  /** @param {I} a */
  function f(a) {}
 ->f : (a: I) => void
-->  : ^ ^^^^^^^^^^^^
 ->a : I
-->  : ^
 +>f : (a: any) => void
 +>a : any
  

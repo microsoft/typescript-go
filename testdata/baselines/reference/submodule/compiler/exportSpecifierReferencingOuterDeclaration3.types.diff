@@ -9,7 +9,6 @@
 +
  declare module "m" {
  >"m" : typeof import("m")
-->    : ^^^^^^^^^^^^^^^^^^
  
      module X { export interface foo { } }
 +>X : any
@@ -17,19 +16,14 @@
 +
      export { X };
  >X : any
-->  : ^^^
  
      export function foo(): X.foo;
 ->foo : () => X.foo
-->    : ^^^^^^     
 +>foo : () => foo
  >X : any
-->  : ^^^
  
      export function bar(): X.bar; // error
 ->bar : () => X.bar
-->    : ^^^^^^     
 +>bar : () => bar
  >X : any
-->  : ^^^
  }

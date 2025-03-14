@@ -8,33 +8,13 @@
 +
      m(x: number): void;
  >m : (x: number) => void
-->  : ^ ^^      ^^^^^    
  >x : number
-->  : ^^^^^^
- 
-     [key: string]: unknown;
- >key : string
-->    : ^^^^^^
- }
- declare function f(options: number | Options): void;
- >f : (options: number | Options) => void
-->  : ^       ^^                ^^^^^    
- >options : number | Options
-->        : ^^^^^^^^^^^^^^^^
- 
+@@= skipped -14, +16 lines =@@
  f({
  >f({    m(x) { },}) : void
-->                   : ^^^^
  >f : (options: number | Options) => void
-->  : ^       ^^                ^^^^^    
 ->{    m(x) { },} : { m(x: number): void; }
-->                : ^^^^ ^^^^^^^^^^^^^^^^^^
 +>{    m(x) { },} : { m: (x: number) => void; }
  
      m(x) { },
  >m : (x: number) => void
-->  : ^ ^^^^^^^^^^^^^^^^^
- >x : number
-->  : ^^^^^^
- 
- });

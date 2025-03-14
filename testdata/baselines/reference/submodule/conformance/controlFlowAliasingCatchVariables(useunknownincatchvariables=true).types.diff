@@ -1,123 +1,38 @@
 --- old.controlFlowAliasingCatchVariables(useunknownincatchvariables=true).types
 +++ new.controlFlowAliasingCatchVariables(useunknownincatchvariables=true).types
-@@= skipped -3, +3 lines =@@
- try {}
- catch (e) {
- >e : unknown
-->  : ^^^^^^^
- 
+@@= skipped -7, +7 lines =@@
      const isString = typeof e === 'string';
  >isString : boolean
-->         : ^^^^^^^
  >typeof e === 'string' : boolean
-->                      : ^^^^^^^
 ->typeof e : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
-->         : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>typeof e : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
  >e : unknown
-->  : ^^^^^^^
  >'string' : "string"
-->         : ^^^^^^^^
  
-     if (isString) {
- >isString : boolean
-->         : ^^^^^^^
- 
-         e.toUpperCase(); // e string
- >e.toUpperCase() : string
-->                : ^^^^^^
- >e.toUpperCase : () => string
-->              : ^^^^^^      
- >e : string
-->  : ^^^^^^
- >toUpperCase : () => string
-->            : ^^^^^^      
-     }
+@@= skipped -16, +16 lines =@@
  
      if (typeof e === 'string') {
  >typeof e === 'string' : boolean
-->                      : ^^^^^^^
 ->typeof e : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
-->         : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>typeof e : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
  >e : unknown
-->  : ^^^^^^^
  >'string' : "string"
-->         : ^^^^^^^^
  
-         e.toUpperCase(); // e string
- >e.toUpperCase() : string
-->                : ^^^^^^
- >e.toUpperCase : () => string
-->              : ^^^^^^      
- >e : string
-->  : ^^^^^^
- >toUpperCase : () => string
-->            : ^^^^^^      
-     }
- }
- 
- try {}
- catch (e) {
- >e : unknown
-->  : ^^^^^^^
- 
+@@= skipped -19, +19 lines =@@
      const isString = typeof e === 'string';
  >isString : boolean
-->         : ^^^^^^^
  >typeof e === 'string' : boolean
-->                      : ^^^^^^^
 ->typeof e : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
-->         : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>typeof e : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
  >e : unknown
-->  : ^^^^^^^
  >'string' : "string"
-->         : ^^^^^^^^
  
-     e = 1;
- >e = 1 : 1
-->      : ^
- >e : unknown
-->  : ^^^^^^^
- >1 : 1
-->  : ^
- 
-     if (isString) {
- >isString : boolean
-->         : ^^^^^^^
- 
-         e.toUpperCase(); // e any/unknown
- >e.toUpperCase() : any
-->                : ^^^
- >e.toUpperCase : any
-->              : ^^^
- >e : unknown
-->  : ^^^^^^^
- >toUpperCase : any
-->            : ^^^
-     }
+@@= skipped -21, +21 lines =@@
  
      if (typeof e === 'string') {
  >typeof e === 'string' : boolean
-->                      : ^^^^^^^
 ->typeof e : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
-->         : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>typeof e : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
  >e : unknown
-->  : ^^^^^^^
  >'string' : "string"
-->         : ^^^^^^^^
- 
-         e.toUpperCase(); // e string
- >e.toUpperCase() : string
-->                : ^^^^^^
- >e.toUpperCase : () => string
-->              : ^^^^^^      
- >e : string
-->  : ^^^^^^
- >toUpperCase : () => string
-->            : ^^^^^^      
-     }
- }
  

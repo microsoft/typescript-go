@@ -1,36 +1,11 @@
 --- old.ExportVariableWithAccessibleTypeInTypeAnnotation.types
 +++ new.ExportVariableWithAccessibleTypeInTypeAnnotation.types
-@@= skipped -2, +2 lines =@@
- === ExportVariableWithAccessibleTypeInTypeAnnotation.ts ===
- module A {
+@@= skipped -4, +4 lines =@@
  >A : typeof A
-->  : ^^^^^^^^
  
      export interface Point {
 +>Point : Point
 +
          x: number;
  >x : number
-->  : ^^^^^^
- 
-         y: number;
- >y : number
-->  : ^^^^^^
-     }
- 
-     // valid since Point is exported
-     export var Origin: Point = { x: 0, y: 0 };
- >Origin : Point
-->       : ^^^^^
- >{ x: 0, y: 0 } : { x: number; y: number; }
-->               : ^^^^^^^^^^^^^^^^^^^^^^^^^
- >x : number
-->  : ^^^^^^
- >0 : 0
-->  : ^
- >y : number
-->  : ^^^^^^
- >0 : 0
-->  : ^
- }
  

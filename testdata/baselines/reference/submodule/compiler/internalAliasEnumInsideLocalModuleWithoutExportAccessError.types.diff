@@ -1,52 +1,20 @@
 --- old.internalAliasEnumInsideLocalModuleWithoutExportAccessError.types
 +++ new.internalAliasEnumInsideLocalModuleWithoutExportAccessError.types
-@@= skipped -2, +2 lines =@@
- === internalAliasEnumInsideLocalModuleWithoutExportAccessError.ts ===
- export module a {
- >a : typeof a
-->  : ^^^^^^^^
- 
-     export enum weekend {
- >weekend : weekend
-->        : ^^^^^^^
- 
-         Friday,
- >Friday : weekend.Friday
-->       : ^^^^^^^^^^^^^^
- 
-         Saturday,
- >Saturday : weekend.Saturday
-->         : ^^^^^^^^^^^^^^^^
- 
-         Sunday
- >Sunday : weekend.Sunday
-->       : ^^^^^^^^^^^^^^
-     }
- }
- 
- export module c {
+@@= skipped -21, +21 lines =@@
  >c : typeof c
-->  : ^^^^^^^^
  
      import b = a.weekend;
 ->b : typeof b
-->  : ^^^^^^^^
 +>b : typeof weekend
  >a : typeof a
-->  : ^^^^^^^^
 ->weekend : b
-->        : ^
 +>weekend : weekend
  
      export var bVal: b = b.Sunday;
 ->bVal : b
-->     : ^
 ->b.Sunday : b.Sunday
-->         : ^^^^^^^^
 ->b : typeof b
-->  : ^^^^^^^^
 ->Sunday : b.Sunday
-->       : ^^^^^^^^
 +>bVal : weekend
 +>b.Sunday : weekend.Sunday
 +>b : typeof weekend
@@ -54,16 +22,3 @@
  }
  
  var happyFriday = c.b.Friday;
- >happyFriday : any
-->            : ^^^
- >c.b.Friday : any
-->           : ^^^
- >c.b : any
-->    : ^^^
- >c : typeof c
-->  : ^^^^^^^^
- >b : any
-->  : ^^^
- >Friday : any
-->       : ^^^
- 

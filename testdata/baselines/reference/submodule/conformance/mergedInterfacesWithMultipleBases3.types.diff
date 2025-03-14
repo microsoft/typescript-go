@@ -4,42 +4,34 @@
  
  class C<T> {
  >C : C<T>
-->  : ^^^^
 +>T : T
  
      a: T;
  >a : T
-->  : ^
- }
+@@= skipped -7, +8 lines =@@
  
  class C2<T> {
  >C2 : C2<T>
-->   : ^^^^^
 +>T : T
  
      b: T;
  >b : T
-->  : ^
- }
+@@= skipped -7, +8 lines =@@
  
  class C3<T> {
  >C3 : C3<T>
-->   : ^^^^^
 +>T : T
  
      c: T;
  >c : T
-->  : ^
- }
+@@= skipped -7, +8 lines =@@
  
  class C4<T> {
  >C4 : C4<T>
-->   : ^^^^^
 +>T : T
  
      d: T;
  >d : T
-->  : ^
  }
  
  interface A<T> extends C<string>, C3<string> {
@@ -48,7 +40,6 @@
 +
      y: T;
  >y : T
-->  : ^
  }
  
  interface A<T> extends C<string>, C4<string> {
@@ -57,34 +48,4 @@
 +
      z: T;
  >z : T
-->  : ^
- }
- 
- class D implements A<boolean> {
- >D : D
-->  : ^
- 
-     a: string;
- >a : string
-->  : ^^^^^^
- 
-     b: Date;
- >b : Date
-->  : ^^^^
- 
-     c: string;
- >c : string
-->  : ^^^^^^
- 
-     d: string;
- >d : string
-->  : ^^^^^^
- 
-     y: boolean;
- >y : boolean
-->  : ^^^^^^^
- 
-     z: boolean;
- >z : boolean
-->  : ^^^^^^^
  }

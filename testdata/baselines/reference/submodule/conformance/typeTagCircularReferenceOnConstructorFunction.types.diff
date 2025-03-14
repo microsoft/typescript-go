@@ -5,19 +5,13 @@
   */
  function MyClass() { }
 ->MyClass : typeof MyClass
-->        : ^^^^^^^^^^^^^^
 +>MyClass : { (): void; prototype: {}; }
  
  MyClass.prototype = {};
  >MyClass.prototype = {} : {}
-->                       : ^^
  >MyClass.prototype : {}
-->                  : ^^
 ->MyClass : typeof MyClass
-->        : ^^^^^^^^^^^^^^
 +>MyClass : { (): void; prototype: {}; }
  >prototype : {}
-->          : ^^
  >{} : {}
-->   : ^^
  

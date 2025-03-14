@@ -5,35 +5,29 @@
  // esm format file
  import * as self from "@scope/package";
 ->self : typeof self
-->     : ^^^^^^^^^^^
 +>self : typeof import("index")
  
  self;
 ->self : typeof self
-->     : ^^^^^^^^^^^
 +>self : typeof import("index")
  
  === index.mts ===
  // esm format file
  import * as self from "@scope/package";
 ->self : typeof self
-->     : ^^^^^^^^^^^
 +>self : typeof import("index")
  
  self;
 ->self : typeof self
-->     : ^^^^^^^^^^^
 +>self : typeof import("index")
  
  === index.cts ===
  // cjs format file
  import * as self from "@scope/package";
 ->self : typeof self
-->     : ^^^^^^^^^^^
 +>self : typeof import("index")
  
  self;
 ->self : typeof self
-->     : ^^^^^^^^^^^
 +>self : typeof import("index")
  

@@ -1,42 +1,18 @@
 --- old.inferredIndexerOnNamespaceImport.types
 +++ new.inferredIndexerOnNamespaceImport.types
-@@= skipped -2, +2 lines =@@
- === foo.ts ===
- export const x = 3;
- >x : 3
-->  : ^
- >3 : 3
-->  : ^
- 
- export const y = 5;
- >y : 5
-->  : ^
- >5 : 5
-->  : ^
+@@= skipped -10, +10 lines =@@
  
  === bar.ts ===
  import * as foo from "./foo";
 ->foo : typeof foo
-->    : ^^^^^^^^^^
 +>foo : typeof import("foo")
  
  function f(map: { [k: string]: number }) {
  >f : (map: { [k: string]: number; }) => void
-->  : ^   ^^                        ^^^^^^^^^
- >map : { [k: string]: number; }
-->    : ^^^^^^^^^^^^^^^^^^^^^^^^
- >k : string
-->  : ^^^^^^
- 
-   // ...
- }
- 
+@@= skipped -13, +13 lines =@@
  f(foo);
  >f(foo) : void
-->       : ^^^^
  >f : (map: { [k: string]: number; }) => void
-->  : ^   ^^                        ^^^^^^^^^
 ->foo : typeof foo
-->    : ^^^^^^^^^^
 +>foo : typeof import("foo")
  

@@ -5,32 +5,24 @@
  === main.ts ===
  import { fa } from "ext";
 ->fa : () => import("ext").A
-->   : ^^^^^^       ^^^^^  ^
 +>fa : () => A
  
  import { fb } from "ext/other";
 ->fb : () => import("ext/other").B
-->   : ^^^^^^       ^^^^^^^^^^^  ^
 +>fb : () => B
  
  export const va = fa();
 ->va : import("ext").A
-->   : ^^^^^^^^^^^^^^^
 ->fa() : import("ext").A
-->     : ^^^^^^^^^^^^^^^
 ->fa : () => import("ext").A
-->   : ^^^^^^       ^^^^^  ^
 +>va : A
 +>fa() : A
 +>fa : () => A
  
  export const vb = fb();
 ->vb : import("ext/other").B
-->   : ^^^^^^^^^^^^^^^^^^^^^
 ->fb() : import("ext/other").B
-->     : ^^^^^^^^^^^^^^^^^^^^^
 ->fb : () => import("ext/other").B
-->   : ^^^^^^       ^^^^^^^^^^^  ^
 +>vb : B
 +>fb() : B
 +>fb : () => B
@@ -39,24 +31,20 @@
 +=== node_modules/ext/index.d.ts ===
  declare module "ext" {
  >"ext" : typeof import("ext")
-->      : ^^^^^^^^^^^^^^^^^^^^
  
      export interface A {}
 +>A : A
 +
      export function fa(): A;
  >fa : () => A
-->   : ^^^^^^ 
  }
- declare module "ext/other" {
+@@= skipped -27, +29 lines =@@
  >"ext/other" : typeof import("ext/other")
-->            : ^^^^^^^^^^^^^^^^^^^^^^^^^^
  
      export interface B {}
 +>B : B
 +
      export function fb(): B;
  >fb : () => B
-->   : ^^^^^^ 
  }
 -

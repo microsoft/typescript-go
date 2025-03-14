@@ -5,7 +5,6 @@
  === /node_modules/foo/index.d.ts ===
  export = foo;
 ->foo : typeof import("/node_modules/foo/index.d.ts")
-->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>foo : typeof foo
  
  declare namespace foo {
@@ -13,38 +12,22 @@
 +
      export type T = number;
  >T : number
-->  : ^^^^^^
  }
- 
- === /a.ts ===
- import * as foo from "foo";
- >foo : typeof foo
-->    : ^^^^^^^^^^
- 
- declare module "foo" {
+@@= skipped -15, +17 lines =@@
  >"foo" : typeof foo
-->      : ^^^^^^^^^^
  
      export function f(): T; // OK
 ->f : () => T
-->  : ^^^^^^ 
 +>f : () => number
  }
  
  === /b.ts ===
- import * as foo from "foo";
- >foo : typeof foo
-->    : ^^^^^^^^^^
- 
- declare module "foo" {
+@@= skipped -11, +11 lines =@@
  >"foo" : typeof foo
-->      : ^^^^^^^^^^
  
      export function g(): foo.T; // OK
 ->g : () => foo.T
-->  : ^^^^^^     
 +>g : () => number
  >foo : any
-->    : ^^^
  }
  

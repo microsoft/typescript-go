@@ -1,20 +1,11 @@
 --- old.ambientEnumElementInitializer6.types
 +++ new.ambientEnumElementInitializer6.types
-@@= skipped -2, +2 lines =@@
- === ambientEnumElementInitializer6.ts ===
- declare module M {
+@@= skipped -4, +4 lines =@@
  >M : typeof M
-->  : ^^^^^^^^
  
      enum E {
 ->E : E
-->  : ^
 +>E : E.e
  
          e = 3
  >e : E.e
-->  : ^^^
- >3 : 3
-->  : ^
-     }
- }

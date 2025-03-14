@@ -8,20 +8,12 @@
  }
  
  // In second instance of same module, exported interface is not visible
- module m {
+@@= skipped -7, +8 lines =@@
  >m : typeof m
-->  : ^^^^^^^^
  
      interface f {}
 +>f : f
 +
      export class n { 
  >n : n
-->  : ^
- 
-         private n: f;
- >n : f
-->  : ^
-     }
- }
  

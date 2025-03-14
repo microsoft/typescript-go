@@ -1,72 +1,11 @@
 --- old.unusedDestructuring.types
 +++ new.unusedDestructuring.types
-@@= skipped -3, +3 lines =@@
- export {};
- declare const o: any;
+@@= skipped -33, +33 lines =@@
  >o : any
-->  : ^^^
- 
- const { a, b } = o;
- >a : any
-->  : ^^^
- >b : any
-->  : ^^^
- >o : any
-->  : ^^^
- 
- const { c, d }  = o;
- >c : any
-->  : ^^^
- >d : any
-->  : ^^^
- >o : any
-->  : ^^^
- 
- d;
- >d : any
-->  : ^^^
- 
- const { e } = o;
- >e : any
-->  : ^^^
- >o : any
-->  : ^^^
- 
- const { f: g } = o;
- >f : any
-->  : ^^^
- >g : any
-->  : ^^^
- >o : any
-->  : ^^^
- 
- const { h } = o, { i } = o;
- >h : any
-->  : ^^^
- >o : any
-->  : ^^^
- >i : any
-->  : ^^^
- >o : any
-->  : ^^^
  
  function f({ a, b }, { c, d }, { e }) {
 ->f : ({ a, b }: { a: any; b: any; }, { c, d }: { c: any; d: any; }, { e }: { e: any; }) => void
-->  : ^        ^^^^^^^^^^^^^^^^^^^^^^^        ^^^^^^^^^^^^^^^^^^^^^^^     ^^^^^^^^^^^^^^^^^^^^^^
 +>f : (__0: { a: any; b: any; }, __1: { c: any; d: any; }, __2: { e: any; }) => void
  >a : any
-->  : ^^^
  >b : any
-->  : ^^^
  >c : any
-->  : ^^^
- >d : any
-->  : ^^^
- >e : any
-->  : ^^^
- 
-     d;
- >d : any
-->  : ^^^
- }
- 

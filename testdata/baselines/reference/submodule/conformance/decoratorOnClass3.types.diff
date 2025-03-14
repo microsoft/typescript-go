@@ -4,17 +4,7 @@
  === decoratorOnClass3.ts ===
  declare function dec<T>(target: T): T;
  >dec : <T>(target: T) => T
-->    : ^ ^^      ^^ ^^^^^ 
 +>T : T
  >target : T
-->       : ^
  
  export
- @dec
- >dec : <T>(target: T) => T
-->    : ^ ^^      ^^ ^^^^^ 
- 
- class C {
- >C : C
-->  : ^
- }

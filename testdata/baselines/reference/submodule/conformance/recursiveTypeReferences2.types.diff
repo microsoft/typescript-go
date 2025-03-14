@@ -5,8 +5,6 @@
  /** @type {XMLObject<{foo:string}>} */
  const p = {};
 ->p : XMLObject<{ foo: string; }>
-->  : ^^^^^^^^^^^^^^^^^      ^^^^
 +>p : {}
  >{} : {}
-->   : ^^
  

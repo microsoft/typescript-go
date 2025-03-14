@@ -1,12 +1,8 @@
 --- old.declarationEmitHasTypesRefOnNamespaceUse.types
 +++ new.declarationEmitHasTypesRefOnNamespaceUse.types
-@@= skipped -2, +2 lines =@@
- === /src/index.ts ===
- class Src implements NS.Dep { }
+@@= skipped -4, +4 lines =@@
  >Src : Src
-->    : ^^^
  >NS : any
-->   : ^^^
  
 -=== /deps/dep/dep.d.ts ===
 -

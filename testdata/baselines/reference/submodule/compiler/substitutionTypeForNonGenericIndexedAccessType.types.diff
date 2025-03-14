@@ -8,5 +8,3 @@
  
  type B = A extends Record<'foo', string> ? A['foo'] : string; // no error
  >B : string
-->  : ^^^^^^
- 

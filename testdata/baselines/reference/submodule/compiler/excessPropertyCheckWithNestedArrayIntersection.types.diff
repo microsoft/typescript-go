@@ -8,13 +8,11 @@
 +
      fields: Array<{
 ->fields : { value: number | null; }[]
-->       : ^^^^^^^^^             ^^^^^
 +>fields : { value: number; }[]
  
          value: number | null;
  >value : number
-->      : ^^^^^^
- 
+@@= skipped -9, +11 lines =@@
      }>;
  }
  interface ValueAndKeyFields {
@@ -22,17 +20,11 @@
 +
      fields: Array<{
 ->fields : { key: string | null; value: number | null; }[]
-->       : ^^^^^^^             ^^^^^^^^^             ^^^^^
 +>fields : { key: string; value: number; }[]
  
          key: string | null;
  >key : string
-->    : ^^^^^^
- 
-         value: number | null;
- >value : number
-->      : ^^^^^^
- 
+@@= skipped -12, +14 lines =@@
      }>;
  }
  interface BugRepro {
@@ -40,37 +32,4 @@
 +
    dataType: ValueAndKeyFields & ValueOnlyFields;
  >dataType : ValueAndKeyFields & ValueOnlyFields
-->         : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
  }
- const repro: BugRepro = {
- >repro : BugRepro
-->      : ^^^^^^^^
- >{  dataType: {    fields: [{      key: 'bla', // should be OK: Not excess      value: null,    }],  }} : { dataType: { fields: { key: string; value: null; }[]; }; }
-->                                                                                                       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
-   dataType: {
- >dataType : { fields: { key: string; value: null; }[]; }
-->         : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >{    fields: [{      key: 'bla', // should be OK: Not excess      value: null,    }],  } : { fields: { key: string; value: null; }[]; }
-->                                                                                         : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
-     fields: [{
- >fields : { key: string; value: null; }[]
-->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >[{      key: 'bla', // should be OK: Not excess      value: null,    }] : { key: string; value: null; }[]
-->                                                                        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >{      key: 'bla', // should be OK: Not excess      value: null,    } : { key: string; value: null; }
-->                                                                      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
-       key: 'bla', // should be OK: Not excess
- >key : string
-->    : ^^^^^^
- >'bla' : "bla"
-->      : ^^^^^
- 
-       value: null,
- >value : null
-->      : ^^^^
- 
-     }],
-   }

@@ -5,33 +5,19 @@
  === mergedDeclarations2.ts ===
  enum Foo {
 ->Foo : Foo
-->    : ^^^
 +>Foo : Foo.b
  
      b
  >b : Foo.b
-->  : ^^^^^
  }
  enum Foo {
 ->Foo : Foo
-->    : ^^^
 +>Foo : Foo.b
  
      a = b
  >a : Foo.b
-->  : ^^^^^
 ->b : Foo
-->  : ^^^
 +>b : Foo.b
  }
  
  module Foo {
- >Foo : typeof Foo
-->    : ^^^^^^^^^^
- 
-     export var x = b
- >x : any
-->  : ^^^
- >b : any
-->  : ^^^
- }

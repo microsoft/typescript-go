@@ -1,217 +1,34 @@
 --- old.emptyAnonymousObjectNarrowing(strictnullchecks=false).types
 +++ new.emptyAnonymousObjectNarrowing(strictnullchecks=false).types
-@@= skipped -2, +2 lines =@@
- === emptyAnonymousObjectNarrowing.ts ===
- declare let nonNull: {};
- >nonNull : {}
-->        : ^^
- 
- if (nonNull === "foo") {
- >nonNull === "foo" : boolean
-->                  : ^^^^^^^
- >nonNull : {}
-->        : ^^
- >"foo" : "foo"
-->      : ^^^^^
- 
-   nonNull;
- >nonNull : "foo"
-->        : ^^^^^
- }
- else {
-   nonNull;
- >nonNull : {}
-->        : ^^
- }
- 
- declare let obj: { a: string };
- >obj : { a: string; }
-->    : ^^^^^      ^^^
- >a : string
-->  : ^^^^^^
- 
- if (nonNull === obj) {
- >nonNull === obj : boolean
-->                : ^^^^^^^
- >nonNull : {}
-->        : ^^
- >obj : { a: string; }
-->    : ^^^^^      ^^^
- 
-   nonNull;
- >nonNull : object
-->        : ^^^^^^
- }
- else {
-   nonNull;
- >nonNull : {}
-->        : ^^
- }
+@@= skipped -35, +35 lines =@@
  
  function f1<T>(x: T) {
  >f1 : <T>(x: T) => void
-->   : ^ ^^ ^^ ^^^^^^^^^
 +>T : T
  >x : T
-->  : ^
  
    if (nonNull === x) {
- >nonNull === x : boolean
-->              : ^^^^^^^
- >nonNull : {}
-->        : ^^
- >x : T
-->  : ^
- 
-     nonNull;
- >nonNull : {}
-->        : ^^
-   }
-   else {
-     nonNull;
- >nonNull : {}
-->        : ^^
-   }
- }
+@@= skipped -18, +19 lines =@@
  
  function f2<T extends object>(x: T) {
  >f2 : <T extends object>(x: T) => void
-->   : ^ ^^^^^^^^^      ^^ ^^ ^^^^^^^^^
 +>T : T
  >x : T
-->  : ^
  
    if (nonNull === x) {
- >nonNull === x : boolean
-->              : ^^^^^^^
- >nonNull : {}
-->        : ^^
- >x : T
-->  : ^
- 
-     nonNull;
- >nonNull : {}
-->        : ^^
-   }
-   else {
-     nonNull;
- >nonNull : {}
-->        : ^^
-   }
+@@= skipped -17, +18 lines =@@
  }
  
  declare let union: "xyz" | { a: string } | undefined;
 ->union : { a: string; } | "xyz"
-->      : ^^^^^      ^^^^^^^^^^^
 +>union : "xyz" | { a: string; }
  >a : string
-->  : ^^^^^^
  
  if (nonNull === union) {
  >nonNull === union : boolean
-->                  : ^^^^^^^
  >nonNull : {}
-->        : ^^
 ->union : { a: string; } | "xyz"
-->      : ^^^^^      ^^^^^^^^^^^
 +>union : "xyz" | { a: string; }
  
    nonNull;
  >nonNull : {}
-->        : ^^
- }
- else {
-   nonNull;
- >nonNull : {}
-->        : ^^
- }
- 
- if (nonNull === undefined) {
- >nonNull === undefined : boolean
-->                      : ^^^^^^^
- >nonNull : {}
-->        : ^^
- >undefined : undefined
-->          : ^^^^^^^^^
- 
-   nonNull;
- >nonNull : {}
-->        : ^^
- }
- else {
-   nonNull;
- >nonNull : {}
-->        : ^^
- }
- 
- if (nonNull === null) {
- >nonNull === null : boolean
-->                 : ^^^^^^^
- >nonNull : {}
-->        : ^^
- 
-   nonNull;
- >nonNull : {}
-->        : ^^
- }
- else {
-   nonNull;
- >nonNull : {}
-->        : ^^
- }
- 
- if (nonNull == undefined) {
- >nonNull == undefined : boolean
-->                     : ^^^^^^^
- >nonNull : {}
-->        : ^^
- >undefined : undefined
-->          : ^^^^^^^^^
- 
-   nonNull;
- >nonNull : {}
-->        : ^^
- }
- else {
-   nonNull;
- >nonNull : {}
-->        : ^^
- }
- 
- // Repro from #50567
- const foo = (value: unknown): string => {
- >foo : (value: unknown) => string
-->    : ^     ^^       ^^^^^      
- >(value: unknown): string => {  if (!value) {      return 'foo';  }  if (value === 'xyz') {      return value; // Type '{}' is not assignable to type 'string'.  }  return '';} : (value: unknown) => string
-->                                                                                                                                                                               : ^     ^^       ^^^^^      
- >value : unknown
-->      : ^^^^^^^
- 
-   if (!value) {
- >!value : boolean
-->       : ^^^^^^^
- >value : unknown
-->      : ^^^^^^^
- 
-       return 'foo';
- >'foo' : "foo"
-->      : ^^^^^
-   }
-   if (value === 'xyz') {
- >value === 'xyz' : boolean
-->                : ^^^^^^^
- >value : unknown
-->      : ^^^^^^^
- >'xyz' : "xyz"
-->      : ^^^^^
- 
-       return value; // Type '{}' is not assignable to type 'string'.
- >value : "xyz"
-->      : ^^^^^
-   }
-   return '';
- >'' : ""
-->   : ^^
- 
- };
- 

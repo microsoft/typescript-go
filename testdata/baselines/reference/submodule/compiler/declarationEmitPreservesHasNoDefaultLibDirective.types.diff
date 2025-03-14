@@ -1,14 +1,7 @@
 --- old.declarationEmitPreservesHasNoDefaultLibDirective.types
 +++ new.declarationEmitPreservesHasNoDefaultLibDirective.types
-@@= skipped -3, +3 lines =@@
- /// <reference no-default-lib="true"/>
- class Foo {
- >Foo : Foo
-->    : ^^^
- 
-     public: string;
+@@= skipped -8, +8 lines =@@
  >public : string
-->       : ^^^^^^
  }
  interface Array<T> {}
 +>Array : T[]

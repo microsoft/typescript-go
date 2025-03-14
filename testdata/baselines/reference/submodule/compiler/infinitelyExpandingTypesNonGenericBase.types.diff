@@ -4,29 +4,19 @@
  === infinitelyExpandingTypesNonGenericBase.ts ===
  class Functionality<V> {
  >Functionality : Functionality<V>
-->              : ^^^^^^^^^^^^^^^^
 +>V : V
  
      property: Options<V>;
  >property : Options<V>
-->         : ^^^^^^^^^^
- }
- 
- class Base {
- >Base : Base
-->     : ^^^^
- }
+@@= skipped -11, +12 lines =@@
  
  class A<T> extends Base {
  >A : A<T>
-->  : ^^^^
 +>T : T
  >Base : Base
-->     : ^^^^
  
      options: Options<Functionality<T>[]>;
- >options : Options<Functionality<T>[]>
-->        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+@@= skipped -7, +8 lines =@@
  }
  
  interface OptionsBase<T> {
@@ -35,7 +25,6 @@
 +
      Options: Options<T>;
  >Options : Options<T>
-->        : ^^^^^^^^^^
  }
  
  interface Options<T> extends OptionsBase<T> {
@@ -43,19 +32,4 @@
 +>T : T
  }
  
- 
- function o(type: new () => Base) {
- >o : (type: new () => Base) => void
-->  : ^    ^^              ^^^^^^^^^
- >type : new () => Base
-->     : ^^^^^^^^^^    
- }
- 
- o(A);
- >o(A) : void
-->     : ^^^^
- >o : (type: new () => Base) => void
-->  : ^    ^^              ^^^^^^^^^
- >A : typeof A
-->  : ^^^^^^^^
  

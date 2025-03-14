@@ -5,86 +5,37 @@
  var x: typeof undefined;
  >x : any
 ->undefined : undefined
-->          : ^^^^^^^^^
  
  var a: number = x;
  >a : number
-->  : ^^^^^^
- >x : any
- 
- var b: boolean = x;
- >b : boolean
-->  : ^^^^^^^
- >x : any
- 
- var c: string = x;
- >c : string
-->  : ^^^^^^
- >x : any
- 
- var d: void = x;
- >d : void
-->  : ^^^^
- >x : any
+@@= skipped -20, +19 lines =@@
  
  var e: typeof undefined = x;
  >e : any
 ->undefined : undefined
-->          : ^^^^^^^^^
  >x : any
  
  e = x; // should work
-@@= skipped -36, +28 lines =@@
- 
- class C { foo: string }
- >C : C
-->  : ^
- >foo : string
-->    : ^^^^^^
- 
- var f: C;
- >f : C
-->  : ^
- 
- f = x;
- >f = x : any
- >f : C
-->  : ^
+@@= skipped -21, +20 lines =@@
  >x : any
  
  interface I { foo: string }
 +>I : I
  >foo : string
-->    : ^^^^^^
  
  var g: I;
- >g : I
-->  : ^
- 
- g = x;
- >g = x : any
- >g : I
-->  : ^
+@@= skipped -11, +12 lines =@@
  >x : any
  
  var h: { f(): void } = x;
 ->h : { f(): void; }
-->  : ^^^^^^^    ^^^
 +>h : { f: () => void; }
  >f : () => void
-->  : ^^^^^^    
  >x : any
  
  function i<T>(a: T) {
  >i : <T>(a: T) => void
-->  : ^ ^^ ^^ ^^^^^^^^^
 +>T : T
  >a : T
-->  : ^
  
      a = x;
- >a = x : any
- >a : T
-->  : ^
- >x : any
- }

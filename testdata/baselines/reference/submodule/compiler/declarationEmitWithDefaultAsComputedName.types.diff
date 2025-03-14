@@ -4,63 +4,33 @@
  === other.ts ===
  type Experiment<Name> = {
  >Experiment : Experiment<Name>
-->           : ^^^^^^^^^^^^^^^^
 +>Name : Name
  
      name: Name;
  >name : Name
-->     : ^^^^
- 
+@@= skipped -7, +8 lines =@@
  };
  declare const createExperiment: <Name extends string>(
  >createExperiment : <Name extends string>(options: Experiment<Name>) => Experiment<Name>
-->                 : ^    ^^^^^^^^^      ^^       ^^                ^^^^^                
 +>Name : Name
  
      options: Experiment<Name>
  >options : Experiment<Name>
-->        : ^^^^^^^^^^^^^^^^
- 
- ) => Experiment<Name>;
- export default createExperiment({
- >createExperiment({    name: "foo"}) : Experiment<"foo">
-->                                    : ^^^^^^^^^^^^^^^^^
- >createExperiment : <Name extends string>(options: Experiment<Name>) => Experiment<Name>
-->                 : ^    ^^^^^^^^^      ^^       ^^                ^^^^^                
- >{    name: "foo"} : { name: "foo"; }
-->                  : ^^^^^^^^^^^^^^^^
- 
-     name: "foo"
- >name : "foo"
-->     : ^^^^^
- >"foo" : "foo"
-->      : ^^^^^
- 
- });
+@@= skipped -18, +19 lines =@@
  
  === main.ts ===
  import other from "./other";
 ->other : { name: "foo"; }
-->      : ^^^^^^^^^^^^^^^^
 +>other : Experiment<"foo">
  
  export const obj = {
  >obj : { foo: number; }
-->    : ^^^^^^^^^^^^^^^^
- >{    [other.name]: 1,} : { foo: number; }
-->                       : ^^^^^^^^^^^^^^^^
- 
+@@= skipped -9, +9 lines =@@
      [other.name]: 1,
  >[other.name] : number
-->             : ^^^^^^
  >other.name : "foo"
-->           : ^^^^^
 ->other : { name: "foo"; }
-->      : ^^^^^^^^^^^^^^^^
 +>other : Experiment<"foo">
  >name : "foo"
-->     : ^^^^^
  >1 : 1
-->  : ^
  
- };

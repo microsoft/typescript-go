@@ -1,22 +1,11 @@
 --- old.jsDeclarationsImportNamespacedType.types
 +++ new.jsDeclarationsImportNamespacedType.types
-@@= skipped -2, +2 lines =@@
- === file.js ===
- import { dummy } from './mod1'
- >dummy : number
-->      : ^^^^^^
+@@= skipped -5, +5 lines =@@
  
  /** @type {import('./mod1').Dotted.Name} - should work */
  var dot2
 ->dot2 : number
-->     : ^^^^^^
 +>dot2 : any
  
  === mod1.js ===
  /** @typedef {number} Dotted.Name */
- export var dummy = 1
- >dummy : number
-->      : ^^^^^^
- >1 : 1
-->  : ^
- 

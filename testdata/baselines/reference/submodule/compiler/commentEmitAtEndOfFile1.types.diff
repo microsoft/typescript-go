@@ -1,21 +1,6 @@
 --- old.commentEmitAtEndOfFile1.types
 +++ new.commentEmitAtEndOfFile1.types
-@@= skipped -3, +3 lines =@@
- // test
- var f = ''
- >f : string
-->  : ^^^^^^
- >'' : ""
-->   : ^^
- 
- // test #2
- module foo {
- >foo : typeof foo
-->    : ^^^^^^^^^^
- 
-         function bar() { }
- >bar : () => void
-->    : ^^^^^^^^^^
+@@= skipped -14, +14 lines =@@
  }
  // test #3
  module empty {

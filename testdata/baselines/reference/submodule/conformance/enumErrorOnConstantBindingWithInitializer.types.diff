@@ -1,38 +1,11 @@
 --- old.enumErrorOnConstantBindingWithInitializer.types
 +++ new.enumErrorOnConstantBindingWithInitializer.types
-@@= skipped -2, +2 lines =@@
- === enumErrorOnConstantBindingWithInitializer.ts ===
- type Thing = {
- >Thing : Thing
-->      : ^^^^^
- 
-   value?: string | number;
- >value : string | number | undefined
-->      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
- };
- 
- declare const thing: Thing;
+@@= skipped -17, +17 lines =@@
  >thing : Thing
-->      : ^^^^^
- 
- const { value = "123" } = thing;
- >value : string | number
-->      : ^^^^^^^^^^^^^^^
- >"123" : "123"
-->      : ^^^^^
- >thing : Thing
-->      : ^^^^^
  
  enum E {
 ->E : E
-->  : ^
 +>E : E.test
  
    test = value,
  >test : E.test
-->     : ^^^^^^
- >value : string | number
-->      : ^^^^^^^^^^^^^^^
- }
- 

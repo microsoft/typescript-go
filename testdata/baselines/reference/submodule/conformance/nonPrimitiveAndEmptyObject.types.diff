@@ -8,7 +8,6 @@
 +
      barProp?: string;
  >barProp : string | undefined
-->        : ^^^^^^^^^^^^^^^^^^
  }
  
  export interface FooProps {
@@ -16,27 +15,7 @@
 +
      fooProps?: BarProps & object;
 ->fooProps : (BarProps & object) | undefined
-->         : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>fooProps : BarProps & object | undefined
  }
  
  declare const foo: FooProps;
- >foo : FooProps
-->    : ^^^^^^^^
- 
- const { fooProps = {} } = foo;
- >fooProps : BarProps & object
-->         : ^^^^^^^^^^^^^^^^^
- >{} : {}
-->   : ^^
- >foo : FooProps
-->    : ^^^^^^^^
- 
- fooProps.barProp;
- >fooProps.barProp : string | undefined
-->                 : ^^^^^^^^^^^^^^^^^^
- >fooProps : BarProps & object
-->         : ^^^^^^^^^^^^^^^^^
- >barProp : string | undefined
-->        : ^^^^^^^^^^^^^^^^^^
- 

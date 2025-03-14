@@ -1,12 +1,6 @@
 --- old.jsxPreserveWithJsInput.types
 +++ new.jsxPreserveWithJsInput.types
-@@= skipped -2, +2 lines =@@
- === a.js ===
- var elemA = 42;
- >elemA : number
-->      : ^^^^^^
- >42 : 42
-->   : ^^
+@@= skipped -6, +6 lines =@@
  
  === b.jsx ===
  var elemB = <b>{"test"}</b>;
@@ -15,11 +9,8 @@
 +>elemB : any
 +><b>{"test"}</b> : any
  >b : any
-->  : ^^^
  >"test" : "test"
-->       : ^^^^^^
  >b : any
-->  : ^^^
  
  === c.js ===
  var elemC = <c>{42}</c>;
@@ -28,18 +19,9 @@
 +>elemC : any
 +><c>{42}</c> : any
  >c : any
-->  : ^^^
  >42 : 42
-->   : ^^
  >c : any
-->  : ^^^
- 
- === d.ts ===
- var elemD = 42;
- >elemD : number
-->      : ^^^^^^
- >42 : 42
-->   : ^^
+@@= skipped -21, +21 lines =@@
  
  === e.tsx ===
  var elemE = <e>{true}</e>;
@@ -48,9 +30,5 @@
 +>elemE : any
 +><e>{true}</e> : any
  >e : any
-->  : ^^^
  >true : true
-->     : ^^^^
  >e : any
-->  : ^^^
- 

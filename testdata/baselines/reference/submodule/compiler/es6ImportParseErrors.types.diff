@@ -1,8 +1,0 @@
---- old.es6ImportParseErrors.types
-+++ new.es6ImportParseErrors.types
-@@= skipped -2, +2 lines =@@
- === es6ImportParseErrors.ts ===
- import 10;
- >10 : 10
-->   : ^^
- 

@@ -5,50 +5,15 @@
  ///<reference path='ambientExternalModuleWithInternalImportDeclaration_0.ts'/>
  import A = require('M');
 ->A : typeof A
-->  : ^^^^^^^^
 +>A : typeof C
  
  var c = new A();
 ->c : A
-->  : ^
 ->new A() : A
-->        : ^
 ->A : typeof A
-->  : ^^^^^^^^
 +>c : C
 +>new A() : C
 +>A : typeof C
  
  === ambientExternalModuleWithInternalImportDeclaration_0.ts ===
  declare module 'M' {
- >'M' : typeof import("M")
-->    : ^^^^^^^^^^^^^^^^^^
- 
-     module C {
- >C : typeof C
-->  : ^^^^^^^^
- 
-         export var f: number;
- >f : number
-->  : ^^^^^^
-     }
-     class C {
- >C : C
-->  : ^
- 
-         foo(): void;
- >foo : () => void
-->    : ^^^^^^    
-     }
-     import X = C;
- >X : typeof C
-->  : ^^^^^^^^
- >C : C
-->  : ^
- 
-     export = X;
- >X : C
-->  : ^
- 
- }
- 

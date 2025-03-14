@@ -9,7 +9,6 @@
 +
      elems: T[];
  >elems : T[]
-->      : ^^^
  }
  interface CollectionStatic {
 +>CollectionStatic : CollectionStatic
@@ -19,49 +18,19 @@
  }
  declare const Collection: CollectionStatic;
  >Collection : CollectionStatic
-->           : ^^^^^^^^^^^^^^^^
- 
- const ALL = "all";
- >ALL : "all"
-->    : ^^^^^
- >"all" : "all"
-->      : ^^^^^
+@@= skipped -15, +21 lines =@@
  
  type All = typeof ALL;
  >All : "all"
-->    : ^^^^^
 ->ALL : "all"
-->    : ^^^^^
  
  const result: Collection<All> = new Collection();
  >result : Collection<"all">
-->       : ^^^^^^^^^^^^^^^^^
- >new Collection() : Collection<"all">
-->                 : ^^^^^^^^^^^^^^^^^
- >Collection : CollectionStatic
-->           : ^^^^^^^^^^^^^^^^
- 
- const ANOTHER = "another";
- >ANOTHER : "another"
-->        : ^^^^^^^^^
- >"another" : "another"
-->          : ^^^^^^^^^
+@@= skipped -13, +12 lines =@@
  
  type Another = typeof ANOTHER;
  >Another : "another"
-->        : ^^^^^^^^^
 ->ANOTHER : "another"
-->        : ^^^^^^^^^
  
  type Both = Another | All;
  >Both : Both
-->     : ^^^^
- 
- const result2: Collection<Both> = new Collection();
- >result2 : Collection<Both>
-->        : ^^^^^^^^^^^^^^^^
- >new Collection() : Collection<Both>
-->                 : ^^^^^^^^^^^^^^^^
- >Collection : CollectionStatic
-->           : ^^^^^^^^^^^^^^^^
- 

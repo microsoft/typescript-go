@@ -1,48 +1,16 @@
 --- old.stringLiteralTypesAndLogicalOrExpressions01.types
 +++ new.stringLiteralTypesAndLogicalOrExpressions01.types
-@@= skipped -2, +2 lines =@@
- === stringLiteralTypesAndLogicalOrExpressions01.ts ===
- declare function myRandBool(): boolean;
- >myRandBool : () => boolean
-->           : ^^^^^^       
- 
- let a: "foo" = "foo";
- >a : "foo"
-->  : ^^^^^
- >"foo" : "foo"
-->      : ^^^^^
- 
- let b = a || "foo";
- >b : "foo"
-->  : ^^^^^
- >a || "foo" : "foo"
-->           : ^^^^^
- >a : "foo"
-->  : ^^^^^
- >"foo" : "foo"
-->      : ^^^^^
- 
- let c: "foo" = b;
- >c : "foo"
-->  : ^^^^^
- >b : "foo"
-->  : ^^^^^
+@@= skipped -19, +19 lines =@@
  
  let d = b || "bar";
  >d : string
-->  : ^^^^^^
 ->b || "bar" : "foo" | "bar"
-->           : ^^^^^^^^^^^^^
 +>b || "bar" : "bar" | "foo"
  >b : "foo"
-->  : ^^^^^
  >"bar" : "bar"
-->      : ^^^^^
  
  let e: "foo" | "bar" = d;
 ->e : "foo" | "bar"
-->  : ^^^^^^^^^^^^^
 +>e : "bar" | "foo"
  >d : string
-->  : ^^^^^^
  

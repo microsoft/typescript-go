@@ -1,31 +1,21 @@
 --- old.uniqueSymbolsDeclarationsInJs.types
 +++ new.uniqueSymbolsDeclarationsInJs.types
-@@= skipped -3, +3 lines =@@
- // classes
- class C {
- >C : C
-->  : ^
- 
-     /**
+@@= skipped -8, +8 lines =@@
       * @readonly
       */
      static readonlyStaticCall = Symbol();
 ->readonlyStaticCall : unique symbol
-->                   : ^^^^^^^^^^^^^
 ->Symbol() : unique symbol
-->         : ^^^^^^^^^^^^^
 +>readonlyStaticCall : symbol
 +>Symbol() : symbol
  >Symbol : SymbolConstructor
-->       : ^^^^^^^^^^^^^^^^^
  
      /**
-      * @type {unique symbol}
+@@= skipped -9, +9 lines =@@
       * @readonly
       */
      static readonlyStaticType;
 ->readonlyStaticType : unique symbol
-->                   : ^^^^^^^^^^^^^
 +>readonlyStaticType : any
  
      /**
@@ -34,48 +24,9 @@
       */
      static readonlyStaticTypeAndCall = Symbol();
 ->readonlyStaticTypeAndCall : unique symbol
-->                          : ^^^^^^^^^^^^^
 ->Symbol() : unique symbol
-->         : ^^^^^^^^^^^^^
 +>readonlyStaticTypeAndCall : symbol
 +>Symbol() : symbol
  >Symbol : SymbolConstructor
-->       : ^^^^^^^^^^^^^^^^^
  
      static readwriteStaticCall = Symbol();
- >readwriteStaticCall : symbol
-->                    : ^^^^^^
- >Symbol() : symbol
-->         : ^^^^^^
- >Symbol : SymbolConstructor
-->       : ^^^^^^^^^^^^^^^^^
- 
-     /**
-      * @readonly
-      */
-     readonlyCall = Symbol();
- >readonlyCall : symbol
-->             : ^^^^^^
- >Symbol() : symbol
-->         : ^^^^^^
- >Symbol : SymbolConstructor
-->       : ^^^^^^^^^^^^^^^^^
- 
-     readwriteCall = Symbol();
- >readwriteCall : symbol
-->              : ^^^^^^
- >Symbol() : symbol
-->         : ^^^^^^
- >Symbol : SymbolConstructor
-->       : ^^^^^^^^^^^^^^^^^
- }
- 
- /** @type {unique symbol} */
- const a = Symbol();
- >a : unique symbol
-->  : ^^^^^^^^^^^^^
- >Symbol() : unique symbol
-->         : ^^^^^^^^^^^^^
- >Symbol : SymbolConstructor
-->       : ^^^^^^^^^^^^^^^^^
- 

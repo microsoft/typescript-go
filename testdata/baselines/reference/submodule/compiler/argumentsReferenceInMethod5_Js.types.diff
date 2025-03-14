@@ -1,35 +1,14 @@
 --- old.argumentsReferenceInMethod5_Js.types
 +++ new.argumentsReferenceInMethod5_Js.types
-@@= skipped -2, +2 lines =@@
- === /a.js ===
- const bar = {
- >bar : { arguments: {}; }
-->    : ^^^^^^^^^^^^^^^^^^
- >{	arguments: {}} : { arguments: {}; }
-->                 : ^^^^^^^^^^^^^^^^^^
- 
- 	arguments: {}
- >arguments : {}
-->          : ^^
- >{} : {}
-->   : ^^
- }
- 
- class A {
- >A : A
-->  : ^
- 
- 	/**
+@@= skipped -16, +16 lines =@@
  	 * @param {object} [foo={}]
  	 */
  	m(foo = {}) {
 ->m : (foo?: object) => void
-->  : ^   ^^^      ^^^^^^^^^
 ->foo : any
 +>m : (foo?: {}) => void
 +>foo : {}
  >{} : {}
-->   : ^^
  
  		/**
  		 * @type object
@@ -39,29 +18,9 @@
 +>this.foo = foo : {}
  >this.foo : any
  >this : this
-->     : ^^^^
  >foo : any
-->    : ^^^
 ->foo : any
 +>foo : {}
  
  		/**
  		 * @type object
- 		 */
- 		this.bar = bar.arguments;
- >this.bar = bar.arguments : {}
-->                         : ^^
- >this.bar : any
- >this : this
-->     : ^^^^
- >bar : any
-->    : ^^^
- >bar.arguments : {}
-->              : ^^
- >bar : { arguments: {}; }
-->    : ^^^^^^^^^^^^^^^^^^
- >arguments : {}
-->          : ^^
- 	}
- }
- 

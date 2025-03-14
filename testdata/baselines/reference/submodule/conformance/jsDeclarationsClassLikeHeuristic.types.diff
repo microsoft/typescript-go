@@ -1,33 +1,11 @@
 --- old.jsDeclarationsClassLikeHeuristic.types
 +++ new.jsDeclarationsClassLikeHeuristic.types
-@@= skipped -3, +3 lines =@@
- // https://github.com/microsoft/TypeScript/issues/35801
- let A;
- >A : any
-->  : ^^^
- 
- A = {};
- >A = {} : {}
-->       : ^^
- >A : any
-->  : ^^^
- >{} : {}
-->   : ^^
- 
- A.prototype.b = {};
+@@= skipped -13, +13 lines =@@
  >A.prototype.b = {} : {}
-->                   : ^^
  >A.prototype.b : any
-->              : ^^^
  >A.prototype : any
-->            : ^^^
 ->A : {}
-->  : ^^
 +>A : any
  >prototype : any
-->          : ^^^
  >b : any
-->  : ^^^
  >{} : {}
-->   : ^^
- 

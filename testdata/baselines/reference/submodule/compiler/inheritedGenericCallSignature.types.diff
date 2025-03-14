@@ -9,9 +9,7 @@
  
      (a: T): T;
  >a : T
-->  : ^
- 
- }
+@@= skipped -8, +10 lines =@@
  
  
  interface Object {}
@@ -25,33 +23,3 @@
  
      b: T;
  >b : T
-->  : ^
- 
- }
- 
-@@= skipped -24, +27 lines =@@
- 
- var x: I2<Date>;
- >x : I2<Date>
-->  : ^^^^^^^^
- 
-  
- 
- var y = x(undefined);
- >y : Date[]
-->  : ^^^^^^
- >x(undefined) : Date[]
-->             : ^^^^^^
- >x : I2<Date>
-->  : ^^^^^^^^
- >undefined : undefined
-->          : ^^^^^^^^^
- 
- y.length;  // should not error
- >y.length : number
-->         : ^^^^^^
- >y : Date[]
-->  : ^^^^^^
- >length : number
-->       : ^^^^^^
- 

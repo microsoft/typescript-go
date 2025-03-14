@@ -9,11 +9,8 @@
 +
     X: T;
  >X : T
-->  : ^
  
-    Y: T;
- >Y : T
-->  : ^
+@@= skipped -8, +11 lines =@@
  }
  
  interface Person<U extends Person<U>> extends Entity<U> {
@@ -22,7 +19,6 @@
 +
  	n: number;
  >n : number
-->  : ^^^^^^
  }
  
  interface Customer extends Person<Customer> {
@@ -30,6 +26,4 @@
 +
  	s: string;
  >s : string
-->  : ^^^^^^
  }
- 

@@ -1,8 +1,0 @@
---- old.parserRegularExpression1.types
-+++ new.parserRegularExpression1.types
-@@= skipped -2, +2 lines =@@
- === parserRegularExpression1.ts ===
- /(#?-?\d*\.\d\w*%?)|(@?#?[\w-?]+%?)/g;
- >/(#?-?\d*\.\d\w*%?)|(@?#?[\w-?]+%?)/g : RegExp
-->                                      : ^^^^^^
- 

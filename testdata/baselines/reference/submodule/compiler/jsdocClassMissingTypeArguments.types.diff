@@ -5,15 +5,12 @@
  /** @template T */
  class C {}
 ->C : C<T>
-->  : ^^^^
 +>C : C
  
  /** @param {C} p */
  function f(p) {}
 ->f : (p: C<any>) => void
-->  : ^ ^^^^^^^^^^^^^^^^^
 ->p : C<any>
-->  : ^^^^^^
 +>f : (p: any) => void
 +>p : any
  

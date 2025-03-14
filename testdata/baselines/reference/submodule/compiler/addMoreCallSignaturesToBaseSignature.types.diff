@@ -14,18 +14,4 @@
 +
      (key: string): string;
  >key : string
-->    : ^^^^^^
  }
- 
- var a: Bar;
- >a : Bar
-->  : ^^^
- 
- var kitty = a();
- >kitty : string
-->      : ^^^^^^
- >a() : string
-->    : ^^^^^^
- >a : Bar
-->  : ^^^
- 

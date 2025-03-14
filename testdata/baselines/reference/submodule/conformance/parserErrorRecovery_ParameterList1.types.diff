@@ -5,8 +5,6 @@
  === parserErrorRecovery_ParameterList1.ts ===
  function f(a {
 ->f : (a: any, {}: {}) => any
-->  : ^ ^^^^^^^  ^^^^^^^^^^^^
 +>f : (a: any, __1: {}) => any
  >a : any
-->  : ^^^
  }

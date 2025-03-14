@@ -1,8 +1,0 @@
---- old.letAsIdentifier2.types
-+++ new.letAsIdentifier2.types
-@@= skipped -2, +2 lines =@@
- === letAsIdentifier2.ts ===
- function let() {}
- >let : () => void
-->    : ^^^^^^^^^^
- 

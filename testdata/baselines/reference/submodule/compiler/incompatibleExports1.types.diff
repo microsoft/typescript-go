@@ -1,51 +1,23 @@
 --- old.incompatibleExports1.types
 +++ new.incompatibleExports1.types
-@@= skipped -2, +2 lines =@@
- === incompatibleExports1.ts ===
- declare module "foo" { 
+@@= skipped -4, +4 lines =@@
  >"foo" : typeof import("foo")
-->      : ^^^^^^^^^^^^^^^^^^^^
  
      export interface x { a: string } 
 +>x : x
  >a : string
-->  : ^^^^^^
  
      interface y { a: Date }
 +>y : y
  >a : Date
-->  : ^^^^
  
      export = y;
- >y : y
-->  : ^
- }
-  
- declare module "baz" {
- >"baz" : typeof import("baz")
-->      : ^^^^^^^^^^^^^^^^^^^^
- 
-     export module a {
- >a : typeof a
-->  : ^^^^^^^^
- 
-         export var b: number;
- >b : number
-->  : ^^^^^^
+@@= skipped -20, +22 lines =@@
      }
   
      module c {
 ->c : typeof import("baz")
-->  : ^^^^^^^^^^^^^^^^^^^^
 +>c : typeof c
  
          export var c: string;
  >c : string
-->  : ^^^^^^
-     }
-  
-     export = c;
- >c : typeof c
-->  : ^^^^^^^^
- }
- 

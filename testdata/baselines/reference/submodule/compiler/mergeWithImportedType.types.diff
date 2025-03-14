@@ -5,18 +5,14 @@
  === f1.ts ===
  export enum E {X}
 ->E : E
-->  : ^
 +>E : E.X
  >X : E.X
-->  : ^^^
  
  === f2.ts ===
- import {E} from "./f1";
+@@= skipped -8, +8 lines =@@
  >E : typeof E
-->  : ^^^^^^^^
  
  export type E = E;
 ->E : E
-->  : ^
 +>E : E.X
  

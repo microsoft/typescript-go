@@ -8,7 +8,6 @@
 +
      [x: number]: string; // error
  >x : number
-->  : ^^^^^^
  }
  
  
@@ -17,9 +16,7 @@
 +
      [x: string]: { length: string }; // error
  >x : string
-->  : ^^^^^^
  >length : string
-->       : ^^^^^^
  }
  
  interface A2 {
@@ -27,12 +24,8 @@
 +
      [x: number]: string;
  >x : number
-->  : ^^^^^^
  
-     'a': number; //error
- >'a' : number
-->    : ^^^^^^
- }
+@@= skipped -21, +27 lines =@@
  
  
  interface A2 {
@@ -40,14 +33,4 @@
 +
      [x: string]: { length: number };
  >x : string
-->  : ^^^^^^
  >length : number
-->       : ^^^^^^
- 
-     1: { length: number }; // error
- >1 : { length: number; }
-->  : ^^^^^^^^^^      ^^^
- >length : number
-->       : ^^^^^^
- }
- 

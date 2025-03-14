@@ -10,52 +10,13 @@
 +
      [Symbol.unscopables](x: T): U;
  >[Symbol.unscopables] : (x: T) => U
-->                     : ^ ^^ ^^^^^ 
  >Symbol.unscopables : unique symbol
-->                   : ^^^^^^^^^^^^^
- >Symbol : SymbolConstructor
-->       : ^^^^^^^^^^^^^^^^^
- >unscopables : unique symbol
-->            : ^^^^^^^^^^^^^
- >x : T
-->  : ^
- }
+@@= skipped -10, +14 lines =@@
  
  declare function foo<T, U>(p1: T, p2: I<T, U>): U;
  >foo : <T, U>(p1: T, p2: I<T, U>) => U
-->    : ^ ^^ ^^  ^^ ^^  ^^       ^^^^^ 
 +>T : T
 +>U : U
  >p1 : T
-->   : ^
  >p2 : I<T, U>
-->   : ^^^^^^^
- 
- foo("", { [Symbol.unscopables]: s => s.length });
- >foo("", { [Symbol.unscopables]: s => s.length }) : number
-->                                                 : ^^^^^^
- >foo : <T, U>(p1: T, p2: I<T, U>) => U
-->    : ^ ^^ ^^  ^^ ^^  ^^       ^^^^^ 
- >"" : ""
-->   : ^^
- >{ [Symbol.unscopables]: s => s.length } : { [Symbol.unscopables]: (s: string) => number; }
-->                                        : ^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^^^^^^^^^^^^^^^
- >[Symbol.unscopables] : (s: string) => number
-->                     : ^ ^^^^^^^^^^^^^^^^^^^
- >Symbol.unscopables : unique symbol
-->                   : ^^^^^^^^^^^^^
- >Symbol : SymbolConstructor
-->       : ^^^^^^^^^^^^^^^^^
- >unscopables : unique symbol
-->            : ^^^^^^^^^^^^^
- >s => s.length : (s: string) => number
-->              : ^ ^^^^^^^^^^^^^^^^^^^
- >s : string
-->  : ^^^^^^
- >s.length : number
-->         : ^^^^^^
- >s : string
-->  : ^^^^^^
- >length : number
-->       : ^^^^^^
  

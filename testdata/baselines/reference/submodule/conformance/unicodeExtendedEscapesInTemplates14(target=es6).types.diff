@@ -4,8 +4,6 @@
  // Shouldn't work, negatives are not allowed.
  var x = `\u{-DDDD}`;
  >x : string
-->  : ^^^^^^
 ->`\u{-DDDD}` : "\\u{-DDDD}"
-->            : ^^^^^^^^^^^^
 +>`\u{-DDDD}` : "\u{-DDDD}"
  

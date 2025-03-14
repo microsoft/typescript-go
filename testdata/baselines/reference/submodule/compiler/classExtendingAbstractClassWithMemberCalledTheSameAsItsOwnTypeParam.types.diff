@@ -8,13 +8,10 @@
 +
  	handleChange<T, TChange>(observable: IObservable<T, TChange>, change: TChange): void;
  >handleChange : <T, TChange>(observable: IObservable<T, TChange>, change: TChange) => void
-->             : ^ ^^       ^^          ^^                       ^^      ^^       ^^^^^    
 +>T : T
 +>TChange : TChange
  >observable : IObservable<T, TChange>
-->           : ^^^^^^^^^^^^^^^^^^^^^^^
  >change : TChange
-->       : ^^^^^^^
  }
  
  interface IObservable<T, TChange = unknown> {
@@ -24,11 +21,8 @@
 +
  	get(): T;
  >get : () => T
-->    : ^^^^^^ 
  
- 	readonly TChange: TChange;
- >TChange : TChange
-->        : ^^^^^^^
+@@= skipped -15, +23 lines =@@
  }
  
  export interface IReader {
@@ -36,43 +30,23 @@
 +
  	readObservable<T>(observable: IObservable<T, any>): T;
  >readObservable : <T>(observable: IObservable<T, any>) => T
-->               : ^ ^^          ^^                   ^^^^^ 
 +>T : T
  >observable : IObservable<T, any>
-->           : ^^^^^^^^^^^^^^^^^^^
  }
  
  export abstract class ConvenientObservable<T, TChange> implements IObservable<T, TChange> {
  >ConvenientObservable : ConvenientObservable<T, TChange>
-->                     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>T : T
 +>TChange : TChange
  
  	get TChange(): TChange { return null!; }
  >TChange : TChange
-->        : ^^^^^^^
- >null! : never
-->      : ^^^^^
- 
- 	public abstract get(): T;
- >get : () => T
-->    : ^^^^^^ 
- }
+@@= skipped -18, +23 lines =@@
  
  export abstract class BaseObservable<T, TChange = void> extends ConvenientObservable<T, TChange> {
  >BaseObservable : BaseObservable<T, TChange>
-->               : ^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>T : T
 +>TChange : TChange
  >ConvenientObservable : ConvenientObservable<T, TChange>
-->                     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
  
  	protected readonly observers = new Set<IObserver>();
- >observers : Set<IObserver>
-->          : ^^^^^^^^^^^^^^
- >new Set<IObserver>() : Set<IObserver>
-->                     : ^^^^^^^^^^^^^^
- >Set : SetConstructor
-->    : ^^^^^^^^^^^^^^
- }
- 

@@ -5,23 +5,7 @@
  === es6modulekindWithES5Target2.ts ===
  export default class C {
 ->C : C
-->  : ^
 +>C : default
  
      static s = 0;
  >s : number
-->  : ^^^^^^
- >0 : 0
-->  : ^
- 
-     p = 1;
- >p : number
-->  : ^^^^^^
- >1 : 1
-->  : ^
- 
-     method() { }
- >method : () => void
-->       : ^^^^^^^^^^
- }
- 

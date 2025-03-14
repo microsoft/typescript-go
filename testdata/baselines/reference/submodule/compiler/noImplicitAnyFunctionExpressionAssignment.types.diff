@@ -1,31 +1,18 @@
 --- old.noImplicitAnyFunctionExpressionAssignment.types
 +++ new.noImplicitAnyFunctionExpressionAssignment.types
-@@= skipped -2, +2 lines =@@
- === noImplicitAnyFunctionExpressionAssignment.ts ===
- var x: (a: any) => void = function <T>(x: T) {
+@@= skipped -4, +4 lines =@@
  >x : (a: any) => void
-->  : ^ ^^   ^^^^^    
  >a : any
  >function <T>(x: T) {    return null;} : <T>(x: T) => any
-->                                      : ^ ^^ ^^ ^^^^^^^^
 +>T : T
  >x : T
-->  : ^
  
      return null;
- };
- 
- var x2: (a: any) => void = function f<T>(x: T) {
- >x2 : (a: any) => void
-->   : ^ ^^   ^^^^^    
+@@= skipped -10, +11 lines =@@
  >a : any
  >function f<T>(x: T) {    return null;} : <T>(x: T) => any
-->                                       : ^ ^^ ^^ ^^^^^^^^
  >f : <T>(x: T) => any
-->  : ^ ^^ ^^ ^^^^^^^^
 +>T : T
  >x : T
-->  : ^
  
      return null;
- };

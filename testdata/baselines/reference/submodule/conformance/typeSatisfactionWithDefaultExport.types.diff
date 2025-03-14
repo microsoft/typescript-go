@@ -10,13 +10,10 @@
 +
      a: number;
  >a : number
-->  : ^^^^^^
  }
- export default {} satisfies Foo;
+@@= skipped -8, +10 lines =@@
  >{} satisfies Foo : {}
-->                 : ^^
  >{} : {}
-->   : ^^
  
 -=== ./b.ts ===
 +=== b.ts ===
@@ -25,15 +22,4 @@
 +
      a: number;
  >a : number
-->  : ^^^^^^
  }
- export default { a: 1 } satisfies Foo;
- >{ a: 1 } satisfies Foo : { a: number; }
-->                       : ^^^^^^^^^^^^^^
- >{ a: 1 } : { a: number; }
-->         : ^^^^^^^^^^^^^^
- >a : number
-->  : ^^^^^^
- >1 : 1
-->  : ^
- 

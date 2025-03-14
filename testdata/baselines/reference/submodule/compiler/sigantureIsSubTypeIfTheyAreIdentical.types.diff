@@ -8,24 +8,15 @@
 +
      get<T>(key: string): T;
  >get : <T>(key: string) => T
-->    : ^ ^^   ^^      ^^^^^ 
 +>T : T
  >key : string
-->    : ^^^^^^
  }
  class CacheService implements ICache { // Should not error that property type of get are incomaptible
- >CacheService : CacheService
-->             : ^^^^^^^^^^^^
+@@= skipped -9, +12 lines =@@
  
      get<T>(key: string): T {
  >get : <T>(key: string) => T
-->    : ^ ^^   ^^      ^^^^^ 
 +>T : T
  >key : string
-->    : ^^^^^^
  
          return undefined;
- >undefined : undefined
-->          : ^^^^^^^^^
-     }
- }

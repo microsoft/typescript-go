@@ -1,39 +1,13 @@
 --- old.jsDeclarationsSubclassWithExplicitNoArgumentConstructor.types
 +++ new.jsDeclarationsSubclassWithExplicitNoArgumentConstructor.types
-@@= skipped -2, +2 lines =@@
- === index.js ===
- export class Super {
- >Super : Super
-->      : ^^^^^
- 
-     /**
-      * @param {string} firstArg
+@@= skipped -8, +8 lines =@@
       * @param {string} secondArg
       */
      constructor(firstArg, secondArg) { }
 ->firstArg : string
-->         : ^^^^^^
 ->secondArg : string
-->          : ^^^^^^
 +>firstArg : any
 +>secondArg : any
  }
  
  export class Sub extends Super {
- >Sub : Sub
-->    : ^^^
- >Super : Super
-->      : ^^^^^
- 
-     constructor() {
-         super('first', 'second');
- >super('first', 'second') : void
-->                         : ^^^^
- >super : typeof Super
-->      : ^^^^^^^^^^^^
- >'first' : "first"
-->        : ^^^^^^^
- >'second' : "second"
-->         : ^^^^^^^^
-     }
- }

@@ -8,5 +8,4 @@
 +
      export declare module "M" { }
  >"M" : typeof import("M")
-->    : ^^^^^^^^^^^^^^^^^^
  }

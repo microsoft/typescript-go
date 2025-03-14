@@ -1,44 +1,25 @@
 --- old.importTypeAmbient.types
 +++ new.importTypeAmbient.types
-@@= skipped -2, +2 lines =@@
- === importTypeAmbient.ts ===
- declare module "foo" {
+@@= skipped -4, +4 lines =@@
  >"foo" : typeof import("foo")
-->      : ^^^^^^^^^^^^^^^^^^^^
  
      interface Point {
 +>Point : Point
 +
          x: number;
  >x : number
-->  : ^^^^^^
  
-         y: number;
- >y : number
-->  : ^^^^^^
-     }
-     export = Point;
+@@= skipped -10, +12 lines =@@
  >Point : Point
-->      : ^^^^^
  }
  const x: import("foo") = { x: 0, y: 0 };
 ->x : import("foo")
-->  : ^^^^^^^^^^^^^
 +>x : Point
  >{ x: 0, y: 0 } : { x: number; y: number; }
-->               : ^^^^^^^^^^^^^^^^^^^^^^^^^
  >x : number
-->  : ^^^^^^
  >0 : 0
-->  : ^
- >y : number
-->  : ^^^^^^
- >0 : 0
-->  : ^
- 
- declare module "foo2" {
+@@= skipped -11, +11 lines =@@
  >"foo2" : typeof import("foo2")
-->       : ^^^^^^^^^^^^^^^^^^^^^
  
      namespace Bar {
 +>Bar : typeof Bar
@@ -48,12 +29,8 @@
 +
              a: string;
  >a : string
-->  : ^^^^^^
  
-             b: number;
- >b : number
-->  : ^^^^^^
-         }
+@@= skipped -10, +14 lines =@@
      }
  
      namespace Baz {
@@ -64,80 +41,25 @@
 +
              a: number;
  >a : number
-->  : ^^^^^^
  
-             b: string;
- >b : string
-->  : ^^^^^^
-         }
-     }
- 
-     class Bar {
+@@= skipped -13, +17 lines =@@
  >Bar : Bar
-->    : ^^^
  
          item: Bar.I;
 ->item : Bar.I
-->     : ^^^^^
 +>item : I
  >Bar : any
-->    : ^^^
  
          constructor(input: Baz.J);
 ->input : Baz.J
-->      : ^^^^^
 +>input : J
  >Baz : any
-->    : ^^^
      }
  }
  
  let y: import("foo2").Bar.I = { a: "", b: 0 };
 ->y : import("foo2").Bar.I
-->  : ^^^^^^^^^^^^^^^^^^^^
 +>y : I
  >Bar : any
-->    : ^^^
  >{ a: "", b: 0 } : { a: string; b: number; }
-->                : ^^^^^^^^^^^^^^^^^^^^^^^^^
  >a : string
-->  : ^^^^^^
- >"" : ""
-->   : ^^
- >b : number
-->  : ^^^^^^
- >0 : 0
-->  : ^
- 
- class Bar2 {
- >Bar2 : Bar2
-->     : ^^^^
- 
-     item: {a: string, b: number, c: object};
- >item : { a: string; b: number; c: object; }
-->     : ^^^^^      ^^^^^      ^^^^^      ^^^
- >a : string
-->  : ^^^^^^
- >b : number
-->  : ^^^^^^
- >c : object
-->  : ^^^^^^
- 
-     constructor(input?: any) {}
- >input : any
-@@= skipped -111, +89 lines =@@
- 
- let shim: typeof import("foo2") = {
- >shim : typeof import("foo2")
-->     : ^^^^^^^^^^^^^^^^^^^^^
- >{    Bar: Bar2} : { Bar: typeof Bar2; }
-->                : ^^^^^^^^^^^^^^^^^^^^^
- 
-     Bar: Bar2
- >Bar : typeof Bar2
-->    : ^^^^^^^^^^^
- >Bar2 : typeof Bar2
-->     : ^^^^^^^^^^^
- 
- };
- 

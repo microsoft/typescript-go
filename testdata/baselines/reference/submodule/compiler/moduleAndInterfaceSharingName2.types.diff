@@ -17,16 +17,7 @@
  }
  var z: X.Y.Z = null;
 ->z : X.Y.Z
-->  : ^^^^^
 +>z : Z
  >X : any
-->  : ^^^
  >Y : any
-->  : ^^^
- 
- var z2: X.Y<string>;
- >z2 : any
-->   : ^^^
- >X : any
-->  : ^^^
  

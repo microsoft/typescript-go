@@ -10,7 +10,6 @@
      <U extends T>(x: U[])
 +>U : U
  >x : U[]
-->  : ^^^
  }
  
  interface B<T> {
@@ -20,16 +19,5 @@
      <U extends T>(x: U)
 +>U : U
  >x : U
-->  : ^
  }
- 
- var a: A<string>
- >a : A<string>
-->  : ^^^^^^^^^
- 
- var b: B<string> = a; // assignment should be legal (both U's get instantiated to any for comparison)
- >b : B<string>
-->  : ^^^^^^^^^
- >a : A<string>
-->  : ^^^^^^^^^
  

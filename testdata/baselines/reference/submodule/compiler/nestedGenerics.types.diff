@@ -9,10 +9,4 @@
 +
  	t: T;
  >t : T
-->  : ^
  }
- 
- var f: Foo<Foo<number>>;
- >f : Foo<Foo<number>>
-->  : ^^^^^^^^^^^^^^^^
- 

@@ -5,6 +5,5 @@
  /** @type {Array<?number>} */
  var nns;
 ->nns : number[]
-->    : ^^^^^^^^
 +>nns : any
  

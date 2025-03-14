@@ -1,40 +1,22 @@
 --- old.recursiveExportAssignmentAndFindAliasedType1.types
 +++ new.recursiveExportAssignmentAndFindAliasedType1.types
-@@= skipped -3, +3 lines =@@
- /// <reference path="recursiveExportAssignmentAndFindAliasedType1_moduleDef.d.ts"/>
- import moduleC = require("moduleC");
+@@= skipped -5, +5 lines =@@
  >moduleC : any
-->        : ^^^
  
  import ClassB = require("recursiveExportAssignmentAndFindAliasedType1_moduleB");
 ->ClassB : typeof ClassB
-->       : ^^^^^^^^^^^^^
 +>ClassB : any
  
  export var b: ClassB; // This should result in type ClassB
  >b : ClassB
-->  : ^^^^^^
- 
- === recursiveExportAssignmentAndFindAliasedType1_moduleDef.d.ts ===
- declare module "moduleC" {
- >"moduleC" : typeof import("moduleC")
-->          : ^^^^^^^^^^^^^^^^^^^^^^^^
- 
-     import self = require("moduleC");
+@@= skipped -16, +16 lines =@@
  >self : any
-->     : ^^^
- 
-     export = self;
- >self : any
-->     : ^^^
  }
  
 -=== recursiveExportAssignmentAndFindAliasedType1_moduleB.ts ===
 -class ClassB { }
 ->ClassB : ClassB
-->       : ^^^^^^
 -
 -export = ClassB;
 ->ClassB : ClassB
-->       : ^^^^^^
 -

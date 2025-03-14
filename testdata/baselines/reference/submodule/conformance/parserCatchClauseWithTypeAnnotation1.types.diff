@@ -1,9 +1,0 @@
---- old.parserCatchClauseWithTypeAnnotation1.types
-+++ new.parserCatchClauseWithTypeAnnotation1.types
-@@= skipped -3, +3 lines =@@
- try {
- } catch (e: Error) {
- >e : any
-->  : ^^^
- }
- 

@@ -8,7 +8,6 @@
 +
      foo: string;
  >foo : string
-->    : ^^^^^^
  }
  
  interface A {
@@ -16,32 +15,8 @@
 +
      bar: number;
  >bar : number
-->    : ^^^^^^
  }
- 
- var a: A;
- >a : A
-->  : ^
- 
- var r1 = a.foo
- >r1 : string
-->   : ^^^^^^
- >a.foo : string
-->      : ^^^^^^
- >a : A
-->  : ^
- >foo : string
-->    : ^^^^^^
- 
- var r2 = a.bar;
- >r2 : number
-->   : ^^^^^^
- >a.bar : number
-->      : ^^^^^^
- >a : A
-->  : ^
- >bar : number
-->    : ^^^^^^
+@@= skipped -26, +30 lines =@@
  
  // basic generic case
  interface B<T> {
@@ -50,11 +25,8 @@
 +
      baz: string;
  >baz : string
-->    : ^^^^^^
  
-     foo: T;
- >foo : T
-->    : ^
+@@= skipped -8, +11 lines =@@
  }
  
  interface B<T> {
@@ -63,44 +35,15 @@
 +
      bar: T;
  >bar : T
-->    : ^
  }
- 
- var b: B<string>;
- >b : B<string>
-->  : ^^^^^^^^^
- 
- var r3 = b.foo
- >r3 : string
-->   : ^^^^^^
- >b.foo : string
-->      : ^^^^^^
- >b : B<string>
-->  : ^^^^^^^^^
- >foo : string
-->    : ^^^^^^
- 
- var r4 = b.bar;
- >r4 : string
-->   : ^^^^^^
- >b.bar : string
-->      : ^^^^^^
- >b : B<string>
-->  : ^^^^^^^^^
- >bar : string
-->    : ^^^^^^
- 
- // basic non-generic and generic case inside a module
- module M {
+@@= skipped -24, +27 lines =@@
  >M : typeof M
-->  : ^^^^^^^^
  
      interface A {
 +>A : A
 +
          foo: string;
  >foo : string
-->    : ^^^^^^
      }
  
      interface A {
@@ -108,33 +51,9 @@
 +
          bar: number;
  >bar : number
-->    : ^^^^^^
      }
- 
-     var a: A;
- >a : A
-->  : ^
- 
-     var r1 = a.foo;
- >r1 : string
-->   : ^^^^^^
- >a.foo : string
-->      : ^^^^^^
- >a : A
-->  : ^
- >foo : string
-->    : ^^^^^^
- 
-     // BUG 856491
-     var r2 = a.bar; // any, should be number
- >r2 : number
-->   : ^^^^^^
- >a.bar : number
-->      : ^^^^^^
- >a : A
-->  : ^
+@@= skipped -26, +30 lines =@@
  >bar : number
-->    : ^^^^^^
  
      interface B<T> {
 +>B : B<T>
@@ -142,7 +61,6 @@
 +
          foo: T;
  >foo : T
-->    : ^
      }
  
      interface B<T> {
@@ -151,31 +69,4 @@
 +
          bar: T;
  >bar : T
-->    : ^
      }
- 
-     var b: B<string>;
- >b : B<string>
-->  : ^^^^^^^^^
- 
-     var r3 = b.foo
- >r3 : string
-->   : ^^^^^^
- >b.foo : string
-->      : ^^^^^^
- >b : B<string>
-->  : ^^^^^^^^^
- >foo : string
-->    : ^^^^^^
- 
-     // BUG 856491
-     var r4 = b.bar; // any, should be string
- >r4 : string
-->   : ^^^^^^
- >b.bar : string
-->      : ^^^^^^
- >b : B<string>
-->  : ^^^^^^^^^
- >bar : string
-->    : ^^^^^^
- }

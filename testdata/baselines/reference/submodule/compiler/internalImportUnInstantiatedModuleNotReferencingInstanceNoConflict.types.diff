@@ -9,22 +9,12 @@
      export interface X { s: string }
 +>X : X
  >s : string
-->  : ^^^^^^
  }
  
- module B {
- >B : typeof B
-->  : ^^^^^^^^
- 
-     var A = 1;
- >A : number
-->  : ^^^^^^
- >1 : 1
-->  : ^
+@@= skipped -13, +16 lines =@@
  
      import Y = A;
  >Y : any
-->  : ^^^
 ->A : error
 +>A : any
  }

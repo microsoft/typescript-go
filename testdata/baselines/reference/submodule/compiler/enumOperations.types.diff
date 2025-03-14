@@ -5,103 +5,68 @@
  === enumOperations.ts ===
  enum Enum { None = 0 }
 ->Enum : Enum
-->     : ^^^^
 +>Enum : Enum.None
  >None : Enum.None
-->     : ^^^^^^^^^
  >0 : 0
-->  : ^
  
  var enumType: Enum = Enum.None;
 ->enumType : Enum
-->         : ^^^^
 ->Enum.None : Enum
-->          : ^^^^
 +>enumType : Enum.None
 +>Enum.None : Enum.None
  >Enum : typeof Enum
-->     : ^^^^^^^^^^^
 ->None : Enum
-->     : ^^^^
 +>None : Enum.None
  
  var numberType: number = 0;
  >numberType : number
-->           : ^^^^^^
- >0 : 0
-->  : ^
- 
- var anyType: any = 0;
- >anyType : any
- >0 : 0
-->  : ^
+@@= skipped -20, +20 lines =@@
   
  enumType ^ numberType;
  >enumType ^ numberType : number
-->                      : ^^^^^^
 ->enumType : Enum
-->         : ^^^^
 +>enumType : Enum.None
  >numberType : number
-->           : ^^^^^^
  
  numberType ^ anyType;
- >numberType ^ anyType : number
-->                     : ^^^^^^
- >numberType : number
-->           : ^^^^^^
- >anyType : any
+@@= skipped -10, +10 lines =@@
   
  enumType & anyType;
  >enumType & anyType : number
-->                   : ^^^^^^
 ->enumType : Enum
-->         : ^^^^
 +>enumType : Enum.None
  >anyType : any
  
  enumType | anyType;
  >enumType | anyType : number
-->                   : ^^^^^^
 ->enumType : Enum
-->         : ^^^^
 +>enumType : Enum.None
  >anyType : any
  
  enumType ^ anyType;
  >enumType ^ anyType : number
-->                   : ^^^^^^
 ->enumType : Enum
-->         : ^^^^
 +>enumType : Enum.None
  >anyType : any
  
  ~anyType;
- >~anyType : number
-->         : ^^^^^^
- >anyType : any
+@@= skipped -19, +19 lines =@@
  
  enumType <<anyType;
  >enumType <<anyType : number
-->                   : ^^^^^^
 ->enumType : Enum
-->         : ^^^^
 +>enumType : Enum.None
  >anyType : any
  
  enumType >>anyType;
  >enumType >>anyType : number
-->                   : ^^^^^^
 ->enumType : Enum
-->         : ^^^^
 +>enumType : Enum.None
  >anyType : any
  
  enumType >>>anyType;
  >enumType >>>anyType : number
-->                    : ^^^^^^
 ->enumType : Enum
-->         : ^^^^
 +>enumType : Enum.None
  >anyType : any
  

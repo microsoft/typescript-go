@@ -1,10 +1,7 @@
 --- old.inlineJsxAndJsxFragPragmaOverridesCompilerOptions.types
 +++ new.inlineJsxAndJsxFragPragmaOverridesCompilerOptions.types
-@@= skipped -2, +2 lines =@@
- === react.d.ts ===
- declare global {
+@@= skipped -4, +4 lines =@@
  >global : any
-->       : ^^^
  
      namespace JSX {
 +>JSX : any
@@ -14,38 +11,9 @@
 +
              [e: string]: any;
  >e : string
-->  : ^^^^^^
          }
-     }
- }
- export function createElement(): void;
- >createElement : () => void
-->              : ^^^^^^    
- 
- export function Fragment(): void;
+@@= skipped -29, +33 lines =@@
  >Fragment : () => void
-->         : ^^^^^^    
- 
- === preact.d.ts ===
- export function h(): void;
- >h : () => void
-->  : ^^^^^^    
- 
- export function Frag(): void;
- >Frag : () => void
-->     : ^^^^^^    
- 
- === snabbdom.d.ts ===
- export function h(): void;
- >h : () => void
-->  : ^^^^^^    
- 
- === reacty.tsx ===
- import {createElement, Fragment} from "./react";
- >createElement : () => void
-->              : ^^^^^^    
- >Fragment : () => void
-->         : ^^^^^^    
  
  <><span></span></>
 -><><span></span></> : error
@@ -53,19 +21,10 @@
 +><><span></span></> : any
 +><span></span> : any
  >span : any
-->     : ^^^
  >span : any
-->     : ^^^
  
- === preacty.tsx ===
- /**
-@@= skipped -54, +47 lines =@@
-  */
- import {h, Frag} from "./preact";
- >h : () => void
-->  : ^^^^^^    
+@@= skipped -15, +15 lines =@@
  >Frag : () => void
-->     : ^^^^^^    
  
  <><div></div></>
 -><><div></div></> : error
@@ -73,17 +32,10 @@
 +><><div></div></> : any
 +><div></div> : any
  >div : any
-->    : ^^^
  >div : any
-->    : ^^^
  
- === snabbdomy.tsx ===
- /**
-@@= skipped -19, +15 lines =@@
-  */
- import {h} from "./snabbdom";
+@@= skipped -14, +14 lines =@@
  >h : () => void
-->  : ^^^^^^    
  
  <><div></div></>
 -><><div></div></> : error
@@ -91,20 +43,10 @@
 +><><div></div></> : any
 +><div></div> : any
  >div : any
-->    : ^^^
  >div : any
-->    : ^^^
  
- === mix-n-match.tsx ===
- /* @jsx h */
- /* @jsxFrag Fragment */
- import {h} from "./preact";
- >h : () => void
-->  : ^^^^^^    
- 
- import {Fragment} from "./react";
+@@= skipped -15, +15 lines =@@
  >Fragment : () => void
-->         : ^^^^^^    
  
  <><span></span></>
 -><><span></span></> : error
@@ -112,7 +54,5 @@
 +><><span></span></> : any
 +><span></span> : any
  >span : any
-->     : ^^^
  >span : any
-->     : ^^^
  

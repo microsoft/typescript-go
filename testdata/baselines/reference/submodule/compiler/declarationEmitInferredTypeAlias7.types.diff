@@ -1,30 +1,11 @@
 --- old.declarationEmitInferredTypeAlias7.types
 +++ new.declarationEmitInferredTypeAlias7.types
-@@= skipped -2, +2 lines =@@
- === 0.ts ===
- export type Data = string | boolean;
- >Data : Data
-->     : ^^^^
- 
- let obj: Data = true;
- >obj : Data
-->    : ^^^^
- >true : true
-->     : ^^^^
- 
+@@= skipped -10, +10 lines =@@
  === 1.ts ===
  let v = "str" || true;
  >v : string | boolean
-->  : ^^^^^^^^^^^^^^^^
 ->"str" || true : true | "str"
-->              : ^^^^^^^^^^^^
 +>"str" || true : "str" | true
  >"str" : "str"
-->      : ^^^^^
  >true : true
-->     : ^^^^
- 
- export { v }
- >v : string | boolean
-->  : ^^^^^^^^^^^^^^^^
  

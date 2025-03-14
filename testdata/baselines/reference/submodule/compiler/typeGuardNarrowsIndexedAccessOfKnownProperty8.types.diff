@@ -7,49 +7,31 @@
 +=== a.ts ===
  export const key = "a";
  >key : "a"
-->    : ^^^
  >"a" : "a"
-->    : ^^^
  
 -=== ./b.ts ===
 +=== b.ts ===
  import * as a from "./a";
 ->a : typeof a
-->  : ^^^^^^^^
 +>a : typeof import("a")
  
  export class C {
  >C : C
-->  : ^
- 
+@@= skipped -14, +14 lines =@@
      [a.key]: string;
  >[a.key] : string
-->        : ^^^^^^
  >a.key : "a"
-->      : ^^^
 ->a : typeof a
-->  : ^^^^^^^^
 +>a : typeof import("a")
  >key : "a"
-->    : ^^^
  
      constructor() {
-         this[a.key] = "foo";
- >this[a.key] = "foo" : "foo"
-->                    : ^^^^^
+@@= skipped -9, +9 lines =@@
  >this[a.key] : string
-->            : ^^^^^^
  >this : this
-->     : ^^^^
  >a.key : "a"
-->      : ^^^
 ->a : typeof a
-->  : ^^^^^^^^
 +>a : typeof import("a")
  >key : "a"
-->    : ^^^
  >"foo" : "foo"
-->      : ^^^^^
      }
- }
- 

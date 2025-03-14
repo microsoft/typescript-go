@@ -8,36 +8,21 @@
 +
      x: string;
  >x : string
-->  : ^^^^^^
  }
- declare const items: Item[];
- >items : Item[]
-->      : ^^^^^^
- 
- export = items;
- >items : Item[]
-->      : ^^^^^^
- 
+@@= skipped -12, +14 lines =@@
  === index.js ===
  /** @type {typeof import("/some-mod")} */
  const items = [];
 ->items : Item[]
-->      : ^^^^^^
 +>items : any[]
  >[] : undefined[]
-->   : ^^^^^^^^^^^
  
  module.exports = items;
 ->module.exports = items : Item[]
-->                       : ^^^^^^
 ->module.exports : Item[]
-->               : ^^^^^^
 ->module : { exports: Item[]; }
-->       : ^^^^^^^^^^^^^^^^^^^^
 ->exports : Item[]
-->        : ^^^^^^
 ->items : Item[]
-->      : ^^^^^^
 +>module.exports = items : any[]
 +>module.exports : any
 +>module : any

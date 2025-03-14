@@ -1,17 +1,6 @@
 --- old.systemModule7.types
 +++ new.systemModule7.types
-@@= skipped -3, +3 lines =@@
- // filename: instantiatedModule.ts
- export module M {
- >M : typeof M
-->  : ^^^^^^^^
- 
-     var x = 1;
- >x : number
-->  : ^^^^^^
- >1 : 1
-->  : ^
- }
+@@= skipped -11, +11 lines =@@
  
  // filename: nonInstantiatedModule.ts
  export module M {

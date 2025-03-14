@@ -1,10 +1,7 @@
 --- old.parserConstructorDeclaration9.types
 +++ new.parserConstructorDeclaration9.types
-@@= skipped -2, +2 lines =@@
- === parserConstructorDeclaration9.ts ===
- class C {
+@@= skipped -4, +4 lines =@@
  >C : C
-->  : ^
  
    constructor<T>() { }
 +>T : T

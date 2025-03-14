@@ -1,19 +1,6 @@
 --- old.contextualTypingOfTooShortOverloads.types
 +++ new.contextualTypingOfTooShortOverloads.types
-@@= skipped -3, +3 lines =@@
- // small repro from #11875
- var use: Overload;
- >use : Overload
-->    : ^^^^^^^^
- 
- use((req, res) => {});
- >use((req, res) => {}) : void
-->                      : ^^^^
- >use : Overload
-->    : ^^^^^^^^
- >(req, res) => {} : (req: any, res: any) => void
-->                 : ^   ^^^^^^^   ^^^^^^^^^^^^^^
- >req : any
+@@= skipped -12, +12 lines =@@
  >res : any
  
  interface Overload {
@@ -21,38 +8,8 @@
 +
      (handler1: (req1: string) => void): void;
  >handler1 : (req1: string) => void
-->         : ^    ^^      ^^^^^    
  >req1 : string
-->     : ^^^^^^
- 
-     (handler2: (req2: number, res2: number) => void): void;
- >handler2 : (req2: number, res2: number) => void
-->         : ^    ^^      ^^    ^^      ^^^^^    
- >req2 : number
-->     : ^^^^^^
- >res2 : number
-->     : ^^^^^^
- }
- // larger repro from #11875
- let app: MyApp;
- >app : MyApp
-->    : ^^^^^
- 
- app.use((err: any, req, res, next) => { return; });
- >app.use((err: any, req, res, next) => { return; }) : MyApp
-->                                                   : ^^^^^
- >app.use : IRouterHandler<MyApp> & IRouterMatcher<MyApp>
-->        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >app : MyApp
-->    : ^^^^^
- >use : IRouterHandler<MyApp> & IRouterMatcher<MyApp>
-->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >(err: any, req, res, next) => { return; } : (err: any, req: any, res: any, next: any) => void
-->                                          : ^   ^^   ^^   ^^^^^^^   ^^^^^^^    ^^^^^^^^^^^^^^
- >err : any
- >req : any
- >res : any
-@@= skipped -50, +37 lines =@@
+@@= skipped -26, +28 lines =@@
  
  
  interface MyApp {
@@ -60,7 +17,6 @@
 +
      use: IRouterHandler<this> & IRouterMatcher<this>;
  >use : IRouterHandler<this> & IRouterMatcher<this>
-->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
  }
  
  interface IRouterHandler<T> {
@@ -69,11 +25,8 @@
 +
      (...handlers: RequestHandler[]): T;
  >handlers : RequestHandler[]
-->         : ^^^^^^^^^^^^^^^^
  
-     (...handlers: RequestHandlerParams[]): T;
- >handlers : RequestHandlerParams[]
-->         : ^^^^^^^^^^^^^^^^^^^^^^
+@@= skipped -13, +18 lines =@@
  }
  
  interface IRouterMatcher<T> {
@@ -82,35 +35,17 @@
 +
      (path: PathParams, ...handlers: RequestHandler[]): T;
  >path : PathParams
-->     : ^^^^^^^^^^
  >handlers : RequestHandler[]
-->         : ^^^^^^^^^^^^^^^^
- 
-     (path: PathParams, ...handlers: RequestHandlerParams[]): T;
- >path : PathParams
-->     : ^^^^^^^^^^
- >handlers : RequestHandlerParams[]
-->         : ^^^^^^^^^^^^^^^^^^^^^^
- }
- 
- type PathParams = string | RegExp | (string | RegExp)[];
- >PathParams : PathParams
-->           : ^^^^^^^^^^
- 
- type RequestHandlerParams = RequestHandler | ErrorRequestHandler | (RequestHandler | ErrorRequestHandler)[];
+@@= skipped -16, +19 lines =@@
  >RequestHandlerParams : RequestHandlerParams
-->                     : ^^^^^^^^^^^^^^^^^^^^
  
  interface RequestHandler {
 +>RequestHandler : RequestHandler
 +
      (req: Request, res: Response, next: NextFunction): any;
  >req : Request
-->    : ^^^^^^^
  >res : Response
-->    : ^^^^^^^^
- >next : NextFunction
-->     : ^^^^^^^^^^^^
+@@= skipped -7, +9 lines =@@
  }
  
  interface ErrorRequestHandler {
@@ -119,11 +54,7 @@
      (err: any, req: Request, res: Response, next: NextFunction): any;
  >err : any
  >req : Request
-->    : ^^^^^^^
- >res : Response
-->    : ^^^^^^^^
- >next : NextFunction
-->     : ^^^^^^^^^^^^
+@@= skipped -8, +10 lines =@@
  }
  
  interface Request {
@@ -131,7 +62,6 @@
 +
      method: string;
  >method : string
-->       : ^^^^^^
  }
  
  interface Response {
@@ -139,7 +69,6 @@
 +
      statusCode: number;
  >statusCode : number
-->           : ^^^^^^
  }
  
  interface NextFunction {

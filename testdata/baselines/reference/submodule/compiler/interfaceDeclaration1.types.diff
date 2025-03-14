@@ -8,11 +8,8 @@
 +
      item:number;
  >item : number
-->     : ^^^^^^
  
-     item:number;
- >item : number
-->     : ^^^^^^
+@@= skipped -8, +10 lines =@@
  }
  
  interface I2 {
@@ -20,11 +17,8 @@
 +
      item:any;
  >item : any
-->     : ^^^
  
-     item:number;
- >item : any
-->     : ^^^
+@@= skipped -8, +10 lines =@@
  }
  
  interface I3 {
@@ -32,7 +26,6 @@
 +
      prototype:number;
  >prototype : number
-->          : ^^^^^^
  }
  
  interface I4 {
@@ -40,19 +33,8 @@
 +
      class:number;
  >class : number
-->      : ^^^^^^
  
-     number:number;
- >number : number
-->       : ^^^^^^
- 
-     super:number;
- >super : number
-->      : ^^^^^^
- 
-     prototype:number;
- >prototype : number
-->          : ^^^^^^
+@@= skipped -19, +23 lines =@@
  }
  
  interface I5 extends I5 { 
@@ -60,7 +42,6 @@
 +
      foo():void;
  >foo : () => void
-->    : ^^^^^^    
  }
  
  interface I6 {
@@ -74,25 +55,7 @@
  
  var v1:I7;
  >v1 : I7
-->   : ^^
- 
- v1();
- >v1() : void
-->     : ^^^^
- >v1 : I7
-->   : ^^
- 
- class C1 implements I3 {
- >C1 : C1
-->   : ^^
- 
-     constructor() {
-         var prototype: number = 3;
- >prototype : number
-->          : ^^^^^^
- >3 : 3
-->  : ^
-     }
+@@= skipped -28, +33 lines =@@
  }
  
  interface i8 extends i9 { }
@@ -106,7 +69,6 @@
 +
  	foo():number;
  >foo : () => number
-->    : ^^^^^^      
  }
  
  interface i11{
@@ -114,7 +76,6 @@
 +
  	foo():string;
  >foo : () => string
-->    : ^^^^^^      
  }
  
  interface i12 extends i10, i11 { }

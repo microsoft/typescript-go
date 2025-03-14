@@ -1,14 +1,6 @@
 --- old.mergedInterfacesWithInheritedPrivates.types
 +++ new.mergedInterfacesWithInheritedPrivates.types
-@@= skipped -2, +2 lines =@@
- === mergedInterfacesWithInheritedPrivates.ts ===
- class C {
- >C : C
-->  : ^
- 
-     private x: number;
- >x : number
-->  : ^^^^^^
+@@= skipped -8, +8 lines =@@
  }
  
  interface A extends C {
@@ -16,7 +8,6 @@
 +
      y: string;
  >y : string
-->  : ^^^^^^
  }
  
  interface A {
@@ -24,54 +15,4 @@
 +
      z: string;
  >z : string
-->  : ^^^^^^
  }
- 
- class D implements A { // error
- >D : D
-->  : ^
- 
-     private x: number;
- >x : number
-->  : ^^^^^^
- 
-     y: string;
- >y : string
-->  : ^^^^^^
- 
-     z: string;
- >z : string
-->  : ^^^^^^
- }
- 
- class E implements A { // error
- >E : E
-->  : ^
- 
-     x: number;
- >x : number
-->  : ^^^^^^
- 
-     y: string;
- >y : string
-->  : ^^^^^^
- 
-     z: string;
- >z : string
-->  : ^^^^^^
- }
- 
- var a: A;
- >a : A
-->  : ^
- 
- var r = a.x; // error
- >r : number
-->  : ^^^^^^
- >a.x : number
-->    : ^^^^^^
- >a : A
-->  : ^
- >x : number
-->  : ^^^^^^
- 

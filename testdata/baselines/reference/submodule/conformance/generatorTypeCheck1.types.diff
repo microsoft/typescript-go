@@ -5,6 +5,5 @@
  === generatorTypeCheck1.ts ===
  function* g1(): Iterator<string> { }
 ->g1 : () => Iterator<string>
-->   : ^^^^^^                
 +>g1 : () => Iterator<string, any, any>
  

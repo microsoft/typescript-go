@@ -5,13 +5,7 @@
  === b.ts ===
  import y = require("./a");
 ->y : typeof y
-->  : ^^^^^^^^
 +>y : typeof import("a")
  
  === a.ts ===
  export var x = 1;
- >x : number
-->  : ^^^^^^
- >1 : 1
-->  : ^
- 

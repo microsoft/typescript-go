@@ -5,39 +5,27 @@
   */
  function foo(n, s) {}
 ->foo : (n?: number | undefined, s?: string) => void
-->    : ^ ^^^         ^^^^^^^^^^^ ^^^      ^^^^^^^^^
 ->n : number
-->  : ^^^^^^
 ->s : string
-->  : ^^^^^^
 +>foo : (n: any, s: any) => void
 +>n : any
 +>s : any
  
  foo();
  >foo() : void
-->      : ^^^^
 ->foo : (n?: number | undefined, s?: string) => void
-->    : ^ ^^^         ^^^^^^^^^^^ ^^^      ^^^^^^^^^
 +>foo : (n: any, s: any) => void
  
  foo(1);
  >foo(1) : void
-->       : ^^^^
 ->foo : (n?: number | undefined, s?: string) => void
-->    : ^ ^^^         ^^^^^^^^^^^ ^^^      ^^^^^^^^^
 +>foo : (n: any, s: any) => void
  >1 : 1
-->  : ^
  
  foo(1, "hi");
  >foo(1, "hi") : void
-->             : ^^^^
 ->foo : (n?: number | undefined, s?: string) => void
-->    : ^ ^^^         ^^^^^^^^^^^ ^^^      ^^^^^^^^^
 +>foo : (n: any, s: any) => void
  >1 : 1
-->  : ^
  >"hi" : "hi"
-->     : ^^^^
  

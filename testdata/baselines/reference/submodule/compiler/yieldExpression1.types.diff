@@ -1,35 +1,11 @@
 --- old.yieldExpression1.types
 +++ new.yieldExpression1.types
-@@= skipped -2, +2 lines =@@
- === yieldExpression1.ts ===
- function* a() {
- >a : () => Generator<0 | undefined, void, unknown>
-->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
-     yield;
- >yield : any
-->      : ^^^
- 
-     yield 0;
- >yield 0 : any
-->        : ^^^
- >0 : 0
-->  : ^
+@@= skipped -12, +12 lines =@@
  }
  
  function* b(): IterableIterator<number> {
 ->b : () => IterableIterator<number>
-->  : ^^^^^^                        
 +>b : () => IterableIterator<number, any, any>
  
      yield;
  >yield : any
-->      : ^^^
- 
-     yield 0;
- >yield 0 : any
-->        : ^^^
- >0 : 0
-->  : ^
- }
- 

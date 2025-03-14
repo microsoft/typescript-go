@@ -1,34 +1,11 @@
 --- old.umd6.types
 +++ new.umd6.types
-@@= skipped -3, +3 lines =@@
- /// <reference path="foo.d.ts" />
- let y: number = Foo.fn();
+@@= skipped -5, +5 lines =@@
  >y : number
-->  : ^^^^^^
  >Foo.fn() : number
-->         : ^^^^^^
  >Foo.fn : () => number
-->       : ^^^^^^      
 ->Foo : typeof Foo
-->    : ^^^^^^^^^^
 +>Foo : typeof Thing
  >fn : () => number
-->   : ^^^^^^      
  
  === foo.d.ts ===
- declare namespace Thing {
- >Thing : typeof Thing
-->      : ^^^^^^^^^^^^
- 
- 	export function fn(): number;
- >fn : () => number
-->   : ^^^^^^      
- }
- export = Thing;
- >Thing : typeof Thing
-->      : ^^^^^^^^^^^^
- 
- export as namespace Foo;
- >Foo : typeof Thing
-->    : ^^^^^^^^^^^^
- 

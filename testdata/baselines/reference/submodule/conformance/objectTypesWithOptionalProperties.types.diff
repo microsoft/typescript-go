@@ -1,14 +1,6 @@
 --- old.objectTypesWithOptionalProperties.types
 +++ new.objectTypesWithOptionalProperties.types
-@@= skipped -4, +4 lines =@@
- 
- var a: {
- >a : { x?: number; }
-->  : ^^^^^^      ^^^
- 
-     x?: number; // ok
- >x : number
-->  : ^^^^^^
+@@= skipped -10, +10 lines =@@
  }
  
  interface I {
@@ -16,16 +8,8 @@
 +
      x?: number; // ok
  >x : number
-->  : ^^^^^^
  }
- 
- class C {
- >C : C
-->  : ^
- 
-     x?: number; // ok
- >x : number
-->  : ^^^^^^
+@@= skipped -12, +14 lines =@@
  }
  
  interface I2<T> {
@@ -34,28 +18,11 @@
 +
      x?: T; // ok
  >x : T
-->  : ^
  }
  
  class C2<T> {
  >C2 : C2<T>
-->   : ^^^^^
 +>T : T
  
      x?: T; // ok
  >x : T
-->  : ^
- }
- 
- var b = {
- >b : { x: number; }
-->  : ^^^^^^^^^^^^^^
- >{    x?: 1 // error} : { x: number; }
-->                     : ^^^^^^^^^^^^^^
- 
-     x?: 1 // error
- >x : number
-->  : ^^^^^^
- >1 : 1
-->  : ^
- }

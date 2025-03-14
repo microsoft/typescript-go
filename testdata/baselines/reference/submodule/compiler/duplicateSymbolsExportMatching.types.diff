@@ -66,89 +66,28 @@
  }
  
  // Should report error only once for instantiated module
- module M {
- >M : typeof M
-->  : ^^^^^^^^
- 
-     module inst {
- >inst : typeof inst
-->     : ^^^^^^^^^^^
- 
-         var t;
+@@= skipped -39, +72 lines =@@
  >t : any
-->  : ^^^
      }
      export module inst { // one error
 ->inst : typeof M.inst
-->     : ^^^^^^^^^^^^^
 +>inst : typeof inst
  
          var t;
  >t : any
-->  : ^^^
-     }
- }
- 
- // Variables of the same / different type
- module M2 {
- >M2 : typeof M2
-->   : ^^^^^^^^^
- 
-     var v: string;
- >v : string
-->  : ^^^^^^
- 
-     export var v: string; // one error (visibility)
- >v : string
-->  : ^^^^^^
- 
-     var w: number;
- >w : number
-->  : ^^^^^^
- 
-     export var w: string; // two errors (visibility and type mismatch)
- >w : string
-->  : ^^^^^^
- }
- 
- module M {
- >M : typeof M
-->  : ^^^^^^^^
- 
-     module F {
- >F : typeof F
-->  : ^^^^^^^^
- 
-         var t;
- >t : any
-->  : ^^^
-     }
-     export function F() { } // Only one error for duplicate identifier (don't consider visibility)
- >F : () => void
-->  : ^^^^^^^^^^
- }
- 
- module M {
- >M : typeof M
-->  : ^^^^^^^^
- 
-     class C { }
+@@= skipped -44, +44 lines =@@
  >C : C
-->  : ^
  
      module C { }
 +>C : typeof C
 +
      export module C { // Two visibility errors (one for the clodule symbol, and one for the merged container symbol)
 ->C : typeof M.C
-->  : ^^^^^^^^^^
 +>C : typeof C
  
          var t;
  >t : any
-->  : ^^^
-     }
- }
+@@= skipped -10, +12 lines =@@
  
  // Top level
  interface D { }

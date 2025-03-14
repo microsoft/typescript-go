@@ -1,38 +1,19 @@
 --- old.exportAsNamespace5.types
 +++ new.exportAsNamespace5.types
-@@= skipped -2, +2 lines =@@
- === three.d.ts ===
- export type Named = 0;
- >Named : 0
-->      : ^
- 
- declare const Named: 0;
- >Named : 0
-->      : ^
- 
- === two.d.ts ===
- export * as default from "./three";
- >default : typeof import("three")
-->        : ^^^^^^^^^^^^^^^^^^^^^^
+@@= skipped -12, +12 lines =@@
  
  === one.ts ===
  import ns from "./two";
 ->ns : typeof ns
-->   : ^^^^^^^^^
 +>ns : typeof import("three")
  
  type Alias = ns.Named;
  >Alias : 0
-->      : ^
- >ns : any
-->   : ^^^
+@@= skipped -8, +8 lines =@@
  
  ns.Named;
  >ns.Named : 0
-->         : ^
 ->ns : typeof ns
-->   : ^^^^^^^^^
 +>ns : typeof import("three")
  >Named : 0
-->      : ^
  

@@ -1,13 +1,8 @@
 --- old.parserGetAccessorWithTypeParameters1.types
 +++ new.parserGetAccessorWithTypeParameters1.types
-@@= skipped -2, +2 lines =@@
- === parserGetAccessorWithTypeParameters1.ts ===
- class C {
- >C : C
-->  : ^
+@@= skipped -5, +5 lines =@@
  
    get foo<T>() { }
  >foo : void
-->    : ^^^^
 +>T : T
  }

@@ -1,115 +1,42 @@
 --- old.genericIndexedAccessVarianceComparisonResultCorrect.types
 +++ new.genericIndexedAccessVarianceComparisonResultCorrect.types
-@@= skipped -2, +2 lines =@@
- === genericIndexedAccessVarianceComparisonResultCorrect.ts ===
- class A {
- >A : A
-->  : ^
- 
-     x: string = 'A';
- >x : string
-->  : ^^^^^^
- >'A' : "A"
-->    : ^^^
- 
-     y: number = 0;
- >y : number
-->  : ^^^^^^
- >0 : 0
-->  : ^
- }
- 
- class B {
- >B : B
-->  : ^
- 
-     x: string = 'B';
- >x : string
-->  : ^^^^^^
- >'B' : "B"
-->    : ^^^
- 
-     z: boolean = true;
- >z : boolean
-->  : ^^^^^^^
- >true : true
-->     : ^^^^
- }
+@@= skipped -26, +26 lines =@@
  
  type T<X extends { x: any }> = Pick<X, 'x'>;
  >T : T<X>
-->  : ^^^^
 +>X : X
  >x : any
-->  : ^^^
  
  type C = T<A>;
- >C : C
-->  : ^
- 
- type D = T<B>;
- >D : D
-->  : ^
- 
- type C_extends_D = C extends D ? true : false;                                  // true
- >C_extends_D : true
-->            : ^^^^
- >true : true
-->     : ^^^^
+@@= skipped -19, +20 lines =@@
  >false : false
-->      : ^^^^^
- 
- type PickA_extends_PickB = Pick<A, 'x'> extends Pick<B, 'x'> ? true : false;    // true
- >PickA_extends_PickB : true
-->                    : ^^^^
- >true : true
-->     : ^^^^
- >false : false
-->      : ^^^^^
  
  type TA_extends_TB = T<A> extends T<B> ? true : false;                          // should be true
 ->TA_extends_TB : false
-->              : ^^^^^
 +>TA_extends_TB : true
  >true : true
-->     : ^^^^
  >false : false
-->      : ^^^^^
  
  declare let a: T<A>;
 ->a : T<A>
-->  : ^^^^
 +>a : Pick<A, "x">
  
  declare let b: T<B>;
 ->b : T<B>
-->  : ^^^^
 +>b : Pick<B, "x">
  
  declare let c: C;
  >c : C
-->  : ^
- 
- declare let d: D;
+@@= skipped -17, +17 lines =@@
  >d : D
-->  : ^
  
  b = a;      // should be no error
 ->b = a : T<A>
-->      : ^^^^
 ->b : T<B>
-->  : ^^^^
 ->a : T<A>
-->  : ^^^^
 +>b = a : Pick<A, "x">
 +>b : Pick<B, "x">
 +>a : Pick<A, "x">
  
  c = d;
  >c = d : D
-->      : ^
- >c : C
-->  : ^
- >d : D
-->  : ^
- 

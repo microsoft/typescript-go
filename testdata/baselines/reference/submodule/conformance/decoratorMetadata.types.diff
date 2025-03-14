@@ -5,36 +5,21 @@
  === service.ts ===
  export default class Service {
 ->Service : Service
-->        : ^^^^^^^
 +>Service : default
  }
  === component.ts ===
  import Service from "./service";
 ->Service : typeof Service
-->        : ^^^^^^^^^^^^^^
 +>Service : typeof default
  
  declare var decorator: any;
  >decorator : any
-@@= skipped -16, +14 lines =@@
- 
- class MyComponent {
+@@= skipped -16, +16 lines =@@
  >MyComponent : MyComponent
-->            : ^^^^^^^^^^^
  
      constructor(public Service: Service) {
 ->Service : Service
-->        : ^^^^^^^
 +>Service : default
      }
  
      @decorator
-@@= skipped -12, +10 lines =@@
- 
-     method(x: this) {
- >method : (x: this) => void
-->       : ^ ^^    ^^^^^^^^^
- >x : this
-->  : ^^^^
-     }
- }

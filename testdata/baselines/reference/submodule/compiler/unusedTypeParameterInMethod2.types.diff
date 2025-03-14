@@ -1,32 +1,12 @@
 --- old.unusedTypeParameterInMethod2.types
 +++ new.unusedTypeParameterInMethod2.types
-@@= skipped -2, +2 lines =@@
- === unusedTypeParameterInMethod2.ts ===
- class A {
- >A : A
-->  : ^
+@@= skipped -5, +5 lines =@@
  
      public f1<X, Y, Z>() {
  >f1 : <X, Y, Z>() => void
-->   : ^ ^^ ^^ ^^^^^^^^^^^
 +>X : X
 +>Y : Y
 +>Z : Z
  
          var a: X;
  >a : X
-->  : ^
- 
-         var b: Z;
- >b : Z
-->  : ^
- 
-         a;
- >a : X
-->  : ^
- 
-         b;
- >b : Z
-->  : ^
-     }
- }

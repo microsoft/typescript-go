@@ -4,7 +4,6 @@
  
  type Pairs<T> = {
  >Pairs : Pairs<T>
-->      : ^^^^^^^^
 +>T : T
  
      [TKey in keyof T]: {
@@ -12,74 +11,21 @@
 +
          key: TKey;
  >key : TKey
-->    : ^^^^
  
-         value: T[TKey];
- >value : T[TKey]
-->      : ^^^^^^^
- 
-     };
- };
+@@= skipped -13, +16 lines =@@
  
  type Pair<T> = Pairs<T>[keyof T];
  >Pair : Pair<T>
-->     : ^^^^^^^
 +>T : T
  
  type FooBar = {
  >FooBar : FooBar
-->       : ^^^^^^
- 
-     foo: string;
- >foo : string
-->    : ^^^^^^
- 
-     bar: number;
- >bar : number
-->    : ^^^^^^
- 
- };
- 
- // Error expected here
- let pair1: Pair<FooBar> = {
- >pair1 : Pair<FooBar>
-->      : ^^^^^^^^^^^^
- >{    key: "foo",    value: 3} : { key: "foo"; value: number; }
-->                              : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
-     key: "foo",
- >key : "foo"
-->    : ^^^^^
- >"foo" : "foo"
-->      : ^^^^^
- 
-     value: 3
- >value : number
-->      : ^^^^^^
- >3 : 3
-->  : ^
- 
- };
+@@= skipped -29, +30 lines =@@
  
  // Error expected here
  let pair2: Pairs<FooBar>[keyof FooBar] = {
 ->pair2 : { key: "foo"; value: string; } | { key: "bar"; value: number; }
-->      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>pair2 : { key: "bar"; value: number; } | { key: "foo"; value: string; }
  >{    key: "foo",    value: 3} : { key: "foo"; value: number; }
-->                              : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
  
      key: "foo",
- >key : "foo"
-->    : ^^^^^
- >"foo" : "foo"
-->      : ^^^^^
- 
-     value: 3
- >value : number
-->      : ^^^^^^
- >3 : 3
-->  : ^
- 
- };
- 

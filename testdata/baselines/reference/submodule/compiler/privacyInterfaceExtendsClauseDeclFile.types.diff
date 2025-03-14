@@ -30,12 +30,10 @@
      interface privateInterfaceImplementingFromPrivateModuleInterface extends privateModule.publicInterfaceInPrivateModule {
 +>privateInterfaceImplementingFromPrivateModuleInterface : privateInterfaceImplementingFromPrivateModuleInterface
  >privateModule : any
-->              : ^^^
      }
      export interface publicInterfaceImplementingFromPrivateModuleInterface extends privateModule.publicInterfaceInPrivateModule { // Should error
 +>publicInterfaceImplementingFromPrivateModuleInterface : publicInterfaceImplementingFromPrivateModuleInterface
  >privateModule : any
-->              : ^^^
      }
  
      export interface publicInterfaceImplementingPrivateAndPublicInterface extends privateInterfaceInPublicModule, publicInterfaceInPublicModule { // Should error
@@ -71,12 +69,10 @@
      interface privateInterfaceImplementingFromPrivateModuleInterface extends privateModule.publicInterfaceInPrivateModule {
 +>privateInterfaceImplementingFromPrivateModuleInterface : privateInterfaceImplementingFromPrivateModuleInterface
  >privateModule : any
-->              : ^^^
      }
      export interface publicInterfaceImplementingFromPrivateModuleInterface extends privateModule.publicInterfaceInPrivateModule {
 +>publicInterfaceImplementingFromPrivateModuleInterface : publicInterfaceImplementingFromPrivateModuleInterface
  >privateModule : any
-->              : ^^^
      }
  }
  
@@ -105,12 +101,10 @@
  interface privateInterfaceImplementingFromPrivateModuleInterface extends privateModule.publicInterfaceInPrivateModule {
 +>privateInterfaceImplementingFromPrivateModuleInterface : privateInterfaceImplementingFromPrivateModuleInterface
  >privateModule : any
-->              : ^^^
  }
  export interface publicInterfaceImplementingFromPrivateModuleInterface extends privateModule.publicInterfaceInPrivateModule { // Should error
 +>publicInterfaceImplementingFromPrivateModuleInterface : publicInterfaceImplementingFromPrivateModuleInterface
  >privateModule : any
-->              : ^^^
  }
  
  === privacyInterfaceExtendsClauseDeclFile_GlobalFile.ts ===

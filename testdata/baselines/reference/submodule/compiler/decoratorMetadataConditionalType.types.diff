@@ -1,44 +1,18 @@
 --- old.decoratorMetadataConditionalType.types
 +++ new.decoratorMetadataConditionalType.types
-@@= skipped -2, +2 lines =@@
- === decoratorMetadataConditionalType.ts ===
- declare function d(): PropertyDecorator;
- >d : () => PropertyDecorator
-->  : ^^^^^^                 
+@@= skipped -5, +5 lines =@@
  
  abstract class BaseEntity<T> {
  >BaseEntity : BaseEntity<T>
-->           : ^^^^^^^^^^^^^
 +>T : T
  
      @d()
  >d() : PropertyDecorator
-->    : ^^^^^^^^^^^^^^^^^
- >d : () => PropertyDecorator
-->  : ^^^^^^                 
- 
+@@= skipped -8, +9 lines =@@
      public attributes: T extends { attributes: infer A } ? A : undefined;
  >attributes : T extends { attributes: infer A; } ? A : undefined
-->           : ^^^^^^^^^^^^^^^^^^^^^^^^       ^^^^^^^^^^^^^^^^^^^
  >attributes : A
-->           : ^
 +>A : A
  }
  class C {
  >C : C
-->  : ^
- 
-     @d()
- >d() : PropertyDecorator
-->    : ^^^^^^^^^^^^^^^^^
- >d : () => PropertyDecorator
-->  : ^^^^^^                 
- 
-     x: number extends string ? false : true;
- >x : true
-->  : ^^^^
- >false : false
-->      : ^^^^^
- >true : true
-->     : ^^^^
- }

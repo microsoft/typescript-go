@@ -1,8 +1,0 @@
---- old.indexWithoutParamType.types
-+++ new.indexWithoutParamType.types
-@@= skipped -2, +2 lines =@@
- === indexWithoutParamType.ts ===
- var y: { []; } // Error
- >y : {}
-->  : ^^
- 

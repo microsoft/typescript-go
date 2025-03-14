@@ -1,9 +1,0 @@
---- old.es5-commonjs5.types
-+++ new.es5-commonjs5.types
-@@= skipped -3, +3 lines =@@
- export default function () {
- 	return "test";
- >"test" : "test"
-->       : ^^^^^^
- }
- 

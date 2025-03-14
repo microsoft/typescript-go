@@ -8,34 +8,18 @@
 +
      c: string;
  >c : string
-->  : ^^^^^^
  }
- export default Color;
- >Color : Color
-->      : ^^^^^
- 
- === file1.ts ===
- import Color from "./color";
- >Color : any
-->      : ^^^
- 
- export declare function styled(): Color;
- >styled : () => Color
-->       : ^^^^^^     
+@@= skipped -15, +17 lines =@@
  
  === file2.ts ===
  import { styled }  from "./file1";
 ->styled : () => import("color").default
-->       : ^^^^^^       ^^^^^^^  ^^^^^^^
 +>styled : () => Color
  
  export const A = styled();
 ->A : import("color").default
-->  : ^^^^^^^^^^^^^^^^^^^^^^^
 ->styled() : import("color").default
-->         : ^^^^^^^^^^^^^^^^^^^^^^^
 ->styled : () => import("color").default
-->       : ^^^^^^       ^^^^^^^  ^^^^^^^
 +>A : Color
 +>styled() : Color
 +>styled : () => Color

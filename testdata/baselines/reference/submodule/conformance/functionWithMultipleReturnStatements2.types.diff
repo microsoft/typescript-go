@@ -1,207 +1,37 @@
 --- old.functionWithMultipleReturnStatements2.types
 +++ new.functionWithMultipleReturnStatements2.types
-@@= skipped -5, +5 lines =@@
- 
- function f1() {
- >f1 : () => number
-->   : ^^^^^^^^^^^^
- 
-     if (true) {
- >true : true
-->     : ^^^^
- 
-         return 1;
- >1 : 1
-->  : ^
- 
-     } else {
-         return null;
-@@= skipped -17, +14 lines =@@
- 
- function f2() {
- >f2 : () => 1 | 2
-->   : ^^^^^^^^^^^
- 
-     if (true) {
- >true : true
-->     : ^^^^
- 
-         return 1;
- >1 : 1
-->  : ^
- 
-     } else if (false) {
- >false : false
-->      : ^^^^^
- 
-         return null;
-     } else {
-         return 2;
- >2 : 2
-->  : ^
-     }
- }
- 
- function f4() {
- >f4 : () => number
-->   : ^^^^^^^^^^^^
- 
-     try {
-         return 1;
- >1 : 1
-->  : ^
-     }
-     catch (e) {
- >e : any
- 
-         return undefined;
- >undefined : undefined
-->          : ^^^^^^^^^
-     }
-     finally {
-         return 1;
- >1 : 1
-->  : ^
-     }
+@@= skipped -56, +56 lines =@@
  }
  
  function f5() {
 ->f5 : () => Object | 1
-->   : ^^^^^^^^^^^^^^^^
 +>f5 : () => 1 | Object
  
      return 1;
  >1 : 1
-->  : ^
- 
-     return new Object();
- >new Object() : Object
-->             : ^^^^^^
- >Object : ObjectConstructor
-->       : ^^^^^^^^^^^^^^^^^
- }
+@@= skipped -12, +12 lines =@@
  
  function f6<T>(x: T) {
  >f6 : <T>(x: T) => T
-->   : ^ ^^ ^^ ^^^^^^
 +>T : T
  >x : T
-->  : ^
  
      if (true) {
- >true : true
-->     : ^^^^
- 
-         return x;
- >x : T
-->  : ^
- 
-     } else {
-         return null;
-@@= skipped -89, +73 lines =@@
- 
- var a: { x: number; y?: number };
- >a : { x: number; y?: number; }
-->  : ^^^^^      ^^^^^^      ^^^
- >x : number
-->  : ^^^^^^
- >y : number
-->  : ^^^^^^
- 
- var b: { x: number; z?: number };
- >b : { x: number; z?: number; }
-->  : ^^^^^      ^^^^^^      ^^^
- >x : number
-->  : ^^^^^^
- >z : number
-->  : ^^^^^^
- 
- // returns typeof a
- function f9() {
- >f9 : () => { x: number; y?: number; } | { x: number; z?: number; }
-->   : ^^^^^^^^^^^      ^^^^^^      ^^^^^^^^^^^      ^^^^^^      ^^^
- 
-     if (true) {
- >true : true
-->     : ^^^^
- 
-         return a;
- >a : { x: number; y?: number; }
-->  : ^^^^^      ^^^^^^      ^^^
- 
-     } else {
-         return b;
- >b : { x: number; z?: number; }
-->  : ^^^^^      ^^^^^^      ^^^
-     }
- }
- 
- // returns typeof b
- function f10() {
- >f10 : () => { x: number; y?: number; } | { x: number; z?: number; }
-->    : ^^^^^^^^^^^      ^^^^^^      ^^^^^^^^^^^      ^^^^^^      ^^^
- 
-     if (true) {
- >true : true
-->     : ^^^^
- 
-         return b;
- >b : { x: number; z?: number; }
-->  : ^^^^^      ^^^^^^      ^^^
- 
-     } else {
-         return a;
- >a : { x: number; y?: number; }
-->  : ^^^^^      ^^^^^^      ^^^
-     }
- }
+@@= skipped -65, +66 lines =@@
  
  // returns number => void
  function f11() {
 ->f11 : () => ((x: number) => void) | ((x: Object) => void)
-->    : ^^^^^^^^ ^^      ^^^^^^^^^^^^^^^ ^^      ^^^^^^^^^^
 +>f11 : () => (x: number) => void | (x: Object) => void
  
      if (true) {
  >true : true
-->     : ^^^^
- 
-         return (x: number) => { }
- >(x: number) => { } : (x: number) => void
-->                   : ^ ^^      ^^^^^^^^^
- >x : number
-->  : ^^^^^^
- 
-     } else {
-         return (x: Object) => { }
- >(x: Object) => { } : (x: Object) => void
-->                   : ^ ^^      ^^^^^^^^^
- >x : Object
-->  : ^^^^^^
-     }
- }
+@@= skipped -18, +18 lines =@@
  
  // returns Object => void
  function f12() {
 ->f12 : () => ((x: Object) => void) | ((x: number) => void)
-->    : ^^^^^^^^ ^^      ^^^^^^^^^^^^^^^ ^^      ^^^^^^^^^^
 +>f12 : () => (x: Object) => void | (x: number) => void
  
      if (true) {
  >true : true
-->     : ^^^^
- 
-         return (x: Object) => { }
- >(x: Object) => { } : (x: Object) => void
-->                   : ^ ^^      ^^^^^^^^^
- >x : Object
-->  : ^^^^^^
- 
-     } else {
-         return (x: number) => { }        
- >(x: number) => { } : (x: number) => void
-->                   : ^ ^^      ^^^^^^^^^
- >x : number
-->  : ^^^^^^
-     }
- }

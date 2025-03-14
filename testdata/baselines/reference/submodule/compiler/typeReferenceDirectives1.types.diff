@@ -8,7 +8,6 @@
 +
      x: $
  >x : $
-->  : ^
  }
 -=== /types/lib/index.d.ts ===
 -interface $ { x }

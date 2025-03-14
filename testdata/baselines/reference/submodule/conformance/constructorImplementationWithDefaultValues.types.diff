@@ -1,64 +1,18 @@
 --- old.constructorImplementationWithDefaultValues.types
 +++ new.constructorImplementationWithDefaultValues.types
-@@= skipped -2, +2 lines =@@
- === constructorImplementationWithDefaultValues.ts ===
- class C {
- >C : C
-->  : ^
- 
-     constructor(x);
- >x : any
- 
-     constructor(x = 1) {
- >x : number
-->  : ^^^^^^
- >1 : 1
-->  : ^
- 
-         var y = x;
- >y : number
-->  : ^^^^^^
- >x : number
-->  : ^^^^^^
-     }
- }
+@@= skipped -18, +18 lines =@@
  
  class D<T> {
  >D : D<T>
-->  : ^^^^
 +>T : T
  
      constructor(x);
  >x : any
- 
-     constructor(x:T = null) {
- >x : T
-->  : ^
- 
-         var y = x;
- >y : T
-->  : ^
- >x : T
-->  : ^
-     }
- }
+@@= skipped -15, +16 lines =@@
  
  class E<T extends Date> {
  >E : E<T>
-->  : ^^^^
 +>T : T
  
      constructor(x);
  >x : any
- 
-     constructor(x: T = null) {
- >x : T
-->  : ^
- 
-         var y = x;
- >y : T
-->  : ^
- >x : T
-->  : ^
-     }
- }

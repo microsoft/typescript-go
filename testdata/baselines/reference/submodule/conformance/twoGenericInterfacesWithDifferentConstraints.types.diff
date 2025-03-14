@@ -9,7 +9,6 @@
 +
      x: T;
  >x : T
-->  : ^
  }
  
  interface A<T extends Number> { // error
@@ -18,7 +17,6 @@
 +
      y: T;
  >y : T
-->  : ^
  }
  
  module M {
@@ -30,7 +28,6 @@
 +
          x: T;
  >x : T
-->  : ^
      }
  
      interface B<T extends A<any>> { // error
@@ -39,7 +36,6 @@
 +
          y: T;
  >y : T
-->  : ^
      }
  }
  
@@ -52,7 +48,6 @@
 +
          x: T;
  >x : T
-->  : ^
      }
  }
  
@@ -65,7 +60,6 @@
 +
          y: T;
  >y : T
-->  : ^
      }
  }
  
@@ -78,7 +72,6 @@
 +
          x: T;
  >x : T
-->  : ^
      }
  }
  
@@ -91,7 +84,6 @@
 +
          y: T;
  >y : T
-->  : ^
      }
  }
  
@@ -101,11 +93,8 @@
 +
    u: T;
  >u : T
-->  : ^
  
-   v: Constraint<T>; // ok
- >v : Constraint<T>
-->  : ^^^^^^^^^^^^^
+@@= skipped -58, +95 lines =@@
  }
  
  interface B<T> { // ok
@@ -114,11 +103,8 @@
 +
    x: T;
  >x : T
-->  : ^
  
-   y: Constraint<T>; // ok
- >y : Constraint<T>
-->  : ^^^^^^^^^^^^^
+@@= skipped -8, +11 lines =@@
  }
  
  interface C<T> {
@@ -127,7 +113,6 @@
 +
    x: T;
  >x : T
-->  : ^
  }
  
  interface C<T extends number> { // ok
@@ -136,7 +121,6 @@
 +
    y: T;
  >y : T
-->  : ^
  }
  
  interface Constraint<T extends number> {}

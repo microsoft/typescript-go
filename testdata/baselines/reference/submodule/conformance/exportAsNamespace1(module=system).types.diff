@@ -1,73 +1,29 @@
 --- old.exportAsNamespace1(module=system).types
 +++ new.exportAsNamespace1(module=system).types
-@@= skipped -2, +2 lines =@@
- === 0.ts ===
- export const a = 1;
- >a : 1
-->  : ^
- >1 : 1
-->  : ^
- 
- export const b = 2;
- >b : 2
-->  : ^
- >2 : 2
-->  : ^
- 
- === 1.ts ===
- export * as ns from './0';
- >ns : typeof import("0")
-->   : ^^^^^^^^^^^^^^^^^^
- 
- ns.a;
- >ns.a : any
-->     : ^^^
- >ns : any
-->   : ^^^
- >a : any
-->  : ^^^
- 
- ns.b;
- >ns.b : any
-->     : ^^^
- >ns : any
-->   : ^^^
- >b : any
-->  : ^^^
+@@= skipped -24, +24 lines =@@
  
  === 2.ts ===
  import * as foo from './1'
 ->foo : typeof foo
-->    : ^^^^^^^^^^
 +>foo : typeof import("1")
  
  foo.ns.a;
  >foo.ns.a : 1
-->         : ^
 ->foo.ns : typeof foo.ns
-->       : ^^^^^^^^^^^^^
 ->foo : typeof foo
-->    : ^^^^^^^^^^
 ->ns : typeof foo.ns
-->   : ^^^^^^^^^^^^^
 +>foo.ns : typeof import("0")
 +>foo : typeof import("1")
 +>ns : typeof import("0")
  >a : 1
-->  : ^
  
  foo.ns.b;
  >foo.ns.b : 2
-->         : ^
 ->foo.ns : typeof foo.ns
-->       : ^^^^^^^^^^^^^
 ->foo : typeof foo
-->    : ^^^^^^^^^^
 ->ns : typeof foo.ns
-->   : ^^^^^^^^^^^^^
 +>foo.ns : typeof import("0")
 +>foo : typeof import("1")
 +>ns : typeof import("0")
  >b : 2
-->  : ^
  

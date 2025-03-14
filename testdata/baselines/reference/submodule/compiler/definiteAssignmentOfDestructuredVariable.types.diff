@@ -8,56 +8,29 @@
 +
      a?: number | object;
  >a : number | object | undefined
-->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^
  
-     b: () => void;
- >b : () => void
-->  : ^^^^^^    
- }
+@@= skipped -9, +11 lines =@@
  
  class C<T extends Options> {
  >C : C<T>
-->  : ^^^^
 +>T : T
  
      foo!: { [P in keyof T]: T[P] }
 ->foo : { [P in keyof T]: T[P]; }
-->    : ^^^ ^^^^^^^^^^^^^^^^^^^^^
 +>foo : { [P in keyof T]: T[P] }
 +>P : P
  
      method() {
  >method : () => void
-->       : ^^^^^^^^^^
- 
+@@= skipped -10, +12 lines =@@
          let { a, b } = this.foo;
  >a : T["a"] | undefined
-->  : ^^^^^^^^^^^^^^^^^^
  >b : T["b"]
-->  : ^^^^^^
 ->this.foo : { [P in keyof T]: T[P]; }
-->         : ^^^ ^^^^^^^^^^^^^^^^^^^^^
 +>this.foo : { [P in keyof T]: T[P] }
  >this : this
-->     : ^^^^
 ->foo : { [P in keyof T]: T[P]; }
-->    : ^^^ ^^^^^^^^^^^^^^^^^^^^^
 +>foo : { [P in keyof T]: T[P] }
  
          !(a && b);
  >!(a && b) : boolean
-->          : ^^^^^^^
- >(a && b) : T["b"] | undefined
-->         : ^^^^^^^^^^^^^^^^^^
- >a && b : T["b"] | undefined
-->       : ^^^^^^^^^^^^^^^^^^
- >a : T["a"] | undefined
-->  : ^^^^^^^^^^^^^^^^^^
- >b : T["b"]
-->  : ^^^^^^
- 
-         a;
- >a : T["a"] | undefined
-->  : ^^^^^^^^^^^^^^^^^^
-     }
- }

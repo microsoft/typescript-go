@@ -1,24 +1,9 @@
 --- old.blockScopedFunctionDeclarationInStrictModule.types
 +++ new.blockScopedFunctionDeclarationInStrictModule.types
-@@= skipped -2, +2 lines =@@
- === blockScopedFunctionDeclarationInStrictModule.ts ===
- if (true) {
- >true : true
-->     : ^^^^
- 
-     function foo() { }
- >foo : () => void
-->    : ^^^^^^^^^^
- 
-     foo(); // ok
- >foo() : void
-->      : ^^^^
- >foo : () => void
-->    : ^^^^^^^^^^
+@@= skipped -12, +12 lines =@@
  }
  
  export = foo; // not ok
 ->foo : any
-->    : ^^^
 +>foo : () => void
  

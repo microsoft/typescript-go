@@ -1,8 +1,0 @@
---- old.scannerNumericLiteral2.types
-+++ new.scannerNumericLiteral2.types
-@@= skipped -2, +2 lines =@@
- === scannerNumericLiteral2.ts ===
- 01
- >01 : 1
-->   : ^
- 

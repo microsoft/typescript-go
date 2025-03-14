@@ -1,22 +1,10 @@
 --- old.ambientShorthand_reExport.types
 +++ new.ambientShorthand_reExport.types
-@@= skipped -6, +6 lines =@@
- === reExportX.ts ===
- export {x} from "jquery";
+@@= skipped -16, +16 lines =@@
  >x : any
-->  : ^^^
- 
- === reExportAll.ts ===
- 
-@@= skipped -9, +8 lines =@@
- === reExportUser.ts ===
- import {x} from "./reExportX";
- >x : any
-->  : ^^^
  
  import * as $ from "./reExportAll";
 ->$ : typeof $
-->  : ^^^^^^^^
 +>$ : typeof import("reExportAll")
  
  // '$' is not callable, it is an object.
@@ -24,6 +12,5 @@
  >x($) : any
  >x : any
 ->$ : typeof $
-->  : ^^^^^^^^
 +>$ : typeof import("reExportAll")
  

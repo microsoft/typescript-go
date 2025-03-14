@@ -14,23 +14,18 @@
 +
  	    [x: string]: any;
  >x : string
-->  : ^^^^^^
  	}
- }
+@@= skipped -9, +15 lines =@@
  
  // OK
  <div />;
 -><div /> : JSX.Element
-->        : ^^^^^^^^^^^
 +><div /> : any
  >div : any
-->    : ^^^
  
  // OK
  <span />;
 -><span /> : JSX.Element
-->         : ^^^^^^^^^^^
 +><span /> : any
  >span : any
-->     : ^^^
  

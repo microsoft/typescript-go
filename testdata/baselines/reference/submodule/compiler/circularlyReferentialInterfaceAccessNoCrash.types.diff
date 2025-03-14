@@ -1,10 +1,7 @@
 --- old.circularlyReferentialInterfaceAccessNoCrash.types
 +++ new.circularlyReferentialInterfaceAccessNoCrash.types
-@@= skipped -2, +2 lines =@@
- === circularlyReferentialInterfaceAccessNoCrash.ts ===
- type Mxs = Mx<'list', Mxs['p1']>;
+@@= skipped -4, +4 lines =@@
  >Mxs : Mxs
-->    : ^^^
  
  interface Mx<T, K> {
 +>Mx : Mx<T, K>
@@ -13,18 +10,4 @@
 +
    p1: T;
  >p1 : T
-->   : ^
- 
-   p2: K;
- >p2 : K
-->   : ^
- }
- 
- type ArrElem = ['list', ArrElem[number][0]][];
- >ArrElem : ArrElem
-->        : ^^^^^^^
- 
- type TupleElem = [['list', TupleElem[0][0]]];
- >TupleElem : TupleElem
-->          : ^^^^^^^^^
  

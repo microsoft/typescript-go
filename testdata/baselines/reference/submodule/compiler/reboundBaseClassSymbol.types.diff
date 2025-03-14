@@ -6,20 +6,12 @@
  interface A { a: number; }
 +>A : A
  >a : number
-->  : ^^^^^^
  
  module Foo {
- >Foo : typeof Foo
-->    : ^^^^^^^^^^
- 
-     var A = 1;
- >A : number
-->  : ^^^^^^
+@@= skipped -10, +11 lines =@@
  >1 : 1
-->  : ^
  
      interface B extends A { b: string; } 
 +>B : B
  >b : string
-->  : ^^^^^^
  }

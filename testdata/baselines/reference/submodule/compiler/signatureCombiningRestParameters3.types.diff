@@ -9,85 +9,27 @@
 +
    extendMarkSchema?:
 ->extendMarkSchema : ((this: { name: string; options: Options; }, extension: Mark) => Record<string, any>) | null | undefined
-->                 : ^^    ^^                                   ^^         ^^    ^^^^^                   ^^^^^^^^^^^^^^^^^^^^
 +>extendMarkSchema : (extension: Mark<any>) => Record<string, any> | null | undefined
  
      | ((
          this: {
- >this : { name: string; options: Options; }
-->     : ^^^^^^^^      ^^^^^^^^^^^       ^^^
- 
-           name: string;
- >name : string
-->     : ^^^^^^
- 
-           options: Options;
- >options : Options
-->        : ^^^^^^^
- 
-         },
-         extension: Mark,
- >extension : Mark<any>
-->          : ^^^^^^^^^
- 
-       ) => Record<string, any>)
-     | null;
-@@= skipped -28, +26 lines =@@
+@@= skipped -23, +26 lines =@@
  
  declare class Extension<Options = any> {
  >Extension : Extension<Options>
-->          : ^^^^^^^^^^^^^^^^^^
 +>Options : Options
  
    type: string;
  >type : string
-->     : ^^^^^^
- 
-   name: string;
- >name : string
-->     : ^^^^^^
- 
-   parent: Extension | null;
- >parent : Extension<any> | null
-->       : ^^^^^^^^^^^^^^^^^^^^^
- 
-   child: Extension | null;
- >child : Extension<any> | null
-->      : ^^^^^^^^^^^^^^^^^^^^^
- 
-   options: Options;
- >options : Options
-->        : ^^^^^^^
- 
-   config: ExtensionConfig;
- >config : ExtensionConfig<any>
-->       : ^^^^^^^^^^^^^^^^^^^^
- }
+@@= skipped -22, +23 lines =@@
  
  declare class Node<Options = any> {
  >Node : Node<Options>
-->     : ^^^^^^^^^^^^^
 +>Options : Options
  
    type: string;
  >type : string
-->     : ^^^^^^
- 
-   name: string;
- >name : string
-->     : ^^^^^^
- 
-   parent: Node | null;
- >parent : Node<any> | null
-->       : ^^^^^^^^^^^^^^^^
- 
-   child: Node | null;
- >child : Node<any> | null
-->      : ^^^^^^^^^^^^^^^^
- 
-   options: Options;
- >options : Options
-->        : ^^^^^^^
+@@= skipped -18, +19 lines =@@
  }
  
  interface NodeConfig<Options = any> {
@@ -96,43 +38,19 @@
 +
    extendMarkSchema?:
 ->extendMarkSchema : ((this: { name: string; options: Options; }, extension: Node) => Record<string, any>) | null | undefined
-->                 : ^^    ^^                                   ^^         ^^    ^^^^^                   ^^^^^^^^^^^^^^^^^^^^
 +>extendMarkSchema : (extension: Node<any>) => Record<string, any> | null | undefined
  
      | ((
          this: {
- >this : { name: string; options: Options; }
-->     : ^^^^^^^^      ^^^^^^^^^^^       ^^^
- 
-           name: string;
- >name : string
-->     : ^^^^^^
- 
-           options: Options;
- >options : Options
-->        : ^^^^^^^
- 
-         },
-         extension: Node,
- >extension : Node<any>
-->          : ^^^^^^^^^
- 
-       ) => Record<string, any>)
-     | null;
-@@= skipped -81, +68 lines =@@
+@@= skipped -23, +26 lines =@@
  
  declare class Mark<Options = any> {
  >Mark : Mark<Options>
-->     : ^^^^^^^^^^^^^
 +>Options : Options
  
    options: Options;
  >options : Options
-->        : ^^^^^^^
- 
-   config: MarkConfig;
- >config : MarkConfig<any>
-->       : ^^^^^^^^^^^^^^^
+@@= skipped -9, +10 lines =@@
  }
  
  interface MarkConfig<Options = any> {
@@ -141,110 +59,52 @@
 +
    extendMarkSchema?:
 ->extendMarkSchema : ((this: { name: string; options: Options; }, extension: Mark) => Record<string, any>) | null | undefined
-->                 : ^^    ^^                                   ^^         ^^    ^^^^^                   ^^^^^^^^^^^^^^^^^^^^
 +>extendMarkSchema : (extension: Mark<any>) => Record<string, any> | null | undefined
  
      | ((
          this: {
- >this : { name: string; options: Options; }
-->     : ^^^^^^^^      ^^^^^^^^^^^       ^^^
- 
-           name: string;
- >name : string
-->     : ^^^^^^
- 
-           options: Options;
- >options : Options
-->        : ^^^^^^^
- 
-         },
-         extension: Mark,
- >extension : Mark<any>
-->          : ^^^^^^^^^
- 
-       ) => Record<string, any>)
-     | null;
-@@= skipped -40, +36 lines =@@
- 
- type AnyConfig = ExtensionConfig | NodeConfig | MarkConfig;
- >AnyConfig : AnyConfig
-->          : ^^^^^^^^^
- 
- type AnyExtension = Extension | Node | Mark;
- >AnyExtension : AnyExtension
-->             : ^^^^^^^^^^^^
- 
- declare const e: AnyExtension;
- >e : AnyExtension
-->  : ^^^^^^^^^^^^
+@@= skipped -32, +35 lines =@@
  
  type RemoveThis<T> = T extends (...args: any) => any
  >RemoveThis : RemoveThis<T>
-->           : ^^^^^^^^^^^^^
 +>T : T
  >args : any
-->     : ^^^
  
    ? (...args: Parameters<T>) => ReturnType<T>
- >args : Parameters<T>
-->     : ^^^^^^^^^^^^^
- 
+@@= skipped -8, +9 lines =@@
    : T;
  
  declare function getExtensionField<T = any>(
 ->getExtensionField : <T = any>(extension: AnyExtension, field: string) => RemoveThis<T>
-->                  : ^ ^^^^^^^^         ^^            ^^     ^^      ^^^^^             
 +>getExtensionField : <T>(extension: AnyExtension, field: string) => RemoveThis<T>
 +>T : T
  
    extension: AnyExtension,
  >extension : AnyExtension
-->          : ^^^^^^^^^^^^
- 
-   field: string,
- >field : string
-->      : ^^^^^^
- 
+@@= skipped -11, +12 lines =@@
  ): RemoveThis<T>;
  
  const extendMarkSchema = getExtensionField<AnyConfig["extendMarkSchema"]>(
 ->extendMarkSchema : ((extension: Mark<any>) => Record<string, any>) | ((extension: Node<any>) => Record<string, any>) | ((extension: Mark<any>) => Record<string, any>) | null | undefined
-->                 : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ->getExtensionField<AnyConfig["extendMarkSchema"]>(  e,  "extendMarkSchema",) : ((extension: Mark<any>) => Record<string, any>) | ((extension: Node<any>) => Record<string, any>) | ((extension: Mark<any>) => Record<string, any>) | null | undefined
-->                                                                            : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ->getExtensionField : <T = any>(extension: AnyExtension, field: string) => RemoveThis<T>
-->                  : ^ ^^^^^^^^         ^^            ^^     ^^      ^^^^^             
 +>extendMarkSchema : (...args: [extension: Mark<any>]) => Record<string, any> | (...args: [extension: Node<any>]) => Record<string, any> | (...args: [extension: Mark<any>]) => Record<string, any> | null | undefined
 +>getExtensionField<AnyConfig["extendMarkSchema"]>(  e,  "extendMarkSchema",) : (...args: [extension: Mark<any>]) => Record<string, any> | (...args: [extension: Node<any>]) => Record<string, any> | (...args: [extension: Mark<any>]) => Record<string, any> | null | undefined
 +>getExtensionField : <T>(extension: AnyExtension, field: string) => RemoveThis<T>
  
    e,
  >e : AnyExtension
-->  : ^^^^^^^^^^^^
- 
-   "extendMarkSchema",
- >"extendMarkSchema" : "extendMarkSchema"
-->                   : ^^^^^^^^^^^^^^^^^^
- 
- );
- 
- declare const extension: Mark<any>;
+@@= skipped -16, +16 lines =@@
  >extension : Mark<any>
-->          : ^^^^^^^^^
  
  if (extendMarkSchema) {
 ->extendMarkSchema : ((extension: Mark<any>) => Record<string, any>) | ((extension: Node<any>) => Record<string, any>) | ((extension: Mark<any>) => Record<string, any>) | null | undefined
-->                 : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>extendMarkSchema : (...args: [extension: Mark<any>]) => Record<string, any> | (...args: [extension: Node<any>]) => Record<string, any> | (...args: [extension: Mark<any>]) => Record<string, any> | null | undefined
  
    extendMarkSchema(extension); // error
  >extendMarkSchema(extension) : Record<string, any>
-->                            : ^^^^^^^^^^^^^^^^^^^
 ->extendMarkSchema : ((extension: Mark<any>) => Record<string, any>) | ((extension: Node<any>) => Record<string, any>) | ((extension: Mark<any>) => Record<string, any>)
-->                 : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>extendMarkSchema : (...args: [extension: Mark<any>]) => Record<string, any> | (...args: [extension: Node<any>]) => Record<string, any> | (...args: [extension: Mark<any>]) => Record<string, any>
  >extension : Mark<any>
-->          : ^^^^^^^^^
  }
  
- export {};

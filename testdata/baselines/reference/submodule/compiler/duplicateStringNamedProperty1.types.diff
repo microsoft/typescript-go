@@ -8,9 +8,4 @@
 +
      "artist": string;
  >"artist" : string
-->         : ^^^^^^
  
-     artist: string;
- >artist : string
-->       : ^^^^^^
- }

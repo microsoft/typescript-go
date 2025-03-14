@@ -8,53 +8,10 @@
 +
      draw(): number;
  >draw : () => number
-->     : ^^^^^^      
  }
  interface Sizable {
 +>Sizable : Sizable
 +
      size(): number;
  >size : () => number
-->     : ^^^^^^      
- }
- === /a.js ===
- /** 
-@@= skipped -16, +18 lines =@@
-  **/
- class Square {
- >Square : Square
-->       : ^^^^^^
- 
-     draw() {
- >draw : () => number
-->     : ^^^^^^^^^^^^
- 
-         return 0;
- >0 : 0
-->  : ^
-     }
-     size() {
- >size : () => number
-->     : ^^^^^^^^^^^^
- 
-         return 0;
- >0 : 0
-->  : ^
-     }
- }
- /**
-@@= skipped -25, +20 lines =@@
-  **/
- class BadSquare {
- >BadSquare : BadSquare
-->          : ^^^^^^^^^
- 
-     size() {
- >size : () => number
-->     : ^^^^^^^^^^^^
- 
-         return 0;
- >0 : 0
-->  : ^
-     }
  }

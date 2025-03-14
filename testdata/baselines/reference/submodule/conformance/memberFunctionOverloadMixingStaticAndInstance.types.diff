@@ -1,65 +1,18 @@
 --- old.memberFunctionOverloadMixingStaticAndInstance.types
 +++ new.memberFunctionOverloadMixingStaticAndInstance.types
-@@= skipped -2, +2 lines =@@
- === memberFunctionOverloadMixingStaticAndInstance.ts ===
- class C {
- >C : C
-->  : ^
- 
-     foo();
- >foo : () => any
-->    : ^^^^^^^^^
- 
-     static foo(); // error
- >foo : () => any
-->    : ^^^^^^^^^
- }
- 
- class D {
- >D : D
-->  : ^
- 
-     static foo();
- >foo : () => any
-->    : ^^^^^^^^^
- 
-     foo(); // error    
- >foo : () => any
-->    : ^^^^^^^^^
- }
+@@= skipped -22, +22 lines =@@
  
  class E<T> {
  >E : E<T>
-->  : ^^^^
 +>T : T
  
      foo(x: T);
  >foo : (x: T) => any
-->    : ^ ^^ ^^^^^^^^
- >x : T
-->  : ^
- 
-     static foo(x: number); // error
- >foo : (x: number) => any
-->    : ^ ^^      ^^^^^^^^
- >x : number
-->  : ^^^^^^
- }
+@@= skipped -12, +13 lines =@@
  
  class F<T> {
  >F : F<T>
-->  : ^^^^
 +>T : T
  
      static foo(x: number);
  >foo : (x: number) => any
-->    : ^ ^^      ^^^^^^^^
- >x : number
-->  : ^^^^^^
- 
-     foo(x: T); // error    
- >foo : (x: T) => any
-->    : ^ ^^ ^^^^^^^^
- >x : T
-->  : ^
- }

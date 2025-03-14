@@ -1,16 +1,6 @@
 --- old.internalAliasWithDottedNameEmit.types
 +++ new.internalAliasWithDottedNameEmit.types
-@@= skipped -2, +2 lines =@@
- === internalAliasWithDottedNameEmit.ts ===
- module a.b.c {
- >a : typeof a
-->  : ^^^^^^^^
- >b : typeof b
-->  : ^^^^^^^^
- >c : typeof c
-->  : ^^^^^^^^
- 
-       export var d;
+@@= skipped -9, +9 lines =@@
  >d : any
  }
  module a.e.f {
@@ -20,11 +10,8 @@
 +
        import g = b.c;
 ->g : typeof g
-->  : ^^^^^^^^
 ->b : typeof b
-->  : ^^^^^^^^
 ->c : typeof g
-->  : ^^^^^^^^
 +>g : any
 +>b : any
 +>c : any

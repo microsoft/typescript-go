@@ -4,25 +4,15 @@
  === genericClassStaticMethod.ts ===
  class Foo<T> {
  >Foo : Foo<T>
-->    : ^^^^^^
 +>T : T
  
      static getFoo() {
  >getFoo : () => void
-->       : ^^^^^^^^^^
-     }
- }
+@@= skipped -8, +9 lines =@@
  
  class Bar<T> extends Foo<T> {
  >Bar : Bar<T>
-->    : ^^^^^^
 +>T : T
  >Foo : Foo<T>
-->    : ^^^^^^
  
      static getFoo() {
- >getFoo : () => void
-->       : ^^^^^^^^^^
-     }
- }
- 

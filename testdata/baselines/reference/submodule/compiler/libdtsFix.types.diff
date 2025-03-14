@@ -8,6 +8,4 @@
 +
      type: string;
  >type : string
-->     : ^^^^^^
  }
- 

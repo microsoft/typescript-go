@@ -1,52 +1,11 @@
 --- old.shorthandPropertyAssignmentInES6Module.types
 +++ new.shorthandPropertyAssignmentInES6Module.types
-@@= skipped -2, +2 lines =@@
- === existingModule.ts ===
- export var x = 1;
- >x : number
-->  : ^^^^^^
- >1 : 1
-->  : ^
- 
- === test.ts ===
- import {x} from './existingModule';
- >x : number
-->  : ^^^^^^
- 
- import {foo} from './missingModule';
- >foo : any
-->    : ^^^
- 
- declare function use(a: any): void;
- >use : (a: any) => void
-->    : ^ ^^   ^^^^^    
- >a : any
-->  : ^^^
- 
+@@= skipped -18, +18 lines =@@
  const test = { x, foo };
  >test : { x: number; foo: any; }
-->     : ^^^^^^^^^^^^^^^^^^^^^^^^
  >{ x, foo } : { x: number; foo: any; }
-->           : ^^^^^^^^^^^^^^^^^^^^^^^^
 ->x : number
-->  : ^^^^^^
 +>x : any
  >foo : any
-->    : ^^^
  
  use(x);
- >use(x) : void
-->       : ^^^^
- >use : (a: any) => void
-->    : ^ ^^   ^^^^^    
- >x : number
-->  : ^^^^^^
- 
- use(foo);
- >use(foo) : void
-->         : ^^^^
- >use : (a: any) => void
-->    : ^ ^^   ^^^^^    
- >foo : any
-->    : ^^^
- 

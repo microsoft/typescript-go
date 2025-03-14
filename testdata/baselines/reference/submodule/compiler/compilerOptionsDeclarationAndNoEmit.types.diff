@@ -1,9 +1,0 @@
---- old.compilerOptionsDeclarationAndNoEmit.types
-+++ new.compilerOptionsDeclarationAndNoEmit.types
-@@= skipped -2, +2 lines =@@
- === a.ts ===
- class c {
- >c : c
-->  : ^
- }
- 

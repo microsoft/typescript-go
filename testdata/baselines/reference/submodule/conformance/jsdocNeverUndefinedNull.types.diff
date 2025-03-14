@@ -5,13 +5,9 @@
   */
  function f(p1, p2, p3) {
 ->f : (p1: never, p2: undefined, p3: null) => void
-->  : ^  ^^     ^^  ^^         ^^  ^^    ^^^^^    
 ->p1 : never
-->   : ^^^^^
 ->p2 : undefined
-->   : ^^^^^^^^^
 ->p3 : null
-->   : ^^^^
 +>f : (p1: any, p2: any, p3: any) => void
 +>p1 : any
 +>p2 : any

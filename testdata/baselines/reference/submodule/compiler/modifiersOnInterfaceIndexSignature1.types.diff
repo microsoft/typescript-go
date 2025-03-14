@@ -8,5 +8,4 @@
 +
    public [a: string]: number;
  >a : string
-->  : ^^^^^^
  }

@@ -9,20 +9,11 @@
      export interface Point { x: number; y: number }
 +>Point : Point
  >x : number
-->  : ^^^^^^
  >y : number
-->  : ^^^^^^
  }
- 
- var m = M; // Error, not instantiated can not be used as var
- >m : any
-->  : ^^^
- >M : any
-->  : ^^^
+@@= skipped -11, +14 lines =@@
  
  var x: typeof M; // Error only a namespace
  >x : any
-->  : ^^^
 ->M : any
-->  : ^^^
  

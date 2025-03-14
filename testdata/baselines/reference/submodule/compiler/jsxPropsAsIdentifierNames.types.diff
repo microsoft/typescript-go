@@ -14,23 +14,12 @@
 +
          div: {
  >div : { static?: boolean; }
-->    : ^^^^^^^^^^^       ^^^
  
-             static?: boolean;
- >static : boolean
-->       : ^^^^^^^
- 
-         };
-     }
- }
+@@= skipped -14, +20 lines =@@
  export default <div static={true} />;
  ><div static={true} /> : any
-->                      : ^^^
  >div : any
-->    : ^^^
 ->static : boolean
-->       : ^^^^^^^
 +>static : any
  >true : true
-->     : ^^^^
  

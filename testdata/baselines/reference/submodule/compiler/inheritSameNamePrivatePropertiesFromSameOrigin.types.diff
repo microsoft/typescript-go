@@ -1,31 +1,11 @@
 --- old.inheritSameNamePrivatePropertiesFromSameOrigin.types
 +++ new.inheritSameNamePrivatePropertiesFromSameOrigin.types
-@@= skipped -2, +2 lines =@@
- === inheritSameNamePrivatePropertiesFromSameOrigin.ts ===
- class B {
+@@= skipped -15, +15 lines =@@
  >B : B
-->  : ^
- 
-     private x: number;
- >x : number
-->  : ^^^^^^
- }
- class C extends B { }
- >C : C
-->  : ^
- >B : B
-->  : ^
- 
- class C2 extends B { }
- >C2 : C2
-->   : ^^
- >B : B
-->  : ^
  
  interface A extends C, C2 { // ok
 +>A : A
 +
      y: string;
  >y : string
-->  : ^^^^^^
  }

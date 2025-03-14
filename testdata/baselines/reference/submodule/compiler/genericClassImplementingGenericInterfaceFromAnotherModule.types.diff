@@ -12,13 +12,10 @@
  }
  module bar {
  >bar : typeof bar
-->    : ^^^^^^^^^^
  
      export class Foo<T> implements foo.IFoo<T> { }
  >Foo : Foo<T>
-->    : ^^^^^^
 +>T : T
  >foo : any
-->    : ^^^
  }
  

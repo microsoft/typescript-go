@@ -1,16 +1,9 @@
 --- old.indexedAccessKeyofNestedSimplifiedSubstituteUnwrapped.types
 +++ new.indexedAccessKeyofNestedSimplifiedSubstituteUnwrapped.types
-@@= skipped -2, +2 lines =@@
- === indexedAccessKeyofNestedSimplifiedSubstituteUnwrapped.ts ===
- type AnyFunction = (...args: any[]) => any;
- >AnyFunction : AnyFunction
-->            : ^^^^^^^^^^^
- >args : any[]
-->     : ^^^^^
+@@= skipped -6, +6 lines =@@
  
  type Params<T> = Parameters<Extract<T, AnyFunction>>;
  >Params : Params<T>
-->       : ^^^^^^^^^
 +>T : T
  
  interface Wrapper<T> {
@@ -19,13 +12,10 @@
 +
  	call<K extends keyof T>(event: K, ...args: Params<T[K]>): void;
 ->call : <K extends keyof T>(event: K, ...args: Params<T[K]>) => void
-->     : ^ ^^^^^^^^^       ^^     ^^ ^^^^^    ^^            ^^^^^    
 +>call : <K extends keyof T>(event: K, ...args: Parameters<Extract<T[K], AnyFunction>>) => void
 +>K : K
  >event : K
-->      : ^
  >args : Parameters<Extract<T[K], AnyFunction>>
-->     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
  }
  
  interface AWrapped {
@@ -33,16 +23,8 @@
 +
  	foo(): void;
  >foo : () => void
-->    : ^^^^^^    
  }
- 
- class A {
- >A : A
-->  : ^
- 
- 	foo: Wrapper<AWrapped>;
- >foo : Wrapper<AWrapped>
-->    : ^^^^^^^^^^^^^^^^^
+@@= skipped -21, +28 lines =@@
  }
  
  interface BWrapped extends AWrapped {
@@ -50,16 +32,4 @@
 +
  	bar(): void;
  >bar : () => void
-->    : ^^^^^^    
- }
- 
- class B extends A {
- >B : B
-->  : ^
- >A : A
-->  : ^
- 
- 	foo: Wrapper<BWrapped>;
- >foo : Wrapper<BWrapped>
-->    : ^^^^^^^^^^^^^^^^^
  }

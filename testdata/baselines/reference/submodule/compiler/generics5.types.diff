@@ -6,17 +6,14 @@
  interface A { a: string; }
 +>A : A
  >a : string
-->  : ^^^^^^
  
  interface B extends A { b: string; }
 +>B : B
  >b : string
-->  : ^^^^^^
  
  interface C extends B { c: string; }
 +>C : C
  >c : string
-->  : ^^^^^^
  
  interface G<T, U extends B> {
 +>G : G<T, U>
@@ -25,9 +22,3 @@
  
  
  }
- 
- var v3: G<A, A>;               // Error, A not valid argument for U
- >v3 : G<A, A>
-->   : ^^^^^^^
- 
- 

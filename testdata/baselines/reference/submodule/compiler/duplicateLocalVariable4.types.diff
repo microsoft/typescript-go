@@ -5,29 +5,17 @@
  === duplicateLocalVariable4.ts ===
  enum E{
 ->E : E
-->  : ^
 +>E : E.a
  
  a
  >a : E.a
-->  : ^^^
- }
-  
- var x = E;
- >x : typeof E
-->  : ^^^^^^^^
- >E : typeof E
-->  : ^^^^^^^^
+@@= skipped -12, +12 lines =@@
  
  var x = E.a;
  >x : typeof E
-->  : ^^^^^^^^
 ->E.a : E
-->    : ^
 +>E.a : E.a
  >E : typeof E
-->  : ^^^^^^^^
 ->a : E
-->  : ^
 +>a : E.a
  

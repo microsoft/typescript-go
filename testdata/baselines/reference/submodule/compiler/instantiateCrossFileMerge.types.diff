@@ -4,17 +4,11 @@
  === first.ts ===
  declare class P<R> {
  >P : P<R>
-->  : ^^^^
 +>R : R
  
      constructor(callback: (resolve: (value: R) => void) => void);
  >callback : (resolve: (value: R) => void) => void
-->         : ^       ^^                  ^^^^^    
- >resolve : (value: R) => void
-->        : ^     ^^ ^^^^^    
- >value : R
-->      : ^
- }
+@@= skipped -9, +10 lines =@@
  
  === second.ts ===
  interface P<R> { }
@@ -23,17 +17,4 @@
 +
  new P<string>(r => { r('foo') });
  >new P<string>(r => { r('foo') }) : P<string>
-->                                 : ^^^^^^^^^
  >P : typeof P
-->  : ^^^^^^^^
- >r => { r('foo') } : (r: (value: string) => void) => void
-->                  : ^ ^^^     ^^^^^^^^^^^^^    ^^^^^^^^^
- >r : (value: string) => void
-->  : ^     ^^^^^^^^^^^^^    
- >r('foo') : void
-->         : ^^^^
- >r : (value: string) => void
-->  : ^     ^^^^^^^^^^^^^    
- >'foo' : "foo"
-->      : ^^^^^
- 

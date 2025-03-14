@@ -14,13 +14,4 @@
 +
  		[s: string]: any;
  >s : string
-->  : ^^^^^^
  	}
- }
- 
-@@= skipped -16, +21 lines =@@
- // This import should be elided
- import {React} from "./test";
- >React : any
-->      : ^^^
- 

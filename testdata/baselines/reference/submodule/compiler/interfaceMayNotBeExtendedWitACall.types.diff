@@ -9,9 +9,5 @@
  interface blue extends color() { // error
 +>blue : blue
  >color() : any
-->        : ^^^
  >color : any
-->      : ^^^
- 
- }
  

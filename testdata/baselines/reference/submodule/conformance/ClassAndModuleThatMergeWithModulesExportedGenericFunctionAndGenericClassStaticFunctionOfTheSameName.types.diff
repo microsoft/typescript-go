@@ -4,42 +4,23 @@
  === ClassAndModuleThatMergeWithModulesExportedGenericFunctionAndGenericClassStaticFunctionOfTheSameName.ts ===
  class clodule<T> {
  >clodule : clodule<T>
-->        : ^^^^^^^^^^
 +>T : T
  
      id: string;
  >id : string
-->   : ^^^^^^
- 
-     value: T;
- >value : T
-->      : ^
+@@= skipped -9, +10 lines =@@
  
      static fn<U>(id: U) { }
  >fn : <U>(id: U) => void
-->   : ^ ^^  ^^ ^^^^^^^^^
 +>U : U
  >id : U
-->   : ^
  }
  
- module clodule {
- >clodule : typeof clodule
-->        : ^^^^^^^^^^^^^^
- 
+@@= skipped -9, +10 lines =@@
      // error: duplicate identifier expected
      export function fn<T>(x: T, y: T): T {
  >fn : <T>(x: T, y: T) => T
-->   : ^ ^^ ^^ ^^ ^^ ^^^^^ 
 +>T : T
  >x : T
-->  : ^
  >y : T
-->  : ^
- 
-         return x;
- >x : T
-->  : ^
-     }
- }
  

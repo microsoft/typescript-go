@@ -15,68 +15,48 @@
  import "./preact";
  const a = <>
 ->a : JSX.Element
-->  : ^^^^^^^^^^^
 -><>  <p></p>  text  <div className="foo"></div></> : JSX.Element
-->                                                  : ^^^^^^^^^^^
 +>a : any
 +><>  <p></p>  text  <div className="foo"></div></> : any
  
    <p></p>
 -><p></p> : JSX.Element
-->        : ^^^^^^^^^^^
 +><p></p> : any
  >p : any
-->  : ^^^
  >p : any
-->  : ^^^
  
    text
    <div className="foo"></div>
 -><div className="foo"></div> : JSX.Element
-->                            : ^^^^^^^^^^^
 +><div className="foo"></div> : any
  >div : any
-->    : ^^^
 ->className : string
-->          : ^^^^^^
 +>className : any
  >div : any
-->    : ^^^
  
  </>
- 
-@@= skipped -41, +26 lines =@@
+@@= skipped -32, +26 lines =@@
  /// <reference path="react16.d.ts" />
  /* @jsxImportSource preact */
  const a = <>
 ->a : JSX.Element
-->  : ^^^^^^^^^^^
 -><>  <p></p>  text  <div className="foo"></div></> : JSX.Element
-->                                                  : ^^^^^^^^^^^
 +>a : any
 +><>  <p></p>  text  <div className="foo"></div></> : any
  
    <p></p>
 -><p></p> : JSX.Element
-->        : ^^^^^^^^^^^
 +><p></p> : any
  >p : any
-->  : ^^^
  >p : any
-->  : ^^^
  
    text
    <div className="foo"></div>
 -><div className="foo"></div> : JSX.Element
-->                            : ^^^^^^^^^^^
 +><div className="foo"></div> : any
  >div : any
-->    : ^^^
 ->className : string
-->          : ^^^^^^
 +>className : any
  >div : any
-->    : ^^^
  
  </>
- 

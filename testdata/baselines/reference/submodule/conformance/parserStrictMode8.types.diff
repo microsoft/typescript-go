@@ -11,9 +11,3 @@
  === parserStrictMode8.ts ===
  "use strict";
  >"use strict" : "use strict"
-->             : ^^^^^^^^^^^^
- 
- function eval() {
- >eval : { (x: string): any; (): void; }
-->     : ^^^ ^^      ^^^   ^^^^^^^^^^^^^
- }

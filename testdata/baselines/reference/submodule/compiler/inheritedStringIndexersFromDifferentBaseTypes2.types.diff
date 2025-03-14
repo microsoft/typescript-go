@@ -8,12 +8,8 @@
 +
      [s: string]: {
  >s : string
-->  : ^^^^^^
  
-         a;
- >a : any
-->  : ^^^
- 
+@@= skipped -9, +11 lines =@@
      };
  }
  interface B {
@@ -21,16 +17,8 @@
 +
      [s: number]: {
  >s : number
-->  : ^^^^^^
  
-         a;
- >a : any
-->  : ^^^
- 
-         b;
- >b : any
-->  : ^^^
- 
+@@= skipped -12, +14 lines =@@
      };
  }
  interface C extends A, B { } // ok
@@ -41,7 +29,6 @@
 +
      [s: number]: {};
  >s : number
-->  : ^^^^^^
  }
  interface E extends A, D { } // error
 +>E : E
@@ -51,11 +38,4 @@
 +
      [s: number]: {
  >s : number
-->  : ^^^^^^
  
-         a;
- >a : any
-->  : ^^^
- 
-     };
- } // ok because we overrode D's number index signature

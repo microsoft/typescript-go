@@ -1,32 +1,17 @@
 --- old.nodeNextPackageSelfNameWithOutDirDeclDirCompositeNestedDirs.types
 +++ new.nodeNextPackageSelfNameWithOutDirDeclDirCompositeNestedDirs.types
-@@= skipped -2, +2 lines =@@
- === index.ts ===
- export {srcthing as thing} from "./src/thing.js";
- >srcthing : () => void
-->         : ^^^^^^    
- >thing : () => void
-->      : ^^^^^^    
- 
- === src/thing.ts ===
- // The following import should cause `index.ts`
-@@= skipped -13, +11 lines =@@
+@@= skipped -13, +13 lines =@@
  // real command-line we'll crawl the imports for that set - a limitation
  // of the harness, I suppose)
  import * as me from "@this/package";
 ->me : typeof me
-->   : ^^^^^^^^^
 +>me : any
  
  me.thing();
 ->me.thing() : void
-->           : ^^^^
 ->me.thing : () => void
-->         : ^^^^^^    
 ->me : typeof me
-->   : ^^^^^^^^^
 ->thing : () => void
-->      : ^^^^^^    
 +>me.thing() : any
 +>me.thing : any
 +>me : any
@@ -34,6 +19,3 @@
  
  export function srcthing(): void {}
  >srcthing : () => void
-->         : ^^^^^^    
- 
- 

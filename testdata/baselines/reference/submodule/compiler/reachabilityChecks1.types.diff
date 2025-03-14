@@ -1,37 +1,7 @@
 --- old.reachabilityChecks1.types
 +++ new.reachabilityChecks1.types
-@@= skipped -2, +2 lines =@@
- === reachabilityChecks1.ts ===
- while (true);
+@@= skipped -24, +24 lines =@@
  >true : true
-->     : ^^^^
- 
- var x = 1;
- >x : number
-->  : ^^^^^^
- >1 : 1
-->  : ^
- 
- module A {
- >A : typeof A
-->  : ^^^^^^^^
- 
-     while (true);
- >true : true
-->     : ^^^^
- 
-     let x;
- >x : any
-->  : ^^^
- }
- 
- module A1 {
- >A1 : typeof A1
-->   : ^^^^^^^^^
- 
-     do {} while(true);
- >true : true
-->     : ^^^^
  
      module A {
 +>A : any
@@ -41,99 +11,19 @@
      }
  }
  
- module A2 {
- >A2 : typeof A2
-->   : ^^^^^^^^^
- 
-     while (true);
+@@= skipped -36, +39 lines =@@
  >true : true
-->     : ^^^^
- 
-     module A {
- >A : typeof A
-->  : ^^^^^^^^
- 
-         var x = 1;
- >x : number
-->  : ^^^^^^
- >1 : 1
-->  : ^
-     }
- }
- 
- module A3 {
- >A3 : typeof A3
-->   : ^^^^^^^^^
- 
-     while (true);
- >true : true
-->     : ^^^^
- 
-     type T = string;
- >T : string
-->  : ^^^^^^
- }
- 
- module A4 {
- >A4 : typeof A4
-->   : ^^^^^^^^^
- 
-     while (true);
- >true : true
-->     : ^^^^
  
      module A {
 +>A : typeof A
 +
          const enum E { X }
 ->E : E
-->  : ^
 +>E : E.X
  >X : E.X
-->  : ^^^
      }
  }
- 
- function f1(x) {
- >f1 : (x: any) => void
-->   : ^ ^^^^^^^^^^^^^^
- >x : any
-->  : ^^^
- 
-     if (x) {
- >x : any
-->  : ^^^
- 
-         return;
-     }
-     else {
-         throw new Error("123");
- >new Error("123") : Error
-->                 : ^^^^^
- >Error : ErrorConstructor
-->      : ^^^^^^^^^^^^^^^^
- >"123" : "123"
-->      : ^^^^^
-     }
-     var x;
- >x : any
-->  : ^^^
- }
- 
- function f2() {
- >f2 : () => void
-->   : ^^^^^^^^^^
- 
-     return;
-     class A {
- >A : A
-->  : ^
-     }
- }
- 
- module B {
- >B : typeof B
-->  : ^^^^^^^^
+@@= skipped -39, +41 lines =@@
  
      for (; ;);
      module C {
@@ -141,52 +31,21 @@
      }
  }
  
- function f3() {
- >f3 : () => void
-->   : ^^^^^^^^^^
- 
-     do {
-     } while (true);
+@@= skipped -11, +12 lines =@@
  >true : true
-->     : ^^^^
  
      enum E {
 ->E : E
-->  : ^
 +>E : E.X
  
          X = 1
  >X : E.X
-->  : ^^^
- >1 : 1
-->  : ^
-     }
- }
- 
- function f4() {
- >f4 : () => void
-->   : ^^^^^^^^^^
- 
-     if (true) {
- >true : true
-->     : ^^^^
- 
-         throw new Error();
- >new Error() : Error
-->            : ^^^^^
+@@= skipped -19, +19 lines =@@
  >Error : ErrorConstructor
-->      : ^^^^^^^^^^^^^^^^
      }
      const enum E {
 ->E : E
-->  : ^
 +>E : E.X
  
          X = 1
  >X : E.X
-->  : ^^^
- >1 : 1
-->  : ^
-     }
- }
- 

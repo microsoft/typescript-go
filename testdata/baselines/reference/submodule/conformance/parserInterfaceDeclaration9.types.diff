@@ -8,13 +8,8 @@
 +
      get foo(): number,
  >foo : number
-->    : ^^^^^^
  
-     set foo(value: number),
- >foo : number
-->    : ^^^^^^
- >value : number
-->      : ^^^^^^
+@@= skipped -9, +11 lines =@@
  }
  
  interface I2 {
@@ -22,13 +17,8 @@
 +
      get foo(): number;
  >foo : number
-->    : ^^^^^^
  
-     set foo(value: number);
- >foo : number
-->    : ^^^^^^
- >value : number
-->      : ^^^^^^
+@@= skipped -9, +11 lines =@@
  }
  
  interface I3 {
@@ -36,12 +26,4 @@
 +
      get foo(): number
  >foo : number
-->    : ^^^^^^
- 
-     set foo(value: number)
- >foo : number
-->    : ^^^^^^
- >value : number
-->      : ^^^^^^
- }
  

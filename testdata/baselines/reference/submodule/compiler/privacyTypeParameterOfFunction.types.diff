@@ -1,15 +1,6 @@
 --- old.privacyTypeParameterOfFunction.types
 +++ new.privacyTypeParameterOfFunction.types
-@@= skipped -2, +2 lines =@@
- === privacyTypeParameterOfFunction.ts ===
- class privateClass {
- >privateClass : privateClass
-->             : ^^^^^^^^^^^^
- }
- 
- export class publicClass {
- >publicClass : publicClass
-->            : ^^^^^^^^^^^
+@@= skipped -9, +9 lines =@@
  }
  
  export interface publicInterfaceWithPrivateTypeParameters {
@@ -26,7 +17,6 @@
      // TypeParameter_0_of_method_from_exported_interface_has_or_is_using_private_type_1
      myMethod<T extends privateClass>(): privateClass;
  >myMethod : <T extends privateClass>() => privateClass
-->         : ^ ^^^^^^^^^            ^^^^^^^            
 +>T : T
  }
  
@@ -41,7 +31,6 @@
 +
      myMethod<T extends publicClass>(): publicClass;
  >myMethod : <T extends publicClass>() => publicClass
-->         : ^ ^^^^^^^^^           ^^^^^^^           
 +>T : T
  }
  
@@ -56,7 +45,6 @@
 +
      myMethod<T extends privateClass>(): privateClass;
  >myMethod : <T extends privateClass>() => privateClass
-->         : ^ ^^^^^^^^^            ^^^^^^^            
 +>T : T
  }
  
@@ -71,112 +59,87 @@
 +
      myMethod<T extends publicClass>(): publicClass;
  >myMethod : <T extends publicClass>() => publicClass
-->         : ^ ^^^^^^^^^           ^^^^^^^           
 +>T : T
  }
  
  export class publicClassWithWithPrivateTypeParameters {
- >publicClassWithWithPrivateTypeParameters : publicClassWithWithPrivateTypeParameters
-->                                         : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
+@@= skipped -38, +64 lines =@@
      // TypeParameter_0_of_public_static_method_from_exported_class_has_or_is_using_private_type_1
      static myPublicStaticMethod<T extends privateClass>() {
  >myPublicStaticMethod : <T extends privateClass>() => void
-->                     : ^ ^^^^^^^^^            ^^^^^^^^^^^
 +>T : T
      }
      private static myPrivateStaticMethod<T extends privateClass>() { // No error
  >myPrivateStaticMethod : <T extends privateClass>() => void
-->                      : ^ ^^^^^^^^^            ^^^^^^^^^^^
 +>T : T
      }
      // TypeParameter_0_of_public_method_from_exported_class_has_or_is_using_private_type_1
      myPublicMethod<T extends privateClass>() {
  >myPublicMethod : <T extends privateClass>() => void
-->               : ^ ^^^^^^^^^            ^^^^^^^^^^^
 +>T : T
      }
      private myPrivateMethod<T extends privateClass>() { // No error
  >myPrivateMethod : <T extends privateClass>() => void
-->                : ^ ^^^^^^^^^            ^^^^^^^^^^^
 +>T : T
      }
  }
  
- export class publicClassWithWithPublicTypeParameters {
- >publicClassWithWithPublicTypeParameters : publicClassWithWithPublicTypeParameters
-->                                        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+@@= skipped -18, +22 lines =@@
  
      static myPublicStaticMethod<T extends publicClass>() {
  >myPublicStaticMethod : <T extends publicClass>() => void
-->                     : ^ ^^^^^^^^^           ^^^^^^^^^^^
 +>T : T
      }
      private static myPrivateStaticMethod<T extends publicClass>() { 
  >myPrivateStaticMethod : <T extends publicClass>() => void
-->                      : ^ ^^^^^^^^^           ^^^^^^^^^^^
 +>T : T
      }
      myPublicMethod<T extends publicClass>() {
  >myPublicMethod : <T extends publicClass>() => void
-->               : ^ ^^^^^^^^^           ^^^^^^^^^^^
 +>T : T
      }
      private myPrivateMethod<T extends publicClass>() {
  >myPrivateMethod : <T extends publicClass>() => void
-->                : ^ ^^^^^^^^^           ^^^^^^^^^^^
 +>T : T
      }
  }
  
- class privateClassWithWithPrivateTypeParameters {
- >privateClassWithWithPrivateTypeParameters : privateClassWithWithPrivateTypeParameters
-->                                          : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+@@= skipped -17, +21 lines =@@
  
      static myPublicStaticMethod<T extends privateClass>() {
  >myPublicStaticMethod : <T extends privateClass>() => void
-->                     : ^ ^^^^^^^^^            ^^^^^^^^^^^
 +>T : T
      }
      private static myPrivateStaticMethod<T extends privateClass>() { // No error
  >myPrivateStaticMethod : <T extends privateClass>() => void
-->                      : ^ ^^^^^^^^^            ^^^^^^^^^^^
 +>T : T
      }
      myPublicMethod<T extends privateClass>() {
  >myPublicMethod : <T extends privateClass>() => void
-->               : ^ ^^^^^^^^^            ^^^^^^^^^^^
 +>T : T
      }
      private myPrivateMethod<T extends privateClass>() { // No error
  >myPrivateMethod : <T extends privateClass>() => void
-->                : ^ ^^^^^^^^^            ^^^^^^^^^^^
 +>T : T
      }
  }
  
- class privateClassWithWithPublicTypeParameters {
- >privateClassWithWithPublicTypeParameters : privateClassWithWithPublicTypeParameters
-->                                         : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+@@= skipped -17, +21 lines =@@
  
      static myPublicStaticMethod<T extends publicClass>() {
  >myPublicStaticMethod : <T extends publicClass>() => void
-->                     : ^ ^^^^^^^^^           ^^^^^^^^^^^
 +>T : T
      }
      private static myPrivateStaticMethod<T extends publicClass>() {
  >myPrivateStaticMethod : <T extends publicClass>() => void
-->                      : ^ ^^^^^^^^^           ^^^^^^^^^^^
 +>T : T
      }
      myPublicMethod<T extends publicClass>() {
  >myPublicMethod : <T extends publicClass>() => void
-->               : ^ ^^^^^^^^^           ^^^^^^^^^^^
 +>T : T
      }
      private myPrivateMethod<T extends publicClass>() {
  >myPrivateMethod : <T extends publicClass>() => void
-->                : ^ ^^^^^^^^^           ^^^^^^^^^^^
 +>T : T
      }
  }
@@ -184,25 +147,21 @@
  // TypeParameter_0_of_exported_function_has_or_is_using_private_type_1
  export function publicFunctionWithPrivateTypeParameters<T extends privateClass>() {
  >publicFunctionWithPrivateTypeParameters : <T extends privateClass>() => void
-->                                        : ^ ^^^^^^^^^            ^^^^^^^^^^^
 +>T : T
  }
  
  export function publicFunctionWithPublicTypeParameters<T extends publicClass>() {
  >publicFunctionWithPublicTypeParameters : <T extends publicClass>() => void
-->                                       : ^ ^^^^^^^^^           ^^^^^^^^^^^
 +>T : T
  }
  
  function privateFunctionWithPrivateTypeParameters<T extends privateClass>() {
  >privateFunctionWithPrivateTypeParameters : <T extends privateClass>() => void
-->                                         : ^ ^^^^^^^^^            ^^^^^^^^^^^
 +>T : T
  }
  
  function privateFunctionWithPublicTypeParameters<T extends publicClass>() {
  >privateFunctionWithPublicTypeParameters : <T extends publicClass>() => void
-->                                        : ^ ^^^^^^^^^           ^^^^^^^^^^^
 +>T : T
  }
  
@@ -217,7 +176,6 @@
 +
      myMethod<T>(): publicClass;
  >myMethod : <T>() => publicClass
-->         : ^ ^^^^^^^           
 +>T : T
  }
  
@@ -232,69 +190,56 @@
 +
      myMethod<T>(): publicClass;
  >myMethod : <T>() => publicClass
-->         : ^ ^^^^^^^           
 +>T : T
  }
  
  export class publicClassWithWithPublicTypeParametersWithoutExtends {
- >publicClassWithWithPublicTypeParametersWithoutExtends : publicClassWithWithPublicTypeParametersWithoutExtends
-->                                                      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+@@= skipped -48, +70 lines =@@
  
      static myPublicStaticMethod<T>() {
  >myPublicStaticMethod : <T>() => void
-->                     : ^ ^^^^^^^^^^^
 +>T : T
      }
      private static myPrivateStaticMethod<T>() {
  >myPrivateStaticMethod : <T>() => void
-->                      : ^ ^^^^^^^^^^^
 +>T : T
      }
      myPublicMethod<T>() {
  >myPublicMethod : <T>() => void
-->               : ^ ^^^^^^^^^^^
 +>T : T
      }
      private myPrivateMethod<T>() {
  >myPrivateMethod : <T>() => void
-->                : ^ ^^^^^^^^^^^
 +>T : T
      }
  }
  class privateClassWithWithPublicTypeParametersWithoutExtends {
- >privateClassWithWithPublicTypeParametersWithoutExtends : privateClassWithWithPublicTypeParametersWithoutExtends
-->                                                       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+@@= skipped -16, +20 lines =@@
  
      static myPublicStaticMethod<T>() {
  >myPublicStaticMethod : <T>() => void
-->                     : ^ ^^^^^^^^^^^
 +>T : T
      }
      private static myPrivateStaticMethod<T>() {
  >myPrivateStaticMethod : <T>() => void
-->                      : ^ ^^^^^^^^^^^
 +>T : T
      }
      myPublicMethod<T>() {
  >myPublicMethod : <T>() => void
-->               : ^ ^^^^^^^^^^^
 +>T : T
      }
      private myPrivateMethod<T>() {
  >myPrivateMethod : <T>() => void
-->                : ^ ^^^^^^^^^^^
 +>T : T
      }
  }
  
  export function publicFunctionWithPublicTypeParametersWithoutExtends<T>() {
  >publicFunctionWithPublicTypeParametersWithoutExtends : <T>() => void
-->                                                     : ^ ^^^^^^^^^^^
 +>T : T
  }
  
  function privateFunctionWithPublicTypeParametersWithoutExtends<T>() {
  >privateFunctionWithPublicTypeParametersWithoutExtends : <T>() => void
-->                                                      : ^ ^^^^^^^^^^^
 +>T : T
  }

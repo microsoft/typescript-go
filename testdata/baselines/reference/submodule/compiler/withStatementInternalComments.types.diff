@@ -1,8 +1,0 @@
---- old.withStatementInternalComments.types
-+++ new.withStatementInternalComments.types
-@@= skipped -3, +3 lines =@@
- // @ts-ignore
- /*1*/ with /*2*/ ( /*3*/ false /*4*/ ) /*5*/ {}
- >false : false
-->      : ^^^^^
- 

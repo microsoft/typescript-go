@@ -5,10 +5,7 @@
  === asyncEnum_es5.ts ===
  async enum E {
 ->E : E
-->  : ^
 +>E : E.Value
  
    Value
  >Value : E.Value
-->      : ^^^^^^^
- }

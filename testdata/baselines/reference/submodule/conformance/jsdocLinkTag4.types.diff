@@ -11,15 +11,7 @@
  === /b.ts ===
  import * as a from "./a";
 ->a : typeof a
-->  : ^^^^^^^^
 +>a : typeof import("/a")
  
  /**
   * @param {number} a - see {@link a.A}
-  */
- export function foo(a: string) {}
- >foo : (a: string) => void
-->    : ^ ^^      ^^^^^^^^^
- >a : string
-->  : ^^^^^^
- 

@@ -1,8 +1,0 @@
---- old.moduleResolutionWithSuffixes_threeLastIsBlank4.types
-+++ new.moduleResolutionWithSuffixes_threeLastIsBlank4.types
-@@= skipped -2, +2 lines =@@
- === /index.ts ===
- import { base } from "./foo";
- >base : any
-->     : ^^^
- 

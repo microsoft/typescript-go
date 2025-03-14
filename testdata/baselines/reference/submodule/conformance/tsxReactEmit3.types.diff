@@ -15,24 +15,19 @@
  
  <Foo> <Bar> q </Bar> <Bar/>   s <Bar/><Bar/></Foo>;
 -><Foo> <Bar> q </Bar> <Bar/>   s <Bar/><Bar/></Foo> : JSX.Element
-->                                                   : ^^^^^^^^^^^
 +><Foo> <Bar> q </Bar> <Bar/>   s <Bar/><Bar/></Foo> : any
  >Foo : any
 -><Bar> q </Bar> : JSX.Element
-->               : ^^^^^^^^^^^
 +><Bar> q </Bar> : any
  >Bar : any
  >Bar : any
 -><Bar/> : JSX.Element
-->       : ^^^^^^^^^^^
 +><Bar/> : any
  >Bar : any
 -><Bar/> : JSX.Element
-->       : ^^^^^^^^^^^
 +><Bar/> : any
  >Bar : any
 -><Bar/> : JSX.Element
-->       : ^^^^^^^^^^^
 +><Bar/> : any
  >Bar : any
  >Foo : any

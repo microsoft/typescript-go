@@ -11,24 +11,4 @@
 +
          [s: string]: any;
  >s : string
-->  : ^^^^^^
      }
- }
- 
- export class AppComponent {
- >AppComponent : AppComponent
-->             : ^^^^^^^^^^^^
- 
-     render(createElement) {
- >render : (createElement: any) => any
-->       : ^             ^^^^^^^^^^^^^
- >createElement : any
-->              : ^^^
- 
-         return <div />;
- ><div /> : any
-->        : ^^^
- >div : any
-->    : ^^^
-     }
- }

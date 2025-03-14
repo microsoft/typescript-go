@@ -1,8 +1,0 @@
---- old.parserVariableDeclaration5.types
-+++ new.parserVariableDeclaration5.types
-@@= skipped -2, +2 lines =@@
- === parserVariableDeclaration5.ts ===
- var a,
- >a : any
-->  : ^^^
- 

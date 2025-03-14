@@ -1,13 +1,9 @@
 --- old.extensionLoadingPriority(moduleresolution=node).types
 +++ new.extensionLoadingPriority(moduleresolution=node).types
-@@= skipped -18, +18 lines =@@
- === /project/b.ts ===
- import a from "./a.js";
+@@= skipped -20, +20 lines =@@
  >a : "a.js"
-->  : ^^^^^^
  
  import dir from "./dir";
 ->dir : "dir/index.ts"
-->    : ^^^^^^^^^^^^^^
 +>dir : "dir.js"
  

@@ -1,31 +1,10 @@
 --- old.typeofEnum.types
 +++ new.typeofEnum.types
-@@= skipped -2, +2 lines =@@
- === typeofEnum.ts ===
- enum E {
- >E : E
-->  : ^
- 
-     e1,
- >e1 : E.e1
-->   : ^^^^
- 
-     e2
- >e2 : E.e2
-->   : ^^^^
- }
+@@= skipped -12, +12 lines =@@
  
  var e1: typeof E;
  >e1 : typeof E
-->   : ^^^^^^^^
 ->E : typeof E
-->  : ^^^^^^^^
  
  e1.e1;
  >e1.e1 : E.e1
-->      : ^^^^
- >e1 : typeof E
-->   : ^^^^^^^^
- >e1 : E.e1
-->   : ^^^^
- 

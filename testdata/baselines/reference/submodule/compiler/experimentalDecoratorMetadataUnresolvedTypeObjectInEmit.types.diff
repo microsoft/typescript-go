@@ -19,28 +19,15 @@
              }
          }
      }
-@@= skipped -12, +18 lines =@@
- === usage.ts ===
- class Foo {
+@@= skipped -14, +20 lines =@@
  >Foo : Foo
-->    : ^^^
  
      f(@decorate user: A.B.C.D.E): void {}
 ->f : (user: A.B.C.D.E) => void
-->  : ^    ^^         ^^^^^    
 +>f : (user: E) => void
  >decorate : any
-->         : ^^^
 ->user : A.B.C.D.E
-->     : ^^^^^^^^^
 +>user : E
  >A : any
-->  : ^^^
  >B : any
-->  : ^^^
  >C : any
-->  : ^^^
- >D : any
-->  : ^^^
- }
- 

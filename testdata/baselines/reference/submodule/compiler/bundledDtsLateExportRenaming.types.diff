@@ -1,46 +1,21 @@
 --- old.bundledDtsLateExportRenaming.types
 +++ new.bundledDtsLateExportRenaming.types
-@@= skipped -6, +6 lines =@@
- === nested/base.ts ===
- import { B } from "./shared";
- >B : typeof B
-->  : ^^^^^^^^
- 
- export function f() {
- >f : () => B
-->  : ^^^^^^^
- 
-     return new B();
- >new B() : B
-->        : ^
- >B : typeof B
-->  : ^^^^^^^^
- }
+@@= skipped -17, +17 lines =@@
  
  === nested/derived.ts ===
  import { f } from "./base";
 ->f : () => import("index").B
-->  : ^^^^^^^^^^^^^^^^^^^^^^^
 +>f : () => B
  
  export function g() {
 ->g : () => import("index").B
-->  : ^^^^^^^^^^^^^^^^^^^^^^^
 +>g : () => B
  
      return f();
 ->f() : import("index").B
-->    : ^^^^^^^^^^^^^^^^^
 ->f : () => import("index").B
-->  : ^^^^^^^^^^^^^^^^^^^^^^^
 +>f() : B
 +>f : () => B
  }
  
  === nested/index.ts ===
-@@= skipped -39, +31 lines =@@
- === nested/shared.ts ===
- export class B {}
- >B : B
-->  : ^
- 

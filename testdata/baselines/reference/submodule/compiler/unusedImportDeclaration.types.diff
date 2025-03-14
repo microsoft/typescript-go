@@ -5,60 +5,20 @@
  === unusedImportDeclaration_testerA.ts ===
  import B = require("./unusedImportDeclaration_testerB");
 ->B : typeof B
-->  : ^^^^^^^^
 +>B : typeof TesterB
  
  var thingy: B = {
 ->thingy : B
-->       : ^
 +>thingy : TesterB
  >{    me: "A"} : { me: string; }
-->              : ^^^^^^^^^^^^^^^
  
      me: "A"
- >me : string
-->   : ^^^^^^
- >"A" : "A"
-->    : ^^^
- 
- };
- declare function foo(a: string): void;
- >foo : (a: string) => void
-->    : ^ ^^      ^^^^^    
- >a : string
-->  : ^^^^^^
- 
- foo("IN " + thingy.me + "!");
- >foo("IN " + thingy.me + "!") : void
-->                             : ^^^^
- >foo : (a: string) => void
-->    : ^ ^^      ^^^^^    
- >"IN " + thingy.me + "!" : string
-->                        : ^^^^^^
+@@= skipped -22, +22 lines =@@
  >"IN " + thingy.me : string
-->                  : ^^^^^^
  >"IN " : "IN "
-->      : ^^^^^
  >thingy.me : string
-->          : ^^^^^^
 ->thingy : B
-->       : ^
 +>thingy : TesterB
  >me : string
-->   : ^^^^^^
  >"!" : "!"
-->    : ^^^
- 
- === unusedImportDeclaration_testerB.ts ===
- class TesterB {
- >TesterB : TesterB
-->        : ^^^^^^^
- 
-     me: string;
- >me : string
-->   : ^^^^^^
- }
- export = TesterB;
- >TesterB : TesterB
-->        : ^^^^^^^
  

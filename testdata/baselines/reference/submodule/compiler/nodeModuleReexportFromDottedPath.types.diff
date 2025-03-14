@@ -12,40 +12,23 @@
  
  export class PrismaClient<T extends PrismaClientOptions = PrismaClientOptions> {
  >PrismaClient : PrismaClient<T>
-->             : ^^^^^^^^^^^^^^^
 +>T : T
  
    private fetcher;
  >fetcher : any
-@@= skipped -19, +21 lines =@@
- === /index.ts ===
- import { PrismaClient } from "@prisma/client";
- >PrismaClient : typeof PrismaClient
-->             : ^^^^^^^^^^^^^^^^^^^
+@@= skipped -21, +24 lines =@@
  
  declare const enhancePrisma: <TPrismaClientCtor>(client: TPrismaClientCtor) => TPrismaClientCtor & { enhanced: unknown };
  >enhancePrisma : <TPrismaClientCtor>(client: TPrismaClientCtor) => TPrismaClientCtor & { enhanced: unknown; }
-->              : ^                 ^^      ^^                 ^^^^^                                          
 +>TPrismaClientCtor : TPrismaClientCtor
  >client : TPrismaClientCtor
-->       : ^^^^^^^^^^^^^^^^^
  >enhanced : unknown
-->         : ^^^^^^^
  
- const EnhancedPrisma = enhancePrisma(PrismaClient);
- >EnhancedPrisma : typeof PrismaClient & { enhanced: unknown; }
-->               : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^       ^^^
- >enhancePrisma(PrismaClient) : typeof PrismaClient & { enhanced: unknown; }
-->                            : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^       ^^^
- >enhancePrisma : <TPrismaClientCtor>(client: TPrismaClientCtor) => TPrismaClientCtor & { enhanced: unknown; }
-->              : ^                 ^^      ^^                 ^^^^^                                          
+@@= skipped -10, +11 lines =@@
  >PrismaClient : typeof PrismaClient
-->             : ^^^^^^^^^^^^^^^^^^^
  
  export default new EnhancedPrisma();
 ->new EnhancedPrisma() : PrismaClient<import("/node_modules/.prisma/client/index").PrismaClientOptions>
-->                     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>new EnhancedPrisma() : PrismaClient<PrismaClientOptions>
  >EnhancedPrisma : typeof PrismaClient & { enhanced: unknown; }
-->               : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^       ^^^
  

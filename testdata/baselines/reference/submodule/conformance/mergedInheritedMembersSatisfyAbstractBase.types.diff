@@ -1,21 +1,6 @@
 --- old.mergedInheritedMembersSatisfyAbstractBase.types
 +++ new.mergedInheritedMembersSatisfyAbstractBase.types
-@@= skipped -2, +2 lines =@@
- === mergedInheritedMembersSatisfyAbstractBase.ts ===
- abstract class BaseClass {
- >BaseClass : BaseClass
-->          : ^^^^^^^^^
- 
-   abstract bar: number;
- >bar : number
-->    : ^^^^^^
- }
- 
- class Broken extends BaseClass {}
- >Broken : Broken
-->       : ^^^^^^
- >BaseClass : BaseClass
-->          : ^^^^^^^^^
+@@= skipped -13, +13 lines =@@
  
  // declaration merging should satisfy abstract bar
  interface IGetters {
@@ -23,33 +8,20 @@
 +
    bar: number;
  >bar : number
-->    : ^^^^^^
  }
  interface Broken extends IGetters {}
 +>Broken : Broken
  
  new Broken().bar
  >new Broken().bar : number
-->                 : ^^^^^^
- >new Broken() : Broken
-->             : ^^^^^^
- >Broken : typeof Broken
-->       : ^^^^^^^^^^^^^
- >bar : number
-->    : ^^^^^^
- 
- class IncorrectlyExtends extends BaseClass {}
- >IncorrectlyExtends : IncorrectlyExtends
-->                   : ^^^^^^^^^^^^^^^^^^
+@@= skipped -16, +19 lines =@@
  >BaseClass : BaseClass
-->          : ^^^^^^^^^
  
  interface IncorrectGetters {
 +>IncorrectGetters : IncorrectGetters
 +
    bar: string;
  >bar : string
-->    : ^^^^^^
  }
  interface IncorrectlyExtends extends IncorrectGetters {}
 +>IncorrectlyExtends : IncorrectlyExtends

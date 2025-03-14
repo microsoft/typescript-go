@@ -9,11 +9,8 @@
 +>t02 : any
 +><a>{0}#</a> : any
  >a : any
-->  : ^^^
  >0 : 0
-->  : ^
  >a : any
-->  : ^^^
  
  var t03 = <a>#{0}</a>;
 ->t03 : error
@@ -21,11 +18,8 @@
 +>t03 : any
 +><a>#{0}</a> : any
  >a : any
-->  : ^^^
  >0 : 0
-->  : ^
  >a : any
-->  : ^^^
  
  var t04 = <a>#{0}#</a>;
 ->t04 : error
@@ -33,11 +27,8 @@
 +>t04 : any
 +><a>#{0}#</a> : any
  >a : any
-->  : ^^^
  >0 : 0
-->  : ^
  >a : any
-->  : ^^^
  
  var t05 = <a>#<i></i></a>;
 ->t05 : error
@@ -45,15 +36,11 @@
 +>t05 : any
 +><a>#<i></i></a> : any
  >a : any
-->  : ^^^
 -><i></i> : error
 +><i></i> : any
  >i : any
-->  : ^^^
  >i : any
-->  : ^^^
  >a : any
-->  : ^^^
  
  var t06 = <a>#<i></i></a>;
 ->t06 : error
@@ -61,15 +48,11 @@
 +>t06 : any
 +><a>#<i></i></a> : any
  >a : any
-->  : ^^^
 -><i></i> : error
 +><i></i> : any
  >i : any
-->  : ^^^
  >i : any
-->  : ^^^
  >a : any
-->  : ^^^
  
  var t07 = <a>#<i>#</i></a>;
 ->t07 : error
@@ -77,15 +60,11 @@
 +>t07 : any
 +><a>#<i>#</i></a> : any
  >a : any
-->  : ^^^
 -><i>#</i> : error
 +><i>#</i> : any
  >i : any
-->  : ^^^
  >i : any
-->  : ^^^
  >a : any
-->  : ^^^
  
  var t08 = <a><i></i>#</a>;
 ->t08 : error
@@ -93,15 +72,11 @@
 +>t08 : any
 +><a><i></i>#</a> : any
  >a : any
-->  : ^^^
 -><i></i> : error
 +><i></i> : any
  >i : any
-->  : ^^^
  >i : any
-->  : ^^^
  >a : any
-->  : ^^^
  
  var t09 = <a>#<i></i>#</a>;
 ->t09 : error
@@ -109,15 +84,11 @@
 +>t09 : any
 +><a>#<i></i>#</a> : any
  >a : any
-->  : ^^^
 -><i></i> : error
 +><i></i> : any
  >i : any
-->  : ^^^
  >i : any
-->  : ^^^
  >a : any
-->  : ^^^
  
  var t10 = <a><i/>#</a>;
 ->t10 : error
@@ -125,13 +96,10 @@
 +>t10 : any
 +><a><i/>#</a> : any
  >a : any
-->  : ^^^
 -><i/> : error
 +><i/> : any
  >i : any
-->  : ^^^
  >a : any
-->  : ^^^
  
  var t11 = <a>#<i/></a>;
 ->t11 : error
@@ -139,13 +107,10 @@
 +>t11 : any
 +><a>#<i/></a> : any
  >a : any
-->  : ^^^
 -><i/> : error
 +><i/> : any
  >i : any
-->  : ^^^
  >a : any
-->  : ^^^
  
  var t12 = <a>#</a>;
 ->t12 : error
@@ -153,7 +118,5 @@
 +>t12 : any
 +><a>#</a> : any
  >a : any
-->  : ^^^
  >a : any
-->  : ^^^
  

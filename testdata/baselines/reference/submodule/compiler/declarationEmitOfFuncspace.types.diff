@@ -1,16 +1,7 @@
 --- old.declarationEmitOfFuncspace.types
 +++ new.declarationEmitOfFuncspace.types
-@@= skipped -3, +3 lines =@@
- // #27032
- function ExpandoMerge(n: number) {
- >ExpandoMerge : (n: number) => number
-->             : ^ ^^      ^^^^^^^^^^^
+@@= skipped -9, +9 lines =@@
  >n : number
-->  : ^^^^^^
- 
-     return n;
- >n : number
-->  : ^^^^^^
  }
  namespace ExpandoMerge {
 +>ExpandoMerge : (n: number) => number

@@ -16,12 +16,7 @@
      /** This is comment for function signature*/
      (/** this is comment about a*/a: string,
  >a : string
-->  : ^^^^^^
- 
-         /** this is comment for b*/
-         b: number): void;
- >b : number
-->  : ^^^^^^
+@@= skipped -15, +19 lines =@@
  }
  
  export interface ICallSignatureWithRestParameters {
@@ -29,9 +24,7 @@
 +
      (a: string, ...rests: string[]): string;
  >a : string
-->  : ^^^^^^
  >rests : string[]
-->      : ^^^^^^^^
  }
  
  export interface ICallSignatureWithOverloads {
@@ -39,11 +32,8 @@
 +
      (a: string): string;
  >a : string
-->  : ^^^^^^
  
-     (a: number): number;
- >a : number
-->  : ^^^^^^
+@@= skipped -14, +18 lines =@@
  }
  
  export interface ICallSignatureWithTypeParameters<T> {
@@ -53,7 +43,6 @@
      /** This comment should appear for foo*/
      (a: T): string;
  >a : T
-->  : ^
  }
  
  export interface ICallSignatureWithOwnTypeParametes {
@@ -62,7 +51,6 @@
      <T extends ICallSignature>(a: T): string;
 +>T : T
  >a : T
-->  : ^
  }
  
  === declFileCallSignatures_1.ts ===
@@ -79,12 +67,7 @@
      /** This is comment for function signature*/
      (/** this is comment about a*/a: string,
  >a : string
-->  : ^^^^^^
- 
-         /** this is comment for b*/
-         b: number): void;
- >b : number
-->  : ^^^^^^
+@@= skipped -27, +37 lines =@@
  }
  
  interface IGlobalCallSignatureWithRestParameters {
@@ -92,10 +75,7 @@
  
      (a: string, ...rests: string[]): string;
  >a : string
-->  : ^^^^^^
- >rests : string[]
-->      : ^^^^^^^^
- 
+@@= skipped -8, +9 lines =@@
  }
  
  interface IGlobalCallSignatureWithOverloads {
@@ -103,11 +83,8 @@
 +
      (a: string): string;
  >a : string
-->  : ^^^^^^
  
-     (a: number): number;
- >a : number
-->  : ^^^^^^
+@@= skipped -8, +10 lines =@@
  }
  
  interface IGlobalCallSignatureWithTypeParameters<T> {
@@ -117,7 +94,6 @@
      /** This comment should appear for foo*/
      (a: T): string;
  >a : T
-->  : ^
  }
  
  interface IGlobalCallSignatureWithOwnTypeParametes {
@@ -126,5 +102,4 @@
      <T extends IGlobalCallSignature>(a: T): string;
 +>T : T
  >a : T
-->  : ^
  }

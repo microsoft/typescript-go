@@ -8,7 +8,6 @@
 +
  import a = M;
  >a : any
-->  : ^^^
 ->M : error
 +>M : any
  

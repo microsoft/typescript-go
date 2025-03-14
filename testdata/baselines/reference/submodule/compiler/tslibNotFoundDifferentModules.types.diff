@@ -1,20 +1,8 @@
 --- old.tslibNotFoundDifferentModules.types
 +++ new.tslibNotFoundDifferentModules.types
-@@= skipped -3, +3 lines =@@
- export {};
+@@= skipped -12, +12 lines =@@
  async function foo(): Promise<void> {}
  >foo : () => Promise<void>
-->    : ^^^^^^             
- 
- async function bar(): Promise<void> {}
- >bar : () => Promise<void>
-->    : ^^^^^^             
- 
- === /package2/index.ts ===
- export {};
- async function foo(): Promise<void> {}
- >foo : () => Promise<void>
-->    : ^^^^^^             
  
 -=== /package1/node_modules/tslib/tslib.d.ts ===
 -/**
@@ -27,13 +15,8 @@
 - */
 -export declare function __awaiter(thisArg: any, _arguments: any, P: Function, generator: Function): any;
 ->__awaiter : (thisArg: any, _arguments: any, P: Function, generator: Function) => any
-->          : ^       ^^   ^^          ^^   ^^ ^^        ^^         ^^        ^^^^^   
 ->thisArg : any
-->        : ^^^
 ->_arguments : any
-->           : ^^^
 ->P : Function
-->  : ^^^^^^^^
 ->generator : Function
-->          : ^^^^^^^^
 -

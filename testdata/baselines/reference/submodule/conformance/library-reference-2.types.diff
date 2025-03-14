@@ -5,13 +5,9 @@
  /// <reference types="jquery" />
  $.foo();
 ->$.foo() : void
-->        : ^^^^
 ->$.foo : () => void
-->      : ^^^^^^    
 ->$ : { foo(): void; }
-->  : ^^^^^^^^^    ^^^
 ->foo : () => void
-->    : ^^^^^^    
 +>$.foo() : any
 +>$.foo : any
 +>$ : any
@@ -20,8 +16,6 @@
 -=== /types/jquery/jquery.d.ts ===
 -declare var $: { foo(): void };
 ->$ : { foo(): void; }
-->  : ^^^^^^^^^    ^^^
 ->foo : () => void
-->    : ^^^^^^    
 -
 -

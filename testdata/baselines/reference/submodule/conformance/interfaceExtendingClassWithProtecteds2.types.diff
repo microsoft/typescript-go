@@ -1,23 +1,6 @@
 --- old.interfaceExtendingClassWithProtecteds2.types
 +++ new.interfaceExtendingClassWithProtecteds2.types
-@@= skipped -2, +2 lines =@@
- === interfaceExtendingClassWithProtecteds2.ts ===
- class Foo {
- >Foo : Foo
-->    : ^^^
- 
-     protected x: string;
- >x : string
-->  : ^^^^^^
- }
- 
- class Bar {
- >Bar : Bar
-->    : ^^^
- 
-     protected x: string;
- >x : string
-->  : ^^^^^^
+@@= skipped -15, +15 lines =@@
  }
  
  interface I3 extends Foo, Bar { // error
@@ -29,16 +12,8 @@
 +
      x: string;
  >x : string
-->  : ^^^^^^
  }
- 
- class Baz {
- >Baz : Baz
-->    : ^^^
- 
-     protected y: string;
- >y : string
-->  : ^^^^^^
+@@= skipped -15, +18 lines =@@
  }
  
  interface I5 extends Foo, Baz {
@@ -46,40 +21,4 @@
 +
      z: string;
  >z : string
-->  : ^^^^^^
  }
- 
- var i: I5;
- >i : I5
-->  : ^^
- 
- var r: string = i.z;
- >r : string
-->  : ^^^^^^
- >i.z : string
-->    : ^^^^^^
- >i : I5
-->  : ^^
- >z : string
-->  : ^^^^^^
- 
- var r2 = i.x; // error
- >r2 : string
-->   : ^^^^^^
- >i.x : string
-->    : ^^^^^^
- >i : I5
-->  : ^^
- >x : string
-->  : ^^^^^^
- 
- var r3 = i.y; // error
- >r3 : string
-->   : ^^^^^^
- >i.y : string
-->    : ^^^^^^
- >i : I5
-->  : ^^
- >y : string
-->  : ^^^^^^
- 

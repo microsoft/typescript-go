@@ -8,20 +8,4 @@
 +
      a?: string;
  >a : string | undefined
-->  : ^^^^^^^^^^^^^^^^^^
- 
-     b: string;
- >b : string
-->  : ^^^^^^
- }
- 
- <Foo>{ a: undefined };
- ><Foo>{ a: undefined } : Foo
-->                      : ^^^
- >{ a: undefined } : { a: undefined; }
-->                 : ^^^^^^^^^^^^^^^^^
- >a : undefined
-->  : ^^^^^^^^^
- >undefined : undefined
-->          : ^^^^^^^^^
  

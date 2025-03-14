@@ -8,15 +8,4 @@
 +
  declare var a: A;
  >a : A
-->  : ^
  
- async function f() {
- >f : () => Promise<void>
-->  : ^^^^^^^^^^^^^^^^^^^
- 
-     await a;
- >await a : string
-->        : ^^^^^^
- >a : A
-->  : ^
- }

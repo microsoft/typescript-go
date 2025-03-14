@@ -13,20 +13,15 @@
  /// <reference path="react16.d.ts" />
  import * as React from "react";
 ->React : typeof React
-->      : ^^^^^^^^^^^^
 +>React : any
  
  import "./App.css"; // doesn't actually exist
  
  const tag = <div></div>;
 ->tag : JSX.Element
-->    : ^^^^^^^^^^^
 -><div></div> : JSX.Element
-->            : ^^^^^^^^^^^
 +>tag : any
 +><div></div> : any
  >div : any
-->    : ^^^
  >div : any
-->    : ^^^
  

@@ -1,8 +1,0 @@
---- old.parserSkippedTokens4.types
-+++ new.parserSkippedTokens4.types
-@@= skipped -2, +2 lines =@@
- === parserSkippedTokens4.ts ===
- \  /regexp/;
- >/regexp/ : RegExp
-->         : ^^^^^^
- 

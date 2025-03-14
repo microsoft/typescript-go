@@ -10,44 +10,13 @@
 +
    items: T[];
  >items : T[]
-->      : ^^^
  
-   itemKey: K;
- >itemKey : K
-->        : ^
- 
-   prop: number;
- >prop : number
-->     : ^^^^^^
- }
+@@= skipped -12, +16 lines =@@
  
  declare const Component: <T, K extends keyof T>(x: ListProps<T, K>) => void;
  >Component : <T, K extends keyof T>(x: ListProps<T, K>) => void
-->          : ^ ^^ ^^^^^^^^^       ^^ ^^               ^^^^^    
 +>T : T
 +>K : K
  >x : ListProps<T, K>
-->  : ^^^^^^^^^^^^^^^
  
  Component({items: [{name:' string'}], itemKey: 'name' });
- >Component({items: [{name:' string'}], itemKey: 'name' }) : void
-->                                                         : ^^^^
- >Component : <T, K extends keyof T>(x: ListProps<T, K>) => void
-->          : ^ ^^ ^^^^^^^^^       ^^ ^^               ^^^^^    
- >{items: [{name:' string'}], itemKey: 'name' } : { items: { name: string; }[]; itemKey: "name"; }
-->                                              : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >items : { name: string; }[]
-->      : ^^^^^^^^^^^^^^^^^^^
- >[{name:' string'}] : { name: string; }[]
-->                   : ^^^^^^^^^^^^^^^^^^^
- >{name:' string'} : { name: string; }
-->                 : ^^^^^^^^^^^^^^^^^
- >name : string
-->     : ^^^^^^
- >' string' : " string"
-->          : ^^^^^^^^^
- >itemKey : "name"
-->        : ^^^^^^
- >'name' : "name"
-->       : ^^^^^^
- 

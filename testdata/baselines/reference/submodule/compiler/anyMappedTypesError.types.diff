@@ -4,6 +4,5 @@
  === anyMappedTypesError.ts ===
  type Foo = {[P in "bar"]};
  >Foo : Foo
-->    : ^^^
 +>P : P
  

@@ -8,37 +8,8 @@
 +
      a: (...args: number[]) => number;
  >a : (...args: number[]) => number
-->  : ^^^^    ^^        ^^^^^      
  >args : number[]
-->     : ^^^^^^^^
- 
-     a2: (x: number, ...z: number[]) => number;
- >a2 : (x: number, ...z: number[]) => number
-->   : ^ ^^      ^^^^^ ^^        ^^^^^      
- >x : number
-->  : ^^^^^^
- >z : number[]
-->  : ^^^^^^^^
- 
-     a3: (x: number, y?: string, ...z: number[]) => number;
- >a3 : (x: number, y?: string, ...z: number[]) => number
-->   : ^ ^^      ^^ ^^^      ^^^^^ ^^        ^^^^^      
- >x : number
-->  : ^^^^^^
- >y : string
-->  : ^^^^^^
- >z : number[]
-->  : ^^^^^^^^
- 
-     a4: (x?: number, y?: string, ...z: number[]) => number;
- >a4 : (x?: number, y?: string, ...z: number[]) => number
-->   : ^ ^^^      ^^ ^^^      ^^^^^ ^^        ^^^^^      
- >x : number
-->  : ^^^^^^
- >y : string
-->  : ^^^^^^
- >z : number[]
-->  : ^^^^^^^^
+@@= skipped -23, +25 lines =@@
  }
  
  interface I1 extends Base {
@@ -46,7 +17,6 @@
 +
      a: () => number; // ok, same number of required params
  >a : () => number
-->  : ^^^^^^      
  }
  
  interface I1B extends Base {
@@ -54,9 +24,7 @@
 +
      a: (...args: number[]) => number; // ok, same number of required params
  >a : (...args: number[]) => number
-->  : ^^^^    ^^        ^^^^^      
  >args : number[]
-->     : ^^^^^^^^
  }
  
  interface I1C extends Base {
@@ -64,9 +32,7 @@
 +
      a: (...args: string[]) => number; // error, type mismatch
  >a : (...args: string[]) => number
-->  : ^^^^    ^^        ^^^^^      
  >args : string[]
-->     : ^^^^^^^^
  }
  
  interface I2 extends Base {
@@ -74,9 +40,7 @@
 +
      a: (x?: number) => number; // ok, same number of required params
  >a : (x?: number) => number
-->  : ^ ^^^      ^^^^^      
  >x : number
-->  : ^^^^^^
  }
  
  interface I2B extends Base {
@@ -84,13 +48,8 @@
 +
      a: (x?: number, y?: number, z?: number) => number; // ok, same number of required params
  >a : (x?: number, y?: number, z?: number) => number
-->  : ^ ^^^      ^^ ^^^      ^^ ^^^      ^^^^^      
  >x : number
-->  : ^^^^^^
- >y : number
-->  : ^^^^^^
- >z : number
-->  : ^^^^^^
+@@= skipped -31, +41 lines =@@
  }
  
  interface I3 extends Base {
@@ -98,9 +57,7 @@
 +
      a: (x: number) => number; // ok, all present params match
  >a : (x: number) => number
-->  : ^ ^^      ^^^^^      
  >x : number
-->  : ^^^^^^
  }
  
  interface I3B extends Base {
@@ -108,11 +65,8 @@
 +
      a: (x?: string) => number; // error, incompatible type
  >a : (x?: string) => number
-->  : ^ ^^^      ^^^^^      
  >x : string
-->  : ^^^^^^
- }
- 
+@@= skipped -14, +18 lines =@@
  
  
  interface I4 extends Base {
@@ -120,7 +74,6 @@
 +
      a2: () => number; // ok, fewer required params
  >a2 : () => number
-->   : ^^^^^^      
  }
  
  interface I4B extends Base {
@@ -128,9 +81,7 @@
 +
      a2: (...args: number[]) => number; // ok, fewer required params
  >a2 : (...args: number[]) => number
-->   : ^^^^    ^^        ^^^^^      
  >args : number[]
-->     : ^^^^^^^^
  }
  
  interface I5 extends Base {
@@ -138,9 +89,7 @@
 +
      a2: (x?: number) => number; // ok, fewer required params
  >a2 : (x?: number) => number
-->   : ^ ^^^      ^^^^^      
  >x : number
-->  : ^^^^^^
  }
  
  interface I6 extends Base {
@@ -148,9 +97,7 @@
 +
      a2: (x: number) => number; // ok, same number of required params
  >a2 : (x: number) => number
-->   : ^ ^^      ^^^^^      
  >x : number
-->  : ^^^^^^
  }
  
  interface I6B extends Base {
@@ -158,11 +105,8 @@
 +
      a2: (x: number, ...args: number[]) => number; // ok, same number of required params
  >a2 : (x: number, ...args: number[]) => number
-->   : ^ ^^      ^^^^^    ^^        ^^^^^      
  >x : number
-->  : ^^^^^^
- >args : number[]
-->     : ^^^^^^^^
+@@= skipped -30, +40 lines =@@
  }
  
  interface I6C extends Base {
@@ -170,11 +114,8 @@
 +
      a2: (x: number, ...args: string[]) => number; // error
  >a2 : (x: number, ...args: string[]) => number
-->   : ^ ^^      ^^^^^    ^^        ^^^^^      
  >x : number
-->  : ^^^^^^
- >args : string[]
-->     : ^^^^^^^^
+@@= skipped -7, +9 lines =@@
  }
  
  interface I6D extends Base {
@@ -182,11 +123,8 @@
 +
      a2: (x: number, y: number) => number; // ok, all present params match
  >a2 : (x: number, y: number) => number
-->   : ^ ^^      ^^ ^^      ^^^^^      
  >x : number
-->  : ^^^^^^
- >y : number
-->  : ^^^^^^
+@@= skipped -7, +9 lines =@@
  }
  
  interface I6E extends Base {
@@ -194,13 +132,8 @@
 +
      a2: (x: number, y?: number) => number; // ok, same number of required params
  >a2 : (x: number, y?: number) => number
-->   : ^ ^^      ^^ ^^^      ^^^^^      
  >x : number
-->  : ^^^^^^
- >y : number
-->  : ^^^^^^
- }
- 
+@@= skipped -9, +11 lines =@@
  
  
  interface I7 extends Base {
@@ -208,7 +141,6 @@
 +
      a3: () => number; // ok, fewer required params
  >a3 : () => number
-->   : ^^^^^^      
  }
  
  interface I8 extends Base {
@@ -216,9 +148,7 @@
 +
      a3: (x?: number) => number; // ok, fewer required params
  >a3 : (x?: number) => number
-->   : ^ ^^^      ^^^^^      
  >x : number
-->  : ^^^^^^
  }
  
  interface I9 extends Base {
@@ -226,9 +156,7 @@
 +
      a3: (x: number) => number; // ok, same number of required params
  >a3 : (x: number) => number
-->   : ^ ^^      ^^^^^      
  >x : number
-->  : ^^^^^^
  }
  
  interface I10 extends Base {
@@ -236,11 +164,8 @@
 +
      a3: (x: number, y: string) => number;  // ok, all present params match
  >a3 : (x: number, y: string) => number
-->   : ^ ^^      ^^ ^^      ^^^^^      
  >x : number
-->  : ^^^^^^
- >y : string
-->  : ^^^^^^
+@@= skipped -24, +32 lines =@@
  }
  
  interface I10B extends Base {
@@ -248,13 +173,8 @@
 +
      a3: (x: number, y?: number, z?: number) => number;  // error
  >a3 : (x: number, y?: number, z?: number) => number
-->   : ^ ^^      ^^ ^^^      ^^ ^^^      ^^^^^      
  >x : number
-->  : ^^^^^^
- >y : number
-->  : ^^^^^^
- >z : number
-->  : ^^^^^^
+@@= skipped -8, +10 lines =@@
  }
  
  interface I10C extends Base {
@@ -262,11 +182,8 @@
 +
      a3: (x: number, ...z: number[]) => number;  // error
  >a3 : (x: number, ...z: number[]) => number
-->   : ^ ^^      ^^^^^ ^^        ^^^^^      
  >x : number
-->  : ^^^^^^
- >z : number[]
-->  : ^^^^^^^^
+@@= skipped -7, +9 lines =@@
  }
  
  interface I10D extends Base {
@@ -274,13 +191,8 @@
 +
      a3: (x: string, y?: string, z?: string) => number;  // error, incompatible types
  >a3 : (x: string, y?: string, z?: string) => number
-->   : ^ ^^      ^^ ^^^      ^^ ^^^      ^^^^^      
  >x : string
-->  : ^^^^^^
- >y : string
-->  : ^^^^^^
- >z : string
-->  : ^^^^^^
+@@= skipped -8, +10 lines =@@
  }
  
  interface I10E extends Base {
@@ -288,11 +200,8 @@
 +
      a3: (x: number, ...z: string[]) => number;  // error
  >a3 : (x: number, ...z: string[]) => number
-->   : ^ ^^      ^^^^^ ^^        ^^^^^      
  >x : number
-->  : ^^^^^^
- >z : string[]
-->  : ^^^^^^^^
+@@= skipped -7, +9 lines =@@
  }
  
  interface I11 extends Base {
@@ -300,7 +209,6 @@
 +
      a4: () => number; // ok, fewer required params
  >a4 : () => number
-->   : ^^^^^^      
  }
  
  interface I12 extends Base {
@@ -308,11 +216,8 @@
 +
      a4: (x?: number, y?: number) => number; // error, type mismatch
  >a4 : (x?: number, y?: number) => number
-->   : ^ ^^^      ^^ ^^^      ^^^^^      
  >x : number
-->  : ^^^^^^
- >y : number
-->  : ^^^^^^
+@@= skipped -12, +16 lines =@@
  }
  
  interface I13 extends Base {
@@ -320,9 +225,7 @@
 +
      a4: (x: number) => number; // ok, all present params match
  >a4 : (x: number) => number
-->   : ^ ^^      ^^^^^      
  >x : number
-->  : ^^^^^^
  }
  
  interface I14 extends Base {
@@ -330,11 +233,8 @@
 +
      a4: (x: number, y?: number) => number;  // error, second param has type mismatch
  >a4 : (x: number, y?: number) => number
-->   : ^ ^^      ^^ ^^^      ^^^^^      
  >x : number
-->  : ^^^^^^
- >y : number
-->  : ^^^^^^
+@@= skipped -13, +17 lines =@@
  }
  
  interface I15 extends Base {
@@ -342,11 +242,8 @@
 +
      a4: (x?: number, y?: string) => number;  // ok, same number of required params with matching types
  >a4 : (x?: number, y?: string) => number
-->   : ^ ^^^      ^^ ^^^      ^^^^^      
  >x : number
-->  : ^^^^^^
- >y : string
-->  : ^^^^^^
+@@= skipped -7, +9 lines =@@
  }
  
  interface I16 extends Base {
@@ -354,11 +251,8 @@
 +
      a4: (x: number, ...args: string[]) => number;  // error, rest param has type mismatch
  >a4 : (x: number, ...args: string[]) => number
-->   : ^ ^^      ^^^^^    ^^        ^^^^^      
  >x : number
-->  : ^^^^^^
- >args : string[]
-->     : ^^^^^^^^
+@@= skipped -7, +9 lines =@@
  }
  
  interface I17 extends Base {
@@ -366,8 +260,4 @@
 +
      a4: (...args: number[]) => number; // error
  >a4 : (...args: number[]) => number
-->   : ^^^^    ^^        ^^^^^      
  >args : number[]
-->     : ^^^^^^^^
- }
- 

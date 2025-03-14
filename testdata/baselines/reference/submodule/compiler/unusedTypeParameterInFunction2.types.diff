@@ -4,15 +4,8 @@
  === unusedTypeParameterInFunction2.ts ===
  function f1<X, Y>() {
  >f1 : <X, Y>() => void
-->   : ^ ^^ ^^^^^^^^^^^
 +>X : X
 +>Y : Y
  
      var a: X;
  >a : X
-->  : ^
- 
-     a;
- >a : X
-->  : ^
- }

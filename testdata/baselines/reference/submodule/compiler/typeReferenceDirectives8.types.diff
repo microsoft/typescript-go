@@ -1,18 +1,8 @@
 --- old.typeReferenceDirectives8.types
 +++ new.typeReferenceDirectives8.types
-@@= skipped -2, +2 lines =@@
- === /mod2.ts ===
- import {foo} from "./mod1";
- >foo : () => Lib
-->    : ^^^^^^   
- 
- export const bar = foo();
- >bar : Lib
-->    : ^^^
+@@= skipped -8, +8 lines =@@
  >foo() : Lib
-->      : ^^^
  >foo : () => Lib
-->    : ^^^^^^   
  
 -=== /types/lib/index.d.ts ===
 -interface Lib { x }
@@ -21,11 +11,3 @@
  === /mod1.ts ===
  export function foo(): Lib { return {x: 1} }
  >foo : () => Lib
-->    : ^^^^^^   
- >{x: 1} : { x: number; }
-->       : ^^^^^^^^^^^^^^
- >x : number
-->  : ^^^^^^
- >1 : 1
-->  : ^
- 

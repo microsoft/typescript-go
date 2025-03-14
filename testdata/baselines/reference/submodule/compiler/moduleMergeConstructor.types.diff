@@ -1,73 +1,41 @@
 --- old.moduleMergeConstructor.types
 +++ new.moduleMergeConstructor.types
-@@= skipped -2, +2 lines =@@
- === foo.d.ts ===
- declare module "foo" {
+@@= skipped -17, +17 lines =@@
  >"foo" : typeof import("foo")
-->      : ^^^^^^^^^^^^^^^^^^^^
- 
-     export class Foo {
- >Foo : Foo
-->    : ^^^
- 
-         constructor();
-         method1(): any;
- >method1 : () => any
-->        : ^^^^^^   
-     }
- }
- 
- === foo-ext.d.ts ===
- declare module "foo" {
- >"foo" : typeof import("foo")
-->      : ^^^^^^^^^^^^^^^^^^^^
  
      export interface Foo {
 +>Foo : Foo
 +
          method2(): any;
  >method2 : () => any
-->        : ^^^^^^   
      }
- }
+@@= skipped -7, +9 lines =@@
  
  === index.ts ===
  import * as foo from "foo";
 ->foo : typeof foo
-->    : ^^^^^^^^^^
 +>foo : typeof import("foo")
  
  class Test {
  >Test : Test
-->     : ^^^^
  
      bar: foo.Foo;
 ->bar : foo.Foo
-->    : ^^^^^^^
 +>bar : Foo
  >foo : any
-->    : ^^^
  
      constructor() {
          this.bar = new foo.Foo();
 ->this.bar = new foo.Foo() : foo.Foo
-->                         : ^^^^^^^
 ->this.bar : foo.Foo
-->         : ^^^^^^^
 +>this.bar = new foo.Foo() : Foo
 +>this.bar : Foo
  >this : this
-->     : ^^^^
 ->bar : foo.Foo
-->    : ^^^^^^^
 ->new foo.Foo() : foo.Foo
-->              : ^^^^^^^
 ->foo.Foo : typeof foo.Foo
-->        : ^^^^^^^^^^^^^^
 ->foo : typeof foo
-->    : ^^^^^^^^^^
 ->Foo : typeof foo.Foo
-->    : ^^^^^^^^^^^^^^
 +>bar : Foo
 +>new foo.Foo() : Foo
 +>foo.Foo : typeof Foo

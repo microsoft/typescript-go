@@ -1,151 +1,49 @@
 --- old.typeGuardOfFormTypeOfIsOrderIndependent.types
 +++ new.typeGuardOfFormTypeOfIsOrderIndependent.types
-@@= skipped -2, +2 lines =@@
- === typeGuardOfFormTypeOfIsOrderIndependent.ts ===
- var strOrNum: string | number;
- >strOrNum : string | number
-->         : ^^^^^^^^^^^^^^^
- 
- var strOrBool: string | boolean;
+@@= skipped -7, +7 lines =@@
  >strOrBool : string | boolean
-->          : ^^^^^^^^^^^^^^^^
  
  var strOrFunc: string | (() => void);
 ->strOrFunc : string | (() => void)
-->          : ^^^^^^^^^^^^^^^^    ^
 +>strOrFunc : string | () => void
  
  var numOrBool: number | boolean
  >numOrBool : number | boolean
-->          : ^^^^^^^^^^^^^^^^
- 
- var str: string;
- >str : string
-->    : ^^^^^^
- 
- var num: number;
- >num : number
-->    : ^^^^^^
- 
- var bool: boolean;
- >bool : boolean
-->     : ^^^^^^^
- 
- var func: () => void;
- >func : () => void
-->     : ^^^^^^    
- 
+@@= skipped -20, +20 lines =@@
  if ("string" === typeof strOrNum) {
  >"string" === typeof strOrNum : boolean
-->                             : ^^^^^^^
  >"string" : "string"
-->         : ^^^^^^^^
 ->typeof strOrNum : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
-->                : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>typeof strOrNum : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
  >strOrNum : string | number
-->         : ^^^^^^^^^^^^^^^
  
      str = strOrNum;
- >str = strOrNum : string
-->               : ^^^^^^
- >str : string
-->    : ^^^^^^
- >strOrNum : string
-->         : ^^^^^^
- }
- else {
-     num = strOrNum;
- >num = strOrNum : number
-->               : ^^^^^^
- >num : number
-->    : ^^^^^^
- >strOrNum : number
-->         : ^^^^^^
- }
+@@= skipped -17, +17 lines =@@
  if ("function" === typeof strOrFunc) {
  >"function" === typeof strOrFunc : boolean
-->                                : ^^^^^^^
  >"function" : "function"
-->           : ^^^^^^^^^^
 ->typeof strOrFunc : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
-->                 : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ->strOrFunc : string | (() => void)
-->          : ^^^^^^^^^^^^^^^^    ^
 +>typeof strOrFunc : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
 +>strOrFunc : string | () => void
  
      func = strOrFunc;
  >func = strOrFunc : () => void
-->                 : ^^^^^^    
- >func : () => void
-->     : ^^^^^^    
- >strOrFunc : () => void
-->          : ^^^^^^    
- }
- else {
-     str = strOrFunc;
- >str = strOrFunc : string
-->                : ^^^^^^
- >str : string
-->    : ^^^^^^
- >strOrFunc : string
-->          : ^^^^^^
- }
+@@= skipped -17, +17 lines =@@
  if ("number" === typeof numOrBool) {
  >"number" === typeof numOrBool : boolean
-->                              : ^^^^^^^
  >"number" : "number"
-->         : ^^^^^^^^
 ->typeof numOrBool : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
-->                 : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>typeof numOrBool : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
  >numOrBool : number | boolean
-->          : ^^^^^^^^^^^^^^^^
  
      num = numOrBool;
- >num = numOrBool : number
-->                : ^^^^^^
- >num : number
-->    : ^^^^^^
- >numOrBool : number
-->          : ^^^^^^
- }
- else {
-     bool = numOrBool;
- >bool = numOrBool : boolean
-->                 : ^^^^^^^
- >bool : boolean
-->     : ^^^^^^^
- >numOrBool : boolean
-->          : ^^^^^^^
- }
+@@= skipped -17, +17 lines =@@
  if ("boolean" === typeof strOrBool) {
  >"boolean" === typeof strOrBool : boolean
-->                               : ^^^^^^^
  >"boolean" : "boolean"
-->          : ^^^^^^^^^
 ->typeof strOrBool : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
-->                 : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>typeof strOrBool : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
  >strOrBool : string | boolean
-->          : ^^^^^^^^^^^^^^^^
  
      bool = strOrBool;
- >bool = strOrBool : boolean
-->                 : ^^^^^^^
- >bool : boolean
-->     : ^^^^^^^
- >strOrBool : boolean
-->          : ^^^^^^^
- }
- else {
-     str = strOrBool;
- >str = strOrBool : string
-->                : ^^^^^^
- >str : string
-->    : ^^^^^^
- >strOrBool : string
-->          : ^^^^^^
- }
- 

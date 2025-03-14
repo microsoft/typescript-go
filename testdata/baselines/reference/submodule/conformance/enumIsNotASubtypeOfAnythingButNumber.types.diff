@@ -5,21 +5,17 @@
  
  enum E { A }
 ->E : E
-->  : ^
 +>E : E.A
  >A : E.A
-->  : ^^^
  
  interface I {
 +>I : I
 +
      [x: string]: any;
  >x : string
-->  : ^^^^^^
  
      foo: E; // ok
 ->foo : E
-->    : ^
 +>foo : E.A
  }
  
@@ -29,11 +25,9 @@
 +
      [x: string]: number;
  >x : string
-->  : ^^^^^^
  
      foo: E; // ok
 ->foo : E
-->    : ^
 +>foo : E.A
  }
  
@@ -43,11 +37,9 @@
 +
      [x: string]: string;
  >x : string
-->  : ^^^^^^
  
      foo: E;
 ->foo : E
-->    : ^
 +>foo : E.A
  }
  
@@ -57,11 +49,9 @@
 +
      [x: string]: boolean;
  >x : string
-->  : ^^^^^^
  
      foo: E;
 ->foo : E
-->    : ^
 +>foo : E.A
  }
  
@@ -71,11 +61,9 @@
 +
      [x: string]: Date;
  >x : string
-->  : ^^^^^^
  
      foo: E;
 ->foo : E
-->    : ^
 +>foo : E.A
  }
  
@@ -85,11 +73,9 @@
 +
      [x: string]: RegExp;
  >x : string
-->  : ^^^^^^
  
      foo: E;
 ->foo : E
-->    : ^
 +>foo : E.A
  }
  
@@ -99,13 +85,10 @@
 +
      [x: string]: { bar: number };
  >x : string
-->  : ^^^^^^
  >bar : number
-->    : ^^^^^^
  
      foo: E;
 ->foo : E
-->    : ^
 +>foo : E.A
  }
  
@@ -115,11 +98,9 @@
 +
      [x: string]: number[];
  >x : string
-->  : ^^^^^^
  
      foo: E;
 ->foo : E
-->    : ^
 +>foo : E.A
  }
  
@@ -129,50 +110,40 @@
 +
      [x: string]: I8;
  >x : string
-->  : ^^^^^^
  
      foo: E;
 ->foo : E
-->    : ^
 +>foo : E.A
  }
  
  class A { foo: number; }
- >A : A
-->  : ^
+@@= skipped -89, +107 lines =@@
  >foo : number
-->    : ^^^^^^
  
  interface I10 {
 +>I10 : I10
 +
      [x: string]: A;
  >x : string
-->  : ^^^^^^
  
      foo: E;
 ->foo : E
-->    : ^
 +>foo : E.A
  }
  
  class A2<T> { foo: T; }
  >A2 : A2<T>
-->   : ^^^^^
 +>T : T
  >foo : T
-->    : ^
  
  interface I11 {
 +>I11 : I11
 +
      [x: string]: A2<number>;
  >x : string
-->  : ^^^^^^
  
      foo: E;
 ->foo : E
-->    : ^
 +>foo : E.A
  }
  
@@ -182,13 +153,10 @@
 +
      [x: string]: (x) => number;
  >x : string
-->  : ^^^^^^
  >x : any
-->  : ^^^
  
      foo: E;
 ->foo : E
-->    : ^
 +>foo : E.A
  }
  
@@ -198,97 +166,60 @@
 +
      [x: string]: <T>(x: T) => T;
  >x : string
-->  : ^^^^^^
 +>T : T
  >x : T
-->  : ^
  
      foo: E;
 ->foo : E
-->    : ^
 +>foo : E.A
  }
  
  
  enum E2 { A }
 ->E2 : E2
-->   : ^^
 +>E2 : E2.A
  >A : E2.A
-->  : ^^^^
  
  interface I14 {
 +>I14 : I14
 +
      [x: string]: E2;
  >x : string
-->  : ^^^^^^
  
      foo: E;
 ->foo : E
-->    : ^
 +>foo : E.A
  }
  
  
- function f() { }
- >f : typeof f
-->  : ^^^^^^^^
- 
- module f {
- >f : typeof f
-->  : ^^^^^^^^
- 
-     export var bar = 1;
- >bar : number
-->    : ^^^^^^
+@@= skipped -64, +76 lines =@@
  >1 : 1
-->  : ^
  }
  interface I15 {
 +>I15 : I15
 +
      [x: string]: typeof f;
  >x : string
-->  : ^^^^^^
 ->f : typeof f
-->  : ^^^^^^^^
  
      foo: E;
 ->foo : E
-->    : ^
 +>foo : E.A
  }
  
  
- class c { baz: string }
- >c : c
-->  : ^
- >baz : string
-->    : ^^^^^^
- 
- module c {
- >c : typeof c
-->  : ^^^^^^^^
- 
-     export var bar = 1;
- >bar : number
-->    : ^^^^^^
+@@= skipped -21, +22 lines =@@
  >1 : 1
-->  : ^
  }
  interface I16 {
 +>I16 : I16
 +
      [x: string]: typeof c;
  >x : string
-->  : ^^^^^^
 ->c : typeof c
-->  : ^^^^^^^^
  
      foo: E;
 ->foo : E
-->    : ^
 +>foo : E.A
  }
  
@@ -299,11 +230,9 @@
 +
      [x: string]: T;
  >x : string
-->  : ^^^^^^
  
      foo: E;
 ->foo : E
-->    : ^
 +>foo : E.A
  }
  
@@ -315,11 +244,9 @@
 +
      [x: string]: U;
  >x : string
-->  : ^^^^^^
  
      foo: E;
 ->foo : E
-->    : ^
 +>foo : E.A
  }
  
@@ -329,11 +256,9 @@
 +
      [x: string]: Object;
  >x : string
-->  : ^^^^^^
  
      foo: E; // BUG 831833
 ->foo : E
-->    : ^
 +>foo : E.A
  }
  
@@ -343,10 +268,8 @@
 +
      [x: string]: {};
  >x : string
-->  : ^^^^^^
  
      foo: E; // BUG 831833
 ->foo : E
-->    : ^
 +>foo : E.A
  }

@@ -1,111 +1,34 @@
 --- old.qualify.types
 +++ new.qualify.types
-@@= skipped -2, +2 lines =@@
- === qualify.ts ===
- module M {
- >M : typeof M
-->  : ^^^^^^^^
- 
-     export var m=0;
- >m : number
-->  : ^^^^^^
- >0 : 0
-->  : ^
- 
-     export module N {
- >N : typeof N
-->  : ^^^^^^^^
- 
-         export var n=1;
- >n : number
-->  : ^^^^^^
- >1 : 1
-->  : ^
-     }
- }
- 
- module M {
- >M : typeof M
-->  : ^^^^^^^^
- 
-     export module N {
- >N : typeof N
-->  : ^^^^^^^^
- 
-         var y=m;
- >y : number
-->  : ^^^^^^
- >m : number
-->  : ^^^^^^
- 
-         var x=n+y;
- >x : number
-->  : ^^^^^^
- >n+y : number
-->    : ^^^^^^
- >n : number
-->  : ^^^^^^
- >y : number
-->  : ^^^^^^
-     }
- }
- 
- 
- module T {
+@@= skipped -39, +39 lines =@@
  >T : typeof T
-->  : ^^^^^^^^
  
      export interface I {
 +>I : I
 +
          p;
  >p : any
-->  : ^^^
      }
-     export module U {
- >U : typeof U
-->  : ^^^^^^^^
- 
-         var z:I=3;
- >z : I
-->  : ^
+@@= skipped -11, +13 lines =@@
  >3 : 3
-->  : ^
  
          export interface I2 {
 +>I2 : I2
 +
              q;
  >q : any
-->  : ^^^
          }
-     }
- }
- 
- module Peer {
- >Peer : typeof Peer
-->     : ^^^^^^^^^^^
- 
-     export module U2 {
+@@= skipped -13, +15 lines =@@
  >U2 : typeof U2
-->   : ^^^^^^^^^
  
          var z:T.U.I2=3;
 ->z : T.U.I2
-->  : ^^^^^^
 +>z : I2
  >T : any
-->  : ^^^
  >U : any
-->  : ^^^
  >3 : 3
-->  : ^
-     }
- }
- 
- module Everest {
+@@= skipped -11, +11 lines =@@
  >Everest : typeof Everest
-->        : ^^^^^^^^^^^^^^
  
      export module K1 {
 +>K1 : any
@@ -115,74 +38,52 @@
 +
              zeep;
  >zeep : any
-->     : ^^^
          }
-     }
-     export module K2 {
+@@= skipped -9, +13 lines =@@
  >K2 : typeof K2
-->   : ^^^^^^^^^
  
          export interface I4 {
 +>I4 : I4
 +
              z;
  >z : any
-->  : ^^^
          }
-         var v1:I4;
+@@= skipped -7, +9 lines =@@
  >v1 : I4
-->   : ^^
  
          var v2:K1.I3=v1;
 ->v2 : K1.I3
-->   : ^^^^^
 +>v2 : I3
  >K1 : any
-->   : ^^^
  >v1 : I4
-->   : ^^
  
          var v3:K1.I3[]=v1;
 ->v3 : K1.I3[]
-->   : ^^^^^^^
 +>v3 : I3[]
  >K1 : any
-->   : ^^^
  >v1 : I4
-->   : ^^
  
          var v4:()=>K1.I3=v1;
 ->v4 : () => K1.I3
-->   : ^^^^^^     
 +>v4 : () => I3
  >K1 : any
-->   : ^^^
  >v1 : I4
-->   : ^^
  
          var v5:(k:K1.I3)=>void=v1;
 ->v5 : (k: K1.I3) => void
-->   : ^ ^^     ^^^^^    
 ->k : K1.I3
-->  : ^^^^^
 +>v5 : (k: I3) => void
 +>k : I3
  >K1 : any
-->   : ^^^
  >v1 : I4
-->   : ^^
  
          var v6:{k:K1.I3;}=v1;
 ->v6 : { k: K1.I3; }
-->   : ^^^^^     ^^^
 ->k : K1.I3
-->  : ^^^^^
 +>v6 : { k: I3; }
 +>k : I3
  >K1 : any
-->   : ^^^
  >v1 : I4
-->   : ^^
      }
  }
  
@@ -191,20 +92,13 @@
 +
      k;
  >k : any
-->  : ^^^
  }
- 
- var y:I;
+@@= skipped -37, +39 lines =@@
  >y : I
-->  : ^
  
  var x:T.I=y;
 ->x : T.I
-->  : ^^^
 +>x : I
  >T : any
-->  : ^^^
  >y : I
-->  : ^
- 
  

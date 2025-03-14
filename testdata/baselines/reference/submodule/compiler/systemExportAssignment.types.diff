@@ -1,18 +1,9 @@
 --- old.systemExportAssignment.types
 +++ new.systemExportAssignment.types
-@@= skipped -2, +2 lines =@@
- === a.d.ts ===
- declare var a: number;
- >a : number
-->  : ^^^^^^
- 
- export = a;  // OK, in ambient context
- >a : number
-->  : ^^^^^^
+@@= skipped -8, +8 lines =@@
  
  === b.ts ===
  import * as a from "a";
 ->a : number
-->  : ^^^^^^
 +>a : any
  

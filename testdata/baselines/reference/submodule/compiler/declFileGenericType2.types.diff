@@ -19,27 +19,16 @@
 +>IController : IController<ModelType>
 +>ModelType : ModelType
  >templa : any
-->       : ^^^
  >mvc : any
-->    : ^^^
      }
- }
- declare module templa.mvc {
- >templa : typeof templa
-->       : ^^^^^^^^^^^^^
- >mvc : typeof mvc
-->    : ^^^^^^^^^^
+@@= skipped -15, +24 lines =@@
  
      class AbstractController<ModelType extends templa.mvc.IModel> implements mvc.IController<ModelType> {
  >AbstractController : AbstractController<ModelType>
-->                   : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>ModelType : ModelType
  >templa : any
-->       : ^^^
  >mvc : any
-->    : ^^^
  >mvc : typeof mvc
-->    : ^^^^^^^^^^
      }
  }
  declare module templa.mvc.composite {
@@ -50,16 +39,12 @@
      interface ICompositeControllerModel extends mvc.IModel {
 +>ICompositeControllerModel : ICompositeControllerModel
  >mvc : typeof mvc
-->    : ^^^^^^^^^^
  
          getControllers(): mvc.IController<mvc.IModel>[];
 ->getControllers : () => mvc.IController<mvc.IModel>[]
-->               : ^^^^^^                             
 +>getControllers : () => IController<IModel>[]
  >mvc : any
-->    : ^^^
  >mvc : any
-->    : ^^^
      }
  }
  module templa.dom.mvc {
@@ -71,137 +56,82 @@
 +>IElementController : IElementController<ModelType>
 +>ModelType : ModelType
  >templa : any
-->       : ^^^
  >mvc : any
-->    : ^^^
 ->templa.mvc : typeof templa.mvc
-->           : ^^^^^^^^^^^^^^^^^
 +>templa.mvc : typeof mvc
  >templa : typeof templa
-->       : ^^^^^^^^^^^^^
 ->mvc : typeof templa.mvc
-->    : ^^^^^^^^^^^^^^^^^
 +>mvc : typeof mvc
      }
  }
  // Module
- module templa.dom.mvc {
- >templa : typeof templa
-->       : ^^^^^^^^^^^^^
- >dom : typeof dom
-->    : ^^^^^^^^^^
- >mvc : typeof mvc
-->    : ^^^^^^^^^^
+@@= skipped -32, +44 lines =@@
  
      export class AbstractElementController<ModelType extends templa.mvc.IModel> extends templa.mvc.AbstractController<ModelType> implements IElementController<ModelType> {
  >AbstractElementController : AbstractElementController<ModelType>
-->                          : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>ModelType : ModelType
  >templa : any
-->       : ^^^
  >mvc : any
-->    : ^^^
 ->templa.mvc.AbstractController : templa.mvc.AbstractController<ModelType>
-->                              : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ->templa.mvc : typeof templa.mvc
-->           : ^^^^^^^^^^^^^^^^^
 +>templa.mvc.AbstractController : AbstractController<ModelType>
 +>templa.mvc : typeof mvc
  >templa : typeof templa
-->       : ^^^^^^^^^^^^^
 ->mvc : typeof templa.mvc
-->    : ^^^^^^^^^^^^^^^^^
 ->AbstractController : typeof templa.mvc.AbstractController
-->                   : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>mvc : typeof mvc
 +>AbstractController : typeof AbstractController
  
          constructor() {
              super();
  >super() : void
-->        : ^^^^
 ->super : typeof templa.mvc.AbstractController
-->      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>super : typeof AbstractController
          }
      }
  }
- // Module
- module templa.dom.mvc.composite {
- >templa : typeof templa
-->       : ^^^^^^^^^^^^^
- >dom : typeof dom
-->    : ^^^^^^^^^^
- >mvc : typeof mvc
-->    : ^^^^^^^^^^
- >composite : typeof composite
-->          : ^^^^^^^^^^^^^^^^
+@@= skipped -24, +25 lines =@@
  
      export class AbstractCompositeElementController<ModelType extends templa.mvc.composite.ICompositeControllerModel> extends templa.dom.mvc.AbstractElementController<ModelType> {
  >AbstractCompositeElementController : AbstractCompositeElementController<ModelType>
-->                                   : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>ModelType : ModelType
  >templa : any
-->       : ^^^
  >mvc : any
-->    : ^^^
  >composite : any
-->          : ^^^
 ->templa.dom.mvc.AbstractElementController : AbstractElementController<ModelType>
-->                                         : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ->templa.dom.mvc : typeof mvc
-->               : ^^^^^^^^^^
 ->templa.dom : typeof dom
-->           : ^^^^^^^^^^
 +>templa.dom.mvc.AbstractElementController : any
 +>templa.dom.mvc : any
 +>templa.dom : any
  >templa : typeof templa
-->       : ^^^^^^^^^^^^^
 ->dom : typeof dom
-->    : ^^^^^^^^^^
 ->mvc : typeof mvc
-->    : ^^^^^^^^^^
 ->AbstractElementController : typeof AbstractElementController
-->                          : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>dom : any
 +>mvc : any
 +>AbstractElementController : any
  
          public _controllers: templa.mvc.IController<templa.mvc.IModel>[];
 ->_controllers : templa.mvc.IController<templa.mvc.IModel>[]
-->             : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>_controllers : IController<IModel>[]
  >templa : any
-->       : ^^^
  >mvc : any
-->    : ^^^
  >templa : any
-->       : ^^^
- >mvc : any
-->    : ^^^
- 
+@@= skipped -21, +22 lines =@@
          constructor() {
              super();
  >super() : void
-->        : ^^^^
 ->super : typeof AbstractElementController
-->      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>super : any
  
              this._controllers = [];
  >this._controllers = [] : undefined[]
-->                       : ^^^^^^^^^^^
 ->this._controllers : templa.mvc.IController<templa.mvc.IModel>[]
-->                  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>this._controllers : IController<IModel>[]
  >this : this
-->     : ^^^^
 ->_controllers : templa.mvc.IController<templa.mvc.IModel>[]
-->             : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>_controllers : IController<IModel>[]
  >[] : undefined[]
-->   : ^^^^^^^^^^^
          }
      }
- }

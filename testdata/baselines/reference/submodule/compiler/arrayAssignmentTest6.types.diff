@@ -1,10 +1,7 @@
 --- old.arrayAssignmentTest6.types
 +++ new.arrayAssignmentTest6.types
-@@= skipped -2, +2 lines =@@
- === arrayAssignmentTest6.ts ===
- module Test {
+@@= skipped -4, +4 lines =@@
  >Test : typeof Test
-->     : ^^^^^^^^^^^
  
      interface IState {
 +>IState : IState
@@ -14,45 +11,19 @@
 +
          startIndex: number;
  >startIndex : number
-->           : ^^^^^^
      }
      interface ILineTokens {
 +>ILineTokens : ILineTokens
 +
          tokens: IToken[];
  >tokens : IToken[]
-->       : ^^^^^^^^
  
-         endState: IState;
+@@= skipped -13, +18 lines =@@
  >endState : IState
-->         : ^^^^^^
      }
      interface IMode {
 +>IMode : IMode
 +
          tokenize(line:string, state:IState, includeStates:boolean):ILineTokens;
  >tokenize : (line: string, state: IState, includeStates: boolean) => ILineTokens
-->         : ^    ^^      ^^     ^^      ^^             ^^       ^^^^^           
  >line : string
-->     : ^^^^^^
- >state : IState
-->      : ^^^^^^
- >includeStates : boolean
-->              : ^^^^^^^
-     }
-     export class Bug implements IMode {
- >Bug : Bug
-->    : ^^^
- 
-         public tokenize(line:string, tokens:IToken[], includeStates:boolean):ILineTokens {
- >tokenize : (line: string, tokens: IToken[], includeStates: boolean) => ILineTokens
-->         : ^    ^^      ^^      ^^        ^^             ^^       ^^^^^           
- >line : string
-->     : ^^^^^^
- >tokens : IToken[]
-->       : ^^^^^^^^
- >includeStates : boolean
-->              : ^^^^^^^
- 
-             return null;
-         }

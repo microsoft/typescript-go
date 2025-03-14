@@ -1,35 +1,23 @@
 --- old.reachabilityChecks2.types
 +++ new.reachabilityChecks2.types
-@@= skipped -2, +2 lines =@@
- === reachabilityChecks2.ts ===
- while (true) { }
+@@= skipped -4, +4 lines =@@
  >true : true
-->     : ^^^^
  
  const enum E { X }
 ->E : E
-->  : ^
 +>E : E.X
  >X : E.X
-->  : ^^^
  
  module A4 {
- >A4 : typeof A4
-->   : ^^^^^^^^^
- 
-     while (true);
+@@= skipped -10, +10 lines =@@
  >true : true
-->     : ^^^^
  
      module A {
 +>A : typeof A
 +
          const enum E { X }
 ->E : E
-->  : ^
 +>E : E.X
  >X : E.X
-->  : ^^^
      }
  }
- 

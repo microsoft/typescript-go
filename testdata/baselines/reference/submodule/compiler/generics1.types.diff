@@ -6,17 +6,14 @@
  interface A { a: string; }
 +>A : A
  >a : string
-->  : ^^^^^^
  
  interface B extends A { b: string; }
 +>B : B
  >b : string
-->  : ^^^^^^
  
  interface C extends B { c: string; }
 +>C : C
  >c : string
-->  : ^^^^^^
  
  interface G<T, U extends B> {
 +>G : G<T, U>
@@ -25,39 +22,4 @@
 +
      x: T;
  >x : T
-->  : ^
- 
-     y: U;
- >y : U
-->  : ^
- }
- var v1: G<A, C>;               // Ok
- >v1 : G<A, C>
-->   : ^^^^^^^
- 
- var v2: G<{ a: string }, C>;   // Ok, equivalent to G<A, C>
- >v2 : G<{ a: string; }, C>
-->   : ^^^^^^^      ^^^^^^^
- >a : string
-->  : ^^^^^^
- 
- var v3: G<A, A>;               // Error, A not valid argument for U
- >v3 : G<A, A>
-->   : ^^^^^^^
- 
- var v4: G<G<A, B>, C>;         // Ok
- >v4 : G<G<A, B>, C>
-->   : ^^^^^^^^^^^^^
- 
- var v5: G<any, any>;           // Error, any does not satisfy constraint B
- >v5 : G<any, any>
-->   : ^^^^^^^^^^^
- 
- var v6: G<any>;                // Error, wrong number of arguments
- >v6 : any
-->   : ^^^
- 
- var v7: G;                     // Error, no type arguments
- >v7 : any
-->   : ^^^
  

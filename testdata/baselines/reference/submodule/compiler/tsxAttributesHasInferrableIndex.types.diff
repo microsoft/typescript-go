@@ -1,31 +1,16 @@
 --- old.tsxAttributesHasInferrableIndex.types
 +++ new.tsxAttributesHasInferrableIndex.types
-@@= skipped -2, +2 lines =@@
- === tsxAttributesHasInferrableIndex.tsx ===
- type AttributeValue = number | string | Date | boolean;
+@@= skipped -4, +4 lines =@@
  >AttributeValue : AttributeValue
-->               : ^^^^^^^^^^^^^^
  
  interface Attributes {
 +>Attributes : Attributes
 +
      [key: string]: AttributeValue;
  >key : string
-->    : ^^^^^^
  }
- function createElement(name: string, attributes: Attributes | undefined, ...contents: string[]) {
- >createElement : (name: string, attributes: Attributes | undefined, ...contents: string[]) => string
-->              : ^    ^^      ^^          ^^                      ^^^^^        ^^        ^^^^^^^^^^^
+@@= skipped -13, +15 lines =@@
  >name : string
-->     : ^^^^^^
- >attributes : Attributes | undefined
-->           : ^^^^^^^^^^^^^^^^^^^^^^
- >contents : string[]
-->         : ^^^^^^^^
- 
-     return name;
- >name : string
-->     : ^^^^^^
  }
  namespace createElement.JSX {
 +>createElement : (name: string, attributes: Attributes | undefined, ...contents: string[]) => string
@@ -33,20 +18,9 @@
 +
      type Element = string;
  >Element : string
-->        : ^^^^^^
  }
- 
- function Button(attributes: Attributes | undefined, contents: string[]) {
- >Button : (attributes: Attributes | undefined, contents: string[]) => string
-->       : ^          ^^                      ^^        ^^        ^^^^^^^^^^^
- >attributes : Attributes | undefined
-->           : ^^^^^^^^^^^^^^^^^^^^^^
- >contents : string[]
-->         : ^^^^^^^^
- 
-     return '';
+@@= skipped -13, +16 lines =@@
  >'' : ""
-->   : ^^
  }
  const b = <Button></Button>
 ->b : error
@@ -54,7 +28,5 @@
 +>b : any
 +><Button></Button> : any
  >Button : (attributes: Attributes | undefined, contents: string[]) => string
-->       : ^          ^^                      ^^        ^^        ^^^^^^^^^^^
  >Button : (attributes: Attributes | undefined, contents: string[]) => string
-->       : ^          ^^                      ^^        ^^        ^^^^^^^^^^^
  

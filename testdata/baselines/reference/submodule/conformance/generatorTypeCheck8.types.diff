@@ -8,5 +8,4 @@
 +
  function* g3(): BadGenerator { }
  >g3 : () => BadGenerator
-->   : ^^^^^^            
  

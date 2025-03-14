@@ -4,20 +4,15 @@
  === declarationEmitIndexTypeArray.ts ===
  function doSomethingWithKeys<T>(...keys: (keyof T)[]) { }
  >doSomethingWithKeys : <T>(...keys: (keyof T)[]) => void
-->                    : ^ ^^^^^    ^^           ^^^^^^^^^
 +>T : T
  >keys : (keyof T)[]
-->     : ^^^^^^^^^^^
  
  const utilityFunctions = {
- >utilityFunctions : { doSomethingWithKeys: <T>(...keys: (keyof T)[]) => void; }
-->                 : ^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^    ^^           ^^^^^^^^^^^^
+@@= skipped -7, +8 lines =@@
  >{  doSomethingWithKeys} : { doSomethingWithKeys: <T>(...keys: (keyof T)[]) => void; }
-->                        : ^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^    ^^           ^^^^^^^^^^^^
  
    doSomethingWithKeys
 ->doSomethingWithKeys : <T>(...keys: (keyof T)[]) => void
-->                    : ^ ^^^^^    ^^           ^^^^^^^^^
 +>doSomethingWithKeys : any
  
  };

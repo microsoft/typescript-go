@@ -1,102 +1,28 @@
 --- old.declFileTypeAnnotationTypeLiteral.types
 +++ new.declFileTypeAnnotationTypeLiteral.types
-@@= skipped -2, +2 lines =@@
- === declFileTypeAnnotationTypeLiteral.ts ===
- class c {
- >c : c
-->  : ^
+@@= skipped -5, +5 lines =@@
  }
  class g<T> {
  >g : g<T>
-->  : ^^^^
 +>T : T
  }
  module m {
  >m : typeof m
-->  : ^^^^^^^^
- 
-     export class c {
- >c : c
-->  : ^
-     }
- }
+@@= skipped -11, +12 lines =@@
  
  // Object literal with everything
  var x: {
 ->x : { (a: number): c; (a: string): g<string>; new (a: number): c; new (a: string): m.c; [n: number]: c; [n: string]: c; a: c; b: g<string>; m1(): g<number>; m2(a: string, b?: number, ...c: c[]): string; }
-->  : ^^^ ^^      ^^^ ^^^ ^^      ^^^         ^^^^^^^ ^^      ^^^ ^^^^^^^ ^^      ^^^   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^         ^^^^^^^^         ^^^^^ ^^      ^^ ^^^      ^^^^^ ^^   ^^^      ^^^
 +>x : { (a: number): c; (a: string): g<string>; new (a: number): c; new (a: string): c; [n: number]: c; [n: string]: c; a: c; b: g<string>; m1: () => g<number>; m2: (a: string, b?: number, ...c: c[]) => string; }
  
      // Call signatures
      (a: number): c;
- >a : number
-->  : ^^^^^^
- 
-     (a: string): g<string>;
- >a : string
-->  : ^^^^^^
- 
-     // Construct signatures
-     new (a: number): c;
- >a : number
-->  : ^^^^^^
- 
-     new (a: string): m.c;
- >a : string
-->  : ^^^^^^
- >m : any
-->  : ^^^
- 
-     // Indexers
-     [n: number]: c;
- >n : number
-->  : ^^^^^^
- 
-     [n: string]: c;
- >n : string
-->  : ^^^^^^
- 
-     // Properties
-     a: c;
- >a : c
-->  : ^
- 
-     b: g<string>;
- >b : g<string>
-->  : ^^^^^^^^^
- 
-     // methods
-     m1(): g<number>;
- >m1 : () => g<number>
-->   : ^^^^^^         
- 
-     m2(a: string, b?: number, ...c: c[]): string;
- >m2 : (a: string, b?: number, ...c: c[]) => string
-->   : ^ ^^      ^^ ^^^      ^^^^^ ^^   ^^^^^      
- >a : string
-->  : ^^^^^^
- >b : number
-->  : ^^^^^^
- >c : c[]
-->  : ^^^
- 
- };
- 
-@@= skipped -80, +62 lines =@@
- // Function type
- var y: (a: string) => string;
- >y : (a: string) => string
-->  : ^ ^^      ^^^^^      
- >a : string
-->  : ^^^^^^
+@@= skipped -51, +51 lines =@@
  
  // constructor type
  var z: new (a: string) => m.c;
 ->z : new (a: string) => m.c
-->  : ^^^^^ ^^      ^^^^^   
 +>z : new (a: string) => c
  >a : string
-->  : ^^^^^^
  >m : any
-->  : ^^^
  

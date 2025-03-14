@@ -1,8 +1,0 @@
---- old.jsFileCompilationTypeSyntaxOfVar.types
-+++ new.jsFileCompilationTypeSyntaxOfVar.types
-@@= skipped -2, +2 lines =@@
- === a.js ===
- var v: () => number;
- >v : () => number
-->  : ^^^^^^      
- 

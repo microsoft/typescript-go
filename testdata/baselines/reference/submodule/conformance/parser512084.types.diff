@@ -1,8 +1,0 @@
---- old.parser512084.types
-+++ new.parser512084.types
-@@= skipped -2, +2 lines =@@
- === parser512084.ts ===
- class foo {
- >foo : foo
-->    : ^^^
- 

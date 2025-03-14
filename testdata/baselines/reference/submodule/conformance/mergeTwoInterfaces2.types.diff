@@ -1,162 +1,38 @@
 --- old.mergeTwoInterfaces2.types
 +++ new.mergeTwoInterfaces2.types
-@@= skipped -5, +5 lines =@@
- // root module now multiple module declarations
- module M2 {
+@@= skipped -7, +7 lines =@@
  >M2 : typeof M2
-->   : ^^^^^^^^^
  
      export interface A {
 +>A : A
 +
          foo: string;
  >foo : string
-->    : ^^^^^^
      }
- 
-     var a: A;
- >a : A
-->  : ^
- 
-     var r1 = a.foo
- >r1 : string
-->   : ^^^^^^
- >a.foo : string
-->      : ^^^^^^
- >a : A
-->  : ^
- >foo : string
-->    : ^^^^^^
- 
-     var r2 = a.bar;
- >r2 : number
-->   : ^^^^^^
- >a.bar : number
-->      : ^^^^^^
- >a : A
-->  : ^
- >bar : number
-->    : ^^^^^^
- }
- 
- module M2 {
+@@= skipped -24, +26 lines =@@
  >M2 : typeof M2
-->   : ^^^^^^^^^
  
      export interface A {
 +>A : A
 +
          bar: number;
  >bar : number
-->    : ^^^^^^
      }
- 
-     var a: A;
- >a : A
-->  : ^
- 
-     var r1 = a.foo
- >r1 : string
-->   : ^^^^^^
- >a.foo : string
-->      : ^^^^^^
- >a : A
-->  : ^
- >foo : string
-->    : ^^^^^^
- 
-     var r2 = a.bar;
- >r2 : number
-->   : ^^^^^^
- >a.bar : number
-->      : ^^^^^^
- >a : A
-->  : ^
- >bar : number
-->    : ^^^^^^
- }
- 
- // same as above but with an additional level of nesting
- module M2 {
- >M2 : typeof M2
-->   : ^^^^^^^^^
- 
-     export module M3 {
+@@= skipped -28, +30 lines =@@
  >M3 : typeof M3
-->   : ^^^^^^^^^
  
          export interface A {
 +>A : A
 +
              foo: string;
  >foo : string
-->    : ^^^^^^
          }
- 
-         var a: A;
- >a : A
-->  : ^
- 
-         var r1 = a.foo
- >r1 : string
-->   : ^^^^^^
- >a.foo : string
-->      : ^^^^^^
- >a : A
-->  : ^
- >foo : string
-->    : ^^^^^^
- 
-         var r2 = a.bar;
- >r2 : number
-->   : ^^^^^^
- >a.bar : number
-->      : ^^^^^^
- >a : A
-->  : ^
- >bar : number
-->    : ^^^^^^
-     }
- }
- 
- module M2 {
- >M2 : typeof M2
-->   : ^^^^^^^^^
- 
-     export module M3 {
+@@= skipped -28, +30 lines =@@
  >M3 : typeof M3
-->   : ^^^^^^^^^
  
          export interface A {
 +>A : A
 +
              bar: number;
  >bar : number
-->    : ^^^^^^
          }
- 
-         var a: A;
- >a : A
-->  : ^
- 
-         var r1 = a.foo
- >r1 : string
-->   : ^^^^^^
- >a.foo : string
-->      : ^^^^^^
- >a : A
-->  : ^
- >foo : string
-->    : ^^^^^^
- 
-         var r2 = a.bar;
- >r2 : number
-->   : ^^^^^^
- >a.bar : number
-->      : ^^^^^^
- >a : A
-->  : ^
- >bar : number
-->    : ^^^^^^
-     }
- }

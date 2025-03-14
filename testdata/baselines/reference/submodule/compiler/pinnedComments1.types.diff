@@ -1,8 +1,0 @@
---- old.pinnedComments1.types
-+++ new.pinnedComments1.types
-@@= skipped -9, +9 lines =@@
- /*! pinned comment that need to be removed */
- class C {
- >C : C
-->  : ^
- }

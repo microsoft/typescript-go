@@ -1,8 +1,0 @@
---- old.moduleResolution_noLeadingDot.types
-+++ new.moduleResolution_noLeadingDot.types
-@@= skipped -2, +2 lines =@@
- === /a.ts ===
- true;
- >true : true
-->     : ^^^^
- 

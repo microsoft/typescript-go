@@ -8,7 +8,6 @@
 +
      x: string; // error
  >x : string
-->  : ^^^^^^
  }
  
  interface A {
@@ -16,7 +15,6 @@
 +
      x: number;
  >x : string
-->  : ^^^^^^
  }
  
  module M {
@@ -28,7 +26,6 @@
 +
          x: T;
  >x : T
-->  : ^
      }
  
      interface A<T> {
@@ -37,7 +34,6 @@
 +
          x: number;  // error
  >x : T
-->  : ^
      }
  }
  
@@ -50,7 +46,6 @@
 +
          x: T;
  >x : T
-->  : ^
      }   
  }
  
@@ -63,7 +58,6 @@
 +
          x: number;  // ok, different declaration space than other M2
  >x : number
-->  : ^^^^^^
      }
  }
  
@@ -76,7 +70,6 @@
 +
          x: T;
  >x : T
-->  : ^
      }
  }
  
@@ -89,6 +82,4 @@
 +
          x: number;  // error
  >x : T
-->  : ^
      }
- }

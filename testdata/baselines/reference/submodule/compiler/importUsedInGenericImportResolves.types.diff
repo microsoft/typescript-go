@@ -9,20 +9,12 @@
 +
      a: P;
  >a : P
-->  : ^
  }
- 
- === test2.d.ts ===
- export declare const theme: { a: string }
- >theme : { a: string; }
-->      : ^^^^^      ^^^
- >a : string
-->  : ^^^^^^
+@@= skipped -11, +14 lines =@@
  
  === test3.ts ===
  export const a: import("./test1").T<typeof import("./test2").theme> = null as any;
 ->a : import("test1").T<{ a: string; }>
-->  : ^^^^^^^^^^^^^^^^^^^^^^^      ^^^^
 ->theme : error
 +>a : T<{ a: string; }>
  >null as any : any

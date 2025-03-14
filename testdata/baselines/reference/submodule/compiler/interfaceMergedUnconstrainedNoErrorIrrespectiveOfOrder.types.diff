@@ -13,7 +13,6 @@
  
          throttle(): Function<T>;
  >throttle : () => Function<T>
-->         : ^^^^^^           
      }
      interface Function<T> {
 +>Function : Function<T>
@@ -21,7 +20,6 @@
 +
          unary(): Function<() => ReturnType<T>>;
  >unary : () => Function<() => ReturnType<T>>
-->      : ^^^^^^                             
      }
  }
  === regression.ts ===
@@ -34,7 +32,6 @@
 +
          unary(): Function<() => ReturnType<T>>;
  >unary : () => Function<() => ReturnType<T>>
-->      : ^^^^^^                             
      }
      interface Function<T extends (...args: any) => any> {
 +>Function : Function<T>
@@ -42,7 +39,3 @@
  >args : any
  
          throttle(): Function<T>;
- >throttle : () => Function<T>
-->         : ^^^^^^           
-     }
- }

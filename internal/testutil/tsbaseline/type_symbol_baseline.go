@@ -22,6 +22,7 @@ var (
 	codeLinesRegexp  = regexp.MustCompile("[\r\u2028\u2029]|\r?\n")
 	bracketLineRegex = regexp.MustCompile(`^\s*[{|}]\s*$`)
 	lineEndRegex     = regexp.MustCompile(`\r?\n`)
+	nodeReuseRegex   = regexp.MustCompile(`$> +:[ ^]+^`)
 )
 
 func DoTypeAndSymbolBaseline(
@@ -54,12 +55,51 @@ func DoTypeAndSymbolBaseline(
 
 	t.Run("type", func(t *testing.T) {
 		defer testutil.RecoverAndFail(t, "Panic on creating type baseline for test "+header)
-		checkBaselines(t, baselinePath, allFiles, fullWalker, header, opts, false /*isSymbolBaseline*/)
+
+		typesOpts := opts
+		typesOpts.DiffFixupOld = func(s string) string {
+			var sb strings.Builder
+			sb.Grow(len(s))
+
+			for line := range strings.SplitSeq(s, "\n") {
+				if isTypeBaselineNodeReuseLine(line) {
+					continue
+				}
+				sb.WriteString(line)
+				sb.WriteString("\n")
+			}
+
+			return sb.String()[:sb.Len()-1]
+		}
+
+		checkBaselines(t, baselinePath, allFiles, fullWalker, header, typesOpts, false /*isSymbolBaseline*/)
 	})
 	t.Run("symbol", func(t *testing.T) {
 		defer testutil.RecoverAndFail(t, "Panic on creating symbol baseline for test "+header)
 		checkBaselines(t, baselinePath, allFiles, fullWalker, header, opts, true /*isSymbolBaseline*/)
 	})
+}
+
+func isTypeBaselineNodeReuseLine(line string) bool {
+	line, ok := strings.CutPrefix(line, ">")
+	if !ok {
+		return false
+	}
+	line = strings.TrimLeft(line[1:], " ")
+	line, ok = strings.CutPrefix(line, ":")
+	if !ok {
+		return false
+	}
+
+	for _, c := range line {
+		switch c {
+		case ' ', '^', '\r':
+			// Okay
+		default:
+			return false
+		}
+	}
+	return true
 }
 
 func checkBaselines(

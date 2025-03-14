@@ -1,27 +1,16 @@
 --- old.jsdocParamTagOnPropertyInitializer.types
 +++ new.jsdocParamTagOnPropertyInitializer.types
-@@= skipped -2, +2 lines =@@
- === /a.js ===
- class Foo {
- >Foo : Foo
-->    : ^^^
+@@= skipped -5, +5 lines =@@
  
      /**@param {string} x */
      m = x => x.toLowerCase();
 ->m : (x: string) => string
-->  : ^ ^^      ^^^^^^^^^^^
 ->x => x.toLowerCase() : (x: string) => string
-->                     : ^ ^^      ^^^^^^^^^^^
 ->x : string
-->  : ^^^^^^
 ->x.toLowerCase() : string
-->                : ^^^^^^
 ->x.toLowerCase : () => string
-->              : ^^^^^^      
 ->x : string
-->  : ^^^^^^
 ->toLowerCase : () => string
-->            : ^^^^^^      
 +>m : (x: any) => any
 +>x => x.toLowerCase() : (x: any) => any
 +>x : any

@@ -5,11 +5,7 @@
  === es5ExportDefaultClassDeclaration.ts ===
  export default class C {
 ->C : C
-->  : ^
 +>C : default
  
      method() { }
  >method : () => void
-->       : ^^^^^^^^^^
- }
- 

@@ -1,21 +1,9 @@
 --- old.declarationEmitInvalidExport.types
 +++ new.declarationEmitInvalidExport.types
-@@= skipped -2, +2 lines =@@
- === declarationEmitInvalidExport.ts ===
- if (false) {
- >false : false
-->      : ^^^^^
- 
-   export var myClass = 0;
- >myClass : number
-->        : ^^^^^^
- >0 : 0
-->  : ^
+@@= skipped -9, +9 lines =@@
  }
  export type MyClass = typeof myClass;
  >MyClass : number
-->        : ^^^^^^
 ->myClass : number
-->        : ^^^^^^
  }
  

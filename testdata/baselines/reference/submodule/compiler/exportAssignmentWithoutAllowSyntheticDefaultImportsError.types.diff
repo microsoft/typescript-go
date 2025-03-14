@@ -1,18 +1,9 @@
 --- old.exportAssignmentWithoutAllowSyntheticDefaultImportsError.types
 +++ new.exportAssignmentWithoutAllowSyntheticDefaultImportsError.types
-@@= skipped -2, +2 lines =@@
- === /bar.ts ===
- export = bar;
- >bar : () => void
-->    : ^^^^^^^^^^
- 
- function bar() {}
- >bar : () => void
-->    : ^^^^^^^^^^
+@@= skipped -8, +8 lines =@@
  
  === /foo.ts ===
  import bar from './bar';
 ->bar : any
-->    : ^^^
 +>bar : () => void
  

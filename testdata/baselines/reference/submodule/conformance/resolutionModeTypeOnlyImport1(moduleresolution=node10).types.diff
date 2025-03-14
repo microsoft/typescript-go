@@ -1,108 +1,47 @@
 --- old.resolutionModeTypeOnlyImport1(moduleresolution=node10).types
 +++ new.resolutionModeTypeOnlyImport1(moduleresolution=node10).types
-@@= skipped -2, +2 lines =@@
- === /node_modules/@types/foo/index.d.mts ===
- export declare const x: "module";
- >x : "module"
-->  : ^^^^^^^^
- 
- === /node_modules/@types/foo/index.d.cts ===
- export declare const x: "script";
- >x : "script"
-->  : ^^^^^^^^
+@@= skipped -9, +9 lines =@@
  
  === /app.ts ===
  import type { x as Default } from "foo";
 ->x : any
-->  : ^^^
 +>x : "script"
  >Default : any
-->        : ^^^
  
  import type { x as Import } from "foo" assert { "resolution-mode": "import" };
 ->x : "module"
-->  : ^^^^^^^^
 +>x : "script"
  >Import : any
-->       : ^^^
  
  import type { x as Require } from "foo" assert { "resolution-mode": "require" };
- >x : "script"
-->  : ^^^^^^^^
+@@= skipped -12, +12 lines =@@
  >Require : any
-->        : ^^^
  
  type _Default = typeof Default;
 ->_Default : any
-->         : ^^^
 ->Default : any
-->        : ^^^
 +>_Default : "script"
  
  type _Import = typeof Import;
 ->_Import : "module"
-->        : ^^^^^^^^
 ->Import : "module"
-->       : ^^^^^^^^
 +>_Import : "script"
  
  type _Require = typeof Require;
  >_Require : "script"
-->         : ^^^^^^^^
 ->Require : "script"
-->        : ^^^^^^^^
  
  // resolution-mode does not enforce file extension in `bundler`, just sets conditions
  import type { x as ImportRelative } from "./other" assert { "resolution-mode": "import" };
- >x : "other"
-->  : ^^^^^^^
- >ImportRelative : any
-->               : ^^^
- 
- import type { x as RequireRelative } from "./other" assert { "resolution-mode": "require" };
- >x : "other"
-->  : ^^^^^^^
- >RequireRelative : any
-->                : ^^^
+@@= skipped -22, +19 lines =@@
  
  type _ImportRelative = typeof ImportRelative;
  >_ImportRelative : "other"
-->                : ^^^^^^^
 ->ImportRelative : "other"
-->               : ^^^^^^^
  
  type _RequireRelative = typeof RequireRelative;
  >_RequireRelative : "other"
-->                 : ^^^^^^^
 ->RequireRelative : "other"
-->                : ^^^^^^^
  
  export {
    _Default,
- >_Default : any
-->         : ^^^
- 
-   _Import,
- >_Import : any
-->        : ^^^
- 
-   _Require,
- >_Require : any
-->         : ^^^
- 
-   _ImportRelative,
- >_ImportRelative : any
-->                : ^^^
- 
-   _RequireRelative
- >_RequireRelative : any
-->                 : ^^^
- }
- 
- === /other.ts ===
- export const x = "other";
- >x : "other"
-->  : ^^^^^^^
- >"other" : "other"
-->        : ^^^^^^^
- 

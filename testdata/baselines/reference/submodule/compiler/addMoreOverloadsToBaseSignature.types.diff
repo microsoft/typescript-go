@@ -8,7 +8,6 @@
 +
      f(): string;
  >f : () => string
-->  : ^^^^^^      
  }
  
  interface Bar extends Foo {
@@ -16,8 +15,4 @@
 +
      f(key: string): string;
  >f : (key: string) => string
-->  : ^   ^^      ^^^^^      
  >key : string
-->    : ^^^^^^
- }
- 

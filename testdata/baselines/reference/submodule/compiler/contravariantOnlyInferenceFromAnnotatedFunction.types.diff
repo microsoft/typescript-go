@@ -4,7 +4,6 @@
  
  type Funcs<A, B extends Record<string, unknown>> = {
  >Funcs : Funcs<A, B>
-->      : ^^^^^^^^^^^
 +>A : A
 +>B : B
  
@@ -13,56 +12,13 @@
 +
      fn: (a: A, b: B) => void;
  >fn : (a: A, b: B) => void
-->   : ^ ^^ ^^ ^^ ^^^^^    
  >a : A
-->  : ^
- >b : B
-->  : ^
- 
-     thing: B[K];
- >thing : B[K]
-->      : ^^^^
- 
-   };
- }
+@@= skipped -15, +19 lines =@@
  
  declare function foo<A, B extends Record<string, unknown>>(fns: Funcs<A, B>): [A, B]
  >foo : <A, B extends Record<string, unknown>>(fns: Funcs<A, B>) => [A, B]
-->    : ^ ^^ ^^^^^^^^^                       ^^   ^^           ^^^^^      
 +>A : A
 +>B : B
  >fns : Funcs<A, B>
-->    : ^^^^^^^^^^^
  
  const result = foo({
- >result : [string, { bar: string; }]
-->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^
- >foo({  bar: {    fn: (a: string) => {},    thing: 'asd',  },}) : [string, { bar: string; }]
-->                                                               : ^^^^^^^^^^^^^^^^^^^^^^^^^^
- >foo : <A, B extends Record<string, unknown>>(fns: Funcs<A, B>) => [A, B]
-->    : ^ ^^ ^^^^^^^^^                       ^^   ^^           ^^^^^      
- >{  bar: {    fn: (a: string) => {},    thing: 'asd',  },} : { bar: { fn: (a: string) => void; thing: string; }; }
-->                                                          : ^^^^^^^^^^^^^^ ^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
-   bar: {
- >bar : { fn: (a: string) => void; thing: string; }
-->    : ^^^^^^^ ^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >{    fn: (a: string) => {},    thing: 'asd',  } : { fn: (a: string) => void; thing: string; }
-->                                                : ^^^^^^^ ^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
-     fn: (a: string) => {},
- >fn : (a: string) => void
-->   : ^ ^^      ^^^^^^^^^
- >(a: string) => {} : (a: string) => void
-->                  : ^ ^^      ^^^^^^^^^
- >a : string
-->  : ^^^^^^
- 
-     thing: 'asd',
- >thing : string
-->      : ^^^^^^
- >'asd' : "asd"
-->      : ^^^^^
- 
-   },
- });

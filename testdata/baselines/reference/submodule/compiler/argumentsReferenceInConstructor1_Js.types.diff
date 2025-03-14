@@ -1,21 +1,12 @@
 --- old.argumentsReferenceInConstructor1_Js.types
 +++ new.argumentsReferenceInConstructor1_Js.types
-@@= skipped -2, +2 lines =@@
- === /a.js ===
- class A {
- >A : A
-->  : ^
- 
- 	/**
- 	 * Constructor
-@@= skipped -8, +7 lines =@@
+@@= skipped -9, +9 lines =@@
  	 * @param {object} [foo={}]
  	 */
  	constructor(foo = {}) {
 ->foo : any
 +>foo : {}
  >{} : {}
-->   : ^^
  
  		/**
  		 * @type object
@@ -25,9 +16,7 @@
 +>this.arguments = foo : {}
  >this.arguments : any
  >this : this
-->     : ^^^^
  >arguments : any
-->          : ^^^
 ->foo : any
 +>foo : {}
  	}

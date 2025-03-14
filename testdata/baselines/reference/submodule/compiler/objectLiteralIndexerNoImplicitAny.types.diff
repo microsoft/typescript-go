@@ -8,16 +8,4 @@
 +
      [s: string]: any;
  >s : string
-->  : ^^^^^^
- }
- 
- var x: I = {
- >x : I
-->  : ^
- >{    p: null} : { p: null; }
-->              : ^^^^^^^^^^^^
- 
-     p: null
- >p : null
-->  : ^^^^
  }

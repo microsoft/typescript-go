@@ -4,39 +4,17 @@
  === typeofClassWithPrivates.ts ===
  class C<T> {
  >C : C<T>
-->  : ^^^^
 +>T : T
  
      private a: number;
  >a : number
-->  : ^^^^^^
- 
-     private static b: number;
- >b : number
-->  : ^^^^^^
- 
-     x: T;
- >x : T
-->  : ^
- 
-     static y: T;
- >y : T
-->  : ^
- }
- 
- var c: C<string>;
- >c : C<string>
-->  : ^^^^^^^^^
+@@= skipped -19, +20 lines =@@
  
  var r: typeof C;
  >r : typeof C
-->  : ^^^^^^^^
 ->C : typeof C
-->  : ^^^^^^^^
  
  var r2: typeof c;
  >r2 : C<string>
-->   : ^^^^^^^^^
 ->c : C<string>
-->  : ^^^^^^^^^
  

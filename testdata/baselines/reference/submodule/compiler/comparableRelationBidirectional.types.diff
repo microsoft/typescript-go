@@ -1,34 +1,6 @@
 --- old.comparableRelationBidirectional.types
 +++ new.comparableRelationBidirectional.types
-@@= skipped -2, +2 lines =@@
- === comparableRelationBidirectional.ts ===
- enum AutomationMode {
- >AutomationMode : AutomationMode
-->               : ^^^^^^^^^^^^^^
- 
-     NONE = "",
- >NONE : AutomationMode.NONE
-->     : ^^^^^^^^^^^^^^^^^^^
- >"" : ""
-->   : ^^
- 
-     TIME = "time",
- >TIME : AutomationMode.TIME
-->     : ^^^^^^^^^^^^^^^^^^^
- >"time" : "time"
-->       : ^^^^^^
- 
-     SYSTEM = "system",
- >SYSTEM : AutomationMode.SYSTEM
-->       : ^^^^^^^^^^^^^^^^^^^^^
- >"system" : "system"
-->         : ^^^^^^^^
- 
-     LOCATION = "location",
- >LOCATION : AutomationMode.LOCATION
-->         : ^^^^^^^^^^^^^^^^^^^^^^^
- >"location" : "location"
-->           : ^^^^^^^^^^
+@@= skipped -21, +21 lines =@@
  }
  
  interface ThemePreset {
@@ -36,7 +8,6 @@
 +
      id: string;
  >id : string
-->   : ^^^^^^
  }
  
  interface Automation {
@@ -44,7 +15,6 @@
 +
      mode: AutomationMode;
  >mode : AutomationMode
-->     : ^^^^^^^^^^^^^^
  }
  
  interface UserSettings {
@@ -52,11 +22,8 @@
 +
      presets: ThemePreset[];
  >presets : ThemePreset[]
-->        : ^^^^^^^^^^^^^
  
-     automation: Automation;
- >automation : Automation
-->           : ^^^^^^^^^^
+@@= skipped -18, +24 lines =@@
  }
  
  interface ExtensionData {
@@ -64,42 +31,4 @@
 +
      settings: UserSettings;
  >settings : UserSettings
-->         : ^^^^^^^^^^^^
  }
- 
- export function getMockData(): ExtensionData {
- >getMockData : () => ExtensionData
-->            : ^^^^^^             
- 
-     return {
- >{        settings: {            presets: [],            automation: {                mode: "",            },        } as UserSettings,    } : { settings: UserSettings; }
-->                                                                                                                                            : ^^^^^^^^^^^^            ^^^
- 
-         settings: {
- >settings : UserSettings
-->         : ^^^^^^^^^^^^
- >{            presets: [],            automation: {                mode: "",            },        } as UserSettings : UserSettings
-->                                                                                                                   : ^^^^^^^^^^^^
- >{            presets: [],            automation: {                mode: "",            },        } : { presets: never[]; automation: { mode: ""; }; }
-->                                                                                                   : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
-             presets: [],
- >presets : never[]
-->        : ^^^^^^^
- >[] : never[]
-->   : ^^^^^^^
- 
-             automation: {
- >automation : { mode: ""; }
-->           : ^^^^^^^^^^^^^
- >{                mode: "",            } : { mode: ""; }
-->                                        : ^^^^^^^^^^^^^
- 
-                 mode: "",
- >mode : ""
-->     : ^^
- >"" : ""
-->   : ^^
- 
-             },
-         } as UserSettings,

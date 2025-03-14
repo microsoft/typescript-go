@@ -1,8 +1,0 @@
---- old.jsFileCompilationHeritageClauseSyntaxOfClass.types
-+++ new.jsFileCompilationHeritageClauseSyntaxOfClass.types
-@@= skipped -2, +2 lines =@@
- === a.js ===
- class C implements D { }
- >C : C
-->  : ^
- 

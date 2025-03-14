@@ -1,24 +1,11 @@
 --- old.mergedClassWithNamespacePrototype.types
 +++ new.mergedClassWithNamespacePrototype.types
-@@= skipped -2, +2 lines =@@
- === /a.d.ts ===
- declare class Foo {}
- >Foo : Foo
-->    : ^^^
- 
- === /b.ts ===
- declare namespace Foo {
+@@= skipped -8, +8 lines =@@
  >Foo : typeof Foo
-->    : ^^^^^^^^^^
  
      namespace prototype {
 ->prototype : typeof Foo.prototype
-->          : ^^^^^^^^^^^^^^^^^^^^
 +>prototype : typeof prototype
  
          function f(): void;
  >f : () => void
-->  : ^^^^^^    
-     }
- }
- 

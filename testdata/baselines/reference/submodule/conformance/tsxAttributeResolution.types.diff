@@ -11,11 +11,4 @@
 +
  		x: { y: number; z: string; };
  >x : { y: number; z: string; }
-->  : ^^^^^      ^^^^^      ^^^
  >y : number
-->  : ^^^^^^
- >z : string
-->  : ^^^^^^
- 	}
- }
- 

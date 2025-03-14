@@ -14,17 +14,13 @@
  }
  
  var div: any;
- >div : any
-->    : ^^^
+@@= skipped -9, +14 lines =@@
  
  // Still an error
  <div n='x' />;
 -><div n='x' /> : JSX.Element
-->              : ^^^^^^^^^^^
 +><div n='x' /> : any
  >div : any
-->    : ^^^
 ->n : string
-->  : ^^^^^^
 +>n : any
  

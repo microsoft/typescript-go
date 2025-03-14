@@ -64,7 +64,6 @@
  
  class Foo<T> {
  >Foo : Foo<T>
-->    : ^^^^^^
 +>T : T
  }
  interface I4<T extends Foo<T>> {

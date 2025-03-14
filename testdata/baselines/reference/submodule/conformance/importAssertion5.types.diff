@@ -1,8 +1,0 @@
---- old.importAssertion5.types
-+++ new.importAssertion5.types
-@@= skipped -2, +2 lines =@@
- === importAssertion5.ts ===
- import * as f from "./first" assert {
- >f : any
-->  : ^^^
- 

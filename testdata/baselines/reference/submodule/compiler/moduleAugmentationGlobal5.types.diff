@@ -1,28 +1,15 @@
 --- old.moduleAugmentationGlobal5.types
 +++ new.moduleAugmentationGlobal5.types
-@@= skipped -10, +10 lines =@@
- === f1.d.ts ===
- declare module "A" {
- >"A" : typeof import("A")
-->    : ^^^^^^^^^^^^^^^^^^
- 
-     global {
+@@= skipped -15, +15 lines =@@
  >global : any
-->       : ^^^
  
          interface Something {x}
 +>Something : Something
  >x : any
      }
  }
- === f2.d.ts ===
- declare module "B" {
- >"B" : typeof import("B")
-->    : ^^^^^^^^^^^^^^^^^^
- 
-     global {
+@@= skipped -11, +12 lines =@@
  >global : any
-->       : ^^^
  
          interface Something {y}
 +>Something : Something

@@ -1,8 +1,0 @@
---- old.parserES5ForOfStatement21.types
-+++ new.parserES5ForOfStatement21.types
-@@= skipped -2, +2 lines =@@
- === parserES5ForOfStatement21.ts ===
- for (var of of) { }
- >of : any
-->   : ^^^
- 

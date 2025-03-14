@@ -7,9 +7,7 @@
 -><foo data/> : error
 +><foo data/> : any
  >foo : any
-->    : ^^^
 ->data : true
-->     : ^^^^
 +>data : any
  
  <Bar x={x} />;
@@ -23,7 +21,6 @@
 -><x-component /> : error
 +><x-component /> : any
  >x-component : any
-->            : ^^^
  
  <Bar {...x} />;
 -><Bar {...x} /> : error
@@ -37,10 +34,8 @@
  >Bar : any
  >x : any
 ->y : number
-->  : ^^^^^^
 +>y : any
  >2 : 2
-->  : ^
  
  <_Bar { ...x } />;
 -><_Bar { ...x } /> : error

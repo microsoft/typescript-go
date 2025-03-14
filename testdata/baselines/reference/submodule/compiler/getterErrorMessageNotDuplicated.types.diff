@@ -8,13 +8,8 @@
 +
      get style(): Foo;
  >style : Foo
-->      : ^^^
  
-     set style(cssText: string | Bar);
- >style : Foo
-->      : ^^^
- >cssText : string | Bar
-->        : ^^^^^^^^^^^^
+@@= skipped -9, +11 lines =@@
  }
  
  interface Foo {
@@ -22,11 +17,8 @@
 +
      hello: string;
  >hello : string
-->      : ^^^^^^
  
-     world: number;
- >world : number
-->      : ^^^^^^
+@@= skipped -8, +10 lines =@@
  }
  
  interface Bar extends Foo {

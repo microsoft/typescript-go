@@ -1,15 +1,9 @@
 --- old.parserSetAccessorWithTypeParameters1.types
 +++ new.parserSetAccessorWithTypeParameters1.types
-@@= skipped -2, +2 lines =@@
- === parserSetAccessorWithTypeParameters1.ts ===
- class C {
- >C : C
-->  : ^
+@@= skipped -5, +5 lines =@@
  
     set foo<T>(v) { }
  >foo : any
-->    : ^^^
 +>T : T
  >v : any
-->  : ^^^
  }

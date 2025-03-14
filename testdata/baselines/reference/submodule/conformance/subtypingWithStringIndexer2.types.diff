@@ -6,24 +6,20 @@
  interface Base { foo: string; }
 +>Base : Base
  >foo : string
-->    : ^^^^^^
  
  interface Derived extends Base { bar: string; }
 +>Derived : Derived
  >bar : string
-->    : ^^^^^^
  
  interface Derived2 extends Derived { baz: string; }
 +>Derived2 : Derived2
  >baz : string
-->    : ^^^^^^
  
  interface A {
 +>A : A
 +
      [x: string]: Derived;
  >x : string
-->  : ^^^^^^
  }
  
  interface B extends A {
@@ -31,7 +27,6 @@
 +
      [x: string]: Base; // error
  >x : string
-->  : ^^^^^^
  }
  
  interface B2 extends A {
@@ -39,7 +34,6 @@
 +
      [x: string]: Derived2; // ok
  >x : string
-->  : ^^^^^^
  }
  
  module Generics {
@@ -51,7 +45,6 @@
 +
          [x: string]: T;
  >x : string
-->  : ^^^^^^
      }
  
      interface B extends A<Base> {
@@ -59,7 +52,6 @@
 +
          [x: string]: Derived; // error
  >x : string
-->  : ^^^^^^
      }
  
      interface B2 extends A<Derived> {
@@ -67,7 +59,6 @@
 +
          [x: string]: Derived2; // ok
  >x : string
-->  : ^^^^^^
      }
  
      interface B3<T extends Derived> extends A<T> {
@@ -76,7 +67,6 @@
 +
          [x: string]: Base; // error
  >x : string
-->  : ^^^^^^
      }
  
      interface B4<T extends Derived> extends A<T> {
@@ -85,7 +75,6 @@
 +
          [x: string]: Derived; // error
  >x : string
-->  : ^^^^^^
      }
  
      interface B5<T extends Derived2> extends A<T> {
@@ -94,6 +83,4 @@
 +
          [x: string]: Derived2; // error
  >x : string
-->  : ^^^^^^
      }
- }

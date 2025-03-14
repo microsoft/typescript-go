@@ -1,10 +1,7 @@
 --- old.noDefaultLib.types
 +++ new.noDefaultLib.types
-@@= skipped -3, +3 lines =@@
- /// <reference no-default-lib="true"/>
- var x;
+@@= skipped -5, +5 lines =@@
  >x : any
-->  : ^^^
  
  interface Array {}
 +>Array : T[]

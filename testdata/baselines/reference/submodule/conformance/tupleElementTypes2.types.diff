@@ -5,10 +5,7 @@
  === tupleElementTypes2.ts ===
  function f([a, b]: [number, any]) { }
 ->f : ([a, b]: [number, any]) => void
-->  : ^      ^^             ^^^^^^^^^
 +>f : (__0: [number, any]) => void
  >a : number
-->  : ^^^^^^
  >b : any
-->  : ^^^
  

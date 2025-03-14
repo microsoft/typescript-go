@@ -9,10 +9,3 @@
      // Should return error for implicit any on `new` and `foo`.
      new ();
      few() : any;
- >few : () => any
-->    : ^^^^^^   
- 
-     foo();
- >foo : () => any
-->    : ^^^^^^^^^
- }

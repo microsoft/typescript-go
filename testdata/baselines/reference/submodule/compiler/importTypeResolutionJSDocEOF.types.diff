@@ -8,14 +8,12 @@
 +
      prop: string
  >prop : string
-->     : ^^^^^^
  }
- 
+@@= skipped -7, +9 lines =@@
  === usage.js ===
  /** @type {Bar} */
  export let bar;
 ->bar : import("interfaces").Bar
-->    : ^^^^^^^^^^^^^^^^^^^^^^^^
 +>bar : any
  
  /** @typedef {import('./interfaces').Bar} Bar */

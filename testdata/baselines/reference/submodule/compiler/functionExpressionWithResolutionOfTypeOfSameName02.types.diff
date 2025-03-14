@@ -8,14 +8,3 @@
  }
  
  var x = function Foo() {
- >x : () => void
-->  : ^^^^^^^^^^
- >function Foo() {    var x: Foo;} : () => void
-->                                 : ^^^^^^^^^^
- >Foo : () => void
-->    : ^^^^^^^^^^
- 
-     var x: Foo;
- >x : Foo
-->  : ^^^
- }

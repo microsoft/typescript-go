@@ -8,6 +8,4 @@
 +
      [index: TypeNotFound]: any;
  >index : TypeNotFound
-->      : ^^^^^^^^^^^^
  }
- 

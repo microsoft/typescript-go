@@ -4,30 +4,24 @@
  === getAccessorWithImpliedReturnTypeAndFunctionClassMerge.ts ===
  declare function _<T>(value: Array<T>): _<T>;
  >_ : typeof _
-->  : ^^^^^^^^
 +>T : T
  >value : T[]
-->      : ^^^
  
  declare function _<T>(value: T): _<T>;
  >_ : typeof _
-->  : ^^^^^^^^
 +>T : T
  >value : T
-->      : ^
  
  declare module _ {
- >_ : typeof _
-->  : ^^^^^^^^
+@@= skipped -11, +13 lines =@@
  
      export function each<T>(
  >each : <T>(context?: any) => void
-->     : ^ ^^       ^^^   ^^^^^    
 +>T : T
  
          //list: List<T>,
          //iterator: ListIterator<T, void>,
-@@= skipped -24, +21 lines =@@
+@@= skipped -7, +8 lines =@@
  >context : any
  
      interface ListIterator<T, TResult> {
@@ -37,46 +31,18 @@
 +
          (value: T, index: number, list: T[]): TResult;
  >value : T
-->      : ^
  >index : number
-->      : ^^^^^^
- >list : T[]
-->     : ^^^
-     }
- }
+@@= skipped -9, +13 lines =@@
  
  declare class _<T> {
  >_ : _<T>
-->  : ^^^^
 +>T : T
  
      each(iterator: _.ListIterator<T, void>, context?: any): void;
 ->each : (iterator: _.ListIterator<T, void>, context?: any) => void
-->     : ^        ^^                       ^^       ^^^   ^^^^^    
 ->iterator : _.ListIterator<T, void>
-->         : ^^^^^^^^^^^^^^^^^^^^^^^
 +>each : (iterator: ListIterator<T, void>, context?: any) => void
 +>iterator : ListIterator<T, void>
  >_ : any
-->  : ^^^
  >context : any
  }
- 
- module MyModule { 
- >MyModule : typeof MyModule
-->         : ^^^^^^^^^^^^^^^
- 
-     export class MyClass {
- >MyClass : MyClass
-->        : ^^^^^^^
- 
-         public get myGetter() {
- >myGetter : any
-@@= skipped -38, +34 lines =@@
-             var obj:any = {};
- >obj : any
- >{} : {}
-->   : ^^
-             
-             return obj;
- >obj : any

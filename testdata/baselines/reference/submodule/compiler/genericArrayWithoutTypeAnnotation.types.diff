@@ -9,14 +9,10 @@
  }
  class Bar {
  >Bar : Bar
-->    : ^^^
  
      public getBar(foo: IFoo[]) {
 ->getBar : (foo: IFoo[]) => void
-->       : ^   ^^      ^^^^^^^^^
 +>getBar : (foo: any[]) => void
  >foo : any[]
-->    : ^^^^^
      }
  }
- 

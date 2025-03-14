@@ -8,7 +8,6 @@
 +
      [x: number]: string;
  >x : number
-->  : ^^^^^^
  }
  
  
@@ -17,42 +16,4 @@
 +
      [x: string]: { length: number };
  >x : string
-->  : ^^^^^^
  >length : number
-->       : ^^^^^^
- }
- 
- var a: A;
- >a : A
-->  : ^
- 
- var r = a[1];
- >r : string
-->  : ^^^^^^
- >a[1] : string
-->     : ^^^^^^
- >a : A
-->  : ^
- >1 : 1
-->  : ^
- 
- var r2 = a['1'];
- >r2 : string
-->   : ^^^^^^
- >a['1'] : string
-->       : ^^^^^^
- >a : A
-->  : ^
- >'1' : "1"
-->    : ^^^
- 
- var r3 = a['hi'];
- >r3 : { length: number; }
-->   : ^^^^^^^^^^      ^^^
- >a['hi'] : { length: number; }
-->        : ^^^^^^^^^^      ^^^
- >a : A
-->  : ^
- >'hi' : "hi"
-->     : ^^^^
- 

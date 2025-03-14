@@ -9,8 +9,6 @@
  
  declare let y: OhNo.hello;
 ->y : OhNo.hello
-->  : ^^^^^^^^^^
 +>y : hello
  >OhNo : any
-->     : ^^^
  

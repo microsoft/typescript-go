@@ -1,26 +1,11 @@
 --- old.jsdocImportTypeNodeNamespace.types
 +++ new.jsdocImportTypeNodeNamespace.types
-@@= skipped -2, +2 lines =@@
- === GeometryType.d.ts ===
- declare namespace _default {
- >_default : typeof _default
-->         : ^^^^^^^^^^^^^^^
- 
-   export const POINT: string;
- >POINT : string
-->      : ^^^^^^
- }
- export default _default;
- >_default : typeof _default
-->         : ^^^^^^^^^^^^^^^
- 
+@@= skipped -12, +12 lines =@@
  === Main.js ===
  export default function () {
    return /** @type {import('./GeometryType.js').default} */ ('Point');
 ->('Point') : typeof import("GeometryType").default
-->          : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>('Point') : "Point"
  >'Point' : "Point"
-->        : ^^^^^^^
  }
  

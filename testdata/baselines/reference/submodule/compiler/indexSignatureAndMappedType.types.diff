@@ -4,101 +4,30 @@
  
  function f1<T, K extends string>(x: { [key: string]: T }, y: Record<K, T>) {
  >f1 : <T, K extends string>(x: { [key: string]: T; }, y: Record<K, T>) => void
-->   : ^ ^^ ^^^^^^^^^      ^^ ^^                     ^^ ^^            ^^^^^^^^^
 +>T : T
 +>K : K
  >x : { [key: string]: T; }
-->  : ^^^^^^^^^^^^^^^^^^^^^
  >key : string
-->    : ^^^^^^
  >y : Record<K, T>
-->  : ^^^^^^^^^^^^
- 
-     x = y;
- >x = y : Record<K, T>
-->      : ^^^^^^^^^^^^
- >x : { [key: string]: T; }
-->  : ^^^^^^^^^^^^^^^^^^^^^
- >y : Record<K, T>
-->  : ^^^^^^^^^^^^
- 
-     y = x;  // Error
- >y = x : { [key: string]: T; }
-->      : ^^^^^^^^^^^^^^^^^^^^^
- >y : Record<K, T>
-->  : ^^^^^^^^^^^^
- >x : { [key: string]: T; }
-->  : ^^^^^^^^^^^^^^^^^^^^^
- }
+@@= skipped -17, +19 lines =@@
  
  function f2<T>(x: { [key: string]: T }, y: Record<string, T>) {
  >f2 : <T>(x: { [key: string]: T; }, y: Record<string, T>) => void
-->   : ^ ^^ ^^                     ^^ ^^                 ^^^^^^^^^
 +>T : T
  >x : { [key: string]: T; }
-->  : ^^^^^^^^^^^^^^^^^^^^^
  >key : string
-->    : ^^^^^^
  >y : Record<string, T>
-->  : ^^^^^^^^^^^^^^^^^
- 
-     x = y;
- >x = y : Record<string, T>
-->      : ^^^^^^^^^^^^^^^^^
- >x : { [key: string]: T; }
-->  : ^^^^^^^^^^^^^^^^^^^^^
- >y : Record<string, T>
-->  : ^^^^^^^^^^^^^^^^^
- 
-     y = x;
- >y = x : { [key: string]: T; }
-->      : ^^^^^^^^^^^^^^^^^^^^^
- >y : Record<string, T>
-->  : ^^^^^^^^^^^^^^^^^
- >x : { [key: string]: T; }
-->  : ^^^^^^^^^^^^^^^^^^^^^
- }
+@@= skipped -17, +18 lines =@@
  
  function f3<T, U, K extends string>(x: { [key: string]: T }, y: Record<K, U>) {
  >f3 : <T, U, K extends string>(x: { [key: string]: T; }, y: Record<K, U>) => void
-->   : ^ ^^ ^^ ^^^^^^^^^      ^^ ^^                     ^^ ^^            ^^^^^^^^^
 +>T : T
 +>U : U
 +>K : K
  >x : { [key: string]: T; }
-->  : ^^^^^^^^^^^^^^^^^^^^^
  >key : string
-->    : ^^^^^^
  >y : Record<K, U>
-->  : ^^^^^^^^^^^^
- 
-     x = y;  // Error
- >x = y : Record<K, U>
-->      : ^^^^^^^^^^^^
- >x : { [key: string]: T; }
-->  : ^^^^^^^^^^^^^^^^^^^^^
- >y : Record<K, U>
-->  : ^^^^^^^^^^^^
- 
-     y = x;  // Error
- >y = x : { [key: string]: T; }
-->      : ^^^^^^^^^^^^^^^^^^^^^
- >y : Record<K, U>
-->  : ^^^^^^^^^^^^
- >x : { [key: string]: T; }
-->  : ^^^^^^^^^^^^^^^^^^^^^
- }
- 
- // Repro from #14548
- 
- type Dictionary = {
- >Dictionary : Dictionary
-->           : ^^^^^^^^^^
- 
-     [key: string]: string;
- >key : string
-->    : ^^^^^^
- 
+@@= skipped -26, +29 lines =@@
  };
  
  interface IBaseEntity {
@@ -106,11 +35,8 @@
 +
      name: string;
  >name : string
-->     : ^^^^^^
  
-     properties: Dictionary;
- >properties : Dictionary
-->           : ^^^^^^^^^^
+@@= skipped -8, +10 lines =@@
  }
  
  interface IEntity<T extends string> extends IBaseEntity {
@@ -119,6 +45,4 @@
 +
      properties: Record<T, string>;
  >properties : Record<T, string>
-->           : ^^^^^^^^^^^^^^^^^
  }
- 

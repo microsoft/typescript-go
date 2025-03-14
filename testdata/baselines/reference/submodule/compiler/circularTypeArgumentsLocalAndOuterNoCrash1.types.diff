@@ -4,7 +4,6 @@
  
  function f<_T, _S>() {
  >f : <_T, _S>() => void
-->  : ^  ^^  ^^^^^^^^^^^
 +>_T : _T
 +>_S : _S
  
@@ -14,7 +13,6 @@
 +
    type X = NumArray<X extends {} ? number : number>;
 ->X : NumArray<any>
-->  : ^^^^^^^^^^^^^
 +>X : X
  }
  

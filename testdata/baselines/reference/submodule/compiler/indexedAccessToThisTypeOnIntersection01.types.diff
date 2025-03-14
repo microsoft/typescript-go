@@ -8,16 +8,4 @@
 +
    a: string;
  >a : string
-->  : ^^^^^^
- 
-   getA: this['a'];
- >getA : this["a"]
-->     : ^^^^^^^^^
- }
- 
- type T = (A & { a: number })['getA'];
- >T : never
-->  : ^^^^^
- >a : number
-->  : ^^^^^^
  

@@ -5,13 +5,9 @@
  /** @type {Test<number>} */
  const test = dibbity => dibbity
 ->test : Test<number>
-->     : ^^^^^^^^^^^^
 ->dibbity => dibbity : <T1 extends number>(dibbity: T1) => T1
-->                   : ^  ^^^^^^^^^^^^^^^^^       ^^^^^^^^^^^
 ->dibbity : T1
-->        : ^^
 ->dibbity : T1
-->        : ^^
 +>test : (dibbity: any) => any
 +>dibbity => dibbity : (dibbity: any) => any
 +>dibbity : any
@@ -19,21 +15,15 @@
  
  test(1) // ok, T=1
 ->test(1) : 1
-->        : ^
 ->test : Test<number>
-->     : ^^^^^^^^^^^^
 +>test(1) : any
 +>test : (dibbity: any) => any
  >1 : 1
-->  : ^
  
  test('hi') // error, T=number
 ->test('hi') : number
-->           : ^^^^^^
 ->test : Test<number>
-->     : ^^^^^^^^^^^^
 +>test('hi') : any
 +>test : (dibbity: any) => any
  >'hi' : "hi"
-->     : ^^^^
  

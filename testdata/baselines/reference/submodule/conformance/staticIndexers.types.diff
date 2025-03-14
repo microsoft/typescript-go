@@ -1,31 +1,10 @@
 --- old.staticIndexers.types
 +++ new.staticIndexers.types
-@@= skipped -4, +4 lines =@@
- 
- class C {
- >C : C
-->  : ^
- 
-     static [x: string]: string;
- >x : string
-->  : ^^^^^^
- }
- 
- class D {
- >D : D
-->  : ^
- 
-     static [x: number]: string;
- >x : number
-->  : ^^^^^^
- }
+@@= skipped -18, +18 lines =@@
  
  class E<T> {
  >E : E<T>
-->  : ^^^^
 +>T : T
  
      static [x: string]: T;
  >x : string
-->  : ^^^^^^
- }

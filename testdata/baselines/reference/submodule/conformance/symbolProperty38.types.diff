@@ -8,24 +8,13 @@
 +
      [Symbol.isConcatSpreadable]: string;
  >[Symbol.isConcatSpreadable] : string
-->                            : ^^^^^^
  >Symbol.isConcatSpreadable : unique symbol
-->                          : ^^^^^^^^^^^^^
- >Symbol : SymbolConstructor
-->       : ^^^^^^^^^^^^^^^^^
+@@= skipped -7, +9 lines =@@
  >isConcatSpreadable : unique symbol
-->                   : ^^^^^^^^^^^^^
  }
  interface I {
 +>I : I
 +
      [Symbol.isConcatSpreadable]: string;
  >[Symbol.isConcatSpreadable] : string
-->                            : ^^^^^^
  >Symbol.isConcatSpreadable : unique symbol
-->                          : ^^^^^^^^^^^^^
- >Symbol : SymbolConstructor
-->       : ^^^^^^^^^^^^^^^^^
- >isConcatSpreadable : unique symbol
-->                   : ^^^^^^^^^^^^^
- }

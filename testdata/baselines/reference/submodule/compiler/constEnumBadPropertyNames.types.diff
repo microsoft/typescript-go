@@ -5,18 +5,7 @@
  === constEnumBadPropertyNames.ts ===
  const enum E { A }
 ->E : E
-->  : ^
 +>E : E.A
  >A : E.A
-->  : ^^^
  
  var x = E["B"]
- >x : any
-->  : ^^^
- >E["B"] : any
-->       : ^^^
- >E : typeof E
-->  : ^^^^^^^^
- >"B" : "B"
-->    : ^^^
- 

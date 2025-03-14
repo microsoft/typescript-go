@@ -1,8 +1,0 @@
---- old.Protected1.types
-+++ new.Protected1.types
-@@= skipped -2, +2 lines =@@
- === Protected1.ts ===
- protected class C {
- >C : C
-->  : ^
- }

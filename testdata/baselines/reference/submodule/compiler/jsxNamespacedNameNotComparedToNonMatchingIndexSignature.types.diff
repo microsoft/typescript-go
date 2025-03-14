@@ -14,7 +14,6 @@
  
  declare module "react" {
 ->"react" : typeof import("react")
-->        : ^^^^^^^^^^^^^^^^^^^^^^
 +>"react" : any
  
      interface Attributes {
@@ -22,25 +21,17 @@
 +
          [key: `do-${string}`]: Function;
  >key : `do-${string}`
-->    : ^^^^^^^^^^^^^^
  
-         "ns:thing"?: string;
- >"ns:thing" : string
-->           : ^^^^^^
-     }
+@@= skipped -21, +17 lines =@@
  }
  
  export const tag = <div ns:thing="a"/>
 ->tag : JSX.Element
-->    : ^^^^^^^^^^^
 -><div ns:thing="a"/> : JSX.Element
-->                    : ^^^^^^^^^^^
 +>tag : any
 +><div ns:thing="a"/> : any
  >div : any
-->    : ^^^
 ->ns:thing : string
-->         : ^^^^^^
 ->ns : error
 ->thing : error
 +>ns:thing : any

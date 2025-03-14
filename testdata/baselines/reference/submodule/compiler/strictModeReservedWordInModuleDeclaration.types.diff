@@ -1,10 +1,7 @@
 --- old.strictModeReservedWordInModuleDeclaration.types
 +++ new.strictModeReservedWordInModuleDeclaration.types
-@@= skipped -2, +2 lines =@@
- === strictModeReservedWordInModuleDeclaration.ts ===
- "use strict"
+@@= skipped -4, +4 lines =@@
  >"use strict" : "use strict"
-->             : ^^^^^^^^^^^^
  
  module public { }
 +>public : any

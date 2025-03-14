@@ -9,7 +9,6 @@
 +
      [n: number]: T;
  >n : number
-->  : ^^^^^^
  }
  
  interface B {
@@ -17,7 +16,6 @@
 +
      foo: number;
  >foo : number
-->    : ^^^^^^
  }
  
  interface C extends B, A<string> { } // Should succeed

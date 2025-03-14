@@ -1,29 +1,14 @@
 --- old.internalImportInstantiatedModuleMergedWithClassNotReferencingInstanceNoConflict.types
 +++ new.internalImportInstantiatedModuleMergedWithClassNotReferencingInstanceNoConflict.types
-@@= skipped -2, +2 lines =@@
- === internalImportInstantiatedModuleMergedWithClassNotReferencingInstanceNoConflict.ts ===
- class A {
- >A : A
-->  : ^
- 
-     aProp: string;
- >aProp : string
-->      : ^^^^^^
- }
- module A {
+@@= skipped -10, +10 lines =@@
  >A : typeof A
-->  : ^^^^^^^^
  
      export interface X { s: string }
 +>X : X
  >s : string
-->  : ^^^^^^
  
      export var a = 10;
- >a : number
-->  : ^^^^^^
- >10 : 10
-->   : ^^
+@@= skipped -8, +9 lines =@@
  }
  
  module B {
@@ -31,9 +16,7 @@
 +
      import Y = A;
 ->Y : typeof Y
-->  : ^^^^^^^^
 ->A : Y
-->  : ^
 +>Y : typeof A
 +>A : A
  }

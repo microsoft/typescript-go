@@ -8,17 +8,3 @@
   
  {
   
-     import A = B;
- >A : any
-->  : ^^^
- >B : any
-->  : ^^^
-  
-     import B = A;
- >B : any
-->  : ^^^
- >A : any
-->  : ^^^
-  
- }
- 

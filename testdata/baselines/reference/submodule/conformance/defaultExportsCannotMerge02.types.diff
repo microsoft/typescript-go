@@ -5,7 +5,6 @@
  === m1.ts ===
  export default class Decl {
 ->Decl : Decl
-->     : ^^^^
 +>Decl : default
  }
  
@@ -14,11 +13,8 @@
 +
      p1: number;
  >p1 : number
-->   : ^^^^^^
  
-     p2: number;
- >p2 : number
-->   : ^^^^^^
+@@= skipped -12, +14 lines =@@
  }
  
  export namespace Decl {
@@ -29,51 +25,12 @@
      }
  }
  
- === m2.ts ===
- import Entity from "m1"
- >Entity : any
-->       : ^^^
- 
- Entity();
- >Entity() : any
-->         : ^^^
- >Entity : any
-->       : ^^^
- 
- var x: Entity;
+@@= skipped -16, +19 lines =@@
  >x : Entity
-->  : ^^^^^^
  
  var y: Entity.I;
 ->y : Entity.I
-->  : ^^^^^^^^
 +>y : I
  >Entity : any
-->       : ^^^
  
  var z = new Entity();
- >z : any
-->  : ^^^
- >new Entity() : any
-->             : ^^^
- >Entity : any
-->       : ^^^
- 
- var sum = z.p1 + z.p2
- >sum : any
-->    : ^^^
- >z.p1 + z.p2 : any
-->            : ^^^
- >z.p1 : any
-->     : ^^^
- >z : any
-->  : ^^^
- >p1 : any
-->   : ^^^
- >z.p2 : any
-->     : ^^^
- >z : any
-->  : ^^^
- >p2 : any
-->   : ^^^
- 

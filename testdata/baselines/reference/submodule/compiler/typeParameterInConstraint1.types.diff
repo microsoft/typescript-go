@@ -4,7 +4,6 @@
  === typeParameterInConstraint1.ts ===
  class C<T, U extends T> {
  >C : C<T, U>
-->  : ^^^^^^^
 +>T : T
 +>U : U
  }

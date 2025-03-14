@@ -6,93 +6,30 @@
  interface NumVal { val: number; }
 +>NumVal : NumVal
  >val : number
-->    : ^^^^^^
  
  interface StrVal { val: string; }
 +>StrVal : StrVal
  >val : string
-->    : ^^^^^^
  
  type Val = NumVal | StrVal;
- >Val : Val
-->    : ^^^
- 
- function isNumVal(x: Val): x is NumVal {
- >isNumVal : (x: Val) => x is NumVal
-->         : ^ ^^   ^^^^^           
- >x : Val
-->  : ^^^
+@@= skipped -14, +16 lines =@@
  
      return typeof x.val === 'number';
  >typeof x.val === 'number' : boolean
-->                          : ^^^^^^^
 ->typeof x.val : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
-->             : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>typeof x.val : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
  >x.val : string | number
-->      : ^^^^^^^^^^^^^^^
  >x : Val
-->  : ^^^
  >val : string | number
-->    : ^^^^^^^^^^^^^^^
- >'number' : "number"
-->         : ^^^^^^^^
- }
- 
- function foo(things: Val[]): void {
- >foo : (things: Val[]) => void
-->    : ^      ^^     ^^^^^    
- >things : Val[]
-->       : ^^^^^
- 
-     for (const thing of things) {
- >thing : Val
-->      : ^^^
- >things : Val[]
-->       : ^^^^^
- 
-         if (isNumVal(thing)) {
- >isNumVal(thing) : boolean
-->                : ^^^^^^^
- >isNumVal : (x: Val) => x is NumVal
-->         : ^ ^^   ^^^^^           
- >thing : Val
-->      : ^^^
- 
-             const { val } = thing;
- >val : number
-->    : ^^^^^^
- >thing : NumVal
-->      : ^^^^^^
+@@= skipped -26, +26 lines =@@
  
              val.toFixed(2);
  >val.toFixed(2) : string
-->               : ^^^^^^
 ->val.toFixed : (fractionDigits?: number) => string
-->            : ^              ^^^      ^^^^^      
 +>val.toFixed : (fractionDigits?: number | undefined) => string
  >val : number
-->    : ^^^^^^
 ->toFixed : (fractionDigits?: number) => string
-->        : ^              ^^^      ^^^^^      
 +>toFixed : (fractionDigits?: number | undefined) => string
  >2 : 2
-->  : ^
          }
          else {
-             const { val } = thing;
- >val : string
-->    : ^^^^^^
- >thing : StrVal
-->      : ^^^^^^
- 
-             val.length;
- >val.length : number
-->           : ^^^^^^
- >val : string
-->    : ^^^^^^
- >length : number
-->       : ^^^^^^
-         }
-     }
- }

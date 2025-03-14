@@ -8,12 +8,10 @@
 +
      global {
  >global : typeof global
-->       : ^^^^^^^^^^^^^
  
          interface Array<T> { x }
 +>Array : Array<T>
 +>T : T
  >x : any
-->  : ^^^
      }
  }

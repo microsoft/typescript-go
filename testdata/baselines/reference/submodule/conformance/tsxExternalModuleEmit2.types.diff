@@ -1,27 +1,6 @@
 --- old.tsxExternalModuleEmit2.types
 +++ new.tsxExternalModuleEmit2.types
-@@= skipped -2, +2 lines =@@
- === modules.d.ts ===
- declare module 'mod' {
- >'mod' : typeof import("mod")
-->      : ^^^^^^^^^^^^^^^^^^^^
- 
-   var y: any;
- >y : any
- 
-   export default y;
- >y : any
-->  : ^^^
- }
- 
- === app.tsx ===
- import Main from 'mod';
- >Main : any
-->     : ^^^
- 
- declare var Foo, React;
- >Foo : any
-@@= skipped -21, +18 lines =@@
+@@= skipped -20, +20 lines =@@
  
  // Should see mod_1['default'] in emit here
  <Foo handler={Main}></Foo>;

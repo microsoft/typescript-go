@@ -17,11 +17,8 @@
 +
  interface void {}
  >interface : any
-->          : ^^^
  >void {} : undefined
-->        : ^^^^^^^^^
  >{} : {}
-->   : ^^
  
  interface unknown {}
 +>unknown : unknown

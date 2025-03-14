@@ -1,10 +1,7 @@
 --- old.recursiveMappedTypes.types
 +++ new.recursiveMappedTypes.types
-@@= skipped -4, +4 lines =@@
- 
- type Recurse = {
+@@= skipped -6, +6 lines =@@
  >Recurse : any
-->        : ^^^
  
      [K in keyof Recurse]: Recurse[K]
 +>K : K
@@ -12,7 +9,6 @@
  
  type Recurse1 = {
  >Recurse1 : any
-->         : ^^^
  
      [K in keyof Recurse2]: Recurse2[K]
 +>K : K
@@ -20,7 +16,6 @@
  
  type Recurse2 = {
  >Recurse2 : any
-->         : ^^^
  
      [K in keyof Recurse1]: Recurse1[K]
 +>K : K
@@ -30,31 +25,22 @@
  
  export type Circular<T> = {[P in keyof T]: Circular<T>};
  >Circular : Circular<T>
-->         : ^^^^^^^^^^^
 +>T : T
 +>P : P
  
  type tup = [number, number, number, number];
  >tup : tup
-->    : ^^^
  
  function foo(arg: Circular<tup>): tup {
 ->foo : (arg: Circular<tup>) => tup
-->    : ^   ^^             ^^^^^   
 +>foo : (arg: any) => tup
  >arg : any
-->    : ^^^
  
    return arg;
- >arg : any
-->    : ^^^
- }
- 
- // Repro from #29442
+@@= skipped -34, +39 lines =@@
  
  type DeepMap<T extends unknown[], R> = {
  >DeepMap : DeepMap<T, R>
-->        : ^^^^^^^^^^^^^
 +>T : T
 +>R : R
  
@@ -64,26 +50,10 @@
  };
  
  type tpl = [string, [string, [string]]];
- >tpl : tpl
-->    : ^^^
- 
- type arr = string[][];
- >arr : arr
-->    : ^^^
- 
- type t1 = DeepMap<tpl, number>;  // [number, [number, [number]]]
- >t1 : [number, [number, [number]]]
-->   : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
- type t2 = DeepMap<arr, number>;  // number[][]
- >t2 : number[][]
-->   : ^^^^^^^^^^
- 
- // Repro from #29577
+@@= skipped -20, +24 lines =@@
  
  type Transform<T> = { [K in keyof T]: Transform<T[K]> };
  >Transform : Transform<T>
-->          : ^^^^^^^^^^^^
 +>T : T
 +>K : K
  
@@ -92,7 +62,6 @@
 +
      avatar: string;
  >avatar : string
-->       : ^^^^^^
  }
  
  interface Guest {
@@ -100,7 +69,6 @@
 +
      displayName: string;
  >displayName : string
-->            : ^^^^^^
  }
  
  interface Product {
@@ -108,57 +76,42 @@
 +
      users: (User | Guest)[];
 ->users : (User | Guest)[]
-->      : ^^^^^^^^^^^^^^^^
 +>users : (Guest | User)[]
  }
  
  declare var product: Transform<Product>;
  >product : Transform<Product>
-->        : ^^^^^^^^^^^^^^^^^^
  
  product.users;  // (Transform<User> | Transform<Guest>)[]
 ->product.users : Transform<User | Guest>[]
-->              : ^^^^^^^^^^^^^^^^^^^^^^^^^
 +>product.users : Transform<Guest | User>[]
  >product : Transform<Product>
-->        : ^^^^^^^^^^^^^^^^^^
 ->users : Transform<User | Guest>[]
-->      : ^^^^^^^^^^^^^^^^^^^^^^^^^
 +>users : Transform<Guest | User>[]
  
  // Repro from #29702
  
  type Remap1<T> = { [P in keyof T]: Remap1<T[P]>; };
  >Remap1 : Remap1<T>
-->       : ^^^^^^^^^
 +>T : T
 +>P : P
  
  type Remap2<T> = T extends object ? { [P in keyof T]: Remap2<T[P]>; } : T;
  >Remap2 : Remap2<T>
-->       : ^^^^^^^^^
 +>T : T
 +>P : P
    
  type a = Remap1<string[]>;  // string[]
  >a : string[]
-->  : ^^^^^^^^
- 
- type b = Remap2<string[]>;  // string[]
- >b : string[]
-->  : ^^^^^^^^
- 
- // Repro from #29992
+@@= skipped -42, +54 lines =@@
  
  type NonOptionalKeys<T> = { [P in keyof T]: undefined extends T[P] ? never : P }[keyof T];
  >NonOptionalKeys : NonOptionalKeys<T>
-->                : ^^^^^^^^^^^^^^^^^^
 +>T : T
 +>P : P
  
  type Child<T> = { [P in NonOptionalKeys<T>]: T[P] }
  >Child : Child<T>
-->      : ^^^^^^^^
 +>T : T
 +>P : P
  
@@ -167,59 +120,22 @@
 +
      "type": "list",
  >"type" : "list"
-->       : ^^^^^^
  
-     "minimum_count": number,
- >"minimum_count" : number
-->                : ^^^^^^
- 
-     "maximum_count": number,
- >"maximum_count" : number
-->                : ^^^^^^
- 
-     "collapsable"?: boolean, //default to false, means all expanded
- >"collapsable" : boolean
-->              : ^^^^^^^
- 
-     "each": Child<ListWidget>;
- >"each" : any
-->       : ^^^
- }
- 
- type ListChild = Child<ListWidget>
- >ListChild : ListChild
-->          : ^^^^^^^^^
- 
- declare let x: ListChild;
- >x : ListChild
-->  : ^^^^^^^^^
- 
- x.type;
- >x.type : any
-->       : ^^^
- >x : ListChild
-->  : ^^^^^^^^^
- >type : any
-->     : ^^^
- 
- // Repros from #41790
+@@= skipped -36, +42 lines =@@
  
  export type TV<T, K extends keyof T> = T[K] extends Record<infer E, any> ? E : never;
  >TV : TV<T, K>
-->   : ^^^^^^^^
 +>T : T
 +>K : K
 +>E : E
  
  export type ObjectOrArray<T, K extends keyof any = keyof any> = T[] | Record<K, T | Record<K, T> | T[]>;
  >ObjectOrArray : ObjectOrArray<T, K>
-->              : ^^^^^^^^^^^^^^^^^^^
 +>T : T
 +>K : K
  
  export type ThemeValue<K extends keyof ThemeType, ThemeType, TVal = any> =
  >ThemeValue : ThemeValue<K, ThemeType, TVal>
-->           : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>K : K
 +>ThemeType : ThemeType
 +>TVal : TVal
@@ -233,7 +149,6 @@
  
  export type Foo<T> = T extends { [P in infer E]: any } ? E : never;
  >Foo : Foo<T>
-->    : ^^^^^^
 +>T : T
 +>P : P
 +>E : E

@@ -1,33 +1,11 @@
 --- old.jsxFactoryQualifiedNameWithEs5.types
 +++ new.jsxFactoryQualifiedNameWithEs5.types
-@@= skipped -7, +7 lines =@@
- 
- const React = { createElement: skate.h };
- >React : { createElement: any; }
-->      : ^^^^^^^^^^^^^^^^^^^^^^^
- >{ createElement: skate.h } : { createElement: any; }
-->                           : ^^^^^^^^^^^^^^^^^^^^^^^
- >createElement : any
- >skate.h : any
- >skate : any
-->      : ^^^
- >h : any
-->  : ^^^
- 
- class Component {
- >Component : Component
-->          : ^^^^^^^^^
- 
-     renderCallback() {
+@@= skipped -20, +20 lines =@@
  >renderCallback : () => any
-->               : ^^^^^^^^^
  
          return <div>test</div>;
 -><div>test</div> : error
 +><div>test</div> : any
  >div : any
-->    : ^^^
  >div : any
-->    : ^^^
      }
- };

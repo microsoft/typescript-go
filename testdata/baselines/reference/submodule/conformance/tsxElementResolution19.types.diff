@@ -1,12 +1,6 @@
 --- old.tsxElementResolution19.types
 +++ new.tsxElementResolution19.types
-@@= skipped -2, +2 lines =@@
- === react.d.ts ===
- declare module "react" {
- >"react" : typeof import("react")
-->        : ^^^^^^^^^^^^^^^^^^^^^^
- 
- }
+@@= skipped -7, +7 lines =@@
  
  === file1.tsx ===
  declare module JSX {
@@ -17,22 +11,18 @@
  }
  export class MyClass { }
  >MyClass : MyClass
-->        : ^^^^^^^
- 
+@@= skipped -8, +11 lines =@@
  === file2.tsx ===
  // Should not elide React import
  import * as React from 'react';
 ->React : typeof React
-->      : ^^^^^^^^^^^^
 +>React : typeof import("react")
  
  import {MyClass} from './file1';
  >MyClass : typeof MyClass
-->        : ^^^^^^^^^^^^^^
  
  <MyClass />;
 -><MyClass /> : error
 +><MyClass /> : any
  >MyClass : typeof MyClass
-->        : ^^^^^^^^^^^^^^
  

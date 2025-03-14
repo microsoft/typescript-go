@@ -5,7 +5,6 @@
  === file.tsx ===
  import React = require('react');
 ->React : typeof React
-->      : ^^^^^^^^^^^^
 +>React : any
  
  interface Prop {
@@ -13,22 +12,14 @@
 +
      a: number,
  >a : number
-->  : ^^^^^^
  
-     b: string
- >b : string
-->  : ^^^^^^
- }
+@@= skipped -12, +14 lines =@@
  
  declare class MyComp<P = Prop> extends React.Component<P, {}> {
  >MyComp : MyComp<P>
-->       : ^^^^^^^^^
 ->React.Component : React.Component<P, {}>
-->                : ^^^^^^^^^^^^^^^^^^^^^^
 ->React : typeof React
-->      : ^^^^^^^^^^^^
 ->Component : typeof React.Component
-->          : ^^^^^^^^^^^^^^^^^^^^^^
 +>P : P
 +>React.Component : any
 +>React : any
@@ -36,24 +27,17 @@
  
      internalProp: P;
  >internalProp : P
-->             : ^
  }
  
  let x = <MyComp a={10} b="hi" />
 ->x : JSX.Element
-->  : ^^^^^^^^^^^
 -><MyComp a={10} b="hi" /> : JSX.Element
-->                         : ^^^^^^^^^^^
 +>x : any
 +><MyComp a={10} b="hi" /> : any
  >MyComp : typeof MyComp
-->       : ^^^^^^^^^^^^^
 ->a : number
-->  : ^^^^^^
 +>a : any
  >10 : 10
-->   : ^^
 ->b : string
-->  : ^^^^^^
 +>b : any
  

@@ -1,47 +1,15 @@
 --- old.scannerStringLiterals.types
 +++ new.scannerStringLiterals.types
-@@= skipped -2, +2 lines =@@
- === scannerStringLiterals.ts ===
- ""
- >"" : ""
-->   : ^^
- 
- " "
- >" " : " "
-->    : ^^^
- 
- "a"
- >"a" : "a"
-->    : ^^^
- 
- "'"
+@@= skipped -13, +13 lines =@@
  >"'" : "'"
-->    : ^^^
  
  '"'
 ->'"' : "\""
-->    : ^^^^
 +>'"' : """
  
  "\""
 ->"\"" : "\""
-->     : ^^^^
 +>"\"" : """
  
  '\u2192\   '
  >'\u2192\   ' : "→   "
-->             : ^^^^^^
- 
- "Legal line continuation \
- >"Legal line continuation \" : "Legal line continuation "
-->                            : ^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
- "
- "Should error because of newline.
- >"Should error because of newline. : "Should error because of newline."
-->                                  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
- "Should error because of end of file.
- >"Should error because of end of file. : "Should error because of end of file."
-->                                      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 

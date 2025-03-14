@@ -5,7 +5,6 @@
  */
  class A {
 ->A : A<T>
-->  : ^^^^
 +>A : A
  
     /**
@@ -13,34 +12,28 @@
      */
     constructor(a) {
 ->a : T
-->  : ^
 +>a : any
  
         return a
 ->a : T
-->  : ^
 +>a : any
     }
  }
  
-@@= skipped -24, +21 lines =@@
+@@= skipped -21, +21 lines =@@
  */
  class B extends A {}
  >B : B
-->  : ^
 ->A : A<{ a: string; b: string[]; }>
-->  : ^^^^^^^      ^^^^^        ^^^^
 +>A : A
  
  /**
   * @extends {A<{
-@@= skipped -12, +10 lines =@@
+@@= skipped -10, +10 lines =@@
   */
  class C extends A {}
  >C : C
-->  : ^
 ->A : A<{ a: string; b: string; }>
-->  : ^^^^^^^      ^^^^^      ^^^^
 +>A : A
  
  /**
@@ -48,9 +41,7 @@
   */
  class D extends A {}
  >D : D
-->  : ^
 ->A : A<{ a: string; b: string[]; }>
-->  : ^^^^^^^      ^^^^^        ^^^^
 +>A : A
  
  /**
@@ -58,8 +49,6 @@
   */
  class E extends A {}
  >E : E
-->  : ^
 ->A : A<{ a: string; b: string; }>
-->  : ^^^^^^^      ^^^^^      ^^^^
 +>A : A
  

@@ -1,8 +1,0 @@
---- old.optionsStrictPropertyInitializationStrictNullChecks.types
-+++ new.optionsStrictPropertyInitializationStrictNullChecks.types
-@@= skipped -2, +2 lines =@@
- === optionsStrictPropertyInitializationStrictNullChecks.ts ===
- var x;
- >x : any
-->  : ^^^
- 

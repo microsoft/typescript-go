@@ -5,35 +5,29 @@
  // esm format file
  import * as self from "package";
 ->self : typeof self
-->     : ^^^^^^^^^^^
 +>self : typeof import("index")
  
  self;
 ->self : typeof self
-->     : ^^^^^^^^^^^
 +>self : typeof import("index")
  
  === index.mts ===
  // esm format file
  import * as self from "package";
 ->self : typeof self
-->     : ^^^^^^^^^^^
 +>self : typeof import("index")
  
  self;
 ->self : typeof self
-->     : ^^^^^^^^^^^
 +>self : typeof import("index")
  
  === index.cts ===
  // esm format file
  import * as self from "package";
 ->self : typeof self
-->     : ^^^^^^^^^^^
 +>self : typeof import("index")
  
  self;
 ->self : typeof self
-->     : ^^^^^^^^^^^
 +>self : typeof import("index")
  

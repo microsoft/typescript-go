@@ -1,18 +1,10 @@
 --- old.ambientInsideNonAmbientExternalModule.types
 +++ new.ambientInsideNonAmbientExternalModule.types
-@@= skipped -5, +5 lines =@@
- 
- export declare function f();
- >f : () => any
-->  : ^^^^^^^^^
- 
- export declare class C { }
+@@= skipped -10, +10 lines =@@
  >C : C
-->  : ^
  
  export declare enum E { }
 ->E : E
-->  : ^
 +>E : "ambientInsideNonAmbientExternalModule".E
  
  export declare module M { }

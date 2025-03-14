@@ -8,19 +8,4 @@
 +
      barkable: true
  >barkable : true
-->         : ^^^^
  >true : true
-->     : ^^^^
- }
- 
- declare function getRover(): Dog
- >getRover : () => Dog
-->         : ^^^^^^   
-     
- export let x:Dog = getRover;
- >x : Dog
-->  : ^^^
- >getRover : () => Dog
-->         : ^^^^^^   
- 
- // export let x: Dog = getRover; 

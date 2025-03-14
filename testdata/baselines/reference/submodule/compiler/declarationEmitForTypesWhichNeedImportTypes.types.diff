@@ -8,25 +8,17 @@
  
  export function createNamed(): Named {
  >createNamed : () => Named
-->            : ^^^^^^     
- 
-   return {};
- >{} : {}
-->   : ^^
+@@= skipped -9, +10 lines =@@
  }
  === a.ts ===
  import { createNamed } from "./b";
 ->createNamed : () => import("b").Named
-->            : ^^^^^^       ^^^  ^^^^^
 +>createNamed : () => Named
  
  export const Value = createNamed();
 ->Value : import("b").Named
-->      : ^^^^^^^^^^^^^^^^^
 ->createNamed() : import("b").Named
-->              : ^^^^^^^^^^^^^^^^^
 ->createNamed : () => import("b").Named
-->            : ^^^^^^       ^^^  ^^^^^
 +>Value : Named
 +>createNamed() : Named
 +>createNamed : () => Named

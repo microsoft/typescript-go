@@ -8,14 +8,4 @@
 +
   Bar: number;
  >Bar : number
-->    : ^^^^^^
  }
- class Foo implements Qux {
- >Foo : Foo
-->    : ^^^
- 
-  private Bar: number;
- >Bar : number
-->    : ^^^^^^
- }
- 

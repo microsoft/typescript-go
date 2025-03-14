@@ -14,37 +14,19 @@
 +
              foo();
  >foo : () => any
-->    : ^^^^^^^^^
          }
-     }
- }
- 
- module c {
- >c : typeof c
-->  : ^^^^^^^^
- 
-     import b = a.b;
+@@= skipped -17, +23 lines =@@
  >b : any
-->  : ^^^
- >a : any
-->  : ^^^
- >b : any
-->  : ^^^
  
      export var x: b.I;
 ->x : b.I
-->  : ^^^
 +>x : I
  >b : any
-->  : ^^^
  
      x.foo();
  >x.foo() : any
  >x.foo : () => any
-->      : ^^^^^^^^^
 ->x : b.I
-->  : ^^^
 +>x : I
  >foo : () => any
-->    : ^^^^^^^^^
  }

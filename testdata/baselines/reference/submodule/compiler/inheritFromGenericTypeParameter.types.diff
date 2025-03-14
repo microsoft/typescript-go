@@ -4,10 +4,8 @@
  === inheritFromGenericTypeParameter.ts ===
  class C<T> extends T { }
  >C : C<T>
-->  : ^^^^
 +>T : T
  >T : any
-->  : ^^^
  
  interface I<T> extends T { }
 +>I : I<T>

@@ -1,52 +1,34 @@
 --- old.systemModuleConstEnumsSeparateCompilation.types
 +++ new.systemModuleConstEnumsSeparateCompilation.types
-@@= skipped -2, +2 lines =@@
- === systemModuleConstEnumsSeparateCompilation.ts ===
- declare function use(a: any);
- >use : (a: any) => any
-->    : ^ ^^   ^^^^^^^^
+@@= skipped -5, +5 lines =@@
  >a : any
  
  const enum TopLevelConstEnum { X }
 ->TopLevelConstEnum : TopLevelConstEnum
-->                  : ^^^^^^^^^^^^^^^^^
 +>TopLevelConstEnum : TopLevelConstEnum.X
  >X : TopLevelConstEnum.X
-->  : ^^^^^^^^^^^^^^^^^^^
  
  export function foo() {
- >foo : () => void
-->    : ^^^^^^^^^^
- 
+@@= skipped -9, +9 lines =@@
      use(TopLevelConstEnum.X);
  >use(TopLevelConstEnum.X) : any
  >use : (a: any) => any
-->    : ^ ^^   ^^^^^^^^
 ->TopLevelConstEnum.X : TopLevelConstEnum
-->                    : ^^^^^^^^^^^^^^^^^
 +>TopLevelConstEnum.X : TopLevelConstEnum.X
  >TopLevelConstEnum : typeof TopLevelConstEnum
-->                  : ^^^^^^^^^^^^^^^^^^^^^^^^
 ->X : TopLevelConstEnum
-->  : ^^^^^^^^^^^^^^^^^
 +>X : TopLevelConstEnum.X
  
      use(M.NonTopLevelConstEnum.X);
  >use(M.NonTopLevelConstEnum.X) : any
  >use : (a: any) => any
-->    : ^ ^^   ^^^^^^^^
 ->M.NonTopLevelConstEnum.X : M.NonTopLevelConstEnum
-->                         : ^^^^^^^^^^^^^^^^^^^^^^
 ->M.NonTopLevelConstEnum : typeof M.NonTopLevelConstEnum
-->                       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>M.NonTopLevelConstEnum.X : NonTopLevelConstEnum.X
 +>M.NonTopLevelConstEnum : typeof NonTopLevelConstEnum
  >M : typeof M
-->  : ^^^^^^^^
 ->NonTopLevelConstEnum : typeof M.NonTopLevelConstEnum
-->                     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ->X : M.NonTopLevelConstEnum
-->  : ^^^^^^^^^^^^^^^^^^^^^^
 +>NonTopLevelConstEnum : typeof NonTopLevelConstEnum
 +>X : NonTopLevelConstEnum.X
  }
@@ -56,8 +38,6 @@
 +
      export const enum NonTopLevelConstEnum { X }
 ->NonTopLevelConstEnum : NonTopLevelConstEnum
-->                     : ^^^^^^^^^^^^^^^^^^^^
 +>NonTopLevelConstEnum : NonTopLevelConstEnum.X
  >X : NonTopLevelConstEnum.X
-->  : ^^^^^^^^^^^^^^^^^^^^^^
  }

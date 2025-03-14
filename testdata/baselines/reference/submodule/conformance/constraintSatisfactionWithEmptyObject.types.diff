@@ -4,56 +4,20 @@
  // Object constraint
  function foo<T extends Object>(x: T) { }
  >foo : <T extends Object>(x: T) => void
-->    : ^ ^^^^^^^^^      ^^ ^^ ^^^^^^^^^
 +>T : T
  >x : T
-->  : ^
  
  var r = foo({});
- >r : void
-->  : ^^^^
- >foo({}) : void
-->        : ^^^^
- >foo : <T extends Object>(x: T) => void
-->    : ^ ^^^^^^^^^      ^^ ^^ ^^^^^^^^^
- >{} : {}
-->   : ^^
- 
- var a = {};
- >a : {}
-->  : ^^
- >{} : {}
-->   : ^^
- 
- var r = foo({});
- >r : void
-->  : ^^^^
- >foo({}) : void
-->        : ^^^^
- >foo : <T extends Object>(x: T) => void
-->    : ^ ^^^^^^^^^      ^^ ^^ ^^^^^^^^^
- >{} : {}
-->   : ^^
+@@= skipped -20, +21 lines =@@
  
  class C<T extends Object> {
  >C : C<T>
-->  : ^^^^
 +>T : T
  
      constructor(public x: T) { }
  >x : T
-->  : ^
- }
- 
- var r2 = new C({});
- >r2 : C<{}>
-->   : ^^^^^
- >new C({}) : C<{}>
-->          : ^^^^^
- >C : typeof C
-->  : ^^^^^^^^
+@@= skipped -12, +13 lines =@@
  >{} : {}
-->   : ^^
  
  interface I<T extends Object> {
 +>I : I<T>
@@ -61,65 +25,25 @@
 +
      x: T;
  >x : T
-->  : ^
  }
- var i: I<{}>;
- >i : I<{}>
-->  : ^^^^^
- 
+@@= skipped -9, +12 lines =@@
  // {} constraint
  function foo2<T extends {}>(x: T) { }
  >foo2 : <T extends {}>(x: T) => void
-->     : ^ ^^^^^^^^^  ^^ ^^ ^^^^^^^^^
 +>T : T
  >x : T
-->  : ^
  
  var r = foo2({});
- >r : void
-->  : ^^^^
- >foo2({}) : void
-->         : ^^^^
- >foo2 : <T extends {}>(x: T) => void
-->     : ^ ^^^^^^^^^  ^^ ^^ ^^^^^^^^^
- >{} : {}
-->   : ^^
- 
- var a = {};
- >a : {}
-->  : ^^
- >{} : {}
-->   : ^^
- 
- var r = foo2({});
- >r : void
-->  : ^^^^
- >foo2({}) : void
-->         : ^^^^
- >foo2 : <T extends {}>(x: T) => void
-->     : ^ ^^^^^^^^^  ^^ ^^ ^^^^^^^^^
- >{} : {}
-->   : ^^
+@@= skipped -20, +21 lines =@@
  
  class C2<T extends {}> {
  >C2 : C2<T>
-->   : ^^^^^
 +>T : T
  
      constructor(public x: T) { }
  >x : T
-->  : ^
- }
- 
- var r2 = new C2({});
- >r2 : C<{}>
-->   : ^^^^^
- >new C2({}) : C2<{}>
-->           : ^^^^^^
- >C2 : typeof C2
-->   : ^^^^^^^^^
+@@= skipped -12, +13 lines =@@
  >{} : {}
-->   : ^^
  
  interface I2<T extends {}> {
 +>I2 : I2<T>
@@ -127,10 +51,4 @@
 +
      x: T;
  >x : T
-->  : ^
  }
- var i2: I2<{}>;
- >i2 : I2<{}>
-->   : ^^^^^^
- 
- 

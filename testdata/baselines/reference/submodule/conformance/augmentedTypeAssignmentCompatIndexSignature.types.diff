@@ -6,19 +6,16 @@
  interface Foo { a }
 +>Foo : Foo
  >a : any
-->  : ^^^
  
  interface Bar { b }
 +>Bar : Bar
  >b : any
-->  : ^^^
  
  interface Object {
 +>Object : Object
 +
      [n: number]: Foo;
  >n : number
-->  : ^^^^^^
  }
  
  interface Function {
@@ -26,42 +23,4 @@
 +
      [n: number]: Bar;
  >n : number
-->  : ^^^^^^
  }
- 
- var o = {};
- >o : {}
-->  : ^^
- >{} : {}
-->   : ^^
- 
- var f = () => { };
- >f : () => void
-->  : ^^^^^^^^^^
- >() => { } : () => void
-->          : ^^^^^^^^^^
- 
- var v1: {
- >v1 : { [n: number]: Foo; }
-->   : ^^^^^^^^^^^^^^^^^^^^^
- 
-     [n: number]: Foo
- >n : number
-->  : ^^^^^^
- 
- } = o; // Should be allowed
- >o : {}
-->  : ^^
- 
- var v2: {
- >v2 : { [n: number]: Bar; }
-->   : ^^^^^^^^^^^^^^^^^^^^^
- 
-     [n: number]: Bar
- >n : number
-->  : ^^^^^^
- 
- } = f; // Should be allowed
- >f : () => void
-->  : ^^^^^^^^^^
- 

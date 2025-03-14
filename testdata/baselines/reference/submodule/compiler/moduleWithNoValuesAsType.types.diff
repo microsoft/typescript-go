@@ -8,7 +8,6 @@
 +
  var a: A; // error
  >a : A
-->  : ^
  
  module B {
 +>B : any
@@ -18,7 +17,6 @@
  }
  var b: B; // error
  >b : B
-->  : ^
  
  module C {
 +>C : any
@@ -30,8 +28,4 @@
 +>I : I
      }
  }
- 
- var c: C; // error
- >c : C
-->  : ^
  

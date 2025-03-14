@@ -1,8 +1,0 @@
---- old.downlevelLetConst2.types
-+++ new.downlevelLetConst2.types
-@@= skipped -2, +2 lines =@@
- === downlevelLetConst2.ts ===
- const a
- >a : any
-->  : ^^^
- 

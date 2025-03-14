@@ -5,26 +5,17 @@
   */
  function C() {
 ->C : typeof C
-->  : ^^^^^^^^
 +>C : () => void
  
      this.e = this.m + 1
 ->this.e = this.m + 1 : number
-->                    : ^^^^^^
 ->this.e : number
-->       : ^^^^^^
 ->this : { e: number; m: number; }
-->     : ^^^^^      ^^^^^      ^^^
 ->e : number
-->  : ^^^^^^
 ->this.m + 1 : number
-->           : ^^^^^^
 ->this.m : number
-->       : ^^^^^^
 ->this : { e: number; m: number; }
-->     : ^^^^^      ^^^^^      ^^^
 ->m : number
-->  : ^^^^^^
 +>this.e = this.m + 1 : any
 +>this.e : any
 +>this : any
@@ -34,6 +25,5 @@
 +>this : any
 +>m : any
  >1 : 1
-->  : ^
  }
  

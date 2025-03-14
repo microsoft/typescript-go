@@ -8,11 +8,8 @@
 +
      [x: string]: any;
  >x : string
-->  : ^^^^^^
  
-     foo: any;
- >foo : any
-@@= skipped -10, +11 lines =@@
+@@= skipped -9, +11 lines =@@
  
  
  interface I2 {
@@ -20,12 +17,8 @@
 +
      [x: string]: any;
  >x : string
-->  : ^^^^^^
  
-     foo: number;
- >foo : number
-->    : ^^^^^^
- }
+@@= skipped -9, +11 lines =@@
  
  
  interface I3 {
@@ -33,12 +26,8 @@
 +
      [x: string]: any;
  >x : string
-->  : ^^^^^^
  
-     foo: string;
- >foo : string
-->    : ^^^^^^
- }
+@@= skipped -9, +11 lines =@@
  
  
  interface I4 {
@@ -46,12 +35,8 @@
 +
      [x: string]: any;
  >x : string
-->  : ^^^^^^
  
-     foo: boolean;
- >foo : boolean
-->    : ^^^^^^^
- }
+@@= skipped -9, +11 lines =@@
  
  
  interface I5 {
@@ -59,12 +44,8 @@
 +
      [x: string]: any;
  >x : string
-->  : ^^^^^^
  
-     foo: Date;
- >foo : Date
-->    : ^^^^
- }
+@@= skipped -9, +11 lines =@@
  
  
  interface I6 {
@@ -72,12 +53,8 @@
 +
      [x: string]: any;
  >x : string
-->  : ^^^^^^
  
-     foo: RegExp;
- >foo : RegExp
-->    : ^^^^^^
- }
+@@= skipped -9, +11 lines =@@
  
  
  interface I7 {
@@ -85,14 +62,8 @@
 +
      [x: string]: any;
  >x : string
-->  : ^^^^^^
  
-     foo: { bar: number };
- >foo : { bar: number; }
-->    : ^^^^^^^      ^^^
- >bar : number
-->    : ^^^^^^
- }
+@@= skipped -10, +12 lines =@@
  
  
  interface I8 {
@@ -100,12 +71,8 @@
 +
      [x: string]: any;
  >x : string
-->  : ^^^^^^
  
-     foo: number[];
- >foo : number[]
-->    : ^^^^^^^^
- }
+@@= skipped -9, +11 lines =@@
  
  
  interface I9 {
@@ -113,49 +80,30 @@
 +
      [x: string]: any;
  >x : string
-->  : ^^^^^^
  
-     foo: I8;
- >foo : I8
-->    : ^^
- }
- 
- class A { foo: number; }
- >A : A
-->  : ^
+@@= skipped -12, +14 lines =@@
  >foo : number
-->    : ^^^^^^
  
  interface I10 {
 +>I10 : I10
 +
      [x: string]: any;
  >x : string
-->  : ^^^^^^
  
-     foo: A;
- >foo : A
-->    : ^
- }
+@@= skipped -9, +11 lines =@@
  
  class A2<T> { foo: T; }
  >A2 : A2<T>
-->   : ^^^^^
 +>T : T
  >foo : T
-->    : ^
  
  interface I11 {
 +>I11 : I11
 +
      [x: string]: any;
  >x : string
-->  : ^^^^^^
  
-     foo: A2<number>;
- >foo : A2<number>
-->    : ^^^^^^^^^^
- }
+@@= skipped -12, +15 lines =@@
  
  
  interface I12 {
@@ -163,13 +111,8 @@
 +
      [x: string]: any;
  >x : string
-->  : ^^^^^^
  
-     foo: (x) => number;
- >foo : (x: any) => number
-->    : ^ ^^^^^^^^^^      
- >x : any
- }
+@@= skipped -10, +12 lines =@@
  
  
  interface I13 {
@@ -177,95 +120,58 @@
 +
      [x: string]: any;
  >x : string
-->  : ^^^^^^
  
      foo: <T>(x:T) => T;
  >foo : <T>(x: T) => T
-->    : ^ ^^ ^^ ^^^^^ 
 +>T : T
  >x : T
-->  : ^
  }
  
  
  enum E { A }
 ->E : E
-->  : ^
 +>E : E.A
  >A : E.A
-->  : ^^^
  
  interface I14 {
 +>I14 : I14
 +
      [x: string]: any;
  >x : string
-->  : ^^^^^^
  
      foo: E;
 ->foo : E
-->    : ^
 +>foo : E.A
  }
  
  
- function f() { }
- >f : typeof f
-->  : ^^^^^^^^
- 
- module f {
- >f : typeof f
-->  : ^^^^^^^^
- 
-     export var bar = 1;
- >bar : number
-->    : ^^^^^^
+@@= skipped -33, +38 lines =@@
  >1 : 1
-->  : ^
  }
  interface I15 {
 +>I15 : I15
 +
      [x: string]: any;
  >x : string
-->  : ^^^^^^
  
      foo: typeof f;
  >foo : typeof f
-->    : ^^^^^^^^
 ->f : typeof f
-->  : ^^^^^^^^
  }
  
  
- class c { baz: string }
- >c : c
-->  : ^
- >baz : string
-->    : ^^^^^^
- 
- module c {
- >c : typeof c
-->  : ^^^^^^^^
- 
-     export var bar = 1;
- >bar : number
-->    : ^^^^^^
+@@= skipped -21, +22 lines =@@
  >1 : 1
-->  : ^
  }
  interface I16 {
 +>I16 : I16
 +
      [x: string]: any;
  >x : string
-->  : ^^^^^^
  
      foo: typeof c;
  >foo : typeof c
-->    : ^^^^^^^^
 ->c : typeof c
-->  : ^^^^^^^^
  }
  
  
@@ -275,12 +181,8 @@
 +
      [x: string]: any;
  >x : string
-->  : ^^^^^^
  
-     foo: T;
- >foo : T
-->    : ^
- }
+@@= skipped -19, +23 lines =@@
  
  
  interface I18<T, U> {
@@ -290,15 +192,8 @@
 +
      [x: string]: any;
  >x : string
-->  : ^^^^^^
  
-     foo: U;
- >foo : U
-->    : ^
- }
- //interface I18<T, U extends T> {
- //    [x: string]: any;
-@@= skipped -246, +230 lines =@@
+@@= skipped -13, +17 lines =@@
  
  
  interface I19 {
@@ -306,12 +201,8 @@
 +
      [x: string]: any;
  >x : string
-->  : ^^^^^^
  
-     foo: Object;
- >foo : Object
-->    : ^^^^^^
- }
+@@= skipped -9, +11 lines =@@
  
  
  interface I20 {
@@ -319,9 +210,4 @@
 +
      [x: string]: any;
  >x : string
-->  : ^^^^^^
  
-     foo: {};
- >foo : {}
-->    : ^^
- }

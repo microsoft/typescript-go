@@ -14,22 +14,13 @@
 +
          div: any
  >div : any
-->    : ^^^
  	}
- }
- 
- var customTag = "h1";
- >customTag : string
-->          : ^^^^^^
+@@= skipped -12, +18 lines =@@
  >"h1" : "h1"
-->     : ^^^^
  
  <customTag> Hello World </customTag>  // This should be an error. The lower-case is look up as an intrinsic element name
 -><customTag> Hello World </customTag> : JSX.Element
-->                                     : ^^^^^^^^^^^
 +><customTag> Hello World </customTag> : any
  >customTag : string
-->          : ^^^^^^
  >customTag : string
-->          : ^^^^^^
  

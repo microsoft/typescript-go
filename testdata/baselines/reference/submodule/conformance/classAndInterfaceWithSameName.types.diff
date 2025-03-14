@@ -1,29 +1,14 @@
 --- old.classAndInterfaceWithSameName.types
 +++ new.classAndInterfaceWithSameName.types
-@@= skipped -2, +2 lines =@@
- === classAndInterfaceWithSameName.ts ===
- class C { foo: string; }
- >C : C
-->  : ^
+@@= skipped -5, +5 lines =@@
  >foo : string
-->    : ^^^^^^
  
  interface C { foo: string; }
 +>C : C
  >foo : string
-->    : ^^^^^^
  
  module M {
- >M : typeof M
-->  : ^^^^^^^^
- 
-     class D {
- >D : D
-->  : ^
- 
-         bar: string;
- >bar : string
-->    : ^^^^^^
+@@= skipped -13, +14 lines =@@
      }
  
      interface D {
@@ -31,6 +16,4 @@
 +
          bar: string;
  >bar : string
-->    : ^^^^^^
      }
- }

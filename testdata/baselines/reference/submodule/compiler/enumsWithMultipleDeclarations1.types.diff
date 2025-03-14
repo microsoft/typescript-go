@@ -5,30 +5,23 @@
  === enumsWithMultipleDeclarations1.ts ===
  enum E {
 ->E : E
-->  : ^
 +>E : E.A
  
    A
  >A : E.A
-->  : ^^^
  }
  
  enum E {
 ->E : E
-->  : ^
 +>E : E.A
  
    B
  >B : E.A
-->  : ^^^
  }
  
  enum E {
 ->E : E
-->  : ^
 +>E : E.A
  
    C
  >C : E.A
-->  : ^^^
- }

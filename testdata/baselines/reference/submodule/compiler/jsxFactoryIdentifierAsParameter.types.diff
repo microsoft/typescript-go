@@ -11,24 +11,13 @@
 +
          [s: string]: any;
  >s : string
-->  : ^^^^^^
      }
- }
- 
- export class AppComponent {
- >AppComponent : AppComponent
-->             : ^^^^^^^^^^^^
- 
-     render(createElement) {
- >render : (createElement: any) => any
-->       : ^             ^^^^^^^^^^^^^
+@@= skipped -14, +18 lines =@@
  >createElement : any
  
          return <div />;
 -><div /> : error
 +><div /> : any
  >div : any
-->    : ^^^
      }
  }
- 

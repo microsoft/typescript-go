@@ -14,59 +14,41 @@
  
  import * as React from "react";
 ->React : typeof React
-->      : ^^^^^^^^^^^^
 +>React : any
  
  declare const Tag: keyof React.ReactHTML;
 ->Tag : keyof React.ReactHTML
-->    : ^^^^^^^^^^^^^^^^^^^^^
 +>Tag : string | number | symbol
  >React : any
-->      : ^^^
  
  const classes = "";
- >classes : ""
-->        : ^^
+@@= skipped -20, +14 lines =@@
  >"" : ""
-->   : ^^
  
  const rest: React.HTMLAttributes<HTMLElement> = {};
 ->rest : React.HTMLAttributes<HTMLElement>
-->     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>rest : HTMLAttributes<HTMLElement>
  >React : any
-->      : ^^^
  >{} : {}
-->   : ^^
  
- const children: any[] = [];
- >children : any[]
-->         : ^^^^^
+@@= skipped -9, +9 lines =@@
  >[] : never[]
-->   : ^^^^^^^
  
  <Tag className={classes} {...rest}>
 -><Tag className={classes} {...rest}>{children}</Tag> : JSX.Element
-->                                                    : ^^^^^^^^^^^
 ->Tag : keyof React.ReactHTML
-->    : ^^^^^^^^^^^^^^^^^^^^^
 ->className : string
-->          : ^^^^^^
 +><Tag className={classes} {...rest}>{children}</Tag> : any
 +>Tag : string | number | symbol
 +>className : any
  >classes : ""
-->        : ^^
 ->rest : React.HTMLAttributes<HTMLElement>
-->     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>rest : HTMLAttributes<HTMLElement>
  
  {children}
  >children : any[]
-->         : ^^^^^
  
  </Tag>
 ->Tag : keyof React.ReactHTML
-->    : ^^^^^^^^^^^^^^^^^^^^^
 +>Tag : string | number | symbol
  

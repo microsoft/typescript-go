@@ -5,11 +5,9 @@
  === functionReturningItself.ts ===
  function somefn() {
 ->somefn : () => typeof somefn
-->       : ^^^^^^^^^^^^^^^^^^^
 +>somefn : () => ???
  
      return somefn;
 ->somefn : () => typeof somefn
-->       : ^^^^^^^^^^^^^^^^^^^
 +>somefn : () => ???
  }

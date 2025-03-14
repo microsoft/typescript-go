@@ -5,18 +5,14 @@
  === assignmentCompatWithEnumIndexer.ts ===
  enum E {
 ->E : E
-->  : ^
 +>E : E.A
  
      A
  >A : E.A
-->  : ^^^
  }
  
  let foo: Record<E, any> = {}
 ->foo : Record<E, any>
-->    : ^^^^^^^^^^^^^^
 +>foo : Record<E.A, any>
  >{} : {}
-->   : ^^
  

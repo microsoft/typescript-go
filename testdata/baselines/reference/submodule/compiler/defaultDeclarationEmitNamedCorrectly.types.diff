@@ -10,25 +10,19 @@
 +
      p: P;
  >p : P
-->  : ^
  
-     t: T;
+@@= skipped -7, +11 lines =@@
  >t : T
-->  : ^
  }
  export function make<P, CTor>(x: { new (): CTor & {props: P} }): Things<P, CTor> {
 ->make : <P, CTor>(x: { new (): CTor & { props: P; }; }) => Things<P, CTor>
-->     : ^ ^^    ^^ ^^                                 ^^^^^               
 +>make : <P, CTor>(x: new () => CTor & { props: P; }) => Things<P, CTor>
 +>P : P
 +>CTor : CTor
  >x : new () => CTor & { props: P; }
-->  : ^^^^^^^^^^                    
  >props : P
-->      : ^
  
-     return null as any;
- >null as any : any
+@@= skipped -9, +11 lines =@@
  }
  
  export interface Props {
@@ -37,22 +31,16 @@
  
  export default class MyComponent {
 ->MyComponent : MyComponent
-->            : ^^^^^^^^^^^
 +>MyComponent : default
  
      props: Props;
  >props : Props
-->      : ^^^^^
  
      static create = make(MyComponent);
 ->create : Things<Props, MyComponent>
-->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^
 ->make(MyComponent) : Things<Props, MyComponent>
-->                  : ^^^^^^^^^^^^^^^^^^^^^^^^^^
 ->make : <P, CTor>(x: { new (): CTor & { props: P; }; }) => Things<P, CTor>
-->     : ^ ^^    ^^ ^^                                 ^^^^^               
 ->MyComponent : typeof MyComponent
-->            : ^^^^^^^^^^^^^^^^^^
 +>create : Things<Props, default>
 +>make(MyComponent) : Things<Props, default>
 +>make : <P, CTor>(x: new () => CTor & { props: P; }) => Things<P, CTor>

@@ -5,23 +5,11 @@
   */
  function f(args, bwarg) {
 ->f : (args?: string | undefined, bwarg: (number | null) | null) => void
-->  : ^    ^^^         ^^^^^^^^^^^     ^^^         ^^^^^   ^^^^^^^^^^^^^
 ->args : string | undefined
-->     : ^^^^^^^^^^^^^^^^^^
 ->bwarg : number | null
-->      : ^^^^^^^^^^^^^
 +>f : (args: any, bwarg: any) => void
 +>args : any
 +>bwarg : any
  }
  
  === ts.ts ===
-@@= skipped -14, +11 lines =@@
-  */
- function g(arg: string) {
- >g : (arg: string) => void
-->  : ^   ^^      ^^^^^^^^^
- >arg : string
-->    : ^^^^^^
- }
- 

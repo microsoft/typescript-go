@@ -1,10 +1,7 @@
 --- old.mergedClassInterface.types
 +++ new.mergedClassInterface.types
-@@= skipped -2, +2 lines =@@
- === file1.ts ===
- declare class C1 { }
+@@= skipped -4, +4 lines =@@
  >C1 : C1
-->   : ^^
  
  interface C1 { }
 +>C1 : C1
@@ -14,11 +11,8 @@
  
  declare class C2 { }
  >C2 : C2
-->   : ^^
- 
- class C3 { }
+@@= skipped -10, +12 lines =@@
  >C3 : C3
-->   : ^^
  
  interface C3 { }
 +>C3 : C3
@@ -28,23 +22,14 @@
  
  class C4 { }
  >C4 : C4
-->   : ^^
  
  interface C5 {
 +>C5 : C5
 +
      x1: number;
  >x1 : number
-->   : ^^^^^^
  }
- 
- declare class C5 {
- >C5 : C5
-->   : ^^
- 
-     x2: number;
- >x2 : number
-->   : ^^^^^^
+@@= skipped -19, +23 lines =@@
  }
  
  interface C5 {
@@ -52,7 +37,6 @@
 +
      x3: number;
  >x3 : number
-->   : ^^^^^^
  }
  
  interface C5 {
@@ -60,50 +44,9 @@
 +
      x4: number;
  >x4 : number
-->   : ^^^^^^
  }
- 
- // checks if properties actually were merged
- var c5 : C5;
- >c5 : C5
-->   : ^^
- 
- c5.x1;
- >c5.x1 : number
-->      : ^^^^^^
- >c5 : C5
-->   : ^^
- >x1 : number
-->   : ^^^^^^
- 
- c5.x2;
- >c5.x2 : number
-->      : ^^^^^^
- >c5 : C5
-->   : ^^
- >x2 : number
-->   : ^^^^^^
- 
- c5.x3;
- >c5.x3 : number
-->      : ^^^^^^
- >c5 : C5
-->   : ^^
- >x3 : number
-->   : ^^^^^^
- 
- c5.x4;
- >c5.x4 : number
-->      : ^^^^^^
- >c5 : C5
-->   : ^^
- >x4 : number
-->   : ^^^^^^
- 
- === file2.ts ===
- declare class C6 { }
+@@= skipped -38, +42 lines =@@
  >C6 : C6
-->   : ^^
  
  interface C7 { }
 +>C7 : C7
@@ -114,5 +57,3 @@
  
  declare class C7 { }
  >C7 : C7
-->   : ^^
- 

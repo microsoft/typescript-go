@@ -1,14 +1,10 @@
 --- old.parserEnumDeclaration2.types
 +++ new.parserEnumDeclaration2.types
-@@= skipped -2, +2 lines =@@
- === parserEnumDeclaration2.ts ===
- declare module M {
+@@= skipped -4, +4 lines =@@
  >M : typeof M
-->  : ^^^^^^^^
  
    declare enum E {
 ->E : E
-->  : ^
 +>E : M.E
    }
  }

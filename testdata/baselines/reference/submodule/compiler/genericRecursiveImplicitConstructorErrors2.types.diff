@@ -1,10 +1,7 @@
 --- old.genericRecursiveImplicitConstructorErrors2.types
 +++ new.genericRecursiveImplicitConstructorErrors2.types
-@@= skipped -2, +2 lines =@@
- === genericRecursiveImplicitConstructorErrors2.ts ===
- module TypeScript2 {
+@@= skipped -4, +4 lines =@@
  >TypeScript2 : typeof TypeScript2
-->            : ^^^^^^^^^^^^^^^^^^
  
    export interface DeclKind { };
 +>DeclKind : DeclKind
@@ -17,62 +14,34 @@
 +
    export enum PullSymbolVisibility {
  >PullSymbolVisibility : PullSymbolVisibility
-->                     : ^^^^^^^^^^^^^^^^^^^^
  
-     Private,
- >Private : PullSymbolVisibility.Private
-->        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
-     Public
- >Public : PullSymbolVisibility.Public
-->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   }
- 　
-   export class PullSymbol {
- >PullSymbol : PullSymbol
-->           : ^^^^^^^^^^
- 
-     constructor (name: string, declKind: DeclKind) {
- >name : string
-->     : ^^^^^^
- >declKind : DeclKind
-->         : ^^^^^^^^
- 
-     }
+@@= skipped -23, +29 lines =@@
      // link methods
      public addOutgoingLink<A,B,C>(linkTo: PullSymbol, kind: SymbolLinkKind) {
  >addOutgoingLink : <A, B, C>(linkTo: PullSymbol, kind: SymbolLinkKind) => void
-->                : ^ ^^ ^^ ^^      ^^          ^^    ^^              ^^^^^^^^^
 +>A : A
 +>B : B
 +>C : C
  >linkTo : PullSymbol
-->       : ^^^^^^^^^^
  >kind : SymbolLinkKind
-->     : ^^^^^^^^^^^^^^
  
-     }
+@@= skipped -7, +10 lines =@@
  
      public getType<A,B,C>(): PullTypeSymbol<A,B,C> {
  >getType : <A, B, C>() => PullTypeSymbol<A, B, C>
-->        : ^ ^^ ^^ ^^^^^^^                       
 +>A : A
 +>B : B
 +>C : C
  
        return undefined;
  >undefined : undefined
-->          : ^^^^^^^^^
-     }
+@@= skipped -7, +10 lines =@@
    }
    export class PullTypeSymbol <A,B,C>extends PullSymbol {
  >PullTypeSymbol : PullTypeSymbol<A, B, C>
-->               : ^^^^^^^^^^^^^^^^^^^^^^^
 +>A : A
 +>B : B
 +>C : C
  >PullSymbol : PullSymbol
-->           : ^^^^^^^^^^
    }
  }
- 

@@ -1,28 +1,18 @@
 --- old.es6ImportNameSpaceImportDts.types
 +++ new.es6ImportNameSpaceImportDts.types
-@@= skipped -2, +2 lines =@@
- === server.ts ===
- export class c { };  
- >c : c
-->  : ^
+@@= skipped -5, +5 lines =@@
  
  === client.ts ===
  import * as nameSpaceBinding from "./server";
 ->nameSpaceBinding : typeof nameSpaceBinding
-->                 : ^^^^^^^^^^^^^^^^^^^^^^^
 +>nameSpaceBinding : typeof import("server")
  
  export var x = new nameSpaceBinding.c();
 ->x : nameSpaceBinding.c
-->  : ^^^^^^^^^^^^^^^^^^
 ->new nameSpaceBinding.c() : nameSpaceBinding.c
-->                         : ^^^^^^^^^^^^^^^^^^
 ->nameSpaceBinding.c : typeof nameSpaceBinding.c
-->                   : ^^^^^^^^^^^^^^^^^^^^^^^^^
 ->nameSpaceBinding : typeof nameSpaceBinding
-->                 : ^^^^^^^^^^^^^^^^^^^^^^^
 ->c : typeof nameSpaceBinding.c
-->  : ^^^^^^^^^^^^^^^^^^^^^^^^^
 +>x : c
 +>new nameSpaceBinding.c() : c
 +>nameSpaceBinding.c : typeof c
@@ -31,6 +21,5 @@
  
  import * as nameSpaceBinding2 from "./server"; // unreferenced
 ->nameSpaceBinding2 : typeof nameSpaceBinding
-->                  : ^^^^^^^^^^^^^^^^^^^^^^^
 +>nameSpaceBinding2 : typeof import("server")
  

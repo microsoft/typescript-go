@@ -1,14 +1,10 @@
 --- old.argumentsReferenceInMethod7_Js.types
 +++ new.argumentsReferenceInMethod7_Js.types
-@@= skipped -2, +2 lines =@@
- === /a.js ===
- class A {
+@@= skipped -4, +4 lines =@@
  >A : A
-->  : ^
  
  	m() {
 ->m : (...args: any[]) => void
-->  : ^^^^^^^^^^^^^^^^^^^^^^^^
 +>m : () => void
  
  		/**
@@ -16,21 +12,11 @@
  		 */
  		this.callee = arguments.callee;
  >this.callee = arguments.callee : Function
-->                               : ^^^^^^^^
 ->this.callee : Function
-->            : ^^^^^^^^
 +>this.callee : any
  >this : this
-->     : ^^^^
 ->callee : Function
-->       : ^^^^^^^^
 +>callee : any
  >arguments.callee : Function
-->                 : ^^^^^^^^
  >arguments : IArguments
-->          : ^^^^^^^^^^
  >callee : Function
-->       : ^^^^^^^^
- 	}
- }
- 

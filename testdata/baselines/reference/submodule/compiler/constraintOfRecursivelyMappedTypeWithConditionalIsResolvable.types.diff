@@ -11,13 +11,10 @@
      // ...
  }
  
- export type ImmutableTypes = IImmutableMap<any>;
- >ImmutableTypes : ImmutableTypes
-->               : ^^^^^^^^^^^^^^
+@@= skipped -8, +12 lines =@@
  
  export type ImmutableModel<T> = { [K in keyof T]: T[K] extends ImmutableTypes ? T[K] : never };
  >ImmutableModel : ImmutableModel<T>
-->               : ^^^^^^^^^^^^^^^^^
 +>T : T
 +>K : K
  
@@ -27,26 +24,18 @@
 +
      set<K extends keyof T>(key: K, value: T[K]): IImmutableMap<T>;
  >set : <K extends keyof T>(key: K, value: T[K]) => IImmutableMap<T>
-->    : ^ ^^^^^^^^^       ^^   ^^ ^^     ^^    ^^^^^                
 +>K : K
  >key : K
-->    : ^
  >value : T[K]
-->      : ^^^^
  }
- 
- export type ImmutableTypes2 = IImmutableMap2<any>;
- >ImmutableTypes2 : ImmutableTypes2
-->                : ^^^^^^^^^^^^^^^
+@@= skipped -13, +19 lines =@@
  
  type isImmutableType<T> = [T] extends [ImmutableTypes2] ? T : never;
  >isImmutableType : isImmutableType<T>
-->                : ^^^^^^^^^^^^^^^^^^
 +>T : T
  
  export type ImmutableModel2<T> = { [K in keyof T]: isImmutableType<T[K]> };
  >ImmutableModel2 : ImmutableModel2<T>
-->                : ^^^^^^^^^^^^^^^^^^
 +>T : T
 +>K : K
  
@@ -56,11 +45,7 @@
 +
      set<K extends keyof T>(key: K, value: T[K]): IImmutableMap2<T>;
  >set : <K extends keyof T>(key: K, value: T[K]) => IImmutableMap2<T>
-->    : ^ ^^^^^^^^^       ^^   ^^ ^^     ^^    ^^^^^                 
 +>K : K
  >key : K
-->    : ^
  >value : T[K]
-->      : ^^^^
  }
- 

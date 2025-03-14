@@ -1,22 +1,11 @@
 --- old.ambientExternalModuleWithRelativeModuleName.types
 +++ new.ambientExternalModuleWithRelativeModuleName.types
-@@= skipped -2, +2 lines =@@
- === ambientExternalModuleWithRelativeModuleName.ts ===
- declare module "./relativeModule" {
- >"./relativeModule" : typeof import("./relativeModule")
-->                   : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
-     var x: string;
- >x : string
-->  : ^^^^^^
+@@= skipped -8, +8 lines =@@
  }
  
  declare module ".\\relativeModule" {
 ->".\\relativeModule" : typeof import(".\\relativeModule")
-->                    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>".\\relativeModule" : typeof import(".\relativeModule")
  
      var x: string;
  >x : string
-->  : ^^^^^^
- }

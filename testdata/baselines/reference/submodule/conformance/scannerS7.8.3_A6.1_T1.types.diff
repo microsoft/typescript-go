@@ -1,9 +1,0 @@
---- old.scannerS7.8.3_A6.1_T1.types
-+++ new.scannerS7.8.3_A6.1_T1.types
-@@= skipped -14, +14 lines =@@
- //CHECK#1
- 0x
- >0x : 0
-->   : ^
- 
- 

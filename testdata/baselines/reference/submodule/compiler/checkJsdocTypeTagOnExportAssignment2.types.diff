@@ -8,31 +8,15 @@
 +
      a: number;
  >a : number
-->  : ^^^^^^
  
-     b: number;
- >b : number
-->  : ^^^^^^
- }
- 
- === b.js ===
- /** @type {import("./a").Foo} */
- export default { c: false };
- >{ c: false } : { c: boolean; }
-->             : ^^^^^^^^^^^^^^^
- >c : boolean
-->  : ^^^^^^^
- >false : false
-->      : ^^^^^
+@@= skipped -16, +18 lines =@@
  
  === c.js ===
  import b from "./b";
 ->b : import("a").Foo
-->  : ^^^^^^^^^^^^^^^
 +>b : { c: boolean; }
  
  b;
 ->b : import("a").Foo
-->  : ^^^^^^^^^^^^^^^
 +>b : { c: boolean; }
  

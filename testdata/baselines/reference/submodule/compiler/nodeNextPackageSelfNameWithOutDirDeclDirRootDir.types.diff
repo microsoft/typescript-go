@@ -5,18 +5,13 @@
  === /pkg/src/index.ts ===
  import * as me from "@this/package";
 ->me : typeof me
-->   : ^^^^^^^^^
 +>me : any
  
  me.thing();
 ->me.thing() : void
-->           : ^^^^
 ->me.thing : () => void
-->         : ^^^^^^    
 ->me : typeof me
-->   : ^^^^^^^^^
 ->thing : () => void
-->      : ^^^^^^    
 +>me.thing() : any
 +>me.thing : any
 +>me : any
@@ -24,5 +19,3 @@
  
  export function thing(): void {}
  >thing : () => void
-->      : ^^^^^^    
- 

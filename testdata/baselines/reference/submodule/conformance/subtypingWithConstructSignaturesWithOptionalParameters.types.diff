@@ -8,35 +8,8 @@
 +
      a: new () => number;
  >a : new () => number
-->  : ^^^^^^^^^^      
  
-     a2: new (x?: number) => number;
- >a2 : new (x?: number) => number
-->   : ^^^^^ ^^^      ^^^^^      
- >x : number
-->  : ^^^^^^
- 
-     a3: new (x: number) => number;
- >a3 : new (x: number) => number
-->   : ^^^^^ ^^      ^^^^^      
- >x : number
-->  : ^^^^^^
- 
-     a4: new (x: number, y?: number) => number;
- >a4 : new (x: number, y?: number) => number
-->   : ^^^^^ ^^      ^^ ^^^      ^^^^^      
- >x : number
-->  : ^^^^^^
- >y : number
-->  : ^^^^^^
- 
-     a5: new (x?: number, y?: number) => number;
- >a5 : new (x?: number, y?: number) => number
-->   : ^^^^^ ^^^      ^^ ^^^      ^^^^^      
- >x : number
-->  : ^^^^^^
- >y : number
-->  : ^^^^^^
+@@= skipped -23, +25 lines =@@
  }
  
  interface I1 extends Base {
@@ -44,7 +17,6 @@
 +
      a: new () => number; // ok, same number of required params
  >a : new () => number
-->  : ^^^^^^^^^^      
  }
  
  interface I2 extends Base {
@@ -52,9 +24,7 @@
 +
      a: new (x?: number) => number; // ok, same number of required params
  >a : new (x?: number) => number
-->  : ^^^^^ ^^^      ^^^^^      
  >x : number
-->  : ^^^^^^
  }
  
  interface I3 extends Base {
@@ -62,10 +32,8 @@
 +
      a: new (x: number) => number; // error, too many required params
  >a : new (x: number) => number
-->  : ^^^^^ ^^      ^^^^^      
  >x : number
-->  : ^^^^^^
- }
+@@= skipped -18, +24 lines =@@
  
  
  interface I4 extends Base {
@@ -73,7 +41,6 @@
 +
      a2: new () => number; // ok, same number of required params
  >a2 : new () => number
-->   : ^^^^^^^^^^      
  }
  
  interface I5 extends Base {
@@ -81,9 +48,7 @@
 +
      a2: new (x?: number) => number; // ok, same number of required params
  >a2 : new (x?: number) => number
-->   : ^^^^^ ^^^      ^^^^^      
  >x : number
-->  : ^^^^^^
  }
  
  interface I6 extends Base {
@@ -91,10 +56,8 @@
 +
      a2: new (x: number) => number; // ok, same number of params
  >a2 : new (x: number) => number
-->   : ^^^^^ ^^      ^^^^^      
  >x : number
-->  : ^^^^^^
- }
+@@= skipped -18, +24 lines =@@
  
  
  interface I7 extends Base {
@@ -102,7 +65,6 @@
 +
      a3: new () => number; // ok, fewer required params
  >a3 : new () => number
-->   : ^^^^^^^^^^      
  }
  
  interface I8 extends Base {
@@ -110,9 +72,7 @@
 +
      a3: new (x?: number) => number; // ok, fewer required params
  >a3 : new (x?: number) => number
-->   : ^^^^^ ^^^      ^^^^^      
  >x : number
-->  : ^^^^^^
  }
  
  interface I9 extends Base {
@@ -120,9 +80,7 @@
 +
      a3: new (x: number) => number; // ok, same number of required params
  >a3 : new (x: number) => number
-->   : ^^^^^ ^^      ^^^^^      
  >x : number
-->  : ^^^^^^
  }
  
  interface I10 extends Base {
@@ -130,12 +88,8 @@
 +
      a3: new (x: number, y: number) => number;  // error, too many required params
  >a3 : new (x: number, y: number) => number
-->   : ^^^^^ ^^      ^^ ^^      ^^^^^      
  >x : number
-->  : ^^^^^^
- >y : number
-->  : ^^^^^^
- }
+@@= skipped -25, +33 lines =@@
  
  
  interface I11 extends Base {
@@ -143,7 +97,6 @@
 +
      a4: new () => number; // ok, fewer required params
  >a4 : new () => number
-->   : ^^^^^^^^^^      
  }
  
  interface I12 extends Base {
@@ -151,11 +104,8 @@
 +
      a4: new (x?: number, y?: number) => number; // ok, fewer required params
  >a4 : new (x?: number, y?: number) => number
-->   : ^^^^^ ^^^      ^^ ^^^      ^^^^^      
  >x : number
-->  : ^^^^^^
- >y : number
-->  : ^^^^^^
+@@= skipped -12, +16 lines =@@
  }
  
  interface I13 extends Base {
@@ -163,9 +113,7 @@
 +
      a4: new (x: number) => number; // ok, same number of required params
  >a4 : new (x: number) => number
-->   : ^^^^^ ^^      ^^^^^      
  >x : number
-->  : ^^^^^^
  }
  
  interface I14 extends Base {
@@ -173,12 +121,8 @@
 +
      a4: new (x: number, y: number) => number;  // ok, same number of params
  >a4 : new (x: number, y: number) => number
-->   : ^^^^^ ^^      ^^ ^^      ^^^^^      
  >x : number
-->  : ^^^^^^
- >y : number
-->  : ^^^^^^
- }
+@@= skipped -14, +18 lines =@@
  
  
  interface I15 extends Base {
@@ -186,7 +130,6 @@
 +
      a5: new () => number; // ok, fewer required params
  >a5 : new () => number
-->   : ^^^^^^^^^^      
  }
  
  interface I16 extends Base {
@@ -194,11 +137,8 @@
 +
      a5: new (x?: number, y?: number) => number; // ok, fewer required params
  >a5 : new (x?: number, y?: number) => number
-->   : ^^^^^ ^^^      ^^ ^^^      ^^^^^      
  >x : number
-->  : ^^^^^^
- >y : number
-->  : ^^^^^^
+@@= skipped -12, +16 lines =@@
  }
  
  interface I17 extends Base {
@@ -206,9 +146,7 @@
 +
      a5: new (x: number) => number; // ok, all present params match
  >a5 : new (x: number) => number
-->   : ^^^^^ ^^      ^^^^^      
  >x : number
-->  : ^^^^^^
  }
  
  interface I18 extends Base {
@@ -216,9 +154,4 @@
 +
      a5: new (x: number, y: number) => number;  // ok, same number of params
  >a5 : new (x: number, y: number) => number
-->   : ^^^^^ ^^      ^^ ^^      ^^^^^      
  >x : number
-->  : ^^^^^^
- >y : number
-->  : ^^^^^^
- }

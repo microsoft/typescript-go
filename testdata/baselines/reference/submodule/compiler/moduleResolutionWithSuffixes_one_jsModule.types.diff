@@ -5,84 +5,59 @@
  === /index.ts ===
  import { ios } from "./foo.js";
 ->ios : () => void
-->    : ^^^^^^^^^^
 +>ios : any
  
  === /foo.ios.js ===
  "use strict";
- >"use strict" : "use strict"
-->             : ^^^^^^^^^^^^
+@@= skipped -8, +8 lines =@@
  
  exports.__esModule = true;
  >exports.__esModule = true : true
-->                          : ^^^^
 ->exports.__esModule : true
-->                   : ^^^^
 ->exports : typeof import("/foo.ios")
-->        : ^^^^^^^^^^^^^^^^^^^^^^^^^
 ->__esModule : true
-->           : ^^^^
 +>exports.__esModule : any
 +>exports : any
 +>__esModule : any
  >true : true
-->     : ^^^^
  
  function ios() {}
- >ios : () => void
-->    : ^^^^^^^^^^
+@@= skipped -10, +10 lines =@@
  
  exports.ios = ios;
  >exports.ios = ios : () => void
-->                  : ^^^^^^^^^^
 ->exports.ios : () => void
-->            : ^^^^^^^^^^
 ->exports : typeof import("/foo.ios")
-->        : ^^^^^^^^^^^^^^^^^^^^^^^^^
 +>exports.ios : any
 +>exports : any
 +>ios : any
  >ios : () => void
-->    : ^^^^^^^^^^
 ->ios : () => void
-->    : ^^^^^^^^^^
  
  === /foo.js ===
  "use strict";
- >"use strict" : "use strict"
-->             : ^^^^^^^^^^^^
+@@= skipped -11, +11 lines =@@
  
  exports.__esModule = true;
  >exports.__esModule = true : true
-->                          : ^^^^
 ->exports.__esModule : true
-->                   : ^^^^
 ->exports : typeof import("/foo")
-->        : ^^^^^^^^^^^^^^^^^^^^^
 ->__esModule : true
-->           : ^^^^
 +>exports.__esModule : any
 +>exports : any
 +>__esModule : any
  >true : true
-->     : ^^^^
  
  function base() {}
- >base : () => void
-->     : ^^^^^^^^^^
+@@= skipped -10, +10 lines =@@
  
  exports.base = base;
  >exports.base = base : () => void
-->                    : ^^^^^^^^^^
 ->exports.base : () => void
-->             : ^^^^^^^^^^
 ->exports : typeof import("/foo")
-->        : ^^^^^^^^^^^^^^^^^^^^^
 +>exports.base : any
 +>exports : any
 +>base : any
  >base : () => void
-->     : ^^^^^^^^^^
 ->base : () => void
-->     : ^^^^^^^^^^
  

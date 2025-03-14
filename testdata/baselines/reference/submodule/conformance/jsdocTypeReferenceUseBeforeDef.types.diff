@@ -5,11 +5,7 @@
  /** @type {C | null} */
  const c = null
 ->c : C
-->  : ^
 +>c : any
  
  class C {
  >C : C
-->  : ^
- }
- 

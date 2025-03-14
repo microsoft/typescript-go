@@ -5,32 +5,24 @@
  === main.ts ===
  import { fa } from "ext";
 ->fa : any
-->   : ^^^
 +>fa : () => A
  
  import { fb } from "ext/other";
 ->fb : () => import("node_modules/ext/other").B
-->   : ^^^^^^       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  ^
 +>fb : () => B
  
  export const va = fa();
 ->va : any
-->   : ^^^
 ->fa() : any
-->     : ^^^
 ->fa : any
-->   : ^^^
 +>va : A
 +>fa() : A
 +>fa : () => A
  
  export const vb = fb();
 ->vb : import("node_modules/ext/other").B
-->   : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ->fb() : import("node_modules/ext/other").B
-->     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ->fb : () => import("node_modules/ext/other").B
-->   : ^^^^^^       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  ^
 +>vb : B
 +>fb() : B
 +>fb : () => B
@@ -48,7 +40,6 @@
 +
  export function fb(): B;
  >fb : () => B
-->   : ^^^^^^ 
  
 -=== node_modules/ext/ts3.1/index.d.ts ===
 -

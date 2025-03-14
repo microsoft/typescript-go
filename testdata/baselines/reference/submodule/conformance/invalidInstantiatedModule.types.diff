@@ -1,56 +1,19 @@
 --- old.invalidInstantiatedModule.types
 +++ new.invalidInstantiatedModule.types
-@@= skipped -2, +2 lines =@@
- === invalidInstantiatedModule.ts ===
- module M {
- >M : typeof M
-->  : ^^^^^^^^
- 
-     export class Point { x: number; y: number }
- >Point : Point
-->      : ^^^^^
- >x : number
-->  : ^^^^^^
- >y : number
-->  : ^^^^^^
- 
-     export var Point = 1;  // Error
- >Point : number
-->      : ^^^^^^
- >1 : 1
-->  : ^
- }
- 
- module M2 {
+@@= skipped -17, +17 lines =@@
  >M2 : typeof M2
-->   : ^^^^^^^^^
  
      export interface Point { x: number; y: number }
 +>Point : Point
  >x : number
-->  : ^^^^^^
  >y : number
-->  : ^^^^^^
  
-     export var Point = 1;
- >Point : number
-->      : ^^^^^^
- >1 : 1
-->  : ^
- }
- 
- var m = M2;
- >m : typeof M2
-->  : ^^^^^^^^^
+@@= skipped -13, +14 lines =@@
  >M2 : typeof M2
-->   : ^^^^^^^^^
  
  var p: m.Point; // Error
 ->p : m.Point
-->  : ^^^^^^^
 +>p : Point
  >m : any
-->  : ^^^
  
  
-  

@@ -1,18 +1,11 @@
 --- old.parserInterfaceKeywordInEnum1.types
 +++ new.parserInterfaceKeywordInEnum1.types
-@@= skipped -2, +2 lines =@@
- === parserInterfaceKeywordInEnum1.ts ===
- "use strict";
+@@= skipped -4, +4 lines =@@
  >"use strict" : "use strict"
-->             : ^^^^^^^^^^^^
  
  enum Bar {
 ->Bar : Bar
-->    : ^^^
 +>Bar : Bar.interface
  
      interface,
  >interface : Bar.interface
-->          : ^^^^^^^^^^^^^
- }
- 

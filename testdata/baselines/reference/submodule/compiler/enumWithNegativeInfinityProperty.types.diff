@@ -5,14 +5,11 @@
  === enumWithNegativeInfinityProperty.ts ===
  enum A {
 ->A : A
-->  : ^
 +>A : A."-Infinity"
  
      "-Infinity" = 1
 ->"-Infinity" : (typeof A)["-Infinity"]
-->            : ^^^^^^^^^^^^^^^^^^^^^^^
 +>"-Infinity" : A."-Infinity"
  >1 : 1
-->  : ^
  }
  

@@ -9,12 +9,10 @@
 +
      foo: T;
  >foo : T
-->    : ^
  }
  
  type FindConditions<T> = {
  >FindConditions : FindConditions<T>
-->               : ^^^^^^^^^^^^^^^^^
 +>T : T
  
      [P in keyof T]?: FindConditions<T[P]> | FindOperator<FindConditions<T[P]>>;
@@ -24,15 +22,7 @@
  
  function foo<Entity>() {
  >foo : <Entity>() => void
-->    : ^      ^^^^^^^^^^^
 +>Entity : Entity
  
      var x: FindConditions<any>;
  >x : FindConditions<any>
-->  : ^^^^^^^^^^^^^^^^^^^
- 
-     var x: FindConditions<Entity>;  // Excessive stack depth error not expected here
- >x : FindConditions<any>
-->  : ^^^^^^^^^^^^^^^^^^^
- }
- 

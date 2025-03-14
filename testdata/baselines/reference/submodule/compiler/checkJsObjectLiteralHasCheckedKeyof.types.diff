@@ -1,43 +1,16 @@
 --- old.checkJsObjectLiteralHasCheckedKeyof.types
 +++ new.checkJsObjectLiteralHasCheckedKeyof.types
-@@= skipped -3, +3 lines =@@
- // @ts-check
- const obj = {
- >obj : { x: number; y: number; }
-->    : ^^^^^^^^^^^^^^^^^^^^^^^^^
- >{    x: 1,    y: 2} : { x: number; y: number; }
-->                    : ^^^^^^^^^^^^^^^^^^^^^^^^^
- 
-     x: 1,
- >x : number
-->  : ^^^^^^
- >1 : 1
-->  : ^
- 
-     y: 2
- >y : number
-->  : ^^^^^^
- >2 : 2
-->  : ^
- 
- };
- 
-@@= skipped -22, +16 lines =@@
+@@= skipped -19, +19 lines =@@
   * @type {keyof typeof obj}
   */
  let selected = "x";
 ->selected : "x" | "y"
-->         : ^^^^^^^^^
 +>selected : string
  >"x" : "x"
-->    : ^^^
  
  selected = "z"; // should fail
  >selected = "z" : "z"
-->               : ^^^
 ->selected : "x" | "y"
-->         : ^^^^^^^^^
 +>selected : string
  >"z" : "z"
-->    : ^^^
  

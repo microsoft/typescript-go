@@ -5,21 +5,7 @@
  === functionWithNoBestCommonType1.ts ===
  function foo() {
 ->foo : () => true | void
-->    : ^^^^^^^^^^^^^^^^^
 +>foo : () => void | true
  
      return true;
  >true : true
-->     : ^^^^
- 
-     return bar();
- >bar() : void
-->      : ^^^^
- >bar : () => void
-->    : ^^^^^^    
- }
- 
- function bar(): void {
- >bar : () => void
-->    : ^^^^^^    
- }

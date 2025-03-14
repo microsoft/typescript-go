@@ -1,8 +1,0 @@
---- old.downlevelLetConst9.types
-+++ new.downlevelLetConst9.types
-@@= skipped -2, +2 lines =@@
- === downlevelLetConst9.ts ===
- let a: number
- >a : number
-->  : ^^^^^^
- 

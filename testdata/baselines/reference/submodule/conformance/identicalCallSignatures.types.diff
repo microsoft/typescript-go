@@ -15,12 +15,10 @@
      <T>(x: T): T;
 +>T : T
  >x : T
-->  : ^
  
      <U>(x: U): U; // error
 +>U : U
  >x : U
-->  : ^
  }
  
  interface I2<T> {
@@ -29,29 +27,15 @@
 +
      (x: T): T;
  >x : T
-->  : ^
  
-     (x: T): T; // error
- >x : T
-->  : ^
- }
- 
- var a: {
- >a : { (x: any): number; (x: any): number; <T>(x: T): T; <T>(x: T): T; }
-->  : ^^^ ^^^^^^^^      ^^^ ^^   ^^^      ^^^ ^^ ^^ ^^^ ^^^ ^^ ^^ ^^^ ^^^
- 
-     (x): number;
- >x : any
-@@= skipped -29, +29 lines =@@
+@@= skipped -24, +29 lines =@@
  >x : any
  
      <T>(x: T): T;
 +>T : T
  >x : T
-->  : ^
  
      <T>(x: T): T; // error
 +>T : T
  >x : T
-->  : ^
  }

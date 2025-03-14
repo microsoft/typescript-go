@@ -5,6 +5,5 @@
  === declarationEmitDefaultExport1.ts ===
  export default class C {
 ->C : C
-->  : ^
 +>C : default
  }

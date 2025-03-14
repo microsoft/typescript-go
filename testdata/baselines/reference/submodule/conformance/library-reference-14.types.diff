@@ -5,13 +5,9 @@
  === /a/b/consumer.ts ===
  $.foo();
 ->$.foo() : void
-->        : ^^^^
 ->$.foo : () => void
-->      : ^^^^^^    
 ->$ : { foo(): void; }
-->  : ^^^^^^^^^    ^^^
 ->foo : () => void
-->    : ^^^^^^    
 +>$.foo() : any
 +>$.foo : any
 +>$ : any
@@ -20,8 +16,6 @@
 -=== /a/types/jquery/index.d.ts ===
 -declare var $: { foo(): void };
 ->$ : { foo(): void; }
-->  : ^^^^^^^^^    ^^^
 ->foo : () => void
-->    : ^^^^^^    
 -
 -

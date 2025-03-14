@@ -1,8 +1,0 @@
---- old.es5ExportDefaultFunctionDeclaration.types
-+++ new.es5ExportDefaultFunctionDeclaration.types
-@@= skipped -2, +2 lines =@@
- === es5ExportDefaultFunctionDeclaration.ts ===
- export default function f() { }
- >f : () => void
-->  : ^^^^^^^^^^
- 

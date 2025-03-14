@@ -8,7 +8,6 @@
 +
      foo: number;
  >foo : number
-->    : ^^^^^^
  }
  
  interface TextSpan {}
@@ -16,46 +15,3 @@
  
  class SubText extends TextBase {
  >SubText : SubText
-->        : ^^^^^^^
- >TextBase : TextBase
-->         : ^^^^^^^^
- 
-         constructor(text: IText, span: TextSpan) {
- >text : IText
-->     : ^^^^^
- >span : TextSpan
-->     : ^^^^^^^^
- 
-             super();
- >super() : void
-->        : ^^^^
- >super : typeof TextBase
-->      : ^^^^^^^^^^^^^^^
-         }
- }
- 
- class TextBase implements IText {
- >TextBase : TextBase
-->         : ^^^^^^^^
- 
-         public foo: number;
- >foo : number
-->    : ^^^^^^
- 
-         public subText(span: TextSpan): IText {
- >subText : (span: TextSpan) => IText
-->        : ^    ^^        ^^^^^     
- >span : TextSpan
-->     : ^^^^^^^^
- 
-             return new SubText(this, span);
- >new SubText(this, span) : SubText
-->                        : ^^^^^^^
- >SubText : typeof SubText
-->        : ^^^^^^^^^^^^^^
- >this : this
-->     : ^^^^
- >span : TextSpan
-->     : ^^^^^^^^
-         }
- }

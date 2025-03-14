@@ -1,8 +1,0 @@
---- old.commentOnIfStatement1.types
-+++ new.commentOnIfStatement1.types
-@@= skipped -3, +3 lines =@@
- // Test
- if (true) {
- >true : true
-->     : ^^^^
- }

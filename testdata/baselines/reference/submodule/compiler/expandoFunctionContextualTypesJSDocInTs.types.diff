@@ -5,21 +5,15 @@
  === expandoFunctionContextualTypesJSDocInTs.ts ===
  export function Foo() { }
 ->Foo : typeof Foo
-->    : ^^^^^^^^^^
 +>Foo : { (): void; bar: () => void; }
  
  // This comment should have no effect; this is a TS file.
  /** @type {never} */
  Foo.bar = () => { };
  >Foo.bar = () => { } : () => void
-->                    : ^^^^^^^^^^
  >Foo.bar : () => void
-->        : ^^^^^^^^^^
 ->Foo : typeof Foo
-->    : ^^^^^^^^^^
 +>Foo : { (): void; bar: () => void; }
  >bar : () => void
-->    : ^^^^^^^^^^
  >() => { } : () => void
-->          : ^^^^^^^^^^
  

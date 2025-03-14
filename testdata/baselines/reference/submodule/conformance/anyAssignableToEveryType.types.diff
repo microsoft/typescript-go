@@ -1,175 +1,52 @@
 --- old.anyAssignableToEveryType.types
 +++ new.anyAssignableToEveryType.types
-@@= skipped -5, +5 lines =@@
- 
- class C {
- >C : C
-->  : ^
- 
-     foo: string;
- >foo : string
-->    : ^^^^^^
- }
- var ac: C;
+@@= skipped -13, +13 lines =@@
  >ac : C
-->   : ^
  
  interface I {
 +>I : I
 +
      foo: string;
  >foo : string
-->    : ^^^^^^
  }
- var ai: I;
+@@= skipped -7, +9 lines =@@
  >ai : I
-->   : ^
  
  enum E { A }
 ->E : E
-->  : ^
 +>E : E.A
  >A : E.A
-->  : ^^^
  
  var ae: E;
 ->ae : E
-->   : ^
 +>ae : E.A
  
  var b: number = a;
  >b : number
-->  : ^^^^^^
- >a : any
- 
- var c: string = a;
- >c : string
-->  : ^^^^^^
- >a : any
- 
- var d: boolean = a;
- >d : boolean
-->  : ^^^^^^^
- >a : any
- 
- var e: Date = a;
- >e : Date
-->  : ^^^^
- >a : any
- 
- var f: any = a;
-@@= skipped -55, +45 lines =@@
- 
- var g: void = a;
- >g : void
-->  : ^^^^
- >a : any
- 
- var h: Object = a;
- >h : Object
-->  : ^^^^^^
- >a : any
- 
- var i: {} = a;
- >i : {}
-->  : ^^
- >a : any
- 
- var j: () => {} = a;
- >j : () => {}
-->  : ^^^^^^  
- >a : any
- 
- var k: Function = a;
- >k : Function
-->  : ^^^^^^^^
- >a : any
- 
- var l: (x: number) => string = a;
- >l : (x: number) => string
-->  : ^ ^^      ^^^^^      
- >x : number
-->  : ^^^^^^
- >a : any
- 
- ac = a;
- >ac = a : any
- >ac : C
-->   : ^
- >a : any
- 
- ai = a;
- >ai = a : any
- >ai : I
-->   : ^
- >a : any
+@@= skipped -63, +63 lines =@@
  
  ae = a;
  >ae = a : any
 ->ae : E
-->   : ^
 +>ae : E.A
  >a : any
  
  var m: number[] = a;
- >m : number[]
-->  : ^^^^^^^^
- >a : any
- 
- var n: { foo: string } = a;
- >n : { foo: string; }
-->  : ^^^^^^^      ^^^
- >foo : string
-->    : ^^^^^^
- >a : any
+@@= skipped -14, +14 lines =@@
  
  var o: <T>(x: T) => T = a;
  >o : <T>(x: T) => T
-->  : ^ ^^ ^^ ^^^^^ 
 +>T : T
  >x : T
-->  : ^
  >a : any
  
- var p: Number = a;
- >p : Number
-->  : ^^^^^^
- >a : any
- 
- var q: String = a;
- >q : String
-->  : ^^^^^^
- >a : any
+@@= skipped -13, +14 lines =@@
  
  function foo<T, U /*extends T*/, V extends Date>(x: T, y: U, z: V) {
  >foo : <T, U, V extends Date>(x: T, y: U, z: V) => void
-->    : ^ ^^ ^^ ^^^^^^^^^    ^^ ^^ ^^ ^^ ^^ ^^ ^^^^^^^^^
 +>T : T
 +>U : U
 +>V : V
  >x : T
-->  : ^
  >y : U
-->  : ^
  >z : V
-->  : ^
- 
-     x = a;
- >x = a : any
- >x : T
-->  : ^
- >a : any
- 
-     y = a;
- >y = a : any
- >y : U
-->  : ^
- >a : any
- 
-     z = a;
- >z = a : any
- >z : V
-->  : ^
- >a : any
- }
- 

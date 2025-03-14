@@ -1,25 +1,10 @@
 --- old.preserveValueImports_mixedImports.types
 +++ new.preserveValueImports_mixedImports.types
-@@= skipped -2, +2 lines =@@
- === /exports.ts ===
- export function Component() {}
+@@= skipped -4, +4 lines =@@
  >Component : () => void
-->          : ^^^^^^^^^^
  
  export interface ComponentProps {}
 +>ComponentProps : ComponentProps
  
  === /index.ts ===
  import { Component, ComponentProps } from "./exports.js";
- >Component : () => void
-->          : ^^^^^^^^^^
- >ComponentProps : any
-->               : ^^^
- 
- === /index.fixed.ts ===
- import { Component, type ComponentProps } from "./exports.js";
- >Component : () => void
-->          : ^^^^^^^^^^
- >ComponentProps : any
-->               : ^^^
- 

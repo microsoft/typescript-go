@@ -5,18 +5,13 @@
  === m2.ts ===
  import A = require('m1')
 ->A : typeof A
-->  : ^^^^^^^^
 +>A : any
  
  var v = A.V;
 ->v : A
-->  : ^
 ->A.V : A
-->    : ^
 ->A : typeof A
-->  : ^^^^^^^^
 ->V : A
-->  : ^
 +>v : any
 +>A.V : any
 +>A : any
@@ -25,16 +20,12 @@
 -=== m1.ts ===
 -const enum E {
 ->E : E
-->  : ^
 -
 -    V = 100
 ->V : E.V
-->  : ^^^
 ->100 : 100
-->    : ^^^
 -}
 -
 -export = E
 ->E : E
-->  : ^
 -

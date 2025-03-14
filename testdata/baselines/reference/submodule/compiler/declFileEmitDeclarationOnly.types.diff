@@ -5,50 +5,18 @@
  === helloworld.ts ===
  const Log = {
 ->Log : { info(msg: string): void; }
-->    : ^^^^^^^   ^^      ^^^^^^^^^^
 ->{  info(msg: string) {}} : { info(msg: string): void; }
-->                         : ^^^^^^^   ^^      ^^^^^^^^^^
 +>Log : { info: (msg: string) => void; }
 +>{  info(msg: string) {}} : { info: (msg: string) => void; }
  
    info(msg: string) {}
  >info : (msg: string) => void
-->     : ^   ^^      ^^^^^^^^^
- >msg : string
-->    : ^^^^^^
- }
- 
- class HelloWorld {
- >HelloWorld : HelloWorld
-->           : ^^^^^^^^^^
- 
-   constructor(private name: string) {
- >name : string
-->     : ^^^^^^
-   }
- 
-   public hello() {
- >hello : () => void
-->      : ^^^^^^^^^^
- 
+@@= skipped -21, +21 lines =@@
      Log.info(`Hello ${this.name}`);
  >Log.info(`Hello ${this.name}`) : void
-->                               : ^^^^
  >Log.info : (msg: string) => void
-->         : ^   ^^      ^^^^^^^^^
 ->Log : { info(msg: string): void; }
-->    : ^^^^^^^   ^^      ^^^^^^^^^^
 +>Log : { info: (msg: string) => void; }
  >info : (msg: string) => void
-->     : ^   ^^      ^^^^^^^^^
  >`Hello ${this.name}` : string
-->                     : ^^^^^^
  >this.name : string
-->          : ^^^^^^
- >this : this
-->     : ^^^^
- >name : string
-->     : ^^^^^^
-   }
- }
- 

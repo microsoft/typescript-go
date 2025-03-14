@@ -5,28 +5,18 @@
  === bug39167.js ===
  var test = {};
 ->test : typeof test
-->     : ^^^^^^^^^^^
 +>test : {}
  >{} : {}
-->   : ^^
  
  test.K = test.K ||
 ->test.K = test.K ||    function () {} : typeof K
-->                                     : ^^^^^^^^
 ->test.K : typeof K
-->       : ^^^^^^^^
 ->test : typeof test
-->     : ^^^^^^^^^^^
 ->K : typeof K
-->  : ^^^^^^^^
 ->test.K ||    function () {} : typeof K
-->                            : ^^^^^^^^
 ->test.K : typeof K
-->       : ^^^^^^^^
 ->test : typeof test
-->     : ^^^^^^^^^^^
 ->K : typeof K
-->  : ^^^^^^^^
 +>test.K = test.K ||    function () {} : any
 +>test.K : any
 +>test : {}
@@ -38,24 +28,16 @@
  
      function () {}
 ->function () {} : typeof K
-->               : ^^^^^^^^
 +>function () {} : () => void
  
  test.K.prototype = {
 ->test.K.prototype = {    add() {}} : { add(): void; }
-->                                  : ^^^^^^^^^^^^^^^^
 ->test.K.prototype : { add(): void; }
-->                 : ^^^^^^^^^^^^^^^^
 ->test.K : typeof K
-->       : ^^^^^^^^
 ->test : typeof test
-->     : ^^^^^^^^^^^
 ->K : typeof K
-->  : ^^^^^^^^
 ->prototype : { add(): void; }
-->          : ^^^^^^^^^^^^^^^^
 ->{    add() {}} : { add(): void; }
-->               : ^^^^^^^^^^^^^^^^
 +>test.K.prototype = {    add() {}} : { add: () => void; }
 +>test.K.prototype : any
 +>test.K : any
@@ -66,23 +48,16 @@
  
      add() {}
  >add : () => void
-->    : ^^^^^^^^^^
- 
+@@= skipped -31, +31 lines =@@
  };
  
  new test.K().add;
 ->new test.K().add : () => void
-->                 : ^^^^^^^^^^
 ->new test.K() : K
-->             : ^
 ->test.K : typeof K
-->       : ^^^^^^^^
 ->test : typeof test
-->     : ^^^^^^^^^^^
 ->K : typeof K
-->  : ^^^^^^^^
 ->add : () => void
-->    : ^^^^^^^^^^
 +>new test.K().add : any
 +>new test.K() : any
 +>test.K : any

@@ -8,33 +8,23 @@
 +
  declare const a: T;
  >a : T
-->  : ^
  
  class Foo<T> {
  >Foo : Foo<T>
-->    : ^^^^^^
 +>T : T
  
      x: T;
  >x : T
-->  : ^
- 
-     fn() {
+@@= skipped -13, +16 lines =@@
  >fn : () => void
-->   : ^^^^^^^^^^
  
          this.x = a;
 ->this.x = a : globalThis.T
-->           : ^^^^^^^^^^^^
 +>this.x = a : T
  >this.x : T
-->       : ^
  >this : this
-->     : ^^^^
  >x : T
-->  : ^
 ->a : globalThis.T
-->  : ^^^^^^^^^^^^
 +>a : T
      }
  }

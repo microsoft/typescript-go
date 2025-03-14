@@ -5,17 +5,12 @@
  /** @type {string} */
  module.exports = 0;
 ->module.exports = 0 : string
-->                   : ^^^^^^
 ->module.exports : string
-->               : ^^^^^^
 ->module : { exports: string; }
-->       : ^^^^^^^^^^^^^^^^^^^^
 ->exports : string
-->        : ^^^^^^
 +>module.exports = 0 : 0
 +>module.exports : any
 +>module : any
 +>exports : any
  >0 : 0
-->  : ^
  

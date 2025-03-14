@@ -1,8 +1,0 @@
---- old.anyIndexedAccessArrayNoException.types
-+++ new.anyIndexedAccessArrayNoException.types
-@@= skipped -2, +2 lines =@@
- === anyIndexedAccessArrayNoException.ts ===
- var x: any[[]];
- >x : any
-->  : ^^^
- 

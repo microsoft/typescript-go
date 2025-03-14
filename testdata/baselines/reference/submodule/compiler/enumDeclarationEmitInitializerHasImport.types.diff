@@ -5,22 +5,15 @@
  === consumer.ts ===
  import provider = require('./provider');
 ->provider : typeof provider
-->         : ^^^^^^^^^^^^^^^
 +>provider : typeof import("provider")
  
  export const value = provider.Enum.Value1;
 ->value : provider.Enum.Value1
-->      : ^^^^^^^^^^^^^^^^^^^^
 ->provider.Enum.Value1 : provider.Enum.Value1
-->                     : ^^^^^^^^^^^^^^^^^^^^
 ->provider.Enum : typeof provider.Enum
-->              : ^^^^^^^^^^^^^^^^^^^^
 ->provider : typeof provider
-->         : ^^^^^^^^^^^^^^^
 ->Enum : typeof provider.Enum
-->     : ^^^^^^^^^^^^^^^^^^^^
 ->Value1 : provider.Enum.Value1
-->       : ^^^^^^^^^^^^^^^^^^^^
 +>value : Enum.Value1
 +>provider.Enum.Value1 : Enum.Value1
 +>provider.Enum : typeof Enum
@@ -30,14 +23,3 @@
  
  === provider.ts ===
  export enum Enum {
- >Enum : Enum
-->     : ^^^^
- 
-     Value1,
- >Value1 : Enum.Value1
-->       : ^^^^^^^^^^^
- 
-     Value2,
- >Value2 : Enum.Value2
-->       : ^^^^^^^^^^^
- }

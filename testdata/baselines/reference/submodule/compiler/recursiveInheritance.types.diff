@@ -8,7 +8,6 @@
 +
      foo():void;
  >foo : () => void
-->    : ^^^^^^    
  } 
  
  interface i8 extends i9 { } // error

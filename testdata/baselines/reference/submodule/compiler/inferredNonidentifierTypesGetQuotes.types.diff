@@ -1,37 +1,15 @@
 --- old.inferredNonidentifierTypesGetQuotes.types
 +++ new.inferredNonidentifierTypesGetQuotes.types
-@@= skipped -2, +2 lines =@@
- === inferredNonidentifierTypesGetQuotes.ts ===
- var x = [{ "a-b": "string" }, {}];
- >x : ({ "a-b": string; } | { "a-b"?: undefined; })[]
-->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >[{ "a-b": "string" }, {}] : ({ "a-b": string; } | {})[]
-->                          : ^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >{ "a-b": "string" } : { "a-b": string; }
-->                    : ^^^^^^^^^^^^^^^^^^
- >"a-b" : string
-->      : ^^^^^^
- >"string" : "string"
-->         : ^^^^^^^^
+@@= skipped -9, +9 lines =@@
  >{} : {}
-->   : ^^
  
  var y = [{ ["a-b"]: "string" }, {}];
 ->y : ({ "a-b": string; } | { "a-b"?: undefined; })[]
-->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ->[{ ["a-b"]: "string" }, {}] : ({ "a-b": string; } | {})[]
-->                            : ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ->{ ["a-b"]: "string" } : { "a-b": string; }
-->                      : ^^^^^^^^^^^^^^^^^^
 +>y : ({ ["a-b"]: string; } | { "a-b"?: undefined; })[]
 +>[{ ["a-b"]: "string" }, {}] : ({ ["a-b"]: string; } | {})[]
 +>{ ["a-b"]: "string" } : { ["a-b"]: string; }
  >["a-b"] : string
-->        : ^^^^^^
  >"a-b" : "a-b"
-->      : ^^^^^
  >"string" : "string"
-->         : ^^^^^^^^
- >{} : {}
-->   : ^^
- 

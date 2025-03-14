@@ -5,9 +5,7 @@
   */
  function foo(fns) {
 ->foo : <A, B extends Record<string, unknown>>(fns: Funcs<A, B>) => [A, B]
-->    : ^ ^^ ^^^^^^^^^                       ^^   ^^           ^^^^^      
 ->fns : Funcs<A, B>
-->    : ^^^^^^^^^^^
 +>foo : (fns: any) => null
 +>fns : any
  
@@ -18,13 +16,9 @@
  
  const result = foo({
 ->result : [string, { bar: string; }]
-->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^
 ->foo({  bar: {    fn:      /** @param {string} a */      (a) => {},    thing: "asd",  },}) : [string, { bar: string; }]
-->                                                                                          : ^^^^^^^^^^^^^^^^^^^^^^^^^^
 ->foo : <A, B extends Record<string, unknown>>(fns: Funcs<A, B>) => [A, B]
-->    : ^ ^^ ^^^^^^^^^                       ^^   ^^           ^^^^^      
 ->{  bar: {    fn:      /** @param {string} a */      (a) => {},    thing: "asd",  },} : { bar: { fn: (a: string) => void; thing: string; }; }
-->                                                                                     : ^^^^^^^^^^^^^^ ^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>result : null
 +>foo({  bar: {    fn:      /** @param {string} a */      (a) => {},    thing: "asd",  },}) : null
 +>foo : (fns: any) => null
@@ -32,31 +26,20 @@
  
    bar: {
 ->bar : { fn: (a: string) => void; thing: string; }
-->    : ^^^^^^^ ^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ->{    fn:      /** @param {string} a */      (a) => {},    thing: "asd",  } : { fn: (a: string) => void; thing: string; }
-->                                                                           : ^^^^^^^ ^^      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>bar : { fn: (a: any) => void; thing: string; }
 +>{    fn:      /** @param {string} a */      (a) => {},    thing: "asd",  } : { fn: (a: any) => void; thing: string; }
  
      fn:
 ->fn : (a: string) => void
-->   : ^ ^^      ^^^^^^^^^
 +>fn : (a: any) => void
  
        /** @param {string} a */
        (a) => {},
 ->(a) => {} : (a: string) => void
-->          : ^ ^^      ^^^^^^^^^
 ->a : string
-->  : ^^^^^^
 +>(a) => {} : (a: any) => void
 +>a : any
  
      thing: "asd",
  >thing : string
-->      : ^^^^^^
- >"asd" : "asd"
-->      : ^^^^^
- 
-   },
- });

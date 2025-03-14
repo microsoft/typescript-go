@@ -1,8 +1,0 @@
---- old.parserUnicode3.types
-+++ new.parserUnicode3.types
-@@= skipped -2, +2 lines =@@
- === parserUnicode3.ts ===
- class 剩下 {
- >剩下 : 剩下
-->   : ^^
- }

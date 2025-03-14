@@ -1,8 +1,0 @@
---- old.commentInEmptyParameterList1.types
-+++ new.commentInEmptyParameterList1.types
-@@= skipped -2, +2 lines =@@
- === commentInEmptyParameterList1.ts ===
- function foo(/** nothing */) {
- >foo : () => void
-->    : ^^^^^^^^^^
- }

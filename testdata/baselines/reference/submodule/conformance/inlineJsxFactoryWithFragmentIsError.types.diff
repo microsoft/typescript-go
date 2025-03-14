@@ -1,10 +1,7 @@
 --- old.inlineJsxFactoryWithFragmentIsError.types
 +++ new.inlineJsxFactoryWithFragmentIsError.types
-@@= skipped -2, +2 lines =@@
- === renderer.d.ts ===
- declare global {
+@@= skipped -4, +4 lines =@@
  >global : any
-->       : ^^^
  
      namespace JSX {
 +>JSX : any
@@ -14,48 +11,13 @@
 +
              [e: string]: any;
  >e : string
-->  : ^^^^^^
          }
-     }
- }
- export function dom(): void;
- >dom : () => void
-->    : ^^^^^^    
- 
- export function createElement(): void;
- >createElement : () => void
-->              : ^^^^^^    
- 
+@@= skipped -15, +19 lines =@@
  === reacty.tsx ===
  /** @jsx React.createElement */
  import * as React from "./renderer";
 ->React : typeof React
-->      : ^^^^^^^^^^^^
 +>React : typeof import("renderer")
  
  <><h></h></>
  ><><h></h></> : any
-->             : ^^^
- ><h></h> : any
-->        : ^^^
- >h : any
-->  : ^^^
- >h : any
-->  : ^^^
- 
- === index.tsx ===
- /** @jsx dom */
- import { dom } from "./renderer";
- >dom : () => void
-->    : ^^^^^^    
- 
- <><h></h></>
- ><><h></h></> : any
-->             : ^^^
- ><h></h> : any
-->        : ^^^
- >h : any
-->  : ^^^
- >h : any
-->  : ^^^
- 

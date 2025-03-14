@@ -1,40 +1,18 @@
 --- old.symlinkedWorkspaceDependenciesNoDirectLinkPeerGeneratesNonrelativeName.types
 +++ new.symlinkedWorkspaceDependenciesNoDirectLinkPeerGeneratesNonrelativeName.types
-@@= skipped -2, +2 lines =@@
- === workspace/packageA/index.d.ts ===
- export declare class Foo {
- >Foo : Foo
-->    : ^^^
- 
-     private f: any;
- >f : any
-@@= skipped -8, +7 lines =@@
- === workspace/packageB/index.d.ts ===
- import { Foo } from "package-a";
- >Foo : typeof Foo
-->    : ^^^^^^^^^^
- 
- export declare function invoke(): Foo;
- >invoke : () => Foo
-->       : ^^^^^^   
+@@= skipped -15, +15 lines =@@
  
  === workspace/packageC/index.ts ===
  import * as pkg from "package-b";
 ->pkg : typeof pkg
-->    : ^^^^^^^^^^
 +>pkg : typeof import("workspace/packageB/index")
  
  export const a = pkg.invoke();
 ->a : import("workspace/packageA/index").Foo
-->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ->pkg.invoke() : import("workspace/packageA/index").Foo
-->             : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ->pkg.invoke : () => import("workspace/packageA/index").Foo
-->           : ^^^^^^       ^^^^^^^^^^^^^^^^^^^^^^^^^^  ^^^
 ->pkg : typeof pkg
-->    : ^^^^^^^^^^
 ->invoke : () => import("workspace/packageA/index").Foo
-->       : ^^^^^^       ^^^^^^^^^^^^^^^^^^^^^^^^^^  ^^^
 +>a : Foo
 +>pkg.invoke() : Foo
 +>pkg.invoke : () => Foo

@@ -4,42 +4,16 @@
  
  class C<T> {
  >C : C<T>
-->  : ^^^^
 +>T : T
  
      x: T;
  >x : T
-->  : ^
- }
- 
- var c = new C();
- >c : C<unknown>
-->  : ^^^^^^^^^^
- >new C() : C<unknown>
-->        : ^^^^^^^^^^
- >C : typeof C
-->  : ^^^^^^^^
+@@= skipped -12, +13 lines =@@
  
  class D<T, U> {
  >D : D<T, U>
-->  : ^^^^^^^
 +>T : T
 +>U : U
  
      x: T
  >x : T
-->  : ^
- 
-     y: U
- >y : U
-->  : ^
- }
- 
- var d = new D();
- >d : D<unknown, unknown>
-->  : ^^^^^^^^^^^^^^^^^^^
- >new D() : D<unknown, unknown>
-->        : ^^^^^^^^^^^^^^^^^^^
- >D : typeof D
-->  : ^^^^^^^^
- 

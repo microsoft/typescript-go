@@ -1,15 +1,7 @@
 --- old.jsxNamespaceReexports.types
 +++ new.jsxNamespaceReexports.types
-@@= skipped -2, +2 lines =@@
- === library.ts ===
- function createElement(element: string, props: any, ...children: any[]): any {}
- >createElement : (element: string, props: any, ...children: any[]) => any
-->              : ^       ^^      ^^     ^^   ^^^^^        ^^     ^^^^^   
- >element : string
-->        : ^^^^^^
- >props : any
+@@= skipped -7, +7 lines =@@
  >children : any[]
-->         : ^^^^^
  
  namespace JSX {
 +>JSX : any
@@ -19,20 +11,12 @@
 +
      [key: string]: Record<string, any>;
  >key : string
-->    : ^^^^^^
    }
- }
- 
- export { createElement, JSX };
- >createElement : (element: string, props: any, ...children: any[]) => any
-->              : ^       ^^      ^^     ^^   ^^^^^        ^^     ^^^^^   
- >JSX : any
-->    : ^^^
+@@= skipped -12, +16 lines =@@
  
  === index.tsx ===
  import * as MyLib from "./library";
 ->MyLib : typeof MyLib
-->      : ^^^^^^^^^^^^
 +>MyLib : typeof import("library")
  
  const content = <my-element/>;
@@ -41,5 +25,4 @@
 +>content : any
 +><my-element/> : any
  >my-element : any
-->           : ^^^
  

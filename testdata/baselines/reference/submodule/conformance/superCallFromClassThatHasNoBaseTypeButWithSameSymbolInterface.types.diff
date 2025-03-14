@@ -8,14 +8,3 @@
  
  class Foo {
  >Foo : Foo
-->    : ^^^
- 
-     constructor() {
-         super(); // error
- >super() : void
-->        : ^^^^
- >super : any
-->      : ^^^
-     }
- }
- 

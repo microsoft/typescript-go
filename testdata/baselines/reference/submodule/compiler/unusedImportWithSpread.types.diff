@@ -1,27 +1,7 @@
 --- old.unusedImportWithSpread.types
 +++ new.unusedImportWithSpread.types
-@@= skipped -2, +2 lines =@@
- === a.ts ===
- export default { a: 1 };
- >{ a: 1 } : { a: number; }
-->         : ^^^^^^^^^^^^^^
- >a : number
-->  : ^^^^^^
- >1 : 1
-->  : ^
- 
- === b1.ts ===
- import a from "./a";
- >a : { a: number; }
-->  : ^^^^^^^^^^^^^^
- 
- const b1 = {} as unknown;
- >b1 : unknown
-->   : ^^^^^^^
- >{} as unknown : unknown
-->              : ^^^^^^^
+@@= skipped -15, +15 lines =@@
  >{} : {}
-->   : ^^
  
  ({
 ->({    // @ts-ignore    ...b1,    a}) : error
@@ -32,27 +12,15 @@
      // @ts-ignore
      ...b1,
  >b1 : unknown
-->   : ^^^^^^^
  
      a
 ->a : { a: number; }
-->  : ^^^^^^^^^^^^^^
 +>a : any
  
  })
  
- === b2.ts ===
- import a from "./a";
- >a : { a: number; }
-->  : ^^^^^^^^^^^^^^
- 
- const b2 = {} as never;
- >b2 : never
-->   : ^^^^^
- >{} as never : never
-->            : ^^^^^
+@@= skipped -22, +22 lines =@@
  >{} : {}
-->   : ^^
  
  ({
 ->({    // @ts-ignore    ...b2,    a}) : error
@@ -63,11 +31,9 @@
      // @ts-ignore
      ...b2,
  >b2 : never
-->   : ^^^^^
  
      a
 ->a : { a: number; }
-->  : ^^^^^^^^^^^^^^
 +>a : any
  
  })

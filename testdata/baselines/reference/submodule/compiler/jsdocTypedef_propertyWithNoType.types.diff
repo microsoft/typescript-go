@@ -5,12 +5,7 @@
  /** @type {Foo} */
  const x = { foo: 0 };
 ->x : Foo
-->  : ^^^
 +>x : { foo: number; }
  >{ foo: 0 } : { foo: number; }
-->           : ^^^^^^^^^^^^^^^^
  >foo : number
-->    : ^^^^^^
  >0 : 0
-->  : ^
- 

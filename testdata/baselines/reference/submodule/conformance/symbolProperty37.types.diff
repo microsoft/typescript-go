@@ -8,21 +8,4 @@
 +
      [Symbol.isConcatSpreadable]: string;
  >[Symbol.isConcatSpreadable] : string
-->                            : ^^^^^^
  >Symbol.isConcatSpreadable : unique symbol
-->                          : ^^^^^^^^^^^^^
- >Symbol : SymbolConstructor
-->       : ^^^^^^^^^^^^^^^^^
- >isConcatSpreadable : unique symbol
-->                   : ^^^^^^^^^^^^^
- 
-     [Symbol.isConcatSpreadable]: string;
- >[Symbol.isConcatSpreadable] : string
-->                            : ^^^^^^
- >Symbol.isConcatSpreadable : unique symbol
-->                          : ^^^^^^^^^^^^^
- >Symbol : SymbolConstructor
-->       : ^^^^^^^^^^^^^^^^^
- >isConcatSpreadable : unique symbol
-->                   : ^^^^^^^^^^^^^
- }

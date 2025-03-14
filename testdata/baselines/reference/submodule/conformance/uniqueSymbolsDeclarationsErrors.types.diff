@@ -1,107 +1,71 @@
 --- old.uniqueSymbolsDeclarationsErrors.types
 +++ new.uniqueSymbolsDeclarationsErrors.types
-@@= skipped -2, +2 lines =@@
- === uniqueSymbolsDeclarationsErrors.ts ===
- declare const s: unique symbol;
+@@= skipped -4, +4 lines =@@
  >s : unique symbol
-->  : ^^^^^^^^^^^^^
  
  interface I { readonly readonlyType: unique symbol; }
 +>I : I
  >readonlyType : unique symbol
-->             : ^^^^^^^^^^^^^
  
  // not allowed when emitting declarations
  
  export const obj = {
 ->obj : { method1(p: typeof s): typeof s; method2(p: I["readonlyType"]): I["readonlyType"]; }
-->    : ^^^^^^^^^^ ^^        ^^^        ^^^^^^^^^^ ^^                 ^^^                 ^^^
 ->{    method1(p: typeof s): typeof s {        return p;    },    method2(p: I["readonlyType"]): I["readonlyType"] {        return p;    }} : { method1(p: typeof s): typeof s; method2(p: I["readonlyType"]): I["readonlyType"]; }
-->                                                                                                                                          : ^^^^^^^^^^ ^^        ^^^        ^^^^^^^^^^ ^^                 ^^^                 ^^^
 +>obj : { method1: (p: unique symbol) => unique symbol; method2: (p: unique symbol) => unique symbol; }
 +>{    method1(p: typeof s): typeof s {        return p;    },    method2(p: I["readonlyType"]): I["readonlyType"] {        return p;    }} : { method1: (p: unique symbol) => unique symbol; method2: (p: unique symbol) => unique symbol; }
  
      method1(p: typeof s): typeof s {
 ->method1 : (p: typeof s) => typeof s
-->        : ^ ^^        ^^^^^        
 +>method1 : (p: unique symbol) => unique symbol
  >p : unique symbol
-->  : ^^^^^^^^^^^^^
 ->s : unique symbol
-->  : ^^^^^^^^^^^^^
 ->s : unique symbol
-->  : ^^^^^^^^^^^^^
  
          return p;
  >p : unique symbol
-->  : ^^^^^^^^^^^^^
  
      },
      method2(p: I["readonlyType"]): I["readonlyType"] {
 ->method2 : (p: I["readonlyType"]) => I["readonlyType"]
-->        : ^ ^^                 ^^^^^                 
 +>method2 : (p: unique symbol) => unique symbol
  >p : unique symbol
-->  : ^^^^^^^^^^^^^
  
          return p;
- >p : unique symbol
-->  : ^^^^^^^^^^^^^
-     }
- };
- 
- export const classExpression = class {
- >classExpression : typeof classExpression
-->                : ^^^^^^^^^^^^^^^^^^^^^^
+@@= skipped -32, +31 lines =@@
  >class {    method1(p: typeof s): typeof s {        return p;    }    method2(p: I["readonlyType"]): I["readonlyType"] {        return p;    }} : typeof classExpression
-->                                                                                                                                               : ^^^^^^^^^^^^^^^^^^^^^^
  
      method1(p: typeof s): typeof s {
 ->method1 : (p: typeof s) => typeof s
-->        : ^ ^^        ^^^^^        
 +>method1 : (p: unique symbol) => unique symbol
  >p : unique symbol
-->  : ^^^^^^^^^^^^^
 ->s : unique symbol
-->  : ^^^^^^^^^^^^^
 ->s : unique symbol
-->  : ^^^^^^^^^^^^^
  
          return p;
  >p : unique symbol
-->  : ^^^^^^^^^^^^^
      }
      method2(p: I["readonlyType"]): I["readonlyType"] {
 ->method2 : (p: I["readonlyType"]) => I["readonlyType"]
-->        : ^ ^^                 ^^^^^                 
 +>method2 : (p: unique symbol) => unique symbol
  >p : unique symbol
-->  : ^^^^^^^^^^^^^
  
          return p;
- >p : unique symbol
-->  : ^^^^^^^^^^^^^
-     }
+@@= skipped -18, +16 lines =@@
  };
  
  export function funcInferredReturnType(obj: { method(p: typeof s): void }) {
 ->funcInferredReturnType : (obj: { method(p: typeof s): void; }) => { method(p: typeof s): void; }
-->                       : ^   ^^                              ^^^^^^^^^^^^^^ ^^        ^^^    ^^^
 ->obj : { method(p: typeof s): void; }
-->    : ^^^^^^^^^ ^^        ^^^    ^^^
 ->method : (p: typeof s) => void
-->       : ^ ^^        ^^^^^    
 +>funcInferredReturnType : (obj: { method: (p: unique symbol) => void; }) => { method: (p: unique symbol) => void; }
 +>obj : { method: (p: unique symbol) => void; }
 +>method : (p: unique symbol) => void
  >p : unique symbol
-->  : ^^^^^^^^^^^^^
 ->s : unique symbol
-->  : ^^^^^^^^^^^^^
  
      return obj;
 ->obj : { method(p: typeof s): void; }
-->    : ^^^^^^^^^ ^^        ^^^    ^^^
 +>obj : { method: (p: unique symbol) => void; }
  }
  
@@ -111,7 +75,6 @@
      [s]: any;
  >[s] : any
  >s : unique symbol
-->  : ^^^^^^^^^^^^^
  }
  
  export interface InterfaceWithPrivateNamedMethods {
@@ -119,91 +82,4 @@
 +
      [s](): any;
  >[s] : () => any
-->    : ^^^^^^   
  >s : unique symbol
-->  : ^^^^^^^^^^^^^
- }
- 
- export type TypeLiteralWithPrivateNamedProperties = {
- >TypeLiteralWithPrivateNamedProperties : TypeLiteralWithPrivateNamedProperties
-->                                      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
-     [s]: any;
- >[s] : any
- >s : unique symbol
-->  : ^^^^^^^^^^^^^
- }
- 
- export type TypeLiteralWithPrivateNamedMethods = {
- >TypeLiteralWithPrivateNamedMethods : TypeLiteralWithPrivateNamedMethods
-->                                   : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
-     [s](): any;
- >[s] : () => any
-->    : ^^^^^^   
- >s : unique symbol
-->  : ^^^^^^^^^^^^^
- }
- 
- export class ClassWithPrivateNamedProperties {
- >ClassWithPrivateNamedProperties : ClassWithPrivateNamedProperties
-->                                : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
-     [s]: any;
- >[s] : any
- >s : unique symbol
-->  : ^^^^^^^^^^^^^
- 
-     static [s]: any;
- >[s] : any
- >s : unique symbol
-->  : ^^^^^^^^^^^^^
- }
- 
- export class ClassWithPrivateNamedMethods {
- >ClassWithPrivateNamedMethods : ClassWithPrivateNamedMethods
-->                             : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
-     [s]() {}
- >[s] : () => void
-->    : ^^^^^^^^^^
- >s : unique symbol
-->  : ^^^^^^^^^^^^^
- 
-     static [s]() {}
- >[s] : () => void
-->    : ^^^^^^^^^^
- >s : unique symbol
-->  : ^^^^^^^^^^^^^
- }
- 
- export class ClassWithPrivateNamedAccessors {
- >ClassWithPrivateNamedAccessors : ClassWithPrivateNamedAccessors
-->                               : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
-     get [s](): any { return undefined; }
- >[s] : any
- >s : unique symbol
-->  : ^^^^^^^^^^^^^
- >undefined : undefined
-->          : ^^^^^^^^^
- 
-     set [s](v: any) { }
- >[s] : any
- >s : unique symbol
-->  : ^^^^^^^^^^^^^
- >v : any
- 
-     static get [s](): any { return undefined; }
- >[s] : any
- >s : unique symbol
-->  : ^^^^^^^^^^^^^
- >undefined : undefined
-->          : ^^^^^^^^^
- 
-     static set [s](v: any) { }
- >[s] : any
- >s : unique symbol
-->  : ^^^^^^^^^^^^^
- >v : any
- }

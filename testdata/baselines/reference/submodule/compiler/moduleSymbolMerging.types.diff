@@ -1,21 +1,12 @@
 --- old.moduleSymbolMerging.types
 +++ new.moduleSymbolMerging.types
-@@= skipped -3, +3 lines =@@
- ///<reference path="A.ts" preserve="true" />
- module A { ; }
- >A : typeof A
-->  : ^^^^^^^^
- 
- module B {
+@@= skipped -8, +8 lines =@@
  >B : typeof B
-->  : ^^^^^^^^
  
  	export function f(): A.I { return null; }
 ->f : () => A.I
-->  : ^^^^^^   
 +>f : () => I
  >A : any
-->  : ^^^
  }
  
  

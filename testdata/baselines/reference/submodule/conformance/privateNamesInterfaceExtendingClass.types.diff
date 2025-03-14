@@ -1,30 +1,6 @@
 --- old.privateNamesInterfaceExtendingClass.types
 +++ new.privateNamesInterfaceExtendingClass.types
-@@= skipped -2, +2 lines =@@
- === privateNamesInterfaceExtendingClass.ts ===
- class C {
- >C : C
-->  : ^
- 
-     #prop;
- >#prop : any
-->      : ^^^
- 
-     func(x: I) {
- >func : (x: I) => void
-->     : ^ ^^ ^^^^^^^^^
- >x : I
-->  : ^
- 
-         x.#prop = 123;
- >x.#prop = 123 : 123
-->              : ^^^
- >x.#prop : any
-->        : ^^^
- >x : I
-->  : ^
- >123 : 123
-->    : ^^^
+@@= skipped -18, +18 lines =@@
      }
  }
  interface I extends C {}
@@ -32,19 +8,3 @@
  
  function func(x: I) {
  >func : (x: I) => void
-->     : ^ ^^ ^^^^^^^^^
- >x : I
-->  : ^
- 
-     x.#prop = 123;
- >x.#prop = 123 : 123
-->              : ^^^
- >x.#prop : any
-->        : ^^^
- >x : I
-->  : ^
- >123 : 123
-->    : ^^^
- }
- 
- 

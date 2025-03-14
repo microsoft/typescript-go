@@ -1,67 +1,18 @@
 --- old.privateNameStaticAccessorssDerivedClasses.types
 +++ new.privateNameStaticAccessorssDerivedClasses.types
-@@= skipped -2, +2 lines =@@
- === privateNameStaticAccessorssDerivedClasses.ts ===
- class Base {
- >Base : Base
-->     : ^^^^
- 
-     static get #prop(): number { return  123; }
- >#prop : number
-->      : ^^^^^^
- >123 : 123
-->    : ^^^
- 
+@@= skipped -10, +10 lines =@@
      static method(x: typeof Derived) {
  >method : (x: typeof Derived) => void
-->       : ^ ^^              ^^^^^^^^^
  >x : typeof Derived
-->  : ^^^^^^^^^^^^^^
 ->Derived : typeof Derived
-->        : ^^^^^^^^^^^^^^
  
          console.log(x.#prop);
  >console.log(x.#prop) : void
-->                     : ^^^^
- >console.log : (...data: any[]) => void
-->            : ^^^^    ^^     ^^^^^    
- >console : Console
-->        : ^^^^^^^
- >log : (...data: any[]) => void
-->    : ^^^^    ^^     ^^^^^    
- >x.#prop : any
-->        : ^^^
- >x : typeof Derived
-->  : ^^^^^^^^^^^^^^
-     }
- }
- class Derived extends Base {
- >Derived : Derived
-->        : ^^^^^^^
- >Base : Base
-->     : ^^^^
- 
+@@= skipped -18, +17 lines =@@
      static method(x: typeof Derived) {
  >method : (x: typeof Derived) => void
-->       : ^ ^^              ^^^^^^^^^
  >x : typeof Derived
-->  : ^^^^^^^^^^^^^^
 ->Derived : typeof Derived
-->        : ^^^^^^^^^^^^^^
  
          console.log(x.#prop);
  >console.log(x.#prop) : void
-->                     : ^^^^
- >console.log : (...data: any[]) => void
-->            : ^^^^    ^^     ^^^^^    
- >console : Console
-->        : ^^^^^^^
- >log : (...data: any[]) => void
-->    : ^^^^    ^^     ^^^^^    
- >x.#prop : any
-->        : ^^^
- >x : typeof Derived
-->  : ^^^^^^^^^^^^^^
-     }
- }
- 

@@ -5,41 +5,21 @@
  >ns.next = ns.next || { shared: {} } : any
  >ns.next : any
 ->ns : typeof ns
-->   : ^^^^^^^^^
 +>ns : any
  >next : any
-->     : ^^^
  >ns.next || { shared: {} } : any
  >ns.next : any
 ->ns : typeof ns
-->   : ^^^^^^^^^
 +>ns : any
  >next : any
-->     : ^^^
  >{ shared: {} } : { shared: {}; }
-->               : ^^^^^^^^^^^^^^^
  >shared : {}
-->       : ^^
- >{} : {}
-->   : ^^
- 
- ns.next.shared.mymethod = {};
- >ns.next.shared.mymethod = {} : {}
-->                             : ^^
+@@= skipped -15, +15 lines =@@
  >ns.next.shared.mymethod : any
  >ns.next.shared : any
-->               : ^^^
  >ns.next : any
-->        : ^^^
 ->ns : typeof ns
-->   : ^^^^^^^^^
 +>ns : any
  >next : any
-->     : ^^^
  >shared : any
-->       : ^^^
  >mymethod : any
-->         : ^^^
- >{} : {}
-->   : ^^
- 

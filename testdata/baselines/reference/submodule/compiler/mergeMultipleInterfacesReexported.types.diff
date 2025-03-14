@@ -1,20 +1,6 @@
 --- old.mergeMultipleInterfacesReexported.types
 +++ new.mergeMultipleInterfacesReexported.types
-@@= skipped -6, +6 lines =@@
- === test.ts ===
- import { EventList } from "./eventList";
- >EventList : any
-->          : ^^^
- 
- declare const p012: "p0" | "p1" | "p2"
- >p012 : "p0" | "p1" | "p2"
-->     : ^^^^^^^^^^^^^^^^^^
- 
- const t: keyof EventList = p012
- >t : keyof EventList
-->  : ^^^^^^^^^^^^^^^
- >p012 : "p0" | "p1" | "p2"
-->     : ^^^^^^^^^^^^^^^^^^
+@@= skipped -16, +16 lines =@@
  
  === eventList.ts ===
  export interface EventList {
@@ -22,35 +8,22 @@
 +
      p0: [];
  >p0 : []
-->   : ^^
  }
- 
- === foo.ts ===
- declare module './index' {
+@@= skipped -9, +11 lines =@@
  >'./index' : typeof import("index")
-->          : ^^^^^^^^^^^^^^^^^^^^^^
  
      interface EventList {
 +>EventList : EventList
 +
          p1: []
  >p1 : []
-->   : ^^
      }
- }
- export {};
-@@= skipped -36, +33 lines =@@
- === bar.ts ===
- declare module './index' {
+@@= skipped -12, +14 lines =@@
  >'./index' : typeof import("index")
-->          : ^^^^^^^^^^^^^^^^^^^^^^
  
      interface EventList {
 +>EventList : EventList
 +
          p2: []
  >p2 : []
-->   : ^^
      }
- }
- export {};

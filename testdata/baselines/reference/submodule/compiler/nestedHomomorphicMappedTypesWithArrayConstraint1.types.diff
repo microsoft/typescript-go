@@ -4,7 +4,6 @@
  
  type MatchArguments<T> = {
  >MatchArguments : MatchArguments<T>
-->               : ^^^^^^^^^^^^^^^^^
 +>T : T
  
      [K in keyof T]: T[K];
@@ -18,7 +17,4 @@
 +
      calledWith(...args: Partial<MatchArguments<TArgs>>): boolean;
  >calledWith : (...args: Partial<MatchArguments<TArgs>>) => boolean
-->           : ^^^^    ^^                              ^^^^^       
  >args : Partial<MatchArguments<TArgs>>
-->     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- }

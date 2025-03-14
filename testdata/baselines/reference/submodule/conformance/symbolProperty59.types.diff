@@ -8,13 +8,9 @@
 +
      [Symbol.keyFor]: string;
  >[Symbol.keyFor] : string
-->                : ^^^^^^
 ->Symbol.keyFor : (sym: symbol) => string | undefined
-->              : ^   ^^      ^^^^^                  
 +>Symbol.keyFor : (sym: symbol) => string
  >Symbol : SymbolConstructor
-->       : ^^^^^^^^^^^^^^^^^
 ->keyFor : (sym: symbol) => string | undefined
-->       : ^   ^^      ^^^^^                  
 +>keyFor : (sym: symbol) => string
  }

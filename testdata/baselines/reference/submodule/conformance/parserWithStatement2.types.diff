@@ -1,9 +1,0 @@
---- old.parserWithStatement2.types
-+++ new.parserWithStatement2.types
-@@= skipped -2, +2 lines =@@
- === parserWithStatement2.ts ===
- with (1)
- >1 : 1
-->  : ^
- 
-   return;

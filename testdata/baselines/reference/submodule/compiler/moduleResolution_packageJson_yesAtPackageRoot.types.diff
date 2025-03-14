@@ -1,8 +1,0 @@
---- old.moduleResolution_packageJson_yesAtPackageRoot.types
-+++ new.moduleResolution_packageJson_yesAtPackageRoot.types
-@@= skipped -2, +2 lines =@@
- === /a.ts ===
- import { x } from "foo/bar";
- >x : any
-->  : ^^^
- 

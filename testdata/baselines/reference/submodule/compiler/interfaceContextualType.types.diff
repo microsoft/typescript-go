@@ -8,89 +8,13 @@
 +
      italic?: boolean;
  >italic : boolean
-->       : ^^^^^^^
  
-     bold?: boolean;
+@@= skipped -7, +9 lines =@@
  >bold : boolean
-->     : ^^^^^^^
  }
  export interface IMap {
 +>IMap : IMap
 +
      [s: string]: IOptions;
  >s : string
-->  : ^^^^^^
  }
- 
- class Bug {
- >Bug : Bug
-->    : ^^^
- 
-     public values: IMap;
- >values : IMap
-->       : ^^^^
- 
-     ok() {
- >ok : () => void
-->   : ^^^^^^^^^^
- 
-         this.values = {};
- >this.values = {} : {}
-->                 : ^^
- >this.values : IMap
-->            : ^^^^
- >this : this
-->     : ^^^^
- >values : IMap
-->       : ^^^^
- >{} : {}
-->   : ^^
- 
-         this.values['comments'] = { italic: true };
- >this.values['comments'] = { italic: true } : { italic: true; }
-->                                           : ^^^^^^^^^^^^^^^^^
- >this.values['comments'] : IOptions
-->                        : ^^^^^^^^
- >this.values : IMap
-->            : ^^^^
- >this : this
-->     : ^^^^
- >values : IMap
-->       : ^^^^
- >'comments' : "comments"
-->           : ^^^^^^^^^^
- >{ italic: true } : { italic: true; }
-->                 : ^^^^^^^^^^^^^^^^^
- >italic : true
-->       : ^^^^
- >true : true
-->     : ^^^^
-     }
-     shouldBeOK() {
- >shouldBeOK : () => void
-->           : ^^^^^^^^^^
- 
-         this.values = {
- >this.values = {            comments: { italic: true }        } : { comments: { italic: true; }; }
-->                                                               : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >this.values : IMap
-->            : ^^^^
- >this : this
-->     : ^^^^
- >values : IMap
-->       : ^^^^
- >{            comments: { italic: true }        } : { comments: { italic: true; }; }
-->                                                 : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
-             comments: { italic: true }
- >comments : { italic: true; }
-->         : ^^^^^^^^^^^^^^^^^
- >{ italic: true } : { italic: true; }
-->                 : ^^^^^^^^^^^^^^^^^
- >italic : true
-->       : ^^^^
- >true : true
-->     : ^^^^
- 
-         };
-     }

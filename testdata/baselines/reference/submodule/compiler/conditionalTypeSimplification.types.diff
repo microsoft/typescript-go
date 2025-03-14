@@ -10,22 +10,17 @@
 +
    m1<T> (v: T): SchemaType<S, Exclude<V, T>>;
  >m1 : <T>(v: T) => SchemaType<S, Exclude<V, T>>
-->   : ^ ^^ ^^ ^^^^^                            
 +>T : T
  >v : T
-->  : ^
  
    m2<T> (v: T): SchemaType<S, T>;
  >m2 : <T>(v: T) => SchemaType<S, T>
-->   : ^ ^^ ^^ ^^^^^                
 +>T : T
  >v : T
-->  : ^
  }
  
  type SchemaType<S, V> = S extends object ? AnySchema<V> : never;
  >SchemaType : SchemaType<S, V>
-->           : ^^^^^^^^^^^^^^^^
 +>S : S
 +>V : V
  

@@ -4,7 +4,6 @@
  
  type WithSpec<T extends number> = T
  >WithSpec : T
-->         : ^
 +>T : T
  
  type R = WithSpec<Spec> // should not error

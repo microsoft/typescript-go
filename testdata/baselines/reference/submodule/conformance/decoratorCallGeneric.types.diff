@@ -9,33 +9,12 @@
 +
      prototype: T,
  >prototype : T
-->          : ^
  
-     m: () => T
- >m : () => T
-->  : ^^^^^^ 
+@@= skipped -8, +11 lines =@@
  }
  function dec<T>(c: I<T>) { }
  >dec : <T>(c: I<T>) => void
-->    : ^ ^^ ^^    ^^^^^^^^^
 +>T : T
  >c : I<T>
-->  : ^^^^
  
  @dec
- >dec : <T>(c: I<T>) => void
-->    : ^ ^^ ^^    ^^^^^^^^^
- 
- class C {
- >C : C
-->  : ^
- 
-     _brand: any;
- >_brand : any
-->       : ^^^
- 
-     static m() {}
- >m : () => void
-->  : ^^^^^^^^^^
- }
- 

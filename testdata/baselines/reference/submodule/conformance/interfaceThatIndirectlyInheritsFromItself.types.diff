@@ -8,7 +8,6 @@
 +
      x: string;
  >x : string
-->  : ^^^^^^
  }
  
  interface Derived extends Base {
@@ -16,7 +15,6 @@
 +
      y: string;
  >y : string
-->  : ^^^^^^
  }
  
  interface Derived2 extends Derived {
@@ -24,7 +22,6 @@
 +
      z: string;
  >z : string
-->  : ^^^^^^
  }
  
  module Generic {
@@ -36,7 +33,6 @@
 +
          x: string;
  >x : string
-->  : ^^^^^^
      }
  
      interface Derived<T> extends Base<T> {
@@ -45,7 +41,6 @@
 +
          y: string;
  >y : string
-->  : ^^^^^^
      }
  
      interface Derived2<T> extends Derived<T> {
@@ -54,6 +49,4 @@
 +
          z: string;
  >z : string
-->  : ^^^^^^
      }
- }

@@ -9,15 +9,12 @@
 +>a : any
 +><input value="  foo: 23"></input> : any
  >input : any
-->      : ^^^
 ->value : string
-->      : ^^^^^^
 +>value : any
  
    foo: 23
  "></input>;
  >input : any
-->      : ^^^
  
  const b = <input value='
 ->b : error
@@ -25,13 +22,8 @@
 +>b : any
 +><input value='foo: 23'></input> : any
  >input : any
-->      : ^^^
 ->value : string
-->      : ^^^^^^
 +>value : any
  
  foo: 23
  '></input>;
- >input : any
-->      : ^^^
- 

@@ -4,18 +4,7 @@
  === decoratorOnClassMethod8.ts ===
  declare function dec<T>(target: T): T;
  >dec : <T>(target: T) => T
-->    : ^ ^^      ^^ ^^^^^ 
 +>T : T
  >target : T
-->       : ^
  
  class C {
- >C : C
-->  : ^
- 
-     @dec method() {}
- >dec : <T>(target: T) => T
-->    : ^ ^^      ^^ ^^^^^ 
- >method : () => void
-->       : ^^^^^^^^^^
- }

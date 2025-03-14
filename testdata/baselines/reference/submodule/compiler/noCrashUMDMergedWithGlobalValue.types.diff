@@ -1,14 +1,6 @@
 --- old.noCrashUMDMergedWithGlobalValue.types
 +++ new.noCrashUMDMergedWithGlobalValue.types
-@@= skipped -2, +2 lines =@@
- === /other.d.ts ===
- export as namespace SomeInterface;
- >SomeInterface : typeof import("/other")
-->              : ^^^^^^^^^^^^^^^^^^^^^^^
- 
- export type Action = "PUSH" | "POP" | "REPLACE";
- >Action : Action
-->       : ^^^^^^
+@@= skipped -8, +8 lines =@@
  
  === /main.ts ===
  interface SomeInterface {
@@ -16,10 +8,8 @@
 +
    readonly length: number;
  >length : number
-->       : ^^^^^^
  }
  declare const value: SomeInterface;
 ->value : import("/other")
-->      : ^^^^^^^^^^^^^^^^
 +>value : "/other"
  

@@ -13,14 +13,9 @@
  /// <reference path="react16.d.ts" />
  const a = <div></div>
 ->a : JSX.Element
-->  : ^^^^^^^^^^^
 -><div></div> : JSX.Element
-->            : ^^^^^^^^^^^
 +>a : any
 +><div></div> : any
  >div : any
-->    : ^^^
  >div : any
-->    : ^^^
  
- export {};

@@ -9,17 +9,12 @@
 +
     compareTo(other: T);
  >compareTo : (other: T) => any
-->          : ^     ^^ ^^^^^^^^
  >other : T
-->      : ^
- }
+@@= skipped -7, +10 lines =@@
  
  declare function sort<U extends IComparable<U>>(items: U[]): U[];
  >sort : <U extends IComparable<U>>(items: U[]) => U[]
-->     : ^ ^^^^^^^^^              ^^     ^^   ^^^^^   
 +>U : U
  >items : U[]
-->      : ^^^
- 
  
  

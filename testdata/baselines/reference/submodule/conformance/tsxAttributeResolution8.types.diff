@@ -14,20 +14,13 @@
 +
  		test1: {x: string};
  >test1 : { x: string; }
-->      : ^^^^^      ^^^
  >x : string
-->  : ^^^^^^
- 	}
- }
- 
-@@= skipped -15, +19 lines =@@
+@@= skipped -13, +19 lines =@@
  
  // Should be OK
  <test1 {...x} />
 -><test1 {...x} /> : JSX.Element
-->                 : ^^^^^^^^^^^
 +><test1 {...x} /> : any
  >test1 : any
-->      : ^^^
  >x : any
  

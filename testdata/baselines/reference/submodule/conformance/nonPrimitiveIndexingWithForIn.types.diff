@@ -1,16 +1,7 @@
 --- old.nonPrimitiveIndexingWithForIn.types
 +++ new.nonPrimitiveIndexingWithForIn.types
-@@= skipped -2, +2 lines =@@
- === nonPrimitiveIndexingWithForIn.ts ===
- var a: object;
+@@= skipped -8, +8 lines =@@
  >a : object
-->  : ^^^^^^
- 
- for (var key in a) {
- >key : string
-->    : ^^^^^^
- >a : object
-->  : ^^^^^^
  
      var value = a[key];
 ->value : error
@@ -18,8 +9,5 @@
 +>value : any
 +>a[key] : any
  >a : object
-->  : ^^^^^^
  >key : string
-->    : ^^^^^^
  }
- 

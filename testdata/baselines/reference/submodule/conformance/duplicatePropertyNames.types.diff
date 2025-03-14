@@ -8,11 +8,8 @@
 +
      foo: string;
  >foo : string
-->    : ^^^^^^
  
-     foo: string;
- >foo : string
-->    : ^^^^^^
+@@= skipped -8, +10 lines =@@
  }
  
  interface String {
@@ -20,11 +17,8 @@
 +
      foo(): string;
  >foo : { (): string; (): string; }
-->    : ^^^^^^      ^^^^^^      ^^^
  
-     foo(): string;
- >foo : { (): string; (): string; }
-->    : ^^^^^^      ^^^^^^      ^^^
+@@= skipped -8, +10 lines =@@
  }
  
  interface Array<T> {
@@ -33,48 +27,8 @@
 +
      foo: T;
  >foo : T
-->    : ^
  
-     foo: T;
- >foo : T
-->    : ^
- }
- 
- class C {
- >C : C
-->  : ^
- 
-     foo: string;
- >foo : string
-->    : ^^^^^^
- 
-     foo: string;
- >foo : string
-->    : ^^^^^^
- 
-     bar(x) { }
- >bar : (x: any) => void
-->    : ^ ^^^^^^^^^^^^^^
- >x : any
-->  : ^^^
- 
-     bar(x) { }
- >bar : (x: any) => void
-->    : ^ ^^^^^^^^^^^^^^
- >x : any
-->  : ^^^
- 
-     baz = () => { }
- >baz : () => void
-->    : ^^^^^^^^^^
- >() => { } : () => void
-->          : ^^^^^^^^^^
- 
-     baz = () => { }
- >baz : () => void
-->    : ^^^^^^^^^^
- >() => { } : () => void
-->          : ^^^^^^^^^^
+@@= skipped -34, +37 lines =@@
  }
  
  interface I {
@@ -82,62 +36,4 @@
 +
      foo: string;
  >foo : string
-->    : ^^^^^^
- 
-     foo: string;
- >foo : string
-->    : ^^^^^^
- }
- 
- var a: {
- >a : { foo: string; bar: () => {}; }
-->  : ^^^^^^^      ^^^^^^^        ^^^
- 
-     foo: string;
- >foo : string
-->    : ^^^^^^
- 
-     foo: string;
- >foo : string
-->    : ^^^^^^
- 
-     bar: () => {};
- >bar : () => {}
-->    : ^^^^^^  
- 
-     bar: () => {};
- >bar : () => {}
-->    : ^^^^^^  
- }
- 
- var b = {
- >b : { foo: string; bar: () => void; }
-->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >{    foo: '',    foo: '',    bar: () => { },    bar: () => { }} : { foo: string; bar: () => void; }
-->                                                                : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
-     foo: '',
- >foo : string
-->    : ^^^^^^
- >'' : ""
-->   : ^^
- 
-     foo: '',
- >foo : string
-->    : ^^^^^^
- >'' : ""
-->   : ^^
- 
-     bar: () => { },
- >bar : () => void
-->    : ^^^^^^^^^^
- >() => { } : () => void
-->          : ^^^^^^^^^^
- 
-     bar: () => { }
- >bar : () => void
-->    : ^^^^^^^^^^
- >() => { } : () => void
-->          : ^^^^^^^^^^
- }
  

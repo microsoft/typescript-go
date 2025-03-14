@@ -8,11 +8,8 @@
 +
      p: C;
  >p : C
-->  : ^
  
-     s: string;
- >s : string
-->  : ^^^^^^
+@@= skipped -8, +10 lines =@@
  }
  
  interface B {
@@ -20,11 +17,8 @@
 +
      p: D;
  >p : D
-->  : ^
  
-     s: number;
- >s : number
-->  : ^^^^^^
+@@= skipped -8, +10 lines =@@
  }
  
  interface C {
@@ -32,7 +26,6 @@
 +
      q: A;
  >q : A
-->  : ^
  }
  
  interface D {
@@ -40,38 +33,4 @@
 +
      q: B;
  >q : B
-->  : ^
  }
- 
- var a: A;
- >a : A
-->  : ^
- 
- var b: B;
- >b : B
-->  : ^
- 
- var c: C;
- >c : C
-->  : ^
- 
- var d: D;
- >d : D
-->  : ^
- 
- a = b;
- >a = b : B
-->      : ^
- >a : A
-->  : ^
- >b : B
-->  : ^
- 
- c = d; // Should not be allowed
- >c = d : D
-->      : ^
- >c : C
-->  : ^
- >d : D
-->  : ^
- 

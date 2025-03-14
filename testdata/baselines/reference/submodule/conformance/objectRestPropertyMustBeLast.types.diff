@@ -1,70 +1,20 @@
 --- old.objectRestPropertyMustBeLast.types
 +++ new.objectRestPropertyMustBeLast.types
-@@= skipped -2, +2 lines =@@
- === objectRestPropertyMustBeLast.ts ===
- var {...a, x } = { x: 1 };    // Error, rest must be last property
- >a : {}
-->  : ^^
- >x : number
-->  : ^^^^^^
- >{ x: 1 } : { x: number; }
-->         : ^^^^^^^^^^^^^^
- >x : number
-->  : ^^^^^^
- >1 : 1
-->  : ^
- 
- ({...a, x } = { x: 1 });      // Error, rest must be last property
- >({...a, x } = { x: 1 }) : { x: number; }
-->                        : ^^^^^^^^^^^^^^
+@@= skipped -12, +12 lines =@@
  >{...a, x } = { x: 1 } : { x: number; }
-->                      : ^^^^^^^^^^^^^^
  >{...a, x } : { x: number; }
-->           : ^^^^^^^^^^^^^^
  >a : {}
-->  : ^^
 ->x : number
-->  : ^^^^^^
 +>x : any
  >{ x: 1 } : { x: number; }
-->         : ^^^^^^^^^^^^^^
  >x : number
-->  : ^^^^^^
  >1 : 1
-->  : ^
- 
- var {...a, x, ...b } = { x: 1 };    // Error, rest must be last property
- >a : {}
-->  : ^^
- >x : number
-->  : ^^^^^^
- >b : {}
-->  : ^^
- >{ x: 1 } : { x: number; }
-->         : ^^^^^^^^^^^^^^
- >x : number
-->  : ^^^^^^
- >1 : 1
-->  : ^
- 
- ({...a, x, ...b } = { x: 1 });      // Error, rest must be last property
- >({...a, x, ...b } = { x: 1 }) : { x: number; }
-->                              : ^^^^^^^^^^^^^^
+@@= skipped -18, +18 lines =@@
  >{...a, x, ...b } = { x: 1 } : { x: number; }
-->                            : ^^^^^^^^^^^^^^
  >{...a, x, ...b } : { x: number; }
-->                 : ^^^^^^^^^^^^^^
  >a : {}
-->  : ^^
 ->x : number
-->  : ^^^^^^
 +>x : any
  >b : {}
-->  : ^^
  >{ x: 1 } : { x: number; }
-->         : ^^^^^^^^^^^^^^
  >x : number
-->  : ^^^^^^
- >1 : 1
-->  : ^
- 

@@ -8,27 +8,20 @@
 +
      a: number;
  >a : number
-->  : ^^^^^^
  }
  export interface B {
 +>B : B
 +
      a: number;
  >a : number
-->  : ^^^^^^
  }
- 
- === /foo.js ===
-@@= skipped -23, +25 lines =@@
+@@= skipped -21, +25 lines =@@
   * @param { B } b
   */
  function f(a, b) {}
 ->f : (a: A, b: B) => void
-->  : ^ ^^^^^ ^^^^^^^^^^^^
 ->a : A
-->  : ^
 ->b : B
-->  : ^
 +>f : (a: any, b: any) => void
 +>a : any
 +>b : any

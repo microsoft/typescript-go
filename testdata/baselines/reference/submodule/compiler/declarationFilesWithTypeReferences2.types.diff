@@ -8,15 +8,4 @@
 +
      stack2: string;
  >stack2 : string
-->       : ^^^^^^
- }
- 
- === /app.ts ===
- function foo(): Error2 {
- >foo : () => Error2
-->    : ^^^^^^      
- 
-     return undefined;
- >undefined : undefined
-->          : ^^^^^^^^^
  }

@@ -8,18 +8,4 @@
 +
      newSymbolProp: number;
  >newSymbolProp : number
-->              : ^^^^^^
  }
- 
- var sym: symbol;
- >sym : symbol
-->    : ^^^^^^
- 
- sym.newSymbolProp;
- >sym.newSymbolProp : number
-->                  : ^^^^^^
- >sym : symbol
-->    : ^^^^^^
- >newSymbolProp : number
-->              : ^^^^^^
- 

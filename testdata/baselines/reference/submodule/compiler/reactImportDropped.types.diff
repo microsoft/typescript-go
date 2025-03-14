@@ -1,22 +1,6 @@
 --- old.reactImportDropped.types
 +++ new.reactImportDropped.types
-@@= skipped -2, +2 lines =@@
- === react.d.ts ===
- export = React;
- >React : typeof React
-->      : ^^^^^^^^^^^^
- 
- export as namespace React;
- >React : typeof React
-->      : ^^^^^^^^^^^^
- 
- declare namespace React {
- >React : typeof React
-->      : ^^^^^^^^^^^^
- 
-     function createClass(spec: any): ClassicComponentClass;
- >createClass : (spec: any) => ClassicComponentClass
-->            : ^    ^^   ^^^^^                     
+@@= skipped -14, +14 lines =@@
  >spec : any
  
      interface ClassicComponentClass {
@@ -25,11 +9,8 @@
          new (props?: any): ClassicComponentClass;
  >props : any
      }
-@@= skipped -23, +21 lines =@@
- 
- declare global {
+@@= skipped -9, +11 lines =@@
  >global : any
-->       : ^^^
  
      namespace JSX {
 +>JSX : any
@@ -43,15 +24,10 @@
  === src/components/TabBar.js ===
  export default React.createClass({
 ->React.createClass({  render() {    return (      null    );  }}) : import("react").ClassicComponentClass
-->                                                                 : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ->React.createClass : (spec: any) => import("react").ClassicComponentClass
-->                  : ^    ^^   ^^^^^       ^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^
 ->React : typeof import("react")
-->      : ^^^^^^^^^^^^^^^^^^^^^^
 ->createClass : (spec: any) => import("react").ClassicComponentClass
-->            : ^    ^^   ^^^^^       ^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^
 ->{  render() {    return (      null    );  }} : { render(): any; }
-->                                              : ^^^^^^^^^^^^^^^^^^
 +>React.createClass({  render() {    return (      null    );  }}) : ClassicComponentClass
 +>React.createClass : (spec: any) => ClassicComponentClass
 +>React : typeof React
@@ -60,31 +36,20 @@
  
    render() {
  >render : () => any
-->       : ^^^^^^^^^
- 
-     return (
- >(      null    ) : null
-->                 : ^^^^
- 
-       null
-     );
-@@= skipped -36, +31 lines =@@
+@@= skipped -26, +29 lines =@@
  
  === src/modules/navigation/NavigationView.js ===
  import TabBar from '../../components/TabBar';
 ->TabBar : import("react").ClassicComponentClass
-->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>TabBar : ClassicComponentClass
  
  import {layout} from '../../utils/theme'; // <- DO NOT DROP this import
  >layout : any
-->       : ^^^
  
  const x = <TabBar height={layout.footerHeight} />;
 ->x : error
 -><TabBar height={layout.footerHeight} /> : error
 ->TabBar : import("react").ClassicComponentClass
-->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ->height : error
 ->layout.footerHeight : error
 +>x : any
@@ -93,7 +58,5 @@
 +>height : any
 +>layout.footerHeight : any
  >layout : any
-->       : ^^^
  >footerHeight : any
-->             : ^^^
  

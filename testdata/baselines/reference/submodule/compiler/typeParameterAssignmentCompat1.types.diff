@@ -9,66 +9,25 @@
 +
      frobble(value: T): T;
  >frobble : (value: T) => T
-->        : ^     ^^ ^^^^^ 
  >value : T
-->      : ^
- }
+@@= skipped -7, +10 lines =@@
  
  function f<T, U>(): Foo<U> {
  >f : <T, U>() => Foo<U>
-->  : ^ ^^ ^^^^^^^      
 +>T : T
 +>U : U
  
      var x: Foo<T>;
  >x : Foo<T>
-->  : ^^^^^^
- 
-     var y: Foo<U>;
- >y : Foo<U>
-->  : ^^^^^^
- 
-     x = y; // should be an error
- >x = y : Foo<U>
-->      : ^^^^^^
- >x : Foo<T>
-->  : ^^^^^^
- >y : Foo<U>
-->  : ^^^^^^
- 
-     return x;
- >x : Foo<T>
-->  : ^^^^^^
- }
+@@= skipped -18, +20 lines =@@
  
  class C<T> {
  >C : C<T>
-->  : ^^^^
 +>T : T
  
      f<U>(): Foo<U> {
  >f : <U>() => Foo<U>
-->  : ^ ^^^^^^^      
 +>U : U
  
          var x: Foo<T>;
  >x : Foo<T>
-->  : ^^^^^^
- 
-         var y: Foo<U>;
- >y : Foo<U>
-->  : ^^^^^^
- 
-         x = y; // should be an error
- >x = y : Foo<U>
-->      : ^^^^^^
- >x : Foo<T>
-->  : ^^^^^^
- >y : Foo<U>
-->  : ^^^^^^
- 
-         return x;
- >x : Foo<T>
-->  : ^^^^^^
-     }
- }

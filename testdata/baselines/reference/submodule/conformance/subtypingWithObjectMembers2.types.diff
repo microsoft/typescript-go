@@ -8,7 +8,6 @@
 +
      foo: string;
  >foo : string
-->    : ^^^^^^
  }
  
  interface Derived extends Base {
@@ -16,9 +15,8 @@
 +
      bar: string;
  >bar : string
-->    : ^^^^^^
  }
- 
+@@= skipped -12, +16 lines =@@
  // N and M have the same name, same accessibility, same optionality, and N is a subtype of M
  // foo properties are valid, bar properties cause errors in the derived class declarations
  module NotOptional {
@@ -29,11 +27,8 @@
 +
          foo: Base;
  >foo : Base
-->    : ^^^^
  
-         bar: Base;
- >bar : Base
-->    : ^^^^
+@@= skipped -9, +13 lines =@@
      }
  
      interface B extends A {
@@ -41,11 +36,8 @@
 +
          foo: Derived; // ok
  >foo : Derived
-->    : ^^^^^^^
  
-         bar: string; // error
- >bar : string
-->    : ^^^^^^
+@@= skipped -8, +10 lines =@@
      }
  
      interface A2 {
@@ -53,11 +45,8 @@
 +
          1: Base;
  >1 : Base
-->  : ^^^^
  
-         2.0: Base;
- >2.0 : Base
-->    : ^^^^
+@@= skipped -8, +10 lines =@@
      }
  
      interface B2 extends A2 {
@@ -65,11 +54,8 @@
 +
          1: Derived; // ok
  >1 : Derived
-->  : ^^^^^^^
  
-         2: string; // error
- >2 : string
-->  : ^^^^^^
+@@= skipped -8, +10 lines =@@
      }
  
      interface A3 {
@@ -77,11 +63,8 @@
 +
          '1': Base;
  >'1' : Base
-->    : ^^^^
  
-         '2.0': Base;
- >'2.0' : Base
-->      : ^^^^
+@@= skipped -8, +10 lines =@@
      }
  
      interface B3 extends A3 {
@@ -89,13 +72,8 @@
 +
          '1': Derived; // ok
  >'1' : Derived
-->    : ^^^^^^^
  
-         '2.0': string; // error
- >'2.0' : string
-->      : ^^^^^^
-     }
- }
+@@= skipped -10, +12 lines =@@
  
  // same cases as above but with optional
  module Optional {
@@ -106,11 +84,8 @@
 +
          foo?: Base;
  >foo : Base
-->    : ^^^^
  
-         bar?: Base;
- >bar : Base
-->    : ^^^^
+@@= skipped -9, +13 lines =@@
      }
  
      interface B extends A {
@@ -118,11 +93,8 @@
 +
          foo?: Derived; // ok
  >foo : Derived
-->    : ^^^^^^^
  
-         bar?: string; // error
- >bar : string
-->    : ^^^^^^
+@@= skipped -8, +10 lines =@@
      }
  
      interface A2 {
@@ -130,11 +102,8 @@
 +
          1?: Base;
  >1 : Base
-->  : ^^^^
  
-         2.0?: Base;
- >2.0 : Base
-->    : ^^^^
+@@= skipped -8, +10 lines =@@
      }
  
      interface B2 extends A2 {
@@ -142,11 +111,8 @@
 +
          1?: Derived; // ok
  >1 : Derived
-->  : ^^^^^^^
  
-         2?: string; // error
- >2 : string
-->  : ^^^^^^
+@@= skipped -8, +10 lines =@@
      }
  
      interface A3 {
@@ -154,11 +120,8 @@
 +
          '1'?: Base;
  >'1' : Base
-->    : ^^^^
  
-         '2.0'?: Base;
- >'2.0' : Base
-->      : ^^^^
+@@= skipped -8, +10 lines =@@
      }
  
      interface B3 extends A3 {
@@ -166,10 +129,4 @@
 +
          '1'?: Derived; // ok
  >'1' : Derived
-->    : ^^^^^^^
  
-         '2.0'?: string; // error
- >'2.0' : string
-->      : ^^^^^^
-     }
- }

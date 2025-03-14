@@ -1,25 +1,10 @@
 --- old.visSyntax.types
 +++ new.visSyntax.types
-@@= skipped -2, +2 lines =@@
- === visSyntax.ts ===
- module M {
- >M : typeof M
-->  : ^^^^^^^^
- 
-     export class C {
- >C : C
-->  : ^
+@@= skipped -8, +8 lines =@@
      }
  
      export interface I {
 +>I : I
  	
      }
- 
-     export var x=10;
- >x : number
-->  : ^^^^^^
- >10 : 10
-->   : ^^
- }
  

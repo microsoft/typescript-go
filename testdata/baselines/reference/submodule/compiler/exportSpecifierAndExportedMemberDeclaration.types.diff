@@ -1,10 +1,7 @@
 --- old.exportSpecifierAndExportedMemberDeclaration.types
 +++ new.exportSpecifierAndExportedMemberDeclaration.types
-@@= skipped -2, +2 lines =@@
- === exportSpecifierAndExportedMemberDeclaration.ts ===
- declare module "m2" {
+@@= skipped -4, +4 lines =@@
  >"m2" : typeof import("m2")
-->     : ^^^^^^^^^^^^^^^^^^^
  
      export module X {
 +>X : () => any
@@ -14,30 +11,20 @@
      }
      function Y();
  >Y : () => any
-->  : ^^^^^^^^^
- 
-     export { Y as X };
- >Y : () => any
-->  : ^^^^^^^^^
+@@= skipped -10, +13 lines =@@
  >X : () => any
-->  : ^^^^^^^^^
  
      function Z(): X.I;
 ->Z : () => X.I
-->  : ^^^^^^   
 +>Z : () => I
  >X : any
-->  : ^^^
  }
  
- declare module "m2" {
+@@= skipped -8, +8 lines =@@
  >"m2" : typeof import("m2")
-->     : ^^^^^^^^^^^^^^^^^^^
  
      function Z2(): X.I;
 ->Z2 : () => X.I
-->   : ^^^^^^   
 +>Z2 : () => I
  >X : any
-->  : ^^^
  }

@@ -9,35 +9,3 @@
  
  name: string;
  >name : string
-->     : ^^^^^^
- 
- x(): T;
- >x : () => T
-->  : ^^^^^^ 
- 
- }
-  
- class c {
- >c : c
-->  : ^
- 
- foo(): B<void> {
- >foo : () => B<void>
-->    : ^^^^^^       
- 
- return null;
- 
-@@= skipped -27, +25 lines =@@
-  
- class d extends c {
- >d : d
-->  : ^
- >c : c
-->  : ^
- 
- foo(): B<number> {
- >foo : () => B<number>
-->    : ^^^^^^         
- 
- return null;
- 

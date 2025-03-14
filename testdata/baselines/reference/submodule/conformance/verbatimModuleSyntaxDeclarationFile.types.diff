@@ -8,12 +8,9 @@
 +
      type A = object;
  >A : object
-->  : ^^^^^^
  }
- 
- export = NS;
+@@= skipped -8, +10 lines =@@
  >NS : any
-->   : ^^^
  
  export as namespace MyTypes;
 ->MyTypes : error
@@ -26,7 +23,6 @@
  
  export = NS;
  >NS : any
-->   : ^^^
  
  export as namespace ModuleATypes;
 ->ModuleATypes : error

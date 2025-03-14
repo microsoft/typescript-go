@@ -1,8 +1,0 @@
---- old.ambientDeclarationsPatterns_tooManyAsterisks.types
-+++ new.ambientDeclarationsPatterns_tooManyAsterisks.types
-@@= skipped -2, +2 lines =@@
- === ambientDeclarationsPatterns_tooManyAsterisks.ts ===
- declare module "too*many*asterisks" { }
- >"too*many*asterisks" : typeof import("too*many*asterisks")
-->                     : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 

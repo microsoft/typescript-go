@@ -15,12 +15,10 @@
      <T>(x: T): number;
 +>T : T
  >x : T
-->  : ^
  
      <T>(x: T): string; // error
 +>T : T
  >x : T
-->  : ^
  }
  
  interface I2 {
@@ -29,12 +27,10 @@
      <T>(x: T): number;
 +>T : T
  >x : T
-->  : ^
  
      <T>(x: T): string; // error
 +>T : T
  >x : T
-->  : ^
  }
  
  interface I3<T> {
@@ -43,32 +39,15 @@
 +
      (x: T): number;
  >x : T
-->  : ^
  
-     (x: T): string; // error
- >x : T
-->  : ^
- }
- 
- var a: {
- >a : { (x: any, y: any): Object; (x: any, y: any): any; }
-->  : ^^^ ^^^^^^^ ^^^^^^^^      ^^^ ^^^^^^^ ^^^^^^^^   ^^^
- 
-     (x, y): Object;
- >x : any
-@@= skipped -43, +45 lines =@@
- 
- var a2: {
+@@= skipped -38, +47 lines =@@
  >a2 : { <T>(x: T): number; <T>(x: T): string; }
-->   : ^^^ ^^ ^^ ^^^      ^^^ ^^ ^^ ^^^      ^^^
  
      <T>(x: T): number;
 +>T : T
  >x : T
-->  : ^
  
      <T>(x: T): string; // error
 +>T : T
  >x : T
-->  : ^
  }

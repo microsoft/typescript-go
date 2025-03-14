@@ -9,7 +9,6 @@
 +
      x: Foo<Foo<T>>;
  >x : Foo<Foo<T>>
-->  : ^^^^^^^^^^^
  } 
  
  interface Bar<T> extends Foo<T> {
@@ -18,37 +17,4 @@
 +
      y: string;
  >y : string
-->  : ^^^^^^
  }
- 
- function f(p: Foo<number>) {
- >f : (p: Foo<number>) => void
-->  : ^ ^^           ^^^^^^^^^
- >p : Foo<number>
-->  : ^^^^^^^^^^^
- 
-     console.log(p);
- >console.log(p) : void
-->               : ^^^^
- >console.log : (...data: any[]) => void
-->            : ^^^^    ^^     ^^^^^    
- >console : Console
-->        : ^^^^^^^
- >log : (...data: any[]) => void
-->    : ^^^^    ^^     ^^^^^    
- >p : Foo<number>
-->  : ^^^^^^^^^^^
- }
- 
- var v: Bar<number> = null;
- >v : Bar<number>
-->  : ^^^^^^^^^^^
- 
- f(v); // should not error
- >f(v) : void
-->     : ^^^^
- >f : (p: Foo<number>) => void
-->  : ^ ^^           ^^^^^^^^^
- >v : Bar<number>
-->  : ^^^^^^^^^^^
- 

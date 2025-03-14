@@ -4,7 +4,6 @@
  === circularConstrainedMappedTypeNoCrash.ts ===
  type Loop<T, U extends Loop<T, U>> = {
  >Loop : Loop<T, U>
-->     : ^^^^^^^^^^
 +>T : T
 +>U : U
  

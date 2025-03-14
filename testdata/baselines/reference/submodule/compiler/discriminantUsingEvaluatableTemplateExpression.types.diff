@@ -1,63 +1,18 @@
 --- old.discriminantUsingEvaluatableTemplateExpression.types
 +++ new.discriminantUsingEvaluatableTemplateExpression.types
-@@= skipped -4, +4 lines =@@
- 
- type S = { d: "s"; cb: (x: string) => void };
- >S : S
-->  : ^
- >d : "s"
-->  : ^^^
- >cb : (x: string) => void
-->   : ^ ^^      ^^^^^    
- >x : string
-->  : ^^^^^^
- 
- type N = { d: "n"; cb: (x: number) => void };
- >N : N
-->  : ^
- >d : "n"
-->  : ^^^
- >cb : (x: number) => void
-->   : ^ ^^      ^^^^^    
+@@= skipped -15, +15 lines =@@
  >x : number
-->  : ^^^^^^
  
  declare function foo(foo: S | N): void;
 ->foo : (foo: S | N) => void
-->    : ^   ^^     ^^^^^    
 ->foo : S | N
-->    : ^^^^^
 +>foo : (foo: N | S) => void
 +>foo : N | S
  
  foo({
  >foo({  d: `${"s"}`,  cb: (x) => {    x; // string  },}) : void
-->                                                        : ^^^^
 ->foo : (foo: S | N) => void
-->    : ^   ^^     ^^^^^    
 +>foo : (foo: N | S) => void
  >{  d: `${"s"}`,  cb: (x) => {    x; // string  },} : { d: "s"; cb: (x: string) => void; }
-->                                                   : ^^^^^^^^^^^^^^^ ^^^^^^^^^^^^^^^^^^^^
  
    d: `${"s"}`,
- >d : "s"
-->  : ^^^
- >`${"s"}` : "s"
-->         : ^^^
- >"s" : "s"
-->    : ^^^
- 
-   cb: (x) => {
- >cb : (x: string) => void
-->   : ^ ^^^^^^^^^^^^^^^^^
- >(x) => {    x; // string  } : (x: string) => void
-->                            : ^ ^^^^^^^^^^^^^^^^^
- >x : string
-->  : ^^^^^^
- 
-     x; // string
- >x : string
-->  : ^^^^^^
- 
-   },
- });

@@ -11,65 +11,13 @@
 +
          'this:b': any;
  >'this:b' : any
-->         : ^^^
  
-         'b:c': {
- >'b:c' : { x: any; }
-->      : ^^^^^   ^^^
- 
-             x: any
- >x : any
-->  : ^^^
- 
-         };
-         'a:b': any;
- >'a:b' : any
-->      : ^^^
-     }
- }
- 
- <a:b></a:b>;
- ><a:b></a:b> : any
-->            : ^^^
- >a : any
-->  : ^^^
- >b : any
-->  : ^^^
- >a : any
-->  : ^^^
- >b : any
-->  : ^^^
- 
- <b:c.x></b:c.x>;
+@@= skipped -27, +31 lines =@@
  ><b:c.x></b:c : any
-->             : ^^^
  >b : any
-->  : ^^^
  >c : any
-->  : ^^^
 ->x : true
-->  : ^^^^
 +>x : any
  >b : any
-->  : ^^^
  >c : any
-->  : ^^^
  >x> : boolean
-->   : ^^^^^^^
- >x : any
-->  : ^^^
- > : any
--> : ^^^
- 
- <this:b></this:b>;
- ><this:b></this:b> : any
-->                  : ^^^
- >this : any
-->     : ^^^
- >b : any
-->  : ^^^
- >this : any
-->     : ^^^
- >b : any
-->  : ^^^
- 

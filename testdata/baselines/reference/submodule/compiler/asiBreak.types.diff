@@ -1,8 +1,0 @@
---- old.asiBreak.types
-+++ new.asiBreak.types
-@@= skipped -2, +2 lines =@@
- === asiBreak.ts ===
- while (true) break
- >true : true
-->     : ^^^^
- 

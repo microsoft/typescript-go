@@ -1,26 +1,19 @@
 --- old.es5ExportEqualsDts.types
 +++ new.es5ExportEqualsDts.types
-@@= skipped -2, +2 lines =@@
- === es5ExportEqualsDts.ts ===
- class A {
+@@= skipped -4, +4 lines =@@
  >A : A
-->  : ^
  
      foo() {
 ->foo : () => A.B
-->    : ^^^^^^^^^
 +>foo : () => B
  
          var aVal: A.B;
 ->aVal : A.B
-->     : ^^^
 +>aVal : B
  >A : any
-->  : ^^^
  
          return aVal;
 ->aVal : A.B
-->     : ^^^
 +>aVal : B
      }
  }
@@ -33,6 +26,3 @@
  }
  
  export = A
- >A : A
-->  : ^
- 

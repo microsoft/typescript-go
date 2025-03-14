@@ -5,16 +5,7 @@
  === b.ts ===
  import y = require("a"); 
 ->y : typeof y
-->  : ^^^^^^^^
 +>y : typeof import("a")
  
  === node_modules/a/index.d.ts ===
  declare module "a" {
- >"a" : typeof import("a")
-->    : ^^^^^^^^^^^^^^^^^^
- 
-     var x: number;
- >x : number
-->  : ^^^^^^
- }
- 

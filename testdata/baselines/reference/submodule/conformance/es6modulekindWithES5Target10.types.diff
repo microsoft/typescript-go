@@ -1,10 +1,6 @@
 --- old.es6modulekindWithES5Target10.types
 +++ new.es6modulekindWithES5Target10.types
-@@= skipped -2, +2 lines =@@
- === es6modulekindWithES5Target10.ts ===
- import i = require("mod"); // Error;
- >i : any
-->  : ^^^
+@@= skipped -5, +5 lines =@@
  
  
  namespace N {
@@ -12,5 +8,3 @@
  }
  export = N; // Error
  >N : any
-->  : ^^^
- 

@@ -8,15 +8,4 @@
 +
      [index: string]: { prop }
  >index : string
-->      : ^^^^^^
  >prop : any
- }
- class A implements I {
- >A : A
-->  : ^
- 
-     [index: string]: { prop }
- >index : string
-->      : ^^^^^^
- >prop : any
- }

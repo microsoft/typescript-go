@@ -1,8 +1,0 @@
---- old.parserUnicodeWhitespaceCharacter1.types
-+++ new.parserUnicodeWhitespaceCharacter1.types
-@@= skipped -2, +2 lines =@@
- === parserUnicodeWhitespaceCharacter1.ts ===
- function foo(){　}
- >foo : () => void
-->    : ^^^^^^^^^^
- 

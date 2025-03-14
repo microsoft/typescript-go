@@ -1,41 +1,23 @@
 --- old.renamed.types
 +++ new.renamed.types
-@@= skipped -2, +2 lines =@@
- === /a.ts ===
- class A { a!: string }
- >A : A
-->  : ^
- >a : string
-->  : ^^^^^^
- 
- export type { A as B };
- >A : typeof A
-->  : ^^^^^^^^
- >B : A
-->  : ^
+@@= skipped -10, +10 lines =@@
  
  === /b.ts ===
  export type { B as C } from './a';
 ->B : typeof import("/a").B
-->  : ^^^^^^^^^^^^^^^^^^^^^
 ->C : import("/a").B
-->  : ^^^^^^^^^^^^^^
 +>B : typeof A
 +>C : A
  
  === /c.ts ===
  import type { C as D } from './b';
 ->C : typeof D
-->  : ^^^^^^^^
 ->D : D
-->  : ^
 +>C : typeof A
 +>D : A
  
  const d: D = {};
 ->d : D
-->  : ^
 +>d : A
  >{} : {}
-->   : ^^
  

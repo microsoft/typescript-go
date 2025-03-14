@@ -8,28 +8,19 @@
 +
    states?: {
  >states : { [key: string]: StateSchema; } | undefined
-->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
  
-     [key: string]: StateSchema;
- >key : string
-->    : ^^^^^^
- 
-   };
- }
+@@= skipped -11, +13 lines =@@
  
  declare class StateNode<TStateSchema extends StateSchema> {
  >StateNode : StateNode<TStateSchema>
-->          : ^^^^^^^^^^^^^^^^^^^^^^^
 +>TStateSchema : TStateSchema
  
    schema: TStateSchema;
  >schema : TStateSchema
-->       : ^^^^^^^^^^^^
- }
+@@= skipped -7, +8 lines =@@
  
  type StateNodesConfig<TStateSchema extends StateSchema> = {
  >StateNodesConfig : StateNodesConfig<TStateSchema>
-->                 : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>TStateSchema : TStateSchema
  
    [K in keyof TStateSchema["states"]]: StateNode<NonNullable<TStateSchema["states"]>[K]>;
@@ -41,27 +32,20 @@
  
  type Ordering<TOrderBy extends string> = {
  >Ordering : Ordering<TOrderBy>
-->         : ^^^^^^^^^^^^^^^^^^
 +>TOrderBy : TOrderBy
  
      orderBy: TOrderBy
  >orderBy : TOrderBy
-->        : ^^^^^^^^
- }
+@@= skipped -15, +19 lines =@@
  
  type Query<TOrderBy extends string> = {
  >Query : Query<TOrderBy>
-->      : ^^^^^^^^^^^^^^^
 +>TOrderBy : TOrderBy
  
      order?: Ordering<TOrderBy>
  >order : Ordering<TOrderBy> | undefined
-->      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- }
- 
- type QueryHandler<
+@@= skipped -9, +10 lines =@@
  >QueryHandler : QueryHandler<TQuery, TOrderBy>
-->             : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
  
      TQuery extends Query<TOrderBy>,
 +>TQuery : TQuery

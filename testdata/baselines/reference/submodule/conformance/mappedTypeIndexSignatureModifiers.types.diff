@@ -8,75 +8,47 @@
 +
      readonly [key: string]: string;
  >key : string
-->    : ^^^^^^
  }
- type Res1 = Pick<Obj1, keyof Obj1>
+@@= skipped -7, +9 lines =@@
  >Res1 : Res1
-->     : ^^^^
  
  interface Obj2 {
 +>Obj2 : Obj2
 +
      concreteProp: 'hello';
  >concreteProp : "hello"
-->             : ^^^^^^^
  
-     readonly [key: string]: string;
- >key : string
-->    : ^^^^^^
- }
- type Res2 = Pick<Obj2, keyof Obj2>
+@@= skipped -10, +12 lines =@@
  >Res2 : Res2
-->     : ^^^^
  
  interface Obj3 {
 +>Obj3 : Obj3
 +
      readonly [key: string]: string;
  >key : string
-->    : ^^^^^^
  
-     readonly [key: number]: 'foo';
- >key : number
-->    : ^^^^^^
- }
- type Res3 = Pick<Obj3, keyof Obj3>
+@@= skipped -10, +12 lines =@@
  >Res3 : Res3
-->     : ^^^^
  
  interface Obj4 {
 +>Obj4 : Obj4
 +
      [key: string]: string;
  >key : string
-->    : ^^^^^^
  
-     readonly [key: number]: 'foo';
- >key : number
-->    : ^^^^^^
- }
- type Res4 = Pick<Obj4, keyof Obj4>
+@@= skipped -10, +12 lines =@@
  >Res4 : Res4
-->     : ^^^^
  
  interface Obj5 {
 +>Obj5 : Obj5
 +
      readonly [key: string]: string;
  >key : string
-->    : ^^^^^^
  
-     [key: number]: 'foo';
- >key : number
-->    : ^^^^^^
- }
- type Res5 = Pick<Obj5, keyof Obj5>
- >Res5 : Res5
-->     : ^^^^
+@@= skipped -11, +13 lines =@@
  
  type Identity<T> = { [P in keyof T]: T[P]; }
  >Identity : Identity<T>
-->         : ^^^^^^^^^^^
 +>T : T
 +>P : P
  
@@ -85,45 +57,29 @@
 +
      readonly [key: `wow${string}`]: 'foo';
  >key : `wow${string}`
-->    : ^^^^^^^^^^^^^^
  }
- type Res6 = Identity<Obj6>
+@@= skipped -9, +13 lines =@@
  >Res6 : Identity<Obj6>
-->     : ^^^^^^^^^^^^^^
  
  interface Obj7 {
 +>Obj7 : Obj7
 +
      [key: string]: string;
  >key : string
-->    : ^^^^^^
  
-     readonly [key: `wow${string}`]: 'foo';
- >key : `wow${string}`
-->    : ^^^^^^^^^^^^^^
- }
- type Res7 = Identity<Obj7>
+@@= skipped -10, +12 lines =@@
  >Res7 : Identity<Obj7>
-->     : ^^^^^^^^^^^^^^
  
  interface Obj8 {
 +>Obj8 : Obj8
 +
      readonly [key: string]: string;
  >key : string
-->    : ^^^^^^
  
-     [key: `wow${string}`]: 'foo';
- >key : `wow${string}`
-->    : ^^^^^^^^^^^^^^
- }
- type Res8 = Identity<Obj8>
- >Res8 : Identity<Obj8>
-->     : ^^^^^^^^^^^^^^
+@@= skipped -11, +13 lines =@@
  
  type StrippingPick<T, K extends keyof T> = { -readonly [P in K]: T[P]; }
  >StrippingPick : StrippingPick<T, K>
-->              : ^^^^^^^^^^^^^^^^^^^
 +>T : T
 +>K : K
 +>P : P
@@ -133,60 +89,38 @@
 +
      readonly [key: string]: string;
  >key : string
-->    : ^^^^^^
  }
- type Res9 = StrippingPick<Obj9, keyof Obj9>
+@@= skipped -9, +14 lines =@@
  >Res9 : Res9
-->     : ^^^^
  
  interface Obj10 {
 +>Obj10 : Obj10
 +
      readonly [key: string]: string;
  >key : string
-->    : ^^^^^^
  
-     readonly [key: number]: 'foo';
- >key : number
-->    : ^^^^^^
- }
- type Res10 = StrippingPick<Obj10, keyof Obj10>
+@@= skipped -10, +12 lines =@@
  >Res10 : Res10
-->      : ^^^^^
  
  interface Obj11 {
 +>Obj11 : Obj11
 +
      [key: string]: string;
  >key : string
-->    : ^^^^^^
  
-     readonly [key: number]: 'foo';
- >key : number
-->    : ^^^^^^
- }
- type Res11 = StrippingPick<Obj11, keyof Obj11>
+@@= skipped -10, +12 lines =@@
  >Res11 : Res11
-->      : ^^^^^
  
  interface Obj12 {
 +>Obj12 : Obj12
 +
      readonly [key: string]: string;
  >key : string
-->    : ^^^^^^
  
-     [key: number]: 'foo';
- >key : number
-->    : ^^^^^^
- }
- type Res12 = StrippingPick<Obj12, keyof Obj12>
- >Res12 : Res12
-->      : ^^^^^
+@@= skipped -11, +13 lines =@@
  
  type StrippingIdentity<T> = { -readonly [P in keyof T]: T[P]; }
  >StrippingIdentity : StrippingIdentity<T>
-->                  : ^^^^^^^^^^^^^^^^^^^^
 +>T : T
 +>P : P
  
@@ -195,9 +129,4 @@
 +
      readonly [key: `wow${string}`]: 'foo';
  >key : `wow${string}`
-->    : ^^^^^^^^^^^^^^
  }
- type Res13 = StrippingIdentity<Obj13>
- >Res13 : StrippingIdentity<Obj13>
-->      : ^^^^^^^^^^^^^^^^^^^^^^^^
- 

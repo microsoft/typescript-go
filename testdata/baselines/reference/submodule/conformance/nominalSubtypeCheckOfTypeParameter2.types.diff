@@ -9,7 +9,6 @@
 +
      bar: T;
  >bar : T
-->    : ^
  }
  
  // ok
@@ -19,7 +18,6 @@
 +
      foo: T;
  >foo : T
-->    : ^
  }
  
  // ok
@@ -29,7 +27,6 @@
 +
      baz: T;
  >baz : T
-->    : ^
  }
  
  interface C<T> {
@@ -38,7 +35,6 @@
 +
      bam: T;
  >bam : T
-->    : ^
  }
  
  // ok
@@ -48,5 +44,4 @@
 +
      bing: T;
  >bing : T
-->     : ^
  }

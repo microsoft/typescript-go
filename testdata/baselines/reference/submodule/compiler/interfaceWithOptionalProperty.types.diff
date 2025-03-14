@@ -8,5 +8,4 @@
 +
      x?: number;
  >x : number
-->  : ^^^^^^
  }

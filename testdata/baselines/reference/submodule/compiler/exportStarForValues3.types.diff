@@ -13,11 +13,7 @@
  >x : any
  
  export * from "file1"
- var x = 1;
- >x : number
-->  : ^^^^^^
- >1 : 1
-->  : ^
+@@= skipped -13, +15 lines =@@
  
  === file3.ts ===
  export interface B { x }
@@ -25,11 +21,7 @@
  >x : any
  
  export * from "file1"
- var x = 1;
- >x : number
-->  : ^^^^^^
- >1 : 1
-->  : ^
+@@= skipped -9, +10 lines =@@
  
  === file4.ts ===
  export interface C { x }
@@ -37,18 +29,3 @@
  >x : any
  
  export * from "file2"
- export * from "file3"
- var x = 1;
- >x : number
-->  : ^^^^^^
- >1 : 1
-->  : ^
- 
- === file5.ts ===
- export * from "file4"
- var x = 1;
- >x : number
-->  : ^^^^^^
- >1 : 1
-->  : ^
- 

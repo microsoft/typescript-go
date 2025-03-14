@@ -8,7 +8,6 @@
 +
      x: () => $
  >x : () => $
-->  : ^^^^^^ 
  }
  === /ref.d.ts ===
  interface $ { x }
@@ -18,7 +17,5 @@
 -=== /types/lib/index.d.ts ===
 -declare let $: { x: number }
 ->$ : { x: number; }
-->  : ^^^^^      ^^^
 ->x : number
-->  : ^^^^^^
 -

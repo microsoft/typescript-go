@@ -1,8 +1,0 @@
---- old.moduleMemberMissingErrorIsRelative.types
-+++ new.moduleMemberMissingErrorIsRelative.types
-@@= skipped -5, +5 lines =@@
- === folder/bar.ts ===
- import {nosuch} from './foo';
- >nosuch : any
-->       : ^^^
- 

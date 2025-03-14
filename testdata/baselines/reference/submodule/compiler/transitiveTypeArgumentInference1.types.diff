@@ -10,33 +10,12 @@
 +
  	m(value: T): U;
  >m : (value: T) => U
-->  : ^     ^^ ^^^^^ 
  >value : T
-->      : ^
- }
- 
- var i: I1<boolean, string> = null;
- >i : I1<boolean, string>
-->  : ^^^^^^^^^^^^^^^^^^^
+@@= skipped -10, +14 lines =@@
  
  class C<T> {
  >C : C<T>
-->  : ^^^^
 +>T : T
  
  	constructor(p: I1<boolean, T>) {
  >p : I1<boolean, T>
-->  : ^^^^^^^^^^^^^^
- 	}
- }
- 
- var c = new C(i);
- >c : C<string>
-->  : ^^^^^^^^^
- >new C(i) : C<string>
-->         : ^^^^^^^^^
- >C : typeof C
-->  : ^^^^^^^^
- >i : I1<boolean, string>
-->  : ^^^^^^^^^^^^^^^^^^^
- 

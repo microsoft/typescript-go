@@ -5,17 +5,13 @@
  */ 
  function foo({ cause } = {}) {
 ->foo : ({ cause }?: { cause?: string; }) => string
-->    : ^         ^^^                   ^^^^^^^^^^^
 ->cause : string
-->      : ^^^^^^
 +>foo : (__0?: {}) => any
 +>cause : any
  >{} : {}
-->   : ^^
  
      return cause;
 ->cause : string
-->      : ^^^^^^
 +>cause : any
  }
  

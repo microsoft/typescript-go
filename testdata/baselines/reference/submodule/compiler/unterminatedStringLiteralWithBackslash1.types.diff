@@ -1,8 +1,0 @@
---- old.unterminatedStringLiteralWithBackslash1.types
-+++ new.unterminatedStringLiteralWithBackslash1.types
-@@= skipped -2, +2 lines =@@
- === unterminatedStringLiteralWithBackslash1.ts ===
- "\
- >"\ : ""
-->   : ^^
- 

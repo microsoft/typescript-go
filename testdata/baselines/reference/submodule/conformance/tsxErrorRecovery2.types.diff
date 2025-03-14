@@ -9,45 +9,30 @@
  
  <div></div>
 -><div></div><div></div> : JSX.Element
-->                       : ^^^^^^^^^^^
 -><div></div> : JSX.Element
-->            : ^^^^^^^^^^^
 +><div></div><div></div> : any
 +><div></div> : any
  >div : any
-->    : ^^^
  >div : any
-->    : ^^^
  
  <div></div>
 -><div></div> : JSX.Element
-->            : ^^^^^^^^^^^
 +><div></div> : any
  >div : any
-->    : ^^^
  >div : any
-->    : ^^^
  
  === file2.tsx ===
  var x = <div></div><div></div>
 ->x : JSX.Element
-->  : ^^^^^^^^^^^
 -><div></div><div></div> : JSX.Element
-->                       : ^^^^^^^^^^^
 -><div></div> : JSX.Element
-->            : ^^^^^^^^^^^
 +>x : any
 +><div></div><div></div> : any
 +><div></div> : any
  >div : any
-->    : ^^^
  >div : any
-->    : ^^^
 -><div></div> : JSX.Element
-->            : ^^^^^^^^^^^
 +><div></div> : any
  >div : any
-->    : ^^^
  >div : any
-->    : ^^^
  

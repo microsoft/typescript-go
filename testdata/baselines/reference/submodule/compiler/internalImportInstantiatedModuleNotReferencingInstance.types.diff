@@ -1,38 +1,19 @@
 --- old.internalImportInstantiatedModuleNotReferencingInstance.types
 +++ new.internalImportInstantiatedModuleNotReferencingInstance.types
-@@= skipped -2, +2 lines =@@
- === internalImportInstantiatedModuleNotReferencingInstance.ts ===
- module A {
+@@= skipped -4, +4 lines =@@
  >A : typeof A
-->  : ^^^^^^^^
  
      export interface X { s: string }
 +>X : X
  >s : string
-->  : ^^^^^^
  
      export var a = 10;
- >a : number
-->  : ^^^^^^
- >10 : 10
-->   : ^^
- }
- 
- module B {
- >B : typeof B
-->  : ^^^^^^^^
- 
-     var A = 1;
- >A : number
-->  : ^^^^^^
+@@= skipped -15, +16 lines =@@
  >1 : 1
-->  : ^
  
      import Y = A;
 ->Y : typeof Y
-->  : ^^^^^^^^
 ->A : typeof Y
-->  : ^^^^^^^^
 +>Y : typeof A
 +>A : typeof A
  }

@@ -1,25 +1,11 @@
 --- old.enumWithExport.types
 +++ new.enumWithExport.types
-@@= skipped -2, +2 lines =@@
- === enumWithExport.ts ===
- namespace x {
- >x : typeof x
-->  : ^^^^^^^^
- 
-   export let y = 123
- >y : number
-->  : ^^^^^^
+@@= skipped -8, +8 lines =@@
  >123 : 123
-->    : ^^^
  }
  enum x {
 ->x : x
-->  : ^
 +>x : x.z
  
    z = y
  >z : x.z
-->  : ^^^
- >y : any
-->  : ^^^
- }

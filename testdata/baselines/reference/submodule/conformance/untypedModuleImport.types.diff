@@ -1,13 +1,6 @@
 --- old.untypedModuleImport.types
 +++ new.untypedModuleImport.types
-@@= skipped -2, +2 lines =@@
- === /c.ts ===
- import foo, { bar } from "foo";
- >foo : any
-->    : ^^^
- >bar : any
-->    : ^^^
- 
+@@= skipped -7, +7 lines =@@
  import "./a";
  import "./b";
  foo(bar());
@@ -31,14 +24,10 @@
 +>foo.bar() : any
 +>foo.bar : any
  >foo : any
-->    : ^^^
  >bar : any
-->    : ^^^
  
- === /b.ts ===
- import foo = require("foo");
+@@= skipped -20, +20 lines =@@
  >foo : any
-->    : ^^^
  
  foo();
 ->foo() : error

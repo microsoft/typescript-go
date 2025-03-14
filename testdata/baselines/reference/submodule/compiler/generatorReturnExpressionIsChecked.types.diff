@@ -5,11 +5,7 @@
  === generatorReturnExpressionIsChecked.ts ===
  function* f(): Iterator<number> {
 ->f : () => Iterator<number>
-->  : ^^^^^^                
 +>f : () => Iterator<number, any, any>
  
      return invalid;
  >invalid : any
-->        : ^^^
- }
- 

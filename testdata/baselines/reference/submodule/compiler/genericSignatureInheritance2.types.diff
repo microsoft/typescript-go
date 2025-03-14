@@ -9,7 +9,6 @@
      <T>(x: T): string;
 +>T : T
  >x : T
-->  : ^
  }
  
  interface I2 extends I { 
@@ -18,6 +17,5 @@
      <T>(x: T): void;
 +>T : T
  >x : T
-->  : ^
  }
  

@@ -4,16 +4,13 @@
  
  type UnionToIntersection<U> = (
  >UnionToIntersection : UnionToIntersection<U>
-->                    : ^^^^^^^^^^^^^^^^^^^^^^
 +>U : U
  
    U extends any ? (k: U) => unknown : never
  >k : U
-->  : ^
  
  ) extends (k: infer I) => unknown
  >k : I
-->  : ^
 +>I : I
  
    ? I
@@ -24,24 +21,11 @@
 +
    public?: object;
  >public : object | undefined
-->       : ^^^^^^^^^^^^^^^^^^
  
-   private?: object;
- >private : object | undefined
-->        : ^^^^^^^^^^^^^^^^^^
- 
-   publicExtends?: Record<string, ClassSpec>;
- >publicExtends : Record<string, ClassSpec> | undefined
-->              : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
-   privateExtends?: Record<string, ClassSpec>;
- >privateExtends : Record<string, ClassSpec> | undefined
-->               : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- }
+@@= skipped -26, +30 lines =@@
  
  type MaybeMergePrivateSuperSpec<T> = T extends Record<string, ClassSpec>
  >MaybeMergePrivateSuperSpec : MaybeMergePrivateSuperSpec<T>
-->                           : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>T : T
  
    ? MergePrivateSuperSpec<T>
@@ -49,7 +33,6 @@
  
  type MaybeMergePrivateSpecs<T extends ClassSpec, U> = U extends ClassSpec
  >MaybeMergePrivateSpecs : MaybeMergePrivateSpecs<T, U>
-->                       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>T : T
 +>U : U
  
@@ -58,23 +41,15 @@
  
  type MergePrivateSpecs<T extends ClassSpec, U extends ClassSpec> = {
  >MergePrivateSpecs : MergePrivateSpecs<T, U>
-->                  : ^^^^^^^^^^^^^^^^^^^^^^^
 +>T : T
 +>U : U
  
    public: T["public"] & U["public"];
  >public : T["public"] & U["public"]
-->       : ^^^^^^^^^^^^^^^^^^^^^^^^^
- 
-   private: T["private"] & U["private"];
- >private : T["private"] & U["private"]
-->        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
- };
+@@= skipped -23, +28 lines =@@
  
  type MergePrivateSuperSpec<T extends Record<string, ClassSpec>> =
  >MergePrivateSuperSpec : MergePrivateSuperSpec<T>
-->                      : ^^^^^^^^^^^^^^^^^^^^^^^^
 +>T : T
  
    UnionToIntersection<
@@ -87,16 +62,14 @@
  
  export type SimplifyPrivateSpec<T extends ClassSpec> = MaybeMergePrivateSpecs<
  >SimplifyPrivateSpec : SimplifyPrivateSpec<T>
-->                    : ^^^^^^^^^^^^^^^^^^^^^^
 +>T : T
  
    MaybeMergePrivateSpecs<T, MaybeMergePrivateSuperSpec<T["publicExtends"]>>,
    MaybeMergePrivateSuperSpec<T["privateExtends"]>
-@@= skipped -81, +80 lines =@@
+@@= skipped -18, +22 lines =@@
  
  type Converted<T> = {
  >Converted : Converted<T>
-->          : ^^^^^^^^^^^^
 +>T : T
  
    [P in keyof T]: null extends T[P] ? T[P] : T[P];
@@ -106,7 +79,6 @@
  
  type DefaultsDeep<T, U extends T> = {
  >DefaultsDeep : DefaultsDeep<T, U>
-->             : ^^^^^^^^^^^^^^^^^^
 +>T : T
 +>U : U
  
@@ -116,7 +88,7 @@
      ? null extends U[P]
        ? Converted<DefaultsDeep<T[P], NonNullable<U[P]>>>
        : T[P]
-@@= skipped -17, +22 lines =@@
+@@= skipped -15, +22 lines =@@
  };
  
  interface _Array<T> {
@@ -125,33 +97,7 @@
 +
    find<S extends T>(predicate: (value: T) => boolean): void;
  >find : <S extends T>(predicate: (value: T) => boolean) => void
-->     : ^ ^^^^^^^^^ ^^         ^^                     ^^^^^    
 +>S : S
  >predicate : (value: T) => boolean
-->          : ^     ^^ ^^^^^       
  >value : T
-->      : ^
  }
- 
- const z: _Array<DefaultsDeep<{}, {}>> = [];
- >z : _Array<DefaultsDeep<{}, {}>>
-->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >[] : never[]
-->   : ^^^^^^^
- 
- z.find((_) => true);
- >z.find((_) => true) : void
-->                    : ^^^^
- >z.find : <S extends DefaultsDeep<{}, {}>>(predicate: (value: DefaultsDeep<{}, {}>) => boolean) => void
-->       : ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^         ^^^     ^^^^^^^^^^^^^^^^^^^^^^^^^^^       ^^^^^    
- >z : _Array<DefaultsDeep<{}, {}>>
-->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >find : <S extends DefaultsDeep<{}, {}>>(predicate: (value: DefaultsDeep<{}, {}>) => boolean) => void
-->     : ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^         ^^^     ^^^^^^^^^^^^^^^^^^^^^^^^^^^       ^^^^^    
- >(_) => true : (_: DefaultsDeep<{}, {}>) => true
-->            : ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >_ : DefaultsDeep<{}, {}>
-->  : ^^^^^^^^^^^^^^^^^^^^
- >true : true
-->     : ^^^^
- 

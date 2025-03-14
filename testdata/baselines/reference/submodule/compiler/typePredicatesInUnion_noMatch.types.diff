@@ -8,61 +8,24 @@
 +
      pred(x: {}, y: {}): x is boolean;
  >pred : (x: {}, y: {}) => x is boolean
-->     : ^ ^^  ^^ ^^  ^^^^^            
  >x : {}
-->  : ^^
  >y : {}
-->  : ^^
  }
  interface B {
 +>B : B
 +
      pred(x: {}, y: {}): y is string;
  >pred : (x: {}, y: {}) => y is string
-->     : ^ ^^  ^^ ^^  ^^^^^           
  >x : {}
-->  : ^^
- >y : {}
-->  : ^^
- }
- 
- type Or = A | B;
- >Or : Or
-->   : ^^
- 
- function f(o: Or, x: {}, y: {}) {
- >f : (o: Or, x: {}, y: {}) => void
-->  : ^ ^^  ^^ ^^  ^^ ^^  ^^^^^^^^^
- >o : Or
-->  : ^^
- >x : {}
-->  : ^^
- >y : {}
-->  : ^^
+@@= skipped -23, +27 lines =@@
  
      if (o.pred(x, y)) {
  >o.pred(x, y) : boolean
-->             : ^^^^^^^
 ->o.pred : ((x: {}, y: {}) => x is boolean) | ((x: {}, y: {}) => y is string)
-->       : ^^ ^^  ^^ ^^  ^^^^^            ^^^^^^ ^^  ^^ ^^  ^^^^^           ^
 +>o.pred : (x: {}, y: {}) => x is boolean | (x: {}, y: {}) => y is string
  >o : Or
-->  : ^^
 ->pred : ((x: {}, y: {}) => x is boolean) | ((x: {}, y: {}) => y is string)
-->     : ^^ ^^  ^^ ^^  ^^^^^            ^^^^^^ ^^  ^^ ^^  ^^^^^           ^
 +>pred : (x: {}, y: {}) => x is boolean | (x: {}, y: {}) => y is string
  >x : {}
-->  : ^^
  >y : {}
-->  : ^^
- 
-         x;
- >x : {}
-->  : ^^
- 
-         y;
- >y : {}
-->  : ^^
-     }
- }
  

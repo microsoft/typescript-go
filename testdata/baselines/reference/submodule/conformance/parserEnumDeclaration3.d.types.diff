@@ -5,12 +5,7 @@
  === parserEnumDeclaration3.d.ts ===
  enum E {
 ->E : E
-->  : ^
 +>E : E.A
  
     A = 1
  >A : E.A
-->  : ^^^
- >1 : 1
-->  : ^
- }

@@ -1,16 +1,6 @@
 --- old.esnextmodulekindWithES5Target7.types
 +++ new.esnextmodulekindWithES5Target7.types
-@@= skipped -2, +2 lines =@@
- === esnextmodulekindWithES5Target7.ts ===
- export namespace N {
- >N : typeof N
-->  : ^^^^^^^^
- 
-     var x = 0;
- >x : number
-->  : ^^^^^^
- >0 : 0
-->  : ^
+@@= skipped -9, +9 lines =@@
  }
  
  export namespace N2 {

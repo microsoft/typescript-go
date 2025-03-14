@@ -1,23 +1,6 @@
 --- old.declFileForClassWithMultipleBaseClasses.types
 +++ new.declFileForClassWithMultipleBaseClasses.types
-@@= skipped -2, +2 lines =@@
- === declFileForClassWithMultipleBaseClasses.ts ===
- class A {
- >A : A
-->  : ^
- 
-     foo() { }
- >foo : () => void
-->    : ^^^^^^^^^^
- }
- 
- class B {
- >B : B
-->  : ^
- 
-     bar() { }
- >bar : () => void
-->    : ^^^^^^^^^^
+@@= skipped -15, +15 lines =@@
  }
  
  interface I {
@@ -25,7 +8,6 @@
 +
      baz();
  >baz : () => any
-->    : ^^^^^^^^^
  }
  
  interface J {
@@ -33,29 +15,8 @@
 +
      bat();
  >bat : () => any
-->    : ^^^^^^^^^
  }
- 
- 
- class D implements I, J {
- >D : D
-->  : ^
- 
-     baz() { }
- >baz : () => void
-->    : ^^^^^^^^^^
- 
-     bat() { }
- >bat : () => void
-->    : ^^^^^^^^^^
- 
-     foo() { }
- >foo : () => void
-->    : ^^^^^^^^^^
- 
-     bar() { }
- >bar : () => void
-->    : ^^^^^^^^^^
+@@= skipped -27, +31 lines =@@
  }
  
  interface I extends A, B {

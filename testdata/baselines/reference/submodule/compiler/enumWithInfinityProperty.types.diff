@@ -5,13 +5,7 @@
  === enumWithInfinityProperty.ts ===
  enum A {
 ->A : A
-->  : ^
 +>A : A.Infinity
  
      Infinity = 1
  >Infinity : A.Infinity
-->         : ^^^^^^^^^^
- >1 : 1
-->  : ^
- }
- 

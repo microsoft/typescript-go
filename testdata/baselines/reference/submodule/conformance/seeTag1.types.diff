@@ -8,7 +8,6 @@
 +
      foo: string
  >foo : string
-->    : ^^^^^^
  }
  
  namespace NS {
@@ -19,28 +18,4 @@
 +
          baz: Foo
  >baz : Foo
-->    : ^^^
      }
- }
- 
- /** @see {Foo} foooo*/
- const a = ""
- >a : ""
-->  : ^^
- >"" : ""
-->   : ^^
- 
- /** @see {NS.Bar} ns.bar*/
- const b = ""
- >b : ""
-->  : ^^
- >"" : ""
-->   : ^^
- 
- /** @see {b} b */
- const c = ""
- >c : ""
-->  : ^^
- >"" : ""
-->   : ^^
- 

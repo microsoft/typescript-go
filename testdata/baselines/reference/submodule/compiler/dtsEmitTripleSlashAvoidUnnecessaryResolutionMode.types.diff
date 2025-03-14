@@ -5,13 +5,10 @@
  /// <reference types="node" preserve="true" />
  export async function drainStream(stream: NodeJS.ReadableStream): Promise<void> {
 ->drainStream : (stream: NodeJS.ReadableStream) => Promise<void>
-->            : ^      ^^                     ^^^^^             
 ->stream : NodeJS.ReadableStream
-->       : ^^^^^^^^^^^^^^^^^^^^^
 +>drainStream : (stream: ReadableStream) => Promise<void>
 +>stream : ReadableStream
  >NodeJS : any
-->       : ^^^
  }
  
  === /node_modules/@types/node/globals.d.ts ===

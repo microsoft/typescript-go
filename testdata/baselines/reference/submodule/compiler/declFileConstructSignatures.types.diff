@@ -16,12 +16,7 @@
      /** This is comment for function signature*/
      new (/** this is comment about a*/a: string,
  >a : string
-->  : ^^^^^^
- 
-         /** this is comment for b*/
-         b: number);
- >b : number
-->  : ^^^^^^
+@@= skipped -15, +19 lines =@@
  }
  
  export interface IConstructSignatureWithRestParameters {
@@ -29,9 +24,7 @@
 +
      new (a: string, ...rests: string[]): string;
  >a : string
-->  : ^^^^^^
  >rests : string[]
-->      : ^^^^^^^^
  }
  
  export interface IConstructSignatureWithOverloads {
@@ -39,11 +32,8 @@
 +
      new (a: string): string;
  >a : string
-->  : ^^^^^^
  
-     new (a: number): number;
- >a : number
-->  : ^^^^^^
+@@= skipped -14, +18 lines =@@
  }
  
  export interface IConstructSignatureWithTypeParameters<T> {
@@ -53,7 +43,6 @@
      /** This comment should appear for foo*/
      new (a: T): T;
  >a : T
-->  : ^
  }
  
  export interface IConstructSignatureWithOwnTypeParametes {
@@ -62,7 +51,6 @@
      new <T extends IConstructSignature>(a: T): T;
 +>T : T
  >a : T
-->  : ^
  }
  
  === declFileConstructSignatures_1.ts ===
@@ -79,12 +67,7 @@
      /** This is comment for function signature*/
      new (/** this is comment about a*/a: string,
  >a : string
-->  : ^^^^^^
- 
-         /** this is comment for b*/
-         b: number);
- >b : number
-->  : ^^^^^^
+@@= skipped -27, +37 lines =@@
  }
  
  interface IGlobalConstructSignatureWithRestParameters {
@@ -92,10 +75,7 @@
  
      new (a: string, ...rests: string[]): string;
  >a : string
-->  : ^^^^^^
- >rests : string[]
-->      : ^^^^^^^^
- 
+@@= skipped -8, +9 lines =@@
  }
  
  interface IGlobalConstructSignatureWithOverloads {
@@ -103,11 +83,8 @@
 +
      new (a: string): string;
  >a : string
-->  : ^^^^^^
  
-     new (a: number): number;
- >a : number
-->  : ^^^^^^
+@@= skipped -8, +10 lines =@@
  }
  
  interface IGlobalConstructSignatureWithTypeParameters<T> {
@@ -117,7 +94,6 @@
      /** This comment should appear for foo*/
      new (a: T): T;
  >a : T
-->  : ^
  }
  
  interface IGlobalConstructSignatureWithOwnTypeParametes {
@@ -126,5 +102,4 @@
      new <T extends IGlobalConstructSignature>(a: T): T;
 +>T : T
  >a : T
-->  : ^
  }

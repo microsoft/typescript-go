@@ -15,20 +15,12 @@
  		div: any
  >div : any
  
-@@= skipped -12, +18 lines =@@
- 
- var CustomTag: "h1" = "h1";
- >CustomTag : "h1"
-->          : ^^^^
+@@= skipped -15, +21 lines =@@
  >"h1" : "h1"
-->     : ^^^^
  
  <CustomTag> Hello World </CustomTag>
 -><CustomTag> Hello World </CustomTag> : JSX.Element
-->                                     : ^^^^^^^^^^^
 +><CustomTag> Hello World </CustomTag> : any
  >CustomTag : "h1"
-->          : ^^^^
  >CustomTag : "h1"
-->          : ^^^^
  

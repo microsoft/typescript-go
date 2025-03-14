@@ -8,30 +8,17 @@
 +
      [Symbol.toStringTag](): { x: string }
  >[Symbol.toStringTag] : () => { x: string; }
-->                     : ^^^^^^              
  >Symbol.toStringTag : unique symbol
-->                   : ^^^^^^^^^^^^^
- >Symbol : SymbolConstructor
-->       : ^^^^^^^^^^^^^^^^^
- >toStringTag : unique symbol
-->            : ^^^^^^^^^^^^^
+@@= skipped -8, +10 lines =@@
  >x : string
-->  : ^^^^^^
  }
  interface I2 {
 +>I2 : I2
 +
      [Symbol.toStringTag](): { x: number }
  >[Symbol.toStringTag] : () => { x: number; }
-->                     : ^^^^^^              
  >Symbol.toStringTag : unique symbol
-->                   : ^^^^^^^^^^^^^
- >Symbol : SymbolConstructor
-->       : ^^^^^^^^^^^^^^^^^
- >toStringTag : unique symbol
-->            : ^^^^^^^^^^^^^
- >x : number
-->  : ^^^^^^
+@@= skipped -9, +11 lines =@@
  }
  
  interface I3 extends I1, I2 { }

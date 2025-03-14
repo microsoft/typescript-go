@@ -1,20 +1,6 @@
 --- old.aliasWithInterfaceExportAssignmentUsedInVarInitializer.types
 +++ new.aliasWithInterfaceExportAssignmentUsedInVarInitializer.types
-@@= skipped -2, +2 lines =@@
- === aliasWithInterfaceExportAssignmentUsedInVarInitializer_1.ts ===
- import moduleA = require("./aliasWithInterfaceExportAssignmentUsedInVarInitializer_0");
- >moduleA : any
-->        : ^^^
- 
- var d = b.q3;
- >d : any
-->  : ^^^
- >b.q3 : any
-->     : ^^^
- >b : any
-->  : ^^^
- >q3 : any
-->   : ^^^
+@@= skipped -11, +11 lines =@@
  
  === aliasWithInterfaceExportAssignmentUsedInVarInitializer_0.ts ===
  interface c {
@@ -22,9 +8,4 @@
 +
      q3: number;
  >q3 : number
-->   : ^^^^^^
  }
- export = c;
- >c : c
-->  : ^
- 

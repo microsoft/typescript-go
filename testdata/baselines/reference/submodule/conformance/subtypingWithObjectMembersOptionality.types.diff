@@ -6,21 +6,17 @@
  interface Base { foo: string; }
 +>Base : Base
  >foo : string
-->    : ^^^^^^
  
  interface Derived extends Base { bar: string; }
 +>Derived : Derived
  >bar : string
-->    : ^^^^^^
  
  interface Derived2 extends Derived { baz: string; }
 +>Derived2 : Derived2
  >baz : string
-->    : ^^^^^^
  
  // S is a subtype of a type T, and T is a supertype of S, if one of the following is true, where S' denotes the apparent type (section 3.8.1) of S:
- //   - S' and T are object types and, for each member M in T, one of the following is true:
-@@= skipped -20, +20 lines =@@
+@@= skipped -17, +20 lines =@@
  //          if M is a required property, N is also a required property.
  //      - M is an optional property and S' contains no property of the same name as M.
  interface T {
@@ -28,7 +24,6 @@
 +
      Foo?: Base;
  >Foo : Base
-->    : ^^^^
  }
  
  interface S extends T {
@@ -36,7 +31,6 @@
 +
      Foo: Derived
  >Foo : Derived
-->    : ^^^^^^^
  }
  
  interface T2 {
@@ -44,7 +38,6 @@
 +
      1?: Base; 
  >1 : Base
-->  : ^^^^
  }
  
  interface S2 extends T2 {
@@ -52,7 +45,6 @@
 +
      1: Derived;
  >1 : Derived
-->  : ^^^^^^^
  }
  
  interface T3 {
@@ -60,7 +52,6 @@
 +
      '1'?: Base;
  >'1' : Base
-->    : ^^^^
  }
  
  interface S3 extends T3 {
@@ -68,48 +59,15 @@
 +
      '1.': Derived;
  >'1.' : Derived
-->     : ^^^^^^^
  }
- 
- // object literal case
- var a: { Foo?: Base; };
- >a : { Foo?: Base; }
-->  : ^^^^^^^^    ^^^
- >Foo : Base
-->    : ^^^^
- 
- var b = { Foo: <Derived>null };
- >b : { Foo: Derived; }
-->  : ^^^^^^^       ^^^
- >{ Foo: <Derived>null } : { Foo: Derived; }
-->                       : ^^^^^^^       ^^^
- >Foo : Derived
-->    : ^^^^^^^
- ><Derived>null : Derived
-->              : ^^^^^^^
- 
- var r = true ? a : b;
- >r : { Foo?: Base; }
-->  : ^^^^^^^^    ^^^
- >true ? a : b : { Foo?: Base; }
-->             : ^^^^^^^^    ^^^
- >true : true
-->     : ^^^^
- >a : { Foo?: Base; }
-->  : ^^^^^^^^    ^^^
- >b : { Foo: Derived; }
-->  : ^^^^^^^       ^^^
- 
- module TwoLevels {
+@@= skipped -51, +63 lines =@@
  >TwoLevels : typeof TwoLevels
-->          : ^^^^^^^^^^^^^^^^
  
      interface T {
 +>T : T
 +
          Foo?: Base;
  >Foo : Base
-->    : ^^^^
      }
  
      interface S extends T {
@@ -117,7 +75,6 @@
 +
          Foo: Derived2 
  >Foo : Derived2
-->    : ^^^^^^^^
      }
  
      interface T2 {
@@ -125,7 +82,6 @@
 +
          1?: Base;
  >1 : Base
-->  : ^^^^
      }
  
      interface S2 extends T2 {
@@ -133,7 +89,6 @@
 +
          1: Derived2;
  >1 : Derived2
-->  : ^^^^^^^^
      }
  
      interface T3 {
@@ -141,7 +96,6 @@
 +
          '1'?: Base;
  >'1' : Base
-->    : ^^^^
      }
  
      interface S3 extends T3 {
@@ -149,35 +103,4 @@
 +
          '1.': Derived2;
  >'1.' : Derived2
-->     : ^^^^^^^^
      }
- 
-     // object literal case
-     var a: { Foo?: Base; };
- >a : { Foo?: Base; }
-->  : ^^^^^^^^    ^^^
- >Foo : Base
-->    : ^^^^
- 
-     var b = { Foo: <Derived2>null };
- >b : { Foo: Derived2; }
-->  : ^^^^^^^        ^^^
- >{ Foo: <Derived2>null } : { Foo: Derived2; }
-->                        : ^^^^^^^        ^^^
- >Foo : Derived2
-->    : ^^^^^^^^
- ><Derived2>null : Derived2
-->               : ^^^^^^^^
- 
-     var r = true ? a : b;
- >r : { Foo?: Base; }
-->  : ^^^^^^^^    ^^^
- >true ? a : b : { Foo?: Base; }
-->             : ^^^^^^^^    ^^^
- >true : true
-->     : ^^^^
- >a : { Foo?: Base; }
-->  : ^^^^^^^^    ^^^
- >b : { Foo: Derived2; }
-->  : ^^^^^^^        ^^^
- }

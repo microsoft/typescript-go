@@ -8,6 +8,4 @@
 +
      abstract(): void;
  >abstract : () => void
-->         : ^^^^^^    
  }
- 

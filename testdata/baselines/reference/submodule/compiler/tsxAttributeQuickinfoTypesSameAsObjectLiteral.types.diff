@@ -11,7 +11,6 @@
 +
          span: {};
  >span : {}
-->     : ^^
      }
      export interface Element {
 +>Element : Element
@@ -23,54 +22,34 @@
  
  const Foo = (props: { foo: "A" | "B" | "C" }) => <span>{props.foo}</span>;
 ->Foo : (props: { foo: "A" | "B" | "C"; }) => JSX.Element
-->    : ^     ^^                         ^^^^^^^^^^^^^^^^
 ->(props: { foo: "A" | "B" | "C" }) => <span>{props.foo}</span> : (props: { foo: "A" | "B" | "C"; }) => JSX.Element
-->                                                              : ^     ^^                         ^^^^^^^^^^^^^^^^
 +>Foo : (props: { foo: "A" | "B" | "C"; }) => any
 +>(props: { foo: "A" | "B" | "C" }) => <span>{props.foo}</span> : (props: { foo: "A" | "B" | "C"; }) => any
  >props : { foo: "A" | "B" | "C"; }
-->      : ^^^^^^^               ^^^
  >foo : "A" | "B" | "C"
-->    : ^^^^^^^^^^^^^^^
 -><span>{props.foo}</span> : JSX.Element
-->                         : ^^^^^^^^^^^
 +><span>{props.foo}</span> : any
  >span : any
-->     : ^^^
  >props.foo : "A" | "B" | "C"
-->          : ^^^^^^^^^^^^^^^
  >props : { foo: "A" | "B" | "C"; }
-->      : ^^^^^^^               ^^^
- >foo : "A" | "B" | "C"
-->    : ^^^^^^^^^^^^^^^
+@@= skipped -23, +29 lines =@@
  >span : any
-->     : ^^^
  
  Foo({
 ->Foo({    foo: "B"}) : JSX.Element
-->                    : ^^^^^^^^^^^
 ->Foo : (props: { foo: "A" | "B" | "C"; }) => JSX.Element
-->    : ^     ^^                         ^^^^^^^^^^^^^^^^
 +>Foo({    foo: "B"}) : any
 +>Foo : (props: { foo: "A" | "B" | "C"; }) => any
  >{    foo: "B"} : { foo: "B"; }
-->               : ^^^^^^^^^^^^^
  
      foo: "B"
- >foo : "B"
-->    : ^^^
- >"B" : "B"
-->    : ^^^
- 
+@@= skipped -11, +11 lines =@@
  });
  
  <Foo foo="B" />
 -><Foo foo="B" /> : JSX.Element
-->                : ^^^^^^^^^^^
 ->Foo : (props: { foo: "A" | "B" | "C"; }) => JSX.Element
-->    : ^     ^^                         ^^^^^^^^^^^^^^^^
 ->foo : "B"
-->    : ^^^
 +><Foo foo="B" /> : any
 +>Foo : (props: { foo: "A" | "B" | "C"; }) => any
 +>foo : any

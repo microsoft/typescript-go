@@ -11,7 +11,6 @@
 +
          [k: string]: any
  >k : string
-->  : ^^^^^^
      }
  }
  
@@ -25,9 +24,7 @@
 -><public-foo></public-foo> : error
 +><public-foo></public-foo> : any
  >public-foo : any
-->           : ^^^
  >public-foo : any
-->           : ^^^
  
  );
  
@@ -41,9 +38,5 @@
 -><public></public> : error
 +><public></public> : any
  >public : any
-->       : ^^^
  >public : any
-->       : ^^^
- 
- );
  

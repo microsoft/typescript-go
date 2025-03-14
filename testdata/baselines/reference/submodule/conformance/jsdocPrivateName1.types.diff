@@ -1,17 +1,11 @@
 --- old.jsdocPrivateName1.types
 +++ new.jsdocPrivateName1.types
-@@= skipped -2, +2 lines =@@
- === jsdocPrivateName1.js ===
- class A {
- >A : A
-->  : ^
+@@= skipped -5, +5 lines =@@
  
      /** @type {boolean} some number value */
      #foo = 3 // Error because not assignable to boolean
 ->#foo : boolean
-->     : ^^^^^^^
 +>#foo : number
  >3 : 3
-->  : ^
  }
  

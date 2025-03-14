@@ -1,8 +1,0 @@
---- old.commentsBeforeVariableStatement1.types
-+++ new.commentsBeforeVariableStatement1.types
-@@= skipped -3, +3 lines =@@
- /** b's comment*/
- export var b: number;
- >b : number
-->  : ^^^^^^
- 

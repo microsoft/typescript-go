@@ -4,25 +4,8 @@
  === callWithWrongNumberOfTypeArguments.ts ===
  function f<T, U>() { }
  >f : <T, U>() => void
-->  : ^ ^^ ^^^^^^^^^^^
 +>T : T
 +>U : U
  
  f<number>();
  >f<number>() : void
-->            : ^^^^
- >f : <T, U>() => void
-->  : ^ ^^ ^^^^^^^^^^^
- 
- f<number, string>();
- >f<number, string>() : void
-->                    : ^^^^
- >f : <T, U>() => void
-->  : ^ ^^ ^^^^^^^^^^^
- 
- f<number, string, number>();
- >f<number, string, number>() : void
-->                            : ^^^^
- >f : <T, U>() => void
-->  : ^ ^^ ^^^^^^^^^^^
- 

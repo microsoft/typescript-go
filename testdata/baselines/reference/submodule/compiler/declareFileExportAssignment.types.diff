@@ -19,46 +19,30 @@
 +
          use: (mod: connectModule) => connectExport;
  >use : (mod: connectModule) => connectExport
-->    : ^   ^^             ^^^^^             
  >mod : connectModule
-->    : ^^^^^^^^^^^^^
- 
-         listen: (port: number) => void;
- >listen : (port: number) => void
-->       : ^    ^^      ^^^^^    
- >port : number
-->     : ^^^^^^
-     }
- 
+@@= skipped -19, +25 lines =@@
  }
  
  var m2: {
 ->m2 : { (): m2.connectExport; test1: m2.connectModule; test2(): m2.connectModule; }
-->   : ^^^^^^                ^^^^^^^^^                ^^^^^^^^^^^                ^^^
 +>m2 : { (): connectExport; test1: connectModule; test2: () => connectModule; }
  
      (): m2.connectExport;
  >m2 : any
-->   : ^^^
  
      test1: m2.connectModule;
 ->test1 : m2.connectModule
-->      : ^^^^^^^^^^^^^^^^
 +>test1 : connectModule
  >m2 : any
-->   : ^^^
  
      test2(): m2.connectModule;
 ->test2 : () => m2.connectModule
-->      : ^^^^^^                
 +>test2 : () => connectModule
  >m2 : any
-->   : ^^^
  
  };
  
  export = m2;
 ->m2 : { (): m2.connectExport; test1: m2.connectModule; test2(): m2.connectModule; }
-->   : ^^^^^^                ^^^^^^^^^                ^^^^^^^^^^^                ^^^
 +>m2 : { (): connectExport; test1: connectModule; test2: () => connectModule; }
  

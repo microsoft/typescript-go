@@ -8,11 +8,8 @@
 +
      foo (): void
  >foo : () => void
-->    : ^^^^^^    
  
-     bar (): void
- >bar : () => void
-->    : ^^^^^^    
+@@= skipped -8, +10 lines =@@
  }
  
  interface D extends B {
@@ -20,18 +17,4 @@
 +
      foo (): void;
  >foo : () => void
-->    : ^^^^^^    
- 
-     override bar(): void;
- >bar : () => void
-->    : ^^^^^^    
- 
-     baz(): void;
- >baz : () => void
-->    : ^^^^^^    
- 
-     override bazz(): void;
- >bazz : () => void
-->     : ^^^^^^    
- }
  

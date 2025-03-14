@@ -1,8 +1,0 @@
---- old.parserSkippedTokens20.types
-+++ new.parserSkippedTokens20.types
-@@= skipped -2, +2 lines =@@
- === parserSkippedTokens20.ts ===
- var v: X<T \
- >v : X<T>
-->  : ^^^^
- 

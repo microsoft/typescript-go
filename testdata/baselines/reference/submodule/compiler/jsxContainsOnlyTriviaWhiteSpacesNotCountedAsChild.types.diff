@@ -11,7 +11,6 @@
 +
      children: {};
  >children : {}
-->         : ^^
    }
  }
  
@@ -20,41 +19,26 @@
 +
    className?: string | undefined;
  >className : string | undefined
-->          : ^^^^^^^^^^^^^^^^^^
  }
- 
- function NoticeList(props: Props) {
- >NoticeList : (props: Props) => null
-->           : ^     ^^     ^^^^^^^^^
- >props : Props
-->      : ^^^^^
- 
-   return null;
+@@= skipped -19, +25 lines =@@
  }
  
  <NoticeList className="my-notice-list">
 -><NoticeList className="my-notice-list"></NoticeList> : error
 +><NoticeList className="my-notice-list"></NoticeList> : any
  >NoticeList : (props: Props) => null
-->           : ^     ^^     ^^^^^^^^^
 ->className : string
-->          : ^^^^^^
 +>className : any
  
  </NoticeList>;
  >NoticeList : (props: Props) => null
-->           : ^     ^^     ^^^^^^^^^
  
  <NoticeList className="my-notice-list">
 -><NoticeList className="my-notice-list"></NoticeList> : error
 +><NoticeList className="my-notice-list"></NoticeList> : any
  >NoticeList : (props: Props) => null
-->           : ^     ^^     ^^^^^^^^^
 ->className : string
-->          : ^^^^^^
 +>className : any
  
  </NoticeList>;
  >NoticeList : (props: Props) => null
-->           : ^     ^^     ^^^^^^^^^
- 

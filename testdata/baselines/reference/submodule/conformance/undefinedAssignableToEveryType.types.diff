@@ -1,205 +1,52 @@
 --- old.undefinedAssignableToEveryType.types
 +++ new.undefinedAssignableToEveryType.types
-@@= skipped -2, +2 lines =@@
- === undefinedAssignableToEveryType.ts ===
- class C {
- >C : C
-->  : ^
- 
-     foo: string;
- >foo : string
-->    : ^^^^^^
- }
- var ac: C;
+@@= skipped -10, +10 lines =@@
  >ac : C
-->   : ^
  
  interface I {
 +>I : I
 +
      foo: string;
  >foo : string
-->    : ^^^^^^
  }
- var ai: I;
+@@= skipped -7, +9 lines =@@
  >ai : I
-->   : ^
  
  enum E { A }
 ->E : E
-->  : ^
 +>E : E.A
  >A : E.A
-->  : ^^^
  
  var ae: E;
 ->ae : E
-->   : ^
 +>ae : E.A
  
  var b: number = undefined;
  >b : number
-->  : ^^^^^^
- >undefined : undefined
-->          : ^^^^^^^^^
- 
- var c: string = undefined;
- >c : string
-->  : ^^^^^^
- >undefined : undefined
-->          : ^^^^^^^^^
- 
- var d: boolean = undefined;
- >d : boolean
-->  : ^^^^^^^
- >undefined : undefined
-->          : ^^^^^^^^^
- 
- var e: Date = undefined;
- >e : Date
-->  : ^^^^
- >undefined : undefined
-->          : ^^^^^^^^^
- 
- var f: any = undefined;
- >f : any
- >undefined : undefined
-->          : ^^^^^^^^^
- 
- var g: void = undefined;
- >g : void
-->  : ^^^^
- >undefined : undefined
-->          : ^^^^^^^^^
- 
- var h: Object = undefined;
- >h : Object
-->  : ^^^^^^
- >undefined : undefined
-->          : ^^^^^^^^^
- 
- var i: {} = undefined;
- >i : {}
-->  : ^^
- >undefined : undefined
-->          : ^^^^^^^^^
- 
- var j: () => {} = undefined;
- >j : () => {}
-->  : ^^^^^^  
- >undefined : undefined
-->          : ^^^^^^^^^
- 
- var k: Function = undefined;
- >k : Function
-->  : ^^^^^^^^
- >undefined : undefined
-->          : ^^^^^^^^^
- 
- var l: (x: number) => string = undefined;
- >l : (x: number) => string
-->  : ^ ^^      ^^^^^      
- >x : number
-->  : ^^^^^^
- >undefined : undefined
-->          : ^^^^^^^^^
- 
- ac = undefined;
- >ac = undefined : undefined
-->               : ^^^^^^^^^
- >ac : C
-->   : ^
- >undefined : undefined
-->          : ^^^^^^^^^
- 
- ai = undefined;
- >ai = undefined : undefined
-->               : ^^^^^^^^^
- >ai : I
-->   : ^
- >undefined : undefined
-->          : ^^^^^^^^^
+@@= skipped -63, +63 lines =@@
  
  ae = undefined;
  >ae = undefined : undefined
-->               : ^^^^^^^^^
 ->ae : E
-->   : ^
 +>ae : E.A
  >undefined : undefined
-->          : ^^^^^^^^^
  
  var m: number[] = undefined;
- >m : number[]
-->  : ^^^^^^^^
- >undefined : undefined
-->          : ^^^^^^^^^
- 
- var n: { foo: string } = undefined;
- >n : { foo: string; }
-->  : ^^^^^^^      ^^^
- >foo : string
-->    : ^^^^^^
- >undefined : undefined
-->          : ^^^^^^^^^
+@@= skipped -14, +14 lines =@@
  
  var o: <T>(x: T) => T = undefined;
  >o : <T>(x: T) => T
-->  : ^ ^^ ^^ ^^^^^ 
 +>T : T
  >x : T
-->  : ^
  >undefined : undefined
-->          : ^^^^^^^^^
  
- var p: Number = undefined;
- >p : Number
-->  : ^^^^^^
- >undefined : undefined
-->          : ^^^^^^^^^
- 
- var q: String = undefined;
- >q : String
-->  : ^^^^^^
- >undefined : undefined
-->          : ^^^^^^^^^
+@@= skipped -13, +14 lines =@@
  
  function foo<T, U, V extends Date>(x: T, y: U, z: V) {
  >foo : <T, U, V extends Date>(x: T, y: U, z: V) => void
-->    : ^ ^^ ^^ ^^^^^^^^^    ^^ ^^ ^^ ^^ ^^ ^^ ^^^^^^^^^
 +>T : T
 +>U : U
 +>V : V
  >x : T
-->  : ^
  >y : U
-->  : ^
  >z : V
-->  : ^
- 
-     x = undefined;
- >x = undefined : undefined
-->              : ^^^^^^^^^
- >x : T
-->  : ^
- >undefined : undefined
-->          : ^^^^^^^^^
- 
-     y = undefined;
- >y = undefined : undefined
-->              : ^^^^^^^^^
- >y : U
-->  : ^
- >undefined : undefined
-->          : ^^^^^^^^^
- 
-     z = undefined;
- >z = undefined : undefined
-->              : ^^^^^^^^^
- >z : V
-->  : ^
- >undefined : undefined
-->          : ^^^^^^^^^
- }
- //function foo<T, U extends T, V extends Date>(x: T, y: U, z: V) {
- //    x = undefined;

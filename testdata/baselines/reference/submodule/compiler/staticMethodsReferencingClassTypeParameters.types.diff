@@ -4,14 +4,7 @@
  === staticMethodsReferencingClassTypeParameters.ts ===
  class C<T> {
  >C : C<T>
-->  : ^^^^
 +>T : T
  
      static s(p: T) { return p; }
  >s : (p: T) => T
-->  : ^ ^^ ^^^^^^
- >p : T
-->  : ^
- >p : T
-->  : ^
- }

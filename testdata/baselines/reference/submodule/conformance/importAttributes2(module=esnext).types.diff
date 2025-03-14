@@ -1,18 +1,6 @@
 --- old.importAttributes2(module=esnext).types
 +++ new.importAttributes2(module=esnext).types
-@@= skipped -2, +2 lines =@@
- === 0.ts ===
- export const a = 1;
- >a : 1
-->  : ^
- >1 : 1
-->  : ^
- 
- export const b = 2;
- >b : 2
-->  : ^
- >2 : 2
-->  : ^
+@@= skipped -10, +10 lines =@@
  
  === 1.ts ===
  export {} from './0' with { type: "json" }
@@ -21,9 +9,7 @@
  
  export { a, b } from './0' with { type: "json" }
  >a : 1
-->  : ^
  >b : 2
-->  : ^
 ->type : error
 +>type : any
  
@@ -33,26 +19,15 @@
  
  export * as ns from './0' with { type: "json" }
  >ns : typeof import("0")
-->   : ^^^^^^^^^^^^^^^^^^
 ->type : error
 +>type : any
  
  === 2.ts ===
  export { a, b } from './0' with {}
- >a : 1
-->  : ^
- >b : 2
-->  : ^
- 
- export { a as c, b as d } from './0' with { a: "a", b: "b", c: "c" }
- >a : 1
-->  : ^
+@@= skipped -24, +24 lines =@@
  >c : 1
-->  : ^
  >b : 2
-->  : ^
  >d : 2
-->  : ^
 ->a : error
 ->b : error
 ->c : error

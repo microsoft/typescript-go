@@ -16,11 +16,8 @@
 +
      [x: number]: string;
  >x : number
-->  : ^^^^^^
  
-     [x: number]: string;
- >x : number
-->  : ^^^^^^
+@@= skipped -16, +13 lines =@@
  }
  
  interface String {
@@ -28,11 +25,8 @@
 +
      [x: number]: string;
  >x : number
-->  : ^^^^^^
  
-     [x: number]: string;
- >x : number
-->  : ^^^^^^
+@@= skipped -8, +10 lines =@@
  }
  
  interface Array<T> {
@@ -41,24 +35,8 @@
 +
      [x: number]: T;
  >x : number
-->  : ^^^^^^
  
-     [x: number]: T;
- >x : number
-->  : ^^^^^^
- }
- 
- class C {
- >C : C
-->  : ^
- 
-     [x: number]: string;
- >x : number
-->  : ^^^^^^
- 
-     [x: number]: string;
- >x : number
-->  : ^^^^^^
+@@= skipped -18, +21 lines =@@
  }
  
  interface I {
@@ -66,24 +44,4 @@
 +
      [x: number]: string;
  >x : number
-->  : ^^^^^^
- 
-     [x: number]: string;
- >x : number
-->  : ^^^^^^
- }
- 
- var a: {
- >a : { [x: number]: string; }
-->  : ^^^^^^^^^^^^^^^^^^^^^^^^
- 
-     [x: number]: string;
- >x : number
-->  : ^^^^^^
- 
-     [x: number]: string;
- >x : number
-->  : ^^^^^^
- }
- 
  

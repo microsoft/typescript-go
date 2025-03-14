@@ -5,9 +5,7 @@
    */
  function x(y) { }
 ->x : (y?: any[] | undefined) => void
-->  : ^ ^^^^^^^^   ^^^^^^^^^^^^^^^^^^
 ->y : any[]
-->  : ^^^^^
 +>x : (y: any) => void
 +>y : any
  
@@ -16,9 +14,7 @@
   */
  function y(func) { return; }
 ->y : (func: (arg0: any[]) => any) => void
-->  : ^    ^^     ^^^^^^^     ^^^^^^^^^^^^
 ->func : (arg0: any[]) => any
-->     : ^^^^^^^^^^^^^^^^^^^^
 +>y : (func: any) => void
 +>func : any
  
@@ -27,7 +23,6 @@
   */
  function z() { return null ;}
 ->z : () => (any[] | null)
-->  : ^^^^^^ ^^^^^        
 +>z : () => any
  
  /**
@@ -36,6 +31,5 @@
   */
  function w() { return null; }
 ->w : () => Promise<any> | null
-->  : ^^^^^^^^^^^^^^^^^^   ^^^^
 +>w : () => any
  

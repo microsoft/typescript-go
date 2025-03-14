@@ -5,52 +5,11 @@
  === file.tsx ===
  import React = require('react');
 ->React : typeof React
-->      : ^^^^^^^^^^^^
 +>React : any
  
  const obj = {};
  >obj : {}
-->    : ^^
- >{} : {}
-->   : ^^
- 
- const obj1: {x: 2} = {
- >obj1 : { x: 2; }
-->     : ^^^^^ ^^^
- >x : 2
-->  : ^
- >{    x: 2} : { x: 2; }
-->           : ^^^^^^^^^
- 
-     x: 2
- >x : 2
-->  : ^
- >2 : 2
-->  : ^
- }
- const obj3: {y: false, overwrite: string} = {
- >obj3 : { y: false; overwrite: string; }
-->     : ^^^^^     ^^^^^^^^^^^^^      ^^^
- >y : false
-->  : ^^^^^
- >false : false
-->      : ^^^^^
- >overwrite : string
-->          : ^^^^^^
- >{    y: false,    overwrite: "hi"} : { y: false; overwrite: string; }
-->                                   : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
-     y: false,
- >y : false
-->  : ^^^^^
- >false : false
-->      : ^^^^^
- 
-     overwrite: "hi"
- >overwrite : string
-->          : ^^^^^^
- >"hi" : "hi"
-->     : ^^^^
+@@= skipped -32, +32 lines =@@
  }
  
  interface Prop {
@@ -58,139 +17,86 @@
 +
      x: 2
  >x : 2
-->  : ^
  
-     y: false
- >y : false
-->  : ^^^^^
- >false : false
-->      : ^^^^^
- 
-     overwrite: string
- >overwrite : string
-->          : ^^^^^^
- }
+@@= skipped -13, +15 lines =@@
  
  class OverWriteAttr extends React.Component<Prop, {}> {
  >OverWriteAttr : OverWriteAttr
-->              : ^^^^^^^^^^^^^
 ->React.Component : React.Component<Prop, {}>
-->                : ^^^^^^^^^^^^^^^^^^^^^^^^^
 ->React : typeof React
-->      : ^^^^^^^^^^^^
 ->Component : typeof React.Component
-->          : ^^^^^^^^^^^^^^^^^^^^^^
 +>React.Component : any
 +>React : any
 +>Component : any
  
      render() {
 ->render : () => JSX.Element
-->       : ^^^^^^^^^^^^^^^^^
 +>render : () => any
  
          return <div>Hello</div>;
 -><div>Hello</div> : JSX.Element
-->                 : ^^^^^^^^^^^
 +><div>Hello</div> : any
  >div : any
-->    : ^^^
  >div : any
-->    : ^^^
      }
- }
- 
- let anyobj: any;
- >anyobj : any
-->       : ^^^
+@@= skipped -19, +19 lines =@@
  
  // Error
  let x = <OverWriteAttr {...obj} y overwrite="hi" {...obj1} />
 ->x : JSX.Element
-->  : ^^^^^^^^^^^
 -><OverWriteAttr {...obj} y overwrite="hi" {...obj1} /> : JSX.Element
-->                                                      : ^^^^^^^^^^^
 +>x : any
 +><OverWriteAttr {...obj} y overwrite="hi" {...obj1} /> : any
  >OverWriteAttr : typeof OverWriteAttr
-->              : ^^^^^^^^^^^^^^^^^^^^
  >obj : {}
-->    : ^^
 ->y : true
-->  : ^^^^
 ->overwrite : string
-->          : ^^^^^^
 +>y : any
 +>overwrite : any
  >obj1 : { x: 2; }
-->     : ^^^^^ ^^^
  
  let x1 = <OverWriteAttr overwrite="hi" {...obj1} x={3} {...{y: true}} />
 ->x1 : JSX.Element
-->   : ^^^^^^^^^^^
 -><OverWriteAttr overwrite="hi" {...obj1} x={3} {...{y: true}} /> : JSX.Element
-->                                                                : ^^^^^^^^^^^
 +>x1 : any
 +><OverWriteAttr overwrite="hi" {...obj1} x={3} {...{y: true}} /> : any
  >OverWriteAttr : typeof OverWriteAttr
-->              : ^^^^^^^^^^^^^^^^^^^^
 ->overwrite : string
-->          : ^^^^^^
 +>overwrite : any
  >obj1 : { x: 2; }
-->     : ^^^^^ ^^^
 ->x : 3
-->  : ^
 +>x : any
  >3 : 3
-->  : ^
 ->{y: true} : { y: true; }
-->          : ^^^^^^^^^^^^
 ->y : true
-->  : ^^^^
 +>{y: true} : { y: boolean; }
 +>y : boolean
  >true : true
-->     : ^^^^
  
  let x2 = <OverWriteAttr {...anyobj} x={3} />
 ->x2 : JSX.Element
-->   : ^^^^^^^^^^^
 -><OverWriteAttr {...anyobj} x={3} /> : JSX.Element
-->                                    : ^^^^^^^^^^^
 +>x2 : any
 +><OverWriteAttr {...anyobj} x={3} /> : any
  >OverWriteAttr : typeof OverWriteAttr
-->              : ^^^^^^^^^^^^^^^^^^^^
  >anyobj : any
-->       : ^^^
 ->x : 3
-->  : ^
 +>x : any
  >3 : 3
-->  : ^
  
  let x3 = <OverWriteAttr overwrite="hi" {...obj1} {...{y: true}} />
 ->x3 : JSX.Element
-->   : ^^^^^^^^^^^
 -><OverWriteAttr overwrite="hi" {...obj1} {...{y: true}} /> : JSX.Element
-->                                                          : ^^^^^^^^^^^
 +>x3 : any
 +><OverWriteAttr overwrite="hi" {...obj1} {...{y: true}} /> : any
  >OverWriteAttr : typeof OverWriteAttr
-->              : ^^^^^^^^^^^^^^^^^^^^
 ->overwrite : string
-->          : ^^^^^^
 +>overwrite : any
  >obj1 : { x: 2; }
-->     : ^^^^^ ^^^
 ->{y: true} : { y: true; }
-->          : ^^^^^^^^^^^^
 ->y : true
-->  : ^^^^
 +>{y: true} : { y: boolean; }
 +>y : boolean
  >true : true
-->     : ^^^^
  
  

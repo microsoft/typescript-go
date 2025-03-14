@@ -6,17 +6,12 @@
  interface A { x: number }
 +>A : A
  >x : number
-->  : ^^^^^^
  
  declare function isA(a: unknown): a is A;
- >isA : (a: unknown) => a is A
-->    : ^ ^^       ^^^^^      
- >a : unknown
-->  : ^^^^^^^
+@@= skipped -8, +9 lines =@@
  
  type FunctionsObj<T> = {
  >FunctionsObj : FunctionsObj<T>
-->             : ^^^^^^^^^^^^^^^
 +>T : T
  
      [K in keyof T]: () => unknown
@@ -25,7 +20,6 @@
  
  function g<
  >g : <T extends FunctionsObj<T>, M extends keyof T>(a2: ReturnType<T[M]>, x: A) => void
-->  : ^ ^^^^^^^^^               ^^ ^^^^^^^^^       ^^  ^^                ^^ ^^ ^^^^^^^^^
  
      T extends FunctionsObj<T>,
 +>T : T
@@ -35,24 +29,9 @@
 +
  >(a2: ReturnType<T[M]>, x: A) {
  >a2 : ReturnType<T[M]>
-->   : ^^^^^^^^^^^^^^^^
  >x : A
-->  : ^
- 
-     x = a2;
- >x = a2 : ReturnType<T[M]>
-->       : ^^^^^^^^^^^^^^^^
- >x : A
-->  : ^
- >a2 : ReturnType<T[M]>
-->   : ^^^^^^^^^^^^^^^^
- }
- 
- // Original CFA report of the above issue
- 
- function g2<
+@@= skipped -25, +31 lines =@@
  >g2 : <T extends FunctionsObj<T>, M extends keyof T>(a2: ReturnType<T[M]>) => void
-->   : ^ ^^^^^^^^^               ^^ ^^^^^^^^^       ^^  ^^                ^^^^^^^^^
  
      T extends FunctionsObj<T>,
 +>T : T
@@ -62,24 +41,4 @@
 +
  >(a2: ReturnType<T[M]>) {
  >a2 : ReturnType<T[M]>
-->   : ^^^^^^^^^^^^^^^^
- 
-     if (isA(a2)) {
- >isA(a2) : boolean
-->        : ^^^^^^^
- >isA : (a: unknown) => a is A
-->    : ^ ^^       ^^^^^      
- >a2 : ReturnType<T[M]>
-->   : ^^^^^^^^^^^^^^^^
- 
-         // a2 is not narrowed
-         a2.x // error, but should be ok
- >a2.x : number
-->     : ^^^^^^
- >a2 : ReturnType<T[M]> & A
-->   : ^^^^^^^^^^^^^^^^^^^^
- >x : number
-->  : ^^^^^^
-     }
- }
  

@@ -1,8 +1,0 @@
---- old.globalThisCollision.types
-+++ new.globalThisCollision.types
-@@= skipped -2, +2 lines =@@
- === globalThisCollision.js ===
- var globalThis;
- >globalThis : any
-->           : ^^^
- 

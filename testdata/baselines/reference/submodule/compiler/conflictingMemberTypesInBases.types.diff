@@ -8,7 +8,6 @@
 +
      m: string;
  >m : string
-->  : ^^^^^^
  }
  interface B extends A {
 +>B : B
@@ -18,7 +17,6 @@
 +
      m: number;
  >m : number
-->  : ^^^^^^
  }
  interface D extends C {
 +>D : D

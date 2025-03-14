@@ -1,8 +1,0 @@
---- old.declFileClassExtendsNull.types
-+++ new.declFileClassExtendsNull.types
-@@= skipped -2, +2 lines =@@
- === declFileClassExtendsNull.ts ===
- class ExtendsNull extends null {
- >ExtendsNull : ExtendsNull
-->            : ^^^^^^^^^^^
- }

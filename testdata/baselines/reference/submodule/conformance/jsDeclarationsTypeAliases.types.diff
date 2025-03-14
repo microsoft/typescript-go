@@ -5,46 +5,29 @@
   */
  function doTheThing(x) {
 ->doTheThing : (x: number) => SomeType
-->           : ^ ^^      ^^^^^        
 ->x : number
-->  : ^^^^^^
 +>doTheThing : (x: any) => { x: string; }
 +>x : any
  
      return {x: ""+x};
  >{x: ""+x} : { x: string; }
-->          : ^^^^^^^^^^^^^^
  >x : string
-->  : ^^^^^^
  >""+x : string
-->     : ^^^^^^
  >"" : ""
-->   : ^^
 ->x : number
-->  : ^^^^^^
 +>x : any
  }
  class ExportedThing {
  >ExportedThing : ExportedThing
-->              : ^^^^^^^^^^^^^
- 
-     z = "ok"
- >z : string
-->  : ^^^^^^
+@@= skipped -18, +18 lines =@@
  >"ok" : "ok"
-->     : ^^^^
  }
  module.exports = {
 ->module.exports = {    doTheThing,    ExportedThing,} : typeof module.exports
-->                                                     : ^^^^^^^^^^^^^^^^^^^^^
 ->module.exports : typeof module.exports
-->               : ^^^^^^^^^^^^^^^^^^^^^
 ->module : { exports: typeof module.exports; }
-->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ->exports : typeof module.exports
-->        : ^^^^^^^^^^^^^^^^^^^^^
 ->{    doTheThing,    ExportedThing,} : { doTheThing: (x: number) => SomeType; ExportedThing: typeof ExportedThing; }
-->                                    : ^^^^^^^^^^^^^^^ ^^      ^^^^^        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>module.exports = {    doTheThing,    ExportedThing,} : { doTheThing: (x: any) => { x: string; }; ExportedThing: typeof ExportedThing; }
 +>module.exports : any
 +>module : any
@@ -53,23 +36,11 @@
  
      doTheThing,
 ->doTheThing : (x: number) => SomeType
-->           : ^ ^^      ^^^^^        
 +>doTheThing : any
  
      ExportedThing,
 ->ExportedThing : typeof ExportedThing
-->              : ^^^^^^^^^^^^^^^^^^^^
 +>ExportedThing : any
  
  };
  class LocalThing {
- >LocalThing : LocalThing
-->           : ^^^^^^^^^^
- 
-     y = "ok"
- >y : string
-->  : ^^^^^^
- >"ok" : "ok"
-->     : ^^^^
- }
- 

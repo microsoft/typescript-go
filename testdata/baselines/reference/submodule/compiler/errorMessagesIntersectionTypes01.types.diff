@@ -8,7 +8,6 @@
 +
      fooProp: boolean;
  >fooProp : boolean
-->        : ^^^^^^^
  }
  
  interface Bar {
@@ -16,7 +15,6 @@
 +
      barProp: string;
  >barProp : string
-->        : ^^^^^^
  }
  
  interface FooBar extends Foo, Bar {
@@ -25,25 +23,7 @@
  
  declare function mixBar<T>(obj: T): T & Bar;
  >mixBar : <T>(obj: T) => T & Bar
-->       : ^ ^^   ^^ ^^^^^       
 +>T : T
  >obj : T
-->    : ^
  
  let fooBar: FooBar = mixBar({
- >fooBar : FooBar
-->       : ^^^^^^
- >mixBar({    fooProp: "frizzlebizzle"}) : { fooProp: string; } & Bar
-->                                       : ^^^^^^^^^^^^^^^^^^^^^^^^^^
- >mixBar : <T>(obj: T) => T & Bar
-->       : ^ ^^   ^^ ^^^^^       
- >{    fooProp: "frizzlebizzle"} : { fooProp: string; }
-->                               : ^^^^^^^^^^^^^^^^^^^^
- 
-     fooProp: "frizzlebizzle"
- >fooProp : string
-->        : ^^^^^^
- >"frizzlebizzle" : "frizzlebizzle"
-->                : ^^^^^^^^^^^^^^^
- 
- });

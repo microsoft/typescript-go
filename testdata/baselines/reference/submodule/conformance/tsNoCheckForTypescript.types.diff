@@ -1,29 +1,11 @@
 --- old.tsNoCheckForTypescript.types
 +++ new.tsNoCheckForTypescript.types
-@@= skipped -6, +6 lines =@@
- >a : any
- >1 + {} : any
- >1 : 1
-->  : ^
+@@= skipped -9, +9 lines =@@
  >{} : {}
-->   : ^^
  
  export interface Aleph {
 +>Aleph : Aleph
 +
      q: number;
  >q : number
-->  : ^^^^^^
  }
- 
- export class Bet implements Aleph {
- >Bet : Bet
-->    : ^^^
- 
-     q: string = "lol" // And so will this implements error
- >q : string
-->  : ^^^^^^
- >"lol" : "lol"
-->      : ^^^^^
- }
- 

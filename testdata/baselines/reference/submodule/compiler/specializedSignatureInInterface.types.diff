@@ -8,7 +8,6 @@
 +
    (key:string):void;
  >key : string
-->    : ^^^^^^
  }
  
  interface B extends A {
@@ -16,9 +15,4 @@
 +
    (key:'foo'):string;
  >key : "foo"
-->    : ^^^^^
  
-   (key:'bar'):string;
- >key : "bar"
-->    : ^^^^^
- }

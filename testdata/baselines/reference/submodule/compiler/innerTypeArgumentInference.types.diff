@@ -9,16 +9,7 @@
 +
  function Generate<U>(func: Generator<U>): U {
  >Generate : <U>(func: Generator<U>) => U
-->         : ^ ^^    ^^            ^^^^^ 
 +>U : U
  >func : Generator<U>
-->     : ^^^^^^^^^^^^
  
      return Generate(func);
- >Generate(func) : U
-->               : ^
- >Generate : <U>(func: Generator<U>) => U
-->         : ^ ^^    ^^            ^^^^^ 
- >func : Generator<U>
-->     : ^^^^^^^^^^^^
- }

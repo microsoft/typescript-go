@@ -1,51 +1,20 @@
 --- old.namespacesDeclaration2.types
 +++ new.namespacesDeclaration2.types
-@@= skipped -2, +2 lines =@@
- === namespacesDeclaration2.ts ===
- namespace N {
- >N : typeof N
-->  : ^^^^^^^^
- 
-     function S() {}
- >S : () => void
-->  : ^^^^^^^^^^
- }
- module M {
- >M : typeof M
-->  : ^^^^^^^^
- 
-     function F() {}
- >F : () => void
-->  : ^^^^^^^^^^
- }
- 
- declare namespace ns {
- >ns : typeof ns
-->   : ^^^^^^^^^
- 
-     let f: number;
- >f : number
-->  : ^^^^^^
+@@= skipped -21, +21 lines =@@
  }
  
  var foge: N.S;
 ->foge : N.S
-->     : ^^^
 +>foge : S
  >N : any
-->  : ^^^
  
  var foo: M.F;
 ->foo : M.F
-->    : ^^^
 +>foo : F
  >M : any
-->  : ^^^
  
  let x: ns.A;
 ->x : ns.A
-->  : ^^^^
 +>x : A
  >ns : any
-->   : ^^^
  

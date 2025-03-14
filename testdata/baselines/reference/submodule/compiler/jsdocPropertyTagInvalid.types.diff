@@ -5,28 +5,19 @@
  /** @param {MyType} p  */
  export function f(p) { }
 ->f : (p: MyType) => void
-->  : ^ ^^      ^^^^^^^^^
 ->p : MyType
-->  : ^^^^^^
 +>f : (p: any) => void
 +>p : any
  
  === /b.js ===
  import { f } from "./a.js"
 ->f : (p: MyType) => void
-->  : ^ ^^      ^^^^^^^^^
 +>f : (p: any) => void
  
  f({ x: 42 })
  >f({ x: 42 }) : void
-->             : ^^^^
 ->f : (p: MyType) => void
-->  : ^ ^^      ^^^^^^^^^
 +>f : (p: any) => void
  >{ x: 42 } : { x: number; }
-->          : ^^^^^^^^^^^^^^
  >x : number
-->  : ^^^^^^
  >42 : 42
-->   : ^^
- 

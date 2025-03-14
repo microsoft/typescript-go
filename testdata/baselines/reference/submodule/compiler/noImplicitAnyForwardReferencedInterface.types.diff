@@ -1,10 +1,7 @@
 --- old.noImplicitAnyForwardReferencedInterface.types
 +++ new.noImplicitAnyForwardReferencedInterface.types
-@@= skipped -2, +2 lines =@@
- === noImplicitAnyForwardReferencedInterface.ts ===
- declare var x: Entry;
+@@= skipped -4, +4 lines =@@
  >x : Entry
-->  : ^^^^^
  
  interface Entry {
 +>Entry : Entry

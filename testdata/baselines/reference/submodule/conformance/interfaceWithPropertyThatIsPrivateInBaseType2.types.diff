@@ -1,14 +1,6 @@
 --- old.interfaceWithPropertyThatIsPrivateInBaseType2.types
 +++ new.interfaceWithPropertyThatIsPrivateInBaseType2.types
-@@= skipped -2, +2 lines =@@
- === interfaceWithPropertyThatIsPrivateInBaseType2.ts ===
- class Base {
- >Base : Base
-->     : ^^^^
- 
-     private x() {}
- >x : () => void
-->  : ^^^^^^^^^^
+@@= skipped -8, +8 lines =@@
  }
  
  interface Foo extends Base { // error
@@ -16,17 +8,14 @@
 +
      x(): any;
  >x : () => any
-->  : ^^^^^^   
  }
  
  class Base2<T> {
  >Base2 : Base2<T>
-->      : ^^^^^^^^
 +>T : T
  
      private x() { }
  >x : () => void
-->  : ^^^^^^^^^^
  }
  
  interface Foo2<T> extends Base2<T> { // error
@@ -35,5 +24,4 @@
 +
      x(): any;
  >x : () => any
-->  : ^^^^^^   
  }

@@ -1,86 +1,27 @@
 --- old.thisInGenericStaticMembers.types
 +++ new.thisInGenericStaticMembers.types
-@@= skipped -4, +4 lines =@@
- 
- class A {
- >A : A
-->  : ^
+@@= skipped -7, +7 lines =@@
  
      static one<T>(source:T, value: number): T {
  >one : <T>(source: T, value: number) => T
-->    : ^ ^^      ^^ ^^     ^^      ^^^^^ 
 +>T : T
  >source : T
-->       : ^
  >value : number
-->      : ^^^^^^
  
-         return source;
- >source : T
-->       : ^
-     }
+@@= skipped -9, +10 lines =@@
  
      static two<T>(source: T): T {
  >two : <T>(source: T) => T
-->    : ^ ^^      ^^ ^^^^^ 
 +>T : T
  >source : T
-->       : ^
  
          return this.one<T>(source, 42);
  >this.one<T>(source, 42) : T
-->                        : ^
 ->this.one : <T_1>(source: T_1, value: number) => T_1
-->         : ^^^^^^      ^^   ^^     ^^      ^^^^^   
 +>this.one : <T>(source: T, value: number) => T
  >this : typeof A
-->     : ^^^^^^^^
 ->one : <T_1>(source: T_1, value: number) => T_1
-->    : ^^^^^^      ^^   ^^     ^^      ^^^^^   
 +>one : <T>(source: T, value: number) => T
  >source : T
-->       : ^
  >42 : 42
-->   : ^^
      }
- }
- 
- class B {
- >B : B
-->  : ^
- 
-     static one(source: B, value: number): B {
- >one : (source: B, value: number) => B
-->    : ^      ^^ ^^     ^^      ^^^^^ 
- >source : B
-->       : ^
- >value : number
-->      : ^^^^^^
- 
-         return source;
- >source : B
-->       : ^
-     }
- 
-     static two(source: B): B {
- >two : (source: B) => B
-->    : ^      ^^ ^^^^^ 
- >source : B
-->       : ^
- 
-         return this.one(source, 42);
- >this.one(source, 42) : B
-->                     : ^
- >this.one : (source: B, value: number) => B
-->         : ^      ^^ ^^     ^^      ^^^^^ 
- >this : typeof B
-->     : ^^^^^^^^
- >one : (source: B, value: number) => B
-->    : ^      ^^ ^^     ^^      ^^^^^ 
- >source : B
-->       : ^
- >42 : 42
-->   : ^^
-     }
- }
- 

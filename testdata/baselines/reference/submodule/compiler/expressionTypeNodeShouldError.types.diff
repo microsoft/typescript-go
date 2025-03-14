@@ -1,16 +1,6 @@
 --- old.expressionTypeNodeShouldError.types
 +++ new.expressionTypeNodeShouldError.types
-@@= skipped -2, +2 lines =@@
- === base.d.ts ===
- declare const x: "foo".charCodeAt(0);
- >x : "foo"
-->  : ^^^^^
- >charCodeAt : any
-->           : ^^^
- >(0) : 0
-->    : ^
- >0 : 0
-->  : ^
+@@= skipped -8, +8 lines =@@
  
  === string.ts ===
  interface String {
@@ -18,69 +8,29 @@
 +
      typeof<T>(x: T): T;
  >typeof : <T>(x: T) => T
-->       : ^ ^^ ^^ ^^^^^ 
 +>T : T
  >x : T
-->  : ^
  }
  
- class C {
- >C : C
-->  : ^
- 
-     foo() {
- >foo : () => void
-->    : ^^^^^^^^^^
+@@= skipped -13, +16 lines =@@
  
          const x: "".typeof(this.foo);
  >x : ""
-->  : ^^
 ->typeof(this.foo) : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
-->                 : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>typeof(this.foo) : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
  >(this.foo) : () => void
-->           : ^^^^^^^^^^
  >this.foo : () => void
-->         : ^^^^^^^^^^
  >this : this
-->     : ^^^^
- >foo : () => void
-->    : ^^^^^^^^^^
-     }
- }
- 
- const nodes = document.getElementsByTagName("li");
- >nodes : HTMLCollectionOf<HTMLLIElement>
-->      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >document.getElementsByTagName("li") : HTMLCollectionOf<HTMLLIElement>
-->                                    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >document.getElementsByTagName : { <K extends keyof HTMLElementTagNameMap>(qualifiedName: K): HTMLCollectionOf<HTMLElementTagNameMap[K]>; <K extends keyof SVGElementTagNameMap>(qualifiedName: K): HTMLCollectionOf<SVGElementTagNameMap[K]>; <K extends keyof MathMLElementTagNameMap>(qualifiedName: K): HTMLCollectionOf<MathMLElementTagNameMap[K]>; <K extends keyof HTMLElementDeprecatedTagNameMap>(qualifiedName: K): HTMLCollectionOf<HTMLElementDeprecatedTagNameMap[K]>; (qualifiedName: string): HTMLCollectionOf<Element>; }
-->                              : ^^^ ^^^^^^^^^                           ^^             ^^ ^^^                                          ^^^ ^^^^^^^^^                          ^^             ^^ ^^^                                         ^^^ ^^^^^^^^^                             ^^             ^^ ^^^                                            ^^^ ^^^^^^^^^                                     ^^             ^^ ^^^                                                    ^^^             ^^      ^^^                         ^^^
- >document : Document
-->         : ^^^^^^^^
- >getElementsByTagName : { <K extends keyof HTMLElementTagNameMap>(qualifiedName: K): HTMLCollectionOf<HTMLElementTagNameMap[K]>; <K extends keyof SVGElementTagNameMap>(qualifiedName: K): HTMLCollectionOf<SVGElementTagNameMap[K]>; <K extends keyof MathMLElementTagNameMap>(qualifiedName: K): HTMLCollectionOf<MathMLElementTagNameMap[K]>; <K extends keyof HTMLElementDeprecatedTagNameMap>(qualifiedName: K): HTMLCollectionOf<HTMLElementDeprecatedTagNameMap[K]>; (qualifiedName: string): HTMLCollectionOf<Element>; }
-->                     : ^^^ ^^^^^^^^^                           ^^             ^^ ^^^                                          ^^^ ^^^^^^^^^                          ^^             ^^ ^^^                                         ^^^ ^^^^^^^^^                             ^^             ^^ ^^^                                            ^^^ ^^^^^^^^^                                     ^^             ^^ ^^^                                                    ^^^             ^^      ^^^                         ^^^
- >"li" : "li"
-->     : ^^^^
+@@= skipped -18, +18 lines =@@
  
  type ItemType = "".typeof(nodes.item(0));
  >ItemType : ""
-->         : ^^
 ->typeof(nodes.item(0)) : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
-->                      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>typeof(nodes.item(0)) : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
  >(nodes.item(0)) : HTMLLIElement
-->                : ^^^^^^^^^^^^^
  >nodes.item(0) : HTMLLIElement
-->              : ^^^^^^^^^^^^^
  >nodes.item : (index: number) => HTMLLIElement
-->           : ^     ^^      ^^^^^^^^^^^^^^^^^^
- >nodes : HTMLCollectionOf<HTMLLIElement>
-->      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >item : (index: number) => HTMLLIElement
-->     : ^     ^^      ^^^^^^^^^^^^^^^^^^
- >0 : 0
-->  : ^
+@@= skipped -10, +10 lines =@@
  
  === number.ts ===
  interface Number {
@@ -88,69 +38,29 @@
 +
      typeof<T>(x: T): T;
  >typeof : <T>(x: T) => T
-->       : ^ ^^ ^^ ^^^^^ 
 +>T : T
  >x : T
-->  : ^
  }
  
- class C2 {
- >C2 : C2
-->   : ^^
- 
-     foo() {
- >foo : () => void
-->    : ^^^^^^^^^^
+@@= skipped -13, +16 lines =@@
  
          const x: 3.141592.typeof(this.foo);
  >x : 3.141592
-->  : ^^^^^^^^
 ->typeof(this.foo) : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
-->                 : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>typeof(this.foo) : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
  >(this.foo) : () => void
-->           : ^^^^^^^^^^
  >this.foo : () => void
-->         : ^^^^^^^^^^
  >this : this
-->     : ^^^^
- >foo : () => void
-->    : ^^^^^^^^^^
-     }
- }
- 
- const nodes2 = document.getElementsByTagName("li");
- >nodes2 : HTMLCollectionOf<HTMLLIElement>
-->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >document.getElementsByTagName("li") : HTMLCollectionOf<HTMLLIElement>
-->                                    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >document.getElementsByTagName : { <K extends keyof HTMLElementTagNameMap>(qualifiedName: K): HTMLCollectionOf<HTMLElementTagNameMap[K]>; <K extends keyof SVGElementTagNameMap>(qualifiedName: K): HTMLCollectionOf<SVGElementTagNameMap[K]>; <K extends keyof MathMLElementTagNameMap>(qualifiedName: K): HTMLCollectionOf<MathMLElementTagNameMap[K]>; <K extends keyof HTMLElementDeprecatedTagNameMap>(qualifiedName: K): HTMLCollectionOf<HTMLElementDeprecatedTagNameMap[K]>; (qualifiedName: string): HTMLCollectionOf<Element>; }
-->                              : ^^^ ^^^^^^^^^                           ^^             ^^ ^^^                                          ^^^ ^^^^^^^^^                          ^^             ^^ ^^^                                         ^^^ ^^^^^^^^^                             ^^             ^^ ^^^                                            ^^^ ^^^^^^^^^                                     ^^             ^^ ^^^                                                    ^^^             ^^      ^^^                         ^^^
- >document : Document
-->         : ^^^^^^^^
- >getElementsByTagName : { <K extends keyof HTMLElementTagNameMap>(qualifiedName: K): HTMLCollectionOf<HTMLElementTagNameMap[K]>; <K extends keyof SVGElementTagNameMap>(qualifiedName: K): HTMLCollectionOf<SVGElementTagNameMap[K]>; <K extends keyof MathMLElementTagNameMap>(qualifiedName: K): HTMLCollectionOf<MathMLElementTagNameMap[K]>; <K extends keyof HTMLElementDeprecatedTagNameMap>(qualifiedName: K): HTMLCollectionOf<HTMLElementDeprecatedTagNameMap[K]>; (qualifiedName: string): HTMLCollectionOf<Element>; }
-->                     : ^^^ ^^^^^^^^^                           ^^             ^^ ^^^                                          ^^^ ^^^^^^^^^                          ^^             ^^ ^^^                                         ^^^ ^^^^^^^^^                             ^^             ^^ ^^^                                            ^^^ ^^^^^^^^^                                     ^^             ^^ ^^^                                                    ^^^             ^^      ^^^                         ^^^
- >"li" : "li"
-->     : ^^^^
+@@= skipped -18, +18 lines =@@
  
  type ItemType2 = 4..typeof(nodes.item(0));
  >ItemType2 : 4
-->          : ^
 ->typeof(nodes.item(0)) : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
-->                      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>typeof(nodes.item(0)) : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
  >(nodes.item(0)) : HTMLLIElement
-->                : ^^^^^^^^^^^^^
  >nodes.item(0) : HTMLLIElement
-->              : ^^^^^^^^^^^^^
  >nodes.item : (index: number) => HTMLLIElement
-->           : ^     ^^      ^^^^^^^^^^^^^^^^^^
- >nodes : HTMLCollectionOf<HTMLLIElement>
-->      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >item : (index: number) => HTMLLIElement
-->     : ^     ^^      ^^^^^^^^^^^^^^^^^^
- >0 : 0
-->  : ^
+@@= skipped -10, +10 lines =@@
  
  === boolean.ts ===
  interface Boolean {
@@ -158,72 +68,25 @@
 +
      typeof<T>(x: T): T;
  >typeof : <T>(x: T) => T
-->       : ^ ^^ ^^ ^^^^^ 
 +>T : T
  >x : T
-->  : ^
  }
  
- class C3 {
- >C3 : C3
-->   : ^^
- 
-     foo() {
- >foo : () => void
-->    : ^^^^^^^^^^
- 
+@@= skipped -14, +17 lines =@@
          const x: false.typeof(this.foo);
  >x : false
-->  : ^^^^^
  >false : false
-->      : ^^^^^
 ->typeof(this.foo) : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
-->                 : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>typeof(this.foo) : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
  >(this.foo) : () => void
-->           : ^^^^^^^^^^
  >this.foo : () => void
-->         : ^^^^^^^^^^
  >this : this
-->     : ^^^^
- >foo : () => void
-->    : ^^^^^^^^^^
-     }
- }
- 
- const nodes3 = document.getElementsByTagName("li");
- >nodes3 : HTMLCollectionOf<HTMLLIElement>
-->       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >document.getElementsByTagName("li") : HTMLCollectionOf<HTMLLIElement>
-->                                    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >document.getElementsByTagName : { <K extends keyof HTMLElementTagNameMap>(qualifiedName: K): HTMLCollectionOf<HTMLElementTagNameMap[K]>; <K extends keyof SVGElementTagNameMap>(qualifiedName: K): HTMLCollectionOf<SVGElementTagNameMap[K]>; <K extends keyof MathMLElementTagNameMap>(qualifiedName: K): HTMLCollectionOf<MathMLElementTagNameMap[K]>; <K extends keyof HTMLElementDeprecatedTagNameMap>(qualifiedName: K): HTMLCollectionOf<HTMLElementDeprecatedTagNameMap[K]>; (qualifiedName: string): HTMLCollectionOf<Element>; }
-->                              : ^^^ ^^^^^^^^^                           ^^             ^^ ^^^                                          ^^^ ^^^^^^^^^                          ^^             ^^ ^^^                                         ^^^ ^^^^^^^^^                             ^^             ^^ ^^^                                            ^^^ ^^^^^^^^^                                     ^^             ^^ ^^^                                                    ^^^             ^^      ^^^                         ^^^
- >document : Document
-->         : ^^^^^^^^
- >getElementsByTagName : { <K extends keyof HTMLElementTagNameMap>(qualifiedName: K): HTMLCollectionOf<HTMLElementTagNameMap[K]>; <K extends keyof SVGElementTagNameMap>(qualifiedName: K): HTMLCollectionOf<SVGElementTagNameMap[K]>; <K extends keyof MathMLElementTagNameMap>(qualifiedName: K): HTMLCollectionOf<MathMLElementTagNameMap[K]>; <K extends keyof HTMLElementDeprecatedTagNameMap>(qualifiedName: K): HTMLCollectionOf<HTMLElementDeprecatedTagNameMap[K]>; (qualifiedName: string): HTMLCollectionOf<Element>; }
-->                     : ^^^ ^^^^^^^^^                           ^^             ^^ ^^^                                          ^^^ ^^^^^^^^^                          ^^             ^^ ^^^                                         ^^^ ^^^^^^^^^                             ^^             ^^ ^^^                                            ^^^ ^^^^^^^^^                                     ^^             ^^ ^^^                                                    ^^^             ^^      ^^^                         ^^^
- >"li" : "li"
-->     : ^^^^
- 
+@@= skipped -19, +19 lines =@@
  type ItemType3 = true.typeof(nodes.item(0));
  >ItemType3 : true
-->          : ^^^^
  >true : true
-->     : ^^^^
 ->typeof(nodes.item(0)) : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
-->                      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>typeof(nodes.item(0)) : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
  >(nodes.item(0)) : HTMLLIElement
-->                : ^^^^^^^^^^^^^
  >nodes.item(0) : HTMLLIElement
-->              : ^^^^^^^^^^^^^
  >nodes.item : (index: number) => HTMLLIElement
-->           : ^     ^^      ^^^^^^^^^^^^^^^^^^
- >nodes : HTMLCollectionOf<HTMLLIElement>
-->      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >item : (index: number) => HTMLLIElement
-->     : ^     ^^      ^^^^^^^^^^^^^^^^^^
- >0 : 0
-->  : ^
- 
- 

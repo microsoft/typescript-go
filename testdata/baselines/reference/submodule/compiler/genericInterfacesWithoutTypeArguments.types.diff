@@ -9,14 +9,7 @@
 +
  class C<T> { }
  >C : C<T>
-->  : ^^^^
 +>T : T
  
  var i: I;
  >i : any
-->  : ^^^
- 
- var c: C<I>;
- >c : C<any>
-->  : ^^^^^^
- 

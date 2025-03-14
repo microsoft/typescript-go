@@ -1,39 +1,11 @@
 --- old.classConstructorAccessibility5.types
 +++ new.classConstructorAccessibility5.types
-@@= skipped -2, +2 lines =@@
- === classConstructorAccessibility5.ts ===
- class Base {
- >Base : Base
-->     : ^^^^
- 
-     protected constructor() { }
- }
- class Derived extends Base {
- >Derived : Derived
-->        : ^^^^^^^
- >Base : Base
-->     : ^^^^
- 
-     static make() { new Base() } // ok
- >make : () => void
-->     : ^^^^^^^^^^
- >new Base() : Base
-->           : ^^^^
- >Base : typeof Base
-->     : ^^^^^^^^^^^
- }
- 
- class Unrelated {
- >Unrelated : Unrelated
-->          : ^^^^^^^^^
+@@= skipped -20, +20 lines =@@
  
      static fake() { new Base() } // error
  >fake : () => void
-->     : ^^^^^^^^^^
 ->new Base() : any
-->           : ^^^
 +>new Base() : Base
  >Base : typeof Base
-->     : ^^^^^^^^^^^
  }
  

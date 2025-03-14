@@ -5,28 +5,16 @@
  /** @type {A} */
  const a = { value: undefined }; // error
 ->a : A
-->  : ^
 +>a : { value: undefined; }
  >{ value: undefined } : { value: undefined; }
-->                     : ^^^^^^^^^^^^^^^^^^^^^
  >value : undefined
-->      : ^^^^^^^^^
  >undefined : undefined
-->          : ^^^^^^^^^
- 
- /**
-  * @typedef {{ value?: number }} B
-@@= skipped -15, +11 lines =@@
+@@= skipped -11, +11 lines =@@
  
  /** @type {B} */
  const b = { value: undefined }; // error
 ->b : B
-->  : ^
 +>b : { value: undefined; }
  >{ value: undefined } : { value: undefined; }
-->                     : ^^^^^^^^^^^^^^^^^^^^^
  >value : undefined
-->      : ^^^^^^^^^
  >undefined : undefined
-->          : ^^^^^^^^^
- 

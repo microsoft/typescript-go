@@ -18,11 +18,8 @@
   */
  export function foo(a, b) {}
 ->foo : (a: Foo, b: I) => void
-->    : ^ ^^^^^^^ ^^^^^^^^^^^^
 ->a : Foo
-->  : ^^^
 ->b : I
-->  : ^
 +>foo : (a: any, b: any) => void
 +>a : any
 +>b : any

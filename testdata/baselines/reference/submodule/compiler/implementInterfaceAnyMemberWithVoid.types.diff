@@ -8,20 +8,4 @@
 +
      foo(value: number);
  >foo : (value: number) => any
-->    : ^     ^^      ^^^^^^^^
  >value : number
-->      : ^^^^^^
- }
- 
- class Bug implements I {
- >Bug : Bug
-->    : ^^^
- 
-     public foo(value: number) {
- >foo : (value: number) => void
-->    : ^     ^^      ^^^^^^^^^
- >value : number
-->      : ^^^^^^
-     }
- }
- 

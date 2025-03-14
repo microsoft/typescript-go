@@ -5,7 +5,6 @@
  === emptyArrayBindingPatternParameter03.ts ===
  function f(a, []) {
 ->f : (a: any, []: any[]) => void
-->  : ^ ^^^^^^^  ^^^^^^^^^^^^^^^^
 +>f : (a: any, __1: any[]) => void
  >a : any
  

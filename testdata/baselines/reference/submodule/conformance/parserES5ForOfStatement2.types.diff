@@ -1,8 +1,0 @@
---- old.parserES5ForOfStatement2.types
-+++ new.parserES5ForOfStatement2.types
-@@= skipped -2, +2 lines =@@
- === parserES5ForOfStatement2.ts ===
- for (var of X) {
- >X : any
-->  : ^^^
- }

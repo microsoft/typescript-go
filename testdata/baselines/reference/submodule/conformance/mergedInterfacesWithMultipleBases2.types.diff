@@ -1,42 +1,6 @@
 --- old.mergedInterfacesWithMultipleBases2.types
 +++ new.mergedInterfacesWithMultipleBases2.types
-@@= skipped -5, +5 lines =@@
- 
- class C {
- >C : C
-->  : ^
- 
-     a: number;
- >a : number
-->  : ^^^^^^
- }
- 
- class C2 {
- >C2 : C2
-->   : ^^
- 
-     b: number;
- >b : number
-->  : ^^^^^^
- }
- 
- class C3 {
- >C3 : C3
-->   : ^^
- 
-     c: string;
- >c : string
-->  : ^^^^^^
- }
- 
- class C4 {
- >C4 : C4
-->   : ^^
- 
-     d: string;
- >d : string
-->  : ^^^^^^
- }
+@@= skipped -33, +33 lines =@@
  
  
  interface A extends C, C3 {
@@ -44,7 +8,6 @@
 +
      y: string;
  >y : string
-->  : ^^^^^^
  }
  
  interface A extends C2, C4 {
@@ -52,95 +15,39 @@
 +
      z: string;
  >z : string
-->  : ^^^^^^
  }
- 
- class D implements A {
- >D : D
-->  : ^
- 
-     a: number;
- >a : number
-->  : ^^^^^^
- 
-     b: number;
- >b : number
-->  : ^^^^^^
- 
-     c: string;
- >c : string
-->  : ^^^^^^
- 
-     d: string;
- >d : string
-->  : ^^^^^^
- 
-     y: string;
- >y : string
-->  : ^^^^^^
- 
-     z: string;
- >z : string
-->  : ^^^^^^
- }
- 
- var a: A;
- >a : A
-->  : ^
- 
- var r = a.a;
- >r : number
-->  : ^^^^^^
- >a.a : number
-->    : ^^^^^^
- >a : A
-->  : ^
- >a : number
-->  : ^^^^^^
- 
- // generic interfaces in a module
- module M {
- >M : typeof M
-->  : ^^^^^^^^
+@@= skipped -46, +50 lines =@@
  
      class C<T> {
  >C : C<T>
-->  : ^^^^
 +>T : T
  
          a: T;
  >a : T
-->  : ^
-     }
+@@= skipped -7, +8 lines =@@
  
      class C2<T> {
  >C2 : C2<T>
-->   : ^^^^^
 +>T : T
  
          b: T;
  >b : T
-->  : ^
-     }
+@@= skipped -7, +8 lines =@@
  
      class C3<T> {
  >C3 : C3<T>
-->   : ^^^^^
 +>T : T
  
          c: T;
  >c : T
-->  : ^
-     }
+@@= skipped -7, +8 lines =@@
  
      class C4<T> {
  >C4 : C4<T>
-->   : ^^^^^
 +>T : T
  
          d: T;
  >d : T
-->  : ^
      }
  
      interface A<T> extends C<T>, C3<T> {
@@ -149,7 +56,6 @@
 +
          y: T;
  >y : T
-->  : ^
      }
  
      interface A<T> extends C2<string>, C4<string> {
@@ -158,35 +64,4 @@
 +
          z: T;
  >z : T
-->  : ^
      }
- 
-     class D implements A<boolean> {
- >D : D
-->  : ^
- 
-         a: boolean;
- >a : boolean
-->  : ^^^^^^^
- 
-         b: string;
- >b : string
-->  : ^^^^^^
- 
-         c: boolean;
- >c : boolean
-->  : ^^^^^^^
- 
-         d: string;
- >d : string
-->  : ^^^^^^
- 
-         y: boolean;
- >y : boolean
-->  : ^^^^^^^
- 
-         z: boolean;
- >z : boolean
-->  : ^^^^^^^
-     }
- }

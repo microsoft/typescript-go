@@ -1,69 +1,26 @@
 --- old.templateExpressionNoInlininingOfConstantBindingWithInitializer.types
 +++ new.templateExpressionNoInlininingOfConstantBindingWithInitializer.types
-@@= skipped -2, +2 lines =@@
- === templateExpressionNoInlininingOfConstantBindingWithInitializer.ts ===
- type Params = {
- >Params : Params
-->       : ^^^^^^
- 
-   value?: string | number
- >value : string | number
-->      : ^^^^^^^^^^^^^^^
- }
- 
- function example(parameters: Params) {
- >example : (parameters: Params) => boolean
-->        : ^          ^^      ^^^^^^^^^^^^
- >parameters : Params
-->           : ^^^^^^
- 
-   const { value = '123' } = parameters
- >value : string | number
-->      : ^^^^^^^^^^^^^^^
- >'123' : "123"
-->      : ^^^^^
- >parameters : Params
-->           : ^^^^^^
+@@= skipped -18, +18 lines =@@
  
    return `${value}` === '345'
  >`${value}` === '345' : boolean
-->                     : ^^^^^^^
 ->`${value}` : string
-->           : ^^^^^^
 +>`${value}` : "123"
  >value : string | number
-->      : ^^^^^^^^^^^^^^^
  >'345' : "345"
-->      : ^^^^^
  }
- 
- function example2(parameters: Params) {
- >example2 : (parameters: Params) => string
-->         : ^          ^^      ^^^^^^^^^^^
+@@= skipped -15, +15 lines =@@
  >parameters : Params
-->           : ^^^^^^
- 
-   const { value = '123' } = parameters
- >value : string | number
-->      : ^^^^^^^^^^^^^^^
- >'123' : "123"
-->      : ^^^^^
- >parameters : Params
-->           : ^^^^^^
  
    const b = `${value}`;
 ->b : string
-->  : ^^^^^^
 ->`${value}` : string
-->           : ^^^^^^
 +>b : "123"
 +>`${value}` : "123"
  >value : string | number
-->      : ^^^^^^^^^^^^^^^
  
    return b;
 ->b : string
-->  : ^^^^^^
 +>b : "123"
  }
  

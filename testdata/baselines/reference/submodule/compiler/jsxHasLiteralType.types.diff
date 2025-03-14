@@ -5,7 +5,6 @@
  === jsxHasLiteralType.tsx ===
  import * as React from "react";
 ->React : typeof React
-->      : ^^^^^^^^^^^^
 +>React : any
  
  interface Props {
@@ -13,17 +12,12 @@
 +
      x?: "a" | "b";
  >x : "a" | "b" | undefined
-->  : ^^^^^^^^^^^^^^^^^^^^^
  }
  class MyComponent<P extends Props = Props> extends React.Component<P, {}> {}
  >MyComponent : MyComponent<P>
-->            : ^^^^^^^^^^^^^^
 ->React.Component : React.Component<P, {}>
-->                : ^^^^^^^^^^^^^^^^^^^^^^
 ->React : typeof React
-->      : ^^^^^^^^^^^^
 ->Component : typeof React.Component
-->          : ^^^^^^^^^^^^^^^^^^^^^^
 +>P : P
 +>React.Component : any
 +>React : any
@@ -31,14 +25,10 @@
  
  const m = <MyComponent x="a"/>
 ->m : JSX.Element
-->  : ^^^^^^^^^^^
 -><MyComponent x="a"/> : JSX.Element
-->                     : ^^^^^^^^^^^
 +>m : any
 +><MyComponent x="a"/> : any
  >MyComponent : typeof MyComponent
-->            : ^^^^^^^^^^^^^^^^^^
 ->x : "a"
-->  : ^^^
 +>x : any
  

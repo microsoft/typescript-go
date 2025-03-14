@@ -1,43 +1,7 @@
 --- old.moduleAugmentationImportsAndExports3.types
 +++ new.moduleAugmentationImportsAndExports3.types
-@@= skipped -2, +2 lines =@@
- === f1.ts ===
- export class A {}
- >A : A
-->  : ^
- 
- === f2.ts ===
- export class B {
- >B : B
-->  : ^
- 
-     n: number;
- >n : number
-->  : ^^^^^^
- }
- 
- === f3.ts ===
- import {A} from "./f1";
- >A : typeof A
-->  : ^^^^^^^^
- 
- A.prototype.foo = function () { return undefined; }
- >A.prototype.foo = function () { return undefined; } : () => any
-->                                                    : ^^^^^^^^^
- >A.prototype.foo : () => B
-->                : ^^^^^^^
- >A.prototype : A
-->            : ^
- >A : typeof A
-->  : ^^^^^^^^
- >prototype : A
-->          : ^
- >foo : () => B
-->    : ^^^^^^^
- >function () { return undefined; } : () => any
-->                                  : ^^^^^^^^^
+@@= skipped -26, +26 lines =@@
  >undefined : undefined
-->          : ^^^^^^^^^
  
  namespace N {
 +>N : any
@@ -45,38 +9,23 @@
      export interface Ifc { a }
 +>Ifc : Ifc
  >a : any
-->  : ^^^
  
      export interface Cls { a }
 +>Cls : Cls
  >a : any
-->  : ^^^
  }
  
- declare module "./f1" {
- >"./f1" : typeof import("f1")
-->       : ^^^^^^^^^^^^^^^^^^^
- 
-     import {B} from "./f2";
- >B : any
-->  : ^^^
- 
+@@= skipped -16, +20 lines =@@
      import I = N.Ifc;
  >I : any
-->  : ^^^
  >N : any
-->  : ^^^
 ->Ifc : I
-->    : ^
 +>Ifc : Ifc
  
      import C = N.Cls;
  >C : any
-->  : ^^^
  >N : any
-->  : ^^^
 ->Cls : C
-->    : ^
 +>Cls : Cls
  
      interface A {
@@ -84,44 +33,14 @@
 +
          foo(): B;
  >foo : () => B
-->    : ^^^^^^ 
  
          bar(): I;
 ->bar : () => I
-->    : ^^^^^^ 
 +>bar : () => Ifc
  
          baz(): C;
 ->baz : () => C
-->    : ^^^^^^ 
 +>baz : () => Cls
      }
  }
- 
- === f4.ts ===
- import {A} from "./f1";
- >A : typeof A
-->  : ^^^^^^^^
- 
- import "./f3";
- 
- let a: A;
- >a : A
-->  : ^
- 
- let b = a.foo().n;
- >b : any
-->  : ^^^
- >a.foo().n : any
-->          : ^^^
- >a.foo() : B
-->        : ^
- >a.foo : () => B
-->      : ^^^^^^^
- >a : A
-->  : ^
- >foo : () => B
-->    : ^^^^^^^
- >n : any
-->  : ^^^
  

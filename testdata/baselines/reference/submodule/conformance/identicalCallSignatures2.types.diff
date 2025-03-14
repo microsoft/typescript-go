@@ -9,7 +9,6 @@
 +
      (x: number): string;
  >x : number
-->  : ^^^^^^
  }
  
  interface I extends Base<string>, Base<number> { }

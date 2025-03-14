@@ -1,17 +1,11 @@
 --- old.parserParameterList1.types
 +++ new.parserParameterList1.types
-@@= skipped -2, +2 lines =@@
- === parserParameterList1.ts ===
- class C {
+@@= skipped -4, +4 lines =@@
  >C : C
-->  : ^
  
     F(...A, B) { }
 ->F : (...A: any[], B: any) => void
-->  : ^^^^ ^^^^^^^^^ ^^^^^^^^^^^^^^
 +>F : (A: any[], B: any) => void
  >A : any[]
-->  : ^^^^^
  >B : any
-->  : ^^^
  }

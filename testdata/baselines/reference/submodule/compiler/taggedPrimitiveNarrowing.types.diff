@@ -1,83 +1,26 @@
 --- old.taggedPrimitiveNarrowing.types
 +++ new.taggedPrimitiveNarrowing.types
-@@= skipped -2, +2 lines =@@
- === taggedPrimitiveNarrowing.ts ===
- type Hash = string & { __hash: true };
- >Hash : Hash
-->     : ^^^^
- >__hash : true
-->       : ^^^^
- >true : true
-->     : ^^^^
- 
- function getHashLength(hash: Hash): number {
- >getHashLength : (hash: Hash) => number
-->              : ^    ^^    ^^^^^      
- >hash : Hash
-->     : ^^^^
+@@= skipped -11, +11 lines =@@
  
      if (typeof hash !== "string") {
  >typeof hash !== "string" : boolean
-->                         : ^^^^^^^
 ->typeof hash : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
-->            : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>typeof hash : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
  >hash : Hash
-->     : ^^^^
  >"string" : "string"
-->         : ^^^^^^^^
  
-         throw new Error("This doesn't look like a hash");
- >new Error("This doesn't look like a hash") : Error
-->                                           : ^^^^^
- >Error : ErrorConstructor
-->      : ^^^^^^^^^^^^^^^^
- >"This doesn't look like a hash" : "This doesn't look like a hash"
-->                                : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-     }
-     return hash.length;
- >hash.length : number
-->            : ^^^^^^
- >hash : Hash
-->     : ^^^^
- >length : number
-->       : ^^^^^^
- }
+@@= skipped -17, +17 lines =@@
  
  function getHashLength2<T extends { __tag__: unknown}>(hash: string & T): number {
  >getHashLength2 : <T extends { __tag__: unknown; }>(hash: string & T) => number
-->               : ^ ^^^^^^^^^                     ^^    ^^          ^^^^^      
 +>T : T
  >__tag__ : unknown
-->        : ^^^^^^^
  >hash : string & T
-->     : ^^^^^^^^^^
  
      if (typeof hash !== "string") {
  >typeof hash !== "string" : boolean
-->                         : ^^^^^^^
 ->typeof hash : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
-->            : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>typeof hash : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
  >hash : string & T
-->     : ^^^^^^^^^^
  >"string" : "string"
-->         : ^^^^^^^^
- 
-         throw new Error("This doesn't look like a hash");
- >new Error("This doesn't look like a hash") : Error
-->                                           : ^^^^^
- >Error : ErrorConstructor
-->      : ^^^^^^^^^^^^^^^^
- >"This doesn't look like a hash" : "This doesn't look like a hash"
-->                                : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-     }
-     return hash.length;
- >hash.length : number
-->            : ^^^^^^
- >hash : string & T
-->     : ^^^^^^^^^^
- >length : number
-->       : ^^^^^^
- }
  

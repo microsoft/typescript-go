@@ -1,30 +1,10 @@
 --- old.thisInInstanceMemberInitializer.types
 +++ new.thisInInstanceMemberInitializer.types
-@@= skipped -2, +2 lines =@@
- === thisInInstanceMemberInitializer.ts ===
- class C {
- >C : C
-->  : ^
- 
-     x = this;
- >x : this
-->  : ^^^^
- >this : this
-->     : ^^^^
- }
+@@= skipped -10, +10 lines =@@
  
  class D<T> {
  >D : D<T>
-->  : ^^^^
 +>T : T
  
      x = this;
  >x : this
-->  : ^^^^
- >this : this
-->     : ^^^^
- 
-     y: T;
- >y : T
-->  : ^
- }

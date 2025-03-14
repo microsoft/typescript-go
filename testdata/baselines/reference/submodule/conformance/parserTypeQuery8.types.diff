@@ -4,7 +4,5 @@
  === parserTypeQuery8.ts ===
  var v: typeof A<B>
  >v : any
-->  : ^^^
 ->A : any
-->  : ^^^
  

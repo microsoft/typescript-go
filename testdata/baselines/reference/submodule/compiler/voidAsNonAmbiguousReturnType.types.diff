@@ -5,41 +5,16 @@
  ///<reference path='voidAsNonAmbiguousReturnType_0.ts'/>
  import fs = require("./voidAsNonAmbiguousReturnType_0");
 ->fs : typeof fs
-->   : ^^^^^^^^^
 +>fs : typeof import("voidAsNonAmbiguousReturnType_0")
  
  function main() {
  >main : () => void
-->     : ^^^^^^^^^^
- 
+@@= skipped -8, +8 lines =@@
   fs.mkdirSync('test'); // should not error - return types are the same
  >fs.mkdirSync('test') : void
-->                     : ^^^^
  >fs.mkdirSync : (path: string, mode?: number) => void
-->             : ^    ^^      ^^    ^^^      ^^^^^    
 ->fs : typeof fs
-->   : ^^^^^^^^^
 +>fs : typeof import("voidAsNonAmbiguousReturnType_0")
  >mkdirSync : (path: string, mode?: number) => void
-->          : ^    ^^      ^^    ^^^      ^^^^^    
  >'test' : "test"
-->       : ^^^^^^
  }
- 
- === voidAsNonAmbiguousReturnType_0.ts ===
- export function mkdirSync(path: string, mode?: number): void;
- >mkdirSync : (path: string, mode?: number) => void
-->          : ^    ^^      ^^    ^^^      ^^^^^    
- >path : string
-->     : ^^^^^^
- >mode : number
-->     : ^^^^^^
- 
- export function mkdirSync(path: string, mode?: string): void {}
- >mkdirSync : (path: string, mode?: number) => void
-->          : ^    ^^      ^^    ^^^      ^^^^^    
- >path : string
-->     : ^^^^^^
- >mode : string
-->     : ^^^^^^
- 

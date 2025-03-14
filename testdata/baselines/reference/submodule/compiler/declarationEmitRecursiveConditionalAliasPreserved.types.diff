@@ -12,7 +12,6 @@
  === input.d.ts ===
  type _BuildPowersOf2LengthArrays<
  >_BuildPowersOf2LengthArrays : _BuildPowersOf2LengthArrays<Length, AccumulatedArray>
-->                            : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
  
      Length extends number,
 +>Length : Length
@@ -23,11 +22,8 @@
  > = AccumulatedArray[0][Length] extends never
      ? AccumulatedArray
      : _BuildPowersOf2LengthArrays<
-@@= skipped -21, +18 lines =@@
- 
- type _ConcatLargestUntilDone<
+@@= skipped -22, +20 lines =@@
  >_ConcatLargestUntilDone : _ConcatLargestUntilDone<Length, AccumulatedArray, NextArray>
-->                        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
  
      Length extends number,
 +>Length : Length
@@ -49,7 +45,7 @@
          ? U extends never[][]
          ? U
          : never
-@@= skipped -20, +27 lines =@@
+@@= skipped -17, +25 lines =@@
      : _ConcatLargestUntilDone<
          Length,
          AccumulatedArray extends [AccumulatedArray[0], ...infer U]
@@ -62,14 +58,12 @@
  
  type _Replace<R extends unknown[], T> = { [K in keyof R]: T };
  >_Replace : _Replace<R, T>
-->         : ^^^^^^^^^^^^^^
 +>R : R
 +>T : T
 +>K : K
  
  export type TupleOf<Type, Length extends number> = number extends Length
  >TupleOf : TupleOf<Type, Length>
-->        : ^^^^^^^^^^^^^^^^^^^^^
 +>Type : Type
 +>Length : Length
  
@@ -87,11 +81,10 @@
          ? TwoDimensionalArray extends never[][]
          ? _Replace<_ConcatLargestUntilDone<LengthKey, TwoDimensionalArray, []>, Type>
          : never
-@@= skipped -21, +28 lines =@@
+@@= skipped -19, +28 lines =@@
  
  export type Subtract<N1 extends number, N2 extends number> = TupleOf<never, N1> extends [
  >Subtract : Subtract<N1, N2>
-->         : ^^^^^^^^^^^^^^^^
 +>N1 : N1
 +>N2 : N2
  
@@ -105,22 +98,17 @@
  
  export type Decrement<T extends number> = Subtract<T, 1>;
  >Decrement : Decrement<T>
-->          : ^^^^^^^^^^^^
 +>T : T
  
  export type Add<N1 extends number, N2 extends number> = [
  >Add : Add<N1, N2>
-->    : ^^^^^^^^^^^
 +>N1 : N1
 +>N2 : N2
  
      ...TupleOf<never, N1>,
      ...TupleOf<never, N2>,
-@@= skipped -24, +28 lines =@@
- 
- type _MultiAdd<
+@@= skipped -23, +30 lines =@@
  >_MultiAdd : _MultiAdd<Num, Accumulator, IterationsLeft>
-->          : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
  
      Num extends number,
 +>Num : Num
@@ -137,7 +125,6 @@
  
  export type Multiply<N1 extends number, N2 extends number> = number extends N1 | N2
  >Multiply : Multiply<N1, N2>
-->         : ^^^^^^^^^^^^^^^^
 +>N1 : N1
 +>N2 : N2
  
@@ -151,7 +138,6 @@
  
  type PowerTailRec<
  >PowerTailRec : PowerTailRec<Num, PowerOf, Result>
-->             : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
  
      Num extends number,
 +>Num : Num
@@ -165,44 +151,21 @@
  > = number extends PowerOf
      ? number
      : PowerOf extends 0
-@@= skipped -33, +47 lines =@@
+@@= skipped -28, +45 lines =@@
  
  export type Power<Num extends number, PowerOf extends number> = PowerTailRec<Num, PowerOf, 1>;
  >Power : Power<Num, PowerOf>
-->      : ^^^^^^^^^^^^^^^^^^^
 +>Num : Num
 +>PowerOf : PowerOf
  
  === a.tsx ===
  import { Power } from "./input";
- >Power : any
-->      : ^^^
- 
+@@= skipped -8, +10 lines =@@
  export const power = <Num extends number, PowerOf extends number>(
  >power : <Num extends number, PowerOf extends number>(num: Num, powerOf: PowerOf) => Power<Num, PowerOf>
-->      : ^   ^^^^^^^^^      ^^       ^^^^^^^^^      ^^   ^^   ^^       ^^       ^^^^^                   
  ><Num extends number, PowerOf extends number>(    num: Num,    powerOf: PowerOf): Power<Num, PowerOf> => (num ** powerOf) as never : <Num extends number, PowerOf extends number>(num: Num, powerOf: PowerOf) => Power<Num, PowerOf>
-->                                                                                                                                  : ^   ^^^^^^^^^      ^^       ^^^^^^^^^      ^^   ^^   ^^       ^^       ^^^^^                   
 +>Num : Num
 +>PowerOf : PowerOf
  
      num: Num,
  >num : Num
-->    : ^^^
- 
-     powerOf: PowerOf
- >powerOf : PowerOf
-->        : ^^^^^^^
- 
- ): Power<Num, PowerOf> => (num ** powerOf) as never;
- >(num ** powerOf) as never : never
-->                          : ^^^^^
- >(num ** powerOf) : number
-->                 : ^^^^^^
- >num ** powerOf : number
-->               : ^^^^^^
- >num : Num
-->    : ^^^
- >powerOf : PowerOf
-->        : ^^^^^^^
- 

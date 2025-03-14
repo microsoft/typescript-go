@@ -1,8 +1,0 @@
---- old.jsFileCompilationAmbientVarDeclarationSyntax.types
-+++ new.jsFileCompilationAmbientVarDeclarationSyntax.types
-@@= skipped -2, +2 lines =@@
- === a.js ===
- declare var v;
- >v : any
-->  : ^^^
- 

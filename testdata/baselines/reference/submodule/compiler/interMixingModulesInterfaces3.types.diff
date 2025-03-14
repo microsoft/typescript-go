@@ -1,21 +1,6 @@
 --- old.interMixingModulesInterfaces3.types
 +++ new.interMixingModulesInterfaces3.types
-@@= skipped -2, +2 lines =@@
- === interMixingModulesInterfaces3.ts ===
- module A {
- >A : typeof A
-->  : ^^^^^^^^
- 
-     module B {
- >B : typeof B
-->  : ^^^^^^^^
- 
-         export function createB(): B {
- >createB : () => B
-->        : ^^^^^^ 
- 
-             return null;
-         }
+@@= skipped -14, +14 lines =@@
      }
  
      export interface B {
@@ -23,18 +8,12 @@
 +
          name: string;
  >name : string
-->     : ^^^^^^
  
-         value: number;
- >value : number
-->      : ^^^^^^
-     }
+@@= skipped -9, +11 lines =@@
  }
  
  var x: A.B = null;
 ->x : A.B
-->  : ^^^
 +>x : B
  >A : any
-->  : ^^^
  

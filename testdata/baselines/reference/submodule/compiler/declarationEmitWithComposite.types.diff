@@ -8,9 +8,4 @@
 +
      x: number;
  >x : number
-->  : ^^^^^^
  }
- export default Foo;
- >Foo : Foo
-->    : ^^^
- 

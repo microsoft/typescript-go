@@ -8,22 +8,8 @@
 +
      [x: number]: { a: number; b: number }
  >x : number
-->  : ^^^^^^
  >a : number
-->  : ^^^^^^
- >b : number
-->  : ^^^^^^
- 
-     x: {
- >x : { a: number; b: number; }
-->  : ^^^^^      ^^^^^      ^^^
- 
-         a: number; b: number;
- >a : number
-->  : ^^^^^^
- >b : number
-->  : ^^^^^^
-     }
+@@= skipped -15, +17 lines =@@
  }
  
  interface Derived extends Base {
@@ -31,29 +17,4 @@
 +
      [x: string]: {
  >x : string
-->  : ^^^^^^
  
-         a: number
- >a : number
-->  : ^^^^^^
- 
-     };
- 
-     y: {
- >y : { a: number; }
-->  : ^^^^^      ^^^
- 
-         a: number;
- >a : number
-->  : ^^^^^^
-     }
-     // error
-     1: {
- >1 : { a: number; }
-->  : ^^^^^      ^^^
- 
-         a: number;
- >a : number
-->  : ^^^^^^
-     }
- }

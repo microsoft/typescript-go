@@ -4,14 +4,7 @@
  === /a.d.ts ===
  declare global { namespace N {} }
  >global : any
-->       : ^^^
 +>N : any
  
  export = N;
  >N : any
-->  : ^^^
- 
- export as namespace N;
- >N : any
-->  : ^^^
- 

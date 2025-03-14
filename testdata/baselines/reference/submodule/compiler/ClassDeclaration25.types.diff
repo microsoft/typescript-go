@@ -9,23 +9,12 @@
 +
      data(): T;
  >data : () => T
-->     : ^^^^^^ 
  
-     next(): string;
- >next : () => string
-->     : ^^^^^^      
+@@= skipped -8, +11 lines =@@
  }
  class List<U> implements IList<U> {
  >List : List<U>
-->     : ^^^^^^^
 +>U : U
  
      data(): U;
  >data : () => U
-->     : ^^^^^^ 
- 
-     next(): string;
- >next : () => string
-->     : ^^^^^^      
- }
- 

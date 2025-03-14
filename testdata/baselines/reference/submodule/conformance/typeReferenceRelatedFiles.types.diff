@@ -1,28 +1,10 @@
 --- old.typeReferenceRelatedFiles.types
 +++ new.typeReferenceRelatedFiles.types
-@@= skipped -5, +5 lines =@@
- === node_modules/@types/node/fs.d.ts ===
- declare module "fs" {
+@@= skipped -7, +7 lines =@@
  >"fs" : typeof import("fs")
-->     : ^^^^^^^^^^^^^^^^^^^
  
      interface FSWatcher {}
 +>FSWatcher : FSWatcher
  }
  === main.ts ===
  /// <reference types="node" />
- import { FSWatcher } from "fs";
- >FSWatcher : any
-->          : ^^^
- 
- export function f() {
- >f : () => FSWatcher
-->  : ^^^^^^         
- 
-     return {} as FSWatcher;
- >{} as FSWatcher : FSWatcher
-->                : ^^^^^^^^^
- >{} : {}
-->   : ^^
- }
- 

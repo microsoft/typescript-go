@@ -1,8 +1,0 @@
---- old.primitiveTypeAsClassName.types
-+++ new.primitiveTypeAsClassName.types
-@@= skipped -2, +2 lines =@@
- === primitiveTypeAsClassName.ts ===
- class any {}
- >any : any
-->    : ^^^
- 

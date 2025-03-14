@@ -1,20 +1,10 @@
 --- old.privacyCheckTypeOfFunction.types
 +++ new.privacyCheckTypeOfFunction.types
-@@= skipped -2, +2 lines =@@
- === privacyCheckTypeOfFunction.ts ===
- function foo() {
- >foo : () => void
-->    : ^^^^^^^^^^
+@@= skipped -5, +5 lines =@@
  }
  export var x: typeof foo;
  >x : () => void
-->  : ^^^^^^^^^^
 ->foo : () => void
-->    : ^^^^^^^^^^
  
  export var b = foo;
  >b : () => void
-->  : ^^^^^^^^^^
- >foo : () => void
-->    : ^^^^^^^^^^
- 

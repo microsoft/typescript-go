@@ -1,8 +1,0 @@
---- old.pathMappingBasedModuleResolution_withExtension_MapedToNodeModules.types
-+++ new.pathMappingBasedModuleResolution_withExtension_MapedToNodeModules.types
-@@= skipped -2, +2 lines =@@
- === /a.ts ===
- import foobar from "foo/bar/foobar.js";
- >foobar : any
-->       : ^^^
- 

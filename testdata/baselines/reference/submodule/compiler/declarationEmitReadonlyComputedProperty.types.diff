@@ -1,62 +1,30 @@
 --- old.declarationEmitReadonlyComputedProperty.types
 +++ new.declarationEmitReadonlyComputedProperty.types
-@@= skipped -2, +2 lines =@@
- === bug.ts ===
- export const SYMBOL = Symbol()
- >SYMBOL : unique symbol
-->       : ^^^^^^^^^^^^^
- >Symbol() : unique symbol
-->         : ^^^^^^^^^^^^^
+@@= skipped -6, +6 lines =@@
  >Symbol : SymbolConstructor
-->       : ^^^^^^^^^^^^^^^^^
  
  export interface Interface {
 +>Interface : Interface
 +
    readonly [SYMBOL]: string; // remove readonly and @showEmit to see the expected error
  >[SYMBOL] : string
-->         : ^^^^^^
  >SYMBOL : unique symbol
-->       : ^^^^^^^^^^^^^
- }
- 
- export function createInstance(): Interface {
- >createInstance : () => Interface
-->               : ^^^^^^         
- 
-   return {
- >{    [SYMBOL]: ''  } : { [SYMBOL]: string; }
-->                     : ^^^^^^^^^^^^^^^^^^^^^
- 
-     [SYMBOL]: ''
- >[SYMBOL] : string
-->         : ^^^^^^
- >SYMBOL : unique symbol
-->       : ^^^^^^^^^^^^^
- >'' : ""
-->   : ^^
-   }
- }
+@@= skipped -20, +22 lines =@@
  
  === index.ts ===
  import { createInstance } from './bug'
 ->createInstance : () => import("bug").Interface
-->               : ^^^^^^       ^^^^^  ^^^^^^^^^
 +>createInstance : () => Interface
  
  export const spread = {
 ->spread : { [SYMBOL]: string; }
-->       : ^^^^^^^^^^^^      ^^^
 ->{  ...createInstance(),} : { [SYMBOL]: string; }
-->                         : ^^^^^^^^^^^^      ^^^
 +>spread : { (Unique symbol): string; }
 +>{  ...createInstance(),} : { (Unique symbol): string; }
  
    ...createInstance(),
 ->createInstance() : import("bug").Interface
-->                 : ^^^^^^^^^^^^^^^^^^^^^^^
 ->createInstance : () => import("bug").Interface
-->               : ^^^^^^       ^^^^^  ^^^^^^^^^
 +>createInstance() : Interface
 +>createInstance : () => Interface
  }

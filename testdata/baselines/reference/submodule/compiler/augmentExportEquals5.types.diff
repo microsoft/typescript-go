@@ -18,18 +18,14 @@
  
  declare module "express" {
  >"express" : typeof import("express")
-->          : ^^^^^^^^^^^^^^^^^^^^^^^^
  
      function e(): e.Express;
 ->e : typeof import("express.d.ts")
-->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>e : typeof e
  >e : any
-->  : ^^^
  
      namespace e {
 ->e : typeof import("express.d.ts")
-->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>e : typeof e
  
          interface IRoute {
@@ -37,9 +33,7 @@
 +
              all(...handler: RequestHandler[]): IRoute;
  >all : (...handler: RequestHandler[]) => IRoute
-->    : ^^^^       ^^                ^^^^^      
  >handler : RequestHandler[]
-->        : ^^^^^^^^^^^^^^^^
          }
  
          interface IRouterMatcher<T> {
@@ -48,9 +42,7 @@
 +
              (name: string|RegExp, ...handlers: RequestHandler[]): T;
  >name : string | RegExp
-->     : ^^^^^^^^^^^^^^^
  >handlers : RequestHandler[]
-->         : ^^^^^^^^^^^^^^^^
          }
  
          interface IRouter<T> extends RequestHandler {
@@ -59,14 +51,8 @@
 +
              route(path: string): IRoute;
  >route : (path: string) => IRoute
-->      : ^    ^^      ^^^^^      
  >path : string
-->     : ^^^^^^
-         }
- 
-         export function Router(options?: any): Router;
- >Router : (options?: any) => Router
-->       : ^       ^^^   ^^^^^      
+@@= skipped -38, +53 lines =@@
  >options : any
  
          export interface Router extends IRouter<Router> {}
@@ -75,28 +61,21 @@
          interface Errback { (err: Error): void; }
 +>Errback : Errback
  >err : Error
-->    : ^^^^^
  
          interface Request extends Express.Request {
 +>Request : Request
  >Express : any
-->        : ^^^
  
              get (name: string): string;
- >get : (name: string) => string
-->    : ^    ^^      ^^^^^      
- >name : string
-->     : ^^^^^^
+@@= skipped -13, +16 lines =@@
          }
  
          interface Response extends Express.Response {
 +>Response : Response
  >Express : any
-->        : ^^^
  
              charset: string;
- >charset : string
-->        : ^^^^^^
+@@= skipped -7, +8 lines =@@
          }
  
          interface ErrorRequestHandler {
@@ -105,11 +84,7 @@
              (err: any, req: Request, res: Response, next: Function): any;
  >err : any
  >req : Request
-->    : ^^^^^^^
- >res : Response
-->    : ^^^^^^^^
- >next : Function
-->     : ^^^^^^^^
+@@= skipped -8, +10 lines =@@
          }
  
          interface RequestHandler {
@@ -117,11 +92,8 @@
 +
              (req: Request, res: Response, next: Function): any;
  >req : Request
-->    : ^^^^^^^
  >res : Response
-->    : ^^^^^^^^
- >next : Function
-->     : ^^^^^^^^
+@@= skipped -7, +9 lines =@@
          }
  
          interface Handler extends RequestHandler {}
@@ -132,21 +104,16 @@
 +
              (req: Request, res: Response, next: Function, param: any): any;
  >req : Request
-->    : ^^^^^^^
  >res : Response
-->    : ^^^^^^^^
- >next : Function
-->     : ^^^^^^^^
- >param : any
+@@= skipped -10, +13 lines =@@
          }
  
          interface Application extends IRouter<Application>, Express.Application {
 +>Application : Application
  >Express : any
-->        : ^^^
  
              routes: any;
- >routes : any
+@@= skipped -7, +8 lines =@@
          }
  
          interface Express extends Application {
@@ -154,55 +121,22 @@
 +
              createApplication(): Application;
  >createApplication : () => Application
-->                  : ^^^^^^           
          }
- 
-         var static: any;
-@@= skipped -127, +128 lines =@@
+@@= skipped -9, +11 lines =@@
      }
  
      export = e;
 ->e : typeof import("express.d.ts")
-->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>e : typeof e
  }
  
  === augmentation.ts ===
- /// <reference path="express.d.ts"/>
- import * as e from "express";
- >e : typeof e
-->  : ^^^^^^^^
- 
- declare module "express" {
+@@= skipped -12, +12 lines =@@
  >"express" : typeof e
-->          : ^^^^^^^^
  
      interface Request {
 +>Request : Request
 +
          id: number;
  >id : number
-->   : ^^^^^^
      }
- }
- 
- === consumer.ts ===
- import { Request } from "express";
- >Request : any
-->        : ^^^
- 
- import "./augmentation";
- let x: Request;
- >x : Request
-->  : ^^^^^^^
- 
- const y = x.id;
- >y : number
-->  : ^^^^^^
- >x.id : number
-->     : ^^^^^^
- >x : Request
-->  : ^^^^^^^
- >id : number
-->   : ^^^^^^
- 

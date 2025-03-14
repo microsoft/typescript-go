@@ -1,20 +1,9 @@
 --- old.systemExportAssignment2.types
 +++ new.systemExportAssignment2.types
-@@= skipped -2, +2 lines =@@
- === a.ts ===
- var a = 10;
- >a : number
-->  : ^^^^^^
- >10 : 10
-->   : ^^
- 
- export = a;  // Error: export = not allowed in ES6
- >a : number
-->  : ^^^^^^
+@@= skipped -9, +9 lines =@@
  
  === b.ts ===
  import * as a from "a";
 ->a : number
-->  : ^^^^^^
 +>a : any
  

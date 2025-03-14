@@ -11,7 +11,6 @@
 +
      cat: string;
  >cat : string
-->    : ^^^^^^
  }
  
  export interface C<T, U> {
@@ -21,71 +20,45 @@
 +
      field: T & U;
  >field : T & U
-->      : ^^^^^
  
-     optionalField?: T;
- >optionalField : T
-->              : ^
- 
-     readonly readonlyField: T & U;
- >readonlyField : T & U
-->              : ^^^^^
- 
-     readonly readonlyOptionalField?: U;
- >readonlyOptionalField : U
-->                      : ^
- 
-     (): number;
-     (x: T): U;
+@@= skipped -24, +31 lines =@@
  >x : T
-->  : ^
  
      <Q>(x: Q): T & Q;
 +>Q : Q
  >x : Q
-->  : ^
  
      new (): string;
-     new (x: T): U;
+@@= skipped -7, +8 lines =@@
  >x : T
-->  : ^
  
      new <Q>(x: Q): T & Q;
 +>Q : Q
  >x : Q
-->  : ^
  
      method<Q = number>(): number;
 ->method : { <Q = number>(): number; <Q_1>(a: T & Q_1): Q_1 & number; (a?: number): number; (...args: any[]): number; }
-->       : ^^^ ^^^^^^^^^^^^^^      ^^^^^^^^ ^^       ^^^            ^^^ ^^^      ^^^      ^^^^^^    ^^     ^^^      ^^^
 +>method : { <Q>(): number; <Q>(a: T & Q): Q & number; (a?: number): number; (...args: any[]): number; }
 +>Q : Q
  
      method<Q>(a: T & Q): Q & number;
 ->method : { <Q_1 = number>(): number; <Q>(a: T & Q): Q & number; (a?: number): number; (...args: any[]): number; }
-->       : ^^^^^^^^^^^^^^^^^^^^      ^^^ ^^ ^^     ^^^          ^^^ ^^^      ^^^      ^^^^^^    ^^     ^^^      ^^^
 +>method : { <Q>(): number; <Q>(a: T & Q): Q & number; (a?: number): number; (...args: any[]): number; }
 +>Q : Q
  >a : T & Q
-->  : ^^^^^
  
      method(a?: number): number;
 ->method : { <Q = number>(): number; <Q>(a: T & Q): Q & number; (a?: number): number; (...args: any[]): number; }
-->       : ^^^ ^^^^^^^^^^^^^^      ^^^ ^^ ^^     ^^^          ^^^ ^^^      ^^^      ^^^^^^    ^^     ^^^      ^^^
 +>method : { <Q>(): number; <Q>(a: T & Q): Q & number; (a?: number): number; (...args: any[]): number; }
  >a : number
-->  : ^^^^^^
  
      method(...args: any[]): number;
 ->method : { <Q = number>(): number; <Q>(a: T & Q): Q & number; (a?: number): number; (...args: any[]): number; }
-->       : ^^^ ^^^^^^^^^^^^^^      ^^^ ^^ ^^     ^^^          ^^^ ^^^      ^^^      ^^^^^^    ^^     ^^^      ^^^
 +>method : { <Q>(): number; <Q>(a: T & Q): Q & number; (a?: number): number; (...args: any[]): number; }
  >args : any[]
-->     : ^^^^^
  
      optMethod?(): number;
- >optMethod : () => number
-->          : ^^^^^^      
+@@= skipped -22, +25 lines =@@
  }
  
  interface G {}
@@ -93,31 +66,22 @@
  
  export { G };
  >G : any
-->  : ^^^
  
  interface HH {}
 +>HH : HH
  
  export { HH as H };
  >HH : any
-->   : ^^^
  >H : any
-->  : ^^^
  
  export interface I {}
 +>I : I
 +
  export { I as II };
  >I : any
-->  : ^^^
  >II : any
-->   : ^^^
- 
- export { J as JJ };
- >J : any
-->  : ^^^
+@@= skipped -20, +24 lines =@@
  >JJ : any
-->   : ^^^
  
  export interface J {}
 +>J : J
@@ -127,7 +91,6 @@
 +
      x: string;
  >x : string
-->  : ^^^^^^
  }
  
  export interface L extends K {
@@ -135,7 +98,6 @@
 +
      y: string;
  >y : string
-->  : ^^^^^^
  }
  
  export interface M<T> {
@@ -144,7 +106,6 @@
 +
      field: T;
  >field : T
-->      : ^
  }
  
  export interface N<U> extends M<U> {
@@ -153,7 +114,6 @@
 +
      other: U;
  >other : U
-->      : ^
  }
  
  export interface O {
@@ -161,7 +121,6 @@
 +
      [idx: string]: string;
  >idx : string
-->    : ^^^^^^
  }
  
  export interface P extends O {}
@@ -172,7 +131,6 @@
 +
      [idx: string]: "ok";
  >idx : string
-->    : ^^^^^^
  }
  
  export interface R extends O {
@@ -180,7 +138,6 @@
 +
      [idx: number]: "ok";
  >idx : number
-->    : ^^^^^^
  }
  
  export interface S extends O {
@@ -188,11 +145,8 @@
 +
      [idx: string]: "ok";
  >idx : string
-->    : ^^^^^^
  
-     [idx: number]: never;
- >idx : number
-->    : ^^^^^^
+@@= skipped -47, +67 lines =@@
  }
  
  export interface T {
@@ -200,7 +154,6 @@
 +
      [idx: number]: string;
  >idx : number
-->    : ^^^^^^
  }
  
  export interface U extends T {}
@@ -212,7 +165,6 @@
 +
      [idx: string]: string;
  >idx : string
-->    : ^^^^^^
  }
  
  export interface W extends T {
@@ -220,7 +172,6 @@
 +
      [idx: number]: "ok";
  >idx : number
-->    : ^^^^^^
  }
  
  export interface X extends T {
@@ -228,11 +179,8 @@
 +
      [idx: string]: string;
  >idx : string
-->    : ^^^^^^
  
-     [idx: number]: "ok";
- >idx : number
-->    : ^^^^^^
+@@= skipped -26, +35 lines =@@
  }
  
  export interface Y {
@@ -240,17 +188,8 @@
 +
      [idx: string]: {x: number};
  >idx : string
-->    : ^^^^^^
  >x : number
-->  : ^^^^^^
- 
-     [idx: number]: {x: number, y: number};
- >idx : number
-->    : ^^^^^^
- >x : number
-->  : ^^^^^^
- >y : number
-->  : ^^^^^^
+@@= skipped -11, +13 lines =@@
  }
  
  export interface Z extends Y {}
@@ -261,11 +200,8 @@
 +
      [idx: string]: {x: number, y: number};
  >idx : string
-->    : ^^^^^^
  >x : number
-->  : ^^^^^^
- >y : number
-->  : ^^^^^^
+@@= skipped -9, +12 lines =@@
  }
  
  export interface BB extends Y {
@@ -273,11 +209,8 @@
 +
      [idx: number]: {x: 0, y: 0};
  >idx : number
-->    : ^^^^^^
  >x : 0
-->  : ^
- >y : 0
-->  : ^
+@@= skipped -7, +9 lines =@@
  }
  
  export interface CC extends Y {
@@ -285,18 +218,4 @@
 +
      [idx: string]: {x: number, y: number};
  >idx : string
-->    : ^^^^^^
  >x : number
-->  : ^^^^^^
- >y : number
-->  : ^^^^^^
- 
-     [idx: number]: {x: 0, y: 0};
- >idx : number
-->    : ^^^^^^
- >x : 0
-->  : ^
- >y : 0
-->  : ^
- }
- 

@@ -5,29 +5,22 @@
  === mergedEnumDeclarationCodeGen.ts ===
  enum E {
 ->E : E
-->  : ^
 +>E : E.a
  
      a,
  >a : E.a
-->  : ^^^
  
      b = a
  >b : E.a
-->  : ^^^
 ->a : E
-->  : ^
 +>a : E.a
  }
  enum E {
 ->E : E
-->  : ^
 +>E : E.a
  
      c = a
  >c : E.a
-->  : ^^^
 ->a : E
-->  : ^
 +>a : E.a
  }

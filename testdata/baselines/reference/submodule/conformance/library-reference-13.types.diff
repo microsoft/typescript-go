@@ -5,21 +5,15 @@
  === /a/types/jquery/index.d.ts ===
  declare var $: { foo(): void };
 ->$ : { foo(): void; }
-->  : ^^^^^^^^^    ^^^
 +>$ : { foo: () => void; }
  >foo : () => void
-->    : ^^^^^^    
  
  
- === /a/b/consumer.ts ===
+@@= skipped -8, +8 lines =@@
  $.foo();
  >$.foo() : void
-->        : ^^^^
  >$.foo : () => void
-->      : ^^^^^^    
 ->$ : { foo(): void; }
-->  : ^^^^^^^^^    ^^^
 +>$ : { foo: () => void; }
  >foo : () => void
-->    : ^^^^^^    
  

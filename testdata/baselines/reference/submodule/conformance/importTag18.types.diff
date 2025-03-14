@@ -15,9 +15,7 @@
   */
  export function foo(a) {}
 ->foo : (a: Foo) => void
-->    : ^ ^^^^^^^^^^^^^^
 ->a : Foo
-->  : ^^^
 +>foo : (a: any) => void
 +>a : any
  

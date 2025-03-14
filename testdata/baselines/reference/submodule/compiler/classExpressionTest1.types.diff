@@ -1,56 +1,25 @@
 --- old.classExpressionTest1.types
 +++ new.classExpressionTest1.types
-@@= skipped -2, +2 lines =@@
- === classExpressionTest1.ts ===
- function M() {
- >M : () => { t: string; x: number; }
-->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+@@= skipped -5, +5 lines =@@
  
      class C<X> {
  >C : C<X>
-->  : ^^^^
 +>X : X
  
          f<T>() {
  >f : <T>() => { t: T; x: X; }
-->  : ^ ^^^^^^^^^^^^^^^^^^^^^^
 +>T : T
  
              var t: T;
  >t : T
-->  : ^
- 
-             var x: X;
- >x : X
-->  : ^
+@@= skipped -12, +14 lines =@@
  
              return { t, x };
  >{ t, x } : { t: T; x: X; }
-->         : ^^^^^^^^^^^^^^^
 ->t : T
-->  : ^
 ->x : X
-->  : ^
 +>t : any
 +>x : any
          }
      }
  
-     var v = new C<number>();
- >v : C<number>
-->  : ^^^^^^^^^
- >new C<number>() : C<number>
-->                : ^^^^^^^^^
- >C : typeof C
-->  : ^^^^^^^^
- 
-     return v.f<string>();
- >v.f<string>() : { t: string; x: number; }
-->              : ^^^^^^^^^^^^^^^^^^^^^^^^^
- >v.f : <T>() => { t: T; x: number; }
-->    : ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >v : C<number>
-->  : ^^^^^^^^^
- >f : <T>() => { t: T; x: number; }
-->  : ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^
- }

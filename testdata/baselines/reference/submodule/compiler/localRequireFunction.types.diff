@@ -1,14 +1,6 @@
 --- old.localRequireFunction.types
 +++ new.localRequireFunction.types
-@@= skipped -2, +2 lines =@@
- === app.js ===
- function require(a) {
- >require : (a: any) => any
-->        : ^ ^^^^^^^^^^^^^
- >a : any
- 
-     return a;
-@@= skipped -8, +7 lines =@@
+@@= skipped -9, +9 lines =@@
  }
  
  const fs = require("fs");
@@ -16,9 +8,7 @@
 +>fs : any
  >require("fs") : any
  >require : (a: any) => any
-->        : ^ ^^^^^^^^^^^^^
  >"fs" : "fs"
-->     : ^^^^
  
  const text = fs.readFileSync("/a/b/c");
 ->text : error
@@ -28,9 +18,5 @@
 +>fs.readFileSync("/a/b/c") : any
 +>fs.readFileSync : any
  >fs : any
-->   : ^^^
  >readFileSync : any
-->             : ^^^
  >"/a/b/c" : "/a/b/c"
-->         : ^^^^^^^^
- 

@@ -1,8 +1,0 @@
---- old.parserErrorRecovery_ExtendsOrImplementsClause1.types
-+++ new.parserErrorRecovery_ExtendsOrImplementsClause1.types
-@@= skipped -2, +2 lines =@@
- === parserErrorRecovery_ExtendsOrImplementsClause1.ts ===
- class C extends {
- >C : C
-->  : ^
- }

@@ -5,27 +5,18 @@
  === emitRestParametersFunctionPropertyES6.ts ===
  var obj: {
 ->obj : { func1: (...rest: any) => void; }
-->    : ^^^^^^^^^          ^^^         ^^^
 +>obj : { func1: (...rest: any[]) => void; }
  
      func1: (...rest) => void
  >func1 : (...rest: any[]) => void
-->      : ^^^^    ^^^^^^^^^^^^    
- >rest : any[]
-->     : ^^^^^
+@@= skipped -8, +8 lines =@@
  }
  
  var obj2 = {
 ->obj2 : { func(...rest: any[]): void; }
-->     : ^^^^^^^^^^    ^^^^^^^^^^^^^^^^^
 ->{    func(...rest) { }} : { func(...rest: any[]): void; }
-->                        : ^^^^^^^^^^    ^^^^^^^^^^^^^^^^^
 +>obj2 : { func: (...rest: any[]) => void; }
 +>{    func(...rest) { }} : { func: (...rest: any[]) => void; }
  
      func(...rest) { }
  >func : (...rest: any[]) => void
-->     : ^^^^    ^^^^^^^^^^^^^^^^
- >rest : any[]
-->     : ^^^^^
- }

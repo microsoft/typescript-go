@@ -1,26 +1,14 @@
 --- old.privacyCheckTypeOfInvisibleModuleError.types
 +++ new.privacyCheckTypeOfInvisibleModuleError.types
-@@= skipped -2, +2 lines =@@
- === privacyCheckTypeOfInvisibleModuleError.ts ===
- module Outer {
- >Outer : typeof Outer
-->      : ^^^^^^^^^^^^
- 
-     module Inner {
- >Inner : typeof Inner
-->      : ^^^^^^^^^^^^
+@@= skipped -8, +8 lines =@@
  
          export var m: typeof Inner;
  >m : typeof Inner
-->  : ^^^^^^^^^^^^
 ->Inner : typeof Inner
-->      : ^^^^^^^^^^^^
      }
  
      export var f: typeof Inner;
  >f : typeof Inner
-->  : ^^^^^^^^^^^^
 ->Inner : typeof Inner
-->      : ^^^^^^^^^^^^
  }
  

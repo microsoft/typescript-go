@@ -5,12 +5,10 @@
  === aliasUsage1_main.ts ===
  import Backbone = require("./aliasUsage1_backbone");
 ->Backbone : typeof Backbone
-->         : ^^^^^^^^^^^^^^^
 +>Backbone : typeof import("aliasUsage1_backbone")
  
  import moduleA = require("./aliasUsage1_moduleA");
 ->moduleA : typeof moduleA
-->        : ^^^^^^^^^^^^^^
 +>moduleA : typeof import("aliasUsage1_moduleA")
  
  interface IHasVisualizationModel {
@@ -18,78 +16,38 @@
 +
      VisualizationModel: typeof Backbone.Model;
 ->VisualizationModel : typeof Backbone.Model
-->                   : ^^^^^^^^^^^^^^^^^^^^^
 ->Backbone.Model : typeof Backbone.Model
-->               : ^^^^^^^^^^^^^^^^^^^^^
 ->Backbone : typeof Backbone
-->         : ^^^^^^^^^^^^^^^
 ->Model : typeof Backbone.Model
-->      : ^^^^^^^^^^^^^^^^^^^^^
 +>VisualizationModel : typeof Model
 +>Backbone : typeof import("aliasUsage1_backbone")
  }
  class C2 {
  >C2 : C2
-->   : ^^
- 
-     x: IHasVisualizationModel;
+@@= skipped -31, +31 lines =@@
  >x : IHasVisualizationModel
-->  : ^^^^^^^^^^^^^^^^^^^^^^
- 
-     get A() {
- >A : IHasVisualizationModel
-->  : ^^^^^^^^^^^^^^^^^^^^^^
- 
-         return this.x;
- >this.x : IHasVisualizationModel
-->       : ^^^^^^^^^^^^^^^^^^^^^^
- >this : this
-->     : ^^^^
- >x : IHasVisualizationModel
-->  : ^^^^^^^^^^^^^^^^^^^^^^
-     }
-     set A(x) {
- >A : IHasVisualizationModel
-->  : ^^^^^^^^^^^^^^^^^^^^^^
- >x : IHasVisualizationModel
-->  : ^^^^^^^^^^^^^^^^^^^^^^
  
          x = moduleA;
 ->x = moduleA : typeof moduleA
-->            : ^^^^^^^^^^^^^^
 +>x = moduleA : typeof import("aliasUsage1_moduleA")
  >x : IHasVisualizationModel
-->  : ^^^^^^^^^^^^^^^^^^^^^^
 ->moduleA : typeof moduleA
-->        : ^^^^^^^^^^^^^^
 +>moduleA : typeof import("aliasUsage1_moduleA")
      }
  }
  === aliasUsage1_backbone.ts ===
- export class Model {
- >Model : Model
-->      : ^^^^^
- 
-     public someData: string;
- >someData : string
-->         : ^^^^^^
- }
+@@= skipped -15, +15 lines =@@
  
  === aliasUsage1_moduleA.ts ===
  import Backbone = require("./aliasUsage1_backbone");
 ->Backbone : typeof Backbone
-->         : ^^^^^^^^^^^^^^^
 +>Backbone : typeof import("aliasUsage1_backbone")
  
  export class VisualizationModel extends Backbone.Model {
  >VisualizationModel : VisualizationModel
-->                   : ^^^^^^^^^^^^^^^^^^
 ->Backbone.Model : Backbone.Model
-->               : ^^^^^^^^^^^^^^
 ->Backbone : typeof Backbone
-->         : ^^^^^^^^^^^^^^^
 ->Model : typeof Backbone.Model
-->      : ^^^^^^^^^^^^^^^^^^^^^
 +>Backbone.Model : Model
 +>Backbone : typeof import("aliasUsage1_backbone")
 +>Model : typeof Model

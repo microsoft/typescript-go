@@ -1,10 +1,7 @@
 --- old.reservedNameOnModuleImport.types
 +++ new.reservedNameOnModuleImport.types
-@@= skipped -2, +2 lines =@@
- === reservedNameOnModuleImport.ts ===
- declare module test {
+@@= skipped -4, +4 lines =@@
  >test : typeof test
-->     : ^^^^^^^^^^^
  
      module mstring { }
 +>mstring : any
@@ -12,7 +9,6 @@
      // Should be fine; this does not clobber any declared values.
      export import string = mstring;
  >string : any
-->       : ^^^
 ->mstring : error
 +>mstring : any
  }

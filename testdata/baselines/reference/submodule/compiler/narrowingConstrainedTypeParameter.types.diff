@@ -8,64 +8,30 @@
 +
      name: string;
  >name : string
-->     : ^^^^^^
  }
- 
- function isPet(pet: any): pet is Pet {
- >isPet : (pet: any) => pet is Pet
-->      : ^   ^^   ^^^^^          
- >pet : any
+@@= skipped -10, +12 lines =@@
  
      return typeof pet.name === "string";
  >typeof pet.name === "string" : boolean
-->                             : ^^^^^^^
 ->typeof pet.name : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
-->                : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>typeof pet.name : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
  >pet.name : any
  >pet : any
-->    : ^^^
  >name : any
-->     : ^^^
- >"string" : "string"
-->         : ^^^^^^^^
- }
+@@= skipped -9, +9 lines =@@
  
  export function speak<TPet extends Pet>(pet: TPet, voice: (pet: TPet) => string): string {
  >speak : <TPet extends Pet>(pet: TPet, voice: (pet: TPet) => string) => string
-->      : ^    ^^^^^^^^^   ^^   ^^    ^^     ^^                     ^^^^^      
 +>TPet : TPet
  >pet : TPet
-->    : ^^^^
  >voice : (pet: TPet) => string
-->      : ^   ^^    ^^^^^      
  >pet : TPet
-->    : ^^^^
- 
-     if (!isPet(pet)) {
- >!isPet(pet) : boolean
-->            : ^^^^^^^
- >isPet(pet) : boolean
-->           : ^^^^^^^
- >isPet : (pet: any) => pet is Pet
-->      : ^   ^^   ^^^^^          
- >pet : TPet
-->    : ^^^^
- 
+@@= skipped -13, +14 lines =@@
          throw new Error("Expected \"pet\" to be a Pet");
  >new Error("Expected \"pet\" to be a Pet") : Error
-->                                          : ^^^^^
  >Error : ErrorConstructor
-->      : ^^^^^^^^^^^^^^^^
 ->"Expected \"pet\" to be a Pet" : "Expected \"pet\" to be a Pet"
-->                               : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>"Expected \"pet\" to be a Pet" : "Expected "pet" to be a Pet"
      }
      return voice(pet);
  >voice(pet) : string
-->           : ^^^^^^
- >voice : (pet: TPet) => string
-->      : ^   ^^    ^^^^^      
- >pet : TPet
-->    : ^^^^
- }

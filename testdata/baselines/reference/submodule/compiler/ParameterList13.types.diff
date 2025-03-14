@@ -8,5 +8,4 @@
 +
      new (public x);
  >x : any
-->  : ^^^
  }

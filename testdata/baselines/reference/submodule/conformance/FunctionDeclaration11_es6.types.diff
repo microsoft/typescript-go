@@ -1,8 +1,0 @@
---- old.FunctionDeclaration11_es6.types
-+++ new.FunctionDeclaration11_es6.types
-@@= skipped -2, +2 lines =@@
- === FunctionDeclaration11_es6.ts ===
- function * yield() {
- >yield : () => Generator<never, void, unknown>
-->      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- }

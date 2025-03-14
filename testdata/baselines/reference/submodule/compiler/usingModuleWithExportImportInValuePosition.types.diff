@@ -1,26 +1,7 @@
 --- old.usingModuleWithExportImportInValuePosition.types
 +++ new.usingModuleWithExportImportInValuePosition.types
-@@= skipped -2, +2 lines =@@
- === usingModuleWithExportImportInValuePosition.ts ===
- module A {
- >A : typeof A
-->  : ^^^^^^^^
- 
- export var x = 'hello world'
- >x : string
-->  : ^^^^^^
- >'hello world' : "hello world"
-->              : ^^^^^^^^^^^^^
- 
- export class Point {
- >Point : Point
-->      : ^^^^^
- 
-         constructor(public x: number, public y: number) { }
- >x : number
-->  : ^^^^^^
+@@= skipped -15, +15 lines =@@
  >y : number
-->  : ^^^^^^
      }
      export module B {
 +>B : any
@@ -30,77 +11,31 @@
 +
              name: string;
  >name : string
-->     : ^^^^^^
          }
-     }
- }
- module C {
+@@= skipped -10, +14 lines =@@
  >C : typeof C
-->  : ^^^^^^^^
  
      export import a = A;
 ->a : typeof a
-->  : ^^^^^^^^
 ->A : typeof a
-->  : ^^^^^^^^
 +>a : typeof A
 +>A : typeof A
  }
  
  var a: string = C.a.x;
- >a : string
-->  : ^^^^^^
- >C.a.x : string
-->      : ^^^^^^
- >C.a : typeof A
-->    : ^^^^^^^^
- >C : typeof C
-->  : ^^^^^^^^
- >a : typeof A
-->  : ^^^^^^^^
- >x : string
-->  : ^^^^^^
- 
- var b: { x: number; y: number; } = new C.a.Point(0, 0);
+@@= skipped -16, +16 lines =@@
  >b : { x: number; y: number; }
-->  : ^^^^^      ^^^^^      ^^^
  >x : number
-->  : ^^^^^^
  >y : number
-->  : ^^^^^^
 ->new C.a.Point(0, 0) : A.Point
-->                    : ^^^^^^^
 ->C.a.Point : typeof A.Point
-->          : ^^^^^^^^^^^^^^
 +>new C.a.Point(0, 0) : Point
 +>C.a.Point : typeof Point
  >C.a : typeof A
-->    : ^^^^^^^^
  >C : typeof C
-->  : ^^^^^^^^
  >a : typeof A
-->  : ^^^^^^^^
 ->Point : typeof A.Point
-->      : ^^^^^^^^^^^^^^
 +>Point : typeof Point
  >0 : 0
-->  : ^
  >0 : 0
-->  : ^
- 
- var c: { name: string };
- >c : { name: string; }
-->  : ^^^^^^^^      ^^^
- >name : string
-->     : ^^^^^^
- 
- var c: C.a.B.Id;
- >c : { name: string; }
-->  : ^^^^^^^^      ^^^
- >C : any
-->  : ^^^
- >a : any
-->  : ^^^
- >B : any
-->  : ^^^
  

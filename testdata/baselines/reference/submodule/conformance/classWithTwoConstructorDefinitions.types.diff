@@ -1,29 +1,10 @@
 --- old.classWithTwoConstructorDefinitions.types
 +++ new.classWithTwoConstructorDefinitions.types
-@@= skipped -2, +2 lines =@@
- === classWithTwoConstructorDefinitions.ts ===
- class C {
- >C : C
-->  : ^
- 
-     constructor() { } // error
-     constructor(x) { } // error
- >x : any
-->  : ^^^
- }
+@@= skipped -10, +10 lines =@@
  
  class D<T> {
  >D : D<T>
-->  : ^^^^
 +>T : T
  
      constructor(x: T) { } // error
  >x : T
-->  : ^
- 
-     constructor(x: T, y: T) { } // error
- >x : T
-->  : ^
- >y : T
-->  : ^
- }

@@ -5,17 +5,12 @@
  === iteratorSpreadInArray11.ts ===
  var iter: Iterable<number>;
 ->iter : Iterable<number>
-->     : ^^^^^^^^^^^^^^^^
 +>iter : Iterable<number, any, any>
  
  var array = [...iter];
  >array : number[]
-->      : ^^^^^^^^
  >[...iter] : number[]
-->          : ^^^^^^^^
  >...iter : number
-->        : ^^^^^^
 ->iter : Iterable<number>
-->     : ^^^^^^^^^^^^^^^^
 +>iter : Iterable<number, any, any>
  

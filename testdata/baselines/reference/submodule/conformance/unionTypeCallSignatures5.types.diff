@@ -8,35 +8,18 @@
 +
    (this: void, b?: number): void;
  >this : void
-->     : ^^^^
  >b : number
-->  : ^^^^^^
  }
  interface B {
 +>B : B
 +
    (this: number, b?: number): void;
  >this : number
-->     : ^^^^^^
  >b : number
-->  : ^^^^^^
  }
  interface C {
 +>C : C
 +
    (i: number): void;
  >i : number
-->  : ^^^^^^
  }
- declare const fn: A | B | C;
- >fn : A | B | C
-->   : ^^^^^^^^^
- 
- fn(0);
- >fn(0) : void
-->      : ^^^^
- >fn : A | B | C
-->   : ^^^^^^^^^
- >0 : 0
-->  : ^
- 

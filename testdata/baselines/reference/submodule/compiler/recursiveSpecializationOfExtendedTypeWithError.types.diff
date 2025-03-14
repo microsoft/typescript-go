@@ -8,12 +8,9 @@
 +
      options: HTMLSelectElement;
  >options : HTMLSelectElement
-->        : ^^^^^^^^^^^^^^^^^
  
      <A>(name: A): any;
 +>A : A
  >name : A
-->     : ^
  }
   
- 

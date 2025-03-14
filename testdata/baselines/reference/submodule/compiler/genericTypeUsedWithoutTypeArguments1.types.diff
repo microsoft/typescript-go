@@ -9,6 +9,5 @@
 +
  class Bar<T> implements Foo { }
  >Bar : Bar<T>
-->    : ^^^^^^
 +>T : T
  

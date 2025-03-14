@@ -1,8 +1,0 @@
---- old.untypedModuleImport_noImplicitAny_relativePath.types
-+++ new.untypedModuleImport_noImplicitAny_relativePath.types
-@@= skipped -2, +2 lines =@@
- === /a.ts ===
- import * as foo from "./node_modules/foo";
- >foo : any
-->    : ^^^
- 

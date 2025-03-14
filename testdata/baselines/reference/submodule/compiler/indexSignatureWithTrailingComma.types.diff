@@ -1,15 +1,6 @@
 --- old.indexSignatureWithTrailingComma.types
 +++ new.indexSignatureWithTrailingComma.types
-@@= skipped -2, +2 lines =@@
- === indexSignatureWithTrailingComma.ts ===
- type A = {
- >A : A
-->  : ^
- 
-     [key: string,]: string;
- >key : string
-->    : ^^^^^^
- 
+@@= skipped -9, +9 lines =@@
  };
  
  interface B {
@@ -17,15 +8,4 @@
 +
      [key: string,]: string;
  >key : string
-->    : ^^^^^^
  }
- 
- class C {
- >C : C
-->  : ^
- 
-     [key: string,]: null;
- >key : string
-->    : ^^^^^^
- }
- 

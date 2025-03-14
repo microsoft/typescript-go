@@ -1,8 +1,0 @@
---- old.moduleResolution_explicitNodeModulesImport_implicitAny.types
-+++ new.moduleResolution_explicitNodeModulesImport_implicitAny.types
-@@= skipped -2, +2 lines =@@
- === /src/index.ts ===
- import { y } from "../node_modules/foo";
- >y : any
-->  : ^^^
- 

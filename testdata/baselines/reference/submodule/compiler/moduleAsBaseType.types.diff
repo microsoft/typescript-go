@@ -8,14 +8,11 @@
 +
  class C extends M {}
  >C : C
-->  : ^
  >M : any
-->  : ^^^
  
  interface I extends M { }
 +>I : I
 +
  class C2 implements M { }
  >C2 : C2
-->   : ^^
  

@@ -4,43 +4,16 @@
  
  class C<T> {
  >C : C<T>
-->  : ^^^^
 +>T : T
  
      x: T;
  >x : T
-->  : ^
- }
- 
- var c = new C<number, number>();
- >c : C<number>
-->  : ^^^^^^^^^
- >new C<number, number>() : C<number>
-->                        : ^^^^^^^^^
- >C : typeof C
-->  : ^^^^^^^^
+@@= skipped -12, +13 lines =@@
  
  class D<T, U> {
  >D : D<T, U>
-->  : ^^^^^^^
 +>T : T
 +>U : U
  
      x: T
  >x : T
-->  : ^
- 
-     y: U
- >y : U
-->  : ^
- }
- 
- // BUG 794238
- var d = new D<number>();
- >d : D<number, unknown>
-->  : ^^^^^^^^^^^^^^^^^^
- >new D<number>() : D<number, unknown>
-->                : ^^^^^^^^^^^^^^^^^^
- >D : typeof D
-->  : ^^^^^^^^
- 

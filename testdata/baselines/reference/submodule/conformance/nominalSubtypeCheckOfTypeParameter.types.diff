@@ -10,11 +10,8 @@
 +
      first: T
  >first : T
-->      : ^
  
-     second: S
- >second : S
-->       : ^
+@@= skipped -8, +12 lines =@@
  }
  
  interface Sequence<T> {
@@ -23,18 +20,13 @@
 +
      hasNext(): boolean
  >hasNext : () => boolean
-->        : ^^^^^^       
  
-     pop(): T
- >pop : () => T
-->    : ^^^^^^ 
+@@= skipped -8, +11 lines =@@
  
      zip<S>(seq: Sequence<S>): Sequence<BinaryTuple<T, S>>
  >zip : <S>(seq: Sequence<S>) => Sequence<BinaryTuple<T, S>>
-->    : ^ ^^   ^^           ^^^^^                           
 +>S : S
  >seq : Sequence<S>
-->    : ^^^^^^^^^^^
  }
  
  // error, despite the fact that the code explicitly says List<T> extends Sequence<T>, the current rules for infinitely expanding type references 
@@ -45,13 +37,10 @@
 +
      getLength(): number
  >getLength : () => number
-->          : ^^^^^^      
  
      zip<S>(seq: Sequence<S>): List<BinaryTuple<T, S>>
  >zip : <S>(seq: Sequence<S>) => List<BinaryTuple<T, S>>
-->    : ^ ^^   ^^           ^^^^^                       
 +>S : S
  >seq : Sequence<S>
-->    : ^^^^^^^^^^^
  }
  

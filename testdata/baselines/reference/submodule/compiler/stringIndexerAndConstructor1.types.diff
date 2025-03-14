@@ -8,9 +8,4 @@
 +
      [s: string]: number;
  >s : string
-->  : ^^^^^^
  
-     "": string;
- >"" : string
-->   : ^^^^^^
- }

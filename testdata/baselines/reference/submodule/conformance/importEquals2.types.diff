@@ -5,37 +5,24 @@
  === /c.ts ===
  import a = require('./b');
 ->a : typeof a
-->  : ^^^^^^^^
 +>a : typeof import("/a")
  
  new a.A(); // Error
  >new a.A() : any
-->          : ^^^
  >a.A : any
-->    : ^^^
 ->a : typeof a
-->  : ^^^^^^^^
 +>a : typeof import("/a")
  >A : any
-->  : ^^^
  
  === /a.ts ===
- class A {}
- >A : A
-->  : ^
- 
- export type { A }
- >A : A
-->  : ^
+@@= skipped -17, +17 lines =@@
  
  === /b.ts ===
  import * as a from './a';
 ->a : typeof a
-->  : ^^^^^^^^
 +>a : typeof import("/a")
  
  export = a;
 ->a : typeof a
-->  : ^^^^^^^^
 +>a : typeof import("/a")
  

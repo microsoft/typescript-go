@@ -8,13 +8,8 @@
 +
      type: 'cat';
  >type : "cat"
-->     : ^^^^^
  
-     canMeow: true;
- >canMeow : true
-->        : ^^^^
- >true : true
-->     : ^^^^
+@@= skipped -9, +11 lines =@@
  }
  
  interface Dog {
@@ -22,104 +17,12 @@
 +
      type: 'dog';
  >type : "dog"
-->     : ^^^^^
  
-     canBark: true;
- >canBark : true
-->        : ^^^^
- >true : true
-->     : ^^^^
- }
- 
- type Animal = Cat | Dog;
- >Animal : Animal
-->       : ^^^^^^
+@@= skipped -13, +15 lines =@@
  
  declare function assertEqual<T>(value: any, type: T): asserts value is T;
  >assertEqual : <T>(value: any, type: T) => asserts value is T
-->            : ^ ^^     ^^   ^^    ^^ ^^^^^                  
 +>T : T
  >value : any
  >type : T
-->     : ^
- 
- const animal = { type: 'cat', canMeow: true } as Animal;
- >animal : Animal
-->       : ^^^^^^
- >{ type: 'cat', canMeow: true } as Animal : Animal
-->                                         : ^^^^^^
- >{ type: 'cat', canMeow: true } : { type: "cat"; canMeow: true; }
-->                               : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >type : "cat"
-->     : ^^^^^
- >'cat' : "cat"
-->      : ^^^^^
- >canMeow : true
-->        : ^^^^
- >true : true
-->     : ^^^^
- 
- assertEqual(animal.type, 'cat' as const);
- >assertEqual(animal.type, 'cat' as const) : void
-->                                         : ^^^^
- >assertEqual : <T>(value: any, type: T) => asserts value is T
-->            : ^ ^^     ^^   ^^    ^^ ^^^^^                  
- >animal.type : "cat" | "dog"
-->            : ^^^^^^^^^^^^^
- >animal : Animal
-->       : ^^^^^^
- >type : "cat" | "dog"
-->     : ^^^^^^^^^^^^^
- >'cat' as const : "cat"
-->               : ^^^^^
- >'cat' : "cat"
-->      : ^^^^^
- 
- animal.canMeow; // since is cat, should not be an error
- >animal.canMeow : true
-->               : ^^^^
- >animal : Cat
-->       : ^^^
- >canMeow : true
-->        : ^^^^
- 
- const animalOrUndef = { type: 'cat', canMeow: true } as Animal | undefined;
- >animalOrUndef : Animal | undefined
-->              : ^^^^^^^^^^^^^^^^^^
- >{ type: 'cat', canMeow: true } as Animal | undefined : Animal | undefined
-->                                                     : ^^^^^^^^^^^^^^^^^^
- >{ type: 'cat', canMeow: true } : { type: "cat"; canMeow: true; }
-->                               : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >type : "cat"
-->     : ^^^^^
- >'cat' : "cat"
-->      : ^^^^^
- >canMeow : true
-->        : ^^^^
- >true : true
-->     : ^^^^
- 
- assertEqual(animalOrUndef?.type, 'cat' as const);
- >assertEqual(animalOrUndef?.type, 'cat' as const) : void
-->                                                 : ^^^^
- >assertEqual : <T>(value: any, type: T) => asserts value is T
-->            : ^ ^^     ^^   ^^    ^^ ^^^^^                  
- >animalOrUndef?.type : "cat" | "dog" | undefined
-->                    : ^^^^^^^^^^^^^^^^^^^^^^^^^
- >animalOrUndef : Animal | undefined
-->              : ^^^^^^^^^^^^^^^^^^
- >type : "cat" | "dog" | undefined
-->     : ^^^^^^^^^^^^^^^^^^^^^^^^^
- >'cat' as const : "cat"
-->               : ^^^^^
- >'cat' : "cat"
-->      : ^^^^^
- 
- animalOrUndef.canMeow; // since is cat, should not be an error
- >animalOrUndef.canMeow : true
-->                      : ^^^^
- >animalOrUndef : Cat
-->              : ^^^
- >canMeow : true
-->        : ^^^^
  

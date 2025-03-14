@@ -1,81 +1,20 @@
 --- old.systemModuleAmbientDeclarations.types
 +++ new.systemModuleAmbientDeclarations.types
-@@= skipped -2, +2 lines =@@
- === file1.ts ===
- declare class Promise { }
- >Promise : Promise
-->        : ^^^^^^^
- 
- declare function Foo(): void;
- >Foo : () => void
-->    : ^^^^^^    
- 
- declare class C {}
+@@= skipped -10, +10 lines =@@
  >C : C
-->  : ^
  
  declare enum E {X = 1};
 ->E : E
-->  : ^
 +>E : E.X
  >X : E.X
-->  : ^^^
  >1 : 1
-->  : ^
  
- export var promise = Promise;
- >promise : typeof Promise
-->        : ^^^^^^^^^^^^^^
- >Promise : typeof Promise
-->        : ^^^^^^^^^^^^^^
- 
- export var foo = Foo;
- >foo : () => void
-->    : ^^^^^^    
- >Foo : () => void
-->    : ^^^^^^    
- 
- export var c = C;
- >c : typeof C
-->  : ^^^^^^^^
- >C : typeof C
-->  : ^^^^^^^^
- 
- export var e = E;
- >e : typeof E
-->  : ^^^^^^^^
- >E : typeof E
-->  : ^^^^^^^^
- 
- === file2.ts ===
- export declare function foo();
- >foo : () => any
-->    : ^^^^^^^^^
- 
- === file3.ts ===
- export declare class C {}
- >C : C
-->  : ^
- 
- === file4.ts ===
- export declare var v: number;
- >v : number
-->  : ^^^^^^
+@@= skipped -34, +34 lines =@@
  
  === file5.ts ===
  export declare enum E {X = 1}
 ->E : E
-->  : ^
 +>E : E.X
  >X : E.X
-->  : ^^^
  >1 : 1
-->  : ^
- 
- === file6.ts ===
- export declare module M { var v: number; }
- >M : typeof M
-->  : ^^^^^^^^
- >v : number
-->  : ^^^^^^
  

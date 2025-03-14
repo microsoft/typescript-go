@@ -5,13 +5,10 @@
  === /b.ts ===
  import A from "./a";
 ->A : typeof A
-->  : ^^^^^^^^
 +>A : typeof default
  
  new A();
  >new A() : any
-->        : ^^^
 ->A : typeof A
-->  : ^^^^^^^^
 +>A : typeof default
  

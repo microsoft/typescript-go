@@ -1,24 +1,13 @@
 --- old.node10IsNode_node.types
 +++ new.node10IsNode_node.types
-@@= skipped -2, +2 lines =@@
- === /node_modules/fancy-lib/index.d.ts ===
- export declare const fancy: "feast";
- >fancy : "feast"
-->      : ^^^^^^^
- 
- === /node_modules/fancy-lib/definitely-not-index.d.ts ===
- export declare const fancy: "ketchup";
- >fancy : "ketchup"
-->      : ^^^^^^^^^
+@@= skipped -9, +9 lines =@@
  
  === /main.ts ===
  import { fancy } from "fancy-lib";
 ->fancy : "feast"
-->      : ^^^^^^^
 +>fancy : "ketchup"
  
  fancy;
 ->fancy : "feast"
-->      : ^^^^^^^
 +>fancy : "ketchup"
  

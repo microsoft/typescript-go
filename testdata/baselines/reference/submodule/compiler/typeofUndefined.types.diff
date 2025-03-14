@@ -5,7 +5,6 @@
  var x: typeof undefined;
  >x : any
 ->undefined : undefined
-->          : ^^^^^^^^^
  
  var x: any; // shouldn't be an error since type is the same as the first declaration
  >x : any

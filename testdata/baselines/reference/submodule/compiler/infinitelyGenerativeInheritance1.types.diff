@@ -9,18 +9,13 @@
 +
        pop(): T
  >pop : () => T
-->    : ^^^^^^ 
  
        zip<S>(a: Stack<S>): Stack<{ x: T; y: S }>
  >zip : <S>(a: Stack<S>) => Stack<{ x: T; y: S; }>
-->    : ^ ^^ ^^        ^^^^^                      
 +>S : S
  >a : Stack<S>
-->  : ^^^^^^^^
  >x : T
-->  : ^
  >y : S
-->  : ^
  }
  
  interface MyStack<T> extends Stack<T> {
@@ -29,13 +24,7 @@
 +
        zip<S>(a: Stack<S>): Stack<{ x: T; y: S }>
  >zip : <S>(a: Stack<S>) => Stack<{ x: T; y: S; }>
-->    : ^ ^^ ^^        ^^^^^                      
 +>S : S
  >a : Stack<S>
-->  : ^^^^^^^^
  >x : T
-->  : ^
  >y : S
-->  : ^
- }
- 

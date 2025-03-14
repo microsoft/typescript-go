@@ -13,7 +13,6 @@
  export {};
  declare global {
  >global : any
-->       : ^^^
  
      interface RequireInterface {}
 +>RequireInterface : RequireInterface

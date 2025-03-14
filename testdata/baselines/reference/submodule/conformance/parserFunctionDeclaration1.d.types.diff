@@ -1,8 +1,0 @@
---- old.parserFunctionDeclaration1.d.types
-+++ new.parserFunctionDeclaration1.d.types
-@@= skipped -2, +2 lines =@@
- === parserFunctionDeclaration1.d.ts ===
- declare function F();
- >F : () => any
-->  : ^^^^^^^^^
- 

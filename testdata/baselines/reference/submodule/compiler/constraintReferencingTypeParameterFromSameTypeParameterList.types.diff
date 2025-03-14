@@ -9,7 +9,6 @@
  }
  function f<T, I extends IComparable<T>>() {
  >f : <T, I extends IComparable<T>>() => void
-->  : ^ ^^ ^^^^^^^^^              ^^^^^^^^^^^
 +>T : T
 +>I : I
  }
@@ -39,19 +38,15 @@
 +
      method1<X, Y extends T>();
  >method1 : <X, Y extends T>() => any
-->        : ^ ^^ ^^^^^^^^^ ^^^^^^^^^^
 +>X : X
 +>Y : Y
  }
  
  function foo<T, U extends <V extends T>(v: V) => void>() {
  >foo : <T, U extends <V extends T>(v: V) => void>() => void
-->    : ^ ^^ ^^^^^^^^^                           ^^^^^^^^^^^
 +>T : T
 +>U : U
 +>V : V
  >v : V
-->  : ^
  }
- 
  

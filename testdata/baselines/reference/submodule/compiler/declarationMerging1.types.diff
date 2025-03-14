@@ -1,25 +1,6 @@
 --- old.declarationMerging1.types
 +++ new.declarationMerging1.types
-@@= skipped -2, +2 lines =@@
- === file1.ts ===
- class A {
- >A : A
-->  : ^
- 
-     protected _f: number;
- >_f : number
-->   : ^^^^^^
- 
-     getF() { return this._f; }
- >getF : () => number
-->     : ^^^^^^^^^^^^
- >this._f : number
-->        : ^^^^^^
- >this : this
-->     : ^^^^
- >_f : number
-->   : ^^^^^^
- }
+@@= skipped -15, +15 lines =@@
  
  === file2.ts ===
  interface A {
@@ -27,5 +8,4 @@
 +
      run();
  >run : () => any
-->    : ^^^^^^^^^
  }

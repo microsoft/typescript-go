@@ -8,18 +8,3 @@
  >x : any
  
  === file2.ts ===
- export * from "file1"
- var x = 1;
- >x : number
-->  : ^^^^^^
- >1 : 1
-->  : ^
- 
- === file3.ts ===
- export * from "file2"
- var x = 1;
- >x : number
-->  : ^^^^^^
- >1 : 1
-->  : ^
- 

@@ -9,9 +9,7 @@
      dummy;
  >dummy : any
  
-     p?: number;
- >p : number
-->  : ^^^^^^
+@@= skipped -8, +10 lines =@@
  }
  
  interface Ellement {
@@ -19,27 +17,4 @@
 +
      dummy;
  >dummy : any
- 
-@@= skipped -18, +21 lines =@@
- 
- var c: Contextual;
- >c : Contextual
-->  : ^^^^^^^^^^
- 
- var e: Ellement;
- >e : Ellement
-->  : ^^^^^^^^
- 
- (c || e).dummy;
- >(c || e).dummy : any
- >(c || e) : Contextual | Ellement
-->         : ^^^^^^^^^^^^^^^^^^^^^
- >c || e : Contextual | Ellement
-->       : ^^^^^^^^^^^^^^^^^^^^^
- >c : Contextual
-->  : ^^^^^^^^^^
- >e : Ellement
-->  : ^^^^^^^^
- >dummy : any
-->      : ^^^
  

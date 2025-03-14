@@ -1,47 +1,14 @@
 --- old.commentOnAmbientModule.types
 +++ new.commentOnAmbientModule.types
-@@= skipped -3, +3 lines =@@
- ///<reference path="a.ts"/>
- declare module E {
- >E : typeof E
-->  : ^^^^^^^^
+@@= skipped -6, +6 lines =@@
  
      class foobar extends D.bar {
  >foobar : foobar
-->       : ^^^^^^
 ->D.bar : D.bar
-->      : ^^^^^
 +>D.bar : bar
  >D : typeof D
-->  : ^^^^^^^^
 ->bar : typeof D.bar
-->    : ^^^^^^^^^^^^
 +>bar : typeof bar
  
          foo();
  >foo : () => any
-->    : ^^^^^^^^^
-     }
- }
- === a.ts ===
-@@= skipped -26, +20 lines =@@
- /*! Don't keep this pinned comment */
- declare module C {
- >C : typeof C
-->  : ^^^^^^^^
- 
-     function foo();
- >foo : () => any
-->    : ^^^^^^^^^
- }
- 
- // Don't keep this comment.
- declare module D {
- >D : typeof D
-->  : ^^^^^^^^
- 
-     class bar { }
- >bar : bar
-->    : ^^^
- }
- 

@@ -1,8 +1,0 @@
---- old.exportAmbientClassNameWithObject.types
-+++ new.exportAmbientClassNameWithObject.types
-@@= skipped -2, +2 lines =@@
- === exportAmbientClassNameWithObject.ts ===
- export declare class Object {}
- >Object : Object
-->       : ^^^^^^
- 

@@ -9,16 +9,8 @@
 +
      data: T;
  >data : T
-->     : ^
  
-     next: List<T>;
- >next : List<T>
-->     : ^^^^^^^
- 
-     owner: List<List<T>>;
- >owner : List<List<T>>
-->      : ^^^^^^^^^^^^^
- }
+@@= skipped -12, +15 lines =@@
  
  
  interface MyList<T> {
@@ -27,50 +19,4 @@
 +
      data: T;
  >data : T
-->     : ^
- 
-     next: MyList<T>;
- >next : MyList<T>
-->     : ^^^^^^^^^
- 
-     owner: MyList<MyList<T>>;
- >owner : MyList<MyList<T>>
-->      : ^^^^^^^^^^^^^^^^^
- }
- 
- var l: List<number>;
- >l : List<number>
-->  : ^^^^^^^^^^^^
- 
- var m: MyList<number>;
- >m : MyList<number>
-->  : ^^^^^^^^^^^^^^
- 
- l == m; // should error
- >l == m : boolean
-->       : ^^^^^^^
- >l : List<number>
-->  : ^^^^^^^^^^^^
- >m : MyList<number>
-->  : ^^^^^^^^^^^^^^
- 
- var l2: List<string>;
- >l2 : List<string>
-->   : ^^^^^^^^^^^^
- 
- l == l2; // should error;
- >l == l2 : boolean
-->        : ^^^^^^^
- >l : List<number>
-->  : ^^^^^^^^^^^^
- >l2 : List<string>
-->   : ^^^^^^^^^^^^
- 
- l == l; // should not error
- >l == l : boolean
-->       : ^^^^^^^
- >l : List<number>
-->  : ^^^^^^^^^^^^
- >l : List<number>
-->  : ^^^^^^^^^^^^
  

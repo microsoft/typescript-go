@@ -5,29 +5,16 @@
  === this_inside-enum-should-not-be-allowed.ts ===
  enum TopLevelEnum {
 ->TopLevelEnum : TopLevelEnum
-->             : ^^^^^^^^^^^^
 +>TopLevelEnum : TopLevelEnum.ThisWasAllowedButShouldNotBe
  
      ThisWasAllowedButShouldNotBe = this // Should not be allowed
  >ThisWasAllowedButShouldNotBe : TopLevelEnum.ThisWasAllowedButShouldNotBe
-->                             : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >this : any
-->     : ^^^
- }
- 
- module ModuleEnum {
+@@= skipped -11, +11 lines =@@
  >ModuleEnum : typeof ModuleEnum
-->           : ^^^^^^^^^^^^^^^^^
  
      enum EnumInModule {
 ->EnumInModule : EnumInModule
-->             : ^^^^^^^^^^^^
 +>EnumInModule : EnumInModule.WasADifferentError
  
          WasADifferentError = this // this was handled as if this was in a module
  >WasADifferentError : EnumInModule.WasADifferentError
-->                   : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >this : any
-->     : ^^^
-     }
- }

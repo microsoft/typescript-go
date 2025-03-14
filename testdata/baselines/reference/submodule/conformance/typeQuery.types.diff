@@ -1,19 +1,8 @@
 --- old.typeQuery.types
 +++ new.typeQuery.types
-@@= skipped -2, +2 lines =@@
- === /a.ts ===
- export class A { }
- >A : A
-->  : ^
- 
- === /b.ts ===
- import type { A } from './a';
- >A : A
-->  : ^
+@@= skipped -9, +9 lines =@@
  
  let AConstructor: typeof A;
  >AConstructor : typeof A
-->             : ^^^^^^^^
 ->A : typeof A
-->  : ^^^^^^^^
  

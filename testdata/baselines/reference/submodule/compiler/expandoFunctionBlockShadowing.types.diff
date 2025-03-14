@@ -1,110 +1,34 @@
 --- old.expandoFunctionBlockShadowing.types
 +++ new.expandoFunctionBlockShadowing.types
-@@= skipped -4, +4 lines =@@
- 
- export function X() {}
- >X : () => void
-->  : ^^^^^^^^^^
- 
- if (Math.random()) {
- >Math.random() : number
-->              : ^^^^^^
- >Math.random : () => number
-->            : ^^^^^^      
- >Math : Math
-->     : ^^^^
- >random : () => number
-->       : ^^^^^^      
- 
-   const X: { test?: any } = {};
- >X : { test?: any; }
-->  : ^^^^^^^^^   ^^^
- >test : any
- >{} : {}
-->   : ^^
- 
-   X.test = 1;
- >X.test = 1 : 1
-->           : ^
- >X.test : any
- >X : { test?: any; }
-->  : ^^^^^^^^^   ^^^
- >test : any
-->     : ^^^
- >1 : 1
-->  : ^
+@@= skipped -25, +25 lines =@@
  }
  
  export function Y() {}
 ->Y : typeof Y
-->  : ^^^^^^^^
 +>Y : { (): void; test: string; }
  
  Y.test = "foo";
  >Y.test = "foo" : "foo"
-->               : ^^^^^
  >Y.test : string
-->       : ^^^^^^
 ->Y : typeof Y
-->  : ^^^^^^^^
 +>Y : { (): void; test: string; }
  >test : string
-->     : ^^^^^^
  >"foo" : "foo"
-->      : ^^^^^
  
  const aliasTopY = Y;
 ->aliasTopY : typeof Y
-->          : ^^^^^^^^
 ->Y : typeof Y
-->  : ^^^^^^^^
 +>aliasTopY : { (): void; test: string; }
 +>Y : { (): void; test: string; }
  
  if (Math.random()) {
  >Math.random() : number
-->              : ^^^^^^
- >Math.random : () => number
-->            : ^^^^^^      
- >Math : Math
-->     : ^^^^
- >random : () => number
-->       : ^^^^^^      
- 
-   const Y = function Y() {}
- >Y : { (): void; test: number; }
-->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >function Y() {} : { (): void; test: number; }
-->                : ^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >Y : { (): void; test: number; }
-->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
-   Y.test = 42;
- >Y.test = 42 : 42
-->            : ^^
- >Y.test : number
-->       : ^^^^^^
- >Y : { (): void; test: number; }
-->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >test : number
-->     : ^^^^^^
- >42 : 42
-->   : ^^
- 
+@@= skipped -34, +34 lines =@@
    const topYcheck: { (): void; test: string } = aliasTopY;
  >topYcheck : { (): void; test: string; }
-->          : ^^^^^^    ^^^^^^^^      ^^^
  >test : string
-->     : ^^^^^^
 ->aliasTopY : typeof import("expandoFunctionBlockShadowing").Y
-->          : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>aliasTopY : { (): void; test: string; }
  
    const blockYcheck: { (): void; test: number } = Y;
  >blockYcheck : { (): void; test: number; }
-->            : ^^^^^^    ^^^^^^^^      ^^^
- >test : number
-->     : ^^^^^^
- >Y : { (): void; test: number; }
-->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^
- }

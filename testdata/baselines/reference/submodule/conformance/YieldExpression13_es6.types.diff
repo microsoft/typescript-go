@@ -1,9 +1,0 @@
---- old.YieldExpression13_es6.types
-+++ new.YieldExpression13_es6.types
-@@= skipped -2, +2 lines =@@
- === YieldExpression13_es6.ts ===
- function* foo() { yield }
- >foo : () => Generator<any, void, unknown>
-->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >yield : any
- 

@@ -5,25 +5,21 @@
   */
  class C { }
 ->C : C<T>
-->  : ^^^^
 +>C : C
  
  /**
   * @template private T
-@@= skipped -9, +8 lines =@@
+@@= skipped -8, +8 lines =@@
   * @returns {T}
   */
  function f(x) {
 ->f : <T>(x: T) => T
-->  : ^ ^^ ^^ ^^^^^ 
 ->x : T
-->  : ^
 +>f : (x: any) => any
 +>x : any
  
      return x;
 ->x : T
-->  : ^
 +>x : any
  }
  

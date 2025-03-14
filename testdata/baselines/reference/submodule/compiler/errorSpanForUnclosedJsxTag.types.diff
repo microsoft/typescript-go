@@ -1,50 +1,22 @@
 --- old.errorSpanForUnclosedJsxTag.types
 +++ new.errorSpanForUnclosedJsxTag.types
-@@= skipped -2, +2 lines =@@
- === errorSpanForUnclosedJsxTag.tsx ===
- declare const React: any
+@@= skipped -4, +4 lines =@@
  >React : any
-->      : ^^^
  
  let Foo = {
 ->Foo : { Bar(): void; }
-->    : ^^^^^^^^^^^^^^^^
 ->{  Bar() {}} : { Bar(): void; }
-->             : ^^^^^^^^^^^^^^^^
 +>Foo : { Bar: () => void; }
 +>{  Bar() {}} : { Bar: () => void; }
  
    Bar() {}
  >Bar : () => void
-->    : ^^^^^^^^^^
- }
- 
- let Baz = () => {}
- >Baz : () => void
-->    : ^^^^^^^^^^
- >() => {} : () => void
-->         : ^^^^^^^^^^
- 
- let x = <    Foo.Bar >Hello
+@@= skipped -15, +15 lines =@@
  >x : any
-->  : ^^^
  ><    Foo.Bar >Hellolet y = <   Baz >Hello : any
-->                                          : ^^^
  >Foo.Bar : () => void
-->        : ^^^^^^^^^^
 ->Foo : { Bar(): void; }
-->    : ^^^^^^^^^^^^^^^^
 +>Foo : { Bar: () => void; }
  >Bar : () => void
-->    : ^^^^^^^^^^
  
  let y = <   Baz >Hello
- ><   Baz >Hello : any
-->               : ^^^
- >Baz : () => void
-->    : ^^^^^^^^^^
- > : any
--> : ^^^
- > : any
--> : ^^^
- 

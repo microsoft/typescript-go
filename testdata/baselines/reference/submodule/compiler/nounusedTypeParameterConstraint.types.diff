@@ -10,11 +10,9 @@
  
  === test.ts ===
  import { IEventSourcedEntity } from "./bar";
- >IEventSourcedEntity : any
-->                    : ^^^
+@@= skipped -9, +9 lines =@@
  
  export type DomainEntityConstructor<TEntity extends IEventSourcedEntity> = { new(): TEntity; };
  >DomainEntityConstructor : DomainEntityConstructor<TEntity>
-->                        : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>TEntity : TEntity
  

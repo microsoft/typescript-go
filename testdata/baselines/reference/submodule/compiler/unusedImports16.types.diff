@@ -5,7 +5,6 @@
  === foo.tsx ===
  import Element = require("react");
 ->Element : typeof Element
-->        : ^^^^^^^^^^^^^^
 +>Element : typeof React
  
  export const FooComponent = <div></div>
@@ -14,33 +13,18 @@
 +>FooComponent : any
 +><div></div> : any
  >div : any
-->    : ^^^
  >div : any
-->    : ^^^
  
- === node_modules/@types/react/index.d.ts ===
- export = React;
- >React : typeof React
-->      : ^^^^^^^^^^^^
- 
- export as namespace React;
- >React : typeof React
-->      : ^^^^^^^^^^^^
- 
- declare namespace React {
- >React : typeof React
-->      : ^^^^^^^^^^^^
+@@= skipped -20, +20 lines =@@
  
      function createClass<P, S>(spec);
  >createClass : <P, S>(spec: any) => any
-->            : ^ ^^ ^^    ^^^^^^^^^^^^^
 +>P : P
 +>S : S
  >spec : any
  }
  declare global {
  >global : any
-->       : ^^^
  
      namespace JSX {
 +>JSX : any

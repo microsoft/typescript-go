@@ -1,49 +1,15 @@
 --- old.argumentsReferenceInConstructor3_Js.types
 +++ new.argumentsReferenceInConstructor3_Js.types
-@@= skipped -2, +2 lines =@@
- === /a.js ===
- class A {
- >A : A
-->  : ^
- 
- 	get arguments() {
- >arguments : { bar: {}; }
-->          : ^^^^^^^^^^^^
- 
- 		return { bar: {} };
- >{ bar: {} } : { bar: {}; }
-->            : ^^^^^^^^^^^^
- >bar : {}
-->    : ^^
- >{} : {}
-->   : ^^
- 	}
- }
- 
- class B extends A {
- >B : B
-->  : ^
- >A : A
-->  : ^
- 
- 	/**
- 	 * Constructor
-@@= skipped -28, +21 lines =@@
+@@= skipped -23, +23 lines =@@
  	 * @param {object} [foo={}]
  	 */
  	constructor(foo = {}) {
 ->foo : any
 +>foo : {}
  >{} : {}
-->   : ^^
  
  		super();
- >super() : void
-->        : ^^^^
- >super : typeof A
-->      : ^^^^^^^^
- 
- 		/**
+@@= skipped -11, +11 lines =@@
  		 * @type object
  		 */
  		this.foo = foo;
@@ -51,9 +17,7 @@
 +>this.foo = foo : {}
  >this.foo : any
  >this : this
-->     : ^^^^
  >foo : any
-->    : ^^^
 ->foo : any
 +>foo : {}
  
@@ -65,19 +29,9 @@
 +>this.bar = super.arguments.foo : any
  >this.bar : any
  >this : this
-->     : ^^^^
  >bar : any
-->    : ^^^
 ->super.arguments.foo : error
 +>super.arguments.foo : any
  >super.arguments : { bar: {}; }
-->                : ^^^^^^^^^^^^
  >super : A
-->      : ^
  >arguments : { bar: {}; }
-->          : ^^^^^^^^^^^^
- >foo : any
-->    : ^^^
- 	}
- }
- 

@@ -10,14 +10,3 @@
  
  }
  
-@@= skipped -9, +9 lines =@@
- /// <reference types="jquery" preserve="true" />
- namespace Test {
- >Test : typeof Test
-->     : ^^^^^^^^^^^
- 
-     export var x: JQuery;
- >x : JQuery
-->  : ^^^^^^
- }
- 

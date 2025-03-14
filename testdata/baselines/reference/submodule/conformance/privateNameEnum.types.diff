@@ -5,12 +5,10 @@
  === privateNameEnum.ts ===
  enum E {
 ->E : E
-->  : ^
 +>E : E.#x
  
      #x
 ->#x : E.__missing
-->   : ^^^^^^^^^^^
 +>#x : E.#x
  }
  

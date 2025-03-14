@@ -1,72 +1,38 @@
 --- old.interfaceDeclaration4.types
 +++ new.interfaceDeclaration4.types
-@@= skipped -4, +4 lines =@@
- // import Foo = require("interfaceDeclaration5")
- module Foo {
+@@= skipped -6, +6 lines =@@
  >Foo : typeof Foo
-->    : ^^^^^^^^^^
  
      export interface I1 { item: string; }
 +>I1 : I1
  >item : string
-->     : ^^^^^^
  
      export class C1 { }
- >C1 : C1
-->   : ^^
- }
- 
- class C1 implements Foo.I1 {
- >C1 : C1
-->   : ^^
- >Foo : typeof Foo
-->    : ^^^^^^^^^^
- 
- 	public item:string;
- >item : string
-->     : ^^^^^^
- }
+@@= skipped -16, +17 lines =@@
  
  // Allowed
  interface I2 extends Foo.I1 {
 +>I2 : I2
  >Foo : typeof Foo
-->    : ^^^^^^^^^^
  
  	item:string;
- >item : string
-->     : ^^^^^^
- }
+@@= skipped -8, +9 lines =@@
  
  // Negative Case
  interface I3 extends Foo.I1 {
 +>I3 : I3
  >Foo : typeof Foo
-->    : ^^^^^^^^^^
  
      item:number;
- >item : number
-->     : ^^^^^^
+@@= skipped -7, +8 lines =@@
  }
  
  interface I4 extends Foo.I1 {
 +>I4 : I4
  >Foo : typeof Foo
-->    : ^^^^^^^^^^
  
      token:string;
- >token : string
-->      : ^^^^^^
- }
- 
- // Err - not implemented item
- class C2 implements I4 {
- >C2 : C2
-->   : ^^
- 
-     public token: string;
- >token : string
-->      : ^^^^^^
+@@= skipped -15, +16 lines =@@
  }
  
  interface I5 extends Foo { }
@@ -76,17 +42,12 @@
  interface I6 extends Foo.C1 { }
 +>I6 : I6
  >Foo : typeof Foo
-->    : ^^^^^^^^^^
  
  class C3 implements Foo.I1 { }
- >C3 : C3
-->   : ^^
- >Foo : typeof Foo
-->    : ^^^^^^^^^^
+@@= skipped -11, +13 lines =@@
  
  // Negative case 
  interface Foo.I1 { }
 +>Foo : Foo
  >I1 : any
-->   : ^^^
  

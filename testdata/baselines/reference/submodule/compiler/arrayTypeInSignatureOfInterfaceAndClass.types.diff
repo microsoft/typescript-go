@@ -1,35 +1,19 @@
 --- old.arrayTypeInSignatureOfInterfaceAndClass.types
 +++ new.arrayTypeInSignatureOfInterfaceAndClass.types
-@@= skipped -2, +2 lines =@@
- === arrayTypeInSignatureOfInterfaceAndClass.ts ===
- declare module WinJS {
- >WinJS : typeof WinJS
-->      : ^^^^^^^^^^^^
+@@= skipped -5, +5 lines =@@
  
      class Promise<T> {
  >Promise : Promise<T>
-->        : ^^^^^^^^^^
 +>T : T
  
          then<U>(success?: (value: T) => Promise<U>, error?: (error: any) => Promise<U>, progress?: (progress: any) => void): Promise<U>;
  >then : <U>(success?: (value: T) => Promise<U>, error?: (error: any) => Promise<U>, progress?: (progress: any) => void) => Promise<U>
-->     : ^ ^^       ^^^                        ^^     ^^^                          ^^        ^^^                       ^^^^^          
 +>U : U
  >success : (value: T) => Promise<U>
-->        : ^     ^^ ^^^^^          
  >value : T
-->      : ^
  >error : (error: any) => Promise<U>
-->      : ^     ^^   ^^^^^          
- >error : any
- >progress : (progress: any) => void
-->         : ^        ^^   ^^^^^    
- >progress : any
-     }
- }
- declare module Data {
+@@= skipped -15, +17 lines =@@
  >Data : typeof Data
-->     : ^^^^^^^^^^^
  
      export interface IListItem<T> {
 +>IListItem : IListItem<T>
@@ -37,33 +21,9 @@
 +
          itemIndex: number;
  >itemIndex : number
-->          : ^^^^^^
  
-         key: any;
- >key : any
- 
-         data: T;
- >data : T
-->     : ^
- 
-         group: any;
- >group : any
- 
-         isHeader: boolean;
- >isHeader : boolean
-->         : ^^^^^^^
- 
-         cached: boolean;
- >cached : boolean
-->       : ^^^^^^^
- 
-         isNonSourceData: boolean;
- >isNonSourceData : boolean
-->                : ^^^^^^^
- 
-         preventAugmentation: boolean;
+@@= skipped -25, +28 lines =@@
  >preventAugmentation : boolean
-->                    : ^^^^^^^
      }
      export interface IVirtualList<T> {
 +>IVirtualList : IVirtualList<T>
@@ -72,28 +32,19 @@
          //removeIndices: WinJS.Promise<IListItem<T>[]>;
          removeIndices(indices: number[], options?: any): WinJS.Promise<IListItem<T>[]>;
 ->removeIndices : (indices: number[], options?: any) => WinJS.Promise<IListItem<T>[]>
-->              : ^       ^^        ^^       ^^^   ^^^^^                             
 +>removeIndices : (indices: number[], options?: any) => Promise<IListItem<T>[]>
  >indices : number[]
-->        : ^^^^^^^^
  >options : any
  >WinJS : any
-->      : ^^^
      }
      export class VirtualList<T> implements IVirtualList<T> {
  >VirtualList : VirtualList<T>
-->            : ^^^^^^^^^^^^^^
 +>T : T
  
          //removeIndices: WinJS.Promise<IListItem<T>[]>;
          public removeIndices(indices: number[], options?: any): WinJS.Promise<IListItem<T>[]>;
 ->removeIndices : (indices: number[], options?: any) => WinJS.Promise<IListItem<T>[]>
-->              : ^       ^^        ^^       ^^^   ^^^^^                             
 +>removeIndices : (indices: number[], options?: any) => Promise<IListItem<T>[]>
  >indices : number[]
-->        : ^^^^^^^^
  >options : any
  >WinJS : any
-->      : ^^^
-     }
- }

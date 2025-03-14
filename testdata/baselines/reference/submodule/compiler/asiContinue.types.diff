@@ -1,8 +1,0 @@
---- old.asiContinue.types
-+++ new.asiContinue.types
-@@= skipped -2, +2 lines =@@
- === asiContinue.ts ===
- while (true) continue
- >true : true
-->     : ^^^^
- 

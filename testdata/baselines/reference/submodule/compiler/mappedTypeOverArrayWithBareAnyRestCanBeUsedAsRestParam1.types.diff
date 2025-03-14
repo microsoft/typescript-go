@@ -4,7 +4,6 @@
  
  type Replace<T extends [...any], A, B> = {
  >Replace : Replace<T, A, B>
-->        : ^^^^^^^^^^^^^^^^
 +>T : T
 +>A : A
 +>B : B
@@ -16,14 +15,9 @@
  
  type ReplaceParams1<ARRAY extends [...any], A, B> = (
  >ReplaceParams1 : ReplaceParams1<ARRAY, A, B>
-->               : ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>ARRAY : ARRAY
 +>A : A
 +>B : B
  
    ...args: Replace<ARRAY, A, B>
  >args : Replace<ARRAY, A, B>
-->     : ^^^^^^^^^^^^^^^^^^^^
- 
- ) => any;
- 

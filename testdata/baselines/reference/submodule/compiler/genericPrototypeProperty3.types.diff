@@ -1,43 +1,10 @@
 --- old.genericPrototypeProperty3.types
 +++ new.genericPrototypeProperty3.types
-@@= skipped -2, +2 lines =@@
- === genericPrototypeProperty3.ts ===
- class BaseEvent {
- >BaseEvent : BaseEvent
-->          : ^^^^^^^^^
- 
-     target: {};
- >target : {}
-->       : ^^
- }
+@@= skipped -9, +9 lines =@@
  
  class MyEvent<T> extends BaseEvent { // T is instantiated to any in the prototype, which is assignable to {}
  >MyEvent : MyEvent<T>
-->        : ^^^^^^^^^^
 +>T : T
  >BaseEvent : BaseEvent
-->          : ^^^^^^^^^
  
      target: T;
- >target : T
-->       : ^
- }
- class BaseEventWrapper {
- >BaseEventWrapper : BaseEventWrapper
-->                 : ^^^^^^^^^^^^^^^^
- 
-     t: BaseEvent;
- >t : BaseEvent
-->  : ^^^^^^^^^
- }
- 
- class MyEventWrapper extends BaseEventWrapper {
- >MyEventWrapper : MyEventWrapper
-->               : ^^^^^^^^^^^^^^
- >BaseEventWrapper : BaseEventWrapper
-->                 : ^^^^^^^^^^^^^^^^
- 
-     t: MyEvent<any>;
- >t : MyEvent<any>
-->  : ^^^^^^^^^^^^
- }

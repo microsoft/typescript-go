@@ -1,37 +1,11 @@
 --- old.declarationMerging2.types
 +++ new.declarationMerging2.types
-@@= skipped -2, +2 lines =@@
- === a.ts ===
- export class A {
- >A : A
-->  : ^
- 
-     protected _f: number;
- >_f : number
-->   : ^^^^^^
- 
-     getF() { return this._f; }
- >getF : () => number
-->     : ^^^^^^^^^^^^
- >this._f : number
-->        : ^^^^^^
- >this : this
-->     : ^^^^
- >_f : number
-->   : ^^^^^^
- }
- 
- === b.ts ===
- export {}
- declare module "./a" {
+@@= skipped -19, +19 lines =@@
  >"./a" : typeof import("a")
-->      : ^^^^^^^^^^^^^^^^^^
  
      interface A {
 +>A : A
 +
          run();
  >run : () => any
-->    : ^^^^^^^^^
      }
- }

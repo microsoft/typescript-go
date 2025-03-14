@@ -1,47 +1,11 @@
 --- old.exportsAndImportsWithContextualKeywordNames01.types
 +++ new.exportsAndImportsWithContextualKeywordNames01.types
-@@= skipped -2, +2 lines =@@
- === t1.ts ===
- let set = {
- >set : { foo: number; }
-->    : ^^^^^^^^^^^^^^^^
- >{    set foo(x: number) {    }} : { foo: number; }
-->                                : ^^^^^^^^^^^^^^^^
- 
-     set foo(x: number) {
- >foo : number
-->    : ^^^^^^
- >x : number
-->  : ^^^^^^
-     }
- }
- let get = 10;
- >get : number
-->    : ^^^^^^
- >10 : 10
-->   : ^^
- 
- export { set, get };
- >set : { foo: number; }
-->    : ^^^^^^^^^^^^^^^^
- >get : number
-->    : ^^^^^^
+@@= skipped -19, +19 lines =@@
  
  === t2.ts ===
  import * as set from "./t1";
 ->set : typeof set
-->    : ^^^^^^^^^^
 +>set : typeof import("t1")
  
  === t3.ts ===
  import { set as yield } from "./t1";
- >set : { foo: number; }
-->    : ^^^^^^^^^^^^^^^^
- >yield : { foo: number; }
-->      : ^^^^^^^^^^^^^^^^
- 
- === t4.ts ===
- import { get } from "./t1";
- >get : number
-->    : ^^^^^^
- 

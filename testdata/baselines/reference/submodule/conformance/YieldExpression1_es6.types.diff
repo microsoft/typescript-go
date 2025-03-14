@@ -1,8 +1,0 @@
---- old.YieldExpression1_es6.types
-+++ new.YieldExpression1_es6.types
-@@= skipped -2, +2 lines =@@
- === YieldExpression1_es6.ts ===
- yield;
- >yield : any
-->      : ^^^
- 

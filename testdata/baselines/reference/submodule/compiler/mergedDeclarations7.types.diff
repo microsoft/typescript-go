@@ -1,10 +1,7 @@
 --- old.mergedDeclarations7.types
 +++ new.mergedDeclarations7.types
-@@= skipped -2, +2 lines =@@
- === passport.d.ts ===
- declare module 'passport' {
+@@= skipped -4, +4 lines =@@
  >'passport' : typeof import("passport")
-->           : ^^^^^^^^^^^^^^^^^^^^^^^^^
  
      namespace passport {
 +>passport : PassportStatic
@@ -14,7 +11,6 @@
 +
              use(): this;
  >use : () => this
-->    : ^^^^^^    
          }
  
          interface PassportStatic extends Passport {
@@ -22,45 +18,34 @@
 +
              Passport: {new(): Passport};
  >Passport : new () => Passport
-->         : ^^^^^^^^^^        
          }
      }
  
      const passport: passport.PassportStatic;
 ->passport : passport.PassportStatic
-->         : ^^^^^^^^^^^^^^^^^^^^^^^
 +>passport : PassportStatic
  >passport : any
-->         : ^^^
  
      export = passport;
 ->passport : passport.PassportStatic
-->         : ^^^^^^^^^^^^^^^^^^^^^^^
 +>passport : PassportStatic
  }
  
  === test.ts ===
  import * as passport from "passport";
 ->passport : passport.PassportStatic
-->         : ^^^^^^^^^^^^^^^^^^^^^^^
 +>passport : PassportStatic
  
  import { Passport } from "passport";
 ->Passport : new () => passport.Passport
-->         : ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>Passport : new () => Passport
  
  let p: Passport = passport.use();
  >p : Passport
-->  : ^^^^^^^^
 ->passport.use() : passport.PassportStatic
-->               : ^^^^^^^^^^^^^^^^^^^^^^^
 ->passport.use : () => passport.PassportStatic
-->             : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ->passport : passport.PassportStatic
-->         : ^^^^^^^^^^^^^^^^^^^^^^^
 ->use : () => passport.PassportStatic
-->    : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>passport.use() : PassportStatic
 +>passport.use : () => PassportStatic
 +>passport : PassportStatic

@@ -1,22 +1,8 @@
 --- old.importTypeTypeofClassStaticLookup.types
 +++ new.importTypeTypeofClassStaticLookup.types
-@@= skipped -2, +2 lines =@@
- === a.d.ts ===
- export declare class A {
- >A : A
-->  : ^
- 
-     static foo(): void;
- >foo : () => void
-->    : ^^^^^^    
- }
- 
- === index.d.ts ===
+@@= skipped -11, +11 lines =@@
  export const foo: typeof import("./a").A.foo;
  >foo : () => void
-->    : ^^^^^^    
  >A : any
-->  : ^^^
 ->foo : any
-->    : ^^^
  

@@ -12,41 +12,26 @@
  
  const a = (
 ->a : JSX.Element
-->  : ^^^^^^^^^^^
 ->(  <main>    {(<div />) as unknown}    <span />  </main>) : JSX.Element
-->                                                          : ^^^^^^^^^^^
 +>a : any
 +>(  <main>    {(<div />) as unknown}    <span />  </main>) : any
  
    <main>
 -><main>    {(<div />) as unknown}    <span />  </main> : JSX.Element
-->                                                      : ^^^^^^^^^^^
 +><main>    {(<div />) as unknown}    <span />  </main> : any
  >main : any
-->     : ^^^
  
      {(<div />) as unknown}
  >(<div />) as unknown : unknown
-->                     : ^^^^^^^
 ->(<div />) : JSX.Element
-->          : ^^^^^^^^^^^
 -><div /> : JSX.Element
-->        : ^^^^^^^^^^^
 +>(<div />) : any
 +><div /> : any
  >div : any
-->    : ^^^
  
      <span />
 -><span /> : JSX.Element
-->         : ^^^^^^^^^^^
 +><span /> : any
  >span : any
-->     : ^^^
  
    </main>
- >main : any
-->     : ^^^
- 
- );
- 

@@ -1,48 +1,20 @@
 --- old.internalAliasEnumInsideTopLevelModuleWithExport.types
 +++ new.internalAliasEnumInsideTopLevelModuleWithExport.types
-@@= skipped -2, +2 lines =@@
- === internalAliasEnumInsideTopLevelModuleWithExport.ts ===
- export module a {
- >a : typeof a
-->  : ^^^^^^^^
- 
-     export enum weekend {
- >weekend : weekend
-->        : ^^^^^^^
- 
-         Friday,
- >Friday : weekend.Friday
-->       : ^^^^^^^^^^^^^^
- 
-         Saturday,
- >Saturday : weekend.Saturday
-->         : ^^^^^^^^^^^^^^^^
- 
-         Sunday
- >Sunday : weekend.Sunday
-->       : ^^^^^^^^^^^^^^
-     }
+@@= skipped -18, +18 lines =@@
  }
  
  export import b = a.weekend;
 ->b : typeof b
-->  : ^^^^^^^^
 +>b : typeof weekend
  >a : typeof a
-->  : ^^^^^^^^
 ->weekend : b
-->        : ^
 +>weekend : weekend
  
  export var bVal: b = b.Sunday;
 ->bVal : b
-->     : ^
 ->b.Sunday : b.Sunday
-->         : ^^^^^^^^
 ->b : typeof b
-->  : ^^^^^^^^
 ->Sunday : b.Sunday
-->       : ^^^^^^^^
 +>bVal : weekend
 +>b.Sunday : weekend.Sunday
 +>b : typeof weekend

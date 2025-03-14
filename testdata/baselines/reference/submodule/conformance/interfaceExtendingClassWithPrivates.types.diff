@@ -1,14 +1,6 @@
 --- old.interfaceExtendingClassWithPrivates.types
 +++ new.interfaceExtendingClassWithPrivates.types
-@@= skipped -2, +2 lines =@@
- === interfaceExtendingClassWithPrivates.ts ===
- class Foo {
- >Foo : Foo
-->    : ^^^
- 
-     private x: string;
- >x : string
-->  : ^^^^^^
+@@= skipped -8, +8 lines =@@
  }
  
  interface I extends Foo { // error
@@ -16,7 +8,6 @@
 +
      x: string;
  >x : string
-->  : ^^^^^^
  }
  
  interface I2 extends Foo {
@@ -24,30 +15,4 @@
 +
      y: string;
  >y : string
-->  : ^^^^^^
  }
- 
- var i: I2;
- >i : I2
-->  : ^^
- 
- var r = i.y;
- >r : string
-->  : ^^^^^^
- >i.y : string
-->    : ^^^^^^
- >i : I2
-->  : ^^
- >y : string
-->  : ^^^^^^
- 
- var r2 = i.x; // error
- >r2 : string
-->   : ^^^^^^
- >i.x : string
-->    : ^^^^^^
- >i : I2
-->  : ^^
- >x : string
-->  : ^^^^^^
- 

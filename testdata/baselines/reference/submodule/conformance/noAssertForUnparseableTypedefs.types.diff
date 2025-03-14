@@ -1,8 +1,0 @@
---- old.noAssertForUnparseableTypedefs.types
-+++ new.noAssertForUnparseableTypedefs.types
-@@= skipped -3, +3 lines =@@
- /** @typedef {module:locale} hi */
- import { nope } from 'nope';
- >nope : any
-->     : ^^^
- 

@@ -5,12 +5,7 @@
   */
  var isArray = Array.isArray;
 ->isArray : Function
-->        : ^^^^^^^^
 +>isArray : (arg: any) => arg is any[]
  >Array.isArray : (arg: any) => arg is any[]
-->              : ^   ^^   ^^^^^            
  >Array : ArrayConstructor
-->      : ^^^^^^^^^^^^^^^^
  >isArray : (arg: any) => arg is any[]
-->        : ^   ^^   ^^^^^            
- 

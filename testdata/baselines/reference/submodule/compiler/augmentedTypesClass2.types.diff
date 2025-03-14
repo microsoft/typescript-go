@@ -1,19 +1,6 @@
 --- old.augmentedTypesClass2.types
 +++ new.augmentedTypesClass2.types
-@@= skipped -5, +5 lines =@@
- // class then interface
- class c11 {
- >c11 : c11
-->    : ^^^
- 
-     foo() {
- >foo : () => number
-->    : ^^^^^^^^^^^^
- 
-         return 1;
- >1 : 1
-->  : ^
-     }
+@@= skipped -15, +15 lines =@@
  }
  
  interface c11 {
@@ -21,43 +8,13 @@
 +
      bar(): void;
  >bar : () => void
-->    : ^^^^^^    
  }
- 
- // class then class - covered
- // class then enum 
- class c33 {
- >c33 : c33
-->    : ^^^
- 
-     foo() {
- >foo : () => number
-->    : ^^^^^^^^^^^^
- 
-         return 1;
- >1 : 1
-->  : ^
+@@= skipped -17, +19 lines =@@
      }
  }
  enum c33 { One };
 ->c33 : c33
-->    : ^^^
 +>c33 : c33.One
  >One : c33.One
-->    : ^^^^^^^
  
  // class then import
- class c44 {
- >c44 : c44
-->    : ^^^
- 
-     foo() {
- >foo : () => number
-->    : ^^^^^^^^^^^^
- 
-         return 1;
- >1 : 1
-->  : ^
-     }
- }
- 

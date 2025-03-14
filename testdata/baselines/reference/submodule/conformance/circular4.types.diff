@@ -1,10 +1,7 @@
 --- old.circular4.types
 +++ new.circular4.types
-@@= skipped -2, +2 lines =@@
- === /a.ts ===
- import type { ns2 } from './b';
+@@= skipped -4, +4 lines =@@
  >ns2 : any
-->    : ^^^
  
  export namespace ns1 {
 +>ns1 : any
@@ -14,18 +11,9 @@
 +
      export type T = ns2.nested.T;
  >T : any
-->  : ^^^
  >ns2 : any
-->    : ^^^
- >nested : any
-->       : ^^^
-   }
- }
- 
- === /b.ts ===
- import type { ns1 } from './a';
+@@= skipped -13, +17 lines =@@
  >ns1 : any
-->    : ^^^
  
  export namespace ns2 {
 +>ns2 : any
@@ -35,11 +23,4 @@
 +
      export type T = ns1.nested.T;
  >T : any
-->  : ^^^
  >ns1 : any
-->    : ^^^
- >nested : any
-->       : ^^^
-   }
- }
- 

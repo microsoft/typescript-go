@@ -1,24 +1,11 @@
 --- old.topLevelAwaitErrors.11.types
 +++ new.topLevelAwaitErrors.11.types
-@@= skipped -3, +3 lines =@@
- // await disallowed in import=
- declare var require: any;
+@@= skipped -5, +5 lines =@@
  >require : any
-->        : ^^^
  
  import await = require("./other");
 ->await : typeof await
-->      : ^^^^^^^^^^^^
 +>await : typeof import("other")
  
  === other.ts ===
  declare const _await: any;
- >_await : any
-->       : ^^^
- 
- export { _await as await };
- >_await : any
-->       : ^^^
- >await : any
-->      : ^^^
- 

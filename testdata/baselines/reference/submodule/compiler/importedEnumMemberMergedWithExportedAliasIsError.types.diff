@@ -1,34 +1,9 @@
 --- old.importedEnumMemberMergedWithExportedAliasIsError.types
 +++ new.importedEnumMemberMergedWithExportedAliasIsError.types
-@@= skipped -2, +2 lines =@@
- === enum.ts ===
- export enum Enum {
- >Enum : Enum
-->     : ^^^^
- 
-     A,
+@@= skipped -19, +19 lines =@@
  >A : Enum.A
-->  : ^^^^^^
- 
-     B
- >B : Enum.B
-->  : ^^^^^^
- }
- === alias.ts ===
- import {Enum} from "./enum";
- >Enum : typeof Enum
-->     : ^^^^^^^^^^^
- 
- import EnumA = Enum.A;
- >EnumA : Enum.A
-->      : ^^^^^^
- >Enum : Enum
-->     : ^^^^
- >A : Enum.A
-->  : ^^^^^^
  
  export type EnumA = [string] | [string, number];
 ->EnumA : import("alias").EnumA
-->      : ^^^^^^^^^^^^^^^^^^^^^
 +>EnumA : EnumA
  

@@ -16,7 +16,6 @@
 +
      [n: number]: Foo;
  >n : number
-->  : ^^^^^^
  }
  
  interface Function {
@@ -24,7 +23,6 @@
 +
      [n: number]: Bar;
  >n : number
-->  : ^^^^^^
  }
  
  var a = {}[0]; // Should be Foo
@@ -33,9 +31,7 @@
 +>a : any
 +>{}[0] : any
  >{} : {}
-->   : ^^
  >0 : 0
-->  : ^
  
  var b = (() => { })[0]; // Should be Bar
 ->b : error
@@ -43,9 +39,5 @@
 +>b : any
 +>(() => { })[0] : any
  >(() => { }) : () => void
-->            : ^^^^^^^^^^
  >() => { } : () => void
-->          : ^^^^^^^^^^
  >0 : 0
-->  : ^
- 

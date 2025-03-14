@@ -1,19 +1,13 @@
 --- old.moduleAndInterfaceSharingName4.types
 +++ new.moduleAndInterfaceSharingName4.types
-@@= skipped -2, +2 lines =@@
- === moduleAndInterfaceSharingName4.ts ===
- declare module D3 {
+@@= skipped -4, +4 lines =@@
  >D3 : typeof D3
-->   : ^^^^^^^^^
  
      var x: D3.Color.Color;
 ->x : Color.Color
-->  : ^^^^^^^^^^^
 +>x : Color
  >D3 : any
-->   : ^^^
  >Color : any
-->      : ^^^
  
      module Color {
 +>Color : any
@@ -23,7 +17,4 @@
 +
              darker: Color;
  >darker : Color
-->       : ^^^^^
          }
-     }
- }

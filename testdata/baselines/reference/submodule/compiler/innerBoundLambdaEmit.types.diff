@@ -1,20 +1,7 @@
 --- old.innerBoundLambdaEmit.types
 +++ new.innerBoundLambdaEmit.types
-@@= skipped -2, +2 lines =@@
- === innerBoundLambdaEmit.ts ===
- module M {
- >M : typeof M
-->  : ^^^^^^^^
- 
-     export class Foo {
- >Foo : Foo
-->    : ^^^
-     }
-     var bar = () => { };
- >bar : () => void
-->    : ^^^^^^^^^^
+@@= skipped -11, +11 lines =@@
  >() => { } : () => void
-->          : ^^^^^^^^^^
  }
  interface Array<T> {
 +>Array : T[]
@@ -22,9 +9,7 @@
 +
      toFoo(): M.Foo
 ->toFoo : () => M.Foo
-->      : ^^^^^^     
 +>toFoo : () => Foo
  >M : any
-->  : ^^^
  }
  

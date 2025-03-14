@@ -9,10 +9,8 @@
      (): void;
  }
  C();
- >C() : any
-->    : ^^^
+@@= skipped -7, +9 lines =@@
  >C : any
-->  : ^^^
  
  module m2 {
 +>m2 : any
@@ -23,14 +21,3 @@
          (): void;
      }
  }
- 
- m2.C();
- >m2.C() : any
-->       : ^^^
- >m2.C : any
-->     : ^^^
- >m2 : any
-->   : ^^^
- >C : any
-->  : ^^^
- 

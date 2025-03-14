@@ -10,30 +10,22 @@
 +
  declare class Component<P, S> {
  >Component : Component<P, S>
-->          : ^^^^^^^^^^^^^^^
 +>P : P
 +>S : S
  
      constructor(props: P, context?: any);
  >props : P
-->      : ^
- >context : any
- 
-     render(): {};
+@@= skipped -11, +17 lines =@@
  >render : () => {}
-->       : ^^^^^^  
  
      props: Readonly<{ children?: {} }> & Readonly<P>;
 ->props : Readonly<{ children?: {}; }> & Readonly<P>
-->      : ^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^
 +>props : Readonly<{ children?: {} | undefined; }> & Readonly<P>
  >children : {} | undefined
-->         : ^^^^^^^^^^^^^^
  }
  
- declare global {
+@@= skipped -8, +8 lines =@@
  >global : any
-->       : ^^^
  
      namespace JSX {
 +>JSX : any
@@ -46,17 +38,14 @@
 +
              render(): {};
  >render : () => {}
-->       : ^^^^^^  
          }
          interface ElementAttributesProperty { props: {}; }
 +>ElementAttributesProperty : ElementAttributesProperty
  >props : {}
-->      : ^^
  
          interface ElementChildrenAttribute { children: {}; }
 +>ElementChildrenAttribute : ElementChildrenAttribute
  >children : {}
-->         : ^^
  
          interface IntrinsicAttributes  { }
 +>IntrinsicAttributes : IntrinsicAttributes
@@ -72,32 +61,22 @@
 +
      children?: (props: { x: number }) => any;
 ->children : ((props: { x: number; }) => any) | undefined
-->         : ^^     ^^              ^^^^^   ^^^^^^^^^^^^^
 +>children : (props: { x: number; }) => any | undefined
  >props : { x: number; }
-->      : ^^^^^      ^^^
  >x : number
-->  : ^^^^^^
  }
  export class MyComponent<T extends RouteProps = RouteProps> extends Component<T> { }
  >MyComponent : MyComponent<T>
-->            : ^^^^^^^^^^^^^^
 +>T : T
  >Component : Component<T, {}>
-->          : ^^^^^^^^^^^^^^^^
  
  <MyComponent children={({ x }) => {}}/>
 -><MyComponent children={({ x }) => {}}/> : JSX.Element
-->                                        : ^^^^^^^^^^^
 +><MyComponent children={({ x }) => {}}/> : any
  >MyComponent : typeof MyComponent
-->            : ^^^^^^^^^^^^^^^^^^
 ->children : ({ x }: { x: number; }) => void
-->         : ^     ^^^^^^^      ^^^^^^^^^^^^
 ->({ x }) => {} : ({ x }: { x: number; }) => void
-->              : ^     ^^^^^^^      ^^^^^^^^^^^^
 ->x : number
-->  : ^^^^^^
 +>children : any
 +>({ x }) => {} : (__0: { x: any; }) => void
 +>x : any

@@ -5,6 +5,5 @@
  === parserClassDeclaration23.ts ===
  class C\u0032 {
 ->C\u0032 : C\u0032
-->        : ^^^^^^^
 +>C\u0032 : C2
  }

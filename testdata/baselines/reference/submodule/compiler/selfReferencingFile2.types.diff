@@ -1,9 +1,0 @@
---- old.selfReferencingFile2.types
-+++ new.selfReferencingFile2.types
-@@= skipped -4, +4 lines =@@
- 
- class selfReferencingFile2 {
- >selfReferencingFile2 : selfReferencingFile2
-->                     : ^^^^^^^^^^^^^^^^^^^^
- 
- }

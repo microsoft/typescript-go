@@ -17,49 +17,23 @@
 +
  		props;
  >props : any
-->      : ^^^
  	}
  	interface IntrinsicAttributes {
 +>IntrinsicAttributes : IntrinsicAttributes
 +
  		ref?: string;
  >ref : string
-->    : ^^^^^^
  	}
- }
- 
- === file.tsx ===
- class MyComponent {  
- >MyComponent : MyComponent
-->            : ^^^^^^^^^^^
- 
-   render() {
- >render : () => void
-->       : ^^^^^^^^^^
-   }
- 
-   props: {
- >props : { ref?: string; }
-->      : ^^^^^^^^      ^^^
- 
- 	  ref?: string;
- >ref : string
-->    : ^^^^^^
-   }
- }
+@@= skipped -31, +40 lines =@@
  
  // Should be an OK
  var x = <MyComponent bar='world' />;
 ->x : JSX.Element
-->  : ^^^^^^^^^^^
 -><MyComponent bar='world' /> : JSX.Element
-->                            : ^^^^^^^^^^^
 +>x : any
 +><MyComponent bar='world' /> : any
  >MyComponent : typeof MyComponent
-->            : ^^^^^^^^^^^^^^^^^^
 ->bar : string
-->    : ^^^^^^
 +>bar : any
  
  

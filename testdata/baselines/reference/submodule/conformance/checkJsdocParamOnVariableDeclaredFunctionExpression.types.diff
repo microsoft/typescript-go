@@ -5,15 +5,10 @@
   */
  var x = function foo(n, s) {}
 ->x : (n?: number | undefined, s?: string) => void
-->  : ^ ^^^         ^^^^^^^^^^^ ^^^      ^^^^^^^^^
 ->function foo(n, s) {} : (n?: number | undefined, s?: string) => void
-->                      : ^ ^^^         ^^^^^^^^^^^ ^^^      ^^^^^^^^^
 ->foo : (n?: number | undefined, s?: string) => void
-->    : ^ ^^^         ^^^^^^^^^^^ ^^^      ^^^^^^^^^
 ->n : number
-->  : ^^^^^^
 ->s : string
-->  : ^^^^^^
 +>x : (n: any, s: any) => void
 +>function foo(n, s) {} : (n: any, s: any) => void
 +>foo : (n: any, s: any) => void
@@ -22,23 +17,16 @@
  
  var y;
  >y : any
-->  : ^^^
- 
- /**
+@@= skipped -13, +13 lines =@@
   * @param {boolean!} b
   */
  y = function bar(b) {}
 ->y = function bar(b) {} : (b: boolean) => void
-->                       : ^ ^^       ^^^^^^^^^
 +>y = function bar(b) {} : (b: any) => void
  >y : any
-->  : ^^^
 ->function bar(b) {} : (b: boolean) => void
-->                   : ^ ^^       ^^^^^^^^^
 ->bar : (b: boolean) => void
-->    : ^ ^^       ^^^^^^^^^
 ->b : boolean
-->  : ^^^^^^^
 +>function bar(b) {} : (b: any) => void
 +>bar : (b: any) => void
 +>b : any
@@ -48,18 +36,11 @@
   */
  var one = function (s) { }, two = function (untyped) { };
 ->one : (s: string) => void
-->    : ^ ^^      ^^^^^^^^^
 ->function (s) { } : (s: string) => void
-->                 : ^ ^^      ^^^^^^^^^
 ->s : string
-->  : ^^^^^^
 +>one : (s: any) => void
 +>function (s) { } : (s: any) => void
 +>s : any
  >two : (untyped: any) => void
-->    : ^       ^^^^^^^^^^^^^^
  >function (untyped) { } : (untyped: any) => void
-->                       : ^       ^^^^^^^^^^^^^^
  >untyped : any
-->        : ^^^
- 

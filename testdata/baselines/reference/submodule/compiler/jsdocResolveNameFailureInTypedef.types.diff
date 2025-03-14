@@ -5,9 +5,7 @@
   */
  function f(x) {}
 ->f : (x: Ty) => void
-->  : ^ ^^  ^^^^^^^^^
 ->x : CantResolveThis
-->  : ^^^^^^^^^^^^^^^
 +>f : (x: any) => void
 +>x : any
  

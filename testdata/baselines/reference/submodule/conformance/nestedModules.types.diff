@@ -13,39 +13,17 @@
 +
          x: number;
  >x : number
-->  : ^^^^^^
  
-         y: number;
- >y : number
-->  : ^^^^^^
-     }
- }
- 
- module A {
- >A : typeof A
-->  : ^^^^^^^^
- 
-     export module B {
+@@= skipped -16, +22 lines =@@
  >B : typeof B
-->  : ^^^^^^^^
  
          var Point: C.Point = { x: 0, y: 0 }; // bug 832088: could not find module 'C'
 ->Point : C.Point
-->      : ^^^^^^^
 +>Point : Point
  >C : any
-->  : ^^^
  >{ x: 0, y: 0 } : { x: number; y: number; }
-->               : ^^^^^^^^^^^^^^^^^^^^^^^^^
  >x : number
-->  : ^^^^^^
- >0 : 0
-->  : ^
- >y : number
-->  : ^^^^^^
- >0 : 0
-->  : ^
-     }
+@@= skipped -11, +11 lines =@@
  }
  
  module M2.X {
@@ -57,67 +35,27 @@
 +
          x: number; y: number;
  >x : number
-->  : ^^^^^^
  >y : number
-->  : ^^^^^^
-     }
- }
- 
- module M2 {
- >M2 : typeof M2
-->   : ^^^^^^^^^
- 
-     export module X {
- >X : typeof X
-->  : ^^^^^^^^
- 
-         export var Point: number;
- >Point : number
-->      : ^^^^^^
-     }
+@@= skipped -19, +24 lines =@@
  }
  
  var m = M2.X;
 ->m : typeof M2.X
-->  : ^^^^^^^^^^^
 ->M2.X : typeof M2.X
-->     : ^^^^^^^^^^^
 +>m : typeof X
 +>M2.X : typeof X
  >M2 : typeof M2
-->   : ^^^^^^^^^
 ->X : typeof M2.X
-->  : ^^^^^^^^^^^
 +>X : typeof X
  
  var point: number;
  >point : number
-->      : ^^^^^^
- 
+@@= skipped -11, +11 lines =@@
  var point = m.Point;
  >point : number
-->      : ^^^^^^
  >m.Point : number
-->        : ^^^^^^
 ->m : typeof M2.X
-->  : ^^^^^^^^^^^
 +>m : typeof X
  >Point : number
-->      : ^^^^^^
  
  var p: { x: number; y: number; }
- >p : { x: number; y: number; }
-->  : ^^^^^      ^^^^^      ^^^
- >x : number
-->  : ^^^^^^
- >y : number
-->  : ^^^^^^
- 
- var p: M2.X.Point;
- >p : { x: number; y: number; }
-->  : ^^^^^      ^^^^^      ^^^
- >M2 : any
-->   : ^^^
- >X : any
-->  : ^^^
- 

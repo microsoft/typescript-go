@@ -1,10 +1,7 @@
 --- old.nestedRecursiveArraysOrObjectsError01.types
 +++ new.nestedRecursiveArraysOrObjectsError01.types
-@@= skipped -2, +2 lines =@@
- === nestedRecursiveArraysOrObjectsError01.ts ===
- type Style = StyleBase | StyleArray;
+@@= skipped -4, +4 lines =@@
  >Style : Style
-->      : ^^^^^
  
  interface StyleArray extends Array<Style> {}
 +>StyleArray : StyleArray
@@ -14,34 +11,4 @@
 +
      foo: string;
  >foo : string
-->    : ^^^^^^
  }
- 
- const blah: Style = [
- >blah : Style
-->     : ^^^^^
- >[    [[{        foo: 'asdf',        jj: 1 // intentional error    }]]] : { foo: string; jj: number; }[][][]
-->                                                                       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
-     [[{
- >[[{        foo: 'asdf',        jj: 1 // intentional error    }]] : { foo: string; jj: number; }[][]
-->                                                                 : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >[{        foo: 'asdf',        jj: 1 // intentional error    }] : { foo: string; jj: number; }[]
-->                                                               : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >{        foo: 'asdf',        jj: 1 // intentional error    } : { foo: string; jj: number; }
-->                                                             : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
-         foo: 'asdf',
- >foo : string
-->    : ^^^^^^
- >'asdf' : "asdf"
-->       : ^^^^^^
- 
-         jj: 1 // intentional error
- >jj : number
-->   : ^^^^^^
- >1 : 1
-->  : ^
- 
-     }]]
- ];

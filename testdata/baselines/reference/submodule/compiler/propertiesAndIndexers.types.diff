@@ -11,14 +11,12 @@
 +
      n: number;
  >n : number
-->  : ^^^^^^
  }
  interface Z {
 +>Z : Z
 +
      s: string;
  >s : string
-->  : ^^^^^^
  }
  
  interface A {
@@ -26,15 +24,8 @@
 +
      a: Y;
  >a : Y
-->  : ^
  
-     b: X;
- >b : X
-->  : ^
- 
-     1: Z;
- >1 : Z
-->  : ^
+@@= skipped -21, +29 lines =@@
  }
  
  interface B extends A {
@@ -42,19 +33,8 @@
 +
      [n: number]: string;
  >n : number
-->  : ^^^^^^
  
-     c: boolean;
- >c : boolean
-->  : ^^^^^^^
- 
-     3: boolean;
- >3 : boolean
-->  : ^^^^^^^
- 
-     6(): string;
- >6 : () => string
-->  : ^^^^^^      
+@@= skipped -14, +16 lines =@@
  }
  
  interface B {
@@ -62,11 +42,8 @@
 +
      4: boolean;
  >4 : boolean
-->  : ^^^^^^^
  
-     5: string;
- >5 : string
-->  : ^^^^^^
+@@= skipped -8, +10 lines =@@
  }
  
  interface C extends A {
@@ -74,15 +51,8 @@
 +
      [s: string]: number;
  >s : string
-->  : ^^^^^^
  
-     c: boolean;
- >c : boolean
-->  : ^^^^^^^
- 
-     3: boolean;
- >3 : boolean
-->  : ^^^^^^^
+@@= skipped -11, +13 lines =@@
  }
  
  interface D extends B, C {
@@ -90,51 +60,4 @@
 +
      2: Z;
  >2 : Z
-->  : ^
  
-     Infinity: number;
- >Infinity : number
-->         : ^^^^^^
- 
-     zoo: string;
- >zoo : string
-->    : ^^^^^^
- }
- 
- class P {
- >P : P
-->  : ^
- 
-     [n: string]: string
- >n : string
-->  : ^^^^^^
- }
- 
- class Q extends P {
- >Q : Q
-->  : ^
- >P : P
-->  : ^
- 
-     t: number;
- >t : number
-->  : ^^^^^^
- }
- 
- var c: {
- >c : { [n: number]: string; c: boolean; 3: boolean; }
-->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^       ^^^^^       ^^^
- 
-     [n: number]: string;
- >n : number
-->  : ^^^^^^
- 
-     c: boolean;
- >c : boolean
-->  : ^^^^^^^
- 
-     3: boolean;
- >3 : boolean
-->  : ^^^^^^^
- 
- };

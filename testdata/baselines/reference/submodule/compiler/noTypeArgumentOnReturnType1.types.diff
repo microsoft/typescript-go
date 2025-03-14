@@ -4,12 +4,10 @@
  === noTypeArgumentOnReturnType1.ts ===
  class A<T>{
  >A : A<T>
-->  : ^^^^
 +>T : T
   
   foo(): A{
 ->foo : () => A
-->    : ^^^^^^ 
 +>foo : () => any
  
    return null;

@@ -1,10 +1,7 @@
 --- old.inlineJsxFactoryDeclarations.types
 +++ new.inlineJsxFactoryDeclarations.types
-@@= skipped -2, +2 lines =@@
- === renderer.d.ts ===
- declare global {
+@@= skipped -4, +4 lines =@@
  >global : any
-->       : ^^^
  
      namespace JSX {
 +>JSX : any
@@ -14,50 +11,22 @@
 +
              [e: string]: any;
  >e : string
-->  : ^^^^^^
          }
-     }
- }
- export function dom(): void;
- >dom : () => void
-->    : ^^^^^^    
- 
- export function otherdom(): void;
- >otherdom : () => void
-->         : ^^^^^^    
- 
- export function createElement(): void;
- >createElement : () => void
-->              : ^^^^^^    
- 
- export { dom as default };
- >dom : () => void
-->    : ^^^^^^    
- >default : () => void
-->        : ^^^^^^    
- 
+@@= skipped -22, +26 lines =@@
  === otherreacty.tsx ===
  /** @jsx React.createElement */
  import * as React from "./renderer";
 ->React : typeof React
-->      : ^^^^^^^^^^^^
 +>React : typeof import("renderer")
  
  <h></h>
 -><h></h> : error
 +><h></h> : any
  >h : any
-->  : ^^^
  >h : any
-->  : ^^^
  
- === other.tsx ===
- /** @jsx h */
- import { dom as h } from "./renderer"
- >dom : () => void
-->    : ^^^^^^    
+@@= skipped -14, +14 lines =@@
  >h : () => void
-->  : ^^^^^^    
  
  export const prerendered = <h></h>;
 ->prerendered : error
@@ -65,15 +34,10 @@
 +>prerendered : any
 +><h></h> : any
  >h : () => void
-->  : ^^^^^^    
  >h : () => void
-->  : ^^^^^^    
  
- === othernoalias.tsx ===
- /** @jsx otherdom */
- import { otherdom } from "./renderer"
+@@= skipped -11, +11 lines =@@
  >otherdom : () => void
-->         : ^^^^^^    
  
  export const prerendered2 = <h></h>;
 ->prerendered2 : error
@@ -81,14 +45,10 @@
 +>prerendered2 : any
 +><h></h> : any
  >h : any
-->  : ^^^
  >h : any
-->  : ^^^
  
- === reacty.tsx ===
- import React from "./renderer"
+@@= skipped -10, +10 lines =@@
  >React : () => void
-->      : ^^^^^^    
  
  export const prerendered3 = <h></h>;
 ->prerendered3 : error
@@ -96,23 +56,14 @@
 +>prerendered3 : any
 +><h></h> : any
  >h : any
-->  : ^^^
  >h : any
-->  : ^^^
  
- === index.tsx ===
- /** @jsx dom */
- import { dom } from "./renderer"
+@@= skipped -11, +11 lines =@@
  >dom : () => void
-->    : ^^^^^^    
  
  <h></h>
 -><h></h> : error
 +><h></h> : any
  >h : any
-->  : ^^^
  >h : any
-->  : ^^^
  
- export * from "./other";
- export * from "./othernoalias";

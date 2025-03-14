@@ -8,7 +8,6 @@
 +
      begin: number;
  >begin : number
-->      : ^^^^^^
  }
  
  interface IIntervalTreeNode {
@@ -16,28 +15,4 @@
 +
      interval: ITestEventInterval;
  >interval : ITestEventInterval
-->         : ^^^^^^^^^^^^^^^^^^
- 
-     children?: IIntervalTreeNode[];
- >children : IIntervalTreeNode[]
-->         : ^^^^^^^^^^^^^^^^^^^
- }
- 
- var test: IIntervalTreeNode[] = [{ interval: { begin: 0 }, children: null }]; // was error here because best common type is {}
- >test : IIntervalTreeNode[]
-->     : ^^^^^^^^^^^^^^^^^^^
- >[{ interval: { begin: 0 }, children: null }] : { interval: { begin: number; }; children: null; }[]
-->                                             : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >{ interval: { begin: 0 }, children: null } : { interval: { begin: number; }; children: null; }
-->                                           : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >interval : { begin: number; }
-->         : ^^^^^^^^^^^^^^^^^^
- >{ begin: 0 } : { begin: number; }
-->             : ^^^^^^^^^^^^^^^^^^
- >begin : number
-->      : ^^^^^^
- >0 : 0
-->  : ^
- >children : null
-->         : ^^^^
  

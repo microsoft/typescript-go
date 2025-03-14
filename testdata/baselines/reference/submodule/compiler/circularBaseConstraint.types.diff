@@ -11,12 +11,10 @@
  
  type A<T> = T;
  >A : T
-->  : ^
 +>T : T
  
  type B<T> = T extends any[]
  >B : B<T>
-->  : ^^^^
 +>T : T
  
      ? never
@@ -26,19 +24,11 @@
      ? key extends keyof T
          ? B<T[key]>
          : never
-@@= skipped -22, +21 lines =@@
+@@= skipped -20, +21 lines =@@
  
  function foo<T>() {
  >foo : <T>() => void
-->    : ^ ^^^^^^^^^^^
 +>T : T
  
      `${a}` as B<T>;
  >`${a}` as B<T> : B<T>
-->               : ^^^^
- >`${a}` : string
-->       : ^^^^^^
- >a : any
-->  : ^^^
- }
- 

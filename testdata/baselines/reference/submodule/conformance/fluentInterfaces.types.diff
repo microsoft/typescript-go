@@ -8,47 +8,16 @@
 +
      foo(): this;
  >foo : () => this
-->    : ^^^^^^    
  }
  interface B extends A {
 +>B : B
 +
      bar(): this;
  >bar : () => this
-->    : ^^^^^^    
  }
  interface C extends B {
 +>C : C
 +
      baz(): this;
  >baz : () => this
-->    : ^^^^^^    
  }
- var c: C;
- >c : C
-->  : ^
- 
- var z = c.foo().bar().baz();  // Fluent pattern
- >z : C
-->  : ^
- >c.foo().bar().baz() : C
-->                    : ^
- >c.foo().bar().baz : () => C
-->                  : ^^^^^^^
- >c.foo().bar() : C
-->              : ^
- >c.foo().bar : () => C
-->            : ^^^^^^^
- >c.foo() : C
-->        : ^
- >c.foo : () => C
-->      : ^^^^^^^
- >c : C
-->  : ^
- >foo : () => C
-->    : ^^^^^^^
- >bar : () => C
-->    : ^^^^^^^
- >baz : () => C
-->    : ^^^^^^^
- 

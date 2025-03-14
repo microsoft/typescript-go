@@ -1,14 +1,7 @@
 --- old.parserObjectType5.types
 +++ new.parserObjectType5.types
-@@= skipped -2, +2 lines =@@
- === parserObjectType5.ts ===
- var v: {
- >v : { <T>(): any; A: B; }
-->  : ^^^ ^^^^^^^^^^^^^ ^^^
- 
-    A: B
+@@= skipped -7, +7 lines =@@
  >A : B
-->  : ^
  
     <T>;
 +>T : T

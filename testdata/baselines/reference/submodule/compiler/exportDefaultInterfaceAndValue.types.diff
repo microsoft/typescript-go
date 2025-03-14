@@ -6,14 +6,11 @@
  export default interface A { a: string; }
 +>A : default
  >a : string
-->  : ^^^^^^
  
  export default function() { return 1; }
  >1 : 1
-->  : ^
  
  declare var x: A;
 ->x : A
-->  : ^
 +>x : default
  

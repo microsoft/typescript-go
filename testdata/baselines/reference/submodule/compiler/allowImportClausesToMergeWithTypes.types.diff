@@ -1,16 +1,6 @@
 --- old.allowImportClausesToMergeWithTypes.types
 +++ new.allowImportClausesToMergeWithTypes.types
-@@= skipped -2, +2 lines =@@
- === b.ts ===
- export const zzz = 123;
- >zzz : 123
-->    : ^^^
- >123 : 123
-->    : ^^^
- 
- export default zzz;
- >zzz : 123
-->    : ^^^
+@@= skipped -9, +9 lines =@@
  
  === a.ts ===
  export default interface zzz {
@@ -18,66 +8,29 @@
 +
      x: string;
  >x : string
-->  : ^^^^^^
  }
- 
- import zzz from "./b";
+@@= skipped -8, +10 lines =@@
  >zzz : 123
-->    : ^^^
  
  const x: zzz = { x: "" };
 ->x : zzz
-->  : ^^^
 +>x : default
  >{ x: "" } : { x: string; }
-->          : ^^^^^^^^^^^^^^
  >x : string
-->  : ^^^^^^
  >"" : ""
-->   : ^^
- 
- zzz;
+@@= skipped -17, +17 lines =@@
  >zzz : 123
-->    : ^^^
- 
- export { zzz as default };
- >zzz : 123
-->    : ^^^
- >default : 123
-->        : ^^^
- 
- === index.ts ===
- import zzz from "./a";
- >zzz : 123
-->    : ^^^
  
  const x: zzz = { x: "" };
 ->x : zzz
-->  : ^^^
 +>x : default
  >{ x: "" } : { x: string; }
-->          : ^^^^^^^^^^^^^^
  >x : string
-->  : ^^^^^^
  >"" : ""
-->   : ^^
- 
- zzz;
- >zzz : 123
-->    : ^^^
- 
- import originalZZZ from "./b";
- >originalZZZ : 123
-->            : ^^^
- 
- originalZZZ;
- >originalZZZ : 123
-->            : ^^^
+@@= skipped -16, +16 lines =@@
  
  const y: originalZZZ = x;
  >y : originalZZZ
-->  : ^^^^^^^^^^^
 ->x : zzz
-->  : ^^^
 +>x : default
  

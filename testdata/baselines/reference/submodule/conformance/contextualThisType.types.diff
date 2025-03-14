@@ -8,9 +8,7 @@
 +
      a: (p: this) => this;
  >a : (p: this) => this
-->  : ^ ^^    ^^^^^    
  >p : this
-->  : ^^^^
  }
  
  interface Y extends X {
@@ -19,34 +17,8 @@
  
  var x: Y = {
  >x : Y
-->  : ^
 ->{    a(p) {        return p;    }} : { a(p: Y): Y; }
-->                                   : ^^^^ ^^^^^^^^^^
 +>{    a(p) {        return p;    }} : { a: (p: Y) => Y; }
  
      a(p) {
  >a : (p: Y) => Y
-->  : ^ ^^^^^^^^^
- >p : Y
-->  : ^
- 
-         return p;
- >p : Y
-->  : ^
-     }
- }
- 
- var y = x.a(x);
- >y : Y
-->  : ^
- >x.a(x) : Y
-->       : ^
- >x.a : (p: Y) => Y
-->    : ^ ^^^^^^^^^
- >x : Y
-->  : ^
- >a : (p: Y) => Y
-->  : ^ ^^^^^^^^^
- >x : Y
-->  : ^
- 

@@ -1,44 +1,19 @@
 --- old.augmentExportEquals1.types
 +++ new.augmentExportEquals1.types
-@@= skipped -2, +2 lines =@@
- === file3.ts ===
- import x = require("./file1");
- >x : number
-->  : ^^^^^^
+@@= skipped -5, +5 lines =@@
  
  import "./file2";
  let a: x.A; // should not work
 ->a : x.A
-->  : ^^^
 +>a : A
  >x : any
-->  : ^^^
  
  === file1.ts ===
- var x = 1;
- >x : number
-->  : ^^^^^^
- >1 : 1
-->  : ^
- 
- export = x;
- >x : number
-->  : ^^^^^^
- 
- === file2.ts ===
- import x = require("./file1"); 
- >x : number
-->  : ^^^^^^
- 
- // augmentation for './file1'
- // should error since './file1' does not have namespace meaning
- declare module "./file1" {
+@@= skipped -21, +21 lines =@@
  >"./file1" : any
-->          : ^^^
  
      interface A { a }
 +>A : A
  >a : any
-->  : ^^^
  }
  

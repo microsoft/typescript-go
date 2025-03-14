@@ -1,33 +1,15 @@
 --- old.ambientModuleDeclarationWithReservedIdentifierInDottedPath.types
 +++ new.ambientModuleDeclarationWithReservedIdentifierInDottedPath.types
-@@= skipped -4, +4 lines =@@
- 
- declare module chrome.debugger {
- >chrome : typeof chrome
-->       : ^^^^^^^^^^^^^
- >debugger : typeof debugger
-->         : ^^^^^^^^^^^^^^^
- 
-     declare var tabId: number;
- >tabId : number
-->      : ^^^^^^
- }
- 
+@@= skipped -13, +13 lines =@@
  export const tabId = chrome.debugger.tabId;
  >tabId : number
-->      : ^^^^^^
  >chrome.debugger.tabId : number
-->                      : ^^^^^^
 ->chrome.debugger : typeof chrome.debugger
-->                : ^^^^^^^^^^^^^^^^^^^^^^
 +>chrome.debugger : typeof debugger
  >chrome : typeof chrome
-->       : ^^^^^^^^^^^^^
 ->debugger : typeof chrome.debugger
-->         : ^^^^^^^^^^^^^^^^^^^^^^
 +>debugger : typeof debugger
  >tabId : number
-->      : ^^^^^^
  
  declare module test.class {}
 +>test : any
@@ -35,7 +17,3 @@
  
  declare module debugger {} // still an error
  >declare : any
-->        : ^^^
- >module : any
-->       : ^^^
- 

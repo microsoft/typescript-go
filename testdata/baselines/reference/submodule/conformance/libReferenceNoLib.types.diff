@@ -36,15 +36,5 @@
  export declare interface HTMLElement { field: string; }
 +>HTMLElement : HTMLElement
  >field : string
-->      : ^^^^^^
  
  export const elem: HTMLElement = { field: 'a' };
- >elem : HTMLElement
-->     : ^^^^^^^^^^^
- >{ field: 'a' } : { field: string; }
-->               : ^^^^^^^^^^^^^^^^^^
- >field : string
-->      : ^^^^^^
- >'a' : "a"
-->    : ^^^
- 

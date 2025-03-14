@@ -5,12 +5,10 @@
  /// <reference types="pkg" />
  foo; // foo should resolve while bar should not, since index.js is esm
 ->foo : number
-->    : ^^^^^^
 +>foo : any
  
  bar;
 ->bar : any
-->    : ^^^
 +>bar : number
  
  export {};
@@ -19,11 +17,9 @@
  export {};
  declare global {
  >global : typeof global
-->       : ^^^^^^^^^^^^^
  
 -    var foo: number;
 ->foo : number
-->    : ^^^^^^
 +    var bar: number;
 +>bar : number
  }

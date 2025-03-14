@@ -5,15 +5,7 @@
  === b.ts ===
  import y = require("a"); 
 ->y : typeof y
-->  : ^^^^^^^^
 +>y : typeof import("node_modules/a")
  
  === node_modules/ref.ts ===
  var x = 1;
- >x : number
-->  : ^^^^^^
- >1 : 1
-->  : ^
- 
- === node_modules/a.d.ts ===
- /// <reference path="ref.ts"/>

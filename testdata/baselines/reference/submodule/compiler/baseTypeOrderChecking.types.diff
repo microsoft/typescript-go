@@ -1,52 +1,18 @@
 --- old.baseTypeOrderChecking.types
 +++ new.baseTypeOrderChecking.types
-@@= skipped -2, +2 lines =@@
- === baseTypeOrderChecking.ts ===
- var someVariable: Class4<Class2>;
- >someVariable : Class4<Class2>
-->             : ^^^^^^^^^^^^^^
- 
-  
- 
- class Class1
- >Class1 : Class1
-->       : ^^^^^^
- 
- {
- 
-@@= skipped -16, +14 lines =@@
- 
- class Class2 extends Class1
- >Class2 : Class2
-->       : ^^^^^^
- >Class1 : Class1
-->       : ^^^^^^
- 
- {
- 
-@@= skipped -12, +10 lines =@@
+@@= skipped -26, +26 lines =@@
  
  class Class3<T>
  >Class3 : Class3<T>
-->       : ^^^^^^^^^
 +>T : T
  
  {
  
-                public memberVariable: Class2;
- >memberVariable : Class2
-->               : ^^^^^^
- 
- }
- 
-@@= skipped -14, +13 lines =@@
+@@= skipped -12, +13 lines =@@
  
  class Class4<T> extends Class3<T>
  >Class4 : Class4<T>
-->       : ^^^^^^^^^
 +>T : T
  >Class3 : Class3<T>
-->       : ^^^^^^^^^
  
  {
- 

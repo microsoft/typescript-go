@@ -8,13 +8,7 @@
 +
      const enum E { X }
 ->E : E
-->  : ^
 +>E : E.X
  >X : E.X
-->  : ^^^
  }
- 
- export = foo
- >foo : typeof foo
-->    : ^^^^^^^^^^
  

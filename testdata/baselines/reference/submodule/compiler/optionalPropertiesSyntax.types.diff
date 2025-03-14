@@ -9,15 +9,7 @@
      //functions signatures can be optional
      fn(): void;
  >fn : { (): void; (): void; }
-->   : ^^^^^^    ^^^^^^    ^^^
- 
-     fn?(): void; //err
- >fn : { (): void; (): void; }
-->   : ^^^^^^    ^^^^^^    ^^^
- 
-     fn2?(): void;
- >fn2 : () => void
-->    : ^^^^^^    
+@@= skipped -12, +14 lines =@@
  }
  
  interface callSig {
@@ -26,10 +18,7 @@
      //Call signatures can't be optional
      (): any;
      ()?: any; //err
- >any : any
-->    : ^^^
- 
-     ?(): any; //err
+@@= skipped -9, +11 lines =@@
  }
  
  interface constructSig {
@@ -38,12 +27,7 @@
      //Construct signatures can't be optional
      new (): any;
      new ()?: any; //err
- >any : any
-->    : ^^^
- 
-     new ?(): any; //err
- >new : () => any
-->    : ^^^^^^   
+@@= skipped -10, +12 lines =@@
  }
  
  interface propertySig {
@@ -52,15 +36,7 @@
      //Property signatures can be optional
      prop: any;
  >prop : any
-->     : ^^^
- 
-     prop?: any;
- >prop : any
-->     : ^^^
- 
-     prop2?: any;
- >prop2 : any
-->      : ^^^
+@@= skipped -12, +14 lines =@@
  }
  
  interface indexSig {
@@ -69,19 +45,3 @@
      //Index signatures can't be optional
      [idx: number]: any;
  >idx : number
-->    : ^^^^^^
- 
-     [idx: number]?: any; //err
- >idx : number
-->    : ^^^^^^
- >any : any
-->    : ^^^
- 
-     ? [idx: number]: any; //err
- >idx : number
-->    : ^^^^^^
- 
-     [idx?: number]: any; //err
- >idx : number
-->    : ^^^^^^
- }

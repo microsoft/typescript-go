@@ -1,38 +1,10 @@
 --- old.declarationEmitExportDeclaration.types
 +++ new.declarationEmitExportDeclaration.types
-@@= skipped -2, +2 lines =@@
- === utils.ts ===
- export function foo() { }
- >foo : () => void
-->    : ^^^^^^^^^^
- 
- export function bar() { }
+@@= skipped -7, +7 lines =@@
  >bar : () => void
-->    : ^^^^^^^^^^
  
  export interface Buzz { }
 +>Buzz : Buzz
  
  === index.ts ===
  import {foo, bar, Buzz} from "./utils";
- >foo : () => void
-->    : ^^^^^^^^^^
- >bar : () => void
-->    : ^^^^^^^^^^
- >Buzz : any
-->     : ^^^
- 
- foo();
- >foo() : void
-->      : ^^^^
- >foo : () => void
-->    : ^^^^^^^^^^
- 
- let obj: Buzz;
- >obj : Buzz
-->    : ^^^^
- 
- export {bar};
- >bar : () => void
-->    : ^^^^^^^^^^
- 

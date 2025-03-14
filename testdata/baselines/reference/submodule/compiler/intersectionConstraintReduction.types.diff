@@ -4,7 +4,6 @@
  === intersectionConstraintReduction.ts ===
  type Test1<K1 extends keyof any, K2 extends keyof any> =
  >Test1 : Extract<K1, string | number | symbol> & K1 & K2
-->      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>K1 : K1
 +>K2 : K2
  
@@ -12,7 +11,6 @@
  
  type Test2<K1 extends keyof any, K2 extends keyof any> =
  >Test2 : K1 & K2 & Extract<K1, string | number | symbol>
-->      : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>K1 : K1
 +>K2 : K2
  
@@ -20,18 +18,14 @@
  
  type MustBeKey<K extends keyof any> = K;
  >MustBeKey : K
-->          : ^
 +>K : K
  
  // https://github.com/microsoft/TypeScript/issues/58370
  
- type AnyKey = number | string | symbol;
- >AnyKey : AnyKey
-->       : ^^^^^^
+@@= skipped -18, +23 lines =@@
  
  type ReturnTypeKeyof<Obj extends object> = Obj extends object
  >ReturnTypeKeyof : ReturnTypeKeyof<Obj>
-->                : ^^^^^^^^^^^^^^^^^^^^
 +>Obj : Obj
  
      ? [keyof Obj] extends [never]
@@ -43,7 +37,6 @@
  
  type KeyIfSignatureOfObject<
  >KeyIfSignatureOfObject : KeyIfSignatureOfObject<Obj, Key, ReturnTypeKeys>
-->                       : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
  
      Obj extends object,
 +>Obj : Obj
@@ -58,7 +51,6 @@
  
  export type Reduced1<Obj extends object, Key extends AnyKey, Value, ObjKeys extends keyof Obj = keyof Obj> =
  >Reduced1 : Reduced1<Obj, Key, Value, ObjKeys>
-->         : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>Obj : Obj
 +>Key : Key
 +>Value : Value
@@ -74,7 +66,6 @@
  
  export type Reduced2<Obj extends object, Key extends AnyKey, Value, ObjKeys extends keyof Obj = keyof Obj> =
  >Reduced2 : Reduced2<Obj, Key, Value, ObjKeys>
-->         : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 +>Obj : Obj
 +>Key : Key
 +>Value : Value

@@ -1,18 +1,6 @@
 --- old.privateNameAndPropertySignature.types
 +++ new.privateNameAndPropertySignature.types
-@@= skipped -2, +2 lines =@@
- === privateNameAndPropertySignature.ts ===
- type A = {
- >A : A
-->  : ^
- 
-     #foo: string;
- >#foo : string
-->     : ^^^^^^
- 
-     #bar(): string;
- >#bar : () => string
-->     : ^^^^^^      
+@@= skipped -11, +11 lines =@@
  }
  
  interface B {
@@ -20,46 +8,22 @@
 +
      #foo: string;
  >#foo : string
-->     : ^^^^^^
  
-     #bar(): string;
- >#bar : () => string
-->     : ^^^^^^      
+@@= skipped -8, +10 lines =@@
  }
  
  declare const x: {
 ->x : { bar: { #baz: string; #taz(): string; }; }
-->  : ^^^^^^^                                 ^^^
 +>x : { bar: {}; }
  
      #foo: number;
  >#foo : number
-->     : ^^^^^^
- 
-     bar: {
- >bar : {}
-->    : ^^
- 
-         #baz: string;
- >#baz : string
-->     : ^^^^^^
- 
-         #taz(): string;
- >#taz : () => string
-->     : ^^^^^^      
-     }
-     #baz(): string;
- >#baz : () => string
-->     : ^^^^^^      
- 
+@@= skipped -20, +20 lines =@@
  };
  
  declare const y: [{ qux: { #quux: 3 } }];
 ->y : [{ qux: { #quux: 3; }; }]
-->  : ^^^^^^^^             ^^^^
 +>y : [{ qux: {}; }]
  >qux : {}
-->    : ^^
  >#quux : 3
-->      : ^
  

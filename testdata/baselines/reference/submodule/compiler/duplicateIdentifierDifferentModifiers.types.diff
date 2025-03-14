@@ -6,21 +6,13 @@
  interface B { x; }
 +>B : B
  >x : any
-->  : ^^^
  
  interface B { x?; }
 +>B : B
  >x : any
-->  : ^^^
  
  // OK
- class A {
- >A : A
-->  : ^
- 
-   public y: string;
- >y : string
-->  : ^^^^^^
+@@= skipped -14, +16 lines =@@
  }
  
  interface A {
@@ -28,17 +20,8 @@
 +
    y: string;
  >y : string
-->  : ^^^^^^
  }
- 
- // Not OK
- class C {
- >C : C
-->  : ^
- 
-   private y: string;
- >y : string
-->  : ^^^^^^
+@@= skipped -13, +15 lines =@@
  }
  
  interface C {
@@ -46,6 +29,4 @@
 +
    y: string;
  >y : string
-->  : ^^^^^^
  }
- 

@@ -1,50 +1,22 @@
 --- old.interMixingModulesInterfaces5.types
 +++ new.interMixingModulesInterfaces5.types
-@@= skipped -2, +2 lines =@@
- === interMixingModulesInterfaces5.ts ===
- module A {
+@@= skipped -4, +4 lines =@@
  >A : typeof A
-->  : ^^^^^^^^
  
      interface B {
 +>B : B
 +
          name: string;
  >name : string
-->     : ^^^^^^
  
-         value: number;
- >value : number
-->      : ^^^^^^
-     }
- 
-     export module B {
- >B : typeof B
-->  : ^^^^^^^^
- 
-         export function createB(): number {
- >createB : () => number
-->        : ^^^^^^      
- 
-             return null;
-         }
-@@= skipped -27, +24 lines =@@
- 
- var x: number = A.B.createB();
+@@= skipped -22, +24 lines =@@
  >x : number
-->  : ^^^^^^
  >A.B.createB() : number
-->              : ^^^^^^
  >A.B.createB : () => number
-->            : ^^^^^^      
 ->A.B : typeof A.B
-->    : ^^^^^^^^^^
 +>A.B : typeof B
  >A : typeof A
-->  : ^^^^^^^^
 ->B : typeof A.B
-->  : ^^^^^^^^^^
 +>B : typeof B
  >createB : () => number
-->        : ^^^^^^      
  

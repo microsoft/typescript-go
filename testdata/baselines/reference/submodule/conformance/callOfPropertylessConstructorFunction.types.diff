@@ -5,21 +5,15 @@
   */
  function Dependency(j) {
 ->Dependency : typeof Dependency
-->           : ^^^^^^^^^^^^^^^^^
 +>Dependency : (j: any) => any
  >j : any
-->  : ^^^
  
    return j
- >j : any
-->  : ^^^
+@@= skipped -8, +8 lines =@@
  }
  Dependency({})
  >Dependency({}) : any
-->               : ^^^
 ->Dependency : typeof Dependency
-->           : ^^^^^^^^^^^^^^^^^
 +>Dependency : (j: any) => any
  >{} : {}
-->   : ^^
  

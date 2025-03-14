@@ -4,18 +4,11 @@
  === decoratorOnImportEquals1.ts ===
  declare function dec<T>(target: T): T;
  >dec : <T>(target: T) => T
-->    : ^ ^^      ^^ ^^^^^ 
 +>T : T
  >target : T
-->       : ^
  
  module M1 {
- >M1 : typeof M1
-->   : ^^^^^^^^^
- 
-     export var X: number;
- >X : number
-->  : ^^^^^^
+@@= skipped -10, +11 lines =@@
  }
  
  module M2 {
@@ -23,13 +16,4 @@
 +
      @dec
  >dec : <T>(target: T) => T
-->    : ^ ^^      ^^ ^^^^^ 
  
-     import X = M1.X;
- >X : number
-->  : ^^^^^^
- >M1 : typeof M1
-->   : ^^^^^^^^^
- >X : number
-->  : ^^^^^^
- }

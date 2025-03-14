@@ -4,82 +4,36 @@
  === controlFlowCommaExpressionAssertionMultiple.ts ===
  function Narrow<T>(value: any): asserts value is T {}
  >Narrow : <T>(value: any) => asserts value is T
-->       : ^ ^^     ^^   ^^^^^                  
 +>T : T
  >value : any
  
  function func(foo: any, bar: any) {
- >func : (foo: any, bar: any) => void
-->     : ^   ^^   ^^   ^^   ^^^^^^^^^
- >foo : any
- >bar : any
- 
-     Narrow<number>(foo), Narrow<string>(bar);
- >Narrow<number>(foo), Narrow<string>(bar) : void
-->                                         : ^^^^
- >Narrow<number>(foo) : void
-->                    : ^^^^
- >Narrow : <T>(value: any) => asserts value is T
-->       : ^ ^^     ^^   ^^^^^                  
- >foo : any
- >Narrow<string>(bar) : void
-->                    : ^^^^
- >Narrow : <T>(value: any) => asserts value is T
-->       : ^ ^^     ^^   ^^^^^                  
+@@= skipped -17, +18 lines =@@
  >bar : any
  
      foo;
 ->foo : number
-->    : ^^^^^^
 +>foo : any
  
      bar;
 ->bar : string
-->    : ^^^^^^
 +>bar : any
  }
  
  function func2(foo: any, bar: any, baz: any) {
- >func2 : (foo: any, bar: any, baz: any) => void
-->      : ^   ^^   ^^   ^^   ^^   ^^   ^^^^^^^^^
- >foo : any
- >bar : any
- >baz : any
- 
-     Narrow<number>(foo), Narrow<string>(bar), Narrow<boolean>(baz);
- >Narrow<number>(foo), Narrow<string>(bar), Narrow<boolean>(baz) : void
-->                                                               : ^^^^
- >Narrow<number>(foo), Narrow<string>(bar) : void
-->                                         : ^^^^
- >Narrow<number>(foo) : void
-->                    : ^^^^
- >Narrow : <T>(value: any) => asserts value is T
-->       : ^ ^^     ^^   ^^^^^                  
- >foo : any
- >Narrow<string>(bar) : void
-->                    : ^^^^
- >Narrow : <T>(value: any) => asserts value is T
-->       : ^ ^^     ^^   ^^^^^                  
- >bar : any
- >Narrow<boolean>(baz) : void
-->                     : ^^^^
- >Narrow : <T>(value: any) => asserts value is T
-->       : ^ ^^     ^^   ^^^^^                  
+@@= skipped -26, +26 lines =@@
  >baz : any
  
      foo;
 ->foo : number
-->    : ^^^^^^
 +>foo : any
  
      bar;
 ->bar : string
-->    : ^^^^^^
 +>bar : any
  
      baz;
 ->baz : boolean
-->    : ^^^^^^^
 +>baz : any
  }
  

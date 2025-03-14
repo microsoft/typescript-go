@@ -1,8 +1,0 @@
---- old.for-of56.types
-+++ new.for-of56.types
-@@= skipped -3, +3 lines =@@
- for (var let of []) {}
- >let : any
- >[] : undefined[]
-->   : ^^^^^^^^^^^
- 

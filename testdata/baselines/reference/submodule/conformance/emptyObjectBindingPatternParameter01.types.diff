@@ -5,7 +5,6 @@
  === emptyObjectBindingPatternParameter01.ts ===
  function f({}) {
 ->f : ({}: {}) => void
-->  : ^  ^^^^^^^^^^^^^
 +>f : (__0: {}) => void
  
      var x, y, z;

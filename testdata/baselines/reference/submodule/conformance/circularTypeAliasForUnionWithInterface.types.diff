@@ -1,30 +1,16 @@
 --- old.circularTypeAliasForUnionWithInterface.types
 +++ new.circularTypeAliasForUnionWithInterface.types
-@@= skipped -2, +2 lines =@@
- === circularTypeAliasForUnionWithInterface.ts ===
- var v0: T0;
- >v0 : T0
-->   : ^^
- 
- type T0 = string | I0;
+@@= skipped -7, +7 lines =@@
  >T0 : T0
-->   : ^^
  
  interface I0 {
 +>I0 : I0
 +
      x: T0;
  >x : T0
-->  : ^^
  }
- 
- var v1: T1;
- >v1 : T1
-->   : ^^
- 
- type T1 = string | I1;
+@@= skipped -11, +13 lines =@@
  >T1 : T1
-->   : ^^
  
  interface I1 {
 +>I1 : I1
@@ -32,13 +18,8 @@
      (): T1;
  }
  
- var v2: T2;
- >v2 : T2
-->   : ^^
- 
- type T2 = string | I2;
+@@= skipped -10, +12 lines =@@
  >T2 : T2
-->   : ^^
  
  interface I2 {
 +>I2 : I2
@@ -46,35 +27,21 @@
      new (): T2;
  }
  
- var v3: T3;
- >v3 : T3
-->   : ^^
- 
- type T3 = string | I3;
+@@= skipped -10, +12 lines =@@
  >T3 : T3
-->   : ^^
  
  interface I3 {
 +>I3 : I3
 +
      [x: number]: T3;
  >x : number
-->  : ^^^^^^
  }
- 
- var v4: T4;
- >v4 : T4
-->   : ^^
- 
- type T4 = string | I4;
+@@= skipped -11, +13 lines =@@
  >T4 : T4
-->   : ^^
  
  interface I4 {
 +>I4 : I4
 +
      [x: string]: T4;
  >x : string
-->  : ^^^^^^
  }
- 

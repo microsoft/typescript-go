@@ -1,16 +1,9 @@
 --- old.typesVersions.justIndex.types
 +++ new.typesVersions.justIndex.types
-@@= skipped -2, +2 lines =@@
- === /a/ts3.1/index.d.ts ===
- export const a = 0;
- >a : 0
-->  : ^
- >0 : 0
-->  : ^
+@@= skipped -6, +6 lines =@@
  
  === /b/user.ts ===
  import { a } from "a";
 ->a : 0
-->  : ^
 +>a : any
  

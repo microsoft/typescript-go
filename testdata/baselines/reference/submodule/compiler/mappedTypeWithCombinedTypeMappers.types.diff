@@ -4,7 +4,6 @@
  
  type Meta<T, A> = {
  >Meta : Meta<T, A>
-->     : ^^^^^^^^^^
 +>T : T
 +>A : A
  
@@ -13,17 +12,8 @@
 +
          value: T[P];
  >value : T[P]
-->      : ^^^^
  
-         also: A;
- >also : A
-->     : ^
- 
-         readonly children: Meta<T[P], A>;
- >children : Meta<T[P], A>
-->         : ^^^^^^^^^^^^^
- 
-     };
+@@= skipped -15, +19 lines =@@
  }
  
  interface Input {
@@ -31,30 +21,4 @@
 +
      x: string;
  >x : string
-->  : ^^^^^^
- 
-     y: number;
- >y : number
-->  : ^^^^^^
- }
- 
- declare const output: Meta<Input, boolean>;
- >output : Meta<Input, boolean>
-->       : ^^^^^^^^^^^^^^^^^^^^
- 
- const shouldFail: { important: boolean } = output.x.children;
- >shouldFail : { important: boolean; }
-->           : ^^^^^^^^^^^^^       ^^^
- >important : boolean
-->          : ^^^^^^^
- >output.x.children : string
-->                  : ^^^^^^
- >output.x : { value: string; also: boolean; readonly children: string; }
-->         : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >output : Meta<Input, boolean>
-->       : ^^^^^^^^^^^^^^^^^^^^
- >x : { value: string; also: boolean; readonly children: string; }
-->  : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- >children : string
-->         : ^^^^^^
  

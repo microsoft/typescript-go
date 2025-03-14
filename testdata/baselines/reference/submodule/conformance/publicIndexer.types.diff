@@ -1,31 +1,10 @@
 --- old.publicIndexer.types
 +++ new.publicIndexer.types
-@@= skipped -4, +4 lines =@@
- 
- class C {
- >C : C
-->  : ^
- 
-     public [x: string]: string;
- >x : string
-->  : ^^^^^^
- }
- 
- class D {
- >D : D
-->  : ^
- 
-     public [x: number]: string;
- >x : number
-->  : ^^^^^^
- }
+@@= skipped -18, +18 lines =@@
  
  class E<T> {
  >E : E<T>
-->  : ^^^^
 +>T : T
  
      public [x: string]: T;
  >x : string
-->  : ^^^^^^
- }

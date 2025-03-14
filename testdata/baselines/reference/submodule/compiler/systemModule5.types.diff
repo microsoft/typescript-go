@@ -1,8 +1,0 @@
---- old.systemModule5.types
-+++ new.systemModule5.types
-@@= skipped -2, +2 lines =@@
- === systemModule5.ts ===
- export function foo() {}
- >foo : () => void
-->    : ^^^^^^^^^^
- 

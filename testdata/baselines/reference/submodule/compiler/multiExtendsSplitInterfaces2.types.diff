@@ -8,7 +8,6 @@
 +
  	a: number;
  >a : number
-->  : ^^^^^^
  }
  
  interface I extends A {
@@ -16,7 +15,6 @@
 +
  	i1: number;
  >i1 : number
-->   : ^^^^^^
  }
  
  interface B {
@@ -24,7 +22,6 @@
 +
  	b: number;
  >b : number
-->  : ^^^^^^
  }
  
  interface I extends B {
@@ -32,50 +29,4 @@
 +
  	i2: number;
  >i2 : number
-->   : ^^^^^^
  }
- 
- var i: I;
- >i : I
-->  : ^
- 
- var a = i.a;
- >a : number
-->  : ^^^^^^
- >i.a : number
-->    : ^^^^^^
- >i : I
-->  : ^
- >a : number
-->  : ^^^^^^
- 
- var i1 = i.i1;
- >i1 : number
-->   : ^^^^^^
- >i.i1 : number
-->     : ^^^^^^
- >i : I
-->  : ^
- >i1 : number
-->   : ^^^^^^
- 
- var b = i.b;
- >b : number
-->  : ^^^^^^
- >i.b : number
-->    : ^^^^^^
- >i : I
-->  : ^
- >b : number
-->  : ^^^^^^
- 
- var i2 = i.i2;
- >i2 : number
-->   : ^^^^^^
- >i.i2 : number
-->     : ^^^^^^
- >i : I
-->  : ^
- >i2 : number
-->   : ^^^^^^
- 

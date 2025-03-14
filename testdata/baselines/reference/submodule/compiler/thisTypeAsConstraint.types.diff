@@ -1,14 +1,9 @@
 --- old.thisTypeAsConstraint.types
 +++ new.thisTypeAsConstraint.types
-@@= skipped -2, +2 lines =@@
- === thisTypeAsConstraint.ts ===
- class C {
- >C : C
-->  : ^
+@@= skipped -5, +5 lines =@@
  
    public m<T extends this>() {
  >m : <T extends this>() => void
-->  : ^ ^^^^^^^^^    ^^^^^^^^^^^
 +>T : T
    }
  }

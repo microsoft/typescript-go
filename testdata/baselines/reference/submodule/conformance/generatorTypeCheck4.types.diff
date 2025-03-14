@@ -1,8 +1,0 @@
---- old.generatorTypeCheck4.types
-+++ new.generatorTypeCheck4.types
-@@= skipped -2, +2 lines =@@
- === generatorTypeCheck4.ts ===
- function* g1(): {} { }
- >g1 : () => {}
-->   : ^^^^^^  
- 
