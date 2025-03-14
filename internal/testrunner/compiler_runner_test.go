@@ -6,6 +6,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/repo"
+	"github.com/microsoft/typescript-go/internal/tspath"
 	"gotest.tools/v3/assert"
 )
 
@@ -37,6 +38,7 @@ func runCompilerTests(t *testing.T, isSubmodule bool) {
 	var seenTests core.Set[string]
 	for _, runner := range runners {
 		for _, test := range runner.EnumerateTestFiles() {
+			test = tspath.GetBaseFileName(test)
 			assert.Assert(t, !seenTests.Has(test), "Duplicate test file: %s", test)
 			seenTests.Add(test)
 		}
