@@ -2166,7 +2166,7 @@ func (c *Checker) checkSourceElementWorker(node *ast.Node) {
 		c.checkClassDeclaration(node)
 	case ast.KindInterfaceDeclaration:
 		c.checkInterfaceDeclaration(node)
-	case ast.KindTypeAliasDeclaration:
+	case ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration:
 		c.checkTypeAliasDeclaration(node)
 	case ast.KindEnumDeclaration:
 		c.checkEnumDeclaration(node)
@@ -2329,12 +2329,12 @@ func (c *Checker) checkTypeParameter(node *ast.Node) {
 }
 
 func (c *Checker) checkTypeParameterDeferred(node *ast.Node) {
-	if ast.IsInterfaceDeclaration(node.Parent) || ast.IsClassLike(node.Parent) || ast.IsTypeAliasDeclaration(node.Parent) {
+	if ast.IsInterfaceDeclaration(node.Parent) || ast.IsClassLike(node.Parent) || ast.IsTypeAliasDeclaration(node.Parent) || ast.IsJSTypeAliasDeclaration(node.Parent) {
 		typeParameter := c.getDeclaredTypeOfTypeParameter(c.getSymbolOfDeclaration(node))
 		modifiers := c.getTypeParameterModifiers(typeParameter) & (ast.ModifierFlagsIn | ast.ModifierFlagsOut)
 		if modifiers != 0 {
 			symbol := c.getSymbolOfDeclaration(node.Parent)
-			if ast.IsTypeAliasDeclaration(node.Parent) && c.getDeclaredTypeOfSymbol(symbol).objectFlags&(ObjectFlagsAnonymous|ObjectFlagsMapped) == 0 {
+			if (ast.IsTypeAliasDeclaration(node.Parent) || ast.IsJSTypeAliasDeclaration(node.Parent)) && c.getDeclaredTypeOfSymbol(symbol).objectFlags&(ObjectFlagsAnonymous|ObjectFlagsMapped) == 0 {
 				c.error(node, diagnostics.Variance_annotations_are_only_supported_in_type_aliases_for_object_function_constructor_and_mapped_types)
 			} else if modifiers == ast.ModifierFlagsIn || modifiers == ast.ModifierFlagsOut {
 				source := c.createMarkerType(symbol, typeParameter, core.IfElse(modifiers == ast.ModifierFlagsOut, c.markerSubTypeForCheck, c.markerSuperTypeForCheck))
@@ -6308,10 +6308,15 @@ func (c *Checker) checkTypeAliasDeclaration(node *ast.Node) {
 	c.checkTypeNameIsReserved(node.Name(), diagnostics.Type_alias_name_cannot_be_0)
 	c.checkExportsOnMergedDeclarations(node)
 
-	typeNode := node.AsTypeAliasDeclaration().Type
+	var typeNode *ast.Node
+	if node.Kind == ast.KindTypeAliasDeclaration {
+		typeNode = node.AsTypeAliasDeclaration().Type
+	} else if node.Kind == ast.KindJSTypeAliasDeclaration {
+		typeNode = node.AsJSTypeAliasDeclaration().Type
+	}
 	typeParameters := node.TypeParameters()
 	c.checkTypeParameters(typeParameters)
-	if typeNode.Kind == ast.KindIntrinsicKeyword {
+	if typeNode != nil && typeNode.Kind == ast.KindIntrinsicKeyword {
 		if !(len(typeParameters) == 0 && node.Name().Text() == "BuiltinIteratorReturn" ||
 			len(typeParameters) == 1 && intrinsicTypeKinds[node.Name().Text()] != IntrinsicTypeKindUnknown) {
 			c.error(typeNode, diagnostics.The_intrinsic_keyword_can_only_be_used_to_declare_compiler_provided_intrinsic_types)
@@ -6325,6 +6330,9 @@ func (c *Checker) checkTypeAliasDeclaration(node *ast.Node) {
 func (c *Checker) checkTypeNameIsReserved(name *ast.Node, message *diagnostics.Message) {
 	// TS 1.0 spec (April 2014): 3.6.1
 	// The predefined type keywords are reserved and cannot be used as names of user defined types.
+	if name == nil { // TODO: Check when this happens
+		return
+	}
 	switch name.Text() {
 	case "any", "unknown", "never", "number", "bigint", "boolean", "string", "symbol", "void", "object", "undefined":
 		c.error(name, message, name.Text())
@@ -6396,7 +6404,7 @@ func (c *Checker) checkUnusedIdentifiers(potentiallyUnusedIdentifiers []*ast.Nod
 			}
 			c.checkUnusedTypeParameters(node)
 		case ast.KindMethodSignature, ast.KindCallSignature, ast.KindConstructSignature, ast.KindFunctionType, ast.KindConstructorType,
-			ast.KindTypeAliasDeclaration, ast.KindInterfaceDeclaration:
+			ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration, ast.KindInterfaceDeclaration:
 			c.checkUnusedTypeParameters(node)
 		case ast.KindInferType:
 			c.checkUnusedInferTypeParameter(node)
@@ -10444,7 +10452,7 @@ func (c *Checker) parameterInitializerContainsUndefined(declaration *ast.Node) b
 
 func (c *Checker) isInAmbientOrTypeNode(node *ast.Node) bool {
 	return node.Flags&ast.NodeFlagsAmbient != 0 || ast.FindAncestor(node, func(n *ast.Node) bool {
-		return ast.IsInterfaceDeclaration(n) || ast.IsTypeAliasDeclaration(n) || ast.IsTypeLiteralNode(n)
+		return ast.IsInterfaceDeclaration(n) || ast.IsTypeAliasDeclaration(n) || ast.IsJSTypeAliasDeclaration(n) || ast.IsTypeLiteralNode(n)
 	}) != nil
 }
 
@@ -20279,6 +20287,9 @@ func (c *Checker) couldContainTypeVariablesWorker(t *Type) bool {
 func (c *Checker) isNonGenericTopLevelType(t *Type) bool {
 	if t.alias != nil && len(t.alias.typeArguments) == 0 {
 		declaration := ast.GetDeclarationOfKind(t.alias.symbol, ast.KindTypeAliasDeclaration)
+		if declaration == nil {
+			declaration = ast.GetDeclarationOfKind(t.alias.symbol, ast.KindJSTypeAliasDeclaration)
+		}
 		return declaration != nil && ast.FindAncestorOrQuit(declaration.Parent, func(n *ast.Node) ast.FindAncestorResult {
 			switch n.Kind {
 			case ast.KindSourceFile:
@@ -21246,7 +21257,7 @@ func (c *Checker) isResolvedByTypeAlias(node *ast.Node) bool {
 	case ast.KindParenthesizedType, ast.KindNamedTupleMember, ast.KindTypeReference, ast.KindUnionType, ast.KindIntersectionType,
 		ast.KindIndexedAccessType, ast.KindConditionalType, ast.KindTypeOperator, ast.KindArrayType, ast.KindTupleType:
 		return c.isResolvedByTypeAlias(parent)
-	case ast.KindTypeAliasDeclaration:
+	case ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration:
 		return true
 	}
 	return false
@@ -21744,7 +21755,7 @@ func (c *Checker) getOuterTypeParameters(node *ast.Node, includeThisTypes bool) 
 		switch kind {
 		case ast.KindClassDeclaration, ast.KindClassExpression, ast.KindInterfaceDeclaration, ast.KindCallSignature, ast.KindConstructSignature,
 			ast.KindMethodSignature, ast.KindFunctionType, ast.KindConstructorType, ast.KindFunctionDeclaration,
-			ast.KindMethodDeclaration, ast.KindFunctionExpression, ast.KindArrowFunction, ast.KindTypeAliasDeclaration, ast.KindMappedType,
+			ast.KindMethodDeclaration, ast.KindFunctionExpression, ast.KindArrowFunction, ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration, ast.KindMappedType,
 			ast.KindConditionalType:
 			outerTypeParameters := c.getOuterTypeParameters(node, includeThisTypes)
 			if (kind == ast.KindFunctionExpression || kind == ast.KindArrowFunction || ast.IsObjectLiteralMethod(node)) && c.isContextSensitive(node) {
@@ -21823,7 +21834,7 @@ func (c *Checker) getDeclaredTypeOfTypeAlias(symbol *ast.Symbol) *Type {
 		if !c.pushTypeResolution(symbol, TypeSystemPropertyNameDeclaredType) {
 			return c.errorType
 		}
-		declaration := core.Find(symbol.Declarations, ast.IsTypeAliasDeclaration)
+		declaration := core.Find(symbol.Declarations, ast.IsEitherTypeAliasDeclaration)
 		typeNode := declaration.AsTypeAliasDeclaration().Type
 		t := c.getTypeFromTypeNode(typeNode)
 		if c.popTypeResolution() {

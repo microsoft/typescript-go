@@ -685,6 +685,7 @@ func (p *Printer) shouldAllowTrailingComma(node *ast.Node, list *ast.NodeList) b
 		ast.KindGetAccessor,
 		ast.KindSetAccessor,
 		ast.KindTypeAliasDeclaration,
+		ast.KindJSTypeAliasDeclaration,
 		ast.KindFunctionType,
 		ast.KindConstructorType,
 		ast.KindCallSignature,
@@ -3319,6 +3320,21 @@ func (p *Printer) emitTypeAliasDeclaration(node *ast.TypeAliasDeclaration) {
 	p.exitNode(node.AsNode())
 }
 
+func (p *Printer) emitJSTypeAliasDeclaration(node *ast.JSTypeAliasDeclaration) {
+	p.enterNode(node.AsNode())
+	p.emitModifierList(node.AsNode(), node.Modifiers(), false /*allowDecorators*/)
+	p.writeKeyword("jstype")
+	p.writeSpace()
+	p.emitBindingIdentifier(node.Name().AsIdentifier())
+	p.emitTypeParameters(node.AsNode(), node.TypeParameters)
+	p.writeSpace()
+	p.writePunctuation("=")
+	p.writeSpace()
+	p.emitTypeNodeOutsideExtends(node.Type)
+	p.writeTrailingSemicolon()
+	p.exitNode(node.AsNode())
+}
+
 func (p *Printer) emitEnumDeclaration(node *ast.EnumDeclaration) {
 	p.enterNode(node.AsNode())
 	p.emitModifierList(node.AsNode(), node.Modifiers(), false /*allowDecorators*/)
@@ -3706,6 +3722,8 @@ func (p *Printer) emitStatement(node *ast.Statement) {
 		p.emitInterfaceDeclaration(node.AsInterfaceDeclaration())
 	case ast.KindTypeAliasDeclaration:
 		p.emitTypeAliasDeclaration(node.AsTypeAliasDeclaration())
+	case ast.KindJSTypeAliasDeclaration:
+		p.emitJSTypeAliasDeclaration(node.AsJSTypeAliasDeclaration())
 	case ast.KindEnumDeclaration:
 		p.emitEnumDeclaration(node.AsEnumDeclaration())
 	case ast.KindModuleDeclaration:

@@ -3,6 +3,8 @@
 === folder/mod1.js ===
 /**
  * @typedef {{x: number}} Item
+>x : Symbol(x, Decl(mod1.js, 1, 14))
+
  */
 /**
  * @type {Item};

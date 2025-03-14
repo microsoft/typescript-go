@@ -9,8 +9,12 @@
  }
  
  declare global {
-@@= skipped -19, +19 lines =@@
+@@= skipped -17, +17 lines =@@
+ /** @typedef {typeof import("./file")} Foo */
+ 
  /** @typedef {(foo: Foo) => string} FooFun */
++>foo : Symbol(foo, Decl(something.js, 2, 15))
++>Foo : Symbol(Foo)
  
  module.exports = /** @type {FooFun} */(void 0);
 ->module.exports : Symbol(module.exports, Decl(something.js, 0, 0))

@@ -1,0 +1,11 @@
+--- old.jsdocPropertyTagInvalid.symbols
++++ new.jsdocPropertyTagInvalid.symbols
+@@= skipped -3, +3 lines =@@
+ /**
+  * @typedef MyType
+  * @property {sting} [x]
++>sting : Symbol(sting)
++
+  */
+ 
+ /** @param {MyType} p  */

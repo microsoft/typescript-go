@@ -16,6 +16,8 @@ const testFnTypes = {
 };
 
 /** @typedef {boolean|myTypes.typeC} testFnTypes.input */
+>myTypes : Symbol(myTypes)
+>typeC : Symbol(typeC)
 
 /**
  * @function testFn

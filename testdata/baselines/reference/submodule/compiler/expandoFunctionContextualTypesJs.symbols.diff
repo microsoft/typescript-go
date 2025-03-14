@@ -1,6 +1,19 @@
 --- old.expandoFunctionContextualTypesJs.symbols
 +++ new.expandoFunctionContextualTypesJs.symbols
-@@= skipped -10, +10 lines =@@
+@@= skipped -1, +1 lines =@@
+ 
+ === input.js ===
+ /** @typedef {{ color: "red" | "blue" }} MyComponentProps */
++>color : Symbol(color, Decl(input.js, 0, 15))
+ 
+ /**
+  * @template P 
+  * @typedef {{ (): any; defaultProps?: Partial<P> }} StatelessComponent */
++>defaultProps : Symbol(defaultProps, Decl(input.js, 4, 23))
++>Partial : Symbol(Partial, Decl(lib.es5.d.ts, --, --))
++>P : Symbol(P)
+ 
+  /**
    * @type {StatelessComponent<MyComponentProps>}
    */
  const MyComponent = () => /* @type {any} */(null);
@@ -15,7 +28,7 @@
  
      color: "red"
  >color : Symbol(color, Decl(input.js, 11, 28))
-@@= skipped -13, +11 lines =@@
+@@= skipped -22, +24 lines =@@
  };
  
  const MyComponent2 = () => null;

@@ -4,6 +4,8 @@
 /**
  * @template const T
  * @typedef {[T]} X
+>T : Symbol(T)
+
  */
 
 /**

@@ -3,6 +3,9 @@
 === /a.js ===
 /**
  * @typedef {{fn(a: string): void}} T
+>fn : Symbol(fn, Decl(a.js, 1, 14))
+>a : Symbol(a, Decl(a.js, 1, 17))
+
  */
 
 class C {

@@ -1,6 +1,15 @@
 --- old.typedefTagNested.symbols
 +++ new.typedefTagNested.symbols
-@@= skipped -54, +54 lines =@@
+@@= skipped -43, +43 lines =@@
+ /** @typedef {Object} Upp
+  * @property {string} name
+  * @property {Object} not
++>Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
++
+  * @property {string} nested
+  */
+ 
+@@= skipped -11, +13 lines =@@
  >nested : Symbol(nested, Decl(a.js, 35, 37))
  
  sala.name

@@ -3,6 +3,8 @@
 === mod1.js ===
 /** 
  * @typedef {function(string): boolean}
+>function : Symbol(function)
+
  * Type1
  */
 
@@ -27,8 +29,14 @@ function callIt(func, arg) {
 /** 
  * @typedef {{
  *   num: number,
+>num : Symbol(num, Decl(mod2.js, 1, 14))
+
  *   str: string,
+>str : Symbol(str, Decl(mod2.js, 2, 17))
+
  *   boo: boolean
+>boo : Symbol(boo, Decl(mod2.js, 3, 17))
+
  * }} Type2
  */
 
@@ -52,6 +60,8 @@ function check(obj) {
  * A function whose signature is very long.
  *
  * @typedef {function(boolean, string, number):
+>function : Symbol(function)
+
  *     (string|number)} StringOrNumber1
  */
 
@@ -82,6 +92,8 @@ function use1(func, bool, str, num) {
  * A function whose signature is very long.
  *
  * @typedef {function(boolean, string,
+>function : Symbol(function)
+
  *    number):
  *    (string|number)} StringOrNumber2
  */
@@ -112,10 +124,16 @@ function use2(func, bool, str, num) {
 /** 
  * @typedef {{
  *   num:
+>num : Symbol(num, Decl(mod5.js, 1, 14))
+
  *   number,
  *   str:
+>str : Symbol(str, Decl(mod5.js, 3, 12))
+
  *   string,
  *   boo:
+>boo : Symbol(boo, Decl(mod5.js, 5, 12))
+
  *   boolean
  * }} Type5
  */
@@ -139,8 +157,12 @@ function check5(obj) {
 /** 
  * @typedef {{
  *   foo:
+>foo : Symbol(foo, Decl(mod6.js, 1, 14))
+
  *   *,
  *   bar:
+>bar : Symbol(bar, Decl(mod6.js, 3, 7))
+
  *   *
  * }} Type6
  */

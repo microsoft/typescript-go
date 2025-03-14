@@ -1,6 +1,15 @@
 --- old.checkJsdocSatisfiesTag1.symbols
 +++ new.checkJsdocSatisfiesTag1.symbols
-@@= skipped -40, +40 lines =@@
+@@= skipped -12, +12 lines =@@
+ 
+ /**
+  * @typedef {(x: string) => string} T3
++>x : Symbol(x, Decl(a.js, 11, 14))
++
+  */
+ 
+ /**
+@@= skipped -28, +30 lines =@@
  const t5 = /** @satisfies {T3} */((m) => m.substring(0));
  >t5 : Symbol(t5, Decl(a.js, 27, 5))
  >m : Symbol(m, Decl(a.js, 27, 35))

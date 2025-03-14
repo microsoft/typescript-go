@@ -1,13 +1,21 @@
 --- old.misspelledJsDocTypedefTags.symbols
 +++ new.misspelledJsDocTypedefTags.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
+ 
  === a.js ===
  /** @typedef {{ endTime: number, screenshots: number}} A.<b>*/
++>endTime : Symbol(endTime, Decl(a.js, 0, 15))
++>screenshots : Symbol(screenshots, Decl(a.js, 0, 32))
++
  Animation.AnimationModel.ScreenshotCapture.Request;
 ->Animation : Symbol(Animation, Decl(lib.dom.d.ts, --, --), Decl(lib.dom.d.ts, --, --), Decl(a.js, 1, 51))
 +>Animation : Symbol(Animation, Decl(lib.dom.d.ts, --, --), Decl(lib.dom.d.ts, --, --))
  
  /** @typedef {{ endTime: number, screenshots: !B.<string>}} */
++>endTime : Symbol(endTime, Decl(a.js, 3, 15))
++>screenshots : Symbol(screenshots, Decl(a.js, 3, 32))
++>B : Symbol(B)
++
  Animation.AnimationModel.ScreenshotCapture.Request;
 ->Animation : Symbol(Animation, Decl(lib.dom.d.ts, --, --), Decl(lib.dom.d.ts, --, --), Decl(a.js, 1, 51))
 +>Animation : Symbol(Animation, Decl(lib.dom.d.ts, --, --), Decl(lib.dom.d.ts, --, --))

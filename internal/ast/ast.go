@@ -3046,6 +3046,7 @@ type ClassLikeBase struct {
 	DeclarationBase
 	ExportableBase
 	ModifiersBase
+	LocalsContainerBase
 	name            *IdentifierNode // IdentifierNode
 	TypeParameters  *NodeList       // NodeList[*TypeParameterDeclarationNode]. Optional
 	HeritageClauses *NodeList       // NodeList[*HeritageClauseNode]. Optional
@@ -3282,6 +3283,10 @@ func IsTypeAliasDeclaration(node *Node) bool {
 	return node.Kind == KindTypeAliasDeclaration
 }
 
+func IsEitherTypeAliasDeclaration(node *Node) bool {
+	return node.Kind == KindTypeAliasDeclaration || node.Kind == KindJSTypeAliasDeclaration
+}
+
 type JSTypeAliasDeclaration struct {
 	StatementBase
 	DeclarationBase
@@ -3320,7 +3325,9 @@ func (node *JSTypeAliasDeclaration) VisitEachChild(v *NodeVisitor) *Node {
 func (node *JSTypeAliasDeclaration) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewJSTypeAliasDeclaration(node.Modifiers(), node.Name(), node.TypeParameters, node.Type), node.AsNode(), f.hooks)
 }
+
 func (node *JSTypeAliasDeclaration) Name() *DeclarationName { return node.name }
+
 func IsJSTypeAliasDeclaration(node *Node) bool {
 	return node.Kind == KindJSTypeAliasDeclaration
 }

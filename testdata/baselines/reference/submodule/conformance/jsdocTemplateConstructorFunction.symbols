@@ -4,6 +4,10 @@
 /**
  * @template U
  * @typedef {(u: U) => U} Id
+>u : Symbol(u, Decl(templateTagOnConstructorFunctions.js, 2, 14))
+>U : Symbol(U)
+>U : Symbol(U)
+
  */
 /**
  * @param {T} t

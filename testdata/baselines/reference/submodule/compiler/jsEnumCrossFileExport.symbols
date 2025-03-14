@@ -57,7 +57,6 @@ Other.Cls = class {
 >this.method : Symbol(method, Decl(index.js, 1, 19))
 >this : Symbol(Cls, Decl(index.js, 1, 11))
 >method : Symbol(method, Decl(index.js, 1, 19))
->Host : Symbol(Host, Decl(enumDef.js, 0, 3))
     }
 }
 

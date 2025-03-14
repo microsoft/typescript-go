@@ -1,6 +1,30 @@
 --- old.typedefTagWrapping.symbols
 +++ new.typedefTagWrapping.symbols
-@@= skipped -41, +41 lines =@@
+@@= skipped -2, +2 lines =@@
+ === mod1.js ===
+ /** 
+  * @typedef {function(string): boolean}
++>function : Symbol(function)
++
+  * Type1
+  */
+ 
+@@= skipped -24, +26 lines =@@
+ /** 
+  * @typedef {{
+  *   num: number,
++>num : Symbol(num, Decl(mod2.js, 1, 14))
++
+  *   str: string,
++>str : Symbol(str, Decl(mod2.js, 2, 17))
++
+  *   boo: boolean
++>boo : Symbol(boo, Decl(mod2.js, 3, 17))
++
+  * }} Type2
+  */
+ 
+@@= skipped -15, +21 lines =@@
  >obj : Symbol(obj, Decl(mod2.js, 13, 15))
  
    return obj.boo ? obj.num : obj.str;
@@ -16,7 +40,42 @@
  }
  
  === mod3.js ===
-@@= skipped -94, +88 lines =@@
+@@= skipped -16, +10 lines =@@
+  * A function whose signature is very long.
+  *
+  * @typedef {function(boolean, string, number):
++>function : Symbol(function)
++
+  *     (string|number)} StringOrNumber1
+  */
+ 
+@@= skipped -30, +32 lines =@@
+  * A function whose signature is very long.
+  *
+  * @typedef {function(boolean, string,
++>function : Symbol(function)
++
+  *    number):
+  *    (string|number)} StringOrNumber2
+  */
+@@= skipped -30, +32 lines =@@
+ /** 
+  * @typedef {{
+  *   num:
++>num : Symbol(num, Decl(mod5.js, 1, 14))
++
+  *   number,
+  *   str:
++>str : Symbol(str, Decl(mod5.js, 3, 12))
++
+  *   string,
+  *   boo:
++>boo : Symbol(boo, Decl(mod5.js, 5, 12))
++
+  *   boolean
+  * }} Type5
+  */
+@@= skipped -18, +24 lines =@@
  >obj : Symbol(obj, Decl(mod5.js, 16, 16))
  
    return obj.boo ? obj.num : obj.str;
@@ -32,7 +91,19 @@
  }
  
  === mod6.js ===
-@@= skipped -31, +25 lines =@@
+ /** 
+  * @typedef {{
+  *   foo:
++>foo : Symbol(foo, Decl(mod6.js, 1, 14))
++
+  *   *,
+  *   bar:
++>bar : Symbol(bar, Decl(mod6.js, 3, 7))
++
+  *   *
+  * }} Type6
+  */
+@@= skipped -31, +29 lines =@@
  >obj : Symbol(obj, Decl(mod6.js, 14, 16))
  
    return obj.foo;

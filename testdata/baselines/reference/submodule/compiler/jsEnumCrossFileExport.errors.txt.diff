@@ -7,7 +7,7 @@
 +enumDef.js(4,6): error TS2339: Property 'UserMetrics' does not exist on type '{}'.
 +enumDef.js(16,6): error TS2339: Property 'UserMetrics' does not exist on type '{}'.
 +index.js(2,7): error TS2339: Property 'Cls' does not exist on type '{}'.
-+index.js(8,26): error TS2339: Property 'UserMetrics' does not exist on type '{}'.
++index.js(8,21): error TS2304: Cannot find name 'Host'.
 +index.js(13,11): error TS2503: Cannot find namespace 'Host'.
 +index.js(18,11): error TS2503: Cannot find namespace 'Host'.
 +
@@ -48,8 +48,8 @@
 +        method(p) {}
 +        usage() {
 +            this.method(Host.UserMetrics.Action.WindowDocked);
-+                             ~~~~~~~~~~~
-+!!! error TS2339: Property 'UserMetrics' does not exist on type '{}'.
++                        ~~~~
++!!! error TS2304: Cannot find name 'Host'.
 +        }
 +    }
 +    

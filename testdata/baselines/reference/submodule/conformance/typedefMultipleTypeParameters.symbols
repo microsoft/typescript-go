@@ -7,6 +7,17 @@
  * @template W
  * @template X That last one had no comment
  * @typedef {{ t: T, u: U, v: V, w: W, x: X }} Everything
+>t : Symbol(t, Decl(a.js, 5, 14))
+>T : Symbol(T)
+>u : Symbol(u, Decl(a.js, 5, 20))
+>U : Symbol(U)
+>v : Symbol(v, Decl(a.js, 5, 26))
+>V : Symbol(V)
+>w : Symbol(w, Decl(a.js, 5, 32))
+>W : Symbol(W)
+>x : Symbol(x, Decl(a.js, 5, 38))
+>X : Symbol(X)
+
  */
 
 /** @type {Everything<{ a: number, b: 'hi', c: never }, undefined, { c: true, d: 1 }, number, string>} */

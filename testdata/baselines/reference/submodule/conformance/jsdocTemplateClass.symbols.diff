@@ -1,6 +1,25 @@
 --- old.jsdocTemplateClass.symbols
 +++ new.jsdocTemplateClass.symbols
-@@= skipped -14, +14 lines =@@
+@@= skipped -3, +3 lines =@@
+ /**
+  * @template T
+  * @typedef {(t: T) => T} Id
++>t : Symbol(t, Decl(templateTagOnClasses.js, 2, 14))
++>T : Symbol(T)
++>T : Symbol(T)
++
+  */
+ /** @template T */
+ class Foo {
+ >Foo : Symbol(Foo, Decl(templateTagOnClasses.js, 0, 0))
+ 
+     /** @typedef {(t: T) => T} Id2 */
++>t : Symbol(t, Decl(templateTagOnClasses.js, 6, 19))
++>T : Symbol(T)
++>T : Symbol(T)
++
+     /** @param {T} x */
+     constructor (x) {
  >x : Symbol(x, Decl(templateTagOnClasses.js, 8, 17))
  
          this.a = x
@@ -10,7 +29,7 @@
  >x : Symbol(x, Decl(templateTagOnClasses.js, 8, 17))
      }
      /**
-@@= skipped -13, +11 lines =@@
+@@= skipped -24, +30 lines =@@
       * @return {T}
       */
      foo(x, y, alpha) {

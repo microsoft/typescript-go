@@ -14,6 +14,8 @@ const a = { value: undefined }; // error
 
 /**
  * @typedef {{ value?: number }} B
+>value : Symbol(value, Decl(a.js, 9, 14))
+
  */
 
 /** @type {B} */

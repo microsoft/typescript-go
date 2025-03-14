@@ -1,0 +1,32 @@
+--- old.jsdocTemplateTag8.symbols
++++ new.jsdocTemplateTag8.symbols
+@@= skipped -4, +4 lines =@@
+  * @template out T
+  * @typedef {Object} Covariant
+  * @property {T} x
++>T : Symbol(T)
++
+  */
+ 
+ /**
+@@= skipped -28, +30 lines =@@
+  * @template in T
+  * @typedef {Object} Contravariant
+  * @property {(x: T) => void} f
++>x : Symbol(x, Decl(a.js, 22, 15))
++>T : Symbol(T)
++
+  */
+ 
+ /**
+@@= skipped -30, +33 lines =@@
+  * @template in out T
+  * @typedef {Object} Invariant
+  * @property {(x: T) => T} f
++>x : Symbol(x, Decl(a.js, 41, 15))
++>T : Symbol(T)
++>T : Symbol(T)
++
+  */
+ 
+ /**

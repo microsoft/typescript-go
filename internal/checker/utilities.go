@@ -371,7 +371,7 @@ func isShorthandPropertyNameUseSite(useSite *ast.Node) bool {
 
 func isTypeDeclaration(node *ast.Node) bool {
 	switch node.Kind {
-	case ast.KindTypeParameter, ast.KindClassDeclaration, ast.KindInterfaceDeclaration, ast.KindTypeAliasDeclaration, ast.KindEnumDeclaration:
+	case ast.KindTypeParameter, ast.KindClassDeclaration, ast.KindInterfaceDeclaration, ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration, ast.KindEnumDeclaration:
 		return true
 	case ast.KindImportClause:
 		return node.AsImportClause().IsTypeOnly
@@ -398,7 +398,7 @@ func canHaveSymbol(node *ast.Node) bool {
 		ast.KindNamespaceImport, ast.KindNewExpression, ast.KindNoSubstitutionTemplateLiteral, ast.KindNumericLiteral, ast.KindObjectLiteralExpression,
 		ast.KindParameter, ast.KindPropertyAccessExpression, ast.KindPropertyAssignment, ast.KindPropertyDeclaration, ast.KindPropertySignature,
 		ast.KindSetAccessor, ast.KindShorthandPropertyAssignment, ast.KindSourceFile, ast.KindSpreadAssignment, ast.KindStringLiteral,
-		ast.KindTypeAliasDeclaration, ast.KindTypeLiteral, ast.KindTypeParameter, ast.KindVariableDeclaration:
+		ast.KindTypeAliasDeclaration, ast.KindTypeLiteral, ast.KindTypeParameter, ast.KindVariableDeclaration, ast.KindJSTypeAliasDeclaration:
 		return true
 	}
 	return false
@@ -412,7 +412,7 @@ func canHaveLocals(node *ast.Node) bool {
 		ast.KindFunctionExpression, ast.KindFunctionType, ast.KindGetAccessor, ast.KindIndexSignature, ast.KindJSDocCallbackTag,
 		ast.KindJSDocSignature, ast.KindJSDocTypedefTag, ast.KindMappedType,
 		ast.KindMethodDeclaration, ast.KindMethodSignature, ast.KindModuleDeclaration, ast.KindSetAccessor, ast.KindSourceFile,
-		ast.KindTypeAliasDeclaration:
+		ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration:
 		return true
 	}
 	return false
@@ -529,7 +529,7 @@ func parsePseudoBigInt(stringValue string) string {
 }
 
 func isTypeAlias(node *ast.Node) bool {
-	return ast.IsTypeAliasDeclaration(node)
+	return ast.IsEitherTypeAliasDeclaration(node)
 }
 
 func hasOnlyExpressionInitializer(node *ast.Node) bool {
@@ -1575,7 +1575,7 @@ func (c *Checker) isMutableLocalVariableDeclaration(declaration *ast.Node) bool 
 
 func isInAmbientOrTypeNode(node *ast.Node) bool {
 	return node.Flags&ast.NodeFlagsAmbient != 0 || ast.FindAncestor(node, func(n *ast.Node) bool {
-		return ast.IsInterfaceDeclaration(n) || ast.IsTypeAliasDeclaration(n) || ast.IsTypeLiteralNode(n)
+		return ast.IsInterfaceDeclaration(n) || ast.IsTypeAliasDeclaration(n) || ast.IsJSTypeAliasDeclaration(n) || ast.IsTypeLiteralNode(n)
 	}) != nil
 }
 

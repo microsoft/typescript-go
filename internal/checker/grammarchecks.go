@@ -400,7 +400,7 @@ func (c *Checker) checkGrammarModifiers(node *ast.Node /*Union[HasModifiers, Has
 					return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_must_precede_1_modifier, "export", "abstract")
 				} else if flags&ast.ModifierFlagsAsync != 0 {
 					return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_must_precede_1_modifier, "export", "async")
-				} else if ast.IsClassLike(node.Parent) {
+				} else if ast.IsClassLike(node.Parent) && !ast.IsJSTypeAliasDeclaration(node) {
 					return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_cannot_appear_on_class_elements_of_this_kind, "export")
 				} else if node.Kind == ast.KindParameter {
 					return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_cannot_appear_on_a_parameter, "export")
@@ -604,7 +604,8 @@ func (c *Checker) findFirstIllegalModifier(node *ast.Node) *ast.Node {
 		ast.KindFunctionExpression,
 		ast.KindArrowFunction,
 		ast.KindParameter,
-		ast.KindTypeParameter:
+		ast.KindTypeParameter,
+		ast.KindJSTypeAliasDeclaration:
 		return nil
 	case ast.KindClassStaticBlockDeclaration,
 		ast.KindPropertyAssignment,
