@@ -252,8 +252,10 @@ func (p *Printer) printStringMappingType(t *Type) {
 }
 
 func (p *Printer) printEnumLiteral(t *Type) {
-	p.printName(p.c.getParentOfSymbol(t.symbol))
-	p.print(".")
+	if parent := p.c.getParentOfSymbol(t.symbol); parent != nil {
+		p.printName(parent)
+		p.print(".")
+	}
 	p.printName(t.symbol)
 }
 
