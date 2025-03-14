@@ -1,0 +1,15 @@
+--- old.checkTypePredicateForRedundantProperties.errors.txt
++++ new.checkTypePredicateForRedundantProperties.errors.txt
+@@= skipped -0, +0 lines =@@
+-checkTypePredicateForRedundantProperties.ts(1,35): error TS2300: Duplicate identifier 'a'.
+ checkTypePredicateForRedundantProperties.ts(1,46): error TS2300: Duplicate identifier 'a'.
+ 
+ 
+-==== checkTypePredicateForRedundantProperties.ts (2 errors) ====
++==== checkTypePredicateForRedundantProperties.ts (1 errors) ====
+     function addProp2(x: any): x is { a: string; a: string; } {
+-                                      ~
+-!!! error TS2300: Duplicate identifier 'a'.
+                                                  ~
+ !!! error TS2300: Duplicate identifier 'a'.
+         return true;

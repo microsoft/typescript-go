@@ -39,7 +39,7 @@ var x = {
 
     a.b,
 >a : Symbol(a, Decl(objectLiteralShorthandPropertiesErrorFromNotUsingIdentifier.ts, 13, 9), Decl(objectLiteralShorthandPropertiesErrorFromNotUsingIdentifier.ts, 14, 8), Decl(objectLiteralShorthandPropertiesErrorFromNotUsingIdentifier.ts, 15, 12))
-> : Symbol(, Decl(objectLiteralShorthandPropertiesErrorFromNotUsingIdentifier.ts, 14, 5))
+> : Symbol((Missing), Decl(objectLiteralShorthandPropertiesErrorFromNotUsingIdentifier.ts, 14, 5))
 
     a["ss"],
 >a : Symbol(a, Decl(objectLiteralShorthandPropertiesErrorFromNotUsingIdentifier.ts, 13, 9), Decl(objectLiteralShorthandPropertiesErrorFromNotUsingIdentifier.ts, 14, 8), Decl(objectLiteralShorthandPropertiesErrorFromNotUsingIdentifier.ts, 15, 12))

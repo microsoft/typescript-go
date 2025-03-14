@@ -38,7 +38,7 @@ func (c *Checker) symbolToString(s *ast.Symbol) string {
 	if s.ValueDeclaration != nil {
 		name := ast.GetNameOfDeclaration(s.ValueDeclaration)
 		if name != nil {
-			return scanner.GetTextOfNode(name)
+			return scanner.DeclarationNameToString(name)
 		}
 	}
 	if len(s.Name) == 0 || s.Name[0] != '\xFE' {

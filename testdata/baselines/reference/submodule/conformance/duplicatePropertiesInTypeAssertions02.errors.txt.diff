@@ -1,0 +1,14 @@
+--- old.duplicatePropertiesInTypeAssertions02.errors.txt
++++ new.duplicatePropertiesInTypeAssertions02.errors.txt
+@@= skipped -0, +0 lines =@@
+-duplicatePropertiesInTypeAssertions02.ts(1,16): error TS2300: Duplicate identifier 'a'.
+ duplicatePropertiesInTypeAssertions02.ts(1,27): error TS2300: Duplicate identifier 'a'.
+ 
+ 
+-==== duplicatePropertiesInTypeAssertions02.ts (2 errors) ====
++==== duplicatePropertiesInTypeAssertions02.ts (1 errors) ====
+     let x = {} as {a: number; a: number};
+-                   ~
+-!!! error TS2300: Duplicate identifier 'a'.
+                               ~
+ !!! error TS2300: Duplicate identifier 'a'.

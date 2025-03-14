@@ -309,6 +309,14 @@ const (
 	DeclarationMeaningPropertyAssignmentOrMethod = DeclarationMeaningPropertyAssignment | DeclarationMeaningMethod
 )
 
+type DeclarationNameKind uint32
+
+const (
+	DeclarationNameKindInstance DeclarationNameKind = iota
+	DeclarationNameKindStatic
+	DeclarationNameKindPrivate
+)
+
 // IntrinsicTypeKind
 
 type IntrinsicTypeKind int32
@@ -2822,29 +2830,48 @@ func (c *Checker) checkTypeLiteral(node *ast.Node) {
 }
 
 func (c *Checker) checkObjectTypeForDuplicateDeclarations(node *ast.Node, checkPrivateNames bool) {
-	var instanceNames map[string]int
-	var staticNames map[string]int
-	var privateNames map[string]int
+	var instanceNames map[string]DeclarationMeaning
+	var staticNames map[string]DeclarationMeaning
+	var privateNames map[string]DeclarationMeaning
 	nodeInAmbientContext := node.Flags&ast.NodeFlagsAmbient != 0
-	checkProperty := func(symbol *ast.Symbol, isStatic bool) {
+	checkProperty := func(location *ast.Node, symbol *ast.Symbol, kind DeclarationNameKind, meaning DeclarationMeaning) {
 		if len(symbol.Declarations) > 1 {
-			var names map[string]int
-			if isStatic {
-				if staticNames == nil {
-					staticNames = make(map[string]int)
-				}
-				names = staticNames
-			} else {
+			var names map[string]DeclarationMeaning
+			switch kind {
+			case DeclarationNameKindInstance:
 				if instanceNames == nil {
-					instanceNames = make(map[string]int)
+					instanceNames = make(map[string]DeclarationMeaning)
 				}
 				names = instanceNames
-			}
-			if state := names[symbol.Name]; state != 2 {
-				if state == 1 {
-					c.reportDuplicateMemberErrors(node, symbol.Name, true, isStatic, diagnostics.Duplicate_identifier_0)
+			case DeclarationNameKindStatic:
+				if staticNames == nil {
+					staticNames = make(map[string]DeclarationMeaning)
 				}
-				names[symbol.Name] = state + 1
+				names = staticNames
+			case DeclarationNameKindPrivate:
+				if privateNames == nil {
+					privateNames = make(map[string]DeclarationMeaning)
+				}
+				names = privateNames
+			}
+			if prev := names[symbol.Name]; prev != 0 {
+				if (prev & DeclarationMeaningPrivateStatic) != (meaning & DeclarationMeaningPrivateStatic) {
+					c.error(location, diagnostics.Duplicate_identifier_0_Static_and_instance_elements_cannot_share_the_same_private_name, c.symbolToString(symbol))
+				} else {
+					if (prev & DeclarationMeaningMethod) != 0 || (meaning & DeclarationMeaningMethod) != 0 {
+						if (prev & DeclarationMeaningMethod) != (meaning & DeclarationMeaningMethod) {
+							c.error(location, diagnostics.Duplicate_identifier_0, c.symbolToString(symbol));
+						}
+						// If this is a method/method duplication is might be an overload, so this will be handled when overloads are considered
+					} else if (prev & meaning & ^DeclarationMeaningPrivateStatic) != 0 {
+						c.error(location, diagnostics.Duplicate_identifier_0, c.symbolToString(symbol));
+					} else {
+						names[symbol.Name] = prev | meaning
+					}
+
+				}
+			} else {
+				names[symbol.Name] = meaning
 			}
 		}
 	}
@@ -2852,51 +2879,40 @@ func (c *Checker) checkObjectTypeForDuplicateDeclarations(node *ast.Node, checkP
 		if ast.IsConstructorDeclaration(member) {
 			for _, param := range member.Parameters() {
 				if ast.IsParameterPropertyDeclaration(param, member) && !ast.IsBindingPattern(param.Name()) {
-					checkProperty(c.getSymbolOfDeclaration(param), false /*isStatic*/)
+					checkProperty(param.Name(), c.getSymbolOfDeclaration(param), DeclarationNameKindInstance, DeclarationMeaningGetOrSetAccessor)
 				}
 			}
 		} else {
 			symbol := c.getSymbolOfDeclaration(member)
+			memberName := member.Name()
+			if (memberName == nil) {
+				continue
+			}
 			isStatic := ast.HasStaticModifier(member)
+			isPrivate := ast.IsPrivateIdentifier(memberName)
+			privateStaticFlags := core.IfElse(isPrivate && isStatic, DeclarationMeaningPrivateStatic, 0)
+			if isPrivate && !checkPrivateNames {
+				continue
+			}
+			declarationNameKind := core.IfElse(isPrivate, DeclarationNameKindPrivate, core.IfElse(isStatic, DeclarationNameKindStatic, DeclarationNameKindInstance))
 			// In non-ambient contexts, check that static members are not named 'prototype'.
 			if !nodeInAmbientContext && isStatic && symbol != nil && symbol.Name == "prototype" {
-				c.error(member.Name(), diagnostics.Static_property_0_conflicts_with_built_in_property_Function_0_of_constructor_function_1, symbol.Name, c.symbolToString(c.getSymbolOfDeclaration(node)))
+				c.error(memberName, diagnostics.Static_property_0_conflicts_with_built_in_property_Function_0_of_constructor_function_1, symbol.Name, c.symbolToString(c.getSymbolOfDeclaration(node)))
 			}
-			// When a property has multiple declarations, check that only one of those declarations is in this object
-			// type declaration (multiple merged object types are permitted to each declare the same property).
-			if ast.IsPropertyDeclaration(member) || ast.IsPropertySignatureDeclaration(member) {
-				checkProperty(symbol, isStatic)
+			// When a member has multiple declarations, check that only one of those declarations is in this object
+			// type declaration (multiple merged object types are permitted to each declare the same member).
+			switch member.Kind {
+			case ast.KindGetAccessor:
+				checkProperty(memberName, symbol, declarationNameKind, DeclarationMeaningGetAccessor | privateStaticFlags);
+			case ast.KindSetAccessor:
+				checkProperty(memberName, symbol, declarationNameKind, DeclarationMeaningSetAccessor | privateStaticFlags);
+			case ast.KindPropertyDeclaration:
+			fallthrough
+			case ast.KindPropertySignature:
+				checkProperty(memberName, symbol, declarationNameKind, DeclarationMeaningGetOrSetAccessor | privateStaticFlags);
+			case ast.KindMethodDeclaration:
+				checkProperty(memberName, symbol, declarationNameKind, DeclarationMeaningMethod | privateStaticFlags);
 			}
-			// Check that each private identifier is used only for instance members or only for static members. It is an
-			// error for an instance and a static member to have the same private identifier.
-			if checkPrivateNames && member.Name() != nil && ast.IsPrivateIdentifier(member.Name()) {
-				if flags := privateNames[symbol.Name]; flags != 3 {
-					flags |= core.IfElse(ast.IsStatic(member), 2, 1)
-					if privateNames == nil {
-						privateNames = make(map[string]int)
-					}
-					privateNames[symbol.Name] = flags
-					if flags == 3 {
-						c.reportDuplicateMemberErrors(node, symbol.Name, false, false, diagnostics.Duplicate_identifier_0_Static_and_instance_elements_cannot_share_the_same_private_name)
-					}
-				}
-			}
-		}
-	}
-}
-
-func (c *Checker) reportDuplicateMemberErrors(node *ast.Node, name string, checkStatic bool, isStatic bool, message *diagnostics.Message) {
-	for _, member := range node.Members() {
-		if ast.IsConstructorDeclaration(member) {
-			for _, param := range member.Parameters() {
-				if ast.IsParameterPropertyDeclaration(param, member) && !ast.IsBindingPattern(param.Name()) {
-					if symbol := c.getSymbolOfDeclaration(param); symbol.Name == name {
-						c.error(param.Name(), message, c.symbolToString(symbol))
-					}
-				}
-			}
-		} else if symbol := c.getSymbolOfDeclaration(member); symbol != nil && symbol.Name == name && (!checkStatic || isStatic == ast.IsStatic(member)) {
-			c.error(member.Name(), message, c.symbolToString(symbol))
 		}
 	}
 }
@@ -14502,7 +14518,7 @@ func (c *Checker) lateBindMember(parent *ast.Symbol, earlySymbols ast.SymbolTabl
 			}
 			// Report an error if there's a symbol declaration with the same name and conflicting flags.
 			earlySymbol := earlySymbols[memberName]
-			// Duplicate property declarations of classes are checked in checkClassForDuplicateDeclarations.
+			// Duplicate property declarations of classes are checked in checkObjectTypeForDuplicateDeclarations.
 			if parent.Flags&ast.SymbolFlagsClass == 0 && lateSymbol.Flags&getExcludedSymbolFlags(symbolFlags) != 0 {
 				// If we have an existing early-bound member, combine its declarations so that we can
 				// report an error at each declaration.
