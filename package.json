@@ -38,16 +38,14 @@
         "build": "hereby build",
         "build:watch": "hereby build:watch",
         "test": "hereby test",
-        "extension:build": "npm run -w typescript-lsp build",
-        "extension:watch": "npm run -w typescript-lsp watch"
+        "api:build": "pnpm --filter ./_packages/api run build",
+        "extension:build": "pnpm --filter ./_extension build",
+        "extension:watch": "pnpm --filter ./_extension watch",
+        "node": "node --no-warnings --conditions @typescript/source"
     },
-    "workspaces": [
-        "./_api",
-        "./_extension"
-    ],
-    "packageManager": "npm@8.19.4",
+    "packageManager": "pnpm@9.15.5",
     "volta": {
         "node": "20.5.1",
-        "npm": "8.19.4"
+        "pnpm": "*"
     }
 }

@@ -1,0 +1,3 @@
+packages:
+  - '_extension'
+  - '_packages/*'

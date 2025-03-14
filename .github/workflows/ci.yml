@@ -23,13 +23,14 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
+      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
       - uses: ./.github/actions/setup-go
         with:
           cache-name: build
 
-      - run: npm ci
+      - run: pnpm install
 
-      - run: npx hereby build
+      - run: pnpm hereby build
 
   test:
     strategy:
@@ -66,11 +67,12 @@ jobs:
       - uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
         with:
           node-version: 'lts/*'
+      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
       - uses: ./.github/actions/setup-go
         with:
           cache-name: test
 
-      - run: npm ci
+      - run: pnpm install
 
       - run: go install gotest.tools/gotestsum@latest
         # Installing gotestsum is super slow on Windows.
@@ -79,7 +81,7 @@ jobs:
 
       - name: Tests
         id: test
-        run: npx hereby test:all ${RACE_FLAG:+"$RACE_FLAG"} ${NOEMBED_FLAG:+"$NOEMBED_FLAG"} ${CONCURRENTTESTPROGRAM_FLAG:+"$CONCURRENTTESTPROGRAM_FLAG"}
+        run: pnpm hereby test:all ${RACE_FLAG:+"$RACE_FLAG"} ${NOEMBED_FLAG:+"$NOEMBED_FLAG"} ${CONCURRENTTESTPROGRAM_FLAG:+"$CONCURRENTTESTPROGRAM_FLAG"}
         env:
           RACE_FLAG: ${{ (matrix.race && '--race') || '' }}
           NOEMBED_FLAG: ${{ (matrix.noembed && '--noembed') || '' }}
@@ -91,7 +93,7 @@ jobs:
       - name: Print baseline diff on failure
         if: ${{ failure() && steps.test.conclusion == 'failure' }}
         run: |
-          npx hereby baseline-accept
+          pnpm hereby baseline-accept
           git add testdata/baselines/reference
           git diff --staged --exit-code
       - uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # v4.6.1
@@ -105,28 +107,30 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
+      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
       - uses: ./.github/actions/setup-go
         with:
           cache-name: lint
 
-      - run: npm ci
+      - run: pnpm install
 
-      - run: npx hereby install-tools
-      - run: npx hereby lint
+      - run: pnpm hereby install-tools
+      - run: pnpm hereby lint
 
   format:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
+      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
       - uses: ./.github/actions/setup-go
         with:
           cache-name: format
 
-      - run: npm ci
+      - run: pnpm install
 
-      - run: npx hereby install-tools
-      - run: npx hereby check:format
+      - run: pnpm hereby install-tools
+      - run: pnpm hereby check:format
 
   generate:
     runs-on: ubuntu-latest
@@ -135,13 +139,14 @@ jobs:
         with:
           submodules: true
       - uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
+      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
       - uses: ./.github/actions/setup-go
         with:
           cache-name: generate
 
-      - run: npm ci
+      - run: pnpm install
 
-      - run: npx hereby generate
+      - run: pnpm hereby generate
 
       - run: git add .
       - run: git diff --staged --exit-code --stat
@@ -167,13 +172,14 @@ jobs:
         with:
           submodules: true
       - uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
+      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
       - uses: ./.github/actions/setup-go
         with:
           cache-name: smoke
 
-      - run: npm ci
+      - run: pnpm install
 
-      - run: npx hereby build --race
+      - run: pnpm hereby build --race
 
       - run: npm ci && npx hereby generate-diagnostics
         working-directory: ./_submodules/TypeScript
