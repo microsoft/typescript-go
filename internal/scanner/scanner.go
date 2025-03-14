@@ -1660,20 +1660,12 @@ func (s *Scanner) scanNumber() ast.Kind {
 				s.tokenFlags |= ast.TokenFlagsContainsLeadingZero
 				fixedPart = digits
 			} else {
+				s.tokenValue = jsnum.FromString(digits).String()
 				s.tokenFlags |= ast.TokenFlagsOctal
-				s.tokenValue = "0o" + digits
 				withMinus := s.token == ast.KindMinusToken
-				literal := "0o"
-
-				if len(digits) > 1 && digits[0] == '0' {
-					literal += digits[1:]
-				} else {
-					literal += digits
-				}
-
+				literal := core.IfElse(withMinus, "-", "") + "0o" + s.tokenValue
 				if withMinus {
 					start--
-					literal = "-" + literal
 				}
 				s.errorAt(diagnostics.Octal_literals_are_not_allowed_Use_the_syntax_0, start, s.pos-start, literal)
 				return ast.KindNumericLiteral
