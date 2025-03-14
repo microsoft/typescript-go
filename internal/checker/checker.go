@@ -2859,17 +2859,16 @@ func (c *Checker) checkObjectTypeForDuplicateDeclarations(node *ast.Node, checkP
 				if (prev & DeclarationMeaningPrivateStatic) != (meaning & DeclarationMeaningPrivateStatic) {
 					c.error(location, diagnostics.Duplicate_identifier_0_Static_and_instance_elements_cannot_share_the_same_private_name, c.symbolToString(symbol))
 				} else {
-					if (prev & DeclarationMeaningMethod) != 0 || (meaning & DeclarationMeaningMethod) != 0 {
+					if (prev&DeclarationMeaningMethod) != 0 || (meaning&DeclarationMeaningMethod) != 0 {
 						if (prev & DeclarationMeaningMethod) != (meaning & DeclarationMeaningMethod) {
-							c.error(location, diagnostics.Duplicate_identifier_0, c.symbolToString(symbol));
+							c.error(location, diagnostics.Duplicate_identifier_0, c.symbolToString(symbol))
 						}
 						// If this is a method/method duplication is might be an overload, so this will be handled when overloads are considered
 					} else if (prev & meaning & ^DeclarationMeaningPrivateStatic) != 0 {
-						c.error(location, diagnostics.Duplicate_identifier_0, c.symbolToString(symbol));
+						c.error(location, diagnostics.Duplicate_identifier_0, c.symbolToString(symbol))
 					} else {
 						names[symbol.Name] = prev | meaning
 					}
-
 				}
 			} else {
 				names[symbol.Name] = meaning
@@ -2886,7 +2885,7 @@ func (c *Checker) checkObjectTypeForDuplicateDeclarations(node *ast.Node, checkP
 		} else {
 			symbol := c.getSymbolOfDeclaration(member)
 			memberName := member.Name()
-			if (memberName == nil) {
+			if memberName == nil {
 				continue
 			}
 			isStatic := ast.HasStaticModifier(member)
@@ -2904,15 +2903,15 @@ func (c *Checker) checkObjectTypeForDuplicateDeclarations(node *ast.Node, checkP
 			// type declaration (multiple merged object types are permitted to each declare the same member).
 			switch member.Kind {
 			case ast.KindGetAccessor:
-				checkProperty(memberName, symbol, declarationNameKind, DeclarationMeaningGetAccessor | privateStaticFlags);
+				checkProperty(memberName, symbol, declarationNameKind, DeclarationMeaningGetAccessor|privateStaticFlags)
 			case ast.KindSetAccessor:
-				checkProperty(memberName, symbol, declarationNameKind, DeclarationMeaningSetAccessor | privateStaticFlags);
+				checkProperty(memberName, symbol, declarationNameKind, DeclarationMeaningSetAccessor|privateStaticFlags)
 			case ast.KindPropertyDeclaration:
-			fallthrough
+				fallthrough
 			case ast.KindPropertySignature:
-				checkProperty(memberName, symbol, declarationNameKind, DeclarationMeaningGetOrSetAccessor | privateStaticFlags);
+				checkProperty(memberName, symbol, declarationNameKind, DeclarationMeaningGetOrSetAccessor|privateStaticFlags)
 			case ast.KindMethodDeclaration:
-				checkProperty(memberName, symbol, declarationNameKind, DeclarationMeaningMethod | privateStaticFlags);
+				checkProperty(memberName, symbol, declarationNameKind, DeclarationMeaningMethod|privateStaticFlags)
 			}
 		}
 	}
