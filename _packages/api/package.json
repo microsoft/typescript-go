@@ -1,0 +1,38 @@
+{
+  "private": true,
+  "name": "@typescript/api",
+  "version": "1.0.0",
+  "type": "module",
+  "imports": {
+    "#symbolFlags": {
+      "@typescript/source": {
+        "types": "./src/base/symbolFlags.enum.ts",
+        "default": "./src/base/symbolFlags.ts"
+      },
+      "types": "./dist/base/symbolFlags.enum.d.ts",
+      "default": "./dist/base/symbolFlags.js"
+    }
+  },
+  "exports": {
+    "./async": {
+      "@typescript/source": "./src/async/api.ts",
+      "default": "./dist/async/api.js"
+    },
+    "./sync": {
+      "@typescript/source": "./src/sync/api.ts",
+      "default": "./dist/sync/api.js"
+    },
+    "./base/*": {
+      "@typescript/source": "./src/base/*",
+      "default": "./dist/base/*"
+    }
+  },
+  "dependencies": {
+    "@typescript/ast": "workspace:*",
+    "json-rpc-2.0": "^1.7.0",
+    "libsyncrpc": "link:../../../libsyncrpc"
+  },
+  "scripts": {
+    "build": "tsc -b"
+  }
+}
