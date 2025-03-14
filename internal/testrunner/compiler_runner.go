@@ -56,8 +56,6 @@ type CompilerBaselineRunner struct {
 	testSuitName string
 }
 
-var _ Runner = (*CompilerBaselineRunner)(nil)
-
 func NewCompilerBaselineRunner(testType CompilerTestType, isSubmodule bool) *CompilerBaselineRunner {
 	testSuitName := testType.String()
 	var basePath string
