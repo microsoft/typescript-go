@@ -10,13 +10,13 @@ import (
 )
 
 // Runs the new compiler tests and produces baselines (e.g. `test1.symbols`).
-func TestLocal(t *testing.T) { runTests(t, false) } //nolint:paralleltest
+func TestLocal(t *testing.T) { runCompilerTests(t, false) } //nolint:paralleltest
 
 // Runs the old compiler tests, and produces new baselines (e.g. `test1.symbols`)
 // and a diff between the new and old baselines (e.g. `test1.symbols.diff`).
-func TestSubmodule(t *testing.T) { runTests(t, true) } //nolint:paralleltest
+func TestSubmodule(t *testing.T) { runCompilerTests(t, true) } //nolint:paralleltest
 
-func runTests(t *testing.T, isSubmodule bool) {
+func runCompilerTests(t *testing.T, isSubmodule bool) {
 	t.Parallel()
 
 	if isSubmodule {
