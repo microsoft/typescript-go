@@ -353,17 +353,17 @@ func (c *Checker) isClassInstanceSide(t *Type) bool {
 }
 
 func (p *Printer) printAnonymousType(t *Type) {
-	// !!! logic partially taken from createAnonymousTypeNode
-	if symbol := t.symbol; symbol != nil {
-		if symbol.Flags&ast.SymbolFlagsClass != 0 &&
-			p.c.getBaseTypeVariableOfClass(symbol) != nil &&
-			!(symbol.ValueDeclaration != nil && ast.IsClassLike(symbol.ValueDeclaration) && p.flags&TypeFormatFlagsWriteClassExpressionAsTypeLiteral != 0 && !ast.IsClassDeclaration(symbol.ValueDeclaration)) ||
-			symbol.Flags&(ast.SymbolFlagsEnum|ast.SymbolFlagsValueModule) != 0 {
-			if name := symbol.Name; scanner.IsValidIdentifier(name, p.c.languageVersion) {
-				if !p.c.isClassInstanceSide(t) {
-					p.print("typeof ")
+	if t.symbol != nil && len(t.symbol.Name) != 0 {
+		if t.symbol.Flags&(ast.SymbolFlagsClass|ast.SymbolFlagsEnum|ast.SymbolFlagsValueModule) != 0 {
+			if t == p.c.getTypeOfSymbol(t.symbol) {
+				p.print("typeof ")
+				if t.symbol.Flags&ast.SymbolFlagsValueModule != 0 && t.symbol.Name[0] == '"' {
+					p.print("import(")
+					p.print(t.symbol.Name)
+					p.print(")")
+				} else {
+					p.printName(t.symbol)
 				}
-				p.print(name)
 				return
 			}
 		}

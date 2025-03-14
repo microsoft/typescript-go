@@ -9,7 +9,7 @@ forStatementsMultipleInvalidDecl.ts(43,10): error TS2403: Subsequent variable de
 forStatementsMultipleInvalidDecl.ts(46,10): error TS2403: Subsequent variable declarations must have the same type.  Variable 'arr' must be of type 'string[]', but here has type 'number[]'.
 forStatementsMultipleInvalidDecl.ts(47,10): error TS2403: Subsequent variable declarations must have the same type.  Variable 'arr' must be of type 'string[]', but here has type '(C | D<string>)[]'.
 forStatementsMultipleInvalidDecl.ts(50,10): error TS2403: Subsequent variable declarations must have the same type.  Variable 'arr2' must be of type 'D<string>[]', but here has type 'D<number>[]'.
-forStatementsMultipleInvalidDecl.ts(53,10): error TS2403: Subsequent variable declarations must have the same type.  Variable 'm' must be of type 'typeof M', but here has type '{ new (): A; prototype: A; }'.
+forStatementsMultipleInvalidDecl.ts(53,10): error TS2403: Subsequent variable declarations must have the same type.  Variable 'm' must be of type 'typeof M', but here has type 'typeof A'.
 
 
 ==== forStatementsMultipleInvalidDecl.ts (12 errors) ====
@@ -100,5 +100,5 @@ forStatementsMultipleInvalidDecl.ts(53,10): error TS2403: Subsequent variable de
     for(var m: typeof M;;){}
     for( var m = M.A;;){}
              ~
-!!! error TS2403: Subsequent variable declarations must have the same type.  Variable 'm' must be of type 'typeof M', but here has type '{ new (): A; prototype: A; }'.
+!!! error TS2403: Subsequent variable declarations must have the same type.  Variable 'm' must be of type 'typeof M', but here has type 'typeof A'.
 !!! related TS6203 forStatementsMultipleInvalidDecl.ts:52:9: 'm' was also declared here.

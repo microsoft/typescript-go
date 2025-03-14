@@ -9,7 +9,7 @@ invalidMultipleVariableDeclarations.ts(43,5): error TS2403: Subsequent variable 
 invalidMultipleVariableDeclarations.ts(46,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'arr' must be of type 'string[]', but here has type 'number[]'.
 invalidMultipleVariableDeclarations.ts(47,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'arr' must be of type 'string[]', but here has type '(C | D<string>)[]'.
 invalidMultipleVariableDeclarations.ts(50,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'arr2' must be of type 'D<string>[]', but here has type 'D<number>[]'.
-invalidMultipleVariableDeclarations.ts(53,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'm' must be of type 'typeof M', but here has type '{ new (): A; prototype: A; }'.
+invalidMultipleVariableDeclarations.ts(53,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'm' must be of type 'typeof M', but here has type 'typeof A'.
 
 
 ==== invalidMultipleVariableDeclarations.ts (12 errors) ====
@@ -100,5 +100,5 @@ invalidMultipleVariableDeclarations.ts(53,5): error TS2403: Subsequent variable 
     var m: typeof M;
     var m = M.A;
         ~
-!!! error TS2403: Subsequent variable declarations must have the same type.  Variable 'm' must be of type 'typeof M', but here has type '{ new (): A; prototype: A; }'.
+!!! error TS2403: Subsequent variable declarations must have the same type.  Variable 'm' must be of type 'typeof M', but here has type 'typeof A'.
 !!! related TS6203 invalidMultipleVariableDeclarations.ts:52:5: 'm' was also declared here.
