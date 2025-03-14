@@ -173,10 +173,14 @@ func (s *Server) enableCallback(callback string) error {
 
 func (s *Server) handleRequest(method string, payload []byte) ([]byte, error) {
 	s.requestId++
-	if method == "configure" {
+	switch method {
+	case "configure":
 		return nil, s.handleConfigure(payload)
+	case "echo":
+		return payload, nil
+	default:
+		return s.api.HandleRequest(s.requestId, method, payload)
 	}
-	return s.api.HandleRequest(s.requestId, method, payload)
 }
 
 func (s *Server) handleConfigure(payload []byte) error {
@@ -189,11 +193,7 @@ func (s *Server) handleConfigure(payload []byte) error {
 			return err
 		}
 	}
-	if params.LogFile != "" {
-		s.logger.SetFile(params.LogFile)
-	} else {
-		s.logger.SetFile("")
-	}
+	s.logger.SetFile(params.LogFile)
 	return nil
 }
 

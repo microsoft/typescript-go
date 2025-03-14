@@ -55,15 +55,15 @@ type LoadProjectParams struct {
 	ConfigFileName string `json:"configFileName"`
 }
 
-type ProjectData struct {
+type ProjectResponse struct {
 	Id              int                   `json:"id"`
 	ConfigFileName  string                `json:"configFileName"`
 	RootFiles       []string              `json:"rootFiles"`
 	CompilerOptions *core.CompilerOptions `json:"compilerOptions"`
 }
 
-func NewProjectData(project *project.Project, id int) *ProjectData {
-	return &ProjectData{
+func NewProjectResponse(project *project.Project, id int) *ProjectResponse {
+	return &ProjectResponse{
 		Id:              id,
 		ConfigFileName:  project.Name(),
 		RootFiles:       project.GetRootFileNames(),
@@ -77,15 +77,15 @@ type GetSymbolAtPositionParams struct {
 	Position uint32 `json:"position"`
 }
 
-type SymbolData struct {
+type SymbolResponse struct {
 	Id         Handle[ast.Symbol] `json:"id"`
 	Name       string             `json:"name"`
 	Flags      uint32             `json:"flags"`
 	CheckFlags uint32             `json:"checkFlags"`
 }
 
-func NewSymbolData(symbol *ast.Symbol, projectVersion int) *SymbolData {
-	return &SymbolData{
+func NewSymbolResponse(symbol *ast.Symbol, projectVersion int) *SymbolResponse {
+	return &SymbolResponse{
 		Id:         NewHandle(symbol),
 		Name:       symbol.Name,
 		Flags:      uint32(symbol.Flags),
@@ -98,13 +98,13 @@ type GetTypeOfSymbolParams struct {
 	Symbol  Handle[ast.Symbol] `json:"symbol"`
 }
 
-type TypeData struct {
+type TypeResponse struct {
 	Id    Handle[checker.Type] `json:"id"`
 	Flags uint32               `json:"flags"`
 }
 
-func NewTypeData(t *checker.Type) *TypeData {
-	return &TypeData{
+func NewTypeData(t *checker.Type) *TypeResponse {
+	return &TypeResponse{
 		Id:    NewHandle(t),
 		Flags: uint32(t.Flags()),
 	}

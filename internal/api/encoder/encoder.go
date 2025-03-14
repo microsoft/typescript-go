@@ -1,4 +1,4 @@
-package api
+package encoder
 
 import (
 	"encoding/binary"
@@ -9,30 +9,34 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 )
 
-// EncodedNodeLength is the number of int32 values that represent a single node in the encoded format.
 const (
-	EncodedKind = iota
-	EncodedPos
-	EncodedEnd
-	EncodedNext
-	EncodedParent
-	EncodedData
-	EncodedNodeLength
+	offsetKind = iota
+	offsetPos
+	offsetEnd
+	offsetNext
+	offsetParent
+	offsetData
+	// encodedNodeLength is the number of int32 values that represent a single node in the encoded format.
+	encodedNodeLength
 )
 
 const (
-	NodeDataTypeChildren int32 = iota
-	NodeDataTypeStringIndex
-	NodeDataTypeExtendedDataIndex
+	nodeDataTypeChildren uint32 = iota
+	nodeDataTypeStringIndex
+	nodeDataTypeExtendedDataIndex
 )
 
 const (
-	EncodedHeaderLength = 6 * 4
+	syntaxKindNodeList uint32 = 1<<32 - 1
+)
+
+const (
+	encodedHeaderLength = 6 * 4
 )
 
 type stringTable struct {
 	data    *strings.Builder
-	offsets []int32
+	offsets []uint32
 }
 
 func newStringTable(stringLength int, stringCount int) *stringTable {
@@ -40,20 +44,20 @@ func newStringTable(stringLength int, stringCount int) *stringTable {
 	builder.Grow(stringLength)
 	return &stringTable{
 		data:    builder,
-		offsets: make([]int32, 0, stringCount),
+		offsets: make([]uint32, 0, stringCount),
 	}
 }
 
-func (t *stringTable) add(s string) int32 {
-	offset := int32(t.data.Len())
+func (t *stringTable) add(s string) uint32 {
+	offset := uint32(t.data.Len())
 	t.offsets = append(t.offsets, offset)
 	t.data.WriteString(s)
-	return int32(len(t.offsets) - 1)
+	return uint32(len(t.offsets) - 1)
 }
 
 func (t *stringTable) encode() (result []byte, err error) {
 	result = make([]byte, 0, len(t.offsets)*4+t.data.Len())
-	if result, err = appendInt32s(result, t.offsets...); err != nil {
+	if result, err = appendUint32s(result, t.offsets...); err != nil {
 		return nil, err
 	}
 	result = append(result, t.data.String()...)
@@ -70,10 +74,10 @@ func (t *stringTable) encode() (result []byte, err error) {
 // The first encoded node is a zero element that is not part of the source file.
 func EncodeSourceFile(sourceFile *ast.SourceFile) ([]byte, error) {
 	var err error
-	var parentIndex, nodeCount, prevIndex int32
+	var parentIndex, nodeCount, prevIndex uint32
 
 	strs := newStringTable(sourceFile.TextLength, sourceFile.TextCount)
-	nodes := make([]byte, 0, (sourceFile.NodeCount+1)*EncodedNodeLength*4)
+	nodes := make([]byte, 0, (sourceFile.NodeCount+1)*encodedNodeLength*4)
 
 	visitor := &ast.NodeVisitor{
 		Hooks: ast.NodeVisitorHooks{
@@ -86,13 +90,13 @@ func EncodeSourceFile(sourceFile *ast.SourceFile) ([]byte, error) {
 				if prevIndex != 0 {
 					// this is the next sibling of `prevNode`
 					b0, b1, b2, b3 := uint8(nodeCount), uint8(nodeCount>>8), uint8(nodeCount>>16), uint8(nodeCount>>24)
-					nodes[prevIndex*EncodedNodeLength*4+EncodedNext*4] = b0
-					nodes[prevIndex*EncodedNodeLength*4+EncodedNext*4+1] = b1
-					nodes[prevIndex*EncodedNodeLength*4+EncodedNext*4+2] = b2
-					nodes[prevIndex*EncodedNodeLength*4+EncodedNext*4+3] = b3
+					nodes[prevIndex*encodedNodeLength*4+offsetNext*4] = b0
+					nodes[prevIndex*encodedNodeLength*4+offsetNext*4+1] = b1
+					nodes[prevIndex*encodedNodeLength*4+offsetNext*4+2] = b2
+					nodes[prevIndex*encodedNodeLength*4+offsetNext*4+3] = b3
 				}
 
-				if nodes, err = appendInt32s(nodes, int32(-1), int32(nodeList.Pos()), int32(nodeList.End()), 0, parentIndex, int32(len(nodeList.Nodes))); err != nil {
+				if nodes, err = appendUint32s(nodes, syntaxKindNodeList, uint32(nodeList.Pos()), uint32(nodeList.End()), 0, parentIndex, uint32(len(nodeList.Nodes))); err != nil {
 					return nil
 				}
 
@@ -120,13 +124,13 @@ func EncodeSourceFile(sourceFile *ast.SourceFile) ([]byte, error) {
 		if prevIndex != 0 {
 			// this is the next sibling of `prevNode`
 			b0, b1, b2, b3 := uint8(nodeCount), uint8(nodeCount>>8), uint8(nodeCount>>16), uint8(nodeCount>>24)
-			nodes[prevIndex*EncodedNodeLength*4+EncodedNext*4] = b0
-			nodes[prevIndex*EncodedNodeLength*4+EncodedNext*4+1] = b1
-			nodes[prevIndex*EncodedNodeLength*4+EncodedNext*4+2] = b2
-			nodes[prevIndex*EncodedNodeLength*4+EncodedNext*4+3] = b3
+			nodes[prevIndex*encodedNodeLength*4+offsetNext*4] = b0
+			nodes[prevIndex*encodedNodeLength*4+offsetNext*4+1] = b1
+			nodes[prevIndex*encodedNodeLength*4+offsetNext*4+2] = b2
+			nodes[prevIndex*encodedNodeLength*4+offsetNext*4+3] = b3
 		}
 
-		if nodes, err = appendInt32s(nodes, int32(node.Kind), int32(node.Pos()), int32(node.End()), 0, parentIndex, getNodeData(node, strs)); err != nil {
+		if nodes, err = appendUint32s(nodes, uint32(node.Kind), uint32(node.Pos()), uint32(node.End()), 0, parentIndex, getNodeData(node, strs)); err != nil {
 			visitor.Visit = nil
 			return nil
 		}
@@ -143,13 +147,13 @@ func EncodeSourceFile(sourceFile *ast.SourceFile) ([]byte, error) {
 	}
 
 	// kind, pos, end, next, parent
-	if nodes, err = appendInt32s(nodes, 0, 0, 0, 0, 0, 0); err != nil {
+	if nodes, err = appendUint32s(nodes, 0, 0, 0, 0, 0, 0); err != nil {
 		return nil, err
 	}
 
 	nodeCount++
 	parentIndex++
-	if nodes, err = appendInt32s(nodes, int32(sourceFile.Kind), int32(sourceFile.Pos()), int32(sourceFile.End()), 0, 0, 0); err != nil {
+	if nodes, err = appendUint32s(nodes, uint32(sourceFile.Kind), uint32(sourceFile.Pos()), uint32(sourceFile.End()), 0, 0, 0); err != nil {
 		return nil, err
 	}
 
@@ -158,24 +162,24 @@ func EncodeSourceFile(sourceFile *ast.SourceFile) ([]byte, error) {
 		return nil, err
 	}
 
-	headerLength := EncodedHeaderLength
+	headerLength := encodedHeaderLength
 	offsetStringTableOffsets := headerLength
 	offsetStringTableData := headerLength + len(strs.offsets)*4
 	offsetNodes := offsetStringTableData + strs.data.Len()
 	offsetExtendedDataOffsets := 0
 	offsetExtendedDataData := 0
 
-	header := []int32{
+	header := []uint32{
 		0,
-		int32(offsetStringTableOffsets),
-		int32(offsetStringTableData),
-		int32(offsetExtendedDataOffsets),
-		int32(offsetExtendedDataData),
-		int32(offsetNodes),
+		uint32(offsetStringTableOffsets),
+		uint32(offsetStringTableData),
+		uint32(offsetExtendedDataOffsets),
+		uint32(offsetExtendedDataData),
+		uint32(offsetNodes),
 	}
 
 	var headerBytes, strsBytes []byte
-	if headerBytes, err = appendInt32s(nil, header...); err != nil {
+	if headerBytes, err = appendUint32s(nil, header...); err != nil {
 		return nil, err
 	}
 	if strsBytes, err = strs.encode(); err != nil {
@@ -189,7 +193,7 @@ func EncodeSourceFile(sourceFile *ast.SourceFile) ([]byte, error) {
 	), nil
 }
 
-func appendInt32s(buf []byte, values ...int32) ([]byte, error) {
+func appendUint32s(buf []byte, values ...uint32) ([]byte, error) {
 	for _, value := range values {
 		var err error
 		if buf, err = binary.Append(buf, binary.LittleEndian, value); err != nil {
@@ -211,42 +215,42 @@ func FormatEncodedSourceFile(encoded []byte) string {
 		if parentIndex == 0 {
 			return ""
 		}
-		return "  " + getIndent(readInt32(encoded, int(offsetNodes)+int(parentIndex)*EncodedNodeLength*4+EncodedParent*4))
+		return "  " + getIndent(readInt32(encoded, int(offsetNodes)+int(parentIndex)*encodedNodeLength*4+offsetParent*4))
 	}
 	j := 1
-	for i := int(offsetNodes) + EncodedNodeLength*4; i < len(encoded); i += EncodedNodeLength * 4 {
-		kind := readInt32(encoded, i+EncodedKind*4)
-		pos := readInt32(encoded, i+EncodedPos*4)
-		end := readInt32(encoded, i+EncodedEnd*4)
-		parentIndex := readInt32(encoded, i+EncodedParent*4)
+	for i := int(offsetNodes) + encodedNodeLength*4; i < len(encoded); i += encodedNodeLength * 4 {
+		kind := readInt32(encoded, i+offsetKind*4)
+		pos := readInt32(encoded, i+offsetPos*4)
+		end := readInt32(encoded, i+offsetEnd*4)
+		parentIndex := readInt32(encoded, i+offsetParent*4)
 		result.WriteString(getIndent(parentIndex))
 		if kind == -1 {
 			result.WriteString("NodeList")
 		} else {
 			result.WriteString(ast.Kind(kind).String())
 		}
-		fmt.Fprintf(&result, " [%d, %d), i=%d, next=%d", pos, end, j, encoded[i+EncodedNext*4])
+		fmt.Fprintf(&result, " [%d, %d), i=%d, next=%d", pos, end, j, encoded[i+offsetNext*4])
 		result.WriteString("\n")
 		j++
 	}
 	return result.String()
 }
 
-func getNodeData(node *ast.Node, strs *stringTable) int32 {
+func getNodeData(node *ast.Node, strs *stringTable) uint32 {
 	t := getNodeDataType(node)
 	switch t {
-	case NodeDataTypeChildren:
-		return t | getNodeDefinedData(node) | int32(getChildrenPropertyMask(node))
-	case NodeDataTypeStringIndex:
+	case nodeDataTypeChildren:
+		return t | getNodeDefinedData(node) | uint32(getChildrenPropertyMask(node))
+	case nodeDataTypeStringIndex:
 		return t | getNodeDefinedData(node) | recordNodeStrings(node, strs)
-	case NodeDataTypeExtendedDataIndex:
+	case nodeDataTypeExtendedDataIndex:
 		return t | getNodeDefinedData(node) /* | TODO */
 	default:
 		panic("unreachable")
 	}
 }
 
-func getNodeDataType(node *ast.Node) int32 {
+func getNodeDataType(node *ast.Node) uint32 {
 	switch node.Kind {
 	case ast.KindJsxText,
 		ast.KindIdentifier,
@@ -257,13 +261,13 @@ func getNodeDataType(node *ast.Node) int32 {
 		ast.KindRegularExpressionLiteral,
 		ast.KindNoSubstitutionTemplateLiteral,
 		ast.KindJSDocText:
-		return NodeDataTypeStringIndex
+		return nodeDataTypeStringIndex
 	case ast.KindTemplateHead,
 		ast.KindTemplateMiddle,
 		ast.KindTemplateTail:
-		return NodeDataTypeExtendedDataIndex
+		return nodeDataTypeExtendedDataIndex
 	default:
-		return NodeDataTypeChildren
+		return nodeDataTypeChildren
 	}
 }
 
@@ -598,61 +602,61 @@ func getChildrenPropertyMask(node *ast.Node) uint8 {
 	}
 }
 
-func getNodeDefinedData(node *ast.Node) int32 {
+func getNodeDefinedData(node *ast.Node) uint32 {
 	switch node.Kind {
 	case ast.KindJSDocTypeLiteral:
 		n := node.AsJSDocTypeLiteral()
-		return int32(boolToByte(n.IsArrayType)) << 24
+		return uint32(boolToByte(n.IsArrayType)) << 24
 	case ast.KindImportSpecifier:
 		n := node.AsImportSpecifier()
-		return int32(boolToByte(n.IsTypeOnly)) << 24
+		return uint32(boolToByte(n.IsTypeOnly)) << 24
 	case ast.KindImportClause:
 		n := node.AsImportClause()
-		return int32(boolToByte(n.IsTypeOnly)) << 24
+		return uint32(boolToByte(n.IsTypeOnly)) << 24
 	case ast.KindExportSpecifier:
 		n := node.AsExportSpecifier()
-		return int32(boolToByte(n.IsTypeOnly)) << 24
+		return uint32(boolToByte(n.IsTypeOnly)) << 24
 	case ast.KindImportType:
 		n := node.AsImportTypeNode()
-		return int32(boolToByte(n.IsTypeOf)) << 24
+		return uint32(boolToByte(n.IsTypeOf)) << 24
 	case ast.KindBlock:
 		n := node.AsBlock()
-		return int32(boolToByte(n.Multiline)) << 24
+		return uint32(boolToByte(n.Multiline)) << 24
 	case ast.KindImportEqualsDeclaration:
 		n := node.AsImportEqualsDeclaration()
-		return int32(boolToByte(n.IsTypeOnly)) << 24
+		return uint32(boolToByte(n.IsTypeOnly)) << 24
 	case ast.KindExportAssignment:
 		n := node.AsExportAssignment()
-		return int32(boolToByte(n.IsExportEquals)) << 24
+		return uint32(boolToByte(n.IsExportEquals)) << 24
 	case ast.KindExportDeclaration:
 		n := node.AsExportDeclaration()
-		return int32(boolToByte(n.IsTypeOnly)) << 24
+		return uint32(boolToByte(n.IsTypeOnly)) << 24
 	case ast.KindArrayLiteralExpression:
 		n := node.AsArrayLiteralExpression()
-		return int32(boolToByte(n.MultiLine)) << 24
+		return uint32(boolToByte(n.MultiLine)) << 24
 	case ast.KindObjectLiteralExpression:
 		n := node.AsObjectLiteralExpression()
-		return int32(boolToByte(n.MultiLine)) << 24
+		return uint32(boolToByte(n.MultiLine)) << 24
 	case ast.KindJSDocPropertyTag:
 		n := node.AsJSDocPropertyTag()
-		return int32(boolToByte(n.IsBracketed))<<24 | int32(boolToByte(n.IsNameFirst))<<25
+		return uint32(boolToByte(n.IsBracketed))<<24 | uint32(boolToByte(n.IsNameFirst))<<25
 	case ast.KindJSDocParameterTag:
 		n := node.AsJSDocParameterTag()
-		return int32(boolToByte(n.IsBracketed))<<24 | int32(boolToByte(n.IsNameFirst))<<25
+		return uint32(boolToByte(n.IsBracketed))<<24 | uint32(boolToByte(n.IsNameFirst))<<25
 	case ast.KindJsxText:
 		n := node.AsJsxText()
-		return int32(boolToByte(n.ContainsOnlyTriviaWhiteSpaces)) << 24
+		return uint32(boolToByte(n.ContainsOnlyTriviaWhiteSpaces)) << 24
 	case ast.KindVariableDeclarationList:
 		n := node.AsVariableDeclarationList()
-		return int32(n.Flags & (ast.NodeFlagsLet | ast.NodeFlagsConst) << 24)
+		return uint32(n.Flags & (ast.NodeFlagsLet | ast.NodeFlagsConst) << 24)
 	case ast.KindImportAttributes:
 		n := node.AsImportAttributes()
-		return int32(boolToByte(n.MultiLine))<<24 | int32(boolToByte(n.Token == ast.KindAssertKeyword))<<25
+		return uint32(boolToByte(n.MultiLine))<<24 | uint32(boolToByte(n.Token == ast.KindAssertKeyword))<<25
 	}
 	return 0
 }
 
-func recordNodeStrings(node *ast.Node, strs *stringTable) int32 {
+func recordNodeStrings(node *ast.Node, strs *stringTable) uint32 {
 	switch node.Kind {
 	case ast.KindJsxText:
 		return strs.add(node.AsJsxText().Text)

@@ -6,6 +6,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/microsoft/typescript-go/internal/api/encoder"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/project"
@@ -108,7 +109,7 @@ func (api *API) HandleRequest(id int, method string, payload json.RawMessage) ([
 		if err != nil {
 			return nil, err
 		}
-		return EncodeSourceFile(sourceFile)
+		return encoder.EncodeSourceFile(sourceFile)
 	case MethodParseConfigFile:
 		return encodeJSON(api.ParseConfigFile(params.(*ParseConfigFileParams).FileName))
 	case MethodLoadProject:
@@ -150,7 +151,7 @@ func (api *API) ParseConfigFile(configFileName string) (*tsoptions.ParsedCommand
 	return nil, fmt.Errorf("could not read file %q", configFileName)
 }
 
-func (api *API) LoadProject(configFileName string) (*ProjectData, error) {
+func (api *API) LoadProject(configFileName string) (*ProjectResponse, error) {
 	configFileName = api.toAbsoluteFileName(configFileName)
 	configFilePath := api.toPath(configFileName)
 	project := project.NewConfiguredProject(configFileName, configFilePath, api)
@@ -160,10 +161,10 @@ func (api *API) LoadProject(configFileName string) (*ProjectData, error) {
 	project.GetProgram()
 	id := len(api.projects)
 	api.projects = append(api.projects, project)
-	return NewProjectData(project, id), nil
+	return NewProjectResponse(project, id), nil
 }
 
-func (api *API) GetSymbolAtPosition(projectId int, fileName string, position int) (*SymbolData, error) {
+func (api *API) GetSymbolAtPosition(projectId int, fileName string, position int) (*SymbolResponse, error) {
 	if projectId >= len(api.projects) {
 		return nil, fmt.Errorf("project not found")
 	}
@@ -172,14 +173,14 @@ func (api *API) GetSymbolAtPosition(projectId int, fileName string, position int
 	if err != nil || symbol == nil {
 		return nil, err
 	}
-	data := NewSymbolData(symbol, project.Version())
+	data := NewSymbolResponse(symbol, project.Version())
 	api.symbolsMu.Lock()
 	defer api.symbolsMu.Unlock()
 	api.symbols[data.Id] = symbol
 	return data, nil
 }
 
-func (api *API) GetTypeOfSymbol(projectId int, symbolHandle Handle[ast.Symbol]) (*TypeData, error) {
+func (api *API) GetTypeOfSymbol(projectId int, symbolHandle Handle[ast.Symbol]) (*TypeResponse, error) {
 	if projectId >= len(api.projects) {
 		return nil, fmt.Errorf("project not found")
 	}

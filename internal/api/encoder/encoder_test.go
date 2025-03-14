@@ -1,11 +1,11 @@
-package api_test
+package encoder_test
 
 import (
 	"os"
 	"path/filepath"
 	"testing"
 
-	"github.com/microsoft/typescript-go/internal/api"
+	"github.com/microsoft/typescript-go/internal/api/encoder"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/parser"
@@ -22,10 +22,10 @@ func TestEncodeSourceFile(t *testing.T) {
 
 	t.Run("baseline", func(t *testing.T) {
 		t.Parallel()
-		buf, err := api.EncodeSourceFile(sourceFile)
+		buf, err := encoder.EncodeSourceFile(sourceFile)
 		assert.NilError(t, err)
 
-		str := api.FormatEncodedSourceFile(buf)
+		str := encoder.FormatEncodedSourceFile(buf)
 		baseline.Run(t, "encodeSourceFile.txt", str, baseline.Options{
 			Subfolder: "api",
 		})
