@@ -139,15 +139,7 @@ func parseOwnConfigOfJsonSourceFile(
 		}
 		if parentOption != nil && parentOption.Name != "undefined" && value != nil {
 			if option != nil && option.Name != "" {
-				commandLineOptionEnumMapVal := option.EnumMap()
-				if commandLineOptionEnumMapVal != nil {
-					val, ok := commandLineOptionEnumMapVal.Get(strings.ToLower(value.(string)))
-					if ok {
-						propertySetErrors = append(propertySetErrors, ParseCompilerOptions(option.Name, val, options)...)
-					}
-				} else {
-					propertySetErrors = append(propertySetErrors, ParseCompilerOptions(option.Name, value, options)...)
-				}
+				propertySetErrors = append(propertySetErrors, ParseCompilerOptions(option.Name, value, options)...)
 			} else if keyText != "" {
 				if parentOption.ElementOptions != nil {
 					// !!! TODO: support suggestion
@@ -276,8 +268,7 @@ func isCompilerOptionsValue(option *CommandLineOption, value any) bool {
 			return reflect.TypeOf(value) == orderedMapType
 		}
 		if option.Kind == "enum" && reflect.TypeOf(value).Kind() == reflect.String {
-			_, ok := option.EnumMap().Get(strings.ToLower(value.(string)))
-			return ok || (option.DeprecatedKeys() != nil && option.DeprecatedKeys().Has(strings.ToLower(value.(string))))
+			return true
 		}
 	}
 	return false
@@ -385,7 +376,7 @@ func convertJsonOption(
 			} else {
 				return convertJsonOption(opt.Elements(), value, basePath, propertyAssignment, valueExpression, sourceFile)
 			}
-		} else if !(reflect.TypeOf(optType).Kind() == reflect.String) {
+		} else if optType == CommandLineOptionTypeEnum {
 			return convertJsonOptionOfEnumType(opt, value.(string), valueExpression, sourceFile)
 		}
 		validatedValue, errors := validateJsonOptionValue(opt, value, valueExpression, sourceFile)
@@ -395,9 +386,6 @@ func convertJsonOption(
 			return normalizeNonListOptionValue(opt, basePath, validatedValue), errors
 		}
 	} else {
-		if opt.Kind == CommandLineOptionTypeEnum {
-			return nil, []*ast.Diagnostic{createDiagnosticForInvalidEnumType(opt, sourceFile, valueExpression)}
-		}
 		return nil, []*ast.Diagnostic{createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile, valueExpression, diagnostics.Compiler_option_0_requires_a_value_of_type_1, opt.Name, getCompilerOptionValueTypeString(opt))}
 	}
 }

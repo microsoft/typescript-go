@@ -63,7 +63,7 @@ CompilerOptions::
   "jsxImportSource": "",
   "keyofStringsOnly": null,
   "lib": [
-    "es5"
+    "lib.es5.d.ts"
   ],
   "locale": "",
   "mapRoot": "",

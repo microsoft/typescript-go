@@ -721,7 +721,7 @@ func TestParseSrcCompiler(t *testing.T) {
 
 	opts := parseConfigFileContent.CompilerOptions()
 	assert.DeepEqual(t, opts, &core.CompilerOptions{
-		Lib:                        []string{"es2020"},
+		Lib:                        []string{"lib.es2020.d.ts"},
 		ModuleKind:                 core.ModuleKindNodeNext,
 		ModuleResolution:           core.ModuleResolutionKindNodeNext,
 		NewLine:                    core.NewLineKindLF,
