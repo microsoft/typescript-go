@@ -367,7 +367,6 @@ func convertJsonOption(
 		}
 	}
 	if isCompilerOptionsValue(opt, value) {
-
 		switch opt.Kind {
 		case CommandLineOptionTypeList:
 			return convertJsonOptionOfListType(opt, value, basePath, propertyAssignment, valueExpression, sourceFile) // as ArrayLiteralExpression | undefined
