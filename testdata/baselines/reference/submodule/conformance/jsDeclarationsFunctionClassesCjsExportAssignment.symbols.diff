@@ -16,7 +16,14 @@
  >Timer : Symbol(Timer, Decl(timer.js, 0, 0))
  
  === hook.js ===
-@@= skipped -23, +17 lines =@@
+ /**
+  * @typedef {(arg: import("./context")) => void} HookHandler
++>arg : Symbol(arg, Decl(hook.js, 1, 14))
++
+  */
+ /**
+  * @param {HookHandler} handle
+@@= skipped -23, +19 lines =@@
  >handle : Symbol(handle, Decl(hook.js, 6, 14))
  
      this.handle = handle;
@@ -32,7 +39,31 @@
  >Hook : Symbol(Hook, Decl(hook.js, 0, 0))
  
  === context.js ===
-@@= skipped -44, +38 lines =@@
+@@= skipped -25, +19 lines =@@
+  *
+  * @typedef {Object} Input
+  * @prop {Timer} timer
++>Timer : Symbol(Timer)
++
+  * @prop {Hook} hook
++>Hook : Symbol(Hook)
++
+  */
+  
+ /**
+@@= skipped -8, +12 lines =@@
+  *
+  * @typedef {Object} State
+  * @prop {Timer} timer
++>Timer : Symbol(Timer)
++
+  * @prop {Hook} hook
++>Hook : Symbol(Hook)
++
+  */
+ 
+ /**
+@@= skipped -11, +15 lines =@@
   */
  
  function Context(input) {

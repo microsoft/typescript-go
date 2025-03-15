@@ -1,0 +1,22 @@
+--- old.jsdocSignatureOnReturnedFunction.symbols
++++ new.jsdocSignatureOnReturnedFunction.symbols
+@@= skipped -40, +40 lines =@@
+ >f3 : Symbol(f3, Decl(jsdocSignatureOnReturnedFunction.js, 20, 1))
+ 
+     /** @type {(a: number, b: number) => number} */
++>a : Symbol(a, Decl(jsdocSignatureOnReturnedFunction.js, 23, 16))
++>b : Symbol(b, Decl(jsdocSignatureOnReturnedFunction.js, 23, 26))
++
+     return (a, b) => {
+ >a : Symbol(a, Decl(jsdocSignatureOnReturnedFunction.js, 24, 12))
+ >b : Symbol(b, Decl(jsdocSignatureOnReturnedFunction.js, 24, 14))
+@@= skipped -14, +17 lines =@@
+ >f4 : Symbol(f4, Decl(jsdocSignatureOnReturnedFunction.js, 27, 1))
+ 
+     /** @type {(a: number, b: number) => number} */
++>a : Symbol(a, Decl(jsdocSignatureOnReturnedFunction.js, 30, 16))
++>b : Symbol(b, Decl(jsdocSignatureOnReturnedFunction.js, 30, 26))
++
+     return function (a, b){
+ >a : Symbol(a, Decl(jsdocSignatureOnReturnedFunction.js, 31, 21))
+ >b : Symbol(b, Decl(jsdocSignatureOnReturnedFunction.js, 31, 23))

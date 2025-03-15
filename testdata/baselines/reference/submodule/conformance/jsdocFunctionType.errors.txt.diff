@@ -6,18 +6,15 @@
 +functions.js(5,14): error TS7006: Parameter 'c' implicitly has an 'any' type.
 +functions.js(9,23): error TS7006: Parameter 'n' implicitly has an 'any' type.
 +functions.js(15,14): error TS7006: Parameter 'c' implicitly has an 'any' type.
-+functions.js(21,17): error TS7006: Parameter 'n' implicitly has an 'any' type.
 +functions.js(22,14): error TS2339: Property 'length' does not exist on type 'C'.
 +functions.js(31,19): error TS7006: Parameter 'ab' implicitly has an 'any' type.
 +functions.js(31,23): error TS7006: Parameter 'onetwo' implicitly has an 'any' type.
-+functions.js(38,12): error TS7006: Parameter 'n' implicitly has an 'any' type.
 +functions.js(51,26): error TS7006: Parameter 'dref' implicitly has an 'any' type.
-+functions.js(60,18): error TS7006: Parameter 'n' implicitly has an 'any' type.
 +functions.js(72,14): error TS7019: Rest parameter 'args' implicitly has an 'any[]' type.
  
  
 -==== functions.js (1 errors) ====
-+==== functions.js (11 errors) ====
++==== functions.js (8 errors) ====
      /**
       * @param {function(this: string, number): number} c is just passing on through
       * @return {function(this: string, number): number}
@@ -42,18 +39,16 @@
          return c
      }
      
-     class C {
+@@= skipped -24, +36 lines =@@
          /** @param {number} n */
          constructor(n) {
-+                    ~
-+!!! error TS7006: Parameter 'n' implicitly has an 'any' type.
              this.length = n;
 +                 ~~~~~~
 +!!! error TS2339: Property 'length' does not exist on type 'C'.
          }
      }
      
-@@= skipped -33, +52 lines =@@
+@@= skipped -9, +11 lines =@@
      
      /** @type {function ("a" | "b", 1 | 2): 3 | 4} */
      var f = function (ab, onetwo) { return ab === "a" ? 3 : 4;  }
@@ -64,16 +59,7 @@
      
      
      /** 
-@@= skipped -7, +11 lines =@@
-      * @param {number} n
-      */
-     function D(n) {
-+               ~
-+!!! error TS7006: Parameter 'n' implicitly has an 'any' type.
-       this.length = n;
-     }
-     
-@@= skipped -13, +15 lines =@@
+@@= skipped -20, +24 lines =@@
       * @return {D}
       */
      var construct = function(dref) { return new dref(33); }
@@ -82,14 +68,7 @@
      var z3 = construct(D);
      z3.length;
      
-@@= skipped -9, +11 lines =@@
-      * @param {number} n
-      */
-     var E = function(n) {
-+                     ~
-+!!! error TS7006: Parameter 'n' implicitly has an 'any' type.
-       this.not_length_on_purpose = n;
-     };
+@@= skipped -14, +16 lines =@@
      
      
      var y3 = id2(E);
@@ -100,7 +79,7 @@
      
      // Repro from #39229
      
-@@= skipped -16, +14 lines =@@
+@@= skipped -11, +7 lines =@@
       * @type {(...args: [string, string] | [number, string, string]) => void}
       */
      function foo(...args) {

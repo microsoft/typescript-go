@@ -63,9 +63,7 @@ const TabbedShowLayout = () => {
 };
 
 TabbedShowLayout.defaultProps = {
->TabbedShowLayout.defaultProps : Symbol(defaultProps, Decl(jsDeclarationsReactComponents2.jsx, 10, 2))
 >TabbedShowLayout : Symbol(TabbedShowLayout, Decl(jsDeclarationsReactComponents2.jsx, 4, 5))
->defaultProps : Symbol(defaultProps, Decl(jsDeclarationsReactComponents2.jsx, 10, 2))
 
     tabs: "default value"
 >tabs : Symbol(tabs, Decl(jsDeclarationsReactComponents2.jsx, 12, 33))
@@ -96,9 +94,7 @@ const TabbedShowLayout = () => {
 };
 
 TabbedShowLayout.defaultProps = {
->TabbedShowLayout.defaultProps : Symbol(defaultProps, Decl(jsDeclarationsReactComponents3.jsx, 10, 2))
 >TabbedShowLayout : Symbol(TabbedShowLayout, Decl(jsDeclarationsReactComponents3.jsx, 4, 5))
->defaultProps : Symbol(defaultProps, Decl(jsDeclarationsReactComponents3.jsx, 10, 2))
 
     tabs: "default value"
 >tabs : Symbol(tabs, Decl(jsDeclarationsReactComponents3.jsx, 12, 33))

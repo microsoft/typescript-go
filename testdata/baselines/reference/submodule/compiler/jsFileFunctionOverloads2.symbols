@@ -69,9 +69,7 @@ function flatMap(array, iterable = identity) {
 >i : Symbol(i, Decl(jsFileFunctionOverloads2.js, 47, 10))
 
     result.push(.../** @type {unknown[]} */(iterable(array[i])));
->result.push : Symbol(push, Decl(lib.es5.d.ts, --, --))
 >result : Symbol(result, Decl(jsFileFunctionOverloads2.js, 46, 7))
->push : Symbol(push, Decl(lib.es5.d.ts, --, --))
 >iterable : Symbol(iterable, Decl(jsFileFunctionOverloads2.js, 44, 23))
 >array : Symbol(array, Decl(jsFileFunctionOverloads2.js, 44, 17))
 >i : Symbol(i, Decl(jsFileFunctionOverloads2.js, 47, 10))

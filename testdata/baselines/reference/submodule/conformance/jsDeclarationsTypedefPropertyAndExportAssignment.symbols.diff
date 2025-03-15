@@ -9,7 +9,28 @@
  
  /** @typedef {import('./module.js').TaskGroup} TaskGroup */
  
-@@= skipped -26, +24 lines =@@
+ /**
+  * @typedef TaskNode
+  * @prop {TaskNode[]} children
++>TaskNode : Symbol(TaskNode)
++
+  * @prop {TaskNode|undefined} parent
++>TaskNode : Symbol(TaskNode)
++
+  * @prop {TaskGroup} group
++>TaskGroup : Symbol(TaskGroup)
++
+  */
+ 
+ /** @typedef {{timers: Map<string, TaskNode>}} PriorTaskData */
++>timers : Symbol(timers, Decl(index.js, 11, 15))
++>Map : Symbol(Map, Decl(lib.es2015.collection.d.ts, --, --), Decl(lib.es2015.collection.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>TaskNode : Symbol(TaskNode)
++
+ class MainThreadTasks {
+ >MainThreadTasks : Symbol(MainThreadTasks, Decl(index.js, 0, 61))
+ 
+@@= skipped -26, +34 lines =@@
  }
  
  module.exports = MainThreadTasks;

@@ -2,56 +2,89 @@
 
 === typedefOnStatements.js ===
 /** @typedef {{a: string}} A */
+>a : Symbol(a, Decl(typedefOnStatements.js, 0, 15))
+
 ;
 /** @typedef {{ b: string }} B */
+>b : Symbol(b, Decl(typedefOnStatements.js, 2, 15))
+
 debugger;
 /** @typedef {{ c: string }} C */
+>c : Symbol(c, Decl(typedefOnStatements.js, 4, 15))
 {
 }
 /** @typedef {{ d: string }} D */
+>d : Symbol(d, Decl(typedefOnStatements.js, 7, 15))
+
 1 + 1;
 /** @typedef {{ e: string }} E */
+>e : Symbol(e, Decl(typedefOnStatements.js, 9, 15))
+
 if (false) {
 }
 /** @typedef {{ f: string }} F */
+>f : Symbol(f, Decl(typedefOnStatements.js, 12, 15))
+
 do {
 } while (false);
 /** @typedef {{ g: string }} G */
+>g : Symbol(g, Decl(typedefOnStatements.js, 15, 15))
+
 while (false) {
 }
 /** @typedef {{ h: string }} H */
+>h : Symbol(h, Decl(typedefOnStatements.js, 18, 15))
+
 for (;; false) {
 }
 /** @typedef {{ i: string }} I */
+>i : Symbol(i, Decl(typedefOnStatements.js, 21, 15))
+
 for (let i in []) {
 >i : Symbol(i, Decl(typedefOnStatements.js, 22, 8))
 }
 /** @typedef {{ j: string }} J */
+>j : Symbol(j, Decl(typedefOnStatements.js, 24, 15))
+
 break;
 /** @typedef {{ k: string }} K */
+>k : Symbol(k, Decl(typedefOnStatements.js, 26, 15))
+
 for (let k of []) {
 >k : Symbol(k, Decl(typedefOnStatements.js, 27, 8))
 }
 /** @typedef {{ l: string }} L */
+>l : Symbol(l, Decl(typedefOnStatements.js, 29, 15))
+
 continue;
 /** @typedef {{ m: string }} M */
+>m : Symbol(m, Decl(typedefOnStatements.js, 31, 15))
+
 with (name) {
 >name : Symbol(name, Decl(lib.dom.d.ts, --, --))
 }
 /** @typedef {{ n: string }} N */
+>n : Symbol(n, Decl(typedefOnStatements.js, 34, 15))
+
 switch (name) {
 >name : Symbol(name, Decl(lib.dom.d.ts, --, --))
 }
 
 /** @typedef {{ o: string }} O */
+>o : Symbol(o, Decl(typedefOnStatements.js, 38, 15))
+
 fork: while (false) {
 }
 
 /** @typedef {{ p: string }} P */
+>p : Symbol(p, Decl(typedefOnStatements.js, 42, 15))
+
 throw new Error('Unreachable')
 >Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
 
 /** @typedef {{ q: string }} Q */
+>q : Symbol(q, Decl(typedefOnStatements.js, 45, 15))
+
 try {
 }
 catch (e) {
@@ -125,6 +158,8 @@ function proof (a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q) {
 >alpha : Symbol(alpha, Decl(typedefOnStatements.js, 73, 17))
 
     /** @typedef {{ alpha: string }} Alpha */
+>alpha : Symbol(alpha, Decl(typedefOnStatements.js, 74, 19))
+
     return
 }
 

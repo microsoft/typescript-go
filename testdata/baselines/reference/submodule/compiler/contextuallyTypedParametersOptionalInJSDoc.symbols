@@ -11,6 +11,9 @@ function acceptNum(num) {}
 
 /**
  * @typedef {(a: string, b: number) => void} Fn
+>a : Symbol(a, Decl(index.js, 7, 14))
+>b : Symbol(b, Decl(index.js, 7, 24))
+
  */
 
 /** @type {Fn} */

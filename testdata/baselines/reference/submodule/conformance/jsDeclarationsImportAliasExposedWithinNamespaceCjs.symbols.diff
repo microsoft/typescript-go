@@ -18,7 +18,14 @@
  
      // SOME PROPS HERE
  };
-@@= skipped -29, +29 lines =@@
+ 
+ /** @typedef {boolean|myTypes.typeC} testFnTypes.input */
++>myTypes : Symbol(myTypes)
++>typeC : Symbol(typeC)
+ 
+ /**
+  * @function testFn
+@@= skipped -29, +31 lines =@@
  }
  
  module.exports = {testFn, testFnTypes};

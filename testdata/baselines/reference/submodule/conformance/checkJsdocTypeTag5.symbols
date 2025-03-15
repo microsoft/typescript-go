@@ -40,6 +40,8 @@ var k = function (x) { return x }
 
 
 /** @typedef {(x: 'hi' | 'bye') => 0 | 1 | 2} Argle */
+>x : Symbol(x, Decl(test.js, 16, 15))
+
 /** @type {Argle} */
 function blargle(s) {
 >blargle : Symbol(blargle, Decl(test.js, 13, 33))
@@ -54,6 +56,8 @@ var zeroonetwo = blargle('hi')
 >blargle : Symbol(blargle, Decl(test.js, 13, 33))
 
 /** @typedef {{(s: string): 0 | 1; (b: boolean): 2 | 3 }} Gioconda */
+>s : Symbol(s, Decl(test.js, 25, 16))
+>b : Symbol(b, Decl(test.js, 25, 36))
 
 /** @type {Gioconda} */
 function monaLisa(sb) {

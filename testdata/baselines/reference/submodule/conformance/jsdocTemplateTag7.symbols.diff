@@ -1,0 +1,11 @@
+--- old.jsdocTemplateTag7.symbols
++++ new.jsdocTemplateTag7.symbols
+@@= skipped -3, +3 lines =@@
+ /**
+  * @template const T
+  * @typedef {[T]} X
++>T : Symbol(T)
++
+  */
+ 
+ /**

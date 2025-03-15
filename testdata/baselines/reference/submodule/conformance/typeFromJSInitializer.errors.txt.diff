@@ -6,8 +6,6 @@
 -a.js(5,5): error TS7008: Member 'empty' implicitly has an 'any[]' type.
 -a.js(25,29): error TS7006: Parameter 'l' implicitly has an 'any[]' type.
 +a.js(7,9): error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
-+a.js(22,5): error TS7034: Variable 'n' implicitly has type 'any' in some locations where its type cannot be determined.
-+a.js(25,26): error TS7005: Variable 'n' implicitly has an 'any' type.
  a.js(27,5): error TS2322: Type 'undefined' is not assignable to type 'null'.
  a.js(29,5): error TS2322: Type '1' is not assignable to type 'null'.
  a.js(30,5): error TS2322: Type 'true' is not assignable to type 'null'.
@@ -20,7 +18,7 @@
  
  
 -==== a.js (10 errors) ====
-+==== a.js (11 errors) ====
++==== a.js (9 errors) ====
      function A () {
          // should get any on this-assignments in constructor
          this.unknown = null
@@ -39,23 +37,16 @@
      a.unknown = 1
      a.unknown = true
      a.unknown = {}
-@@= skipped -38, +35 lines =@@
-     
-     /** @type {number | undefined} */
-     var n;
-+        ~
-+!!! error TS7034: Variable 'n' implicitly has type 'any' in some locations where its type cannot be determined.
+@@= skipped -41, +36 lines =@@
      
      // should get any on parameter initialisers
      function f(a = null, b = n, l = []) {
 -                                ~~~~~~
 -!!! error TS7006: Parameter 'l' implicitly has an 'any[]' type.
-+                             ~
-+!!! error TS7005: Variable 'n' implicitly has an 'any' type.
          // a should be null in strict mode
          a = undefined
          ~
-@@= skipped -27, +29 lines =@@
+@@= skipped -24, +22 lines =@@
          b = 1
          b = undefined
          b = 'error'

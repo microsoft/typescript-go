@@ -10,6 +10,8 @@
  */
 
 /** @type {Foo} */
+>Foo : Symbol(Foo)
+
 export default {
     a: 'a',
 >a : Symbol(a, Decl(a.js, 7, 16))

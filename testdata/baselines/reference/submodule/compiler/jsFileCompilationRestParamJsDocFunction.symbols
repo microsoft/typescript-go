@@ -19,9 +19,7 @@ function apply(func, thisArg, ...args) {
 
     var length = args.length;
 >length : Symbol(length, Decl(_apply.js, 11, 7))
->args.length : Symbol(length, Decl(lib.es5.d.ts, --, --))
 >args : Symbol(args, Decl(_apply.js, 10, 29))
->length : Symbol(length, Decl(lib.es5.d.ts, --, --))
 
     switch (length) {
 >length : Symbol(length, Decl(_apply.js, 11, 7))
