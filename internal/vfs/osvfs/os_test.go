@@ -18,11 +18,11 @@ func TestOS(t *testing.T) {
 
 	fs := osvfs.FS()
 
-	goMod := filepath.Join(repo.RootPath, "go.mod")
-	goModPath := tspath.NormalizePath(goMod)
-
 	t.Run("ReadFile", func(t *testing.T) {
 		t.Parallel()
+
+		goMod := filepath.Join(repo.RootPath, "go.mod")
+		goModPath := tspath.NormalizePath(goMod)
 
 		expectedRaw, err := os.ReadFile(goMod)
 		assert.NilError(t, err)
