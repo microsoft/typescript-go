@@ -87,7 +87,6 @@ function assertTypeScriptCloned() {
 
 const tools = new Map([
     ["gotest.tools/gotestsum", "latest"],
-    ["mvdan.cc/gofumpt", "v0.7.0"],
 ]);
 
 /**
