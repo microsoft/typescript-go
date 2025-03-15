@@ -323,7 +323,7 @@ func ComputeLineStartsSeq(text string) iter.Seq[TextPos] {
 		lineStart := 0
 		for pos < len(text) {
 			b := text[pos]
-			if b < 0x7F {
+			if b < utf8.RuneSelf {
 				pos++
 				switch b {
 				case '\r':
