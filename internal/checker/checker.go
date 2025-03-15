@@ -22948,14 +22948,14 @@ func isUnaryTupleTypeNode(node *ast.Node) bool {
 	return ast.IsTupleTypeNode(node) && len(node.AsTupleTypeNode().Elements.Nodes) == 1
 }
 
-func (c *Checker) newType(flags TypeFlags, objectFlags ObjectFlags, data TypeData) *Type {
+func (c *Checker) newType(flags TypeFlags, objectFlags ObjectFlags, data typeData) *Type {
 	c.TypeCount++
 	t := data.AsType()
 	t.flags = flags
 	t.objectFlags = objectFlags &^ (ObjectFlagsCouldContainTypeVariablesComputed | ObjectFlagsCouldContainTypeVariables | ObjectFlagsMembersResolved)
 	t.id = TypeId(c.TypeCount)
 	t.checker = c
-	t.data = data
+	t.setData(data)
 	return t
 }
 
@@ -23006,7 +23006,7 @@ func (c *Checker) newUniqueESSymbolType(symbol *ast.Symbol, name string) *Type {
 }
 
 func (c *Checker) newObjectType(objectFlags ObjectFlags, symbol *ast.Symbol) *Type {
-	var data TypeData
+	var data typeData
 	switch {
 	case objectFlags&ObjectFlagsClassOrInterface != 0:
 		data = &InterfaceType{}
