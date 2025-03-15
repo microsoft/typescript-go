@@ -432,6 +432,29 @@ func TestParameterPropertyTransformer(t *testing.T) {
         this.x = x;
     }
 }`},
+		{title: "multiple parameter properties", input: `class Project {
+  constructor(
+    public name: string,
+    public deadline: Date,
+    public budget: number
+  ) {}
+
+  extendDeadline(days: number): void {
+    this.deadline.setDate(this.deadline.getDate() + days);
+  }
+}`, output: `class Project {
+    name;
+    deadline;
+    budget;
+    constructor(name, deadline, budget) {
+        this.name = name;
+        this.deadline = deadline;
+        this.budget = budget;
+    }
+    extendDeadline(days) {
+        this.deadline.setDate(this.deadline.getDate() + days);
+    }
+}`},
 	}
 
 	for _, rec := range data {

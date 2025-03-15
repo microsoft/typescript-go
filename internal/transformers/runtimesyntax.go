@@ -810,7 +810,35 @@ func (tx *RuntimeSyntaxTransformer) visitClassExpression(node *ast.ClassExpressi
 
 func (tx *RuntimeSyntaxTransformer) visitConstructorDeclaration(node *ast.ConstructorDeclaration) *ast.Node {
 	modifiers := tx.visitor.VisitModifiers(node.Modifiers())
-	parameters := tx.emitContext.VisitParameters(node.ParameterList(), tx.visitor)
+	
+	var nonParamPropertyParams []*ast.ParameterDeclaration
+	for _, param := range node.ParameterList().Nodes {
+		nonParamPropertyParams = append(nonParamPropertyParams, param.AsParameterDeclaration())
+	}
+	
+	var newParams []*ast.Node
+	for _, param := range nonParamPropertyParams {
+		var paramModifiers *ast.ModifierList
+		if ast.IsParameterPropertyDeclaration(param.AsNode(), node.AsNode()) {
+			paramModifiers = nil
+		} else {
+			paramModifiers = param.Modifiers()
+		}
+		
+		newParam := tx.factory.NewParameterDeclaration(
+			paramModifiers,
+			param.DotDotDotToken,
+			param.Name().Clone(tx.factory),
+			param.QuestionToken,
+			nil,
+			param.Initializer,
+		)
+		newParams = append(newParams, newParam)
+	}
+	
+	parameters := tx.factory.NewNodeList(newParams)
+	parameters.Loc = node.ParameterList().Loc
+	
 	body := tx.visitConstructorBody(node.Body.AsBlock(), node.AsNode())
 	return tx.factory.UpdateConstructorDeclaration(node, modifiers, nil /*typeParameters*/, parameters, nil /*returnType*/, body)
 }
@@ -878,7 +906,7 @@ func (tx *RuntimeSyntaxTransformer) visitConstructorBody(body *ast.Block, constr
 		statements = append(statements, tx.transformConstructorBodyWorker(rest, superPath, parameterPropertyAssignments)...)
 	} else {
 		statements = append(statements, parameterPropertyAssignments...)
-		statements = append(statements, core.FirstResult(tx.visitor.VisitSlice(rest))...)
+		statements = append(statements, rest...)
 	}
 
 	statements = tx.emitContext.EndAndMergeVariableEnvironment(statements)
