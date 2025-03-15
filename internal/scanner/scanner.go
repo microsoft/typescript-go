@@ -5,6 +5,7 @@ import (
 	"iter"
 	"strconv"
 	"strings"
+	"sync"
 	"unicode"
 	"unicode/utf8"
 
@@ -116,6 +117,17 @@ var textToKeyword = map[string]ast.Kind{
 	"await":       ast.KindAwaitKeyword,
 	"of":          ast.KindOfKeyword,
 }
+
+var ViableKeywordSuggestions = sync.OnceValue(func() []string {
+	kws := make([]string, 0, len(textToKeyword))
+
+	for kw := range textToKeyword {
+		if len(kw) > 2 {
+			kws = append(kws, kw)
+		}
+	}
+	return kws
+})
 
 var textToToken = map[string]ast.Kind{
 	"{":    ast.KindOpenBraceToken,
