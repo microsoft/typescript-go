@@ -158,7 +158,7 @@ func newVFSModuleResolutionHost(files map[string]string, currentDirectory string
 		currentDirectory = "/.src/" + currentDirectory
 	}
 	return &vfsModuleResolutionHost{
-		fs:               vfstest.FromMap(fs, true /*useCaseSensitiveFileNames*/),
+		fs:               vfstest.FromMap(fs, tspath.CaseSensitive),
 		currentDirectory: currentDirectory,
 	}
 }

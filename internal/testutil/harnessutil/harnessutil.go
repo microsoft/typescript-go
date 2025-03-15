@@ -55,24 +55,24 @@ type NamedTestConfiguration struct {
 }
 
 type HarnessOptions struct {
-	AllowNonTsExtensions      bool
-	UseCaseSensitiveFileNames bool
-	BaselineFile              string
-	IncludeBuiltFile          string
-	FileName                  string
-	LibFiles                  []string
-	NoErrorTruncation         bool
-	SuppressOutputPathCheck   bool
-	NoImplicitReferences      bool
-	CurrentDirectory          string
-	Symlink                   string
-	Link                      string
-	NoTypesAndSymbols         bool
-	FullEmitPaths             bool
-	NoCheck                   bool
-	ReportDiagnostics         bool
-	CaptureSuggestions        bool
-	TypescriptVersion         string
+	AllowNonTsExtensions    bool
+	CaseSensitivity         tspath.CaseSensitivity
+	BaselineFile            string
+	IncludeBuiltFile        string
+	FileName                string
+	LibFiles                []string
+	NoErrorTruncation       bool
+	SuppressOutputPathCheck bool
+	NoImplicitReferences    bool
+	CurrentDirectory        string
+	Symlink                 string
+	Link                    string
+	NoTypesAndSymbols       bool
+	FullEmitPaths           bool
+	NoCheck                 bool
+	ReportDiagnostics       bool
+	CaptureSuggestions      bool
+	TypescriptVersion       string
 }
 
 func CompileFiles(
@@ -96,7 +96,7 @@ func CompileFiles(
 		compilerOptions.SkipDefaultLibCheck = core.TSTrue
 	}
 	compilerOptions.NoErrorTruncation = core.TSTrue
-	harnessOptions := HarnessOptions{UseCaseSensitiveFileNames: true, CurrentDirectory: currentDirectory}
+	harnessOptions := HarnessOptions{CaseSensitivity: tspath.CaseSensitive, CurrentDirectory: currentDirectory}
 
 	// Parse harness and compiler options from the test configuration
 	if testConfig != nil {
@@ -151,7 +151,7 @@ func CompileFiles(
 		testfs[srcFileName] = vfstest.Symlink(targetFileName)
 	}
 
-	fs := vfstest.FromMap(testfs, harnessOptions.UseCaseSensitiveFileNames)
+	fs := vfstest.FromMap(testfs, harnessOptions.CaseSensitivity)
 	fs = bundled.WrapFS(fs)
 
 	host := createCompilerHost(fs, bundled.LibPath(), &compilerOptions, currentDirectory)
@@ -271,7 +271,11 @@ func parseHarnessOption(t *testing.T, key string, value any, options *HarnessOpt
 	case "allowNonTsExtensions":
 		options.AllowNonTsExtensions = value.(bool)
 	case "useCaseSensitiveFileNames":
-		options.UseCaseSensitiveFileNames = value.(bool)
+		if useCaseSensitiveFileNames := value.(bool); useCaseSensitiveFileNames {
+			options.CaseSensitivity = tspath.CaseSensitive
+		} else {
+			options.CaseSensitivity = tspath.CaseInsensitive
+		}
 	case "baselineFile":
 		options.BaselineFile = value.(string)
 	case "includeBuiltFile":

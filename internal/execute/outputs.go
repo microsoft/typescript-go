@@ -15,8 +15,8 @@ func getFormatOptsOfSys(sys System) *diagnosticwriter.FormattingOptions {
 	return &diagnosticwriter.FormattingOptions{
 		NewLine: "\n",
 		ComparePathsOptions: tspath.ComparePathsOptions{
-			CurrentDirectory:          sys.GetCurrentDirectory(),
-			UseCaseSensitiveFileNames: sys.FS().UseCaseSensitiveFileNames(),
+			CurrentDirectory: sys.GetCurrentDirectory(),
+			CaseSensitivity:  sys.FS().CaseSensitivity(),
 		},
 	}
 }

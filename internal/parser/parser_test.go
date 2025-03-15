@@ -32,7 +32,7 @@ func BenchmarkParse(b *testing.B) {
 			f.SkipIfNotExist(b)
 
 			fileName := tspath.GetNormalizedAbsolutePath(f.Path(), "/")
-			path := tspath.ToPath(fileName, "/", osvfs.FS().UseCaseSensitiveFileNames())
+			path := tspath.ToPath(fileName, "/", osvfs.FS().CaseSensitivity())
 			sourceText := f.ReadFile(b)
 
 			for _, jsdoc := range jsdocModes {
@@ -75,7 +75,7 @@ func TestParseTypeScriptRepo(t *testing.T) {
 					assert.NilError(t, err)
 
 					fileName := tspath.GetNormalizedAbsolutePath(f.path, repo.TypeScriptSubmodulePath)
-					path := tspath.ToPath(f.path, repo.TypeScriptSubmodulePath, osvfs.FS().UseCaseSensitiveFileNames())
+					path := tspath.ToPath(f.path, repo.TypeScriptSubmodulePath, osvfs.FS().CaseSensitivity())
 
 					var sourceFile *ast.SourceFile
 

@@ -281,7 +281,7 @@ func (p *Project) isOrphan() bool {
 }
 
 func (p *Project) toPath(fileName string) tspath.Path {
-	return tspath.ToPath(fileName, p.GetCurrentDirectory(), p.FS().UseCaseSensitiveFileNames())
+	return tspath.ToPath(fileName, p.GetCurrentDirectory(), p.FS().CaseSensitivity())
 }
 
 func (p *Project) isRoot(info *ScriptInfo) bool {

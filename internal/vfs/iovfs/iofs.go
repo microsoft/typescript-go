@@ -30,7 +30,7 @@ type WritableFS interface {
 //
 // From does not actually handle case-insensitivity; ensure the passed in [fs.FS]
 // respects case-insensitive file names if needed. Consider using [vfstest.FromMap] for testing.
-func From(fsys fs.FS, useCaseSensitiveFileNames bool) vfs.FS {
+func From(fsys fs.FS, caseSensitivity tspath.CaseSensitivity) vfs.FS {
 	var realpath func(path string) (string, error)
 	if fsys, ok := fsys.(RealpathFS); ok {
 		realpath = func(path string) (string, error) {
@@ -88,26 +88,26 @@ func From(fsys fs.FS, useCaseSensitiveFileNames bool) vfs.FS {
 				return sub
 			},
 		},
-		useCaseSensitiveFileNames: useCaseSensitiveFileNames,
-		realpath:                  realpath,
-		writeFile:                 writeFile,
-		mkdirAll:                  mkdirAll,
+		caseSensitivity: caseSensitivity,
+		realpath:        realpath,
+		writeFile:       writeFile,
+		mkdirAll:        mkdirAll,
 	}
 }
 
 type ioFS struct {
 	common internal.Common
 
-	useCaseSensitiveFileNames bool
-	realpath                  func(path string) (string, error)
-	writeFile                 func(path string, content string, writeByteOrderMark bool) error
-	mkdirAll                  func(path string) error
+	caseSensitivity tspath.CaseSensitivity
+	realpath        func(path string) (string, error)
+	writeFile       func(path string, content string, writeByteOrderMark bool) error
+	mkdirAll        func(path string) error
 }
 
 var _ vfs.FS = (*ioFS)(nil)
 
-func (vfs *ioFS) UseCaseSensitiveFileNames() bool {
-	return vfs.useCaseSensitiveFileNames
+func (vfs *ioFS) CaseSensitivity() tspath.CaseSensitivity {
+	return vfs.caseSensitivity
 }
 
 func (vfs *ioFS) DirectoryExists(path string) bool {

@@ -27,26 +27,26 @@ type caches struct {
 
 func newCaches(
 	currentDirectory string,
-	useCaseSensitiveFileNames bool,
+	caseSensitivity tspath.CaseSensitivity,
 	options *core.CompilerOptions,
 ) caches {
 	optionsToRedirectsKey := make(map[*core.CompilerOptions]string)
 	getOriginalOrResolvedModuleFileName := func(result *ResolvedModule) tspath.Path {
 		if result.OriginalPath != "" {
-			return tspath.ToPath(result.OriginalPath, currentDirectory, useCaseSensitiveFileNames)
+			return tspath.ToPath(result.OriginalPath, currentDirectory, caseSensitivity)
 		}
-		return tspath.ToPath(result.ResolvedFileName, currentDirectory, useCaseSensitiveFileNames)
+		return tspath.ToPath(result.ResolvedFileName, currentDirectory, caseSensitivity)
 	}
 	getOriginalOrResolvedTypeReferenceFileName := func(result *ResolvedTypeReferenceDirective) tspath.Path {
 		if result.OriginalPath != "" {
-			return tspath.ToPath(result.OriginalPath, currentDirectory, useCaseSensitiveFileNames)
+			return tspath.ToPath(result.OriginalPath, currentDirectory, caseSensitivity)
 		}
-		return tspath.ToPath(result.ResolvedFileName, currentDirectory, useCaseSensitiveFileNames)
+		return tspath.ToPath(result.ResolvedFileName, currentDirectory, caseSensitivity)
 	}
 	return caches{
-		moduleNameCache:             newResolutionCache(currentDirectory, useCaseSensitiveFileNames, options, getOriginalOrResolvedModuleFileName, optionsToRedirectsKey, false /*isReadonly*/),
-		typeReferenceDirectiveCache: newResolutionCache(currentDirectory, useCaseSensitiveFileNames, options, getOriginalOrResolvedTypeReferenceFileName, optionsToRedirectsKey, false /*isReadonly*/),
-		packageJsonInfoCache:        packagejson.NewInfoCache(currentDirectory, useCaseSensitiveFileNames),
+		moduleNameCache:             newResolutionCache(currentDirectory, caseSensitivity, options, getOriginalOrResolvedModuleFileName, optionsToRedirectsKey, false /*isReadonly*/),
+		typeReferenceDirectiveCache: newResolutionCache(currentDirectory, caseSensitivity, options, getOriginalOrResolvedTypeReferenceFileName, optionsToRedirectsKey, false /*isReadonly*/),
+		packageJsonInfoCache:        packagejson.NewInfoCache(currentDirectory, caseSensitivity),
 	}
 }
 
@@ -60,15 +60,15 @@ type resolutionCache[T comparable] struct {
 
 func newResolutionCache[T comparable](
 	currentDirectory string,
-	useCaseSensitiveFileNames bool,
+	caseSensitivity tspath.CaseSensitivity,
 	options *core.CompilerOptions,
 	getResolvedFileName func(result T) tspath.Path,
 	optionsToRedirectsKey map[*core.CompilerOptions]string,
 	isReadonly bool,
 ) *resolutionCache[T] {
 	return &resolutionCache[T]{
-		perDirectoryResolutionCache:    newPerDirectoryResolutionCache[T](currentDirectory, useCaseSensitiveFileNames, options, optionsToRedirectsKey),
-		nonRelativeNameResolutionCache: newNonRelativeNameResolutionCache[T](currentDirectory, useCaseSensitiveFileNames, options, getResolvedFileName, optionsToRedirectsKey),
+		perDirectoryResolutionCache:    newPerDirectoryResolutionCache[T](currentDirectory, caseSensitivity, options, optionsToRedirectsKey),
+		nonRelativeNameResolutionCache: newNonRelativeNameResolutionCache[T](currentDirectory, caseSensitivity, options, getResolvedFileName, optionsToRedirectsKey),
 		isReadonly:                     isReadonly,
 	}
 }
@@ -102,31 +102,31 @@ func (c *resolutionCache[T]) appendLookupLocations(resolved T, failedLookupLocat
 }
 
 type perDirectoryResolutionCache[T any] struct {
-	mu                        sync.RWMutex
-	currentDirectory          string
-	useCaseSensitiveFileNames bool
-	options                   *core.CompilerOptions
-	directoryToModuleNameMap  *cacheWithRedirects[tspath.Path, ModeAwareCache[T]]
+	mu                       sync.RWMutex
+	currentDirectory         string
+	caseSensitivity          tspath.CaseSensitivity
+	options                  *core.CompilerOptions
+	directoryToModuleNameMap *cacheWithRedirects[tspath.Path, ModeAwareCache[T]]
 }
 
 func newPerDirectoryResolutionCache[T any](
 	currentDirectory string,
-	useCaseSensitiveFileNames bool,
+	caseSensitivity tspath.CaseSensitivity,
 	options *core.CompilerOptions,
 	optionsToRedirectsKey map[*core.CompilerOptions]string,
 ) perDirectoryResolutionCache[T] {
 	return perDirectoryResolutionCache[T]{
-		currentDirectory:          currentDirectory,
-		useCaseSensitiveFileNames: useCaseSensitiveFileNames,
-		options:                   options,
-		directoryToModuleNameMap:  newCacheWithRedirects[tspath.Path, ModeAwareCache[T]](options, optionsToRedirectsKey),
+		currentDirectory:         currentDirectory,
+		caseSensitivity:          caseSensitivity,
+		options:                  options,
+		directoryToModuleNameMap: newCacheWithRedirects[tspath.Path, ModeAwareCache[T]](options, optionsToRedirectsKey),
 	}
 }
 
 func (c *perDirectoryResolutionCache[T]) getFromDirectoryCache(nameAndMode ModeAwareCacheKey, directory string, redirectedReference *ResolvedProjectReference) (T, bool) {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
-	result, ok := c.directoryToModuleNameMap.getMapOfCacheRedirects(redirectedReference)[tspath.ToPath(directory, c.currentDirectory, c.useCaseSensitiveFileNames)][nameAndMode]
+	result, ok := c.directoryToModuleNameMap.getMapOfCacheRedirects(redirectedReference)[tspath.ToPath(directory, c.currentDirectory, c.caseSensitivity)][nameAndMode]
 	return result, ok
 }
 
@@ -140,7 +140,7 @@ func (c *perDirectoryResolutionCache[T]) setInDirectoryCache(nameAndMode ModeAwa
 func (c *perDirectoryResolutionCache[T]) getOrCreateCacheForDirectory(directory string, redirectedReference *ResolvedProjectReference) ModeAwareCache[T] {
 	c.mu.RLock()
 	cache := c.directoryToModuleNameMap.getOrCreateMapOfCacheRedirects(redirectedReference)
-	key := tspath.ToPath(directory, c.currentDirectory, c.useCaseSensitiveFileNames)
+	key := tspath.ToPath(directory, c.currentDirectory, c.caseSensitivity)
 	result, ok := cache[key]
 	c.mu.RUnlock()
 	if ok {
@@ -155,27 +155,27 @@ func (c *perDirectoryResolutionCache[T]) getOrCreateCacheForDirectory(directory 
 }
 
 type nonRelativeNameResolutionCache[T any] struct {
-	mu                        sync.RWMutex
-	currentDirectory          string
-	useCaseSensitiveFileNames bool
-	options                   *core.CompilerOptions
-	getResolvedFileName       func(result T) tspath.Path
-	moduleNameToDirectoryMap  *cacheWithRedirects[ModeAwareCacheKey, *perNonRelativeNameCache[T]]
+	mu                       sync.RWMutex
+	currentDirectory         string
+	caseSensitivity          tspath.CaseSensitivity
+	options                  *core.CompilerOptions
+	getResolvedFileName      func(result T) tspath.Path
+	moduleNameToDirectoryMap *cacheWithRedirects[ModeAwareCacheKey, *perNonRelativeNameCache[T]]
 }
 
 func newNonRelativeNameResolutionCache[T any](
 	currentDirectory string,
-	useCaseSensitiveFileNames bool,
+	caseSensitivity tspath.CaseSensitivity,
 	options *core.CompilerOptions,
 	getResolvedFileName func(result T) tspath.Path,
 	optionsToRedirectsKey map[*core.CompilerOptions]string,
 ) nonRelativeNameResolutionCache[T] {
 	return nonRelativeNameResolutionCache[T]{
-		currentDirectory:          currentDirectory,
-		useCaseSensitiveFileNames: useCaseSensitiveFileNames,
-		options:                   options,
-		getResolvedFileName:       getResolvedFileName,
-		moduleNameToDirectoryMap:  newCacheWithRedirects[ModeAwareCacheKey, *perNonRelativeNameCache[T]](options, optionsToRedirectsKey),
+		currentDirectory:         currentDirectory,
+		caseSensitivity:          caseSensitivity,
+		options:                  options,
+		getResolvedFileName:      getResolvedFileName,
+		moduleNameToDirectoryMap: newCacheWithRedirects[ModeAwareCacheKey, *perNonRelativeNameCache[T]](options, optionsToRedirectsKey),
 	}
 }
 
@@ -185,7 +185,7 @@ func (c *nonRelativeNameResolutionCache[T]) getFromNonRelativeNameCache(nameAndM
 	}
 	c.mu.RLock()
 	defer c.mu.RUnlock()
-	return c.moduleNameToDirectoryMap.getMapOfCacheRedirects(redirectedReference)[nameAndMode].get(tspath.ToPath(directoryName, c.currentDirectory, c.useCaseSensitiveFileNames))
+	return c.moduleNameToDirectoryMap.getMapOfCacheRedirects(redirectedReference)[nameAndMode].get(tspath.ToPath(directoryName, c.currentDirectory, c.caseSensitivity))
 }
 
 func (c *nonRelativeNameResolutionCache[T]) setInNonRelativeNameCache(nameAndMode ModeAwareCacheKey, directoryName string, value T, redirectedReference *ResolvedProjectReference) {
@@ -195,7 +195,7 @@ func (c *nonRelativeNameResolutionCache[T]) setInNonRelativeNameCache(nameAndMod
 	cache := c.getOrCreateCacheForNonRelativeName(nameAndMode, redirectedReference)
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	cache.set(tspath.ToPath(directoryName, c.currentDirectory, c.useCaseSensitiveFileNames), value, c.getResolvedFileName)
+	cache.set(tspath.ToPath(directoryName, c.currentDirectory, c.caseSensitivity), value, c.getResolvedFileName)
 }
 
 func (c *nonRelativeNameResolutionCache[T]) getOrCreateCacheForNonRelativeName(nameAndMode ModeAwareCacheKey, redirectedReference *ResolvedProjectReference) *perNonRelativeNameCache[T] {

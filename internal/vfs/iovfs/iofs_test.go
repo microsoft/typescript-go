@@ -6,6 +6,7 @@ import (
 	"testing/fstest"
 
 	"github.com/microsoft/typescript-go/internal/testutil"
+	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/iovfs"
 	"gotest.tools/v3/assert"
@@ -29,7 +30,7 @@ func TestIOFS(t *testing.T) {
 		},
 	}
 
-	fs := iovfs.From(testfs, true)
+	fs := iovfs.From(testfs, tspath.CaseSensitive)
 
 	t.Run("ReadFile", func(t *testing.T) {
 		t.Parallel()
@@ -126,9 +127,9 @@ func TestIOFS(t *testing.T) {
 		assert.Equal(t, realpath, "/foo.ts")
 	})
 
-	t.Run("UseCaseSensitiveFileNames", func(t *testing.T) {
+	t.Run("CaseSensitivity", func(t *testing.T) {
 		t.Parallel()
 
-		assert.Assert(t, fs.UseCaseSensitiveFileNames())
+		assert.Equal(t, fs.CaseSensitivity(), tspath.CaseSensitive)
 	})
 }

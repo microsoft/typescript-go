@@ -28,7 +28,7 @@ foo.bar;`
 					"compilerOptions": {}
 				}
 			`,
-	}, false /*useCaseSensitiveFileNames*/)
+	}, tspath.CaseInsensitive)
 	fs = bundled.WrapFS(fs)
 
 	cd := "/"

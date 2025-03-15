@@ -7,6 +7,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 	"gotest.tools/v3/assert"
 )
@@ -213,7 +214,7 @@ func TestProgram(t *testing.T) {
 		t.Run(testCase.testName, func(t *testing.T) {
 			t.Parallel()
 			libPrefix := bundled.LibPath() + "/"
-			fs := vfstest.FromMap[any](nil, false /*useCaseSensitiveFileNames*/)
+			fs := vfstest.FromMap[any](nil, tspath.CaseInsensitive)
 			fs = bundled.WrapFS(fs)
 
 			for _, testFile := range testCase.files {

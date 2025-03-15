@@ -12,6 +12,7 @@ import (
 	"unicode/utf16"
 
 	"github.com/microsoft/typescript-go/internal/testutil"
+	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"gotest.tools/v3/assert"
 )
@@ -34,7 +35,7 @@ func TestInsensitive(t *testing.T) {
 			Data: contents,
 			Sys:  1234,
 		},
-	}, false /*useCaseSensitiveFileNames*/)
+	}, tspath.CaseInsensitive)
 
 	sensitive, err := fs.ReadFile(vfs, "foo/bar/baz")
 	assert.NilError(t, err)
@@ -97,7 +98,7 @@ func TestInsensitiveUpper(t *testing.T) {
 			Data: contents,
 			Sys:  1234,
 		},
-	}, false /*useCaseSensitiveFileNames*/)
+	}, tspath.CaseInsensitive)
 
 	sensitive, err := fs.ReadFile(vfs, "foo/bar/baz")
 	assert.NilError(t, err)
@@ -142,7 +143,7 @@ func TestSensitive(t *testing.T) {
 			Data: contents,
 			Sys:  1234,
 		},
-	}, true /*useCaseSensitiveFileNames*/)
+	}, tspath.CaseSensitive)
 
 	sensitive, err := fs.ReadFile(vfs, "foo/bar/baz")
 	assert.NilError(t, err)
@@ -170,7 +171,7 @@ func TestSensitiveDuplicatePath(t *testing.T) {
 	}
 
 	testutil.AssertPanics(t, func() {
-		convertMapFS(testfs, false /*useCaseSensitiveFileNames*/)
+		convertMapFS(testfs, tspath.CaseInsensitive)
 	}, `duplicate path: "Foo" and "foo" have the same canonical path`)
 }
 
@@ -186,7 +187,7 @@ func TestInsensitiveDuplicatePath(t *testing.T) {
 		},
 	}
 
-	convertMapFS(testfs, true /*useCaseSensitiveFileNames*/)
+	convertMapFS(testfs, tspath.CaseSensitive)
 }
 
 func dirEntriesToNames(entries []fs.DirEntry) []string {
@@ -200,7 +201,7 @@ func dirEntriesToNames(entries []fs.DirEntry) []string {
 func TestWritableFS(t *testing.T) {
 	t.Parallel()
 
-	fs := FromMap[any](nil, false)
+	fs := FromMap[any](nil, tspath.CaseInsensitive)
 
 	err := fs.WriteFile("/foo/bar/baz", "hello, world", false)
 	assert.NilError(t, err)
@@ -223,7 +224,7 @@ func TestWritableFS(t *testing.T) {
 func TestStress(t *testing.T) {
 	t.Parallel()
 
-	fs := FromMap[any](nil, false)
+	fs := FromMap[any](nil, tspath.CaseInsensitive)
 
 	ops := []func(){
 		func() { _ = fs.WriteFile("/foo/bar/baz.txt", "hello, world", false) },
@@ -275,7 +276,7 @@ func TestParentDirFile(t *testing.T) {
 	}
 
 	testutil.AssertPanics(t, func() {
-		convertMapFS(testfs, false /*useCaseSensitiveFileNames*/)
+		convertMapFS(testfs, tspath.CaseInsensitive)
 	}, `failed to create intermediate directories for "foo/oops": mkdir "foo": path exists but is not a directory`)
 }
 
@@ -291,7 +292,7 @@ func TestFromMap(t *testing.T) {
 			"/mapfile": &fstest.MapFile{
 				Data: []byte("hello, world"),
 			},
-		}, false)
+		}, tspath.CaseInsensitive)
 
 		content, ok := fs.ReadFile("/string")
 		assert.Assert(t, ok)
@@ -315,7 +316,7 @@ func TestFromMap(t *testing.T) {
 			"e:/mapfile": &fstest.MapFile{
 				Data: []byte("hello, world"),
 			},
-		}, false)
+		}, tspath.CaseInsensitive)
 
 		content, ok := fs.ReadFile("c:/string")
 		assert.Assert(t, ok)
@@ -337,7 +338,7 @@ func TestFromMap(t *testing.T) {
 			FromMap(map[string]any{
 				"/string":  "hello, world",
 				"c:/bytes": []byte("hello, world"),
-			}, false)
+			}, tspath.CaseInsensitive)
 		}, `mixed posix and windows paths`)
 	})
 
@@ -347,7 +348,7 @@ func TestFromMap(t *testing.T) {
 		testutil.AssertPanics(t, func() {
 			FromMap(map[string]any{
 				"string": "hello, world",
-			}, false)
+			}, tspath.CaseInsensitive)
 		}, `non-rooted path "string"`)
 	})
 
@@ -357,7 +358,7 @@ func TestFromMap(t *testing.T) {
 		testutil.AssertPanics(t, func() {
 			FromMap(map[string]any{
 				"/string/": "hello, world",
-			}, false)
+			}, tspath.CaseInsensitive)
 		}, `non-normalized path "/string/"`)
 	})
 
@@ -367,7 +368,7 @@ func TestFromMap(t *testing.T) {
 		testutil.AssertPanics(t, func() {
 			FromMap(map[string]any{
 				"/string/../foo": "hello, world",
-			}, false)
+			}, tspath.CaseInsensitive)
 		}, `non-normalized path "/string/../foo"`)
 	})
 
@@ -377,7 +378,7 @@ func TestFromMap(t *testing.T) {
 		testutil.AssertPanics(t, func() {
 			FromMap(map[string]any{
 				"/string": 1234,
-			}, false)
+			}, tspath.CaseInsensitive)
 		}, `invalid file type int`)
 	})
 }
@@ -390,7 +391,7 @@ func TestVFSTestMapFS(t *testing.T) {
 		"/dir1/file1.ts": "export const foo = 42;",
 		"/dir1/file2.ts": "export const foo = 42;",
 		"/dir2/file1.ts": "export const foo = 42;",
-	}, false /*useCaseSensitiveFileNames*/)
+	}, tspath.CaseInsensitive)
 
 	t.Run("ReadFile", func(t *testing.T) {
 		t.Parallel()
@@ -417,10 +418,10 @@ func TestVFSTestMapFS(t *testing.T) {
 		assert.Equal(t, realpath, "/does/not/exist.ts")
 	})
 
-	t.Run("UseCaseSensitiveFileNames", func(t *testing.T) {
+	t.Run("CaseSensitivity", func(t *testing.T) {
 		t.Parallel()
 
-		assert.Assert(t, !fs.UseCaseSensitiveFileNames())
+		assert.Equal(t, fs.CaseSensitivity(), tspath.CaseInsensitive)
 	})
 }
 
@@ -432,7 +433,7 @@ func TestVFSTestMapFSWindows(t *testing.T) {
 		"c:/dir1/file1.ts": "export const foo = 42;",
 		"c:/dir1/file2.ts": "export const foo = 42;",
 		"c:/dir2/file1.ts": "export const foo = 42;",
-	}, false)
+	}, tspath.CaseInsensitive)
 
 	t.Run("ReadFile", func(t *testing.T) {
 		t.Parallel()
@@ -494,7 +495,7 @@ func TestBOM(t *testing.T) {
 
 			fs := FromMap(map[string][]byte{
 				"/foo.ts": buf,
-			}, true)
+			}, tspath.CaseSensitive)
 
 			content, ok := fs.ReadFile("/foo.ts")
 			assert.Assert(t, ok)
@@ -507,7 +508,7 @@ func TestBOM(t *testing.T) {
 
 		fs := FromMap(map[string][]byte{
 			"/foo.ts": []byte("\xEF\xBB\xBF" + expected),
-		}, true)
+		}, tspath.CaseSensitive)
 
 		content, ok := fs.ReadFile("/foo.ts")
 		assert.Assert(t, ok)
@@ -527,7 +528,7 @@ func TestSymlink(t *testing.T) {
 		"/b":                Symlink("/c"),
 		"/c":                Symlink("/d"),
 		"/d/existing.ts":    "this is existing.ts",
-	}, false)
+	}, tspath.CaseInsensitive)
 
 	t.Run("ReadFile", func(t *testing.T) {
 		t.Parallel()
@@ -589,7 +590,7 @@ func TestWritableFSSymlink(t *testing.T) {
 		"/b":                 Symlink("/c"),
 		"/c":                 Symlink("/d"),
 		"/d/existing.ts":     "hello, world",
-	}, false)
+	}, tspath.CaseInsensitive)
 
 	err := fs.WriteFile("/some/dirlink/file.ts", "hello, world", false)
 	assert.NilError(t, err)
@@ -649,7 +650,7 @@ func TestWritableFSSymlinkChain(t *testing.T) {
 		"/b":             Symlink("/c"),
 		"/c":             Symlink("/d"),
 		"/d/existing.ts": "hello, world",
-	}, false)
+	}, tspath.CaseInsensitive)
 
 	err := fs.WriteFile("/a/foo/bar/new.ts", "this is new.ts", false)
 	assert.NilError(t, err)
@@ -672,7 +673,7 @@ func TestWritableFSSymlinkChainNotDir(t *testing.T) {
 		"/b": Symlink("/c"),
 		"/c": Symlink("/d"),
 		"/d": "hello, world",
-	}, false)
+	}, tspath.CaseInsensitive)
 
 	err := fs.WriteFile("/a/foo/bar/new.ts", "this is new.ts", false)
 	assert.Error(t, err, `mkdir "d": path exists but is not a directory`)

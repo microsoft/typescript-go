@@ -130,7 +130,7 @@ func makeUnitsFromTest(code string, fileName string) testCaseContent {
 	for i, data := range testUnits {
 		if harnessutil.GetConfigNameFromFileName(data.name) != "" {
 			configFileName := tspath.GetNormalizedAbsolutePath(data.name, currentDirectory)
-			path := tspath.ToPath(data.name, parseConfigHost.GetCurrentDirectory(), parseConfigHost.Vfs.UseCaseSensitiveFileNames())
+			path := tspath.ToPath(data.name, parseConfigHost.GetCurrentDirectory(), parseConfigHost.Vfs.CaseSensitivity())
 			configJson := parser.ParseJSONText(configFileName, path, data.content)
 			tsConfigSourceFile := &tsoptions.TsConfigSourceFile{
 				SourceFile: configJson,
