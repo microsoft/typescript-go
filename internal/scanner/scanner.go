@@ -1889,6 +1889,14 @@ func GetIdentifierToken(str string) ast.Kind {
 	return ast.KindIdentifier
 }
 
+func AllKeywords() []string {
+	keywords := make([]string, 0, len(textToKeyword))
+	for text := range textToKeyword {
+		keywords = append(keywords, text)
+	}
+	return keywords
+}
+
 func IsValidIdentifier(s string, languageVersion core.ScriptTarget) bool {
 	if len(s) == 0 {
 		return false

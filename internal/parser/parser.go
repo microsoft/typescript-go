@@ -1842,16 +1842,19 @@ func (p *Parser) parseErrorForMissingSemicolonAfter(node *ast.Node) {
 		p.parseErrorAtRange(p.skipRangeTrivia(node.AsTaggedTemplateExpression().Template.Loc), diagnostics.Module_declaration_names_may_only_use_or_quoted_strings)
 		return
 	}
+
 	// Otherwise, if this isn't a well-known keyword-like identifier, give the generic fallback message.
 	var expressionText string
 	if node.Kind == ast.KindIdentifier {
 		expressionText = node.AsIdentifier().Text
 	}
+
 	// !!! Also call isIdentifierText(expressionText, languageVersion)
 	if expressionText == "" {
 		p.parseErrorAtCurrentToken(diagnostics.X_0_expected, scanner.TokenToString(ast.KindSemicolonToken))
 		return
 	}
+
 	pos := scanner.SkipTrivia(p.sourceText, node.Pos())
 	// Some known keywords are likely signs of syntax being used improperly.
 	switch expressionText {
@@ -1874,18 +1877,36 @@ func (p *Parser) parseErrorForMissingSemicolonAfter(node *ast.Node) {
 		p.parseErrorForInvalidName(diagnostics.Type_alias_name_cannot_be_0, diagnostics.Type_alias_must_be_given_a_name, ast.KindEqualsToken)
 		return
 	}
-	// !!! The user alternatively might have misspelled or forgotten to add a space after a common keyword.
-	// const suggestion = getSpellingSuggestion(expressionText, viableKeywordSuggestions, identity) ?? getSpaceSuggestion(expressionText);
-	// if (suggestion) {
-	// 	parseErrorAt(pos, node.end, Diagnostics.Unknown_keyword_or_identifier_Did_you_mean_0, suggestion);
-	// 	return;
-	// }
+
+	// The user alternatively might have misspelled or forgotten to add a space after a common keyword.
+	viableKeywordSuggestions := core.Filter(scanner.AllKeywords(), func(keyword string) bool {
+		return len(keyword) > 2
+	})
+	suggestion := core.GetSpellingSuggestion(expressionText, viableKeywordSuggestions, core.Identity)
+	if suggestion == "" {
+		suggestion = getSpaceSuggestion(expressionText, viableKeywordSuggestions)
+	}
+	if suggestion != "" {
+		p.parseErrorAt(pos, node.End(), diagnostics.Unknown_keyword_or_identifier_Did_you_mean_0, suggestion)
+		return
+	}
+
 	// Unknown tokens are handled with their own errors in the scanner
 	if p.token == ast.KindUnknown {
 		return
 	}
+
 	// Otherwise, we know this some kind of unknown word, not just a missing expected semicolon.
 	p.parseErrorAt(pos, node.End(), diagnostics.Unexpected_keyword_or_identifier)
+}
+
+func getSpaceSuggestion(expressionText string, viableKeywordSuggestions []string) string {
+	for _, keyword := range viableKeywordSuggestions {
+		if len(expressionText) > len(keyword)+2 && strings.HasPrefix(expressionText, keyword) {
+			return keyword + " " + expressionText[len(keyword):]
+		}
+	}
+	return "" // return empty string if no suggestion found
 }
 
 func (p *Parser) parseErrorForInvalidName(nameDiagnostic *diagnostics.Message, blankDiagnostic *diagnostics.Message, tokenIfBlankName ast.Kind) {
