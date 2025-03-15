@@ -484,6 +484,21 @@ var parseJsonConfigFileTests = []struct {
 			allFileList:    map[string]string{"/app.ts": ""},
 		}},
 	},
+	{
+		title: "reports errors for wrong type option and invalid enum value",
+		input: []testConfig{{
+			jsonText: `{
+			    "compilerOptions": {
+				"target": "invalid value",
+				"removeComments": "should be a boolean",
+				"moduleResolution": "invalid value"
+			    }
+			}`,
+			configFileName: "tsconfig.json",
+			basePath:       "/",
+			allFileList:    map[string]string{"/app.ts": ""},
+		}},
+	},
 }
 
 var tsconfigWithExtends = `{
