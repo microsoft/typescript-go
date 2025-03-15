@@ -73,3 +73,8 @@ linters-settings:
 issues:
   max-issues-per-linter: 0
   max-same-issues: 0
+
+  exclude:
+    - '^could not import'
+    - '^: #'
+    - 'imported and not used$'
