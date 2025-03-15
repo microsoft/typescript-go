@@ -24,17 +24,18 @@ func parseTristate(value any) core.Tristate {
 }
 
 func parseStringArray(value any) []string {
-	if arr, ok := value.([]any); ok {
-		var result []string
-		for _, v := range arr {
-			if str, ok := v.(string); ok {
-				result = append(result, str)
-			}
-		}
-		return result
-	}
-	return nil
+    var result []string
+    if arr, ok := value.([]any); ok {
+        result = make([]string, 0, len(arr)) 
+        for _, v := range arr {
+            if str, ok := v.(string); ok {
+                result = append(result, str)
+            }
+        }
+    }
+    return result 
 }
+
 
 func parseStringMap(value any) *collections.OrderedMap[string, []string] {
 	if m, ok := value.(*collections.OrderedMap[string, any]); ok {
