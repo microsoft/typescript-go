@@ -16,11 +16,11 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/bundled"
-	ts "github.com/microsoft/typescript-go/internal/compiler"
-	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/execute"
+	"github.com/microsoft/typescript-go/internal/program"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
@@ -164,10 +164,10 @@ func main() {
 
 	currentDirectory = tspath.GetDirectoryPath(configFileName)
 	// !!! is the working directory actually the config path?
-	host := ts.NewCompilerHost(compilerOptions, currentDirectory, fs, defaultLibraryPath)
+	host := program.NewCompilerHost(compilerOptions, currentDirectory, fs, defaultLibraryPath)
 
 	parseStart := time.Now()
-	program := ts.NewProgram(ts.ProgramOptions{
+	prog := program.NewProgram(program.ProgramOptions{
 		ConfigFileName: configFileName,
 		Options:        compilerOptions,
 		SingleThreaded: opts.devel.singleThreaded,
@@ -175,10 +175,10 @@ func main() {
 	})
 	parseTime := time.Since(parseStart)
 
-	compilerOptions = program.Options()
+	compilerOptions = prog.Options()
 
 	if compilerOptions.ListFilesOnly.IsTrue() {
-		listFiles(program)
+		listFiles(prog)
 		os.Exit(0)
 	}
 
@@ -194,25 +194,25 @@ func main() {
 
 	var bindTime, checkTime time.Duration
 
-	diagnostics := program.GetConfigFileParsingDiagnostics()
+	diagnostics := prog.GetConfigFileParsingDiagnostics()
 	if len(diagnostics) != 0 {
 		printDiagnostics(diagnostics, host, compilerOptions)
 		os.Exit(1)
 	}
 
-	diagnostics = program.GetSyntacticDiagnostics(nil)
+	diagnostics = prog.GetSyntacticDiagnostics(nil)
 	if len(diagnostics) == 0 {
 		if opts.devel.printTypes {
-			program.PrintSourceFileWithTypes()
+			prog.PrintSourceFileWithTypes()
 		} else {
 			bindStart := time.Now()
-			_ = program.GetBindDiagnostics(nil)
+			_ = prog.GetBindDiagnostics(nil)
 			bindTime = time.Since(bindStart)
 
 			// !!! the checker already reads noCheck, but do it here just for stats printing for now
 			if compilerOptions.NoCheck.IsFalseOrUnknown() {
 				checkStart := time.Now()
-				diagnostics = slices.Concat(program.GetGlobalDiagnostics(), program.GetSemanticDiagnostics(nil))
+				diagnostics = slices.Concat(prog.GetGlobalDiagnostics(), prog.GetSemanticDiagnostics(nil))
 				checkTime = time.Since(checkStart)
 			}
 		}
@@ -221,7 +221,7 @@ func main() {
 	var emitTime time.Duration
 	if compilerOptions.NoEmit.IsFalseOrUnknown() {
 		emitStart := time.Now()
-		result := program.Emit(&ts.EmitOptions{})
+		result := prog.Emit(&program.EmitOptions{})
 		diagnostics = append(diagnostics, result.Diagnostics...)
 		emitTime = time.Since(emitStart)
 	}
@@ -235,11 +235,11 @@ func main() {
 	runtime.ReadMemStats(&memStats)
 
 	if !opts.devel.quiet && len(diagnostics) != 0 {
-		printDiagnostics(ts.SortAndDeduplicateDiagnostics(diagnostics), host, compilerOptions)
+		printDiagnostics(program.SortAndDeduplicateDiagnostics(diagnostics), host, compilerOptions)
 	}
 
 	var unsupportedExtensions []string
-	for _, file := range program.SourceFiles() {
+	for _, file := range prog.SourceFiles() {
 		extension := tspath.TryGetExtensionFromPath(file.FileName())
 		if extension == tspath.ExtensionTsx || slices.Contains(tspath.SupportedJSExtensionsFlat, extension) {
 			unsupportedExtensions = core.AppendIfUnique(unsupportedExtensions, extension)
@@ -250,13 +250,13 @@ func main() {
 	}
 
 	if compilerOptions.ListFiles.IsTrue() {
-		listFiles(program)
+		listFiles(prog)
 	}
 
 	var stats table
 
-	stats.add("Files", len(program.SourceFiles()))
-	stats.add("Types", program.TypeCount())
+	stats.add("Files", len(prog.SourceFiles()))
+	stats.add("Types", prog.TypeCount())
 	stats.add("Parse time", parseTime)
 	if bindTime != 0 {
 		stats.add("Bind time", bindTime)
@@ -307,13 +307,13 @@ func formatDuration(d time.Duration) string {
 	return fmt.Sprintf("%.3fs", d.Seconds())
 }
 
-func listFiles(p *ts.Program) {
+func listFiles(p *program.Program) {
 	for _, file := range p.SourceFiles() {
 		fmt.Println(file.FileName())
 	}
 }
 
-func getFormatOpts(host ts.CompilerHost) *diagnosticwriter.FormattingOptions {
+func getFormatOpts(host program.CompilerHost) *diagnosticwriter.FormattingOptions {
 	return &diagnosticwriter.FormattingOptions{
 		NewLine: host.NewLine(),
 		ComparePathsOptions: tspath.ComparePathsOptions{
@@ -323,7 +323,7 @@ func getFormatOpts(host ts.CompilerHost) *diagnosticwriter.FormattingOptions {
 	}
 }
 
-func printDiagnostics(diagnostics []*ast.Diagnostic, host ts.CompilerHost, compilerOptions *core.CompilerOptions) {
+func printDiagnostics(diagnostics []*ast.Diagnostic, host program.CompilerHost, compilerOptions *core.CompilerOptions) {
 	formatOpts := getFormatOpts(host)
 	if compilerOptions.Pretty.IsTrueOrUnknown() {
 		diagnosticwriter.FormatDiagnosticsWithColorAndContext(os.Stdout, diagnostics, formatOpts)

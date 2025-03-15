@@ -4,9 +4,9 @@ import (
 	"fmt"
 
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/compiler"
-	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/program"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -165,19 +165,19 @@ func getParsedCommandLineOfConfigFile(configFileName string, options *core.Compi
 }
 
 func performCompilation(sys System, cb cbType, config *tsoptions.ParsedCommandLine, reportDiagnostic diagnosticReporter) ExitStatus {
-	host := compiler.NewCompilerHost(config.CompilerOptions(), sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath())
+	host := program.NewCompilerHost(config.CompilerOptions(), sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath())
 	// todo: cache, statistics, tracing
-	program := compiler.NewProgramFromParsedCommandLine(config, host)
+	prog := program.NewProgramFromParsedCommandLine(config, host)
 
-	diagnostics, emitResult, exitStatus := compileAndEmit(sys, program, reportDiagnostic)
+	diagnostics, emitResult, exitStatus := compileAndEmit(sys, prog, reportDiagnostic)
 	if exitStatus != ExitStatusSuccess {
 		// compile exited early
 		return exitStatus
 	}
 
-	reportStatistics(sys, program)
+	reportStatistics(sys, prog)
 	if cb != nil {
-		cb(program)
+		cb(prog)
 	}
 
 	if emitResult.EmitSkipped && diagnostics != nil && len(diagnostics) > 0 {
@@ -188,23 +188,23 @@ func performCompilation(sys System, cb cbType, config *tsoptions.ParsedCommandLi
 	return ExitStatusSuccess
 }
 
-func compileAndEmit(sys System, program *compiler.Program, reportDiagnostic diagnosticReporter) ([]*ast.Diagnostic, *compiler.EmitResult, ExitStatus) {
+func compileAndEmit(sys System, prog *program.Program, reportDiagnostic diagnosticReporter) ([]*ast.Diagnostic, *program.EmitResult, ExitStatus) {
 	// todo: check if third return needed after execute is fully implemented
 
-	options := program.Options()
-	allDiagnostics := program.GetConfigFileParsingDiagnostics()
+	options := prog.Options()
+	allDiagnostics := prog.GetConfigFileParsingDiagnostics()
 
 	// todo: early exit logic and append diagnostics
-	diagnostics := program.GetSyntacticDiagnostics(nil)
+	diagnostics := prog.GetSyntacticDiagnostics(nil)
 	if len(diagnostics) == 0 {
-		diagnostics = append(diagnostics, program.GetOptionsDiagnostics()...)
+		diagnostics = append(diagnostics, prog.GetOptionsDiagnostics()...)
 		if options.ListFilesOnly.IsFalse() {
-			// program.GetBindDiagnostics(nil)
-			diagnostics = append(diagnostics, program.GetGlobalDiagnostics()...)
+			// prog.GetBindDiagnostics(nil)
+			diagnostics = append(diagnostics, prog.GetGlobalDiagnostics()...)
 		}
 	}
 	if len(diagnostics) == 0 {
-		diagnostics = append(diagnostics, program.GetSemanticDiagnostics(nil)...)
+		diagnostics = append(diagnostics, prog.GetSemanticDiagnostics(nil)...)
 	}
 	// TODO: declaration diagnostics
 	if len(diagnostics) == 0 && options.NoEmit == core.TSTrue && (options.Declaration.IsTrue() && options.Composite.IsTrue()) {
@@ -212,15 +212,15 @@ func compileAndEmit(sys System, program *compiler.Program, reportDiagnostic diag
 		// addRange(allDiagnostics, program.getDeclarationDiagnostics(/*sourceFile*/ undefined, cancellationToken));
 	}
 
-	emitResult := &compiler.EmitResult{EmitSkipped: true, Diagnostics: []*ast.Diagnostic{}}
+	emitResult := &program.EmitResult{EmitSkipped: true, Diagnostics: []*ast.Diagnostic{}}
 	if !options.ListFilesOnly.IsTrue() {
 		// !!! Emit is not yet fully implemented, will not emit unless `outfile` specified
-		emitResult = program.Emit(&compiler.EmitOptions{})
+		emitResult = prog.Emit(&program.EmitOptions{})
 	}
 	diagnostics = append(diagnostics, emitResult.Diagnostics...)
 
 	allDiagnostics = append(allDiagnostics, diagnostics...)
-	allDiagnostics = compiler.SortAndDeduplicateDiagnostics(allDiagnostics)
+	allDiagnostics = program.SortAndDeduplicateDiagnostics(allDiagnostics)
 	for _, diagnostic := range allDiagnostics {
 		reportDiagnostic(diagnostic)
 	}
@@ -233,7 +233,7 @@ func compileAndEmit(sys System, program *compiler.Program, reportDiagnostic diag
 		// todo: listFiles(program, sys.Writer())
 	}
 
-	createReportErrorSummary(sys, program.Options())(allDiagnostics)
+	createReportErrorSummary(sys, prog.Options())(allDiagnostics)
 	return allDiagnostics, emitResult, ExitStatusSuccess
 }
 

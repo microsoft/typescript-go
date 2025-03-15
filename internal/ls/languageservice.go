@@ -2,13 +2,13 @@ package ls
 
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/program"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
-var _ compiler.CompilerHost = (*LanguageService)(nil)
+var _ program.CompilerHost = (*LanguageService)(nil)
 
 type LanguageService struct {
 	host Host
@@ -51,11 +51,11 @@ func (l *LanguageService) GetSourceFile(fileName string, path tspath.Path, langu
 }
 
 // GetProgram updates the program if the project version has changed.
-func (l *LanguageService) GetProgram() *compiler.Program {
+func (l *LanguageService) GetProgram() *program.Program {
 	return l.host.GetProgram()
 }
 
-func (l *LanguageService) getProgramAndFile(fileName string) (*compiler.Program, *ast.SourceFile) {
+func (l *LanguageService) getProgramAndFile(fileName string) (*program.Program, *ast.SourceFile) {
 	program := l.GetProgram()
 	file := program.GetSourceFile(fileName)
 	if file == nil {

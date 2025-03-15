@@ -5,9 +5,9 @@ import (
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
+	"github.com/microsoft/typescript-go/internal/program"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -56,7 +56,7 @@ func createReportErrorSummary(sys System, options *core.CompilerOptions) func(di
 	return func(diagnostics []*ast.Diagnostic) {}
 }
 
-func reportStatistics(sys System, program *compiler.Program) {
+func reportStatistics(sys System, program *program.Program) {
 	// todo
 	stats := []statistic{
 		newStatistic("Files", len(program.SourceFiles())),

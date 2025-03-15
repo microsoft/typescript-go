@@ -15,9 +15,9 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/bundled"
-	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/parser"
+	"github.com/microsoft/typescript-go/internal/program"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/testutil"
@@ -34,7 +34,7 @@ type TestFile struct {
 
 type CompilationResult struct {
 	Diagnostics    []*ast.Diagnostic
-	Program        *compiler.Program
+	Program        *program.Program
 	Options        *core.CompilerOptions
 	HarnessOptions *HarnessOptions
 	// !!! outputs
@@ -349,7 +349,7 @@ func getOptionValue(t *testing.T, option *tsoptions.CommandLineOption, value str
 }
 
 type cachedCompilerHost struct {
-	compiler.CompilerHost
+	program.CompilerHost
 	options *core.CompilerOptions
 }
 
@@ -391,15 +391,15 @@ func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path, la
 	return result.(*ast.SourceFile)
 }
 
-func createCompilerHost(fs vfs.FS, defaultLibraryPath string, options *core.CompilerOptions, currentDirectory string) compiler.CompilerHost {
+func createCompilerHost(fs vfs.FS, defaultLibraryPath string, options *core.CompilerOptions, currentDirectory string) program.CompilerHost {
 	return &cachedCompilerHost{
-		CompilerHost: compiler.NewCompilerHost(options, currentDirectory, fs, defaultLibraryPath),
+		CompilerHost: program.NewCompilerHost(options, currentDirectory, fs, defaultLibraryPath),
 		options:      options,
 	}
 }
 
 func compileFilesWithHost(
-	host compiler.CompilerHost,
+	host program.CompilerHost,
 	rootFiles []string,
 	options *core.CompilerOptions,
 	harnessOptions *HarnessOptions,
@@ -423,7 +423,7 @@ func compileFilesWithHost(
 	// pre-emit/post-emit error comparison requires declaration emit twice, which can be slow. If it's unlikely to flag any error consistency issues
 	// and if the test is running `skipLibCheck` - an indicator that we want the tets to run quickly - skip the before/after error comparison, too
 	// skipErrorComparison := len(rootFiles) >= 100 || options.SkipLibCheck == core.TSTrue && options.Declaration == core.TSTrue
-	// var preProgram *compiler.Program
+	// var preProgram *program.Program
 	// if !skipErrorComparison {
 	// preProgram = ts.createProgram({ rootNames: rootFiles || [], options: { ...compilerOptions, configFile: compilerOptions.configFile, traceResolution: false }, host, typeScriptVersion })
 	// }
@@ -470,7 +470,7 @@ func compileFilesWithHost(
 
 func newCompilationResult(
 	options *core.CompilerOptions,
-	program *compiler.Program,
+	program *program.Program,
 	diagnostics []*ast.Diagnostic,
 	harnessOptions *HarnessOptions,
 ) *CompilationResult {
@@ -486,14 +486,14 @@ func newCompilationResult(
 	}
 }
 
-func createProgram(host compiler.CompilerHost, options *core.CompilerOptions, rootFiles []string) *compiler.Program {
-	programOptions := compiler.ProgramOptions{
+func createProgram(host program.CompilerHost, options *core.CompilerOptions, rootFiles []string) *program.Program {
+	programOptions := program.ProgramOptions{
 		RootFiles:      rootFiles,
 		Host:           host,
 		Options:        options,
 		SingleThreaded: testutil.TestProgramIsSingleThreaded(),
 	}
-	program := compiler.NewProgram(programOptions)
+	program := program.NewProgram(programOptions)
 	return program
 }
 

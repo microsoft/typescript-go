@@ -1,7 +1,7 @@
 package execute
 
 import (
-	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/program"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 )
 
@@ -24,7 +24,7 @@ func RunWatchCycle(w *watcher) {
 		return
 	}
 	// todo: updateProgram()
-	w.program = compiler.NewProgramFromParsedCommandLine(w.options, w.host)
+	w.program = program.NewProgramFromParsedCommandLine(w.options, w.host)
 	if w.hasBeenModified(w.program) {
 		w.compileAndEmit()
 	}
