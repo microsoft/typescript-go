@@ -36,12 +36,18 @@ func TestOS(t *testing.T) {
 	t.Run("Realpath", func(t *testing.T) {
 		t.Parallel()
 
-		expected := goModPath
+		home, err := os.UserHomeDir()
+		if err != nil {
+			t.Skip(err)
+		}
+		home = tspath.NormalizePath(home)
+
+		expected := home
 		if runtime.GOOS == "windows" {
 			// Windows drive letters can be lowercase, but realpath will always return uppercase.
 			expected = strings.ToUpper(expected[:1]) + expected[1:]
 		}
-		realpath := fs.Realpath(goModPath)
+		realpath := fs.Realpath(home)
 		assert.Equal(t, realpath, expected)
 	})
 
