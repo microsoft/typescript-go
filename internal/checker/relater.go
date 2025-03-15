@@ -2680,7 +2680,7 @@ func (r *Relater) hasExcessProperties(source *Type, target *Type, reportErrors b
 					}
 					if ast.IsJsxAttributes(r.errorNode) || isJsxOpeningLikeElement(r.errorNode) || isJsxOpeningLikeElement(r.errorNode.Parent) {
 						// !!!
-						// // JsxAttributes has an object-literal flag and undergo same type-assignablity check as normal object-literal.
+						// // JsxAttributes has an object-literal flag and undergo same type-assignability check as normal object-literal.
 						// // However, using an object-literal error message will be very confusing to the users so we give different a message.
 						// if prop.valueDeclaration && isJsxAttribute(prop.valueDeclaration) && ast.GetSourceFileOfNode(errorNode) == ast.GetSourceFileOfNode(prop.valueDeclaration.name) {
 						// 	// Note that extraneous children (as in `<NoChild>extra</NoChild>`) don't pass this check,
