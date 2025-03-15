@@ -1,25 +1,17 @@
-stringNamedPropertyDuplicates.ts(2,5): error TS2300: Duplicate identifier '"a b"'.
 stringNamedPropertyDuplicates.ts(3,5): error TS2300: Duplicate identifier '"a b"'.
-stringNamedPropertyDuplicates.ts(4,12): error TS2300: Duplicate identifier '"c d"'.
 stringNamedPropertyDuplicates.ts(5,12): error TS2300: Duplicate identifier '"c d"'.
-stringNamedPropertyDuplicates.ts(9,5): error TS2300: Duplicate identifier '"a b"'.
 stringNamedPropertyDuplicates.ts(10,5): error TS2300: Duplicate identifier '"a b"'.
-stringNamedPropertyDuplicates.ts(14,5): error TS2300: Duplicate identifier '"a b"'.
 stringNamedPropertyDuplicates.ts(15,5): error TS2300: Duplicate identifier '"a b"'.
 stringNamedPropertyDuplicates.ts(20,5): error TS1005: ',' expected.
 
 
-==== stringNamedPropertyDuplicates.ts (9 errors) ====
+==== stringNamedPropertyDuplicates.ts (5 errors) ====
     class C {
         "a b": number;
-        ~~~~~
-!!! error TS2300: Duplicate identifier '"a b"'.
         "a b": number;
         ~~~~~
 !!! error TS2300: Duplicate identifier '"a b"'.
         static "c d": number;
-               ~~~~~
-!!! error TS2300: Duplicate identifier '"c d"'.
         static "c d": number;
                ~~~~~
 !!! error TS2300: Duplicate identifier '"c d"'.
@@ -27,8 +19,6 @@ stringNamedPropertyDuplicates.ts(20,5): error TS1005: ',' expected.
     
     interface I {
         "a b": number;
-        ~~~~~
-!!! error TS2300: Duplicate identifier '"a b"'.
         "a b": number;
         ~~~~~
 !!! error TS2300: Duplicate identifier '"a b"'.
@@ -36,8 +26,6 @@ stringNamedPropertyDuplicates.ts(20,5): error TS1005: ',' expected.
     
     var a: {
         "a b": number;
-        ~~~~~
-!!! error TS2300: Duplicate identifier '"a b"'.
         "a b": number;
         ~~~~~
 !!! error TS2300: Duplicate identifier '"a b"'.

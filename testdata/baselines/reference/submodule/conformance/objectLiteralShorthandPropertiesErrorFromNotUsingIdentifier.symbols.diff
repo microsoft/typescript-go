@@ -9,12 +9,7 @@
  
      42,
  >42 : Symbol(42, Decl(objectLiteralShorthandPropertiesErrorFromNotUsingIdentifier.ts, 2, 20))
-@@= skipped -33, +33 lines =@@
- 
-     a.b,
- >a : Symbol(a, Decl(objectLiteralShorthandPropertiesErrorFromNotUsingIdentifier.ts, 13, 9), Decl(objectLiteralShorthandPropertiesErrorFromNotUsingIdentifier.ts, 14, 8), Decl(objectLiteralShorthandPropertiesErrorFromNotUsingIdentifier.ts, 15, 12))
--> : Symbol((Missing), Decl(objectLiteralShorthandPropertiesErrorFromNotUsingIdentifier.ts, 14, 5))
-+> : Symbol(, Decl(objectLiteralShorthandPropertiesErrorFromNotUsingIdentifier.ts, 14, 5))
+@@= skipped -37, +37 lines =@@
  
      a["ss"],
  >a : Symbol(a, Decl(objectLiteralShorthandPropertiesErrorFromNotUsingIdentifier.ts, 13, 9), Decl(objectLiteralShorthandPropertiesErrorFromNotUsingIdentifier.ts, 14, 8), Decl(objectLiteralShorthandPropertiesErrorFromNotUsingIdentifier.ts, 15, 12))

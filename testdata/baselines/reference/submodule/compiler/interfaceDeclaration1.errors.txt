@@ -1,6 +1,4 @@
-interfaceDeclaration1.ts(2,5): error TS2300: Duplicate identifier 'item'.
 interfaceDeclaration1.ts(3,5): error TS2300: Duplicate identifier 'item'.
-interfaceDeclaration1.ts(7,5): error TS2300: Duplicate identifier 'item'.
 interfaceDeclaration1.ts(8,5): error TS2300: Duplicate identifier 'item'.
 interfaceDeclaration1.ts(8,5): error TS2717: Subsequent property declarations must have the same type.  Property 'item' must be of type 'any', but here has type 'number'.
 interfaceDeclaration1.ts(22,11): error TS2310: Type 'I5' recursively references itself as a base type.
@@ -12,11 +10,9 @@ interfaceDeclaration1.ts(52,11): error TS2320: Interface 'i12' cannot simultaneo
   Named property 'foo' of types 'i10' and 'i11' are not identical.
 
 
-==== interfaceDeclaration1.ts (10 errors) ====
+==== interfaceDeclaration1.ts (8 errors) ====
     interface I1 {
         item:number;
-        ~~~~
-!!! error TS2300: Duplicate identifier 'item'.
         item:number;
         ~~~~
 !!! error TS2300: Duplicate identifier 'item'.
@@ -24,8 +20,6 @@ interfaceDeclaration1.ts(52,11): error TS2320: Interface 'i12' cannot simultaneo
     
     interface I2 {
         item:any;
-        ~~~~
-!!! error TS2300: Duplicate identifier 'item'.
         item:number;
         ~~~~
 !!! error TS2300: Duplicate identifier 'item'.

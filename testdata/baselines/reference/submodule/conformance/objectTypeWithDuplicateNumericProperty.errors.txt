@@ -1,12 +1,9 @@
-objectTypeWithDuplicateNumericProperty.ts(5,5): error TS2300: Duplicate identifier '1'.
 objectTypeWithDuplicateNumericProperty.ts(6,5): error TS2300: Duplicate identifier '1'.
 objectTypeWithDuplicateNumericProperty.ts(7,5): error TS2300: Duplicate identifier '1'.
 objectTypeWithDuplicateNumericProperty.ts(8,5): error TS2300: Duplicate identifier '1'.
-objectTypeWithDuplicateNumericProperty.ts(12,5): error TS2300: Duplicate identifier '1'.
 objectTypeWithDuplicateNumericProperty.ts(13,5): error TS2300: Duplicate identifier '1'.
 objectTypeWithDuplicateNumericProperty.ts(14,5): error TS2300: Duplicate identifier '1'.
 objectTypeWithDuplicateNumericProperty.ts(15,5): error TS2300: Duplicate identifier '1'.
-objectTypeWithDuplicateNumericProperty.ts(19,5): error TS2300: Duplicate identifier '1'.
 objectTypeWithDuplicateNumericProperty.ts(20,5): error TS2300: Duplicate identifier '1'.
 objectTypeWithDuplicateNumericProperty.ts(21,5): error TS2300: Duplicate identifier '1'.
 objectTypeWithDuplicateNumericProperty.ts(22,5): error TS2300: Duplicate identifier '1'.
@@ -15,14 +12,12 @@ objectTypeWithDuplicateNumericProperty.ts(28,5): error TS1117: An object literal
 objectTypeWithDuplicateNumericProperty.ts(29,5): error TS1117: An object literal cannot have multiple properties with the same name.
 
 
-==== objectTypeWithDuplicateNumericProperty.ts (15 errors) ====
+==== objectTypeWithDuplicateNumericProperty.ts (12 errors) ====
     // numeric properties must be distinct after a ToNumber operation
     // so the below are all errors
     
     class C {
         1;
-        ~
-!!! error TS2300: Duplicate identifier '1'.
         1.0;
         ~~~
 !!! error TS2300: Duplicate identifier '1'.
@@ -36,8 +31,6 @@ objectTypeWithDuplicateNumericProperty.ts(29,5): error TS1117: An object literal
     
     interface I {
         1;
-        ~
-!!! error TS2300: Duplicate identifier '1'.
         1.0;
         ~~~
 !!! error TS2300: Duplicate identifier '1'.
@@ -51,8 +44,6 @@ objectTypeWithDuplicateNumericProperty.ts(29,5): error TS1117: An object literal
     
     var a: {
         1;
-        ~
-!!! error TS2300: Duplicate identifier '1'.
         1.0;
         ~~~
 !!! error TS2300: Duplicate identifier '1'.

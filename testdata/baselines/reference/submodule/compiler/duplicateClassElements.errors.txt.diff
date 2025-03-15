@@ -1,11 +1,6 @@
 --- old.duplicateClassElements.errors.txt
 +++ new.duplicateClassElements.errors.txt
-@@= skipped -0, +0 lines =@@
-+duplicateClassElements.ts(2,12): error TS2300: Duplicate identifier 'a'.
- duplicateClassElements.ts(3,12): error TS2300: Duplicate identifier 'a'.
- duplicateClassElements.ts(4,12): error TS2393: Duplicate function implementation.
- duplicateClassElements.ts(6,12): error TS2393: Duplicate function implementation.
-@@= skipped -6, +7 lines =@@
+@@= skipped -6, +6 lines =@@
  duplicateClassElements.ts(21,12): error TS2300: Duplicate identifier 'z'.
  duplicateClassElements.ts(23,9): error TS2300: Duplicate identifier 'z'.
  duplicateClassElements.ts(26,9): error TS2300: Duplicate identifier 'z'.
@@ -19,15 +14,11 @@
  
  
 -==== duplicateClassElements.ts (14 errors) ====
-+==== duplicateClassElements.ts (16 errors) ====
++==== duplicateClassElements.ts (15 errors) ====
      class a {
          public a;
-+               ~
-+!!! error TS2300: Duplicate identifier 'a'.
          public a;
-                ~
- !!! error TS2300: Duplicate identifier 'a'.
-@@= skipped -55, +58 lines =@@
+@@= skipped -55, +56 lines =@@
          }
      
          get x2() {

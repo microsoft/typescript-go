@@ -6,13 +6,9 @@
 -classWithDuplicateIdentifier.ts(3,5): error TS2717: Subsequent property declarations must have the same type.  Property 'a' must be of type '() => number', but here has type 'number'.
  classWithDuplicateIdentifier.ts(6,5): error TS2300: Duplicate identifier 'b'.
  classWithDuplicateIdentifier.ts(7,5): error TS2300: Duplicate identifier 'b'.
-+classWithDuplicateIdentifier.ts(10,5): error TS2300: Duplicate identifier 'c'.
  classWithDuplicateIdentifier.ts(11,5): error TS2300: Duplicate identifier 'c'.
- classWithDuplicateIdentifier.ts(11,5): error TS2717: Subsequent property declarations must have the same type.  Property 'c' must be of type 'number', but here has type 'string'.
- 
- 
--==== classWithDuplicateIdentifier.ts (6 errors) ====
-+==== classWithDuplicateIdentifier.ts (7 errors) ====
+@@= skipped -8, +8 lines =@@
+ ==== classWithDuplicateIdentifier.ts (6 errors) ====
      class C {
          a(): number { return 0; } // error: duplicate identifier
 -        a: number;
@@ -26,12 +22,3 @@
      }
      class K {
          b: number; // error: duplicate identifier
-@@= skipped -25, +25 lines =@@
-     }
-     class D {
-         c: number;
-+        ~
-+!!! error TS2300: Duplicate identifier 'c'.
-         c: string;
-         ~
- !!! error TS2300: Duplicate identifier 'c'.

@@ -1,4 +1,3 @@
-duplicateClassElements.ts(2,12): error TS2300: Duplicate identifier 'a'.
 duplicateClassElements.ts(3,12): error TS2300: Duplicate identifier 'a'.
 duplicateClassElements.ts(4,12): error TS2393: Duplicate function implementation.
 duplicateClassElements.ts(6,12): error TS2393: Duplicate function implementation.
@@ -16,11 +15,9 @@ duplicateClassElements.ts(39,9): error TS2300: Duplicate identifier 'z2'.
 duplicateClassElements.ts(41,12): error TS2300: Duplicate identifier 'z2'.
 
 
-==== duplicateClassElements.ts (16 errors) ====
+==== duplicateClassElements.ts (15 errors) ====
     class a {
         public a;
-               ~
-!!! error TS2300: Duplicate identifier 'a'.
         public a;
                ~
 !!! error TS2300: Duplicate identifier 'a'.

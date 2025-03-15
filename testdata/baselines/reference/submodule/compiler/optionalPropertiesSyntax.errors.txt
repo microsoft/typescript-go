@@ -4,7 +4,6 @@ optionalPropertiesSyntax.ts(11,8): error TS1131: Property or signature expected.
 optionalPropertiesSyntax.ts(12,5): error TS1131: Property or signature expected.
 optionalPropertiesSyntax.ts(18,11): error TS1005: ';' expected.
 optionalPropertiesSyntax.ts(18,12): error TS1131: Property or signature expected.
-optionalPropertiesSyntax.ts(24,5): error TS2300: Duplicate identifier 'prop'.
 optionalPropertiesSyntax.ts(24,5): error TS2687: All declarations of 'prop' must have identical modifiers.
 optionalPropertiesSyntax.ts(25,5): error TS2300: Duplicate identifier 'prop'.
 optionalPropertiesSyntax.ts(25,5): error TS2687: All declarations of 'prop' must have identical modifiers.
@@ -17,7 +16,7 @@ optionalPropertiesSyntax.ts(33,7): error TS2374: Duplicate index signature for t
 optionalPropertiesSyntax.ts(34,5): error TS2374: Duplicate index signature for type 'number'.
 
 
-==== optionalPropertiesSyntax.ts (17 errors) ====
+==== optionalPropertiesSyntax.ts (16 errors) ====
     interface fnSigs {
         //functions signatures can be optional
         fn(): void;
@@ -54,8 +53,6 @@ optionalPropertiesSyntax.ts(34,5): error TS2374: Duplicate index signature for t
     interface propertySig {
         //Property signatures can be optional
         prop: any;
-        ~~~~
-!!! error TS2300: Duplicate identifier 'prop'.
         ~~~~
 !!! error TS2687: All declarations of 'prop' must have identical modifiers.
         prop?: any;

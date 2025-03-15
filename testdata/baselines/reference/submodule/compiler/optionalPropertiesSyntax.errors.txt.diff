@@ -1,0 +1,28 @@
+--- old.optionalPropertiesSyntax.errors.txt
++++ new.optionalPropertiesSyntax.errors.txt
+@@= skipped -3, +3 lines =@@
+ optionalPropertiesSyntax.ts(12,5): error TS1131: Property or signature expected.
+ optionalPropertiesSyntax.ts(18,11): error TS1005: ';' expected.
+ optionalPropertiesSyntax.ts(18,12): error TS1131: Property or signature expected.
+-optionalPropertiesSyntax.ts(24,5): error TS2300: Duplicate identifier 'prop'.
+ optionalPropertiesSyntax.ts(24,5): error TS2687: All declarations of 'prop' must have identical modifiers.
+ optionalPropertiesSyntax.ts(25,5): error TS2300: Duplicate identifier 'prop'.
+ optionalPropertiesSyntax.ts(25,5): error TS2687: All declarations of 'prop' must have identical modifiers.
+@@= skipped -13, +12 lines =@@
+ optionalPropertiesSyntax.ts(34,5): error TS2374: Duplicate index signature for type 'number'.
+ 
+ 
+-==== optionalPropertiesSyntax.ts (17 errors) ====
++==== optionalPropertiesSyntax.ts (16 errors) ====
+     interface fnSigs {
+         //functions signatures can be optional
+         fn(): void;
+@@= skipped -38, +38 lines =@@
+         //Property signatures can be optional
+         prop: any;
+         ~~~~
+-!!! error TS2300: Duplicate identifier 'prop'.
+-        ~~~~
+ !!! error TS2687: All declarations of 'prop' must have identical modifiers.
+         prop?: any;
+         ~~~~
