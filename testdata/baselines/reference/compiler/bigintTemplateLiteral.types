@@ -1,0 +1,132 @@
+//// [tests/cases/compiler/bigintTemplateLiteral.ts] ////
+
+=== bigintTemplateLiteral.ts ===
+// Tests for bigint in template literal type contexts
+
+// Valid bigint string assignments to `${bigint}` type
+const str1: `${bigint}` = "123";
+>str1 : `${bigint}`
+>"123" : "123"
+
+const str2: `${bigint}` = "-456";
+>str2 : `${bigint}`
+>"-456" : "-456"
+
+const str3: `${bigint}` = "0";
+>str3 : `${bigint}`
+>"0" : "0"
+
+const str4: `${bigint}` = "0x1A";
+>str4 : `${bigint}`
+>"0x1A" : "0x1A"
+
+const str5: `${bigint}` = "0b101";
+>str5 : `${bigint}`
+>"0b101" : "0b101"
+
+const str6: `${bigint}` = "0o777";
+>str6 : `${bigint}`
+>"0o777" : "0o777"
+
+// Direct assignment of bigint in template strings
+const n = 42n;
+>n : 42n
+>42n : 42n
+
+const str7: `${bigint}` = `${n}`;
+>str7 : `${bigint}`
+>`${n}` : "42n"
+>n : 42n
+
+const str8: `test-${bigint}` = `test-${n}`;
+>str8 : `test-${bigint}`
+>`test-${n}` : "test-42n"
+>n : 42n
+
+// Type predicates with bigint template types
+type IsBigInt<T extends string> = T extends `${bigint}` ? true : false;
+>IsBigInt : IsBigInt<T>
+>T : T
+>true : true
+>false : false
+
+// These should be true
+type Test1 = IsBigInt<"123">; // true
+>Test1 : true
+
+type Test2 = IsBigInt<"-456">; // true
+>Test2 : true
+
+type Test3 = IsBigInt<"0">; // true
+>Test3 : true
+
+type Test4 = IsBigInt<"0x1A">; // true
+>Test4 : true
+
+// These should be false
+type Test5 = IsBigInt<"hello">; // false
+>Test5 : false
+
+type Test6 = IsBigInt<"12.34">; // false
+>Test6 : false
+
+type Test7 = IsBigInt<"">; // false
+>Test7 : false
+
+// Function that accepts bigint template type
+function takesOnlyBigInt<T extends `${bigint}`>(value: T): T {
+>takesOnlyBigInt : <T extends `${bigint}`>(value: T) => T
+>T : T
+>value : T
+
+  return value;
+>value : T
+}
+
+// Valid calls
+const val1 = takesOnlyBigInt("123");
+>val1 : "123"
+>takesOnlyBigInt("123") : "123"
+>takesOnlyBigInt : <T extends `${bigint}`>(value: T) => T
+>"123" : "123"
+
+const val2 = takesOnlyBigInt("-456");
+>val2 : "-456"
+>takesOnlyBigInt("-456") : "-456"
+>takesOnlyBigInt : <T extends `${bigint}`>(value: T) => T
+>"-456" : "-456"
+
+const val3 = takesOnlyBigInt("0");
+>val3 : "0"
+>takesOnlyBigInt("0") : "0"
+>takesOnlyBigInt : <T extends `${bigint}`>(value: T) => T
+>"0" : "0"
+
+const val4 = takesOnlyBigInt("0x1A");
+>val4 : "0x1A"
+>takesOnlyBigInt("0x1A") : "0x1A"
+>takesOnlyBigInt : <T extends `${bigint}`>(value: T) => T
+>"0x1A" : "0x1A"
+
+// These should cause type errors
+// @ts-expect-error
+const err1 = takesOnlyBigInt("hello");
+>err1 : `${bigint}`
+>takesOnlyBigInt("hello") : `${bigint}`
+>takesOnlyBigInt : <T extends `${bigint}`>(value: T) => T
+>"hello" : "hello"
+
+// @ts-expect-error
+const err2 = takesOnlyBigInt("12.34");
+>err2 : `${bigint}`
+>takesOnlyBigInt("12.34") : `${bigint}`
+>takesOnlyBigInt : <T extends `${bigint}`>(value: T) => T
+>"12.34" : "12.34"
+
+// @ts-expect-error
+const err3 = takesOnlyBigInt(""); 
+>err3 : `${bigint}`
+>takesOnlyBigInt("") : `${bigint}`
+>takesOnlyBigInt : <T extends `${bigint}`>(value: T) => T
+>"" : ""
+

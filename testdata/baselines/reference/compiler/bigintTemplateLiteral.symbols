@@ -1,0 +1,117 @@
+//// [tests/cases/compiler/bigintTemplateLiteral.ts] ////
+
+=== bigintTemplateLiteral.ts ===
+// Tests for bigint in template literal type contexts
+
+// Valid bigint string assignments to `${bigint}` type
+const str1: `${bigint}` = "123";
+>str1 : Symbol(str1, Decl(bigintTemplateLiteral.ts, 3, 5))
+
+const str2: `${bigint}` = "-456";
+>str2 : Symbol(str2, Decl(bigintTemplateLiteral.ts, 4, 5))
+
+const str3: `${bigint}` = "0";
+>str3 : Symbol(str3, Decl(bigintTemplateLiteral.ts, 5, 5))
+
+const str4: `${bigint}` = "0x1A";
+>str4 : Symbol(str4, Decl(bigintTemplateLiteral.ts, 6, 5))
+
+const str5: `${bigint}` = "0b101";
+>str5 : Symbol(str5, Decl(bigintTemplateLiteral.ts, 7, 5))
+
+const str6: `${bigint}` = "0o777";
+>str6 : Symbol(str6, Decl(bigintTemplateLiteral.ts, 8, 5))
+
+// Direct assignment of bigint in template strings
+const n = 42n;
+>n : Symbol(n, Decl(bigintTemplateLiteral.ts, 11, 5))
+
+const str7: `${bigint}` = `${n}`;
+>str7 : Symbol(str7, Decl(bigintTemplateLiteral.ts, 12, 5))
+>n : Symbol(n, Decl(bigintTemplateLiteral.ts, 11, 5))
+
+const str8: `test-${bigint}` = `test-${n}`;
+>str8 : Symbol(str8, Decl(bigintTemplateLiteral.ts, 13, 5))
+>n : Symbol(n, Decl(bigintTemplateLiteral.ts, 11, 5))
+
+// Type predicates with bigint template types
+type IsBigInt<T extends string> = T extends `${bigint}` ? true : false;
+>IsBigInt : Symbol(IsBigInt, Decl(bigintTemplateLiteral.ts, 13, 43))
+>T : Symbol(T, Decl(bigintTemplateLiteral.ts, 16, 14))
+>T : Symbol(T, Decl(bigintTemplateLiteral.ts, 16, 14))
+
+// These should be true
+type Test1 = IsBigInt<"123">; // true
+>Test1 : Symbol(Test1, Decl(bigintTemplateLiteral.ts, 16, 71))
+>IsBigInt : Symbol(IsBigInt, Decl(bigintTemplateLiteral.ts, 13, 43))
+
+type Test2 = IsBigInt<"-456">; // true
+>Test2 : Symbol(Test2, Decl(bigintTemplateLiteral.ts, 19, 29))
+>IsBigInt : Symbol(IsBigInt, Decl(bigintTemplateLiteral.ts, 13, 43))
+
+type Test3 = IsBigInt<"0">; // true
+>Test3 : Symbol(Test3, Decl(bigintTemplateLiteral.ts, 20, 30))
+>IsBigInt : Symbol(IsBigInt, Decl(bigintTemplateLiteral.ts, 13, 43))
+
+type Test4 = IsBigInt<"0x1A">; // true
+>Test4 : Symbol(Test4, Decl(bigintTemplateLiteral.ts, 21, 27))
+>IsBigInt : Symbol(IsBigInt, Decl(bigintTemplateLiteral.ts, 13, 43))
+
+// These should be false
+type Test5 = IsBigInt<"hello">; // false
+>Test5 : Symbol(Test5, Decl(bigintTemplateLiteral.ts, 22, 30))
+>IsBigInt : Symbol(IsBigInt, Decl(bigintTemplateLiteral.ts, 13, 43))
+
+type Test6 = IsBigInt<"12.34">; // false
+>Test6 : Symbol(Test6, Decl(bigintTemplateLiteral.ts, 25, 31))
+>IsBigInt : Symbol(IsBigInt, Decl(bigintTemplateLiteral.ts, 13, 43))
+
+type Test7 = IsBigInt<"">; // false
+>Test7 : Symbol(Test7, Decl(bigintTemplateLiteral.ts, 26, 31))
+>IsBigInt : Symbol(IsBigInt, Decl(bigintTemplateLiteral.ts, 13, 43))
+
+// Function that accepts bigint template type
+function takesOnlyBigInt<T extends `${bigint}`>(value: T): T {
+>takesOnlyBigInt : Symbol(takesOnlyBigInt, Decl(bigintTemplateLiteral.ts, 27, 26))
+>T : Symbol(T, Decl(bigintTemplateLiteral.ts, 30, 25))
+>value : Symbol(value, Decl(bigintTemplateLiteral.ts, 30, 48))
+>T : Symbol(T, Decl(bigintTemplateLiteral.ts, 30, 25))
+>T : Symbol(T, Decl(bigintTemplateLiteral.ts, 30, 25))
+
+  return value;
+>value : Symbol(value, Decl(bigintTemplateLiteral.ts, 30, 48))
+}
+
+// Valid calls
+const val1 = takesOnlyBigInt("123");
+>val1 : Symbol(val1, Decl(bigintTemplateLiteral.ts, 35, 5))
+>takesOnlyBigInt : Symbol(takesOnlyBigInt, Decl(bigintTemplateLiteral.ts, 27, 26))
+
+const val2 = takesOnlyBigInt("-456");
+>val2 : Symbol(val2, Decl(bigintTemplateLiteral.ts, 36, 5))
+>takesOnlyBigInt : Symbol(takesOnlyBigInt, Decl(bigintTemplateLiteral.ts, 27, 26))
+
+const val3 = takesOnlyBigInt("0");
+>val3 : Symbol(val3, Decl(bigintTemplateLiteral.ts, 37, 5))
+>takesOnlyBigInt : Symbol(takesOnlyBigInt, Decl(bigintTemplateLiteral.ts, 27, 26))
+
+const val4 = takesOnlyBigInt("0x1A");
+>val4 : Symbol(val4, Decl(bigintTemplateLiteral.ts, 38, 5))
+>takesOnlyBigInt : Symbol(takesOnlyBigInt, Decl(bigintTemplateLiteral.ts, 27, 26))
+
+// These should cause type errors
+// @ts-expect-error
+const err1 = takesOnlyBigInt("hello");
+>err1 : Symbol(err1, Decl(bigintTemplateLiteral.ts, 42, 5))
+>takesOnlyBigInt : Symbol(takesOnlyBigInt, Decl(bigintTemplateLiteral.ts, 27, 26))
+
+// @ts-expect-error
+const err2 = takesOnlyBigInt("12.34");
+>err2 : Symbol(err2, Decl(bigintTemplateLiteral.ts, 44, 5))
+>takesOnlyBigInt : Symbol(takesOnlyBigInt, Decl(bigintTemplateLiteral.ts, 27, 26))
+
+// @ts-expect-error
+const err3 = takesOnlyBigInt(""); 
+>err3 : Symbol(err3, Decl(bigintTemplateLiteral.ts, 46, 5))
+>takesOnlyBigInt : Symbol(takesOnlyBigInt, Decl(bigintTemplateLiteral.ts, 27, 26))
+
