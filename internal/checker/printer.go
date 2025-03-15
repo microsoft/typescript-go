@@ -61,10 +61,10 @@ func (c *Checker) symbolToString(s *ast.Symbol) string {
 }
 
 func (c *Checker) TypeToString(t *Type) string {
-	return c.typeToStringEx(t, nil, TypeFormatFlagsNone)
+	return c.typeToStringEx(t, TypeFormatFlagsNone)
 }
 
-func (c *Checker) typeToStringEx(t *Type, enclosingDeclaration *ast.Node, flags TypeFormatFlags) string {
+func (c *Checker) typeToStringEx(t *Type, flags TypeFormatFlags) string {
 	p := c.newPrinter(flags)
 	p.printType(t)
 	return p.string()
