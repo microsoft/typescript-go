@@ -1,0 +1,57 @@
+bigintTemplateLiteral.ts(13,7): error TS2322: Type '"42n"' is not assignable to type '`${bigint}`'.
+bigintTemplateLiteral.ts(14,7): error TS2322: Type '"test-42n"' is not assignable to type '`test-${bigint}`'.
+
+
+==== bigintTemplateLiteral.ts (2 errors) ====
+    // Tests for bigint in template literal type contexts
+    
+    // Valid bigint string assignments to `${bigint}` type
+    const str1: `${bigint}` = "123";
+    const str2: `${bigint}` = "-456";
+    const str3: `${bigint}` = "0";
+    const str4: `${bigint}` = "0x1A";
+    const str5: `${bigint}` = "0b101";
+    const str6: `${bigint}` = "0o777";
+    
+    // Direct assignment of bigint in template strings
+    const n = 42n;
+    const str7: `${bigint}` = `${n}`;
+          ~~~~
+!!! error TS2322: Type '"42n"' is not assignable to type '`${bigint}`'.
+    const str8: `test-${bigint}` = `test-${n}`;
+          ~~~~
+!!! error TS2322: Type '"test-42n"' is not assignable to type '`test-${bigint}`'.
+    
+    // Type predicates with bigint template types
+    type IsBigInt<T extends string> = T extends `${bigint}` ? true : false;
+    
+    // These should be true
+    type Test1 = IsBigInt<"123">; // true
+    type Test2 = IsBigInt<"-456">; // true
+    type Test3 = IsBigInt<"0">; // true
+    type Test4 = IsBigInt<"0x1A">; // true
+    
+    // These should be false
+    type Test5 = IsBigInt<"hello">; // false
+    type Test6 = IsBigInt<"12.34">; // false
+    type Test7 = IsBigInt<"">; // false
+    
+    // Function that accepts bigint template type
+    function takesOnlyBigInt<T extends `${bigint}`>(value: T): T {
+      return value;
+    }
+    
+    // Valid calls
+    const val1 = takesOnlyBigInt("123");
+    const val2 = takesOnlyBigInt("-456");
+    const val3 = takesOnlyBigInt("0");
+    const val4 = takesOnlyBigInt("0x1A");
+    
+    // These should cause type errors
+    // @ts-expect-error
+    const err1 = takesOnlyBigInt("hello");
+    // @ts-expect-error
+    const err2 = takesOnlyBigInt("12.34");
+    // @ts-expect-error
+    const err3 = takesOnlyBigInt(""); 
+    

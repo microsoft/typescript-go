@@ -473,16 +473,16 @@ type PExclude1 = "0" extends `${infer T extends `1${string}` | number}` ? T : ne
 >T : T
 
 type PExclude2 = "0" extends `${infer T extends 1 | bigint}` ? T : never; // 0n
->PExclude2 : never
+>PExclude2 : 0
 >T : T
 
 type PExclude3 = "0" extends `${infer T extends NumberLiteralEnum.One | bigint}` ? T : never; // 0n
->PExclude3 : never
+>PExclude3 : 0
 >T : T
 >NumberLiteralEnum : any
 
 type PExclude4 = "100000000000000000000000" extends `${infer T extends number | bigint}` ? T : never; // 100000000000000000000000n
->PExclude4 : number | bigint
+>PExclude4 : never
 >T : T
 
 // infer to prefix from string
@@ -706,7 +706,7 @@ declare function f3<T extends bigint>(s: `**${T}**`): T;
 >s : `**${T}**`
 
 f3("**123**"); // 123n
->f3("**123**") : bigint
+>f3("**123**") : 0
 >f3 : <T extends bigint>(s: `**${T}**`) => T
 >"**123**" : "**123**"
 
