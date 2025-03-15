@@ -53,17 +53,22 @@ func mergeTypeMappers(m1 *TypeMapper, m2 *TypeMapper) *TypeMapper {
 }
 
 func prependTypeMapping(source *Type, target *Type, mapper *TypeMapper) *TypeMapper {
-	if mapper == nil {
-		return newSimpleTypeMapper(source, target)
-	}
-	return newMergedTypeMapper(newSimpleTypeMapper(source, target), mapper)
+	return mergeTypeMapping(mapper, source, target, true)
 }
 
 func appendTypeMapping(mapper *TypeMapper, source *Type, target *Type) *TypeMapper {
+	return mergeTypeMapping(mapper, source, target, false)
+}
+
+func mergeTypeMapping(mapper *TypeMapper, source *Type, target *Type, prepend bool) *TypeMapper {
+	newMapper := newSimpleTypeMapper(source, target)
 	if mapper == nil {
-		return newSimpleTypeMapper(source, target)
+		return newMapper
 	}
-	return newMergedTypeMapper(mapper, newSimpleTypeMapper(source, target))
+	if prepend {
+		return newMergedTypeMapper(newMapper, mapper)
+	}
+	return newMergedTypeMapper(mapper, newMapper)
 }
 
 // Maps forward-references to later types parameters to the empty object type.
