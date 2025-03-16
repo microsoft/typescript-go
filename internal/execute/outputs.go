@@ -144,13 +144,13 @@ func printEasyHelp(sys System, simpleOptions []*tsoptions.CommandLineOption) {
 			// output.push("  " + colors.blue(example) + sys.newLine);
 			output = append(output, "  ", example, sys.NewLine())
 		}
-		output = append(output, "  ", ast.NewCompilerDiagnostic(desc).Message(), sys.NewLine(), sys.NewLine())
+		output = append(output, "  ", desc.Format(), sys.NewLine(), sys.NewLine())
 	}
 
-	msg := ast.NewCompilerDiagnostic(diagnostics.X_tsc_Colon_The_TypeScript_Compiler).Message() + " - " + ast.NewCompilerDiagnostic(diagnostics.Version_0, core.Version).Message()
+	msg := diagnostics.X_tsc_Colon_The_TypeScript_Compiler.Format() + " - " + diagnostics.Version_0.Format(core.Version)
 	output = append(output, getHeader(sys, msg)...)
 
-	output = append(output /*colors.bold(*/, ast.NewCompilerDiagnostic(diagnostics.COMMON_COMMANDS).Message() /*)*/, sys.NewLine(), sys.NewLine())
+	output = append(output /*colors.bold(*/, diagnostics.COMMON_COMMANDS.Format() /*)*/, sys.NewLine(), sys.NewLine())
 
 	example([]string{"tsc"}, diagnostics.Compiles_the_current_project_tsconfig_json_in_the_working_directory)
 	example([]string{"tsc app.ts util.ts"}, diagnostics.Ignoring_tsconfig_json_compiles_the_specified_files_with_default_compiler_options)
@@ -209,7 +209,7 @@ func generateSectionOptionsOutput(
 		if option.Category == nil {
 			continue
 		}
-		curCategory := ast.NewCompilerDiagnostic(option.Category).Message()
+		curCategory := option.Category.Format()
 		categoryMap[curCategory] = append(categoryMap[curCategory], option)
 	}
 	for key, value := range categoryMap {
