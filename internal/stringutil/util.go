@@ -82,7 +82,7 @@ func IsASCIILetter(ch rune) bool {
 }
 
 func SplitLines(text string) []string {
-    lines := make([]string, 0, strings.Count(text, "\n")+1) // preallocate
+	lines := make([]string, 0, strings.Count(text, "\n")+1) // preallocate
 	start := 0
 	pos := 0
 	for pos < len(text) {
@@ -113,9 +113,9 @@ func GuessIndentation(lines []string) int {
 	const MAX_SMI_X86 int = 0x3fff_ffff
 	indentation := MAX_SMI_X86
 	for _, line := range lines {
-        if strings.TrimSpace(line) == "" {
-            continue
-        }
+    	if strings.TrimSpace(line) == "" {
+			continue
+		}
 		i := 0
 		for i < len(line) && i < indentation {
 			ch, size := utf8.DecodeRuneInString(line[i:])
