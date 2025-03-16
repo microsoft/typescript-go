@@ -1,6 +1,8 @@
 package ls
 
 import (
+	"fmt"
+
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -55,11 +57,11 @@ func (l *LanguageService) GetProgram() *compiler.Program {
 	return l.host.GetProgram()
 }
 
-func (l *LanguageService) getProgramAndFile(fileName string) (*compiler.Program, *ast.SourceFile) {
+func (l *LanguageService) getProgramAndFile(fileName string) (*compiler.Program, *ast.SourceFile, error) {
 	program := l.GetProgram()
 	file := program.GetSourceFile(fileName)
 	if file == nil {
-		panic("file not found")
+		return nil, nil, fmt.Errorf("file not found")
 	}
-	return program, file
+	return program, file, nil
 }

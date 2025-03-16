@@ -303,7 +303,11 @@ func (s *Server) handleDidClose(req *lsproto.RequestMessage) error {
 func (s *Server) handleDocumentDiagnostic(req *lsproto.RequestMessage) error {
 	params := req.Params.(*lsproto.DocumentDiagnosticParams)
 	file, project := s.getFileAndProject(params.TextDocument.Uri)
-	diagnostics := project.LanguageService().GetDocumentDiagnostics(file.FileName())
+	diagnostics, err := project.LanguageService().GetDocumentDiagnostics(file.FileName())
+	if err != nil {
+		return s.sendError(req.ID, err)
+	}
+
 	lspDiagnostics := make([]lsproto.Diagnostic, len(diagnostics))
 	for i, diag := range diagnostics {
 		if lspDiagnostic, err := s.converters.toLspDiagnostic(diag); err != nil {
@@ -330,7 +334,11 @@ func (s *Server) handleHover(req *lsproto.RequestMessage) error {
 		return s.sendError(req.ID, err)
 	}
 
-	hoverText := project.LanguageService().ProvideHover(file.FileName(), pos)
+	hoverText, err := project.LanguageService().ProvideHover(file.FileName(), pos)
+	if err != nil {
+		return s.sendError(req.ID, err)
+	}
+
 	return s.sendResult(req.ID, &lsproto.Hover{
 		Contents: lsproto.MarkupContentOrMarkedStringOrMarkedStrings{
 			MarkupContent: &lsproto.MarkupContent{
@@ -349,7 +357,11 @@ func (s *Server) handleDefinition(req *lsproto.RequestMessage) error {
 		return s.sendError(req.ID, err)
 	}
 
-	locations := project.LanguageService().ProvideDefinitions(file.FileName(), pos)
+	locations, err := project.LanguageService().ProvideDefinitions(file.FileName(), pos)
+	if err != nil {
+		return s.sendError(req.ID, err)
+	}
+
 	lspLocations := make([]lsproto.Location, len(locations))
 	for i, loc := range locations {
 		if lspLocation, err := s.converters.toLspLocation(loc); err != nil {

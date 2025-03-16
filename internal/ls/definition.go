@@ -1,17 +1,22 @@
 package ls
 
 import (
+	"fmt"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
-func (l *LanguageService) ProvideDefinitions(fileName string, position int) []Location {
-	program, file := l.getProgramAndFile(fileName)
+func (l *LanguageService) ProvideDefinitions(fileName string, position int) ([]Location, error) {
+	program, file, err := l.getProgramAndFile(fileName)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get program and file: %w", err)
+	}
+
 	node := astnav.GetTouchingPropertyName(file, position)
 	if node.Kind == ast.KindSourceFile {
-		return nil
+		return nil, nil
 	}
 
 	checker := program.GetTypeChecker()
@@ -33,7 +38,7 @@ func (l *LanguageService) ProvideDefinitions(fileName string, position int) []Lo
 				Range:    core.NewTextRange(pos, loc.End()),
 			})
 		}
-		return locations
+		return locations, nil
 	}
-	return nil
+	return nil, nil
 }

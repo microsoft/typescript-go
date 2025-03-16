@@ -34,10 +34,18 @@ func (c *converters) fromLspRange(textRange lsproto.Range, fileName string) (cor
 	if scriptInfo == nil {
 		return core.TextRange{}, fmt.Errorf("no script info found for %s", fileName)
 	}
-	return core.NewTextRange(
-		lineAndCharacterToPosition(textRange.Start, scriptInfo.LineMap()),
-		lineAndCharacterToPosition(textRange.End, scriptInfo.LineMap()),
-	), nil
+
+	startPos, err := lineAndCharacterToPosition(textRange.Start, scriptInfo.LineMap())
+	if err != nil {
+		return core.TextRange{}, fmt.Errorf("error converting start position: %w", err)
+	}
+
+	endPos, err := lineAndCharacterToPosition(textRange.End, scriptInfo.LineMap())
+	if err != nil {
+		return core.TextRange{}, fmt.Errorf("error converting end position: %w", err)
+	}
+
+	return core.NewTextRange(startPos, endPos), nil
 }
 
 func (c *converters) fromLspTextChange(change *lsproto.TextDocumentContentChangePartial, fileName string) (ls.TextChange, error) {
@@ -124,7 +132,7 @@ func (c *converters) lineAndCharacterToPosition(lineAndCharacter lsproto.Positio
 	if scriptInfo == nil {
 		return 0, fmt.Errorf("no script info found for %s", fileName)
 	}
-	return lineAndCharacterToPosition(lineAndCharacter, scriptInfo.LineMap()), nil
+	return lineAndCharacterToPosition(lineAndCharacter, scriptInfo.LineMap())
 }
 
 func languageKindToScriptKind(languageID lsproto.LanguageKind) core.ScriptKind {
@@ -188,19 +196,20 @@ func fileNameToDocumentUri(fileName string) lsproto.DocumentUri {
 	return lsproto.DocumentUri("file://" + fileName)
 }
 
-func lineAndCharacterToPosition(lineAndCharacter lsproto.Position, lineMap []core.TextPos) int {
+func lineAndCharacterToPosition(lineAndCharacter lsproto.Position, lineMap []core.TextPos) (int, error) {
 	line := int(lineAndCharacter.Line)
 	offset := int(lineAndCharacter.Character)
 
 	if line < 0 || line >= len(lineMap) {
-		panic(fmt.Sprintf("bad line number. Line: %d, lineMap length: %d", line, len(lineMap)))
+		return 0, fmt.Errorf("bad line number. Line: %d, lineMap length: %d", line, len(lineMap))
 	}
 
 	res := int(lineMap[line]) + offset
 	if line < len(lineMap)-1 && res >= int(lineMap[line+1]) {
-		panic("resulting position is out of bounds")
+		return 0, fmt.Errorf("resulting position is out of bounds")
 	}
-	return res
+
+	return res, nil
 }
 
 func positionToLineAndCharacter(position int, lineMap []core.TextPos) lsproto.Position {
