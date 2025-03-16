@@ -28,7 +28,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     const config = vscode.workspace.getConfiguration("typescript-go");
 
-    // Get pprofDir
+    // Get pprofDir
     const pprofDir = config.get<string>("pprofDir");
     const pprofArgs = pprofDir ? ["-pprofDir", pprofDir] : [];
 
