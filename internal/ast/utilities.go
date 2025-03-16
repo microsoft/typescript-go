@@ -2401,11 +2401,16 @@ func GetEmitSyntaxForUsageLocationWorker(file *SourceFile, usage *Expression, op
 	}
 
 	var exprParentParent *Node
-	exprContainingNode := WalkUpParenthesizedExpressions(usage.Parent)
-	if exprContainingNode != nil {
-		exprParentParent = exprContainingNode.Parent
+	exprParentContainingNode := WalkUpParenthesizedExpressions(usage.Parent)
+	if exprParentContainingNode != nil {
+		exprParentParent = exprParentContainingNode.Parent
 	}
-	if exprParentParent != nil && IsImportEqualsDeclaration(usage.Parent) {
+
+	if exprParentParent != nil && IsImportEqualsDeclaration(exprParentParent) || IsRequireCall(usage.Parent, false /*requireStringLiteralLikeArgument*/) {
+		return core.ModuleKindCommonJS
+	}
+
+	if IsImportCall(exprParentContainingNode) {
 		return core.IfElse(shouldTransformImportCallWorker(file, options), core.ModuleKindCommonJS, core.ModuleKindESNext)
 	}
 	// If we're in --module preserve on an input file, we know that an import

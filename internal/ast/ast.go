@@ -8697,7 +8697,7 @@ type SourceFile struct {
 	TypeReferenceDirectives     []*FileReference
 	LibReferenceDirectives      []*FileReference
 
-	// Fields set by compiler host
+	// Fields set by file loader
 
 	PackageJsonScope  *packagejson.InfoCacheEntry
 	ImpliedNodeFormat core.ModuleKind

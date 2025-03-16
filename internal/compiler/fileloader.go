@@ -223,7 +223,10 @@ func (t *parseTask) start(loader *fileLoader) {
 
 func (p *fileLoader) parseSourceFile(fileName string) *ast.SourceFile {
 	path := tspath.ToPath(fileName, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
-	sourceFile := p.host.GetSourceFile(fileName, path, p.compilerOptions.GetEmitScriptTarget(), p.resolver.GetPackageScopeForPath(string(path)))
+	sourceFile := p.host.GetSourceFile(fileName, path, p.compilerOptions.GetEmitScriptTarget())
+	sourceFile.PackageJsonScope = p.resolver.GetPackageScopeForPath(string(path))
+	sourceFile.ImpliedNodeFormat = ast.GetImpliedNodeFormatForEmitWorker(sourceFile, p.compilerOptions)
+
 	return sourceFile
 }
 
