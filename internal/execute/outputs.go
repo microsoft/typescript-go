@@ -250,6 +250,7 @@ func generateGroupOptionOutput(sys System, optionsList []*tsoptions.CommandLineO
 
 	return lines
 }
+
 func generateOptionOutput(
 	sys System,
 	option *tsoptions.CommandLineOption,
