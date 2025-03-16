@@ -2,6 +2,7 @@
 package stringutil
 
 import (
+	"strings"
 	"unicode/utf8"
 )
 
