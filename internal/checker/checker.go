@@ -516,7 +516,7 @@ type Program interface {
 	GetResolvedModule(currentSourceFile *ast.SourceFile, moduleReference string) *ast.SourceFile
 }
 
-type Host interface{}
+type Host any
 
 // Checker
 
