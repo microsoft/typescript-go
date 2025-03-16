@@ -1,10 +1,12 @@
 package checker
 
 import (
+	"bufio"
 	"cmp"
 	"slices"
 	"strings"
 	"sync"
+	"strconv"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
@@ -1223,64 +1225,58 @@ func isValidBigIntString(s string, roundTripOnly bool) bool {
 		return false
 	}
 
-	// Check for a leading minus sign
-	start := 0
-	if len(s) > 0 && s[0] == '-' {
-		start = 1
-	}
-
-	// Empty string after minus sign is not valid
-	if start >= len(s) {
+	if len(s) > 0 && s[len(s)-1] == 'n' {
 		return false
 	}
 
-	// Handle different number formats
-	if len(s) > start+1 && s[start] == '0' {
-		switch s[start+1] {
-		case 'x', 'X': // Hexadecimal
-			for i := start + 2; i < len(s); i++ {
-				c := s[i]
-				if !((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')) {
-					return false
-				}
-			}
-			return len(s) > start+2 // Must have at least one hex digit
-		case 'b', 'B': // Binary
-			for i := start + 2; i < len(s); i++ {
-				c := s[i]
-				if c != '0' && c != '1' {
-					return false
-				}
-			}
-			return len(s) > start+2 // Must have at least one binary digit
-		case 'o', 'O': // Octal
-			for i := start + 2; i < len(s); i++ {
-				c := s[i]
-				if c < '0' || c > '7' {
-					return false
-				}
-			}
-			return len(s) > start+2 // Must have at least one octal digit
-		}
-	}
+	scanner := bufio.NewScanner(strings.NewReader(s))
+	scanner.Split(bufio.ScanWords)
 
-	// Decimal format
-	// Leading zeros are not allowed in strict mode (unless roundTripOnly is true)
-	if !roundTripOnly && len(s) > start+1 && s[start] == '0' {
-		// If the string starts with 0 but is not one of the special formats,
-		// and it has more than just the 0, it's not valid (e.g., "01")
+	if !scanner.Scan() || scanner.Text() != s {
 		return false
 	}
 
-	// Check each character is a valid decimal digit
-	for i := start; i < len(s); i++ {
-		c := s[i]
-		if c < '0' || c > '9' {
-			return false
+	_, err := strconv.ParseInt(s, 0, 64)
+	if err == nil {
+		if roundTripOnly {
+			negative := false
+			if len(s) > 0 && s[0] == '-' {
+				negative = true
+				s = s[1:]
+			}
+			
+			bigInt := jsnum.PseudoBigInt{
+				Negative:    negative,
+				Base10Value: parsePseudoBigInt(s),
+			}
+			
+			return s == pseudoBigIntToString(bigInt)
 		}
+		return true
 	}
 
-	return true
+	// Check for invalid formats
+	if strings.Contains(s, ".") || strings.Contains(s, "e") || strings.Contains(s, "E") || s == "-" {
+		return false
+	}
+	
+	// Check for valid hex, binary, or octal format
+	if strings.HasPrefix(s, "0x") || strings.HasPrefix(s, "0X") {
+		_, err = strconv.ParseInt(s[2:], 16, 64)
+		return err == nil
+	} 
+	
+	if strings.HasPrefix(s, "0b") || strings.HasPrefix(s, "0B") {
+		_, err = strconv.ParseInt(s[2:], 2, 64)
+		return err == nil
+	} 
+	
+	if strings.HasPrefix(s, "0o") || strings.HasPrefix(s, "0O") {
+		_, err = strconv.ParseInt(s[2:], 8, 64)
+		return err == nil
+	}
+	
+	return false
 }
 
 func isValidESSymbolDeclaration(node *ast.Node) bool {

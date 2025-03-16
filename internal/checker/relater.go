@@ -2447,7 +2447,10 @@ func (c *Checker) isValidTypeForTemplateLiteralPlaceholder(source *Type, target 
 		
 		// Use isValidBigIntString for bigint template literals
 		if target.flags&TypeFlagsBigInt != 0 {
-			return isValidBigIntString(value, false /*roundTripOnly*/)
+			if len(value) > 0 && value[len(value)-1] == 'n' {
+				return isValidBigIntString(value[:len(value)-1], false)
+			}
+			return isValidBigIntString(value, false)
 		}
 		
 		return target.flags&TypeFlagsNumber != 0 && isValidNumberString(value, false /*roundTripOnly*/) ||
