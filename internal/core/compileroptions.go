@@ -134,6 +134,8 @@ type CompilerOptions struct {
 	Watch               Tristate `json:"watch,omitzero"`
 	ShowConfig          Tristate `json:"showConfig,omitzero"`
 	TscBuild            Tristate `json:"tscBuild,omitzero"`
+	Help                Tristate `json:"help"`
+	All                 Tristate `json:"all"`
 }
 
 func (options *CompilerOptions) GetEmitScriptTarget() ScriptTarget {

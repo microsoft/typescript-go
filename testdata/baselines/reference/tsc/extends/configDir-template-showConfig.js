@@ -59,7 +59,9 @@ Input::--showConfig
 ExitStatus:: 5
 
 CompilerOptions::{
-    "showConfig": true
+    "showConfig": true,
+    "help": null,
+    "all": null
 }
 Output::
 No output

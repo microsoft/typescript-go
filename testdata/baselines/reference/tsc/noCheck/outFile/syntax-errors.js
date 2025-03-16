@@ -17,7 +17,9 @@ ExitStatus:: 2
 
 CompilerOptions::{
     "noCheck": true,
-    "outFile": "/home/src/workspaces/project/built"
+    "outFile": "/home/src/workspaces/project/built",
+    "help": null,
+    "all": null
 }
 Output::
 a.ts(1,24): error TS1002: Unterminated string literal.

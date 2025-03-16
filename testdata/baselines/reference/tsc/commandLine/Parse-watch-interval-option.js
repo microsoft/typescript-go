@@ -8,7 +8,9 @@ ExitStatus:: 1
 ParsedCommandLine::{
     "parsedConfig": {
         "compilerOptions": {
-            "watch": true
+            "watch": true,
+            "help": null,
+            "all": null
         },
         "watchOptions": {
             "watchInterval": 1000,

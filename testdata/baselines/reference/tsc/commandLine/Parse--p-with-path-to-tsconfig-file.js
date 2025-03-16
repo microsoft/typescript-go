@@ -12,7 +12,9 @@ ExitStatus:: 0
 ParsedCommandLine::{
     "parsedConfig": {
         "compilerOptions": {
-            "project": "/home/src/workspaces/project/tsconfig.json"
+            "project": "/home/src/workspaces/project/tsconfig.json",
+            "help": null,
+            "all": null
         },
         "watchOptions": {
             "watchInterval": null,

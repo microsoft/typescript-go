@@ -34,16 +34,22 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 		return ExitStatusDiagnosticsPresent_OutputsSkipped, nil
 	}
 
-	if commandLine.CompilerOptions().Init.IsTrue() ||
-		// commandLine.CompilerOptions().Help != nil ||
-		// commandLine.CompilerOptions().All != nil ||
-		commandLine.CompilerOptions().Watch.IsTrue() && commandLine.CompilerOptions().ListFilesOnly.IsTrue() {
+	if commandLine.CompilerOptions().Init.IsTrue() {
 		return ExitStatusNotImplemented, nil
 	}
 
 	if commandLine.CompilerOptions().Version.IsTrue() {
 		printVersion(sys)
 		return ExitStatusSuccess, nil
+	}
+
+	if commandLine.CompilerOptions().Help.IsTrue() || commandLine.CompilerOptions().All.IsTrue() {
+		printHelp(sys, commandLine)
+		return ExitStatusSuccess, nil
+	}
+
+	if commandLine.CompilerOptions().Watch.IsTrue() && commandLine.CompilerOptions().ListFilesOnly.IsTrue() {
+		return ExitStatusNotImplemented, nil
 	}
 
 	if commandLine.CompilerOptions().Project != "" {

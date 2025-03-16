@@ -12,7 +12,9 @@ ExitStatus:: 0
 ParsedCommandLine::{
     "parsedConfig": {
         "compilerOptions": {
-            "project": "/home/src/workspaces/project"
+            "project": "/home/src/workspaces/project",
+            "help": null,
+            "all": null
         },
         "watchOptions": {
             "watchInterval": null,

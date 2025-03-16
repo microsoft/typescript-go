@@ -16,7 +16,9 @@ const a = class { private p = 10; };
 
 
 CompilerOptions::{
-    "watch": true
+    "watch": true,
+    "help": null,
+    "all": null
 }
 
 

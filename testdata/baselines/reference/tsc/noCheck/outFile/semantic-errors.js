@@ -17,7 +17,9 @@ ExitStatus:: 0
 
 CompilerOptions::{
     "noCheck": true,
-    "outFile": "/home/src/workspaces/project/built"
+    "outFile": "/home/src/workspaces/project/built",
+    "help": null,
+    "all": null
 }
 Output::
 //// [/home/src/workspaces/project/a.js] new file

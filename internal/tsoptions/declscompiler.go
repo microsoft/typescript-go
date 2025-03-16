@@ -13,7 +13,7 @@ var optionsForCompiler = []*CommandLineOption{
 	//******* commandOptionsWithoutBuild *******
 	{
 		Name:                     "help",
-		shortName:                "h",
+		ShortName:                "h",
 		Kind:                     CommandLineOptionTypeBoolean,
 		showInSimplifiedHelpView: true,
 		IsCommandLineOnly:        true,
@@ -23,7 +23,7 @@ var optionsForCompiler = []*CommandLineOption{
 	},
 	{
 		Name:                    "help",
-		shortName:               "?",
+		ShortName:               "?",
 		Kind:                    CommandLineOptionTypeBoolean,
 		IsCommandLineOnly:       true,
 		Category:                diagnostics.Command_line_Options,
@@ -31,7 +31,7 @@ var optionsForCompiler = []*CommandLineOption{
 	},
 	{
 		Name:                     "watch",
-		shortName:                "w",
+		ShortName:                "w",
 		Kind:                     CommandLineOptionTypeBoolean,
 		showInSimplifiedHelpView: true,
 		IsCommandLineOnly:        true,
@@ -114,7 +114,7 @@ var optionsForCompiler = []*CommandLineOption{
 	},
 	{
 		Name:                    "incremental",
-		shortName:               "i",
+		ShortName:               "i",
 		Kind:                    CommandLineOptionTypeBoolean,
 		Category:                diagnostics.Projects,
 		Description:             diagnostics.Save_tsbuildinfo_files_to_allow_for_incremental_compilation_of_projects,
@@ -123,7 +123,7 @@ var optionsForCompiler = []*CommandLineOption{
 	},
 	{
 		Name:      "declaration",
-		shortName: "d",
+		ShortName: "d",
 		Kind:      CommandLineOptionTypeBoolean,
 		// Not setting affectsEmit because we calculate this flag might not affect full emit
 		AffectsBuildInfo:         true,
@@ -226,7 +226,7 @@ var commonOptionsWithBuild = []*CommandLineOption{
 	},
 	{
 		Name:                     "version",
-		shortName:                "v",
+		ShortName:                "v",
 		Kind:                     CommandLineOptionTypeBoolean,
 		showInSimplifiedHelpView: true,
 		Category:                 diagnostics.Command_line_Options,
@@ -243,7 +243,7 @@ var commonOptionsWithBuild = []*CommandLineOption{
 	},
 	{
 		Name:                     "project",
-		shortName:                "p",
+		ShortName:                "p",
 		Kind:                     CommandLineOptionTypeString,
 		isFilePath:               true,
 		showInSimplifiedHelpView: true,
@@ -272,7 +272,7 @@ var commonOptionsWithBuild = []*CommandLineOption{
 	// targetOptionDeclaration,
 	{
 		Name:                     "target",
-		shortName:                "t",
+		ShortName:                "t",
 		Kind:                     CommandLineOptionTypeEnum, // targetOptionMap
 		AffectsSourceFile:        true,
 		AffectsModuleResolution:  true,
@@ -287,7 +287,7 @@ var commonOptionsWithBuild = []*CommandLineOption{
 	// moduleOptionDeclaration,
 	{
 		Name:                     "module",
-		shortName:                "m",
+		ShortName:                "m",
 		Kind:                     CommandLineOptionTypeEnum, // moduleOptionMap
 		AffectsModuleResolution:  true,
 		AffectsEmit:              true,

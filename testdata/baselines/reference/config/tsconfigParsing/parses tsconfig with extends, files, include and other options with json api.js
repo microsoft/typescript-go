@@ -43,7 +43,9 @@ CompilerOptions::
   "noImplicitAny": true,
   "outDir": "/dist",
   "strict": true,
-  "configFilePath": "/tsconfig.json"
+  "configFilePath": "/tsconfig.json",
+  "help": null,
+  "all": null
 }
 
 FileNames::

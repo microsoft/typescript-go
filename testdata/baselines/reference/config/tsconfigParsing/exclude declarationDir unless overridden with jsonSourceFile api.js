@@ -17,7 +17,9 @@ configFileName:: tsconfig.json
 CompilerOptions::
 {
   "declarationDir": "/declarations",
-  "configFilePath": "/tsconfig.json"
+  "configFilePath": "/tsconfig.json",
+  "help": null,
+  "all": null
 }
 
 FileNames::
@@ -45,7 +47,9 @@ configFileName:: tsconfig.json
 CompilerOptions::
 {
   "declarationDir": "/declarations",
-  "configFilePath": "/tsconfig.json"
+  "configFilePath": "/tsconfig.json",
+  "help": null,
+  "all": null
 }
 
 FileNames::

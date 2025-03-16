@@ -8,10 +8,10 @@ import (
 
 var BuildOpts = slices.Concat(commonOptionsWithBuild, optionsForBuild)
 
-var tscBuildOption = CommandLineOption{
+var TscBuildOption = CommandLineOption{
 	Name:                     "build",
 	Kind:                     "boolean",
-	shortName:                "b",
+	ShortName:                "b",
 	showInSimplifiedHelpView: true,
 	Category:                 diagnostics.Command_line_Options,
 	Description:              diagnostics.Build_one_or_more_projects_and_their_dependencies_if_out_of_date,
@@ -19,10 +19,10 @@ var tscBuildOption = CommandLineOption{
 }
 
 var optionsForBuild = []*CommandLineOption{
-	&tscBuildOption,
+	&TscBuildOption,
 	{
 		Name:                    "verbose",
-		shortName:               "v",
+		ShortName:               "v",
 		Category:                diagnostics.Command_line_Options,
 		Description:             diagnostics.Enable_verbose_logging,
 		Kind:                    "boolean",
@@ -30,7 +30,7 @@ var optionsForBuild = []*CommandLineOption{
 	},
 	{
 		Name:                    "dry",
-		shortName:               "d",
+		ShortName:               "d",
 		Category:                diagnostics.Command_line_Options,
 		Description:             diagnostics.Show_what_would_be_built_or_deleted_if_specified_with_clean,
 		Kind:                    "boolean",
@@ -38,7 +38,7 @@ var optionsForBuild = []*CommandLineOption{
 	},
 	{
 		Name:                    "force",
-		shortName:               "f",
+		ShortName:               "f",
 		Category:                diagnostics.Command_line_Options,
 		Description:             diagnostics.Build_all_projects_including_those_that_appear_to_be_up_to_date,
 		Kind:                    "boolean",

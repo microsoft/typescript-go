@@ -50,7 +50,9 @@ CompilerOptions::
   "strict": true,
   "target": 4,
   "configFilePath": "/apath/tsconfig.json",
-  "pathsBasePath": "/apath"
+  "pathsBasePath": "/apath",
+  "help": null,
+  "all": null
 }
 
 FileNames::

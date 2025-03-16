@@ -15,7 +15,9 @@ const a: number = "hello"
 
 
 CompilerOptions::{
-    "watch": true
+    "watch": true,
+    "help": null,
+    "all": null
 }
 
 

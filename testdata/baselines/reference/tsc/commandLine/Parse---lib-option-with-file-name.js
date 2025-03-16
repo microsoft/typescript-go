@@ -12,7 +12,9 @@ ParsedCommandLine::{
         "compilerOptions": {
             "lib": [
                 "lib.es2015.d.ts"
-            ]
+            ],
+            "help": null,
+            "all": null
         },
         "watchOptions": {
             "watchInterval": null,

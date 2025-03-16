@@ -19,7 +19,7 @@ const (
 )
 
 type CommandLineOption struct {
-	Name, shortName string
+	Name, ShortName string
 	Kind            CommandLineOptionKind
 
 	// used in parsing
@@ -63,6 +63,10 @@ type CommandLineOption struct {
 	listPreserveFalsyValues bool
 	// used for compilerOptionsDeclaration
 	ElementOptions map[string]*CommandLineOption
+}
+
+func (o *CommandLineOption) ShowInSimplifiedHelpView() bool {
+	return o.showInSimplifiedHelpView
 }
 
 func (o *CommandLineOption) DeprecatedKeys() *core.Set[string] {

@@ -21,7 +21,9 @@ Fs::
 configFileName:: tsconfig.json
 CompilerOptions::
 {
-  "configFilePath": "/tsconfig.json"
+  "configFilePath": "/tsconfig.json",
+  "help": null,
+  "all": null
 }
 
 FileNames::
