@@ -15,9 +15,9 @@ export {};
 === other.ts ===
 // esm format file
 export const a = await import("package/cjs");
->a : typeof import("index")
->await import("package/cjs") : typeof import("index")
->import("package/cjs") : Promise<typeof import("index")>
+>a : { default: typeof import("index"); }
+>await import("package/cjs") : { default: typeof import("index"); }
+>import("package/cjs") : Promise<{ default: typeof import("index"); }>
 >"package/cjs" : "package/cjs"
 
 export const b = await import("package/mjs");
@@ -55,9 +55,9 @@ export const e = await import("inner/mjs");
 === other.mts ===
 // esm format file
 export const a = await import("package/cjs");
->a : typeof import("index")
->await import("package/cjs") : typeof import("index")
->import("package/cjs") : Promise<typeof import("index")>
+>a : { default: typeof import("index"); }
+>await import("package/cjs") : { default: typeof import("index"); }
+>import("package/cjs") : Promise<{ default: typeof import("index"); }>
 >"package/cjs" : "package/cjs"
 
 export const b = await import("package/mjs");
@@ -95,8 +95,8 @@ export const e = await import("inner/mjs");
 === other.cts ===
 // cjs format file, no TLA
 export const a = import("package/cjs");
->a : Promise<typeof import("index")>
->import("package/cjs") : Promise<typeof import("index")>
+>a : Promise<{ default: typeof import("index"); }>
+>import("package/cjs") : Promise<{ default: typeof import("index"); }>
 >"package/cjs" : "package/cjs"
 
 export const b = import("package/mjs");

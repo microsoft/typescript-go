@@ -1,19 +1,6 @@
 --- old.nodeModulesDeclarationEmitDynamicImportWithPackageExports.types
 +++ new.nodeModulesDeclarationEmitDynamicImportWithPackageExports.types
-@@= skipped -14, +14 lines =@@
- === other.ts ===
- // esm format file
- export const a = await import("package/cjs");
-->a : { default: typeof import("index"); }
-->await import("package/cjs") : { default: typeof import("index"); }
-->import("package/cjs") : Promise<{ default: typeof import("index"); }>
-+>a : typeof import("index")
-+>await import("package/cjs") : typeof import("index")
-+>import("package/cjs") : Promise<typeof import("index")>
- >"package/cjs" : "package/cjs"
- 
- export const b = await import("package/mjs");
-@@= skipped -18, +18 lines =@@
+@@= skipped -32, +32 lines =@@
  >"package" : "package"
  
  export const f = await import("inner");
@@ -46,17 +33,6 @@
  >"inner/mjs" : "inner/mjs"
  
  === other.mts ===
- // esm format file
- export const a = await import("package/cjs");
-->a : { default: typeof import("index"); }
-->await import("package/cjs") : { default: typeof import("index"); }
-->import("package/cjs") : Promise<{ default: typeof import("index"); }>
-+>a : typeof import("index")
-+>await import("package/cjs") : typeof import("index")
-+>import("package/cjs") : Promise<typeof import("index")>
- >"package/cjs" : "package/cjs"
- 
- export const b = await import("package/mjs");
 @@= skipped -40, +40 lines =@@
  >"package" : "package"
  
@@ -90,12 +66,7 @@
  >"inner/mjs" : "inner/mjs"
  
  === other.cts ===
- // cjs format file, no TLA
- export const a = import("package/cjs");
-->a : Promise<{ default: typeof import("index"); }>
-->import("package/cjs") : Promise<{ default: typeof import("index"); }>
-+>a : Promise<typeof import("index")>
-+>import("package/cjs") : Promise<typeof import("index")>
+@@= skipped -27, +27 lines =@@
  >"package/cjs" : "package/cjs"
  
  export const b = import("package/mjs");

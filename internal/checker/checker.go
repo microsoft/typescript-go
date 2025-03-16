@@ -512,6 +512,7 @@ type Program interface {
 	SourceFiles() []*ast.SourceFile
 	BindSourceFiles()
 	GetEmitModuleFormatOfFile(sourceFile *ast.SourceFile) core.ModuleKind
+	GetEmitSyntaxForUsageLocation(sourceFile *ast.SourceFile, usage *ast.Expression) core.ResolutionMode
 	GetImpliedNodeFormatForEmit(sourceFile *ast.SourceFile) core.ModuleKind
 	GetResolvedModule(currentSourceFile *ast.SourceFile, moduleReference string) *ast.SourceFile
 }
@@ -13749,23 +13750,22 @@ func (c *Checker) isOnlyImportableAsDefault(usage *ast.Node, resolvedModule *ast
 }
 
 func (c *Checker) canHaveSyntheticDefault(file *ast.Node, moduleSymbol *ast.Symbol, dontResolveAlias bool, usage *ast.Node) bool {
-	// !!!
-	// var usageMode ResolutionMode
-	// if file != nil {
-	// 	usageMode = c.getEmitSyntaxForModuleSpecifierExpression(usage)
-	// }
-	// if file != nil && usageMode != core.ModuleKindNone {
-	// 	targetMode := host.getImpliedNodeFormatForEmit(file)
-	// 	if usageMode == core.ModuleKindESNext && targetMode == core.ModuleKindCommonJS && core.ModuleKindNode16 <= c.moduleKind && c.moduleKind <= core.ModuleKindNodeNext {
-	// 		// In Node.js, CommonJS modules always have a synthetic default when imported into ESM
-	// 		return true
-	// 	}
-	// 	if usageMode == core.ModuleKindESNext && targetMode == core.ModuleKindESNext {
-	// 		// No matter what the `module` setting is, if we're confident that both files
-	// 		// are ESM, there cannot be a synthetic default.
-	// 		return false
-	// 	}
-	// }
+	var usageMode core.ResolutionMode
+	if file != nil {
+		usageMode = c.getEmitSyntaxForModuleSpecifierExpression(usage)
+	}
+	if file != nil && usageMode != core.ModuleKindNone {
+		targetMode := c.program.GetImpliedNodeFormatForEmit(file.AsSourceFile())
+		if usageMode == core.ModuleKindESNext && targetMode == core.ModuleKindCommonJS && core.ModuleKindNode16 <= c.moduleKind && c.moduleKind <= core.ModuleKindNodeNext {
+			// In Node.js, CommonJS modules always have a synthetic default when imported into ESM
+			return true
+		}
+		if usageMode == core.ModuleKindESNext && targetMode == core.ModuleKindESNext {
+			// No matter what the `module` setting is, if we're confident that both files
+			// are ESM, there cannot be a synthetic default.
+			return false
+		}
+	}
 	if !c.allowSyntheticDefaultImports {
 		return false
 	}
@@ -13794,10 +13794,9 @@ func (c *Checker) canHaveSyntheticDefault(file *ast.Node, moduleSymbol *ast.Symb
 }
 
 func (c *Checker) getEmitSyntaxForModuleSpecifierExpression(usage *ast.Node) core.ResolutionMode {
-	// !!!
-	// if isStringLiteralLike(usage) {
-	// 	return host.getEmitSyntaxForUsageLocation(ast.GetSourceFileOfNode(usage), usage)
-	// }
+	if ast.IsStringLiteralLike(usage) {
+		return c.program.GetEmitSyntaxForUsageLocation(ast.GetSourceFileOfNode(usage), usage)
+	}
 	return core.ModuleKindNone
 }
 

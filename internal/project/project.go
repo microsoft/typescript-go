@@ -8,6 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/compiler/packagejson"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -124,7 +125,7 @@ func (p *Project) GetRootFileNames() []string {
 }
 
 // GetSourceFile implements LanguageServiceHost.
-func (p *Project) GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget) *ast.SourceFile {
+func (p *Project) GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget, packageJsonScope *packagejson.InfoCacheEntry) *ast.SourceFile {
 	scriptKind := p.getScriptKind(fileName)
 	if scriptInfo := p.getOrCreateScriptInfoAndAttachToProject(fileName, scriptKind); scriptInfo != nil {
 		var (

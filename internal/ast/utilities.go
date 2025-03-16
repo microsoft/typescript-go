@@ -2364,20 +2364,60 @@ func GetEmitModuleFormatOfFileWorker(sourceFile *SourceFile, options *core.Compi
 
 func GetImpliedNodeFormatForEmitWorker(sourceFile *SourceFile, options *core.CompilerOptions) core.ResolutionMode {
 	moduleKind := options.GetEmitModuleKind()
-	if core.ModuleKindNode16 <= moduleKind && moduleKind <= core.ModuleKindNodeNext {
+	shouldLookupFromPackageJson := core.ModuleKindNode16 <= moduleKind && moduleKind <= core.ModuleKindNodeNext || strings.Contains(string(sourceFile.Path()), "/node_modules/")
+	var packageJsonMode core.ResolutionMode
+	if shouldLookupFromPackageJson {
+		packageJsonMode = core.IfElse(sourceFile.PackageJsonScope != nil && sourceFile.PackageJsonScope.Contents.Type.Value == "module", core.ModuleKindESNext, core.ModuleKindCommonJS)
+	}
+
+	if core.ModuleKindNode16 <= moduleKind && moduleKind <= core.ModuleKindNodeNext && !shouldLookupFromPackageJson {
 		return sourceFile.ImpliedNodeFormat
 	}
-	if sourceFile.ImpliedNodeFormat == core.ModuleKindCommonJS &&
-		( /*sourceFile.packageJsonScope.contents.packageJsonContent.type == "commonjs" ||*/ // !!!
-		tspath.FileExtensionIsOneOf(sourceFile.FileName(), []string{tspath.ExtensionCjs, tspath.ExtensionCts})) {
+
+	if packageJsonMode == core.ModuleKindCommonJS ||
+		tspath.FileExtensionIsOneOf(sourceFile.FileName(), []string{tspath.ExtensionCjs, tspath.ExtensionCts}) {
 		return core.ModuleKindCommonJS
 	}
-	if sourceFile.ImpliedNodeFormat == core.ModuleKindESNext &&
-		( /*sourceFile.packageJsonScope?.contents.packageJsonContent.type === "module" ||*/ // !!!
-		tspath.FileExtensionIsOneOf(sourceFile.fileName, []string{tspath.ExtensionMjs, tspath.ExtensionMts})) {
+	if packageJsonMode == core.ModuleKindESNext ||
+		tspath.FileExtensionIsOneOf(sourceFile.fileName, []string{tspath.ExtensionMjs, tspath.ExtensionMts}) {
 		return core.ModuleKindESNext
 	}
 	return core.ModuleKindNone
+}
+
+func shouldTransformImportCallWorker(sourceFile *SourceFile, options *core.CompilerOptions) bool {
+	moduleKind := options.GetEmitModuleKind()
+	if core.ModuleKindNode16 <= moduleKind && moduleKind <= core.ModuleKindNodeNext || moduleKind == core.ModuleKindPreserve {
+		return false
+	}
+	return GetEmitModuleFormatOfFileWorker(sourceFile, options) < core.ModuleKindES2015
+}
+
+func GetEmitSyntaxForUsageLocationWorker(file *SourceFile, usage *Expression, options *core.CompilerOptions) core.ModuleKind {
+	if options == nil {
+		// This should always be provided, but we try to fail somewhat
+		// gracefully to allow projects like ts-node time to update.
+		return core.ModuleKindNone
+	}
+
+	var exprParentParent *Node
+	exprContainingNode := WalkUpParenthesizedExpressions(usage.Parent)
+	if exprContainingNode != nil {
+		exprParentParent = exprContainingNode.Parent
+	}
+	if exprParentParent != nil && IsImportEqualsDeclaration(usage.Parent) {
+		return core.IfElse(shouldTransformImportCallWorker(file, options), core.ModuleKindCommonJS, core.ModuleKindESNext)
+	}
+	// If we're in --module preserve on an input file, we know that an import
+	// is an import. But if this is a declaration file, we'd prefer to use the
+	// impliedNodeFormat. Since we want things to be consistent between the two,
+	// we need to issue errors when the user writes ESM syntax in a definitely-CJS
+	// file, until/unless declaration emit can indicate a true ESM import. On the
+	// other hand, writing CJS syntax in a definitely-ESM file is fine, since declaration
+	// emit preserves the CJS syntax.
+	fileEmitMode := GetEmitModuleFormatOfFileWorker(file, options)
+	emitModuleKindIsNonNodeEsm := fileEmitMode >= core.ModuleKindES2015 && fileEmitMode <= core.ModuleKindESNext
+	return core.IfElse(fileEmitMode == core.ModuleKindCommonJS, core.ModuleKindCommonJS, core.IfElse(emitModuleKindIsNonNodeEsm || fileEmitMode == core.ModuleKindPreserve, core.ModuleKindESNext, core.ModuleKindNone))
 }
 
 func GetDeclarationContainer(node *Node) *Node {

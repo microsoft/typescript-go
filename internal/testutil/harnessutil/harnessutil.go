@@ -16,6 +16,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/compiler/packagejson"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/repo"
@@ -355,7 +356,7 @@ type cachedCompilerHost struct {
 
 var sourceFileCache sync.Map
 
-func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget) *ast.SourceFile {
+func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget, packageJsonScope *packagejson.InfoCacheEntry) *ast.SourceFile {
 	text, _ := h.FS().ReadFile(fileName)
 
 	type sourceFileCacheKey struct {
@@ -385,6 +386,10 @@ func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path, la
 	} else {
 		// !!! JSDocParsingMode
 		sourceFile = parser.ParseSourceFile(fileName, path, text, languageVersion, scanner.JSDocParsingModeParseAll)
+		sourceFile.PackageJsonScope = packageJsonScope
+		if h.options != nil {
+			sourceFile.ImpliedNodeFormat = ast.GetEmitModuleFormatOfFileWorker(sourceFile, h.options)
+		}
 	}
 
 	result, _ := sourceFileCache.LoadOrStore(key, sourceFile)
