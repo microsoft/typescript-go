@@ -69,7 +69,16 @@
  >default : 0
  
  import c1 from "./c"; // { default: [Function: default] }
-@@= skipped -81, +81 lines =@@
+@@= skipped -72, +72 lines =@@
+ >default : () => void
+ 
+ import e1 from "./e.mjs"; // 0
+->e1 : any
++>e1 : 0
+ 
+ import e2 = require("./e.mjs"); // 0
+ >e2 : 0
+@@= skipped -9, +9 lines =@@
  >f1 : 0
  
  import f2 = require("./f.cjs"); // { default: 0 }
@@ -138,7 +147,16 @@
  
  import c1 from "./c"; // { default: [Function: default] }
  >c1 : { default: () => void; }
-@@= skipped -24, +24 lines =@@
+@@= skipped -15, +15 lines =@@
+ >d2 : () => void
+ 
+ import e1 from "./e.mjs"; // 0
+->e1 : any
++>e1 : 0
+ 
+ import e2 = require("./e.mjs"); // 0
+ >e2 : 0
+@@= skipped -9, +9 lines =@@
  >f1 : 0
  
  import f2 = require("./f.cjs"); // { default: 0 }

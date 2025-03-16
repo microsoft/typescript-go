@@ -9,9 +9,9 @@ export const a = (await import("inner")).x();
 >a : Thing
 >(await import("inner")).x() : Thing
 >(await import("inner")).x : () => Thing
->(await import("inner")) : typeof import("node_modules/inner/index")
->await import("inner") : typeof import("node_modules/inner/index")
->import("inner") : Promise<typeof import("node_modules/inner/index")>
+>(await import("inner")) : { x: () => Thing; default: typeof import("node_modules/inner/index"); }
+>await import("inner") : { x: () => Thing; default: typeof import("node_modules/inner/index"); }
+>import("inner") : Promise<{ x: () => Thing; default: typeof import("node_modules/inner/index"); }>
 >"inner" : "inner"
 >x : () => Thing
 

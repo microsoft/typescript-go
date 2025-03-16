@@ -6,15 +6,15 @@ import obj1 from "./sub1/uses.js"
 >obj1 : any
 
 import obj2 from "./sub2/uses.js"
->obj2 : typeof import("/sub2/uses")
+>obj2 : RequireInterface
 
 export default [obj1, obj2.default] as const;
->[obj1, obj2.default] as const : [any, RequireInterface]
->[obj1, obj2.default] : [any, RequireInterface]
+>[obj1, obj2.default] as const : [any, any]
+>[obj1, obj2.default] : [any, any]
 >obj1 : any
->obj2.default : RequireInterface
->obj2 : typeof import("/sub2/uses")
->default : RequireInterface
+>obj2.default : any
+>obj2 : RequireInterface
+>default : any
 
 === /node_modules/pkg/require.d.ts ===
 export {};

@@ -77,14 +77,14 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 		return ExitStatusDiagnosticsPresent_OutputsSkipped, nil
 	}
 
-	// !!! convert to options with absolute paths is usually done here, but for ease of implementation, it's done in `tsoptions.ParseCommandLine()`
+	// !!! convert to options with absolute paths is usualy done here, but for ease of implementation, it's done in `tsoptions.ParseCommandLine()`
 	compilerOptionsFromCommandLine := commandLine.CompilerOptions()
 
 	if configFileName != "" {
 		extendedConfigCache := map[tspath.Path]*tsoptions.ExtendedConfigCacheEntry{}
 		configParseResult, errors := getParsedCommandLineOfConfigFile(configFileName, compilerOptionsFromCommandLine, sys, extendedConfigCache)
 		if len(errors) != 0 {
-			// these are unrecoverable errors--exit to report them as diagnostics
+			// these are unrecoverable errors--exit to report them as diagnotics
 			for _, e := range errors {
 				reportDiagnostic(e)
 			}
@@ -144,7 +144,7 @@ func getParsedCommandLineOfConfigFile(configFileName string, options *core.Compi
 	errors := []*ast.Diagnostic{}
 	configFileText, errors := tsoptions.TryReadFile(configFileName, sys.FS().ReadFile, errors)
 	if len(errors) > 0 {
-		// these are unrecoverable errors--exit to report them as diagnostics
+		// these are unrecoverable errors--exit to report them as diagnotics
 		return nil, errors
 	}
 

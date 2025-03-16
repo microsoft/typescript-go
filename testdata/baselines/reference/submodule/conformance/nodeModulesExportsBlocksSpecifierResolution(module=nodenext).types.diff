@@ -7,12 +7,15 @@
 ->a : import("node_modules/inner/other").Thing
 ->(await import("inner")).x() : import("node_modules/inner/other").Thing
 ->(await import("inner")).x : () => import("node_modules/inner/other").Thing
+->(await import("inner")) : typeof import("node_modules/inner/index")
+->await import("inner") : typeof import("node_modules/inner/index")
+->import("inner") : Promise<typeof import("node_modules/inner/index")>
 +>a : Thing
 +>(await import("inner")).x() : Thing
 +>(await import("inner")).x : () => Thing
- >(await import("inner")) : typeof import("node_modules/inner/index")
- >await import("inner") : typeof import("node_modules/inner/index")
- >import("inner") : Promise<typeof import("node_modules/inner/index")>
++>(await import("inner")) : { x: () => Thing; default: typeof import("node_modules/inner/index"); }
++>await import("inner") : { x: () => Thing; default: typeof import("node_modules/inner/index"); }
++>import("inner") : Promise<{ x: () => Thing; default: typeof import("node_modules/inner/index"); }>
  >"inner" : "inner"
 ->x : () => import("node_modules/inner/other").Thing
 +>x : () => Thing

@@ -418,10 +418,6 @@ func (p *Program) GetImpliedNodeFormatForEmit(sourceFile *ast.SourceFile) core.R
 	return ast.GetImpliedNodeFormatForEmitWorker(sourceFile, p.compilerOptions)
 }
 
-func (p *Program) GetEmitSyntaxForUsageLocation(sourceFile *ast.SourceFile, usage *ast.Expression) core.ResolutionMode {
-	return ast.GetEmitSyntaxForUsageLocationWorker(sourceFile, usage, p.compilerOptions)
-}
-
 func (p *Program) CommonSourceDirectory() string {
 	p.commonSourceDirectoryOnce.Do(func() {
 		var files []string

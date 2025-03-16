@@ -6,7 +6,6 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/microsoft/typescript-go/internal/compiler/packagejson"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -8697,11 +8696,6 @@ type SourceFile struct {
 	TypeReferenceDirectives     []*FileReference
 	LibReferenceDirectives      []*FileReference
 
-	// Fields set by file loader
-
-	PackageJsonScope  *packagejson.InfoCacheEntry
-	ImpliedNodeFormat core.ModuleKind
-
 	// Fields set by binder
 
 	isBound                   atomic.Bool
@@ -8729,6 +8723,7 @@ type SourceFile struct {
 
 	// !!!
 
+	ImpliedNodeFormat       core.ModuleKind
 	CommonJsModuleIndicator *Node
 	ExternalModuleIndicator *Node
 	JsGlobalAugmentations   SymbolTable
@@ -8814,7 +8809,6 @@ func (node *SourceFile) copyFrom(other *SourceFile) {
 	node.TypeReferenceDirectives = other.TypeReferenceDirectives
 	node.LibReferenceDirectives = other.LibReferenceDirectives
 	node.ImpliedNodeFormat = other.ImpliedNodeFormat
-	node.PackageJsonScope = other.PackageJsonScope
 	node.CommonJsModuleIndicator = other.CommonJsModuleIndicator
 	node.ExternalModuleIndicator = other.ExternalModuleIndicator
 	node.JsGlobalAugmentations = other.JsGlobalAugmentations

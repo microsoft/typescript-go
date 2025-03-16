@@ -334,33 +334,33 @@ const _m36 = import("./index");
 >"./index" : "./index"
 
 const _m37 = import("./subfolder");
->_m37 : Promise<{ x: 1; default: typeof import("subfolder/index"); }>
->import("./subfolder") : Promise<{ x: 1; default: typeof import("subfolder/index"); }>
+>_m37 : Promise<typeof import("subfolder/index")>
+>import("./subfolder") : Promise<typeof import("subfolder/index")>
 >"./subfolder" : "./subfolder"
 
 const _m38 = import("./subfolder/");
->_m38 : Promise<{ x: 1; default: typeof import("subfolder/index"); }>
->import("./subfolder/") : Promise<{ x: 1; default: typeof import("subfolder/index"); }>
+>_m38 : Promise<typeof import("subfolder/index")>
+>import("./subfolder/") : Promise<typeof import("subfolder/index")>
 >"./subfolder/" : "./subfolder/"
 
 const _m39 = import("./subfolder/index");
->_m39 : Promise<{ x: 1; default: typeof import("subfolder/index"); }>
->import("./subfolder/index") : Promise<{ x: 1; default: typeof import("subfolder/index"); }>
+>_m39 : Promise<typeof import("subfolder/index")>
+>import("./subfolder/index") : Promise<typeof import("subfolder/index")>
 >"./subfolder/index" : "./subfolder/index"
 
 const _m40 = import("./subfolder2");
->_m40 : Promise<{ x: 1; default: typeof import("subfolder2/index"); }>
->import("./subfolder2") : Promise<{ x: 1; default: typeof import("subfolder2/index"); }>
+>_m40 : Promise<typeof import("subfolder2/index")>
+>import("./subfolder2") : Promise<typeof import("subfolder2/index")>
 >"./subfolder2" : "./subfolder2"
 
 const _m41 = import("./subfolder2/");
->_m41 : Promise<{ x: 1; default: typeof import("subfolder2/index"); }>
->import("./subfolder2/") : Promise<{ x: 1; default: typeof import("subfolder2/index"); }>
+>_m41 : Promise<typeof import("subfolder2/index")>
+>import("./subfolder2/") : Promise<typeof import("subfolder2/index")>
 >"./subfolder2/" : "./subfolder2/"
 
 const _m42 = import("./subfolder2/index");
->_m42 : Promise<{ x: 1; default: typeof import("subfolder2/index"); }>
->import("./subfolder2/index") : Promise<{ x: 1; default: typeof import("subfolder2/index"); }>
+>_m42 : Promise<typeof import("subfolder2/index")>
+>import("./subfolder2/index") : Promise<typeof import("subfolder2/index")>
 >"./subfolder2/index" : "./subfolder2/index"
 
 const _m43 = import("./subfolder2/another");
@@ -640,33 +640,33 @@ const _m36 = import("./index");
 >"./index" : "./index"
 
 const _m37 = import("./subfolder");
->_m37 : Promise<{ x: 1; default: typeof import("subfolder/index"); }>
->import("./subfolder") : Promise<{ x: 1; default: typeof import("subfolder/index"); }>
+>_m37 : Promise<typeof import("subfolder/index")>
+>import("./subfolder") : Promise<typeof import("subfolder/index")>
 >"./subfolder" : "./subfolder"
 
 const _m38 = import("./subfolder/");
->_m38 : Promise<{ x: 1; default: typeof import("subfolder/index"); }>
->import("./subfolder/") : Promise<{ x: 1; default: typeof import("subfolder/index"); }>
+>_m38 : Promise<typeof import("subfolder/index")>
+>import("./subfolder/") : Promise<typeof import("subfolder/index")>
 >"./subfolder/" : "./subfolder/"
 
 const _m39 = import("./subfolder/index");
->_m39 : Promise<{ x: 1; default: typeof import("subfolder/index"); }>
->import("./subfolder/index") : Promise<{ x: 1; default: typeof import("subfolder/index"); }>
+>_m39 : Promise<typeof import("subfolder/index")>
+>import("./subfolder/index") : Promise<typeof import("subfolder/index")>
 >"./subfolder/index" : "./subfolder/index"
 
 const _m40 = import("./subfolder2");
->_m40 : Promise<{ x: 1; default: typeof import("subfolder2/index"); }>
->import("./subfolder2") : Promise<{ x: 1; default: typeof import("subfolder2/index"); }>
+>_m40 : Promise<typeof import("subfolder2/index")>
+>import("./subfolder2") : Promise<typeof import("subfolder2/index")>
 >"./subfolder2" : "./subfolder2"
 
 const _m41 = import("./subfolder2/");
->_m41 : Promise<{ x: 1; default: typeof import("subfolder2/index"); }>
->import("./subfolder2/") : Promise<{ x: 1; default: typeof import("subfolder2/index"); }>
+>_m41 : Promise<typeof import("subfolder2/index")>
+>import("./subfolder2/") : Promise<typeof import("subfolder2/index")>
 >"./subfolder2/" : "./subfolder2/"
 
 const _m42 = import("./subfolder2/index");
->_m42 : Promise<{ x: 1; default: typeof import("subfolder2/index"); }>
->import("./subfolder2/index") : Promise<{ x: 1; default: typeof import("subfolder2/index"); }>
+>_m42 : Promise<typeof import("subfolder2/index")>
+>import("./subfolder2/index") : Promise<typeof import("subfolder2/index")>
 >"./subfolder2/index" : "./subfolder2/index"
 
 const _m43 = import("./subfolder2/another");
@@ -945,33 +945,33 @@ const _m36 = import("./index");
 >"./index" : "./index"
 
 const _m37 = import("./subfolder");
->_m37 : Promise<{ x: 1; default: typeof import("subfolder/index"); }>
->import("./subfolder") : Promise<{ x: 1; default: typeof import("subfolder/index"); }>
+>_m37 : Promise<typeof import("subfolder/index")>
+>import("./subfolder") : Promise<typeof import("subfolder/index")>
 >"./subfolder" : "./subfolder"
 
 const _m38 = import("./subfolder/");
->_m38 : Promise<{ x: 1; default: typeof import("subfolder/index"); }>
->import("./subfolder/") : Promise<{ x: 1; default: typeof import("subfolder/index"); }>
+>_m38 : Promise<typeof import("subfolder/index")>
+>import("./subfolder/") : Promise<typeof import("subfolder/index")>
 >"./subfolder/" : "./subfolder/"
 
 const _m39 = import("./subfolder/index");
->_m39 : Promise<{ x: 1; default: typeof import("subfolder/index"); }>
->import("./subfolder/index") : Promise<{ x: 1; default: typeof import("subfolder/index"); }>
+>_m39 : Promise<typeof import("subfolder/index")>
+>import("./subfolder/index") : Promise<typeof import("subfolder/index")>
 >"./subfolder/index" : "./subfolder/index"
 
 const _m40 = import("./subfolder2");
->_m40 : Promise<{ x: 1; default: typeof import("subfolder2/index"); }>
->import("./subfolder2") : Promise<{ x: 1; default: typeof import("subfolder2/index"); }>
+>_m40 : Promise<typeof import("subfolder2/index")>
+>import("./subfolder2") : Promise<typeof import("subfolder2/index")>
 >"./subfolder2" : "./subfolder2"
 
 const _m41 = import("./subfolder2/");
->_m41 : Promise<{ x: 1; default: typeof import("subfolder2/index"); }>
->import("./subfolder2/") : Promise<{ x: 1; default: typeof import("subfolder2/index"); }>
+>_m41 : Promise<typeof import("subfolder2/index")>
+>import("./subfolder2/") : Promise<typeof import("subfolder2/index")>
 >"./subfolder2/" : "./subfolder2/"
 
 const _m42 = import("./subfolder2/index");
->_m42 : Promise<{ x: 1; default: typeof import("subfolder2/index"); }>
->import("./subfolder2/index") : Promise<{ x: 1; default: typeof import("subfolder2/index"); }>
+>_m42 : Promise<typeof import("subfolder2/index")>
+>import("./subfolder2/index") : Promise<typeof import("subfolder2/index")>
 >"./subfolder2/index" : "./subfolder2/index"
 
 const _m43 = import("./subfolder2/another");

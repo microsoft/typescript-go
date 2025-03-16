@@ -25,9 +25,9 @@ export async function f() {
 >"../index.js" : "../index.js"
 
     const mod4 = await import ("./index.js");
->mod4 : { f: () => Promise<void>; default: typeof import("subfolder/index"); }
->await import ("./index.js") : { f: () => Promise<void>; default: typeof import("subfolder/index"); }
->import ("./index.js") : Promise<{ f: () => Promise<void>; default: typeof import("subfolder/index"); }>
+>mod4 : typeof import("subfolder/index")
+>await import ("./index.js") : typeof import("subfolder/index")
+>import ("./index.js") : Promise<typeof import("subfolder/index")>
 >"./index.js" : "./index.js"
 
     h();
@@ -59,9 +59,9 @@ export async function h() {
 >"./index.js" : "./index.js"
 
     const mod4 = await import ("./subfolder/index.js");
->mod4 : { f: () => Promise<void>; default: typeof import("subfolder/index"); }
->await import ("./subfolder/index.js") : { f: () => Promise<void>; default: typeof import("subfolder/index"); }
->import ("./subfolder/index.js") : Promise<{ f: () => Promise<void>; default: typeof import("subfolder/index"); }>
+>mod4 : typeof import("subfolder/index")
+>await import ("./subfolder/index.js") : typeof import("subfolder/index")
+>import ("./subfolder/index.js") : Promise<typeof import("subfolder/index")>
 >"./subfolder/index.js" : "./subfolder/index.js"
 
     f();

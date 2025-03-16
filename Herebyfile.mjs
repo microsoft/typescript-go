@@ -44,7 +44,7 @@ const defaultGoBuildTags = [
 
 /**
  * @param  {...string} extra
- * @returns {string[]}
+ * @returns
  */
 function goBuildTags(...extra) {
     const tags = new Set(defaultGoBuildTags.concat(extra));
