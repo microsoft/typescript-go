@@ -82,6 +82,6 @@ func newStatistic(name string, count int) statistic {
 }
 
 func printVersion(sys System) {
-	fmt.Fprint(sys.Writer(), ast.NewCompilerDiagnostic(diagnostics.Version_0, core.Version).Message()+sys.NewLine())
+	fmt.Fprint(sys.Writer(), diagnostics.Version_0.Format(core.Version)+sys.NewLine())
 	sys.EndWrite()
 }
