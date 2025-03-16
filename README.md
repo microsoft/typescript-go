@@ -12,19 +12,19 @@ This repo uses [Go 1.24 or higher](https://go.dev/dl/), [Node.js with npm](https
 For tests and code generation, this repo contains a git submodule to the main TypeScript repo pointing to the commit being ported.
 When cloning, you'll want to clone with submodules:
 
-```
+```sh
 git clone --recurse-submodules https://github.com/microsoft/typescript-go.git
 ```
 
 If you have already cloned the repo, you can initialize the submodule with:
 
-```
+```sh
 git submodule update --init --recursive
 ```
 
 With the submodule in place and `npm ci`, you can run tasks via `hereby`, similar to the TypeScript repo:
 
-```
+```sh
 hereby build          # Verify that the project builds
 hereby test           # Run all tests
 hereby install-tools  # Install additional tools such as linters
