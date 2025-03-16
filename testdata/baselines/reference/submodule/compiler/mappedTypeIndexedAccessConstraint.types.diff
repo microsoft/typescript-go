@@ -137,11 +137,11 @@
  
  const mapper: { [K in keyof PartMappings]: (o: MapperArgs<K>) => PartMappings[K] } = {
 ->mapper : { "12": (o: MapperArgs<"12">) => number; 42: (o: MapperArgs<42>) => string; foo?: ((o: MapperArgs<"foo">) => boolean | undefined) | undefined; }
-+>mapper : { foo?: (o: MapperArgs<"foo">) => boolean | undefined | undefined; 12: (o: MapperArgs<"12">) => number; 42: (o: MapperArgs<42>) => string; }
++>mapper : { 12: (o: MapperArgs<"12">) => number; 42: (o: MapperArgs<42>) => string; foo?: (o: MapperArgs<"foo">) => boolean | undefined | undefined; }
 +>K : K
  >o : MapperArgs<K>
 ->{    foo: ({ v, i }) => v.length + i > 4,    "12": ({ v, i }) => Number(v) + i,    42: ({ v, i }) => `${v}${i}`,} : { foo: ({ v, i }: MapperArgs<"foo">) => boolean; "12": ({ v, i }: MapperArgs<"12">) => number; 42: ({ v, i }: MapperArgs<42>) => string; }
-+>{    foo: ({ v, i }) => v.length + i > 4,    "12": ({ v, i }) => Number(v) + i,    42: ({ v, i }) => `${v}${i}`,} : { foo: (__0: MapperArgs<"foo">) => boolean; "12": (__0: MapperArgs<"12">) => number; 42: (__0: MapperArgs<42>) => string; }
++>{    foo: ({ v, i }) => v.length + i > 4,    "12": ({ v, i }) => Number(v) + i,    42: ({ v, i }) => `${v}${i}`,} : { "12": (__0: MapperArgs<"12">) => number; 42: (__0: MapperArgs<42>) => string; foo: (__0: MapperArgs<"foo">) => boolean; }
  
      foo: ({ v, i }) => v.length + i > 4,
 ->foo : ({ v, i }: MapperArgs<"foo">) => boolean
@@ -191,7 +191,7 @@
 ->mapper[key] : ((o: MapperArgs<K>) => PartMappings[K]) | undefined
 ->mapper : { "12": (o: MapperArgs<"12">) => number; 42: (o: MapperArgs<42>) => string; foo?: ((o: MapperArgs<"foo">) => boolean | undefined) | undefined; }
 +>mapper[key] : (o: MapperArgs<K>) => PartMappings[K] | undefined
-+>mapper : { foo?: (o: MapperArgs<"foo">) => boolean | undefined | undefined; 12: (o: MapperArgs<"12">) => number; 42: (o: MapperArgs<42>) => string; }
++>mapper : { 12: (o: MapperArgs<"12">) => number; 42: (o: MapperArgs<42>) => string; foo?: (o: MapperArgs<"foo">) => boolean | undefined | undefined; }
  >key : K
  >o : MapperArgs<K>
  
@@ -210,7 +210,7 @@
 ->mapper[key] : ((o: MapperArgs<K>) => PartMappings[K]) | undefined
 ->mapper : { "12": (o: MapperArgs<"12">) => number; 42: (o: MapperArgs<42>) => string; foo?: ((o: MapperArgs<"foo">) => boolean | undefined) | undefined; }
 +>mapper[key] : (o: MapperArgs<K>) => PartMappings[K] | undefined
-+>mapper : { foo?: (o: MapperArgs<"foo">) => boolean | undefined | undefined; 12: (o: MapperArgs<"12">) => number; 42: (o: MapperArgs<42>) => string; }
++>mapper : { 12: (o: MapperArgs<"12">) => number; 42: (o: MapperArgs<42>) => string; foo?: (o: MapperArgs<"foo">) => boolean | undefined | undefined; }
  >key : K
  >o : MapperArgs<K>
  

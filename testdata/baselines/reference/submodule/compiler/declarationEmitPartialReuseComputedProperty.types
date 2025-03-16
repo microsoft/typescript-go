@@ -15,9 +15,9 @@ export const neg = -1;
 >1 : 1
 
 export const o = () => null! as { [n]: string, foo: string, [poz]: number, [neg]: number }
->o : () => { A: string; foo: string; [poz]: number; [neg]: number; }
->() => null! as { [n]: string, foo: string, [poz]: number, [neg]: number } : () => { A: string; foo: string; [poz]: number; [neg]: number; }
->null! as { [n]: string, foo: string, [poz]: number, [neg]: number } : { A: string; foo: string; [poz]: number; [neg]: number; }
+>o : () => { [neg]: number; [poz]: number; A: string; foo: string; }
+>() => null! as { [n]: string, foo: string, [poz]: number, [neg]: number } : () => { [neg]: number; [poz]: number; A: string; foo: string; }
+>null! as { [n]: string, foo: string, [poz]: number, [neg]: number } : { [neg]: number; [poz]: number; A: string; foo: string; }
 >null! : never
 >[n] : string
 >n : "A"
@@ -29,9 +29,9 @@ export const o = () => null! as { [n]: string, foo: string, [poz]: number, [neg]
 
 === b.ts ===
 import { o } from "./a";
->o : () => { A: string; foo: string; [poz]: number; [neg]: number; }
+>o : () => { [neg]: number; [poz]: number; A: string; foo: string; }
 
 export const g = o
->g : () => { A: string; foo: string; [poz]: number; [neg]: number; }
->o : () => { A: string; foo: string; [poz]: number; [neg]: number; }
+>g : () => { [neg]: number; [poz]: number; A: string; foo: string; }
+>o : () => { [neg]: number; [poz]: number; A: string; foo: string; }
 

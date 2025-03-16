@@ -2,7 +2,7 @@
 
 === /a.ts ===
 export default {
->{    a: "a",    b: "b",    1: "1",} : { a: string; b: string; 1: string; }
+>{    a: "a",    b: "b",    1: "1",} : { 1: string; a: string; b: string; }
 
     a: "a",
 >a : string
@@ -19,7 +19,7 @@ export default {
 
 === /b.ts ===
 import a from "./a" with { a: "a", "b": "b" };
->a : { a: string; b: string; 1: string; }
+>a : { 1: string; a: string; b: string; }
 >a : any
 
 export async function f() {

@@ -16,3 +16,23 @@
      y: string;
  >y : string
  }
+@@= skipped -22, +26 lines =@@
+ >o1 : { [s: string]: A; [n: number]: B; }
+ >s : string
+ >n : number
+->{ x: b, 0: a } : { x: B; 0: A; }
++>{ x: b, 0: a } : { 0: A; x: B; }
+ >x : B
+ >b : B
+ >0 : A
+ >a : A
+ 
+ o1 = { x: c, 0: a }; // string indexer is any, number indexer is A
+->o1 = { x: c, 0: a } : { x: any; 0: A; }
++>o1 = { x: c, 0: a } : { 0: A; x: any; }
+ >o1 : { [s: string]: A; [n: number]: B; }
+->{ x: c, 0: a } : { x: any; 0: A; }
++>{ x: c, 0: a } : { 0: A; x: any; }
+ >x : any
+ >c : any
+ >0 : A

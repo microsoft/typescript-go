@@ -134,10 +134,10 @@ type PartMappings = SetOptional<Mappings, "foo">;
 >PartMappings : PartMappings
 
 const mapper: { [K in keyof PartMappings]: (o: MapperArgs<K>) => PartMappings[K] } = {
->mapper : { foo?: (o: MapperArgs<"foo">) => boolean | undefined | undefined; 12: (o: MapperArgs<"12">) => number; 42: (o: MapperArgs<42>) => string; }
+>mapper : { 12: (o: MapperArgs<"12">) => number; 42: (o: MapperArgs<42>) => string; foo?: (o: MapperArgs<"foo">) => boolean | undefined | undefined; }
 >K : K
 >o : MapperArgs<K>
->{    foo: ({ v, i }) => v.length + i > 4,    "12": ({ v, i }) => Number(v) + i,    42: ({ v, i }) => `${v}${i}`,} : { foo: (__0: MapperArgs<"foo">) => boolean; "12": (__0: MapperArgs<"12">) => number; 42: (__0: MapperArgs<42>) => string; }
+>{    foo: ({ v, i }) => v.length + i > 4,    "12": ({ v, i }) => Number(v) + i,    42: ({ v, i }) => `${v}${i}`,} : { "12": (__0: MapperArgs<"12">) => number; 42: (__0: MapperArgs<42>) => string; foo: (__0: MapperArgs<"foo">) => boolean; }
 
     foo: ({ v, i }) => v.length + i > 4,
 >foo : (__0: MapperArgs<"foo">) => boolean
@@ -183,7 +183,7 @@ const resolveMapper1 = <K extends keyof typeof mapper>(
 >o : MapperArgs<K>
 >mapper[key](o) : PartMappings[K]
 >mapper[key] : (o: MapperArgs<K>) => PartMappings[K] | undefined
->mapper : { foo?: (o: MapperArgs<"foo">) => boolean | undefined | undefined; 12: (o: MapperArgs<"12">) => number; 42: (o: MapperArgs<42>) => string; }
+>mapper : { 12: (o: MapperArgs<"12">) => number; 42: (o: MapperArgs<42>) => string; foo?: (o: MapperArgs<"foo">) => boolean | undefined | undefined; }
 >key : K
 >o : MapperArgs<K>
 
@@ -197,7 +197,7 @@ const resolveMapper2 = <K extends keyof typeof mapper>(
 >o : MapperArgs<K>
 >mapper[key]?.(o) : PartMappings[K] | undefined
 >mapper[key] : (o: MapperArgs<K>) => PartMappings[K] | undefined
->mapper : { foo?: (o: MapperArgs<"foo">) => boolean | undefined | undefined; 12: (o: MapperArgs<"12">) => number; 42: (o: MapperArgs<42>) => string; }
+>mapper : { 12: (o: MapperArgs<"12">) => number; 42: (o: MapperArgs<42>) => string; foo?: (o: MapperArgs<"foo">) => boolean | undefined | undefined; }
 >key : K
 >o : MapperArgs<K>
 

@@ -1,13 +1,24 @@
 --- old.objectLiteralShorthandPropertiesErrorFromNotUsingIdentifier.types
 +++ new.objectLiteralShorthandPropertiesErrorFromNotUsingIdentifier.types
-@@= skipped -42, +42 lines =@@
+@@= skipped -2, +2 lines =@@
+ === objectLiteralShorthandPropertiesErrorFromNotUsingIdentifier.ts ===
+ // errors
+ var y = {
+->y : { stringLiteral: any; 42: any; readonly e: void; f: any; this: any; super: any; var: any; class: any; typeof: any; }
+->{    "stringLiteral",    42,    get e,    set f,    this,    super,    var,    class,    typeof} : { stringLiteral: any; 42: any; readonly e: void; f: any; this: any; super: any; var: any; class: any; typeof: any; }
++>y : { 42: any; stringLiteral: any; readonly e: void; f: any; this: any; super: any; var: any; class: any; typeof: any; }
++>{    "stringLiteral",    42,    get e,    set f,    this,    super,    var,    class,    typeof} : { 42: any; stringLiteral: any; readonly e: void; f: any; this: any; super: any; var: any; class: any; typeof: any; }
+ 
+     "stringLiteral",
+ >"stringLiteral" : any
+@@= skipped -40, +40 lines =@@
  > : any
  
  var x = {
 ->x : { a: any; "": any; ss: any; 1: any; }
 ->{    a.b,    a["ss"],    a[1],} : { a: any; "": any; ss: any; 1: any; }
-+>x : { a: any; : any; ss: any; [1]: any; }
-+>{    a.b,    a["ss"],    a[1],} : { a: any; : any; ss: any; [1]: any; }
++>x : { [1]: any; a: any; : any; ss: any; }
++>{    a.b,    a["ss"],    a[1],} : { [1]: any; a: any; : any; ss: any; }
  
      a.b,
  >a : any

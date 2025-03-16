@@ -98,7 +98,7 @@ class Q extends P {
 }
 
 var c: {
->c : { [n: number]: string; c: boolean; 3: boolean; }
+>c : { [n: number]: string; 3: boolean; c: boolean; }
 
     [n: number]: string;
 >n : number

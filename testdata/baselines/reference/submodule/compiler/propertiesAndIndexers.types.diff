@@ -61,3 +61,12 @@
      2: Z;
  >2 : Z
  
+@@= skipped -26, +28 lines =@@
+ }
+ 
+ var c: {
+->c : { [n: number]: string; c: boolean; 3: boolean; }
++>c : { [n: number]: string; 3: boolean; c: boolean; }
+ 
+     [n: number]: string;
+ >n : number
