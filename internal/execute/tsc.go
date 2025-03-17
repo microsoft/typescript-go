@@ -82,7 +82,7 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 			reportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.Cannot_find_a_tsconfig_json_file_at_the_current_directory_Colon_0, tspath.NormalizePath(sys.GetCurrentDirectory())))
 		} else {
 			printVersion(sys)
-			// print help
+			printHelp(sys, commandLine)
 		}
 		return ExitStatusDiagnosticsPresent_OutputsSkipped, nil
 	}
