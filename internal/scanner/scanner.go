@@ -1660,9 +1660,14 @@ func (s *Scanner) scanNumber() ast.Kind {
 				s.tokenFlags |= ast.TokenFlagsContainsLeadingZero
 				fixedPart = digits
 			} else {
+				s.tokenValue = jsnum.FromString(digits).String()
 				s.tokenFlags |= ast.TokenFlagsOctal
-				s.tokenValue = "0o" + digits
-				s.errorAt(diagnostics.Octal_literals_are_not_allowed_Use_the_syntax_0, start, s.pos-start, digits)
+				withMinus := s.token == ast.KindMinusToken
+				literal := core.IfElse(withMinus, "-", "") + "0o" + s.tokenValue
+				if withMinus {
+					start--
+				}
+				s.errorAt(diagnostics.Octal_literals_are_not_allowed_Use_the_syntax_0, start, s.pos-start, literal)
 				return ast.KindNumericLiteral
 			}
 		}
@@ -1862,14 +1867,6 @@ func (s *Scanner) scanBigIntSuffix() ast.Kind {
 		s.tokenValue += "n"
 		// !!! Convert all bigint tokens to their normalized decimal representation
 		return ast.KindBigIntLiteral
-	}
-	// !!! Once core.StringToNumber supports parsing of non-decimal values we should also convert non-decimal
-	// tokens to their normalized decimal representation
-	if len(s.tokenValue) >= 2 {
-		firstTwo := s.tokenValue[:2]
-		if firstTwo == "0x" || firstTwo == "0o" || firstTwo == "0b" {
-			return ast.KindNumericLiteral
-		}
 	}
 	s.tokenValue = jsnum.FromString(s.tokenValue).String()
 	return ast.KindNumericLiteral

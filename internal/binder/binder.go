@@ -9,6 +9,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 type ContainerFlags int32
@@ -116,6 +117,7 @@ func bindSourceFile(file *ast.SourceFile, options *core.CompilerOptions) {
 		b.file = file
 		b.options = options
 		b.languageVersion = options.GetEmitScriptTarget()
+		b.inStrictMode = options.AlwaysStrict.IsTrue()
 		b.unreachableFlow = b.newFlowNode(ast.FlowFlagsUnreachable)
 		b.reportedUnreachableFlow = b.newFlowNode(ast.FlowFlagsUnreachable)
 		b.bind(file.AsNode())
@@ -756,8 +758,7 @@ func (b *Binder) bindSourceFileIfExternalModule() {
 }
 
 func (b *Binder) bindSourceFileAsExternalModule() {
-	// !!! Remove file extension from module name
-	b.bindAnonymousDeclaration(b.file.AsNode(), ast.SymbolFlagsValueModule, "\""+b.file.FileName()+"\"")
+	b.bindAnonymousDeclaration(b.file.AsNode(), ast.SymbolFlagsValueModule, "\""+tspath.RemoveFileExtension(b.file.FileName())+"\"")
 }
 
 func (b *Binder) bindModuleDeclaration(node *ast.Node) {
