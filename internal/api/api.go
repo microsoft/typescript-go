@@ -119,6 +119,11 @@ func (api *API) HandleRequest(id int, method string, payload json.RawMessage) ([
 		return encodeJSON(handleBatchableRequest(params, func(params *GetSymbolAtPositionParams) (any, error) {
 			return api.GetSymbolAtPosition(params.Project, params.FileName, int(params.Position))
 		}))
+	case MethodGetSymbolAtPositions:
+		params := params.(*GetSymbolAtPositionsParams)
+		return encodeJSON(handleBatchableRequest(&params.Positions, func(position uint32) (any, error) {
+			return api.GetSymbolAtPosition(params.Project, params.FileName, int(position))
+		}))
 	case MethodGetTypeOfSymbol:
 		return encodeJSON(handleBatchableRequest(params, func(params *GetTypeOfSymbolParams) (any, error) {
 			return api.GetTypeOfSymbol(params.Project, params.Symbol)

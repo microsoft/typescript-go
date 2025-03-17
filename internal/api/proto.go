@@ -26,20 +26,22 @@ func NewHandle[T any](v *T) Handle[T] {
 }
 
 const (
-	MethodConfigure           Method = "configure"
-	MethodParseConfigFile     Method = "parseConfigFile"
-	MethodLoadProject         Method = "loadProject"
-	MethodGetSymbolAtPosition Method = "getSymbolAtPosition"
-	MethodGetTypeOfSymbol     Method = "getTypeOfSymbol"
-	MethodGetSourceFile       Method = "getSourceFile"
+	MethodConfigure            Method = "configure"
+	MethodParseConfigFile      Method = "parseConfigFile"
+	MethodLoadProject          Method = "loadProject"
+	MethodGetSymbolAtPosition  Method = "getSymbolAtPosition"
+	MethodGetSymbolAtPositions Method = "getSymbolAtPositions"
+	MethodGetTypeOfSymbol      Method = "getTypeOfSymbol"
+	MethodGetSourceFile        Method = "getSourceFile"
 )
 
 var unmarshalers = map[Method]func([]byte) (any, error){
-	MethodParseConfigFile:     unmarshallerFor[ParseConfigFileParams],
-	MethodLoadProject:         unmarshallerFor[LoadProjectParams],
-	MethodGetSourceFile:       unmarshallerFor[GetSourceFileParams],
-	MethodGetSymbolAtPosition: batchEnabledUnmarshallerFor[GetSymbolAtPositionParams],
-	MethodGetTypeOfSymbol:     batchEnabledUnmarshallerFor[GetTypeOfSymbolParams],
+	MethodParseConfigFile:      unmarshallerFor[ParseConfigFileParams],
+	MethodLoadProject:          unmarshallerFor[LoadProjectParams],
+	MethodGetSourceFile:        unmarshallerFor[GetSourceFileParams],
+	MethodGetSymbolAtPosition:  batchEnabledUnmarshallerFor[GetSymbolAtPositionParams],
+	MethodGetSymbolAtPositions: unmarshallerFor[GetSymbolAtPositionsParams],
+	MethodGetTypeOfSymbol:      batchEnabledUnmarshallerFor[GetTypeOfSymbolParams],
 }
 
 type ConfigureParams struct {
@@ -75,6 +77,12 @@ type GetSymbolAtPositionParams struct {
 	Project  int    `json:"project"`
 	FileName string `json:"fileName"`
 	Position uint32 `json:"position"`
+}
+
+type GetSymbolAtPositionsParams struct {
+	Project   int      `json:"project"`
+	FileName  string   `json:"fileName"`
+	Positions []uint32 `json:"positions"`
 }
 
 type SymbolResponse struct {

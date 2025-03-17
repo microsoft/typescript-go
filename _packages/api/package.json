@@ -23,8 +23,8 @@
       "default": "./dist/sync/api.js"
     },
     "./base/*": {
-      "@typescript/source": "./src/base/*",
-      "default": "./dist/base/*"
+      "@typescript/source": "./src/base/*.ts",
+      "default": "./dist/base/*.js"
     }
   },
   "dependencies": {

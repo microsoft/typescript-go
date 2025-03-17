@@ -14,6 +14,7 @@ import {
 } from "../base/api.ts";
 import type {
     ConfigResponse,
+    GetSymbolAtPositionParams,
     ProjectResponse,
     SymbolResponse,
     TypeResponse,
@@ -68,17 +69,19 @@ export class Project extends BaseProject<false> {
         return data ? new RemoteSourceFile(this.client, this, data) as unknown as SourceFile : undefined;
     }
 
-    getSymbolAtPosition(requests: readonly { fileName: string; position: number; }[]): (Symbol | undefined)[];
-    getSymbolAtPosition(fileName: string, position: number): Symbol | undefined;
-    getSymbolAtPosition(...params: [fileName: string, position: number] | [readonly { fileName: string; position: number; }[]]): Symbol | undefined | (Symbol | undefined)[] {
+    getSymbolAtPosition(requests: readonly GetSymbolAtPositionParams[]): (Symbol | undefined)[];
+    getSymbolAtPosition(fileName: string, position: number | number[]): Symbol | undefined;
+    getSymbolAtPosition(...params: [fileName: string, position: number | number[]] | [readonly GetSymbolAtPositionParams[]]): Symbol | undefined | (Symbol | undefined)[] {
         if (params.length === 2) {
-            const data = this.client.request("getSymbolAtPosition", { project: this.id, fileName: params[0], position: params[1] });
-            return data ? new Symbol(this.client, this, data) : undefined;
-        }
-        else {
-            const data = this.client.request("getSymbolAtPosition", params[0].map(({ fileName, position }) => ({ project: this.id, fileName, position })));
+            if (typeof params[1] === "number") {
+                const data = this.client.request("getSymbolAtPosition", { project: this.id, fileName: params[0], position: params[1] });
+                return data ? new Symbol(this.client, this, data) : undefined;
+            }
+            const data = this.client.request("getSymbolAtPositions", { project: this.id, fileName: params[0], positions: params[1] });
             return data.map((d: SymbolResponse | null) => d ? new Symbol(this.client, this, d) : undefined);
         }
+        const data = this.client.request("getSymbolAtPosition", params[0].map(({ fileName, position }) => ({ project: this.id, fileName, position })));
+        return data.map((d: SymbolResponse | null) => d ? new Symbol(this.client, this, d) : undefined);
     }
 }
 
