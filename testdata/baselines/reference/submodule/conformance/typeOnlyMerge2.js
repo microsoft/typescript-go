@@ -35,3 +35,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.A = void 0;
 const A = {};
 exports.A = A;
+
+
+!!!! File d.js differs from original emit in noCheck emit
+//// [d.js]
+--- Expected	The full check baseline
++++ Actual	with noCheck set
+@@ -1,3 +1,4 @@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-A;
++const c_1 = require("./c");
++c_1.A;

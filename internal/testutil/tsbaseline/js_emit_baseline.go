@@ -124,7 +124,10 @@ func DoJsEmitBaseline(
 					jsCode.WriteString("]\r\n")
 					expected := original.Content
 					actual := doc.Content
-					t.Fatal(diff.Text("Expected\tThe full check baseline", "Actual\twith noCheck set", expected, actual, &jsCode))
+					err := diff.Text("Expected\tThe full check baseline", "Actual\twith noCheck set", expected, actual, &jsCode)
+					if err != nil {
+						t.Fatal(err)
+					}
 				}
 			}
 		}
