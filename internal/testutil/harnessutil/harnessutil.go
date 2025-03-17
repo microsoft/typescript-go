@@ -221,7 +221,7 @@ func CompileFilesEx(
 		newHarnessOptions := *harnessOptions
 		newCompilerOptions := *compilerOptions
 		setOptionsFromTestConfig(t, testConfig, &newCompilerOptions, &newHarnessOptions)
-		return CompileFilesEx(t, inputFiles, otherFiles, harnessOptions, compilerOptions, currentDirectory, symlinks)
+		return CompileFilesEx(t, inputFiles, otherFiles, &newHarnessOptions, &newCompilerOptions, currentDirectory, symlinks)
 	}
 	return result
 }

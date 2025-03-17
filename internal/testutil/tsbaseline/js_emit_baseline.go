@@ -95,6 +95,7 @@ func DoJsEmitBaseline(
 	////		false, /*pretty*/
 	////	)
 	////} else
+
 	if !options.NoCheck.IsTrue() && !options.NoEmit.IsTrue() {
 		testConfig := make(map[string]string)
 		testConfig["noCheck"] = "true"
