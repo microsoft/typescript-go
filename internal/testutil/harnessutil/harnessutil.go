@@ -367,15 +367,12 @@ func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path, la
 		text            string
 	}
 
-	packageJsonTypeValue := ""
-	packageJsonTypeValue = packageJsonType
-
 	key := sourceFileCacheKey{
 		SourceFileAffectingCompilerOptions: h.options.SourceFileAffecting(),
 		fileName:                           fileName,
 		path:                               path,
 		languageVersion:                    languageVersion,
-		packageJsonType:                    packageJsonTypeValue,
+		packageJsonType:                    packageJsonType,
 		text:                               text,
 	}
 
