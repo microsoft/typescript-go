@@ -113,7 +113,7 @@ func GuessIndentation(lines []string) int {
 	const MAX_SMI_X86 int = 0x3fff_ffff
 	indentation := MAX_SMI_X86
 	for _, line := range lines {
-		if strings.TrimSpace(line) == "" {
+		if len(line) == 0 {
 			continue
 		}
 		i := 0
