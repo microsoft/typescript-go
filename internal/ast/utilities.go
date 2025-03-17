@@ -2368,7 +2368,7 @@ func GetImpliedNodeFormatForEmitWorker(sourceFile *SourceFile, options *core.Com
 		return sourceFile.ImpliedNodeFormat
 	}
 	if sourceFile.ImpliedNodeFormat == core.ModuleKindCommonJS &&
-		(sourceFile.PackageJsonType != "module" || // !!!
+		(sourceFile.PackageJsonType != "module" ||
 			tspath.FileExtensionIsOneOf(sourceFile.FileName(), []string{tspath.ExtensionCjs, tspath.ExtensionCts})) {
 		return core.ModuleKindCommonJS
 	}
