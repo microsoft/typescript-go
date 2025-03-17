@@ -94,10 +94,10 @@ func putParser(p *Parser) {
 	parserPool.Put(p)
 }
 
-func ParseSourceFile(fileName string, path tspath.Path, sourceText string, languageVersion core.ScriptTarget, jsdocParsingMode scanner.JSDocParsingMode, impliedNodeFormat core.ResolutionMode, packageJsonType string) *ast.SourceFile {
+func ParseSourceFile(fileName string, path tspath.Path, sourceText string, languageVersion core.ScriptTarget, jsdocParsingMode scanner.JSDocParsingMode, moduleResolutionKind core.ModuleResolutionKind, packageJsonType string) *ast.SourceFile {
 	p := getParser()
 	defer putParser(p)
-	p.initializeState(fileName, path, sourceText, languageVersion, core.ScriptKindUnknown, jsdocParsingMode, impliedNodeFormat, packageJsonType)
+	p.initializeState(fileName, path, sourceText, languageVersion, core.ScriptKindUnknown, jsdocParsingMode, moduleResolutionKind, packageJsonType)
 	p.nextToken()
 	return p.parseSourceFileWorker()
 }
@@ -105,7 +105,7 @@ func ParseSourceFile(fileName string, path tspath.Path, sourceText string, langu
 func ParseJSONText(fileName string, path tspath.Path, sourceText string) *ast.SourceFile {
 	p := getParser()
 	defer putParser(p)
-	p.initializeState(fileName, path, sourceText, core.ScriptTargetES2015, core.ScriptKindJSON, scanner.JSDocParsingModeParseAll, core.ResolutionModeNone, "")
+	p.initializeState(fileName, path, sourceText, core.ScriptTargetES2015, core.ScriptKindJSON, scanner.JSDocParsingModeParseAll, core.ModuleResolutionKindUnknown, "")
 	p.nextToken()
 	pos := p.nodePos()
 	var statements *ast.NodeList
@@ -178,7 +178,7 @@ func ParseJSONText(fileName string, path tspath.Path, sourceText string) *ast.So
 	return result
 }
 
-func (p *Parser) initializeState(fileName string, path tspath.Path, sourceText string, languageVersion core.ScriptTarget, scriptKind core.ScriptKind, jsdocParsingMode scanner.JSDocParsingMode, impliedNodeFormat core.ResolutionMode, packageJsonType string) {
+func (p *Parser) initializeState(fileName string, path tspath.Path, sourceText string, languageVersion core.ScriptTarget, scriptKind core.ScriptKind, jsdocParsingMode scanner.JSDocParsingMode, moduleResolutionKind core.ModuleResolutionKind, packageJsonType string) {
 	if p.scanner == nil {
 		p.scanner = scanner.NewScanner()
 	} else {
@@ -198,6 +198,18 @@ func (p *Parser) initializeState(fileName string, path tspath.Path, sourceText s
 	default:
 		p.contextFlags = ast.NodeFlagsNone
 	}
+
+	shouldLookupFromPackageJson := core.ModuleResolutionKindNode16 <= moduleResolutionKind && moduleResolutionKind <= core.ModuleResolutionKindNodeNext || strings.Contains(string(path), "/node_modules/")
+
+	impliedNodeFormat := core.ResolutionModeNone
+	if tspath.FileExtensionIsOneOf(string(path), []string{tspath.ExtensionDmts, tspath.ExtensionMts, tspath.ExtensionMjs}) {
+		impliedNodeFormat = core.ResolutionModeESM
+	} else if tspath.FileExtensionIsOneOf(string(path), []string{tspath.ExtensionDcts, tspath.ExtensionCts, tspath.ExtensionCjs}) {
+		impliedNodeFormat = core.ResolutionModeCommonJS
+	} else if shouldLookupFromPackageJson && tspath.FileExtensionIsOneOf(string(path), []string{tspath.ExtensionDts, tspath.ExtensionTs, tspath.ExtensionTsx, tspath.ExtensionJs, tspath.ExtensionJsx}) {
+		impliedNodeFormat = core.IfElse(packageJsonType == "module", core.ResolutionModeESM, core.ResolutionModeCommonJS)
+	}
+
 	p.impliedNodeFormat = impliedNodeFormat
 	p.packageJsonType = packageJsonType
 	p.scanner.SetText(p.sourceText)

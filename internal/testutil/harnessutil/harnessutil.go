@@ -389,7 +389,12 @@ func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path, la
 		sourceFile = parser.ParseJSONText(fileName, path, text)
 	} else {
 		// !!! JSDocParsingMode
-		sourceFile = parser.ParseSourceFile(fileName, path, text, languageVersion, scanner.JSDocParsingModeParseAll, h.GetImpliedNodeFormat(fileName, packageJsonType), packageJsonType)
+		var moduleResolutionKind core.ModuleResolutionKind
+		if h.options != nil {
+			moduleResolutionKind = h.options.GetModuleResolutionKind()
+		}
+
+		sourceFile = parser.ParseSourceFile(fileName, path, text, languageVersion, scanner.JSDocParsingModeParseAll, moduleResolutionKind, packageJsonType)
 	}
 
 	result, _ := sourceFileCache.LoadOrStore(key, sourceFile)

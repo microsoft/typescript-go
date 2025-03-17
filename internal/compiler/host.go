@@ -1,8 +1,6 @@
 package compiler
 
 import (
-	"strings"
-
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/parser"
@@ -18,7 +16,6 @@ type CompilerHost interface {
 	NewLine() string
 	Trace(msg string)
 	GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget, packageJsonType string) *ast.SourceFile
-	GetImpliedNodeFormat(fileName string, packageJsonType string) core.ResolutionMode
 }
 
 type FileInfo struct {
@@ -76,30 +73,11 @@ func (h *compilerHost) GetSourceFile(fileName string, path tspath.Path, language
 	if tspath.FileExtensionIs(fileName, tspath.ExtensionJson) {
 		return parser.ParseJSONText(fileName, path, text)
 	}
-	return parser.ParseSourceFile(fileName, path, text, languageVersion, scanner.JSDocParsingModeParseForTypeErrors, h.GetImpliedNodeFormat(fileName, packageJsonType), packageJsonType)
-}
 
-func (h *compilerHost) GetImpliedNodeFormatForFileWorker(path string, packageJsonType string) core.ResolutionMode {
-	var moduleResolution core.ModuleResolutionKind
+	var moduleResolutionKind core.ModuleResolutionKind
 	if h.options != nil {
-		moduleResolution = h.options.GetModuleResolutionKind()
+		moduleResolutionKind = h.options.GetModuleResolutionKind()
 	}
 
-	shouldLookupFromPackageJson := core.ModuleResolutionKindNode16 <= moduleResolution && moduleResolution <= core.ModuleResolutionKindNodeNext || strings.Contains(path, "/node_modules/")
-
-	if tspath.FileExtensionIsOneOf(path, []string{tspath.ExtensionDmts, tspath.ExtensionMts, tspath.ExtensionMjs}) {
-		return core.ResolutionModeESM
-	}
-	if tspath.FileExtensionIsOneOf(path, []string{tspath.ExtensionDcts, tspath.ExtensionCts, tspath.ExtensionCjs}) {
-		return core.ResolutionModeCommonJS
-	}
-	if shouldLookupFromPackageJson && tspath.FileExtensionIsOneOf(path, []string{tspath.ExtensionDts, tspath.ExtensionTs, tspath.ExtensionTsx, tspath.ExtensionJs, tspath.ExtensionJsx}) {
-		return core.IfElse(packageJsonType == "module", core.ResolutionModeESM, core.ResolutionModeCommonJS)
-	}
-
-	return core.ResolutionModeNone
-}
-
-func (h *compilerHost) GetImpliedNodeFormat(fileName string, packageJsonType string) core.ResolutionMode {
-	return h.GetImpliedNodeFormatForFileWorker(fileName, packageJsonType)
+	return parser.ParseSourceFile(fileName, path, text, languageVersion, scanner.JSDocParsingModeParseForTypeErrors, moduleResolutionKind, packageJsonType)
 }

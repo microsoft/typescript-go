@@ -50,10 +50,6 @@ func (l *LanguageService) GetSourceFile(fileName string, path tspath.Path, langu
 	return l.host.GetSourceFile(fileName, path, languageVersion, packageJsonType)
 }
 
-func (l *LanguageService) GetImpliedNodeFormat(fileName string, packageJsonType string) core.ResolutionMode {
-	return l.host.GetImpliedNodeFormat(fileName, packageJsonType)
-}
-
 // GetProgram updates the program if the project version has changed.
 func (l *LanguageService) GetProgram() *compiler.Program {
 	return l.host.GetProgram()
