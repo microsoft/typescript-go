@@ -1,0 +1,18 @@
+--- old.internalAliasWithDottedNameEmit.types
++++ new.internalAliasWithDottedNameEmit.types
+@@= skipped -9, +9 lines =@@
+ >d : any
+ }
+ module a.e.f {
++>a : typeof a
++>e : any
++>f : any
++
+       import g = b.c;
+->g : typeof g
++>g : typeof c
+ >b : typeof b
+->c : typeof g
++>c : typeof c
+ }
+ 

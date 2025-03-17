@@ -1,0 +1,11 @@
+--- old.augmentedTypesClass2.types
++++ new.augmentedTypesClass2.types
+@@= skipped -15, +15 lines =@@
+ }
+ 
+ interface c11 {
++>c11 : c11
++
+     bar(): void;
+ >bar : () => void
+ }

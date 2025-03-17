@@ -444,6 +444,9 @@ func (n *Node) ModifierFlags() ModifierFlags {
 	if modifiers != nil {
 		return modifiers.ModifierFlags
 	}
+	if n.Flags&NodeFlagsNestedNamespace != 0 {
+		return ModifierFlagsExport
+	}
 	return ModifierFlagsNone
 }
 
