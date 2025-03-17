@@ -30,7 +30,7 @@ type CommandLineOption struct {
 	// used in output
 	Description              *diagnostics.Message
 	DefaultValueDescription  any
-	showInSimplifiedHelpView bool
+	ShowInSimplifiedHelpView bool
 
 	// used in output in serializing and generate tsconfig
 	Category *diagnostics.Message
@@ -63,10 +63,6 @@ type CommandLineOption struct {
 	listPreserveFalsyValues bool
 	// used for compilerOptionsDeclaration
 	ElementOptions map[string]*CommandLineOption
-}
-
-func (o *CommandLineOption) ShowInSimplifiedHelpView() bool {
-	return o.showInSimplifiedHelpView
 }
 
 func (o *CommandLineOption) DeprecatedKeys() *core.Set[string] {

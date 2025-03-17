@@ -108,7 +108,7 @@ func getOptionsForHelp(commandLine *tsoptions.ParsedCommandLine) []*tsoptions.Co
 		return opts
 	} else {
 		return core.Filter(opts, func(opt *tsoptions.CommandLineOption) bool {
-			return opt.ShowInSimplifiedHelpView()
+			return opt.ShowInSimplifiedHelpView
 		})
 	}
 }

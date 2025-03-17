@@ -12,7 +12,7 @@ var TscBuildOption = CommandLineOption{
 	Name:                     "build",
 	Kind:                     "boolean",
 	ShortName:                "b",
-	showInSimplifiedHelpView: true,
+	ShowInSimplifiedHelpView: true,
 	Category:                 diagnostics.Command_line_Options,
 	Description:              diagnostics.Build_one_or_more_projects_and_their_dependencies_if_out_of_date,
 	DefaultValueDescription:  false,
