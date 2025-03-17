@@ -31,19 +31,26 @@ func DoJsEmitBaseline(
 	}
 
 	// check js output
-	tsCode := ""
+	var tsCode strings.Builder
 	tsSources := core.Concatenate(otherFiles, toBeCompiled)
-	tsCode += "//// [" + header + "] ////\r\n\r\n"
+	tsCode.WriteString("//// [")
+	tsCode.WriteString(header)
+	tsCode.WriteString("] ////\r\n\r\n")
 
 	for i, file := range tsSources {
-		tsCode += "//// [" + tspath.GetBaseFileName(file.UnitName) + "]\r\n"
-		tsCode += file.Content + core.IfElse(i < len(tsSources)-1, "\r\n", "")
+		tsCode.WriteString("//// [")
+		tsCode.WriteString(tspath.GetBaseFileName(file.UnitName))
+		tsCode.WriteString("]\r\n")
+		tsCode.WriteString(file.Content)
+		if i < len(tsSources)-1 {
+			tsCode.WriteString("\r\n")
+		}
 	}
 
-	jsCode := ""
+	var jsCode strings.Builder
 	for file := range result.Js.Values() {
-		if len(jsCode) > 0 && !strings.HasSuffix(jsCode, "\n") {
-			jsCode += "\r\n"
+		if jsCode.Len() > 0 && !strings.HasSuffix(jsCode.String(), "\n") {
+			jsCode.WriteString("\r\n")
 		}
 		if len(result.Diagnostics) == 0 && strings.HasSuffix(file.UnitName, tspath.ExtensionJson) {
 			fileParseResult := parser.ParseSourceFile(
@@ -53,11 +60,11 @@ func DoJsEmitBaseline(
 				options.GetEmitScriptTarget(),
 				scanner.JSDocParsingModeParseAll)
 			if len(fileParseResult.Diagnostics()) > 0 {
-				jsCode += getErrorBaseline(t, []*harnessutil.TestFile{file}, fileParseResult.Diagnostics(), false /*pretty*/)
-				return
+				jsCode.WriteString(getErrorBaseline(t, []*harnessutil.TestFile{file}, fileParseResult.Diagnostics(), false /*pretty*/))
+				continue
 			}
 		}
-		jsCode += fileOutput(file, harnessSettings)
+		jsCode.WriteString(fileOutput(file, harnessSettings))
 	}
 
 	// !!! Enable the following once .d.ts emit is implemented
@@ -97,26 +104,26 @@ func DoJsEmitBaseline(
 			for key, doc := range a.Entries() {
 				original := b.GetOrZero(key)
 				if original == nil {
-					jsCode += "\r\n\r\n!!!! File " + removeTestPathPrefixes(doc.UnitName, false /*retainTrailingDirectorySeparator*/) + " missing from original emit, but present in noCheck emit\r\n"
-					jsCode += fileOutput(doc, harnessSettings)
+					jsCode.WriteString("\r\n\r\n!!!! File ")
+					jsCode.WriteString(removeTestPathPrefixes(doc.UnitName, false /*retainTrailingDirectorySeparator*/))
+					jsCode.WriteString(" missing from original emit, but present in noCheck emit\r\n")
+					jsCode.WriteString(fileOutput(doc, harnessSettings))
 				} else if original.Content != doc.Content {
-					jsCode += "\r\n\r\n!!!! File " + removeTestPathPrefixes(doc.UnitName, false /*retainTrailingDirectorySeparator*/) + " differs from original emit in noCheck emit\r\n"
-					expected := original.Content
-					actual := doc.Content
-					var patch strings.Builder
-					err := diff.Text("Expected\tThe full check baseline", "Actual\twith noCheck set", expected, actual, &patch)
-					if err != nil {
-						panic(err)
-					}
-
+					jsCode.WriteString("\r\n\r\n!!!! File ")
+					jsCode.WriteString(removeTestPathPrefixes(doc.UnitName, false /*retainTrailingDirectorySeparator*/))
+					jsCode.WriteString(" differs from original emit in noCheck emit\r\n")
 					var fileName string
 					if harnessSettings.FullEmitPaths {
 						fileName = removeTestPathPrefixes(doc.UnitName, false /*retainTrailingDirectorySeparator*/)
 					} else {
 						fileName = tspath.GetBaseFileName(doc.UnitName)
 					}
-					jsCode += "//// [" + fileName + "]\r\n"
-					jsCode += patch.String()
+					jsCode.WriteString("//// [")
+					jsCode.WriteString(fileName)
+					jsCode.WriteString("]\r\n")
+					expected := original.Content
+					actual := doc.Content
+					t.Fatal(diff.Text("Expected\tThe full check baseline", "Actual\twith noCheck set", expected, actual, &jsCode))
 				}
 			}
 		}
@@ -130,8 +137,8 @@ func DoJsEmitBaseline(
 	}
 
 	var actual string
-	if len(jsCode) > 0 {
-		actual = tsCode + "\r\n\r\n" + jsCode
+	if jsCode.Len() > 0 {
+		actual = tsCode.String() + "\r\n\r\n" + jsCode.String()
 	} else {
 		actual = baseline.NoContent
 	}
