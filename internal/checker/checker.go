@@ -20451,7 +20451,7 @@ func (c *Checker) getObjectTypeInstantiation(t *Type, m *TypeMapper, alias *Type
 			result = c.instantiateAnonymousType(target, newMapper, newAlias)
 		}
 		data.instantiations[key] = result
-		if (result.flags&TypeFlagsObjectFlagsType != 0) && (result.objectFlags&ObjectFlagsCouldContainTypeVariablesComputed == 0) {
+		if result.flags&TypeFlagsObjectFlagsType != 0 && result.objectFlags&ObjectFlagsCouldContainTypeVariablesComputed == 0 {
 			// if `result` is one of the object types we tried to make (it may not be, due to how `instantiateMappedType` works), we can carry forward the type variable containment check from the input type arguments
 			resultCouldContainObjectFlags := core.Some(typeArguments, c.couldContainTypeVariables)
 			if result.objectFlags&ObjectFlagsCouldContainTypeVariablesComputed == 0 {
