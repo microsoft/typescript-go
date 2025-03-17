@@ -3,7 +3,6 @@ package ls
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler"
-	"github.com/microsoft/typescript-go/internal/compiler/packagejson"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -47,12 +46,12 @@ func (l *LanguageService) Trace(msg string) {
 }
 
 // GetSourceFile implements compiler.CompilerHost.
-func (l *LanguageService) GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget, packageJsonScope *packagejson.InfoCacheEntry) *ast.SourceFile {
-	return l.host.GetSourceFile(fileName, path, languageVersion, packageJsonScope)
+func (l *LanguageService) GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget, packageJsonType string) *ast.SourceFile {
+	return l.host.GetSourceFile(fileName, path, languageVersion, packageJsonType)
 }
 
-func (l *LanguageService) GetImpliedNodeFormat(fileName string, packageJsonScope *packagejson.InfoCacheEntry) core.ResolutionMode {
-	return l.host.GetImpliedNodeFormat(fileName, packageJsonScope)
+func (l *LanguageService) GetImpliedNodeFormat(fileName string, packageJsonType string) core.ResolutionMode {
+	return l.host.GetImpliedNodeFormat(fileName, packageJsonType)
 }
 
 // GetProgram updates the program if the project version has changed.

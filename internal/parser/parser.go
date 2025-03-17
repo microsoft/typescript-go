@@ -8,7 +8,6 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
-	"github.com/microsoft/typescript-go/internal/compiler/packagejson"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -61,7 +60,7 @@ type Parser struct {
 	diagnostics       []*ast.Diagnostic
 	jsdocDiagnostics  []*ast.Diagnostic
 	impliedNodeFormat core.ResolutionMode
-	packageJsonScope  *packagejson.InfoCacheEntry
+	packageJsonType   string
 
 	token                       ast.Kind
 	sourceFlags                 ast.NodeFlags
@@ -95,10 +94,10 @@ func putParser(p *Parser) {
 	parserPool.Put(p)
 }
 
-func ParseSourceFile(fileName string, path tspath.Path, sourceText string, languageVersion core.ScriptTarget, jsdocParsingMode scanner.JSDocParsingMode, impliedNodeFormat core.ResolutionMode, packageJsonScope *packagejson.InfoCacheEntry) *ast.SourceFile {
+func ParseSourceFile(fileName string, path tspath.Path, sourceText string, languageVersion core.ScriptTarget, jsdocParsingMode scanner.JSDocParsingMode, impliedNodeFormat core.ResolutionMode, packageJsonType string) *ast.SourceFile {
 	p := getParser()
 	defer putParser(p)
-	p.initializeState(fileName, path, sourceText, languageVersion, core.ScriptKindUnknown, jsdocParsingMode, impliedNodeFormat, packageJsonScope)
+	p.initializeState(fileName, path, sourceText, languageVersion, core.ScriptKindUnknown, jsdocParsingMode, impliedNodeFormat, packageJsonType)
 	p.nextToken()
 	return p.parseSourceFileWorker()
 }
@@ -106,7 +105,7 @@ func ParseSourceFile(fileName string, path tspath.Path, sourceText string, langu
 func ParseJSONText(fileName string, path tspath.Path, sourceText string) *ast.SourceFile {
 	p := getParser()
 	defer putParser(p)
-	p.initializeState(fileName, path, sourceText, core.ScriptTargetES2015, core.ScriptKindJSON, scanner.JSDocParsingModeParseAll, core.ResolutionModeNone, nil)
+	p.initializeState(fileName, path, sourceText, core.ScriptTargetES2015, core.ScriptKindJSON, scanner.JSDocParsingModeParseAll, core.ResolutionModeNone, "")
 	p.nextToken()
 	pos := p.nodePos()
 	var statements *ast.NodeList
@@ -179,7 +178,7 @@ func ParseJSONText(fileName string, path tspath.Path, sourceText string) *ast.So
 	return result
 }
 
-func (p *Parser) initializeState(fileName string, path tspath.Path, sourceText string, languageVersion core.ScriptTarget, scriptKind core.ScriptKind, jsdocParsingMode scanner.JSDocParsingMode, impliedNodeFormat core.ResolutionMode, packageJsonScope *packagejson.InfoCacheEntry) {
+func (p *Parser) initializeState(fileName string, path tspath.Path, sourceText string, languageVersion core.ScriptTarget, scriptKind core.ScriptKind, jsdocParsingMode scanner.JSDocParsingMode, impliedNodeFormat core.ResolutionMode, packageJsonType string) {
 	if p.scanner == nil {
 		p.scanner = scanner.NewScanner()
 	} else {
@@ -200,7 +199,7 @@ func (p *Parser) initializeState(fileName string, path tspath.Path, sourceText s
 		p.contextFlags = ast.NodeFlagsNone
 	}
 	p.impliedNodeFormat = impliedNodeFormat
-	p.packageJsonScope = packageJsonScope
+	p.packageJsonType = packageJsonType
 	p.scanner.SetText(p.sourceText)
 	p.scanner.SetOnError(p.scanError)
 	p.scanner.SetScriptTarget(p.languageVersion)
@@ -331,11 +330,11 @@ func (p *Parser) finishSourceFile(result *ast.SourceFile, isDeclarationFile bool
 	result.Identifiers = p.identifiers
 	result.SetJSDocCache(p.jsdocCache)
 	result.ImpliedNodeFormat = p.impliedNodeFormat
-	result.PackageJsonScope = p.packageJsonScope
+	result.PackageJsonType = p.packageJsonType
 	p.jsdocCache = nil
 	p.identifiers = nil
 	p.impliedNodeFormat = core.ResolutionModeNone
-	p.packageJsonScope = nil
+	p.packageJsonType = ""
 }
 
 func (p *Parser) parseToplevelStatement(i int) *ast.Node {

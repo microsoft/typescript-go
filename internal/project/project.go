@@ -8,7 +8,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
-	"github.com/microsoft/typescript-go/internal/compiler/packagejson"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -125,7 +124,7 @@ func (p *Project) GetRootFileNames() []string {
 }
 
 // GetSourceFile implements LanguageServiceHost.
-func (p *Project) GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget, packageJsonScope *packagejson.InfoCacheEntry) *ast.SourceFile {
+func (p *Project) GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget, packageJsonType string) *ast.SourceFile {
 	scriptKind := p.getScriptKind(fileName)
 	if scriptInfo := p.getOrCreateScriptInfoAndAttachToProject(fileName, scriptKind); scriptInfo != nil {
 		var (
@@ -141,7 +140,7 @@ func (p *Project) GetSourceFile(fileName string, path tspath.Path, languageVersi
 	return nil
 }
 
-func (p *Project) GetImpliedNodeFormatForFileWorker(path string, packageJsonScope *packagejson.InfoCacheEntry) core.ResolutionMode {
+func (p *Project) GetImpliedNodeFormatForFileWorker(path string, packageJsonType string) core.ResolutionMode {
 	moduleResolution := p.GetProgram().Options().GetModuleResolutionKind()
 	shouldLookupFromPackageJson := core.ModuleResolutionKindNode16 <= moduleResolution && moduleResolution <= core.ModuleResolutionKindNodeNext || strings.Contains(path, "/node_modules/")
 
@@ -152,14 +151,14 @@ func (p *Project) GetImpliedNodeFormatForFileWorker(path string, packageJsonScop
 		return core.ResolutionModeCommonJS
 	}
 	if shouldLookupFromPackageJson && tspath.FileExtensionIsOneOf(path, []string{tspath.ExtensionDts, tspath.ExtensionTs, tspath.ExtensionTsx, tspath.ExtensionJs, tspath.ExtensionJsx}) {
-		return core.IfElse(packageJsonScope.Contents.Type.Value == "module", core.ResolutionModeESM, core.ResolutionModeCommonJS)
+		return core.IfElse(packageJsonType == "module", core.ResolutionModeESM, core.ResolutionModeCommonJS)
 	}
 
 	return core.ResolutionModeNone
 }
 
-func (p *Project) GetImpliedNodeFormat(fileName string, packageJsonScope *packagejson.InfoCacheEntry) core.ResolutionMode {
-	return p.GetImpliedNodeFormatForFileWorker(fileName, packageJsonScope)
+func (p *Project) GetImpliedNodeFormat(fileName string, packageJsonType string) core.ResolutionMode {
+	return p.GetImpliedNodeFormatForFileWorker(fileName, packageJsonType)
 }
 
 // GetProgram implements LanguageServiceHost. Updates the program if needed.

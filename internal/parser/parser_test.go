@@ -39,7 +39,7 @@ func BenchmarkParse(b *testing.B) {
 				b.Run(jsdoc.name, func(b *testing.B) {
 					jsdocMode := jsdoc.mode
 					for b.Loop() {
-						ParseSourceFile(fileName, path, sourceText, core.ScriptTargetESNext, jsdocMode, core.ResolutionModeESM, nil)
+						ParseSourceFile(fileName, path, sourceText, core.ScriptTargetESNext, jsdocMode, core.ResolutionModeESM, "")
 					}
 				})
 			}
@@ -82,7 +82,7 @@ func TestParseTypeScriptRepo(t *testing.T) {
 					if strings.HasSuffix(f.name, ".json") {
 						sourceFile = ParseJSONText(fileName, path, string(sourceText))
 					} else {
-						sourceFile = ParseSourceFile(fileName, path, string(sourceText), core.ScriptTargetESNext, scanner.JSDocParsingModeParseAll, core.ResolutionModeESM, nil)
+						sourceFile = ParseSourceFile(fileName, path, string(sourceText), core.ScriptTargetESNext, scanner.JSDocParsingModeParseAll, core.ResolutionModeESM, "")
 					}
 
 					if !test.ignoreErrors {
@@ -179,6 +179,6 @@ func FuzzParser(f *testing.F) {
 			return
 		}
 
-		ParseSourceFile(fileName, path, sourceText, scriptTarget, jsdocParsingMode, core.ResolutionModeESM, nil)
+		ParseSourceFile(fileName, path, sourceText, scriptTarget, jsdocParsingMode, core.ResolutionModeESM, "")
 	})
 }
