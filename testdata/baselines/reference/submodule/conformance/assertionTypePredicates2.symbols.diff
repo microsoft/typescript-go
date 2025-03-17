@@ -1,6 +1,22 @@
 --- old.assertionTypePredicates2.symbols
 +++ new.assertionTypePredicates2.symbols
-@@= skipped -17, +17 lines =@@
+@@= skipped -2, +2 lines =@@
+ === assertionTypePredicates2.js ===
+ /**
+  * @typedef {{ x: number }} A
++>x : Symbol(x, Decl(assertionTypePredicates2.js, 1, 14))
++
+  */
+ 
+ /**
+  * @typedef { A & { y: number } } B
++>A : Symbol(A)
++>y : Symbol(y, Decl(assertionTypePredicates2.js, 5, 19))
++
+  */
+ 
+ /**
+@@= skipped -15, +20 lines =@@
  >a : Symbol(a, Decl(assertionTypePredicates2.js, 12, 13))
  
      if (/** @type { B } */ (a).y !== 0) throw TypeError();

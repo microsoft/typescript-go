@@ -1,22 +1,13 @@
-a.js(6,12): error TS7006: Parameter 'p' implicitly has an 'any' type.
-a.js(6,15): error TS7006: Parameter 'q' implicitly has an 'any' type.
-a.js(6,18): error TS7006: Parameter 'r' implicitly has an 'any' type.
 a.js(13,1): error TS2554: Expected 3 arguments, but got 0.
 
 
-==== a.js (4 errors) ====
+==== a.js (1 errors) ====
     /**
      * @param {number} [p]
      * @param {number=} q
      * @param {number} [r=101]
      */
     function f(p, q, r) {
-               ~
-!!! error TS7006: Parameter 'p' implicitly has an 'any' type.
-                  ~
-!!! error TS7006: Parameter 'q' implicitly has an 'any' type.
-                     ~
-!!! error TS7006: Parameter 'r' implicitly has an 'any' type.
         p = undefined
         q = undefined
         // note that, unlike TS, JSDOC [r=101] retains | undefined because

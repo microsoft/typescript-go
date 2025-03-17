@@ -1,6 +1,17 @@
 --- old.jsDeclarationsTypeAliases.symbols
 +++ new.jsDeclarationsTypeAliases.symbols
-@@= skipped -48, +48 lines =@@
+@@= skipped -31, +31 lines =@@
+ === mixed.js ===
+ /**
+  * @typedef {{x: string} | number | LocalThing | ExportedThing} SomeType
++>x : Symbol(x, Decl(mixed.js, 1, 14))
++>LocalThing : Symbol(LocalThing, Decl(mixed.js, 16, 2))
++>ExportedThing : Symbol(ExportedThing, Decl(mixed.js, 9, 1))
++
+  */
+ /**
+  * @param {number} x
+@@= skipped -17, +21 lines =@@
  >ExportedThing : Symbol(ExportedThing, Decl(mixed.js, 9, 1))
  
      z = "ok"

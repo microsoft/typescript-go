@@ -5,6 +5,9 @@
  * @template T
  * @template {keyof T} K
  * @typedef {T[K]} Foo
+>T : Symbol(T)
+>K : Symbol(K)
+
  */
 
 const x = { a: 1 };

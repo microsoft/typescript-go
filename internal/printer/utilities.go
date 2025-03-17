@@ -454,6 +454,8 @@ func getContainingNodeArray(node *ast.Node) *ast.NodeList {
 			return parent.AsInterfaceDeclaration().TypeParameters
 		case ast.IsTypeAliasDeclaration(parent):
 			return parent.AsTypeAliasDeclaration().TypeParameters
+		case ast.IsJSTypeAliasDeclaration(parent):
+			return parent.AsJSTypeAliasDeclaration().TypeParameters
 		// case ast.IsJSDocTemplateTag(parent):
 		// 	return parent.AsJSDocTemplateTag().TypeParameters
 		case ast.IsInferTypeNode(parent):

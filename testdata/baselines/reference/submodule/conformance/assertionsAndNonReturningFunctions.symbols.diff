@@ -1,6 +1,15 @@
 --- old.assertionsAndNonReturningFunctions.symbols
 +++ new.assertionsAndNonReturningFunctions.symbols
-@@= skipped -58, +58 lines =@@
+@@= skipped -1, +1 lines =@@
+ 
+ === assertionsAndNonReturningFunctions.js ===
+ /** @typedef {(check: boolean) => asserts check} AssertFunc */
++>check : Symbol(check, Decl(assertionsAndNonReturningFunctions.js, 0, 15))
++>check : Symbol(check, Decl(assertionsAndNonReturningFunctions.js, 0, 15))
+ 
+ /** @type {AssertFunc} */
+ const assert = check => {
+@@= skipped -57, +59 lines =@@
  >x : Symbol(x, Decl(assertionsAndNonReturningFunctions.js, 30, 12))
  
          x.length;

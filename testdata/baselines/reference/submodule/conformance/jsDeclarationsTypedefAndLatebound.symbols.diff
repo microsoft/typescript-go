@@ -19,7 +19,16 @@
  >stringSet : Symbol(stringSet, Decl(index.js, 3, 5))
  
  
-@@= skipped -18, +16 lines =@@
+@@= skipped -10, +8 lines =@@
+ // Comment out this JSDoc, and note that the errors index.js go away.
+ /**
+  * @typedef {Object} SomeObject
++>Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
++
+  */
+ class LazySet {
+ >LazySet : Symbol(LazySet, Decl(LazySet.js, 0, 0))
+@@= skipped -8, +10 lines =@@
       * @param {LazySet} iterable
       */
      addAll(iterable) {}
@@ -41,6 +50,5 @@
 ->module.exports : Symbol(module.exports, Decl(LazySet.js, 0, 0))
 ->module : Symbol(export=, Decl(LazySet.js, 10, 1))
 ->exports : Symbol(export=, Decl(LazySet.js, 10, 1))
-->LazySet : Symbol(LazySet, Decl(LazySet.js, 0, 0))
-+>LazySet : Symbol(LazySet, Decl(index.js, 0, 5))
+ >LazySet : Symbol(LazySet, Decl(LazySet.js, 0, 0))
  

@@ -1,6 +1,15 @@
 --- old.jsDeclarationEmitDoesNotRenameImport.symbols
 +++ new.jsDeclarationEmitDoesNotRenameImport.symbols
-@@= skipped -38, +38 lines =@@
+@@= skipped -22, +22 lines =@@
+ /**
+  * @typedef {Object} Options
+  * @property {typeof import("./Test.js").default} [test]
++>default : Symbol(default, Decl(Test.js, 1, 13))
++
+  */
+ 
+ class X extends Test {
+@@= skipped -16, +18 lines =@@
  >super : Symbol(Test, Decl(Test.js, 0, 0))
  
          if (options.test) {

@@ -4,6 +4,8 @@
 /**
  * @typedef MyType
  * @property {sting} [x]
+>sting : Symbol(sting)
+
  */
 
 /** @param {MyType} p  */

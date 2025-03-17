@@ -1,0 +1,20 @@
+--- old.contravariantOnlyInferenceFromAnnotatedFunctionJs.symbols
++++ new.contravariantOnlyInferenceFromAnnotatedFunctionJs.symbols
+@@= skipped -2, +2 lines =@@
+ === index.js ===
+ /**
+  * @typedef {{ [K in keyof B]: { fn: (a: A, b: B) => void; thing: B[K]; } }} Funcs
++>K : Symbol(K, Decl(index.js, 1, 16))
++>B : Symbol(B)
++>fn : Symbol(fn, Decl(index.js, 1, 32))
++>a : Symbol(a, Decl(index.js, 1, 38))
++>A : Symbol(A)
++>b : Symbol(b, Decl(index.js, 1, 43))
++>B : Symbol(B)
++>thing : Symbol(thing, Decl(index.js, 1, 58))
++>B : Symbol(B)
++>K : Symbol(K, Decl(index.js, 1, 16))
++
+  * @template A
+  * @template {Record<string, unknown>} B
+  */

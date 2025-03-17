@@ -1,8 +1,7 @@
 templateInsideCallback.js(17,18): error TS7006: Parameter 'x' implicitly has an 'any' type.
-templateInsideCallback.js(47,18): error TS7006: Parameter 'array' implicitly has an 'any' type.
 
 
-==== templateInsideCallback.js (2 errors) ====
+==== templateInsideCallback.js (1 errors) ====
     /**
      * @typedef Oops
      * @template T
@@ -52,8 +51,6 @@ templateInsideCallback.js(47,18): error TS7006: Parameter 'array' implicitly has
      * @returns {unknown[]}
      */
     function flatMap(array, iterable = identity) {
-                     ~~~~~
-!!! error TS7006: Parameter 'array' implicitly has an 'any' type.
       /** @type {unknown[]} */
       const result = [];
       for (let i = 0; i < array.length; i += 1) {
