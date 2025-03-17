@@ -1,0 +1,17 @@
+--- old.resolutionCandidateFromPackageJsonField2(moduleresolution=bundler).js
++++ new.resolutionCandidateFromPackageJsonField2(moduleresolution=bundler).js
+@@= skipped -10, +10 lines =@@
+ import { b } from "baz/main.ts";
+ 
+ 
++//// [test.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
+ //// [bar.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.a = void 0;
+ exports.a = 1234;
+-//// [test.js]
+-"use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });

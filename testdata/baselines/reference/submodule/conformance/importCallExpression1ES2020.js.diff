@@ -1,0 +1,17 @@
+--- old.importCallExpression1ES2020.js
++++ new.importCallExpression1ES2020.js
+@@= skipped -16, +16 lines =@@
+ }
+ 
+ 
+-//// [0.js]
+-export function foo() { return "foo"; }
+ //// [1.js]
+ import("./0");
+ var p1 = import("./0");
+@@= skipped -12, +10 lines =@@
+ function foo() {
+     const p2 = import("./0");
+ }
++//// [0.js]
++export function foo() { return "foo"; }

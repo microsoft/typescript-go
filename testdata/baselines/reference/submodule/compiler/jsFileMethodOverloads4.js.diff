@@ -1,0 +1,31 @@
+--- old.jsFileMethodOverloads4.js
++++ new.jsFileMethodOverloads4.js
+@@= skipped -23, +23 lines =@@
+ Foo.prototype.bar = function (a, b) { }
+ 
+ 
+-
+-
+-//// [a.d.ts]
+-export function Foo(): void;
+-export class Foo {
+-    /**
+-     * @overload
+-     * @param {string} a
+-     * @return {void}
+-     */
+-    bar(a: string): void;
+-    /**
+-     * @overload
+-     * @param {number} a
+-     * @param {string} b
+-     * @return {void}
+-     */
+-    bar(a: number, b: string): void;
+-}
++//// [a.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.Foo = Foo;
++function Foo() { }
++Foo.prototype.bar = function (a, b) { };

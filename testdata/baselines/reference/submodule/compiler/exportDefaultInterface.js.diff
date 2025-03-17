@@ -1,0 +1,17 @@
+--- old.exportDefaultInterface.js
++++ new.exportDefaultInterface.js
+@@= skipped -11, +11 lines =@@
+ var a: A;
+ a.value.toExponential();
+ 
+-//// [a.js]
++//// [b.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ var a;
+ a.value.toExponential();
+-//// [b.js]
++//// [a.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ var a;

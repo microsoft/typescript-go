@@ -1,0 +1,25 @@
+--- old.es6ImportEqualsExportModuleCommonJsError.js
++++ new.es6ImportEqualsExportModuleCommonJsError.js
+@@= skipped -10, +10 lines =@@
+ 
+ 
+ 
+-//// [a.js]
+-"use strict";
+-var a = /** @class */ (function () {
+-    function a() {
+-    }
+-    return a;
+-}());
+-module.exports = a;
+ //// [main.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-var a = require("./a");
++const a = require("./a");
+ a;
++//// [a.js]
++"use strict";
++class a {
++}
++module.exports = a;

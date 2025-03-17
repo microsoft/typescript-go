@@ -1,0 +1,23 @@
+--- old.jsdocTypeCast.js
++++ new.jsdocTypeCast.js
+@@= skipped -19, +19 lines =@@
+ 
+ 
+ //// [jsdocTypeCast.js]
+-/**
+- * @param {string} x
+- */
+ function f(x) {
+-    /** @type {'a' | 'b'} */
+-    var a = (x); // Error
++    let a = (x);
+     a;
+-    /** @type {'a' | 'b'} */
+-    var b = (((x))); // Error
++    let b = (((x)));
+     b;
+-    /** @type {'a' | 'b'} */
+-    var c = /** @type {'a' | 'b'} */ (x); // Ok
++    let c = (x);
+     c;
+ }

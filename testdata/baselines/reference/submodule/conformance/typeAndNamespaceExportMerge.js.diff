@@ -1,0 +1,30 @@
+--- old.typeAndNamespaceExportMerge.js
++++ new.typeAndNamespaceExportMerge.js
+@@= skipped -15, +15 lines =@@
+ const x: Drink = Drink.TEA;
+ 
+ 
+-//// [constants.js]
++//// [index.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-exports.TEA = exports.COFFEE = void 0;
+-exports.COFFEE = 0;
+-exports.TEA = 1;
++const drink_1 = require("./drink");
++const x = drink_1.Drink.TEA;
+ //// [drink.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.Drink = void 0;
+ exports.Drink = require("./constants");
+-//// [index.js]
++//// [constants.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-var drink_1 = require("./drink");
+-// 'Drink' only refers to a type, but is being used as a value here
+-var x = drink_1.Drink.TEA;
++exports.TEA = exports.COFFEE = void 0;
++exports.COFFEE = 0;
++exports.TEA = 1;

@@ -89,7 +89,8 @@ func (r *CompilerBaselineRunner) RunTests(t *testing.T) {
 	r.cleanUpLocal(t)
 	files := r.EnumerateTestFiles()
 	skippedTests := []string{
-		"mappedTypeRecursiveInference.ts", // Needed until we have type printer with truncation limit.
+		"mappedTypeRecursiveInference.ts",         // Needed until we have type printer with truncation limit.
+		"jsFileCompilationWithoutJsExtensions.ts", // Needed until we have proper allowJS support (and errors when not enabled.)
 	}
 	deprecatedTests := []string{
 		// Test deprecated `importsNotUsedAsValue`
@@ -174,6 +175,7 @@ func (r *CompilerBaselineRunner) runSingleConfigTest(t *testing.T, testName stri
 	compilerTest := newCompilerTest(t, testName, test.filename, &payload, config)
 
 	compilerTest.verifyDiagnostics(t, r.testSuitName, r.isSubmodule)
+	compilerTest.verifyJavaScriptOutput(t, r.testSuitName, r.isSubmodule)
 	compilerTest.verifyTypesAndSymbols(t, r.testSuitName, r.isSubmodule)
 	// !!! Verify all baselines
 }
@@ -338,6 +340,33 @@ func (c *compilerTest) verifyDiagnostics(t *testing.T, suiteName string, isSubmo
 		defer testutil.RecoverAndFail(t, "Panic on creating error baseline for test "+c.filename)
 		files := core.Concatenate(c.tsConfigFiles, core.Concatenate(c.toBeCompiled, c.otherFiles))
 		tsbaseline.DoErrorBaseline(t, c.configuredName, files, c.result.Diagnostics, c.result.Options.Pretty.IsTrue(), baseline.Options{Subfolder: suiteName, IsSubmodule: isSubmodule})
+	})
+}
+
+func (c *compilerTest) verifyJavaScriptOutput(t *testing.T, suiteName string, isSubmodule bool) {
+	if !c.hasNonDtsFiles {
+		return
+	}
+
+	t.Run("output", func(t *testing.T) {
+		defer testutil.RecoverAndFail(t, "Panic on creating js output for test "+c.filename)
+		headerComponents := tspath.GetPathComponentsRelativeTo(repo.TestDataPath, c.filename, tspath.ComparePathsOptions{})
+		if isSubmodule {
+			headerComponents = headerComponents[4:] // Strip "./../_submodules/TypeScript" prefix
+		}
+		header := tspath.GetPathFromPathComponents(headerComponents)
+		tsbaseline.DoJsEmitBaseline(
+			t,
+			c.configuredName,
+			header,
+			c.options,
+			c.result,
+			c.tsConfigFiles,
+			c.toBeCompiled,
+			c.otherFiles,
+			c.harnessOptions,
+			baseline.Options{Subfolder: suiteName, IsSubmodule: isSubmodule},
+		)
 	})
 }
 

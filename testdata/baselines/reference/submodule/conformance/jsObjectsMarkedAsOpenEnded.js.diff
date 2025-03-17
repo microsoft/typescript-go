@@ -1,0 +1,42 @@
+--- old.jsObjectsMarkedAsOpenEnded.js
++++ new.jsObjectsMarkedAsOpenEnded.js
+@@= skipped -34, +34 lines =@@
+ 
+ 
+ 
+-//// [output.js]
++//// [b.js]
++variable.a = 1;
++(new C()).member.a = 1;
++(new C()).initializedMember.a = 1;
++obj.property.a = 1;
++arr[0].a = 1;
++getObj().a = 1;
++//// [a.js]
+ var variable = {};
+ variable.a = 0;
+-var C = /** @class */ (function () {
+-    function C() {
+-        this.initializedMember = {};
++class C {
++    initializedMember = {};
++    constructor() {
+         this.member = {};
+         this.member.a = 0;
+     }
+-    return C;
+-}());
++}
+ var obj = {
+     property: {}
+ };
+@@= skipped -19, +25 lines =@@
+ function getObj() {
+     return {};
+ }
+-variable.a = 1;
+-(new C()).member.a = 1;
+-(new C()).initializedMember.a = 1;
+-obj.property.a = 1;
+-arr[0].a = 1;
+-getObj().a = 1;

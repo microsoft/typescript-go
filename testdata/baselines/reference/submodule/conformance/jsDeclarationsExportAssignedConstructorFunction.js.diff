@@ -1,0 +1,20 @@
+--- old.jsDeclarationsExportAssignedConstructorFunction.js
++++ new.jsDeclarationsExportAssignedConstructorFunction.js
+@@= skipped -11, +11 lines =@@
+ 
+ 
+ //// [jsDeclarationsExportAssignedConstructorFunction.js]
+-/** @constructor */
+ module.exports.MyClass = function () {
+     this.x = 1;
+ };
+@@= skipped -8, +7 lines =@@
+     a: function () {
+     }
+ };
+-
+-
+-//// [jsDeclarationsExportAssignedConstructorFunction.d.ts]
+-export class MyClass {
+-    a: () => void;
+-}

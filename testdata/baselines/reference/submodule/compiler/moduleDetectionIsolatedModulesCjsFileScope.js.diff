@@ -1,0 +1,21 @@
+--- old.moduleDetectionIsolatedModulesCjsFileScope.js
++++ new.moduleDetectionIsolatedModulesCjsFileScope.js
+@@= skipped -4, +4 lines =@@
+ //// [filename.mts]
+ const a = 2;
+ 
+-//// [filename.cjs]
+-"use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });
+-const a = 2;
+ //// [filename.mjs]
+ const a = 2;
+-export {};
+-
+-
+-//// [filename.d.cts]
+-export {};
+-//// [filename.d.mts]
+-export {};
++//// [filename.cjs]
++const a = 2;

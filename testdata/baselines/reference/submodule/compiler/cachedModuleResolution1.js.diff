@@ -1,0 +1,14 @@
+--- old.cachedModuleResolution1.js
++++ new.cachedModuleResolution1.js
+@@= skipped -9, +9 lines =@@
+ import {x} from "foo";
+ 
+ 
+-//// [app.js]
++//// [lib.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-//// [lib.js]
++//// [app.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });

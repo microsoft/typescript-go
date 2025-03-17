@@ -1,0 +1,9 @@
+--- old.doNotEmitTripleSlashCommentsOnNotEmittedNode.js
++++ new.doNotEmitTripleSlashCommentsOnNotEmittedNode.js
+@@= skipped -9, +9 lines =@@
+ 
+ 
+ 
+-//// [file0.js]
+ //// [file1.js]
++//// [file0.js]

@@ -1,0 +1,15 @@
+--- old.importHelpersWithExportStarAs(esmoduleinterop=false,module=es2015).js
++++ new.importHelpersWithExportStarAs(esmoduleinterop=false,module=es2015).js
+@@= skipped -10, +10 lines =@@
+     function __importStar(m: any): void;
+ }
+ 
+-//// [a.js]
+-export class A {
+-}
+ //// [b.js]
+ import * as a_1 from "./a";
+ export { a_1 as a };
++//// [a.js]
++export class A {
++}

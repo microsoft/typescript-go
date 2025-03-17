@@ -1,0 +1,24 @@
+--- old.lateBoundClassMemberAssignmentJS.js
++++ new.lateBoundClassMemberAssignmentJS.js
+@@= skipped -12, +12 lines =@@
+     }
+ }
+ 
+-
+-
+-//// [lateBoundClassMemberAssignmentJS.d.ts]
++//// [lateBoundClassMemberAssignmentJS.js]
++const _sym = Symbol("_sym");
+ export class MyClass {
+-    method(): void;
+-    [_sym]: string;
++    constructor() {
++        this[_sym] = "ok";
++    }
++    method() {
++        this[_sym] = "yep";
++        const x = this[_sym];
++    }
+ }
+-declare const _sym: unique symbol;
+-export {};

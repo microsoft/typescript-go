@@ -1,0 +1,28 @@
+--- old.exportDefaultProperty2.js
++++ new.exportDefaultProperty2.js
+@@= skipped -14, +14 lines =@@
+ const x: B = { c: B };
+ 
+ 
+-//// [a.js]
++//// [b.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-var C = /** @class */ (function () {
+-    function C() {
+-    }
+-    return C;
+-}());
+-exports.default = C.B;
+-//// [b.js]
++const a_1 = require("./a");
++const x = { c: a_1.default };
++//// [a.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-var a_1 = require("./a");
+-var x = { c: a_1.default };
++class C {
++    static B;
++}
++exports.default = C.B;

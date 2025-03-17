@@ -1,0 +1,14 @@
+--- old.importNonExportedMember3.js
++++ new.importNonExportedMember3.js
+@@= skipped -9, +9 lines =@@
+ import { Foo } from './a';
+ 
+ 
+-//// [a.js]
++//// [b.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-//// [b.js]
++//// [a.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });

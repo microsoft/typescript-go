@@ -1,0 +1,55 @@
+--- old.declarationEmitExportAssignedNamespaceNoTripleSlashTypesReference.js
++++ new.declarationEmitExportAssignedNamespaceNoTripleSlashTypesReference.js
+@@= skipped -36, +36 lines =@@
+ export * from '@emotion/core';
+ 
+ 
+-//// [get-comp.js]
+-"use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });
+-exports.getComp = getComp;
+-function getComp() {
+-    return {};
+-}
+-//// [inferred-comp-export.js]
+-"use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });
+-exports.obj = void 0;
+-var get_comp_1 = require("./get-comp");
+-// this shouldn't need any triple-slash references - it should have a direct import to `react` and that's it
+-// This issue (#35343) _only_ reproduces in the test harness when the file in question is in a subfolder
+-exports.obj = {
+-    comp: (0, get_comp_1.getComp)()
+-};
+ //// [some-other-file.js]
+ "use strict";
+ var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+@@= skipped -35, +18 lines =@@
+ };
+ Object.defineProperty(exports, "__esModule", { value: true });
+ __exportStar(require("@emotion/core"), exports);
+-
+-
+-//// [get-comp.d.ts]
+-import { Component } from 'react';
+-export declare function getComp(): Component;
+-//// [inferred-comp-export.d.ts]
+-export declare const obj: {
+-    comp: import("react").Component;
++//// [inferred-comp-export.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.obj = void 0;
++const get_comp_1 = require("./get-comp");
++exports.obj = {
++    comp: (0, get_comp_1.getComp)()
+ };
+-//// [some-other-file.d.ts]
+-export * from '@emotion/core';
++//// [get-comp.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.getComp = getComp;
++function getComp() {
++    return {};
++}

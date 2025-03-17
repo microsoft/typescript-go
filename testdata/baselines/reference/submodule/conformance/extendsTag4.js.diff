@@ -1,0 +1,15 @@
+--- old.extendsTag4.js
++++ new.extendsTag4.js
+@@= skipped -13, +13 lines =@@
+ 
+ 
+ //// [foo.js]
+-/**
+- * @constructor
+- */
+ class A {
+     constructor() { }
+ }
+-/**
+- * @extends {A}
+- */

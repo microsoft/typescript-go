@@ -1,0 +1,36 @@
+--- old.es6ImportNameSpaceImportWithExport.js
++++ new.es6ImportNameSpaceImportWithExport.js
+@@= skipped -8, +8 lines =@@
+ export import * as nameSpaceBinding2 from "server"; // Not referenced imports
+ 
+ 
+-//// [server.js]
+-define(["require", "exports"], function (require, exports) {
+-    "use strict";
+-    Object.defineProperty(exports, "__esModule", { value: true });
+-    exports.a = void 0;
+-    exports.a = 10;
+-});
+ //// [client.js]
+-define(["require", "exports", "server"], function (require, exports, nameSpaceBinding) {
+-    "use strict";
+-    Object.defineProperty(exports, "__esModule", { value: true });
+-    exports.x = void 0;
+-    exports.x = nameSpaceBinding.a;
+-});
+-
+-
+-//// [server.d.ts]
+-export declare var a: number;
+-//// [client.d.ts]
+-export declare var x: number;
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.x = void 0;
++const nameSpaceBinding = require("server");
++exports.x = nameSpaceBinding.a;
++//// [server.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.a = void 0;
++exports.a = 10;

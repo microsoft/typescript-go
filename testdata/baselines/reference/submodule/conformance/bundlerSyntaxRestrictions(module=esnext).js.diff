@@ -1,0 +1,21 @@
+--- old.bundlerSyntaxRestrictions(module=esnext).js
++++ new.bundlerSyntaxRestrictions(module=esnext).js
+@@= skipped -30, +30 lines =@@
+ export const a = "a";
+ 
+ 
+-//// [a.js]
+-export var a = "a";
++//// [main.js]
++export {};
+ //// [mainJs.js]
+ import("./a");
+-var _ = require("./a");
+-_.a; // any
++const _ = require("./a");
++_.a;
+ export {};
+-//// [main.js]
+-export {};
++//// [a.js]
++export const a = "a";

@@ -1,0 +1,135 @@
+--- old.esDecorators-classDeclaration-exportModifier.2.js
++++ new.esDecorators-classDeclaration-exportModifier.2.js
+@@= skipped -64, +64 lines =@@
+ export default abstract @dec class C15 {}
+ 
+ 
+-//// [global.js]
+-/** @type {*} */
+-var dec;
+-//// [file1.js]
+-// ok
++//// [file15.js]
++export default abstract;
+ @dec
+-export class C1 {
++class C15 {
+ }
+-//// [file2.js]
+-// ok
++//// [file14.js]
++abstract;
+ @dec
+-export default class C2 {
++class C14 {
+ }
+-//// [file3.js]
+-// error
+-export 
++//// [file13.js]
++abstract;
+ @dec
+-default class C3 {
++class C13 {
+ }
+-//// [file4.js]
+-// ok
+-export 
+-@dec
+-class C4 {
+-}
+-//// [file5.js]
+-// ok
++//// [file12.js]
+ export default 
+ @dec
+-class C5 {
++class C12 {
+ }
+-//// [file6.js]
+-// error
+-@dec
++//// [file11.js]
+ export 
+ @dec
+-class C6 {
++class C11 {
+ }
+-//// [file7.js]
+-// error
++//// [file10.js]
+ @dec
+-export default 
++export default class C10 {
++}
++//// [file9.js]
+ @dec
+-class C7 {
++export class C9 {
+ }
+ //// [file8.js]
+-// ok
+ @dec
+ class C8 {
+ }
+-//// [file9.js]
+-// ok
++//// [file7.js]
+ @dec
+-export class C9 {
+-}
+-//// [file10.js]
+-// ok
++export default 
+ @dec
+-export default class C10 {
++class C7 {
+ }
+-//// [file11.js]
+-// ok
++//// [file6.js]
++@dec
+ export 
+ @dec
+-class C11 {
++class C6 {
+ }
+-//// [file12.js]
+-// ok
++//// [file5.js]
+ export default 
+ @dec
+-class C12 {
++class C5 {
+ }
+-//// [file13.js]
+-// error
+-abstract;
++//// [file4.js]
++export 
+ @dec
+-class C13 {
++class C4 {
+ }
+-//// [file14.js]
+-abstract;
++//// [file3.js]
++export 
+ @dec
+-class C14 {
++default class C3 {
+ }
+-//// [file15.js]
+-// error
+-export default abstract;
++//// [file2.js]
+ @dec
+-class C15 {
++export default class C2 {
+ }
++//// [file1.js]
++@dec
++export class C1 {
++}
++//// [global.js]
++var dec;

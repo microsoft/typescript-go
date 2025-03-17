@@ -1,0 +1,19 @@
+--- old.typeFromPrivatePropertyAssignmentJs.js
++++ new.typeFromPrivatePropertyAssignmentJs.js
+@@= skipped -14, +14 lines =@@
+ }
+ 
+ 
+-//// [typeFromPrivatePropertyAssignmentJs.js]
+ //// [a.js]
+ class C {
+-    /** @type {{ foo?: string } | undefined } */
+     #a;
+-    /** @type {{ foo?: string } | undefined } */
+     #b;
+     m() {
+         const a = this.#a || {};
+         this.#b = this.#b || {};
+     }
+ }
++//// [typeFromPrivatePropertyAssignmentJs.js]

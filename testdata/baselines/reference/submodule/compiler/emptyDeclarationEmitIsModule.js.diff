@@ -1,0 +1,29 @@
+--- old.emptyDeclarationEmitIsModule.js
++++ new.emptyDeclarationEmitIsModule.js
+@@= skipped -8, +8 lines =@@
+     x: string
+ }
+ 
+-//// [index.js]
+-"use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });
+ //// [module.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-var Foo = /** @class */ (function () {
+-    function Foo() {
+-    }
+-    return Foo;
+-}());
+-
+-
+-//// [index.d.ts]
+-export interface Bar {
+-    x: string;
++class Foo {
+ }
+-//// [module.d.ts]
+-export {};
++//// [index.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });

@@ -1,0 +1,14 @@
+--- old.commentOnInterface1.js
++++ new.commentOnInterface1.js
+@@= skipped -18, +18 lines =@@
+ interface I3 {
+ }
+ 
+-//// [a.js]
+-/*!=================
+-    Keep this pinned
+-   =================
+-*/
+ //// [b.js]
+-///<reference path='a.ts'/>
++//// [a.js]

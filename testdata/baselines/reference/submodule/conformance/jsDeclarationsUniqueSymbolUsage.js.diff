@@ -1,0 +1,31 @@
+--- old.jsDeclarationsUniqueSymbolUsage.js
++++ new.jsDeclarationsUniqueSymbolUsage.js
+@@= skipped -15, +15 lines =@@
+ }
+ 
+ 
+-
+-
+-//// [a.d.ts]
+-export const kSymbol: unique symbol;
+-export type WithSymbol = {
+-    [kSymbol]: true;
+-};
+-//// [b.d.ts]
+-/**
+- * @returns {import('./a').WithSymbol}
+- * @param {import('./a').WithSymbol} value
+- */
+-export function b(value: import("./a").WithSymbol): import("./a").WithSymbol;
++//// [b.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.b = b;
++function b(value) {
++    return value;
++}
++//// [a.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.kSymbol = void 0;
++exports.kSymbol = Symbol("my-symbol");

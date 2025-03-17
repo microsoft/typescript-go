@@ -1,0 +1,16 @@
+--- old.jsFileCompilationAbstractModifier.js
++++ new.jsFileCompilationAbstractModifier.js
+@@= skipped -0, +-1 lines =@@
+-<no content>
+@@= skipped --1, +1 lines =@@
++//// [tests/cases/compiler/jsFileCompilationAbstractModifier.ts] ////
++
++//// [a.js]
++abstract class c {
++    abstract x;
++}
++
++//// [a.js]
++class c {
++    x;
++}

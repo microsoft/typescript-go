@@ -1,0 +1,13 @@
+--- old.commentOnAmbientVariable2.js
++++ new.commentOnAmbientVariable2.js
+@@= skipped -7, +7 lines =@@
+ declare var x: number;
+ x = 2;
+ 
+-//// [commentOnAmbientVariable2_1.js]
+-var y = 1;
+ //// [commentOnAmbientVariable2_2.js]
+-/// <reference path='commentOnAmbientVariable2_1.ts'/>
+ x = 2;
++//// [commentOnAmbientVariable2_1.js]
++var y = 1;

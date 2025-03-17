@@ -1,0 +1,10 @@
+--- old.plainJSTypeErrors.js
++++ new.plainJSTypeErrors.js
+@@= skipped -8, +8 lines =@@
+ 
+ 
+ //// [plainJSTypeErrors.js]
+-// should error
+ if ({} === {}) { }
+-// should not error
+ if ({} == {}) { }

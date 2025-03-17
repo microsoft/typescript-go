@@ -1,0 +1,73 @@
+--- old.jsDeclarationsImportAliasExposedWithinNamespace.js
++++ new.jsDeclarationsImportAliasExposedWithinNamespace.js
+@@= skipped -50, +50 lines =@@
+ 
+ export {testFn, testFnTypes};
+ 
+-
+-
+-//// [file.d.ts]
+-export namespace myTypes {
+-    type typeA = string | RegExp | Array<string | RegExp>;
+-    type typeB = {
+-        /**
+-         * - Prop 1.
+-         */
+-        prop1: myTypes.typeA;
+-        /**
+-         * - Prop 2.
+-         */
+-        prop2: string;
+-    };
+-    type typeC = myTypes.typeB | Function;
++//// [file2.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.testFnTypes = void 0;
++exports.testFn = testFn;
++const file_js_1 = require("./file.js");
++const testFnTypes = {};
++exports.testFnTypes = testFnTypes;
++function testFn(input) {
++    if (typeof input === 'number') {
++        return 2 * input;
++    }
++    else {
++        return null;
++    }
+ }
+-/**
+- * @namespace myTypes
+- * @global
+- * @type {Object<string,*>}
+- */
+-export const myTypes: {
+-    [x: string]: any;
+-};
+-//// [file2.d.ts]
+-export namespace testFnTypes {
+-    type input = boolean | myTypes.typeC;
+-}
+-/** @typedef {boolean|myTypes.typeC} testFnTypes.input */
+-/**
+- * @function testFn
+- * @description A test function.
+- * @param {testFnTypes.input} input - Input.
+- * @returns {number|null} Result.
+- */
+-export function testFn(input: testFnTypes.input): number | null;
+-import { myTypes } from './file.js';
+-/**
+- * @namespace testFnTypes
+- * @global
+- * @type {Object<string,*>}
+- */
+-export const testFnTypes: {
+-    [x: string]: any;
+-};
++//// [file.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.myTypes = void 0;
++const myTypes = {};
++exports.myTypes = myTypes;

@@ -1,0 +1,28 @@
+--- old.jsDeclarationsPrivateFields01.js
++++ new.jsDeclarationsPrivateFields01.js
+@@= skipped -22, +22 lines =@@
+ }
+ 
+ 
+-
+-
+-//// [file.d.ts]
++//// [file.js]
+ export class C {
+-    getWorld(): number;
+-    #private;
++    #hello = "hello";
++    #world = 100;
++    #calcHello() {
++        return this.#hello;
++    }
++    get #screamingHello() {
++        return this.#hello.toUpperCase();
++    }
++    set #screamingHello(value) {
++        throw "NO";
++    }
++    getWorld() {
++        return this.#world;
++    }
+ }

@@ -1,0 +1,23 @@
+--- old.pathMappingBasedModuleResolution_rootImport_aliasWithRoot_multipleAliases.js
++++ new.pathMappingBasedModuleResolution_rootImport_aliasWithRoot_multipleAliases.js
+@@= skipped -10, +10 lines =@@
+ import { bar } from "/client/bar";
+ 
+ 
+-//// [foo.js]
++//// [a.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-exports.foo = foo;
+-function foo() { }
+ //// [bar.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.bar = bar;
+ function bar() { }
+-//// [a.js]
++//// [foo.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
++exports.foo = foo;
++function foo() { }

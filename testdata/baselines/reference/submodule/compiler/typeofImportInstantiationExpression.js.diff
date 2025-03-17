@@ -1,0 +1,13 @@
+--- old.typeofImportInstantiationExpression.js
++++ new.typeofImportInstantiationExpression.js
+@@= skipped -13, +13 lines =@@
+ type T2 = typeof import('./input.js').myFunction<any, { slug: 'hello' }>;
+ 
+ 
++//// [main.js]
+ //// [input.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.myFunction = myFunction;
+ function myFunction(arg) { return (arg.params || {}); }
+-//// [main.js]

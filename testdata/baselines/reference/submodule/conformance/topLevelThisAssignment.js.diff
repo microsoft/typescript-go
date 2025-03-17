@@ -1,0 +1,15 @@
+--- old.topLevelThisAssignment.js
++++ new.topLevelThisAssignment.js
+@@= skipped -9, +9 lines =@@
+ a;
+ 
+ 
+-//// [output.js]
+-this.a = 10;
++//// [b.js]
+ this.a;
+ a;
++//// [a.js]
++this.a = 10;
+ this.a;
+ a;

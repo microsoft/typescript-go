@@ -1,0 +1,100 @@
+--- old.exportNamespace5.js
++++ new.exportNamespace5.js
+@@= skipped -24, +24 lines =@@
+ let __: B = new B();  // Ok
+ let ___: X = new X(); // Ok
+ 
+-//// [a.js]
++//// [e.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-exports.X = exports.B = exports.A = void 0;
+-var A = /** @class */ (function () {
+-    function A() {
+-    }
+-    return A;
+-}());
+-exports.A = A;
+-var B = /** @class */ (function () {
+-    function B() {
+-    }
+-    return B;
+-}());
+-exports.B = B;
+-var X = /** @class */ (function () {
+-    function X() {
+-    }
+-    return X;
+-}());
+-exports.X = X;
+-//// [b.js]
+-"use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });
+-exports.X = void 0;
+-var a_1 = require("./a");
+-Object.defineProperty(exports, "X", { enumerable: true, get: function () { return a_1.X; } });
+-//// [c.js]
+-"use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });
+-var b_1 = require("./b");
+-var _ = new A(); // Error
+-var __ = new C(); // Error
+-var ___ = new b_1.X(); // Ok
++const d_1 = require("./d");
++let _ = new d_1.A();
++let __ = new d_1.B();
++let ___ = new d_1.X();
+ //// [d.js]
+ "use strict";
+ var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+@@= skipped -53, +25 lines =@@
+ };
+ Object.defineProperty(exports, "__esModule", { value: true });
+ __exportStar(require("./a"), exports);
+-//// [e.js]
++//// [c.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-var d_1 = require("./d");
+-var _ = new d_1.A(); // Ok
+-var __ = new d_1.B(); // Ok
+-var ___ = new d_1.X(); // Ok
+-
+-
+-//// [a.d.ts]
+-export declare class A {
++const b_1 = require("./b");
++let _ = new A();
++let __ = new C();
++let ___ = new b_1.X();
++//// [b.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.X = void 0;
++const a_1 = require("./a");
++Object.defineProperty(exports, "X", { enumerable: true, get: function () { return a_1.X; } });
++//// [a.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.X = exports.B = exports.A = void 0;
++class A {
+ }
+-export declare class B {
++exports.A = A;
++class B {
+ }
+-export declare class X {
++exports.B = B;
++class X {
+ }
+-//// [b.d.ts]
+-export type * from "./a";
+-export { X } from "./a";
+-//// [c.d.ts]
+-export {};
+-//// [d.d.ts]
+-export type * from "./a";
+-export * from "./a";
+-//// [e.d.ts]
+-export {};
++exports.X = X;

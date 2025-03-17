@@ -1,0 +1,44 @@
+--- old.jsDeclarationsInheritedTypes.js
++++ new.jsDeclarationsInheritedTypes.js
+@@= skipped -32, +32 lines =@@
+ }
+ 
+ 
+-
+-
+-//// [a.d.ts]
+-/**
+- * @typedef A
+- * @property {string} a
+- */
+-/**
+- * @typedef B
+- * @property {number} b
+- */
+-declare class C1 {
+-    /**
+-     * @type {A}
+-     */
+-    value: A;
++//// [a.js]
++class C1 {
++    value;
+ }
+-declare class C2 extends C1 {
++class C2 extends C1 {
++    value;
+ }
+-declare class C3 extends C1 {
+-    /**
+-     * @type {A & B}
+-     */
+-    value: A & B;
++class C3 extends C1 {
++    value;
+ }
+-type A = {
+-    a: string;
+-};
+-type B = {
+-    b: number;
+-};

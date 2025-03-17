@@ -1,0 +1,11 @@
+--- old.jsFileCompilationAmbientVarDeclarationSyntax.js
++++ new.jsFileCompilationAmbientVarDeclarationSyntax.js
+@@= skipped -0, +-1 lines =@@
+-<no content>
+@@= skipped --1, +1 lines =@@
++//// [tests/cases/compiler/jsFileCompilationAmbientVarDeclarationSyntax.ts] ////
++
++//// [a.js]
++declare var v;
++
++//// [a.js]

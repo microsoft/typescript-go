@@ -1,0 +1,20 @@
+--- old.es6ImportEqualsExportModuleEs2015Error.js
++++ new.es6ImportEqualsExportModuleEs2015Error.js
+@@= skipped -10, +10 lines =@@
+ 
+ 
+ 
+-//// [a.js]
+-var a = /** @class */ (function () {
+-    function a() {
+-    }
+-    return a;
+-}());
+-export {};
+ //// [main.js]
+ import * as a from "./a";
+ a;
++//// [a.js]
++class a {
++}
++export {};

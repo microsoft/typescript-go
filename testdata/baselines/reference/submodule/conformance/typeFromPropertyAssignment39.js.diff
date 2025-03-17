@@ -1,0 +1,18 @@
+--- old.typeFromPropertyAssignment39.js
++++ new.typeFromPropertyAssignment39.js
+@@= skipped -5, +5 lines =@@
+ foo["baz"]["blah"] = 3;
+ 
+ 
+-
+-
+-//// [a.d.ts]
+-declare namespace foo {
+-    namespace baz {
+-        let blah: number;
+-    }
+-}
++//// [a.js]
++const foo = {};
++foo["baz"] = {};
++foo["baz"]["blah"] = 3;

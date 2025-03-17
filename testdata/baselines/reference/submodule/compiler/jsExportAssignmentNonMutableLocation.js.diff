@@ -1,0 +1,17 @@
+--- old.jsExportAssignmentNonMutableLocation.js
++++ new.jsExportAssignmentNonMutableLocation.js
+@@= skipped -9, +9 lines =@@
+ 
+ exports.customSymbol2 = Symbol("custom");
+ 
+-
+-
+-//// [file.d.ts]
+-export const customSymbol2: unique symbol;
+-export const customSymbol: unique symbol;
++//// [file.js]
++const customSymbol = Symbol("custom");
++module.exports = {
++    customSymbol,
++};
++exports.customSymbol2 = Symbol("custom");

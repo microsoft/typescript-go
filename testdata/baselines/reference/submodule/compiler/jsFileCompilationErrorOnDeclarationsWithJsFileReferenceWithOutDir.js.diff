@@ -1,0 +1,33 @@
+--- old.jsFileCompilationErrorOnDeclarationsWithJsFileReferenceWithOutDir.js
++++ new.jsFileCompilationErrorOnDeclarationsWithJsFileReferenceWithOutDir.js
+@@= skipped -12, +12 lines =@@
+ function bar() {
+ }
+ 
+-//// [a.js]
+-var c = /** @class */ (function () {
+-    function c() {
+-    }
+-    return c;
+-}());
+-//// [c.js]
+-function bar() {
+-}
+ //// [b.js]
+-/// <reference path="c.js"/>
+ function foo() {
+ }
+-
+-
+-//// [a.d.ts]
+-declare class c {
++//// [c.js]
++function bar() {
+ }
+-//// [c.d.ts]
+-declare function bar(): void;
+-//// [b.d.ts]
+-declare function foo(): void;
++//// [a.js]
++class c {
++}

@@ -1,0 +1,24 @@
+--- old.blockScopedNamespaceDifferentFile.js
++++ new.blockScopedNamespaceDifferentFile.js
+@@= skipped -18, +18 lines =@@
+ }
+ 
+ 
+-//// [out.js]
++//// [test.js]
+ var C;
+ (function (C) {
+-    var Name = /** @class */ (function () {
+-        function Name(parameters) {
+-        }
+-        Name.funcData = A.AA.func();
+-        Name.someConst = A.AA.foo;
+-        return Name;
+-    }());
++    class Name {
++        static funcData = A.AA.func();
++        static someConst = A.AA.foo;
++        constructor(parameters) { }
++    }
+     C.Name = Name;
+ })(C || (C = {}));

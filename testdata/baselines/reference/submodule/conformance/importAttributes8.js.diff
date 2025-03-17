@@ -1,0 +1,15 @@
+--- old.importAttributes8.js
++++ new.importAttributes8.js
+@@= skipped -9, +9 lines =@@
+ import a from "./a" with { a: "a", "b": "b" }; // ok
+ 
+ 
++//// [b.js]
++export {};
+ //// [a.js]
+ export default {
+     a: "a",
+     b: "b",
+ };
+-//// [b.js]
+-export {};

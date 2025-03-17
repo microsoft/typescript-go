@@ -1,0 +1,46 @@
+--- old.impliedNodeFormatEmit2(module=esnext).js
++++ new.impliedNodeFormatEmit2(module=esnext).js
+@@= skipped -36, +36 lines =@@
+ export {};
+ 
+ 
+-//// [a.js]
+-export var _ = 0;
+-//// [b.mjs]
+-export var _ = 0;
+-//// [c.cjs]
+-"use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });
+-exports._ = void 0;
+-exports._ = 0;
+-//// [d.js]
+-export var _ = 0;
+-//// [e.mjs]
+-export var _ = 0;
+-//// [f.mjs]
+-export var _ = 0;
+-//// [g.js]
++//// [dummy.js]
+ export {};
++//// [i.cjs]
++export {};
+ //// [h.mjs]
+ export {};
+-//// [i.cjs]
+-"use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });
+-//// [dummy.js]
++//// [g.js]
+ export {};
++//// [f.mjs]
++export const _ = 0;
++//// [e.mjs]
++export const _ = 0;
++//// [d.js]
++export const _ = 0;
++//// [c.cjs]
++export const _ = 0;
++//// [b.mjs]
++export const _ = 0;
++//// [a.js]
++export const _ = 0;

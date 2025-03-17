@@ -1,0 +1,14 @@
+--- old.interfaceMergedUnconstrainedNoErrorIrrespectiveOfOrder.js
++++ new.interfaceMergedUnconstrainedNoErrorIrrespectiveOfOrder.js
+@@= skipped -19, +19 lines =@@
+     }
+ }
+ 
+-//// [working.js]
++//// [regression.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-//// [regression.js]
++//// [working.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });

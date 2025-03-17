@@ -1,0 +1,33 @@
+--- old.constEnumNamespaceReferenceCausesNoImport(isolatedmodules=true).js
++++ new.constEnumNamespaceReferenceCausesNoImport(isolatedmodules=true).js
+@@= skipped -16, +16 lines =@@
+   }
+ }
+ 
++//// [index.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++const Foo = require("./foo");
++function check(x) {
++    switch (x) {
++        case Foo.ConstFooEnum.Some:
++            break;
++    }
++}
+ //// [foo.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+@@= skipped -13, +23 lines =@@
+ })(ConstFooEnum || (exports.ConstFooEnum = ConstFooEnum = {}));
+ ;
+ function fooFunc() { }
+-//// [index.js]
+-"use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });
+-var Foo = require("./foo");
+-function check(x) {
+-    switch (x) {
+-        case Foo.ConstFooEnum.Some:
+-            break;
+-    }
+-}

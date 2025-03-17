@@ -1,0 +1,13 @@
+--- old.pathMappingWithoutBaseUrl2.js
++++ new.pathMappingWithoutBaseUrl2.js
+@@= skipped -18, +18 lines =@@
+ //// [index.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-exports.p1 = void 0;
+-exports.p1 = 0;
+ //// [index.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
++exports.p1 = void 0;
++exports.p1 = 0;

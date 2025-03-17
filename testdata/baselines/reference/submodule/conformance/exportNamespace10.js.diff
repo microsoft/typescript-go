@@ -1,0 +1,30 @@
+--- old.exportNamespace10.js
++++ new.exportNamespace10.js
+@@= skipped -9, +9 lines =@@
+ import { ns } from "./b";
+ let _: ns.A = new ns.A(); // Error
+ 
+-//// [a.js]
++//// [c.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-exports.A = void 0;
+-var A = /** @class */ (function () {
+-    function A() {
+-    }
+-    return A;
+-}());
+-exports.A = A;
++let _ = new ns.A();
+ //// [b.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-//// [c.js]
++//// [a.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-var _ = new ns.A(); // Error
++exports.A = void 0;
++class A {
++}
++exports.A = A;

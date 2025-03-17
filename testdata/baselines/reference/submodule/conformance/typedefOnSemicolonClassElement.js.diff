@@ -1,0 +1,26 @@
+--- old.typedefOnSemicolonClassElement.js
++++ new.typedefOnSemicolonClassElement.js
+@@= skipped -12, +12 lines =@@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.Preferences = void 0;
+-var Preferences = /** @class */ (function () {
+-    function Preferences() {
+-        /** @type {A} */
+-        this.a = 'ok';
+-    }
+-    /** @typedef {string} A */
++class Preferences {
+     ;
+-    return Preferences;
+-}());
+-exports.Preferences = Preferences;
+-
+-
+-//// [typedefOnSemicolonClassElement.d.ts]
+-export class Preferences {
+-    /** @type {A} */
+-    a: string;
++    a = 'ok';
+ }
++exports.Preferences = Preferences;

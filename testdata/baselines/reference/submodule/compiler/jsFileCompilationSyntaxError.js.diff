@@ -1,0 +1,17 @@
+--- old.jsFileCompilationSyntaxError.js
++++ new.jsFileCompilationSyntaxError.js
+@@= skipped -0, +-1 lines =@@
+-<no content>
+@@= skipped --1, +1 lines =@@
++//// [tests/cases/compiler/jsFileCompilationSyntaxError.ts] ////
++
++//// [a.js]
++/**
++  * @type {number}
++  * @type {string}
++  */
++var v;
++
++
++//// [a.js]
++var v;

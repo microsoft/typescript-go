@@ -1,0 +1,16 @@
+--- old.importTypeInJSDoc.js
++++ new.importTypeInJSDoc.js
+@@= skipped -26, +26 lines =@@
+ 
+ 
+ //// [index.js]
+-/**
+- * @typedef {import("./externs")} Foo
+- */
+-let a = /** @type {Foo} */ ( /** @type {*} */(undefined));
++let a = ((undefined));
+ a = new Foo({ doer: Foo.Bar });
+-const q = /** @type {import("./externs").Bar} */ ({ doer: q => q });
+-const r = /** @type {typeof import("./externs").Bar} */ (r => r);
++const q = ({ doer: q => q });
++const r = (r => r);

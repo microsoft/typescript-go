@@ -1,0 +1,12 @@
+--- old.constDeclarations-useBeforeDefinition2.js
++++ new.constDeclarations-useBeforeDefinition2.js
+@@= skipped -6, +6 lines =@@
+ const c = 0;
+ 
+ 
+-//// [out.js]
+-c;
++//// [file2.js]
+ const c = 0;
++//// [file1.js]
++c;

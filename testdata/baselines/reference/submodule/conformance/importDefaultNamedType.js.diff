@@ -1,0 +1,23 @@
+--- old.importDefaultNamedType.js
++++ new.importDefaultNamedType.js
+@@= skipped -6, +6 lines =@@
+ import type from './a';
+ 
+ 
+-//// [a.js]
++//// [b.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-var A = /** @class */ (function () {
+-    function A() {
+-    }
+-    return A;
+-}());
+-exports.default = A;
+-//// [b.js]
++//// [a.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
++class A {
++}
++exports.default = A;

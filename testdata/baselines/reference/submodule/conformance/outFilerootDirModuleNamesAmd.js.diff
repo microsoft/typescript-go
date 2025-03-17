@@ -1,0 +1,38 @@
+--- old.outFilerootDirModuleNamesAmd.js
++++ new.outFilerootDirModuleNamesAmd.js
+@@= skipped -11, +11 lines =@@
+ // https://github.com/microsoft/TypeScript/issues/37429
+ import("./a");
+ 
+-//// [output.js]
+-define("b", ["require", "exports", "a"], function (require, exports, a_1) {
+-    "use strict";
+-    Object.defineProperty(exports, "__esModule", { value: true });
+-    exports.default = foo;
+-    function foo() { new a_1.default(); }
+-    // https://github.com/microsoft/TypeScript/issues/37429
+-    new Promise((resolve_1, reject_1) => { require(["a"], resolve_1, reject_1); });
+-});
+-define("a", ["require", "exports", "b"], function (require, exports, b_1) {
+-    "use strict";
+-    Object.defineProperty(exports, "__esModule", { value: true });
+-    class Foo {
+-    }
+-    exports.default = Foo;
+-    (0, b_1.default)();
+-});
++//// [a.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++const b_1 = require("./b");
++class Foo {
++}
++exports.default = Foo;
++(0, b_1.default)();
++//// [b.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.default = foo;
++const a_1 = require("./a");
++function foo() { new a_1.default(); }
++Promise.resolve().then(() => require("./a"));

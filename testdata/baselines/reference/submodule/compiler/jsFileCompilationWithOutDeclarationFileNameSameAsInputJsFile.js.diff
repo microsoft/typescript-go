@@ -1,0 +1,15 @@
+--- old.jsFileCompilationWithOutDeclarationFileNameSameAsInputJsFile.js
++++ new.jsFileCompilationWithOutDeclarationFileNameSameAsInputJsFile.js
+@@= skipped -7, +7 lines =@@
+ declare function foo(): boolean;
+ 
+ 
+-//// [b.js]
+-var c = /** @class */ (function () {
+-    function c() {
+-    }
+-    return c;
+-}());
++//// [a.js]
++class c {
++}

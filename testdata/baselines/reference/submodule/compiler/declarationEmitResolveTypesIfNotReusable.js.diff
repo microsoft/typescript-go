@@ -1,0 +1,45 @@
+--- old.declarationEmitResolveTypesIfNotReusable.js
++++ new.declarationEmitResolveTypesIfNotReusable.js
+@@= skipped -17, +17 lines =@@
+ 
+ export const f = {...d}
+ 
++//// [main.js]
++import * as d from './decl';
++export const f = { ...d };
+ //// [decl.js]
+ const u = "X";
+ const a = { a: "value of a", notNecessary: u };
+@@= skipped -7, +10 lines =@@
+ export const o2 = (o) => { };
+ export const o3 = (o) => { };
+ export const o4 = (o) => { };
+-//// [main.js]
+-import * as d from './decl';
+-export const f = { ...d };
+-
+-
+-//// [decl.d.ts]
+-declare const u = "X";
+-type A = {
+-    a: {
+-        b: "value of b";
+-        notNecessary: typeof u;
+-    };
+-};
+-declare const a: {
+-    readonly a: "value of a";
+-    readonly notNecessary: "X";
+-};
+-export declare const o1: (o: A["a"]["b"]) => void;
+-export declare const o2: (o: (typeof a)["a"]) => void;
+-export declare const o3: (o: (typeof a)["a"]) => void;
+-export declare const o4: (o: keyof A["a"]) => void;
+-export {};
+-//// [main.d.ts]
+-export declare const f: {
+-    o1: (o: "value of b") => void;
+-    o2: (o: "value of a") => void;
+-    o3: (o: "value of a") => void;
+-    o4: (o: "b" | "notNecessary") => void;
+-};

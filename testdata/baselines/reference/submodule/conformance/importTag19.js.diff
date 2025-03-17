@@ -1,0 +1,29 @@
+--- old.importTag19.js
++++ new.importTag19.js
+@@= skipped -14, +14 lines =@@
+ export function foo(a) {}
+ 
+ 
+-
+-
+-//// [a.d.ts]
+-export interface Foo {
+-}
+-//// [b.d.ts]
+-/**
+- * @import { Foo }
+- * from "./a"
+- */
+-/**
+- * @param {Foo} a
+- */
+-export function foo(a: Foo): void;
+-import type { Foo } from "./a";
++//// [b.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.foo = foo;
++function foo(a) { }
++//// [a.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });

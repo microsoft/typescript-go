@@ -1,0 +1,11 @@
+--- old.doNotEmitTripleSlashCommentsInEmptyFile.js
++++ new.doNotEmitTripleSlashCommentsInEmptyFile.js
+@@= skipped -8, +8 lines =@@
+ /// <reference path="file1.ts" />
+ /// <amd-dependency path="/js/libs/hgn.js!app/templates/home" name="compiler"/>
+ 
+-//// [file0.js]
+-//// [file1.js]
+ //// [file2.js]
++//// [file1.js]
++//// [file0.js]

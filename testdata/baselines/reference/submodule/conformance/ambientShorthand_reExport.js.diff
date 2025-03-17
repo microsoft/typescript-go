@@ -1,0 +1,34 @@
+--- old.ambientShorthand_reExport.js
++++ new.ambientShorthand_reExport.js
+@@= skipped -15, +15 lines =@@
+ x($);
+ 
+ 
+-//// [reExportX.js]
++//// [reExportUser.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-exports.x = void 0;
+-var jquery_1 = require("jquery");
+-Object.defineProperty(exports, "x", { enumerable: true, get: function () { return jquery_1.x; } });
++const reExportX_1 = require("./reExportX");
++const $ = require("./reExportAll");
++(0, reExportX_1.x)($);
+ //// [reExportAll.js]
+ "use strict";
+ var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+@@= skipped -24, +24 lines =@@
+ };
+ Object.defineProperty(exports, "__esModule", { value: true });
+ __exportStar(require("jquery"), exports);
+-//// [reExportUser.js]
++//// [reExportX.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-var reExportX_1 = require("./reExportX");
+-var $ = require("./reExportAll");
+-// '$' is not callable, it is an object.
+-(0, reExportX_1.x)($);
++exports.x = void 0;
++const jquery_1 = require("jquery");
++Object.defineProperty(exports, "x", { enumerable: true, get: function () { return jquery_1.x; } });

@@ -1,0 +1,14 @@
+--- old.jsdocLinkTag1.js
++++ new.jsdocLinkTag1.js
+@@= skipped -9, +9 lines =@@
+ export interface B {}
+ 
+ 
+-//// [a.js]
++//// [b.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-//// [b.js]
++//// [a.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });

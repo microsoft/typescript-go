@@ -1,0 +1,12 @@
+--- old.topLevelAwaitErrors.10(module=esnext).js
++++ new.topLevelAwaitErrors.10(module=esnext).js
+@@= skipped -8, +8 lines =@@
+ export { _await as await };
+ 
+ 
+-//// [other.js]
+-export { _await as await };
+ //// [index.js]
+ export {};
++//// [other.js]
++export { _await as await };

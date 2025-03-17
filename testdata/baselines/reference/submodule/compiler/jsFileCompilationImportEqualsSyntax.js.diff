@@ -1,0 +1,12 @@
+--- old.jsFileCompilationImportEqualsSyntax.js
++++ new.jsFileCompilationImportEqualsSyntax.js
+@@= skipped -0, +-1 lines =@@
+-<no content>
+@@= skipped --1, +1 lines =@@
++//// [tests/cases/compiler/jsFileCompilationImportEqualsSyntax.ts] ////
++
++//// [a.js]
++import a = b;
++
++//// [a.js]
++var a = b;

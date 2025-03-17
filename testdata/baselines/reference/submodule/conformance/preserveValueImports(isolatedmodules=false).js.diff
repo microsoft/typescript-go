@@ -1,0 +1,34 @@
+--- old.preserveValueImports(isolatedmodules=false).js
++++ new.preserveValueImports(isolatedmodules=false).js
+@@= skipped -25, +25 lines =@@
+ b;
+ 
+ 
+-//// [a.js]
+-export default {};
+-export var b = 0;
+-export var c = 1;
+-//// [b.js]
++//// [f.js]
++import { b } from "./a";
++b;
++//// [e.js]
++DD;
+ export {};
+-//// [c.js]
+-export {};
+ //// [d.js]
+ export {};
+-//// [e.js]
+-DD;
++//// [c.js]
+ export {};
+-//// [f.js]
+-import { b } from "./a";
+-b;
++//// [b.js]
++export {};
++//// [a.js]
++export default {};
++export const b = 0;
++export const c = 1;

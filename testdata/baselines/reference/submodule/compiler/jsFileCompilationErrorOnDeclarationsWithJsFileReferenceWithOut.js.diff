@@ -1,0 +1,30 @@
+--- old.jsFileCompilationErrorOnDeclarationsWithJsFileReferenceWithOut.js
++++ new.jsFileCompilationErrorOnDeclarationsWithJsFileReferenceWithOut.js
+@@= skipped -13, +13 lines =@@
+ }
+ 
+ 
+-//// [out.js]
+-var c = /** @class */ (function () {
+-    function c() {
+-    }
+-    return c;
+-}());
+-function bar() {
+-}
+-/// <reference path="c.js"/>
++//// [b.js]
+ function foo() {
+ }
+-
+-
+-//// [out.d.ts]
+-declare class c {
++//// [c.js]
++function bar() {
+ }
+-declare function bar(): void;
+-declare function foo(): void;
++//// [a.js]
++class c {
++}

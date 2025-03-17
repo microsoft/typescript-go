@@ -1,0 +1,11 @@
+--- old.moduleResolutionWithSuffixes_one_externalTSModule.js
++++ new.moduleResolutionWithSuffixes_one_externalTSModule.js
+@@= skipped -10, +10 lines =@@
+ //// [/bin/test.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
++//// [/bin/node_modules/some-library/index.ios.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.ios = ios;
++function ios() { }

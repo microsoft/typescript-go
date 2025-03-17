@@ -1,0 +1,29 @@
+--- old.assignmentToVoidZero2.js
++++ new.assignmentToVoidZero2.js
+@@= skipped -19, +19 lines =@@
+ j + k
+ 
+ 
++//// [importer.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++const assignmentToVoidZero2_1 = require("./assignmentToVoidZero2");
++assignmentToVoidZero2_1.j + assignmentToVoidZero2_1.k;
+ //// [assignmentToVoidZero2.js]
+ exports.j = 1;
+ exports.k = void 0;
+@@= skipped -13, +18 lines =@@
+ }
+ var c = new C();
+ c.p + c.q;
+-//// [importer.js]
+-"use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });
+-var assignmentToVoidZero2_1 = require("./assignmentToVoidZero2");
+-assignmentToVoidZero2_1.j + assignmentToVoidZero2_1.k;
+-
+-
+-//// [assignmentToVoidZero2.d.ts]
+-export const j: 1;
+-//// [importer.d.ts]
+-export {};

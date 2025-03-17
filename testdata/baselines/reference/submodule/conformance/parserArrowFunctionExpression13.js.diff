@@ -1,0 +1,12 @@
+--- old.parserArrowFunctionExpression13.js
++++ new.parserArrowFunctionExpression13.js
+@@= skipped -6, +6 lines =@@
+ a ? () => a() : (): any => null;
+ 
+ 
+-//// [fileJs.js]
+-a ? () => a() : () => null; // Not legal JS; "Unexpected token ')'" at last paren
+ //// [fileTs.js]
+ a ? () => a() : () => null;
++//// [fileJs.js]
++a ? () => a() : () => null;

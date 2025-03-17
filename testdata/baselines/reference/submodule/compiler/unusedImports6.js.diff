@@ -1,0 +1,32 @@
+--- old.unusedImports6.js
++++ new.unusedImports6.js
+@@= skipped -19, +19 lines =@@
+ 
+ 
+ 
++//// [file2.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
+ //// [file1.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.Calculator = void 0;
+ exports.test = test;
+ exports.default = test2;
+-var Calculator = /** @class */ (function () {
+-    function Calculator() {
+-    }
+-    Calculator.prototype.handleChar = function () { };
+-    return Calculator;
+-}());
++class Calculator {
++    handleChar() { }
++}
+ exports.Calculator = Calculator;
+ function test() {
+ }
+ function test2() {
+ }
+-//// [file2.js]
+-"use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });

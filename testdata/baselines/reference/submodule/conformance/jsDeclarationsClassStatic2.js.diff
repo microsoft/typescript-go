@@ -1,0 +1,35 @@
+--- old.jsDeclarationsClassStatic2.js
++++ new.jsDeclarationsClassStatic2.js
+@@= skipped -13, +13 lines =@@
+ Bar.foo = "foo";
+ 
+ 
+-
+-
+-//// [Foo.d.ts]
+-export class Foo extends Base {
++//// [Bar.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++const Foo_js_1 = require("./Foo.js");
++class Bar extends Foo_js_1.Foo {
+ }
+-export namespace Foo {
+-    let foo: string;
++Bar.foo = "foo";
++//// [Foo.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.Foo = void 0;
++class Base {
++    static foo = "";
+ }
+-declare class Base {
+-    static foo: string;
++class Foo extends Base {
+ }
+-export {};
+-//// [Bar.d.ts]
+-export {};
++exports.Foo = Foo;
++Foo.foo = "foo";

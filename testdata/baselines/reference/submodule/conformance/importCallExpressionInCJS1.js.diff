@@ -1,0 +1,23 @@
+--- old.importCallExpressionInCJS1.js
++++ new.importCallExpressionInCJS1.js
+@@= skipped -15, +15 lines =@@
+     const p2 = import("./0");
+ }
+ 
+-//// [0.js]
+-"use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });
+-exports.foo = foo;
+-function foo() { return "foo"; }
+ //// [1.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+@@= skipped -18, +13 lines =@@
+ function foo() {
+     const p2 = Promise.resolve().then(() => require("./0"));
+ }
++//// [0.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.foo = foo;
++function foo() { return "foo"; }

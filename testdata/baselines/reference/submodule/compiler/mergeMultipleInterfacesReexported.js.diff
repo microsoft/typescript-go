@@ -1,0 +1,35 @@
+--- old.mergeMultipleInterfacesReexported.js
++++ new.mergeMultipleInterfacesReexported.js
+@@= skipped -31, +31 lines =@@
+ export {};
+ 
+ 
+-//// [eventList.js]
++//// [bar.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
++//// [foo.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++//// [test.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++const t = p012;
+ //// [index.js]
+ "use strict";
+ var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+@@= skipped -21, +28 lines =@@
+ };
+ Object.defineProperty(exports, "__esModule", { value: true });
+ __exportStar(require("./eventList"), exports);
+-//// [test.js]
++//// [eventList.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-var t = p012;
+-//// [foo.js]
+-"use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });
+-//// [bar.js]
+-"use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });

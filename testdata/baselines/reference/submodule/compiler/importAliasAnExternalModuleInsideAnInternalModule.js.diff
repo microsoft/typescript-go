@@ -1,0 +1,32 @@
+--- old.importAliasAnExternalModuleInsideAnInternalModule.js
++++ new.importAliasAnExternalModuleInsideAnInternalModule.js
+@@= skipped -13, +13 lines =@@
+ }
+ 
+ 
++//// [importAliasAnExternalModuleInsideAnInternalModule_file1.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++const r = require("./importAliasAnExternalModuleInsideAnInternalModule_file0");
++var m_private;
++(function (m_private) {
++    m_private.C = r;
++    m_private.C.m.foo();
++})(m_private || (m_private = {}));
+ //// [importAliasAnExternalModuleInsideAnInternalModule_file0.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+@@= skipped -9, +18 lines =@@
+     function foo() { }
+     m.foo = foo;
+ })(m || (exports.m = m = {}));
+-//// [importAliasAnExternalModuleInsideAnInternalModule_file1.js]
+-"use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });
+-var r = require("./importAliasAnExternalModuleInsideAnInternalModule_file0");
+-var m_private;
+-(function (m_private) {
+-    //import r2 = require('m'); // would be error
+-    m_private.C = r; // no error
+-    m_private.C.m.foo();
+-})(m_private || (m_private = {}));

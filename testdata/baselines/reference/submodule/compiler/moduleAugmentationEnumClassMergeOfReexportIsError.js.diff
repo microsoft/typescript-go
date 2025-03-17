@@ -1,0 +1,33 @@
+--- old.moduleAugmentationEnumClassMergeOfReexportIsError.js
++++ new.moduleAugmentationEnumClassMergeOfReexportIsError.js
+@@= skipped -17, +17 lines =@@
+ declare const f: ns.Foo; //is this the enum or the class? should be an error.
+ 
+ 
+-//// [file.js]
++//// [augment.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-exports.Foo = void 0;
+-var Foo = /** @class */ (function () {
+-    function Foo() {
+-    }
+-    return Foo;
+-}());
+-exports.Foo = Foo;
+ //// [reexport.js]
+ "use strict";
+ var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+@@= skipped -28, +21 lines =@@
+ };
+ Object.defineProperty(exports, "__esModule", { value: true });
+ __exportStar(require("./file"), exports);
+-//// [augment.js]
++//// [file.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
++exports.Foo = void 0;
++class Foo {
++    member;
++}
++exports.Foo = Foo;

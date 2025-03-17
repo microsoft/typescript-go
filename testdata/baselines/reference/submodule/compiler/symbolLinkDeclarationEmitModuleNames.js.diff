@@ -1,0 +1,73 @@
+--- old.symbolLinkDeclarationEmitModuleNames.js
++++ new.symbolLinkDeclarationEmitModuleNames.js
+@@= skipped -23, +23 lines =@@
+ export * from "./src/bindingkey";
+ 
+ 
+-//// [value-promise.js]
++//// [usage.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-//// [bindingkey.js]
++exports.CONTROLLER_CLASS = void 0;
++const context_1 = require("@loopback/context");
++exports.CONTROLLER_CLASS = context_1.BindingKey.create(null);
++//// [application.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-exports.BindingKey = void 0;
+-var BindingKey = /** @class */ (function () {
+-    function BindingKey() {
+-    }
+-    BindingKey.create = function (ctor) {
+-        return new BindingKey();
+-    };
+-    return BindingKey;
+-}());
+-exports.BindingKey = BindingKey;
+ //// [index.js]
+ "use strict";
+ var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+@@= skipped -35, +28 lines =@@
+ Object.defineProperty(exports, "__esModule", { value: true });
+ __exportStar(require("./src/value-promise"), exports);
+ __exportStar(require("./src/bindingkey"), exports);
+-//// [application.js]
++//// [bindingkey.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-//// [usage.js]
++exports.BindingKey = void 0;
++class BindingKey {
++    __type;
++    static create(ctor) {
++        return new BindingKey();
++    }
++}
++exports.BindingKey = BindingKey;
++//// [value-promise.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-exports.CONTROLLER_CLASS = void 0;
+-var context_1 = require("@loopback/context");
+-exports.CONTROLLER_CLASS = context_1.BindingKey.create(null); // line in question
+-
+-
+-//// [value-promise.d.ts]
+-export type Constructor<T> = (...args: any[]) => T;
+-//// [bindingkey.d.ts]
+-import { Constructor } from "@loopback/context";
+-export declare class BindingKey<T> {
+-    readonly __type: T;
+-    static create<T extends Constructor<any>>(ctor: T): BindingKey<T>;
+-}
+-//// [index.d.ts]
+-export * from "./src/value-promise";
+-export * from "./src/bindingkey";
+-//// [application.d.ts]
+-import { Constructor } from "@loopback/context";
+-export type ControllerClass = Constructor<any>;
+-//// [usage.d.ts]
+-import { ControllerClass } from './application';
+-import { BindingKey } from '@loopback/context';
+-export declare const CONTROLLER_CLASS: BindingKey<ControllerClass>;

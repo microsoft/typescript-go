@@ -1,0 +1,26 @@
+--- old.importCallExpression6ES2020.js
++++ new.importCallExpression6ES2020.js
+@@= skipped -18, +18 lines =@@
+ let myModule3 = import(null);
+ 
+ 
+-//// [0.js]
+-export class B {
+-    print() { return "I am B"; }
+-}
+-export function foo() { return "foo"; }
+-//// [1.js]
+-export function backup() { return "backup"; }
+ //// [2.js]
+ const specify = bar() ? "./0" : undefined;
+ let myModule = import(specify);
+ let myModule1 = import(undefined);
+ let myModule2 = import(bar() ? "./1" : null);
+ let myModule3 = import(null);
++//// [1.js]
++export function backup() { return "backup"; }
++//// [0.js]
++export class B {
++    print() { return "I am B"; }
++}
++export function foo() { return "foo"; }

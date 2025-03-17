@@ -1,0 +1,12 @@
+--- old.letDeclarations-useBeforeDefinition2.js
++++ new.letDeclarations-useBeforeDefinition2.js
+@@= skipped -6, +6 lines =@@
+ const l = 0;
+ 
+ 
+-//// [out.js]
+-l;
++//// [file2.js]
+ const l = 0;
++//// [file1.js]
++l;

@@ -1,0 +1,17 @@
+--- old.jsEmitIntersectionProperty.js
++++ new.jsEmitIntersectionProperty.js
+@@= skipped -30, +30 lines =@@
+ }
+ 
+ 
+-
+-
+-//// [index.d.ts]
+-export class MyComponent extends Component {
++//// [index.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.MyComponent = void 0;
++class MyComponent extends Component {
+ }
++exports.MyComponent = MyComponent;

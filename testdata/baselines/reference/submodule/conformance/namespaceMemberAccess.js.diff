@@ -1,0 +1,28 @@
+--- old.namespaceMemberAccess.js
++++ new.namespaceMemberAccess.js
+@@= skipped -8, +8 lines =@@
+ types.A;
+ const { A } = types;
+ 
+-//// [a.js]
+-"use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });
+-var A = /** @class */ (function () {
+-    function A() {
+-    }
+-    return A;
+-}());
+ //// [b.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-var types = require("./a");
++const types = require("./a");
+ types.A;
+-var A = types.A;
++const { A } = types;
++//// [a.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++class A {
++    a;
++}

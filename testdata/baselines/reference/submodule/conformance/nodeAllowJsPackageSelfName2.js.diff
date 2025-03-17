@@ -1,0 +1,16 @@
+--- old.nodeAllowJsPackageSelfName2.js
++++ new.nodeAllowJsPackageSelfName2.js
+@@= skipped -24, +24 lines =@@
+ import { foo } from "js-self-name-import/foo.js";
+ 
+ 
+-
+-
+-//// [foo.d.ts]
+-export const foo: 1;
+-//// [foo.d.ts]
+-export {};
++//// [foo.js]
++import { foo } from "js-self-name-import/foo.js";
++//// [foo.js]
++export const foo = 1;

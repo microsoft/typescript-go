@@ -1,0 +1,11 @@
+--- old.bundlerNodeModules1(module=preserve).js
++++ new.bundlerNodeModules1(module=preserve).js
+@@= skipped -36, +36 lines =@@
+ import { esm, cjs } from "dual";
+ 
+ 
+-//// [main.js]
+-//// [main.mjs]
+ //// [main.cjs]
++//// [main.mjs]
++//// [main.js]

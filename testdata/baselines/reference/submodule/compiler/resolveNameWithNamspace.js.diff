@@ -1,0 +1,14 @@
+--- old.resolveNameWithNamspace.js
++++ new.resolveNameWithNamspace.js
+@@= skipped -17, +17 lines =@@
+ exports.equal = myAssert.equal
+ exports.equal()
+ 
+-//// [ns.js]
+-/// <reference path="node.d.ts"/>
+-var myAssert = require('assert');
+ //// [app.js]
+ exports.equal = myAssert.equal;
+ exports.equal();
++//// [ns.js]
++var myAssert = require('assert');

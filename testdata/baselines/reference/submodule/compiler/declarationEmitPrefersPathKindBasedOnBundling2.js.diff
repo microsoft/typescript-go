@@ -1,0 +1,54 @@
+--- old.declarationEmitPrefersPathKindBasedOnBundling2.js
++++ new.declarationEmitPrefersPathKindBasedOnBundling2.js
+@@= skipped -18, +18 lines =@@
+ };
+ 
+ 
+-//// [dist.js]
+-define("lib/operators/scalar", ["require", "exports"], function (require, exports) {
+-    "use strict";
+-    Object.defineProperty(exports, "__esModule", { value: true });
+-    exports.scalar = scalar;
+-    function scalar(value) {
+-        return null;
++//// [spacing.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++const scalar_1 = require("../lib/operators/scalar");
++exports.default = {
++    get xs() {
++        return (0, scalar_1.scalar)("14px");
+     }
+-});
+-define("settings/spacing", ["require", "exports", "lib/operators/scalar"], function (require, exports, scalar_1) {
+-    "use strict";
+-    Object.defineProperty(exports, "__esModule", { value: true });
+-    exports.default = {
+-        get xs() {
+-            return (0, scalar_1.scalar)("14px");
+-        }
+-    };
+-});
+-
+-
+-//// [dist.d.ts]
+-declare module "lib/operators/scalar" {
+-    export interface Scalar {
+-        (): string;
+-        value: number;
+-    }
+-    export function scalar(value: string): Scalar;
++};
++//// [scalar.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.scalar = scalar;
++function scalar(value) {
++    return null;
+ }
+-declare module "settings/spacing" {
+-    const _default: {
+-        readonly xs: import("lib/operators/scalar").Scalar;
+-    };
+-    export default _default;
+-}

@@ -1,0 +1,7 @@
+--- old.moduleResolutionWithExtensions_notSupported.js
++++ new.moduleResolutionWithExtensions_notSupported.js
+@@= skipped -14, +14 lines =@@
+ //// [a.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
++//// [tsx.js]

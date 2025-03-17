@@ -1,0 +1,19 @@
+--- old.mergeWithImportedNamespace.js
++++ new.mergeWithImportedNamespace.js
+@@= skipped -8, +8 lines =@@
+     export interface I {x: any}
+ }
+ 
++//// [f2.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
+ //// [f1.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+@@= skipped -8, +11 lines =@@
+ (function (N) {
+     N.x = 1;
+ })(N || (exports.N = N = {}));
+-//// [f2.js]
+-"use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });

@@ -1,0 +1,24 @@
+--- old.argumentsReferenceInMethod2_Js.js
++++ new.argumentsReferenceInMethod2_Js.js
+@@= skipped -13, +13 lines =@@
+ }
+ 
+ 
+-
+-
+-//// [a.d.ts]
+-declare class A {
+-    /**
+-     * @param {object} [foo={}]
+-     */
+-    m(foo?: object): void;
+-    /**
+-     * @type object
+-     */
+-    arguments: object;
++//// [a.js]
++class A {
++    m(foo = {}) {
++        this["arguments"] = foo;
++    }
+ }

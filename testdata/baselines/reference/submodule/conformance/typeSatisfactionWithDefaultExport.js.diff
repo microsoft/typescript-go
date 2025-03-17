@@ -1,0 +1,12 @@
+--- old.typeSatisfactionWithDefaultExport.js
++++ new.typeSatisfactionWithDefaultExport.js
+@@= skipped -12, +12 lines =@@
+ export default { a: 1 } satisfies Foo;
+ 
+ 
+-//// [a.js]
+-export default {};
+ //// [b.js]
+ export default { a: 1 };
++//// [a.js]
++export default {};

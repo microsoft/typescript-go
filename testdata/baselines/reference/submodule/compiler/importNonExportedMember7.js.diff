@@ -1,0 +1,19 @@
+--- old.importNonExportedMember7.js
++++ new.importNonExportedMember7.js
+@@= skipped -6, +6 lines =@@
+ //// [b.ts]
+ import { Foo } from './a';
+ 
+-//// [a.js]
+-var Foo = /** @class */ (function () {
+-    function Foo() {
+-    }
+-    return Foo;
+-}());
+-export {};
+ //// [b.js]
+ export {};
++//// [a.js]
++class Foo {
++}
++export {};

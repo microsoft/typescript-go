@@ -1,0 +1,19 @@
+--- old.jsFileCompilationWithJsEmitPathSameAsInput.js
++++ new.jsFileCompilationWithJsEmitPathSameAsInput.js
+@@= skipped -0, +-1 lines =@@
+-<no content>
+@@= skipped --1, +1 lines =@@
++//// [tests/cases/compiler/jsFileCompilationWithJsEmitPathSameAsInput.ts] ////
++
++//// [a.ts]
++class c {
++}
++
++//// [a.js]
++function foo() {
++}
++
++
++//// [a.js]
++class c {
++}

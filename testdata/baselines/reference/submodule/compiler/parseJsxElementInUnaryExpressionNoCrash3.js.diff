@@ -1,0 +1,10 @@
+--- old.parseJsxElementInUnaryExpressionNoCrash3.js
++++ new.parseJsxElementInUnaryExpressionNoCrash3.js
+@@= skipped -5, +5 lines =@@
+ 
+ 
+ //// [a.js]
+-!< {...}>
+-
+-</>;
++!;

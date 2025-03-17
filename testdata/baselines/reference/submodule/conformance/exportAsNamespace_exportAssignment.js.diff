@@ -1,0 +1,19 @@
+--- old.exportAsNamespace_exportAssignment.js
++++ new.exportAsNamespace_exportAssignment.js
+@@= skipped -6, +6 lines =@@
+ export * as ns from './a';
+ 
+ 
+-//// [a.js]
+-"use strict";
+-module.exports = {};
+ //// [b.js]
+ "use strict";
+ var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+@@= skipped -31, +28 lines =@@
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.ns = void 0;
+ exports.ns = __importStar(require("./a"));
++//// [a.js]
++"use strict";
++module.exports = {};

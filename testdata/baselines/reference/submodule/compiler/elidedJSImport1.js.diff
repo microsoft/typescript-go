@@ -1,0 +1,11 @@
+--- old.elidedJSImport1.js
++++ new.elidedJSImport1.js
+@@= skipped -19, +19 lines =@@
+ 
+ //// [caller.js]
+ import * as fs from 'fs';
+-import TruffleContract from '@truffle/contract'; // Runtime err: this import is elided in transform
++import TruffleContract from '@truffle/contract';
+ console.log(fs);
+-console.log('TruffleContract is ', typeof TruffleContract, TruffleContract); // `TruffleContract` is considered 'unused'
++console.log('TruffleContract is ', typeof TruffleContract, TruffleContract);

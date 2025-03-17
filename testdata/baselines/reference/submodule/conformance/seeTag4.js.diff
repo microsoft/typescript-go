@@ -1,0 +1,16 @@
+--- old.seeTag4.js
++++ new.seeTag4.js
+@@= skipped -13, +13 lines =@@
+ 
+ 
+ //// [seeTag4.js]
+-/**
+- * @typedef {any} A
+- */
+-/**
+- * @see {@link A}
+- * @see {@linkcode A}
+- * @see {@linkplain A}
+- */
+-var foo;
++let foo;

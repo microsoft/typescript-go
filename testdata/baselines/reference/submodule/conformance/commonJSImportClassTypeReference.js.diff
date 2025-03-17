@@ -1,0 +1,36 @@
+--- old.commonJSImportClassTypeReference.js
++++ new.commonJSImportClassTypeReference.js
+@@= skipped -16, +16 lines =@@
+ 
+ 
+ //// [mod1.js]
+-"use strict";
+-var K = /** @class */ (function () {
+-    function K() {
+-    }
+-    K.prototype.values = function () {
++class K {
++    values() {
+         return new K();
+-    };
+-    return K;
+-}());
++    }
++}
+ exports.K = K;
+ //// [main.js]
+-"use strict";
+-var K = require("./mod1").K;
+-/** @param {K} k */
++const { K } = require("./mod1");
+ function f(k) {
+     k.values();
+ }
+-
+-
+-//// [mod1.d.ts]
+-export class K {
+-    values(): K;
+-}
+-//// [main.d.ts]
+-export {};

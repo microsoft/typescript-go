@@ -1,0 +1,21 @@
+--- old.allowsImportingTsExtension.js
++++ new.allowsImportingTsExtension.js
+@@= skipped -20, +20 lines =@@
+ const aPromise = import("./a.d.ts"); // error
+ 
+ 
++//// [c.js]
++const aPromise = import("./a.d.ts");
++export {};
++//// [b.js]
++const aPromise = import("./a.ts");
++export {};
+ //// [a.js]
+ export class A {
+ }
+-//// [b.js]
+-const aPromise = import("./a.ts"); // error
+-export {};
+-//// [c.js]
+-const aPromise = import("./a.d.ts"); // error
+-export {};

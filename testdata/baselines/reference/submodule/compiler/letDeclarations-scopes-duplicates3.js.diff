@@ -1,0 +1,12 @@
+--- old.letDeclarations-scopes-duplicates3.js
++++ new.letDeclarations-scopes-duplicates3.js
+@@= skipped -5, +5 lines =@@
+ //// [file2.ts]
+ const var1 = 0;
+ 
+-//// [file1.js]
+-let var1 = 0;
+ //// [file2.js]
+ const var1 = 0;
++//// [file1.js]
++let var1 = 0;

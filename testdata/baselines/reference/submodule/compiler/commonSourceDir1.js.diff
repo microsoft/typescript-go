@@ -1,0 +1,12 @@
+--- old.commonSourceDir1.js
++++ new.commonSourceDir1.js
+@@= skipped -6, +6 lines =@@
+ var y: number;
+ 
+ 
+-//// [bar.js]
+-var x;
+ //// [baz.js]
+ var y;
++//// [bar.js]
++var x;

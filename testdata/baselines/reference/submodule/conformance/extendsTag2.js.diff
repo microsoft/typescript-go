@@ -1,0 +1,21 @@
+--- old.extendsTag2.js
++++ new.extendsTag2.js
+@@= skipped -22, +22 lines =@@
+ 
+ 
+ //// [foo.js]
+-/**
+- * @constructor
+- */
+ class A {
+     constructor() { }
+ }
+-/**
+- * @extends {A}
+- */
+-/**
+- * @constructor
+- */
+ class B extends A {
+     constructor() {
+         super();

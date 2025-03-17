@@ -1,0 +1,9 @@
+--- old.jsFileCompilationRestParameter.js
++++ new.jsFileCompilationRestParameter.js
+@@= skipped -3, +3 lines =@@
+ function foo(...a) { }
+ 
+ 
+-//// [b.js]
++//// [a.js]
+ function foo(...a) { }

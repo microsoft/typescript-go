@@ -1,0 +1,11 @@
+--- old.nestedGenericConditionalTypeWithGenericImportType.js
++++ new.nestedGenericConditionalTypeWithGenericImportType.js
+@@= skipped -8, +8 lines =@@
+   : any;
+ 
+ 
++//// [index.js]
+ //// [name.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-//// [index.js]

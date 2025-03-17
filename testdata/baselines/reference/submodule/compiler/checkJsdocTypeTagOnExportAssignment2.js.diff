@@ -1,0 +1,25 @@
+--- old.checkJsdocTypeTagOnExportAssignment2.js
++++ new.checkJsdocTypeTagOnExportAssignment2.js
+@@= skipped -16, +16 lines =@@
+ b;
+ 
+ 
+-//// [checkJsdocTypeTagOnExportAssignment2.js]
+-//// [a.js]
++//// [c.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
++const b_1 = require("./b");
++b_1.default;
+ //// [b.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-/** @type {import("./a").Foo} */
+ exports.default = { c: false };
+-//// [c.js]
++//// [a.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-var b_1 = require("./b");
+-b_1.default;
++//// [checkJsdocTypeTagOnExportAssignment2.js]

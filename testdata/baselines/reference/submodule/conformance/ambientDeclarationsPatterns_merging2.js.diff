@@ -1,0 +1,16 @@
+--- old.ambientDeclarationsPatterns_merging2.js
++++ new.ambientDeclarationsPatterns_merging2.js
+@@= skipped -17, +17 lines =@@
+   let alsoOnlyInA: number;
+ }
+ 
+-//// [types.js]
+-//// [testA.js]
++//// [testB.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-//// [testB.js]
++//// [testA.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
++//// [types.js]

@@ -1,0 +1,14 @@
+--- old.jsFileCompilationEnumSyntax.js
++++ new.jsFileCompilationEnumSyntax.js
+@@= skipped -0, +-1 lines =@@
+-<no content>
+@@= skipped --1, +1 lines =@@
++//// [tests/cases/compiler/jsFileCompilationEnumSyntax.ts] ////
++
++//// [a.js]
++enum E { }
++
++//// [a.js]
++var E;
++(function (E) {
++})(E || (E = {}));

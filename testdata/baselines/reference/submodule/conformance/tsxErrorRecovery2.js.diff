@@ -1,0 +1,14 @@
+--- old.tsxErrorRecovery2.js
++++ new.tsxErrorRecovery2.js
+@@= skipped -9, +9 lines =@@
+ var x = <div></div><div></div>
+ 
+ 
++//// [file2.jsx]
++var x = (<div></div>, <div></div>);
+ //// [file1.jsx]
+ <div></div>
+     ,
+         <div></div>;
+-//// [file2.jsx]
+-var x = <div></div>, <div></div>;

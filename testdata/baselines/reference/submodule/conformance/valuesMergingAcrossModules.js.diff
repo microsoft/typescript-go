@@ -1,0 +1,35 @@
+--- old.valuesMergingAcrossModules.js
++++ new.valuesMergingAcrossModules.js
+@@= skipped -18, +18 lines =@@
+ A.displayName;
+ 
+ 
+-//// [a.js]
+-"use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });
+-exports.A = A;
+-function A() { }
+-//// [b.js]
+-"use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });
+-exports.A = void 0;
+-var a_1 = require("./a");
+-Object.defineProperty(exports, "A", { enumerable: true, get: function () { return a_1.A; } });
+ //// [c.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+@@= skipped -20, +9 lines =@@
+ })(A || (A = {}));
+ A();
+ A.displayName;
++//// [b.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.A = void 0;
++const a_1 = require("./a");
++Object.defineProperty(exports, "A", { enumerable: true, get: function () { return a_1.A; } });
++//// [a.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.A = A;
++function A() { }

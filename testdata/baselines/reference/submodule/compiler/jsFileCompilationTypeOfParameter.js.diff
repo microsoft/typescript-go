@@ -1,0 +1,12 @@
+--- old.jsFileCompilationTypeOfParameter.js
++++ new.jsFileCompilationTypeOfParameter.js
+@@= skipped -0, +-1 lines =@@
+-<no content>
+@@= skipped --1, +1 lines =@@
++//// [tests/cases/compiler/jsFileCompilationTypeOfParameter.ts] ////
++
++//// [a.js]
++function F(a: number) { }
++
++//// [a.js]
++function F(a) { }

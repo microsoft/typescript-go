@@ -1,0 +1,10 @@
+--- old.moduleNoneDynamicImport(target=es2020).js
++++ new.moduleNoneDynamicImport(target=es2020).js
+@@= skipped -6, +6 lines =@@
+ export default 1;
+ 
+ 
++//// [b.js]
++export default 1;
+ //// [a.js]
+ const foo = import("./b");

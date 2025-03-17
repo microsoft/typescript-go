@@ -1,0 +1,12 @@
+--- old.plainJSGrammarErrors4.js
++++ new.plainJSGrammarErrors4.js
+@@= skipped -13, +13 lines =@@
+ class A {
+     #a;
+     m() {
+-        this.#a; // ok
+-        this.#b; // error
++        this.#a;
++        this.#b;
+     }
+ }

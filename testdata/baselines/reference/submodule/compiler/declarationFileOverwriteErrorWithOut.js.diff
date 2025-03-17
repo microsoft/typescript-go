@@ -1,0 +1,15 @@
+--- old.declarationFileOverwriteErrorWithOut.js
++++ new.declarationFileOverwriteErrorWithOut.js
+@@= skipped -8, +8 lines =@@
+ }
+ 
+ 
+-//// [out.js]
+-var d = /** @class */ (function () {
+-    function d() {
+-    }
+-    return d;
+-}());
++//// [a.js]
++class d {
++}

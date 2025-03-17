@@ -1,0 +1,41 @@
+--- old.argumentsReferenceInConstructor3_Js.js
++++ new.argumentsReferenceInConstructor3_Js.js
+@@= skipped -28, +28 lines =@@
+ }
+ 
+ 
+-
+-
+-//// [a.d.ts]
+-declare class A {
+-    get arguments(): {
+-        bar: {};
+-    };
++//// [a.js]
++class A {
++    get arguments() {
++        return { bar: {} };
++    }
+ }
+-declare class B extends A {
+-    /**
+-     * Constructor
+-     *
+-     * @param {object} [foo={}]
+-     */
+-    constructor(foo?: object);
+-    /**
+-     * @type object
+-     */
+-    foo: object;
+-    /**
+-     * @type object
+-     */
+-    bar: object;
++class B extends A {
++    constructor(foo = {}) {
++        super();
++        this.foo = foo;
++        this.bar = super.arguments.foo;
++    }
+ }

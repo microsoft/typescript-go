@@ -1,0 +1,16 @@
+--- old.preserveValueImports_mixedImports.js
++++ new.preserveValueImports_mixedImports.js
+@@= skipped -10, +10 lines =@@
+ import { Component, type ComponentProps } from "./exports.js";
+ 
+ 
+-//// [exports.js]
+-export function Component() { }
++//// [index.fixed.js]
++import "./exports.js";
+ //// [index.js]
+ export {};
+-//// [index.fixed.js]
+-export {};
++//// [exports.js]
++export function Component() { }

@@ -1,0 +1,19 @@
+--- old.constEnumPreserveEmitNamedExport1.js
++++ new.constEnumPreserveEmitNamedExport1.js
+@@= skipped -10, +10 lines =@@
+ export { A };
+ 
+ 
++//// [b.js]
++import { A } from './a';
++export { A };
+ //// [a.js]
+ var A;
+ (function (A) {
+@@= skipped -7, +10 lines =@@
+ })(A || (A = {}));
+ ;
+ export { A };
+-//// [b.js]
+-import { A } from './a';
+-export { A };

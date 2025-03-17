@@ -1,0 +1,18 @@
+--- old.jsFileCompilationWithOut.js
++++ new.jsFileCompilationWithOut.js
+@@= skipped -8, +8 lines =@@
+ }
+ 
+ 
+-//// [out.js]
+-var c = /** @class */ (function () {
+-    function c() {
+-    }
+-    return c;
+-}());
++//// [b.js]
+ function foo() {
+ }
++//// [a.js]
++class c {
++}

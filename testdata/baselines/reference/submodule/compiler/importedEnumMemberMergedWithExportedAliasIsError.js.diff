@@ -1,0 +1,19 @@
+--- old.importedEnumMemberMergedWithExportedAliasIsError.js
++++ new.importedEnumMemberMergedWithExportedAliasIsError.js
+@@= skipped -12, +12 lines =@@
+ export type EnumA = [string] | [string, number];
+ 
+ 
++//// [alias.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
+ //// [enum.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+@@= skipped -9, +12 lines =@@
+     Enum[Enum["A"] = 0] = "A";
+     Enum[Enum["B"] = 1] = "B";
+ })(Enum || (exports.Enum = Enum = {}));
+-//// [alias.js]
+-"use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });

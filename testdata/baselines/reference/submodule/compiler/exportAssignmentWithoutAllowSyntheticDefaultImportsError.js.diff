@@ -1,0 +1,13 @@
+--- old.exportAssignmentWithoutAllowSyntheticDefaultImportsError.js
++++ new.exportAssignmentWithoutAllowSyntheticDefaultImportsError.js
+@@= skipped -6, +6 lines =@@
+ //// [foo.ts]
+ import bar from './bar';
+ 
++//// [foo.js]
++export {};
+ //// [bar.js]
+ function bar() { }
+ export {};
+-//// [foo.js]
+-export {};

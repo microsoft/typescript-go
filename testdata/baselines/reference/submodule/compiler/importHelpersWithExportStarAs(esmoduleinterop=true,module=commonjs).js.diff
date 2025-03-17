@@ -1,0 +1,25 @@
+--- old.importHelpersWithExportStarAs(esmoduleinterop=true,module=commonjs).js
++++ new.importHelpersWithExportStarAs(esmoduleinterop=true,module=commonjs).js
+@@= skipped -10, +10 lines =@@
+     function __importStar(m: any): void;
+ }
+ 
++//// [b.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.a = void 0;
++const tslib_1 = require("tslib");
++exports.a = tslib_1.__importStar(require("./a"));
+ //// [a.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+@@= skipped -7, +13 lines =@@
+ class A {
+ }
+ exports.A = A;
+-//// [b.js]
+-"use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });
+-exports.a = void 0;
+-const tslib_1 = require("tslib");
+-exports.a = tslib_1.__importStar(require("./a"));

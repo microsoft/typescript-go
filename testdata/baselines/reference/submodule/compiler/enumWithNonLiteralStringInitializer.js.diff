@@ -1,0 +1,48 @@
+--- old.enumWithNonLiteralStringInitializer.js
++++ new.enumWithNonLiteralStringInitializer.js
+@@= skipped -19, +19 lines =@@
+ }
+ 
+ 
+-//// [helpers.js]
++//// [good.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-exports.bar = exports.foo = void 0;
+-exports.foo = 2;
+-exports.bar = "bar";
+-//// [bad.js]
+-"use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });
+-var helpers_1 = require("./helpers");
++const helpers_1 = require("./helpers");
+ var A;
+ (function (A) {
+-    A["a"] = "bar";
++    A["a"] = `${helpers_1.foo}`;
++    if (typeof A.a !== "string") A[A.a] = "a";
++    A["b"] = "2";
++    A["c"] = "2";
++    A["d"] = "foo";
+ })(A || (A = {}));
+-//// [good.js]
++//// [bad.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-var helpers_1 = require("./helpers");
++const helpers_1 = require("./helpers");
+ var A;
+ (function (A) {
+-    A["a"] = "2";
+-    A["b"] = "2";
+-    A["c"] = "2";
+-    A["d"] = "foo";
++    A["a"] = helpers_1.bar;
++    if (typeof A.a !== "string") A[A.a] = "a";
+ })(A || (A = {}));
++//// [helpers.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.bar = exports.foo = void 0;
++exports.foo = 2;
++exports.bar = "bar";

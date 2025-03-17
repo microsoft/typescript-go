@@ -1,0 +1,17 @@
+--- old.namespacesWithTypeAliasOnlyExportsMerge.js
++++ new.namespacesWithTypeAliasOnlyExportsMerge.js
+@@= skipped -45, +45 lines =@@
+ declare const try6: NS2.NS1.NS2.B;
+ 
+ 
+-//// [constAndNS.js]
++//// [circularWithUses.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ //// [circular.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-//// [circularWithUses.js]
++//// [constAndNS.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });

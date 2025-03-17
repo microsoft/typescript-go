@@ -1,0 +1,24 @@
+--- old.nestedDestructuringOfRequire.js
++++ new.nestedDestructuringOfRequire.js
+@@= skipped -13, +13 lines =@@
+ chalk
+ 
+ 
+-//// [mod1.js]
+-var chalk = {
+-    grey: {}
+-};
+-module.exports.chalk = chalk;
+ //// [main.js]
+-var grey = require('./mod1').chalk.grey;
++const { chalk: { grey } } = require('./mod1');
+ grey;
+ chalk;
+-
+-
+-//// [mod1.d.ts]
+-export namespace chalk {
+-    let grey: {};
+-}
+-//// [main.d.ts]
+-export {};

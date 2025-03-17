@@ -1,0 +1,26 @@
+--- old.argumentsReferenceInConstructor1_Js.js
++++ new.argumentsReferenceInConstructor1_Js.js
+@@= skipped -15, +15 lines =@@
+ }
+ 
+ 
+-
+-
+-//// [a.d.ts]
+-declare class A {
+-    /**
+-     * Constructor
+-     *
+-     * @param {object} [foo={}]
+-     */
+-    constructor(foo?: object);
+-    /**
+-     * @type object
+-     */
+-    arguments: object;
++//// [a.js]
++class A {
++    constructor(foo = {}) {
++        this.arguments = foo;
++    }
+ }

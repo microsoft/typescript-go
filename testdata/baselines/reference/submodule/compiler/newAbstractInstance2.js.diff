@@ -1,0 +1,27 @@
+--- old.newAbstractInstance2.js
++++ new.newAbstractInstance2.js
+@@= skipped -7, +7 lines =@@
+ new A();
+ 
+ 
+-//// [a.js]
+-"use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });
+-var default_1 = /** @class */ (function () {
+-    function default_1() {
+-    }
+-    return default_1;
+-}());
+-exports.default = default_1;
+ //// [b.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-var a_1 = require("./a");
++const a_1 = require("./a");
+ new a_1.default();
++//// [a.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++class default_1 {
++}
++exports.default = default_1;

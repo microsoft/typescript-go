@@ -1,0 +1,80 @@
+--- old.declarationEmitEnumReferenceViaImportEquals.js
++++ new.declarationEmitEnumReferenceViaImportEquals.js
+@@= skipped -28, +28 lines =@@
+ import { Test } from "./test";
+ new Test().print();
+ 
+-//// [translation.js]
++//// [index.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-exports.Translation = void 0;
+-var Translation;
+-(function (Translation) {
+-    Translation.TranslationKeyEnum = {
+-        Translation1: 'translation1',
+-        Translation2: 'translation2',
+-    };
+-})(Translation || (exports.Translation = Translation = {}));
++const test_1 = require("./test");
++new test_1.Test().print();
+ //// [test.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.Test = void 0;
+-var translation_1 = require("./translation");
+-var TranslationKeyEnum = translation_1.Translation.TranslationKeyEnum;
+-var Test = /** @class */ (function () {
+-    function Test() {
+-        this.TranslationKeyEnum = TranslationKeyEnum;
+-    }
+-    Test.prototype.print = function () {
++const translation_1 = require("./translation");
++class Test {
++    TranslationKeyEnum = TranslationKeyEnum;
++    print() {
+         console.log(TranslationKeyEnum.Translation1);
+-    };
+-    return Test;
+-}());
++    }
++}
+ exports.Test = Test;
+-//// [index.js]
++//// [translation.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-var test_1 = require("./test");
+-new test_1.Test().print();
+-
+-
+-//// [translation.d.ts]
+-export interface Translation {
+-    translationKey: Translation.TranslationKeyEnum;
+-}
+-export declare namespace Translation {
+-    type TranslationKeyEnum = 'translation1' | 'translation2';
+-    const TranslationKeyEnum: {
+-        Translation1: TranslationKeyEnum;
+-        Translation2: TranslationKeyEnum;
++exports.Translation = void 0;
++var Translation;
++(function (Translation) {
++    Translation.TranslationKeyEnum = {
++        Translation1: 'translation1',
++        Translation2: 'translation2',
+     };
+-}
+-//// [test.d.ts]
+-import { Translation } from "./translation";
+-import TranslationKeyEnum = Translation.TranslationKeyEnum;
+-export declare class Test {
+-    TranslationKeyEnum: {
+-        Translation1: TranslationKeyEnum;
+-        Translation2: TranslationKeyEnum;
+-    };
+-    print(): void;
+-}
+-//// [index.d.ts]
+-export {};
++})(Translation || (exports.Translation = Translation = {}));

@@ -1,0 +1,12 @@
+--- old.exportDefaultImportedType.js
++++ new.exportDefaultImportedType.js
+@@= skipped -8, +8 lines =@@
+ export default Foo;
+ 
+ 
+-//// [exported.js]
+-export {};
+ //// [main.js]
+ export {};
++//// [exported.js]
++export {};

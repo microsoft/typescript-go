@@ -1,0 +1,46 @@
+--- old.constEnumNamespaceReferenceCausesNoImport2.js
++++ new.constEnumNamespaceReferenceCausesNoImport2.js
+@@= skipped -21, +21 lines =@@
+   }
+ }
+ 
++//// [index.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++function check(x) {
++    switch (x) {
++        case Foo.ConstFooEnum.Some:
++            break;
++    }
++}
++//// [reexport.js]
++"use strict";
++const Foo = require("./foo");
++module.exports = Foo.ConstEnumOnlyModule;
+ //// [foo.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.ConstEnumOnlyModule = void 0;
+ var ConstEnumOnlyModule;
+ (function (ConstEnumOnlyModule) {
+-    var ConstFooEnum;
++    let ConstFooEnum;
+     (function (ConstFooEnum) {
+         ConstFooEnum[ConstFooEnum["Some"] = 0] = "Some";
+         ConstFooEnum[ConstFooEnum["Values"] = 1] = "Values";
+         ConstFooEnum[ConstFooEnum["Here"] = 2] = "Here";
+     })(ConstFooEnum = ConstEnumOnlyModule.ConstFooEnum || (ConstEnumOnlyModule.ConstFooEnum = {}));
+ })(ConstEnumOnlyModule || (exports.ConstEnumOnlyModule = ConstEnumOnlyModule = {}));
+-//// [reexport.js]
+-"use strict";
+-var Foo = require("./foo");
+-module.exports = Foo.ConstEnumOnlyModule;
+-//// [index.js]
+-"use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });
+-function check(x) {
+-    switch (x) {
+-        case 0 /* Foo.ConstFooEnum.Some */:
+-            break;
+-    }
+-}

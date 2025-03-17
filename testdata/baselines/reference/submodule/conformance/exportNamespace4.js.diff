@@ -1,0 +1,52 @@
+--- old.exportNamespace4.js
++++ new.exportNamespace4.js
+@@= skipped -17, +17 lines =@@
+ ns.A;
+ 
+ 
+-//// [a.js]
++//// [e.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-exports.A = void 0;
+-var A = /** @class */ (function () {
+-    function A() {
+-    }
+-    return A;
+-}());
+-exports.A = A;
+-//// [b.js]
++ns.A;
++//// [d.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
++A;
+ //// [c.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-//// [d.js]
++//// [b.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-A;
+-//// [e.js]
++//// [a.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-ns.A;
+-
+-
+-//// [a.d.ts]
+-export declare class A {
++exports.A = void 0;
++class A {
+ }
+-//// [b.d.ts]
+-export type * from './a';
+-//// [c.d.ts]
+-export type * as ns from './a';
+-//// [d.d.ts]
+-export {};
+-//// [e.d.ts]
+-export {};
++exports.A = A;

@@ -1,0 +1,31 @@
+--- old.manyCompilerErrorsInTheTwoFiles.js
++++ new.manyCompilerErrorsInTheTwoFiles.js
+@@= skipped -11, +11 lines =@@
+ to
+ limit
+ 
++//// [b.js]
++fhqwhgads;
++to;
++limit;
+ //// [a.js]
+-var a = !;
+-!;
+-var b = !;
+-!;
+-!;
++const a = !();
++!();
++const b = !();
++!();
++!();
+ !OK;
+ HERE;
+ 's A shouty thing;
+ GOTTA;
+ GO;
+ FAST;
+-//// [b.js]
+-fhqwhgads;
+-to;
+-limit;

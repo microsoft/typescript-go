@@ -1,0 +1,23 @@
+--- old.jsFileCompilationWithEnabledCompositeOption.js
++++ new.jsFileCompilationWithEnabledCompositeOption.js
+@@= skipped -8, +8 lines =@@
+ }
+ 
+ 
+-//// [out.js]
+-var c = /** @class */ (function () {
+-    function c() {
+-    }
+-    return c;
+-}());
++//// [b.js]
+ function foo() {
+ }
+-
+-
+-//// [out.d.ts]
+-declare class c {
++//// [a.js]
++class c {
+ }
+-declare function foo(): void;

@@ -1,0 +1,83 @@
+--- old.enumAssignmentCompat6.js
++++ new.enumAssignmentCompat6.js
+@@= skipped -77, +77 lines =@@
+     }
+ })()
+ 
++//// [f.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.x = exports.DiagnosticCategory = void 0;
++var DiagnosticCategory;
++(function (DiagnosticCategory) {
++    DiagnosticCategory[DiagnosticCategory["Warning"] = 0] = "Warning";
++    DiagnosticCategory[DiagnosticCategory["Error"] = 1] = "Error";
++    DiagnosticCategory[DiagnosticCategory["Suggestion"] = 2] = "Suggestion";
++    DiagnosticCategory[DiagnosticCategory["Message"] = 3] = "Message";
++})(DiagnosticCategory || (exports.DiagnosticCategory = DiagnosticCategory = {}));
++(() => {
++    let DiagnosticCategory;
++    (function (DiagnosticCategory) {
++        DiagnosticCategory["Warning"] = "Warning";
++        DiagnosticCategory["Error"] = "Error";
++        DiagnosticCategory["Suggestion"] = "Suggestion";
++        DiagnosticCategory["Message"] = "Message";
++    })(DiagnosticCategory || (DiagnosticCategory = {}));
++    function f(y) {
++        exports.x = y;
++        y = exports.x;
++    }
++})();
+ //// [a.js]
+ var numerics;
+ (function (numerics) {
+-    var DiagnosticCategory;
++    let DiagnosticCategory;
+     (function (DiagnosticCategory) {
+         DiagnosticCategory[DiagnosticCategory["Warning"] = 0] = "Warning";
+         DiagnosticCategory[DiagnosticCategory["Error"] = 1] = "Error";
+         DiagnosticCategory[DiagnosticCategory["Suggestion"] = 2] = "Suggestion";
+         DiagnosticCategory[DiagnosticCategory["Message"] = 3] = "Message";
+     })(DiagnosticCategory = numerics.DiagnosticCategory || (numerics.DiagnosticCategory = {}));
+-    var DiagnosticCategory2;
++    let DiagnosticCategory2;
+     (function (DiagnosticCategory2) {
+         DiagnosticCategory2[DiagnosticCategory2["Warning"] = 0] = "Warning";
+         DiagnosticCategory2[DiagnosticCategory2["Error"] = 1] = "Error";
+@@= skipped -20, +44 lines =@@
+ })(numerics || (numerics = {}));
+ var strings;
+ (function (strings) {
+-    var DiagnosticCategory;
++    let DiagnosticCategory;
+     (function (DiagnosticCategory) {
+         DiagnosticCategory["Warning"] = "Warning";
+         DiagnosticCategory["Error"] = "Error";
+@@= skipped -24, +24 lines =@@
+     x = y;
+     y = x;
+ }
+-//// [f.js]
+-"use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });
+-exports.x = exports.DiagnosticCategory = void 0;
+-var DiagnosticCategory;
+-(function (DiagnosticCategory) {
+-    DiagnosticCategory[DiagnosticCategory["Warning"] = 0] = "Warning";
+-    DiagnosticCategory[DiagnosticCategory["Error"] = 1] = "Error";
+-    DiagnosticCategory[DiagnosticCategory["Suggestion"] = 2] = "Suggestion";
+-    DiagnosticCategory[DiagnosticCategory["Message"] = 3] = "Message";
+-})(DiagnosticCategory || (exports.DiagnosticCategory = DiagnosticCategory = {}));
+-(function () {
+-    var DiagnosticCategory;
+-    (function (DiagnosticCategory) {
+-        DiagnosticCategory["Warning"] = "Warning";
+-        DiagnosticCategory["Error"] = "Error";
+-        DiagnosticCategory["Suggestion"] = "Suggestion";
+-        DiagnosticCategory["Message"] = "Message";
+-    })(DiagnosticCategory || (DiagnosticCategory = {}));
+-    function f(y) {
+-        exports.x = y;
+-        y = exports.x;
+-    }
+-})();

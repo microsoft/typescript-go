@@ -1,0 +1,11 @@
+--- old.jsFileCompilationModuleSyntax.js
++++ new.jsFileCompilationModuleSyntax.js
+@@= skipped -0, +-1 lines =@@
+-<no content>
+@@= skipped --1, +1 lines =@@
++//// [tests/cases/compiler/jsFileCompilationModuleSyntax.ts] ////
++
++//// [a.js]
++module M { }
++
++//// [a.js]

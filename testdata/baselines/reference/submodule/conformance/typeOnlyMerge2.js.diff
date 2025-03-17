@@ -1,0 +1,30 @@
+--- old.typeOnlyMerge2.js
++++ new.typeOnlyMerge2.js
+@@= skipped -18, +18 lines =@@
+ A;
+ 
+ 
+-//// [a.js]
++//// [d.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-exports.A = void 0;
+-var A = {};
+-exports.A = A;
+-//// [b.js]
++A;
++//// [c.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-//// [c.js]
++//// [b.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-//// [d.js]
++//// [a.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-A;
++exports.A = void 0;
++const A = {};
++exports.A = A;

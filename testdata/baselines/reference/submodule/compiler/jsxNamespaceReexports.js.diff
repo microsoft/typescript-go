@@ -1,0 +1,26 @@
+--- old.jsxNamespaceReexports.js
++++ new.jsxNamespaceReexports.js
+@@= skipped -14, +14 lines =@@
+ 
+ const content = <my-element/>;
+ 
+-//// [library.js]
++//// [index.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-exports.createElement = createElement;
+-function createElement(element, props) {
+-    var children = [];
+-    for (var _i = 2; _i < arguments.length; _i++) {
+-        children[_i - 2] = arguments[_i];
+-    }
+-}
+-//// [index.js]
++const content = <my-element />;
++//// [library.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-var MyLib = require("./library");
+-var content = MyLib.createElement("my-element", null);
++exports.createElement = createElement;
++function createElement(element, props, ...children) { }

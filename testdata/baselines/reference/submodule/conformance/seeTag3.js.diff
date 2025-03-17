@@ -1,0 +1,9 @@
+--- old.seeTag3.js
++++ new.seeTag3.js
+@@= skipped -6, +6 lines =@@
+ 
+ 
+ //// [seeTag3.js]
+-/** @see [The typescript web site](https://typescriptlang.org)  */
+ function theWholeThing() {
+ }

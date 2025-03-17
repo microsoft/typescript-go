@@ -1,0 +1,23 @@
+--- old.es6ImportNamedImportMergeErrors.js
++++ new.es6ImportNamedImportMergeErrors.js
+@@= skipped -18, +18 lines =@@
+ import { z1 as z } from "./es6ImportNamedImportMergeErrors_0"; // should be error
+ 
+ 
++//// [es6ImportNamedImportMergeErrors_1.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++var x = 10;
++var x44 = 10;
+ //// [es6ImportNamedImportMergeErrors_0.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+@@= skipped -8, +13 lines =@@
+ exports.x = exports.a;
+ exports.z = exports.a;
+ exports.z1 = exports.a;
+-//// [es6ImportNamedImportMergeErrors_1.js]
+-"use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });
+-var x = 10;
+-var x44 = 10;

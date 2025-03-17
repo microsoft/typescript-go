@@ -1,0 +1,30 @@
+--- old.moduleSymbolMerging.js
++++ new.moduleSymbolMerging.js
+@@= skipped -11, +11 lines =@@
+ 
+ 
+ 
+-//// [A.js]
+ //// [B.js]
+-///<reference path="A.ts" preserve="true" />
+ var A;
+ (function (A) {
+     ;
+@@= skipped -12, +10 lines =@@
+     function f() { return null; }
+     B.f = f;
+ })(B || (B = {}));
+-
+-
+-//// [A.d.ts]
+-declare namespace A {
+-    interface I {
+-    }
+-}
+-//// [B.d.ts]
+-/// <reference path="A.d.ts" preserve="true" />
+-declare namespace A { }
+-declare namespace B {
+-    function f(): A.I;
+-}
++//// [A.js]

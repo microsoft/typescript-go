@@ -1,0 +1,39 @@
+--- old.importEquals3.js
++++ new.importEquals3.js
+@@= skipped -19, +19 lines =@@
+ console.log(x);
+ 
+ 
+-//// [a.js]
++//// [c.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-exports.A = void 0;
+-var A = /** @class */ (function () {
+-    function A() {
+-    }
+-    return A;
+-}());
+-exports.A = A;
++const b = require("./b");
++console.log(x);
+ //// [b.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.x = exports.A = void 0;
+-var A = a.A; // Error
+-exports.A = A;
+-var x = 0;
++const x = 0;
+ exports.x = x;
+-//// [c.js]
++//// [a.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-var b = require("./b");
+-var x = b.x;
+-console.log(x);
++exports.A = void 0;
++class A {
++}
++exports.A = A;

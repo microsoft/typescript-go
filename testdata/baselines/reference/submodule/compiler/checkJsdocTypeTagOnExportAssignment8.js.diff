@@ -1,0 +1,21 @@
+--- old.checkJsdocTypeTagOnExportAssignment8.js
++++ new.checkJsdocTypeTagOnExportAssignment8.js
+@@= skipped -15, +15 lines =@@
+ }
+ 
+ 
+-//// [checkJsdocTypeTagOnExportAssignment8.js]
+ //// [a.js]
+ "use strict";
+-/**
+- * @typedef Foo
+- * @property {string} a
+- * @property {'b'} b
+- */
+ Object.defineProperty(exports, "__esModule", { value: true });
+-/** @type {Foo} */
+ exports.default = {
+     a: 'a',
+     b: 'b'
+ };
++//// [checkJsdocTypeTagOnExportAssignment8.js]

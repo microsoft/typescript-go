@@ -1,0 +1,25 @@
+--- old.importHelpersWithImportStarAs(esmoduleinterop=false,module=commonjs).js
++++ new.importHelpersWithImportStarAs(esmoduleinterop=false,module=commonjs).js
+@@= skipped -11, +11 lines =@@
+     function __importStar(m: any): void;
+ }
+ 
++//// [b.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.a = void 0;
++const a = require("./a");
++exports.a = a;
+ //// [a.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+@@= skipped -7, +13 lines =@@
+ class A {
+ }
+ exports.A = A;
+-//// [b.js]
+-"use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });
+-exports.a = void 0;
+-const a = require("./a");
+-exports.a = a;

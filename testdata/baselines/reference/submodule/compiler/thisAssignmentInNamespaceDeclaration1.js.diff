@@ -1,0 +1,21 @@
+--- old.thisAssignmentInNamespaceDeclaration1.js
++++ new.thisAssignmentInNamespaceDeclaration1.js
+@@= skipped -10, +10 lines =@@
+ }
+ 
+ 
+-//// [a.js]
+-var foo;
+-(function (foo) {
+-    this.bar = 4;
+-})(foo || (foo = {}));
+ //// [b.js]
+ var blah;
+ (function (blah) {
+     this.prop = 42;
+ })(blah || (blah = {}));
++//// [a.js]
++var foo;
++(function (foo) {
++    this.bar = 4;
++})(foo || (foo = {}));

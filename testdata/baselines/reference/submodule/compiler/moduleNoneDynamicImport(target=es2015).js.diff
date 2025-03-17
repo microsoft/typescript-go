@@ -1,0 +1,11 @@
+--- old.moduleNoneDynamicImport(target=es2015).js
++++ new.moduleNoneDynamicImport(target=es2015).js
+@@= skipped -6, +6 lines =@@
+ export default 1;
+ 
+ 
++//// [b.js]
++export default 1;
+ //// [a.js]
+-const foo = Promise.resolve().then(() => require("b"));
++const foo = import("./b");

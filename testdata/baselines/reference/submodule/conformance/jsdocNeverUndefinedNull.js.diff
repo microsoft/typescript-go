@@ -1,0 +1,16 @@
+--- old.jsdocNeverUndefinedNull.js
++++ new.jsdocNeverUndefinedNull.js
+@@= skipped -10, +10 lines =@@
+ }
+ 
+ 
+-//// [out.js]
+-/**
+- * @param {never} p1
+- * @param {undefined} p2
+- * @param {null} p3
+- * @returns {void} nothing
+- */
++//// [in.js]
+ function f(p1, p2, p3) {
+ }

@@ -1,0 +1,22 @@
+--- old.jsFileCompilationWithOutFileNameSameAsInputJsFile.js
++++ new.jsFileCompilationWithOutFileNameSameAsInputJsFile.js
+@@= skipped -0, +-1 lines =@@
+-<no content>
+@@= skipped --1, +1 lines =@@
++//// [tests/cases/compiler/jsFileCompilationWithOutFileNameSameAsInputJsFile.ts] ////
++
++//// [a.ts]
++class c {
++}
++
++//// [b.js]
++function foo() {
++}
++
++
++//// [b.js]
++function foo() {
++}
++//// [a.js]
++class c {
++}

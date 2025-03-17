@@ -1,0 +1,30 @@
+--- old.contextualOverloadListFromArrayUnion.js
++++ new.contextualOverloadListFromArrayUnion.js
+@@= skipped -64, +64 lines =@@
+ })
+ 
+ 
+-//// [one.js]
+-export const yThen = y.map(item => item.length);
+-//// [two.js]
+-export const yThen = y.map(item => item.length);
+ //// [three.js]
+ const resizeObserver = new ResizeObserver(([entry]) => {
+     entry;
+@@= skipped -22, +18 lines =@@
+                     callback(error, null);
+                 }
+                 else {
+-                    // must use postfix-!, since `error` and `result` don't have a
+-                    // causal relationship when the overloads are combined
+                     results.push(result);
+                     next();
+                 }
+@@= skipped -22, +20 lines =@@
+         console.log(results);
+     }
+ });
++//// [two.js]
++export const yThen = y.map(item => item.length);
++//// [one.js]
++export const yThen = y.map(item => item.length);

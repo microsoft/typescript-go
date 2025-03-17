@@ -1,0 +1,24 @@
+--- old.unusedImports1.js
++++ new.unusedImports1.js
+@@= skipped -7, +7 lines =@@
+ //// [file2.ts]
+ import {Calculator} from "./file1"
+ 
++//// [file2.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
+ //// [file1.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.Calculator = void 0;
+-var Calculator = /** @class */ (function () {
+-    function Calculator() {
+-    }
+-    return Calculator;
+-}());
++class Calculator {
++}
+ exports.Calculator = Calculator;
+-//// [file2.js]
+-"use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });

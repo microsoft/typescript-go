@@ -1,0 +1,20 @@
+--- old.jsdocLinkTag3.js
++++ new.jsdocLinkTag3.js
+@@= skipped -11, +11 lines =@@
+ export function foo(a: string) {}
+ 
+ 
+-//// [a.js]
+-"use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });
+ //// [b.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.foo = foo;
+-/**
+- * @param {number} a - see {@link A}
+- */
+ function foo(a) { }
++//// [a.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });

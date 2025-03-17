@@ -1,0 +1,25 @@
+--- old.moduleExportDuplicateAlias2.js
++++ new.moduleExportDuplicateAlias2.js
+@@= skipped -11, +11 lines =@@
+ apply()
+ 
+ 
+-//// [moduleExportAliasDuplicateAlias.js]
+-"use strict";
+-module.exports.apply = undefined;
+-function a() { }
+-module.exports.apply = a;
+-module.exports.apply = a;
+-module.exports.apply();
+ //// [test.js]
+-"use strict";
+-var apply = require('./moduleExportAliasDuplicateAlias').apply;
++const { apply } = require('./moduleExportAliasDuplicateAlias');
+ apply();
+-
+-
+-//// [moduleExportAliasDuplicateAlias.d.ts]
+-export { a as apply };
+-declare function a(): void;
+-//// [test.d.ts]
+-export {};

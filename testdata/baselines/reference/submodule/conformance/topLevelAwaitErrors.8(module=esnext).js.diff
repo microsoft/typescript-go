@@ -1,0 +1,12 @@
+--- old.topLevelAwaitErrors.8(module=esnext).js
++++ new.topLevelAwaitErrors.8(module=esnext).js
+@@= skipped -8, +8 lines =@@
+ export default _await;
+ 
+ 
+-//// [other.js]
+-export default _await;
+ //// [index.js]
+ export {};
++//// [other.js]
++export default _await;

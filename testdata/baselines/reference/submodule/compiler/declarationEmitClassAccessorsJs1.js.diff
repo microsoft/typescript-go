@@ -1,0 +1,30 @@
+--- old.declarationEmitClassAccessorsJs1.js
++++ new.declarationEmitClassAccessorsJs1.js
+@@= skipped -18, +18 lines =@@
+ }
+ 
+ 
+-
+-
+-//// [index.d.ts]
+-export class VFile {
+-    /**
+-     * @param {URL | string} path
+-     */
+-    set path(path: string | URL);
+-    /**
+-     * @returns {string}
+-     */
+-    get path(): string;
++//// [index.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.VFile = void 0;
++class VFile {
++    get path() {
++        return '';
++    }
++    set path(path) {
++    }
+ }
++exports.VFile = VFile;

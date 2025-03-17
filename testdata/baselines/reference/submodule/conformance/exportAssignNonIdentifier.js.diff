@@ -1,0 +1,52 @@
+--- old.exportAssignNonIdentifier.js
++++ new.exportAssignNonIdentifier.js
+@@= skipped -26, +26 lines =@@
+ 
+ 
+ 
+-//// [foo1.js]
++//// [foo8.js]
+ "use strict";
+-var x = 10;
+-module.exports = typeof x;
+-//// [foo2.js]
++module.exports = null;
++//// [foo7.js]
+ "use strict";
+-module.exports = "sausages";
+-//// [foo3.js]
++module.exports = Date || String;
++//// [foo6.js]
+ "use strict";
+-module.exports = /** @class */ (function () {
+-    function Foo3() {
+-    }
+-    return Foo3;
+-}());
+-//// [foo4.js]
+-"use strict";
+-module.exports = true;
++module.exports = void ;
+ //// [foo5.js]
+ "use strict";
+ module.exports = undefined;
+-//// [foo6.js]
++//// [foo4.js]
+ "use strict";
+-module.exports = void ;
+-//// [foo7.js]
++module.exports = true;
++//// [foo3.js]
+ "use strict";
+-module.exports = Date || String;
+-//// [foo8.js]
++module.exports = class Foo3 {
++};
++//// [foo2.js]
+ "use strict";
+-module.exports = null;
++module.exports = "sausages";
++//// [foo1.js]
++"use strict";
++var x = 10;
++module.exports = typeof x;

@@ -1,0 +1,34 @@
+--- old.systemExportAssignment2.js
++++ new.systemExportAssignment2.js
+@@= skipped -7, +7 lines =@@
+ import * as a from "a";
+ 
+ 
+-//// [a.js]
+-System.register([], function (exports_1, context_1) {
+-    "use strict";
+-    var a;
+-    var __moduleName = context_1 && context_1.id;
+-    return {
+-        setters: [],
+-        execute: function () {
+-            a = 10;
+-        }
+-    };
+-});
+ //// [b.js]
+-System.register([], function (exports_1, context_1) {
+-    "use strict";
+-    var __moduleName = context_1 && context_1.id;
+-    return {
+-        setters: [],
+-        execute: function () {
+-        }
+-    };
+-});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++//// [a.js]
++"use strict";
++var a = 10;
++module.exports = a;

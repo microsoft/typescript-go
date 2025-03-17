@@ -1,0 +1,29 @@
+--- old.assertionFunctionWildcardImport2.js
++++ new.assertionFunctionWildcardImport2.js
+@@= skipped -19, +19 lines =@@
+ }
+ 
+ 
++//// [test.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++const asserts = require("./asserts");
++function test(obj) {
++    asserts.isNonNullable(obj);
++    obj.trim();
++}
+ //// [asserts.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+@@= skipped -9, +17 lines =@@
+         throw new Error("Must not be a nullable value");
+     }
+ }
+-//// [test.js]
+-"use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });
+-var asserts = require("./asserts");
+-function test(obj) {
+-    asserts.isNonNullable(obj);
+-    obj.trim();
+-}

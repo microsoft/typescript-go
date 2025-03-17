@@ -1,0 +1,22 @@
+--- old.jsFileCompilationDuplicateFunctionImplementationFileOrderReversed.js
++++ new.jsFileCompilationDuplicateFunctionImplementationFileOrderReversed.js
+@@= skipped -11, +11 lines =@@
+ 
+ 
+ 
+-//// [out.js]
++//// [b.js]
+ function foo() {
+-    return 30;
++    return 10;
+ }
++//// [a.js]
+ function foo() {
+-    return 10;
++    return 30;
+ }
+-
+-
+-//// [out.d.ts]
+-declare function foo(): number;
+-declare function foo(): number;

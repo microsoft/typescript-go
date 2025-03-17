@@ -1,0 +1,24 @@
+--- old.reexportMissingDefault8.js
++++ new.reexportMissingDefault8.js
+@@= skipped -6, +6 lines =@@
+ //// [a.ts]
+ export { default } from "./b";
+ 
+-//// [b.js]
+-"use strict";
+-var b = null;
+-module.exports = b;
+ //// [a.js]
+ "use strict";
+ var __importDefault = (this && this.__importDefault) || function (mod) {
+@@= skipped -11, +7 lines =@@
+ };
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.default = void 0;
+-var b_1 = require("./b");
++const b_1 = require("./b");
+ Object.defineProperty(exports, "default", { enumerable: true, get: function () { return __importDefault(b_1).default; } });
++//// [b.js]
++"use strict";
++const b = null;
++module.exports = b;

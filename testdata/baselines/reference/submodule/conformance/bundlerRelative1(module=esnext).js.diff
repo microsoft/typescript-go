@@ -1,0 +1,16 @@
+--- old.bundlerRelative1(module=esnext).js
++++ new.bundlerRelative1(module=esnext).js
+@@= skipped -31, +31 lines =@@
+ import * as cjs from "./types/cjs";
+ 
+ 
+-//// [index.js]
+-export var x = 0;
+-//// [index.js]
+-export var y = 0;
+ //// [main.js]
+ export {};
++//// [index.js]
++export const y = 0;
++//// [index.js]
++export const x = 0;

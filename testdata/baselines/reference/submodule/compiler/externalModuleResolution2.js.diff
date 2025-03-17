@@ -1,0 +1,23 @@
+--- old.externalModuleResolution2.js
++++ new.externalModuleResolution2.js
+@@= skipped -16, +16 lines =@@
+ import x = require('./foo');
+ x.X // .ts should be picked
+ 
++//// [consumer.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++const x = require("./foo");
++x.X;
+ //// [foo.js]
+ "use strict";
+ var M2;
+@@= skipped -7, +12 lines =@@
+     M2.X = 1;
+ })(M2 || (M2 = {}));
+ module.exports = M2;
+-//// [consumer.js]
+-"use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });
+-var x = require("./foo");
+-x.X; // .ts should be picked

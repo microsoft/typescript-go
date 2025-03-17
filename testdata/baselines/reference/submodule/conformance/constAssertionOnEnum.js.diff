@@ -1,0 +1,55 @@
+--- old.constAssertionOnEnum.js
++++ new.constAssertionOnEnum.js
+@@= skipped -26, +26 lines =@@
+ (Foo).X as const;
+ 
+ 
+-//// [enum.js]
+-export var Foo;
++//// [more.js]
++export { Foo };
++var Foo;
+ (function (Foo) {
+-    Foo[Foo["A"] = 0] = "A";
+-    Foo[Foo["B"] = 1] = "B";
++    Foo[Foo["X"] = 0] = "X";
+ })(Foo || (Foo = {}));
+-//// [test.js]
+-import { Foo } from './enum';
+-var Bar;
+-(function (Bar) {
+-    Bar[Bar["A"] = 0] = "A";
+-    Bar[Bar["B"] = 1] = "B";
+-})(Bar || (Bar = {}));
+-let foo = Foo.A;
+-let bar = Bar.A;
++(Foo).X;
+ //// [ns.js]
+-"use strict";
+ var ns;
+ (function (ns) {
+     let Foo;
+@@= skipped -25, +16 lines =@@
+     })(Foo = ns.Foo || (ns.Foo = {}));
+     ns.Foo.X;
+ })(ns || (ns = {}));
+-//// [more.js]
+-export var Foo;
++//// [test.js]
++import { Foo } from './enum';
++var Bar;
++(function (Bar) {
++    Bar[Bar["A"] = 0] = "A";
++    Bar[Bar["B"] = 1] = "B";
++})(Bar || (Bar = {}));
++let foo = Foo.A;
++let bar = Bar.A;
++//// [enum.js]
++export { Foo };
++var Foo;
+ (function (Foo) {
+-    Foo[Foo["X"] = 0] = "X";
++    Foo[Foo["A"] = 0] = "A";
++    Foo[Foo["B"] = 1] = "B";
+ })(Foo || (Foo = {}));
+-(Foo).X;

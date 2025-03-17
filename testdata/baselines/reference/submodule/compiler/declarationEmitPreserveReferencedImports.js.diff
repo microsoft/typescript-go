@@ -1,0 +1,41 @@
+--- old.declarationEmitPreserveReferencedImports.js
++++ new.declarationEmitPreserveReferencedImports.js
+@@= skipped -13, +13 lines =@@
+ 
+ export const f = { o: o({ v: null! as Evt}) };
+ 
+-//// [utils.js]
++//// [main.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
++exports.f = void 0;
++const decl_1 = require("./decl");
++exports.f = { o: (0, decl_1.o)({ v: null }) };
+ //// [decl.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.o = void 0;
+-var o = function (o) { return function () { return null; }; };
++const o = (o) => () => null;
+ exports.o = o;
+-//// [main.js]
++//// [utils.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-exports.f = void 0;
+-var decl_1 = require("./decl");
+-exports.f = { o: (0, decl_1.o)({ v: null }) };
+-
+-
+-//// [utils.d.ts]
+-export interface Evt {
+-}
+-//// [decl.d.ts]
+-export declare const o: <T>(o: T) => () => T;
+-//// [main.d.ts]
+-import { Evt } from './utils';
+-export declare const f: {
+-    o: () => {
+-        v: Evt;
+-    };
+-};

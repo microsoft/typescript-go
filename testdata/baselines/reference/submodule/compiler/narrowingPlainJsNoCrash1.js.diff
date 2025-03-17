@@ -1,0 +1,10 @@
+--- old.narrowingPlainJsNoCrash1.js
++++ new.narrowingPlainJsNoCrash1.js
+@@= skipped -10, +10 lines =@@
+ 
+ 
+ //// [index.js]
+-// https://github.com/microsoft/TypeScript/issues/59594
+ var a$b = {};
+ var c, d;
+ d = a$b;

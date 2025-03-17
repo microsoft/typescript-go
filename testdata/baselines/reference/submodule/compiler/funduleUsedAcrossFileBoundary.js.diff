@@ -1,0 +1,13 @@
+--- old.funduleUsedAcrossFileBoundary.js
++++ new.funduleUsedAcrossFileBoundary.js
+@@= skipped -13, +13 lines =@@
+     var deferred = Q.defer<T>(); // used to be an error
+ }
+ 
+-//// [funduleUsedAcrossFileBoundary_file1.js]
+ //// [funduleUsedAcrossFileBoundary_file2.js]
+ function promiseWithCancellation(promise) {
+-    var deferred = Q.defer(); // used to be an error
++    var deferred = Q.defer();
+ }
++//// [funduleUsedAcrossFileBoundary_file1.js]
