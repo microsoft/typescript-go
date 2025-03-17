@@ -21,6 +21,7 @@ type Host interface {
 	// GetCompilerOptions was called GetCompilationSettings in the original code.
 	GetCompilerOptions() *core.CompilerOptions
 	GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget, packageJsonScope *packagejson.InfoCacheEntry) *ast.SourceFile
+	GetImpliedNodeFormat(fileName string, packageJsonScope *packagejson.InfoCacheEntry) core.ResolutionMode
 	// This responsibility was moved from the language service to the project,
 	// because they were bidirectionally interdependent.
 	GetProgram() *compiler.Program

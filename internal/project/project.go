@@ -141,8 +141,25 @@ func (p *Project) GetSourceFile(fileName string, path tspath.Path, languageVersi
 	return nil
 }
 
-func (p *Project) GetImpliedNodeFormat(fileName string, packageJsonScope *packagejson.InfoCacheEntry) core.ResolutionMode {
+func (p *Project) GetImpliedNodeFormatForFileWorker(path string, packageJsonScope *packagejson.InfoCacheEntry) core.ResolutionMode {
+	moduleResolution := p.GetProgram().Options().GetModuleResolutionKind()
+	shouldLookupFromPackageJson := core.ModuleResolutionKindNode16 <= moduleResolution && moduleResolution <= core.ModuleResolutionKindNodeNext || strings.Contains(path, "/node_modules/")
+
+	if tspath.FileExtensionIsOneOf(path, []string{tspath.ExtensionDmts, tspath.ExtensionMts, tspath.ExtensionMjs}) {
+		return core.ResolutionModeESM
+	}
+	if tspath.FileExtensionIsOneOf(path, []string{tspath.ExtensionDcts, tspath.ExtensionCts, tspath.ExtensionCjs}) {
+		return core.ResolutionModeCommonJS
+	}
+	if shouldLookupFromPackageJson && tspath.FileExtensionIsOneOf(path, []string{tspath.ExtensionDts, tspath.ExtensionTs, tspath.ExtensionTsx, tspath.ExtensionJs, tspath.ExtensionJsx}) {
+		return core.IfElse(packageJsonScope.Contents.Type.Value == "module", core.ResolutionModeESM, core.ResolutionModeCommonJS)
+	}
+
 	return core.ResolutionModeNone
+}
+
+func (p *Project) GetImpliedNodeFormat(fileName string, packageJsonScope *packagejson.InfoCacheEntry) core.ResolutionMode {
+	return p.GetImpliedNodeFormatForFileWorker(fileName, packageJsonScope)
 }
 
 // GetProgram implements LanguageServiceHost. Updates the program if needed.
