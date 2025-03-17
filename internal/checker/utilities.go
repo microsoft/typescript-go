@@ -1255,11 +1255,6 @@ func getThisParameter(signature *ast.Node) *ast.Node {
 	return nil
 }
 
-// Deprecated: use ast.IsThisParameter
-func parameterIsThisKeyword(parameter *ast.Node) bool {
-	return ast.IsThisParameter(parameter)
-}
-
 func isObjectOrArrayLiteralType(t *Type) bool {
 	return t.objectFlags&(ObjectFlagsObjectLiteral|ObjectFlagsArrayLiteral) != 0
 }
