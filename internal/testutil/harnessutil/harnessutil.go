@@ -16,6 +16,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/compiler/packagejson"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/repo"
@@ -355,15 +356,21 @@ type cachedCompilerHost struct {
 
 var sourceFileCache sync.Map
 
-func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget) *ast.SourceFile {
+func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget, packageJsonScope *packagejson.InfoCacheEntry) *ast.SourceFile {
 	text, _ := h.FS().ReadFile(fileName)
 
 	type sourceFileCacheKey struct {
 		core.SourceFileAffectingCompilerOptions
-		fileName        string
-		path            tspath.Path
-		languageVersion core.ScriptTarget
-		text            string
+		fileName             string
+		path                 tspath.Path
+		languageVersion      core.ScriptTarget
+		packageJsonTypeValue string
+		text                 string
+	}
+
+	packageJsonTypeValue := ""
+	if packageJsonScope != nil {
+		packageJsonTypeValue = packageJsonScope.Contents.Type.Value
 	}
 
 	key := sourceFileCacheKey{
@@ -371,6 +378,7 @@ func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path, la
 		fileName:                           fileName,
 		path:                               path,
 		languageVersion:                    languageVersion,
+		packageJsonTypeValue:               packageJsonTypeValue,
 		text:                               text,
 	}
 
@@ -384,7 +392,7 @@ func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path, la
 		sourceFile = parser.ParseJSONText(fileName, path, text)
 	} else {
 		// !!! JSDocParsingMode
-		sourceFile = parser.ParseSourceFile(fileName, path, text, languageVersion, scanner.JSDocParsingModeParseAll)
+		sourceFile = parser.ParseSourceFile(fileName, path, text, languageVersion, scanner.JSDocParsingModeParseAll, h.GetImpliedNodeFormat(fileName, packageJsonScope), packageJsonScope)
 	}
 
 	result, _ := sourceFileCache.LoadOrStore(key, sourceFile)

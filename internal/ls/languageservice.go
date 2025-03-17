@@ -1,8 +1,11 @@
 package ls
 
 import (
+	"strings"
+
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/compiler/packagejson"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -46,8 +49,29 @@ func (l *LanguageService) Trace(msg string) {
 }
 
 // GetSourceFile implements compiler.CompilerHost.
-func (l *LanguageService) GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget) *ast.SourceFile {
-	return l.host.GetSourceFile(fileName, path, languageVersion)
+func (l *LanguageService) GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget, packageJsonScope *packagejson.InfoCacheEntry) *ast.SourceFile {
+	return l.host.GetSourceFile(fileName, path, languageVersion, packageJsonScope)
+}
+
+func (l *LanguageService) GetImpliedNodeFormatForFileWorker(path string, packageJsonScope *packagejson.InfoCacheEntry) core.ResolutionMode {
+	moduleResolution := l.GetProgram().Options().GetModuleResolutionKind()
+	shouldLookupFromPackageJson := core.ModuleResolutionKindNode16 <= moduleResolution && moduleResolution <= core.ModuleResolutionKindNodeNext || strings.Contains(path, "/node_modules/")
+
+	if tspath.FileExtensionIsOneOf(path, []string{tspath.ExtensionDmts, tspath.ExtensionMts, tspath.ExtensionMjs}) {
+		return core.ResolutionModeESM
+	}
+	if tspath.FileExtensionIsOneOf(path, []string{tspath.ExtensionDcts, tspath.ExtensionCts, tspath.ExtensionCjs}) {
+		return core.ResolutionModeCommonJS
+	}
+	if shouldLookupFromPackageJson && tspath.FileExtensionIsOneOf(path, []string{tspath.ExtensionDts, tspath.ExtensionTs, tspath.ExtensionTsx, tspath.ExtensionJs, tspath.ExtensionJsx}) {
+		return core.IfElse(packageJsonScope.Contents.Type.Value == "module", core.ResolutionModeESM, core.ResolutionModeCommonJS)
+	}
+
+	return core.ResolutionModeNone
+}
+
+func (l *LanguageService) GetImpliedNodeFormat(fileName string, packageJsonScope *packagejson.InfoCacheEntry) core.ResolutionMode {
+	return l.GetImpliedNodeFormatForFileWorker(fileName, packageJsonScope)
 }
 
 // GetProgram updates the program if the project version has changed.
