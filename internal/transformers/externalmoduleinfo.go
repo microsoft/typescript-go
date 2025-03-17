@@ -249,7 +249,7 @@ const externalHelpersModuleNameText = "tslib"
 func createExternalHelpersImportDeclarationIfNeeded(emitContext *printer.EmitContext, sourceFile *ast.SourceFile, compilerOptions *core.CompilerOptions, hasExportStarsToExportValues bool, hasImportStar bool, hasImportDefault bool) *ast.Node /*ImportDeclaration | ImportEqualsDeclaration*/ {
 	if compilerOptions.ImportHelpers.IsTrue() && ast.IsEffectiveExternalModule(sourceFile, compilerOptions) {
 		moduleKind := compilerOptions.GetEmitModuleKind()
-		impliedModuleKind := ast.GetImpliedNodeFormatForEmitWorker(sourceFile, compilerOptions, emitContext.GetSourceFileMetaData(string(sourceFile.Path())))
+		impliedModuleKind := ast.GetImpliedNodeFormatForEmitWorker(sourceFile.FileName(), compilerOptions, emitContext.GetSourceFileMetaData(string(sourceFile.Path())))
 		helpers := getImportedHelpers(emitContext, sourceFile)
 		if (moduleKind >= core.ModuleKindES2015 && moduleKind <= core.ModuleKindESNext) ||
 			impliedModuleKind == core.ModuleKindESNext ||

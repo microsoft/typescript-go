@@ -224,7 +224,7 @@ func (t *parseTask) start(loader *fileLoader) {
 	})
 }
 
-func (p *fileLoader) CacheSourceFileMetaData(path string, packageJsonType string) {
+func (p *fileLoader) CacheSourceFileMetaData(path string) {
 	p.sourceFileMetaDatasMutex.Lock()
 	defer p.sourceFileMetaDatasMutex.Unlock()
 	if _, ok := p.sourceFileMetaDatas[path]; ok {
@@ -235,6 +235,7 @@ func (p *fileLoader) CacheSourceFileMetaData(path string, packageJsonType string
 		p.sourceFileMetaDatas = make(map[string]*ast.SourceFileMetaData)
 	}
 
+	packageJsonType := p.resolver.GetPackageJsonTypeIfApplicable(string(path))
 	impliedNodeFormat := ast.GetImpliedNodeFormatForFile(path, packageJsonType)
 	metadata := &ast.SourceFileMetaData{
 		PackageJsonType:   packageJsonType,
@@ -247,8 +248,7 @@ func (p *fileLoader) CacheSourceFileMetaData(path string, packageJsonType string
 func (p *fileLoader) parseSourceFile(fileName string) *ast.SourceFile {
 	path := tspath.ToPath(fileName, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
 	sourceFile := p.host.GetSourceFile(fileName, path, p.compilerOptions.GetEmitScriptTarget())
-	packageType := p.resolver.GetPackageJsonTypeIfApplicable(string(path))
-	p.CacheSourceFileMetaData(string(path), packageType)
+	p.CacheSourceFileMetaData(string(path))
 	return sourceFile
 }
 

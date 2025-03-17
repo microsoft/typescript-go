@@ -420,7 +420,7 @@ func (p *Program) GetEmitModuleFormatOfFileWorker(sourceFile *ast.SourceFile, op
 }
 
 func (p *Program) GetImpliedNodeFormatForEmit(sourceFile *ast.SourceFile) core.ResolutionMode {
-	return ast.GetImpliedNodeFormatForEmitWorker(sourceFile, p.compilerOptions, p.GetCachedSourceFileMetaData(sourceFile.FileName()))
+	return ast.GetImpliedNodeFormatForEmitWorker(sourceFile.FileName(), p.compilerOptions, p.GetCachedSourceFileMetaData(sourceFile.FileName()))
 }
 
 func (p *Program) CommonSourceDirectory() string {
