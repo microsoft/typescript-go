@@ -3402,7 +3402,7 @@ type ModuleDeclaration struct {
 	LocalsContainerBase
 	BodyBase
 	name    *ModuleName // ModuleName
-	Keyword Kind        // KindModuleKeyword (deprecated), KindNamespaceKeyword, KindGlobalKeyword (global augmentation)
+	Keyword Kind        // KindModuleKeyword, KindNamespaceKeyword, KindGlobalKeyword (global augmentation)
 }
 
 func (f *NodeFactory) NewModuleDeclaration(modifiers *ModifierList, keyword Kind, name *ModuleName, body *ModuleBody) *Node {

@@ -2198,10 +2198,6 @@ func getModuleInstanceStateWorker(node *Node, ancestors []*Node, visited map[Nod
 		return state
 	case KindModuleDeclaration:
 		return getModuleInstanceState(node, ancestors, visited)
-	case KindIdentifier:
-		if node.Flags&NodeFlagsIdentifierIsInJSDocNamespace != 0 {
-			return ModuleInstanceStateNonInstantiated
-		}
 	}
 	return ModuleInstanceStateInstantiated
 }
