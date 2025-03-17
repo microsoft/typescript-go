@@ -71,6 +71,7 @@ func DoTypeAndSymbolBaseline(
 
 			return sb.String()[:sb.Len()-1]
 		}
+		typesOpts.SkipDiff = len(program.UnsupportedExtensions()) != 0
 
 		checkBaselines(t, baselinePath, allFiles, fullWalker, header, typesOpts, false /*isSymbolBaseline*/)
 	})
