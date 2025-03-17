@@ -548,7 +548,7 @@ func getFileBasedTestConfigurationDescription(config TestConfiguration) string {
 func GetFileBasedTestConfigurations(t *testing.T, settings map[string]string, varyByOptions map[string]struct{}) []*NamedTestConfiguration {
 	var optionEntries [][]string // Each element slice has the option name as the first element, and the values as the rest
 	variationCount := 1
-	nonVariyingOptions := make(map[string]string)
+	nonVaryingOptions := make(map[string]string)
 	for option, value := range settings {
 		if _, ok := varyByOptions[option]; ok {
 			entries := splitOptionValues(t, value, option)
@@ -559,11 +559,11 @@ func GetFileBasedTestConfigurations(t *testing.T, settings map[string]string, va
 				}
 				optionEntries = append(optionEntries, append([]string{option}, entries...))
 			} else if len(entries) == 1 {
-				nonVariyingOptions[option] = entries[0]
+				nonVaryingOptions[option] = entries[0]
 			}
 		} else {
 			// Variation is not supported for the option
-			nonVariyingOptions[option] = value
+			nonVaryingOptions[option] = value
 		}
 	}
 
@@ -573,12 +573,12 @@ func GetFileBasedTestConfigurations(t *testing.T, settings map[string]string, va
 		varyingConfigurations := computeFileBasedTestConfigurationVariations(variationCount, optionEntries)
 		for _, varyingConfig := range varyingConfigurations {
 			description := getFileBasedTestConfigurationDescription(varyingConfig)
-			maps.Copy(varyingConfig, nonVariyingOptions)
+			maps.Copy(varyingConfig, nonVaryingOptions)
 			configurations = append(configurations, &NamedTestConfiguration{description, varyingConfig})
 		}
-	} else if len(nonVariyingOptions) > 0 {
+	} else if len(nonVaryingOptions) > 0 {
 		// Only non-varying options
-		configurations = append(configurations, &NamedTestConfiguration{"", nonVariyingOptions})
+		configurations = append(configurations, &NamedTestConfiguration{"", nonVaryingOptions})
 	}
 	return configurations
 }
