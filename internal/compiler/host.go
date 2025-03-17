@@ -15,7 +15,7 @@ type CompilerHost interface {
 	GetCurrentDirectory() string
 	NewLine() string
 	Trace(msg string)
-	GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget, packageJsonType string) *ast.SourceFile
+	GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget) *ast.SourceFile
 }
 
 type FileInfo struct {
@@ -26,10 +26,11 @@ type FileInfo struct {
 var _ CompilerHost = (*compilerHost)(nil)
 
 type compilerHost struct {
-	options            *core.CompilerOptions
-	currentDirectory   string
-	fs                 vfs.FS
-	defaultLibraryPath string
+	options                  *core.CompilerOptions
+	currentDirectory         string
+	fs                       vfs.FS
+	defaultLibraryPath       string
+	pathToSourceFileMetaData map[string]*ast.SourceFileMetaData
 }
 
 func NewCompilerHost(options *core.CompilerOptions, currentDirectory string, fs vfs.FS, defaultLibraryPath string) CompilerHost {
@@ -38,6 +39,7 @@ func NewCompilerHost(options *core.CompilerOptions, currentDirectory string, fs 
 	h.currentDirectory = currentDirectory
 	h.fs = fs
 	h.defaultLibraryPath = defaultLibraryPath
+	h.pathToSourceFileMetaData = make(map[string]*ast.SourceFileMetaData)
 	return h
 }
 
@@ -68,16 +70,11 @@ func (h *compilerHost) Trace(msg string) {
 	//!!! TODO: implement
 }
 
-func (h *compilerHost) GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget, packageJsonType string) *ast.SourceFile {
+func (h *compilerHost) GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget) *ast.SourceFile {
 	text, _ := h.FS().ReadFile(fileName)
 	if tspath.FileExtensionIs(fileName, tspath.ExtensionJson) {
 		return parser.ParseJSONText(fileName, path, text)
 	}
 
-	var moduleResolutionKind core.ModuleResolutionKind
-	if h.options != nil {
-		moduleResolutionKind = h.options.GetModuleResolutionKind()
-	}
-
-	return parser.ParseSourceFile(fileName, path, text, languageVersion, scanner.JSDocParsingModeParseForTypeErrors, moduleResolutionKind, packageJsonType)
+	return parser.ParseSourceFile(fileName, path, text, languageVersion, scanner.JSDocParsingModeParseForTypeErrors)
 }

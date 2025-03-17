@@ -355,7 +355,7 @@ type cachedCompilerHost struct {
 
 var sourceFileCache sync.Map
 
-func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget, packageJsonType string) *ast.SourceFile {
+func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget) *ast.SourceFile {
 	text, _ := h.FS().ReadFile(fileName)
 
 	type sourceFileCacheKey struct {
@@ -372,7 +372,6 @@ func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path, la
 		fileName:                           fileName,
 		path:                               path,
 		languageVersion:                    languageVersion,
-		packageJsonType:                    packageJsonType,
 		text:                               text,
 	}
 
@@ -386,12 +385,7 @@ func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path, la
 		sourceFile = parser.ParseJSONText(fileName, path, text)
 	} else {
 		// !!! JSDocParsingMode
-		var moduleResolutionKind core.ModuleResolutionKind
-		if h.options != nil {
-			moduleResolutionKind = h.options.GetModuleResolutionKind()
-		}
-
-		sourceFile = parser.ParseSourceFile(fileName, path, text, languageVersion, scanner.JSDocParsingModeParseAll, moduleResolutionKind, packageJsonType)
+		sourceFile = parser.ParseSourceFile(fileName, path, text, languageVersion, scanner.JSDocParsingModeParseAll)
 	}
 
 	result, _ := sourceFileCache.LoadOrStore(key, sourceFile)

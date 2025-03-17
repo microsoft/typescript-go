@@ -23,6 +23,7 @@ type EmitHost interface {
 	CommonSourceDirectory() string
 	IsEmitBlocked(file string) bool
 	WriteFile(fileName string, text string, writeByteOrderMark bool, relatedSourceFiles []*ast.SourceFile, data *WriteFileData) error
+	GetCachedSourceFileMetaData(path string) *ast.SourceFileMetaData
 	GetEmitResolver(file *ast.SourceFile, skipDiagnostics bool) printer.EmitResolver
 }
 
@@ -53,4 +54,8 @@ func (host *emitHost) WriteFile(fileName string, text string, writeByteOrderMark
 func (host *emitHost) GetEmitResolver(file *ast.SourceFile, skipDiagnostics bool) printer.EmitResolver {
 	checker := host.program.GetTypeCheckerForFile(file)
 	return checker.GetEmitResolver(file, skipDiagnostics)
+}
+
+func (host *emitHost) GetCachedSourceFileMetaData(path string) *ast.SourceFileMetaData {
+	return host.program.GetCachedSourceFileMetaData(path)
 }

@@ -19,7 +19,7 @@ type Host interface {
 	GetRootFileNames() []string
 	// GetCompilerOptions was called GetCompilationSettings in the original code.
 	GetCompilerOptions() *core.CompilerOptions
-	GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget, packageJsonType string) *ast.SourceFile
+	GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget) *ast.SourceFile
 	// This responsibility was moved from the language service to the project,
 	// because they were bidirectionally interdependent.
 	GetProgram() *compiler.Program

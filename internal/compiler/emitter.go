@@ -20,15 +20,16 @@ const (
 )
 
 type emitter struct {
-	host               EmitHost
-	emitOnly           emitOnly
-	emittedFilesList   []string
-	emitterDiagnostics ast.DiagnosticsCollection
-	emitSkipped        bool
-	sourceMapDataList  []*sourceMapEmitResult
-	writer             printer.EmitTextWriter
-	paths              *outputPaths
-	sourceFile         *ast.SourceFile
+	host                  EmitHost
+	emitOnly              emitOnly
+	emittedFilesList      []string
+	emitterDiagnostics    ast.DiagnosticsCollection
+	emitSkipped           bool
+	sourceMapDataList     []*sourceMapEmitResult
+	writer                printer.EmitTextWriter
+	paths                 *outputPaths
+	sourceFile            *ast.SourceFile
+	sourceFileMetaDataMap map[string]*ast.SourceFileMetaData
 }
 
 func (e *emitter) emit() {
@@ -105,6 +106,7 @@ func (e *emitter) emitJsFile(sourceFile *ast.SourceFile, jsFilePath string, sour
 	}
 
 	emitContext := printer.NewEmitContext()
+	emitContext.SetSourceFileMetaDataMap(e.sourceFileMetaDataMap)
 	for _, transformer := range e.getScriptTransformers(emitContext, sourceFile) {
 		sourceFile = transformer.TransformSourceFile(sourceFile)
 	}

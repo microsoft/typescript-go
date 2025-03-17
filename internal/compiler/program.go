@@ -49,6 +49,8 @@ type Program struct {
 	files       []*ast.SourceFile
 	filesByPath map[tspath.Path]*ast.SourceFile
 
+	sourceFileMetaDataMap map[string]*ast.SourceFileMetaData
+
 	// The below settings are to track if a .js file should be add to the program if loaded via searching under node_modules.
 	// This works as imported modules are discovered recursively in a depth first manner, specifically:
 	// - For each root file, findSourceFile is called.
@@ -65,13 +67,12 @@ type Program struct {
 	commonSourceDirectoryOnce sync.Once
 }
 
-var extensions = []string{".ts", ".tsx"}
-
 func NewProgram(options ProgramOptions) *Program {
 	p := &Program{}
 	p.programOptions = options
 	p.compilerOptions = options.Options
 	p.configFileParsingDiagnostics = slices.Clip(options.ConfigFileParsingDiagnostics)
+	p.sourceFileMetaDataMap = make(map[string]*ast.SourceFileMetaData)
 	if p.compilerOptions == nil {
 		p.compilerOptions = &core.CompilerOptions{}
 	}
@@ -152,6 +153,8 @@ func NewProgram(options ProgramOptions) *Program {
 	p.files, p.resolvedModules = processAllProgramFiles(p.host, p.programOptions, p.compilerOptions, p.resolver, rootFiles, libs)
 	p.filesByPath = make(map[tspath.Path]*ast.SourceFile, len(p.files))
 	for _, file := range p.files {
+		packageType := p.resolver.GetPackageJsonTypeIfApplicable(string(file.Path()))
+		p.GetSourceFileMetaData(string(file.Path()), packageType) // We don't use the result, but we need to call it to cache the result
 		p.filesByPath[file.Path()] = file
 	}
 
@@ -406,16 +409,35 @@ func (p *Program) PrintSourceFileWithTypes() {
 	}
 }
 
+func (p *Program) GetSourceFileMetaData(path string, packageJsonType string) *ast.SourceFileMetaData {
+	if metaData, ok := p.sourceFileMetaDataMap[path]; ok {
+		return metaData
+	}
+
+	impliedNodeFormat := ast.GetImpliedNodeFormatForFile(path, packageJsonType)
+	metadata := &ast.SourceFileMetaData{
+		PackageJsonType:   packageJsonType,
+		ImpliedNodeFormat: impliedNodeFormat,
+	}
+
+	p.sourceFileMetaDataMap[path] = metadata
+	return metadata
+}
+
+func (p *Program) GetCachedSourceFileMetaData(path string) *ast.SourceFileMetaData {
+	return p.sourceFileMetaDataMap[path]
+}
+
 func (p *Program) GetEmitModuleFormatOfFile(sourceFile *ast.SourceFile) core.ModuleKind {
 	return p.GetEmitModuleFormatOfFileWorker(sourceFile, p.compilerOptions)
 }
 
 func (p *Program) GetEmitModuleFormatOfFileWorker(sourceFile *ast.SourceFile, options *core.CompilerOptions) core.ModuleKind {
-	return ast.GetEmitModuleFormatOfFileWorker(sourceFile, options)
+	return ast.GetEmitModuleFormatOfFileWorker(sourceFile, options, p.GetCachedSourceFileMetaData(sourceFile.FileName()))
 }
 
 func (p *Program) GetImpliedNodeFormatForEmit(sourceFile *ast.SourceFile) core.ResolutionMode {
-	return ast.GetImpliedNodeFormatForEmitWorker(sourceFile, p.compilerOptions)
+	return ast.GetImpliedNodeFormatForEmitWorker(sourceFile, p.compilerOptions, p.GetCachedSourceFileMetaData(sourceFile.FileName()))
 }
 
 func (p *Program) CommonSourceDirectory() string {
@@ -535,11 +557,12 @@ func (p *Program) Emit(options *EmitOptions) *EmitResult {
 
 	for _, sourceFile := range sourceFiles {
 		emitter := &emitter{
-			host:              host,
-			emittedFilesList:  nil,
-			sourceMapDataList: nil,
-			writer:            nil,
-			sourceFile:        sourceFile,
+			host:                  host,
+			emittedFilesList:      nil,
+			sourceMapDataList:     nil,
+			writer:                nil,
+			sourceFile:            sourceFile,
+			sourceFileMetaDataMap: p.sourceFileMetaDataMap,
 		}
 		emitters = append(emitters, emitter)
 		wg.Queue(func() {

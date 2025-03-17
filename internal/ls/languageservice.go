@@ -46,8 +46,8 @@ func (l *LanguageService) Trace(msg string) {
 }
 
 // GetSourceFile implements compiler.CompilerHost.
-func (l *LanguageService) GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget, packageJsonType string) *ast.SourceFile {
-	return l.host.GetSourceFile(fileName, path, languageVersion, packageJsonType)
+func (l *LanguageService) GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget) *ast.SourceFile {
+	return l.host.GetSourceFile(fileName, path, languageVersion)
 }
 
 // GetProgram updates the program if the project version has changed.

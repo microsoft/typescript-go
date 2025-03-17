@@ -56,5 +56,5 @@ func (tx *ImpliedModuleTransformer) visitSourceFile(node *ast.SourceFile) *ast.N
 
 func (tx *ImpliedModuleTransformer) getEmitModuleFormatOfFile(node *ast.SourceFile) core.ModuleKind {
 	// !!! host.getEmitModuleFormatOfFile?
-	return ast.GetEmitModuleFormatOfFileWorker(node, tx.compilerOptions)
+	return ast.GetEmitModuleFormatOfFileWorker(node, tx.compilerOptions, tx.emitContext.GetSourceFileMetaData(string(node.AsSourceFile().Path())))
 }

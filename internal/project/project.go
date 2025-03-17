@@ -124,7 +124,7 @@ func (p *Project) GetRootFileNames() []string {
 }
 
 // GetSourceFile implements LanguageServiceHost.
-func (p *Project) GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget, packageJsonType string) *ast.SourceFile {
+func (p *Project) GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget) *ast.SourceFile {
 	scriptKind := p.getScriptKind(fileName)
 	if scriptInfo := p.getOrCreateScriptInfoAndAttachToProject(fileName, scriptKind); scriptInfo != nil {
 		var (

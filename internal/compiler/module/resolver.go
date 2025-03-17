@@ -145,6 +145,24 @@ func (r *Resolver) GetPackageScopeForPath(directory string) *packagejson.InfoCac
 	return (&resolutionState{compilerOptions: r.compilerOptions, resolver: r}).getPackageScopeForPath(directory)
 }
 
+func (r *Resolver) GetPackageJsonTypeIfApplicable(path string) string {
+	var moduleResolutionKind core.ModuleResolutionKind
+	if r.compilerOptions != nil {
+		moduleResolutionKind = r.compilerOptions.GetModuleResolutionKind()
+	}
+
+	var packageJsonType string
+	shouldLookupFromPackageJson := core.ModuleResolutionKindNode16 <= moduleResolutionKind && moduleResolutionKind <= core.ModuleResolutionKindNodeNext || strings.Contains(path, "/node_modules/")
+	if shouldLookupFromPackageJson {
+		packageJsonScope := r.GetPackageScopeForPath(tspath.GetDirectoryPath(path))
+		if packageJsonScope.Exists() {
+			packageJsonType, _ = packageJsonScope.Contents.Type.GetValue()
+		}
+	}
+
+	return packageJsonType
+}
+
 func (r *Resolver) ResolveTypeReferenceDirective(typeReferenceDirectiveName string, containingFile string, resolutionMode core.ResolutionMode, redirectedReference *ResolvedProjectReference) *ResolvedTypeReferenceDirective {
 	traceEnabled := r.traceEnabled()
 
