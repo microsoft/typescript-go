@@ -1,12 +1,10 @@
 package checker
 
 import (
-	"bufio"
 	"cmp"
 	"slices"
 	"strings"
 	"sync"
-	"strconv"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
@@ -1220,63 +1218,84 @@ func isValidNumberString(s string, roundTripOnly bool) bool {
 	return !n.IsNaN() && !n.IsInf() && (!roundTripOnly || n.String() == s)
 }
 
-func isValidBigIntString(s string, roundTripOnly bool) bool {
+func isValidBigIntString(s string, roundtrip bool) bool {
 	if s == "" {
 		return false
 	}
 
-	if len(s) > 0 && s[len(s)-1] == 'n' {
+	// Create a scanner and set the text to the input string with an 'n' suffix
+	scan := scanner.NewScanner("", scanner.ScriptTargetESNext, false /*skipTrivia*/)
+	text := s + "n"
+	scan.SetText(text)
+	
+	// Scan the first token
+	token := scan.Scan()
+	
+	// Check for a negative sign
+	negative := token == ast.KindMinusToken
+	if negative {
+		token = scan.Scan()
+	}
+	
+	tokenFlags := scan.GetTokenFlags()
+	
+	// Validate that:
+	// 1. We scanned a BigIntLiteral token
+	// 2. The scanner consumed the entire input (plus the 'n' we added)
+	// A correct BigInt literal does not contain separators
+	if token != ast.KindBigIntLiteral || 
+	   scan.GetTokenEnd() != (len(s) + 1) || 
+	   (tokenFlags & scanner.TokenFlagsContainsSeparator) != 0 {
 		return false
 	}
-
-	scanner := bufio.NewScanner(strings.NewReader(s))
-	scanner.Split(bufio.ScanWords)
-
-	if !scanner.Scan() || scanner.Text() != s {
-		return false
-	}
-
-	_, err := strconv.ParseInt(s, 0, 64)
-	if err == nil {
-		if roundTripOnly {
-			negative := false
-			if len(s) > 0 && s[0] == '-' {
-				negative = true
-				s = s[1:]
-			}
-			
-			bigInt := jsnum.PseudoBigInt{
-				Negative:    negative,
-				Base10Value: parsePseudoBigInt(s),
-			}
-			
-			return s == pseudoBigIntToString(bigInt)
+	
+	// If roundtrip checking is required, verify the string representation matches the original
+	if roundtrip {
+		// Get the token value without the 'n' suffix
+		tokenValue := scan.GetTokenValue()
+		if negative {
+			tokenValue = "-" + tokenValue
 		}
-		return true
+		return s == tokenValue
 	}
+	
+	return true
+}
 
-	// Check for invalid formats
-	if strings.Contains(s, ".") || strings.Contains(s, "e") || strings.Contains(s, "E") || s == "-" {
+func isValidHexDigits(s string) bool {
+	if s == "" {
 		return false
 	}
-	
-	// Check for valid hex, binary, or octal format
-	if strings.HasPrefix(s, "0x") || strings.HasPrefix(s, "0X") {
-		_, err = strconv.ParseInt(s[2:], 16, 64)
-		return err == nil
-	} 
-	
-	if strings.HasPrefix(s, "0b") || strings.HasPrefix(s, "0B") {
-		_, err = strconv.ParseInt(s[2:], 2, 64)
-		return err == nil
-	} 
-	
-	if strings.HasPrefix(s, "0o") || strings.HasPrefix(s, "0O") {
-		_, err = strconv.ParseInt(s[2:], 8, 64)
-		return err == nil
+	for _, c := range s {
+		if !((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')) {
+			return false
+		}
 	}
-	
-	return false
+	return true
+}
+
+func isValidBinaryDigits(s string) bool {
+	if s == "" {
+		return false
+	}
+	for _, c := range s {
+		if c != '0' && c != '1' {
+			return false
+		}
+	}
+	return true
+}
+
+func isValidOctalDigits(s string) bool {
+	if s == "" {
+		return false
+	}
+	for _, c := range s {
+		if c < '0' || c > '7' {
+			return false
+		}
+	}
+	return true
 }
 
 func isValidESSymbolDeclaration(node *ast.Node) bool {
@@ -2153,3 +2172,19 @@ func allDeclarationsInSameSourceFile(symbol *ast.Symbol) bool {
 	}
 	return true
 }
+
+func isValidTypeForTemplateLiteralPlaceholder(source *Type, target *Type) bool {
+	if target.flags&TypeFlagsBigInt == 0 {
+		return false
+	}
+	if source.flags&TypeFlagsStringLiteral == 0 {
+		return false
+	}
+	value := source.data.(*LiteralType).value.(string)
+	// For BigInt template literals, reject strings with 'n' suffix
+	if len(value) > 0 && value[len(value)-1] == 'n' {
+		return false
+	}
+	return isValidBigIntString(value, false)
+}
+
