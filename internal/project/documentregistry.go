@@ -96,7 +96,6 @@ func (r *documentRegistry) getDocumentWorker(
 		// the script snapshot. If so, update it appropriately.
 		entry := entryAny.(*registryEntry)
 		if entry.sourceFile.Version != scriptInfo.version {
-
 			sourceFile := parser.ParseSourceFile(scriptInfo.fileName, scriptInfo.path, scriptInfo.text, scriptTarget, scanner.JSDocParsingModeParseAll, moduleResolutionKind, "")
 			sourceFile.Version = scriptInfo.version
 			entry.mu.Lock()
