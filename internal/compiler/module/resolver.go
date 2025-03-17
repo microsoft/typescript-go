@@ -146,6 +146,10 @@ func (r *Resolver) GetPackageScopeForPath(directory string) *packagejson.InfoCac
 }
 
 func (r *Resolver) GetPackageJsonTypeIfApplicable(path string) string {
+	if tspath.FileExtensionIsOneOf(path, []string{".mts", ".cts", "mjs", "cjs"}) {
+		return ""
+	}
+
 	var moduleResolutionKind core.ModuleResolutionKind
 	if r.compilerOptions != nil {
 		moduleResolutionKind = r.compilerOptions.GetModuleResolutionKind()

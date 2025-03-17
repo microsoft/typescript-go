@@ -16,15 +16,15 @@ import (
 //
 // NOTE: EmitContext is not guaranteed to be thread-safe.
 type EmitContext struct {
-	Factory               *ast.NodeFactory // Required. The NodeFactory to use to create new nodes
-	autoGenerate          map[*ast.MemberName]*AutoGenerateInfo
-	textSource            map[*ast.StringLiteralNode]*ast.Node
-	original              map[*ast.Node]*ast.Node
-	emitNodes             core.LinkStore[*ast.Node, emitNode]
-	varScopeStack         core.Stack[*varScope]
-	letScopeStack         core.Stack[*varScope]
-	emitHelpers           collections.OrderedSet[*EmitHelper]
-	sourceFileMetaDataMap map[string]*ast.SourceFileMetaData
+	Factory             *ast.NodeFactory // Required. The NodeFactory to use to create new nodes
+	autoGenerate        map[*ast.MemberName]*AutoGenerateInfo
+	textSource          map[*ast.StringLiteralNode]*ast.Node
+	original            map[*ast.Node]*ast.Node
+	emitNodes           core.LinkStore[*ast.Node, emitNode]
+	varScopeStack       core.Stack[*varScope]
+	letScopeStack       core.Stack[*varScope]
+	emitHelpers         collections.OrderedSet[*EmitHelper]
+	sourcefileMetaDatas map[string]*ast.SourceFileMetaData
 
 	isCustomPrologue           func(node *ast.Statement) bool
 	isHoistedFunction          func(node *ast.Statement) bool
@@ -626,8 +626,8 @@ func (c *EmitContext) NewRewriteRelativeImportExtensionsHelper(firstArgument *as
 	)
 }
 
-func (c *EmitContext) SetSourceFileMetaDataMap(sourceFileMetaDataMap map[string]*ast.SourceFileMetaData) {
-	c.sourceFileMetaDataMap = sourceFileMetaDataMap
+func (c *EmitContext) SetSourcefileMetaDatas(sourcefileMetaDatas map[string]*ast.SourceFileMetaData) {
+	c.sourcefileMetaDatas = sourcefileMetaDatas
 }
 
 //
@@ -956,5 +956,5 @@ func (c *EmitContext) VisitIterationBody(body *ast.Statement, visitor *ast.NodeV
 }
 
 func (c *EmitContext) GetSourceFileMetaData(path string) *ast.SourceFileMetaData {
-	return c.sourceFileMetaDataMap[path]
+	return c.sourcefileMetaDatas[path]
 }

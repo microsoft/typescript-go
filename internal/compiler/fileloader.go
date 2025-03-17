@@ -23,6 +23,9 @@ type fileLoader struct {
 	resolvedModulesMutex sync.Mutex
 	resolvedModules      map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule]
 
+	sourceFileMetaDatasMutex sync.Mutex
+	sourceFileMetaDatas      map[string]*ast.SourceFileMetaData
+
 	mu                      sync.Mutex
 	wg                      core.WorkGroup
 	tasksByFileName         map[string]*parseTask
@@ -40,7 +43,7 @@ func processAllProgramFiles(
 	resolver *module.Resolver,
 	rootFiles []string,
 	libs []string,
-) (files []*ast.SourceFile, resolvedModules map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule]) {
+) (files []*ast.SourceFile, resolvedModules map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule], sourceFileMetaDatas map[string]*ast.SourceFileMetaData) {
 	supportedExtensions := tsoptions.GetSupportedExtensions(compilerOptions, nil /*extraFileExtensions*/)
 	loader := fileLoader{
 		host:               host,
@@ -76,7 +79,7 @@ func processAllProgramFiles(
 	}
 	loader.sortLibs(libFiles)
 
-	return append(libFiles, files...), loader.resolvedModules
+	return append(libFiles, files...), loader.resolvedModules, loader.sourceFileMetaDatas
 }
 
 func (p *fileLoader) addRootTasks(files []string, isLib bool) {
@@ -221,9 +224,31 @@ func (t *parseTask) start(loader *fileLoader) {
 	})
 }
 
+func (p *fileLoader) CacheSourceFileMetaData(path string, packageJsonType string) {
+	p.sourceFileMetaDatasMutex.Lock()
+	defer p.sourceFileMetaDatasMutex.Unlock()
+	if _, ok := p.sourceFileMetaDatas[path]; ok {
+		return
+	}
+
+	if p.sourceFileMetaDatas == nil {
+		p.sourceFileMetaDatas = make(map[string]*ast.SourceFileMetaData)
+	}
+
+	impliedNodeFormat := ast.GetImpliedNodeFormatForFile(path, packageJsonType)
+	metadata := &ast.SourceFileMetaData{
+		PackageJsonType:   packageJsonType,
+		ImpliedNodeFormat: impliedNodeFormat,
+	}
+
+	p.sourceFileMetaDatas[path] = metadata
+}
+
 func (p *fileLoader) parseSourceFile(fileName string) *ast.SourceFile {
 	path := tspath.ToPath(fileName, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
 	sourceFile := p.host.GetSourceFile(fileName, path, p.compilerOptions.GetEmitScriptTarget())
+	packageType := p.resolver.GetPackageJsonTypeIfApplicable(string(path))
+	p.CacheSourceFileMetaData(string(path), packageType)
 	return sourceFile
 }
 
