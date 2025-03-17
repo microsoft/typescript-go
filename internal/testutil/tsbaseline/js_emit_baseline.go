@@ -104,7 +104,11 @@ func DoJsEmitBaseline(
 					expected := original.Content
 					actual := doc.Content
 					var patch strings.Builder
-					diff.Text("Expected\tThe full check baseline", "Actual\twith noCheck set", expected, actual, &patch)
+					err := diff.Text("Expected\tThe full check baseline", "Actual\twith noCheck set", expected, actual, &patch)
+					if err != nil {
+						panic(err)
+					}
+
 					var fileName string
 					if harnessSettings.FullEmitPaths {
 						fileName = removeTestPathPrefixes(doc.UnitName, false /*retainTrailingDirectorySeparator*/)

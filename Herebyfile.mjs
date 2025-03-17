@@ -204,7 +204,7 @@ export const generate = task({
 const goTestFlags = [
     ...goBuildFlags,
     ...goBuildTags(),
-    ...(options.tests ? [`-run=${options.tests}`] : [])
+    ...(options.tests ? [`-run=${options.tests}`] : []),
 ];
 
 const goTestEnv = {
