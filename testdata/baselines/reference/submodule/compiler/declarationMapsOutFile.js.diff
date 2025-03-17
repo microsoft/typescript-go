@@ -43,16 +43,6 @@
 -            b: number;
 -        };
 -        static make(): Foo;
-+//// [index.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.Foo = exports.c = exports.x = void 0;
-+const a_1 = require("./a");
-+Object.defineProperty(exports, "Foo", { enumerable: true, get: function () { return a_1.Foo; } });
-+const c = new a_1.Foo();
-+exports.c = c;
-+c.doThing({ a: 42 });
-+exports.x = c.doThing({ a: 12 });
 +//// [a.js]
 +"use strict";
 +Object.defineProperty(exports, "__esModule", { value: true });
@@ -75,3 +65,13 @@
 -}
 -//# sourceMappingURL=bundle.d.ts.map
 +exports.Foo = Foo;
++//// [index.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.Foo = exports.c = exports.x = void 0;
++const a_1 = require("./a");
++Object.defineProperty(exports, "Foo", { enumerable: true, get: function () { return a_1.Foo; } });
++const c = new a_1.Foo();
++exports.c = c;
++c.doThing({ a: 42 });
++exports.x = c.doThing({ a: 12 });

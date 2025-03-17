@@ -45,10 +45,21 @@ import { Observable } from "./observable"
 import "./x";
 
 
-//// [main.js]
+//// [x0.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-require("./x");
+exports.a = void 0;
+exports.a = 1;
+//// [observable.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.x = void 0;
+exports.x = 1;
+//// [test.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.b = void 0;
+exports.b = 1;
 //// [x.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -56,18 +67,7 @@ var N1;
 (function (N1) {
     N1.x = 1;
 })(N1 || (N1 = {}));
-//// [test.js]
+//// [main.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.b = void 0;
-exports.b = 1;
-//// [observable.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.x = void 0;
-exports.x = 1;
-//// [x0.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.a = void 0;
-exports.a = 1;
+require("./x");

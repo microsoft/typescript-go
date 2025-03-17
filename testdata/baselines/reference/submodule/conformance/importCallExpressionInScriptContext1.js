@@ -7,11 +7,11 @@ export function foo() { return "foo"; }
 var p1 = import("./0");
 function arguments() { } // this is allow as the file doesn't have implicit "use strict"
 
-//// [1.js]
-var p1 = Promise.resolve().then(() => require("./0"));
-function arguments() { }
 //// [0.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.foo = foo;
 function foo() { return "foo"; }
+//// [1.js]
+var p1 = Promise.resolve().then(() => require("./0"));
+function arguments() { }

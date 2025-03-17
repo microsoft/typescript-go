@@ -1,74 +1,51 @@
 --- old.exportDefault.js
 +++ new.exportDefault.js
-@@= skipped -27, +27 lines =@@
- new types.A(); // Error
- 
- 
--//// [a.js]
-+//// [g.js]
+@@= skipped -31, +31 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
--exports.A = void 0;
+ exports.A = void 0;
 -var A = /** @class */ (function () {
 -    function A() {
 -    }
 -    return A;
 -}());
--exports.A = A;
--//// [b.js]
-+new types.A();
-+//// [f.js]
++class A {
++}
+ exports.A = A;
+ //// [b.js]
  "use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--//// [c.js]
--"use strict";
- var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-     if (k2 === undefined) k2 = k;
-     var desc = Object.getOwnPropertyDescriptor(m, k);
-@@= skipped -39, +30 lines =@@
+@@= skipped -35, +32 lines =@@
      return result;
  };
  Object.defineProperty(exports, "__esModule", { value: true });
 -var types = __importStar(require("./a"));
--exports.default = types;
--//// [d.js]
-+const types = __importStar(require("./b"));
-+new types.default.A();
-+//// [e.js]
++const types = __importStar(require("./a"));
+ exports.default = types;
+ //// [d.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
 -new types.A(); // Error
--//// [e.js]
-+const types = require("./b");
 +new types.A();
-+//// [d.js]
+ //// [e.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
 -var types = require("./b");
 -new types.A(); // Error
--//// [f.js]
++const types = require("./b");
 +new types.A();
-+//// [c.js]
+ //// [f.js]
  "use strict";
  var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-     if (k2 === undefined) k2 = k;
 @@= skipped -37, +37 lines =@@
      return result;
  };
  Object.defineProperty(exports, "__esModule", { value: true });
 -var types = __importStar(require("./b"));
 -new types.default.A(); // Error
--//// [g.js]
-+const types = __importStar(require("./a"));
-+exports.default = types;
-+//// [b.js]
++const types = __importStar(require("./b"));
++new types.default.A();
+ //// [g.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
 -new types.A(); // Error
-+//// [a.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.A = void 0;
-+class A {
-+}
-+exports.A = A;
++new types.A();

@@ -26,7 +26,7 @@ export const name2 = ns.default.name;
     "default": "misedirection"
 }
 
-//// [index.mjs]
+//// [index.js]
 import pkg from "./package.json" with { type: "json" };
 export const name = pkg.name;
 import * as ns from "./package.json" with { type: "json" };
@@ -38,7 +38,7 @@ export const name = pkg.name;
 import * as ns from "./package.json";
 export const thing = ns;
 export const name2 = ns.default.name;
-//// [index.js]
+//// [index.mjs]
 import pkg from "./package.json" with { type: "json" };
 export const name = pkg.name;
 import * as ns from "./package.json" with { type: "json" };

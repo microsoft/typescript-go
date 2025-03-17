@@ -13,6 +13,6 @@ interface F { }
 
 
 
-//// [file1.js]
 //// [file0.js]
 var x = 10;
+//// [file1.js]

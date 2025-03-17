@@ -6,23 +6,15 @@
  
 -//// [out.js]
 -"use strict";
-+//// [b.js]
- var M;
- (function (M) {
--    function f() {
-+    function f2() {
-         var arguments = [];
-     }
--    M.f = f;
-+    M.f2 = f2;
- })(M || (M = {}));
 +//// [a.js]
  var M;
  (function (M) {
--    function f2() {
-+    function f() {
-         var arguments = [];
+     function f() {
+@@= skipped -9, +8 lines =@@
      }
--    M.f2 = f2;
-+    M.f = f;
+     M.f = f;
  })(M || (M = {}));
++//// [b.js]
+ var M;
+ (function (M) {
+     function f2() {

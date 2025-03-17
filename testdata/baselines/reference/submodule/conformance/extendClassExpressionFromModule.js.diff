@@ -1,17 +1,17 @@
 --- old.extendClassExpressionFromModule.js
 +++ new.extendClassExpressionFromModule.js
-@@= skipped -10, +10 lines =@@
- class y extends x {}
+@@= skipped -12, +12 lines =@@
  
- 
--//// [foo1.js]
--"use strict";
+ //// [foo1.js]
+ "use strict";
 -var x = /** @class */ (function () {
 -    function x() {
 -    }
 -    return x;
 -}());
--module.exports = x;
++class x {
++}
+ module.exports = x;
  //// [foo2.js]
  "use strict";
 -var __extends = (this && this.__extends) || (function () {
@@ -42,8 +42,3 @@
 -}(x));
 +class y extends x {
 +}
-+//// [foo1.js]
-+"use strict";
-+class x {
-+}
-+module.exports = x;

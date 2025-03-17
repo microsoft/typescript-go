@@ -10,5 +10,5 @@ interface F { }
 
 
 
-//// [file1.js]
 //// [file0.js]
+//// [file1.js]

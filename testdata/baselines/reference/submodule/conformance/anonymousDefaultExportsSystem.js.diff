@@ -1,10 +1,9 @@
 --- old.anonymousDefaultExportsSystem.js
 +++ new.anonymousDefaultExportsSystem.js
-@@= skipped -5, +5 lines =@@
- //// [b.ts]
+@@= skipped -6, +6 lines =@@
  export default function() {}
  
--//// [a.js]
+ //// [a.js]
 -System.register([], function (exports_1, context_1) {
 -    "use strict";
 -    var default_1;
@@ -18,6 +17,11 @@
 -        }
 -    };
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++class default_1 {
++}
++exports.default = default_1;
  //// [b.js]
 -System.register([], function (exports_1, context_1) {
 -    "use strict";
@@ -34,9 +38,3 @@
 +Object.defineProperty(exports, "__esModule", { value: true });
 +exports.default = default_1;
 +function default_1() { }
-+//// [a.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+class default_1 {
-+}
-+exports.default = default_1;

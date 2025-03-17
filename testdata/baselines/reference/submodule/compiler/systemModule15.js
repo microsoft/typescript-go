@@ -28,13 +28,17 @@ export default value;
 //// [file4.ts]
 export var value2 = "v";
 
-//// [file1.js]
+//// [file3.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const moduleB = require("./file2");
-use(moduleB.value);
-use(moduleB.moduleC);
-use(moduleB.moduleCStar);
+exports.value = void 0;
+exports.value = "youpi";
+exports.default = exports.value;
+//// [file4.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.value2 = void 0;
+exports.value2 = "v";
 //// [file2.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -45,14 +49,10 @@ const file3_1 = require("./file3");
 exports.moduleC = file3_1.default;
 const file3_2 = require("./file3");
 Object.defineProperty(exports, "value", { enumerable: true, get: function () { return file3_2.value; } });
-//// [file4.js]
+//// [file1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.value2 = void 0;
-exports.value2 = "v";
-//// [file3.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.value = void 0;
-exports.value = "youpi";
-exports.default = exports.value;
+const moduleB = require("./file2");
+use(moduleB.value);
+use(moduleB.moduleC);
+use(moduleB.moduleCStar);

@@ -14,6 +14,10 @@ async function foo() {
 foo();
 
 
+//// [0.js]
+export class B {
+    print() { return "I am B"; }
+}
 //// [2.js]
 async function foo() {
     class C extends (await import("./0")).B {
@@ -22,7 +26,3 @@ async function foo() {
     c.print();
 }
 foo();
-//// [0.js]
-export class B {
-    print() { return "I am B"; }
-}

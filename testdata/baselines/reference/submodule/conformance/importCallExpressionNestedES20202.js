@@ -9,9 +9,9 @@ async function foo() {
 }
 
 
+//// [foo.js]
+export default "./foo";
 //// [index.js]
 async function foo() {
     return await import((await import("./foo")).default);
 }
-//// [foo.js]
-export default "./foo";

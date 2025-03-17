@@ -1,26 +1,17 @@
 --- old.declarationEmitMappedTypeDistributivityPreservesConstraints.js
 +++ new.declarationEmitMappedTypeDistributivityPreservesConstraints.js
-@@= skipped -16, +16 lines =@@
- import test from "./types";
- export default { test };
- 
-+//// [reexport.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+const types_1 = require("./types");
-+exports.default = { test: types_1.default };
- //// [types.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
+@@= skipped -22, +22 lines =@@
  function fn(sliceIndex) {
      return null;
  }
 -exports.default = { fn: fn };
--//// [reexport.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
++exports.default = { fn };
+ //// [reexport.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
 -var types_1 = require("./types");
--exports.default = { test: types_1.default };
++const types_1 = require("./types");
+ exports.default = { test: types_1.default };
 -
 -
 -//// [types.d.ts]
@@ -51,4 +42,3 @@
 -    };
 -};
 -export default _default;
-+exports.default = { fn };

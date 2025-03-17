@@ -10,16 +10,16 @@ export const indexInA = 0;
 import { indexInA, rootA } from ".";
 
 
-//// [b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-//// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.indexInA = void 0;
-exports.indexInA = 0;
 //// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.rootA = void 0;
 exports.rootA = 0;
+//// [index.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.indexInA = void 0;
+exports.indexInA = 0;
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });

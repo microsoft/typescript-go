@@ -19,20 +19,20 @@ new D();
 const d: D = {};
 
 
-//// [d.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-new D();
-const d = {};
-//// [c.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-//// [b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 //// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class A {
     a;
 }
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [c.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [d.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+new D();
+const d = {};

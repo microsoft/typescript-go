@@ -44,6 +44,34 @@ export class C extends A<B> {
 }
 
 
+//// [typeReference.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [classReference.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.D = void 0;
+class C {
+}
+class D extends C {
+}
+exports.D = D;
+//// [interface.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [call.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const unknown_1 = require("unknown");
+(0, unknown_1.foo)();
+//// [new.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const unkown_1 = require("unkown");
+new unkown_1.Foo();
+//// [callAny.js]
+g();
+g();
 //// [super.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -56,31 +84,3 @@ class C extends unknown_1.A {
     }
 }
 exports.C = C;
-//// [callAny.js]
-g();
-g();
-//// [new.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const unkown_1 = require("unkown");
-new unkown_1.Foo();
-//// [call.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const unknown_1 = require("unknown");
-(0, unknown_1.foo)();
-//// [interface.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-//// [classReference.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.D = void 0;
-class C {
-}
-class D extends C {
-}
-exports.D = D;
-//// [typeReference.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });

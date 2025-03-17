@@ -24,5 +24,5 @@ declare module E {
     }
 }
 
-//// [b.js]
 //// [a.js]
+//// [b.js]

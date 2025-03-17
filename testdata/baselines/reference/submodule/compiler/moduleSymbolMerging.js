@@ -12,6 +12,7 @@ module B {
 
 
 
+//// [A.js]
 //// [B.js]
 var A;
 (function (A) {
@@ -22,4 +23,3 @@ var B;
     function f() { return null; }
     B.f = f;
 })(B || (B = {}));
-//// [A.js]

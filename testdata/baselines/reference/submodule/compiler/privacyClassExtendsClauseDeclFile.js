@@ -96,31 +96,6 @@ class publicClassExtendingPublicClassInGlobal extends publicClassInGlobal {
 }
 
 
-//// [privacyClassExtendsClauseDeclFile_GlobalFile.js]
-var publicModuleInGlobal;
-(function (publicModuleInGlobal) {
-    class publicClassInPublicModule {
-        f1() {
-        }
-    }
-    publicModuleInGlobal.publicClassInPublicModule = publicClassInPublicModule;
-    class privateClassInPublicModule {
-    }
-    class privateClassExtendingPublicClassInModule extends publicClassInPublicModule {
-    }
-    class privateClassExtendingPrivateClassInModule extends privateClassInPublicModule {
-    }
-    class publicClassExtendingPublicClassInModule extends publicClassInPublicModule {
-    }
-    publicModuleInGlobal.publicClassExtendingPublicClassInModule = publicClassExtendingPublicClassInModule;
-    class publicClassExtendingPrivateClassInModule extends privateClassInPublicModule {
-    }
-    publicModuleInGlobal.publicClassExtendingPrivateClassInModule = publicClassExtendingPrivateClassInModule;
-})(publicModuleInGlobal || (publicModuleInGlobal = {}));
-class publicClassInGlobal {
-}
-class publicClassExtendingPublicClassInGlobal extends publicClassInGlobal {
-}
 //// [privacyClassExtendsClauseDeclFile_externalModule.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -197,3 +172,28 @@ class privateClassExtendingFromPrivateModuleClass extends privateModule.publicCl
 class publicClassExtendingFromPrivateModuleClass extends privateModule.publicClassInPrivateModule {
 }
 exports.publicClassExtendingFromPrivateModuleClass = publicClassExtendingFromPrivateModuleClass;
+//// [privacyClassExtendsClauseDeclFile_GlobalFile.js]
+var publicModuleInGlobal;
+(function (publicModuleInGlobal) {
+    class publicClassInPublicModule {
+        f1() {
+        }
+    }
+    publicModuleInGlobal.publicClassInPublicModule = publicClassInPublicModule;
+    class privateClassInPublicModule {
+    }
+    class privateClassExtendingPublicClassInModule extends publicClassInPublicModule {
+    }
+    class privateClassExtendingPrivateClassInModule extends privateClassInPublicModule {
+    }
+    class publicClassExtendingPublicClassInModule extends publicClassInPublicModule {
+    }
+    publicModuleInGlobal.publicClassExtendingPublicClassInModule = publicClassExtendingPublicClassInModule;
+    class publicClassExtendingPrivateClassInModule extends privateClassInPublicModule {
+    }
+    publicModuleInGlobal.publicClassExtendingPrivateClassInModule = publicClassExtendingPrivateClassInModule;
+})(publicModuleInGlobal || (publicModuleInGlobal = {}));
+class publicClassInGlobal {
+}
+class publicClassExtendingPublicClassInGlobal extends publicClassInGlobal {
+}

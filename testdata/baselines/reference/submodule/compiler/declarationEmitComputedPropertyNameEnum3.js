@@ -15,11 +15,6 @@ import { type Type } from "./type";
 export const foo = { ...({} as Type) };
 
 
-//// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.foo = void 0;
-exports.foo = { ...{} };
 //// [type.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -32,3 +27,8 @@ var Foo;
         Enum["B"] = "b";
     })(Enum = Foo.Enum || (Foo.Enum = {}));
 })(Foo || (exports.Foo = Foo = {}));
+//// [index.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.foo = void 0;
+exports.foo = { ...{} };

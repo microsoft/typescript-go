@@ -36,12 +36,6 @@ export default {
 export default () => 42;
 
 
-//// [functionexpression.js]
-export default () => 42;
-//// [comma.js]
-export default {
-    ['foo']: 42
-};
 //// [commalist.js]
 export default {
     ['foo' + '']: 42,
@@ -68,3 +62,9 @@ export default {
     ['foo' + '']: 42,
     ['foo' + '']: 42,
 };
+//// [comma.js]
+export default {
+    ['foo']: 42
+};
+//// [functionexpression.js]
+export default () => 42;

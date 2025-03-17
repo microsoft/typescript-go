@@ -19,5 +19,5 @@ module ElidedModule2 {
 module ElidedModule3 {
 }
 
-//// [b.js]
 //// [a.js]
+//// [b.js]

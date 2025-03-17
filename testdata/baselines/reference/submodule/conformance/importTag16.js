@@ -14,11 +14,11 @@ export interface I {}
 export function foo(a, b) {}
 
 
+//// [a.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 //// [b.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.foo = foo;
 function foo(a, b) { }
-//// [a.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });

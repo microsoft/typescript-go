@@ -11,6 +11,12 @@ export default function f2() {
 }
 
 
+//// [m1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = f1;
+function f1() {
+}
 //// [m2.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -18,10 +24,4 @@ exports.default = f2;
 const m1_1 = require("./m1");
 function f2() {
     (0, m1_1.default)();
-}
-//// [m1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = f1;
-function f1() {
 }

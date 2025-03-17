@@ -1,10 +1,9 @@
 --- old.importMeta(module=system,target=es5).js
 +++ new.importMeta(module=system,target=es5).js
-@@= skipped -37, +37 lines =@@
- 
+@@= skipped -38, +38 lines =@@
  const { a, b, c } = import.meta.wellKnownProperty;
  
--//// [example.js]
+ //// [example.js]
 -System.register([], function (exports_1, context_1) {
 -    "use strict";
 -    var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -70,7 +69,16 @@
 -        }
 -    };
 -});
--//// [moduleLookingFile01.js]
++(async () => {
++    const response = await fetch(new URL("../hamsters.jpg", import.meta.url).toString());
++    const blob = await response.blob();
++    const size = import.meta.scriptElement.dataset.size || 300;
++    const image = new Image();
++    image.src = URL.createObjectURL(blob);
++    image.width = image.height = size;
++    document.body.appendChild(image);
++})();
+ //// [moduleLookingFile01.js]
 -System.register([], function (exports_1, context_1) {
 -    "use strict";
 -    var x, y, z;
@@ -84,7 +92,13 @@
 -        }
 -    };
 -});
--//// [scriptLookingFile01.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.z = exports.y = exports.x = void 0;
++exports.x = import.meta;
++exports.y = import.metal;
++exports.z = import.import.import.malkovich;
+ //// [scriptLookingFile01.js]
 -System.register([], function (exports_1, context_1) {
 -    "use strict";
 -    var globalA, globalB, globalC;
@@ -98,6 +112,9 @@
 -        }
 -    };
 -});
++let globalA = import.meta;
++let globalB = import.metal;
++let globalC = import.import.import.malkovich;
  //// [assignmentTargets.js]
 -System.register([], function (exports_1, context_1) {
 -    "use strict";
@@ -118,24 +135,3 @@
 +exports.foo = import.meta.blah = import.meta.blue = import.meta;
 +import.meta = exports.foo;
 +const { a, b, c } = import.meta.wellKnownProperty;
-+//// [scriptLookingFile01.js]
-+let globalA = import.meta;
-+let globalB = import.metal;
-+let globalC = import.import.import.malkovich;
-+//// [moduleLookingFile01.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.z = exports.y = exports.x = void 0;
-+exports.x = import.meta;
-+exports.y = import.metal;
-+exports.z = import.import.import.malkovich;
-+//// [example.js]
-+(async () => {
-+    const response = await fetch(new URL("../hamsters.jpg", import.meta.url).toString());
-+    const blob = await response.blob();
-+    const size = import.meta.scriptElement.dataset.size || 300;
-+    const image = new Image();
-+    image.src = URL.createObjectURL(blob);
-+    image.width = image.height = size;
-+    document.body.appendChild(image);
-+})();

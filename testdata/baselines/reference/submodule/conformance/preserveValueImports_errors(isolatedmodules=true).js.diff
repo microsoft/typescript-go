@@ -1,45 +1,16 @@
 --- old.preserveValueImports_errors(isolatedmodules=true).js
 +++ new.preserveValueImports_errors(isolatedmodules=true).js
-@@= skipped -44, +44 lines =@@
- export type { A, B as BB };
- 
- 
--//// [a.js]
-+//// [f.fixed.js]
+@@= skipped -47, +47 lines =@@
+ //// [a.js]
  export {};
--//// [b.js]
+ //// [b.js]
 -var B = /** @class */ (function () {
 -    function B() {
 -    }
 -    return B;
 -}());
--;
-+//// [f.js]
- export {};
--//// [c.js]
-+//// [e.fixed.js]
- export {};
--//// [c.fixed.js]
-+//// [e.js]
- export {};
--//// [d.js]
--export {};
- //// [d.fixed.js]
- export {};
--//// [e.js]
-+//// [d.js]
- export {};
--//// [e.fixed.js]
-+//// [c.fixed.js]
- export {};
--//// [f.js]
-+//// [c.js]
- export {};
--//// [f.fixed.js]
-+//// [b.js]
 +class B {
 +}
-+;
+ ;
  export {};
-+//// [a.js]
-+export {};
+ //// [c.js]

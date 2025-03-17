@@ -8,12 +8,12 @@ export var x = a;
 import { a1 } from "./es6ImportNamedImportNoExportMember_0";
 import { x1 as x } from "./es6ImportNamedImportNoExportMember_0";
 
-//// [es6ImportNamedImport_1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 //// [es6ImportNamedImportNoExportMember_0.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.x = exports.a = void 0;
 exports.a = 10;
 exports.x = exports.a;
+//// [es6ImportNamedImport_1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });

@@ -48,11 +48,11 @@ import obj1 from "./sub1/uses.js"
 import obj2 from "./sub2/uses.js"
 export default [obj1, obj2.default] as const;
 
+//// [uses.js]
+export default getInterI();
+//// [uses.js]
+export default getInterR();
 //// [index.js]
 import obj1 from "./sub1/uses.js";
 import obj2 from "./sub2/uses.js";
 export default [obj1, obj2.default];
-//// [uses.js]
-export default getInterR();
-//// [uses.js]
-export default getInterI();

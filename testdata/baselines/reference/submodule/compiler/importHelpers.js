@@ -46,20 +46,6 @@ export declare function __awaiter(thisArg: any, _arguments: any, P: Function, ge
 export declare function __makeTemplateObject(cooked: string[], raw: string[]): TemplateStringsArray;
 
 
-//// [script.js]
-class A {
-}
-class B extends A {
-}
-@dec
-class C {
-    method(x) {
-    }
-}
-function id(x) {
-    return x;
-}
-const result = id `hello world`;
 //// [external.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -79,3 +65,17 @@ function id(x) {
     return x;
 }
 exports.result = id `hello world`;
+//// [script.js]
+class A {
+}
+class B extends A {
+}
+@dec
+class C {
+    method(x) {
+    }
+}
+function id(x) {
+    return x;
+}
+const result = id `hello world`;

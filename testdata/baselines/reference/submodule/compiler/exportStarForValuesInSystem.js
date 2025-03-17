@@ -7,6 +7,9 @@ export interface Foo { x }
 export * from "file1"
 var x = 1;
 
+//// [file1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 //// [file2.js]
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -26,6 +29,3 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("file1"), exports);
 var x = 1;
-//// [file1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });

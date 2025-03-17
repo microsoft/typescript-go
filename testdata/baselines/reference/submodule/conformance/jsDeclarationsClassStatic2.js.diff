@@ -8,15 +8,6 @@
 -
 -//// [Foo.d.ts]
 -export class Foo extends Base {
-+//// [Bar.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+const Foo_js_1 = require("./Foo.js");
-+class Bar extends Foo_js_1.Foo {
- }
--export namespace Foo {
--    let foo: string;
-+Bar.foo = "foo";
 +//// [Foo.js]
 +"use strict";
 +Object.defineProperty(exports, "__esModule", { value: true });
@@ -24,12 +15,21 @@
 +class Base {
 +    static foo = "";
  }
+-export namespace Foo {
+-    let foo: string;
++class Foo extends Base {
+ }
 -declare class Base {
 -    static foo: string;
-+class Foo extends Base {
++exports.Foo = Foo;
++Foo.foo = "foo";
++//// [Bar.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++const Foo_js_1 = require("./Foo.js");
++class Bar extends Foo_js_1.Foo {
  }
 -export {};
 -//// [Bar.d.ts]
 -export {};
-+exports.Foo = Foo;
-+Foo.foo = "foo";
++Bar.foo = "foo";

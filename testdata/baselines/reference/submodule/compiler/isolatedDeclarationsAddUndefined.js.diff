@@ -1,13 +1,9 @@
 --- old.isolatedDeclarationsAddUndefined.js
 +++ new.isolatedDeclarationsAddUndefined.js
-@@= skipped -18, +18 lines =@@
-     f = 2;
- }
- 
--//// [file1.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.Bar = void 0;
+@@= skipped -22, +22 lines =@@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.Bar = void 0;
 -var Bar = /** @class */ (function () {
 -    function Bar() {
 -        this.c = [2];
@@ -17,10 +13,16 @@
 -    }
 -    return Bar;
 -}());
--exports.Bar = Bar;
++class Bar {
++    c = [2];
++    c3 = 1;
++    r = 1;
++    f = 2;
++}
+ exports.Bar = Bar;
  //// [file2.js]
  "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
+@@= skipped -16, +13 lines =@@
  exports.Bar2 = void 0;
  exports.foo = foo;
  exports.foo2 = foo2;
@@ -56,15 +58,5 @@
 -    c3?: N;
 -    readonly r = 1;
 -    f: number;
-+//// [file1.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.Bar = void 0;
-+class Bar {
-+    c = [2];
-+    c3 = 1;
-+    r = 1;
-+    f = 2;
- }
+-}
 -export {};
-+exports.Bar = Bar;

@@ -22,6 +22,9 @@ if(!!x.c){ }
 var z = {x: 1, y: 2};
 z = x.d;
 
+//// [foo_0.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 //// [foo_1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -32,6 +35,3 @@ var y = x.b;
 if (!!x.c) { }
 var z = { x: 1, y: 2 };
 z = x.d;
-//// [foo_0.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });

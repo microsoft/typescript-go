@@ -8,5 +8,5 @@ namespace A {}
 type A = {}
 
 
-//// [final.js]
 //// [initial.js]
+//// [final.js]

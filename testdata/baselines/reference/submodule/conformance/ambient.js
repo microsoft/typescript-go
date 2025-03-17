@@ -11,9 +11,6 @@ declare namespace ns {
 }
 
 
-//// [b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 //// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -22,3 +19,6 @@ class A {
     a;
 }
 exports.A = A;
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });

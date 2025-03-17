@@ -20,14 +20,6 @@ function test(obj: string | null): void {
 }
 
 
-//// [test.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const asserts = require("./asserts");
-function test(obj) {
-    asserts.isNonNullable(obj);
-    obj.trim();
-}
 //// [asserts.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36,4 +28,12 @@ function isNonNullable(obj) {
     if (obj === undefined || obj === null) {
         throw new Error("Must not be a nullable value");
     }
+}
+//// [test.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const asserts = require("./asserts");
+function test(obj) {
+    asserts.isNonNullable(obj);
+    obj.trim();
 }

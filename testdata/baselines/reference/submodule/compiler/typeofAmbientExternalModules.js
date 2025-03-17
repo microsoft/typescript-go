@@ -18,6 +18,20 @@ y1 = exp;
 var y2: typeof exp = exp;
 y2 = ext;
 
+//// [typeofAmbientExternalModules_0.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.C = void 0;
+class C {
+    foo;
+}
+exports.C = C;
+//// [typeofAmbientExternalModules_1.js]
+"use strict";
+class D {
+    bar;
+}
+module.exports = D;
 //// [typeofAmbientExternalModules_2.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -27,17 +41,3 @@ var y1 = ext;
 y1 = exp;
 var y2 = exp;
 y2 = ext;
-//// [typeofAmbientExternalModules_1.js]
-"use strict";
-class D {
-    bar;
-}
-module.exports = D;
-//// [typeofAmbientExternalModules_0.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.C = void 0;
-class C {
-    foo;
-}
-exports.C = C;

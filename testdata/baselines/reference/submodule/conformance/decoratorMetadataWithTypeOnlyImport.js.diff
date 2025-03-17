@@ -1,19 +1,17 @@
 --- old.decoratorMetadataWithTypeOnlyImport.js
 +++ new.decoratorMetadataWithTypeOnlyImport.js
-@@= skipped -17, +17 lines =@@
-     }
- }
- 
--//// [service.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.Service = void 0;
+@@= skipped -21, +21 lines =@@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.Service = void 0;
 -var Service = /** @class */ (function () {
 -    function Service() {
 -    }
 -    return Service;
 -}());
--exports.Service = Service;
++class Service {
++}
+ exports.Service = Service;
  //// [component.js]
  "use strict";
 -var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -52,10 +50,3 @@
 +    method(x) {
 +    }
 +}
-+//// [service.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.Service = void 0;
-+class Service {
-+}
-+exports.Service = Service;

@@ -13,14 +13,14 @@ if(foo.answer === 42){
 }
 
 
+//// [foo_0.js]
+var foo;
+(function (foo) {
+    foo.answer = 42;
+})(foo || (foo = {}));
 //// [foo_1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const foo = require("./foo_0");
 if (foo.answer === 42) {
 }
-//// [foo_0.js]
-var foo;
-(function (foo) {
-    foo.answer = 42;
-})(foo || (foo = {}));

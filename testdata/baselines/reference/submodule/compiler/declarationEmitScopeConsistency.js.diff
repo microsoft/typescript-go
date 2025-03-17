@@ -1,15 +1,12 @@
 --- old.declarationEmitScopeConsistency.js
 +++ new.declarationEmitScopeConsistency.js
-@@= skipped -9, +9 lines =@@
- export const g = f;
- 
- 
--//// [a.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.f = void 0;
+@@= skipped -13, +13 lines =@@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.f = void 0;
 -var f = function (x) { return x; };
--exports.f = f;
++const f = (x) => x;
+ exports.f = f;
  //// [b.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
@@ -29,9 +26,3 @@
 -    other: number;
 -}
 -export declare const g: (x: import("./a").A) => import("./a").A;
-+//// [a.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.f = void 0;
-+const f = (x) => x;
-+exports.f = f;

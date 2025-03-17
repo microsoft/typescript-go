@@ -1,15 +1,6 @@
 --- old.globalThisDeclarationEmit2.js
 +++ new.globalThisDeclarationEmit2.js
-@@= skipped -6, +6 lines =@@
- //// [variable.ts]
- export const variable = globalThis;
- 
--//// [variable.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.variable = void 0;
--exports.variable = globalThis;
- //// [index.js]
+@@= skipped -15, +15 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.globalThis = void 0;
@@ -23,8 +14,3 @@
 -//// [index.d.ts]
 -import { variable } from "./variable";
 -export { variable as globalThis };
-+//// [variable.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.variable = void 0;
-+exports.variable = globalThis;

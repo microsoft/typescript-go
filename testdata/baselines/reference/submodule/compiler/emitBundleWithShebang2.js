@@ -10,13 +10,13 @@ class Scooby extends Doo {}
 class Dood {}
 class Scoobyd extends Dood {}
 
-//// [test2.js]
-class Dood {
-}
-class Scoobyd extends Dood {
-}
 //// [test.js]
 class Doo {
 }
 class Scooby extends Doo {
+}
+//// [test2.js]
+class Dood {
+}
+class Scoobyd extends Dood {
 }

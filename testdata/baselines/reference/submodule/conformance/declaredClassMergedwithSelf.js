@@ -17,6 +17,6 @@ declare class C3 { }
 //// [file3.ts]
 declare class C3 { }
 
-//// [file3.js]
-//// [file2.js]
 //// [file1.js]
+//// [file2.js]
+//// [file3.js]

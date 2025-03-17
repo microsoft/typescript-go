@@ -1,15 +1,11 @@
 --- old.decoratorInstantiateModulesInFunctionBodies.js
 +++ new.decoratorInstantiateModulesInFunctionBodies.js
-@@= skipped -19, +19 lines =@@
-     }
- }
- 
--//// [a.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.test = void 0;
+@@= skipped -23, +23 lines =@@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.test = void 0;
 -// from #3108
--exports.test = 'abc';
+ exports.test = 'abc';
  //// [b.js]
  "use strict";
 -var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -41,8 +37,3 @@
 -    return Wat;
 -}());
 +}
-+//// [a.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.test = void 0;
-+exports.test = 'abc';

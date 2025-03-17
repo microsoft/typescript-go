@@ -1,16 +1,9 @@
 --- old.bundlerNodeModules1(module=esnext).js
 +++ new.bundlerNodeModules1(module=esnext).js
-@@= skipped -36, +36 lines =@@
- import { esm, cjs } from "dual";
- 
- 
--//// [main.js]
-+//// [main.cjs]
- export {};
+@@= skipped -41, +41 lines =@@
  //// [main.mjs]
  export {};
--//// [main.cjs]
+ //// [main.cjs]
 -"use strict";
 -Object.defineProperty(exports, "__esModule", { value: true });
-+//// [main.js]
 +export {};

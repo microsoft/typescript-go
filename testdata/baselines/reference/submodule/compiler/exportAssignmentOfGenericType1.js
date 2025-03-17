@@ -13,6 +13,12 @@ var m: M;
 var r: string = m.foo;
 
 
+//// [exportAssignmentOfGenericType1_0.js]
+"use strict";
+class T {
+    foo;
+}
+module.exports = T;
 //// [exportAssignmentOfGenericType1_1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -21,9 +27,3 @@ class M extends q {
 }
 var m;
 var r = m.foo;
-//// [exportAssignmentOfGenericType1_0.js]
-"use strict";
-class T {
-    foo;
-}
-module.exports = T;

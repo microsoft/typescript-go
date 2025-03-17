@@ -40,30 +40,6 @@ var a = new A();
 var a: { id: string };
 
 
-//// [simple.js]
-class A {
-    id;
-}
-(function (A) {
-    A.Instance = new A();
-})(A || (A = {}));
-var a = A.Instance;
-var a = new A();
-var a;
-//// [test.js]
-var cl = new X.Y.Point(1, 1);
-var cl = X.Y.Point.Origin;
-//// [module.js]
-var X;
-(function (X) {
-    let Y;
-    (function (Y) {
-        let Point;
-        (function (Point) {
-            Point.Origin = new Point(0, 0);
-        })(Point = Y.Point || (Y.Point = {}));
-    })(Y = X.Y || (X.Y = {}));
-})(X || (X = {}));
 //// [class.js]
 var X;
 (function (X) {
@@ -80,3 +56,27 @@ var X;
         Y.Point = Point;
     })(Y = X.Y || (X.Y = {}));
 })(X || (X = {}));
+//// [module.js]
+var X;
+(function (X) {
+    let Y;
+    (function (Y) {
+        let Point;
+        (function (Point) {
+            Point.Origin = new Point(0, 0);
+        })(Point = Y.Point || (Y.Point = {}));
+    })(Y = X.Y || (X.Y = {}));
+})(X || (X = {}));
+//// [test.js]
+var cl = new X.Y.Point(1, 1);
+var cl = X.Y.Point.Origin;
+//// [simple.js]
+class A {
+    id;
+}
+(function (A) {
+    A.Instance = new A();
+})(A || (A = {}));
+var a = A.Instance;
+var a = new A();
+var a;

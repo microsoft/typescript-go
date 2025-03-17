@@ -18,6 +18,12 @@ export async function f() {
 }
 
 
+//// [a.js]
+export default {
+    a: "a",
+    b: "b",
+    1: "1",
+};
 //// [b.js]
 export async function f() {
     const a = import("./a", {
@@ -25,9 +31,3 @@ export async function f() {
     });
     a;
 }
-//// [a.js]
-export default {
-    a: "a",
-    b: "b",
-    1: "1",
-};

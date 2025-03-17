@@ -27,19 +27,6 @@ export {x as default};
  */
 
 
-//// [index3.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = void 0;
-const x = 12;
-exports.default = x;
-//// [index2.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class C {
-}
-exports.default = C;
-;
 //// [index1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -48,3 +35,16 @@ class Cls {
     static y = "ok";
 }
 exports.default = Cls;
+//// [index2.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class C {
+}
+exports.default = C;
+;
+//// [index3.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = void 0;
+const x = 12;
+exports.default = x;

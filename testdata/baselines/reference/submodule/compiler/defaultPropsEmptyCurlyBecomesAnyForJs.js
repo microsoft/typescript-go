@@ -25,6 +25,15 @@ export class TypedFoo extends MyFoo {
     }
 }
 
+//// [component.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MyFoo = void 0;
+const library_1 = require("./library");
+class MyFoo extends library_1.Foo {
+    member;
+}
+exports.MyFoo = MyFoo;
 //// [typed_component.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40,12 +49,3 @@ class TypedFoo extends component_1.MyFoo {
     }
 }
 exports.TypedFoo = TypedFoo;
-//// [component.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.MyFoo = void 0;
-const library_1 = require("./library");
-class MyFoo extends library_1.Foo {
-    member;
-}
-exports.MyFoo = MyFoo;

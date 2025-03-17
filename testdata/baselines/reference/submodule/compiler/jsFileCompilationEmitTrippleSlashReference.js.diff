@@ -11,7 +11,9 @@
 -    return c;
 -}());
 -function bar() {
--}
++//// [a.js]
++class c {
+ }
 -/// <reference path="c.js"/>
 +//// [b.js]
  function foo() {
@@ -25,6 +27,3 @@
  }
 -declare function bar(): void;
 -declare function foo(): void;
-+//// [a.js]
-+class c {
-+}

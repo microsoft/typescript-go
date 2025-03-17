@@ -13,7 +13,7 @@ import { esm } from "./esm.mjs";
 import { esm } from "./esm.mjs";
 
 
-//// [still-not-cjs.js]
-//// [not-actually-cjs.cjs]
 //// [esm.mjs]
 export const esm = 0;
+//// [not-actually-cjs.cjs]
+//// [still-not-cjs.js]

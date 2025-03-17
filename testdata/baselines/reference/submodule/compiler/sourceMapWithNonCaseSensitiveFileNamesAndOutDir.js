@@ -10,9 +10,9 @@ class c {
 class d {
 }
 
-//// [app2.js]
-class d {
-}
 //// [app.js]
 class c {
+}
+//// [app2.js]
+class d {
 }

@@ -15,14 +15,14 @@ import B = require("./a");
 const x: B = { c: B };
 
 
-//// [b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const B = require("./a");
-const x = { c: B };
 //// [a.js]
 "use strict";
 class C {
     static B;
 }
 module.exports = C.B;
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const B = require("./a");
+const x = { c: B };

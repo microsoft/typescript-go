@@ -1,10 +1,9 @@
 --- old.filesEmittingIntoSameOutputWithOutOption.js
 +++ new.filesEmittingIntoSameOutputWithOutOption.js
-@@= skipped -8, +8 lines =@@
- }
+@@= skipped -9, +9 lines =@@
  
  
--//// [a.js]
+ //// [a.js]
 -define("a", ["require", "exports"], function (require, exports) {
 -    "use strict";
 -    Object.defineProperty(exports, "__esModule", { value: true });
@@ -16,13 +15,12 @@
 -    }());
 -    exports.c = c;
 -});
-+//// [b.js]
- function foo() {
- }
-+//// [a.js]
 +"use strict";
 +Object.defineProperty(exports, "__esModule", { value: true });
 +exports.c = void 0;
 +class c {
 +}
 +exports.c = c;
++//// [b.js]
+ function foo() {
+ }

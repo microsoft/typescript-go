@@ -1,10 +1,9 @@
 --- old.importCallExpressionInAMD4.js
 +++ new.importCallExpressionInAMD4.js
-@@= skipped -39, +39 lines =@@
-     }
+@@= skipped -40, +40 lines =@@
  }
  
--//// [0.js]
+ //// [0.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
 -    Object.defineProperty(exports, "__esModule", { value: true });
@@ -16,13 +15,26 @@
 -    exports.B = B;
 -    function foo() { return "foo"; }
 -});
--//// [1.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.B = void 0;
++exports.foo = foo;
++class B {
++    print() { return "I am B"; }
++}
++exports.B = B;
++function foo() { return "foo"; }
+ //// [1.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
 -    Object.defineProperty(exports, "__esModule", { value: true });
 -    exports.backup = backup;
 -    function backup() { return "backup"; }
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.backup = backup;
++function backup() { return "backup"; }
  //// [2.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
@@ -88,18 +100,3 @@
 -});
 +}
 +exports.D = D;
-+//// [1.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.backup = backup;
-+function backup() { return "backup"; }
-+//// [0.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.B = void 0;
-+exports.foo = foo;
-+class B {
-+    print() { return "I am B"; }
-+}
-+exports.B = B;
-+function foo() { return "foo"; }

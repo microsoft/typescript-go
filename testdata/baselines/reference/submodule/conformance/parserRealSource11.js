@@ -2366,6 +2366,7 @@ module TypeScript {
     }
 }
 
+//// [typescript.js]
 //// [parserRealSource11.js]
 var TypeScript;
 (function (TypeScript) {
@@ -4545,4 +4546,3 @@ var TypeScript;
     }
     TypeScript.DebuggerStatement = DebuggerStatement;
 })(TypeScript || (TypeScript = {}));
-//// [typescript.js]

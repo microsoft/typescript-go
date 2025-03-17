@@ -23,6 +23,15 @@ export type TypeA = {
 export type Merge<T, U> = T & U;
 
 
+//// [types.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [type-a.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [type-b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 //// [index.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -33,12 +42,3 @@ class Broken {
     }
 }
 exports.Broken = Broken;
-//// [type-b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-//// [type-a.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-//// [types.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });

@@ -1,13 +1,11 @@
 --- old.nodeModulesAllowJsExportlessJsModuleDetectionAuto(module=node16).js
 +++ new.nodeModulesAllowJsExportlessJsModuleDetectionAuto(module=node16).js
-@@= skipped -4, +4 lines =@@
- //// [bar.js]
+@@= skipped -5, +5 lines =@@
  // however this file is _not_ a module
  
--//// [foo.cjs]
+ //// [foo.cjs]
 -"use strict";
 -Object.defineProperty(exports, "__esModule", { value: true });
 -// this file is a module despite having no imports
  //// [bar.js]
 -// however this file is _not_ a module
-+//// [foo.cjs]

@@ -6,7 +6,7 @@ class C<T> { }
 //// [b.ts]
 interface C<T> { }
 
-//// [b.js]
 //// [a.js]
 class C {
 }
+//// [b.js]

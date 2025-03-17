@@ -18,16 +18,16 @@ import test from "./test";
 export type test = test;
 
 
-//// [types3.js]
+//// [test.js]
+module.exports = {
+    message: ""
+};
+//// [types1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 //// [types2.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-//// [types1.js]
+//// [types3.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-//// [test.js]
-module.exports = {
-    message: ""
-};

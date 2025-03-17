@@ -1,32 +1,34 @@
 --- old.privateNamesUnique-2.js
 +++ new.privateNamesUnique-2.js
-@@= skipped -21, +21 lines =@@
- a.copy(b); // error
+@@= skipped -22, +22 lines =@@
  
  
--//// [b.js]
+ //// [b.js]
 -var _Foo_x;
--export class Foo {
+ export class Foo {
 -    constructor() {
 -        _Foo_x.set(this, void 0);
 -    }
--}
++    #x;
+ }
 -_Foo_x = new WeakMap();
--//// [a.js]
+ //// [a.js]
 -var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
 -    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
 -    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
 -    return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 -};
 -var _Foo_x;
--export class Foo {
+ export class Foo {
 -    constructor() {
 -        _Foo_x.set(this, void 0);
 -    }
--    copy(other) {
++    #x;
+     copy(other) {
 -        __classPrivateFieldGet(other, _Foo_x, "f"); // error
--    }
--}
++        other.#x;
+     }
+ }
 -_Foo_x = new WeakMap();
  //// [main.js]
  import { Foo as A } from "./a";
@@ -35,14 +37,3 @@
  const b = new B();
 -a.copy(b); // error
 +a.copy(b);
-+//// [a.js]
-+export class Foo {
-+    #x;
-+    copy(other) {
-+        other.#x;
-+    }
-+}
-+//// [b.js]
-+export class Foo {
-+    #x;
-+}

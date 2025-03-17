@@ -1,62 +1,41 @@
 --- old.jsDeclarationsExportFormsErr.js
 +++ new.jsDeclarationsExportFormsErr.js
-@@= skipped -20, +20 lines =@@
- import "./globalNs";
- 
- 
--//// [cls.js]
-+//// [includeAll.js]
+@@= skipped -24, +24 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
--exports.Foo = void 0;
+ exports.Foo = void 0;
 -var Foo = /** @class */ (function () {
 -    function Foo() {
 -    }
 -    return Foo;
 -}());
--exports.Foo = Foo;
--//// [bar.js]
--"use strict";
++class Foo {
++}
+ exports.Foo = Foo;
+ //// [bar.js]
+ "use strict";
 -var ns = require("./cls");
--module.exports = ns;
--//// [bin.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
++const ns = require("./cls");
+ module.exports = ns;
+ //// [bin.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
 -var ns = require("./cls");
 -module.exports = ns; // We refuse to bind cjs module exports assignments in the same file we find an import in
-+require("./bar");
-+require("./bin");
-+require("./globalNs");
++const ns = require("./cls");
++module.exports = ns;
  //// [globalNs.js]
  "use strict";
  var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-@@= skipped -37, +24 lines =@@
- };
- Object.defineProperty(exports, "__esModule", { value: true });
- __exportStar(require("./cls"), exports);
--//// [includeAll.js]
-+//// [bin.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
--require("./bar");
--require("./bin");
--require("./globalNs");
+@@= skipped -39, +36 lines =@@
+ require("./bar");
+ require("./bin");
+ require("./globalNs");
 -
 -
 -//// [cls.d.ts]
 -export class Foo {
-+const ns = require("./cls");
-+module.exports = ns;
-+//// [bar.js]
-+"use strict";
-+const ns = require("./cls");
-+module.exports = ns;
-+//// [cls.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.Foo = void 0;
-+class Foo {
- }
+-}
 -//// [bar.d.ts]
 -export = ns;
 -import ns = require("./cls");
@@ -66,4 +45,3 @@
 -export * from "./cls";
 -//// [includeAll.d.ts]
 -export {};
-+exports.Foo = Foo;

@@ -1,59 +1,39 @@
 --- old.impliedNodeFormatEmit4(module=commonjs).js
 +++ new.impliedNodeFormatEmit4(module=commonjs).js
-@@= skipped -38, +38 lines =@@
- export {};
- 
- 
--//// [a.js]
-+//// [dummy.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
-+//// [i.cjs]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+//// [h.mjs]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+//// [g.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+//// [f.mjs]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
+@@= skipped -44, +44 lines =@@
  exports._ = void 0;
  exports._ = 0;
--//// [b.mjs]
+ //// [b.mjs]
 -export var _ = 0;
--//// [c.cjs]
-+//// [e.mjs]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports._ = void 0;
++exports._ = 0;
+ //// [c.cjs]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
- exports._ = void 0;
-@@= skipped -17, +27 lines =@@
- Object.defineProperty(exports, "__esModule", { value: true });
+@@= skipped -12, +15 lines =@@
  exports._ = void 0;
  exports._ = 0;
--//// [e.mjs]
+ //// [e.mjs]
 -export var _ = 0;
--//// [f.mjs]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports._ = void 0;
++exports._ = 0;
+ //// [f.mjs]
 -export var _ = 0;
--//// [g.js]
-+//// [c.cjs]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports._ = void 0;
++exports._ = 0;
+ //// [g.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
--//// [h.mjs]
+ //// [h.mjs]
 -export {};
--//// [i.cjs]
-+exports._ = void 0;
-+exports._ = 0;
-+//// [b.mjs]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
+ //// [i.cjs]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
--//// [dummy.js]
-+exports._ = void 0;
-+exports._ = 0;
-+//// [a.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
-+exports._ = void 0;
-+exports._ = 0;

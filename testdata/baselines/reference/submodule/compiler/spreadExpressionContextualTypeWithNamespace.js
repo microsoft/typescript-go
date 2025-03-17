@@ -34,6 +34,19 @@ getStuff().obj;
 getStuff().exportedDirectly;
 
 
+//// [spreadExpressionContextualTypeWithNamespace_0.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.obj = exports.klass = void 0;
+exports.func = func;
+exports.exportedDirectly = exportedDirectly;
+function func() { }
+class klass {
+}
+exports.klass = klass;
+const obj = { x: true };
+exports.obj = obj;
+function exportedDirectly() { }
 //// [spreadExpressionContextualTypeWithNamespace_1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -54,16 +67,3 @@ getStuff().func;
 getStuff().klass;
 getStuff().obj;
 getStuff().exportedDirectly;
-//// [spreadExpressionContextualTypeWithNamespace_0.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.obj = exports.klass = void 0;
-exports.func = func;
-exports.exportedDirectly = exportedDirectly;
-function func() { }
-class klass {
-}
-exports.klass = klass;
-const obj = { x: true };
-exports.obj = obj;
-function exportedDirectly() { }

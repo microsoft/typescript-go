@@ -11,13 +11,13 @@ a;
 
 
 
-//// [main.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const a = require("./a");
-a;
 //// [a.js]
 "use strict";
 class a {
 }
 module.exports = a;
+//// [main.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const a = require("./a");
+a;

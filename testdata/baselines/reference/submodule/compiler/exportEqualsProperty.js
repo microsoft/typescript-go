@@ -38,20 +38,6 @@ import fooLength = require("./b");
 fooLength + 1;
 
 
-//// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const foobar_1 = require("foobar");
-const X2 = require("foobarx");
-const x = foobar_1.X;
-const x2 = X2;
-const B = require("./a");
-const b = new B(B.b);
-const fooLength = require("./b");
-fooLength + 1;
-//// [b.js]
-"use strict";
-module.exports = "foo".length;
 //// [a.js]
 "use strict";
 var A;
@@ -65,3 +51,17 @@ var A;
     })(B = A.B || (A.B = {}));
 })(A || (A = {}));
 module.exports = A.B;
+//// [b.js]
+"use strict";
+module.exports = "foo".length;
+//// [index.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const foobar_1 = require("foobar");
+const X2 = require("foobarx");
+const x = foobar_1.X;
+const x2 = X2;
+const B = require("./a");
+const b = new B(B.b);
+const fooLength = require("./b");
+fooLength + 1;

@@ -35,11 +35,11 @@ function bar() { }
 
 
 
-//// [file2.js]
-function bar() { }
-//// [file1.js]
-function foo() { }
-var z = "world";
 //// [file0.js]
 var x = 10;
 var y = "hello";
+//// [file1.js]
+function foo() { }
+var z = "world";
+//// [file2.js]
+function bar() { }

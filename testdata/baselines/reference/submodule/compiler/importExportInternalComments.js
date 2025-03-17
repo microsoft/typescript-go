@@ -15,11 +15,11 @@ void D, A, C, foo; // Use the variables to prevent ellision
 /*1*/ export /*2*/ { /*3*/ A /*4*/, /*5*/ B /*6*/ as /*7*/ C /*8*/ } /*9*/ from /*10*/ "foo";
 /*1*/ export /*2*/ * /*3*/ from /*4*/ "foo"
 
+//// [default.js]
+export default Array;
 //// [index.js]
 import D, { A, B as C } from "foo";
 import * as foo from "foo";
 void D, A, C, foo;
 export { A, B as C } from "foo";
 export * from "foo";
-//// [default.js]
-export default Array;

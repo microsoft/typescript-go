@@ -19,11 +19,11 @@ import * as React from "./renderer";
 import { dom } from "./renderer";
 <><h></h></>
 
-//// [index.js]
+//// [reacty.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 <><h></h></>;
-//// [reacty.js]
+//// [index.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 <><h></h></>;

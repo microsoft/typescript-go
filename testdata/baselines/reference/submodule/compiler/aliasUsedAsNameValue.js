@@ -18,6 +18,15 @@ export var a = function () {
 }
 
 
+//// [aliasUsedAsNameValue_0.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.id = void 0;
+//// [aliasUsedAsNameValue_1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.b = b;
+function b(a) { return null; }
 //// [aliasUsedAsNameValue_2.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -28,12 +37,3 @@ var a = function () {
     b.b(mod);
 };
 exports.a = a;
-//// [aliasUsedAsNameValue_1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.b = b;
-function b(a) { return null; }
-//// [aliasUsedAsNameValue_0.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.id = void 0;

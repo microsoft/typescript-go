@@ -21,10 +21,10 @@ z.bar("hello"); // This should be ok
 var x: foo.A = foo.bar("hello"); // foo.A should be ok but foo.bar should be error
 
 
+//// [aliasOnMergedModuleInterface_0.js]
 //// [aliasOnMergedModuleInterface_1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var z;
 z.bar("hello");
 var x = foo.bar("hello");
-//// [aliasOnMergedModuleInterface_0.js]

@@ -25,12 +25,12 @@ import "file2";
 let a: x.A;
 let b = a.a;
 
+//// [file2.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 //// [file3.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 require("file2");
 let a;
 let b = a.a;
-//// [file2.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });

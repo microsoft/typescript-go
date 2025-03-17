@@ -26,6 +26,22 @@ class N2 {
     x: IHasVisualizationModel;
 }
 
+//// [aliasUsageInIndexerOfClass_backbone.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Model = void 0;
+class Model {
+    someData;
+}
+exports.Model = Model;
+//// [aliasUsageInIndexerOfClass_moduleA.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.VisualizationModel = void 0;
+const Backbone = require("./aliasUsageInIndexerOfClass_backbone");
+class VisualizationModel extends Backbone.Model {
+}
+exports.VisualizationModel = VisualizationModel;
 //// [aliasUsageInIndexerOfClass_main.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36,19 +52,3 @@ class N {
 class N2 {
     x;
 }
-//// [aliasUsageInIndexerOfClass_moduleA.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.VisualizationModel = void 0;
-const Backbone = require("./aliasUsageInIndexerOfClass_backbone");
-class VisualizationModel extends Backbone.Model {
-}
-exports.VisualizationModel = VisualizationModel;
-//// [aliasUsageInIndexerOfClass_backbone.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Model = void 0;
-class Model {
-    someData;
-}
-exports.Model = Model;

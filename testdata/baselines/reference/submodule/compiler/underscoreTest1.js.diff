@@ -1,10 +1,8 @@
 --- old.underscoreTest1.js
 +++ new.underscoreTest1.js
-@@= skipped -901, +901 lines =@@
- template2({ name: "Mustache" });
- _.template("Using 'with': <%= data.answer %>", { answer: 'no' }, { variable: 'data' });
+@@= skipped -903, +903 lines =@@
  
--//// [underscoreTest1_underscore.js]
+ //// [underscoreTest1_underscore.js]
  //// [underscoreTest1_underscoreTests.js]
 -/// <reference path="underscoreTest1_underscore.ts" />
 -_.each([1, 2, 3], function (num) { return alert(num.toString()); });
@@ -55,7 +53,7 @@
  _.first([5, 4, 3, 2, 1]);
  _.initial([5, 4, 3, 2, 1]);
  _.last([5, 4, 3, 2, 1]);
-@@= skipped -41, +36 lines =@@
+@@= skipped -39, +35 lines =@@
  _.compact([0, 1, false, 2, '', 3]);
  _.flatten([1, 2, 3, 4]);
  _.flatten([1, [2]]);
@@ -134,8 +132,3 @@
  var underscore = _.noConflict();
  var moe2 = { name: 'moe' };
  moe2 === _.identity(moe);
-@@= skipped -32, +31 lines =@@
- var template2 = _.template("Hello {{ name }}!");
- template2({ name: "Mustache" });
- _.template("Using 'with': <%= data.answer %>", { answer: 'no' }, { variable: 'data' });
-+//// [underscoreTest1_underscore.js]

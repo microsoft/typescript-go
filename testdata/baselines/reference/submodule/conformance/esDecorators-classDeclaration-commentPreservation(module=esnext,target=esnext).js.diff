@@ -1,29 +1,8 @@
 --- old.esDecorators-classDeclaration-commentPreservation(module=esnext,target=esnext).js
 +++ new.esDecorators-classDeclaration-commentPreservation(module=esnext,target=esnext).js
-@@= skipped -118, +118 lines =@@
- }
+@@= skipped -119, +119 lines =@@
  
  
-+//// [file3.js]
-+export 
-+@dec
-+@dec
-+class F {
-+}
-+export default 
-+@dec
-+@dec
-+class G {
-+}
-+//// [file2.js]
-+@dec
-+@dec
-+export class D {
-+}
-+@dec
-+@dec
-+export default class E {
-+}
  //// [file1.js]
 -/*1*/
  @dec
@@ -92,37 +71,37 @@
 -    /*33*/
      static accessor #z = 1;
  }
--//// [file2.js]
+ //// [file2.js]
 -/*34*/
--@dec
+ @dec
 -/*35*/
--@dec
+ @dec
 -/*36*/
--export class D {
--}
+ export class D {
+ }
 -/*37*/
--@dec
+ @dec
 -/*38*/
--@dec
+ @dec
 -/*39*/
--export default class E {
--}
--//// [file3.js]
+ export default class E {
+ }
+ //// [file3.js]
 -/*40*/
--export 
+ export 
 -/*41*/
--@dec
+ @dec
 -/*42*/
--@dec
+ @dec
 -/*43*/
--class F {
--}
+ class F {
+ }
 -/*44*/
--export default 
+ export default 
 -/*45*/
--@dec
+ @dec
 -/*46*/
--@dec
+ @dec
 -/*47*/
--class G {
--}
+ class G {
+ }

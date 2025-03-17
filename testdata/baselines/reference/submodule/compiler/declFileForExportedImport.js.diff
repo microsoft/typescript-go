@@ -1,13 +1,6 @@
 --- old.declFileForExportedImport.js
 +++ new.declFileForExportedImport.js
-@@= skipped -10, +10 lines =@@
- export import b = a;
- var z = b.x;
- 
--//// [declFileForExportedImport_0.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.x = void 0;
+@@= skipped -17, +17 lines =@@
  //// [declFileForExportedImport_1.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
@@ -24,7 +17,3 @@
 -//// [declFileForExportedImport_1.d.ts]
 -export import a = require('./declFileForExportedImport_0');
 -export import b = a;
-+//// [declFileForExportedImport_0.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.x = void 0;

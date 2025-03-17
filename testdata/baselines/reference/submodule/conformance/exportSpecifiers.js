@@ -20,6 +20,11 @@ export { type as as bar };
 export type { type something as whatever }; // Error
 
 
+//// [exports.js]
+const type = 0;
+const as = 0;
+const something = 0;
+export { type };
 //// [imports.js]
 import { type } from "./exports.js";
 type;
@@ -27,8 +32,3 @@ as;
 something;
 foo;
 bar;
-//// [exports.js]
-const type = 0;
-const as = 0;
-const something = 0;
-export { type };

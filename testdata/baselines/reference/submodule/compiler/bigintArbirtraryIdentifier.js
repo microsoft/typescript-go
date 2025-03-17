@@ -20,25 +20,25 @@ export { foo as 0n };
 //// [badExport2.ts]
 export { 0n as foo };
 
-//// [badExport2.js]
-0n;
-;
+//// [foo.js]
+const foo = 0n;
+export { foo as "0n" };
+//// [correctUse.js]
+import { "0n" as foo } from "./foo";
+export { foo as "0n" };
+//// [badImport.js]
+from;
+"./foo";
+export {};
+//// [badImport2.js]
+from;
+"./foo";
 export {};
 //// [badExport.js]
 export { foo as  };
 0n;
 ;
-//// [badImport2.js]
-from;
-"./foo";
+//// [badExport2.js]
+0n;
+;
 export {};
-//// [badImport.js]
-from;
-"./foo";
-export {};
-//// [correctUse.js]
-import { "0n" as foo } from "./foo";
-export { foo as "0n" };
-//// [foo.js]
-const foo = 0n;
-export { foo as "0n" };

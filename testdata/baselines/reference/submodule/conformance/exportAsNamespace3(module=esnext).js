@@ -18,10 +18,9 @@ import * as foo from './1'
 foo.ns.a;
 foo.ns.b;
 
-//// [2.js]
-import * as foo from './1';
-foo.ns.a;
-foo.ns.b;
+//// [0.js]
+export const a = 1;
+export const b = 2;
 //// [1.js]
 export * as ns from './0';
 ns.a;
@@ -29,6 +28,7 @@ ns.b;
 let ns = { a: 1, b: 2 };
 ns.a;
 ns.b;
-//// [0.js]
-export const a = 1;
-export const b = 2;
+//// [2.js]
+import * as foo from './1';
+foo.ns.a;
+foo.ns.b;

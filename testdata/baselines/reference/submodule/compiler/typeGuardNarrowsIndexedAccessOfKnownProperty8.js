@@ -14,6 +14,8 @@ export class C {
 }
 
 
+//// [a.js]
+export const key = "a";
 //// [b.js]
 import * as a from "./a";
 export class C {
@@ -22,5 +24,3 @@ export class C {
         this[a.key] = "foo";
     }
 }
-//// [a.js]
-export const key = "a";

@@ -15,11 +15,19 @@ import { A, B } from "./c";
 let _: A = new A();  // Error
 let __: B = new B(); // Error
 
-//// [d.js]
+//// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-let _ = new A();
-let __ = new B();
+exports.B = exports.A = void 0;
+class A {
+}
+exports.A = A;
+class B {
+}
+exports.B = B;
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 //// [c.js]
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -38,16 +46,8 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./b"), exports);
-//// [b.js]
+//// [d.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-//// [a.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.B = exports.A = void 0;
-class A {
-}
-exports.A = A;
-class B {
-}
-exports.B = B;
+let _ = new A();
+let __ = new B();

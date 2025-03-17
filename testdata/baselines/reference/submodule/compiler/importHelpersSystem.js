@@ -17,6 +17,13 @@ export declare function __metadata(metadataKey: any, metadataValue: any): Functi
 export declare function __awaiter(thisArg: any, _arguments: any, P: Function, generator: Function): any;
 
 
+//// [a.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.A = void 0;
+class A {
+}
+exports.A = A;
 //// [b.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -27,10 +34,3 @@ tslib_1.__exportStar(require("./a"), exports);
 class B extends a_1.A {
 }
 exports.B = B;
-//// [a.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.A = void 0;
-class A {
-}
-exports.A = A;

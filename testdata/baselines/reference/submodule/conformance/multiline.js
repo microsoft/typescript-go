@@ -53,6 +53,14 @@ let x = (
 );
 
 
+//// [a.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.texts = void 0;
+exports.texts = [];
+exports.texts.push(100);
+exports.texts.push(100);
+exports.texts.push("100");
 //// [b.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -82,11 +90,3 @@ let x = (<div>
     
     <MyComponent foo={"hooray"}/>
   </div>);
-//// [a.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.texts = void 0;
-exports.texts = [];
-exports.texts.push(100);
-exports.texts.push(100);
-exports.texts.push("100");

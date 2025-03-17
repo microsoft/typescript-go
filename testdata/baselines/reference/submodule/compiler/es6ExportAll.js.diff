@@ -1,11 +1,6 @@
 --- old.es6ExportAll.js
 +++ new.es6ExportAll.js
-@@= skipped -14, +14 lines =@@
- //// [client.ts]
- export * from "server";
- 
-+//// [client.js]
-+export * from "server";
+@@= skipped -17, +17 lines =@@
  //// [server.js]
  export class c {
  }
@@ -16,8 +11,8 @@
      m.x = 10;
  })(m || (m = {}));
  export var x = 10;
--//// [client.js]
--export * from "server";
+ //// [client.js]
+ export * from "server";
 -
 -
 -//// [server.d.ts]

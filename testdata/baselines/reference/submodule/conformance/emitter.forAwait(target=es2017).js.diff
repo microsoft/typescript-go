@@ -1,10 +1,9 @@
 --- old.emitter.forAwait(target=es2017).js
 +++ new.emitter.forAwait(target=es2017).js
-@@= skipped -49, +49 lines =@@
-     }
+@@= skipped -50, +50 lines =@@
  }
  
--//// [file1.js]
+ //// [file1.js]
 -var __asyncValues = (this && this.__asyncValues) || function (o) {
 -    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
 -    var m = o[Symbol.asyncIterator], i;
@@ -12,19 +11,16 @@
 -    function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
 -    function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
 -};
--async function f1() {
+ async function f1() {
 -    var _a, e_1, _b, _c;
-+//// [file7.js]
-+async function* f7() {
      let y;
 -    try {
 -        for (var _d = true, y_1 = __asyncValues(y), y_1_1; y_1_1 = await y_1.next(), _a = y_1_1.done, !_a; _d = true) {
 -            _c = y_1_1.value;
 -            _d = false;
 -            const x = _c;
-+    for (;;) {
-+        for await (const x of y) {
-         }
+-        }
++    for await (const x of y) {
      }
 -    catch (e_1_1) { e_1 = { error: e_1_1 }; }
 -    finally {
@@ -34,7 +30,7 @@
 -        finally { if (e_1) throw e_1.error; }
 -    }
  }
--//// [file2.js]
+ //// [file2.js]
 -var __asyncValues = (this && this.__asyncValues) || function (o) {
 -    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
 -    var m = o[Symbol.asyncIterator], i;
@@ -42,20 +38,16 @@
 -    function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
 -    function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
 -};
--async function f2() {
+ async function f2() {
 -    var _a, e_1, _b, _c;
--    let x, y;
+     let x, y;
 -    try {
 -        for (var _d = true, y_1 = __asyncValues(y), y_1_1; y_1_1 = await y_1.next(), _a = y_1_1.done, !_a; _d = true) {
 -            _c = y_1_1.value;
 -            _d = false;
 -            x = _c;
 -        }
-+//// [file6.js]
-+async function* f6() {
-+    let y;
-+    outer: for await (const x of y) {
-+        continue outer;
++    for await (x of y) {
      }
 -    catch (e_1_1) { e_1 = { error: e_1_1 }; }
 -    finally {
@@ -65,7 +57,7 @@
 -        finally { if (e_1) throw e_1.error; }
 -    }
  }
--//// [file3.js]
+ //// [file3.js]
 -var __asyncValues = (this && this.__asyncValues) || function (o) {
 -    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
 -    var m = o[Symbol.asyncIterator], i;
@@ -105,8 +97,12 @@
 -            finally { if (e_1) throw e_1.error; }
 -        }
 -    });
--}
--//// [file4.js]
++async function* f3() {
++    let y;
++    for await (const x of y) {
++    }
+ }
+ //// [file4.js]
 -var __asyncValues = (this && this.__asyncValues) || function (o) {
 -    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
 -    var m = o[Symbol.asyncIterator], i;
@@ -146,7 +142,11 @@
 -            finally { if (e_1) throw e_1.error; }
 -        }
 -    });
--}
++async function* f4() {
++    let x, y;
++    for await (x of y) {
++    }
+ }
  //// [file5.js]
 -var __asyncValues = (this && this.__asyncValues) || function (o) {
 -    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
@@ -175,14 +175,9 @@
 -            if (!_d && !_a && (_b = y_1.return)) await _b.call(y_1);
 -        }
 -        finally { if (e_1) throw e_1.error; }
-+}
-+//// [file4.js]
-+async function* f4() {
-+    let x, y;
-+    for await (x of y) {
-     }
+-    }
  }
--//// [file6.js]
+ //// [file6.js]
 -var __asyncValues = (this && this.__asyncValues) || function (o) {
 -    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
 -    var m = o[Symbol.asyncIterator], i;
@@ -224,13 +219,13 @@
 -            finally { if (e_1) throw e_1.error; }
 -        }
 -    });
-+//// [file3.js]
-+async function* f3() {
++async function* f6() {
 +    let y;
-+    for await (const x of y) {
++    outer: for await (const x of y) {
++        continue outer;
 +    }
  }
--//// [file7.js]
+ //// [file7.js]
 -var __asyncValues = (this && this.__asyncValues) || function (o) {
 -    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
 -    var m = o[Symbol.asyncIterator], i;
@@ -271,17 +266,11 @@
 -                }
 -                finally { if (e_1) throw e_1.error; }
 -            }
--        }
++async function* f7() {
++    let y;
++    for (;;) {
++        for await (const x of y) {
+         }
 -    });
-+//// [file2.js]
-+async function f2() {
-+    let x, y;
-+    for await (x of y) {
 +    }
  }
-+//// [file1.js]
-+async function f1() {
-+    let y;
-+    for await (const x of y) {
-+    }
-+}

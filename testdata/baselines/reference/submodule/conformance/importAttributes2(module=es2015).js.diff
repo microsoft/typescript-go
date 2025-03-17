@@ -1,23 +1,9 @@
 --- old.importAttributes2(module=es2015).js
 +++ new.importAttributes2(module=es2015).js
-@@= skipped -14, +14 lines =@@
- export { a as c, b as d } from './0' with { a: "a", b: "b", c: "c" }
- 
- 
--//// [0.js]
--export const a = 1;
--export const b = 2;
-+//// [2.js]
-+export { a, b } from './0' with {};
-+export { a as c, b as d } from './0' with { a: "a", b: "b", c: "c" };
- //// [1.js]
- export { a, b } from './0' with { type: "json" };
- export * from './0' with { type: "json" };
- import * as ns_1 from './0' with { type: "json" };
- export { ns_1 as ns };
--//// [2.js]
--export { a, b } from './0' with {};
--export { a as c, b as d } from './0' with { a: "a", b: "b", c: "c" };
+@@= skipped -25, +25 lines =@@
+ //// [2.js]
+ export { a, b } from './0' with {};
+ export { a as c, b as d } from './0' with { a: "a", b: "b", c: "c" };
 -
 -
 -//// [0.d.ts]
@@ -31,6 +17,3 @@
 -//// [2.d.ts]
 -export { a, b } from './0';
 -export { a as c, b as d } from './0';
-+//// [0.js]
-+export const a = 1;
-+export const b = 2;

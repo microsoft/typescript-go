@@ -30,7 +30,7 @@ import { handleParamGovernance } from './contractHelper.js';
 export const blah = handleParamGovernance({});
 
 
+//// [types.js]
 //// [index.js]
 import { handleParamGovernance } from './contractHelper.js';
 export const blah = handleParamGovernance({});
-//// [types.js]

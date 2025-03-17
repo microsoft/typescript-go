@@ -22,5 +22,5 @@ declare enum D {
 declare enum E {
 }
 
-//// [b.js]
 //// [a.js]
+//// [b.js]

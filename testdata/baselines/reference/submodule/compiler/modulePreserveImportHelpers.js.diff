@@ -1,10 +1,9 @@
 --- old.modulePreserveImportHelpers.js
 +++ new.modulePreserveImportHelpers.js
-@@= skipped -35, +35 lines =@@
- export declare function __runInitializers(...args: any[]): any;
+@@= skipped -36, +36 lines =@@
  
  
--//// [a.mjs]
+ //// [a.mjs]
 -import { __esDecorate, __runInitializers } from "tslib";
 -let A = (() => {
 -    let _classDecorators = [dec()];
@@ -24,7 +23,10 @@
 -    return A = _classThis;
 -})();
 -export { A };
--//// [b.cjs]
++@dec()
++export class A {
++}
+ //// [b.cjs]
 -const tslib_1 = require("tslib");
 -let B = (() => {
 -    let _classDecorators = [dec()];
@@ -43,6 +45,9 @@
 -    };
 -    return B = _classThis;
 -})();
++@dec()
++class B {
++}
  //// [c.js]
 -import { __esDecorate, __runInitializers } from "tslib";
 -let C = (() => {
@@ -65,12 +70,4 @@
 -export { C };
 +@dec()
 +export class C {
-+}
-+//// [b.cjs]
-+@dec()
-+class B {
-+}
-+//// [a.mjs]
-+@dec()
-+export class A {
 +}

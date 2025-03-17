@@ -1,14 +1,6 @@
 --- old.declFileImportModuleWithExportAssignment.js
 +++ new.declFileImportModuleWithExportAssignment.js
-@@= skipped -24, +24 lines =@@
- a.test1(null, null, null);
- 
- 
--//// [declFileImportModuleWithExportAssignment_0.js]
--"use strict";
--var m2;
--module.exports = m2;
- //// [declFileImportModuleWithExportAssignment_1.js]
+@@= skipped -32, +32 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.a = void 0;
@@ -43,7 +35,3 @@
 -    test1: a1.connectModule;
 -    test2(): a1.connectModule;
 -};
-+//// [declFileImportModuleWithExportAssignment_0.js]
-+"use strict";
-+var m2;
-+module.exports = m2;

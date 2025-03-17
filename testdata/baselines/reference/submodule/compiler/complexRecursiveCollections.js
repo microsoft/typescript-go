@@ -534,5 +534,5 @@ declare module "immutable" {
 }
 
 
-//// [immutable.js]
 //// [complex.js]
+//// [immutable.js]

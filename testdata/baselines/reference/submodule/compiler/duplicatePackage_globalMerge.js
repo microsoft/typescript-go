@@ -21,16 +21,16 @@ import { x } from './index'
 import { y } from '../tests/index'
 
 
-//// [bug25410.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-//// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.y = void 0;
-exports.y = 2;
 //// [index.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.x = void 0;
 exports.x = 1;
+//// [index.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.y = void 0;
+exports.y = 2;
+//// [bug25410.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });

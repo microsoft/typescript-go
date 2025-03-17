@@ -1,18 +1,17 @@
 --- old.decoratorMetadata.js
 +++ new.decoratorMetadata.js
-@@= skipped -17, +17 lines =@@
-     }
- }
- 
--//// [service.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
+@@= skipped -20, +20 lines =@@
+ //// [service.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
 -var Service = /** @class */ (function () {
 -    function Service() {
 -    }
 -    return Service;
 -}());
--exports.default = Service;
++class Service {
++}
+ exports.default = Service;
  //// [component.js]
  "use strict";
 -var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -52,9 +51,3 @@
 +    method(x) {
 +    }
 +}
-+//// [service.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+class Service {
-+}
-+exports.default = Service;

@@ -1,19 +1,17 @@
 --- old.declFileAliasUseBeforeDeclaration.js
 +++ new.declFileAliasUseBeforeDeclaration.js
-@@= skipped -6, +6 lines =@@
- export function bar(a: foo.Foo) { }
- import foo = require("./declFileAliasUseBeforeDeclaration_foo");
- 
--//// [declFileAliasUseBeforeDeclaration_foo.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.Foo = void 0;
+@@= skipped -10, +10 lines =@@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.Foo = void 0;
 -var Foo = /** @class */ (function () {
 -    function Foo() {
 -    }
 -    return Foo;
 -}());
--exports.Foo = Foo;
++class Foo {
++}
+ exports.Foo = Foo;
  //// [declFileAliasUseBeforeDeclaration_test.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
@@ -23,13 +21,7 @@
 -
 -//// [declFileAliasUseBeforeDeclaration_foo.d.ts]
 -export declare class Foo {
-+//// [declFileAliasUseBeforeDeclaration_foo.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.Foo = void 0;
-+class Foo {
- }
+-}
 -//// [declFileAliasUseBeforeDeclaration_test.d.ts]
 -export declare function bar(a: foo.Foo): void;
 -import foo = require("./declFileAliasUseBeforeDeclaration_foo");
-+exports.Foo = Foo;

@@ -20,14 +20,13 @@ export declare function __metadata(metadataKey: any, metadataValue: any): Functi
 export declare function __awaiter(thisArg: any, _arguments: any, P: Function, generator: Function): any;
 
 
-//// [c.js]
+//// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.C = void 0;
-const a_1 = require("./a");
-class C extends a_1.A {
+exports.A = void 0;
+class A {
 }
-exports.C = C;
+exports.A = A;
 //// [b.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36,10 +35,11 @@ const a_1 = require("./a");
 class B extends a_1.A {
 }
 exports.B = B;
-//// [a.js]
+//// [c.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.A = void 0;
-class A {
+exports.C = void 0;
+const a_1 = require("./a");
+class C extends a_1.A {
 }
-exports.A = A;
+exports.C = C;

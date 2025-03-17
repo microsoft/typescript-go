@@ -50,36 +50,8 @@ async function* f7() {
     }
 }
 
-//// [file7.js]
-async function* f7() {
-    let y;
-    for (;;) {
-        for await (const x of y) {
-        }
-    }
-}
-//// [file6.js]
-async function* f6() {
-    let y;
-    outer: for await (const x of y) {
-        continue outer;
-    }
-}
-//// [file5.js]
-async function f5() {
-    let y;
-    outer: for await (const x of y) {
-        continue outer;
-    }
-}
-//// [file4.js]
-async function* f4() {
-    let x, y;
-    for await (x of y) {
-    }
-}
-//// [file3.js]
-async function* f3() {
+//// [file1.js]
+async function f1() {
     let y;
     for await (const x of y) {
     }
@@ -90,9 +62,37 @@ async function f2() {
     for await (x of y) {
     }
 }
-//// [file1.js]
-async function f1() {
+//// [file3.js]
+async function* f3() {
     let y;
     for await (const x of y) {
+    }
+}
+//// [file4.js]
+async function* f4() {
+    let x, y;
+    for await (x of y) {
+    }
+}
+//// [file5.js]
+async function f5() {
+    let y;
+    outer: for await (const x of y) {
+        continue outer;
+    }
+}
+//// [file6.js]
+async function* f6() {
+    let y;
+    outer: for await (const x of y) {
+        continue outer;
+    }
+}
+//// [file7.js]
+async function* f7() {
+    let y;
+    for (;;) {
+        for await (const x of y) {
+        }
     }
 }

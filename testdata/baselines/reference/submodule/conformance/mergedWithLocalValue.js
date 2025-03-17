@@ -9,11 +9,11 @@ const A: A = "a";
 A.toUpperCase();
 
 
+//// [a.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 //// [b.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const A = "a";
 A.toUpperCase();
-//// [a.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });

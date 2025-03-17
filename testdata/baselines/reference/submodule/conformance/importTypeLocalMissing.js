@@ -43,6 +43,18 @@ export let shim: typeof import("./fo2") = {
 };
 
 
+//// [foo.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [foo2.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Bar = void 0;
+class Bar {
+    item;
+    constructor(input) { }
+}
+exports.Bar = Bar;
 //// [usage.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -58,15 +70,3 @@ exports.Bar2 = Bar2;
 exports.shim = {
     Bar: Bar2
 };
-//// [foo2.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Bar = void 0;
-class Bar {
-    item;
-    constructor(input) { }
-}
-exports.Bar = Bar;
-//// [foo.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });

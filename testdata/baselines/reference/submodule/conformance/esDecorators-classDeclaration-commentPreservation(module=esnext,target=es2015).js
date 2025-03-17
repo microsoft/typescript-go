@@ -119,26 +119,6 @@ class G {
 }
 
 
-//// [file3.js]
-export 
-@dec
-@dec
-class F {
-}
-export default 
-@dec
-@dec
-class G {
-}
-//// [file2.js]
-@dec
-@dec
-export class D {
-}
-@dec
-@dec
-export default class E {
-}
 //// [file1.js]
 @dec
 @dec
@@ -173,4 +153,24 @@ class C {
     @dec
     @dec
     static accessor #z = 1;
+}
+//// [file2.js]
+@dec
+@dec
+export class D {
+}
+@dec
+@dec
+export default class E {
+}
+//// [file3.js]
+export 
+@dec
+@dec
+class F {
+}
+export default 
+@dec
+@dec
+class G {
 }

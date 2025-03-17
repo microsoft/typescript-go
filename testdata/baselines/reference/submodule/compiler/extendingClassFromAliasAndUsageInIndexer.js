@@ -32,6 +32,30 @@ var moduleMap: { [key: string]: IHasVisualizationModel } = {
 var moduleName: string;
 var visModel = new moduleMap[moduleName].VisualizationModel();
 
+//// [extendingClassFromAliasAndUsageInIndexer_backbone.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Model = void 0;
+class Model {
+    someData;
+}
+exports.Model = Model;
+//// [extendingClassFromAliasAndUsageInIndexer_moduleA.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.VisualizationModel = void 0;
+const Backbone = require("./extendingClassFromAliasAndUsageInIndexer_backbone");
+class VisualizationModel extends Backbone.Model {
+}
+exports.VisualizationModel = VisualizationModel;
+//// [extendingClassFromAliasAndUsageInIndexer_moduleB.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.VisualizationModel = void 0;
+const Backbone = require("./extendingClassFromAliasAndUsageInIndexer_backbone");
+class VisualizationModel extends Backbone.Model {
+}
+exports.VisualizationModel = VisualizationModel;
 //// [extendingClassFromAliasAndUsageInIndexer_main.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -44,27 +68,3 @@ var moduleMap = {
 };
 var moduleName;
 var visModel = new moduleMap[moduleName].VisualizationModel();
-//// [extendingClassFromAliasAndUsageInIndexer_moduleB.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.VisualizationModel = void 0;
-const Backbone = require("./extendingClassFromAliasAndUsageInIndexer_backbone");
-class VisualizationModel extends Backbone.Model {
-}
-exports.VisualizationModel = VisualizationModel;
-//// [extendingClassFromAliasAndUsageInIndexer_moduleA.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.VisualizationModel = void 0;
-const Backbone = require("./extendingClassFromAliasAndUsageInIndexer_backbone");
-class VisualizationModel extends Backbone.Model {
-}
-exports.VisualizationModel = VisualizationModel;
-//// [extendingClassFromAliasAndUsageInIndexer_backbone.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Model = void 0;
-class Model {
-    someData;
-}
-exports.Model = Model;

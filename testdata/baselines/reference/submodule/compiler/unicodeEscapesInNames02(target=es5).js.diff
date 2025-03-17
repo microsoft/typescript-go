@@ -1,11 +1,8 @@
 --- old.unicodeEscapesInNames02(target=es5).js
 +++ new.unicodeEscapesInNames02(target=es5).js
-@@= skipped -29, +29 lines =@@
- import { _𐊧 as \uD800\uDEA7 } from "./extendedEscapesForAstralsInVarsAndClasses.js";
+@@= skipped -30, +30 lines =@@
  
  
-+//// [astralAsSurrogatePair.js]
-+export {};
  //// [extendedEscapesForAstralsInVarsAndClasses.js]
 -// U+102A7 CARIAN LETTER A2
  var string;
@@ -14,7 +11,7 @@
  if (Math.random()) {
      "hello";
  }
-@@= skipped -15, +16 lines =@@
+@@= skipped -14, +13 lines =@@
      }
      "hallo";
  }
@@ -44,6 +41,6 @@
  }
  "!";
 -//# sourceMappingURL=extendedEscapesForAstralsInVarsAndClasses.js.map
--//// [astralAsSurrogatePair.js]
--export {};
+ //// [astralAsSurrogatePair.js]
+ export {};
 -//# sourceMappingURL=astralAsSurrogatePair.js.map

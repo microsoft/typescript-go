@@ -19,12 +19,6 @@ import { C, I, C2 } from "./server"; // Shouldnt emit I and C2 into the js file 
 export type cValInterface = I;
 export var cVal = new C();
 
-//// [client.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.cVal = void 0;
-const server_1 = require("./server");
-exports.cVal = new server_1.C();
 //// [server.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -37,3 +31,9 @@ class C2 {
     prop2 = "world";
 }
 exports.C2 = C2;
+//// [client.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.cVal = void 0;
+const server_1 = require("./server");
+exports.cVal = new server_1.C();

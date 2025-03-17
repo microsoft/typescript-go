@@ -20,11 +20,6 @@ namespace ts {
 
 
 
-//// [B.js]
-var ts;
-(function (ts) {
-    ts.sys = { version: "2.0.5" };
-})(ts || (ts = {}));
 //// [A.js]
 var ts;
 (function (ts) {
@@ -35,4 +30,9 @@ var ts;
     function log(info) {
     }
     ts.log = log;
+})(ts || (ts = {}));
+//// [B.js]
+var ts;
+(function (ts) {
+    ts.sys = { version: "2.0.5" };
 })(ts || (ts = {}));

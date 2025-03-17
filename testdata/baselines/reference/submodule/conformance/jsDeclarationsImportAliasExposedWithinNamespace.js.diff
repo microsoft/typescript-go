@@ -20,6 +20,12 @@
 -        prop2: string;
 -    };
 -    type typeC = myTypes.typeB | Function;
++//// [file.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.myTypes = void 0;
++const myTypes = {};
++exports.myTypes = myTypes;
 +//// [file2.js]
 +"use strict";
 +Object.defineProperty(exports, "__esModule", { value: true });
@@ -65,9 +71,3 @@
 -export const testFnTypes: {
 -    [x: string]: any;
 -};
-+//// [file.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.myTypes = void 0;
-+const myTypes = {};
-+exports.myTypes = myTypes;

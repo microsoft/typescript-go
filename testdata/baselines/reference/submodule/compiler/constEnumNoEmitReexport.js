@@ -28,31 +28,6 @@ import { MyConstEnum } from './ReExport';
 MyConstEnum.Foo;
 
 
-//// [Usage3.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-ReExport_1.MyConstEnum.Foo;
-//// [Usage2.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-ImportExport_1.MyConstEnum.Foo;
-//// [Usage1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-ImportExportDefault_1.default.Foo;
-ReExportDefault_1.default.Foo;
-//// [ReExport.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-//// [ReExportDefault.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-//// [ImportExportDefault.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-//// [ImportExport.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 //// [ConstEnum.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -63,3 +38,28 @@ var MyConstEnum;
     MyConstEnum[MyConstEnum["Bar"] = 1] = "Bar";
 })(MyConstEnum || (exports.MyConstEnum = MyConstEnum = {}));
 ;
+//// [ImportExport.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [ImportExportDefault.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [ReExportDefault.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [ReExport.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [Usage1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+ImportExportDefault_1.default.Foo;
+ReExportDefault_1.default.Foo;
+//// [Usage2.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+ImportExport_1.MyConstEnum.Foo;
+//// [Usage3.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+ReExport_1.MyConstEnum.Foo;

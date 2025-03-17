@@ -15,6 +15,11 @@ Lib.foo; // should work
 var x: Lib.Bar; // should be an error
 export { Lib }
 
+//// [file1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var x;
+Library.foo;
 //// [file2.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -25,8 +30,3 @@ var Lib;
 })(Lib || (exports.Lib = Lib = {}));
 Lib.foo;
 var x;
-//// [file1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var x;
-Library.foo;

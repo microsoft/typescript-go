@@ -20,6 +20,11 @@ export function test() {
   return inner;
 }
 
+//// [types.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.symb = void 0;
+exports.symb = Symbol();
 //// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -30,8 +35,3 @@ function test() {
     inner[types_1.symb] = true;
     return inner;
 }
-//// [types.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.symb = void 0;
-exports.symb = Symbol();

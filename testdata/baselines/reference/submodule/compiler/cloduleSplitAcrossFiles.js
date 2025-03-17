@@ -9,12 +9,12 @@ module D {
 }
 D.y;
 
+//// [cloduleSplitAcrossFiles_class.js]
+class D {
+}
 //// [cloduleSplitAcrossFiles_module.js]
 var D;
 (function (D) {
     D.y = "hi";
 })(D || (D = {}));
 D.y;
-//// [cloduleSplitAcrossFiles_class.js]
-class D {
-}

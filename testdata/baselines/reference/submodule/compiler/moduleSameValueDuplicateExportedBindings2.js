@@ -13,6 +13,22 @@ export enum Animals {
 	Dog
 };
 
+//// [c.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Animals = void 0;
+var Animals;
+(function (Animals) {
+    Animals[Animals["Cat"] = 0] = "Cat";
+    Animals[Animals["Dog"] = 1] = "Dog";
+})(Animals || (exports.Animals = Animals = {}));
+;
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Animals = void 0;
+const c_1 = require("./c");
+Object.defineProperty(exports, "Animals", { enumerable: true, get: function () { return c_1.Animals; } });
 //// [a.js]
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -32,19 +48,3 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./b"), exports);
 __exportStar(require("./c"), exports);
-//// [b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Animals = void 0;
-const c_1 = require("./c");
-Object.defineProperty(exports, "Animals", { enumerable: true, get: function () { return c_1.Animals; } });
-//// [c.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Animals = void 0;
-var Animals;
-(function (Animals) {
-    Animals[Animals["Cat"] = 0] = "Cat";
-    Animals[Animals["Dog"] = 1] = "Dog";
-})(Animals || (exports.Animals = Animals = {}));
-;

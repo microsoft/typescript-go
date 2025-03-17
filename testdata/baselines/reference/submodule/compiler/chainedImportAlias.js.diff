@@ -1,24 +1,10 @@
 --- old.chainedImportAlias.js
 +++ new.chainedImportAlias.js
-@@= skipped -10, +10 lines =@@
- y.m.foo();
- 
- 
-+//// [chainedImportAlias_file1.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+const x = require("./chainedImportAlias_file0");
-+y.m.foo();
- //// [chainedImportAlias_file0.js]
+@@= skipped -22, +22 lines =@@
+ //// [chainedImportAlias_file1.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
-@@= skipped -9, +14 lines =@@
-     function foo() { }
-     m.foo = foo;
- })(m || (exports.m = m = {}));
--//// [chainedImportAlias_file1.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
 -var x = require("./chainedImportAlias_file0");
 -var y = x;
--y.m.foo();
++const x = require("./chainedImportAlias_file0");
+ y.m.foo();

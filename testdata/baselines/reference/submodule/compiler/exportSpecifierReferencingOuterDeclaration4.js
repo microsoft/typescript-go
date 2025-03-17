@@ -9,7 +9,7 @@ export { X };
 export declare function foo(): X.foo;
 export declare function bar(): X.bar; // error
 
+//// [exportSpecifierReferencingOuterDeclaration2_A.js]
 //// [exportSpecifierReferencingOuterDeclaration2_B.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-//// [exportSpecifierReferencingOuterDeclaration2_A.js]

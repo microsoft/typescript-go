@@ -14,25 +14,25 @@ export default class C {}
 
 
 
-//// [file4.js]
+//// [file1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-class C {
-}
-exports.default = C;
+exports.default = default_1;
+function default_1() { }
+//// [file2.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = foo;
+function foo() { }
 //// [file3.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class default_1 {
 }
 exports.default = default_1;
-//// [file2.js]
+//// [file4.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = foo;
-function foo() { }
-//// [file1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = default_1;
-function default_1() { }
+class C {
+}
+exports.default = C;

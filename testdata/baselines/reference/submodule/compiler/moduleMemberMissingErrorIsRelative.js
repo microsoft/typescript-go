@@ -5,9 +5,9 @@ export {};
 //// [bar.ts]
 import {nosuch} from './foo';
 
-//// [bar.js]
+//// [foo.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-//// [foo.js]
+//// [bar.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });

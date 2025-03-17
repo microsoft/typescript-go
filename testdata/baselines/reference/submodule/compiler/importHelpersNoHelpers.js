@@ -36,16 +36,11 @@ class C {
 export {}
 
 
-//// [script.js]
-class A {
-}
-class B extends A {
-}
-@dec
-class C {
-    method(x) {
-    }
-}
+//// [other.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.x = void 0;
+exports.x = 1;
 //// [external.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -66,8 +61,13 @@ class C {
 const o = { a: 1 };
 const y = { ...o };
 const { ...x } = y;
-//// [other.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.x = void 0;
-exports.x = 1;
+//// [script.js]
+class A {
+}
+class B extends A {
+}
+@dec
+class C {
+    method(x) {
+    }
+}

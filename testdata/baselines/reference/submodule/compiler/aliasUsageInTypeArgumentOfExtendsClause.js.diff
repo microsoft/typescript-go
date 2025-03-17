@@ -1,27 +1,18 @@
 --- old.aliasUsageInTypeArgumentOfExtendsClause.js
 +++ new.aliasUsageInTypeArgumentOfExtendsClause.js
-@@= skipped -23, +23 lines =@@
-     x = moduleA;
- }
- 
--//// [aliasUsageInTypeArgumentOfExtendsClause_backbone.js]
-+//// [aliasUsageInTypeArgumentOfExtendsClause_main.js]
+@@= skipped -27, +27 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
--exports.Model = void 0;
+ exports.Model = void 0;
 -var Model = /** @class */ (function () {
 -    function Model() {
 -    }
 -    return Model;
 -}());
--exports.Model = Model;
-+const moduleA = require("./aliasUsageInTypeArgumentOfExtendsClause_moduleA");
-+class C {
-+    x;
++class Model {
++    someData;
 +}
-+class D extends C {
-+    x = moduleA;
-+}
+ exports.Model = Model;
  //// [aliasUsageInTypeArgumentOfExtendsClause_moduleA.js]
  "use strict";
 -var __extends = (this && this.__extends) || (function () {
@@ -53,8 +44,7 @@
 +class VisualizationModel extends Backbone.Model {
 +}
  exports.VisualizationModel = VisualizationModel;
--//// [aliasUsageInTypeArgumentOfExtendsClause_main.js]
-+//// [aliasUsageInTypeArgumentOfExtendsClause_backbone.js]
+ //// [aliasUsageInTypeArgumentOfExtendsClause_main.js]
  "use strict";
 -var __extends = (this && this.__extends) || (function () {
 -    var extendStatics = function (d, b) {
@@ -87,8 +77,10 @@
 -    }
 -    return D;
 -}(C));
-+exports.Model = void 0;
-+class Model {
-+    someData;
++const moduleA = require("./aliasUsageInTypeArgumentOfExtendsClause_moduleA");
++class C {
++    x;
 +}
-+exports.Model = Model;
++class D extends C {
++    x = moduleA;
++}

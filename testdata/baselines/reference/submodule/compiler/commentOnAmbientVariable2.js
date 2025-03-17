@@ -8,7 +8,7 @@ var y = 1;
 declare var x: number;
 x = 2;
 
-//// [commentOnAmbientVariable2_2.js]
-x = 2;
 //// [commentOnAmbientVariable2_1.js]
 var y = 1;
+//// [commentOnAmbientVariable2_2.js]
+x = 2;

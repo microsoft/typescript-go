@@ -18,9 +18,6 @@ import * as d  from './decl'
 
 export const f = {...d}
 
-//// [main.js]
-import * as d from './decl';
-export const f = { ...d };
 //// [decl.js]
 const u = "X";
 const a = { a: "value of a", notNecessary: u };
@@ -28,3 +25,6 @@ export const o1 = (o) => { };
 export const o2 = (o) => { };
 export const o3 = (o) => { };
 export const o4 = (o) => { };
+//// [main.js]
+import * as d from './decl';
+export const f = { ...d };

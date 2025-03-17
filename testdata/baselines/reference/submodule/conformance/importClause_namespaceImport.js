@@ -17,16 +17,6 @@ const c: types.C<string> = "";
 const d = { types };
 
 
-//// [b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-types;
-types.Value;
-let v;
-const a = {};
-const b = {};
-const c = "";
-const d = { types };
 //// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40,3 +30,13 @@ class B {
 }
 exports.B = B;
 exports.Value = {};
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+types;
+types.Value;
+let v;
+const a = {};
+const b = {};
+const c = "";
+const d = { types };

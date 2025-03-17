@@ -1,20 +1,10 @@
 --- old.reactImportDropped.js
 +++ new.reactImportDropped.js
-@@= skipped -34, +34 lines =@@
- const x = <TabBar height={layout.footerHeight} />;
- 
- 
-+//// [NavigationView.js]
-+import TabBar from '../../components/TabBar';
-+import { layout } from '../../utils/theme';
-+const x = <TabBar height={layout.footerHeight}/>;
- //// [TabBar.js]
- export default React.createClass({
-     render() {
-         return (null);
-     }
+@@= skipped -42, +42 lines =@@
  });
--//// [NavigationView.js]
--import TabBar from '../../components/TabBar';
+ //// [NavigationView.js]
+ import TabBar from '../../components/TabBar';
 -import { layout } from '../../utils/theme'; // <- DO NOT DROP this import
 -const x = React.createElement(TabBar, { height: layout.footerHeight });
++import { layout } from '../../utils/theme';
++const x = <TabBar height={layout.footerHeight}/>;

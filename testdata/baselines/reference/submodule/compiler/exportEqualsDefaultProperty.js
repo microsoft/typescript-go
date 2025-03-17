@@ -13,11 +13,6 @@ import foo from "./exp";
 foo.toExponential(2);
 
 
-//// [imp.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const exp_1 = require("./exp");
-exp_1.default.toExponential(2);
 //// [exp.js]
 "use strict";
 var x = {
@@ -25,3 +20,8 @@ var x = {
     "default": 42
 };
 module.exports = x;
+//// [imp.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const exp_1 = require("./exp");
+exp_1.default.toExponential(2);

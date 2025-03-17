@@ -13,11 +13,14 @@ export * from "./register";
 export * from "./data1";
 export * as aliased from "./data1";
 
-//// [data1.js]
+//// [register.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const _1 = require("./");
-(0, _1.register)("ok");
+exports.register = register;
+const r = [];
+function register(data) {
+    r.push(data);
+}
 //// [index.js]
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -39,11 +42,8 @@ exports.aliased = void 0;
 __exportStar(require("./register"), exports);
 __exportStar(require("./data1"), exports);
 exports.aliased = require("./data1");
-//// [register.js]
+//// [data1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.register = register;
-const r = [];
-function register(data) {
-    r.push(data);
-}
+const _1 = require("./");
+(0, _1.register)("ok");

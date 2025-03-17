@@ -23,20 +23,6 @@ class Bar {
   //                      ^^^^
 }
 
-//// [index2.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-function foo(...args) { }
-class Bar {
-    yoha(yoha, ...bar) { }
-}
-//// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-function foo(...args) { }
-class Bar {
-    yoha(yoha, bar) { }
-}
 //// [yoha.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -44,3 +30,17 @@ exports.Yoha = void 0;
 class Yoha {
 }
 exports.Yoha = Yoha;
+//// [index.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+function foo(...args) { }
+class Bar {
+    yoha(yoha, bar) { }
+}
+//// [index2.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+function foo(...args) { }
+class Bar {
+    yoha(yoha, ...bar) { }
+}

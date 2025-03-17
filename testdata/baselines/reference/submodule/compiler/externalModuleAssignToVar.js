@@ -26,6 +26,14 @@ var y3: new () => ext3 = ext3;
 y3 = ext3; // ok
 
 
+//// [externalModuleAssignToVar_core_require.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.C = void 0;
+class C {
+    bar;
+}
+exports.C = C;
 //// [externalModuleAssignToVar_core.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -38,11 +46,3 @@ y2 = ext2;
 const ext3 = require("externalModuleAssignToVar_ext");
 var y3 = ext3;
 y3 = ext3;
-//// [externalModuleAssignToVar_core_require.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.C = void 0;
-class C {
-    bar;
-}
-exports.C = C;

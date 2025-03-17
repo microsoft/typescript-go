@@ -457,6 +457,7 @@ module TypeScript {
     }
 }
 
+//// [typescript.js]
 //// [parserRealSource10.js]
 var TypeScript;
 (function (TypeScript) {
@@ -926,4 +927,3 @@ var TypeScript;
     }
     TypeScript.initializeStaticTokens = initializeStaticTokens;
 })(TypeScript || (TypeScript = {}));
-//// [typescript.js]

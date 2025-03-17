@@ -40,29 +40,29 @@ class C6 {
 }
 
 
-//// [file6.js]
-class C6 {
+//// [file1.js]
+class C1 {
+    static accessor x = 0;
+}
+//// [file2.js]
+class C2 {
+    static accessor #x = 0;
+}
+//// [file3.js]
+class C3 {
+    accessor x = 0;
+}
+//// [file4.js]
+class C4 {
     accessor #x = 0;
-    x = 1;
 }
 //// [file5.js]
 class C5 {
     x = 0;
     accessor #x = 1;
 }
-//// [file4.js]
-class C4 {
+//// [file6.js]
+class C6 {
     accessor #x = 0;
-}
-//// [file3.js]
-class C3 {
-    accessor x = 0;
-}
-//// [file2.js]
-class C2 {
-    static accessor #x = 0;
-}
-//// [file1.js]
-class C1 {
-    static accessor x = 0;
+    x = 1;
 }

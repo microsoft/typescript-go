@@ -13,10 +13,10 @@ import test = require('exportAssignedTypeAsTypeAnnotation_0');
 var t2: test; // should not raise a 'container type' error
 
 
+//// [exportAssignedTypeAsTypeAnnotation_0.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 //// [exportAssignedTypeAsTypeAnnotation_1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var t2;
-//// [exportAssignedTypeAsTypeAnnotation_0.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });

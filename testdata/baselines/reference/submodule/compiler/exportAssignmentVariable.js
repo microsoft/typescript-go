@@ -10,12 +10,12 @@ import y = require("./exportAssignmentVariable_A");
 
 var n: number = y;
 
+//// [exportAssignmentVariable_A.js]
+"use strict";
+var x = 0;
+module.exports = x;
 //// [exportAssignmentVariable_B.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const y = require("./exportAssignmentVariable_A");
 var n = y;
-//// [exportAssignmentVariable_A.js]
-"use strict";
-var x = 0;
-module.exports = x;

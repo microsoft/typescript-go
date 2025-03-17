@@ -27,21 +27,6 @@ export declare enum E {X = 1}
 export declare module M { var v: number; }
 
 
-//// [file6.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-//// [file5.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-//// [file4.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-//// [file3.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-//// [file2.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 //// [file1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -51,3 +36,18 @@ exports.promise = Promise;
 exports.foo = Foo;
 exports.c = C;
 exports.e = E;
+//// [file2.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [file3.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [file4.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [file5.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [file6.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });

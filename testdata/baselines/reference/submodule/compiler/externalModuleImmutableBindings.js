@@ -50,6 +50,11 @@ for ((stuff[n]) of []) {}
 
 
 
+//// [f1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.x = void 0;
+exports.x = 1;
 //// [f2.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -87,8 +92,3 @@ for ((stuff.blah) in []) { }
 for ((stuff.blah) of []) { }
 for ((stuff[n]) in []) { }
 for ((stuff[n]) of []) { }
-//// [f1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.x = void 0;
-exports.x = 1;

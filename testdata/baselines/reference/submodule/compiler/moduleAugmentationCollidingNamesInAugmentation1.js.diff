@@ -1,26 +1,35 @@
 --- old.moduleAugmentationCollidingNamesInAugmentation1.js
 +++ new.moduleAugmentationCollidingNamesInAugmentation1.js
-@@= skipped -31, +31 lines =@@
- let x: Observable<number>;
+@@= skipped -32, +32 lines =@@
  
  
--//// [observable.js]
+ //// [observable.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
 -    Object.defineProperty(exports, "__esModule", { value: true });
 -});
--//// [map1.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
+ //// [map1.js]
 -define(["require", "exports", "./observable"], function (require, exports, observable_1) {
 -    "use strict";
 -    Object.defineProperty(exports, "__esModule", { value: true });
 -    observable_1.Observable.prototype.map = function () { };
 -});
--//// [map2.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++const observable_1 = require("./observable");
++observable_1.Observable.prototype.map = function () { };
+ //// [map2.js]
 -define(["require", "exports", "./observable"], function (require, exports, observable_1) {
 -    "use strict";
 -    Object.defineProperty(exports, "__esModule", { value: true });
 -    observable_1.Observable.prototype.map = function () { };
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++const observable_1 = require("./observable");
++observable_1.Observable.prototype.map = function () { };
  //// [main.js]
 -define(["require", "exports", "./map1", "./map2"], function (require, exports) {
 -    "use strict";
@@ -55,16 +64,3 @@
 +require("./map1");
 +require("./map2");
 +let x;
-+//// [map2.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+const observable_1 = require("./observable");
-+observable_1.Observable.prototype.map = function () { };
-+//// [map1.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+const observable_1 = require("./observable");
-+observable_1.Observable.prototype.map = function () { };
-+//// [observable.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });

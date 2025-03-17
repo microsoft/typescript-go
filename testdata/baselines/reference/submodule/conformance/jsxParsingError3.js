@@ -27,16 +27,16 @@ let x5 = <div>}{"foo"}</div>;
 let x6 = <div>>{"foo"}</div>;
 
 
-//// [Error6.jsx]
-let x6 = <div>>{"foo"}</div>;
-//// [Error5.jsx]
-let x5 = <div>}{"foo"}</div>;
-//// [Error4.jsx]
-let x4 = <div>{"foo"}></div>;
-//// [Error3.jsx]
-let x3 = <div>{"foo"}}</div>;
-//// [Error2.jsx]
-let x2 = <div>></div>;
+//// [file.jsx]
 //// [Error1.jsx]
 let x1 = <div>}</div>;
-//// [file.jsx]
+//// [Error2.jsx]
+let x2 = <div>></div>;
+//// [Error3.jsx]
+let x3 = <div>{"foo"}}</div>;
+//// [Error4.jsx]
+let x4 = <div>{"foo"}></div>;
+//// [Error5.jsx]
+let x5 = <div>}{"foo"}</div>;
+//// [Error6.jsx]
+let x6 = <div>>{"foo"}</div>;

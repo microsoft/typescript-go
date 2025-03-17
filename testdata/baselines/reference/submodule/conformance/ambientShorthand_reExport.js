@@ -16,12 +16,12 @@ import * as $ from "./reExportAll";
 x($);
 
 
-//// [reExportUser.js]
+//// [reExportX.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const reExportX_1 = require("./reExportX");
-const $ = require("./reExportAll");
-(0, reExportX_1.x)($);
+exports.x = void 0;
+const jquery_1 = require("jquery");
+Object.defineProperty(exports, "x", { enumerable: true, get: function () { return jquery_1.x; } });
 //// [reExportAll.js]
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -40,9 +40,9 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("jquery"), exports);
-//// [reExportX.js]
+//// [reExportUser.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.x = void 0;
-const jquery_1 = require("jquery");
-Object.defineProperty(exports, "x", { enumerable: true, get: function () { return jquery_1.x; } });
+const reExportX_1 = require("./reExportX");
+const $ = require("./reExportAll");
+(0, reExportX_1.x)($);

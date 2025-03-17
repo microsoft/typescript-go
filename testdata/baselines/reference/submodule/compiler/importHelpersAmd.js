@@ -19,6 +19,13 @@ export declare function __awaiter(thisArg: any, _arguments: any, P: Function, ge
 export declare function __generator(thisArg: any, body: Function): any;
 export declare function __exportStar(m: any, exports: any): void;
 
+//// [a.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.A = void 0;
+class A {
+}
+exports.A = A;
 //// [b.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -29,10 +36,3 @@ tslib_1.__exportStar(require("./a"), exports);
 class B extends a_1.A {
 }
 exports.B = B;
-//// [a.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.A = void 0;
-class A {
-}
-exports.A = A;

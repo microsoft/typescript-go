@@ -12,12 +12,12 @@ import A from './a';
 var a: A;
 a.value.toExponential();
 
-//// [b.js]
+//// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var a;
 a.value.toExponential();
-//// [a.js]
+//// [b.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var a;

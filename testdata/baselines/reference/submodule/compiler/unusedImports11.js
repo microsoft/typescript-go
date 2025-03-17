@@ -17,6 +17,14 @@ new M();
 new ns.Member();
 new r.Member();
 
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Member = void 0;
+class Member {
+}
+exports.Member = Member;
+exports.default = Member;
 //// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -29,11 +37,3 @@ new b_2.default();
 new b_2.Member();
 new ns.Member();
 new r.Member();
-//// [b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Member = void 0;
-class Member {
-}
-exports.Member = Member;
-exports.default = Member;

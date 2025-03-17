@@ -1,20 +1,6 @@
 --- old.importCallExpressionReturnPromiseOfAny.js
 +++ new.importCallExpressionReturnPromiseOfAny.js
-@@= skipped -32, +32 lines =@@
- }
- 
- 
--//// [defaultPath.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.C = void 0;
--class C {
--}
--exports.C = C;
- //// [1.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
-@@= skipped -17, +10 lines =@@
+@@= skipped -49, +49 lines =@@
  var p11 = Promise.resolve(`${getSpecifier()}`).then(s => require(s));
  const p2 = Promise.resolve(`${whatToLoad ? getSpecifier() : "defaulPath"}`).then(s => require(s));
  p1.then(zero => {
@@ -23,14 +9,3 @@
  });
  let j;
  var p3 = Promise.resolve(`${j = getSpecifier()}`).then(s => require(s));
-@@= skipped -10, +10 lines =@@
-         Promise.resolve(`${yield path}`).then(s => require(s));
-     }
- }
-+//// [defaultPath.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.C = void 0;
-+class C {
-+}
-+exports.C = C;

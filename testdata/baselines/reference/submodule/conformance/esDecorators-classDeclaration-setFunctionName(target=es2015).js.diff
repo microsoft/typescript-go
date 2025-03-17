@@ -1,17 +1,8 @@
 --- old.esDecorators-classDeclaration-setFunctionName(target=es2015).js
 +++ new.esDecorators-classDeclaration-setFunctionName(target=es2015).js
-@@= skipped -22, +22 lines =@@
- @dec export default class {}
+@@= skipped -23, +23 lines =@@
  
  
-+//// [c.js]
-+@dec
-+export default class {
-+}
-+//// [b.js]
-+@dec
-+export class C {
-+}
  //// [a.js]
 -let C = (() => {
 -    let _classDecorators = [dec];
@@ -34,7 +25,7 @@
 +class C {
 +}
  export {};
--//// [b.js]
+ //// [b.js]
 -let C = (() => {
 -    let _classDecorators = [dec];
 -    let _classDescriptor;
@@ -53,7 +44,10 @@
 -    return C = _classThis;
 -})();
 -export { C };
--//// [c.js]
++@dec
++export class C {
++}
+ //// [c.js]
 -export default (() => {
 -    let _classDecorators = [dec];
 -    let _classDescriptor;
@@ -71,3 +65,6 @@
 -    })();
 -    return default_1 = _classThis;
 -})();
++@dec
++export default class {
++}

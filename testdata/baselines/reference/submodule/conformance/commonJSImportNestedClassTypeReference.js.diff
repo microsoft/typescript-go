@@ -1,24 +1,21 @@
 --- old.commonJSImportNestedClassTypeReference.js
 +++ new.commonJSImportNestedClassTypeReference.js
-@@= skipped -17, +17 lines =@@
+@@= skipped -16, +16 lines =@@
+ exports.K = NS.K;
  
  
- //// [mod1.js]
+-//// [mod1.js]
 -"use strict";
- var NS = {};
+-var NS = {};
 -NS.K = /** @class */ (function () {
 -    function K() {
 -    }
 -    K.prototype.values = function () {
-+NS.K = class {
-+    values() {
-         return new NS.K();
+-        return new NS.K();
 -    };
 -    return K;
 -}());
-+    }
-+};
- exports.K = NS.K;
+-exports.K = NS.K;
  //// [main.js]
 -"use strict";
 -var K = require("./mod1").K;
@@ -34,6 +31,13 @@
 -    new (): {
 -        values(): /*elided*/ any;
 -    };
--};
++//// [mod1.js]
++var NS = {};
++NS.K = class {
++    values() {
++        return new NS.K();
++    }
+ };
 -//// [main.d.ts]
 -export {};
++exports.K = NS.K;

@@ -39,6 +39,18 @@ export import { aaaa } from "./server";
 export import { aaaa as bbbb } from "./server";
 
 
+//// [server.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.aaaa = exports.z2 = exports.z1 = exports.x1 = exports.a1 = exports.m = exports.x = exports.a = void 0;
+exports.a = 10;
+exports.x = exports.a;
+exports.m = exports.a;
+exports.a1 = 10;
+exports.x1 = 10;
+exports.z1 = 10;
+exports.z2 = 10;
+exports.aaaa = 10;
 //// [client.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -64,15 +76,3 @@ const server_8 = require("./server");
 exports.z111 = server_8.z1;
 const server_9 = require("./server");
 exports.z2 = server_9.z2;
-//// [server.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.aaaa = exports.z2 = exports.z1 = exports.x1 = exports.a1 = exports.m = exports.x = exports.a = void 0;
-exports.a = 10;
-exports.x = exports.a;
-exports.m = exports.a;
-exports.a1 = 10;
-exports.x1 = 10;
-exports.z1 = 10;
-exports.z2 = 10;
-exports.aaaa = 10;

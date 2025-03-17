@@ -16,13 +16,13 @@ declare let dec: any;
 
 export default (class { @dec y: any });
 
-//// [b.js]
-export default (class {
-    @dec
-    y;
-});
 //// [a.js]
 export default (
 @dec
 class {
+});
+//// [b.js]
+export default (class {
+    @dec
+    y;
 });

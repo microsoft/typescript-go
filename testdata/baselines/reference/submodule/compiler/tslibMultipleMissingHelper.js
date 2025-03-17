@@ -46,6 +46,7 @@ async function foo(): Promise<void> {}
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 async function foo() { }
+async function bar() { }
 //// [other.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -59,4 +60,3 @@ function spread({ a, ...rest }) {
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 async function foo() { }
-async function bar() { }

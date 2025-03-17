@@ -14,6 +14,12 @@ declare module "tslib" {
     function __importDefault(m: any): void;
 }
 
+//// [a.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class default_1 {
+}
+exports.default = default_1;
 //// [b.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -24,9 +30,3 @@ const a_2 = require("./a");
 Object.defineProperty(exports, "a", { enumerable: true, get: function () { return a_2.default; } });
 const a_3 = require("./a");
 void a_3.default;
-//// [a.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class default_1 {
-}
-exports.default = default_1;

@@ -10,15 +10,15 @@ declare let dec: any;
 
 export = class { @dec y: any };
 
-//// [b.js]
-"use strict";
-module.exports = class {
-    @dec
-    y;
-};
 //// [a.js]
 "use strict";
 module.exports = 
 @dec
 class {
+};
+//// [b.js]
+"use strict";
+module.exports = class {
+    @dec
+    y;
 };

@@ -11,12 +11,12 @@ type Foo = 54;
 let Bar = 42
 
 
-//// [file3.js]
-let Bar = 42;
-//// [file2.js]
-class Bar {
-}
 //// [file1.js]
 class Foo {
 }
 const Bar = 3;
+//// [file2.js]
+class Bar {
+}
+//// [file3.js]
+let Bar = 42;

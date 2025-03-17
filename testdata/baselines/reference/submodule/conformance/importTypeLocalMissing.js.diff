@@ -1,26 +1,22 @@
 --- old.importTypeLocalMissing.js
 +++ new.importTypeLocalMissing.js
-@@= skipped -42, +42 lines =@@
- };
- 
- 
--//// [foo.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--//// [foo2.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.Bar = void 0;
+@@= skipped -49, +49 lines =@@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.Bar = void 0;
 -var Bar = /** @class */ (function () {
 -    function Bar(input) {
 -    }
 -    return Bar;
 -}());
--exports.Bar = Bar;
++class Bar {
++    item;
++    constructor(input) { }
++}
+ exports.Bar = Bar;
  //// [usage.js]
  "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
-@@= skipped -20, +7 lines =@@
+@@= skipped -13, +12 lines =@@
  exports.x = { x: 0, y: 0 };
  exports.y = { a: "", b: 0 };
  exports.z = { a: "", b: 0 };
@@ -43,14 +39,7 @@
 -interface Point {
 -    x: number;
 -    y: number;
-+//// [foo2.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.Bar = void 0;
-+class Bar {
-+    item;
-+    constructor(input) { }
- }
+-}
 -export = Point;
 -//// [foo2.d.ts]
 -declare namespace Bar {
@@ -83,7 +72,3 @@
 -    constructor(input?: any);
 -}
 -export declare let shim: typeof import("./fo2");
-+exports.Bar = Bar;
-+//// [foo.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });

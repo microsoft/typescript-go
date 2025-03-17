@@ -1,8 +1,10 @@
 --- old.parserRealSource14.js
 +++ new.parserRealSource14.js
-@@= skipped -577, +577 lines =@@
+@@= skipped -576, +576 lines =@@
+ }
  
  
++//// [typescript.js]
  //// [parserRealSource14.js]
 -// Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
 -// See LICENSE.txt in the project root for complete license information.
@@ -10,7 +12,7 @@
  var TypeScript;
  (function (TypeScript) {
      function lastOf(items) {
-@@= skipped -17, +14 lines =@@
+@@= skipped -18, +16 lines =@@
          return a <= b ? a : b;
      }
      TypeScript.min = min;
@@ -604,8 +606,3 @@
      function walkAST(ast, callback) {
          var pre = function (cur, parent, walker) {
              var path = walker.state;
-@@= skipped -20, +17 lines =@@
-     }
-     TypeScript.walkAST = walkAST;
- })(TypeScript || (TypeScript = {}));
-+//// [typescript.js]

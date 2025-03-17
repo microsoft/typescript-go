@@ -1,18 +1,17 @@
 --- old.nodeModulesAllowJsExportAssignment(module=nodenext).js
 +++ new.nodeModulesAllowJsExportAssignment(module=nodenext).js
-@@= skipped -27, +27 lines =@@
-     "type": "commonjs"
+@@= skipped -28, +28 lines =@@
  }
  
--//// [index.js]
+ //// [index.js]
 -"use strict";
 -// cjs format file
--const a = {};
+ const a = {};
 -module.exports = a;
++export {};
  //// [file.js]
 -"use strict";
 -// cjs format file
-+import "fs";
  const a = {};
  module.exports = a;
  //// [index.js]
@@ -21,7 +20,7 @@
  export {};
  //// [file.js]
 -// esm format file
--import "fs";
+ import "fs";
  const a = {};
  module.exports = a;
 -
@@ -36,6 +35,4 @@
 -export = a;
 -declare const a: {};
 -//// [file.d.ts]
-+//// [index.js]
-+const a = {};
- export {};
+-export {};

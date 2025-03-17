@@ -15,19 +15,6 @@ let p2 = import("./defaultPath") as Promise<typeof anotherModule>;
 let p3: Promise<any> = import("./defaultPath");
 
 
-//// [1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-let p1 = Promise.resolve().then(() => require("./defaultPath"));
-let p2 = Promise.resolve().then(() => require("./defaultPath"));
-let p3 = Promise.resolve().then(() => require("./defaultPath"));
-//// [defaultPath.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.C = void 0;
-class C {
-}
-exports.C = C;
 //// [anotherModule.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -35,3 +22,16 @@ exports.D = void 0;
 class D {
 }
 exports.D = D;
+//// [defaultPath.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.C = void 0;
+class C {
+}
+exports.C = C;
+//// [1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+let p1 = Promise.resolve().then(() => require("./defaultPath"));
+let p2 = Promise.resolve().then(() => require("./defaultPath"));
+let p3 = Promise.resolve().then(() => require("./defaultPath"));

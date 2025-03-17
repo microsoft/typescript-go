@@ -7,6 +7,11 @@ export const b = null;
 export { b } from "./b";
 export { default } from "./b";
 
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.b = void 0;
+exports.b = null;
 //// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -15,8 +20,3 @@ const b_1 = require("./b");
 Object.defineProperty(exports, "b", { enumerable: true, get: function () { return b_1.b; } });
 const b_2 = require("./b");
 Object.defineProperty(exports, "default", { enumerable: true, get: function () { return b_2.default; } });
-//// [b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.b = void 0;
-exports.b = null;

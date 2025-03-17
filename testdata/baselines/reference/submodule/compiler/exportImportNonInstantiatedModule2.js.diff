@@ -1,19 +1,22 @@
 --- old.exportImportNonInstantiatedModule2.js
 +++ new.exportImportNonInstantiatedModule2.js
-@@= skipped -13, +13 lines =@@
-     return {name: 'value' };
+@@= skipped -14, +14 lines =@@
  }
  
--//// [w1.js]
+ //// [w1.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
 -    Object.defineProperty(exports, "__esModule", { value: true });
 -});
--//// [exporter.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
+ //// [exporter.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
 -    Object.defineProperty(exports, "__esModule", { value: true });
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
  //// [consumer.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
@@ -40,9 +43,3 @@
 -//// [consumer.d.ts]
 -import e = require('./exporter');
 -export declare function w(): e.w;
-+//// [exporter.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+//// [w1.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });

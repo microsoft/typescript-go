@@ -22,8 +22,17 @@ var v4 = {a: true, b: NaN};  // Should shadow global v2 in this module
 var x = v2; // Should be global v2 of type number again
 
 
-//// [file5.js]
-var x = v2;
+//// [file1.js]
+var v1 = "sausages";
+//// [file2.js]
+var v2 = 42;
+var v4 = () => 5;
+//// [file3.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.v3 = void 0;
+exports.v3 = true;
+var v2 = [1, 2, 3];
 //// [file4.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -32,14 +41,5 @@ var t1 = v1;
 var t2 = v2;
 var t3 = file3.v3;
 var v4 = { a: true, b: NaN };
-//// [file3.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.v3 = void 0;
-exports.v3 = true;
-var v2 = [1, 2, 3];
-//// [file2.js]
-var v2 = 42;
-var v4 = () => 5;
-//// [file1.js]
-var v1 = "sausages";
+//// [file5.js]
+var x = v2;

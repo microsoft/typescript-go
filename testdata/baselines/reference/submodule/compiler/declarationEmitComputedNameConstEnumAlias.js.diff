@@ -1,27 +1,11 @@
 --- old.declarationEmitComputedNameConstEnumAlias.js
 +++ new.declarationEmitComputedNameConstEnumAlias.js
-@@= skipped -13, +13 lines =@@
-     [EnumExample.TEST]: {},
- };
- 
-+//// [index.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+const EnumExample_1 = require("./EnumExample");
-+exports.default = {
-+    [EnumExample_1.default.TEST]: {},
-+};
- //// [EnumExample.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
-@@= skipped -8, +15 lines =@@
-     EnumExample["TEST"] = "TEST";
- })(EnumExample || (EnumExample = {}));
+@@= skipped -23, +23 lines =@@
  exports.default = EnumExample;
--//// [index.js]
--"use strict";
+ //// [index.js]
+ "use strict";
 -var _a;
--Object.defineProperty(exports, "__esModule", { value: true });
+ Object.defineProperty(exports, "__esModule", { value: true });
 -var EnumExample_1 = require("./EnumExample");
 -exports.default = (_a = {},
 -    _a[EnumExample_1.default.TEST] = {},
@@ -36,5 +20,8 @@
 -//// [index.d.ts]
 -declare const _default: {
 -    TEST: {};
--};
++const EnumExample_1 = require("./EnumExample");
++exports.default = {
++    [EnumExample_1.default.TEST]: {},
+ };
 -export default _default;

@@ -23,14 +23,17 @@ if(foo2.M2.x){
 }
 
 
-//// [foo_3.js]
+//// [foo_0.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const foo0 = require("../foo_0");
-const foo1 = require("./test/foo_1");
-const foo2 = require("./.././test/foo_2");
-if (foo2.M2.x) {
-    var x = foo0.foo + foo1.f();
+exports.foo = void 0;
+exports.foo = 42;
+//// [foo_1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.f = f;
+function f() {
+    return 42;
 }
 //// [foo_2.js]
 "use strict";
@@ -40,15 +43,12 @@ var M2;
 (function (M2) {
     M2.x = true;
 })(M2 || (exports.M2 = M2 = {}));
-//// [foo_1.js]
+//// [foo_3.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.f = f;
-function f() {
-    return 42;
+const foo0 = require("../foo_0");
+const foo1 = require("./test/foo_1");
+const foo2 = require("./.././test/foo_2");
+if (foo2.M2.x) {
+    var x = foo0.foo + foo1.f();
 }
-//// [foo_0.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.foo = void 0;
-exports.foo = 42;

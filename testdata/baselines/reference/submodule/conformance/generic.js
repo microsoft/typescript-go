@@ -12,13 +12,6 @@ let b: B<number> = { a: 3 };
 let c: A<boolean> = {};
 let d: B = { a: "" };
 
-//// [b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-let a = { a: "" };
-let b = { a: 3 };
-let c = {};
-let d = { a: "" };
 //// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -27,3 +20,10 @@ class A {
     a;
 }
 exports.A = A;
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+let a = { a: "" };
+let b = { a: 3 };
+let c = {};
+let d = { a: "" };

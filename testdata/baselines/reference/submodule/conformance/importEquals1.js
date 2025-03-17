@@ -28,22 +28,16 @@ import type types from './c'
 new types.A(); // Error
 
 
-//// [g.js]
+//// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-new types.A();
-//// [f.js]
+exports.A = void 0;
+class A {
+}
+exports.A = A;
+//// [b.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-new types.A();
-//// [e.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-new types.A();
-//// [d.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-new types.A();
 //// [c.js]
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -71,13 +65,19 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 const types = __importStar(require("./a"));
 module.exports = types;
-//// [b.js]
+//// [d.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-//// [a.js]
+new types.A();
+//// [e.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.A = void 0;
-class A {
-}
-exports.A = A;
+new types.A();
+//// [f.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+new types.A();
+//// [g.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+new types.A();

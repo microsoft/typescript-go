@@ -29,9 +29,9 @@ export function srcthing(): void {}
 
 
 
-//// [index.js]
-export { srcthing as thing } from "./src/thing.js";
 //// [thing.js]
 import * as me from "@this/package";
 me.thing();
 export function srcthing() { }
+//// [index.js]
+export { srcthing as thing } from "./src/thing.js";

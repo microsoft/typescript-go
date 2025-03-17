@@ -17,16 +17,6 @@ function check(x: Foo.ConstFooEnum): void {
   }
 }
 
-//// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const Foo = require("./foo");
-function check(x) {
-    switch (x) {
-        case Foo.ConstFooEnum.Some:
-            break;
-    }
-}
 //// [foo.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40,3 +30,13 @@ var ConstFooEnum;
 })(ConstFooEnum || (exports.ConstFooEnum = ConstFooEnum = {}));
 ;
 function fooFunc() { }
+//// [index.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const Foo = require("./foo");
+function check(x) {
+    switch (x) {
+        case Foo.ConstFooEnum.Some:
+            break;
+    }
+}

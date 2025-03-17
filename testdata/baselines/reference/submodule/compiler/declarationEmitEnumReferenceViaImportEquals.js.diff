@@ -1,24 +1,6 @@
 --- old.declarationEmitEnumReferenceViaImportEquals.js
 +++ new.declarationEmitEnumReferenceViaImportEquals.js
-@@= skipped -28, +28 lines =@@
- import { Test } from "./test";
- new Test().print();
- 
--//// [translation.js]
-+//// [index.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
--exports.Translation = void 0;
--var Translation;
--(function (Translation) {
--    Translation.TranslationKeyEnum = {
--        Translation1: 'translation1',
--        Translation2: 'translation2',
--    };
--})(Translation || (exports.Translation = Translation = {}));
-+const test_1 = require("./test");
-+new test_1.Test().print();
- //// [test.js]
+@@= skipped -43, +43 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.Test = void 0;
@@ -40,12 +22,12 @@
 +    }
 +}
  exports.Test = Test;
--//// [index.js]
-+//// [translation.js]
+ //// [index.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
 -var test_1 = require("./test");
--new test_1.Test().print();
++const test_1 = require("./test");
+ new test_1.Test().print();
 -
 -
 -//// [translation.d.ts]
@@ -57,13 +39,7 @@
 -    const TranslationKeyEnum: {
 -        Translation1: TranslationKeyEnum;
 -        Translation2: TranslationKeyEnum;
-+exports.Translation = void 0;
-+var Translation;
-+(function (Translation) {
-+    Translation.TranslationKeyEnum = {
-+        Translation1: 'translation1',
-+        Translation2: 'translation2',
-     };
+-    };
 -}
 -//// [test.d.ts]
 -import { Translation } from "./translation";
@@ -77,4 +53,3 @@
 -}
 -//// [index.d.ts]
 -export {};
-+})(Translation || (exports.Translation = Translation = {}));

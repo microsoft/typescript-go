@@ -25,6 +25,8 @@ enum Foo {
 //// [bar.ts]
 export const BAR = 'bar';
 
+//// [bar.js]
+export const BAR = 'bar';
 //// [foo.js]
 import { BAR } from './bar';
 const LOCAL = 'LOCAL';
@@ -53,5 +55,3 @@ var Foo;
     Foo["J"] = Foo.H;
     if (typeof Foo.J !== "string") Foo[Foo.J] = "J";
 })(Foo || (Foo = {}));
-//// [bar.js]
-export const BAR = 'bar';

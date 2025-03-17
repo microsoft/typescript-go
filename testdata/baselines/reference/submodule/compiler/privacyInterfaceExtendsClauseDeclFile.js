@@ -93,7 +93,7 @@ interface publicInterfaceImplementingPublicInterfaceInGlobal extends publicInter
 }
 
 
-//// [privacyInterfaceExtendsClauseDeclFile_GlobalFile.js]
 //// [privacyInterfaceExtendsClauseDeclFile_externalModule.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+//// [privacyInterfaceExtendsClauseDeclFile_GlobalFile.js]

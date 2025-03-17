@@ -1,10 +1,9 @@
 --- old.invalidSyntaxNamespaceImportWithSystem.js
 +++ new.invalidSyntaxNamespaceImportWithSystem.js
-@@= skipped -5, +5 lines =@@
- //// [1.ts]
+@@= skipped -6, +6 lines =@@
  import * from Zero from "./0"
  
--//// [0.js]
+ //// [0.js]
 -System.register([], function (exports_1, context_1) {
 -    "use strict";
 -    var C;
@@ -21,6 +20,12 @@
 -        }
 -    };
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.C = void 0;
++class C {
++}
++exports.C = C;
  //// [1.js]
 -System.register([], function (exports_1, context_1) {
 -    "use strict";
@@ -39,10 +44,3 @@
 +const from = require();
 +from;
 +"./0";
-+//// [0.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.C = void 0;
-+class C {
-+}
-+exports.C = C;

@@ -21,8 +21,8 @@ export function createElement<ElementType extends HTMLElement>(
 
 
 
+//// [jsx.js]
+export {};
 //// [factory.js]
 export function createElement(tagName, attributes, ...children) {
 }
-//// [jsx.js]
-export {};

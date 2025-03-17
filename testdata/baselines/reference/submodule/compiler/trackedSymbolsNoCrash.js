@@ -118,12 +118,6 @@ export const isNodeOfType =
 
 
 
-//// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.isNodeOfType = void 0;
-const isNodeOfType = (nodeType) => (node) => node?.kind === nodeType;
-exports.isNodeOfType = isNodeOfType;
 //// [ast.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -231,3 +225,9 @@ var SyntaxKind;
     SyntaxKind[SyntaxKind["Node98"] = 98] = "Node98";
     SyntaxKind[SyntaxKind["Node99"] = 99] = "Node99";
 })(SyntaxKind || (exports.SyntaxKind = SyntaxKind = {}));
+//// [index.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.isNodeOfType = void 0;
+const isNodeOfType = (nodeType) => (node) => node?.kind === nodeType;
+exports.isNodeOfType = isNodeOfType;

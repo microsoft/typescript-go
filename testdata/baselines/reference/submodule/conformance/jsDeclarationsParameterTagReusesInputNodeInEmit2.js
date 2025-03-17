@@ -26,10 +26,6 @@ const test = (base) => {
 };
 
 
-//// [file.js]
-const test = (base) => {
-    return base;
-};
 //// [base.js]
 class Base {
     constructor() { }
@@ -39,3 +35,7 @@ const BaseFactory = () => {
 };
 BaseFactory.Base = Base;
 module.exports = BaseFactory;
+//// [file.js]
+const test = (base) => {
+    return base;
+};

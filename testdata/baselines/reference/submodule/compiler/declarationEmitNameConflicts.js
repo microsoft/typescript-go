@@ -49,6 +49,15 @@ export module M.Q {
     }
 }
 
+//// [declarationEmit_nameConflicts_1.js]
+"use strict";
+var f;
+(function (f) {
+    class c {
+    }
+    f.c = c;
+})(f || (f = {}));
+module.exports = f;
 //// [declarationEmit_nameConflicts_0.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -110,12 +119,3 @@ var M;
         })(N = Q.N || (Q.N = {}));
     })(Q = M.Q || (M.Q = {}));
 })(M || (exports.M = M = {}));
-//// [declarationEmit_nameConflicts_1.js]
-"use strict";
-var f;
-(function (f) {
-    class c {
-    }
-    f.c = c;
-})(f || (f = {}));
-module.exports = f;

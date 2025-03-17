@@ -44,9 +44,9 @@ export function resolveParserPlugins() {
 
 
 //// [index.js]
+export {};
+//// [index.js]
 import { createPlugin } from "@babel/parser";
 export function resolveParserPlugins() {
     return [createPlugin()];
 }
-//// [index.js]
-export {};

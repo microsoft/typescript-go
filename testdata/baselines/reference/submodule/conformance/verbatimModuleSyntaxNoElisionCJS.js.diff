@@ -1,40 +1,7 @@
 --- old.verbatimModuleSyntaxNoElisionCJS.js
 +++ new.verbatimModuleSyntaxNoElisionCJS.js
-@@= skipped -30, +30 lines =@@
- //// [z.ts]
- // test harness is weird if the last file includs a require >:(
- 
--//// [a.js]
-+//// [z.js]
-+//// [f.js]
- "use strict";
-+const I = {};
+@@= skipped -53, +53 lines =@@
+ const I = {};
  module.exports = I;
--//// [b.js]
-+//// [d.js]
- "use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--const I = require("./a");
-+const I = require("./c");
-+module.exports = J;
- //// [c.js]
- "use strict";
- var I;
-@@= skipped -14, +16 lines =@@
-     I.x = 1;
- })(I || (I = {}));
- module.exports = I;
--//// [d.js]
-+//// [b.js]
- "use strict";
--const I = require("./c");
--module.exports = J;
--//// [f.js]
-+Object.defineProperty(exports, "__esModule", { value: true });
-+const I = require("./a");
-+//// [a.js]
- "use strict";
--const I = {};
- module.exports = I;
--//// [z.js]
+ //// [z.js]
 -// test harness is weird if the last file includs a require >:(

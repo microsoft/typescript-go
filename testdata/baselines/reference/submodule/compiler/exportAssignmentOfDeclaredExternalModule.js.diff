@@ -1,20 +1,7 @@
 --- old.exportAssignmentOfDeclaredExternalModule.js
 +++ new.exportAssignmentOfDeclaredExternalModule.js
-@@= skipped -15, +15 lines =@@
- var a = new z(); // constructor - no error
- var b = z(); // call signature - no error
- 
--//// [exportAssignmentOfDeclaredExternalModule_0.js]
-+//// [exportAssignmentOfDeclaredExternalModule_1.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
--//// [exportAssignmentOfDeclaredExternalModule_1.js]
-+var x = new Sammy();
-+var y = Sammy();
-+var z;
-+var a = new z();
-+var b = z();
-+//// [exportAssignmentOfDeclaredExternalModule_0.js]
+@@= skipped -21, +21 lines =@@
+ //// [exportAssignmentOfDeclaredExternalModule_1.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
 -var x = new Sammy(); // error to use as constructor as there is not constructor symbol
@@ -22,3 +9,8 @@
 -var z; // no error - z is of type interface Sammy from module 'M'
 -var a = new z(); // constructor - no error
 -var b = z(); // call signature - no error
++var x = new Sammy();
++var y = Sammy();
++var z;
++var a = new z();
++var b = z();

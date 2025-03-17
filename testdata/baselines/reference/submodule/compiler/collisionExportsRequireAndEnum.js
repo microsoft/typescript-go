@@ -60,43 +60,6 @@ module m4 {
     }
 }
 
-//// [collisionExportsRequireAndEnum_globalFile.js]
-var require;
-(function (require) {
-    require[require["_thisVal1"] = 0] = "_thisVal1";
-    require[require["_thisVal2"] = 1] = "_thisVal2";
-})(require || (require = {}));
-var exports;
-(function (exports) {
-    exports[exports["_thisVal1"] = 0] = "_thisVal1";
-    exports[exports["_thisVal2"] = 1] = "_thisVal2";
-})(exports || (exports = {}));
-var m3;
-(function (m3) {
-    let require;
-    (function (require) {
-        require[require["_thisVal1"] = 0] = "_thisVal1";
-        require[require["_thisVal2"] = 1] = "_thisVal2";
-    })(require || (require = {}));
-    let exports;
-    (function (exports) {
-        exports[exports["_thisVal1"] = 0] = "_thisVal1";
-        exports[exports["_thisVal2"] = 1] = "_thisVal2";
-    })(exports || (exports = {}));
-})(m3 || (m3 = {}));
-var m4;
-(function (m4) {
-    let require;
-    (function (require) {
-        require[require["_thisVal1"] = 0] = "_thisVal1";
-        require[require["_thisVal2"] = 1] = "_thisVal2";
-    })(require = m4.require || (m4.require = {}));
-    let exports;
-    (function (exports) {
-        exports[exports["_thisVal1"] = 0] = "_thisVal1";
-        exports[exports["_thisVal2"] = 1] = "_thisVal2";
-    })(exports = m4.exports || (m4.exports = {}));
-})(m4 || (m4 = {}));
 //// [collisionExportsRequireAndEnum_externalmodule.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -137,3 +100,40 @@ var m2;
         exports[exports["_thisVal2"] = 1] = "_thisVal2";
     })(exports = m2.exports || (m2.exports = {}));
 })(m2 || (m2 = {}));
+//// [collisionExportsRequireAndEnum_globalFile.js]
+var require;
+(function (require) {
+    require[require["_thisVal1"] = 0] = "_thisVal1";
+    require[require["_thisVal2"] = 1] = "_thisVal2";
+})(require || (require = {}));
+var exports;
+(function (exports) {
+    exports[exports["_thisVal1"] = 0] = "_thisVal1";
+    exports[exports["_thisVal2"] = 1] = "_thisVal2";
+})(exports || (exports = {}));
+var m3;
+(function (m3) {
+    let require;
+    (function (require) {
+        require[require["_thisVal1"] = 0] = "_thisVal1";
+        require[require["_thisVal2"] = 1] = "_thisVal2";
+    })(require || (require = {}));
+    let exports;
+    (function (exports) {
+        exports[exports["_thisVal1"] = 0] = "_thisVal1";
+        exports[exports["_thisVal2"] = 1] = "_thisVal2";
+    })(exports || (exports = {}));
+})(m3 || (m3 = {}));
+var m4;
+(function (m4) {
+    let require;
+    (function (require) {
+        require[require["_thisVal1"] = 0] = "_thisVal1";
+        require[require["_thisVal2"] = 1] = "_thisVal2";
+    })(require = m4.require || (m4.require = {}));
+    let exports;
+    (function (exports) {
+        exports[exports["_thisVal1"] = 0] = "_thisVal1";
+        exports[exports["_thisVal2"] = 1] = "_thisVal2";
+    })(exports = m4.exports || (m4.exports = {}));
+})(m4 || (m4 = {}));

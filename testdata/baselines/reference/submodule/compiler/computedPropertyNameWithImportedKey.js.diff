@@ -1,15 +1,6 @@
 --- old.computedPropertyNameWithImportedKey.js
 +++ new.computedPropertyNameWithImportedKey.js
-@@= skipped -9, +9 lines =@@
- }
- 
- 
--//// [a.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.a = void 0;
--exports.a = Symbol();
- //// [b.js]
+@@= skipped -18, +18 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.fn = fn;
@@ -27,8 +18,3 @@
 -//// [b.d.ts]
 -import { a } from "./a";
 -export declare function fn({ [a]: value }: any): string;
-+//// [a.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.a = void 0;
-+exports.a = Symbol();

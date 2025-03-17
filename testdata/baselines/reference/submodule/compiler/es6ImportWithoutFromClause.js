@@ -7,7 +7,7 @@ export var a = 10;
 import "es6ImportWithoutFromClause_0";
 
 
-//// [es6ImportWithoutFromClause_1.js]
-import "es6ImportWithoutFromClause_0";
 //// [es6ImportWithoutFromClause_0.js]
 export var a = 10;
+//// [es6ImportWithoutFromClause_1.js]
+import "es6ImportWithoutFromClause_0";

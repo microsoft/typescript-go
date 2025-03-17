@@ -18,6 +18,12 @@ class MyComponent {
     }
 }
 
+//// [service.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class Service {
+}
+exports.default = Service;
 //// [component.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -31,9 +37,3 @@ class MyComponent {
     method(x) {
     }
 }
-//// [service.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class Service {
-}
-exports.default = Service;

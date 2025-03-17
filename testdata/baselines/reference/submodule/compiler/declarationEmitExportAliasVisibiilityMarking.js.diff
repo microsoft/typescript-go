@@ -1,28 +1,18 @@
 --- old.declarationEmitExportAliasVisibiilityMarking.js
 +++ new.declarationEmitExportAliasVisibiilityMarking.js
-@@= skipped -13, +13 lines =@@
- export { Suit, Rank } from './Types';
- 
- 
--//// [Types.js]
-+//// [index.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
-+exports.lazyCard = void 0;
-+let lazyCard = () => Promise.resolve().then(() => require('./Card')).then(a => a.default);
-+exports.lazyCard = lazyCard;
+@@= skipped -19, +19 lines =@@
  //// [Card.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
 -exports.default = (function (suit, rank) { return ({ suit: suit, rank: rank }); });
--//// [index.js]
 +exports.default = (suit, rank) => ({ suit, rank });
-+//// [Types.js]
+ //// [index.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
--exports.lazyCard = void 0;
+ exports.lazyCard = void 0;
 -var lazyCard = function () { return Promise.resolve().then(function () { return require('./Card'); }).then(function (a) { return a.default; }); };
--exports.lazyCard = lazyCard;
++let lazyCard = () => Promise.resolve().then(() => require('./Card')).then(a => a.default);
+ exports.lazyCard = lazyCard;
 -
 -
 -//// [Types.d.ts]

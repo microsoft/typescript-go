@@ -8,8 +8,8 @@ function foo() {
 }
 
 
+//// [plainJSGrammarErrors3.js]
 //// [a.js]
 function foo() {
     await new Promise(undefined);
 }
-//// [plainJSGrammarErrors3.js]

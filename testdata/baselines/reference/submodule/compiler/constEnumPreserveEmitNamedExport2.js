@@ -11,9 +11,6 @@ import { A } from './a';
 export { A as B };
 
 
-//// [b.js]
-import { A } from './a';
-export { A as B };
 //// [a.js]
 var A;
 (function (A) {
@@ -21,3 +18,6 @@ var A;
 })(A || (A = {}));
 ;
 export { A };
+//// [b.js]
+import { A } from './a';
+export { A as B };

@@ -25,6 +25,13 @@ export const result = <MyComponent x="yes" y={{
 }} />;
 
 
+//// [my-component.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MyComponent = MyComponent;
+function MyComponent(_props) {
+    return <span>my component</span>;
+}
 //// [file1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -33,10 +40,3 @@ const my_component_1 = require("./my-component");
 exports.result = <my_component_1.MyComponent x="yes" y={{
         value: 42
     }}/>;
-//// [my-component.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.MyComponent = MyComponent;
-function MyComponent(_props) {
-    return <span>my component</span>;
-}

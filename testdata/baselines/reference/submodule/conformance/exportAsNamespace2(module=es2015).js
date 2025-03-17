@@ -15,15 +15,15 @@ import * as foo from './1'
 foo.ns.a;
 foo.ns.b;
 
-//// [2.js]
-import * as foo from './1';
-foo.ns.a;
-foo.ns.b;
+//// [0.js]
+export const a = 1;
+export const b = 2;
 //// [1.js]
 import * as ns_1 from './0';
 export { ns_1 as ns };
 ns.a;
 ns.b;
-//// [0.js]
-export const a = 1;
-export const b = 2;
+//// [2.js]
+import * as foo from './1';
+foo.ns.a;
+foo.ns.b;

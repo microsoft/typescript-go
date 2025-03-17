@@ -33,16 +33,6 @@ export declare function __metadata(metadataKey: any, metadataValue: any): Functi
 export declare function __awaiter(thisArg: any, _arguments: any, P: Function, generator: Function): any;
 
 
-//// [script.js]
-class A {
-}
-class B extends A {
-}
-@dec
-class C {
-    method(x) {
-    }
-}
 //// [external.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -53,6 +43,16 @@ exports.A = A;
 class B extends A {
 }
 exports.B = B;
+@dec
+class C {
+    method(x) {
+    }
+}
+//// [script.js]
+class A {
+}
+class B extends A {
+}
 @dec
 class C {
     method(x) {

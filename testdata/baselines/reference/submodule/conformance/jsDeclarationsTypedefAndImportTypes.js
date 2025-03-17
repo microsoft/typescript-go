@@ -34,6 +34,13 @@ module.exports = {
 };
 
 
+//// [conn.js]
+class Conn {
+    constructor() { }
+    item = 3;
+    method() { }
+}
+module.exports = Conn;
 //// [usage.js]
 class Wrap {
     constructor(c) {
@@ -44,10 +51,3 @@ class Wrap {
 module.exports = {
     Wrap
 };
-//// [conn.js]
-class Conn {
-    constructor() { }
-    item = 3;
-    method() { }
-}
-module.exports = Conn;

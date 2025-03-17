@@ -1,13 +1,11 @@
 --- old.nodeModulesExportsBlocksTypesVersions(module=node16).js
 +++ new.nodeModulesExportsBlocksTypesVersions(module=node16).js
-@@= skipped -62, +62 lines =@@
- import {} from "just-types-versions/foo";
+@@= skipped -63, +63 lines =@@
  
  
--//// [main.cjs]
+ //// [main.cjs]
 -"use strict";
 -Object.defineProperty(exports, "__esModule", { value: true });
++export {};
  //// [main.mjs]
  export {};
-+//// [main.cjs]
-+export {};

@@ -27,6 +27,11 @@ import "file2";
 let a: x.A;
 let b = x.b;
 
+//// [file2.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const x = require("file1");
+x.b = 1;
 //// [file3.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -34,8 +39,3 @@ const x = require("file1");
 require("file2");
 let a;
 let b = x.b;
-//// [file2.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const x = require("file1");
-x.b = 1;

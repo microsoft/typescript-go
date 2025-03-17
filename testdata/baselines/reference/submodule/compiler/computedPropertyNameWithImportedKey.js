@@ -10,6 +10,11 @@ export function fn({ [a]: value }: any): string {
 }
 
 
+//// [a.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.a = void 0;
+exports.a = Symbol();
 //// [b.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -18,8 +23,3 @@ const a_1 = require("./a");
 function fn({ [a_1.a]: value }) {
     return value;
 }
-//// [a.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.a = void 0;
-exports.a = Symbol();

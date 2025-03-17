@@ -7,7 +7,7 @@ a() ? (b: number, c?: string): void => d() : e; // Not legal JS; "Unexpected tok
 a() ? (b: number, c?: string): void => d() : e;
 
 
-//// [fileTs.js]
-a() ? (b, c) => d() : e;
 //// [fileJs.js]
+a() ? (b, c) => d() : e;
+//// [fileTs.js]
 a() ? (b, c) => d() : e;

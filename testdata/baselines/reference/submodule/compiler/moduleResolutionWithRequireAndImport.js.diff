@@ -1,23 +1,14 @@
 --- old.moduleResolutionWithRequireAndImport.js
 +++ new.moduleResolutionWithRequireAndImport.js
-@@= skipped -11, +11 lines =@@
- }
- 
- 
-+//// [index.js]
-+const a = null;
-+function foo() {
-+    const a = require('../outside-of-rootdir/foo');
-+    const { other } = require('./other');
-+}
- //// [other.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
+@@= skipped -17, +17 lines =@@
  exports.other = void 0;
  exports.other = 123;
--//// [index.js]
+ //// [index.js]
 -var a = null;
--function foo() {
++const a = null;
+ function foo() {
 -    var a = require('../outside-of-rootdir/foo');
 -    var other = require('./other').other;
--}
++    const a = require('../outside-of-rootdir/foo');
++    const { other } = require('./other');
+ }

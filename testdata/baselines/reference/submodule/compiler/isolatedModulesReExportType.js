@@ -52,15 +52,10 @@ import { C as CC } from "./reExportValueAsTypeOnly";
 export { CC };
 
 
-//// [user.js]
+//// [exportT.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.NS = exports.C = void 0;
-const exportValue_1 = require("./exportValue");
-Object.defineProperty(exports, "C", { enumerable: true, get: function () { return exportValue_1.C; } });
-const NS = require("./exportT");
-exports.NS = NS;
-//// [reExportValueAsTypeOnly.js]
+//// [exportEqualsT.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 //// [exportValue.js]
@@ -70,9 +65,14 @@ exports.C = void 0;
 class C {
 }
 exports.C = C;
-//// [exportEqualsT.js]
+//// [reExportValueAsTypeOnly.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-//// [exportT.js]
+//// [user.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.NS = exports.C = void 0;
+const exportValue_1 = require("./exportValue");
+Object.defineProperty(exports, "C", { enumerable: true, get: function () { return exportValue_1.C; } });
+const NS = require("./exportT");
+exports.NS = NS;

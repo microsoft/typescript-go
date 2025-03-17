@@ -26,6 +26,6 @@ import { foo } from "js-self-name-import/foo.js";
 
 
 //// [foo.js]
-import { foo } from "js-self-name-import/foo.js";
-//// [foo.js]
 export const foo = 1;
+//// [foo.js]
+import { foo } from "js-self-name-import/foo.js";

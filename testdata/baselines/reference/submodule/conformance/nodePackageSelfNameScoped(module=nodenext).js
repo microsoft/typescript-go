@@ -20,12 +20,12 @@ self;
     "exports": "./index.js"
 }
 
-//// [index.cjs]
+//// [index.js]
 import * as self from "@scope/package";
 self;
 //// [index.mjs]
 import * as self from "@scope/package";
 self;
-//// [index.js]
+//// [index.cjs]
 import * as self from "@scope/package";
 self;

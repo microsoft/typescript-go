@@ -20,17 +20,6 @@ import x = b.x;
 console.log(x);
 
 
-//// [c.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const b = require("./b");
-console.log(x);
-//// [b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.x = exports.A = void 0;
-const x = 0;
-exports.x = x;
 //// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -38,3 +27,14 @@ exports.A = void 0;
 class A {
 }
 exports.A = A;
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.x = exports.A = void 0;
+const x = 0;
+exports.x = x;
+//// [c.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const b = require("./b");
+console.log(x);

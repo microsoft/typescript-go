@@ -1,17 +1,18 @@
 --- old.externalModuleExportingGenericClass.js
 +++ new.externalModuleExportingGenericClass.js
-@@= skipped -13, +13 lines =@@
- var v3: number = (new a<number>()).foo;
+@@= skipped -15, +15 lines =@@
  
- 
--//// [externalModuleExportingGenericClass_file0.js]
--"use strict";
+ //// [externalModuleExportingGenericClass_file0.js]
+ "use strict";
 -var C = /** @class */ (function () {
 -    function C() {
 -    }
 -    return C;
 -}());
--module.exports = C;
++class C {
++    foo;
++}
+ module.exports = C;
  //// [externalModuleExportingGenericClass_file1.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
@@ -21,9 +22,3 @@
 +var v;
  var v2 = (new a()).foo;
  var v3 = (new a()).foo;
-+//// [externalModuleExportingGenericClass_file0.js]
-+"use strict";
-+class C {
-+    foo;
-+}
-+module.exports = C;

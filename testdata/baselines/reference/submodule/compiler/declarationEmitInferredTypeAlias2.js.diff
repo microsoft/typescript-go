@@ -1,15 +1,12 @@
 --- old.declarationEmitInferredTypeAlias2.js
 +++ new.declarationEmitInferredTypeAlias2.js
-@@= skipped -13, +13 lines =@@
- }
- export { v, bar }
- 
--//// [0.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--{
+@@= skipped -17, +17 lines =@@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ {
 -    var obj = true;
--}
++    let obj = true;
+ }
  //// [1.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
@@ -29,9 +26,3 @@
 -declare let v: string | boolean;
 -declare function bar(): string | boolean;
 -export { v, bar };
-+//// [0.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+{
-+    let obj = true;
-+}

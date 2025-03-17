@@ -1,16 +1,6 @@
 --- old.es6ImportDefaultBindingFollowedWithNamedImport1.js
 +++ new.es6ImportDefaultBindingFollowedWithNamedImport1.js
-@@= skipped -18, +18 lines =@@
- var x1: number = defaultBinding6;
- 
- 
--//// [es6ImportDefaultBindingFollowedWithNamedImport1_0.js]
--var a = 10;
--export default a;
- //// [es6ImportDefaultBindingFollowedWithNamedImport1_1.js]
- import defaultBinding1 from "es6ImportDefaultBindingFollowedWithNamedImport1_0";
- var x1 = defaultBinding1;
-@@= skipped -16, +13 lines =@@
+@@= skipped -34, +34 lines =@@
  var x1 = defaultBinding5;
  import defaultBinding6 from "es6ImportDefaultBindingFollowedWithNamedImport1_0";
  var x1 = defaultBinding6;
@@ -18,8 +8,6 @@
 -
 -//// [es6ImportDefaultBindingFollowedWithNamedImport1_0.d.ts]
 -declare var a: number;
-+//// [es6ImportDefaultBindingFollowedWithNamedImport1_0.js]
-+var a = 10;
- export default a;
+-export default a;
 -//// [es6ImportDefaultBindingFollowedWithNamedImport1_1.d.ts]
 -export {};

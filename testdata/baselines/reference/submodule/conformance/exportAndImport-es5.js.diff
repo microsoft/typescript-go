@@ -1,16 +1,6 @@
 --- old.exportAndImport-es5.js
 +++ new.exportAndImport-es5.js
-@@= skipped -10, +10 lines =@@
- }
- 
- 
--//// [m1.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.default = f1;
--function f1() {
--}
- //// [m2.js]
+@@= skipped -20, +20 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.default = f2;
@@ -19,9 +9,3 @@
  function f2() {
      (0, m1_1.default)();
  }
-+//// [m1.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.default = f1;
-+function f1() {
-+}

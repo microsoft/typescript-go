@@ -11,11 +11,11 @@ class B extends A {
     protected foo() {}
 }
 
-//// [b.js]
-class B extends A {
-    foo() { }
-}
 //// [a.js]
 class A {
+    foo() { }
+}
+//// [b.js]
+class B extends A {
     foo() { }
 }

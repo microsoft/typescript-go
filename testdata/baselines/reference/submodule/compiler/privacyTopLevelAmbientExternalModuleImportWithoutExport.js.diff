@@ -1,11 +1,9 @@
 --- old.privacyTopLevelAmbientExternalModuleImportWithoutExport.js
 +++ new.privacyTopLevelAmbientExternalModuleImportWithoutExport.js
-@@= skipped -46, +46 lines =@@
- export var publicUse_im_private_mi_public = new im_private_mi_public.c_public();
+@@= skipped -48, +48 lines =@@
  
- 
--//// [privacyTopLevelAmbientExternalModuleImportWithoutExport_require2.js]
--//// [privacyTopLevelAmbientExternalModuleImportWithoutExport_require3.js]
+ //// [privacyTopLevelAmbientExternalModuleImportWithoutExport_require2.js]
+ //// [privacyTopLevelAmbientExternalModuleImportWithoutExport_require3.js]
 -//// [privacyTopLevelAmbientExternalModuleImportWithoutExport_require.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
@@ -90,5 +88,3 @@
 +exports.publicUse_im_private_mi_public = new im_private_mi_public.c_public();
 +var privateUse_im_private_mi_public = new im_private_mi_public.c_public();
 +exports.publicUse_im_private_mi_public = new im_private_mi_public.c_public();
-+//// [privacyTopLevelAmbientExternalModuleImportWithoutExport_require3.js]
-+//// [privacyTopLevelAmbientExternalModuleImportWithoutExport_require2.js]

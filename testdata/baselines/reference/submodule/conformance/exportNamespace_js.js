@@ -11,14 +11,6 @@ import { A } from './b';
 A;
 
 
-//// [c.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const b_1 = require("./b");
-b_1.A;
-//// [b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 //// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -26,3 +18,11 @@ exports.A = void 0;
 class A {
 }
 exports.A = A;
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [c.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const b_1 = require("./b");
+b_1.A;

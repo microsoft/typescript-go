@@ -1,10 +1,9 @@
 --- old.esDecorators-classDeclaration-commentPreservation(module=esnext,target=es2015).js
 +++ new.esDecorators-classDeclaration-commentPreservation(module=esnext,target=es2015).js
-@@= skipped -118, +118 lines =@@
- }
+@@= skipped -119, +119 lines =@@
  
  
--//// [file1.js]
+ //// [file1.js]
 -/*1*/
 -let C = (() => {
 -    var _C_method_get, _C_x_get, _C_x_set, _C_y, _C_z_accessor_storage, _C_z_get, _C_z_set, _C_z_1_accessor_storage;
@@ -95,7 +94,41 @@
 -    })();
 -    return C = _classThis;
 -})();
--//// [file2.js]
++@dec
++@dec
++class C {
++    @dec
++    @dec
++    method() { }
++    @dec
++    @dec
++    get x() { return 1; }
++    @dec
++    @dec
++    set x(value) { }
++    @dec
++    @dec
++    y = 1;
++    @dec
++    @dec
++    accessor z = 1;
++    @dec
++    @dec
++    static #method() { }
++    @dec
++    @dec
++    static get #x() { return 1; }
++    @dec
++    @dec
++    static set #x(value) { }
++    @dec
++    @dec
++    static #y = 1;
++    @dec
++    @dec
++    static accessor #z = 1;
++}
+ //// [file2.js]
 -/*34*/
 -let D = (() => {
 -    let _classDecorators = [dec, dec];
@@ -134,6 +167,14 @@
 -})();
 -/*37*/
 -export default E;
++@dec
++@dec
++export class D {
++}
++@dec
++@dec
++export default class E {
++}
  //// [file3.js]
 -/*40*/
 -let F = (() => {
@@ -182,48 +223,4 @@
 +@dec
 +@dec
 +class G {
-+}
-+//// [file2.js]
-+@dec
-+@dec
-+export class D {
-+}
-+@dec
-+@dec
-+export default class E {
-+}
-+//// [file1.js]
-+@dec
-+@dec
-+class C {
-+    @dec
-+    @dec
-+    method() { }
-+    @dec
-+    @dec
-+    get x() { return 1; }
-+    @dec
-+    @dec
-+    set x(value) { }
-+    @dec
-+    @dec
-+    y = 1;
-+    @dec
-+    @dec
-+    accessor z = 1;
-+    @dec
-+    @dec
-+    static #method() { }
-+    @dec
-+    @dec
-+    static get #x() { return 1; }
-+    @dec
-+    @dec
-+    static set #x(value) { }
-+    @dec
-+    @dec
-+    static #y = 1;
-+    @dec
-+    @dec
-+    static accessor #z = 1;
 +}

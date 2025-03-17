@@ -1,15 +1,6 @@
 --- old.reexportMissingDefault3.js
 +++ new.reexportMissingDefault3.js
-@@= skipped -6, +6 lines =@@
- export { b } from "./b";
- export { default as a } from "./b";
- 
--//// [b.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.b = void 0;
--exports.b = null;
- //// [a.js]
+@@= skipped -15, +15 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.a = exports.b = void 0;
@@ -19,8 +10,3 @@
 -var b_2 = require("./b");
 +const b_2 = require("./b");
  Object.defineProperty(exports, "a", { enumerable: true, get: function () { return b_2.default; } });
-+//// [b.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.b = void 0;
-+exports.b = null;

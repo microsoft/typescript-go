@@ -34,21 +34,6 @@ export default class extends mix(DisposableMixin) {
     }
 }
 
-//// [another.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const DisposableMixin = class {
-    _onDispose() {
-        this._assertIsStripped();
-    }
-    _assertIsStripped() {
-    }
-};
-class default_1 extends mix(DisposableMixin) {
-    _onDispose() {
-    }
-}
-exports.default = default_1;
 //// [first.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -66,3 +51,18 @@ class Monitor extends mix(DisposableMixin) {
     }
 }
 exports.Monitor = Monitor;
+//// [another.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const DisposableMixin = class {
+    _onDispose() {
+        this._assertIsStripped();
+    }
+    _assertIsStripped() {
+    }
+};
+class default_1 extends mix(DisposableMixin) {
+    _onDispose() {
+    }
+}
+exports.default = default_1;

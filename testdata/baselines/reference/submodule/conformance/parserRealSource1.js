@@ -156,6 +156,7 @@ module TypeScript {
 }
 
 
+//// [typescript.js]
 //// [parserRealSource1.js]
 var TypeScript;
 (function (TypeScript) {
@@ -291,4 +292,3 @@ var TypeScript;
     }
     TypeScript.stringToLiteral = stringToLiteral;
 })(TypeScript || (TypeScript = {}));
-//// [typescript.js]

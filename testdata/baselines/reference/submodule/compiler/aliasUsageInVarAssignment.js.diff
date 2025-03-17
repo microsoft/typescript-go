@@ -1,22 +1,18 @@
 --- old.aliasUsageInVarAssignment.js
 +++ new.aliasUsageInVarAssignment.js
-@@= skipped -19, +19 lines =@@
- var i: IHasVisualizationModel;
- var m: typeof moduleA = i;
- 
--//// [aliasUsageInVarAssignment_backbone.js]
-+//// [aliasUsageInVarAssignment_main.js]
+@@= skipped -23, +23 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
--exports.Model = void 0;
+ exports.Model = void 0;
 -var Model = /** @class */ (function () {
 -    function Model() {
 -    }
 -    return Model;
 -}());
--exports.Model = Model;
-+var i;
-+var m = i;
++class Model {
++    someData;
++}
+ exports.Model = Model;
  //// [aliasUsageInVarAssignment_moduleA.js]
  "use strict";
 -var __extends = (this && this.__extends) || (function () {
@@ -48,14 +44,5 @@
 +class VisualizationModel extends Backbone.Model {
 +}
  exports.VisualizationModel = VisualizationModel;
--//// [aliasUsageInVarAssignment_main.js]
-+//// [aliasUsageInVarAssignment_backbone.js]
+ //// [aliasUsageInVarAssignment_main.js]
  "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
--var i;
--var m = i;
-+exports.Model = void 0;
-+class Model {
-+    someData;
-+}
-+exports.Model = Model;

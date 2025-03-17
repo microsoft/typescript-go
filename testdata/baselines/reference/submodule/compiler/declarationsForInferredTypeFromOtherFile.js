@@ -13,6 +13,20 @@ export function bar() {
 }
 
 
+//// [file1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Foo = void 0;
+class Foo {
+}
+exports.Foo = Foo;
+//// [file2.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.foo = foo;
+function foo() {
+    return null;
+}
 //// [file3.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -21,17 +35,3 @@ const file2_1 = require("./file2");
 function bar() {
     return (0, file2_1.foo)();
 }
-//// [file2.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.foo = foo;
-function foo() {
-    return null;
-}
-//// [file1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Foo = void 0;
-class Foo {
-}
-exports.Foo = Foo;

@@ -14,8 +14,8 @@ declare let ohno: OhNo;
 ohno.a // oh no
 
 
+//// [types.js]
 //// [test.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 ohno.a;
-//// [types.js]

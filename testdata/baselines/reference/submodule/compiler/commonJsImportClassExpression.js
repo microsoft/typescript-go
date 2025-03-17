@@ -11,12 +11,12 @@ declare var c: Chunk;
 c.chunk;
 
 
-//// [use.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-c.chunk;
 //// [mod1.js]
 "use strict";
 module.exports = class {
     chunk = 1;
 };
+//// [use.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+c.chunk;

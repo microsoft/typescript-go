@@ -1,10 +1,9 @@
 --- old.ambientExternalModuleMerging.js
 +++ new.ambientExternalModuleMerging.js
-@@= skipped -15, +15 lines =@@
-     export var y: string;
+@@= skipped -16, +16 lines =@@
  }
  
--//// [ambientExternalModuleMerging_use.js]
+ //// [ambientExternalModuleMerging_use.js]
 -define(["require", "exports", "M"], function (require, exports, M) {
 -    "use strict";
 -    Object.defineProperty(exports, "__esModule", { value: true });
@@ -12,10 +11,9 @@
 -    var x = M.x;
 -    var y = M.y;
 -});
- //// [ambientExternalModuleMerging_declare.js]
-+//// [ambientExternalModuleMerging_use.js]
 +"use strict";
 +Object.defineProperty(exports, "__esModule", { value: true });
 +const M = require("M");
 +var x = M.x;
 +var y = M.y;
+ //// [ambientExternalModuleMerging_declare.js]

@@ -491,328 +491,20 @@ declare class B { static w(): number; }
 });
 
 
-//// [inContainingFuncExprStaticBlock.js]
+//// [external.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-(function Reflect() {
-    class C extends B {
-        static { super.w(); }
-    }
-});
-//// [inContainingFuncExprStaticField.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-(function Reflect() {
-    class C extends B {
-        static _ = super.w();
-    }
-});
-//// [funcExprInContainingScopeStaticBlock.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-(function Reflect() { });
-class C extends B {
-    static { super.w(); }
-}
-//// [funcExprInContainingScopeStaticField.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-(function Reflect() { });
-class C extends B {
-    static _ = super.w();
-}
-//// [inContainingClassExprStaticBlock.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-(class Reflect {
-    static {
-        class C extends B {
-            static { super.w(); }
-        }
-    }
-});
-//// [inContainingClassExprStaticField.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-(class Reflect {
-    static {
-        class C extends B {
-            static _ = super.w();
-        }
-    }
-});
-//// [classExprInContainingScopeStaticBlock.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-(class Reflect {
-});
-class C extends B {
-    static { super.w(); }
-}
-//// [classExprInContainingScopeStaticField.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-(class Reflect {
-});
-class C extends B {
-    static _ = super.w();
-}
-//// [uninstantiatedNamespaceInContainingScopeStaticBlock.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-;
-class C extends B {
-    static { super.w(); }
-}
-//// [uninstantiatedNamespaceInContainingScopeStaticField.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-;
-class C extends B {
-    static _ = super.w();
-}
-//// [interfaceInContainingScopeStaticBlock.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-;
-class C extends B {
-    static { super.w(); }
-}
-//// [interfaceInContainingScopeStaticField.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-;
-class C extends B {
-    static _ = super.w();
-}
-//// [typeInContainingScopeStaticBlock.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class C extends B {
-    static { super.w(); }
-}
-//// [typeInContainingScopeStaticField.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class C extends B {
-    static _ = super.w();
-}
-//// [typeOnlyDefaultImportInContainingScopeStaticBlock.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class C extends B {
-    static { super.w(); }
-}
-//// [typeOnlyDefaultImportInContainingScopeStaticField.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class C extends B {
-    static _ = super.w();
-}
-//// [defaultImportInContainingScopeStaticBlock.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class C extends B {
-    static { super.w(); }
-}
-//// [defaultImportInContainingScopeStaticField.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class C extends B {
-    static _ = super.w();
-}
-//// [typeOnlyNamedImportInContainingScopeStaticBlock.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class C extends B {
-    static { super.w(); }
-}
-//// [typeOnlyNamedImportInContainingScopeStaticField.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class C extends B {
-    static _ = super.w();
-}
-//// [namedImportOfConstEnumInContainingScopeStaticBlock.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class C extends B {
-    static { super.w(); }
-}
-//// [namedImportOfConstEnumInContainingScopeStaticField.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class C extends B {
-    static _ = super.w();
-}
-//// [namedImportOfUninstantiatedNamespaceInContainingScopeStaticBlock.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class C extends B {
-    static { super.w(); }
-}
-//// [namedImportOfUninstantiatedNamespaceInContainingScopeStaticField.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class C extends B {
-    static _ = super.w();
-}
-//// [namedImportOfInterfaceInContainingScopeStaticBlock.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class C extends B {
-    static { super.w(); }
-}
-//// [namedImportOfInterfaceInContainingScopeStaticField.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class C extends B {
-    static _ = super.w();
-}
-//// [namedImportInContainingScopeStaticBlock.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class C extends B {
-    static { super.w(); }
-}
-//// [namedImportInContainingScopeStaticField.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class C extends B {
-    static _ = super.w();
-}
-//// [namespaceImportInContainingScopeStaticBlock.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class C extends B {
-    static { super.w(); }
-}
-//// [namespaceImportInContainingScopeStaticField.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class C extends B {
-    static _ = super.w();
-}
-//// [constEnumInContainingScopeStaticBlock.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var Reflect;
-(function (Reflect) {
-})(Reflect || (Reflect = {}));
-class C extends B {
-    static { super.w(); }
-}
-//// [constEnumInContainingScopeStaticField.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var Reflect;
-(function (Reflect) {
-})(Reflect || (Reflect = {}));
-class C extends B {
-    static _ = super.w();
-}
-//// [enumInContainingScopeStaticBlock.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var Reflect;
-(function (Reflect) {
-})(Reflect || (Reflect = {}));
-class C extends B {
-    static { super.w(); }
-}
-//// [enumInContainingScopeStaticField.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var Reflect;
-(function (Reflect) {
-})(Reflect || (Reflect = {}));
-class C extends B {
-    static _ = super.w();
-}
-//// [valueNamespaceInContainingScopeStaticBlock.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class C extends B {
-    static { super.w(); }
-}
-//// [valueNamespaceInContainingScopeStaticField.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class C extends B {
-    static _ = super.w();
-}
-//// [funcDeclInContainingScopeStaticBlock.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-function Reflect() { }
-class C extends B {
-    static { super.w(); }
-}
-//// [funcDeclInContainingScopeStaticField.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-function Reflect() { }
-class C extends B {
-    static _ = super.w();
-}
-//// [classDeclInContainingScopeStaticBlock.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+exports.Baz = exports.Reflect = void 0;
 class Reflect {
 }
-class C extends B {
-    static { super.w(); }
+exports.Reflect = Reflect;
+var Baz;
+(function (Baz) {
+})(Baz || (exports.Baz = Baz = {}));
+class default_1 {
 }
-//// [classDeclInContainingScopeStaticField.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class Reflect {
-}
-class C extends B {
-    static _ = super.w();
-}
-//// [varInContainingScopeStaticBlock3.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var [Reflect] = [null];
-class C extends B {
-    static { super.w(); }
-}
-//// [varInContainingScopeStaticBlock2.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var { Reflect } = { Reflect: null };
-class C extends B {
-    static { super.w(); }
-}
-//// [varInContainingScopeStaticBlock1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var Reflect = null;
-class C extends B {
-    static { super.w(); }
-}
-//// [varInContainingScopeStaticField3.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var [Reflect] = [null];
-class C extends B {
-    static _ = super.w();
-}
-//// [varInContainingScopeStaticField2.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var { Reflect } = { Reflect: null };
-class C extends B {
-    static _ = super.w();
-}
-//// [varInContainingScopeStaticField1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var Reflect = null;
-class C extends B {
-    static _ = super.w();
-}
+exports.default = default_1;
+;
 //// [locals.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -917,17 +609,325 @@ class C extends B {
         super.w();
     }
 }
-//// [external.js]
+//// [varInContainingScopeStaticField1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Baz = exports.Reflect = void 0;
+var Reflect = null;
+class C extends B {
+    static _ = super.w();
+}
+//// [varInContainingScopeStaticField2.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var { Reflect } = { Reflect: null };
+class C extends B {
+    static _ = super.w();
+}
+//// [varInContainingScopeStaticField3.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var [Reflect] = [null];
+class C extends B {
+    static _ = super.w();
+}
+//// [varInContainingScopeStaticBlock1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var Reflect = null;
+class C extends B {
+    static { super.w(); }
+}
+//// [varInContainingScopeStaticBlock2.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var { Reflect } = { Reflect: null };
+class C extends B {
+    static { super.w(); }
+}
+//// [varInContainingScopeStaticBlock3.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var [Reflect] = [null];
+class C extends B {
+    static { super.w(); }
+}
+//// [classDeclInContainingScopeStaticField.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 class Reflect {
 }
-exports.Reflect = Reflect;
-var Baz;
-(function (Baz) {
-})(Baz || (exports.Baz = Baz = {}));
-class default_1 {
+class C extends B {
+    static _ = super.w();
 }
-exports.default = default_1;
+//// [classDeclInContainingScopeStaticBlock.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class Reflect {
+}
+class C extends B {
+    static { super.w(); }
+}
+//// [funcDeclInContainingScopeStaticField.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+function Reflect() { }
+class C extends B {
+    static _ = super.w();
+}
+//// [funcDeclInContainingScopeStaticBlock.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+function Reflect() { }
+class C extends B {
+    static { super.w(); }
+}
+//// [valueNamespaceInContainingScopeStaticField.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class C extends B {
+    static _ = super.w();
+}
+//// [valueNamespaceInContainingScopeStaticBlock.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class C extends B {
+    static { super.w(); }
+}
+//// [enumInContainingScopeStaticField.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var Reflect;
+(function (Reflect) {
+})(Reflect || (Reflect = {}));
+class C extends B {
+    static _ = super.w();
+}
+//// [enumInContainingScopeStaticBlock.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var Reflect;
+(function (Reflect) {
+})(Reflect || (Reflect = {}));
+class C extends B {
+    static { super.w(); }
+}
+//// [constEnumInContainingScopeStaticField.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var Reflect;
+(function (Reflect) {
+})(Reflect || (Reflect = {}));
+class C extends B {
+    static _ = super.w();
+}
+//// [constEnumInContainingScopeStaticBlock.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var Reflect;
+(function (Reflect) {
+})(Reflect || (Reflect = {}));
+class C extends B {
+    static { super.w(); }
+}
+//// [namespaceImportInContainingScopeStaticField.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class C extends B {
+    static _ = super.w();
+}
+//// [namespaceImportInContainingScopeStaticBlock.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class C extends B {
+    static { super.w(); }
+}
+//// [namedImportInContainingScopeStaticField.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class C extends B {
+    static _ = super.w();
+}
+//// [namedImportInContainingScopeStaticBlock.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class C extends B {
+    static { super.w(); }
+}
+//// [namedImportOfInterfaceInContainingScopeStaticField.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class C extends B {
+    static _ = super.w();
+}
+//// [namedImportOfInterfaceInContainingScopeStaticBlock.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class C extends B {
+    static { super.w(); }
+}
+//// [namedImportOfUninstantiatedNamespaceInContainingScopeStaticField.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class C extends B {
+    static _ = super.w();
+}
+//// [namedImportOfUninstantiatedNamespaceInContainingScopeStaticBlock.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class C extends B {
+    static { super.w(); }
+}
+//// [namedImportOfConstEnumInContainingScopeStaticField.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class C extends B {
+    static _ = super.w();
+}
+//// [namedImportOfConstEnumInContainingScopeStaticBlock.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class C extends B {
+    static { super.w(); }
+}
+//// [typeOnlyNamedImportInContainingScopeStaticField.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class C extends B {
+    static _ = super.w();
+}
+//// [typeOnlyNamedImportInContainingScopeStaticBlock.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class C extends B {
+    static { super.w(); }
+}
+//// [defaultImportInContainingScopeStaticField.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class C extends B {
+    static _ = super.w();
+}
+//// [defaultImportInContainingScopeStaticBlock.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class C extends B {
+    static { super.w(); }
+}
+//// [typeOnlyDefaultImportInContainingScopeStaticField.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class C extends B {
+    static _ = super.w();
+}
+//// [typeOnlyDefaultImportInContainingScopeStaticBlock.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class C extends B {
+    static { super.w(); }
+}
+//// [typeInContainingScopeStaticField.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class C extends B {
+    static _ = super.w();
+}
+//// [typeInContainingScopeStaticBlock.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class C extends B {
+    static { super.w(); }
+}
+//// [interfaceInContainingScopeStaticField.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 ;
+class C extends B {
+    static _ = super.w();
+}
+//// [interfaceInContainingScopeStaticBlock.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+;
+class C extends B {
+    static { super.w(); }
+}
+//// [uninstantiatedNamespaceInContainingScopeStaticField.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+;
+class C extends B {
+    static _ = super.w();
+}
+//// [uninstantiatedNamespaceInContainingScopeStaticBlock.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+;
+class C extends B {
+    static { super.w(); }
+}
+//// [classExprInContainingScopeStaticField.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+(class Reflect {
+});
+class C extends B {
+    static _ = super.w();
+}
+//// [classExprInContainingScopeStaticBlock.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+(class Reflect {
+});
+class C extends B {
+    static { super.w(); }
+}
+//// [inContainingClassExprStaticField.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+(class Reflect {
+    static {
+        class C extends B {
+            static _ = super.w();
+        }
+    }
+});
+//// [inContainingClassExprStaticBlock.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+(class Reflect {
+    static {
+        class C extends B {
+            static { super.w(); }
+        }
+    }
+});
+//// [funcExprInContainingScopeStaticField.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+(function Reflect() { });
+class C extends B {
+    static _ = super.w();
+}
+//// [funcExprInContainingScopeStaticBlock.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+(function Reflect() { });
+class C extends B {
+    static { super.w(); }
+}
+//// [inContainingFuncExprStaticField.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+(function Reflect() {
+    class C extends B {
+        static _ = super.w();
+    }
+});
+//// [inContainingFuncExprStaticBlock.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+(function Reflect() {
+    class C extends B {
+        static { super.w(); }
+    }
+});

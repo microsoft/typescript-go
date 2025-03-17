@@ -24,6 +24,10 @@ export declare const Po: {
 };
 
 
+//// [op.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = Op;
 //// [test.js]
 "use strict";
 var __importDefault = (this && this.__importDefault) || function (mod) {
@@ -39,7 +43,3 @@ function foo() {
         [po_1.Po.ro]: {}
     };
 }
-//// [op.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Op;

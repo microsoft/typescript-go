@@ -15,6 +15,12 @@ class C implements types.Component {}
 class D implements nestedNamespace.types.Component {}
 
 
+//// [types.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [ns.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 //// [index.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -22,9 +28,3 @@ class C {
 }
 class D {
 }
-//// [ns.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-//// [types.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });

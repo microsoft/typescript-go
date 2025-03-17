@@ -11,9 +11,9 @@ import foo = require("foo");
 var z = foo.x + 10;
 
 
+//// [foo_0.js]
 //// [foo_1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const foo = require("foo");
 var z = foo.x + 10;
-//// [foo_0.js]

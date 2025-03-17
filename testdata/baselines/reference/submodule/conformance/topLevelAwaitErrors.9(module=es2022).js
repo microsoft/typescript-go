@@ -9,7 +9,7 @@ declare const _await: any;
 export { _await as await };
 
 
-//// [index.js]
-export {};
 //// [other.js]
 export { _await as await };
+//// [index.js]
+export {};

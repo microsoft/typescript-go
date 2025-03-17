@@ -9,13 +9,13 @@ import { undefined } from "./a";
 declare function use(a: number);
 use(undefined);
 
-//// [b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const a_1 = require("./a");
-use(a_1.undefined);
 //// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.undefined = void 0;
 var undefined;
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const a_1 = require("./a");
+use(a_1.undefined);

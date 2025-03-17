@@ -14,6 +14,16 @@ export var main = 10;
 //// [elidingImportNames_main1.ts]
 export var main = 10;
 
+//// [elidingImportNames_main.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.main = void 0;
+exports.main = 10;
+//// [elidingImportNames_main1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.main = void 0;
+exports.main = 10;
 //// [elidingImportNames_test.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -22,13 +32,3 @@ var b = a;
 var x;
 const a2 = require("./elidingImportNames_main1");
 var b2 = a2;
-//// [elidingImportNames_main1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.main = void 0;
-exports.main = 10;
-//// [elidingImportNames_main.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.main = void 0;
-exports.main = 10;

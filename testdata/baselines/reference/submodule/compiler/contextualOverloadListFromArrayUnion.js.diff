@@ -1,17 +1,6 @@
 --- old.contextualOverloadListFromArrayUnion.js
 +++ new.contextualOverloadListFromArrayUnion.js
-@@= skipped -64, +64 lines =@@
- })
- 
- 
--//// [one.js]
--export const yThen = y.map(item => item.length);
--//// [two.js]
--export const yThen = y.map(item => item.length);
- //// [three.js]
- const resizeObserver = new ResizeObserver(([entry]) => {
-     entry;
-@@= skipped -22, +18 lines =@@
+@@= skipped -86, +86 lines =@@
                      callback(error, null);
                  }
                  else {
@@ -20,11 +9,3 @@
                      results.push(result);
                      next();
                  }
-@@= skipped -22, +20 lines =@@
-         console.log(results);
-     }
- });
-+//// [two.js]
-+export const yThen = y.map(item => item.length);
-+//// [one.js]
-+export const yThen = y.map(item => item.length);

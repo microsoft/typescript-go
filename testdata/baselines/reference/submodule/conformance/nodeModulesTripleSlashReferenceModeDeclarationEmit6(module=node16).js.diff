@@ -1,14 +1,14 @@
 --- old.nodeModulesTripleSlashReferenceModeDeclarationEmit6(module=node16).js
 +++ new.nodeModulesTripleSlashReferenceModeDeclarationEmit6(module=node16).js
-@@= skipped -27, +27 lines =@@
- import obj from "./uses.js"
+@@= skipped -28, +28 lines =@@
  export default (obj as typeof obj);
  
--//// [uses.js]
+ //// [uses.js]
 -"use strict";
 -Object.defineProperty(exports, "__esModule", { value: true });
 -/// <reference types="pkg" preserve="true" />
 -exports.default = getInterR();
++export default getInterR();
  //// [index.js]
 -"use strict";
 -var __importDefault = (this && this.__importDefault) || function (mod) {
@@ -68,5 +68,3 @@
 -    
 +import obj from "./uses.js";
 +export default obj;
-+//// [uses.js]
-+export default getInterR();

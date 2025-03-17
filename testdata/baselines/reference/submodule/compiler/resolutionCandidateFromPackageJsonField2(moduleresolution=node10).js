@@ -11,11 +11,11 @@ import { a } from "foo/bar.ts";
 import { b } from "baz/main.ts";
 
 
-//// [test.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 //// [bar.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.a = void 0;
 exports.a = 1234;
+//// [test.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });

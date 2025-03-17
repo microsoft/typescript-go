@@ -1,14 +1,9 @@
 --- old.declFileIndexSignatures.js
 +++ new.declFileIndexSignatures.js
-@@= skipped -33, +33 lines =@@
-     [a: string]: T;
- }
- 
-+//// [declFileIndexSignatures_1.js]
- //// [declFileIndexSignatures_0.js]
+@@= skipped -37, +37 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
--//// [declFileIndexSignatures_1.js]
+ //// [declFileIndexSignatures_1.js]
 -
 -
 -//// [declFileIndexSignatures_0.d.ts]

@@ -12,6 +12,10 @@ export const x = new Fooa();
 export {default as Foob} from "./cls";
 
 
+//// [cls.js]
+class Foo {
+}
+module.exports = Foo;
 //// [usage.js]
 "use strict";
 var __importDefault = (this && this.__importDefault) || function (mod) {
@@ -23,7 +27,3 @@ const cls_1 = __importDefault(require("./cls"));
 exports.x = new cls_1.default();
 const cls_2 = require("./cls");
 Object.defineProperty(exports, "Foob", { enumerable: true, get: function () { return __importDefault(cls_2).default; } });
-//// [cls.js]
-class Foo {
-}
-module.exports = Foo;

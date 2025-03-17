@@ -40,6 +40,21 @@ export class D {
     }
 }
 
+//// [0.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.B = void 0;
+exports.foo = foo;
+class B {
+    print() { return "I am B"; }
+}
+exports.B = B;
+function foo() { return "foo"; }
+//// [1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.backup = backup;
+function backup() { return "backup"; }
 //// [2.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -71,18 +86,3 @@ class D {
     }
 }
 exports.D = D;
-//// [1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.backup = backup;
-function backup() { return "backup"; }
-//// [0.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.B = void 0;
-exports.foo = foo;
-class B {
-    print() { return "I am B"; }
-}
-exports.B = B;
-function foo() { return "foo"; }

@@ -1,17 +1,21 @@
 --- old.jsDeclarationsFunctionClassesCjsExportAssignment.js
 +++ new.jsDeclarationsFunctionClassesCjsExportAssignment.js
-@@= skipped -70, +70 lines =@@
- module.exports = Context;
+@@= skipped -71, +71 lines =@@
  
  
--//// [timer.js]
+ //// [timer.js]
 -/**
 - * @param {number} timeout
 - */
--function Timer(timeout) {
--    this.timeout = timeout;
--}
--module.exports = Timer;
+ function Timer(timeout) {
+     this.timeout = timeout;
+ }
+ module.exports = Timer;
++//// [hook.js]
++function Hook(handle) {
++    this.handle = handle;
++}
++module.exports = Hook;
  //// [context.js]
 -/**
 - * Imports
@@ -43,7 +47,7 @@
  function Context(input) {
      if (!(this instanceof Context)) {
          return new Context(input);
-@@= skipped -43, +8 lines =@@
+@@= skipped -42, +17 lines =@@
      this.state = this.construct(input);
  }
  Context.prototype = {
@@ -59,17 +63,17 @@
      }
  };
  module.exports = Context;
- //// [hook.js]
+-//// [hook.js]
 -/**
 - * @typedef {(arg: import("./context")) => void} HookHandler
 - */
 -/**
 - * @param {HookHandler} handle
 - */
- function Hook(handle) {
-     this.handle = handle;
- }
- module.exports = Hook;
+-function Hook(handle) {
+-    this.handle = handle;
+-}
+-module.exports = Hook;
 -
 -
 -//// [timer.d.ts]
@@ -84,10 +88,7 @@
 -     */
 -    constructor(timeout: number);
 -    timeout: number;
-+//// [timer.js]
-+function Timer(timeout) {
-+    this.timeout = timeout;
- }
+-}
 -//// [context.d.ts]
 -export = Context;
 -/**
@@ -207,4 +208,3 @@
 -    export { HookHandler };
 -}
 -type HookHandler = (arg: import("./context")) => void;
-+module.exports = Timer;

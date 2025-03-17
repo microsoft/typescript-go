@@ -33,6 +33,8 @@ d.default();
 self.default.default();
 self.def.default();
 
+//// [mod.cjs]
+export default fun;
 //// [b.mjs]
 import a from "./mod.cjs";
 import { default as b } from "./mod.cjs";
@@ -57,5 +59,3 @@ c.default();
 d.default();
 self.default.default();
 self.def.default();
-//// [mod.cjs]
-export default fun;

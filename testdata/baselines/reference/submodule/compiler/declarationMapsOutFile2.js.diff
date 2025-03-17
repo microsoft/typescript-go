@@ -9,10 +9,6 @@
 -    function Foo() {
 -    }
 -    Foo.prototype.doThing = function (x) {
-+//// [index.js]
-+const c = new Foo();
-+c.doThing({ a: 42 });
-+let x = c.doThing({ a: 12 });
 +//// [a.js]
 +class Foo {
 +    doThing(x) {
@@ -45,3 +41,7 @@
 -    b: number;
 -};
 -//# sourceMappingURL=bundle.d.ts.map
++//// [index.js]
++const c = new Foo();
++c.doThing({ a: 42 });
++let x = c.doThing({ a: 12 });

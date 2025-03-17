@@ -122,7 +122,7 @@ export const cjsSource = true;
     }
 }
 
-//// [index.js]
+//// [index.mjs]
 import * as cjs from "package/cjs";
 import * as mjs from "package/mjs";
 import * as type from "package";
@@ -152,7 +152,7 @@ cjsi.cjsSource;
 mjsi.cjsSource;
 typei.implicitCjsSource;
 ts.cjsSource;
-//// [index.mjs]
+//// [index.js]
 import * as cjs from "package/cjs";
 import * as mjs from "package/mjs";
 import * as type from "package";

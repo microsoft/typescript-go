@@ -119,34 +119,6 @@ class G {
 }
 
 
-//// [file3.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.F = void 0;
-@dec
-@dec
-class F {
-}
-exports.F = F;
-@dec
-@dec
-class G {
-}
-exports.default = G;
-//// [file2.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.D = void 0;
-@dec
-@dec
-class D {
-}
-exports.D = D;
-@dec
-@dec
-class E {
-}
-exports.default = E;
 //// [file1.js]
 @dec
 @dec
@@ -182,3 +154,31 @@ class C {
     @dec
     static accessor #z = 1;
 }
+//// [file2.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.D = void 0;
+@dec
+@dec
+class D {
+}
+exports.D = D;
+@dec
+@dec
+class E {
+}
+exports.default = E;
+//// [file3.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.F = void 0;
+@dec
+@dec
+class F {
+}
+exports.F = F;
+@dec
+@dec
+class G {
+}
+exports.default = G;

@@ -1,22 +1,9 @@
 --- old.declarationEmitResolveTypesIfNotReusable.js
 +++ new.declarationEmitResolveTypesIfNotReusable.js
-@@= skipped -17, +17 lines =@@
- 
- export const f = {...d}
- 
-+//// [main.js]
-+import * as d from './decl';
-+export const f = { ...d };
- //// [decl.js]
- const u = "X";
- const a = { a: "value of a", notNecessary: u };
-@@= skipped -7, +10 lines =@@
- export const o2 = (o) => { };
- export const o3 = (o) => { };
- export const o4 = (o) => { };
--//// [main.js]
--import * as d from './decl';
--export const f = { ...d };
+@@= skipped -27, +27 lines =@@
+ //// [main.js]
+ import * as d from './decl';
+ export const f = { ...d };
 -
 -
 -//// [decl.d.ts]

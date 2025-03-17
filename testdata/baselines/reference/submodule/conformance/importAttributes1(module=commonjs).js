@@ -32,25 +32,12 @@ const g = import('./0', {}, {})
 const h = import('./0', { with: { type: "json" }},)
 
 
-//// [3.js]
-const a = Promise.resolve().then(() => require('./0'));
-const b = Promise.resolve().then(() => require('./0'));
-const c = Promise.resolve().then(() => require('./0'));
-const d = Promise.resolve().then(() => require('./0'));
-const dd = Promise.resolve().then(() => require('./0'));
-const e = Promise.resolve().then(() => require('./0'));
-const f = Promise.resolve().then(() => require());
-const g = Promise.resolve().then(() => require('./0'));
-const h = Promise.resolve().then(() => require('./0'));
-//// [2.js]
+//// [0.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const _0_1 = require("./0");
-const _0_2 = require("./0");
-_0_1.a;
-_0_1.b;
-_0_2.a;
-_0_2.b;
+exports.b = exports.a = void 0;
+exports.a = 1;
+exports.b = 2;
 //// [1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -61,9 +48,22 @@ _0_1.a;
 _0_1.b;
 foo.a;
 foo.b;
-//// [0.js]
+//// [2.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.b = exports.a = void 0;
-exports.a = 1;
-exports.b = 2;
+const _0_1 = require("./0");
+const _0_2 = require("./0");
+_0_1.a;
+_0_1.b;
+_0_2.a;
+_0_2.b;
+//// [3.js]
+const a = Promise.resolve().then(() => require('./0'));
+const b = Promise.resolve().then(() => require('./0'));
+const c = Promise.resolve().then(() => require('./0'));
+const d = Promise.resolve().then(() => require('./0'));
+const dd = Promise.resolve().then(() => require('./0'));
+const e = Promise.resolve().then(() => require('./0'));
+const f = Promise.resolve().then(() => require());
+const g = Promise.resolve().then(() => require('./0'));
+const h = Promise.resolve().then(() => require('./0'));

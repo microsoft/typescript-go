@@ -17,16 +17,16 @@ file1.bar();
 
 
 
-//// [externalModuleRefernceResolutionOrderInImportDeclaration_file3.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const file1 = require("./externalModuleRefernceResolutionOrderInImportDeclaration_file1");
-file1.foo();
-file1.bar();
+//// [externalModuleRefernceResolutionOrderInImportDeclaration_file2.js]
 //// [externalModuleRefernceResolutionOrderInImportDeclaration_file1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.foo = foo;
 function foo() { }
 ;
-//// [externalModuleRefernceResolutionOrderInImportDeclaration_file2.js]
+//// [externalModuleRefernceResolutionOrderInImportDeclaration_file3.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const file1 = require("./externalModuleRefernceResolutionOrderInImportDeclaration_file1");
+file1.foo();
+file1.bar();

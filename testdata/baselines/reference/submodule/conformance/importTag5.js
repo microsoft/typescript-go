@@ -16,8 +16,8 @@ export interface Foo {
 function f(foo) {}
 
 
-//// [foo.js]
-function f(foo) { }
 //// [types.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+//// [foo.js]
+function f(foo) { }

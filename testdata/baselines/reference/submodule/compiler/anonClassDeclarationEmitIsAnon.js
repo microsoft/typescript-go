@@ -34,22 +34,6 @@ export class TimestampedUser extends Timestamped(User) {
     }
 }
 
-//// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.TimestampedUser = exports.User = void 0;
-const wrapClass_1 = require("./wrapClass");
-exports.default = (0, wrapClass_1.wrapClass)(0);
-class User {
-    name = '';
-}
-exports.User = User;
-class TimestampedUser extends (0, wrapClass_1.Timestamped)(User) {
-    constructor() {
-        super();
-    }
-}
-exports.TimestampedUser = TimestampedUser;
 //// [wrapClass.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -67,3 +51,19 @@ function Timestamped(Base) {
         timestamp = Date.now();
     };
 }
+//// [index.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.TimestampedUser = exports.User = void 0;
+const wrapClass_1 = require("./wrapClass");
+exports.default = (0, wrapClass_1.wrapClass)(0);
+class User {
+    name = '';
+}
+exports.User = User;
+class TimestampedUser extends (0, wrapClass_1.Timestamped)(User) {
+    constructor() {
+        super();
+    }
+}
+exports.TimestampedUser = TimestampedUser;

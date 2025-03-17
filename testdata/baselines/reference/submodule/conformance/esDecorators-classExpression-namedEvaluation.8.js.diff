@@ -1,10 +1,9 @@
 --- old.esDecorators-classExpression-namedEvaluation.8.js
 +++ new.esDecorators-classExpression-namedEvaluation.8.js
-@@= skipped -15, +15 lines =@@
- 
+@@= skipped -16, +16 lines =@@
  export default (class { @dec y: any });
  
--//// [a.js]
+ //// [a.js]
 -// 16.2.3.7 RS: Evaluation
 -//   ExportDeclaration : `export` `default` AssignmentExpression `;` 
 -export default ((() => {
@@ -25,6 +24,10 @@
 -    };
 -    return class_1 = _classThis;
 -})());
++export default (
++@dec
++class {
++});
  //// [b.js]
 -// 16.2.3.7 RS: Evaluation
 -//   ExportDeclaration : `export` `default` AssignmentExpression `;` 
@@ -49,9 +52,4 @@
 +export default (class {
 +    @dec
 +    y;
-+});
-+//// [a.js]
-+export default (
-+@dec
-+class {
 +});

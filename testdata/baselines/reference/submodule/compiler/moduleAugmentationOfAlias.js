@@ -17,15 +17,15 @@ function f(i: I) {
 }
 
 
+//// [a.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 //// [c.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 function f(i) {
     i.x;
 }
-//// [b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-//// [a.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });

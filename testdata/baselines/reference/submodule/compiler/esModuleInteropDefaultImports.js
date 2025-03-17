@@ -36,6 +36,14 @@ d.default();
 self.default.default();
 self.def.default();
 
+//// [mod.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = fun;
+//// [a.js]
+"use strict";
+const mod = require("./mod");
+module.exports = mod;
 //// [b.js]
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -91,11 +99,3 @@ a_3.default.default();
 a_3.default.default();
 self.default.default();
 self.def.default();
-//// [a.js]
-"use strict";
-const mod = require("./mod");
-module.exports = mod;
-//// [mod.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = fun;

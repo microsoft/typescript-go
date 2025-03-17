@@ -9,9 +9,6 @@ export namespace N {
     export interface I {x: any}
 }
 
-//// [f2.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 //// [f1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -20,3 +17,6 @@ var N;
 (function (N) {
     N.x = 1;
 })(N || (exports.N = N = {}));
+//// [f2.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });

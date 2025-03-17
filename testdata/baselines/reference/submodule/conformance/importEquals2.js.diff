@@ -1,11 +1,7 @@
 --- old.importEquals2.js
 +++ new.importEquals2.js
-@@= skipped -12, +12 lines =@@
- new a.A(); // Error
- 
- 
--//// [a.js]
-+//// [c.js]
+@@= skipped -15, +15 lines =@@
+ //// [a.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
 -var A = /** @class */ (function () {
@@ -13,23 +9,22 @@
 -    }
 -    return A;
 -}());
-+const a = require("./b");
-+new a.A();
++class A {
++}
  //// [b.js]
  "use strict";
  var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-@@= skipped -33, +30 lines =@@
+@@= skipped -30, +27 lines =@@
      __setModuleDefault(result, mod);
      return result;
  };
 -var a = __importStar(require("./a"));
 +const a = __importStar(require("./a"));
  module.exports = a;
--//// [c.js]
-+//// [a.js]
+ //// [c.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
 -var a = require("./b");
 -new a.A(); // Error
-+class A {
-+}
++const a = require("./b");
++new a.A();

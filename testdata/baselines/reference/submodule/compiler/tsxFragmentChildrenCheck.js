@@ -28,6 +28,13 @@ class RenderString extends React.PureComponent<any, any> {
 
 export default RenderString
 
+//// [my-component.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MyComponent = MyComponent;
+function MyComponent(props) {
+    return <span>my component</span>;
+}
 //// [file1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -45,10 +52,3 @@ class RenderString extends React.PureComponent {
     }
 }
 exports.default = RenderString;
-//// [my-component.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.MyComponent = MyComponent;
-function MyComponent(props) {
-    return <span>my component</span>;
-}

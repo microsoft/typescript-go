@@ -51,12 +51,12 @@ export const futureVersionApplied = true;
     }
 }
 
-//// [index.cjs]
+//// [index.js]
 import * as mod from "inner";
 mod.correctVersionApplied;
 //// [index.mjs]
 import * as mod from "inner";
 mod.correctVersionApplied;
-//// [index.js]
+//// [index.cjs]
 import * as mod from "inner";
 mod.correctVersionApplied;

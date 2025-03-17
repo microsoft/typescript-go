@@ -32,22 +32,22 @@ import "./map2";
 let x: Observable<number>;
 
 
+//// [observable.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [map1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const observable_1 = require("./observable");
+observable_1.Observable.prototype.map = function () { };
+//// [map2.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const observable_1 = require("./observable");
+observable_1.Observable.prototype.map = function () { };
 //// [main.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 require("./map1");
 require("./map2");
 let x;
-//// [map2.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const observable_1 = require("./observable");
-observable_1.Observable.prototype.map = function () { };
-//// [map1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const observable_1 = require("./observable");
-observable_1.Observable.prototype.map = function () { };
-//// [observable.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });

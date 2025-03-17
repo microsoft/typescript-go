@@ -1,11 +1,8 @@
 --- old.declarationEmitMixinPrivateProtected.js
 +++ new.declarationEmitMixinPrivateProtected.js
-@@= skipped -33, +33 lines =@@
-     }
- }
+@@= skipped -35, +35 lines =@@
  
--//// [first.js]
-+//// [another.js]
+ //// [first.js]
  "use strict";
 -var __extends = (this && this.__extends) || (function () {
 -    var extendStatics = function (d, b) {
@@ -23,7 +20,7 @@
 -    };
 -})();
  Object.defineProperty(exports, "__esModule", { value: true });
--exports.Monitor = void 0;
+ exports.Monitor = void 0;
 -var DisposableMixin = /** @class */ (function () {
 -    function class_1() {
 -    }
@@ -37,27 +34,25 @@
 -    return class_1;
 -}());
 -// No error, but definition is wrong. 
--exports.default = mix(DisposableMixin);
++    }
++    _assertIsStripped() {
++    }
++};
+ exports.default = mix(DisposableMixin);
 -var Monitor = /** @class */ (function (_super) {
 -    __extends(Monitor, _super);
 -    function Monitor() {
 -        return _super !== null && _super.apply(this, arguments) || this;
++class Monitor extends mix(DisposableMixin) {
++    _onDispose() {
      }
 -    Monitor.prototype._onDispose = function () {
 -    };
 -    return Monitor;
 -}(mix(DisposableMixin)));
--exports.Monitor = Monitor;
--//// [another.js]
-+    _assertIsStripped() {
-+    }
-+};
-+class default_1 extends mix(DisposableMixin) {
-+    _onDispose() {
-+    }
 +}
-+exports.default = default_1;
-+//// [first.js]
+ exports.Monitor = Monitor;
+ //// [another.js]
  "use strict";
 -var __extends = (this && this.__extends) || (function () {
 -    var extendStatics = function (d, b) {
@@ -79,7 +74,6 @@
 -    function class_1() {
 -    }
 -    class_1.prototype._onDispose = function () {
-+exports.Monitor = void 0;
 +const DisposableMixin = class {
 +    _onDispose() {
          this._assertIsStripped();
@@ -97,13 +91,11 @@
 -    };
 -    return default_1;
 -}(mix(DisposableMixin)));
--exports.default = default_1;
 +    _assertIsStripped() {
 +    }
 +};
-+exports.default = mix(DisposableMixin);
-+class Monitor extends mix(DisposableMixin) {
++class default_1 extends mix(DisposableMixin) {
 +    _onDispose() {
 +    }
 +}
-+exports.Monitor = Monitor;
+ exports.default = default_1;

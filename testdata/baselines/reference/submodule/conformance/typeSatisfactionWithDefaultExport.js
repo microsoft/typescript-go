@@ -13,7 +13,7 @@ interface Foo {
 export default { a: 1 } satisfies Foo;
 
 
-//// [b.js]
-export default { a: 1 };
 //// [a.js]
 export default {};
+//// [b.js]
+export default { a: 1 };

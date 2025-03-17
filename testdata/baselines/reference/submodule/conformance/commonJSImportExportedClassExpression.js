@@ -14,13 +14,13 @@ exports.K = class K {
 };
 
 
-//// [mod1.js]
-exports.K = class K {
-    values() {
-    }
-};
 //// [main.js]
 const { K } = require("./mod1");
 function f(k) {
     k.values();
 }
+//// [mod1.js]
+exports.K = class K {
+    values() {
+    }
+};

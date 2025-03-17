@@ -1,24 +1,6 @@
 --- old.exportEqualsProperty.js
 +++ new.exportEqualsProperty.js
-@@= skipped -37, +37 lines =@@
- fooLength + 1;
- 
- 
-+//// [index.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+const foobar_1 = require("foobar");
-+const X2 = require("foobarx");
-+const x = foobar_1.X;
-+const x2 = X2;
-+const B = require("./a");
-+const b = new B(B.b);
-+const fooLength = require("./b");
-+fooLength + 1;
-+//// [b.js]
-+"use strict";
-+module.exports = "foo".length;
- //// [a.js]
+@@= skipped -41, +41 lines =@@
  "use strict";
  var A;
  (function (A) {
@@ -33,15 +15,10 @@
      A.B = B;
      (function (B) {
          B.b = 0;
-     })(B = A.B || (A.B = {}));
- })(A || (A = {}));
- module.exports = A.B;
--//// [b.js]
--"use strict";
--module.exports = "foo".length;
--//// [index.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
+@@= skipped -17, +15 lines =@@
+ //// [index.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
 -/// <reference path="declarations.d.ts" />
 -var foobar_1 = require("foobar");
 -var X2 = require("foobarx");
@@ -50,4 +27,11 @@
 -var B = require("./a");
 -var b = new B(B.b);
 -var fooLength = require("./b");
--fooLength + 1;
++const foobar_1 = require("foobar");
++const X2 = require("foobarx");
++const x = foobar_1.X;
++const x2 = X2;
++const B = require("./a");
++const b = new B(B.b);
++const fooLength = require("./b");
+ fooLength + 1;

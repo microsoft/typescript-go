@@ -13,9 +13,6 @@ import EnumA = Enum.A;
 export type EnumA = [string] | [string, number];
 
 
-//// [alias.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 //// [enum.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -25,3 +22,6 @@ var Enum;
     Enum[Enum["A"] = 0] = "A";
     Enum[Enum["B"] = 1] = "B";
 })(Enum || (exports.Enum = Enum = {}));
+//// [alias.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });

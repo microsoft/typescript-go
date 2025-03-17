@@ -1,10 +1,9 @@
 --- old.requireEmitSemicolon.js
 +++ new.requireEmitSemicolon.js
-@@= skipped -18, +18 lines =@@
- 	}
+@@= skipped -19, +19 lines =@@
  } 
  
--//// [requireEmitSemicolon_0.js]
+ //// [requireEmitSemicolon_0.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
 -    Object.defineProperty(exports, "__esModule", { value: true });
@@ -19,6 +18,16 @@
 -        Models.Person = Person;
 -    })(Models || (exports.Models = Models = {}));
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.Models = void 0;
++var Models;
++(function (Models) {
++    class Person {
++        constructor(name) { }
++    }
++    Models.Person = Person;
++})(Models || (exports.Models = Models = {}));
  //// [requireEmitSemicolon_1.js]
 -define(["require", "exports", "requireEmitSemicolon_0"], function (require, exports, P) {
 -    "use strict";
@@ -50,14 +59,3 @@
 +    }
 +    Database.DB = DB;
 +})(Database || (exports.Database = Database = {}));
-+//// [requireEmitSemicolon_0.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.Models = void 0;
-+var Models;
-+(function (Models) {
-+    class Person {
-+        constructor(name) { }
-+    }
-+    Models.Person = Person;
-+})(Models || (exports.Models = Models = {}));

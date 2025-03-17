@@ -45,19 +45,19 @@ import {h} from "./preact";
 import {Fragment} from "./react";
 <><span></span></>
 
-//// [mix-n-match.js]
+//// [reacty.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 <><span></span></>;
-//// [snabbdomy.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-<><div></div></>;
 //// [preacty.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 <><div></div></>;
-//// [reacty.js]
+//// [snabbdomy.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+<><div></div></>;
+//// [mix-n-match.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 <><span></span></>;

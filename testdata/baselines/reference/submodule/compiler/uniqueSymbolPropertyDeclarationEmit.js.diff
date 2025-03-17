@@ -1,17 +1,6 @@
 --- old.uniqueSymbolPropertyDeclarationEmit.js
 +++ new.uniqueSymbolPropertyDeclarationEmit.js
-@@= skipped -23, +23 lines =@@
- };
- 
- 
--//// [op.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.default = Op;
- //// [test.js]
- "use strict";
- var __importDefault = (this && this.__importDefault) || function (mod) {
-@@= skipped -11, +7 lines =@@
+@@= skipped -34, +34 lines =@@
  };
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.default = foo;
@@ -44,7 +33,3 @@
 -    [Op.or]: any[];
 -    [Po.ro]: {};
 -};
-+//// [op.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.default = Op;

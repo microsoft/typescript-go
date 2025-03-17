@@ -1,10 +1,9 @@
 --- old.allowSyntheticDefaultImports3.js
 +++ new.allowSyntheticDefaultImports3.js
-@@= skipped -9, +9 lines =@@
- }
+@@= skipped -10, +10 lines =@@
  
  
--//// [b.js]
+ //// [b.js]
 -System.register([], function (exports_1, context_1) {
 -    "use strict";
 -    var Foo;
@@ -21,6 +20,13 @@
 -        }
 -    };
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.Foo = void 0;
++class Foo {
++    member;
++}
++exports.Foo = Foo;
  //// [a.js]
 -System.register(["./b"], function (exports_1, context_1) {
 -    "use strict";
@@ -42,11 +48,3 @@
 +exports.x = void 0;
 +const b_1 = require("./b");
 +exports.x = new b_1.default.Foo();
-+//// [b.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.Foo = void 0;
-+class Foo {
-+    member;
-+}
-+exports.Foo = Foo;

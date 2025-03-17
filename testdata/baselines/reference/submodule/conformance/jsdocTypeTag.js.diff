@@ -1,12 +1,10 @@
 --- old.jsdocTypeTag.js
 +++ new.jsdocTypeTag.js
-@@= skipped -91, +91 lines =@@
- var ctor: new (s: string) => { s: string };
+@@= skipped -92, +92 lines =@@
  
  
--//// [a.js]
+ //// [a.js]
 -/** @type {String} */
-+//// [b.js]
  var S;
 -/** @type {string} */
  var s;
@@ -50,8 +48,5 @@
  var f;
 -/** @type {new (s: string) => { s: string }} */
  var ctor;
--//// [b.js]
-+//// [a.js]
+ //// [b.js]
  var S;
- var s;
- var N;

@@ -12,11 +12,6 @@ export class Promise {
 import WinJS = require('./staticInstanceResolution3_0');
 WinJS.Promise.timeout(10);
 
-//// [staticInstanceResolution3_1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const WinJS = require("./staticInstanceResolution3_0");
-WinJS.Promise.timeout(10);
 //// [staticInstanceResolution3_0.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -27,3 +22,8 @@ class Promise {
     }
 }
 exports.Promise = Promise;
+//// [staticInstanceResolution3_1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const WinJS = require("./staticInstanceResolution3_0");
+WinJS.Promise.timeout(10);

@@ -37,6 +37,26 @@ export * from "./othernoalias";
 export * from "./reacty";
 
 
+//// [otherreacty.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+<h></h>;
+//// [other.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.prerendered = void 0;
+const renderer_1 = require("./renderer");
+exports.prerendered = <renderer_1.dom></h>;
+//// [othernoalias.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.prerendered2 = void 0;
+exports.prerendered2 = <h></h>;
+//// [reacty.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.prerendered3 = void 0;
+exports.prerendered3 = <h></h>;
 //// [index.js]
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -58,23 +78,3 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./other"), exports);
 __exportStar(require("./othernoalias"), exports);
 __exportStar(require("./reacty"), exports);
-//// [reacty.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.prerendered3 = void 0;
-exports.prerendered3 = <h></h>;
-//// [othernoalias.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.prerendered2 = void 0;
-exports.prerendered2 = <h></h>;
-//// [other.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.prerendered = void 0;
-const renderer_1 = require("./renderer");
-exports.prerendered = <renderer_1.dom></h>;
-//// [otherreacty.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-<h></h>;

@@ -12,13 +12,13 @@ import lib = require('./exportImportMultipleFiles_library');
 lib.math.add(3, 4); // Shouldnt be error
 
 
-//// [exportImportMultipleFiles_userCode.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const lib = require("./exportImportMultipleFiles_library");
-lib.math.add(3, 4);
 //// [exportImportMultipleFiles_library.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.math = require("exportImportMultipleFiles_math");
 exports.math.add(3, 4);
+//// [exportImportMultipleFiles_userCode.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const lib = require("./exportImportMultipleFiles_library");
+lib.math.add(3, 4);

@@ -11,10 +11,10 @@ a;
 
 
 
-//// [main.js]
-import * as a from "./a";
-a;
 //// [a.js]
 class a {
 }
 export {};
+//// [main.js]
+import * as a from "./a";
+a;

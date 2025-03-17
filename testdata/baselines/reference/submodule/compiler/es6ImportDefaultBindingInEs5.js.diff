@@ -1,19 +1,9 @@
 --- old.es6ImportDefaultBindingInEs5.js
 +++ new.es6ImportDefaultBindingInEs5.js
-@@= skipped -6, +6 lines =@@
- //// [es6ImportDefaultBindingInEs5_1.ts]
- import defaultBinding from "./es6ImportDefaultBindingInEs5_0";
- 
-+//// [es6ImportDefaultBindingInEs5_1.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
- //// [es6ImportDefaultBindingInEs5_0.js]
+@@= skipped -13, +13 lines =@@
+ //// [es6ImportDefaultBindingInEs5_1.js]
  "use strict";
- var a = 10;
- module.exports = a;
--//// [es6ImportDefaultBindingInEs5_1.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
+ Object.defineProperty(exports, "__esModule", { value: true });
 -
 -
 -//// [es6ImportDefaultBindingInEs5_0.d.ts]

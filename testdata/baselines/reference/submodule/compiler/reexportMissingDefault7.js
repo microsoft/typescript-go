@@ -7,8 +7,8 @@ export const b = null;
 export { b } from "./b";
 export { default } from "./b";
 
+//// [b.js]
+export const b = null;
 //// [a.js]
 export { b } from "./b";
 export { default } from "./b";
-//// [b.js]
-export const b = null;

@@ -16,11 +16,13 @@ import { hello } from "./m";
 hello();
 
 
-//// [m2.js]
+//// [c.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const m_1 = require("./m");
-(0, m_1.hello)();
+exports.default = require;
+exports.has = has;
+function require(a) { }
+function has(a) { return true; }
 //// [m.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -30,10 +32,8 @@ function hello() { }
 if ((0, c_1.has)('ember-debug')) {
     (0, c_1.default)('ember-debug');
 }
-//// [c.js]
+//// [m2.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = require;
-exports.has = has;
-function require(a) { }
-function has(a) { return true; }
+const m_1 = require("./m");
+(0, m_1.hello)();

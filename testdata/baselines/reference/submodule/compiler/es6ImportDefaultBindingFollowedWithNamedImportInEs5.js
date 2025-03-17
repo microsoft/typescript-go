@@ -20,6 +20,13 @@ import defaultBinding6, { m,  } from "./es6ImportDefaultBindingFollowedWithNamed
 var x1: number = m;
 
 
+//// [es6ImportDefaultBindingFollowedWithNamedImportInEs5_0.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.m = exports.x = exports.a = void 0;
+exports.a = 10;
+exports.x = exports.a;
+exports.m = exports.a;
 //// [es6ImportDefaultBindingFollowedWithNamedImportInEs5_1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -35,10 +42,3 @@ const es6ImportDefaultBindingFollowedWithNamedImportInEs5_0_4 = require("./es6Im
 var x1 = es6ImportDefaultBindingFollowedWithNamedImportInEs5_0_4.x;
 const es6ImportDefaultBindingFollowedWithNamedImportInEs5_0_5 = require("./es6ImportDefaultBindingFollowedWithNamedImportInEs5_0");
 var x1 = es6ImportDefaultBindingFollowedWithNamedImportInEs5_0_5.m;
-//// [es6ImportDefaultBindingFollowedWithNamedImportInEs5_0.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.m = exports.x = exports.a = void 0;
-exports.a = 10;
-exports.x = exports.a;
-exports.m = exports.a;

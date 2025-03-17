@@ -1,10 +1,9 @@
 --- old.emitter.forAwait(target=es5).js
 +++ new.emitter.forAwait(target=es5).js
-@@= skipped -49, +49 lines =@@
-     }
+@@= skipped -50, +50 lines =@@
  }
  
--//// [file1.js]
+ //// [file1.js]
 -var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
 -    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 -    return new (P || (P = Promise))(function (resolve, reject) {
@@ -39,12 +38,9 @@
 -            op = body.call(thisArg, _);
 -        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
 -        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-+//// [file7.js]
-+async function* f7() {
++async function f1() {
 +    let y;
-+    for (;;) {
-+        for await (const x of y) {
-+        }
++    for await (const x of y) {
      }
 -};
 -var __asyncValues = (this && this.__asyncValues) || function (o) {
@@ -96,7 +92,7 @@
 -        });
 -    });
  }
--//// [file2.js]
+ //// [file2.js]
 -var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
 -    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 -    return new (P || (P = Promise))(function (resolve, reject) {
@@ -131,11 +127,9 @@
 -            op = body.call(thisArg, _);
 -        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
 -        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-+//// [file6.js]
-+async function* f6() {
-+    let y;
-+    outer: for await (const x of y) {
-+        continue outer;
++async function f2() {
++    let x, y;
++    for await (x of y) {
      }
 -};
 -var __asyncValues = (this && this.__asyncValues) || function (o) {
@@ -187,7 +181,7 @@
 -        });
 -    });
  }
--//// [file3.js]
+ //// [file3.js]
 -var __generator = (this && this.__generator) || function (thisArg, body) {
 -    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
 -    return g.next = verb(0), g["throw"] = verb(1), g["return"] = verb(2), typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
@@ -213,11 +207,9 @@
 -            op = body.call(thisArg, _);
 -        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
 -        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-+//// [file5.js]
-+async function f5() {
++async function* f3() {
 +    let y;
-+    outer: for await (const x of y) {
-+        continue outer;
++    for await (const x of y) {
      }
 -};
 -var __asyncValues = (this && this.__asyncValues) || function (o) {
@@ -375,7 +367,7 @@
 -        });
 -    });
  }
--//// [file5.js]
+ //// [file5.js]
 -var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
 -    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 -    return new (P || (P = Promise))(function (resolve, reject) {
@@ -410,10 +402,10 @@
 -            op = body.call(thisArg, _);
 -        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
 -        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-+//// [file3.js]
-+async function* f3() {
++async function f5() {
 +    let y;
-+    for await (const x of y) {
++    outer: for await (const x of y) {
++        continue outer;
      }
 -};
 -var __asyncValues = (this && this.__asyncValues) || function (o) {
@@ -466,7 +458,7 @@
 -        });
 -    });
  }
--//// [file6.js]
+ //// [file6.js]
 -var __generator = (this && this.__generator) || function (thisArg, body) {
 -    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
 -    return g.next = verb(0), g["throw"] = verb(1), g["return"] = verb(2), typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
@@ -492,10 +484,10 @@
 -            op = body.call(thisArg, _);
 -        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
 -        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-+//// [file2.js]
-+async function f2() {
-+    let x, y;
-+    for await (x of y) {
++async function* f6() {
++    let y;
++    outer: for await (const x of y) {
++        continue outer;
      }
 -};
 -var __asyncValues = (this && this.__asyncValues) || function (o) {
@@ -561,7 +553,7 @@
 -        });
 -    });
  }
--//// [file7.js]
+ //// [file7.js]
 -var __generator = (this && this.__generator) || function (thisArg, body) {
 -    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
 -    return g.next = verb(0), g["throw"] = verb(1), g["return"] = verb(2), typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
@@ -587,10 +579,11 @@
 -            op = body.call(thisArg, _);
 -        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
 -        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-+//// [file1.js]
-+async function f1() {
++async function* f7() {
 +    let y;
-+    for await (const x of y) {
++    for (;;) {
++        for await (const x of y) {
++        }
      }
 -};
 -var __asyncValues = (this && this.__asyncValues) || function (o) {

@@ -1,9 +1,0 @@
---- old.noSymbolForMergeCrash.js
-+++ new.noSymbolForMergeCrash.js
-@@= skipped -7, +7 lines =@@
- type A = {}
- 
- 
--//// [initial.js]
- //// [final.js]
-+//// [initial.js]

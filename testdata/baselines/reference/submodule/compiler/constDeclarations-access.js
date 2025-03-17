@@ -6,7 +6,7 @@ const x = 0
 //// [file2.ts]
 x++;
 
-//// [file2.js]
-x++;
 //// [file1.js]
 const x = 0;
+//// [file2.js]
+x++;

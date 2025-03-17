@@ -19,11 +19,6 @@ import { z } from "./es6ImportNamedImportMergeErrors_0"; // should be error
 import { z1 as z } from "./es6ImportNamedImportMergeErrors_0"; // should be error
 
 
-//// [es6ImportNamedImportMergeErrors_1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var x = 10;
-var x44 = 10;
 //// [es6ImportNamedImportMergeErrors_0.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -32,3 +27,8 @@ exports.a = 10;
 exports.x = exports.a;
 exports.z = exports.a;
 exports.z1 = exports.a;
+//// [es6ImportNamedImportMergeErrors_1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var x = 10;
+var x44 = 10;

@@ -31,12 +31,12 @@ class Hola {
 }
 
 
-//// [test3.js]
-class Hola {
+//// [test1.js]
+class Hello {
 }
 //// [test2.js]
 class Hi {
 }
-//// [test1.js]
-class Hello {
+//// [test3.js]
+class Hola {
 }

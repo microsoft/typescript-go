@@ -93,22 +93,6 @@ class publicClassImplementingPublicInterfaceInGlobal implements publicInterfaceI
 }
 
 
-//// [privacyClassImplementsClauseDeclFile_GlobalFile.js]
-var publicModuleInGlobal;
-(function (publicModuleInGlobal) {
-    class privateClassImplementingPublicInterfaceInModule {
-    }
-    class privateClassImplementingPrivateInterfaceInModule {
-    }
-    class publicClassImplementingPublicInterfaceInModule {
-    }
-    publicModuleInGlobal.publicClassImplementingPublicInterfaceInModule = publicClassImplementingPublicInterfaceInModule;
-    class publicClassImplementingPrivateInterfaceInModule {
-    }
-    publicModuleInGlobal.publicClassImplementingPrivateInterfaceInModule = publicClassImplementingPrivateInterfaceInModule;
-})(publicModuleInGlobal || (publicModuleInGlobal = {}));
-class publicClassImplementingPublicInterfaceInGlobal {
-}
 //// [privacyClassImplementsClauseDeclFile_externalModule.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -167,3 +151,19 @@ class privateClassImplementingFromPrivateModuleInterface {
 class publicClassImplementingFromPrivateModuleInterface {
 }
 exports.publicClassImplementingFromPrivateModuleInterface = publicClassImplementingFromPrivateModuleInterface;
+//// [privacyClassImplementsClauseDeclFile_GlobalFile.js]
+var publicModuleInGlobal;
+(function (publicModuleInGlobal) {
+    class privateClassImplementingPublicInterfaceInModule {
+    }
+    class privateClassImplementingPrivateInterfaceInModule {
+    }
+    class publicClassImplementingPublicInterfaceInModule {
+    }
+    publicModuleInGlobal.publicClassImplementingPublicInterfaceInModule = publicClassImplementingPublicInterfaceInModule;
+    class publicClassImplementingPrivateInterfaceInModule {
+    }
+    publicModuleInGlobal.publicClassImplementingPrivateInterfaceInModule = publicClassImplementingPrivateInterfaceInModule;
+})(publicModuleInGlobal || (publicModuleInGlobal = {}));
+class publicClassImplementingPublicInterfaceInGlobal {
+}

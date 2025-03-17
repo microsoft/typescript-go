@@ -1,23 +1,19 @@
 --- old.nodeModulesImportAssignments(module=nodenext).js
 +++ new.nodeModulesImportAssignments(module=nodenext).js
-@@= skipped -29, +29 lines =@@
- //// [types.d.ts]
+@@= skipped -30, +30 lines =@@
  declare module "fs";
  
--//// [index.js]
+ //// [index.js]
 -"use strict";
 -Object.defineProperty(exports, "__esModule", { value: true });
 -// cjs format file
 -const fs = require("fs");
-+//// [file.js]
-+import { createRequire as _createRequire_1 } from "module";
-+const __require_1 = _createRequire_1(import.meta.url);
-+const __require = null;
-+const _createRequire = null;
-+const fs = __require_1("fs");
++import { createRequire as _createRequire } from "module";
++const __require = _createRequire(import.meta.url);
++const fs = __require("fs");
  fs.readFile;
 -exports.fs2 = require("fs");
-+const fs2 = __require_1("fs");
++const fs2 = __require("fs");
 +export { fs2 };
  //// [index.js]
  import { createRequire as _createRequire } from "module";
@@ -26,21 +22,16 @@
  const fs = __require("fs");
  fs.readFile;
  const fs2 = __require("fs");
- export { fs2 };
--//// [file.js]
--import { createRequire as _createRequire_1 } from "module";
--const __require_1 = _createRequire_1(import.meta.url);
+@@= skipped -17, +16 lines =@@
+ //// [file.js]
+ import { createRequire as _createRequire_1 } from "module";
+ const __require_1 = _createRequire_1(import.meta.url);
 -// esm format file
--const __require = null;
--const _createRequire = null;
--const fs = __require_1("fs");
-+//// [index.js]
-+import { createRequire as _createRequire } from "module";
-+const __require = _createRequire(import.meta.url);
-+const fs = __require("fs");
+ const __require = null;
+ const _createRequire = null;
+ const fs = __require_1("fs");
  fs.readFile;
--const fs2 = __require_1("fs");
-+const fs2 = __require("fs");
+ const fs2 = __require_1("fs");
  export { fs2 };
 -
 -

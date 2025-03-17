@@ -1,10 +1,9 @@
 --- old.systemModule15.js
 +++ new.systemModule15.js
-@@= skipped -27, +27 lines =@@
- //// [file4.ts]
+@@= skipped -28, +28 lines =@@
  export var value2 = "v";
  
--//// [file3.js]
+ //// [file3.js]
 -System.register([], function (exports_1, context_1) {
 -    "use strict";
 -    var value;
@@ -17,7 +16,12 @@
 -        }
 -    };
 -});
--//// [file4.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.value = void 0;
++exports.value = "youpi";
++exports.default = exports.value;
+ //// [file4.js]
 -System.register([], function (exports_1, context_1) {
 -    "use strict";
 -    var value2;
@@ -29,7 +33,11 @@
 -        }
 -    };
 -});
--//// [file2.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.value2 = void 0;
++exports.value2 = "v";
+ //// [file2.js]
 -System.register(["./file3"], function (exports_1, context_1) {
 -    "use strict";
 -    var moduleCStar, file3_1, file3_2;
@@ -49,6 +57,15 @@
 -        }
 -    };
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.value = exports.moduleC = exports.moduleCStar = void 0;
++const moduleCStar = require("./file3");
++exports.moduleCStar = moduleCStar;
++const file3_1 = require("./file3");
++exports.moduleC = file3_1.default;
++const file3_2 = require("./file3");
++Object.defineProperty(exports, "value", { enumerable: true, get: function () { return file3_2.value; } });
  //// [file1.js]
 -System.register(["./file2"], function (exports_1, context_1) {
 -    "use strict";
@@ -73,24 +90,3 @@
 +use(moduleB.value);
 +use(moduleB.moduleC);
 +use(moduleB.moduleCStar);
-+//// [file2.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.value = exports.moduleC = exports.moduleCStar = void 0;
-+const moduleCStar = require("./file3");
-+exports.moduleCStar = moduleCStar;
-+const file3_1 = require("./file3");
-+exports.moduleC = file3_1.default;
-+const file3_2 = require("./file3");
-+Object.defineProperty(exports, "value", { enumerable: true, get: function () { return file3_2.value; } });
-+//// [file4.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.value2 = void 0;
-+exports.value2 = "v";
-+//// [file3.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.value = void 0;
-+exports.value = "youpi";
-+exports.default = exports.value;

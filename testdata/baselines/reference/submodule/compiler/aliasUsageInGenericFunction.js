@@ -24,6 +24,22 @@ var r = foo({ a: moduleA });
 var r2 = foo({ a: <IHasVisualizationModel>null });
 
 
+//// [aliasUsageInGenericFunction_backbone.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Model = void 0;
+class Model {
+    someData;
+}
+exports.Model = Model;
+//// [aliasUsageInGenericFunction_moduleA.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.VisualizationModel = void 0;
+const Backbone = require("./aliasUsageInGenericFunction_backbone");
+class VisualizationModel extends Backbone.Model {
+}
+exports.VisualizationModel = VisualizationModel;
 //// [aliasUsageInGenericFunction_main.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -33,19 +49,3 @@ function foo(x) {
 }
 var r = foo({ a: moduleA });
 var r2 = foo({ a: null });
-//// [aliasUsageInGenericFunction_moduleA.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.VisualizationModel = void 0;
-const Backbone = require("./aliasUsageInGenericFunction_backbone");
-class VisualizationModel extends Backbone.Model {
-}
-exports.VisualizationModel = VisualizationModel;
-//// [aliasUsageInGenericFunction_backbone.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Model = void 0;
-class Model {
-    someData;
-}
-exports.Model = Model;

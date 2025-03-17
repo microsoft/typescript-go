@@ -1,14 +1,6 @@
 --- old.pathMappingBasedModuleResolution_rootImport_aliasWithRoot_realRootFile.js
 +++ new.pathMappingBasedModuleResolution_rootImport_aliasWithRoot_realRootFile.js
-@@= skipped -10, +10 lines =@@
- import { bar } from "/bar";
- 
- 
-+//// [a.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
- //// [foo.js]
- "use strict";
+@@= skipped -15, +15 lines =@@
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.foo = foo;
  function foo() { }
@@ -17,6 +9,6 @@
 -Object.defineProperty(exports, "__esModule", { value: true });
 -exports.bar = bar;
 -function bar() { }
--//// [a.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
+ //// [a.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });

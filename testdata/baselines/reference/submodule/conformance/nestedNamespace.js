@@ -10,9 +10,6 @@ import type * as a from './a';
 interface B extends a.types.A {}
 
 
-//// [b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 //// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -23,3 +20,6 @@ var types;
     }
     types.A = A;
 })(types || (exports.types = types = {}));
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });

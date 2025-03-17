@@ -12,9 +12,9 @@ function foo() {
 function bar() {
 }
 
-//// [b.js]
-function bar() {
-}
 //// [a.js]
 class c {
+}
+//// [b.js]
+function bar() {
 }

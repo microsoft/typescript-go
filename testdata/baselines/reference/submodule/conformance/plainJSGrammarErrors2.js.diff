@@ -1,17 +1,10 @@
 --- old.plainJSGrammarErrors2.js
 +++ new.plainJSGrammarErrors2.js
-@@= skipped -11, +11 lines =@@
- export { default as A } from "./a";
- 
- 
--//// [plainJSGrammarErrors2.js]
--//// [a.js]
--export default 1;
+@@= skipped -15, +15 lines =@@
+ //// [a.js]
+ export default 1;
  //// [b.js]
 -/**
 - * @deprecated
 - */
  export { default as A } from "./a";
-+//// [a.js]
-+export default 1;
-+//// [plainJSGrammarErrors2.js]

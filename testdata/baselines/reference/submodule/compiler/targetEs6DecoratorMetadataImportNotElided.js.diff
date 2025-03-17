@@ -1,17 +1,7 @@
 --- old.targetEs6DecoratorMetadataImportNotElided.js
 +++ new.targetEs6DecoratorMetadataImportNotElided.js
-@@= skipped -15, +15 lines =@@
- }
+@@= skipped -17, +17 lines =@@
  
- 
-+//// [index.js]
-+import { Input } from './deps';
-+export class MyComponent {
-+    _ref;
-+    @Input()
-+    get ref() { return this._ref; }
-+    set ref(value) { this._ref = value; }
-+}
  //// [deps.js]
  export function Input() { }
 -var TemplateRef = /** @class */ (function () {
@@ -20,7 +10,9 @@
 -    return TemplateRef;
 -}());
 -export { TemplateRef };
--//// [index.js]
++export class TemplateRef {
++}
+ //// [index.js]
 -var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 -    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 -    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -48,5 +40,10 @@
 -    return MyComponent;
 -}());
 -export { MyComponent };
-+export class TemplateRef {
++import { Input } from './deps';
++export class MyComponent {
++    _ref;
++    @Input()
++    get ref() { return this._ref; }
++    set ref(value) { this._ref = value; }
 +}

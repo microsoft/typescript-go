@@ -1,11 +1,6 @@
 --- old.noInferRedeclaration.js
 +++ new.noInferRedeclaration.js
-@@= skipped -10, +10 lines =@@
- export const g = f;
- 
- 
--//// [a.js]
--export const f = (x, y) => x;
+@@= skipped -15, +15 lines =@@
  //// [b.js]
  import { f } from "./a";
  export const g = f;
@@ -15,5 +10,3 @@
 -export declare const f: <T>(x: T, y: NoInfer<T>) => T;
 -//// [b.d.ts]
 -export declare const g: <T>(x: T, y: globalThis.NoInfer<T>) => T;
-+//// [a.js]
-+export const f = (x, y) => x;

@@ -12,16 +12,16 @@ import type { C as D } from './b';
 const d: D = {};
 
 
-//// [c.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const d = {};
-//// [b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 //// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class A {
     a;
 }
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [c.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const d = {};

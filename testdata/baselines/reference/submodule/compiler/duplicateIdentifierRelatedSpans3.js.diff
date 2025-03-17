@@ -1,9 +1,0 @@
---- old.duplicateIdentifierRelatedSpans3.js
-+++ new.duplicateIdentifierRelatedSpans3.js
-@@= skipped -13, +13 lines =@@
- }
- 
- 
--//// [file1.js]
- //// [file2.js]
-+//// [file1.js]

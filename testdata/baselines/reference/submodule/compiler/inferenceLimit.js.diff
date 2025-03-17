@@ -1,12 +1,7 @@
 --- old.inferenceLimit.js
 +++ new.inferenceLimit.js
-@@= skipped -39, +39 lines =@@
-     id: number;
- }
- 
--//// [mymodule.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
+@@= skipped -44, +44 lines =@@
+ Object.defineProperty(exports, "__esModule", { value: true });
  //// [file1.js]
  "use strict";
 -var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -21,7 +16,7 @@
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.BrokenClass = void 0;
  class BrokenClass {
-@@= skipped -36, +24 lines =@@
+@@= skipped -31, +22 lines =@@
              });
          });
      }
@@ -34,6 +29,3 @@
      }
  }
  exports.BrokenClass = BrokenClass;
-+//// [mymodule.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });

@@ -21,7 +21,7 @@
 -    augmentation: Augmentation;
 -    options: FooOptions;
 -}
-+//// [index.js]
-+export {};
 +//// [augmentation.js]
++export {};
++//// [index.js]
 +export {};

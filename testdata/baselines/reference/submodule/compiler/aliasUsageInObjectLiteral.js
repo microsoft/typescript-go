@@ -21,21 +21,6 @@ var a: { x: typeof moduleA } = { x: moduleA };
 var b: { x: IHasVisualizationModel } = { x: moduleA };
 var c: { y: { z: IHasVisualizationModel } } = { y: { z: moduleA } };
 
-//// [aliasUsageInObjectLiteral_main.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const moduleA = require("./aliasUsageInObjectLiteral_moduleA");
-var a = { x: moduleA };
-var b = { x: moduleA };
-var c = { y: { z: moduleA } };
-//// [aliasUsageInObjectLiteral_moduleA.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.VisualizationModel = void 0;
-const Backbone = require("./aliasUsageInObjectLiteral_backbone");
-class VisualizationModel extends Backbone.Model {
-}
-exports.VisualizationModel = VisualizationModel;
 //// [aliasUsageInObjectLiteral_backbone.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -44,3 +29,18 @@ class Model {
     someData;
 }
 exports.Model = Model;
+//// [aliasUsageInObjectLiteral_moduleA.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.VisualizationModel = void 0;
+const Backbone = require("./aliasUsageInObjectLiteral_backbone");
+class VisualizationModel extends Backbone.Model {
+}
+exports.VisualizationModel = VisualizationModel;
+//// [aliasUsageInObjectLiteral_main.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const moduleA = require("./aliasUsageInObjectLiteral_moduleA");
+var a = { x: moduleA };
+var b = { x: moduleA };
+var c = { y: { z: moduleA } };

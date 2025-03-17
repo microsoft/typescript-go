@@ -22,13 +22,15 @@ var s: X.A;
 X.A.q;
 X.A.r; // Error
 
-//// [exportStarFromEmptyModule_module4.js]
+//// [exportStarFromEmptyModule_module1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const X = require("./exportStarFromEmptyModule_module3");
-var s;
-X.A.q;
-X.A.r;
+exports.A = void 0;
+class A {
+    static r;
+}
+exports.A = A;
+//// [exportStarFromEmptyModule_module2.js]
 //// [exportStarFromEmptyModule_module3.js]
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -53,12 +55,10 @@ class A {
     static q;
 }
 exports.A = A;
-//// [exportStarFromEmptyModule_module2.js]
-//// [exportStarFromEmptyModule_module1.js]
+//// [exportStarFromEmptyModule_module4.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.A = void 0;
-class A {
-    static r;
-}
-exports.A = A;
+const X = require("./exportStarFromEmptyModule_module3");
+var s;
+X.A.q;
+X.A.r;

@@ -7,9 +7,9 @@ class A { }
 class B { }
 
 
-//// [b.js]
-class B {
-}
 //// [a.js]
 class A {
+}
+//// [b.js]
+class B {
 }

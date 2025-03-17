@@ -19,6 +19,11 @@ import defaultBinding6, { m,  } from "./es6ImportDefaultBindingFollowedWithNamed
 var x: number = defaultBinding6;
 
 
+//// [es6ImportDefaultBindingFollowedWithNamedImport1InEs5_0.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var a = 10;
+exports.default = a;
 //// [es6ImportDefaultBindingFollowedWithNamedImport1InEs5_1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -34,8 +39,3 @@ const es6ImportDefaultBindingFollowedWithNamedImport1InEs5_0_5 = require("./es6I
 var x = es6ImportDefaultBindingFollowedWithNamedImport1InEs5_0_5.default;
 const es6ImportDefaultBindingFollowedWithNamedImport1InEs5_0_6 = require("./es6ImportDefaultBindingFollowedWithNamedImport1InEs5_0");
 var x = es6ImportDefaultBindingFollowedWithNamedImport1InEs5_0_6.default;
-//// [es6ImportDefaultBindingFollowedWithNamedImport1InEs5_0.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var a = 10;
-exports.default = a;

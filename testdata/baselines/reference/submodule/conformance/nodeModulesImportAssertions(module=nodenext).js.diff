@@ -1,15 +1,11 @@
 --- old.nodeModulesImportAssertions(module=nodenext).js
 +++ new.nodeModulesImportAssertions(module=nodenext).js
-@@= skipped -11, +11 lines =@@
-     "type": "module"
- }
- 
-+//// [otherc.cjs]
-+const json2 = import("./package.json", { assert: { type: "json" } });
-+export {};
+@@= skipped -14, +14 lines =@@
  //// [index.js]
  export {};
--//// [otherc.cjs]
+ //// [otherc.cjs]
 -"use strict";
 -Object.defineProperty(exports, "__esModule", { value: true });
 -const json2 = import("./package.json", { assert: { type: "json" } }); // should be fine
++const json2 = import("./package.json", { assert: { type: "json" } });
++export {};

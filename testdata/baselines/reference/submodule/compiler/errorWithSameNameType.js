@@ -24,6 +24,12 @@ if (a === b) {
 a = b
 
 
+//// [a.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 //// [c.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -32,9 +38,3 @@ let b;
 if (a === b) {
 }
 a = b;
-//// [b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-//// [a.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });

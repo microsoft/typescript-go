@@ -45,33 +45,33 @@ s; // Error (used in emitting position)
 import type { type something } from "./mod.js"; // Error
 
 
-//// [g.js]
+//// [mod.js]
+export const as = 0;
+export const type = 0;
+export const something = 0;
+//// [a.js]
+import { type } from "./mod.js";
+type;
+as;
+//// [b.js]
+import { type as as } from "./mod.js";
+type;
+as;
+//// [c.js]
+type;
+as;
 export {};
+//// [d.js]
+import "./mod.js";
+//// [e.js]
+import { type as type } from "./mod.js";
+type;
+as;
 //// [f.js]
 type;
 as;
 something;
 s;
 export {};
-//// [e.js]
-import { type as type } from "./mod.js";
-type;
-as;
-//// [d.js]
-import "./mod.js";
-//// [c.js]
-type;
-as;
+//// [g.js]
 export {};
-//// [b.js]
-import { type as as } from "./mod.js";
-type;
-as;
-//// [a.js]
-import { type } from "./mod.js";
-type;
-as;
-//// [mod.js]
-export const as = 0;
-export const type = 0;
-export const something = 0;

@@ -1,10 +1,9 @@
 --- old.importImportOnlyModule.js
 +++ new.importImportOnlyModule.js
-@@= skipped -14, +14 lines =@@
- var x = foo; // Cause a runtime dependency
+@@= skipped -15, +15 lines =@@
  
  
--//// [foo_0.js]
+ //// [foo_0.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
 -    Object.defineProperty(exports, "__esModule", { value: true });
@@ -18,12 +17,23 @@
 -    }());
 -    exports.C1 = C1;
 -});
--//// [foo_1.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.C1 = void 0;
++class C1 {
++    m1 = 42;
++    static s1 = true;
++}
++exports.C1 = C1;
+ //// [foo_1.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
 -    Object.defineProperty(exports, "__esModule", { value: true });
 -    var answer = 42; // No exports
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++var answer = 42;
  //// [foo_2.js]
 -define(["require", "exports", "./foo_1"], function (require, exports, foo) {
 -    "use strict";
@@ -34,16 +44,3 @@
 +Object.defineProperty(exports, "__esModule", { value: true });
 +const foo = require("./foo_1");
 +var x = foo;
-+//// [foo_1.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+var answer = 42;
-+//// [foo_0.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.C1 = void 0;
-+class C1 {
-+    m1 = 42;
-+    static s1 = true;
-+}
-+exports.C1 = C1;

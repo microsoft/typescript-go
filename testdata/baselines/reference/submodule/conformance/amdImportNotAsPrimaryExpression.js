@@ -31,14 +31,6 @@ var y: typeof foo.C1.s1 = false;
 var z: foo.M1.I2;
 var e: number = <foo.E1>0;
 
-//// [foo_1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var i;
-var x = {};
-var y = false;
-var z;
-var e = 0;
 //// [foo_0.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -54,3 +46,11 @@ var E1;
     E1[E1["B"] = 1] = "B";
     E1[E1["C"] = 2] = "C";
 })(E1 || (exports.E1 = E1 = {}));
+//// [foo_1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var i;
+var x = {};
+var y = false;
+var z;
+var e = 0;

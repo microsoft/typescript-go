@@ -468,6 +468,7 @@ module TypeScript {
     }
 }
 
+//// [typescript.js]
 //// [parserRealSource8.js]
 var TypeScript;
 (function (TypeScript) {
@@ -843,4 +844,3 @@ var TypeScript;
     }
     TypeScript.postAssignScopes = postAssignScopes;
 })(TypeScript || (TypeScript = {}));
-//// [typescript.js]

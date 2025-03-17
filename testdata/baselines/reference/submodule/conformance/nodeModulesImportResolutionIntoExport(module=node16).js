@@ -23,12 +23,12 @@ type;
     }
 }
 
-//// [index.mjs]
+//// [index.cjs]
 import * as type from "#type";
 type;
 //// [index.js]
 import * as type from "#type";
 type;
-//// [index.cjs]
+//// [index.mjs]
 import * as type from "#type";
 type;

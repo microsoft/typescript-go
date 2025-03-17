@@ -5,8 +5,7 @@
  
  
 -//// [out.js]
--c;
++//// [file1.js]
+ c;
 +//// [file2.js]
  const c = 0;
-+//// [file1.js]
-+c;

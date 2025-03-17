@@ -88,7 +88,7 @@ export { type };
     }
 }
 
-//// [index.cjs]
+//// [index.js]
 import * as cjs from "package/cjs";
 import * as mjs from "package/mjs";
 import * as type from "package";
@@ -114,7 +114,7 @@ import * as typei from "inner";
 cjsi;
 mjsi;
 typei;
-//// [index.js]
+//// [index.cjs]
 import * as cjs from "package/cjs";
 import * as mjs from "package/mjs";
 import * as type from "package";

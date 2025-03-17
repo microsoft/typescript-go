@@ -1,25 +1,6 @@
 --- old.importHelpersNoHelpers.js
 +++ new.importHelpersNoHelpers.js
-@@= skipped -35, +35 lines =@@
- export {}
- 
- 
--//// [other.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.x = void 0;
--exports.x = 1;
-+//// [script.js]
-+class A {
-+}
-+class B extends A {
-+}
-+@dec
-+class C {
-+    method(x) {
-+    }
-+}
- //// [external.js]
+@@= skipped -44, +44 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.B = exports.A = void 0;
@@ -66,7 +47,11 @@
 -var o = { a: 1 };
 -var y = tslib_1.__assign({}, o);
 -var x = tslib_1.__rest(y, []);
--//// [script.js]
++}
++const o = { a: 1 };
++const y = { ...o };
++const { ...x } = y;
+ //// [script.js]
 -var __extends = (this && this.__extends) || (function () {
 -    var extendStatics = function (d, b) {
 -        extendStatics = Object.setPrototypeOf ||
@@ -96,7 +81,14 @@
 -};
 -var A = /** @class */ (function () {
 -    function A() {
--    }
++class A {
++}
++class B extends A {
++}
++@dec
++class C {
++    method(x) {
+     }
 -    return A;
 -}());
 -var B = /** @class */ (function (_super) {
@@ -123,11 +115,3 @@
 -    return C;
 -}());
 +}
-+const o = { a: 1 };
-+const y = { ...o };
-+const { ...x } = y;
-+//// [other.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.x = void 0;
-+exports.x = 1;

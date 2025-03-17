@@ -1,41 +1,39 @@
 --- old.esModuleInteropTslibHelpers.js
 +++ new.esModuleInteropTslibHelpers.js
-@@= skipped -18, +18 lines =@@
- resolve("", "../");
- export { Bar }
- 
--//// [file.js]
-+//// [file4.js]
+@@= skipped -22, +22 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
--exports.Foo = void 0;
+ exports.Foo = void 0;
 -var tslib_1 = require("tslib");
 -var path_1 = tslib_1.__importDefault(require("path"));
--path_1.default.resolve("", "../");
++const tslib_1 = require("tslib");
++const path_1 = tslib_1.__importDefault(require("path"));
+ path_1.default.resolve("", "../");
 -var Foo = /** @class */ (function () {
 -    function Foo() {
 -    }
 -    return Foo;
 -}());
--exports.Foo = Foo;
--//// [file2.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.Foo2 = void 0;
++class Foo {
++}
+ exports.Foo = Foo;
+ //// [file2.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.Foo2 = void 0;
 -var tslib_1 = require("tslib");
 -var path = tslib_1.__importStar(require("path"));
--path.resolve("", "../");
++const tslib_1 = require("tslib");
++const path = tslib_1.__importStar(require("path"));
+ path.resolve("", "../");
 -var Foo2 = /** @class */ (function () {
 -    function Foo2() {
 -    }
 -    return Foo2;
 -}());
--exports.Foo2 = Foo2;
-+exports.Bar = void 0;
-+const tslib_1 = require("tslib");
-+const path_1 = tslib_1.__importStar(require("path"));
-+Object.defineProperty(exports, "Bar", { enumerable: true, get: function () { return path_1.Bar; } });
-+(0, path_1.default)("", "../");
++class Foo2 {
++}
+ exports.Foo2 = Foo2;
  //// [file3.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
@@ -53,29 +51,13 @@
 +class Foo3 {
 +}
  exports.Foo3 = Foo3;
--//// [file4.js]
-+//// [file2.js]
+ //// [file4.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
--exports.Bar = void 0;
+ exports.Bar = void 0;
 -var tslib_1 = require("tslib");
 -var path_1 = tslib_1.__importStar(require("path"));
--Object.defineProperty(exports, "Bar", { enumerable: true, get: function () { return path_1.Bar; } });
--(0, path_1.default)("", "../");
-+exports.Foo2 = void 0;
 +const tslib_1 = require("tslib");
-+const path = tslib_1.__importStar(require("path"));
-+path.resolve("", "../");
-+class Foo2 {
-+}
-+exports.Foo2 = Foo2;
-+//// [file.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.Foo = void 0;
-+const tslib_1 = require("tslib");
-+const path_1 = tslib_1.__importDefault(require("path"));
-+path_1.default.resolve("", "../");
-+class Foo {
-+}
-+exports.Foo = Foo;
++const path_1 = tslib_1.__importStar(require("path"));
+ Object.defineProperty(exports, "Bar", { enumerable: true, get: function () { return path_1.Bar; } });
+ (0, path_1.default)("", "../");

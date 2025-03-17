@@ -16,6 +16,11 @@ export const m = {
 
 export const x = { p: fn }; 
 
+//// [a.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.fn = void 0;
+exports.fn = { o: (a) => { } };
 //// [b.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -25,8 +30,3 @@ exports.m = {
     prop: 1
 };
 exports.x = { p: a_1.fn };
-//// [a.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.fn = void 0;
-exports.fn = { o: (a) => { } };

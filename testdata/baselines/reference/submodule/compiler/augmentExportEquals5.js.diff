@@ -1,14 +1,15 @@
 --- old.augmentExportEquals5.js
 +++ new.augmentExportEquals5.js
-@@= skipped -79, +79 lines =@@
- let x: Request;
+@@= skipped -80, +80 lines =@@
  const y = x.id;
  
--//// [augmentation.js]
+ //// [augmentation.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
 -    Object.defineProperty(exports, "__esModule", { value: true });
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
  //// [consumer.js]
 -define(["require", "exports", "./augmentation"], function (require, exports) {
 -    "use strict";
@@ -21,6 +22,3 @@
 +require("./augmentation");
 +let x;
 +const y = x.id;
-+//// [augmentation.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });

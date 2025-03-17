@@ -1,13 +1,6 @@
 --- old.computedEnumMemberSyntacticallyString2(isolatedmodules=false).js
 +++ new.computedEnumMemberSyntacticallyString2(isolatedmodules=false).js
-@@= skipped -24, +24 lines =@@
- //// [bar.ts]
- export const BAR = 'bar';
- 
--//// [bar.js]
--export const BAR = 'bar';
- //// [foo.js]
- import { BAR } from './bar';
+@@= skipped -31, +31 lines =@@
  const LOCAL = 'LOCAL';
  var Foo;
  (function (Foo) {
@@ -45,5 +38,3 @@
 +    Foo["J"] = Foo.H;
 +    if (typeof Foo.J !== "string") Foo[Foo.J] = "J";
  })(Foo || (Foo = {}));
-+//// [bar.js]
-+export const BAR = 'bar';

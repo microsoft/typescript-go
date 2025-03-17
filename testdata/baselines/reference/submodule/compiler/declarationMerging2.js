@@ -14,9 +14,6 @@ declare module "./a" {
     }
 }
 
-//// [b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 //// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -26,3 +23,6 @@ class A {
     getF() { return this._f; }
 }
 exports.A = A;
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });

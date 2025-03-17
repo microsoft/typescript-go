@@ -34,16 +34,16 @@ export async function h() {
 }
 
 //// [index.js]
-import { h } from "../index.js";
-export async function f() {
-    const mod3 = await import("../index.js");
-    const mod4 = await import("./index.js");
-    h();
-}
-//// [index.js]
 import { f } from "./subfolder/index.js";
 export async function h() {
     const mod3 = await import("./index.js");
     const mod4 = await import("./subfolder/index.js");
     f();
+}
+//// [index.js]
+import { h } from "../index.js";
+export async function f() {
+    const mod3 = await import("../index.js");
+    const mod4 = await import("./index.js");
+    h();
 }

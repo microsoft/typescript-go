@@ -1,19 +1,17 @@
 --- old.declarationEmitExpressionInExtends6.js
 +++ new.declarationEmitExpressionInExtends6.js
-@@= skipped -11, +11 lines =@@
- export default class extends Foo {}
- 
- 
--//// [a.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.Foo = void 0;
+@@= skipped -15, +15 lines =@@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.Foo = void 0;
 -var Foo = /** @class */ (function () {
 -    function Foo() {
 -    }
 -    return Foo;
 -}());
--exports.Foo = Foo;
++class Foo {
++}
+ exports.Foo = Foo;
  //// [b.js]
  "use strict";
 -var __extends = (this && this.__extends) || (function () {
@@ -41,20 +39,14 @@
 -    }
 -    return default_1;
 -}(Foo));
-+const A = require("./a");
-+const { Foo } = A;
-+class default_1 extends Foo {
-+}
- exports.default = default_1;
+-exports.default = default_1;
 -
 -
 -//// [a.d.ts]
 -export declare class Foo {
-+//// [a.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.Foo = void 0;
-+class Foo {
++const A = require("./a");
++const { Foo } = A;
++class default_1 extends Foo {
  }
 -//// [b.d.ts]
 -import * as A from "./a";
@@ -62,4 +54,4 @@
 -export default class extends Foo {
 -}
 -export {};
-+exports.Foo = Foo;
++exports.default = default_1;

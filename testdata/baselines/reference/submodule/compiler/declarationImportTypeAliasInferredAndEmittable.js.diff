@@ -1,11 +1,9 @@
 --- old.declarationImportTypeAliasInferredAndEmittable.js
 +++ new.declarationImportTypeAliasInferredAndEmittable.js
-@@= skipped -19, +19 lines =@@
- }
+@@= skipped -21, +21 lines =@@
  
- 
--//// [foo.js]
--"use strict";
+ //// [foo.js]
+ "use strict";
 -var Conn = /** @class */ (function () {
 -    function Conn() {
 -        this.item = 3;
@@ -13,7 +11,12 @@
 -    Conn.prototype.method = function () { };
 -    return Conn;
 -}());
--module.exports = Conn;
++class Conn {
++    constructor() { }
++    item = 3;
++    method() { }
++}
+ module.exports = Conn;
  //// [usage.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
@@ -28,8 +31,7 @@
      }
 -    return Wrap;
 -}());
-+}
- exports.Wrap = Wrap;
+-exports.Wrap = Wrap;
 -
 -
 -//// [foo.d.ts]
@@ -37,12 +39,6 @@
 -    constructor();
 -    item: number;
 -    method(): void;
-+//// [foo.js]
-+"use strict";
-+class Conn {
-+    constructor() { }
-+    item = 3;
-+    method() { }
  }
 -export = Conn;
 -//// [usage.d.ts]
@@ -50,4 +46,4 @@
 -    connItem: number;
 -    constructor(c?: import("./foo"));
 -}
-+module.exports = Conn;
++exports.Wrap = Wrap;

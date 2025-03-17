@@ -10,6 +10,9 @@
 -    }
 -    return c;
 -}());
++//// [a.js]
++class c {
++}
 +//// [b.js]
  function foo() {
  }
@@ -17,7 +20,5 @@
 -
 -//// [out.d.ts]
 -declare class c {
-+//// [a.js]
-+class c {
- }
+-}
 -declare function foo(): void;

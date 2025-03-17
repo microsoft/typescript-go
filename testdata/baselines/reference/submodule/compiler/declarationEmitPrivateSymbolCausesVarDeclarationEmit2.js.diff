@@ -1,22 +1,7 @@
 --- old.declarationEmitPrivateSymbolCausesVarDeclarationEmit2.js
 +++ new.declarationEmitPrivateSymbolCausesVarDeclarationEmit2.js
-@@= skipped -18, +18 lines =@@
- }
- 
- 
--//// [a.js]
-+//// [c.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
--exports.x = void 0;
--exports.x = Symbol();
-+exports.D = void 0;
-+const a_1 = require("./a");
-+const b_1 = require("./b");
-+class D extends b_1.C {
-+    [a_1.x] = 12;
-+}
-+exports.D = D;
+@@= skipped -25, +25 lines =@@
+ exports.x = Symbol();
  //// [b.js]
  "use strict";
 -var _a;
@@ -35,8 +20,7 @@
 +}
  exports.C = C;
 -_a = a_1.x;
--//// [c.js]
-+//// [a.js]
+ //// [c.js]
  "use strict";
 -var __extends = (this && this.__extends) || (function () {
 -    var extendStatics = function (d, b) {
@@ -55,7 +39,7 @@
 -})();
 -var _a;
  Object.defineProperty(exports, "__esModule", { value: true });
--exports.D = void 0;
+ exports.D = void 0;
 -var a_1 = require("./a");
 -var b_1 = require("./b");
 -var D = /** @class */ (function (_super) {
@@ -77,12 +61,15 @@
 -import { x } from "./a";
 -export declare class C {
 -    private [x];
--}
++const a_1 = require("./a");
++const b_1 = require("./b");
++class D extends b_1.C {
++    [a_1.x] = 12;
+ }
 -//// [c.d.ts]
 -import { x } from "./a";
 -import { C } from "./b";
 -export declare class D extends C {
 -    private [x];
 -}
-+exports.x = void 0;
-+exports.x = Symbol();
++exports.D = D;

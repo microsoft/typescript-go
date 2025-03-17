@@ -1,10 +1,8 @@
 --- old.ambientExternalModuleWithInternalImportDeclaration.js
 +++ new.ambientExternalModuleWithInternalImportDeclaration.js
-@@= skipped -17, +17 lines =@@
- import A = require('M');
- var c = new A();
+@@= skipped -19, +19 lines =@@
  
--//// [ambientExternalModuleWithInternalImportDeclaration_0.js]
+ //// [ambientExternalModuleWithInternalImportDeclaration_0.js]
  //// [ambientExternalModuleWithInternalImportDeclaration_1.js]
 -define(["require", "exports", "M"], function (require, exports, A) {
 -    "use strict";
@@ -15,4 +13,3 @@
 +Object.defineProperty(exports, "__esModule", { value: true });
 +const A = require("M");
 +var c = new A();
-+//// [ambientExternalModuleWithInternalImportDeclaration_0.js]

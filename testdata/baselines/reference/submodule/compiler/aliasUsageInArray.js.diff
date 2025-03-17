@@ -1,23 +1,18 @@
 --- old.aliasUsageInArray.js
 +++ new.aliasUsageInArray.js
-@@= skipped -20, +20 lines =@@
- var xs: IHasVisualizationModel[] = [moduleA];
- var xs2: typeof moduleA[] = [moduleA];
- 
--//// [aliasUsageInArray_backbone.js]
-+//// [aliasUsageInArray_main.js]
+@@= skipped -24, +24 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
--exports.Model = void 0;
+ exports.Model = void 0;
 -var Model = /** @class */ (function () {
 -    function Model() {
 -    }
 -    return Model;
 -}());
--exports.Model = Model;
-+const moduleA = require("./aliasUsageInArray_moduleA");
-+var xs = [moduleA];
-+var xs2 = [moduleA];
++class Model {
++    someData;
++}
+ exports.Model = Model;
  //// [aliasUsageInArray_moduleA.js]
  "use strict";
 -var __extends = (this && this.__extends) || (function () {
@@ -49,15 +44,10 @@
 +class VisualizationModel extends Backbone.Model {
 +}
  exports.VisualizationModel = VisualizationModel;
--//// [aliasUsageInArray_main.js]
-+//// [aliasUsageInArray_backbone.js]
+ //// [aliasUsageInArray_main.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
 -var moduleA = require("./aliasUsageInArray_moduleA");
--var xs = [moduleA];
--var xs2 = [moduleA];
-+exports.Model = void 0;
-+class Model {
-+    someData;
-+}
-+exports.Model = Model;
++const moduleA = require("./aliasUsageInArray_moduleA");
+ var xs = [moduleA];
+ var xs2 = [moduleA];

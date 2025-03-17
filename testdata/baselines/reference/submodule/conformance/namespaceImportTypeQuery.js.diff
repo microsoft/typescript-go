@@ -1,13 +1,9 @@
 --- old.namespaceImportTypeQuery.js
 +++ new.namespaceImportTypeQuery.js
-@@= skipped -17, +17 lines =@@
- }
- 
- 
--//// [a.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.B = void 0;
+@@= skipped -21, +21 lines =@@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.B = void 0;
 -var A = /** @class */ (function () {
 -    function A() {
 -    }
@@ -18,8 +14,12 @@
 -    }
 -    return B;
 -}());
--exports.B = B;
--;
++class A {
++}
++class B {
++}
+ exports.B = B;
+ ;
  //// [b.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
@@ -34,13 +34,3 @@
      A: undefined,
      B: undefined,
  };
-+//// [a.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.B = void 0;
-+class A {
-+}
-+class B {
-+}
-+exports.B = B;
-+;

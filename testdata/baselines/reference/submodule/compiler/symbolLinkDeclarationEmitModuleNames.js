@@ -24,15 +24,20 @@ export * from "./src/value-promise";
 export * from "./src/bindingkey";
 
 
-//// [usage.js]
+//// [value-promise.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CONTROLLER_CLASS = void 0;
-const context_1 = require("@loopback/context");
-exports.CONTROLLER_CLASS = context_1.BindingKey.create(null);
-//// [application.js]
+//// [bindingkey.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BindingKey = void 0;
+class BindingKey {
+    __type;
+    static create(ctor) {
+        return new BindingKey();
+    }
+}
+exports.BindingKey = BindingKey;
 //// [index.js]
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -52,17 +57,12 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./src/value-promise"), exports);
 __exportStar(require("./src/bindingkey"), exports);
-//// [bindingkey.js]
+//// [application.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.BindingKey = void 0;
-class BindingKey {
-    __type;
-    static create(ctor) {
-        return new BindingKey();
-    }
-}
-exports.BindingKey = BindingKey;
-//// [value-promise.js]
+//// [usage.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.CONTROLLER_CLASS = void 0;
+const context_1 = require("@loopback/context");
+exports.CONTROLLER_CLASS = context_1.BindingKey.create(null);

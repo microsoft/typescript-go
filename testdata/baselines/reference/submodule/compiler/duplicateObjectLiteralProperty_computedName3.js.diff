@@ -1,40 +1,11 @@
 --- old.duplicateObjectLiteralProperty_computedName3.js
 +++ new.duplicateObjectLiteralProperty_computedName3.js
-@@= skipped -29, +29 lines =@@
- }
- 
- 
-+//// [b.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+const keys = require("./a");
-+const t1 = {
-+    [keys.n]: 1,
-+    [keys.n]: 1,
-+};
-+const t2 = {
-+    [keys.s]: 1,
-+    [keys.s]: 1,
-+};
-+const t3 = {
-+    [keys.E1.A]: 1,
-+    [keys.E1.A]: 1,
-+};
-+const t4 = {
-+    [keys.E2.B]: 1,
-+    [keys.E2.B]: 1,
-+};
- //// [a.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
-@@= skipped -14, +34 lines =@@
- (function (E2) {
-     E2[E2["B"] = 0] = "B";
+@@= skipped -45, +45 lines =@@
  })(E2 || (exports.E2 = E2 = {}));
--//// [b.js]
--"use strict";
+ //// [b.js]
+ "use strict";
 -var _a, _b, _c, _d;
--Object.defineProperty(exports, "__esModule", { value: true });
+ Object.defineProperty(exports, "__esModule", { value: true });
 -var keys = require("./a");
 -var t1 = (_a = {},
 -    _a[keys.n] = 1,
@@ -52,3 +23,20 @@
 -    _d[keys.E2.B] = 1,
 -    _d[keys.E2.B] = 1,
 -    _d);
++const keys = require("./a");
++const t1 = {
++    [keys.n]: 1,
++    [keys.n]: 1,
++};
++const t2 = {
++    [keys.s]: 1,
++    [keys.s]: 1,
++};
++const t3 = {
++    [keys.E1.A]: 1,
++    [keys.E1.A]: 1,
++};
++const t4 = {
++    [keys.E2.B]: 1,
++    [keys.E2.B]: 1,
++};

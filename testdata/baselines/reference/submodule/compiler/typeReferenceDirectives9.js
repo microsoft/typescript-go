@@ -31,6 +31,19 @@ export const cls = Cls;
 export const foo = new Cls().foo();
 export const bar = Cls.bar();
 
+//// [main.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Cls = void 0;
+class Cls {
+    x;
+}
+exports.Cls = Cls;
+//// [mod1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const main_1 = require("./main");
+main_1.Cls.prototype.foo = function () { return undefined; };
 //// [mod2.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40,16 +53,3 @@ require("./mod1");
 exports.cls = main_1.Cls;
 exports.foo = new main_1.Cls().foo();
 exports.bar = main_1.Cls.bar();
-//// [mod1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const main_1 = require("./main");
-main_1.Cls.prototype.foo = function () { return undefined; };
-//// [main.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Cls = void 0;
-class Cls {
-    x;
-}
-exports.Cls = Cls;

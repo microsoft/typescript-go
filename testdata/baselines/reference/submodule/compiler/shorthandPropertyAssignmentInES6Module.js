@@ -14,6 +14,11 @@ const test = { x, foo };
 use(x);
 use(foo);
 
+//// [existingModule.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.x = void 0;
+exports.x = 1;
 //// [test.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -22,8 +27,3 @@ const missingModule_1 = require("./missingModule");
 const test = { x: existingModule_1.x, foo: missingModule_1.foo };
 use(existingModule_1.x);
 use(missingModule_1.foo);
-//// [existingModule.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.x = void 0;
-exports.x = 1;

@@ -7,7 +7,7 @@ a ? (b) => (c): d => e // Legal JS
 a ? (b) => (c): d => e
 
 
-//// [fileTs.js]
-a ? (b) => (c) : d => e;
 //// [fileJs.js]
+a ? (b) => (c) : d => e;
+//// [fileTs.js]
 a ? (b) => (c) : d => e;

@@ -1,21 +1,23 @@
 --- old.dynamicImportsDeclaration.js
 +++ new.dynamicImportsDeclaration.js
-@@= skipped -21, +21 lines =@@
-   }
+@@= skipped -22, +22 lines =@@
  })();
  
--//// [case0.js]
+ //// [case0.js]
 -"use strict";
 -Object.defineProperty(exports, "__esModule", { value: true });
 -exports.default = 0;
--//// [case1.js]
++export default 0;
+ //// [case1.js]
 -"use strict";
 -Object.defineProperty(exports, "__esModule", { value: true });
 -exports.default = 1;
--//// [caseFallback.js]
++export default 1;
+ //// [caseFallback.js]
 -"use strict";
 -Object.defineProperty(exports, "__esModule", { value: true });
 -exports.default = 'fallback';
++export default 'fallback';
  //// [index.js]
 -"use strict";
 -Object.defineProperty(exports, "__esModule", { value: true });
@@ -25,7 +27,7 @@
      const x = 0;
      switch (x) {
          case 0:
-@@= skipped -27, +12 lines =@@
+@@= skipped -26, +17 lines =@@
              return await import("./caseFallback.js");
      }
  })();
@@ -48,9 +50,3 @@
 -} | {
 -    default: typeof import("./caseFallback.js");
 -};
-+//// [caseFallback.js]
-+export default 'fallback';
-+//// [case1.js]
-+export default 1;
-+//// [case0.js]
-+export default 0;

@@ -18,15 +18,15 @@ var z: Foo.Bar;
 var zz: Foo;
 zz.x;
 
-//// [exportAssignClassAndModule_1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var z;
-var zz;
-zz.x;
 //// [exportAssignClassAndModule_0.js]
 "use strict";
 class Foo {
     x;
 }
 module.exports = Foo;
+//// [exportAssignClassAndModule_1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var z;
+var zz;
+zz.x;

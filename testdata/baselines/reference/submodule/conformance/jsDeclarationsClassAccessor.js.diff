@@ -1,17 +1,6 @@
 --- old.jsDeclarationsClassAccessor.js
 +++ new.jsDeclarationsClassAccessor.js
-@@= skipped -36, +36 lines =@@
-     *validate(defs) { }
- }
- 
--//// [base.js]
--export class Base {
--    constructor() { }
--    toJSON() {
--        const json = { type: undefined, name: undefined, inheritance: undefined };
--        return json;
--    }
--}
+@@= skipped -47, +47 lines =@@
  //// [argument.js]
  import { Base } from "./base.js";
  export class Argument extends Base {
@@ -32,19 +21,13 @@
 -
 -
 -//// [base.d.ts]
-+//// [base.js]
- export class Base {
+-export class Base {
 -    toJSON(): {
 -        type: any;
 -        name: any;
 -        inheritance: any;
 -    };
-+    constructor() { }
-+    toJSON() {
-+        const json = { type: undefined, name: undefined, inheritance: undefined };
-+        return json;
-+    }
- }
+-}
 -//// [argument.d.ts]
 -export class Argument extends Base {
 -    /**

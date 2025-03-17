@@ -1,10 +1,8 @@
 --- old.missingDecoratorType.js
 +++ new.missingDecoratorType.js
-@@= skipped -19, +19 lines =@@
+@@= skipped -21, +21 lines =@@
  
- 
- 
--//// [a.js]
+ //// [a.js]
  //// [b.js]
 -var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 -    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -25,4 +23,3 @@
 +    @dec
 +    method() { }
 +}
-+//// [a.js]

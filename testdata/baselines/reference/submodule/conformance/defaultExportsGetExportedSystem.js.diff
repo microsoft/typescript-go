@@ -1,10 +1,9 @@
 --- old.defaultExportsGetExportedSystem.js
 +++ new.defaultExportsGetExportedSystem.js
-@@= skipped -6, +6 lines =@@
- export default function foo() {}
+@@= skipped -7, +7 lines =@@
  
  
--//// [a.js]
+ //// [a.js]
 -System.register([], function (exports_1, context_1) {
 -    "use strict";
 -    var Foo;
@@ -18,6 +17,11 @@
 -        }
 -    };
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++class Foo {
++}
++exports.default = Foo;
  //// [b.js]
 -System.register([], function (exports_1, context_1) {
 -    "use strict";
@@ -34,9 +38,3 @@
 +Object.defineProperty(exports, "__esModule", { value: true });
 +exports.default = foo;
 +function foo() { }
-+//// [a.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+class Foo {
-+}
-+exports.default = Foo;

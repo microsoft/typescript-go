@@ -37,14 +37,14 @@ module m4 {
     var a = 10;
 }
 
-//// [collisionExportsRequireAndAmbientClass_globalFile.js]
-var m4;
-(function (m4) {
-    var a = 10;
-})(m4 || (m4 = {}));
 //// [collisionExportsRequireAndAmbientClass_externalmodule.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var m2;
 (function (m2) {
 })(m2 || (m2 = {}));
+//// [collisionExportsRequireAndAmbientClass_globalFile.js]
+var m4;
+(function (m4) {
+    var a = 10;
+})(m4 || (m4 = {}));

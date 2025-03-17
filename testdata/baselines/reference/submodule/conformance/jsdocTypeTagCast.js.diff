@@ -1,11 +1,8 @@
 --- old.jsdocTypeTagCast.js
 +++ new.jsdocTypeTagCast.js
-@@= skipped -78, +78 lines =@@
-     x: 1
- });
- 
--//// [a.js]
--var W;
+@@= skipped -81, +81 lines =@@
+ //// [a.js]
+ var W;
  //// [b.js]
 -var __extends = (this && this.__extends) || (function () {
 -    var extendStatics = function (d, b) {
@@ -116,5 +113,3 @@
 +var asConst2 = ({
      x: 1
  });
-+//// [a.js]
-+var W;

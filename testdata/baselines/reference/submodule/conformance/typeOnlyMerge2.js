@@ -19,19 +19,19 @@ import { A } from "./c";
 A;
 
 
-//// [d.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-A;
-//// [c.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-//// [b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 //// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.A = void 0;
 const A = {};
 exports.A = A;
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [c.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [d.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+A;

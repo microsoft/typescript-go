@@ -15,6 +15,7 @@ class C {
 }
 
 
+//// [typeFromPrivatePropertyAssignmentJs.js]
 //// [a.js]
 class C {
     #a;
@@ -24,4 +25,3 @@ class C {
         this.#b = this.#b || {};
     }
 }
-//// [typeFromPrivatePropertyAssignmentJs.js]

@@ -1,24 +1,16 @@
 --- old.elidedJSImport2(module=es2022).js
 +++ new.elidedJSImport2(module=es2022).js
-@@= skipped -27, +27 lines =@@
- }
- 
- 
-+//// [other.js]
-+export class Foo {
-+    bar = 2.4;
-+}
-+export default class Bar {
-+    foo = 1.2;
-+}
- //// [index.js]
+@@= skipped -31, +31 lines =@@
  import { Foo } from "./other.js";
  import * as other from "./other.js";
  import defaultFoo from "./other.js";
 -var x = new Foo();
 -var y = other.Foo();
 -var z = new defaultFoo();
--//// [other.js]
++const x = new Foo();
++const y = other.Foo();
++const z = new defaultFoo();
+ //// [other.js]
 -var Foo = /** @class */ (function () {
 -    function Foo() {
 -        this.bar = 2.4;
@@ -33,6 +25,9 @@
 -    return Bar;
 -}());
 -export default Bar;
-+const x = new Foo();
-+const y = other.Foo();
-+const z = new defaultFoo();
++export class Foo {
++    bar = 2.4;
++}
++export default class Bar {
++    foo = 1.2;
++}

@@ -1,60 +1,64 @@
 --- old.nodeModulesAllowJs1(module=nodenext).js
 +++ new.nodeModulesAllowJs1(module=nodenext).js
-@@= skipped -319, +319 lines =@@
-     "type": "module"
+@@= skipped -320, +320 lines =@@
  }
  
--//// [index.js]
+ //// [index.js]
 -"use strict";
 -Object.defineProperty(exports, "__esModule", { value: true });
 -exports.x = void 0;
 -// cjs format file
--const x = 1;
+ const x = 1;
 -exports.x = x;
--//// [index.cjs]
++export { x };
+ //// [index.cjs]
 -"use strict";
 -Object.defineProperty(exports, "__esModule", { value: true });
 -exports.x = void 0;
 -// cjs format file
--const x = 1;
+ const x = 1;
 -exports.x = x;
++export { x };
  //// [index.mjs]
 -// esm format file
--const x = 1;
--export { x };
--//// [index.js]
+ const x = 1;
+ export { x };
+ //// [index.js]
 -"use strict";
 -Object.defineProperty(exports, "__esModule", { value: true });
 -exports.x = void 0;
 -// cjs format file
--const x = 1;
+ const x = 1;
 -exports.x = x;
--//// [index.cjs]
++export { x };
+ //// [index.cjs]
 -"use strict";
 -Object.defineProperty(exports, "__esModule", { value: true });
 -exports.x = void 0;
 -// cjs format file
--const x = 1;
+ const x = 1;
 -exports.x = x;
--//// [index.mjs]
++export { x };
+ //// [index.mjs]
 -// esm format file
--const x = 1;
--export { x };
--//// [index.js]
+ const x = 1;
+ export { x };
+ //// [index.js]
 -// esm format file
--const x = 1;
--export { x };
--//// [index.cjs]
+ const x = 1;
+ export { x };
+ //// [index.cjs]
 -"use strict";
 -Object.defineProperty(exports, "__esModule", { value: true });
 -exports.x = void 0;
 -// cjs format file
--const x = 1;
+ const x = 1;
 -exports.x = x;
--//// [index.mjs]
++export { x };
+ //// [index.mjs]
 -// esm format file
--const x = 1;
--export { x };
+ const x = 1;
+ export { x };
 -//// [index.cjs]
 -"use strict";
 -var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -107,6 +111,7 @@
 -const m21 = __importStar(require("./subfolder2/another"));
 -const m22 = __importStar(require("./subfolder2/another/"));
 -const m23 = __importStar(require("./subfolder2/another/index"));
++//// [index.js]
 +import { createRequire as _createRequire } from "module";
 +const __require = _createRequire(import.meta.url);
 +import * as m1 from "./index.js";
@@ -135,7 +140,7 @@
  void m1;
  void m2;
  void m3;
-@@= skipped -126, +49 lines =@@
+@@= skipped -125, +75 lines =@@
  void m21;
  void m22;
  void m23;
@@ -217,7 +222,11 @@
 -// esm format file
  const x = 1;
  export { x };
- //// [index.js]
+-//// [index.js]
++//// [index.mjs]
+ import { createRequire as _createRequire } from "module";
+ const __require = _createRequire(import.meta.url);
+ import * as m1 from "./index.js";
 @@= skipped -18, +17 lines =@@
  import * as m10 from "./subfolder2/another/index.js";
  import * as m11 from "./subfolder2/another/index.mjs";
@@ -275,30 +284,3 @@
 -export const x: 1;
 -//// [index.d.ts]
 -export const x: 1;
-+//// [index.mjs]
-+const x = 1;
-+export { x };
-+//// [index.cjs]
-+const x = 1;
-+export { x };
-+//// [index.js]
-+const x = 1;
-+export { x };
-+//// [index.mjs]
-+const x = 1;
-+export { x };
-+//// [index.cjs]
-+const x = 1;
-+export { x };
-+//// [index.js]
-+const x = 1;
-+export { x };
-+//// [index.mjs]
-+const x = 1;
-+export { x };
-+//// [index.cjs]
-+const x = 1;
-+export { x };
-+//// [index.js]
-+const x = 1;
-+export { x };

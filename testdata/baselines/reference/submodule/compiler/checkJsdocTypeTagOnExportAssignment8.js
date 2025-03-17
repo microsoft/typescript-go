@@ -16,6 +16,7 @@ export default {
 }
 
 
+//// [checkJsdocTypeTagOnExportAssignment8.js]
 //// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -23,4 +24,3 @@ exports.default = {
     a: 'a',
     b: 'b'
 };
-//// [checkJsdocTypeTagOnExportAssignment8.js]

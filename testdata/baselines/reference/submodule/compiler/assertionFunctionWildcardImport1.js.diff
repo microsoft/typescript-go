@@ -1,22 +1,15 @@
 --- old.assertionFunctionWildcardImport1.js
 +++ new.assertionFunctionWildcardImport1.js
-@@= skipped -27, +27 lines =@@
- Debug.assert(true);
- 
- 
--//// [debug.js]
-+//// [bar.js]
+@@= skipped -34, +34 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
--//// [ts.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.Debug = void 0;
+ exports.Debug = void 0;
 -var Debug = require("../debug");
--exports.Debug = Debug;
--//// [foo.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
++const Debug = require("../debug");
+ exports.Debug = Debug;
+ //// [foo.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
 -var ts = require("./_namespaces/ts");
 -var ts_1 = require("./_namespaces/ts");
 +const ts = require("./_namespaces/ts");
@@ -24,12 +17,8 @@
  ts.Debug.assert(true);
  ts_1.Debug.assert(true);
  //// [ts.js]
-@@= skipped -34, +25 lines =@@
- };
- Object.defineProperty(exports, "__esModule", { value: true });
- __exportStar(require("../../core/_namespaces/ts"), exports);
--//// [bar.js]
-+//// [foo.js]
+@@= skipped -30, +30 lines =@@
+ //// [bar.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
 -var ts = require("./_namespaces/ts");
@@ -38,12 +27,3 @@
 +const ts_1 = require("./_namespaces/ts");
  ts.Debug.assert(true);
  ts_1.Debug.assert(true);
-+//// [ts.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.Debug = void 0;
-+const Debug = require("../debug");
-+exports.Debug = Debug;
-+//// [debug.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });

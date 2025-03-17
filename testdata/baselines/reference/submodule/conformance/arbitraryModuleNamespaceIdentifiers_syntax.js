@@ -61,37 +61,37 @@ import { type "invalid 1" } from "./type-clause-valid";
 import { type as as "invalid 4" } from "./type-clause-valid";
 
 
-//// [type-clause-type-as-as.js]
-export {};
-//// [type-clause-no-as.js]
-export {};
-//// [type-clause-bad-export.js]
-export {};
-//// [type-clause-bad-import.js]
-export {};
-//// [type-clause-valid.js]
-export {};
-//// [type-decls-type-as.js]
-export {};
-//// [type-decls-no-as.js]
-export {};
-//// [type-decls-bad-export.js]
-export {};
-//// [type-decls-bad-import.js]
-export {};
-//// [type-decls-valid.js]
-export {};
-//// [values-type-as.js]
-export {};
-//// [values-no-as.js]
-export {};
-//// [values-bad-export.js]
-export { "invalid 3" as baz };
-//// [values-bad-import.js]
-export {};
 //// [values-valid.js]
 export const foo = 123;
 export { foo as "valid 1" };
 export { "valid 1" as "valid 2" } from "./values-valid";
 export { foo as "valid 3" } from "./values-valid";
 export * as "valid 4" from "./values-valid";
+//// [values-bad-import.js]
+export {};
+//// [values-bad-export.js]
+export { "invalid 3" as baz };
+//// [values-no-as.js]
+export {};
+//// [values-type-as.js]
+export {};
+//// [type-decls-valid.js]
+export {};
+//// [type-decls-bad-import.js]
+export {};
+//// [type-decls-bad-export.js]
+export {};
+//// [type-decls-no-as.js]
+export {};
+//// [type-decls-type-as.js]
+export {};
+//// [type-clause-valid.js]
+export {};
+//// [type-clause-bad-import.js]
+export {};
+//// [type-clause-bad-export.js]
+export {};
+//// [type-clause-no-as.js]
+export {};
+//// [type-clause-type-as-as.js]
+export {};

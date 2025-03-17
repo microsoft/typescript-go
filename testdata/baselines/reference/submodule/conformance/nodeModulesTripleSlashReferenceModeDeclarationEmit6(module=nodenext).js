@@ -28,8 +28,8 @@ export default getInterR();
 import obj from "./uses.js"
 export default (obj as typeof obj);
 
+//// [uses.js]
+export default getInterR();
 //// [index.js]
 import obj from "./uses.js";
 export default obj;
-//// [uses.js]
-export default getInterR();

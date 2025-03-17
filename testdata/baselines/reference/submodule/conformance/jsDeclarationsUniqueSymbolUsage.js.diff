@@ -17,6 +17,11 @@
 - * @param {import('./a').WithSymbol} value
 - */
 -export function b(value: import("./a").WithSymbol): import("./a").WithSymbol;
++//// [a.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.kSymbol = void 0;
++exports.kSymbol = Symbol("my-symbol");
 +//// [b.js]
 +"use strict";
 +Object.defineProperty(exports, "__esModule", { value: true });
@@ -24,8 +29,3 @@
 +function b(value) {
 +    return value;
 +}
-+//// [a.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.kSymbol = void 0;
-+exports.kSymbol = Symbol("my-symbol");

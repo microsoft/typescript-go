@@ -11,11 +11,6 @@ declare module "tslib" {
     function __importStar(m: any): void;
 }
 
-//// [b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.a = void 0;
-exports.a = require("./a");
 //// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -23,3 +18,8 @@ exports.A = void 0;
 class A {
 }
 exports.A = A;
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.a = void 0;
+exports.a = require("./a");

@@ -41,20 +41,17 @@ export = y;
 export = z;
 
 
-//// [foo5.js]
+//// [foo1.js]
 "use strict";
-var x = 5;
-var y = "test";
-var z = {};
+var x = 10;
+var y = 20;
 module.exports = x;
-//// [foo4.js]
+//// [foo2.js]
 "use strict";
-function x() {
-    return 42;
+var x = 10;
+class y {
 }
-function y() {
-    return 42;
-}
+;
 module.exports = x;
 //// [foo3.js]
 "use strict";
@@ -66,15 +63,18 @@ class y {
     y;
 }
 module.exports = x;
-//// [foo2.js]
+//// [foo4.js]
 "use strict";
-var x = 10;
-class y {
+function x() {
+    return 42;
 }
-;
+function y() {
+    return 42;
+}
 module.exports = x;
-//// [foo1.js]
+//// [foo5.js]
 "use strict";
-var x = 10;
-var y = 20;
+var x = 5;
+var y = "test";
+var z = {};
 module.exports = x;

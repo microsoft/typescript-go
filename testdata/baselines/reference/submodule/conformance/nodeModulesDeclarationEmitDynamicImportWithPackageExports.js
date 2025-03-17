@@ -70,18 +70,13 @@ export const cjsNonmain = true;
     }
 }
 
-//// [other2.cjs]
-export const d = import("inner/cjs");
-export const e = import("inner/mjs");
-//// [other.cjs]
-export const a = import("package/cjs");
-export const b = import("package/mjs");
-export const c = import("package");
-export const f = import("inner");
-//// [other2.mjs]
-export const d = await import("inner/cjs");
-export const e = await import("inner/mjs");
-//// [other.mjs]
+//// [index.js]
+export {};
+//// [index.mjs]
+export {};
+//// [index.cjs]
+export {};
+//// [other.js]
 export const a = await import("package/cjs");
 export const b = await import("package/mjs");
 export const c = await import("package");
@@ -89,14 +84,19 @@ export const f = await import("inner");
 //// [other2.js]
 export const d = await import("inner/cjs");
 export const e = await import("inner/mjs");
-//// [other.js]
+//// [other.mjs]
 export const a = await import("package/cjs");
 export const b = await import("package/mjs");
 export const c = await import("package");
 export const f = await import("inner");
-//// [index.cjs]
-export {};
-//// [index.mjs]
-export {};
-//// [index.js]
-export {};
+//// [other2.mjs]
+export const d = await import("inner/cjs");
+export const e = await import("inner/mjs");
+//// [other.cjs]
+export const a = import("package/cjs");
+export const b = import("package/mjs");
+export const c = import("package");
+export const f = import("inner");
+//// [other2.cjs]
+export const d = import("inner/cjs");
+export const e = import("inner/mjs");

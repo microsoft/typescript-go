@@ -56,34 +56,6 @@ import type esmy from "./decl";
 export default esmy; // error
 
 
-//// [main7.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = esmy;
-//// [main6.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = I;
-//// [main5.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class C {
-}
-exports.default = C;
-//// [main4.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = 1;
-//// [main3.js]
-"use strict";
-var ns;
-(function (ns) {
-    ns.x = 1;
-})(ns || (ns = {}));
-module.exports = ns;
-//// [main2.js]
-"use strict";
-module.exports = { x: 1 };
 //// [main.js]
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -123,3 +95,31 @@ var Values;
 (function (Values) {
     Values.x = 1;
 })(Values || (exports.Values = Values = {}));
+//// [main2.js]
+"use strict";
+module.exports = { x: 1 };
+//// [main3.js]
+"use strict";
+var ns;
+(function (ns) {
+    ns.x = 1;
+})(ns || (ns = {}));
+module.exports = ns;
+//// [main4.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = 1;
+//// [main5.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class C {
+}
+exports.default = C;
+//// [main6.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = I;
+//// [main7.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = esmy;

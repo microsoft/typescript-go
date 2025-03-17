@@ -1,48 +1,6 @@
 --- old.declFileAccessors.js
 +++ new.declFileAccessors.js
-@@= skipped -99, +99 lines =@@
-     }
- }
- 
-+//// [declFileAccessors_1.js]
-+class c2 {
-+    get p3() {
-+        return 10;
-+    }
-+    set p3(value) {
-+    }
-+    get pp3() {
-+        return 10;
-+    }
-+    set pp3(value) {
-+    }
-+    static get s3() {
-+        return 10;
-+    }
-+    static set s3(value) {
-+    }
-+    get nc_p3() {
-+        return 10;
-+    }
-+    set nc_p3(value) {
-+    }
-+    get nc_pp3() {
-+        return 10;
-+    }
-+    set nc_pp3(value) {
-+    }
-+    static get nc_s3() {
-+        return "";
-+    }
-+    static set nc_s3(value) {
-+    }
-+    get onlyGetter() {
-+        return 10;
-+    }
-+    set onlySetter(value) {
-+    }
-+}
- //// [declFileAccessors_0.js]
+@@= skipped -103, +103 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.c1 = void 0;
@@ -130,12 +88,47 @@
 -    });
 -    return c1;
 -}());
--exports.c1 = c1;
--//// [declFileAccessors_1.js]
++    set p3(value) {
++    }
++    get pp3() {
++        return 10;
++    }
++    set pp3(value) {
++    }
++    static get s3() {
++        return 10;
++    }
++    static set s3(value) {
++    }
++    get nc_p3() {
++        return 10;
++    }
++    set nc_p3(value) {
++    }
++    get nc_pp3() {
++        return 10;
++    }
++    set nc_pp3(value) {
++    }
++    static get nc_s3() {
++        return "";
++    }
++    static set nc_s3(value) {
++    }
++    get onlyGetter() {
++        return 10;
++    }
++    set onlySetter(value) {
++    }
++}
+ exports.c1 = c1;
+ //// [declFileAccessors_1.js]
 -/** This is comment for c2 - the global class*/
 -var c2 = /** @class */ (function () {
 -    function c2() {
-+    set p3(value) {
++class c2 {
++    get p3() {
++        return 10;
      }
 -    Object.defineProperty(c2.prototype, "p3", {
 -        /** getter property*/
@@ -239,6 +232,8 @@
 -    static set nc_s3(value: string);
 -    get onlyGetter(): number;
 -    set onlySetter(value: number);
++    set p3(value) {
++    }
 +    get pp3() {
 +        return 10;
 +    }
@@ -294,4 +289,3 @@
 -    get onlyGetter(): number;
 -    set onlySetter(value: number);
 -}
-+exports.c1 = c1;

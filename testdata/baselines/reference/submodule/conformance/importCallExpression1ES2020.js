@@ -17,6 +17,8 @@ function foo() {
 }
 
 
+//// [0.js]
+export function foo() { return "foo"; }
 //// [1.js]
 import("./0");
 var p1 = import("./0");
@@ -27,5 +29,3 @@ export var p2 = import("./0");
 function foo() {
     const p2 = import("./0");
 }
-//// [0.js]
-export function foo() { return "foo"; }

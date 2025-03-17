@@ -33,16 +33,6 @@ __esmodule();
 __proto();
 _hi();
 
-//// [m2.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const m1_1 = require("./m1");
-(0, m1_1._)();
-(0, m1_1.__)();
-(0, m1_1.___hello)();
-(0, m1_1.__esmodule)();
-(0, m1_1.__proto)();
-(0, m1_1._hi)();
 //// [m1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -74,3 +64,13 @@ function __esmodule() {
 function ___hello() {
     console.log("___hello");
 }
+//// [m2.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const m1_1 = require("./m1");
+(0, m1_1._)();
+(0, m1_1.__)();
+(0, m1_1.___hello)();
+(0, m1_1.__esmodule)();
+(0, m1_1.__proto)();
+(0, m1_1._hi)();

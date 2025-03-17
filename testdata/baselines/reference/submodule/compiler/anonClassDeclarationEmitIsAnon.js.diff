@@ -1,25 +1,7 @@
 --- old.anonClassDeclarationEmitIsAnon.js
 +++ new.anonClassDeclarationEmitIsAnon.js
-@@= skipped -33, +33 lines =@@
-     }
- }
+@@= skipped -35, +35 lines =@@
  
-+//// [index.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.TimestampedUser = exports.User = void 0;
-+const wrapClass_1 = require("./wrapClass");
-+exports.default = (0, wrapClass_1.wrapClass)(0);
-+class User {
-+    name = '';
-+}
-+exports.User = User;
-+class TimestampedUser extends (0, wrapClass_1.Timestamped)(User) {
-+    constructor() {
-+        super();
-+    }
-+}
-+exports.TimestampedUser = TimestampedUser;
  //// [wrapClass.js]
  "use strict";
 -var __extends = (this && this.__extends) || (function () {
@@ -51,27 +33,32 @@
 -        };
 -        return Wrapped;
 -    }());
--}
--function Timestamped(Base) {
++        }
++    };
+ }
+ function Timestamped(Base) {
 -    return /** @class */ (function (_super) {
 -        __extends(class_1, _super);
 -        function class_1() {
 -            var _this = _super !== null && _super.apply(this, arguments) || this;
 -            _this.timestamp = Date.now();
 -            return _this;
-         }
+-        }
 -        return class_1;
 -    }(Base));
--}
--//// [index.js]
--"use strict";
++    return class extends Base {
++        timestamp = Date.now();
++    };
+ }
+ //// [index.js]
+ "use strict";
 -var __extends = (this && this.__extends) || (function () {
 -    var extendStatics = function (d, b) {
 -        extendStatics = Object.setPrototypeOf ||
 -            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
 -            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
 -        return extendStatics(d, b);
-     };
+-    };
 -    return function (d, b) {
 -        if (typeof b !== "function" && b !== null)
 -            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
@@ -80,10 +67,11 @@
 -        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 -    };
 -})();
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.TimestampedUser = exports.User = void 0;
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.TimestampedUser = exports.User = void 0;
 -var wrapClass_1 = require("./wrapClass");
--exports.default = (0, wrapClass_1.wrapClass)(0);
++const wrapClass_1 = require("./wrapClass");
+ exports.default = (0, wrapClass_1.wrapClass)(0);
 -// Simple class
 -var User = /** @class */ (function () {
 -    function User() {
@@ -91,13 +79,19 @@
 -    }
 -    return User;
 -}());
--exports.User = User;
++class User {
++    name = '';
++}
+ exports.User = User;
 -// User that is Timestamped
 -var TimestampedUser = /** @class */ (function (_super) {
 -    __extends(TimestampedUser, _super);
 -    function TimestampedUser() {
 -        return _super.call(this) || this;
--    }
++class TimestampedUser extends (0, wrapClass_1.Timestamped)(User) {
++    constructor() {
++        super();
+     }
 -    return TimestampedUser;
 -}((0, wrapClass_1.Timestamped)(User)));
 -exports.TimestampedUser = TimestampedUser;
@@ -128,11 +122,9 @@
 -declare const TimestampedUser_base: {
 -    new (...args: any[]): {
 -        timestamp: number;
-+function Timestamped(Base) {
-+    return class extends Base {
-+        timestamp = Date.now();
-     };
+-    };
 -} & typeof User;
 -export declare class TimestampedUser extends TimestampedUser_base {
 -    constructor();
- }
+-}
++exports.TimestampedUser = TimestampedUser;

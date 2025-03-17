@@ -25,16 +25,6 @@ class C {
 }
 
 
-//// [script.js]
-class A {
-}
-class B extends A {
-}
-@dec
-class C {
-    method(x) {
-    }
-}
 //// [external.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -45,6 +35,16 @@ exports.A = A;
 class B extends A {
 }
 exports.B = B;
+@dec
+class C {
+    method(x) {
+    }
+}
+//// [script.js]
+class A {
+}
+class B extends A {
+}
 @dec
 class C {
     method(x) {

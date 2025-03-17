@@ -30,6 +30,18 @@ import {fnExp} from './aExp'
 export const f = fn;
 export const fExp = fnExp;
 
+//// [a.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.fn = void 0;
+const fn = (v, p, key, p2) => { };
+exports.fn = fn;
+//// [aExp.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.fnExp = void 0;
+const fnExp = (v, p, key, p2) => { };
+exports.fnExp = fnExp;
 //// [b.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -38,15 +50,3 @@ const a_1 = require("./a");
 const aExp_1 = require("./aExp");
 exports.f = a_1.fn;
 exports.fExp = aExp_1.fnExp;
-//// [aExp.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.fnExp = void 0;
-const fnExp = (v, p, key, p2) => { };
-exports.fnExp = fnExp;
-//// [a.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.fn = void 0;
-const fn = (v, p, key, p2) => { };
-exports.fn = fn;

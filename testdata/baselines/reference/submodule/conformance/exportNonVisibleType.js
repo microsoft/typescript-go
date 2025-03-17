@@ -35,19 +35,19 @@ class C1 {
 export = C1; // Should work, private type I1 of visible class C1 only used in private member m1.
 
 
-//// [foo3.js]
+//// [foo1.js]
 "use strict";
-class C1 {
-    m1;
-}
-module.exports = C1;
+var x = { a: "test", b: 42 };
+module.exports = x;
 //// [foo2.js]
 "use strict";
 class C1 {
     m1;
 }
 module.exports = C1;
-//// [foo1.js]
+//// [foo3.js]
 "use strict";
-var x = { a: "test", b: 42 };
-module.exports = x;
+class C1 {
+    m1;
+}
+module.exports = C1;

@@ -32,6 +32,39 @@ export function C() {
 C.A = A;
 C.B = B;
 
+//// [foo.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Foo = void 0;
+class Foo {
+}
+exports.Foo = Foo;
+//// [index1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = Example;
+const foo_1 = require("./foo");
+function Example() { }
+Example.Foo = foo_1.Foo;
+//// [index2.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Foo = void 0;
+exports.default = Example;
+const foo_1 = require("./foo");
+Object.defineProperty(exports, "Foo", { enumerable: true, get: function () { return foo_1.Foo; } });
+function Example() { }
+Example.Foo = foo_1.Foo;
+//// [index3.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Bar = void 0;
+exports.default = Example;
+class Bar {
+}
+exports.Bar = Bar;
+function Example() { }
+Example.Bar = Bar;
 //// [index4.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -43,36 +76,3 @@ function C() {
 }
 C.A = A;
 C.B = B;
-//// [index3.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Bar = void 0;
-exports.default = Example;
-class Bar {
-}
-exports.Bar = Bar;
-function Example() { }
-Example.Bar = Bar;
-//// [index2.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Foo = void 0;
-exports.default = Example;
-const foo_1 = require("./foo");
-Object.defineProperty(exports, "Foo", { enumerable: true, get: function () { return foo_1.Foo; } });
-function Example() { }
-Example.Foo = foo_1.Foo;
-//// [index1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Example;
-const foo_1 = require("./foo");
-function Example() { }
-Example.Foo = foo_1.Foo;
-//// [foo.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Foo = void 0;
-class Foo {
-}
-exports.Foo = Foo;

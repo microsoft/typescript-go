@@ -9,6 +9,6 @@
 /// <reference path="file1.ts" />
 /// <amd-dependency path="/js/libs/hgn.js!app/templates/home" name="compiler"/>
 
-//// [file2.js]
-//// [file1.js]
 //// [file0.js]
+//// [file1.js]
+//// [file2.js]

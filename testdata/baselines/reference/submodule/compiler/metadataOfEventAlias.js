@@ -10,6 +10,10 @@ export class SomeClass {
     @Input event: Event;
 }
 
+//// [event.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+;
 //// [test.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -20,7 +24,3 @@ class SomeClass {
     event;
 }
 exports.SomeClass = SomeClass;
-//// [event.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-;

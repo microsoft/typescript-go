@@ -59,7 +59,20 @@ type Q = 6n | 7n | 8n;
 type T = { [t in  Q]: string };
 
 
-//// [q.js]
+//// [a.js]
+{
+    ({ 1n: 123 });
+}
+;
+const bigNum = 0n;
+const a = { 1n: 123 };
+const b = { [1n]: 456 };
+const c = { [bigNum]: 789 };
+const arr = [1, 2, 3];
+const { 0: d } = arr;
+const { "0": e } = arr;
+const { 0n: f } = arr;
+const x = { 0n: 123 };
 //// [g.js]
 class K {
     4n = 0;
@@ -85,17 +98,4 @@ l[5n];
 l2[5n];
 g;
 .2n;
-//// [a.js]
-{
-    ({ 1n: 123 });
-}
-;
-const bigNum = 0n;
-const a = { 1n: 123 };
-const b = { [1n]: 456 };
-const c = { [bigNum]: 789 };
-const arr = [1, 2, 3];
-const { 0: d } = arr;
-const { "0": e } = arr;
-const { 0n: f } = arr;
-const x = { 0n: 123 };
+//// [q.js]

@@ -17,6 +17,13 @@ import d5, * as ns3 from "./a";
 ns3;
 
 
+//// [a.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.b = exports.a = void 0;
+exports.a = 0;
+exports.b = 0;
+exports.default = 0;
 //// [b.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -26,10 +33,3 @@ const a_2 = require("./a");
 a_2.default;
 const ns3 = require("./a");
 ns3;
-//// [a.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.b = exports.a = void 0;
-exports.a = 0;
-exports.b = 0;
-exports.default = 0;

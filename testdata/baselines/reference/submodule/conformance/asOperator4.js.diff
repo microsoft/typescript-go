@@ -1,14 +1,6 @@
 --- old.asOperator4.js
 +++ new.asOperator4.js
-@@= skipped -10, +10 lines =@@
- (foo as any);
- 
- 
--//// [foo.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.foo = foo;
--function foo() { }
+@@= skipped -18, +18 lines =@@
  //// [bar.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
@@ -17,8 +9,3 @@
 +const foo_1 = require("./foo");
  foo_1.foo;
  foo_1.foo;
-+//// [foo.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.foo = foo;
-+function foo() { }

@@ -15,15 +15,6 @@ import foo = require("./foo_1");
 var x = foo; // Cause a runtime dependency
 
 
-//// [foo_2.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const foo = require("./foo_1");
-var x = foo;
-//// [foo_1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var answer = 42;
 //// [foo_0.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -33,3 +24,12 @@ class C1 {
     static s1 = true;
 }
 exports.C1 = C1;
+//// [foo_1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var answer = 42;
+//// [foo_2.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const foo = require("./foo_1");
+var x = foo;

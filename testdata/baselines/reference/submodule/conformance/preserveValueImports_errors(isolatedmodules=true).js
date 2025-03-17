@@ -45,26 +45,26 @@ import type { B } from "./b";
 export type { A, B as BB };
 
 
-//// [f.fixed.js]
-export {};
-//// [f.js]
-export {};
-//// [e.fixed.js]
-export {};
-//// [e.js]
-export {};
-//// [d.fixed.js]
-export {};
-//// [d.js]
-export {};
-//// [c.fixed.js]
-export {};
-//// [c.js]
+//// [a.js]
 export {};
 //// [b.js]
 class B {
 }
 ;
 export {};
-//// [a.js]
+//// [c.js]
+export {};
+//// [c.fixed.js]
+export {};
+//// [d.js]
+export {};
+//// [d.fixed.js]
+export {};
+//// [e.js]
+export {};
+//// [e.fixed.js]
+export {};
+//// [f.js]
+export {};
+//// [f.fixed.js]
 export {};

@@ -23,16 +23,16 @@ declare let dec: any;
 @dec export default class {}
 
 
-//// [c.js]
-@dec
-export default class {
-}
-//// [b.js]
-@dec
-export class C {
-}
 //// [a.js]
 @dec
 class C {
 }
 export {};
+//// [b.js]
+@dec
+export class C {
+}
+//// [c.js]
+@dec
+export default class {
+}

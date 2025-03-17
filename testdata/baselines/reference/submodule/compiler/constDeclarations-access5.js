@@ -46,6 +46,11 @@ m.x;
 m.x.toString();
 
 
+//// [constDeclarations_access_1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.x = void 0;
+exports.x = 0;
 //// [constDeclarations_access_2.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -78,8 +83,3 @@ m.x;
 -m.x;
 +m.x;
 m.x.toString();
-//// [constDeclarations_access_1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.x = void 0;
-exports.x = 0;

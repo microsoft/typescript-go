@@ -1,11 +1,7 @@
 --- old.chained.js
 +++ new.chained.js
-@@= skipped -18, +18 lines =@@
- const d: D = {};
- 
- 
--//// [a.js]
-+//// [d.js]
+@@= skipped -21, +21 lines =@@
+ //// [a.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
 -var A = /** @class */ (function () {
@@ -13,22 +9,15 @@
 -    }
 -    return A;
 -}());
--//// [b.js]
-+new D();
-+const d = {};
-+//// [c.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
--//// [c.js]
-+//// [b.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
--//// [d.js]
-+//// [a.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
--new D();
--var d = {};
 +class A {
 +    a;
 +}
+ //// [b.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+@@= skipped -15, +13 lines =@@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ new D();
+-var d = {};
++const d = {};

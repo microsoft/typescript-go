@@ -1,10 +1,9 @@
 --- old.importCallExpressionInAMD2.js
 +++ new.importCallExpressionInAMD2.js
-@@= skipped -15, +15 lines =@@
- 
+@@= skipped -16, +16 lines =@@
  foo(import("./0"));
  
--//// [0.js]
+ //// [0.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
 -    Object.defineProperty(exports, "__esModule", { value: true });
@@ -14,6 +13,13 @@
 -    }
 -    exports.B = B;
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.B = void 0;
++class B {
++    print() { return "I am B"; }
++}
++exports.B = B;
  //// [2.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
@@ -33,11 +39,3 @@
 +    });
 +}
 +foo(Promise.resolve().then(() => require("./0")));
-+//// [0.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.B = void 0;
-+class B {
-+    print() { return "I am B"; }
-+}
-+exports.B = B;

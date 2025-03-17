@@ -7,7 +7,7 @@ export type T = number;
 export * from "./a";
 
 
-//// [b.js]
-export * from "./a";
 //// [a.js]
 export {};
+//// [b.js]
+export * from "./a";

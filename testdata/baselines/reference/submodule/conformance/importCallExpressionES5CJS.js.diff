@@ -1,15 +1,6 @@
 --- old.importCallExpressionES5CJS.js
 +++ new.importCallExpressionES5CJS.js
-@@= skipped -27, +27 lines =@@
-     }
- }
- 
--//// [0.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.foo = foo;
--function foo() { return "foo"; }
- //// [1.js]
+@@= skipped -36, +36 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.D = exports.p2 = void 0;
@@ -52,8 +43,3 @@
 -}());
 +}
  exports.D = D;
-+//// [0.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.foo = foo;
-+function foo() { return "foo"; }

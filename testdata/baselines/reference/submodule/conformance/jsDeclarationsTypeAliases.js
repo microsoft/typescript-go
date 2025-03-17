@@ -51,6 +51,9 @@ class LocalThing {
 }
 
 
+//// [index.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 //// [mixed.js]
 function doTheThing(x) {
     return { x: "" + x };
@@ -65,6 +68,3 @@ module.exports = {
 class LocalThing {
     y = "ok";
 }
-//// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });

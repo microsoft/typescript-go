@@ -9,10 +9,6 @@ export function useState() {}
 export import React = require("./react.js");
 
 
-//// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.React = require("./react.js");
 //// [react.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -22,3 +18,7 @@ exports.useState = useState;
 function createElement() { }
 function lazy() { }
 function useState() { }
+//// [index.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.React = require("./react.js");

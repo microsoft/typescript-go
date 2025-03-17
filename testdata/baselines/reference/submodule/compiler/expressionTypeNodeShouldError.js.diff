@@ -1,17 +1,15 @@
 --- old.expressionTypeNodeShouldError.js
 +++ new.expressionTypeNodeShouldError.js
-@@= skipped -46, +46 lines =@@
+@@= skipped -47, +47 lines =@@
  
  
- 
--//// [string.js]
+ //// [string.js]
 -var C = /** @class */ (function () {
 -    function C() {
 -    }
 -    C.prototype.foo = function () {
 -        var x;
-+//// [boolean.js]
-+class C3 {
++class C {
 +    foo() {
 +        const x;
          typeof (this.foo);
@@ -21,7 +19,7 @@
 -var nodes = document.getElementsByTagName("li");
 +    }
 +}
-+const nodes3 = document.getElementsByTagName("li");
++const nodes = document.getElementsByTagName("li");
  typeof (nodes.item(0));
  //// [number.js]
 -var C2 = /** @class */ (function () {
@@ -37,18 +35,17 @@
 -    return C2;
 -}());
 -var nodes2 = document.getElementsByTagName("li");
--typeof (nodes.item(0));
--//// [boolean.js]
--var C3 = /** @class */ (function () {
--    function C3() {
-     }
--    C3.prototype.foo = function () {
--        var x;
++    }
 +}
 +const nodes2 = document.getElementsByTagName("li");
-+typeof (nodes.item(0));
-+//// [string.js]
-+class C {
+ typeof (nodes.item(0));
+ //// [boolean.js]
+-var C3 = /** @class */ (function () {
+-    function C3() {
+-    }
+-    C3.prototype.foo = function () {
+-        var x;
++class C3 {
 +    foo() {
 +        const x;
          typeof (this.foo);
@@ -58,5 +55,5 @@
 -var nodes3 = document.getElementsByTagName("li");
 +    }
 +}
-+const nodes = document.getElementsByTagName("li");
++const nodes3 = document.getElementsByTagName("li");
  typeof (nodes.item(0));

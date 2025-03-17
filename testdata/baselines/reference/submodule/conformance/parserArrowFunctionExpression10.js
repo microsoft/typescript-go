@@ -7,7 +7,7 @@ a ? (b) : c => (d) : e => f // Not legal JS; "Unexpected token ':'" at last colo
 a ? (b) : c => (d) : e => f
 
 
-//// [fileTs.js]
-a ? (b) => (d) : e => f;
 //// [fileJs.js]
+a ? (b) => (d) : e => f;
+//// [fileTs.js]
 a ? (b) => (d) : e => f;

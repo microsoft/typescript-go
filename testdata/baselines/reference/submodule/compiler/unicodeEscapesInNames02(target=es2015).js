@@ -30,8 +30,6 @@ _\u{102A7} += "!";
 import { _𐊧 as \uD800\uDEA7 } from "./extendedEscapesForAstralsInVarsAndClasses.js";
 
 
-//// [astralAsSurrogatePair.js]
-export {};
 //// [extendedEscapesForAstralsInVarsAndClasses.js]
 var 𐊧;
 var \u{102A7};
@@ -52,3 +50,5 @@ class Foo {
 }
 export var _𐊧 = new Foo().\u{102A7} + new Foo().methodA();
 _\u{102A7} += "!";
+//// [astralAsSurrogatePair.js]
+export {};

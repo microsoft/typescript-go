@@ -41,6 +41,24 @@ enum E {
 }
 
 
+//// [helpers.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.foo = void 0;
+exports.foo = 2;
+//// [bad.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const helpers_1 = require("./helpers");
+var A;
+(function (A) {
+    var auto;
+    A[A["a"] = auto = helpers_1.foo] = "a";
+    A[A["b"] = ++auto] = "b";
+    A[A["c"] = 10] = "c";
+    A[A["d"] = 10] = "d";
+    A[A["e"] = 11] = "e";
+})(A || (A = {}));
 //// [good.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -75,21 +93,3 @@ var E;
     E[E["e"] = 1] = "e";
     E[E["f"] = 2] = "f";
 })(E || (E = {}));
-//// [bad.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const helpers_1 = require("./helpers");
-var A;
-(function (A) {
-    var auto;
-    A[A["a"] = auto = helpers_1.foo] = "a";
-    A[A["b"] = ++auto] = "b";
-    A[A["c"] = 10] = "c";
-    A[A["d"] = 10] = "d";
-    A[A["e"] = 11] = "e";
-})(A || (A = {}));
-//// [helpers.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.foo = void 0;
-exports.foo = 2;

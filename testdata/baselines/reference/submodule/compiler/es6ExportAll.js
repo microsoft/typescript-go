@@ -15,8 +15,6 @@ export module uninstantiated {
 //// [client.ts]
 export * from "server";
 
-//// [client.js]
-export * from "server";
 //// [server.js]
 export class c {
 }
@@ -26,3 +24,5 @@ var m;
     m.x = 10;
 })(m || (m = {}));
 export var x = 10;
+//// [client.js]
+export * from "server";

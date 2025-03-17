@@ -1,14 +1,6 @@
 --- old.typeQuery.js
 +++ new.typeQuery.js
-@@= skipped -7, +7 lines =@@
- let AConstructor: typeof A;
- 
- 
-+//// [b.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+let AConstructor;
- //// [a.js]
+@@= skipped -11, +11 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.A = void 0;
@@ -20,7 +12,8 @@
 +class A {
 +}
  exports.A = A;
--//// [b.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
+ //// [b.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
 -var AConstructor;
++let AConstructor;

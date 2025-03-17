@@ -9,11 +9,11 @@ export interface Bar {
     x: string
 }
 
+//// [index.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 //// [module.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class Foo {
 }
-//// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });

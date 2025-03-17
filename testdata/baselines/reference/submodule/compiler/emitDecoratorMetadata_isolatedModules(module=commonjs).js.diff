@@ -1,31 +1,6 @@
 --- old.emitDecoratorMetadata_isolatedModules(module=commonjs).js
 +++ new.emitDecoratorMetadata_isolatedModules(module=commonjs).js
-@@= skipped -37, +37 lines =@@
- }
- 
- 
--//// [type1.js]
-+//// [index.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
--//// [type2.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
-+class HelloWorld {
-+    @EventListener('1')
-+    handleEvent1(event) { }
-+    @EventListener('2')
-+    handleEvent2(event) { }
-+    @EventListener('1')
-+    p1;
-+    @EventListener('1')
-+    p1_ns;
-+    @EventListener('2')
-+    p2;
-+    @EventListener('3')
-+    handleEvent3(event) { return undefined; }
-+}
- //// [class3.js]
+@@= skipped -47, +47 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.C3 = void 0;
@@ -37,8 +12,7 @@
 +class C3 {
 +}
  exports.C3 = C3;
--//// [index.js]
-+//// [type2.js]
+ //// [index.js]
  "use strict";
 -var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 -    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -90,6 +64,17 @@
 -    ], HelloWorld.prototype, "handleEvent3", null);
 -    return HelloWorld;
 -}());
-+//// [type1.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
++class HelloWorld {
++    @EventListener('1')
++    handleEvent1(event) { }
++    @EventListener('2')
++    handleEvent2(event) { }
++    @EventListener('1')
++    p1;
++    @EventListener('1')
++    p1_ns;
++    @EventListener('2')
++    p2;
++    @EventListener('3')
++    handleEvent3(event) { return undefined; }
++}

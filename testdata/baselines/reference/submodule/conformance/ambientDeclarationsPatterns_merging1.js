@@ -16,10 +16,10 @@ declare module "a.foo" {
 import { everywhere, onlyInA } from "b.foo"; // Error
 
 
-//// [testB.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+//// [types.js]
 //// [testA.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-//// [types.js]
+//// [testB.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });

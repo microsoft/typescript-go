@@ -1,24 +1,12 @@
 --- old.commonjsSafeImport.js
 +++ new.commonjsSafeImport.js
-@@= skipped -8, +8 lines =@@
- Foo();
- 
- 
-+//// [main.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+const _10_lib_1 = require("./10_lib");
-+(0, _10_lib_1.Foo)();
- //// [10_lib.js]
+@@= skipped -16, +16 lines =@@
+ //// [main.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
- exports.Foo = Foo;
- function Foo() { }
--//// [main.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
 -var _10_lib_1 = require("./10_lib");
--(0, _10_lib_1.Foo)();
++const _10_lib_1 = require("./10_lib");
+ (0, _10_lib_1.Foo)();
 -
 -
 -//// [10_lib.d.ts]

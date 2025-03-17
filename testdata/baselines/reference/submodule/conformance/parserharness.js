@@ -2083,6 +2083,10 @@ module Harness {
 }
 
 
+//// [io.js]
+//// [typescript.js]
+//// [typescriptServices.js]
+//// [diff.js]
 //// [parserharness.js]
 function switchToForwardSlashes(path) {
     return path.replace(/\\/g, "/");
@@ -3646,7 +3650,3 @@ var Harness;
     global.it = it;
     global.assert = Harness.Assert;
 })(Harness || (Harness = {}));
-//// [diff.js]
-//// [typescriptServices.js]
-//// [typescript.js]
-//// [io.js]

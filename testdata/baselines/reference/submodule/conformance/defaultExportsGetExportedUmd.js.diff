@@ -1,10 +1,9 @@
 --- old.defaultExportsGetExportedUmd.js
 +++ new.defaultExportsGetExportedUmd.js
-@@= skipped -6, +6 lines =@@
- export default function foo() {}
+@@= skipped -7, +7 lines =@@
  
  
--//// [a.js]
+ //// [a.js]
 -(function (factory) {
 -    if (typeof module === "object" && typeof module.exports === "object") {
 -        var v = factory(require, exports);
@@ -20,6 +19,11 @@
 -    }
 -    exports.default = Foo;
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++class Foo {
++}
++exports.default = Foo;
  //// [b.js]
 -(function (factory) {
 -    if (typeof module === "object" && typeof module.exports === "object") {
@@ -39,9 +43,3 @@
 +Object.defineProperty(exports, "__esModule", { value: true });
 +exports.default = foo;
 +function foo() { }
-+//// [a.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+class Foo {
-+}
-+exports.default = Foo;

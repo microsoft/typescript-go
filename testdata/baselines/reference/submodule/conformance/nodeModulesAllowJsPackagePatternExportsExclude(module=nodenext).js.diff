@@ -1,16 +1,14 @@
 --- old.nodeModulesAllowJsPackagePatternExportsExclude(module=nodenext).js
 +++ new.nodeModulesAllowJsPackagePatternExportsExclude(module=nodenext).js
-@@= skipped -67, +67 lines =@@
-     }
+@@= skipped -68, +68 lines =@@
  } 
  
--//// [index.js]
+ //// [index.js]
 -// esm format file
-+//// [index.cjs]
  import * as cjsi from "inner/cjs/exclude/index";
  import * as mjsi from "inner/mjs/exclude/index";
  import * as typei from "inner/js/exclude/index";
-@@= skipped -9, +8 lines =@@
+@@= skipped -8, +7 lines =@@
  mjsi;
  typei;
  //// [index.mjs]
@@ -18,10 +16,10 @@
  import * as cjsi from "inner/cjs/exclude/index";
  import * as mjsi from "inner/mjs/exclude/index";
  import * as typei from "inner/js/exclude/index";
- cjsi;
+@@= skipped -8, +7 lines =@@
  mjsi;
  typei;
--//// [index.cjs]
+ //// [index.cjs]
 -"use strict";
 -var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
 -    if (k2 === undefined) k2 = k;
@@ -51,7 +49,6 @@
 -const cjsi = __importStar(require("inner/cjs/exclude/index"));
 -const mjsi = __importStar(require("inner/mjs/exclude/index"));
 -const typei = __importStar(require("inner/js/exclude/index"));
-+//// [index.js]
 +import * as cjsi from "inner/cjs/exclude/index";
 +import * as mjsi from "inner/mjs/exclude/index";
 +import * as typei from "inner/js/exclude/index";

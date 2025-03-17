@@ -1,13 +1,6 @@
 --- old.declarationsForIndirectTypeAliasReference.js
 +++ new.declarationsForIndirectTypeAliasReference.js
-@@= skipped -32, +32 lines =@@
-                 arg3 = MAP2) {
- }
- 
--//// [b.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
- //// [a.js]
+@@= skipped -39, +39 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.doSome = doSome;
@@ -38,6 +31,3 @@
 -import { StringHash, StringHash2 } from "./b";
 -export { doSome };
 -declare function doSome(arg1: string, arg2?: StringHash, arg3?: StringHash2): void;
-+//// [b.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });

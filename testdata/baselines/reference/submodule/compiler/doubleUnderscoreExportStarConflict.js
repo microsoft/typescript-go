@@ -11,6 +11,16 @@ export function __foo(): number | void {}
 export function __foo(): string | void {}
 
 
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.__foo = __foo;
+function __foo() { }
+//// [c.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.__foo = __foo;
+function __foo() { }
 //// [index.js]
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -30,13 +40,3 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./b"), exports);
 __exportStar(require("./c"), exports);
-//// [c.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.__foo = __foo;
-function __foo() { }
-//// [b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.__foo = __foo;
-function __foo() { }

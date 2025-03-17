@@ -1,10 +1,9 @@
 --- old.nodeModulesImportResolutionIntoExport(module=node16).js
 +++ new.nodeModulesImportResolutionIntoExport(module=node16).js
-@@= skipped -22, +22 lines =@@
-     }
+@@= skipped -23, +23 lines =@@
  }
  
--//// [index.cjs]
+ //// [index.cjs]
 -"use strict";
 -var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
 -    if (k2 === undefined) k2 = k;
@@ -32,16 +31,14 @@
 -Object.defineProperty(exports, "__esModule", { value: true });
 -// esm format file
 -const type = __importStar(require("#type"));
-+//// [index.mjs]
 +import * as type from "#type";
  type;
  //// [index.js]
 -// esm format file
  import * as type from "#type";
  type;
--//// [index.mjs]
+ //// [index.mjs]
 -// esm format file
-+//// [index.cjs]
  import * as type from "#type";
  type;
 -

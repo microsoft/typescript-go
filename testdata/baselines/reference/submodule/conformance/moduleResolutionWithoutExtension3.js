@@ -10,9 +10,9 @@ export function foo() {
 import { foo } from "./foo"; // should error, suggest adding ".jsx"
 
 
-//// [bar.mjs]
-export {};
 //// [foo.jsx]
 export function foo() {
     return "";
 }
+//// [bar.mjs]
+export {};

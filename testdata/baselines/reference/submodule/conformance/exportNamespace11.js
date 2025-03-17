@@ -10,14 +10,6 @@ export type * from './ghost'
 //// [ghost.ts]
 export class Ghost {}
 
-//// [main.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const intermediate = require("./intermediate");
-const ghost = new intermediate.Ghost();
-//// [intermediate.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 //// [ghost.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -25,3 +17,11 @@ exports.Ghost = void 0;
 class Ghost {
 }
 exports.Ghost = Ghost;
+//// [intermediate.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [main.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const intermediate = require("./intermediate");
+const ghost = new intermediate.Ghost();

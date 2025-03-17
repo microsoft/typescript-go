@@ -22,12 +22,10 @@ const b = new B();
 a.copy(b); // error
 
 
-//// [main.js]
-import { Foo as A } from "./a";
-import { Foo as B } from "./b";
-const a = new A();
-const b = new B();
-a.copy(b);
+//// [b.js]
+export class Foo {
+    #x;
+}
 //// [a.js]
 export class Foo {
     #x;
@@ -35,7 +33,9 @@ export class Foo {
         other.#x;
     }
 }
-//// [b.js]
-export class Foo {
-    #x;
-}
+//// [main.js]
+import { Foo as A } from "./a";
+import { Foo as B } from "./b";
+const a = new A();
+const b = new B();
+a.copy(b);

@@ -13,11 +13,6 @@ import R from "./m1";
 const { ___, ___hello, _hi } = R;
 
 
-//// [m2.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const m1_1 = require("./m1");
-const { ___, ___hello, _hi } = m1_1.default;
 //// [m1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -27,3 +22,8 @@ exports.default = R = {
     "___hello": 21,
     "_hi": 40,
 };
+//// [m2.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const m1_1 = require("./m1");
+const { ___, ___hello, _hi } = m1_1.default;

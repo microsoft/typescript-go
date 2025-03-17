@@ -10,12 +10,12 @@ export var y;
 //// [b.ts]
 import y = require("./a");
 
-//// [b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+//// [ref.js]
+var x = 1;
 //// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.y = void 0;
-//// [ref.js]
-var x = 1;
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });

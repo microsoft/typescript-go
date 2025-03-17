@@ -1,10 +1,9 @@
 --- old.exportAssignmentTopLevelFundule.js
 +++ new.exportAssignmentTopLevelFundule.js
-@@= skipped -15, +15 lines =@@
- }
+@@= skipped -16, +16 lines =@@
  
  
--//// [foo_0.js]
+ //// [foo_0.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
 -    function foo() {
@@ -15,6 +14,14 @@
 -    })(foo || (foo = {}));
 -    return foo;
 -});
++"use strict";
++function foo() {
++    return "test";
++}
++(function (foo) {
++    foo.answer = 42;
++})(foo || (foo = {}));
++module.exports = foo;
  //// [foo_1.js]
 -define(["require", "exports", "./foo_0"], function (require, exports, foo) {
 -    "use strict";
@@ -29,12 +36,3 @@
 +if (foo.answer === 42) {
 +    var x = foo();
 +}
-+//// [foo_0.js]
-+"use strict";
-+function foo() {
-+    return "test";
-+}
-+(function (foo) {
-+    foo.answer = 42;
-+})(foo || (foo = {}));
-+module.exports = foo;

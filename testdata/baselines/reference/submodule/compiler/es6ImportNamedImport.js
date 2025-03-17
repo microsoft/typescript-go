@@ -40,6 +40,18 @@ import { aaaa } from "./es6ImportNamedImport_0";
 import { aaaa as bbbb } from "./es6ImportNamedImport_0";
 
 
+//// [es6ImportNamedImport_0.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.aaaa = exports.z2 = exports.z1 = exports.x1 = exports.a1 = exports.m = exports.x = exports.a = void 0;
+exports.a = 10;
+exports.x = exports.a;
+exports.m = exports.a;
+exports.a1 = 10;
+exports.x1 = 10;
+exports.z1 = 10;
+exports.z2 = 10;
+exports.aaaa = 10;
 //// [es6ImportNamedImport_1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -64,15 +76,3 @@ const es6ImportNamedImport_0_8 = require("./es6ImportNamedImport_0");
 var z111 = es6ImportNamedImport_0_8.z1;
 const es6ImportNamedImport_0_9 = require("./es6ImportNamedImport_0");
 var z2 = es6ImportNamedImport_0_9.z2;
-//// [es6ImportNamedImport_0.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.aaaa = exports.z2 = exports.z1 = exports.x1 = exports.a1 = exports.m = exports.x = exports.a = void 0;
-exports.a = 10;
-exports.x = exports.a;
-exports.m = exports.a;
-exports.a1 = 10;
-exports.x1 = 10;
-exports.z1 = 10;
-exports.z2 = 10;
-exports.aaaa = 10;

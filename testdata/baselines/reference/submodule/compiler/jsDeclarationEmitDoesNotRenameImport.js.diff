@@ -10,23 +10,16 @@
 -export default Test;
 -/** @module test/Test */
 -declare class Test {
-+//// [index.js]
++//// [Test.js]
 +"use strict";
 +Object.defineProperty(exports, "__esModule", { value: true });
-+const Test_js_1 = require("./test/Test.js");
-+class X extends Test_js_1.default {
-+    constructor(options) {
-+        super();
-+        if (options.test) {
-+            this.test = new options.test();
-+        }
-+    }
++class Test {
  }
 -//// [Test.d.ts]
 -export default Test;
 -/** @module Test */
 -declare class Test {
-+exports.default = X;
++exports.default = Test;
 +//// [Test.js]
 +"use strict";
 +Object.defineProperty(exports, "__esModule", { value: true });
@@ -48,10 +41,17 @@
 -    constructor(options: Options);
 -    test: import("./Test.js").default | undefined;
 +exports.default = Test;
-+//// [Test.js]
++//// [index.js]
 +"use strict";
 +Object.defineProperty(exports, "__esModule", { value: true });
-+class Test {
++const Test_js_1 = require("./test/Test.js");
++class X extends Test_js_1.default {
++    constructor(options) {
++        super();
++        if (options.test) {
++            this.test = new options.test();
++        }
++    }
  }
 -import Test from './test/Test.js';
-+exports.default = Test;
++exports.default = X;

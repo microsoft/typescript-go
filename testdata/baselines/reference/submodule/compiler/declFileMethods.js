@@ -189,53 +189,6 @@ interface I2 {
 }
 
 
-//// [declFileMethods_1.js]
-class c2 {
-    foo() {
-    }
-    fooWithParameters(a, b) {
-        var d = a;
-    }
-    fooWithRestParameters(a, ...rests) {
-        return a + rests.join("");
-    }
-    fooWithOverloads(a) {
-        return a;
-    }
-    privateFoo() {
-    }
-    privateFooWithParameters(a, b) {
-        var d = a;
-    }
-    privateFooWithRestParameters(a, ...rests) {
-        return a + rests.join("");
-    }
-    privateFooWithOverloads(a) {
-        return a;
-    }
-    static staticFoo() {
-    }
-    static staticFooWithParameters(a, b) {
-        var d = a;
-    }
-    static staticFooWithRestParameters(a, ...rests) {
-        return a + rests.join("");
-    }
-    static staticFooWithOverloads(a) {
-        return a;
-    }
-    static privateStaticFoo() {
-    }
-    static privateStaticFooWithParameters(a, b) {
-        var d = a;
-    }
-    static privateStaticFooWithRestParameters(a, ...rests) {
-        return a + rests.join("");
-    }
-    static privateStaticFooWithOverloads(a) {
-        return a;
-    }
-}
 //// [declFileMethods_0.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -287,3 +240,50 @@ class c1 {
     }
 }
 exports.c1 = c1;
+//// [declFileMethods_1.js]
+class c2 {
+    foo() {
+    }
+    fooWithParameters(a, b) {
+        var d = a;
+    }
+    fooWithRestParameters(a, ...rests) {
+        return a + rests.join("");
+    }
+    fooWithOverloads(a) {
+        return a;
+    }
+    privateFoo() {
+    }
+    privateFooWithParameters(a, b) {
+        var d = a;
+    }
+    privateFooWithRestParameters(a, ...rests) {
+        return a + rests.join("");
+    }
+    privateFooWithOverloads(a) {
+        return a;
+    }
+    static staticFoo() {
+    }
+    static staticFooWithParameters(a, b) {
+        var d = a;
+    }
+    static staticFooWithRestParameters(a, ...rests) {
+        return a + rests.join("");
+    }
+    static staticFooWithOverloads(a) {
+        return a;
+    }
+    static privateStaticFoo() {
+    }
+    static privateStaticFooWithParameters(a, b) {
+        var d = a;
+    }
+    static privateStaticFooWithRestParameters(a, ...rests) {
+        return a + rests.join("");
+    }
+    static privateStaticFooWithOverloads(a) {
+        return a;
+    }
+}

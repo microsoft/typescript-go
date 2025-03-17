@@ -75,6 +75,9 @@ export { x };
 //// [index.mjs]
 const x = () => (void 0);
 export { x };
+//// [index.js]
+const x = () => (void 0);
+export { x };
 //// [index.cjs]
 const x = () => (void 0);
 export { x };
@@ -88,9 +91,6 @@ export { x };
 const x = () => (void 0);
 export { x };
 //// [index.cjs]
-const x = () => (void 0);
-export { x };
-//// [index.js]
 const x = () => (void 0);
 export { x };
 //// [index.mjs]

@@ -12,6 +12,7 @@
 -    return tslib_1.__awaiter(this, void 0, void 0, function* () { });
 -}
 +async function foo() { }
++async function bar() { }
  //// [index.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
@@ -20,4 +21,3 @@
 -    return tslib_1.__awaiter(this, void 0, void 0, function* () { });
 -}
 +async function foo() { }
-+async function bar() { }

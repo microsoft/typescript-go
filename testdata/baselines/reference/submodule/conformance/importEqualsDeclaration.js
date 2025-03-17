@@ -18,6 +18,17 @@ void type; // Ok
 export declare const AConstructor: typeof A; // Ok
 
 
+//// [a.js]
+"use strict";
+class A {
+    a;
+}
+module.exports = A;
+//// [b.js]
+"use strict";
+class SomeClass {
+}
+module.exports = SomeClass;
 //// [c.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -25,14 +36,3 @@ const type = require("./b");
 A.prototype;
 const a = { a: 'a' };
 void type;
-//// [b.js]
-"use strict";
-class SomeClass {
-}
-module.exports = SomeClass;
-//// [a.js]
-"use strict";
-class A {
-    a;
-}
-module.exports = A;

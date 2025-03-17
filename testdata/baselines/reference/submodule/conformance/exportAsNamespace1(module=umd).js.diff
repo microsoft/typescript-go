@@ -1,10 +1,9 @@
 --- old.exportAsNamespace1(module=umd).js
 +++ new.exportAsNamespace1(module=umd).js
-@@= skipped -14, +14 lines =@@
- foo.ns.a;
+@@= skipped -15, +15 lines =@@
  foo.ns.b;
  
--//// [0.js]
+ //// [0.js]
 -(function (factory) {
 -    if (typeof module === "object" && typeof module.exports === "object") {
 -        var v = factory(require, exports);
@@ -20,7 +19,12 @@
 -    exports.a = 1;
 -    exports.b = 2;
 -});
--//// [1.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.b = exports.a = void 0;
++exports.a = 1;
++exports.b = 2;
+ //// [1.js]
 -(function (factory) {
 -    if (typeof module === "object" && typeof module.exports === "object") {
 -        var v = factory(require, exports);
@@ -37,6 +41,12 @@
 -    ns.a;
 -    ns.b;
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.ns = void 0;
++exports.ns = require("./0");
++ns.a;
++ns.b;
  //// [2.js]
 -(function (factory) {
 -    if (typeof module === "object" && typeof module.exports === "object") {
@@ -67,16 +77,3 @@
 +const foo = require("./1");
 +foo.ns.a;
 +foo.ns.b;
-+//// [1.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.ns = void 0;
-+exports.ns = require("./0");
-+ns.a;
-+ns.b;
-+//// [0.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.b = exports.a = void 0;
-+exports.a = 1;
-+exports.b = 2;

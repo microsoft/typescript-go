@@ -1,14 +1,12 @@
 --- old.commentOnElidedModule1.js
 +++ new.commentOnElidedModule1.js
-@@= skipped -18, +18 lines =@@
- module ElidedModule3 {
+@@= skipped -19, +19 lines =@@
  }
  
--//// [a.js]
+ //// [a.js]
 -/*!=================
 -    Keep this pinned
 -   =================
 -*/
  //// [b.js]
 -///<reference path="a.ts"/>
-+//// [a.js]

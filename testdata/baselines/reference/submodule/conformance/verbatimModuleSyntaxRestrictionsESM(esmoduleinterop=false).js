@@ -27,6 +27,12 @@ export namespace ns {
 }
 
 
+//// [types.js]
+export {};
+//// [main.js]
+import CJSy3 from "./decl";
+import * as types from "./types";
+CJSy;
 //// [ns.js]
 export { ns };
 var ns;
@@ -35,9 +41,3 @@ var ns;
     (function (A) {
     })(A = ns.A || (ns.A = {}));
 })(ns || (ns = {}));
-//// [main.js]
-import CJSy3 from "./decl";
-import * as types from "./types";
-CJSy;
-//// [types.js]
-export {};

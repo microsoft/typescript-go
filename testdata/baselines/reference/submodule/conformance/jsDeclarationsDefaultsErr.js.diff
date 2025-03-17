@@ -1,11 +1,7 @@
 --- old.jsDeclarationsDefaultsErr.js
 +++ new.jsDeclarationsDefaultsErr.js
-@@= skipped -26, +26 lines =@@
-  */
- 
- 
--//// [index1.js]
-+//// [index3.js]
+@@= skipped -29, +29 lines =@@
+ //// [index1.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
 -// merge type alias and alias (should error, see #32367)
@@ -16,13 +12,14 @@
 -    Cls.y = "ok";
 -    return Cls;
 -}());
--exports.default = Cls;
++class Cls {
++    x = 12;
++    static y = "ok";
++}
+ exports.default = Cls;
 -/**
 - * @typedef {string | number} default
 - */
-+exports.default = void 0;
-+const x = 12;
-+exports.default = x;
  //// [index2.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
@@ -39,14 +36,14 @@
 -/**
 - * @typedef {string | number} default
 - */
--//// [index3.js]
-+//// [index1.js]
+ //// [index3.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
--exports.default = void 0;
+ exports.default = void 0;
 -// merge type alias and variable (behavior is borked, see #32366)
 -var x = 12;
--exports.default = x;
++const x = 12;
+ exports.default = x;
 -/**
 - * @typedef {string | number} default
 - */
@@ -58,10 +55,7 @@
 -declare class Cls {
 -    static y: string;
 -    x: number;
-+class Cls {
-+    x = 12;
-+    static y = "ok";
- }
+-}
 -//// [index2.d.ts]
 -export default class C {
 -}
@@ -69,4 +63,3 @@
 -export type _default = string | number;
 -export { x as default };
 -declare const x: 12;
-+exports.default = Cls;

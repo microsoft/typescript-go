@@ -21,6 +21,21 @@ const a: types.A = {};
 const b: types.B = {};
 
 
+//// [a.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class A {
+    a;
+}
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [c.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = void 0;
+const types = require("./b");
+exports.default = types;
 //// [d.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -29,18 +44,3 @@ new c_1.default.A();
 new c_1.default.B();
 const a = {};
 const b = {};
-//// [c.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = void 0;
-const types = require("./b");
-exports.default = types;
-//// [b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-//// [a.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class A {
-    a;
-}

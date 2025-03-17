@@ -26,6 +26,19 @@ OriginalB.zzz;
 
 const y: OriginalB = x;
 
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.zzz = void 0;
+exports.zzz = 123;
+//// [a.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.B = void 0;
+const B = require("./b");
+exports.B = B;
+const x = { x: "" };
+B.zzz;
 //// [index.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -35,16 +48,3 @@ a_1.B.zzz;
 const OriginalB = require("./b");
 OriginalB.zzz;
 const y = x;
-//// [a.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.B = void 0;
-const B = require("./b");
-exports.B = B;
-const x = { x: "" };
-B.zzz;
-//// [b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.zzz = void 0;
-exports.zzz = 123;

@@ -39,24 +39,20 @@ export default function func() {};
  */
 
 
-//// [index6.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = func;
-function func() { }
-;
-//// [index5.js]
+//// [index1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = 12;
-//// [index4.js]
+//// [index2.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const index3_1 = require("./index3");
-class Bar extends index3_1.default {
-    x = (null);
+exports.x = void 0;
+exports.default = foo;
+exports.bar = foo;
+function foo() {
+    return foo;
 }
-exports.default = Bar;
+exports.x = foo;
 //// [index3.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -68,17 +64,21 @@ exports.default = Foo;
 exports.Bar = Foo;
 ;
 exports.X = Foo;
-//// [index2.js]
+//// [index4.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.x = void 0;
-exports.default = foo;
-exports.bar = foo;
-function foo() {
-    return foo;
+const index3_1 = require("./index3");
+class Bar extends index3_1.default {
+    x = (null);
 }
-exports.x = foo;
-//// [index1.js]
+exports.default = Bar;
+//// [index5.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = 12;
+//// [index6.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = func;
+function func() { }
+;

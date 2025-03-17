@@ -1,84 +1,27 @@
 --- old.exportAssignTypes.js
 +++ new.exportAssignTypes.js
-@@= skipped -52, +52 lines =@@
- var v7: {<x>(p1: x): x} = iGeneric;
- 
- 
--//// [expString.js]
-+//// [consumer.js]
+@@= skipped -85, +85 lines =@@
+ //// [consumer.js]
  "use strict";
--var x = "test";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+const iString = require("./expString");
-+var v1 = iString;
-+const iNumber = require("./expNumber");
-+var v2 = iNumber;
-+const iBoolean = require("./expBoolean");
-+var v3 = iBoolean;
-+const iArray = require("./expArray");
-+var v4 = iArray;
-+const iObject = require("./expObject");
-+var v5 = iObject;
-+const iAny = require("./expAny");
-+var v6 = iAny;
-+const iGeneric = require("./expGeneric");
-+var v7 = iGeneric;
-+//// [expGeneric.js]
-+"use strict";
-+function x(a) {
-+    return a;
-+}
- module.exports = x;
--//// [expNumber.js]
-+//// [expAny.js]
- "use strict";
--var x = 42;
-+var x;
- module.exports = x;
--//// [expBoolean.js]
-+//// [expObject.js]
- "use strict";
--var x = true;
-+var x = { answer: 42, when: 1776 };
- module.exports = x;
- //// [expArray.js]
- "use strict";
- var x = [1, 2];
- module.exports = x;
--//// [expObject.js]
-+//// [expBoolean.js]
- "use strict";
--var x = { answer: 42, when: 1776 };
-+var x = true;
- module.exports = x;
--//// [expAny.js]
-+//// [expNumber.js]
- "use strict";
--var x;
-+var x = 42;
- module.exports = x;
--//// [expGeneric.js]
-+//// [expString.js]
- "use strict";
--function x(a) {
--    return a;
--}
-+var x = "test";
- module.exports = x;
--//// [consumer.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
+ Object.defineProperty(exports, "__esModule", { value: true });
 -var iString = require("./expString");
--var v1 = iString;
++const iString = require("./expString");
+ var v1 = iString;
 -var iNumber = require("./expNumber");
--var v2 = iNumber;
++const iNumber = require("./expNumber");
+ var v2 = iNumber;
 -var iBoolean = require("./expBoolean");
--var v3 = iBoolean;
++const iBoolean = require("./expBoolean");
+ var v3 = iBoolean;
 -var iArray = require("./expArray");
--var v4 = iArray;
++const iArray = require("./expArray");
+ var v4 = iArray;
 -var iObject = require("./expObject");
--var v5 = iObject;
++const iObject = require("./expObject");
+ var v5 = iObject;
 -var iAny = require("./expAny");
--var v6 = iAny;
++const iAny = require("./expAny");
+ var v6 = iAny;
 -var iGeneric = require("./expGeneric");
--var v7 = iGeneric;
++const iGeneric = require("./expGeneric");
+ var v7 = iGeneric;

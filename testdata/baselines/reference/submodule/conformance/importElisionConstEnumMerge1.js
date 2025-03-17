@@ -17,15 +17,6 @@ import { Enum } from "./merge";
 Enum.One;
 
 
-//// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const merge_1 = require("./merge");
-merge_1.Enum.One;
-//// [merge.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Enum = void 0;
 //// [enum.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -34,3 +25,12 @@ var Enum;
 (function (Enum) {
     Enum[Enum["One"] = 1] = "One";
 })(Enum || (exports.Enum = Enum = {}));
+//// [merge.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Enum = void 0;
+//// [index.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const merge_1 = require("./merge");
+merge_1.Enum.One;

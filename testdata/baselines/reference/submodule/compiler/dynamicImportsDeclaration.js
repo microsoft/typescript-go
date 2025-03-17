@@ -22,6 +22,12 @@ export const mod = await (async () => {
   }
 })();
 
+//// [case0.js]
+export default 0;
+//// [case1.js]
+export default 1;
+//// [caseFallback.js]
+export default 'fallback';
 //// [index.js]
 export const mod = await (async () => {
     const x = 0;
@@ -34,9 +40,3 @@ export const mod = await (async () => {
             return await import("./caseFallback.js");
     }
 })();
-//// [caseFallback.js]
-export default 'fallback';
-//// [case1.js]
-export default 1;
-//// [case0.js]
-export default 0;

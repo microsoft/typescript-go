@@ -1,11 +1,8 @@
 --- old.classMemberInitializerWithLamdaScoping2.js
 +++ new.classMemberInitializerWithLamdaScoping2.js
-@@= skipped -16, +16 lines =@@
-     };
- }
- 
--//// [classMemberInitializerWithLamdaScoping2_0.js]
--var field1;
+@@= skipped -19, +19 lines =@@
+ //// [classMemberInitializerWithLamdaScoping2_0.js]
+ var field1;
  //// [classMemberInitializerWithLamdaScoping2_1.js]
 -var Test1 = /** @class */ (function () {
 -    function Test1(field1) {
@@ -25,5 +22,3 @@
 +        console.log(field1);
 +    };
 +}
-+//// [classMemberInitializerWithLamdaScoping2_0.js]
-+var field1;

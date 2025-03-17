@@ -1,16 +1,8 @@
 --- old.importAttributes3(module=es2015).js
 +++ new.importAttributes3(module=es2015).js
-@@= skipped -11, +11 lines =@@
- import type * as foo from './0' with { type: "json" }
- 
- 
--//// [0.js]
-+//// [2.js]
+@@= skipped -17, +17 lines =@@
  export {};
- //// [1.js]
- export {};
--//// [2.js]
-+//// [0.js]
+ //// [2.js]
  export {};
 -
 -

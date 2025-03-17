@@ -24,13 +24,6 @@ export const NotificationScenario = test(
   getNotification
 );
 
-//// [NotificationStore.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.NotificationScenario = void 0;
-const index_1 = require("search/lib/index");
-const NotificationAPIUtils_1 = require("../API/NotificationAPIUtils");
-exports.NotificationScenario = (0, index_1.test)(NotificationAPIUtils_1.getNotification);
 //// [NotificationAPIUtils.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -38,3 +31,10 @@ exports.getNotification = getNotification;
 function getNotification() {
     return {};
 }
+//// [NotificationStore.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.NotificationScenario = void 0;
+const index_1 = require("search/lib/index");
+const NotificationAPIUtils_1 = require("../API/NotificationAPIUtils");
+exports.NotificationScenario = (0, index_1.test)(NotificationAPIUtils_1.getNotification);

@@ -13,13 +13,6 @@ import {f} from "./m1";
 f();
 foo();
 
-//// [m2.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const m1_1 = require("./m1");
-const m1_2 = require("./m1");
-(0, m1_2.f)();
-(0, m1_1.default)();
 //// [m1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -27,3 +20,10 @@ exports.default = f;
 exports.f = f;
 function f() {
 }
+//// [m2.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const m1_1 = require("./m1");
+const m1_2 = require("./m1");
+(0, m1_2.f)();
+(0, m1_1.default)();

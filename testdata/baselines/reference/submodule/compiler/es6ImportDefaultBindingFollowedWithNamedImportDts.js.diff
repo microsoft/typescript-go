@@ -1,49 +1,57 @@
 --- old.es6ImportDefaultBindingFollowedWithNamedImportDts.js
 +++ new.es6ImportDefaultBindingFollowedWithNamedImportDts.js
-@@= skipped -22, +22 lines =@@
- export var x6 = new m();
- 
- 
--//// [server.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.x11 = exports.a12 = exports.a11 = exports.m = exports.x = exports.a = void 0;
+@@= skipped -26, +26 lines =@@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.x11 = exports.a12 = exports.a11 = exports.m = exports.x = exports.a = void 0;
 -var a = /** @class */ (function () {
 -    function a() {
 -    }
 -    return a;
 -}());
--exports.a = a;
++class a {
++}
+ exports.a = a;
 -var x = /** @class */ (function () {
 -    function x() {
 -    }
 -    return x;
 -}());
--exports.x = x;
++class x {
++}
+ exports.x = x;
 -var m = /** @class */ (function () {
 -    function m() {
 -    }
 -    return m;
 -}());
--exports.m = m;
++class m {
++}
+ exports.m = m;
 -var a11 = /** @class */ (function () {
 -    function a11() {
 -    }
 -    return a11;
 -}());
--exports.a11 = a11;
++class a11 {
++}
+ exports.a11 = a11;
 -var a12 = /** @class */ (function () {
 -    function a12() {
 -    }
 -    return a12;
 -}());
--exports.a12 = a12;
++class a12 {
++}
+ exports.a12 = a12;
 -var x11 = /** @class */ (function () {
 -    function x11() {
 -    }
 -    return x11;
 -}());
--exports.x11 = x11;
++class x11 {
++}
+ exports.x11 = x11;
  //// [client.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
@@ -69,32 +77,17 @@
 -
 -//// [server.d.ts]
 -export declare class a {
-+//// [server.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.x11 = exports.a12 = exports.a11 = exports.m = exports.x = exports.a = void 0;
-+class a {
- }
+-}
 -export declare class x {
-+exports.a = a;
-+class x {
- }
+-}
 -export declare class m {
-+exports.x = x;
-+class m {
- }
+-}
 -export declare class a11 {
-+exports.m = m;
-+class a11 {
- }
+-}
 -export declare class a12 {
-+exports.a11 = a11;
-+class a12 {
- }
+-}
 -export declare class x11 {
-+exports.a12 = a12;
-+class x11 {
- }
+-}
 -//// [client.d.ts]
 -import { a } from "./server";
 -export declare var x1: a;
@@ -107,4 +100,3 @@
 -export declare var x3: z;
 -import { m } from "./server";
 -export declare var x6: m;
-+exports.x11 = x11;

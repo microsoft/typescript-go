@@ -8,16 +8,16 @@ export function ios() {}
 export function base() {}
 
 
-//// [foo.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.base = base;
-function base() { }
-//// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 //// [foo.ios.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ios = ios;
 function ios() { }
+//// [index.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [foo.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.base = base;
+function base() { }

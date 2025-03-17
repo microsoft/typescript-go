@@ -27,6 +27,7 @@ class Foo2 {
 var y: Foo1;
 var y: Foo2;
 
+//// [propertyIdentityWithPrivacyMismatch_0.js]
 //// [propertyIdentityWithPrivacyMismatch_1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40,4 +41,3 @@ class Foo2 {
 }
 var y;
 var y;
-//// [propertyIdentityWithPrivacyMismatch_0.js]

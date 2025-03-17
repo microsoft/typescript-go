@@ -9,7 +9,7 @@ export let x = 1;
 //// [lib2.ts]
 export let x = 1;
 
-//// [lib2.js]
+//// [app.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.x = void 0;
@@ -19,7 +19,7 @@ exports.x = 1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.x = void 0;
 exports.x = 1;
-//// [app.js]
+//// [lib2.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.x = void 0;

@@ -38,6 +38,19 @@ class HelloWorld {
 }
 
 
+//// [type1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [type2.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [class3.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.C3 = void 0;
+class C3 {
+}
+exports.C3 = C3;
 //// [index.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -55,16 +68,3 @@ class HelloWorld {
     @EventListener('3')
     handleEvent3(event) { return undefined; }
 }
-//// [class3.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.C3 = void 0;
-class C3 {
-}
-exports.C3 = C3;
-//// [type2.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-//// [type1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });

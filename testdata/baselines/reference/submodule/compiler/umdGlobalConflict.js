@@ -16,8 +16,8 @@ import * as v2 from './v2';
 // Should be OK, first in wins
 const p: string = Alpha.x;
 
-//// [global.js]
-const p = Alpha.x;
 //// [consumer.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+//// [global.js]
+const p = Alpha.x;

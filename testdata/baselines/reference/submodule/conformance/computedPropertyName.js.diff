@@ -1,11 +1,8 @@
 --- old.computedPropertyName.js
 +++ new.computedPropertyName.js
-@@= skipped -42, +42 lines =@@
- }
- 
- 
--//// [framework-hooks.js]
--export const onInit = Symbol("onInit");
+@@= skipped -45, +45 lines =@@
+ //// [framework-hooks.js]
+ export const onInit = Symbol("onInit");
  //// [component.js]
 -var _a;
  const o = {
@@ -28,8 +25,3 @@
  }
  class F {
  }
- class G {
- }
- export {};
-+//// [framework-hooks.js]
-+export const onInit = Symbol("onInit");

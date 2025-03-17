@@ -16,18 +16,6 @@ import { as as as } from "./t1";
 //// [t4.ts]
 import { as } from "./t1";
 
-//// [t4.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-//// [t3.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-//// [t2.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const as = require("./t1");
-var x = as.as;
-var y = as.return;
 //// [t1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -35,3 +23,15 @@ exports.as = exports.return = void 0;
 let as = 100;
 exports.return = as;
 exports.as = as;
+//// [t2.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const as = require("./t1");
+var x = as.as;
+var y = as.return;
+//// [t3.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [t4.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });

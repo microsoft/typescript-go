@@ -1,10 +1,9 @@
 --- old.importCallExpressionInSystem4.js
 +++ new.importCallExpressionInSystem4.js
-@@= skipped -39, +39 lines =@@
-     }
+@@= skipped -40, +40 lines =@@
  }
  
--//// [0.js]
+ //// [0.js]
 -System.register([], function (exports_1, context_1) {
 -    "use strict";
 -    var B;
@@ -21,7 +20,16 @@
 -        }
 -    };
 -});
--//// [1.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.B = void 0;
++exports.foo = foo;
++class B {
++    print() { return "I am B"; }
++}
++exports.B = B;
++function foo() { return "foo"; }
+ //// [1.js]
 -System.register([], function (exports_1, context_1) {
 -    "use strict";
 -    var __moduleName = context_1 && context_1.id;
@@ -33,6 +41,10 @@
 -        }
 -    };
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.backup = backup;
++function backup() { return "backup"; }
  //// [2.js]
 -System.register([], function (exports_1, context_1) {
 -    "use strict";
@@ -105,18 +117,3 @@
 +    }
 +}
 +exports.D = D;
-+//// [1.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.backup = backup;
-+function backup() { return "backup"; }
-+//// [0.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.B = void 0;
-+exports.foo = foo;
-+class B {
-+    print() { return "I am B"; }
-+}
-+exports.B = B;
-+function foo() { return "foo"; }

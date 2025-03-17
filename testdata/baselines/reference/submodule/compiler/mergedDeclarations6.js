@@ -22,16 +22,6 @@ export class B extends A {
     }
 }
 
-//// [b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.B = void 0;
-const a_1 = require("./a");
-class B extends a_1.A {
-    setProtected() {
-    }
-}
-exports.B = B;
 //// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -43,3 +33,13 @@ class A {
     }
 }
 exports.A = A;
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.B = void 0;
+const a_1 = require("./a");
+class B extends a_1.A {
+    setProtected() {
+    }
+}
+exports.B = B;

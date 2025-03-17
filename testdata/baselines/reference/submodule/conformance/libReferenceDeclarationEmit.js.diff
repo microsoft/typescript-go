@@ -1,16 +1,11 @@
 --- old.libReferenceDeclarationEmit.js
 +++ new.libReferenceDeclarationEmit.js
-@@= skipped -8, +8 lines =@@
- export {}
- declare const elem: HTMLElement;
- 
--//// [file1.js]
-+//// [file2.js]
+@@= skipped -11, +11 lines =@@
+ //// [file1.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
 -/// <reference lib="dom" preserve="true" />
--//// [file2.js]
-+//// [file1.js]
+ //// [file2.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
 -

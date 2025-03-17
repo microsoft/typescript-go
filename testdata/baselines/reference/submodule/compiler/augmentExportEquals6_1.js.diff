@@ -1,14 +1,15 @@
 --- old.augmentExportEquals6_1.js
 +++ new.augmentExportEquals6_1.js
-@@= skipped -24, +24 lines =@@
- let a: x.A;
+@@= skipped -25, +25 lines =@@
  let b = a.a;
  
--//// [file2.js]
+ //// [file2.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
 -    Object.defineProperty(exports, "__esModule", { value: true });
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
  //// [file3.js]
 -define(["require", "exports", "file2"], function (require, exports) {
 -    "use strict";
@@ -21,6 +22,3 @@
 +require("file2");
 +let a;
 +let b = a.a;
-+//// [file2.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });

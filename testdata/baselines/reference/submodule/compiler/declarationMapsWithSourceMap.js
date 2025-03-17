@@ -16,10 +16,6 @@ c.doThing({a: 42});
 let x = c.doThing({a: 12});
 
 
-//// [index.js]
-const c = new Foo();
-c.doThing({ a: 42 });
-let x = c.doThing({ a: 12 });
 //// [a.js]
 class Foo {
     doThing(x) {
@@ -29,3 +25,7 @@ class Foo {
         return new Foo();
     }
 }
+//// [index.js]
+const c = new Foo();
+c.doThing({ a: 42 });
+let x = c.doThing({ a: 12 });

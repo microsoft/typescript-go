@@ -9,10 +9,10 @@ import lib = require('./decoratorOnImportEquals2_0');
 
 declare function dec<T>(target: T): T;
 
-//// [decoratorOnImportEquals2_1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 //// [decoratorOnImportEquals2_0.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.X = void 0;
+//// [decoratorOnImportEquals2_1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });

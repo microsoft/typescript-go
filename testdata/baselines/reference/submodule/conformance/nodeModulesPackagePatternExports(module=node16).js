@@ -65,7 +65,7 @@ export { type };
     }
 }
 
-//// [index.cjs]
+//// [index.js]
 import * as cjsi from "inner/cjs/index";
 import * as mjsi from "inner/mjs/index";
 import * as typei from "inner/js/index";
@@ -79,7 +79,7 @@ import * as typei from "inner/js/index";
 cjsi;
 mjsi;
 typei;
-//// [index.js]
+//// [index.cjs]
 import * as cjsi from "inner/cjs/index";
 import * as mjsi from "inner/mjs/index";
 import * as typei from "inner/js/index";

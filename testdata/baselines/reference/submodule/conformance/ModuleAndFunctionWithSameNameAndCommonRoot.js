@@ -29,6 +29,22 @@ module B {
 }
 
 
+//// [module.js]
+var A;
+(function (A) {
+    let Point;
+    (function (Point) {
+        Point.Origin = { x: 0, y: 0 };
+    })(Point = A.Point || (A.Point = {}));
+})(A || (A = {}));
+//// [function.js]
+var A;
+(function (A) {
+    function Point() {
+        return { x: 0, y: 0 };
+    }
+    A.Point = Point;
+})(A || (A = {}));
 //// [simple.js]
 var B;
 (function (B) {
@@ -41,19 +57,3 @@ var B;
     }
     B.Point = Point;
 })(B || (B = {}));
-//// [function.js]
-var A;
-(function (A) {
-    function Point() {
-        return { x: 0, y: 0 };
-    }
-    A.Point = Point;
-})(A || (A = {}));
-//// [module.js]
-var A;
-(function (A) {
-    let Point;
-    (function (Point) {
-        Point.Origin = { x: 0, y: 0 };
-    })(Point = A.Point || (A.Point = {}));
-})(A || (A = {}));

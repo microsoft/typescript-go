@@ -1,10 +1,9 @@
 --- old.exportAssignmentCircularModules.js
 +++ new.exportAssignmentCircularModules.js
-@@= skipped -21, +21 lines =@@
- export = Foo;
+@@= skipped -22, +22 lines =@@
  
  
--//// [foo_1.js]
+ //// [foo_1.js]
 -define(["require", "exports", "./foo_2"], function (require, exports, foo2) {
 -    "use strict";
 -    var Foo;
@@ -13,7 +12,14 @@
 -    })(Foo || (Foo = {}));
 -    return Foo;
 -});
--//// [foo_0.js]
++"use strict";
++const foo2 = require("./foo_2");
++var Foo;
++(function (Foo) {
++    Foo.x = foo2.x;
++})(Foo || (Foo = {}));
++module.exports = Foo;
+ //// [foo_0.js]
 -define(["require", "exports", "./foo_1"], function (require, exports, foo1) {
 -    "use strict";
 -    var Foo;
@@ -22,6 +28,13 @@
 -    })(Foo || (Foo = {}));
 -    return Foo;
 -});
++"use strict";
++const foo1 = require("./foo_1");
++var Foo;
++(function (Foo) {
++    Foo.x = foo1.x;
++})(Foo || (Foo = {}));
++module.exports = Foo;
  //// [foo_2.js]
 -define(["require", "exports", "./foo_0"], function (require, exports, foo0) {
 -    "use strict";
@@ -36,21 +49,5 @@
 +var Foo;
 +(function (Foo) {
 +    Foo.x = foo0.x;
-+})(Foo || (Foo = {}));
-+module.exports = Foo;
-+//// [foo_0.js]
-+"use strict";
-+const foo1 = require("./foo_1");
-+var Foo;
-+(function (Foo) {
-+    Foo.x = foo1.x;
-+})(Foo || (Foo = {}));
-+module.exports = Foo;
-+//// [foo_1.js]
-+"use strict";
-+const foo2 = require("./foo_2");
-+var Foo;
-+(function (Foo) {
-+    Foo.x = foo2.x;
 +})(Foo || (Foo = {}));
 +module.exports = Foo;

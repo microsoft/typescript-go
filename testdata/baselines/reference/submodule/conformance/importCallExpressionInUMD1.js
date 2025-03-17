@@ -16,6 +16,11 @@ function foo() {
     const p2 = import("./0");
 }
 
+//// [0.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.foo = foo;
+function foo() { return "foo"; }
 //// [1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -29,8 +34,3 @@ exports.p2 = Promise.resolve().then(() => require("./0"));
 function foo() {
     const p2 = Promise.resolve().then(() => require("./0"));
 }
-//// [0.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.foo = foo;
-function foo() { return "foo"; }

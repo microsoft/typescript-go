@@ -1,37 +1,8 @@
 --- old.esDecorators-classDeclaration-commentPreservation(module=commonjs,target=esnext).js
 +++ new.esDecorators-classDeclaration-commentPreservation(module=commonjs,target=esnext).js
-@@= skipped -118, +118 lines =@@
- }
+@@= skipped -119, +119 lines =@@
  
  
-+//// [file3.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.F = void 0;
-+@dec
-+@dec
-+class F {
-+}
-+exports.F = F;
-+@dec
-+@dec
-+class G {
-+}
-+exports.default = G;
-+//// [file2.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.D = void 0;
-+@dec
-+@dec
-+class D {
-+}
-+exports.D = D;
-+@dec
-+@dec
-+class E {
-+}
-+exports.default = E;
  //// [file1.js]
 -/*1*/
  @dec
@@ -100,45 +71,45 @@
 -    /*33*/
      static accessor #z = 1;
  }
--//// [file2.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.D = void 0;
+ //// [file2.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.D = void 0;
 -/*34*/
--@dec
+ @dec
 -/*35*/
--@dec
+ @dec
 -/*36*/
--class D {
--}
--exports.D = D;
+ class D {
+ }
+ exports.D = D;
 -/*37*/
--@dec
+ @dec
 -/*38*/
--@dec
+ @dec
 -/*39*/
--class E {
--}
--exports.default = E;
--//// [file3.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.F = void 0;
+ class E {
+ }
+ exports.default = E;
+@@= skipped -91, +52 lines =@@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.F = void 0;
 -/*40*/
 -/*41*/
--@dec
+ @dec
 -/*42*/
--@dec
+ @dec
 -/*43*/
--class F {
--}
--exports.F = F;
+ class F {
+ }
+ exports.F = F;
 -/*44*/
 -/*45*/
--@dec
+ @dec
 -/*46*/
--@dec
+ @dec
 -/*47*/
--class G {
--}
--exports.default = G;
+ class G {
+ }
+ exports.default = G;

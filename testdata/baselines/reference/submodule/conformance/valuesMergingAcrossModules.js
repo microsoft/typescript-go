@@ -19,6 +19,17 @@ A();
 A.displayName;
 
 
+//// [a.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.A = A;
+function A() { }
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.A = void 0;
+const a_1 = require("./a");
+Object.defineProperty(exports, "A", { enumerable: true, get: function () { return a_1.A; } });
 //// [c.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -28,14 +39,3 @@ var A;
 })(A || (A = {}));
 A();
 A.displayName;
-//// [b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.A = void 0;
-const a_1 = require("./a");
-Object.defineProperty(exports, "A", { enumerable: true, get: function () { return a_1.A; } });
-//// [a.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.A = A;
-function A() { }

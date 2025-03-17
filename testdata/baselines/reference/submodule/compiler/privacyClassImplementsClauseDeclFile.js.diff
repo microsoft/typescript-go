@@ -1,28 +1,6 @@
 --- old.privacyClassImplementsClauseDeclFile.js
 +++ new.privacyClassImplementsClauseDeclFile.js
-@@= skipped -92, +92 lines =@@
- }
- 
- 
-+//// [privacyClassImplementsClauseDeclFile_GlobalFile.js]
-+var publicModuleInGlobal;
-+(function (publicModuleInGlobal) {
-+    class privateClassImplementingPublicInterfaceInModule {
-+    }
-+    class privateClassImplementingPrivateInterfaceInModule {
-+    }
-+    class publicClassImplementingPublicInterfaceInModule {
-+    }
-+    publicModuleInGlobal.publicClassImplementingPublicInterfaceInModule = publicClassImplementingPublicInterfaceInModule;
-+    class publicClassImplementingPrivateInterfaceInModule {
-+    }
-+    publicModuleInGlobal.publicClassImplementingPrivateInterfaceInModule = publicClassImplementingPrivateInterfaceInModule;
-+})(publicModuleInGlobal || (publicModuleInGlobal = {}));
-+class publicClassImplementingPublicInterfaceInGlobal {
-+}
- //// [privacyClassImplementsClauseDeclFile_externalModule.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
+@@= skipped -98, +98 lines =@@
  exports.publicClassImplementingFromPrivateModuleInterface = exports.publicClassImplementingPrivateInterface = exports.publicClassImplementingPublicInterface = exports.publicModule = void 0;
  var publicModule;
  (function (publicModule) {
@@ -243,17 +221,28 @@
 -//// [privacyClassImplementsClauseDeclFile_GlobalFile.d.ts]
 -declare namespace publicModuleInGlobal {
 -    export interface publicInterfaceInPublicModule {
--    }
++exports.publicClassImplementingFromPrivateModuleInterface = publicClassImplementingFromPrivateModuleInterface;
++//// [privacyClassImplementsClauseDeclFile_GlobalFile.js]
++var publicModuleInGlobal;
++(function (publicModuleInGlobal) {
++    class privateClassImplementingPublicInterfaceInModule {
+     }
 -    interface privateInterfaceInPublicModule {
--    }
++    class privateClassImplementingPrivateInterfaceInModule {
+     }
 -    export class publicClassImplementingPublicInterfaceInModule implements publicInterfaceInPublicModule {
--    }
++    class publicClassImplementingPublicInterfaceInModule {
+     }
 -    export class publicClassImplementingPrivateInterfaceInModule implements privateInterfaceInPublicModule {
--    }
++    publicModuleInGlobal.publicClassImplementingPublicInterfaceInModule = publicClassImplementingPublicInterfaceInModule;
++    class publicClassImplementingPrivateInterfaceInModule {
+     }
 -    export {};
--}
++    publicModuleInGlobal.publicClassImplementingPrivateInterfaceInModule = publicClassImplementingPrivateInterfaceInModule;
++})(publicModuleInGlobal || (publicModuleInGlobal = {}));
++class publicClassImplementingPublicInterfaceInGlobal {
+ }
 -interface publicInterfaceInGlobal {
 -}
 -declare class publicClassImplementingPublicInterfaceInGlobal implements publicInterfaceInGlobal {
 -}
-+exports.publicClassImplementingFromPrivateModuleInterface = publicClassImplementingFromPrivateModuleInterface;

@@ -25,29 +25,6 @@ let __: B = new B();  // Error
 let ___: C = new C(); // Error
 
 
-//// [e.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-let _ = new A();
-let __ = new B();
-let ___ = new C();
-//// [d.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-//// [c.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const b_1 = require("./b");
-let _ = new A();
-let __ = new B();
-let ___ = new b_1.C();
-//// [b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.C = void 0;
-class C {
-}
-exports.C = C;
 //// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -61,3 +38,26 @@ exports.B = B;
 class C {
 }
 exports.C = C;
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.C = void 0;
+class C {
+}
+exports.C = C;
+//// [c.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const b_1 = require("./b");
+let _ = new A();
+let __ = new B();
+let ___ = new b_1.C();
+//// [d.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [e.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+let _ = new A();
+let __ = new B();
+let ___ = new C();

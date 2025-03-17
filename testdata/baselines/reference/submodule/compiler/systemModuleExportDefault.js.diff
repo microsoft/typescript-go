@@ -1,10 +1,9 @@
 --- old.systemModuleExportDefault.js
 +++ new.systemModuleExportDefault.js
-@@= skipped -13, +13 lines =@@
+@@= skipped -14, +14 lines =@@
  
  
- 
--//// [file1.js]
+ //// [file1.js]
 -System.register([], function (exports_1, context_1) {
 -    "use strict";
 -    var __moduleName = context_1 && context_1.id;
@@ -16,7 +15,11 @@
 -        }
 -    };
 -});
--//// [file2.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.default = default_1;
++function default_1() { }
+ //// [file2.js]
 -System.register([], function (exports_1, context_1) {
 -    "use strict";
 -    var __moduleName = context_1 && context_1.id;
@@ -28,7 +31,11 @@
 -        }
 -    };
 -});
--//// [file3.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.default = foo;
++function foo() { }
+ //// [file3.js]
 -System.register([], function (exports_1, context_1) {
 -    "use strict";
 -    var default_1;
@@ -45,6 +52,11 @@
 -        }
 -    };
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++class default_1 {
++}
++exports.default = default_1;
  //// [file4.js]
 -System.register([], function (exports_1, context_1) {
 -    "use strict";
@@ -67,19 +79,3 @@
 +class C {
 +}
 +exports.default = C;
-+//// [file3.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+class default_1 {
-+}
-+exports.default = default_1;
-+//// [file2.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.default = foo;
-+function foo() { }
-+//// [file1.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.default = default_1;
-+function default_1() { }

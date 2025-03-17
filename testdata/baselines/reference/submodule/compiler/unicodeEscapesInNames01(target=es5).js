@@ -121,104 +121,30 @@ export class PrivateIdentifierWithExtendedEscape2 {
 }
 
 
-//// [PrivateIdentifierNameWithExtendedEscape2.js]
+//// [identifierVariableWithEscape1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PrivateIdentifierWithExtendedEscape2 = void 0;
-class PrivateIdentifierWithExtendedEscape2 {
-    #x\u{78};
-    constructor() {
-        this.#x\u{78} = 0;
-    }
-    doThing() {
-        this.#xx = 42;
-    }
-}
-exports.PrivateIdentifierWithExtendedEscape2 = PrivateIdentifierWithExtendedEscape2;
-//// [PrivateIdentifierNameWithExtendedEscape1.js]
+exports.x = void 0;
+exports.x = 10;
+exports.x++;
+//// [identifierVariableWithEscape2.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PrivateIdentifierWithExtendedEscape1 = void 0;
-class PrivateIdentifierWithExtendedEscape1 {
-    #\u{78};
-    constructor() {
-        this.#\u{78} = 0;
-    }
-    doThing() {
-        this.#x = 42;
-    }
-}
-exports.PrivateIdentifierWithExtendedEscape1 = PrivateIdentifierWithExtendedEscape1;
-//// [PrivateIdentifierNameWithEscape2.js]
+exports.xx = void 0;
+exports.xx = 10;
+exports.xx++;
+//// [identifierVariableWithExtendedEscape1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PrivateIdentifierWithEscape2 = void 0;
-class PrivateIdentifierWithEscape2 {
-    #x\u0078;
-    constructor() {
-        this.#x\u0078 = 0;
-    }
-    doThing() {
-        this.#xx = 42;
-    }
-}
-exports.PrivateIdentifierWithEscape2 = PrivateIdentifierWithEscape2;
-//// [PrivateIdentifierNameWithEscape1.js]
+exports.x = void 0;
+exports.x = 10;
+exports.x++;
+//// [identifierVariableWithExtendedEscape2.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PrivateIdentifierWithEscape1 = void 0;
-class PrivateIdentifierWithEscape1 {
-    #\u0078;
-    constructor() {
-        this.#\u0078 = 0;
-    }
-    doThing() {
-        this.#x = 42;
-    }
-}
-exports.PrivateIdentifierWithEscape1 = PrivateIdentifierWithEscape1;
-//// [IdentifierNameWithExtendedEscape2.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.IdentifierNameWithExtendedEscape2 = void 0;
-class IdentifierNameWithExtendedEscape2 {
-    x\u{78};
-    constructor() {
-        this.x\u{78} = 0;
-    }
-    doThing() {
-        this.xx = 42;
-    }
-}
-exports.IdentifierNameWithExtendedEscape2 = IdentifierNameWithExtendedEscape2;
-//// [IdentifierNameWithExtendedEscape1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.IdentifierNameWithExtendedEscape1 = void 0;
-class IdentifierNameWithExtendedEscape1 {
-    \u{78};
-    constructor() {
-        this.\u{78} = 0;
-    }
-    doThing() {
-        this.x = 42;
-    }
-}
-exports.IdentifierNameWithExtendedEscape1 = IdentifierNameWithExtendedEscape1;
-//// [IdentifierNameWithEscape2.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.IdentifierNameWithEscape2 = void 0;
-class IdentifierNameWithEscape2 {
-    x\u0078;
-    constructor() {
-        this.x\u0078 = 0;
-    }
-    doThing() {
-        this.xx = 42;
-    }
-}
-exports.IdentifierNameWithEscape2 = IdentifierNameWithEscape2;
+exports.xx = void 0;
+exports.xx = 10;
+exports.xx++;
 //// [IdentifierNameWithEscape1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -233,27 +159,101 @@ class IdentifierNameWithEscape1 {
     }
 }
 exports.IdentifierNameWithEscape1 = IdentifierNameWithEscape1;
-//// [identifierVariableWithExtendedEscape2.js]
+//// [IdentifierNameWithEscape2.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.xx = void 0;
-exports.xx = 10;
-exports.xx++;
-//// [identifierVariableWithExtendedEscape1.js]
+exports.IdentifierNameWithEscape2 = void 0;
+class IdentifierNameWithEscape2 {
+    x\u0078;
+    constructor() {
+        this.x\u0078 = 0;
+    }
+    doThing() {
+        this.xx = 42;
+    }
+}
+exports.IdentifierNameWithEscape2 = IdentifierNameWithEscape2;
+//// [IdentifierNameWithExtendedEscape1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.x = void 0;
-exports.x = 10;
-exports.x++;
-//// [identifierVariableWithEscape2.js]
+exports.IdentifierNameWithExtendedEscape1 = void 0;
+class IdentifierNameWithExtendedEscape1 {
+    \u{78};
+    constructor() {
+        this.\u{78} = 0;
+    }
+    doThing() {
+        this.x = 42;
+    }
+}
+exports.IdentifierNameWithExtendedEscape1 = IdentifierNameWithExtendedEscape1;
+//// [IdentifierNameWithExtendedEscape2.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.xx = void 0;
-exports.xx = 10;
-exports.xx++;
-//// [identifierVariableWithEscape1.js]
+exports.IdentifierNameWithExtendedEscape2 = void 0;
+class IdentifierNameWithExtendedEscape2 {
+    x\u{78};
+    constructor() {
+        this.x\u{78} = 0;
+    }
+    doThing() {
+        this.xx = 42;
+    }
+}
+exports.IdentifierNameWithExtendedEscape2 = IdentifierNameWithExtendedEscape2;
+//// [PrivateIdentifierNameWithEscape1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.x = void 0;
-exports.x = 10;
-exports.x++;
+exports.PrivateIdentifierWithEscape1 = void 0;
+class PrivateIdentifierWithEscape1 {
+    #\u0078;
+    constructor() {
+        this.#\u0078 = 0;
+    }
+    doThing() {
+        this.#x = 42;
+    }
+}
+exports.PrivateIdentifierWithEscape1 = PrivateIdentifierWithEscape1;
+//// [PrivateIdentifierNameWithEscape2.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PrivateIdentifierWithEscape2 = void 0;
+class PrivateIdentifierWithEscape2 {
+    #x\u0078;
+    constructor() {
+        this.#x\u0078 = 0;
+    }
+    doThing() {
+        this.#xx = 42;
+    }
+}
+exports.PrivateIdentifierWithEscape2 = PrivateIdentifierWithEscape2;
+//// [PrivateIdentifierNameWithExtendedEscape1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PrivateIdentifierWithExtendedEscape1 = void 0;
+class PrivateIdentifierWithExtendedEscape1 {
+    #\u{78};
+    constructor() {
+        this.#\u{78} = 0;
+    }
+    doThing() {
+        this.#x = 42;
+    }
+}
+exports.PrivateIdentifierWithExtendedEscape1 = PrivateIdentifierWithExtendedEscape1;
+//// [PrivateIdentifierNameWithExtendedEscape2.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PrivateIdentifierWithExtendedEscape2 = void 0;
+class PrivateIdentifierWithExtendedEscape2 {
+    #x\u{78};
+    constructor() {
+        this.#x\u{78} = 0;
+    }
+    doThing() {
+        this.#xx = 42;
+    }
+}
+exports.PrivateIdentifierWithExtendedEscape2 = PrivateIdentifierWithExtendedEscape2;

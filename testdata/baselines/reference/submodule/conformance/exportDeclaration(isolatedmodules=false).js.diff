@@ -1,11 +1,7 @@
 --- old.exportDeclaration(isolatedmodules=false).js
 +++ new.exportDeclaration(isolatedmodules=false).js
-@@= skipped -16, +16 lines =@@
- import { A } from './a';
- export = A;
- 
--//// [a.js]
-+//// [d.js]
+@@= skipped -19, +19 lines =@@
+ //// [a.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
 -var A = /** @class */ (function () {
@@ -13,19 +9,8 @@
 -    }
 -    return A;
 -}());
-+//// [c.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
++class A {
++}
  //// [b.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
- new A();
--//// [c.js]
-+//// [a.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
--//// [d.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
-+class A {
-+}

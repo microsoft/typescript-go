@@ -743,6 +743,7 @@ module Formatting {
 }
 
 
+//// [formatting.js]
 //// [parserindenter.js]
 var Formatting;
 (function (Formatting) {
@@ -1222,4 +1223,3 @@ var Formatting;
     }
     Formatting.Indenter = Indenter;
 })(Formatting || (Formatting = {}));
-//// [formatting.js]

@@ -1,20 +1,9 @@
 --- old.declarationEmitPartialReuseComputedProperty.js
 +++ new.declarationEmitPartialReuseComputedProperty.js
-@@= skipped -9, +9 lines =@@
+@@= skipped -17, +17 lines =@@
+ //// [b.js]
  import { o } from "./a";
- export const g = o
- 
-+//// [b.js]
-+import { o } from "./a";
-+export const g = o;
- //// [a.js]
- export const n = "A";
- export const poz = 1;
- export const neg = -1;
- export const o = () => null;
--//// [b.js]
--import { o } from "./a";
--export const g = o;
+ export const g = o;
 -
 -
 -//// [a.d.ts]

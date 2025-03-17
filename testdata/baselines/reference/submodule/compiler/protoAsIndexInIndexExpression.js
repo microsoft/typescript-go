@@ -19,6 +19,10 @@ class C {
     "__proto__" = 0;
 }
 
+//// [protoAsIndexInIndexExpression_0.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.x = void 0;
 //// [protoAsIndexInIndexExpression_1.js]
 var EntityPrototype = undefined;
 var WorkspacePrototype = {
@@ -32,7 +36,3 @@ var o = {
 class C {
     "__proto__" = 0;
 }
-//// [protoAsIndexInIndexExpression_0.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.x = void 0;

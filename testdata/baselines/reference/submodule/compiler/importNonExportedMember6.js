@@ -7,9 +7,9 @@ export = Foo;
 //// [b.ts]
 import { Foo } from './a';
 
-//// [b.js]
-export {};
 //// [a.js]
 class Foo {
 }
+export {};
+//// [b.js]
 export {};

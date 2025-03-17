@@ -23,13 +23,6 @@ nFoo(q); // for comparison
 nFoo(B);
 
 
-//// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const items_1 = require("./items");
-function nFoo(x) { }
-nFoo(items_1.q);
-nFoo(items_1.default);
 //// [items.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -40,3 +33,10 @@ exports.default = {
 exports.q = {
     foob: "b"
 };
+//// [index.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const items_1 = require("./items");
+function nFoo(x) { }
+nFoo(items_1.q);
+nFoo(items_1.default);

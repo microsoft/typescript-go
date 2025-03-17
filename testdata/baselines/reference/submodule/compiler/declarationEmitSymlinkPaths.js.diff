@@ -1,30 +1,14 @@
 --- old.declarationEmitSymlinkPaths.js
 +++ new.declarationEmitSymlinkPaths.js
-@@= skipped -23, +23 lines =@@
-   getNotification
- );
- 
-+//// [NotificationStore.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.NotificationScenario = void 0;
-+const index_1 = require("search/lib/index");
-+const NotificationAPIUtils_1 = require("../API/NotificationAPIUtils");
-+exports.NotificationScenario = (0, index_1.test)(NotificationAPIUtils_1.getNotification);
- //// [NotificationAPIUtils.js]
+@@= skipped -34, +34 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
-@@= skipped -7, +14 lines =@@
- function getNotification() {
-     return {};
- }
--//// [NotificationStore.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.NotificationScenario = void 0;
+ exports.NotificationScenario = void 0;
 -var index_1 = require("search/lib/index");
 -var NotificationAPIUtils_1 = require("../API/NotificationAPIUtils");
--exports.NotificationScenario = (0, index_1.test)(NotificationAPIUtils_1.getNotification);
++const index_1 = require("search/lib/index");
++const NotificationAPIUtils_1 = require("../API/NotificationAPIUtils");
+ exports.NotificationScenario = (0, index_1.test)(NotificationAPIUtils_1.getNotification);
 -
 -
 -//// [NotificationAPIUtils.d.ts]

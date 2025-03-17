@@ -19,6 +19,13 @@ export default {
 };
 
 
+//// [scalar.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.scalar = scalar;
+function scalar(value) {
+    return null;
+}
 //// [spacing.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -28,10 +35,3 @@ exports.default = {
         return (0, scalar_1.scalar)("14px");
     }
 };
-//// [scalar.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.scalar = scalar;
-function scalar(value) {
-    return null;
-}

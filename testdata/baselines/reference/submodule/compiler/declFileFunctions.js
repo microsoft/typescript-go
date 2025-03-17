@@ -76,18 +76,6 @@ function globalfooWithOverloads(a: any): any {
     return a;
 }
 
-//// [declFileFunctions_1.js]
-function globalfoo() {
-}
-function globalfooWithParameters(a, b) {
-    var d = a;
-}
-function globalfooWithRestParameters(a, ...rests) {
-    return a + rests.join("");
-}
-function globalfooWithOverloads(a) {
-    return a;
-}
 //// [declFileFunctions_0.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -135,5 +123,17 @@ function nonExportedFooWithRestParameters(a, ...rests) {
     return a + rests.join("");
 }
 function nonExportedFooWithOverloads(a) {
+    return a;
+}
+//// [declFileFunctions_1.js]
+function globalfoo() {
+}
+function globalfooWithParameters(a, b) {
+    var d = a;
+}
+function globalfooWithRestParameters(a, ...rests) {
+    return a + rests.join("");
+}
+function globalfooWithOverloads(a) {
     return a;
 }

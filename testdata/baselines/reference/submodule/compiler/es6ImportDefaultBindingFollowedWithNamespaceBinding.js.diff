@@ -1,11 +1,6 @@
 --- old.es6ImportDefaultBindingFollowedWithNamespaceBinding.js
 +++ new.es6ImportDefaultBindingFollowedWithNamespaceBinding.js
-@@= skipped -6, +6 lines =@@
- import defaultBinding, * as nameSpaceBinding  from "es6ImportDefaultBindingFollowedWithNamespaceBinding_0";
- var x: number = nameSpaceBinding.a;
- 
--//// [es6ImportDefaultBindingFollowedWithNamespaceBinding_0.js]
--export var a = 10;
+@@= skipped -11, +11 lines =@@
  //// [es6ImportDefaultBindingFollowedWithNamespaceBinding_1.js]
  import * as nameSpaceBinding from "es6ImportDefaultBindingFollowedWithNamespaceBinding_0";
  var x = nameSpaceBinding.a;
@@ -15,5 +10,3 @@
 -export declare var a: number;
 -//// [es6ImportDefaultBindingFollowedWithNamespaceBinding_1.d.ts]
 -export {};
-+//// [es6ImportDefaultBindingFollowedWithNamespaceBinding_0.js]
-+export var a = 10;

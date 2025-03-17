@@ -10,9 +10,9 @@ import type { A } from "./a";
 export interface B {}
 
 
-//// [b.js]
+//// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-//// [a.js]
+//// [b.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });

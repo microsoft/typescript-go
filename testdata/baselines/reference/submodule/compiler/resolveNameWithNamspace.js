@@ -18,8 +18,8 @@ var myAssert = require('assert')
 exports.equal = myAssert.equal
 exports.equal()
 
+//// [ns.js]
+var myAssert = require('assert');
 //// [app.js]
 exports.equal = myAssert.equal;
 exports.equal();
-//// [ns.js]
-var myAssert = require('assert');

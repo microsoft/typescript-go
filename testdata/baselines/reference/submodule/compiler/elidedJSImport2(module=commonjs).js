@@ -28,18 +28,6 @@ export default class Bar {
 }
 
 
-//// [other.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Foo = void 0;
-class Foo {
-    bar = 2.4;
-}
-exports.Foo = Foo;
-class Bar {
-    foo = 1.2;
-}
-exports.default = Bar;
 //// [index.js]
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -75,3 +63,15 @@ const other_js_2 = __importDefault(require("./other.js"));
 const x = new other_js_1.Foo();
 const y = other.Foo();
 const z = new other_js_2.default();
+//// [other.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Foo = void 0;
+class Foo {
+    bar = 2.4;
+}
+exports.Foo = Foo;
+class Bar {
+    foo = 1.2;
+}
+exports.default = Bar;

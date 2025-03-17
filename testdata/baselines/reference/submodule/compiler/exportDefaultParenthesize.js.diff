@@ -1,10 +1,9 @@
 --- old.exportDefaultParenthesize.js
 +++ new.exportDefaultParenthesize.js
-@@= skipped -35, +35 lines =@@
- export default () => 42;
+@@= skipped -36, +36 lines =@@
  
  
--//// [commalist.js]
+ //// [commalist.js]
 -var _a;
 -export default (_a = {},
 -    _a['foo' + ''] = 42,
@@ -31,41 +30,39 @@
 -    _a['foo' + ''] = 42,
 -    _a['foo' + ''] = 42,
 -    _a);
--//// [comma.js]
++export default {
++    ['foo' + '']: 42,
++    ['foo' + '']: 42,
++    ['foo' + '']: 42,
++    ['foo' + '']: 42,
++    ['foo' + '']: 42,
++    ['foo' + '']: 42,
++    ['foo' + '']: 42,
++    ['foo' + '']: 42,
++    ['foo' + '']: 42,
++    ['foo' + '']: 42,
++    ['foo' + '']: 42,
++    ['foo' + '']: 42,
++    ['foo' + '']: 42,
++    ['foo' + '']: 42,
++    ['foo' + '']: 42,
++    ['foo' + '']: 42,
++    ['foo' + '']: 42,
++    ['foo' + '']: 42,
++    ['foo' + '']: 42,
++    ['foo' + '']: 42,
++    ['foo' + '']: 42,
++    ['foo' + '']: 42,
++    ['foo' + '']: 42,
++};
+ //// [comma.js]
 -var _a;
 -export default (_a = {},
 -    _a['foo'] = 42,
 -    _a);
- //// [functionexpression.js]
--export default (function () { return 42; });
-+export default () => 42;
-+//// [comma.js]
 +export default {
 +    ['foo']: 42
 +};
-+//// [commalist.js]
-+export default {
-+    ['foo' + '']: 42,
-+    ['foo' + '']: 42,
-+    ['foo' + '']: 42,
-+    ['foo' + '']: 42,
-+    ['foo' + '']: 42,
-+    ['foo' + '']: 42,
-+    ['foo' + '']: 42,
-+    ['foo' + '']: 42,
-+    ['foo' + '']: 42,
-+    ['foo' + '']: 42,
-+    ['foo' + '']: 42,
-+    ['foo' + '']: 42,
-+    ['foo' + '']: 42,
-+    ['foo' + '']: 42,
-+    ['foo' + '']: 42,
-+    ['foo' + '']: 42,
-+    ['foo' + '']: 42,
-+    ['foo' + '']: 42,
-+    ['foo' + '']: 42,
-+    ['foo' + '']: 42,
-+    ['foo' + '']: 42,
-+    ['foo' + '']: 42,
-+    ['foo' + '']: 42,
-+};
+ //// [functionexpression.js]
+-export default (function () { return 42; });
++export default () => 42;

@@ -1,10 +1,9 @@
 --- old.ambientDeclarationsExternal.js
 +++ new.ambientDeclarationsExternal.js
-@@= skipped -22, +22 lines =@@
- var n: number;
+@@= skipped -23, +23 lines =@@
  
  
--//// [decls.js]
+ //// [decls.js]
 -// Ambient external import declaration referencing ambient external module using top level module name
  //// [consumer.js]
  "use strict";
@@ -14,4 +13,3 @@
 +const imp3 = require("equ2");
  var n = imp3.x;
  var n;
-+//// [decls.js]

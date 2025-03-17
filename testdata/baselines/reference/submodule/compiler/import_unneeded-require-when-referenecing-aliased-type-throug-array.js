@@ -15,9 +15,9 @@ var testData: ITest[];
 var p = testData[0].name;
  
 
+//// [b.js]
 //// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var testData;
 var p = testData[0].name;
-//// [b.js]

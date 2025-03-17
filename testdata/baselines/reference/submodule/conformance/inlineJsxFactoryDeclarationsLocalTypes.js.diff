@@ -1,11 +1,8 @@
 --- old.inlineJsxFactoryDeclarationsLocalTypes.js
 +++ new.inlineJsxFactoryDeclarationsLocalTypes.js
-@@= skipped -86, +86 lines =@@
- const _brokenTree2 = <DOMSFC x={1} y={2}>{tree}{tree}</DOMSFC>
+@@= skipped -88, +88 lines =@@
  
- 
--//// [component.js]
-+//// [index.js]
+ //// [component.js]
  "use strict";
 -var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
 -    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
@@ -18,7 +15,7 @@
 -};
 -var _this = this;
  Object.defineProperty(exports, "__esModule", { value: true });
--exports.tree = exports.MyClass = exports.MySFC = void 0;
+ exports.tree = exports.MyClass = exports.MySFC = void 0;
 -/** @jsx predom */
 -var renderer2_1 = require("./renderer2");
 -var MySFC = function (props) { return renderer2_1.predom.apply(void 0, __spreadArray(["p", null, props.x,
@@ -26,16 +23,13 @@
 -    props.y,
 -    " = ",
 -    props.x + props.y], _this.props.children, false)); };
--exports.MySFC = MySFC;
++const MySFC = (props) => <p>{props.x} + {props.y} = {props.x + props.y}{...this.props.children}</p>;
+ exports.MySFC = MySFC;
 -var MyClass = /** @class */ (function () {
 -    function MyClass(props) {
-+const component_1 = require("./component");
-+let elem = component_1.default;
-+elem = <h></h>;
-+const DOMSFC = (props) => <p>{props.x} + {props.y} = {props.x + props.y}{props.children}</p>;
-+class DOMClass {
++class MyClass {
 +    props;
-+    __domBrand;
++    __predomBrand;
 +    constructor(props) {
          this.props = props;
      }
@@ -48,30 +42,31 @@
 -    };
 -    return MyClass;
 -}());
--exports.MyClass = MyClass;
++    render() {
++        return <p>
++            {this.props.x} + {this.props.y} = {this.props.x + this.props.y}
++            {...this.props.children}
++        </p>;
++    }
++}
+ exports.MyClass = MyClass;
 -exports.tree = (0, renderer2_1.predom)(exports.MySFC, { x: 1, y: 2 },
 -    (0, renderer2_1.predom)(MyClass, { x: 3, y: 4 }),
 -    (0, renderer2_1.predom)(MyClass, { x: 5, y: 6 }));
 -exports.default = (0, renderer2_1.predom)("h", null);
--//// [index.js]
--"use strict";
++exports.tree = <exports.MySFC x={1} y={2}><MyClass x={3} y={4}/><MyClass x={5} y={6}/></MySFC>;
++exports.default = <h></h>;
+ //// [index.js]
+ "use strict";
 -var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
 -    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
 -        if (ar || !(i in from)) {
 -            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
 -            ar[i] = from[i];
 -        }
-+    render() {
-+        return <p>{this.props.x} + {this.props.y} = {this.props.x + this.props.y}{...this.props.children}</p>;
-     }
+-    }
 -    return to.concat(ar || Array.prototype.slice.call(from));
 -};
-+}
-+const _tree = <DOMSFC x={1} y={2}><DOMClass x={3} y={4}/><DOMClass x={5} y={6}/></DOMSFC>;
-+const _brokenTree = <component_1.MySFC x={1} y={2}><component_1.MyClass x={3} y={4}/><component_1.MyClass x={5} y={6}/></MySFC>;
-+const _brokenTree2 = <DOMSFC x={1} y={2}>{component_1.tree}{component_1.tree}</DOMSFC>;
-+//// [component.js]
-+"use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
 -/** @jsx dom */
 -var renderer_1 = require("./renderer");
@@ -87,12 +82,13 @@
 -    props.children); };
 -var DOMClass = /** @class */ (function () {
 -    function DOMClass(props) {
-+exports.tree = exports.MyClass = exports.MySFC = void 0;
-+const MySFC = (props) => <p>{props.x} + {props.y} = {props.x + props.y}{...this.props.children}</p>;
-+exports.MySFC = MySFC;
-+class MyClass {
++const component_1 = require("./component");
++let elem = component_1.default;
++elem = <h></h>;
++const DOMSFC = (props) => <p>{props.x} + {props.y} = {props.x + props.y}{props.children}</p>;
++class DOMClass {
 +    props;
-+    __predomBrand;
++    __domBrand;
 +    constructor(props) {
          this.props = props;
      }
@@ -118,12 +114,9 @@
 -    component_1.tree,
 -    component_1.tree);
 +    render() {
-+        return <p>
-+            {this.props.x} + {this.props.y} = {this.props.x + this.props.y}
-+            {...this.props.children}
-+        </p>;
++        return <p>{this.props.x} + {this.props.y} = {this.props.x + this.props.y}{...this.props.children}</p>;
 +    }
 +}
-+exports.MyClass = MyClass;
-+exports.tree = <exports.MySFC x={1} y={2}><MyClass x={3} y={4}/><MyClass x={5} y={6}/></MySFC>;
-+exports.default = <h></h>;
++const _tree = <DOMSFC x={1} y={2}><DOMClass x={3} y={4}/><DOMClass x={5} y={6}/></DOMSFC>;
++const _brokenTree = <component_1.MySFC x={1} y={2}><component_1.MyClass x={3} y={4}/><component_1.MyClass x={5} y={6}/></MySFC>;
++const _brokenTree2 = <DOMSFC x={1} y={2}>{component_1.tree}{component_1.tree}</DOMSFC>;

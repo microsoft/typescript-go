@@ -17,19 +17,6 @@ x = y;
 y = x;
 
 
-//// [/src/bin/app.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-let x;
-let y;
-x = y;
-y = x;
-//// [/src/bin/library-b/index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.MyClass2 = void 0;
-const library_a_1 = require("library-a");
-Object.defineProperty(exports, "MyClass2", { enumerable: true, get: function () { return library_a_1.MyClass; } });
 //// [/src/bin/library-a/index.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -38,3 +25,16 @@ class MyClass {
     x;
 }
 exports.MyClass = MyClass;
+//// [/src/bin/library-b/index.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MyClass2 = void 0;
+const library_a_1 = require("library-a");
+Object.defineProperty(exports, "MyClass2", { enumerable: true, get: function () { return library_a_1.MyClass; } });
+//// [/src/bin/app.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+let x;
+let y;
+x = y;
+y = x;

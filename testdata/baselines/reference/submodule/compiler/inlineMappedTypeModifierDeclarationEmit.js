@@ -34,6 +34,17 @@ export function test2<T, K extends string>(obj: T, k: K): OmitUnveiled<T, K> {
   return {} as any;
 }
 
+//// [other.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.test1 = test1;
+exports.test2 = test2;
+function test1(obj, k) {
+    return {};
+}
+function test2(obj, k) {
+    return {};
+}
 //// [index.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -49,14 +60,3 @@ function wrappedTest2(obj, k) {
 }
 exports.processedInternally1 = wrappedTest1({}, "a");
 exports.processedInternally2 = wrappedTest2({}, "a");
-//// [other.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.test1 = test1;
-exports.test2 = test2;
-function test1(obj, k) {
-    return {};
-}
-function test2(obj, k) {
-    return {};
-}

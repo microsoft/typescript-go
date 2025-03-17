@@ -17,14 +17,6 @@ if(color === foo.green){
 }
 
 
-//// [foo_1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const foo = require("./foo_0");
-var color;
-if (color === foo.green) {
-    color = foo.answer;
-}
 //// [foo_0.js]
 "use strict";
 var foo;
@@ -37,3 +29,11 @@ var foo;
     foo.answer = 42;
 })(foo || (foo = {}));
 module.exports = foo;
+//// [foo_1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const foo = require("./foo_0");
+var color;
+if (color === foo.green) {
+    color = foo.answer;
+}

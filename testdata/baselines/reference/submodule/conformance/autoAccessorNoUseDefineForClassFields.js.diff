@@ -1,36 +1,17 @@
 --- old.autoAccessorNoUseDefineForClassFields.js
 +++ new.autoAccessorNoUseDefineForClassFields.js
-@@= skipped -39, +39 lines =@@
- }
+@@= skipped -40, +40 lines =@@
  
  
--//// [file1.js]
+ //// [file1.js]
 -// https://github.com/microsoft/TypeScript/issues/51528
--class C1 {
--    static accessor x = 0;
-+//// [file6.js]
-+class C6 {
-+    accessor #x = 0;
-+    x = 1;
+ class C1 {
+     static accessor x = 0;
  }
--//// [file2.js]
--class C2 {
--    static accessor #x = 0;
-+//// [file5.js]
-+class C5 {
-+    x = 0;
-+    accessor #x = 1;
+@@= skipped -18, +17 lines =@@
  }
--//// [file3.js]
--class C3 {
--    accessor x = 0;
--}
- //// [file4.js]
- class C4 {
-     accessor #x = 0;
- }
--//// [file5.js]
--class C5 {
+ //// [file5.js]
+ class C5 {
 -    constructor() {
 -        this.x = 0;
 -        this.#x_accessor_storage = 1;
@@ -38,12 +19,11 @@
 -    #x_accessor_storage;
 -    get #x() { return this.#x_accessor_storage; }
 -    set #x(value) { this.#x_accessor_storage = value; }
-+//// [file3.js]
-+class C3 {
-+    accessor x = 0;
++    x = 0;
++    accessor #x = 1;
  }
--//// [file6.js]
--class C6 {
+ //// [file6.js]
+ class C6 {
 -    constructor() {
 -        this.#x_accessor_storage = 0;
 -        this.x = 1;
@@ -51,11 +31,6 @@
 -    #x_accessor_storage;
 -    get #x() { return this.#x_accessor_storage; }
 -    set #x(value) { this.#x_accessor_storage = value; }
-+//// [file2.js]
-+class C2 {
-+    static accessor #x = 0;
++    accessor #x = 0;
++    x = 1;
  }
-+//// [file1.js]
-+class C1 {
-+    static accessor x = 0;
-+}

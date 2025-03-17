@@ -1,16 +1,8 @@
 --- old.importAssertion3(module=es2015).js
 +++ new.importAssertion3(module=es2015).js
-@@= skipped -12, +12 lines =@@
- 
- 
- 
--//// [0.js]
-+//// [2.js]
+@@= skipped -18, +18 lines =@@
  export {};
- //// [1.js]
- export {};
--//// [2.js]
-+//// [0.js]
+ //// [2.js]
  export {};
 -
 -

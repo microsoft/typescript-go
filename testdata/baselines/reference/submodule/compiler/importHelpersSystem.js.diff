@@ -1,10 +1,9 @@
 --- old.importHelpersSystem.js
 +++ new.importHelpersSystem.js
-@@= skipped -16, +16 lines =@@
- export declare function __awaiter(thisArg: any, _arguments: any, P: Function, generator: Function): any;
+@@= skipped -17, +17 lines =@@
  
  
--//// [a.js]
+ //// [a.js]
 -System.register([], function (exports_1, context_1) {
 -    "use strict";
 -    var A;
@@ -21,6 +20,12 @@
 -        }
 -    };
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.A = void 0;
++class A {
++}
++exports.A = A;
  //// [b.js]
 -System.register(["tslib", "./a"], function (exports_1, context_1) {
 -    "use strict";
@@ -67,10 +72,3 @@
 +class B extends a_1.A {
 +}
 +exports.B = B;
-+//// [a.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.A = void 0;
-+class A {
-+}
-+exports.A = A;

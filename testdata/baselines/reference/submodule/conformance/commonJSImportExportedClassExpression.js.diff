@@ -1,20 +1,18 @@
 --- old.commonJSImportExportedClassExpression.js
 +++ new.commonJSImportExportedClassExpression.js
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
+ };
  
  
- //// [mod1.js]
+-//// [mod1.js]
 -"use strict";
 -exports.K = /** @class */ (function () {
 -    function K() {
-+exports.K = class K {
-+    values() {
-     }
+-    }
 -    K.prototype.values = function () {
 -    };
 -    return K;
 -}());
-+};
  //// [main.js]
 -"use strict";
 -var K = require("./mod1").K;
@@ -31,3 +29,8 @@
 -}
 -//// [main.d.ts]
 -export {};
++//// [mod1.js]
++exports.K = class K {
++    values() {
++    }
++};

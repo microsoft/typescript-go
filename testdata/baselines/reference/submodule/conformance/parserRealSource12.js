@@ -532,6 +532,7 @@ module TypeScript {
     }
 }
 
+//// [typescript.js]
 //// [parserRealSource12.js]
 var TypeScript;
 (function (TypeScript) {
@@ -1022,4 +1023,3 @@ var TypeScript;
         ChildrenWalkers.walkLabeledStatementChildren = walkLabeledStatementChildren;
     })(ChildrenWalkers || (ChildrenWalkers = {}));
 })(TypeScript || (TypeScript = {}));
-//// [typescript.js]

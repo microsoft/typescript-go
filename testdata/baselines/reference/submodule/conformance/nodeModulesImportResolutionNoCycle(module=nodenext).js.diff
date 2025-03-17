@@ -1,19 +1,17 @@
 --- old.nodeModulesImportResolutionNoCycle(module=nodenext).js
 +++ new.nodeModulesImportResolutionNoCycle(module=nodenext).js
-@@= skipped -22, +22 lines =@@
-     }
+@@= skipped -23, +23 lines =@@
  }
  
--//// [index.js]
+ //// [index.js]
 -// esm format file
-+//// [index.cjs]
  import * as type from "#type";
  type;
  //// [index.mjs]
 -// esm format file
  import * as type from "#type";
  type;
--//// [index.cjs]
+ //// [index.cjs]
 -"use strict";
 -var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
 -    if (k2 === undefined) k2 = k;
@@ -41,7 +39,6 @@
 -Object.defineProperty(exports, "__esModule", { value: true });
 -// esm format file
 -const type = __importStar(require("#type"));
-+//// [index.js]
 +import * as type from "#type";
  type;
 -

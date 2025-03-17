@@ -12,10 +12,6 @@ fhqwhgads
 to
 limit
 
-//// [b.js]
-fhqwhgads;
-to;
-limit;
 //// [a.js]
 const a = !();
 !();
@@ -28,3 +24,7 @@ HERE;
 GOTTA;
 GO;
 FAST;
+//// [b.js]
+fhqwhgads;
+to;
+limit;

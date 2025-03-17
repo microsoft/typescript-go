@@ -17,18 +17,18 @@ export = A;
 import { A } from './a';
 export = A;
 
-//// [d.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-//// [c.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-//// [b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-new A();
 //// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class A {
 }
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+new A();
+//// [c.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [d.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });

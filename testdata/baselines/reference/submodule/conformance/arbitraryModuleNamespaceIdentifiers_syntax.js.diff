@@ -1,67 +1,17 @@
 --- old.arbitraryModuleNamespaceIdentifiers_syntax.js
 +++ new.arbitraryModuleNamespaceIdentifiers_syntax.js
-@@= skipped -60, +60 lines =@@
- import { type as as "invalid 4" } from "./type-clause-valid";
- 
- 
--//// [values-valid.js]
--export const foo = 123;
--export { foo as "valid 1" };
--export { "valid 1" as "valid 2" } from "./values-valid";
--export { foo as "valid 3" } from "./values-valid";
--export * as "valid 4" from "./values-valid";
--//// [values-bad-import.js]
-+//// [type-clause-type-as-as.js]
+@@= skipped -94, +94 lines =@@
  export {};
--//// [values-bad-export.js]
--export { "invalid 3" as baz };
--//// [values-no-as.js]
-+//// [type-clause-no-as.js]
- export {};
--//// [values-type-as.js]
-+//// [type-clause-bad-export.js]
- export {};
--//// [type-decls-valid.js]
-+//// [type-clause-bad-import.js]
- export {};
--//// [type-decls-bad-import.js]
-+//// [type-clause-valid.js]
- export {};
--//// [type-decls-bad-export.js]
-+//// [type-decls-type-as.js]
- export {};
- //// [type-decls-no-as.js]
- export {};
--//// [type-decls-type-as.js]
-+//// [type-decls-bad-export.js]
- export {};
--//// [type-clause-valid.js]
-+//// [type-decls-bad-import.js]
- export {};
--//// [type-clause-bad-import.js]
-+//// [type-decls-valid.js]
- export {};
--//// [type-clause-bad-export.js]
-+//// [values-type-as.js]
- export {};
--//// [type-clause-no-as.js]
-+//// [values-no-as.js]
- export {};
--//// [type-clause-type-as-as.js]
-+//// [values-bad-export.js]
-+export { "invalid 3" as baz };
-+//// [values-bad-import.js]
+ //// [type-clause-type-as-as.js]
  export {};
 -
 -
 -//// [values-valid.d.ts]
 -export declare const foo = 123;
-+//// [values-valid.js]
-+export const foo = 123;
- export { foo as "valid 1" };
- export { "valid 1" as "valid 2" } from "./values-valid";
- export { foo as "valid 3" } from "./values-valid";
- export * as "valid 4" from "./values-valid";
+-export { foo as "valid 1" };
+-export { "valid 1" as "valid 2" } from "./values-valid";
+-export { foo as "valid 3" } from "./values-valid";
+-export * as "valid 4" from "./values-valid";
 -//// [values-bad-import.d.ts]
 -export {};
 -//// [values-bad-export.d.ts]

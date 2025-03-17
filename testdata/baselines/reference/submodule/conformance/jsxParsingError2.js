@@ -28,19 +28,19 @@ let x5 = <div><span>
 
 
 
-//// [Error5.jsx]
-let x5 = <div><span>
-
-</></>;
-//// [Error4.jsx]
-let x4 = <div><div></span>;
-</>;
+//// [file.jsx]
+//// [Error1.jsx]
+let x1 = <div><span></></div>;
+//// [Error2.jsx]
+let x2 = <div></span>;
 //// [Error3.jsx]
 let x3 = <div>;
 
 </>;
-//// [Error2.jsx]
-let x2 = <div></span>;
-//// [Error1.jsx]
-let x1 = <div><span></></div>;
-//// [file.jsx]
+//// [Error4.jsx]
+let x4 = <div><div></span>;
+</>;
+//// [Error5.jsx]
+let x5 = <div><span>
+
+</></>;

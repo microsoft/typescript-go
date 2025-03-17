@@ -1,12 +1,10 @@
 --- old.parserArrowFunctionExpression17.js
 +++ new.parserArrowFunctionExpression17.js
-@@= skipped -6, +6 lines =@@
- a ? b : (c) : d => e
+@@= skipped -7, +7 lines =@@
  
  
--//// [fileJs.js]
+ //// [fileJs.js]
 -a ? b : (c) => e; // Not legal JS; "Unexpected token ':'" at last colon
++a ? b : (c) => e;
  //// [fileTs.js]
  a ? b : (c) => e;
-+//// [fileJs.js]
-+a ? b : (c) => e;

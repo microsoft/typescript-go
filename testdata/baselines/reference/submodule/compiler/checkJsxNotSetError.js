@@ -10,13 +10,13 @@ export default Foo;
 import Foo from '/foo';
 const a = <Foo />
 
-//// [bar.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const foo_1 = require("/foo");
-const a = <foo_1.default />;
 //// [foo.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Foo = () => (<div>foo</div>);
 exports.default = Foo;
+//// [bar.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const foo_1 = require("/foo");
+const a = <foo_1.default />;

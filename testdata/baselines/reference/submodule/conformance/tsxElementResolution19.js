@@ -19,11 +19,6 @@ import {MyClass} from './file1';
 <MyClass />;
 
 
-//// [file2.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const file1_1 = require("./file1");
-<file1_1.MyClass />;
 //// [file1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -31,3 +26,8 @@ exports.MyClass = void 0;
 class MyClass {
 }
 exports.MyClass = MyClass;
+//// [file2.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const file1_1 = require("./file1");
+<file1_1.MyClass />;

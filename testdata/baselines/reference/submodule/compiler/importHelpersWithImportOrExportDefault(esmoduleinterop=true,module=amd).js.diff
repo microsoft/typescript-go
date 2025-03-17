@@ -1,10 +1,9 @@
 --- old.importHelpersWithImportOrExportDefault(esmoduleinterop=true,module=amd).js
 +++ new.importHelpersWithImportOrExportDefault(esmoduleinterop=true,module=amd).js
-@@= skipped -13, +13 lines =@@
-     function __importDefault(m: any): void;
+@@= skipped -14, +14 lines =@@
  }
  
--//// [a.js]
+ //// [a.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
 -    Object.defineProperty(exports, "__esModule", { value: true });
@@ -12,6 +11,11 @@
 -    }
 -    exports.default = default_1;
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++class default_1 {
++}
++exports.default = default_1;
  //// [b.js]
 -define(["require", "exports", "tslib", "./a", "./a", "./a"], function (require, exports, tslib_1, a_1, a_2, a_3) {
 -    "use strict";
@@ -32,9 +36,3 @@
 +Object.defineProperty(exports, "a", { enumerable: true, get: function () { return tslib_1.__importDefault(a_2).default; } });
 +const a_3 = tslib_1.__importDefault(require("./a"));
 +void a_3.default;
-+//// [a.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+class default_1 {
-+}
-+exports.default = default_1;

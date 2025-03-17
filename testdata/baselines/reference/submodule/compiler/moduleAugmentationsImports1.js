@@ -42,19 +42,13 @@ let b = a.getB().x.toFixed();
 let c = a.getCls().y.toLowerCase();
 
 
-//// [main.js]
+//// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-require("d");
-let a;
-let b = a.getB().x.toFixed();
-let c = a.getCls().y.toLowerCase();
-//// [d.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const a_1 = require("./a");
-a_1.A.prototype.getB = function () { return undefined; };
-a_1.A.prototype.getCls = function () { return undefined; };
+exports.A = void 0;
+class A {
+}
+exports.A = A;
 //// [b.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -63,10 +57,16 @@ class B {
     x;
 }
 exports.B = B;
-//// [a.js]
+//// [d.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.A = void 0;
-class A {
-}
-exports.A = A;
+const a_1 = require("./a");
+a_1.A.prototype.getB = function () { return undefined; };
+a_1.A.prototype.getCls = function () { return undefined; };
+//// [main.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+require("d");
+let a;
+let b = a.getB().x.toFixed();
+let c = a.getCls().y.toLowerCase();

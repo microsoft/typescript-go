@@ -14,11 +14,6 @@ import WinJS = require('memberAccessMustUseModuleInstances_0');
 WinJS.Promise.timeout(10);
 
 
-//// [memberAccessMustUseModuleInstances_1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const WinJS = require("memberAccessMustUseModuleInstances_0");
-WinJS.Promise.timeout(10);
 //// [memberAccessMustUseModuleInstances_0.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -29,3 +24,8 @@ class Promise {
     }
 }
 exports.Promise = Promise;
+//// [memberAccessMustUseModuleInstances_1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const WinJS = require("memberAccessMustUseModuleInstances_0");
+WinJS.Promise.timeout(10);

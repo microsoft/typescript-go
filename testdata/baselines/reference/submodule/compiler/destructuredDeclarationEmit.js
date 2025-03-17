@@ -22,6 +22,14 @@ const { foo: foo2 } = getFoo();
 export { foo2 };
 
 
+//// [foo.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.arr = exports.foo = void 0;
+const foo = { bar: 'hello', bat: 'world', bam: { bork: { bar: 'a', baz: 'b' } } };
+exports.foo = foo;
+const arr = [0, 1, 2, ['a', 'b', 'c', [{ def: 'def' }, { sec: 'sec' }]]];
+exports.arr = arr;
 //// [index.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -35,11 +43,3 @@ const getFoo = () => ({
     foo: 'foo'
 });
 const { foo: foo2 } = getFoo();
-//// [foo.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.arr = exports.foo = void 0;
-const foo = { bar: 'hello', bat: 'world', bam: { bork: { bar: 'a', baz: 'b' } } };
-exports.foo = foo;
-const arr = [0, 1, 2, ['a', 'b', 'c', [{ def: 'def' }, { sec: 'sec' }]]];
-exports.arr = arr;

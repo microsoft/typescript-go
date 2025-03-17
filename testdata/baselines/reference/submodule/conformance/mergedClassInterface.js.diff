@@ -1,11 +1,8 @@
 --- old.mergedClassInterface.js
 +++ new.mergedClassInterface.js
-@@= skipped -49, +49 lines =@@
- 
+@@= skipped -50, +50 lines =@@
  declare class C7 { }
  
-+//// [file3.js]
-+//// [file2.js]
  //// [file1.js]
 -var C3 = /** @class */ (function () {
 -    function C3() {
@@ -25,10 +22,10 @@
  var c5;
  c5.x1;
  c5.x2;
- c5.x3;
+@@= skipped -18, +11 lines =@@
  c5.x4;
--//// [file2.js]
--//// [file3.js]
+ //// [file2.js]
+ //// [file3.js]
 -
 -
 -//// [file1.d.ts]

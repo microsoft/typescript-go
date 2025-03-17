@@ -9,12 +9,9 @@ import * as things from "./things";
 export const thing2 = (param: things.ThingB) => null;
 
 
-//// [index.js]
+//// [thingB.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.thing2 = void 0;
-const thing2 = (param) => null;
-exports.thing2 = thing2;
 //// [things.js]
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -33,6 +30,9 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./thingB"), exports);
-//// [thingB.js]
+//// [index.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.thing2 = void 0;
+const thing2 = (param) => null;
+exports.thing2 = thing2;

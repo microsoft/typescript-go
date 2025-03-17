@@ -16,6 +16,12 @@ export const mixin = (Base: Constructor) => {
   }
 }
 
+//// [dom.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [custom.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 //// [index.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -26,9 +32,3 @@ const mixin = (Base) => {
     };
 };
 exports.mixin = mixin;
-//// [custom.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-//// [dom.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });

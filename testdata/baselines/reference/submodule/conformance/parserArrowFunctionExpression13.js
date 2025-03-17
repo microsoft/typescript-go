@@ -7,7 +7,7 @@ a ? () => a() : (): any => null; // Not legal JS; "Unexpected token ')'" at last
 a ? () => a() : (): any => null;
 
 
-//// [fileTs.js]
-a ? () => a() : () => null;
 //// [fileJs.js]
+a ? () => a() : () => null;
+//// [fileTs.js]
 a ? () => a() : () => null;

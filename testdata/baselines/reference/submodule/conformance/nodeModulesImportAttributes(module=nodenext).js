@@ -13,8 +13,8 @@ const json2 = import("./package.json", { with: { type: "json" } }); // should be
 }
 
 
+//// [index.js]
+export {};
 //// [otherc.cjs]
 const json2 = import("./package.json", { with: { type: "json" } });
-export {};
-//// [index.js]
 export {};

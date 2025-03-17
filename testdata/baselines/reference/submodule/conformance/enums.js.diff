@@ -1,19 +1,14 @@
 --- old.enums.js
 +++ new.enums.js
-@@= skipped -30, +30 lines =@@
- const flags: TypeFlag = SymbolFlags.Type;
- 
- 
--//// [a.js]
-+//// [c.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
--var SyntaxKind;
--(function (SyntaxKind) {
--    SyntaxKind[SyntaxKind["ImportClause"] = 0] = "ImportClause";
--    SyntaxKind[SyntaxKind["ExportDeclaration"] = 1] = "ExportDeclaration";
--})(SyntaxKind || (SyntaxKind = {}));
-+const flags = a_1.SymbolFlags.Type;
+@@= skipped -38, +38 lines =@@
+     SyntaxKind[SyntaxKind["ImportClause"] = 0] = "ImportClause";
+     SyntaxKind[SyntaxKind["ExportDeclaration"] = 1] = "ExportDeclaration";
+ })(SyntaxKind || (SyntaxKind = {}));
++var SymbolFlags;
++(function (SymbolFlags) {
++    SymbolFlags["Type"] = "Type";
++    SymbolFlags["Value"] = "Value";
++})(SymbolFlags || (SymbolFlags = {}));
  //// [b.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
@@ -21,21 +16,11 @@
 -"Type" /* SymbolFlags.Type */;
 -var kind;
 -var flags;
--//// [c.js]
 +SymbolFlags.Type;
 +let kind;
 +let flags;
-+//// [a.js]
+ //// [c.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
 -var flags = "Type" /* SymbolFlags.Type */;
-+var SyntaxKind;
-+(function (SyntaxKind) {
-+    SyntaxKind[SyntaxKind["ImportClause"] = 0] = "ImportClause";
-+    SyntaxKind[SyntaxKind["ExportDeclaration"] = 1] = "ExportDeclaration";
-+})(SyntaxKind || (SyntaxKind = {}));
-+var SymbolFlags;
-+(function (SymbolFlags) {
-+    SymbolFlags["Type"] = "Type";
-+    SymbolFlags["Value"] = "Value";
-+})(SymbolFlags || (SymbolFlags = {}));
++const flags = a_1.SymbolFlags.Type;

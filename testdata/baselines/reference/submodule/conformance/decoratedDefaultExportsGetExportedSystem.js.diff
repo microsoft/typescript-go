@@ -1,10 +1,9 @@
 --- old.decoratedDefaultExportsGetExportedSystem.js
 +++ new.decoratedDefaultExportsGetExportedSystem.js
-@@= skipped -11, +11 lines =@@
- @decorator
+@@= skipped -12, +12 lines =@@
  export default class {}
  
--//// [a.js]
+ //// [a.js]
 -System.register([], function (exports_1, context_1) {
 -    "use strict";
 -    var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -27,6 +26,13 @@
 -        }
 -    };
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++var decorator;
++@decorator
++class Foo {
++}
++exports.default = Foo;
  //// [b.js]
 -System.register([], function (exports_1, context_1) {
 -    "use strict";
@@ -57,11 +63,3 @@
 +class default_1 {
 +}
 +exports.default = default_1;
-+//// [a.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+var decorator;
-+@decorator
-+class Foo {
-+}
-+exports.default = Foo;

@@ -1,20 +1,6 @@
 --- old.dynamicNames.js
 +++ new.dynamicNames.js
-@@= skipped -153, +153 lines =@@
- }
- 
- 
--//// [module.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.s0 = exports.c1 = exports.c0 = void 0;
--exports.c0 = "a";
--exports.c1 = 1;
--exports.s0 = Symbol();
- //// [main.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
-@@= skipped -41, +34 lines =@@
+@@= skipped -194, +194 lines =@@
  let t13;
  let t14;
  let t15;
@@ -74,10 +60,3 @@
 -export declare const o1_c5: string;
 -export declare const o1_s2: boolean;
 -export declare const o2: T0;
-+//// [module.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.s0 = exports.c1 = exports.c0 = void 0;
-+exports.c0 = "a";
-+exports.c1 = 1;
-+exports.s0 = Symbol();

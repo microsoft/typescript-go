@@ -1,12 +1,9 @@
 --- old.jsDeclarationsTypeAliases.js
 +++ new.jsDeclarationsTypeAliases.js
-@@= skipped -50, +50 lines =@@
- }
- 
- 
--//// [index.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
+@@= skipped -53, +53 lines =@@
+ //// [index.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
 -/**
 - * @typedef {string | number | symbol} PropName
 - */
@@ -97,6 +94,3 @@
 -    y: string;
 -}
 -export {};
-+//// [index.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });

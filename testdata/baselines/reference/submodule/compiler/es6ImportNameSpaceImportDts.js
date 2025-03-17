@@ -8,12 +8,6 @@ import * as nameSpaceBinding from "./server";
 export var x = new nameSpaceBinding.c();
 import * as nameSpaceBinding2 from "./server"; // unreferenced
 
-//// [client.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.x = void 0;
-const nameSpaceBinding = require("./server");
-exports.x = new nameSpaceBinding.c();
 //// [server.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -22,3 +16,9 @@ class c {
 }
 exports.c = c;
 ;
+//// [client.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.x = void 0;
+const nameSpaceBinding = require("./server");
+exports.x = new nameSpaceBinding.c();

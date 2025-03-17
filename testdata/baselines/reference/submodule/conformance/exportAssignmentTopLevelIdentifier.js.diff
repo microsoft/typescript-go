@@ -1,10 +1,9 @@
 --- old.exportAssignmentTopLevelIdentifier.js
 +++ new.exportAssignmentTopLevelIdentifier.js
-@@= skipped -12, +12 lines =@@
- }
+@@= skipped -13, +13 lines =@@
  
  
--//// [foo_0.js]
+ //// [foo_0.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
 -    var Foo;
@@ -13,6 +12,12 @@
 -    })(Foo || (Foo = {}));
 -    return Foo;
 -});
++"use strict";
++var Foo;
++(function (Foo) {
++    Foo.answer = 42;
++})(Foo || (Foo = {}));
++module.exports = Foo;
  //// [foo_1.js]
 -define(["require", "exports", "./foo_0"], function (require, exports, foo) {
 -    "use strict";
@@ -25,10 +30,3 @@
 +const foo = require("./foo_0");
 +if (foo.answer === 42) {
 +}
-+//// [foo_0.js]
-+"use strict";
-+var Foo;
-+(function (Foo) {
-+    Foo.answer = 42;
-+})(Foo || (Foo = {}));
-+module.exports = Foo;

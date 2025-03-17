@@ -20,19 +20,6 @@ interface IHasVisualizationModel {
 var i: IHasVisualizationModel;
 var m: typeof moduleA = i;
 
-//// [aliasUsageInVarAssignment_main.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var i;
-var m = i;
-//// [aliasUsageInVarAssignment_moduleA.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.VisualizationModel = void 0;
-const Backbone = require("./aliasUsageInVarAssignment_backbone");
-class VisualizationModel extends Backbone.Model {
-}
-exports.VisualizationModel = VisualizationModel;
 //// [aliasUsageInVarAssignment_backbone.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -41,3 +28,16 @@ class Model {
     someData;
 }
 exports.Model = Model;
+//// [aliasUsageInVarAssignment_moduleA.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.VisualizationModel = void 0;
+const Backbone = require("./aliasUsageInVarAssignment_backbone");
+class VisualizationModel extends Backbone.Model {
+}
+exports.VisualizationModel = VisualizationModel;
+//// [aliasUsageInVarAssignment_main.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var i;
+var m = i;

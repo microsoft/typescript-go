@@ -14,12 +14,6 @@ export function func() {
 import { func } from "./reexporter";
 export const c = func();
 
-//// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.c = void 0;
-const reexporter_1 = require("./reexporter");
-exports.c = (0, reexporter_1.func)();
 //// [reexporter.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -28,3 +22,9 @@ const foo_html_1 = require("./foo.html");
 function func() {
     return new foo_html_1.CustomHtmlRepresentationThing();
 }
+//// [index.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.c = void 0;
+const reexporter_1 = require("./reexporter");
+exports.c = (0, reexporter_1.func)();

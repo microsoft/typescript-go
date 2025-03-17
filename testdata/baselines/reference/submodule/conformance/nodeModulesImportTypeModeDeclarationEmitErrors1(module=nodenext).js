@@ -64,21 +64,7 @@ export const a = (null as any as import("pkg", { assert: {} }).RequireInterface)
 export const b = (null as any as import("pkg", { assert: {} }).ImportInterface);
 
 
-//// [other5.js]
-export const a = null;
-export const b = null;
-//// [other4.js]
-Asserts1;
-RequireInterface
-    & import("pkg", Asserts2).ImportInterface;
-export const a = null, Asserts1, RequireInterface;
-export const b = null, Asserts2, ImportInterface;
-//// [other3.js]
-RequireInterface
-    & import("pkg", [{ "resolution-mode": "import" }]).ImportInterface;
-export const a = null.RequireInterface;
-export const b = null.ImportInterface;
-//// [other2.js]
+//// [index.js]
 export const a = null;
 export const b = null;
 //// [other.js]
@@ -96,6 +82,20 @@ export const b = null;
 "import";
 ImportInterface;
 ;
-//// [index.js]
+//// [other2.js]
+export const a = null;
+export const b = null;
+//// [other3.js]
+RequireInterface
+    & import("pkg", [{ "resolution-mode": "import" }]).ImportInterface;
+export const a = null.RequireInterface;
+export const b = null.ImportInterface;
+//// [other4.js]
+Asserts1;
+RequireInterface
+    & import("pkg", Asserts2).ImportInterface;
+export const a = null, Asserts1, RequireInterface;
+export const b = null, Asserts2, ImportInterface;
+//// [other5.js]
 export const a = null;
 export const b = null;

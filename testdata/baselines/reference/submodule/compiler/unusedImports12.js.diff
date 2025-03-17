@@ -1,13 +1,6 @@
 --- old.unusedImports12.js
 +++ new.unusedImports12.js
-@@= skipped -11, +11 lines =@@
- import r = require("./b");
- 
- 
-+//// [a.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
- //// [b.js]
+@@= skipped -15, +15 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.Member = void 0;
@@ -20,6 +13,4 @@
 +}
  exports.Member = Member;
  exports.default = Member;
--//// [a.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
+ //// [a.js]

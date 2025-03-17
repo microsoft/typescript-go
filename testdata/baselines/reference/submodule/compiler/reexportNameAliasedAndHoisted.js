@@ -10,6 +10,11 @@ export namespace Sizing {
     export const Distribute = { type: 'distribute' };
 }
 
+//// [gridview.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Sizing = void 0;
+exports.Sizing = null;
 //// [index.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -20,8 +25,3 @@ var Sizing;
 (function (Sizing) {
     Sizing.Distribute = { type: 'distribute' };
 })(Sizing || (exports.Sizing = Sizing = {}));
-//// [gridview.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Sizing = void 0;
-exports.Sizing = null;

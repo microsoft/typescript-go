@@ -45,13 +45,13 @@ let elem = prerendered;
 elem = <h></h>; // Expect assignability error here
 
 
+//// [component.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = <h></h>;
 //// [index.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const component_1 = require("./component");
 let elem = component_1.default;
 elem = <h></h>;
-//// [component.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = <h></h>;

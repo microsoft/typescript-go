@@ -1,14 +1,15 @@
 --- old.exportAssignmentMergedInterface.js
 +++ new.exportAssignmentMergedInterface.js
-@@= skipped -21, +21 lines =@@
- var z = {x: 1, y: 2};
+@@= skipped -22, +22 lines =@@
  z = x.d;
  
--//// [foo_0.js]
+ //// [foo_0.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
 -    Object.defineProperty(exports, "__esModule", { value: true });
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
  //// [foo_1.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
@@ -30,6 +31,3 @@
 +if (!!x.c) { }
 +var z = { x: 1, y: 2 };
 +z = x.d;
-+//// [foo_0.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });

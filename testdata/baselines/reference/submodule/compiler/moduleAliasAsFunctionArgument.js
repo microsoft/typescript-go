@@ -14,6 +14,10 @@ a.x; // OK
 fn(a); // Error: property 'x' is missing from 'a'
 
 
+//// [moduleAliasAsFunctionArgument_0.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.x = void 0;
 //// [moduleAliasAsFunctionArgument_1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -22,7 +26,3 @@ function fn(arg) {
 }
 a.x;
 fn(a);
-//// [moduleAliasAsFunctionArgument_0.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.x = void 0;

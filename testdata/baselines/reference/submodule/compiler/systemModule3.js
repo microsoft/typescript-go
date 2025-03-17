@@ -12,25 +12,25 @@ export default class C {}
 //// [file4.ts]
 export default class {}
 
-//// [file4.js]
+//// [file1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-class default_1 {
-}
 exports.default = default_1;
+function default_1() { }
+//// [file2.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = f;
+function f() { }
 //// [file3.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class C {
 }
 exports.default = C;
-//// [file2.js]
+//// [file4.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = f;
-function f() { }
-//// [file1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+class default_1 {
+}
 exports.default = default_1;
-function default_1() { }

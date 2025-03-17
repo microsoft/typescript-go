@@ -1,19 +1,18 @@
 --- old.declarationEmitTypeofDefaultExport.js
 +++ new.declarationEmitTypeofDefaultExport.js
-@@= skipped -7, +7 lines =@@
- export default a.default;
- 
- 
--//// [a.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
+@@= skipped -10, +10 lines =@@
+ //// [a.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
 -var C = /** @class */ (function () {
 -    function C() {
 -    }
 -    return C;
 -}());
--exports.default = C;
--;
++class C {
++}
+ exports.default = C;
+ ;
  //// [b.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
@@ -24,14 +23,8 @@
 -
 -//// [a.d.ts]
 -export default class C {
-+//// [a.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+class C {
- }
+-}
 -//// [b.d.ts]
 -import * as a from "./a";
 -declare const _default: typeof a.default;
 -export default _default;
-+exports.default = C;
-+;

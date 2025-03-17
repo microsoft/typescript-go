@@ -1,21 +1,21 @@
 --- old.unusedImportDeclaration.js
 +++ new.unusedImportDeclaration.js
-@@= skipped -14, +14 lines =@@
- foo("IN " + thingy.me + "!");
+@@= skipped -16, +16 lines =@@
  
- 
--//// [unusedImportDeclaration_testerB.js]
--"use strict";
+ //// [unusedImportDeclaration_testerB.js]
+ "use strict";
 -var TesterB = /** @class */ (function () {
 -    function TesterB() {
 -    }
 -    return TesterB;
 -}());
--module.exports = TesterB;
++class TesterB {
++    me;
++}
+ module.exports = TesterB;
  //// [unusedImportDeclaration_testerA.js]
  "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
-@@= skipped -15, +7 lines =@@
+@@= skipped -13, +11 lines =@@
      me: "A"
  };
  foo("IN " + thingy.me + "!");
@@ -24,12 +24,7 @@
 -//// [unusedImportDeclaration_testerB.d.ts]
 -declare class TesterB {
 -    me: string;
-+//// [unusedImportDeclaration_testerB.js]
-+"use strict";
-+class TesterB {
-+    me;
- }
+-}
 -export = TesterB;
 -//// [unusedImportDeclaration_testerA.d.ts]
 -export {};
-+module.exports = TesterB;

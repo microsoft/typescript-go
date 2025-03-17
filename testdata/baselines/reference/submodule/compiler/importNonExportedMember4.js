@@ -7,11 +7,11 @@ export = Foo;
 //// [b.ts]
 import { Foo } from './a';
 
-//// [b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 //// [a.js]
 "use strict";
 class Foo {
 }
 module.exports = Foo;
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });

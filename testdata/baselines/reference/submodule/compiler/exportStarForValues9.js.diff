@@ -1,20 +1,22 @@
 --- old.exportStarForValues9.js
 +++ new.exportStarForValues9.js
-@@= skipped -14, +14 lines =@@
- export var x = 1;
+@@= skipped -15, +15 lines =@@
  
  
--//// [file1.js]
+ //// [file1.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
 -    Object.defineProperty(exports, "__esModule", { value: true });
 -});
- //// [file3.js]
+-//// [file3.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++//// [file2.js]
 +"use strict";
  var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
      if (k2 === undefined) k2 = k;
      var desc = Object.getOwnPropertyDescriptor(m, k);
-@@= skipped -20, +16 lines =@@
+@@= skipped -19, +18 lines =@@
  var __exportStar = (this && this.__exportStar) || function(m, exports) {
      for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
  };
@@ -25,16 +27,18 @@
 -    __exportStar(file2_1, exports);
 -    exports.x = 1;
 -});
+-//// [file2.js]
 +Object.defineProperty(exports, "__esModule", { value: true });
 +exports.x = void 0;
-+__exportStar(require("file2"), exports);
++__exportStar(require("file1"), exports);
++__exportStar(require("file3"), exports);
 +exports.x = 1;
- //// [file2.js]
++//// [file3.js]
 +"use strict";
  var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
      if (k2 === undefined) k2 = k;
      var desc = Object.getOwnPropertyDescriptor(m, k);
-@@= skipped -22, +20 lines =@@
+@@= skipped -22, +21 lines =@@
  var __exportStar = (this && this.__exportStar) || function(m, exports) {
      for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
  };
@@ -48,9 +52,5 @@
 -});
 +Object.defineProperty(exports, "__esModule", { value: true });
 +exports.x = void 0;
-+__exportStar(require("file1"), exports);
-+__exportStar(require("file3"), exports);
++__exportStar(require("file2"), exports);
 +exports.x = 1;
-+//// [file1.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });

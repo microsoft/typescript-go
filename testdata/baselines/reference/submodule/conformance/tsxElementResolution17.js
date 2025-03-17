@@ -26,9 +26,9 @@ import s2 = require('elements2');
 <s1.MyElement />;
 
 
+//// [file.jsx]
 //// [consumer.jsx]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const s1 = require("elements1");
 <s1.MyElement />;
-//// [file.jsx]

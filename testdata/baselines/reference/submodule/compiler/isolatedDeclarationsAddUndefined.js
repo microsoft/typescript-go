@@ -19,6 +19,17 @@ export class Bar2 {
     f = 2;
 }
 
+//// [file1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Bar = void 0;
+class Bar {
+    c = [2];
+    c3 = 1;
+    r = 1;
+    f = 2;
+}
+exports.Bar = Bar;
 //// [file2.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -33,14 +44,3 @@ class Bar2 {
     f = 2;
 }
 exports.Bar2 = Bar2;
-//// [file1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Bar = void 0;
-class Bar {
-    c = [2];
-    c3 = 1;
-    r = 1;
-    f = 2;
-}
-exports.Bar = Bar;

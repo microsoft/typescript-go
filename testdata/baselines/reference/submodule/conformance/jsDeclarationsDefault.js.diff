@@ -1,36 +1,6 @@
 --- old.jsDeclarationsDefault.js
 +++ new.jsDeclarationsDefault.js
-@@= skipped -38, +38 lines =@@
-  */
- 
- 
--//// [index1.js]
-+//// [index6.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
-+exports.default = func;
-+function func() { }
-+;
-+//// [index5.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
- exports.default = 12;
--//// [index2.js]
-+//// [index4.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
--exports.x = void 0;
--exports.default = foo;
--exports.bar = foo;
--function foo() {
--    return foo;
-+const index3_1 = require("./index3");
-+class Bar extends index3_1.default {
-+    x = (null);
- }
--exports.x = foo;
-+exports.default = Bar;
- //// [index3.js]
+@@= skipped -56, +56 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.Bar = exports.X = void 0;
@@ -48,8 +18,7 @@
 +exports.Bar = Foo;
  ;
  exports.X = Foo;
--//// [index4.js]
-+//// [index2.js]
+ //// [index4.js]
  "use strict";
 -var __extends = (this && this.__extends) || (function () {
 -    var extendStatics = function (d, b) {
@@ -77,16 +46,12 @@
 -    }
 -    return Bar;
 -}(index3_1.default));
--exports.default = Bar;
--//// [index5.js]
-+exports.x = void 0;
-+exports.default = foo;
-+exports.bar = foo;
-+function foo() {
-+    return foo;
++const index3_1 = require("./index3");
++class Bar extends index3_1.default {
++    x = (null);
 +}
-+exports.x = foo;
-+//// [index1.js]
+ exports.default = Bar;
+ //// [index5.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
 -// merge type alias and const (OK)
@@ -94,13 +59,13 @@
 -/**
 - * @typedef {string | number} default
 - */
--//// [index6.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.default = func;
+ //// [index6.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.default = func;
 -// merge type alias and function (OK)
--function func() { }
--;
+ function func() { }
+ ;
 -/**
 - * @typedef {string | number} default
 - */

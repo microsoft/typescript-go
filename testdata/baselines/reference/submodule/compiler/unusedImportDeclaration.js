@@ -15,6 +15,12 @@ declare function foo(a: string): void;
 foo("IN " + thingy.me + "!");
 
 
+//// [unusedImportDeclaration_testerB.js]
+"use strict";
+class TesterB {
+    me;
+}
+module.exports = TesterB;
 //// [unusedImportDeclaration_testerA.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -22,9 +28,3 @@ var thingy = {
     me: "A"
 };
 foo("IN " + thingy.me + "!");
-//// [unusedImportDeclaration_testerB.js]
-"use strict";
-class TesterB {
-    me;
-}
-module.exports = TesterB;

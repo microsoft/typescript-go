@@ -24,6 +24,9 @@ export class Encoder {
  * @typedef {import('./interface').Encoder<T>} IEncoder
  */
 
+//// [interface.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 //// [lib.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -34,6 +37,3 @@ class Encoder {
     }
 }
 exports.Encoder = Encoder;
-//// [interface.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });

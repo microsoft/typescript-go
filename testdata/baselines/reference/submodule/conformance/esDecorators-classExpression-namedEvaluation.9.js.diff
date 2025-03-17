@@ -1,11 +1,9 @@
 --- old.esDecorators-classExpression-namedEvaluation.9.js
 +++ new.esDecorators-classExpression-namedEvaluation.9.js
-@@= skipped -9, +9 lines =@@
+@@= skipped -11, +11 lines =@@
  
- export = class { @dec y: any };
- 
--//// [a.js]
--"use strict";
+ //// [a.js]
+ "use strict";
 -module.exports = (() => {
 -    let _classDecorators = [dec];
 -    let _classDescriptor;
@@ -24,6 +22,10 @@
 -    };
 -    return class_1 = _classThis;
 -})();
++module.exports = 
++@dec
++class {
++};
  //// [b.js]
  "use strict";
 -module.exports = (() => {
@@ -46,10 +48,4 @@
 +module.exports = class {
 +    @dec
 +    y;
-+};
-+//// [a.js]
-+"use strict";
-+module.exports = 
-+@dec
-+class {
 +};

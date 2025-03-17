@@ -1,8 +1,10 @@
 --- old.parserRealSource6.js
 +++ new.parserRealSource6.js
-@@= skipped -223, +223 lines =@@
+@@= skipped -222, +222 lines =@@
+     }
  }
  
++//// [typescript.js]
  //// [parserRealSource6.js]
 -// Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
 -// See LICENSE.txt in the project root for complete license information.
@@ -128,7 +130,7 @@
      TypeScript.EnclosingScopeContext = EnclosingScopeContext;
      function preFindMemberScope(ast, parent, walker) {
          var memScope = walker.state;
-@@= skipped -103, +109 lines =@@
+@@= skipped -104, +111 lines =@@
          var context = walker.state;
          var minChar = ast.minChar;
          var limChar = ast.limChar;
@@ -165,8 +167,3 @@
      function findEnclosingScopeAt(logger, script, text, pos, isMemberCompletion) {
          var context = new EnclosingScopeContext(logger, script, text, pos, isMemberCompletion);
          TypeScript.getAstWalkerFactory().walk(script, preFindEnclosingScope, null, null, context);
-@@= skipped -14, +9 lines =@@
-     }
-     TypeScript.findEnclosingScopeAt = findEnclosingScopeAt;
- })(TypeScript || (TypeScript = {}));
-+//// [typescript.js]

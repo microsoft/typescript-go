@@ -1,18 +1,22 @@
 --- old.importAliasFromNamespace.js
 +++ new.importAliasFromNamespace.js
-@@= skipped -20, +20 lines =@@
-     }
- }
- 
--//// [internal.js]
--var My;
--(function (My) {
+@@= skipped -23, +23 lines =@@
+ //// [internal.js]
+ var My;
+ (function (My) {
 -    var Internal;
--    (function (Internal) {
--        function getThing() { }
--        Internal.getThing = getThing;
--    })(Internal = My.Internal || (My.Internal = {}));
--})(My || (My = {}));
++    let Internal;
+     (function (Internal) {
+         function getThing() { }
+         Internal.getThing = getThing;
++        let WhichThing;
++        (function (WhichThing) {
++            WhichThing[WhichThing["A"] = 0] = "A";
++            WhichThing[WhichThing["B"] = 1] = "B";
++            WhichThing[WhichThing["C"] = 2] = "C";
++        })(WhichThing = Internal.WhichThing || (Internal.WhichThing = {}));
+     })(Internal = My.Internal || (My.Internal = {}));
+ })(My || (My = {}));
  //// [usage.js]
 -/// <reference path="./internal.ts" preserve="true" />
  var SomeOther;
@@ -55,18 +59,3 @@
 -        constructor();
 -    }
 -}
-+//// [internal.js]
-+var My;
-+(function (My) {
-+    let Internal;
-+    (function (Internal) {
-+        function getThing() { }
-+        Internal.getThing = getThing;
-+        let WhichThing;
-+        (function (WhichThing) {
-+            WhichThing[WhichThing["A"] = 0] = "A";
-+            WhichThing[WhichThing["B"] = 1] = "B";
-+            WhichThing[WhichThing["C"] = 2] = "C";
-+        })(WhichThing = Internal.WhichThing || (Internal.WhichThing = {}));
-+    })(Internal = My.Internal || (My.Internal = {}));
-+})(My || (My = {}));

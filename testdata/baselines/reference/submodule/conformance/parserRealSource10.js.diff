@@ -1,8 +1,10 @@
 --- old.parserRealSource10.js
 +++ new.parserRealSource10.js
-@@= skipped -457, +457 lines =@@
+@@= skipped -456, +456 lines =@@
+     }
  }
  
++//// [typescript.js]
  //// [parserRealSource10.js]
 -// Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
 -// See LICENSE.txt in the project root for complete license information.
@@ -31,7 +33,7 @@
          TokenID[TokenID["Any"] = 0] = "Any";
          TokenID[TokenID["Bool"] = 1] = "Bool";
          TokenID[TokenID["Break"] = 2] = "Break";
-@@= skipped -77, +58 lines =@@
+@@= skipped -78, +60 lines =@@
          TokenID[TokenID["With"] = 51] = "With";
          TokenID[TokenID["While"] = 52] = "While";
          TokenID[TokenID["Yield"] = 53] = "Yield";
@@ -437,8 +439,3 @@
      TypeScript.staticTokens = new Token[];
      function initializeStaticTokens() {
          for (var i = 0; i <= TokenID.LimFixed; i++) {
-@@= skipped -115, +107 lines =@@
-     }
-     TypeScript.initializeStaticTokens = initializeStaticTokens;
- })(TypeScript || (TypeScript = {}));
-+//// [typescript.js]

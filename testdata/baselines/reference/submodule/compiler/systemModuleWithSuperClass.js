@@ -11,6 +11,14 @@ export class Bar extends Foo {
     b: string;
 }
 
+//// [foo.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Foo = void 0;
+class Foo {
+    a;
+}
+exports.Foo = Foo;
 //// [bar.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -20,11 +28,3 @@ class Bar extends foo_1.Foo {
     b;
 }
 exports.Bar = Bar;
-//// [foo.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Foo = void 0;
-class Foo {
-    a;
-}
-exports.Foo = Foo;

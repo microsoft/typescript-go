@@ -20,9 +20,9 @@ export namespace ns {
     }
 }
 
-//// [regression.js]
+//// [working.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-//// [working.js]
+//// [regression.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });

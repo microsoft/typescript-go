@@ -27,12 +27,9 @@ const g: ns.Root = ns.Root.A;
 f.x;
 
 
-//// [augment.js]
+//// [file.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const ns = require("./reexport");
-const g = ns.Root.A;
-f.x;
 //// [reexport.js]
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -51,6 +48,9 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./file"), exports);
-//// [file.js]
+//// [augment.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const ns = require("./reexport");
+const g = ns.Root.A;
+f.x;

@@ -211,6 +211,7 @@ module TypeScript {
 
 }
 
+//// [typescript.js]
 //// [parserRealSource9.js]
 var TypeScript;
 (function (TypeScript) {
@@ -391,4 +392,3 @@ var TypeScript;
     }
     TypeScript.Binder = Binder;
 })(TypeScript || (TypeScript = {}));
-//// [typescript.js]

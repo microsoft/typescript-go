@@ -21,14 +21,14 @@ import y2 from "./y";
 import z2 from "./z";
 
 
-//// [user.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-//// [y.jsx]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = 0;
 //// [x.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = 0;
+//// [y.jsx]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = 0;
+//// [user.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });

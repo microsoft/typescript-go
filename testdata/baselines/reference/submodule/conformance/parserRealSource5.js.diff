@@ -1,8 +1,10 @@
 --- old.parserRealSource5.js
 +++ new.parserRealSource5.js
-@@= skipped -68, +68 lines =@@
+@@= skipped -67, +67 lines =@@
+     }
  }
  
++//// [typescript.js]
  //// [parserRealSource5.js]
 -// Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
 -// See LICENSE.txt in the project root for complete license information.
@@ -42,7 +44,7 @@
              if (this.builder.length > 0) {
                  CompilerDiagnostics.Alert(this.builder);
              }
-@@= skipped -34, +32 lines =@@
+@@= skipped -35, +34 lines =@@
                  this.indentStrings[this.indentAmt] = indentString;
              }
              this.builder += indentString;
@@ -66,8 +68,3 @@
      TypeScript.PrintContext = PrintContext;
      function prePrintAST(ast, parent, walker) {
          var pc = walker.state;
-@@= skipped -26, +25 lines =@@
-     }
-     TypeScript.postPrintAST = postPrintAST;
- })(TypeScript || (TypeScript = {}));
-+//// [typescript.js]

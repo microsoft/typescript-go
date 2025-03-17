@@ -39,21 +39,6 @@ import fooLength from "./b";
 fooLength + 1;
 
 
-//// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const foobar_1 = require("foobar");
-const foobarx_1 = require("foobarx");
-const x = X;
-const x2 = foobarx_1.default;
-const a_1 = require("./a");
-const b = new a_1.default(a_1.default.b);
-const b_1 = require("./b");
-b_1.default + 1;
-//// [b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = "foo".length;
 //// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -68,3 +53,18 @@ var A;
     })(B = A.B || (A.B = {}));
 })(A || (A = {}));
 exports.default = A.B;
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = "foo".length;
+//// [index.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const foobar_1 = require("foobar");
+const foobarx_1 = require("foobarx");
+const x = X;
+const x2 = foobarx_1.default;
+const a_1 = require("./a");
+const b = new a_1.default(a_1.default.b);
+const b_1 = require("./b");
+b_1.default + 1;

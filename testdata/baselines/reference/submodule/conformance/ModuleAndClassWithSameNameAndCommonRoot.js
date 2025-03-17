@@ -31,14 +31,17 @@ class A {
 }
 
 
-//// [simple.js]
-var A;
-(function (A) {
-    A.Instance = new A();
-})(A || (A = {}));
-class A {
-    id;
-}
+//// [module.js]
+var X;
+(function (X) {
+    let Y;
+    (function (Y) {
+        let Point;
+        (function (Point) {
+            Point.Origin = new Point(0, 0);
+        })(Point = Y.Point || (Y.Point = {}));
+    })(Y = X.Y || (X.Y = {}));
+})(X || (X = {}));
 //// [classPoint.js]
 var X;
 (function (X) {
@@ -55,14 +58,11 @@ var X;
         Y.Point = Point;
     })(Y = X.Y || (X.Y = {}));
 })(X || (X = {}));
-//// [module.js]
-var X;
-(function (X) {
-    let Y;
-    (function (Y) {
-        let Point;
-        (function (Point) {
-            Point.Origin = new Point(0, 0);
-        })(Point = Y.Point || (Y.Point = {}));
-    })(Y = X.Y || (X.Y = {}));
-})(X || (X = {}));
+//// [simple.js]
+var A;
+(function (A) {
+    A.Instance = new A();
+})(A || (A = {}));
+class A {
+    id;
+}

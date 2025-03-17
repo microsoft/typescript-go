@@ -1,10 +1,9 @@
 --- old.importCallExpressionInAMD3.js
 +++ new.importCallExpressionInAMD3.js
-@@= skipped -12, +12 lines =@@
- }
+@@= skipped -13, +13 lines =@@
  foo();
  
--//// [0.js]
+ //// [0.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
 -    Object.defineProperty(exports, "__esModule", { value: true });
@@ -14,6 +13,13 @@
 -    }
 -    exports.B = B;
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.B = void 0;
++class B {
++    print() { return "I am B"; }
++}
++exports.B = B;
  //// [2.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
@@ -31,11 +37,3 @@
 +    c.print();
 +}
 +foo();
-+//// [0.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.B = void 0;
-+class B {
-+    print() { return "I am B"; }
-+}
-+exports.B = B;

@@ -21,6 +21,14 @@ config.x;
 config.y;
 
 
+//// [vue.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.config = exports.Vue = void 0;
+class Vue {
+}
+exports.Vue = Vue;
+exports.config = { x: 0 };
 //// [test.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -31,11 +39,3 @@ vue_1.config.x = 1;
 vue_1.config.y = {};
 vue_1.config.x;
 vue_1.config.y;
-//// [vue.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.config = exports.Vue = void 0;
-class Vue {
-}
-exports.Vue = Vue;
-exports.config = { x: 0 };

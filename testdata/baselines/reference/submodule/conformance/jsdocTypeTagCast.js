@@ -79,6 +79,8 @@ var asConst2 = /** @type {const} */({
     x: 1
 });
 
+//// [a.js]
+var W;
 //// [b.js]
 var W = ((4));
 var W = (4);
@@ -131,5 +133,3 @@ var asConst1 = (1);
 var asConst2 = ({
     x: 1
 });
-//// [a.js]
-var W;

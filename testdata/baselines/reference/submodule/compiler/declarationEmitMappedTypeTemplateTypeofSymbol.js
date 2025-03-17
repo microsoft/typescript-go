@@ -18,15 +18,15 @@ import { now } from "./a";
 
 export const timestamp = now();
 
-//// [c.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.timestamp = void 0;
-const a_1 = require("./a");
-exports.timestamp = (0, a_1.now)();
 //// [b.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.timestamp = void 0;
 const x = require("./a");
 exports.timestamp = x.now();
+//// [c.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.timestamp = void 0;
+const a_1 = require("./a");
+exports.timestamp = (0, a_1.now)();

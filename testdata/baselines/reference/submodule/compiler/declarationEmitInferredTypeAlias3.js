@@ -11,14 +11,14 @@ export { }
 var x = "hi" || 5;
 export default x;
 
-//// [1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var x = "hi" || 5;
-exports.default = x;
 //// [0.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 {
     let obj = true;
 }
+//// [1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var x = "hi" || 5;
+exports.default = x;

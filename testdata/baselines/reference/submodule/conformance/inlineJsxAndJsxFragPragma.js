@@ -77,24 +77,15 @@ function Component() { return null; }
 <Component />
 
 
-//// [preacty-only-component.js]
+//// [preacty.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-function Component() { return null; }
-<Component />;
-//// [snabbdomy-no-fragment.js]
+<><div></div></>;
+//// [snabbdomy.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-<div></div>;
-//// [preacty-no-fragment.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-<div></div>;
-//// [snabbdomy-only-fragment-no-jsx.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-<></>;
-//// [preacty-only-fragment-no-jsx.js]
+<><span></span></>;
+//// [preacty-only-fragment.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 <></>;
@@ -102,15 +93,24 @@ Object.defineProperty(exports, "__esModule", { value: true });
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 <></>;
-//// [preacty-only-fragment.js]
+//// [preacty-only-fragment-no-jsx.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 <></>;
-//// [snabbdomy.js]
+//// [snabbdomy-only-fragment-no-jsx.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-<><span></span></>;
-//// [preacty.js]
+<></>;
+//// [preacty-no-fragment.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-<><div></div></>;
+<div></div>;
+//// [snabbdomy-no-fragment.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+<div></div>;
+//// [preacty-only-component.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+function Component() { return null; }
+<Component />;

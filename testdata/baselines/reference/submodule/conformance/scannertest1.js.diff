@@ -1,8 +1,10 @@
 --- old.scannertest1.js
 +++ new.scannertest1.js
-@@= skipped -26, +26 lines =@@
+@@= skipped -25, +25 lines =@@
  
  
+ 
++//// [References.js]
  //// [scannertest1.js]
 -///<reference path='References.ts' />
 -var CharacterInfo = /** @class */ (function () {
@@ -34,4 +36,3 @@
 -}());
 +    }
 +}
-+//// [References.js]

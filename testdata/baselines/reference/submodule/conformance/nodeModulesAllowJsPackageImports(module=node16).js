@@ -37,7 +37,7 @@ type;
     }
 }
 
-//// [index.cjs]
+//// [index.js]
 import * as cjs from "#cjs";
 import * as mjs from "#mjs";
 import * as type from "#type";
@@ -51,7 +51,7 @@ import * as type from "#type";
 cjs;
 mjs;
 type;
-//// [index.js]
+//// [index.cjs]
 import * as cjs from "#cjs";
 import * as mjs from "#mjs";
 import * as type from "#type";

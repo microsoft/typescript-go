@@ -1,14 +1,12 @@
 --- old.bundlerRelative1(module=preserve).js
 +++ new.bundlerRelative1(module=preserve).js
-@@= skipped -31, +31 lines =@@
- import * as cjs from "./types/cjs";
+@@= skipped -32, +32 lines =@@
  
  
-+//// [main.js]
  //// [index.js]
 -export var x = 0;
-+export const y = 0;
++export const x = 0;
  //// [index.js]
 -export var y = 0;
--//// [main.js]
-+export const x = 0;
++export const y = 0;
+ //// [main.js]

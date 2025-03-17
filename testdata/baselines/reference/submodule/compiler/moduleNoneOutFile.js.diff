@@ -32,9 +32,9 @@
 -    }
 -    return Bar;
 -}(Foo));
-+//// [second.js]
-+class Bar extends Foo {
-+}
 +//// [first.js]
 +class Foo {
++}
++//// [second.js]
++class Bar extends Foo {
 +}

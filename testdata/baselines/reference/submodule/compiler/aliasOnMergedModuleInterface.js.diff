@@ -1,11 +1,6 @@
 --- old.aliasOnMergedModuleInterface.js
 +++ new.aliasOnMergedModuleInterface.js
-@@= skipped -20, +20 lines =@@
- var x: foo.A = foo.bar("hello"); // foo.A should be ok but foo.bar should be error
- 
- 
--//// [aliasOnMergedModuleInterface_0.js]
- //// [aliasOnMergedModuleInterface_1.js]
+@@= skipped -25, +25 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  var z;
@@ -13,4 +8,3 @@
 -var x = foo.bar("hello"); // foo.A should be ok but foo.bar should be error
 +z.bar("hello");
 +var x = foo.bar("hello");
-+//// [aliasOnMergedModuleInterface_0.js]

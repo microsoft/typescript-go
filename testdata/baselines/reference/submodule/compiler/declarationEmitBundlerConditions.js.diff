@@ -7,9 +7,6 @@
 -
 -
 -//// [makeC.d.ts]
-+//// [index.js]
-+import { makeC } from "./makeC";
-+export const c = makeC();
 +//// [makeC.js]
  import { C } from "pkg";
 -export declare function makeC(): C;
@@ -18,3 +15,6 @@
 +export function makeC() {
 +    return new C();
 +}
++//// [index.js]
++import { makeC } from "./makeC";
++export const c = makeC();

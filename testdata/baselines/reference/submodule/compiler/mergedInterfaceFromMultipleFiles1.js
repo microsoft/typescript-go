@@ -22,10 +22,10 @@ var b: number = c.bar();
 var d: number = c.a();
 var e: Date = c.b();
 
+//// [mergedInterfaceFromMultipleFiles1_0.js]
 //// [mergedInterfaceFromMultipleFiles1_1.js]
 var c;
 var a = c.foo();
 var b = c.bar();
 var d = c.a();
 var e = c.b();
-//// [mergedInterfaceFromMultipleFiles1_0.js]

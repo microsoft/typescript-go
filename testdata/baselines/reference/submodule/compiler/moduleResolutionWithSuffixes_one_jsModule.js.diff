@@ -4,20 +4,17 @@
  exports.base = base;
  
  
-+//// [/bin/foo.js]
++//// [/bin/index.js]
 +"use strict";
-+exports.__esModule = true;
-+function base() { }
-+exports.base = base;
++Object.defineProperty(exports, "__esModule", { value: true });
  //// [/bin/foo.ios.js]
  "use strict";
  exports.__esModule = true;
-@@= skipped -8, +13 lines =@@
- //// [/bin/index.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
--//// [/bin/foo.js]
+ function ios() { }
+ exports.ios = ios;
+-//// [/bin/index.js]
 -"use strict";
--exports.__esModule = true;
--function base() { }
--exports.base = base;
+-Object.defineProperty(exports, "__esModule", { value: true });
+ //// [/bin/foo.js]
+ "use strict";
+ exports.__esModule = true;

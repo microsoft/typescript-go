@@ -1,16 +1,6 @@
 --- old.importClause_namedImports.js
 +++ new.importClause_namedImports.js
-@@= skipped -13, +13 lines =@@
- const c = { A };
- 
- 
-+//// [d.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+new A();
-+b.b;
-+const c = { A };
- //// [abc.js]
+@@= skipped -17, +17 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.C = exports.A = void 0;
@@ -23,9 +13,10 @@
 +}
  exports.A = A;
  exports.C = "";
--//// [d.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--new A();
--b.b;
+ //// [d.js]
+@@= skipped -12, +9 lines =@@
+ Object.defineProperty(exports, "__esModule", { value: true });
+ new A();
+ b.b;
 -var c = { A: A };
++const c = { A };

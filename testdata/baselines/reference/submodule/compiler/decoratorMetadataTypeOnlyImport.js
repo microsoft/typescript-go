@@ -14,6 +14,9 @@ class Foo {
 }
 
 
+//// [a.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 //// [b.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -21,6 +24,3 @@ class Foo {
     @Decorator
     myList;
 }
-//// [a.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });

@@ -14,13 +14,6 @@ var x = new foo(true); // Should error
 var y = new foo({a: "test", b: 42}); // Should be OK
 var z: number = y.test.b;
 
-//// [foo_1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const foo = require("./foo_0");
-var x = new foo(true);
-var y = new foo({ a: "test", b: 42 });
-var z = y.test.b;
 //// [foo_0.js]
 "use strict";
 class Foo {
@@ -28,3 +21,10 @@ class Foo {
     constructor(x) { }
 }
 module.exports = Foo;
+//// [foo_1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const foo = require("./foo_0");
+var x = new foo(true);
+var y = new foo({ a: "test", b: 42 });
+var z = y.test.b;

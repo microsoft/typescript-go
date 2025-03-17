@@ -1,14 +1,9 @@
 --- old.declFileConstructSignatures.js
 +++ new.declFileConstructSignatures.js
-@@= skipped -63, +63 lines =@@
-     new <T extends IGlobalConstructSignature>(a: T): T;
- }
- 
-+//// [declFileConstructSignatures_1.js]
- //// [declFileConstructSignatures_0.js]
+@@= skipped -67, +67 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
--//// [declFileConstructSignatures_1.js]
+ //// [declFileConstructSignatures_1.js]
 -
 -
 -//// [declFileConstructSignatures_0.d.ts]

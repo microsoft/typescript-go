@@ -6,8 +6,14 @@
  
 -//// [outFile.js]
 -#!/usr/bin/env gjs
-+//// [test1.js]
++//// [test.js]
  "use strict";
++class Doo {
++}
++class Scooby extends Doo {
++}
++//// [test1.js]
++"use strict";
  "Another prologue";
 -var __extends = (this && this.__extends) || (function () {
 -    var extendStatics = function (d, b) {
@@ -51,10 +57,4 @@
 +class Dood {
 +}
 +class Scoobyd extends Dood {
-+}
-+//// [test.js]
-+"use strict";
-+class Doo {
-+}
-+class Scooby extends Doo {
 +}

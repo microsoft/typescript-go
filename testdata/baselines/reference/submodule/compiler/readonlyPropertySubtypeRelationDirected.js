@@ -79,22 +79,11 @@ function doSomething(condition: boolean) {
     return three;
 }
 
-//// [four.js]
+//// [one.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const one = { a: 'one' };
 const two = { a: 'two' };
-function doSomething(condition) {
-    const three = (condition) ? two : one;
-    three.a = 'foo';
-    three.a = 'foo2';
-    return three;
-}
-//// [three.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const one = { a: 'one' };
-const two = { a: 'two' };
 function doSomething(condition) {
     const three = (condition) ? one : two;
     three.a = 'foo';
@@ -112,13 +101,24 @@ function doSomething(condition) {
     three.a = 'foo2';
     return three;
 }
-//// [one.js]
+//// [three.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const two = { a: 'two' };
 const one = { a: 'one' };
+const two = { a: 'two' };
 function doSomething(condition) {
     const three = (condition) ? one : two;
+    three.a = 'foo';
+    three.a = 'foo2';
+    return three;
+}
+//// [four.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const one = { a: 'one' };
+const two = { a: 'two' };
+function doSomething(condition) {
+    const three = (condition) ? two : one;
     three.a = 'foo';
     three.a = 'foo2';
     return three;

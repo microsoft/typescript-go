@@ -23,6 +23,15 @@ class MyClass {
 export {MyClass};
 
 
+//// [db.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.db = void 0;
+class db {
+    doSomething() {
+    }
+}
+exports.db = db;
 //// [service.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -39,12 +48,3 @@ class MyClass {
     }
 }
 exports.MyClass = MyClass;
-//// [db.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.db = void 0;
-class db {
-    doSomething() {
-    }
-}
-exports.db = db;

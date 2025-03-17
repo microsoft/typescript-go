@@ -1,42 +1,30 @@
 --- old.moduleAugmentationDisallowedExtensions.js
 +++ new.moduleAugmentationDisallowedExtensions.js
-@@= skipped -44, +44 lines =@@
- import "./x";
- 
- 
--//// [x0.js]
-+//// [main.js]
- "use strict";
+@@= skipped -49, +49 lines =@@
  Object.defineProperty(exports, "__esModule", { value: true });
--exports.a = void 0;
--exports.a = 1;
-+require("./x");
- //// [x.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
-@@= skipped -12, +11 lines =@@
- (function (N1) {
-     N1.x = 1;
- })(N1 || (N1 = {}));
--//// [observable.js]
+ exports.a = void 0;
+ exports.a = 1;
+-//// [x.js]
 -"use strict";
 -Object.defineProperty(exports, "__esModule", { value: true });
--exports.x = void 0;
--exports.x = 1;
- //// [test.js]
+-var N1;
+-(function (N1) {
+-    N1.x = 1;
+-})(N1 || (N1 = {}));
+ //// [observable.js]
  "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+@@= skipped -17, +10 lines =@@
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.b = void 0;
  exports.b = 1;
--//// [main.js]
-+//// [observable.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
--require("./x");
-+exports.x = void 0;
-+exports.x = 1;
-+//// [x0.js]
++//// [x.js]
 +"use strict";
 +Object.defineProperty(exports, "__esModule", { value: true });
-+exports.a = void 0;
-+exports.a = 1;
++var N1;
++(function (N1) {
++    N1.x = 1;
++})(N1 || (N1 = {}));
+ //// [main.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });

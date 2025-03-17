@@ -5,5 +5,5 @@
 //// [bar.js]
 // however this file is _not_ a module
 
-//// [bar.js]
 //// [foo.cjs]
+//// [bar.js]

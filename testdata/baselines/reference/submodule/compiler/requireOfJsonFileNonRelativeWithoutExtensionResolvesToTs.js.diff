@@ -1,12 +1,6 @@
 --- old.requireOfJsonFileNonRelativeWithoutExtensionResolvesToTs.js
 +++ new.requireOfJsonFileNonRelativeWithoutExtensionResolvesToTs.js
-@@= skipped -13, +13 lines =@@
- export = 10;
- 
- 
--//// [out/node_modules/f.js]
--"use strict";
--module.exports = 10;
+@@= skipped -19, +19 lines =@@
  //// [out/projects/file1.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
@@ -14,6 +8,3 @@
 -var fnumber = f;
 +const f = require("f");
 +let fnumber = f;
-+//// [out/node_modules/f.js]
-+"use strict";
-+module.exports = 10;

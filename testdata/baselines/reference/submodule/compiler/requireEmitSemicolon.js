@@ -19,6 +19,17 @@ export module Database {
 	}
 } 
 
+//// [requireEmitSemicolon_0.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Models = void 0;
+var Models;
+(function (Models) {
+    class Person {
+        constructor(name) { }
+    }
+    Models.Person = Person;
+})(Models || (exports.Models = Models = {}));
 //// [requireEmitSemicolon_1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -33,14 +44,3 @@ var Database;
     }
     Database.DB = DB;
 })(Database || (exports.Database = Database = {}));
-//// [requireEmitSemicolon_0.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Models = void 0;
-var Models;
-(function (Models) {
-    class Person {
-        constructor(name) { }
-    }
-    Models.Person = Person;
-})(Models || (exports.Models = Models = {}));

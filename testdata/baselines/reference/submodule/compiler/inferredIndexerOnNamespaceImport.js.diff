@@ -1,15 +1,6 @@
 --- old.inferredIndexerOnNamespaceImport.js
 +++ new.inferredIndexerOnNamespaceImport.js
-@@= skipped -12, +12 lines =@@
- 
- f(foo);
- 
--//// [foo.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.y = exports.x = void 0;
--exports.x = 3;
--exports.y = 5;
+@@= skipped -21, +21 lines =@@
  //// [bar.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
@@ -19,9 +10,3 @@
 -    // ...
  }
  f(foo);
-+//// [foo.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.y = exports.x = void 0;
-+exports.x = 3;
-+exports.y = 5;

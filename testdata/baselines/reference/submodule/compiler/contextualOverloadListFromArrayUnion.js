@@ -65,6 +65,10 @@ series([
 })
 
 
+//// [one.js]
+export const yThen = y.map(item => item.length);
+//// [two.js]
+export const yThen = y.map(item => item.length);
 //// [three.js]
 const resizeObserver = new ResizeObserver(([entry]) => {
     entry;
@@ -103,7 +107,3 @@ series([
         console.log(results);
     }
 });
-//// [two.js]
-export const yThen = y.map(item => item.length);
-//// [one.js]
-export const yThen = y.map(item => item.length);

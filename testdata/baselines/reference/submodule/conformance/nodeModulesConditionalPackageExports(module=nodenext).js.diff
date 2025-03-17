@@ -1,16 +1,14 @@
 --- old.nodeModulesConditionalPackageExports(module=nodenext).js
 +++ new.nodeModulesConditionalPackageExports(module=nodenext).js
-@@= skipped -121, +121 lines =@@
-     }
+@@= skipped -122, +122 lines =@@
  }
  
--//// [index.mjs]
+ //// [index.mjs]
 -// esm format file
-+//// [index.js]
  import * as cjs from "package/cjs";
  import * as mjs from "package/mjs";
  import * as type from "package";
-@@= skipped -17, +16 lines =@@
+@@= skipped -16, +15 lines =@@
  typei.mjsSource;
  ts.mjsSource;
  //// [index.cjs]
@@ -61,9 +59,8 @@
  mjsi.cjsSource;
  typei.implicitCjsSource;
  ts.cjsSource;
--//// [index.js]
+ //// [index.js]
 -// esm format file
-+//// [index.mjs]
  import * as cjs from "package/cjs";
  import * as mjs from "package/mjs";
  import * as type from "package";

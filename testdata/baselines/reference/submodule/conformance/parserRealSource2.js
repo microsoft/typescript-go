@@ -273,6 +273,7 @@ module TypeScript {
 
 }
 
+//// [typescript.js]
 //// [parserRealSource2.js]
 var TypeScript;
 (function (TypeScript) {
@@ -523,4 +524,3 @@ var TypeScript;
     }
     TypeScript.flagsToString = flagsToString;
 })(TypeScript || (TypeScript = {}));
-//// [typescript.js]

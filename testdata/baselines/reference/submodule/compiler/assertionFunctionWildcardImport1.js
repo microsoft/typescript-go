@@ -28,7 +28,16 @@ ts.Debug.assert(true);
 Debug.assert(true);
 
 
-//// [bar.js]
+//// [debug.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [ts.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Debug = void 0;
+const Debug = require("../debug");
+exports.Debug = Debug;
+//// [foo.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const ts = require("./_namespaces/ts");
@@ -53,19 +62,10 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("../../core/_namespaces/ts"), exports);
-//// [foo.js]
+//// [bar.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const ts = require("./_namespaces/ts");
 const ts_1 = require("./_namespaces/ts");
 ts.Debug.assert(true);
 ts_1.Debug.assert(true);
-//// [ts.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Debug = void 0;
-const Debug = require("../debug");
-exports.Debug = Debug;
-//// [debug.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });

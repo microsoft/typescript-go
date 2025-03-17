@@ -24,13 +24,8 @@ const b2 = {} as never;
 })
 
 
-//// [b2.js]
-import a from "./a";
-const b2 = {};
-({
-    ...b2,
-    a
-});
+//// [a.js]
+export default { a: 1 };
 //// [b1.js]
 import a from "./a";
 const b1 = {};
@@ -38,5 +33,10 @@ const b1 = {};
     ...b1,
     a
 });
-//// [a.js]
-export default { a: 1 };
+//// [b2.js]
+import a from "./a";
+const b2 = {};
+({
+    ...b2,
+    a
+});

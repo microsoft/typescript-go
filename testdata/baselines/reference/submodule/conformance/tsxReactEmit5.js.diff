@@ -1,10 +1,7 @@
 --- old.tsxReactEmit5.js
 +++ new.tsxReactEmit5.js
-@@= skipped -18, +18 lines =@@
- var spread1 = <div x='' {...foo} y='' />;
- 
- 
--//// [file.js]
+@@= skipped -21, +21 lines =@@
+ //// [file.js]
  //// [react-consumer.js]
  "use strict";
 -var __assign = (this && this.__assign) || function () {
@@ -25,4 +22,3 @@
  var foo;
 -var spread1 = test_1.React.createElement("div", __assign({ x: '' }, foo, { y: '' }));
 +var spread1 = <div x='' {...foo} y=''/>;
-+//// [file.js]

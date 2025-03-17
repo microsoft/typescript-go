@@ -37,6 +37,14 @@ export class Argument extends Base {
     *validate(defs) { }
 }
 
+//// [base.js]
+export class Base {
+    constructor() { }
+    toJSON() {
+        const json = { type: undefined, name: undefined, inheritance: undefined };
+        return json;
+    }
+}
 //// [argument.js]
 import { Base } from "./base.js";
 export class Argument extends Base {
@@ -47,12 +55,4 @@ export class Argument extends Base {
         return "argument";
     }
     *validate(defs) { }
-}
-//// [base.js]
-export class Base {
-    constructor() { }
-    toJSON() {
-        const json = { type: undefined, name: undefined, inheritance: undefined };
-        return json;
-    }
 }

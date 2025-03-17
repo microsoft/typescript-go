@@ -1,18 +1,6 @@
 --- old.jsDeclarationsFunctionLikeClasses.js
 +++ new.jsDeclarationsFunctionLikeClasses.js
-@@= skipped -23, +23 lines =@@
- }
- 
- 
-+//// [referencer.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.magnitude = magnitude;
-+const source_1 = require("./source");
-+function magnitude(p) {
-+    return Math.sqrt(p.x ** 2 + p.y ** 2);
-+}
- //// [source.js]
+@@= skipped -27, +27 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.Point = Point;
@@ -23,21 +11,19 @@
  function Point(x, y) {
      if (!(this instanceof Point)) {
          return new Point(x, y);
-@@= skipped -15, +19 lines =@@
-     this.x = x;
-     this.y = y;
- }
--//// [referencer.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.magnitude = magnitude;
+@@= skipped -15, +11 lines =@@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.magnitude = magnitude;
 -var source_1 = require("./source");
 -/**
 - * @param {Point} p
 - */
--function magnitude(p) {
++const source_1 = require("./source");
+ function magnitude(p) {
 -    return Math.sqrt(Math.pow(p.x, 2) + Math.pow(p.y, 2));
--}
++    return Math.sqrt(p.x ** 2 + p.y ** 2);
+ }
 -
 -
 -//// [source.d.ts]

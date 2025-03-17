@@ -91,49 +91,6 @@ module m4 {
 }
 
 
-//// [collisionExportsRequireAndModule_globalFile.js]
-var require;
-(function (require) {
-    class C {
-    }
-    require.C = C;
-})(require || (require = {}));
-var exports;
-(function (exports) {
-    class C {
-    }
-    exports.C = C;
-})(exports || (exports = {}));
-var m3;
-(function (m3) {
-    let require;
-    (function (require) {
-        class C {
-        }
-        require.C = C;
-    })(require || (require = {}));
-    let exports;
-    (function (exports) {
-        class C {
-        }
-        exports.C = C;
-    })(exports || (exports = {}));
-})(m3 || (m3 = {}));
-var m4;
-(function (m4) {
-    let require;
-    (function (require) {
-        class C {
-        }
-        require.C = C;
-    })(require = m4.require || (m4.require = {}));
-    let exports;
-    (function (exports) {
-        class C {
-        }
-        exports.C = C;
-    })(exports = m4.exports || (m4.exports = {}));
-})(m4 || (m4 = {}));
 //// [collisionExportsRequireAndModule_externalmodule.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -188,3 +145,46 @@ var m2;
         exports.C = C;
     })(exports = m2.exports || (m2.exports = {}));
 })(m2 || (m2 = {}));
+//// [collisionExportsRequireAndModule_globalFile.js]
+var require;
+(function (require) {
+    class C {
+    }
+    require.C = C;
+})(require || (require = {}));
+var exports;
+(function (exports) {
+    class C {
+    }
+    exports.C = C;
+})(exports || (exports = {}));
+var m3;
+(function (m3) {
+    let require;
+    (function (require) {
+        class C {
+        }
+        require.C = C;
+    })(require || (require = {}));
+    let exports;
+    (function (exports) {
+        class C {
+        }
+        exports.C = C;
+    })(exports || (exports = {}));
+})(m3 || (m3 = {}));
+var m4;
+(function (m4) {
+    let require;
+    (function (require) {
+        class C {
+        }
+        require.C = C;
+    })(require = m4.require || (m4.require = {}));
+    let exports;
+    (function (exports) {
+        class C {
+        }
+        exports.C = C;
+    })(exports = m4.exports || (m4.exports = {}));
+})(m4 || (m4 = {}));

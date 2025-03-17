@@ -1,15 +1,6 @@
 --- old.moduleAugmentationGlobal2.js
 +++ new.moduleAugmentationGlobal2.js
-@@= skipped -15, +15 lines =@@
- let y = x.getCountAsString().toLowerCase();
- 
- 
-+//// [f2.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+let x = [1];
-+let y = x.getCountAsString().toLowerCase();
- //// [f1.js]
+@@= skipped -19, +19 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.A = void 0;
@@ -22,9 +13,9 @@
 +}
  exports.A = A;
  ;
--//// [f2.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
+ //// [f2.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
 -var x = [1];
 -var y = x.getCountAsString().toLowerCase();
 -
@@ -39,3 +30,5 @@
 -    }
 -}
 -export {};
++let x = [1];
++let y = x.getCountAsString().toLowerCase();

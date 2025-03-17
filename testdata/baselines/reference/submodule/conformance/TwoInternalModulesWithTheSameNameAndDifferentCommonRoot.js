@@ -30,6 +30,20 @@ module otherRoot {
     }
 }
 
+//// [part1.js]
+var Root;
+(function (Root) {
+    let A;
+    (function (A) {
+        let Utils;
+        (function (Utils) {
+            function mirror(p) {
+                return { x: p.y, y: p.x };
+            }
+            Utils.mirror = mirror;
+        })(Utils = A.Utils || (A.Utils = {}));
+    })(A = Root.A || (Root.A = {}));
+})(Root || (Root = {}));
 //// [part2.js]
 var otherRoot;
 (function (otherRoot) {
@@ -50,17 +64,3 @@ var otherRoot;
         })(Utils = A.Utils || (A.Utils = {}));
     })(A = otherRoot.A || (otherRoot.A = {}));
 })(otherRoot || (otherRoot = {}));
-//// [part1.js]
-var Root;
-(function (Root) {
-    let A;
-    (function (A) {
-        let Utils;
-        (function (Utils) {
-            function mirror(p) {
-                return { x: p.y, y: p.x };
-            }
-            Utils.mirror = mirror;
-        })(Utils = A.Utils || (A.Utils = {}));
-    })(A = Root.A || (Root.A = {}));
-})(Root || (Root = {}));

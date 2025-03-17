@@ -21,12 +21,12 @@ type __A = import("./a.d.ts").A; // ok
 const aPromise = import("./a.d.ts"); // error
 
 
-//// [c.js]
-const aPromise = import("./a.d.ts");
-export {};
-//// [b.js]
-const aPromise = import("./a.ts");
-export {};
 //// [a.js]
 export class A {
 }
+//// [b.js]
+const aPromise = import("./a.ts");
+export {};
+//// [c.js]
+const aPromise = import("./a.d.ts");
+export {};

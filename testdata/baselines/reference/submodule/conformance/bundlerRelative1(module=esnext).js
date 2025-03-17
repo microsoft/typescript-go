@@ -32,9 +32,9 @@ import b from "./types/cjs";
 import * as cjs from "./types/cjs";
 
 
-//// [main.js]
-export {};
-//// [index.js]
-export const y = 0;
 //// [index.js]
 export const x = 0;
+//// [index.js]
+export const y = 0;
+//// [main.js]
+export {};

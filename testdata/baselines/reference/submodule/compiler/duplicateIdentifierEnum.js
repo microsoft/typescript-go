@@ -37,14 +37,6 @@ enum E {
     bar
 }
 
-//// [duplicateIdentifierEnum_B.js]
-function D() {
-    return 0;
-}
-var E;
-(function (E) {
-    E[E["bar"] = 0] = "bar";
-})(E || (E = {}));
 //// [duplicateIdentifierEnum_A.js]
 var A;
 (function (A) {
@@ -70,3 +62,11 @@ var D;
 class E {
     foo;
 }
+//// [duplicateIdentifierEnum_B.js]
+function D() {
+    return 0;
+}
+var E;
+(function (E) {
+    E[E["bar"] = 0] = "bar";
+})(E || (E = {}));

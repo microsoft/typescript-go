@@ -1,8 +1,10 @@
 --- old.parserRealSource2.js
 +++ new.parserRealSource2.js
-@@= skipped -273, +273 lines =@@
+@@= skipped -272, +272 lines =@@
+ 
  }
  
++//// [typescript.js]
  //// [parserRealSource2.js]
 -// Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
 -// See LICENSE.txt in the project root for complete license information.
@@ -26,7 +28,7 @@
          ErrorRecoverySet[ErrorRecoverySet["RBrack"] = 16] = "RBrack";
          ErrorRecoverySet[ErrorRecoverySet["RCurly"] = 32] = "RCurly";
          ErrorRecoverySet[ErrorRecoverySet["RParen"] = 64] = "RParen";
-@@= skipped -44, +39 lines =@@
+@@= skipped -45, +41 lines =@@
          ErrorRecoverySet[ErrorRecoverySet["RLit"] = 134217728] = "RLit";
          ErrorRecoverySet[ErrorRecoverySet["Func"] = 268435456] = "Func";
          ErrorRecoverySet[ErrorRecoverySet["EOF"] = 536870912] = "EOF";
@@ -158,8 +160,3 @@
      TypeScript.codeGenTarget = CodeGenTarget.ES3;
      TypeScript.moduleGenTarget = ModuleGenTarget.Synchronous;
      TypeScript.optimizeModuleCodeGen = true;
-@@= skipped -35, +33 lines =@@
-     }
-     TypeScript.flagsToString = flagsToString;
- })(TypeScript || (TypeScript = {}));
-+//// [typescript.js]

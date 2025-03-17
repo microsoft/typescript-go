@@ -17,13 +17,13 @@ import a from "./a";
 a;
 
 
+//// [checkJsdocTypeTagOnExportAssignment1.js]
+//// [a.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = { c: false };
 //// [b.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const a_1 = require("./a");
 a_1.default;
-//// [a.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = { c: false };
-//// [checkJsdocTypeTagOnExportAssignment1.js]

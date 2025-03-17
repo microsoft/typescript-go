@@ -60,15 +60,6 @@ extMod.m4.fooExport();
 export var newVar2 = new extMod.m4.m2.c();
 
 
-//// [commentsExternalModules_1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.newVar2 = exports.newVar = void 0;
-const extMod = require("./commentsExternalModules2_0");
-extMod.m1.fooExport();
-exports.newVar = new extMod.m1.m2.c();
-extMod.m4.fooExport();
-exports.newVar2 = new extMod.m4.m2.c();
 //// [commentsExternalModules2_0.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -113,3 +104,12 @@ var m4;
 })(m4 || (exports.m4 = m4 = {}));
 m4.fooExport();
 var myvar2 = new m4.m2.c();
+//// [commentsExternalModules_1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.newVar2 = exports.newVar = void 0;
+const extMod = require("./commentsExternalModules2_0");
+extMod.m1.fooExport();
+exports.newVar = new extMod.m1.m2.c();
+extMod.m4.fooExport();
+exports.newVar2 = new extMod.m4.m2.c();

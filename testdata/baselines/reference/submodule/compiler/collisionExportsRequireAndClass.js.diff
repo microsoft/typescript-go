@@ -1,10 +1,9 @@
 --- old.collisionExportsRequireAndClass.js
 +++ new.collisionExportsRequireAndClass.js
-@@= skipped -35, +35 lines =@@
-     }
+@@= skipped -36, +36 lines =@@
  }
  
--//// [collisionExportsRequireAndClass_externalmodule.js]
+ //// [collisionExportsRequireAndClass_externalmodule.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
 -    Object.defineProperty(exports, "__esModule", { value: true });
@@ -50,17 +49,41 @@
 -        m2.exports = exports;
 -    })(m2 || (m2 = {}));
 -});
- //// [collisionExportsRequireAndClass_globalFile.js]
+-//// [collisionExportsRequireAndClass_globalFile.js]
 -var require = /** @class */ (function () {
 -    function require() {
--    }
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.exports = exports.require = void 0;
++class require {
++}
++exports.require = require;
++class exports {
++}
++exports.exports = exports;
++var m1;
++(function (m1) {
++    class require {
+     }
 -    return require;
 -}());
 -var exports = /** @class */ (function () {
 -    function exports() {
--    }
++    class exports {
+     }
 -    return exports;
 -}());
++})(m1 || (m1 = {}));
++var m2;
++(function (m2) {
++    class require {
++    }
++    m2.require = require;
++    class exports {
++    }
++    m2.exports = exports;
++})(m2 || (m2 = {}));
++//// [collisionExportsRequireAndClass_globalFile.js]
 +class require {
 +}
 +class exports {
@@ -101,29 +124,3 @@
 +    }
      m4.exports = exports;
  })(m4 || (m4 = {}));
-+//// [collisionExportsRequireAndClass_externalmodule.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.exports = exports.require = void 0;
-+class require {
-+}
-+exports.require = require;
-+class exports {
-+}
-+exports.exports = exports;
-+var m1;
-+(function (m1) {
-+    class require {
-+    }
-+    class exports {
-+    }
-+})(m1 || (m1 = {}));
-+var m2;
-+(function (m2) {
-+    class require {
-+    }
-+    m2.require = require;
-+    class exports {
-+    }
-+    m2.exports = exports;
-+})(m2 || (m2 = {}));

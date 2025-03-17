@@ -34,34 +34,7 @@ import a = require("./a");
 export {};
 
 
-//// [dummy.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-//// [i.cjs]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-//// [h.mjs]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-//// [g.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-//// [f.mjs]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports._ = void 0;
-exports._ = 0;
-//// [e.mjs]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports._ = void 0;
-exports._ = 0;
-//// [d.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports._ = void 0;
-exports._ = 0;
-//// [c.cjs]
+//// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports._ = void 0;
@@ -71,8 +44,35 @@ exports._ = 0;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports._ = void 0;
 exports._ = 0;
-//// [a.js]
+//// [c.cjs]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports._ = void 0;
 exports._ = 0;
+//// [d.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports._ = void 0;
+exports._ = 0;
+//// [e.mjs]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports._ = void 0;
+exports._ = 0;
+//// [f.mjs]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports._ = void 0;
+exports._ = 0;
+//// [g.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [h.mjs]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [i.cjs]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [dummy.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });

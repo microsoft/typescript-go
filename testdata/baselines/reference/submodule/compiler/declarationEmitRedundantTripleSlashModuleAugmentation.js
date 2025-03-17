@@ -21,7 +21,7 @@ export interface _ {
 }
 
 
-//// [index.js]
-export {};
 //// [augmentation.js]
+export {};
+//// [index.js]
 export {};

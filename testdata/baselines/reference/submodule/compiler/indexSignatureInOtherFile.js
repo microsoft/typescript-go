@@ -40,7 +40,7 @@ interface Array1<T> {
 }
 
 
-//// [other.js]
 //// [index.js]
 class Test extends Array1 {
 }
+//// [other.js]

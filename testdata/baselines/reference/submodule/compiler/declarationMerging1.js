@@ -11,9 +11,9 @@ interface A {
     run();
 }
 
-//// [file2.js]
 //// [file1.js]
 class A {
     _f;
     getF() { return this._f; }
 }
+//// [file2.js]

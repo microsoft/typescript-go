@@ -17,11 +17,6 @@ export = M1
 import x = require('./foo');
 x.X // .ts should be picked
 
-//// [consumer.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const x = require("./foo");
-x.X;
 //// [foo.js]
 "use strict";
 var M2;
@@ -29,3 +24,8 @@ var M2;
     M2.X = 1;
 })(M2 || (M2 = {}));
 module.exports = M2;
+//// [consumer.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const x = require("./foo");
+x.X;

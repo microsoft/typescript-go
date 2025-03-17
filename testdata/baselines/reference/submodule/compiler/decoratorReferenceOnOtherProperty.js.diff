@@ -1,24 +1,17 @@
 --- old.decoratorReferenceOnOtherProperty.js
 +++ new.decoratorReferenceOnOtherProperty.js
-@@= skipped -22, +22 lines =@@
-   //                      ^^^^
- }
- 
--//// [yoha.js]
-+//// [index2.js]
+@@= skipped -26, +26 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
--exports.Yoha = void 0;
+ exports.Yoha = void 0;
 -var Yoha = /** @class */ (function () {
 -    function Yoha() {
 -    }
 -    return Yoha;
 -}());
--exports.Yoha = Yoha;
-+function foo(...args) { }
-+class Bar {
-+    yoha(yoha, ...bar) { }
++class Yoha {
 +}
+ exports.Yoha = Yoha;
  //// [index.js]
  "use strict";
 -var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -56,8 +49,7 @@
 -    ], Bar.prototype, "yoha", null);
 -    return Bar;
 -}());
--//// [index2.js]
-+//// [yoha.js]
+ //// [index2.js]
  "use strict";
 -var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 -    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -78,8 +70,9 @@
 -    for (var _i = 0; _i < arguments.length; _i++) {
 -        args[_i] = arguments[_i];
 -    }
-+exports.Yoha = void 0;
-+class Yoha {
++function foo(...args) { }
++class Bar {
++    yoha(yoha, ...bar) { }
  }
 -var Bar = /** @class */ (function () {
 -    function Bar() {
@@ -98,4 +91,3 @@
 -    ], Bar.prototype, "yoha", null);
 -    return Bar;
 -}());
-+exports.Yoha = Yoha;

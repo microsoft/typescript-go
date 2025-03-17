@@ -14,13 +14,6 @@ export default {
     [EnumExample.TEST]: {},
 };
 
-//// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const EnumExample_1 = require("./EnumExample");
-exports.default = {
-    [EnumExample_1.default.TEST]: {},
-};
 //// [EnumExample.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -29,3 +22,10 @@ var EnumExample;
     EnumExample["TEST"] = "TEST";
 })(EnumExample || (EnumExample = {}));
 exports.default = EnumExample;
+//// [index.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const EnumExample_1 = require("./EnumExample");
+exports.default = {
+    [EnumExample_1.default.TEST]: {},
+};

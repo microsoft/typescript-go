@@ -68,6 +68,7 @@ module TypeScript {
     }
 }
 
+//// [typescript.js]
 //// [parserRealSource5.js]
 var TypeScript;
 (function (TypeScript) {
@@ -126,4 +127,3 @@ var TypeScript;
     }
     TypeScript.postPrintAST = postPrintAST;
 })(TypeScript || (TypeScript = {}));
-//// [typescript.js]

@@ -10,15 +10,15 @@
 -    }
 -    return c;
 -}());
-+//// [b.js]
-+function foo() {
-+}
-+//// [c.js]
- function bar() {
- }
--/// <reference path="c.js"/>
--//no  error on above reference since not emitting declarations
--function foo() {
+-function bar() {
 +//// [a.js]
 +class c {
  }
+-/// <reference path="c.js"/>
+-//no  error on above reference since not emitting declarations
++//// [b.js]
+ function foo() {
+ }
++//// [c.js]
++function bar() {
++}

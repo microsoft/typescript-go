@@ -1,24 +1,9 @@
 --- old.exportAssignmentImportMergeNoCrash.js
 +++ new.exportAssignmentImportMergeNoCrash.js
-@@= skipped -10, +10 lines =@@
- export const Obj = void Obj;
- 
- 
-+//// [user.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.Obj = void 0;
-+const assignment_1 = require("./assignment");
-+exports.Obj = void exports.Obj;
- //// [assignment.js]
+@@= skipped -20, +20 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
- exports.default = {
-     foo: 12
- };
--//// [user.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.Obj = void 0;
+ exports.Obj = void 0;
 -var assignment_1 = require("./assignment");
--exports.Obj = void exports.Obj;
++const assignment_1 = require("./assignment");
+ exports.Obj = void exports.Obj;

@@ -1,12 +1,10 @@
 --- old.parserArrowFunctionExpression16.js
 +++ new.parserArrowFunctionExpression16.js
-@@= skipped -6, +6 lines =@@
- true ? false ? (param): string => param : null : null
+@@= skipped -7, +7 lines =@@
  
  
--//// [fileJs.js]
+ //// [fileJs.js]
 -true ? false ? (param) => param : null : null; // Not legal JS; "Unexpected token ':'" at last colon
++true ? false ? (param) => param : null : null;
  //// [fileTs.js]
  true ? false ? (param) => param : null : null;
-+//// [fileJs.js]
-+true ? false ? (param) => param : null : null;

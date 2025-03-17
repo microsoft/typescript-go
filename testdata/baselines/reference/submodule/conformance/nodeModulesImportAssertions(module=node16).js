@@ -12,8 +12,8 @@ const json2 = import("./package.json", { assert: { type: "json" } }); // should 
     "type": "module"
 }
 
+//// [index.js]
+export {};
 //// [otherc.cjs]
 const json2 = import("./package.json", { assert: { type: "json" } });
-export {};
-//// [index.js]
 export {};

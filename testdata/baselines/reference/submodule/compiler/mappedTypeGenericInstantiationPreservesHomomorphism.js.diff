@@ -1,13 +1,6 @@
 --- old.mappedTypeGenericInstantiationPreservesHomomorphism.js
 +++ new.mappedTypeGenericInstantiationPreservesHomomorphism.js
-@@= skipped -9, +9 lines =@@
- export const mappedUnionWithPrivateType = <T extends unknown[]>(...args: T) => usePrivateType(...args);
- 
- 
--//// [internal.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
- //// [api.js]
+@@= skipped -16, +16 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.mappedUnionWithPrivateType = void 0;
@@ -32,6 +25,3 @@
 -export {};
 -//// [api.d.ts]
 -export declare const mappedUnionWithPrivateType: <T extends unknown[]>(...args: T) => T[any] extends infer T_1 ? { [K in keyof T_1]: T[any][K]; } : never;
-+//// [internal.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });

@@ -1,11 +1,9 @@
 --- old.jsxJsxsCjsTransformKeyPropCustomImportPragma(jsx=react-jsx).js
 +++ new.jsxJsxsCjsTransformKeyPropCustomImportPragma(jsx=react-jsx).js
-@@= skipped -19, +19 lines =@@
- export {};
+@@= skipped -21, +21 lines =@@
  
- 
--//// [preact.js]
--"use strict";
+ //// [preact.js]
+ "use strict";
 -var __assign = (this && this.__assign) || function () {
 -    __assign = Object.assign || function(t) {
 -        for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -17,7 +15,7 @@
 -    };
 -    return __assign.apply(this, arguments);
 -};
--Object.defineProperty(exports, "__esModule", { value: true });
+ Object.defineProperty(exports, "__esModule", { value: true });
 -var preact_1 = require("preact");
 -var jsx_runtime_1 = require("preact/jsx-runtime");
 -/// <reference path="react16.d.ts" />
@@ -25,6 +23,9 @@
 -var props = { answer: 42 };
 -var a = (0, jsx_runtime_1.jsx)("div", __assign({}, props, { children: "text" }), "foo");
 -var b = (0, preact_1.createElement)("div", __assign({}, props, { key: "bar" }), "text");
++const props = { answer: 42 };
++const a = <div key="foo" {...props}>text</div>;
++const b = <div {...props} key="bar">text</div>;
  //// [react.js]
  "use strict";
 -var __assign = (this && this.__assign) || function () {
@@ -50,9 +51,3 @@
 +const props2 = { answer: 42 };
 +const a2 = <div key="foo" {...props2}>text</div>;
 +const b2 = <div {...props2} key="bar">text</div>;
-+//// [preact.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+const props = { answer: 42 };
-+const a = <div key="foo" {...props}>text</div>;
-+const b = <div {...props} key="bar">text</div>;

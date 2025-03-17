@@ -1,10 +1,9 @@
 --- old.importCallExpressionInUMD1.js
 +++ new.importCallExpressionInUMD1.js
-@@= skipped -15, +15 lines =@@
-     const p2 = import("./0");
+@@= skipped -16, +16 lines =@@
  }
  
--//// [0.js]
+ //// [0.js]
 -(function (factory) {
 -    if (typeof module === "object" && typeof module.exports === "object") {
 -        var v = factory(require, exports);
@@ -19,6 +18,10 @@
 -    exports.foo = foo;
 -    function foo() { return "foo"; }
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.foo = foo;
++function foo() { return "foo"; }
  //// [1.js]
 -(function (factory) {
 -    if (typeof module === "object" && typeof module.exports === "object") {
@@ -54,8 +57,3 @@
 +function foo() {
 +    const p2 = Promise.resolve().then(() => require("./0"));
 +}
-+//// [0.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.foo = foo;
-+function foo() { return "foo"; }

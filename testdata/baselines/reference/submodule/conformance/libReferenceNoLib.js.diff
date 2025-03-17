@@ -1,11 +1,6 @@
 --- old.libReferenceNoLib.js
 +++ new.libReferenceNoLib.js
-@@= skipped -16, +16 lines =@@
- export const elem: HTMLElement = { field: 'a' };
- 
- 
--//// [fakelib.js]
- //// [file1.js]
+@@= skipped -21, +21 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.elem = void 0;
@@ -35,4 +30,3 @@
 -    field: string;
 -}
 -export declare const elem: HTMLElement;
-+//// [fakelib.js]

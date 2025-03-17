@@ -1,10 +1,9 @@
 --- old.jsDeclarationsTypedefAndImportTypes.js
 +++ new.jsDeclarationsTypedefAndImportTypes.js
-@@= skipped -33, +33 lines =@@
- };
+@@= skipped -34, +34 lines =@@
  
  
--//// [conn.js]
+ //// [conn.js]
 -/**
 - * @typedef {string | number} Whatever
 - */
@@ -15,7 +14,12 @@
 -    Conn.prototype.method = function () { };
 -    return Conn;
 -}());
--module.exports = Conn;
++class Conn {
++    constructor() { }
++    item = 3;
++    method() { }
++}
+ module.exports = Conn;
  //// [usage.js]
 -/**
 - * @typedef {import("./conn")} Conn
@@ -48,12 +52,7 @@
 -declare class Conn {
 -    item: number;
 -    method(): void;
-+//// [conn.js]
-+class Conn {
-+    constructor() { }
-+    item = 3;
-+    method() { }
- }
+-}
 -declare namespace Conn {
 -    export { Whatever };
 -}
@@ -72,4 +71,3 @@
 -    /** @type {import("./conn").Whatever} */
 -    another: import("./conn").Whatever;
 -}
-+module.exports = Conn;

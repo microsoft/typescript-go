@@ -1,10 +1,9 @@
 --- old.exportAssignmentOfGenericType1.js
 +++ new.exportAssignmentOfGenericType1.js
-@@= skipped -12, +12 lines =@@
- var r: string = m.foo;
+@@= skipped -13, +13 lines =@@
  
  
--//// [exportAssignmentOfGenericType1_0.js]
+ //// [exportAssignmentOfGenericType1_0.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
 -    var T = /** @class */ (function () {
@@ -14,6 +13,11 @@
 -    }());
 -    return T;
 -});
++"use strict";
++class T {
++    foo;
++}
++module.exports = T;
  //// [exportAssignmentOfGenericType1_1.js]
 -var __extends = (this && this.__extends) || (function () {
 -    var extendStatics = function (d, b) {
@@ -50,9 +54,3 @@
 +}
 +var m;
 +var r = m.foo;
-+//// [exportAssignmentOfGenericType1_0.js]
-+"use strict";
-+class T {
-+    foo;
-+}
-+module.exports = T;

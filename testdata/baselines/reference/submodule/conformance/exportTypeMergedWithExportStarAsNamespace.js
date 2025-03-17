@@ -16,17 +16,17 @@ export * as Something from "./Something"
 export type Something<A> = S.Something<A>
 
 
+//// [Something.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [prelude.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Something = void 0;
+exports.Something = require("./Something");
 //// [usage.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.myValue = void 0;
 const prelude_1 = require("./prelude");
 exports.myValue = prelude_1.Something.of("abc");
-//// [prelude.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Something = void 0;
-exports.Something = require("./Something");
-//// [Something.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });

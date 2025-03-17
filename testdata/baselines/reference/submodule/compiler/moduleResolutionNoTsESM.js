@@ -21,9 +21,9 @@ import y2 from "./y";
 import z2 from "./z";
 
 
-//// [user.js]
-export {};
-//// [y.jsx]
-export default 0;
 //// [x.js]
 export default 0;
+//// [y.jsx]
+export default 0;
+//// [user.js]
+export {};

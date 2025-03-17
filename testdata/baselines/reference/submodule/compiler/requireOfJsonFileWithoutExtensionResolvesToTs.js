@@ -24,6 +24,9 @@ if (x2) {
 //// [c.ts]
 export = { a: true, b: "hello" };
 
+//// [out/c.js]
+"use strict";
+module.exports = { a: true, b: "hello" };
 //// [out/file1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -34,6 +37,3 @@ if (x2) {
     let b = c2.b;
     let x = (c1.b === b);
 }
-//// [out/c.js]
-"use strict";
-module.exports = { a: true, b: "hello" };

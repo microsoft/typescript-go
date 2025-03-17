@@ -33,6 +33,27 @@ declare enum Enum {
     F = A
 }
 
+//// [script-namespaces.js]
+var Instantiated;
+(function (Instantiated) {
+    Instantiated.x = 1;
+})(Instantiated || (Instantiated = {}));
+//// [module-namespaces.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Instantiated = void 0;
+var Instantiated;
+(function (Instantiated) {
+    Instantiated.x = 1;
+})(Instantiated || (exports.Instantiated = Instantiated = {}));
+//// [enum1.js]
+var Enum;
+(function (Enum) {
+    Enum[Enum["A"] = 0] = "A";
+    Enum[Enum["B"] = 1] = "B";
+    Enum[Enum["C"] = 2] = "C";
+})(Enum || (Enum = {}));
+const d = 'd';
 //// [enum2.js]
 var Enum;
 (function (Enum) {
@@ -45,24 +66,3 @@ var Enum;
     Enum["Z"] = Enum.A;
     if (typeof Enum.Z !== "string") Enum[Enum.Z] = "Z";
 })(Enum || (Enum = {}));
-//// [enum1.js]
-var Enum;
-(function (Enum) {
-    Enum[Enum["A"] = 0] = "A";
-    Enum[Enum["B"] = 1] = "B";
-    Enum[Enum["C"] = 2] = "C";
-})(Enum || (Enum = {}));
-const d = 'd';
-//// [module-namespaces.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Instantiated = void 0;
-var Instantiated;
-(function (Instantiated) {
-    Instantiated.x = 1;
-})(Instantiated || (exports.Instantiated = Instantiated = {}));
-//// [script-namespaces.js]
-var Instantiated;
-(function (Instantiated) {
-    Instantiated.x = 1;
-})(Instantiated || (Instantiated = {}));

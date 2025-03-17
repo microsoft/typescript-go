@@ -1,15 +1,6 @@
 --- old.allowJscheckJsTypeParameterNoCrash.js
 +++ new.allowJscheckJsTypeParameterNoCrash.js
-@@= skipped -18, +18 lines =@@
-   }
- });
- 
--//// [func.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.vextend = void 0;
--exports.vextend = extend;
- //// [app.js]
+@@= skipped -27, +27 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.a = void 0;
@@ -26,8 +17,3 @@
 +        data2(val) { },
      }
  });
-+//// [func.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.vextend = void 0;
-+exports.vextend = extend;

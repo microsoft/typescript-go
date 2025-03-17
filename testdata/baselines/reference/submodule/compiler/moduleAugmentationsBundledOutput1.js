@@ -54,22 +54,19 @@ c.baz1().x.toExponential();
 c.baz2().x.toLowerCase();
 
 
-//// [test.js]
+//// [m1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-require("m2");
-require("m4");
-let c;
-c.foo().toExponential();
-c.bar().toLowerCase();
-c.baz1().x.toExponential();
-c.baz2().x.toLowerCase();
-//// [m4.js]
+exports.Cls = void 0;
+class Cls {
+}
+exports.Cls = Cls;
+//// [m2.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const m1_1 = require("./m1");
-m1_1.Cls.prototype.baz1 = function () { return undefined; };
-m1_1.Cls.prototype.baz2 = function () { return undefined; };
+m1_1.Cls.prototype.foo = function () { return 1; };
+m1_1.Cls.prototype.bar = function () { return "1"; };
 //// [m3.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -82,16 +79,19 @@ class C2 {
     x;
 }
 exports.C2 = C2;
-//// [m2.js]
+//// [m4.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const m1_1 = require("./m1");
-m1_1.Cls.prototype.foo = function () { return 1; };
-m1_1.Cls.prototype.bar = function () { return "1"; };
-//// [m1.js]
+m1_1.Cls.prototype.baz1 = function () { return undefined; };
+m1_1.Cls.prototype.baz2 = function () { return undefined; };
+//// [test.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Cls = void 0;
-class Cls {
-}
-exports.Cls = Cls;
+require("m2");
+require("m4");
+let c;
+c.foo().toExponential();
+c.bar().toLowerCase();
+c.baz1().x.toExponential();
+c.baz2().x.toLowerCase();

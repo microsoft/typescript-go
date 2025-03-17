@@ -1,8 +1,10 @@
 --- old.parserRealSource1.js
 +++ new.parserRealSource1.js
-@@= skipped -156, +156 lines =@@
+@@= skipped -155, +155 lines =@@
+ }
  
  
++//// [typescript.js]
  //// [parserRealSource1.js]
 -// Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
 -// See LICENSE.txt in the project root for complete license information.
@@ -14,7 +16,7 @@
      (function (CompilerDiagnostics) {
          CompilerDiagnostics.debug = false;
          CompilerDiagnostics.diagnosticWriter = null;
-@@= skipped -31, +28 lines =@@
+@@= skipped -32, +30 lines =@@
          }
          CompilerDiagnostics.assert = assert;
      })(CompilerDiagnostics = TypeScript.CompilerDiagnostics || (TypeScript.CompilerDiagnostics = {}));
@@ -143,8 +145,3 @@
                      result += "\\";
                      break;
                  default:
-@@= skipped -49, +49 lines =@@
-     }
-     TypeScript.stringToLiteral = stringToLiteral;
- })(TypeScript || (TypeScript = {}));
-+//// [typescript.js]

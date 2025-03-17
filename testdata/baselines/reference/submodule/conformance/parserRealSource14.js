@@ -577,6 +577,7 @@ module TypeScript {
 }
 
 
+//// [typescript.js]
 //// [parserRealSource14.js]
 var TypeScript;
 (function (TypeScript) {
@@ -1032,4 +1033,3 @@ var TypeScript;
     }
     TypeScript.walkAST = walkAST;
 })(TypeScript || (TypeScript = {}));
-//// [typescript.js]

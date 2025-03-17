@@ -1,16 +1,14 @@
 --- old.nodeModulesAllowJsPackageExports(module=nodenext).js
 +++ new.nodeModulesAllowJsPackageExports(module=nodenext).js
-@@= skipped -87, +87 lines =@@
-     }
+@@= skipped -88, +88 lines =@@
  }
  
--//// [index.js]
+ //// [index.js]
 -// esm format file
-+//// [index.cjs]
  import * as cjs from "package/cjs";
  import * as mjs from "package/mjs";
  import * as type from "package";
-@@= skipped -15, +14 lines =@@
+@@= skipped -14, +13 lines =@@
  mjsi;
  typei;
  //// [index.mjs]
@@ -18,11 +16,10 @@
  import * as cjs from "package/cjs";
  import * as mjs from "package/mjs";
  import * as type from "package";
-@@= skipped -13, +12 lines =@@
- cjsi;
+@@= skipped -14, +13 lines =@@
  mjsi;
  typei;
--//// [index.cjs]
+ //// [index.cjs]
 -"use strict";
 -var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
 -    if (k2 === undefined) k2 = k;
@@ -52,7 +49,6 @@
 -const cjs = __importStar(require("package/cjs"));
 -const mjs = __importStar(require("package/mjs"));
 -const type = __importStar(require("package"));
-+//// [index.js]
 +import * as cjs from "package/cjs";
 +import * as mjs from "package/mjs";
 +import * as type from "package";

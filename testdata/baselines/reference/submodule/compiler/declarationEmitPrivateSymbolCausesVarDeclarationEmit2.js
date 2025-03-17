@@ -19,6 +19,20 @@ export class D extends C {
 }
 
 
+//// [a.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.x = void 0;
+exports.x = Symbol();
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.C = void 0;
+const a_1 = require("./a");
+class C {
+    [a_1.x] = 1;
+}
+exports.C = C;
 //// [c.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -29,17 +43,3 @@ class D extends b_1.C {
     [a_1.x] = 12;
 }
 exports.D = D;
-//// [b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.C = void 0;
-const a_1 = require("./a");
-class C {
-    [a_1.x] = 1;
-}
-exports.C = C;
-//// [a.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.x = void 0;
-exports.x = Symbol();

@@ -1,29 +1,28 @@
 --- old.esModuleInteropNamedDefaultImports.js
 +++ new.esModuleInteropNamedDefaultImports.js
-@@= skipped -11, +11 lines =@@
- new Bar();
- new Foo3();
- 
--//// [mod.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.Bar = void 0;
+@@= skipped -15, +15 lines =@@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.Bar = void 0;
 -var Foo = /** @class */ (function () {
 -    function Foo() {
 -    }
 -    return Foo;
 -}());
--exports.default = Foo;
++class Foo {
++}
+ exports.default = Foo;
 -var Bar = /** @class */ (function () {
 -    function Bar() {
 -    }
 -    return Bar;
 -}());
--exports.Bar = Bar;
++class Bar {
++}
+ exports.Bar = Bar;
  //// [idx.js]
  "use strict";
- var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-@@= skipped -45, +29 lines =@@
+@@= skipped -41, +35 lines =@@
      return (mod && mod.__esModule) ? mod : { "default": mod };
  };
  Object.defineProperty(exports, "__esModule", { value: true });
@@ -36,14 +35,3 @@
  new mod_1.default();
  new mod_2.default();
  new mod_3.Bar();
- new mod_3.default();
-+//// [mod.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.Bar = void 0;
-+class Foo {
-+}
-+exports.default = Foo;
-+class Bar {
-+}
-+exports.Bar = Bar;

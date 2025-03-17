@@ -1,22 +1,20 @@
 --- old.declarationEmitNameConflicts.js
 +++ new.declarationEmitNameConflicts.js
-@@= skipped -48, +48 lines =@@
-     }
- }
- 
--//// [declarationEmit_nameConflicts_1.js]
--"use strict";
--var f;
--(function (f) {
+@@= skipped -52, +52 lines =@@
+ "use strict";
+ var f;
+ (function (f) {
 -    var c = /** @class */ (function () {
 -        function c() {
 -        }
 -        return c;
 -    }());
--    f.c = c;
--})(f || (f = {}));
--module.exports = f;
- //// [declarationEmit_nameConflicts_0.js]
++    class c {
++    }
+     f.c = c;
+ })(f || (f = {}));
+ module.exports = f;
+@@= skipped -12, +9 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.M = void 0;
@@ -39,7 +37,7 @@
      (function (N) {
          function g() { }
          N.g = g;
-@@= skipped -39, +24 lines =@@
+@@= skipped -23, +20 lines =@@
      M.d = im;
  })(M || (exports.M = M = {}));
  (function (M) {
@@ -103,12 +101,8 @@
 -
 -//// [declarationEmit_nameConflicts_1.d.ts]
 -declare namespace f {
-+//// [declarationEmit_nameConflicts_1.js]
-+"use strict";
-+var f;
-+(function (f) {
-     class c {
-     }
+-    class c {
+-    }
 -}
 -export = f;
 -//// [declarationEmit_nameConflicts_0.d.ts]
@@ -161,6 +155,3 @@
 -        }
 -    }
 -}
-+    f.c = c;
-+})(f || (f = {}));
-+module.exports = f;

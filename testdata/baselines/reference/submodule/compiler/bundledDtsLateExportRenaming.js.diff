@@ -27,37 +27,6 @@
 +};
 +Object.defineProperty(exports, "__esModule", { value: true });
 +__exportStar(require("./nested"), exports);
-+//// [index.js]
-+"use strict";
-+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-+    if (k2 === undefined) k2 = k;
-+    var desc = Object.getOwnPropertyDescriptor(m, k);
-+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-+      desc = { enumerable: true, get: function() { return m[k]; } };
-+    }
-+    Object.defineProperty(o, k2, desc);
-+}) : (function(o, m, k, k2) {
-+    if (k2 === undefined) k2 = k;
-+    o[k2] = m[k];
-+}));
-+var __exportStar = (this && this.__exportStar) || function(m, exports) {
-+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
-+};
-+Object.defineProperty(exports, "__esModule", { value: true });
-+__exportStar(require("./base"), exports);
-+__exportStar(require("./derived"), exports);
-+__exportStar(require("./shared"), exports);
-+//// [derived.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.g = g;
-+const base_1 = require("./base");
-+function g() {
-+    return (0, base_1.f)();
- }
--declare module "nested/base" {
--    import { B } from "nested/shared";
--    export function f(): B;
 +//// [base.js]
 +"use strict";
 +Object.defineProperty(exports, "__esModule", { value: true });
@@ -66,14 +35,20 @@
 +function f() {
 +    return new shared_1.B();
  }
--declare module "nested/derived" {
--    export function g(): import("nested").B;
-+//// [shared.js]
+-declare module "nested/base" {
+-    import { B } from "nested/shared";
+-    export function f(): B;
++//// [derived.js]
 +"use strict";
 +Object.defineProperty(exports, "__esModule", { value: true });
-+exports.B = void 0;
-+class B {
++exports.g = g;
++const base_1 = require("./base");
++function g() {
++    return (0, base_1.f)();
  }
+-declare module "nested/derived" {
+-    export function g(): import("nested").B;
+-}
 -declare module "nested/index" {
 -    export * from "nested/base";
 -    export * from "nested/derived";
@@ -94,7 +69,14 @@
 -    declare module "nested/shared" {
 -        export class B {
 -        }
--    }
++//// [index.js]
++"use strict";
++var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
++    if (k2 === undefined) k2 = k;
++    var desc = Object.getOwnPropertyDescriptor(m, k);
++    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
++      desc = { enumerable: true, get: function() { return m[k]; } };
+     }
 -    declare module "nested/base" {
 -        import { B } from "nested/shared";
 -        export function f(): B;
@@ -113,4 +95,22 @@
 -        export * from "nested/index";
 -    }
 -    
++    Object.defineProperty(o, k2, desc);
++}) : (function(o, m, k, k2) {
++    if (k2 === undefined) k2 = k;
++    o[k2] = m[k];
++}));
++var __exportStar = (this && this.__exportStar) || function(m, exports) {
++    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
++};
++Object.defineProperty(exports, "__esModule", { value: true });
++__exportStar(require("./base"), exports);
++__exportStar(require("./derived"), exports);
++__exportStar(require("./shared"), exports);
++//// [shared.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.B = void 0;
++class B {
++}
 +exports.B = B;

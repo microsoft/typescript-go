@@ -1,40 +1,24 @@
 --- old.exportNamespace3.js
 +++ new.exportNamespace3.js
-@@= skipped -13, +13 lines =@@
- new a.A(); // Error
- 
- 
--//// [a.js]
-+//// [d.js]
+@@= skipped -17, +17 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
--exports.A = void 0;
+ exports.A = void 0;
 -var A = /** @class */ (function () {
 -    function A() {
 -    }
 -    return A;
 -}());
--exports.A = A;
--//// [b.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
-+const c_1 = require("./c");
-+new c_1.a.A();
- //// [c.js]
++class A {
++}
+ exports.A = A;
+ //// [b.js]
  "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
- exports.a = void 0;
- exports.a = require("./b");
--//// [d.js]
-+//// [b.js]
+@@= skipped -17, +14 lines =@@
+ //// [d.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
 -var c_1 = require("./c");
 -new c_1.a.A(); // Error
-+//// [a.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.A = void 0;
-+class A {
-+}
-+exports.A = A;
++const c_1 = require("./c");
++new c_1.a.A();

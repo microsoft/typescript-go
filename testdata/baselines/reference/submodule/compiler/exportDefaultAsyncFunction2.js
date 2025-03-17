@@ -27,21 +27,21 @@ export default async
 
 export function foo() { }
 
+//// [asyncawait.js]
+export function async(...args) { }
+export function await(...args) { }
+//// [a.js]
+import { async, await } from 'asyncawait';
+export default async(() => await(Promise.resolve(1)));
+//// [b.js]
+export default async () => { return 0; };
+//// [c.js]
+import { async } from 'asyncawait';
+export default async();
+//// [d.js]
+import { async } from 'asyncawait';
+export default async;
 //// [e.js]
 import { async } from 'asyncawait';
 export default async;
 export function foo() { }
-//// [d.js]
-import { async } from 'asyncawait';
-export default async;
-//// [c.js]
-import { async } from 'asyncawait';
-export default async();
-//// [b.js]
-export default async () => { return 0; };
-//// [a.js]
-import { async, await } from 'asyncawait';
-export default async(() => await(Promise.resolve(1)));
-//// [asyncawait.js]
-export function async(...args) { }
-export function await(...args) { }

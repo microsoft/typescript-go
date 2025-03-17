@@ -5,14 +5,9 @@
  
  
 -//// [test.js]
-+//// [B.js]
++//// [A.js]
  var ts;
  (function (ts) {
-+    ts.sys = { version: "2.0.5" };
-+})(ts || (ts = {}));
-+//// [A.js]
-+var ts;
-+(function (ts) {
      function printVersion() {
 -        log("Version: " + ts.sys.version); // the call of sys.version is deferred, should not report an error.
 +        log("Version: " + sys.version);
@@ -22,7 +17,7 @@
      }
      ts.log = log;
  })(ts || (ts = {}));
--var ts;
--(function (ts) {
--    ts.sys = { version: "2.0.5" };
--})(ts || (ts = {}));
++//// [B.js]
+ var ts;
+ (function (ts) {
+     ts.sys = { version: "2.0.5" };

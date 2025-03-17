@@ -10,10 +10,10 @@ export default {
 import a from "./a" with { a: "a", "b": "b" }; // ok
 
 
-//// [b.js]
-export {};
 //// [a.js]
 export default {
     a: "a",
     b: "b",
 };
+//// [b.js]
+export {};

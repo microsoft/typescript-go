@@ -22,7 +22,7 @@ class H { }
 class I { }
 
 
-//// [file2.js]
+//// [file1.js]
 class A {
 }
 class B {
@@ -41,7 +41,7 @@ class H {
 }
 class I {
 }
-//// [file1.js]
+//// [file2.js]
 class A {
 }
 class B {

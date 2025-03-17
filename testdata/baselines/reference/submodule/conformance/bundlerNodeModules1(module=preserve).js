@@ -37,6 +37,6 @@ import { esm, cjs } from "dual";
 import { esm, cjs } from "dual";
 
 
-//// [main.cjs]
-//// [main.mjs]
 //// [main.js]
+//// [main.mjs]
+//// [main.cjs]

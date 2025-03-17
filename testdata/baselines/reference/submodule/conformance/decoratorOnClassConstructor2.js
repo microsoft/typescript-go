@@ -13,6 +13,15 @@ export class C  extends base{
     }
 }
 
+//// [0.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.base = void 0;
+exports.foo = foo;
+class base {
+}
+exports.base = base;
+function foo(target, propertyKey, parameterIndex) { }
 //// [2.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -25,12 +34,3 @@ class C extends _0_ts_1.base {
     }
 }
 exports.C = C;
-//// [0.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.base = void 0;
-exports.foo = foo;
-class base {
-}
-exports.base = base;
-function foo(target, propertyKey, parameterIndex) { }

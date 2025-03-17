@@ -7,11 +7,6 @@ export default C.x;
 import def from "./code";
 void def;
 
-//// [usage.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const code_1 = require("./code");
-void code_1.default;
 //// [code.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -20,3 +15,8 @@ class C {
 }
 ;
 exports.default = C.x;
+//// [usage.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const code_1 = require("./code");
+void code_1.default;

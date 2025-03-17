@@ -154,6 +154,13 @@ declare class RC<T extends "a" | "b"> {
 }
 
 
+//// [module.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.s0 = exports.c1 = exports.c0 = void 0;
+exports.c0 = "a";
+exports.c1 = 1;
+exports.s0 = Symbol();
 //// [main.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -203,10 +210,3 @@ exports.o1_s2 = exports.o1[exports.s2];
 exports.o2 = exports.o1;
 rI.x;
 rC.x;
-//// [module.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.s0 = exports.c1 = exports.c0 = void 0;
-exports.c0 = "a";
-exports.c1 = 1;
-exports.s0 = Symbol();

@@ -1,18 +1,21 @@
 --- old.jsDeclarationsComputedNames.js
 +++ new.jsDeclarationsComputedNames.js
-@@= skipped -27, +27 lines =@@
- }
+@@= skipped -28, +28 lines =@@
  
  
--//// [index.js]
+ //// [index.js]
 -var _a, _b;
 -var TopLevelSym = Symbol();
 -var InnerSym = Symbol();
 -module.exports = (_a = {},
 -    _a[TopLevelSym] = function (x) {
 -        if (x === void 0) { x = 12; }
--        return x;
--    },
++const TopLevelSym = Symbol();
++const InnerSym = Symbol();
++module.exports = {
++    [TopLevelSym](x = 12) {
+         return x;
+     },
 -    _a.items = (_b = {},
 -        _b[InnerSym] = function (arg) {
 -            if (arg === void 0) { arg = { x: 12 }; }
@@ -20,6 +23,10 @@
 -        },
 -        _b),
 -    _a);
++    items: {
++        [InnerSym]: (arg = { x: 12 }) => arg.x
++    }
++};
  //// [index2.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
@@ -46,28 +53,18 @@
 -    MyClass[_a] = 12;
 -    return MyClass;
 -}());
-+}
- exports.MyClass = MyClass;
+-exports.MyClass = MyClass;
 -
 -
 -//// [index.d.ts]
 -declare const _exports: {
 -    [TopLevelSym](x?: number): number;
-+//// [index.js]
-+const TopLevelSym = Symbol();
-+const InnerSym = Symbol();
-+module.exports = {
-+    [TopLevelSym](x = 12) {
-+        return x;
-+    },
-     items: {
+-    items: {
 -        [InnerSym]: (arg?: {
 -            x: number;
 -        }) => number;
 -    };
-+        [InnerSym]: (arg = { x: 12 }) => arg.x
-+    }
- };
+-};
 -export = _exports;
 -declare const TopLevelSym: unique symbol;
 -declare const InnerSym: unique symbol;
@@ -79,7 +76,8 @@
 -     */
 -    constructor(_p?: typeof TopLevelSym | typeof InnerSym);
 -    [InnerSym]: string;
--}
+ }
 -declare const InnerSym: unique symbol;
 -declare const TopLevelSym: unique symbol;
 -export {};
++exports.MyClass = MyClass;

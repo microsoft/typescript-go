@@ -21,9 +21,9 @@
 -//// [c.d.ts]
 -type Foo = teams.calling.Foo;
 -export declare const bar: (p?: Foo) => void;
++//// [a.js]
+ export {};
++//// [b.js]
++export {};
 +//// [c.js]
 +export const bar = (p) => { };
-+//// [b.js]
- export {};
-+//// [a.js]
-+export {};

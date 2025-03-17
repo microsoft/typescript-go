@@ -1,10 +1,9 @@
 --- old.topLevelAwait.1(module=system,target=es2017).js
 +++ new.topLevelAwait.1(module=system,target=es2017).js
-@@= skipped -79, +79 lines =@@
- }
+@@= skipped -80, +80 lines =@@
  
  
--//// [other.js]
+ //// [other.js]
 -System.register([], function (exports_1, context_1) {
 -    "use strict";
 -    var _a, e_1, _b, _c, _await, arr;
@@ -34,6 +33,15 @@
 -        }
 -    };
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.await = void 0;
++const _await = 1;
++exports.await = _await;
++const arr = [Promise.resolve()];
++for await (const item of arr) {
++    item;
++}
  //// [index.js]
 -System.register([], function (exports_1, context_1) {
 -    "use strict";
@@ -133,13 +141,3 @@
 +throw await 1;
 +let y = await 1;
 +await 1;
-+//// [other.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.await = void 0;
-+const _await = 1;
-+exports.await = _await;
-+const arr = [Promise.resolve()];
-+for await (const item of arr) {
-+    item;
-+}

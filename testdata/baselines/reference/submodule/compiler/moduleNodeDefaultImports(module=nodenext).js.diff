@@ -1,17 +1,17 @@
 --- old.moduleNodeDefaultImports(module=nodenext).js
 +++ new.moduleNodeDefaultImports(module=nodenext).js
-@@= skipped -32, +32 lines =@@
- self.default.default();
+@@= skipped -33, +33 lines =@@
  self.def.default();
  
--//// [mod.cjs]
+ //// [mod.cjs]
 -"use strict";
 -Object.defineProperty(exports, "__esModule", { value: true });
 -exports.default = fun;
++export default fun;
  //// [b.mjs]
  import a from "./mod.cjs";
  import { default as b } from "./mod.cjs";
-@@= skipped -16, +12 lines =@@
+@@= skipped -15, +13 lines =@@
  c === d;
  d === self.default;
  self.default === self.def;
@@ -26,8 +26,3 @@
  a.default();
  b.default();
  c.default();
- d.default();
- self.default.default();
- self.def.default();
-+//// [mod.cjs]
-+export default fun;

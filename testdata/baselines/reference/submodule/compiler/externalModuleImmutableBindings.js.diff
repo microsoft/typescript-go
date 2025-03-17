@@ -1,14 +1,6 @@
 --- old.externalModuleImmutableBindings.js
 +++ new.externalModuleImmutableBindings.js
-@@= skipped -49, +49 lines =@@
- 
- 
- 
--//// [f1.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.x = void 0;
--exports.x = 1;
+@@= skipped -57, +57 lines =@@
  //// [f2.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
@@ -18,7 +10,7 @@
  var n = 'baz';
  stuff.x = 0;
  stuff['x'] = 1;
-@@= skipped -28, +22 lines =@@
+@@= skipped -20, +19 lines =@@
  (stuff['blah'])++;
  (stuff[n])++;
  for (stuff.x in []) { }
@@ -61,8 +53,3 @@
 -    (stuff[n]) = _q[_p];
 -}
 +for ((stuff[n]) of []) { }
-+//// [f1.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.x = void 0;
-+exports.x = 1;

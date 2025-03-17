@@ -1,20 +1,18 @@
 --- old.unusedImports11.js
 +++ new.unusedImports11.js
-@@= skipped -16, +16 lines =@@
- new ns.Member();
- new r.Member();
- 
--//// [b.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.Member = void 0;
+@@= skipped -20, +20 lines =@@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.Member = void 0;
 -var Member = /** @class */ (function () {
 -    function Member() {
 -    }
 -    return Member;
 -}());
--exports.Member = Member;
--exports.default = Member;
++class Member {
++}
+ exports.Member = Member;
+ exports.default = Member;
  //// [a.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
@@ -29,13 +27,3 @@
  new b_1.Member();
  new b_2.default();
  new b_2.Member();
- new ns.Member();
- new r.Member();
-+//// [b.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.Member = void 0;
-+class Member {
-+}
-+exports.Member = Member;
-+exports.default = Member;

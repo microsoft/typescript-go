@@ -1,11 +1,7 @@
 --- old.decoratorMetadataTypeOnlyExport.js
 +++ new.decoratorMetadataTypeOnlyExport.js
-@@= skipped -14, +14 lines =@@
- }
- 
- 
--//// [a.js]
-+//// [b.js]
+@@= skipped -17, +17 lines =@@
+ //// [a.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
 -var Foo = /** @class */ (function () {
@@ -13,13 +9,9 @@
 -    }
 -    return Foo;
 -}());
--//// [b.js]
-+const Decorator = () => undefined;
-+@Decorator
-+class Bar {
-+    constructor(par) { }
++class Foo {
 +}
-+//// [a.js]
+ //// [b.js]
  "use strict";
 -var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 -    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -41,5 +33,8 @@
 -    ], Bar);
 -    return Bar;
 -}());
-+class Foo {
++const Decorator = () => undefined;
++@Decorator
++class Bar {
++    constructor(par) { }
 +}

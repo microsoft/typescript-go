@@ -38,6 +38,13 @@ class HelloWorld {
 }
 
 
+//// [type1.js]
+export {};
+//// [type2.js]
+export {};
+//// [class3.js]
+export class C3 {
+}
 //// [index.js]
 class HelloWorld {
     @EventListener('1')
@@ -53,11 +60,4 @@ class HelloWorld {
     @EventListener('3')
     handleEvent3(event) { return undefined; }
 }
-export {};
-//// [class3.js]
-export class C3 {
-}
-//// [type2.js]
-export {};
-//// [type1.js]
 export {};

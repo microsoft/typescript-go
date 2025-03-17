@@ -1,28 +1,18 @@
 --- old.ModuleAndClassWithSameNameAndCommonRoot.js
 +++ new.ModuleAndClassWithSameNameAndCommonRoot.js
-@@= skipped -30, +30 lines =@@
- }
- 
- 
--//// [module.js]
--var X;
--(function (X) {
+@@= skipped -33, +33 lines =@@
+ //// [module.js]
+ var X;
+ (function (X) {
 -    var Y;
--    (function (Y) {
++    let Y;
+     (function (Y) {
 -        var Point;
--        (function (Point) {
--            Point.Origin = new Point(0, 0);
--        })(Point = Y.Point || (Y.Point = {}));
--    })(Y = X.Y || (X.Y = {}));
--})(X || (X = {}));
-+//// [simple.js]
-+var A;
-+(function (A) {
-+    A.Instance = new A();
-+})(A || (A = {}));
-+class A {
-+    id;
-+}
++        let Point;
+         (function (Point) {
+             Point.Origin = new Point(0, 0);
+         })(Point = Y.Point || (Y.Point = {}));
+@@= skipped -11, +11 lines =@@
  //// [classPoint.js]
  var X;
  (function (X) {
@@ -45,25 +35,16 @@
          Y.Point = Point;
      })(Y = X.Y || (X.Y = {}));
  })(X || (X = {}));
--//// [simple.js]
--var A;
--(function (A) {
--    A.Instance = new A();
--})(A || (A = {}));
+@@= skipped -18, +18 lines =@@
+ (function (A) {
+     A.Instance = new A();
+ })(A || (A = {}));
 -// duplicate identifier
 -var A = /** @class */ (function () {
 -    function A() {
 -    }
 -    return A;
 -}());
-+//// [module.js]
-+var X;
-+(function (X) {
-+    let Y;
-+    (function (Y) {
-+        let Point;
-+        (function (Point) {
-+            Point.Origin = new Point(0, 0);
-+        })(Point = Y.Point || (Y.Point = {}));
-+    })(Y = X.Y || (X.Y = {}));
-+})(X || (X = {}));
++class A {
++    id;
++}

@@ -1,29 +1,18 @@
 --- old.aliasUsageInAccessorsOfClass.js
 +++ new.aliasUsageInAccessorsOfClass.js
-@@= skipped -26, +26 lines =@@
-     }
- }
- 
--//// [aliasUsage1_backbone.js]
-+//// [aliasUsage1_main.js]
+@@= skipped -30, +30 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
--exports.Model = void 0;
+ exports.Model = void 0;
 -var Model = /** @class */ (function () {
 -    function Model() {
-+const moduleA = require("./aliasUsage1_moduleA");
-+class C2 {
-+    x;
-+    get A() {
-+        return this.x;
-     }
+-    }
 -    return Model;
 -}());
--exports.Model = Model;
-+    set A(x) {
-+        x = moduleA;
-+    }
++class Model {
++    someData;
 +}
+ exports.Model = Model;
  //// [aliasUsage1_moduleA.js]
  "use strict";
 -var __extends = (this && this.__extends) || (function () {
@@ -55,14 +44,18 @@
 +class VisualizationModel extends Backbone.Model {
 +}
  exports.VisualizationModel = VisualizationModel;
--//// [aliasUsage1_main.js]
-+//// [aliasUsage1_backbone.js]
+ //// [aliasUsage1_main.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
 -var moduleA = require("./aliasUsage1_moduleA");
 -var C2 = /** @class */ (function () {
 -    function C2() {
--    }
++const moduleA = require("./aliasUsage1_moduleA");
++class C2 {
++    x;
++    get A() {
++        return this.x;
+     }
 -    Object.defineProperty(C2.prototype, "A", {
 -        get: function () {
 -            return this.x;
@@ -75,8 +68,7 @@
 -    });
 -    return C2;
 -}());
-+exports.Model = void 0;
-+class Model {
-+    someData;
++    set A(x) {
++        x = moduleA;
++    }
 +}
-+exports.Model = Model;

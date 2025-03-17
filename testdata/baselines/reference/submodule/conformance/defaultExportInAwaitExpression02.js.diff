@@ -1,14 +1,7 @@
 --- old.defaultExportInAwaitExpression02.js
 +++ new.defaultExportInAwaitExpression02.js
-@@= skipped -11, +11 lines =@@
- }() );
- 
- 
--//// [a.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--const x = new Promise((resolve, reject) => { resolve({}); });
--exports.default = x;
+@@= skipped -18, +18 lines =@@
+ exports.default = x;
  //// [b.js]
  "use strict";
 -var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -29,8 +22,3 @@
 +(async function () {
 +    const value = await a_1.default;
  }());
-+//// [a.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+const x = new Promise((resolve, reject) => { resolve({}); });
-+exports.default = x;

@@ -10,6 +10,6 @@ interface P<R> { }
 new P<string>(r => { r('foo') });
 
 
+//// [first.js]
 //// [second.js]
 new P(r => { r('foo'); });
-//// [first.js]

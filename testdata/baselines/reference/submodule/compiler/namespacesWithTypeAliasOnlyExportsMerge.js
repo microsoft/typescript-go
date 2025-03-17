@@ -46,12 +46,12 @@ declare const try5: NS1.NS2.NS1.A;
 declare const try6: NS2.NS1.NS2.B;
 
 
-//// [circularWithUses.js]
+//// [constAndNS.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 //// [circular.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-//// [constAndNS.js]
+//// [circularWithUses.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });

@@ -1,22 +1,9 @@
 --- old.importAttributes2(module=esnext).js
 +++ new.importAttributes2(module=esnext).js
-@@= skipped -14, +14 lines =@@
- export { a as c, b as d } from './0' with { a: "a", b: "b", c: "c" }
- 
- 
--//// [0.js]
--export const a = 1;
--export const b = 2;
-+//// [2.js]
-+export { a, b } from './0' with {};
-+export { a as c, b as d } from './0' with { a: "a", b: "b", c: "c" };
- //// [1.js]
- export { a, b } from './0' with { type: "json" };
- export * from './0' with { type: "json" };
- export * as ns from './0' with { type: "json" };
--//// [2.js]
--export { a, b } from './0' with {};
--export { a as c, b as d } from './0' with { a: "a", b: "b", c: "c" };
+@@= skipped -24, +24 lines =@@
+ //// [2.js]
+ export { a, b } from './0' with {};
+ export { a as c, b as d } from './0' with { a: "a", b: "b", c: "c" };
 -
 -
 -//// [0.d.ts]
@@ -30,6 +17,3 @@
 -//// [2.d.ts]
 -export { a, b } from './0';
 -export { a as c, b as d } from './0';
-+//// [0.js]
-+export const a = 1;
-+export const b = 2;

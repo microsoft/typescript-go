@@ -1,23 +1,9 @@
 --- old.exportEqualsDefaultProperty.js
 +++ new.exportEqualsDefaultProperty.js
-@@= skipped -12, +12 lines =@@
- foo.toExponential(2);
- 
- 
-+//// [imp.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+const exp_1 = require("./exp");
-+exp_1.default.toExponential(2);
- //// [exp.js]
+@@= skipped -22, +22 lines =@@
+ //// [imp.js]
  "use strict";
- var x = {
-@@= skipped -7, +12 lines =@@
-     "default": 42
- };
- module.exports = x;
--//// [imp.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
+ Object.defineProperty(exports, "__esModule", { value: true });
 -var exp_1 = require("./exp");
--exp_1.default.toExponential(2);
++const exp_1 = require("./exp");
+ exp_1.default.toExponential(2);

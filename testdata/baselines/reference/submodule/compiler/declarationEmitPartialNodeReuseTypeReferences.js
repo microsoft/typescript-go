@@ -17,11 +17,11 @@ export const g = a.o
 import { o, SpecialString } from "./a";
 export const g = o
 
-//// [c.js]
-import { o } from "./a";
-export const g = o;
+//// [a.js]
+export const o = (p1, p2, p3) => null;
 //// [b.js]
 import * as a from "./a";
 export const g = a.o;
-//// [a.js]
-export const o = (p1, p2, p3) => null;
+//// [c.js]
+import { o } from "./a";
+export const g = o;

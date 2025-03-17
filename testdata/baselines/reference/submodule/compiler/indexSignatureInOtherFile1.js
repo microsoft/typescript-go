@@ -39,7 +39,7 @@ class Test extends Array1 {
   [key: symbol]: string
 }
 
+//// [other.js]
 //// [index.js]
 class Test extends Array1 {
 }
-//// [other.js]

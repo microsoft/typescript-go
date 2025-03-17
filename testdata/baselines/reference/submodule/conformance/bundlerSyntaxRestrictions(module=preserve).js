@@ -31,11 +31,11 @@ export {};
 export const a = "a";
 
 
-//// [main.js]
-module.exports = {};
+//// [a.js]
+export const a = "a";
 //// [mainJs.js]
 import("./a");
 const _ = require("./a");
 _.a;
-//// [a.js]
-export const a = "a";
+//// [main.js]
+module.exports = {};

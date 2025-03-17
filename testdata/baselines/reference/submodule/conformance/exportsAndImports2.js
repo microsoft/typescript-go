@@ -12,13 +12,12 @@ import { x, y } from "./t1";
 export { x as y, y as x };
 
 
-//// [t3.js]
+//// [t1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.x = exports.y = void 0;
-const t1_1 = require("./t1");
-Object.defineProperty(exports, "y", { enumerable: true, get: function () { return t1_1.x; } });
-Object.defineProperty(exports, "x", { enumerable: true, get: function () { return t1_1.y; } });
+exports.y = exports.x = void 0;
+exports.x = "x";
+exports.y = "y";
 //// [t2.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -26,9 +25,10 @@ exports.x = exports.y = void 0;
 const t1_1 = require("./t1");
 Object.defineProperty(exports, "y", { enumerable: true, get: function () { return t1_1.x; } });
 Object.defineProperty(exports, "x", { enumerable: true, get: function () { return t1_1.y; } });
-//// [t1.js]
+//// [t3.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.y = exports.x = void 0;
-exports.x = "x";
-exports.y = "y";
+exports.x = exports.y = void 0;
+const t1_1 = require("./t1");
+Object.defineProperty(exports, "y", { enumerable: true, get: function () { return t1_1.x; } });
+Object.defineProperty(exports, "x", { enumerable: true, get: function () { return t1_1.y; } });

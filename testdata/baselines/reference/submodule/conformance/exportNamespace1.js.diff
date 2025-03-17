@@ -1,40 +1,22 @@
 --- old.exportNamespace1.js
 +++ new.exportNamespace1.js
-@@= skipped -13, +13 lines =@@
- new A(); // Error
- 
- 
--//// [a.js]
-+//// [d.js]
+@@= skipped -17, +17 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
--exports.A = void 0;
+ exports.A = void 0;
 -var A = /** @class */ (function () {
 -    function A() {
 -    }
 -    return A;
 -}());
--exports.A = A;
--//// [b.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
-+new A();
- //// [c.js]
++class A {
++}
+ exports.A = A;
+ //// [b.js]
  "use strict";
- var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-@@= skipped -31, +22 lines =@@
- };
- Object.defineProperty(exports, "__esModule", { value: true });
- __exportStar(require("./b"), exports);
--//// [d.js]
-+//// [b.js]
+@@= skipped -30, +27 lines =@@
+ //// [d.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
 -new A(); // Error
-+//// [a.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.A = void 0;
-+class A {
-+}
-+exports.A = A;
++new A();

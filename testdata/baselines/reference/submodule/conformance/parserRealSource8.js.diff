@@ -1,8 +1,10 @@
 --- old.parserRealSource8.js
 +++ new.parserRealSource8.js
-@@= skipped -468, +468 lines =@@
+@@= skipped -467, +467 lines =@@
+     }
  }
  
++//// [typescript.js]
  //// [parserRealSource8.js]
 -// Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
 -// See LICENSE.txt in the project root for complete license information.
@@ -26,7 +28,7 @@
      TypeScript.AssignScopeContext = AssignScopeContext;
      function pushAssignScope(scope, context, type, classType, fnc) {
          var chain = new ScopeChain(null, context.scopeChain, scope);
-@@= skipped -39, +38 lines =@@
+@@= skipped -40, +40 lines =@@
          return s.isInstanceProperty();
      }
      TypeScript.instanceFilterStop = instanceFilterStop;
@@ -206,8 +208,3 @@
              var catchLocals = new SymbolScopeBuilder(catchTable, null, null, null, context.scopeChain.scope, context.scopeChain.scope.container);
              catchBlock.containedScope = catchLocals;
              pushAssignScope(catchLocals, context, context.scopeChain.thisType, context.scopeChain.classType, context.scopeChain.fnc);
-@@= skipped -83, +83 lines =@@
-     }
-     TypeScript.postAssignScopes = postAssignScopes;
- })(TypeScript || (TypeScript = {}));
-+//// [typescript.js]

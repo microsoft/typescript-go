@@ -14,10 +14,16 @@ import { A } from './c';
 new A(); // Error
 
 
-//// [d.js]
+//// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-new A();
+exports.A = void 0;
+class A {
+}
+exports.A = A;
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 //// [c.js]
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -36,13 +42,7 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./b"), exports);
-//// [b.js]
+//// [d.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-//// [a.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.A = void 0;
-class A {
-}
-exports.A = A;
+new A();

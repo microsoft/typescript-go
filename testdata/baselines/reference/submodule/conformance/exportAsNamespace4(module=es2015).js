@@ -21,6 +21,15 @@ foo1.a;
 foo.b;
 foo1.b;
 
+//// [0.js]
+export const a = 1;
+export const b = 2;
+//// [1.js]
+import * as default_1 from './0';
+export default default_1;
+//// [11.js]
+import * as ns from './0';
+export default ns;
 //// [2.js]
 import foo from './1';
 import foo1 from './11';
@@ -28,12 +37,3 @@ foo.a;
 foo1.a;
 foo.b;
 foo1.b;
-//// [11.js]
-import * as ns from './0';
-export default ns;
-//// [1.js]
-import * as default_1 from './0';
-export default default_1;
-//// [0.js]
-export const a = 1;
-export const b = 2;

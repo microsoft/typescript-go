@@ -1,10 +1,9 @@
 --- old.mergedDeclarations6.js
 +++ new.mergedDeclarations6.js
-@@= skipped -21, +21 lines =@@
-     }
+@@= skipped -22, +22 lines =@@
  }
  
--//// [a.js]
+ //// [a.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
 -    Object.defineProperty(exports, "__esModule", { value: true });
@@ -19,6 +18,16 @@
 -    }());
 -    exports.A = A;
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.A = void 0;
++class A {
++    protected;
++    setProtected(val) {
++        this.protected = val;
++    }
++}
++exports.A = A;
  //// [b.js]
 -var __extends = (this && this.__extends) || (function () {
 -    var extendStatics = function (d, b) {
@@ -59,14 +68,3 @@
 +    }
 +}
 +exports.B = B;
-+//// [a.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.A = void 0;
-+class A {
-+    protected;
-+    setProtected(val) {
-+        this.protected = val;
-+    }
-+}
-+exports.A = A;

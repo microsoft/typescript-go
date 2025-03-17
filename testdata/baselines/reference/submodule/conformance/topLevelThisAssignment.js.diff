@@ -5,11 +5,10 @@
  
  
 -//// [output.js]
--this.a = 10;
-+//// [b.js]
++//// [a.js]
+ this.a = 10;
  this.a;
  a;
-+//// [a.js]
-+this.a = 10;
++//// [b.js]
  this.a;
  a;

@@ -25,12 +25,9 @@ import * as model from "./model";
 export const func = (account: model.Account, acc2: model.Acc) => {};
 
 
-//// [index.js]
+//// [account.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.func = void 0;
-const func = (account, acc2) => { };
-exports.func = func;
 //// [index.js]
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -49,6 +46,9 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./account"), exports);
-//// [account.js]
+//// [index.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.func = void 0;
+const func = (account, acc2) => { };
+exports.func = func;

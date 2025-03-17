@@ -19,5 +19,5 @@ interface I2 {
 interface I3 {
 }
 
-//// [b.js]
 //// [a.js]
+//// [b.js]

@@ -92,7 +92,7 @@ var f: (s: string) => number;
 var ctor: new (s: string) => { s: string };
 
 
-//// [b.js]
+//// [a.js]
 var S;
 var s;
 var N;
@@ -115,7 +115,7 @@ var obj;
 var Func;
 var f;
 var ctor;
-//// [a.js]
+//// [b.js]
 var S;
 var s;
 var N;

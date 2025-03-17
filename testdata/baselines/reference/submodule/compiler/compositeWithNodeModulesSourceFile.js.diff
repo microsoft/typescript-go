@@ -1,6 +1,16 @@
 --- old.compositeWithNodeModulesSourceFile.js
 +++ new.compositeWithNodeModulesSourceFile.js
-@@= skipped -11, +11 lines =@@
+@@= skipped -8, +8 lines =@@
+ 
+ 
+ 
++//// [index.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.c = void 0;
++class c {
++}
++exports.c = c;
  //// [test.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
@@ -11,10 +21,3 @@
 -
 -//// [test.d.ts]
 -export {};
-+//// [index.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.c = void 0;
-+class c {
-+}
-+exports.c = c;

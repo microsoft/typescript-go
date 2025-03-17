@@ -1,12 +1,8 @@
 --- old.commentOnSignature1.js
 +++ new.commentOnSignature1.js
-@@= skipped -36, +36 lines =@@
- function foo2(a: any): void {
+@@= skipped -37, +37 lines =@@
  }
  
-+//// [b.js]
-+function foo2(a) {
-+}
  //// [a.js]
 -/*!=================
 -    Keep this pinned
@@ -23,9 +19,10 @@
 -    };
 -    return c;
 -}());
--//// [b.js]
--///<reference path='a.ts'/>
--function foo2(a) {
 +    foo(a) {
 +    }
++}
+ //// [b.js]
+-///<reference path='a.ts'/>
+ function foo2(a) {
  }

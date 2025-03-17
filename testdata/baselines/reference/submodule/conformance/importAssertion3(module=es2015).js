@@ -13,9 +13,9 @@ import type * as foo from './0' assert { type: "json" }
 
 
 
-//// [2.js]
+//// [0.js]
 export {};
 //// [1.js]
 export {};
-//// [0.js]
+//// [2.js]
 export {};

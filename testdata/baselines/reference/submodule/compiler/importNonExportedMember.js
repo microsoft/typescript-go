@@ -9,11 +9,11 @@ export { foo, bar as baz };
 import { foo, bar } from "./a";
 
 
-//// [b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 //// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.foo = foo;
 exports.baz = bar;
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });

@@ -44,7 +44,7 @@ export {
 export const x = "other";
 
 
-//// [app.js]
-export {};
 //// [other.js]
 export const x = "other";
+//// [app.js]
+export {};

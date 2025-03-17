@@ -71,6 +71,16 @@ Context.prototype = {
 module.exports = Context;
 
 
+//// [timer.js]
+function Timer(timeout) {
+    this.timeout = timeout;
+}
+module.exports = Timer;
+//// [hook.js]
+function Hook(handle) {
+    this.handle = handle;
+}
+module.exports = Hook;
 //// [context.js]
 function Context(input) {
     if (!(this instanceof Context)) {
@@ -84,13 +94,3 @@ Context.prototype = {
     }
 };
 module.exports = Context;
-//// [hook.js]
-function Hook(handle) {
-    this.handle = handle;
-}
-module.exports = Hook;
-//// [timer.js]
-function Timer(timeout) {
-    this.timeout = timeout;
-}
-module.exports = Timer;

@@ -1,35 +1,24 @@
 --- old.FunctionAndModuleWithSameNameAndCommonRoot.js
 +++ new.FunctionAndModuleWithSameNameAndCommonRoot.js
-@@= skipped -42, +42 lines =@@
- var cl = B.Point.Origin;
- 
- 
--//// [function.js]
--var A;
--(function (A) {
--    function Point() {
--        return { x: 0, y: 0 };
--    }
--    A.Point = Point;
--})(A || (A = {}));
--//// [module.js]
--var A;
--(function (A) {
+@@= skipped -53, +53 lines =@@
+ //// [module.js]
+ var A;
+ (function (A) {
 -    var Point;
--    (function (Point) {
--        Point.Origin = { x: 0, y: 0 };
--    })(Point = A.Point || (A.Point = {}));
--})(A || (A = {}));
--//// [test.js]
--var fn;
--var fn = A.Point;
--var cl;
--var cl = A.Point();
++    let Point;
+     (function (Point) {
+         Point.Origin = { x: 0, y: 0 };
+     })(Point = A.Point || (A.Point = {}));
+@@= skipped -10, +10 lines =@@
+ var fn = A.Point;
+ var cl;
+ var cl = A.Point();
 -var cl = A.Point.Origin; // not expected to be an error.
++var cl = A.Point.Origin;
  //// [simple.js]
  var B;
  (function (B) {
-@@= skipped -34, +12 lines =@@
+@@= skipped -13, +13 lines =@@
      })(Point = B.Point || (B.Point = {}));
  })(B || (B = {}));
  var fn;
@@ -38,25 +27,3 @@
  var cl;
  var cl = B.Point();
  var cl = B.Point.Origin;
-+//// [test.js]
-+var fn;
-+var fn = A.Point;
-+var cl;
-+var cl = A.Point();
-+var cl = A.Point.Origin;
-+//// [module.js]
-+var A;
-+(function (A) {
-+    let Point;
-+    (function (Point) {
-+        Point.Origin = { x: 0, y: 0 };
-+    })(Point = A.Point || (A.Point = {}));
-+})(A || (A = {}));
-+//// [function.js]
-+var A;
-+(function (A) {
-+    function Point() {
-+        return { x: 0, y: 0 };
-+    }
-+    A.Point = Point;
-+})(A || (A = {}));

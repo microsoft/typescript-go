@@ -20,12 +20,12 @@ var x: typeof foo0 = {};
 var y: {M2: Object} = foo0;
 
 
+//// [foo_0.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 //// [foo_1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const foo0 = require("./foo_0");
 var x = {};
 var y = foo0;
-//// [foo_0.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });

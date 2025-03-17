@@ -17,9 +17,9 @@ export declare interface HTMLElement { field: string; }
 export const elem: HTMLElement = { field: 'a' };
 
 
+//// [fakelib.js]
 //// [file1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.elem = void 0;
 exports.elem = { field: 'a' };
-//// [fakelib.js]

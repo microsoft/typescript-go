@@ -1,16 +1,19 @@
 --- old.es6ImportDefaultBindingFollowedWithNamespaceBinding1WithExport.js
 +++ new.es6ImportDefaultBindingFollowedWithNamespaceBinding1WithExport.js
-@@= skipped -7, +7 lines =@@
- export import defaultBinding, * as nameSpaceBinding  from "server";
+@@= skipped -8, +8 lines =@@
  export var x: number = defaultBinding;
  
--//// [server.js]
+ //// [server.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
 -    Object.defineProperty(exports, "__esModule", { value: true });
 -    var a = 10;
 -    exports.default = a;
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++var a = 10;
++exports.default = a;
  //// [client.js]
 -define(["require", "exports", "server"], function (require, exports, server_1) {
 -    "use strict";
@@ -30,8 +33,3 @@
 +exports.x = void 0;
 +const server_1 = require("server");
 +exports.x = server_1.default;
-+//// [server.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+var a = 10;
-+exports.default = a;

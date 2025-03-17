@@ -1,14 +1,6 @@
 --- old.declarationEmitPartialNodeReuseTypeReferences.js
 +++ new.declarationEmitPartialNodeReuseTypeReferences.js
-@@= skipped -16, +16 lines =@@
- import { o, SpecialString } from "./a";
- export const g = o
- 
--//// [a.js]
--export const o = (p1, p2, p3) => null;
--//// [b.js]
--import * as a from "./a";
--export const g = a.o;
+@@= skipped -24, +24 lines =@@
  //// [c.js]
  import { o } from "./a";
  export const g = o;
@@ -27,8 +19,7 @@
 -};
 -export {};
 -//// [b.d.ts]
-+//// [b.js]
- import * as a from "./a";
+-import * as a from "./a";
 -export declare const g: (p1: a.SpecialString, p2: string, p3: a.N.SpecialString) => {
 -    foo: a.SpecialString;
 -    bar: string;
@@ -41,6 +32,3 @@
 -    bar: string;
 -    baz: import("./a").N.SpecialString;
 -};
-+export const g = a.o;
-+//// [a.js]
-+export const o = (p1, p2, p3) => null;

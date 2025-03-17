@@ -1,10 +1,9 @@
 --- old.amdModuleConstEnumUsage.js
 +++ new.amdModuleConstEnumUsage.js
-@@= skipped -13, +13 lines =@@
- }
+@@= skipped -14, +14 lines =@@
  
  
--//// [cc.js]
+ //// [cc.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
 -    Object.defineProperty(exports, "__esModule", { value: true });
@@ -15,6 +14,14 @@
 -        CharCode[CharCode["B"] = 1] = "B";
 -    })(CharCode || (exports.CharCode = CharCode = {}));
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.CharCode = void 0;
++var CharCode;
++(function (CharCode) {
++    CharCode[CharCode["A"] = 0] = "A";
++    CharCode[CharCode["B"] = 1] = "B";
++})(CharCode || (exports.CharCode = CharCode = {}));
  //// [file.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
@@ -40,12 +47,3 @@
 +    }
 +}
 +exports.User = User;
-+//// [cc.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.CharCode = void 0;
-+var CharCode;
-+(function (CharCode) {
-+    CharCode[CharCode["A"] = 0] = "A";
-+    CharCode[CharCode["B"] = 1] = "B";
-+})(CharCode || (exports.CharCode = CharCode = {}));

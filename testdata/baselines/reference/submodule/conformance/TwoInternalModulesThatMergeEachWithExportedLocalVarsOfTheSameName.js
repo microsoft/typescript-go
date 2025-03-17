@@ -29,6 +29,21 @@ export module A {
 }
 
 
+//// [part1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.A = void 0;
+var A;
+(function (A) {
+    let Utils;
+    (function (Utils) {
+        function mirror(p) {
+            return { x: p.y, y: p.x };
+        }
+        Utils.mirror = mirror;
+    })(Utils = A.Utils || (A.Utils = {}));
+    A.Origin = { x: 0, y: 0 };
+})(A || (exports.A = A = {}));
 //// [part2.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -48,19 +63,4 @@ var A;
         }
         Utils.Plane = Plane;
     })(Utils = A.Utils || (A.Utils = {}));
-})(A || (exports.A = A = {}));
-//// [part1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.A = void 0;
-var A;
-(function (A) {
-    let Utils;
-    (function (Utils) {
-        function mirror(p) {
-            return { x: p.y, y: p.x };
-        }
-        Utils.mirror = mirror;
-    })(Utils = A.Utils || (A.Utils = {}));
-    A.Origin = { x: 0, y: 0 };
 })(A || (exports.A = A = {}));

@@ -96,49 +96,6 @@ class GlobalConstructorWithParameterInitializer {
     }
 }
 
-//// [declFileConstructors_1.js]
-class GlobalSimpleConstructor {
-    constructor() {
-    }
-}
-class GlobalConstructorWithParameters {
-    constructor(a, b) {
-        var d = a;
-    }
-}
-class GlobalConstructorWithRestParamters {
-    constructor(a, ...rests) {
-        return a + rests.join("");
-    }
-}
-class GlobalConstructorWithOverloads {
-    constructor(a) {
-    }
-}
-class GlobalConstructorWithPublicParameterProperty {
-    x;
-    constructor(x) {
-        this.x = x;
-    }
-}
-class GlobalConstructorWithPrivateParameterProperty {
-    x;
-    constructor(x) {
-        this.x = x;
-    }
-}
-class GlobalConstructorWithOptionalParameterProperty {
-    x;
-    constructor(x) {
-        this.x = x;
-    }
-}
-class GlobalConstructorWithParameterInitializer {
-    x;
-    constructor(x = "hello") {
-        this.x = x;
-    }
-}
 //// [declFileConstructors_0.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -193,3 +150,46 @@ class ConstructorWithParameterInitializer {
     }
 }
 exports.ConstructorWithParameterInitializer = ConstructorWithParameterInitializer;
+//// [declFileConstructors_1.js]
+class GlobalSimpleConstructor {
+    constructor() {
+    }
+}
+class GlobalConstructorWithParameters {
+    constructor(a, b) {
+        var d = a;
+    }
+}
+class GlobalConstructorWithRestParamters {
+    constructor(a, ...rests) {
+        return a + rests.join("");
+    }
+}
+class GlobalConstructorWithOverloads {
+    constructor(a) {
+    }
+}
+class GlobalConstructorWithPublicParameterProperty {
+    x;
+    constructor(x) {
+        this.x = x;
+    }
+}
+class GlobalConstructorWithPrivateParameterProperty {
+    x;
+    constructor(x) {
+        this.x = x;
+    }
+}
+class GlobalConstructorWithOptionalParameterProperty {
+    x;
+    constructor(x) {
+        this.x = x;
+    }
+}
+class GlobalConstructorWithParameterInitializer {
+    x;
+    constructor(x = "hello") {
+        this.x = x;
+    }
+}

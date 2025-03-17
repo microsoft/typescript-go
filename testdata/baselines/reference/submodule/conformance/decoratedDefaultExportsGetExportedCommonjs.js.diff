@@ -1,11 +1,8 @@
 --- old.decoratedDefaultExportsGetExportedCommonjs.js
 +++ new.decoratedDefaultExportsGetExportedCommonjs.js
-@@= skipped -12, +12 lines =@@
- export default class {}
+@@= skipped -14, +14 lines =@@
  
- 
--//// [a.js]
-+//// [b.js]
+ //// [a.js]
  "use strict";
 -var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 -    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -20,13 +17,11 @@
 -Foo = __decorate([
 -    decorator
 -], Foo);
--exports.default = Foo;
--//// [b.js]
 +@decorator
-+class default_1 {
++class Foo {
 +}
-+exports.default = default_1;
-+//// [a.js]
+ exports.default = Foo;
+ //// [b.js]
  "use strict";
 -var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 -    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -41,8 +36,7 @@
 -default_1 = __decorate([
 -    decorator
 -], default_1);
--exports.default = default_1;
 +@decorator
-+class Foo {
++class default_1 {
 +}
-+exports.default = Foo;
+ exports.default = default_1;

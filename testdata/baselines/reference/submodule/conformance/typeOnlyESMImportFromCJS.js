@@ -12,7 +12,7 @@ type _2 = typeof import("./module.mts", { with: { "resolution-mode": "import" } 
 type _3 = typeof import("./module.mts", { with: { "resolution-mode": "require" } });
 
 
-//// [common.cjs]
-export {};
 //// [module.mjs]
+export {};
+//// [common.cjs]
 export {};

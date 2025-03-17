@@ -8,6 +8,6 @@ class selfReferencingFile2 {
 }
 
 //// [selfReferencingFile2.js]
+//// [selfReferencingFile2.js]
 class selfReferencingFile2 {
 }
-//// [selfReferencingFile2.js]

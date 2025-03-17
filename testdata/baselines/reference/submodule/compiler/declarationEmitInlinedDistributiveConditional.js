@@ -18,12 +18,9 @@ export declare function excludePrivateKeys2<Obj>(obj: Obj): {[K in PublicKeys2<k
 export type PublicKeys1<T> = T extends `_${string}` ? never : T;
 type PublicKeys2<T>        = T extends `_${string}` ? never : T;
 
-//// [test.js]
+//// [internal.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const api_1 = require("./api");
-const a = (0, api_1.dropPrivateProps1)({ foo: 42, _bar: 'secret' });
-const b = (0, api_1.dropPrivateProps2)({ foo: 42, _bar: 'secret' });
 //// [api.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -33,6 +30,9 @@ const dropPrivateProps1 = (obj) => (0, internal_1.excludePrivateKeys1)(obj);
 exports.dropPrivateProps1 = dropPrivateProps1;
 const dropPrivateProps2 = (obj) => (0, internal_1.excludePrivateKeys2)(obj);
 exports.dropPrivateProps2 = dropPrivateProps2;
-//// [internal.js]
+//// [test.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const api_1 = require("./api");
+const a = (0, api_1.dropPrivateProps1)({ foo: 42, _bar: 'secret' });
+const b = (0, api_1.dropPrivateProps2)({ foo: 42, _bar: 'secret' });

@@ -9,10 +9,10 @@ export default class Decorated { }
 //// [undecorated.ts]
 import Decorated from 'decorated';
 
-//// [undecorated.js]
-export {};
 //// [decorated.js]
 function decorate(target) { }
 @decorate
 export default class Decorated {
 }
+//// [undecorated.js]
+export {};

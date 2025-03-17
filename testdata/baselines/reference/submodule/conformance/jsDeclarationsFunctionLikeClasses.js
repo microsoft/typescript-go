@@ -24,14 +24,6 @@ export function magnitude(p) {
 }
 
 
-//// [referencer.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.magnitude = magnitude;
-const source_1 = require("./source");
-function magnitude(p) {
-    return Math.sqrt(p.x ** 2 + p.y ** 2);
-}
 //// [source.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -42,4 +34,12 @@ function Point(x, y) {
     }
     this.x = x;
     this.y = y;
+}
+//// [referencer.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.magnitude = magnitude;
+const source_1 = require("./source");
+function magnitude(p) {
+    return Math.sqrt(p.x ** 2 + p.y ** 2);
 }

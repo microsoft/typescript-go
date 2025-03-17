@@ -20,7 +20,7 @@
 -type _ImportRelative = typeof ImportRelative;
 -type _RequireRelative = typeof RequireRelative;
 -export { _Default, _Import, _Require, _ImportRelative, _RequireRelative };
-+//// [app.js]
-+export {};
 +//// [other.js]
 +export const x = "other";
++//// [app.js]
++export {};

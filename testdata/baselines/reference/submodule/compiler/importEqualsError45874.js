@@ -11,10 +11,10 @@ import Foo = globals.toString.Blah;
 const Foo = {};
 
 
-//// [index.js]
-const Foo = {};
 //// [globals.js]
 var globals;
 (function (globals) {
     globals.Bar = {};
 })(globals || (globals = {}));
+//// [index.js]
+const Foo = {};

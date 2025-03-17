@@ -30,8 +30,6 @@ _\u{102A7} += "!";
 import { _𐊧 as \uD800\uDEA7 } from "./extendedEscapesForAstralsInVarsAndClasses.js";
 
 
-//// [astralAsSurrogatePair.js]
-export {};
 //// [extendedEscapesForAstralsInVarsAndClasses.js]
 var string;
 var u, { 102: A7 };
@@ -84,3 +82,5 @@ u;
     A7;
 }
 "!";
+//// [astralAsSurrogatePair.js]
+export {};

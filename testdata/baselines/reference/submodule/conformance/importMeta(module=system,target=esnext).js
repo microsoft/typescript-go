@@ -38,24 +38,6 @@ declare global {
 
 const { a, b, c } = import.meta.wellKnownProperty;
 
-//// [assignmentTargets.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.foo = void 0;
-exports.foo = import.meta.blah = import.meta.blue = import.meta;
-import.meta = exports.foo;
-const { a, b, c } = import.meta.wellKnownProperty;
-//// [scriptLookingFile01.js]
-let globalA = import.meta;
-let globalB = import.metal;
-let globalC = import.import.import.malkovich;
-//// [moduleLookingFile01.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.z = exports.y = exports.x = void 0;
-exports.x = import.meta;
-exports.y = import.metal;
-exports.z = import.import.import.malkovich;
 //// [example.js]
 (async () => {
     const response = await fetch(new URL("../hamsters.jpg", import.meta.url).toString());
@@ -66,3 +48,21 @@ exports.z = import.import.import.malkovich;
     image.width = image.height = size;
     document.body.appendChild(image);
 })();
+//// [moduleLookingFile01.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.z = exports.y = exports.x = void 0;
+exports.x = import.meta;
+exports.y = import.metal;
+exports.z = import.import.import.malkovich;
+//// [scriptLookingFile01.js]
+let globalA = import.meta;
+let globalB = import.metal;
+let globalC = import.import.import.malkovich;
+//// [assignmentTargets.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.foo = void 0;
+exports.foo = import.meta.blah = import.meta.blue = import.meta;
+import.meta = exports.foo;
+const { a, b, c } = import.meta.wellKnownProperty;

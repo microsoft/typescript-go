@@ -1,10 +1,9 @@
 --- old.systemModuleWithSuperClass.js
 +++ new.systemModuleWithSuperClass.js
-@@= skipped -10, +10 lines =@@
-     b: string;
+@@= skipped -11, +11 lines =@@
  }
  
--//// [foo.js]
+ //// [foo.js]
 -System.register([], function (exports_1, context_1) {
 -    "use strict";
 -    var Foo;
@@ -21,6 +20,13 @@
 -        }
 -    };
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.Foo = void 0;
++class Foo {
++    a;
++}
++exports.Foo = Foo;
  //// [bar.js]
 -System.register(["./foo"], function (exports_1, context_1) {
 -    "use strict";
@@ -67,11 +73,3 @@
 +    b;
 +}
 +exports.Bar = Bar;
-+//// [foo.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.Foo = void 0;
-+class Foo {
-+    a;
-+}
-+exports.Foo = Foo;

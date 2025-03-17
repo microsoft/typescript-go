@@ -1,8 +1,10 @@
 --- old.parserRealSource13.js
 +++ new.parserRealSource13.js
-@@= skipped -148, +148 lines =@@
+@@= skipped -147, +147 lines =@@
+     }
  }
  
++//// [typescript.js]
  //// [parserRealSource13.js]
 -// Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
 -// See LICENSE.txt in the project root for complete license information.
@@ -23,7 +25,7 @@
                  AstWalkerCallback(false, cur, callback);
                  return cur;
              };
-@@= skipped -21, +18 lines =@@
+@@= skipped -22, +20 lines =@@
          }
          AstWalkerWithDetailCallback.walk = walk;
          function AstWalkerCallback(pre, ast, callback) {
@@ -31,8 +33,3 @@
              var nodeType = ast.nodeType;
              var callbackString = NodeType._map[nodeType] + "Callback";
              if (callback[callbackString]) {
-@@= skipped -13, +12 lines =@@
-         }
-     })(AstWalkerWithDetailCallback = TypeScript.AstWalkerWithDetailCallback || (TypeScript.AstWalkerWithDetailCallback = {}));
- })(TypeScript || (TypeScript = {}));
-+//// [typescript.js]

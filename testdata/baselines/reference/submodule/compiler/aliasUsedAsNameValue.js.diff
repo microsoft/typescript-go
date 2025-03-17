@@ -1,38 +1,17 @@
 --- old.aliasUsedAsNameValue.js
 +++ new.aliasUsedAsNameValue.js
-@@= skipped -17, +17 lines =@@
- }
- 
- 
--//// [aliasUsedAsNameValue_0.js]
-+//// [aliasUsedAsNameValue_2.js]
+@@= skipped -30, +30 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
--exports.id = void 0;
-+exports.a = void 0;
-+const mod = require("./aliasUsedAsNameValue_0");
-+const b = require("./aliasUsedAsNameValue_1");
-+var a = function () {
-+    b.b(mod);
-+};
-+exports.a = a;
- //// [aliasUsedAsNameValue_1.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
- exports.b = b;
- function b(a) { return null; }
--//// [aliasUsedAsNameValue_2.js]
-+//// [aliasUsedAsNameValue_0.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
--exports.a = void 0;
+ exports.a = void 0;
 -///<reference path='aliasUsedAsNameValue_0.ts' />
 -///<reference path='aliasUsedAsNameValue_1.ts' />
 -var mod = require("./aliasUsedAsNameValue_0");
 -var b = require("./aliasUsedAsNameValue_1");
--var a = function () {
++const mod = require("./aliasUsedAsNameValue_0");
++const b = require("./aliasUsedAsNameValue_1");
+ var a = function () {
 -    //var x = mod.id; // TODO needed hack that mod is loaded
--    b.b(mod);
--};
--exports.a = a;
-+exports.id = void 0;
+     b.b(mod);
+ };
+ exports.a = a;

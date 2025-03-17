@@ -20,6 +20,14 @@ export class Wrap {
 }
 
 
+//// [foo.js]
+"use strict";
+class Conn {
+    constructor() { }
+    item = 3;
+    method() { }
+}
+module.exports = Conn;
 //// [usage.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -31,11 +39,3 @@ class Wrap {
     }
 }
 exports.Wrap = Wrap;
-//// [foo.js]
-"use strict";
-class Conn {
-    constructor() { }
-    item = 3;
-    method() { }
-}
-module.exports = Conn;

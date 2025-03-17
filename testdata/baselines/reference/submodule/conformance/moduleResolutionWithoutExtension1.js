@@ -11,9 +11,9 @@ import { foo } from "./foo"; // should error, suggest adding ".mjs"
 import { baz } from "./baz"; // should error, ask for extension, no extension suggestion
 
 
-//// [bar.mjs]
-export {};
 //// [foo.mjs]
 export function foo() {
     return "";
 }
+//// [bar.mjs]
+export {};

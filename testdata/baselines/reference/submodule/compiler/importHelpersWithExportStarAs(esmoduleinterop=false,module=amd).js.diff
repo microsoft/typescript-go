@@ -1,10 +1,9 @@
 --- old.importHelpersWithExportStarAs(esmoduleinterop=false,module=amd).js
 +++ new.importHelpersWithExportStarAs(esmoduleinterop=false,module=amd).js
-@@= skipped -10, +10 lines =@@
-     function __importStar(m: any): void;
+@@= skipped -11, +11 lines =@@
  }
  
--//// [a.js]
+ //// [a.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
 -    Object.defineProperty(exports, "__esModule", { value: true });
@@ -13,6 +12,12 @@
 -    }
 -    exports.A = A;
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.A = void 0;
++class A {
++}
++exports.A = A;
  //// [b.js]
 -define(["require", "exports", "./a"], function (require, exports, a) {
 -    "use strict";
@@ -24,10 +29,3 @@
 +Object.defineProperty(exports, "__esModule", { value: true });
 +exports.a = void 0;
 +exports.a = require("./a");
-+//// [a.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.A = void 0;
-+class A {
-+}
-+exports.A = A;

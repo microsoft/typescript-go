@@ -1,22 +1,17 @@
 --- old.reexportClassDefinition.js
 +++ new.reexportClassDefinition.js
-@@= skipped -16, +16 lines =@@
+@@= skipped -18, +18 lines =@@
  
- 
- 
--//// [foo1.js]
-+//// [foo3.js]
+ //// [foo1.js]
  "use strict";
 -var x = /** @class */ (function () {
 -    function x() {
 -    }
 -    return x;
 -}());
--module.exports = x;
-+Object.defineProperty(exports, "__esModule", { value: true });
-+const foo2 = require("./foo2");
-+class x extends foo2.x {
++class x {
 +}
+ module.exports = x;
  //// [foo2.js]
  "use strict";
 -var foo1 = require("./foo1");
@@ -24,8 +19,7 @@
  module.exports = {
      x: foo1
  };
--//// [foo3.js]
-+//// [foo1.js]
+ //// [foo3.js]
  "use strict";
 -var __extends = (this && this.__extends) || (function () {
 -    var extendStatics = function (d, b) {
@@ -42,7 +36,7 @@
 -        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 -    };
 -})();
--Object.defineProperty(exports, "__esModule", { value: true });
+ Object.defineProperty(exports, "__esModule", { value: true });
 -var foo2 = require("./foo2");
 -var x = /** @class */ (function (_super) {
 -    __extends(x, _super);
@@ -51,6 +45,6 @@
 -    }
 -    return x;
 -}(foo2.x));
-+class x {
++const foo2 = require("./foo2");
++class x extends foo2.x {
 +}
-+module.exports = x;

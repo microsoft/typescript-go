@@ -39,14 +39,17 @@ var p = new A.Utils.Plane(o, { x: 1, y: 1 });
 
 
 
-//// [part3.js]
-var o;
-var o;
-var o = A.Origin;
-var o = A.Utils.mirror(o);
-var p;
-var p;
-var p = new A.Utils.Plane(o, { x: 1, y: 1 });
+//// [part1.js]
+var A;
+(function (A) {
+    let Utils;
+    (function (Utils) {
+        function mirror(p) {
+            return { x: p.y, y: p.x };
+        }
+        Utils.mirror = mirror;
+    })(Utils = A.Utils || (A.Utils = {}));
+})(A || (A = {}));
 //// [part2.js]
 var A;
 (function (A) {
@@ -64,14 +67,11 @@ var A;
         Utils.Plane = Plane;
     })(Utils = A.Utils || (A.Utils = {}));
 })(A || (A = {}));
-//// [part1.js]
-var A;
-(function (A) {
-    let Utils;
-    (function (Utils) {
-        function mirror(p) {
-            return { x: p.y, y: p.x };
-        }
-        Utils.mirror = mirror;
-    })(Utils = A.Utils || (A.Utils = {}));
-})(A || (A = {}));
+//// [part3.js]
+var o;
+var o;
+var o = A.Origin;
+var o = A.Utils.mirror(o);
+var p;
+var p;
+var p = new A.Utils.Plane(o, { x: 1, y: 1 });

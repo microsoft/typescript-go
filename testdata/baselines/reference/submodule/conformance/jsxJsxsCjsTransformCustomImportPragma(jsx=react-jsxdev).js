@@ -22,18 +22,18 @@ const a = <>
 
 export {};
 
-//// [react.js]
+//// [preact.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-require("./preact");
 const a = <>
   <p></p>
   text
   <div className="foo"></div>
 </>;
-//// [preact.js]
+//// [react.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+require("./preact");
 const a = <>
   <p></p>
   text

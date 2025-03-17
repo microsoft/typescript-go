@@ -26,19 +26,19 @@ import { b, c } from "./a";
 b;
 
 
-//// [f.js]
-import { b } from "./a";
-b;
-//// [e.js]
-DD;
-export {};
-//// [d.js]
-export {};
-//// [c.js]
-export {};
-//// [b.js]
-export {};
 //// [a.js]
 export default {};
 export const b = 0;
 export const c = 1;
+//// [b.js]
+export {};
+//// [c.js]
+export {};
+//// [d.js]
+export {};
+//// [e.js]
+DD;
+export {};
+//// [f.js]
+import { b } from "./a";
+b;

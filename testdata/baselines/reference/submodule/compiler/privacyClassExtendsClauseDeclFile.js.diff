@@ -1,34 +1,7 @@
 --- old.privacyClassExtendsClauseDeclFile.js
 +++ new.privacyClassExtendsClauseDeclFile.js
-@@= skipped -95, +95 lines =@@
- }
+@@= skipped -97, +97 lines =@@
  
- 
-+//// [privacyClassExtendsClauseDeclFile_GlobalFile.js]
-+var publicModuleInGlobal;
-+(function (publicModuleInGlobal) {
-+    class publicClassInPublicModule {
-+        f1() {
-+        }
-+    }
-+    publicModuleInGlobal.publicClassInPublicModule = publicClassInPublicModule;
-+    class privateClassInPublicModule {
-+    }
-+    class privateClassExtendingPublicClassInModule extends publicClassInPublicModule {
-+    }
-+    class privateClassExtendingPrivateClassInModule extends privateClassInPublicModule {
-+    }
-+    class publicClassExtendingPublicClassInModule extends publicClassInPublicModule {
-+    }
-+    publicModuleInGlobal.publicClassExtendingPublicClassInModule = publicClassExtendingPublicClassInModule;
-+    class publicClassExtendingPrivateClassInModule extends privateClassInPublicModule {
-+    }
-+    publicModuleInGlobal.publicClassExtendingPrivateClassInModule = publicClassExtendingPrivateClassInModule;
-+})(publicModuleInGlobal || (publicModuleInGlobal = {}));
-+class publicClassInGlobal {
-+}
-+class publicClassExtendingPublicClassInGlobal extends publicClassInGlobal {
-+}
  //// [privacyClassExtendsClauseDeclFile_externalModule.js]
  "use strict";
 -var __extends = (this && this.__extends) || (function () {
@@ -87,7 +60,15 @@
 -        }
 -        return publicClassExtendingPublicClassInModule;
 -    }(publicClassInPublicModule));
--    publicModule.publicClassExtendingPublicClassInModule = publicClassExtendingPublicClassInModule;
++    class privateClassInPublicModule {
++    }
++    class privateClassExtendingPublicClassInModule extends publicClassInPublicModule {
++    }
++    class privateClassExtendingPrivateClassInModule extends privateClassInPublicModule {
++    }
++    class publicClassExtendingPublicClassInModule extends publicClassInPublicModule {
++    }
+     publicModule.publicClassExtendingPublicClassInModule = publicClassExtendingPublicClassInModule;
 -    var publicClassExtendingPrivateClassInModule = /** @class */ (function (_super) {
 -        __extends(publicClassExtendingPrivateClassInModule, _super);
 -        function publicClassExtendingPrivateClassInModule() {
@@ -95,7 +76,9 @@
 -        }
 -        return publicClassExtendingPrivateClassInModule;
 -    }(privateClassInPublicModule));
--    publicModule.publicClassExtendingPrivateClassInModule = publicClassExtendingPrivateClassInModule;
++    class publicClassExtendingPrivateClassInModule extends privateClassInPublicModule {
++    }
+     publicModule.publicClassExtendingPrivateClassInModule = publicClassExtendingPrivateClassInModule;
 -    var privateClassExtendingFromPrivateModuleClass = /** @class */ (function (_super) {
 -        __extends(privateClassExtendingFromPrivateModuleClass, _super);
 -        function privateClassExtendingFromPrivateModuleClass() {
@@ -110,18 +93,25 @@
 -        }
 -        return publicClassExtendingFromPrivateModuleClass;
 -    }(privateModule.publicClassInPrivateModule));
--    publicModule.publicClassExtendingFromPrivateModuleClass = publicClassExtendingFromPrivateModuleClass;
--})(publicModule || (exports.publicModule = publicModule = {}));
--var privateModule;
--(function (privateModule) {
++    class privateClassExtendingFromPrivateModuleClass extends privateModule.publicClassInPrivateModule {
++    }
++    class publicClassExtendingFromPrivateModuleClass extends privateModule.publicClassInPrivateModule {
++    }
+     publicModule.publicClassExtendingFromPrivateModuleClass = publicClassExtendingFromPrivateModuleClass;
+ })(publicModule || (exports.publicModule = publicModule = {}));
+ var privateModule;
+ (function (privateModule) {
 -    var publicClassInPrivateModule = /** @class */ (function () {
 -        function publicClassInPrivateModule() {
--        }
++    class publicClassInPrivateModule {
++        f1() {
+         }
 -        publicClassInPrivateModule.prototype.f1 = function () {
 -        };
 -        return publicClassInPrivateModule;
 -    }());
--    privateModule.publicClassInPrivateModule = publicClassInPrivateModule;
++    }
+     privateModule.publicClassInPrivateModule = publicClassInPrivateModule;
 -    var privateClassInPrivateModule = /** @class */ (function () {
 -        function privateClassInPrivateModule() {
 -        }
@@ -175,7 +165,7 @@
 -})(privateModule || (privateModule = {}));
 -var publicClass = /** @class */ (function () {
 -    function publicClass() {
-+    class privateClassInPublicModule {
++    class privateClassInPrivateModule {
      }
 -    publicClass.prototype.f1 = function () {
 -    };
@@ -184,7 +174,7 @@
 -exports.publicClass = publicClass;
 -var privateClass = /** @class */ (function () {
 -    function privateClass() {
-+    class privateClassExtendingPublicClassInModule extends publicClassInPublicModule {
++    class privateClassExtendingPublicClassInModule extends publicClassInPrivateModule {
      }
 -    return privateClass;
 -}());
@@ -192,7 +182,7 @@
 -    __extends(privateClassExtendingPublicClass, _super);
 -    function privateClassExtendingPublicClass() {
 -        return _super !== null && _super.apply(this, arguments) || this;
-+    class privateClassExtendingPrivateClassInModule extends privateClassInPublicModule {
++    class privateClassExtendingPrivateClassInModule extends privateClassInPrivateModule {
      }
 -    return privateClassExtendingPublicClass;
 -}(publicClass));
@@ -200,7 +190,7 @@
 -    __extends(privateClassExtendingPrivateClassInModule, _super);
 -    function privateClassExtendingPrivateClassInModule() {
 -        return _super !== null && _super.apply(this, arguments) || this;
-+    class publicClassExtendingPublicClassInModule extends publicClassInPublicModule {
++    class publicClassExtendingPublicClassInModule extends publicClassInPrivateModule {
      }
 -    return privateClassExtendingPrivateClassInModule;
 -}(privateClass));
@@ -208,8 +198,8 @@
 -    __extends(publicClassExtendingPublicClass, _super);
 -    function publicClassExtendingPublicClass() {
 -        return _super !== null && _super.apply(this, arguments) || this;
-+    publicModule.publicClassExtendingPublicClassInModule = publicClassExtendingPublicClassInModule;
-+    class publicClassExtendingPrivateClassInModule extends privateClassInPublicModule {
++    privateModule.publicClassExtendingPublicClassInModule = publicClassExtendingPublicClassInModule;
++    class publicClassExtendingPrivateClassInModule extends privateClassInPrivateModule {
      }
 -    return publicClassExtendingPublicClass;
 -}(publicClass));
@@ -218,7 +208,7 @@
 -    __extends(publicClassExtendingPrivateClass, _super);
 -    function publicClassExtendingPrivateClass() {
 -        return _super !== null && _super.apply(this, arguments) || this;
-+    publicModule.publicClassExtendingPrivateClassInModule = publicClassExtendingPrivateClassInModule;
++    privateModule.publicClassExtendingPrivateClassInModule = publicClassExtendingPrivateClassInModule;
 +    class privateClassExtendingFromPrivateModuleClass extends privateModule.publicClassInPrivateModule {
      }
 -    return publicClassExtendingPrivateClass;
@@ -236,11 +226,33 @@
 -    __extends(publicClassExtendingFromPrivateModuleClass, _super);
 -    function publicClassExtendingFromPrivateModuleClass() {
 -        return _super !== null && _super.apply(this, arguments) || this;
--    }
++    privateModule.publicClassExtendingFromPrivateModuleClass = publicClassExtendingFromPrivateModuleClass;
++})(privateModule || (privateModule = {}));
++class publicClass {
++    f1() {
+     }
 -    return publicClassExtendingFromPrivateModuleClass;
 -}(privateModule.publicClassInPrivateModule));
--exports.publicClassExtendingFromPrivateModuleClass = publicClassExtendingFromPrivateModuleClass;
--//// [privacyClassExtendsClauseDeclFile_GlobalFile.js]
++}
++exports.publicClass = publicClass;
++class privateClass {
++}
++class privateClassExtendingPublicClass extends publicClass {
++}
++class privateClassExtendingPrivateClassInModule extends privateClass {
++}
++class publicClassExtendingPublicClass extends publicClass {
++}
++exports.publicClassExtendingPublicClass = publicClassExtendingPublicClass;
++class publicClassExtendingPrivateClass extends privateClass {
++}
++exports.publicClassExtendingPrivateClass = publicClassExtendingPrivateClass;
++class privateClassExtendingFromPrivateModuleClass extends privateModule.publicClassInPrivateModule {
++}
++class publicClassExtendingFromPrivateModuleClass extends privateModule.publicClassInPrivateModule {
++}
+ exports.publicClassExtendingFromPrivateModuleClass = publicClassExtendingFromPrivateModuleClass;
+ //// [privacyClassExtendsClauseDeclFile_GlobalFile.js]
 -var __extends = (this && this.__extends) || (function () {
 -    var extendStatics = function (d, b) {
 -        extendStatics = Object.setPrototypeOf ||
@@ -256,15 +268,11 @@
 -        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 -    };
 -})();
--var publicModuleInGlobal;
--(function (publicModuleInGlobal) {
+ var publicModuleInGlobal;
+ (function (publicModuleInGlobal) {
 -    var publicClassInPublicModule = /** @class */ (function () {
 -        function publicClassInPublicModule() {
-+    publicModule.publicClassExtendingFromPrivateModuleClass = publicClassExtendingFromPrivateModuleClass;
-+})(publicModule || (exports.publicModule = publicModule = {}));
-+var privateModule;
-+(function (privateModule) {
-+    class publicClassInPrivateModule {
++    class publicClassInPublicModule {
 +        f1() {
          }
 -        publicClassInPublicModule.prototype.f1 = function () {
@@ -317,9 +325,7 @@
 -    __extends(publicClassExtendingPublicClassInGlobal, _super);
 -    function publicClassExtendingPublicClassInGlobal() {
 -        return _super !== null && _super.apply(this, arguments) || this;
-+    privateModule.publicClassInPrivateModule = publicClassInPrivateModule;
-+    class privateClassInPrivateModule {
-     }
+-    }
 -    return publicClassExtendingPublicClassInGlobal;
 -}(publicClassInGlobal));
 -
@@ -328,35 +334,29 @@
 -export declare namespace publicModule {
 -    export class publicClassInPublicModule {
 -        private f1;
-+    class privateClassExtendingPublicClassInModule extends publicClassInPrivateModule {
-     }
--    class privateClassInPublicModule {
-+    class privateClassExtendingPrivateClassInModule extends privateClassInPrivateModule {
+-    }
++    publicModuleInGlobal.publicClassInPublicModule = publicClassInPublicModule;
+     class privateClassInPublicModule {
      }
 -    export class publicClassExtendingPublicClassInModule extends publicClassInPublicModule {
-+    class publicClassExtendingPublicClassInModule extends publicClassInPrivateModule {
++    class privateClassExtendingPublicClassInModule extends publicClassInPublicModule {
      }
 -    export class publicClassExtendingPrivateClassInModule extends privateClassInPublicModule {
-+    privateModule.publicClassExtendingPublicClassInModule = publicClassExtendingPublicClassInModule;
-+    class publicClassExtendingPrivateClassInModule extends privateClassInPrivateModule {
++    class privateClassExtendingPrivateClassInModule extends privateClassInPublicModule {
      }
 -    export class publicClassExtendingFromPrivateModuleClass extends privateModule.publicClassInPrivateModule {
-+    privateModule.publicClassExtendingPrivateClassInModule = publicClassExtendingPrivateClassInModule;
-+    class privateClassExtendingFromPrivateModuleClass extends privateModule.publicClassInPrivateModule {
++    class publicClassExtendingPublicClassInModule extends publicClassInPublicModule {
      }
 -    export {};
 -}
 -declare namespace privateModule {
 -    export class publicClassInPrivateModule {
 -        private f1;
-+    class publicClassExtendingFromPrivateModuleClass extends privateModule.publicClassInPrivateModule {
++    publicModuleInGlobal.publicClassExtendingPublicClassInModule = publicClassExtendingPublicClassInModule;
++    class publicClassExtendingPrivateClassInModule extends privateClassInPublicModule {
      }
 -    class privateClassInPrivateModule {
-+    privateModule.publicClassExtendingFromPrivateModuleClass = publicClassExtendingFromPrivateModuleClass;
-+})(privateModule || (privateModule = {}));
-+class publicClass {
-+    f1() {
-     }
+-    }
 -    export class publicClassExtendingPublicClassInModule extends publicClassInPrivateModule {
 -    }
 -    export class publicClassExtendingPrivateClassInModule extends privateClassInPrivateModule {
@@ -364,25 +364,22 @@
 -    export class publicClassExtendingFromPrivateModuleClass extends privateModule.publicClassInPrivateModule {
 -    }
 -    export {};
++    publicModuleInGlobal.publicClassExtendingPrivateClassInModule = publicClassExtendingPrivateClassInModule;
++})(publicModuleInGlobal || (publicModuleInGlobal = {}));
++class publicClassInGlobal {
  }
 -export declare class publicClass {
 -    private f1;
-+exports.publicClass = publicClass;
-+class privateClass {
++class publicClassExtendingPublicClassInGlobal extends publicClassInGlobal {
  }
 -declare class privateClass {
-+class privateClassExtendingPublicClass extends publicClass {
- }
+-}
 -export declare class publicClassExtendingPublicClass extends publicClass {
-+class privateClassExtendingPrivateClassInModule extends privateClass {
- }
+-}
 -export declare class publicClassExtendingPrivateClass extends privateClass {
-+class publicClassExtendingPublicClass extends publicClass {
- }
+-}
 -export declare class publicClassExtendingFromPrivateModuleClass extends privateModule.publicClassInPrivateModule {
-+exports.publicClassExtendingPublicClass = publicClassExtendingPublicClass;
-+class publicClassExtendingPrivateClass extends privateClass {
- }
+-}
 -export {};
 -//// [privacyClassExtendsClauseDeclFile_GlobalFile.d.ts]
 -declare namespace publicModuleInGlobal {
@@ -396,12 +393,8 @@
 -    export class publicClassExtendingPrivateClassInModule extends privateClassInPublicModule {
 -    }
 -    export {};
-+exports.publicClassExtendingPrivateClass = publicClassExtendingPrivateClass;
-+class privateClassExtendingFromPrivateModuleClass extends privateModule.publicClassInPrivateModule {
- }
+-}
 -declare class publicClassInGlobal {
-+class publicClassExtendingFromPrivateModuleClass extends privateModule.publicClassInPrivateModule {
- }
+-}
 -declare class publicClassExtendingPublicClassInGlobal extends publicClassInGlobal {
 -}
-+exports.publicClassExtendingFromPrivateModuleClass = publicClassExtendingFromPrivateModuleClass;

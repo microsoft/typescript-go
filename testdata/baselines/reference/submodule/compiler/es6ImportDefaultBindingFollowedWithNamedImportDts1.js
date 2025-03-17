@@ -18,6 +18,12 @@ export var x5 = new defaultBinding5();
 import defaultBinding6, { m,  } from "./server";
 export var x6 = new defaultBinding6();
 
+//// [server.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class a {
+}
+exports.default = a;
 //// [client.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -34,9 +40,3 @@ const server_5 = require("./server");
 exports.x5 = new server_5.default();
 const server_6 = require("./server");
 exports.x6 = new server_6.default();
-//// [server.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class a {
-}
-exports.default = a;

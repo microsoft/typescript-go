@@ -18,6 +18,7 @@ class MyClass {
     }
 }
 
+//// [genericWithCallSignatures_0.js]
 //// [genericWithCallSignatures_1.js]
 class MyClass {
     callableThing;
@@ -25,4 +26,3 @@ class MyClass {
         var x = this.callableThing();
     }
 }
-//// [genericWithCallSignatures_0.js]

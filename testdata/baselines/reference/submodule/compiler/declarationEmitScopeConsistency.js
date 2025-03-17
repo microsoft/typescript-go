@@ -10,15 +10,15 @@ export interface A { other: number }
 export const g = f;
 
 
-//// [b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.g = void 0;
-const a_1 = require("./a");
-exports.g = a_1.f;
 //// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.f = void 0;
 const f = (x) => x;
 exports.f = f;
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.g = void 0;
+const a_1 = require("./a");
+exports.g = a_1.f;

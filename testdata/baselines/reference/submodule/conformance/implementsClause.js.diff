@@ -1,22 +1,7 @@
 --- old.implementsClause.js
 +++ new.implementsClause.js
-@@= skipped -14, +14 lines =@@
- class D implements nestedNamespace.types.Component {}
- 
- 
--//// [types.js]
-+//// [index.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
-+class C {
-+}
-+class D {
-+}
- //// [ns.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
--//// [index.js]
-+//// [types.js]
+@@= skipped -23, +23 lines =@@
+ //// [index.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
 -var C = /** @class */ (function () {
@@ -29,3 +14,7 @@
 -    }
 -    return D;
 -}());
++class C {
++}
++class D {
++}

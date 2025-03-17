@@ -19,13 +19,6 @@ namespace ns {
 import type Foo = ns.Foo;
 
 
-//// [c.js]
-var ns;
-(function (ns) {
-    class Foo {
-    }
-    ns.Foo = Foo;
-})(ns || (ns = {}));
 //// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -42,3 +35,10 @@ exports.C = C;
 //// [b.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+//// [c.js]
+var ns;
+(function (ns) {
+    class Foo {
+    }
+    ns.Foo = Foo;
+})(ns || (ns = {}));

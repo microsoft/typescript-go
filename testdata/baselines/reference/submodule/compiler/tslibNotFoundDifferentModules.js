@@ -42,8 +42,8 @@ async function foo(): Promise<void> {}
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 async function foo() { }
+async function bar() { }
 //// [index.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 async function foo() { }
-async function bar() { }

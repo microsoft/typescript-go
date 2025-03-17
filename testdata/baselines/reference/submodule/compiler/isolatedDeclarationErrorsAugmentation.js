@@ -20,12 +20,12 @@ export class ParentThing implements ParentThing {}
 
 child1(ParentThing.prototype);
 
-//// [child1.js]
-export function child1(prototype) {
-    prototype.add = (a, b) => a + b;
-}
 //// [parent.js]
 import { child1 } from './child1';
 export class ParentThing {
 }
 child1(ParentThing.prototype);
+//// [child1.js]
+export function child1(prototype) {
+    prototype.add = (a, b) => a + b;
+}

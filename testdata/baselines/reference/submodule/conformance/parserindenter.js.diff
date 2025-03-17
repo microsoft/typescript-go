@@ -1,8 +1,10 @@
 --- old.parserindenter.js
 +++ new.parserindenter.js
-@@= skipped -743, +743 lines =@@
+@@= skipped -742, +742 lines =@@
+ }
  
  
++//// [formatting.js]
  //// [parserindenter.js]
 -//﻿
 -// Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -38,7 +40,7 @@
              this.logger = logger;
              this.tree = tree;
              this.snapshot = snapshot;
-@@= skipped -28, +23 lines =@@
+@@= skipped -29, +25 lines =@@
              this.smartIndent = smartIndent;
              this.indentationBag = new IndentationBag(this.snapshot);
              this.scriptBlockBeginLineNumber = -1;
@@ -574,4 +576,3 @@
 +    }
      Formatting.Indenter = Indenter;
  })(Formatting || (Formatting = {}));
-+//// [formatting.js]

@@ -835,6 +835,7 @@ module TypeScript {
 
 }
 
+//// [typescript.js]
 //// [parserRealSource7.js]
 var TypeScript;
 (function (TypeScript) {
@@ -1473,4 +1474,3 @@ var TypeScript;
     }
     TypeScript.postCollectTypes = postCollectTypes;
 })(TypeScript || (TypeScript = {}));
-//// [typescript.js]

@@ -14,13 +14,6 @@ class Bar extends Foo {}
 Bar.foo = "foo";
 
 
-//// [Bar.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const Foo_js_1 = require("./Foo.js");
-class Bar extends Foo_js_1.Foo {
-}
-Bar.foo = "foo";
 //// [Foo.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -32,3 +25,10 @@ class Foo extends Base {
 }
 exports.Foo = Foo;
 Foo.foo = "foo";
+//// [Bar.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const Foo_js_1 = require("./Foo.js");
+class Bar extends Foo_js_1.Foo {
+}
+Bar.foo = "foo";

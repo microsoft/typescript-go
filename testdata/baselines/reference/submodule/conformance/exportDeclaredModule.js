@@ -11,11 +11,11 @@ export = M1;
 import foo1 = require('./foo1');
 var x: number = foo1.b();
 
+//// [foo1.js]
+"use strict";
+module.exports = M1;
 //// [foo2.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const foo1 = require("./foo1");
 var x = foo1.b();
-//// [foo1.js]
-"use strict";
-module.exports = M1;

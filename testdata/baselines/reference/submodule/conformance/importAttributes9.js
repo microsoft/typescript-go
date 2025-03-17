@@ -22,6 +22,8 @@ async function f() {
 }
 
 
+//// [a.js]
+export default {};
 //// [b.js]
 import * as ns from "./a" with { type: "not-json" };
 void ns;
@@ -32,5 +34,3 @@ async function f() {
         },
     });
 }
-//// [a.js]
-export default {};

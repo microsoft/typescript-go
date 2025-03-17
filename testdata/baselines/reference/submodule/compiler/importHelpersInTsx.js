@@ -19,10 +19,10 @@ export declare function __metadata(metadataKey: any, metadataValue: any): Functi
 export declare function __awaiter(thisArg: any, _arguments: any, P: Function, generator: Function): any;
 
 
-//// [script.js]
-const x = <span {...o}/>;
 //// [external.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.x = void 0;
 exports.x = <span {...o}/>;
+//// [script.js]
+const x = <span {...o}/>;

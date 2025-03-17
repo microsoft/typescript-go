@@ -11,14 +11,7 @@
 -    exports.scalar = scalar;
 -    function scalar(value) {
 -        return null;
-+//// [spacing.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+const scalar_1 = require("../lib/operators/scalar");
-+exports.default = {
-+    get xs() {
-+        return (0, scalar_1.scalar)("14px");
-     }
+-    }
 -});
 -define("settings/spacing", ["require", "exports", "lib/operators/scalar"], function (require, exports, scalar_1) {
 -    "use strict";
@@ -38,7 +31,6 @@
 -        value: number;
 -    }
 -    export function scalar(value: string): Scalar;
-+};
 +//// [scalar.js]
 +"use strict";
 +Object.defineProperty(exports, "__esModule", { value: true });
@@ -52,3 +44,12 @@
 -    };
 -    export default _default;
 -}
++//// [spacing.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++const scalar_1 = require("../lib/operators/scalar");
++exports.default = {
++    get xs() {
++        return (0, scalar_1.scalar)("14px");
++    }
++};

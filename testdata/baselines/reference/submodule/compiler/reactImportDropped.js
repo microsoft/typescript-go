@@ -35,13 +35,13 @@ import {layout} from '../../utils/theme'; // <- DO NOT DROP this import
 const x = <TabBar height={layout.footerHeight} />;
 
 
-//// [NavigationView.js]
-import TabBar from '../../components/TabBar';
-import { layout } from '../../utils/theme';
-const x = <TabBar height={layout.footerHeight}/>;
 //// [TabBar.js]
 export default React.createClass({
     render() {
         return (null);
     }
 });
+//// [NavigationView.js]
+import TabBar from '../../components/TabBar';
+import { layout } from '../../utils/theme';
+const x = <TabBar height={layout.footerHeight}/>;

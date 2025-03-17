@@ -42,14 +42,13 @@
 -    }(a_2.A));
 -    exports.C = C;
 -});
-+//// [c.js]
++//// [a.js]
 +"use strict";
 +Object.defineProperty(exports, "__esModule", { value: true });
-+exports.C = void 0;
-+const a_1 = require("./a");
-+class C extends a_1.A {
++exports.A = void 0;
++class A {
 +}
-+exports.C = C;
++exports.A = A;
 +//// [b.js]
 +"use strict";
 +Object.defineProperty(exports, "__esModule", { value: true });
@@ -58,10 +57,11 @@
 +class B extends a_1.A {
 +}
 +exports.B = B;
-+//// [a.js]
++//// [c.js]
 +"use strict";
 +Object.defineProperty(exports, "__esModule", { value: true });
-+exports.A = void 0;
-+class A {
++exports.C = void 0;
++const a_1 = require("./a");
++class C extends a_1.A {
 +}
-+exports.A = A;
++exports.C = C;

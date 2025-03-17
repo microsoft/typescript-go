@@ -1,11 +1,8 @@
 --- old.sourceMapWithMultipleFilesWithCopyright.js
 +++ new.sourceMapWithMultipleFilesWithCopyright.js
-@@= skipped -18, +18 lines =@@
- var y = x;
+@@= skipped -19, +19 lines =@@
  
  
-+//// [b.js]
-+var y = x;
  //// [a.js]
 -/*--------------------------------------------------------------------------
 -Copyright
@@ -18,7 +15,8 @@
 -Copyright
 ----------------------------------------------------------------------------*/
 -///<reference path="a.ts"/>
--var y = x;
++//// [b.js]
+ var y = x;
 -//# sourceMappingURL=a.js.map
 -
 -//// [a.d.ts]

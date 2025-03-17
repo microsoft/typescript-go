@@ -13,6 +13,11 @@ function main() {
 }
 
 
+//// [voidAsNonAmbiguousReturnType_0.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.mkdirSync = mkdirSync;
+function mkdirSync(path, mode) { }
 //// [voidAsNonAmbiguousReturnType_1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -20,8 +25,3 @@ const fs = require("./voidAsNonAmbiguousReturnType_0");
 function main() {
     fs.mkdirSync('test');
 }
-//// [voidAsNonAmbiguousReturnType_0.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.mkdirSync = mkdirSync;
-function mkdirSync(path, mode) { }

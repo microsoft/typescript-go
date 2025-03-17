@@ -19,9 +19,9 @@ console.log("hello");
 React.foo;
 
 
-//// [emits.js]
-console.log("hello");
-React.foo;
 //// [some_module.js]
 React.foo;
 export {};
+//// [emits.js]
+console.log("hello");
+React.foo;

@@ -16,12 +16,6 @@ import {test} from "./file1"
 var x = new Calculator();
 x.handleChar();
 
-//// [file2.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const file1_1 = require("./file1");
-var x = new file1_1.Calculator();
-x.handleChar();
 //// [file1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -33,3 +27,9 @@ class Calculator {
 exports.Calculator = Calculator;
 function test() {
 }
+//// [file2.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const file1_1 = require("./file1");
+var x = new file1_1.Calculator();
+x.handleChar();

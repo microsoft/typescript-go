@@ -1,16 +1,6 @@
 --- old.importsImplicitlyReadonly.js
 +++ new.importsImplicitlyReadonly.js
-@@= skipped -19, +19 lines =@@
- a3.x = 1;
- a3.y = 1;
- 
--//// [a.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.y = exports.x = void 0;
--exports.x = 1;
--var y = 1;
--exports.y = y;
+@@= skipped -29, +29 lines =@@
  //// [b.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
@@ -33,11 +23,3 @@
  a2.x = 1;
  a2.y = 1;
  a3.x = 1;
- a3.y = 1;
-+//// [a.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.y = exports.x = void 0;
-+exports.x = 1;
-+var y = 1;
-+exports.y = y;

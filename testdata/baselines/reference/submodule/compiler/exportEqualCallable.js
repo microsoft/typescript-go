@@ -12,12 +12,12 @@ import connect = require('exportEqualCallable_0');
 connect();
 
 
+//// [exportEqualCallable_0.js]
+"use strict";
+var server;
+module.exports = server;
 //// [exportEqualCallable_1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const connect = require("exportEqualCallable_0");
 connect();
-//// [exportEqualCallable_0.js]
-"use strict";
-var server;
-module.exports = server;

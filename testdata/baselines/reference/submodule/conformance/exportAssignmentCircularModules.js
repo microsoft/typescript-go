@@ -22,12 +22,12 @@ module Foo {
 export = Foo;
 
 
-//// [foo_2.js]
+//// [foo_1.js]
 "use strict";
-const foo0 = require("./foo_0");
+const foo2 = require("./foo_2");
 var Foo;
 (function (Foo) {
-    Foo.x = foo0.x;
+    Foo.x = foo2.x;
 })(Foo || (Foo = {}));
 module.exports = Foo;
 //// [foo_0.js]
@@ -38,11 +38,11 @@ var Foo;
     Foo.x = foo1.x;
 })(Foo || (Foo = {}));
 module.exports = Foo;
-//// [foo_1.js]
+//// [foo_2.js]
 "use strict";
-const foo2 = require("./foo_2");
+const foo0 = require("./foo_0");
 var Foo;
 (function (Foo) {
-    Foo.x = foo2.x;
+    Foo.x = foo0.x;
 })(Foo || (Foo = {}));
 module.exports = Foo;

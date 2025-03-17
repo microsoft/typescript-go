@@ -25,22 +25,6 @@ class Adder {
 
 export = Adder;
 
-//// [consumer.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const Drawing = require("./Drawing");
-var addr = new Drawing.Math.Adder();
-//// [Drawing.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Math = require("./Math/Math");
-//// [Math.js]
-"use strict";
-const Adder = require("./Adder");
-var Math = {
-    Adder: Adder
-};
-module.exports = Math;
 //// [Adder.js]
 "use strict";
 class Adder {
@@ -48,3 +32,19 @@ class Adder {
     }
 }
 module.exports = Adder;
+//// [Math.js]
+"use strict";
+const Adder = require("./Adder");
+var Math = {
+    Adder: Adder
+};
+module.exports = Math;
+//// [Drawing.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Math = require("./Math/Math");
+//// [consumer.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const Drawing = require("./Drawing");
+var addr = new Drawing.Math.Adder();

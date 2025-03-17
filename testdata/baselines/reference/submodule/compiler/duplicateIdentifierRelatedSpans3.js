@@ -14,5 +14,5 @@ interface TopLevel {
 }
 
 
-//// [file2.js]
 //// [file1.js]
+//// [file2.js]

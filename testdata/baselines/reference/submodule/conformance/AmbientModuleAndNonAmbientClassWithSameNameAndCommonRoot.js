@@ -22,10 +22,6 @@ var p: { x: number; y: number; }
 var p = A.Point.Origin;
 var p = new A.Point(0, 0); // unexpected error here, bug 840000
 
-//// [test.js]
-var p;
-var p = A.Point.Origin;
-var p = new A.Point(0, 0);
 //// [classPoint.js]
 var A;
 (function (A) {
@@ -39,3 +35,7 @@ var A;
     }
     A.Point = Point;
 })(A || (A = {}));
+//// [test.js]
+var p;
+var p = A.Point.Origin;
+var p = new A.Point(0, 0);

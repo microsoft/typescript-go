@@ -1,19 +1,18 @@
 --- old.metadataOfClassFromAlias.js
 +++ new.metadataOfClassFromAlias.js
-@@= skipped -13, +13 lines =@@
-     @annotation() array: SomeClass | null;
- }
- 
--//// [auxiliry.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.SomeClass = void 0;
+@@= skipped -17, +17 lines =@@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.SomeClass = void 0;
 -var SomeClass = /** @class */ (function () {
 -    function SomeClass() {
 -    }
 -    return SomeClass;
 -}());
--exports.SomeClass = SomeClass;
++class SomeClass {
++    field;
++}
+ exports.SomeClass = SomeClass;
  //// [test.js]
  "use strict";
 -var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -46,11 +45,3 @@
 +    array;
 +}
  exports.ClassA = ClassA;
-+//// [auxiliry.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.SomeClass = void 0;
-+class SomeClass {
-+    field;
-+}
-+exports.SomeClass = SomeClass;

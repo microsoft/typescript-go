@@ -50,20 +50,6 @@ class A {
 }
 
 
-//// [test.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const Element_1 = require("./Element");
-let createElement = Element_1.Element.createElement;
-let c;
-class A {
-    view() {
-        return [
-            <meta content="helloworld"></meta>,
-            <meta content={c.a.b}></meta>
-        ];
-    }
-}
 //// [Element.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -82,4 +68,18 @@ var Element;
 exports.createElement = Element.createElement;
 function toCamelCase(text) {
     return text[0].toLowerCase() + text.substring(1);
+}
+//// [test.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const Element_1 = require("./Element");
+let createElement = Element_1.Element.createElement;
+let c;
+class A {
+    view() {
+        return [
+            <meta content="helloworld"></meta>,
+            <meta content={c.a.b}></meta>
+        ];
+    }
 }

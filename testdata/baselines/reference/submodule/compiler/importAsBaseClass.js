@@ -10,12 +10,6 @@ import Greeter = require("./importAsBaseClass_0");
 class Hello extends Greeter { }
 
 
-//// [importAsBaseClass_1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const Greeter = require("./importAsBaseClass_0");
-class Hello extends Greeter {
-}
 //// [importAsBaseClass_0.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -24,3 +18,9 @@ class Greeter {
     greet() { return 'greet'; }
 }
 exports.Greeter = Greeter;
+//// [importAsBaseClass_1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const Greeter = require("./importAsBaseClass_0");
+class Hello extends Greeter {
+}

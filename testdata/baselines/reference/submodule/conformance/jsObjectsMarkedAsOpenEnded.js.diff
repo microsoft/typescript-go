@@ -5,13 +5,6 @@
  
  
 -//// [output.js]
-+//// [b.js]
-+variable.a = 1;
-+(new C()).member.a = 1;
-+(new C()).initializedMember.a = 1;
-+obj.property.a = 1;
-+arr[0].a = 1;
-+getObj().a = 1;
 +//// [a.js]
  var variable = {};
  variable.a = 0;
@@ -30,13 +23,11 @@
  var obj = {
      property: {}
  };
-@@= skipped -19, +25 lines =@@
+@@= skipped -19, +18 lines =@@
  function getObj() {
      return {};
  }
--variable.a = 1;
--(new C()).member.a = 1;
--(new C()).initializedMember.a = 1;
--obj.property.a = 1;
--arr[0].a = 1;
--getObj().a = 1;
++//// [b.js]
+ variable.a = 1;
+ (new C()).member.a = 1;
+ (new C()).initializedMember.a = 1;

@@ -15,6 +15,9 @@ module bar {
 }
 
 
+//// [reuseInnerModuleMember_0.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 //// [reuseInnerModuleMember_1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -22,6 +25,3 @@ var bar;
 (function (bar) {
     var x;
 })(bar || (bar = {}));
-//// [reuseInnerModuleMember_0.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });

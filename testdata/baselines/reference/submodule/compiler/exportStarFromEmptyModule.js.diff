@@ -1,30 +1,24 @@
 --- old.exportStarFromEmptyModule.js
 +++ new.exportStarFromEmptyModule.js
-@@= skipped -21, +21 lines =@@
- X.A.q;
- X.A.r; // Error
- 
--//// [exportStarFromEmptyModule_module1.js]
-+//// [exportStarFromEmptyModule_module4.js]
+@@= skipped -25, +25 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
--exports.A = void 0;
+ exports.A = void 0;
 -var A = /** @class */ (function () {
 -    function A() {
 -    }
 -    return A;
 -}());
--exports.A = A;
--//// [exportStarFromEmptyModule_module2.js]
++class A {
++    static r;
++}
+ exports.A = A;
+ //// [exportStarFromEmptyModule_module2.js]
 -// empty
-+const X = require("./exportStarFromEmptyModule_module3");
-+var s;
-+X.A.q;
-+X.A.r;
  //// [exportStarFromEmptyModule_module3.js]
  "use strict";
  var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-@@= skipped -32, +27 lines =@@
+@@= skipped -28, +25 lines =@@
  exports.A = void 0;
  __exportStar(require("./exportStarFromEmptyModule_module2"), exports);
  __exportStar(require("./exportStarFromEmptyModule_module1"), exports);
@@ -37,24 +31,20 @@
 +    static q;
 +}
  exports.A = A;
--//// [exportStarFromEmptyModule_module4.js]
-+//// [exportStarFromEmptyModule_module2.js]
-+//// [exportStarFromEmptyModule_module1.js]
+ //// [exportStarFromEmptyModule_module4.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
 -var X = require("./exportStarFromEmptyModule_module3");
--var s;
--X.A.q;
++const X = require("./exportStarFromEmptyModule_module3");
+ var s;
+ X.A.q;
 -X.A.r; // Error
 -
 -
 -//// [exportStarFromEmptyModule_module1.d.ts]
 -export declare class A {
 -    static r: any;
-+exports.A = void 0;
-+class A {
-+    static r;
- }
+-}
 -//// [exportStarFromEmptyModule_module2.d.ts]
 -//// [exportStarFromEmptyModule_module3.d.ts]
 -export * from "./exportStarFromEmptyModule_module2";
@@ -64,4 +54,4 @@
 -}
 -//// [exportStarFromEmptyModule_module4.d.ts]
 -export {};
-+exports.A = A;
++X.A.r;

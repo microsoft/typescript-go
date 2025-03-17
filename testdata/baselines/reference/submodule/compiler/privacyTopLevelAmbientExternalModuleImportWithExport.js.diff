@@ -1,32 +1,32 @@
 --- old.privacyTopLevelAmbientExternalModuleImportWithExport.js
 +++ new.privacyTopLevelAmbientExternalModuleImportWithExport.js
-@@= skipped -47, +47 lines =@@
- export var publicUse_im_public_mi_public = new im_public_mi_public.c_private();
- 
- 
--//// [privacyTopLevelAmbientExternalModuleImportWithExport_require2.js]
--//// [privacyTopLevelAmbientExternalModuleImportWithExport_require3.js]
--//// [privacyTopLevelAmbientExternalModuleImportWithExport_require.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.c_public = void 0;
+@@= skipped -53, +53 lines =@@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.c_public = void 0;
 -// Public elements
 -var c_public = /** @class */ (function () {
 -    function c_public() {
 -    }
 -    return c_public;
 -}());
--exports.c_public = c_public;
--//// [privacyTopLevelAmbientExternalModuleImportWithExport_require1.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.c_public = void 0;
++class c_public {
++    foo;
++}
+ exports.c_public = c_public;
+ //// [privacyTopLevelAmbientExternalModuleImportWithExport_require1.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.c_public = void 0;
 -var c_public = /** @class */ (function () {
 -    function c_public() {
 -    }
 -    return c_public;
 -}());
--exports.c_public = c_public;
++class c_public {
++    bar;
++}
+ exports.c_public = c_public;
  //// [privacyTopLevelAmbientExternalModuleImportWithExport_core.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
@@ -42,7 +42,7 @@
  var privateUse_im_public_mi_private = new exports.im_public_mi_private.c_public();
  exports.publicUse_im_public_mi_private = new exports.im_public_mi_private.c_public();
  var privateUse_im_public_mu_private = new exports.im_public_mu_private.c_public();
-@@= skipped -43, +16 lines =@@
+@@= skipped -37, +28 lines =@@
  exports.publicUse_im_public_mi_public = new exports.im_public_mi_public.c_private();
  var privateUse_im_public_mi_public = new exports.im_public_mi_public.c_private();
  exports.publicUse_im_public_mi_public = new exports.im_public_mi_public.c_private();
@@ -53,26 +53,13 @@
 -    class c_private {
 -        baz: string;
 -    }
-+//// [privacyTopLevelAmbientExternalModuleImportWithExport_require1.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.c_public = void 0;
-+class c_public {
-+    bar;
- }
+-}
 -//// [privacyTopLevelAmbientExternalModuleImportWithExport_require3.d.ts]
 -declare module 'm2' {
 -    class c_private {
 -        bing: string;
 -    }
-+exports.c_public = c_public;
-+//// [privacyTopLevelAmbientExternalModuleImportWithExport_require.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.c_public = void 0;
-+class c_public {
-+    foo;
- }
+-}
 -//// [privacyTopLevelAmbientExternalModuleImportWithExport_require.d.ts]
 -export declare class c_public {
 -    foo: string;
@@ -90,6 +77,3 @@
 -export declare var publicUse_im_public_mu_private: im_public_mu_private.c_public;
 -export declare var publicUse_im_public_mi_public: im_public_mi_public.c_private;
 -export declare var publicUse_im_public_mi_public: im_public_mi_public.c_private;
-+exports.c_public = c_public;
-+//// [privacyTopLevelAmbientExternalModuleImportWithExport_require3.js]
-+//// [privacyTopLevelAmbientExternalModuleImportWithExport_require2.js]

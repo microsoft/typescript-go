@@ -1,14 +1,6 @@
 --- old.isolatedDeclarationsAllowJs.js
 +++ new.isolatedDeclarationsAllowJs.js
-@@= skipped -4, +4 lines =@@
- //// [file2.js]
- export var y;
- 
-+//// [file2.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.y = void 0;
- //// [file1.js]
+@@= skipped -8, +8 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.x = void 0;
@@ -16,3 +8,7 @@
 -
 -//// [file2.d.ts]
 -export const y: any;
++//// [file2.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.y = void 0;

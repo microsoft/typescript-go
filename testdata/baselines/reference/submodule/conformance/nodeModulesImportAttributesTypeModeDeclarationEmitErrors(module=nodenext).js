@@ -70,21 +70,7 @@ export type LocalInterface =
 export const a = (null as any as import("pkg", { with: {} }).RequireInterface);
 export const b = (null as any as import("pkg", { with: {} }).ImportInterface);
 
-//// [other5.js]
-export const a = null;
-export const b = null;
-//// [other4.js]
-Attribute1;
-RequireInterface
-    & import("pkg", Attribute2).ImportInterface;
-export const a = null, Attribute1, RequireInterface;
-export const b = null, Attribute2, ImportInterface;
-//// [other3.js]
-RequireInterface
-    & import("pkg", [{ "resolution-mode": "import" }]).ImportInterface;
-export const a = null.RequireInterface;
-export const b = null.ImportInterface;
-//// [other2.js]
+//// [index.js]
 export const a = null;
 export const b = null;
 //// [other.js]
@@ -102,6 +88,20 @@ export const b = null;
 "import";
 ImportInterface;
 ;
-//// [index.js]
+//// [other2.js]
+export const a = null;
+export const b = null;
+//// [other3.js]
+RequireInterface
+    & import("pkg", [{ "resolution-mode": "import" }]).ImportInterface;
+export const a = null.RequireInterface;
+export const b = null.ImportInterface;
+//// [other4.js]
+Attribute1;
+RequireInterface
+    & import("pkg", Attribute2).ImportInterface;
+export const a = null, Attribute1, RequireInterface;
+export const b = null, Attribute2, ImportInterface;
+//// [other5.js]
 export const a = null;
 export const b = null;

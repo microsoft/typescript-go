@@ -1,16 +1,15 @@
 --- old.topLevelAwait.1(module=esnext,target=es2015).js
 +++ new.topLevelAwait.1(module=esnext,target=es2015).js
-@@= skipped -79, +79 lines =@@
- }
+@@= skipped -80, +80 lines =@@
  
  
--//// [other.js]
+ //// [other.js]
 -var _a, e_1, _b, _c;
--const _await = 1;
+ const _await = 1;
 -// await allowed in aliased export
--export { _await as await };
+ export { _await as await };
 -// for-await-of
--const arr = [Promise.resolve()];
+ const arr = [Promise.resolve()];
 -try {
 -    for (var _d = true, arr_1 = __asyncValues(arr), arr_1_1; arr_1_1 = await arr_1.next(), _a = arr_1_1.done, !_a; _d = true) {
 -        _c = arr_1_1.value;
@@ -18,7 +17,9 @@
 -        const item = _c;
 -        item;
 -    }
--}
++for await (const item of arr) {
++    item;
+ }
 -catch (e_1_1) { e_1 = { error: e_1_1 }; }
 -finally {
 -    try {
@@ -43,7 +44,7 @@
  class C1 {
      await() { }
  }
-@@= skipped -44, +19 lines =@@
+@@= skipped -43, +25 lines =@@
      set await(value) { }
  }
  class C3 {
@@ -75,10 +76,3 @@
  let y = await 1;
 -// await in expression statement;
  await 1;
-+//// [other.js]
-+const _await = 1;
-+export { _await as await };
-+const arr = [Promise.resolve()];
-+for await (const item of arr) {
-+    item;
-+}

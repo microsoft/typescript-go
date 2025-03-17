@@ -1,20 +1,20 @@
 --- old.decoratorMetadataWithImportDeclarationNameCollision7.js
 +++ new.decoratorMetadataWithImportDeclarationNameCollision7.js
-@@= skipped -22, +22 lines =@@
- export {MyClass};
- 
- 
--//// [db.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
+@@= skipped -25, +25 lines =@@
+ //// [db.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
 -var db = /** @class */ (function () {
 -    function db() {
--    }
++class db {
++    doSomething() {
+     }
 -    db.prototype.doSomething = function () {
 -    };
 -    return db;
 -}());
--exports.default = db;
++}
+ exports.default = db;
  //// [service.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
@@ -41,11 +41,3 @@
 -}());
 +}
  exports.MyClass = MyClass;
-+//// [db.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+class db {
-+    doSomething() {
-+    }
-+}
-+exports.default = db;

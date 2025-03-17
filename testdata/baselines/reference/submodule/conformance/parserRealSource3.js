@@ -121,6 +121,7 @@ module TypeScript {
     }
 }
 
+//// [typescript.js]
 //// [parserRealSource3.js]
 var TypeScript;
 (function (TypeScript) {
@@ -237,4 +238,3 @@ var TypeScript;
         NodeType[NodeType["LastAsg"] = 41] = "LastAsg";
     })(NodeType = TypeScript.NodeType || (TypeScript.NodeType = {}));
 })(TypeScript || (TypeScript = {}));
-//// [typescript.js]

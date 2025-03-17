@@ -60,28 +60,11 @@
 -declare module "m1" {
 -    export class Cls {
 -    }
-+//// [test.js]
++//// [m1.js]
 +"use strict";
 +Object.defineProperty(exports, "__esModule", { value: true });
-+require("m2");
-+require("m4");
-+let c;
-+c.foo().toExponential();
-+c.bar().toLowerCase();
-+c.baz1().x.toExponential();
-+c.baz2().x.toLowerCase();
-+//// [m4.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+const m1_1 = require("./m1");
-+m1_1.Cls.prototype.baz1 = function () { return undefined; };
-+m1_1.Cls.prototype.baz2 = function () { return undefined; };
-+//// [m3.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.C2 = exports.C1 = void 0;
-+class C1 {
-+    x;
++exports.Cls = void 0;
++class Cls {
  }
 -declare module "m2" {
 -    module "m1" {
@@ -94,8 +77,18 @@
 -            bar(): string;
 -        }
 -    }
-+exports.C1 = C1;
-+class C2 {
++exports.Cls = Cls;
++//// [m2.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++const m1_1 = require("./m1");
++m1_1.Cls.prototype.foo = function () { return 1; };
++m1_1.Cls.prototype.bar = function () { return "1"; };
++//// [m3.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.C2 = exports.C1 = void 0;
++class C1 {
 +    x;
  }
 -declare module "m3" {
@@ -105,18 +98,9 @@
 -    export class C2 {
 -        x: string;
 -    }
-+exports.C2 = C2;
-+//// [m2.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+const m1_1 = require("./m1");
-+m1_1.Cls.prototype.foo = function () { return 1; };
-+m1_1.Cls.prototype.bar = function () { return "1"; };
-+//// [m1.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.Cls = void 0;
-+class Cls {
++exports.C1 = C1;
++class C2 {
++    x;
  }
 -declare module "m4" {
 -    import { C1, C2 } from "m3";
@@ -135,4 +119,20 @@
 -    import "m2";
 -    import "m4";
 -}
-+exports.Cls = Cls;
++exports.C2 = C2;
++//// [m4.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++const m1_1 = require("./m1");
++m1_1.Cls.prototype.baz1 = function () { return undefined; };
++m1_1.Cls.prototype.baz2 = function () { return undefined; };
++//// [test.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++require("m2");
++require("m4");
++let c;
++c.foo().toExponential();
++c.bar().toLowerCase();
++c.baz1().x.toExponential();
++c.baz2().x.toLowerCase();

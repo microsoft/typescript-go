@@ -12,6 +12,11 @@ const x = {
 export { x }
 
 
+//// [main.js]
+const x = require('./ch').x;
+x;
+x.grey;
+x.x.grey;
 //// [ch.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -20,8 +25,3 @@ const x = {
     grey: {}
 };
 exports.x = x;
-//// [main.js]
-const x = require('./ch').x;
-x;
-x.grey;
-x.x.grey;

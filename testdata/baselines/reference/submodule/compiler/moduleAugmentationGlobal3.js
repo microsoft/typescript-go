@@ -19,15 +19,6 @@ let x = [1];
 let y = x.getCountAsString().toLowerCase();
 
 
-//// [f3.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-require("./f2");
-let x = [1];
-let y = x.getCountAsString().toLowerCase();
-//// [f2.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 //// [f1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36,3 +27,12 @@ class A {
 }
 exports.A = A;
 ;
+//// [f2.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [f3.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+require("./f2");
+let x = [1];
+let y = x.getCountAsString().toLowerCase();

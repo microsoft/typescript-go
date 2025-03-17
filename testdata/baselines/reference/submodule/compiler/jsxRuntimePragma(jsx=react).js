@@ -34,23 +34,7 @@ export * as two from "./two.js";
 export * as three from "./three.js";
 export * as four from "./four.js";
 
-//// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.four = exports.three = exports.two = exports.one = void 0;
-exports.one = require("./one.js");
-exports.two = require("./two.js");
-exports.three = require("./three.js");
-exports.four = require("./four.js");
-//// [four.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.selfClosing = exports.frag = exports.HelloWorld = void 0;
-const HelloWorld = () => <h1>Hello world</h1>;
-exports.HelloWorld = HelloWorld;
-exports.frag = <><div></div></>;
-exports.selfClosing = <img src="./image.png"/>;
-//// [three.js]
+//// [one.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.selfClosing = exports.frag = exports.HelloWorld = void 0;
@@ -66,7 +50,7 @@ const HelloWorld = () => <h1>Hello world</h1>;
 exports.HelloWorld = HelloWorld;
 exports.frag = <><div></div></>;
 exports.selfClosing = <img src="./image.png"/>;
-//// [one.js]
+//// [three.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.selfClosing = exports.frag = exports.HelloWorld = void 0;
@@ -74,3 +58,19 @@ const HelloWorld = () => <h1>Hello world</h1>;
 exports.HelloWorld = HelloWorld;
 exports.frag = <><div></div></>;
 exports.selfClosing = <img src="./image.png"/>;
+//// [four.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.selfClosing = exports.frag = exports.HelloWorld = void 0;
+const HelloWorld = () => <h1>Hello world</h1>;
+exports.HelloWorld = HelloWorld;
+exports.frag = <><div></div></>;
+exports.selfClosing = <img src="./image.png"/>;
+//// [index.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.four = exports.three = exports.two = exports.one = void 0;
+exports.one = require("./one.js");
+exports.two = require("./two.js");
+exports.three = require("./three.js");
+exports.four = require("./four.js");

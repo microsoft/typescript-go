@@ -27,6 +27,13 @@ class C {
 }
 
 
+//// [0.js]
+export class B {
+    print() { return "I am B"; }
+}
+export function foo() { return "foo"; }
+//// [1.js]
+export function backup() { return "backup"; }
 //// [2.js]
 class C {
     myModule = import("./0");
@@ -41,10 +48,3 @@ class C {
         });
     }
 }
-//// [1.js]
-export function backup() { return "backup"; }
-//// [0.js]
-export class B {
-    print() { return "I am B"; }
-}
-export function foo() { return "foo"; }

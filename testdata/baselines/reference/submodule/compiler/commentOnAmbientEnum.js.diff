@@ -1,14 +1,12 @@
 --- old.commentOnAmbientEnum.js
 +++ new.commentOnAmbientEnum.js
-@@= skipped -21, +21 lines =@@
- declare enum E {
+@@= skipped -22, +22 lines =@@
  }
  
--//// [a.js]
+ //// [a.js]
 -/*!=========
 -    Keep this pinned comment
 -   =========
 -*/
  //// [b.js]
 -///<reference path="a.ts"/>
-+//// [a.js]

@@ -6,7 +6,8 @@
  //// [index.js]
 -"use strict";
 -Object.defineProperty(exports, "__esModule", { value: true });
--//// [index.js]
++export {};
+ //// [index.js]
 -"use strict";
 -Object.defineProperty(exports, "__esModule", { value: true });
 -exports.resolveParserPlugins = resolveParserPlugins;
@@ -20,7 +21,6 @@
 -
 -
 -//// [index.d.ts]
-+//// [index.js]
- export {};
+-export {};
 -//// [index.d.ts]
 -export declare function resolveParserPlugins(): import("@babel/parser").PluginConfig[];

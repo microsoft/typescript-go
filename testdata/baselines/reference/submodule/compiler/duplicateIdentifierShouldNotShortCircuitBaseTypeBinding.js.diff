@@ -22,7 +22,6 @@
 +
 +//}
 +
-+//// [duplicateIdentifierShouldNotShortCircuitBaseTypeBinding_1.js]
  //// [duplicateIdentifierShouldNotShortCircuitBaseTypeBinding_0.js]
 +"use strict";
 +Object.defineProperty(exports, "__esModule", { value: true });
@@ -33,3 +32,4 @@
 +    }
 +    Shapes.Point = Point;
 +})(Shapes || (exports.Shapes = Shapes = {}));
++//// [duplicateIdentifierShouldNotShortCircuitBaseTypeBinding_1.js]

@@ -1,13 +1,9 @@
 --- old.typeofImportTypeOnlyExport.js
 +++ new.typeofImportTypeOnlyExport.js
-@@= skipped -17, +17 lines =@@
- export const classMap = directive(ClassMapDirective);
- 
- 
--//// [lit.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.classMap = exports.directive = void 0;
+@@= skipped -21, +21 lines =@@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.classMap = exports.directive = void 0;
 -var ClassMapDirective = /** @class */ (function () {
 -    function ClassMapDirective() {
 -    }
@@ -18,8 +14,13 @@
 -        directive: class_,
 -    }); };
 -};
--exports.directive = directive;
--exports.classMap = (0, exports.directive)(ClassMapDirective);
++class ClassMapDirective {
++}
++const directive = (class_) => () => ({
++    directive: class_,
++});
+ exports.directive = directive;
+ exports.classMap = (0, exports.directive)(ClassMapDirective);
  //// [button.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
@@ -31,12 +32,7 @@
 -
 -//// [lit.d.ts]
 -declare class ClassMapDirective {
-+//// [lit.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.classMap = exports.directive = void 0;
-+class ClassMapDirective {
- }
+-}
 -export type { ClassMapDirective };
 -export declare const directive: <C>(class_: C) => () => {
 -    directive: C;
@@ -48,8 +44,3 @@
 -export declare const c: {
 -    directive: typeof import("./lit.js").ClassMapDirective;
 -};
-+const directive = (class_) => () => ({
-+    directive: class_,
-+});
-+exports.directive = directive;
-+exports.classMap = (0, exports.directive)(ClassMapDirective);

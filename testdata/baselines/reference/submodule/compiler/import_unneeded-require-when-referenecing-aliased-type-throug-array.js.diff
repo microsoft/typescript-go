@@ -1,10 +1,8 @@
 --- old.import_unneeded-require-when-referenecing-aliased-type-throug-array.js
 +++ new.import_unneeded-require-when-referenecing-aliased-type-throug-array.js
-@@= skipped -14, +14 lines =@@
- var p = testData[0].name;
-  
+@@= skipped -16, +16 lines =@@
  
--//// [b.js]
+ //// [b.js]
  //// [a.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
@@ -16,4 +14,3 @@
 +Object.defineProperty(exports, "__esModule", { value: true });
 +var testData;
 +var p = testData[0].name;
-+//// [b.js]

@@ -1,24 +1,16 @@
 --- old.declarationEmitMappedTypeTemplateTypeofSymbol.js
 +++ new.declarationEmitMappedTypeTemplateTypeofSymbol.js
-@@= skipped -17, +17 lines =@@
- 
- export const timestamp = now();
- 
--//// [b.js]
-+//// [c.js]
+@@= skipped -21, +21 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.timestamp = void 0;
 -var x = require("./a");
--exports.timestamp = x.now();
--//// [c.js]
-+const a_1 = require("./a");
-+exports.timestamp = (0, a_1.now)();
-+//// [b.js]
++const x = require("./a");
+ exports.timestamp = x.now();
+ //// [c.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.timestamp = void 0;
 -var a_1 = require("./a");
--exports.timestamp = (0, a_1.now)();
-+const x = require("./a");
-+exports.timestamp = x.now();
++const a_1 = require("./a");
+ exports.timestamp = (0, a_1.now)();

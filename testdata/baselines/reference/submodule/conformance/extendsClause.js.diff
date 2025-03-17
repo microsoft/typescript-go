@@ -1,29 +1,21 @@
 --- old.extendsClause.js
 +++ new.extendsClause.js
-@@= skipped -20, +20 lines =@@
- class V extends types.C {} // Error
- 
- 
--//// [types.js]
-+//// [index.js]
+@@= skipped -24, +24 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
--exports.C = void 0;
+ exports.C = void 0;
 -var C = /** @class */ (function () {
 -    function C() {
 -    }
 -    return C;
 -}());
--exports.C = C;
-+class U extends C {
++class C {
 +}
-+class V extends types.C {
-+}
+ exports.C = C;
  //// [ns.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
--//// [index.js]
-+//// [types.js]
+ //// [index.js]
  "use strict";
 -var __extends = (this && this.__extends) || (function () {
 -    var extendStatics = function (d, b) {
@@ -55,7 +47,7 @@
 -    }
 -    return V;
 -}(types.C)); // Error
-+exports.C = void 0;
-+class C {
++class U extends C {
 +}
-+exports.C = C;
++class V extends types.C {
++}

@@ -1,13 +1,9 @@
 --- old.declarationEmitPrivatePromiseLikeInterface.js
 +++ new.declarationEmitPrivatePromiseLikeInterface.js
-@@= skipped -31, +31 lines =@@
-     abc3 = () => this.http.request();
- }
- 
--//// [http-client.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.HttpClient = void 0;
+@@= skipped -35, +35 lines =@@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.HttpClient = void 0;
 -var HttpClient = /** @class */ (function () {
 -    function HttpClient() {
 -        this.request = function () {
@@ -16,7 +12,12 @@
 -    }
 -    return HttpClient;
 -}());
--exports.HttpClient = HttpClient;
++class HttpClient {
++    request = () => {
++        return '';
++    };
++}
+ exports.HttpClient = HttpClient;
  //// [Api.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
@@ -34,11 +35,7 @@
      }
 -    return Api;
 -}());
-+    abc1 = () => this.http.request();
-+    abc2 = () => this.http.request();
-+    abc3 = () => this.http.request();
-+}
- exports.Api = Api;
+-exports.Api = Api;
 -
 -
 -//// [http-client.d.ts]
@@ -49,17 +46,12 @@
 -export interface HttpResponse<D extends unknown, E extends unknown = unknown> extends Response {
 -    data: D;
 -    error: E;
-+//// [http-client.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.HttpClient = void 0;
-+class HttpClient {
-+    request = () => {
-+        return '';
-+    };
++    abc1 = () => this.http.request();
++    abc2 = () => this.http.request();
++    abc3 = () => this.http.request();
  }
 -export declare class HttpClient<SecurityDataType = unknown> {
 -    request: <T = any, E = any>() => TPromise<HttpResponse<T, E>>;
 -}
 -export {};
-+exports.HttpClient = HttpClient;
++exports.Api = Api;

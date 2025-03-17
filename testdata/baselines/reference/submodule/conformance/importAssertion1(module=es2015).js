@@ -35,6 +35,24 @@ const h = import('./0', { assert: { type: "json" }},)
 
 
 
+//// [0.js]
+export const a = 1;
+export const b = 2;
+//// [1.js]
+import './0' assert { type: "json" };
+import { a, b } from './0' assert { "type": "json" };
+import * as foo from './0' assert { type: "json" };
+a;
+b;
+foo.a;
+foo.b;
+//// [2.js]
+import { a, b } from './0' assert {};
+import { a as c, b as d } from './0' assert { a: "a", b: "b", c: "c" };
+a;
+b;
+c;
+d;
 //// [3.js]
 const a = import('./0');
 const b = import('./0', { assert: { type: "json" } });
@@ -45,21 +63,3 @@ const e = import('./0', foo());
 const f = import();
 const g = import('./0', {}, {});
 const h = import('./0', { assert: { type: "json" } });
-//// [2.js]
-import { a, b } from './0' assert {};
-import { a as c, b as d } from './0' assert { a: "a", b: "b", c: "c" };
-a;
-b;
-c;
-d;
-//// [1.js]
-import './0' assert { type: "json" };
-import { a, b } from './0' assert { "type": "json" };
-import * as foo from './0' assert { type: "json" };
-a;
-b;
-foo.a;
-foo.b;
-//// [0.js]
-export const a = 1;
-export const b = 2;

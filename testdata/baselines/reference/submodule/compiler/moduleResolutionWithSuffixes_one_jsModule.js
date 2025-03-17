@@ -14,16 +14,16 @@ function base() {}
 exports.base = base;
 
 
-//// [/bin/foo.js]
+//// [/bin/index.js]
 "use strict";
-exports.__esModule = true;
-function base() { }
-exports.base = base;
+Object.defineProperty(exports, "__esModule", { value: true });
 //// [/bin/foo.ios.js]
 "use strict";
 exports.__esModule = true;
 function ios() { }
 exports.ios = ios;
-//// [/bin/index.js]
+//// [/bin/foo.js]
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+exports.__esModule = true;
+function base() { }
+exports.base = base;

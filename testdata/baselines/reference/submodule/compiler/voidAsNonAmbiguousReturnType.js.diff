@@ -1,14 +1,6 @@
 --- old.voidAsNonAmbiguousReturnType.js
 +++ new.voidAsNonAmbiguousReturnType.js
-@@= skipped -12, +12 lines =@@
- }
- 
- 
--//// [voidAsNonAmbiguousReturnType_0.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.mkdirSync = mkdirSync;
--function mkdirSync(path, mode) { }
+@@= skipped -20, +20 lines =@@
  //// [voidAsNonAmbiguousReturnType_1.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
@@ -19,8 +11,3 @@
 -    fs.mkdirSync('test'); // should not error - return types are the same
 +    fs.mkdirSync('test');
  }
-+//// [voidAsNonAmbiguousReturnType_0.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.mkdirSync = mkdirSync;
-+function mkdirSync(path, mode) { }

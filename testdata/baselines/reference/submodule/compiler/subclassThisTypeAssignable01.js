@@ -30,10 +30,10 @@ const test8: ClassComponent<any> = new C();
 const test9 = new C();
 
 
-//// [file1.js]
-const test9 = new C();
 //// [tile1.js]
 class C {
     view(v) { return 0; }
 }
 const test8 = new C();
+//// [file1.js]
+const test9 = new C();

@@ -36,15 +36,15 @@ export declare function __esDecorate(...args: any[]): any;
 export declare function __runInitializers(...args: any[]): any;
 
 
-//// [c.js]
+//// [a.mjs]
 @dec()
-export class C {
+export class A {
 }
 //// [b.cjs]
 @dec()
 class B {
 }
-//// [a.mjs]
+//// [c.js]
 @dec()
-export class A {
+export class C {
 }

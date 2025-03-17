@@ -1,15 +1,17 @@
 --- old.exportEqualCallable.js
 +++ new.exportEqualCallable.js
-@@= skipped -11, +11 lines =@@
- connect();
+@@= skipped -12, +12 lines =@@
  
  
--//// [exportEqualCallable_0.js]
+ //// [exportEqualCallable_0.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
 -    var server;
 -    return server;
 -});
++"use strict";
++var server;
++module.exports = server;
  //// [exportEqualCallable_1.js]
 -define(["require", "exports", "exportEqualCallable_0"], function (require, exports, connect) {
 -    "use strict";
@@ -20,7 +22,3 @@
 +Object.defineProperty(exports, "__esModule", { value: true });
 +const connect = require("exportEqualCallable_0");
 +connect();
-+//// [exportEqualCallable_0.js]
-+"use strict";
-+var server;
-+module.exports = server;

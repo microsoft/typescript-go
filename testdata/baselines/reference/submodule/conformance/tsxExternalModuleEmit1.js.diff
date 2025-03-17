@@ -1,11 +1,9 @@
 --- old.tsxExternalModuleEmit1.js
 +++ new.tsxExternalModuleEmit1.js
-@@= skipped -29, +29 lines =@@
+@@= skipped -31, +31 lines =@@
  
- }
- 
--//// [button.jsx]
--"use strict";
+ //// [button.jsx]
+ "use strict";
 -var __extends = (this && this.__extends) || (function () {
 -    var extendStatics = function (d, b) {
 -        extendStatics = Object.setPrototypeOf ||
@@ -21,8 +19,8 @@
 -        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 -    };
 -})();
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.Button = void 0;
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.Button = void 0;
 -var React = require("react");
 -var Button = /** @class */ (function (_super) {
 -    __extends(Button, _super);
@@ -30,11 +28,16 @@
 -        return _super !== null && _super.apply(this, arguments) || this;
 -    }
 -    Button.prototype.render = function () {
--        return <button>Some button</button>;
++const React = require("react");
++class Button extends React.Component {
++    render() {
+         return <button>Some button</button>;
 -    };
 -    return Button;
 -}(React.Component));
--exports.Button = Button;
++    }
++}
+ exports.Button = Button;
  //// [app.jsx]
  "use strict";
 -var __extends = (this && this.__extends) || (function () {
@@ -74,14 +77,3 @@
 +    }
 +}
  exports.App = App;
-+//// [button.jsx]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.Button = void 0;
-+const React = require("react");
-+class Button extends React.Component {
-+    render() {
-+        return <button>Some button</button>;
-+    }
-+}
-+exports.Button = Button;

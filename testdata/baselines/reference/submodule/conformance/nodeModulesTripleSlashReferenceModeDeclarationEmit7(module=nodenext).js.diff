@@ -1,17 +1,17 @@
 --- old.nodeModulesTripleSlashReferenceModeDeclarationEmit7(module=nodenext).js
 +++ new.nodeModulesTripleSlashReferenceModeDeclarationEmit7(module=nodenext).js
-@@= skipped -47, +47 lines =@@
- import obj2 from "./sub2/uses.js"
+@@= skipped -48, +48 lines =@@
  export default [obj1, obj2.default] as const;
  
--//// [uses.js]
+ //// [uses.js]
 -/// <reference types="pkg" preserve="true" />
--export default getInterI();
--//// [uses.js]
+ export default getInterI();
+ //// [uses.js]
 -"use strict";
 -Object.defineProperty(exports, "__esModule", { value: true });
 -/// <reference types="pkg" preserve="true" />
 -exports.default = getInterR();
++export default getInterR();
  //// [index.js]
 -// only an esm file can `import` both kinds of files
  import obj1 from "./sub1/uses.js";
@@ -93,7 +93,3 @@
 -        "private": true,
 -        "type": "module"
 -    }
-+//// [uses.js]
-+export default getInterR();
-+//// [uses.js]
-+export default getInterI();

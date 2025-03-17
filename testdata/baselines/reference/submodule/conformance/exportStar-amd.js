@@ -28,15 +28,28 @@ z;
 foo;
 
 
-//// [main.js]
+//// [t1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const t4_1 = require("./t4");
-t4_1.default;
-t4_1.x;
-t4_1.y;
-t4_1.z;
-t4_1.foo;
+exports.y = exports.x = void 0;
+exports.x = 1;
+exports.y = 2;
+//// [t2.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.foo = foo;
+exports.default = "hello";
+function foo() { }
+//// [t3.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.z = exports.y = exports.x = void 0;
+var x = "x";
+exports.x = x;
+var y = "y";
+exports.y = y;
+var z = "z";
+exports.z = z;
 //// [t4.js]
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -57,25 +70,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./t1"), exports);
 __exportStar(require("./t2"), exports);
 __exportStar(require("./t3"), exports);
-//// [t3.js]
+//// [main.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.z = exports.y = exports.x = void 0;
-var x = "x";
-exports.x = x;
-var y = "y";
-exports.y = y;
-var z = "z";
-exports.z = z;
-//// [t2.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.foo = foo;
-exports.default = "hello";
-function foo() { }
-//// [t1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.y = exports.x = void 0;
-exports.x = 1;
-exports.y = 2;
+const t4_1 = require("./t4");
+t4_1.default;
+t4_1.x;
+t4_1.y;
+t4_1.z;
+t4_1.foo;

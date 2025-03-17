@@ -1,31 +1,19 @@
 --- old.extendingClassFromAliasAndUsageInIndexer.js
 +++ new.extendingClassFromAliasAndUsageInIndexer.js
-@@= skipped -31, +31 lines =@@
- var moduleName: string;
- var visModel = new moduleMap[moduleName].VisualizationModel();
- 
--//// [extendingClassFromAliasAndUsageInIndexer_backbone.js]
-+//// [extendingClassFromAliasAndUsageInIndexer_main.js]
+@@= skipped -35, +35 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
--exports.Model = void 0;
+ exports.Model = void 0;
 -var Model = /** @class */ (function () {
 -    function Model() {
 -    }
 -    return Model;
 -}());
--exports.Model = Model;
--//// [extendingClassFromAliasAndUsageInIndexer_moduleA.js]
-+const moduleA = require("./extendingClassFromAliasAndUsageInIndexer_moduleA");
-+const moduleB = require("./extendingClassFromAliasAndUsageInIndexer_moduleB");
-+var moduleATyped = moduleA;
-+var moduleMap = {
-+    "moduleA": moduleA,
-+    "moduleB": moduleB
-+};
-+var moduleName;
-+var visModel = new moduleMap[moduleName].VisualizationModel();
-+//// [extendingClassFromAliasAndUsageInIndexer_moduleB.js]
++class Model {
++    someData;
++}
+ exports.Model = Model;
+ //// [extendingClassFromAliasAndUsageInIndexer_moduleA.js]
  "use strict";
 -var __extends = (this && this.__extends) || (function () {
 -    var extendStatics = function (d, b) {
@@ -56,8 +44,7 @@
 +class VisualizationModel extends Backbone.Model {
 +}
  exports.VisualizationModel = VisualizationModel;
--//// [extendingClassFromAliasAndUsageInIndexer_moduleB.js]
-+//// [extendingClassFromAliasAndUsageInIndexer_moduleA.js]
+ //// [extendingClassFromAliasAndUsageInIndexer_moduleB.js]
  "use strict";
 -var __extends = (this && this.__extends) || (function () {
 -    var extendStatics = function (d, b) {
@@ -88,21 +75,13 @@
 +class VisualizationModel extends Backbone.Model {
 +}
  exports.VisualizationModel = VisualizationModel;
--//// [extendingClassFromAliasAndUsageInIndexer_main.js]
-+//// [extendingClassFromAliasAndUsageInIndexer_backbone.js]
+ //// [extendingClassFromAliasAndUsageInIndexer_main.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
 -var moduleA = require("./extendingClassFromAliasAndUsageInIndexer_moduleA");
 -var moduleB = require("./extendingClassFromAliasAndUsageInIndexer_moduleB");
--var moduleATyped = moduleA;
--var moduleMap = {
--    "moduleA": moduleA,
--    "moduleB": moduleB
--};
--var moduleName;
--var visModel = new moduleMap[moduleName].VisualizationModel();
-+exports.Model = void 0;
-+class Model {
-+    someData;
-+}
-+exports.Model = Model;
++const moduleA = require("./extendingClassFromAliasAndUsageInIndexer_moduleA");
++const moduleB = require("./extendingClassFromAliasAndUsageInIndexer_moduleB");
+ var moduleATyped = moduleA;
+ var moduleMap = {
+     "moduleA": moduleA,

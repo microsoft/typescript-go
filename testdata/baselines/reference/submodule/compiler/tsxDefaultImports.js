@@ -13,11 +13,6 @@ import {default as Def} from "./a"
 let a = Def.E.one;
 
 
-//// [b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const a_1 = require("./a");
-let a = a_1.default.E.one;
 //// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -29,3 +24,8 @@ class SomeClass {
     static E = SomeEnum;
 }
 exports.default = SomeClass;
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const a_1 = require("./a");
+let a = a_1.default.E.one;

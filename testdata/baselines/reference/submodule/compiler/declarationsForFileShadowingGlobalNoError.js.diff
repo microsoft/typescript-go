@@ -1,25 +1,8 @@
 --- old.declarationsForFileShadowingGlobalNoError.js
 +++ new.declarationsForFileShadowingGlobalNoError.js
-@@= skipped -15, +15 lines =@@
-   }
- }
- 
--//// [dom.js]
-+//// [index.js]
- "use strict";
+@@= skipped -23, +23 lines =@@
  Object.defineProperty(exports, "__esModule", { value: true });
-+exports.mixin = void 0;
-+const mixin = (Base) => {
-+    return class extends Base {
-+        get(domNode) { }
-+    };
-+};
-+exports.mixin = mixin;
- //// [custom.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
--//// [index.js]
-+//// [dom.js]
+ //// [index.js]
  "use strict";
 -var __extends = (this && this.__extends) || (function () {
 -    var extendStatics = function (d, b) {
@@ -37,7 +20,7 @@
 -    };
 -})();
  Object.defineProperty(exports, "__esModule", { value: true });
--exports.mixin = void 0;
+ exports.mixin = void 0;
 -var mixin = function (Base) {
 -    return /** @class */ (function (_super) {
 -        __extends(class_1, _super);
@@ -62,6 +45,10 @@
 -    new (...args: any[]): {
 -        [x: string]: any;
 -        get(domNode: DOMNode): void;
--    };
--};
++const mixin = (Base) => {
++    return class extends Base {
++        get(domNode) { }
+     };
+ };
 -export {};
++exports.mixin = mixin;

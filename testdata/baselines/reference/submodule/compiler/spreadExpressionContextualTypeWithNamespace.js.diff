@@ -1,26 +1,27 @@
 --- old.spreadExpressionContextualTypeWithNamespace.js
 +++ new.spreadExpressionContextualTypeWithNamespace.js
-@@= skipped -33, +33 lines =@@
- getStuff().exportedDirectly;
+@@= skipped -35, +35 lines =@@
  
- 
--//// [spreadExpressionContextualTypeWithNamespace_0.js]
--"use strict";
+ //// [spreadExpressionContextualTypeWithNamespace_0.js]
+ "use strict";
 -// Repro from #44179 with some modification
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.obj = exports.klass = void 0;
--exports.func = func;
--exports.exportedDirectly = exportedDirectly;
--function func() { }
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.obj = exports.klass = void 0;
+ exports.func = func;
+ exports.exportedDirectly = exportedDirectly;
+ function func() { }
 -var klass = /** @class */ (function () {
 -    function klass() {
 -    }
 -    return klass;
 -}());
--exports.klass = klass;
++class klass {
++}
+ exports.klass = klass;
 -var obj = { x: true };
--exports.obj = obj;
--function exportedDirectly() { }
++const obj = { x: true };
+ exports.obj = obj;
+ function exportedDirectly() { }
  //// [spreadExpressionContextualTypeWithNamespace_1.js]
  "use strict";
 -var __assign = (this && this.__assign) || function () {
@@ -47,20 +48,3 @@
      thing.func;
      thing.klass;
      thing.obj;
-@@= skipped -48, +20 lines =@@
- getStuff().klass;
- getStuff().obj;
- getStuff().exportedDirectly;
-+//// [spreadExpressionContextualTypeWithNamespace_0.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.obj = exports.klass = void 0;
-+exports.func = func;
-+exports.exportedDirectly = exportedDirectly;
-+function func() { }
-+class klass {
-+}
-+exports.klass = klass;
-+const obj = { x: true };
-+exports.obj = obj;
-+function exportedDirectly() { }

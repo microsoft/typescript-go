@@ -1,19 +1,17 @@
 --- old.metadataReferencedWithinFilteredUnion.js
 +++ new.metadataReferencedWithinFilteredUnion.js
-@@= skipped -15, +15 lines =@@
-     }
- }
- 
--//// [Class1.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.Class1 = void 0;
+@@= skipped -19, +19 lines =@@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.Class1 = void 0;
 -var Class1 = /** @class */ (function () {
 -    function Class1() {
 -    }
 -    return Class1;
 -}());
--exports.Class1 = Class1;
++class Class1 {
++}
+ exports.Class1 = Class1;
  //// [Class2.js]
  "use strict";
 -var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -53,10 +51,3 @@
 -}());
 +}
  exports.Class2 = Class2;
-+//// [Class1.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.Class1 = void 0;
-+class Class1 {
-+}
-+exports.Class1 = Class1;

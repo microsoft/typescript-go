@@ -9,10 +9,10 @@ export { foo };
 import { bar } from "./a";
 
 
-//// [b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 //// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.foo = foo;
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });

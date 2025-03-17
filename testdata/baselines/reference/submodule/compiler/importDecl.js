@@ -81,6 +81,52 @@ export var useMultiImport_m4_d4 = multiImport_m4.d;
 export var useMultiImport_m4_f4 = multiImport_m4.foo();
 
 
+//// [importDecl_require.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.x = exports.d = void 0;
+exports.foo = foo;
+class d {
+    foo;
+}
+exports.d = d;
+function foo() { return null; }
+//// [importDecl_require1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.d = void 0;
+exports.foo = foo;
+class d {
+    bar;
+}
+exports.d = d;
+var x;
+function foo() { return null; }
+//// [importDecl_require2.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.x = exports.d = void 0;
+exports.foo = foo;
+class d {
+    baz;
+}
+exports.d = d;
+function foo() { return null; }
+//// [importDecl_require3.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.x = exports.d = void 0;
+exports.foo = foo;
+class d {
+    bing;
+}
+exports.d = d;
+function foo() { return null; }
+//// [importDecl_require4.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.foo2 = foo2;
+function foo2() { return null; }
 //// [importDecl_1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -116,49 +162,3 @@ const multiImport_m4 = require("./importDecl_require");
 exports.useMultiImport_m4_x4 = multiImport_m4.x;
 exports.useMultiImport_m4_d4 = multiImport_m4.d;
 exports.useMultiImport_m4_f4 = multiImport_m4.foo();
-//// [importDecl_require4.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.foo2 = foo2;
-function foo2() { return null; }
-//// [importDecl_require3.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.x = exports.d = void 0;
-exports.foo = foo;
-class d {
-    bing;
-}
-exports.d = d;
-function foo() { return null; }
-//// [importDecl_require2.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.x = exports.d = void 0;
-exports.foo = foo;
-class d {
-    baz;
-}
-exports.d = d;
-function foo() { return null; }
-//// [importDecl_require1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.d = void 0;
-exports.foo = foo;
-class d {
-    bar;
-}
-exports.d = d;
-var x;
-function foo() { return null; }
-//// [importDecl_require.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.x = exports.d = void 0;
-exports.foo = foo;
-class d {
-    foo;
-}
-exports.d = d;
-function foo() { return null; }

@@ -12,17 +12,17 @@ export type * from './values'
 //// [values.ts]
 export const c = 10
 
+//// [values.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.c = void 0;
+exports.c = 10;
+//// [types.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 //// [main.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const types = require("./types");
 console.log(c);
 console.log(types.c);
-//// [types.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-//// [values.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.c = void 0;
-exports.c = 10;

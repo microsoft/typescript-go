@@ -7,7 +7,7 @@ import "./not-a-module";
 console.log("Hello, world!");
 
 
-//// [index.js]
-import "./not-a-module";
 //// [not-a-module.js]
 console.log("Hello, world!");
+//// [index.js]
+import "./not-a-module";

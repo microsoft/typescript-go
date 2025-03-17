@@ -1,31 +1,10 @@
 --- old.importCallExpressionInCJS3.js
 +++ new.importCallExpressionInCJS3.js
-@@= skipped -15, +15 lines =@@
- 
- foo(import("./0"));
- 
--//// [0.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.B = void 0;
--class B {
--    print() { return "I am B"; }
--}
--exports.B = B;
+@@= skipped -24, +24 lines =@@
+ }
+ exports.B = B;
  //// [2.js]
 -// We use Promise<any> for now as there is no way to specify shape of module object
  function foo(x) {
      x.then(value => {
          let b = new value.B();
-@@= skipped -17, +8 lines =@@
-     });
- }
- foo(Promise.resolve().then(() => require("./0")));
-+//// [0.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.B = void 0;
-+class B {
-+    print() { return "I am B"; }
-+}
-+exports.B = B;

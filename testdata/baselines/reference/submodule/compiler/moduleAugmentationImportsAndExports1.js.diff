@@ -1,28 +1,17 @@
 --- old.moduleAugmentationImportsAndExports1.js
 +++ new.moduleAugmentationImportsAndExports1.js
-@@= skipped -25, +25 lines =@@
- let a: A;
- let b = a.foo().n;
- 
--//// [f1.js]
-+//// [f4.js]
+@@= skipped -29, +29 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
--exports.A = void 0;
+ exports.A = void 0;
 -var A = /** @class */ (function () {
 -    function A() {
 -    }
 -    return A;
 -}());
--exports.A = A;
-+require("./f3");
-+let a;
-+let b = a.foo().n;
-+//// [f3.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+const f1_1 = require("./f1");
-+f1_1.A.prototype.foo = function () { return undefined; };
++class A {
++}
+ exports.A = A;
  //// [f2.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
@@ -36,25 +25,23 @@
 +    n;
 +}
  exports.B = B;
--//// [f3.js]
-+//// [f1.js]
+ //// [f3.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
 -var f1_1 = require("./f1");
--f1_1.A.prototype.foo = function () { return undefined; };
--//// [f4.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--require("./f3");
++const f1_1 = require("./f1");
+ f1_1.A.prototype.foo = function () { return undefined; };
+ //// [f4.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ require("./f3");
 -var a;
 -var b = a.foo().n;
 -
 -
 -//// [f1.d.ts]
 -export declare class A {
-+exports.A = void 0;
-+class A {
- }
+-}
 -//// [f2.d.ts]
 -export declare class B {
 -    n: number;
@@ -68,4 +55,5 @@
 -}
 -//// [f4.d.ts]
 -import "./f3";
-+exports.A = A;
++let a;
++let b = a.foo().n;

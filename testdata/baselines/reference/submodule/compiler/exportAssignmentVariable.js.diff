@@ -1,20 +1,9 @@
 --- old.exportAssignmentVariable.js
 +++ new.exportAssignmentVariable.js
-@@= skipped -9, +9 lines =@@
- 
- var n: number = y;
- 
--//// [exportAssignmentVariable_A.js]
--"use strict";
--var x = 0;
--module.exports = x;
+@@= skipped -16, +16 lines =@@
  //// [exportAssignmentVariable_B.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
 -var y = require("./exportAssignmentVariable_A");
 +const y = require("./exportAssignmentVariable_A");
  var n = y;
-+//// [exportAssignmentVariable_A.js]
-+"use strict";
-+var x = 0;
-+module.exports = x;

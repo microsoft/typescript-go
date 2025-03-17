@@ -1,10 +1,9 @@
 --- old.memberAccessMustUseModuleInstances.js
 +++ new.memberAccessMustUseModuleInstances.js
-@@= skipped -13, +13 lines =@@
- WinJS.Promise.timeout(10);
+@@= skipped -14, +14 lines =@@
  
  
--//// [memberAccessMustUseModuleInstances_0.js]
+ //// [memberAccessMustUseModuleInstances_0.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
 -    Object.defineProperty(exports, "__esModule", { value: true });
@@ -19,6 +18,15 @@
 -    }());
 -    exports.Promise = Promise;
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.Promise = void 0;
++class Promise {
++    static timeout(delay) {
++        return null;
++    }
++}
++exports.Promise = Promise;
  //// [memberAccessMustUseModuleInstances_1.js]
 -define(["require", "exports", "memberAccessMustUseModuleInstances_0"], function (require, exports, WinJS) {
 -    "use strict";
@@ -29,13 +37,3 @@
 +Object.defineProperty(exports, "__esModule", { value: true });
 +const WinJS = require("memberAccessMustUseModuleInstances_0");
 +WinJS.Promise.timeout(10);
-+//// [memberAccessMustUseModuleInstances_0.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.Promise = void 0;
-+class Promise {
-+    static timeout(delay) {
-+        return null;
-+    }
-+}
-+exports.Promise = Promise;

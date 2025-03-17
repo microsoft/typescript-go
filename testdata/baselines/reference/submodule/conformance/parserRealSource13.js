@@ -148,6 +148,7 @@ module TypeScript.AstWalkerWithDetailCallback {
     }
 }
 
+//// [typescript.js]
 //// [parserRealSource13.js]
 var TypeScript;
 (function (TypeScript) {
@@ -179,4 +180,3 @@ var TypeScript;
         }
     })(AstWalkerWithDetailCallback = TypeScript.AstWalkerWithDetailCallback || (TypeScript.AstWalkerWithDetailCallback = {}));
 })(TypeScript || (TypeScript = {}));
-//// [typescript.js]

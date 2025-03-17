@@ -8,13 +8,13 @@ export default a;
 import defaultBinding, * as nameSpaceBinding  from "./es6ImportDefaultBindingFollowedWithNamespaceBindingInEs5_0";
 var x: number = defaultBinding;
 
-//// [es6ImportDefaultBindingFollowedWithNamespaceBindingInEs5_1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const es6ImportDefaultBindingFollowedWithNamespaceBindingInEs5_0_1 = require("./es6ImportDefaultBindingFollowedWithNamespaceBindingInEs5_0");
-var x = es6ImportDefaultBindingFollowedWithNamespaceBindingInEs5_0_1.default;
 //// [es6ImportDefaultBindingFollowedWithNamespaceBindingInEs5_0.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var a = 10;
 exports.default = a;
+//// [es6ImportDefaultBindingFollowedWithNamespaceBindingInEs5_1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const es6ImportDefaultBindingFollowedWithNamespaceBindingInEs5_0_1 = require("./es6ImportDefaultBindingFollowedWithNamespaceBindingInEs5_0");
+var x = es6ImportDefaultBindingFollowedWithNamespaceBindingInEs5_0_1.default;

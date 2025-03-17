@@ -28,6 +28,17 @@ export class MyClass {
 }
 
 
+//// [index.js]
+const TopLevelSym = Symbol();
+const InnerSym = Symbol();
+module.exports = {
+    [TopLevelSym](x = 12) {
+        return x;
+    },
+    items: {
+        [InnerSym]: (arg = { x: 12 }) => arg.x
+    }
+};
 //// [index2.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -41,14 +52,3 @@ class MyClass {
     }
 }
 exports.MyClass = MyClass;
-//// [index.js]
-const TopLevelSym = Symbol();
-const InnerSym = Symbol();
-module.exports = {
-    [TopLevelSym](x = 12) {
-        return x;
-    },
-    items: {
-        [InnerSym]: (arg = { x: 12 }) => arg.x
-    }
-};

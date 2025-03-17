@@ -30,6 +30,20 @@ export import fs2 = require("fs");
 //// [types.d.ts]
 declare module "fs";
 
+//// [index.js]
+import { createRequire as _createRequire } from "module";
+const __require = _createRequire(import.meta.url);
+const fs = __require("fs");
+fs.readFile;
+const fs2 = __require("fs");
+export { fs2 };
+//// [index.js]
+import { createRequire as _createRequire } from "module";
+const __require = _createRequire(import.meta.url);
+const fs = __require("fs");
+fs.readFile;
+const fs2 = __require("fs");
+export { fs2 };
 //// [file.js]
 import { createRequire as _createRequire_1 } from "module";
 const __require_1 = _createRequire_1(import.meta.url);
@@ -38,18 +52,4 @@ const _createRequire = null;
 const fs = __require_1("fs");
 fs.readFile;
 const fs2 = __require_1("fs");
-export { fs2 };
-//// [index.js]
-import { createRequire as _createRequire } from "module";
-const __require = _createRequire(import.meta.url);
-const fs = __require("fs");
-fs.readFile;
-const fs2 = __require("fs");
-export { fs2 };
-//// [index.js]
-import { createRequire as _createRequire } from "module";
-const __require = _createRequire(import.meta.url);
-const fs = __require("fs");
-fs.readFile;
-const fs2 = __require("fs");
 export { fs2 };

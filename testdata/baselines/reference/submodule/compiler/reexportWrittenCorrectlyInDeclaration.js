@@ -17,14 +17,20 @@ export class Test {
     public method = (input: things.ThingA)  => { };
 }
 
-//// [Test.js]
+//// [ThingA.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Test = void 0;
-class Test {
-    method = (input) => { };
+exports.ThingA = void 0;
+class ThingA {
 }
-exports.Test = Test;
+exports.ThingA = ThingA;
+//// [ThingB.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ThingB = void 0;
+class ThingB {
+}
+exports.ThingB = ThingB;
 //// [Things.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -33,17 +39,11 @@ const ThingA_1 = require("./ThingA");
 Object.defineProperty(exports, "ThingA", { enumerable: true, get: function () { return ThingA_1.ThingA; } });
 const ThingB_1 = require("./ThingB");
 Object.defineProperty(exports, "ThingB", { enumerable: true, get: function () { return ThingB_1.ThingB; } });
-//// [ThingB.js]
+//// [Test.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ThingB = void 0;
-class ThingB {
+exports.Test = void 0;
+class Test {
+    method = (input) => { };
 }
-exports.ThingB = ThingB;
-//// [ThingA.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ThingA = void 0;
-class ThingA {
-}
-exports.ThingA = ThingA;
+exports.Test = Test;

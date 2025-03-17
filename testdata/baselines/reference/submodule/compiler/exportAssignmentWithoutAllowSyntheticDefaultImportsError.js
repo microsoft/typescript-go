@@ -7,8 +7,8 @@ function bar() {}
 //// [foo.ts]
 import bar from './bar';
 
-//// [foo.js]
-export {};
 //// [bar.js]
 function bar() { }
+export {};
+//// [foo.js]
 export {};

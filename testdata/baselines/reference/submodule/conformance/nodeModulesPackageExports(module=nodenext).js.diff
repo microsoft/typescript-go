@@ -1,16 +1,14 @@
 --- old.nodeModulesPackageExports(module=nodenext).js
 +++ new.nodeModulesPackageExports(module=nodenext).js
-@@= skipped -87, +87 lines =@@
-     }
+@@= skipped -88, +88 lines =@@
  }
  
--//// [index.mjs]
+ //// [index.mjs]
 -// esm format file
-+//// [index.js]
  import * as cjs from "package/cjs";
  import * as mjs from "package/mjs";
  import * as type from "package";
-@@= skipped -15, +14 lines =@@
+@@= skipped -14, +13 lines =@@
  mjsi;
  typei;
  //// [index.cjs]
@@ -58,9 +56,8 @@
  cjsi;
  mjsi;
  typei;
--//// [index.js]
+ //// [index.js]
 -// esm format file
-+//// [index.mjs]
  import * as cjs from "package/cjs";
  import * as mjs from "package/mjs";
  import * as type from "package";

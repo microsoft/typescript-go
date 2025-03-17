@@ -7,6 +7,9 @@ export = {}
 export * as ns from './a';
 
 
+//// [a.js]
+"use strict";
+module.exports = {};
 //// [b.js]
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -35,6 +38,3 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ns = void 0;
 exports.ns = __importStar(require("./a"));
-//// [a.js]
-"use strict";
-module.exports = {};

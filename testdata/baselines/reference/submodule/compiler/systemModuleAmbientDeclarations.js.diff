@@ -1,10 +1,9 @@
 --- old.systemModuleAmbientDeclarations.js
 +++ new.systemModuleAmbientDeclarations.js
-@@= skipped -26, +26 lines =@@
- export declare module M { var v: number; }
+@@= skipped -27, +27 lines =@@
  
  
--//// [file1.js]
+ //// [file1.js]
 -System.register([], function (exports_1, context_1) {
 -    "use strict";
 -    var promise, foo, c, e;
@@ -20,7 +19,15 @@
 -        }
 -    };
 -});
--//// [file2.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.e = exports.c = exports.foo = exports.promise = void 0;
++;
++exports.promise = Promise;
++exports.foo = Foo;
++exports.c = C;
++exports.e = E;
+ //// [file2.js]
 -System.register([], function (exports_1, context_1) {
 -    "use strict";
 -    var __moduleName = context_1 && context_1.id;
@@ -30,7 +37,9 @@
 -        }
 -    };
 -});
--//// [file3.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
+ //// [file3.js]
 -System.register([], function (exports_1, context_1) {
 -    "use strict";
 -    var __moduleName = context_1 && context_1.id;
@@ -40,7 +49,9 @@
 -        }
 -    };
 -});
--//// [file4.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
+ //// [file4.js]
 -System.register([], function (exports_1, context_1) {
 -    "use strict";
 -    var __moduleName = context_1 && context_1.id;
@@ -50,7 +61,9 @@
 -        }
 -    };
 -});
--//// [file5.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
+ //// [file5.js]
 -System.register([], function (exports_1, context_1) {
 -    "use strict";
 -    var __moduleName = context_1 && context_1.id;
@@ -60,6 +73,8 @@
 -        }
 -    };
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
  //// [file6.js]
 -System.register([], function (exports_1, context_1) {
 -    "use strict";
@@ -72,24 +87,3 @@
 -});
 +"use strict";
 +Object.defineProperty(exports, "__esModule", { value: true });
-+//// [file5.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+//// [file4.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+//// [file3.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+//// [file2.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+//// [file1.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.e = exports.c = exports.foo = exports.promise = void 0;
-+;
-+exports.promise = Promise;
-+exports.foo = Foo;
-+exports.c = C;
-+exports.e = E;

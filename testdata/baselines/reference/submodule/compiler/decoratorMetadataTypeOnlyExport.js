@@ -15,6 +15,11 @@ class Bar {
 }
 
 
+//// [a.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class Foo {
+}
 //// [b.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -22,9 +27,4 @@ const Decorator = () => undefined;
 @Decorator
 class Bar {
     constructor(par) { }
-}
-//// [a.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class Foo {
 }

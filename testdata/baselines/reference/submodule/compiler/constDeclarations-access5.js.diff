@@ -1,16 +1,19 @@
 --- old.constDeclarations-access5.js
 +++ new.constDeclarations-access5.js
-@@= skipped -45, +45 lines =@@
- m.x.toString();
+@@= skipped -46, +46 lines =@@
  
  
--//// [constDeclarations_access_1.js]
+ //// [constDeclarations_access_1.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
 -    Object.defineProperty(exports, "__esModule", { value: true });
 -    exports.x = void 0;
 -    exports.x = 0;
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.x = void 0;
++exports.x = 0;
  //// [constDeclarations_access_2.js]
 -define(["require", "exports", "constDeclarations_access_1"], function (require, exports, m) {
 -    "use strict";
@@ -77,8 +80,3 @@
 +-m.x;
 ++m.x;
 +m.x.toString();
-+//// [constDeclarations_access_1.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.x = void 0;
-+exports.x = 0;

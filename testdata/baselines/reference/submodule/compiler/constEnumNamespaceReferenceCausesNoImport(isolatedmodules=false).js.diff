@@ -1,17 +1,21 @@
 --- old.constEnumNamespaceReferenceCausesNoImport(isolatedmodules=false).js
 +++ new.constEnumNamespaceReferenceCausesNoImport(isolatedmodules=false).js
-@@= skipped -16, +16 lines =@@
-   }
- }
- 
--//// [foo.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.fooFunc = fooFunc;
--;
--function fooFunc() { }
- //// [index.js]
+@@= skipped -19, +19 lines =@@
+ //// [foo.js]
  "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
++exports.ConstFooEnum = void 0;
+ exports.fooFunc = fooFunc;
++var ConstFooEnum;
++(function (ConstFooEnum) {
++    ConstFooEnum[ConstFooEnum["Some"] = 0] = "Some";
++    ConstFooEnum[ConstFooEnum["Values"] = 1] = "Values";
++    ConstFooEnum[ConstFooEnum["Here"] = 2] = "Here";
++})(ConstFooEnum || (exports.ConstFooEnum = ConstFooEnum = {}));
+ ;
+ function fooFunc() { }
+ //// [index.js]
+@@= skipped -8, +15 lines =@@
  Object.defineProperty(exports, "__esModule", { value: true });
  function check(x) {
      switch (x) {
@@ -20,16 +24,3 @@
              break;
      }
  }
-+//// [foo.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.ConstFooEnum = void 0;
-+exports.fooFunc = fooFunc;
-+var ConstFooEnum;
-+(function (ConstFooEnum) {
-+    ConstFooEnum[ConstFooEnum["Some"] = 0] = "Some";
-+    ConstFooEnum[ConstFooEnum["Values"] = 1] = "Values";
-+    ConstFooEnum[ConstFooEnum["Here"] = 2] = "Here";
-+})(ConstFooEnum || (exports.ConstFooEnum = ConstFooEnum = {}));
-+;
-+function fooFunc() { }

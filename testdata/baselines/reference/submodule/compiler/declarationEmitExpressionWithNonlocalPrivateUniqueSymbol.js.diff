@@ -1,15 +1,6 @@
 --- old.declarationEmitExpressionWithNonlocalPrivateUniqueSymbol.js
 +++ new.declarationEmitExpressionWithNonlocalPrivateUniqueSymbol.js
-@@= skipped -6, +6 lines =@@
- import { A } from './a';
- export const A1 = A;
- 
--//// [a.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.A = void 0;
--exports.A = 0;
- //// [b.js]
+@@= skipped -15, +15 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.A1 = void 0;
@@ -24,8 +15,3 @@
 -};
 -export declare const A: AX;
 -export {};
-+//// [a.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.A = void 0;
-+exports.A = 0;

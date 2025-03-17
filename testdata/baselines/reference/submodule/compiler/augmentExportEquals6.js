@@ -27,19 +27,6 @@ let a: x.A;
 let b = a.a;
 let c = x.B.b;
 
-//// [file3.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const x = require("./file1");
-require("./file2");
-let a;
-let b = a.a;
-let c = x.B.b;
-//// [file2.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const x = require("./file1");
-x.B.b = 1;
 //// [file1.js]
 "use strict";
 class foo {
@@ -53,3 +40,16 @@ class foo {
     })(B = foo.B || (foo.B = {}));
 })(foo || (foo = {}));
 module.exports = foo;
+//// [file2.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const x = require("./file1");
+x.B.b = 1;
+//// [file3.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const x = require("./file1");
+require("./file2");
+let a;
+let b = a.a;
+let c = x.B.b;

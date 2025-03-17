@@ -23,15 +23,7 @@ import unresolved from "./doesntexist";
 export default unresolved;
 
 
-//// [test4.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const doesntexist_1 = require("./doesntexist");
-exports.default = doesntexist_1.default;
-//// [test3.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-//// [test2.js]
+//// [type.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 //// [test1.js]
@@ -39,6 +31,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 Object.defineProperty(exports, "__esModule", { value: true });
 const T = 0;
 exports.default = T;
-//// [type.js]
+//// [test2.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+//// [test3.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [test4.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const doesntexist_1 = require("./doesntexist");
+exports.default = doesntexist_1.default;

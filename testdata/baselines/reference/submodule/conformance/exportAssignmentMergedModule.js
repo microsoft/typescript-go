@@ -24,14 +24,6 @@ if(!!foo.b){
 	foo.Test.answer = foo.c(42);
 }
 
-//// [foo_1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const foo = require("./foo_0");
-var a = foo.a();
-if (!!foo.b) {
-    foo.Test.answer = foo.c(42);
-}
 //// [foo_0.js]
 "use strict";
 var Foo;
@@ -53,3 +45,11 @@ var Foo;
     })(Test = Foo.Test || (Foo.Test = {}));
 })(Foo || (Foo = {}));
 module.exports = Foo;
+//// [foo_1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const foo = require("./foo_0");
+var a = foo.a();
+if (!!foo.b) {
+    foo.Test.answer = foo.c(42);
+}

@@ -20,9 +20,6 @@ import d from "./file1"
 
 
 
-//// [file2.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 //// [file1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -37,3 +34,6 @@ function test() {
 }
 function test2() {
 }
+//// [file2.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });

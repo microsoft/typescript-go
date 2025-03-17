@@ -15,16 +15,12 @@ export { a, b } from './0' assert {}
 export { a as c, b as d } from './0' assert { a: "a", b: "b", c: "c" }
 
 
-//// [2.js]
+//// [0.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.d = exports.c = exports.b = exports.a = void 0;
-const _0_1 = require("./0");
-Object.defineProperty(exports, "a", { enumerable: true, get: function () { return _0_1.a; } });
-Object.defineProperty(exports, "b", { enumerable: true, get: function () { return _0_1.b; } });
-const _0_2 = require("./0");
-Object.defineProperty(exports, "c", { enumerable: true, get: function () { return _0_2.a; } });
-Object.defineProperty(exports, "d", { enumerable: true, get: function () { return _0_2.b; } });
+exports.b = exports.a = void 0;
+exports.a = 1;
+exports.b = 2;
 //// [1.js]
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -48,9 +44,13 @@ Object.defineProperty(exports, "a", { enumerable: true, get: function () { retur
 Object.defineProperty(exports, "b", { enumerable: true, get: function () { return _0_1.b; } });
 __exportStar(require("./0"), exports);
 exports.ns = require("./0");
-//// [0.js]
+//// [2.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.b = exports.a = void 0;
-exports.a = 1;
-exports.b = 2;
+exports.d = exports.c = exports.b = exports.a = void 0;
+const _0_1 = require("./0");
+Object.defineProperty(exports, "a", { enumerable: true, get: function () { return _0_1.a; } });
+Object.defineProperty(exports, "b", { enumerable: true, get: function () { return _0_1.b; } });
+const _0_2 = require("./0");
+Object.defineProperty(exports, "c", { enumerable: true, get: function () { return _0_2.a; } });
+Object.defineProperty(exports, "d", { enumerable: true, get: function () { return _0_2.b; } });

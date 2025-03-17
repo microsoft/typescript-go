@@ -1,11 +1,7 @@
 --- old.esDecorators-classDeclaration-setFunctionName(target=es5).js
 +++ new.esDecorators-classDeclaration-setFunctionName(target=es5).js
-@@= skipped -22, +22 lines =@@
- @dec export default class {}
- 
- 
--//// [a.js]
-+//// [c.js]
+@@= skipped -25, +25 lines =@@
+ //// [a.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
 -var C = function () {
@@ -29,9 +25,8 @@
 -    return C = _classThis;
 -}();
 +@dec
-+class default_1 {
++class C {
 +}
-+exports.default = default_1;
  //// [b.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
@@ -60,8 +55,7 @@
 +class C {
 +}
  exports.C = C;
--//// [c.js]
-+//// [a.js]
+ //// [c.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
 -var default_1 = function () {
@@ -84,7 +78,7 @@
 -    })();
 -    return default_1 = _classThis;
 -}();
--exports.default = default_1;
 +@dec
-+class C {
++class default_1 {
 +}
+ exports.default = default_1;

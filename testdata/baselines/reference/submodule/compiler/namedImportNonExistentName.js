@@ -18,6 +18,10 @@ foo();
 import { a, b, c, d, toString as foo2String } from './foo2';
 c;
 
+//// [foo2.js]
+"use strict";
+let x;
+module.exports = x;
 //// [bar.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -25,7 +29,3 @@ const foo_1 = require("./foo");
 (0, foo_1.foo)();
 const foo2_1 = require("./foo2");
 foo2_1.c;
-//// [foo2.js]
-"use strict";
-let x;
-module.exports = x;

@@ -11,7 +11,7 @@ export interface I { }
 function f(a) {}
 
 
-//// [1.js]
-function f(a) { }
 //// [0.js]
 export {};
+//// [1.js]
+function f(a) { }

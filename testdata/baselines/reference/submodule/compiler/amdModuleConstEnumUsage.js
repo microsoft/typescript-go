@@ -14,6 +14,15 @@ export class User {
 }
 
 
+//// [cc.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.CharCode = void 0;
+var CharCode;
+(function (CharCode) {
+    CharCode[CharCode["A"] = 0] = "A";
+    CharCode[CharCode["B"] = 1] = "B";
+})(CharCode || (exports.CharCode = CharCode = {}));
 //// [file.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -25,12 +34,3 @@ class User {
     }
 }
 exports.User = User;
-//// [cc.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.CharCode = void 0;
-var CharCode;
-(function (CharCode) {
-    CharCode[CharCode["A"] = 0] = "A";
-    CharCode[CharCode["B"] = 1] = "B";
-})(CharCode || (exports.CharCode = CharCode = {}));

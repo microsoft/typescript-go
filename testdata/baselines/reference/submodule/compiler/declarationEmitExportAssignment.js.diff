@@ -1,22 +1,9 @@
 --- old.declarationEmitExportAssignment.js
 +++ new.declarationEmitExportAssignment.js
-@@= skipped -8, +8 lines =@@
- import {foo} from "./utils";
- export = foo;
- 
-+//// [index.js]
-+"use strict";
-+const utils_1 = require("./utils");
-+module.exports = foo;
- //// [utils.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
-@@= skipped -7, +11 lines =@@
- exports.bar = bar;
- function foo() { }
+@@= skipped -17, +17 lines =@@
  function bar() { }
--//// [index.js]
--"use strict";
+ //// [index.js]
+ "use strict";
 -var utils_1 = require("./utils");
 -module.exports = utils_1.foo;
 -
@@ -29,3 +16,5 @@
 -//// [index.d.ts]
 -import { foo } from "./utils";
 -export = foo;
++const utils_1 = require("./utils");
++module.exports = foo;

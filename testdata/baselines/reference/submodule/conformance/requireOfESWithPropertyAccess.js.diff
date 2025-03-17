@@ -1,6 +1,15 @@
 --- old.requireOfESWithPropertyAccess.js
 +++ new.requireOfESWithPropertyAccess.js
-@@= skipped -15, +15 lines =@@
+@@= skipped -11, +11 lines =@@
+ export { x }
+ 
+ 
++//// [main.js]
++const x = require('./ch').x;
++x;
++x.grey;
++x.x.grey;
+ //// [ch.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.x = void 0;
@@ -9,13 +18,12 @@
      grey: {}
  };
  exports.x = x;
- //// [main.js]
+-//// [main.js]
 -"use strict";
 -var x = require('./ch').x;
-+const x = require('./ch').x;
- x;
- x.grey;
- x.x.grey;
+-x;
+-x.grey;
+-x.x.grey;
 -
 -
 -//// [ch.d.ts]

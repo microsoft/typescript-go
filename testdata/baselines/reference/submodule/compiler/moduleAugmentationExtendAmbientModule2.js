@@ -34,6 +34,11 @@ let y = x.map(x => x + 1);
 let z1 = Observable.someValue.toFixed();
 let z2 = Observable.someAnotherValue.toLowerCase();
 
+//// [map.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const observable_1 = require("observable");
+observable_1.Observable.prototype.map = function () { };
 //// [main.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -43,8 +48,3 @@ let x;
 let y = x.map(x => x + 1);
 let z1 = observable_1.Observable.someValue.toFixed();
 let z2 = observable_1.Observable.someAnotherValue.toLowerCase();
-//// [map.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const observable_1 = require("observable");
-observable_1.Observable.prototype.map = function () { };

@@ -40,6 +40,9 @@ export interface MyModel {
     id: number;
 }
 
+//// [mymodule.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 //// [file1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -69,6 +72,3 @@ class BrokenClass {
     }
 }
 exports.BrokenClass = BrokenClass;
-//// [mymodule.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });

@@ -12,9 +12,9 @@ declare module "tslib" {
     function __importStar(m: any): void;
 }
 
-//// [b.js]
-import * as a from "./a";
-export { a };
 //// [a.js]
 export class A {
 }
+//// [b.js]
+import * as a from "./a";
+export { a };

@@ -11,6 +11,9 @@ export function f(): A {
 export { f as fV2 };
 
 
+//// [a.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 //// [b.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -19,6 +22,3 @@ exports.fV2 = f;
 function f() {
     return {};
 }
-//// [a.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });

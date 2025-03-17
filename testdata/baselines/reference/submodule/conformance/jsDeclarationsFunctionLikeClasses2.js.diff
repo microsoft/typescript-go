@@ -1,17 +1,6 @@
 --- old.jsDeclarationsFunctionLikeClasses2.js
 +++ new.jsDeclarationsFunctionLikeClasses2.js
-@@= skipped -75, +75 lines =@@
- // export const res = Point2D(2, 3).dot(origin); // TODO: when __proto__ works, validate this
- 
- 
-+//// [referencer.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.origin = void 0;
-+const source_1 = require("./source");
-+exports.origin = new source_1.Point2D(0, 0);
- //// [source.js]
- "use strict";
+@@= skipped -80, +80 lines =@@
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.Vec = Vec;
  exports.Point2D = Point2D;
@@ -61,7 +50,7 @@
  function Point2D(x, y) {
      if (!(this instanceof Point2D)) {
          return new Point2D(x, y);
-@@= skipped -53, +46 lines =@@
+@@= skipped -48, +35 lines =@@
      get x() {
          return this.storage[0];
      },
@@ -80,13 +69,13 @@
      set y(y) {
          this.storage[1] = y;
      }
- };
--//// [referencer.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.origin = void 0;
+@@= skipped -20, +14 lines =@@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.origin = void 0;
 -var source_1 = require("./source");
--exports.origin = new source_1.Point2D(0, 0);
++const source_1 = require("./source");
+ exports.origin = new source_1.Point2D(0, 0);
 -// export const res = Point2D(2, 3).dot(origin); // TODO: when __proto__ works, validate this
 -
 -

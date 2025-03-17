@@ -20,11 +20,6 @@ import { j, k } from './assignmentToVoidZero2'
 j + k
 
 
-//// [importer.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const assignmentToVoidZero2_1 = require("./assignmentToVoidZero2");
-assignmentToVoidZero2_1.j + assignmentToVoidZero2_1.k;
 //// [assignmentToVoidZero2.js]
 exports.j = 1;
 exports.k = void 0;
@@ -38,3 +33,8 @@ function C() {
 }
 var c = new C();
 c.p + c.q;
+//// [importer.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const assignmentToVoidZero2_1 = require("./assignmentToVoidZero2");
+assignmentToVoidZero2_1.j + assignmentToVoidZero2_1.k;

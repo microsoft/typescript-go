@@ -91,7 +91,7 @@ export const cjsNonmain = true;
     }
 }
 
-//// [index.js]
+//// [index.mjs]
 import * as cjs from "package/cjs";
 import * as mjs from "package/mjs";
 import * as type from "package";
@@ -117,7 +117,7 @@ import * as typei from "inner";
 export const d = cjsi;
 export const e = mjsi;
 export const f = typei;
-//// [index.mjs]
+//// [index.js]
 import * as cjs from "package/cjs";
 import * as mjs from "package/mjs";
 import * as type from "package";

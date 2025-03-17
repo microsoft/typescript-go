@@ -20,13 +20,6 @@ export class ParentThing implements ParentThing {}
 
 child1(ParentThing.prototype);
 
-//// [child1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.child1 = child1;
-function child1(prototype) {
-    prototype.add = (a, b) => a + b;
-}
 //// [parent.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36,3 +29,10 @@ class ParentThing {
 }
 exports.ParentThing = ParentThing;
 (0, child1_1.child1)(ParentThing.prototype);
+//// [child1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.child1 = child1;
+function child1(prototype) {
+    prototype.add = (a, b) => a + b;
+}

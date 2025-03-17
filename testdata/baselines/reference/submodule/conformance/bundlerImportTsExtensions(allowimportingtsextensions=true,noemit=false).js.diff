@@ -1,24 +1,13 @@
 --- old.bundlerImportTsExtensions(allowimportingtsextensions=true,noemit=false).js
 +++ new.bundlerImportTsExtensions(allowimportingtsextensions=true,noemit=false).js
-@@= skipped -64, +64 lines =@@
- import {} from "./a.d.ts";
- import type {} from "./a.d.ts";
+@@= skipped -66, +66 lines =@@
  
--//// [a.js]
-+//// [main.js]
- export {};
--//// [index.js]
-+//// [e.txt.js]
- export {};
- //// [e.js]
- export {};
--//// [e.txt.js]
-+//// [index.js]
- export {};
--//// [main.js]
-+//// [c.js]
+ //// [a.js]
  export {};
 +//// [b.js]
 +export {};
-+//// [a.js]
++//// [c.js]
 +export {};
+ //// [index.js]
+ export {};
+ //// [e.js]

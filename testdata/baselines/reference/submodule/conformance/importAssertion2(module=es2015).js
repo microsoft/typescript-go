@@ -15,14 +15,14 @@ export { a, b } from './0' assert {}
 export { a as c, b as d } from './0' assert { a: "a", b: "b", c: "c" }
 
 
-//// [2.js]
-export { a, b } from './0' assert {};
-export { a as c, b as d } from './0' assert { a: "a", b: "b", c: "c" };
+//// [0.js]
+export const a = 1;
+export const b = 2;
 //// [1.js]
 export { a, b } from './0' assert { type: "json" };
 export * from './0' assert { type: "json" };
 import * as ns_1 from './0' assert { type: "json" };
 export { ns_1 as ns };
-//// [0.js]
-export const a = 1;
-export const b = 2;
+//// [2.js]
+export { a, b } from './0' assert {};
+export { a as c, b as d } from './0' assert { a: "a", b: "b", c: "c" };

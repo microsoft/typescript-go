@@ -24,6 +24,22 @@ class D extends C<IHasVisualizationModel> {
     x = moduleA;
 }
 
+//// [aliasUsageInTypeArgumentOfExtendsClause_backbone.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Model = void 0;
+class Model {
+    someData;
+}
+exports.Model = Model;
+//// [aliasUsageInTypeArgumentOfExtendsClause_moduleA.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.VisualizationModel = void 0;
+const Backbone = require("./aliasUsageInTypeArgumentOfExtendsClause_backbone");
+class VisualizationModel extends Backbone.Model {
+}
+exports.VisualizationModel = VisualizationModel;
 //// [aliasUsageInTypeArgumentOfExtendsClause_main.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -34,19 +50,3 @@ class C {
 class D extends C {
     x = moduleA;
 }
-//// [aliasUsageInTypeArgumentOfExtendsClause_moduleA.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.VisualizationModel = void 0;
-const Backbone = require("./aliasUsageInTypeArgumentOfExtendsClause_backbone");
-class VisualizationModel extends Backbone.Model {
-}
-exports.VisualizationModel = VisualizationModel;
-//// [aliasUsageInTypeArgumentOfExtendsClause_backbone.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Model = void 0;
-class Model {
-    someData;
-}
-exports.Model = Model;

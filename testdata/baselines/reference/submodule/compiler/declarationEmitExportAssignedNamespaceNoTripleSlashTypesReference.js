@@ -37,6 +37,21 @@ export const obj = {
 export * from '@emotion/core';
 
 
+//// [get-comp.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getComp = getComp;
+function getComp() {
+    return {};
+}
+//// [inferred-comp-export.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.obj = void 0;
+const get_comp_1 = require("./get-comp");
+exports.obj = {
+    comp: (0, get_comp_1.getComp)()
+};
 //// [some-other-file.js]
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -55,18 +70,3 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("@emotion/core"), exports);
-//// [inferred-comp-export.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.obj = void 0;
-const get_comp_1 = require("./get-comp");
-exports.obj = {
-    comp: (0, get_comp_1.getComp)()
-};
-//// [get-comp.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getComp = getComp;
-function getComp() {
-    return {};
-}

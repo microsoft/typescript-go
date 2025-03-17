@@ -107,44 +107,23 @@ exports.x = require("./g");
 export {}; // Silly test harness
 
 
-//// [dummy.js]
-export {};
-//// [main4.cjs]
-exports.x = require("./g");
-//// [main3.cjs]
-import { x, y } from "./a";
-const a1 = require("./a");
-const a2 = require("./a");
-import b1 from "./b";
-const b2 = require("./b");
-import c1 from "./c";
-const c2 = require("./c");
-import d1 from "./d";
-const d2 = require("./d");
-import e1 from "./e.mjs";
-const e2 = require("./e.mjs");
-import f1 from "./f.cjs";
-const f2 = require("./f.cjs");
-import g1 from "./g";
-const g2 = require("./g");
-//// [main2.mjs]
-import { x, y } from "./a";
-const a1 = require("./a");
-a1.x;
-a1.default.x;
-const a2 = require("./a");
-import b1 from "./b";
-const b2 = require("./b");
-import c1 from "./c";
-const c2 = require("./c");
-import d1 from "./d";
-const d2 = require("./d");
-import e1 from "./e.mjs";
-const e2 = require("./e.mjs");
-import f1 from "./f.cjs";
-const f2 = require("./f.cjs");
-import g1 from "./g";
-const g2 = require("./g");
+//// [a.js]
+export const x = 0;
+module.exports.y = 0;
+//// [b.js]
+export default 0;
+//// [c.js]
+module.exports = {
+    default: function () { }
+};
+//// [d.js]
+module.exports = function () { };
+//// [e.mjs]
+module.exports = 0;
+//// [f.cjs]
+export default 0;
+//// [g.js]
+exports.default = 0;
 //// [main1.js]
 import { x, y } from "./a";
 const a1 = require("./a");
@@ -174,20 +153,41 @@ import g1 from "./g";
 g1.default;
 const g2 = require("./g");
 g2.default;
-//// [g.js]
-exports.default = 0;
-//// [f.cjs]
-export default 0;
-//// [e.mjs]
-module.exports = 0;
-//// [d.js]
-module.exports = function () { };
-//// [c.js]
-module.exports = {
-    default: function () { }
-};
-//// [b.js]
-export default 0;
-//// [a.js]
-export const x = 0;
-module.exports.y = 0;
+//// [main2.mjs]
+import { x, y } from "./a";
+const a1 = require("./a");
+a1.x;
+a1.default.x;
+const a2 = require("./a");
+import b1 from "./b";
+const b2 = require("./b");
+import c1 from "./c";
+const c2 = require("./c");
+import d1 from "./d";
+const d2 = require("./d");
+import e1 from "./e.mjs";
+const e2 = require("./e.mjs");
+import f1 from "./f.cjs";
+const f2 = require("./f.cjs");
+import g1 from "./g";
+const g2 = require("./g");
+//// [main3.cjs]
+import { x, y } from "./a";
+const a1 = require("./a");
+const a2 = require("./a");
+import b1 from "./b";
+const b2 = require("./b");
+import c1 from "./c";
+const c2 = require("./c");
+import d1 from "./d";
+const d2 = require("./d");
+import e1 from "./e.mjs";
+const e2 = require("./e.mjs");
+import f1 from "./f.cjs";
+const f2 = require("./f.cjs");
+import g1 from "./g";
+const g2 = require("./g");
+//// [main4.cjs]
+exports.x = require("./g");
+//// [dummy.js]
+export {};

@@ -1,10 +1,9 @@
 --- old.decoratedDefaultExportsGetExportedAmd.js
 +++ new.decoratedDefaultExportsGetExportedAmd.js
-@@= skipped -12, +12 lines =@@
- export default class {}
+@@= skipped -13, +13 lines =@@
  
  
--//// [a.js]
+ //// [a.js]
 -var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 -    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 -    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -22,6 +21,13 @@
 -    ], Foo);
 -    exports.default = Foo;
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++var decorator;
++@decorator
++class Foo {
++}
++exports.default = Foo;
  //// [b.js]
 -var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 -    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -47,11 +53,3 @@
 +class default_1 {
 +}
 +exports.default = default_1;
-+//// [a.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+var decorator;
-+@decorator
-+class Foo {
-+}
-+exports.default = Foo;

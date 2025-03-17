@@ -19,9 +19,9 @@ var foo: any;
 var spread1 = <div x='' {...foo} y='' />;
 
 
+//// [file.js]
 //// [react-consumer.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var foo;
 var spread1 = <div x='' {...foo} y=''/>;
-//// [file.js]

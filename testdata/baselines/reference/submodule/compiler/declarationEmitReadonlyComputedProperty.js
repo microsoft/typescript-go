@@ -20,14 +20,6 @@ export const spread = {
   ...createInstance(),
 }
 
-//// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.spread = void 0;
-const bug_1 = require("./bug");
-exports.spread = {
-    ...(0, bug_1.createInstance)(),
-};
 //// [bug.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -39,3 +31,11 @@ function createInstance() {
         [exports.SYMBOL]: ''
     };
 }
+//// [index.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.spread = void 0;
+const bug_1 = require("./bug");
+exports.spread = {
+    ...(0, bug_1.createInstance)(),
+};

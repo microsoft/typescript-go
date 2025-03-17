@@ -27,9 +27,9 @@ export const x: () => Thing = null as any;
     "exports": "./index.ts"
 }
 
-//// [index.js]
-export const a = (await import("inner")).x();
-//// [index.js]
-export { x } from "./other.js";
 //// [other.js]
 export const x = null;
+//// [index.js]
+export { x } from "./other.js";
+//// [index.js]
+export const a = (await import("inner")).x();

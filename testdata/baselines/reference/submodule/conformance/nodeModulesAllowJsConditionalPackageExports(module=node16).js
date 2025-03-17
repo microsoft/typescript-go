@@ -122,36 +122,6 @@ export const cjsSource = true;
     }
 }
 
-//// [index.cjs]
-import * as cjs from "package/cjs";
-import * as mjs from "package/mjs";
-import * as type from "package";
-cjs;
-mjs;
-type;
-import * as cjsi from "inner/a";
-import * as mjsi from "inner/b";
-import * as typei from "inner";
-import * as ts from "inner/types";
-cjsi.cjsSource;
-mjsi.cjsSource;
-typei.implicitCjsSource;
-ts.cjsSource;
-//// [index.mjs]
-import * as cjs from "package/cjs";
-import * as mjs from "package/mjs";
-import * as type from "package";
-cjs;
-mjs;
-type;
-import * as cjsi from "inner/a";
-import * as mjsi from "inner/b";
-import * as typei from "inner";
-import * as ts from "inner/types";
-cjsi.mjsSource;
-mjsi.mjsSource;
-typei.mjsSource;
-ts.mjsSource;
 //// [index.js]
 import * as cjs from "package/cjs";
 import * as mjs from "package/mjs";
@@ -167,3 +137,33 @@ cjsi.mjsSource;
 mjsi.mjsSource;
 typei.mjsSource;
 ts.mjsSource;
+//// [index.mjs]
+import * as cjs from "package/cjs";
+import * as mjs from "package/mjs";
+import * as type from "package";
+cjs;
+mjs;
+type;
+import * as cjsi from "inner/a";
+import * as mjsi from "inner/b";
+import * as typei from "inner";
+import * as ts from "inner/types";
+cjsi.mjsSource;
+mjsi.mjsSource;
+typei.mjsSource;
+ts.mjsSource;
+//// [index.cjs]
+import * as cjs from "package/cjs";
+import * as mjs from "package/mjs";
+import * as type from "package";
+cjs;
+mjs;
+type;
+import * as cjsi from "inner/a";
+import * as mjsi from "inner/b";
+import * as typei from "inner";
+import * as ts from "inner/types";
+cjsi.cjsSource;
+mjsi.cjsSource;
+typei.implicitCjsSource;
+ts.cjsSource;

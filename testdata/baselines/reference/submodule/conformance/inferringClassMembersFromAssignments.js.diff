@@ -16,35 +16,13 @@
 -                _this.inPropertyDeclaration = "string";
 -            }
 -        };
-+//// [b.js]
-+var c = new C();
-+var stringOrNumber;
-+var stringOrNumber = c.inConstructor;
-+var stringOrNumberOrUndefined;
-+var stringOrNumberOrUndefined = c.inMethod;
-+var stringOrNumberOrUndefined = c.inGetter;
-+var stringOrNumberOrUndefined = c.inSetter;
-+var stringOrNumberOrUndefined = c.inPropertyDeclaration;
-+var stringOrNumberOrUndefined = c.inNestedArrowFunction;
-+var stringOrNumberOrBoolean;
-+var number;
-+var number = c.inMultiple;
-+var stringOrBooleanOrUndefined;
-+var stringOrBooleanOrUndefined = c.inMultipleMethods;
-+var any;
-+var any = c.inMethodNullable;
-+var stringOrNumberOrUndefined = C.inStaticMethod;
-+var stringOrNumberOrUndefined = C.inStaticGetter;
-+var stringOrNumberOrUndefined = C.inStaticSetter;
-+var stringOrNumberOrUndefined = C.inStaticPropertyDeclaration;
-+var stringOrNumberOrUndefined = C.inStaticNestedArrowFunction;
 +//// [a.js]
 +class C {
 +    constructor() {
          if (Math.random()) {
              this.inConstructor = 0;
          }
-@@= skipped -20, +33 lines =@@
+@@= skipped -20, +11 lines =@@
          }
          this.inMultiple = 0;
      }
@@ -156,25 +134,8 @@
      };
 -    return C;
 -}());
--var c = new C();
--var stringOrNumber;
--var stringOrNumber = c.inConstructor;
--var stringOrNumberOrUndefined;
--var stringOrNumberOrUndefined = c.inMethod;
--var stringOrNumberOrUndefined = c.inGetter;
--var stringOrNumberOrUndefined = c.inSetter;
--var stringOrNumberOrUndefined = c.inPropertyDeclaration;
--var stringOrNumberOrUndefined = c.inNestedArrowFunction;
--var stringOrNumberOrBoolean;
--var number;
--var number = c.inMultiple;
--var stringOrBooleanOrUndefined;
--var stringOrBooleanOrUndefined = c.inMultipleMethods;
--var any;
--var any = c.inMethodNullable;
--var stringOrNumberOrUndefined = C.inStaticMethod;
--var stringOrNumberOrUndefined = C.inStaticGetter;
--var stringOrNumberOrUndefined = C.inStaticSetter;
--var stringOrNumberOrUndefined = C.inStaticPropertyDeclaration;
--var stringOrNumberOrUndefined = C.inStaticNestedArrowFunction;
 +}
++//// [b.js]
+ var c = new C();
+ var stringOrNumber;
+ var stringOrNumber = c.inConstructor;

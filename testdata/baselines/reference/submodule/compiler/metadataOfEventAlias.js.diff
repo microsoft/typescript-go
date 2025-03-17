@@ -1,13 +1,7 @@
 --- old.metadataOfEventAlias.js
 +++ new.metadataOfEventAlias.js
-@@= skipped -9, +9 lines =@@
-     @Input event: Event;
- }
- 
--//// [event.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--;
+@@= skipped -15, +15 lines =@@
+ ;
  //// [test.js]
  "use strict";
 -var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -36,7 +30,3 @@
 +    event;
 +}
  exports.SomeClass = SomeClass;
-+//// [event.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+;

@@ -78,30 +78,6 @@ export let x: DiagnosticCategory;
     }
 })()
 
-//// [f.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.x = exports.DiagnosticCategory = void 0;
-var DiagnosticCategory;
-(function (DiagnosticCategory) {
-    DiagnosticCategory[DiagnosticCategory["Warning"] = 0] = "Warning";
-    DiagnosticCategory[DiagnosticCategory["Error"] = 1] = "Error";
-    DiagnosticCategory[DiagnosticCategory["Suggestion"] = 2] = "Suggestion";
-    DiagnosticCategory[DiagnosticCategory["Message"] = 3] = "Message";
-})(DiagnosticCategory || (exports.DiagnosticCategory = DiagnosticCategory = {}));
-(() => {
-    let DiagnosticCategory;
-    (function (DiagnosticCategory) {
-        DiagnosticCategory["Warning"] = "Warning";
-        DiagnosticCategory["Error"] = "Error";
-        DiagnosticCategory["Suggestion"] = "Suggestion";
-        DiagnosticCategory["Message"] = "Message";
-    })(DiagnosticCategory || (DiagnosticCategory = {}));
-    function f(y) {
-        exports.x = y;
-        y = exports.x;
-    }
-})();
 //// [a.js]
 var numerics;
 (function (numerics) {
@@ -146,3 +122,27 @@ function i(x, y) {
     x = y;
     y = x;
 }
+//// [f.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.x = exports.DiagnosticCategory = void 0;
+var DiagnosticCategory;
+(function (DiagnosticCategory) {
+    DiagnosticCategory[DiagnosticCategory["Warning"] = 0] = "Warning";
+    DiagnosticCategory[DiagnosticCategory["Error"] = 1] = "Error";
+    DiagnosticCategory[DiagnosticCategory["Suggestion"] = 2] = "Suggestion";
+    DiagnosticCategory[DiagnosticCategory["Message"] = 3] = "Message";
+})(DiagnosticCategory || (exports.DiagnosticCategory = DiagnosticCategory = {}));
+(() => {
+    let DiagnosticCategory;
+    (function (DiagnosticCategory) {
+        DiagnosticCategory["Warning"] = "Warning";
+        DiagnosticCategory["Error"] = "Error";
+        DiagnosticCategory["Suggestion"] = "Suggestion";
+        DiagnosticCategory["Message"] = "Message";
+    })(DiagnosticCategory || (DiagnosticCategory = {}));
+    function f(y) {
+        exports.x = y;
+        y = exports.x;
+    }
+})();

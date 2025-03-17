@@ -31,17 +31,6 @@ import type { TypeFlag } from './b';
 const flags: TypeFlag = SymbolFlags.Type;
 
 
-//// [c.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const flags = a_1.SymbolFlags.Type;
-//// [b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-SyntaxKind.ImportClause;
-SymbolFlags.Type;
-let kind;
-let flags;
 //// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -55,3 +44,14 @@ var SymbolFlags;
     SymbolFlags["Type"] = "Type";
     SymbolFlags["Value"] = "Value";
 })(SymbolFlags || (SymbolFlags = {}));
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+SyntaxKind.ImportClause;
+SymbolFlags.Type;
+let kind;
+let flags;
+//// [c.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const flags = a_1.SymbolFlags.Type;

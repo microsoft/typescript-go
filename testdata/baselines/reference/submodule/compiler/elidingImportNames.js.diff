@@ -1,33 +1,13 @@
 --- old.elidingImportNames.js
 +++ new.elidingImportNames.js
-@@= skipped -13, +13 lines =@@
- //// [elidingImportNames_main1.ts]
- export var main = 10;
- 
--//// [elidingImportNames_main.js]
-+//// [elidingImportNames_test.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
--exports.main = void 0;
--exports.main = 10;
-+const a = require("./elidingImportNames_main");
-+var b = a;
-+var x;
-+const a2 = require("./elidingImportNames_main1");
-+var b2 = a2;
- //// [elidingImportNames_main1.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
- exports.main = void 0;
- exports.main = 10;
--//// [elidingImportNames_test.js]
-+//// [elidingImportNames_main.js]
+@@= skipped -26, +26 lines =@@
+ //// [elidingImportNames_test.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
 -var a = require("./elidingImportNames_main"); // alias used in typeof
--var b = a;
--var x;
++const a = require("./elidingImportNames_main");
+ var b = a;
+ var x;
 -var a2 = require("./elidingImportNames_main1"); // alias not used in typeof
--var b2 = a2;
-+exports.main = void 0;
-+exports.main = 10;
++const a2 = require("./elidingImportNames_main1");
+ var b2 = a2;

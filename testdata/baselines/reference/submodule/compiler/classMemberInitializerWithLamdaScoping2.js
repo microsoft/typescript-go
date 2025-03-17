@@ -17,6 +17,8 @@ class Test1 {
     };
 }
 
+//// [classMemberInitializerWithLamdaScoping2_0.js]
+var field1;
 //// [classMemberInitializerWithLamdaScoping2_1.js]
 class Test1 {
     field1;
@@ -27,5 +29,3 @@ class Test1 {
         console.log(field1);
     };
 }
-//// [classMemberInitializerWithLamdaScoping2_0.js]
-var field1;

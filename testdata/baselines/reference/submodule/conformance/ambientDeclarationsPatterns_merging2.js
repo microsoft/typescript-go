@@ -18,10 +18,10 @@ declare module "a.foo" {
   let alsoOnlyInA: number;
 }
 
-//// [testB.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+//// [types.js]
 //// [testA.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-//// [types.js]
+//// [testB.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });

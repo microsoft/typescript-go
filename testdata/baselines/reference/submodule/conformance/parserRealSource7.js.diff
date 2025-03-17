@@ -1,8 +1,10 @@
 --- old.parserRealSource7.js
 +++ new.parserRealSource7.js
-@@= skipped -835, +835 lines =@@
+@@= skipped -834, +834 lines =@@
+ 
  }
  
++//// [typescript.js]
  //// [parserRealSource7.js]
 -// Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
 -// See LICENSE.txt in the project root for complete license information.
@@ -24,7 +26,7 @@
      TypeScript.Continuation = Continuation;
      function getBaseTypeLinks(bases, baseTypeLinks) {
          if (bases) {
-@@= skipped -85, +82 lines =@@
+@@= skipped -86, +84 lines =@@
              case NodeType.Name:
                  var name = alias.text;
                  var isDynamic = isQuoted(name);
@@ -266,8 +268,3 @@
          else if (ast.nodeType == NodeType.ArgDecl) {
              go = preCollectArgDeclTypes(ast, parent, context);
          }
-@@= skipped -35, +33 lines =@@
-     }
-     TypeScript.postCollectTypes = postCollectTypes;
- })(TypeScript || (TypeScript = {}));
-+//// [typescript.js]

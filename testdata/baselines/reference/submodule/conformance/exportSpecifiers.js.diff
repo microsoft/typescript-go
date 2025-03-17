@@ -1,14 +1,16 @@
 --- old.exportSpecifiers.js
 +++ new.exportSpecifiers.js
-@@= skipped -19, +19 lines =@@
- export type { type something as whatever }; // Error
+@@= skipped -20, +20 lines =@@
  
  
--//// [exports.js]
+ //// [exports.js]
 -var type = 0;
 -var as = 0;
 -var something = 0;
--export { type };
++const type = 0;
++const as = 0;
++const something = 0;
+ export { type };
  //// [imports.js]
  import { type } from "./exports.js";
  type;
@@ -22,15 +24,7 @@
 -declare const type = 0;
 -declare const as = 0;
 -declare const something = 0;
-+as;
-+something;
-+foo;
-+bar;
-+//// [exports.js]
-+const type = 0;
-+const as = 0;
-+const something = 0;
- export { type };
+-export { type };
 -export { type as };
 -export { type something };
 -export { type type as foo };
@@ -38,3 +32,7 @@
 -export type { type something as whatever };
 -//// [imports.d.ts]
 -export {};
++as;
++something;
++foo;
++bar;

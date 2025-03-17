@@ -12,7 +12,9 @@
 - * @type {Item};
 - */
 -var x = { x: 12 };
--module.exports = x;
++//// [mod1.js]
++const x = { x: 12 };
+ module.exports = x;
 -/** @type {(typeof import("./folder/mod1"))[]} */
 -var items = [{ x: 12 }];
 +//// [index.js]
@@ -42,6 +44,3 @@
 -    /** @type {(typeof import("./folder/mod1"))[]} */
 -    const items: (typeof import("folder/mod1"))[];
 -}
-+//// [mod1.js]
-+const x = { x: 12 };
-+module.exports = x;

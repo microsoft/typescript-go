@@ -23,13 +23,12 @@ declare let dec: any;
 @dec export default class {}
 
 
-//// [c.js]
+//// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 @dec
-class default_1 {
+class C {
 }
-exports.default = default_1;
 //// [b.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -38,9 +37,10 @@ exports.C = void 0;
 class C {
 }
 exports.C = C;
-//// [a.js]
+//// [c.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 @dec
-class C {
+class default_1 {
 }
+exports.default = default_1;

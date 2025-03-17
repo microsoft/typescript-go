@@ -1,10 +1,9 @@
 --- old.systemModule17.js
 +++ new.systemModule17.js
-@@= skipped -37, +37 lines =@@
- export {II};
+@@= skipped -38, +38 lines =@@
  export {II as II1};
  
--//// [f1.js]
+ //// [f1.js]
 -System.register([], function (exports_1, context_1) {
 -    "use strict";
 -    var A;
@@ -21,6 +20,12 @@
 -        }
 -    };
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.A = void 0;
++class A {
++}
++exports.A = A;
  //// [f2.js]
 -System.register(["f1"], function (exports_1, context_1) {
 -    "use strict";
@@ -66,10 +71,3 @@
 +Object.defineProperty(exports, "EA1", { enumerable: true, get: function () { return f1_1.A; } });
 +Object.defineProperty(exports, "EI", { enumerable: true, get: function () { return f1_1.I; } });
 +Object.defineProperty(exports, "EI1", { enumerable: true, get: function () { return f1_1.I; } });
-+//// [f1.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.A = void 0;
-+class A {
-+}
-+exports.A = A;

@@ -100,44 +100,6 @@ class c2 {
     }
 }
 
-//// [declFileAccessors_1.js]
-class c2 {
-    get p3() {
-        return 10;
-    }
-    set p3(value) {
-    }
-    get pp3() {
-        return 10;
-    }
-    set pp3(value) {
-    }
-    static get s3() {
-        return 10;
-    }
-    static set s3(value) {
-    }
-    get nc_p3() {
-        return 10;
-    }
-    set nc_p3(value) {
-    }
-    get nc_pp3() {
-        return 10;
-    }
-    set nc_pp3(value) {
-    }
-    static get nc_s3() {
-        return "";
-    }
-    static set nc_s3(value) {
-    }
-    get onlyGetter() {
-        return 10;
-    }
-    set onlySetter(value) {
-    }
-}
 //// [declFileAccessors_0.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -180,3 +142,41 @@ class c1 {
     }
 }
 exports.c1 = c1;
+//// [declFileAccessors_1.js]
+class c2 {
+    get p3() {
+        return 10;
+    }
+    set p3(value) {
+    }
+    get pp3() {
+        return 10;
+    }
+    set pp3(value) {
+    }
+    static get s3() {
+        return 10;
+    }
+    static set s3(value) {
+    }
+    get nc_p3() {
+        return 10;
+    }
+    set nc_p3(value) {
+    }
+    get nc_pp3() {
+        return 10;
+    }
+    set nc_pp3(value) {
+    }
+    static get nc_s3() {
+        return "";
+    }
+    static set nc_s3(value) {
+    }
+    get onlyGetter() {
+        return 10;
+    }
+    set onlySetter(value) {
+    }
+}

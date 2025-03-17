@@ -1,30 +1,18 @@
 --- old.jsDeclarationsParameterTagReusesInputNodeInEmit2.js
 +++ new.jsDeclarationsParameterTagReusesInputNodeInEmit2.js
-@@= skipped -25, +25 lines =@@
- };
- 
- 
-+//// [file.js]
-+const test = (base) => {
-+    return base;
-+};
- //// [base.js]
- class Base {
-     constructor() { }
-@@= skipped -9, +13 lines =@@
- };
+@@= skipped -35, +35 lines =@@
  BaseFactory.Base = Base;
  module.exports = BaseFactory;
--//// [file.js]
+ //// [file.js]
 -/** @typedef {typeof import('./base')} BaseFactory */
 -/**
 - *
 - * @param {InstanceType<BaseFactory["Base"]>} base
 - * @returns {InstanceType<BaseFactory["Base"]>}
 - */
--const test = (base) => {
--    return base;
--};
+ const test = (base) => {
+     return base;
+ };
 -
 -
 -//// [base.d.ts]

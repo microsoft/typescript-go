@@ -31,15 +31,13 @@ export = I;
 //// [z.ts]
 // test harness is weird if the last file includs a require >:(
 
-//// [z.js]
-//// [f.js]
+//// [a.js]
 "use strict";
-const I = {};
 module.exports = I;
-//// [d.js]
+//// [b.js]
 "use strict";
-const I = require("./c");
-module.exports = J;
+Object.defineProperty(exports, "__esModule", { value: true });
+const I = require("./a");
 //// [c.js]
 "use strict";
 var I;
@@ -47,10 +45,12 @@ var I;
     I.x = 1;
 })(I || (I = {}));
 module.exports = I;
-//// [b.js]
+//// [d.js]
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const I = require("./a");
-//// [a.js]
+const I = require("./c");
+module.exports = J;
+//// [f.js]
 "use strict";
+const I = {};
 module.exports = I;
+//// [z.js]

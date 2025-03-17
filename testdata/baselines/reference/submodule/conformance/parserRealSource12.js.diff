@@ -1,8 +1,10 @@
 --- old.parserRealSource12.js
 +++ new.parserRealSource12.js
-@@= skipped -532, +532 lines =@@
+@@= skipped -531, +531 lines =@@
+     }
  }
  
++//// [typescript.js]
  //// [parserRealSource12.js]
 -// Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
 -// See LICENSE.txt in the project root for complete license information.
@@ -50,7 +52,7 @@
              var preAst = this.pre(ast, parent, this);
              if (preAst === undefined) {
                  preAst = ast;
-@@= skipped -35, +33 lines =@@
+@@= skipped -36, +35 lines =@@
              if (this.options.goChildren) {
                  var svGoSib = this.options.goNextSibling;
                  this.options.goNextSibling = true;
@@ -149,8 +151,3 @@
          }
          ChildrenWalkers.walkLabelChildren = walkLabelChildren;
          function walkLabeledStatementChildren(preAst, parent, walker) {
-@@= skipped -12, +11 lines =@@
-         ChildrenWalkers.walkLabeledStatementChildren = walkLabeledStatementChildren;
-     })(ChildrenWalkers || (ChildrenWalkers = {}));
- })(TypeScript || (TypeScript = {}));
-+//// [typescript.js]

@@ -8,8 +8,8 @@ export = a;  // Error: export = not allowed in ES6
 import * as a from "a";
 
 
-//// [b.js]
-export {};
 //// [a.js]
 var a = 10;
+export {};
+//// [b.js]
 export {};

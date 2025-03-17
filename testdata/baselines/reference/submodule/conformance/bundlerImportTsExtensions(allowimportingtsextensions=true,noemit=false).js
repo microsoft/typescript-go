@@ -65,17 +65,17 @@ import {} from "./a.ts";
 import {} from "./a.d.ts";
 import type {} from "./a.d.ts";
 
-//// [main.js]
-export {};
-//// [e.txt.js]
-export {};
-//// [e.js]
-export {};
-//// [index.js]
-export {};
-//// [c.js]
+//// [a.js]
 export {};
 //// [b.js]
 export {};
-//// [a.js]
+//// [c.js]
+export {};
+//// [index.js]
+export {};
+//// [e.js]
+export {};
+//// [e.txt.js]
+export {};
+//// [main.js]
 export {};

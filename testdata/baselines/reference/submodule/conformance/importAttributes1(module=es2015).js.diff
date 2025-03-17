@@ -1,31 +1,6 @@
 --- old.importAttributes1(module=es2015).js
 +++ new.importAttributes1(module=es2015).js
-@@= skipped -31, +31 lines =@@
- const h = import('./0', { with: { type: "json" }},)
- 
- 
--//// [0.js]
--export const a = 1;
--export const b = 2;
--//// [1.js]
--import './0' with { type: "json" };
--import { a, b } from './0' with { "type": "json" };
--import * as foo from './0' with { type: "json" };
--a;
--b;
--foo.a;
--foo.b;
--//// [2.js]
--import { a, b } from './0' with {};
--import { a as c, b as d } from './0' with { a: "a", b: "b", c: "c" };
--a;
--b;
--c;
--d;
- //// [3.js]
- const a = import('./0');
- const b = import('./0', { with: { type: "json" } });
-@@= skipped -28, +10 lines =@@
+@@= skipped -59, +59 lines =@@
  const f = import();
  const g = import('./0', {}, {});
  const h = import('./0', { with: { type: "json" } });
@@ -49,21 +24,3 @@
 -declare const f: Promise<any>;
 -declare const g: Promise<typeof import("./0")>;
 -declare const h: Promise<typeof import("./0")>;
-+//// [2.js]
-+import { a, b } from './0' with {};
-+import { a as c, b as d } from './0' with { a: "a", b: "b", c: "c" };
-+a;
-+b;
-+c;
-+d;
-+//// [1.js]
-+import './0' with { type: "json" };
-+import { a, b } from './0' with { "type": "json" };
-+import * as foo from './0' with { type: "json" };
-+a;
-+b;
-+foo.a;
-+foo.b;
-+//// [0.js]
-+export const a = 1;
-+export const b = 2;

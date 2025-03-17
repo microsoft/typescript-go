@@ -16,6 +16,11 @@ export function b(value) {
 }
 
 
+//// [a.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.kSymbol = void 0;
+exports.kSymbol = Symbol("my-symbol");
 //// [b.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -23,8 +28,3 @@ exports.b = b;
 function b(value) {
     return value;
 }
-//// [a.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.kSymbol = void 0;
-exports.kSymbol = Symbol("my-symbol");

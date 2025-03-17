@@ -22,11 +22,6 @@
 -        a: 0;
 -    };
 -};
-+//// [index.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.foo = void 0;
-+exports.foo = { ...{} };
 +//// [type.js]
 +"use strict";
 +Object.defineProperty(exports, "__esModule", { value: true });
@@ -36,3 +31,8 @@
 +    Enum["A"] = "a";
 +    Enum["B"] = "b";
 +})(Enum || (exports.Enum = Enum = {}));
++//// [index.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.foo = void 0;
++exports.foo = { ...{} };

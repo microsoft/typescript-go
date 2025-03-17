@@ -80,12 +80,12 @@ import "./augmentation";
 let x: Request;
 const y = x.id;
 
+//// [augmentation.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 //// [consumer.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 require("./augmentation");
 let x;
 const y = x.id;
-//// [augmentation.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });

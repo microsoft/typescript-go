@@ -1,12 +1,6 @@
 --- old.jsFileImportPreservedWhenUsed.js
 +++ new.jsFileImportPreservedWhenUsed.js
-@@= skipped -27, +27 lines =@@
-     }
- }
- 
--//// [Consts.js]
--export const INDEX_FIELD = '__INDEX';
- //// [index.js]
+@@= skipped -33, +33 lines =@@
  import * as _ from './dash';
  import { INDEX_FIELD } from './Consts';
  export class Test {
@@ -17,7 +11,3 @@
      test(obj, vm) {
          let index = 0;
          vm.objects = _.mapValues(obj, object => ({ ...object, [INDEX_FIELD]: index++ }));
-     }
- }
-+//// [Consts.js]
-+export const INDEX_FIELD = '__INDEX';

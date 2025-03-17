@@ -46,14 +46,6 @@
 -declare module "a" {
 -    export class A {
 -    }
-+//// [main.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+require("D");
-+require("e");
-+let a;
-+let b = a.getB().x.toFixed();
-+let c = a.getCls().y.toLowerCase();
 +//// [a.js]
 +"use strict";
 +Object.defineProperty(exports, "__esModule", { value: true });
@@ -78,3 +70,11 @@
 -    import "e";
 -}
 +exports.A = A;
++//// [main.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++require("D");
++require("e");
++let a;
++let b = a.getB().x.toFixed();
++let c = a.getCls().y.toLowerCase();

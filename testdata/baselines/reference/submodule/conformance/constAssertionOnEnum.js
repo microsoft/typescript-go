@@ -27,22 +27,13 @@ export enum Foo { X }
 (Foo).X as const;
 
 
-//// [more.js]
+//// [enum.js]
 export { Foo };
 var Foo;
 (function (Foo) {
-    Foo[Foo["X"] = 0] = "X";
+    Foo[Foo["A"] = 0] = "A";
+    Foo[Foo["B"] = 1] = "B";
 })(Foo || (Foo = {}));
-(Foo).X;
-//// [ns.js]
-var ns;
-(function (ns) {
-    let Foo;
-    (function (Foo) {
-        Foo[Foo["X"] = 0] = "X";
-    })(Foo = ns.Foo || (ns.Foo = {}));
-    ns.Foo.X;
-})(ns || (ns = {}));
 //// [test.js]
 import { Foo } from './enum';
 var Bar;
@@ -52,10 +43,19 @@ var Bar;
 })(Bar || (Bar = {}));
 let foo = Foo.A;
 let bar = Bar.A;
-//// [enum.js]
+//// [ns.js]
+var ns;
+(function (ns) {
+    let Foo;
+    (function (Foo) {
+        Foo[Foo["X"] = 0] = "X";
+    })(Foo = ns.Foo || (ns.Foo = {}));
+    ns.Foo.X;
+})(ns || (ns = {}));
+//// [more.js]
 export { Foo };
 var Foo;
 (function (Foo) {
-    Foo[Foo["A"] = 0] = "A";
-    Foo[Foo["B"] = 1] = "B";
+    Foo[Foo["X"] = 0] = "X";
 })(Foo || (Foo = {}));
+(Foo).X;

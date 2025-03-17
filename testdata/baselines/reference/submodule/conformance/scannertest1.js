@@ -26,6 +26,7 @@ class CharacterInfo {
 
 
 
+//// [References.js]
 //// [scannertest1.js]
 class CharacterInfo {
     static isDecimalDigit(c) {
@@ -45,4 +46,3 @@ class CharacterInfo {
                 : c - CharacterCodes.a + 10;
     }
 }
-//// [References.js]

@@ -1,10 +1,9 @@
 --- old.exportStarForValues10.js
 +++ new.exportStarForValues10.js
-@@= skipped -10, +10 lines =@@
- export * from "file1";
+@@= skipped -11, +11 lines =@@
  var x = 1;
  
--//// [file0.js]
+ //// [file0.js]
 -System.register([], function (exports_1, context_1) {
 -    "use strict";
 -    var v;
@@ -16,7 +15,11 @@
 -        }
 -    };
 -});
--//// [file1.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.v = void 0;
++exports.v = 1;
+ //// [file1.js]
 -System.register([], function (exports_1, context_1) {
 -    "use strict";
 -    var __moduleName = context_1 && context_1.id;
@@ -26,6 +29,8 @@
 -        }
 -    };
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
  //// [file2.js]
 -System.register(["file0", "file1"], function (exports_1, context_1) {
 -    "use strict";
@@ -70,11 +75,3 @@
 +__exportStar(require("file0"), exports);
 +__exportStar(require("file1"), exports);
 +var x = 1;
-+//// [file1.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+//// [file0.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.v = void 0;
-+exports.v = 1;

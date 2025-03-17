@@ -1,21 +1,6 @@
 --- old.exportAssignmentMergedModule.js
 +++ new.exportAssignmentMergedModule.js
-@@= skipped -23, +23 lines =@@
- 	foo.Test.answer = foo.c(42);
- }
- 
-+//// [foo_1.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+const foo = require("./foo_0");
-+var a = foo.a();
-+if (!!foo.b) {
-+    foo.Test.answer = foo.c(42);
-+}
- //// [foo_0.js]
- "use strict";
- var Foo;
-@@= skipped -15, +23 lines =@@
+@@= skipped -38, +38 lines =@@
          return a;
      }
      Foo.c = c;
@@ -24,13 +9,12 @@
      (function (Test) {
          Test.answer = 42;
      })(Test = Foo.Test || (Foo.Test = {}));
- })(Foo || (Foo = {}));
- module.exports = Foo;
--//// [foo_1.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
+@@= skipped -9, +9 lines =@@
+ //// [foo_1.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
 -var foo = require("./foo_0");
--var a = foo.a();
--if (!!foo.b) {
--    foo.Test.answer = foo.c(42);
--}
++const foo = require("./foo_0");
+ var a = foo.a();
+ if (!!foo.b) {
+     foo.Test.answer = foo.c(42);

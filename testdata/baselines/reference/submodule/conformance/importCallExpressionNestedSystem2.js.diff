@@ -1,10 +1,9 @@
 --- old.importCallExpressionNestedSystem2.js
 +++ new.importCallExpressionNestedSystem2.js
-@@= skipped -7, +7 lines =@@
-     return await import((await import("./foo")).default);
+@@= skipped -8, +8 lines =@@
  }
  
--//// [foo.js]
+ //// [foo.js]
 -System.register([], function (exports_1, context_1) {
 -    "use strict";
 -    var __moduleName = context_1 && context_1.id;
@@ -15,6 +14,9 @@
 -        }
 -    };
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.default = "./foo";
  //// [index.js]
 -System.register([], function (exports_1, context_1) {
 -    var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -74,7 +76,3 @@
 +async function foo() {
 +    return await Promise.resolve(`${(await Promise.resolve().then(() => require("./foo"))).default}`).then(s => require(s));
 +}
-+//// [foo.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.default = "./foo";

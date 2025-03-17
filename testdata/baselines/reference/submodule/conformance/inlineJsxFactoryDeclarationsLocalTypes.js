@@ -87,26 +87,6 @@ const _brokenTree = <MySFC x={1} y={2}><MyClass x={3} y={4} /><MyClass x={5} y={
 const _brokenTree2 = <DOMSFC x={1} y={2}>{tree}{tree}</DOMSFC>
 
 
-//// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const component_1 = require("./component");
-let elem = component_1.default;
-elem = <h></h>;
-const DOMSFC = (props) => <p>{props.x} + {props.y} = {props.x + props.y}{props.children}</p>;
-class DOMClass {
-    props;
-    __domBrand;
-    constructor(props) {
-        this.props = props;
-    }
-    render() {
-        return <p>{this.props.x} + {this.props.y} = {this.props.x + this.props.y}{...this.props.children}</p>;
-    }
-}
-const _tree = <DOMSFC x={1} y={2}><DOMClass x={3} y={4}/><DOMClass x={5} y={6}/></DOMSFC>;
-const _brokenTree = <component_1.MySFC x={1} y={2}><component_1.MyClass x={3} y={4}/><component_1.MyClass x={5} y={6}/></MySFC>;
-const _brokenTree2 = <DOMSFC x={1} y={2}>{component_1.tree}{component_1.tree}</DOMSFC>;
 //// [component.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -129,3 +109,23 @@ class MyClass {
 exports.MyClass = MyClass;
 exports.tree = <exports.MySFC x={1} y={2}><MyClass x={3} y={4}/><MyClass x={5} y={6}/></MySFC>;
 exports.default = <h></h>;
+//// [index.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const component_1 = require("./component");
+let elem = component_1.default;
+elem = <h></h>;
+const DOMSFC = (props) => <p>{props.x} + {props.y} = {props.x + props.y}{props.children}</p>;
+class DOMClass {
+    props;
+    __domBrand;
+    constructor(props) {
+        this.props = props;
+    }
+    render() {
+        return <p>{this.props.x} + {this.props.y} = {this.props.x + this.props.y}{...this.props.children}</p>;
+    }
+}
+const _tree = <DOMSFC x={1} y={2}><DOMClass x={3} y={4}/><DOMClass x={5} y={6}/></DOMSFC>;
+const _brokenTree = <component_1.MySFC x={1} y={2}><component_1.MyClass x={3} y={4}/><component_1.MyClass x={5} y={6}/></MySFC>;
+const _brokenTree2 = <DOMSFC x={1} y={2}>{component_1.tree}{component_1.tree}</DOMSFC>;

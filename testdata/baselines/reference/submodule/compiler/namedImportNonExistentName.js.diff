@@ -1,13 +1,12 @@
 --- old.namedImportNonExistentName.js
 +++ new.namedImportNonExistentName.js
-@@= skipped -17, +17 lines =@@
- import { a, b, c, d, toString as foo2String } from './foo2';
- c;
+@@= skipped -19, +19 lines =@@
  
--//// [foo2.js]
--"use strict";
+ //// [foo2.js]
+ "use strict";
 -var x;
--module.exports = x;
++let x;
+ module.exports = x;
  //// [bar.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
@@ -17,7 +16,3 @@
 -var foo2_1 = require("./foo2");
 +const foo2_1 = require("./foo2");
  foo2_1.c;
-+//// [foo2.js]
-+"use strict";
-+let x;
-+module.exports = x;

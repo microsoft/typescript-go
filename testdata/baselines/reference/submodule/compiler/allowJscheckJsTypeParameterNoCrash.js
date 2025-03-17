@@ -19,6 +19,11 @@ export var a = vextend({
   }
 });
 
+//// [func.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.vextend = void 0;
+exports.vextend = extend;
 //// [app.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -32,8 +37,3 @@ exports.a = (0, func_1.vextend)({
         data2(val) { },
     }
 });
-//// [func.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.vextend = void 0;
-exports.vextend = extend;

@@ -1,33 +1,13 @@
 --- old.exportAsNamespace1(module=commonjs).js
 +++ new.exportAsNamespace1(module=commonjs).js
-@@= skipped -14, +14 lines =@@
- foo.ns.a;
- foo.ns.b;
- 
--//// [0.js]
-+//// [2.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
--exports.b = exports.a = void 0;
--exports.a = 1;
--exports.b = 2;
-+const foo = require("./1");
-+foo.ns.a;
-+foo.ns.b;
- //// [1.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
-@@= skipped -13, +13 lines =@@
- exports.ns = require("./0");
- ns.a;
- ns.b;
--//// [2.js]
-+//// [0.js]
+@@= skipped -30, +30 lines =@@
+ //// [2.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
 -var foo = require("./1");
--foo.ns.a;
--foo.ns.b;
++const foo = require("./1");
+ foo.ns.a;
+ foo.ns.b;
 -
 -
 -//// [0.d.ts]
@@ -37,6 +17,3 @@
 -export * as ns from './0';
 -//// [2.d.ts]
 -export {};
-+exports.b = exports.a = void 0;
-+exports.a = 1;
-+exports.b = 2;

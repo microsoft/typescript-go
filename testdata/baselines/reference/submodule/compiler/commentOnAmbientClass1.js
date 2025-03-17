@@ -19,5 +19,5 @@ declare class D {
 declare class E extends C {
 }
 
-//// [b.js]
 //// [a.js]
+//// [b.js]

@@ -1,15 +1,6 @@
 --- old.es6ImportDefaultBindingFollowedWithNamedImport1WithExport.js
 +++ new.es6ImportDefaultBindingFollowedWithNamedImport1WithExport.js
-@@= skipped -18, +18 lines =@@
- export var x1: number = defaultBinding6;
- 
- 
--//// [server.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--var a = 10;
--exports.default = a;
- //// [client.js]
+@@= skipped -27, +27 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.x1 = void 0;
@@ -43,8 +34,3 @@
 -export declare var x1: number;
 -export declare var x1: number;
 -export declare var x1: number;
-+//// [server.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+var a = 10;
-+exports.default = a;

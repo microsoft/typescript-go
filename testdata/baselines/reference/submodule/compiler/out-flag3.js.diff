@@ -19,10 +19,10 @@
 -
 -//// [d.d.ts]
 -declare class A {
-+//// [b.js]
-+class B {
- }
--declare class B {
 +//// [a.js]
 +class A {
+ }
+-declare class B {
++//// [b.js]
++class B {
  }

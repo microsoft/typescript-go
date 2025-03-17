@@ -1,10 +1,9 @@
 --- old.exportImport.js
 +++ new.exportImport.js
-@@= skipped -13, +13 lines =@@
-     return new e.w();
+@@= skipped -14, +14 lines =@@
  }
  
--//// [w1.js]
+ //// [w1.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
 -    var Widget1 = /** @class */ (function () {
@@ -15,12 +14,20 @@
 -    }());
 -    return Widget1;
 -});
--//// [exporter.js]
++"use strict";
++class Widget1 {
++    name = 'one';
++}
++module.exports = Widget1;
+ //// [exporter.js]
 -define(["require", "exports", "./w1"], function (require, exports, w) {
 -    "use strict";
 -    Object.defineProperty(exports, "__esModule", { value: true });
 -    exports.w = w;
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.w = require("./w1");
  //// [consumer.js]
 -define(["require", "exports", "./exporter"], function (require, exports, e) {
 -    "use strict";
@@ -48,13 +55,3 @@
 -//// [consumer.d.ts]
 -import e = require('./exporter');
 -export declare function w(): e.w;
-+//// [exporter.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.w = require("./w1");
-+//// [w1.js]
-+"use strict";
-+class Widget1 {
-+    name = 'one';
-+}
-+module.exports = Widget1;

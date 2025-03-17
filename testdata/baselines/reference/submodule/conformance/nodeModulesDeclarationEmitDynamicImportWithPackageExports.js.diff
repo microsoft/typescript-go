@@ -1,30 +1,14 @@
 --- old.nodeModulesDeclarationEmitDynamicImportWithPackageExports.js
 +++ new.nodeModulesDeclarationEmitDynamicImportWithPackageExports.js
-@@= skipped -69, +69 lines =@@
-     }
- }
- 
--//// [index.js]
--export {};
--//// [index.mjs]
--export {};
--//// [index.cjs]
+@@= skipped -74, +74 lines =@@
+ //// [index.mjs]
+ export {};
+ //// [index.cjs]
 -"use strict";
 -Object.defineProperty(exports, "__esModule", { value: true });
--//// [other.js]
++export {};
+ //// [other.js]
 -// esm format file
-+//// [other2.cjs]
-+export const d = import("inner/cjs");
-+export const e = import("inner/mjs");
-+//// [other.cjs]
-+export const a = import("package/cjs");
-+export const b = import("package/mjs");
-+export const c = import("package");
-+export const f = import("inner");
-+//// [other2.mjs]
-+export const d = await import("inner/cjs");
-+export const e = await import("inner/mjs");
-+//// [other.mjs]
  export const a = await import("package/cjs");
  export const b = await import("package/mjs");
  export const c = await import("package");
@@ -33,18 +17,17 @@
 -// esm format file
  export const d = await import("inner/cjs");
  export const e = await import("inner/mjs");
--//// [other.mjs]
+ //// [other.mjs]
 -// esm format file
-+//// [other.js]
  export const a = await import("package/cjs");
  export const b = await import("package/mjs");
  export const c = await import("package");
  export const f = await import("inner");
--//// [other2.mjs]
+ //// [other2.mjs]
 -// esm format file
--export const d = await import("inner/cjs");
--export const e = await import("inner/mjs");
--//// [other.cjs]
+ export const d = await import("inner/cjs");
+ export const e = await import("inner/mjs");
+ //// [other.cjs]
 -"use strict";
 -Object.defineProperty(exports, "__esModule", { value: true });
 -exports.f = exports.c = exports.b = exports.a = void 0;
@@ -53,7 +36,11 @@
 -exports.b = import("package/mjs");
 -exports.c = import("package");
 -exports.f = import("inner");
--//// [other2.cjs]
++export const a = import("package/cjs");
++export const b = import("package/mjs");
++export const c = import("package");
++export const f = import("inner");
+ //// [other2.cjs]
 -"use strict";
 -Object.defineProperty(exports, "__esModule", { value: true });
 -exports.e = exports.d = void 0;
@@ -63,14 +50,11 @@
 -
 -
 -//// [index.d.ts]
-+//// [index.cjs]
- export {};
+-export {};
 -//// [index.d.mts]
-+//// [index.mjs]
- export {};
+-export {};
 -//// [index.d.cts]
-+//// [index.js]
- export {};
+-export {};
 -//// [other.d.ts]
 -export declare const a: {
 -    default: typeof import("package/cjs");
@@ -119,3 +103,5 @@
 -    cjsNonmain: true;
 -}>;
 -export declare const e: Promise<typeof import("inner/mjs", { with: { "resolution-mode": "import" } })>;
++export const d = import("inner/cjs");
++export const e = import("inner/mjs");

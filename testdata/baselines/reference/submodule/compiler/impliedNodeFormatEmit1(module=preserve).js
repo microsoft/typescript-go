@@ -34,19 +34,19 @@ import a = require("./a");
 export {};
 
 
-//// [dummy.js]
-//// [i.cjs]
-//// [h.mjs]
-//// [g.js]
-//// [f.mjs]
-export const _ = 0;
-//// [e.mjs]
-export const _ = 0;
-//// [d.js]
-export const _ = 0;
-//// [c.cjs]
+//// [a.js]
 export const _ = 0;
 //// [b.mjs]
 export const _ = 0;
-//// [a.js]
+//// [c.cjs]
 export const _ = 0;
+//// [d.js]
+export const _ = 0;
+//// [e.mjs]
+export const _ = 0;
+//// [f.mjs]
+export const _ = 0;
+//// [g.js]
+//// [h.mjs]
+//// [i.cjs]
+//// [dummy.js]

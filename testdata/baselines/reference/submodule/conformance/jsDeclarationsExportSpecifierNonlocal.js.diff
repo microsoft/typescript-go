@@ -1,25 +1,25 @@
 --- old.jsDeclarationsExportSpecifierNonlocal.js
 +++ new.jsDeclarationsExportSpecifierNonlocal.js
-@@= skipped -6, +6 lines =@@
- export { Thing, OtherThing as default } from "./source";
- 
- 
--//// [source.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.OtherThing = exports.Thing = void 0;
+@@= skipped -10, +10 lines =@@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.OtherThing = exports.Thing = void 0;
 -var Thing = /** @class */ (function () {
 -    function Thing() {
 -    }
 -    return Thing;
 -}());
--exports.Thing = Thing;
++class Thing {
++}
+ exports.Thing = Thing;
 -var OtherThing = /** @class */ (function () {
 -    function OtherThing() {
 -    }
 -    return OtherThing;
 -}());
--exports.OtherThing = OtherThing;
++class OtherThing {
++}
+ exports.OtherThing = OtherThing;
  //// [index.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
@@ -32,16 +32,8 @@
 -
 -//// [source.d.ts]
 -export class Thing {
-+//// [source.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.OtherThing = exports.Thing = void 0;
-+class Thing {
- }
+-}
 -export class OtherThing {
-+exports.Thing = Thing;
-+class OtherThing {
- }
+-}
 -//// [index.d.ts]
 -export { Thing, OtherThing as default } from "./source";
-+exports.OtherThing = OtherThing;

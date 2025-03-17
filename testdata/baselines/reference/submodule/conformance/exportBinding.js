@@ -17,14 +17,6 @@ export default y;
 var y = 'y'
 
 
-//// [exportVars.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.yy = exports.y = void 0;
-exports.default = y;
-var y = 'y';
-exports.y = y;
-exports.yy = y;
 //// [exportConsts.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36,3 +28,11 @@ exports.xx = x;
 class Y {
 }
 exports.Z = Y;
+//// [exportVars.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.yy = exports.y = void 0;
+exports.default = y;
+var y = 'y';
+exports.y = y;
+exports.yy = y;

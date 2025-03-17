@@ -1,20 +1,11 @@
 --- old.isolatedDeclarationErrorsAugmentation.js
 +++ new.isolatedDeclarationErrorsAugmentation.js
-@@= skipped -19, +19 lines =@@
- 
+@@= skipped -20, +20 lines =@@
  child1(ParentThing.prototype);
  
--//// [parent.js]
+ //// [parent.js]
 -import { child1 } from './child1'; // this import should still exist in some form in the output, since it augments this module
--export class ParentThing {
--}
--child1(ParentThing.prototype);
- //// [child1.js]
- export function child1(prototype) {
-     prototype.add = (a, b) => a + b;
- }
-+//// [parent.js]
 +import { child1 } from './child1';
-+export class ParentThing {
-+}
-+child1(ParentThing.prototype);
+ export class ParentThing {
+ }
+ child1(ParentThing.prototype);

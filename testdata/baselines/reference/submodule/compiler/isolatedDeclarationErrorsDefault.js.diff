@@ -1,27 +1,9 @@
 --- old.isolatedDeclarationErrorsDefault.js
 +++ new.isolatedDeclarationErrorsDefault.js
-@@= skipped -19, +19 lines =@@
+@@= skipped -32, +32 lines =@@
+ //// [f.js]
  const a = { foo: 1 };
  export default a;
- 
--//// [a.js]
--export default 1 + 1;
--//// [b.js]
--export default { foo: 1 + 1 };
--//// [c.js]
-+//// [f.js]
-+const a = { foo: 1 };
-+export default a;
-+//// [e.js]
- export default [{ foo: 1 + 1 }];
- //// [d.js]
- export default [{ foo: 1 + 1 }];
--//// [e.js]
-+//// [c.js]
- export default [{ foo: 1 + 1 }];
--//// [f.js]
--const a = { foo: 1 };
--export default a;
 -
 -
 -//// [f.d.ts]
@@ -29,7 +11,3 @@
 -    foo: number;
 -};
 -export default a;
-+//// [b.js]
-+export default { foo: 1 + 1 };
-+//// [a.js]
-+export default 1 + 1;

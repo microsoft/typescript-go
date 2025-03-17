@@ -14,12 +14,6 @@ b.b;
 const c = { A };
 
 
-//// [d.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-new A();
-b.b;
-const c = { A };
 //// [abc.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -28,3 +22,9 @@ class A {
 }
 exports.A = A;
 exports.C = "";
+//// [d.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+new A();
+b.b;
+const c = { A };

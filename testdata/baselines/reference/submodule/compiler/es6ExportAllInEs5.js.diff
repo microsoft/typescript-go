@@ -1,28 +1,20 @@
 --- old.es6ExportAllInEs5.js
 +++ new.es6ExportAllInEs5.js
-@@= skipped -14, +14 lines =@@
- //// [client.ts]
- export * from "./server";
- 
--//// [server.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.x = exports.m = exports.c = void 0;
+@@= skipped -18, +18 lines =@@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.x = exports.m = exports.c = void 0;
 -var c = /** @class */ (function () {
 -    function c() {
 -    }
 -    return c;
 -}());
--exports.c = c;
--var m;
--(function (m) {
--    m.x = 10;
--})(m || (exports.m = m = {}));
--exports.x = 10;
- //// [client.js]
- "use strict";
- var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-@@= skipped -33, +18 lines =@@
++class c {
++}
+ exports.c = c;
+ var m;
+ (function (m) {
+@@= skipped -29, +26 lines =@@
  };
  Object.defineProperty(exports, "__esModule", { value: true });
  __exportStar(require("./server"), exports);
@@ -30,12 +22,7 @@
 -
 -//// [server.d.ts]
 -export declare class c {
-+//// [server.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.x = exports.m = exports.c = void 0;
-+class c {
- }
+-}
 -export interface i {
 -}
 -export declare namespace m {
@@ -46,9 +33,3 @@
 -}
 -//// [client.d.ts]
 -export * from "./server";
-+exports.c = c;
-+var m;
-+(function (m) {
-+    m.x = 10;
-+})(m || (exports.m = m = {}));
-+exports.x = 10;

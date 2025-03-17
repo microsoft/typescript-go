@@ -9,9 +9,9 @@ export declare const elem: HTMLElement;
 export {}
 declare const elem: HTMLElement;
 
-//// [file2.js]
+//// [file1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-//// [file1.js]
+//// [file2.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });

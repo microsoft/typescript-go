@@ -11,8 +11,8 @@ type NoInfer<T> = T & number;
 export const g = f;
 
 
+//// [a.js]
+export const f = (x, y) => x;
 //// [b.js]
 import { f } from "./a";
 export const g = f;
-//// [a.js]
-export const f = (x, y) => x;

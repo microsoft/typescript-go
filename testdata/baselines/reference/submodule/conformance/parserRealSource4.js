@@ -297,6 +297,7 @@ module TypeScript {
 
 }
 
+//// [typescript.js]
 //// [parserRealSource4.js]
 var TypeScript;
 (function (TypeScript) {
@@ -554,4 +555,3 @@ var TypeScript;
     }
     TypeScript.SimpleHashTable = SimpleHashTable;
 })(TypeScript || (TypeScript = {}));
-//// [typescript.js]

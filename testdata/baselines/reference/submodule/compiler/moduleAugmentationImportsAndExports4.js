@@ -38,19 +38,13 @@ let b = a.foo().n;
 let c = a.bar().a;
 let d = a.baz().b;
 
-//// [f4.js]
+//// [f1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-require("./f3");
-let a;
-let b = a.foo().n;
-let c = a.bar().a;
-let d = a.baz().b;
-//// [f3.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const f1_1 = require("./f1");
-f1_1.A.prototype.foo = function () { return undefined; };
+exports.A = void 0;
+class A {
+}
+exports.A = A;
 //// [f2.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -59,10 +53,16 @@ class B {
     n;
 }
 exports.B = B;
-//// [f1.js]
+//// [f3.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.A = void 0;
-class A {
-}
-exports.A = A;
+const f1_1 = require("./f1");
+f1_1.A.prototype.foo = function () { return undefined; };
+//// [f4.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+require("./f3");
+let a;
+let b = a.foo().n;
+let c = a.bar().a;
+let d = a.baz().b;

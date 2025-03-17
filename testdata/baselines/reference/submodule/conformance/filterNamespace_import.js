@@ -23,14 +23,6 @@ let t: ns.Type = "";
 let n: ns.nested.NestedClass = { a: '' };
 
 
-//// [a.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-ns.Class;
-ns.Value;
-let c;
-let t = "";
-let n = { a: '' };
 //// [ns.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -49,3 +41,11 @@ var ns;
     })(nested = ns.nested || (ns.nested = {}));
 })(ns || (ns = {}));
 exports.default = ns;
+//// [a.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+ns.Class;
+ns.Value;
+let c;
+let t = "";
+let n = { a: '' };

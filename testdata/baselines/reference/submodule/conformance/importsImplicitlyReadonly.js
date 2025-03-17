@@ -20,6 +20,13 @@ a2.y = 1;
 a3.x = 1;
 a3.y = 1;
 
+//// [a.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.y = exports.x = void 0;
+exports.x = 1;
+var y = 1;
+exports.y = y;
 //// [b.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -35,10 +42,3 @@ a2.x = 1;
 a2.y = 1;
 a3.x = 1;
 a3.y = 1;
-//// [a.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.y = exports.x = void 0;
-exports.x = 1;
-var y = 1;
-exports.y = y;

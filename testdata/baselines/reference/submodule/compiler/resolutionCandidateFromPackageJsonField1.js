@@ -13,10 +13,10 @@ export {};
 import "@angular/core";
 
 
+//// [index.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 //// [test.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 require("@angular/core");
-//// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });

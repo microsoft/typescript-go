@@ -1,10 +1,9 @@
 --- old.importCallExpressionInUMD3.js
 +++ new.importCallExpressionInUMD3.js
-@@= skipped -12, +12 lines =@@
- }
+@@= skipped -13, +13 lines =@@
  foo();
  
--//// [0.js]
+ //// [0.js]
 -(function (factory) {
 -    if (typeof module === "object" && typeof module.exports === "object") {
 -        var v = factory(require, exports);
@@ -22,6 +21,13 @@
 -    }
 -    exports.B = B;
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.B = void 0;
++class B {
++    print() { return "I am B"; }
++}
++exports.B = B;
  //// [2.js]
 -(function (factory) {
 -    if (typeof module === "object" && typeof module.exports === "object") {
@@ -48,11 +54,3 @@
 +    c.print();
 +}
 +foo();
-+//// [0.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.B = void 0;
-+class B {
-+    print() { return "I am B"; }
-+}
-+exports.B = B;

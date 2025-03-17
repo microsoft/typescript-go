@@ -15,18 +15,6 @@ import { a } from './c';
 new a.A(); // Error
 
 
-//// [d.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-new a.A();
-//// [c.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-//// [b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.a = void 0;
-exports.a = require("./a");
 //// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -34,3 +22,15 @@ exports.A = void 0;
 class A {
 }
 exports.A = A;
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.a = void 0;
+exports.a = require("./a");
+//// [c.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [d.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+new a.A();

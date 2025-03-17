@@ -1,16 +1,7 @@
 --- old.exportDefaultAbstractClass.js
 +++ new.exportDefaultAbstractClass.js
-@@= skipped -11, +11 lines =@@
- class C extends A {}
- new C().a.toExponential();
+@@= skipped -13, +13 lines =@@
  
-+//// [b.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+const a_1 = require("./a");
-+class C extends a_1.default {
-+}
-+new C().a.toExponential();
  //// [a.js]
  "use strict";
 -var __extends = (this && this.__extends) || (function () {
@@ -48,8 +39,8 @@
 +class B extends A {
 +}
  new B().a.toExponential();
--//// [b.js]
--"use strict";
+ //// [b.js]
+ "use strict";
 -var __extends = (this && this.__extends) || (function () {
 -    var extendStatics = function (d, b) {
 -        extendStatics = Object.setPrototypeOf ||
@@ -65,7 +56,7 @@
 -        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 -    };
 -})();
--Object.defineProperty(exports, "__esModule", { value: true });
+ Object.defineProperty(exports, "__esModule", { value: true });
 -var a_1 = require("./a");
 -var C = /** @class */ (function (_super) {
 -    __extends(C, _super);
@@ -74,4 +65,7 @@
 -    }
 -    return C;
 -}(a_1.default));
--new C().a.toExponential();
++const a_1 = require("./a");
++class C extends a_1.default {
++}
+ new C().a.toExponential();

@@ -22,6 +22,7 @@ export = MainModule;
 
 
 
+//// [missingImportAfterModuleImport_0.js]
 //// [missingImportAfterModuleImport_1.js]
 "use strict";
 class MainModule {
@@ -29,4 +30,3 @@ class MainModule {
     constructor() { }
 }
 module.exports = MainModule;
-//// [missingImportAfterModuleImport_0.js]

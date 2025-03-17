@@ -1,26 +1,12 @@
 --- old.typeCheckObjectCreationExpressionWithUndefinedCallResolutionData.js
 +++ new.typeCheckObjectCreationExpressionWithUndefinedCallResolutionData.js
-@@= skipped -10, +10 lines =@@
- f.foo();
- 
- 
-+//// [file2.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+const f = require("./file1");
-+f.foo();
- //// [file1.js]
+@@= skipped -21, +21 lines =@@
+ //// [file2.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
-@@= skipped -8, +13 lines =@@
-     var classes = undefined;
-     return new classes(null);
- }
--//// [file2.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
 -var f = require("./file1");
--f.foo();
++const f = require("./file1");
+ f.foo();
 -
 -
 -//// [file1.d.ts]

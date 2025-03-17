@@ -18,13 +18,10 @@ A.displayName;
 A();
 
 
-//// [c.js]
+//// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const b_1 = require("./b");
-A;
-A.displayName;
-A();
+function A() { }
 //// [b.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -33,7 +30,10 @@ var A;
 (function (A) {
     A.displayName = "A";
 })(A || (exports.A = A = {}));
-//// [a.js]
+//// [c.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-function A() { }
+const b_1 = require("./b");
+A;
+A.displayName;
+A();

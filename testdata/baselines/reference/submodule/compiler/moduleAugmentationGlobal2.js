@@ -16,11 +16,6 @@ let x = [1];
 let y = x.getCountAsString().toLowerCase();
 
 
-//// [f2.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-let x = [1];
-let y = x.getCountAsString().toLowerCase();
 //// [f1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -29,3 +24,8 @@ class A {
 }
 exports.A = A;
 ;
+//// [f2.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+let x = [1];
+let y = x.getCountAsString().toLowerCase();

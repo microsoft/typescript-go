@@ -7,7 +7,7 @@ true ? false ? (param): string => param : null : null // Not legal JS; "Unexpect
 true ? false ? (param): string => param : null : null
 
 
-//// [fileTs.js]
-true ? false ? (param) => param : null : null;
 //// [fileJs.js]
+true ? false ? (param) => param : null : null;
+//// [fileTs.js]
 true ? false ? (param) => param : null : null;

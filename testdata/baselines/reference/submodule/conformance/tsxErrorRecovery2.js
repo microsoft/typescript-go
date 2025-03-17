@@ -10,9 +10,9 @@ declare namespace JSX { interface Element { } }
 var x = <div></div><div></div>
 
 
-//// [file2.jsx]
-var x = (<div></div>, <div></div>);
 //// [file1.jsx]
 <div></div>
     ,
         <div></div>;
+//// [file2.jsx]
+var x = (<div></div>, <div></div>);

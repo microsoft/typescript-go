@@ -1,16 +1,19 @@
 --- old.importCallExpressionES6AMD.js
 +++ new.importCallExpressionES6AMD.js
-@@= skipped -27, +27 lines =@@
-     }
+@@= skipped -28, +28 lines =@@
  }
  
--//// [0.js]
+ //// [0.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
 -    Object.defineProperty(exports, "__esModule", { value: true });
 -    exports.foo = foo;
 -    function foo() { return "foo"; }
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.foo = foo;
++function foo() { return "foo"; }
  //// [1.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
@@ -58,8 +61,3 @@
 -});
 +}
 +exports.D = D;
-+//// [0.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.foo = foo;
-+function foo() { return "foo"; }

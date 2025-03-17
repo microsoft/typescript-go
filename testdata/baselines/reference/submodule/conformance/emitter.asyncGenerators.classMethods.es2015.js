@@ -60,13 +60,45 @@ class C9 extends B9 {
 }
 
 
-//// [C9.js]
-class B9 {
-    g() { }
-}
-class C9 extends B9 {
+//// [C1.js]
+class C1 {
     async *f() {
-        super.g();
+    }
+}
+//// [C2.js]
+class C2 {
+    async *f() {
+        const x = yield;
+    }
+}
+//// [C3.js]
+class C3 {
+    async *f() {
+        const x = yield 1;
+    }
+}
+//// [C4.js]
+class C4 {
+    async *f() {
+        const x = yield* [1];
+    }
+}
+//// [C5.js]
+class C5 {
+    async *f() {
+        const x = yield* (async function* () { yield 1; })();
+    }
+}
+//// [C6.js]
+class C6 {
+    async *f() {
+        const x = await 1;
+    }
+}
+//// [C7.js]
+class C7 {
+    async *f() {
+        return 1;
     }
 }
 //// [C8.js]
@@ -77,44 +109,12 @@ class C8 {
         this.g();
     }
 }
-//// [C7.js]
-class C7 {
-    async *f() {
-        return 1;
-    }
+//// [C9.js]
+class B9 {
+    g() { }
 }
-//// [C6.js]
-class C6 {
+class C9 extends B9 {
     async *f() {
-        const x = await 1;
-    }
-}
-//// [C5.js]
-class C5 {
-    async *f() {
-        const x = yield* (async function* () { yield 1; })();
-    }
-}
-//// [C4.js]
-class C4 {
-    async *f() {
-        const x = yield* [1];
-    }
-}
-//// [C3.js]
-class C3 {
-    async *f() {
-        const x = yield 1;
-    }
-}
-//// [C2.js]
-class C2 {
-    async *f() {
-        const x = yield;
-    }
-}
-//// [C1.js]
-class C1 {
-    async *f() {
+        super.g();
     }
 }

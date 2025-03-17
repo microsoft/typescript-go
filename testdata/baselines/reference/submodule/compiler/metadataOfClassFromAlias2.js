@@ -14,6 +14,14 @@ export class ClassA {
     @annotation() array: SomeClass | null | string;
 }
 
+//// [auxiliry.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.SomeClass = void 0;
+class SomeClass {
+    field;
+}
+exports.SomeClass = SomeClass;
 //// [test.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -26,11 +34,3 @@ class ClassA {
     array;
 }
 exports.ClassA = ClassA;
-//// [auxiliry.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.SomeClass = void 0;
-class SomeClass {
-    field;
-}
-exports.SomeClass = SomeClass;

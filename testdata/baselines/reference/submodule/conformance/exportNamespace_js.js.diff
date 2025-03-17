@@ -1,27 +1,21 @@
 --- old.exportNamespace_js.js
 +++ new.exportNamespace_js.js
-@@= skipped -10, +10 lines =@@
- A;
- 
- 
--//// [a.js]
-+//// [c.js]
+@@= skipped -14, +14 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
--exports.A = void 0;
+ exports.A = void 0;
 -var A = /** @class */ (function () {
 -    function A() {
 -    }
 -    return A;
 -}());
--exports.A = A;
-+const b_1 = require("./b");
-+b_1.A;
++class A {
++}
+ exports.A = A;
  //// [b.js]
  "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
--//// [c.js]
-+//// [a.js]
+@@= skipped -12, +9 lines =@@
+ //// [c.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
 -var b_1 = require("./b");
@@ -30,11 +24,10 @@
 -
 -//// [a.d.ts]
 -export class A {
-+exports.A = void 0;
-+class A {
- }
+-}
 -//// [b.d.ts]
 -export type * from "./a";
 -//// [c.d.ts]
 -export {};
-+exports.A = A;
++const b_1 = require("./b");
++b_1.A;

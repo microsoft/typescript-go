@@ -1,27 +1,15 @@
 --- old.ModuleAndFunctionWithSameNameAndCommonRoot.js
 +++ new.ModuleAndFunctionWithSameNameAndCommonRoot.js
-@@= skipped -28, +28 lines =@@
- }
- 
- 
--//// [module.js]
--var A;
--(function (A) {
+@@= skipped -31, +31 lines =@@
+ //// [module.js]
+ var A;
+ (function (A) {
 -    var Point;
-+//// [simple.js]
-+var B;
-+(function (B) {
 +    let Point;
      (function (Point) {
          Point.Origin = { x: 0, y: 0 };
--    })(Point = A.Point || (A.Point = {}));
--})(A || (A = {}));
-+    })(Point = B.Point || (B.Point = {}));
-+    function Point() {
-+        return { x: 0, y: 0 };
-+    }
-+    B.Point = Point;
-+})(B || (B = {}));
+     })(Point = A.Point || (A.Point = {}));
+@@= skipped -8, +8 lines =@@
  //// [function.js]
  var A;
  (function (A) {
@@ -29,24 +17,16 @@
      function Point() {
          return { x: 0, y: 0 };
      }
-     A.Point = Point;
- })(A || (A = {}));
--//// [simple.js]
--var B;
--(function (B) {
+@@= skipped -9, +8 lines =@@
+ //// [simple.js]
+ var B;
+ (function (B) {
 -    var Point;
-+//// [module.js]
-+var A;
-+(function (A) {
 +    let Point;
      (function (Point) {
          Point.Origin = { x: 0, y: 0 };
--    })(Point = B.Point || (B.Point = {}));
+     })(Point = B.Point || (B.Point = {}));
 -    // duplicate identifier error
--    function Point() {
--        return { x: 0, y: 0 };
--    }
--    B.Point = Point;
--})(B || (B = {}));
-+    })(Point = A.Point || (A.Point = {}));
-+})(A || (A = {}));
+     function Point() {
+         return { x: 0, y: 0 };
+     }

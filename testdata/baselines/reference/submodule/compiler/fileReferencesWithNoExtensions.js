@@ -21,10 +21,10 @@ var cc = 1;
 declare var xx: number;
 
 
-//// [c.js]
-//// [a.js]
 //// [t.js]
 var a = aa;
 var b = bb;
 var c = cc;
+//// [a.js]
+//// [c.js]
 //// [b.js]

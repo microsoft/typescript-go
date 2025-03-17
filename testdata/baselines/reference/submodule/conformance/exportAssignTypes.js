@@ -53,6 +53,36 @@ import iGeneric = require('./expGeneric');
 var v7: {<x>(p1: x): x} = iGeneric;
 
 
+//// [expString.js]
+"use strict";
+var x = "test";
+module.exports = x;
+//// [expNumber.js]
+"use strict";
+var x = 42;
+module.exports = x;
+//// [expBoolean.js]
+"use strict";
+var x = true;
+module.exports = x;
+//// [expArray.js]
+"use strict";
+var x = [1, 2];
+module.exports = x;
+//// [expObject.js]
+"use strict";
+var x = { answer: 42, when: 1776 };
+module.exports = x;
+//// [expAny.js]
+"use strict";
+var x;
+module.exports = x;
+//// [expGeneric.js]
+"use strict";
+function x(a) {
+    return a;
+}
+module.exports = x;
 //// [consumer.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -70,33 +100,3 @@ const iAny = require("./expAny");
 var v6 = iAny;
 const iGeneric = require("./expGeneric");
 var v7 = iGeneric;
-//// [expGeneric.js]
-"use strict";
-function x(a) {
-    return a;
-}
-module.exports = x;
-//// [expAny.js]
-"use strict";
-var x;
-module.exports = x;
-//// [expObject.js]
-"use strict";
-var x = { answer: 42, when: 1776 };
-module.exports = x;
-//// [expArray.js]
-"use strict";
-var x = [1, 2];
-module.exports = x;
-//// [expBoolean.js]
-"use strict";
-var x = true;
-module.exports = x;
-//// [expNumber.js]
-"use strict";
-var x = 42;
-module.exports = x;
-//// [expString.js]
-"use strict";
-var x = "test";
-module.exports = x;

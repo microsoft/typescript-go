@@ -8,10 +8,10 @@ export = a;  // Error: export = not allowed in ES6
 import * as a from "a";
 
 
-//// [b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 //// [a.js]
 "use strict";
 var a = 10;
 module.exports = a;
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });

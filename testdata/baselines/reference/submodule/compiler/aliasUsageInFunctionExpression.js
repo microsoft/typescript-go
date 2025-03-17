@@ -20,20 +20,6 @@ interface IHasVisualizationModel {
 var f = (x: IHasVisualizationModel) => x;
 f = (x) => moduleA;
 
-//// [aliasUsageInFunctionExpression_main.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const moduleA = require("./aliasUsageInFunctionExpression_moduleA");
-var f = (x) => x;
-f = (x) => moduleA;
-//// [aliasUsageInFunctionExpression_moduleA.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.VisualizationModel = void 0;
-const Backbone = require("./aliasUsageInFunctionExpression_backbone");
-class VisualizationModel extends Backbone.Model {
-}
-exports.VisualizationModel = VisualizationModel;
 //// [aliasUsageInFunctionExpression_backbone.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -42,3 +28,17 @@ class Model {
     someData;
 }
 exports.Model = Model;
+//// [aliasUsageInFunctionExpression_moduleA.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.VisualizationModel = void 0;
+const Backbone = require("./aliasUsageInFunctionExpression_backbone");
+class VisualizationModel extends Backbone.Model {
+}
+exports.VisualizationModel = VisualizationModel;
+//// [aliasUsageInFunctionExpression_main.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const moduleA = require("./aliasUsageInFunctionExpression_moduleA");
+var f = (x) => x;
+f = (x) => moduleA;

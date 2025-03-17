@@ -19,10 +19,10 @@ Copyright
 var y = x;
 
 
-//// [b.js]
-var y = x;
 //// [a.js]
 var x = {
     a: 10,
     b: 20
 };
+//// [b.js]
+var y = x;

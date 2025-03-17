@@ -1,19 +1,6 @@
 --- old.commentsExternalModules3.js
 +++ new.commentsExternalModules3.js
-@@= skipped -59, +59 lines =@@
- export var newVar2 = new extMod.m4.m2.c();
- 
- 
-+//// [commentsExternalModules_1.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.newVar2 = exports.newVar = void 0;
-+const extMod = require("./commentsExternalModules2_0");
-+extMod.m1.fooExport();
-+exports.newVar = new extMod.m1.m2.c();
-+extMod.m4.fooExport();
-+exports.newVar2 = new extMod.m4.m2.c();
- //// [commentsExternalModules2_0.js]
+@@= skipped -63, +63 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.m4 = exports.m1 = void 0;
@@ -45,7 +32,7 @@
      function fooExport() {
          return foo();
      }
-@@= skipped -33, +33 lines =@@
+@@= skipped -29, +20 lines =@@
  })(m1 || (exports.m1 = m1 = {}));
  m1.fooExport();
  var myvar = new m1.m2.c();
@@ -79,20 +66,17 @@
      function fooExport() {
          return foo();
      }
-@@= skipped -31, +20 lines =@@
- })(m4 || (exports.m4 = m4 = {}));
- m4.fooExport();
- var myvar2 = new m4.m2.c();
--//// [commentsExternalModules_1.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.newVar2 = exports.newVar = void 0;
+@@= skipped -35, +24 lines =@@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.newVar2 = exports.newVar = void 0;
 -/**This is on import declaration*/
 -var extMod = require("./commentsExternalModules2_0"); // trailing comment 1
--extMod.m1.fooExport();
--exports.newVar = new extMod.m1.m2.c();
--extMod.m4.fooExport();
--exports.newVar2 = new extMod.m4.m2.c();
++const extMod = require("./commentsExternalModules2_0");
+ extMod.m1.fooExport();
+ exports.newVar = new extMod.m1.m2.c();
+ extMod.m4.fooExport();
+ exports.newVar2 = new extMod.m4.m2.c();
 -
 -
 -//// [commentsExternalModules2_0.d.ts]

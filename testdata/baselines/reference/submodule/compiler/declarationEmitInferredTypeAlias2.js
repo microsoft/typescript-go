@@ -14,6 +14,12 @@ function bar () {
 }
 export { v, bar }
 
+//// [0.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+{
+    let obj = true;
+}
 //// [1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -23,10 +29,4 @@ let v = "str" || true;
 exports.v = v;
 function bar() {
     return v;
-}
-//// [0.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-{
-    let obj = true;
 }

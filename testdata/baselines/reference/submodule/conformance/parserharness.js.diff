@@ -1,8 +1,13 @@
 --- old.parserharness.js
 +++ new.parserharness.js
-@@= skipped -2083, +2083 lines =@@
+@@= skipped -2082, +2082 lines =@@
+ }
  
  
++//// [io.js]
++//// [typescript.js]
++//// [typescriptServices.js]
++//// [diff.js]
  //// [parserharness.js]
 -//﻿
 -// Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -40,7 +45,7 @@
  function switchToForwardSlashes(path) {
      return path.replace(/\\/g, "/");
  }
-@@= skipped -56, +23 lines =@@
+@@= skipped -57, +28 lines =@@
  }
  var Harness;
  (function (Harness) {
@@ -1593,11 +1598,3 @@
                          var comparison = compareToBaseline(actual, relativeFilename, opts);
                          writeComparison(comparison.expected, comparison.actual, relativeFilename, actualFilename, descriptionForDescribe);
                      });
-@@= skipped -20, +20 lines =@@
-     global.it = it;
-     global.assert = Harness.Assert;
- })(Harness || (Harness = {}));
-+//// [diff.js]
-+//// [typescriptServices.js]
-+//// [typescript.js]
-+//// [io.js]

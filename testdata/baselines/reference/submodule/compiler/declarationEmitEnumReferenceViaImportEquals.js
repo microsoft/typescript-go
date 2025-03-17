@@ -29,11 +29,17 @@ export class Test {
 import { Test } from "./test";
 new Test().print();
 
-//// [index.js]
+//// [translation.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const test_1 = require("./test");
-new test_1.Test().print();
+exports.Translation = void 0;
+var Translation;
+(function (Translation) {
+    Translation.TranslationKeyEnum = {
+        Translation1: 'translation1',
+        Translation2: 'translation2',
+    };
+})(Translation || (exports.Translation = Translation = {}));
 //// [test.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -46,14 +52,8 @@ class Test {
     }
 }
 exports.Test = Test;
-//// [translation.js]
+//// [index.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Translation = void 0;
-var Translation;
-(function (Translation) {
-    Translation.TranslationKeyEnum = {
-        Translation1: 'translation1',
-        Translation2: 'translation2',
-    };
-})(Translation || (exports.Translation = Translation = {}));
+const test_1 = require("./test");
+new test_1.Test().print();

@@ -29,11 +29,28 @@ A;
 type _ = A; // Follow-on from collision error
 
 
-//// [g.js]
+//// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const f_1 = require("./f");
-f_1.A;
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [c.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.A = void 0;
+const A = 1;
+exports.A = A;
+//// [d.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const c_1 = require("./c");
+c_1.A;
+//// [e.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.A = void 0;
+exports.A = 1;
 //// [f.js]
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -52,25 +69,8 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./e"), exports);
-//// [e.js]
+//// [g.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.A = void 0;
-exports.A = 1;
-//// [d.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const c_1 = require("./c");
-c_1.A;
-//// [c.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.A = void 0;
-const A = 1;
-exports.A = A;
-//// [b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-//// [a.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+const f_1 = require("./f");
+f_1.A;

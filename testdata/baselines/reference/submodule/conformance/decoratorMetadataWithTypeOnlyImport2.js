@@ -15,15 +15,6 @@ export class Main {
 }
 
 
-//// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Main = void 0;
-class Main {
-    @decorator()
-    field;
-}
-exports.Main = Main;
 //// [services.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -34,3 +25,12 @@ var Services;
     }
     Services.Service = Service;
 })(Services || (exports.Services = Services = {}));
+//// [index.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Main = void 0;
+class Main {
+    @decorator()
+    field;
+}
+exports.Main = Main;

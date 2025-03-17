@@ -18,7 +18,7 @@ interface C {
 }
 
 
-//// [file2.js]
 //// [file1.js]
 var q1;
 var x = q1.each(x => c.log(x));
+//// [file2.js]

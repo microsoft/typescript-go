@@ -21,6 +21,16 @@ export function makeB(): A {
 }
 
 
+//// [a.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.A = void 0;
+class A {
+    toUpper(msg) {
+        return msg.toUpperCase();
+    }
+}
+exports.A = A;
 //// [b.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36,13 +46,3 @@ exports.B = B;
 function makeB() {
     return new B();
 }
-//// [a.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.A = void 0;
-class A {
-    toUpper(msg) {
-        return msg.toUpperCase();
-    }
-}
-exports.A = A;

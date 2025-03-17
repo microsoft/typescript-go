@@ -18,6 +18,11 @@ module m1 {
 }
 
 
+//// [a.js]
+var M;
+(function (M) {
+    M.X = 1;
+})(M || (M = {}));
 //// [b.js]
 var m1;
 (function (m1) {
@@ -25,8 +30,3 @@ var m1;
     }
     m1.c1 = c1;
 })(m1 || (m1 = {}));
-//// [a.js]
-var M;
-(function (M) {
-    M.X = 1;
-})(M || (M = {}));

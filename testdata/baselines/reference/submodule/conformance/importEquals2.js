@@ -13,11 +13,11 @@ import a = require('./b');
 new a.A(); // Error
 
 
-//// [c.js]
+//// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const a = require("./b");
-new a.A();
+class A {
+}
 //// [b.js]
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -45,8 +45,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 const a = __importStar(require("./a"));
 module.exports = a;
-//// [a.js]
+//// [c.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-class A {
-}
+const a = require("./b");
+new a.A();

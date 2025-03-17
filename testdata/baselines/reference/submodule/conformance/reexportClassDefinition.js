@@ -17,20 +17,20 @@ class x extends foo2.x {}
 
 
 
-//// [foo3.js]
+//// [foo1.js]
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const foo2 = require("./foo2");
-class x extends foo2.x {
+class x {
 }
+module.exports = x;
 //// [foo2.js]
 "use strict";
 const foo1 = require("./foo1");
 module.exports = {
     x: foo1
 };
-//// [foo1.js]
+//// [foo3.js]
 "use strict";
-class x {
+Object.defineProperty(exports, "__esModule", { value: true });
+const foo2 = require("./foo2");
+class x extends foo2.x {
 }
-module.exports = x;

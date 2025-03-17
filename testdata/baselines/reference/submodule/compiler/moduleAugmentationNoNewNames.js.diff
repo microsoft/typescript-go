@@ -1,26 +1,17 @@
 --- old.moduleAugmentationNoNewNames.js
 +++ new.moduleAugmentationNoNewNames.js
-@@= skipped -26, +26 lines =@@
- let x: Observable<number>;
- let y = x.map(x => x + 1);
- 
--//// [observable.js]
-+//// [main.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
-+require("./map");
-+let x;
-+let y = x.map(x => x + 1);
+@@= skipped -32, +32 lines =@@
  //// [map.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
 -var observable_1 = require("./observable");
 +const observable_1 = require("./observable");
  observable_1.Observable.prototype.map = function () { };
--//// [main.js]
-+//// [observable.js]
+ //// [main.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
--require("./map");
+ require("./map");
 -var x;
 -var y = x.map(function (x) { return x + 1; });
++let x;
++let y = x.map(x => x + 1);

@@ -33,6 +33,9 @@ function doSome(arg1: string,
                 arg3 = MAP2) {
 }
 
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 //// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -45,6 +48,3 @@ const MAP2 = {
 };
 function doSome(arg1, arg2 = MAP, arg3 = MAP2) {
 }
-//// [b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });

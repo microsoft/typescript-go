@@ -38,6 +38,13 @@ export {IX as IX1};
 export {II};
 export {II as II1};
 
+//// [f1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.A = void 0;
+class A {
+}
+exports.A = A;
 //// [f2.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -56,10 +63,3 @@ Object.defineProperty(exports, "EA", { enumerable: true, get: function () { retu
 Object.defineProperty(exports, "EA1", { enumerable: true, get: function () { return f1_1.A; } });
 Object.defineProperty(exports, "EI", { enumerable: true, get: function () { return f1_1.I; } });
 Object.defineProperty(exports, "EI1", { enumerable: true, get: function () { return f1_1.I; } });
-//// [f1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.A = void 0;
-class A {
-}
-exports.A = A;

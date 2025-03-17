@@ -21,6 +21,21 @@ namespace SomeOther.Thing {
     }
 }
 
+//// [internal.js]
+var My;
+(function (My) {
+    let Internal;
+    (function (Internal) {
+        function getThing() { }
+        Internal.getThing = getThing;
+        let WhichThing;
+        (function (WhichThing) {
+            WhichThing[WhichThing["A"] = 0] = "A";
+            WhichThing[WhichThing["B"] = 1] = "B";
+            WhichThing[WhichThing["C"] = 2] = "C";
+        })(WhichThing = Internal.WhichThing || (Internal.WhichThing = {}));
+    })(Internal = My.Internal || (My.Internal = {}));
+})(My || (My = {}));
 //// [usage.js]
 var SomeOther;
 (function (SomeOther) {
@@ -37,18 +52,3 @@ var SomeOther;
         Thing.Foo = Foo;
     })(Thing = SomeOther.Thing || (SomeOther.Thing = {}));
 })(SomeOther || (SomeOther = {}));
-//// [internal.js]
-var My;
-(function (My) {
-    let Internal;
-    (function (Internal) {
-        function getThing() { }
-        Internal.getThing = getThing;
-        let WhichThing;
-        (function (WhichThing) {
-            WhichThing[WhichThing["A"] = 0] = "A";
-            WhichThing[WhichThing["B"] = 1] = "B";
-            WhichThing[WhichThing["C"] = 2] = "C";
-        })(WhichThing = Internal.WhichThing || (Internal.WhichThing = {}));
-    })(Internal = My.Internal || (My.Internal = {}));
-})(My || (My = {}));

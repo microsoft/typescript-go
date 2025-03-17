@@ -1,11 +1,6 @@
 --- old.declarationEmitDoesNotUseReexportedNamespaceAsLocal.js
 +++ new.declarationEmitDoesNotUseReexportedNamespaceAsLocal.js
-@@= skipped -6, +6 lines =@@
- export * as Q from "./sub";
- declare function add<T>(x: Promise<T>): T;
- 
--//// [sub.js]
--export function a() { }
+@@= skipped -11, +11 lines =@@
  //// [index.js]
  export const x = add(import("./sub"));
  export * as Q from "./sub";
@@ -16,5 +11,3 @@
 -//// [index.d.ts]
 -export declare const x: typeof import("./sub");
 -export * as Q from "./sub";
-+//// [sub.js]
-+export function a() { }

@@ -15,17 +15,17 @@ export const b = {
     }
 };
 
-//// [a.js]
-import { b } from './b';
-export const a = {
-    f: async () => {
-        await b.f();
-    }
-};
 //// [b.js]
 import { a } from './a';
 export const b = {
     f: async () => {
         await a.f();
+    }
+};
+//// [a.js]
+import { b } from './b';
+export const a = {
+    f: async () => {
+        await b.f();
     }
 };

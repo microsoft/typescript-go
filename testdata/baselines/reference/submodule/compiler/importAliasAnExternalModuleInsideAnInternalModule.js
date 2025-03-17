@@ -14,15 +14,6 @@ module m_private {
 }
 
 
-//// [importAliasAnExternalModuleInsideAnInternalModule_file1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const r = require("./importAliasAnExternalModuleInsideAnInternalModule_file0");
-var m_private;
-(function (m_private) {
-    m_private.C = r;
-    m_private.C.m.foo();
-})(m_private || (m_private = {}));
 //// [importAliasAnExternalModuleInsideAnInternalModule_file0.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -32,3 +23,12 @@ var m;
     function foo() { }
     m.foo = foo;
 })(m || (exports.m = m = {}));
+//// [importAliasAnExternalModuleInsideAnInternalModule_file1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const r = require("./importAliasAnExternalModuleInsideAnInternalModule_file0");
+var m_private;
+(function (m_private) {
+    m_private.C = r;
+    m_private.C.m.foo();
+})(m_private || (m_private = {}));

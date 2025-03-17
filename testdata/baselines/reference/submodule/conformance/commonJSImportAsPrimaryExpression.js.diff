@@ -1,13 +1,9 @@
 --- old.commonJSImportAsPrimaryExpression.js
 +++ new.commonJSImportAsPrimaryExpression.js
-@@= skipped -12, +12 lines =@@
- }
- 
- 
--//// [foo_0.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.C1 = void 0;
+@@= skipped -16, +16 lines =@@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.C1 = void 0;
 -var C1 = /** @class */ (function () {
 -    function C1() {
 -        this.m1 = 42;
@@ -15,7 +11,11 @@
 -    C1.s1 = true;
 -    return C1;
 -}());
--exports.C1 = C1;
++class C1 {
++    m1 = 42;
++    static s1 = true;
++}
+ exports.C1 = C1;
  //// [foo_1.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
@@ -24,12 +24,3 @@
  if (foo.C1.s1) {
 -    // Should cause runtime import
  }
-+//// [foo_0.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.C1 = void 0;
-+class C1 {
-+    m1 = 42;
-+    static s1 = true;
-+}
-+exports.C1 = C1;

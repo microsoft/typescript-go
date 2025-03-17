@@ -43,6 +43,8 @@ declare class H {
 }
 
 
+//// [framework-hooks.js]
+export const onInit = Symbol("onInit");
 //// [component.js]
 const o = {
     [onInit]: 0
@@ -61,5 +63,3 @@ class F {
 class G {
 }
 export {};
-//// [framework-hooks.js]
-export const onInit = Symbol("onInit");

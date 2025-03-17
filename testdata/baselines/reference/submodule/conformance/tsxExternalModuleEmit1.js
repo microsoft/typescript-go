@@ -30,6 +30,17 @@ export class Button extends React.Component<any, any> {
 
 }
 
+//// [button.jsx]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Button = void 0;
+const React = require("react");
+class Button extends React.Component {
+    render() {
+        return <button>Some button</button>;
+    }
+}
+exports.Button = Button;
 //// [app.jsx]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -42,14 +53,3 @@ class App extends React.Component {
     }
 }
 exports.App = App;
-//// [button.jsx]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Button = void 0;
-const React = require("react");
-class Button extends React.Component {
-    render() {
-        return <button>Some button</button>;
-    }
-}
-exports.Button = Button;

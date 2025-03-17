@@ -28,16 +28,16 @@ module.exports = a;
     "type": "commonjs"
 }
 
+//// [index.js]
+const a = {};
+export {};
+//// [file.js]
+const a = {};
+module.exports = a;
+//// [index.js]
+const a = {};
+export {};
 //// [file.js]
 import "fs";
 const a = {};
 module.exports = a;
-//// [index.js]
-const a = {};
-export {};
-//// [file.js]
-const a = {};
-module.exports = a;
-//// [index.js]
-const a = {};
-export {};

@@ -15,11 +15,11 @@ declare module "../dir/a" {
 }
 
 
-//// [b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 //// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.x = void 0;
 exports.x = 0;
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });

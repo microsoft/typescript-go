@@ -47,14 +47,14 @@ type ItemType3 = true.typeof(nodes.item(0));
 
 
 
-//// [boolean.js]
-class C3 {
+//// [string.js]
+class C {
     foo() {
         const x;
         typeof (this.foo);
     }
 }
-const nodes3 = document.getElementsByTagName("li");
+const nodes = document.getElementsByTagName("li");
 typeof (nodes.item(0));
 //// [number.js]
 class C2 {
@@ -65,12 +65,12 @@ class C2 {
 }
 const nodes2 = document.getElementsByTagName("li");
 typeof (nodes.item(0));
-//// [string.js]
-class C {
+//// [boolean.js]
+class C3 {
     foo() {
         const x;
         typeof (this.foo);
     }
 }
-const nodes = document.getElementsByTagName("li");
+const nodes3 = document.getElementsByTagName("li");
 typeof (nodes.item(0));

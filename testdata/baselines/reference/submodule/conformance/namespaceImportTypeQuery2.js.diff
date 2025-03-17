@@ -1,18 +1,6 @@
 --- old.namespaceImportTypeQuery2.js
 +++ new.namespaceImportTypeQuery2.js
-@@= skipped -17, +17 lines =@@
- }
- 
- 
--//// [z.js]
-+//// [b.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
-+let t = {
-+    A: undefined,
-+    B: undefined,
-+};
- //// [a.js]
+@@= skipped -24, +24 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.B = exports.A = void 0;
@@ -28,11 +16,12 @@
 +}
  exports.B = B;
  ;
--//// [b.js]
-+//// [z.js]
+ //// [b.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
 -var t = {
 -    A: undefined, // ok
--    B: undefined,
--};
++let t = {
++    A: undefined,
+     B: undefined,
+ };

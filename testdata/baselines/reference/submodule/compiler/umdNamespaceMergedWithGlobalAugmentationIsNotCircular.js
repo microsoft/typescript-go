@@ -23,9 +23,9 @@ React.createRef;
 console.log("hello");
 React.createRef;
 
-//// [emits.js]
-console.log("hello");
-React.createRef;
 //// [some_module.js]
 React.createRef;
 export {};
+//// [emits.js]
+console.log("hello");
+React.createRef;

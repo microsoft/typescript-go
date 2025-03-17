@@ -1,11 +1,8 @@
 --- old.isolatedModulesExportImportUninstantiatedNamespace.js
 +++ new.isolatedModulesExportImportUninstantiatedNamespace.js
-@@= skipped -20, +20 lines =@@
- 
- 
- 
--//// [jsx.js]
--export {};
+@@= skipped -23, +23 lines =@@
+ //// [jsx.js]
+ export {};
  //// [factory.js]
 -export function createElement(tagName, attributes) {
 -    var children = [];
@@ -15,5 +12,3 @@
 -    //...
 +export function createElement(tagName, attributes, ...children) {
  }
-+//// [jsx.js]
-+export {};

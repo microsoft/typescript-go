@@ -17,12 +17,12 @@ export declare function __metadata(metadataKey: any, metadataValue: any): Functi
 export declare function __awaiter(thisArg: any, _arguments: any, P: Function, generator: Function): any;
 export declare function __generator(body: Function): any;
 
-//// [script.js]
-async function foo() {
-}
 //// [external.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.foo = foo;
+async function foo() {
+}
+//// [script.js]
 async function foo() {
 }

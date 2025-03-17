@@ -1,28 +1,12 @@
 --- old.declarationEmitForTypesWhichNeedImportTypes.js
 +++ new.declarationEmitForTypesWhichNeedImportTypes.js
-@@= skipped -11, +11 lines =@@
- export const Value = createNamed();
- 
- 
-+//// [a.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.Value = void 0;
-+const b_1 = require("./b");
-+exports.Value = (0, b_1.createNamed)();
- //// [b.js]
+@@= skipped -22, +22 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
-@@= skipped -7, +13 lines =@@
- function createNamed() {
-     return {};
- }
--//// [a.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.Value = void 0;
+ exports.Value = void 0;
 -var b_1 = require("./b");
--exports.Value = (0, b_1.createNamed)();
++const b_1 = require("./b");
+ exports.Value = (0, b_1.createNamed)();
 -
 -
 -//// [b.d.ts]

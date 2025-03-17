@@ -1,14 +1,15 @@
 --- old.exportAssignedTypeAsTypeAnnotation.js
 +++ new.exportAssignedTypeAsTypeAnnotation.js
-@@= skipped -12, +12 lines =@@
- var t2: test; // should not raise a 'container type' error
+@@= skipped -13, +13 lines =@@
  
  
--//// [exportAssignedTypeAsTypeAnnotation_0.js]
+ //// [exportAssignedTypeAsTypeAnnotation_0.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
 -    Object.defineProperty(exports, "__esModule", { value: true });
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
  //// [exportAssignedTypeAsTypeAnnotation_1.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
@@ -18,6 +19,3 @@
 +"use strict";
 +Object.defineProperty(exports, "__esModule", { value: true });
 +var t2;
-+//// [exportAssignedTypeAsTypeAnnotation_0.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });

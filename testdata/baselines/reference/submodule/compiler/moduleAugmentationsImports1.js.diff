@@ -47,36 +47,23 @@
 -declare module "a" {
 -    export class A {
 -    }
-+//// [main.js]
++//// [a.js]
 +"use strict";
 +Object.defineProperty(exports, "__esModule", { value: true });
-+require("d");
-+let a;
-+let b = a.getB().x.toFixed();
-+let c = a.getCls().y.toLowerCase();
-+//// [d.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+const a_1 = require("./a");
-+a_1.A.prototype.getB = function () { return undefined; };
-+a_1.A.prototype.getCls = function () { return undefined; };
++exports.A = void 0;
++class A {
+ }
+-declare module "b" {
+-    export class B {
+-        x: number;
+-    }
++exports.A = A;
 +//// [b.js]
 +"use strict";
 +Object.defineProperty(exports, "__esModule", { value: true });
 +exports.B = void 0;
 +class B {
 +    x;
- }
--declare module "b" {
--    export class B {
--        x: number;
--    }
-+exports.B = B;
-+//// [a.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.A = void 0;
-+class A {
  }
 -declare module "d" {
 -    import { B } from "b";
@@ -95,4 +82,17 @@
 -declare module "main" {
 -    import "d";
 -}
-+exports.A = A;
++exports.B = B;
++//// [d.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++const a_1 = require("./a");
++a_1.A.prototype.getB = function () { return undefined; };
++a_1.A.prototype.getCls = function () { return undefined; };
++//// [main.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++require("d");
++let a;
++let b = a.getB().x.toFixed();
++let c = a.getCls().y.toLowerCase();

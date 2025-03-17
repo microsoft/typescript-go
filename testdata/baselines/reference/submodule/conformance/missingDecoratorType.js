@@ -20,9 +20,9 @@ class C {
 
 
 
+//// [a.js]
 //// [b.js]
 class C {
     @dec
     method() { }
 }
-//// [a.js]

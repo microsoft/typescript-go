@@ -13,18 +13,18 @@ const d: typeof import("./a/inner")["c"] = {x: 12};
 export {d};
 
 
-//// [index.js]
+//// [c.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.d = void 0;
-const d = { x: 12 };
-exports.d = d;
 //// [inner.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.c = void 0;
 const c = { x: 12 };
 exports.c = c;
-//// [c.js]
+//// [index.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.d = void 0;
+const d = { x: 12 };
+exports.d = d;

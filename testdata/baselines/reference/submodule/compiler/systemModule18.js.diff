@@ -1,10 +1,9 @@
 --- old.systemModule18.js
 +++ new.systemModule18.js
-@@= skipped -8, +8 lines =@@
- export import React = require("./react.js");
+@@= skipped -9, +9 lines =@@
  
  
--//// [react.js]
+ //// [react.js]
 -System.register([], function (exports_1, context_1) {
 -    "use strict";
 -    var __moduleName = context_1 && context_1.id;
@@ -20,6 +19,14 @@
 -        }
 -    };
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.createElement = createElement;
++exports.lazy = lazy;
++exports.useState = useState;
++function createElement() { }
++function lazy() { }
++function useState() { }
  //// [index.js]
 -System.register(["./react.js"], function (exports_1, context_1) {
 -    "use strict";
@@ -39,12 +46,3 @@
 +"use strict";
 +Object.defineProperty(exports, "__esModule", { value: true });
 +exports.React = require("./react.js");
-+//// [react.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.createElement = createElement;
-+exports.lazy = lazy;
-+exports.useState = useState;
-+function createElement() { }
-+function lazy() { }
-+function useState() { }

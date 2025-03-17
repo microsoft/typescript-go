@@ -16,11 +16,6 @@
 -    };
 -};
 -export {};
-+//// [index.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.foo = void 0;
-+exports.foo = { ...{} };
 +//// [type.js]
 +"use strict";
 +Object.defineProperty(exports, "__esModule", { value: true });
@@ -28,3 +23,8 @@
 +(function (Foo) {
 +    Foo.sym = Symbol();
 +})(Foo || (Foo = {}));
++//// [index.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.foo = void 0;
++exports.foo = { ...{} };

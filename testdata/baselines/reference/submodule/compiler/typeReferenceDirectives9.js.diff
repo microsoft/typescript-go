@@ -1,25 +1,25 @@
 --- old.typeReferenceDirectives9.js
 +++ new.typeReferenceDirectives9.js
-@@= skipped -30, +30 lines =@@
- export const foo = new Cls().foo();
- export const bar = Cls.bar();
- 
--//// [main.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.Cls = void 0;
+@@= skipped -34, +34 lines =@@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.Cls = void 0;
 -var Cls = /** @class */ (function () {
 -    function Cls() {
 -    }
 -    return Cls;
 -}());
--exports.Cls = Cls;
--//// [mod1.js]
--"use strict";
++class Cls {
++    x;
++}
+ exports.Cls = Cls;
+ //// [mod1.js]
+ "use strict";
 -/// <reference types="lib" />
--Object.defineProperty(exports, "__esModule", { value: true });
+ Object.defineProperty(exports, "__esModule", { value: true });
 -var main_1 = require("./main");
--main_1.Cls.prototype.foo = function () { return undefined; };
++const main_1 = require("./main");
+ main_1.Cls.prototype.foo = function () { return undefined; };
  //// [mod2.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
@@ -35,18 +35,7 @@
 -//// [main.d.ts]
 -export declare class Cls {
 -    x: any;
-+//// [mod1.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+const main_1 = require("./main");
-+main_1.Cls.prototype.foo = function () { return undefined; };
-+//// [main.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.Cls = void 0;
-+class Cls {
-+    x;
- }
+-}
 -//// [mod1.d.ts]
 -declare module "./main" {
 -    interface Cls {
@@ -63,4 +52,3 @@
 -export declare const cls: typeof Cls;
 -export declare const foo: Lib;
 -export declare const bar: Lib;
-+exports.Cls = Cls;

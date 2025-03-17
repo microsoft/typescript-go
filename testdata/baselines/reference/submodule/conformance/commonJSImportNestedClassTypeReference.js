@@ -17,6 +17,11 @@ NS.K =class {
 exports.K = NS.K;
 
 
+//// [main.js]
+const { K } = require("./mod1");
+function f(k) {
+    k.values();
+}
 //// [mod1.js]
 var NS = {};
 NS.K = class {
@@ -25,8 +30,3 @@ NS.K = class {
     }
 };
 exports.K = NS.K;
-//// [main.js]
-const { K } = require("./mod1");
-function f(k) {
-    k.values();
-}

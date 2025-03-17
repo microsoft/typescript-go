@@ -17,9 +17,9 @@ declare module 'M' {
 import A = require('M');
 var c = new A();
 
+//// [ambientExternalModuleWithoutInternalImportDeclaration_0.js]
 //// [ambientExternalModuleWithoutInternalImportDeclaration_1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const A = require("M");
 var c = new A();
-//// [ambientExternalModuleWithoutInternalImportDeclaration_0.js]

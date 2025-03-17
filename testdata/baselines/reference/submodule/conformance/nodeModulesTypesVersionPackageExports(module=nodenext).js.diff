@@ -1,19 +1,17 @@
 --- old.nodeModulesTypesVersionPackageExports(module=nodenext).js
 +++ new.nodeModulesTypesVersionPackageExports(module=nodenext).js
-@@= skipped -50, +50 lines =@@
-     }
+@@= skipped -51, +51 lines =@@
  }
  
--//// [index.js]
+ //// [index.js]
 -// esm format file
-+//// [index.cjs]
  import * as mod from "inner";
  mod.correctVersionApplied;
  //// [index.mjs]
 -// esm format file
  import * as mod from "inner";
  mod.correctVersionApplied;
--//// [index.cjs]
+ //// [index.cjs]
 -"use strict";
 -var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
 -    if (k2 === undefined) k2 = k;
@@ -41,7 +39,6 @@
 -Object.defineProperty(exports, "__esModule", { value: true });
 -// cjs format file
 -const mod = __importStar(require("inner"));
-+//// [index.js]
 +import * as mod from "inner";
  mod.correctVersionApplied;
 -

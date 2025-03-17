@@ -1,26 +1,18 @@
 --- old.aliasUsageInGenericFunction.js
 +++ new.aliasUsageInGenericFunction.js
-@@= skipped -23, +23 lines =@@
- var r2 = foo({ a: <IHasVisualizationModel>null });
- 
- 
--//// [aliasUsageInGenericFunction_backbone.js]
-+//// [aliasUsageInGenericFunction_main.js]
+@@= skipped -27, +27 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
--exports.Model = void 0;
+ exports.Model = void 0;
 -var Model = /** @class */ (function () {
 -    function Model() {
 -    }
 -    return Model;
 -}());
--exports.Model = Model;
-+const moduleA = require("./aliasUsageInGenericFunction_moduleA");
-+function foo(x) {
-+    return x;
++class Model {
++    someData;
 +}
-+var r = foo({ a: moduleA });
-+var r2 = foo({ a: null });
+ exports.Model = Model;
  //// [aliasUsageInGenericFunction_moduleA.js]
  "use strict";
 -var __extends = (this && this.__extends) || (function () {
@@ -52,17 +44,11 @@
 +class VisualizationModel extends Backbone.Model {
 +}
  exports.VisualizationModel = VisualizationModel;
--//// [aliasUsageInGenericFunction_main.js]
-+//// [aliasUsageInGenericFunction_backbone.js]
+ //// [aliasUsageInGenericFunction_main.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
 -var moduleA = require("./aliasUsageInGenericFunction_moduleA");
--function foo(x) {
--    return x;
-+exports.Model = void 0;
-+class Model {
-+    someData;
++const moduleA = require("./aliasUsageInGenericFunction_moduleA");
+ function foo(x) {
+     return x;
  }
--var r = foo({ a: moduleA });
--var r2 = foo({ a: null });
-+exports.Model = Model;

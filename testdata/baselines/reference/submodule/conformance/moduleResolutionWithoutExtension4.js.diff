@@ -1,11 +1,8 @@
 --- old.moduleResolutionWithoutExtension4.js
 +++ new.moduleResolutionWithoutExtension4.js
-@@= skipped -9, +9 lines =@@
- import { foo } from "./foo"; // should error, suggest adding ".js"
+@@= skipped -10, +10 lines =@@
  
  
-+//// [bar.mjs]
-+export {};
  //// [foo.js]
 -"use strict";
 -Object.defineProperty(exports, "__esModule", { value: true });
@@ -14,5 +11,4 @@
 +export function foo() {
      return "";
  }
--//// [bar.mjs]
--export {};
+ //// [bar.mjs]

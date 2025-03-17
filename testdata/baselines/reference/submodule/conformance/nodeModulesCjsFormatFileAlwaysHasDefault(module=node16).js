@@ -19,7 +19,7 @@ mod;
 }
 
 //// [index.js]
+export const a = 1;
+//// [index.js]
 import mod from "./subfolder/index.js";
 mod;
-//// [index.js]
-export const a = 1;

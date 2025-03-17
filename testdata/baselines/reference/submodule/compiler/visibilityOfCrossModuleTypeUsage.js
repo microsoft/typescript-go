@@ -23,15 +23,15 @@ function run(configuration: commands.IConfiguration) {
     var absoluteWorkspacePath = configuration.workspace.toAbsolutePath(configuration.server);
 }
 
+//// [visibilityOfCrossModuleTypeUsage_server.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [visibilityOfCrossModuleTypeUsage_commands.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 //// [visibilityOfCrossModuleTypeUsage_fs.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 function run(configuration) {
     var absoluteWorkspacePath = configuration.workspace.toAbsolutePath(configuration.server);
 }
-//// [visibilityOfCrossModuleTypeUsage_commands.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-//// [visibilityOfCrossModuleTypeUsage_server.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });

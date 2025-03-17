@@ -45,6 +45,22 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./nested"), exports);
+//// [base.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.f = f;
+const shared_1 = require("./shared");
+function f() {
+    return new shared_1.B();
+}
+//// [derived.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.g = g;
+const base_1 = require("./base");
+function g() {
+    return (0, base_1.f)();
+}
 //// [index.js]
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -65,22 +81,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./base"), exports);
 __exportStar(require("./derived"), exports);
 __exportStar(require("./shared"), exports);
-//// [derived.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.g = g;
-const base_1 = require("./base");
-function g() {
-    return (0, base_1.f)();
-}
-//// [base.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.f = f;
-const shared_1 = require("./shared");
-function f() {
-    return new shared_1.B();
-}
 //// [shared.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });

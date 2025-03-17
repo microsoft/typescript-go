@@ -11,11 +11,6 @@ import y = x;
 y.m.foo();
 
 
-//// [chainedImportAlias_file1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const x = require("./chainedImportAlias_file0");
-y.m.foo();
 //// [chainedImportAlias_file0.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -25,3 +20,8 @@ var m;
     function foo() { }
     m.foo = foo;
 })(m || (exports.m = m = {}));
+//// [chainedImportAlias_file1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const x = require("./chainedImportAlias_file0");
+y.m.foo();

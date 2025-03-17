@@ -1,35 +1,18 @@
 --- old.moduleAugmentationDeclarationEmit2.js
 +++ new.moduleAugmentationDeclarationEmit2.js
-@@= skipped -32, +32 lines =@@
- let z1 = Observable.someValue.toFixed();
- let z2 = Observable.someAnotherValue.toLowerCase();
- 
--//// [observable.js]
-+//// [main.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
--exports.Observable = void 0;
--var Observable;
--(function (Observable) {
--})(Observable || (exports.Observable = Observable = {}));
-+const observable_1 = require("./observable");
-+require("./map");
-+let x;
-+let y = x.map(x => x + 1);
-+let z1 = observable_1.Observable.someValue.toFixed();
-+let z2 = observable_1.Observable.someAnotherValue.toLowerCase();
+@@= skipped -42, +42 lines =@@
  //// [map.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
 -var observable_1 = require("./observable");
 +const observable_1 = require("./observable");
  observable_1.Observable.prototype.map = function () { };
--//// [main.js]
-+//// [observable.js]
+ //// [main.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
 -var observable_1 = require("./observable");
--require("./map");
++const observable_1 = require("./observable");
+ require("./map");
 -var x;
 -var y = x.map(function (x) { return x + 1; });
 -var z1 = observable_1.Observable.someValue.toFixed();
@@ -55,7 +38,7 @@
 -export {};
 -//// [main.d.ts]
 -import "./map";
-+exports.Observable = void 0;
-+var Observable;
-+(function (Observable) {
-+})(Observable || (exports.Observable = Observable = {}));
++let x;
++let y = x.map(x => x + 1);
++let z1 = observable_1.Observable.someValue.toFixed();
++let z2 = observable_1.Observable.someAnotherValue.toLowerCase();

@@ -21,20 +21,6 @@ interface IHasVisualizationModel {
 var xs: IHasVisualizationModel[] = [moduleA];
 var xs2: typeof moduleA[] = [moduleA];
 
-//// [aliasUsageInArray_main.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const moduleA = require("./aliasUsageInArray_moduleA");
-var xs = [moduleA];
-var xs2 = [moduleA];
-//// [aliasUsageInArray_moduleA.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.VisualizationModel = void 0;
-const Backbone = require("./aliasUsageInArray_backbone");
-class VisualizationModel extends Backbone.Model {
-}
-exports.VisualizationModel = VisualizationModel;
 //// [aliasUsageInArray_backbone.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -43,3 +29,17 @@ class Model {
     someData;
 }
 exports.Model = Model;
+//// [aliasUsageInArray_moduleA.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.VisualizationModel = void 0;
+const Backbone = require("./aliasUsageInArray_backbone");
+class VisualizationModel extends Backbone.Model {
+}
+exports.VisualizationModel = VisualizationModel;
+//// [aliasUsageInArray_main.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const moduleA = require("./aliasUsageInArray_moduleA");
+var xs = [moduleA];
+var xs2 = [moduleA];

@@ -1,12 +1,10 @@
 --- old.parserArrowFunctionExpression11.js
 +++ new.parserArrowFunctionExpression11.js
-@@= skipped -6, +6 lines =@@
- a ? b ? c : (d) : e => f
+@@= skipped -7, +7 lines =@@
  
  
--//// [fileJs.js]
+ //// [fileJs.js]
 -a ? b ? c : (d) : e => f; // Legal JS
++a ? b ? c : (d) : e => f;
  //// [fileTs.js]
  a ? b ? c : (d) : e => f;
-+//// [fileJs.js]
-+a ? b ? c : (d) : e => f;

@@ -902,6 +902,7 @@ var template2 = _.template("Hello {{ name }}!");
 template2({ name: "Mustache" });
 _.template("Using 'with': <%= data.answer %>", { answer: 'no' }, { variable: 'data' });
 
+//// [underscoreTest1_underscore.js]
 //// [underscoreTest1_underscoreTests.js]
 _.each([1, 2, 3], (num) => alert(num.toString()));
 _.each({ one: 1, two: 2, three: 3 }, (value, key) => alert(value.toString()));
@@ -1067,4 +1068,3 @@ _.templateSettings = {
 var template2 = _.template("Hello {{ name }}!");
 template2({ name: "Mustache" });
 _.template("Using 'with': <%= data.answer %>", { answer: 'no' }, { variable: 'data' });
-//// [underscoreTest1_underscore.js]

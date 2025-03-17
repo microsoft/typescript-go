@@ -16,10 +16,10 @@ declare module "M" {
     export var y: string;
 }
 
-//// [ambientExternalModuleMerging_declare.js]
 //// [ambientExternalModuleMerging_use.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const M = require("M");
 var x = M.x;
 var y = M.y;
+//// [ambientExternalModuleMerging_declare.js]

@@ -19,20 +19,6 @@ export const b = {
     }
 };
 
-//// [a.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.a = void 0;
-const b_1 = require("./b");
-exports.a = {
-    f: () => {
-        class A {
-        }
-        class B extends A {
-        }
-        b_1.b.f();
-    }
-};
 //// [b.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -45,5 +31,19 @@ exports.b = {
         class B extends A {
         }
         a_1.a.f();
+    }
+};
+//// [a.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.a = void 0;
+const b_1 = require("./b");
+exports.a = {
+    f: () => {
+        class A {
+        }
+        class B extends A {
+        }
+        b_1.b.f();
     }
 };

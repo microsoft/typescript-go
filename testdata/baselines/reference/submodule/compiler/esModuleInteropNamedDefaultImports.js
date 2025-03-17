@@ -12,6 +12,16 @@ new Foo2();
 new Bar();
 new Foo3();
 
+//// [mod.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Bar = void 0;
+class Foo {
+}
+exports.default = Foo;
+class Bar {
+}
+exports.Bar = Bar;
 //// [idx.js]
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -48,13 +58,3 @@ new mod_1.default();
 new mod_2.default();
 new mod_3.Bar();
 new mod_3.default();
-//// [mod.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Bar = void 0;
-class Foo {
-}
-exports.default = Foo;
-class Bar {
-}
-exports.Bar = Bar;

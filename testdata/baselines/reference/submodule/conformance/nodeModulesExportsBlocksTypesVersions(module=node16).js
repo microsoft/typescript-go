@@ -63,7 +63,7 @@ import {} from "exports-and-types-versions/versioned-nah";
 import {} from "just-types-versions/foo";
 
 
-//// [main.mjs]
-export {};
 //// [main.cjs]
+export {};
+//// [main.mjs]
 export {};

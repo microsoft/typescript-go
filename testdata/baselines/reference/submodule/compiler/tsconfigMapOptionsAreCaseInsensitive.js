@@ -10,6 +10,10 @@ export {
     x
 };
 
+//// [other.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = 42;
 //// [index.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -17,7 +21,3 @@ exports.x = void 0;
 const other_js_1 = require("./other.js");
 const x = 10 + other_js_1.default;
 exports.x = x;
-//// [other.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = 42;

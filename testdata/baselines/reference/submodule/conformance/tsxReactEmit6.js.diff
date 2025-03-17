@@ -1,10 +1,8 @@
 --- old.tsxReactEmit6.js
 +++ new.tsxReactEmit6.js
-@@= skipped -24, +24 lines =@@
+@@= skipped -26, +26 lines =@@
  
- 
- 
--//// [file.js]
+ //// [file.js]
  //// [react-consumer.js]
 -var __assign = (this && this.__assign) || function () {
 -    __assign = Object.assign || function(t) {
@@ -30,4 +28,3 @@
 +    var spread1 = <div x='' {...foo} y=''/>;
 +    var x = <div>This "quote" thing</div>;
  })(M || (M = {}));
-+//// [file.js]

@@ -1,18 +1,17 @@
 --- old.defaultExportsCannotMerge03.js
 +++ new.defaultExportsCannotMerge03.js
-@@= skipped -23, +23 lines =@@
- var z = new Entity();
- var sum = z.p1 + z.p2
- 
--//// [m1.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
+@@= skipped -26, +26 lines =@@
+ //// [m1.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
 -var Decl = /** @class */ (function () {
 -    function Decl() {
 -    }
 -    return Decl;
 -}());
--exports.default = Decl;
++class Decl {
++}
+ exports.default = Decl;
  //// [m2.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
@@ -21,11 +20,3 @@
  (0, m1_1.default)();
  var x;
  var y;
- var z = new m1_1.default();
- var sum = z.p1 + z.p2;
-+//// [m1.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+class Decl {
-+}
-+exports.default = Decl;

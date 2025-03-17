@@ -10,9 +10,9 @@ var y;
 var z;
 
 
-//// [file3.js]
-var z;
-//// [file2.js]
-var y;
 //// [file1.js]
 var x;
+//// [file2.js]
+var y;
+//// [file3.js]
+var z;

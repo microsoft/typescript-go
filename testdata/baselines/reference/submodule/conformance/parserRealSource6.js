@@ -223,6 +223,7 @@ module TypeScript {
     }
 }
 
+//// [typescript.js]
 //// [parserRealSource6.js]
 var TypeScript;
 (function (TypeScript) {
@@ -420,4 +421,3 @@ var TypeScript;
     }
     TypeScript.findEnclosingScopeAt = findEnclosingScopeAt;
 })(TypeScript || (TypeScript = {}));
-//// [typescript.js]

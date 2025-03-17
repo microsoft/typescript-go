@@ -17,11 +17,6 @@ let x = [1];
 let y = x.getA().x;
 
 
-//// [f2.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-let x = [1];
-let y = x.getA().x;
 //// [f1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -30,3 +25,8 @@ class A {
     x;
 }
 exports.A = A;
+//// [f2.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+let x = [1];
+let y = x.getA().x;

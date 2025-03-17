@@ -16,6 +16,9 @@ var z: Sammy; // no error - z is of type interface Sammy from module 'M'
 var a = new z(); // constructor - no error
 var b = z(); // call signature - no error
 
+//// [exportAssignmentOfDeclaredExternalModule_0.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 //// [exportAssignmentOfDeclaredExternalModule_1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -24,6 +27,3 @@ var y = Sammy();
 var z;
 var a = new z();
 var b = z();
-//// [exportAssignmentOfDeclaredExternalModule_0.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });

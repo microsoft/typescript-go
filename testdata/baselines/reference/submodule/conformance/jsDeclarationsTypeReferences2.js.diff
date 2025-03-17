@@ -1,28 +1,17 @@
 --- old.jsDeclarationsTypeReferences2.js
 +++ new.jsDeclarationsTypeReferences2.js
-@@= skipped -15, +15 lines =@@
- };
- 
- 
-+//// [index.js]
-+const { a, m } = require("./something").o;
-+const thing = a + m;
-+module.exports = {
-+    thing
-+};
- //// [something.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
-@@= skipped -8, +14 lines =@@
-     a: 1,
+@@= skipped -24, +24 lines =@@
      m: 1
  };
--//// [index.js]
+ //// [index.js]
 -var _a = require("./something").o, a = _a.a, m = _a.m;
 -var thing = a + m;
--module.exports = {
++const { a, m } = require("./something").o;
++const thing = a + m;
+ module.exports = {
 -    thing: thing
--};
++    thing
+ };
 -
 -
 -//// [something.d.ts]

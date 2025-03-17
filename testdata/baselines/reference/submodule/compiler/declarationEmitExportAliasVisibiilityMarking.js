@@ -14,16 +14,16 @@ export let lazyCard = () => import('./Card').then(a => a.default);
 export { Suit, Rank } from './Types';
 
 
+//// [Types.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [Card.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = (suit, rank) => ({ suit, rank });
 //// [index.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.lazyCard = void 0;
 let lazyCard = () => Promise.resolve().then(() => require('./Card')).then(a => a.default);
 exports.lazyCard = lazyCard;
-//// [Card.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = (suit, rank) => ({ suit, rank });
-//// [Types.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });

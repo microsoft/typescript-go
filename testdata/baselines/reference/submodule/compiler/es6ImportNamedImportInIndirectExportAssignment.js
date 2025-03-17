@@ -11,10 +11,6 @@ import { a } from "./es6ImportNamedImportInIndirectExportAssignment_0";
 import x = a;
 export = x;
 
-//// [es6ImportNamedImportInIndirectExportAssignment_1.js]
-"use strict";
-const es6ImportNamedImportInIndirectExportAssignment_0_1 = require("./es6ImportNamedImportInIndirectExportAssignment_0");
-module.exports = x;
 //// [es6ImportNamedImportInIndirectExportAssignment_0.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -25,3 +21,7 @@ var a;
     }
     a.c = c;
 })(a || (exports.a = a = {}));
+//// [es6ImportNamedImportInIndirectExportAssignment_1.js]
+"use strict";
+const es6ImportNamedImportInIndirectExportAssignment_0_1 = require("./es6ImportNamedImportInIndirectExportAssignment_0");
+module.exports = x;

@@ -19,13 +19,26 @@ let __: B = new B();  // Ok
 let ___: C = new C(); // Ok
 
 
-//// [d.js]
+//// [a.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const c_1 = require("./c");
-let _ = new A();
-let __ = new c_1.B();
-let ___ = new c_1.C();
+exports.B = exports.A = void 0;
+class A {
+}
+exports.A = A;
+class B {
+}
+exports.B = B;
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.C = exports.B = void 0;
+class B {
+}
+exports.B = B;
+class C {
+}
+exports.C = C;
 //// [c.js]
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -44,23 +57,10 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./b"), exports);
-//// [b.js]
+//// [d.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.C = exports.B = void 0;
-class B {
-}
-exports.B = B;
-class C {
-}
-exports.C = C;
-//// [a.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.B = exports.A = void 0;
-class A {
-}
-exports.A = A;
-class B {
-}
-exports.B = B;
+const c_1 = require("./c");
+let _ = new A();
+let __ = new c_1.B();
+let ___ = new c_1.C();

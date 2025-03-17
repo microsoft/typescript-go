@@ -51,6 +51,12 @@ function testFn(input) {
 
 export {testFn, testFnTypes};
 
+//// [file.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.myTypes = void 0;
+const myTypes = {};
+exports.myTypes = myTypes;
 //// [file2.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -67,9 +73,3 @@ function testFn(input) {
         return null;
     }
 }
-//// [file.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.myTypes = void 0;
-const myTypes = {};
-exports.myTypes = myTypes;

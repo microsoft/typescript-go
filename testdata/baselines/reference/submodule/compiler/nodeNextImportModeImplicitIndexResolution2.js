@@ -37,7 +37,7 @@ import dedent3 from "dedent3";
 import dedent4 from "dedent4"; // Error
 
 
-//// [index.cjs]
-export {};
 //// [index.mjs]
+export {};
+//// [index.cjs]
 export {};

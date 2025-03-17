@@ -23,10 +23,10 @@ var n = imp3.x;
 var n: number;
 
 
+//// [decls.js]
 //// [consumer.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const imp3 = require("equ2");
 var n = imp3.x;
 var n;
-//// [decls.js]

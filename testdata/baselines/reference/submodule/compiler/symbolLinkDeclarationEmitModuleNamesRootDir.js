@@ -24,12 +24,12 @@ import { BindingKey } from '@loopback/context';
 export const CONTROLLER_CLASS = BindingKey.create<ControllerClass>(null as any); // line in question
 
 
+//// [application.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 //// [usage.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CONTROLLER_CLASS = void 0;
 const context_1 = require("@loopback/context");
 exports.CONTROLLER_CLASS = context_1.BindingKey.create(null);
-//// [application.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });

@@ -8,10 +8,6 @@ import { Foo } from "./enum";
 function f(foo: Foo) { return; }
 
 
-//// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-function f(foo) { return; }
 //// [enum.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -20,3 +16,7 @@ var Foo;
 (function (Foo) {
     Foo[Foo["Bar"] = 0] = "Bar";
 })(Foo || (exports.Foo = Foo = {}));
+//// [index.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+function f(foo) { return; }

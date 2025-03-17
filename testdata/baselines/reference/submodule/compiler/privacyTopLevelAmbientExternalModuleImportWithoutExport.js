@@ -47,6 +47,8 @@ var privateUse_im_private_mi_public = new im_private_mi_public.c_public();
 export var publicUse_im_private_mi_public = new im_private_mi_public.c_public();
 
 
+//// [privacyTopLevelAmbientExternalModuleImportWithoutExport_require2.js]
+//// [privacyTopLevelAmbientExternalModuleImportWithoutExport_require3.js]
 //// [privacyTopLevelAmbientExternalModuleImportWithoutExport_core.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -62,5 +64,3 @@ var privateUse_im_private_mi_public = new im_private_mi_public.c_public();
 exports.publicUse_im_private_mi_public = new im_private_mi_public.c_public();
 var privateUse_im_private_mi_public = new im_private_mi_public.c_public();
 exports.publicUse_im_private_mi_public = new im_private_mi_public.c_public();
-//// [privacyTopLevelAmbientExternalModuleImportWithoutExport_require3.js]
-//// [privacyTopLevelAmbientExternalModuleImportWithoutExport_require2.js]

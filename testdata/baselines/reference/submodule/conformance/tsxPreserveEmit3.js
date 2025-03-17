@@ -16,7 +16,7 @@ export var React;
 import {React} from "./test";
 
 
+//// [file.jsx]
 //// [react-consumer.jsx]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-//// [file.jsx]

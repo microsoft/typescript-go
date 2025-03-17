@@ -1,8 +1,10 @@
 --- old.parserRealSource11.js
 +++ new.parserRealSource11.js
-@@= skipped -2366, +2366 lines =@@
+@@= skipped -2365, +2365 lines =@@
+     }
  }
  
++//// [typescript.js]
  //// [parserRealSource11.js]
 -// Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
 -// See LICENSE.txt in the project root for complete license information.
@@ -74,7 +76,7 @@
              switch (this.nodeType) {
                  case NodeType.Error:
                  case NodeType.EmptyExpr:
-@@= skipped -72, +49 lines =@@
+@@= skipped -73, +51 lines =@@
                      throw new Error("please implement in derived class");
              }
              return this;
@@ -2383,4 +2385,3 @@
 +    }
      TypeScript.DebuggerStatement = DebuggerStatement;
  })(TypeScript || (TypeScript = {}));
-+//// [typescript.js]

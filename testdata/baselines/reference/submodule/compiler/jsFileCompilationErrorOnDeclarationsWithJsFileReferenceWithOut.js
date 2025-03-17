@@ -14,12 +14,12 @@ function bar() {
 }
 
 
+//// [a.js]
+class c {
+}
 //// [b.js]
 function foo() {
 }
 //// [c.js]
 function bar() {
-}
-//// [a.js]
-class c {
 }

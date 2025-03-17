@@ -80,6 +80,16 @@ for await (const item of arr) {
 }
 
 
+//// [other.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.await = void 0;
+const _await = 1;
+exports.await = _await;
+const arr = [Promise.resolve()];
+for await (const item of arr) {
+    item;
+}
 //// [index.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -121,13 +131,3 @@ class C {
 throw await 1;
 let y = await 1;
 await 1;
-//// [other.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.await = void 0;
-const _await = 1;
-exports.await = _await;
-const arr = [Promise.resolve()];
-for await (const item of arr) {
-    item;
-}

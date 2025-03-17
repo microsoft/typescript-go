@@ -24,16 +24,16 @@ import j from "./jquery";
 import j from "./jquery.js"
 
 
-//// [jquery_user_1.js]
+//// [a.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = 0;
+//// [b.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 //// [d.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-//// [b.js]
+//// [jquery_user_1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-//// [a.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = 0;

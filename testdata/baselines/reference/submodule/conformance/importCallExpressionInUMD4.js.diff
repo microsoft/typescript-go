@@ -1,10 +1,9 @@
 --- old.importCallExpressionInUMD4.js
 +++ new.importCallExpressionInUMD4.js
-@@= skipped -39, +39 lines =@@
-     }
+@@= skipped -40, +40 lines =@@
  }
  
--//// [0.js]
+ //// [0.js]
 -(function (factory) {
 -    if (typeof module === "object" && typeof module.exports === "object") {
 -        var v = factory(require, exports);
@@ -24,7 +23,16 @@
 -    exports.B = B;
 -    function foo() { return "foo"; }
 -});
--//// [1.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.B = void 0;
++exports.foo = foo;
++class B {
++    print() { return "I am B"; }
++}
++exports.B = B;
++function foo() { return "foo"; }
+ //// [1.js]
 -(function (factory) {
 -    if (typeof module === "object" && typeof module.exports === "object") {
 -        var v = factory(require, exports);
@@ -39,6 +47,10 @@
 -    exports.backup = backup;
 -    function backup() { return "backup"; }
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.backup = backup;
++function backup() { return "backup"; }
  //// [2.js]
 -(function (factory) {
 -    if (typeof module === "object" && typeof module.exports === "object") {
@@ -113,18 +125,3 @@
 -});
 +}
 +exports.D = D;
-+//// [1.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.backup = backup;
-+function backup() { return "backup"; }
-+//// [0.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.B = void 0;
-+exports.foo = foo;
-+class B {
-+    print() { return "I am B"; }
-+}
-+exports.B = B;
-+function foo() { return "foo"; }

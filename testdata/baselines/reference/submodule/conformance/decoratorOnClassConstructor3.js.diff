@@ -1,23 +1,6 @@
 --- old.decoratorOnClassConstructor3.js
 +++ new.decoratorOnClassConstructor3.js
-@@= skipped -14, +14 lines =@@
-     }
- }
- 
-+//// [2.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.C = void 0;
-+const _0_1 = require("./0");
-+const _0_2 = require("./0");
-+class C extends _0_1.base {
-+    constructor(prop) {
-+        super();
-+    }
-+}
-+exports.C = C;
- //// [0.js]
- "use strict";
+@@= skipped -19, +19 lines =@@
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.base = void 0;
  exports.foo = foo;
@@ -30,8 +13,8 @@
 +}
  exports.base = base;
  function foo(target, propertyKey, parameterIndex) { }
--//// [2.js]
--"use strict";
+ //// [2.js]
+ "use strict";
 -var __extends = (this && this.__extends) || (function () {
 -    var extendStatics = function (d, b) {
 -        extendStatics = Object.setPrototypeOf ||
@@ -56,8 +39,8 @@
 -var __param = (this && this.__param) || function (paramIndex, decorator) {
 -    return function (target, key) { decorator(target, key, paramIndex); }
 -};
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.C = void 0;
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.C = void 0;
 -var _0_1 = require("./0");
 -var _0_2 = require("./0");
 -/* Comment on the Class Declaration */
@@ -65,10 +48,16 @@
 -    __extends(C, _super);
 -    function C(prop) {
 -        return _super.call(this) || this;
--    }
++const _0_1 = require("./0");
++const _0_2 = require("./0");
++class C extends _0_1.base {
++    constructor(prop) {
++        super();
+     }
 -    C = __decorate([
 -        __param(0, _0_2.foo)
 -    ], C);
 -    return C;
 -}(_0_1.base));
--exports.C = C;
++}
+ exports.C = C;

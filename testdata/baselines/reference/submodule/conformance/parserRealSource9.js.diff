@@ -1,8 +1,10 @@
 --- old.parserRealSource9.js
 +++ new.parserRealSource9.js
-@@= skipped -211, +211 lines =@@
+@@= skipped -210, +210 lines =@@
+ 
  }
  
++//// [typescript.js]
  //// [parserRealSource9.js]
 -// Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
 -// See LICENSE.txt in the project root for complete license information.
@@ -21,7 +23,7 @@
              var extendsList = null;
              if (typeLinks) {
                  extendsList = new Type[];
-@@= skipped -27, +25 lines =@@
+@@= skipped -28, +27 lines =@@
                  }
              }
              return extendsList;
@@ -134,4 +136,3 @@
 +    }
      TypeScript.Binder = Binder;
  })(TypeScript || (TypeScript = {}));
-+//// [typescript.js]

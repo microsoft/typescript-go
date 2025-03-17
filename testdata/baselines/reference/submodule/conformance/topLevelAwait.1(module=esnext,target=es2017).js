@@ -80,6 +80,13 @@ for await (const item of arr) {
 }
 
 
+//// [other.js]
+const _await = 1;
+export { _await as await };
+const arr = [Promise.resolve()];
+for await (const item of arr) {
+    item;
+}
 //// [index.js]
 export const x = 1;
 await x;
@@ -118,10 +125,3 @@ class C {
 throw await 1;
 let y = await 1;
 await 1;
-//// [other.js]
-const _await = 1;
-export { _await as await };
-const arr = [Promise.resolve()];
-for await (const item of arr) {
-    item;
-}

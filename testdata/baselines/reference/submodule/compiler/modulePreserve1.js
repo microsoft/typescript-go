@@ -12,13 +12,13 @@ import B = require("./b");
 export { A, B };
 
 
+//// [a.js]
+export class A {
+}
+//// [b.js]
+module.exports = class B {
+};
 //// [main.js]
 import { A } from "./a";
 const B = require("./b");
 export { A, B };
-//// [b.js]
-module.exports = class B {
-};
-//// [a.js]
-export class A {
-}

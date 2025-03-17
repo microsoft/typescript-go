@@ -43,6 +43,12 @@ import {MetadataAccessor} from "@raymondfeng/pkg2";
 
 export const ADMIN = MetadataAccessor.create<boolean>('1');
 
+//// [keys.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ADMIN = void 0;
+const pkg2_1 = require("@raymondfeng/pkg2");
+exports.ADMIN = pkg2_1.MetadataAccessor.create('1');
 //// [index.js]
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -61,9 +67,3 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./keys"), exports);
-//// [keys.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ADMIN = void 0;
-const pkg2_1 = require("@raymondfeng/pkg2");
-exports.ADMIN = pkg2_1.MetadataAccessor.create('1');

@@ -17,9 +17,9 @@ declare global {
 type Foo = teams.calling.Foo;
 export const bar = (p?: Foo) => {}
 
-//// [c.js]
-export const bar = (p) => { };
-//// [b.js]
-export {};
 //// [a.js]
 export {};
+//// [b.js]
+export {};
+//// [c.js]
+export const bar = (p) => { };

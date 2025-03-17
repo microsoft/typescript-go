@@ -1,32 +1,18 @@
 --- old.unusedImportWithSpread.js
 +++ new.unusedImportWithSpread.js
-@@= skipped -23, +23 lines =@@
- })
- 
- 
--//// [a.js]
--export default { a: 1 };
--//// [b1.js]
-+//// [b2.js]
+@@= skipped -29, +29 lines =@@
  import a from "./a";
--const b1 = {};
-+const b2 = {};
+ const b1 = {};
  ({
 -    // @ts-ignore
--    ...b1,
-+    ...b2,
+     ...b1,
      a
  });
--//// [b2.js]
-+//// [b1.js]
+@@= skipped -8, +7 lines =@@
  import a from "./a";
--const b2 = {};
-+const b1 = {};
+ const b2 = {};
  ({
 -    // @ts-ignore
--    ...b2,
-+    ...b1,
+     ...b2,
      a
  });
-+//// [a.js]
-+export default { a: 1 };

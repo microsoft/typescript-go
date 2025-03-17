@@ -7,7 +7,7 @@ var x: number;
 var y: number;
 
 
-//// [baz.js]
-var y;
 //// [bar.js]
 var x;
+//// [baz.js]
+var y;

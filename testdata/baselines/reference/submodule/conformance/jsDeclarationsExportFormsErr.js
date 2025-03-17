@@ -21,12 +21,22 @@ import "./bin";
 import "./globalNs";
 
 
-//// [includeAll.js]
+//// [cls.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-require("./bar");
-require("./bin");
-require("./globalNs");
+exports.Foo = void 0;
+class Foo {
+}
+exports.Foo = Foo;
+//// [bar.js]
+"use strict";
+const ns = require("./cls");
+module.exports = ns;
+//// [bin.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const ns = require("./cls");
+module.exports = ns;
 //// [globalNs.js]
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -45,19 +55,9 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./cls"), exports);
-//// [bin.js]
+//// [includeAll.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const ns = require("./cls");
-module.exports = ns;
-//// [bar.js]
-"use strict";
-const ns = require("./cls");
-module.exports = ns;
-//// [cls.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Foo = void 0;
-class Foo {
-}
-exports.Foo = Foo;
+require("./bar");
+require("./bin");
+require("./globalNs");

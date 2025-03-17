@@ -1,46 +1,31 @@
 --- old.decoratorMetadataRestParameterWithImportedType.js
 +++ new.decoratorMetadataRestParameterWithImportedType.js
-@@= skipped -38, +38 lines =@@
-     }
- }
- 
--//// [aux.js]
-+//// [main.js]
+@@= skipped -42, +42 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
--exports.SomeClass = void 0;
+ exports.SomeClass = void 0;
 -var SomeClass = /** @class */ (function () {
 -    function SomeClass() {
-+exports.ClassA = void 0;
-+function annotation() {
-+    return (target) => { };
-+}
-+function annotation1() {
-+    return (target) => { };
-+}
-+@annotation()
-+class ClassA {
-+    array;
-+    constructor(...init) {
-+        this.array = init;
-     }
+-    }
 -    return SomeClass;
 -}());
--exports.SomeClass = SomeClass;
--//// [aux1.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.SomeClass1 = void 0;
++class SomeClass {
++    field;
++}
+ exports.SomeClass = SomeClass;
+ //// [aux1.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.SomeClass1 = void 0;
 -var SomeClass1 = /** @class */ (function () {
 -    function SomeClass1() {
-+    @annotation1()
-+    foo(...args) {
-     }
+-    }
 -    return SomeClass1;
 -}());
--exports.SomeClass1 = SomeClass1;
++class SomeClass1 {
++    field;
 +}
-+exports.ClassA = ClassA;
+ exports.SomeClass1 = SomeClass1;
  //// [aux2.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
@@ -54,8 +39,7 @@
 +    field;
 +}
  exports.SomeClass2 = SomeClass2;
--//// [main.js]
-+//// [aux1.js]
+ //// [main.js]
  "use strict";
 -var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 -    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -67,24 +51,16 @@
 -    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 -};
  Object.defineProperty(exports, "__esModule", { value: true });
--exports.ClassA = void 0;
+ exports.ClassA = void 0;
 -var aux_1 = require("./aux");
 -var aux1_1 = require("./aux1");
--function annotation() {
+ function annotation() {
 -    return function (target) { };
-+exports.SomeClass1 = void 0;
-+class SomeClass1 {
-+    field;
++    return (target) => { };
  }
--function annotation1() {
+ function annotation1() {
 -    return function (target) { };
-+exports.SomeClass1 = SomeClass1;
-+//// [aux.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.SomeClass = void 0;
-+class SomeClass {
-+    field;
++    return (target) => { };
  }
 -var ClassA = /** @class */ (function () {
 -    function ClassA() {
@@ -92,8 +68,12 @@
 -        for (var _i = 0; _i < arguments.length; _i++) {
 -            init[_i] = arguments[_i];
 -        }
--        this.array = init;
--    }
++@annotation()
++class ClassA {
++    array;
++    constructor(...init) {
+         this.array = init;
+     }
 -    ClassA.prototype.foo = function () {
 -        var args = [];
 -        for (var _i = 0; _i < arguments.length; _i++) {
@@ -112,5 +92,8 @@
 -    ], ClassA);
 -    return ClassA;
 -}());
--exports.ClassA = ClassA;
-+exports.SomeClass = SomeClass;
++    @annotation1()
++    foo(...args) {
++    }
++}
+ exports.ClassA = ClassA;

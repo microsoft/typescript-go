@@ -1,21 +1,15 @@
 --- old.esModuleInteropDefaultImports.js
 +++ new.esModuleInteropDefaultImports.js
-@@= skipped -35, +35 lines =@@
- self.default.default();
- self.def.default();
- 
--//// [mod.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.default = fun;
--//// [a.js]
--"use strict";
+@@= skipped -41, +41 lines =@@
+ exports.default = fun;
+ //// [a.js]
+ "use strict";
 -var mod = require("./mod");
--module.exports = mod;
++const mod = require("./mod");
+ module.exports = mod;
  //// [b.js]
  "use strict";
- var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-@@= skipped -38, +30 lines =@@
+@@= skipped -32, +32 lines =@@
  };
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.def = exports.default = void 0;
@@ -49,14 +43,3 @@
  a_1.default.default();
  a_2.default.default();
  a_3.default.default();
- a_3.default.default();
- self.default.default();
- self.def.default();
-+//// [a.js]
-+"use strict";
-+const mod = require("./mod");
-+module.exports = mod;
-+//// [mod.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.default = fun;

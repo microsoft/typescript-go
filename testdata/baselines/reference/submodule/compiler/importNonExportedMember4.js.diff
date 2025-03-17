@@ -1,22 +1,16 @@
 --- old.importNonExportedMember4.js
 +++ new.importNonExportedMember4.js
-@@= skipped -6, +6 lines =@@
- //// [b.ts]
- import { Foo } from './a';
+@@= skipped -8, +8 lines =@@
  
--//// [a.js]
--"use strict";
+ //// [a.js]
+ "use strict";
 -var Foo = /** @class */ (function () {
 -    function Foo() {
 -    }
 -    return Foo;
 -}());
--module.exports = Foo;
- //// [b.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
-+//// [a.js]
-+"use strict";
 +class Foo {
 +}
-+module.exports = Foo;
+ module.exports = Foo;
+ //// [b.js]
+ "use strict";

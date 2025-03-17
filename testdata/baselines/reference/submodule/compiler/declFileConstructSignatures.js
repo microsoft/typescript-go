@@ -64,7 +64,7 @@ interface IGlobalConstructSignatureWithOwnTypeParametes {
     new <T extends IGlobalConstructSignature>(a: T): T;
 }
 
-//// [declFileConstructSignatures_1.js]
 //// [declFileConstructSignatures_0.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+//// [declFileConstructSignatures_1.js]

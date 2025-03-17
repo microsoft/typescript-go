@@ -1,15 +1,6 @@
 --- old.expandoFunctionSymbolPropertyJs.js
 +++ new.expandoFunctionSymbolPropertyJs.js
-@@= skipped -19, +19 lines =@@
-   return inner;
- }
- 
--//// [types.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.symb = void 0;
--exports.symb = Symbol();
- //// [a.js]
+@@= skipped -28, +28 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.test = test;
@@ -36,8 +27,3 @@
 - * @returns {import("./types").TestSymb}
 - */
 -export function test(): import("./types").TestSymb;
-+//// [types.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.symb = void 0;
-+exports.symb = Symbol();

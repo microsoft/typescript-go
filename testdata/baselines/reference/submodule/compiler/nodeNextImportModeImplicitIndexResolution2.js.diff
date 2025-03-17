@@ -1,13 +1,9 @@
 --- old.nodeNextImportModeImplicitIndexResolution2.js
 +++ new.nodeNextImportModeImplicitIndexResolution2.js
-@@= skipped -36, +36 lines =@@
- import dedent4 from "dedent4"; // Error
- 
- 
-+//// [index.cjs]
-+export {};
+@@= skipped -39, +39 lines =@@
  //// [index.mjs]
  export {};
--//// [index.cjs]
+ //// [index.cjs]
 -"use strict";
 -Object.defineProperty(exports, "__esModule", { value: true });
++export {};

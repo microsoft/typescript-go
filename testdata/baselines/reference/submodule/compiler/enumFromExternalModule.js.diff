@@ -1,24 +1,10 @@
 --- old.enumFromExternalModule.js
 +++ new.enumFromExternalModule.js
-@@= skipped -9, +9 lines =@@
- var x = f.Mode.Open;
- 
- 
-+//// [enumFromExternalModule_1.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+const f = require("./enumFromExternalModule_0");
-+var x = f.Mode.Open;
- //// [enumFromExternalModule_0.js]
+@@= skipped -20, +20 lines =@@
+ //// [enumFromExternalModule_1.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
-@@= skipped -8, +13 lines =@@
- (function (Mode) {
-     Mode[Mode["Open"] = 0] = "Open";
- })(Mode || (exports.Mode = Mode = {}));
--//// [enumFromExternalModule_1.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
 -///<reference path='enumFromExternalModule_0.ts'/>
 -var f = require("./enumFromExternalModule_0");
--var x = f.Mode.Open;
++const f = require("./enumFromExternalModule_0");
+ var x = f.Mode.Open;

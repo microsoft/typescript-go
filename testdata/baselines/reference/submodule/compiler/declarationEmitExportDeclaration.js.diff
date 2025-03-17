@@ -1,31 +1,13 @@
 --- old.declarationEmitExportDeclaration.js
 +++ new.declarationEmitExportDeclaration.js
-@@= skipped -11, +11 lines =@@
- let obj: Buzz;
- export {bar};
- 
-+//// [index.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.bar = void 0;
-+const utils_1 = require("./utils");
-+Object.defineProperty(exports, "bar", { enumerable: true, get: function () { return utils_1.bar; } });
-+(0, utils_1.foo)();
-+let obj;
- //// [utils.js]
+@@= skipped -22, +22 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
-@@= skipped -7, +15 lines =@@
- exports.bar = bar;
- function foo() { }
- function bar() { }
--//// [index.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.bar = void 0;
+ exports.bar = void 0;
 -var utils_1 = require("./utils");
--Object.defineProperty(exports, "bar", { enumerable: true, get: function () { return utils_1.bar; } });
--(0, utils_1.foo)();
++const utils_1 = require("./utils");
+ Object.defineProperty(exports, "bar", { enumerable: true, get: function () { return utils_1.bar; } });
+ (0, utils_1.foo)();
 -var obj;
 -
 -
@@ -37,3 +19,4 @@
 -//// [index.d.ts]
 -import { bar } from "./utils";
 -export { bar };
++let obj;

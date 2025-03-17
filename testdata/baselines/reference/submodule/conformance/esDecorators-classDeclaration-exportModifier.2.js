@@ -65,48 +65,30 @@ export abstract @dec class C14 {}
 export default abstract @dec class C15 {}
 
 
-//// [file15.js]
-export default abstract;
+//// [global.js]
+var dec;
+//// [file1.js]
 @dec
-class C15 {
+export class C1 {
 }
-//// [file14.js]
-abstract;
+//// [file2.js]
 @dec
-class C14 {
+export default class C2 {
 }
-//// [file13.js]
-abstract;
-@dec
-class C13 {
-}
-//// [file12.js]
-export default 
-@dec
-class C12 {
-}
-//// [file11.js]
+//// [file3.js]
 export 
 @dec
-class C11 {
+default class C3 {
 }
-//// [file10.js]
+//// [file4.js]
+export 
 @dec
-export default class C10 {
+class C4 {
 }
-//// [file9.js]
-@dec
-export class C9 {
-}
-//// [file8.js]
-@dec
-class C8 {
-}
-//// [file7.js]
-@dec
+//// [file5.js]
 export default 
 @dec
-class C7 {
+class C5 {
 }
 //// [file6.js]
 @dec
@@ -114,28 +96,46 @@ export
 @dec
 class C6 {
 }
-//// [file5.js]
+//// [file7.js]
+@dec
 export default 
 @dec
-class C5 {
+class C7 {
 }
-//// [file4.js]
+//// [file8.js]
+@dec
+class C8 {
+}
+//// [file9.js]
+@dec
+export class C9 {
+}
+//// [file10.js]
+@dec
+export default class C10 {
+}
+//// [file11.js]
 export 
 @dec
-class C4 {
+class C11 {
 }
-//// [file3.js]
-export 
+//// [file12.js]
+export default 
 @dec
-default class C3 {
+class C12 {
 }
-//// [file2.js]
+//// [file13.js]
+abstract;
 @dec
-export default class C2 {
+class C13 {
 }
-//// [file1.js]
+//// [file14.js]
+abstract;
 @dec
-export class C1 {
+class C14 {
 }
-//// [global.js]
-var dec;
+//// [file15.js]
+export default abstract;
+@dec
+class C15 {
+}

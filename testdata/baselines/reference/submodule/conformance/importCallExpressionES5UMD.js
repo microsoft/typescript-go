@@ -28,6 +28,11 @@ export class D {
     }
 }
 
+//// [0.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.foo = foo;
+function foo() { return "foo"; }
 //// [1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -52,8 +57,3 @@ class D {
     }
 }
 exports.D = D;
-//// [0.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.foo = foo;
-function foo() { return "foo"; }

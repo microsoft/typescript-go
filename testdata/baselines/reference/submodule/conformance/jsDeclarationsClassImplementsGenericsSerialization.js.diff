@@ -1,13 +1,6 @@
 --- old.jsDeclarationsClassImplementsGenericsSerialization.js
 +++ new.jsDeclarationsClassImplementsGenericsSerialization.js
-@@= skipped -23, +23 lines =@@
-  * @typedef {import('./interface').Encoder<T>} IEncoder
-  */
- 
--//// [interface.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
- //// [lib.js]
+@@= skipped -30, +30 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.Encoder = void 0;
@@ -53,6 +46,3 @@
 -}
 -export type IEncoder<T> = import("./interface").Encoder<T>;
 +exports.Encoder = Encoder;
-+//// [interface.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });

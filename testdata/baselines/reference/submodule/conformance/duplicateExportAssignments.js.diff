@@ -1,38 +1,20 @@
 --- old.duplicateExportAssignments.js
 +++ new.duplicateExportAssignments.js
-@@= skipped -40, +40 lines =@@
- export = z;
- 
- 
--//// [foo1.js]
-+//// [foo5.js]
+@@= skipped -48, +48 lines =@@
+ //// [foo2.js]
  "use strict";
--var x = 10;
--var y = 20;
-+var x = 5;
-+var y = "test";
-+var z = {};
- module.exports = x;
--//// [foo2.js]
-+//// [foo4.js]
- "use strict";
--var x = 10;
+ var x = 10;
 -var y = /** @class */ (function () {
 -    function y() {
 -    }
 -    return y;
 -}());
--;
-+function x() {
-+    return 42;
++class y {
 +}
-+function y() {
-+    return 42;
-+}
+ ;
  module.exports = x;
  //// [foo3.js]
- "use strict";
-@@= skipped -21, +21 lines =@@
+@@= skipped -13, +10 lines =@@
  (function (x_1) {
      x_1.x = 10;
  })(x || (x = {}));
@@ -45,25 +27,5 @@
 +    y;
 +}
  module.exports = x;
--//// [foo4.js]
-+//// [foo2.js]
+ //// [foo4.js]
  "use strict";
--function x() {
--    return 42;
-+var x = 10;
-+class y {
- }
--function y() {
--    return 42;
--}
-+;
- module.exports = x;
--//// [foo5.js]
-+//// [foo1.js]
- "use strict";
--var x = 5;
--var y = "test";
--var z = {};
-+var x = 10;
-+var y = 20;
- module.exports = x;

@@ -1,19 +1,17 @@
 --- old.nodeAllowJsPackageSelfName(module=nodenext).js
 +++ new.nodeAllowJsPackageSelfName(module=nodenext).js
-@@= skipped -19, +19 lines =@@
-     "exports": "./index.js"
+@@= skipped -20, +20 lines =@@
  }
  
--//// [index.js]
+ //// [index.js]
 -// esm format file
-+//// [index.cjs]
  import * as self from "package";
  self;
  //// [index.mjs]
 -// esm format file
  import * as self from "package";
  self;
--//// [index.cjs]
+ //// [index.cjs]
 -"use strict";
 -var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
 -    if (k2 === undefined) k2 = k;
@@ -41,7 +39,6 @@
 -Object.defineProperty(exports, "__esModule", { value: true });
 -// esm format file
 -const self = __importStar(require("package"));
-+//// [index.js]
 +import * as self from "package";
  self;
 -

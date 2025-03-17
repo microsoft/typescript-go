@@ -12,8 +12,8 @@ export default 1;
 export { default as A } from "./a";
 
 
-//// [b.js]
-export { default as A } from "./a";
+//// [plainJSGrammarErrors2.js]
 //// [a.js]
 export default 1;
-//// [plainJSGrammarErrors2.js]
+//// [b.js]
+export { default as A } from "./a";

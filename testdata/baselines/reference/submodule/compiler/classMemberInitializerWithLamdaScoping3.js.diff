@@ -1,12 +1,6 @@
 --- old.classMemberInitializerWithLamdaScoping3.js
 +++ new.classMemberInitializerWithLamdaScoping3.js
-@@= skipped -16, +16 lines =@@
-     };
- }
- 
--//// [classMemberInitializerWithLamdaScoping3_0.js]
--var field1;
- //// [classMemberInitializerWithLamdaScoping3_1.js]
+@@= skipped -22, +22 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.Test1 = void 0;
@@ -29,5 +23,3 @@
 +    };
 +}
  exports.Test1 = Test1;
-+//// [classMemberInitializerWithLamdaScoping3_0.js]
-+var field1;

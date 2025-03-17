@@ -16,6 +16,10 @@ export class MyComponent {
 }
 
 
+//// [deps.js]
+export function Input() { }
+export class TemplateRef {
+}
 //// [index.js]
 import { Input } from './deps';
 export class MyComponent {
@@ -23,8 +27,4 @@ export class MyComponent {
     @Input()
     get ref() { return this._ref; }
     set ref(value) { this._ref = value; }
-}
-//// [deps.js]
-export function Input() { }
-export class TemplateRef {
 }

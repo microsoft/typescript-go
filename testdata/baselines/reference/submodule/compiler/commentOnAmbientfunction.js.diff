@@ -1,14 +1,12 @@
 --- old.commentOnAmbientfunction.js
 +++ new.commentOnAmbientfunction.js
-@@= skipped -15, +15 lines =@@
- ///<reference path="a.ts"/>
+@@= skipped -16, +16 lines =@@
  declare function foobar(a: typeof foo): typeof bar;
  
--//// [a.js]
+ //// [a.js]
 -/*!=========
 -    Keep this pinned comment
 -   =========
 -*/
  //// [b.js]
 -///<reference path="a.ts"/>
-+//// [a.js]

@@ -32,16 +32,9 @@ declare module './index' {
 export {};
 
 
-//// [bar.js]
+//// [eventList.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-//// [foo.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-//// [test.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const t = p012;
 //// [index.js]
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -60,6 +53,13 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./eventList"), exports);
-//// [eventList.js]
+//// [test.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const t = p012;
+//// [foo.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [bar.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });

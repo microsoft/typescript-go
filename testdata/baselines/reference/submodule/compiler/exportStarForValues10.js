@@ -11,6 +11,14 @@ export * from "file0";
 export * from "file1";
 var x = 1;
 
+//// [file0.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.v = void 0;
+exports.v = 1;
+//// [file1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 //// [file2.js]
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -31,11 +39,3 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("file0"), exports);
 __exportStar(require("file1"), exports);
 var x = 1;
-//// [file1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-//// [file0.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.v = void 0;
-exports.v = 1;

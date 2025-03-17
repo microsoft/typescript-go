@@ -19,7 +19,6 @@ export module Shapes {
 
 //}
 
-//// [duplicateIdentifierShouldNotShortCircuitBaseTypeBinding_1.js]
 //// [duplicateIdentifierShouldNotShortCircuitBaseTypeBinding_0.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -30,3 +29,4 @@ var Shapes;
     }
     Shapes.Point = Point;
 })(Shapes || (exports.Shapes = Shapes = {}));
+//// [duplicateIdentifierShouldNotShortCircuitBaseTypeBinding_1.js]

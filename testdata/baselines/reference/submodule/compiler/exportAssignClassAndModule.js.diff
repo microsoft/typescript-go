@@ -1,26 +1,17 @@
 --- old.exportAssignClassAndModule.js
 +++ new.exportAssignClassAndModule.js
-@@= skipped -17, +17 lines =@@
- var zz: Foo;
- zz.x;
+@@= skipped -19, +19 lines =@@
  
--//// [exportAssignClassAndModule_0.js]
--"use strict";
+ //// [exportAssignClassAndModule_0.js]
+ "use strict";
 -var Foo = /** @class */ (function () {
 -    function Foo() {
 -    }
 -    return Foo;
 -}());
--module.exports = Foo;
- //// [exportAssignClassAndModule_1.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
- var z;
- var zz;
- zz.x;
-+//// [exportAssignClassAndModule_0.js]
-+"use strict";
 +class Foo {
 +    x;
 +}
-+module.exports = Foo;
+ module.exports = Foo;
+ //// [exportAssignClassAndModule_1.js]
+ "use strict";

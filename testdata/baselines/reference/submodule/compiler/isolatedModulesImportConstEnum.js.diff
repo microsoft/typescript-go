@@ -1,23 +1,9 @@
 --- old.isolatedModulesImportConstEnum.js
 +++ new.isolatedModulesImportConstEnum.js
-@@= skipped -9, +9 lines =@@
- }
- 
- 
-+//// [file1.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+const file2_1 = require("./file2");
-+console.log(file2_1.Foo.BAR);
- //// [file2.js]
+@@= skipped -20, +20 lines =@@
+ //// [file1.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
-@@= skipped -8, +13 lines =@@
- (function (Foo) {
-     Foo[Foo["BAR"] = 0] = "BAR";
- })(Foo || (exports.Foo = Foo = {}));
--//// [file1.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
 -var file2_1 = require("./file2");
--console.log(file2_1.Foo.BAR);
++const file2_1 = require("./file2");
+ console.log(file2_1.Foo.BAR);

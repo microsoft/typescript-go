@@ -43,6 +43,14 @@ import m3 = require("withImportDecl_0");
 var b = new m3.A();
 b.foo;
 
+//// [withImportDecl_0.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.A = void 0;
+class A {
+    foo;
+}
+exports.A = A;
 //// [withImportDecl_1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -70,11 +78,3 @@ var m1;
 const m3 = require("withImportDecl_0");
 var b = new m3.A();
 b.foo;
-//// [withImportDecl_0.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.A = void 0;
-class A {
-    foo;
-}
-exports.A = A;

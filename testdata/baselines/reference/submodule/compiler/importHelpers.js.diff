@@ -1,24 +1,6 @@
 --- old.importHelpers.js
 +++ new.importHelpers.js
-@@= skipped -45, +45 lines =@@
- export declare function __makeTemplateObject(cooked: string[], raw: string[]): TemplateStringsArray;
- 
- 
-+//// [script.js]
-+class A {
-+}
-+class B extends A {
-+}
-+@dec
-+class C {
-+    method(x) {
-+    }
-+}
-+function id(x) {
-+    return x;
-+}
-+const result = id `hello world`;
- //// [external.js]
+@@= skipped -49, +49 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.result = exports.B = exports.A = void 0;
@@ -60,12 +42,14 @@
 -    ], C);
 -    return C;
 -}());
--function id(x) {
--    return x;
++}
+ function id(x) {
+     return x;
  }
 -exports.result = id(templateObject_1 || (templateObject_1 = tslib_1.__makeTemplateObject(["hello world"], ["hello world"])));
 -var templateObject_1;
--//// [script.js]
++exports.result = id `hello world`;
+ //// [script.js]
 -var __extends = (this && this.__extends) || (function () {
 -    var extendStatics = function (d, b) {
 -        extendStatics = Object.setPrototypeOf ||
@@ -99,7 +83,14 @@
 -};
 -var A = /** @class */ (function () {
 -    function A() {
--    }
++class A {
++}
++class B extends A {
++}
++@dec
++class C {
++    method(x) {
+     }
 -    return A;
 -}());
 -var B = /** @class */ (function (_super) {
@@ -125,8 +116,9 @@
 -    ], C);
 -    return C;
 -}());
++}
  function id(x) {
      return x;
  }
 -var result = id(__makeTemplateObject(["hello world"], ["hello world"]));
-+exports.result = id `hello world`;
++const result = id `hello world`;

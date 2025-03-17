@@ -16,6 +16,16 @@ export {subject} from './0';
 export {subject1} from './1';
 
 
+//// [0.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.subject = void 0;
+exports.subject = 10;
+//// [1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.subject1 = void 0;
+exports.subject1 = 10;
 //// [2.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -24,13 +34,3 @@ const _0_1 = require("./0");
 Object.defineProperty(exports, "subject", { enumerable: true, get: function () { return _0_1.subject; } });
 const _1_1 = require("./1");
 Object.defineProperty(exports, "subject1", { enumerable: true, get: function () { return _1_1.subject1; } });
-//// [1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.subject1 = void 0;
-exports.subject1 = 10;
-//// [0.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.subject = void 0;
-exports.subject = 10;

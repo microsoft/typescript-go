@@ -33,16 +33,6 @@ declare module N {
 }
 
 
-//// [file2.js]
-class I {
-}
-function C2() { }
-class f {
-}
-var v = 3;
-var Foo;
-(function (Foo) {
-})(Foo || (Foo = {}));
 //// [file1.js]
 class C1 {
 }
@@ -60,3 +50,13 @@ var N;
         var t;
     })(F = N.F || (N.F = {}));
 })(N || (N = {}));
+//// [file2.js]
+class I {
+}
+function C2() { }
+class f {
+}
+var v = 3;
+var Foo;
+(function (Foo) {
+})(Foo || (Foo = {}));

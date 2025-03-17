@@ -1,10 +1,9 @@
 --- old.exportStarForValuesInSystem.js
 +++ new.exportStarForValuesInSystem.js
-@@= skipped -6, +6 lines =@@
- export * from "file1"
+@@= skipped -7, +7 lines =@@
  var x = 1;
  
--//// [file1.js]
+ //// [file1.js]
 -System.register([], function (exports_1, context_1) {
 -    "use strict";
 -    var __moduleName = context_1 && context_1.id;
@@ -14,6 +13,8 @@
 -        }
 -    };
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
  //// [file2.js]
 -System.register(["file1"], function (exports_1, context_1) {
 -    "use strict";
@@ -54,6 +55,3 @@
 +Object.defineProperty(exports, "__esModule", { value: true });
 +__exportStar(require("file1"), exports);
 +var x = 1;
-+//// [file1.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });

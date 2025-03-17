@@ -1,10 +1,9 @@
 --- old.importHelpersWithImportStarAs(esmoduleinterop=false,module=system).js
 +++ new.importHelpersWithImportStarAs(esmoduleinterop=false,module=system).js
-@@= skipped -11, +11 lines =@@
-     function __importStar(m: any): void;
+@@= skipped -12, +12 lines =@@
  }
  
--//// [a.js]
+ //// [a.js]
 -System.register([], function (exports_1, context_1) {
 -    "use strict";
 -    var A;
@@ -18,6 +17,12 @@
 -        }
 -    };
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.A = void 0;
++class A {
++}
++exports.A = A;
  //// [b.js]
 -System.register(["./a"], function (exports_1, context_1) {
 -    "use strict";
@@ -39,10 +44,3 @@
 +exports.a = void 0;
 +const a = require("./a");
 +exports.a = a;
-+//// [a.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.A = void 0;
-+class A {
-+}
-+exports.A = A;

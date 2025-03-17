@@ -1,13 +1,9 @@
 --- old.typeOnlyESMImportFromCJS.js
 +++ new.typeOnlyESMImportFromCJS.js
-@@= skipped -11, +11 lines =@@
- type _3 = typeof import("./module.mts", { with: { "resolution-mode": "require" } });
- 
- 
-+//// [common.cjs]
-+export {};
+@@= skipped -14, +14 lines =@@
  //// [module.mjs]
  export {};
--//// [common.cjs]
+ //// [common.cjs]
 -"use strict";
 -Object.defineProperty(exports, "__esModule", { value: true });
++export {};

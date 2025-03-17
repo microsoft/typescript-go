@@ -28,6 +28,8 @@ export class Test {
     }
 }
 
+//// [Consts.js]
+export const INDEX_FIELD = '__INDEX';
 //// [index.js]
 import * as _ from './dash';
 import { INDEX_FIELD } from './Consts';
@@ -37,5 +39,3 @@ export class Test {
         vm.objects = _.mapValues(obj, object => ({ ...object, [INDEX_FIELD]: index++ }));
     }
 }
-//// [Consts.js]
-export const INDEX_FIELD = '__INDEX';

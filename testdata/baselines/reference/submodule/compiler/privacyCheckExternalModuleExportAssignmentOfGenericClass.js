@@ -13,9 +13,6 @@ interface Bar {
     foo: Foo<number>;
 }
 
-//// [privacyCheckExternalModuleExportAssignmentOfGenericClass_1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 //// [privacyCheckExternalModuleExportAssignmentOfGenericClass_0.js]
 "use strict";
 class Foo {
@@ -25,3 +22,6 @@ class Foo {
     }
 }
 module.exports = Foo;
+//// [privacyCheckExternalModuleExportAssignmentOfGenericClass_1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });

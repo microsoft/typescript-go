@@ -1,25 +1,6 @@
 --- old.declFileFunctions.js
 +++ new.declFileFunctions.js
-@@= skipped -75, +75 lines =@@
-     return a;
- }
- 
-+//// [declFileFunctions_1.js]
-+function globalfoo() {
-+}
-+function globalfooWithParameters(a, b) {
-+    var d = a;
-+}
-+function globalfooWithRestParameters(a, ...rests) {
-+    return a + rests.join("");
-+}
-+function globalfooWithOverloads(a) {
-+    return a;
-+}
- //// [declFileFunctions_0.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
-@@= skipped -12, +24 lines =@@
+@@= skipped -87, +87 lines =@@
  exports.fooWithTypePredicateAndMulitpleParams = fooWithTypePredicateAndMulitpleParams;
  exports.fooWithTypeTypePredicateAndGeneric = fooWithTypeTypePredicateAndGeneric;
  exports.fooWithTypeTypePredicateAndRestParam = fooWithTypeTypePredicateAndRestParam;
@@ -75,26 +56,28 @@
  function nonExportedFooWithOverloads(a) {
      return a;
  }
--//// [declFileFunctions_1.js]
+ //// [declFileFunctions_1.js]
 -/** This comment should appear for foo*/
--function globalfoo() {
--}
+ function globalfoo() {
+ }
 -/** This is comment for function signature*/
 -function globalfooWithParameters(/** this is comment about a*/ a, 
 -/** this is comment for b*/
 -b) {
--    var d = a;
--}
++function globalfooWithParameters(a, b) {
+     var d = a;
+ }
 -function globalfooWithRestParameters(a) {
 -    var rests = [];
 -    for (var _i = 1; _i < arguments.length; _i++) {
 -        rests[_i - 1] = arguments[_i];
 -    }
--    return a + rests.join("");
--}
--function globalfooWithOverloads(a) {
--    return a;
--}
++function globalfooWithRestParameters(a, ...rests) {
+     return a + rests.join("");
+ }
+ function globalfooWithOverloads(a) {
+     return a;
+ }
 -
 -
 -//// [declFileFunctions_0.d.ts]

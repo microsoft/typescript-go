@@ -30,6 +30,20 @@ const t4 = {
 }
 
 
+//// [a.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.E2 = exports.E1 = exports.s = exports.n = void 0;
+exports.n = 1;
+exports.s = "s";
+var E1;
+(function (E1) {
+    E1["A"] = "ENUM_KEY";
+})(E1 || (exports.E1 = E1 = {}));
+var E2;
+(function (E2) {
+    E2[E2["B"] = 0] = "B";
+})(E2 || (exports.E2 = E2 = {}));
 //// [b.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -50,17 +64,3 @@ const t4 = {
     [keys.E2.B]: 1,
     [keys.E2.B]: 1,
 };
-//// [a.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.E2 = exports.E1 = exports.s = exports.n = void 0;
-exports.n = 1;
-exports.s = "s";
-var E1;
-(function (E1) {
-    E1["A"] = "ENUM_KEY";
-})(E1 || (exports.E1 = E1 = {}));
-var E2;
-(function (E2) {
-    E2[E2["B"] = 0] = "B";
-})(E2 || (exports.E2 = E2 = {}));

@@ -36,18 +36,6 @@ export async function h() {
 //// [index.js]
 import { createRequire as _createRequire } from "module";
 const __require = _createRequire(import.meta.url);
-import { h as _h } from "./index.js";
-const mod = __require("./index.js");
-import { f } from "./subfolder/index.js";
-const mod2 = __require("./subfolder/index.js");
-export async function h() {
-    const mod3 = await import("./index.js");
-    const mod4 = await import("./subfolder/index.js");
-    f();
-}
-//// [index.js]
-import { createRequire as _createRequire } from "module";
-const __require = _createRequire(import.meta.url);
 import { h } from "../index.js";
 const mod = __require("../index.js");
 import { f as _f } from "./index.js";
@@ -56,4 +44,16 @@ export async function f() {
     const mod3 = await import("../index.js");
     const mod4 = await import("./index.js");
     h();
+}
+//// [index.js]
+import { createRequire as _createRequire } from "module";
+const __require = _createRequire(import.meta.url);
+import { h as _h } from "./index.js";
+const mod = __require("./index.js");
+import { f } from "./subfolder/index.js";
+const mod2 = __require("./subfolder/index.js");
+export async function h() {
+    const mod3 = await import("./index.js");
+    const mod4 = await import("./subfolder/index.js");
+    f();
 }

@@ -1,19 +1,17 @@
 --- old.declarationEmitOfTypeofAliasedExport.js
 +++ new.declarationEmitOfTypeofAliasedExport.js
-@@= skipped -8, +8 lines =@@
- export default a.D;
- 
- 
--//// [a.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.D = void 0;
+@@= skipped -12, +12 lines =@@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.D = void 0;
 -var C = /** @class */ (function () {
 -    function C() {
 -    }
 -    return C;
 -}());
--exports.D = C;
++class C {
++}
+ exports.D = C;
  //// [b.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
@@ -24,15 +22,9 @@
 -
 -//// [a.d.ts]
 -declare class C {
-+//// [a.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.D = void 0;
-+class C {
- }
+-}
 -export { C as D };
 -//// [b.d.ts]
 -import * as a from "./a";
 -declare const _default: typeof a.D;
 -export default _default;
-+exports.D = C;

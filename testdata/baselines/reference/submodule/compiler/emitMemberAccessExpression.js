@@ -24,21 +24,6 @@ module Microsoft.PeopleAtWork.Model {
     }
 }
 
-//// [emitMemberAccessExpression_file3.js]
-var Microsoft;
-(function (Microsoft) {
-    let PeopleAtWork;
-    (function (PeopleAtWork) {
-        let Model;
-        (function (Model) {
-            class KnockoutExtentions {
-            }
-            Model.KnockoutExtentions = KnockoutExtentions;
-        })(Model = PeopleAtWork.Model || (PeopleAtWork.Model = {}));
-    })(PeopleAtWork = Microsoft.PeopleAtWork || (Microsoft.PeopleAtWork = {}));
-})(Microsoft || (Microsoft = {}));
-//// [emitMemberAccessExpression_file1.js]
-"use strict";
 //// [emitMemberAccessExpression_file2.js]
 "use strict";
 var Microsoft;
@@ -53,6 +38,21 @@ var Microsoft;
                 }
             }
             Model._Person = _Person;
+        })(Model = PeopleAtWork.Model || (PeopleAtWork.Model = {}));
+    })(PeopleAtWork = Microsoft.PeopleAtWork || (Microsoft.PeopleAtWork = {}));
+})(Microsoft || (Microsoft = {}));
+//// [emitMemberAccessExpression_file1.js]
+"use strict";
+//// [emitMemberAccessExpression_file3.js]
+var Microsoft;
+(function (Microsoft) {
+    let PeopleAtWork;
+    (function (PeopleAtWork) {
+        let Model;
+        (function (Model) {
+            class KnockoutExtentions {
+            }
+            Model.KnockoutExtentions = KnockoutExtentions;
         })(Model = PeopleAtWork.Model || (PeopleAtWork.Model = {}));
     })(PeopleAtWork = Microsoft.PeopleAtWork || (Microsoft.PeopleAtWork = {}));
 })(Microsoft || (Microsoft = {}));

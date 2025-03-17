@@ -17,11 +17,6 @@ export default { fn };
 import test from "./types";
 export default { test };
 
-//// [reexport.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const types_1 = require("./types");
-exports.default = { test: types_1.default };
 //// [types.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -29,3 +24,8 @@ function fn(sliceIndex) {
     return null;
 }
 exports.default = { fn };
+//// [reexport.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const types_1 = require("./types");
+exports.default = { test: types_1.default };

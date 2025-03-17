@@ -1,23 +1,6 @@
 --- old.inlineMappedTypeModifierDeclarationEmit.js
 +++ new.inlineMappedTypeModifierDeclarationEmit.js
-@@= skipped -33, +33 lines =@@
-   return {} as any;
- }
- 
--//// [other.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.test1 = test1;
--exports.test2 = test2;
--function test1(obj, k) {
--    return {};
--}
--function test2(obj, k) {
--    return {};
--}
- //// [index.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
+@@= skipped -50, +50 lines =@@
  exports.processedInternally2 = exports.processedInternally1 = void 0;
  exports.wrappedTest1 = wrappedTest1;
  exports.wrappedTest2 = wrappedTest2;
@@ -26,7 +9,7 @@
  function wrappedTest1(obj, k) {
      return (0, other_1.test1)(obj, k);
  }
-@@= skipped -26, +15 lines =@@
+@@= skipped -9, +9 lines =@@
  }
  exports.processedInternally1 = wrappedTest1({}, "a");
  exports.processedInternally2 = wrappedTest2({}, "a");
@@ -53,14 +36,3 @@
 -export declare const processedInternally2: {
 -    foo: string;
 -};
-+//// [other.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.test1 = test1;
-+exports.test2 = test2;
-+function test1(obj, k) {
-+    return {};
-+}
-+function test2(obj, k) {
-+    return {};
-+}

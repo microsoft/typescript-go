@@ -16,12 +16,12 @@ connect();
 
 
 
+//// [localAliasExportAssignment_0.js]
+"use strict";
+var server;
+module.exports = server;
 //// [localAliasExportAssignment_1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const connect = require("./localAliasExportAssignment_0");
 connect();
-//// [localAliasExportAssignment_0.js]
-"use strict";
-var server;
-module.exports = server;

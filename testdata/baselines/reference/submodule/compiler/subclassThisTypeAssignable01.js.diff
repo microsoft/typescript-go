@@ -1,10 +1,9 @@
 --- old.subclassThisTypeAssignable01.js
 +++ new.subclassThisTypeAssignable01.js
-@@= skipped -29, +29 lines =@@
- const test9 = new C();
+@@= skipped -30, +30 lines =@@
  
  
--//// [tile1.js]
+ //// [tile1.js]
 -var C = /** @class */ (function () {
 -    function C() {
 -    }
@@ -12,12 +11,11 @@
 -    return C;
 -}());
 -var test8 = new C();
- //// [file1.js]
--/** @type {ClassComponent<any>} */
--var test9 = new C();
-+const test9 = new C();
-+//// [tile1.js]
 +class C {
 +    view(v) { return 0; }
 +}
 +const test8 = new C();
+ //// [file1.js]
+-/** @type {ClassComponent<any>} */
+-var test9 = new C();
++const test9 = new C();

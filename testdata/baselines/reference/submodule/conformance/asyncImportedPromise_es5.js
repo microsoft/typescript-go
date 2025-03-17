@@ -9,12 +9,6 @@ class Test {
     async example<T>(): Task<T> { return; }
 }
 
-//// [test.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class Test {
-    async example() { return; }
-}
 //// [task.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -22,3 +16,9 @@ exports.Task = void 0;
 class Task extends Promise {
 }
 exports.Task = Task;
+//// [test.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class Test {
+    async example() { return; }
+}

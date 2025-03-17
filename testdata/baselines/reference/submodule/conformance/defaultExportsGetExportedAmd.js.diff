@@ -1,10 +1,9 @@
 --- old.defaultExportsGetExportedAmd.js
 +++ new.defaultExportsGetExportedAmd.js
-@@= skipped -6, +6 lines =@@
- export default function foo() {}
+@@= skipped -7, +7 lines =@@
  
  
--//// [a.js]
+ //// [a.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
 -    Object.defineProperty(exports, "__esModule", { value: true });
@@ -12,6 +11,11 @@
 -    }
 -    exports.default = Foo;
 -});
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++class Foo {
++}
++exports.default = Foo;
  //// [b.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
@@ -23,9 +27,3 @@
 +Object.defineProperty(exports, "__esModule", { value: true });
 +exports.default = foo;
 +function foo() { }
-+//// [a.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+class Foo {
-+}
-+exports.default = Foo;

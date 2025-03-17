@@ -95,7 +95,7 @@ Tree.defaultProps = {
 
 export default Tree;
 
-//// [jsDeclarationsReactComponents5.js]
+//// [jsDeclarationsReactComponents1.js]
 "use strict";
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -103,26 +103,25 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importDefault(require("react"));
 const prop_types_1 = __importDefault(require("prop-types"));
-function Tree({ allowDropOnRoot }) {
-    return <div />;
-}
-Tree.propTypes = {
-    classes: prop_types_1.default.object,
+const TabbedShowLayout = ({}) => {
+    return (<div />);
 };
-Tree.defaultProps = {
-    classes: {},
-    parentSource: 'parent_id',
+TabbedShowLayout.propTypes = {
+    version: prop_types_1.default.number,
 };
-exports.default = Tree;
-//// [jsDeclarationsReactComponents4.js]
+TabbedShowLayout.defaultProps = {
+    tabs: undefined
+};
+exports.default = TabbedShowLayout;
+//// [jsDeclarationsReactComponents2.js]
 "use strict";
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importDefault(require("react"));
-const TabbedShowLayout = (prop) => {
-    return (<div className={prop.className} key="">
+const TabbedShowLayout = () => {
+    return (<div className="" key="">
             ok
         </div>);
 };
@@ -146,15 +145,15 @@ TabbedShowLayout.defaultProps = {
     tabs: "default value"
 };
 exports.default = TabbedShowLayout;
-//// [jsDeclarationsReactComponents2.js]
+//// [jsDeclarationsReactComponents4.js]
 "use strict";
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importDefault(require("react"));
-const TabbedShowLayout = () => {
-    return (<div className="" key="">
+const TabbedShowLayout = (prop) => {
+    return (<div className={prop.className} key="">
             ok
         </div>);
 };
@@ -162,7 +161,7 @@ TabbedShowLayout.defaultProps = {
     tabs: "default value"
 };
 exports.default = TabbedShowLayout;
-//// [jsDeclarationsReactComponents1.js]
+//// [jsDeclarationsReactComponents5.js]
 "use strict";
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -170,13 +169,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importDefault(require("react"));
 const prop_types_1 = __importDefault(require("prop-types"));
-const TabbedShowLayout = ({}) => {
-    return (<div />);
+function Tree({ allowDropOnRoot }) {
+    return <div />;
+}
+Tree.propTypes = {
+    classes: prop_types_1.default.object,
 };
-TabbedShowLayout.propTypes = {
-    version: prop_types_1.default.number,
+Tree.defaultProps = {
+    classes: {},
+    parentSource: 'parent_id',
 };
-TabbedShowLayout.defaultProps = {
-    tabs: undefined
-};
-exports.default = TabbedShowLayout;
+exports.default = Tree;

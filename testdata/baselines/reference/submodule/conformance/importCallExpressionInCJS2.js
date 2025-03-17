@@ -18,6 +18,16 @@ async function compute(promise: Promise<any>) {
 
 compute(import("./0"));
 
+//// [0.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.foo = foo;
+function foo() { return "foo"; }
+//// [1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.backup = backup;
+function backup() { return "backup"; }
 //// [2.js]
 async function compute(promise) {
     let j = await promise;
@@ -28,13 +38,3 @@ async function compute(promise) {
     return j.foo();
 }
 compute(Promise.resolve().then(() => require("./0")));
-//// [1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.backup = backup;
-function backup() { return "backup"; }
-//// [0.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.foo = foo;
-function foo() { return "foo"; }

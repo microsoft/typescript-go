@@ -1,24 +1,9 @@
 --- old.moduleAugmentationGlobal4.js
 +++ new.moduleAugmentationGlobal4.js
-@@= skipped -15, +15 lines =@@
- 
- 
- 
--//// [f1.js]
-+//// [f3.js]
- "use strict";
+@@= skipped -26, +26 lines =@@
  Object.defineProperty(exports, "__esModule", { value: true });
-+require("./f1");
-+require("./f2");
- //// [f2.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
--//// [f3.js]
-+//// [f1.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
--require("./f1");
--require("./f2");
+ require("./f1");
+ require("./f2");
 -
 -
 -//// [f1.d.ts]

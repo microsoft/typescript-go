@@ -1,19 +1,8 @@
 --- old.decoratorMetadataTypeOnlyImport.js
 +++ new.decoratorMetadataTypeOnlyImport.js
-@@= skipped -13, +13 lines =@@
- }
- 
- 
--//// [a.js]
-+//// [b.js]
- "use strict";
+@@= skipped -18, +18 lines =@@
  Object.defineProperty(exports, "__esModule", { value: true });
--//// [b.js]
-+class Foo {
-+    @Decorator
-+    myList;
-+}
-+//// [a.js]
+ //// [b.js]
  "use strict";
 -var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 -    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -34,3 +23,7 @@
 -    ], Foo.prototype, "myList", void 0);
 -    return Foo;
 -}());
++class Foo {
++    @Decorator
++    myList;
++}

@@ -14,6 +14,11 @@ export const context: Context = {
 
 export const withContext = ({ [Key]: value }: Context) => value;
 
+//// [context.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Key = void 0;
+exports.Key = Symbol();
 //// [index.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -24,8 +29,3 @@ exports.context = {
 };
 const withContext = ({ [context_1.Key]: value }) => value;
 exports.withContext = withContext;
-//// [context.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Key = void 0;
-exports.Key = Symbol();

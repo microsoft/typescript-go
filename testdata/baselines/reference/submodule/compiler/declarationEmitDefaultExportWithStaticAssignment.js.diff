@@ -1,43 +1,27 @@
 --- old.declarationEmitDefaultExportWithStaticAssignment.js
 +++ new.declarationEmitDefaultExportWithStaticAssignment.js
-@@= skipped -31, +31 lines =@@
- C.A = A;
- C.B = B;
- 
--//// [foo.js]
-+//// [index4.js]
+@@= skipped -35, +35 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
--exports.Foo = void 0;
+ exports.Foo = void 0;
 -var Foo = /** @class */ (function () {
 -    function Foo() {
 -    }
 -    return Foo;
 -}());
--exports.Foo = Foo;
--//// [index1.js]
-+exports.C = C;
-+function A() { }
-+function B() { }
-+function C() {
-+    return null;
++class Foo {
 +}
-+C.A = A;
-+C.B = B;
-+//// [index3.js]
+ exports.Foo = Foo;
+ //// [index1.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
-+exports.Bar = void 0;
  exports.default = Example;
 -var foo_1 = require("./foo");
-+class Bar {
-+}
-+exports.Bar = Bar;
++const foo_1 = require("./foo");
  function Example() { }
--Example.Foo = foo_1.Foo;
-+Example.Bar = Bar;
+ Example.Foo = foo_1.Foo;
  //// [index2.js]
- "use strict";
+@@= skipped -18, +15 lines =@@
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.Foo = void 0;
  exports.default = Example;
@@ -46,36 +30,24 @@
  Object.defineProperty(exports, "Foo", { enumerable: true, get: function () { return foo_1.Foo; } });
  function Example() { }
  Example.Foo = foo_1.Foo;
--//// [index3.js]
-+//// [index1.js]
- "use strict";
+@@= skipped -9, +9 lines =@@
  Object.defineProperty(exports, "__esModule", { value: true });
--exports.Bar = void 0;
+ exports.Bar = void 0;
  exports.default = Example;
 -var Bar = /** @class */ (function () {
 -    function Bar() {
 -    }
 -    return Bar;
 -}());
--exports.Bar = Bar;
-+const foo_1 = require("./foo");
++class Bar {
++}
+ exports.Bar = Bar;
  function Example() { }
--Example.Bar = Bar;
--//// [index4.js]
-+Example.Foo = foo_1.Foo;
-+//// [foo.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
--exports.C = C;
--function A() { }
--function B() { }
--function C() {
--    return null;
-+exports.Foo = void 0;
-+class Foo {
+ Example.Bar = Bar;
+@@= skipped -19, +16 lines =@@
  }
--C.A = A;
--C.B = B;
+ C.A = A;
+ C.B = B;
 -
 -
 -//// [foo.d.ts]
@@ -109,4 +81,3 @@
 -    var A: () => void;
 -    var B: () => void;
 -}
-+exports.Foo = Foo;

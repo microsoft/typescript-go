@@ -18,6 +18,13 @@ class MyComponent {
     }
 }
 
+//// [service.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Service = void 0;
+class Service {
+}
+exports.Service = Service;
 //// [component.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -31,10 +38,3 @@ class MyComponent {
     method(x) {
     }
 }
-//// [service.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Service = void 0;
-class Service {
-}
-exports.Service = Service;

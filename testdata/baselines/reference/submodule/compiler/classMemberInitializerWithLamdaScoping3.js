@@ -17,6 +17,8 @@ export class Test1 {
     };
 }
 
+//// [classMemberInitializerWithLamdaScoping3_0.js]
+var field1;
 //// [classMemberInitializerWithLamdaScoping3_1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -31,5 +33,3 @@ class Test1 {
     };
 }
 exports.Test1 = Test1;
-//// [classMemberInitializerWithLamdaScoping3_0.js]
-var field1;

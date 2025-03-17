@@ -8,14 +8,14 @@ export default a;
 export import defaultBinding, * as nameSpaceBinding  from "server";
 export var x: number = defaultBinding;
 
+//// [server.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var a = 10;
+exports.default = a;
 //// [client.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.x = void 0;
 const server_1 = require("server");
 exports.x = server_1.default;
-//// [server.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var a = 10;
-exports.default = a;

@@ -14,18 +14,18 @@ import { Evt }  from './utils'
 
 export const f = { o: o({ v: null! as Evt}) };
 
-//// [main.js]
+//// [utils.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.f = void 0;
-const decl_1 = require("./decl");
-exports.f = { o: (0, decl_1.o)({ v: null }) };
 //// [decl.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.o = void 0;
 const o = (o) => () => null;
 exports.o = o;
-//// [utils.js]
+//// [main.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.f = void 0;
+const decl_1 = require("./decl");
+exports.f = { o: (0, decl_1.o)({ v: null }) };

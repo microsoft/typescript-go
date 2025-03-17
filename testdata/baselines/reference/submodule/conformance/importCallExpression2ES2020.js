@@ -16,6 +16,10 @@ function foo(x: Promise<any>) {
 foo(import("./0"));
 
 
+//// [0.js]
+export class B {
+    print() { return "I am B"; }
+}
 //// [2.js]
 function foo(x) {
     x.then(value => {
@@ -24,7 +28,3 @@ function foo(x) {
     });
 }
 foo(import("./0"));
-//// [0.js]
-export class B {
-    print() { return "I am B"; }
-}

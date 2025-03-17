@@ -22,19 +22,6 @@ var cl: { x: number; y: number; }
 var cl = B.Point.Origin;
 
 
-//// [test.js]
-var fn;
-var fn = A.Point;
-var cl;
-var cl = B.Point.Origin;
-//// [module.js]
-var B;
-(function (B) {
-    let Point;
-    (function (Point) {
-        Point.Origin = { x: 0, y: 0 };
-    })(Point = B.Point || (B.Point = {}));
-})(B || (B = {}));
 //// [function.js]
 var A;
 (function (A) {
@@ -43,3 +30,16 @@ var A;
     }
     A.Point = Point;
 })(A || (A = {}));
+//// [module.js]
+var B;
+(function (B) {
+    let Point;
+    (function (Point) {
+        Point.Origin = { x: 0, y: 0 };
+    })(Point = B.Point || (B.Point = {}));
+})(B || (B = {}));
+//// [test.js]
+var fn;
+var fn = A.Point;
+var cl;
+var cl = B.Point.Origin;

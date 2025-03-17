@@ -1,37 +1,26 @@
 --- old.impliedNodeFormatEmit1(module=preserve).js
 +++ new.impliedNodeFormatEmit1(module=preserve).js
-@@= skipped -33, +33 lines =@@
- export {};
+@@= skipped -34, +34 lines =@@
  
  
--//// [a.js]
+ //// [a.js]
 -export var _ = 0;
--//// [b.mjs]
++export const _ = 0;
+ //// [b.mjs]
 -export var _ = 0;
--//// [c.cjs]
++export const _ = 0;
+ //// [c.cjs]
 -export var _ = 0;
--//// [d.js]
++export const _ = 0;
+ //// [d.js]
 -export var _ = 0;
--//// [e.mjs]
++export const _ = 0;
+ //// [e.mjs]
 -export var _ = 0;
--//// [f.mjs]
++export const _ = 0;
+ //// [f.mjs]
 -export var _ = 0;
--//// [g.js]
--//// [h.mjs]
--//// [i.cjs]
- //// [dummy.js]
-+//// [i.cjs]
-+//// [h.mjs]
-+//// [g.js]
-+//// [f.mjs]
 +export const _ = 0;
-+//// [e.mjs]
-+export const _ = 0;
-+//// [d.js]
-+export const _ = 0;
-+//// [c.cjs]
-+export const _ = 0;
-+//// [b.mjs]
-+export const _ = 0;
-+//// [a.js]
-+export const _ = 0;
+ //// [g.js]
+ //// [h.mjs]
+ //// [i.cjs]

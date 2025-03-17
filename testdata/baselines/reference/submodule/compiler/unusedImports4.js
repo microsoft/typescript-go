@@ -20,13 +20,6 @@ var x = new Calculator();
 x.handleChar();
 test2();
 
-//// [file2.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const file1_1 = require("./file1");
-var x = new file1_1.Calculator();
-x.handleChar();
-(0, file1_1.test2)();
 //// [file1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -41,3 +34,10 @@ function test() {
 }
 function test2() {
 }
+//// [file2.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const file1_1 = require("./file1");
+var x = new file1_1.Calculator();
+x.handleChar();
+(0, file1_1.test2)();

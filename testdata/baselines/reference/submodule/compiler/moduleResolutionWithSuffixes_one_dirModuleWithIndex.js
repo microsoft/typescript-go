@@ -7,16 +7,16 @@ export function ios() {}
 //// [index.ts]
 export function base() {}
 
-//// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.base = base;
-function base() { }
-//// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 //// [index.ios.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ios = ios;
 function ios() { }
+//// [index.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [index.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.base = base;
+function base() { }

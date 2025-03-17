@@ -1,65 +1,49 @@
 --- old.privacyFunctionCannotNameReturnTypeDeclFile.js
 +++ new.privacyFunctionCannotNameReturnTypeDeclFile.js
-@@= skipped -160, +160 lines =@@
- }
- 
- 
--//// [privacyFunctionReturnTypeDeclFile_GlobalWidgets.js]
--//// [privacyFunctionReturnTypeDeclFile_Widgets.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.SpecializedWidget = exports.Widget1 = void 0;
--exports.createWidget1 = createWidget1;
+@@= skipped -166, +166 lines =@@
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.SpecializedWidget = exports.Widget1 = void 0;
+ exports.createWidget1 = createWidget1;
 -var Widget1 = /** @class */ (function () {
 -    function Widget1() {
 -        this.name = 'one';
 -    }
 -    return Widget1;
 -}());
--exports.Widget1 = Widget1;
--function createWidget1() {
--    return new Widget1();
--}
--var SpecializedWidget;
--(function (SpecializedWidget) {
++class Widget1 {
++    name = 'one';
++}
+ exports.Widget1 = Widget1;
+ function createWidget1() {
+     return new Widget1();
+ }
+ var SpecializedWidget;
+ (function (SpecializedWidget) {
 -    var Widget2 = /** @class */ (function () {
 -        function Widget2() {
 -            this.name = 'one';
 -        }
 -        return Widget2;
 -    }());
--    SpecializedWidget.Widget2 = Widget2;
--    function createWidget2() {
--        return new Widget2();
--    }
--    SpecializedWidget.createWidget2 = createWidget2;
--})(SpecializedWidget || (exports.SpecializedWidget = SpecializedWidget = {}));
--//// [privacyFunctionReturnTypeDeclFile_exporter.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
--exports.createExportedWidget1 = createExportedWidget1;
--exports.createExportedWidget2 = createExportedWidget2;
--exports.createExportedWidget3 = createExportedWidget3;
--exports.createExportedWidget4 = createExportedWidget4;
++    class Widget2 {
++        name = 'one';
++    }
+     SpecializedWidget.Widget2 = Widget2;
+     function createWidget2() {
+         return new Widget2();
+@@= skipped -31, +25 lines =@@
+ exports.createExportedWidget2 = createExportedWidget2;
+ exports.createExportedWidget3 = createExportedWidget3;
+ exports.createExportedWidget4 = createExportedWidget4;
 -///<reference path='privacyFunctionReturnTypeDeclFile_GlobalWidgets.ts'/>
 -var Widgets = require("./privacyFunctionReturnTypeDeclFile_Widgets");
 -var Widgets1 = require("GlobalWidgets");
--function createExportedWidget1() {
--    return Widgets.createWidget1();
--}
--function createExportedWidget2() {
--    return Widgets.SpecializedWidget.createWidget2();
--}
--function createExportedWidget3() {
--    return Widgets1.createWidget3();
--}
--function createExportedWidget4() {
--    return Widgets1.SpecializedGlobalWidget.createWidget4();
--}
- //// [privacyFunctionReturnTypeDeclFile_consumer.js]
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
-@@= skipped -60, +8 lines =@@
++const Widgets = require("./privacyFunctionReturnTypeDeclFile_Widgets");
++const Widgets1 = require("GlobalWidgets");
+ function createExportedWidget1() {
+     return Widgets.createWidget1();
+ }
+@@= skipped -23, +22 lines =@@
  exports.publicFunctionWithPrivateParmeterTypes1 = publicFunctionWithPrivateParmeterTypes1;
  exports.publicFunctionWithPrivateModuleReturnTypes = publicFunctionWithPrivateModuleReturnTypes;
  exports.publicFunctionWithPrivateModuleReturnTypes1 = publicFunctionWithPrivateModuleReturnTypes1;
@@ -260,33 +244,18 @@
 -        }
 -        function createWidget4(): Widget4;
 -    }
-+//// [privacyFunctionReturnTypeDeclFile_exporter.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.createExportedWidget1 = createExportedWidget1;
-+exports.createExportedWidget2 = createExportedWidget2;
-+exports.createExportedWidget3 = createExportedWidget3;
-+exports.createExportedWidget4 = createExportedWidget4;
-+const Widgets = require("./privacyFunctionReturnTypeDeclFile_Widgets");
-+const Widgets1 = require("GlobalWidgets");
-+function createExportedWidget1() {
-+    return Widgets.createWidget1();
- }
+-}
 -//// [privacyFunctionReturnTypeDeclFile_Widgets.d.ts]
 -export declare class Widget1 {
 -    name: string;
-+function createExportedWidget2() {
-+    return Widgets.SpecializedWidget.createWidget2();
- }
+-}
 -export declare function createWidget1(): Widget1;
 -export declare namespace SpecializedWidget {
 -    class Widget2 {
 -        name: string;
 -    }
 -    function createWidget2(): Widget2;
-+function createExportedWidget3() {
-+    return Widgets1.createWidget3();
- }
+-}
 -//// [privacyFunctionReturnTypeDeclFile_exporter.d.ts]
 -import Widgets = require("./privacyFunctionReturnTypeDeclFile_Widgets");
 -import Widgets1 = require("GlobalWidgets");
@@ -304,9 +273,7 @@
 -    private static myPrivateStaticMethod1;
 -    myPublicMethod1(): import("GlobalWidgets").Widget3;
 -    private myPrivateMethod1;
-+function createExportedWidget4() {
-+    return Widgets1.SpecializedGlobalWidget.createWidget4();
- }
+-}
 -export declare function publicFunctionWithPrivateParmeterTypes(): import("./privacyFunctionReturnTypeDeclFile_Widgets").Widget1;
 -export declare function publicFunctionWithPrivateParmeterTypes1(): import("GlobalWidgets").Widget3;
 -export declare class publicClassWithPrivateModuleReturnTypes {
@@ -314,14 +281,7 @@
 -    myPublicMethod(): import("./privacyFunctionReturnTypeDeclFile_Widgets").SpecializedWidget.Widget2;
 -    static myPublicStaticMethod1(): import("GlobalWidgets").SpecializedGlobalWidget.Widget4;
 -    myPublicMethod1(): import("GlobalWidgets").SpecializedGlobalWidget.Widget4;
-+//// [privacyFunctionReturnTypeDeclFile_Widgets.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.SpecializedWidget = exports.Widget1 = void 0;
-+exports.createWidget1 = createWidget1;
-+class Widget1 {
-+    name = 'one';
- }
+-}
 -export declare function publicFunctionWithPrivateModuleReturnTypes(): import("./privacyFunctionReturnTypeDeclFile_Widgets").SpecializedWidget.Widget2;
 -export declare function publicFunctionWithPrivateModuleReturnTypes1(): import("GlobalWidgets").SpecializedGlobalWidget.Widget4;
 -
@@ -351,15 +311,7 @@
 -                                  ~~~~~~~~~~~~~~~
 -!!! error TS2307: Cannot find module 'GlobalWidgets' or its corresponding type declarations.
 -        private myPrivateMethod1;
-+exports.Widget1 = Widget1;
-+function createWidget1() {
-+    return new Widget1();
-+}
-+var SpecializedWidget;
-+(function (SpecializedWidget) {
-+    class Widget2 {
-+        name = 'one';
-     }
+-    }
 -    export declare function publicFunctionWithPrivateParmeterTypes(): import("./privacyFunctionReturnTypeDeclFile_Widgets").Widget1;
 -    export declare function publicFunctionWithPrivateParmeterTypes1(): import("GlobalWidgets").Widget3;
 -                                                                              ~~~~~~~~~~~~~~~
@@ -373,10 +325,7 @@
 -        myPublicMethod1(): import("GlobalWidgets").SpecializedGlobalWidget.Widget4;
 -                                  ~~~~~~~~~~~~~~~
 -!!! error TS2307: Cannot find module 'GlobalWidgets' or its corresponding type declarations.
-+    SpecializedWidget.Widget2 = Widget2;
-+    function createWidget2() {
-+        return new Widget2();
-     }
+-    }
 -    export declare function publicFunctionWithPrivateModuleReturnTypes(): import("./privacyFunctionReturnTypeDeclFile_Widgets").SpecializedWidget.Widget2;
 -    export declare function publicFunctionWithPrivateModuleReturnTypes1(): import("GlobalWidgets").SpecializedGlobalWidget.Widget4;
 -                                                                                  ~~~~~~~~~~~~~~~
@@ -416,6 +365,3 @@
 -    export declare function createExportedWidget3(): Widgets1.Widget3;
 -    export declare function createExportedWidget4(): Widgets1.SpecializedGlobalWidget.Widget4;
 -    
-+    SpecializedWidget.createWidget2 = createWidget2;
-+})(SpecializedWidget || (exports.SpecializedWidget = SpecializedWidget = {}));
-+//// [privacyFunctionReturnTypeDeclFile_GlobalWidgets.js]

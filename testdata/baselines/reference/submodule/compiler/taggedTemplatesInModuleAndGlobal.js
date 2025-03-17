@@ -23,16 +23,6 @@ function templateObjectFactory() {
 let result = templateObjectFactory() === templateObjectFactory();
 
 
-//// [module.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-function id(x) {
-    return x;
-}
-function templateObjectFactory() {
-    return id `hello world`;
-}
-let result = templateObjectFactory() === templateObjectFactory();
 //// [global.js]
 var n;
 (function (n) {
@@ -44,3 +34,13 @@ var n;
     }
     let result = templateObjectFactory() === templateObjectFactory();
 })(n || (n = {}));
+//// [module.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+function id(x) {
+    return x;
+}
+function templateObjectFactory() {
+    return id `hello world`;
+}
+let result = templateObjectFactory() === templateObjectFactory();

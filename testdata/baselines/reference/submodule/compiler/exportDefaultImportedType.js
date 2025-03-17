@@ -9,7 +9,7 @@ import { Foo } from "./exported";
 export default Foo;
 
 
-//// [main.js]
-export {};
 //// [exported.js]
+export {};
+//// [main.js]
 export {};

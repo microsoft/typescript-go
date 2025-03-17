@@ -12,9 +12,6 @@ import * as ns from './b';
 import r = require("./b");
 
 
-//// [a.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 //// [b.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -23,3 +20,6 @@ class Member {
 }
 exports.Member = Member;
 exports.default = Member;
+//// [a.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });

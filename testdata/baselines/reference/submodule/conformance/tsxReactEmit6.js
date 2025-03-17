@@ -25,6 +25,7 @@ namespace M {
 
 
 
+//// [file.js]
 //// [react-consumer.js]
 var M;
 (function (M) {
@@ -34,4 +35,3 @@ var M;
     var spread1 = <div x='' {...foo} y=''/>;
     var x = <div>This "quote" thing</div>;
 })(M || (M = {}));
-//// [file.js]

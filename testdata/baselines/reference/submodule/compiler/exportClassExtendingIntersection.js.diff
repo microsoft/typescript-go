@@ -1,34 +1,19 @@
 --- old.exportClassExtendingIntersection.js
 +++ new.exportClassExtendingIntersection.js
-@@= skipped -34, +34 lines =@@
- const AnotherMixedClass = MyMixin(MyExtendedClass);
- 
- 
--//// [BaseClass.js]
-+//// [Main.js]
+@@= skipped -38, +38 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
--exports.MyBaseClass = void 0;
+ exports.MyBaseClass = void 0;
 -var MyBaseClass = /** @class */ (function () {
 -    function MyBaseClass(value) {
 -    }
 -    return MyBaseClass;
 -}());
--exports.MyBaseClass = MyBaseClass;
-+const FinalClass_1 = require("./FinalClass");
-+const MixinClass_1 = require("./MixinClass");
-+const myExtendedClass = new FinalClass_1.MyExtendedClass('string');
-+const AnotherMixedClass = (0, MixinClass_1.MyMixin)(FinalClass_1.MyExtendedClass);
-+//// [FinalClass.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.MyExtendedClass = void 0;
-+const BaseClass_1 = require("./BaseClass");
-+const MixinClass_1 = require("./MixinClass");
-+class MyExtendedClass extends (0, MixinClass_1.MyMixin)(BaseClass_1.MyBaseClass) {
-+    extendedClassProperty;
++class MyBaseClass {
++    baseProperty;
++    constructor(value) { }
 +}
-+exports.MyExtendedClass = MyExtendedClass;
+ exports.MyBaseClass = MyBaseClass;
  //// [MixinClass.js]
  "use strict";
 -var __extends = (this && this.__extends) || (function () {
@@ -60,8 +45,7 @@
 +        mixinProperty;
 +    };
  }
--//// [FinalClass.js]
-+//// [BaseClass.js]
+ //// [FinalClass.js]
  "use strict";
 -var __extends = (this && this.__extends) || (function () {
 -    var extendStatics = function (d, b) {
@@ -79,7 +63,7 @@
 -    };
 -})();
  Object.defineProperty(exports, "__esModule", { value: true });
--exports.MyExtendedClass = void 0;
+ exports.MyExtendedClass = void 0;
 -var BaseClass_1 = require("./BaseClass");
 -var MixinClass_1 = require("./MixinClass");
 -var MyExtendedClass = /** @class */ (function (_super) {
@@ -89,10 +73,15 @@
 -    }
 -    return MyExtendedClass;
 -}((0, MixinClass_1.MyMixin)(BaseClass_1.MyBaseClass)));
--exports.MyExtendedClass = MyExtendedClass;
--//// [Main.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
++const BaseClass_1 = require("./BaseClass");
++const MixinClass_1 = require("./MixinClass");
++class MyExtendedClass extends (0, MixinClass_1.MyMixin)(BaseClass_1.MyBaseClass) {
++    extendedClassProperty;
++}
+ exports.MyExtendedClass = MyExtendedClass;
+ //// [Main.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
 -var FinalClass_1 = require("./FinalClass");
 -var MixinClass_1 = require("./MixinClass");
 -var myExtendedClass = new FinalClass_1.MyExtendedClass('string');
@@ -104,11 +93,7 @@
 -export declare class MyBaseClass<T> {
 -    baseProperty: string;
 -    constructor(value: T);
-+exports.MyBaseClass = void 0;
-+class MyBaseClass {
-+    baseProperty;
-+    constructor(value) { }
- }
+-}
 -//// [MixinClass.d.ts]
 -import { Constructor, MyBaseClass } from './BaseClass';
 -export interface MyMixin {
@@ -125,4 +110,7 @@
 -export {};
 -//// [Main.d.ts]
 -export {};
-+exports.MyBaseClass = MyBaseClass;
++const FinalClass_1 = require("./FinalClass");
++const MixinClass_1 = require("./MixinClass");
++const myExtendedClass = new FinalClass_1.MyExtendedClass('string');
++const AnotherMixedClass = (0, MixinClass_1.MyMixin)(FinalClass_1.MyExtendedClass);

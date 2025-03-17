@@ -1,10 +1,9 @@
 --- old.exportAssignmentTopLevelClodule.js
 +++ new.exportAssignmentTopLevelClodule.js
-@@= skipped -15, +15 lines =@@
- }
+@@= skipped -16, +16 lines =@@
  
  
--//// [foo_0.js]
+ //// [foo_0.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
 -    var Foo = /** @class */ (function () {
@@ -18,6 +17,14 @@
 -    })(Foo || (Foo = {}));
 -    return Foo;
 -});
++"use strict";
++class Foo {
++    test = "test";
++}
++(function (Foo) {
++    Foo.answer = 42;
++})(Foo || (Foo = {}));
++module.exports = Foo;
  //// [foo_1.js]
 -define(["require", "exports", "./foo_0"], function (require, exports, foo) {
 -    "use strict";
@@ -32,12 +39,3 @@
 +if (foo.answer === 42) {
 +    var x = new foo();
 +}
-+//// [foo_0.js]
-+"use strict";
-+class Foo {
-+    test = "test";
-+}
-+(function (Foo) {
-+    Foo.answer = 42;
-+})(Foo || (Foo = {}));
-+module.exports = Foo;

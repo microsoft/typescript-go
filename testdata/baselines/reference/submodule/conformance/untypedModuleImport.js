@@ -18,6 +18,16 @@ import "./b";
 foo(bar());
 
 
+//// [a.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const foo = require("foo");
+foo.bar();
+//// [b.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const foo = require("foo");
+foo();
 //// [c.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -25,13 +35,3 @@ const foo_1 = require("foo");
 require("./a");
 require("./b");
 (0, foo_1.default)((0, foo_1.bar)());
-//// [b.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const foo = require("foo");
-foo();
-//// [a.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const foo = require("foo");
-foo.bar();

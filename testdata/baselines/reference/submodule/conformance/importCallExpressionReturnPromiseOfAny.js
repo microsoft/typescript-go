@@ -33,6 +33,13 @@ function * loadModule(directories: string[]) {
 }
 
 
+//// [defaultPath.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.C = void 0;
+class C {
+}
+exports.C = C;
 //// [1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -53,10 +60,3 @@ function* loadModule(directories) {
         Promise.resolve(`${yield path}`).then(s => require(s));
     }
 }
-//// [defaultPath.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.C = void 0;
-class C {
-}
-exports.C = C;

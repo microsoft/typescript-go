@@ -38,18 +38,6 @@ declare global {
 
 const { a, b, c } = import.meta.wellKnownProperty;
 
-//// [assignmentTargets.js]
-export const foo = import.meta.blah = import.meta.blue = import.meta;
-import.meta = foo;
-const { a, b, c } = import.meta.wellKnownProperty;
-//// [scriptLookingFile01.js]
-let globalA = import.meta;
-let globalB = import.metal;
-let globalC = import.import.import.malkovich;
-//// [moduleLookingFile01.js]
-export let x = import.meta;
-export let y = import.metal;
-export let z = import.import.import.malkovich;
 //// [example.js]
 (async () => {
     const response = await fetch(new URL("../hamsters.jpg", import.meta.url).toString());
@@ -60,3 +48,15 @@ export let z = import.import.import.malkovich;
     image.width = image.height = size;
     document.body.appendChild(image);
 })();
+//// [moduleLookingFile01.js]
+export let x = import.meta;
+export let y = import.metal;
+export let z = import.import.import.malkovich;
+//// [scriptLookingFile01.js]
+let globalA = import.meta;
+let globalB = import.metal;
+let globalC = import.import.import.malkovich;
+//// [assignmentTargets.js]
+export const foo = import.meta.blah = import.meta.blue = import.meta;
+import.meta = foo;
+const { a, b, c } = import.meta.wellKnownProperty;

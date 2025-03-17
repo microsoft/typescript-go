@@ -17,6 +17,12 @@ export const obj = {
     [other.name]: 1,
 };
 
+//// [other.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = createExperiment({
+    name: "foo"
+});
 //// [main.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -25,9 +31,3 @@ const other_1 = require("./other");
 exports.obj = {
     [other_1.default.name]: 1,
 };
-//// [other.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = createExperiment({
-    name: "foo"
-});

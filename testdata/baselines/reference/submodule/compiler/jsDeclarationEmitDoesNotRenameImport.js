@@ -31,6 +31,18 @@ class X extends Test {
 export default X;
 
 
+//// [Test.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class Test {
+}
+exports.default = Test;
+//// [Test.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class Test {
+}
+exports.default = Test;
 //// [index.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -44,15 +56,3 @@ class X extends Test_js_1.default {
     }
 }
 exports.default = X;
-//// [Test.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class Test {
-}
-exports.default = Test;
-//// [Test.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class Test {
-}
-exports.default = Test;

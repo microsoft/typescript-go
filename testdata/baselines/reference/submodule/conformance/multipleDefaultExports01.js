@@ -17,11 +17,6 @@ import Entity from "./m1"
 
 Entity();
 
-//// [m2.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const m1_1 = require("./m1");
-(0, m1_1.default)();
 //// [m1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -33,3 +28,8 @@ function bar() {
 }
 var x = 10;
 exports.default = x;
+//// [m2.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const m1_1 = require("./m1");
+(0, m1_1.default)();

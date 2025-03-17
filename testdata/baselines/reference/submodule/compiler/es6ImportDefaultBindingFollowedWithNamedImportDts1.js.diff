@@ -1,18 +1,17 @@
 --- old.es6ImportDefaultBindingFollowedWithNamedImportDts1.js
 +++ new.es6ImportDefaultBindingFollowedWithNamedImportDts1.js
-@@= skipped -17, +17 lines =@@
- import defaultBinding6, { m,  } from "./server";
- export var x6 = new defaultBinding6();
- 
--//// [server.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
+@@= skipped -20, +20 lines =@@
+ //// [server.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
 -var a = /** @class */ (function () {
 -    function a() {
 -    }
 -    return a;
 -}());
--exports.default = a;
++class a {
++}
+ exports.default = a;
  //// [client.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
@@ -39,11 +38,7 @@
 -
 -//// [server.d.ts]
 -declare class a {
-+//// [server.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+class a {
- }
+-}
 -export default a;
 -//// [client.d.ts]
 -import defaultBinding1 from "./server";
@@ -53,4 +48,3 @@
 -export declare var x4: defaultBinding1;
 -export declare var x5: defaultBinding1;
 -export declare var x6: defaultBinding1;
-+exports.default = a;

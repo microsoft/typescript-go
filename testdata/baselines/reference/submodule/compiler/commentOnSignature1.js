@@ -37,9 +37,6 @@ function foo2(s: string): void;
 function foo2(a: any): void {
 }
 
-//// [b.js]
-function foo2(a) {
-}
 //// [a.js]
 function foo(a) {
 }
@@ -48,4 +45,7 @@ class c {
     }
     foo(a) {
     }
+}
+//// [b.js]
+function foo2(a) {
 }

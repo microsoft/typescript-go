@@ -13,12 +13,6 @@ if(foo.C1.s1){
 }
 
 
-//// [foo_1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const foo = require("./foo_0");
-if (foo.C1.s1) {
-}
 //// [foo_0.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -28,3 +22,9 @@ class C1 {
     static s1 = true;
 }
 exports.C1 = C1;
+//// [foo_1.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const foo = require("./foo_0");
+if (foo.C1.s1) {
+}

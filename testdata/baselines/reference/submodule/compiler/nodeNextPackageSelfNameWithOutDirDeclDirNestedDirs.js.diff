@@ -1,11 +1,8 @@
 --- old.nodeNextPackageSelfNameWithOutDirDeclDirNestedDirs.js
 +++ new.nodeNextPackageSelfNameWithOutDirDeclDirNestedDirs.js
-@@= skipped -28, +28 lines =@@
+@@= skipped -29, +29 lines =@@
  
  
- 
-+//// [index.js]
-+export { srcthing as thing } from "./src/thing.js";
  //// [thing.js]
 -// The following import should cause `index.ts`
 -// to be included in the build, which will,
@@ -17,8 +14,8 @@
  import * as me from "@this/package";
  me.thing();
  export function srcthing() { }
--//// [index.js]
--export { srcthing as thing } from "./src/thing.js";
+ //// [index.js]
+ export { srcthing as thing } from "./src/thing.js";
 -
 -
 -//// [thing.d.ts]

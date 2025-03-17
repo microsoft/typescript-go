@@ -39,6 +39,16 @@ const a = {def\u0061ult: 12}; // OK, `default` not in keyword position
 // chrome and jsc may still error on this, ref https://bugs.chromium.org/p/chromium/issues/detail?id=993000 and https://bugs.webkit.org/show_bug.cgi?id=200638
 
 
+//// [file1.js]
+var \u0061wait = 12;
+async function main() {
+    await 12;
+}
+var \u0079ield = 12;
+function* gen() {
+    yield 12;
+}
+export {};
 //// [file2.js]
 var x = "hello";
 var \u{0061}wait = 12;
@@ -50,14 +60,4 @@ function* gen() {
     yield 12;
 }
 const a = { def\u0061ult: 12 };
-export {};
-//// [file1.js]
-var \u0061wait = 12;
-async function main() {
-    await 12;
-}
-var \u0079ield = 12;
-function* gen() {
-    yield 12;
-}
 export {};

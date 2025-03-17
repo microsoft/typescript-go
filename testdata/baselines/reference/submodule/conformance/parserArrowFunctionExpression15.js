@@ -7,7 +7,7 @@ false ? (param): string => param : null // Not legal JS; "Unexpected token ':'" 
 false ? (param): string => param : null
 
 
-//// [fileTs.js]
-false ? (param) => param : null;
 //// [fileJs.js]
+false ? (param) => param : null;
+//// [fileTs.js]
 false ? (param) => param : null;

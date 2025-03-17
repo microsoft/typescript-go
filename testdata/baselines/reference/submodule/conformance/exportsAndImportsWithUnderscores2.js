@@ -12,11 +12,6 @@ import R from "./m1";
 const { __esmodule, __proto__ } = R;
 
 
-//// [m2.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const m1_1 = require("./m1");
-const { __esmodule, __proto__ } = m1_1.default;
 //// [m1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -25,3 +20,8 @@ exports.default = R = {
     "__esmodule": true,
     "__proto__": {}
 };
+//// [m2.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const m1_1 = require("./m1");
+const { __esmodule, __proto__ } = m1_1.default;

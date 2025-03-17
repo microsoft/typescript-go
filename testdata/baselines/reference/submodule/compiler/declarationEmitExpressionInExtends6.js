@@ -12,6 +12,13 @@ const { Foo } = A;
 export default class extends Foo {}
 
 
+//// [a.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Foo = void 0;
+class Foo {
+}
+exports.Foo = Foo;
 //// [b.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -20,10 +27,3 @@ const { Foo } = A;
 class default_1 extends Foo {
 }
 exports.default = default_1;
-//// [a.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Foo = void 0;
-class Foo {
-}
-exports.Foo = Foo;

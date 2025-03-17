@@ -1,13 +1,6 @@
 --- old.symbolLinkDeclarationEmitModuleNamesRootDir.js
 +++ new.symbolLinkDeclarationEmitModuleNamesRootDir.js
-@@= skipped -23, +23 lines =@@
- export const CONTROLLER_CLASS = BindingKey.create<ControllerClass>(null as any); // line in question
- 
- 
--//// [application.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
- //// [usage.js]
+@@= skipped -30, +30 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.CONTROLLER_CLASS = void 0;
@@ -24,6 +17,3 @@
 -export declare const CONTROLLER_CLASS: BindingKey<ControllerClass>;
 +const context_1 = require("@loopback/context");
 +exports.CONTROLLER_CLASS = context_1.BindingKey.create(null);
-+//// [application.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });

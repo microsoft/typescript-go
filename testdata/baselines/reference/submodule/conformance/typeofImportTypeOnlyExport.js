@@ -18,12 +18,6 @@ export const directive =
 export const classMap = directive(ClassMapDirective);
 
 
-//// [button.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.c = void 0;
-const lit_js_1 = require("./lit.js");
-exports.c = (0, lit_js_1.classMap)();
 //// [lit.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -35,3 +29,9 @@ const directive = (class_) => () => ({
 });
 exports.directive = directive;
 exports.classMap = (0, exports.directive)(ClassMapDirective);
+//// [button.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.c = void 0;
+const lit_js_1 = require("./lit.js");
+exports.c = (0, lit_js_1.classMap)();

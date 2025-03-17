@@ -36,27 +36,6 @@ module m4 {
     }
 }
 
-//// [collisionExportsRequireAndClass_globalFile.js]
-class require {
-}
-class exports {
-}
-var m3;
-(function (m3) {
-    class require {
-    }
-    class exports {
-    }
-})(m3 || (m3 = {}));
-var m4;
-(function (m4) {
-    class require {
-    }
-    m4.require = require;
-    class exports {
-    }
-    m4.exports = exports;
-})(m4 || (m4 = {}));
 //// [collisionExportsRequireAndClass_externalmodule.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -83,3 +62,24 @@ var m2;
     }
     m2.exports = exports;
 })(m2 || (m2 = {}));
+//// [collisionExportsRequireAndClass_globalFile.js]
+class require {
+}
+class exports {
+}
+var m3;
+(function (m3) {
+    class require {
+    }
+    class exports {
+    }
+})(m3 || (m3 = {}));
+var m4;
+(function (m4) {
+    class require {
+    }
+    m4.require = require;
+    class exports {
+    }
+    m4.exports = exports;
+})(m4 || (m4 = {}));
