@@ -65,13 +65,6 @@ linters-settings:
     customlint:
       type: module
 
-  misspell:
-    locale: US
-    ignore-words:
-      - behaviour
-      - cancelled
-      - misspelt
-
 #   revive:
 #     enable-all-rules: true
 #     rules:
