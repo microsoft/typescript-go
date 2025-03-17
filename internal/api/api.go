@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"sync"
 	"time"
@@ -166,7 +167,7 @@ func (api *API) LoadProject(configFileName string) (*ProjectResponse, error) {
 
 func (api *API) GetSymbolAtPosition(projectId int, fileName string, position int) (*SymbolResponse, error) {
 	if projectId >= len(api.projects) {
-		return nil, fmt.Errorf("project not found")
+		return nil, errors.New("project not found")
 	}
 	project := api.projects[projectId]
 	symbol, err := project.LanguageService().GetSymbolAtPosition(fileName, position)
@@ -182,7 +183,7 @@ func (api *API) GetSymbolAtPosition(projectId int, fileName string, position int
 
 func (api *API) GetTypeOfSymbol(projectId int, symbolHandle Handle[ast.Symbol]) (*TypeResponse, error) {
 	if projectId >= len(api.projects) {
-		return nil, fmt.Errorf("project not found")
+		return nil, errors.New("project not found")
 	}
 	project := api.projects[projectId]
 	symbol, ok := api.symbols[symbolHandle]
@@ -198,7 +199,7 @@ func (api *API) GetTypeOfSymbol(projectId int, symbolHandle Handle[ast.Symbol]) 
 
 func (api *API) GetSourceFile(projectId int, fileName string) (*ast.SourceFile, error) {
 	if projectId >= len(api.projects) {
-		return nil, fmt.Errorf("project not found")
+		return nil, errors.New("project not found")
 	}
 	project := api.projects[projectId]
 	sourceFile := project.GetProgram().GetSourceFile(fileName)

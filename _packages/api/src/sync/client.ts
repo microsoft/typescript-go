@@ -48,6 +48,14 @@ export class Client {
         return this.channel.requestBinarySync(method, this.encoder.encode(JSON.stringify(payload)));
     }
 
+    echo(payload: string): string {
+        return this.channel.requestSync("echo", payload);
+    }
+
+    echoBinary(payload: Uint8Array): Uint8Array {
+        return this.channel.requestBinarySync("echo", payload);
+    }
+
     close(): void {
         this.channel.murderInColdBlood();
     }

@@ -2,10 +2,8 @@ package api
 
 import (
 	"bufio"
-	"bytes"
 	"encoding/binary"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"sync"
@@ -102,47 +100,24 @@ func (s *Server) NewLine() string {
 
 func (s *Server) Run() error {
 	for {
-		messageType, err := s.r.ReadBytes('\t')
-		if err != nil {
-			if errors.Is(err, io.EOF) {
-				return nil
-			}
-			return err
-		}
-		method, err := s.r.ReadBytes('\t')
+		messageType, method, payload, err := s.readRequest("")
 		if err != nil {
 			return err
 		}
 
-		var size uint32
-		if err = binary.Read(s.r, binary.LittleEndian, &size); err != nil {
-			return fmt.Errorf("%w: expected payload size: %w", ErrInvalidRequest, err)
-		}
-		messageType = messageType[:len(messageType)-1]
-		method = method[:len(method)-1]
-
-		payload := make([]byte, size)
-		bytesRead, err := io.ReadFull(s.r, payload)
-		if err != nil {
-			return err
-		}
-		if bytesRead != int(size) {
-			return fmt.Errorf("%w: expected %d bytes, read %d", ErrInvalidRequest, size, bytesRead)
-		}
-
-		switch string(messageType) {
+		switch messageType {
 		case "request":
 			now := time.Now()
-			result, err := s.handleRequest(string(method), payload)
+			result, err := s.handleRequest(method, payload)
 
 			s.logger.PerfTrace(fmt.Sprintf("%s handled - %s", method, time.Since(now)))
 			now = time.Now()
 			if err != nil {
-				if err := s.sendError(string(method), err); err != nil {
+				if err := s.sendError(method, err); err != nil {
 					return err
 				}
 			} else {
-				if err := s.sendResponse(string(method), result); err != nil {
+				if err := s.sendResponse(method, result); err != nil {
 					return err
 				}
 				s.logger.PerfTrace(fmt.Sprintf("%s sent - %s", method, time.Since(now)))
@@ -151,6 +126,35 @@ func (s *Server) Run() error {
 			return fmt.Errorf("%w: expected request, recieved: %s", ErrInvalidRequest, messageType)
 		}
 	}
+}
+
+func (s *Server) readRequest(expectedMethod string) (messageType string, method string, payload []byte, err error) {
+	messageType, err = s.r.ReadString('\t')
+	if err != nil {
+		return "", "", nil, err
+	}
+	messageType = messageType[:len(messageType)-1]
+	method, err = s.r.ReadString('\t')
+	if err != nil {
+		return "", "", nil, err
+	}
+	method = method[:len(method)-1]
+	if expectedMethod != "" && method != expectedMethod {
+		return "", "", nil, fmt.Errorf("%w: expected method %q, recieved %q", ErrInvalidRequest, expectedMethod, method)
+	}
+	var size uint32
+	if err = binary.Read(s.r, binary.LittleEndian, &size); err != nil {
+		return "", "", nil, fmt.Errorf("%w: expected payload size: %w", ErrInvalidRequest, err)
+	}
+	payload = make([]byte, size)
+	bytesRead, err := io.ReadFull(s.r, payload)
+	if err != nil {
+		return "", "", nil, err
+	}
+	if bytesRead != int(size) {
+		return "", "", nil, fmt.Errorf("%w: expected %d bytes, read %d", ErrInvalidRequest, size, bytesRead)
+	}
+	return messageType, method, payload, nil
 }
 
 func (s *Server) enableCallback(callback string) error {
@@ -193,12 +197,31 @@ func (s *Server) handleConfigure(payload []byte) error {
 			return err
 		}
 	}
-	s.logger.SetFile(params.LogFile)
+	if params.LogFile != "" {
+		s.logger.SetFile(params.LogFile)
+	} else {
+		s.logger.SetFile("")
+	}
 	return nil
 }
 
 func (s *Server) sendResponse(method string, result []byte) error {
-	if _, err := s.w.WriteString("response\t"); err != nil {
+	return s.write("response", method, result)
+}
+
+func (s *Server) sendError(method string, err error) error {
+	payload, err := json.Marshal(err.Error())
+	if err != nil {
+		return err
+	}
+	return s.write("error", method, payload)
+}
+
+func (s *Server) write(messageType, method string, payload []byte) error {
+	if _, err := s.w.WriteString(messageType); err != nil {
+		return err
+	}
+	if _, err := s.w.WriteString("\t"); err != nil {
 		return err
 	}
 	if _, err := s.w.WriteString(method); err != nil {
@@ -207,33 +230,10 @@ func (s *Server) sendResponse(method string, result []byte) error {
 	if err := s.w.WriteByte('\t'); err != nil {
 		return err
 	}
-	if err := binary.Write(s.w, binary.LittleEndian, uint32(len(result))); err != nil {
+	if err := binary.Write(s.w, binary.LittleEndian, uint32(len(payload))); err != nil {
 		return err
 	}
-	if _, err := s.w.Write(result); err != nil {
-		return err
-	}
-	return s.w.Flush()
-}
-
-func (s *Server) sendError(method string, err error) error {
-	payload, err := json.Marshal(err.Error())
-	if err != nil {
-		return err
-	}
-	if _, err = s.w.Write([]byte("error\t")); err != nil {
-		return err
-	}
-	if _, err = s.w.Write([]byte(method)); err != nil {
-		return err
-	}
-	if _, err = s.w.Write([]byte("\t")); err != nil {
-		return err
-	}
-	if _, err = s.w.Write(payload); err != nil {
-		return err
-	}
-	if _, err = s.w.Write([]byte("\n")); err != nil {
+	if _, err := s.w.Write(payload); err != nil {
 		return err
 	}
 	return s.w.Flush()
@@ -242,50 +242,28 @@ func (s *Server) sendError(method string, err error) error {
 func (s *Server) call(method string, payload any) ([]byte, error) {
 	s.callbackMu.Lock()
 	defer s.callbackMu.Unlock()
-	if _, err := s.w.WriteString("call\t"); err != nil {
+	jsonPayload, err := json.Marshal(payload)
+	if err != nil {
 		return nil, err
 	}
-	if _, err := s.w.WriteString(method); err != nil {
+	if err = s.write("call", method, jsonPayload); err != nil {
 		return nil, err
 	}
-	if err := s.w.WriteByte('\t'); err != nil {
-		return nil, err
-	}
-	if err := json.NewEncoder(s.w).Encode(payload); err != nil {
-		return nil, err
-	}
-	if err := s.w.Flush(); err != nil {
-		return nil, err
-	}
-	line, err := s.r.ReadBytes('\n')
+
+	messageType, _, responsePayload, err := s.readRequest(method)
 	if err != nil {
 		return nil, err
 	}
 
-	index := bytes.IndexByte(line, '\t')
-	if index == -1 {
-		return nil, fmt.Errorf("%w: missing message type or method: %q", ErrInvalidRequest, line)
-	}
-
-	messageType := string(line[:index])
-	if messageType != "call-response" && messageType != "call-error" {
+	if string(messageType) != "call-response" && string(messageType) != "call-error" {
 		return nil, fmt.Errorf("%w: expected call-response or call-error, recieved: %s", ErrInvalidRequest, messageType)
 	}
 
-	offset := index + 1
-	index = bytes.IndexByte(line[offset:], '\t')
-	if index == -1 {
-		return nil, fmt.Errorf("%w: missing method or payload: %q", ErrInvalidRequest, line)
-	}
-	if string(line[offset:offset+index]) != method {
-		return nil, fmt.Errorf("%w: expected method %q, recieved %q", ErrInvalidRequest, method, line[offset:offset+index])
+	if string(messageType) == "call-error" {
+		return nil, fmt.Errorf("%w: %s", ErrClientError, responsePayload)
 	}
 
-	if messageType == "call-error" {
-		return nil, fmt.Errorf("%w: %s", ErrClientError, line[offset+index+1:])
-	}
-
-	return line[offset+index+1 : len(line)-1], nil
+	return responsePayload, nil
 }
 
 // DirectoryExists implements vfs.FS.

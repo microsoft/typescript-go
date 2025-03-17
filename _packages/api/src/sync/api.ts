@@ -1,9 +1,14 @@
-import type { SourceFile as SourceFileNode } from "@typescript/ast";
+import type {
+    Node,
+    NodeArray,
+    Statement,
+    SyntaxKind,
+} from "@typescript/ast";
 import {
     type API as BaseAPI,
     type APIOptions as BaseAPIOptions,
     Project as BaseProject,
-    SourceFile as BaseSourceFile,
+    RemoteSourceFile as BaseRemoteSourceFile,
     Symbol as BaseSymbol,
     Type as BaseType,
 } from "../base/api.ts";
@@ -33,6 +38,14 @@ export class API implements BaseAPI<false> {
         return new Project(this.client, data);
     }
 
+    echo(message: string): string {
+        return this.client.echo(message);
+    }
+
+    echoBinary(message: Uint8Array): Uint8Array {
+        return this.client.echoBinary(message);
+    }
+
     close(): void {
         this.client.close();
     }
@@ -50,9 +63,9 @@ export class Project extends BaseProject<false> {
         this.loadData(this.client.request("loadProject", { configFileName: this.configFileName }));
     }
 
-    getSourceFile(fileName: string): SourceFileNode | undefined {
+    getSourceFile(fileName: string): SourceFile | undefined {
         const data = this.client.requestBinary("getSourceFile", { project: this.id, fileName });
-        return data ? new SourceFile(this.client, this, data) as unknown as SourceFileNode : undefined;
+        return data ? new RemoteSourceFile(this.client, this, data) as unknown as SourceFile : undefined;
     }
 
     getSymbolAtPosition(requests: readonly { fileName: string; position: number; }[]): (Symbol | undefined)[];
@@ -69,7 +82,12 @@ export class Project extends BaseProject<false> {
     }
 }
 
-export class SourceFile extends BaseSourceFile {
+export interface SourceFile extends Node {
+    kind: SyntaxKind.SourceFile;
+    statements: NodeArray<Statement>;
+}
+
+class RemoteSourceFile extends BaseRemoteSourceFile {
     private client: Client;
     private project: Project;
     constructor(client: Client, project: Project, data: Uint8Array) {

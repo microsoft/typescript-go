@@ -46,7 +46,7 @@ func BenchmarkEncodeSourceFile(b *testing.B) {
 	)
 
 	for b.Loop() {
-		_, err := api.EncodeSourceFile(sourceFile)
+		_, err := encoder.EncodeSourceFile(sourceFile)
 		assert.NilError(b, err)
 	}
 }

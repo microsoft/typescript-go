@@ -43,7 +43,7 @@ export abstract class Project<Async extends boolean> {
     abstract getSymbolAtPosition(fileName: string, position: number): MaybeAsync<Async, Symbol<Async> | undefined>;
 }
 
-export abstract class SourceFile extends RemoteNode {
+export abstract class RemoteSourceFile extends RemoteNode {
     constructor(data: Uint8Array) {
         const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
         super(view, 1, undefined!);

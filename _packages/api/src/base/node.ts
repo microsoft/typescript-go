@@ -1,8 +1,18 @@
-import { SyntaxKind } from "@typescript/ast";
-import type {
-    Node as BaseNode,
-    NodeArray as BaseNodeArray,
+import {
+    type Node,
+    type NodeArray,
+    SyntaxKind,
 } from "@typescript/ast";
+
+declare module "@typescript/ast" {
+    export interface Node {
+        forEachChild<T>(visitor: (node: Node) => T): T | undefined;
+    }
+
+    export interface NodeArray<T> {
+        at(index: number): T;
+    }
+}
 
 const popcount8 = [0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 4, 5, 5, 6, 5, 6, 6, 7, 5, 6, 6, 7, 6, 7, 7, 8];
 
@@ -133,14 +143,6 @@ const OFFSET_PARENT = 4;
 const OFFSET_DATA = 5;
 const NODE_LEN = 6;
 const KIND_NODE_LIST = 2 ** 32 - 1;
-
-export interface Node extends BaseNode {
-    forEachChild<T>(visitor: (node: Node) => T): T | undefined;
-}
-
-export interface NodeArray<T extends Node> extends BaseNodeArray<T> {
-    at(index: number): T;
-}
 
 export class RemoteNodeBase {
     parent: RemoteNode;

@@ -33,6 +33,10 @@
     "libsyncrpc": "link:../../../libsyncrpc"
   },
   "scripts": {
-    "build": "tsc -b"
+    "build": "tsc -b",
+    "bench": "node --no-warnings --conditions @typescript/source bench/sync.ts"
+  },
+  "devDependencies": {
+    "tinybench": "^3.1.1"
   }
 }

@@ -66,6 +66,10 @@ importers:
       libsyncrpc:
         specifier: link:../../../libsyncrpc
         version: link:../../../libsyncrpc
+    devDependencies:
+      tinybench:
+        specifier: ^3.1.1
+        version: 3.1.1
 
   _packages/ast: {}
 
@@ -417,6 +421,10 @@ packages:
   table-layout@1.0.2:
     resolution: {integrity: sha512-qd/R7n5rQTRFi+Zf2sk5XVVd9UQl6ZkduPFC3S7WEGJAmetDTjY3qPN50eSKzwuzEyQKy5TN2TiZdkIjos2L6A==}
     engines: {node: '>=8.0.0'}
+
+  tinybench@3.1.1:
+    resolution: {integrity: sha512-74pmf47HY/bHqamcCMGris+1AtGGsqTZ3Hc/UK4QvSmRuf/9PIF9753+c8XBh7JfX2r9KeZtVjOYjd6vFpc0qQ==}
+    engines: {node: '>=18.0.0'}
 
   typescript@5.7.3:
     resolution: {integrity: sha512-84MVSjMEHP+FQRPy3pX9sTVV/INIex71s9TL2Gm5FG/WG1SqXeKyZ0k7/blY/4FdOzI12CBy1vGc4og/eus0fw==}
@@ -791,6 +799,8 @@ snapshots:
       deep-extend: 0.6.0
       typical: 5.2.0
       wordwrapjs: 4.0.1
+
+  tinybench@3.1.1: {}
 
   typescript@5.7.3: {}
 
