@@ -235,7 +235,7 @@ func (p *fileLoader) CacheSourceFileMetaData(path string) {
 		p.sourceFileMetaDatas = make(map[string]*ast.SourceFileMetaData)
 	}
 
-	packageJsonType := p.resolver.GetPackageJsonTypeIfApplicable(string(path))
+	packageJsonType := p.resolver.GetPackageJsonTypeIfApplicable(path)
 	impliedNodeFormat := ast.GetImpliedNodeFormatForFile(path, packageJsonType)
 	metadata := &ast.SourceFileMetaData{
 		PackageJsonType:   packageJsonType,
