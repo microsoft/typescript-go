@@ -11412,7 +11412,7 @@ func (c *Checker) checkThisBeforeSuper(node *ast.Node, container *ast.Node, diag
 	// If a containing class does not have extends clause or the class extends null
 	// skip checking whether super statement is called before "this" accessing.
 	if baseTypeNode != nil && !c.classDeclarationExtendsNull(containingClassDecl) {
-		if node.FlowNodeData() != nil && !c.isPostSuperFlowNode(node.FlowNodeData().FlowNode, false /*noCacheCheck*/) {
+		if node.FlowNodeData() != nil && !c.isPostSuperFlowNode(node.FlowNodeData().FlowNode, false /*noCacheCheck*/, nil) {
 			c.error(node, diagnosticMessage)
 		}
 	}
