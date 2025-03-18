@@ -27,7 +27,5 @@
  export interface Thing { n: typeof x }
 +>Thing : Thing
  >n : number
-->x : number
+ >x : number
  
- export as namespace Foo;
- >Foo : typeof import("foo")

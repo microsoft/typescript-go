@@ -14,7 +14,9 @@ declare global {
 
 const observable: typeof Symbol.obs = Symbol.obs
 >observable : symbol
+>Symbol.obs : symbol
 >Symbol : SymbolConstructor
+>obs : symbol
 >Symbol.obs : symbol
 >Symbol : SymbolConstructor
 >obs : symbol

@@ -113,16 +113,7 @@
      }
  }
  
- function f16(x: typeof globalThis, y: Window & typeof globalThis) {
- >f16 : (x: typeof globalThis, y: Window & typeof globalThis) => void
- >x : typeof globalThis
-->globalThis : typeof globalThis
- >y : Window & typeof globalThis
-->globalThis : typeof globalThis
- 
-     x = y;
- >x = y : Window & typeof globalThis
-@@= skipped -35, +33 lines =@@
+@@= skipped -35, +35 lines =@@
  
  function foo<A>(value: A) {
  >foo : <A>(value: A) => void

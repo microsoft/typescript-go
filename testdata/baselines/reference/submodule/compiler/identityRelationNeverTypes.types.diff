@@ -35,6 +35,7 @@
          type T1 = Equals<typeof state, never>;  // true
  >T1 : true
 ->state : never
++>state : State<{ foo: number; }> & { value: "a"; } & { value: "a.b"; }
  
          type T2 = Equals<never, never>;  // true
  >T2 : true

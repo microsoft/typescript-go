@@ -15,6 +15,7 @@ var d: void = null;
 
 var e: typeof undefined = null;
 >e : any
+>undefined : undefined
 
 e = null; // ok
 >e = null : null

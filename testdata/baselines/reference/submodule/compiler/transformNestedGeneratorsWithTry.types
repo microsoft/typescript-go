@@ -46,6 +46,7 @@ declare module "bluebird" {
 
     const Bluebird: typeof Promise;
 >Bluebird : PromiseConstructor
+>Promise : PromiseConstructor
 
     export = Bluebird;
 >Bluebird : Bluebird<T>

@@ -91,6 +91,8 @@ const printFn = (action: typeof actionA | typeof actionB)=> console.log(action);
 >printFn : (action: Action<"ACTION_A", string> | Action<"ACTION_B", boolean>) => void
 >(action: typeof actionA | typeof actionB)=> console.log(action) : (action: Action<"ACTION_A", string> | Action<"ACTION_B", boolean>) => void
 >action : Action<"ACTION_A", string> | Action<"ACTION_B", boolean>
+>actionA : Action<"ACTION_A", string>
+>actionB : Action<"ACTION_B", boolean>
 >console.log(action) : void
 >console.log : (...data: any[]) => void
 >console : Console

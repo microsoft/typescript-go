@@ -196,6 +196,7 @@ function f4<T extends Number>(x: T) {
 
     var u: typeof undefined;
 >u : any
+>undefined : undefined
 
     var r0b = true ? u : x; // ok
 >r0b : any
@@ -497,10 +498,12 @@ function f16<T extends E>(x: T) {
 function f17<T extends typeof f>(x: T) {
 >f17 : <T extends typeof f>(x: T) => void
 >T : T
+>f : typeof f
 >x : T
 
     var af: typeof f;
 >af : typeof f
+>f : typeof f
 
     var r15 = true ? af : x; // ok
 >r15 : typeof f
@@ -520,10 +523,12 @@ function f17<T extends typeof f>(x: T) {
 function f18<T extends typeof c>(x: T) {
 >f18 : <T extends typeof c>(x: T) => void
 >T : T
+>c : typeof c
 >x : T
 
     var ac: typeof c;
 >ac : typeof c
+>c : typeof c
 
     var r16 = true ? ac : x; // ok
 >r16 : typeof c

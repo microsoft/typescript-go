@@ -1367,6 +1367,7 @@ declare module "Any/Type" {
 
         [K in typeof symbol]: Id;
 >K : K
+>symbol : unique symbol
 
     };
 }

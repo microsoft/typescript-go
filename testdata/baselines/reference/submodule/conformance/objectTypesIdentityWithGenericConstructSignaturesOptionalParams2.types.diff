@@ -66,13 +66,13 @@
 ->foo3 : { (x: typeof a): any; (x: typeof a): any; }
 +>foo3 : { (x: new <T, U>(x: T, y?: U) => B<T, U>): any; (x: new <T, U>(x: T, y?: U) => B<T, U>): any; }
  >x : new <T, U>(x: T, y?: U) => B<T, U>
-->a : new <T, U>(x: T, y?: U) => B<T, U>
+ >a : new <T, U>(x: T, y?: U) => B<T, U>
  
  function foo3(x: typeof a); // error
 ->foo3 : { (x: typeof a): any; (x: typeof a): any; }
 +>foo3 : { (x: new <T, U>(x: T, y?: U) => B<T, U>): any; (x: new <T, U>(x: T, y?: U) => B<T, U>): any; }
  >x : new <T, U>(x: T, y?: U) => B<T, U>
-->a : new <T, U>(x: T, y?: U) => B<T, U>
+ >a : new <T, U>(x: T, y?: U) => B<T, U>
  
  function foo3(x: any) { }
 ->foo3 : { (x: typeof a): any; (x: typeof a): any; }
@@ -85,6 +85,7 @@
 ->b : { "new"<T, U>(x: T, y?: U): C<T, U>; }
 +>foo4 : { (x: { new: <T, U>(x: T, y?: U) => C<T, U>; }): any; (x: { new: <T, U>(x: T, y?: U) => C<T, U>; }): any; }
 +>x : { new: <T, U>(x: T, y?: U) => C<T, U>; }
++>b : { new: <T, U>(x: T, y?: U) => C<T, U>; }
  
  function foo4(x: typeof b); // error
 ->foo4 : { (x: typeof b): any; (x: typeof b): any; }
@@ -92,6 +93,7 @@
 ->b : { "new"<T, U>(x: T, y?: U): C<T, U>; }
 +>foo4 : { (x: { new: <T, U>(x: T, y?: U) => C<T, U>; }): any; (x: { new: <T, U>(x: T, y?: U) => C<T, U>; }): any; }
 +>x : { new: <T, U>(x: T, y?: U) => C<T, U>; }
++>b : { new: <T, U>(x: T, y?: U) => C<T, U>; }
  
  function foo4(x: any) { }
 ->foo4 : { (x: typeof b): any; (x: typeof b): any; }
@@ -99,7 +101,7 @@
  >x : any
  
  function foo8(x: B<string, number>);
-@@= skipped -52, +48 lines =@@
+@@= skipped -52, +52 lines =@@
  >x : any
  
  function foo10(x: B<string, number>);
@@ -111,7 +113,7 @@
 ->foo10 : { (x: B<string, number>): any; (x: typeof a): any; }
 +>foo10 : { (x: B<string, number>): any; (x: new <T, U>(x: T, y?: U) => B<T, U>): any; }
  >x : new <T, U>(x: T, y?: U) => B<T, U>
-->a : new <T, U>(x: T, y?: U) => B<T, U>
+ >a : new <T, U>(x: T, y?: U) => B<T, U>
  
  function foo10(x: any) { }
 ->foo10 : { (x: B<string, number>): any; (x: typeof a): any; }
@@ -129,6 +131,7 @@
 ->b : { "new"<T, U>(x: T, y?: U): C<T, U>; }
 +>foo11 : { (x: B<string, number>): any; (x: { new: <T, U>(x: T, y?: U) => C<T, U>; }): any; }
 +>x : { new: <T, U>(x: T, y?: U) => C<T, U>; }
++>b : { new: <T, U>(x: T, y?: U) => C<T, U>; }
  
  function foo11(x: any) { }
 ->foo11 : { (x: B<string, number>): any; (x: typeof b): any; }
@@ -136,7 +139,7 @@
  >x : any
  
  function foo12(x: I<string, number>);
-@@= skipped -50, +48 lines =@@
+@@= skipped -50, +50 lines =@@
  >x : any
  
  function foo13(x: I<string, number>);
@@ -148,7 +151,7 @@
 ->foo13 : { (x: I<string, number>): any; (x: typeof a): any; }
 +>foo13 : { (x: I<string, number>): any; (x: new <T, U>(x: T, y?: U) => B<T, U>): any; }
  >x : new <T, U>(x: T, y?: U) => B<T, U>
-->a : new <T, U>(x: T, y?: U) => B<T, U>
+ >a : new <T, U>(x: T, y?: U) => B<T, U>
  
  function foo13(x: any) { }
 ->foo13 : { (x: I<string, number>): any; (x: typeof a): any; }
@@ -166,6 +169,7 @@
 ->b : { "new"<T, U>(x: T, y?: U): C<T, U>; }
 +>foo14 : { (x: I<string, number>): any; (x: { new: <T, U>(x: T, y?: U) => C<T, U>; }): any; }
 +>x : { new: <T, U>(x: T, y?: U) => C<T, U>; }
++>b : { new: <T, U>(x: T, y?: U) => C<T, U>; }
  
  function foo14(x: any) { }
 ->foo14 : { (x: I<string, number>): any; (x: typeof b): any; }

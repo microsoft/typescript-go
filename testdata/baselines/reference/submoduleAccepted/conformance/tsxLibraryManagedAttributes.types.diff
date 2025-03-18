@@ -17,11 +17,11 @@
  
  type InferredPropTypes<P> = {[K in keyof P]: P[K] extends PropTypeChecker<infer T, infer U> ? PropTypeChecker<T, U>[typeof checkedType] : {}};
  >InferredPropTypes : InferredPropTypes<P>
-->checkedType : unique symbol
 +>P : P
 +>K : K
 +>T : T
 +>U : U
+ >checkedType : unique symbol
  
  declare const checkedType: unique symbol;
  >checkedType : unique symbol
@@ -33,7 +33,7 @@
  >false : false
  
      (props: any, propName: string, componentName: string, location: any, propFullName: string): boolean;
-@@= skipped -50, +62 lines =@@
+@@= skipped -50, +63 lines =@@
  
  declare class ReactComponent<P={}, S={}> {
  >ReactComponent : ReactComponent<P, S>

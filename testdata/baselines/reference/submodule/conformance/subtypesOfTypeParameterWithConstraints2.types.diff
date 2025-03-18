@@ -52,15 +52,7 @@
  >x : T
  
      var r0 = true ? x : null; // ok
-@@= skipped -16, +17 lines =@@
- 
-     var u: typeof undefined;
- >u : any
-->undefined : undefined
- 
-     var r0b = true ? u : x; // ok
- >r0b : any
-@@= skipped -19, +18 lines =@@
+@@= skipped -35, +36 lines =@@
  
  function f5<T extends Number>(x: T) {
  >f5 : <T extends Number>(x: T) => void
@@ -186,31 +178,19 @@
  
  function f17<T extends typeof f>(x: T) {
  >f17 : <T extends typeof f>(x: T) => void
-->f : typeof f
 +>T : T
+ >f : typeof f
  >x : T
  
-     var af: typeof f;
- >af : typeof f
-->f : typeof f
- 
-     var r15 = true ? af : x; // ok
- >r15 : typeof f
-@@= skipped -24, +23 lines =@@
+@@= skipped -24, +25 lines =@@
  
  function f18<T extends typeof c>(x: T) {
  >f18 : <T extends typeof c>(x: T) => void
-->c : typeof c
 +>T : T
+ >c : typeof c
  >x : T
  
-     var ac: typeof c;
- >ac : typeof c
-->c : typeof c
- 
-     var r16 = true ? ac : x; // ok
- >r16 : typeof c
-@@= skipped -24, +23 lines =@@
+@@= skipped -24, +25 lines =@@
  
  function f19<T>(x: T) {
  >f19 : <T>(x: T) => void

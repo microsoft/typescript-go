@@ -32,6 +32,7 @@ declare global {
 
     const Foo: typeof MyClass;
 >Foo : typeof MyClass
+>MyClass : typeof MyClass
 }
 export = MyClass;
 >MyClass : MyClass

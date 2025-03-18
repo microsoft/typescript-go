@@ -54,23 +54,7 @@
  
  type Bar1 = NestedRecord<"x.y.z.a.b.c", number>;
  >Bar1 : { x: { y: { z: { a: { b: Record<"c", number>; }; }; }; }; }
-@@= skipped -18, +23 lines =@@
- 
- export type Input = Static<typeof Input>
- >Input : { level1: { level2: { foo: string; }; }; }
-->Input : TObject<{ level1: TObject<{ level2: TObject<{ foo: TString; }>; }>; }>
- 
- export const Input = Type.Object({
- >Input : TObject<{ level1: TObject<{ level2: TObject<{ foo: TString; }>; }>; }>
-@@= skipped -39, +38 lines =@@
- 
- export type Output = Static<typeof Output>
- >Output : { level1: { level2: { foo: string; bar: string; }; }; }
-->Output : TObject<{ level1: TObject<{ level2: TObject<{ foo: TString; bar: TString; }>; }>; }>
- 
- export const Output = Type.Object({
- >Output : TObject<{ level1: TObject<{ level2: TObject<{ foo: TString; bar: TString; }>; }>; }>
-@@= skipped -45, +44 lines =@@
+@@= skipped -102, +107 lines =@@
  })
  
  function problematicFunction1(ors: Input[]): Output[] {
@@ -96,13 +80,9 @@
 ->problematicFunction3 : (ors: (typeof Input.static)[]) => Output[]
 +>problematicFunction3 : (ors: { level1: { level2: { foo: string; }; }; }[]) => { level1: { level2: { foo: string; bar: string; }; }; }[]
  >ors : { level1: { level2: { foo: string; }; }; }[]
-->Input.static : { level1: { level2: { foo: string; }; }; }
+ >Input.static : { level1: { level2: { foo: string; }; }; }
  >Input : TObject<{ level1: TObject<{ level2: TObject<{ foo: TString; }>; }>; }>
-->static : { level1: { level2: { foo: string; }; }; }
- 
-     return ors;  // Error
- >ors : { level1: { level2: { foo: string; }; }; }[]
-@@= skipped -12, +10 lines =@@
+@@= skipped -12, +12 lines =@@
  
  export type Evaluate<T> = T extends infer O ? { [K in keyof O]: O[K] } : never
  >Evaluate : Evaluate<T>

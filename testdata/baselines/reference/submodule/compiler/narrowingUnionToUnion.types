@@ -102,6 +102,8 @@ function fx5<T extends X>(obj: X | YS, c: typeof XS | typeof Y) {
 >T : T
 >obj : X | YS
 >c : typeof XS | typeof Y
+>XS : typeof XS
+>Y : typeof Y
 
     if (obj instanceof c) {
 >obj instanceof c : boolean

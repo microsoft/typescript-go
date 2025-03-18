@@ -8,6 +8,7 @@ module ConstructSignature {
 >foo1 : { (cb: new (x: number) => void): new (x: number) => void; (cb: any): any; }
 >cb : new (x: number) => void
 >x : number
+>cb : new (x: number) => void
 
     declare function foo1(cb: any): any;
 >foo1 : { (cb: new (x: number) => void): new (x: number) => void; (cb: any): any; }
@@ -39,6 +40,7 @@ module ConstructSignature {
 >cb : new (x: number, y: number) => void
 >x : number
 >y : number
+>cb : new (x: number, y: number) => void
 
     declare function foo2(cb: any): any;
 >foo2 : { (cb: new (x: number, y: number) => void): new (x: number, y: number) => void; (cb: any): any; }

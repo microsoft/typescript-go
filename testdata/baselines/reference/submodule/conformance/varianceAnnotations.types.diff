@@ -257,12 +257,11 @@
  
      foo(): InstanceType<(typeof Anon<T>)> {
 ->foo : () => InstanceType<(typeof Anon<T>)>
-->Anon : typeof Anon
 +>foo : () => Anon<T>
+ >Anon : typeof Anon
  
          return this;
- >this : this
-@@= skipped -14, +14 lines =@@
+@@= skipped -14, +15 lines =@@
  >OuterC : typeof C
  >class C<out T> {    foo(): C<T> {        return this;    }} : typeof C
  >C : typeof C

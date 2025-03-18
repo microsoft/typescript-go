@@ -12,8 +12,8 @@
  
  declare const Err: typeof ErrImpl & (<T>() => T);
 ->Err : typeof ErrImpl & (<T>() => T)
-->ErrImpl : typeof ErrImpl
 +>Err : typeof ErrImpl & <T>() => T
+ >ErrImpl : typeof ErrImpl
 +>T : T
  
  type ErrAlias<U> = typeof Err<U>;
@@ -21,6 +21,7 @@
 ->Err : typeof ErrImpl & (<T>() => T)
 +>ErrAlias : { new (): ErrImpl<U>; prototype: ErrImpl<any>; } & () => U
 +>U : U
++>Err : typeof ErrImpl & <T>() => T
  
  declare const e: ErrAlias<number>;
 ->e : { new (): ErrImpl<number>; prototype: ErrImpl<any>; } & (() => number)

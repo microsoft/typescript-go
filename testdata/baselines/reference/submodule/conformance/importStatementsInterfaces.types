@@ -50,6 +50,7 @@ module C {
 
     var m: typeof a;
 >m : any
+>a : any
 
     var p: b.Point3D;
 >p : Point3D

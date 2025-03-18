@@ -998,6 +998,7 @@ const foobarPred = (fb: typeof foobar) => fb.type === "foo";
 >foobarPred : (fb: { type: "foo"; foo: number; } | { type: "bar"; bar: string; }) => fb is { type: "foo"; foo: number; }
 >(fb: typeof foobar) => fb.type === "foo" : (fb: { type: "foo"; foo: number; } | { type: "bar"; bar: string; }) => fb is { type: "foo"; foo: number; }
 >fb : { type: "foo"; foo: number; } | { type: "bar"; bar: string; }
+>foobar : { type: "foo"; foo: number; } | { type: "bar"; bar: string; }
 >fb.type === "foo" : boolean
 >fb.type : "bar" | "foo"
 >fb : { type: "foo"; foo: number; } | { type: "bar"; bar: string; }

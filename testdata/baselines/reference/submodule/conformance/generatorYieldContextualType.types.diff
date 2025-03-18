@@ -98,10 +98,10 @@
  }
  type StepResult<T> = typeof StepResult.Break | T;
  >StepResult : StepResult<T>
-->StepResult.Break : unique symbol
 +>T : T
+ >StepResult.Break : unique symbol
  >StepResult : typeof StepResult
-->Break : unique symbol
+ >Break : unique symbol
  
  type StepResultGenerator<T> =
  >StepResultGenerator : StepResultGenerator<T>
@@ -109,7 +109,7 @@
  
    | Generator<QuickPickStep | QuickInputStep, StepResult<T>, any | undefined>
    | AsyncGenerator<
-@@= skipped -15, +15 lines =@@
+@@= skipped -15, +17 lines =@@
      >;
  type StepSelection<T> = T extends QuickPickStep<infer U>
  >StepSelection : StepSelection<T>
@@ -173,8 +173,8 @@
    });
    const selection: StepSelection<typeof step> = yield step;
 ->selection : Directive | QuickPickItem[]
-->step : QuickPickStep<QuickPickItem>
 +>selection : QuickPickItem[] | Directive
+ >step : QuickPickStep<QuickPickItem>
  >yield step : any
  >step : QuickPickStep<QuickPickItem>
  

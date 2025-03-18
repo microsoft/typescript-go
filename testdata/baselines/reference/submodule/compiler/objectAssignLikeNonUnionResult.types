@@ -47,6 +47,7 @@ type ExtractRawComponent<T> = T extends { __raw: infer C } ? [L1: T, L2: C] : [R
 
 type t1 = ExtractRawComponent<typeof data1>;
 >t1 : [R1: Interface & ({ field: number; } | { field?: undefined; })]
+>data1 : Interface & ({ field: number; } | { field?: undefined; })
 
 // ???
 type Explode<T> = T extends { x: infer A } ? [A] : 'X';
@@ -58,4 +59,5 @@ type Explode<T> = T extends { x: infer A } ? [A] : 'X';
 // 'X' | [unknown] -- why?
 type e1 = Explode<typeof data1>;
 >e1 : "X"
+>data1 : Interface & ({ field: number; } | { field?: undefined; })
 

@@ -11,9 +11,3 @@
  >x : number
  >y : number
  }
-@@= skipped -11, +14 lines =@@
- 
- var x: typeof M; // Error only a namespace
- >x : any
-->M : any
- 

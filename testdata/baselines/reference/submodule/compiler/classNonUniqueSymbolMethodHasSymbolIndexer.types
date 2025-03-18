@@ -14,6 +14,7 @@ export class A {
 }
 declare const e1: A[typeof a]; // no error, `A` has `symbol` index
 >e1 : () => number
+>a : symbol
 
 type Constructor = new (...args: any[]) => {};
 >Constructor : Constructor

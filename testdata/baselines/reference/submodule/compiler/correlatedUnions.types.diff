@@ -415,8 +415,7 @@
  >'name' : "name"
  
  type BarLookup = typeof BAR_LOOKUP;
- >BarLookup : { a: { readonly name: "a"; }; b: { readonly name: "b"; }; }
-->BAR_LOOKUP : { a: { readonly name: "a"; }; b: { readonly name: "b"; }; }
+@@= skipped -10, +10 lines =@@
  
  type Baz = { [K in keyof BarLookup]: BarLookup[K]['name'] };
  >Baz : Baz
@@ -430,7 +429,7 @@
    prop1: {
  >prop1 : { subProp1: string; subProp2: string; }
  
-@@= skipped -40, +42 lines =@@
+@@= skipped -30, +33 lines =@@
  
  type NestedKeyOfOriginalFor<T extends KeyOfOriginal> = keyof Original[T];
  >NestedKeyOfOriginalFor : keyof Original[T]

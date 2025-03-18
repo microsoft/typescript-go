@@ -24,7 +24,9 @@
 ->Backbone : typeof Backbone
 ->Model : typeof Backbone.Model
 +>VisualizationModel : typeof Model
++>Backbone.Model : typeof Model
 +>Backbone : typeof import("extendingClassFromAliasAndUsageInIndexer_backbone")
++>Model : typeof Model
  }
  var moduleATyped: IHasVisualizationModel = moduleA;
  >moduleATyped : IHasVisualizationModel
@@ -68,7 +70,7 @@
  
  === extendingClassFromAliasAndUsageInIndexer_backbone.ts ===
  export class Model {
-@@= skipped -55, +55 lines =@@
+@@= skipped -55, +57 lines =@@
  
  === extendingClassFromAliasAndUsageInIndexer_moduleA.ts ===
  import Backbone = require("./extendingClassFromAliasAndUsageInIndexer_backbone");

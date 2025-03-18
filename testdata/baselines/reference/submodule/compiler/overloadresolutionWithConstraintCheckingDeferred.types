@@ -60,6 +60,7 @@ var result2: number = foo(x => new G<typeof x>(x)); // x has type D, new G(x) fa
 >new G<typeof x>(x) : G<D>
 >G : typeof G
 >x : D
+>x : D
 
 var result3: string = foo(x => { // x has type D
 >result3 : string
@@ -70,6 +71,7 @@ var result3: string = foo(x => { // x has type D
 
     var y: G<typeof x>; // error that D does not satisfy constraint, y is of type G<D>, entire call to foo is an error
 >y : G<D>
+>x : D
 
     return y;
 >y : G<D>

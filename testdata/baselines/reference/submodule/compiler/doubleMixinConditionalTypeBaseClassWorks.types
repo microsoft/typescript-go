@@ -16,6 +16,7 @@ const Mixin1 = <C extends Constructor>(Base: C) => class extends Base { private 
 
 type FooConstructor = typeof Mixin1 extends (a: Constructor) => infer Cls ? Cls : never;
 >FooConstructor : { new (...args: any[]): (Anonymous class)<Constructor>; prototype: (Anonymous class)<any>; } & Constructor
+>Mixin1 : <C extends Constructor>(Base: C) => { new (...args: any[]): (Anonymous class)<C>; prototype: (Anonymous class)<any>; } & C
 >a : Constructor
 >Cls : Cls
 

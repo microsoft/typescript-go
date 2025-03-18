@@ -7,11 +7,9 @@
 ->foo4 : (cb: typeof a) => boolean
 +>foo4 : (cb: { new (x: boolean): boolean; new (x: string): string; }) => boolean
  >cb : { new (x: boolean): boolean; new (x: string): string; }
-->a : { new (x: boolean): boolean; new (x: string): string; }
+ >a : { new (x: boolean): boolean; new (x: string): string; }
  
-         return new cb(null);
- >new cb(null) : boolean
-@@= skipped -12, +11 lines =@@
+@@= skipped -12, +12 lines =@@
      var r = foo4(a);
  >r : boolean
  >foo4(a) : boolean

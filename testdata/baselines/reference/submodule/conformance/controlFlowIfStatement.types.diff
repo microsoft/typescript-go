@@ -50,13 +50,3 @@
    p: T;
  >p : T
  }
-@@= skipped -19, +22 lines =@@
- >(null as unknown as typeof x.p) : "A"
- >null as unknown as typeof x.p : "A"
- >null as unknown : unknown
-->x.p : "A"
- >x : I<"A" | "B">
-->p : "A"
-     }
- }
- 

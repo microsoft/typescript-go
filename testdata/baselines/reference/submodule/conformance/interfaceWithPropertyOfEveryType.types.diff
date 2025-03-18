@@ -17,19 +17,7 @@
  >x : T
  
      j: Foo;
-@@= skipped -10, +11 lines =@@
- 
-     l: typeof f1;
- >l : () => void
-->f1 : () => void
- 
-     m: typeof M;
- >m : typeof M
-->M : typeof M
- 
-     n: {};
- >n : {}
-@@= skipped -54, +52 lines =@@
+@@= skipped -64, +65 lines =@@
      i: <T>(x: T) => x,
  >i : <T>(x: T) => T
  ><T>(x: T) => x : <T>(x: T) => T

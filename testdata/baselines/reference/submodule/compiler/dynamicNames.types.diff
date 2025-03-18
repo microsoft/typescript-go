@@ -18,11 +18,8 @@
  
  namespace N {
  >N : typeof N
-@@= skipped -16, +16 lines =@@
-     export const s1: typeof s0 = s0;
- >s1 : unique symbol
+@@= skipped -19, +19 lines =@@
  >s0 : unique symbol
-->s0 : unique symbol
  
      export interface T4 {
 +>T4 : T4
@@ -30,11 +27,8 @@
          [N.c2]: number;
  >[N.c2] : number
  >N.c2 : "a"
-@@= skipped -81, +82 lines =@@
- export const s2: typeof s0 = s0;
- >s2 : unique symbol
+@@= skipped -81, +83 lines =@@
  >s0 : unique symbol
-->s0 : unique symbol
  
  interface T8 {
 +>T8 : T8
@@ -42,7 +36,7 @@
      [c4]: number;
  >[c4] : number
  >c4 : "a"
-@@= skipped -52, +53 lines =@@
+@@= skipped -49, +51 lines =@@
  };
  
  interface T12 {

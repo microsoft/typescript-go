@@ -458,6 +458,7 @@ const config = createXMachine({
 
       logic: typeof child;
 >logic : () => any
+>child : () => any
 
     };
   },

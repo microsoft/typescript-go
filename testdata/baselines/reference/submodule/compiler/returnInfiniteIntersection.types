@@ -15,6 +15,7 @@ function recursive() {
     return x as typeof x & { p };
 >x as typeof x & { p } : <T>(subkey: T) => ??? & { p: any; } & { p: any; }
 >x : <T>(subkey: T) => ??? & { p: any; }
+>x : <T>(subkey: T) => ??? & { p: any; }
 >p : any
 }
 

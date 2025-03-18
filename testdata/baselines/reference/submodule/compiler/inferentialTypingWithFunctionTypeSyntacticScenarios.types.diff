@@ -23,15 +23,5 @@
 +>IdentityConstructor : IdentityConstructor
 +
      new (): typeof identity;
-->identity : <V>(y: V) => V
- }
- var ic: IdentityConstructor;
- >ic : IdentityConstructor
-@@= skipped -38, +39 lines =@@
- >"" : ""
- ><typeof identity>identity : <V>(y: V) => V
  >identity : <V>(y: V) => V
-->identity : <V>(y: V) => V
- 
- // parenthesized expression
- s = map("", (identity));
+ }

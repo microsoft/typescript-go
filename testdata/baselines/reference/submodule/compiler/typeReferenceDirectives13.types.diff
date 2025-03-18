@@ -10,6 +10,7 @@
 ->x : () => typeof $
 ->$ : { x: number; }
 +>x : () => any
++>$ : any
  }
  
  === /ref.d.ts ===

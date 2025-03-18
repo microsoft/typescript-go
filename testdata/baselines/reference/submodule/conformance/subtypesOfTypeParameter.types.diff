@@ -51,15 +51,7 @@
  >x : T
  >y : U
  
-@@= skipped -17, +19 lines =@@
- 
-     var u: typeof undefined;
- >u : any
-->undefined : undefined
- 
-     var r0b = true ? u : x;
- >r0b : any
-@@= skipped -75, +74 lines =@@
+@@= skipped -92, +94 lines =@@
  >Date : DateConstructor
  
      var r5 = true ? /1/ : x;
@@ -188,19 +180,8 @@
  >true : true
  >x : T
  >E.A : E
-@@= skipped -10, +10 lines =@@
- 
-     var af: typeof f;
- >af : typeof f
-->f : typeof f
- 
-     var r15 = true ? af : x;
- >r15 : T | typeof f
-@@= skipped -18, +17 lines =@@
- 
-     var ac: typeof c;
- >ac : typeof c
-->c : typeof c
+@@= skipped -31, +31 lines =@@
+ >c : typeof c
  
      var r16 = true ? ac : x;
 ->r16 : typeof c | T

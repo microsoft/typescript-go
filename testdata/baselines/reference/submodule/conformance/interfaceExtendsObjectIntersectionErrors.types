@@ -94,12 +94,15 @@ declare namespace NX { export const a = "hello" }
 
 type TCX = typeof CX;
 >TCX : typeof CX
+>CX : typeof CX
 
 type TEX = typeof EX;
 >TEX : typeof EX
+>EX : typeof EX
 
 type TNX = typeof NX;
 >TNX : typeof NX
+>NX : typeof NX
 
 interface I10 extends TCX { a: number }
 >I10 : I10

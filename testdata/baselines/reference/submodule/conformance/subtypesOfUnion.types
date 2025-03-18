@@ -89,9 +89,11 @@ interface I1<T> {
 
     foo14: typeof f; // error
 >foo14 : typeof f
+>f : typeof f
 
     foo15: typeof c; // error
 >foo15 : typeof c
+>c : typeof c
 
     foo16: T; // error
 >foo16 : T
@@ -154,9 +156,11 @@ interface I2<T> {
 
     foo14: typeof f; // error
 >foo14 : typeof f
+>f : typeof f
 
     foo15: typeof c; // error
 >foo15 : typeof c
+>c : typeof c
 
     foo16: T; // error
 >foo16 : T

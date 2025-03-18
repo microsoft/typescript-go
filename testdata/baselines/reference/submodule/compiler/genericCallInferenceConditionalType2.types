@@ -43,6 +43,7 @@ const WrappedComponent = wrapComponent(
 
 type RetrievedProps = ComponentProps<typeof WrappedComponent>;
 >RetrievedProps : { as?: string | undefined; className?: string | undefined; }
+>WrappedComponent : <T extends string>(props: { as?: T | undefined; className?: string | undefined; }) => unknown
 
 declare const f: <T>(f: (x: T) => unknown) => (x: T) => unknown
 >f : <T>(f: (x: T) => unknown) => (x: T) => unknown
@@ -71,4 +72,5 @@ type FirstParameter<T> = T extends (x: infer P) => unknown ? P : unknown
 
 type X = FirstParameter<typeof h>['foo']
 >X : unknown
+>h : <T extends unknown>(x: { foo: T; }) => unknown
 

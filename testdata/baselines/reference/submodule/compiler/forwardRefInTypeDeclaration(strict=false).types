@@ -4,6 +4,7 @@
 // forward ref ignored in a typeof
 declare let s: typeof s1;
 >s : "x"
+>s1 : "x"
 
 const s1 = "x";
 >s1 : "x"

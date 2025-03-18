@@ -236,6 +236,8 @@ module f {
 declare function foo15(x: typeof f): typeof f;
 >foo15 : { (x: typeof f): typeof f; (x: any): any; }
 >x : typeof f
+>f : typeof f
+>f : typeof f
 
 declare function foo15(x: any): any;
 >foo15 : { (x: typeof f): typeof f; (x: any): any; }

@@ -26,11 +26,3 @@
  
  
  export const Mixin: MixinHelperFunc = null as any
-@@= skipped -25, +28 lines =@@
-     (base: AnyConstructor<Base, typeof Base>) => {
- >(base: AnyConstructor<Base, typeof Base>) => {        class XmlElement2 extends base {            num: number = 0        }        return XmlElement2;    } : (base: AnyConstructor<Base, typeof Base>) => typeof XmlElement2
- >base : AnyConstructor<Base, typeof Base>
-->Base : typeof Base
- 
-         class XmlElement2 extends base {
- >XmlElement2 : XmlElement2

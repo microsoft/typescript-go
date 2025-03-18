@@ -3,6 +3,7 @@
 === invalidUndefinedAssignments.ts ===
 var x: typeof undefined;
 >x : any
+>undefined : undefined
 
 enum E { A }
 >E : E

@@ -10,6 +10,7 @@ function f<T>(p: T) {
 >g : <T>(x: T) => T
 >T : T
 >x : T
+>p : T
 >null as any : any
 
     return g;
@@ -23,7 +24,9 @@ function g<T>(x: T) {
 
     let y: typeof x extends (infer T)[] ? T : typeof x = null as any;
 >y : T extends (infer T)[] ? T : T
+>x : T
 >T : T
+>x : T
 >null as any : any
 
     return y;

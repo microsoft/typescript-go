@@ -17,12 +17,14 @@ f(t => {
 
     type isArray = (typeof t)[] extends string[] ? true : false;
 >isArray : isArray
+>t : T
 >true : true
 >false : false
 
     type IsObject = { x: typeof t } extends { x: string } ? true : false;
 >IsObject : IsObject
 >x : T
+>t : T
 >x : string
 >true : true
 >false : false
@@ -38,12 +40,14 @@ const fn1: <T>(x: T) => void = t => {
 
     type isArray = (typeof t)[] extends string[] ? true : false;
 >isArray : isArray
+>t : T
 >true : true
 >false : false
 
     type IsObject = { x: typeof t } extends { x: string } ? true : false;
 >IsObject : IsObject
 >x : T
+>t : T
 >x : string
 >true : true
 >false : false
@@ -60,12 +64,14 @@ const fn2: <T>(x: T) => void = function test(t) {
 
     type isArray = (typeof t)[] extends string[] ? true : false;
 >isArray : isArray
+>t : T
 >true : true
 >false : false
 
     type IsObject = { x: typeof t } extends { x: string } ? true : false;
 >IsObject : IsObject
 >x : T
+>t : T
 >x : string
 >true : true
 >false : false
@@ -85,12 +91,14 @@ const obj: { f: <T>(x: T) => void } = {
 
         type isArray = (typeof t)[] extends string[] ? true : false;
 >isArray : isArray
+>t : T
 >true : true
 >false : false
 
         type IsObject = { x: typeof t } extends { x: string } ? true : false;
 >IsObject : IsObject
 >x : T
+>t : T
 >x : string
 >true : true
 >false : false

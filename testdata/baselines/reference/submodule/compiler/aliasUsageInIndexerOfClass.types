@@ -12,7 +12,9 @@ interface IHasVisualizationModel {
 
     VisualizationModel: typeof Backbone.Model;
 >VisualizationModel : typeof Model
+>Backbone.Model : typeof Model
 >Backbone : typeof import("aliasUsageInIndexerOfClass_backbone")
+>Model : typeof Model
 }
 class N {
 >N : N
@@ -29,6 +31,7 @@ class N2 {
 
     [idx: string]: typeof moduleA
 >idx : string
+>moduleA : typeof import("aliasUsageInIndexerOfClass_moduleA")
 
     x: IHasVisualizationModel;
 >x : IHasVisualizationModel

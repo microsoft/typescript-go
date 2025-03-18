@@ -10,6 +10,7 @@
 ->x : { x: number; }
 ->$ : { x: number; }
 +>x : any
++>$ : any
  }
  === /ref.d.ts ===
  export interface $ { x }

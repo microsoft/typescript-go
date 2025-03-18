@@ -20,10 +20,12 @@ type Action =
 
     | {type: typeof A, data: string}
 >type : unique symbol
+>A : unique symbol
 >data : string
 
     | {type: typeof B, data: number}
 >type : unique symbol
+>B : unique symbol
 >data : number
 
 declare const ab: Action;

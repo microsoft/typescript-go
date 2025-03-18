@@ -7,8 +7,9 @@
 ->jsx : error
 ->React.createElement : error
 +>jsx : any
++>React.createElement : any
  >React : any
-->createElement : any
+ >createElement : any
  
  namespace jsx {
 +>jsx : any
@@ -38,7 +39,7 @@
          export type IntrinsicElements = {
  >IntrinsicElements : IntrinsicElements
  
-@@= skipped -26, +41 lines =@@
+@@= skipped -26, +43 lines =@@
          // Equivalent to above, but fails
          export type WithCSSProp<P> = P & { css: string }
  >WithCSSProp : WithCSSProp<P>

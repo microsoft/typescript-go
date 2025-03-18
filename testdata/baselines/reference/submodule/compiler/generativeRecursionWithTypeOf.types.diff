@@ -8,15 +8,3 @@
  
      static foo(x: number) { }
  >foo : (x: number) => void
-@@= skipped -15, +16 lines =@@
-     export function f(x: typeof C) {   
- >f : (x: typeof C) => C<typeof C>
- >x : typeof C
-->C : typeof C
- 
-         return new x<typeof x>();     
- >new x<typeof x>() : C<typeof C>
- >x : typeof C
-->x : typeof C
-     }
- }

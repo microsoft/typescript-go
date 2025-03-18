@@ -8,6 +8,7 @@ import foo0 = require('./foo_0');
 
 var x: typeof foo0 = {};
 >x : typeof import("foo_0")
+>foo0 : typeof import("foo_0")
 >{} : {}
 
 var y: {M2: Object} = foo0;

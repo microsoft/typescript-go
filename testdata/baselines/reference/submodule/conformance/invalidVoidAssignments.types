@@ -18,6 +18,7 @@ var c: number = x;
 
 var d: typeof undefined = x;
 >d : any
+>undefined : undefined
 >x : void
 
 class C { foo: string; }

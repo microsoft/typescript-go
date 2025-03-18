@@ -23,9 +23,11 @@ var x: foo.C1 = <{m1: number}>{};
 
 var y: typeof foo.C1.s1 = false;
 >y : boolean
+>foo.C1.s1 : boolean
 >foo.C1 : typeof C1
 >foo : typeof import("foo_0")
 >C1 : typeof C1
+>s1 : boolean
 >false : false
 
 var z: foo.M1.I2;

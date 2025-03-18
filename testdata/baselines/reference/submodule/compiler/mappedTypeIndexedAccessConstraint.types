@@ -89,6 +89,7 @@ const resolveMapped = <K extends keyof typeof mapped>(key: K) => mapped[key].toS
 >resolveMapped : <K extends keyof Obj>(key: K) => string
 ><K extends keyof typeof mapped>(key: K) => mapped[key].toString() : <K extends keyof Obj>(key: K) => string
 >K : K
+>mapped : { a?: 1 | undefined; b?: 2 | undefined; }
 >key : K
 >mapped[key].toString() : string
 >mapped[key].toString : (radix?: number | undefined) => string
@@ -116,6 +117,7 @@ type Mappings = { foo: boolean, "12": number, 42: string };
 type MapperArgs<K extends (typeof arr)[number]> = {
 >MapperArgs : MapperArgs<K>
 >K : K
+>arr : ["foo", "12", 42]
 
     v: K,
 >v : K
@@ -177,6 +179,7 @@ const resolveMapper1 = <K extends keyof typeof mapper>(
 >resolveMapper1 : <K extends "12" | "foo" | 42>(key: K, o: MapperArgs<K>) => PartMappings[K]
 ><K extends keyof typeof mapper>(    key: K, o: MapperArgs<K>) => mapper[key](o) : <K extends "12" | "foo" | 42>(key: K, o: MapperArgs<K>) => PartMappings[K]
 >K : K
+>mapper : { foo?: (o: MapperArgs<"foo">) => boolean | undefined | undefined; 12: (o: MapperArgs<"12">) => number; 42: (o: MapperArgs<42>) => string; }
 
     key: K, o: MapperArgs<K>) => mapper[key](o);  // Error
 >key : K
@@ -191,6 +194,7 @@ const resolveMapper2 = <K extends keyof typeof mapper>(
 >resolveMapper2 : <K extends "12" | "foo" | 42>(key: K, o: MapperArgs<K>) => PartMappings[K] | undefined
 ><K extends keyof typeof mapper>(    key: K, o: MapperArgs<K>) => mapper[key]?.(o) : <K extends "12" | "foo" | 42>(key: K, o: MapperArgs<K>) => PartMappings[K] | undefined
 >K : K
+>mapper : { foo?: (o: MapperArgs<"foo">) => boolean | undefined | undefined; 12: (o: MapperArgs<"12">) => number; 42: (o: MapperArgs<42>) => string; }
 
     key: K, o: MapperArgs<K>) => mapper[key]?.(o)
 >key : K

@@ -384,11 +384,13 @@
  >ExtractedProps : ExtractedProps
  >PropTypes : any
 ->propTypes : PropTypes.ValidationMap<Props>
++>propTypes : ValidationMap<Props>
  
  type ExtractedPropsWithoutAnnotation = PropTypes.InferProps<typeof propTypesWithoutAnnotation>;
  >ExtractedPropsWithoutAnnotation : ExtractedPropsWithoutAnnotation
  >PropTypes : any
 ->propTypesWithoutAnnotation : { any: PropTypes.Requireable<any>; array: PropTypes.Validator<any[]>; bool: PropTypes.Validator<boolean>; shape: PropTypes.Validator<NonNullable<PropTypes.InferProps<{ foo: PropTypes.Validator<string>; bar: PropTypes.Requireable<boolean>; baz: PropTypes.Requireable<any>; }>>>; oneOfType: PropTypes.Validator<NonNullable<NonNullable<string | boolean | PropTypes.InferProps<{ foo: PropTypes.Requireable<string>; bar: PropTypes.Validator<number>; }>>>>; }
++>propTypesWithoutAnnotation : { any: Requireable<any>; array: Validator<any[]>; bool: Validator<boolean>; shape: Validator<NonNullable<InferProps<{ foo: Validator<string>; bar: Requireable<boolean>; baz: Requireable<any>; }>>>; oneOfType: Validator<NonNullable<NonNullable<string | boolean | InferProps<{ foo: Requireable<string>; bar: Validator<number>; }>>>>; }
  
  type ExtractPropsMatch = ExtractedProps extends ExtractedPropsWithoutAnnotation ? true : false;
  >ExtractPropsMatch : true

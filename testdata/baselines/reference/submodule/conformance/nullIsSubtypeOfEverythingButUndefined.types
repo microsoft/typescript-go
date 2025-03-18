@@ -15,6 +15,7 @@ var r0 = true ? null : null;
 
 var u: typeof undefined;
 >u : any
+>undefined : undefined
 
 var r0b = true ? u : null;
 >r0b : any
@@ -238,6 +239,7 @@ module f {
 }
 var af: typeof f;
 >af : typeof f
+>f : typeof f
 
 var r15 = true ? af : null;
 >r15 : typeof f
@@ -264,6 +266,7 @@ module c {
 }
 var ac: typeof c;
 >ac : typeof c
+>c : typeof c
 
 var r16 = true ? ac : null;
 >r16 : typeof c

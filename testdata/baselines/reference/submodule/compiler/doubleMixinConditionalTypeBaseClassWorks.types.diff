@@ -19,6 +19,7 @@
 ->FooConstructor : { new (...args: any[]): Mixin1<Constructor>.(Anonymous class); prototype: Mixin1<any>.(Anonymous class); } & Constructor
 ->Mixin1 : <C extends Constructor>(Base: C) => { new (...args: any[]): (Anonymous class); prototype: Mixin1<any>.(Anonymous class); } & C
 +>FooConstructor : { new (...args: any[]): (Anonymous class)<Constructor>; prototype: (Anonymous class)<any>; } & Constructor
++>Mixin1 : <C extends Constructor>(Base: C) => { new (...args: any[]): (Anonymous class)<C>; prototype: (Anonymous class)<any>; } & C
  >a : Constructor
 +>Cls : Cls
  

@@ -10,25 +10,20 @@
 ->method : (args: typeof arguments) => void
 +>method : (args: any) => void
  >args : any
-->arguments : any
+ >arguments : any
  
      fn: (args: typeof arguments) => void;
 ->fn : (args: typeof arguments) => void
 +>fn : (args: any) => void
  >args : any
-->arguments : any
+ >arguments : any
  
-     (args: typeof arguments): void;
- >args : any
-->arguments : any
- 
-     new (args: typeof arguments): void;
- >args : any
-->arguments : any
+@@= skipped -19, +21 lines =@@
+ >arguments : any
  
      construct: new (args: typeof arguments) => void;
 ->construct : new (args: typeof arguments) => void
 +>construct : new (args: any) => void
  >args : any
-->arguments : any
+ >arguments : any
  }

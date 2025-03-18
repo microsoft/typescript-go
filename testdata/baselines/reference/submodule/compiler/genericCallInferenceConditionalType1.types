@@ -30,4 +30,5 @@ type FirstParameter<T> = T extends (x: infer P) => unknown ? P : unknown;
 
 type X = FirstParameter<typeof h>["foo"];
 >X : unknown
+>h : <T extends unknown>(x: { foo: T; }) => unknown
 

@@ -16,6 +16,7 @@ export type PropertiesOf<T> = { [K in keyof T]: T[K] };
 
 interface IApiItemConstructor extends Constructor<ApiItem>, PropertiesOf<typeof ApiItem> {}
 >IApiItemConstructor : IApiItemConstructor
+>ApiItem : typeof ApiItem
 
 // Base class
 class ApiItem {

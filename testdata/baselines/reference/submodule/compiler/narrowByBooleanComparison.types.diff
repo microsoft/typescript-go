@@ -26,11 +26,8 @@
 +
      type: typeof ACTOR_TYPE;
  >type : "actor"
-->ACTOR_TYPE : "actor"
- }
- function isActor(entity: Entity): entity is Actor {
- >isActor : (entity: Entity) => entity is Actor
-@@= skipped -61, +62 lines =@@
+ >ACTOR_TYPE : "actor"
+@@= skipped -61, +63 lines =@@
  
      return typeof x === "function";
  >typeof x === "function" : boolean

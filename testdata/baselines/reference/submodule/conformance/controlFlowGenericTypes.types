@@ -403,6 +403,7 @@ function once<ET, T extends EventEmitter<ET>>(emittingObject: T, eventName: keyo
 >off : <K extends keyof ET>(...args: [unknown, string] | [K, number]) => void
 >eventName as typeof eventName : keyof ET
 >eventName : keyof ET
+>eventName : keyof ET
 >0 : 0
 }
 

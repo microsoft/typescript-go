@@ -9,15 +9,7 @@
          opt?: Base
  >opt : Base
      }
-@@= skipped -12, +14 lines =@@
- 
-     var b: typeof a = { opt: new Base() }
- >b : { opt?: Base; }
-->a : { opt?: Base; }
- >{ opt: new Base() } : { opt: Base; }
- >opt : Base
- >new Base() : Base
-@@= skipped -8, +7 lines =@@
+@@= skipped -20, +22 lines =@@
  
      // sources
      interface D {

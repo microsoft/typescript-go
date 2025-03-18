@@ -30,10 +30,11 @@
  >null as any as Parameters<typeof readSegment>[0] : [number, number]
  >null as any : any
 ->readSegment : ([length, count]: [number, number]) => void
++>readSegment : (__0: [number, number]) => void
  
  export type RecursiveTupleA = [initial: string, next: RecursiveTupleA];
  >RecursiveTupleA : RecursiveTupleA
-@@= skipped -48, +47 lines =@@
+@@= skipped -48, +48 lines =@@
  
  declare function f<T extends any[]>(...x: T): T;
  >f : <T extends any[]>(...x: T) => T

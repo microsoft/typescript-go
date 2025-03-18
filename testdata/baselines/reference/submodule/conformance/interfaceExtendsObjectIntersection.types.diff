@@ -44,23 +44,8 @@
  
  class C1 extends Constructor<I1>() { x: string }
  >C1 : C1
-@@= skipped -91, +101 lines =@@
- 
- type T10 = typeof fx;
- >T10 : (x: string) => string
-->fx : (x: string) => string
- 
- type T11 = typeof CX;
- >T11 : typeof CX
-->CX : typeof CX
- 
- type T12 = typeof EX;
- >T12 : typeof EX
-->EX : typeof EX
- 
- type T13 = typeof NX;
- >T13 : typeof NX
-->NX : typeof NX
+@@= skipped -106, +116 lines =@@
+ >NX : typeof NX
  
  interface I10 extends T10 { x: string }
 +>I10 : I10

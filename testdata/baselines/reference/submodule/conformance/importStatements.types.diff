@@ -27,6 +27,7 @@
 ->m : typeof a
 ->a : typeof a
 +>m : typeof A
++>a : typeof A
  
      var p: a.Point;
 ->p : a.Point
@@ -39,7 +40,7 @@
  >{x:0, y:0 } : { x: number; y: number; }
  >x : number
  >0 : 0
-@@= skipped -25, +24 lines =@@
+@@= skipped -25, +25 lines =@@
  >D : typeof D
  
      import a = A;

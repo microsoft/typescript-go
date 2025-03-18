@@ -40,6 +40,7 @@ interface C {
 
     "a-b": typeof B;
 >"a-b" : typeof B
+>B : typeof B
 }
 
 interface D {
@@ -47,6 +48,7 @@ interface D {
 
     1: typeof B;
 >1 : typeof B
+>B : typeof B
 }
 
 var a: string[];

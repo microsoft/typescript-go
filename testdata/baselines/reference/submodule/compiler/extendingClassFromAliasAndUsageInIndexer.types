@@ -15,7 +15,9 @@ interface IHasVisualizationModel {
 
     VisualizationModel: typeof Backbone.Model;
 >VisualizationModel : typeof Model
+>Backbone.Model : typeof Model
 >Backbone : typeof import("extendingClassFromAliasAndUsageInIndexer_backbone")
+>Model : typeof Model
 }
 var moduleATyped: IHasVisualizationModel = moduleA;
 >moduleATyped : IHasVisualizationModel

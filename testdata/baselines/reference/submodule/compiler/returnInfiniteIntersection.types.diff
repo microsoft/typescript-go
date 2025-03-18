@@ -25,6 +25,7 @@
 ->x : <T>(subkey: T) => any & { p: any; }
 +>x as typeof x & { p } : <T>(subkey: T) => ??? & { p: any; } & { p: any; }
 +>x : <T>(subkey: T) => ??? & { p: any; }
++>x : <T>(subkey: T) => ??? & { p: any; }
  >p : any
  }
  

@@ -25,5 +25,3 @@
  
  type X = FirstParameter<typeof h>["foo"];
  >X : unknown
-->h : <T extends unknown>(x: { foo: T; }) => unknown
- 

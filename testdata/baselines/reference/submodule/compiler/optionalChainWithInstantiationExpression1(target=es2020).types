@@ -21,6 +21,7 @@ type c = unknown;
 
 declare const a: typeof A | undefined;
 >a : typeof A
+>A : typeof A
 
 a?.b<c>.d;
 >a?.b<c>.d : number

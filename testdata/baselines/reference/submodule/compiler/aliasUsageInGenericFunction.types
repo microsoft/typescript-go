@@ -12,7 +12,9 @@ interface IHasVisualizationModel {
 
     VisualizationModel: typeof Backbone.Model;
 >VisualizationModel : typeof Model
+>Backbone.Model : typeof Model
 >Backbone : typeof import("aliasUsageInGenericFunction_backbone")
+>Model : typeof Model
 }
 function foo<T extends { a: IHasVisualizationModel }>(x: T) {
 >foo : <T extends { a: IHasVisualizationModel; }>(x: T) => T

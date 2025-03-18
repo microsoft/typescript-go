@@ -19,6 +19,7 @@
 ->b : { a: T; b: any; }
 ->x : { a: T; b: any; }
 +>b : { a: T; b: ???; }
++>x : { a: T; b: ???; }
  
      };
      return x;
@@ -42,6 +43,7 @@
 ->b : { a: T; b: any; }
 ->x : { a: T; b: any; }
 +>b : { a: T; b: ???; }
++>x : { a: T; b: ???; }
  
      };
      return x;

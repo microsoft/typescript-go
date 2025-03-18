@@ -7,7 +7,9 @@ import React from 'react'
 
 declare const jsx: typeof React.createElement
 >jsx : any
+>React.createElement : any
 >React : any
+>createElement : any
 
 namespace jsx {
 >jsx : any

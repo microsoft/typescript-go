@@ -6,6 +6,7 @@ type FuncType = (x: <T>(p: T) => T) => typeof x;
 >x : <T>(p: T) => T
 >T : T
 >p : T
+>x : <T>(p: T) => T
 
 function tempTag1<T>(templateStrs: TemplateStringsArray, f: FuncType, x: T): T;
 >tempTag1 : { <T>(templateStrs: TemplateStringsArray, f: FuncType, x: T): T; <T>(templateStrs: TemplateStringsArray, f: FuncType, h: FuncType, x: T): T; }

@@ -6,7 +6,7 @@
  >x : <T>(p: T) => T
 +>T : T
  >p : T
-->x : <T>(p: T) => T
+ >x : <T>(p: T) => T
  
  function fun<T>(f: FuncType, x: T): T;
 ->fun : { <T>(f: FuncType, x: T): T; <T_1>(f: FuncType, g: FuncType, x: T_1): T_1; }

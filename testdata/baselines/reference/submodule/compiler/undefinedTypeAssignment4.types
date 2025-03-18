@@ -25,4 +25,5 @@ var x: undefined;
 
 var y: typeof undefined;
 >y : typeof undefined
+>undefined : typeof undefined
 

@@ -26,19 +26,3 @@
  
      constructor(x: T) { }
  >x : T
-@@= skipped -53, +58 lines =@@
- >new G<typeof x>(x) : G<D>
- >G : typeof G
- >x : D
-->x : D
- 
- var result3: string = foo(x => { // x has type D
- >result3 : string
-@@= skipped -11, +10 lines =@@
- 
-     var y: G<typeof x>; // error that D does not satisfy constraint, y is of type G<D>, entire call to foo is an error
- >y : G<D>
-->x : D
- 
-     return y;
- >y : G<D>

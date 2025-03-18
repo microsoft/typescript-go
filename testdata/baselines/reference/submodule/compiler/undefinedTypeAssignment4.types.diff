@@ -9,9 +9,3 @@
  	member: number;
  >member : number
  }
-@@= skipped -15, +17 lines =@@
- 
- var y: typeof undefined;
- >y : typeof undefined
-->undefined : typeof undefined
- 

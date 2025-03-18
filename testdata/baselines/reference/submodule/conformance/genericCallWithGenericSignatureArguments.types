@@ -80,8 +80,10 @@ var r4 = foo((x: typeof a) => a, (x: typeof b) => b); // typeof a => typeof a
 >(x: typeof a) => a : (x: { x: number; y?: number; }) => { x: number; y?: number; }
 >x : { x: number; y?: number; }
 >a : { x: number; y?: number; }
+>a : { x: number; y?: number; }
 >(x: typeof b) => b : (x: { x: number; z?: number; }) => { x: number; z?: number; }
 >x : { x: number; z?: number; }
+>b : { x: number; z?: number; }
 >b : { x: number; z?: number; }
 
 var r5 = foo((x: typeof b) => b, (x: typeof a) => a); // typeof b => typeof b
@@ -91,8 +93,10 @@ var r5 = foo((x: typeof b) => b, (x: typeof a) => a); // typeof b => typeof b
 >(x: typeof b) => b : (x: { x: number; z?: number; }) => { x: number; z?: number; }
 >x : { x: number; z?: number; }
 >b : { x: number; z?: number; }
+>b : { x: number; z?: number; }
 >(x: typeof a) => a : (x: { x: number; y?: number; }) => { x: number; y?: number; }
 >x : { x: number; y?: number; }
+>a : { x: number; y?: number; }
 >a : { x: number; y?: number; }
 
 function other<T>(x: T) {

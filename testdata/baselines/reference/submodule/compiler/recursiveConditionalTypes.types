@@ -208,6 +208,7 @@ declare let b4: { value: { value: { value: typeof b4 }}};
 >value : { value: { value: { value: ???; }; }; }
 >value : { value: { value: { value: ???; }; }; }
 >value : { value: { value: { value: ???; }; }; }
+>b4 : { value: { value: { value: ???; }; }; }
 
 unbox(b1);  // string
 >unbox(b1) : string

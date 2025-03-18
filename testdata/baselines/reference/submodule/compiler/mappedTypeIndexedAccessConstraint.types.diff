@@ -90,10 +90,10 @@
  const resolveMapped = <K extends keyof typeof mapped>(key: K) => mapped[key].toString();  // Error
 ->resolveMapped : <K extends keyof typeof mapped>(key: K) => string
 -><K extends keyof typeof mapped>(key: K) => mapped[key].toString() : <K extends keyof typeof mapped>(key: K) => string
-->mapped : { a?: 1 | undefined; b?: 2 | undefined; }
 +>resolveMapped : <K extends keyof Obj>(key: K) => string
 +><K extends keyof typeof mapped>(key: K) => mapped[key].toString() : <K extends keyof Obj>(key: K) => string
 +>K : K
+ >mapped : { a?: 1 | undefined; b?: 2 | undefined; }
  >key : K
  >mapped[key].toString() : string
 ->mapped[key].toString : (radix?: number) => string
@@ -116,16 +116,17 @@
  >"foo" : "foo"
  >"12" : "12"
  >42 : 42
-@@= skipped -32, +33 lines =@@
+@@= skipped -32, +34 lines =@@
  
  type MapperArgs<K extends (typeof arr)[number]> = {
  >MapperArgs : MapperArgs<K>
 ->arr : readonly ["foo", "12", 42]
 +>K : K
++>arr : ["foo", "12", 42]
  
      v: K,
  >v : K
-@@= skipped -12, +12 lines =@@
+@@= skipped -12, +13 lines =@@
  
  type SetOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
  >SetOptional : SetOptional<T, K>
@@ -183,6 +184,7 @@
 +>resolveMapper1 : <K extends "12" | "foo" | 42>(key: K, o: MapperArgs<K>) => PartMappings[K]
 +><K extends keyof typeof mapper>(    key: K, o: MapperArgs<K>) => mapper[key](o) : <K extends "12" | "foo" | 42>(key: K, o: MapperArgs<K>) => PartMappings[K]
 +>K : K
++>mapper : { foo?: (o: MapperArgs<"foo">) => boolean | undefined | undefined; 12: (o: MapperArgs<"12">) => number; 42: (o: MapperArgs<42>) => string; }
  
      key: K, o: MapperArgs<K>) => mapper[key](o);  // Error
  >key : K
@@ -202,6 +204,7 @@
 +>resolveMapper2 : <K extends "12" | "foo" | 42>(key: K, o: MapperArgs<K>) => PartMappings[K] | undefined
 +><K extends keyof typeof mapper>(    key: K, o: MapperArgs<K>) => mapper[key]?.(o) : <K extends "12" | "foo" | 42>(key: K, o: MapperArgs<K>) => PartMappings[K] | undefined
 +>K : K
++>mapper : { foo?: (o: MapperArgs<"foo">) => boolean | undefined | undefined; 12: (o: MapperArgs<"12">) => number; 42: (o: MapperArgs<42>) => string; }
  
      key: K, o: MapperArgs<K>) => mapper[key]?.(o)
  >key : K
@@ -214,7 +217,7 @@
  >key : K
  >o : MapperArgs<K>
  
-@@= skipped -55, +55 lines =@@
+@@= skipped -55, +57 lines =@@
  >mapIntersection : { a?: number | undefined; b: number; c: number; }
  
      [K in keyof (Partial<Obj1> & Required<Obj2>)]: number;

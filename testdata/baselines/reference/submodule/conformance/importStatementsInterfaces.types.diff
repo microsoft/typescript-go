@@ -33,11 +33,8 @@
      import a = A;
  >a : any
  >A : any
-@@= skipped -20, +22 lines =@@
- 
-     var m: typeof a;
- >m : any
-->a : any
+@@= skipped -23, +25 lines =@@
+ >a : any
  
      var p: b.Point3D;
 ->p : b.Point3D
@@ -50,7 +47,7 @@
  >{x:0, y:0, z: 0 } : { x: number; y: number; z: number; }
  >x : number
  >0 : 0
-@@= skipped -26, +25 lines =@@
+@@= skipped -23, +23 lines =@@
  >A : any
  
      var p : a.Point;

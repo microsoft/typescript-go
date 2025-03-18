@@ -62,10 +62,12 @@ function foo2(x: any) { }
 function foo3(x: typeof a);
 >foo3 : { (x: <Z, A, B, C, D>(x: Z) => Z): any; (x: <Z, A, B, C, D>(x: Z) => Z): any; }
 >x : <Z, A, B, C, D>(x: Z) => Z
+>a : <Z, A, B, C, D>(x: Z) => Z
 
 function foo3(x: typeof a); // error
 >foo3 : { (x: <Z, A, B, C, D>(x: Z) => Z): any; (x: <Z, A, B, C, D>(x: Z) => Z): any; }
 >x : <Z, A, B, C, D>(x: Z) => Z
+>a : <Z, A, B, C, D>(x: Z) => Z
 
 function foo3(x: any) { }
 >foo3 : { (x: <Z, A, B, C, D>(x: Z) => Z): any; (x: <Z, A, B, C, D>(x: Z) => Z): any; }
@@ -78,6 +80,7 @@ function foo13(x: I<boolean, string, number, Date>);
 function foo13(x: typeof a); // ok
 >foo13 : { (x: I<boolean, string, number, Date>): any; (x: <Z, A, B, C, D>(x: Z) => Z): any; }
 >x : <Z, A, B, C, D>(x: Z) => Z
+>a : <Z, A, B, C, D>(x: Z) => Z
 
 function foo13(x: any) { }
 >foo13 : { (x: I<boolean, string, number, Date>): any; (x: <Z, A, B, C, D>(x: Z) => Z): any; }
@@ -98,6 +101,7 @@ function foo14(x: any) { }
 function foo14b(x: typeof a);
 >foo14b : { (x: <Z, A, B, C, D>(x: Z) => Z): any; (x: I2): any; }
 >x : <Z, A, B, C, D>(x: Z) => Z
+>a : <Z, A, B, C, D>(x: Z) => Z
 
 function foo14b(x: I2); // ok
 >foo14b : { (x: <Z, A, B, C, D>(x: Z) => Z): any; (x: I2): any; }

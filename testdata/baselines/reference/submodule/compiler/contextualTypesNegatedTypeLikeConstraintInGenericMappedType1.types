@@ -43,6 +43,7 @@ type Props<TTag extends ElementType, Overrides = {}> = Omit<
 type TabGroupProps<TTag extends ElementType = typeof DEFAULT_TABS_TAG> = Props<
 >TabGroupProps : TabGroupProps<TTag>
 >TTag : TTag
+>DEFAULT_TABS_TAG : "div"
 
   TTag,
   {
@@ -69,6 +70,7 @@ interface _internal_ComponentTabGroup {
 
   <TTag extends ElementType = typeof DEFAULT_TABS_TAG>(
 >TTag : TTag
+>DEFAULT_TABS_TAG : "div"
 
     props: TabGroupProps<TTag>,
 >props : TabGroupProps<TTag>

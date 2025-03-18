@@ -1,14 +1,6 @@
 --- old.nullIsSubtypeOfEverythingButUndefined.types
 +++ new.nullIsSubtypeOfEverythingButUndefined.types
-@@= skipped -14, +14 lines =@@
- 
- var u: typeof undefined;
- >u : any
-->undefined : undefined
- 
- var r0b = true ? u : null;
- >r0b : any
-@@= skipped -109, +108 lines =@@
+@@= skipped -123, +123 lines =@@
  >true ? <T>(x: T) => { return x } : null : <T>(x: T) => T
  >true : true
  ><T>(x: T) => { return x } : <T>(x: T) => T
@@ -37,23 +29,7 @@
  >foo : T
  
  var c2: C2<number>;
-@@= skipped -61, +62 lines =@@
- }
- var af: typeof f;
- >af : typeof f
-->f : typeof f
- 
- var r15 = true ? af : null;
- >r15 : typeof f
-@@= skipped -27, +26 lines =@@
- }
- var ac: typeof c;
- >ac : typeof c
-->c : typeof c
- 
- var r16 = true ? ac : null;
- >r16 : typeof c
-@@= skipped -16, +15 lines =@@
+@@= skipped -104, +105 lines =@@
  
  function f17<T>(x: T) {
  >f17 : <T>(x: T) => void

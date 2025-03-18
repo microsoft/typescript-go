@@ -1,14 +1,6 @@
 --- old.validNullAssignments.types
 +++ new.validNullAssignments.types
-@@= skipped -14, +14 lines =@@
- 
- var e: typeof undefined = null;
- >e : any
-->undefined : undefined
- 
- e = null; // ok
- >e = null : null
-@@= skipped -32, +31 lines =@@
+@@= skipped -46, +46 lines =@@
  >C : any
  
  interface I { foo: string }

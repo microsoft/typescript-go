@@ -9,9 +9,7 @@
      a: number;
  >a : number
  
-     b: typeof a; // Should yield error (a is not a value)
- >b : any
-->a : any
+@@= skipped -9, +11 lines =@@
  }
  
  interface I2 {
@@ -19,10 +17,8 @@
 +
      c: typeof d; // Should yield error (d is not a value)
  >c : any
-->d : any
- 
-     d: string;
- >d : string
+ >d : any
+@@= skipped -9, +11 lines =@@
  }
  
  interface I3 {
@@ -30,33 +26,8 @@
 +
      e: typeof e; // Should yield error (e is not a value)
  >e : any
-->e : any
- }
- 
- class C1 {
-@@= skipped -31, +34 lines =@@
- 
-     b: typeof a; // Should yield error (a is not a value)
- >b : any
-->a : any
- }
- 
- 
-@@= skipped -9, +8 lines =@@
- 
-     c: typeof d; // Should yield error (d is not a value)
- >c : any
-->d : any
- 
-     d: string;
- >d : string
-@@= skipped -11, +10 lines =@@
- 
-     e: typeof e; // Should yield error (e is not a value)
  >e : any
-->e : any
- }
- 
+@@= skipped -39, +41 lines =@@
  
  
  interface ValidInterface {
@@ -65,19 +36,3 @@
      x: string;
  >x : string
  }
-@@= skipped -28, +29 lines =@@
- 
- var x1: typeof vcInstance.x; // x1: string
- >x1 : string
-->vcInstance.x : string
- >vcInstance : ValidClass
-->x : string
- 
- var x2: typeof viInstance.x; // x2: string
- >x2 : string
-->viInstance.x : string
- >viInstance : ValidClass
-->x : string
- 
- 
- 

@@ -1,10 +1,6 @@
 --- old.declFileTypeofClass.types
 +++ new.declFileTypeofClass.types
-@@= skipped -25, +25 lines =@@
- 
- var z: typeof c;
- >z : typeof c
-->c : typeof c
+@@= skipped -29, +29 lines =@@
  
  class genericC<T>
  >genericC : genericC<T>

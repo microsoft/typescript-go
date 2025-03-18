@@ -17,11 +17,7 @@
  
  declare global {
  >global : typeof global
- 
-     const foo: typeof foo;
- >foo : any
-->foo : any
- }
+@@= skipped -18, +18 lines =@@
  
  === foo.d.ts ===
  interface Root {

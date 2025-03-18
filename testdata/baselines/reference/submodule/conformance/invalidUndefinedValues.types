@@ -3,6 +3,7 @@
 === invalidUndefinedValues.ts ===
 var x: typeof undefined;
 >x : any
+>undefined : undefined
 
 x = 1;
 >x = 1 : 1

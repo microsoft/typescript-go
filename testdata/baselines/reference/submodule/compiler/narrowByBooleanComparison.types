@@ -220,6 +220,7 @@ interface Actor extends Entity {
 
     type: typeof ACTOR_TYPE;
 >type : "actor"
+>ACTOR_TYPE : "actor"
 }
 function isActor(entity: Entity): entity is Actor {
 >isActor : (entity: Entity) => entity is Actor

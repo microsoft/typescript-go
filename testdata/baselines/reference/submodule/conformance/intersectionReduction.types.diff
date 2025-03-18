@@ -1,23 +1,6 @@
 --- old.intersectionReduction.types
 +++ new.intersectionReduction.types
-@@= skipped -20, +20 lines =@@
- 
- type T5 = symbol & typeof sym1;  // typeof sym1
- >T5 : unique symbol
-->sym1 : unique symbol
- 
- type T6 = typeof sym1 & symbol & typeof sym2;  // never
- >T6 : never
-->sym1 : unique symbol
-->sym2 : unique symbol
- 
- type T7 = string & 'a' & number & 10 & symbol & typeof sym1;  // never
- >T7 : never
-->sym1 : unique symbol
- 
- type T10 = string & ('a' | 'b');  // 'a' | 'b'
- >T10 : T10
-@@= skipped -83, +79 lines =@@
+@@= skipped -103, +103 lines =@@
  >foo : number
  
  declare let ab: A & B;

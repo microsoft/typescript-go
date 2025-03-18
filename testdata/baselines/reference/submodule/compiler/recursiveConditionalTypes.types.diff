@@ -141,10 +141,11 @@
 +>value : { value: { value: { value: ???; }; }; }
 +>value : { value: { value: { value: ???; }; }; }
 +>value : { value: { value: { value: ???; }; }; }
++>b4 : { value: { value: { value: ???; }; }; }
  
  unbox(b1);  // string
  >unbox(b1) : string
-@@= skipped -39, +38 lines =@@
+@@= skipped -39, +39 lines =@@
  >5 : 5
  
  unbox(b4);  // { value: { value: typeof b4 }}

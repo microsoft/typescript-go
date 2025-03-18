@@ -424,6 +424,7 @@ const langCodeSet = Set('fr', 'en', 'es', 'it', 'nl')
 
 export type LangCode = keyof typeof langCodeSet
 >LangCode : "en" | "es" | "fr" | "it" | "nl"
+>langCodeSet : Record<"en" | "es" | "fr" | "it" | "nl", true>
 
 export const langCodes = keys(langCodeSet)
 >langCodes : ("en" | "es" | "fr" | "it" | "nl")[]

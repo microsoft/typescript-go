@@ -147,6 +147,7 @@ for( var arr2 = new Array<D<number>>();;){}
 
 for(var m: typeof M;;){}
 >m : typeof M
+>M : typeof M
 
 for( var m = M.A;;){}
 >m : typeof M

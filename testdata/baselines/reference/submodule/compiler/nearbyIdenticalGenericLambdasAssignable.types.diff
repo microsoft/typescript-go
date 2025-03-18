@@ -22,19 +22,7 @@
  
      return {} as any as { v: T };
  >{} as any as { v: T } : { v: T; }
-@@= skipped -12, +13 lines =@@
- // Hover display is identical on all of these
- type TA = typeof fA;
- >TA : <T>() => { v: T; }
-->fA : <T>() => { v: T; }
- 
- type TB = typeof fB;
- >TB : <T>() => { v: T; }
-->fB : <T>() => { v: T; }
- 
- type TC = typeof fC;
- >TC : <T>() => { v: T; }
-->fC : <T>() => { v: T; }
+@@= skipped -24, +25 lines =@@
  
  type TL = <T>() => { v: T }; 
  >TL : TL
@@ -57,7 +45,7 @@
  >x : <T>() => { v: T; }
  
  declare function accL(x: TL): void;
-@@= skipped -33, +31 lines =@@
+@@= skipped -21, +22 lines =@@
  // These should all be OK, every type is identical
  accA(fA); accA(fB); accA(fC);
  >accA(fA) : void

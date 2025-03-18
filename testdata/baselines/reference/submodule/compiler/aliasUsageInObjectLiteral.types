@@ -12,11 +12,14 @@ interface IHasVisualizationModel {
 
     VisualizationModel: typeof Backbone.Model;
 >VisualizationModel : typeof Model
+>Backbone.Model : typeof Model
 >Backbone : typeof import("aliasUsageInObjectLiteral_backbone")
+>Model : typeof Model
 }
 var a: { x: typeof moduleA } = { x: moduleA };
 >a : { x: typeof import("aliasUsageInObjectLiteral_moduleA"); }
 >x : typeof import("aliasUsageInObjectLiteral_moduleA")
+>moduleA : typeof import("aliasUsageInObjectLiteral_moduleA")
 >{ x: moduleA } : { x: typeof import("aliasUsageInObjectLiteral_moduleA"); }
 >x : typeof import("aliasUsageInObjectLiteral_moduleA")
 >moduleA : typeof import("aliasUsageInObjectLiteral_moduleA")

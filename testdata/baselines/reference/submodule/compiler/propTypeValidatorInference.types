@@ -298,10 +298,12 @@ const propTypesWithoutAnnotation = {
 type ExtractedProps = PropTypes.InferProps<typeof propTypes>;
 >ExtractedProps : ExtractedProps
 >PropTypes : any
+>propTypes : ValidationMap<Props>
 
 type ExtractedPropsWithoutAnnotation = PropTypes.InferProps<typeof propTypesWithoutAnnotation>;
 >ExtractedPropsWithoutAnnotation : ExtractedPropsWithoutAnnotation
 >PropTypes : any
+>propTypesWithoutAnnotation : { any: Requireable<any>; array: Validator<any[]>; bool: Validator<boolean>; shape: Validator<NonNullable<InferProps<{ foo: Validator<string>; bar: Requireable<boolean>; baz: Requireable<any>; }>>>; oneOfType: Validator<NonNullable<NonNullable<string | boolean | InferProps<{ foo: Requireable<string>; bar: Validator<number>; }>>>>; }
 
 type ExtractPropsMatch = ExtractedProps extends ExtractedPropsWithoutAnnotation ? true : false;
 >ExtractPropsMatch : true

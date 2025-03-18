@@ -56,6 +56,7 @@ declare function f1(cb: (...args: typeof t1) => void): void;
 >f1 : (cb: (...args: [number, boolean, string]) => void) => void
 >cb : (...args: [number, boolean, string]) => void
 >args : [number, boolean, string]
+>t1 : [number, boolean, string]
 
 f1((a, b, c) => {})
 >f1((a, b, c) => {}) : void
@@ -150,6 +151,7 @@ declare function f2(cb: (...args: typeof t2) => void): void;
 >f2 : (cb: (...args: [number, boolean, ...string[]]) => void) => void
 >cb : (...args: [number, boolean, ...string[]]) => void
 >args : [number, boolean, ...string[]]
+>t2 : [number, boolean, ...string[]]
 
 f2((a, b, c) => {})
 >f2((a, b, c) => {}) : void
@@ -250,6 +252,7 @@ declare function f3(cb: (x: number, ...args: typeof t3) => void): void;
 >cb : (x: number, ...args: [boolean, ...string[]]) => void
 >x : number
 >args : [boolean, ...string[]]
+>t3 : [boolean, ...string[]]
 
 f3((a, b, c) => {})
 >f3((a, b, c) => {}) : void

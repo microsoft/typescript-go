@@ -191,6 +191,7 @@ interface I15 {
 
     [x: string]: typeof f;
 >x : string
+>f : typeof f
 
     foo: E;
 >foo : E
@@ -213,6 +214,7 @@ interface I16 {
 
     [x: string]: typeof c;
 >x : string
+>c : typeof c
 
     foo: E;
 >foo : E

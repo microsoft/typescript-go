@@ -8,8 +8,8 @@
 +>Timestamp : { (Unique symbol): true; }
  
      [TKey in typeof timestampSymbol]: true;
-->timestampSymbol : unique symbol
 +>TKey : TKey
+ >timestampSymbol : unique symbol
  >true : true
  
  };
@@ -18,6 +18,7 @@
 ->now : () => typeof Timestamp
 ->Timestamp : { [timestampSymbol]: true; }
 +>now : () => { (Unique symbol): true; }
++>Timestamp : { (Unique symbol): true; }
  
  === b.ts ===
  import * as x from "./a";

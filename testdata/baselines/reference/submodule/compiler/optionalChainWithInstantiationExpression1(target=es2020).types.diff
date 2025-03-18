@@ -8,11 +8,7 @@
  
          static d: number;
  >d : number
-@@= skipped -14, +15 lines =@@
- 
- declare const a: typeof A | undefined;
- >a : typeof A
-->A : typeof A
+@@= skipped -18, +19 lines =@@
  
  a?.b<c>.d;
  >a?.b<c>.d : number

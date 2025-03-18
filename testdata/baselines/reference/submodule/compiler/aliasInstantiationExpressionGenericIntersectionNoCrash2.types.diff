@@ -17,15 +17,16 @@
  
  type ClassAlias<T> = typeof Class<T>;
 ->ClassAlias : typeof Class<T>
-->Class : typeof Class
 +>ClassAlias : { new (): Class<T>; prototype: Class<any>; }
 +>T : T
+ >Class : typeof Class
  
  type FnAlias<T> = typeof fn<T>;
 ->FnAlias : typeof fn<T>
 ->fn : <T_1>() => T_1
 +>FnAlias : () => T
 +>T : T
++>fn : <T>() => T
  
  type Wat<T> = ClassAlias<T> & FnAlias<T>;
  >Wat : Wat<T>

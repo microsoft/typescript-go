@@ -12,7 +12,9 @@ interface IHasVisualizationModel {
 
     VisualizationModel: typeof Backbone.Model;
 >VisualizationModel : typeof Model
+>Backbone.Model : typeof Model
 >Backbone : typeof import("aliasUsageInFunctionExpression_backbone")
+>Model : typeof Model
 }
 var f = (x: IHasVisualizationModel) => x;
 >f : (x: IHasVisualizationModel) => IHasVisualizationModel

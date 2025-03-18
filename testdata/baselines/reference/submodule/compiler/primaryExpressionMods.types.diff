@@ -17,15 +17,7 @@
  >M : any
  
  var m: M = M;           // Used as TypeName and PrimaryExpression (error on TypeName)
-@@= skipped -10, +10 lines =@@
- var m2: typeof M = M;   // Used as PrimaryExpression in TypeQuery
- >m2 : typeof M
- >M : typeof M
-->M : typeof M
- 
- var x1 = M.a;           // Used as PrimaryExpression
- >x1 : number
-@@= skipped -15, +14 lines =@@
+@@= skipped -25, +25 lines =@@
  >a : any
  
  var q: m.P;             // Error

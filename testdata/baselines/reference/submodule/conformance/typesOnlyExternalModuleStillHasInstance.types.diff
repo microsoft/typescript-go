@@ -13,6 +13,7 @@
 ->x : typeof foo0
 ->foo0 : typeof foo0
 +>x : typeof import("foo_0")
++>foo0 : typeof import("foo_0")
  >{} : {}
  
  var y: {M2: Object} = foo0;
@@ -28,7 +29,7 @@
  	name: string;
  >name : string
  
-@@= skipped -24, +25 lines =@@
+@@= skipped -24, +26 lines =@@
  }
  
  export module M2 {

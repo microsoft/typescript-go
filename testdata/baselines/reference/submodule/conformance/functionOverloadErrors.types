@@ -124,6 +124,7 @@ function fn11<T extends Window>();
 function fn11<S extends typeof window>();
 >fn11 : { <T extends Window>(): any; <S extends Window & typeof globalThis>(): any; }
 >S : S
+>window : Window & typeof globalThis
 
 function fn11() { }
 >fn11 : { <T extends Window>(): any; <S extends Window & typeof globalThis>(): any; }

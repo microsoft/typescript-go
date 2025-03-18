@@ -20,11 +20,13 @@
 ->Backbone : typeof Backbone
 ->Model : typeof Backbone.Model
 +>VisualizationModel : typeof Model
++>Backbone.Model : typeof Model
 +>Backbone : typeof import("aliasUsage1_backbone")
++>Model : typeof Model
  }
  class C2 {
  >C2 : C2
-@@= skipped -31, +31 lines =@@
+@@= skipped -31, +33 lines =@@
  >x : IHasVisualizationModel
  
          x = moduleA;

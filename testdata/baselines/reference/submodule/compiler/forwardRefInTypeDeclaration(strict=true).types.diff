@@ -1,14 +1,6 @@
 --- old.forwardRefInTypeDeclaration(strict=true).types
 +++ new.forwardRefInTypeDeclaration(strict=true).types
-@@= skipped -3, +3 lines =@@
- // forward ref ignored in a typeof
- declare let s: typeof s1;
- >s : "x"
-->s1 : "x"
- 
- const s1 = "x";
- >s1 : "x"
-@@= skipped -8, +7 lines =@@
+@@= skipped -11, +11 lines =@@
  
  // ignored anywhere in an interface (#35947)
  interface Foo2 { [s2]: number; }

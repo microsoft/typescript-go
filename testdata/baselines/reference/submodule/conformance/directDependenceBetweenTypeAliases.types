@@ -50,6 +50,7 @@ var x: T5[] = []
 
 type T5 = typeof x
 >T5 : any
+>x : any
 
 class C1<T> {}
 >C1 : C1<T>
@@ -60,6 +61,7 @@ type T6 = T7 | number
 
 type T7 = typeof yy
 >T7 : [string, T8[]]
+>yy : [string, T8[]]
 
 var yy: [string, T8[]];
 >yy : [string, T8[]]
@@ -84,6 +86,7 @@ type T12 = [T13, string]
 
 type T13 = typeof zz
 >T13 : { x: T11; }
+>zz : { x: T11; }
 
 var zz: { x: T11 }
 >zz : { x: T11; }

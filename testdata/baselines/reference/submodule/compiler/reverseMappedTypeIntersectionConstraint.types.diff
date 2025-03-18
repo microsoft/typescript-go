@@ -355,14 +355,7 @@
  
        src: "str";
  >src : "str"
- 
-       logic: typeof child;
- >logic : () => any
-->child : () => any
- 
-     };
-   },
-@@= skipped -40, +39 lines =@@
+@@= skipped -40, +40 lines =@@
  const config2 = createXMachine({
  >config2 : { invoke: { readonly src: "whatever"; }; }
  >createXMachine({  invoke: {    src: "whatever",  },  extra: 10}) : { invoke: { readonly src: "whatever"; }; }

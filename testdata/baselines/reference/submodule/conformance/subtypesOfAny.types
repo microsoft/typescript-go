@@ -190,6 +190,7 @@ interface I15 {
 
     foo: typeof f;
 >foo : typeof f
+>f : typeof f
 }
 
 
@@ -212,6 +213,7 @@ interface I16 {
 
     foo: typeof c;
 >foo : typeof c
+>c : typeof c
 }
 
 

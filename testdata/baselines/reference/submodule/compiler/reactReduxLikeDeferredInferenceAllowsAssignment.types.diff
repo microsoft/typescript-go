@@ -235,11 +235,8 @@
 +
    simpleAction: typeof simpleAction;
  >simpleAction : (payload: boolean) => { type: string; payload: boolean; }
-->simpleAction : (payload: boolean) => { type: string; payload: boolean; }
- 
-   thunkAction(param1: number, param2: string): Promise<string>;
- >thunkAction : (param1: number, param2: string) => Promise<string>
-@@= skipped -18, +21 lines =@@
+ >simpleAction : (payload: boolean) => { type: string; payload: boolean; }
+@@= skipped -18, +22 lines =@@
  >Component : Component<TestComponentProps>
  
  const mapDispatchToProps = { simpleAction, thunkAction };
@@ -253,8 +250,7 @@
  
  type Q = HandleThunkActionCreator<typeof simpleAction>;
  >Q : (payload: boolean) => { type: string; payload: boolean; }
-->simpleAction : (payload: boolean) => { type: string; payload: boolean; }
- 
+@@= skipped -12, +12 lines =@@
  const Test1 = connect(
  >Test1 : ConnectedComponentClass<typeof TestComponent, Omit<TestComponentProps, "simpleAction" | "thunkAction">>
  >connect(  null,  mapDispatchToProps)(TestComponent) : ConnectedComponentClass<typeof TestComponent, Omit<TestComponentProps, "simpleAction" | "thunkAction">>

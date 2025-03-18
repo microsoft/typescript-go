@@ -3,6 +3,7 @@
 === comparisonOperatorWithOneOperandIsUndefined.ts ===
 var x: typeof undefined;
 >x : any
+>undefined : undefined
 
 enum E { a, b, c }
 >E : E

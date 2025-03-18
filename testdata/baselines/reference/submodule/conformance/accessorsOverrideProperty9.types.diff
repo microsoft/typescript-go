@@ -13,12 +13,11 @@
 +>K : K
  
  interface IApiItemConstructor extends Constructor<ApiItem>, PropertiesOf<typeof ApiItem> {}
-->ApiItem : typeof ApiItem
 +>IApiItemConstructor : IApiItemConstructor
+ >ApiItem : typeof ApiItem
  
  // Base class
- class ApiItem {
-@@= skipped -28, +31 lines =@@
+@@= skipped -28, +32 lines =@@
  
  // Mixin base class
  interface ApiItemContainerMixin extends ApiItem {

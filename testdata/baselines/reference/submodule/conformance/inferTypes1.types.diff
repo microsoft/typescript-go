@@ -32,11 +32,7 @@
  
  type T14 = ReturnType<typeof f1>;  // { a: number, b: string }
  >T14 : { a: number; b: string; }
-->f1 : (s: string) => { a: number; b: string; }
- 
- type T15 = ReturnType<any>;  // any
- >T15 : any
-@@= skipped -22, +24 lines =@@
+@@= skipped -22, +25 lines =@@
  
  type T19<T extends any[]> = ReturnType<(x: string, ...args: T) => T[]>;  // T[]
  >T19 : T[]
@@ -44,17 +40,7 @@
  >x : string
  >args : T
  
- type U10 = InstanceType<typeof C>;  // C
- >U10 : C
-->C : typeof C
- 
- type U11 = InstanceType<any>;  // any
- >U11 : any
-@@= skipped -21, +21 lines =@@
- 
- type U15 = InstanceType<typeof Abstract>;  // Abstract
- >U15 : Abstract
-->Abstract : typeof Abstract
+@@= skipped -25, +26 lines =@@
  
  type U16<T extends any[]> = InstanceType<new (x: string, ...args: T) => T[]>;  // T[]
  >U16 : T[]
@@ -77,7 +63,7 @@
  
  type T20 = ArgumentType<() => void>;  // {}
  >T20 : unknown
-@@= skipped -48, +51 lines =@@
+@@= skipped -44, +48 lines =@@
  
  type X1<T extends { x: any, y: any }> = T extends { x: infer X, y: infer Y } ? [X, Y] : any;
  >X1 : X1<T>

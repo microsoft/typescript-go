@@ -8,6 +8,7 @@ class Base {
 
     foo: typeof undefined;
 >foo : any
+>undefined : undefined
 } 
 
 class D0 extends Base {
@@ -24,6 +25,7 @@ class DA extends Base {
 
     foo: typeof undefined; 
 >foo : any
+>undefined : undefined
 }
 
 class D1 extends Base {
@@ -171,6 +173,7 @@ class D12 extends Base {
 
     foo: typeof f;
 >foo : typeof f
+>f : typeof f
 }
 
 
@@ -191,6 +194,7 @@ class D13 extends Base {
 
     foo: typeof c;
 >foo : typeof c
+>c : typeof c
 }
 
 

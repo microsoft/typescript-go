@@ -15,6 +15,7 @@ declare global {
 
     const foo: typeof foo;
 >foo : any
+>foo : any
 }
 
 === foo.d.ts ===

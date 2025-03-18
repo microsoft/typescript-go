@@ -18,11 +18,7 @@
  
  type T2_1 = T2_1[] | number
  >T2_1 : T2_1
-@@= skipped -19, +20 lines =@@
- 
- type T5 = typeof x
- >T5 : any
-->x : any
+@@= skipped -23, +24 lines =@@
  
  class C1<T> {}
  >C1 : C1<T>
@@ -30,18 +26,3 @@
  
  type T6 = T7 | number
  >T6 : T6
- 
- type T7 = typeof yy
- >T7 : [string, T8[]]
-->yy : [string, T8[]]
- 
- var yy: [string, T8[]];
- >yy : [string, T8[]]
-@@= skipped -35, +34 lines =@@
- 
- type T13 = typeof zz
- >T13 : { x: T11; }
-->zz : { x: T11; }
- 
- var zz: { x: T11 }
- >zz : { x: T11; }

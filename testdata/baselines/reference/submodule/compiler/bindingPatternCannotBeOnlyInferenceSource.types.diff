@@ -34,11 +34,8 @@
  >dispatch : Dispatch<any>
  >funcs : T
  
-@@= skipped -32, +36 lines =@@
- };
- type TFuncs1 = typeof funcs1;
- >TFuncs1 : { funcA: (a: boolean) => void; funcB: (b: string, bb: string) => void; funcC: (c: number, cc: number, ccc: boolean) => void; }
-->funcs1 : { funcA: (a: boolean) => void; funcB: (b: string, bb: string) => void; funcC: (c: number, cc: number, ccc: boolean) => void; }
+@@= skipped -35, +39 lines =@@
+ >funcs1 : { funcA: (a: boolean) => void; funcB: (b: string, bb: string) => void; funcC: (c: number, cc: number, ccc: boolean) => void; }
  
  declare function useReduxDispatch1<T extends IDestructuring<TFuncs1>>(destructuring: Destructuring<TFuncs1, T>): T;
 ->useReduxDispatch1 : <T extends IDestructuring<TFuncs1>>(destructuring: Destructuring<TFuncs1, T>) => T
@@ -70,7 +67,7 @@
  >p : [a: boolean]
  >d(f.funcA(...p)) : void
  >d : Dispatch<any>
-@@= skipped -31, +31 lines =@@
+@@= skipped -28, +29 lines =@@
  >p : [a: boolean]
  
          funcB: (...p) => d(f.funcB(...p)),

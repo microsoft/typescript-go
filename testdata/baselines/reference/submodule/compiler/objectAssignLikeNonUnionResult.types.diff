@@ -40,6 +40,7 @@
 ->t1 : [R1: Interface & { field: number; }]
 ->data1 : Interface & { field: number; }
 +>t1 : [R1: Interface & ({ field: number; } | { field?: undefined; })]
++>data1 : Interface & ({ field: number; } | { field?: undefined; })
  
  // ???
  type Explode<T> = T extends { x: infer A } ? [A] : 'X';
@@ -52,4 +53,5 @@
  type e1 = Explode<typeof data1>;
  >e1 : "X"
 ->data1 : Interface & { field: number; }
++>data1 : Interface & ({ field: number; } | { field?: undefined; })
  

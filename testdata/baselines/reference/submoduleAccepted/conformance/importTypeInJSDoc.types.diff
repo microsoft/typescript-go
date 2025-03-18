@@ -21,15 +21,7 @@
  >MyClass : any
  }
  declare global {
-@@= skipped -8, +8 lines =@@
- 
-     const Foo: typeof MyClass;
- >Foo : typeof MyClass
-->MyClass : typeof MyClass
- }
- export = MyClass;
- >MyClass : MyClass
-@@= skipped -11, +10 lines =@@
+@@= skipped -19, +19 lines =@@
   */
  
  let a = /** @type {Foo} */(/** @type {*} */(undefined)); 

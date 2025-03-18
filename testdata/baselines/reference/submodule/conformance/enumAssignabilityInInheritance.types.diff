@@ -35,12 +35,3 @@
  >x : T
  
  declare function foo12(x: E): E;
-@@= skipped -48, +50 lines =@@
- declare function foo14(x: typeof f): typeof f;
- >foo14 : { (x: typeof f): typeof f; (x: E): E; }
- >x : typeof f
-->f : typeof f
-->f : typeof f
- 
- declare function foo14(x: E): E;
- >foo14 : { (x: typeof f): typeof f; (x: E): E; }

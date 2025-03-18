@@ -23,17 +23,7 @@
      c: number;
  >c : number
  }
-@@= skipped -90, +96 lines =@@
- 
- export const photo: typeof obj.photo = {
- >photo : { id: number; } & { url: string; }
-->obj.photo : { id: number; } & { url: string; }
- >obj : MyType
-->photo : { id: number; } & { url: string; }
- >{    id: 1,    url: '',    xyz: 1 // Great! This causes an error!} : { id: number; url: string; xyz: number; }
- 
-     id: 1,
-@@= skipped -53, +51 lines =@@
+@@= skipped -143, +149 lines =@@
  
  export type View<T> = { [K in keyof T]: T[K] extends object ? boolean | View<T[K]> : boolean };
  >View : View<T>

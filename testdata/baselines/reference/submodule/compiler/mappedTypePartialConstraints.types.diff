@@ -16,11 +16,3 @@
  
    doIt(data : Partial<T>) {}
  >doIt : (data: Partial<T>) => void
-@@= skipped -19, +22 lines =@@
- function fn(arg: typeof MyClass) {};
- >fn : (arg: typeof MyClass) => void
- >arg : typeof MyClass
-->MyClass : typeof MyClass
- 
- fn(MySubClass);
- >fn(MySubClass) : void

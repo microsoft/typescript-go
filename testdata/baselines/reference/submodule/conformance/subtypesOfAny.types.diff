@@ -145,13 +145,7 @@
      [x: string]: any;
  >x : string
  
-     foo: typeof f;
- >foo : typeof f
-->f : typeof f
- }
- 
- 
-@@= skipped -21, +22 lines =@@
+@@= skipped -21, +23 lines =@@
  >1 : 1
  }
  interface I16 {
@@ -160,10 +154,7 @@
      [x: string]: any;
  >x : string
  
-     foo: typeof c;
- >foo : typeof c
-->c : typeof c
- }
+@@= skipped -10, +12 lines =@@
  
  
  interface I17<T> {
@@ -173,7 +164,7 @@
      [x: string]: any;
  >x : string
  
-@@= skipped -19, +23 lines =@@
+@@= skipped -9, +12 lines =@@
  
  
  interface I18<T, U> {

@@ -33,6 +33,7 @@
 ->a : { foo: typeof a; }
 +>a : { foo: ???; }
 +>foo : { foo: ???; }
++>a : { foo: ???; }
  
      var b: { foo: typeof b; }
 ->b : { foo: typeof b; }
@@ -40,10 +41,11 @@
 ->b : { foo: typeof b; }
 +>b : { foo: ???; }
 +>foo : { foo: ???; }
++>b : { foo: ???; }
  
      var a2 = { foo: a2 };
  >a2 : any
-@@= skipped -57, +55 lines =@@
+@@= skipped -57, +57 lines =@@
  >t : T
  
      s2 = b;

@@ -16,7 +16,9 @@ let logs: string[] = [];
 
 let originalLog: typeof console.log;
 >originalLog : { (...data: any[]): void; (message?: any, ...optionalParams: any[]): void; }
+>console.log : { (...data: any[]): void; (message?: any, ...optionalParams: any[]): void; }
 >console : Console
+>log : { (...data: any[]): void; (message?: any, ...optionalParams: any[]): void; }
 
 console.log = (...args) => {
 >console.log = (...args) => {  logs.push(...args);} : (...args: [any?, ...any[]]) => void

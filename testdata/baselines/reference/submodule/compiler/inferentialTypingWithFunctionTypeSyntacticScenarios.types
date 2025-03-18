@@ -62,6 +62,7 @@ interface IdentityConstructor {
 >IdentityConstructor : IdentityConstructor
 
     new (): typeof identity;
+>identity : <V>(y: V) => V
 }
 var ic: IdentityConstructor;
 >ic : IdentityConstructor
@@ -97,6 +98,7 @@ s = map("", <typeof identity>identity);
 >map : <T, U>(array: T, func: (x: T) => U) => U
 >"" : ""
 ><typeof identity>identity : <V>(y: V) => V
+>identity : <V>(y: V) => V
 >identity : <V>(y: V) => V
 
 // parenthesized expression

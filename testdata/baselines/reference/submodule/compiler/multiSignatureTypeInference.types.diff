@@ -32,29 +32,7 @@
  
  type Params1 = AllParams<typeof f1>;  // string[] | [arg: boolean] | [arg1: number, arg2: number]
  >Params1 : string[] | [arg: boolean] | [arg1: number, arg2: number]
-->f1 : { (arg: boolean): string; (arg1: number, arg2: number): number; (...args: string[]): string[]; }
- 
- type Params2 = AllParams<typeof f2>;  // [arg: unknown]
- >Params2 : [arg: unknown]
-->f2 : (arg: unknown) => unknown
- 
- type Params3 = AllParams<typeof f3>;  // []
- >Params3 : []
-->f3 : () => string
- 
- type Returns1 = AllReturns<typeof f1>  // string | number | string[]
- >Returns1 : string | number | string[]
-->f1 : { (arg: boolean): string; (arg1: number, arg2: number): number; (...args: string[]): string[]; }
- 
- type Returns2 = AllReturns<typeof f2>;  // unknown
- >Returns2 : unknown
-->f2 : (arg: unknown) => unknown
- 
- type Returns3 = AllReturns<typeof f3>;  // string
- >Returns3 : string
-->f3 : () => string
- 
- // Repro from #28867
+@@= skipped -44, +54 lines =@@
  
  type InferTwoOverloads<F extends Function> = 
  >InferTwoOverloads : InferTwoOverloads<F>
@@ -70,7 +48,7 @@
  
      [(...a1: A1) => R1, (...a0: A0) => R0] : 
  >a1 : A1
-@@= skipped -56, +65 lines =@@
+@@= skipped -12, +17 lines =@@
      never;
  
  type Expected = InferTwoOverloads<((x: string) => number) & (() => string)>;  // [(x: string) => number, () => string]    

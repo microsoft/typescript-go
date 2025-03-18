@@ -586,6 +586,7 @@ class Base1 {
     static explicitStatic(this: typeof Base1): number { return this.x; }
 >explicitStatic : () => number
 >this : typeof Base1
+>Base1 : typeof Base1
 >this.x : any
 >this : typeof Base1
 >x : any

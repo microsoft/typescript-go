@@ -611,12 +611,11 @@
 +>Id : Id
  
          [K in typeof symbol]: Id;
-->symbol : unique symbol
 +>K : K
+ >symbol : unique symbol
  
      };
- }
-@@= skipped -13, +15 lines =@@
+@@= skipped -13, +16 lines =@@
  >Type : any
  
      export type x = Type<{}, 'x'>;

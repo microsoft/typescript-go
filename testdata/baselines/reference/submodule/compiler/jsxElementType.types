@@ -270,6 +270,7 @@ function ReactNativeFlatList(
   ref: React.ForwardedRef<typeof ReactNativeFlatList>
 >ref : ForwardedRef<(props: {}, ref: ForwardedRef<???>) => null>
 >React : any
+>ReactNativeFlatList : (props: {}, ref: ForwardedRef<???>) => null
 
 ) {
   return null;

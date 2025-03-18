@@ -1,14 +1,6 @@
 --- old.invalidStringAssignments.types
 +++ new.invalidStringAssignments.types
-@@= skipped -18, +18 lines =@@
- 
- var d: typeof undefined = x;
- >d : any
-->undefined : undefined
- >x : string
- 
- class C { foo: string; }
-@@= skipped -12, +11 lines =@@
+@@= skipped -30, +30 lines =@@
  >x : string
  
  interface I { bar: string; }

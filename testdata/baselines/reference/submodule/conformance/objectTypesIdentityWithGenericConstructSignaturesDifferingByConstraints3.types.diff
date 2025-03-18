@@ -98,13 +98,13 @@
 ->foo3 : { (x: typeof a): any; (x: typeof a): any; }
 +>foo3 : { (x: new <T extends U, U extends One>(x: T, y: U) => string): any; (x: new <T extends U, U extends One>(x: T, y: U) => string): any; }
  >x : new <T extends U, U extends One>(x: T, y: U) => string
-->a : new <T extends U, U extends One>(x: T, y: U) => string
+ >a : new <T extends U, U extends One>(x: T, y: U) => string
  
  function foo3(x: typeof a); // error
 ->foo3 : { (x: typeof a): any; (x: typeof a): any; }
 +>foo3 : { (x: new <T extends U, U extends One>(x: T, y: U) => string): any; (x: new <T extends U, U extends One>(x: T, y: U) => string): any; }
  >x : new <T extends U, U extends One>(x: T, y: U) => string
-->a : new <T extends U, U extends One>(x: T, y: U) => string
+ >a : new <T extends U, U extends One>(x: T, y: U) => string
  
  function foo3(x: any) { }
 ->foo3 : { (x: typeof a): any; (x: typeof a): any; }
@@ -117,6 +117,7 @@
 ->b : { "new"<T extends U, U extends Two>(x: T, y: U): string; }
 +>foo4 : { (x: { new: <T extends U, U extends Two>(x: T, y: U) => string; }): any; (x: { new: <T extends U, U extends Two>(x: T, y: U) => string; }): any; }
 +>x : { new: <T extends U, U extends Two>(x: T, y: U) => string; }
++>b : { new: <T extends U, U extends Two>(x: T, y: U) => string; }
  
  function foo4(x: typeof b); // error
 ->foo4 : { (x: typeof b): any; (x: typeof b): any; }
@@ -124,6 +125,7 @@
 ->b : { "new"<T extends U, U extends Two>(x: T, y: U): string; }
 +>foo4 : { (x: { new: <T extends U, U extends Two>(x: T, y: U) => string; }): any; (x: { new: <T extends U, U extends Two>(x: T, y: U) => string; }): any; }
 +>x : { new: <T extends U, U extends Two>(x: T, y: U) => string; }
++>b : { new: <T extends U, U extends Two>(x: T, y: U) => string; }
  
  function foo4(x: any) { }
 ->foo4 : { (x: typeof b): any; (x: typeof b): any; }
@@ -131,7 +133,7 @@
  >x : any
  
  function foo5c(x: C<Three, Three>);
-@@= skipped -76, +72 lines =@@
+@@= skipped -76, +76 lines =@@
  >x : any
  
  function foo10(x: B<Two, Two>);
@@ -143,7 +145,7 @@
 ->foo10 : { (x: B<Two, Two>): any; (x: typeof a): any; }
 +>foo10 : { (x: B<Two, Two>): any; (x: new <T extends U, U extends One>(x: T, y: U) => string): any; }
  >x : new <T extends U, U extends One>(x: T, y: U) => string
-->a : new <T extends U, U extends One>(x: T, y: U) => string
+ >a : new <T extends U, U extends One>(x: T, y: U) => string
  
  function foo10(x: any) { }
 ->foo10 : { (x: B<Two, Two>): any; (x: typeof a): any; }
@@ -161,6 +163,7 @@
 ->b : { "new"<T extends U, U extends Two>(x: T, y: U): string; }
 +>foo11 : { (x: B<Two, Two>): any; (x: { new: <T extends U, U extends Two>(x: T, y: U) => string; }): any; }
 +>x : { new: <T extends U, U extends Two>(x: T, y: U) => string; }
++>b : { new: <T extends U, U extends Two>(x: T, y: U) => string; }
  
  function foo11(x: any) { }
 ->foo11 : { (x: B<Two, Two>): any; (x: typeof b): any; }
@@ -168,7 +171,7 @@
  >x : any
  
  function foo12(x: I<Five<string>, Five<string>>);
-@@= skipped -50, +48 lines =@@
+@@= skipped -50, +50 lines =@@
  >x : any
  
  function foo13(x: I<Five<string>, Five<string>>);
@@ -180,7 +183,7 @@
 ->foo13 : { (x: I<Five<string>, Five<string>>): any; (x: typeof a): any; }
 +>foo13 : { (x: I<Five<string>, Five<string>>): any; (x: new <T extends U, U extends One>(x: T, y: U) => string): any; }
  >x : new <T extends U, U extends One>(x: T, y: U) => string
-->a : new <T extends U, U extends One>(x: T, y: U) => string
+ >a : new <T extends U, U extends One>(x: T, y: U) => string
  
  function foo13(x: any) { }
 ->foo13 : { (x: I<Five<string>, Five<string>>): any; (x: typeof a): any; }
@@ -198,6 +201,7 @@
 ->b : { "new"<T extends U, U extends Two>(x: T, y: U): string; }
 +>foo14 : { (x: I<Five<string>, Five<string>>): any; (x: { new: <T extends U, U extends Two>(x: T, y: U) => string; }): any; }
 +>x : { new: <T extends U, U extends Two>(x: T, y: U) => string; }
++>b : { new: <T extends U, U extends Two>(x: T, y: U) => string; }
  
  function foo14(x: any) { }
 ->foo14 : { (x: I<Five<string>, Five<string>>): any; (x: typeof b): any; }

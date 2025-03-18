@@ -79,5 +79,6 @@ declare const g: <U>() => { [K in keyof U]: U[K] };
 
 const h: typeof g = f;
 >h : <U>() => { [K in keyof U]: U[K] }
+>g : <U>() => { [K in keyof U]: U[K] }
 >f : <T>() => IdMapped<T>
 

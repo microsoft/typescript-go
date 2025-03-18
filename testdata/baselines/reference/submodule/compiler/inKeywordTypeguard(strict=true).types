@@ -1007,7 +1007,9 @@ function f15(x: { a?: string | undefined }) {
 function f16(x: typeof globalThis, y: Window & typeof globalThis) {
 >f16 : (x: typeof globalThis, y: Window & typeof globalThis) => void
 >x : typeof globalThis
+>globalThis : typeof globalThis
 >y : Window & typeof globalThis
+>globalThis : typeof globalThis
 
     x = y;
 >x = y : Window & typeof globalThis

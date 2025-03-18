@@ -342,6 +342,7 @@
 +>ref : ForwardedRef<(props: {}, ref: ForwardedRef<???>) => null>
  >React : any
 ->ReactNativeFlatList : (props: {}, ref: React.ForwardedRef<typeof ReactNativeFlatList>) => null
++>ReactNativeFlatList : (props: {}, ref: ForwardedRef<???>) => null
  
  ) {
    return null;
@@ -391,7 +392,7 @@
            ['a:b']: { a: string };
  >['a:b'] : { a: string; }
  >'a:b' : "a:b"
-@@= skipped -88, +95 lines =@@
+@@= skipped -88, +96 lines =@@
  }
  
  <a:b a="accepted" />;

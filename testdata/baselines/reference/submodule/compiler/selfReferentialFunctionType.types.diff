@@ -10,12 +10,14 @@
 +>f : <T>(args: (args: ???) => T) => T
 +>T : T
 +>args : (args: ???) => T
++>f : <T>(args: (args: ???) => T) => T
  
  declare function g<T = typeof g>(args: T): T;
 ->g : <T = typeof g>(args: T) => T
 ->g : <T = typeof g>(args: T) => T
 +>g : <T>(args: T) => T
 +>T : T
++>g : <T>(args: T) => T
  >args : T
  
  declare function h<T>(): typeof h<T>;
@@ -23,4 +25,5 @@
 ->h : <T>() => typeof h<T>
 +>h : <T>() => () => ???
 +>T : T
++>h : <T>() => () => ???
  

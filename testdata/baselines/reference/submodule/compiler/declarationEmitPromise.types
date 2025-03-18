@@ -69,6 +69,7 @@ export async function runSampleWorks<A, B, C, D, E>(
 
     let rfunc: typeof func & {} = func as any; // <- This is the only difference
 >rfunc : <T>(f: (a: A, b?: B, c?: C, d?: D, e?: E) => T) => T
+>func : <T>(f: (a: A, b?: B, c?: C, d?: D, e?: E) => T) => T
 >func as any : any
 >func : <T>(f: (a: A, b?: B, c?: C, d?: D, e?: E) => T) => T
 
@@ -136,6 +137,7 @@ export async function runSampleBreaks<A, B, C, D, E>(
 
     let rfunc: typeof func = func as any; // <- This is the only difference
 >rfunc : <T>(f: (a: A, b?: B, c?: C, d?: D, e?: E) => T) => T
+>func : <T>(f: (a: A, b?: B, c?: C, d?: D, e?: E) => T) => T
 >func as any : any
 >func : <T>(f: (a: A, b?: B, c?: C, d?: D, e?: E) => T) => T
 

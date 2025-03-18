@@ -10,6 +10,7 @@ declare function test1<const T>(obj: {
 >K : K
 
 }): [T, typeof obj];
+>obj : { [K in keyof T]: T[K] }
 
 const result1 = test1({
 >result1 : [{ readonly prop: "foo"; readonly nested: { readonly nestedProp: "bar"; }; }, { readonly prop: "foo"; readonly nested: { readonly nestedProp: "bar"; }; }]
@@ -41,6 +42,7 @@ declare function test2<const T>(obj: {
 >K : K
 
 }): [T, typeof obj];
+>obj : { readonly [K in keyof T]: T[K] }
 
 const result2 = test2({
 >result2 : [{ prop: "foo"; nested: { readonly nestedProp: "bar"; }; }, { readonly prop: "foo"; readonly nested: { readonly nestedProp: "bar"; }; }]
@@ -72,6 +74,7 @@ declare function test3<const T>(obj: {
 >K : K
 
 }): [T, typeof obj];
+>obj : { -readonly [K in keyof T]: T[K] }
 
 const result3 = test3({
 >result3 : [{ readonly prop: "foo"; readonly nested: { readonly nestedProp: "bar"; }; }, { prop: "foo"; nested: { readonly nestedProp: "bar"; }; }]

@@ -7,6 +7,7 @@ type MyPromise<T> = Promise<T>;
 
 declare var MyPromise: typeof Promise;
 >MyPromise : PromiseConstructor
+>Promise : PromiseConstructor
 
 declare var p: Promise<number>;
 >p : Promise<number>

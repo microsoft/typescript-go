@@ -35,12 +35,15 @@ const fC = <T>() => {
 // Hover display is identical on all of these
 type TA = typeof fA;
 >TA : <T>() => { v: T; }
+>fA : <T>() => { v: T; }
 
 type TB = typeof fB;
 >TB : <T>() => { v: T; }
+>fB : <T>() => { v: T; }
 
 type TC = typeof fC;
 >TC : <T>() => { v: T; }
+>fC : <T>() => { v: T; }
 
 type TL = <T>() => { v: T }; 
 >TL : TL

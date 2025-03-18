@@ -92,6 +92,7 @@ namespace N {
     export const s1: typeof s0 = s0;
 >s1 : unique symbol
 >s0 : unique symbol
+>s0 : unique symbol
 
     export interface T4 {
 >T4 : T4
@@ -173,6 +174,7 @@ export const c5 = 1;
 
 export const s2: typeof s0 = s0;
 >s2 : unique symbol
+>s0 : unique symbol
 >s0 : unique symbol
 
 interface T8 {

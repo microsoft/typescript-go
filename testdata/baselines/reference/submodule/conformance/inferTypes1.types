@@ -92,6 +92,7 @@ type T13 = ReturnType<(<T extends U, U extends number[]>() => T)>;  // number[]
 
 type T14 = ReturnType<typeof f1>;  // { a: number, b: string }
 >T14 : { a: number; b: string; }
+>f1 : (s: string) => { a: number; b: string; }
 
 type T15 = ReturnType<any>;  // any
 >T15 : any
@@ -113,6 +114,7 @@ type T19<T extends any[]> = ReturnType<(x: string, ...args: T) => T[]>;  // T[]
 
 type U10 = InstanceType<typeof C>;  // C
 >U10 : C
+>C : typeof C
 
 type U11 = InstanceType<any>;  // any
 >U11 : any
@@ -128,6 +130,7 @@ type U14 = InstanceType<Function>;  // Error
 
 type U15 = InstanceType<typeof Abstract>;  // Abstract
 >U15 : Abstract
+>Abstract : typeof Abstract
 
 type U16<T extends any[]> = InstanceType<new (x: string, ...args: T) => T[]>;  // T[]
 >U16 : T[]

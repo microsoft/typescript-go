@@ -399,6 +399,7 @@ let Anon = class <out T> {
 
     foo(): InstanceType<(typeof Anon<T>)> {
 >foo : () => Anon<T>
+>Anon : typeof Anon
 
         return this;
 >this : this

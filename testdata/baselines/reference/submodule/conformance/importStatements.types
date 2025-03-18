@@ -39,6 +39,7 @@ module C {
 
     var m: typeof a;
 >m : typeof A
+>a : typeof A
 
     var p: a.Point;
 >p : Point

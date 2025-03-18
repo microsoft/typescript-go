@@ -26,6 +26,7 @@ var y = c;
 
 var z: typeof c;
 >z : typeof c
+>c : typeof c
 
 class genericC<T>
 >genericC : genericC<T>

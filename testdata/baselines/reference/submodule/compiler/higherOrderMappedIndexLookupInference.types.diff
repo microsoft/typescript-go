@@ -75,5 +75,6 @@
 ->h : <U>() => { [K in keyof U]: U[K]; }
 ->g : <U>() => { [K in keyof U]: U[K]; }
 +>h : <U>() => { [K in keyof U]: U[K] }
++>g : <U>() => { [K in keyof U]: U[K] }
  >f : <T>() => IdMapped<T>
  

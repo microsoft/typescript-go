@@ -140,6 +140,7 @@ const bar2: Bar2 = bar1;  // Error expected
 
 export type Input = Static<typeof Input>
 >Input : { level1: { level2: { foo: string; }; }; }
+>Input : TObject<{ level1: TObject<{ level2: TObject<{ foo: TString; }>; }>; }>
 
 export const Input = Type.Object({
 >Input : TObject<{ level1: TObject<{ level2: TObject<{ foo: TString; }>; }>; }>
@@ -178,6 +179,7 @@ export const Input = Type.Object({
 
 export type Output = Static<typeof Output>
 >Output : { level1: { level2: { foo: string; bar: string; }; }; }
+>Output : TObject<{ level1: TObject<{ level2: TObject<{ foo: TString; bar: TString; }>; }>; }>
 
 export const Output = Type.Object({
 >Output : TObject<{ level1: TObject<{ level2: TObject<{ foo: TString; bar: TString; }>; }>; }>
@@ -241,7 +243,9 @@ function problematicFunction2<T extends Output[]>(ors: Input[]): T {
 function problematicFunction3(ors: (typeof Input.static)[]): Output[] {
 >problematicFunction3 : (ors: { level1: { level2: { foo: string; }; }; }[]) => { level1: { level2: { foo: string; bar: string; }; }; }[]
 >ors : { level1: { level2: { foo: string; }; }; }[]
+>Input.static : { level1: { level2: { foo: string; }; }; }
 >Input : TObject<{ level1: TObject<{ level2: TObject<{ foo: TString; }>; }>; }>
+>static : { level1: { level2: { foo: string; }; }; }
 
     return ors;  // Error
 >ors : { level1: { level2: { foo: string; }; }; }[]

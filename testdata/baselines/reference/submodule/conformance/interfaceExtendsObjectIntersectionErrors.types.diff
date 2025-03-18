@@ -36,19 +36,8 @@
  
  class C1 extends Constructor<T1>() { a: string }
  >C1 : C1
-@@= skipped -69, +77 lines =@@
- 
- type TCX = typeof CX;
- >TCX : typeof CX
-->CX : typeof CX
- 
- type TEX = typeof EX;
- >TEX : typeof EX
-->EX : typeof EX
- 
- type TNX = typeof NX;
- >TNX : typeof NX
-->NX : typeof NX
+@@= skipped -80, +88 lines =@@
+ >NX : typeof NX
  
  interface I10 extends TCX { a: number }
 +>I10 : I10
@@ -96,7 +85,7 @@
  >b : number
  >a : string
  
-@@= skipped -51, +59 lines =@@
+@@= skipped -40, +51 lines =@@
  >b : string
  
  interface I30 extends U { x: string }

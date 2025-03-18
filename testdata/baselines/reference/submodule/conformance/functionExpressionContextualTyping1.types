@@ -75,6 +75,7 @@ b1 = (k, h) => { };
 
 var b2: typeof a0 | ((n: number, s: string) => string);
 >b2 : (n: number, s: string) => number | (n: number, s: string) => string
+>a0 : (n: number, s: string) => number
 >n : number
 >s : string
 

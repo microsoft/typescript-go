@@ -6,6 +6,7 @@ type FuncType1 = (x: <T>(p: T) => T) => typeof x;
 >x : <T>(p: T) => T
 >T : T
 >p : T
+>x : <T>(p: T) => T
 
 type FuncType2 = (x: <S, T>(p: T) => T) => typeof x;
 >FuncType2 : FuncType2
@@ -13,6 +14,7 @@ type FuncType2 = (x: <S, T>(p: T) => T) => typeof x;
 >S : S
 >T : T
 >p : T
+>x : <S, T>(p: T) => T
 
 function tempTag2(templateStrs: TemplateStringsArray, f: FuncType1, x: number): number;
 >tempTag2 : { (templateStrs: TemplateStringsArray, f: FuncType1, x: number): number; (templateStrs: TemplateStringsArray, f: FuncType2, h: FuncType2, x: string): string; }

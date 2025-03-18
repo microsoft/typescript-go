@@ -39,12 +39,8 @@
 +>T : T
  >obj : X | YS
  >c : typeof XS | typeof Y
-->XS : typeof XS
-->Y : typeof Y
- 
-     if (obj instanceof c) {
- >obj instanceof c : boolean
-@@= skipped -108, +107 lines =@@
+ >XS : typeof XS
+@@= skipped -108, +109 lines =@@
  
  declare function isEmptyArray<T>(value: T[]): value is [];
  >isEmptyArray : <T>(value: T[]) => value is []

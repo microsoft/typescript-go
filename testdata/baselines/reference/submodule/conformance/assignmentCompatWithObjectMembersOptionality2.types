@@ -37,6 +37,7 @@ module TargetHasOptional {
 
     var b: typeof a = { opt: new Base() }
 >b : { opt?: Base; }
+>a : { opt?: Base; }
 >{ opt: new Base() } : { opt: Base; }
 >opt : Base
 >new Base() : Base

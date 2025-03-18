@@ -60,9 +60,11 @@ interface Foo {
 
     l: typeof f1;
 >l : () => void
+>f1 : () => void
 
     m: typeof M;
 >m : typeof M
+>M : typeof M
 
     n: {};
 >n : {}

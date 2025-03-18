@@ -44,6 +44,7 @@ export type Cache<N extends string, QR> = {
 
         [QK in keyof QR]: ReturnType<typeof createCacheReducer<QR>>;
 >QK : QK
+>createCacheReducer : <N extends string, QR>(queries: { [QK in keyof QR]: any }) => (state?: { queries: QR; }) => { queries: QR; }
 
     };
 };

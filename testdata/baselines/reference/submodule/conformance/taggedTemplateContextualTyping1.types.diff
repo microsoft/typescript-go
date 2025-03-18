@@ -6,7 +6,7 @@
  >x : <T>(p: T) => T
 +>T : T
  >p : T
-->x : <T>(p: T) => T
+ >x : <T>(p: T) => T
  
  function tempTag1<T>(templateStrs: TemplateStringsArray, f: FuncType, x: T): T;
 ->tempTag1 : { <T>(templateStrs: TemplateStringsArray, f: FuncType, x: T): T; <T_1>(templateStrs: TemplateStringsArray, f: FuncType, h: FuncType, x: T_1): T_1; }
@@ -32,7 +32,7 @@
  >rest : any[]
  
      return undefined;
-@@= skipped -70, +73 lines =@@
+@@= skipped -70, +74 lines =@@
  >x : <T>(p: T) => T
  >(y: <T>(p: T) => T) => { y<number>(undefined); return y } : (y: <T>(p: T) => T) => <T>(p: T) => T
  >y : <T>(p: T) => T

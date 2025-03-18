@@ -158,15 +158,7 @@
  >emittingObject : T
  >eventName : keyof ET
  
-@@= skipped -25, +29 lines =@@
- >off : <K extends keyof ET>(...args: [unknown, string] | [K, number]) => void
- >eventName as typeof eventName : keyof ET
- >eventName : keyof ET
-->eventName : keyof ET
- >0 : 0
- }
- 
-@@= skipped -10, +9 lines =@@
+@@= skipped -35, +39 lines =@@
  
  function fx1<T, K extends keyof T>(obj: T, key: K) {
  >fx1 : <T, K extends keyof T>(obj: T, key: K) => void

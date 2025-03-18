@@ -62,6 +62,7 @@
 ->KeyofObj : unique symbol | 0 | "str" | "num"
 ->obj : { num: number; str: string; 0: 0; [sym]: symbol; }
 +>KeyofObj : "num" | "str" | 0 | unique symbol
++>obj : { num: number; str: string; [num]: 0; [sym]: symbol; }
  
  // "str" | "num"
  type Values<T> = T[keyof T];
@@ -71,4 +72,5 @@
  type ValuesOfObj = Values<typeof obj>;
  >ValuesOfObj : ValuesOfObj
 ->obj : { num: number; str: string; 0: 0; [sym]: symbol; }
++>obj : { num: number; str: string; [num]: 0; [sym]: symbol; }
  

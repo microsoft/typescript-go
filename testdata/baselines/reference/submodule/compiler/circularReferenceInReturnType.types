@@ -49,6 +49,7 @@ const res3 = fn3()(() => res3);
 function foo(arg: Parameters<typeof bar>[0]) {
 >foo : (arg: string) => string
 >arg : string
+>bar : (arg: string) => string
 
     return arg;
 >arg : string

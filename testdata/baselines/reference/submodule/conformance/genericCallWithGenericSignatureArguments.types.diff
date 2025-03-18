@@ -16,14 +16,13 @@
 +>(x: typeof a) => a : (x: { x: number; y?: number; }) => { x: number; y?: number; }
  >x : { x: number; y?: number; }
  >a : { x: number; y?: number; }
-->a : { x: number; y?: number; }
+ >a : { x: number; y?: number; }
 ->(x: typeof b) => b : (x: typeof b) => { x: number; z?: number; }
 +>(x: typeof b) => b : (x: { x: number; z?: number; }) => { x: number; z?: number; }
  >x : { x: number; z?: number; }
  >b : { x: number; z?: number; }
-->b : { x: number; z?: number; }
- 
- var r5 = foo((x: typeof b) => b, (x: typeof a) => a); // typeof b => typeof b
+ >b : { x: number; z?: number; }
+@@= skipped -13, +13 lines =@@
  >r5 : (x: { x: number; z?: number; }) => { x: number; z?: number; }
  >foo((x: typeof b) => b, (x: typeof a) => a) : (x: { x: number; z?: number; }) => { x: number; z?: number; }
  >foo : <T>(a: (x: T) => T, b: (x: T) => T) => (x: T) => T
@@ -31,12 +30,12 @@
 +>(x: typeof b) => b : (x: { x: number; z?: number; }) => { x: number; z?: number; }
  >x : { x: number; z?: number; }
  >b : { x: number; z?: number; }
-->b : { x: number; z?: number; }
+ >b : { x: number; z?: number; }
 ->(x: typeof a) => a : (x: typeof a) => { x: number; y?: number; }
 +>(x: typeof a) => a : (x: { x: number; y?: number; }) => { x: number; y?: number; }
  >x : { x: number; y?: number; }
  >a : { x: number; y?: number; }
-->a : { x: number; y?: number; }
+ >a : { x: number; y?: number; }
  
  function other<T>(x: T) {
  >other : <T>(x: T) => void
@@ -51,7 +50,7 @@
  >(a: T) => a : (a: T) => T
  >a : T
  >a : T
-@@= skipped -40, +37 lines =@@
+@@= skipped -27, +28 lines =@@
      var r6b = foo((a) => a, (b) => b); // {} => {}
  >r6b : (x: unknown) => unknown
  >foo((a) => a, (b) => b) : (x: unknown) => unknown

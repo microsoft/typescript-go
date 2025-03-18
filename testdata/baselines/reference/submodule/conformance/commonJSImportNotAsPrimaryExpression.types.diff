@@ -25,18 +25,17 @@
  >foo : any
  ><{m1: number}>{} : { m1: number; }
  >m1 : number
-@@= skipped -21, +21 lines =@@
- 
+@@= skipped -22, +22 lines =@@
  var y: typeof foo.C1.s1 = false;
  >y : boolean
-->foo.C1.s1 : boolean
+ >foo.C1.s1 : boolean
 ->foo.C1 : typeof foo.C1
 ->foo : typeof foo
 ->C1 : typeof foo.C1
-->s1 : boolean
 +>foo.C1 : typeof C1
 +>foo : typeof import("foo_0")
 +>C1 : typeof C1
+ >s1 : boolean
  >false : false
  
  var z: foo.M1.I2;
@@ -52,7 +51,7 @@
  >foo : any
  >0 : 0
  
-@@= skipped -32, +30 lines =@@
+@@= skipped -31, +31 lines =@@
  }
  
  export interface I1 {

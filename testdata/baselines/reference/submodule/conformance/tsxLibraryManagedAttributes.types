@@ -20,6 +20,7 @@ type InferredPropTypes<P> = {[K in keyof P]: P[K] extends PropTypeChecker<infer 
 >K : K
 >T : T
 >U : U
+>checkedType : unique symbol
 
 declare const checkedType: unique symbol;
 >checkedType : unique symbol

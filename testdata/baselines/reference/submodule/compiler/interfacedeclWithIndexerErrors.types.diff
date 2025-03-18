@@ -51,7 +51,4 @@
 +
      prop: typeof string;
  >prop : any
-->string : any
- }
- 
- class c1 implements a {
+ >string : any

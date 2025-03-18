@@ -63,7 +63,7 @@
 +>f1 : (cb: (...args: [number, boolean, string]) => void) => void
 +>cb : (...args: [number, boolean, string]) => void
  >args : [number, boolean, string]
-->t1 : [number, boolean, string]
+ >t1 : [number, boolean, string]
  
  f1((a, b, c) => {})
  >f1((a, b, c) => {}) : void
@@ -72,7 +72,7 @@
  >(a, b, c) => {} : (a: number, b: boolean, c: string) => void
  >a : number
  >b : boolean
-@@= skipped -15, +14 lines =@@
+@@= skipped -15, +15 lines =@@
  
  f1((...x) => {})
  >f1((...x) => {}) : void
@@ -173,7 +173,7 @@
 +>f2 : (cb: (...args: [number, boolean, ...string[]]) => void) => void
 +>cb : (...args: [number, boolean, ...string[]]) => void
  >args : [number, boolean, ...string[]]
-->t2 : [number, boolean, ...string[]]
+ >t2 : [number, boolean, ...string[]]
  
  f2((a, b, c) => {})
  >f2((a, b, c) => {}) : void
@@ -182,7 +182,7 @@
  >(a, b, c) => {} : (a: number, b: boolean, c: string) => void
  >a : number
  >b : boolean
-@@= skipped -15, +14 lines =@@
+@@= skipped -15, +15 lines =@@
  
  f2((...x) => {})
  >f2((...x) => {}) : void
@@ -271,7 +271,7 @@
 +>cb : (x: number, ...args: [boolean, ...string[]]) => void
  >x : number
  >args : [boolean, ...string[]]
-->t3 : [boolean, ...string[]]
+ >t3 : [boolean, ...string[]]
  
  f3((a, b, c) => {})
  >f3((a, b, c) => {}) : void
@@ -280,7 +280,7 @@
  >(a, b, c) => {} : (a: number, b: boolean, c: string) => void
  >a : number
  >b : boolean
-@@= skipped -16, +15 lines =@@
+@@= skipped -16, +16 lines =@@
  
  f3((...x) => {})
  >f3((...x) => {}) : void

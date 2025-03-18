@@ -15,6 +15,7 @@
  type Test = ThisParameterType<typeof fn>; 
  >Test : Foo
 ->fn : (this: Foo) => void
++>fn : () => void
  
  const fb = fn.bind({ blub: "blub" });
 ->fb : () => void

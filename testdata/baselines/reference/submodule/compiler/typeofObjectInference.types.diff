@@ -12,7 +12,7 @@
 +>fn : (first: { value: number; }) => O
 +>first : { value: number; }
  >value : number
-->val : number
+ >val : number
  
      return (): O => fn({value: val})
  >(): O => fn({value: val}) : () => O
@@ -22,7 +22,7 @@
  >{value: val} : { value: number; }
  >value : number
  >val : number
-@@= skipped -17, +17 lines =@@
+@@= skipped -17, +18 lines =@@
  let a = decorateA(({value}) => 5)
  >a : () => number
  >decorateA(({value}) => 5) : () => number
@@ -40,7 +40,7 @@
 +>O : O
 +>fn : (first: number) => O
  >first : number
-->val : number
+ >val : number
  
      return (): O => fn(val)
  >(): O => fn(val) : () => O
@@ -64,7 +64,7 @@
  >fn : (first: { value: number; }) => O
  >first : { value: number; }
  >value : number
-@@= skipped -43, +44 lines =@@
+@@= skipped -43, +45 lines =@@
  >c : () => number
  >decorateC(({value}) => 5) : () => number
  >decorateC : <O extends unknown>(fn: (first: { value: number; }) => O) => () => O
@@ -73,10 +73,7 @@
  >value : number
  >5 : 5
  
- type First = {value: typeof val}
- >First : First
- >value : number
-->val : number
+@@= skipped -11, +11 lines =@@
  
  function decorateD<O extends any>(fn: (first: First) => O) {
  >decorateD : <O extends unknown>(fn: (first: First) => O) => () => O
@@ -84,7 +81,7 @@
  >fn : (first: First) => O
  >first : First
  
-@@= skipped -26, +26 lines =@@
+@@= skipped -15, +16 lines =@@
  >d : () => number
  >decorateD(({value}) => 5) : () => number
  >decorateD : <O extends unknown>(fn: (first: First) => O) => () => O

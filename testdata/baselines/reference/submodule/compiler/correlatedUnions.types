@@ -785,6 +785,7 @@ const BAR_LOOKUP = makeCompleteLookupMapping(ALL_BARS, 'name');
 
 type BarLookup = typeof BAR_LOOKUP;
 >BarLookup : { a: { readonly name: "a"; }; b: { readonly name: "b"; }; }
+>BAR_LOOKUP : { a: { readonly name: "a"; }; b: { readonly name: "b"; }; }
 
 type Baz = { [K in keyof BarLookup]: BarLookup[K]['name'] };
 >Baz : Baz

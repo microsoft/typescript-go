@@ -20,11 +20,13 @@
 ->Backbone : typeof Backbone
 ->Model : typeof Backbone.Model
 +>VisualizationModel : typeof Model
++>Backbone.Model : typeof Model
 +>Backbone : typeof import("aliasUsageInIndexerOfClass_backbone")
++>Model : typeof Model
  }
  class N {
  >N : N
-@@= skipped -19, +19 lines =@@
+@@= skipped -19, +21 lines =@@
  >idx : string
  
      x = moduleA;
@@ -39,10 +41,11 @@
      [idx: string]: typeof moduleA
  >idx : string
 ->moduleA : typeof moduleA
++>moduleA : typeof import("aliasUsageInIndexerOfClass_moduleA")
  
      x: IHasVisualizationModel;
  >x : IHasVisualizationModel
-@@= skipped -23, +22 lines =@@
+@@= skipped -23, +23 lines =@@
  
  === aliasUsageInIndexerOfClass_moduleA.ts ===
  import Backbone = require("./aliasUsageInIndexerOfClass_backbone");

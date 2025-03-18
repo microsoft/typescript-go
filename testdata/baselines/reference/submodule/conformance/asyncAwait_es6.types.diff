@@ -8,11 +8,7 @@
  
  declare var MyPromise: typeof Promise;
  >MyPromise : PromiseConstructor
-->Promise : PromiseConstructor
- 
- declare var p: Promise<number>;
- >p : Promise<number>
-@@= skipped -65, +65 lines =@@
+@@= skipped -65, +66 lines =@@
  >p : Promise<number>
  
  let o = {

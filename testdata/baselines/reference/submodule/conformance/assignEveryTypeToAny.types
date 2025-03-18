@@ -67,6 +67,7 @@ x = e;
 
 var e2: typeof undefined;
 >e2 : any
+>undefined : undefined
 
 x = e2;
 >x = e2 : any

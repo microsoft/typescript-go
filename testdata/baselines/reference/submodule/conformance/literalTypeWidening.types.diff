@@ -165,6 +165,7 @@
 ->LangCode : "fr" | "en" | "es" | "it" | "nl"
 ->langCodeSet : Record<"fr" | "en" | "es" | "it" | "nl", true>
 +>LangCode : "en" | "es" | "fr" | "it" | "nl"
++>langCodeSet : Record<"en" | "es" | "fr" | "it" | "nl", true>
  
  export const langCodes = keys(langCodeSet)
 ->langCodes : ("fr" | "en" | "es" | "it" | "nl")[]
@@ -204,7 +205,7 @@
  >a : string
  >b : string
  >obj : T
-@@= skipped -46, +46 lines =@@
+@@= skipped -46, +47 lines =@@
  
  declare function f<T>(x: T): NonNullable<T>;
  >f : <T>(x: T) => NonNullable<T>

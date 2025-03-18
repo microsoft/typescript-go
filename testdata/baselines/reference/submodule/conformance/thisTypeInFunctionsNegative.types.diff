@@ -617,11 +617,9 @@
 ->explicitStatic : (this: typeof Base1) => number
 +>explicitStatic : () => number
  >this : typeof Base1
-->Base1 : typeof Base1
+ >Base1 : typeof Base1
  >this.x : any
- >this : typeof Base1
- >x : any
-@@= skipped -35, +34 lines =@@
+@@= skipped -35, +35 lines =@@
  >y : number
  
      polymorphic(this: this): number { return this.y; }

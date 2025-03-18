@@ -52,6 +52,7 @@ function f1(state: State<{ foo: number }>) {
 
         type T1 = Equals<typeof state, never>;  // true
 >T1 : true
+>state : State<{ foo: number; }> & { value: "a"; } & { value: "a.b"; }
 
         type T2 = Equals<never, never>;  // true
 >T2 : true

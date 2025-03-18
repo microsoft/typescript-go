@@ -26,6 +26,7 @@ class MySubClass extends MyClass<MyInterface> {}
 function fn(arg: typeof MyClass) {};
 >fn : (arg: typeof MyClass) => void
 >arg : typeof MyClass
+>MyClass : typeof MyClass
 
 fn(MySubClass);
 >fn(MySubClass) : void

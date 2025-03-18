@@ -17,5 +17,6 @@
 ->a : import("test1").T<{ a: string; }>
 ->theme : error
 +>a : T<{ a: string; }>
++>theme : any
  >null as any : any
  

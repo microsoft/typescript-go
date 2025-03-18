@@ -8,15 +8,7 @@
  
      constructor(x: number);
  >x : number
-@@= skipped -95, +96 lines =@@
- // BUG 820454
- var r1: typeof C;
- >r1 : typeof C
-->C : typeof C
- 
- var r2: typeof c;
- >r2 : C<string>
-->c : C<string>
+@@= skipped -103, +104 lines =@@
  
  class D<T> {
  >D : D<T>
@@ -24,13 +16,3 @@
  
      constructor(public y?) { }
  >y : any
-@@= skipped -24, +23 lines =@@
- 
- var r3: typeof D;
- >r3 : typeof D
-->D : typeof D
- 
- var r4: typeof d;
- >r4 : D<string>
-->d : D<string>
- 

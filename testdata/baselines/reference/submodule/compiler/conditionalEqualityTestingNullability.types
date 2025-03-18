@@ -30,4 +30,6 @@ declare const b: Foo<Date | null>;
 //Expected 0, Actual 1
 type ShouldBe0 = Equals<typeof a, typeof b>;
 >ShouldBe0 : 0
+>a : Foo<Date>
+>b : Foo<Date | null>
 

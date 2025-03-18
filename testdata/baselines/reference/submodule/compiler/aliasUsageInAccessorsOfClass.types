@@ -12,7 +12,9 @@ interface IHasVisualizationModel {
 
     VisualizationModel: typeof Backbone.Model;
 >VisualizationModel : typeof Model
+>Backbone.Model : typeof Model
 >Backbone : typeof import("aliasUsage1_backbone")
+>Model : typeof Model
 }
 class C2 {
 >C2 : C2
