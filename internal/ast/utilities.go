@@ -2561,12 +2561,12 @@ func GetImpliedNodeFormatForEmitWorker(fileName string, emitModuleKind core.Modu
 	}
 	if sourceFileMetaData.ImpliedNodeFormat == core.ModuleKindCommonJS &&
 		(sourceFileMetaData.PackageJsonType == "commonjs" ||
-			tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionCjs, tspath.ExtensionCts})) {
+		tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionCjs, tspath.ExtensionCts})) {
 		return core.ModuleKindCommonJS
 	}
 	if sourceFileMetaData.ImpliedNodeFormat == core.ModuleKindESNext &&
 		(sourceFileMetaData.PackageJsonType == "module" ||
-			tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionMjs, tspath.ExtensionMts})) {
+		tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionMjs, tspath.ExtensionMts})) {
 		return core.ModuleKindESNext
 	}
 	return core.ModuleKindNone
