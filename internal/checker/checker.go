@@ -721,8 +721,8 @@ type Checker struct {
 	lastGetCombinedNodeFlagsResult             ast.NodeFlags
 	lastGetCombinedModifierFlagsNode           *ast.Node
 	lastGetCombinedModifierFlagsResult         ast.ModifierFlags
-	inferenceStates                            []InferenceState
-	flowStates                                 []FlowState
+	freeinferenceState                         *InferenceState
+	freeFlowState                              *FlowState
 	flowLoopCache                              map[FlowLoopKey]*Type
 	flowLoopStack                              []FlowLoopInfo
 	sharedFlows                                []SharedFlow
@@ -15027,7 +15027,7 @@ func (c *Checker) getTypeOfVariableOrParameterOrPropertyWorker(symbol *ast.Symbo
 	case ast.KindPropertyAssignment:
 		result = c.checkPropertyAssignment(declaration, CheckModeNormal)
 	case ast.KindShorthandPropertyAssignment:
-		result = c.checkExpressionForMutableLocation(declaration, CheckModeNormal)
+		result = c.checkExpressionForMutableLocation(declaration.Name(), CheckModeNormal)
 	case ast.KindMethodDeclaration:
 		result = c.checkObjectLiteralMethod(declaration, CheckModeNormal)
 	case ast.KindExportAssignment:
