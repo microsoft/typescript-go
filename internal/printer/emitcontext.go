@@ -957,14 +957,5 @@ func (c *EmitContext) VisitIterationBody(body *ast.Statement, visitor *ast.NodeV
 }
 
 func (c *EmitContext) GetSourceFileMetaData(file *ast.SourceFile) *ast.SourceFileMetaData {
-	for {
-		if meta, ok := c.sourceFileMetaDatas[file.Path()]; ok {
-			return meta
-		}
-		original := c.Original(file.AsNode())
-		if original == nil || !ast.IsSourceFile(original) {
-			return nil
-		}
-		file = original.AsSourceFile()
-	}
+	return c.sourceFileMetaDatas[file.Path()]
 }
