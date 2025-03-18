@@ -1017,21 +1017,22 @@ exports.a = a;`,
 			file := parsetestutil.ParseTypeScript(rec.input, rec.jsx)
 			parsetestutil.CheckDiagnostics(t, file)
 			binder.BindSourceFile(file, &compilerOptions)
+			files := []*ast.SourceFile{file}
 
 			var other *ast.SourceFile
 			if len(rec.other) > 0 {
 				other = parsetestutil.ParseTypeScript(rec.other, rec.jsx)
 				parsetestutil.CheckDiagnostics(t, other)
 				binder.BindSourceFile(other, &compilerOptions)
+				files = append(files, other)
 			}
 
 			emitContext := printer.NewEmitContext()
 			resolver := binder.NewReferenceResolver(&compilerOptions, binder.ReferenceResolverHooks{})
-			metaDataProvider := NewMetaDataProvider(func(file *ast.SourceFile) *ast.SourceFileMetaData {
-				return nil
-			})
+
+			program := emittestutil.NewFakeProgram(true, &compilerOptions, files, file, other)
 			file = NewRuntimeSyntaxTransformer(emitContext, &compilerOptions, resolver).TransformSourceFile(file)
-			file = NewCommonJSModuleTransformer(emitContext, &compilerOptions, resolver, metaDataProvider).TransformSourceFile(file)
+			file = NewCommonJSModuleTransformer(emitContext, &compilerOptions, resolver, program).TransformSourceFile(file)
 			emittestutil.CheckEmit(t, emitContext, file, rec.output)
 		})
 	}

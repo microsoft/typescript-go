@@ -417,8 +417,8 @@ func (p *Program) PrintSourceFileWithTypes() {
 	}
 }
 
-func (p *Program) GetCachedSourceFileMetaDatas() map[tspath.Path]*ast.SourceFileMetaData {
-	return p.sourceFileMetaDatas
+func (p *Program) GetSourceFileMetaData(path tspath.Path) *ast.SourceFileMetaData {
+	return p.sourceFileMetaDatas[path]
 }
 
 func (p *Program) GetEmitModuleFormatOfFile(sourceFile *ast.SourceFile) core.ModuleKind {
@@ -426,11 +426,11 @@ func (p *Program) GetEmitModuleFormatOfFile(sourceFile *ast.SourceFile) core.Mod
 }
 
 func (p *Program) GetEmitModuleFormatOfFileWorker(sourceFile *ast.SourceFile, options *core.CompilerOptions) core.ModuleKind {
-	return ast.GetEmitModuleFormatOfFileWorker(sourceFile, options, p.GetCachedSourceFileMetaDatas()[sourceFile.Path()])
+	return ast.GetEmitModuleFormatOfFileWorker(sourceFile, options, p.GetSourceFileMetaData(sourceFile.Path()))
 }
 
 func (p *Program) GetImpliedNodeFormatForEmit(sourceFile *ast.SourceFile) core.ResolutionMode {
-	return ast.GetImpliedNodeFormatForEmitWorker(sourceFile.FileName(), p.compilerOptions, p.GetCachedSourceFileMetaDatas()[sourceFile.Path()])
+	return ast.GetImpliedNodeFormatForEmitWorker(sourceFile.FileName(), p.compilerOptions, p.GetSourceFileMetaData(sourceFile.Path()))
 }
 
 func (p *Program) CommonSourceDirectory() string {
