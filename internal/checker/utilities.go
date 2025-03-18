@@ -1223,9 +1223,10 @@ func isValidBigIntString(s string, roundTripOnly bool) bool {
 		return false
 	}
 	scan := scanner.NewScanner()
+	scan.SetSkipTrivia(false)
 	success := true
 	scan.SetOnError(func(diagnostic *diagnostics.Message, start, length int, args ...any) {
-		success = false
+			success = false
 	})
 	scan.SetText(s + "n")
 	result := scan.Scan()
