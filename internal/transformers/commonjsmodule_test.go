@@ -9,7 +9,14 @@ import (
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/testutil/emittestutil"
 	"github.com/microsoft/typescript-go/internal/testutil/parsetestutil"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
+
+type fakeSourceFileMetaDataProvider struct{}
+
+func (p *fakeSourceFileMetaDataProvider) GetSourceFileMetaData(path tspath.Path) *ast.SourceFileMetaData {
+	return nil
+}
 
 func TestCommonJSModuleTransformer(t *testing.T) {
 	t.Parallel()
@@ -1017,20 +1024,18 @@ exports.a = a;`,
 			file := parsetestutil.ParseTypeScript(rec.input, rec.jsx)
 			parsetestutil.CheckDiagnostics(t, file)
 			binder.BindSourceFile(file, &compilerOptions)
-			files := []*ast.SourceFile{file}
 
 			var other *ast.SourceFile
 			if len(rec.other) > 0 {
 				other = parsetestutil.ParseTypeScript(rec.other, rec.jsx)
 				parsetestutil.CheckDiagnostics(t, other)
 				binder.BindSourceFile(other, &compilerOptions)
-				files = append(files, other)
 			}
 
 			emitContext := printer.NewEmitContext()
 			resolver := binder.NewReferenceResolver(&compilerOptions, binder.ReferenceResolverHooks{})
 
-			program := emittestutil.NewFakeProgram(true, &compilerOptions, files, file, other)
+			program := &fakeSourceFileMetaDataProvider{}
 			file = NewRuntimeSyntaxTransformer(emitContext, &compilerOptions, resolver).TransformSourceFile(file)
 			file = NewCommonJSModuleTransformer(emitContext, &compilerOptions, resolver, program).TransformSourceFile(file)
 			emittestutil.CheckEmit(t, emitContext, file, rec.output)
