@@ -220,7 +220,7 @@ func main() {
 	var emitTime time.Duration
 	if compilerOptions.NoEmit.IsFalseOrUnknown() {
 		emitStart := time.Now()
-		result := program.Emit(&ts.EmitOptions{})
+		result := program.Emit(ts.EmitOptions{})
 		diagnostics = append(diagnostics, result.Diagnostics...)
 		emitTime = time.Since(emitStart)
 	}
@@ -237,15 +237,8 @@ func main() {
 		printDiagnostics(ts.SortAndDeduplicateDiagnostics(diagnostics), host, compilerOptions)
 	}
 
-	var unsupportedExtensions []string
-	for _, file := range program.SourceFiles() {
-		extension := tspath.TryGetExtensionFromPath(file.FileName())
-		if extension == tspath.ExtensionTsx || slices.Contains(tspath.SupportedJSExtensionsFlat, extension) {
-			unsupportedExtensions = core.AppendIfUnique(unsupportedExtensions, extension)
-		}
-	}
-	if len(unsupportedExtensions) != 0 {
-		fmt.Fprintf(os.Stderr, "Warning: The project contains unsupported file types (%s), which are currently not fully type-checked.\n", strings.Join(unsupportedExtensions, ", "))
+	if exts := program.UnsupportedExtensions(); len(exts) != 0 {
+		fmt.Fprintf(os.Stderr, "Warning: The project contains unsupported file types (%s), which are currently not fully type-checked.\n", strings.Join(exts, ", "))
 	}
 
 	if compilerOptions.ListFiles.IsTrue() {

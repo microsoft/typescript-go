@@ -63,6 +63,9 @@ type Program struct {
 
 	commonSourceDirectory     string
 	commonSourceDirectoryOnce sync.Once
+
+	// List of present unsupported extensions
+	unsupportedExtensions []string
 }
 
 var extensions = []string{".ts", ".tsx"}
@@ -153,6 +156,13 @@ func NewProgram(options ProgramOptions) *Program {
 	p.filesByPath = make(map[tspath.Path]*ast.SourceFile, len(p.files))
 	for _, file := range p.files {
 		p.filesByPath[file.Path()] = file
+	}
+
+	for _, file := range p.files {
+		extension := tspath.TryGetExtensionFromPath(file.FileName())
+		if extension == tspath.ExtensionTsx || slices.Contains(tspath.SupportedJSExtensionsFlat, extension) {
+			p.unsupportedExtensions = append(p.unsupportedExtensions, extension)
+		}
 	}
 
 	return p
@@ -518,7 +528,7 @@ type sourceMapEmitResult struct {
 	sourceMap            *sourcemap.RawSourceMap
 }
 
-func (p *Program) Emit(options *EmitOptions) *EmitResult {
+func (p *Program) Emit(options EmitOptions) *EmitResult {
 	// !!! performance measurement
 	p.BindSourceFiles()
 
@@ -608,4 +618,10 @@ const (
 type FileIncludeReason struct {
 	Kind  FileIncludeKind
 	Index int
+}
+
+// UnsupportedExtensions returns a list of all present "unsupported" extensions,
+// e.g. extensions that are not yet supported by the port.
+func (p *Program) UnsupportedExtensions() []string {
+	return p.unsupportedExtensions
 }
