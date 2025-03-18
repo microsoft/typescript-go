@@ -38,13 +38,13 @@ func (e *emitter) emit() {
 	e.emitBuildInfo(e.paths.buildInfoPath)
 }
 
-func (e *emitter) getModuleTransformer(emitContext *printer.EmitContext, resolver binder.ReferenceResolver, sourceFileMetaDataResolver printer.SourceFileMetaDataProvider) *transformers.Transformer {
+func (e *emitter) getModuleTransformer(emitContext *printer.EmitContext, resolver binder.ReferenceResolver, sourceFileMetaDataProvider printer.SourceFileMetaDataProvider) *transformers.Transformer {
 	options := e.host.Options()
 
 	switch options.GetEmitModuleKind() {
 	case core.ModuleKindPreserve:
 		// `ESModuleTransformer` contains logic for preserving CJS input syntax in `--module preserve`
-		return transformers.NewESModuleTransformer(emitContext, options, resolver, sourceFileMetaDataResolver)
+		return transformers.NewESModuleTransformer(emitContext, options, resolver, sourceFileMetaDataProvider)
 
 	case core.ModuleKindESNext,
 		core.ModuleKindES2022,
@@ -53,10 +53,10 @@ func (e *emitter) getModuleTransformer(emitContext *printer.EmitContext, resolve
 		core.ModuleKindNode16,
 		core.ModuleKindNodeNext,
 		core.ModuleKindCommonJS:
-		return transformers.NewImpliedModuleTransformer(emitContext, options, resolver, sourceFileMetaDataResolver)
+		return transformers.NewImpliedModuleTransformer(emitContext, options, resolver, sourceFileMetaDataProvider)
 
 	default:
-		return transformers.NewCommonJSModuleTransformer(emitContext, options, resolver, sourceFileMetaDataResolver)
+		return transformers.NewCommonJSModuleTransformer(emitContext, options, resolver, sourceFileMetaDataProvider)
 	}
 }
 

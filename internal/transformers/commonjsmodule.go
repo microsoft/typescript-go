@@ -18,7 +18,7 @@ type CommonJSModuleTransformer struct {
 	assignmentPatternVisitor   *ast.NodeVisitor // visits assignment patterns in a destructuring assignment
 	compilerOptions            *core.CompilerOptions
 	resolver                   binder.ReferenceResolver
-	sourceFileMetaDataResolver printer.SourceFileMetaDataProvider
+	sourceFileMetaDataProvider printer.SourceFileMetaDataProvider
 	moduleKind                 core.ModuleKind
 	languageVersion            core.ScriptTarget
 	currentSourceFile          *ast.SourceFile
@@ -27,11 +27,11 @@ type CommonJSModuleTransformer struct {
 	currentNode                *ast.Node // used for ancestor tracking via pushNode/popNode to detect expression identifiers
 }
 
-func NewCommonJSModuleTransformer(emitContext *printer.EmitContext, compilerOptions *core.CompilerOptions, resolver binder.ReferenceResolver, sourceFileMetaDataResolver printer.SourceFileMetaDataProvider) *Transformer {
+func NewCommonJSModuleTransformer(emitContext *printer.EmitContext, compilerOptions *core.CompilerOptions, resolver binder.ReferenceResolver, sourceFileMetaDataProvider printer.SourceFileMetaDataProvider) *Transformer {
 	if resolver == nil {
 		resolver = binder.NewReferenceResolver(compilerOptions, binder.ReferenceResolverHooks{})
 	}
-	tx := &CommonJSModuleTransformer{compilerOptions: compilerOptions, resolver: resolver, sourceFileMetaDataResolver: sourceFileMetaDataResolver}
+	tx := &CommonJSModuleTransformer{compilerOptions: compilerOptions, resolver: resolver, sourceFileMetaDataProvider: sourceFileMetaDataProvider}
 	tx.topLevelVisitor = emitContext.NewNodeVisitor(tx.visitTopLevel)
 	tx.topLevelNestedVisitor = emitContext.NewNodeVisitor(tx.visitTopLevelNested)
 	tx.discardedValueVisitor = emitContext.NewNodeVisitor(tx.visitDiscardedValue)
@@ -363,7 +363,7 @@ func (tx *CommonJSModuleTransformer) transformCommonJSModule(node *ast.SourceFil
 	result := tx.factory.UpdateSourceFile(node, statementList).AsSourceFile()
 	tx.emitContext.AddEmitHelper(result.AsNode(), tx.emitContext.ReadEmitHelpers()...)
 
-	externalHelpersImportDeclaration := createExternalHelpersImportDeclarationIfNeeded(tx.emitContext, result, tx.compilerOptions, tx.sourceFileMetaDataResolver, false /*hasExportStarsToExportValues*/, false /*hasImportStar*/, false /*hasImportDefault*/)
+	externalHelpersImportDeclaration := createExternalHelpersImportDeclarationIfNeeded(tx.emitContext, result, tx.compilerOptions, tx.sourceFileMetaDataProvider, false /*hasExportStarsToExportValues*/, false /*hasImportStar*/, false /*hasImportDefault*/)
 	if externalHelpersImportDeclaration != nil {
 		prologue, rest := tx.emitContext.SplitStandardPrologue(result.Statements.Nodes)
 		custom, rest := tx.emitContext.SplitCustomPrologue(rest)
@@ -1681,7 +1681,7 @@ func (tx *CommonJSModuleTransformer) visitCallExpression(node *ast.CallExpressio
 
 func (tx *CommonJSModuleTransformer) shouldTransformImportCall() bool {
 	// !!! host.shouldTransformImportCall?
-	return shouldTransformImportCallWorker(tx.currentSourceFile, tx.compilerOptions, tx.sourceFileMetaDataResolver.GetSourceFileMetaData(tx.currentSourceFile.Path()))
+	return shouldTransformImportCallWorker(tx.currentSourceFile, tx.compilerOptions, tx.sourceFileMetaDataProvider.GetSourceFileMetaData(tx.currentSourceFile.Path()))
 }
 
 func (tx *CommonJSModuleTransformer) visitImportCallExpression(node *ast.CallExpression, rewriteOrShim bool) *ast.Node {
