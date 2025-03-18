@@ -246,23 +246,14 @@ func handleBatchableRequest[T any](params any, executeRequest func(T) (any, erro
 	if batchParams, ok := params.(*[]T); !ok {
 		return executeRequest(params.(T))
 	} else {
-		var err error
 		batchParams := *batchParams
 		results := make([]any, len(batchParams))
-		wg := core.NewWorkGroup(true /*singleThreaded*/) // !!! TODO: make GetSymbolAtLocation et al. concurrency-safe
 		for i, params := range batchParams {
-			wg.Queue(func() {
-				var result any
-				if err != nil {
-					return
-				}
-				result, err = executeRequest(params)
-				results[i] = result
-			})
-		}
-		wg.RunAndWait()
-		if err != nil {
-			return nil, err
+			result, err := executeRequest(params)
+			if err != nil {
+				return nil, err
+			}
+			results[i] = result
 		}
 		return results, nil
 	}

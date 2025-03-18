@@ -10,28 +10,40 @@ import (
 )
 
 const (
-	offsetKind = iota
-	offsetPos
-	offsetEnd
-	offsetNext
-	offsetParent
-	offsetData
-	// encodedNodeLength is the number of int32 values that represent a single node in the encoded format.
-	encodedNodeLength
+	NodeOffsetKind = iota * 4
+	NodeOffsetPos
+	NodeOffsetEnd
+	NodeOffsetNext
+	NodeOffsetParent
+	NodeOffsetData
+	// NodeSize is the number of bytes that represents a single node in the encoded format.
+	NodeSize
 )
 
 const (
-	nodeDataTypeChildren uint32 = iota
-	nodeDataTypeStringIndex
-	nodeDataTypeExtendedDataIndex
+	NodeDataTypeChildren uint32 = iota << 30
+	NodeDataTypeStringIndex
+	NodeDataTypeExtendedDataIndex
 )
 
 const (
-	syntaxKindNodeList uint32 = 1<<32 - 1
+	NodeDataTypeMask        uint32 = 0xc0_00_00_00
+	NodeDataChildMask       uint32 = 0x00_00_00_ff
+	NodeDataStringIndexMask uint32 = 0x00_ff_ff_ff
 )
 
 const (
-	encodedHeaderLength = 6 * 4
+	SyntaxKindNodeList uint32 = 1<<32 - 1
+)
+
+const (
+	HeaderOffsetReserved = iota * 4
+	HeaderOffsetStringTableOffsets
+	HeaderOffsetStringTable
+	HeaderOffsetExtendedDataOffsets
+	HeaderOffsetExtendedData
+	HeaderOffsetNodes
+	HeaderSize
 )
 
 type stringTable struct {
@@ -77,7 +89,7 @@ func EncodeSourceFile(sourceFile *ast.SourceFile) ([]byte, error) {
 	var parentIndex, nodeCount, prevIndex uint32
 
 	strs := newStringTable(sourceFile.TextLength, sourceFile.TextCount)
-	nodes := make([]byte, 0, (sourceFile.NodeCount+1)*encodedNodeLength*4)
+	nodes := make([]byte, 0, (sourceFile.NodeCount+1)*NodeSize)
 
 	visitor := &ast.NodeVisitor{
 		Hooks: ast.NodeVisitorHooks{
@@ -90,13 +102,13 @@ func EncodeSourceFile(sourceFile *ast.SourceFile) ([]byte, error) {
 				if prevIndex != 0 {
 					// this is the next sibling of `prevNode`
 					b0, b1, b2, b3 := uint8(nodeCount), uint8(nodeCount>>8), uint8(nodeCount>>16), uint8(nodeCount>>24)
-					nodes[prevIndex*encodedNodeLength*4+offsetNext*4] = b0
-					nodes[prevIndex*encodedNodeLength*4+offsetNext*4+1] = b1
-					nodes[prevIndex*encodedNodeLength*4+offsetNext*4+2] = b2
-					nodes[prevIndex*encodedNodeLength*4+offsetNext*4+3] = b3
+					nodes[prevIndex*NodeSize+NodeOffsetNext+0] = b0
+					nodes[prevIndex*NodeSize+NodeOffsetNext+1] = b1
+					nodes[prevIndex*NodeSize+NodeOffsetNext+2] = b2
+					nodes[prevIndex*NodeSize+NodeOffsetNext+3] = b3
 				}
 
-				if nodes, err = appendUint32s(nodes, syntaxKindNodeList, uint32(nodeList.Pos()), uint32(nodeList.End()), 0, parentIndex, uint32(len(nodeList.Nodes))); err != nil {
+				if nodes, err = appendUint32s(nodes, SyntaxKindNodeList, uint32(nodeList.Pos()), uint32(nodeList.End()), 0, parentIndex, uint32(len(nodeList.Nodes))); err != nil {
 					return nil
 				}
 
@@ -124,10 +136,10 @@ func EncodeSourceFile(sourceFile *ast.SourceFile) ([]byte, error) {
 		if prevIndex != 0 {
 			// this is the next sibling of `prevNode`
 			b0, b1, b2, b3 := uint8(nodeCount), uint8(nodeCount>>8), uint8(nodeCount>>16), uint8(nodeCount>>24)
-			nodes[prevIndex*encodedNodeLength*4+offsetNext*4] = b0
-			nodes[prevIndex*encodedNodeLength*4+offsetNext*4+1] = b1
-			nodes[prevIndex*encodedNodeLength*4+offsetNext*4+2] = b2
-			nodes[prevIndex*encodedNodeLength*4+offsetNext*4+3] = b3
+			nodes[prevIndex*NodeSize+NodeOffsetNext+0] = b0
+			nodes[prevIndex*NodeSize+NodeOffsetNext+1] = b1
+			nodes[prevIndex*NodeSize+NodeOffsetNext+2] = b2
+			nodes[prevIndex*NodeSize+NodeOffsetNext+3] = b3
 		}
 
 		if nodes, err = appendUint32s(nodes, uint32(node.Kind), uint32(node.Pos()), uint32(node.End()), 0, parentIndex, getNodeData(node, strs)); err != nil {
@@ -146,7 +158,6 @@ func EncodeSourceFile(sourceFile *ast.SourceFile) ([]byte, error) {
 		return node
 	}
 
-	// kind, pos, end, next, parent
 	if nodes, err = appendUint32s(nodes, 0, 0, 0, 0, 0, 0); err != nil {
 		return nil, err
 	}
@@ -162,9 +173,8 @@ func EncodeSourceFile(sourceFile *ast.SourceFile) ([]byte, error) {
 		return nil, err
 	}
 
-	headerLength := encodedHeaderLength
-	offsetStringTableOffsets := headerLength
-	offsetStringTableData := headerLength + len(strs.offsets)*4
+	offsetStringTableOffsets := HeaderSize
+	offsetStringTableData := HeaderSize + len(strs.offsets)*4
 	offsetNodes := offsetStringTableData + strs.data.Len()
 	offsetExtendedDataOffsets := 0
 	offsetExtendedDataData := 0
@@ -203,47 +213,14 @@ func appendUint32s(buf []byte, values ...uint32) ([]byte, error) {
 	return buf, nil
 }
 
-func readInt32(buf []byte, offset int) int32 {
-	return int32(binary.LittleEndian.Uint32(buf[offset : offset+4]))
-}
-
-func FormatEncodedSourceFile(encoded []byte) string {
-	var result strings.Builder
-	var getIndent func(parentIndex int32) string
-	offsetNodes := readInt32(encoded, 5*4)
-	getIndent = func(parentIndex int32) string {
-		if parentIndex == 0 {
-			return ""
-		}
-		return "  " + getIndent(readInt32(encoded, int(offsetNodes)+int(parentIndex)*encodedNodeLength*4+offsetParent*4))
-	}
-	j := 1
-	for i := int(offsetNodes) + encodedNodeLength*4; i < len(encoded); i += encodedNodeLength * 4 {
-		kind := readInt32(encoded, i+offsetKind*4)
-		pos := readInt32(encoded, i+offsetPos*4)
-		end := readInt32(encoded, i+offsetEnd*4)
-		parentIndex := readInt32(encoded, i+offsetParent*4)
-		result.WriteString(getIndent(parentIndex))
-		if kind == -1 {
-			result.WriteString("NodeList")
-		} else {
-			result.WriteString(ast.Kind(kind).String())
-		}
-		fmt.Fprintf(&result, " [%d, %d), i=%d, next=%d", pos, end, j, encoded[i+offsetNext*4])
-		result.WriteString("\n")
-		j++
-	}
-	return result.String()
-}
-
 func getNodeData(node *ast.Node, strs *stringTable) uint32 {
 	t := getNodeDataType(node)
 	switch t {
-	case nodeDataTypeChildren:
+	case NodeDataTypeChildren:
 		return t | getNodeDefinedData(node) | uint32(getChildrenPropertyMask(node))
-	case nodeDataTypeStringIndex:
+	case NodeDataTypeStringIndex:
 		return t | getNodeDefinedData(node) | recordNodeStrings(node, strs)
-	case nodeDataTypeExtendedDataIndex:
+	case NodeDataTypeExtendedDataIndex:
 		return t | getNodeDefinedData(node) /* | TODO */
 	default:
 		panic("unreachable")
@@ -261,13 +238,13 @@ func getNodeDataType(node *ast.Node) uint32 {
 		ast.KindRegularExpressionLiteral,
 		ast.KindNoSubstitutionTemplateLiteral,
 		ast.KindJSDocText:
-		return nodeDataTypeStringIndex
+		return NodeDataTypeStringIndex
 	case ast.KindTemplateHead,
 		ast.KindTemplateMiddle,
 		ast.KindTemplateTail:
-		return nodeDataTypeExtendedDataIndex
+		return NodeDataTypeExtendedDataIndex
 	default:
-		return nodeDataTypeChildren
+		return NodeDataTypeChildren
 	}
 }
 

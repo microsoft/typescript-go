@@ -66,22 +66,31 @@ func (l *Logger) Error(s string) {
 }
 
 func (l *Logger) StartGroup() {
+	if l == nil {
+		return
+	}
 	l.inGroup = true
 }
 
 func (l *Logger) EndGroup() {
+	if l == nil {
+		return
+	}
 	l.inGroup = false
 }
 
 func (l *Logger) LoggingEnabled() bool {
-	return len(l.outputs) > 0
+	return l != nil && len(l.outputs) > 0
 }
 
 func (l *Logger) HasLevel(level LogLevel) bool {
-	return l.LoggingEnabled() && l.level >= level
+	return l != nil && l.LoggingEnabled() && l.level >= level
 }
 
 func (l *Logger) Close() {
+	if l == nil {
+		return
+	}
 	for _, output := range l.outputs {
 		_ = output.Flush()
 	}
@@ -91,6 +100,9 @@ func (l *Logger) Close() {
 }
 
 func (l *Logger) msg(s string, messageType string) {
+	if l == nil {
+		return
+	}
 	for _, output := range l.outputs {
 		header := fmt.Sprintf("%s %d", messageType, l.seq)
 		output.WriteString(header)                                      //nolint: errcheck
