@@ -142,7 +142,7 @@ var fixUnifiedDiff = regexp.MustCompile(`@@ -\d+,\d+ \+\d+,\d+ @@`)
 
 func RunAgainstSubmodule(t *testing.T, fileName string, actual string, opts Options) {
 	local := filepath.Join(localRoot, opts.Subfolder, fileName)
-	reference := filepath.Join(referenceRoot, opts.Subfolder, fileName)
+	reference := filepath.Join(submoduleReferenceRoot, opts.Subfolder, fileName)
 	writeComparison(t, actual, local, reference, true)
 }
 
