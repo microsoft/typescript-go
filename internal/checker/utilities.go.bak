@@ -1222,29 +1222,79 @@ func isValidBigIntString(s string, roundtrip bool) bool {
 	if s == "" {
 		return false
 	}
+
+	// Create a scanner and set the text to the input string with an 'n' suffix
 	scan := scanner.NewScanner()
+	// Append 'n' to make it a valid BigInt literal
 	text := s + "n"
-	success := true
-	scan.SetOnError(func(diagnostic *diagnostics.Message, start, length int, args ...any) {
-		success = false
-	})
 	scan.SetText(text)
-	result := scan.Scan()
-	negative := result == ast.KindMinusToken
+	
+	// Scan the first token
+	token := scan.Scan()
+	
+	// Check for a negative sign
+	negative := token == ast.KindMinusToken
 	if negative {
-		result = scan.Scan()
+		token = scan.Scan()
 	}
-	if !success || result != ast.KindBigIntLiteral || scan.TokenEnd() != len(text) || scan.TokenFlags()&ast.TokenFlagsNumericLiteralFlags != 0 {
+	
+	// Validate that:
+	// 1. We scanned a BigIntLiteral token
+	// 2. The scanner consumed the entire input (plus the 'n' we added)
+	// 3. The token does not contain numeric separators
+	if token != ast.KindBigIntLiteral || 
+	   scan.TokenEnd() != len(text) || 
+	   (scan.TokenFlags() & ast.TokenFlagsNumericLiteralFlags) != 0 {
 		return false
 	}
-	if !roundtrip {
-		return true
+	
+	// If roundtrip checking is required, verify the string representation matches the original
+	if roundtrip {
+		// Get the token value without the 'n' suffix
+		tokenValue := scan.TokenValue()
+		if negative {
+			tokenValue = "-" + tokenValue
+		}
+		return s == tokenValue
 	}
-	tokenValue := scan.TokenValue()
-	if negative {
-		tokenValue = "-" + tokenValue
+	
+	return true
+}
+
+func isValidHexDigits(s string) bool {
+	if s == "" {
+		return false
 	}
-	return s == tokenValue
+	for _, c := range s {
+		if !((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')) {
+			return false
+		}
+	}
+	return true
+}
+
+func isValidBinaryDigits(s string) bool {
+	if s == "" {
+		return false
+	}
+	for _, c := range s {
+		if c != '0' && c != '1' {
+			return false
+		}
+	}
+	return true
+}
+
+func isValidOctalDigits(s string) bool {
+	if s == "" {
+		return false
+	}
+	for _, c := range s {
+		if c < '0' || c > '7' {
+			return false
+		}
+	}
+	return true
 }
 
 func isValidESSymbolDeclaration(node *ast.Node) bool {
@@ -2130,10 +2180,10 @@ func isValidTypeForTemplateLiteralPlaceholder(source *Type, target *Type) bool {
 		return false
 	}
 	value := source.data.(*LiteralType).value.(string)
+	// For BigInt template literals, reject strings with 'n' suffix
 	if len(value) > 0 && value[len(value)-1] == 'n' {
 		return false
 	}
 	return isValidBigIntString(value, false)
 }
-
 

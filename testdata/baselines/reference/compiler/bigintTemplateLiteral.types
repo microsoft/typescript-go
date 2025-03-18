@@ -61,7 +61,7 @@ type Test3 = IsBigInt<"0">; // true
 >Test3 : true
 
 type Test4 = IsBigInt<"0x1A">; // true
->Test4 : true
+>Test4 : false
 
 // These should be false
 type Test5 = IsBigInt<"hello">; // false
@@ -103,8 +103,8 @@ const val3 = takesOnlyBigInt("0");
 >"0" : "0"
 
 const val4 = takesOnlyBigInt("0x1A");
->val4 : "0x1A"
->takesOnlyBigInt("0x1A") : "0x1A"
+>val4 : `${bigint}`
+>takesOnlyBigInt("0x1A") : `${bigint}`
 >takesOnlyBigInt : <T extends `${bigint}`>(value: T) => T
 >"0x1A" : "0x1A"
 
