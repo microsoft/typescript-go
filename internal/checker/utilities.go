@@ -1218,31 +1218,40 @@ func isValidNumberString(s string, roundTripOnly bool) bool {
 	return !n.IsNaN() && !n.IsInf() && (!roundTripOnly || n.String() == s)
 }
 
-func isValidBigIntString(s string, roundtrip bool) bool {
+func isValidBigIntString(s string, roundTripOnly bool) bool {
 	if s == "" {
 		return false
 	}
 	scan := scanner.NewScanner()
-	text := s + "n"
 	success := true
 	scan.SetOnError(func(diagnostic *diagnostics.Message, start, length int, args ...any) {
 		success = false
 	})
-	scan.SetText(text)
+	scan.SetText(s + "n")
 	result := scan.Scan()
 	negative := result == ast.KindMinusToken
 	if negative {
 		result = scan.Scan()
 	}
-	if !success || result != ast.KindBigIntLiteral || scan.TokenEnd() != len(text) || scan.TokenFlags()&ast.TokenFlagsNumericLiteralFlags != 0 {
+	if !success || result != ast.KindBigIntLiteral || scan.TokenEnd() != len(s)+1 || (scan.TokenFlags() & ast.TokenFlagsContainsSeparator) != 0 {
 		return false
 	}
-	if !roundtrip {
+	tokenValue := scan.TokenValue()
+	if len(tokenValue) >= 2 {
+		prefix := strings.ToLower(tokenValue[:2])
+		if prefix == "0x" || prefix == "0b" || prefix == "0o" {
+			return false
+		}
+	}
+	if !roundTripOnly {
 		return true
 	}
-	tokenValue := scan.TokenValue()
 	if negative {
 		tokenValue = "-" + tokenValue
+	}
+	tokenValue = strings.TrimLeft(tokenValue, "0")
+	if tokenValue == "" {
+		tokenValue = "0"
 	}
 	return s == tokenValue
 }
@@ -2121,19 +2130,3 @@ func allDeclarationsInSameSourceFile(symbol *ast.Symbol) bool {
 	}
 	return true
 }
-
-func isValidTypeForTemplateLiteralPlaceholder(source *Type, target *Type) bool {
-	if target.flags&TypeFlagsBigInt == 0 {
-		return false
-	}
-	if source.flags&TypeFlagsStringLiteral == 0 {
-		return false
-	}
-	value := source.data.(*LiteralType).value.(string)
-	if len(value) > 0 && value[len(value)-1] == 'n' {
-		return false
-	}
-	return isValidBigIntString(value, false)
-}
-
-

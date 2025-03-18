@@ -1698,6 +1698,16 @@ func (s *Scanner) scanNumber() ast.Kind {
 			end = s.pos
 		}
 	}
+	if !s.skipTrivia && s.pos < len(s.text) {
+		ch, _ := utf8.DecodeRuneInString(s.text[s.pos:])
+		if stringutil.IsWhiteSpaceLike(ch) {
+			if s.onError != nil {
+				s.onError(diagnostics.Invalid_character, s.pos, 1)
+			}
+			s.tokenValue = s.text[start:s.pos]
+			return ast.KindUnknown
+		}
+	}
 	if s.tokenFlags&ast.TokenFlagsContainsSeparator != 0 {
 		s.tokenValue = fixedPart
 		if fractionalPart != "" {
@@ -2398,4 +2408,9 @@ func iterateCommentRanges(f *ast.NodeFactory, text string, pos int, trailing boo
 			yield(f.NewCommentRange(pendingKind, pendingPos, pendingEnd, pendingHasTrailingNewLine))
 		}
 	}
+}
+
+// SetSkipTrivia sets whether the scanner should skip trivia (whitespace, comments) when scanning
+func (s *Scanner) SetSkipTrivia(skip bool) {
+	s.skipTrivia = skip
 }
