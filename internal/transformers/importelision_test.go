@@ -53,8 +53,8 @@ func (p *fakeProgram) GetResolvedModule(currentSourceFile *ast.SourceFile, modul
 	return p.getResolvedModule(currentSourceFile, moduleReference)
 }
 
-func (p *fakeProgram) GetCachedSourceFileMetaData(path string) *ast.SourceFileMetaData {
-	return &ast.SourceFileMetaData{}
+func (p *fakeProgram) GetCachedSourceFileMetaDatas() map[string]*ast.SourceFileMetaData {
+	return map[string]*ast.SourceFileMetaData{}
 }
 
 func TestImportElision(t *testing.T) {

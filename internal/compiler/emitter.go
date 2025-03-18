@@ -105,7 +105,7 @@ func (e *emitter) emitJsFile(sourceFile *ast.SourceFile, jsFilePath string, sour
 	}
 
 	emitContext := printer.NewEmitContext()
-	emitContext.SetSourcefileMetaData(e.host.GetCachedSourceFileMetaData(string(sourceFile.Path())))
+	emitContext.SetSourcefileMetaDatas(e.host.GetCachedSourceFileMetaDatas())
 	for _, transformer := range e.getScriptTransformers(emitContext, sourceFile) {
 		sourceFile = transformer.TransformSourceFile(sourceFile)
 	}
