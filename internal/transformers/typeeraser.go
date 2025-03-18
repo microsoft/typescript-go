@@ -100,10 +100,6 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 			// TypeScript module declarations are elided if they are not instantiated or have no body
 			return nil
 		}
-		if ast.IsModuleDeclaration(tx.parentNode) && tx.parentNode.AsModuleDeclaration().Body == node {
-			// TypeScript nested modules update to drop the synthetic export
-			return tx.factory.UpdateModuleDeclaration(node.AsModuleDeclaration(), nil, node.AsModuleDeclaration().Keyword, tx.visitor.VisitNode(node.AsModuleDeclaration().Name()), tx.visitor.VisitNode(node.AsModuleDeclaration().Body))
-		}
 		return tx.visitor.VisitEachChild(node)
 
 	case ast.KindExpressionWithTypeArguments:

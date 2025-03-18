@@ -145,9 +145,7 @@ func (tx *RuntimeSyntaxTransformer) isFirstDeclarationInScope(node *ast.Node) bo
 }
 
 func (tx *RuntimeSyntaxTransformer) isExportOfNamespace(node *ast.Node) bool {
-	return tx.currentNamespace != nil &&
-		(node.ModifierFlags()&ast.ModifierFlagsExport != 0 ||
-			ast.IsModuleDeclaration(node) && ast.IsModuleDeclaration(tx.parentNode) && tx.parentNode.AsModuleDeclaration().Body == node)
+	return tx.currentNamespace != nil && node.ModifierFlags()&ast.ModifierFlagsExport != 0
 }
 
 func (tx *RuntimeSyntaxTransformer) isExportOfExternalModule(node *ast.Node) bool {
