@@ -10,12 +10,14 @@ import (
 const identifier = "some-identifier"
 
 func TestNewReferenceResolver(t *testing.T) {
+	t.Parallel()
 	hooks := ReferenceResolverHooks{}
 	resolver := NewReferenceResolver(hooks)
 	assert.Assert(t, resolver != nil)
 }
 
 func TestGetResolvedSymbol(t *testing.T) {
+	t.Parallel()
 	hooks := ReferenceResolverHooks{
 		GetResolvedSymbol: func(node *ast.Node) *ast.Symbol {
 			return &ast.Symbol{}
@@ -28,6 +30,7 @@ func TestGetResolvedSymbol(t *testing.T) {
 }
 
 func TestGetMergedSymbol(t *testing.T) {
+	t.Parallel()
 	hooks := ReferenceResolverHooks{
 		GetMergedSymbol: func(symbol *ast.Symbol) *ast.Symbol {
 			return &ast.Symbol{}
@@ -40,6 +43,7 @@ func TestGetMergedSymbol(t *testing.T) {
 }
 
 func TestGetParentOfSymbol(t *testing.T) {
+	t.Parallel()
 	hooks := ReferenceResolverHooks{
 		GetParentOfSymbol: func(symbol *ast.Symbol) *ast.Symbol {
 			return &ast.Symbol{}
@@ -52,6 +56,7 @@ func TestGetParentOfSymbol(t *testing.T) {
 }
 
 func TestGetSymbolOfDeclaration(t *testing.T) {
+	t.Parallel()
 	hooks := ReferenceResolverHooks{
 		GetSymbolOfDeclaration: func(declaration *ast.Declaration) *ast.Symbol {
 			return &ast.Symbol{}
@@ -64,6 +69,7 @@ func TestGetSymbolOfDeclaration(t *testing.T) {
 }
 
 func TestGetReferencedValueSymbol(t *testing.T) {
+	t.Parallel()
 	hooks := ReferenceResolverHooks{
 		ResolveName: func(location *ast.Node, name string, meaning ast.SymbolFlags, nameNotFoundMessage *diagnostics.Message, isUse bool, excludeGlobals bool) *ast.Symbol {
 			return &ast.Symbol{}
@@ -78,6 +84,7 @@ func TestGetReferencedValueSymbol(t *testing.T) {
 }
 
 func TestIsTypeOnlyAliasDeclaration(t *testing.T) {
+	t.Parallel()
 	hooks := ReferenceResolverHooks{
 		GetTypeOnlyAliasDeclaration: func(symbol *ast.Symbol, include ast.SymbolFlags) *ast.Declaration {
 			return &ast.Declaration{}
@@ -90,6 +97,7 @@ func TestIsTypeOnlyAliasDeclaration(t *testing.T) {
 }
 
 func TestGetDeclarationOfAliasSymbol(t *testing.T) {
+	t.Parallel()
 	resolver := NewReferenceResolver(ReferenceResolverHooks{})
 	symbol := &ast.Symbol{
 		Declarations: []*ast.Declaration{
@@ -101,6 +109,7 @@ func TestGetDeclarationOfAliasSymbol(t *testing.T) {
 }
 
 func TestGetExportSymbolOfValueSymbolIfExported(t *testing.T) {
+	t.Parallel()
 	hooks := ReferenceResolverHooks{
 		GetExportSymbolOfValueSymbolIfExported: func(symbol *ast.Symbol) *ast.Symbol {
 			return &ast.Symbol{}
@@ -113,6 +122,7 @@ func TestGetExportSymbolOfValueSymbolIfExported(t *testing.T) {
 }
 
 func TestGetReferencedExportContainer(t *testing.T) {
+	t.Parallel()
 	hooks := ReferenceResolverHooks{
 		ResolveName: func(location *ast.Node, name string, meaning ast.SymbolFlags, nameNotFoundMessage *diagnostics.Message, isUse bool, excludeGlobals bool) *ast.Symbol {
 			return &ast.Symbol{}
@@ -126,6 +136,7 @@ func TestGetReferencedExportContainer(t *testing.T) {
 }
 
 func TestGetReferencedImportDeclaration(t *testing.T) {
+	t.Parallel()
 	hooks := ReferenceResolverHooks{
 		ResolveName: func(location *ast.Node, name string, meaning ast.SymbolFlags, nameNotFoundMessage *diagnostics.Message, isUse bool, excludeGlobals bool) *ast.Symbol {
 			return &ast.Symbol{}
@@ -139,6 +150,7 @@ func TestGetReferencedImportDeclaration(t *testing.T) {
 }
 
 func TestGetReferencedValueDeclaration(t *testing.T) {
+	t.Parallel()
 	hooks := ReferenceResolverHooks{
 		ResolveName: func(location *ast.Node, name string, meaning ast.SymbolFlags, nameNotFoundMessage *diagnostics.Message, isUse bool, excludeGlobals bool) *ast.Symbol {
 			return &ast.Symbol{}
@@ -152,6 +164,7 @@ func TestGetReferencedValueDeclaration(t *testing.T) {
 }
 
 func TestGetReferencedValueDeclarations(t *testing.T) {
+	t.Parallel()
 	hooks := ReferenceResolverHooks{
 		ResolveName: func(location *ast.Node, name string, meaning ast.SymbolFlags, nameNotFoundMessage *diagnostics.Message, isUse bool, excludeGlobals bool) *ast.Symbol {
 			return &ast.Symbol{}
