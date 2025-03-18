@@ -13,9 +13,7 @@ ParsedCommandLine::{
             "moduleResolution": 99,
             "moduleDetectionKind": 1,
             "newLine": 1,
-            "target": 99,
-            "help": null,
-            "all": null
+            "target": 99
         },
         "watchOptions": {
             "watchInterval": null,

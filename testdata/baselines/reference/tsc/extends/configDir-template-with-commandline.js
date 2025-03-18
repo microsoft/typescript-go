@@ -60,9 +60,7 @@ ExitStatus:: 2
 
 CompilerOptions::{
     "outDir": "/home/src/projects/myproject/${configDir}/outDir",
-    "explainFiles": true,
-    "help": null,
-    "all": null
+    "explainFiles": true
 }
 Output::
 src/secondary.ts(4,20): error TS2307: Cannot find module 'other/sometype2' or its corresponding type declarations.

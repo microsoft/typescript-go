@@ -15,9 +15,7 @@ configFileName:: /apath/tsconfig.json
 CompilerOptions::
 {
   "outDir": "/apath",
-  "configFilePath": "/apath/tsconfig.json",
-  "help": null,
-  "all": null
+  "configFilePath": "/apath/tsconfig.json"
 }
 
 FileNames::

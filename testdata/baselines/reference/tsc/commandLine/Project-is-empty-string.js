@@ -11,10 +11,7 @@ ExitStatus:: 0
 
 ParsedCommandLine::{
     "parsedConfig": {
-        "compilerOptions": {
-            "help": null,
-            "all": null
-        },
+        "compilerOptions": {},
         "watchOptions": {
             "watchInterval": null,
             "watchFile": 0,

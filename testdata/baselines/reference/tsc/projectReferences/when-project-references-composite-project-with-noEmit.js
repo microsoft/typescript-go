@@ -23,9 +23,7 @@ export const x = 10;
 ExitStatus:: 2
 
 CompilerOptions::{
-    "project": "/home/src/workspaces/solution/project",
-    "help": null,
-    "all": null
+    "project": "/home/src/workspaces/solution/project"
 }
 Output::
 project/index.ts(1,19): error TS2307: Cannot find module '../utils' or its corresponding type declarations.

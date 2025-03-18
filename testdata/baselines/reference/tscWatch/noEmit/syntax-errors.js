@@ -15,9 +15,7 @@ const a = "hello
 
 
 CompilerOptions::{
-    "watch": true,
-    "help": null,
-    "all": null
+    "watch": true
 }
 
 

@@ -15,9 +15,7 @@ export class class1 {}
 ExitStatus:: 7
 
 CompilerOptions::{
-    "noEmit": true,
-    "help": null,
-    "all": null
+    "noEmit": true
 }
 Output::
 No output

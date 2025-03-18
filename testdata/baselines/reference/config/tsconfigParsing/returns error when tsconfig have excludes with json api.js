@@ -22,9 +22,7 @@ CompilerOptions::
   "lib": [
     "es5"
   ],
-  "configFilePath": "/apath/tsconfig.json",
-  "help": null,
-  "all": null
+  "configFilePath": "/apath/tsconfig.json"
 }
 
 FileNames::

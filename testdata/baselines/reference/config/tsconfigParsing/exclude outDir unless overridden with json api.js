@@ -17,9 +17,7 @@ configFileName:: tsconfig.json
 CompilerOptions::
 {
   "outDir": "/bin",
-  "configFilePath": "/tsconfig.json",
-  "help": null,
-  "all": null
+  "configFilePath": "/tsconfig.json"
 }
 
 FileNames::
@@ -47,9 +45,7 @@ configFileName:: tsconfig.json
 CompilerOptions::
 {
   "outDir": "/bin",
-  "configFilePath": "/tsconfig.json",
-  "help": null,
-  "all": null
+  "configFilePath": "/tsconfig.json"
 }
 
 FileNames::

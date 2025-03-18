@@ -38,9 +38,7 @@ CompilerOptions::
   "outFile": "/outFile",
   "rootDir": "/rootDir",
   "tsBuildInfoFile": "/tsBuildInfoFile",
-  "configFilePath": "/tsconfig.json",
-  "help": null,
-  "all": null
+  "configFilePath": "/tsconfig.json"
 }
 
 FileNames::

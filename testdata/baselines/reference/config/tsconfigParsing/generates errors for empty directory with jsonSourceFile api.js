@@ -11,9 +11,7 @@ configFileName:: /apath/tsconfig.json
 CompilerOptions::
 {
   "allowJs": true,
-  "configFilePath": "/apath/tsconfig.json",
-  "help": null,
-  "all": null
+  "configFilePath": "/apath/tsconfig.json"
 }
 
 FileNames::
