@@ -5706,7 +5706,7 @@ func (c *Checker) checkVarDeclaredNamesNotShadowed(node *ast.Node) {
 				}
 				// names of block-scoped and function scoped variables can collide only
 				// if block scoped variable is defined in the function\module\source file scope (because of variable hoisting)
-				namesShareScope := container != nil && (ast.IsBlock(container) && ast.IsFunctionLike(container.Parent) ||
+				namesShareScope := container != nil && (ast.IsBlock(container) && container.Parent != nil && ast.IsFunctionLike(container.Parent) ||
 					ast.IsModuleBlock(container) || ast.IsModuleDeclaration(container) || ast.IsSourceFile(container))
 				// here we know that function scoped variable is "shadowed" by block scoped one
 				// a var declaration can't hoist past a lexical declaration and it results in a SyntaxError at runtime
@@ -11149,7 +11149,7 @@ func (c *Checker) isUncalledFunctionReference(node *ast.Node, symbol *ast.Symbol
 			return ast.IsCallOrNewExpression(parent) && ast.IsIdentifier(node) && c.hasMatchingArgument(parent, node)
 		}
 		return core.Every(symbol.Declarations, func(d *ast.Node) bool {
-			return !ast.IsFunctionLike(d) || c.IsDeprecatedDeclaration(d)
+			return d == nil || !ast.IsFunctionLike(d) || c.IsDeprecatedDeclaration(d)
 		})
 	}
 	return true
@@ -18874,7 +18874,7 @@ func (c *Checker) getSignaturesOfSymbol(symbol *ast.Symbol) []*Signature {
 	}
 	var result []*Signature
 	for i, decl := range symbol.Declarations {
-		if !ast.IsFunctionLike(decl) {
+		if decl == nil || !ast.IsFunctionLike(decl) {
 			continue
 		}
 		// Don't include signature if node is the implementation of an overloaded function. A node is considered
@@ -30094,7 +30094,7 @@ func (c *Checker) getSymbolAtLocation(node *ast.Node, ignoreErrors bool) *ast.Sy
 		fallthrough
 	case ast.KindThisKeyword:
 		container := c.getThisContainer(node, false /*includeArrowFunctions*/, false /*includeClassComputedPropertyName*/)
-		if ast.IsFunctionLike(container) {
+		if container != nil && ast.IsFunctionLike(container) {
 			sig := c.getSignatureFromDeclaration(container)
 			if sig.thisParameter != nil {
 				return sig.thisParameter
