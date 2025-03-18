@@ -7,8 +7,6 @@
 
 class B<T, U> {
 >B : B<T, U>
->T : T
->U : U
 
     constructor(x: T, y: U) { return null; }
 >x : T
@@ -17,8 +15,6 @@ class B<T, U> {
 
 class C<T, U> {
 >C : C<T, U>
->T : T
->U : U
 
     constructor(x: T, y?: U) { return null; }
 >x : T
@@ -26,29 +22,19 @@ class C<T, U> {
 }
 
 interface I<T, U> {
->I : I<T, U>
->T : T
->U : U
-
     new(x: T, y?: U): B<T, U>;
 >x : T
 >y : U
 }
 
 interface I2 {
->I2 : I2
-
     new<T, U>(x: T, y: U): C<T, U>;
->T : T
->U : U
 >x : T
 >y : U
 }
 
 var a: { new <T, U>(x: T, y?: U): B<T, U> };
 >a : new <T, U>(x: T, y?: U) => B<T, U>
->T : T
->U : U
 >x : T
 >y : U
 
@@ -56,8 +42,6 @@ var b = { new<T, U>(x: T, y: U) { return new C<T, U>(x, y); } }; // not a constr
 >b : { new: <T, U>(x: T, y: U) => C<T, U>; }
 >{ new<T, U>(x: T, y: U) { return new C<T, U>(x, y); } } : { new: <T, U>(x: T, y: U) => C<T, U>; }
 >new : <T, U>(x: T, y: U) => C<T, U>
->T : T
->U : U
 >x : T
 >y : U
 >new C<T, U>(x, y) : C<T, U>

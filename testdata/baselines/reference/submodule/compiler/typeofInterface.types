@@ -6,8 +6,6 @@ var I: { a: string};
 >a : string
 
 interface I {
->I : I
-
     I: number;
 >I : number
 

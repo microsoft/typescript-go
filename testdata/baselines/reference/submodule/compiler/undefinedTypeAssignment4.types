@@ -8,8 +8,6 @@ class undefined {
 >foo : string
 }
 interface undefined {
->undefined : undefined
-
 	member: number;
 >member : number
 }

@@ -1,13 +1,6 @@
 --- old.renamingDestructuredPropertyInFunctionType2.types
 +++ new.renamingDestructuredPropertyInFunctionType2.types
-@@= skipped -117, +117 lines =@@
- >c : any
- 
- interface I {
-+>I : I
-+
-   method1(arg: number): any; 
- >method1 : (arg: number) => any
+@@= skipped -122, +122 lines =@@
  >arg : number
  
    method2({ a: string }): any; 

@@ -12,8 +12,6 @@
 +>moduleA : typeof import("aliasUsageInFunctionExpression_moduleA")
  
  interface IHasVisualizationModel {
-+>IHasVisualizationModel : IHasVisualizationModel
-+
      VisualizationModel: typeof Backbone.Model;
 ->VisualizationModel : typeof Backbone.Model
 ->Backbone.Model : typeof Backbone.Model
@@ -26,7 +24,7 @@
  }
  var f = (x: IHasVisualizationModel) => x;
  >f : (x: IHasVisualizationModel) => IHasVisualizationModel
-@@= skipped -19, +21 lines =@@
+@@= skipped -19, +19 lines =@@
  >x : IHasVisualizationModel
  
  f = (x) => moduleA;

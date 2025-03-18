@@ -1,15 +1,6 @@
 --- old.uniqueSymbolsPropertyNames.types
 +++ new.uniqueSymbolsPropertyNames.types
-@@= skipped -1, +1 lines =@@
- 
- === uniqueSymbolsPropertyNames.ts ===
- interface OpTypes {
-+>OpTypes : OpTypes
-+
-   readonly equal: unique symbol;
- >equal : unique symbol
- }
-@@= skipped -29, +31 lines =@@
+@@= skipped -30, +30 lines =@@
  
  
  function getUniqueSymbol0(): typeof uniqueSymbol0 {

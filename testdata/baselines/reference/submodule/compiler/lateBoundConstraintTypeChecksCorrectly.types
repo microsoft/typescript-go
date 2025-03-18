@@ -13,9 +13,6 @@ type BothProps = typeof fooProp | typeof barProp;
 >barProp : unique symbol
 
 export interface Foo<T> {
->Foo : Foo<T>
->T : T
-
   [fooProp]: T;
 >[fooProp] : T
 >fooProp : unique symbol
@@ -27,7 +24,6 @@ export interface Foo<T> {
 
 function f<T extends Foo<number>>(x: T) {
 >f : <T extends Foo<number>>(x: T) => void
->T : T
 >x : T
 
     const abc = x[fooProp]; // expected: 'T[typeof fooProp]'

@@ -2,8 +2,6 @@
 
 === signatureCombiningRestParameters2.ts ===
 interface Console {
->Console : Console
-
   log(message?: any, ...optionalParams: any[]): void;
 >log : { (...data: any[]): void; (message?: any, ...optionalParams: any[]): void; }
 >message : any

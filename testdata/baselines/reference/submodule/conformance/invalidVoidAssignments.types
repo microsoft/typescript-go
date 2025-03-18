@@ -30,7 +30,6 @@ var e: C = x;
 >x : void
 
 interface I { bar: string; }
->I : I
 >bar : string
 
 var f: I = x;
@@ -59,7 +58,6 @@ M = x;
 
 function i<T>(a: T) {
 >i : <T>(a: T) => void
->T : T
 >a : T
 
     a = x;

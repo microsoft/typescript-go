@@ -4,7 +4,6 @@
 // Repro from #32964
 
 interface Foo { blub: string };
->Foo : Foo
 >blub : string
 
 function fn(this: Foo) {}

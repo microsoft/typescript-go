@@ -44,8 +44,6 @@ export var r4b: typeof c2;
 >c2 : C
 
 export interface I {
->I : I
-
     foo: string;
 >foo : string
 }

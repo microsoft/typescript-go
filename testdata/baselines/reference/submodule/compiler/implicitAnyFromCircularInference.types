@@ -68,8 +68,6 @@ function h() {
 }
 
 interface A {
->A : A
-
     s: string;
 >s : string
 }

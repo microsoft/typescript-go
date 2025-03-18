@@ -1,20 +1,6 @@
 --- old.expressionWithJSDocTypeArguments.types
 +++ new.expressionWithJSDocTypeArguments.types
-@@= skipped -4, +4 lines =@@
- 
- function foo<T>(x: T): T { return x }
- >foo : <T>(x: T) => T
-+>T : T
- >x : T
- >x : T
- 
- class Bar<T> { constructor(public x: T) { } }
- >Bar : Bar<T>
-+>T : T
- >x : T
- 
- // Errors expected on all of the following
-@@= skipped -15, +17 lines =@@
+@@= skipped -19, +19 lines =@@
  >foo : <T>(x: T) => T
  
  const HuhFoo = foo<string?>;

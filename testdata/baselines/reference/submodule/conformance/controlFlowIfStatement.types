@@ -93,7 +93,6 @@ function b() {
 }
 function c<T>(data: string | T): T {
 >c : <T>(data: string | T) => T
->T : T
 >data : string | T
 
     if (typeof data === 'string') {
@@ -116,7 +115,6 @@ function c<T>(data: string | T): T {
 }
 function d<T extends string>(data: string | T): never {
 >d : <T extends string>(data: string | T) => never
->T : T
 >data : string | T
 
     if (typeof data === 'string') {
@@ -137,9 +135,6 @@ function d<T extends string>(data: string | T): never {
 }
 
 interface I<T> {
->I : I<T>
->T : T
-
   p: T;
 >p : T
 }

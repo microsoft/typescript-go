@@ -186,8 +186,6 @@ class MyTestClass {
 
 class MyGenericTestClass<T, U> {
 >MyGenericTestClass : MyGenericTestClass<T, U>
->T : T
->U : U
 
     private canary: number;
 >canary : number

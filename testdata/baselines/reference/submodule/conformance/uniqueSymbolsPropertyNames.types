@@ -2,8 +2,6 @@
 
 === uniqueSymbolsPropertyNames.ts ===
 interface OpTypes {
->OpTypes : OpTypes
-
   readonly equal: unique symbol;
 >equal : unique symbol
 }

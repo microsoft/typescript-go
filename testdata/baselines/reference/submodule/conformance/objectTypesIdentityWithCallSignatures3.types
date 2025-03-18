@@ -4,16 +4,11 @@
 // object types are identical structurally
 
 interface I {
->I : I
-
     (x: string): string;
 >x : string
 }
 
 interface I2<T> {
->I2 : I2<T>
->T : T
-
     (x: T): T;
 >x : T
 }

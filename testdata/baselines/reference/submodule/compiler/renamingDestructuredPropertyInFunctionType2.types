@@ -118,8 +118,6 @@ type G9 = ([a, b, c]) => void;
 >c : any
 
 interface I {
->I : I
-
   method1(arg: number): any; 
 >method1 : (arg: number) => any
 >arg : number

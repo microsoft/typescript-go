@@ -3,7 +3,6 @@
 === cyclicGenericTypeInstantiation.ts ===
 function foo<T>() {
 >foo : <T>() => { y2: { y2: { y2: { y2: { y2: { y2: { y2: { y2: ???; }; }; }; }; }; }; }; }
->T : T
 
     var z = foo<typeof y>();
 >z : { y2: { y2: { y2: { y2: { y2: { y2: { y2: { y2: { y2: ???; }; }; }; }; }; }; }; }; }
@@ -26,7 +25,6 @@ function foo<T>() {
 
 function bar<T>() {
 >bar : <T>() => { y2: { y2: { y2: { y2: { y2: { y2: { y2: { y2: ???; }; }; }; }; }; }; }; }
->T : T
 
     var z = bar<typeof y>();
 >z : { y2: { y2: { y2: { y2: { y2: { y2: { y2: { y2: { y2: ???; }; }; }; }; }; }; }; }; }

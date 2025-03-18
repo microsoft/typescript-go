@@ -5,7 +5,6 @@ module M {
 >M : typeof M
 
     export interface Point { x: number; y: number }
->Point : Point
 >x : number
 >y : number
 
@@ -60,8 +59,6 @@ module M2 {
     }
 
     export interface Point {
->Point : Point
-
         x: number;
 >x : number
 
@@ -95,11 +92,7 @@ module M3 {
 >M3 : typeof M3
 
     export module Utils {
->Utils : typeof Utils
-
         export interface Point {
->Point : Point
-
             x: number; y: number;
 >x : number
 >y : number

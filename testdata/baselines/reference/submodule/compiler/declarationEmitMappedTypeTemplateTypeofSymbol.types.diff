@@ -8,10 +8,8 @@
 +>Timestamp : { (Unique symbol): true; }
  
      [TKey in typeof timestampSymbol]: true;
-+>TKey : TKey
  >timestampSymbol : unique symbol
- >true : true
- 
+@@= skipped -9, +9 lines =@@
  };
  
  export declare function now(): typeof Timestamp;

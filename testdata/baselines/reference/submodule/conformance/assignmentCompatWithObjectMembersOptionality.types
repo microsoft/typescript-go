@@ -22,8 +22,6 @@ module TargetHasOptional {
 
     // targets
     interface C {
->C : C
-
         opt?: Base
 >opt : Base
     }
@@ -44,20 +42,14 @@ module TargetHasOptional {
 
     // sources
     interface D {
->D : D
-
         opt: Base;
 >opt : Base
     }
     interface E {
->E : E
-
         opt: Derived;
 >opt : Derived
     }
     interface F {
->F : F
-
         opt?: Derived;
 >opt : Derived
     }
@@ -142,8 +134,6 @@ module SourceHasOptional {
 
     // targets
     interface C {
->C : C
-
         opt: Base
 >opt : Base
     }
@@ -163,20 +153,14 @@ module SourceHasOptional {
 
     // sources
     interface D {
->D : D
-
         opt?: Base;
 >opt : Base
     }
     interface E {
->E : E
-
         opt?: Derived;
 >opt : Derived
     }
     interface F {
->F : F
-
         opt: Derived;
 >opt : Derived
     }

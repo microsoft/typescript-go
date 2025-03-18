@@ -20,7 +20,6 @@ enum W {
 
 
 interface WStatic {
->WStatic : WStatic
 
     a: W;
 >a : W

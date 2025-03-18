@@ -1,14 +1,6 @@
 --- old.instantiatedModule.types
 +++ new.instantiatedModule.types
-@@= skipped -6, +6 lines =@@
- >M : typeof M
- 
-     export interface Point { x: number; y: number }
-+>Point : Point
- >x : number
- >y : number
- 
-@@= skipped -78, +79 lines =@@
+@@= skipped -84, +84 lines =@@
  
  // static side of the class
  var a2: typeof M2.Point;

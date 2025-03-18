@@ -2,25 +2,20 @@
 
 === overloadresolutionWithConstraintCheckingDeferred.ts ===
 interface A { x }
->A : A
 >x : any
 
 interface B { x; y }
->B : B
 >x : any
 >y : any
 
 interface C { z }
->C : C
 >z : any
 
 interface D { q }
->D : D
 >q : any
 
 class G<T extends A> {
 >G : G<T>
->T : T
 
     constructor(x: T) { }
 >x : T

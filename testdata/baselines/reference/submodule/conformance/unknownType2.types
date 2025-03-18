@@ -3,13 +3,11 @@
 === unknownType2.ts ===
 type isUnknown<T> = unknown extends T ? true : false;
 >isUnknown : isUnknown<T>
->T : T
 >true : true
 >false : false
 
 type isTrue<T extends true> = T;
 >isTrue : T
->T : T
 >true : true
 
 type SomeResponse = 'yes' | 'no' | 'idk';

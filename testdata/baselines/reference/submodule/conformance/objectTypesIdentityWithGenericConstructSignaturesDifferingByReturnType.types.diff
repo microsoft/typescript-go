@@ -1,42 +1,6 @@
 --- old.objectTypesIdentityWithGenericConstructSignaturesDifferingByReturnType.types
 +++ new.objectTypesIdentityWithGenericConstructSignaturesDifferingByReturnType.types
-@@= skipped -6, +6 lines =@@
- 
- class B<T> {
- >B : B<T>
-+>T : T
- 
-     constructor(x: T) { return null; }
- >x : T
-@@= skipped -7, +8 lines =@@
- 
- class C<T> {
- >C : C<T>
-+>T : T
- 
-     constructor(x: T) { return null; }
- >x : T
- }
- 
- interface I<T> {
-+>I : I<T>
-+>T : T
-+
-     new(x: T): Date;
- >x : T
- }
- 
- interface I2 {
-+>I2 : I2
-+
-     new<T>(x: T): RegExp;
-+>T : T
- >x : T
- }
- 
- var a: { new<T>(x: T): T }
- >a : new <T>(x: T) => T
-+>T : T
+@@= skipped -33, +33 lines =@@
  >x : T
  
  var b = { new<T>(x: T): T { return null; } }; // not a construct signature, function called new
@@ -45,11 +9,9 @@
 +>b : { new: <T>(x: T) => T; }
 +>{ new<T>(x: T): T { return null; } } : { new: <T>(x: T) => T; }
  >new : <T>(x: T) => T
-+>T : T
  >x : T
  
- function foo1b(x: B<string>);
-@@= skipped -62, +71 lines =@@
+@@= skipped -42, +42 lines =@@
  >x : any
  
  function foo3(x: typeof a);

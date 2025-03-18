@@ -6,57 +6,51 @@
  function f0<T extends typeof a>(a: T) {
 ->f0 : <T extends typeof a>(a: T) => void
 +>f0 : <T extends any>(a: T) => void
-+>T : T
  >a : any
  >a : T
  
-@@= skipped -11, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  }
  
  function f1<T extends typeof a>({a}: {a:T}) {
 ->f1 : <T extends typeof a>({ a }: { a: T; }) => void
 +>f1 : <T extends any>(__0: { a: T; }) => void
-+>T : T
  >a : any
  >a : T
  >a : T
-@@= skipped -12, +13 lines =@@
+@@= skipped -12, +12 lines =@@
  }
  
  function f2<T extends typeof a>([a]: T[]) {
 ->f2 : <T extends typeof a>([a]: T[]) => void
 +>f2 : <T extends any>(__0: T[]) => void
-+>T : T
  >a : any
  >a : T
  
-@@= skipped -14, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  >A : A
  
  	m0<T extends typeof a>(a: T) {
 ->m0 : <T extends typeof a>(a: T) => void
 +>m0 : <T extends any>(a: T) => void
-+>T : T
  >a : any
  >a : T
  
-@@= skipped -10, +11 lines =@@
+@@= skipped -10, +10 lines =@@
  >b : any
  	}
  	m1<T extends typeof a>({a}: {a:T}) {
 ->m1 : <T extends typeof a>({ a }: { a: T; }) => void
 +>m1 : <T extends any>(__0: { a: T; }) => void
-+>T : T
  >a : any
  >a : T
  >a : T
-@@= skipped -11, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  >b : any
  	}
  	m2<T extends typeof a>([a]: T[]) {
 ->m2 : <T extends typeof a>([a]: T[]) => void
 +>m2 : <T extends any>(__0: T[]) => void
-+>T : T
  >a : any
  >a : T
  

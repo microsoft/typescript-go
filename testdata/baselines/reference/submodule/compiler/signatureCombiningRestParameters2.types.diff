@@ -1,15 +1,6 @@
 --- old.signatureCombiningRestParameters2.types
 +++ new.signatureCombiningRestParameters2.types
-@@= skipped -1, +1 lines =@@
- 
- === signatureCombiningRestParameters2.ts ===
- interface Console {
-+>Console : Console
-+
-   log(message?: any, ...optionalParams: any[]): void;
- >log : { (...data: any[]): void; (message?: any, ...optionalParams: any[]): void; }
- >message : any
-@@= skipped -17, +19 lines =@@
+@@= skipped -18, +18 lines =@@
  >log : { (...data: any[]): void; (message?: any, ...optionalParams: any[]): void; }
  
  console.log = (...args) => {

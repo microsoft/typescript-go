@@ -1,12 +1,6 @@
 --- old.uniqueSymbolsDeclarationsErrors.types
 +++ new.uniqueSymbolsDeclarationsErrors.types
-@@= skipped -4, +4 lines =@@
- >s : unique symbol
- 
- interface I { readonly readonlyType: unique symbol; }
-+>I : I
- >readonlyType : unique symbol
- 
+@@= skipped -9, +9 lines =@@
  // not allowed when emitting declarations
  
  export const obj = {
@@ -21,7 +15,7 @@
  >p : unique symbol
  >s : unique symbol
  >s : unique symbol
-@@= skipped -19, +20 lines =@@
+@@= skipped -14, +14 lines =@@
  
      },
      method2(p: I["readonlyType"]): I["readonlyType"] {
@@ -67,16 +61,3 @@
  }
  
  export interface InterfaceWithPrivateNamedProperties {
-+>InterfaceWithPrivateNamedProperties : InterfaceWithPrivateNamedProperties
-+
-     [s]: any;
- >[s] : any
- >s : unique symbol
- }
- 
- export interface InterfaceWithPrivateNamedMethods {
-+>InterfaceWithPrivateNamedMethods : InterfaceWithPrivateNamedMethods
-+
-     [s](): any;
- >[s] : () => any
- >s : unique symbol

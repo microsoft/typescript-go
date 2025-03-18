@@ -10,16 +10,12 @@ class A {
 
     foo<T extends U, U extends Date>(x: T, y: U): string { return null; }
 >foo : <T extends U, U extends Date>(x: T, y: U) => string
->T : T
->U : U
 >x : T
 >y : U
 }
 
 class B<T extends U, U extends Array<number>> {
 >B : B<T, U>
->T : T
->U : U
 
     foo(x: T, y: U): string { return null; }
 >foo : (x: T, y: U) => string
@@ -29,8 +25,6 @@ class B<T extends U, U extends Array<number>> {
 
 class C<T extends U, U extends String> {
 >C : C<T, U>
->T : T
->U : U
 
     foo(x: T, y: U): string { return null; }
 >foo : (x: T, y: U) => string
@@ -40,8 +34,6 @@ class C<T extends U, U extends String> {
 
 class D<T extends U, U extends Number> {
 >D : D<T, U>
->T : T
->U : U
 
     foo(x: T, y: U): string { return null; }
 >foo : (x: T, y: U) => string
@@ -50,10 +42,6 @@ class D<T extends U, U extends Number> {
 }
 
 interface I<T extends U, U extends Number> {
->I : I<T, U>
->T : T
->U : U
-
     foo(x: T, y: U): string;
 >foo : (x: T, y: U) => string
 >x : T
@@ -61,12 +49,8 @@ interface I<T extends U, U extends Number> {
 }
 
 interface I2 {
->I2 : I2
-
     foo<T extends U, U extends Boolean>(x: T, y: U): string;
 >foo : <T extends U, U extends Boolean>(x: T, y: U) => string
->T : T
->U : U
 >x : T
 >y : U
 }
@@ -74,8 +58,6 @@ interface I2 {
 var a: { foo<T extends U, U extends Array<string>>(x: T, y: U): string }
 >a : { foo: <T extends U, U extends string[]>(x: T, y: U) => string; }
 >foo : <T extends U, U extends string[]>(x: T, y: U) => string
->T : T
->U : U
 >x : T
 >y : U
 
@@ -83,8 +65,6 @@ var b = { foo<T extends U, U extends RegExp>(x: T, y: U) { return ''; } };
 >b : { foo: <T extends U, U extends RegExp>(x: T, y: U) => string; }
 >{ foo<T extends U, U extends RegExp>(x: T, y: U) { return ''; } } : { foo: <T extends U, U extends RegExp>(x: T, y: U) => string; }
 >foo : <T extends U, U extends RegExp>(x: T, y: U) => string
->T : T
->U : U
 >x : T
 >y : U
 >'' : ""

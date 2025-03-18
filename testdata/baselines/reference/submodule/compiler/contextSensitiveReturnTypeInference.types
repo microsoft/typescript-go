@@ -4,15 +4,12 @@
 // Repro from #34849
 
 interface IData {
->IData : IData
-
   bar: boolean
 >bar : boolean
 }
 
 declare function test<TDependencies>(
 >test : <TDependencies>(getter: (deps: TDependencies, data: IData) => any, deps: TDependencies) => any
->TDependencies : TDependencies
 
   getter: (deps: TDependencies, data: IData) => any,
 >getter : (deps: TDependencies, data: IData) => any

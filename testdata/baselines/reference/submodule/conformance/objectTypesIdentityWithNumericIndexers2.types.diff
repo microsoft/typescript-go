@@ -1,22 +1,6 @@
 --- old.objectTypesIdentityWithNumericIndexers2.types
 +++ new.objectTypesIdentityWithNumericIndexers2.types
-@@= skipped -27, +27 lines =@@
- 
- class C<T> {
- >C : C<T>
-+>T : T
- 
-     [x: number]: T;
- >x : number
- }
- 
- interface I {
-+>I : I
-+
-     [x: number]: Derived;
- >x : number
- }
-@@= skipped -82, +85 lines =@@
+@@= skipped -109, +109 lines =@@
  >x : any
  
  function foo3(x: typeof a);

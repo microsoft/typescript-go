@@ -1,10 +1,6 @@
 --- old.staticAnonymousTypeNotReferencingTypeParameter.types
 +++ new.staticAnonymousTypeNotReferencingTypeParameter.types
-@@= skipped -5, +5 lines =@@
- 
- function outer<T>(x: T) {
- >outer : <T>(x: T) => typeof Inner
-+>T : T
+@@= skipped -8, +8 lines =@@
  >x : T
  
    class Inner {
@@ -13,7 +9,7 @@
  
      static y: T = x;
  >y : T
-@@= skipped -15, +16 lines =@@
+@@= skipped -12, +12 lines =@@
  let y: number = outer(5).y;
  >y : number
  >outer(5).y : number
@@ -22,23 +18,7 @@
  >outer : <T>(x: T) => typeof Inner
  >5 : 5
  >y : number
-@@= skipped -10, +10 lines =@@
- 
-   static clone<T>(dit: typeof ListWrapper2, array: T[]): T[] { return array.slice(0); }
- >clone : <T>(dit: typeof ListWrapper2, array: T[]) => T[]
-+>T : T
- >dit : typeof ListWrapper2
- >ListWrapper2 : typeof ListWrapper2
- >array : T[]
-@@= skipped -11, +12 lines =@@
- 
-   static reversed<T>(dit: typeof ListWrapper2, array: T[]): T[] {
- >reversed : <T>(dit: typeof ListWrapper2, array: T[]) => T[]
-+>T : T
- >dit : typeof ListWrapper2
- >ListWrapper2 : typeof ListWrapper2
- >array : T[]
-@@= skipped -7, +8 lines =@@
+@@= skipped -28, +28 lines =@@
      var a = ListWrapper2.clone(dit, array);
  >a : T[]
  >ListWrapper2.clone(dit, array) : T[]
@@ -50,84 +30,7 @@
  >dit : typeof ListWrapper2
  >array : T[]
  
-@@= skipped -20, +20 lines =@@
-      */
-     export function funkyFor<T, U>(array: T[], callback: (element: T, index: number) => U): U {
- >funkyFor : <T, U>(array: T[], callback: (element: T, index: number) => U) => U
-+>T : T
-+>U : U
- >array : T[]
- >callback : (element: T, index: number) => U
- >element : T
-@@= skipped -43, +45 lines =@@
-     }
- }
- interface Scanner {
-+>Scanner : Scanner
-+
-   scanRange<T>(start: number, length: number, callback: () => T): T;
- >scanRange : <T>(start: number, length: number, callback: () => T) => T
-+>T : T
- >start : number
- >length : number
- >callback : () => T
-@@= skipped -31, +34 lines =@@
- 
-   static clone<T>(dit: typeof ListWrapper, array: T[]): T[] { return array.slice(0); }
- >clone : <T>(dit: typeof ListWrapper, array: T[]) => T[]
-+>T : T
- >dit : typeof ListWrapper
- >ListWrapper : typeof ListWrapper
- >array : T[]
-@@= skipped -11, +12 lines =@@
- 
-   static forEachWithIndex<T>(dit: typeof ListWrapper, array: T[], fn: (t: T, n: number) => void) {
- >forEachWithIndex : <T>(dit: typeof ListWrapper, array: T[], fn: (t: T, n: number) => void) => void
-+>T : T
- >dit : typeof ListWrapper
- >ListWrapper : typeof ListWrapper
- >array : T[]
-@@= skipped -29, +30 lines =@@
-   }
-   static first<T>(dit: typeof ListWrapper, array: T[]): T {
- >first : <T>(dit: typeof ListWrapper, array: T[]) => T
-+>T : T
- >dit : typeof ListWrapper
- >ListWrapper : typeof ListWrapper
- >array : T[]
-@@= skipped -15, +16 lines =@@
-   }
-   static last<T>(dit: typeof ListWrapper, array: T[]): T {
- >last : <T>(dit: typeof ListWrapper, array: T[]) => T
-+>T : T
- >dit : typeof ListWrapper
- >ListWrapper : typeof ListWrapper
- >array : T[]
-@@= skipped -25, +26 lines =@@
-   }
-   static indexOf<T>(dit: typeof ListWrapper, array: T[], value: T, startIndex: number = 0): number {
- >indexOf : <T>(dit: typeof ListWrapper, array: T[], value: T, startIndex?: number) => number
-+>T : T
- >dit : typeof ListWrapper
- >ListWrapper : typeof ListWrapper
- >array : T[]
-@@= skipped -17, +18 lines =@@
-   }
-   static contains<T>(dit: typeof ListWrapper, list: T[], el: T): boolean { return list.indexOf(el) !== -1; }
- >contains : <T>(dit: typeof ListWrapper, list: T[], el: T) => boolean
-+>T : T
- >dit : typeof ListWrapper
- >ListWrapper : typeof ListWrapper
- >list : T[]
-@@= skipped -15, +16 lines =@@
- 
-   static reversed<T>(dit: typeof ListWrapper, array: T[]): T[] {
- >reversed : <T>(dit: typeof ListWrapper, array: T[]) => T[]
-+>T : T
- >dit : typeof ListWrapper
- >ListWrapper : typeof ListWrapper
- >array : T[]
-@@= skipped -7, +8 lines =@@
+@@= skipped -213, +213 lines =@@
      var a = ListWrapper.clone(dit, array);
  >a : T[]
  >ListWrapper.clone(dit, array) : T[]
@@ -163,63 +66,7 @@
  >array : T[]
  >t => t.toString() : (t: T) => string
  >t : T
-@@= skipped -30, +30 lines =@@
- 
-   static insert<T>(dit: typeof ListWrapper, list: T[], index: number, value: T) { list.splice(index, 0, value); }
- >insert : <T>(dit: typeof ListWrapper, list: T[], index: number, value: T) => void
-+>T : T
- >dit : typeof ListWrapper
- >ListWrapper : typeof ListWrapper
- >list : T[]
-@@= skipped -15, +16 lines =@@
- 
-   static removeAt<T>(dit: typeof ListWrapper, list: T[], index: number): T {
- >removeAt : <T>(dit: typeof ListWrapper, list: T[], index: number) => T
-+>T : T
- >dit : typeof ListWrapper
- >ListWrapper : typeof ListWrapper
- >list : T[]
-@@= skipped -24, +25 lines =@@
-   }
-   static removeAll<T>(dit: typeof ListWrapper, list: T[], items: T[]) {
- >removeAll : <T>(dit: typeof ListWrapper, list: T[], items: T[]) => void
-+>T : T
- >dit : typeof ListWrapper
- >ListWrapper : typeof ListWrapper
- >list : T[]
-@@= skipped -37, +38 lines =@@
-   }
-   static remove<T>(dit: typeof ListWrapper, list: T[], el: T): boolean {
- >remove : <T>(dit: typeof ListWrapper, list: T[], el: T) => boolean
-+>T : T
- >dit : typeof ListWrapper
- >ListWrapper : typeof ListWrapper
- >list : T[]
-@@= skipped -123, +124 lines =@@
-   }
-   static slice<T>(dit: typeof ListWrapper, l: T[], from: number = 0, to: number = null): T[] {
- >slice : <T>(dit: typeof ListWrapper, l: T[], from?: number, to?: number) => T[]
-+>T : T
- >dit : typeof ListWrapper
- >ListWrapper : typeof ListWrapper
- >l : T[]
-@@= skipped -21, +22 lines =@@
-   }
-   static splice<T>(dit: typeof ListWrapper, l: T[], from: number, length: number): T[] { return l.splice(from, length); }
- >splice : <T>(dit: typeof ListWrapper, l: T[], from: number, length: number) => T[]
-+>T : T
- >dit : typeof ListWrapper
- >ListWrapper : typeof ListWrapper
- >l : T[]
-@@= skipped -14, +15 lines =@@
- 
-   static sort<T>(dit: typeof ListWrapper, l: T[], compareFn?: (a: T, b: T) => number) {
- >sort : <T>(dit: typeof ListWrapper, l: T[], compareFn?: (a: T, b: T) => number) => void
-+>T : T
- >dit : typeof ListWrapper
- >ListWrapper : typeof ListWrapper
- >l : T[]
-@@= skipped -9, +10 lines =@@
+@@= skipped -273, +273 lines =@@
  
      if (isPresent(compareFn)) {
  >isPresent(compareFn) : boolean
@@ -228,20 +75,7 @@
  >compareFn : (a: T, b: T) => number
  
        l.sort(compareFn);
-@@= skipped -20, +20 lines =@@
-   }
-   static toString<T>(dit: typeof ListWrapper, l: T[]): string { return l.toString(); }
- >toString : <T>(dit: typeof ListWrapper, l: T[]) => string
-+>T : T
- >dit : typeof ListWrapper
- >ListWrapper : typeof ListWrapper
- >l : T[]
-@@= skipped -10, +11 lines =@@
- 
-   static toJSON<T>(dit: typeof ListWrapper, l: T[]): string { return JSON.stringify(l); }
- >toJSON : <T>(dit: typeof ListWrapper, l: T[]) => string
-+>T : T
- >dit : typeof ListWrapper
+@@= skipped -34, +34 lines =@@
  >ListWrapper : typeof ListWrapper
  >l : T[]
  >JSON.stringify(l) : string
@@ -253,24 +87,3 @@
  >l : T[]
  
    static maximum<T>(dit: typeof ListWrapper, list: T[], predicate: (t: T) => number): T {
- >maximum : <T>(dit: typeof ListWrapper, list: T[], predicate: (t: T) => number) => T
-+>T : T
- >dit : typeof ListWrapper
- >ListWrapper : typeof ListWrapper
- >list : T[]
-@@= skipped -103, +105 lines =@@
- 
- declare function isPresent<T>(compareFn?: (a: T, b: T) => number): boolean;
- >isPresent : <T>(compareFn?: (a: T, b: T) => number) => boolean
-+>T : T
- >compareFn : (a: T, b: T) => number
- >a : T
- >b : T
- 
- interface Array<T> {
-+>Array : T[]
-+>T : T
-+
- 	fill(value: any, start: number, end: number): void;
- >fill : (value: any, start: number, end: number) => void
- >value : any

@@ -158,8 +158,6 @@ type G13 = new ({ [2]: string }) => void; // Error
 >string : any
 
 interface I {
->I : I
-
   method1(arg: number): any; // OK
 >method1 : (arg: number) => any
 >arg : number

@@ -12,8 +12,6 @@
 +>moduleA : typeof import("aliasUsage1_moduleA")
  
  interface IHasVisualizationModel {
-+>IHasVisualizationModel : IHasVisualizationModel
-+
      VisualizationModel: typeof Backbone.Model;
 ->VisualizationModel : typeof Backbone.Model
 ->Backbone.Model : typeof Backbone.Model
@@ -26,7 +24,7 @@
  }
  class C2 {
  >C2 : C2
-@@= skipped -31, +33 lines =@@
+@@= skipped -31, +31 lines =@@
  >x : IHasVisualizationModel
  
          x = moduleA;

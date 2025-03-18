@@ -1,43 +1,11 @@
 --- old.objectTypesIdentityWithGenericConstructSignaturesDifferingByConstraints.types
 +++ new.objectTypesIdentityWithGenericConstructSignaturesDifferingByConstraints.types
-@@= skipped -6, +6 lines =@@
- 
- class B<T extends Array<number>> {
- >B : B<T>
-+>T : T
- 
-     constructor(x: T) { return null; }
- >x : T
-@@= skipped -7, +8 lines =@@
- 
- class C<T extends String> {
- >C : C<T>
-+>T : T
- 
-     constructor(x: T) { return null; }
- >x : T
- }
- 
- interface I<T extends Number> {
-+>I : I<T>
-+>T : T
-+
-     new(x: T): string;
- >x : T
- }
- 
- interface I2 {
-+>I2 : I2
-+
-     new<T extends Boolean>(x: T): string;
-+>T : T
- >x : T
+@@= skipped -29, +29 lines =@@
  }
  
  var a: { new<T extends Array<string>>(x: T): string }
 ->a : new <T extends Array<string>>(x: T) => string
 +>a : new <T extends string[]>(x: T) => string
-+>T : T
  >x : T
  
  var b = { new<T extends RegExp>(x: T) { return ''; } }; // not a construct signature, function called new
@@ -46,7 +14,6 @@
 +>b : { new: <T extends RegExp>(x: T) => string; }
 +>{ new<T extends RegExp>(x: T) { return ''; } } : { new: <T extends RegExp>(x: T) => string; }
  >new : <T extends RegExp>(x: T) => string
-+>T : T
  >x : T
  >'' : ""
  
@@ -66,7 +33,7 @@
  >x : any
  
  function foo1c(x: C<String>);
-@@= skipped -63, +72 lines =@@
+@@= skipped -47, +47 lines =@@
  >x : any
  
  function foo3(x: typeof a);

@@ -1,22 +1,6 @@
 --- old.contextSensitiveReturnTypeInference.types
 +++ new.contextSensitiveReturnTypeInference.types
-@@= skipped -3, +3 lines =@@
- // Repro from #34849
- 
- interface IData {
-+>IData : IData
-+
-   bar: boolean
- >bar : boolean
- }
- 
- declare function test<TDependencies>(
- >test : <TDependencies>(getter: (deps: TDependencies, data: IData) => any, deps: TDependencies) => any
-+>TDependencies : TDependencies
- 
-   getter: (deps: TDependencies, data: IData) => any,
- >getter : (deps: TDependencies, data: IData) => any
-@@= skipped -61, +64 lines =@@
+@@= skipped -64, +64 lines =@@
  >test : <TDependencies>(getter: (deps: TDependencies, data: IData) => any, deps: TDependencies) => any
  
    (deps: typeof DEPS, data) => ({

@@ -1,13 +1,6 @@
 --- old.renamingDestructuredPropertyInFunctionType.types
 +++ new.renamingDestructuredPropertyInFunctionType.types
-@@= skipped -157, +157 lines =@@
- >string : any
- 
- interface I {
-+>I : I
-+
-   method1(arg: number): any; // OK
- >method1 : (arg: number) => any
+@@= skipped -162, +162 lines =@@
  >arg : number
  
    method2({ a: string }): any; // Error
@@ -16,7 +9,7 @@
  >a : any
  >string : any
  
-@@= skipped -26, +28 lines =@@
+@@= skipped -21, +21 lines =@@
  
  // Below are OK but renaming should be removed from declaration emit
  function f1({ a: string }: O) { }

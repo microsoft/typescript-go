@@ -16,7 +16,6 @@ namespace valueModule { export var val = 1 }
 >1 : 1
 
 namespace namespaceModule { export type typ = 1 }
->namespaceModule : any
 >typ : 1
 
 // should error

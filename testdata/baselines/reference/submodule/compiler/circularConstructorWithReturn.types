@@ -6,7 +6,6 @@
 export type Client = ReturnType<typeof getPrismaClient> extends new () => infer T ? T : never
 >Client : PrismaClient
 >getPrismaClient : (options?: any) => typeof PrismaClient
->T : T
 
 export function getPrismaClient(options?: any) {
 >getPrismaClient : (options?: any) => typeof PrismaClient

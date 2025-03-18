@@ -1,55 +1,6 @@
 --- old.objectTypesIdentityWithGenericConstructSignaturesDifferingTypeParameterCounts.types
 +++ new.objectTypesIdentityWithGenericConstructSignaturesDifferingTypeParameterCounts.types
-@@= skipped -4, +4 lines =@@
- 
- class B<U, V> {
- >B : B<U, V>
-+>U : U
-+>V : V
- 
-     constructor(x: U) { return null; }
- >x : U
-@@= skipped -7, +9 lines =@@
- 
- class C<V, W, X> {
- >C : C<V, W, X>
-+>V : V
-+>W : W
-+>X : X
- 
-     constructor(x: V) { return null; }
- >x : V
- }
- 
- interface I<X, Y, Z, A> {
-+>I : I<X, Y, Z, A>
-+>X : X
-+>Y : Y
-+>Z : Z
-+>A : A
-+
-     new(x: X): B<X,Y>;
- >x : X
- }
- 
- interface I2 {
-+>I2 : I2
-+
-     new <Y, Z, A, B>(x: Y): C<Y, Z, A>;
-+>Y : Y
-+>Z : Z
-+>A : A
-+>B : B
- >x : Y
- }
- 
- var a: { new <Z, A, B, CC, D>(x: Z): C<Z, A, B>; }
- >a : new <Z, A, B, CC, D>(x: Z) => C<Z, A, B>
-+>Z : Z
-+>A : A
-+>B : B
-+>CC : CC
-+>D : D
+@@= skipped -31, +31 lines =@@
  >x : Z
  
  var b = { new<A, B, C, D, E, F>(x: A) { return x; } };
@@ -58,16 +9,9 @@
 +>b : { new: <A, B, C, D, E, F>(x: A) => A; }
 +>{ new<A, B, C, D, E, F>(x: A) { return x; } } : { new: <A, B, C, D, E, F>(x: A) => A; }
  >new : <A, B, C, D, E, F>(x: A) => A
-+>A : A
-+>B : B
-+>C : C
-+>D : D
-+>E : E
-+>F : F
  >x : A
  >x : A
- 
-@@= skipped -63, +89 lines =@@
+@@= skipped -43, +43 lines =@@
  >x : any
  
  function foo3(x: typeof a);

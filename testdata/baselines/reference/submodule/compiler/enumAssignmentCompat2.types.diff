@@ -1,14 +1,6 @@
 --- old.enumAssignmentCompat2.types
 +++ new.enumAssignmentCompat2.types
-@@= skipped -18, +18 lines =@@
- }
- 
- interface WStatic {
-+>WStatic : WStatic
- 
-     a: W;
- >a : W
-@@= skipped -89, +90 lines =@@
+@@= skipped -107, +107 lines =@@
  >a : W.a
  
  W.D;

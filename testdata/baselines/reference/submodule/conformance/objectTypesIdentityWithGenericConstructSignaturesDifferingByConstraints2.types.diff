@@ -1,60 +1,11 @@
 --- old.objectTypesIdentityWithGenericConstructSignaturesDifferingByConstraints2.types
 +++ new.objectTypesIdentityWithGenericConstructSignaturesDifferingByConstraints2.types
-@@= skipped -6, +6 lines =@@
- 
- class B<T extends U, U extends Array<number>> {
- >B : B<T, U>
-+>T : T
-+>U : U
- 
-     constructor(x: T, y: U) { return null; }
- >x : T
-@@= skipped -8, +10 lines =@@
- 
- class C<T extends U, U extends String> {
- >C : C<T, U>
-+>T : T
-+>U : U
- 
-     constructor(x: T, y: U) { return null; }
- >x : T
-@@= skipped -8, +10 lines =@@
- 
- class D<T extends U, U extends Number> {
- >D : D<T, U>
-+>T : T
-+>U : U
- 
-     constructor(x: T, y: U) { return null; }
- >x : T
-@@= skipped -7, +9 lines =@@
- }
- 
- interface I<T extends U, U extends Number> {
-+>I : I<T, U>
-+>T : T
-+>U : U
-+
-     new(x: T, y: U): string;
- >x : T
- >y : U
- }
- 
- interface I2 {
-+>I2 : I2
-+
-     new<T extends U, U extends Boolean>(x: T, y: U): string;
-+>T : T
-+>U : U
- >x : T
- >y : U
+@@= skipped -41, +41 lines =@@
  }
  
  var a: { new<T extends U, U extends Array<string>>(x: T, y: U): string }
 ->a : new <T extends U, U extends Array<string>>(x: T, y: U) => string
 +>a : new <T extends U, U extends string[]>(x: T, y: U) => string
-+>T : T
-+>U : U
  >x : T
  >y : U
  
@@ -64,8 +15,6 @@
 +>b : { new: <T extends U, U extends RegExp>(x: T, y: U) => string; }
 +>{ new<T extends U, U extends RegExp>(x: T, y: U) { return ''; } } : { new: <T extends U, U extends RegExp>(x: T, y: U) => string; }
  >new : <T extends U, U extends RegExp>(x: T, y: U) => string
-+>T : T
-+>U : U
  >x : T
  >y : U
  >'' : ""
@@ -86,7 +35,7 @@
  >x : any
  
  function foo1c(x: C<String, String>);
-@@= skipped -61, +73 lines =@@
+@@= skipped -49, +49 lines =@@
  >x : any
  
  function foo3(x: typeof a);

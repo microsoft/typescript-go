@@ -2,10 +2,7 @@
 
 === InvalidNonInstantiatedModule.ts ===
 module M {
->M : any
-
     export interface Point { x: number; y: number }
->Point : Point
 >x : number
 >y : number
 }

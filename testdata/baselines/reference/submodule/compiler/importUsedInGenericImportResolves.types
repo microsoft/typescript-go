@@ -2,9 +2,6 @@
 
 === test1.d.ts ===
 export interface T<P> {
->T : T<P>
->P : P
-
     a: P;
 >a : P
 }

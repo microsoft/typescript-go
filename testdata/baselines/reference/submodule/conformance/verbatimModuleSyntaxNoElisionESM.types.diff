@@ -9,10 +9,7 @@
  
  === /main6.ts ===
  interface I {}
-+>I : I
-+
- export default I; // error
- >I : I
+@@= skipped -9, +9 lines =@@
  
  === /main7.ts ===
  import type C from "./main5";

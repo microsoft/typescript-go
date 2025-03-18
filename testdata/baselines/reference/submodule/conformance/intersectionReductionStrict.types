@@ -147,15 +147,9 @@ type K2 = keyof A | keyof B;  // 'kind' | 'foo'
 
 type Merge1<T, U> = { [P in keyof (T & U)]: P extends keyof T ? T[P] : U[P & keyof U] }
 >Merge1 : Merge1<T, U>
->T : T
->U : U
->P : P
 
 type Merge2<T, U> = { [P in keyof T | keyof U]: P extends keyof T ? T[P] : U[P & keyof U] }
 >Merge2 : Merge2<T, U>
->T : T
->U : U
->P : P
 
 type M1 = { a: 1, b: 2 } & { a: 2, c: 3 };  // never
 >M1 : M1
@@ -263,7 +257,6 @@ const f1 = (t: "a" | ("b" & "c")): "a" => t;
 
 type Container<Type extends string> = {
 >Container : Container<Type>
->Type : Type
 
     type: Type;
 >type : Type

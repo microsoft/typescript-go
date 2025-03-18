@@ -50,7 +50,6 @@ x = b;
 >b : C
 
 interface I { foo: string }
->I : I
 >foo : string
 
 var c: I;
@@ -79,7 +78,6 @@ x = { f() { } }
 
 function f<T>(a: T) {
 >f : <T>(a: T) => void
->T : T
 >a : T
 
     x = a;

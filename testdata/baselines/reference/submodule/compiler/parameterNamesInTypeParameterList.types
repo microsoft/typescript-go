@@ -3,7 +3,6 @@
 === parameterNamesInTypeParameterList.ts ===
 function f0<T extends typeof a>(a: T) {
 >f0 : <T extends any>(a: T) => void
->T : T
 >a : any
 >a : T
 
@@ -15,7 +14,6 @@ function f0<T extends typeof a>(a: T) {
 
 function f1<T extends typeof a>({a}: {a:T}) {
 >f1 : <T extends any>(__0: { a: T; }) => void
->T : T
 >a : any
 >a : T
 >a : T
@@ -28,7 +26,6 @@ function f1<T extends typeof a>({a}: {a:T}) {
 
 function f2<T extends typeof a>([a]: T[]) {
 >f2 : <T extends any>(__0: T[]) => void
->T : T
 >a : any
 >a : T
 
@@ -43,7 +40,6 @@ class A {
 
 	m0<T extends typeof a>(a: T) {
 >m0 : <T extends any>(a: T) => void
->T : T
 >a : any
 >a : T
 
@@ -54,7 +50,6 @@ class A {
 	}
 	m1<T extends typeof a>({a}: {a:T}) {
 >m1 : <T extends any>(__0: { a: T; }) => void
->T : T
 >a : any
 >a : T
 >a : T
@@ -66,7 +61,6 @@ class A {
 	}
 	m2<T extends typeof a>([a]: T[]) {
 >m2 : <T extends any>(__0: T[]) => void
->T : T
 >a : any
 >a : T
 

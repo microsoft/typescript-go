@@ -118,30 +118,7 @@
  >a2 : { (x: { <T extends Derived>(a: T): T; <T extends Base>(a: T): T; }): any[]; (x: { <T extends Derived2>(a: T): T; <T extends Base>(a: T): T; }): any[]; }
  
          (x: {
- >x : { <T extends Derived>(a: T): T; <T extends Base>(a: T): T; }
- 
-             <T extends Derived>(a: T): T;
-+>T : T
- >a : T
- 
-             <T extends Base>(a: T): T;
-+>T : T
- >a : T
- 
-         }): any[];
-@@= skipped -21, +23 lines =@@
- >x : { <T extends Derived2>(a: T): T; <T extends Base>(a: T): T; }
- 
-             <T extends Derived2>(a: T): T;
-+>T : T
- >a : T
- 
-             <T extends Base>(a: T): T;
-+>T : T
- >a : T
- 
-         }): any[];
-@@= skipped -10, +12 lines =@@
+@@= skipped -31, +31 lines =@@
  >a2 : { (x: { <T extends Derived>(a: T): T; <T extends Base>(a: T): T; }): any[]; (x: { <T extends Derived2>(a: T): T; <T extends Base>(a: T): T; }): any[]; }
  
      declare function foo17(a2: any): any;
@@ -155,8 +132,6 @@
 ->foo2 : { (a2: (x: number) => string[]): typeof a2; (a2: any): any; }
 +>foo2 : { (a2: (x: number) => string[]): (x: number) => string[]; (a2: any): any; }
  ><T, U>(x: T) => <U[]>null : <T, U>(x: T) => U[]
-+>T : T
-+>U : U
  >x : T
  ><U[]>null : U[]
  
@@ -168,11 +143,7 @@
  >(x: number) => [''] : (x: number) => string[]
  >x : number
  >[''] : string[]
- >'' : ""
- ><T, U>(x: T) => <U[]>null : <T, U>(x: T) => U[]
-+>T : T
-+>U : U
- >x : T
+@@= skipped -23, +23 lines =@@
  ><U[]>null : U[]
  
      var r1b = [<T, U>(x: T) => <U[]>null, (x: number) => ['']];
@@ -181,22 +152,9 @@
 +>r1b : (x: number) => string[][]
 +>[<T, U>(x: T) => <U[]>null, (x: number) => ['']] : (x: number) => string[][]
  ><T, U>(x: T) => <U[]>null : <T, U>(x: T) => U[]
-+>T : T
-+>U : U
  >x : T
  ><U[]>null : U[]
- >(x: number) => [''] : (x: number) => string[]
-@@= skipped -36, +42 lines =@@
-     var r2arg = <T extends Base, U extends Derived, V extends Derived2>(x: (arg: T) => U) => (r: T) => <V>null;
- >r2arg : <T extends Base, U extends Derived, V extends Derived2>(x: (arg: T) => U) => (r: T) => V
- ><T extends Base, U extends Derived, V extends Derived2>(x: (arg: T) => U) => (r: T) => <V>null : <T extends Base, U extends Derived, V extends Derived2>(x: (arg: T) => U) => (r: T) => V
-+>T : T
-+>U : U
-+>V : V
- >x : (arg: T) => U
- >arg : T
- >(r: T) => <V>null : (r: T) => V
-@@= skipped -18, +21 lines =@@
+@@= skipped -31, +31 lines =@@
      var r2 = foo7(r2arg); // any
  >r2 : (x: (arg: Base) => Derived) => (r: Base) => Derived2
  >foo7(r2arg) : (x: (arg: Base) => Derived) => (r: Base) => Derived2
@@ -220,15 +178,7 @@
  >r2arg : <T extends Base, U extends Derived, V extends Derived2>(x: (arg: T) => U) => (r: T) => V
  >r2arg2 : (x: (arg: Base) => Derived) => (r: Base) => Derived2
  
-     var r3arg = <T extends Base, U extends Derived>(x: (arg: T) => U, y: (arg2: { foo: number; }) => U) => (r: T) => <U>null;
- >r3arg : <T extends Base, U extends Derived>(x: (arg: T) => U, y: (arg2: { foo: number; }) => U) => (r: T) => U
- ><T extends Base, U extends Derived>(x: (arg: T) => U, y: (arg2: { foo: number; }) => U) => (r: T) => <U>null : <T extends Base, U extends Derived>(x: (arg: T) => U, y: (arg2: { foo: number; }) => U) => (r: T) => U
-+>T : T
-+>U : U
- >x : (arg: T) => U
- >arg : T
- >y : (arg2: { foo: number; }) => U
-@@= skipped -41, +43 lines =@@
+@@= skipped -41, +41 lines =@@
      var r3 = foo8(r3arg); // any
  >r3 : any
  >foo8(r3arg) : any
@@ -252,14 +202,7 @@
  >r3arg : <T extends Base, U extends Derived>(x: (arg: T) => U, y: (arg2: { foo: number; }) => U) => (r: T) => U
  >r3arg2 : (x: (arg: Base) => Derived, y: (arg2: Base) => Derived) => (r: Base) => Derived
  
-     var r4arg = <T extends Derived>(...x: T[]) => <T>null;
- >r4arg : <T extends Derived>(...x: T[]) => T
- ><T extends Derived>(...x: T[]) => <T>null : <T extends Derived>(...x: T[]) => T
-+>T : T
- >x : T[]
- ><T>null : T
- 
-@@= skipped -30, +31 lines =@@
+@@= skipped -30, +30 lines =@@
      var r4 = foo10(r4arg); // any
  >r4 : (...x: Base[]) => Base
  >foo10(r4arg) : (...x: Base[]) => Base
@@ -283,14 +226,7 @@
  >r4arg : <T extends Derived>(...x: T[]) => T
  >r4arg2 : (...x: Base[]) => Base
  
-     var r5arg = <T extends Derived>(x: T, y: T) => <T>null;
- >r5arg : <T extends Derived>(x: T, y: T) => T
- ><T extends Derived>(x: T, y: T) => <T>null : <T extends Derived>(x: T, y: T) => T
-+>T : T
- >x : T
- >y : T
- ><T>null : T
-@@= skipped -35, +36 lines =@@
+@@= skipped -35, +35 lines =@@
      var r5 = foo11(r5arg); // any
  >r5 : (x: { foo: string; }, y: { foo: string; bar: string; }) => Base
  >foo11(r5arg) : (x: { foo: string; }, y: { foo: string; bar: string; }) => Base
@@ -328,7 +264,6 @@
 -><T extends Array<Derived2>>(x: Array<Base>, y: Array<Base>) => <T>null : <T extends Array<Derived2>>(x: Array<Base>, y: Array<Base>) => T
 +>r6arg2 : <T extends Derived2[]>(x: Base[], y: Base[]) => T
 +><T extends Array<Derived2>>(x: Array<Base>, y: Array<Base>) => <T>null : <T extends Derived2[]>(x: Base[], y: Base[]) => T
-+>T : T
  >x : Base[]
  >y : Base[]
  ><T>null : T
@@ -365,12 +300,7 @@
  
      var r7arg = <T>(x: { a: T; b: T }) => <T>null;
  >r7arg : <T>(x: { a: T; b: T; }) => T
- ><T>(x: { a: T; b: T }) => <T>null : <T>(x: { a: T; b: T; }) => T
-+>T : T
- >x : { a: T; b: T; }
- >a : T
- >b : T
-@@= skipped -66, +68 lines =@@
+@@= skipped -66, +66 lines =@@
      var r7 = foo15(r7arg); // any
  >r7 : any
  >foo15(r7arg) : any
@@ -394,14 +324,7 @@
  >r7arg : <T>(x: { a: T; b: T; }) => T
  >r7arg2 : (x: { a: string; b: number; }) => number
  
-     var r7arg3 = <T extends Base>(x: { a: T; b: T }) => 1;
- >r7arg3 : <T extends Base>(x: { a: T; b: T; }) => number
- ><T extends Base>(x: { a: T; b: T }) => 1 : <T extends Base>(x: { a: T; b: T; }) => number
-+>T : T
- >x : { a: T; b: T; }
- >a : T
- >b : T
-@@= skipped -26, +27 lines =@@
+@@= skipped -26, +26 lines =@@
      var r7c = foo15(r7arg3); // (x: { a: string; b: number }) => number): number;
  >r7c : any
  >foo15(r7arg3) : any
@@ -425,14 +348,7 @@
  >r7arg3 : <T extends Base>(x: { a: T; b: T; }) => number
  >r7arg2 : (x: { a: string; b: number; }) => number
  
-     var r8arg = <T>(x: (a: T) => T) => <T[]>null;
- >r8arg : <T>(x: (a: T) => T) => T[]
- ><T>(x: (a: T) => T) => <T[]>null : <T>(x: (a: T) => T) => T[]
-+>T : T
- >x : (a: T) => T
- >a : T
- ><T[]>null : T[]
-@@= skipped -25, +26 lines =@@
+@@= skipped -25, +25 lines =@@
      var r8 = foo16(r8arg); // any
  >r8 : any
  >foo16(r8arg) : any
@@ -441,13 +357,7 @@
  >r8arg : <T>(x: (a: T) => T) => T[]
  
      var r9arg = <T>(x: (a: T) => T) => <any[]>null;
- >r9arg : <T>(x: (a: T) => T) => any[]
- ><T>(x: (a: T) => T) => <any[]>null : <T>(x: (a: T) => T) => any[]
-+>T : T
- >x : (a: T) => T
- >a : T
- ><any[]>null : any[]
-@@= skipped -13, +14 lines =@@
+@@= skipped -13, +13 lines =@@
      var r9 = foo17(r9arg); // (x: { <T extends Derived >(a: T): T; <T extends Base >(a: T): T; }): any[]; (x: { <T extends Derived2>(a: T): T; <T extends Base>(a: T): T; }): any[];
  >r9 : { (x: { <T extends Derived>(a: T): T; <T extends Base>(a: T): T; }): any[]; (x: { <T extends Derived2>(a: T): T; <T extends Base>(a: T): T; }): any[]; }
  >foo17(r9arg) : { (x: { <T extends Derived>(a: T): T; <T extends Base>(a: T): T; }): any[]; (x: { <T extends Derived2>(a: T): T; <T extends Base>(a: T): T; }): any[]; }
@@ -463,7 +373,6 @@
 ->foo2 : { (a2: <T>(x: T) => T[]): typeof a2; (a2: any): any; }
 +>foo2 : { (a2: <T>(x: T) => T[]): <T>(x: T) => T[]; (a2: any): any; }
  >a2 : <T>(x: T) => T[]
-+>T : T
  >x : T
  >a2 : <T>(x: T) => T[]
  
@@ -473,13 +382,7 @@
  >a2 : any
  
      var r2arg2 = <T>(x: T) => [''];
- >r2arg2 : <T>(x: T) => string[]
- ><T>(x: T) => [''] : <T>(x: T) => string[]
-+>T : T
- >x : T
- >[''] : string[]
- >'' : ""
-@@= skipped -19, +21 lines =@@
+@@= skipped -19, +19 lines =@@
      var r2 = foo2(r2arg2); // <T>(x:T) => T[] since we can infer from generic signatures now
  >r2 : any
  >foo2(r2arg2) : any
@@ -491,7 +394,6 @@
 ->foo3 : { (a2: <T>(x: T) => string[]): typeof a2; (a2: any): any; }
 +>foo3 : { (a2: <T>(x: T) => string[]): <T>(x: T) => string[]; (a2: any): any; }
  >a2 : <T>(x: T) => string[]
-+>T : T
  >x : T
  >a2 : <T>(x: T) => string[]
  
@@ -501,12 +403,7 @@
  >a2 : any
  
      var r3arg2 = <T>(x: T) => <T[]>null;
- >r3arg2 : <T>(x: T) => T[]
- ><T>(x: T) => <T[]>null : <T>(x: T) => T[]
-+>T : T
- >x : T
- ><T[]>null : T[]
- 
+@@= skipped -22, +22 lines =@@
      var r3 = foo3(r3arg2); // any
  >r3 : any
  >foo3(r3arg2) : any

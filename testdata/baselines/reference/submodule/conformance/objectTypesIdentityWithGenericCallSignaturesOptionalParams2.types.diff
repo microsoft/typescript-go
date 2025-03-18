@@ -1,62 +1,12 @@
 --- old.objectTypesIdentityWithGenericCallSignaturesOptionalParams2.types
 +++ new.objectTypesIdentityWithGenericCallSignaturesOptionalParams2.types
-@@= skipped -9, +9 lines =@@
- 
-     foo<T, U>(x: T, y?: U): T { return null; }
- >foo : <T, U>(x: T, y?: U) => T
-+>T : T
-+>U : U
- >x : T
- >y : U
- }
- 
- class B<T, U> {
- >B : B<T, U>
-+>T : T
-+>U : U
- 
-     foo(x: T, y?: U): T { return null; }
- >foo : (x: T, y?: U) => T
-@@= skipped -15, +19 lines =@@
- 
- class C<T, U> {
- >C : C<T, U>
-+>T : T
-+>U : U
- 
-     foo(x: T, y?: U): T { return null; }
- >foo : (x: T, y?: U) => T
-@@= skipped -8, +10 lines =@@
- }
- 
- interface I<T, U> {
-+>I : I<T, U>
-+>T : T
-+>U : U
-+
-     foo(x: T, y?: U): T;
- >foo : (x: T, y?: U) => T
- >x : T
-@@= skipped -7, +11 lines =@@
- }
- 
- interface I2 {
-+>I2 : I2
-+
-     foo<T, U>(x: T, y?: U): T;
- >foo : <T, U>(x: T, y?: U) => T
-+>T : T
-+>U : U
- >x : T
- >y : U
+@@= skipped -46, +46 lines =@@
  }
  
  var a: { foo<T, U>(x: T, y?: U): T }
 ->a : { foo<T, U>(x: T, y?: U): T; }
 +>a : { foo: <T, U>(x: T, y?: U) => T; }
  >foo : <T, U>(x: T, y?: U) => T
-+>T : T
-+>U : U
  >x : T
  >y : U
  
@@ -66,12 +16,9 @@
 +>b : { foo: <T, U>(x: T, y?: U) => T; }
 +>{ foo<T, U>(x: T, y?: U) { return x; } } : { foo: <T, U>(x: T, y?: U) => T; }
  >foo : <T, U>(x: T, y?: U) => T
-+>T : T
-+>U : U
  >x : T
  >y : U
- >x : T
-@@= skipped -69, +77 lines =@@
+@@= skipped -62, +62 lines =@@
  >x : any
  
  function foo3(x: typeof a);

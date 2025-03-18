@@ -37,7 +37,6 @@ class B {
 
 class C<T> {
 >C : C<T>
->T : T
 
     foo(x: number): number;
 >foo : { (x: number): number; (x: string): string; (x: T): T; }
@@ -57,8 +56,6 @@ class C<T> {
 }
 
 interface I {
->I : I
-
     foo(x: number): number;
 >foo : { (x: number): number; (x: string): string; }
 >x : number
@@ -69,9 +66,6 @@ interface I {
 }
 
 interface I2<T> {
->I2 : I2<T>
->T : T
-
     foo(x: number): number;
 >foo : { (x: number): number; (x: string): string; (x: T): T; }
 >x : number

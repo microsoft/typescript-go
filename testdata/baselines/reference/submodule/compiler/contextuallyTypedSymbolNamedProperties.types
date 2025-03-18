@@ -33,11 +33,9 @@ declare const ab: Action;
 
 declare function f<T extends { type: string | symbol }>(action: T, blah: { [K in T['type']]: (p: K) => void }): any;
 >f : <T extends { type: string | symbol; }>(action: T, blah: { [K in T["type"]]: (p: K) => void }) => any
->T : T
 >type : string | symbol
 >action : T
 >blah : { [K in T["type"]]: (p: K) => void }
->K : K
 >p : K
 
 f(ab, {

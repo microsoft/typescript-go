@@ -1,46 +1,6 @@
 --- old.objectTypesIdentityWithGenericCallSignaturesDifferingByConstraints.types
 +++ new.objectTypesIdentityWithGenericCallSignaturesDifferingByConstraints.types
-@@= skipped -9, +9 lines =@@
- 
-     foo<T extends Date>(x: T): string { return null; }
- >foo : <T extends Date>(x: T) => string
-+>T : T
- >x : T
- }
- 
- class B<T extends Array<number>> {
- >B : B<T>
-+>T : T
- 
-     foo(x: T): string { return null; }
- >foo : (x: T) => string
-@@= skipped -13, +15 lines =@@
- 
- class C<T extends String> {
- >C : C<T>
-+>T : T
- 
-     foo(x: T): string { return null; }
- >foo : (x: T) => string
-@@= skipped -7, +8 lines =@@
- }
- 
- interface I<T extends Number> {
-+>I : I<T>
-+>T : T
-+
-     foo(x: T): string;
- >foo : (x: T) => string
- >x : T
- }
- 
- interface I2 {
-+>I2 : I2
-+
-     foo<T extends Boolean>(x: T): string;
- >foo : <T extends Boolean>(x: T) => string
-+>T : T
- >x : T
+@@= skipped -41, +41 lines =@@
  }
  
  var a: { foo<T extends Array<string>>(x: T): string }
@@ -48,7 +8,6 @@
 ->foo : <T extends Array<string>>(x: T) => string
 +>a : { foo: <T extends string[]>(x: T) => string; }
 +>foo : <T extends string[]>(x: T) => string
-+>T : T
  >x : T
  
  var b = { foo<T extends RegExp>(x: T) { return ''; } };
@@ -57,11 +16,9 @@
 +>b : { foo: <T extends RegExp>(x: T) => string; }
 +>{ foo<T extends RegExp>(x: T) { return ''; } } : { foo: <T extends RegExp>(x: T) => string; }
  >foo : <T extends RegExp>(x: T) => string
-+>T : T
  >x : T
  >'' : ""
- 
-@@= skipped -36, +44 lines =@@
+@@= skipped -24, +24 lines =@@
  >x : any
  
  function foo1b(x: B<Array<number>>);

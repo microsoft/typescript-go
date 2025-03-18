@@ -31,15 +31,8 @@
 +>test2 : <A extends readonly unknown[], B extends readonly unknown[]>(c: (...args: A) => void, d: (...args: B) => void, e: (arg: (...args: A) => void | (...args: B) => void) => void) => void
  
    A extends readonly unknown[],
-+>A : A
-+
    B extends readonly unknown[],
-+>B : B
-+
- >(
-   c: (...args: A) => void,
- >c : (...args: A) => void
-@@= skipped -26, +30 lines =@@
+@@= skipped -26, +26 lines =@@
  >args : B
  
    e: (arg: typeof c | typeof d) => void,

@@ -297,8 +297,6 @@ const constInitToCReadwriteCallWithIndexedAccess: C["readwriteCall"] = c.readwri
 
 // interfaces
 interface I {
->I : I
-
     readonly readonlyType: unique symbol;
 >readonlyType : unique symbol
 }
@@ -426,7 +424,6 @@ declare const o: { [s]: "a", [N.s]: "b" };
 
 declare function f<T>(x: T): T;
 >f : <T>(x: T) => T
->T : T
 >x : T
 
 declare function g(x: typeof s): void;
@@ -792,8 +789,6 @@ class C1 {
 // contextual types
 
 interface Context {
->Context : Context
-
     method1(): typeof s;
 >method1 : () => unique symbol
 >s : unique symbol

@@ -1,42 +1,6 @@
 --- old.objectTypesIdentityWithGenericConstructSignaturesDifferingTypeParameterNames.types
 +++ new.objectTypesIdentityWithGenericConstructSignaturesDifferingTypeParameterNames.types
-@@= skipped -4, +4 lines =@@
- 
- class B<U> {
- >B : B<U>
-+>U : U
- 
-     constructor(x: U) { return null; }
- >x : U
-@@= skipped -7, +8 lines =@@
- 
- class C<V> {
- >C : C<V>
-+>V : V
- 
-     constructor(x: V) { return null; }
- >x : V
- }
- 
- interface I<X> {
-+>I : I<X>
-+>X : X
-+
-     new(x: X): B<X>;
- >x : X
- }
- 
- interface I2 {
-+>I2 : I2
-+
-     new<Y>(x: Y): C<Y>;
-+>Y : Y
- >x : Y
- }
- 
- var a: { new<Z>(x: Z): B<Z> }
- >a : new <Z>(x: Z) => B<Z>
-+>Z : Z
+@@= skipped -31, +31 lines =@@
  >x : Z
  
  var b = { new<A>(x: A) { return new C<A>(x); } };
@@ -45,11 +9,9 @@
 +>b : { new: <A>(x: A) => C<A>; }
 +>{ new<A>(x: A) { return new C<A>(x); } } : { new: <A>(x: A) => C<A>; }
  >new : <A>(x: A) => C<A>
-+>A : A
  >x : A
  >new C<A>(x) : C<A>
- >C : typeof C
-@@= skipped -65, +74 lines =@@
+@@= skipped -45, +45 lines =@@
  >x : any
  
  function foo3(x: typeof a);

@@ -8,7 +8,6 @@ export declare const Timestamp: {
 >Timestamp : { (Unique symbol): true; }
 
     [TKey in typeof timestampSymbol]: true;
->TKey : TKey
 >timestampSymbol : unique symbol
 >true : true
 

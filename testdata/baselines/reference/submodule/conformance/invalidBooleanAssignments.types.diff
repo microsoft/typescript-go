@@ -1,14 +1,6 @@
 --- old.invalidBooleanAssignments.types
 +++ new.invalidBooleanAssignments.types
-@@= skipped -38, +38 lines =@@
- >x : true
- 
- interface I { bar: string }
-+>I : I
- >bar : string
- 
- var g: I = x;
-@@= skipped -11, +12 lines =@@
+@@= skipped -49, +49 lines =@@
  >x : true
  
  var h2: { toString(): string } = x; // no error
@@ -17,11 +9,3 @@
  >toString : () => string
  >x : true
  
-@@= skipped -16, +16 lines =@@
- 
- function i<T>(a: T) {
- >i : <T>(a: T) => void
-+>T : T
- >a : T
- 
-     a = x;

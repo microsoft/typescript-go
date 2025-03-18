@@ -6,7 +6,6 @@ declare namespace A {
 
     export class b<T> {
 >b : b<T>
->T : T
 
         static d: number;
 >d : number

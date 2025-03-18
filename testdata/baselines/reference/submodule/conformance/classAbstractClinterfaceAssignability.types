@@ -2,15 +2,11 @@
 
 === classAbstractClinterfaceAssignability.ts ===
 interface I {
->I : I
-
     x: number;
 >x : number
 }
 
 interface IConstructor {
->IConstructor : IConstructor
-
     new (): I;
     
     y: number;

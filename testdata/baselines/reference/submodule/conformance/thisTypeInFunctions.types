@@ -67,8 +67,6 @@ class D extends C { }
 >C : C
 
 interface I {
->I : I
-
     a: number;
 >a : number
 
@@ -925,7 +923,6 @@ declare var f: {
 
     call<U>(this: (...argArray: any[]) => U, ...argArray: any[]): U;
 >call : <U>(...argArray: any[]) => U
->U : U
 >this : (...argArray: any[]) => U
 >argArray : any[]
 >argArray : any[]

@@ -1,22 +1,6 @@
 --- old.objectTypesIdentity2.types
 +++ new.objectTypesIdentity2.types
-@@= skipped -18, +18 lines =@@
- 
- class C<T> {
- >C : C<T>
-+>T : T
- 
-     foo: T;
- >foo : T
- }
- 
- interface I {
-+>I : I
-+
-     foo: Date;
- >foo : Date
- }
-@@= skipped -63, +66 lines =@@
+@@= skipped -81, +81 lines =@@
  >x : any
  
  function foo7(x: A);

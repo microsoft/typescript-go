@@ -2,8 +2,6 @@
 
 === typeofProperty.ts ===
 interface I1 {
->I1 : I1
-
     a: number;
 >a : number
 
@@ -13,8 +11,6 @@ interface I1 {
 }
 
 interface I2 {
->I2 : I2
-
     c: typeof d; // Should yield error (d is not a value)
 >c : any
 >d : any
@@ -24,8 +20,6 @@ interface I2 {
 }
 
 interface I3 {
->I3 : I3
-
     e: typeof e; // Should yield error (e is not a value)
 >e : any
 >e : any
@@ -65,8 +59,6 @@ class C3 {
 
 
 interface ValidInterface {
->ValidInterface : ValidInterface
-
     x: string;
 >x : string
 }

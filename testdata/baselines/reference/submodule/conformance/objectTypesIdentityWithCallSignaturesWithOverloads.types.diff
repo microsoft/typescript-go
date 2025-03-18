@@ -1,33 +1,6 @@
 --- old.objectTypesIdentityWithCallSignaturesWithOverloads.types
 +++ new.objectTypesIdentityWithCallSignaturesWithOverloads.types
-@@= skipped -36, +36 lines =@@
- 
- class C<T> {
- >C : C<T>
-+>T : T
- 
-     foo(x: number): number;
- >foo : { (x: number): number; (x: string): string; (x: T): T; }
-@@= skipped -19, +20 lines =@@
- }
- 
- interface I {
-+>I : I
-+
-     foo(x: number): number;
- >foo : { (x: number): number; (x: string): string; }
- >x : number
-@@= skipped -10, +12 lines =@@
- }
- 
- interface I2<T> {
-+>I2 : I2<T>
-+>T : T
-+
-     foo(x: number): number;
- >foo : { (x: number): number; (x: string): string; (x: T): T; }
- >x : number
-@@= skipped -14, +17 lines =@@
+@@= skipped -79, +79 lines =@@
  }
  
  var a: {

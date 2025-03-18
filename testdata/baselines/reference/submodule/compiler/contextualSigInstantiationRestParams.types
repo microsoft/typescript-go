@@ -3,8 +3,6 @@
 === contextualSigInstantiationRestParams.ts ===
 declare function toInstantiate<A, B>(a?: A, b?: B): B;
 >toInstantiate : <A, B>(a?: A, b?: B) => B
->A : A
->B : B
 >a : A
 >b : B
 

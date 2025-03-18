@@ -30,8 +30,6 @@ type typeAlias3 = typeof varOfAliasedType3;
 // Repro from #26104
 
 interface Input {
->Input : Input
-
   a: number;
 >a : number
 

@@ -100,8 +100,6 @@ x = f;
 >f : E
 
 interface I {
->I : I
-
     foo: string;
 >foo : string
 }
@@ -149,13 +147,11 @@ x = { f<T>(x: T) { return x; } }
 >x : any
 >{ f<T>(x: T) { return x; } } : { f: <T>(x: T) => T; }
 >f : <T>(x: T) => T
->T : T
 >x : T
 >x : T
 
 function j<T>(a: T) {
 >j : <T>(a: T) => void
->T : T
 >a : T
 
     x = a;

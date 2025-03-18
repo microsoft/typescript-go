@@ -123,8 +123,6 @@ class D8 extends Base {
 }
 
 interface I1 {
->I1 : I1
-
     bar: string;
 >bar : string
 }
@@ -200,7 +198,6 @@ class D13 extends Base {
 
 class D14<T> extends Base {
 >D14 : D14<T>
->T : T
 >Base : Base
 
     foo: T;
@@ -210,8 +207,6 @@ class D14<T> extends Base {
 
 class D15<T, U> extends Base {
 >D15 : D15<T, U>
->T : T
->U : U
 >Base : Base
 
     foo: U;

@@ -20,8 +20,6 @@ declare global {
 
 === foo.d.ts ===
 interface Root {
->Root : Root
-
     /**
      * A .default property for ES6 default import compatibility
      */

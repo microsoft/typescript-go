@@ -1,14 +1,6 @@
 --- old.validUndefinedAssignments.types
 +++ new.validUndefinedAssignments.types
-@@= skipped -43, +43 lines =@@
- >x : any
- 
- interface I { foo: string }
-+>I : I
- >foo : string
- 
- var g: I;
-@@= skipped -11, +12 lines =@@
+@@= skipped -54, +54 lines =@@
  >x : any
  
  var h: { f(): void } = x;
@@ -17,9 +9,3 @@
  >f : () => void
  >x : any
  
- function i<T>(a: T) {
- >i : <T>(a: T) => void
-+>T : T
- >a : T
- 
-     a = x;

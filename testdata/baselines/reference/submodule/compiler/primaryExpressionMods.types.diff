@@ -1,14 +1,6 @@
 --- old.primaryExpressionMods.types
 +++ new.primaryExpressionMods.types
-@@= skipped -4, +4 lines =@@
- >M : typeof M
- {
-     export interface P { x: number; y: number; }
-+>P : P
- >x : number
- >y : number
- 
-@@= skipped -8, +9 lines =@@
+@@= skipped -12, +12 lines =@@
  >1 : 1
  }
  var p: M.P;             // Used as ModuleName

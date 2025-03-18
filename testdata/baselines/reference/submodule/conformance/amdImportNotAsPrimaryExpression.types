@@ -55,8 +55,6 @@ export class C1 {
 }
 
 export interface I1 {
->I1 : I1
-
 	name: string;
 >name : string
 
@@ -65,11 +63,7 @@ export interface I1 {
 }
 
 export module M1 {
->M1 : any
-
 	export interface I2 {
->I2 : I2
-
 		foo: string;
 >foo : string
 	}

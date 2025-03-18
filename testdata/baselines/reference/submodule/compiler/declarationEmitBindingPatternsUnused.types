@@ -310,8 +310,6 @@ let referencedInSignartureParamTypeCtorType: new  ({ name: alias }: Named, p: ty
 
 
 interface NotReferencedInterface {
->NotReferencedInterface : NotReferencedInterface
-
 	({ name: alias }: Named): void
 >name : any
 >alias : string
@@ -332,8 +330,6 @@ interface NotReferencedInterface {
 }
 
 interface ReferencedInSignartureInterface {
->ReferencedInSignartureInterface : ReferencedInSignartureInterface
-
 	({ name: alias }: Named, p: typeof alias): void
 >name : any
 >alias : string

@@ -1,66 +1,12 @@
 --- old.objectTypesIdentityWithGenericCallSignaturesDifferingTypeParameterCounts.types
 +++ new.objectTypesIdentityWithGenericCallSignaturesDifferingTypeParameterCounts.types
-@@= skipped -7, +7 lines =@@
- 
-     foo<T>(x: T): T { return null; }
- >foo : <T>(x: T) => T
-+>T : T
- >x : T
- }
- 
- class B<U, V> {
- >B : B<U, V>
-+>U : U
-+>V : V
- 
-     foo(x: U): U { return null; }
- >foo : (x: U) => U
-@@= skipped -13, +16 lines =@@
- 
- class C<V, W, X> {
- >C : C<V, W, X>
-+>V : V
-+>W : W
-+>X : X
- 
-     foo(x: V): V { return null; }
- >foo : (x: V) => V
-@@= skipped -7, +10 lines =@@
- }
- 
- interface I<X, Y, Z, A> {
-+>I : I<X, Y, Z, A>
-+>X : X
-+>Y : Y
-+>Z : Z
-+>A : A
-+
-     foo(x: X): X;
- >foo : (x: X) => X
- >x : X
- }
- 
- interface I2 {
-+>I2 : I2
-+
-     foo<Y, Z, A, B>(x: Y): Y;
- >foo : <Y, Z, A, B>(x: Y) => Y
-+>Y : Y
-+>Z : Z
-+>A : A
-+>B : B
- >x : Y
+@@= skipped -39, +39 lines =@@
  }
  
  var a: { foo<Z, A, B, C, D>(x: Z): Z }
 ->a : { foo<Z, A, B, C, D>(x: Z): Z; }
 +>a : { foo: <Z, A, B, C, D>(x: Z) => Z; }
  >foo : <Z, A, B, C, D>(x: Z) => Z
-+>Z : Z
-+>A : A
-+>B : B
-+>C : C
-+>D : D
  >x : Z
  
  var b = { foo<A, B, C, D, E, F>(x: A) { return x; } };
@@ -69,16 +15,9 @@
 +>b : { foo: <A, B, C, D, E, F>(x: A) => A; }
 +>{ foo<A, B, C, D, E, F>(x: A) { return x; } } : { foo: <A, B, C, D, E, F>(x: A) => A; }
  >foo : <A, B, C, D, E, F>(x: A) => A
-+>A : A
-+>B : B
-+>C : C
-+>D : D
-+>E : E
-+>F : F
  >x : A
  >x : A
- 
-@@= skipped -72, +95 lines =@@
+@@= skipped -60, +60 lines =@@
  >x : any
  
  function foo3(x: typeof a);

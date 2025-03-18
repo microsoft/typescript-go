@@ -36,7 +36,6 @@ function declSpace() {
 }
 
 interface Point { x: number; y: number; }
->Point : Point
 >x : number
 >y : number
 

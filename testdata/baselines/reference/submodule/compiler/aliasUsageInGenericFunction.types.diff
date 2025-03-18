@@ -12,8 +12,6 @@
 +>moduleA : typeof import("aliasUsageInGenericFunction_moduleA")
  
  interface IHasVisualizationModel {
-+>IHasVisualizationModel : IHasVisualizationModel
-+
      VisualizationModel: typeof Backbone.Model;
 ->VisualizationModel : typeof Backbone.Model
 ->Backbone.Model : typeof Backbone.Model
@@ -26,11 +24,7 @@
  }
  function foo<T extends { a: IHasVisualizationModel }>(x: T) {
  >foo : <T extends { a: IHasVisualizationModel; }>(x: T) => T
-+>T : T
- >a : IHasVisualizationModel
- >x : T
- 
-@@= skipped -21, +24 lines =@@
+@@= skipped -21, +21 lines =@@
  >x : T
  }
  var r = foo({ a: moduleA });

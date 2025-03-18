@@ -1,15 +1,6 @@
 --- old.noUsedBeforeDefinedErrorInTypeContext.types
 +++ new.noUsedBeforeDefinedErrorInTypeContext.types
-@@= skipped -3, +3 lines =@@
- // https://github.com/microsoft/TypeScript/issues/8775
- 
- interface IThing<T> {
-+>IThing : IThing<T>
-+>T : T
-+
-     owner: T;
- >owner : T
- }
+@@= skipped -9, +9 lines =@@
  
  var foo = {
  >foo : any
@@ -18,7 +9,7 @@
  
      one: {} as IThing<typeof foo>,
  >one : IThing<any>
-@@= skipped -16, +19 lines =@@
+@@= skipped -10, +10 lines =@@
  }
  
  let baz = {

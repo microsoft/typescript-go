@@ -11,10 +11,7 @@ module Outer {
 >C : C
     }
     export module uninstantiated {
->uninstantiated : any
-
         export interface P { }
->P : P
     }
 }
 

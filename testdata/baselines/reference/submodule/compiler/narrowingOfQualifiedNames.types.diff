@@ -1,20 +1,8 @@
 --- old.narrowingOfQualifiedNames.types
 +++ new.narrowingOfQualifiedNames.types
-@@= skipped -3, +3 lines =@@
- // Repro from #43411
- 
- interface IProperties {
-+>IProperties : IProperties
-+
-     foo?: {
- >foo : { aaa: string; bbb: string; } | undefined
- 
-@@= skipped -53, +55 lines =@@
- }
+@@= skipped -57, +57 lines =@@
  
  interface DeepOptional {
-+>DeepOptional : DeepOptional
-+
      a?: {
 ->a : { b?: { c?: string; }; } | undefined
 +>a : { b?: { c?: string | undefined; } | undefined; } | undefined
@@ -25,7 +13,7 @@
  
              c?: string
  >c : string | undefined
-@@= skipped -17, +19 lines =@@
+@@= skipped -16, +16 lines =@@
  >foo : DeepOptional
  
      if (foo.a) {
@@ -288,12 +276,7 @@
  >c : string
                          }
                      }
-@@= skipped -49, +49 lines =@@
- 
- function handleDogBroken<PetType extends Pet>(pet: PetType) {
- >handleDogBroken : <PetType extends Pet>(pet: PetType) => void
-+>PetType : PetType
- >pet : PetType
+@@= skipped -53, +53 lines =@@
  
      if(pet.type === 'dog') {
  >pet.type === 'dog' : boolean
@@ -305,7 +288,7 @@
  >'dog' : "dog"
  
          const _okay1 = pet.saysWoof;
-@@= skipped -32, +33 lines =@@
+@@= skipped -28, +28 lines =@@
  
      if(pet.type === 'dog') {
  >pet.type === 'dog' : boolean

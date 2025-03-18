@@ -1,19 +1,6 @@
 --- old.declFileTypeAnnotationTypeQuery.types
 +++ new.declFileTypeAnnotationTypeQuery.types
-@@= skipped -11, +11 lines =@@
-     }
-     export class g<T> {
- >g : g<T>
-+>T : T
-     }
- }
- class g<T> {
- >g : g<T>
-+>T : T
- }
- 
- // Just the name
-@@= skipped -23, +25 lines =@@
+@@= skipped -34, +34 lines =@@
  
  // Qualified name
  function foo3(): typeof m.c {

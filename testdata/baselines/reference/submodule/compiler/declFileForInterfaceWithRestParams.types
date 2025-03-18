@@ -2,8 +2,6 @@
 
 === declFileForInterfaceWithRestParams.ts ===
 interface I {
->I : I
-
     foo(...x): typeof x;
 >foo : (...x: any[]) => any[]
 >x : any[]

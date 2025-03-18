@@ -2,17 +2,11 @@
 
 === typeofStripsFreshness.ts ===
 interface Collection<T> {
->Collection : Collection<T>
->T : T
-
     elems: T[];
 >elems : T[]
 }
 interface CollectionStatic {
->CollectionStatic : CollectionStatic
-
     new <T>(): Collection<T>;
->T : T
 }
 declare const Collection: CollectionStatic;
 >Collection : CollectionStatic

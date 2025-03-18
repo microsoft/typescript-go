@@ -28,15 +28,12 @@ class B {
 
 class C<T> {
 >C : C<T>
->T : T
 
     [x: number]: T;
 >x : number
 }
 
 interface I {
->I : I
-
     [x: number]: Derived;
 >x : number
 }

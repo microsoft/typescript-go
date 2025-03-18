@@ -1,22 +1,6 @@
 --- old.invalidVoidAssignments.types
 +++ new.invalidVoidAssignments.types
-@@= skipped -29, +29 lines =@@
- >x : void
- 
- interface I { bar: string; }
-+>I : I
- >bar : string
- 
- var f: I = x;
-@@= skipped -28, +29 lines =@@
- 
- function i<T>(a: T) {
- >i : <T>(a: T) => void
-+>T : T
- >a : T
- 
-     a = x;
-@@= skipped -29, +30 lines =@@
+@@= skipped -86, +86 lines =@@
  >A : E
  
  x = { f() { } }

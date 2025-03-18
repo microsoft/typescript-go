@@ -3,13 +3,11 @@
 === nearbyIdenticalGenericLambdasAssignable.ts ===
 declare const fA: <T>() => { v: T };
 >fA : <T>() => { v: T; }
->T : T
 >v : T
 
 const fB = <T>() => {
 >fB : <T>() => { v: T; }
 ><T>() => {    return { v: '' as any as T };} : <T>() => { v: T; }
->T : T
 
     return { v: '' as any as T };
 >{ v: '' as any as T } : { v: T; }
@@ -22,7 +20,6 @@ const fB = <T>() => {
 const fC = <T>() => {
 >fC : <T>() => { v: T; }
 ><T>() => {    return {} as any as { v: T };} : <T>() => { v: T; }
->T : T
 
     return {} as any as { v: T };
 >{} as any as { v: T } : { v: T; }
@@ -47,7 +44,6 @@ type TC = typeof fC;
 
 type TL = <T>() => { v: T }; 
 >TL : TL
->T : T
 >v : T
 
 declare function accA(x: TA): void;

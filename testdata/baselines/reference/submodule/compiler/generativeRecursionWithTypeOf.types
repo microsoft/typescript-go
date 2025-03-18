@@ -3,7 +3,6 @@
 === generativeRecursionWithTypeOf.ts ===
 class C<T> {
 >C : C<T>
->T : T
 
     static foo(x: number) { }
 >foo : (x: number) => void

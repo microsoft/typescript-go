@@ -39,7 +39,6 @@ var f: C = x;
 >x : true
 
 interface I { bar: string }
->I : I
 >bar : string
 
 var g: I = x;
@@ -67,7 +66,6 @@ M = x;
 
 function i<T>(a: T) {
 >i : <T>(a: T) => void
->T : T
 >a : T
 
     a = x;

@@ -30,7 +30,6 @@ var z: typeof c;
 
 class genericC<T>
 >genericC : genericC<T>
->T : T
 {
 }
 var genericX = genericC;

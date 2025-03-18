@@ -6,11 +6,10 @@
  export declare const goodDeclaration: <T>() => () => { 
 ->goodDeclaration : <T>() => () => { shouldPrintResult: T extends Other ? "O" : "N"; shouldPrintResult2: T extends typeof shouldBeElided ? Other : "N"; shouldLookupName: typeof import("./other").shouldLookupName; shouldReuseLocalName: typeof shouldReuseLocalName; reuseDepName: typeof reuseDepName; }
 +>goodDeclaration : <T>() => () => { shouldPrintResult: T extends Other ? "O" : "N"; shouldPrintResult2: T extends unique symbol ? Other : "N"; shouldLookupName: unique symbol; shouldReuseLocalName: unique symbol; reuseDepName: unique symbol; }
-+>T : T
  
    /** Other Can't be named in index.ts, but the whole conditional type can be resolved  */
    shouldPrintResult: T extends Other? "O": "N",
-@@= skipped -14, +15 lines =@@
+@@= skipped -14, +14 lines =@@
    /** Specifier should come from module, local path should not be reused */ 
    shouldLookupName: typeof import('./other').shouldLookupName,
  >shouldLookupName : unique symbol

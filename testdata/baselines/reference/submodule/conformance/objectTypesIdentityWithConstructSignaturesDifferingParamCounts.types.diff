@@ -1,31 +1,6 @@
 --- old.objectTypesIdentityWithConstructSignaturesDifferingParamCounts.types
 +++ new.objectTypesIdentityWithConstructSignaturesDifferingParamCounts.types
-@@= skipped -12, +12 lines =@@
- 
- class C<T> {
- >C : C<T>
-+>T : T
- 
-     constructor(x: T, y: T) { return null; }
- >x : T
-@@= skipped -7, +8 lines =@@
- }
- 
- interface I {
-+>I : I
-+
-     new(x: string): string;
- >x : string
- }
- 
- interface I2<T> {
-+>I2 : I2<T>
-+>T : T
-+
-     new(x: T): T;
- >x : T
- }
-@@= skipped -15, +20 lines =@@
+@@= skipped -34, +34 lines =@@
  >y : string
  
  var b = { new(x: string) { return ''; } }; // not a construct signature, function called new

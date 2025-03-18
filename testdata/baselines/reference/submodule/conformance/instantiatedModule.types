@@ -7,7 +7,6 @@ module M {
 >M : typeof M
 
     export interface Point { x: number; y: number }
->Point : Point
 >x : number
 >y : number
 

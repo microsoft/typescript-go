@@ -1,23 +1,6 @@
 --- old.objectTypesIdentityWithCallSignaturesDifferingParamCounts2.types
 +++ new.objectTypesIdentityWithCallSignaturesDifferingParamCounts2.types
-@@= skipped -3, +3 lines =@@
- // object types are identical structurally
- 
- interface I {
-+>I : I
-+
-     (x: string): string;
- >x : string
- }
- 
- interface I2<T> {
-+>I2 : I2<T>
-+>T : T
-+
-     (x: T): T;
- >x : T
- }
-@@= skipped -27, +32 lines =@@
+@@= skipped -30, +30 lines =@@
  >x : any
  
  function foo3(x: typeof a);

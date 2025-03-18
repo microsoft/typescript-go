@@ -4,8 +4,6 @@
 // Repro from #43411
 
 interface IProperties {
->IProperties : IProperties
-
     foo?: {
 >foo : { aaa: string; bbb: string; } | undefined
 
@@ -59,8 +57,6 @@ function init(properties: IProperties) {
 }
 
 interface DeepOptional {
->DeepOptional : DeepOptional
-
     a?: {
 >a : { b?: { c?: string | undefined; } | undefined; } | undefined
 
@@ -283,7 +279,6 @@ type Pet = Fish | Dog;
 
 function handleDogBroken<PetType extends Pet>(pet: PetType) {
 >handleDogBroken : <PetType extends Pet>(pet: PetType) => void
->PetType : PetType
 >pet : PetType
 
     if(pet.type === 'dog') {

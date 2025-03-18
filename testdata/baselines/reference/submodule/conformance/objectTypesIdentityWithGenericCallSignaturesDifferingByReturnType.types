@@ -10,13 +10,11 @@ class A {
 
     foo<T>(x: T): string { return null; }
 >foo : <T>(x: T) => string
->T : T
 >x : T
 }
 
 class B<T> {
 >B : B<T>
->T : T
 
     foo(x: T): number { return null; }
 >foo : (x: T) => number
@@ -25,7 +23,6 @@ class B<T> {
 
 class C<T> {
 >C : C<T>
->T : T
 
     foo(x: T): boolean { return null; }
 >foo : (x: T) => boolean
@@ -33,34 +30,26 @@ class C<T> {
 }
 
 interface I<T> {
->I : I<T>
->T : T
-
     foo(x: T): Date;
 >foo : (x: T) => Date
 >x : T
 }
 
 interface I2 {
->I2 : I2
-
     foo<T>(x: T): RegExp;
 >foo : <T>(x: T) => RegExp
->T : T
 >x : T
 }
 
 var a: { foo<T>(x: T): T }
 >a : { foo: <T>(x: T) => T; }
 >foo : <T>(x: T) => T
->T : T
 >x : T
 
 var b = { foo<T>(x: T) { return null; } };
 >b : { foo: <T>(x: T) => any; }
 >{ foo<T>(x: T) { return null; } } : { foo: <T>(x: T) => any; }
 >foo : <T>(x: T) => any
->T : T
 >x : T
 
 function foo1(x: A);

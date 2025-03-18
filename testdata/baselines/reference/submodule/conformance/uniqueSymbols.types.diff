@@ -18,20 +18,7 @@
  >constCall : unique symbol
  >yield constCall : any
  >constCall : unique symbol
-@@= skipped -173, +173 lines =@@
- 
- // interfaces
- interface I {
-+>I : I
-+
-     readonly readonlyType: unique symbol;
- >readonlyType : unique symbol
- }
-@@= skipped -127, +129 lines =@@
- 
- declare function f<T>(x: T): T;
- >f : <T>(x: T) => T
-+>T : T
+@@= skipped -303, +303 lines =@@
  >x : T
  
  declare function g(x: typeof s): void;
@@ -46,7 +33,7 @@
  >x : unique symbol
  >N.s : unique symbol
  >N : typeof N
-@@= skipped -55, +56 lines =@@
+@@= skipped -52, +52 lines =@@
  
  // property assignments/methods
  const o2 = {
@@ -107,12 +94,9 @@
  >Math.random() * 2 : number
  >Math.random() : number
  >Math.random : () => number
-@@= skipped -58, +58 lines =@@
- // contextual types
+@@= skipped -59, +59 lines =@@
  
  interface Context {
-+>Context : Context
-+
      method1(): typeof s;
 ->method1 : () => typeof s
 +>method1 : () => unique symbol
@@ -139,7 +123,7 @@
  >p : unique symbol
  >s : unique symbol
  >s : unique symbol
-@@= skipped -25, +27 lines =@@
+@@= skipped -24, +24 lines =@@
  
  const o3: Context = {
  >o3 : Context

@@ -45,19 +45,8 @@
  
  type K1 = keyof (A & B);  // string | number | symbol
  >K1 : string | number | symbol
-@@= skipped -13, +13 lines =@@
- 
- type Merge1<T, U> = { [P in keyof (T & U)]: P extends keyof T ? T[P] : U[P & keyof U] }
- >Merge1 : Merge1<T, U>
-+>T : T
-+>U : U
-+>P : P
- 
- type Merge2<T, U> = { [P in keyof T | keyof U]: P extends keyof T ? T[P] : U[P & keyof U] }
+@@= skipped -18, +18 lines =@@
  >Merge2 : Merge2<T, U>
-+>T : T
-+>U : U
-+>P : P
  
  type M1 = { a: 1, b: 2 } & { a: 2, c: 3 };  // never
 ->M1 : never
@@ -65,7 +54,7 @@
  >a : 1
  >b : 2
  >a : 2
-@@= skipped -103, +109 lines =@@
+@@= skipped -98, +98 lines =@@
  // Repro from #36736
  
  const f1 = (t: "a" | ("b" & "c")): "a" => t;
@@ -76,12 +65,7 @@
  >t : "a"
  >t : "a"
  
- type Container<Type extends string> = {
- >Container : Container<Type>
-+>Type : Type
- 
-     type: Type;
- >type : Type
+@@= skipped -13, +13 lines =@@
  }
  
  const f2 = (t: Container<"a"> | (Container<"b"> & Container<"c">)): Container<"a"> => t;

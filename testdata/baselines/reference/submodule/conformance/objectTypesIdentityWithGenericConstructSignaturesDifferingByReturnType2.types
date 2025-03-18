@@ -7,7 +7,6 @@
 
 class B<T extends Date> {
 >B : B<T>
->T : T
 
     constructor(x: T) { return null; }
 >x : T
@@ -15,38 +14,29 @@ class B<T extends Date> {
 
 class C<T extends Date> {
 >C : C<T>
->T : T
 
     constructor(x: T) { return null; }
 >x : T
 }
 
 interface I<T extends Date> {
->I : I<T>
->T : T
-
     new(x: T): Date;
 >x : T
 }
 
 interface I2 {
->I2 : I2
-
     new<T extends Date>(x: T): RegExp;
->T : T
 >x : T
 }
 
 var a: { new<T extends Date>(x: T): T }
 >a : new <T extends Date>(x: T) => T
->T : T
 >x : T
 
 var b = { new<T extends Date>(x: T) { return null; } }; // not a construct signature, function called new
 >b : { new: <T extends Date>(x: T) => any; }
 >{ new<T extends Date>(x: T) { return null; } } : { new: <T extends Date>(x: T) => any; }
 >new : <T extends Date>(x: T) => any
->T : T
 >x : T
 
 function foo1b(x: B<Date>);

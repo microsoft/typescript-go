@@ -1,23 +1,6 @@
 --- old.nonInstantiatedModule.types
 +++ new.nonInstantiatedModule.types
-@@= skipped -4, +4 lines =@@
- >M : typeof M
- 
-     export interface Point { x: number; y: number }
-+>Point : Point
- >x : number
- >y : number
- 
-@@= skipped -54, +55 lines =@@
-     }
- 
-     export interface Point {
-+>Point : Point
-+
-         x: number;
- >x : number
- 
-@@= skipped -18, +20 lines =@@
+@@= skipped -76, +76 lines =@@
  >M2 : any
  
  var p2: { Origin() : { x: number; y: number; } };
@@ -38,13 +21,3 @@
  
  module M3 {
  >M3 : typeof M3
- 
-     export module Utils {
-+>Utils : typeof Utils
-+
-         export interface Point {
-+>Point : Point
-+
-             x: number; y: number;
- >x : number
- >y : number

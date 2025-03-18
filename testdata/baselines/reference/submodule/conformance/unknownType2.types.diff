@@ -1,20 +1,6 @@
 --- old.unknownType2.types
 +++ new.unknownType2.types
-@@= skipped -2, +2 lines =@@
- === unknownType2.ts ===
- type isUnknown<T> = unknown extends T ? true : false;
- >isUnknown : isUnknown<T>
-+>T : T
- >true : true
- >false : false
- 
- type isTrue<T extends true> = T;
- >isTrue : T
-+>T : T
- >true : true
- 
- type SomeResponse = 'yes' | 'no' | 'idk';
-@@= skipped -13, +15 lines =@@
+@@= skipped -15, +15 lines =@@
  let validate: (x: unknown) => SomeResponse = x => (x === 'yes' || x === 'no') ? x : 'idk'; // No error
  >validate : (x: unknown) => SomeResponse
  >x : unknown

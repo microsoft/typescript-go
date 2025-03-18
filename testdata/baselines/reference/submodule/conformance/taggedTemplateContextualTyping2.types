@@ -4,15 +4,12 @@
 type FuncType1 = (x: <T>(p: T) => T) => typeof x;
 >FuncType1 : FuncType1
 >x : <T>(p: T) => T
->T : T
 >p : T
 >x : <T>(p: T) => T
 
 type FuncType2 = (x: <S, T>(p: T) => T) => typeof x;
 >FuncType2 : FuncType2
 >x : <S, T>(p: T) => T
->S : S
->T : T
 >p : T
 >x : <S, T>(p: T) => T
 

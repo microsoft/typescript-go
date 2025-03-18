@@ -1,11 +1,8 @@
 --- old.declFileForInterfaceWithRestParams.types
 +++ new.declFileForInterfaceWithRestParams.types
-@@= skipped -1, +1 lines =@@
- 
+@@= skipped -2, +2 lines =@@
  === declFileForInterfaceWithRestParams.ts ===
  interface I {
-+>I : I
-+
      foo(...x): typeof x;
 ->foo : (...x: any[]) => typeof x
 +>foo : (...x: any[]) => any[]

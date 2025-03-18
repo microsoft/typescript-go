@@ -18,9 +18,6 @@ type T0_3 = T0_1
 
 // A type reference directly depends on the referenced type and each of the type arguments, if any.
 interface I<T> {}
->I : I<T>
->T : T
-
 type T1 = I<T1>
 >T1 : T1
 
@@ -30,7 +27,6 @@ type T2 = T2 | string
 
 class C<T> {}
 >C : C<T>
->T : T
 
 type T2_1 = T2_1[] | number
 >T2_1 : T2_1
@@ -54,7 +50,6 @@ type T5 = typeof x
 
 class C1<T> {}
 >C1 : C1<T>
->T : T
 
 type T6 = T7 | number
 >T6 : T6

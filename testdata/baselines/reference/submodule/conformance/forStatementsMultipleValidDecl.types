@@ -24,7 +24,6 @@ function declSpace() {
 >'this is a string' : "this is a string"
 }
 interface Point { x: number; y: number; }
->Point : Point
 >x : number
 >y : number
 

@@ -1,46 +1,6 @@
 --- old.objectTypesIdentityWithGenericConstructSignaturesOptionalParams.types
 +++ new.objectTypesIdentityWithGenericConstructSignaturesOptionalParams.types
-@@= skipped -6, +6 lines =@@
- 
- class B<T> {
- >B : B<T>
-+>T : T
- 
-     constructor(x: T, y?: T) { return null; }
- >x : T
-@@= skipped -8, +9 lines =@@
- 
- class C<T> {
- >C : C<T>
-+>T : T
- 
-     constructor(x: T, y?: T) { return null; }
- >x : T
-@@= skipped -7, +8 lines =@@
- }
- 
- interface I<T> {
-+>I : I<T>
-+>T : T
-+
-     new(x: T, y?: T): B<T>;
- >x : T
- >y : T
- }
- 
- interface I2 {
-+>I2 : I2
-+
-     new<T>(x: T, y?: T): C<T>;
-+>T : T
- >x : T
- >y : T
- }
- 
- var a: { new<T>(x: T, y?: T): B<T> }
- >a : new <T>(x: T, y?: T) => B<T>
-+>T : T
- >x : T
+@@= skipped -38, +38 lines =@@
  >y : T
  
  var b = { new<T>(x: T, y?: T) { return new C<T>(x, y); } }; // not a construct signature, function called new
@@ -49,11 +9,9 @@
 +>b : { new: <T>(x: T, y?: T) => C<T>; }
 +>{ new<T>(x: T, y?: T) { return new C<T>(x, y); } } : { new: <T>(x: T, y?: T) => C<T>; }
  >new : <T>(x: T, y?: T) => C<T>
-+>T : T
  >x : T
  >y : T
- >new C<T>(x, y) : C<T>
-@@= skipped -64, +72 lines =@@
+@@= skipped -47, +47 lines =@@
  >x : any
  
  function foo3(x: typeof a);

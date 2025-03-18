@@ -12,8 +12,6 @@ class B {
 }
 
 interface I {
->I : I
-
     static readonly [s: string]: number;
 >s : string
 

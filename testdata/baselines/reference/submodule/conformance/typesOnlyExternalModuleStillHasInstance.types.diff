@@ -24,20 +24,3 @@
  
  === foo_0.ts ===
  export interface Person {
-+>Person : Person
-+
- 	name: string;
- >name : string
- 
-@@= skipped -24, +26 lines =@@
- }
- 
- export module M2 {
-+>M2 : any
-+
- 	export interface I2 {
-+>I2 : I2
-+
- 		x: Person;
- >x : Person
- 	}

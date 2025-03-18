@@ -21,7 +21,6 @@ class B {
 
 class C<T> {
 >C : C<T>
->T : T
 
     foo(x: T): T { return null; }
 >foo : (x: T) => T
@@ -29,17 +28,12 @@ class C<T> {
 }
 
 interface I {
->I : I
-
     foo(x: string): string;
 >foo : (x: string) => string
 >x : string
 }
 
 interface I2<T> {
->I2 : I2<T>
->T : T
-
     foo(x: T): T;
 >foo : (x: T) => T
 >x : T

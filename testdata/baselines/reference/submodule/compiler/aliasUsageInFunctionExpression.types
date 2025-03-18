@@ -8,8 +8,6 @@ import moduleA = require("./aliasUsageInFunctionExpression_moduleA");
 >moduleA : typeof import("aliasUsageInFunctionExpression_moduleA")
 
 interface IHasVisualizationModel {
->IHasVisualizationModel : IHasVisualizationModel
-
     VisualizationModel: typeof Backbone.Model;
 >VisualizationModel : typeof Model
 >Backbone.Model : typeof Model

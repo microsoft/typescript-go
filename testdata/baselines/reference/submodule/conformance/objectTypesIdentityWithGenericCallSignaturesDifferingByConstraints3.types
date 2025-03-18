@@ -14,23 +14,13 @@ class Two { foo: string }
 >foo : string
 
 interface Three { foo: string }
->Three : Three
 >foo : string
 
 interface Four<T> { foo: T }
->Four : Four<T>
->T : T
 >foo : T
 
 interface Five<T> extends Four<T> { }
->Five : Five<T>
->T : T
-
 interface Six<T, U> {
->Six : Six<T, U>
->T : T
->U : U
-
     foo: T;
 >foo : T
 }
@@ -40,16 +30,12 @@ class A {
 
     foo<T extends U, U extends One>(x: T, y: U): string { return null; }
 >foo : <T extends U, U extends One>(x: T, y: U) => string
->T : T
->U : U
 >x : T
 >y : U
 }
 
 class B<T extends U, U extends Two> {
 >B : B<T, U>
->T : T
->U : U
 
     foo(x: T, y: U): string { return null; }
 >foo : (x: T, y: U) => string
@@ -59,8 +45,6 @@ class B<T extends U, U extends Two> {
 
 class C<T extends U, U extends Three> {
 >C : C<T, U>
->T : T
->U : U
 
     foo(x: T, y: U): string { return null; }
 >foo : (x: T, y: U) => string
@@ -70,8 +54,6 @@ class C<T extends U, U extends Three> {
 
 class D<T extends U, U extends Four<string>> {
 >D : D<T, U>
->T : T
->U : U
 
     foo(x: T, y: U): string { return null; }
 >foo : (x: T, y: U) => string
@@ -80,10 +62,6 @@ class D<T extends U, U extends Four<string>> {
 }
 
 interface I<T extends U, U extends Five<string>> {
->I : I<T, U>
->T : T
->U : U
-
     foo(x: T, y: U): string;
 >foo : (x: T, y: U) => string
 >x : T
@@ -91,12 +69,8 @@ interface I<T extends U, U extends Five<string>> {
 }
 
 interface I2 {
->I2 : I2
-
     foo<T extends U, U extends Six<string, string>>(x: T, y: U): string;
 >foo : <T extends U, U extends Six<string, string>>(x: T, y: U) => string
->T : T
->U : U
 >x : T
 >y : U
 }
@@ -104,8 +78,6 @@ interface I2 {
 var a: { foo<T extends U, U extends One>(x: T, y: U): string }
 >a : { foo: <T extends U, U extends One>(x: T, y: U) => string; }
 >foo : <T extends U, U extends One>(x: T, y: U) => string
->T : T
->U : U
 >x : T
 >y : U
 
@@ -113,8 +85,6 @@ var b = { foo<T extends U, U extends Two>(x: T, y: U) { return ''; } };
 >b : { foo: <T extends U, U extends Two>(x: T, y: U) => string; }
 >{ foo<T extends U, U extends Two>(x: T, y: U) { return ''; } } : { foo: <T extends U, U extends Two>(x: T, y: U) => string; }
 >foo : <T extends U, U extends Two>(x: T, y: U) => string
->T : T
->U : U
 >x : T
 >y : U
 >'' : ""

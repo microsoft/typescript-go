@@ -1,31 +1,6 @@
 --- old.objectTypesIdentityWithCallSignaturesDifferingParamCounts.types
 +++ new.objectTypesIdentityWithCallSignaturesDifferingParamCounts.types
-@@= skipped -21, +21 lines =@@
- 
- class C<T> {
- >C : C<T>
-+>T : T
- 
-     foo(x: T, y: T): T { return null; }
- >foo : (x: T, y: T) => T
-@@= skipped -8, +9 lines =@@
- }
- 
- interface I {
-+>I : I
-+
-     foo(x: string): string;
- >foo : (x: string) => string
- >x : string
- }
- 
- interface I2<T> {
-+>I2 : I2<T>
-+>T : T
-+
-     foo(x: T): T;
- >foo : (x: T) => T
- >x : T
+@@= skipped -41, +41 lines =@@
  }
  
  var a: { foo(x: string, y: string): string }
@@ -43,7 +18,7 @@
  >foo : (x: string) => string
  >x : string
  >'' : ""
-@@= skipped -73, +78 lines =@@
+@@= skipped -61, +61 lines =@@
  >x : any
  
  function foo3(x: typeof a);

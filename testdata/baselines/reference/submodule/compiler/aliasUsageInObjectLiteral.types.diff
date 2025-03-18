@@ -12,8 +12,6 @@
 +>moduleA : typeof import("aliasUsageInObjectLiteral_moduleA")
  
  interface IHasVisualizationModel {
-+>IHasVisualizationModel : IHasVisualizationModel
-+
      VisualizationModel: typeof Backbone.Model;
 ->VisualizationModel : typeof Backbone.Model
 ->Backbone.Model : typeof Backbone.Model
@@ -65,7 +63,7 @@
  
  === aliasUsageInObjectLiteral_backbone.ts ===
  export class Model {
-@@= skipped -47, +49 lines =@@
+@@= skipped -47, +47 lines =@@
  
  === aliasUsageInObjectLiteral_moduleA.ts ===
  import Backbone = require("./aliasUsageInObjectLiteral_backbone");

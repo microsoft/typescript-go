@@ -5,13 +5,11 @@
 
 function foo<T>(x: T): T { return x }
 >foo : <T>(x: T) => T
->T : T
 >x : T
 >x : T
 
 class Bar<T> { constructor(public x: T) { } }
 >Bar : Bar<T>
->T : T
 >x : T
 
 // Errors expected on all of the following

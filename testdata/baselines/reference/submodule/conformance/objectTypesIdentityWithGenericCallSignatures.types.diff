@@ -1,53 +1,12 @@
 --- old.objectTypesIdentityWithGenericCallSignatures.types
 +++ new.objectTypesIdentityWithGenericCallSignatures.types
-@@= skipped -7, +7 lines =@@
- 
-     foo<T>(x: T): T { return null; }
- >foo : <T>(x: T) => T
-+>T : T
- >x : T
- }
- 
- class B<T> {
- >B : B<T>
-+>T : T
- 
-     foo(x: T): T { return null; }
- >foo : (x: T) => T
-@@= skipped -13, +15 lines =@@
- 
- class C<T> {
- >C : C<T>
-+>T : T
- 
-     foo(x: T): T { return null; }
- >foo : (x: T) => T
-@@= skipped -7, +8 lines =@@
- }
- 
- interface I<T> {
-+>I : I<T>
-+>T : T
-+
-     foo(x: T): T;
- >foo : (x: T) => T
- >x : T
- }
- 
- interface I2 {
-+>I2 : I2
-+
-     foo<T>(x: T): T;
- >foo : <T>(x: T) => T
-+>T : T
- >x : T
+@@= skipped -39, +39 lines =@@
  }
  
  var a: { foo<T>(x: T): T }
 ->a : { foo<T>(x: T): T; }
 +>a : { foo: <T>(x: T) => T; }
  >foo : <T>(x: T) => T
-+>T : T
  >x : T
  
  var b = { foo<T>(x: T) { return x; } };
@@ -56,11 +15,9 @@
 +>b : { foo: <T>(x: T) => T; }
 +>{ foo<T>(x: T) { return x; } } : { foo: <T>(x: T) => T; }
  >foo : <T>(x: T) => T
-+>T : T
  >x : T
  >x : T
- 
-@@= skipped -72, +80 lines =@@
+@@= skipped -60, +60 lines =@@
  >x : any
  
  function foo3(x: typeof a);

@@ -24,8 +24,6 @@ function f() {
 >arguments : any
 
 interface I {
->I : I
-
     method(args: typeof arguments): void;
 >method : (args: any) => void
 >args : any

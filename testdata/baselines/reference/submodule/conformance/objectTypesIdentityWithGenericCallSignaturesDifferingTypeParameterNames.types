@@ -8,13 +8,11 @@ class A {
 
     foo<T>(x: T): T { return null; }
 >foo : <T>(x: T) => T
->T : T
 >x : T
 }
 
 class B<U> {
 >B : B<U>
->U : U
 
     foo(x: U): U { return null; }
 >foo : (x: U) => U
@@ -23,7 +21,6 @@ class B<U> {
 
 class C<V> {
 >C : C<V>
->V : V
 
     foo(x: V): V { return null; }
 >foo : (x: V) => V
@@ -31,34 +28,26 @@ class C<V> {
 }
 
 interface I<X> {
->I : I<X>
->X : X
-
     foo(x: X): X;
 >foo : (x: X) => X
 >x : X
 }
 
 interface I2 {
->I2 : I2
-
     foo<Y>(x: Y): Y;
 >foo : <Y>(x: Y) => Y
->Y : Y
 >x : Y
 }
 
 var a: { foo<Z>(x: Z): Z }
 >a : { foo: <Z>(x: Z) => Z; }
 >foo : <Z>(x: Z) => Z
->Z : Z
 >x : Z
 
 var b = { foo<A>(x: A) { return x; } };
 >b : { foo: <A>(x: A) => A; }
 >{ foo<A>(x: A) { return x; } } : { foo: <A>(x: A) => A; }
 >foo : <A>(x: A) => A
->A : A
 >x : A
 >x : A
 

@@ -6,7 +6,6 @@
 declare function f(fun: <T>(t: T) => void): void
 >f : (fun: <T>(t: T) => void) => void
 >fun : <T>(t: T) => void
->T : T
 >t : T
 
 f(t => {
@@ -33,7 +32,6 @@ f(t => {
 
 const fn1: <T>(x: T) => void = t => {
 >fn1 : <T>(x: T) => void
->T : T
 >x : T
 >t => {    type isArray = (typeof t)[] extends string[] ? true : false;    type IsObject = { x: typeof t } extends { x: string } ? true : false;} : <T>(t: T) => void
 >t : T
@@ -56,7 +54,6 @@ const fn1: <T>(x: T) => void = t => {
 
 const fn2: <T>(x: T) => void = function test(t) {
 >fn2 : <T>(x: T) => void
->T : T
 >x : T
 >function test(t) {    type isArray = (typeof t)[] extends string[] ? true : false;    type IsObject = { x: typeof t } extends { x: string } ? true : false;} : <T>(t: T) => void
 >test : <T>(t: T) => void
@@ -81,7 +78,6 @@ const fn2: <T>(x: T) => void = function test(t) {
 const obj: { f: <T>(x: T) => void } = {
 >obj : { f: <T>(x: T) => void; }
 >f : <T>(x: T) => void
->T : T
 >x : T
 >{    f(t) {        type isArray = (typeof t)[] extends string[] ? true : false;        type IsObject = { x: typeof t } extends { x: string } ? true : false;    }} : { f: <T>(t: T) => void; }
 

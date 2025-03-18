@@ -10,13 +10,11 @@ class A {
 
     foo<T extends Date>(x: T): string { return null; }
 >foo : <T extends Date>(x: T) => string
->T : T
 >x : T
 }
 
 class B<T extends Array<number>> {
 >B : B<T>
->T : T
 
     foo(x: T): string { return null; }
 >foo : (x: T) => string
@@ -25,7 +23,6 @@ class B<T extends Array<number>> {
 
 class C<T extends String> {
 >C : C<T>
->T : T
 
     foo(x: T): string { return null; }
 >foo : (x: T) => string
@@ -33,34 +30,26 @@ class C<T extends String> {
 }
 
 interface I<T extends Number> {
->I : I<T>
->T : T
-
     foo(x: T): string;
 >foo : (x: T) => string
 >x : T
 }
 
 interface I2 {
->I2 : I2
-
     foo<T extends Boolean>(x: T): string;
 >foo : <T extends Boolean>(x: T) => string
->T : T
 >x : T
 }
 
 var a: { foo<T extends Array<string>>(x: T): string }
 >a : { foo: <T extends string[]>(x: T) => string; }
 >foo : <T extends string[]>(x: T) => string
->T : T
 >x : T
 
 var b = { foo<T extends RegExp>(x: T) { return ''; } };
 >b : { foo: <T extends RegExp>(x: T) => string; }
 >{ foo<T extends RegExp>(x: T) { return ''; } } : { foo: <T extends RegExp>(x: T) => string; }
 >foo : <T extends RegExp>(x: T) => string
->T : T
 >x : T
 >'' : ""
 

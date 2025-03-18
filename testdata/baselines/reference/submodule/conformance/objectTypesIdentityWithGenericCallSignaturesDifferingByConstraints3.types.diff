@@ -1,95 +1,12 @@
 --- old.objectTypesIdentityWithGenericCallSignaturesDifferingByConstraints3.types
 +++ new.objectTypesIdentityWithGenericCallSignaturesDifferingByConstraints3.types
-@@= skipped -13, +13 lines =@@
- >foo : string
- 
- interface Three { foo: string }
-+>Three : Three
- >foo : string
- 
- interface Four<T> { foo: T }
-+>Four : Four<T>
-+>T : T
- >foo : T
- 
- interface Five<T> extends Four<T> { }
-+>Five : Five<T>
-+>T : T
-+
- interface Six<T, U> {
-+>Six : Six<T, U>
-+>T : T
-+>U : U
-+
-     foo: T;
- >foo : T
- }
-@@= skipped -16, +26 lines =@@
- 
-     foo<T extends U, U extends One>(x: T, y: U): string { return null; }
- >foo : <T extends U, U extends One>(x: T, y: U) => string
-+>T : T
-+>U : U
- >x : T
- >y : U
- }
- 
- class B<T extends U, U extends Two> {
- >B : B<T, U>
-+>T : T
-+>U : U
- 
-     foo(x: T, y: U): string { return null; }
- >foo : (x: T, y: U) => string
-@@= skipped -15, +19 lines =@@
- 
- class C<T extends U, U extends Three> {
- >C : C<T, U>
-+>T : T
-+>U : U
- 
-     foo(x: T, y: U): string { return null; }
- >foo : (x: T, y: U) => string
-@@= skipped -9, +11 lines =@@
- 
- class D<T extends U, U extends Four<string>> {
- >D : D<T, U>
-+>T : T
-+>U : U
- 
-     foo(x: T, y: U): string { return null; }
- >foo : (x: T, y: U) => string
-@@= skipped -8, +10 lines =@@
- }
- 
- interface I<T extends U, U extends Five<string>> {
-+>I : I<T, U>
-+>T : T
-+>U : U
-+
-     foo(x: T, y: U): string;
- >foo : (x: T, y: U) => string
- >x : T
-@@= skipped -7, +11 lines =@@
- }
- 
- interface I2 {
-+>I2 : I2
-+
-     foo<T extends U, U extends Six<string, string>>(x: T, y: U): string;
- >foo : <T extends U, U extends Six<string, string>>(x: T, y: U) => string
-+>T : T
-+>U : U
- >x : T
- >y : U
+@@= skipped -75, +75 lines =@@
  }
  
  var a: { foo<T extends U, U extends One>(x: T, y: U): string }
 ->a : { foo<T extends U, U extends One>(x: T, y: U): string; }
 +>a : { foo: <T extends U, U extends One>(x: T, y: U) => string; }
  >foo : <T extends U, U extends One>(x: T, y: U) => string
-+>T : T
-+>U : U
  >x : T
  >y : U
  
@@ -99,12 +16,9 @@
 +>b : { foo: <T extends U, U extends Two>(x: T, y: U) => string; }
 +>{ foo<T extends U, U extends Two>(x: T, y: U) { return ''; } } : { foo: <T extends U, U extends Two>(x: T, y: U) => string; }
  >foo : <T extends U, U extends Two>(x: T, y: U) => string
-+>T : T
-+>U : U
  >x : T
  >y : U
- >'' : ""
-@@= skipped -69, +77 lines =@@
+@@= skipped -62, +62 lines =@@
  >x : any
  
  function foo3(x: typeof a);

@@ -43,7 +43,6 @@ type OriginC = `${MixC}`
 
 type MixD<T extends string> =
 >MixD : `${T & { foo: string; }}`
->T : T
 
     `${T & { foo: string }}`
 >foo : string

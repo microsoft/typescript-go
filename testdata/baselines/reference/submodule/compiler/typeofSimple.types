@@ -14,12 +14,9 @@ var v3: string = v2; // Not assignment compatible
 >v2 : number
 
 interface I<T> { x: T; }
->I : I<T>
->T : T
 >x : T
 
 interface J { }
->J : J
 
 var numberJ: typeof J; //Error, cannot reference type in typeof
 >numberJ : any

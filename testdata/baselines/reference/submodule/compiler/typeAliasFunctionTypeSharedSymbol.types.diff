@@ -6,7 +6,6 @@
  function Mixin<TBase extends {new (...args: any[]): {}}>(Base: TBase) {
 ->Mixin : <TBase extends { new (...args: any[]): {}; }>(Base: TBase) => { new (...args: any[]): (Anonymous class); prototype: Mixin<any>.(Anonymous class); } & TBase
 +>Mixin : <TBase extends new (...args: any[]) => {}>(Base: TBase) => { new (...args: any[]): (Anonymous class)<TBase>; prototype: (Anonymous class)<any>; } & TBase
-+>TBase : TBase
  >args : any[]
  >Base : TBase
  
@@ -26,9 +25,3 @@
  
  type ReturnTypeOf<V> = V extends (...args: any[])=>infer R ? R : never;
  >ReturnTypeOf : ReturnTypeOf<V>
-+>V : V
- >args : any[]
-+>R : R
- 
- type Crashes = number & Mixin;
- >Crashes : Crashes

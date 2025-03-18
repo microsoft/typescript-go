@@ -3,7 +3,6 @@
 === cyclicGenericTypeInstantiationInference.ts ===
 function foo<T>() {
 >foo : <T>() => { y2: { y2: { y2: { y2: { y2: { y2: { y2: { y2: ???; }; }; }; }; }; }; }; }
->T : T
 
     var z = foo<typeof y>();
 >z : { y2: { y2: { y2: { y2: { y2: { y2: { y2: { y2: { y2: ???; }; }; }; }; }; }; }; }; }
@@ -26,7 +25,6 @@ function foo<T>() {
 
 function bar<T>() {
 >bar : <T>() => { y2: { y2: { y2: { y2: { y2: { y2: { y2: { y2: ???; }; }; }; }; }; }; }; }
->T : T
 
     var z = bar<typeof y>();
 >z : { y2: { y2: { y2: { y2: { y2: { y2: { y2: { y2: { y2: ???; }; }; }; }; }; }; }; }; }
@@ -57,7 +55,6 @@ var b = bar<number>();
 
 function test<T>(x: typeof a): void { }
 >test : <T>(x: { y2: { y2: { y2: { y2: { y2: { y2: { y2: { y2: ???; }; }; }; }; }; }; }; }) => void
->T : T
 >x : { y2: { y2: { y2: { y2: { y2: { y2: { y2: { y2: { y2: ???; }; }; }; }; }; }; }; }; }
 >a : { y2: { y2: { y2: { y2: { y2: { y2: { y2: { y2: { y2: ???; }; }; }; }; }; }; }; }; }
 
