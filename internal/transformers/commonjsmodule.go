@@ -31,14 +31,13 @@ func NewCommonJSModuleTransformer(emitContext *printer.EmitContext, compilerOpti
 	if resolver == nil {
 		resolver = binder.NewReferenceResolver(compilerOptions, binder.ReferenceResolverHooks{})
 	}
-	tx := &CommonJSModuleTransformer{compilerOptions: compilerOptions, resolver: resolver}
+	tx := &CommonJSModuleTransformer{compilerOptions: compilerOptions, resolver: resolver, metaDataProvider: metaDataProvider}
 	tx.topLevelVisitor = emitContext.NewNodeVisitor(tx.visitTopLevel)
 	tx.topLevelNestedVisitor = emitContext.NewNodeVisitor(tx.visitTopLevelNested)
 	tx.discardedValueVisitor = emitContext.NewNodeVisitor(tx.visitDiscardedValue)
 	tx.assignmentPatternVisitor = emitContext.NewNodeVisitor(tx.visitAssignmentPattern)
 	tx.languageVersion = compilerOptions.GetEmitScriptTarget()
 	tx.moduleKind = compilerOptions.GetEmitModuleKind()
-	tx.metaDataProvider = metaDataProvider
 	return tx.newTransformer(tx.visit, emitContext)
 }
 
