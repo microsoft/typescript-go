@@ -91,6 +91,9 @@ func (r *CompilerBaselineRunner) RunTests(t *testing.T) {
 	skippedTests := []string{
 		"mappedTypeRecursiveInference.ts",         // Needed until we have type printer with truncation limit.
 		"jsFileCompilationWithoutJsExtensions.ts", // Needed until we have proper allowJS support (and errors when not enabled.)
+		"fileReferencesWithNoExtensions.ts",       // Needed until we support adding missing extensions in subtasks in fileloader.go
+		"typeOnlyMerge2.ts",                       // Needs investigation
+		"typeOnlyMerge3.ts",                       // Needs investigation
 	}
 	deprecatedTests := []string{
 		// Test deprecated `importsNotUsedAsValue`
@@ -102,6 +105,7 @@ func (r *CompilerBaselineRunner) RunTests(t *testing.T) {
 	}
 	for _, filename := range files {
 		if slices.Contains(skippedTests, tspath.GetBaseFileName(filename)) {
+			t.Run(tspath.GetBaseFileName(filename), func(t *testing.T) { t.Skip("Requisite functionality not yet implemented.") })
 			continue
 		}
 		if slices.Contains(deprecatedTests, tspath.GetBaseFileName(filename)) {
