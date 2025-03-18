@@ -332,8 +332,6 @@ var concurrentSkippedErrorBaselines = core.NewSetFromItems(
 	"recursiveExportAssignmentAndFindAliasedType2.ts",
 	"recursiveExportAssignmentAndFindAliasedType3.ts",
 	"superInStaticMembers1.ts target=es2015",
-	"typeOnlyMerge2.ts",
-	"typeOnlyMerge3.ts",
 )
 
 func (c *compilerTest) verifyDiagnostics(t *testing.T, suiteName string, isSubmodule bool) {
