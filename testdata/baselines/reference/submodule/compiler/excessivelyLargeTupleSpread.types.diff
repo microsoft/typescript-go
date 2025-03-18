@@ -1,17 +1,6 @@
 --- old.excessivelyLargeTupleSpread.types
 +++ new.excessivelyLargeTupleSpread.types
-@@= skipped -0, +0 lines =@@
- //// [tests/cases/compiler/excessivelyLargeTupleSpread.ts] ////
- 
--=== Performance Stats ===
--Type Count: 25,000
--Instantiation count: 50,000
--Symbol count: 100,000
--
- === excessivelyLargeTupleSpread.ts ===
- // #41771
- 
-@@= skipped -61, +56 lines =@@
+@@= skipped -56, +56 lines =@@
  >T14 : any
  
  const a0 = [0] as const;

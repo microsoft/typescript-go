@@ -1,16 +1,6 @@
 --- old.variadicTuples1.types
 +++ new.variadicTuples1.types
-@@= skipped -0, +0 lines =@@
- //// [tests/cases/conformance/types/tuple/variadicTuples1.ts] ////
- 
--=== Performance Stats ===
--Type Count: 1,000
--Instantiation count: 2,500
--
- === variadicTuples1.ts ===
- // Variadics in tuple types
- 
-@@= skipped -44, +40 lines =@@
+@@= skipped -40, +40 lines =@@
  // Variadics in array literals
  
  function tup2<T extends unknown[], U extends unknown[]>(t: [...T], u: [...U]) {
