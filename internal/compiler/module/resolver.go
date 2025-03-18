@@ -146,7 +146,7 @@ func (r *Resolver) GetPackageScopeForPath(directory string) *packagejson.InfoCac
 }
 
 func (r *Resolver) GetPackageJsonTypeIfApplicable(path string) string {
-	if tspath.FileExtensionIsOneOf(path, []string{".mts", ".cts", "mjs", "cjs"}) {
+	if tspath.FileExtensionIsOneOf(path, []string{tspath.ExtensionMts, tspath.ExtensionCts, tspath.ExtensionMjs, tspath.ExtensionCjs}) {
 		return ""
 	}
 
