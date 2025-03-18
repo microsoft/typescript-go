@@ -514,9 +514,9 @@ func isFunctionLikeKind(kind Kind) bool {
 }
 
 // Determines if a node is function- or signature-like.
+// Ensure node != nil before calling this
 func IsFunctionLike(node *Node) bool {
-	// TODO(rbuckton): Move `node != nil` test to call sites
-	return node != nil && isFunctionLikeKind(node.Kind)
+	return isFunctionLikeKind(node.Kind)
 }
 
 func IsFunctionLikeOrClassStaticBlockDeclaration(node *Node) bool {
@@ -1064,7 +1064,7 @@ func CanHaveDecorators(node *Node) bool {
 }
 
 func IsFunctionOrModuleBlock(node *Node) bool {
-	return IsSourceFile(node) || IsModuleBlock(node) || IsBlock(node) && IsFunctionLike(node.Parent)
+	return IsSourceFile(node) || IsModuleBlock(node) || IsBlock(node) && node.Parent != nil && IsFunctionLike(node.Parent)
 }
 
 func IsFunctionExpressionOrArrowFunction(node *Node) bool {
@@ -2369,12 +2369,12 @@ func GetImpliedNodeFormatForEmitWorker(sourceFile *SourceFile, options *core.Com
 	}
 	if sourceFile.ImpliedNodeFormat == core.ModuleKindCommonJS &&
 		( /*sourceFile.packageJsonScope.contents.packageJsonContent.type == "commonjs" ||*/ // !!!
-		tspath.FileExtensionIsOneOf(sourceFile.FileName(), []string{tspath.ExtensionCjs, tspath.ExtensionCts})) {
+			tspath.FileExtensionIsOneOf(sourceFile.FileName(), []string{tspath.ExtensionCjs, tspath.ExtensionCts})) {
 		return core.ModuleKindCommonJS
 	}
 	if sourceFile.ImpliedNodeFormat == core.ModuleKindESNext &&
 		( /*sourceFile.packageJsonScope?.contents.packageJsonContent.type === "module" ||*/ // !!!
-		tspath.FileExtensionIsOneOf(sourceFile.fileName, []string{tspath.ExtensionMjs, tspath.ExtensionMts})) {
+			tspath.FileExtensionIsOneOf(sourceFile.fileName, []string{tspath.ExtensionMjs, tspath.ExtensionMts})) {
 		return core.ModuleKindESNext
 	}
 	return core.ModuleKindNone

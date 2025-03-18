@@ -5534,7 +5534,7 @@ func (c *Checker) checkVarDeclaredNamesNotShadowed(node *ast.Node) {
 				}
 				// names of block-scoped and function scoped variables can collide only
 				// if block scoped variable is defined in the function\module\source file scope (because of variable hoisting)
-				namesShareScope := container != nil && (ast.IsBlock(container) && ast.IsFunctionLike(container.Parent) ||
+				namesShareScope := container != nil && (ast.IsBlock(container) && container.Parent != nil && ast.IsFunctionLike(container.Parent) ||
 					ast.IsModuleBlock(container) || ast.IsModuleDeclaration(container) || ast.IsSourceFile(container))
 				// here we know that function scoped variable is "shadowed" by block scoped one
 				// a var declaration can't hoist past a lexical declaration and it results in a SyntaxError at runtime
@@ -10862,7 +10862,7 @@ func (c *Checker) isUncalledFunctionReference(node *ast.Node, symbol *ast.Symbol
 			return isCallOrNewExpression(parent) && ast.IsIdentifier(node) && c.hasMatchingArgument(parent, node)
 		}
 		return core.Every(symbol.Declarations, func(d *ast.Node) bool {
-			return !ast.IsFunctionLike(d) || c.isDeprecatedDeclaration(d)
+			return d == nil || !ast.IsFunctionLike(d) || c.isDeprecatedDeclaration(d)
 		})
 	}
 	return true
@@ -11305,7 +11305,7 @@ func (c *Checker) tryGetThisTypeAt(node *ast.Node) *Type {
 }
 
 func (c *Checker) tryGetThisTypeAtEx(node *ast.Node, includeGlobalThis bool, container *ast.Node) *Type {
-	if ast.IsFunctionLike(container) && (!c.isInParameterInitializerBeforeContainingFunction(node) || getThisParameter(container) != nil) {
+	if container != nil && ast.IsFunctionLike(container) && (!c.isInParameterInitializerBeforeContainingFunction(node) || getThisParameter(container) != nil) {
 		thisType := c.getThisTypeOfDeclaration(container)
 		// Note: a parameter initializer should refer to class-this unless function-this is explicitly annotated.
 		// If this is a function in a JS file, it might be a class method.
@@ -17983,7 +17983,7 @@ func (c *Checker) getSignaturesOfSymbol(symbol *ast.Symbol) []*Signature {
 	}
 	var result []*Signature
 	for i, decl := range symbol.Declarations {
-		if !ast.IsFunctionLike(decl) {
+		if decl == nil || !ast.IsFunctionLike(decl) {
 			continue
 		}
 		// Don't include signature if node is the implementation of an overloaded function. A node is considered
@@ -28988,7 +28988,7 @@ func (c *Checker) getSymbolAtLocation(node *ast.Node, ignoreErrors bool) *ast.Sy
 		fallthrough
 	case ast.KindThisKeyword:
 		container := c.getThisContainer(node, false /*includeArrowFunctions*/, false /*includeClassComputedPropertyName*/)
-		if ast.IsFunctionLike(container) {
+		if container != nil && ast.IsFunctionLike(container) {
 			sig := c.getSignatureFromDeclaration(container)
 			if sig.thisParameter != nil {
 				return sig.thisParameter
