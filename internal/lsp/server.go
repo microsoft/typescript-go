@@ -215,8 +215,8 @@ func (s *Server) handleInitialize(req *lsproto.RequestMessage) error {
 	s.initializeParams = req.Params.(*lsproto.InitializeParams)
 
 	s.positionEncoding = lsproto.PositionEncodingKindUTF16
-	if s.initializeParams.Capabilities.General != nil && s.initializeParams.Capabilities.General.PositionEncodings != nil {
-		if slices.Contains(*s.initializeParams.Capabilities.General.PositionEncodings, lsproto.PositionEncodingKindUTF8) {
+	if genCapabilities := s.initializeParams.Capabilities.General; genCapabilities != nil && genCapabilities.PositionEncodings != nil {
+		if slices.Contains(*genCapabilities.PositionEncodings, lsproto.PositionEncodingKindUTF8) {
 			s.positionEncoding = lsproto.PositionEncodingKindUTF8
 		}
 	}
