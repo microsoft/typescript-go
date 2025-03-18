@@ -73,6 +73,5 @@ func (h *compilerHost) GetSourceFile(fileName string, path tspath.Path, language
 	if tspath.FileExtensionIs(fileName, tspath.ExtensionJson) {
 		return parser.ParseJSONText(fileName, path, text)
 	}
-
 	return parser.ParseSourceFile(fileName, path, text, languageVersion, scanner.JSDocParsingModeParseForTypeErrors)
 }

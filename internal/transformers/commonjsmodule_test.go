@@ -1034,8 +1034,8 @@ exports.a = a;`,
 
 			emitContext := printer.NewEmitContext()
 			resolver := binder.NewReferenceResolver(&compilerOptions, binder.ReferenceResolverHooks{})
-
 			program := &fakeSourceFileMetaDataProvider{}
+
 			file = NewRuntimeSyntaxTransformer(emitContext, &compilerOptions, resolver).TransformSourceFile(file)
 			file = NewCommonJSModuleTransformer(emitContext, &compilerOptions, resolver, program).TransformSourceFile(file)
 			emittestutil.CheckEmit(t, emitContext, file, rec.output)

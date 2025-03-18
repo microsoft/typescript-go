@@ -198,7 +198,6 @@ func (p *Parser) initializeState(fileName string, path tspath.Path, sourceText s
 	default:
 		p.contextFlags = ast.NodeFlagsNone
 	}
-
 	p.scanner.SetText(p.sourceText)
 	p.scanner.SetOnError(p.scanError)
 	p.scanner.SetScriptTarget(p.languageVersion)

@@ -233,7 +233,6 @@ var __rewriteRelativeImportExtension;`,
 
 			emitContext := printer.NewEmitContext()
 			resolver := binder.NewReferenceResolver(&compilerOptions, binder.ReferenceResolverHooks{})
-
 			program := &fakeSourceFileMetaDataProvider{}
 
 			file = NewRuntimeSyntaxTransformer(emitContext, &compilerOptions, resolver).TransformSourceFile(file)

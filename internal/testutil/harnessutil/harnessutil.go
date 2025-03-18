@@ -399,7 +399,6 @@ func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path, la
 		fileName        string
 		path            tspath.Path
 		languageVersion core.ScriptTarget
-		packageJsonType string
 		text            string
 	}
 

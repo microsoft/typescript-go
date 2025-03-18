@@ -224,12 +224,12 @@ func (t *parseTask) start(loader *fileLoader) {
 	})
 }
 
-func (p *fileLoader) CacheSourceFileMetaData(path tspath.Path) {
+func (p *fileLoader) loadSourceFileMetaData(path tspath.Path) {
 	p.sourceFileMetaDatasMutex.Lock()
-	defer p.sourceFileMetaDatasMutex.Unlock()
 	if _, ok := p.sourceFileMetaDatas[path]; ok {
 		return
 	}
+	p.sourceFileMetaDatasMutex.Unlock()
 
 	if p.sourceFileMetaDatas == nil {
 		p.sourceFileMetaDatas = make(map[tspath.Path]*ast.SourceFileMetaData)
@@ -242,13 +242,15 @@ func (p *fileLoader) CacheSourceFileMetaData(path tspath.Path) {
 		ImpliedNodeFormat: impliedNodeFormat,
 	}
 
+	p.sourceFileMetaDatasMutex.Lock()
 	p.sourceFileMetaDatas[path] = metadata
+	p.sourceFileMetaDatasMutex.Unlock()
 }
 
 func (p *fileLoader) parseSourceFile(fileName string) *ast.SourceFile {
 	path := tspath.ToPath(fileName, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
 	sourceFile := p.host.GetSourceFile(fileName, path, p.compilerOptions.GetEmitScriptTarget())
-	p.CacheSourceFileMetaData(path)
+	p.loadSourceFileMetaData(path)
 	return sourceFile
 }
 
