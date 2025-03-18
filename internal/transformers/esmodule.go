@@ -25,7 +25,7 @@ type importRequireStatements struct {
 
 func NewESModuleTransformer(emitContext *printer.EmitContext, compilerOptions *core.CompilerOptions, resolver binder.ReferenceResolver) *Transformer {
 	if resolver == nil {
-		resolver = binder.NewReferenceResolver(binder.ReferenceResolverHooks{})
+		resolver = binder.NewReferenceResolver(compilerOptions, binder.ReferenceResolverHooks{})
 	}
 	tx := &ESModuleTransformer{compilerOptions: compilerOptions, resolver: resolver}
 	return tx.newTransformer(tx.visit, emitContext)
@@ -196,7 +196,7 @@ func (tx *ESModuleTransformer) visitExportDeclaration(node *ast.ExportDeclaratio
 
 	updatedModuleSpecifier := rewriteModuleSpecifier(tx.emitContext, node.ModuleSpecifier, tx.compilerOptions)
 	if tx.compilerOptions.ModuleKind > core.ModuleKindES2015 || node.ExportClause == nil || !ast.IsNamespaceExport(node.ExportClause) {
-		// Either ill-formed or don't need to be tranformed.
+		// Either ill-formed or don't need to be transformed.
 		return tx.factory.UpdateExportDeclaration(
 			node,
 			nil,   /*modifiers*/
