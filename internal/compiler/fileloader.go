@@ -24,7 +24,7 @@ type fileLoader struct {
 	resolvedModules      map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule]
 
 	sourceFileMetaDatasMutex sync.Mutex
-	sourceFileMetaDatas      map[string]*ast.SourceFileMetaData
+	sourceFileMetaDatas      map[tspath.Path]*ast.SourceFileMetaData
 
 	mu                      sync.Mutex
 	wg                      core.WorkGroup
@@ -43,7 +43,7 @@ func processAllProgramFiles(
 	resolver *module.Resolver,
 	rootFiles []string,
 	libs []string,
-) (files []*ast.SourceFile, resolvedModules map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule], sourceFileMetaDatas map[string]*ast.SourceFileMetaData) {
+) (files []*ast.SourceFile, resolvedModules map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule], sourceFileMetaDatas map[tspath.Path]*ast.SourceFileMetaData) {
 	supportedExtensions := tsoptions.GetSupportedExtensions(compilerOptions, nil /*extraFileExtensions*/)
 	loader := fileLoader{
 		host:               host,
@@ -224,7 +224,7 @@ func (t *parseTask) start(loader *fileLoader) {
 	})
 }
 
-func (p *fileLoader) CacheSourceFileMetaData(path string) {
+func (p *fileLoader) CacheSourceFileMetaData(path tspath.Path) {
 	p.sourceFileMetaDatasMutex.Lock()
 	defer p.sourceFileMetaDatasMutex.Unlock()
 	if _, ok := p.sourceFileMetaDatas[path]; ok {
@@ -232,11 +232,11 @@ func (p *fileLoader) CacheSourceFileMetaData(path string) {
 	}
 
 	if p.sourceFileMetaDatas == nil {
-		p.sourceFileMetaDatas = make(map[string]*ast.SourceFileMetaData)
+		p.sourceFileMetaDatas = make(map[tspath.Path]*ast.SourceFileMetaData)
 	}
 
-	packageJsonType := p.resolver.GetPackageJsonTypeIfApplicable(path)
-	impliedNodeFormat := ast.GetImpliedNodeFormatForFile(path, packageJsonType)
+	packageJsonType := p.resolver.GetPackageJsonTypeIfApplicable(string(path))
+	impliedNodeFormat := ast.GetImpliedNodeFormatForFile(string(path), packageJsonType)
 	metadata := &ast.SourceFileMetaData{
 		PackageJsonType:   packageJsonType,
 		ImpliedNodeFormat: impliedNodeFormat,
@@ -248,7 +248,7 @@ func (p *fileLoader) CacheSourceFileMetaData(path string) {
 func (p *fileLoader) parseSourceFile(fileName string) *ast.SourceFile {
 	path := tspath.ToPath(fileName, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
 	sourceFile := p.host.GetSourceFile(fileName, path, p.compilerOptions.GetEmitScriptTarget())
-	p.CacheSourceFileMetaData(string(path))
+	p.CacheSourceFileMetaData(path)
 	return sourceFile
 }
 

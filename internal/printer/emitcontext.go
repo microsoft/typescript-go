@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 // Stores side-table information used during transformation that can be read by the printer to customize emit
@@ -24,7 +25,7 @@ type EmitContext struct {
 	varScopeStack       core.Stack[*varScope]
 	letScopeStack       core.Stack[*varScope]
 	emitHelpers         collections.OrderedSet[*EmitHelper]
-	sourceFileMetaDatas map[string]*ast.SourceFileMetaData
+	sourceFileMetaDatas map[tspath.Path]*ast.SourceFileMetaData
 
 	isCustomPrologue           func(node *ast.Statement) bool
 	isHoistedFunction          func(node *ast.Statement) bool
@@ -626,7 +627,7 @@ func (c *EmitContext) NewRewriteRelativeImportExtensionsHelper(firstArgument *as
 	)
 }
 
-func (c *EmitContext) SetSourcefileMetaDatas(sourceFileMetaDatas map[string]*ast.SourceFileMetaData) {
+func (c *EmitContext) SetSourcefileMetaDatas(sourceFileMetaDatas map[tspath.Path]*ast.SourceFileMetaData) {
 	c.sourceFileMetaDatas = sourceFileMetaDatas
 }
 
@@ -957,7 +958,7 @@ func (c *EmitContext) VisitIterationBody(body *ast.Statement, visitor *ast.NodeV
 
 func (c *EmitContext) GetSourceFileMetaData(file *ast.SourceFile) *ast.SourceFileMetaData {
 	for {
-		if meta, ok := c.sourceFileMetaDatas[string(file.Path())]; ok {
+		if meta, ok := c.sourceFileMetaDatas[file.Path()]; ok {
 			return meta
 		}
 		original := c.Original(file.AsNode())

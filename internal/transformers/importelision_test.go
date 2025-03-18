@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/testutil/emittestutil"
 	"github.com/microsoft/typescript-go/internal/testutil/parsetestutil"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 type fakeProgram struct {
@@ -53,8 +54,8 @@ func (p *fakeProgram) GetResolvedModule(currentSourceFile *ast.SourceFile, modul
 	return p.getResolvedModule(currentSourceFile, moduleReference)
 }
 
-func (p *fakeProgram) GetCachedSourceFileMetaDatas() map[string]*ast.SourceFileMetaData {
-	return map[string]*ast.SourceFileMetaData{}
+func (p *fakeProgram) GetCachedSourceFileMetaDatas() map[tspath.Path]*ast.SourceFileMetaData {
+	return map[tspath.Path]*ast.SourceFileMetaData{}
 }
 
 func TestImportElision(t *testing.T) {

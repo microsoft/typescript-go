@@ -49,7 +49,7 @@ type Program struct {
 	files       []*ast.SourceFile
 	filesByPath map[tspath.Path]*ast.SourceFile
 
-	sourceFileMetaDatas map[string]*ast.SourceFileMetaData
+	sourceFileMetaDatas map[tspath.Path]*ast.SourceFileMetaData
 
 	// The below settings are to track if a .js file should be add to the program if loaded via searching under node_modules.
 	// This works as imported modules are discovered recursively in a depth first manner, specifically:
@@ -75,7 +75,7 @@ func NewProgram(options ProgramOptions) *Program {
 	p.programOptions = options
 	p.compilerOptions = options.Options
 	p.configFileParsingDiagnostics = slices.Clip(options.ConfigFileParsingDiagnostics)
-	p.sourceFileMetaDatas = make(map[string]*ast.SourceFileMetaData)
+	p.sourceFileMetaDatas = make(map[tspath.Path]*ast.SourceFileMetaData)
 	if p.compilerOptions == nil {
 		p.compilerOptions = &core.CompilerOptions{}
 	}
@@ -417,7 +417,7 @@ func (p *Program) PrintSourceFileWithTypes() {
 	}
 }
 
-func (p *Program) GetCachedSourceFileMetaDatas() map[string]*ast.SourceFileMetaData {
+func (p *Program) GetCachedSourceFileMetaDatas() map[tspath.Path]*ast.SourceFileMetaData {
 	return p.sourceFileMetaDatas
 }
 
@@ -426,11 +426,11 @@ func (p *Program) GetEmitModuleFormatOfFile(sourceFile *ast.SourceFile) core.Mod
 }
 
 func (p *Program) GetEmitModuleFormatOfFileWorker(sourceFile *ast.SourceFile, options *core.CompilerOptions) core.ModuleKind {
-	return ast.GetEmitModuleFormatOfFileWorker(sourceFile, options, p.GetCachedSourceFileMetaDatas()[string(sourceFile.Path())])
+	return ast.GetEmitModuleFormatOfFileWorker(sourceFile, options, p.GetCachedSourceFileMetaDatas()[sourceFile.Path()])
 }
 
 func (p *Program) GetImpliedNodeFormatForEmit(sourceFile *ast.SourceFile) core.ResolutionMode {
-	return ast.GetImpliedNodeFormatForEmitWorker(sourceFile.FileName(), p.compilerOptions, p.GetCachedSourceFileMetaDatas()[string(sourceFile.Path())])
+	return ast.GetImpliedNodeFormatForEmitWorker(sourceFile.FileName(), p.compilerOptions, p.GetCachedSourceFileMetaDatas()[sourceFile.Path()])
 }
 
 func (p *Program) CommonSourceDirectory() string {

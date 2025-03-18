@@ -26,11 +26,10 @@ type FileInfo struct {
 var _ CompilerHost = (*compilerHost)(nil)
 
 type compilerHost struct {
-	options                  *core.CompilerOptions
-	currentDirectory         string
-	fs                       vfs.FS
-	defaultLibraryPath       string
-	pathToSourceFileMetaData map[string]*ast.SourceFileMetaData
+	options            *core.CompilerOptions
+	currentDirectory   string
+	fs                 vfs.FS
+	defaultLibraryPath string
 }
 
 func NewCompilerHost(options *core.CompilerOptions, currentDirectory string, fs vfs.FS, defaultLibraryPath string) CompilerHost {
@@ -39,7 +38,6 @@ func NewCompilerHost(options *core.CompilerOptions, currentDirectory string, fs 
 	h.currentDirectory = currentDirectory
 	h.fs = fs
 	h.defaultLibraryPath = defaultLibraryPath
-	h.pathToSourceFileMetaData = make(map[string]*ast.SourceFileMetaData)
 	return h
 }
 
