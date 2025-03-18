@@ -722,8 +722,8 @@ type Checker struct {
 	lastGetCombinedNodeFlagsResult             ast.NodeFlags
 	lastGetCombinedModifierFlagsNode           *ast.Node
 	lastGetCombinedModifierFlagsResult         ast.ModifierFlags
-	inferenceStates                            []InferenceState
-	flowStates                                 []FlowState
+	freeinferenceState                         *InferenceState
+	freeFlowState                              *FlowState
 	flowLoopCache                              map[FlowLoopKey]*Type
 	flowLoopStack                              []FlowLoopInfo
 	sharedFlows                                []SharedFlow
@@ -742,7 +742,7 @@ type Checker struct {
 	reverseMappedSourceStack                   []*Type
 	reverseMappedTargetStack                   []*Type
 	reverseExpandingFlags                      ExpandingFlags
-	relaters                                   []Relater
+	freeRelater                                *Relater
 	subtypeRelation                            *Relation
 	strictSubtypeRelation                      *Relation
 	assignableRelation                         *Relation
@@ -792,6 +792,7 @@ type Checker struct {
 	getGlobalClassMethodDecoratorContextType   func() *Type
 	getGlobalClassGetterDecoratorContextType   func() *Type
 	getGlobalClassSetterDecoratorContextType   func() *Type
+	getGlobalClassAccessorDecoratorContxtType  func() *Type
 	getGlobalClassAccessorDecoratorContextType func() *Type
 	getGlobalClassAccessorDecoratorTargetType  func() *Type
 	getGlobalClassAccessorDecoratorResultType  func() *Type
@@ -2172,6 +2173,8 @@ func (c *Checker) checkSourceElementWorker(node *ast.Node) {
 		c.checkTypeAliasDeclaration(node)
 	case ast.KindEnumDeclaration:
 		c.checkEnumDeclaration(node)
+	case ast.KindEnumMember:
+		c.checkEnumMember(node)
 	case ast.KindModuleDeclaration:
 		c.checkModuleDeclaration(node)
 	case ast.KindImportDeclaration:
@@ -4271,7 +4274,7 @@ basePropertyCheck:
 	for errorNode, memberInfo := range notImplementedInfo {
 		switch {
 		case len(memberInfo.missedProperties) == 1:
-			missedProperty := "'" + memberInfo.missedProperties[0] + "'"
+			missedProperty := memberInfo.missedProperties[0]
 			if ast.IsClassExpression(errorNode) {
 				c.error(errorNode, diagnostics.Non_abstract_class_expression_does_not_implement_inherited_abstract_member_0_from_class_1, missedProperty, memberInfo.baseTypeName)
 			} else {
@@ -4709,6 +4712,15 @@ func (c *Checker) checkEnumDeclaration(node *ast.Node) {
 				}
 			}
 		}
+	}
+}
+
+func (c *Checker) checkEnumMember(node *ast.Node) {
+	if ast.IsPrivateIdentifier(node.Name()) {
+		c.error(node, diagnostics.An_enum_member_cannot_be_named_with_a_private_identifier)
+	}
+	if node.Initializer() != nil {
+		c.checkExpression(node.Initializer())
 	}
 }
 
@@ -8026,7 +8038,7 @@ func (c *Checker) isConstructorAccessible(node *ast.Node, signature *Signature) 
 	declaration := signature.declaration
 	modifiers := getSelectedEffectiveModifierFlags(declaration, ast.ModifierFlagsNonPublicAccessibilityModifier)
 	// (1) Public constructors and (2) constructor functions are always accessible.
-	if modifiers == 0 || ast.IsConstructorDeclaration(declaration) {
+	if modifiers == 0 || !ast.IsConstructorDeclaration(declaration) {
 		return true
 	}
 	declaringClassDeclaration := getClassLikeDeclarationOfSymbol(declaration.Parent.Symbol())
@@ -9620,7 +9632,7 @@ func (c *Checker) isAritySmaller(signature *Signature, target *ast.Node) bool {
 		}
 		targetParameterCount++
 	}
-	if len(parameters) != 0 && parameterIsThisKeyword(parameters[0]) {
+	if len(parameters) != 0 && ast.IsThisParameter(parameters[0]) {
 		targetParameterCount--
 	}
 	return !c.hasEffectiveRestParameter(signature) && c.getParameterCount(signature) < targetParameterCount
@@ -10450,7 +10462,7 @@ func (c *Checker) checkPropertyAccessChain(node *ast.Node, checkMode CheckMode) 
 }
 
 func (c *Checker) checkPropertyAccessExpressionOrQualifiedName(node *ast.Node, left *ast.Node, leftType *Type, right *ast.Node, checkMode CheckMode, writeOnly bool) *Type {
-	parentSymbol := c.typeNodeLinks.Get(node).resolvedSymbol
+	parentSymbol := c.typeNodeLinks.Get(left).resolvedSymbol
 	assignmentKind := getAssignmentTargetKind(node)
 	widenedType := leftType
 	if assignmentKind != AssignmentKindNone || c.isMethodAccessForCall(node) {
@@ -11522,7 +11534,8 @@ func (c *Checker) checkBinaryLikeExpression(left *ast.Node, operatorToken *ast.N
 				ast.KindGreaterThanGreaterThanGreaterThanEqualsToken:
 				rhsEval := c.evaluate(right, right)
 				if numValue, ok := rhsEval.Value.(jsnum.Number); ok && numValue.Abs() >= 32 {
-					c.errorOrSuggestion(ast.IsEnumMember(ast.WalkUpParenthesizedExpressions(right.Parent.Parent)), errorNode, diagnostics.This_operation_can_be_simplified_This_shift_is_identical_to_0_1_2, scanner.GetTextOfNode(left), scanner.TokenToString(operator), (numValue / 32).Floor())
+					// Elevate from suggestion to error within an enum member
+					c.errorOrSuggestion(ast.IsEnumMember(ast.WalkUpParenthesizedExpressions(right.Parent.Parent)), errorNode, diagnostics.This_operation_can_be_simplified_This_shift_is_identical_to_0_1_2, scanner.GetTextOfNode(left), scanner.TokenToString(operator), numValue.Remainder(32))
 				}
 			}
 		}
@@ -15015,7 +15028,7 @@ func (c *Checker) getTypeOfVariableOrParameterOrPropertyWorker(symbol *ast.Symbo
 	case ast.KindPropertyAssignment:
 		result = c.checkPropertyAssignment(declaration, CheckModeNormal)
 	case ast.KindShorthandPropertyAssignment:
-		result = c.checkExpressionForMutableLocation(declaration, CheckModeNormal)
+		result = c.checkExpressionForMutableLocation(declaration.Name(), CheckModeNormal)
 	case ast.KindMethodDeclaration:
 		result = c.checkObjectLiteralMethod(declaration, CheckModeNormal)
 	case ast.KindExportAssignment:
@@ -17984,7 +17997,7 @@ func (c *Checker) getSignaturesOfSymbol(symbol *ast.Symbol) []*Signature {
 			}
 		}
 		// If this is a function or method declaration, get the signature from the @type tag for the sake of optional parameters.
-		// Exclude contextually-typed kinds because we already apply the @type tag to the context, plus applying it here to the initializer would supress checks that the two are compatible.
+		// Exclude contextually-typed kinds because we already apply the @type tag to the context, plus applying it here to the initializer would suppress checks that the two are compatible.
 		result = append(result, c.getSignatureFromDeclaration(decl))
 	}
 	return result
@@ -18246,7 +18259,7 @@ func getEffectiveSetAccessorTypeAnnotationNode(node *ast.Node) *ast.Node {
 func getSetAccessorValueParameter(accessor *ast.Node) *ast.Node {
 	parameters := accessor.Parameters()
 	if len(parameters) > 0 {
-		hasThis := len(parameters) == 2 && parameterIsThisKeyword(parameters[0])
+		hasThis := len(parameters) == 2 && ast.IsThisParameter(parameters[0])
 		return parameters[core.IfElse(hasThis, 1, 0)]
 	}
 	return nil
@@ -20229,7 +20242,7 @@ func (c *Checker) instantiateTypeWithAlias(t *Type, m *TypeMapper, alias *TypeAl
 	}
 	if c.instantiationDepth == 100 || c.instantiationCount >= 5_000_000 {
 		// We have reached 100 recursive type instantiations, or 5M type instantiations caused by the same statement
-		// or expression. There is a very high likelyhood we're dealing with a combination of infinite generic types
+		// or expression. There is a very high likelihood we're dealing with a combination of infinite generic types
 		// that perpetually generate new type identities, so we stop the recursion here by yielding the error type.
 		c.error(c.currentNode, diagnostics.Type_instantiation_is_excessively_deep_and_possibly_infinite)
 		return c.errorType
@@ -20452,6 +20465,20 @@ func (c *Checker) getObjectTypeInstantiation(t *Type, m *TypeMapper, alias *Type
 			result = c.instantiateAnonymousType(target, newMapper, newAlias)
 		}
 		data.instantiations[key] = result
+		if result.flags&TypeFlagsObjectFlagsType != 0 && result.objectFlags&ObjectFlagsCouldContainTypeVariablesComputed == 0 {
+			// if `result` is one of the object types we tried to make (it may not be, due to how `instantiateMappedType` works), we can carry forward the type variable containment check from the input type arguments
+			resultCouldContainObjectFlags := core.Some(typeArguments, c.couldContainTypeVariables)
+			if result.objectFlags&ObjectFlagsCouldContainTypeVariablesComputed == 0 {
+				if result.objectFlags&(ObjectFlagsMapped|ObjectFlagsAnonymous|ObjectFlagsReference) != 0 {
+					result.objectFlags |= ObjectFlagsCouldContainTypeVariablesComputed | core.IfElse(resultCouldContainObjectFlags, ObjectFlagsCouldContainTypeVariables, 0)
+				} else {
+					// If none of the type arguments for the outer type parameters contain type variables, it follows
+					// that the instantiated type doesn't reference type variables.
+					// Intrinsics have `CouldContainTypeVariablesComputed` pre-set, so this should only cover unions and intersections resulting from `instantiateMappedType`
+					result.objectFlags |= core.IfElse(!resultCouldContainObjectFlags, ObjectFlagsCouldContainTypeVariablesComputed, 0)
+				}
+			}
+		}
 	}
 	return result
 }
@@ -21886,6 +21913,7 @@ func (c *Checker) createComputedEnumType(symbol *ast.Symbol) *Type {
 	freshType := c.newLiteralType(TypeFlagsEnum, nil, regularType)
 	freshType.symbol = symbol
 	regularType.AsLiteralType().freshType = freshType
+	freshType.AsLiteralType().freshType = freshType
 	return regularType
 }
 
