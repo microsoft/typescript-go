@@ -27,11 +27,8 @@ type CommonJSModuleTransformer struct {
 }
 
 func NewCommonJSModuleTransformer(emitContext *printer.EmitContext, compilerOptions *core.CompilerOptions, resolver binder.ReferenceResolver) *Transformer {
-	if compilerOptions.VerbatimModuleSyntax.IsTrue() {
-		panic("ImportElisionTransformer should not be used with VerbatimModuleSyntax")
-	}
 	if resolver == nil {
-		resolver = binder.NewReferenceResolver(binder.ReferenceResolverHooks{})
+		resolver = binder.NewReferenceResolver(compilerOptions, binder.ReferenceResolverHooks{})
 	}
 	tx := &CommonJSModuleTransformer{compilerOptions: compilerOptions, resolver: resolver}
 	tx.topLevelVisitor = emitContext.NewNodeVisitor(tx.visitTopLevel)
@@ -473,7 +470,7 @@ func (tx *CommonJSModuleTransformer) appendExportsOfVariableDeclarationList(stat
 //   - The `statements` parameter is a statement list to which the down-level export statements are to be appended.
 //   - The `decl` parameter is the declaration whose exports are to be recorded.
 func (tx *CommonJSModuleTransformer) appendExportsOfBindingElement(statements []*ast.Statement, decl *ast.Node /*VariableDeclaration | BindingElement*/, isForInOrOfInitializer bool) []*ast.Statement {
-	if tx.currentModuleInfo.exportEquals != nil {
+	if tx.currentModuleInfo.exportEquals != nil || decl.Name() == nil {
 		return statements
 	}
 
@@ -1371,7 +1368,7 @@ func (tx *CommonJSModuleTransformer) visitAssignmentExpression(node *ast.BinaryE
 	return tx.visitor.VisitEachChild(node.AsNode())
 }
 
-// Visits a destructuring asssignment which might target an exported identifier.
+// Visits a destructuring assignment which might target an exported identifier.
 func (tx *CommonJSModuleTransformer) visitDestructuringAssignment(node *ast.BinaryExpression) *ast.Node {
 	return tx.factory.UpdateBinaryExpression(
 		node,
@@ -1530,7 +1527,7 @@ func (tx *CommonJSModuleTransformer) visitCommaExpression(node *ast.BinaryExpres
 	return tx.factory.UpdateBinaryExpression(node, left, node.OperatorToken, right)
 }
 
-// Visits a prefix unary expression that might modifify an exported identifier.
+// Visits a prefix unary expression that might modify an exported identifier.
 func (tx *CommonJSModuleTransformer) visitPrefixUnaryExpression(node *ast.PrefixUnaryExpression, resultIsDiscarded bool) *ast.Node {
 	// When we see a prefix increment expression whose operand is an exported
 	// symbol, we should ensure all exports of that symbol are updated with the correct
@@ -1568,7 +1565,7 @@ func (tx *CommonJSModuleTransformer) visitPrefixUnaryExpression(node *ast.Prefix
 	return tx.visitor.VisitEachChild(node.AsNode())
 }
 
-// Visits a postfix unary expression that might modifify an exported identifier.
+// Visits a postfix unary expression that might modify an exported identifier.
 func (tx *CommonJSModuleTransformer) visitPostfixUnaryExpression(node *ast.PostfixUnaryExpression, resultIsDiscarded bool) *ast.Node {
 	// When we see a postfix increment expression whose operand is an exported
 	// symbol, we should ensure all exports of that symbol are updated with the correct
