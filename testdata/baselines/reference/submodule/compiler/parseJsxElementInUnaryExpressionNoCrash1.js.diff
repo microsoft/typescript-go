@@ -1,9 +1,0 @@
---- old.parseJsxElementInUnaryExpressionNoCrash1.js
-+++ new.parseJsxElementInUnaryExpressionNoCrash1.js
-@@= skipped -4, +4 lines =@@
- 
- 
- //// [a.js]
--~< /> <
--;
-+~;

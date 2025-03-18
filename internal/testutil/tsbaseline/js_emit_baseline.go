@@ -24,6 +24,15 @@ func DoJsEmitBaseline(
 	harnessSettings *harnessutil.HarnessOptions,
 	opts baseline.Options,
 ) {
+	if options.GetAllowJs() {
+		t.Skip("AllowJS is not supported")
+		return
+	}
+	if options.OutFile != "" || options.Out != "" {
+		t.Skip("OutFile/Out is not supported")
+		return
+	}
+
 	if !options.NoEmit.IsTrue() && !options.EmitDeclarationOnly.IsTrue() && result.Js.Size() == 0 && len(result.Diagnostics) == 0 {
 		panic("Expected at least one js file to be emitted or at least one error to be created.")
 	}

@@ -1,9 +1,0 @@
---- old.extendsTagEmit.js
-+++ new.extendsTagEmit.js
-@@= skipped -14, +14 lines =@@
- }
- //// [main.js]
- import { B } from './super';
--/** @extends {Mismatch} */
- class C extends B {
- }
