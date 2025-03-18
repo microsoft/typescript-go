@@ -249,7 +249,7 @@ const externalHelpersModuleNameText = "tslib"
 func createExternalHelpersImportDeclarationIfNeeded(emitContext *printer.EmitContext, sourceFile *ast.SourceFile, compilerOptions *core.CompilerOptions, hasExportStarsToExportValues bool, hasImportStar bool, hasImportDefault bool) *ast.Node /*ImportDeclaration | ImportEqualsDeclaration*/ {
 	if compilerOptions.ImportHelpers.IsTrue() && ast.IsEffectiveExternalModule(sourceFile, compilerOptions) {
 		moduleKind := compilerOptions.GetEmitModuleKind()
-		impliedModuleKind := ast.GetImpliedNodeFormatForEmitWorker(sourceFile.FileName(), compilerOptions, emitContext.GetSourceFileMetaData(string(sourceFile.Path())))
+		impliedModuleKind := ast.GetImpliedNodeFormatForEmitWorker(sourceFile.FileName(), compilerOptions, emitContext.GetSourceFileMetaData())
 		helpers := getImportedHelpers(emitContext, sourceFile)
 		if (moduleKind >= core.ModuleKindES2015 && moduleKind <= core.ModuleKindESNext) ||
 			impliedModuleKind == core.ModuleKindESNext ||
@@ -291,7 +291,7 @@ func createExternalHelpersImportDeclarationIfNeeded(emitContext *printer.EmitCon
 			}
 		} else {
 			// When we emit to a non-ES module, generate a synthetic `import tslib = require("tslib")` to be further transformed.
-			externalHelpersModuleName := getOrCreateExternalHelpersModuleNameIfNeeded(emitContext, sourceFile, compilerOptions, helpers, hasExportStarsToExportValues, hasImportStar || hasImportDefault, emitContext.GetSourceFileMetaData(string(sourceFile.Path())))
+			externalHelpersModuleName := getOrCreateExternalHelpersModuleNameIfNeeded(emitContext, sourceFile, compilerOptions, helpers, hasExportStarsToExportValues, hasImportStar || hasImportDefault, emitContext.GetSourceFileMetaData())
 			if externalHelpersModuleName != nil {
 				externalHelpersImportDeclaration := emitContext.Factory.NewImportEqualsDeclaration(
 					nil,   /*modifiers*/

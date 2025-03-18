@@ -550,12 +550,11 @@ func (p *Program) Emit(options *EmitOptions) *EmitResult {
 
 	for _, sourceFile := range sourceFiles {
 		emitter := &emitter{
-			host:                host,
-			emittedFilesList:    nil,
-			sourceMapDataList:   nil,
-			writer:              nil,
-			sourceFile:          sourceFile,
-			sourcefileMetaDatas: p.sourceFileMetaDatas,
+			host:              host,
+			emittedFilesList:  nil,
+			sourceMapDataList: nil,
+			writer:            nil,
+			sourceFile:        sourceFile,
 		}
 		emitters = append(emitters, emitter)
 		wg.Queue(func() {

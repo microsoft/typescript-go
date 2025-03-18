@@ -1683,7 +1683,7 @@ func (tx *CommonJSModuleTransformer) visitCallExpression(node *ast.CallExpressio
 
 func (tx *CommonJSModuleTransformer) shouldTransformImportCall() bool {
 	// !!! host.shouldTransformImportCall?
-	return shouldTransformImportCallWorker(tx.currentSourceFile, tx.compilerOptions, tx.emitContext.GetSourceFileMetaData(string(tx.currentSourceFile.Path())))
+	return shouldTransformImportCallWorker(tx.currentSourceFile, tx.compilerOptions, tx.emitContext.GetSourceFileMetaData())
 }
 
 func (tx *CommonJSModuleTransformer) visitImportCallExpression(node *ast.CallExpression, rewriteOrShim bool) *ast.Node {
