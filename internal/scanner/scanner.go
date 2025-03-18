@@ -1512,7 +1512,7 @@ func (s *Scanner) scanEscapeSequence(flags EscapeSequenceScanningFlags) string {
 			if flags&EscapeSequenceScanningFlagsRegularExpression != 0 && flags&EscapeSequenceScanningFlagsAtomEscape == 0 && ch != '0' {
 				s.errorAt(diagnostics.Octal_escape_sequences_and_backreferences_are_not_allowed_in_a_character_class_If_this_was_intended_as_an_escape_sequence_use_the_syntax_0_instead, start, s.pos-start, fmt.Sprintf("%02x", code))
 			} else {
-				s.errorAt(diagnostics.Octal_escape_sequences_are_not_allowed_Use_the_syntax_0, start, s.pos-start, code)
+				s.errorAt(diagnostics.Octal_escape_sequences_are_not_allowed_Use_the_syntax_0, start, s.pos-start, "\\x"+fmt.Sprintf("%02x", code))
 			}
 			return string(rune(code))
 		}
@@ -1660,9 +1660,14 @@ func (s *Scanner) scanNumber() ast.Kind {
 				s.tokenFlags |= ast.TokenFlagsContainsLeadingZero
 				fixedPart = digits
 			} else {
+				s.tokenValue = jsnum.FromString(digits).String()
 				s.tokenFlags |= ast.TokenFlagsOctal
-				s.tokenValue = "0o" + digits
-				s.errorAt(diagnostics.Octal_literals_are_not_allowed_Use_the_syntax_0, start, s.pos-start, digits)
+				withMinus := s.token == ast.KindMinusToken
+				literal := core.IfElse(withMinus, "-", "") + "0o" + s.tokenValue
+				if withMinus {
+					start--
+				}
+				s.errorAt(diagnostics.Octal_literals_are_not_allowed_Use_the_syntax_0, start, s.pos-start, literal)
 				return ast.KindNumericLiteral
 			}
 		}
@@ -1955,6 +1960,16 @@ func init() {
 
 func TokenToString(token ast.Kind) string {
 	return tokenToText[token]
+}
+
+func GetViableKeywordSuggestions() []string {
+	result := make([]string, 0, len(textToKeyword))
+	for text := range textToKeyword {
+		if len(text) > 2 {
+			result = append(result, text)
+		}
+	}
+	return result
 }
 
 func couldStartTrivia(text string, pos int) bool {
