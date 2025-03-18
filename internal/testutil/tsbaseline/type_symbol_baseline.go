@@ -9,8 +9,8 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/checker"
-	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/program"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/testutil"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
@@ -28,7 +28,7 @@ func DoTypeAndSymbolBaseline(
 	t *testing.T,
 	baselinePath string,
 	header string,
-	program *compiler.Program,
+	program *program.Program,
 	allFiles []*harnessutil.TestFile,
 	opts baseline.Options,
 	skipTypeBaselines bool,
@@ -236,13 +236,13 @@ func iterateBaseline(allFiles []*harnessutil.TestFile, fullWalker *typeWriterWal
 }
 
 type typeWriterWalker struct {
-	program              *compiler.Program
+	program              *program.Program
 	hadErrorBaseline     bool
 	currentSourceFile    *ast.SourceFile
 	declarationTextCache map[*ast.Node]string
 }
 
-func newTypeWriterWalker(program *compiler.Program, hadErrorBaseline bool) *typeWriterWalker {
+func newTypeWriterWalker(program *program.Program, hadErrorBaseline bool) *typeWriterWalker {
 	return &typeWriterWalker{
 		program:              program,
 		hadErrorBaseline:     hadErrorBaseline,

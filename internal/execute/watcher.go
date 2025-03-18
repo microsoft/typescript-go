@@ -3,8 +3,8 @@ package execute
 import (
 	"time"
 
-	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/program"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -15,8 +15,8 @@ type watcher struct {
 	options          *tsoptions.ParsedCommandLine
 	reportDiagnostic diagnosticReporter
 
-	host           compiler.CompilerHost
-	program        *compiler.Program
+	host           program.CompilerHost
+	program        *program.Program
 	prevModified   map[string]time.Time
 	configModified bool
 }
@@ -53,12 +53,12 @@ func (w *watcher) hasErrorsInTsConfig() bool {
 			w.configModified = true
 		}
 		w.options = configParseResult
-		w.host = compiler.NewCompilerHost(w.options.CompilerOptions(), w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath())
+		w.host = program.NewCompilerHost(w.options.CompilerOptions(), w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath())
 	}
 	return false
 }
 
-func (w *watcher) hasBeenModified(program *compiler.Program) bool {
+func (w *watcher) hasBeenModified(program *program.Program) bool {
 	// checks watcher's snapshot against program file modified times
 	currState := map[string]time.Time{}
 	filesModified := w.configModified

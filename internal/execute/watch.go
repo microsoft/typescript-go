@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/program"
 )
 
 func start(w *watcher) ExitStatus {
 	if w.configFileName == "" {
-		w.host = compiler.NewCompilerHost(w.options.CompilerOptions(), w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath())
+		w.host = program.NewCompilerHost(w.options.CompilerOptions(), w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath())
 	}
 	watchInterval := 1000 * time.Millisecond
 	if w.options.ParsedConfig.WatchOptions != nil {
@@ -27,7 +27,7 @@ func (w *watcher) doCycle() {
 		return
 	}
 	// updateProgram()
-	w.program = compiler.NewProgramFromParsedCommandLine(w.options, w.host)
+	w.program = program.NewProgramFromParsedCommandLine(w.options, w.host)
 	if w.hasBeenModified(w.program) {
 		fmt.Fprint(w.sys.Writer(), "build starting at ", w.sys.Now(), w.sys.NewLine())
 		timeStart := w.sys.Now()

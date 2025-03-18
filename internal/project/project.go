@@ -7,9 +7,9 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
-	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
+	"github.com/microsoft/typescript-go/internal/program"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
@@ -55,7 +55,7 @@ type Project struct {
 	rootFileNames   *collections.OrderedMap[tspath.Path, string]
 	compilerOptions *core.CompilerOptions
 	languageService *ls.LanguageService
-	program         *compiler.Program
+	program         *program.Program
 }
 
 func NewConfiguredProject(configFileName string, configFilePath tspath.Path, projectService *Service) *Project {
@@ -141,7 +141,7 @@ func (p *Project) GetSourceFile(fileName string, path tspath.Path, languageVersi
 }
 
 // GetProgram implements LanguageServiceHost. Updates the program if needed.
-func (p *Project) GetProgram() *compiler.Program {
+func (p *Project) GetProgram() *program.Program {
 	p.updateIfDirty()
 	return p.program
 }
@@ -169,7 +169,7 @@ func (p *Project) Kind() Kind {
 	return p.kind
 }
 
-func (p *Project) CurrentProgram() *compiler.Program {
+func (p *Project) CurrentProgram() *program.Program {
 	return p.program
 }
 
@@ -260,7 +260,7 @@ func (p *Project) updateProgram() {
 	rootFileNames := p.GetRootFileNames()
 	compilerOptions := p.GetCompilerOptions()
 
-	p.program = compiler.NewProgram(compiler.ProgramOptions{
+	p.program = program.NewProgram(program.ProgramOptions{
 		RootFiles: rootFileNames,
 		Host:      p,
 		Options:   compilerOptions,

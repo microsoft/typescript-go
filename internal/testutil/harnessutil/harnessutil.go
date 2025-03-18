@@ -16,9 +16,9 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/collections"
-	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/parser"
+	"github.com/microsoft/typescript-go/internal/program"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/testutil"
@@ -385,7 +385,7 @@ func getOptionValue(t *testing.T, option *tsoptions.CommandLineOption, value str
 }
 
 type cachedCompilerHost struct {
-	compiler.CompilerHost
+	program.CompilerHost
 	options *core.CompilerOptions
 }
 
@@ -427,15 +427,15 @@ func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path, la
 	return result.(*ast.SourceFile)
 }
 
-func createCompilerHost(fs vfs.FS, defaultLibraryPath string, options *core.CompilerOptions, currentDirectory string) compiler.CompilerHost {
+func createCompilerHost(fs vfs.FS, defaultLibraryPath string, options *core.CompilerOptions, currentDirectory string) program.CompilerHost {
 	return &cachedCompilerHost{
-		CompilerHost: compiler.NewCompilerHost(options, currentDirectory, fs, defaultLibraryPath),
+		CompilerHost: program.NewCompilerHost(options, currentDirectory, fs, defaultLibraryPath),
 		options:      options,
 	}
 }
 
 func compileFilesWithHost(
-	host compiler.CompilerHost,
+	host program.CompilerHost,
 	rootFiles []string,
 	options *core.CompilerOptions,
 	harnessOptions *HarnessOptions,
@@ -459,7 +459,7 @@ func compileFilesWithHost(
 	// pre-emit/post-emit error comparison requires declaration emit twice, which can be slow. If it's unlikely to flag any error consistency issues
 	// and if the test is running `skipLibCheck` - an indicator that we want the tets to run quickly - skip the before/after error comparison, too
 	// skipErrorComparison := len(rootFiles) >= 100 || options.SkipLibCheck == core.TSTrue && options.Declaration == core.TSTrue
-	// var preProgram *compiler.Program
+	// var preProgram *program.Program
 	// if !skipErrorComparison {
 	// preProgram = ts.createProgram({ rootNames: rootFiles || [], options: { ...compilerOptions, configFile: compilerOptions.configFile, traceResolution: false }, host, typeScriptVersion })
 	// }
@@ -495,20 +495,20 @@ func compileFilesWithHost(
 	//         ...ts.filter(longerErrors!, p => !ts.some(shorterErrors, p2 => ts.compareDiagnostics(p, p2) === ts.Comparison.EqualTo)),
 	//     ),
 	// ] : postErrors;
-	program := createProgram(host, options, rootFiles)
+	prog := createProgram(host, options, rootFiles)
 	var diagnostics []*ast.Diagnostic
-	diagnostics = append(diagnostics, program.GetSyntacticDiagnostics(nil)...)
-	diagnostics = append(diagnostics, program.GetSemanticDiagnostics(nil)...)
-	diagnostics = append(diagnostics, program.GetGlobalDiagnostics()...)
-	emitResult := program.Emit(compiler.EmitOptions{})
+	diagnostics = append(diagnostics, prog.GetSyntacticDiagnostics(nil)...)
+	diagnostics = append(diagnostics, prog.GetSemanticDiagnostics(nil)...)
+	diagnostics = append(diagnostics, prog.GetGlobalDiagnostics()...)
+	emitResult := prog.Emit(program.EmitOptions{})
 
-	return newCompilationResult(options, program, emitResult, diagnostics, harnessOptions)
+	return newCompilationResult(options, prog, emitResult, diagnostics, harnessOptions)
 }
 
 type CompilationResult struct {
 	Diagnostics      []*ast.Diagnostic
-	Result           *compiler.EmitResult
-	Program          *compiler.Program
+	Result           *program.EmitResult
+	Program          *program.Program
 	Options          *core.CompilerOptions
 	HarnessOptions   *HarnessOptions
 	Js               collections.OrderedMap[string, *TestFile]
@@ -530,8 +530,8 @@ type CompilationOutput struct {
 
 func newCompilationResult(
 	options *core.CompilerOptions,
-	program *compiler.Program,
-	result *compiler.EmitResult,
+	program *program.Program,
+	result *program.EmitResult,
 	diagnostics []*ast.Diagnostic,
 	harnessOptions *HarnessOptions,
 ) *CompilationResult {
@@ -700,14 +700,14 @@ func (c *CompilationResult) GetOutput(path string, kind string /*"js" | "dts" | 
 	return nil
 }
 
-func createProgram(host compiler.CompilerHost, options *core.CompilerOptions, rootFiles []string) *compiler.Program {
-	programOptions := compiler.ProgramOptions{
+func createProgram(host program.CompilerHost, options *core.CompilerOptions, rootFiles []string) *program.Program {
+	programOptions := program.ProgramOptions{
 		RootFiles:      rootFiles,
 		Host:           host,
 		Options:        options,
 		SingleThreaded: testutil.TestProgramIsSingleThreaded(),
 	}
-	program := compiler.NewProgram(programOptions)
+	program := program.NewProgram(programOptions)
 	return program
 }
 

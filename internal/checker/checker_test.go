@@ -6,7 +6,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/checker"
-	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/program"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
@@ -32,12 +32,12 @@ foo.bar;`
 	fs = bundled.WrapFS(fs)
 
 	cd := "/"
-	host := compiler.NewCompilerHost(nil, cd, fs, bundled.LibPath())
-	opts := compiler.ProgramOptions{
+	host := program.NewCompilerHost(nil, cd, fs, bundled.LibPath())
+	opts := program.ProgramOptions{
 		Host:           host,
 		ConfigFileName: "/tsconfig.json",
 	}
-	p := compiler.NewProgram(opts)
+	p := program.NewProgram(opts)
 	p.BindSourceFiles()
 	c := p.GetTypeChecker()
 	file := p.GetSourceFile("/foo.ts")
@@ -62,12 +62,12 @@ func TestCheckSrcCompiler(t *testing.T) {
 
 	rootPath := tspath.CombinePaths(tspath.NormalizeSlashes(repo.TypeScriptSubmodulePath), "src", "compiler")
 
-	host := compiler.NewCompilerHost(nil, rootPath, fs, bundled.LibPath())
-	opts := compiler.ProgramOptions{
+	host := program.NewCompilerHost(nil, rootPath, fs, bundled.LibPath())
+	opts := program.ProgramOptions{
 		Host:           host,
 		ConfigFileName: tspath.CombinePaths(rootPath, "tsconfig.json"),
 	}
-	p := compiler.NewProgram(opts)
+	p := program.NewProgram(opts)
 	p.CheckSourceFiles()
 }
 
@@ -78,12 +78,12 @@ func BenchmarkNewChecker(b *testing.B) {
 
 	rootPath := tspath.CombinePaths(tspath.NormalizeSlashes(repo.TypeScriptSubmodulePath), "src", "compiler")
 
-	host := compiler.NewCompilerHost(nil, rootPath, fs, bundled.LibPath())
-	opts := compiler.ProgramOptions{
+	host := program.NewCompilerHost(nil, rootPath, fs, bundled.LibPath())
+	opts := program.ProgramOptions{
 		Host:           host,
 		ConfigFileName: tspath.CombinePaths(rootPath, "tsconfig.json"),
 	}
-	p := compiler.NewProgram(opts)
+	p := program.NewProgram(opts)
 
 	b.ReportAllocs()
 
