@@ -514,9 +514,9 @@ func isFunctionLikeDeclarationKind(kind Kind) bool {
 }
 
 // Determines if a node is function-like (but is not a signature declaration)
+// ensure node != nil before calling this
 func IsFunctionLikeDeclaration(node *Node) bool {
-	// TODO(rbuckton): Move `node != nil` test to call sites
-	return node != nil && isFunctionLikeDeclarationKind(node.Kind)
+	return isFunctionLikeDeclarationKind(node.Kind)
 }
 
 func IsFunctionLikeKind(kind Kind) bool {

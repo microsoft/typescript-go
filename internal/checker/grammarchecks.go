@@ -295,7 +295,7 @@ func (c *Checker) checkGrammarModifiers(node *ast.Node /*Union[HasModifiers, Has
 				parent := node.Parent
 
 				if node.Kind == ast.KindTypeParameter {
-					if !(ast.IsFunctionLikeDeclaration(parent) || ast.IsClassLike(parent) ||
+					if !((parent != nil && ast.IsFunctionLikeDeclaration(parent)) || ast.IsClassLike(parent) ||
 						ast.IsFunctionTypeNode(parent) || ast.IsConstructorTypeNode(parent) ||
 						ast.IsCallSignatureDeclaration(parent) || ast.IsConstructSignatureDeclaration(parent) ||
 						ast.IsMethodSignatureDeclaration(parent)) {

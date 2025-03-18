@@ -7656,7 +7656,7 @@ func (c *Checker) checkSuperExpression(node *ast.Node) *Type {
 
 func (c *Checker) isInConstructorArgumentInitializer(node *ast.Node, constructorDecl *ast.Node) bool {
 	return ast.FindAncestorOrQuit(node, func(n *ast.Node) ast.FindAncestorResult {
-		if ast.IsFunctionLikeDeclaration(n) {
+		if n != nil && ast.IsFunctionLikeDeclaration(n) {
 			return ast.FindAncestorQuit
 		}
 		if ast.IsParameter(n) && n.Parent == constructorDecl {
@@ -11415,7 +11415,7 @@ func (c *Checker) isNodeUsedDuringClassInitialization(node *ast.Node) bool {
 	return ast.FindAncestorOrQuit(node, func(element *ast.Node) ast.FindAncestorResult {
 		if ast.IsConstructorDeclaration(element) && ast.NodeIsPresent(element.Body()) || ast.IsPropertyDeclaration(element) {
 			return ast.FindAncestorTrue
-		} else if ast.IsClassLike(element) || ast.IsFunctionLikeDeclaration(element) {
+		} else if ast.IsClassLike(element) || (element != nil && ast.IsFunctionLikeDeclaration(element)) {
 			return ast.FindAncestorQuit
 		}
 		return ast.FindAncestorFalse
@@ -19474,7 +19474,7 @@ func (c *Checker) createGeneratorType(yieldType *Type, returnType *Type, nextTyp
 
 func (c *Checker) reportErrorsFromWidening(declaration *ast.Node, t *Type, wideningKind WideningKind) {
 	if c.noImplicitAny && t.objectFlags&ObjectFlagsContainsWideningType != 0 {
-		if wideningKind == WideningKindNormal || ast.IsFunctionLikeDeclaration(declaration) && c.shouldReportErrorsFromWideningWithContextualSignature(declaration, wideningKind) {
+		if wideningKind == WideningKindNormal || declaration != nil && ast.IsFunctionLikeDeclaration(declaration) && c.shouldReportErrorsFromWideningWithContextualSignature(declaration, wideningKind) {
 			// Report implicit any error within type if possible, otherwise report error on declaration
 			if !c.reportWideningErrorsInType(t) {
 				c.reportImplicitAny(declaration, t, wideningKind)
