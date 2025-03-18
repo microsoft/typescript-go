@@ -6,32 +6,64 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"sync"
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/pkg/diff"
 )
 
 type Options struct {
-	Subfolder    string
-	IsSubmodule  bool
-	DiffFixupOld func(string) string
+	Subfolder           string
+	IsSubmodule         bool
+	IsSubmoduleAccepted bool
+	DiffFixupOld        func(string) string
 }
 
 const (
-	NoContent       = "<no content>"
-	submoduleFolder = "submodule"
+	NoContent               = "<no content>"
+	submoduleFolder         = "submodule"
+	submoduleAcceptedFolder = "submoduleAccepted"
 )
 
 func Run(t *testing.T, fileName string, actual string, opts Options) {
 	if opts.IsSubmodule {
-		opts.Subfolder = filepath.Join(submoduleFolder, opts.Subfolder)
-		diff := getBaselineDiff(t, actual, fileName, opts.DiffFixupOld)
 		diffFileName := fileName + ".diff"
+		origSubfolder := opts.Subfolder
+		isSubmoduleAccepted := opts.IsSubmoduleAccepted || submoduleAcceptedFileNames().Has(origSubfolder+"/"+diffFileName)
+
+		opts.Subfolder = filepath.Join(core.IfElse(isSubmoduleAccepted, submoduleAcceptedFolder, submoduleFolder), origSubfolder)
+		diff := getBaselineDiff(t, actual, fileName, opts.DiffFixupOld)
 		writeComparison(t, diff, diffFileName, false, opts)
+
+		// Delete the other diff file if it exists
+		opts.Subfolder = filepath.Join(core.IfElse(isSubmoduleAccepted, submoduleFolder, submoduleAcceptedFolder), origSubfolder)
+		writeComparison(t, NoContent, diffFileName, false, opts)
+
+		opts.Subfolder = filepath.Join(submoduleFolder, origSubfolder)
 	}
 	writeComparison(t, actual, fileName, false, opts)
 }
+
+var submoduleAcceptedFileNames = sync.OnceValue(func() *core.Set[string] {
+	var set core.Set[string]
+
+	submoduleAccepted := filepath.Join(repo.TestDataPath, "submoduleAccepted.txt")
+	if content, err := os.ReadFile(submoduleAccepted); err == nil {
+		for line := range strings.SplitSeq(string(content), "\n") {
+			line = strings.TrimSpace(line)
+			if line == "" || line[0] == '#' {
+				continue
+			}
+			set.Add(line)
+		}
+	} else {
+		panic(fmt.Sprintf("failed to read submodule accepted file: %v", err))
+	}
+
+	return &set
+})
 
 func getBaselineDiff(t *testing.T, actual string, fileName string, fixupOld func(string) string) string {
 	expected := NoContent
