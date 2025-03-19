@@ -1,15 +1,6 @@
 --- old.tsxStatelessComponentDefaultProps.types
 +++ new.tsxStatelessComponentDefaultProps.types
-@@= skipped -0, +0 lines =@@
- //// [tests/cases/compiler/tsxStatelessComponentDefaultProps.tsx] ////
- 
--=== Performance Stats ===
--Assignability cache: 2,500
--Type Count: 10,000
--Instantiation count: 100,000
--Symbol count: 50,000
--
- === tsxStatelessComponentDefaultProps.tsx ===
+@@= skipped -3, +3 lines =@@
  /// <reference path="react16.d.ts" />
  
  import React from 'react';
@@ -17,10 +8,8 @@
 +>React : any
  
  interface Props {
-+>Props : Props
-+
      text: string;
- >text : string
+@@= skipped -8, +8 lines =@@
  }
  
  function BackButton(_props: Props) {
@@ -41,7 +30,7 @@
  >defaultProps : { text: string; }
  >{    text: 'Go Back',} : { text: string; }
  
-@@= skipped -37, +33 lines =@@
+@@= skipped -20, +20 lines =@@
  
  };
  let a = <BackButton />

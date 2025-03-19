@@ -1,24 +1,6 @@
 --- old.nodeModulesImportAssignments(module=node16).js
 +++ new.nodeModulesImportAssignments(module=node16).js
-@@= skipped -30, +30 lines =@@
- declare module "fs";
- 
- //// [index.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
-+import { createRequire as _createRequire } from "module";
-+const __require = _createRequire(import.meta.url);
- // cjs format file
--const fs = require("fs");
-+const fs = __require("fs");
- fs.readFile;
--exports.fs2 = require("fs");
-+const fs2 = __require("fs");
-+export { fs2 };
- //// [index.js]
- import { createRequire as _createRequire } from "module";
- const __require = _createRequire(import.meta.url);
-@@= skipped -24, +25 lines =@@
+@@= skipped -54, +54 lines =@@
  fs.readFile;
  const fs2 = __require_1("fs");
  export { fs2 };

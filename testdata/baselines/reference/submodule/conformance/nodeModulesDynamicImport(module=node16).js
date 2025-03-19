@@ -24,8 +24,11 @@ export async function main() {
 declare module "fs";
 
 //// [index.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.main = main;
 // cjs format file
-export async function main() {
+async function main() {
     const { readFile } = await import("fs");
 }
 //// [index.js]

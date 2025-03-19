@@ -31,13 +31,12 @@ export import fs2 = require("fs");
 declare module "fs";
 
 //// [index.js]
-import { createRequire as _createRequire } from "module";
-const __require = _createRequire(import.meta.url);
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 // cjs format file
-const fs = __require("fs");
+const fs = require("fs");
 fs.readFile;
-const fs2 = __require("fs");
-export { fs2 };
+exports.fs2 = require("fs");
 //// [index.js]
 import { createRequire as _createRequire } from "module";
 const __require = _createRequire(import.meta.url);

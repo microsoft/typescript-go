@@ -24,8 +24,13 @@ declare module "tslib" {
 }
 
 //// [index.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = void 0;
+const tslib_1 = require("tslib");
 // cjs format file
-export { default } from "fs";
+const fs_1 = require("fs");
+Object.defineProperty(exports, "default", { enumerable: true, get: function () { return tslib_1.__importDefault(fs_1).default; } });
 //// [index.js]
 // esm format file
 export { default } from "fs";

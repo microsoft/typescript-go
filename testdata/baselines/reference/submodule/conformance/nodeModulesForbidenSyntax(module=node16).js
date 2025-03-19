@@ -67,13 +67,19 @@ export {x};
 }
 
 //// [index.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.x = void 0;
 // cjs format file
 const x = () => (void 0);
-export { x };
+exports.x = x;
 //// [index.cjs]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.x = void 0;
 // cjs format file
 const x = () => (void 0);
-export { x };
+exports.x = x;
 //// [index.mjs]
 // esm format file
 const x = () => (void 0);
@@ -83,9 +89,12 @@ export { x };
 const x = () => (void 0);
 export { x };
 //// [index.cjs]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.x = void 0;
 // cjs format file
 const x = () => (void 0);
-export { x };
+exports.x = x;
 //// [index.mjs]
 // esm format file
 const x = () => (void 0);
@@ -99,17 +108,23 @@ export { x };
 const x = () => (void 0);
 export { x };
 //// [index.cjs]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.x = void 0;
 // cjs format file
 const x = () => (void 0);
-export { x };
+exports.x = x;
 //// [index.mjs]
 // esm format file
 const x = () => (void 0);
 export { x };
 //// [index.cjs]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.x = void 0;
 // cjs format file
 const x = () => (void 0);
-export { x };
+exports.x = x;
 //// [index.js]
 // esm format file
 const x = () => (void 0);
