@@ -7,7 +7,7 @@ Interested developers can clone and run locally to try out things as they become
 
 ## How to Build and Run
 
-This repo uses [Go 1.24 or higher](https://go.dev/dl/), [Node.js with npm](https://nodejs.org/), and [`hereby`](https://www.npmjs.com/package/hereby).
+This repo uses [Go 1.24 or higher](https://go.dev/dl/), [Node.js](https://nodejs.org/), [pnpm](https://pnpm.io), and [`hereby`](https://www.npmjs.com/package/hereby).
 
 For tests and code generation, this repo contains a git submodule to the main TypeScript repo pointing to the commit being ported.
 When cloning, you'll want to clone with submodules:
@@ -22,7 +22,7 @@ If you have already cloned the repo, you can initialize the submodule with:
 git submodule update --init --recursive
 ```
 
-With the submodule in place and `npm ci`, you can run tasks via `hereby`, similar to the TypeScript repo:
+With the submodule in place and `pnpm install`, you can run tasks via `hereby`, similar to the TypeScript repo:
 
 ```sh
 hereby build          # Verify that the project builds

@@ -26,8 +26,8 @@ jobs:
         with:
           cache-name: merge-queue-test
 
-      - run: npm ci
-      - run: npx hereby test:all
+      - run: pnpm install
+      - run: pnpm hereby test:all
 
   required:
     runs-on: ubuntu-latest
