@@ -1,0 +1,34 @@
+--- old.jsxCallbackWithDestructuring.types
++++ new.jsxCallbackWithDestructuring.types
+@@= skipped -13, +13 lines =@@
+ >render : () => {}
+ 
+     props: Readonly<{ children?: {} }> & Readonly<P>;
+->props : Readonly<{ children?: {}; }> & Readonly<P>
++>props : Readonly<{ children?: {} | undefined; }> & Readonly<P>
+ >children : {} | undefined
+ }
+ 
+@@= skipped -26, +26 lines =@@
+ 
+ export interface RouteProps {
+     children?: (props: { x: number }) => any;
+->children : ((props: { x: number; }) => any) | undefined
++>children : (props: { x: number; }) => any | undefined
+ >props : { x: number; }
+ >x : number
+ }
+@@= skipped -9, +9 lines =@@
+ >Component : Component<T, {}>
+ 
+ <MyComponent children={({ x }) => {}}/>
+-><MyComponent children={({ x }) => {}}/> : JSX.Element
++><MyComponent children={({ x }) => {}}/> : any
+ >MyComponent : typeof MyComponent
+->children : ({ x }: { x: number; }) => void
+->({ x }) => {} : ({ x }: { x: number; }) => void
+->x : number
++>children : any
++>({ x }) => {} : (__0: { x: any; }) => void
++>x : any
+ 

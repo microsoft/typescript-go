@@ -84,16 +84,7 @@
  
          ...this.header,
  >this.header : Header
-@@= skipped -21, +21 lines =@@
- >authToken && { authToken } : "" | { authToken: string; }
- >authToken : string
- >{ authToken } : { authToken: string; }
-->authToken : string
-+>authToken : any
-     }
- }
- // boolean && T results in Partial<T>
-@@= skipped -157, +157 lines =@@
+@@= skipped -178, +178 lines =@@
  
  // own methods are enumerable
  let cplus: { p: number, plus(): void } = { ...c, plus() { return this.p + 1; } };
@@ -202,21 +193,9 @@
 ->{ ...o, a } : { a: number; b: string; }
 +>{ ...o, a } : { b: string; a: number; }
  >o : { a: number; b: string; }
-->a : number
-+>a : any
+ >a : number
  
- // non primitive
- let spreadNonPrimitive = { ...<object>{}};
-@@= skipped -15, +15 lines =@@
- 
- function f<T, U>(t: T, u: U) {
- >f : <T, U>(t: T, u: U) => T & U & { id: string; }
-+>T : T
-+>U : U
- >t : T
- >u : U
- 
-@@= skipped -74, +76 lines =@@
+@@= skipped -89, +89 lines =@@
  >d : string
  
      f({ a: 1, id: true }, { c: 1, d: 'no' })
@@ -225,16 +204,7 @@
  >f : <T, U>(t: T, u: U) => T & U & { id: string; }
  >{ a: 1, id: true } : { a: number; id: true; }
  >a : number
-@@= skipped -15, +15 lines =@@
- 
- function genericSpread<T, U>(t: T, u: U, v: T | U, w: T | { s: string }, obj: { x: number }) {
- >genericSpread : <T, U>(t: T, u: U, v: T | U, w: T | { s: string; }, obj: { x: number; }) => void
-+>T : T
-+>U : U
- >t : T
- >u : U
- >v : T | U
-@@= skipped -90, +92 lines =@@
+@@= skipped -105, +105 lines =@@
  >v : T | U
  
      let x12 = { ...v, ...obj };

@@ -5,7 +5,6 @@
 
 type Maybe<T> = null | undefined | T;
 >Maybe : Maybe<T>
->T : T
 
 declare class GraphQLError extends Error {
 >GraphQLError : GraphQLError
@@ -16,16 +15,12 @@ declare class GraphQLError extends Error {
 }
 
 interface ExecutionArgs {
->ExecutionArgs : ExecutionArgs
-
   variableValues?: Maybe<{ readonly [variable: string]: unknown }>;
 >variableValues : Maybe<{ readonly [variable: string]: unknown; }>
 >variable : string
 }
 
 interface ExecutionContext {
->ExecutionContext : ExecutionContext
-
   variableValues: { [variable: string]: unknown };
 >variableValues : { [variable: string]: unknown; }
 >variable : string
@@ -79,7 +74,7 @@ export function buildExecutionContext(
 
     return coercedVariableValues.errors;
 >coercedVariableValues.errors : readonly GraphQLError[]
->coercedVariableValues : { errors: readonly GraphQLError[]; coerced?: undefined; }
+>coercedVariableValues : { errors: readonly GraphQLError[]; coerced?: never; }
 >errors : readonly GraphQLError[]
   }
 
@@ -89,7 +84,7 @@ export function buildExecutionContext(
     variableValues: coercedVariableValues.coerced,
 >variableValues : { [variable: string]: unknown; }
 >coercedVariableValues.coerced : { [variable: string]: unknown; }
->coercedVariableValues : { coerced: { [variable: string]: unknown; }; errors?: undefined; }
+>coercedVariableValues : { coerced: { [variable: string]: unknown; }; errors?: never; }
 >coerced : { [variable: string]: unknown; }
 
   };

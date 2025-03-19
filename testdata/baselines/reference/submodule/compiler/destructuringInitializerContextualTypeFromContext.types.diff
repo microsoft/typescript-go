@@ -1,23 +1,6 @@
 --- old.destructuringInitializerContextualTypeFromContext.types
 +++ new.destructuringInitializerContextualTypeFromContext.types
-@@= skipped -1, +1 lines =@@
- 
- === destructuringInitializerContextualTypeFromContext.ts ===
- interface SFC<P = {}> {
-+>SFC : SFC<P>
-+>P : P
-+
-     (props: P & { children?: any }): any | null;
- >props : P & { children?: any; }
- >children : any
- }
- 
- interface Props {
-+>Props : Props
-+
-     name: "Apollo" | "Artemis" | "Dionysus" | "Persephone";
- >name : "Apollo" | "Artemis" | "Dionysus" | "Persephone"
- }
+@@= skipped -13, +13 lines =@@
  
  const Parent: SFC<Props> = ({
  >Parent : SFC<Props>
@@ -26,13 +9,7 @@
  
      children,
  >children : any
-@@= skipped -28, +33 lines =@@
- >Child({name, ...props}) : any
- >Child : SFC<Props>
- >{name, ...props} : { name: "Apollo" | "Artemis" | "Dionysus" | "Persephone"; }
-->name : "Apollo" | "Artemis" | "Dionysus" | "Persephone"
-+>name : any
- >props : {}
+@@= skipped -21, +21 lines =@@
  
  const Child: SFC<Props> = ({
  >Child : SFC<Props>
@@ -41,7 +18,7 @@
  
      children,
  >children : any
-@@= skipped -21, +21 lines =@@
+@@= skipped -16, +16 lines =@@
  >`name: ${name} props: ${JSON.stringify(props)}` : string
  >name : "Apollo" | "Artemis" | "Dionysus" | "Persephone"
  >JSON.stringify(props) : string

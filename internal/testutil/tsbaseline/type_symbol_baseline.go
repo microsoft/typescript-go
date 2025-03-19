@@ -61,16 +61,30 @@ func DoTypeAndSymbolBaseline(
 			var sb strings.Builder
 			sb.Grow(len(s))
 
+			perfStats := false
 			for line := range strings.SplitSeq(s, "\n") {
 				if isTypeBaselineNodeReuseLine(line) {
 					continue
 				}
+
+				if !perfStats && strings.HasPrefix(line, "=== Performance Stats ===") {
+					perfStats = true
+					continue
+				} else if perfStats {
+					if strings.HasPrefix(line, "=== ") {
+						perfStats = false
+					} else {
+						continue
+					}
+				}
+
 				sb.WriteString(line)
 				sb.WriteString("\n")
 			}
 
 			return sb.String()[:sb.Len()-1]
 		}
+		typesOpts.IsSubmoduleAccepted = len(program.UnsupportedExtensions()) != 0 // TODO(jakebailey): read submoduleAccepted.txt
 
 		checkBaselines(t, baselinePath, allFiles, fullWalker, header, typesOpts, false /*isSymbolBaseline*/)
 	})
@@ -327,8 +341,16 @@ func (walker *typeWriterWalker) writeTypeOrSymbol(node *ast.Node, isSymbolWalk b
 		// Exception for `T` in `type T = something` because that may evaluate to some interesting type.
 		if ast.IsPartOfTypeNode(node) ||
 			ast.IsIdentifier(node) &&
+<<<<<<< HEAD
 				(ast.GetMeaningFromDeclaration(node)&ast.SemanticMeaningValue) == 0 &&
 				!(ast.IsEitherTypeAliasDeclaration(node.Parent) && node == node.Parent.Name()) {
+||||||| 677e0f31e
+				(ast.GetMeaningFromDeclaration(node)&ast.SemanticMeaningValue) == 0 &&
+				!(ast.IsTypeAliasDeclaration(node.Parent) && node == node.Parent.Name()) {
+=======
+				(ast.GetMeaningFromDeclaration(node.Parent)&ast.SemanticMeaningValue) == 0 &&
+				!(ast.IsTypeAliasDeclaration(node.Parent) && node == node.Parent.Name()) {
+>>>>>>> main
 			return nil
 		}
 

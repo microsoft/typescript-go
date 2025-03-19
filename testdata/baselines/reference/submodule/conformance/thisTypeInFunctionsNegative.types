@@ -100,8 +100,6 @@ class D {
 	}
 }
 interface I {
->I : I
-
     a: number;
 >a : number
 
@@ -238,7 +236,7 @@ let ok: {y: number, f: (this: { y: number }, x: number) => number} = { y: 12, ex
 >{ y: 12, explicitStructural } : { y: number; explicitStructural: (x: number) => number; }
 >y : number
 >12 : 12
->explicitStructural : any
+>explicitStructural : (x: number) => number
 
 let wrongPropertyType: {y: string, f: (this: { y: number }, x: number) => number} = { y: 'foo', explicitStructural };
 >wrongPropertyType : { y: string; f: (x: number) => number; }
@@ -250,7 +248,7 @@ let wrongPropertyType: {y: string, f: (this: { y: number }, x: number) => number
 >{ y: 'foo', explicitStructural } : { y: string; explicitStructural: (x: number) => number; }
 >y : string
 >'foo' : "foo"
->explicitStructural : any
+>explicitStructural : (x: number) => number
 
 let wrongPropertyName: {wrongName: number, f: (this: { y: number }, x: number) => number} = { wrongName: 12, explicitStructural };
 >wrongPropertyName : { wrongName: number; f: (x: number) => number; }
@@ -262,7 +260,7 @@ let wrongPropertyName: {wrongName: number, f: (this: { y: number }, x: number) =
 >{ wrongName: 12, explicitStructural } : { wrongName: number; explicitStructural: (x: number) => number; }
 >wrongName : number
 >12 : 12
->explicitStructural : any
+>explicitStructural : (x: number) => number
 
 ok.f(); // not enough arguments
 >ok.f() : number
@@ -586,6 +584,7 @@ class Base1 {
     static explicitStatic(this: typeof Base1): number { return this.x; }
 >explicitStatic : () => number
 >this : typeof Base1
+>Base1 : typeof Base1
 >this.x : any
 >this : typeof Base1
 >x : any
@@ -694,8 +693,6 @@ class ThisConstructor {
     }
 }
 interface ThisConstructorInterface {
->ThisConstructorInterface : ThisConstructorInterface
-
     new(this: ThisConstructor, n: number);
 >this : ThisConstructor
 >n : number
@@ -775,7 +772,6 @@ c.explicitProperty = (this, m) => m + this.n;
 const f2 = <T>(this: {n: number}, m: number) => m + this.n;
 >f2 : <T>(m: number) => any
 ><T>(this: {n: number}, m: number) => m + this.n : <T>(m: number) => any
->T : T
 >this : { n: number; }
 >n : number
 >m : number
@@ -800,7 +796,6 @@ const f3 = async (this: {n: number}, m: number) => m + this.n;
 const f4 = async <T>(this: {n: number}, m: number) => m + this.n;
 >f4 : <T>(m: number) => Promise<any>
 >async <T>(this: {n: number}, m: number) => m + this.n : <T>(m: number) => Promise<any>
->T : T
 >this : { n: number; }
 >n : number
 >m : number

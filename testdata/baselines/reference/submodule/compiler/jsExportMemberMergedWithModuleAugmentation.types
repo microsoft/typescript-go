@@ -17,7 +17,7 @@ module.exports = {
 >{  Abcde} : { Abcde: typeof Abcde; }
 
   Abcde
->Abcde : any
+>Abcde : typeof Abcde
 
 };
 
@@ -29,7 +29,6 @@ declare module "./test" {
 >"./test" : any
 
   interface Abcde { b: string }
->Abcde : Abcde
 >b : string
 }
 

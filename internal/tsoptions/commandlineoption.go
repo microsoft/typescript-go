@@ -19,7 +19,7 @@ const (
 )
 
 type CommandLineOption struct {
-	Name, shortName string
+	Name, ShortName string
 	Kind            CommandLineOptionKind
 
 	// used in parsing
@@ -30,7 +30,7 @@ type CommandLineOption struct {
 	// used in output
 	Description              *diagnostics.Message
 	DefaultValueDescription  any
-	showInSimplifiedHelpView bool
+	ShowInSimplifiedHelpView bool
 
 	// used in output in serializing and generate tsconfig
 	Category *diagnostics.Message
@@ -180,8 +180,8 @@ var commandLineOptionEnumMap = map[string]*collections.OrderedMap[string, any]{
 
 // CommandLineOption.DeprecatedKeys()
 var commandLineOptionDeprecated = map[string]*core.Set[string]{
-	"moduleResolution": core.NewSetFromItems[string]("node", "classic", "node10"),
-	"target":           core.NewSetFromItems[string]("es3"),
+	"moduleResolution": core.NewSetFromItems("node", "classic", "node10"),
+	"target":           core.NewSetFromItems("es3"),
 }
 
 // todo: revisit to see if this can be improved

@@ -1,24 +1,6 @@
 --- old.objectRest.types
 +++ new.objectRest.types
-@@= skipped -121, +121 lines =@@
- >({ x, ...fresh } = { x: 1, y: 2 }) : { x: number; y: number; }
- >{ x, ...fresh } = { x: 1, y: 2 } : { x: number; y: number; }
- >{ x, ...fresh } : { y: number; x: number; }
-->x : number
-+>x : any
- >fresh : { y: number; }
- >{ x: 1, y: 2 } : { x: number; y: number; }
- >x : number
-@@= skipped -39, +39 lines =@@
- >remainder : string
- }
- interface I {
-+>I : I
-+
-     m(): void;
- >m : () => void
- 
-@@= skipped -25, +27 lines =@@
+@@= skipped -185, +185 lines =@@
  
  var { removed, ...removableRest2 } = i;
  >removed : string
