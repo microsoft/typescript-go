@@ -226,10 +226,11 @@ func (t *parseTask) start(loader *fileLoader) {
 
 func (p *fileLoader) loadSourceFileMetaData(path tspath.Path) {
 	p.sourceFileMetaDatasMutex.RLock()
-	if _, ok := p.sourceFileMetaDatas[path]; ok {
+	_, ok := p.sourceFileMetaDatas[path]
+	p.sourceFileMetaDatasMutex.RUnlock()
+	if ok {
 		return
 	}
-	p.sourceFileMetaDatasMutex.RUnlock()
 
 	packageJsonType := p.resolver.GetPackageJsonTypeIfApplicable(string(path))
 	impliedNodeFormat := ast.GetImpliedNodeFormatForFile(string(path), packageJsonType)
