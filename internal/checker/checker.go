@@ -13579,7 +13579,7 @@ func (c *Checker) reportNonDefaultExport(moduleSymbol *ast.Symbol, node *ast.Nod
 	if moduleSymbol.Exports != nil && moduleSymbol.Exports[ast.InternalSymbolNameExportEquals] != nil {
 		c.error(node, diagnostics.Module_0_has_no_default_export_Did_you_mean_to_use_import_1_from_0_instead, c.symbolToString(moduleSymbol), c.symbolToString(node.Symbol()))
 	} else {
-		diagnostic := c.error(node, diagnostics.Module_0_has_no_default_export, c.symbolToString(moduleSymbol))
+		diagnostic := c.error(node.Name(), diagnostics.Module_0_has_no_default_export, c.symbolToString(moduleSymbol))
 		var exportStar *ast.Symbol
 		if moduleSymbol.Exports != nil {
 			exportStar = moduleSymbol.Exports[ast.InternalSymbolNameExportStar]
@@ -13597,7 +13597,6 @@ func (c *Checker) reportNonDefaultExport(moduleSymbol *ast.Symbol, node *ast.Nod
 			}
 		}
 	}
-
 }
 
 func (c *Checker) resolveExportByName(moduleSymbol *ast.Symbol, name string, sourceNode *ast.Node, dontResolveAlias bool) *ast.Symbol {
@@ -13842,7 +13841,7 @@ func (c *Checker) canHaveSyntheticDefault(file *ast.Node, moduleSymbol *ast.Symb
 	}
 
 	// JS files have a synthetic default if they do not contain ES2015+ module syntax (export = is not valid in js) _and_ do not have an __esModule marker
-	return file.AsSourceFile().ExternalModuleIndicator == nil && c.resolveExportByName(moduleSymbol, "__esModule", nil /*sourceNode*/, dontResolveAlias) == nil
+	return file.AsSourceFile().ExternalModuleIndicator == nil /* || file.ExternalModuleIndicator == true) */ && c.resolveExportByName(moduleSymbol, "__esModule", nil /*sourceNode*/, dontResolveAlias) == nil // !!!
 }
 
 func (c *Checker) getEmitSyntaxForModuleSpecifierExpression(usage *ast.Node) core.ResolutionMode {

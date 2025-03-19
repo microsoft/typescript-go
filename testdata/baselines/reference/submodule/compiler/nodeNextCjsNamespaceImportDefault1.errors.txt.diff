@@ -11,7 +11,7 @@
 +    export const a: number = 1;
 +==== src/foo.mts (2 errors) ====
 +    import d, {a} from './a.cjs';
-+           ~~~~~~
++           ~
 +!!! error TS1192: Module '"src/a"' has no default export.
 +    import * as ns from './a.cjs';
 +    export {d, a, ns};
