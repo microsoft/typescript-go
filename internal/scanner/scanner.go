@@ -465,8 +465,8 @@ func (s *Scanner) Scan() ast.Kind {
 
 		switch ch {
 		case '\t', '\v', '\f', ' ':
+			s.pos++
 			if s.skipTrivia {
-				s.pos++
 				continue
 			}
 			for {
