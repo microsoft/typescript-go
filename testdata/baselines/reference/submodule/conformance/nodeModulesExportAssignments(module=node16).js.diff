@@ -5,12 +5,12 @@
  
  //// [index.js]
 -"use strict";
--// cjs format file
+ // cjs format file
  const a = {};
 -module.exports = a;
 +export {};
  //// [index.js]
--// esm format file
+ // esm format file
  const a = {};
  export {};
 -

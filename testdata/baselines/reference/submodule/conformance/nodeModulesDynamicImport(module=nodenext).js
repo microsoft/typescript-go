@@ -24,10 +24,12 @@ export async function main() {
 declare module "fs";
 
 //// [index.js]
+// cjs format file
 export async function main() {
     const { readFile } = await import("fs");
 }
 //// [index.js]
+// esm format file
 export async function main() {
     const { readFile } = await import("fs");
 }

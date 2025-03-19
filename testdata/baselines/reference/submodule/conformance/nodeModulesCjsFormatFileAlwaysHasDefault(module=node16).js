@@ -19,7 +19,9 @@ mod;
 }
 
 //// [index.js]
+// cjs format file
 export const a = 1;
 //// [index.js]
+// esm format file
 import mod from "./subfolder/index.js";
 mod;

@@ -7,12 +7,12 @@
 -"use strict";
 -Object.defineProperty(exports, "__esModule", { value: true });
 -exports.x = void 0;
--// cjs format file
+ // cjs format file
  const x = import.meta.url;
 -exports.x = x;
 +export { x };
  //// [index.js]
--// esm format file
+ // esm format file
  const x = import.meta.url;
  export { x };
 -

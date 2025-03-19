@@ -24,11 +24,14 @@ type;
 }
 
 //// [index.cjs]
+// esm format file
 import * as type from "#type";
 type;
 //// [index.js]
+// esm format file
 import * as type from "#type";
 type;
 //// [index.mjs]
+// esm format file
 import * as type from "#type";
 type;

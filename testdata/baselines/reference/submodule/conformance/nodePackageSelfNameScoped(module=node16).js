@@ -21,11 +21,14 @@ self;
 }
 
 //// [index.js]
+// esm format file
 import * as self from "@scope/package";
 self;
 //// [index.mjs]
+// esm format file
 import * as self from "@scope/package";
 self;
 //// [index.cjs]
+// cjs format file
 import * as self from "@scope/package";
 self;

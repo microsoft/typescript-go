@@ -26,6 +26,7 @@ export {require, exports, Object};
 }
 
 //// [index.js]
+// cjs format file
 function require() { }
 const exports = {};
 class Object {
@@ -33,6 +34,7 @@ class Object {
 export const __esModule = false;
 export { require, exports, Object };
 //// [index.js]
+// esm format file
 function require() { }
 const exports = {};
 class Object {

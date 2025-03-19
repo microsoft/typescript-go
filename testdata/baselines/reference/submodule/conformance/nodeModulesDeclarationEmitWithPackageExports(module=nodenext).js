@@ -92,6 +92,7 @@ export const cjsNonmain = true;
 }
 
 //// [index.mjs]
+// esm format file
 import * as cjs from "package/cjs";
 import * as mjs from "package/mjs";
 import * as type from "package";
@@ -105,6 +106,7 @@ export const d = cjsi;
 export const e = mjsi;
 export const f = typei;
 //// [index.cjs]
+// cjs format file
 import * as cjs from "package/cjs";
 import * as mjs from "package/mjs";
 import * as type from "package";
@@ -118,6 +120,7 @@ export const d = cjsi;
 export const e = mjsi;
 export const f = typei;
 //// [index.js]
+// esm format file
 import * as cjs from "package/cjs";
 import * as mjs from "package/mjs";
 import * as type from "package";

@@ -26,8 +26,10 @@ declare module "tslib" {
 }
 
 //// [index.js]
+// cjs format file
 export * from "fs";
 export * as fs from "fs";
 //// [index.js]
+// esm format file
 export * from "fs";
 export * as fs from "fs";

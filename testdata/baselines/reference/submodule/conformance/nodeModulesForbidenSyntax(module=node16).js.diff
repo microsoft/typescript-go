@@ -7,7 +7,7 @@
 -"use strict";
 -Object.defineProperty(exports, "__esModule", { value: true });
 -exports.x = void 0;
--// cjs format file
+ // cjs format file
  const x = () => (void 0);
 -exports.x = x;
 +export { x };
@@ -15,19 +15,19 @@
 -"use strict";
 -Object.defineProperty(exports, "__esModule", { value: true });
 -exports.x = void 0;
--// cjs format file
+ // cjs format file
  const x = () => (void 0);
 -exports.x = x;
 +export { x };
  //// [index.mjs]
--// esm format file
+ // esm format file
  const x = () => (void 0);
  export { x };
  //// [index.js]
 -"use strict";
 -Object.defineProperty(exports, "__esModule", { value: true });
 -exports.x = void 0;
--// cjs format file
+ // cjs format file
  const x = () => (void 0);
 -exports.x = x;
 +export { x };
@@ -35,44 +35,38 @@
 -"use strict";
 -Object.defineProperty(exports, "__esModule", { value: true });
 -exports.x = void 0;
--// cjs format file
+ // cjs format file
  const x = () => (void 0);
 -exports.x = x;
 +export { x };
  //// [index.mjs]
--// esm format file
+ // esm format file
  const x = () => (void 0);
- export { x };
- //// [index.js]
--// esm format file
- const x = () => (void 0);
- export { x };
- //// [index.mjs]
--// esm format file
+@@= skipped -44, +32 lines =@@
  const x = () => (void 0);
  export { x };
  //// [index.cjs]
 -"use strict";
 -Object.defineProperty(exports, "__esModule", { value: true });
 -exports.x = void 0;
--// cjs format file
+ // cjs format file
  const x = () => (void 0);
 -exports.x = x;
 +export { x };
  //// [index.mjs]
--// esm format file
+ // esm format file
  const x = () => (void 0);
  export { x };
  //// [index.cjs]
 -"use strict";
 -Object.defineProperty(exports, "__esModule", { value: true });
 -exports.x = void 0;
--// cjs format file
+ // cjs format file
  const x = () => (void 0);
 -exports.x = x;
 +export { x };
  //// [index.js]
--// esm format file
+ // esm format file
  const x = () => (void 0);
  export { x };
 -

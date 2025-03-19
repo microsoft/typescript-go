@@ -38,6 +38,7 @@ type;
 }
 
 //// [index.mjs]
+// esm format file
 import * as cjs from "#cjs";
 import * as mjs from "#mjs";
 import * as type from "#type";
@@ -45,6 +46,7 @@ cjs;
 mjs;
 type;
 //// [index.cjs]
+// esm format file
 import * as cjs from "#cjs";
 import * as mjs from "#mjs";
 import * as type from "#type";
@@ -52,6 +54,7 @@ cjs;
 mjs;
 type;
 //// [index.js]
+// esm format file
 import * as cjs from "#cjs";
 import * as mjs from "#mjs";
 import * as type from "#type";

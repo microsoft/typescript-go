@@ -123,6 +123,7 @@ export const cjsSource = true;
 }
 
 //// [index.mjs]
+// esm format file
 import * as cjs from "package/cjs";
 import * as mjs from "package/mjs";
 import * as type from "package";
@@ -138,6 +139,7 @@ mjsi.mjsSource;
 typei.mjsSource;
 ts.mjsSource;
 //// [index.cjs]
+// cjs format file
 import * as cjs from "package/cjs";
 import * as mjs from "package/mjs";
 import * as type from "package";
@@ -153,6 +155,7 @@ mjsi.cjsSource;
 typei.implicitCjsSource;
 ts.cjsSource;
 //// [index.js]
+// esm format file
 import * as cjs from "package/cjs";
 import * as mjs from "package/mjs";
 import * as type from "package";

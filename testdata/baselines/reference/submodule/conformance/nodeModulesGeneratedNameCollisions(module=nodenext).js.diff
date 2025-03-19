@@ -8,7 +8,7 @@
 -Object.defineProperty(exports, "__esModule", { value: true });
 -exports.Object = exports.exports = exports.__esModule = void 0;
 -exports.require = require;
--// cjs format file
+ // cjs format file
  function require() { }
  const exports = {};
 -exports.exports = exports;
@@ -19,10 +19,9 @@
 +export const __esModule = false;
 +export { require, exports, Object };
  //// [index.js]
--// esm format file
+ // esm format file
  function require() { }
- const exports = {};
- class Object {
+@@= skipped -20, +15 lines =@@
  }
  export const __esModule = false;
  export { require, exports, Object };

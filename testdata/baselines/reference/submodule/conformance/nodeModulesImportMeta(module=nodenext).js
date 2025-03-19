@@ -20,8 +20,10 @@ export {x};
 }
 
 //// [index.js]
+// cjs format file
 const x = import.meta.url;
 export { x };
 //// [index.js]
+// esm format file
 const x = import.meta.url;
 export { x };

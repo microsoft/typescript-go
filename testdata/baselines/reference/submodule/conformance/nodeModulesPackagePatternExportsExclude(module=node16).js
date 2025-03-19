@@ -111,6 +111,7 @@ export { type };
 } 
 
 //// [index.js]
+// esm format file
 import * as cjsi from "inner/cjs/exclude/index";
 import * as mjsi from "inner/mjs/exclude/index";
 import * as typei from "inner/js/exclude/index";
@@ -124,6 +125,7 @@ cjsi2;
 mjsi2;
 typei2;
 //// [index.mjs]
+// esm format file
 import * as cjsi from "inner/cjs/exclude/index";
 import * as mjsi from "inner/mjs/exclude/index";
 import * as typei from "inner/js/exclude/index";
@@ -137,6 +139,7 @@ cjsi2;
 mjsi2;
 typei2;
 //// [index.cjs]
+// cjs format file
 import * as cjsi from "inner/cjs/exclude/index";
 import * as mjsi from "inner/mjs/exclude/index";
 import * as typei from "inner/js/exclude/index";

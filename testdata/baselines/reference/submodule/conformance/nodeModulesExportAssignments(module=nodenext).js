@@ -20,8 +20,10 @@ export = a;
 }
 
 //// [index.js]
+// cjs format file
 const a = {};
 export {};
 //// [index.js]
+// esm format file
 const a = {};
 export {};

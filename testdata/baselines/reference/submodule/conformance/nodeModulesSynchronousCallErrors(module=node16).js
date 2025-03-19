@@ -41,6 +41,7 @@ export async function h() {
     f();
 }
 //// [index.js]
+// cjs format file
 import { h } from "../index.js";
 export async function f() {
     const mod3 = await import("../index.js");

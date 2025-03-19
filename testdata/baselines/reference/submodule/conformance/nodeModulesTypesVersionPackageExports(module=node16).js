@@ -52,11 +52,14 @@ export const futureVersionApplied = true;
 }
 
 //// [index.js]
+// esm format file
 import * as mod from "inner";
 mod.correctVersionApplied;
 //// [index.mjs]
+// esm format file
 import * as mod from "inner";
 mod.correctVersionApplied;
 //// [index.cjs]
+// cjs format file
 import * as mod from "inner";
 mod.correctVersionApplied;

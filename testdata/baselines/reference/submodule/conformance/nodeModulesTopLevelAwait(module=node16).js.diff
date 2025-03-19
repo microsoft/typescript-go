@@ -7,13 +7,13 @@
 -"use strict";
 -Object.defineProperty(exports, "__esModule", { value: true });
 -exports.x = void 0;
--// cjs format file
+ // cjs format file
  const x = await 1;
 -exports.x = x;
 +export { x };
  for await (const y of []) { }
  //// [index.js]
--// esm format file
+ // esm format file
  const x = await 1;
  export { x };
  for await (const y of []) { }

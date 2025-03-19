@@ -21,11 +21,14 @@ self;
 }
 
 //// [index.js]
+// esm format file
 import * as self from "package";
 self;
 //// [index.mjs]
+// esm format file
 import * as self from "package";
 self;
 //// [index.cjs]
+// esm format file
 import * as self from "package";
 self;

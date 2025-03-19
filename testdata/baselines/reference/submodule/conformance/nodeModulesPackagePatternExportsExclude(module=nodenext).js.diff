@@ -1,22 +1,6 @@
 --- old.nodeModulesPackagePatternExportsExclude(module=nodenext).js
 +++ new.nodeModulesPackagePatternExportsExclude(module=nodenext).js
-@@= skipped -110, +110 lines =@@
- } 
- 
- //// [index.js]
--// esm format file
- import * as cjsi from "inner/cjs/exclude/index";
- import * as mjsi from "inner/mjs/exclude/index";
- import * as typei from "inner/js/exclude/index";
-@@= skipped -14, +13 lines =@@
- mjsi2;
- typei2;
- //// [index.mjs]
--// esm format file
- import * as cjsi from "inner/cjs/exclude/index";
- import * as mjsi from "inner/mjs/exclude/index";
- import * as typei from "inner/js/exclude/index";
-@@= skipped -14, +13 lines =@@
+@@= skipped -138, +138 lines =@@
  mjsi2;
  typei2;
  //// [index.cjs]
@@ -45,7 +29,7 @@
 -    return result;
 -};
 -Object.defineProperty(exports, "__esModule", { value: true });
--// cjs format file
+ // cjs format file
 -const cjsi = __importStar(require("inner/cjs/exclude/index"));
 -const mjsi = __importStar(require("inner/mjs/exclude/index"));
 -const typei = __importStar(require("inner/js/exclude/index"));

@@ -89,6 +89,7 @@ export { type };
 }
 
 //// [index.mjs]
+// esm format file
 import * as cjs from "package/cjs";
 import * as mjs from "package/mjs";
 import * as type from "package";
@@ -102,6 +103,7 @@ cjsi;
 mjsi;
 typei;
 //// [index.cjs]
+// cjs format file
 import * as cjs from "package/cjs";
 import * as mjs from "package/mjs";
 import * as type from "package";
@@ -115,6 +117,7 @@ cjsi;
 mjsi;
 typei;
 //// [index.js]
+// esm format file
 import * as cjs from "package/cjs";
 import * as mjs from "package/mjs";
 import * as type from "package";

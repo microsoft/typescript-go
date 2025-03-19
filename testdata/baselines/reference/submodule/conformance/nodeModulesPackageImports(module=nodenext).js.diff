@@ -1,14 +1,6 @@
 --- old.nodeModulesPackageImports(module=nodenext).js
 +++ new.nodeModulesPackageImports(module=nodenext).js
-@@= skipped -37, +37 lines =@@
- }
- 
- //// [index.mjs]
--// esm format file
- import * as cjs from "#cjs";
- import * as mjs from "#mjs";
- import * as type from "#type";
-@@= skipped -8, +7 lines =@@
+@@= skipped -45, +45 lines =@@
  mjs;
  type;
  //// [index.cjs]
@@ -37,7 +29,7 @@
 -    return result;
 -};
 -Object.defineProperty(exports, "__esModule", { value: true });
--// esm format file
+ // esm format file
 -const cjs = __importStar(require("#cjs"));
 -const mjs = __importStar(require("#mjs"));
 -const type = __importStar(require("#type"));
@@ -47,11 +39,7 @@
  cjs;
  mjs;
  type;
- //// [index.js]
--// esm format file
- import * as cjs from "#cjs";
- import * as mjs from "#mjs";
- import * as type from "#type";
+@@= skipped -40, +15 lines =@@
  cjs;
  mjs;
  type;

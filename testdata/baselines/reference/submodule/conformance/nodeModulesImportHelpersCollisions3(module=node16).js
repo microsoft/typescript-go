@@ -24,6 +24,8 @@ declare module "tslib" {
 }
 
 //// [index.js]
+// cjs format file
 export { default } from "fs";
 //// [index.js]
+// esm format file
 export { default } from "fs";

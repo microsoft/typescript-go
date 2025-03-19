@@ -22,10 +22,12 @@ for await (const y of []) {}
 }
 
 //// [index.js]
+// cjs format file
 const x = await 1;
 export { x };
 for await (const y of []) { }
 //// [index.js]
+// esm format file
 const x = await 1;
 export { x };
 for await (const y of []) { }

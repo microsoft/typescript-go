@@ -67,38 +67,50 @@ export {x};
 }
 
 //// [index.js]
+// cjs format file
 const x = () => (void 0);
 export { x };
 //// [index.cjs]
+// cjs format file
 const x = () => (void 0);
 export { x };
 //// [index.mjs]
+// esm format file
 const x = () => (void 0);
 export { x };
 //// [index.js]
+// cjs format file
 const x = () => (void 0);
 export { x };
 //// [index.cjs]
+// cjs format file
 const x = () => (void 0);
 export { x };
 //// [index.mjs]
+// esm format file
 const x = () => (void 0);
 export { x };
 //// [index.js]
+// esm format file
 const x = () => (void 0);
 export { x };
 //// [index.mjs]
+// esm format file
 const x = () => (void 0);
 export { x };
 //// [index.cjs]
+// cjs format file
 const x = () => (void 0);
 export { x };
 //// [index.mjs]
+// esm format file
 const x = () => (void 0);
 export { x };
 //// [index.cjs]
+// cjs format file
 const x = () => (void 0);
 export { x };
 //// [index.js]
+// esm format file
 const x = () => (void 0);
 export { x };

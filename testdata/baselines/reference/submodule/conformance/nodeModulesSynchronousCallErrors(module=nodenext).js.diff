@@ -7,7 +7,7 @@
 -"use strict";
 -Object.defineProperty(exports, "__esModule", { value: true });
 -exports.f = f;
--// cjs format file
+ // cjs format file
 -const index_js_1 = require("../index.js");
 -async function f() {
 +import { h } from "../index.js";

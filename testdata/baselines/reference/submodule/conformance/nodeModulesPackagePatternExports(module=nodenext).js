@@ -66,6 +66,7 @@ export { type };
 }
 
 //// [index.js]
+// esm format file
 import * as cjsi from "inner/cjs/index";
 import * as mjsi from "inner/mjs/index";
 import * as typei from "inner/js/index";
@@ -73,6 +74,7 @@ cjsi;
 mjsi;
 typei;
 //// [index.mjs]
+// esm format file
 import * as cjsi from "inner/cjs/index";
 import * as mjsi from "inner/mjs/index";
 import * as typei from "inner/js/index";
@@ -80,6 +82,7 @@ cjsi;
 mjsi;
 typei;
 //// [index.cjs]
+// cjs format file
 import * as cjsi from "inner/cjs/index";
 import * as mjsi from "inner/mjs/index";
 import * as typei from "inner/js/index";
