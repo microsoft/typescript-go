@@ -389,7 +389,7 @@ func (s *Scanner) errorAt(diagnostic *diagnostics.Message, pos int, length int, 
 	}
 }
 
-// NOTE: even though this returns a rune, it only decodes the next byte.
+// NOTE: even though this returns a rune, it only decodes the current byte.
 // It must be checked against utf8.RuneSelf to verify that a call to charAndSize
 // is not needed.
 func (s *Scanner) char() rune {
@@ -399,7 +399,7 @@ func (s *Scanner) char() rune {
 	return -1
 }
 
-// NOTE: this returns a rune, but only decodes the next byte.
+// NOTE: this returns a rune, but only decodes the byte at the offset.
 func (s *Scanner) charAt(offset int) rune {
 	if s.pos+offset < len(s.text) {
 		return rune(s.text[s.pos+offset])
