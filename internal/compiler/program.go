@@ -49,6 +49,8 @@ type Program struct {
 	files       []*ast.SourceFile
 	filesByPath map[tspath.Path]*ast.SourceFile
 
+	sourceFileMetaDatas map[tspath.Path]*ast.SourceFileMetaData
+
 	// The below settings are to track if a .js file should be add to the program if loaded via searching under node_modules.
 	// This works as imported modules are discovered recursively in a depth first manner, specifically:
 	// - For each root file, findSourceFile is called.
@@ -63,15 +65,17 @@ type Program struct {
 
 	commonSourceDirectory     string
 	commonSourceDirectoryOnce sync.Once
-}
 
-var extensions = []string{".ts", ".tsx"}
+	// List of present unsupported extensions
+	unsupportedExtensions []string
+}
 
 func NewProgram(options ProgramOptions) *Program {
 	p := &Program{}
 	p.programOptions = options
 	p.compilerOptions = options.Options
 	p.configFileParsingDiagnostics = slices.Clip(options.ConfigFileParsingDiagnostics)
+	p.sourceFileMetaDatas = make(map[tspath.Path]*ast.SourceFileMetaData)
 	if p.compilerOptions == nil {
 		p.compilerOptions = &core.CompilerOptions{}
 	}
@@ -149,10 +153,17 @@ func NewProgram(options ProgramOptions) *Program {
 		}
 	}
 
-	p.files, p.resolvedModules = processAllProgramFiles(p.host, p.programOptions, p.compilerOptions, p.resolver, rootFiles, libs)
+	p.files, p.resolvedModules, p.sourceFileMetaDatas = processAllProgramFiles(p.host, p.programOptions, p.compilerOptions, p.resolver, rootFiles, libs)
 	p.filesByPath = make(map[tspath.Path]*ast.SourceFile, len(p.files))
 	for _, file := range p.files {
 		p.filesByPath[file.Path()] = file
+	}
+
+	for _, file := range p.files {
+		extension := tspath.TryGetExtensionFromPath(file.FileName())
+		if extension == tspath.ExtensionTsx || slices.Contains(tspath.SupportedJSExtensionsFlat, extension) {
+			p.unsupportedExtensions = core.AppendIfUnique(p.unsupportedExtensions, extension)
+		}
 	}
 
 	return p
@@ -221,6 +232,11 @@ func (p *Program) GetTypeChecker() *checker.Checker {
 	// to obtain types through multiple API calls and we want to ensure that those types are created
 	// by the same checker so they can interoperate.
 	return p.checkers[0]
+}
+
+func (p *Program) GetTypeCheckers() []*checker.Checker {
+	p.createCheckers()
+	return p.checkers
 }
 
 // Return a checker for the given file. We may have multiple checkers in concurrent scenarios and this
@@ -299,7 +315,21 @@ func (p *Program) getBindDiagnosticsForFile(sourceFile *ast.SourceFile) []*ast.D
 }
 
 func (p *Program) getSemanticDiagnosticsForFile(sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	diags := core.Concatenate(sourceFile.BindDiagnostics(), p.GetTypeCheckerForFile(sourceFile).GetDiagnostics(sourceFile))
+	var fileChecker *checker.Checker
+	if sourceFile != nil {
+		fileChecker = p.GetTypeCheckerForFile(sourceFile)
+	}
+
+	diags := slices.Clip(sourceFile.BindDiagnostics())
+	// Ask for diags from all checkers; checking one file may add diagnostics to other files.
+	// These are deduplicated later.
+	for _, checker := range p.checkers {
+		if sourceFile == nil || checker == fileChecker {
+			diags = append(diags, checker.GetDiagnostics(sourceFile)...)
+		} else {
+			diags = append(diags, checker.GetDiagnosticsWithoutCheck(sourceFile)...)
+		}
+	}
 	if len(sourceFile.CommentDirectives) == 0 {
 		return diags
 	}
@@ -376,10 +406,45 @@ func (p *Program) getDiagnosticsHelper(sourceFile *ast.SourceFile, ensureBound b
 	return SortAndDeduplicateDiagnostics(result)
 }
 
+func (p *Program) LineCount() int {
+	var count int
+	for _, file := range p.files {
+		count += len(file.LineMap())
+	}
+	return count
+}
+
+func (p *Program) IdentifierCount() int {
+	var count int
+	for _, file := range p.files {
+		count += file.IdentifierCount
+	}
+	return count
+}
+
+func (p *Program) SymbolCount() int {
+	var count int
+	for _, file := range p.files {
+		count += file.SymbolCount
+	}
+	for _, checker := range p.checkers {
+		count += int(checker.SymbolCount)
+	}
+	return count
+}
+
 func (p *Program) TypeCount() int {
 	var count int
 	for _, checker := range p.checkers {
 		count += int(checker.TypeCount)
+	}
+	return count
+}
+
+func (p *Program) InstantiationCount() int {
+	var count int
+	for _, checker := range p.checkers {
+		count += int(checker.TotalInstantiationCount)
 	}
 	return count
 }
@@ -392,25 +457,20 @@ func (p *Program) PrintSourceFileWithTypes() {
 	}
 }
 
+func (p *Program) GetSourceFileMetaData(path tspath.Path) *ast.SourceFileMetaData {
+	return p.sourceFileMetaDatas[path]
+}
+
 func (p *Program) GetEmitModuleFormatOfFile(sourceFile *ast.SourceFile) core.ModuleKind {
 	return p.GetEmitModuleFormatOfFileWorker(sourceFile, p.compilerOptions)
 }
 
 func (p *Program) GetEmitModuleFormatOfFileWorker(sourceFile *ast.SourceFile, options *core.CompilerOptions) core.ModuleKind {
-	result := p.GetImpliedNodeFormatForEmitWorker(sourceFile, options)
-	if result != core.ModuleKindNone {
-		return result
-	}
-	return options.GetEmitModuleKind()
+	return ast.GetEmitModuleFormatOfFileWorker(sourceFile, options, p.GetSourceFileMetaData(sourceFile.Path()))
 }
 
 func (p *Program) GetImpliedNodeFormatForEmit(sourceFile *ast.SourceFile) core.ResolutionMode {
-	return p.GetImpliedNodeFormatForEmitWorker(sourceFile, p.compilerOptions)
-}
-
-func (p *Program) GetImpliedNodeFormatForEmitWorker(sourceFile *ast.SourceFile, options *core.CompilerOptions) core.ResolutionMode {
-	// !!!
-	return core.ModuleKindNone
+	return ast.GetImpliedNodeFormatForEmitWorker(sourceFile.FileName(), p.compilerOptions, p.GetSourceFileMetaData(sourceFile.Path()))
 }
 
 func (p *Program) CommonSourceDirectory() string {
@@ -513,7 +573,7 @@ type sourceMapEmitResult struct {
 	sourceMap            *sourcemap.RawSourceMap
 }
 
-func (p *Program) Emit(options *EmitOptions) *EmitResult {
+func (p *Program) Emit(options EmitOptions) *EmitResult {
 	// !!! performance measurement
 	p.BindSourceFiles()
 
@@ -603,4 +663,10 @@ const (
 type FileIncludeReason struct {
 	Kind  FileIncludeKind
 	Index int
+}
+
+// UnsupportedExtensions returns a list of all present "unsupported" extensions,
+// e.g. extensions that are not yet supported by the port.
+func (p *Program) UnsupportedExtensions() []string {
+	return p.unsupportedExtensions
 }

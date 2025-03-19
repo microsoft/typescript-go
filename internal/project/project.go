@@ -365,7 +365,7 @@ func (p *Project) LoadConfig() error {
 
 		p.logf("Config: %s : %s",
 			p.configFileName,
-			core.Must(core.StringifyJson(map[string]interface{}{
+			core.Must(core.StringifyJson(map[string]any{
 				"rootNames":         parsedCommandLine.FileNames(),
 				"options":           parsedCommandLine.CompilerOptions(),
 				"projectReferences": parsedCommandLine.ProjectReferences(),

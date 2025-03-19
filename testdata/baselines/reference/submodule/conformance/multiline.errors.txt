@@ -1,0 +1,69 @@
+a.ts(12,1): error TS2578: Unused '@ts-expect-error' directive.
+b.tsx(1,24): error TS2307: Cannot find module 'react' or its corresponding type declarations.
+b.tsx(17,1): error TS2578: Unused '@ts-expect-error' directive.
+b.tsx(28,6): error TS2578: Unused '@ts-expect-error' directive.
+b.tsx(32,1): error TS2578: Unused '@ts-expect-error' directive.
+
+
+==== a.ts (1 errors) ====
+    export const texts: string[] = [];
+    
+    /**
+     @ts-ignore */
+    texts.push(100);
+    
+    /**
+     @ts-expect-error */
+    texts.push(100);
+    
+    /**
+     @ts-expect-error */
+    ~~~~~~~~~~~~~~~~~~~~
+!!! error TS2578: Unused '@ts-expect-error' directive.
+    texts.push("100");
+    
+==== b.tsx (4 errors) ====
+    import * as React from "react";
+                           ~~~~~~~
+!!! error TS2307: Cannot find module 'react' or its corresponding type declarations.
+    
+    export function MyComponent(props: { foo: string }) {
+      return <div />;
+    }
+    
+    let x = (
+      <div>
+        {/*
+       @ts-ignore */}
+        <MyComponent foo={100} />
+    
+        {/*@ts-ignore*/}
+        <MyComponent foo={100} />
+    
+        {/*
+       @ts-expect-error */}
+    ~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS2578: Unused '@ts-expect-error' directive.
+        <MyComponent foo={100} />
+    
+        {/*
+       // @ts-expect-error */}
+        <MyComponent foo={100} />
+    
+        {/*
+       * @ts-expect-error */}
+        <MyComponent foo={100} />
+    
+        {/*@ts-expect-error*/}
+         ~~~~~~~~~~~~~~~~~~~~
+!!! error TS2578: Unused '@ts-expect-error' directive.
+        <MyComponent foo={100} />
+    
+        {/*
+       @ts-expect-error */}
+    ~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS2578: Unused '@ts-expect-error' directive.
+        <MyComponent foo={"hooray"} />
+      </div>
+    );
+    

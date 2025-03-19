@@ -1,0 +1,11 @@
+--- old.importDeclWithExportModifierAndExportAssignmentInAmbientContext.types
++++ new.importDeclWithExportModifierAndExportAssignmentInAmbientContext.types
+@@= skipped -10, +10 lines =@@
+     export import a = x.c;
+ >a : any
+ >x : typeof x
+->c : a
++>c : c
+ 
+     export = x;
+ >x : typeof x

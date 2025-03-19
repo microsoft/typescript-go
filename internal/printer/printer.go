@@ -19,19 +19,21 @@ package printer
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/stringutil"
 )
 
 type PrinterOptions struct {
 	// RemoveComments                bool
 	NewLine core.NewLineKind
 	// OmitTrailingSemicolon         bool
-	// NoEmitHelpers                 bool
+	NoEmitHelpers bool
 	// Module                        core.ModuleKind
 	// ModuleResolution              core.ModuleResolutionKind
 	// Target                        core.ScriptTarget
@@ -95,7 +97,7 @@ type PrintHandlers struct {
 
 	// !!!
 	////OnEmitSourceMapOfNode func(hint EmitHint, node *ast.Node, emitCallback func(hint EmitHint, node *ast.Node))
-	////OnEmitSourceMapOfToken func(nodeOpt *ast.Node | undefined, toke: ast.Kind, writeKind WriteKind, pos int, emitCallback func(token ast.Kind, writeKind WriteKind, pos int) int) int
+	////OnEmitSourceMapOfToken func(nodeOpt *ast.Node | undefined, token: ast.Kind, writeKind WriteKind, pos int, emitCallback func(token ast.Kind, writeKind WriteKind, pos int) int) int
 	////OnEmitSourceMapOfPosition func(pos int)
 
 	OnBeforeEmitNode     func(nodeOpt *ast.Node)
@@ -108,16 +110,19 @@ type PrintHandlers struct {
 
 type Printer struct {
 	PrintHandlers
-	Options            PrinterOptions
-	emitContext        *EmitContext
-	currentSourceFile  *ast.SourceFile
-	nextListElementPos int
-	writer             EmitTextWriter
-	ownWriter          EmitTextWriter
-	writeKind          WriteKind
-	commentsDisabled   bool
-	inExtends          bool // whether we are emitting the `extends` clause of a ConditionalType or InferType
-	nameGenerator      NameGenerator
+	Options                           PrinterOptions
+	emitContext                       *EmitContext
+	currentSourceFile                 *ast.SourceFile
+	uniqueHelperNames                 map[string]*ast.IdentifierNode
+	externalHelpersModuleName         *ast.IdentifierNode
+	nextListElementPos                int
+	writer                            EmitTextWriter
+	ownWriter                         EmitTextWriter
+	writeKind                         WriteKind
+	commentsDisabled                  bool
+	inExtends                         bool // whether we are emitting the `extends` clause of a ConditionalType or InferType
+	nameGenerator                     NameGenerator
+	makeFileLevelOptimisticUniqueName func(string) string
 }
 
 func NewPrinter(options PrinterOptions, handlers PrintHandlers, emitContext *EmitContext) *Printer {
@@ -161,7 +166,7 @@ func (p *Printer) getLiteralTextOfNode(node *ast.LiteralLikeNode, sourceFile *as
 	}
 
 	// !!! Printer option to control whether to terminate unterminated literals
-	// !!! If necessary, printer option to control whether to preserve numeric seperators
+	// !!! If necessary, printer option to control whether to preserve numeric separators
 	if p.emitContext.EmitFlags(node)&EFNoAsciiEscaping != 0 {
 		flags |= getLiteralTextFlagsNeverAsciiEscape
 	}
@@ -302,6 +307,20 @@ func (p *Printer) writeLine() {
 func (p *Printer) writeLineRepeat(count int) {
 	for range count {
 		p.writeLine()
+	}
+}
+
+func (p *Printer) writeLines(text string) {
+	lines := stringutil.SplitLines(text)
+	indentation := stringutil.GuessIndentation(lines)
+	for _, line := range lines {
+		if indentation > 0 {
+			line = line[indentation:]
+		}
+		if len(line) > 0 {
+			p.writeLine()
+			p.write(line)
+		}
 	}
 }
 
@@ -648,8 +667,7 @@ func (p *Printer) hasCommentsAtPosition(pos int) bool {
 }
 
 func (p *Printer) shouldEmitIndirectCall(node *ast.Node) bool {
-	// !!! return getInternalEmitFlags(node)&InternalEmitFlagsIndirectCall != 0
-	return false
+	return p.emitContext.EmitFlags(node)&EFIndirectCall != 0
 }
 
 func (p *Printer) shouldAllowTrailingComma(node *ast.Node, list *ast.NodeList) bool {
@@ -815,13 +833,13 @@ func (p *Printer) emitLiteral(node *ast.LiteralLikeNode, flags getLiteralTextFla
 
 func (p *Printer) emitNumericLiteral(node *ast.NumericLiteral) {
 	p.enterNode(node.AsNode())
-	p.emitLiteral(node.AsNode(), getLiteralTextFlagsNone)
+	p.emitLiteral(node.AsNode(), getLiteralTextFlagsAllowNumericSeparator)
 	p.exitNode(node.AsNode())
 }
 
 func (p *Printer) emitBigIntLiteral(node *ast.BigIntLiteral) {
 	p.enterNode(node.AsNode())
-	p.emitLiteral(node.AsNode(), getLiteralTextFlagsNone)
+	p.emitLiteral(node.AsNode(), getLiteralTextFlagsNone) // TODO: Preserve numeric literal separators after Strada migration
 	p.exitNode(node.AsNode())
 }
 
@@ -909,13 +927,54 @@ func (p *Printer) emitIdentifierNameNode(node *ast.IdentifierNode) {
 	p.emitIdentifierName(node.AsIdentifier())
 }
 
+func (p *Printer) getUniqueHelperName(name string) *ast.IdentifierNode {
+	helperName := p.uniqueHelperNames[name]
+	if helperName == nil {
+		helperName := p.emitContext.NewUniqueName(name, AutoGenerateOptions{Flags: GeneratedIdentifierFlagsFileLevel | GeneratedIdentifierFlagsOptimistic})
+		p.generateName(helperName)
+		p.uniqueHelperNames[name] = helperName
+		return helperName
+	}
+	return helperName.Clone(p.emitContext.Factory)
+}
+
 func (p *Printer) emitIdentifierReference(node *ast.Identifier) {
+	if (p.externalHelpersModuleName != nil || p.uniqueHelperNames != nil) &&
+		p.emitContext.EmitFlags(node.AsNode())&EFHelperName != 0 {
+		if p.externalHelpersModuleName != nil {
+			// Substitute `__helper` with `tslib_1.__helper`
+			helper := p.emitContext.Factory.NewPropertyAccessExpression(
+				p.externalHelpersModuleName.Clone(p.emitContext.Factory),
+				nil, /*questionDotToken*/
+				node.Clone(p.emitContext.Factory),
+				ast.NodeFlagsNone,
+			)
+			p.emitContext.AssignCommentAndSourceMapRanges(helper, node.AsNode())
+			p.emitPropertyAccessExpression(helper.AsPropertyAccessExpression())
+			return
+		}
+		if p.uniqueHelperNames != nil {
+			// Substitute `__helper` with `__helper_1` if there is a conflict in an ES module.
+			helperName := p.getUniqueHelperName(node.Text)
+			p.emitContext.AssignCommentAndSourceMapRanges(helperName, node.AsNode())
+			node = helperName.AsIdentifier()
+		}
+	}
+
 	p.enterNode(node.AsNode())
 	p.emitIdentifierText(node)
 	p.exitNode(node.AsNode())
 }
 
 func (p *Printer) emitBindingIdentifier(node *ast.Identifier) {
+	if p.uniqueHelperNames != nil &&
+		p.emitContext.EmitFlags(node.AsNode())&EFHelperName != 0 {
+		// Substitute `__helper` with `__helper_1` if there is a conflict in an ES module.
+		helperName := p.getUniqueHelperName(node.Text)
+		p.emitContext.AssignCommentAndSourceMapRanges(helperName, node.AsNode())
+		node = helperName.AsIdentifier()
+	}
+
 	p.enterNode(node.AsNode())
 	p.emitIdentifierText(node)
 	p.exitNode(node.AsNode())
@@ -1235,7 +1294,7 @@ func (p *Printer) emitTypeParameters(parentNode *ast.Node, nodes *ast.TypeParame
 		return
 	}
 
-	p.emitList((*Printer).emitTypeParameterNode, parentNode, nodes, LFTypeParameters|core.IfElse(p.shouldAllowTrailingComma(parentNode, nodes), LFAllowTrailingComma, LFNone))
+	p.emitList((*Printer).emitTypeParameterNode, parentNode, nodes, LFTypeParameters|core.IfElse(ast.IsArrowFunction(parentNode) /*p.shouldAllowTrailingComma(parentNode, nodes)*/, LFAllowTrailingComma, LFNone)) // TODO: preserve trailing comma after Strada migration
 }
 
 func (p *Printer) emitTypeAnnotation(node *ast.TypeNode) {
@@ -1261,7 +1320,7 @@ func (p *Printer) emitInitializer(node *ast.Expression, equalTokenPos int, conte
 
 func (p *Printer) emitParameters(parentNode *ast.Node, parameters *ast.ParameterList) {
 	p.generateAllNames(parameters)
-	p.emitList((*Printer).emitParameterNode, parentNode, parameters, LFParameters|core.IfElse(p.shouldAllowTrailingComma(parentNode, parameters), LFAllowTrailingComma, LFNone))
+	p.emitList((*Printer).emitParameterNode, parentNode, parameters, LFParameters /*|core.IfElse(p.shouldAllowTrailingComma(parentNode, parameters), LFAllowTrailingComma, LFNone)*/) // TODO: preserve trailing comma after Strada migration
 }
 
 func canEmitSimpleArrowHead(parentNode *ast.Node, parameters *ast.ParameterList) bool {
@@ -1597,7 +1656,7 @@ func (p *Printer) emitTypeArguments(parentNode *ast.Node, nodes *ast.TypeArgumen
 	if nodes == nil {
 		return
 	}
-	p.emitList((*Printer).emitTypeArgument, parentNode, nodes, LFTypeArguments|core.IfElse(p.shouldAllowTrailingComma(parentNode, nodes), LFAllowTrailingComma, LFNone) /*, typeArgumentParenthesizerRuleSelector */)
+	p.emitList((*Printer).emitTypeArgument, parentNode, nodes, LFTypeArguments /*|core.IfElse(p.shouldAllowTrailingComma(parentNode, nodes), LFAllowTrailingComma, LFNone)*/) // TODO: preserve trailing comma after Strada migration
 }
 
 func (p *Printer) emitTypeReference(node *ast.TypeReferenceNode) {
@@ -2209,7 +2268,7 @@ func (p *Printer) emitCallee(callee *ast.Expression, parentNode *ast.Node) {
 		// Parenthesize `new C` inside of a CallExpression so it is treated as `(new C)()` and not `new C()`
 		p.emitExpression(callee, ast.OperatorPrecedenceParentheses)
 	} else {
-		p.emitExpression(callee, ast.OperatorPrecedenceMember)
+		p.emitExpression(callee, core.IfElse(ast.IsOptionalChain(parentNode), ast.OperatorPrecedenceOptionalChain, ast.OperatorPrecedenceMember))
 	}
 }
 
@@ -2427,10 +2486,10 @@ func (p *Printer) getLiteralKindOfBinaryPlusOperand(node *ast.Expression) ast.Ki
 	return ast.KindUnknown
 }
 
-func (p *Printer) emitBinaryExpression(node *ast.BinaryExpression) {
+func (p *Printer) getBinaryExpressionPrecedence(node *ast.BinaryExpression) (leftPrec ast.OperatorPrecedence, rightPrec ast.OperatorPrecedence) {
 	precedence := ast.GetExpressionPrecedence(node.AsNode())
-	leftPrec := precedence
-	rightPrec := precedence
+	leftPrec = precedence
+	rightPrec = precedence
 	switch precedence {
 	case ast.OperatorPrecedenceComma:
 		// No need to parenthesize the right operand when the binary operator and
@@ -2501,10 +2560,15 @@ func (p *Printer) emitBinaryExpression(node *ast.BinaryExpression) {
 	default:
 		panic(fmt.Sprintf("unhandled precedence: %v", precedence))
 	}
+	return leftPrec, rightPrec
+}
+
+func (p *Printer) emitBinaryExpression(node *ast.BinaryExpression) {
+	leftPrec, rightPrec := p.getBinaryExpressionPrecedence(node)
 	p.enterNode(node.AsNode())
 	p.emitExpression(node.Left, leftPrec)
 	linesBeforeOperator := p.getLinesBetweenNodes(node.AsNode(), node.Left, node.OperatorToken)
-	linesAfterOperator := p.getLinesBetweenNodes(node.AsNode(), node.Left, node.OperatorToken)
+	linesAfterOperator := p.getLinesBetweenNodes(node.AsNode(), node.OperatorToken, node.Right)
 	p.writeLinesAndIndent(linesBeforeOperator, node.OperatorToken.Kind != ast.KindCommaToken /*writeSpaceIfNotIndenting*/)
 	p.emitTokenNode(node.OperatorToken)
 	p.writeLinesAndIndent(linesAfterOperator, true /*writeSpaceIfNotIndenting*/) // Binary operators should have a space before the comment starts
@@ -2649,6 +2713,27 @@ func (p *Printer) emitMetaProperty(node *ast.MetaProperty) {
 	p.exitNode(node.AsNode())
 }
 
+func (p *Printer) emitPartiallyEmittedExpression(node *ast.PartiallyEmittedExpression, precedence ast.OperatorPrecedence) {
+	// avoid reprinting parens for nested partially emitted expressions
+	var stack core.Stack[*ast.PartiallyEmittedExpression]
+	for {
+		stack.Push(node)
+		p.enterNode(node.AsNode())
+		if !ast.IsPartiallyEmittedExpression(node.Expression) {
+			break
+		}
+		node = node.Expression.AsPartiallyEmittedExpression()
+	}
+
+	p.emitExpression(node.Expression, precedence)
+
+	// unwind stack
+	for stack.Len() > 0 {
+		p.exitNode(node.AsNode())
+		node = stack.Pop()
+	}
+}
+
 func (p *Printer) willEmitLeadingNewLine(node *ast.Expression) bool {
 	return false // !!! check if node will emit a leading comment that contains a trailing newline
 }
@@ -2781,16 +2866,17 @@ func (p *Printer) emitExpression(node *ast.Expression, precedence ast.OperatorPr
 	case ast.KindSyntaxList:
 		panic("SyntaxList should not be printed")
 
-		// !!!
-		//////Transformation nodes
-		////case ast.KindNotEmittedStatement:
-		////	return
-		////case ast.KindPartiallyEmittedExpression:
-		////	p.emitPartiallyEmittedExpression(node.AsPartiallyEmittedExpression())
-		////case ast.KindCommaListExpression:
-		////	p.emitCommaList(node.AsCommaListExpression())
-		////case ast.KindSyntheticReferenceExpression:
-		////	return Debug.fail("SyntheticReferenceExpression should not be printed")
+	// Transformation nodes
+	case ast.KindNotEmittedStatement:
+		return
+	case ast.KindPartiallyEmittedExpression:
+		p.emitPartiallyEmittedExpression(node.AsPartiallyEmittedExpression(), precedence)
+
+	// !!!
+	////case ast.KindCommaListExpression:
+	////	p.emitCommaList(node.AsCommaListExpression())
+	////case ast.KindSyntheticReferenceExpression:
+	////	return Debug.fail("SyntheticReferenceExpression should not be printed")
 
 	default:
 		panic(fmt.Sprintf("unexpected Expression: %v", node.Kind))
@@ -3071,7 +3157,15 @@ func (p *Printer) emitLabeledStatement(node *ast.LabeledStatement) {
 	p.enterNode(node.AsNode())
 	p.emitLabelIdentifier(node.Label.AsIdentifier())
 	p.emitTokenWithComment(ast.KindColonToken, node.Label.End(), WriteKindPunctuation, node.AsNode())
-	p.emitEmbeddedStatement(node.AsNode(), node.Statement)
+
+	// TODO: use emitEmbeddedStatement rather than writeSpace/emitStatement here after Strada migration as it is
+	//       more consistent with similar emit elsewhere. writeSpace/emitStatement is used here to reduce spurious
+	//       diffs when testing the Strada migration.
+	////p.emitEmbeddedStatement(node.AsNode(), node.Statement)
+
+	p.writeSpace()
+	p.emitStatement(node.Statement)
+
 	p.exitNode(node.AsNode())
 }
 
@@ -3994,13 +4088,64 @@ func (p *Printer) emitJSDocNode(node *ast.Node) {
 // Top-level nodes
 //
 
-func (p *Printer) emitPrologueDirectives(statements *ast.StatementList) int {
+func (p *Printer) emitShebangIfNeeded(node *ast.SourceFile) {
 	// !!!
-	return 0
 }
 
-func (p *Printer) emitHelpers(node *ast.Node) {
-	// !!!
+func (p *Printer) emitPrologueDirectives(statements *ast.StatementList) int {
+	for i, statement := range statements.Nodes {
+		if ast.IsPrologueDirective(statement) {
+			p.writeLine()
+			p.emitStatement(statement)
+		} else {
+			return i
+		}
+	}
+	return len(statements.Nodes)
+}
+
+func compareEmitHelpers(x *EmitHelper, y *EmitHelper) int {
+	if x == y {
+		return 0
+	}
+	if x.Priority == y.Priority {
+		return 0
+	}
+	if x.Priority == nil {
+		return 1
+	}
+	if y.Priority == nil {
+		return -1
+	}
+	return x.Priority.Value - y.Priority.Value
+}
+
+func (p *Printer) emitHelpers(node *ast.Node) bool {
+	helpersEmitted := false
+	sourceFile := p.currentSourceFile
+	shouldSkip := p.Options.NoEmitHelpers || (sourceFile != nil && p.emitContext.HasRecordedExternalHelpers(sourceFile))
+	helpers := slices.Clone(p.emitContext.GetEmitHelpers(node))
+	if len(helpers) > 0 {
+		slices.SortStableFunc(helpers, compareEmitHelpers)
+		for _, helper := range helpers {
+			if !helper.Scoped {
+				// Skip the helper if it can be skipped and the noEmitHelpers compiler
+				// option is set, or if it can be imported and the importHelpers compiler
+				// option is set.
+				if shouldSkip {
+					continue
+				}
+			}
+			if helper.TextCallback != nil {
+				p.writeLines(helper.TextCallback(p.makeFileLevelOptimisticUniqueName))
+			} else {
+				p.writeLines(helper.Text)
+			}
+			helpersEmitted = true
+		}
+	}
+
+	return helpersEmitted
 }
 
 func (p *Printer) emitSourceFile(node *ast.SourceFile) {
@@ -4013,11 +4158,12 @@ func (p *Printer) emitSourceFile(node *ast.SourceFile) {
 
 	p.pushNameGenerationScope(node.AsNode())
 	p.generateAllNames(node.Statements)
-	p.emitHelpers(node.AsNode())
 
-	index := -1
+	index := 0
 	if node.ScriptKind != core.ScriptKindJSON {
-		index = core.FindIndex(node.Statements.Nodes, isNotPrologueDirective)
+		p.emitShebangIfNeeded(node)
+		index = p.emitPrologueDirectives(node.Statements)
+		p.emitHelpers(node.AsNode())
 	}
 
 	// !!! Emit triple-slash directives
@@ -4026,7 +4172,7 @@ func (p *Printer) emitSourceFile(node *ast.SourceFile) {
 		node.AsNode(),
 		node.Statements,
 		LFMultiLine,
-		core.IfElse(index >= 0, index, len(node.Statements.Nodes)),
+		index,
 		-1, /*count*/
 	)
 	p.popNameGenerationScope(node.AsNode())
@@ -4095,12 +4241,9 @@ func (p *Printer) emitListRange(emit func(p *Printer, node *ast.Node), parentNod
 			p.writeSpace()
 		}
 	} else {
-		end := start + count
-		if end > length {
-			end = length
-		}
+		end := min(start+count, length)
 
-		p.emitListItems(emit, parentNode, children.Nodes[start:end], format, children.HasTrailingComma(), children.Loc)
+		p.emitListItems(emit, parentNode, children.Nodes[start:end], format, p.hasTrailingComma(parentNode, children), children.Loc)
 	}
 
 	if p.OnAfterEmitNodeList != nil {
@@ -4113,6 +4256,82 @@ func (p *Printer) emitListRange(emit func(p *Printer, node *ast.Node), parentNod
 		}
 		p.writePunctuation(getClosingBracket(format))
 	}
+}
+
+func (p *Printer) hasTrailingComma(parentNode *ast.Node, children *ast.NodeList) bool {
+	// NodeList.HasTrailingComma() is unreliable on transformed nodes as some nodes may have been removed. In the event
+	// we believe we may need to emit a trailing comma, we must first look to the respective node list on the original
+	// node first.
+	if !children.HasTrailingComma() {
+		return false
+	}
+
+	originalParent := p.emitContext.MostOriginal(parentNode)
+	if originalParent == parentNode {
+		// if this node is the original node, we can trust the result
+		return true
+	}
+
+	if originalParent.Kind != parentNode.Kind {
+		// if the original node is some other kind of node, we cannot correlate the list
+		return false
+	}
+
+	// find the respective node list on the original parent
+	originalList := children
+	switch originalParent.Kind {
+	case ast.KindObjectLiteralExpression:
+		originalList = originalParent.AsObjectLiteralExpression().Properties
+	case ast.KindArrayLiteralExpression:
+		originalList = originalParent.AsArrayLiteralExpression().Elements
+	case ast.KindCallExpression, ast.KindNewExpression:
+		switch children {
+		case parentNode.TypeArgumentList():
+			originalList = originalParent.TypeArgumentList()
+		case parentNode.ArgumentList():
+			originalList = originalParent.ArgumentList()
+		}
+	case ast.KindConstructor,
+		ast.KindMethodDeclaration,
+		ast.KindGetAccessor,
+		ast.KindSetAccessor,
+		ast.KindFunctionDeclaration,
+		ast.KindFunctionExpression,
+		ast.KindArrowFunction,
+		ast.KindFunctionType,
+		ast.KindConstructorType,
+		ast.KindCallSignature,
+		ast.KindConstructSignature:
+		switch children {
+		case parentNode.TypeParameterList():
+			originalList = originalParent.TypeParameterList()
+		case parentNode.ParameterList():
+			originalList = originalParent.ParameterList()
+		}
+	case ast.KindClassDeclaration, ast.KindClassExpression, ast.KindInterfaceDeclaration, ast.KindTypeAliasDeclaration:
+		switch children {
+		case parentNode.TypeParameterList():
+			originalList = originalParent.TypeParameterList()
+		}
+	case ast.KindObjectBindingPattern, ast.KindArrayBindingPattern:
+		switch children {
+		case parentNode.AsBindingPattern().Elements:
+			originalList = originalParent.AsBindingPattern().Elements
+		}
+	case ast.KindNamedImports:
+		originalList = originalParent.AsNamedImports().Elements
+	case ast.KindNamedExports:
+		originalList = originalParent.AsNamedExports().Elements
+	case ast.KindImportAttributes:
+		originalList = originalParent.AsImportAttributes().Attributes
+	}
+
+	// if we have the original list, we can use it's result.
+	if originalList != nil {
+		return originalList.HasTrailingComma()
+	}
+
+	return false
 }
 
 func (p *Printer) writeDelimiter(format ListFormat) {
@@ -4297,12 +4516,22 @@ func (p *Printer) EmitSourceFile(sourceFile *ast.SourceFile) string {
 
 func (p *Printer) setSourceFile(sourceFile *ast.SourceFile) {
 	p.currentSourceFile = sourceFile
+	p.uniqueHelperNames = nil
+	p.externalHelpersModuleName = nil
+	if sourceFile != nil {
+		if p.emitContext.EmitFlags(p.emitContext.MostOriginal(sourceFile.AsNode()))&EFExternalHelpers != 0 {
+			p.uniqueHelperNames = make(map[string]*ast.IdentifierNode)
+		}
+		p.externalHelpersModuleName = p.emitContext.GetExternalHelpersModuleName(sourceFile)
+	}
+
 	// !!!
 }
 
 func (p *Printer) Write(node *ast.Node, sourceFile *ast.SourceFile, writer EmitTextWriter) {
 	savedCurrentSourceFile := p.currentSourceFile
 	savedWriter := p.writer
+	savedUniqueHelperNames := p.uniqueHelperNames
 
 	p.setSourceFile(sourceFile)
 	p.writer = writer
@@ -4487,6 +4716,7 @@ func (p *Printer) Write(node *ast.Node, sourceFile *ast.SourceFile, writer EmitT
 
 	p.writer = savedWriter
 	p.currentSourceFile = savedCurrentSourceFile
+	p.uniqueHelperNames = savedUniqueHelperNames
 }
 
 //
@@ -4665,7 +4895,7 @@ func (p *Printer) generateName(name *ast.MemberName) {
 // Returns a value indicating whether a name is unique globally or within the current file.
 func (p *Printer) isFileLevelUniqueNameInCurrentFile(name string, _ bool) bool {
 	if p.currentSourceFile != nil {
-		return isFileLevelUniqueName(p.currentSourceFile, name, p.HasGlobalName)
+		return IsFileLevelUniqueName(p.currentSourceFile, name, p.HasGlobalName)
 	} else {
 		return true
 	}

@@ -1,0 +1,26 @@
+--- old.spuriousCircularityOnTypeImport.types
++++ new.spuriousCircularityOnTypeImport.types
+@@= skipped -16, +16 lines =@@
+ };
+ 
+ export declare const value2: {
+->value2 : { sliceSelectors: <FuncMap extends import("./types").SelectorMap<FuncMap>>(selectorsBySlice: FuncMap) => { [P in keyof FuncMap]: Parameters<FuncMap[P]>; }; }
++>value2 : { sliceSelectors: <FuncMap extends SelectorMap<FuncMap>>(selectorsBySlice: FuncMap) => { [P in keyof FuncMap]: Parameters<FuncMap[P]> }; }
+ 
+     sliceSelectors: <FuncMap extends import('./types').SelectorMap<FuncMap>>(selectorsBySlice: FuncMap) => { [P in keyof FuncMap]: Parameters<FuncMap[P]> };
+->sliceSelectors : <FuncMap extends import("./types").SelectorMap<FuncMap>>(selectorsBySlice: FuncMap) => { [P in keyof FuncMap]: Parameters<FuncMap[P]>; }
++>sliceSelectors : <FuncMap extends SelectorMap<FuncMap>>(selectorsBySlice: FuncMap) => { [P in keyof FuncMap]: Parameters<FuncMap[P]> }
+ >selectorsBySlice : FuncMap
+ 
+ };
+ 
+ export declare const value3: {
+->value3 : { sliceSelectors: <FuncMap extends SelectorMap<FuncMap>>(selectorsBySlice: FuncMap) => { [P in keyof FuncMap]: Parameters<FuncMap[P]>; }; }
++>value3 : { sliceSelectors: <FuncMap extends SelectorMap<FuncMap>>(selectorsBySlice: FuncMap) => { [P in keyof FuncMap]: Parameters<FuncMap[P]> }; }
+ 
+     sliceSelectors: <FuncMap extends SelectorMap<FuncMap>>(selectorsBySlice: FuncMap) => { [P in keyof FuncMap]: Parameters<FuncMap[P]> };
+->sliceSelectors : <FuncMap extends SelectorMap<FuncMap>>(selectorsBySlice: FuncMap) => { [P in keyof FuncMap]: Parameters<FuncMap[P]>; }
++>sliceSelectors : <FuncMap extends SelectorMap<FuncMap>>(selectorsBySlice: FuncMap) => { [P in keyof FuncMap]: Parameters<FuncMap[P]> }
+ >selectorsBySlice : FuncMap
+ 
+ };

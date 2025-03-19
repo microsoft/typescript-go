@@ -319,36 +319,37 @@ func ComputeLineStarts(text string) []TextPos {
 
 func ComputeLineStartsSeq(text string) iter.Seq[TextPos] {
 	return func(yield func(TextPos) bool) {
-		pos := 0
-		lineStart := 0
-		for pos < len(text) {
+		textLen := TextPos(len(text))
+		var pos TextPos
+		var lineStart TextPos
+		for pos < textLen {
 			b := text[pos]
-			if b < 0x7F {
+			if b < utf8.RuneSelf {
 				pos++
 				switch b {
 				case '\r':
-					if pos < len(text) && text[pos] == '\n' {
+					if pos < textLen && text[pos] == '\n' {
 						pos++
 					}
 					fallthrough
 				case '\n':
-					if !yield(TextPos(lineStart)) {
+					if !yield(lineStart) {
 						return
 					}
 					lineStart = pos
 				}
 			} else {
 				ch, size := utf8.DecodeRuneInString(text[pos:])
-				pos += size
+				pos += TextPos(size)
 				if stringutil.IsLineBreak(ch) {
-					if !yield(TextPos(lineStart)) {
+					if !yield(lineStart) {
 						return
 					}
 					lineStart = pos
 				}
 			}
 		}
-		yield(TextPos(lineStart))
+		yield(lineStart)
 	}
 }
 
@@ -375,6 +376,11 @@ func Must[T any](v T, err error) T {
 		panic(err)
 	}
 	return v
+}
+
+// Extracts the first value of a multi-value return.
+func FirstResult[T1 any](t1 T1, _ ...any) T1 {
+	return t1
 }
 
 func StringifyJson(input any, prefix string, indent string) (string, error) {
@@ -408,6 +414,21 @@ func GetScriptKindFromFileName(fileName string) ScriptKind {
 		}
 	}
 	return ScriptKindUnknown
+}
+
+func GetOutputExtension(fileName string, jsx JsxEmit) string {
+	switch {
+	case tspath.FileExtensionIs(fileName, tspath.ExtensionJson):
+		return tspath.ExtensionJson
+	case jsx == JsxEmitPreserve && tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionJsx, tspath.ExtensionTsx}):
+		return tspath.ExtensionJsx
+	case tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionMts, tspath.ExtensionMjs}):
+		return tspath.ExtensionMjs
+	case tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionCts, tspath.ExtensionCjs}):
+		return tspath.ExtensionCjs
+	default:
+		return tspath.ExtensionJs
+	}
 }
 
 // Given a name and a list of names that are *not* equal to the name, return a spelling suggestion if there is one that is close enough.

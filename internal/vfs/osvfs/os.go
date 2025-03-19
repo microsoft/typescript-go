@@ -36,6 +36,11 @@ var isFileSystemCaseSensitive = func() bool {
 		return false
 	}
 
+	if runtime.GOARCH == "wasm" {
+		// !!! Who knows; this depends on the host implementation.
+		return true
+	}
+
 	// As a proxy for case-insensitivity, we check if the current executable exists under a different case.
 	// This is not entirely correct, since different OSs can have differing case sensitivity in different paths,
 	// but this is largely good enough for our purposes (and what sys.ts used to do with __filename).
@@ -44,7 +49,7 @@ var isFileSystemCaseSensitive = func() bool {
 		panic(fmt.Sprintf("vfs: failed to get executable path: %v", err))
 	}
 
-	// If the current executable exists under a different case, we must be case-insensitve.
+	// If the current executable exists under a different case, we must be case-insensitive.
 	swapped := swapCase(exe)
 	if _, err := os.Stat(swapped); err != nil {
 		if os.IsNotExist(err) {

@@ -1,0 +1,16 @@
+--- old.awaitInNonAsyncFunction.errors.txt
++++ new.awaitInNonAsyncFunction.errors.txt
+@@= skipped -44, +44 lines =@@
+       for await (const _ of []);
+           ~~~~~
+ !!! error TS1103: 'for await' loops are only allowed within async functions and at the top levels of modules.
+-!!! related TS1356 awaitInNonAsyncFunction.ts:13:28: Did you mean to mark this function as 'async'?
++!!! related TS1356 awaitInNonAsyncFunction.ts:13:7: Did you mean to mark this function as 'async'?
+       await p;
+       ~~~~~
+ !!! error TS1308: 'await' expressions are only allowed within async functions and at the top levels of modules.
+-!!! related TS1356 awaitInNonAsyncFunction.ts:13:28: Did you mean to mark this function as 'async'?
++!!! related TS1356 awaitInNonAsyncFunction.ts:13:7: Did you mean to mark this function as 'async'?
+     }
+     
+     const arrowFunc = (p: Promise<number>) => {

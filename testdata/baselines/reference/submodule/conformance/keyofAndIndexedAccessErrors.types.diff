@@ -1,0 +1,85 @@
+--- old.keyofAndIndexedAccessErrors.types
++++ new.keyofAndIndexedAccessErrors.types
+@@= skipped -27, +27 lines =@@
+ >T01 : keyof Object
+ 
+ type T02 = keyof keyof Object;
+->T02 : number | "length" | "toString" | "charAt" | "charCodeAt" | "concat" | "indexOf" | "lastIndexOf" | "localeCompare" | "match" | "replace" | "search" | "slice" | "split" | "substring" | "toLowerCase" | "toLocaleLowerCase" | "toUpperCase" | "toLocaleUpperCase" | "trim" | "substr" | "valueOf"
++>T02 : number | "charAt" | "charCodeAt" | "concat" | "indexOf" | "lastIndexOf" | "length" | "localeCompare" | "match" | "replace" | "search" | "slice" | "split" | "substr" | "substring" | "toLocaleLowerCase" | "toLocaleUpperCase" | "toLowerCase" | "toString" | "toUpperCase" | "trim" | "valueOf"
+ 
+ type T03 = keyof keyof keyof Object;
+ >T03 : "toString" | "valueOf"
+ 
+ type T04 = keyof keyof keyof keyof Object;
+->T04 : number | "length" | "toString" | "charAt" | "charCodeAt" | "concat" | "indexOf" | "lastIndexOf" | "localeCompare" | "match" | "replace" | "search" | "slice" | "split" | "substring" | "toLowerCase" | "toLocaleLowerCase" | "toUpperCase" | "toLocaleUpperCase" | "trim" | "substr" | "valueOf"
++>T04 : number | "charAt" | "charCodeAt" | "concat" | "indexOf" | "lastIndexOf" | "length" | "localeCompare" | "match" | "replace" | "search" | "slice" | "split" | "substr" | "substring" | "toLocaleLowerCase" | "toLocaleUpperCase" | "toLowerCase" | "toString" | "toUpperCase" | "trim" | "valueOf"
+ 
+ type T05 = keyof keyof keyof keyof keyof Object;
+ >T05 : "toString" | "valueOf"
+ 
+ type T06 = keyof keyof keyof keyof keyof keyof Object;
+->T06 : number | "length" | "toString" | "charAt" | "charCodeAt" | "concat" | "indexOf" | "lastIndexOf" | "localeCompare" | "match" | "replace" | "search" | "slice" | "split" | "substring" | "toLowerCase" | "toLocaleLowerCase" | "toUpperCase" | "toLocaleUpperCase" | "trim" | "substr" | "valueOf"
++>T06 : number | "charAt" | "charCodeAt" | "concat" | "indexOf" | "lastIndexOf" | "length" | "localeCompare" | "match" | "replace" | "search" | "slice" | "split" | "substr" | "substring" | "toLocaleLowerCase" | "toLocaleUpperCase" | "toLowerCase" | "toString" | "toUpperCase" | "trim" | "valueOf"
+ 
+ type T10 = Shape["name"];
+ >T10 : string
+@@= skipped -178, +178 lines =@@
+ }
+ 
+ function f20<T, U>(x: T | U, y: T & U, k1: keyof (T | U), k2: keyof T & keyof U, k3: keyof (T & U), k4: keyof T | keyof U) {
+->f20 : <T, U>(x: T | U, y: T & U, k1: keyof (T | U), k2: keyof T & keyof U, k3: keyof (T & U), k4: keyof T | keyof U) => void
++>f20 : <T, U>(x: T | U, y: T & U, k1: keyof T & keyof U, k2: keyof T & keyof U, k3: keyof T | keyof U, k4: keyof T | keyof U) => void
+ >x : T | U
+ >y : T & U
+ >k1 : keyof T & keyof U
+@@= skipped -9, +9 lines =@@
+ >k4 : keyof T | keyof U
+ 
+     x[k1];
+->x[k1] : (T | U)[keyof T & keyof U]
++>x[k1] : T | U[keyof T & keyof U]
+ >x : T | U
+ >k1 : keyof T & keyof U
+ 
+     x[k2];
+->x[k2] : (T | U)[keyof T & keyof U]
++>x[k2] : T | U[keyof T & keyof U]
+ >x : T | U
+ >k2 : keyof T & keyof U
+ 
+@@= skipped -20, +20 lines =@@
+ >k4 : keyof T | keyof U
+ 
+     y[k1];
+->y[k1] : (T & U)[keyof T & keyof U]
++>y[k1] : T & U[keyof T & keyof U]
+ >y : T & U
+ >k1 : keyof T & keyof U
+ 
+     y[k2];
+->y[k2] : (T & U)[keyof T & keyof U]
++>y[k2] : T & U[keyof T & keyof U]
+ >y : T & U
+ >k2 : keyof T & keyof U
+ 
+     y[k3];
+->y[k3] : (T & U)[keyof T | keyof U]
++>y[k3] : T & U[keyof T | keyof U]
+ >y : T & U
+ >k3 : keyof T | keyof U
+ 
+     y[k4];
+->y[k4] : (T & U)[keyof T | keyof U]
++>y[k4] : T & U[keyof T | keyof U]
+ >y : T & U
+ >k4 : keyof T | keyof U
+ 
+@@= skipped -165, +165 lines =@@
+ 
+ // The constraint of 'keyof T' is 'keyof T'
+ function f4<T extends { [K in keyof T]: string }>(k: keyof T) {
+->f4 : <T extends { [K in keyof T]: string; }>(k: keyof T) => void
++>f4 : <T extends { [K in keyof T]: string }>(k: keyof T) => void
+ >k : keyof T
+ 
+     k = 42; // error

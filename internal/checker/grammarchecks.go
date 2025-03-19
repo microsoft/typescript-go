@@ -32,15 +32,6 @@ func (c *Checker) grammarErrorAtPos(nodeForSourceFile *ast.Node, start int, leng
 	return false
 }
 
-func (c *Checker) grammarErrorOnNodeSkippedOn(key string, node *ast.Node, message *diagnostics.Message, args ...any) bool {
-	sourceFile := ast.GetSourceFileOfNode(node)
-	if !c.hasParseDiagnostics(sourceFile) {
-		c.errorSkippedOn(key, node, message, args...)
-		return true
-	}
-	return false
-}
-
 func (c *Checker) grammarErrorOnNode(node *ast.Node, message *diagnostics.Message, args ...any) bool {
 	sourceFile := ast.GetSourceFileOfNode(node)
 	if !c.hasParseDiagnostics(sourceFile) {
@@ -210,7 +201,7 @@ func (c *Checker) checkGrammarModifiers(node *ast.Node /*Union[HasModifiers, Has
 	if c.reportObviousDecoratorErrors(node) || c.reportObviousModifierErrors(node) {
 		return true
 	}
-	if ast.IsParameter(node) && parameterIsThisKeyword(node) {
+	if ast.IsParameter(node) && ast.IsThisParameter(node) {
 		return c.grammarErrorOnFirstToken(node, diagnostics.Neither_decorators_nor_modifiers_may_be_applied_to_this_parameters)
 	}
 	blockScopeKind := ast.NodeFlagsNone
@@ -1221,12 +1212,13 @@ func (c *Checker) checkGrammarForInOrForOfStatement(forInOrOfStatement *ast.ForI
 			sourceFile := ast.GetSourceFileOfNode(asNode)
 			if ast.IsInTopLevelContext(asNode) {
 				if !c.hasParseDiagnostics(sourceFile) {
-					if !isEffectiveExternalModule(sourceFile, c.compilerOptions) {
+					if !ast.IsEffectiveExternalModule(sourceFile, c.compilerOptions) {
 						c.diagnostics.Add(createDiagnosticForNode(forInOrOfStatement.AwaitModifier, diagnostics.X_for_await_loops_are_only_allowed_at_the_top_level_of_a_file_when_that_file_is_a_module_but_this_file_has_no_imports_or_exports_Consider_adding_an_empty_export_to_make_this_file_a_module))
 					}
 					switch c.moduleKind {
 					case core.ModuleKindNode16, core.ModuleKindNodeNext:
-						if sourceFile.ImpliedNodeFormat == core.ModuleKindCommonJS {
+						sourceFileMetaData := c.program.GetSourceFileMetaData(sourceFile.Path())
+						if sourceFileMetaData != nil && sourceFileMetaData.ImpliedNodeFormat == core.ModuleKindCommonJS {
 							c.diagnostics.Add(createDiagnosticForNode(forInOrOfStatement.AwaitModifier, diagnostics.The_current_file_is_a_CommonJS_module_and_cannot_use_await_at_the_top_level))
 							break
 						}
@@ -1249,7 +1241,6 @@ func (c *Checker) checkGrammarForInOrForOfStatement(forInOrOfStatement *ast.ForI
 					diagnostic := createDiagnosticForNode(forInOrOfStatement.AwaitModifier, diagnostics.X_for_await_loops_are_only_allowed_within_async_functions_and_at_the_top_levels_of_modules)
 					containingFunc := getContainingFunction(forInOrOfStatement.AsNode())
 					if containingFunc != nil && containingFunc.Kind != ast.KindConstructor {
-						// !!!
 						// Debug.assert((getFunctionFlags(containingFunc)&FunctionFlagsAsync) == 0, "Enclosing function should never be an async function.")
 						if hasAsyncModifier(containingFunc) {
 							panic("Enclosing function should never be an async function.")
@@ -1642,7 +1633,7 @@ func (c *Checker) checkGrammarVariableDeclaration(node *ast.VariableDeclaration)
 func (c *Checker) checkGrammarForEsModuleMarkerInBindingName(name *ast.Node) bool {
 	if ast.IsIdentifier(name) {
 		if name.Text() == "__esModule" {
-			return c.grammarErrorOnNodeSkippedOn("noEmit", name, diagnostics.Identifier_expected_esModule_is_reserved_as_an_exported_marker_when_transforming_ECMAScript_modules)
+			return c.grammarErrorOnNode(name, diagnostics.Identifier_expected_esModule_is_reserved_as_an_exported_marker_when_transforming_ECMAScript_modules)
 		}
 	} else {
 		for _, element := range name.AsBindingPattern().Elements.Nodes {
@@ -1713,7 +1704,7 @@ func (c *Checker) checkGrammarAwaitOrAwaitUsing(node *ast.Node) bool {
 			if !c.hasParseDiagnostics(sourceFile) {
 				var span core.TextRange
 				var spanCalculated bool
-				if !isEffectiveExternalModule(sourceFile, c.compilerOptions) {
+				if !ast.IsEffectiveExternalModule(sourceFile, c.compilerOptions) {
 					span = scanner.GetRangeOfTokenAtPosition(sourceFile, node.Pos())
 					spanCalculated = true
 					var message *diagnostics.Message
@@ -1729,7 +1720,8 @@ func (c *Checker) checkGrammarAwaitOrAwaitUsing(node *ast.Node) bool {
 				switch c.moduleKind {
 				case core.ModuleKindNode16,
 					core.ModuleKindNodeNext:
-					if sourceFile.ImpliedNodeFormat == core.ModuleKindCommonJS {
+					sourceFileMetaData := c.program.GetSourceFileMetaData(sourceFile.Path())
+					if sourceFileMetaData != nil && sourceFileMetaData.ImpliedNodeFormat == core.ModuleKindCommonJS {
 						if !spanCalculated {
 							span = scanner.GetRangeOfTokenAtPosition(sourceFile, node.Pos())
 						}
@@ -1772,7 +1764,7 @@ func (c *Checker) checkGrammarAwaitOrAwaitUsing(node *ast.Node) bool {
 					message = diagnostics.X_await_using_statements_are_only_allowed_within_async_functions_and_at_the_top_levels_of_modules
 				}
 				diagnostic := ast.NewDiagnostic(sourceFile, span, message)
-				if container != nil && container.Kind != ast.KindConstructor && hasAsyncModifier(container) {
+				if container != nil && container.Kind != ast.KindConstructor && !hasAsyncModifier(container) {
 					relatedInfo := NewDiagnosticForNode(container, diagnostics.Did_you_mean_to_mark_this_function_as_async)
 					diagnostic.AddRelatedInfo(relatedInfo)
 				}
@@ -1889,8 +1881,6 @@ func (c *Checker) checkGrammarConstructorTypeParameters(node *ast.ConstructorDec
 }
 
 func (c *Checker) checkGrammarConstructorTypeAnnotation(node *ast.ConstructorDeclaration) bool {
-	// !!!
-	// t := node.ReturnType || getEffectiveReturnTypeNode(node)
 	t := node.Type
 	if t != nil {
 		return c.grammarErrorOnNode(t, diagnostics.Type_annotation_cannot_appear_on_a_constructor_declaration)
@@ -1919,24 +1909,22 @@ func (c *Checker) checkGrammarProperty(node *ast.Node /*Union[PropertyDeclaratio
 		if ast.IsAutoAccessorPropertyDeclaration(node) && c.checkGrammarForInvalidQuestionMark(node.AsPropertyDeclaration().PostfixToken, diagnostics.An_accessor_property_cannot_be_declared_optional) {
 			return true
 		}
-	} else if node.Parent.Kind == ast.KindInterfaceDeclaration {
+	} else if ast.IsInterfaceDeclaration(node.Parent) {
 		if c.checkGrammarForInvalidDynamicName(propertyName, diagnostics.A_computed_property_name_in_an_interface_must_refer_to_an_expression_whose_type_is_a_literal_type_or_a_unique_symbol_type) {
 			return true
 		}
-
 		if !ast.IsPropertySignatureDeclaration(node) {
 			// Interfaces cannot contain property declarations
 			panic(fmt.Sprintf("Unexpected node kind %q", node.Kind))
 		}
-
 		if initializer := node.AsPropertySignatureDeclaration().Initializer; initializer != nil {
 			return c.grammarErrorOnNode(initializer, diagnostics.An_interface_property_cannot_have_an_initializer)
 		}
-	} else if ast.IsTypeAliasDeclaration(node.Parent) {
+	} else if ast.IsTypeLiteralNode(node.Parent) {
 		if c.checkGrammarForInvalidDynamicName(node.Name(), diagnostics.A_computed_property_name_in_a_type_literal_must_refer_to_an_expression_whose_type_is_a_literal_type_or_a_unique_symbol_type) {
 			return true
 		}
-		if ast.IsPropertySignatureDeclaration(node) {
+		if !ast.IsPropertySignatureDeclaration(node) {
 			// Type literals cannot contain property declarations
 			panic(fmt.Sprintf("Unexpected node kind %q", node.Kind))
 		}

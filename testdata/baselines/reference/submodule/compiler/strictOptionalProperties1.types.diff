@@ -1,0 +1,17 @@
+--- old.strictOptionalProperties1.types
++++ new.strictOptionalProperties1.types
+@@= skipped -785, +785 lines =@@
+ 
+ interface PropsFromReact {
+     onClick?: () => void;
+->onClick : (() => void) | undefined
++>onClick : () => void | undefined
+ }
+ 
+ interface PropsFromMaterialUI {
+     onClick?: (() => void) | undefined;
+->onClick : (() => void) | undefined
++>onClick : () => void | undefined
+ }
+ 
+ type TheTypeFromMaterialUI = PropsFromReact & PropsFromMaterialUI;

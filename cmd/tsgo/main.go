@@ -6,9 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"path/filepath"
 	"runtime"
-	"runtime/pprof"
 	"slices"
 	"strconv"
 	"strings"
@@ -21,6 +19,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/execute"
+	"github.com/microsoft/typescript-go/internal/pprof"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
@@ -112,10 +111,18 @@ func parseArgs() *cliOptions {
 	flag.StringVar(&opts.devel.pprofDir, "pprofDir", "", "Generate pprof CPU/memory profiles to the given directory.")
 	flag.Parse()
 
+	if len(flag.Args()) > 0 {
+		fmt.Fprintf(os.Stderr, "Unknown positional arguments %v. Current compiler is not identical to tsc but can be partially emulated by running:\n\ntsgo tsc <args>\n", flag.Args())
+		os.Exit(1)
+	}
+
 	return opts
 }
 
 func main() {
+	// TypeScript uses ANSI escape sequences which cmd.exe won't parse without enabling virtual terminal processing.
+	enableVirtualTerminalProcessing()
+
 	if args := os.Args[1:]; len(args) > 0 {
 		switch args[0] {
 		case "tsc":
@@ -129,8 +136,8 @@ func main() {
 	opts := parseArgs()
 
 	if opts.devel.pprofDir != "" {
-		profileSession := beginProfiling(opts.devel.pprofDir)
-		defer profileSession.stop()
+		profileSession := pprof.BeginProfiling(opts.devel.pprofDir, os.Stdout)
+		defer profileSession.Stop()
 	}
 
 	startTime := time.Now()
@@ -215,7 +222,7 @@ func main() {
 	var emitTime time.Duration
 	if compilerOptions.NoEmit.IsFalseOrUnknown() {
 		emitStart := time.Now()
-		result := program.Emit(&ts.EmitOptions{})
+		result := program.Emit(ts.EmitOptions{})
 		diagnostics = append(diagnostics, result.Diagnostics...)
 		emitTime = time.Since(emitStart)
 	}
@@ -223,12 +230,17 @@ func main() {
 	totalTime := time.Since(startTime)
 
 	var memStats runtime.MemStats
+	// GC must be called twice to allow things to settle.
 	runtime.GC()
 	runtime.GC()
 	runtime.ReadMemStats(&memStats)
 
 	if !opts.devel.quiet && len(diagnostics) != 0 {
 		printDiagnostics(ts.SortAndDeduplicateDiagnostics(diagnostics), host, compilerOptions)
+	}
+
+	if exts := program.UnsupportedExtensions(); len(exts) != 0 {
+		fmt.Fprintf(os.Stderr, "Warning: The project contains unsupported file types (%s), which are currently not fully type-checked.\n", strings.Join(exts, ", "))
 	}
 
 	if compilerOptions.ListFiles.IsTrue() {
@@ -238,7 +250,13 @@ func main() {
 	var stats table
 
 	stats.add("Files", len(program.SourceFiles()))
+	stats.add("Lines", program.LineCount())
+	stats.add("Identifiers", program.IdentifierCount())
+	stats.add("Symbols", program.SymbolCount())
 	stats.add("Types", program.TypeCount())
+	stats.add("Instantiations", program.InstantiationCount())
+	stats.add("Memory used", fmt.Sprintf("%vK", memStats.Alloc/1024))
+	stats.add("Memory allocs", strconv.FormatUint(memStats.Mallocs, 10))
 	stats.add("Parse time", parseTime)
 	if bindTime != 0 {
 		stats.add("Bind time", bindTime)
@@ -250,8 +268,6 @@ func main() {
 		stats.add("Emit time", emitTime)
 	}
 	stats.add("Total time", totalTime)
-	stats.add("Memory used", fmt.Sprintf("%vK", memStats.Alloc/1024))
-	stats.add("Memory allocs", strconv.FormatUint(memStats.Mallocs, 10))
 
 	stats.print()
 }
@@ -289,6 +305,14 @@ func formatDuration(d time.Duration) string {
 	return fmt.Sprintf("%.3fs", d.Seconds())
 }
 
+func identifierCount(p *ts.Program) int {
+	count := 0
+	for _, file := range p.SourceFiles() {
+		count += file.IdentifierCount
+	}
+	return count
+}
+
 func listFiles(p *ts.Program) {
 	for _, file := range p.SourceFiles() {
 		fmt.Println(file.FileName())
@@ -316,55 +340,4 @@ func printDiagnostics(diagnostics []*ast.Diagnostic, host ts.CompilerHost, compi
 			printDiagnostic(diagnostic, 0, formatOpts.ComparePathsOptions)
 		}
 	}
-}
-
-type profileSession struct {
-	cpuFilePath string
-	memFilePath string
-	cpuFile     *os.File
-	memFile     *os.File
-}
-
-func beginProfiling(profileDir string) *profileSession {
-	if err := os.MkdirAll(profileDir, 0o755); err != nil {
-		panic(err)
-	}
-
-	pid := os.Getpid()
-
-	cpuProfilePath := filepath.Join(profileDir, fmt.Sprintf("%d-cpuprofile.pb.gz", pid))
-	memProfilePath := filepath.Join(profileDir, fmt.Sprintf("%d-memprofile.pb.gz", pid))
-	cpuFile, err := os.Create(cpuProfilePath)
-	if err != nil {
-		panic(err)
-	}
-	memFile, err := os.Create(memProfilePath)
-	if err != nil {
-		panic(err)
-	}
-
-	if err := pprof.StartCPUProfile(cpuFile); err != nil {
-		panic(err)
-	}
-
-	return &profileSession{
-		cpuFilePath: cpuProfilePath,
-		memFilePath: memProfilePath,
-		cpuFile:     cpuFile,
-		memFile:     memFile,
-	}
-}
-
-func (p *profileSession) stop() {
-	pprof.StopCPUProfile()
-	err := pprof.Lookup("allocs").WriteTo(p.memFile, 0)
-	if err != nil {
-		panic(err)
-	}
-
-	p.cpuFile.Close()
-	p.memFile.Close()
-
-	fmt.Printf("CPU profile: %v\n", p.cpuFilePath)
-	fmt.Printf("Memory profile: %v\n", p.memFilePath)
 }

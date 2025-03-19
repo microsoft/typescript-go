@@ -9,6 +9,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 type ContainerFlags int32
@@ -116,6 +117,7 @@ func bindSourceFile(file *ast.SourceFile, options *core.CompilerOptions) {
 		b.file = file
 		b.options = options
 		b.languageVersion = options.GetEmitScriptTarget()
+		b.inStrictMode = (options.AlwaysStrict.IsTrue() || options.Strict.IsTrue()) && !file.IsDeclarationFile || ast.IsExternalModule(file)
 		b.unreachableFlow = b.newFlowNode(ast.FlowFlagsUnreachable)
 		b.reportedUnreachableFlow = b.newFlowNode(ast.FlowFlagsUnreachable)
 		b.bind(file.AsNode())
@@ -146,7 +148,7 @@ func (b *Binder) declareSymbol(symbolTable ast.SymbolTable, parent *ast.Symbol, 
 
 func (b *Binder) declareSymbolEx(symbolTable ast.SymbolTable, parent *ast.Symbol, node *ast.Node, includes ast.SymbolFlags, excludes ast.SymbolFlags, isReplaceableByMethod bool, isComputedName bool) *ast.Symbol {
 	// Debug.assert(isComputedName || !ast.HasDynamicName(node))
-	isDefaultExport := ast.HasSyntacticModifier(node, ast.ModifierFlagsDefault) || ast.IsExportSpecifier(node) && ModuleExportNameIsDefault(node.AsExportSpecifier().Name())
+	isDefaultExport := ast.HasSyntacticModifier(node, ast.ModifierFlagsDefault) || ast.IsExportSpecifier(node) && ast.ModuleExportNameIsDefault(node.AsExportSpecifier().Name())
 	// The exported symbol for an export default function/class node is always named "default"
 	var name string
 	switch {
@@ -361,10 +363,6 @@ func (b *Binder) getDisplayName(node *ast.Node) string {
 		return name
 	}
 	return "(Missing)"
-}
-
-func ModuleExportNameIsDefault(node *ast.Node) bool {
-	return node.Text() == ast.InternalSymbolNameDefault
 }
 
 func GetSymbolNameForPrivateIdentifier(containingClassSymbol *ast.Symbol, description string) string {
@@ -760,8 +758,7 @@ func (b *Binder) bindSourceFileIfExternalModule() {
 }
 
 func (b *Binder) bindSourceFileAsExternalModule() {
-	// !!! Remove file extension from module name
-	b.bindAnonymousDeclaration(b.file.AsNode(), ast.SymbolFlagsValueModule, "\""+b.file.FileName()+"\"")
+	b.bindAnonymousDeclaration(b.file.AsNode(), ast.SymbolFlagsValueModule, "\""+tspath.RemoveFileExtension(b.file.FileName())+"\"")
 }
 
 func (b *Binder) bindModuleDeclaration(node *ast.Node) {
@@ -970,10 +967,7 @@ func (b *Binder) bindFunctionOrConstructorType(node *ast.Node) {
 }
 
 func addLateBoundAssignmentDeclarationToSymbol(node *ast.Node, symbol *ast.Symbol) {
-	if symbol.AssignmentDeclarationMembers == nil {
-		symbol.AssignmentDeclarationMembers = make(map[ast.NodeId]*ast.Node)
-	}
-	symbol.AssignmentDeclarationMembers[ast.GetNodeId(node)] = node
+	symbol.AssignmentDeclarationMembers.Add(node)
 }
 
 func (b *Binder) bindFunctionPropertyAssignment(node *ast.Node) {
@@ -1986,7 +1980,7 @@ func (b *Binder) bindTryStatement(node *ast.Node) {
 				b.addAntecedent(b.currentReturnTarget, b.createReduceLabel(finallyLabel, returnLabel.Antecedents, b.currentFlow))
 			}
 			// If we have an outer exception target (i.e. a containing try-finally or try-catch-finally), add a
-			// control flow that goes back through the finally blok and back through each possible exception source.
+			// control flow that goes back through the finally block and back through each possible exception source.
 			if b.currentExceptionTarget != nil && exceptionLabel.Antecedents != nil {
 				b.addAntecedent(b.currentExceptionTarget, b.createReduceLabel(finallyLabel, exceptionLabel.Antecedents, b.currentFlow))
 			}
@@ -2809,16 +2803,6 @@ func GetErrorRangeForNode(sourceFile *ast.SourceFile, node *ast.Node) core.TextR
 		ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor, ast.KindTypeAliasDeclaration, ast.KindPropertyDeclaration,
 		ast.KindPropertySignature, ast.KindNamespaceImport:
 		errorNode = ast.GetNameOfDeclaration(node)
-	case ast.KindCallExpression, ast.KindNewExpression:
-		errorNode = node.Expression()
-		if ast.IsPropertyAccessExpression(errorNode) {
-			errorNode = errorNode.Name()
-		}
-	case ast.KindTaggedTemplateExpression:
-		errorNode = node.AsTaggedTemplateExpression().Tag
-		if ast.IsPropertyAccessExpression(errorNode) {
-			errorNode = errorNode.Name()
-		}
 	case ast.KindArrowFunction:
 		return getErrorRangeForArrowFunction(sourceFile, node)
 	case ast.KindCaseClause, ast.KindDefaultClause:

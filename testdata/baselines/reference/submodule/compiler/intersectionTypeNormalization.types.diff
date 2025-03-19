@@ -1,0 +1,57 @@
+--- old.intersectionTypeNormalization.types
++++ new.intersectionTypeNormalization.types
+@@= skipped -123, +123 lines =@@
+ 
+     if (value.kind === 'int') {
+ >value.kind === 'int' : boolean
+->value.kind : "string" | "int"
++>value.kind : "int" | "string"
+ >value : IntersectionFail
+->kind : "string" | "int"
++>kind : "int" | "string"
+ >'int' : "int"
+ 
+         return '' + value.num;
+@@= skipped -83, +83 lines =@@
+ >Foo : Foo
+ 
+     genreId: enums.Genre;
+->genreId : enums.Genre
++>genreId : Genre
+ >enums : any
+ 
+ };
+@@= skipped -9, +9 lines =@@
+ >Bar : Bar
+ 
+     genreId: enums.Genre;
+->genreId : enums.Genre
++>genreId : Genre
+ >enums : any
+ 
+ };
+@@= skipped -9, +9 lines =@@
+ >FooBar : FooBar
+ 
+ function foo(so: any) {
+->foo : (so: any) => enums.Genre
++>foo : (so: any) => Genre
+ >so : any
+ 
+     const val = so as FooBar;
+@@= skipped -9, +9 lines =@@
+ >so : any
+ 
+     const isGenre = val.genreId;
+->isGenre : enums.Genre
+->val.genreId : enums.Genre
++>isGenre : Genre
++>val.genreId : Genre
+ >val : FooBar
+->genreId : enums.Genre
++>genreId : Genre
+ 
+     return isGenre;
+->isGenre : enums.Genre
++>isGenre : Genre
+ }

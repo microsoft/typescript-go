@@ -82,7 +82,7 @@ func getTokenAtPosition(
 	}
 
 	visitNodes := func(nodes []*ast.Node) {
-		index, match := core.BinarySearchUniqueFunc(nodes, position, func(middle int, node *ast.Node) int {
+		index, match := core.BinarySearchUniqueFunc(nodes, func(middle int, node *ast.Node) int {
 			cmp := testNode(node)
 			if cmp < 0 {
 				left = node.End()
@@ -109,20 +109,17 @@ func getTokenAtPosition(
 		return nodeList
 	}
 
-	nodeVisitor := &ast.NodeVisitor{
-		Visit: core.Identity[*ast.Node],
-		Hooks: ast.NodeVisitorHooks{
-			VisitNode:  visitNode,
-			VisitToken: visitNode,
-			VisitNodes: visitNodeList,
-			VisitModifiers: func(modifiers *ast.ModifierList, visitor *ast.NodeVisitor) *ast.ModifierList {
-				if modifiers != nil {
-					visitNodeList(&modifiers.NodeList, visitor)
-				}
-				return modifiers
-			},
+	nodeVisitor := ast.NewNodeVisitor(core.Identity, nil, ast.NodeVisitorHooks{
+		VisitNode:  visitNode,
+		VisitToken: visitNode,
+		VisitNodes: visitNodeList,
+		VisitModifiers: func(modifiers *ast.ModifierList, visitor *ast.NodeVisitor) *ast.ModifierList {
+			if modifiers != nil {
+				visitNodeList(&modifiers.NodeList, visitor)
+			}
+			return modifiers
 		},
-	}
+	})
 
 	for {
 		visitEachChildAndJSDoc(current, sourceFile, nodeVisitor)
@@ -130,7 +127,7 @@ func getTokenAtPosition(
 		// Check if the rightmost token of prevSubtree should be returned based on the
 		// `includePrecedingTokenAtEndPosition` callback.
 		if prevSubtree != nil {
-			child := findRightmostNode(prevSubtree, sourceFile)
+			child := findRightmostNode(prevSubtree)
 			if child.End() == position && includePrecedingTokenAtEndPosition(child) {
 				// Optimization: includePrecedingTokenAtEndPosition only ever returns true
 				// for real AST nodes, so we don't run the scanner here.
@@ -185,7 +182,7 @@ func getPosition(node *ast.Node, sourceFile *ast.SourceFile, allowPositionInLead
 	return scanner.GetTokenPosOfNode(node, sourceFile, true /*includeJsDoc*/)
 }
 
-func findRightmostNode(node *ast.Node, sourceFile *ast.SourceFile) *ast.Node {
+func findRightmostNode(node *ast.Node) *ast.Node {
 	var next *ast.Node
 	current := node
 	visitNode := func(node *ast.Node, _ *ast.NodeVisitor) *ast.Node {
@@ -194,27 +191,22 @@ func findRightmostNode(node *ast.Node, sourceFile *ast.SourceFile) *ast.Node {
 		}
 		return node
 	}
-	visitor := &ast.NodeVisitor{
-		Visit: func(node *ast.Node) *ast.Node {
-			return node
+	visitor := ast.NewNodeVisitor(core.Identity, nil, ast.NodeVisitorHooks{
+		VisitNode:  visitNode,
+		VisitToken: visitNode,
+		VisitNodes: func(nodeList *ast.NodeList, visitor *ast.NodeVisitor) *ast.NodeList {
+			if nodeList != nil && len(nodeList.Nodes) > 0 {
+				next = nodeList.Nodes[len(nodeList.Nodes)-1]
+			}
+			return nodeList
 		},
-		Hooks: ast.NodeVisitorHooks{
-			VisitNode:  visitNode,
-			VisitToken: visitNode,
-			VisitNodes: func(nodeList *ast.NodeList, visitor *ast.NodeVisitor) *ast.NodeList {
-				if nodeList != nil && len(nodeList.Nodes) > 0 {
-					next = nodeList.Nodes[len(nodeList.Nodes)-1]
-				}
-				return nodeList
-			},
-			VisitModifiers: func(modifiers *ast.ModifierList, visitor *ast.NodeVisitor) *ast.ModifierList {
-				if modifiers != nil && len(modifiers.Nodes) > 0 {
-					next = modifiers.Nodes[len(modifiers.Nodes)-1]
-				}
-				return modifiers
-			},
+		VisitModifiers: func(modifiers *ast.ModifierList, visitor *ast.NodeVisitor) *ast.ModifierList {
+			if modifiers != nil && len(modifiers.Nodes) > 0 {
+				next = modifiers.Nodes[len(modifiers.Nodes)-1]
+			}
+			return modifiers
 		},
-	}
+	})
 
 	for {
 		current.VisitEachChild(visitor)

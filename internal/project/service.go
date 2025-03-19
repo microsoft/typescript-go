@@ -648,6 +648,6 @@ func (s *Service) printProjects() {
 	s.options.Logger.EndGroup()
 }
 
-func (s *Service) logf(format string, args ...interface{}) {
+func (s *Service) logf(format string, args ...any) {
 	s.Log(fmt.Sprintf(format, args...))
 }

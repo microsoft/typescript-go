@@ -1,0 +1,42 @@
+--- old.arrayOfFunctionTypes3.types
++++ new.arrayOfFunctionTypes3.types
+@@= skipped -3, +3 lines =@@
+ // valid uses of arrays of function types
+ 
+ var x = [() => 1, () => { }];
+->x : (() => void)[]
+->[() => 1, () => { }] : (() => void)[]
++>x : () => void[]
++>[() => 1, () => { }] : () => void[]
+ >() => 1 : () => number
+ >1 : 1
+ >() => { } : () => void
+@@= skipped -10, +10 lines =@@
+ >r2 : void
+ >x[0]() : void
+ >x[0] : () => void
+->x : (() => void)[]
++>x : () => void[]
+ >0 : 0
+ 
+ class C {
+@@= skipped -10, +10 lines =@@
+ >foo : string
+ }
+ var y = [C, C];
+->y : (typeof C)[]
+->[C, C] : (typeof C)[]
++>y : typeof C[]
++>[C, C] : typeof C[]
+ >C : typeof C
+ >C : typeof C
+ 
+@@= skipped -9, +9 lines =@@
+ >r3 : C
+ >new y[0]() : C
+ >y[0] : typeof C
+->y : (typeof C)[]
++>y : typeof C[]
+ >0 : 0
+ 
+ var a: { (x: number): number; (x: string): string; };

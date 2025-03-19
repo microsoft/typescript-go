@@ -2,13 +2,15 @@ package transformers
 
 // !!! Unqualified enum member references across merged enum declarations are not currently supported (e.g `enum E {A}; enum E {B=A}`)
 // !!! Unqualified namespace member references across merged namespace declarations are not currently supported (e.g `namespace N { export var x = 1; }; namespace N { x; }`).
-// !!! Parameter Property Initializers are not yet implemented.
 // !!! SourceMaps and Comments need to be validated
 
 import (
+	"slices"
+
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/evaluator"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/printer"
 )
@@ -24,23 +26,33 @@ type RuntimeSyntaxTransformer struct {
 	currentScopeFirstDeclarationsOfName map[string]*ast.Node
 	currentEnum                         *ast.EnumDeclarationNode
 	currentNamespace                    *ast.ModuleDeclarationNode
-	resolver                            *binder.NameResolver
+	resolver                            binder.ReferenceResolver
+	evaluator                           evaluator.Evaluator
+	enumMemberCache                     map[*ast.EnumDeclarationNode]map[string]evaluator.Result
 }
 
-func NewRuntimeSyntaxTransformer(emitContext *printer.EmitContext, compilerOptions *core.CompilerOptions) *Transformer {
-	tx := &RuntimeSyntaxTransformer{compilerOptions: compilerOptions}
+func NewRuntimeSyntaxTransformer(emitContext *printer.EmitContext, compilerOptions *core.CompilerOptions, resolver binder.ReferenceResolver) *Transformer {
+	tx := &RuntimeSyntaxTransformer{compilerOptions: compilerOptions, resolver: resolver}
 	return tx.newTransformer(tx.visit, emitContext)
 }
 
-// Visits each node in the AST
-func (tx *RuntimeSyntaxTransformer) visit(node *ast.Node) *ast.Node {
-	savedCurrentScope := tx.currentScope
-	savedCurrentScopeFirstDeclarationsOfName := tx.currentScopeFirstDeclarationsOfName
-	savedParentNode := tx.parentNode
-
+// Pushes a new child node onto the ancestor tracking stack, returning the grandparent node to be restored later via `popNode`.
+func (tx *RuntimeSyntaxTransformer) pushNode(node *ast.Node) (grandparentNode *ast.Node) {
+	grandparentNode = tx.parentNode
 	tx.parentNode = tx.currentNode
 	tx.currentNode = node
+	return
+}
 
+// Pops the last child node off the ancestor tracking stack, restoring the grandparent node.
+func (tx *RuntimeSyntaxTransformer) popNode(grandparentNode *ast.Node) {
+	tx.currentNode = tx.parentNode
+	tx.parentNode = grandparentNode
+}
+
+func (tx *RuntimeSyntaxTransformer) pushScope(node *ast.Node) (savedCurrentScope *ast.Node, savedCurrentScopeFirstDeclarationsOfName map[string]*ast.Node) {
+	savedCurrentScope = tx.currentScope
+	savedCurrentScopeFirstDeclarationsOfName = tx.currentScopeFirstDeclarationsOfName
 	switch node.Kind {
 	case ast.KindSourceFile:
 		tx.currentScope = node
@@ -52,14 +64,41 @@ func (tx *RuntimeSyntaxTransformer) visit(node *ast.Node) *ast.Node {
 	case ast.KindFunctionDeclaration, ast.KindClassDeclaration, ast.KindEnumDeclaration, ast.KindModuleDeclaration, ast.KindVariableDeclaration:
 		tx.recordDeclarationInScope(node)
 	}
+	return savedCurrentScope, savedCurrentScopeFirstDeclarationsOfName
+}
+
+func (tx *RuntimeSyntaxTransformer) popScope(savedCurrentScope *ast.Node, savedCurrentScopeFirstDeclarationsOfName map[string]*ast.Node) {
+	if tx.currentScope != savedCurrentScope {
+		// only reset the first declaration for a name if we are exiting the scope in which it was declared
+		tx.currentScopeFirstDeclarationsOfName = savedCurrentScopeFirstDeclarationsOfName
+	}
+
+	tx.currentScope = savedCurrentScope
+}
+
+// Visits each node in the AST
+func (tx *RuntimeSyntaxTransformer) visit(node *ast.Node) *ast.Node {
+	savedCurrentScope, savedCurrentScopeFirstDeclarationsOfName := tx.pushScope(node)
+	grandparentNode := tx.pushNode(node)
 
 	switch node.Kind {
+	// TypeScript parameter property modifiers are elided
+	case ast.KindPublicKeyword,
+		ast.KindPrivateKeyword,
+		ast.KindProtectedKeyword,
+		ast.KindReadonlyKeyword,
+		ast.KindOverrideKeyword:
+		return nil
 	case ast.KindEnumDeclaration:
 		node = tx.visitEnumDeclaration(node.AsEnumDeclaration())
 	case ast.KindModuleDeclaration:
 		node = tx.visitModuleDeclaration(node.AsModuleDeclaration())
 	case ast.KindClassDeclaration:
 		node = tx.visitClassDeclaration(node.AsClassDeclaration())
+	case ast.KindClassExpression:
+		node = tx.visitClassExpression(node.AsClassExpression())
+	case ast.KindConstructor:
+		node = tx.visitConstructorDeclaration(node.AsConstructorDeclaration())
 	case ast.KindFunctionDeclaration:
 		node = tx.visitFunctionDeclaration(node.AsFunctionDeclaration())
 	case ast.KindVariableStatement:
@@ -74,14 +113,8 @@ func (tx *RuntimeSyntaxTransformer) visit(node *ast.Node) *ast.Node {
 		node = tx.visitor.VisitEachChild(node)
 	}
 
-	if tx.currentScope != savedCurrentScope {
-		// only reset the first declaration for a name if we are exiting the scope in which it was declared
-		tx.currentScopeFirstDeclarationsOfName = savedCurrentScopeFirstDeclarationsOfName
-	}
-
-	tx.currentScope = savedCurrentScope
-	tx.currentNode = tx.parentNode
-	tx.parentNode = savedParentNode
+	tx.popNode(grandparentNode)
+	tx.popScope(savedCurrentScope, savedCurrentScopeFirstDeclarationsOfName)
 	return node
 }
 
@@ -172,7 +205,7 @@ func (tx *RuntimeSyntaxTransformer) getNamespaceQualifiedProperty(ns *ast.Identi
 // Gets an expression used to refer to an export of a namespace or a member of an enum by indexed access.
 func (tx *RuntimeSyntaxTransformer) getNamespaceQualifiedElement(ns *ast.IdentifierNode, expression *ast.Expression) *ast.Expression {
 	qualifiedName := tx.emitContext.Factory.NewElementAccessExpression(ns, nil /*questionDotToken*/, expression, ast.NodeFlagsNone)
-	tx.emitContext.CopyCommentAndSourceMapRangesTo(qualifiedName, expression)
+	tx.emitContext.AssignCommentAndSourceMapRanges(qualifiedName, expression)
 	return qualifiedName
 }
 
@@ -191,17 +224,29 @@ func (tx *RuntimeSyntaxTransformer) addVarForDeclaration(statements []*ast.State
 		return statements, false
 	}
 
+	if tx.isExportOfExternalModule(node) {
+		// export { name };
+		statements = append(statements, tx.factory.NewExportDeclaration(
+			nil,   /*modifiers*/
+			false, /*isTypeOnly*/
+			tx.factory.NewNamedExports(tx.factory.NewNodeList([]*ast.Node{
+				tx.factory.NewExportSpecifier(
+					false, /*isTypeOnly*/
+					nil,   /*propertyName*/
+					node.Name().Clone(tx.factory),
+				),
+			})),
+			nil, /*moduleSpecifier*/
+			nil, /*attributes*/
+		))
+	}
+
 	// var name;
 	name := getLocalName(tx.emitContext, node, assignedNameOptions{allowSourceMaps: true})
 	varDecl := tx.factory.NewVariableDeclaration(name, nil, nil, nil)
 	varFlags := core.IfElse(tx.currentScope == tx.currentSourceFile, ast.NodeFlagsNone, ast.NodeFlagsLet)
 	varDecls := tx.factory.NewVariableDeclarationList(varFlags, tx.factory.NewNodeList([]*ast.Node{varDecl}))
-
-	var varModifiers *ast.ModifierList
-	if tx.currentNamespace == nil {
-		varModifiers = extractModifiers(tx.emitContext, node.Modifiers(), ast.ModifierFlagsExport)
-	}
-	varStatement := tx.factory.NewVariableStatement(varModifiers, varDecls)
+	varStatement := tx.factory.NewVariableStatement(nil /*modifiers*/, varDecls)
 
 	tx.emitContext.SetOriginal(varDecl, node)
 	// !!! synthetic comments
@@ -281,7 +326,7 @@ func (tx *RuntimeSyntaxTransformer) visitEnumDeclaration(node *ast.EnumDeclarati
 	enumCall := tx.factory.NewCallExpression(tx.factory.NewParenthesizedExpression(enumFunc), nil, nil, tx.factory.NewNodeList([]*ast.Node{enumArg}), ast.NodeFlagsNone)
 	enumStatement := tx.factory.NewExpressionStatement(enumCall)
 	tx.emitContext.SetOriginal(enumStatement, node.AsNode())
-	tx.emitContext.CopyCommentAndSourceMapRangesTo(enumStatement, node.AsNode())
+	tx.emitContext.AssignCommentAndSourceMapRanges(enumStatement, node.AsNode())
 	tx.emitContext.AddEmitFlags(enumStatement, emitFlags)
 	return tx.factory.NewSyntaxList(append(statements, enumStatement))
 }
@@ -296,7 +341,7 @@ func (tx *RuntimeSyntaxTransformer) transformEnumBody(node *ast.EnumDeclaration)
 
 	statements := []*ast.Statement{}
 	if len(node.Members.Nodes) > 0 {
-		tx.emitContext.StartVarEnvironment()
+		tx.emitContext.StartVariableEnvironment()
 
 		var autoValue jsnum.Number
 		var autoVar *ast.IdentifierNode
@@ -314,7 +359,7 @@ func (tx *RuntimeSyntaxTransformer) transformEnumBody(node *ast.EnumDeclaration)
 			autoValue++
 		}
 
-		statements = tx.emitContext.EndAndMergeVarEnvironment(statements)
+		statements = tx.emitContext.EndAndMergeVariableEnvironment(statements)
 	}
 
 	statementList := tx.factory.NewNodeList(statements)
@@ -335,6 +380,11 @@ func (tx *RuntimeSyntaxTransformer) transformEnumMember(
 ) []*ast.Statement {
 	memberNode := enum.Members.Nodes[index]
 	member := memberNode.AsEnumMember()
+
+	var memberName string
+	if ast.IsIdentifier(member.Name()) || ast.IsStringLiteralLike(member.Name()) {
+		memberName = member.Name().Text()
+	}
 
 	savedParent := tx.parentNode
 	tx.parentNode = tx.currentNode
@@ -367,6 +417,9 @@ func (tx *RuntimeSyntaxTransformer) transformEnumMember(
 			expression = constantExpression(*autoValue, tx.factory)
 			if expression != nil {
 				useExplicitReverseMapping = true
+				if len(memberName) > 0 {
+					tx.cacheEnumMemberValue(enum.AsNode(), memberName, evaluator.NewResult(*autoValue, false, false, false))
+				}
 			} else {
 				expression = tx.factory.NewVoidExpression(tx.factory.NewNumericLiteral("0"))
 			}
@@ -375,14 +428,23 @@ func (tx *RuntimeSyntaxTransformer) transformEnumMember(
 		// Enum members with an initializer may restore auto-numbering if the initializer is a numeric literal. If we
 		// cannot syntactically determine the initializer value and the following enum member is auto-numbered, we will
 		// use an `auto` variable to perform the remaining auto-numbering at runtime.
+		if tx.evaluator == nil {
+			tx.evaluator = evaluator.NewEvaluator(tx.evaluateEntity, ast.OEKAll)
+		}
+
 		var hasNumericInitializer, hasStringInitializer bool
-		switch value := constantValue(expression).(type) {
+		result := tx.evaluator(expression, enum.AsNode())
+		switch value := result.Value.(type) {
 		case jsnum.Number:
 			hasNumericInitializer = true
 			*autoValue = value
+			expression = core.Coalesce(constantExpression(value, tx.factory), expression) // TODO: preserve original expression after Strada migration
+			tx.cacheEnumMemberValue(enum.AsNode(), memberName, result)
 		case string:
 			hasStringInitializer = true
 			*autoValue = jsnum.NaN()
+			expression = core.Coalesce(constantExpression(value, tx.factory), expression) // TODO: preserve original expression after Strada migration
+			tx.cacheEnumMemberValue(enum.AsNode(), memberName, result)
 		default:
 			*autoValue = jsnum.NaN()
 		}
@@ -395,7 +457,7 @@ func (tx *RuntimeSyntaxTransformer) transformEnumMember(
 			//             ^^^^^^^^
 			if *autoVar == nil {
 				*autoVar = tx.emitContext.NewUniqueName("auto", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
-				tx.emitContext.HoistVariable(*autoVar)
+				tx.emitContext.AddVariableDeclaration(*autoVar)
 			}
 			expression = tx.factory.NewBinaryExpression(*autoVar, tx.factory.NewToken(ast.KindEqualsToken), expression)
 		}
@@ -428,8 +490,8 @@ func (tx *RuntimeSyntaxTransformer) transformEnumMember(
 	}
 
 	memberStatement := tx.factory.NewExpressionStatement(expression)
-	tx.emitContext.CopyCommentAndSourceMapRangesTo(expression, member.AsNode())
-	tx.emitContext.CopyCommentAndSourceMapRangesTo(memberStatement, member.AsNode())
+	tx.emitContext.AssignCommentAndSourceMapRanges(expression, member.AsNode())
+	tx.emitContext.AssignCommentAndSourceMapRanges(memberStatement, member.AsNode())
 	statements = append(statements, memberStatement)
 
 	// If this is not auto numbered and is not syntactically a string or numeric literal initializer, then we
@@ -461,7 +523,7 @@ func (tx *RuntimeSyntaxTransformer) transformEnumMember(
 		)
 
 		tx.emitContext.AddEmitFlags(ifStatement, printer.EFSingleLine)
-		tx.emitContext.CopySourceMapRange(ifStatement, member.Initializer)
+		tx.emitContext.AssignSourceMapRange(ifStatement, member.Initializer)
 		statements = append(statements, ifStatement)
 	}
 
@@ -518,7 +580,7 @@ func (tx *RuntimeSyntaxTransformer) visitModuleDeclaration(node *ast.ModuleDecla
 	moduleCall := tx.factory.NewCallExpression(tx.factory.NewParenthesizedExpression(moduleFunc), nil, nil, tx.factory.NewNodeList([]*ast.Node{moduleArg}), ast.NodeFlagsNone)
 	moduleStatement := tx.factory.NewExpressionStatement(moduleCall)
 	tx.emitContext.SetOriginal(moduleStatement, node.AsNode())
-	tx.emitContext.CopyCommentAndSourceMapRangesTo(moduleStatement, node.AsNode())
+	tx.emitContext.AssignCommentAndSourceMapRanges(moduleStatement, node.AsNode())
 	tx.emitContext.AddEmitFlags(moduleStatement, emitFlags)
 	return tx.factory.NewSyntaxList(append(statements, moduleStatement))
 }
@@ -532,7 +594,7 @@ func (tx *RuntimeSyntaxTransformer) transformModuleBody(node *ast.ModuleDeclarat
 	tx.currentScopeFirstDeclarationsOfName = nil
 
 	var statements []*ast.Statement
-	tx.emitContext.StartVarEnvironment()
+	tx.emitContext.StartVariableEnvironment()
 
 	var statementsLocation core.TextRange
 	var blockLocation core.TextRange
@@ -556,7 +618,7 @@ func (tx *RuntimeSyntaxTransformer) transformModuleBody(node *ast.ModuleDeclarat
 	tx.currentScope = savedCurrentScope
 	tx.currentScopeFirstDeclarationsOfName = savedCurrentScopeFirstDeclarationsOfName
 
-	statements = tx.emitContext.EndAndMergeVarEnvironment(statements)
+	statements = tx.emitContext.EndAndMergeVariableEnvironment(statements)
 	statementList := tx.factory.NewNodeList(statements)
 	statementList.Loc = statementsLocation
 	block := tx.factory.NewBlock(statementList, true /*multiline*/)
@@ -605,7 +667,7 @@ func (tx *RuntimeSyntaxTransformer) visitImportEqualsDeclaration(node *ast.Impor
 		varModifiers := extractModifiers(tx.emitContext, node.Modifiers(), ast.ModifierFlagsExport)
 		varStatement := tx.factory.NewVariableStatement(varModifiers, varList)
 		tx.emitContext.SetOriginal(varStatement, node.AsNode())
-		tx.emitContext.CopyCommentAndSourceMapRangesTo(varStatement, node.AsNode())
+		tx.emitContext.AssignCommentAndSourceMapRanges(varStatement, node.AsNode())
 		return varStatement
 	} else {
 		// exports.${name} = ${moduleReference};
@@ -628,7 +690,7 @@ func (tx *RuntimeSyntaxTransformer) visitVariableStatement(node *ast.VariableSta
 		expression := inlineExpressions(expressions, tx.factory)
 		statement := tx.factory.NewExpressionStatement(expression)
 		tx.emitContext.SetOriginal(statement, node.AsNode())
-		tx.emitContext.CopyCommentAndSourceMapRangesTo(statement, node.AsNode())
+		tx.emitContext.AssignCommentAndSourceMapRanges(statement, node.AsNode())
 
 		// re-visit as the new node
 		savedCurrent := tx.currentNode
@@ -653,77 +715,325 @@ func (tx *RuntimeSyntaxTransformer) visitFunctionDeclaration(node *ast.FunctionD
 			tx.visitor.VisitNode(node.Body),
 		)
 		export := tx.createExportStatementForDeclaration(node.AsNode())
-		return tx.factory.NewSyntaxList([]*ast.Node{updated, export})
+		if export != nil {
+			return tx.factory.NewSyntaxList([]*ast.Node{updated, export})
+		}
+		return updated
 	}
 	return tx.visitor.VisitEachChild(node.AsNode())
 }
 
-func (tx *RuntimeSyntaxTransformer) visitClassDeclaration(node *ast.ClassDeclaration) *ast.Node {
-	if tx.isExportOfNamespace(node.AsNode()) {
-		updated := tx.factory.UpdateClassDeclaration(
-			node,
-			tx.visitor.VisitModifiers(extractModifiers(tx.emitContext, node.Modifiers(), ^ast.ModifierFlagsExportDefault)),
-			tx.visitor.VisitNode(node.Name()),
-			nil, /*typeParameters*/
-			tx.visitor.VisitNodes(node.HeritageClauses),
-			tx.visitor.VisitNodes(node.Members),
-		)
-		export := tx.createExportStatementForDeclaration(node.AsNode())
-		return tx.factory.NewSyntaxList([]*ast.Node{updated, export})
-	}
-	return tx.visitor.VisitEachChild(node.AsNode())
-}
-
-func (tx *RuntimeSyntaxTransformer) visitShorthandPropertyAssignment(node *ast.ShorthandPropertyAssignment) *ast.Node {
-	if tx.currentNamespace != nil {
-		location := tx.emitContext.MostOriginal(node.AsNode())
-		if symbol := tx.getReferencedExport(location, node.Name().Text()); symbol != nil {
-			if container := tx.getSymbolExportContainer(location, symbol); container != nil && container.Kind == ast.KindModuleDeclaration && contains(location, container) {
-				containerName := tx.getNamespaceContainerName(container)
-
-				memberName := copyIdentifier(tx.emitContext, node.Name())
-				tx.emitContext.SetEmitFlags(memberName, printer.EFNoComments|printer.EFNoSourceMap)
-
-				expression := getNamespaceMemberName(tx.emitContext, containerName, memberName, nameOptions{allowSourceMaps: true})
-				tx.emitContext.CopyCommentAndSourceMapRangesTo(expression, node.AsNode())
-
-				if node.ObjectAssignmentInitializer != nil {
-					expression = tx.factory.NewBinaryExpression(
-						expression,
-						tx.factory.NewToken(ast.KindEqualsToken),
-						tx.visitor.VisitNode(node.ObjectAssignmentInitializer),
-					)
-				}
-
-				updated := tx.factory.NewPropertyAssignment(nil /*modifiers*/, node.Name(), nil /*postfixToken*/, expression)
-				updated.Loc = node.Loc
-				tx.emitContext.SetOriginal(updated, node.AsNode())
-				tx.emitContext.CopyCommentAndSourceMapRangesTo(updated, node.AsNode())
-				return updated
+func (tx *RuntimeSyntaxTransformer) getParameterProperties(constructor *ast.Node) []*ast.ParameterDeclaration {
+	var parameterProperties []*ast.ParameterDeclaration
+	if constructor != nil {
+		for _, parameter := range constructor.Parameters() {
+			if ast.IsParameterPropertyDeclaration(parameter, constructor) {
+				parameterProperties = append(parameterProperties, parameter.AsParameterDeclaration())
 			}
 		}
 	}
-	return tx.visitor.VisitEachChild(node.AsNode())
+	return parameterProperties
+}
+
+func (tx *RuntimeSyntaxTransformer) visitClassDeclaration(node *ast.ClassDeclaration) *ast.Node {
+	exported := tx.isExportOfNamespace(node.AsNode())
+	var modifiers *ast.ModifierList
+	if exported {
+		modifiers = tx.visitor.VisitModifiers(extractModifiers(tx.emitContext, node.Modifiers(), ^ast.ModifierFlagsExportDefault))
+	} else {
+		modifiers = tx.visitor.VisitModifiers(node.Modifiers())
+	}
+
+	name := tx.visitor.VisitNode(node.Name())
+	heritageClauses := tx.visitor.VisitNodes(node.HeritageClauses)
+	members := tx.visitor.VisitNodes(node.Members)
+	parameterProperties := tx.getParameterProperties(core.Find(node.Members.Nodes, ast.IsConstructorDeclaration))
+
+	if len(parameterProperties) > 0 {
+		var newMembers []*ast.ClassElement
+		for _, parameter := range parameterProperties {
+			if ast.IsIdentifier(parameter.Name()) {
+				parameterProperty := tx.factory.NewPropertyDeclaration(
+					nil, /*modifiers*/
+					parameter.Name().Clone(tx.factory),
+					nil, /*questionOrExclamationToken*/
+					nil, /*type*/
+					nil, /*initializer*/
+				)
+				tx.emitContext.SetOriginal(parameterProperty, parameter.AsNode())
+				newMembers = append(newMembers, parameterProperty)
+			}
+		}
+		if len(newMembers) > 0 {
+			newMembers = append(newMembers, members.Nodes...)
+			members = tx.factory.NewNodeList(newMembers)
+			members.Loc = node.Members.Loc
+		}
+	}
+
+	updated := tx.factory.UpdateClassDeclaration(node, modifiers, name, nil /*typeParameters*/, heritageClauses, members)
+	if exported {
+		export := tx.createExportStatementForDeclaration(node.AsNode())
+		if export != nil {
+			return tx.factory.NewSyntaxList([]*ast.Node{updated, export})
+		}
+	}
+	return updated
+}
+
+func (tx *RuntimeSyntaxTransformer) visitClassExpression(node *ast.ClassExpression) *ast.Node {
+	modifiers := tx.visitor.VisitModifiers(extractModifiers(tx.emitContext, node.Modifiers(), ^ast.ModifierFlagsExportDefault))
+	name := tx.visitor.VisitNode(node.Name())
+	heritageClauses := tx.visitor.VisitNodes(node.HeritageClauses)
+	members := tx.visitor.VisitNodes(node.Members)
+	parameterProperties := tx.getParameterProperties(core.Find(node.Members.Nodes, ast.IsConstructorDeclaration))
+
+	if len(parameterProperties) > 0 {
+		var newMembers []*ast.ClassElement
+		for _, parameter := range parameterProperties {
+			if ast.IsIdentifier(parameter.Name()) {
+				parameterProperty := tx.factory.NewPropertyDeclaration(
+					nil, /*modifiers*/
+					parameter.Name().Clone(tx.factory),
+					nil, /*questionOrExclamationToken*/
+					nil, /*type*/
+					nil, /*initializer*/
+				)
+				tx.emitContext.SetOriginal(parameterProperty, parameter.AsNode())
+				newMembers = append(newMembers, parameterProperty)
+			}
+		}
+		if len(newMembers) > 0 {
+			newMembers = append(newMembers, members.Nodes...)
+			members = tx.factory.NewNodeList(newMembers)
+			members.Loc = node.Members.Loc
+		}
+	}
+
+	return tx.factory.UpdateClassExpression(node, modifiers, name, nil /*typeParameters*/, heritageClauses, members)
+}
+
+func (tx *RuntimeSyntaxTransformer) visitConstructorDeclaration(node *ast.ConstructorDeclaration) *ast.Node {
+	modifiers := tx.visitor.VisitModifiers(node.Modifiers())
+	parameters := tx.emitContext.VisitParameters(node.ParameterList(), tx.visitor)
+	body := tx.visitConstructorBody(node.Body.AsBlock(), node.AsNode())
+	return tx.factory.UpdateConstructorDeclaration(node, modifiers, nil /*typeParameters*/, parameters, nil /*returnType*/, body)
+}
+
+func (tx *RuntimeSyntaxTransformer) visitConstructorBody(body *ast.Block, constructor *ast.Node) *ast.Node {
+	parameterProperties := tx.getParameterProperties(constructor)
+	if len(parameterProperties) == 0 {
+		return tx.emitContext.VisitFunctionBody(body.AsNode(), tx.visitor)
+	}
+
+	grandparentOfConstructor := tx.pushNode(constructor)
+	grandparentOfBody := tx.pushNode(body.AsNode())
+	savedCurrentScope, savedCurrentScopeFirstDeclarationsOfName := tx.pushScope(body.AsNode())
+
+	tx.emitContext.StartVariableEnvironment()
+	prologue, rest := tx.emitContext.SplitStandardPrologue(body.Statements.Nodes)
+	statements := slices.Clone(prologue)
+
+	// Transform parameters into property assignments. Transforms this:
+	//
+	//  constructor (public x, public y) {
+	//  }
+	//
+	// Into this:
+	//
+	//  constructor (x, y) {
+	//      this.x = x;
+	//      this.y = y;
+	//  }
+	//
+
+	var parameterPropertyAssignments []*ast.Statement
+	for _, parameter := range parameterProperties {
+		if ast.IsIdentifier(parameter.Name()) {
+			propertyName := parameter.Name().Clone(tx.factory)
+			tx.emitContext.AddEmitFlags(propertyName, printer.EFNoComments|printer.EFNoSourceMap)
+
+			localName := parameter.Name().Clone(tx.factory)
+			tx.emitContext.AddEmitFlags(localName, printer.EFNoComments)
+
+			parameterProperty := tx.factory.NewExpressionStatement(
+				tx.factory.NewBinaryExpression(
+					tx.factory.NewPropertyAccessExpression(
+						tx.factory.NewKeywordExpression(ast.KindThisKeyword),
+						nil, /*questionDotToken*/
+						propertyName,
+						ast.NodeFlagsNone,
+					),
+					tx.factory.NewToken(ast.KindEqualsToken),
+					localName,
+				),
+			)
+			tx.emitContext.SetOriginal(parameterProperty, parameter.AsNode())
+			tx.emitContext.AddEmitFlags(parameterProperty, printer.EFStartOnNewLine)
+			parameterPropertyAssignments = append(parameterPropertyAssignments, parameterProperty)
+		}
+	}
+
+	var superPath []int
+	if ast.IsClassLike(grandparentOfBody) && ast.GetExtendsHeritageClauseElement(grandparentOfBody) != nil {
+		superPath = findSuperStatementIndexPath(rest, 0)
+	}
+
+	if len(superPath) > 0 {
+		statements = append(statements, tx.transformConstructorBodyWorker(rest, superPath, parameterPropertyAssignments)...)
+	} else {
+		statements = append(statements, parameterPropertyAssignments...)
+		statements = append(statements, core.FirstResult(tx.visitor.VisitSlice(rest))...)
+	}
+
+	statements = tx.emitContext.EndAndMergeVariableEnvironment(statements)
+	statementList := tx.factory.NewNodeList(statements)
+	statementList.Loc = body.Statements.Loc
+
+	tx.popScope(savedCurrentScope, savedCurrentScopeFirstDeclarationsOfName)
+	tx.popNode(grandparentOfBody)
+	tx.popNode(grandparentOfConstructor)
+	updated := tx.factory.NewBlock(statementList /*multiline*/, true)
+	tx.emitContext.SetOriginal(updated, body.AsNode())
+	updated.Loc = body.Loc
+	return updated
+}
+
+// finds a path to a statement containing a `super` call, descending through `try` blocks
+func findSuperStatementIndexPath(statements []*ast.Statement, start int) []int {
+	for i := start; i < len(statements); i++ {
+		statement := statements[i]
+		if getSuperCallFromStatement(statement) != nil {
+			indices := make([]int, 1, 2)
+			indices[0] = i
+			return indices
+		} else if ast.IsTryStatement(statement) {
+			return slices.Insert(findSuperStatementIndexPath(statement.AsTryStatement().TryBlock.AsBlock().Statements.Nodes, 0), 0, i)
+		}
+	}
+	return nil
+}
+
+func getSuperCallFromStatement(statement *ast.Statement) *ast.Node {
+	if !ast.IsExpressionStatement(statement) {
+		return nil
+	}
+
+	expression := ast.SkipParentheses(statement.Expression())
+	if ast.IsSuperCall(expression) {
+		return expression
+	}
+	return nil
+}
+
+func (tx *RuntimeSyntaxTransformer) transformConstructorBodyWorker(statementsIn []*ast.Statement, superPath []int, initializerStatements []*ast.Statement) []*ast.Statement {
+	var statementsOut []*ast.Statement
+	superStatementIndex := superPath[0]
+	superStatement := statementsIn[superStatementIndex]
+
+	// visit up to the statement containing `super`
+	statementsOut = append(statementsOut, core.FirstResult(tx.visitor.VisitSlice(statementsIn[:superStatementIndex]))...)
+
+	// if the statement containing `super` is a `try` statement, transform the body of the `try` block
+	if ast.IsTryStatement(superStatement) {
+		tryStatement := superStatement.AsTryStatement()
+		tryBlock := tryStatement.TryBlock.AsBlock()
+
+		// keep track of hierarchy as we descend
+		grandparentOfTryStatement := tx.pushNode(tryStatement.AsNode())
+		grandparentOfTryBlock := tx.pushNode(tryBlock.AsNode())
+		savedCurrentScope, savedCurrentScopeFirstDeclarationsOfName := tx.pushScope(tryBlock.AsNode())
+
+		// visit the `try` block
+		tryBlockStatements := tx.transformConstructorBodyWorker(
+			tryBlock.Statements.Nodes,
+			superPath[1:],
+			initializerStatements,
+		)
+
+		// restore hierarchy as we ascend to the `try` statement
+		tx.popScope(savedCurrentScope, savedCurrentScopeFirstDeclarationsOfName)
+		tx.popNode(grandparentOfTryBlock)
+
+		tryBlockStatementList := tx.factory.NewNodeList(tryBlockStatements)
+		tryBlockStatementList.Loc = tryBlock.Statements.Loc
+		statementsOut = append(statementsOut, tx.factory.UpdateTryStatement(
+			tryStatement,
+			tx.factory.UpdateBlock(tryBlock, tryBlockStatementList),
+			tx.visitor.VisitNode(tryStatement.CatchClause),
+			tx.visitor.VisitNode(tryStatement.FinallyBlock),
+		))
+
+		// restore hierarchy as we ascend to the parent of the `try` statement
+		tx.popNode(grandparentOfTryStatement)
+	} else {
+		// visit the statement containing `super`
+		statementsOut = append(statementsOut, core.FirstResult(tx.visitor.VisitSlice(statementsIn[superStatementIndex:superStatementIndex+1]))...)
+
+		// insert the initializer statements
+		statementsOut = append(statementsOut, initializerStatements...)
+	}
+
+	// visit the statements after `super`
+	statementsOut = append(statementsOut, core.FirstResult(tx.visitor.VisitSlice(statementsIn[superStatementIndex+1:]))...)
+	return statementsOut
+}
+
+func (tx *RuntimeSyntaxTransformer) visitShorthandPropertyAssignment(node *ast.ShorthandPropertyAssignment) *ast.Node {
+	name := node.Name()
+	exportedOrImportedName := tx.visitExpressionIdentifier(name)
+	if exportedOrImportedName != name {
+		expression := exportedOrImportedName
+		if node.ObjectAssignmentInitializer != nil {
+			equalsToken := node.EqualsToken
+			if equalsToken == nil {
+				equalsToken = tx.factory.NewToken(ast.KindEqualsToken)
+			}
+			expression = tx.factory.NewBinaryExpression(
+				expression,
+				equalsToken,
+				tx.visitor.VisitNode(node.ObjectAssignmentInitializer),
+			)
+		}
+
+		updated := tx.factory.NewPropertyAssignment(nil /*modifiers*/, node.Name(), nil /*postfixToken*/, expression)
+		updated.Loc = node.Loc
+		tx.emitContext.SetOriginal(updated, node.AsNode())
+		tx.emitContext.AssignCommentAndSourceMapRanges(updated, node.AsNode())
+		return updated
+	}
+	return tx.factory.UpdateShorthandPropertyAssignment(node,
+		nil, /*modifiers*/
+		exportedOrImportedName,
+		nil, /*postfixToken*/
+		node.EqualsToken,
+		tx.visitor.VisitNode(node.ObjectAssignmentInitializer),
+	)
 }
 
 func (tx *RuntimeSyntaxTransformer) visitIdentifier(node *ast.IdentifierNode) *ast.Node {
-	if (tx.currentEnum != nil || tx.currentNamespace != nil) && isIdentifierReference(node, tx.parentNode) {
-		location := tx.getAdjustedExportLocation(node)
-		if symbol := tx.getReferencedExport(location, node.Text()); symbol != nil && symbol.ValueDeclaration != nil {
-			// !!! By passing symbol.ValueDeclaration we turn off references across merged enums/declarations. If we
-			//     pass `location` instead, we would support such references, but only within the same file
-			if container := tx.getSymbolExportContainer(symbol.ValueDeclaration, symbol); container != nil && contains(location, container) {
-				containerName := tx.getNamespaceContainerName(container)
-				decl := tx.emitContext.MostOriginal(node).Parent
-				if decl != nil && ast.IsBindingElement(decl) {
-					decl = ast.WalkUpBindingElementsAndPatterns(decl)
-				}
-				allowComments := decl == nil || !ast.IsVariableDeclaration(decl)
-				expression := getNamespaceMemberName(tx.emitContext, containerName, node, nameOptions{allowComments: allowComments, allowSourceMaps: true})
-				tx.emitContext.SetEmitFlags(node, printer.EFNoComments|printer.EFNoSourceMap)
-				tx.emitContext.CopyCommentAndSourceMapRangesTo(expression, node)
-				return expression
-			}
+	if isIdentifierReference(node, tx.parentNode) {
+		return tx.visitExpressionIdentifier(node)
+	}
+	return node
+}
+
+func (tx *RuntimeSyntaxTransformer) visitExpressionIdentifier(node *ast.IdentifierNode) *ast.Node {
+	if (tx.currentEnum != nil || tx.currentNamespace != nil) && !isGeneratedIdentifier(tx.emitContext, node) && !isLocalName(tx.emitContext, node) {
+		location := tx.emitContext.MostOriginal(node.AsNode())
+		if tx.resolver == nil {
+			tx.resolver = binder.NewReferenceResolver(tx.compilerOptions, binder.ReferenceResolverHooks{})
+		}
+		container := tx.resolver.GetReferencedExportContainer(location, false /*prefixLocals*/)
+		if container != nil && (ast.IsEnumDeclaration(container) || ast.IsModuleDeclaration(container)) && container.Contains(location) {
+			containerName := tx.getNamespaceContainerName(container)
+
+			memberName := node.Clone(tx.factory)
+			tx.emitContext.SetEmitFlags(memberName, printer.EFNoComments|printer.EFNoSourceMap)
+
+			expression := getNamespaceMemberName(tx.emitContext, containerName, memberName, nameOptions{allowSourceMaps: true})
+			tx.emitContext.AssignCommentAndSourceMapRanges(expression, node.AsNode())
+			return expression
 		}
 	}
 	return node
@@ -759,64 +1069,50 @@ func (tx *RuntimeSyntaxTransformer) createExportStatement(name *ast.IdentifierNo
 	return exportStatement
 }
 
-func (tx *RuntimeSyntaxTransformer) getAdjustedExportLocation(location *ast.IdentifierNode) *ast.Node {
-	location = tx.emitContext.MostOriginal(location)
-
-	// When resolving the export for the name of a module or enum
-	// declaration, we need to start resolution at the declaration's container.
-	// Otherwise, we could incorrectly resolve the export as the
-	// declaration if it contains an exported member with the same name.
-	if location.Parent != nil && (location.Parent.Kind == ast.KindModuleDeclaration || location.Parent.Kind == ast.KindEnumDeclaration) && location == location.Parent.Name() {
-		location = location.Parent.Parent
+func (tx *RuntimeSyntaxTransformer) cacheEnumMemberValue(enum *ast.EnumDeclarationNode, memberName string, result evaluator.Result) {
+	if tx.enumMemberCache == nil {
+		tx.enumMemberCache = make(map[*ast.EnumDeclarationNode]map[string]evaluator.Result)
 	}
-
-	return location
+	memberCache := tx.enumMemberCache[enum]
+	if memberCache == nil {
+		memberCache = make(map[string]evaluator.Result)
+		tx.enumMemberCache[enum] = memberCache
+	}
+	memberCache[memberName] = result
 }
 
-func (tx *RuntimeSyntaxTransformer) getReferencedExport(location *ast.Node, name string) *ast.Symbol {
-	if symbol := tx.resolveName(location, name, ast.SymbolFlagsExportValue|ast.SymbolFlagsValue|ast.SymbolFlagsAlias); symbol != nil {
-		if symbol.Flags&ast.SymbolFlagsExportValue != 0 {
-			// If we reference an exported entity within the same module declaration, then whether
-			// we prefix depends on the kind of entity. SymbolFlags.ExportHasLocal encompasses all the
-			// kinds that we do NOT prefix.
-			exportSymbol := symbol.ExportSymbol
-			if exportSymbol.Flags&ast.SymbolFlagsExportHasLocal == 0 && exportSymbol.Flags&ast.SymbolFlagsVariable == 0 {
-				return nil
-			} else {
-				symbol = exportSymbol
+func (tx *RuntimeSyntaxTransformer) isReferenceToEnum(reference *ast.IdentifierNode, enum *ast.EnumDeclarationNode) bool {
+	if isGeneratedIdentifier(tx.emitContext, reference) {
+		originalEnum := tx.emitContext.MostOriginal(enum)
+		return tx.emitContext.GetNodeForGeneratedName(reference) == originalEnum
+	}
+	return reference.Text() == enum.Name().Text()
+}
+
+func (tx *RuntimeSyntaxTransformer) evaluateEntity(node *ast.Node, location *ast.Node) evaluator.Result {
+	var result evaluator.Result
+	if ast.IsEnumDeclaration(location) {
+		memberCache := tx.enumMemberCache[location]
+		if memberCache != nil {
+			switch {
+			case ast.IsIdentifier(node):
+				result = memberCache[node.Text()]
+			case ast.IsPropertyAccessExpression(node):
+				access := node.AsPropertyAccessExpression()
+				expression := access.Expression
+				if ast.IsIdentifier(expression) && tx.isReferenceToEnum(expression, location) {
+					result = memberCache[access.Name().Text()]
+				}
+			case ast.IsElementAccessExpression(node):
+				access := node.AsElementAccessExpression()
+				expression := access.Expression
+				if ast.IsIdentifier(expression) && tx.isReferenceToEnum(expression, location) && ast.IsStringLiteralLike(access.ArgumentExpression) {
+					result = memberCache[access.ArgumentExpression.Text()]
+				}
 			}
 		}
-		return symbol
 	}
-	return nil
-}
-
-func (tx *RuntimeSyntaxTransformer) getSymbolExportContainer(location *ast.Node, symbol *ast.Symbol) *ast.Node {
-	parentSymbol := symbol.Parent
-	if parentSymbol != nil {
-		if parentSymbol.Flags&ast.SymbolFlagsValueModule != 0 && parentSymbol.ValueDeclaration != nil && parentSymbol.ValueDeclaration.Kind == ast.KindSourceFile {
-			symbolFile := parentSymbol.ValueDeclaration.AsSourceFile()
-			referenceFile := ast.GetSourceFileOfNode(location)
-			// If `node` accesses an export and that export isn't in the same file, then symbol is a namespace export, so return nil.
-			symbolIsUmdExport := symbolFile != referenceFile
-			if symbolIsUmdExport {
-				return nil
-			}
-			return symbolFile.AsNode()
-		}
-		return ast.FindAncestor(location.Parent, func(n *ast.Node) bool {
-			return (n.Kind == ast.KindModuleDeclaration || n.Kind == ast.KindEnumDeclaration) && n.Symbol() == parentSymbol
-		})
-	}
-	return nil
-}
-
-func (tx *RuntimeSyntaxTransformer) resolveName(location *ast.Node, name string, meaning ast.SymbolFlags) *ast.Symbol {
-	if tx.resolver == nil {
-		tx.resolver = &binder.NameResolver{CompilerOptions: tx.compilerOptions}
-	}
-	location = tx.emitContext.MostOriginal(location)
-	return tx.resolver.Resolve(location, name, meaning, nil /*nameNotFoundMessage*/, false /*isUse*/, true /*excludeGlobals*/)
+	return result
 }
 
 func getInnermostModuleDeclarationFromDottedModule(moduleDeclaration *ast.ModuleDeclaration) *ast.ModuleDeclaration {
@@ -824,14 +1120,4 @@ func getInnermostModuleDeclarationFromDottedModule(moduleDeclaration *ast.Module
 		moduleDeclaration = moduleDeclaration.Body.AsModuleDeclaration()
 	}
 	return moduleDeclaration
-}
-
-func contains(descendant *ast.Node, ancestor *ast.Node) bool {
-	for descendant != nil {
-		if descendant == ancestor {
-			return true
-		}
-		descendant = descendant.Parent
-	}
-	return false
 }

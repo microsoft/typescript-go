@@ -1,0 +1,30 @@
+--- old.moduleAugmentationImportsAndExports2.types
++++ new.moduleAugmentationImportsAndExports2.types
+@@= skipped -45, +45 lines =@@
+     import I = N.Ifc;
+ >I : any
+ >N : any
+->Ifc : I
++>Ifc : Ifc
+ 
+     import C = N.Cls;
+ >C : any
+ >N : any
+->Cls : C
++>Cls : Cls
+ 
+     // should have explicit export
+     interface A {
+@@= skipped -13, +13 lines =@@
+ >foo : () => B
+ 
+         bar(): I;
+->bar : () => I
++>bar : () => Ifc
+ 
+         baz(): C;
+->baz : () => C
++>baz : () => Cls
+     }
+ }
+ 
