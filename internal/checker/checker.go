@@ -13576,7 +13576,7 @@ func (c *Checker) getTargetOfModuleDefault(moduleSymbol *ast.Symbol, node *ast.N
 }
 
 func (c *Checker) reportNonDefaultExport(moduleSymbol *ast.Symbol, node *ast.Node) {
-	if moduleSymbol.Exports != nil && moduleSymbol.Exports[ast.InternalSymbolNameExportEquals] != nil {
+	if moduleSymbol.Exports != nil && moduleSymbol.Exports[node.Symbol().Name] != nil {
 		c.error(node, diagnostics.Module_0_has_no_default_export_Did_you_mean_to_use_import_1_from_0_instead, c.symbolToString(moduleSymbol), c.symbolToString(node.Symbol()))
 	} else {
 		diagnostic := c.error(node.Name(), diagnostics.Module_0_has_no_default_export, c.symbolToString(moduleSymbol))
@@ -13798,11 +13798,7 @@ func (c *Checker) canHaveSyntheticDefault(file *ast.Node, moduleSymbol *ast.Symb
 		usageMode = c.getEmitSyntaxForModuleSpecifierExpression(usage)
 	}
 	if file != nil && usageMode != core.ModuleKindNone {
-		sourceFileMetaData := c.program.GetSourceFileMetaData(file.AsSourceFile().Path())
-		var targetMode core.ModuleKind
-		if sourceFileMetaData != nil {
-			targetMode = sourceFileMetaData.ImpliedNodeFormat
-		}
+		targetMode := c.program.GetImpliedNodeFormatForEmit(file.AsSourceFile())
 		if usageMode == core.ModuleKindESNext && targetMode == core.ModuleKindCommonJS && core.ModuleKindNode16 <= c.moduleKind && c.moduleKind <= core.ModuleKindNodeNext {
 			// In Node.js, CommonJS modules always have a synthetic default when imported into ESM
 			return true
@@ -13841,7 +13837,7 @@ func (c *Checker) canHaveSyntheticDefault(file *ast.Node, moduleSymbol *ast.Symb
 	}
 
 	// JS files have a synthetic default if they do not contain ES2015+ module syntax (export = is not valid in js) _and_ do not have an __esModule marker
-	return file.AsSourceFile().ExternalModuleIndicator == nil /* || file.ExternalModuleIndicator == true) */ && c.resolveExportByName(moduleSymbol, "__esModule", nil /*sourceNode*/, dontResolveAlias) == nil // !!!
+	return !ast.IsExternalModule(file.AsSourceFile()) && c.resolveExportByName(moduleSymbol, "__esModule", nil /*sourceNode*/, dontResolveAlias) == nil
 }
 
 func (c *Checker) getEmitSyntaxForModuleSpecifierExpression(usage *ast.Node) core.ResolutionMode {
