@@ -321,8 +321,8 @@ func getFormatOpts(host ts.CompilerHost) *diagnosticwriter.FormattingOptions {
 	return &diagnosticwriter.FormattingOptions{
 		NewLine: host.NewLine(),
 		ComparePathsOptions: tspath.ComparePathsOptions{
-			CurrentDirectory:          host.GetCurrentDirectory(),
-			UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
+			CurrentDirectory: host.GetCurrentDirectory(),
+			CaseSensitivity:  host.FS().CaseSensitivity(),
 		},
 	}
 }

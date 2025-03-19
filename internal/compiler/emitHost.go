@@ -4,6 +4,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/printer"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 type WriteFileData struct {
@@ -18,7 +19,7 @@ type WriteFileData struct {
 type EmitHost interface {
 	Options() *core.CompilerOptions
 	SourceFiles() []*ast.SourceFile
-	UseCaseSensitiveFileNames() bool
+	CaseSensitivity() tspath.CaseSensitivity
 	GetCurrentDirectory() string
 	CommonSourceDirectory() string
 	IsEmitBlocked(file string) bool
@@ -37,8 +38,8 @@ func (host *emitHost) Options() *core.CompilerOptions { return host.program.Opti
 func (host *emitHost) SourceFiles() []*ast.SourceFile { return host.program.SourceFiles() }
 func (host *emitHost) GetCurrentDirectory() string    { return host.program.host.GetCurrentDirectory() }
 func (host *emitHost) CommonSourceDirectory() string  { return host.program.CommonSourceDirectory() }
-func (host *emitHost) UseCaseSensitiveFileNames() bool {
-	return host.program.host.FS().UseCaseSensitiveFileNames()
+func (host *emitHost) CaseSensitivity() tspath.CaseSensitivity {
+	return host.program.host.FS().CaseSensitivity()
 }
 
 func (host *emitHost) IsEmitBlocked(file string) bool {

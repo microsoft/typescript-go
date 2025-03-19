@@ -2,12 +2,13 @@ package vfs
 
 import (
 	"io/fs"
+
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 // FS is a file system abstraction.
 type FS interface {
-	// UseCaseSensitiveFileNames returns true if the file system is case-sensitive.
-	UseCaseSensitiveFileNames() bool
+	CaseSensitivity() tspath.CaseSensitivity
 
 	// FileExists returns true if the file exists.
 	FileExists(path string) bool

@@ -10,6 +10,22 @@ import (
 
 type Path string
 
+//go:generate go run golang.org/x/tools/cmd/stringer -type=CaseSensitivity
+
+type CaseSensitivity uint8
+
+const (
+	CaseInsensitive CaseSensitivity = iota
+	CaseSensitive
+)
+
+func (c CaseSensitivity) Invert() CaseSensitivity {
+	if c == CaseSensitive {
+		return CaseInsensitive
+	}
+	return CaseSensitive
+}
+
 // Internally, we represent paths as strings with '/' as the directory separator.
 // When we make system calls (eg: LanguageServiceHost.getDirectory()),
 // we expect the host to correctly handle paths in our specified format.
@@ -493,8 +509,8 @@ func NormalizePath(path string) string {
 	return normalized
 }
 
-func GetCanonicalFileName(fileName string, useCaseSensitiveFileNames bool) string {
-	if useCaseSensitiveFileNames {
+func GetCanonicalFileName(fileName string, caseSensitivity CaseSensitivity) string {
+	if caseSensitivity == CaseSensitive {
 		return fileName
 	}
 	return ToFileNameLowerCase(fileName)
@@ -529,14 +545,14 @@ func ToFileNameLowerCase(fileName string) string {
 	}, fileName)
 }
 
-func ToPath(fileName string, basePath string, useCaseSensitiveFileNames bool) Path {
+func ToPath(fileName string, basePath string, caseSensitivity CaseSensitivity) Path {
 	var nonCanonicalizedPath string
 	if IsRootedDiskPath(fileName) {
 		nonCanonicalizedPath = NormalizePath(fileName)
 	} else {
 		nonCanonicalizedPath = GetNormalizedAbsolutePath(fileName, basePath)
 	}
-	return Path(GetCanonicalFileName(nonCanonicalizedPath, useCaseSensitiveFileNames))
+	return Path(GetCanonicalFileName(nonCanonicalizedPath, caseSensitivity))
 }
 
 func RemoveTrailingDirectorySeparator(path string) string {
@@ -768,16 +784,16 @@ func IsExternalModuleNameRelative(moduleName string) bool {
 }
 
 type ComparePathsOptions struct {
-	UseCaseSensitiveFileNames bool
-	CurrentDirectory          string
+	CaseSensitivity  CaseSensitivity
+	CurrentDirectory string
 }
 
 func (o ComparePathsOptions) GetComparer() func(a, b string) int {
-	return stringutil.GetStringComparer(!o.UseCaseSensitiveFileNames)
+	return stringutil.GetStringComparer(o.CaseSensitivity == CaseInsensitive)
 }
 
 func (o ComparePathsOptions) getEqualityComparer() func(a, b string) bool {
-	return stringutil.GetStringEqualityComparer(!o.UseCaseSensitiveFileNames)
+	return stringutil.GetStringEqualityComparer(o.CaseSensitivity == CaseInsensitive)
 }
 
 func ComparePaths(a string, b string, options ComparePathsOptions) int {
@@ -826,11 +842,11 @@ func ComparePaths(a string, b string, options ComparePathsOptions) int {
 }
 
 func ComparePathsCaseSensitive(a string, b string, currentDirectory string) int {
-	return ComparePaths(a, b, ComparePathsOptions{UseCaseSensitiveFileNames: true, CurrentDirectory: currentDirectory})
+	return ComparePaths(a, b, ComparePathsOptions{CaseSensitivity: CaseSensitive, CurrentDirectory: currentDirectory})
 }
 
 func ComparePathsCaseInsensitive(a string, b string, currentDirectory string) int {
-	return ComparePaths(a, b, ComparePathsOptions{UseCaseSensitiveFileNames: false, CurrentDirectory: currentDirectory})
+	return ComparePaths(a, b, ComparePathsOptions{CaseSensitivity: CaseInsensitive, CurrentDirectory: currentDirectory})
 }
 
 func ContainsPath(parent string, child string, options ComparePathsOptions) bool {

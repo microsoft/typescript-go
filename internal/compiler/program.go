@@ -98,7 +98,7 @@ func NewProgram(options ProgramOptions) *Program {
 		if !ok {
 			panic("config file not found")
 		}
-		configFilePath := tspath.ToPath(p.configFileName, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
+		configFilePath := tspath.ToPath(p.configFileName, p.host.GetCurrentDirectory(), p.host.FS().CaseSensitivity())
 		parsedConfig := parser.ParseJSONText(p.configFileName, configFilePath, jsonText)
 		if len(parsedConfig.Diagnostics()) > 0 {
 			p.configFileParsingDiagnostics = append(p.configFileParsingDiagnostics, parsedConfig.Diagnostics()...)
@@ -252,7 +252,7 @@ func (p *Program) GetResolvedModule(file *ast.SourceFile, moduleReference string
 }
 
 func (p *Program) findSourceFile(candidate string, reason FileIncludeReason) *ast.SourceFile {
-	path := tspath.ToPath(candidate, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
+	path := tspath.ToPath(candidate, p.host.GetCurrentDirectory(), p.host.FS().CaseSensitivity())
 	return p.filesByPath[path]
 }
 
@@ -476,7 +476,7 @@ func (p *Program) CommonSourceDirectory() string {
 			p.compilerOptions,
 			files,
 			p.host.GetCurrentDirectory(),
-			p.host.FS().UseCaseSensitiveFileNames(),
+			p.host.FS().CaseSensitivity(),
 		)
 	})
 	return p.commonSourceDirectory
@@ -486,7 +486,7 @@ func (p *Program) GetCompilerOptions() *core.CompilerOptions {
 	return p.compilerOptions
 }
 
-func computeCommonSourceDirectoryOfFilenames(fileNames []string, currentDirectory string, useCaseSensitiveFileNames bool) string {
+func computeCommonSourceDirectoryOfFilenames(fileNames []string, currentDirectory string, caseSensitivity tspath.CaseSensitivity) string {
 	var commonPathComponents []string
 	for _, sourceFile := range fileNames {
 		// Each file contributes into common source file path
@@ -503,7 +503,7 @@ func computeCommonSourceDirectoryOfFilenames(fileNames []string, currentDirector
 
 		n := min(len(commonPathComponents), len(sourcePathComponents))
 		for i := range n {
-			if tspath.GetCanonicalFileName(commonPathComponents[i], useCaseSensitiveFileNames) != tspath.GetCanonicalFileName(sourcePathComponents[i], useCaseSensitiveFileNames) {
+			if tspath.GetCanonicalFileName(commonPathComponents[i], caseSensitivity) != tspath.GetCanonicalFileName(sourcePathComponents[i], caseSensitivity) {
 				if i == 0 {
 					// Failed to find any common path component
 					return ""
@@ -529,12 +529,12 @@ func computeCommonSourceDirectoryOfFilenames(fileNames []string, currentDirector
 	return tspath.GetPathFromPathComponents(commonPathComponents)
 }
 
-func getCommonSourceDirectory(options *core.CompilerOptions, files []string, currentDirectory string, useCaseSensitiveFileNames bool) string {
+func getCommonSourceDirectory(options *core.CompilerOptions, files []string, currentDirectory string, caseSensitivity tspath.CaseSensitivity) string {
 	var commonSourceDirectory string
 	// !!! If a rootDir is specified use it as the commonSourceDirectory
 	// !!! Project compilations never infer their root from the input source paths
 
-	commonSourceDirectory = computeCommonSourceDirectoryOfFilenames(files, currentDirectory, useCaseSensitiveFileNames)
+	commonSourceDirectory = computeCommonSourceDirectoryOfFilenames(files, currentDirectory, caseSensitivity)
 
 	if len(commonSourceDirectory) > 0 {
 		// Make sure directory path ends with directory separator so this string can directly
@@ -624,7 +624,7 @@ func (p *Program) Emit(options EmitOptions) *EmitResult {
 }
 
 func (p *Program) GetSourceFile(filename string) *ast.SourceFile {
-	path := tspath.ToPath(filename, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
+	path := tspath.ToPath(filename, p.host.GetCurrentDirectory(), p.host.FS().CaseSensitivity())
 	return p.GetSourceFileByPath(path)
 }
 

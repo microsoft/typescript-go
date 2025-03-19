@@ -163,12 +163,12 @@ func (e *emitter) printSourceFile(jsFilePath string, sourceMapFilePath string, s
 	return !data.SkippedDtsWrite
 }
 
-func getSourceFilePathInNewDir(fileName string, newDirPath string, currentDirectory string, commonSourceDirectory string, useCaseSensitiveFileNames bool) string {
+func getSourceFilePathInNewDir(fileName string, newDirPath string, currentDirectory string, commonSourceDirectory string, caseSensitivity tspath.CaseSensitivity) string {
 	sourceFilePath := tspath.GetNormalizedAbsolutePath(fileName, currentDirectory)
 	commonSourceDirectory = tspath.EnsureTrailingDirectorySeparator(commonSourceDirectory)
 	isSourceFileInCommonSourceDirectory := tspath.ContainsPath(commonSourceDirectory, sourceFilePath, tspath.ComparePathsOptions{
-		UseCaseSensitiveFileNames: useCaseSensitiveFileNames,
-		CurrentDirectory:          currentDirectory,
+		CaseSensitivity:  caseSensitivity,
+		CurrentDirectory: currentDirectory,
 	})
 	if isSourceFileInCommonSourceDirectory {
 		sourceFilePath = sourceFilePath[len(commonSourceDirectory):]
@@ -186,7 +186,7 @@ func getOwnEmitOutputFilePath(fileName string, host EmitHost, extension string) 
 			compilerOptions.OutDir,
 			currentDirectory,
 			host.CommonSourceDirectory(),
-			host.UseCaseSensitiveFileNames(),
+			host.CaseSensitivity(),
 		))
 	} else {
 		emitOutputFilePathWithoutExtension = tspath.RemoveFileExtension(fileName)
@@ -220,8 +220,8 @@ func getOutputPathsFor(sourceFile *ast.SourceFile, host EmitHost, forceDtsEmit b
 	// If json file emits to the same location skip writing it, if emitDeclarationOnly skip writing it
 	isJsonEmittedToSameLocation := isJsonFile &&
 		tspath.ComparePaths(sourceFile.FileName(), ownOutputFilePath, tspath.ComparePathsOptions{
-			CurrentDirectory:          host.GetCurrentDirectory(),
-			UseCaseSensitiveFileNames: host.UseCaseSensitiveFileNames(),
+			CurrentDirectory: host.GetCurrentDirectory(),
+			CaseSensitivity:  host.CaseSensitivity(),
 		}) == 0
 	paths := &outputPaths{}
 	if options.EmitDeclarationOnly != core.TSTrue && !isJsonEmittedToSameLocation {

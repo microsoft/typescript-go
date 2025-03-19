@@ -51,17 +51,17 @@ func TestOS(t *testing.T) {
 		assert.Equal(t, realpath, expected)
 	})
 
-	t.Run("UseCaseSensitiveFileNames", func(t *testing.T) {
+	t.Run("CaseSensitivity", func(t *testing.T) {
 		t.Parallel()
 
 		// Just check that it works.
-		fs.UseCaseSensitiveFileNames()
+		fs.CaseSensitivity()
 
 		switch runtime.GOOS {
 		case "windows":
-			assert.Assert(t, !fs.UseCaseSensitiveFileNames())
+			assert.Equal(t, fs.CaseSensitivity(), tspath.CaseInsensitive)
 		case "linux":
-			assert.Assert(t, fs.UseCaseSensitiveFileNames())
+			assert.Equal(t, fs.CaseSensitivity(), tspath.CaseSensitive)
 		}
 	})
 }

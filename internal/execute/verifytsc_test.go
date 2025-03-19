@@ -9,6 +9,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/execute"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 type testTscEdit struct {
@@ -75,7 +76,7 @@ func (test *tscInput) startBaseline() *strings.Builder {
 		"\ncurrentDirectory::",
 		test.sys.GetCurrentDirectory(),
 		"\nuseCaseSensitiveFileNames::",
-		test.sys.FS().UseCaseSensitiveFileNames(),
+		test.sys.FS().CaseSensitivity() == tspath.CaseSensitive,
 		"\nInput::",
 	)
 	fmt.Fprint(s, strings.Join(test.commandLineArgs, " "), "\n")

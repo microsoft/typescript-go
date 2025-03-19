@@ -35,7 +35,7 @@ func (h *VfsParseConfigHost) GetCurrentDirectory() string {
 
 func NewVFSParseConfigHost(files map[string]string, currentDirectory string) *VfsParseConfigHost {
 	return &VfsParseConfigHost{
-		Vfs:              vfstest.FromMap(files, true /*useCaseSensitiveFileNames*/),
+		Vfs:              vfstest.FromMap(files, tspath.CaseSensitive),
 		CurrentDirectory: currentDirectory,
 	}
 }

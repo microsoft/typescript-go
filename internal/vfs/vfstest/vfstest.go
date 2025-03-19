@@ -23,7 +23,7 @@ type mapFS struct {
 	mu sync.RWMutex
 	m  fstest.MapFS
 
-	useCaseSensitiveFileNames bool
+	caseSensitivity tspath.CaseSensitivity
 
 	symlinks map[canonicalPath]canonicalPath
 }
@@ -44,7 +44,7 @@ type sys struct {
 // The paths must be normalized absolute paths according to the tspath package,
 // without trailing directory separators.
 // The paths must be all POSIX-style or all Windows-style, but not both.
-func FromMap[File any](m map[string]File, useCaseSensitiveFileNames bool) vfs.FS {
+func FromMap[File any](m map[string]File, caseSensitivity tspath.CaseSensitivity) vfs.FS {
 	posix := false
 	windows := false
 
@@ -98,13 +98,17 @@ func FromMap[File any](m map[string]File, useCaseSensitiveFileNames bool) vfs.FS
 		panic("mixed posix and windows paths")
 	}
 
-	return iovfs.From(convertMapFS(mfs, useCaseSensitiveFileNames), useCaseSensitiveFileNames)
+	if posix && windows {
+		panic("mixed posix and windows paths")
+	}
+
+	return iovfs.From(convertMapFS(mfs, caseSensitivity), caseSensitivity)
 }
 
-func convertMapFS(input fstest.MapFS, useCaseSensitiveFileNames bool) *mapFS {
+func convertMapFS(input fstest.MapFS, caseSensitivity tspath.CaseSensitivity) *mapFS {
 	m := &mapFS{
-		m:                         make(fstest.MapFS, len(input)),
-		useCaseSensitiveFileNames: useCaseSensitiveFileNames,
+		m:               make(fstest.MapFS, len(input)),
+		caseSensitivity: caseSensitivity,
 	}
 
 	// Verify that the input is well-formed.
@@ -161,7 +165,7 @@ func comparePathsByParts(a, b string) int {
 type canonicalPath string
 
 func (m *mapFS) getCanonicalPath(p string) canonicalPath {
-	return canonicalPath(tspath.GetCanonicalFileName(p, m.useCaseSensitiveFileNames))
+	return canonicalPath(tspath.GetCanonicalFileName(p, m.caseSensitivity))
 }
 
 func (m *mapFS) open(p canonicalPath) (fs.File, error) {

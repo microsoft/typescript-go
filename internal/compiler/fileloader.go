@@ -50,8 +50,8 @@ func processAllProgramFiles(
 		tasksByFileName:    make(map[string]*parseTask),
 		defaultLibraryPath: tspath.GetNormalizedAbsolutePath(host.DefaultLibraryPath(), host.GetCurrentDirectory()),
 		comparePathsOptions: tspath.ComparePathsOptions{
-			UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
-			CurrentDirectory:          host.GetCurrentDirectory(),
+			CaseSensitivity:  host.FS().CaseSensitivity(),
+			CurrentDirectory: host.GetCurrentDirectory(),
 		},
 		wg:                  core.NewWorkGroup(programOptions.SingleThreaded),
 		rootTasks:           make([]*parseTask, 0, len(rootFiles)+len(libs)),
@@ -222,7 +222,7 @@ func (t *parseTask) start(loader *fileLoader) {
 }
 
 func (p *fileLoader) parseSourceFile(fileName string) *ast.SourceFile {
-	path := tspath.ToPath(fileName, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
+	path := tspath.ToPath(fileName, p.host.GetCurrentDirectory(), p.host.FS().CaseSensitivity())
 	sourceFile := p.host.GetSourceFile(fileName, path, p.compilerOptions.GetEmitScriptTarget())
 	return sourceFile
 }

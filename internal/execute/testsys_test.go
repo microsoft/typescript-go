@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
+	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 )
@@ -22,7 +23,7 @@ func newTestSys(fileOrFolderList FileMap, cwd string, args ...string) *testSys {
 		cwd = "/home/src/workspaces/project"
 	}
 	return &testSys{
-		fs:                 bundled.WrapFS(vfstest.FromMap(fileOrFolderList, true /*useCaseSensitiveFileNames*/)),
+		fs:                 bundled.WrapFS(vfstest.FromMap(fileOrFolderList, tspath.CaseSensitive)),
 		defaultLibraryPath: bundled.LibPath(),
 		cwd:                cwd,
 		files:              slices.Collect(maps.Keys(fileOrFolderList)),
