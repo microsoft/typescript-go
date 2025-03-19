@@ -23,7 +23,7 @@ type fileLoader struct {
 	resolvedModulesMutex sync.Mutex
 	resolvedModules      map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule]
 
-	sourceFileMetaDatasMutex sync.Mutex
+	sourceFileMetaDatasMutex sync.RWMutex
 	sourceFileMetaDatas      map[tspath.Path]*ast.SourceFileMetaData
 
 	mu                      sync.Mutex
@@ -225,15 +225,11 @@ func (t *parseTask) start(loader *fileLoader) {
 }
 
 func (p *fileLoader) loadSourceFileMetaData(path tspath.Path) {
-	p.sourceFileMetaDatasMutex.Lock()
+	p.sourceFileMetaDatasMutex.RLock()
 	if _, ok := p.sourceFileMetaDatas[path]; ok {
 		return
 	}
-	p.sourceFileMetaDatasMutex.Unlock()
-
-	if p.sourceFileMetaDatas == nil {
-		p.sourceFileMetaDatas = make(map[tspath.Path]*ast.SourceFileMetaData)
-	}
+	p.sourceFileMetaDatasMutex.RUnlock()
 
 	packageJsonType := p.resolver.GetPackageJsonTypeIfApplicable(string(path))
 	impliedNodeFormat := ast.GetImpliedNodeFormatForFile(string(path), packageJsonType)
@@ -243,8 +239,11 @@ func (p *fileLoader) loadSourceFileMetaData(path tspath.Path) {
 	}
 
 	p.sourceFileMetaDatasMutex.Lock()
+	defer p.sourceFileMetaDatasMutex.Unlock()
+	if p.sourceFileMetaDatas == nil {
+		p.sourceFileMetaDatas = make(map[tspath.Path]*ast.SourceFileMetaData)
+	}
 	p.sourceFileMetaDatas[path] = metadata
-	p.sourceFileMetaDatasMutex.Unlock()
 }
 
 func (p *fileLoader) parseSourceFile(fileName string) *ast.SourceFile {
