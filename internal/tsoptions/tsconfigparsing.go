@@ -1452,6 +1452,9 @@ func getFileNamesFromConfigSpecs(
 	// Literal files are always included verbatim. An "include" or "exclude" specification cannot
 	// remove a literal file.
 	for _, fileName := range validatedFilesSpec {
+		if fileName == "" {
+			continue
+		}
 		file := tspath.GetNormalizedAbsolutePath(fileName, basePath)
 		literalFileMap.Set(keyMappper(fileName), file)
 	}
