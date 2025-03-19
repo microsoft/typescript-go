@@ -16,14 +16,6 @@ declare module "@typescript/ast" {
 
 const popcount8 = [0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 4, 5, 5, 6, 5, 6, 6, 7, 5, 6, 6, 7, 6, 7, 7, 8];
 
-type NodeDataType = typeof NodeDataTypeChildren | typeof NodeDataTypeString | typeof NodeDataTypeExtended;
-const NodeDataTypeChildren = 0x00000000;
-const NodeDataTypeString = 0x40000000;
-const NodeDataTypeExtended = 0x80000000;
-const NodeDataTypeMask = 0xc0_00_00_00;
-const NodeChildMask = 0x00_00_00_ff;
-const NodeStringIndexMask = 0x00_ff_ff_ff;
-
 const childProperties: Readonly<Partial<Record<SyntaxKind, readonly string[]>>> = {
     [SyntaxKind.QualifiedName]: ["left", "right"],
     [SyntaxKind.TypeParameter]: ["modifiers", "name", "constraint", "defaultType"],
@@ -135,109 +127,133 @@ const childProperties: Readonly<Partial<Record<SyntaxKind, readonly string[]>>> 
     [SyntaxKind.JSDocParameterTag]: ["tagName", undefined!, undefined!, "comment"],
 };
 
-const OFFSET_KIND = 0;
-const OFFSET_POS = 1;
-const OFFSET_END = 2;
-const OFFSET_NEXT = 3;
-const OFFSET_PARENT = 4;
-const OFFSET_DATA = 5;
-const NODE_LEN = 6;
+const HEADER_OFFSET_RESERVED = 0;
+const HEADER_OFFSET_STRING_TABLE_OFFSETS = 4;
+const HEADER_OFFSET_STRING_TABLE = 8;
+const HEADER_OFFSET_EXTENDED_DATA_OFFSETS = 12;
+const HEADER_OFFSET_EXTENDED_DATA = 16;
+const HEADER_OFFSET_NODES = 20;
+const HEADER_SIZE = 24;
+
+type NodeDataType = typeof NODE_DATA_TYPE_CHILDREN | typeof NODE_DATA_TYPE_STRING | typeof NODE_DATA_TYPE_EXTENDED;
+const NODE_DATA_TYPE_CHILDREN = 0x00000000;
+const NODE_DATA_TYPE_STRING = 0x40000000;
+const NODE_DATA_TYPE_EXTENDED = 0x80000000;
+const NODE_DATA_TYPE_MASK = 0xc0_00_00_00;
+const NODE_CHILD_MASK = 0x00_00_00_ff;
+const NODE_STRING_INDEX_MASK = 0x00_ff_ff_ff;
+
+const NODE_OFFSET_KIND = 0;
+const NODE_OFFSET_POS = 4;
+const NODE_OFFSET_END = 8;
+const NODE_OFFSET_NEXT = 12;
+const NODE_OFFSET_PARENT = 16;
+const NODE_OFFSET_DATA = 20;
+const NODE_LEN = 24;
+
 const KIND_NODE_LIST = 2 ** 32 - 1;
 
 export class RemoteNodeBase {
     parent: RemoteNode;
     protected view: DataView;
+    protected decoder: TextDecoder;
     protected index: number;
     /** Keys are positions */
     protected _children: Map<number, RemoteNode | RemoteNodeList> | undefined;
 
-    constructor(view: DataView, index: number, parent: RemoteNode) {
+    constructor(view: DataView, decoder: TextDecoder, index: number, parent: RemoteNode) {
         this.view = view;
+        this.decoder = decoder;
         this.index = index;
         this.parent = parent;
     }
 
     get kind(): SyntaxKind {
-        return this.view.getUint32(this.byteIndex + OFFSET_KIND * 4, true);
+        return this.view.getUint32(this.byteIndex + NODE_OFFSET_KIND, true);
     }
 
     get pos(): number {
-        return this.view.getUint32(this.byteIndex + OFFSET_POS * 4, true);
+        return this.view.getUint32(this.byteIndex + NODE_OFFSET_POS, true);
     }
 
     get end(): number {
-        return this.view.getUint32(this.byteIndex + OFFSET_END * 4, true);
+        return this.view.getUint32(this.byteIndex + NODE_OFFSET_END, true);
     }
 
     get next(): number {
-        return this.view.getUint32(this.byteIndex + OFFSET_NEXT * 4, true);
+        return this.view.getUint32(this.byteIndex + NODE_OFFSET_NEXT, true);
     }
 
     protected get byteIndex(): number {
-        return this.offsetNodes + this.index * NODE_LEN * 4;
+        return this.offsetNodes + this.index * NODE_LEN;
     }
 
     protected get offsetStringTableOffsets(): number {
-        return this.view.getUint32(4, true);
+        return this.view.getUint32(HEADER_OFFSET_STRING_TABLE_OFFSETS, true);
     }
 
     protected get offsetStringTable(): number {
-        return this.view.getUint32(8, true);
+        return this.view.getUint32(HEADER_OFFSET_STRING_TABLE, true);
     }
 
     protected get offsetExtendedDataOffsets(): number {
-        return this.view.getUint32(12, true);
+        return this.view.getUint32(HEADER_OFFSET_EXTENDED_DATA_OFFSETS, true);
     }
 
     protected get offsetExtendedData(): number {
-        return this.view.getUint32(16, true);
+        return this.view.getUint32(HEADER_OFFSET_EXTENDED_DATA, true);
     }
 
     protected get offsetNodes(): number {
-        return this.view.getUint32(20, true);
+        return this.view.getUint32(HEADER_OFFSET_NODES, true);
     }
 
     protected get parentIndex(): number {
-        return this.view.getUint32(this.byteIndex + OFFSET_PARENT * 4, true);
+        return this.view.getUint32(this.byteIndex + NODE_OFFSET_PARENT, true);
     }
 
     protected get data(): number {
-        return this.view.getUint32(this.byteIndex + OFFSET_DATA * 4, true);
+        return this.view.getUint32(this.byteIndex + NODE_OFFSET_DATA, true);
     }
 
     protected get dataType(): NodeDataType {
-        return (this.data & NodeDataTypeMask) as NodeDataType;
+        return (this.data & NODE_DATA_TYPE_MASK) as NodeDataType;
     }
 
     protected get childMask(): number {
-        if (this.dataType !== NodeDataTypeChildren) {
+        if (this.dataType !== NODE_DATA_TYPE_CHILDREN) {
             return 0;
         }
-        return this.data & NodeChildMask;
+        return this.data & NODE_CHILD_MASK;
+    }
+
+    protected getFileText(start: number, end: number): string {
+        return this.decoder.decode(new Uint8Array(this.view.buffer, this.offsetStringTable + start, end - start));
     }
 }
 
 export class RemoteNodeList extends Array<RemoteNode> implements NodeArray<RemoteNode> {
     parent: RemoteNode;
     protected view: DataView;
+    protected decoder: TextDecoder;
     protected index: number;
     /** Keys are positions */
     protected _children: Map<number, RemoteNode | RemoteNodeList> | undefined;
 
     get pos(): number {
-        return this.view.getUint32(this.byteIndex + OFFSET_POS * 4, true);
+        return this.view.getUint32(this.byteIndex + NODE_OFFSET_POS, true);
     }
 
     get end(): number {
-        return this.view.getUint32(this.byteIndex + OFFSET_END * 4, true);
+        return this.view.getUint32(this.byteIndex + NODE_OFFSET_END, true);
     }
 
     get next(): number {
-        return this.view.getUint32(this.byteIndex + OFFSET_NEXT * 4, true);
+        return this.view.getUint32(this.byteIndex + NODE_OFFSET_NEXT, true);
     }
 
     private get data(): number {
-        return this.view.getUint32(this.byteIndex + OFFSET_DATA * 4, true);
+        return this.view.getUint32(this.byteIndex + NODE_OFFSET_DATA, true);
     }
 
     private get offsetNodes(): number {
@@ -245,12 +261,13 @@ export class RemoteNodeList extends Array<RemoteNode> implements NodeArray<Remot
     }
 
     private get byteIndex(): number {
-        return this.offsetNodes + this.index * NODE_LEN * 4;
+        return this.offsetNodes + this.index * NODE_LEN;
     }
 
-    constructor(view: DataView, index: number, parent: RemoteNode) {
+    constructor(view: DataView, decoder: TextDecoder, index: number, parent: RemoteNode) {
         super();
         this.view = view;
+        this.decoder = decoder;
         this.index = index;
         this.parent = parent;
         this.length = this.data;
@@ -290,14 +307,14 @@ export class RemoteNodeList extends Array<RemoteNode> implements NodeArray<Remot
     }
 
     private getOrCreateChildAtNodeIndex(index: number): RemoteNode | RemoteNodeList {
-        const pos = this.view.getUint32(this.offsetNodes + index * NODE_LEN * 4 + OFFSET_POS * 4, true);
+        const pos = this.view.getUint32(this.offsetNodes + index * NODE_LEN + NODE_OFFSET_POS, true);
         let child = (this._children ??= new Map()).get(pos);
         if (!child) {
-            const kind = this.view.getUint32(this.offsetNodes + index * NODE_LEN * 4 + OFFSET_KIND * 4, true);
+            const kind = this.view.getUint32(this.offsetNodes + index * NODE_LEN + NODE_OFFSET_KIND, true);
             if (kind === KIND_NODE_LIST) {
                 throw new Error("NodeList cannot directly contain another NodeList");
             }
-            child = new RemoteNode(this.view, index, this.parent);
+            child = new RemoteNode(this.view, this.decoder, index, this.parent);
             this._children.set(pos, child);
         }
         return child;
@@ -334,19 +351,19 @@ export class RemoteNode extends RemoteNodeBase implements Node {
 
     private getString(index: number): string {
         const start = this.view.getUint32(this.offsetStringTableOffsets + index * 4, true);
-        const end = this.offsetStringTableOffsets + (index + 1) * 4 === this.offsetStringTable
-            ? this.offsetNodes
-            : this.view.getUint32(this.offsetStringTableOffsets + (index + 1) * 4, true);
+        const end = this.view.getUint32(this.offsetStringTableOffsets + (index + 1) * 4, true);
         const text = new Uint8Array(this.view.buffer, this.offsetStringTable + start, end - start);
-        return new TextDecoder().decode(text);
+        return this.decoder.decode(text);
     }
 
     private getOrCreateChildAtNodeIndex(index: number): RemoteNode | RemoteNodeList {
-        const pos = this.view.getUint32(this.offsetNodes + index * NODE_LEN * 4 + OFFSET_POS * 4, true);
+        const pos = this.view.getUint32(this.offsetNodes + index * NODE_LEN + NODE_OFFSET_POS, true);
         let child = (this._children ??= new Map()).get(pos);
         if (!child) {
-            const kind = this.view.getUint32(this.offsetNodes + index * NODE_LEN * 4 + OFFSET_KIND * 4, true);
-            child = kind === KIND_NODE_LIST ? new RemoteNodeList(this.view, index, this) : new RemoteNode(this.view, index, this);
+            const kind = this.view.getUint32(this.offsetNodes + index * NODE_LEN + NODE_OFFSET_KIND, true);
+            child = kind === KIND_NODE_LIST
+                ? new RemoteNodeList(this.view, this.decoder, index, this)
+                : new RemoteNode(this.view, this.decoder, index, this);
             this._children.set(pos, child);
         }
         return child;
@@ -356,10 +373,10 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         if (this._children) {
             return true;
         }
-        if (this.byteIndex >= this.view.byteLength - (NODE_LEN * 4)) {
+        if (this.byteIndex >= this.view.byteLength - NODE_LEN) {
             return false;
         }
-        const nextNodeParent = this.view.getUint32(this.offsetNodes + (this.index + 1) * NODE_LEN * 4 + OFFSET_PARENT * 4, true);
+        const nextNodeParent = this.view.getUint32(this.offsetNodes + (this.index + 1) * NODE_LEN + NODE_OFFSET_PARENT, true);
         return nextNodeParent === this.index;
     }
 
@@ -749,7 +766,7 @@ export class RemoteNode extends RemoteNodeBase implements Node {
             case SyntaxKind.RegularExpressionLiteral:
             case SyntaxKind.NoSubstitutionTemplateLiteral:
             case SyntaxKind.JSDocText:
-                const stringIndex = this.data & NodeStringIndexMask;
+                const stringIndex = this.data & NODE_STRING_INDEX_MASK;
                 return this.getString(stringIndex);
         }
     }

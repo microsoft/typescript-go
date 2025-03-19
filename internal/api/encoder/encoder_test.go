@@ -83,8 +83,7 @@ func formatEncodedSourceFile(encoded []byte) string {
 		if ast.Kind(kind) == ast.KindIdentifier || ast.Kind(kind) == ast.KindStringLiteral {
 			stringIndex := readUint32(encoded, i+encoder.NodeOffsetData) & encoder.NodeDataStringIndexMask
 			strStart := readUint32(encoded, int(offsetStringOffsets+stringIndex*4))
-			nextIndex := int(offsetStringOffsets + (stringIndex+1)*4)
-			strEnd := core.IfElse(nextIndex == int(offsetStrings), offsetNodes-offsetStrings, readUint32(encoded, nextIndex))
+			strEnd := readUint32(encoded, int(offsetStringOffsets+stringIndex*4)+4)
 			str := string(encoded[offsetStrings+strStart : offsetStrings+strEnd])
 			result.WriteString(fmt.Sprintf(" \"%s\"", str))
 		}

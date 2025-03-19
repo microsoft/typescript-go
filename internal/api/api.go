@@ -95,7 +95,7 @@ func (api *API) NewLine() string {
 	return api.host.NewLine()
 }
 
-func (api *API) HandleRequest(id int, method string, payload json.RawMessage) ([]byte, error) {
+func (api *API) HandleRequest(id int, method string, payload []byte) ([]byte, error) {
 	now := time.Now()
 	params, err := unmarshalPayload(method, payload)
 	if err != nil {

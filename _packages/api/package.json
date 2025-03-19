@@ -34,7 +34,8 @@
   },
   "scripts": {
     "build": "tsc -b",
-    "bench": "node --no-warnings --conditions @typescript/source bench/sync.ts"
+    "bench": "node --no-warnings --conditions @typescript/source bench/sync.ts",
+    "test": "node --test --no-warnings --conditions @typescript/source ./test/**/*.test.ts"
   },
   "devDependencies": {
     "tinybench": "^3.1.1"

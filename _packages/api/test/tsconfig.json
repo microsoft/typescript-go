@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "module": "nodenext",
+        "strict": true,
+        "noEmit": true,
+        "verbatimModuleSyntax": true,
+        "allowImportingTsExtensions": true
+    },
+    "references": [
+        { "path": ".." }
+    ]
+}

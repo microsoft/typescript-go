@@ -12,6 +12,7 @@ import {
     Symbol as BaseSymbol,
     Type as BaseType,
 } from "../base/api.ts";
+import type { FileSystem } from "../base/fs.ts";
 import type {
     ConfigResponse,
     GetSymbolAtPositionParams,
@@ -22,6 +23,7 @@ import type {
 import { Client } from "./client.ts";
 
 export interface APIOptions extends BaseAPIOptions {
+    fs?: FileSystem;
 }
 
 export class API implements BaseAPI<false> {
@@ -53,6 +55,7 @@ export class API implements BaseAPI<false> {
 }
 
 export class Project extends BaseProject<false> {
+    private decoder = new TextDecoder();
     private client: Client;
 
     constructor(client: Client, data: ProjectResponse) {
@@ -66,7 +69,7 @@ export class Project extends BaseProject<false> {
 
     getSourceFile(fileName: string): SourceFile | undefined {
         const data = this.client.requestBinary("getSourceFile", { project: this.id, fileName });
-        return data ? new RemoteSourceFile(this.client, this, data) as unknown as SourceFile : undefined;
+        return data ? new RemoteSourceFile(this.client, this, data, this.decoder) as unknown as SourceFile : undefined;
     }
 
     getSymbolAtPosition(requests: readonly GetSymbolAtPositionParams[]): (Symbol | undefined)[];
@@ -88,13 +91,14 @@ export class Project extends BaseProject<false> {
 export interface SourceFile extends Node {
     kind: SyntaxKind.SourceFile;
     statements: NodeArray<Statement>;
+    get text(): string;
 }
 
 class RemoteSourceFile extends BaseRemoteSourceFile {
     private client: Client;
     private project: Project;
-    constructor(client: Client, project: Project, data: Uint8Array) {
-        super(data);
+    constructor(client: Client, project: Project, data: Uint8Array, decoder: TextDecoder) {
+        super(data, decoder);
         this.client = client;
         this.project = project;
     }

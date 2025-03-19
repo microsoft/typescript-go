@@ -27,14 +27,15 @@ export class Client {
                 callbacks: Object.keys(options.fs ?? {}),
             }),
         );
-    }
 
-    registerCallback(method: string, callback: (payload: any) => any): void {
-        this.channel.registerCallback(method, (_, arg) => {
-            const result = callback(JSON.parse(this.decoder.decode(arg)));
-            return JSON.stringify(result) ?? "";
-        });
-        this.channel.requestSync("registerCallback", method);
+        if (options.fs) {
+            for (const [key, callback] of Object.entries(options.fs)) {
+                this.channel.registerCallback(key, (_, arg) => {
+                    const result = callback(JSON.parse(this.decoder.decode(arg)));
+                    return this.encoder.encode(JSON.stringify(result));
+                });
+            }
+        }
     }
 
     request(method: string, payload: any): any {

@@ -44,9 +44,13 @@ export abstract class Project<Async extends boolean> {
 }
 
 export abstract class RemoteSourceFile extends RemoteNode {
-    constructor(data: Uint8Array) {
+    constructor(data: Uint8Array, decoder: TextDecoder) {
         const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
-        super(view, 1, undefined!);
+        super(view, decoder, 1, undefined!);
+    }
+
+    get text(): string {
+        return this.getFileText(0, this.end);
     }
 }
 

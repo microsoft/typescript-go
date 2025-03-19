@@ -4,7 +4,6 @@ import (
 	"encoding/binary"
 	"fmt"
 	"slices"
-	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 )
@@ -46,49 +45,12 @@ const (
 	HeaderSize
 )
 
-type stringTable struct {
-	data    *strings.Builder
-	offsets []uint32
-}
-
-func newStringTable(stringLength int, stringCount int) *stringTable {
-	builder := &strings.Builder{}
-	builder.Grow(stringLength)
-	return &stringTable{
-		data:    builder,
-		offsets: make([]uint32, 0, stringCount),
-	}
-}
-
-func (t *stringTable) add(s string) uint32 {
-	offset := uint32(t.data.Len())
-	t.offsets = append(t.offsets, offset)
-	t.data.WriteString(s)
-	return uint32(len(t.offsets) - 1)
-}
-
-func (t *stringTable) encode() (result []byte, err error) {
-	result = make([]byte, 0, len(t.offsets)*4+t.data.Len())
-	if result, err = appendUint32s(result, t.offsets...); err != nil {
-		return nil, err
-	}
-	result = append(result, t.data.String()...)
-	return result, nil
-}
-
 // EncodeSourceFile encodes a source file into a byte slice.
-// The encoded format is a sequence of int32 values, where each node is represented by 5 values:
-// - kind: the node kind
-// - pos: the start position of the node
-// - end: the end position of the node
-// - next: the index of the next sibling node (0 if there is no next sibling)
-// - parent: the index of the parent node (0 if there is no parent)
-// The first encoded node is a zero element that is not part of the source file.
 func EncodeSourceFile(sourceFile *ast.SourceFile) ([]byte, error) {
 	var err error
 	var parentIndex, nodeCount, prevIndex uint32
 
-	strs := newStringTable(sourceFile.TextLength, sourceFile.TextCount)
+	strs := newStringTable(sourceFile.Text, sourceFile.TextCount)
 	nodes := make([]byte, 0, (sourceFile.NodeCount+1)*NodeSize)
 
 	visitor := &ast.NodeVisitor{
@@ -175,7 +137,7 @@ func EncodeSourceFile(sourceFile *ast.SourceFile) ([]byte, error) {
 
 	offsetStringTableOffsets := HeaderSize
 	offsetStringTableData := HeaderSize + len(strs.offsets)*4
-	offsetNodes := offsetStringTableData + strs.data.Len()
+	offsetNodes := offsetStringTableData + strs.stringLength()
 	offsetExtendedDataOffsets := 0
 	offsetExtendedDataData := 0
 
@@ -636,23 +598,23 @@ func getNodeDefinedData(node *ast.Node) uint32 {
 func recordNodeStrings(node *ast.Node, strs *stringTable) uint32 {
 	switch node.Kind {
 	case ast.KindJsxText:
-		return strs.add(node.AsJsxText().Text)
+		return strs.add(node.AsJsxText().Text, node.Kind, node.Pos(), node.End())
 	case ast.KindIdentifier:
-		return strs.add(node.AsIdentifier().Text)
+		return strs.add(node.AsIdentifier().Text, node.Kind, node.Pos(), node.End())
 	case ast.KindPrivateIdentifier:
-		return strs.add(node.AsPrivateIdentifier().Text)
+		return strs.add(node.AsPrivateIdentifier().Text, node.Kind, node.Pos(), node.End())
 	case ast.KindStringLiteral:
-		return strs.add(node.AsStringLiteral().Text)
+		return strs.add(node.AsStringLiteral().Text, node.Kind, node.Pos(), node.End())
 	case ast.KindNumericLiteral:
-		return strs.add(node.AsNumericLiteral().Text)
+		return strs.add(node.AsNumericLiteral().Text, node.Kind, node.Pos(), node.End())
 	case ast.KindBigIntLiteral:
-		return strs.add(node.AsBigIntLiteral().Text)
+		return strs.add(node.AsBigIntLiteral().Text, node.Kind, node.Pos(), node.End())
 	case ast.KindRegularExpressionLiteral:
-		return strs.add(node.AsRegularExpressionLiteral().Text)
+		return strs.add(node.AsRegularExpressionLiteral().Text, node.Kind, node.Pos(), node.End())
 	case ast.KindNoSubstitutionTemplateLiteral:
-		return strs.add(node.AsNoSubstitutionTemplateLiteral().Text)
+		return strs.add(node.AsNoSubstitutionTemplateLiteral().Text, node.Kind, node.Pos(), node.End())
 	case ast.KindJSDocText:
-		return strs.add(node.AsJSDocText().Text)
+		return strs.add(node.AsJSDocText().Text, node.Kind, node.Pos(), node.End())
 	default:
 		panic(fmt.Sprintf("Unexpected node kind %v", node.Kind))
 	}
