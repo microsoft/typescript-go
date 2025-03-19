@@ -423,9 +423,7 @@ func createHarnessTestFile(unit *testUnit, currentDirectory string) *harnessutil
 func (c *compilerTest) verifyUnionOrdering(t *testing.T) {
 	t.Run("union ordering", func(t *testing.T) {
 		for _, c := range c.result.Program.GetTypeCheckers() {
-			count := 0
 			for union := range c.UnionTypes() {
-				count++
 				types := union.Types()
 
 				reversed := slices.Clone(types)

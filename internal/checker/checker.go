@@ -23697,13 +23697,7 @@ func (c *Checker) getUnionTypeFromSortedList(types []*Type, precomputedObjectFla
 }
 
 func (c *Checker) UnionTypes() iter.Seq[*Type] {
-	return func(yield func(v *Type) bool) {
-		for _, t := range c.unionTypes {
-			if !yield(t) {
-				return
-			}
-		}
-	}
+	return maps.Values(c.unionTypes)
 }
 
 func (c *Checker) addTypesToUnion(typeSet []*Type, includes TypeFlags, types []*Type) ([]*Type, TypeFlags) {
