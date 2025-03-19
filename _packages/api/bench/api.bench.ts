@@ -1,9 +1,9 @@
-import type { GetSymbolAtPositionParams } from "@typescript/api/base/proto";
 import {
     API,
     type Project,
     type SourceFile,
-} from "@typescript/api/sync";
+} from "@typescript/api";
+import type { GetSymbolAtPositionParams } from "@typescript/api/proto";
 import { SyntaxKind } from "@typescript/ast";
 import { Bench } from "tinybench";
 

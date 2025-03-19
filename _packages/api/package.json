@@ -6,35 +6,34 @@
   "imports": {
     "#symbolFlags": {
       "@typescript/source": {
-        "types": "./src/base/symbolFlags.enum.ts",
-        "default": "./src/base/symbolFlags.ts"
+        "types": "./src/symbolFlags.enum.ts",
+        "default": "./src/symbolFlags.ts"
       },
-      "types": "./dist/base/symbolFlags.enum.d.ts",
-      "default": "./dist/base/symbolFlags.js"
+      "types": "./dist/symbolFlags.enum.d.ts",
+      "default": "./dist/symbolFlags.js"
     }
   },
   "exports": {
-    "./async": {
-      "@typescript/source": "./src/async/api.ts",
-      "default": "./dist/async/api.js"
+    ".": {
+      "@typescript/source": "./src/api.ts",
+      "default": "./dist/api.js"
     },
-    "./sync": {
-      "@typescript/source": "./src/sync/api.ts",
-      "default": "./dist/sync/api.js"
+    "./fs": {
+      "@typescript/source": "./src/fs.ts",
+      "default": "./dist/fs.js"
     },
-    "./base/*": {
-      "@typescript/source": "./src/base/*.ts",
-      "default": "./dist/base/*.js"
+    "./proto": {
+      "@typescript/source": "./src/proto.ts",
+      "default": "./dist/proto.js"
     }
   },
   "dependencies": {
     "@typescript/ast": "workspace:*",
-    "json-rpc-2.0": "^1.7.0",
     "libsyncrpc": "link:../../../libsyncrpc"
   },
   "scripts": {
     "build": "tsc -b",
-    "bench": "node --no-warnings --conditions @typescript/source bench/sync.ts",
+    "bench": "node --no-warnings --conditions @typescript/source bench/api.bench.ts",
     "test": "node --test --no-warnings --conditions @typescript/source ./test/**/*.test.ts"
   },
   "devDependencies": {

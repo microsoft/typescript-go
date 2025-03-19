@@ -60,9 +60,6 @@ importers:
       '@typescript/ast':
         specifier: workspace:*
         version: link:../ast
-      json-rpc-2.0:
-        specifier: ^1.7.0
-        version: 1.7.0
       libsyncrpc:
         specifier: link:../../../libsyncrpc
         version: link:../../../libsyncrpc
@@ -303,9 +300,6 @@ packages:
   js-yaml@4.1.0:
     resolution: {integrity: sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA==}
     hasBin: true
-
-  json-rpc-2.0@1.7.0:
-    resolution: {integrity: sha512-asnLgC1qD5ytP+fvBP8uL0rvj+l8P6iYICbzZ8dVxCpESffVjzA7KkYkbKCIbavs7cllwH1ZUaNtJwphdeRqpg==}
 
   json-schema-to-typescript-lite@14.1.0:
     resolution: {integrity: sha512-b8K6P3aiLgiYKYcHacgZKrwPXPyjekqRPV5vkNfBt0EoohcOSXEbcuGzgi6KQmsAhuy5Mh2KMxofXodRhMxURA==}
@@ -699,8 +693,6 @@ snapshots:
   js-yaml@4.1.0:
     dependencies:
       argparse: 2.0.1
-
-  json-rpc-2.0@1.7.0: {}
 
   json-schema-to-typescript-lite@14.1.0:
     dependencies:

@@ -4,29 +4,28 @@ import type {
     Statement,
     SyntaxKind,
 } from "@typescript/ast";
-import {
-    type API as BaseAPI,
-    type APIOptions as BaseAPIOptions,
-    Project as BaseProject,
-    RemoteSourceFile as BaseRemoteSourceFile,
-    Symbol as BaseSymbol,
-    Type as BaseType,
-} from "../base/api.ts";
-import type { FileSystem } from "../base/fs.ts";
+import { Client } from "./client.ts";
+import type { FileSystem } from "./fs.ts";
+import { RemoteNode } from "./node.ts";
 import type {
     ConfigResponse,
     GetSymbolAtPositionParams,
     ProjectResponse,
     SymbolResponse,
     TypeResponse,
-} from "../base/proto.ts";
-import { Client } from "./client.ts";
+} from "./proto.ts";
+import { SymbolFlags } from "./symbolFlags.enum.ts";
 
-export interface APIOptions extends BaseAPIOptions {
+export { SymbolFlags };
+
+export interface APIOptions {
+    tsserverPath: string;
+    cwd?: string;
+    logFile?: string;
     fs?: FileSystem;
 }
 
-export class API implements BaseAPI<false> {
+export class API {
     private client: Client;
     constructor(options: APIOptions) {
         this.client = new Client(options);
@@ -54,13 +53,25 @@ export class API implements BaseAPI<false> {
     }
 }
 
-export class Project extends BaseProject<false> {
+export class Project {
     private decoder = new TextDecoder();
     private client: Client;
 
+    id: number;
+    configFileName!: string;
+    compilerOptions!: Record<string, unknown>;
+    rootFiles!: readonly string[];
+
     constructor(client: Client, data: ProjectResponse) {
-        super(data);
+        this.id = data.id;
         this.client = client;
+        this.loadData(data);
+    }
+
+    loadData(data: ProjectResponse): void {
+        this.configFileName = data.configFileName;
+        this.compilerOptions = data.compilerOptions;
+        this.rootFiles = data.rootFiles;
     }
 
     reload(): void {
@@ -69,7 +80,7 @@ export class Project extends BaseProject<false> {
 
     getSourceFile(fileName: string): SourceFile | undefined {
         const data = this.client.requestBinary("getSourceFile", { project: this.id, fileName });
-        return data ? new RemoteSourceFile(this.client, this, data, this.decoder) as unknown as SourceFile : undefined;
+        return data ? new RemoteSourceFile(this.client, data, this.decoder) as unknown as SourceFile : undefined;
     }
 
     getSymbolAtPosition(requests: readonly GetSymbolAtPositionParams[]): (Symbol | undefined)[];
@@ -78,13 +89,13 @@ export class Project extends BaseProject<false> {
         if (params.length === 2) {
             if (typeof params[1] === "number") {
                 const data = this.client.request("getSymbolAtPosition", { project: this.id, fileName: params[0], position: params[1] });
-                return data ? new Symbol(this.client, this, data) : undefined;
+                return data ? new Symbol(this.client, data) : undefined;
             }
             const data = this.client.request("getSymbolAtPositions", { project: this.id, fileName: params[0], positions: params[1] });
-            return data.map((d: SymbolResponse | null) => d ? new Symbol(this.client, this, d) : undefined);
+            return data.map((d: SymbolResponse | null) => d ? new Symbol(this.client, d) : undefined);
         }
         const data = this.client.request("getSymbolAtPosition", params[0].map(({ fileName, position }) => ({ project: this.id, fileName, position })));
-        return data.map((d: SymbolResponse | null) => d ? new Symbol(this.client, this, d) : undefined);
+        return data.map((d: SymbolResponse | null) => d ? new Symbol(this.client, d) : undefined);
     }
 }
 
@@ -94,36 +105,42 @@ export interface SourceFile extends Node {
     get text(): string;
 }
 
-class RemoteSourceFile extends BaseRemoteSourceFile {
+class RemoteSourceFile extends RemoteNode {
     private client: Client;
-    private project: Project;
-    constructor(client: Client, project: Project, data: Uint8Array, decoder: TextDecoder) {
-        super(data, decoder);
+    constructor(client: Client, data: Uint8Array, decoder: TextDecoder) {
+        const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
+        super(view, decoder, 1, undefined!);
         this.client = client;
-        this.project = project;
+    }
+
+    get text(): string {
+        return this.getFileText(0, this.end);
     }
 }
 
-export class Symbol extends BaseSymbol<false> {
+export class Symbol {
     private client: Client;
-    private project: Project;
+    private id: number;
+    name: string;
+    flags: SymbolFlags;
+    checkFlags: number;
 
-    constructor(client: Client, project: Project, data: SymbolResponse) {
-        super(data);
+    constructor(client: Client, data: SymbolResponse) {
         this.client = client;
-        this.project = project;
-    }
-
-    getType(): Type | undefined {
-        const data = this.client.request("getTypeOfSymbol", { project: this.project.id, symbol: this.id });
-        return data ? new Type(this.client, data) : undefined;
+        this.id = data.id;
+        this.name = data.name;
+        this.flags = data.flags;
+        this.checkFlags = data.checkFlags;
     }
 }
 
-export class Type extends BaseType<false> {
+export class Type {
     private client: Client;
+    private id: number;
+    flags: number;
     constructor(client: Client, data: TypeResponse) {
-        super(data);
         this.client = client;
+        this.id = data.id;
+        this.flags = data.flags;
     }
 }

@@ -9,7 +9,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/microsoft/typescript-go/internal/api"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
@@ -22,7 +21,6 @@ type ServerOptions struct {
 	Out io.Writer
 	Err io.Writer
 
-	API                bool
 	Cwd                string
 	NewLine            core.NewLineKind
 	FS                 vfs.FS
@@ -37,7 +35,6 @@ func NewServer(opts *ServerOptions) *Server {
 		r:                  lsproto.NewBaseReader(opts.In),
 		w:                  lsproto.NewBaseWriter(opts.Out),
 		stderr:             opts.Err,
-		useAPI:             opts.API,
 		cwd:                opts.Cwd,
 		newLine:            opts.NewLine,
 		fs:                 opts.FS,
@@ -56,7 +53,6 @@ type Server struct {
 	requestMethod string
 	requestTime   time.Time
 
-	useAPI             bool
 	cwd                string
 	newLine            core.NewLineKind
 	fs                 vfs.FS
@@ -66,7 +62,6 @@ type Server struct {
 	positionEncoding lsproto.PositionEncodingKind
 
 	logger         *project.Logger
-	api            *api.API
 	projectService *project.Service
 	converters     *converters
 }
@@ -100,8 +95,6 @@ func (s *Server) Run() error {
 	for {
 		req, err := s.read()
 		if err != nil {
-			s.requestMethod = ""
-			s.requestTime = time.Time{}
 			if errors.Is(err, lsproto.ErrInvalidRequest) {
 				if err := s.sendError(nil, err); err != nil {
 					return err
@@ -180,38 +173,13 @@ func (s *Server) sendResponse(resp *lsproto.ResponseMessage) error {
 func (s *Server) handleMessage(req *lsproto.RequestMessage) error {
 	s.requestTime = time.Now()
 	s.requestMethod = string(req.Method)
-	if s.useAPI && strings.HasPrefix(string(req.Method), "@ts/") {
-		if result, err := s.api.HandleRequest(int(req.ID.MustInt()), strings.TrimPrefix(string(req.Method), "@ts/"), req.Params.(json.RawMessage)); err != nil {
-			return s.sendError(req.ID, err)
-		} else {
-			return s.sendResult(req.ID, result)
-		}
-	}
 
-	switch req.Params.(type) {
+	params := req.Params
+	switch params.(type) {
 	case *lsproto.InitializeParams:
 		return s.sendError(req.ID, lsproto.ErrInvalidRequest)
 	case *lsproto.InitializedParams:
 		return s.handleInitialized(req)
-	default:
-		switch req.Method {
-		case lsproto.MethodShutdown:
-			if s.useAPI {
-				s.api.Close()
-			} else {
-				s.projectService.Close()
-			}
-			return s.sendResult(req.ID, nil)
-		case lsproto.MethodExit:
-			return nil
-		}
-	}
-
-	if s.useAPI {
-		return s.sendError(req.ID, lsproto.ErrInvalidRequest)
-	}
-
-	switch req.Params.(type) {
 	case *lsproto.DidOpenTextDocumentParams:
 		return s.handleDidOpen(req)
 	case *lsproto.DidChangeTextDocumentParams:
@@ -227,26 +195,24 @@ func (s *Server) handleMessage(req *lsproto.RequestMessage) error {
 	case *lsproto.DefinitionParams:
 		return s.handleDefinition(req)
 	default:
-		s.Log("unknown method", req.Method)
-		if req.ID != nil {
-			return s.sendError(req.ID, lsproto.ErrInvalidRequest)
+		switch req.Method {
+		case lsproto.MethodShutdown:
+			s.projectService.Close()
+			return s.sendResult(req.ID, nil)
+		case lsproto.MethodExit:
+			return nil
+		default:
+			s.Log("unknown method", req.Method)
+			if req.ID != nil {
+				return s.sendError(req.ID, lsproto.ErrInvalidRequest)
+			}
+			return nil
 		}
-		return nil
 	}
 }
 
 func (s *Server) handleInitialize(req *lsproto.RequestMessage) error {
 	s.initializeParams = req.Params.(*lsproto.InitializeParams)
-	serverInfo := &lsproto.ServerInfo{
-		Name:    "typescript-go",
-		Version: ptrTo(core.Version),
-	}
-	if s.useAPI {
-		return s.sendResult(req.ID, &lsproto.InitializeResult{
-			ServerInfo:   serverInfo,
-			Capabilities: lsproto.ServerCapabilities{},
-		})
-	}
 
 	s.positionEncoding = lsproto.PositionEncodingKindUTF16
 	if genCapabilities := s.initializeParams.Capabilities.General; genCapabilities != nil && genCapabilities.PositionEncodings != nil {
@@ -256,7 +222,10 @@ func (s *Server) handleInitialize(req *lsproto.RequestMessage) error {
 	}
 
 	return s.sendResult(req.ID, &lsproto.InitializeResult{
-		ServerInfo: serverInfo,
+		ServerInfo: &lsproto.ServerInfo{
+			Name:    "typescript-go",
+			Version: ptrTo(core.Version),
+		},
 		Capabilities: lsproto.ServerCapabilities{
 			PositionEncoding: ptrTo(s.positionEncoding),
 			TextDocumentSync: &lsproto.TextDocumentSyncOptionsOrTextDocumentSyncKind{
@@ -286,16 +255,10 @@ func (s *Server) handleInitialize(req *lsproto.RequestMessage) error {
 }
 
 func (s *Server) handleInitialized(req *lsproto.RequestMessage) error {
-	s.logger = project.NewLogger([]io.Writer{s.stderr}, "", project.LogLevelVerbose)
-	if s.useAPI {
-		s.api = api.NewAPI(s, api.APIOptions{
-			Logger: s.logger,
-		})
-	} else {
-		s.projectService = project.NewService(s, project.ServiceOptions{
-			Logger: s.logger,
-		})
-	}
+	s.logger = project.NewLogger([]io.Writer{s.stderr}, "" /*file*/, project.LogLevelVerbose)
+	s.projectService = project.NewService(s, project.ServiceOptions{
+		Logger: s.logger,
+	})
 	s.converters = &converters{projectService: s.projectService, positionEncoding: s.positionEncoding}
 	return nil
 }

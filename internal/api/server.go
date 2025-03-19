@@ -123,7 +123,7 @@ func (s *Server) Run() error {
 				s.logger.PerfTrace(fmt.Sprintf("%s sent - %s", method, time.Since(now)))
 			}
 		default:
-			return fmt.Errorf("%w: expected request, recieved: %s", ErrInvalidRequest, messageType)
+			return fmt.Errorf("%w: expected request, received: %s", ErrInvalidRequest, messageType)
 		}
 	}
 }
@@ -140,7 +140,7 @@ func (s *Server) readRequest(expectedMethod string) (messageType string, method 
 	}
 	method = method[:len(method)-1]
 	if expectedMethod != "" && method != expectedMethod {
-		return "", "", nil, fmt.Errorf("%w: expected method %q, recieved %q", ErrInvalidRequest, expectedMethod, method)
+		return "", "", nil, fmt.Errorf("%w: expected method %q, received %q", ErrInvalidRequest, expectedMethod, method)
 	}
 	var size uint32
 	if err = binary.Read(s.r, binary.LittleEndian, &size); err != nil {
@@ -255,11 +255,11 @@ func (s *Server) call(method string, payload any) ([]byte, error) {
 		return nil, err
 	}
 
-	if string(messageType) != "call-response" && string(messageType) != "call-error" {
-		return nil, fmt.Errorf("%w: expected call-response or call-error, recieved: %s", ErrInvalidRequest, messageType)
+	if messageType != "call-response" && messageType != "call-error" {
+		return nil, fmt.Errorf("%w: expected call-response or call-error, received: %s", ErrInvalidRequest, messageType)
 	}
 
-	if string(messageType) == "call-error" {
+	if messageType == "call-error" {
 		return nil, fmt.Errorf("%w: %s", ErrClientError, responsePayload)
 	}
 
