@@ -1,0 +1,17 @@
+--- old.objectTypePropertyAccess.js
++++ new.objectTypePropertyAccess.js
+@@= skipped -32, +32 lines =@@
+ 
+ //// [objectTypePropertyAccess.js]
+ // Index notation should resolve to the type of a declared property with that same name
+-var C = /** @class */ (function () {
+-    function C() {
+-    }
+-    return C;
+-}());
++class C {
++    foo;
++}
+ var c;
+ var r1 = c.toString();
+ var r2 = c['toString']();

@@ -1,14 +1,12 @@
 TwoInternalModulesThatMergeEachWithExportedClassesOfTheSameName.ts(2,18): error TS2300: Duplicate identifier 'Point'.
-TwoInternalModulesThatMergeEachWithExportedClassesOfTheSameName.ts(2,18): error TS2300: Duplicate identifier 'Point'.
 TwoInternalModulesThatMergeEachWithExportedClassesOfTheSameName.ts(10,18): error TS2300: Duplicate identifier 'Point'.
-TwoInternalModulesThatMergeEachWithExportedClassesOfTheSameName.ts(10,18): error TS2300: Duplicate identifier 'Point'.
+TwoInternalModulesThatMergeEachWithExportedClassesOfTheSameName.ts(17,18): error TS2300: Duplicate identifier 'Line'.
+TwoInternalModulesThatMergeEachWithExportedClassesOfTheSameName.ts(26,26): error TS2300: Duplicate identifier 'Line'.
 
 
 ==== TwoInternalModulesThatMergeEachWithExportedClassesOfTheSameName.ts (4 errors) ====
     module A {
         export class Point {
-                     ~~~~~
-!!! error TS2300: Duplicate identifier 'Point'.
                      ~~~~~
 !!! error TS2300: Duplicate identifier 'Point'.
             x: number;
@@ -21,8 +19,6 @@ TwoInternalModulesThatMergeEachWithExportedClassesOfTheSameName.ts(10,18): error
         export class Point {
                      ~~~~~
 !!! error TS2300: Duplicate identifier 'Point'.
-                     ~~~~~
-!!! error TS2300: Duplicate identifier 'Point'.
             origin: number;
             angle: number;
         }
@@ -30,6 +26,8 @@ TwoInternalModulesThatMergeEachWithExportedClassesOfTheSameName.ts(10,18): error
     
     module X.Y.Z {
         export class Line {
+                     ~~~~
+!!! error TS2300: Duplicate identifier 'Line'.
             length: number;
         }
     }
@@ -39,6 +37,8 @@ TwoInternalModulesThatMergeEachWithExportedClassesOfTheSameName.ts(10,18): error
             export module Z {
                 // expected error
                 export class Line {
+                             ~~~~
+!!! error TS2300: Duplicate identifier 'Line'.
                     name: string;
                 }
             }

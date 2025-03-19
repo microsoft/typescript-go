@@ -1,0 +1,22 @@
+--- old.errorElaboration.types
++++ new.errorElaboration.types
+@@= skipped -28, +28 lines =@@
+ // Repro for #25498
+ 
+ function test(): {[A in "foo"]: A} {
+->test : () => { [A in "foo"]: A; }
++>test : () => { foo: "foo"; }
+ 
+   return {foo: "bar"};
+ >{foo: "bar"} : { foo: "bar"; }
+@@= skipped -17, +17 lines =@@
+ >'a' : "a"
+ 
+ const x = ({ [foo.bar]: c }) => undefined;
+->x : ({ [foo.bar]: c }: {}) => any
+->({ [foo.bar]: c }) => undefined : ({ [foo.bar]: c }: {}) => any
++>x : (__0: {}) => any
++>({ [foo.bar]: c }) => undefined : (__0: {}) => any
+ >foo.bar : any
+ >foo : (x: () => Container<Ref<number>>) => void
+ >bar : any

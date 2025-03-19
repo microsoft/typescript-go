@@ -1,0 +1,58 @@
+--- old.topLevelAwait.1(module=esnext,target=es2015).js
++++ new.topLevelAwait.1(module=esnext,target=es2015).js
+@@= skipped -80, +80 lines =@@
+ 
+ 
+ //// [other.js]
+-var _a, e_1, _b, _c;
+ const _await = 1;
+ // await allowed in aliased export
+ export { _await as await };
+ // for-await-of
+ const arr = [Promise.resolve()];
+-try {
+-    for (var _d = true, arr_1 = __asyncValues(arr), arr_1_1; arr_1_1 = await arr_1.next(), _a = arr_1_1.done, !_a; _d = true) {
+-        _c = arr_1_1.value;
+-        _d = false;
+-        const item = _c;
+-        item;
+-    }
++for await (const item of arr) {
++    item;
+ }
+-catch (e_1_1) { e_1 = { error: e_1_1 }; }
+-finally {
+-    try {
+-        if (!_d && !_a && (_b = arr_1.return)) await _b.call(arr_1);
+-    }
+-    finally { if (e_1) throw e_1.error; }
+-}
+ //// [index.js]
+ export const x = 1;
+ await x;
+@@= skipped -43, +30 lines =@@
+     set await(value) { }
+ }
+ class C3 {
+-    constructor() {
+-        this.await = 1;
+-    }
++    await = 1;
+ }
+ ({
+     await() { }
+@@= skipped -16, +14 lines =@@
+ });
+ // property access name should be ok
+ C1.prototype.await;
+-let C = class C {
+-};
+-C = __decorate([
+-    (await dec)
+-], C);
++@(await dec)
++class C {
++}
+ // newlines
+ // await in throw
+ throw await 1;

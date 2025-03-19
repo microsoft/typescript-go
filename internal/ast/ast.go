@@ -442,6 +442,9 @@ func (n *Node) ModifierFlags() ModifierFlags {
 	if modifiers != nil {
 		return modifiers.ModifierFlags
 	}
+	if n.Flags&NodeFlagsNestedNamespace != 0 {
+		return ModifierFlagsExport
+	}
 	return ModifierFlagsNone
 }
 
@@ -1300,6 +1303,10 @@ func (n *Node) AsEmptyStatement() *EmptyStatement {
 
 func (n *Node) AsEnumDeclaration() *EnumDeclaration {
 	return n.data.(*EnumDeclaration)
+}
+
+func (n *Node) AsNotEmittedStatement() *NotEmittedStatement {
+	return n.data.(*NotEmittedStatement)
 }
 
 func (n *Node) AsJSDoc() *JSDoc {
@@ -3441,7 +3448,28 @@ func IsModuleDeclaration(node *Node) bool {
 	return node.Kind == KindModuleDeclaration
 }
 
-// ModuleEqualsDeclaration
+// NotEmittedStatement
+
+// Represents a statement that is elided as part of a transformation to emit comments on a
+// not-emitted node.
+type NotEmittedStatement struct {
+	StatementBase
+}
+
+func (f *NodeFactory) NewNotEmittedStatement() *Node {
+	data := &NotEmittedStatement{}
+	return newNode(KindNotEmittedStatement, data, f.hooks)
+}
+
+func (node *NotEmittedStatement) Clone(f *NodeFactory) *Node {
+	return cloneNode(f.NewNotEmittedStatement(), node.AsNode(), f.hooks)
+}
+
+func IsNotEmittedStatement(node *Node) bool {
+	return node.Kind == KindNotEmittedStatement
+}
+
+// ImportEqualsDeclaration
 
 type ImportEqualsDeclaration struct {
 	StatementBase
@@ -8663,6 +8691,11 @@ type CommentDirective struct {
 
 // SourceFile
 
+type SourceFileMetaData struct {
+	PackageJsonType   string
+	ImpliedNodeFormat core.ResolutionMode
+}
+
 type SourceFile struct {
 	NodeBase
 	DeclarationBase
@@ -8686,6 +8719,7 @@ type SourceFile struct {
 	HasNoDefaultLib             bool
 	UsesUriStyleNodeCoreModules core.Tristate
 	Identifiers                 map[string]string
+	IdentifierCount             int
 	Imports                     []*LiteralLikeNode // []LiteralLikeNode
 	ModuleAugmentations         []*ModuleName      // []ModuleName
 	AmbientModuleNames          []string
@@ -8723,7 +8757,6 @@ type SourceFile struct {
 
 	// !!!
 
-	ImpliedNodeFormat       core.ModuleKind
 	CommonJsModuleIndicator *Node
 	ExternalModuleIndicator *Node
 	JsGlobalAugmentations   SymbolTable
@@ -8808,7 +8841,6 @@ func (node *SourceFile) copyFrom(other *SourceFile) {
 	node.ReferencedFiles = other.ReferencedFiles
 	node.TypeReferenceDirectives = other.TypeReferenceDirectives
 	node.LibReferenceDirectives = other.LibReferenceDirectives
-	node.ImpliedNodeFormat = other.ImpliedNodeFormat
 	node.CommonJsModuleIndicator = other.CommonJsModuleIndicator
 	node.ExternalModuleIndicator = other.ExternalModuleIndicator
 	node.JsGlobalAugmentations = other.JsGlobalAugmentations

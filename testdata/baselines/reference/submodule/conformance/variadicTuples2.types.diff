@@ -1,0 +1,25 @@
+--- old.variadicTuples2.types
++++ new.variadicTuples2.types
+@@= skipped -341, +341 lines =@@
+ >values : T
+ >args.slice(0, -1) as unknown as T : T
+ >args.slice(0, -1) as unknown : unknown
+->args.slice(0, -1) : (((...values: T) => void) | T[number])[]
+->args.slice : (start?: number, end?: number) => (((...values: T) => void) | T[number])[]
++>args.slice(0, -1) : ((...values: T) => void | T[number])[]
++>args.slice : (start?: number | undefined, end?: number | undefined) => ((...values: T) => void | T[number])[]
+ >args : [...T, (...values: T) => void]
+->slice : (start?: number, end?: number) => (((...values: T) => void) | T[number])[]
++>slice : (start?: number | undefined, end?: number | undefined) => ((...values: T) => void | T[number])[]
+ >0 : 0
+ >-1 : -1
+ >1 : 1
+@@= skipped -43, +43 lines =@@
+ >"foo" : "foo"
+ >123 : 123
+ >true : true
+->(...x) => {    x;  // [string, number, boolean]} : (x_0: string, x_1: number, x_2: boolean) => void
++>(...x) => {    x;  // [string, number, boolean]} : (...x: [string, number, boolean]) => void
+ >x : [string, number, boolean]
+ 
+     x;  // [string, number, boolean]

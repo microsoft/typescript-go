@@ -68,6 +68,7 @@ type Parser struct {
 	hasDeprecatedTag            bool
 
 	identifiers             map[string]string
+	identifierCount         int
 	notParenthesizedArrow   core.Set[int]
 	nodeSlicePool           core.Pool[*ast.Node]
 	jsdocCache              map[*ast.Node][]*ast.Node
@@ -76,6 +77,8 @@ type Parser struct {
 	jsdocCommentRangesSpace []ast.CommentRange
 	jsdocTagCommentsSpace   []string
 }
+
+var viableKeywordSuggestions = scanner.GetViableKeywordSuggestions()
 
 var parserPool = sync.Pool{
 	New: func() any {
@@ -324,6 +327,7 @@ func (p *Parser) finishSourceFile(result *ast.SourceFile, isDeclarationFile bool
 	result.ScriptKind = p.scriptKind
 	result.Flags |= p.sourceFlags
 	result.Identifiers = p.identifiers
+	result.IdentifierCount = p.identifierCount
 	result.SetJSDocCache(p.jsdocCache)
 	p.jsdocCache = nil
 	p.identifiers = nil
@@ -1874,18 +1878,30 @@ func (p *Parser) parseErrorForMissingSemicolonAfter(node *ast.Node) {
 		p.parseErrorForInvalidName(diagnostics.Type_alias_name_cannot_be_0, diagnostics.Type_alias_must_be_given_a_name, ast.KindEqualsToken)
 		return
 	}
-	// !!! The user alternatively might have misspelled or forgotten to add a space after a common keyword.
-	// const suggestion = getSpellingSuggestion(expressionText, viableKeywordSuggestions, identity) ?? getSpaceSuggestion(expressionText);
-	// if (suggestion) {
-	// 	parseErrorAt(pos, node.end, Diagnostics.Unknown_keyword_or_identifier_Did_you_mean_0, suggestion);
-	// 	return;
-	// }
+	// The user alternatively might have misspelled or forgotten to add a space after a common keyword.
+	suggestion := core.GetSpellingSuggestion(expressionText, viableKeywordSuggestions, func(s string) string { return s })
+	if suggestion == "" {
+		suggestion = getSpaceSuggestion(expressionText)
+	}
+	if suggestion != "" {
+		p.parseErrorAt(pos, node.End(), diagnostics.Unknown_keyword_or_identifier_Did_you_mean_0, suggestion)
+		return
+	}
 	// Unknown tokens are handled with their own errors in the scanner
 	if p.token == ast.KindUnknown {
 		return
 	}
 	// Otherwise, we know this some kind of unknown word, not just a missing expected semicolon.
 	p.parseErrorAt(pos, node.End(), diagnostics.Unexpected_keyword_or_identifier)
+}
+
+func getSpaceSuggestion(expressionText string) string {
+	for _, keyword := range viableKeywordSuggestions {
+		if len(expressionText) > len(keyword)+2 && strings.HasPrefix(expressionText, keyword) {
+			return keyword + " " + expressionText[len(keyword):]
+		}
+	}
+	return ""
 }
 
 func (p *Parser) parseErrorForInvalidName(nameDiagnostic *diagnostics.Message, blankDiagnostic *diagnostics.Message, tokenIfBlankName ast.Kind) {
@@ -2798,6 +2814,7 @@ func (p *Parser) parseRightSideOfDot(allowIdentifierNames bool, allowPrivateIden
 }
 
 func (p *Parser) newIdentifier(text string) *ast.Node {
+	p.identifierCount++
 	id := p.factory.NewIdentifier(text)
 	if text == "await" {
 		p.statementHasAwaitIdentifier = true
@@ -3775,7 +3792,7 @@ func (p *Parser) parseDecorator() *ast.Node {
 
 func (p *Parser) parseDecoratorExpression() *ast.Expression {
 	if p.inAwaitContext() && p.token == ast.KindAwaitKeyword {
-		// `@await` is is disallowed in an [Await] context, but can cause parsing to go off the rails
+		// `@await` is disallowed in an [Await] context, but can cause parsing to go off the rails
 		// This simply parses the missing identifier and moves on.
 		pos := p.nodePos()
 		awaitExpression := p.parseIdentifierWithDiagnostic(diagnostics.Expression_expected, nil)
@@ -6339,6 +6356,9 @@ func tagNamesAreEquivalent(lhs *ast.Expression, rhs *ast.Expression) bool {
 func attachFileToDiagnostics(diagnostics []*ast.Diagnostic, file *ast.SourceFile) []*ast.Diagnostic {
 	for _, d := range diagnostics {
 		d.SetFile(file)
+		for _, r := range d.RelatedInformation() {
+			r.SetFile(file)
+		}
 	}
 	return diagnostics
 }

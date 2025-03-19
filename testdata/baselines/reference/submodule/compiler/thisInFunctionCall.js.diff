@@ -1,0 +1,10 @@
+--- old.thisInFunctionCall.js
++++ new.thisInFunctionCall.js
+@@= skipped -39, +39 lines =@@
+ 
+ //// [thisInFunctionCall.js]
+ class Test {
++    data;
+     constructor() {
+         this.data = [1, 2, 3];
+     }

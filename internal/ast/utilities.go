@@ -1675,7 +1675,7 @@ func GetExternalModuleName(node *Node) *Expression {
 	case KindImportType:
 		return getImportTypeNodeLiteral(node)
 	case KindCallExpression:
-		return node.AsCallExpression().Arguments.Nodes[0]
+		return core.FirstOrNil(node.AsCallExpression().Arguments.Nodes)
 	case KindModuleDeclaration:
 		if IsStringLiteral(node.AsModuleDeclaration().Name()) {
 			return node.AsModuleDeclaration().Name()
@@ -1835,6 +1835,13 @@ func IsPartOfTypeNode(node *Node) bool {
 
 func isPartOfTypeNodeInParent(node *Node) bool {
 	parent := node.Parent
+	if parent.Kind == KindTypeQuery {
+		return false
+	}
+	if parent.Kind == KindImportType {
+		return !parent.AsImportTypeNode().IsTypeOf
+	}
+
 	// Do not recursively call isPartOfTypeNode on the parent. In the example:
 	//
 	//     let a: A.B.C;
@@ -1845,10 +1852,6 @@ func isPartOfTypeNodeInParent(node *Node) bool {
 		return true
 	}
 	switch parent.Kind {
-	case KindTypeQuery:
-		return false
-	case KindImportType:
-		return !parent.AsImportTypeNode().IsTypeOf
 	case KindExpressionWithTypeArguments:
 		return isPartOfTypeExpressionWithTypeArguments(parent)
 	case KindTypeParameter:
@@ -2081,7 +2084,7 @@ func IsBreakOrContinueStatement(node *Node) bool {
 // virtual `Parent` pointers that can be used to walk up the tree. Since `getModuleInstanceStateForAliasTarget` may
 // potentially walk up out of the provided `Node`, merely setting the parent pointers for a given `ModuleDeclaration`
 // prior to invoking `GetModuleInstanceState` is not sufficient. It is, however, necessary that the `Parent` pointers
-// for all ancestors of the `Node` provided to `GetModuleInstanceState` have ben set.
+// for all ancestors of the `Node` provided to `GetModuleInstanceState` have been set.
 
 // Push a virtual parent pointer onto `ancestors` and return it.
 func pushAncestor(ancestors []*Node, parent *Node) []*Node {
@@ -2354,27 +2357,40 @@ func IsDefaultImport(node *Node /*ImportDeclaration | ImportEqualsDeclaration | 
 	return importClause != nil && importClause.AsImportClause().name != nil
 }
 
-func GetEmitModuleFormatOfFileWorker(sourceFile *SourceFile, options *core.CompilerOptions) core.ModuleKind {
-	result := GetImpliedNodeFormatForEmitWorker(sourceFile, options)
+func GetImpliedNodeFormatForFile(path string, packageJsonType string) core.ModuleKind {
+	impliedNodeFormat := core.ResolutionModeNone
+	if tspath.FileExtensionIsOneOf(path, []string{tspath.ExtensionDmts, tspath.ExtensionMts, tspath.ExtensionMjs}) {
+		impliedNodeFormat = core.ResolutionModeESM
+	} else if tspath.FileExtensionIsOneOf(path, []string{tspath.ExtensionDcts, tspath.ExtensionCts, tspath.ExtensionCjs}) {
+		impliedNodeFormat = core.ResolutionModeCommonJS
+	} else if packageJsonType != "" && tspath.FileExtensionIsOneOf(path, []string{tspath.ExtensionDts, tspath.ExtensionTs, tspath.ExtensionTsx, tspath.ExtensionJs, tspath.ExtensionJsx}) {
+		impliedNodeFormat = core.IfElse(packageJsonType == "module", core.ResolutionModeESM, core.ResolutionModeCommonJS)
+	}
+
+	return impliedNodeFormat
+}
+
+func GetEmitModuleFormatOfFileWorker(sourceFile *SourceFile, options *core.CompilerOptions, sourceFileMetaData *SourceFileMetaData) core.ModuleKind {
+	result := GetImpliedNodeFormatForEmitWorker(sourceFile.FileName(), options, sourceFileMetaData)
 	if result != core.ModuleKindNone {
 		return result
 	}
 	return options.GetEmitModuleKind()
 }
 
-func GetImpliedNodeFormatForEmitWorker(sourceFile *SourceFile, options *core.CompilerOptions) core.ResolutionMode {
+func GetImpliedNodeFormatForEmitWorker(fileName string, options *core.CompilerOptions, sourceFileMetaData *SourceFileMetaData) core.ModuleKind {
 	moduleKind := options.GetEmitModuleKind()
-	if core.ModuleKindNode16 <= moduleKind && moduleKind <= core.ModuleKindNodeNext {
-		return sourceFile.ImpliedNodeFormat
+	if core.ModuleKindNode16 <= moduleKind && moduleKind <= core.ModuleKindNodeNext && sourceFileMetaData != nil {
+		return sourceFileMetaData.ImpliedNodeFormat
 	}
-	if sourceFile.ImpliedNodeFormat == core.ModuleKindCommonJS &&
-		( /*sourceFile.packageJsonScope.contents.packageJsonContent.type == "commonjs" ||*/ // !!!
-		tspath.FileExtensionIsOneOf(sourceFile.FileName(), []string{tspath.ExtensionCjs, tspath.ExtensionCts})) {
+	if sourceFileMetaData != nil && sourceFileMetaData.ImpliedNodeFormat == core.ModuleKindCommonJS &&
+		(sourceFileMetaData.PackageJsonType == "commonjs" ||
+			tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionCjs, tspath.ExtensionCts})) {
 		return core.ModuleKindCommonJS
 	}
-	if sourceFile.ImpliedNodeFormat == core.ModuleKindESNext &&
-		( /*sourceFile.packageJsonScope?.contents.packageJsonContent.type === "module" ||*/ // !!!
-		tspath.FileExtensionIsOneOf(sourceFile.fileName, []string{tspath.ExtensionMjs, tspath.ExtensionMts})) {
+	if sourceFileMetaData != nil && sourceFileMetaData.ImpliedNodeFormat == core.ModuleKindESNext &&
+		(sourceFileMetaData.PackageJsonType == "module" ||
+			tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionMjs, tspath.ExtensionMts})) {
 		return core.ModuleKindESNext
 	}
 	return core.ModuleKindNone

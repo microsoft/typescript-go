@@ -1,0 +1,11 @@
+--- old.importTag2.types
++++ new.importTag2.types
+@@= skipped -14, +14 lines =@@
+  * @param { types.Foo } foo
+  */
+ export function f(foo) {}
+->f : (foo: types.Foo) => void
+->foo : types.Foo
++>f : (foo: any) => void
++>foo : any
+ 

@@ -1,0 +1,27 @@
+--- old.specedNoStackBlown.types
++++ new.specedNoStackBlown.types
+@@= skipped -7, +7 lines =@@
+ // TypeScript Version: 2.8
+ 
+ declare function spected<ROOTINPUT, SPEC extends SpecValue<ROOTINPUT, ROOTINPUT> = SpecValue<ROOTINPUT, ROOTINPUT>>(spec: SPEC, input: ROOTINPUT): Result<ROOTINPUT, SPEC>;
+->spected : <ROOTINPUT, SPEC extends SpecValue<ROOTINPUT, ROOTINPUT> = SpecValue<ROOTINPUT, ROOTINPUT>>(spec: SPEC, input: ROOTINPUT) => Result<ROOTINPUT, SPEC>
++>spected : <ROOTINPUT, SPEC extends SpecValue<ROOTINPUT, ROOTINPUT>>(spec: SPEC, input: ROOTINPUT) => Result<ROOTINPUT, SPEC>
+ >spec : SPEC
+ >input : ROOTINPUT
+ 
+@@= skipped -37, +37 lines =@@
+ >value : INPUT
+ 
+ export type SpecObject<INPUT, ROOTINPUT = any> = Partial<{[key in keyof INPUT]: SpecValue<INPUT[key], ROOTINPUT>}>;
+->SpecObject : Partial<{ [key in keyof INPUT]: SpecValue<INPUT[key], ROOTINPUT>; }>
++>SpecObject : Partial<{ [key in keyof INPUT]: SpecValue<INPUT[key], ROOTINPUT> }>
+ 
+ export type SpecValue<INPUT, ROOTINPUT = any> = [INPUT] extends [ReadonlyArray<any>]
+ >SpecValue : SpecValue<INPUT, ROOTINPUT>
+@@= skipped -15, +15 lines =@@
+ >true : true
+ 
+ export default spected;
+->spected : <ROOTINPUT, SPEC extends SpecValue<ROOTINPUT, ROOTINPUT> = SpecValue<ROOTINPUT, ROOTINPUT>>(spec: SPEC, input: ROOTINPUT) => Result<ROOTINPUT, SPEC>
++>spected : <ROOTINPUT, SPEC extends SpecValue<ROOTINPUT, ROOTINPUT>>(spec: SPEC, input: ROOTINPUT) => Result<ROOTINPUT, SPEC>
+ 

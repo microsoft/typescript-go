@@ -1,0 +1,59 @@
+--- old.contextualTypeShouldBeLiteral.types
++++ new.contextualTypeShouldBeLiteral.types
+@@= skipped -16, +16 lines =@@
+ >type : "y"
+ 
+     value: 'none' | 'done';
+->value : "none" | "done"
++>value : "done" | "none"
+ 
+     method(): void;
+ >method : () => void
+@@= skipped -13, +13 lines =@@
+ foo({
+ >foo({    type: 'y',    value: 'done',    method() {        this;        this.type;        this.value;    }}) : void
+ >foo : (bar: X | Y) => void
+->{    type: 'y',    value: 'done',    method() {        this;        this.type;        this.value;    }} : { type: "y"; value: "done"; method(): void; }
++>{    type: 'y',    value: 'done',    method() {        this;        this.type;        this.value;    }} : { type: "y"; value: "done"; method: () => void; }
+ 
+     type: 'y',
+ >type : "y"
+@@= skipped -22, +22 lines =@@
+ >type : "y"
+ 
+         this.value;
+->this.value : "none" | "done"
++>this.value : "done" | "none"
+ >this : Y
+->value : "none" | "done"
++>value : "done" | "none"
+     }
+ });
+ 
+@@= skipped -22, +22 lines =@@
+ >type2 : "y"
+ 
+     value: 'none' | 'done';
+->value : "none" | "done"
++>value : "done" | "none"
+ 
+     method(): void;
+ >method : () => void
+@@= skipped -13, +13 lines =@@
+ foo2({
+ >foo2({    type2: 'y',    value: 'done',    method() {        this;        this.value;    }}) : void
+ >foo2 : (bar: X2 | Y2) => void
+->{    type2: 'y',    value: 'done',    method() {        this;        this.value;    }} : { type2: "y"; value: "done"; method(): void; }
++>{    type2: 'y',    value: 'done',    method() {        this;        this.value;    }} : { type2: "y"; value: "done"; method: () => void; }
+ 
+     type2: 'y',
+ >type2 : "y"
+@@= skipped -97, +97 lines =@@
+ 
+ let xyz: LikeA | LikeB = {
+ >xyz : LikeA | LikeB
+->{    x: 'x',    y: 'y',    value: "foo",    method() {        this;        this.x;        this.y;        this.value;    }} : { x: "x"; y: "y"; value: string; method(): void; }
++>{    x: 'x',    y: 'y',    value: "foo",    method() {        this;        this.x;        this.y;        this.value;    }} : { x: "x"; y: "y"; value: string; method: () => void; }
+ 
+     x: 'x',
+ >x : "x"

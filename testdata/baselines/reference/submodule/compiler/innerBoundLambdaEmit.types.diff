@@ -1,0 +1,11 @@
+--- old.innerBoundLambdaEmit.types
++++ new.innerBoundLambdaEmit.types
+@@= skipped -12, +12 lines =@@
+ }
+ interface Array<T> {
+     toFoo(): M.Foo
+->toFoo : () => M.Foo
++>toFoo : () => Foo
+ >M : any
+ }
+ 

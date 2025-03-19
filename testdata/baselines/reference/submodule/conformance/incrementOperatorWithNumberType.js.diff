@@ -1,0 +1,17 @@
+--- old.incrementOperatorWithNumberType.js
++++ new.incrementOperatorWithNumberType.js
+@@= skipped -44, +44 lines =@@
+ // ++ operator on number type
+ var NUMBER;
+ var NUMBER1 = [1, 2];
+-var A = /** @class */ (function () {
+-    function A() {
+-    }
+-    return A;
+-}());
++class A {
++    a;
++}
+ var M;
+ (function (M) {
+ })(M || (M = {}));

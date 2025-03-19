@@ -1,0 +1,13 @@
+--- old.invalidVoidAssignments.types
++++ new.invalidVoidAssignments.types
+@@= skipped -86, +86 lines =@@
+ >A : E
+ 
+ x = { f() { } }
+->x = { f() { } } : { f(): void; }
++>x = { f() { } } : { f: () => void; }
+ >x : void
+->{ f() { } } : { f(): void; }
++>{ f() { } } : { f: () => void; }
+ >f : () => void
+ 

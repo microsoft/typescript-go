@@ -1,0 +1,17 @@
+--- old.tsxTypeErrors.js
++++ new.tsxTypeErrors.js
+@@= skipped -45, +45 lines =@@
+ // Mistyped html name (error)
+ var e1 = <imag src="bar.jpg"/>;
+ // A custom type
+-var MyClass = /** @class */ (function () {
+-    function MyClass() {
+-    }
+-    return MyClass;
+-}());
++class MyClass {
++    props;
++}
+ // Let's use it
+ // TODO: Error on missing 'reqd'
+ var b1 = <MyClass reqd={true}/>;

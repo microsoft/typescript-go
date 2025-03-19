@@ -88,25 +88,21 @@ var parseConfigFileTextToJsonTests = []struct {
         }`,
 		},
 	},
-	// { todo: fix this test
-	// 	title: "handles escaped characters in strings correctly",
-	// 	input: []string{
-	// 		`{
-	// 			"exclude": [
-	// 				"xx\\"//files"
-	// 			]
-	// 		}`,
-	// 		`{
-	// 			"exclude": [
-	// 				"xx\\\\" // end of line comment
-	// 			]
-	// 		}`,
-	// 	},
-	// 	output: []map[string]any{
-	// 		{"exclude": []string{"xx\"//files"}},
-	// 		{"exclude": []string{"xx\\"}},
-	// 	},
-	// },
+	{
+		title: "handles escaped characters in strings correctly",
+		input: []string{
+			`{
+            "exclude": [
+                "xx\"//files"
+            ]
+        }`,
+			`{
+            "exclude": [
+                "xx\\" // end of line comment
+            ]
+        }`,
+		},
+	},
 	{
 		title: "returns object when users correctly specify library",
 		input: []string{
@@ -471,6 +467,34 @@ var parseJsonConfigFileTests = []struct {
 			allFileList:    map[string]string{"/tsconfig.base.json": tsconfigWithExtendsAndConfigDir, "/src/index.ts": "", "/src/app.ts": "", "/node_modules/module.ts": "", "/dist/output.js": ""},
 		}},
 	},
+	{
+		title: "reports error for an unknown option",
+		input: []testConfig{{
+			jsonText: `{
+			    "compilerOptions": {
+				"unknown": true
+			    }
+			}`,
+			configFileName: "tsconfig.json",
+			basePath:       "/",
+			allFileList:    map[string]string{"/app.ts": ""},
+		}},
+	},
+	{
+		title: "reports errors for wrong type option and invalid enum value",
+		input: []testConfig{{
+			jsonText: `{
+			    "compilerOptions": {
+				"target": "invalid value",
+				"removeComments": "should be a boolean",
+				"moduleResolution": "invalid value"
+			    }
+			}`,
+			configFileName: "tsconfig.json",
+			basePath:       "/",
+			allFileList:    map[string]string{"/app.ts": ""},
+		}},
+	},
 }
 
 var tsconfigWithExtends = `{
@@ -634,7 +658,7 @@ func printFS(output io.Writer, files vfs.FS, root string) error {
 			if content, ok := files.ReadFile(path); !ok {
 				return fmt.Errorf("failed to read file %s", path)
 			} else {
-				if _, err := output.Write([]byte(fmt.Sprintf("//// [%s]\r\n%s\r\n\r\n", path, content))); err != nil {
+				if _, err := fmt.Fprintf(output, "//// [%s]\r\n%s\r\n\r\n", path, content); err != nil {
 					return err
 				}
 			}
@@ -693,7 +717,7 @@ func TestParseSrcCompiler(t *testing.T) {
 
 	opts := parseConfigFileContent.CompilerOptions()
 	assert.DeepEqual(t, opts, &core.CompilerOptions{
-		Lib:                        []string{"es2020"},
+		Lib:                        []string{"lib.es2020.d.ts"},
 		ModuleKind:                 core.ModuleKindNodeNext,
 		ModuleResolution:           core.ModuleResolutionKindNodeNext,
 		NewLine:                    core.NewLineKindLF,

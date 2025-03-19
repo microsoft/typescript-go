@@ -1,0 +1,65 @@
+//// [tests/cases/compiler/identicalGenericConditionalsWithInferRelated.ts] ////
+
+=== identicalGenericConditionalsWithInferRelated.ts ===
+function f<X>(arg: X) {
+>f : <X>(arg: X) => void
+>arg : X
+
+    type Cond1 = X extends [infer A] ? A : never;
+>Cond1 : Cond1
+
+    type Cond2 = X extends [infer A] ? A : never;
+>Cond2 : Cond2
+
+    let x: Cond1 = null as any;
+>x : Cond1
+>null as any : any
+
+    let y: Cond2 = null as any;
+>y : Cond2
+>null as any : any
+
+    x = y; // is err, should be ok
+>x = y : Cond2
+>x : Cond1
+>y : Cond2
+
+    y = x; // is err, should be ok
+>y = x : Cond1
+>y : Cond2
+>x : Cond1
+}
+
+// repro from https://github.com/microsoft/TypeScript/issues/26627
+export type Constructor<T> = new (...args: any[]) => T
+>Constructor : Constructor<T>
+>args : any[]
+
+export type MappedResult<T> =
+>MappedResult : MappedResult<T>
+
+    T extends Boolean ? boolean :
+    T extends Number ? number :
+    T extends String ? string :
+    T
+
+
+interface X {
+    decode<C extends Constructor<any>>(ctor: C): MappedResult<C extends Constructor<infer T> ? T : never>
+>decode : <C extends Constructor<any>>(ctor: C) => MappedResult<C extends Constructor<infer T> ? T : never>
+>ctor : C
+}
+
+class Y implements X {
+>Y : Y
+
+    decode<C extends Constructor<any>>(ctor: C): MappedResult<C extends Constructor<infer T> ? T : never> {
+>decode : <C extends Constructor<any>>(ctor: C) => MappedResult<C extends Constructor<infer T> ? T : never>
+>ctor : C
+
+        throw new Error()
+>new Error() : Error
+>Error : ErrorConstructor
+    }
+}
+

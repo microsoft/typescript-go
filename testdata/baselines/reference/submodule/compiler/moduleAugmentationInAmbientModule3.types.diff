@@ -1,0 +1,33 @@
+--- old.moduleAugmentationInAmbientModule3.types
++++ new.moduleAugmentationInAmbientModule3.types
+@@= skipped -10, +10 lines =@@
+ >x : Observable
+ 
+ x.foo().x;
+->x.foo().x : number
+->x.foo() : import("M").Cls
+->x.foo : () => import("M").Cls
++>x.foo().x : any
++>x.foo() : any
++>x.foo : any
+ >x : Observable
+->foo : () => import("M").Cls
+->x : number
++>foo : any
++>x : any
+ 
+ x.foo2().x2;
+->x.foo2().x2 : number
+->x.foo2() : import("Map").Cls2
+->x.foo2 : () => import("Map").Cls2
++>x.foo2().x2 : any
++>x.foo2() : any
++>x.foo2 : any
+ >x : Observable
+->foo2 : () => import("Map").Cls2
+->x2 : number
++>foo2 : any
++>x2 : any
+ 
+ === O.d.ts ===
+ declare module "Observable" {

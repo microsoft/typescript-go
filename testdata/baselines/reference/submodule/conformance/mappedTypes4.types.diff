@@ -1,0 +1,33 @@
+--- old.mappedTypes4.types
++++ new.mappedTypes4.types
+@@= skipped -17, +17 lines =@@
+ 
+     if (typeof obj === "object") {
+ >typeof obj === "object" : boolean
+->typeof obj : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof obj : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >obj : T
+ >"object" : "object"
+ 
+@@= skipped -11, +11 lines =@@
+ 
+         for (let k in obj) {
+ >k : Extract<keyof T, string>
+->obj : (T & object) | (T & null)
++>obj : T & null | T & object
+ 
+             result[k] = { value: obj[k] };
+->result[k] = { value: obj[k] } : { value: (T & object)[Extract<keyof T, string>]; }
++>result[k] = { value: obj[k] } : { value: T & object[Extract<keyof T, string>]; }
+ >result[k] : Boxified<T>[Extract<keyof T, string>]
+ >result : Boxified<T>
+ >k : Extract<keyof T, string>
+->{ value: obj[k] } : { value: (T & object)[Extract<keyof T, string>]; }
+->value : (T & object)[Extract<keyof T, string>]
+->obj[k] : (T & object)[Extract<keyof T, string>]
++>{ value: obj[k] } : { value: T & object[Extract<keyof T, string>]; }
++>value : T & object[Extract<keyof T, string>]
++>obj[k] : T & object[Extract<keyof T, string>]
+ >obj : T & object
+ >k : Extract<keyof T, string>
+         }
