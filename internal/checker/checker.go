@@ -20915,7 +20915,7 @@ func (c *Checker) getTypeFromTypeNodeWorker(node *ast.Node) *Type {
 			return t
 		}
 	case ast.KindJSDocVariadicType:
-		return c.createArrayType(c.getTypeFromTypeNode(node.AsJSDocOptionalType().Type))
+		return c.createArrayType(c.getTypeFromTypeNode(node.AsJSDocVariadicType().Type))
 	case ast.KindJSDocOptionalType:
 		return c.addOptionality(c.getTypeFromTypeNode(node.AsJSDocOptionalType().Type))
 	case ast.KindUnknownKeyword:
