@@ -20905,8 +20905,21 @@ func (c *Checker) getTypeFromTypeNode(node *ast.Node) *Type {
 
 func (c *Checker) getTypeFromTypeNodeWorker(node *ast.Node) *Type {
 	switch node.Kind {
-	case ast.KindAnyKeyword:
+	case ast.KindAnyKeyword, ast.KindJSDocAllType:
 		return c.anyType
+	case ast.KindJSDocNonNullableType:
+		return c.getTypeFromTypeNode(node.AsJSDocNonNullableType().Type)
+	case ast.KindJSDocNullableType:
+		t := c.getTypeFromTypeNode(node.AsJSDocNullableType().Type)
+		if c.strictNullChecks {
+			return c.getNullableType(t, TypeFlagsNull)
+		} else {
+			return t
+		}
+	case ast.KindJSDocVariadicType:
+		return c.createArrayType(c.getTypeFromTypeNode(node.AsJSDocOptionalType().Type))
+	case ast.KindJSDocOptionalType:
+		return c.addOptionality(c.getTypeFromTypeNode(node.AsJSDocOptionalType().Type))
 	case ast.KindUnknownKeyword:
 		return c.unknownType
 	case ast.KindStringKeyword:
@@ -21846,7 +21859,7 @@ func (c *Checker) getDeclaredTypeOfTypeAlias(symbol *ast.Symbol) *Type {
 			return c.errorType
 		}
 		declaration := core.Find(symbol.Declarations, ast.IsEitherTypeAliasDeclaration)
-		typeNode := declaration.AsTypeAliasDeclaration().Type
+		typeNode := declaration.Type()
 		t := c.getTypeFromTypeNode(typeNode)
 		if c.popTypeResolution() {
 			typeParameters := c.getLocalTypeParametersOfClassOrInterfaceOrTypeAlias(symbol)

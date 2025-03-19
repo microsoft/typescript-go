@@ -104,18 +104,39 @@ func (p *Parser) attachJSDoc(host *ast.Node, jsDoc []*ast.Node) {
 			case ast.KindJSDocTypedefTag:
 				// TODO: Maybe save an Original pointer
 				// TODO: Look for neighbouring template tags to fill in typeparameters
-				// TODO: Figure out the mechanism for putting statements into a container node list
+				// TODO: Don't mark typedefs as exported if they are not in a module
+				typeexpr := tag.AsJSDocTypedefTag().TypeExpression
+				if typeexpr == nil {
+					break
+				}
 				export := p.factory.NewModifier(ast.KindExportKeyword)
 				export.Loc = core.NewTextRange(p.nodePos(), p.nodePos())
 				export.Flags = ast.NodeFlagsSynthesized
 				nodes := p.nodeSlicePool.NewSlice(1)
 				nodes[0] = export
 				modifiers := p.newModifierList(export.Loc, nodes)
-				jstype := p.factory.NewJSTypeAliasDeclaration(modifiers, tag.AsJSDocTypedefTag().Name(), nil /*typeParameters*/, tag.AsJSDocTypedefTag().TypeExpression)
+				var t *ast.Node
+				switch typeexpr.Kind {
+				case ast.KindJSDocTypeExpression:
+					t = typeexpr.Type()
+				case ast.KindJSDocTypeLiteral:
+					members := p.nodeSlicePool.NewSlice(0)
+					for _, member := range typeexpr.AsJSDocTypeLiteral().JsDocPropertyTags {
+						prop := p.factory.NewPropertySignatureDeclaration(nil, member.Name(), nil /*postfixToken*/, member.Type(), nil /*initializer*/)
+						prop.Loc = export.Loc
+						members = append(members, prop)
+					}
+					t = p.factory.NewTypeLiteralNode(p.newNodeList(export.Loc, members))
+					t.Loc = export.Loc
+				default:
+					panic("typedef tag type expression should be a name reference or a type expression" + typeexpr.Kind.String())
+				}
+				jstype := p.factory.NewJSTypeAliasDeclaration(modifiers, tag.AsJSDocTypedefTag().Name(), nil /*typeParameters*/, t)
+				jstype.Loc = core.NewTextRange(p.nodePos(), p.nodePos())
 				p.reparseList = append(p.reparseList, jstype)
+				// TODO: @overload and unattached tags (@callback, @import et al) support goes here
 			}
 			if !isLast {
-				// TODO: @overload and unattached tags support goes here
 				continue
 			}
 			switch tag.Kind {
@@ -148,6 +169,12 @@ func (p *Parser) attachJSDoc(host *ast.Node, jsDoc []*ast.Node) {
 					if param, ok := findMatchingParameter(fun, jsparam); ok {
 						if param.Type() == nil {
 							param.AsParameterDeclaration().Type = p.makeNewType(jsparam.TypeExpression)
+							if param.AsParameterDeclaration().QuestionToken == nil &&
+							// TODO: TypeExpression can *still* be nil here!
+								(jsparam.IsBracketed || jsparam.TypeExpression.Type().Kind == ast.KindJSDocOptionalType) {
+								param.AsParameterDeclaration().QuestionToken = p.factory.NewToken(ast.KindQuestionToken)
+								param.AsParameterDeclaration().QuestionToken.Loc = core.NewTextRange(param.End(), param.End())
+							}
 						}
 					}
 				}
@@ -207,11 +234,11 @@ func (p *Parser) makeNewTypeAssertion(t *ast.TypeNode, e *ast.Node) *ast.Node {
 }
 
 func (p *Parser) makeNewType(typeExpression *ast.TypeNode) *ast.Node {
-	if typeExpression == nil {
+	if typeExpression == nil || typeExpression.Type() == nil {
 		return nil
 	}
 
-	t := typeExpression.Clone(&p.factory)
+	t := typeExpression.Type().Clone(&p.factory)
 	// TODO: What other flags? Copy from decl? from tag's typeexpression?
 	t.Flags |= typeExpression.Flags | ast.NodeFlagsSynthesized
 	return t
@@ -1056,8 +1083,7 @@ func (p *Parser) parseThisTag(start int, tagName *ast.IdentifierNode, margin int
 func (p *Parser) parseTypedefTag(start int, tagName *ast.IdentifierNode, indent int, indentText string) *ast.Node {
 	typeExpression := p.tryParseTypeExpression()
 	p.skipWhitespaceOrAsterisk()
-
-	fullName := p.parseJSDocTypeNameWithNamespace(false /*nested*/)
+	fullName := p.parseJSDocIdentifierName(nil)
 	p.skipWhitespace()
 	comment := p.parseTagComments(indent, nil)
 
@@ -1129,26 +1155,6 @@ func (p *Parser) parseTypedefTag(start int, tagName *ast.IdentifierNode, indent 
 	return typedefTag
 }
 
-func (p *Parser) parseJSDocTypeNameWithNamespace(nested bool) *ast.Node {
-	start := p.scanner.TokenStart()
-	typeNameOrNamespaceName := p.parseJSDocIdentifierName(nil)
-	if p.parseOptional(ast.KindDotToken) {
-		body := p.parseJSDocTypeNameWithNamespace(true)
-		var flags ast.NodeFlags
-		if nested {
-			flags = ast.NodeFlagsNestedNamespace
-		}
-		jsDocNamespaceNode := p.factory.NewModuleDeclaration(nil, typeNameOrNamespaceName, body, flags)
-		p.finishNode(jsDocNamespaceNode, start)
-		return jsDocNamespaceNode
-	}
-
-	if nested {
-		typeNameOrNamespaceName.Flags |= ast.NodeFlagsIdentifierIsInJSDocNamespace
-	}
-	return typeNameOrNamespaceName
-}
-
 func (p *Parser) parseCallbackTagParameters(indent int) *ast.NodeList {
 	var child *ast.Node
 	var parameters []*ast.Node
@@ -1188,7 +1194,7 @@ func (p *Parser) parseJSDocSignature(start int, indent int) *ast.Node {
 }
 
 func (p *Parser) parseCallbackTag(start int, tagName *ast.IdentifierNode, indent int, indentText string) *ast.Node {
-	fullName := p.parseJSDocTypeNameWithNamespace(false /*nested*/)
+	fullName := p.parseJSDocIdentifierName(nil)
 	p.skipWhitespace()
 	comment := p.parseTagComments(indent, nil)
 	typeExpression := p.parseJSDocSignature(start, indent)
