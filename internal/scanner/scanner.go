@@ -888,7 +888,22 @@ func (s *Scanner) Scan() ast.Kind {
 			}
 			if stringutil.IsWhiteSpaceSingleLine(ch) {
 				s.pos += size
-				continue
+
+				// If we get here and it's not 0x0085 (nextLine), then we're handling non-ASCII whitespace.
+				// Handle skipTrivia like we do in the space case above.
+				if ch == 0x0085 || s.skipTrivia {
+					continue
+				}
+
+				for {
+					ch, size = s.charAndSize()
+					if !stringutil.IsWhiteSpaceSingleLine(ch) {
+						break
+					}
+					s.pos += size
+				}
+				s.token = ast.KindWhitespaceTrivia
+				return s.token
 			}
 			if stringutil.IsLineBreak(ch) {
 				s.tokenFlags |= ast.TokenFlagsPrecedingLineBreak
