@@ -1,12 +1,8 @@
-import type {
-    Node,
-    NodeArray,
-    Statement,
-    SyntaxKind,
-} from "@typescript/ast";
+import { SymbolFlags } from "#symbolFlags";
+import type { SourceFile } from "@typescript/ast";
 import { Client } from "./client.ts";
 import type { FileSystem } from "./fs.ts";
-import { RemoteNode } from "./node.ts";
+import { RemoteSourceFile } from "./node.ts";
 import type {
     ConfigResponse,
     GetSymbolAtPositionParams,
@@ -14,7 +10,6 @@ import type {
     SymbolResponse,
     TypeResponse,
 } from "./proto.ts";
-import { SymbolFlags } from "./symbolFlags.enum.ts";
 
 export { SymbolFlags };
 
@@ -80,7 +75,7 @@ export class Project {
 
     getSourceFile(fileName: string): SourceFile | undefined {
         const data = this.client.requestBinary("getSourceFile", { project: this.id, fileName });
-        return data ? new RemoteSourceFile(this.client, data, this.decoder) as unknown as SourceFile : undefined;
+        return data ? new RemoteSourceFile(data, this.decoder) as unknown as SourceFile : undefined;
     }
 
     getSymbolAtPosition(requests: readonly GetSymbolAtPositionParams[]): (Symbol | undefined)[];
@@ -96,25 +91,6 @@ export class Project {
         }
         const data = this.client.request("getSymbolAtPosition", params[0].map(({ fileName, position }) => ({ project: this.id, fileName, position })));
         return data.map((d: SymbolResponse | null) => d ? new Symbol(this.client, d) : undefined);
-    }
-}
-
-export interface SourceFile extends Node {
-    kind: SyntaxKind.SourceFile;
-    statements: NodeArray<Statement>;
-    get text(): string;
-}
-
-class RemoteSourceFile extends RemoteNode {
-    private client: Client;
-    constructor(client: Client, data: Uint8Array, decoder: TextDecoder) {
-        const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
-        super(view, decoder, 1, undefined!);
-        this.client = client;
-    }
-
-    get text(): string {
-        return this.getFileText(0, this.end);
     }
 }
 

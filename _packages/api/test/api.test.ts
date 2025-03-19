@@ -1,5 +1,5 @@
-import { createVirtualFileSystem } from "@typescript/api/base/fs";
-import { API } from "@typescript/api/sync";
+import { API } from "@typescript/api";
+import { createVirtualFileSystem } from "@typescript/api/fs";
 import assert from "node:assert";
 import {
     describe,

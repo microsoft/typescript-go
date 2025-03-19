@@ -1,10 +1,18 @@
 import {
     API,
     type Project,
-    type SourceFile,
 } from "@typescript/api";
+import {
+    type FileSystem,
+    type FileSystemEntries,
+} from "@typescript/api/fs";
 import type { GetSymbolAtPositionParams } from "@typescript/api/proto";
-import { SyntaxKind } from "@typescript/ast";
+import {
+    type SourceFile,
+    SyntaxKind,
+} from "@typescript/ast";
+import fs from "node:fs";
+import path from "node:path";
 import { Bench } from "tinybench";
 
 const bench = new Bench({
@@ -45,6 +53,9 @@ bench
     .add("load project", () => {
         loadProject();
     }, { beforeAll: spawnAPI })
+    .add("load project (client FS)", () => {
+        loadProject();
+    }, { beforeAll: spawnAPIHosted })
     .add("transfer debug.ts", () => {
         getDebugTS();
     }, { beforeAll: all(spawnAPI, loadProject) })
@@ -106,6 +117,14 @@ function spawnAPI() {
     });
 }
 
+function spawnAPIHosted() {
+    api = new API({
+        cwd: new URL("../../../", import.meta.url).pathname,
+        tsserverPath: new URL("../../../built/local/tsgo", import.meta.url).pathname,
+        fs: createNodeFileSystem(),
+    });
+}
+
 function loadProject() {
     project = api.loadProject("_submodules/TypeScript/src/compiler/tsconfig.json");
 }
@@ -127,5 +146,65 @@ function all(...fns: (() => void)[]) {
         for (const fn of fns) {
             fn();
         }
+    };
+}
+
+function createNodeFileSystem(): FileSystem {
+    return {
+        directoryExists: directoryName => {
+            try {
+                return fs.statSync(directoryName).isDirectory();
+            }
+            catch {
+                return false;
+            }
+        },
+        fileExists: fileName => {
+            try {
+                return fs.statSync(fileName).isFile();
+            }
+            catch {
+                return false;
+            }
+        },
+        readFile: fileName => {
+            try {
+                return fs.readFileSync(fileName, "utf8");
+            }
+            catch {
+                return undefined;
+            }
+        },
+        getAccessibleEntries: dirName => {
+            const entries: FileSystemEntries = {
+                files: [],
+                directories: [],
+            };
+            for (const entry of fs.readdirSync(dirName, { withFileTypes: true })) {
+                if (entry.isFile()) {
+                    entries.files.push(entry.name);
+                }
+                else if (entry.isDirectory()) {
+                    entries.directories.push(entry.name);
+                }
+                else if (entry.isSymbolicLink()) {
+                    const fullName = path.join(dirName, entry.name);
+                    try {
+                        const stat = fs.statSync(fullName);
+                        if (stat.isFile()) {
+                            entries.files.push(entry.name);
+                        }
+                        else if (stat.isDirectory()) {
+                            entries.directories.push(entry.name);
+                        }
+                    }
+                    catch {
+                        // Ignore errors
+                    }
+                }
+            }
+            return entries;
+        },
+        realpath: fs.realpathSync,
     };
 }
