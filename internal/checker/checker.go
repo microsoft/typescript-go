@@ -2,6 +2,7 @@ package checker
 
 import (
 	"fmt"
+	"iter"
 	"maps"
 	"math"
 	"slices"
@@ -514,6 +515,7 @@ type Program interface {
 	GetEmitModuleFormatOfFile(sourceFile *ast.SourceFile) core.ModuleKind
 	GetImpliedNodeFormatForEmit(sourceFile *ast.SourceFile) core.ModuleKind
 	GetResolvedModule(currentSourceFile *ast.SourceFile, moduleReference string) *ast.SourceFile
+	GetSourceFileMetaData(path tspath.Path) *ast.SourceFileMetaData
 }
 
 type Host interface{}
@@ -23721,6 +23723,10 @@ func (c *Checker) getUnionTypeFromSortedList(types []*Type, precomputedObjectFla
 	return t
 }
 
+func (c *Checker) UnionTypes() iter.Seq[*Type] {
+	return maps.Values(c.unionTypes)
+}
+
 func (c *Checker) addTypesToUnion(typeSet []*Type, includes TypeFlags, types []*Type) ([]*Type, TypeFlags) {
 	var lastType *Type
 	for _, t := range types {
@@ -23762,7 +23768,7 @@ func (c *Checker) addTypeToUnion(typeSet []*Type, includes TypeFlags, t *Type) (
 				includes |= TypeFlagsIncludesNonWideningType
 			}
 		} else {
-			if index, ok := slices.BinarySearchFunc(typeSet, t, compareTypes); !ok {
+			if index, ok := slices.BinarySearchFunc(typeSet, t, CompareTypes); !ok {
 				typeSet = slices.Insert(typeSet, index, t)
 			}
 		}
@@ -24528,12 +24534,12 @@ func (c *Checker) removeType(t *Type, targetType *Type) *Type {
 }
 
 func containsType(types []*Type, t *Type) bool {
-	_, ok := slices.BinarySearchFunc(types, t, compareTypes)
+	_, ok := slices.BinarySearchFunc(types, t, CompareTypes)
 	return ok
 }
 
 func insertType(types []*Type, t *Type) ([]*Type, bool) {
-	if i, ok := slices.BinarySearchFunc(types, t, compareTypes); !ok {
+	if i, ok := slices.BinarySearchFunc(types, t, CompareTypes); !ok {
 		return slices.Insert(types, i, t), true
 	}
 	return types, false
