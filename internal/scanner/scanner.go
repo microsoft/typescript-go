@@ -447,21 +447,6 @@ func (s *Scanner) Scan() ast.Kind {
 	for {
 		s.tokenStart = s.pos
 		ch := s.char()
-		// if ch == -1 {
-		// 	s.token = ast.KindEndOfFile
-		// 	return s.token
-		// }
-
-		if s.pos == 0 {
-			if ch == '#' && isShebangTrivia(s.text, s.pos) {
-				s.pos = scanShebangTrivia(s.text, s.pos)
-				if s.skipTrivia {
-					continue
-				}
-				s.token = ast.KindShebangTrivia
-				return s.token
-			}
-		}
 
 		switch ch {
 		case '\t', '\v', '\f', ' ':
@@ -556,9 +541,8 @@ func (s *Scanner) Scan() ast.Kind {
 					(s.tokenFlags&ast.TokenFlagsPrecedingLineBreak) != 0 {
 					s.tokenFlags |= ast.TokenFlagsPrecedingJSDocLeadingAsterisks
 					continue
-				} else {
-					s.token = ast.KindAsteriskToken
 				}
+				s.token = ast.KindAsteriskToken
 			}
 		case '+':
 			if s.charAt(1) == '=' {
@@ -629,7 +613,7 @@ func (s *Scanner) Scan() ast.Kind {
 						break
 					}
 
-					if ch == '*' && s.charAt(1) == '/' {
+					if ch1 == '*' && s.charAt(1) == '/' {
 						s.pos += 2
 						commentClosed = true
 						break
@@ -904,12 +888,12 @@ func (s *Scanner) Scan() ast.Kind {
 			}
 			if stringutil.IsWhiteSpaceSingleLine(ch) {
 				s.pos += size
-				break
+				continue
 			}
 			if stringutil.IsLineBreak(ch) {
 				s.tokenFlags |= ast.TokenFlagsPrecedingLineBreak
 				s.pos += size
-				break
+				continue
 			}
 			s.scanInvalidCharacter()
 		}
@@ -2116,6 +2100,12 @@ func SkipTriviaEx(text string, pos int, options *SkipTriviaOptions) int {
 		case '<', '|', '=', '>':
 			if isConflictMarkerTrivia(text, pos) {
 				pos = scanConflictMarkerTrivia(text, pos, nil)
+				canConsumeStar = false
+				continue
+			}
+		case '#':
+			if pos == 0 && isShebangTrivia(text, pos) {
+				pos = scanShebangTrivia(text, pos)
 				canConsumeStar = false
 				continue
 			}

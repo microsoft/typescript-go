@@ -11,7 +11,6 @@ const (
 	KindMultiLineCommentTrivia
 	KindNewLineTrivia
 	KindWhitespaceTrivia
-	KindShebangTrivia
 	KindConflictMarkerTrivia
 	KindNonTextFileMarkerTrivia
 	KindNumericLiteral
