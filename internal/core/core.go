@@ -70,10 +70,11 @@ func MapIndex[T, U any](slice []T, f func(T, int) U) []U {
 }
 
 func MapNonNil[T any, U comparable](slice []T, f func(T) U) []U {
+	var zero U
 	var result []U
 	for _, value := range slice {
 		mapped := f(value)
-		if mapped != *new(U) {
+		if mapped != zero {
 			result = append(result, mapped)
 		}
 	}
@@ -143,7 +144,8 @@ func Find[T any](slice []T, f func(T) bool) T {
 			return value
 		}
 	}
-	return *new(T)
+	var zero T
+	return zero
 }
 
 func FindLast[T any](slice []T, f func(T) bool) T {
@@ -153,7 +155,8 @@ func FindLast[T any](slice []T, f func(T) bool) T {
 			return value
 		}
 	}
-	return *new(T)
+	var zero T
+	return zero
 }
 
 func FindIndex[T any](slice []T, f func(T) bool) int {
@@ -179,21 +182,24 @@ func FirstOrNil[T any](slice []T) T {
 	if len(slice) != 0 {
 		return slice[0]
 	}
-	return *new(T)
+	var zero T
+	return zero
 }
 
 func LastOrNil[T any](slice []T) T {
 	if len(slice) != 0 {
 		return slice[len(slice)-1]
 	}
-	return *new(T)
+	var zero T
+	return zero
 }
 
 func ElementOrNil[T any](slice []T, index int) T {
 	if index < len(slice) {
 		return slice[index]
 	}
-	return *new(T)
+	var zero T
+	return zero
 }
 
 func FirstOrNilSeq[T any](seq iter.Seq[T]) T {
@@ -202,17 +208,19 @@ func FirstOrNilSeq[T any](seq iter.Seq[T]) T {
 			return value
 		}
 	}
-	return *new(T)
+	var zero T
+	return zero
 }
 
 func FirstNonNil[T any, U comparable](slice []T, f func(T) U) U {
+	var zero U
 	for _, value := range slice {
 		mapped := f(value)
-		if mapped != *new(U) {
+		if mapped != zero {
 			return mapped
 		}
 	}
-	return *new(U)
+	return zero
 }
 
 func Concatenate[T any](s1 []T, s2 []T) []T {
@@ -296,7 +304,8 @@ func IfElse[T any](b bool, whenTrue T, whenFalse T) T {
 // Returns value if value is not the zero value of T; Otherwise, returns defaultValue. OrElse should only be used when
 // defaultValue is constant or precomputed as its argument will be evaluated regardless as to the content of value.
 func OrElse[T comparable](value T, defaultValue T) T {
-	if value != *new(T) {
+	var zero T
+	if value != zero {
 		return value
 	}
 	return defaultValue
