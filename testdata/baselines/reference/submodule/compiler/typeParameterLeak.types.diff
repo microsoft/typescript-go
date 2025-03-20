@@ -10,7 +10,7 @@
  const b = f({ x: "", y: "" })?.getBox();
  >b : Box<{ x: string; }> | Box<{ y: string; }> | undefined
  >f({ x: "", y: "" })?.getBox() : Box<{ x: string; }> | Box<{ y: string; }> | undefined
-->f({ x: "", y: "" })?.getBox : (() => Box<{ y: string; }>) | (() => Box<{ x: string; }>) | undefined
+->f({ x: "", y: "" })?.getBox : (() => Box<{ x: string; }>) | (() => Box<{ y: string; }>) | undefined
 +>f({ x: "", y: "" })?.getBox : () => Box<{ x: string; }> | () => Box<{ y: string; }> | undefined
  >f({ x: "", y: "" }) : BoxFactory<Box<{ x: string; }>> | BoxFactory<Box<{ y: string; }>> | undefined
 ->f : ((arg: { x: string; }) => BoxFactory<Box<{ x: string; }>> | undefined) | ((arg: { y: string; }) => BoxFactory<Box<{ y: string; }>> | undefined)
@@ -20,7 +20,7 @@
  >"" : ""
  >y : string
  >"" : ""
-->getBox : (() => Box<{ y: string; }>) | (() => Box<{ x: string; }>) | undefined
+->getBox : (() => Box<{ x: string; }>) | (() => Box<{ y: string; }>) | undefined
 +>getBox : () => Box<{ x: string; }> | () => Box<{ y: string; }> | undefined
  
  if (b) {

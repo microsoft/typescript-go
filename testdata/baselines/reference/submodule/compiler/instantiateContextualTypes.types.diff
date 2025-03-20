@@ -77,32 +77,26 @@
  >(foo) => "" + foo : (foo: number) => string
  >foo : number
  >"" + foo : string
-@@= skipped -68, +68 lines =@@
- >() : Promise<DooDad> => {		return Promise.resolve().then(() => {			if (1 < 2) {				return 'SOMETHING';			}			return 'ELSE';		});	} : () => Promise<DooDad>
+@@= skipped -69, +69 lines =@@
  
  		return Promise.resolve().then(() => {
-->Promise.resolve().then(() => {			if (1 < 2) {				return 'SOMETHING';			}			return 'ELSE';		}) : Promise<"SOMETHING" | "ELSE">
+ >Promise.resolve().then(() => {			if (1 < 2) {				return 'SOMETHING';			}			return 'ELSE';		}) : Promise<"ELSE" | "SOMETHING">
 ->Promise.resolve().then : <TResult1 = void, TResult2 = never>(onfulfilled?: ((value: void) => TResult1 | PromiseLike<TResult1>) | null | undefined, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null | undefined) => Promise<TResult1 | TResult2>
-+>Promise.resolve().then(() => {			if (1 < 2) {				return 'SOMETHING';			}			return 'ELSE';		}) : Promise<"ELSE" | "SOMETHING">
 +>Promise.resolve().then : <TResult1, TResult2>(onfulfilled?: (value: void) => TResult1 | PromiseLike<TResult1> | null | undefined, onrejected?: (reason: any) => TResult2 | PromiseLike<TResult2> | null | undefined) => Promise<TResult1 | TResult2>
  >Promise.resolve() : Promise<void>
  >Promise.resolve : { (): Promise<void>; <T>(value: T): Promise<Awaited<T>>; <T>(value: T | PromiseLike<T>): Promise<Awaited<T>>; }
  >Promise : PromiseConstructor
  >resolve : { (): Promise<void>; <T>(value: T): Promise<Awaited<T>>; <T>(value: T | PromiseLike<T>): Promise<Awaited<T>>; }
 ->then : <TResult1 = void, TResult2 = never>(onfulfilled?: ((value: void) => TResult1 | PromiseLike<TResult1>) | null | undefined, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null | undefined) => Promise<TResult1 | TResult2>
-->() => {			if (1 < 2) {				return 'SOMETHING';			}			return 'ELSE';		} : () => "SOMETHING" | "ELSE"
 +>then : <TResult1, TResult2>(onfulfilled?: (value: void) => TResult1 | PromiseLike<TResult1> | null | undefined, onrejected?: (reason: any) => TResult2 | PromiseLike<TResult2> | null | undefined) => Promise<TResult1 | TResult2>
-+>() => {			if (1 < 2) {				return 'SOMETHING';			}			return 'ELSE';		} : () => "ELSE" | "SOMETHING"
+ >() => {			if (1 < 2) {				return 'SOMETHING';			}			return 'ELSE';		} : () => "ELSE" | "SOMETHING"
  
  			if (1 < 2) {
- >1 < 2 : boolean
 @@= skipped -27, +27 lines =@@
- >() : Promise<DooDad> => {		return Promise.resolve().then(() => {			return 'ELSE';		});	} : () => Promise<DooDad>
  
  		return Promise.resolve().then(() => {
-->Promise.resolve().then(() => {			return 'ELSE';		}) : Promise<"SOMETHING" | "ELSE">
+ >Promise.resolve().then(() => {			return 'ELSE';		}) : Promise<"ELSE" | "SOMETHING">
 ->Promise.resolve().then : <TResult1 = void, TResult2 = never>(onfulfilled?: ((value: void) => TResult1 | PromiseLike<TResult1>) | null | undefined, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null | undefined) => Promise<TResult1 | TResult2>
-+>Promise.resolve().then(() => {			return 'ELSE';		}) : Promise<"ELSE" | "SOMETHING">
 +>Promise.resolve().then : <TResult1, TResult2>(onfulfilled?: (value: void) => TResult1 | PromiseLike<TResult1> | null | undefined, onrejected?: (reason: any) => TResult2 | PromiseLike<TResult2> | null | undefined) => Promise<TResult1 | TResult2>
  >Promise.resolve() : Promise<void>
  >Promise.resolve : { (): Promise<void>; <T>(value: T): Promise<Awaited<T>>; <T>(value: T | PromiseLike<T>): Promise<Awaited<T>>; }
@@ -114,12 +108,10 @@
  
  			return 'ELSE';
 @@= skipped -19, +19 lines =@@
- >() : Promise<DooDad> => {		return Promise.resolve().then(() => {			if (1 < 2) {				return 'SOMETHING';			}			return 'SOMETHING';		});	} : () => Promise<DooDad>
  
  		return Promise.resolve().then(() => {
-->Promise.resolve().then(() => {			if (1 < 2) {				return 'SOMETHING';			}			return 'SOMETHING';		}) : Promise<"SOMETHING" | "ELSE">
+ >Promise.resolve().then(() => {			if (1 < 2) {				return 'SOMETHING';			}			return 'SOMETHING';		}) : Promise<"ELSE" | "SOMETHING">
 ->Promise.resolve().then : <TResult1 = void, TResult2 = never>(onfulfilled?: ((value: void) => TResult1 | PromiseLike<TResult1>) | null | undefined, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null | undefined) => Promise<TResult1 | TResult2>
-+>Promise.resolve().then(() => {			if (1 < 2) {				return 'SOMETHING';			}			return 'SOMETHING';		}) : Promise<"ELSE" | "SOMETHING">
 +>Promise.resolve().then : <TResult1, TResult2>(onfulfilled?: (value: void) => TResult1 | PromiseLike<TResult1> | null | undefined, onrejected?: (reason: any) => TResult2 | PromiseLike<TResult2> | null | undefined) => Promise<TResult1 | TResult2>
  >Promise.resolve() : Promise<void>
  >Promise.resolve : { (): Promise<void>; <T>(value: T): Promise<Awaited<T>>; <T>(value: T | PromiseLike<T>): Promise<Awaited<T>>; }
@@ -130,7 +122,7 @@
  >() => {			if (1 < 2) {				return 'SOMETHING';			}			return 'SOMETHING';		} : () => "SOMETHING"
  
  			if (1 < 2) {
-@@= skipped -45, +45 lines =@@
+@@= skipped -44, +44 lines =@@
  >partial : Partial<T>
  
  let obj = {

@@ -10,7 +10,7 @@
  
  declare function test(fn: Options): void;
 ->test : { <Data, Props>(fn: ThisTypedOptions<Data, Props>): void; (fn: Options): void; }
-->fn : Options<object | ((this: Instance) => object), PropsDefinition<Record<string, any>>>
+->fn : Options<((this: Instance) => object) | object, PropsDefinition<Record<string, any>>>
 +>test : { <Data, Props>(fn: ThisTypedOptions<Data, Props>): void; (fn: Options<() => object | object, PropsDefinition<Record<string, any>>>): void; }
 +>fn : Options<() => object | object, PropsDefinition<Record<string, any>>>
  

@@ -83,8 +83,8 @@
  >f3 : () => void
  
      let c1 = C<string>;  // { new (x: string): C<string>; f<U>(x: U): T[]; prototype: C<any>; }
-->c1 : { new (x: string): C<string>; prototype: C<any>; f<U>(x: U): U[]; }
-->C<string> : { new (x: string): C<string>; prototype: C<any>; f<U>(x: U): U[]; }
+->c1 : { new (x: string): C<string>; f<U>(x: U): U[]; prototype: C<any>; }
+->C<string> : { new (x: string): C<string>; f<U>(x: U): U[]; prototype: C<any>; }
 +>c1 : { new (x: string): C<string>; f: <U>(x: U) => U[]; prototype: C<any>; }
 +>C<string> : { new (x: string): C<string>; f: <U>(x: U) => U[]; prototype: C<any>; }
  >C : typeof C
@@ -272,7 +272,7 @@
  
  function f32(f: (<T>(a: T) => T) | { x: string }) {
 ->f32 : (f: (<T>(a: T) => T) | { x: string; }) => void
-->f : { x: string; } | (<T>(a: T) => T)
+->f : (<T>(a: T) => T) | { x: string; }
 +>f32 : (f: <T>(a: T) => T | { x: string; }) => void
 +>f : <T>(a: T) => T | { x: string; }
  >a : T
@@ -281,7 +281,7 @@
      let fs = f<string>;  // ((a: string) => string) | { x: string }
 ->fs : { x: string; } | ((a: string) => string)
 ->f<string> : { x: string; } | ((a: string) => string)
-->f : { x: string; } | (<T>(a: T) => T)
+->f : (<T>(a: T) => T) | { x: string; }
 +>fs : { x: string; } | (a: string) => string
 +>f<string> : { x: string; } | (a: string) => string
 +>f : <T>(a: T) => T | { x: string; }

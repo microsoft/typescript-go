@@ -5,17 +5,7 @@
  
  function problemFunction(this: CorrectObject | WrongObject): void {
 ->problemFunction : (this: CorrectObject | WrongObject) => void
-->this : WrongObject | CorrectObject
 +>problemFunction : () => void
-+>this : CorrectObject | WrongObject
+ >this : CorrectObject | WrongObject
  
      //check type
-     if (!isCorrect(this)) return;
- >!isCorrect(this) : boolean
- >isCorrect(this) : boolean
- >isCorrect : (obj: any) => obj is CorrectObject
-->this : WrongObject | CorrectObject
-+>this : CorrectObject | WrongObject
- 
-     callsCallback((name)=>{
- >callsCallback((name)=>{        this.name = name; //should not error        type T = typeof this;    }) : any

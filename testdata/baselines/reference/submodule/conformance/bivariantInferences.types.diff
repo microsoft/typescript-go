@@ -9,24 +9,14 @@
  >this : readonly T[]
  >other : readonly T[]
  }
- 
- declare const a: (string | number)[] | null[] | undefined[] | {}[];
-->a : (string | number)[] | null[] | undefined[] | {}[]
-+>a : undefined[] | null[] | {}[] | (string | number)[]
- 
- declare const b: (string | number)[] | null[] | undefined[] | {}[];
-->b : (string | number)[] | null[] | undefined[] | {}[]
-+>b : undefined[] | null[] | {}[] | (string | number)[]
- 
+@@= skipped -14, +14 lines =@@
  let x = a.equalsShallow(b);
  >x : boolean
  >a.equalsShallow(b) : boolean
 ->a.equalsShallow : (<T>(this: readonly T[], other: readonly T[]) => boolean) | (<T>(this: readonly T[], other: readonly T[]) => boolean) | (<T>(this: readonly T[], other: readonly T[]) => boolean) | (<T>(this: readonly T[], other: readonly T[]) => boolean)
-->a : (string | number)[] | null[] | undefined[] | {}[]
-->equalsShallow : (<T>(this: readonly T[], other: readonly T[]) => boolean) | (<T>(this: readonly T[], other: readonly T[]) => boolean) | (<T>(this: readonly T[], other: readonly T[]) => boolean) | (<T>(this: readonly T[], other: readonly T[]) => boolean)
-->b : (string | number)[] | null[] | undefined[] | {}[]
 +>a.equalsShallow : <T>(other: readonly T[]) => boolean | <T>(other: readonly T[]) => boolean | <T>(other: readonly T[]) => boolean | <T>(other: readonly T[]) => boolean
-+>a : undefined[] | null[] | {}[] | (string | number)[]
+ >a : undefined[] | null[] | {}[] | (string | number)[]
+->equalsShallow : (<T>(this: readonly T[], other: readonly T[]) => boolean) | (<T>(this: readonly T[], other: readonly T[]) => boolean) | (<T>(this: readonly T[], other: readonly T[]) => boolean) | (<T>(this: readonly T[], other: readonly T[]) => boolean)
 +>equalsShallow : <T>(other: readonly T[]) => boolean | <T>(other: readonly T[]) => boolean | <T>(other: readonly T[]) => boolean | <T>(other: readonly T[]) => boolean
-+>b : undefined[] | null[] | {}[] | (string | number)[]
+ >b : undefined[] | null[] | {}[] | (string | number)[]
  

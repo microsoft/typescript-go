@@ -12,7 +12,7 @@
  >a : T
  
    b: NoInfer<T> | (() => NoInfer<T>),
-->b : NoInfer<T> | (() => NoInfer<T>)
+->b : (() => NoInfer<T>) | NoInfer<T>
 +>b : () => T | T
  
  ): void;

@@ -810,30 +810,9 @@
  >undefined : undefined
  
          o.bar;
-@@= skipped -254, +254 lines =@@
- 
-     if (typeof o?.foo === "number") {
- >typeof o?.foo === "number" : boolean
-->typeof o?.foo : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
-+>typeof o?.foo : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
- >o?.foo : string | number | undefined
- >o : Thing | undefined
- >foo : string | number | undefined
-@@= skipped -13, +13 lines =@@
-     }
-     if (typeof o?.["foo"] === "number") {
- >typeof o?.["foo"] === "number" : boolean
-->typeof o?.["foo"] : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
-+>typeof o?.["foo"] : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
- >o?.["foo"] : string | number | undefined
- >o : Thing | undefined
- >"foo" : "foo"
-@@= skipped -13, +13 lines =@@
-     }
-     if (typeof o?.bar() === "number") {
+@@= skipped -282, +282 lines =@@
  >typeof o?.bar() === "number" : boolean
-->typeof o?.bar() : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
-+>typeof o?.bar() : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >typeof o?.bar() : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
  >o?.bar() : number | undefined
 ->o?.bar : (() => number) | undefined
 +>o?.bar : () => number | undefined
@@ -843,30 +822,9 @@
  >"number" : "number"
  
          o.bar;
-@@= skipped -32, +32 lines =@@
- 
-     if (typeof o?.foo === "number") {
- >typeof o?.foo === "number" : boolean
-->typeof o?.foo : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
-+>typeof o?.foo : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
- >o?.foo : string | number | undefined
- >o : Thing | null
- >foo : string | number | undefined
-@@= skipped -13, +13 lines =@@
-     }
-     if (typeof o?.["foo"] === "number") {
- >typeof o?.["foo"] === "number" : boolean
-->typeof o?.["foo"] : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
-+>typeof o?.["foo"] : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
- >o?.["foo"] : string | number | undefined
- >o : Thing | null
- >"foo" : "foo"
-@@= skipped -13, +13 lines =@@
-     }
-     if (typeof o?.bar() === "number") {
+@@= skipped -58, +58 lines =@@
  >typeof o?.bar() === "number" : boolean
-->typeof o?.bar() : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
-+>typeof o?.bar() : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >typeof o?.bar() : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
  >o?.bar() : number | undefined
 ->o?.bar : (() => number) | undefined
 +>o?.bar : () => number | undefined
@@ -876,97 +834,7 @@
  >"number" : "number"
  
          o.bar;
-@@= skipped -32, +32 lines =@@
- 
-     if (typeof o?.foo === "number") {
- >typeof o?.foo === "number" : boolean
-->typeof o?.foo : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
-+>typeof o?.foo : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
- >o?.foo : string | number | undefined
- >o : Thing | undefined
- >foo : string | number | undefined
-@@= skipped -19, +19 lines =@@
-     }
-     if (typeof o?.foo !== "number") {
- >typeof o?.foo !== "number" : boolean
-->typeof o?.foo : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
-+>typeof o?.foo : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
- >o?.foo : string | number | undefined
- >o : Thing | undefined
- >foo : string | number | undefined
-@@= skipped -19, +19 lines =@@
-     }
-     if (typeof o?.foo == "number") {
- >typeof o?.foo == "number" : boolean
-->typeof o?.foo : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
-+>typeof o?.foo : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
- >o?.foo : string | number | undefined
- >o : Thing | undefined
- >foo : string | number | undefined
-@@= skipped -19, +19 lines =@@
-     }
-     if (typeof o?.foo != "number") {
- >typeof o?.foo != "number" : boolean
-->typeof o?.foo : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
-+>typeof o?.foo : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
- >o?.foo : string | number | undefined
- >o : Thing | undefined
- >foo : string | number | undefined
-@@= skipped -25, +25 lines =@@
- 
-     if (typeof o?.foo === "undefined") {
- >typeof o?.foo === "undefined" : boolean
-->typeof o?.foo : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
-+>typeof o?.foo : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
- >o?.foo : string | number | undefined
- >o : Thing | undefined
- >foo : string | number | undefined
-@@= skipped -19, +19 lines =@@
-     }
-     if (typeof o?.foo !== "undefined") {
- >typeof o?.foo !== "undefined" : boolean
-->typeof o?.foo : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
-+>typeof o?.foo : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
- >o?.foo : string | number | undefined
- >o : Thing | undefined
- >foo : string | number | undefined
-@@= skipped -19, +19 lines =@@
-     }
-     if (typeof o?.foo == "undefined") {
- >typeof o?.foo == "undefined" : boolean
-->typeof o?.foo : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
-+>typeof o?.foo : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
- >o?.foo : string | number | undefined
- >o : Thing | undefined
- >foo : string | number | undefined
-@@= skipped -19, +19 lines =@@
-     }
-     if (typeof o?.foo != "undefined") {
- >typeof o?.foo != "undefined" : boolean
-->typeof o?.foo : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
-+>typeof o?.foo : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
- >o?.foo : string | number | undefined
- >o : Thing | undefined
- >foo : string | number | undefined
-@@= skipped -76, +76 lines =@@
- >assert(typeof o?.foo === "number") : void
- >assert : (x: unknown) => asserts x
- >typeof o?.foo === "number" : boolean
-->typeof o?.foo : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
-+>typeof o?.foo : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
- >o?.foo : string | number | undefined
- >o : Thing | undefined
- >foo : string | number | undefined
-@@= skipped -81, +81 lines =@@
- >o : Thing | undefined
- 
-     switch (typeof o?.foo) {
-->typeof o?.foo : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
-+>typeof o?.foo : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
- >o?.foo : string | number | undefined
- >o : Thing | undefined
- >foo : string | number | undefined
-@@= skipped -57, +57 lines =@@
+@@= skipped -383, +383 lines =@@
  >radius : number
  
  function getArea(shape?: Shape) {
@@ -975,14 +843,6 @@
  >shape : Shape | undefined
  
      switch (shape?.type) {
-->shape?.type : "rectangle" | "circle" | undefined
-+>shape?.type : "circle" | "rectangle" | undefined
- >shape : Shape | undefined
-->type : "rectangle" | "circle" | undefined
-+>type : "circle" | "rectangle" | undefined
- 
-         case 'circle':
- >'circle' : "circle"
 @@= skipped -156, +156 lines =@@
  >0 : 0
  
