@@ -1,0 +1,11 @@
+--- old.enumWithNegativeInfinityProperty.types
++++ new.enumWithNegativeInfinityProperty.types
+@@= skipped -4, +4 lines =@@
+ >A : A
+ 
+     "-Infinity" = 1
+->"-Infinity" : (typeof A)["-Infinity"]
++>"-Infinity" : A."-Infinity"
+ >1 : 1
+ }
+ 

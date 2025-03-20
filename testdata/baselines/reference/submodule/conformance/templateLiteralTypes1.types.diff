@@ -1,0 +1,122 @@
+--- old.templateLiteralTypes1.types
++++ new.templateLiteralTypes1.types
+@@= skipped -31, +31 lines =@@
+ >EventName : `${S}Changed`
+ 
+ type EN1 = EventName<'Foo' | 'Bar' | 'Baz'>;
+->EN1 : "FooChanged" | "BarChanged" | "BazChanged"
++>EN1 : "BarChanged" | "BazChanged" | "FooChanged"
+ 
+ type Loc = `${'top' | 'middle' | 'bottom'}-${'left' | 'center' | 'right'}`;
+->Loc : "top-left" | "top-center" | "top-right" | "middle-left" | "middle-center" | "middle-right" | "bottom-left" | "bottom-center" | "bottom-right"
++>Loc : "bottom-center" | "bottom-left" | "bottom-right" | "middle-center" | "middle-left" | "middle-right" | "top-center" | "top-left" | "top-right"
+ 
+ // Primitive literal types can be spread into templates
+ 
+@@= skipped -11, +11 lines =@@
+ >ToString : `${T}`
+ 
+ type TS1 = ToString<'abc' | 42 | true | -1234n>;
+->TS1 : "abc" | "true" | "42" | "-1234"
++>TS1 : "-1234" | "42" | "abc" | "true"
+ >true : true
+ >-1234n : -1234n
+ >1234n : 1234n
+@@= skipped -30, +30 lines =@@
+ // Assignability
+ 
+ function test<T extends 'foo' | 'bar'>(name: `get${Capitalize<T>}`) {
+->test : <T extends "foo" | "bar">(name: `get${Capitalize<T>}`) => void
++>test : <T extends "bar" | "foo">(name: `get${Capitalize<T>}`) => void
+ >name : `get${Capitalize<T>}`
+ 
+     let s1: string = name;
+ >s1 : string
+->name : "getFoo" | "getBar"
++>name : "getBar" | "getFoo"
+ 
+     let s2: 'getFoo' | 'getBar' = name;
+->s2 : "getFoo" | "getBar"
+->name : "getFoo" | "getBar"
++>s2 : "getBar" | "getFoo"
++>name : "getBar" | "getFoo"
+ }
+ 
+ function fa1<T>(x: T, y: { [P in keyof T]: T[P] }, z: { [P in keyof T & string as `p_${P}`]: T[P] }) {
+->fa1 : <T>(x: T, y: { [P in keyof T]: T[P]; }, z: { [P in keyof T & string as `p_${P}`]: T[P]; }) => void
++>fa1 : <T>(x: T, y: { [P in keyof T]: T[P] }, z: { [P in keyof T & string as `p_${P}`]: T[P] }) => void
+ >x : T
+->y : { [P in keyof T]: T[P]; }
+->z : { [P in keyof T & string as `p_${P}`]: T[P]; }
++>y : { [P in keyof T]: T[P] }
++>z : { [P in keyof T & string as `p_${P}`]: T[P] }
+ 
+     y = x;
+ >y = x : T
+->y : { [P in keyof T]: T[P]; }
++>y : { [P in keyof T]: T[P] }
+ >x : T
+ 
+     z = x;  // Error
+ >z = x : T
+->z : { [P in keyof T & string as `p_${P}`]: T[P]; }
++>z : { [P in keyof T & string as `p_${P}`]: T[P] }
+ >x : T
+ }
+ 
+ function fa2<T, U extends T, A extends string, B extends A>(x: { [P in B as `p_${P}`]: T }, y: { [Q in A as `p_${Q}`]: U }) {
+->fa2 : <T, U extends T, A extends string, B extends A>(x: { [P in B as `p_${P}`]: T; }, y: { [Q in A as `p_${Q}`]: U; }) => void
+->x : { [P in B as `p_${P}`]: T; }
+->y : { [Q in A as `p_${Q}`]: U; }
++>fa2 : <T, U extends T, A extends string, B extends A>(x: { [P in B as `p_${P}`]: T }, y: { [Q in A as `p_${Q}`]: U }) => void
++>x : { [P in B as `p_${P}`]: T }
++>y : { [Q in A as `p_${Q}`]: U }
+ 
+     x = y;
+->x = y : { [Q in A as `p_${Q}`]: U; }
+->x : { [P in B as `p_${P}`]: T; }
+->y : { [Q in A as `p_${Q}`]: U; }
++>x = y : { [Q in A as `p_${Q}`]: U }
++>x : { [P in B as `p_${P}`]: T }
++>y : { [Q in A as `p_${Q}`]: U }
+ 
+     y = x;  // Error
+->y = x : { [P in B as `p_${P}`]: T; }
+->y : { [Q in A as `p_${Q}`]: U; }
+->x : { [P in B as `p_${P}`]: T; }
++>y = x : { [P in B as `p_${P}`]: T }
++>y : { [Q in A as `p_${Q}`]: U }
++>x : { [P in B as `p_${P}`]: T }
+ }
+ 
+ // String transformations using recursive conditional types
+@@= skipped -190, +190 lines =@@
+ // Inference and property name paths
+ 
+ declare function getProp<T, P0 extends keyof T & string, P1 extends keyof T[P0] & string, P2 extends keyof T[P0][P1] & string>(obj: T, path: `${P0}.${P1}.${P2}`): T[P0][P1][P2];
+->getProp : { <T, P0 extends keyof T & string, P1 extends keyof T[P0] & string, P2 extends keyof T[P0][P1] & string>(obj: T, path: `${P0}.${P1}.${P2}`): T[P0][P1][P2]; <T_1, P0_1 extends keyof T_1 & string, P1_1 extends keyof T_1[P0_1] & string>(obj: T_1, path: `${P0_1}.${P1_1}`): T_1[P0_1][P1_1]; <T_1, P0_1 extends keyof T_1 & string>(obj: T_1, path: P0_1): T_1[P0_1]; (obj: object, path: string): unknown; }
++>getProp : { <T, P0 extends keyof T & string, P1 extends keyof T[P0] & string, P2 extends keyof T[P0][P1] & string>(obj: T, path: `${P0}.${P1}.${P2}`): T[P0][P1][P2]; <T, P0 extends keyof T & string, P1 extends keyof T[P0] & string>(obj: T, path: `${P0}.${P1}`): T[P0][P1]; <T, P0 extends keyof T & string>(obj: T, path: P0): T[P0]; (obj: object, path: string): unknown; }
+ >obj : T
+ >path : `${P0}.${P1}.${P2}`
+ 
+ declare function getProp<T, P0 extends keyof T & string, P1 extends keyof T[P0] & string>(obj: T, path: `${P0}.${P1}`): T[P0][P1];
+->getProp : { <T_1, P0_1 extends keyof T_1 & string, P1_1 extends keyof T_1[P0_1] & string, P2 extends keyof T_1[P0_1][P1_1] & string>(obj: T_1, path: `${P0_1}.${P1_1}.${P2}`): T_1[P0_1][P1_1][P2]; <T, P0 extends keyof T & string, P1 extends keyof T[P0] & string>(obj: T, path: `${P0}.${P1}`): T[P0][P1]; <T_1, P0_1 extends keyof T_1 & string>(obj: T_1, path: P0_1): T_1[P0_1]; (obj: object, path: string): unknown; }
++>getProp : { <T, P0 extends keyof T & string, P1 extends keyof T[P0] & string, P2 extends keyof T[P0][P1] & string>(obj: T, path: `${P0}.${P1}.${P2}`): T[P0][P1][P2]; <T, P0 extends keyof T & string, P1 extends keyof T[P0] & string>(obj: T, path: `${P0}.${P1}`): T[P0][P1]; <T, P0 extends keyof T & string>(obj: T, path: P0): T[P0]; (obj: object, path: string): unknown; }
+ >obj : T
+ >path : `${P0}.${P1}`
+ 
+ declare function getProp<T, P0 extends keyof T & string>(obj: T, path: P0): T[P0];
+->getProp : { <T_1, P0_1 extends keyof T_1 & string, P1 extends keyof T_1[P0_1] & string, P2 extends keyof T_1[P0_1][P1] & string>(obj: T_1, path: `${P0_1}.${P1}.${P2}`): T_1[P0_1][P1][P2]; <T_1, P0_1 extends keyof T_1 & string, P1 extends keyof T_1[P0_1] & string>(obj: T_1, path: `${P0_1}.${P1}`): T_1[P0_1][P1]; <T, P0 extends keyof T & string>(obj: T, path: P0): T[P0]; (obj: object, path: string): unknown; }
++>getProp : { <T, P0 extends keyof T & string, P1 extends keyof T[P0] & string, P2 extends keyof T[P0][P1] & string>(obj: T, path: `${P0}.${P1}.${P2}`): T[P0][P1][P2]; <T, P0 extends keyof T & string, P1 extends keyof T[P0] & string>(obj: T, path: `${P0}.${P1}`): T[P0][P1]; <T, P0 extends keyof T & string>(obj: T, path: P0): T[P0]; (obj: object, path: string): unknown; }
+ >obj : T
+ >path : P0
+ 
+@@= skipped -252, +252 lines =@@
+ >TDigits : TDigits
+ 
+ type T100000 = [...TDigits, ...TDigits, ...TDigits, ...TDigits, ...TDigits];  // Error
+->T100000 : any
++>T100000 : (0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9)[]
+ 
+ // Repro from #40863
+ 

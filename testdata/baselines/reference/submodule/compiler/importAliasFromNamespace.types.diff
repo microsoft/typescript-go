@@ -1,0 +1,29 @@
+--- old.importAliasFromNamespace.types
++++ new.importAliasFromNamespace.types
+@@= skipped -14, +14 lines =@@
+ >Foo : Foo
+ 
+         private _which: Internal.WhichThing;
+->_which : Internal.WhichThing
++>_which : WhichThing
+ >Internal : any
+ 
+         constructor() {
+@@= skipped -11, +11 lines =@@
+ >getThing : () => void
+ 
+             Internal.WhichThing.A ? "foo" : "bar";
+->Internal.WhichThing.A ? "foo" : "bar" : "foo" | "bar"
+->Internal.WhichThing.A : Internal.WhichThing.A
+->Internal.WhichThing : typeof Internal.WhichThing
++>Internal.WhichThing.A ? "foo" : "bar" : "bar" | "foo"
++>Internal.WhichThing.A : WhichThing.A
++>Internal.WhichThing : typeof WhichThing
+ >Internal : typeof Internal
+->WhichThing : typeof Internal.WhichThing
+->A : Internal.WhichThing.A
++>WhichThing : typeof WhichThing
++>A : WhichThing.A
+ >"foo" : "foo"
+ >"bar" : "bar"
+         }

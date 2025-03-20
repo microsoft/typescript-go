@@ -1,0 +1,20 @@
+--- old.mappedTypeGenericIndexedAccess.types
++++ new.mappedTypeGenericIndexedAccess.types
+@@= skipped -102, +102 lines =@@
+ 
+ const typeHandlers: TypeHandlers = {
+ >typeHandlers : TypeHandlers
+->{    [0]: (p) => console.log(p.foo),    [1]: (p) => console.log(p.a),} : { 0: (p: P<0>) => void; 1: (p: P<1>) => void; }
++>{    [0]: (p) => console.log(p.foo),    [1]: (p) => console.log(p.a),} : { [0]: (p: P<0>) => void; [1]: (p: P<1>) => void; }
+ 
+     [0]: (p) => console.log(p.foo),
+ >[0] : (p: P<0>) => void
+@@= skipped -37, +37 lines =@@
+ 
+     typeHandlers[p.t]?.(p);
+ >typeHandlers[p.t]?.(p) : void | undefined
+->typeHandlers[p.t] : ((p: P<T>) => void) | undefined
++>typeHandlers[p.t] : (p: P<T>) => void | undefined
+ >typeHandlers : TypeHandlers
+ >p.t : T
+ >p : { t: T; } & ({ foo: "bar"; } | { a: "b"; })

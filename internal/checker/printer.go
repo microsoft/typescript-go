@@ -18,7 +18,7 @@ func (c *Checker) getTypePrecedence(t *Type) ast.TypePrecedence {
 			return ast.TypePrecedenceIntersection
 		case t.flags&TypeFlagsUnion != 0 && t.flags&TypeFlagsBoolean == 0:
 			return ast.TypePrecedenceUnion
-		case t.flags&TypeFlagsIndex != 0:
+		case t.flags&TypeFlagsIndex != 0 || isInferTypeParameter(t):
 			return ast.TypePrecedenceTypeOperator
 		case c.isArrayType(t):
 			return ast.TypePrecedencePostfix
@@ -98,11 +98,12 @@ func (c *Checker) valueToString(value any) string {
 }
 
 type Printer struct {
-	c        *Checker
-	flags    TypeFormatFlags
-	sb       strings.Builder
-	printing core.Set[*Type]
-	depth    int
+	c                *Checker
+	flags            TypeFormatFlags
+	sb               strings.Builder
+	printing         core.Set[*Type]
+	depth            int32
+	extendsTypeDepth int32
 }
 
 func (c *Checker) newPrinter(flags TypeFormatFlags) *Printer {
@@ -121,6 +122,20 @@ func (p *Printer) printName(symbol *ast.Symbol) {
 	p.print(p.c.symbolToString(symbol))
 }
 
+func (p *Printer) printQualifiedName(symbol *ast.Symbol) {
+	if p.flags&TypeFormatFlagsUseFullyQualifiedType != 0 && symbol.Parent != nil {
+		p.printQualifiedName(symbol.Parent)
+		p.print(".")
+	}
+	if symbol.Flags&ast.SymbolFlagsModule != 0 && strings.HasPrefix(symbol.Name, "\"") {
+		p.print("import(")
+		p.print(symbol.Name)
+		p.print(")")
+		return
+	}
+	p.printName(symbol)
+}
+
 func (p *Printer) printTypeEx(t *Type, precedence ast.TypePrecedence) {
 	if p.c.getTypePrecedence(t) < precedence {
 		p.print("(")
@@ -132,8 +147,13 @@ func (p *Printer) printTypeEx(t *Type, precedence ast.TypePrecedence) {
 }
 
 func (p *Printer) printType(t *Type) {
+	if p.sb.Len() > 1_000_000 {
+		p.print("...")
+		return
+	}
+
 	if t.alias != nil && (p.flags&TypeFormatFlagsInTypeAlias == 0 || p.depth > 0) {
-		p.printName(t.alias.symbol)
+		p.printQualifiedName(t.alias.symbol)
 		p.printTypeArguments(t.alias.typeArguments)
 	} else {
 		p.printTypeNoAlias(t)
@@ -161,6 +181,8 @@ func (p *Printer) printTypeNoAlias(t *Type) {
 		p.printRecursive(t, (*Printer).printIndexType)
 	case t.flags&TypeFlagsIndexedAccess != 0:
 		p.printRecursive(t, (*Printer).printIndexedAccessType)
+	case t.flags&TypeFlagsConditional != 0:
+		p.printRecursive(t, (*Printer).printConditionalType)
 	case t.flags&TypeFlagsTemplateLiteral != 0:
 		p.printTemplateLiteralType(t)
 	case t.flags&TypeFlagsStringMapping != 0:
@@ -197,7 +219,7 @@ func (p *Printer) printValue(value any) {
 		p.printNumberLiteral(value)
 	case bool:
 		p.printBooleanLiteral(value)
-	case PseudoBigInt:
+	case jsnum.PseudoBigInt:
 		p.printBigIntLiteral(value)
 	}
 }
@@ -216,11 +238,8 @@ func (p *Printer) printBooleanLiteral(b bool) {
 	p.print(core.IfElse(b, "true", "false"))
 }
 
-func (p *Printer) printBigIntLiteral(b PseudoBigInt) {
-	if b.negative {
-		p.print("-")
-	}
-	p.print(b.base10Value)
+func (p *Printer) printBigIntLiteral(b jsnum.PseudoBigInt) {
+	p.print(b.String() + "n")
 }
 
 func (p *Printer) printUniqueESSymbolType(t *Type) {
@@ -249,9 +268,15 @@ func (p *Printer) printStringMappingType(t *Type) {
 }
 
 func (p *Printer) printEnumLiteral(t *Type) {
-	p.printName(p.c.getParentOfSymbol(t.symbol))
-	p.print(".")
-	p.printName(t.symbol)
+	if parent := p.c.getParentOfSymbol(t.symbol); parent != nil {
+		p.printQualifiedName(parent)
+		if p.c.getDeclaredTypeOfSymbol(parent) != t {
+			p.print(".")
+			p.printName(t.symbol)
+		}
+		return
+	}
+	p.printQualifiedName(t.symbol)
 }
 
 func (p *Printer) printObjectType(t *Type) {
@@ -259,7 +284,7 @@ func (p *Printer) printObjectType(t *Type) {
 	case t.objectFlags&ObjectFlagsReference != 0:
 		p.printParameterizedType(t)
 	case t.objectFlags&ObjectFlagsClassOrInterface != 0:
-		p.printName(t.symbol)
+		p.printQualifiedName(t.symbol)
 	case p.c.isGenericMappedType(t) || t.objectFlags&ObjectFlagsMapped != 0 && t.AsMappedType().containsError:
 		p.printMappedType(t)
 	default:
@@ -279,14 +304,14 @@ func (p *Printer) printParameterizedType(t *Type) {
 }
 
 func (p *Printer) printTypeReference(t *Type) {
-	p.printName(t.symbol)
+	p.printQualifiedName(t.symbol)
 	p.printTypeArguments(p.c.getTypeArguments(t)[:p.c.getTypeReferenceArity(t)])
 }
 
 func (p *Printer) printTypeArguments(typeArguments []*Type) {
 	if len(typeArguments) != 0 {
 		p.print("<")
-		tail := false
+		var tail bool
 		for _, t := range typeArguments {
 			if tail {
 				p.print(", ")
@@ -308,10 +333,13 @@ func (p *Printer) printArrayType(t *Type) {
 }
 
 func (p *Printer) printTupleType(t *Type) {
-	tail := false
+	if t.TargetTupleType().readonly {
+		p.print("readonly ")
+	}
 	p.print("[")
 	elementInfos := t.TargetTupleType().elementInfos
 	typeArguments := p.c.getTypeArguments(t)
+	var tail bool
 	for i, info := range elementInfos {
 		t := typeArguments[i]
 		if tail {
@@ -323,18 +351,20 @@ func (p *Printer) printTupleType(t *Type) {
 		if info.labeledDeclaration != nil {
 			p.print(info.labeledDeclaration.Name().Text())
 			if info.flags&ElementFlagsOptional != 0 {
-				p.print("?")
-			}
-			p.print(": ")
-			if info.flags&ElementFlagsRest != 0 {
-				p.printTypeEx(t, ast.TypePrecedencePostfix)
-				p.print("[]")
+				p.print("?: ")
+				p.printType(p.c.removeMissingType(t, true))
 			} else {
-				p.printType(t)
+				p.print(": ")
+				if info.flags&ElementFlagsRest != 0 {
+					p.printTypeEx(t, ast.TypePrecedencePostfix)
+					p.print("[]")
+				} else {
+					p.printType(t)
+				}
 			}
 		} else {
 			if info.flags&ElementFlagsOptional != 0 {
-				p.printTypeEx(t, ast.TypePrecedencePostfix)
+				p.printTypeEx(p.c.removeMissingType(t, true), ast.TypePrecedencePostfix)
 				p.print("?")
 			} else if info.flags&ElementFlagsRest != 0 {
 				p.printTypeEx(t, ast.TypePrecedencePostfix)
@@ -353,18 +383,11 @@ func (p *Printer) printAnonymousType(t *Type) {
 		if t.symbol.Flags&(ast.SymbolFlagsClass|ast.SymbolFlagsEnum|ast.SymbolFlagsValueModule) != 0 {
 			if t == p.c.getTypeOfSymbol(t.symbol) {
 				p.print("typeof ")
-				if t.symbol.Flags&ast.SymbolFlagsValueModule != 0 && t.symbol.Name[0] == '"' {
-					p.print("import(")
-					p.print(t.symbol.Name)
-					p.print(")")
-				} else {
-					p.printName(t.symbol)
-				}
+				p.printQualifiedName(t.symbol)
 				return
 			}
 		}
 	}
-
 	props := p.c.getPropertiesOfObjectType(t)
 	callSignatures := p.c.getSignaturesOfType(t, SignatureKindCall)
 	constructSignatures := p.c.getSignaturesOfType(t, SignatureKindConstruct)
@@ -416,7 +439,7 @@ func (p *Printer) printAnonymousType(t *Type) {
 			p.print("?")
 		}
 		p.print(": ")
-		p.printType(p.c.getTypeOfSymbol(prop))
+		p.printType(p.c.getNonMissingTypeOfSymbol(prop))
 		p.print(";")
 		hasMembers = true
 	}
@@ -434,7 +457,7 @@ func (p *Printer) printSignature(sig *Signature, returnSeparator string) {
 			if tail {
 				p.print(", ")
 			}
-			p.printName(tp.symbol)
+			p.printTypeParameterAndConstraint(tp)
 			tail = true
 		}
 		p.print(">")
@@ -483,12 +506,24 @@ func (p *Printer) printTypePredicate(pred *TypePredicate) {
 }
 
 func (p *Printer) printTypeParameter(t *Type) {
-	if t.AsTypeParameter().isThisType {
+	switch {
+	case t.AsTypeParameter().isThisType:
 		p.print("this")
-	} else if t.symbol != nil {
+	case p.extendsTypeDepth > 0 && isInferTypeParameter(t):
+		p.print("infer ")
+		p.printTypeParameterAndConstraint(t)
+	case t.symbol != nil:
 		p.printName(t.symbol)
-	} else {
+	default:
 		p.print("???")
+	}
+}
+
+func (p *Printer) printTypeParameterAndConstraint(t *Type) {
+	p.printName(t.symbol)
+	if constraint := p.c.getConstraintOfTypeParameter(t); constraint != nil {
+		p.print(" extends ")
+		p.printType(constraint)
 	}
 }
 
@@ -497,7 +532,7 @@ func (p *Printer) printUnionType(t *Type) {
 	case t.flags&TypeFlagsBoolean != 0:
 		p.print("boolean")
 	case t.flags&TypeFlagsEnumLiteral != 0:
-		p.printName(t.symbol)
+		p.printQualifiedName(t.symbol)
 	default:
 		u := t.AsUnionType()
 		if u.origin != nil {
@@ -536,6 +571,18 @@ func (p *Printer) printIndexedAccessType(t *Type) {
 	p.print("[")
 	p.printType(t.AsIndexedAccessType().indexType)
 	p.print("]")
+}
+
+func (p *Printer) printConditionalType(t *Type) {
+	p.printType(t.AsConditionalType().checkType)
+	p.print(" extends ")
+	p.extendsTypeDepth++
+	p.printType(t.AsConditionalType().extendsType)
+	p.extendsTypeDepth--
+	p.print(" ? ")
+	p.printType(p.c.getTrueTypeFromConditionalType(t))
+	p.print(" : ")
+	p.printType(p.c.getFalseTypeFromConditionalType(t))
 }
 
 func (p *Printer) printMappedType(t *Type) {
@@ -662,4 +709,8 @@ func (c *Checker) formatUnionTypes(types []*Type) []*Type {
 		result = append(result, c.undefinedType)
 	}
 	return result
+}
+
+func isInferTypeParameter(t *Type) bool {
+	return t.flags&TypeFlagsTypeParameter != 0 && t.symbol != nil && core.Some(t.symbol.Declarations, func(d *ast.Node) bool { return ast.IsInferTypeNode(d.Parent) })
 }

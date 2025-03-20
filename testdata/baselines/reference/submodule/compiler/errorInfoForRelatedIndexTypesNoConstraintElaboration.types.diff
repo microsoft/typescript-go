@@ -1,0 +1,19 @@
+--- old.errorInfoForRelatedIndexTypesNoConstraintElaboration.types
++++ new.errorInfoForRelatedIndexTypesNoConstraintElaboration.types
+@@= skipped -11, +11 lines =@@
+ >M : () => void
+ 
+         let c1: JSX.IntrinsicElements[T1] = {};
+->c1 : JSX.IntrinsicElements[T1]
++>c1 : IntrinsicElements
+ >JSX : any
+ >{} : {}
+ 
+         const c2: JSX.IntrinsicElements[T2] = c1;
+->c2 : JSX.IntrinsicElements[T2]
++>c2 : IntrinsicElements
+ >JSX : any
+->c1 : JSX.IntrinsicElements[T1]
++>c1 : IntrinsicElements
+     }
+ }

@@ -1,0 +1,11 @@
+--- old.keyofInferenceLowerPriorityThanReturn.js
++++ new.keyofInferenceLowerPriorityThanReturn.js
+@@= skipped -49, +49 lines =@@
+ 
+ 
+ //// [keyofInferenceLowerPriorityThanReturn.js]
+-var bookTable = null;
++const bookTable = null;
+ function insertOnConflictDoNothing(_table, _conflictTarget) {
+     throw new Error();
+ }

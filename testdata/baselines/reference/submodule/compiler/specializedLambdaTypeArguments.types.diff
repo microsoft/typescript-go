@@ -1,0 +1,11 @@
+--- old.specializedLambdaTypeArguments.types
++++ new.specializedLambdaTypeArguments.types
+@@= skipped -4, +4 lines =@@
+ >X : X<A>
+ 
+ 	prop: X< <Tany>() => Tany >;
+->prop : X<(<Tany>() => Tany)>
++>prop : X<<Tany>() => Tany>
+ }
+ var a: X<boolean>;
+ >a : X<boolean>

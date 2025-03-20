@@ -1,0 +1,11 @@
+--- old.tupleTypeInference2.js
++++ new.tupleTypeInference2.js
+@@= skipped -26, +26 lines =@@
+ 
+ 
+ //// [tupleTypeInference2.js]
+-"use strict";
+-// Repro from #22564
+ f([undefined, '']); // T: never
+ f([undefined, '']); // T: void
+ g([[]]); // U: {}

@@ -1,0 +1,29 @@
+--- old.incrementOperatorWithAnyOtherTypeInvalidOperations.js
++++ new.incrementOperatorWithAnyOtherTypeInvalidOperations.js
+@@= skipped -75, +75 lines =@@
+ var ANY1;
+ var ANY2 = [1, 2];
+ var obj;
+-var obj1 = { x: "", y: function () { } };
++var obj1 = { x: "", y: () => { } };
+ function foo() {
+     var a;
+     return a;
+ }
+-var A = /** @class */ (function () {
+-    function A() {
+-    }
+-    A.foo = function () {
++class A {
++    a;
++    static foo() {
+         var a;
+         return a;
+-    };
+-    return A;
+-}());
++    }
++}
+ var M;
+ (function (M) {
+ })(M || (M = {}));

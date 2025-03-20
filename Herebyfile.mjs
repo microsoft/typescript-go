@@ -25,6 +25,7 @@ const { values: options } = parseArgs({
     args: process.argv.slice(2),
     options: {
         race: { type: "boolean" },
+        tests: { type: "string", short: "t" },
         fix: { type: "boolean" },
         noembed: { type: "boolean" },
         debug: { type: "boolean" },
@@ -44,7 +45,7 @@ const defaultGoBuildTags = [
 
 /**
  * @param  {...string} extra
- * @returns
+ * @returns {string[]}
  */
 function goBuildTags(...extra) {
     const tags = new Set(defaultGoBuildTags.concat(extra));
@@ -203,6 +204,7 @@ export const generate = task({
 const goTestFlags = [
     ...goBuildFlags,
     ...goBuildTags(),
+    ...(options.tests ? [`-run=${options.tests}`] : []),
 ];
 
 const goTestEnv = {
@@ -390,6 +392,7 @@ function baselineAcceptTask(localBaseline, refBaseline) {
         for (const p of toDelete) {
             const out = localPathToRefPath(p).replace(/\.delete$/, "");
             await rimraf(out);
+            await rimraf(p); // also delete the .delete file so that it no longer shows up in a diff tool.
         }
     };
 }

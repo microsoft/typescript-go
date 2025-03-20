@@ -1,0 +1,10 @@
+--- old.defaultOfAnyInStrictNullChecks.js
++++ new.defaultOfAnyInStrictNullChecks.js
+@@= skipped -17, +17 lines =@@
+     try {
+     }
+     catch (e) {
+-        var s = e.message;
++        let s = e.message;
+     }
+ }

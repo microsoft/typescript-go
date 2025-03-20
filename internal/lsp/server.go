@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"slices"
 	"strings"
 	"time"
 
@@ -58,6 +59,7 @@ type Server struct {
 	defaultLibraryPath string
 
 	initializeParams *lsproto.InitializeParams
+	positionEncoding lsproto.PositionEncodingKind
 
 	logger         *project.Logger
 	projectService *project.Service
@@ -211,12 +213,21 @@ func (s *Server) handleMessage(req *lsproto.RequestMessage) error {
 
 func (s *Server) handleInitialize(req *lsproto.RequestMessage) error {
 	s.initializeParams = req.Params.(*lsproto.InitializeParams)
+
+	s.positionEncoding = lsproto.PositionEncodingKindUTF16
+	if genCapabilities := s.initializeParams.Capabilities.General; genCapabilities != nil && genCapabilities.PositionEncodings != nil {
+		if slices.Contains(*genCapabilities.PositionEncodings, lsproto.PositionEncodingKindUTF8) {
+			s.positionEncoding = lsproto.PositionEncodingKindUTF8
+		}
+	}
+
 	return s.sendResult(req.ID, &lsproto.InitializeResult{
 		ServerInfo: &lsproto.ServerInfo{
 			Name:    "typescript-go",
 			Version: ptrTo(core.Version),
 		},
 		Capabilities: lsproto.ServerCapabilities{
+			PositionEncoding: ptrTo(s.positionEncoding),
 			TextDocumentSync: &lsproto.TextDocumentSyncOptionsOrTextDocumentSyncKind{
 				TextDocumentSyncOptions: &lsproto.TextDocumentSyncOptions{
 					OpenClose: ptrTo(true),
@@ -249,7 +260,7 @@ func (s *Server) handleInitialized(req *lsproto.RequestMessage) error {
 		DefaultLibraryPath: s.defaultLibraryPath,
 		Logger:             s.logger,
 	})
-	s.converters = &converters{projectService: s.projectService}
+	s.converters = &converters{projectService: s.projectService, positionEncoding: s.positionEncoding}
 	return nil
 }
 
@@ -325,7 +336,7 @@ func (s *Server) handleDocumentDiagnostic(req *lsproto.RequestMessage) error {
 func (s *Server) handleHover(req *lsproto.RequestMessage) error {
 	params := req.Params.(*lsproto.HoverParams)
 	file, project := s.getFileAndProject(params.TextDocument.Uri)
-	pos, err := s.converters.lineAndCharacterToPosition(params.Position, file.FileName())
+	pos, err := s.converters.lineAndCharacterToPositionForFile(params.Position, file.FileName())
 	if err != nil {
 		return s.sendError(req.ID, err)
 	}
@@ -344,7 +355,7 @@ func (s *Server) handleHover(req *lsproto.RequestMessage) error {
 func (s *Server) handleDefinition(req *lsproto.RequestMessage) error {
 	params := req.Params.(*lsproto.DefinitionParams)
 	file, project := s.getFileAndProject(params.TextDocument.Uri)
-	pos, err := s.converters.lineAndCharacterToPosition(params.Position, file.FileName())
+	pos, err := s.converters.lineAndCharacterToPositionForFile(params.Position, file.FileName())
 	if err != nil {
 		return s.sendError(req.ID, err)
 	}

@@ -1,0 +1,21 @@
+--- old.arrayConcat3.types
++++ new.arrayConcat3.types
+@@= skipped -6, +6 lines =@@
+ >subj : U
+ 
+ function doStuff<T extends object, T1 extends T>(a: Array<Fn<T>>, b: Array<Fn<T1>>) {
+->doStuff : <T extends object, T1 extends T>(a: Array<Fn<T>>, b: Array<Fn<T1>>) => void
++>doStuff : <T extends object, T1 extends T>(a: Fn<T>[], b: Fn<T1>[]) => void
+ >a : Fn<T>[]
+ >b : Fn<T1>[]
+ 
+     b.concat(a);
+ >b.concat(a) : Fn<T1>[]
+->b.concat : { (...items: ConcatArray<Fn<T1>>[]): Fn<T1>[]; (...items: (Fn<T1> | ConcatArray<Fn<T1>>)[]): Fn<T1>[]; }
++>b.concat : { (...items: ConcatArray<Fn<T1>>[]): Fn<T1>[]; (...items: (ConcatArray<Fn<T1>> | Fn<T1>)[]): Fn<T1>[]; }
+ >b : Fn<T1>[]
+->concat : { (...items: ConcatArray<Fn<T1>>[]): Fn<T1>[]; (...items: (Fn<T1> | ConcatArray<Fn<T1>>)[]): Fn<T1>[]; }
++>concat : { (...items: ConcatArray<Fn<T1>>[]): Fn<T1>[]; (...items: (ConcatArray<Fn<T1>> | Fn<T1>)[]): Fn<T1>[]; }
+ >a : Fn<T>[]
+ }
+ 

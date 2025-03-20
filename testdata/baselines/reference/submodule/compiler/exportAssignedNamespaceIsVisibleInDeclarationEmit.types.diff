@@ -1,0 +1,17 @@
+--- old.exportAssignedNamespaceIsVisibleInDeclarationEmit.types
++++ new.exportAssignedNamespaceIsVisibleInDeclarationEmit.types
+@@= skipped -12, +12 lines =@@
+ 
+ === index.ts ===
+ import { f } from "./thing";
+->f : () => import("thing").Bar
++>f : () => Bar
+ 
+ export const thing = f();
+->thing : import("thing").Bar
+->f() : import("thing").Bar
+->f : () => import("thing").Bar
++>thing : Bar
++>f() : Bar
++>f : () => Bar
+ 

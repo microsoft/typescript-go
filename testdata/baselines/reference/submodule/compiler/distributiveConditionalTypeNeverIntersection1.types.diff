@@ -1,0 +1,11 @@
+--- old.distributiveConditionalTypeNeverIntersection1.types
++++ new.distributiveConditionalTypeNeverIntersection1.types
+@@= skipped -8, +8 lines =@@
+ >false : false
+ 
+ type Conflicted = { x: true } & { x: false };
+->Conflicted : never
++>Conflicted : Conflicted
+ >x : true
+ >true : true
+ >x : false

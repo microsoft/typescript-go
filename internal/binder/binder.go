@@ -117,6 +117,7 @@ func bindSourceFile(file *ast.SourceFile, options *core.CompilerOptions) {
 		b.file = file
 		b.options = options
 		b.languageVersion = options.GetEmitScriptTarget()
+		b.inStrictMode = (options.AlwaysStrict.IsTrue() || options.Strict.IsTrue()) && !file.IsDeclarationFile || ast.IsExternalModule(file)
 		b.unreachableFlow = b.newFlowNode(ast.FlowFlagsUnreachable)
 		b.reportedUnreachableFlow = b.newFlowNode(ast.FlowFlagsUnreachable)
 		b.bind(file.AsNode())
@@ -1979,7 +1980,7 @@ func (b *Binder) bindTryStatement(node *ast.Node) {
 				b.addAntecedent(b.currentReturnTarget, b.createReduceLabel(finallyLabel, returnLabel.Antecedents, b.currentFlow))
 			}
 			// If we have an outer exception target (i.e. a containing try-finally or try-catch-finally), add a
-			// control flow that goes back through the finally blok and back through each possible exception source.
+			// control flow that goes back through the finally block and back through each possible exception source.
 			if b.currentExceptionTarget != nil && exceptionLabel.Antecedents != nil {
 				b.addAntecedent(b.currentExceptionTarget, b.createReduceLabel(finallyLabel, exceptionLabel.Antecedents, b.currentFlow))
 			}

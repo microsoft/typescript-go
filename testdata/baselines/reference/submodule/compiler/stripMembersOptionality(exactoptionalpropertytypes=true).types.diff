@@ -1,0 +1,32 @@
+--- old.stripMembersOptionality(exactoptionalpropertytypes=true).types
++++ new.stripMembersOptionality(exactoptionalpropertytypes=true).types
+@@= skipped -3, +3 lines =@@
+ // repro from #52494
+ 
+ declare const someVal: Required<{
+->someVal : Required<{ fn?(key: string): string | null; }>
++>someVal : Required<{ fn?: (key: string) => string | null; }>
+ 
+     fn?(key: string): string | null;
+->fn : ((key: string) => string | null) | undefined
++>fn : (key: string) => string | null | undefined
+ >key : string
+ 
+ }>;
+ someVal.fn("");
+ >someVal.fn("") : string | null
+ >someVal.fn : (key: string) => string | null
+->someVal : Required<{ fn?(key: string): string | null; }>
++>someVal : Required<{ fn?: (key: string) => string | null; }>
+ >fn : (key: string) => string | null
+ >"" : ""
+ 
+@@= skipped -18, +18 lines =@@
+ >someVal2 : Required<{ fn?: (key: string) => string | null; }>
+ 
+     fn?: (key: string) => string | null;
+->fn : ((key: string) => string | null) | undefined
++>fn : (key: string) => string | null | undefined
+ >key : string
+ 
+ }>;

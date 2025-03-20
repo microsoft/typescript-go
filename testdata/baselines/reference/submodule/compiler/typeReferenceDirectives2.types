@@ -1,0 +1,7 @@
+//// [tests/cases/compiler/typeReferenceDirectives2.ts] ////
+
+=== /app.ts ===
+interface A {
+    x: $
+>x : $
+}
