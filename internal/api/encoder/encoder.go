@@ -48,7 +48,169 @@ const (
 	ProtocolVersion uint8 = 1
 )
 
-// EncodeSourceFile encodes a source file into a byte slice. The protocol
+// Source File Binary Format
+// =========================
+//
+// The following defines a protocol for serializing TypeScript SourceFile objects to a compact binary format. All integer
+// values are little-endian.
+//
+// Overview
+// --------
+//
+// The format comprises six sections:
+//
+// | Section            | Length             | Description                                                                              |
+// | ------------------ | ------------------ | ---------------------------------------------------------------------------------------- |
+// | Header             | 20 bytes           | Contains byte offsets to the start of each section.                                      |
+// | String offsets     | 8 bytes per string | Pairs of starting byte offsets and ending byte offsets into the **string data** section. |
+// | String data        | variable           | UTF-8 encoded string data.                                                               |
+// | Extended node data | variable           | Extra data for some kinds of nodes.                                                      |
+// | Nodes              | 24 bytes per node  | Defines the AST structure of the file, with references to strings and extended data.     |
+//
+// Header (20 bytes)
+// -----------------
+//
+// The header contains the following fields:
+//
+// | Byte offset | Type   | Field                                     |
+// | ----------- | ------ | ----------------------------------------- |
+// | 0           | uint8  | Protocol version                          |
+// | 1-4         |        | Reserved                                  |
+// | 4-8         | uint32 | Byte offset to string offsets section     |
+// | 8-12        | uint32 | Byte offset to string data section        |
+// | 12-16       | uint32 | Byte offset to extended node data section |
+// | 16-20       | uint32 | Byte offset to nodes section              |
+//
+// String offsets (8 bytes per string)
+// -----------------------------------
+//
+// Each string offset entry consists of two 4-byte unsigned integers, representing the start and end byte offsets into the
+// **string data** section.
+//
+// String data (variable)
+// ----------------------
+//
+// The string data section contains UTF-8 encoded string data. In typical cases, the entirety of the string data is the
+// source file text, and individual nodes with string properties reference their positional slice of the file text. In
+// cases where a node's string property is not equal to the slice of file text at its position, the unique string is
+// appended to the string data section after the file text.
+//
+// Extended node data (variable)
+// -----------------------------
+//
+// The extended node data section contains additional data for specific node types. The length and meaning of each entry
+// is defined by the node type.
+//
+// Currently, the only node types that use this section are `TemplateHead`, `TemplateMiddle`, and `TemplateTail`. The
+// extended data format for these nodes is:
+//
+// | Byte offset | Type   | Field                                            |
+// | ----------- | ------ | ------------------------------------------------ |
+// | 0-4         | uint32 | Index of `text` in the string offsets section    |
+// | 4-8         | uint32 | Index of `rawText` in the string offsets section |
+// | 8-12        | uint32 | Value of `templateFlags`                         |
+//
+// Nodes (24 bytes per node)
+// -------------------------
+//
+// The nodes section contains the AST structure of the file. Nodes are represented in a flat array in source order,
+// heavily inspired by https://marvinh.dev/blog/speeding-up-javascript-ecosystem-part-11/. Each node has the following
+// structure:
+//
+// | Byte offset | Type   | Field                      |
+// | ----------- | ------ | -------------------------- |
+// | 0-4         | uint32 | Kind                       |
+// | 4-8         | uint32 | Pos                        |
+// | 8-12        | uint32 | End                        |
+// | 12-16       | uint32 | Node index of next sibling |
+// | 16-20       | uint32 | Node index of parent       |
+// | 20-24       |        | Node data                  |
+//
+// The first 24 bytes of the nodes section are zeros representing a nil node, such that nodes without a parent or next
+// sibling can unambiuously use `0` for those indices.
+//
+// NodeLists are represented as normal nodes with the special `kind` value `0xff_ff_ff_ff`. They are considered the parent
+// of their contents in the encoded format. A client reconstructing an AST similar to TypeScript's internal representation
+// should instead set the `parent` pointers of a NodeList's children to the NodeList's parent. A NodeList's `data` field
+// is the uint32 length of the list, and does not use one of the data types described below.
+//
+// For node types other than NodeList, the node data field encodes one of the following, determined by the first 2 bits of
+// the field:
+//
+// | Value | Data type | Description                                                                          |
+// | ----- | --------- | ------------------------------------------------------------------------------------ |
+// | 0b00  | Children  | Disambiguates which named properties of the node its children should be assigned to. |
+// | 0b01  | String    | The index of the node's string property in the **string offsets** section.           |
+// | 0b10  | Extended  | The byte offset of the node's extended data into the **extended node data** section. |
+// | 0b11  | Reserved  | Reserved for future use.                                                             |
+//
+// In all node data types, the remaining 6 bits of the first byte are used to encode booleans specific to the node type:
+//
+// | Node type                 | Bit 1         | Bit 0                           |
+// | ------------------------- | ------------- | ------------------------------- |
+// | `ImportSpecifier`         |               | `isTypeOnly`                    |
+// | `ImportClause`            |               | `isTypeOnly`                    |
+// | `ExportSpecifier`         |               | `isTypeOnly`                    |
+// | `ImportEqualsDeclaration` |               | `isTypeOnly`                    |
+// | `ExportDeclaration`       |               | `isTypeOnly`                    |
+// | `ImportTypeNode`          |               | `isTypeOf`                      |
+// | `ExportAssignment`        |               | `isExportEquals`                |
+// | `Block`                   |               | `multiline`                     |
+// | `ArrayLiteralExpression`  |               | `multiline`                     |
+// | `ObjectLiteralExpression` |               | `multiline`                     |
+// | `JsxText`                 |               | `containsOnlyTriviaWhiteSpaces` |
+// | `JSDocTypeLiteral`        |               | `isArrayType`                   |
+// | `JsDocPropertyTag`        | `isNameFirst` | `isBracketed`                   |
+// | `JsDocParameterTag`       | `isNameFirst` | `isBracketed`                   |
+// | `VariableDeclarationList` | is `const`    | is `let`                        |
+// | `ImportAttributes`        | is `assert`   | `multiline`                     |
+//
+// The remaining 3 bytes of the node data field vary by data type:
+//
+// ### Children (0b00)
+//
+// If a node has fewer children than its type allows, additional data is needed to determine which properties the children
+// correspond to. The last byte of the 4-byte data field is a bitmask representing the child properties of the node type,
+// in visitor order, where `1` indicates that the child at that property is present and `0` indicates that the property is
+// nil. For example, a `MethodDeclaration` has the following child properties:
+//
+// | Property name  | Bit position |
+// | -------------- | ------------ |
+// | modifiers      | 0            |
+// | asteriskToken  | 1            |
+// | name           | 2            |
+// | postfixToken   | 3            |
+// | typeParameters | 4            |
+// | parameters     | 5            |
+// | returnType     | 6            |
+// | body           | 7            |
+//
+// A bitmask with value `0b01100101` would indicate that the next four direct descendants (i.e., node records that have a
+// `parent` set to the node index of the `MethodDeclaration`) of the node are its `modifiers`, `name`, `parameters`, and
+// `body` properties, in that order. The remaining properties are nil. (To reconstruct the node with named properties, the
+// client must consult a static table of each node type's child property names.)
+//
+// The bitmask may be zero for node types that can only have a single child, since no disambiguation is needed.
+// Additionally, the children data type may be used for nodes that can never have children, but do not require other
+// data types.
+//
+// ### String (0b01)
+//
+// The string data type is used for nodes with a single string property. (Currently, the name of that property is always
+// `text`.) The last three bytes of the 4-byte data field form a single 24-bit unsigned integer (i.e.,
+// `uint32(0x00_ff_ff_ff & node.data)`) _N_ that is an index into the **string offsets** section. The *N*th 32-bit
+// unsigned integer in the **string offsets** section is the byte offset of the start of the string in the **string data**
+// section, and the *N+1*th 32-bit unsigned integer is the byte offset of the end of the string in the
+// **string data** section.
+//
+// ### Extended (0b10)
+//
+// The extended data type is used for nodes with properties that don't fit into either the children or string data types.
+// The last three bytes of the 4-byte data field form a single 24-bit unsigned integer (i.e.,
+// `uint32(0x00_ff_ff_ff & node.data)`) _N_ that is a byte offset into the **extended node data** section. The length and
+// meaning of the data at that offset is defined by the node type. See the **Extended node data** section for details on
+// the format of the extended data for specific node types.
+
 func EncodeSourceFile(sourceFile *ast.SourceFile) ([]byte, error) {
 	var parentIndex, nodeCount, prevIndex uint32
 	var extendedData []byte
