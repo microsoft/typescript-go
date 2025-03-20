@@ -1287,19 +1287,19 @@ export type LiteralToken =
 export interface TemplateHead extends TemplateLiteralLikeNode {
     readonly kind: SyntaxKind.TemplateHead;
     readonly parent: TemplateExpression | TemplateLiteralTypeNode;
-    templateFlags?: TokenFlags;
+    templateFlags: TokenFlags;
 }
 
 export interface TemplateMiddle extends TemplateLiteralLikeNode {
     readonly kind: SyntaxKind.TemplateMiddle;
     readonly parent: TemplateSpan | TemplateLiteralTypeSpan;
-    templateFlags?: TokenFlags;
+    templateFlags: TokenFlags;
 }
 
 export interface TemplateTail extends TemplateLiteralLikeNode {
     readonly kind: SyntaxKind.TemplateTail;
     readonly parent: TemplateSpan | TemplateLiteralTypeSpan;
-    templateFlags?: TokenFlags;
+    templateFlags: TokenFlags;
 }
 
 export type PseudoLiteralToken =

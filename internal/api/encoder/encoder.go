@@ -21,8 +21,8 @@ const (
 
 const (
 	NodeDataTypeChildren uint32 = iota << 30
-	NodeDataTypeStringIndex
-	NodeDataTypeExtendedDataIndex
+	NodeDataTypeString
+	NodeDataTypeExtendedData
 )
 
 const (
@@ -36,20 +36,22 @@ const (
 )
 
 const (
-	HeaderOffsetReserved = iota * 4
-	HeaderOffsetStringTableOffsets
-	HeaderOffsetStringTable
-	HeaderOffsetExtendedDataOffsets
+	HeaderOffsetMetadata = iota * 4
+	HeaderOffsetStringOffsets
+	HeaderOffsetStringData
 	HeaderOffsetExtendedData
 	HeaderOffsetNodes
 	HeaderSize
 )
 
-// EncodeSourceFile encodes a source file into a byte slice.
-func EncodeSourceFile(sourceFile *ast.SourceFile) ([]byte, error) {
-	var err error
-	var parentIndex, nodeCount, prevIndex uint32
+const (
+	ProtocolVersion uint8 = 1
+)
 
+// EncodeSourceFile encodes a source file into a byte slice. The protocol
+func EncodeSourceFile(sourceFile *ast.SourceFile) ([]byte, error) {
+	var parentIndex, nodeCount, prevIndex uint32
+	var extendedData []byte
 	strs := newStringTable(sourceFile.Text, sourceFile.TextCount)
 	nodes := make([]byte, 0, (sourceFile.NodeCount+1)*NodeSize)
 
@@ -70,9 +72,7 @@ func EncodeSourceFile(sourceFile *ast.SourceFile) ([]byte, error) {
 					nodes[prevIndex*NodeSize+NodeOffsetNext+3] = b3
 				}
 
-				if nodes, err = appendUint32s(nodes, SyntaxKindNodeList, uint32(nodeList.Pos()), uint32(nodeList.End()), 0, parentIndex, uint32(len(nodeList.Nodes))); err != nil {
-					return nil
-				}
+				nodes = appendUint32s(nodes, SyntaxKindNodeList, uint32(nodeList.Pos()), uint32(nodeList.End()), 0, parentIndex, uint32(len(nodeList.Nodes)))
 
 				saveParentIndex := parentIndex
 
@@ -104,10 +104,7 @@ func EncodeSourceFile(sourceFile *ast.SourceFile) ([]byte, error) {
 			nodes[prevIndex*NodeSize+NodeOffsetNext+3] = b3
 		}
 
-		if nodes, err = appendUint32s(nodes, uint32(node.Kind), uint32(node.Pos()), uint32(node.End()), 0, parentIndex, getNodeData(node, strs)); err != nil {
-			visitor.Visit = nil
-			return nil
-		}
+		nodes = appendUint32s(nodes, uint32(node.Kind), uint32(node.Pos()), uint32(node.End()), 0, parentIndex, getNodeData(node, strs, &extendedData))
 
 		saveParentIndex := parentIndex
 
@@ -120,70 +117,61 @@ func EncodeSourceFile(sourceFile *ast.SourceFile) ([]byte, error) {
 		return node
 	}
 
-	if nodes, err = appendUint32s(nodes, 0, 0, 0, 0, 0, 0); err != nil {
-		return nil, err
-	}
+	nodes = appendUint32s(nodes, 0, 0, 0, 0, 0, 0)
 
 	nodeCount++
 	parentIndex++
-	if nodes, err = appendUint32s(nodes, uint32(sourceFile.Kind), uint32(sourceFile.Pos()), uint32(sourceFile.End()), 0, 0, 0); err != nil {
-		return nil, err
-	}
+	nodes = appendUint32s(nodes, uint32(sourceFile.Kind), uint32(sourceFile.Pos()), uint32(sourceFile.End()), 0, 0, 0)
 
 	visitor.VisitEachChild(sourceFile.AsNode())
-	if err != nil {
-		return nil, err
-	}
 
+	metadata := uint32(ProtocolVersion) << 24
 	offsetStringTableOffsets := HeaderSize
 	offsetStringTableData := HeaderSize + len(strs.offsets)*4
-	offsetNodes := offsetStringTableData + strs.stringLength()
-	offsetExtendedDataOffsets := 0
-	offsetExtendedDataData := 0
+	offsetExtendedData := offsetStringTableData + strs.stringLength()
+	offsetNodes := offsetExtendedData + len(extendedData)
 
 	header := []uint32{
-		0,
+		metadata,
 		uint32(offsetStringTableOffsets),
 		uint32(offsetStringTableData),
-		uint32(offsetExtendedDataOffsets),
-		uint32(offsetExtendedDataData),
+		uint32(offsetExtendedData),
 		uint32(offsetNodes),
 	}
 
 	var headerBytes, strsBytes []byte
-	if headerBytes, err = appendUint32s(nil, header...); err != nil {
-		return nil, err
-	}
-	if strsBytes, err = strs.encode(); err != nil {
-		return nil, err
-	}
+	headerBytes = appendUint32s(nil, header...)
+	strsBytes = strs.encode()
 
 	return slices.Concat(
 		headerBytes,
 		strsBytes,
+		extendedData,
 		nodes,
 	), nil
 }
 
-func appendUint32s(buf []byte, values ...uint32) ([]byte, error) {
+func appendUint32s(buf []byte, values ...uint32) []byte {
 	for _, value := range values {
 		var err error
 		if buf, err = binary.Append(buf, binary.LittleEndian, value); err != nil {
-			return nil, err
+			// The only error binary.Append can return is for values that are not fixed-size.
+			// This can never happen here, since we are always appending uint32.
+			panic(fmt.Sprintf("failed to append uint32: %v", err))
 		}
 	}
-	return buf, nil
+	return buf
 }
 
-func getNodeData(node *ast.Node, strs *stringTable) uint32 {
+func getNodeData(node *ast.Node, strs *stringTable, extendedData *[]byte) uint32 {
 	t := getNodeDataType(node)
 	switch t {
 	case NodeDataTypeChildren:
 		return t | getNodeDefinedData(node) | uint32(getChildrenPropertyMask(node))
-	case NodeDataTypeStringIndex:
+	case NodeDataTypeString:
 		return t | getNodeDefinedData(node) | recordNodeStrings(node, strs)
-	case NodeDataTypeExtendedDataIndex:
-		return t | getNodeDefinedData(node) /* | TODO */
+	case NodeDataTypeExtendedData:
+		return t | getNodeDefinedData(node) | recordExtendedData(node, strs, extendedData)
 	default:
 		panic("unreachable")
 	}
@@ -200,11 +188,11 @@ func getNodeDataType(node *ast.Node) uint32 {
 		ast.KindRegularExpressionLiteral,
 		ast.KindNoSubstitutionTemplateLiteral,
 		ast.KindJSDocText:
-		return NodeDataTypeStringIndex
+		return NodeDataTypeString
 	case ast.KindTemplateHead,
 		ast.KindTemplateMiddle,
 		ast.KindTemplateTail:
-		return NodeDataTypeExtendedDataIndex
+		return NodeDataTypeExtendedData
 	default:
 		return NodeDataTypeChildren
 	}
@@ -558,9 +546,6 @@ func getNodeDefinedData(node *ast.Node) uint32 {
 	case ast.KindImportType:
 		n := node.AsImportTypeNode()
 		return uint32(boolToByte(n.IsTypeOf)) << 24
-	case ast.KindBlock:
-		n := node.AsBlock()
-		return uint32(boolToByte(n.Multiline)) << 24
 	case ast.KindImportEqualsDeclaration:
 		n := node.AsImportEqualsDeclaration()
 		return uint32(boolToByte(n.IsTypeOnly)) << 24
@@ -570,6 +555,9 @@ func getNodeDefinedData(node *ast.Node) uint32 {
 	case ast.KindExportDeclaration:
 		n := node.AsExportDeclaration()
 		return uint32(boolToByte(n.IsTypeOnly)) << 24
+	case ast.KindBlock:
+		n := node.AsBlock()
+		return uint32(boolToByte(n.Multiline)) << 24
 	case ast.KindArrayLiteralExpression:
 		n := node.AsArrayLiteralExpression()
 		return uint32(boolToByte(n.MultiLine)) << 24
@@ -618,6 +606,33 @@ func recordNodeStrings(node *ast.Node, strs *stringTable) uint32 {
 	default:
 		panic(fmt.Sprintf("Unexpected node kind %v", node.Kind))
 	}
+}
+
+func recordExtendedData(node *ast.Node, strs *stringTable, extendedData *[]byte) uint32 {
+	offset := uint32(len(*extendedData))
+	var text, rawText string
+	var templateFlags uint32
+	switch node.Kind {
+	case ast.KindTemplateTail:
+		n := node.AsTemplateTail()
+		text = n.Text
+		rawText = n.RawText
+		templateFlags = uint32(n.TemplateFlags)
+	case ast.KindTemplateMiddle:
+		n := node.AsTemplateMiddle()
+		text = n.Text
+		rawText = n.RawText
+		templateFlags = uint32(n.TemplateFlags)
+	case ast.KindTemplateHead:
+		n := node.AsTemplateHead()
+		text = n.Text
+		rawText = n.RawText
+		templateFlags = uint32(n.TemplateFlags)
+	}
+	textIndex := strs.add(text, node.Kind, node.Pos(), node.End())
+	rawTextIndex := strs.add(rawText, node.Kind, node.Pos(), node.End())
+	*extendedData = appendUint32s(*extendedData, textIndex, rawTextIndex, templateFlags)
+	return offset
 }
 
 func boolToByte(b bool) byte {

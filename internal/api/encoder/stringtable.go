@@ -46,14 +46,12 @@ func (t *stringTable) add(text string, kind ast.Kind, pos int, end int) uint32 {
 	return uint32(index)
 }
 
-func (t *stringTable) encode() (result []byte, err error) {
-	result = make([]byte, 0, t.encodedLength())
-	if result, err = appendUint32s(result, t.offsets...); err != nil {
-		return nil, err
-	}
+func (t *stringTable) encode() []byte {
+	result := make([]byte, 0, t.encodedLength())
+	result = appendUint32s(result, t.offsets...)
 	result = append(result, t.fileText...)
 	result = append(result, t.otherStrings.String()...)
-	return result, nil
+	return result
 }
 
 func (t *stringTable) stringLength() int {

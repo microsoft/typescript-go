@@ -130,10 +130,9 @@ const childProperties: Readonly<Partial<Record<SyntaxKind, readonly string[]>>> 
 const HEADER_OFFSET_RESERVED = 0;
 const HEADER_OFFSET_STRING_TABLE_OFFSETS = 4;
 const HEADER_OFFSET_STRING_TABLE = 8;
-const HEADER_OFFSET_EXTENDED_DATA_OFFSETS = 12;
-const HEADER_OFFSET_EXTENDED_DATA = 16;
-const HEADER_OFFSET_NODES = 20;
-const HEADER_SIZE = 24;
+const HEADER_OFFSET_EXTENDED_DATA = 12;
+const HEADER_OFFSET_NODES = 16;
+const HEADER_SIZE = 20;
 
 type NodeDataType = typeof NODE_DATA_TYPE_CHILDREN | typeof NODE_DATA_TYPE_STRING | typeof NODE_DATA_TYPE_EXTENDED;
 const NODE_DATA_TYPE_CHILDREN = 0x00000000;
@@ -142,6 +141,7 @@ const NODE_DATA_TYPE_EXTENDED = 0x80000000;
 const NODE_DATA_TYPE_MASK = 0xc0_00_00_00;
 const NODE_CHILD_MASK = 0x00_00_00_ff;
 const NODE_STRING_INDEX_MASK = 0x00_ff_ff_ff;
+const NODE_EXTENDED_DATA_MASK = 0x00_ff_ff_ff;
 
 const NODE_OFFSET_KIND = 0;
 const NODE_OFFSET_POS = 4;
@@ -194,10 +194,6 @@ export class RemoteNodeBase {
 
     protected get offsetStringTable(): number {
         return this.view.getUint32(HEADER_OFFSET_STRING_TABLE, true);
-    }
-
-    protected get offsetExtendedDataOffsets(): number {
-        return this.view.getUint32(HEADER_OFFSET_EXTENDED_DATA_OFFSETS, true);
     }
 
     protected get offsetExtendedData(): number {
@@ -257,7 +253,7 @@ export class RemoteNodeList extends Array<RemoteNode> implements NodeArray<Remot
     }
 
     private get offsetNodes(): number {
-        return this.view.getUint32(20, true);
+        return this.view.getUint32(HEADER_OFFSET_NODES, true);
     }
 
     private get byteIndex(): number {
@@ -765,8 +761,27 @@ export class RemoteNode extends RemoteNodeBase implements Node {
             case SyntaxKind.BigIntLiteral:
             case SyntaxKind.RegularExpressionLiteral:
             case SyntaxKind.NoSubstitutionTemplateLiteral:
-            case SyntaxKind.JSDocText:
+            case SyntaxKind.JSDocText: {
                 const stringIndex = this.data & NODE_STRING_INDEX_MASK;
+                return this.getString(stringIndex);
+            }
+            case SyntaxKind.TemplateHead:
+            case SyntaxKind.TemplateMiddle:
+            case SyntaxKind.TemplateTail: {
+                const extendedDataOffset = this.offsetExtendedData + (this.data & NODE_EXTENDED_DATA_MASK);
+                const stringIndex = this.view.getUint32(extendedDataOffset, true);
+                return this.getString(stringIndex);
+            }
+        }
+    }
+
+    get rawText(): string | undefined {
+        switch (this.kind) {
+            case SyntaxKind.TemplateHead:
+            case SyntaxKind.TemplateMiddle:
+            case SyntaxKind.TemplateTail:
+                const extendedDataOffset = this.offsetExtendedData + (this.data & NODE_EXTENDED_DATA_MASK);
+                const stringIndex = this.view.getUint32(extendedDataOffset + 4, true);
                 return this.getString(stringIndex);
         }
     }
@@ -788,6 +803,16 @@ export class RemoteNode extends RemoteNodeBase implements Node {
                     return SyntaxKind.AssertKeyword;
                 }
                 return SyntaxKind.WithKeyword;
+        }
+    }
+
+    get templateFlags(): number | undefined {
+        switch (this.kind) {
+            case SyntaxKind.TemplateHead:
+            case SyntaxKind.TemplateMiddle:
+            case SyntaxKind.TemplateTail:
+                const extendedDataOffset = this.offsetExtendedData + (this.data & NODE_EXTENDED_DATA_MASK);
+                return this.view.getUint32(extendedDataOffset + 8, true);
         }
     }
 }

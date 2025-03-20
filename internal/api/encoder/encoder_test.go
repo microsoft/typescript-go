@@ -60,8 +60,8 @@ func formatEncodedSourceFile(encoded []byte) string {
 	var result strings.Builder
 	var getIndent func(parentIndex uint32) string
 	offsetNodes := readUint32(encoded, encoder.HeaderOffsetNodes)
-	offsetStringOffsets := readUint32(encoded, encoder.HeaderOffsetStringTableOffsets)
-	offsetStrings := readUint32(encoded, encoder.HeaderOffsetStringTable)
+	offsetStringOffsets := readUint32(encoded, encoder.HeaderOffsetStringOffsets)
+	offsetStrings := readUint32(encoded, encoder.HeaderOffsetStringData)
 	getIndent = func(parentIndex uint32) string {
 		if parentIndex == 0 {
 			return ""
