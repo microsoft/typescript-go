@@ -188,13 +188,14 @@ func (p *Printer) printTypeNoAlias(t *Type) {
 	case t.flags&TypeFlagsStringMapping != 0:
 		p.printStringMappingType(t)
 	case t.flags&TypeFlagsSubstitution != 0:
-		noInferSymbol := core.IfElse(p.c.isNoInferType(t), p.c.getGlobalNoInferSymbolOrNil(), nil)
-		if noInferSymbol != nil {
-			p.printQualifiedName(noInferSymbol)
-			p.printTypeArguments([]*Type{t.AsSubstitutionType().baseType})
-		} else {
-			p.printType(t.AsSubstitutionType().baseType)
+		if p.c.isNoInferType(t) {
+			if noInferSymbol := p.c.getGlobalNoInferSymbolOrNil(); noInferSymbol != nil {
+				p.printQualifiedName(noInferSymbol)
+				p.printTypeArguments([]*Type{t.AsSubstitutionType().baseType})
+				break
+			}
 		}
+		p.printType(t.AsSubstitutionType().baseType)
 	}
 	p.depth--
 }
