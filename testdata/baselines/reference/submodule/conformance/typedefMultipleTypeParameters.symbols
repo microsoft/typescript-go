@@ -3,7 +3,14 @@
 === a.js ===
 /**
  * @template {{ a: number, b: string }} T,U A Comment
+>a : Symbol(a, Decl(a.js, 1, 15))
+>b : Symbol(b, Decl(a.js, 1, 26))
+>a : Symbol(a, Decl(a.js, 1, 15))
+>b : Symbol(b, Decl(a.js, 1, 26))
+
  * @template {{ c: boolean }} V uh ... are comments even supported??
+>c : Symbol(c, Decl(a.js, 2, 15))
+
  * @template W
  * @template X That last one had no comment
  * @typedef {{ t: T, u: U, v: V, w: W, x: X }} Everything

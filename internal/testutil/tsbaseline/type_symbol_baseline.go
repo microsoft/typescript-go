@@ -341,16 +341,8 @@ func (walker *typeWriterWalker) writeTypeOrSymbol(node *ast.Node, isSymbolWalk b
 		// Exception for `T` in `type T = something` because that may evaluate to some interesting type.
 		if ast.IsPartOfTypeNode(node) ||
 			ast.IsIdentifier(node) &&
-<<<<<<< HEAD
-				(ast.GetMeaningFromDeclaration(node)&ast.SemanticMeaningValue) == 0 &&
-				!(ast.IsEitherTypeAliasDeclaration(node.Parent) && node == node.Parent.Name()) {
-||||||| 677e0f31e
-				(ast.GetMeaningFromDeclaration(node)&ast.SemanticMeaningValue) == 0 &&
-				!(ast.IsTypeAliasDeclaration(node.Parent) && node == node.Parent.Name()) {
-=======
 				(ast.GetMeaningFromDeclaration(node.Parent)&ast.SemanticMeaningValue) == 0 &&
-				!(ast.IsTypeAliasDeclaration(node.Parent) && node == node.Parent.Name()) {
->>>>>>> main
+				!(ast.IsEitherTypeAliasDeclaration(node.Parent) && node == node.Parent.Name()) {
 			return nil
 		}
 

@@ -3,8 +3,8 @@
 === foo.js ===
 /** @type {boolean} */
 var /** @type {string} */ x,
->x : any
+>x : boolean
 
     /** @type {number} */ y;
->y : any
+>y : boolean
 

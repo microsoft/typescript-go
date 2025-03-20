@@ -23,8 +23,9 @@ export = Foo;
 
 /** @typedef {(foo: Foo) => string} FooFun */
 >foo : Symbol(foo, Decl(something.js, 2, 15))
->Foo : Symbol(Foo)
+>Foo : Symbol(Foo, Decl(something.js, 4, 47))
 
 module.exports = /** @type {FooFun} */(void 0);
 >module : Symbol(module, Decl(file.ts, 5, 7))
+>FooFun : Symbol(FooFun, Decl(something.js, 4, 47))
 

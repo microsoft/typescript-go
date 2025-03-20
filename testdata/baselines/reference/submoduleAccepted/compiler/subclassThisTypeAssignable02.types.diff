@@ -26,12 +26,3 @@
  >vnode : Vnode<A, this>
  
  	view(vnode: Vnode<A, this>): number;
-@@= skipped -40, +40 lines =@@
- === file1.js ===
- /** @type {ClassComponent<any>} */
- const test9 = new C();
-->test9 : ClassComponent<any>
-+>test9 : C
- >new C() : C
- >C : typeof C
- 

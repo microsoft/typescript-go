@@ -8,6 +8,7 @@ const MW = require("./MW");
 >"./MW" : "./MW"
 
 /** @typedef {number} Cictema */
+>Cictema : any
 
 module.exports = class MC {
 >module.exports = class MC {  watch() {    return new MW(this);  }} : typeof MC

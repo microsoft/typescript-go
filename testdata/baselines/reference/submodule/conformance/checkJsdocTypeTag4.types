@@ -9,12 +9,15 @@ type A<T extends string> = { a: T }
 /** Also should error for jsdoc typedefs
  * @template {string} U
  * @typedef {{ b: U }} B
+>B : any
+>b : U
+
  */
 /** @type {A<number>} */
 var a;
->a : any
+>a : A<number>
 
 /** @type {B<number>} */
 var b;
->b : any
+>b : { b: U; }
 

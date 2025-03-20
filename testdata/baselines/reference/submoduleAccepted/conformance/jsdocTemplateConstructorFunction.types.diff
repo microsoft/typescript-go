@@ -1,13 +1,21 @@
 --- old.jsdocTemplateConstructorFunction.types
 +++ new.jsdocTemplateConstructorFunction.types
-@@= skipped -9, +9 lines =@@
+@@= skipped -3, +3 lines =@@
+ /**
+  * @template U
+  * @typedef {(u: U) => U} Id
++>Id : Id<U>
++>u : U
++
+  */
+ /**
+  * @param {T} t
   * @template T
   */
  function Zet(t) {
 ->Zet : typeof Zet
-->t : T
-+>Zet : (t: any) => void
-+>t : any
++>Zet : <T>(t: T) => void
+ >t : T
  
      /** @type {T} */
      this.u
@@ -19,17 +27,14 @@
 +>u : any
  
      this.t = t
-->this.t = t : T
-+>this.t = t : any
+ >this.t = t : T
  >this.t : any
 ->this : this
 +>this : any
  >t : any
-->t : T
-+>t : any
+ >t : T
  }
- /**
-  * @param {T} v
+@@= skipped -27, +30 lines =@@
   * @param {Id<T>} id
   */
  Zet.prototype.add = function(v, id) {
@@ -38,7 +43,7 @@
  >Zet.prototype.add : any
  >Zet.prototype : any
 ->Zet : typeof Zet
-+>Zet : (t: any) => void
++>Zet : <T>(t: T) => void
  >prototype : any
  >add : any
 ->function(v, id) {    this.u = v || this.t    return id(this.u)} : (v: T, id: Id<T>) => T
@@ -86,7 +91,7 @@
 ->Zet : typeof Zet
 +>z : any
 +>new Zet(1) : any
-+>Zet : (t: any) => void
++>Zet : <T>(t: T) => void
  >1 : 1
  
  z.t = 2

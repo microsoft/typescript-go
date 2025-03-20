@@ -8,7 +8,7 @@
  */
 
 /** @type {Foo} */
->Foo : Symbol(Foo)
+>Foo : Symbol(Foo, Decl(a.js, 5, 18))
 
 export default "";
 

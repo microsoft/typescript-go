@@ -3,7 +3,11 @@
 === /a.js ===
 /**
  * @typedef {Object} Foo
+>Foo : any
+
  * @property {number} a
+>a : any
+
  */
 export default /** @satisfies {Foo} */ ({});
 >({}) : {}
@@ -12,7 +16,11 @@ export default /** @satisfies {Foo} */ ({});
 === /b.js ===
 /**
  * @typedef {Object} Foo
+>Foo : any
+
  * @property {number} a
+>a : any
+
  */
 
 export default /** @satisfies {Foo} */ ({ a: 1 });

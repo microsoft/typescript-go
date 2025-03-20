@@ -6,7 +6,7 @@ class C {
 
     /**
      * @typedef {C~A} C~B
->C : Symbol(C, Decl(bug25104.js, 0, 0))
+>C : Symbol(C, Decl(bug25104.js, 7, 5))
 
      * @typedef {object} C~A
      */

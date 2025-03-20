@@ -80,7 +80,7 @@
  const TabbedShowLayout = () => {
 ->TabbedShowLayout : React.SFC<{}>
 ->() => {    return (        <div className="" key="">            ok        </div>    );} : { (): JSX.Element; defaultProps: Partial<{}> | undefined; }
-+>TabbedShowLayout : { (): any; defaultProps: { tabs: string; }; }
++>TabbedShowLayout : SFC
 +>() => {    return (        <div className="" key="">            ok        </div>    );} : { (): any; defaultProps: { tabs: string; }; }
  
      return (
@@ -105,9 +105,9 @@
 ->TabbedShowLayout.defaultProps : Partial<{}> | undefined
 ->TabbedShowLayout : React.SFC<{}>
 ->defaultProps : Partial<{}> | undefined
-+>TabbedShowLayout.defaultProps : { tabs: string; }
-+>TabbedShowLayout : { (): any; defaultProps: { tabs: string; }; }
-+>defaultProps : { tabs: string; }
++>TabbedShowLayout.defaultProps : any
++>TabbedShowLayout : SFC
++>defaultProps : any
  >{    tabs: "default value"} : { tabs: string; }
  
      tabs: "default value"
@@ -116,7 +116,7 @@
  
  export default TabbedShowLayout;
 ->TabbedShowLayout : React.SFC<{}>
-+>TabbedShowLayout : { (): any; defaultProps: { tabs: string; }; }
++>TabbedShowLayout : SFC
  
  === jsDeclarationsReactComponents3.jsx ===
  import React from "react";
@@ -129,7 +129,7 @@
  const TabbedShowLayout = () => {
 ->TabbedShowLayout : { defaultProps: { tabs: string; }; } & ((props?: { elem: string; }) => JSX.Element)
 ->() => {    return (        <div className="" key="">            ok        </div>    );} : { (): JSX.Element; defaultProps: { tabs: string; }; }
-+>TabbedShowLayout : { (): any; defaultProps: { tabs: string; }; }
++>TabbedShowLayout : { defaultProps: { tabs: string; }; } & (props?: { elem: string; } | undefined) => Element
 +>() => {    return (        <div className="" key="">            ok        </div>    );} : { (): any; defaultProps: { tabs: string; }; }
  
      return (
@@ -152,7 +152,7 @@
  >TabbedShowLayout.defaultProps = {    tabs: "default value"} : { tabs: string; }
  >TabbedShowLayout.defaultProps : { tabs: string; }
 ->TabbedShowLayout : { defaultProps: { tabs: string; }; } & ((props?: { elem: string; }) => JSX.Element)
-+>TabbedShowLayout : { (): any; defaultProps: { tabs: string; }; }
++>TabbedShowLayout : { defaultProps: { tabs: string; }; } & (props?: { elem: string; } | undefined) => Element
  >defaultProps : { tabs: string; }
  >{    tabs: "default value"} : { tabs: string; }
  
@@ -161,7 +161,7 @@
  
  export default TabbedShowLayout;
 ->TabbedShowLayout : { defaultProps: { tabs: string; }; } & ((props?: { elem: string; }) => JSX.Element)
-+>TabbedShowLayout : { (): any; defaultProps: { tabs: string; }; }
++>TabbedShowLayout : { defaultProps: { tabs: string; }; } & (props?: { elem: string; } | undefined) => Element
  
  === jsDeclarationsReactComponents4.jsx ===
  import React from "react";

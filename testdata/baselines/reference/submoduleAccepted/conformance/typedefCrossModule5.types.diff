@@ -1,0 +1,11 @@
+--- old.typedefCrossModule5.types
++++ new.typedefCrossModule5.types
+@@= skipped -1, +1 lines =@@
+ 
+ === mod1.js ===
+ /** @typedef {number} Foo */
++>Foo : any
++
+ class Bar {}
+ >Bar : Bar
+ 

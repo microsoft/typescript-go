@@ -8,6 +8,8 @@ export type foo = 5;
  * @typedef {{
  * }}
  */
+> : any
+
 export const foo = 5;
 >foo : 5
 >5 : 5

@@ -1,6 +1,21 @@
 --- old.jsdocCatchClauseWithTypeAnnotation.symbols
 +++ new.jsdocCatchClauseWithTypeAnnotation.symbols
-@@= skipped -40, +40 lines =@@
+@@= skipped -2, +2 lines =@@
+ === foo.js ===
+ /**
+  * @typedef {any} Any
++>Any : Symbol(Any, Decl(foo.js, 49, 1))
++
+  */
+ 
+ /**
+  * @typedef {unknown} Unknown
++>Unknown : Symbol(Unknown, Decl(foo.js, 49, 1))
++
+  */
+ 
+ function fn() {
+@@= skipped -38, +42 lines =@@
  
      try { } catch (/** @type {unknown} */ err) { console.log(err); } // should be OK
  >err : Symbol(err, Decl(foo.js, 17, 19))

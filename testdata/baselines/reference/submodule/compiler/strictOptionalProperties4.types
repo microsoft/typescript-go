@@ -3,26 +3,32 @@
 === a.js ===
 /**
  * @typedef Foo
+>Foo : any
+
  * @property {number} [foo]
+>foo : any
+
  */
 
 const x = /** @type {Foo} */ ({});
->x : {}
->({}) : {}
+>x : Foo
+>({}) : Foo
+>{} : Foo
 >{} : {}
 
 x.foo; // number | undefined
 >x.foo : any
->x : {}
+>x : Foo
 >foo : any
 
 const y = /** @type {Required<Foo>} */ ({});
->y : {}
->({}) : {}
+>y : Required<Foo>
+>({}) : Required<Foo>
+>{} : Required<Foo>
 >{} : {}
 
 y.foo; // number
 >y.foo : any
->y : {}
+>y : Required<Foo>
 >foo : any
 

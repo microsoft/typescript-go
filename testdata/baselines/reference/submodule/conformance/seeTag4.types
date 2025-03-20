@@ -3,6 +3,8 @@
 === seeTag4.js ===
 /**
  * @typedef {any} A
+>A : any
+
  */
 
 /**

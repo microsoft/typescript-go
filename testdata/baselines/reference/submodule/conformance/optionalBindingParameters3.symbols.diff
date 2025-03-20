@@ -1,0 +1,14 @@
+--- old.optionalBindingParameters3.symbols
++++ new.optionalBindingParameters3.symbols
+@@= skipped -2, +2 lines =@@
+ === /a.js ===
+ /**
+  * @typedef Foo
++>Foo : Symbol(Foo, Decl(a.js, 8, 26))
++
+  * @property {string} a
++>a : Symbol(a, Decl(a.js, 8, 26))
++
+  */
+ 
+ /**

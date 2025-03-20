@@ -3,23 +3,30 @@
 === a.js ===
 /**
  * @typedef {object} A
+>A : any
+
  * @property {number} [value]
+>value : any
+
  */
 
 /** @type {A} */
 const a = { value: undefined }; // error
->a : { value: undefined; }
+>a : A
 >{ value: undefined } : { value: undefined; }
 >value : undefined
 >undefined : undefined
 
 /**
  * @typedef {{ value?: number }} B
+>B : any
+>value : number | undefined
+
  */
 
 /** @type {B} */
 const b = { value: undefined }; // error
->b : { value: undefined; }
+>b : { value?: number; }
 >{ value: undefined } : { value: undefined; }
 >value : undefined
 >undefined : undefined

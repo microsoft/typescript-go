@@ -1,22 +1,26 @@
 --- old.jsDeclarationEmitDoesNotRenameImport.types
 +++ new.jsDeclarationEmitDoesNotRenameImport.types
-@@= skipped -32, +32 lines =@@
-      * @param {Options} options
-      */
-     constructor(options) {
-->options : Options
-+>options : any
+@@= skipped -21, +21 lines =@@
  
-         super();
- >super() : void
+ /**
+  * @typedef {Object} Options
++>Options : any
++
+  * @property {typeof import("./Test.js").default} [test]
++>test : any
++>default : any
++
+  */
+ 
+ class X extends Test {
+@@= skipped -18, +23 lines =@@
  >super : typeof Test
  
          if (options.test) {
 ->options.test : typeof import("Test").default | undefined
-->options : Options
-->test : typeof import("Test").default | undefined
 +>options.test : any
-+>options : any
+ >options : Options
+->test : typeof import("Test").default | undefined
 +>test : any
  
              this.test = new options.test();
@@ -27,11 +31,10 @@
  >test : any
 ->new options.test() : import("Test").default
 ->options.test : typeof import("Test").default
-->options : Options
-->test : typeof import("Test").default
 +>new options.test() : any
 +>options.test : any
-+>options : any
+ >options : Options
+->test : typeof import("Test").default
 +>test : any
          }
      }

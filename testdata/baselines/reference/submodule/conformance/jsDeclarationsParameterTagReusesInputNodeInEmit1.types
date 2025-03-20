@@ -33,6 +33,8 @@ module.exports = BaseFactory;
 
 === file.js ===
 /** @typedef {import('./base')} BaseFactory */
+>BaseFactory : any
+
 /**
  * @callback BaseFactoryFactory
  * @param {import('./base')} factory

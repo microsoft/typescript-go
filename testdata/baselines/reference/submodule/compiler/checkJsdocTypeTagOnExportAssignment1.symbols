@@ -10,7 +10,7 @@
  */
 
 /** @type {Foo} */
->Foo : Symbol(Foo)
+>Foo : Symbol(Foo, Decl(a.js, 7, 28))
 
 export default { c: false };
 >c : Symbol(c, Decl(a.js, 7, 16))

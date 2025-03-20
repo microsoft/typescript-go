@@ -4,6 +4,8 @@
 /**
  * @template T
  * @template {keyof T} K
+>T : Symbol(T)
+
  * @typedef {T[K]} Foo
 >T : Symbol(T)
 >K : Symbol(K)

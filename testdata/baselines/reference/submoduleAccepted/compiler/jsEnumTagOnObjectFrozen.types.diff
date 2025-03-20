@@ -29,7 +29,14 @@
  
  /**
   * @typedef {Object} LogEntry
-@@= skipped -21, +21 lines =@@
++>LogEntry : any
++
+  * @property {string} type
++>type : any
++
+  * @property {number} time
++>time : any
++
   */
  
  cbThing(type => {
@@ -44,14 +51,13 @@
  
      /** @type {LogEntry} */
      const logEntry = {
-->logEntry : LogEntry
+ >logEntry : LogEntry
 ->{        time: Date.now(),        type,    } : { time: number; type: string; }
-+>logEntry : { time: number; type: any; }
 +>{        time: Date.now(),        type,    } : { time: number; type: any; }
  
          time: Date.now(),
  >time : number
-@@= skipped -18, +18 lines =@@
+@@= skipped -39, +45 lines =@@
  >now : () => number
  
          type,

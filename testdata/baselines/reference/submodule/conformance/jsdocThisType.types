@@ -13,13 +13,13 @@ export type M = (this: Foo) => void;
 === /a.js ===
 /** @type {import('./types').M} */
 export const f1 = function() {
->f1 : () => void
+>f1 : M
 >function() {    this.test();} : () => void
 
     this.test();
 >this.test() : any
 >this.test : any
->this : any
+>this : Foo
 >test : any
 }
 
@@ -42,7 +42,7 @@ export const f3 = function() {
     this.test();
 >this.test() : any
 >this.test : any
->this : any
+>this : Foo
 >test : any
 }
 
@@ -59,7 +59,7 @@ export function f4() {
 
 /** @type {function(this: import('./types').Foo): void} */
 export const f5 = function() {
->f5 : () => void
+>f5 : function
 >function() {    this.test();} : () => void
 
     this.test();

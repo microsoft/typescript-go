@@ -5,6 +5,7 @@
     status: 'done'
     m(n: number): void
 }} DoneStatus */
+>DoneStatus : any
 
 // property assignment
 var ns = {}

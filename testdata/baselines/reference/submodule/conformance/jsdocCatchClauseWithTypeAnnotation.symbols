@@ -3,10 +3,14 @@
 === foo.js ===
 /**
  * @typedef {any} Any
+>Any : Symbol(Any, Decl(foo.js, 49, 1))
+
  */
 
 /**
  * @typedef {unknown} Unknown
+>Unknown : Symbol(Unknown, Decl(foo.js, 49, 1))
+
  */
 
 function fn() {

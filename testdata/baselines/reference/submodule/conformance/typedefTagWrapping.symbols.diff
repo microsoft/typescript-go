@@ -4,112 +4,56 @@
  === mod1.js ===
  /** 
   * @typedef {function(string): boolean}
++> : Symbol(, Decl(mod1.js, 14, 1))
 +>function : Symbol(function)
 +
   * Type1
   */
  
-@@= skipped -24, +26 lines =@@
- /** 
-  * @typedef {{
-  *   num: number,
-+>num : Symbol(num, Decl(mod2.js, 1, 14))
-+
+@@= skipped -27, +30 lines =@@
   *   str: string,
-+>str : Symbol(str, Decl(mod2.js, 2, 17))
-+
   *   boo: boolean
-+>boo : Symbol(boo, Decl(mod2.js, 3, 17))
-+
   * }} Type2
++>Type2 : Symbol(Type2, Decl(mod2.js, 15, 1))
++
   */
  
-@@= skipped -15, +21 lines =@@
- >obj : Symbol(obj, Decl(mod2.js, 13, 15))
- 
-   return obj.boo ? obj.num : obj.str;
-->obj.boo : Symbol(boo, Decl(mod2.js, 3, 17))
- >obj : Symbol(obj, Decl(mod2.js, 13, 15))
-->boo : Symbol(boo, Decl(mod2.js, 3, 17))
-->obj.num : Symbol(num, Decl(mod2.js, 1, 14))
- >obj : Symbol(obj, Decl(mod2.js, 13, 15))
-->num : Symbol(num, Decl(mod2.js, 1, 14))
-->obj.str : Symbol(str, Decl(mod2.js, 2, 17))
- >obj : Symbol(obj, Decl(mod2.js, 13, 15))
-->str : Symbol(str, Decl(mod2.js, 2, 17))
- }
- 
- === mod3.js ===
-@@= skipped -16, +10 lines =@@
+ /**
+@@= skipped -28, +30 lines =@@
   * A function whose signature is very long.
   *
   * @typedef {function(boolean, string, number):
++> : Symbol(, Decl(mod3.js, 17, 1))
 +>function : Symbol(function)
 +
   *     (string|number)} StringOrNumber1
   */
  
-@@= skipped -30, +32 lines =@@
+@@= skipped -30, +33 lines =@@
   * A function whose signature is very long.
   *
   * @typedef {function(boolean, string,
++> : Symbol(, Decl(mod4.js, 18, 1))
 +>function : Symbol(function)
 +
   *    number):
   *    (string|number)} StringOrNumber2
   */
-@@= skipped -30, +32 lines =@@
- /** 
-  * @typedef {{
-  *   num:
-+>num : Symbol(num, Decl(mod5.js, 1, 14))
-+
-  *   number,
-  *   str:
-+>str : Symbol(str, Decl(mod5.js, 3, 12))
-+
-  *   string,
+@@= skipped -36, +39 lines =@@
   *   boo:
-+>boo : Symbol(boo, Decl(mod5.js, 5, 12))
-+
   *   boolean
   * }} Type5
++>Type5 : Symbol(Type5, Decl(mod5.js, 18, 1))
++
   */
-@@= skipped -18, +24 lines =@@
- >obj : Symbol(obj, Decl(mod5.js, 16, 16))
  
-   return obj.boo ? obj.num : obj.str;
-->obj.boo : Symbol(boo, Decl(mod5.js, 5, 12))
- >obj : Symbol(obj, Decl(mod5.js, 16, 16))
-->boo : Symbol(boo, Decl(mod5.js, 5, 12))
-->obj.num : Symbol(num, Decl(mod5.js, 1, 14))
- >obj : Symbol(obj, Decl(mod5.js, 16, 16))
-->num : Symbol(num, Decl(mod5.js, 1, 14))
-->obj.str : Symbol(str, Decl(mod5.js, 3, 12))
- >obj : Symbol(obj, Decl(mod5.js, 16, 16))
-->str : Symbol(str, Decl(mod5.js, 3, 12))
- }
- 
- === mod6.js ===
- /** 
-  * @typedef {{
-  *   foo:
-+>foo : Symbol(foo, Decl(mod6.js, 1, 14))
-+
-  *   *,
+ /**
+@@= skipped -31, +33 lines =@@
   *   bar:
-+>bar : Symbol(bar, Decl(mod6.js, 3, 7))
-+
   *   *
   * }} Type6
++>Type6 : Symbol(Type6, Decl(mod6.js, 16, 1))
++
   */
-@@= skipped -31, +29 lines =@@
- >obj : Symbol(obj, Decl(mod6.js, 14, 16))
  
-   return obj.foo;
-->obj.foo : Symbol(foo, Decl(mod6.js, 1, 14))
- >obj : Symbol(obj, Decl(mod6.js, 14, 16))
-->foo : Symbol(foo, Decl(mod6.js, 1, 14))
- }
- 
- 
+ /**

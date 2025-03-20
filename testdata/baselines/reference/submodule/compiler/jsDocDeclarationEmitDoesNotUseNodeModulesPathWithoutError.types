@@ -12,6 +12,8 @@ export interface LionRequestInit {
 === index.js ===
 /**
  * @typedef {import('@lion/ajax').LionRequestInit} LionRequestInit
+>LionRequestInit : any
+
  */
 
 export class NewAjax {
@@ -21,8 +23,8 @@ export class NewAjax {
      * @param {LionRequestInit} [init]
      */
     case5_unexpectedlyResolvesPathToNodeModules(init) {}
->case5_unexpectedlyResolvesPathToNodeModules : (init: any) => void
->init : any
+>case5_unexpectedlyResolvesPathToNodeModules : (init?: LionRequestInit | undefined) => void
+>init : LionRequestInit | undefined
 }
 
 /**

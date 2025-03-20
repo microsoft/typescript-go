@@ -1,6 +1,13 @@
 --- old.typedefCrossModule4.types
 +++ new.typedefCrossModule4.types
-@@= skipped -6, +6 lines =@@
+@@= skipped -1, +1 lines =@@
+ 
+ === mod3.js ===
+ /** @typedef {number} Foo */
++>Foo : any
++
+ class Bar { }
+ >Bar : Bar
  
  module.exports = { Foo: Bar };
  >module.exports = { Foo: Bar } : { Foo: typeof Bar; }

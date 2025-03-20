@@ -10,18 +10,18 @@ class A {
 	 * @param {object} [foo={}]
 	 */
 	constructor(foo = {}) {
->foo : {}
+>foo : any
 >{} : {}
 
 		/**
 		 * @type object
 		 */
 		this["arguments"] = foo;
->this["arguments"] = foo : {}
+>this["arguments"] = foo : any
 >this["arguments"] : any
 >this : this
 >"arguments" : "arguments"
->foo : {}
+>foo : any
 	}
 }
 

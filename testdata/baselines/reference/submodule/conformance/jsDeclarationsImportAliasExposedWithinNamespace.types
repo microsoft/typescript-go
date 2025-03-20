@@ -7,28 +7,38 @@
  * @type {Object<string,*>}
  */
 const myTypes = {
->myTypes : {}
+>myTypes : any
 >{    // SOME PROPS HERE} : {}
 
     // SOME PROPS HERE
 };
 
 /** @typedef {string|RegExp|Array<string|RegExp>} myTypes.typeA */
+>myTypes : any
 
 /**
  * @typedef myTypes.typeB
+>myTypes : any
+
  * @property {myTypes.typeA}    prop1 - Prop 1.
+>prop1 : any
+>myTypes : any
+
  * @property {string}           prop2 - Prop 2.
+>prop2 : any
+
  */
 
 /** @typedef {myTypes.typeB|Function} myTypes.typeC */
+>myTypes : any
+>myTypes : any
 
 export {myTypes};
->myTypes : {}
+>myTypes : any
 
 === file2.js ===
 import {myTypes} from './file.js';
->myTypes : {}
+>myTypes : any
 
 /**
  * @namespace testFnTypes
@@ -36,13 +46,15 @@ import {myTypes} from './file.js';
  * @type {Object<string,*>}
  */
 const testFnTypes = {
->testFnTypes : {}
+>testFnTypes : any
 >{    // SOME PROPS HERE} : {}
 
     // SOME PROPS HERE
 };
 
 /** @typedef {boolean|myTypes.typeC} testFnTypes.input */
+>testFnTypes : any
+>myTypes : any
 
 /**
  * @function testFn
@@ -51,13 +63,13 @@ const testFnTypes = {
  * @returns {number|null} Result.
  */
 function testFn(input) {
->testFn : (input: any) => number
->input : any
+>testFn : (input: input) => number
+>input : input
 
     if (typeof input === 'number') {
 >typeof input === 'number' : boolean
 >typeof input : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
->input : any
+>input : input
 >'number' : "number"
 
         return 2 * input;
@@ -71,6 +83,6 @@ function testFn(input) {
 }
 
 export {testFn, testFnTypes};
->testFn : (input: any) => number
->testFnTypes : {}
+>testFn : (input: input) => number
+>testFnTypes : any
 

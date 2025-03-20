@@ -5,48 +5,75 @@
   */
  const myTypes = {
 ->myTypes : { [x: string]: any; }
-+>myTypes : {}
++>myTypes : any
  >{    // SOME PROPS HERE} : {}
  
      // SOME PROPS HERE
-@@= skipped -17, +17 lines =@@
+ };
+ 
+ /** @typedef {string|RegExp|Array<string|RegExp>} myTypes.typeA */
++>myTypes : any
+ 
+ /**
+  * @typedef myTypes.typeB
++>myTypes : any
++
+  * @property {myTypes.typeA}    prop1 - Prop 1.
++>prop1 : any
++>myTypes : any
++
+  * @property {string}           prop2 - Prop 2.
++>prop2 : any
++
+  */
+ 
  /** @typedef {myTypes.typeB|Function} myTypes.typeC */
++>myTypes : any
++>myTypes : any
  
  export {myTypes};
 ->myTypes : { [x: string]: any; }
-+>myTypes : {}
++>myTypes : any
  
  === file2.js ===
  import {myTypes} from './file.js';
 ->myTypes : { [x: string]: any; }
-+>myTypes : {}
++>myTypes : any
  
  /**
   * @namespace testFnTypes
-@@= skipped -12, +12 lines =@@
+@@= skipped -29, +39 lines =@@
   * @type {Object<string,*>}
   */
  const testFnTypes = {
 ->testFnTypes : { [x: string]: any; }
-+>testFnTypes : {}
++>testFnTypes : any
  >{    // SOME PROPS HERE} : {}
  
      // SOME PROPS HERE
-@@= skipped -15, +15 lines =@@
+ };
+ 
+ /** @typedef {boolean|myTypes.typeC} testFnTypes.input */
++>testFnTypes : any
++>myTypes : any
+ 
+ /**
+  * @function testFn
+@@= skipped -15, +17 lines =@@
   * @returns {number|null} Result.
   */
  function testFn(input) {
 ->testFn : (input: testFnTypes.input) => number | null
 ->input : import("file2").testFnTypes.input
-+>testFn : (input: any) => number
-+>input : any
++>testFn : (input: input) => number
++>input : input
  
      if (typeof input === 'number') {
  >typeof input === 'number' : boolean
 ->typeof input : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
 ->input : import("file2").testFnTypes.input
 +>typeof input : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
-+>input : any
++>input : input
  >'number' : "number"
  
          return 2 * input;
@@ -63,6 +90,6 @@
  export {testFn, testFnTypes};
 ->testFn : (input: testFnTypes.input) => number | null
 ->testFnTypes : { [x: string]: any; }
-+>testFn : (input: any) => number
-+>testFnTypes : {}
++>testFn : (input: input) => number
++>testFnTypes : any
  

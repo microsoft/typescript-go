@@ -4,13 +4,7 @@ typedefOnStatements.js(33,1): error TS1101: 'with' statements are not allowed in
 typedefOnStatements.js(33,1): error TS2410: The 'with' statement is not supported. All symbols in a 'with' block will have type 'any'.
 
 
-<<<<<<< HEAD
-==== typedefOnStatements.js (3 errors) ====
-||||||| 2904ecfed
-==== typedefOnStatements.js (20 errors) ====
-=======
-==== typedefOnStatements.js (21 errors) ====
->>>>>>> main
+==== typedefOnStatements.js (4 errors) ====
     /** @typedef {{a: string}} A */
     ;
     /** @typedef {{ b: string }} B */

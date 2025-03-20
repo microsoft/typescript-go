@@ -18,6 +18,8 @@ module.exports.C = C
 
 === test.js ===
 /** @typedef {import('./mod1').C} X */
+>X : any
+
 /** @param {X} c */
 function demo(c) {
 >demo : (c: any) => void

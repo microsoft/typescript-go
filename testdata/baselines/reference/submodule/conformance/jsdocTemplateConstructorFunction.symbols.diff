@@ -4,14 +4,15 @@
  /**
   * @template U
   * @typedef {(u: U) => U} Id
++>Id : Symbol(Id, Decl(templateTagOnConstructorFunctions.js, 12, 1))
 +>u : Symbol(u, Decl(templateTagOnConstructorFunctions.js, 2, 14))
-+>U : Symbol(U)
-+>U : Symbol(U)
++>U : Symbol(U, Decl(templateTagOnConstructorFunctions.js, 12, 1))
++>U : Symbol(U, Decl(templateTagOnConstructorFunctions.js, 12, 1))
 +
   */
  /**
   * @param {T} t
-@@= skipped -11, +15 lines =@@
+@@= skipped -11, +16 lines =@@
  
      /** @type {T} */
      this.u

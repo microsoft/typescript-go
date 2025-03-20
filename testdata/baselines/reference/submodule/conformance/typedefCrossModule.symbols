@@ -16,8 +16,8 @@ declare var module: { exports: any};
 >y : Symbol(y, Decl(mod1.js, 2, 26))
 
 /** @typedef {A | B} Both */
->A : Symbol(A)
->B : Symbol(B)
+>A : Symbol(A, Decl(mod1.js, 4, 18))
+>B : Symbol(B, Decl(mod1.js, 4, 18))
 
 module.exports = C
 >module.exports : Symbol(exports, Decl(commonjs.d.ts, 0, 21))
@@ -34,16 +34,19 @@ function C() {
 === mod2.js ===
 /// <reference path="./commonjs.d.ts"/>
 /** @typedef {{ type: "a", x: 1 }} A */
+>A : Symbol(A, Decl(mod2.js, 7, 1))
 >type : Symbol(type, Decl(mod2.js, 1, 15))
 >x : Symbol(x, Decl(mod2.js, 1, 26))
 
 /** @typedef {{ type: "b", y: 1 }} B */
+>B : Symbol(B, Decl(mod2.js, 7, 1))
 >type : Symbol(type, Decl(mod2.js, 2, 15))
 >y : Symbol(y, Decl(mod2.js, 2, 26))
 
 /** @typedef {A | B} Both */
->A : Symbol(A)
->B : Symbol(B)
+>Both : Symbol(Both, Decl(mod2.js, 7, 1))
+>A : Symbol(A, Decl(mod2.js, 7, 1))
+>B : Symbol(B, Decl(mod2.js, 7, 1))
 
 export function C() {
 >C : Symbol(C, Decl(mod2.js, 0, 0))
@@ -62,8 +65,8 @@ export function C() {
 >y : Symbol(y, Decl(mod3.js, 2, 26))
 
 /** @typedef {A | B} Both */
->A : Symbol(A)
->B : Symbol(B)
+>A : Symbol(A, Decl(mod3.js, 7, 1))
+>B : Symbol(B, Decl(mod3.js, 7, 1))
 
 exports.C = function() {
     this.p = 1

@@ -1,6 +1,21 @@
 --- old.jsdocCatchClauseWithTypeAnnotation.types
 +++ new.jsdocCatchClauseWithTypeAnnotation.types
-@@= skipped -21, +21 lines =@@
+@@= skipped -2, +2 lines =@@
+ === foo.js ===
+ /**
+  * @typedef {any} Any
++>Any : any
++
+  */
+ 
+ /**
+  * @typedef {unknown} Unknown
++>Unknown : unknown
++
+  */
+ 
+ function fn() {
+@@= skipped -19, +23 lines =@@
  >err : any
  
      try { } catch (/** @type {unknown} */ err) { }                   // should be OK
@@ -53,21 +68,3 @@
  >foo : any
  
      try { } catch (/** @type {Error} */ err) { }                     // error in the type
-@@= skipped -61, +61 lines =@@
- 
- 		/** @type {string} */
- 		let err;
-->err : string
-+>err : any
- 	}
- 	try { }
- 	catch (err) {
-@@= skipped -8, +8 lines =@@
- 
- 		/** @type {boolean} */
- 		var err;
-->err : boolean
-+>err : any
- 	}
- 
-     try { } catch ({ x }) { }                                        // should be OK

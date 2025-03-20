@@ -17,6 +17,7 @@ module.exports = Timer;
 === hook.js ===
 /**
  * @typedef {(arg: import("./context")) => void} HookHandler
+>HookHandler : Symbol(HookHandler, Decl(hook.js, 8, 1))
 >arg : Symbol(arg, Decl(hook.js, 1, 14))
 
  */
@@ -38,19 +39,30 @@ module.exports = Hook;
  * Imports
  *
  * @typedef {import("./timer")} Timer
+>Timer : Symbol(Timer, Decl(context.js, 36, 1))
+
  * @typedef {import("./hook")} Hook
+>Hook : Symbol(Hook, Decl(context.js, 36, 1))
+
  * @typedef {import("./hook").HookHandler} HookHandler
+>HookHandler : Symbol(HookHandler, Decl(context.js, 36, 1))
+>HookHandler : Symbol(HookHandler, Decl(hook.js, 8, 1))
+
  */
 
 /**
  * Input type definition
  *
  * @typedef {Object} Input
+>Input : Symbol(Input, Decl(context.js, 36, 1))
+
  * @prop {Timer} timer
->Timer : Symbol(Timer)
+>timer : Symbol(timer, Decl(context.js, 36, 1))
+>Timer : Symbol(Timer, Decl(context.js, 36, 1))
 
  * @prop {Hook} hook
->Hook : Symbol(Hook)
+>hook : Symbol(hook, Decl(context.js, 36, 1))
+>Hook : Symbol(Hook, Decl(context.js, 36, 1))
 
  */
  
@@ -58,11 +70,15 @@ module.exports = Hook;
  * State type definition
  *
  * @typedef {Object} State
+>State : Symbol(State, Decl(context.js, 36, 1))
+
  * @prop {Timer} timer
->Timer : Symbol(Timer)
+>timer : Symbol(timer, Decl(context.js, 36, 1))
+>Timer : Symbol(Timer, Decl(context.js, 36, 1))
 
  * @prop {Hook} hook
->Hook : Symbol(Hook)
+>hook : Symbol(hook, Decl(context.js, 36, 1))
+>Hook : Symbol(Hook, Decl(context.js, 36, 1))
 
  */
 

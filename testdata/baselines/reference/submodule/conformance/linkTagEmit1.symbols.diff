@@ -1,0 +1,25 @@
+--- old.linkTagEmit1.symbols
++++ new.linkTagEmit1.symbols
+@@= skipped -8, +8 lines =@@
+ }
+ === linkTagEmit1.js ===
+ /** @typedef {number} N */
++>N : Symbol(N, Decl(linkTagEmit1.js, 14, 1))
++
+ /**
+  * @typedef {Object} D1
++>D1 : Symbol(D1, Decl(linkTagEmit1.js, 14, 1))
++
+  * @property {1} e Just link to {@link NS.R} this time
++>e : Symbol(e, Decl(linkTagEmit1.js, 14, 1))
++
+  * @property {1} m Wyatt Earp loved {@link N integers} I bet.
++>m : Symbol(m, Decl(linkTagEmit1.js, 14, 1))
++
+  */
+ 
+ /** @typedef {number} Z @see N {@link N} */
++>Z : Symbol(Z, Decl(linkTagEmit1.js, 14, 1))
+ 
+ /**
+  * @param {number} integer {@link Z}

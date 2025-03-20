@@ -14,18 +14,19 @@
   */
  const testFnTypes = {
 ->testFnTypes : Symbol(testFnTypes, Decl(file2.js, 7, 5), Decl(file2.js, 11, 37))
-+>testFnTypes : Symbol(testFnTypes, Decl(file2.js, 7, 5))
++>testFnTypes : Symbol(testFnTypes, Decl(file2.js, 7, 5), Decl(file2.js, 25, 1))
  
      // SOME PROPS HERE
  };
  
  /** @typedef {boolean|myTypes.typeC} testFnTypes.input */
++>testFnTypes : Symbol(testFnTypes, Decl(file2.js, 25, 1))
 +>myTypes : Symbol(myTypes)
 +>typeC : Symbol(typeC)
  
  /**
   * @function testFn
-@@= skipped -29, +31 lines =@@
+@@= skipped -29, +32 lines =@@
  }
  
  module.exports = {testFn, testFnTypes};

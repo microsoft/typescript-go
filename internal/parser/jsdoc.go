@@ -102,9 +102,7 @@ func (p *Parser) attachJSDoc(host *ast.Node, jsDoc []*ast.Node) {
 		for _, tag := range j.AsJSDoc().Tags.Nodes {
 			switch tag.Kind {
 			case ast.KindJSDocTypedefTag:
-				// TODO: Maybe save an Original pointer
-				// TODO: Look for neighbouring template tags to fill in typeparameters
-				// TODO: Don't mark typedefs as exported if they are not in a module
+				// !!! Don't mark typedefs as exported if they are not in a module
 				typeexpr := tag.AsJSDocTypedefTag().TypeExpression
 				if typeexpr == nil {
 					break
@@ -115,6 +113,9 @@ func (p *Parser) attachJSDoc(host *ast.Node, jsDoc []*ast.Node) {
 				nodes := p.nodeSlicePool.NewSlice(1)
 				nodes[0] = export
 				modifiers := p.newModifierList(export.Loc, nodes)
+
+				typeParameters := p.gatherTypeParameters(j, export.Loc)
+
 				var t *ast.Node
 				switch typeexpr.Kind {
 				case ast.KindJSDocTypeExpression:
@@ -131,10 +132,10 @@ func (p *Parser) attachJSDoc(host *ast.Node, jsDoc []*ast.Node) {
 				default:
 					panic("typedef tag type expression should be a name reference or a type expression" + typeexpr.Kind.String())
 				}
-				jstype := p.factory.NewJSTypeAliasDeclaration(modifiers, tag.AsJSDocTypedefTag().Name(), nil /*typeParameters*/, t)
+				jstype := p.factory.NewJSTypeAliasDeclaration(modifiers, tag.AsJSDocTypedefTag().Name(), typeParameters, t)
 				jstype.Loc = core.NewTextRange(p.nodePos(), p.nodePos())
 				p.reparseList = append(p.reparseList, jstype)
-				// TODO: @overload and unattached tags (@callback, @import et al) support goes here
+				// !!! @overload and other unattached tags (@callback, @import et al) support goes here
 			}
 			if !isLast {
 				continue
@@ -162,6 +163,25 @@ func (p *Parser) attachJSDoc(host *ast.Node, jsDoc []*ast.Node) {
 				} else if host.Kind == ast.KindReturnStatement {
 					ret := host.AsReturnStatement()
 					ret.Expression = p.makeNewTypeAssertion(p.makeNewType(tag.AsJSDocTypeTag().TypeExpression), ret.Expression)
+				} else if host.Kind == ast.KindParenthesizedExpression {
+					paren:= host.AsParenthesizedExpression()
+					paren.Expression = p.makeNewTypeAssertion(p.makeNewType(tag.AsJSDocTypeTag().TypeExpression), paren.Expression)
+				}
+			case ast.KindJSDocTemplateTag:
+				if fun, ok := getFunctionLikeHost(host); ok {
+					if fun.TypeParameters() == nil {
+						fun.FunctionLikeData().TypeParameters = p.gatherTypeParameters(j, fun.Loc)
+					}
+				} else if host.Kind == ast.KindClassDeclaration {
+					class := host.AsClassDeclaration()
+					if class.TypeParameters == nil {
+						class.TypeParameters = p.gatherTypeParameters(j, host.Loc)
+					}
+				} else if host.Kind == ast.KindClassExpression {
+					class := host.AsClassExpression()
+					if class.TypeParameters == nil {
+						class.TypeParameters = p.gatherTypeParameters(j, host.Loc)
+					}
 				}
 			case ast.KindJSDocParameterTag:
 				if fun, ok := getFunctionLikeHost(host); ok {
@@ -170,8 +190,8 @@ func (p *Parser) attachJSDoc(host *ast.Node, jsDoc []*ast.Node) {
 						if param.Type() == nil {
 							param.AsParameterDeclaration().Type = p.makeNewType(jsparam.TypeExpression)
 							if param.AsParameterDeclaration().QuestionToken == nil &&
-							// TODO: TypeExpression can *still* be nil here!
-								(jsparam.IsBracketed || jsparam.TypeExpression.Type().Kind == ast.KindJSDocOptionalType) {
+								param.AsParameterDeclaration().Initializer == nil &&
+								(jsparam.IsBracketed || jsparam.TypeExpression != nil && jsparam.TypeExpression.Type().Kind == ast.KindJSDocOptionalType) {
 								param.AsParameterDeclaration().QuestionToken = p.factory.NewToken(ast.KindQuestionToken)
 								param.AsParameterDeclaration().QuestionToken.Loc = core.NewTextRange(param.End(), param.End())
 							}
@@ -197,6 +217,26 @@ func findMatchingParameter(fun *ast.Node, jsparam *ast.JSDocParameterTag) (*ast.
 		}
 	}
 	return nil, false
+}
+
+func (p *Parser) gatherTypeParameters(j *ast.Node, loc core.TextRange) *ast.NodeList {
+	nodes := p.nodeSlicePool.NewSlice(0)
+	for _, tag := range j.AsJSDoc().Tags.Nodes {
+		if tag.Kind == ast.KindJSDocTemplateTag {
+			template := tag.AsJSDocTemplateTag()
+			for _, tp := range template.TypeParameters().Nodes {
+				// TODO: decide whether this clone/location update is needed
+				tp2 := tp.Clone(&p.factory)
+				tp2.Loc = loc
+				nodes = append(nodes, tp2)
+			}
+		}
+	}
+	if len(nodes) == 0 {
+		return nil
+	} else {
+		return p.newNodeList(loc, nodes)
+	}
 }
 
 func getFunctionLikeHost(host *ast.Node) (*ast.Node, bool) {
@@ -229,7 +269,7 @@ func getFunctionLikeHost(host *ast.Node) (*ast.Node, bool) {
 func (p *Parser) makeNewTypeAssertion(t *ast.TypeNode, e *ast.Node) *ast.Node {
 	assert := p.factory.NewTypeAssertion(t, e)
 	assert.Flags |= p.contextFlags | ast.NodeFlagsSynthesized
-	assert.Loc = core.NewTextRange(assert.Type().Pos(), assert.Type().End())
+	assert.Loc = core.NewTextRange(e.Pos(), e.End())
 	return assert
 }
 
@@ -1310,7 +1350,7 @@ func (p *Parser) tryParseChildTag(target propertyLikeParse, indent int) *ast.Nod
 	return p.parseParameterOrPropertyTag(start, tagName, target, indent)
 }
 
-func (p *Parser) parseTemplateTagTypeParameter() *ast.Node {
+func (p *Parser) parseTemplateTagTypeParameter(constraint *ast.Node) *ast.Node {
 	typeParameterPos := p.nodePos()
 	isBracketed := p.parseOptionalJsdoc(ast.KindOpenBracketToken)
 	if isBracketed {
@@ -1333,16 +1373,16 @@ func (p *Parser) parseTemplateTagTypeParameter() *ast.Node {
 	if ast.NodeIsMissing(name) {
 		return nil
 	}
-	result := p.factory.NewTypeParameterDeclaration(modifiers, name /*constraint*/, nil, defaultType)
+	result := p.factory.NewTypeParameterDeclaration(modifiers, name, constraint, defaultType)
 	p.finishNode(result, typeParameterPos)
 	return result
 }
 
-func (p *Parser) parseTemplateTagTypeParameters() *ast.TypeParameterList {
+func (p *Parser) parseTemplateTagTypeParameters(constraint *ast.Node) *ast.TypeParameterList {
 	typeParameters := ast.TypeParameterList{}
 	for ok := true; ok; ok = p.parseOptionalJsdoc(ast.KindCommaToken) { // do-while loop
 		p.skipWhitespace()
-		node := p.parseTemplateTagTypeParameter()
+		node := p.parseTemplateTagTypeParameter(constraint)
 		if node != nil {
 			typeParameters.Nodes = append(typeParameters.Nodes, node)
 		}
@@ -1366,9 +1406,12 @@ func (p *Parser) parseTemplateTag(start int, tagName *ast.IdentifierNode, indent
 	var constraint *ast.Node
 	if p.token == ast.KindOpenBraceToken {
 		constraint = p.parseJSDocTypeExpression(false)
+		if constraint != nil {
+			constraint = constraint.Type()
+		}
 	}
-	typeParameters := p.parseTemplateTagTypeParameters()
-	result := p.factory.NewJSDocTemplateTag(tagName, constraint, typeParameters, p.parseTrailingTagComments(start, p.nodePos(), indent, indentText))
+	typeParameters := p.parseTemplateTagTypeParameters(constraint)
+	result := p.factory.NewJSDocTemplateTag(tagName, typeParameters, p.parseTrailingTagComments(start, p.nodePos(), indent, indentText))
 	p.finishNode(result, start)
 	return result
 }

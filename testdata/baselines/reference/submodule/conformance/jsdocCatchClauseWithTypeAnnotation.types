@@ -3,10 +3,14 @@
 === foo.js ===
 /**
  * @typedef {any} Any
+>Any : any
+
  */
 
 /**
  * @typedef {unknown} Unknown
+>Unknown : unknown
+
  */
 
 function fn() {
@@ -107,7 +111,7 @@ function fn() {
 
 		/** @type {string} */
 		let err;
->err : any
+>err : string
 	}
 	try { }
 	catch (err) {
@@ -115,7 +119,7 @@ function fn() {
 
 		/** @type {boolean} */
 		var err;
->err : any
+>err : boolean
 	}
 
     try { } catch ({ x }) { }                                        // should be OK

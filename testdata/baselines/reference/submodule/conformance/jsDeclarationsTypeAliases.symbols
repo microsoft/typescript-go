@@ -32,6 +32,7 @@ export {}; // flag file as module
 === mixed.js ===
 /**
  * @typedef {{x: string} | number | LocalThing | ExportedThing} SomeType
+>SomeType : Symbol(SomeType, Decl(mixed.js, 9, 1))
 >x : Symbol(x, Decl(mixed.js, 1, 14))
 >LocalThing : Symbol(LocalThing, Decl(mixed.js, 16, 2))
 >ExportedThing : Symbol(ExportedThing, Decl(mixed.js, 9, 1))

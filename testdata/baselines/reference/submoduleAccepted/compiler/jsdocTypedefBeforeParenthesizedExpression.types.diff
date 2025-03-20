@@ -1,13 +1,18 @@
 --- old.jsdocTypedefBeforeParenthesizedExpression.types
 +++ new.jsdocTypedefBeforeParenthesizedExpression.types
-@@= skipped -26, +26 lines =@@
-  * @param b {AlsoNotADuplicate}
-  */
- function makeSureTypedefsAreStillRecognized(a, b) {}
-->makeSureTypedefsAreStillRecognized : (a: number, b: number) => void
-->a : number
-->b : number
-+>makeSureTypedefsAreStillRecognized : (a: any, b: any) => void
-+>a : any
-+>b : any
+@@= skipped -2, +2 lines =@@
+ === test.js ===
+ // @ts-check
+ /** @typedef {number} NotADuplicateIdentifier */
++>NotADuplicateIdentifier : any
  
+ (2 * 2);
+ >(2 * 2) : number
+@@= skipped -8, +9 lines =@@
+ >2 : 2
+ 
+ /** @typedef {number} AlsoNotADuplicate */
++>AlsoNotADuplicate : any
+ 
+ (2 * 2) + 1;
+ >(2 * 2) + 1 : number

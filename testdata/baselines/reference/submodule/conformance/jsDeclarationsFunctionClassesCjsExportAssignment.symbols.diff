@@ -18,12 +18,13 @@
  === hook.js ===
  /**
   * @typedef {(arg: import("./context")) => void} HookHandler
++>HookHandler : Symbol(HookHandler, Decl(hook.js, 8, 1))
 +>arg : Symbol(arg, Decl(hook.js, 1, 14))
 +
   */
  /**
   * @param {HookHandler} handle
-@@= skipped -23, +19 lines =@@
+@@= skipped -23, +20 lines =@@
  >handle : Symbol(handle, Decl(hook.js, 6, 14))
  
      this.handle = handle;
@@ -39,31 +40,55 @@
  >Hook : Symbol(Hook, Decl(hook.js, 0, 0))
  
  === context.js ===
-@@= skipped -25, +19 lines =@@
+@@= skipped -16, +10 lines =@@
+  * Imports
   *
-  * @typedef {Object} Input
-  * @prop {Timer} timer
-+>Timer : Symbol(Timer)
+  * @typedef {import("./timer")} Timer
++>Timer : Symbol(Timer, Decl(context.js, 36, 1))
 +
-  * @prop {Hook} hook
-+>Hook : Symbol(Hook)
+  * @typedef {import("./hook")} Hook
++>Hook : Symbol(Hook, Decl(context.js, 36, 1))
 +
-  */
-  
- /**
-@@= skipped -8, +12 lines =@@
-  *
-  * @typedef {Object} State
-  * @prop {Timer} timer
-+>Timer : Symbol(Timer)
-+
-  * @prop {Hook} hook
-+>Hook : Symbol(Hook)
+  * @typedef {import("./hook").HookHandler} HookHandler
++>HookHandler : Symbol(HookHandler, Decl(context.js, 36, 1))
++>HookHandler : Symbol(HookHandler, Decl(hook.js, 8, 1))
 +
   */
  
  /**
-@@= skipped -11, +15 lines =@@
+  * Input type definition
+  *
+  * @typedef {Object} Input
++>Input : Symbol(Input, Decl(context.js, 36, 1))
++
+  * @prop {Timer} timer
++>timer : Symbol(timer, Decl(context.js, 36, 1))
++>Timer : Symbol(Timer, Decl(context.js, 36, 1))
++
+  * @prop {Hook} hook
++>hook : Symbol(hook, Decl(context.js, 36, 1))
++>Hook : Symbol(Hook, Decl(context.js, 36, 1))
++
+  */
+  
+ /**
+  * State type definition
+  *
+  * @typedef {Object} State
++>State : Symbol(State, Decl(context.js, 36, 1))
++
+  * @prop {Timer} timer
++>timer : Symbol(timer, Decl(context.js, 36, 1))
++>Timer : Symbol(Timer, Decl(context.js, 36, 1))
++
+  * @prop {Hook} hook
++>hook : Symbol(hook, Decl(context.js, 36, 1))
++>Hook : Symbol(Hook, Decl(context.js, 36, 1))
++
+  */
+ 
+ /**
+@@= skipped -28, +51 lines =@@
   */
  
  function Context(input) {

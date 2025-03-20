@@ -4,7 +4,7 @@
  /**
   * @template const T
   * @typedef {[T]} X
-+>T : Symbol(T)
++>T : Symbol(T, Decl(a.js, 0, 0))
 +
   */
  

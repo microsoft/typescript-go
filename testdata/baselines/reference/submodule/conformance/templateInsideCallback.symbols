@@ -24,7 +24,11 @@ const identity = x => x;
 
 /**
  * @typedef Nested
+>Nested : Symbol(Nested, Decl(templateInsideCallback.js, 53, 1))
+
  * @property {Object} oh
+>oh : Symbol(oh, Decl(templateInsideCallback.js, 53, 1))
+
  * @property {number} oh.no
  * @template T
  * @property {string} oh.noooooo
@@ -63,11 +67,15 @@ function flatMap(array, iterable = identity) {
   for (let i = 0; i < array.length; i += 1) {
 >i : Symbol(i, Decl(templateInsideCallback.js, 49, 10))
 >i : Symbol(i, Decl(templateInsideCallback.js, 49, 10))
+>array.length : Symbol(length, Decl(lib.es5.d.ts, --, --))
 >array : Symbol(array, Decl(templateInsideCallback.js, 46, 17))
+>length : Symbol(length, Decl(lib.es5.d.ts, --, --))
 >i : Symbol(i, Decl(templateInsideCallback.js, 49, 10))
 
     result.push(.../** @type {unknown[]} */(iterable(array[i])));
+>result.push : Symbol(push, Decl(lib.es5.d.ts, --, --))
 >result : Symbol(result, Decl(templateInsideCallback.js, 48, 7))
+>push : Symbol(push, Decl(lib.es5.d.ts, --, --))
 >iterable : Symbol(iterable, Decl(templateInsideCallback.js, 46, 23))
 >array : Symbol(array, Decl(templateInsideCallback.js, 46, 17))
 >i : Symbol(i, Decl(templateInsideCallback.js, 49, 10))

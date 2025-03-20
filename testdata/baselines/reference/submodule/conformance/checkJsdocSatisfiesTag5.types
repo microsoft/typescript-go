@@ -2,6 +2,9 @@
 
 === /a.js ===
 /** @typedef {{ move(distance: number): void }} Movable */
+>Movable : any
+>move : (distance: number) => void
+>distance : number
 
 const car = /** @satisfies {Movable & Record<string, unknown>} */ ({
 >car : { start: () => void; move: (d: any) => void; stop: () => void; }

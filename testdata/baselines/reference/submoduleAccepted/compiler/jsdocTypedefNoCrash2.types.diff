@@ -1,0 +1,11 @@
+--- old.jsdocTypedefNoCrash2.types
++++ new.jsdocTypedefNoCrash2.types
+@@= skipped -7, +7 lines =@@
+  * @typedef {{
+  * }}
+  */
++> : any
++
+ export const foo = 5;
+ >foo : 5
+ >5 : 5

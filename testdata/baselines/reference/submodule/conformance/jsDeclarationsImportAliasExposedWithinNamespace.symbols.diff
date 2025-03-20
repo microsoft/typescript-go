@@ -5,7 +5,7 @@
   */
  const myTypes = {
 ->myTypes : Symbol(myTypes, Decl(file.js, 5, 5), Decl(file.js, 9, 50), Decl(file.js, 12, 12), Decl(file.js, 17, 38))
-+>myTypes : Symbol(myTypes, Decl(file.js, 5, 5))
++>myTypes : Symbol(myTypes, Decl(file.js, 5, 5), Decl(file.js, 19, 17), Decl(file.js, 19, 17), Decl(file.js, 19, 17))
  
      // SOME PROPS HERE
  };
@@ -31,7 +31,7 @@
  
  export {myTypes};
 ->myTypes : Symbol(myTypes, Decl(file.js, 19, 8), Decl(file.js, 9, 50), Decl(file.js, 12, 12), Decl(file.js, 17, 38))
-+>myTypes : Symbol(myTypes, Decl(file.js, 19, 8))
++>myTypes : Symbol(myTypes, Decl(file.js, 19, 17), Decl(file.js, 19, 8))
  
  === file2.js ===
  import {myTypes} from './file.js';
@@ -40,21 +40,22 @@
   */
  const testFnTypes = {
 ->testFnTypes : Symbol(testFnTypes, Decl(file2.js, 7, 5), Decl(file2.js, 11, 37))
-+>testFnTypes : Symbol(testFnTypes, Decl(file2.js, 7, 5))
++>testFnTypes : Symbol(testFnTypes, Decl(file2.js, 7, 5), Decl(file2.js, 25, 1))
  
      // SOME PROPS HERE
  };
  
  /** @typedef {boolean|myTypes.typeC} testFnTypes.input */
++>testFnTypes : Symbol(testFnTypes, Decl(file2.js, 25, 1), Decl(file2.js, 27, 15))
 +>myTypes : Symbol(myTypes)
 +>typeC : Symbol(typeC)
  
  /**
   * @function testFn
-@@= skipped -30, +32 lines =@@
+@@= skipped -30, +33 lines =@@
  
  export {testFn, testFnTypes};
  >testFn : Symbol(testFn, Decl(file2.js, 27, 8))
 ->testFnTypes : Symbol(testFnTypes, Decl(file2.js, 27, 15), Decl(file2.js, 11, 37))
-+>testFnTypes : Symbol(testFnTypes, Decl(file2.js, 27, 15))
++>testFnTypes : Symbol(testFnTypes, Decl(file2.js, 25, 1), Decl(file2.js, 27, 15))
  

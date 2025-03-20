@@ -13,7 +13,13 @@
  >BaseFactory : { (): Base; Base: typeof Base; }
  
  === file.js ===
-@@= skipped -22, +22 lines =@@
+ /** @typedef {import('./base')} BaseFactory */
++>BaseFactory : any
++
+ /**
+  * @callback BaseFactoryFactory
+  * @param {import('./base')} factory
+@@= skipped -22, +24 lines =@@
   * @returns {InstanceType<BaseFactory["Base"]>}
   */
  const test = (base) => {

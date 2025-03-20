@@ -1,20 +1,30 @@
 --- old.strictOptionalProperties3.types
 +++ new.strictOptionalProperties3.types
-@@= skipped -7, +7 lines =@@
+@@= skipped -2, +2 lines =@@
+ === a.js ===
+ /**
+  * @typedef {object} A
++>A : any
++
+  * @property {number} [value]
++>value : any
++
+  */
  
  /** @type {A} */
- const a = { value: undefined }; // error
-->a : A
-+>a : { value: undefined; }
- >{ value: undefined } : { value: undefined; }
- >value : undefined
- >undefined : undefined
-@@= skipped -11, +11 lines =@@
+@@= skipped -12, +16 lines =@@
+ 
+ /**
+  * @typedef {{ value?: number }} B
++>B : any
++>value : number | undefined
++
+  */
  
  /** @type {B} */
  const b = { value: undefined }; // error
 ->b : B
-+>b : { value: undefined; }
++>b : { value?: number; }
  >{ value: undefined } : { value: undefined; }
  >value : undefined
  >undefined : undefined

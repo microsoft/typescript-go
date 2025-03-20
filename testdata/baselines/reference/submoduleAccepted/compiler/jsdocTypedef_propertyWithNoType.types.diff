@@ -1,11 +1,14 @@
 --- old.jsdocTypedef_propertyWithNoType.types
 +++ new.jsdocTypedef_propertyWithNoType.types
-@@= skipped -7, +7 lines =@@
+@@= skipped -2, +2 lines =@@
+ === /a.js ===
+ /**
+  * @typedef Foo
++>Foo : any
++
+  * @property foo
++>foo : any
++
+  */
  
  /** @type {Foo} */
- const x = { foo: 0 };
-->x : Foo
-+>x : { foo: number; }
- >{ foo: 0 } : { foo: number; }
- >foo : number
- >0 : 0

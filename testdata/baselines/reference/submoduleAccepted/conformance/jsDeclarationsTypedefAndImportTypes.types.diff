@@ -1,6 +1,15 @@
 --- old.jsDeclarationsTypedefAndImportTypes.types
 +++ new.jsDeclarationsTypedefAndImportTypes.types
-@@= skipped -18, +18 lines =@@
+@@= skipped -2, +2 lines =@@
+ === conn.js ===
+ /**
+  * @typedef {string | number} Whatever
++>Whatever : any
++
+  */
+ 
+ class Conn {
+@@= skipped -16, +18 lines =@@
  
  module.exports = Conn;
  >module.exports = Conn : typeof Conn
@@ -13,7 +22,14 @@
  >Conn : typeof Conn
  
  === usage.js ===
-@@= skipped -17, +17 lines =@@
+ /**
+  * @typedef {import("./conn")} Conn
++>Conn : any
++
+  */
+ 
+ class Wrap {
+@@= skipped -17, +19 lines =@@
       * @param {Conn} c
       */
      constructor(c) {

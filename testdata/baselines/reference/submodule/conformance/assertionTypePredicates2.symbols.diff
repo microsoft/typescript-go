@@ -10,19 +10,17 @@
  
  /**
   * @typedef { A & { y: number } } B
-+>A : Symbol(A)
++>A : Symbol(A, Decl(assertionTypePredicates2.js, 15, 2))
 +>y : Symbol(y, Decl(assertionTypePredicates2.js, 5, 19))
 +
   */
  
  /**
-@@= skipped -15, +20 lines =@@
- >a : Symbol(a, Decl(assertionTypePredicates2.js, 12, 13))
+@@= skipped -16, +21 lines =@@
  
      if (/** @type { B } */ (a).y !== 0) throw TypeError();
-->(a).y : Symbol(y, Decl(assertionTypePredicates2.js, 5, 19))
+ >(a).y : Symbol(y, Decl(assertionTypePredicates2.js, 5, 19))
++>B : Symbol(B, Decl(assertionTypePredicates2.js, 15, 2))
  >a : Symbol(a, Decl(assertionTypePredicates2.js, 12, 13))
-->y : Symbol(y, Decl(assertionTypePredicates2.js, 5, 19))
+ >y : Symbol(y, Decl(assertionTypePredicates2.js, 5, 19))
  >TypeError : Symbol(TypeError, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
- 
-     return undefined;

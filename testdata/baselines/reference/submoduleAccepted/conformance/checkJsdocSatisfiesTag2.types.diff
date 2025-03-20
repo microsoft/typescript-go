@@ -1,7 +1,11 @@
 --- old.checkJsdocSatisfiesTag2.types
 +++ new.checkJsdocSatisfiesTag2.types
-@@= skipped -3, +3 lines =@@
+@@= skipped -1, +1 lines =@@
+ 
+ === /a.js ===
  /** @typedef {Object.<string, (n: number) => boolean>} Predicates */
++>Predicates : any
++>n : number
  
  const p = /** @satisfies {Predicates} */ ({
 ->p : { isEven: (n: number) => boolean; isOdd: (n: number) => boolean; }

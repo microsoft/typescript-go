@@ -11,7 +11,7 @@
   */
  
  /** @type {NumberLike[]} */export default ([ ]);
-+>NumberLike : Symbol(NumberLike)
++>NumberLike : Symbol(NumberLike, Decl(a.js, 5, 48))
  
  === b.ts ===
  import A from './a'

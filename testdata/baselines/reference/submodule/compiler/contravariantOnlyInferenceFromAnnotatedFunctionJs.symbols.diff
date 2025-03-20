@@ -4,17 +4,15 @@
  === index.js ===
  /**
   * @typedef {{ [K in keyof B]: { fn: (a: A, b: B) => void; thing: B[K]; } }} Funcs
-+>K : Symbol(K, Decl(index.js, 1, 16))
-+>B : Symbol(B)
-+>fn : Symbol(fn, Decl(index.js, 1, 32))
-+>a : Symbol(a, Decl(index.js, 1, 38))
-+>A : Symbol(A)
-+>b : Symbol(b, Decl(index.js, 1, 43))
-+>B : Symbol(B)
-+>thing : Symbol(thing, Decl(index.js, 1, 58))
-+>B : Symbol(B)
-+>K : Symbol(K, Decl(index.js, 1, 16))
++>Funcs : Symbol(Funcs, Decl(index.js, 14, 1))
 +
   * @template A
++>A : Symbol(A, Decl(index.js, 14, 1))
++
   * @template {Record<string, unknown>} B
++>B : Symbol(B, Decl(index.js, 14, 1))
++>Record : Symbol(Record, Decl(lib.es5.d.ts, --, --))
++
   */
+ 
+ /**

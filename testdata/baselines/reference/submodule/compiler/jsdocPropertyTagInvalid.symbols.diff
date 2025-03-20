@@ -1,9 +1,13 @@
 --- old.jsdocPropertyTagInvalid.symbols
 +++ new.jsdocPropertyTagInvalid.symbols
-@@= skipped -3, +3 lines =@@
+@@= skipped -2, +2 lines =@@
+ === /a.js ===
  /**
   * @typedef MyType
++>MyType : Symbol(MyType, Decl(a.js, 6, 24))
++
   * @property {sting} [x]
++>x : Symbol(x, Decl(a.js, 6, 24))
 +>sting : Symbol(sting)
 +
   */

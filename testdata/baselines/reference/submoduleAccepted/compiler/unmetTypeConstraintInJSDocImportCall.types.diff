@@ -1,0 +1,12 @@
+--- old.unmetTypeConstraintInJSDocImportCall.types
++++ new.unmetTypeConstraintInJSDocImportCall.types
+@@= skipped -3, +3 lines =@@
+ /**
+  * @template {string} T
+  * @typedef {{ foo: T }} Foo
++>Foo : any
++>foo : T
++
+  */
+ 
+ export default {};

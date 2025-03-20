@@ -4,7 +4,7 @@
   */
  
  /** @type {Foo} */
-+>Foo : Symbol(Foo)
++>Foo : Symbol(Foo, Decl(a.js, 10, 1))
 +
  export default {
      a: 'a',

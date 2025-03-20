@@ -5,22 +5,7 @@
  	 */
  	m(foo = {}) {
 ->m : (foo?: object) => void
-->foo : any
-+>m : (foo?: {}) => void
-+>foo : {}
++>m : (foo?: any) => void
+ >foo : any
  >{} : {}
- 
- 		/**
- 		 * @type object
- 		 */
- 		this["arguments"] = foo;
-->this["arguments"] = foo : any
-+>this["arguments"] = foo : {}
- >this["arguments"] : any
- >this : this
- >"arguments" : "arguments"
-->foo : any
-+>foo : {}
- 	}
- }
  
