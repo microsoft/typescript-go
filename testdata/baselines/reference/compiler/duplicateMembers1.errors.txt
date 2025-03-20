@@ -1,0 +1,554 @@
+duplicateMembers1.ts(2,7): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(5,7): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(11,7): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(14,7): error TS1118: An object literal cannot have multiple get/set accessors with the same name.
+duplicateMembers1.ts(14,7): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(20,7): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(23,3): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(34,7): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(35,7): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(38,7): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(38,7): error TS7032: Property 'x' implicitly has type 'any', because its set accessor lacks a parameter type annotation.
+duplicateMembers1.ts(38,9): error TS7006: Parameter 'x' implicitly has an 'any' type.
+duplicateMembers1.ts(39,7): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(43,7): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(44,7): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(49,3): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(53,3): error TS2393: Duplicate function implementation.
+duplicateMembers1.ts(56,3): error TS2393: Duplicate function implementation.
+duplicateMembers1.ts(59,3): error TS2393: Duplicate function implementation.
+duplicateMembers1.ts(65,3): error TS2300: Duplicate identifier 'foo'.
+duplicateMembers1.ts(66,3): error TS2300: Duplicate identifier 'foo'.
+duplicateMembers1.ts(67,3): error TS2300: Duplicate identifier 'foo'.
+duplicateMembers1.ts(71,3): error TS2300: Duplicate identifier 'foo'.
+duplicateMembers1.ts(72,3): error TS2300: Duplicate identifier 'foo'.
+duplicateMembers1.ts(76,3): error TS2300: Duplicate identifier 'foo'.
+duplicateMembers1.ts(77,3): error TS2300: Duplicate identifier 'foo'.
+duplicateMembers1.ts(81,3): error TS2300: Duplicate identifier 'k'.
+duplicateMembers1.ts(82,3): error TS2300: Duplicate identifier 'k'.
+duplicateMembers1.ts(83,3): error TS2300: Duplicate identifier 'k'.
+duplicateMembers1.ts(87,3): error TS2300: Duplicate identifier 'k'.
+duplicateMembers1.ts(87,3): error TS2393: Duplicate function implementation.
+duplicateMembers1.ts(88,3): error TS2300: Duplicate identifier 'k'.
+duplicateMembers1.ts(88,3): error TS2393: Duplicate function implementation.
+duplicateMembers1.ts(89,3): error TS2300: Duplicate identifier 'k'.
+duplicateMembers1.ts(93,3): error TS2300: Duplicate identifier 'k'.
+duplicateMembers1.ts(93,3): error TS2393: Duplicate function implementation.
+duplicateMembers1.ts(94,3): error TS2300: Duplicate identifier 'k'.
+duplicateMembers1.ts(95,3): error TS2393: Duplicate function implementation.
+duplicateMembers1.ts(99,3): error TS2300: Duplicate identifier 'foo'.
+duplicateMembers1.ts(101,3): error TS2300: Duplicate identifier 'foo'.
+duplicateMembers1.ts(102,3): error TS2300: Duplicate identifier 'foo'.
+duplicateMembers1.ts(103,3): error TS2300: Duplicate identifier 'foo'.
+duplicateMembers1.ts(107,3): error TS2300: Duplicate identifier 'foo'.
+duplicateMembers1.ts(108,3): error TS2300: Duplicate identifier 'foo'.
+duplicateMembers1.ts(109,3): error TS2300: Duplicate identifier 'foo'.
+duplicateMembers1.ts(111,3): error TS2300: Duplicate identifier 'foo'.
+duplicateMembers1.ts(115,7): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(119,12): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(123,7): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(127,12): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(131,12): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(133,7): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(139,12): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(140,12): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(144,7): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(147,7): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(148,12): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(152,12): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(153,7): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(156,7): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(156,7): error TS7032: Property 'x' implicitly has type 'any', because its set accessor lacks a parameter type annotation.
+duplicateMembers1.ts(156,9): error TS7006: Parameter 'v' implicitly has an 'any' type.
+duplicateMembers1.ts(160,7): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(163,12): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(164,7): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(164,7): error TS7032: Property 'x' implicitly has type 'any', because its set accessor lacks a parameter type annotation.
+duplicateMembers1.ts(164,9): error TS7006: Parameter 'v' implicitly has an 'any' type.
+duplicateMembers1.ts(168,7): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(169,7): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(170,7): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(174,3): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(175,7): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(179,3): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(180,7): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(180,7): error TS7032: Property 'x' implicitly has type 'any', because its set accessor lacks a parameter type annotation.
+duplicateMembers1.ts(180,9): error TS7006: Parameter 'v' implicitly has an 'any' type.
+duplicateMembers1.ts(184,7): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(185,3): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(189,7): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(189,7): error TS7032: Property 'x' implicitly has type 'any', because its set accessor lacks a parameter type annotation.
+duplicateMembers1.ts(189,9): error TS7006: Parameter 'v' implicitly has an 'any' type.
+duplicateMembers1.ts(190,3): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(194,3): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(195,7): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(196,7): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(196,7): error TS7032: Property 'x' implicitly has type 'any', because its set accessor lacks a parameter type annotation.
+duplicateMembers1.ts(196,9): error TS7006: Parameter 'v' implicitly has an 'any' type.
+duplicateMembers1.ts(200,7): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(201,7): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(202,3): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(206,7): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(209,7): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(213,7): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(216,3): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(220,7): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(220,7): error TS7032: Property 'x' implicitly has type 'any', because its set accessor lacks a parameter type annotation.
+duplicateMembers1.ts(220,9): error TS7006: Parameter 'v' implicitly has an 'any' type.
+duplicateMembers1.ts(223,3): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(227,3): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(230,7): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(234,3): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(237,7): error TS2300: Duplicate identifier 'x'.
+duplicateMembers1.ts(237,7): error TS7032: Property 'x' implicitly has type 'any', because its set accessor lacks a parameter type annotation.
+duplicateMembers1.ts(237,9): error TS7006: Parameter 'v' implicitly has an 'any' type.
+
+
+==== duplicateMembers1.ts (104 errors) ====
+    class Cls1 {
+      get x() {
+          ~
+!!! error TS2300: Duplicate identifier 'x'.
+        return 1;
+      }
+      get x() {
+          ~
+!!! error TS2300: Duplicate identifier 'x'.
+        return 2;
+      }
+    }
+    
+    const obj1 = {
+      get x() {
+          ~
+!!! error TS2300: Duplicate identifier 'x'.
+        return 1;
+      },
+      get x() {
+          ~
+!!! error TS1118: An object literal cannot have multiple get/set accessors with the same name.
+          ~
+!!! error TS2300: Duplicate identifier 'x'.
+        return 2;
+      },
+    };
+    
+    class Cls2 {
+      get x() {
+          ~
+!!! error TS2300: Duplicate identifier 'x'.
+        return 1;
+      }
+      x = 1;
+      ~
+!!! error TS2300: Duplicate identifier 'x'.
+    }
+    
+    interface Interface1 {
+      x: 1;
+    }
+    interface Interface1 {
+      x: 1;
+    }
+    
+    interface Interface2 {
+      set x(x);
+          ~
+!!! error TS2300: Duplicate identifier 'x'.
+      get x(): number;
+          ~
+!!! error TS2300: Duplicate identifier 'x'.
+    }
+    interface Interface2 {
+      set x(x);
+          ~
+!!! error TS2300: Duplicate identifier 'x'.
+          ~
+!!! error TS7032: Property 'x' implicitly has type 'any', because its set accessor lacks a parameter type annotation.
+            ~
+!!! error TS7006: Parameter 'x' implicitly has an 'any' type.
+      get x(): number;
+          ~
+!!! error TS2300: Duplicate identifier 'x'.
+    }
+    
+    class Cls3 {
+      set x(x) {}
+          ~
+!!! error TS2300: Duplicate identifier 'x'.
+      get x() {
+          ~
+!!! error TS2300: Duplicate identifier 'x'.
+        return 1;
+      }
+    }
+    interface Cls3 {
+      x: number;
+      ~
+!!! error TS2300: Duplicate identifier 'x'.
+    }
+    
+    class Cls4 {
+      foo() {
+      ~~~
+!!! error TS2393: Duplicate function implementation.
+        return "";
+      }
+      foo() {
+      ~~~
+!!! error TS2393: Duplicate function implementation.
+        return "";
+      }
+      foo() {
+      ~~~
+!!! error TS2393: Duplicate function implementation.
+        return "";
+      }
+    }
+    
+    class Cls5 {
+      foo = 1;
+      ~~~
+!!! error TS2300: Duplicate identifier 'foo'.
+      foo = 1;
+      ~~~
+!!! error TS2300: Duplicate identifier 'foo'.
+      foo = 1;
+      ~~~
+!!! error TS2300: Duplicate identifier 'foo'.
+    }
+    
+    class Cls6 {
+      foo() {}
+      ~~~
+!!! error TS2300: Duplicate identifier 'foo'.
+      foo = 1;
+      ~~~
+!!! error TS2300: Duplicate identifier 'foo'.
+    }
+    
+    class Cls7 {
+      foo = 1;
+      ~~~
+!!! error TS2300: Duplicate identifier 'foo'.
+      foo() {}
+      ~~~
+!!! error TS2300: Duplicate identifier 'foo'.
+    }
+    
+    class Cls8 {
+      k = 1;
+      ~
+!!! error TS2300: Duplicate identifier 'k'.
+      k() {}
+      ~
+!!! error TS2300: Duplicate identifier 'k'.
+      k() {}
+      ~
+!!! error TS2300: Duplicate identifier 'k'.
+    }
+    
+    class Cls9 {
+      k() {}
+      ~
+!!! error TS2300: Duplicate identifier 'k'.
+      ~
+!!! error TS2393: Duplicate function implementation.
+      k() {}
+      ~
+!!! error TS2300: Duplicate identifier 'k'.
+      ~
+!!! error TS2393: Duplicate function implementation.
+      k = 1;
+      ~
+!!! error TS2300: Duplicate identifier 'k'.
+    }
+    
+    class Cls10 {
+      k() {}
+      ~
+!!! error TS2300: Duplicate identifier 'k'.
+      ~
+!!! error TS2393: Duplicate function implementation.
+      k = 1;
+      ~
+!!! error TS2300: Duplicate identifier 'k'.
+      k() {}
+      ~
+!!! error TS2393: Duplicate function implementation.
+    }
+    
+    class Cls11 {
+      foo = 1;
+      ~~~
+!!! error TS2300: Duplicate identifier 'foo'.
+    
+      foo(): void;
+      ~~~
+!!! error TS2300: Duplicate identifier 'foo'.
+      foo(): void;
+      ~~~
+!!! error TS2300: Duplicate identifier 'foo'.
+      foo() {}
+      ~~~
+!!! error TS2300: Duplicate identifier 'foo'.
+    }
+    
+    class Cls12 {
+      foo(): void;
+      ~~~
+!!! error TS2300: Duplicate identifier 'foo'.
+      foo(): void;
+      ~~~
+!!! error TS2300: Duplicate identifier 'foo'.
+      foo() {}
+      ~~~
+!!! error TS2300: Duplicate identifier 'foo'.
+    
+      foo = 1;
+      ~~~
+!!! error TS2300: Duplicate identifier 'foo'.
+    }
+    
+    class Cls13 {
+      get x() {
+          ~
+!!! error TS2300: Duplicate identifier 'x'.
+        return 1;
+      }
+    
+      accessor x = 1;
+               ~
+!!! error TS2300: Duplicate identifier 'x'.
+    }
+    
+    class Cls14 {
+      get x() {
+          ~
+!!! error TS2300: Duplicate identifier 'x'.
+        return 1;
+      }
+    
+      accessor x = 1;
+               ~
+!!! error TS2300: Duplicate identifier 'x'.
+    }
+    
+    class Cls15 {
+      accessor x = 1;
+               ~
+!!! error TS2300: Duplicate identifier 'x'.
+    
+      get x() {
+          ~
+!!! error TS2300: Duplicate identifier 'x'.
+        return 1;
+      }
+    }
+    
+    class Cls16 {
+      accessor x = 1;
+               ~
+!!! error TS2300: Duplicate identifier 'x'.
+      accessor x = 1;
+               ~
+!!! error TS2300: Duplicate identifier 'x'.
+    }
+    
+    class Cls17 {
+      get x() {
+          ~
+!!! error TS2300: Duplicate identifier 'x'.
+        return 1;
+      }
+      set x(v) {}
+          ~
+!!! error TS2300: Duplicate identifier 'x'.
+      accessor x = 1;
+               ~
+!!! error TS2300: Duplicate identifier 'x'.
+    }
+    
+    class Cls18 {
+      accessor x = 1;
+               ~
+!!! error TS2300: Duplicate identifier 'x'.
+      get x() {
+          ~
+!!! error TS2300: Duplicate identifier 'x'.
+        return 1;
+      }
+      set x(v) {}
+          ~
+!!! error TS2300: Duplicate identifier 'x'.
+          ~
+!!! error TS7032: Property 'x' implicitly has type 'any', because its set accessor lacks a parameter type annotation.
+            ~
+!!! error TS7006: Parameter 'v' implicitly has an 'any' type.
+    }
+    
+    class Cls19 {
+      get x() {
+          ~
+!!! error TS2300: Duplicate identifier 'x'.
+        return 1;
+      }
+      accessor x = 1;
+               ~
+!!! error TS2300: Duplicate identifier 'x'.
+      set x(v) {}
+          ~
+!!! error TS2300: Duplicate identifier 'x'.
+          ~
+!!! error TS7032: Property 'x' implicitly has type 'any', because its set accessor lacks a parameter type annotation.
+            ~
+!!! error TS7006: Parameter 'v' implicitly has an 'any' type.
+    }
+    
+    interface Interface3 {
+      set x(x);
+          ~
+!!! error TS2300: Duplicate identifier 'x'.
+      get x(): number;
+          ~
+!!! error TS2300: Duplicate identifier 'x'.
+      get x(): number;
+          ~
+!!! error TS2300: Duplicate identifier 'x'.
+    }
+    
+    interface Interface4 {
+      x: number;
+      ~
+!!! error TS2300: Duplicate identifier 'x'.
+      get x(): number;
+          ~
+!!! error TS2300: Duplicate identifier 'x'.
+    }
+    
+    interface Interface5 {
+      x: number;
+      ~
+!!! error TS2300: Duplicate identifier 'x'.
+      set x(v);
+          ~
+!!! error TS2300: Duplicate identifier 'x'.
+          ~
+!!! error TS7032: Property 'x' implicitly has type 'any', because its set accessor lacks a parameter type annotation.
+            ~
+!!! error TS7006: Parameter 'v' implicitly has an 'any' type.
+    }
+    
+    interface Interface6 {
+      get x(): number;
+          ~
+!!! error TS2300: Duplicate identifier 'x'.
+      x: number;
+      ~
+!!! error TS2300: Duplicate identifier 'x'.
+    }
+    
+    interface Interface7 {
+      set x(v);
+          ~
+!!! error TS2300: Duplicate identifier 'x'.
+          ~
+!!! error TS7032: Property 'x' implicitly has type 'any', because its set accessor lacks a parameter type annotation.
+            ~
+!!! error TS7006: Parameter 'v' implicitly has an 'any' type.
+      x: number;
+      ~
+!!! error TS2300: Duplicate identifier 'x'.
+    }
+    
+    interface Interface8 {
+      x: number;
+      ~
+!!! error TS2300: Duplicate identifier 'x'.
+      get x(): number;
+          ~
+!!! error TS2300: Duplicate identifier 'x'.
+      set x(v);
+          ~
+!!! error TS2300: Duplicate identifier 'x'.
+          ~
+!!! error TS7032: Property 'x' implicitly has type 'any', because its set accessor lacks a parameter type annotation.
+            ~
+!!! error TS7006: Parameter 'v' implicitly has an 'any' type.
+    }
+    
+    interface Interface9 {
+      get x(): number;
+          ~
+!!! error TS2300: Duplicate identifier 'x'.
+      set x(v);
+          ~
+!!! error TS2300: Duplicate identifier 'x'.
+      x: number;
+      ~
+!!! error TS2300: Duplicate identifier 'x'.
+    }
+    
+    interface Interface10 {
+      get x(): number;
+          ~
+!!! error TS2300: Duplicate identifier 'x'.
+    }
+    interface Interface10 {
+      get x(): number;
+          ~
+!!! error TS2300: Duplicate identifier 'x'.
+    }
+    
+    interface Interface11 {
+      get x(): number;
+          ~
+!!! error TS2300: Duplicate identifier 'x'.
+    }
+    interface Interface11 {
+      x: number;
+      ~
+!!! error TS2300: Duplicate identifier 'x'.
+    }
+    
+    interface Interface12 {
+      set x(v);
+          ~
+!!! error TS2300: Duplicate identifier 'x'.
+          ~
+!!! error TS7032: Property 'x' implicitly has type 'any', because its set accessor lacks a parameter type annotation.
+            ~
+!!! error TS7006: Parameter 'v' implicitly has an 'any' type.
+    }
+    interface Interface12 {
+      x: number;
+      ~
+!!! error TS2300: Duplicate identifier 'x'.
+    }
+    
+    interface Interface13 {
+      x: number;
+      ~
+!!! error TS2300: Duplicate identifier 'x'.
+    }
+    interface Interface13 {
+      get x(): number;
+          ~
+!!! error TS2300: Duplicate identifier 'x'.
+    }
+    
+    interface Interface14 {
+      x: number;
+      ~
+!!! error TS2300: Duplicate identifier 'x'.
+    }
+    interface Interface14 {
+      set x(v);
+          ~
+!!! error TS2300: Duplicate identifier 'x'.
+          ~
+!!! error TS7032: Property 'x' implicitly has type 'any', because its set accessor lacks a parameter type annotation.
+            ~
+!!! error TS7006: Parameter 'v' implicitly has an 'any' type.
+    }
+    

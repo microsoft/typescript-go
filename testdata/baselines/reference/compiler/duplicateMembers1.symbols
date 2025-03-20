@@ -1,0 +1,471 @@
+//// [tests/cases/compiler/duplicateMembers1.ts] ////
+
+=== duplicateMembers1.ts ===
+class Cls1 {
+>Cls1 : Symbol(Cls1, Decl(duplicateMembers1.ts, 0, 0))
+
+  get x() {
+>x : Symbol(x, Decl(duplicateMembers1.ts, 0, 12))
+
+    return 1;
+  }
+  get x() {
+>x : Symbol(x, Decl(duplicateMembers1.ts, 3, 3))
+
+    return 2;
+  }
+}
+
+const obj1 = {
+>obj1 : Symbol(obj1, Decl(duplicateMembers1.ts, 9, 5))
+
+  get x() {
+>x : Symbol(x, Decl(duplicateMembers1.ts, 9, 14))
+
+    return 1;
+  },
+  get x() {
+>x : Symbol(x, Decl(duplicateMembers1.ts, 12, 4))
+
+    return 2;
+  },
+};
+
+class Cls2 {
+>Cls2 : Symbol(Cls2, Decl(duplicateMembers1.ts, 16, 2))
+
+  get x() {
+>x : Symbol(x, Decl(duplicateMembers1.ts, 18, 12))
+
+    return 1;
+  }
+  x = 1;
+>x : Symbol(x, Decl(duplicateMembers1.ts, 21, 3))
+}
+
+interface Interface1 {
+>Interface1 : Symbol(Interface1, Decl(duplicateMembers1.ts, 23, 1), Decl(duplicateMembers1.ts, 27, 1))
+
+  x: 1;
+>x : Symbol(x, Decl(duplicateMembers1.ts, 25, 22), Decl(duplicateMembers1.ts, 28, 22))
+}
+interface Interface1 {
+>Interface1 : Symbol(Interface1, Decl(duplicateMembers1.ts, 23, 1), Decl(duplicateMembers1.ts, 27, 1))
+
+  x: 1;
+>x : Symbol(x, Decl(duplicateMembers1.ts, 25, 22), Decl(duplicateMembers1.ts, 28, 22))
+}
+
+interface Interface2 {
+>Interface2 : Symbol(Interface2, Decl(duplicateMembers1.ts, 30, 1), Decl(duplicateMembers1.ts, 35, 1))
+
+  set x(x);
+>x : Symbol(x, Decl(duplicateMembers1.ts, 32, 22), Decl(duplicateMembers1.ts, 33, 11))
+>x : Symbol(x, Decl(duplicateMembers1.ts, 33, 8))
+
+  get x(): number;
+>x : Symbol(x, Decl(duplicateMembers1.ts, 32, 22), Decl(duplicateMembers1.ts, 33, 11))
+}
+interface Interface2 {
+>Interface2 : Symbol(Interface2, Decl(duplicateMembers1.ts, 30, 1), Decl(duplicateMembers1.ts, 35, 1))
+
+  set x(x);
+>x : Symbol(x, Decl(duplicateMembers1.ts, 36, 22))
+>x : Symbol(x, Decl(duplicateMembers1.ts, 37, 8))
+
+  get x(): number;
+>x : Symbol(x, Decl(duplicateMembers1.ts, 37, 11))
+}
+
+class Cls3 {
+>Cls3 : Symbol(Cls3, Decl(duplicateMembers1.ts, 39, 1), Decl(duplicateMembers1.ts, 46, 1))
+
+  set x(x) {}
+>x : Symbol(x, Decl(duplicateMembers1.ts, 41, 12), Decl(duplicateMembers1.ts, 42, 13))
+>x : Symbol(x, Decl(duplicateMembers1.ts, 42, 8))
+
+  get x() {
+>x : Symbol(x, Decl(duplicateMembers1.ts, 41, 12), Decl(duplicateMembers1.ts, 42, 13))
+
+    return 1;
+  }
+}
+interface Cls3 {
+>Cls3 : Symbol(Cls3, Decl(duplicateMembers1.ts, 39, 1), Decl(duplicateMembers1.ts, 46, 1))
+
+  x: number;
+>x : Symbol(x, Decl(duplicateMembers1.ts, 47, 16))
+}
+
+class Cls4 {
+>Cls4 : Symbol(Cls4, Decl(duplicateMembers1.ts, 49, 1))
+
+  foo() {
+>foo : Symbol(foo, Decl(duplicateMembers1.ts, 51, 12), Decl(duplicateMembers1.ts, 54, 3), Decl(duplicateMembers1.ts, 57, 3))
+
+    return "";
+  }
+  foo() {
+>foo : Symbol(foo, Decl(duplicateMembers1.ts, 51, 12), Decl(duplicateMembers1.ts, 54, 3), Decl(duplicateMembers1.ts, 57, 3))
+
+    return "";
+  }
+  foo() {
+>foo : Symbol(foo, Decl(duplicateMembers1.ts, 51, 12), Decl(duplicateMembers1.ts, 54, 3), Decl(duplicateMembers1.ts, 57, 3))
+
+    return "";
+  }
+}
+
+class Cls5 {
+>Cls5 : Symbol(Cls5, Decl(duplicateMembers1.ts, 61, 1))
+
+  foo = 1;
+>foo : Symbol(foo, Decl(duplicateMembers1.ts, 63, 12), Decl(duplicateMembers1.ts, 64, 10), Decl(duplicateMembers1.ts, 65, 10))
+
+  foo = 1;
+>foo : Symbol(foo, Decl(duplicateMembers1.ts, 63, 12), Decl(duplicateMembers1.ts, 64, 10), Decl(duplicateMembers1.ts, 65, 10))
+
+  foo = 1;
+>foo : Symbol(foo, Decl(duplicateMembers1.ts, 63, 12), Decl(duplicateMembers1.ts, 64, 10), Decl(duplicateMembers1.ts, 65, 10))
+}
+
+class Cls6 {
+>Cls6 : Symbol(Cls6, Decl(duplicateMembers1.ts, 67, 1))
+
+  foo() {}
+>foo : Symbol(foo, Decl(duplicateMembers1.ts, 69, 12))
+
+  foo = 1;
+>foo : Symbol(foo, Decl(duplicateMembers1.ts, 70, 10))
+}
+
+class Cls7 {
+>Cls7 : Symbol(Cls7, Decl(duplicateMembers1.ts, 72, 1))
+
+  foo = 1;
+>foo : Symbol(foo, Decl(duplicateMembers1.ts, 74, 12))
+
+  foo() {}
+>foo : Symbol(foo, Decl(duplicateMembers1.ts, 75, 10))
+}
+
+class Cls8 {
+>Cls8 : Symbol(Cls8, Decl(duplicateMembers1.ts, 77, 1))
+
+  k = 1;
+>k : Symbol(k, Decl(duplicateMembers1.ts, 79, 12))
+
+  k() {}
+>k : Symbol(k, Decl(duplicateMembers1.ts, 80, 8))
+
+  k() {}
+>k : Symbol(k, Decl(duplicateMembers1.ts, 81, 8))
+}
+
+class Cls9 {
+>Cls9 : Symbol(Cls9, Decl(duplicateMembers1.ts, 83, 1))
+
+  k() {}
+>k : Symbol(k, Decl(duplicateMembers1.ts, 85, 12), Decl(duplicateMembers1.ts, 86, 8))
+
+  k() {}
+>k : Symbol(k, Decl(duplicateMembers1.ts, 85, 12), Decl(duplicateMembers1.ts, 86, 8))
+
+  k = 1;
+>k : Symbol(k, Decl(duplicateMembers1.ts, 87, 8))
+}
+
+class Cls10 {
+>Cls10 : Symbol(Cls10, Decl(duplicateMembers1.ts, 89, 1))
+
+  k() {}
+>k : Symbol(k, Decl(duplicateMembers1.ts, 91, 13), Decl(duplicateMembers1.ts, 93, 8))
+
+  k = 1;
+>k : Symbol(k, Decl(duplicateMembers1.ts, 92, 8))
+
+  k() {}
+>k : Symbol(k, Decl(duplicateMembers1.ts, 91, 13), Decl(duplicateMembers1.ts, 93, 8))
+}
+
+class Cls11 {
+>Cls11 : Symbol(Cls11, Decl(duplicateMembers1.ts, 95, 1))
+
+  foo = 1;
+>foo : Symbol(foo, Decl(duplicateMembers1.ts, 97, 13))
+
+  foo(): void;
+>foo : Symbol(foo, Decl(duplicateMembers1.ts, 98, 10))
+
+  foo(): void;
+>foo : Symbol(foo, Decl(duplicateMembers1.ts, 100, 14))
+
+  foo() {}
+>foo : Symbol(foo, Decl(duplicateMembers1.ts, 101, 14))
+}
+
+class Cls12 {
+>Cls12 : Symbol(Cls12, Decl(duplicateMembers1.ts, 103, 1))
+
+  foo(): void;
+>foo : Symbol(foo, Decl(duplicateMembers1.ts, 105, 13), Decl(duplicateMembers1.ts, 106, 14), Decl(duplicateMembers1.ts, 107, 14))
+
+  foo(): void;
+>foo : Symbol(foo, Decl(duplicateMembers1.ts, 105, 13), Decl(duplicateMembers1.ts, 106, 14), Decl(duplicateMembers1.ts, 107, 14))
+
+  foo() {}
+>foo : Symbol(foo, Decl(duplicateMembers1.ts, 105, 13), Decl(duplicateMembers1.ts, 106, 14), Decl(duplicateMembers1.ts, 107, 14))
+
+  foo = 1;
+>foo : Symbol(foo, Decl(duplicateMembers1.ts, 108, 10))
+}
+
+class Cls13 {
+>Cls13 : Symbol(Cls13, Decl(duplicateMembers1.ts, 111, 1))
+
+  get x() {
+>x : Symbol(x, Decl(duplicateMembers1.ts, 113, 13), Decl(duplicateMembers1.ts, 116, 3))
+
+    return 1;
+  }
+
+  accessor x = 1;
+>x : Symbol(x, Decl(duplicateMembers1.ts, 113, 13), Decl(duplicateMembers1.ts, 116, 3))
+}
+
+class Cls14 {
+>Cls14 : Symbol(Cls14, Decl(duplicateMembers1.ts, 119, 1))
+
+  get x() {
+>x : Symbol(x, Decl(duplicateMembers1.ts, 121, 13), Decl(duplicateMembers1.ts, 124, 3))
+
+    return 1;
+  }
+
+  accessor x = 1;
+>x : Symbol(x, Decl(duplicateMembers1.ts, 121, 13), Decl(duplicateMembers1.ts, 124, 3))
+}
+
+class Cls15 {
+>Cls15 : Symbol(Cls15, Decl(duplicateMembers1.ts, 127, 1))
+
+  accessor x = 1;
+>x : Symbol(x, Decl(duplicateMembers1.ts, 129, 13))
+
+  get x() {
+>x : Symbol(x, Decl(duplicateMembers1.ts, 130, 17))
+
+    return 1;
+  }
+}
+
+class Cls16 {
+>Cls16 : Symbol(Cls16, Decl(duplicateMembers1.ts, 135, 1))
+
+  accessor x = 1;
+>x : Symbol(x, Decl(duplicateMembers1.ts, 137, 13), Decl(duplicateMembers1.ts, 138, 17))
+
+  accessor x = 1;
+>x : Symbol(x, Decl(duplicateMembers1.ts, 137, 13), Decl(duplicateMembers1.ts, 138, 17))
+}
+
+class Cls17 {
+>Cls17 : Symbol(Cls17, Decl(duplicateMembers1.ts, 140, 1))
+
+  get x() {
+>x : Symbol(x, Decl(duplicateMembers1.ts, 142, 13), Decl(duplicateMembers1.ts, 145, 3), Decl(duplicateMembers1.ts, 146, 13))
+
+    return 1;
+  }
+  set x(v) {}
+>x : Symbol(x, Decl(duplicateMembers1.ts, 142, 13), Decl(duplicateMembers1.ts, 145, 3), Decl(duplicateMembers1.ts, 146, 13))
+>v : Symbol(v, Decl(duplicateMembers1.ts, 146, 8))
+
+  accessor x = 1;
+>x : Symbol(x, Decl(duplicateMembers1.ts, 142, 13), Decl(duplicateMembers1.ts, 145, 3), Decl(duplicateMembers1.ts, 146, 13))
+}
+
+class Cls18 {
+>Cls18 : Symbol(Cls18, Decl(duplicateMembers1.ts, 148, 1))
+
+  accessor x = 1;
+>x : Symbol(x, Decl(duplicateMembers1.ts, 150, 13))
+
+  get x() {
+>x : Symbol(x, Decl(duplicateMembers1.ts, 151, 17))
+
+    return 1;
+  }
+  set x(v) {}
+>x : Symbol(x, Decl(duplicateMembers1.ts, 154, 3))
+>v : Symbol(v, Decl(duplicateMembers1.ts, 155, 8))
+}
+
+class Cls19 {
+>Cls19 : Symbol(Cls19, Decl(duplicateMembers1.ts, 156, 1))
+
+  get x() {
+>x : Symbol(x, Decl(duplicateMembers1.ts, 158, 13), Decl(duplicateMembers1.ts, 161, 3))
+
+    return 1;
+  }
+  accessor x = 1;
+>x : Symbol(x, Decl(duplicateMembers1.ts, 158, 13), Decl(duplicateMembers1.ts, 161, 3))
+
+  set x(v) {}
+>x : Symbol(x, Decl(duplicateMembers1.ts, 162, 17))
+>v : Symbol(v, Decl(duplicateMembers1.ts, 163, 8))
+}
+
+interface Interface3 {
+>Interface3 : Symbol(Interface3, Decl(duplicateMembers1.ts, 164, 1))
+
+  set x(x);
+>x : Symbol(x, Decl(duplicateMembers1.ts, 166, 22), Decl(duplicateMembers1.ts, 167, 11))
+>x : Symbol(x, Decl(duplicateMembers1.ts, 167, 8))
+
+  get x(): number;
+>x : Symbol(x, Decl(duplicateMembers1.ts, 166, 22), Decl(duplicateMembers1.ts, 167, 11))
+
+  get x(): number;
+>x : Symbol(x, Decl(duplicateMembers1.ts, 168, 18))
+}
+
+interface Interface4 {
+>Interface4 : Symbol(Interface4, Decl(duplicateMembers1.ts, 170, 1))
+
+  x: number;
+>x : Symbol(x, Decl(duplicateMembers1.ts, 172, 22))
+
+  get x(): number;
+>x : Symbol(x, Decl(duplicateMembers1.ts, 173, 12))
+}
+
+interface Interface5 {
+>Interface5 : Symbol(Interface5, Decl(duplicateMembers1.ts, 175, 1))
+
+  x: number;
+>x : Symbol(x, Decl(duplicateMembers1.ts, 177, 22))
+
+  set x(v);
+>x : Symbol(x, Decl(duplicateMembers1.ts, 178, 12))
+>v : Symbol(v, Decl(duplicateMembers1.ts, 179, 8))
+}
+
+interface Interface6 {
+>Interface6 : Symbol(Interface6, Decl(duplicateMembers1.ts, 180, 1))
+
+  get x(): number;
+>x : Symbol(x, Decl(duplicateMembers1.ts, 182, 22))
+
+  x: number;
+>x : Symbol(x, Decl(duplicateMembers1.ts, 183, 18))
+}
+
+interface Interface7 {
+>Interface7 : Symbol(Interface7, Decl(duplicateMembers1.ts, 185, 1))
+
+  set x(v);
+>x : Symbol(x, Decl(duplicateMembers1.ts, 187, 22))
+>v : Symbol(v, Decl(duplicateMembers1.ts, 188, 8))
+
+  x: number;
+>x : Symbol(x, Decl(duplicateMembers1.ts, 188, 11))
+}
+
+interface Interface8 {
+>Interface8 : Symbol(Interface8, Decl(duplicateMembers1.ts, 190, 1))
+
+  x: number;
+>x : Symbol(x, Decl(duplicateMembers1.ts, 192, 22))
+
+  get x(): number;
+>x : Symbol(x, Decl(duplicateMembers1.ts, 193, 12))
+
+  set x(v);
+>x : Symbol(x, Decl(duplicateMembers1.ts, 194, 18))
+>v : Symbol(v, Decl(duplicateMembers1.ts, 195, 8))
+}
+
+interface Interface9 {
+>Interface9 : Symbol(Interface9, Decl(duplicateMembers1.ts, 196, 1))
+
+  get x(): number;
+>x : Symbol(x, Decl(duplicateMembers1.ts, 198, 22), Decl(duplicateMembers1.ts, 199, 18))
+
+  set x(v);
+>x : Symbol(x, Decl(duplicateMembers1.ts, 198, 22), Decl(duplicateMembers1.ts, 199, 18))
+>v : Symbol(v, Decl(duplicateMembers1.ts, 200, 8))
+
+  x: number;
+>x : Symbol(x, Decl(duplicateMembers1.ts, 200, 11))
+}
+
+interface Interface10 {
+>Interface10 : Symbol(Interface10, Decl(duplicateMembers1.ts, 202, 1), Decl(duplicateMembers1.ts, 206, 1))
+
+  get x(): number;
+>x : Symbol(x, Decl(duplicateMembers1.ts, 204, 23))
+}
+interface Interface10 {
+>Interface10 : Symbol(Interface10, Decl(duplicateMembers1.ts, 202, 1), Decl(duplicateMembers1.ts, 206, 1))
+
+  get x(): number;
+>x : Symbol(x, Decl(duplicateMembers1.ts, 207, 23))
+}
+
+interface Interface11 {
+>Interface11 : Symbol(Interface11, Decl(duplicateMembers1.ts, 209, 1), Decl(duplicateMembers1.ts, 213, 1))
+
+  get x(): number;
+>x : Symbol(x, Decl(duplicateMembers1.ts, 211, 23))
+}
+interface Interface11 {
+>Interface11 : Symbol(Interface11, Decl(duplicateMembers1.ts, 209, 1), Decl(duplicateMembers1.ts, 213, 1))
+
+  x: number;
+>x : Symbol(x, Decl(duplicateMembers1.ts, 214, 23))
+}
+
+interface Interface12 {
+>Interface12 : Symbol(Interface12, Decl(duplicateMembers1.ts, 216, 1), Decl(duplicateMembers1.ts, 220, 1))
+
+  set x(v);
+>x : Symbol(x, Decl(duplicateMembers1.ts, 218, 23))
+>v : Symbol(v, Decl(duplicateMembers1.ts, 219, 8))
+}
+interface Interface12 {
+>Interface12 : Symbol(Interface12, Decl(duplicateMembers1.ts, 216, 1), Decl(duplicateMembers1.ts, 220, 1))
+
+  x: number;
+>x : Symbol(x, Decl(duplicateMembers1.ts, 221, 23))
+}
+
+interface Interface13 {
+>Interface13 : Symbol(Interface13, Decl(duplicateMembers1.ts, 223, 1), Decl(duplicateMembers1.ts, 227, 1))
+
+  x: number;
+>x : Symbol(x, Decl(duplicateMembers1.ts, 225, 23))
+}
+interface Interface13 {
+>Interface13 : Symbol(Interface13, Decl(duplicateMembers1.ts, 223, 1), Decl(duplicateMembers1.ts, 227, 1))
+
+  get x(): number;
+>x : Symbol(x, Decl(duplicateMembers1.ts, 228, 23))
+}
+
+interface Interface14 {
+>Interface14 : Symbol(Interface14, Decl(duplicateMembers1.ts, 230, 1), Decl(duplicateMembers1.ts, 234, 1))
+
+  x: number;
+>x : Symbol(x, Decl(duplicateMembers1.ts, 232, 23))
+}
+interface Interface14 {
+>Interface14 : Symbol(Interface14, Decl(duplicateMembers1.ts, 230, 1), Decl(duplicateMembers1.ts, 234, 1))
+
+  set x(v);
+>x : Symbol(x, Decl(duplicateMembers1.ts, 235, 23))
+>v : Symbol(v, Decl(duplicateMembers1.ts, 236, 8))
+}
+

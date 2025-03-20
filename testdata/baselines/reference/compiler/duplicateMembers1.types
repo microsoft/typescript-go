@@ -1,0 +1,464 @@
+//// [tests/cases/compiler/duplicateMembers1.ts] ////
+
+=== duplicateMembers1.ts ===
+class Cls1 {
+>Cls1 : Cls1
+
+  get x() {
+>x : number
+
+    return 1;
+>1 : 1
+  }
+  get x() {
+>x : number
+
+    return 2;
+>2 : 2
+  }
+}
+
+const obj1 = {
+>obj1 : { readonly x: number; }
+>{  get x() {    return 1;  },  get x() {    return 2;  },} : { readonly x: number; }
+
+  get x() {
+>x : number
+
+    return 1;
+>1 : 1
+
+  },
+  get x() {
+>x : number
+
+    return 2;
+>2 : 2
+
+  },
+};
+
+class Cls2 {
+>Cls2 : Cls2
+
+  get x() {
+>x : number
+
+    return 1;
+>1 : 1
+  }
+  x = 1;
+>x : number
+>1 : 1
+}
+
+interface Interface1 {
+  x: 1;
+>x : 1
+}
+interface Interface1 {
+  x: 1;
+>x : 1
+}
+
+interface Interface2 {
+  set x(x);
+>x : number
+>x : number
+
+  get x(): number;
+>x : number
+}
+interface Interface2 {
+  set x(x);
+>x : any
+>x : any
+
+  get x(): number;
+>x : number
+}
+
+class Cls3 {
+>Cls3 : Cls3
+
+  set x(x) {}
+>x : number
+>x : number
+
+  get x() {
+>x : number
+
+    return 1;
+>1 : 1
+  }
+}
+interface Cls3 {
+  x: number;
+>x : number
+}
+
+class Cls4 {
+>Cls4 : Cls4
+
+  foo() {
+>foo : () => string
+
+    return "";
+>"" : ""
+  }
+  foo() {
+>foo : () => string
+
+    return "";
+>"" : ""
+  }
+  foo() {
+>foo : () => string
+
+    return "";
+>"" : ""
+  }
+}
+
+class Cls5 {
+>Cls5 : Cls5
+
+  foo = 1;
+>foo : number
+>1 : 1
+
+  foo = 1;
+>foo : number
+>1 : 1
+
+  foo = 1;
+>foo : number
+>1 : 1
+}
+
+class Cls6 {
+>Cls6 : Cls6
+
+  foo() {}
+>foo : () => void
+
+  foo = 1;
+>foo : number
+>1 : 1
+}
+
+class Cls7 {
+>Cls7 : Cls7
+
+  foo = 1;
+>foo : number
+>1 : 1
+
+  foo() {}
+>foo : () => void
+}
+
+class Cls8 {
+>Cls8 : Cls8
+
+  k = 1;
+>k : number
+>1 : 1
+
+  k() {}
+>k : () => void
+
+  k() {}
+>k : () => void
+}
+
+class Cls9 {
+>Cls9 : Cls9
+
+  k() {}
+>k : () => void
+
+  k() {}
+>k : () => void
+
+  k = 1;
+>k : number
+>1 : 1
+}
+
+class Cls10 {
+>Cls10 : Cls10
+
+  k() {}
+>k : { (): void; (): void; }
+
+  k = 1;
+>k : number
+>1 : 1
+
+  k() {}
+>k : { (): void; (): void; }
+}
+
+class Cls11 {
+>Cls11 : Cls11
+
+  foo = 1;
+>foo : number
+>1 : 1
+
+  foo(): void;
+>foo : () => void
+
+  foo(): void;
+>foo : () => void
+
+  foo() {}
+>foo : () => void
+}
+
+class Cls12 {
+>Cls12 : Cls12
+
+  foo(): void;
+>foo : { (): void; (): void; }
+
+  foo(): void;
+>foo : { (): void; (): void; }
+
+  foo() {}
+>foo : { (): void; (): void; }
+
+  foo = 1;
+>foo : number
+>1 : 1
+}
+
+class Cls13 {
+>Cls13 : Cls13
+
+  get x() {
+>x : number
+
+    return 1;
+>1 : 1
+  }
+
+  accessor x = 1;
+>x : number
+>1 : 1
+}
+
+class Cls14 {
+>Cls14 : Cls14
+
+  get x() {
+>x : number
+
+    return 1;
+>1 : 1
+  }
+
+  accessor x = 1;
+>x : number
+>1 : 1
+}
+
+class Cls15 {
+>Cls15 : Cls15
+
+  accessor x = 1;
+>x : number
+>1 : 1
+
+  get x() {
+>x : number
+
+    return 1;
+>1 : 1
+  }
+}
+
+class Cls16 {
+>Cls16 : Cls16
+
+  accessor x = 1;
+>x : number
+>1 : 1
+
+  accessor x = 1;
+>x : number
+>1 : 1
+}
+
+class Cls17 {
+>Cls17 : Cls17
+
+  get x() {
+>x : number
+
+    return 1;
+>1 : 1
+  }
+  set x(v) {}
+>x : number
+>v : number
+
+  accessor x = 1;
+>x : number
+>1 : 1
+}
+
+class Cls18 {
+>Cls18 : Cls18
+
+  accessor x = 1;
+>x : number
+>1 : 1
+
+  get x() {
+>x : number
+
+    return 1;
+>1 : 1
+  }
+  set x(v) {}
+>x : any
+>v : any
+}
+
+class Cls19 {
+>Cls19 : Cls19
+
+  get x() {
+>x : number
+
+    return 1;
+>1 : 1
+  }
+  accessor x = 1;
+>x : number
+>1 : 1
+
+  set x(v) {}
+>x : any
+>v : any
+}
+
+interface Interface3 {
+  set x(x);
+>x : number
+>x : number
+
+  get x(): number;
+>x : number
+
+  get x(): number;
+>x : number
+}
+
+interface Interface4 {
+  x: number;
+>x : number
+
+  get x(): number;
+>x : number
+}
+
+interface Interface5 {
+  x: number;
+>x : number
+
+  set x(v);
+>x : any
+>v : any
+}
+
+interface Interface6 {
+  get x(): number;
+>x : number
+
+  x: number;
+>x : number
+}
+
+interface Interface7 {
+  set x(v);
+>x : any
+>v : any
+
+  x: number;
+>x : number
+}
+
+interface Interface8 {
+  x: number;
+>x : number
+
+  get x(): number;
+>x : number
+
+  set x(v);
+>x : any
+>v : any
+}
+
+interface Interface9 {
+  get x(): number;
+>x : number
+
+  set x(v);
+>x : number
+>v : number
+
+  x: number;
+>x : number
+}
+
+interface Interface10 {
+  get x(): number;
+>x : number
+}
+interface Interface10 {
+  get x(): number;
+>x : number
+}
+
+interface Interface11 {
+  get x(): number;
+>x : number
+}
+interface Interface11 {
+  x: number;
+>x : number
+}
+
+interface Interface12 {
+  set x(v);
+>x : any
+>v : any
+}
+interface Interface12 {
+  x: number;
+>x : number
+}
+
+interface Interface13 {
+  x: number;
+>x : number
+}
+interface Interface13 {
+  get x(): number;
+>x : number
+}
+
+interface Interface14 {
+  x: number;
+>x : number
+}
+interface Interface14 {
+  set x(v);
+>x : any
+>v : any
+}
+

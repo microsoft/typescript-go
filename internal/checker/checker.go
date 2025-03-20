@@ -2833,25 +2833,27 @@ func (c *Checker) checkObjectTypeForDuplicateDeclarations(node *ast.Node, checkP
 	var privateNames map[string]int
 	nodeInAmbientContext := node.Flags&ast.NodeFlagsAmbient != 0
 	checkProperty := func(symbol *ast.Symbol, isStatic bool) {
-		if len(symbol.Declarations) > 1 {
-			var names map[string]int
-			if isStatic {
-				if staticNames == nil {
-					staticNames = make(map[string]int)
-				}
-				names = staticNames
-			} else {
-				if instanceNames == nil {
-					instanceNames = make(map[string]int)
-				}
-				names = instanceNames
+		l := len(symbol.Declarations)
+		if l == 1 || l == 2 && (ast.IsGetAccessorDeclaration(symbol.Declarations[0]) && ast.IsSetAccessorDeclaration(symbol.Declarations[1]) || ast.IsSetAccessorDeclaration(symbol.Declarations[0]) && ast.IsGetAccessorDeclaration(symbol.Declarations[1])) {
+			return
+		}
+		var names map[string]int
+		if isStatic {
+			if staticNames == nil {
+				staticNames = make(map[string]int)
 			}
-			if state := names[symbol.Name]; state != 2 {
-				if state == 1 {
-					c.reportDuplicateMemberErrors(node, symbol.Name, true, isStatic, diagnostics.Duplicate_identifier_0)
-				}
-				names[symbol.Name] = state + 1
+			names = staticNames
+		} else {
+			if instanceNames == nil {
+				instanceNames = make(map[string]int)
 			}
+			names = instanceNames
+		}
+		if state := names[symbol.Name]; state != 2 {
+			if state == 1 {
+				c.reportDuplicateMemberErrors(node, symbol.Name, true, isStatic, diagnostics.Duplicate_identifier_0)
+			}
+			names[symbol.Name] = state + 1
 		}
 	}
 	for _, member := range node.Members() {
@@ -2870,7 +2872,7 @@ func (c *Checker) checkObjectTypeForDuplicateDeclarations(node *ast.Node, checkP
 			}
 			// When a property has multiple declarations, check that only one of those declarations is in this object
 			// type declaration (multiple merged object types are permitted to each declare the same property).
-			if ast.IsPropertyDeclaration(member) || ast.IsPropertySignatureDeclaration(member) {
+			if ast.IsPropertyDeclaration(member) || ast.IsPropertySignatureDeclaration(member) || ast.IsGetAccessorDeclaration(member) || ast.IsSetAccessorDeclaration(member) {
 				checkProperty(symbol, isStatic)
 			}
 			// Check that each private identifier is used only for instance members or only for static members. It is an
@@ -14550,7 +14552,7 @@ func (c *Checker) lateBindMember(parent *ast.Symbol, earlySymbols ast.SymbolTabl
 			}
 			// Report an error if there's a symbol declaration with the same name and conflicting flags.
 			earlySymbol := earlySymbols[memberName]
-			// Duplicate property declarations of classes are checked in checkClassForDuplicateDeclarations.
+			// Duplicate property declarations of classes are checked in checkObjectTypeForDuplicateDeclarations.
 			if parent.Flags&ast.SymbolFlagsClass == 0 && lateSymbol.Flags&getExcludedSymbolFlags(symbolFlags) != 0 {
 				// If we have an existing early-bound member, combine its declarations so that we can
 				// report an error at each declaration.
