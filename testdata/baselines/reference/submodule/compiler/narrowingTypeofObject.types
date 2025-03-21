@@ -20,17 +20,17 @@ function test(x: number & { _foo: string }) {
 }
 
 function f1(x: F & { foo: number }) {
->f1 : (x: F & { foo: number; }) => void
->x : F & { foo: number; }
+>f1 : (x: (F) & { foo: number; }) => void
+>x : (F) & { foo: number; }
 >foo : number
 
     if (typeof x !== "object") {
 >typeof x !== "object" : boolean
 >typeof x : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
->x : F & { foo: number; }
+>x : (F) & { foo: number; }
 >"object" : "object"
 
         x;
->x : F & { foo: number; }
+>x : (F) & { foo: number; }
     }
 }

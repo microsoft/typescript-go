@@ -35,7 +35,7 @@ interface IWithCallSignatures4 {
 
 // With no call signature | callSignatures
 var x: IWithNoCallSignatures | IWithCallSignatures = a => a.toString();
->x : IWithCallSignatures | IWithNoCallSignatures
+>x : (IWithCallSignatures) | IWithNoCallSignatures
 >a => a.toString() : (a: number) => string
 >a : number
 >a.toString() : string
@@ -45,7 +45,7 @@ var x: IWithNoCallSignatures | IWithCallSignatures = a => a.toString();
 
 // With call signatures with different return type
 var x2: IWithCallSignatures | IWithCallSignatures2 = a => a.toString(); // Like iWithCallSignatures
->x2 : IWithCallSignatures | IWithCallSignatures2
+>x2 : (IWithCallSignatures) | (IWithCallSignatures2)
 >a => a.toString() : (a: number) => string
 >a : number
 >a.toString() : string
@@ -54,14 +54,14 @@ var x2: IWithCallSignatures | IWithCallSignatures2 = a => a.toString(); // Like 
 >toString : (radix?: number) => string
 
 var x2: IWithCallSignatures | IWithCallSignatures2 = a => a; // Like iWithCallSignatures2
->x2 : IWithCallSignatures | IWithCallSignatures2
+>x2 : (IWithCallSignatures) | (IWithCallSignatures2)
 >a => a : (a: number) => number
 >a : number
 >a : number
 
 // With call signatures of mismatching parameter type
 var x3: IWithCallSignatures | IWithCallSignatures3 = a => /*here a should be any*/ a.toString();
->x3 : IWithCallSignatures | IWithCallSignatures3
+>x3 : (IWithCallSignatures) | (IWithCallSignatures3)
 >a => /*here a should be any*/ a.toString() : (a: any) => any
 >a : any
 >a.toString() : any
@@ -71,7 +71,7 @@ var x3: IWithCallSignatures | IWithCallSignatures3 = a => /*here a should be any
 
 // With call signature count mismatch
 var x4: IWithCallSignatures | IWithCallSignatures4 = a => /*here a should be any*/ a.toString();
->x4 : IWithCallSignatures | IWithCallSignatures4
+>x4 : (IWithCallSignatures) | IWithCallSignatures4
 >a => /*here a should be any*/ a.toString() : (a: number) => string
 >a : number
 >a.toString() : string

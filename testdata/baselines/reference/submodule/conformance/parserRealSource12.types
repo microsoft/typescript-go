@@ -79,7 +79,7 @@ module TypeScript {
 
         constructor (
             private childrenWalkers: IAstWalkChildren[],
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 
             private pre: IAstWalkCallback,
 >pre : IAstWalkCallback
@@ -147,9 +147,9 @@ module TypeScript {
                 this.childrenWalkers[ast.nodeType](ast, parent, this);
 >this.childrenWalkers[ast.nodeType](ast, parent, this) : void
 >this.childrenWalkers[ast.nodeType] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >ast.nodeType : any
 >ast : AST
 >nodeType : any
@@ -216,7 +216,7 @@ module TypeScript {
 >AstWalkerFactory : AstWalkerFactory
 
         private childrenWalkers: IAstWalkChildren[] = [];
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >[] : undefined[]
 
         constructor () {
@@ -289,9 +289,9 @@ module TypeScript {
             return new AstWalker(this.childrenWalkers, pre, post, options, state);
 >new AstWalker(this.childrenWalkers, pre, post, options, state) : AstWalker
 >AstWalker : typeof AstWalker
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >pre : IAstWalkCallback
 >post : IAstWalkCallback
 >options : AstWalkOptions
@@ -304,9 +304,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.None] = ChildrenWalkers.walkNone;
 >this.childrenWalkers[NodeType.None] = ChildrenWalkers.walkNone : (preAst: ASTList, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.None] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.None : any
 >NodeType : any
 >None : any
@@ -317,9 +317,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Empty] = ChildrenWalkers.walkNone;
 >this.childrenWalkers[NodeType.Empty] = ChildrenWalkers.walkNone : (preAst: ASTList, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Empty] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Empty : any
 >NodeType : any
 >Empty : any
@@ -330,9 +330,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.EmptyExpr] = ChildrenWalkers.walkNone;
 >this.childrenWalkers[NodeType.EmptyExpr] = ChildrenWalkers.walkNone : (preAst: ASTList, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.EmptyExpr] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.EmptyExpr : any
 >NodeType : any
 >EmptyExpr : any
@@ -343,9 +343,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.True] = ChildrenWalkers.walkNone;
 >this.childrenWalkers[NodeType.True] = ChildrenWalkers.walkNone : (preAst: ASTList, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.True] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.True : any
 >NodeType : any
 >True : any
@@ -356,9 +356,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.False] = ChildrenWalkers.walkNone;
 >this.childrenWalkers[NodeType.False] = ChildrenWalkers.walkNone : (preAst: ASTList, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.False] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.False : any
 >NodeType : any
 >False : any
@@ -369,9 +369,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.This] = ChildrenWalkers.walkNone;
 >this.childrenWalkers[NodeType.This] = ChildrenWalkers.walkNone : (preAst: ASTList, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.This] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.This : any
 >NodeType : any
 >This : any
@@ -382,9 +382,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Super] = ChildrenWalkers.walkNone;
 >this.childrenWalkers[NodeType.Super] = ChildrenWalkers.walkNone : (preAst: ASTList, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Super] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Super : any
 >NodeType : any
 >Super : any
@@ -395,9 +395,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.QString] = ChildrenWalkers.walkNone;
 >this.childrenWalkers[NodeType.QString] = ChildrenWalkers.walkNone : (preAst: ASTList, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.QString] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.QString : any
 >NodeType : any
 >QString : any
@@ -408,9 +408,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Regex] = ChildrenWalkers.walkNone;
 >this.childrenWalkers[NodeType.Regex] = ChildrenWalkers.walkNone : (preAst: ASTList, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Regex] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Regex : any
 >NodeType : any
 >Regex : any
@@ -421,9 +421,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Null] = ChildrenWalkers.walkNone;
 >this.childrenWalkers[NodeType.Null] = ChildrenWalkers.walkNone : (preAst: ASTList, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Null] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Null : any
 >NodeType : any
 >Null : any
@@ -434,9 +434,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.ArrayLit] = ChildrenWalkers.walkUnaryExpressionChildren;
 >this.childrenWalkers[NodeType.ArrayLit] = ChildrenWalkers.walkUnaryExpressionChildren : (preAst: UnaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.ArrayLit] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.ArrayLit : any
 >NodeType : any
 >ArrayLit : any
@@ -447,9 +447,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.ObjectLit] = ChildrenWalkers.walkUnaryExpressionChildren;
 >this.childrenWalkers[NodeType.ObjectLit] = ChildrenWalkers.walkUnaryExpressionChildren : (preAst: UnaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.ObjectLit] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.ObjectLit : any
 >NodeType : any
 >ObjectLit : any
@@ -460,9 +460,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Void] = ChildrenWalkers.walkUnaryExpressionChildren;
 >this.childrenWalkers[NodeType.Void] = ChildrenWalkers.walkUnaryExpressionChildren : (preAst: UnaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Void] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Void : any
 >NodeType : any
 >Void : any
@@ -473,9 +473,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Comma] = ChildrenWalkers.walkBinaryExpressionChildren;
 >this.childrenWalkers[NodeType.Comma] = ChildrenWalkers.walkBinaryExpressionChildren : (preAst: BinaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Comma] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Comma : any
 >NodeType : any
 >Comma : any
@@ -486,9 +486,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Pos] = ChildrenWalkers.walkUnaryExpressionChildren;
 >this.childrenWalkers[NodeType.Pos] = ChildrenWalkers.walkUnaryExpressionChildren : (preAst: UnaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Pos] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Pos : any
 >NodeType : any
 >Pos : any
@@ -499,9 +499,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Neg] = ChildrenWalkers.walkUnaryExpressionChildren;
 >this.childrenWalkers[NodeType.Neg] = ChildrenWalkers.walkUnaryExpressionChildren : (preAst: UnaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Neg] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Neg : any
 >NodeType : any
 >Neg : any
@@ -512,9 +512,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Delete] = ChildrenWalkers.walkUnaryExpressionChildren;
 >this.childrenWalkers[NodeType.Delete] = ChildrenWalkers.walkUnaryExpressionChildren : (preAst: UnaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Delete] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Delete : any
 >NodeType : any
 >Delete : any
@@ -525,9 +525,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Await] = ChildrenWalkers.walkUnaryExpressionChildren;
 >this.childrenWalkers[NodeType.Await] = ChildrenWalkers.walkUnaryExpressionChildren : (preAst: UnaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Await] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Await : any
 >NodeType : any
 >Await : any
@@ -538,9 +538,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.In] = ChildrenWalkers.walkBinaryExpressionChildren;
 >this.childrenWalkers[NodeType.In] = ChildrenWalkers.walkBinaryExpressionChildren : (preAst: BinaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.In] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.In : any
 >NodeType : any
 >In : any
@@ -551,9 +551,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Dot] = ChildrenWalkers.walkBinaryExpressionChildren;
 >this.childrenWalkers[NodeType.Dot] = ChildrenWalkers.walkBinaryExpressionChildren : (preAst: BinaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Dot] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Dot : any
 >NodeType : any
 >Dot : any
@@ -564,9 +564,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.From] = ChildrenWalkers.walkBinaryExpressionChildren;
 >this.childrenWalkers[NodeType.From] = ChildrenWalkers.walkBinaryExpressionChildren : (preAst: BinaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.From] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.From : any
 >NodeType : any
 >From : any
@@ -577,9 +577,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Is] = ChildrenWalkers.walkBinaryExpressionChildren;
 >this.childrenWalkers[NodeType.Is] = ChildrenWalkers.walkBinaryExpressionChildren : (preAst: BinaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Is] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Is : any
 >NodeType : any
 >Is : any
@@ -590,9 +590,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.InstOf] = ChildrenWalkers.walkBinaryExpressionChildren;
 >this.childrenWalkers[NodeType.InstOf] = ChildrenWalkers.walkBinaryExpressionChildren : (preAst: BinaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.InstOf] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.InstOf : any
 >NodeType : any
 >InstOf : any
@@ -603,9 +603,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Typeof] = ChildrenWalkers.walkUnaryExpressionChildren;
 >this.childrenWalkers[NodeType.Typeof] = ChildrenWalkers.walkUnaryExpressionChildren : (preAst: UnaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Typeof] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Typeof : any
 >NodeType : any
 >Typeof : any
@@ -616,9 +616,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.NumberLit] = ChildrenWalkers.walkNone;
 >this.childrenWalkers[NodeType.NumberLit] = ChildrenWalkers.walkNone : (preAst: ASTList, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.NumberLit] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.NumberLit : any
 >NodeType : any
 >NumberLit : any
@@ -629,9 +629,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Name] = ChildrenWalkers.walkNone;
 >this.childrenWalkers[NodeType.Name] = ChildrenWalkers.walkNone : (preAst: ASTList, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Name] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Name : any
 >NodeType : any
 >Name : any
@@ -642,9 +642,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.TypeRef] = ChildrenWalkers.walkTypeReferenceChildren;
 >this.childrenWalkers[NodeType.TypeRef] = ChildrenWalkers.walkTypeReferenceChildren : (preAst: TypeReference, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.TypeRef] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.TypeRef : any
 >NodeType : any
 >TypeRef : any
@@ -655,9 +655,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Index] = ChildrenWalkers.walkBinaryExpressionChildren;
 >this.childrenWalkers[NodeType.Index] = ChildrenWalkers.walkBinaryExpressionChildren : (preAst: BinaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Index] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Index : any
 >NodeType : any
 >Index : any
@@ -668,9 +668,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Call] = ChildrenWalkers.walkCallExpressionChildren;
 >this.childrenWalkers[NodeType.Call] = ChildrenWalkers.walkCallExpressionChildren : (preAst: CallExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Call] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Call : any
 >NodeType : any
 >Call : any
@@ -681,9 +681,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.New] = ChildrenWalkers.walkCallExpressionChildren;
 >this.childrenWalkers[NodeType.New] = ChildrenWalkers.walkCallExpressionChildren : (preAst: CallExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.New] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.New : any
 >NodeType : any
 >New : any
@@ -694,9 +694,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Asg] = ChildrenWalkers.walkBinaryExpressionChildren;
 >this.childrenWalkers[NodeType.Asg] = ChildrenWalkers.walkBinaryExpressionChildren : (preAst: BinaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Asg] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Asg : any
 >NodeType : any
 >Asg : any
@@ -707,9 +707,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.AsgAdd] = ChildrenWalkers.walkBinaryExpressionChildren;
 >this.childrenWalkers[NodeType.AsgAdd] = ChildrenWalkers.walkBinaryExpressionChildren : (preAst: BinaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.AsgAdd] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.AsgAdd : any
 >NodeType : any
 >AsgAdd : any
@@ -720,9 +720,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.AsgSub] = ChildrenWalkers.walkBinaryExpressionChildren;
 >this.childrenWalkers[NodeType.AsgSub] = ChildrenWalkers.walkBinaryExpressionChildren : (preAst: BinaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.AsgSub] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.AsgSub : any
 >NodeType : any
 >AsgSub : any
@@ -733,9 +733,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.AsgDiv] = ChildrenWalkers.walkBinaryExpressionChildren;
 >this.childrenWalkers[NodeType.AsgDiv] = ChildrenWalkers.walkBinaryExpressionChildren : (preAst: BinaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.AsgDiv] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.AsgDiv : any
 >NodeType : any
 >AsgDiv : any
@@ -746,9 +746,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.AsgMul] = ChildrenWalkers.walkBinaryExpressionChildren;
 >this.childrenWalkers[NodeType.AsgMul] = ChildrenWalkers.walkBinaryExpressionChildren : (preAst: BinaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.AsgMul] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.AsgMul : any
 >NodeType : any
 >AsgMul : any
@@ -759,9 +759,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.AsgMod] = ChildrenWalkers.walkBinaryExpressionChildren;
 >this.childrenWalkers[NodeType.AsgMod] = ChildrenWalkers.walkBinaryExpressionChildren : (preAst: BinaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.AsgMod] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.AsgMod : any
 >NodeType : any
 >AsgMod : any
@@ -772,9 +772,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.AsgAnd] = ChildrenWalkers.walkBinaryExpressionChildren;
 >this.childrenWalkers[NodeType.AsgAnd] = ChildrenWalkers.walkBinaryExpressionChildren : (preAst: BinaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.AsgAnd] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.AsgAnd : any
 >NodeType : any
 >AsgAnd : any
@@ -785,9 +785,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.AsgXor] = ChildrenWalkers.walkBinaryExpressionChildren;
 >this.childrenWalkers[NodeType.AsgXor] = ChildrenWalkers.walkBinaryExpressionChildren : (preAst: BinaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.AsgXor] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.AsgXor : any
 >NodeType : any
 >AsgXor : any
@@ -798,9 +798,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.AsgOr] = ChildrenWalkers.walkBinaryExpressionChildren;
 >this.childrenWalkers[NodeType.AsgOr] = ChildrenWalkers.walkBinaryExpressionChildren : (preAst: BinaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.AsgOr] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.AsgOr : any
 >NodeType : any
 >AsgOr : any
@@ -811,9 +811,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.AsgLsh] = ChildrenWalkers.walkBinaryExpressionChildren;
 >this.childrenWalkers[NodeType.AsgLsh] = ChildrenWalkers.walkBinaryExpressionChildren : (preAst: BinaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.AsgLsh] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.AsgLsh : any
 >NodeType : any
 >AsgLsh : any
@@ -824,9 +824,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.AsgRsh] = ChildrenWalkers.walkBinaryExpressionChildren;
 >this.childrenWalkers[NodeType.AsgRsh] = ChildrenWalkers.walkBinaryExpressionChildren : (preAst: BinaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.AsgRsh] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.AsgRsh : any
 >NodeType : any
 >AsgRsh : any
@@ -837,9 +837,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.AsgRs2] = ChildrenWalkers.walkBinaryExpressionChildren;
 >this.childrenWalkers[NodeType.AsgRs2] = ChildrenWalkers.walkBinaryExpressionChildren : (preAst: BinaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.AsgRs2] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.AsgRs2 : any
 >NodeType : any
 >AsgRs2 : any
@@ -850,9 +850,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.ConditionalExpression] = ChildrenWalkers.walkTrinaryExpressionChildren;
 >this.childrenWalkers[NodeType.ConditionalExpression] = ChildrenWalkers.walkTrinaryExpressionChildren : (preAst: ConditionalExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.ConditionalExpression] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.ConditionalExpression : any
 >NodeType : any
 >ConditionalExpression : any
@@ -863,9 +863,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.LogOr] = ChildrenWalkers.walkBinaryExpressionChildren;
 >this.childrenWalkers[NodeType.LogOr] = ChildrenWalkers.walkBinaryExpressionChildren : (preAst: BinaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.LogOr] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.LogOr : any
 >NodeType : any
 >LogOr : any
@@ -876,9 +876,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.LogAnd] = ChildrenWalkers.walkBinaryExpressionChildren;
 >this.childrenWalkers[NodeType.LogAnd] = ChildrenWalkers.walkBinaryExpressionChildren : (preAst: BinaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.LogAnd] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.LogAnd : any
 >NodeType : any
 >LogAnd : any
@@ -889,9 +889,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Or] = ChildrenWalkers.walkBinaryExpressionChildren;
 >this.childrenWalkers[NodeType.Or] = ChildrenWalkers.walkBinaryExpressionChildren : (preAst: BinaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Or] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Or : any
 >NodeType : any
 >Or : any
@@ -902,9 +902,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Xor] = ChildrenWalkers.walkBinaryExpressionChildren;
 >this.childrenWalkers[NodeType.Xor] = ChildrenWalkers.walkBinaryExpressionChildren : (preAst: BinaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Xor] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Xor : any
 >NodeType : any
 >Xor : any
@@ -915,9 +915,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.And] = ChildrenWalkers.walkBinaryExpressionChildren;
 >this.childrenWalkers[NodeType.And] = ChildrenWalkers.walkBinaryExpressionChildren : (preAst: BinaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.And] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.And : any
 >NodeType : any
 >And : any
@@ -928,9 +928,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Eq] = ChildrenWalkers.walkBinaryExpressionChildren;
 >this.childrenWalkers[NodeType.Eq] = ChildrenWalkers.walkBinaryExpressionChildren : (preAst: BinaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Eq] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Eq : any
 >NodeType : any
 >Eq : any
@@ -941,9 +941,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Ne] = ChildrenWalkers.walkBinaryExpressionChildren;
 >this.childrenWalkers[NodeType.Ne] = ChildrenWalkers.walkBinaryExpressionChildren : (preAst: BinaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Ne] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Ne : any
 >NodeType : any
 >Ne : any
@@ -954,9 +954,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Eqv] = ChildrenWalkers.walkBinaryExpressionChildren;
 >this.childrenWalkers[NodeType.Eqv] = ChildrenWalkers.walkBinaryExpressionChildren : (preAst: BinaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Eqv] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Eqv : any
 >NodeType : any
 >Eqv : any
@@ -967,9 +967,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.NEqv] = ChildrenWalkers.walkBinaryExpressionChildren;
 >this.childrenWalkers[NodeType.NEqv] = ChildrenWalkers.walkBinaryExpressionChildren : (preAst: BinaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.NEqv] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.NEqv : any
 >NodeType : any
 >NEqv : any
@@ -980,9 +980,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Lt] = ChildrenWalkers.walkBinaryExpressionChildren;
 >this.childrenWalkers[NodeType.Lt] = ChildrenWalkers.walkBinaryExpressionChildren : (preAst: BinaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Lt] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Lt : any
 >NodeType : any
 >Lt : any
@@ -993,9 +993,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Le] = ChildrenWalkers.walkBinaryExpressionChildren;
 >this.childrenWalkers[NodeType.Le] = ChildrenWalkers.walkBinaryExpressionChildren : (preAst: BinaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Le] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Le : any
 >NodeType : any
 >Le : any
@@ -1006,9 +1006,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Gt] = ChildrenWalkers.walkBinaryExpressionChildren;
 >this.childrenWalkers[NodeType.Gt] = ChildrenWalkers.walkBinaryExpressionChildren : (preAst: BinaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Gt] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Gt : any
 >NodeType : any
 >Gt : any
@@ -1019,9 +1019,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Ge] = ChildrenWalkers.walkBinaryExpressionChildren;
 >this.childrenWalkers[NodeType.Ge] = ChildrenWalkers.walkBinaryExpressionChildren : (preAst: BinaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Ge] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Ge : any
 >NodeType : any
 >Ge : any
@@ -1032,9 +1032,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Add] = ChildrenWalkers.walkBinaryExpressionChildren;
 >this.childrenWalkers[NodeType.Add] = ChildrenWalkers.walkBinaryExpressionChildren : (preAst: BinaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Add] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Add : any
 >NodeType : any
 >Add : any
@@ -1045,9 +1045,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Sub] = ChildrenWalkers.walkBinaryExpressionChildren;
 >this.childrenWalkers[NodeType.Sub] = ChildrenWalkers.walkBinaryExpressionChildren : (preAst: BinaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Sub] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Sub : any
 >NodeType : any
 >Sub : any
@@ -1058,9 +1058,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Mul] = ChildrenWalkers.walkBinaryExpressionChildren;
 >this.childrenWalkers[NodeType.Mul] = ChildrenWalkers.walkBinaryExpressionChildren : (preAst: BinaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Mul] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Mul : any
 >NodeType : any
 >Mul : any
@@ -1071,9 +1071,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Div] = ChildrenWalkers.walkBinaryExpressionChildren;
 >this.childrenWalkers[NodeType.Div] = ChildrenWalkers.walkBinaryExpressionChildren : (preAst: BinaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Div] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Div : any
 >NodeType : any
 >Div : any
@@ -1084,9 +1084,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Mod] = ChildrenWalkers.walkBinaryExpressionChildren;
 >this.childrenWalkers[NodeType.Mod] = ChildrenWalkers.walkBinaryExpressionChildren : (preAst: BinaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Mod] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Mod : any
 >NodeType : any
 >Mod : any
@@ -1097,9 +1097,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Lsh] = ChildrenWalkers.walkBinaryExpressionChildren;
 >this.childrenWalkers[NodeType.Lsh] = ChildrenWalkers.walkBinaryExpressionChildren : (preAst: BinaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Lsh] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Lsh : any
 >NodeType : any
 >Lsh : any
@@ -1110,9 +1110,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Rsh] = ChildrenWalkers.walkBinaryExpressionChildren;
 >this.childrenWalkers[NodeType.Rsh] = ChildrenWalkers.walkBinaryExpressionChildren : (preAst: BinaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Rsh] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Rsh : any
 >NodeType : any
 >Rsh : any
@@ -1123,9 +1123,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Rs2] = ChildrenWalkers.walkBinaryExpressionChildren;
 >this.childrenWalkers[NodeType.Rs2] = ChildrenWalkers.walkBinaryExpressionChildren : (preAst: BinaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Rs2] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Rs2 : any
 >NodeType : any
 >Rs2 : any
@@ -1136,9 +1136,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Not] = ChildrenWalkers.walkUnaryExpressionChildren;
 >this.childrenWalkers[NodeType.Not] = ChildrenWalkers.walkUnaryExpressionChildren : (preAst: UnaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Not] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Not : any
 >NodeType : any
 >Not : any
@@ -1149,9 +1149,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.LogNot] = ChildrenWalkers.walkUnaryExpressionChildren;
 >this.childrenWalkers[NodeType.LogNot] = ChildrenWalkers.walkUnaryExpressionChildren : (preAst: UnaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.LogNot] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.LogNot : any
 >NodeType : any
 >LogNot : any
@@ -1162,9 +1162,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.IncPre] = ChildrenWalkers.walkUnaryExpressionChildren;
 >this.childrenWalkers[NodeType.IncPre] = ChildrenWalkers.walkUnaryExpressionChildren : (preAst: UnaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.IncPre] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.IncPre : any
 >NodeType : any
 >IncPre : any
@@ -1175,9 +1175,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.DecPre] = ChildrenWalkers.walkUnaryExpressionChildren;
 >this.childrenWalkers[NodeType.DecPre] = ChildrenWalkers.walkUnaryExpressionChildren : (preAst: UnaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.DecPre] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.DecPre : any
 >NodeType : any
 >DecPre : any
@@ -1188,9 +1188,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.IncPost] = ChildrenWalkers.walkUnaryExpressionChildren;
 >this.childrenWalkers[NodeType.IncPost] = ChildrenWalkers.walkUnaryExpressionChildren : (preAst: UnaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.IncPost] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.IncPost : any
 >NodeType : any
 >IncPost : any
@@ -1201,9 +1201,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.DecPost] = ChildrenWalkers.walkUnaryExpressionChildren;
 >this.childrenWalkers[NodeType.DecPost] = ChildrenWalkers.walkUnaryExpressionChildren : (preAst: UnaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.DecPost] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.DecPost : any
 >NodeType : any
 >DecPost : any
@@ -1214,9 +1214,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.TypeAssertion] = ChildrenWalkers.walkUnaryExpressionChildren;
 >this.childrenWalkers[NodeType.TypeAssertion] = ChildrenWalkers.walkUnaryExpressionChildren : (preAst: UnaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.TypeAssertion] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.TypeAssertion : any
 >NodeType : any
 >TypeAssertion : any
@@ -1227,9 +1227,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.FuncDecl] = ChildrenWalkers.walkFuncDeclChildren;
 >this.childrenWalkers[NodeType.FuncDecl] = ChildrenWalkers.walkFuncDeclChildren : (preAst: FuncDecl, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.FuncDecl] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.FuncDecl : any
 >NodeType : any
 >FuncDecl : any
@@ -1240,9 +1240,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Member] = ChildrenWalkers.walkBinaryExpressionChildren;
 >this.childrenWalkers[NodeType.Member] = ChildrenWalkers.walkBinaryExpressionChildren : (preAst: BinaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Member] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Member : any
 >NodeType : any
 >Member : any
@@ -1253,9 +1253,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.VarDecl] = ChildrenWalkers.walkBoundDeclChildren;
 >this.childrenWalkers[NodeType.VarDecl] = ChildrenWalkers.walkBoundDeclChildren : (preAst: BoundDecl, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.VarDecl] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.VarDecl : any
 >NodeType : any
 >VarDecl : any
@@ -1266,9 +1266,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.ArgDecl] = ChildrenWalkers.walkBoundDeclChildren;
 >this.childrenWalkers[NodeType.ArgDecl] = ChildrenWalkers.walkBoundDeclChildren : (preAst: BoundDecl, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.ArgDecl] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.ArgDecl : any
 >NodeType : any
 >ArgDecl : any
@@ -1279,9 +1279,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Return] = ChildrenWalkers.walkReturnStatementChildren;
 >this.childrenWalkers[NodeType.Return] = ChildrenWalkers.walkReturnStatementChildren : (preAst: ReturnStatement, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Return] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Return : any
 >NodeType : any
 >Return : any
@@ -1292,9 +1292,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Break] = ChildrenWalkers.walkNone;
 >this.childrenWalkers[NodeType.Break] = ChildrenWalkers.walkNone : (preAst: ASTList, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Break] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Break : any
 >NodeType : any
 >Break : any
@@ -1305,9 +1305,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Continue] = ChildrenWalkers.walkNone;
 >this.childrenWalkers[NodeType.Continue] = ChildrenWalkers.walkNone : (preAst: ASTList, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Continue] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Continue : any
 >NodeType : any
 >Continue : any
@@ -1318,9 +1318,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Throw] = ChildrenWalkers.walkUnaryExpressionChildren;
 >this.childrenWalkers[NodeType.Throw] = ChildrenWalkers.walkUnaryExpressionChildren : (preAst: UnaryExpression, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Throw] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Throw : any
 >NodeType : any
 >Throw : any
@@ -1331,9 +1331,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.For] = ChildrenWalkers.walkForStatementChildren;
 >this.childrenWalkers[NodeType.For] = ChildrenWalkers.walkForStatementChildren : (preAst: ForStatement, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.For] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.For : any
 >NodeType : any
 >For : any
@@ -1344,9 +1344,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.ForIn] = ChildrenWalkers.walkForInStatementChildren;
 >this.childrenWalkers[NodeType.ForIn] = ChildrenWalkers.walkForInStatementChildren : (preAst: ForInStatement, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.ForIn] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.ForIn : any
 >NodeType : any
 >ForIn : any
@@ -1357,9 +1357,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.If] = ChildrenWalkers.walkIfStatementChildren;
 >this.childrenWalkers[NodeType.If] = ChildrenWalkers.walkIfStatementChildren : (preAst: IfStatement, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.If] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.If : any
 >NodeType : any
 >If : any
@@ -1370,9 +1370,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.While] = ChildrenWalkers.walkWhileStatementChildren;
 >this.childrenWalkers[NodeType.While] = ChildrenWalkers.walkWhileStatementChildren : (preAst: WhileStatement, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.While] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.While : any
 >NodeType : any
 >While : any
@@ -1383,9 +1383,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.DoWhile] = ChildrenWalkers.walkDoWhileStatementChildren;
 >this.childrenWalkers[NodeType.DoWhile] = ChildrenWalkers.walkDoWhileStatementChildren : (preAst: DoWhileStatement, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.DoWhile] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.DoWhile : any
 >NodeType : any
 >DoWhile : any
@@ -1396,9 +1396,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Block] = ChildrenWalkers.walkBlockChildren;
 >this.childrenWalkers[NodeType.Block] = ChildrenWalkers.walkBlockChildren : (preAst: Block, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Block] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Block : any
 >NodeType : any
 >Block : any
@@ -1409,9 +1409,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Case] = ChildrenWalkers.walkCaseStatementChildren;
 >this.childrenWalkers[NodeType.Case] = ChildrenWalkers.walkCaseStatementChildren : (preAst: CaseStatement, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Case] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Case : any
 >NodeType : any
 >Case : any
@@ -1422,9 +1422,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Switch] = ChildrenWalkers.walkSwitchStatementChildren;
 >this.childrenWalkers[NodeType.Switch] = ChildrenWalkers.walkSwitchStatementChildren : (preAst: SwitchStatement, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Switch] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Switch : any
 >NodeType : any
 >Switch : any
@@ -1435,9 +1435,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Try] = ChildrenWalkers.walkTryChildren;
 >this.childrenWalkers[NodeType.Try] = ChildrenWalkers.walkTryChildren : (preAst: Try, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Try] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Try : any
 >NodeType : any
 >Try : any
@@ -1448,9 +1448,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.TryCatch] = ChildrenWalkers.walkTryCatchChildren;
 >this.childrenWalkers[NodeType.TryCatch] = ChildrenWalkers.walkTryCatchChildren : (preAst: TryCatch, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.TryCatch] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.TryCatch : any
 >NodeType : any
 >TryCatch : any
@@ -1461,9 +1461,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.TryFinally] = ChildrenWalkers.walkTryFinallyChildren;
 >this.childrenWalkers[NodeType.TryFinally] = ChildrenWalkers.walkTryFinallyChildren : (preAst: TryFinally, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.TryFinally] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.TryFinally : any
 >NodeType : any
 >TryFinally : any
@@ -1474,9 +1474,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Finally] = ChildrenWalkers.walkFinallyChildren;
 >this.childrenWalkers[NodeType.Finally] = ChildrenWalkers.walkFinallyChildren : (preAst: Finally, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Finally] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Finally : any
 >NodeType : any
 >Finally : any
@@ -1487,9 +1487,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Catch] = ChildrenWalkers.walkCatchChildren;
 >this.childrenWalkers[NodeType.Catch] = ChildrenWalkers.walkCatchChildren : (preAst: Catch, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Catch] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Catch : any
 >NodeType : any
 >Catch : any
@@ -1500,9 +1500,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.List] = ChildrenWalkers.walkListChildren;
 >this.childrenWalkers[NodeType.List] = ChildrenWalkers.walkListChildren : (preAst: ASTList, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.List] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.List : any
 >NodeType : any
 >List : any
@@ -1513,9 +1513,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Script] = ChildrenWalkers.walkScriptChildren;
 >this.childrenWalkers[NodeType.Script] = ChildrenWalkers.walkScriptChildren : (preAst: Script, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Script] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Script : any
 >NodeType : any
 >Script : any
@@ -1526,9 +1526,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.ClassDeclaration] = ChildrenWalkers.walkClassDeclChildren;
 >this.childrenWalkers[NodeType.ClassDeclaration] = ChildrenWalkers.walkClassDeclChildren : (preAst: ClassDeclaration, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.ClassDeclaration] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.ClassDeclaration : any
 >NodeType : any
 >ClassDeclaration : any
@@ -1539,9 +1539,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.InterfaceDeclaration] = ChildrenWalkers.walkTypeDeclChildren;
 >this.childrenWalkers[NodeType.InterfaceDeclaration] = ChildrenWalkers.walkTypeDeclChildren : (preAst: InterfaceDeclaration, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.InterfaceDeclaration] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.InterfaceDeclaration : any
 >NodeType : any
 >InterfaceDeclaration : any
@@ -1552,9 +1552,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.ModuleDeclaration] = ChildrenWalkers.walkModuleDeclChildren;
 >this.childrenWalkers[NodeType.ModuleDeclaration] = ChildrenWalkers.walkModuleDeclChildren : (preAst: ModuleDeclaration, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.ModuleDeclaration] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.ModuleDeclaration : any
 >NodeType : any
 >ModuleDeclaration : any
@@ -1565,9 +1565,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.ImportDeclaration] = ChildrenWalkers.walkImportDeclChildren;
 >this.childrenWalkers[NodeType.ImportDeclaration] = ChildrenWalkers.walkImportDeclChildren : (preAst: ImportDeclaration, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.ImportDeclaration] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.ImportDeclaration : any
 >NodeType : any
 >ImportDeclaration : any
@@ -1578,9 +1578,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.With] = ChildrenWalkers.walkWithStatementChildren;
 >this.childrenWalkers[NodeType.With] = ChildrenWalkers.walkWithStatementChildren : (preAst: WithStatement, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.With] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.With : any
 >NodeType : any
 >With : any
@@ -1591,9 +1591,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Label] = ChildrenWalkers.walkLabelChildren;
 >this.childrenWalkers[NodeType.Label] = ChildrenWalkers.walkLabelChildren : (preAst: Label, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Label] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Label : any
 >NodeType : any
 >Label : any
@@ -1604,9 +1604,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.LabeledStatement] = ChildrenWalkers.walkLabeledStatementChildren;
 >this.childrenWalkers[NodeType.LabeledStatement] = ChildrenWalkers.walkLabeledStatementChildren : (preAst: LabeledStatement, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.LabeledStatement] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.LabeledStatement : any
 >NodeType : any
 >LabeledStatement : any
@@ -1617,9 +1617,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.EBStart] = ChildrenWalkers.walkNone;
 >this.childrenWalkers[NodeType.EBStart] = ChildrenWalkers.walkNone : (preAst: ASTList, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.EBStart] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.EBStart : any
 >NodeType : any
 >EBStart : any
@@ -1630,9 +1630,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.GotoEB] = ChildrenWalkers.walkNone;
 >this.childrenWalkers[NodeType.GotoEB] = ChildrenWalkers.walkNone : (preAst: ASTList, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.GotoEB] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.GotoEB : any
 >NodeType : any
 >GotoEB : any
@@ -1643,9 +1643,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.EndCode] = ChildrenWalkers.walkNone;
 >this.childrenWalkers[NodeType.EndCode] = ChildrenWalkers.walkNone : (preAst: ASTList, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.EndCode] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.EndCode : any
 >NodeType : any
 >EndCode : any
@@ -1656,9 +1656,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Error] = ChildrenWalkers.walkNone;
 >this.childrenWalkers[NodeType.Error] = ChildrenWalkers.walkNone : (preAst: ASTList, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Error] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Error : any
 >NodeType : any
 >Error : any
@@ -1669,9 +1669,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Comment] = ChildrenWalkers.walkNone;
 >this.childrenWalkers[NodeType.Comment] = ChildrenWalkers.walkNone : (preAst: ASTList, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Comment] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Comment : any
 >NodeType : any
 >Comment : any
@@ -1682,9 +1682,9 @@ module TypeScript {
             this.childrenWalkers[NodeType.Debugger] = ChildrenWalkers.walkNone;
 >this.childrenWalkers[NodeType.Debugger] = ChildrenWalkers.walkNone : (preAst: ASTList, parent: AST, walker: IAstWalker) => void
 >this.childrenWalkers[NodeType.Debugger] : IAstWalkChildren
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >NodeType.Debugger : any
 >NodeType : any
 >Debugger : any
@@ -1706,9 +1706,9 @@ module TypeScript {
 >(<any>this.childrenWalkers)[e] : any
 >(<any>this.childrenWalkers) : any
 ><any>this.childrenWalkers : any
->this.childrenWalkers : IAstWalkChildren[]
+>this.childrenWalkers : (IAstWalkChildren)[]
 >this : this
->childrenWalkers : IAstWalkChildren[]
+>childrenWalkers : (IAstWalkChildren)[]
 >e : string
 >undefined : undefined
 

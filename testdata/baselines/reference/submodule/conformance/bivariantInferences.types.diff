@@ -25,8 +25,8 @@
 ->a : (string | number)[] | null[] | undefined[] | {}[]
 ->equalsShallow : (<T>(this: readonly T[], other: readonly T[]) => boolean) | (<T>(this: readonly T[], other: readonly T[]) => boolean) | (<T>(this: readonly T[], other: readonly T[]) => boolean) | (<T>(this: readonly T[], other: readonly T[]) => boolean)
 ->b : (string | number)[] | null[] | undefined[] | {}[]
-+>a.equalsShallow : <T>(other: readonly T[]) => boolean | <T>(other: readonly T[]) => boolean | <T>(other: readonly T[]) => boolean | <T>(other: readonly T[]) => boolean
++>a.equalsShallow : (<T>(other: readonly T[]) => boolean) | (<T>(other: readonly T[]) => boolean) | (<T>(other: readonly T[]) => boolean) | (<T>(other: readonly T[]) => boolean)
 +>a : undefined[] | null[] | {}[] | (string | number)[]
-+>equalsShallow : <T>(other: readonly T[]) => boolean | <T>(other: readonly T[]) => boolean | <T>(other: readonly T[]) => boolean | <T>(other: readonly T[]) => boolean
++>equalsShallow : (<T>(other: readonly T[]) => boolean) | (<T>(other: readonly T[]) => boolean) | (<T>(other: readonly T[]) => boolean) | (<T>(other: readonly T[]) => boolean)
 +>b : undefined[] | null[] | {}[] | (string | number)[]
  

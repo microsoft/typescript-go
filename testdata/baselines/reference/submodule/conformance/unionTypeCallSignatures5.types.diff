@@ -1,0 +1,15 @@
+--- old.unionTypeCallSignatures5.types
++++ new.unionTypeCallSignatures5.types
+@@= skipped -16, +16 lines =@@
+ >i : number
+ }
+ declare const fn: A | B | C;
+->fn : A | B | C
++>fn : (A) | (B) | (C)
+ 
+ fn(0);
+ >fn(0) : void
+->fn : A | B | C
++>fn : (A) | (B) | (C)
+ >0 : 0
+ 
