@@ -74,16 +74,28 @@ function memoize(fn) {
 
 const typeScriptSubmodulePath = path.join(__dirname, "_submodules", "TypeScript");
 
-function assertTypeScriptCloned() {
+const isTypeScriptSubmoduleCloned = memoize(() => {
     try {
         const stat = fs.statSync(path.join(typeScriptSubmodulePath, "package.json"));
         if (stat.isFile()) {
-            return;
+            return true;
         }
     }
     catch {}
 
-    throw new Error("_submodules/TypeScript does not exist; try running `git submodule update --init --recursive`");
+    return false;
+});
+
+const warnIfTypeScriptSubmoduleNotCloned = memoize(() => {
+    if (!isTypeScriptSubmoduleCloned()) {
+        console.warn(pc.yellow("Warning: TypeScript submodule is not cloned; some tests may be skipped."));
+    }
+});
+
+function assertTypeScriptCloned() {
+    if (!isTypeScriptSubmoduleCloned()) {
+        throw new Error("_submodules/TypeScript does not exist; try running `git submodule update --init --recursive`");
+    }
 }
 
 const tools = new Map([
@@ -229,6 +241,7 @@ const goTest = memoize(() => {
 });
 
 async function runTests() {
+    warnIfTypeScriptSubmoduleNotCloned();
     await $test`${gotestsum()} ./... ${isCI ? ["--timeout=45m"] : []}`;
 }
 
@@ -238,6 +251,7 @@ export const test = task({
 });
 
 async function runTestBenchmarks() {
+    warnIfTypeScriptSubmoduleNotCloned();
     // Run the benchmarks once to ensure they compile and run without errors.
     await $test`${goTest()} -run=- -bench=. -benchtime=1x ./...`;
 }
