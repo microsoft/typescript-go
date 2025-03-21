@@ -89,9 +89,10 @@ func (p *Parser) withJSDoc(node *ast.Node, hasJSDoc bool) {
 // Case 1 means that property access et al need look down to their children in the same way
 
 // And all the cases might need to be recursive (but probably not in practise)
-func (p *Parser) attachJSDoc(host *ast.Node, jsDoc []*ast.Node) {
+
+func (p *Parser) attachJSDoc(parent *ast.Node, jsDoc []*ast.Node) {
 	// 1. modify the attached node
-	// 1b. Tags that modify their host node should only be taken from the last JSDoc (@overload is 'attached' but actually emits a separate signature node)
+	// 1b. Tags that modify their host node should only be taken from the parent's last JSDoc (@overload is 'attached' but actually emits a separate signature node)
 	// 2. later, output additional sibling nodes (probably unrelated) into the nearest containing node list
 	for _, j := range jsDoc {
 		isLast := j == jsDoc[len(jsDoc)-1]
@@ -142,53 +143,53 @@ func (p *Parser) attachJSDoc(host *ast.Node, jsDoc []*ast.Node) {
 			}
 			switch tag.Kind {
 			case ast.KindJSDocTypeTag:
-				if host.Kind == ast.KindVariableStatement && host.AsVariableStatement().DeclarationList != nil {
+				if parent.Kind == ast.KindVariableStatement && parent.AsVariableStatement().DeclarationList != nil {
 					// TODO: Could still clone the node and mark it synthetic
-					for _, declaration := range host.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes {
+					for _, declaration := range parent.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes {
 						if declaration.AsVariableDeclaration().Type == nil {
-							declaration.AsVariableDeclaration().Type = p.makeNewType(tag.AsJSDocTypeTag().TypeExpression)
+							declaration.AsVariableDeclaration().Type = p.makeNewType(tag.AsJSDocTypeTag().TypeExpression, declaration)
 						}
 					}
-				} else if host.Kind == ast.KindPropertyDeclaration {
-					decl := host.AsPropertyDeclaration()
+				} else if parent.Kind == ast.KindPropertyDeclaration {
+					decl := parent.AsPropertyDeclaration()
 					if decl.Type == nil {
-						decl.Type = p.makeNewType(tag.AsJSDocTypeTag().TypeExpression)
+						decl.Type = p.makeNewType(tag.AsJSDocTypeTag().TypeExpression, parent)
 					}
-				} else if host.Kind == ast.KindPropertyAssignment {
-					prop := host.AsPropertyAssignment()
-					prop.Initializer = p.makeNewTypeAssertion(p.makeNewType(tag.AsJSDocTypeTag().TypeExpression), prop.Initializer)
-				} else if host.Kind == ast.KindExportAssignment {
-					export := host.AsExportAssignment()
-					export.Expression = p.makeNewTypeAssertion(p.makeNewType(tag.AsJSDocTypeTag().TypeExpression), export.Expression)
-				} else if host.Kind == ast.KindReturnStatement {
-					ret := host.AsReturnStatement()
-					ret.Expression = p.makeNewTypeAssertion(p.makeNewType(tag.AsJSDocTypeTag().TypeExpression), ret.Expression)
-				} else if host.Kind == ast.KindParenthesizedExpression {
-					paren:= host.AsParenthesizedExpression()
-					paren.Expression = p.makeNewTypeAssertion(p.makeNewType(tag.AsJSDocTypeTag().TypeExpression), paren.Expression)
+				} else if parent.Kind == ast.KindPropertyAssignment {
+					prop := parent.AsPropertyAssignment()
+					prop.Initializer = p.makeNewTypeAssertion(p.makeNewType(tag.AsJSDocTypeTag().TypeExpression, nil), prop.Initializer)
+				} else if parent.Kind == ast.KindExportAssignment {
+					export := parent.AsExportAssignment()
+					export.Expression = p.makeNewTypeAssertion(p.makeNewType(tag.AsJSDocTypeTag().TypeExpression, nil), export.Expression)
+				} else if parent.Kind == ast.KindReturnStatement {
+					ret := parent.AsReturnStatement()
+					ret.Expression = p.makeNewTypeAssertion(p.makeNewType(tag.AsJSDocTypeTag().TypeExpression, nil), ret.Expression)
+				} else if parent.Kind == ast.KindParenthesizedExpression {
+					paren := parent.AsParenthesizedExpression()
+					paren.Expression = p.makeNewTypeAssertion(p.makeNewType(tag.AsJSDocTypeTag().TypeExpression, nil), paren.Expression)
 				}
 			case ast.KindJSDocTemplateTag:
-				if fun, ok := getFunctionLikeHost(host); ok {
+				if fun, ok := getFunctionLikeHost(parent); ok {
 					if fun.TypeParameters() == nil {
 						fun.FunctionLikeData().TypeParameters = p.gatherTypeParameters(j, fun.Loc)
 					}
-				} else if host.Kind == ast.KindClassDeclaration {
-					class := host.AsClassDeclaration()
+				} else if parent.Kind == ast.KindClassDeclaration {
+					class := parent.AsClassDeclaration()
 					if class.TypeParameters == nil {
-						class.TypeParameters = p.gatherTypeParameters(j, host.Loc)
+						class.TypeParameters = p.gatherTypeParameters(j, parent.Loc)
 					}
-				} else if host.Kind == ast.KindClassExpression {
-					class := host.AsClassExpression()
+				} else if parent.Kind == ast.KindClassExpression {
+					class := parent.AsClassExpression()
 					if class.TypeParameters == nil {
-						class.TypeParameters = p.gatherTypeParameters(j, host.Loc)
+						class.TypeParameters = p.gatherTypeParameters(j, parent.Loc)
 					}
 				}
 			case ast.KindJSDocParameterTag:
-				if fun, ok := getFunctionLikeHost(host); ok {
+				if fun, ok := getFunctionLikeHost(parent); ok {
 					jsparam := tag.AsJSDocParameterTag()
 					if param, ok := findMatchingParameter(fun, jsparam); ok {
 						if param.Type() == nil {
-							param.AsParameterDeclaration().Type = p.makeNewType(jsparam.TypeExpression)
+							param.AsParameterDeclaration().Type = p.makeNewType(jsparam.TypeExpression, param)
 							if param.AsParameterDeclaration().QuestionToken == nil &&
 								param.AsParameterDeclaration().Initializer == nil &&
 								(jsparam.IsBracketed || jsparam.TypeExpression != nil && jsparam.TypeExpression.Type().Kind == ast.KindJSDocOptionalType) {
@@ -199,9 +200,9 @@ func (p *Parser) attachJSDoc(host *ast.Node, jsDoc []*ast.Node) {
 					}
 				}
 			case ast.KindJSDocReturnTag:
-				if fun, ok := getFunctionLikeHost(host); ok {
+				if fun, ok := getFunctionLikeHost(parent); ok {
 					if fun.Type() == nil {
-						fun.FunctionLikeData().Type = p.makeNewType(tag.AsJSDocReturnTag().TypeExpression)
+						fun.FunctionLikeData().Type = p.makeNewType(tag.AsJSDocReturnTag().TypeExpression, fun)
 					}
 				}
 			}
@@ -273,14 +274,17 @@ func (p *Parser) makeNewTypeAssertion(t *ast.TypeNode, e *ast.Node) *ast.Node {
 	return assert
 }
 
-func (p *Parser) makeNewType(typeExpression *ast.TypeNode) *ast.Node {
+func (p *Parser) makeNewType(typeExpression *ast.TypeNode, host *ast.Node) *ast.Node {
 	if typeExpression == nil || typeExpression.Type() == nil {
 		return nil
 	}
-
+	// TODO: Panic if Host is already set
+	typeExpression.AsJSDocTypeExpression().Host = host
 	t := typeExpression.Type().Clone(&p.factory)
-	// TODO: What other flags? Copy from decl? from tag's typeexpression?
 	t.Flags |= typeExpression.Flags | ast.NodeFlagsSynthesized
+	if host != nil {
+		t.Parent = host
+	}
 	return t
 }
 

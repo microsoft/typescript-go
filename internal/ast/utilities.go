@@ -2286,9 +2286,9 @@ func IsGlobalSourceFile(node *Node) bool {
 	return node.Kind == KindSourceFile && !IsExternalOrCommonJsModule(node.AsSourceFile())
 }
 
-func IsParameterLikeOrReturnTag(node *Node) bool {
+func IsParameterLike(node *Node) bool {
 	switch node.Kind {
-	case KindParameter, KindTypeParameter, KindJSDocParameterTag, KindJSDocReturnTag:
+	case KindParameter, KindTypeParameter:
 		return true
 	}
 	return false

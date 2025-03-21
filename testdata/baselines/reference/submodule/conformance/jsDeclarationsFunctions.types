@@ -72,47 +72,47 @@ f.self = f;
  * @param {{y: typeof b}} b
  */
 function g(a, b) {
->g : (a: { x: string; }, b: { y: { (): void; cat: string; }; }) => void
+>g : (a: { x: string; }, b: { y: ???; }) => any
 >a : { x: string; }
->b : { y: { (): void; cat: string; }; }
+>b : { y: ???; }
 
     return a.x && b.y();
->a.x && b.y() : void
+>a.x && b.y() : any
 >a.x : string
 >a : { x: string; }
 >x : string
->b.y() : void
->b.y : { (): void; cat: string; }
->b : { y: { (): void; cat: string; }; }
->y : { (): void; cat: string; }
+>b.y() : any
+>b.y : { y: ???; }
+>b : { y: ???; }
+>y : { y: ???; }
 }
 
 export { g };
->g : (a: { x: string; }, b: { y: { (): void; cat: string; }; }) => void
+>g : (a: { x: string; }, b: { y: ???; }) => any
 
 /**
  * @param {{x: string}} a
  * @param {{y: typeof b}} b
  */
 function hh(a, b) {
->hh : (a: { x: string; }, b: { y: { (): void; cat: string; }; }) => void
+>hh : (a: { x: string; }, b: { y: ???; }) => any
 >a : { x: string; }
->b : { y: { (): void; cat: string; }; }
+>b : { y: ???; }
 
     return a.x && b.y();
->a.x && b.y() : void
+>a.x && b.y() : any
 >a.x : string
 >a : { x: string; }
 >x : string
->b.y() : void
->b.y : { (): void; cat: string; }
->b : { y: { (): void; cat: string; }; }
->y : { (): void; cat: string; }
+>b.y() : any
+>b.y : { y: ???; }
+>b : { y: ???; }
+>y : { y: ???; }
 }
 
 export { hh as h };
->hh : (a: { x: string; }, b: { y: { (): void; cat: string; }; }) => void
->h : (a: { x: string; }, b: { y: { (): void; cat: string; }; }) => void
+>hh : (a: { x: string; }, b: { y: ???; }) => any
+>h : (a: { x: string; }, b: { y: ???; }) => any
 
 export function i() {}
 >i : () => void
