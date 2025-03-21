@@ -14,20 +14,25 @@ import {
 import fs from "node:fs";
 import path from "node:path";
 import { Bench } from "tinybench";
+import ts from "typescript";
 
 const bench = new Bench({
     name: "Sync API",
     teardown: () => {
-        api.close();
+        api?.close();
         api = undefined!;
         project = undefined!;
         file = undefined!;
+        tsProgram = undefined!;
+        tsFile = undefined!;
     },
 });
 
 let api: API;
 let project: Project;
+let tsProgram: ts.Program;
 let file: SourceFile;
+let tsFile: ts.SourceFile;
 
 const SMALL_STRING = "ping";
 const LARGE_STRING = "a".repeat(1_000_000);
@@ -56,6 +61,9 @@ bench
     .add("load project (client FS)", () => {
         loadProject();
     }, { beforeAll: spawnAPIHosted })
+    .add("TS - load project", () => {
+        tsCreateProgram();
+    })
     .add("transfer debug.ts", () => {
         getDebugTS();
     }, { beforeAll: all(spawnAPI, loadProject) })
@@ -77,7 +85,13 @@ bench
     }, { beforeAll: all(spawnAPI, loadProject, getCheckerTS) })
     .add("getSymbolAtPosition - one location", () => {
         project.getSymbolAtPosition("program.ts", 8895);
-    }, { beforeAll: all(spawnAPI, loadProject) })
+    }, { beforeAll: all(spawnAPI, loadProject, createChecker) })
+    .add("TS - getSymbolAtPosition - one location", () => {
+        tsProgram.getTypeChecker().getSymbolAtLocation(
+            // @ts-ignore internal API
+            ts.getTokenAtPosition(tsFile, 8895),
+        );
+    }, { beforeAll: all(tsCreateProgram, tsCreateChecker, tsGetProgramTS) })
     .add("getSymbolAtPosition - all identifiers", () => {
         file.forEachChild(function visit(node) {
             if (node.kind === SyntaxKind.Identifier) {
@@ -85,7 +99,7 @@ bench
             }
             node.forEachChild(visit);
         });
-    }, { beforeAll: all(spawnAPI, loadProject, getProgramTS) })
+    }, { beforeAll: all(spawnAPI, loadProject, createChecker, getProgramTS) })
     .add("getSymbolAtPosition - all identifiers (batched)", () => {
         const positions: GetSymbolAtPositionParams[] = [];
         file.forEachChild(function visit(node) {
@@ -95,7 +109,7 @@ bench
             node.forEachChild(visit);
         });
         project.getSymbolAtPosition(positions);
-    }, { beforeAll: all(spawnAPI, loadProject, getProgramTS) })
+    }, { beforeAll: all(spawnAPI, loadProject, createChecker, getProgramTS) })
     .add("getSymbolAtPosition - all identifiers (batched 2)", () => {
         const positions: number[] = [];
         file.forEachChild(function visit(node) {
@@ -105,7 +119,16 @@ bench
             node.forEachChild(visit);
         });
         project.getSymbolAtPosition("program.ts", positions);
-    }, { beforeAll: all(spawnAPI, loadProject, getProgramTS) });
+    }, { beforeAll: all(spawnAPI, loadProject, createChecker, getProgramTS) })
+    .add("TS - getSymbolAtPosition - all identifiers", () => {
+        const checker = tsProgram.getTypeChecker();
+        tsFile.forEachChild(function visit(node) {
+            if (node.kind === ts.SyntaxKind.Identifier) {
+                checker.getSymbolAtLocation(node);
+            }
+            node.forEachChild(visit);
+        });
+    }, { beforeAll: all(tsCreateProgram, tsCreateChecker, tsGetProgramTS) });
 
 await bench.run();
 console.table(bench.table());
@@ -129,12 +152,38 @@ function loadProject() {
     project = api.loadProject("_submodules/TypeScript/src/compiler/tsconfig.json");
 }
 
+function tsCreateProgram() {
+    const configFileName = new URL("../../../_submodules/TypeScript/src/compiler/tsconfig.json", import.meta.url).pathname;
+    const configFile = ts.readConfigFile(configFileName, ts.sys.readFile);
+    const parsedCommandLine = ts.parseJsonConfigFileContent(configFile.config, ts.sys, path.dirname(configFileName));
+    const host = ts.createCompilerHost(parsedCommandLine.options);
+    tsProgram = ts.createProgram({
+        rootNames: parsedCommandLine.fileNames,
+        options: parsedCommandLine.options,
+        host,
+    });
+}
+
+function createChecker() {
+    // checker is created lazily, for measuring symbol time in a loop
+    // we need to create it first.
+    project.getSymbolAtPosition("core.ts", 0);
+}
+
+function tsCreateChecker() {
+    tsProgram.getTypeChecker();
+}
+
 function getDebugTS() {
     file = project.getSourceFile("debug.ts")!;
 }
 
 function getProgramTS() {
     file = project.getSourceFile("program.ts")!;
+}
+
+function tsGetProgramTS() {
+    tsFile = tsProgram.getSourceFile(new URL("../../../_submodules/TypeScript/src/compiler/program.ts", import.meta.url).pathname)!;
 }
 
 function getCheckerTS() {
