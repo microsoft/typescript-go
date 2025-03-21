@@ -212,10 +212,15 @@ const goTestEnv = {
     ...(process.platform === "win32" ? { GOFLAGS: "-count=1" } : {}), // Go test caching takes a long time on Windows.
 };
 
+const goTestSumFlags = [
+    "--format-hide-empty-pkg",
+    ...(!isCI ? ["--hide-summary", "skipped"] : []),
+];
+
 const $test = $({ env: goTestEnv });
 
 const gotestsum = memoize(() => {
-    const args = isInstalled("gotestsum") ? ["gotestsum", "--format-hide-empty-pkg", "--"] : ["go", "test"];
+    const args = isInstalled("gotestsum") ? ["gotestsum", ...goTestSumFlags, "--"] : ["go", "test"];
     return args.concat(goTestFlags);
 });
 
