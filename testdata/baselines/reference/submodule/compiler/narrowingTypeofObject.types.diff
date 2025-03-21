@@ -9,26 +9,12 @@
  >x : number & { _foo: string; }
  >'object' : "object"
  
-@@= skipped -10, +10 lines =@@
- }
- 
- function f1(x: F & { foo: number }) {
-->f1 : (x: F & { foo: number; }) => void
-->x : F & { foo: number; }
-+>f1 : (x: (F) & { foo: number; }) => void
-+>x : (F) & { foo: number; }
- >foo : number
+@@= skipped -16, +16 lines =@@
  
      if (typeof x !== "object") {
  >typeof x !== "object" : boolean
 ->typeof x : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
-->x : F & { foo: number; }
 +>typeof x : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
-+>x : (F) & { foo: number; }
+ >x : F & { foo: number; }
  >"object" : "object"
  
-         x;
-->x : F & { foo: number; }
-+>x : (F) & { foo: number; }
-     }
- }

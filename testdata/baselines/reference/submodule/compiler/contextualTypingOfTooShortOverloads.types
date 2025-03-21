@@ -45,7 +45,7 @@ interface MyApp {
 
 interface IRouterHandler<T> {
     (...handlers: RequestHandler[]): T;
->handlers : (RequestHandler)[]
+>handlers : RequestHandler[]
 
     (...handlers: RequestHandlerParams[]): T;
 >handlers : RequestHandlerParams[]
@@ -54,7 +54,7 @@ interface IRouterHandler<T> {
 interface IRouterMatcher<T> {
     (path: PathParams, ...handlers: RequestHandler[]): T;
 >path : PathParams
->handlers : (RequestHandler)[]
+>handlers : RequestHandler[]
 
     (path: PathParams, ...handlers: RequestHandlerParams[]): T;
 >path : PathParams
