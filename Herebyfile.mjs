@@ -209,6 +209,7 @@ const goTestFlags = [
 
 const goTestEnv = {
     ...(options.concurrentTestPrograms ? { TS_TEST_PROGRAM_SINGLE_THREADED: "false" } : {}),
+    ...(process.platform === "win32" ? { GOFLAGS: "-count=1" } : {}), // Go test caching takes a long time on Windows.
 };
 
 const $test = $({ env: goTestEnv });
