@@ -150,6 +150,10 @@ func (p *Parser) attachJSDoc(parent *ast.Node, jsDoc []*ast.Node) {
 							declaration.AsVariableDeclaration().Type = p.makeNewType(tag.AsJSDocTypeTag().TypeExpression, declaration)
 						}
 					}
+				} else if parent.Kind == ast.KindVariableDeclaration {
+					if parent.AsVariableDeclaration().Type == nil {
+						parent.AsVariableDeclaration().Type = p.makeNewType(tag.AsJSDocTypeTag().TypeExpression, parent)
+					}
 				} else if parent.Kind == ast.KindPropertyDeclaration {
 					decl := parent.AsPropertyDeclaration()
 					if decl.Type == nil {
@@ -278,8 +282,11 @@ func (p *Parser) makeNewType(typeExpression *ast.TypeNode, host *ast.Node) *ast.
 	if typeExpression == nil || typeExpression.Type() == nil {
 		return nil
 	}
-	// TODO: Panic if Host is already set
-	typeExpression.AsJSDocTypeExpression().Host = host
+	if typeExpression.AsJSDocTypeExpression().Host == nil {
+		typeExpression.AsJSDocTypeExpression().Host = host
+	} else {
+		panic("JSDoc type expression already has a host: " + typeExpression.AsJSDocTypeExpression().Host.Kind.String())
+	}
 	t := typeExpression.Type().Clone(&p.factory)
 	t.Flags |= typeExpression.Flags | ast.NodeFlagsSynthesized
 	if host != nil {

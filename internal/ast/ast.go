@@ -8564,7 +8564,7 @@ func (node *JSDocOverloadTag) Clone(f *NodeFactory) *Node {
 type JSDocTypedefTag struct {
 	JSDocTagBase
 	TypeExpression *Node
-	name       *IdentifierNode
+	name           *IdentifierNode
 }
 
 func (f *NodeFactory) NewJSDocTypedefTag(tagName *IdentifierNode, typeExpression *Node, name *IdentifierNode, comment *NodeList) *Node {
@@ -8599,6 +8599,7 @@ func (node *JSDocTypedefTag) Clone(f *NodeFactory) *Node {
 }
 
 func (node *JSDocTypedefTag) Name() *DeclarationName { return node.name }
+
 // JSDocTypeLiteral
 type JSDocTypeLiteral struct {
 	TypeNodeBase
