@@ -10826,7 +10826,15 @@ func (c *Checker) isPropertyAccessible(node *ast.Node, isSuper bool, isWrite boo
 }
 
 func (c *Checker) containerSeemsToBeEmptyDomElement(containingType *Type) bool {
-	return false // !!!
+	if c.compilerOptions.Lib == nil || slices.Contains(c.compilerOptions.Lib, "dom") {
+		return false
+	}
+	return everyContainedType(containingType, func(t *Type) bool {
+		if t.symbol == nil {
+			return false
+		}
+		return t.symbol.Name == "EventTarget" || t.symbol.Name == "Node" || (strings.HasPrefix(t.symbol.Name, "HTML") && strings.HasSuffix(t.symbol.Name, "Element"))
+	}) && c.isEmptyObjectType(containingType)
 }
 
 func (c *Checker) checkAndReportErrorForExtendingInterface(errorLocation *ast.Node) bool {
@@ -24526,6 +24534,13 @@ func someType(t *Type, f func(*Type) bool) bool {
 
 func everyType(t *Type, f func(*Type) bool) bool {
 	if t.flags&TypeFlagsUnion != 0 {
+		return core.Every(t.Types(), f)
+	}
+	return f(t)
+}
+
+func everyContainedType(t *Type, f func(*Type) bool) bool {
+	if t.flags&TypeFlagsUnionOrIntersection != 0 {
 		return core.Every(t.Types(), f)
 	}
 	return f(t)
