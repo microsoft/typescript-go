@@ -54,12 +54,16 @@ type NodeFactory struct {
 	expressionStatementPool          core.Pool[ExpressionStatement]
 	identifierPool                   core.Pool[Identifier]
 	ifStatementPool                  core.Pool[IfStatement]
+	interfaceDeclarationPool         core.Pool[InterfaceDeclaration]
 	jsdocPool                        core.Pool[JSDoc]
 	jsdocTextPool                    core.Pool[JSDocText]
+	keywordExpressionPool            core.Pool[KeywordExpression]
 	keywordTypeNodePool              core.Pool[KeywordTypeNode]
 	literalTypeNodePool              core.Pool[LiteralTypeNode]
+	methodSignatureDeclarationPool   core.Pool[MethodSignatureDeclaration]
 	modifierListPool                 core.Pool[ModifierList]
 	nodeListPool                     core.Pool[NodeList]
+	numericLiteralPool               core.Pool[NumericLiteral]
 	parameterDeclarationPool         core.Pool[ParameterDeclaration]
 	parenthesizedExpressionPool      core.Pool[ParenthesizedExpression]
 	propertyAccessExpressionPool     core.Pool[PropertyAccessExpression]
@@ -69,6 +73,7 @@ type NodeFactory struct {
 	stringLiteralPool                core.Pool[StringLiteral]
 	tokenPool                        core.Pool[Token]
 	typeReferenceNodePool            core.Pool[TypeReferenceNode]
+	unionTypeNodePool                core.Pool[UnionTypeNode]
 	variableDeclarationListPool      core.Pool[VariableDeclarationList]
 	variableDeclarationPool          core.Pool[VariableDeclaration]
 	variableStatementPool            core.Pool[VariableStatement]
@@ -3190,7 +3195,7 @@ type InterfaceDeclaration struct {
 }
 
 func (f *NodeFactory) NewInterfaceDeclaration(modifiers *ModifierList, name *IdentifierNode, typeParameters *NodeList, heritageClauses *NodeList, members *NodeList) *Node {
-	data := &InterfaceDeclaration{}
+	data := f.interfaceDeclarationPool.New()
 	data.modifiers = modifiers
 	data.name = name
 	data.TypeParameters = typeParameters
@@ -4307,7 +4312,7 @@ type MethodSignatureDeclaration struct {
 }
 
 func (f *NodeFactory) NewMethodSignatureDeclaration(modifiers *ModifierList, name *PropertyName, postfixToken *TokenNode, typeParameters *NodeList, parameters *NodeList, returnType *TypeNode) *Node {
-	data := &MethodSignatureDeclaration{}
+	data := f.methodSignatureDeclarationPool.New()
 	data.modifiers = modifiers
 	data.name = name
 	data.PostfixToken = postfixToken
@@ -4568,7 +4573,7 @@ type KeywordExpression struct {
 }
 
 func (f *NodeFactory) NewKeywordExpression(kind Kind) *Node {
-	return newNode(kind, &KeywordExpression{}, f.hooks)
+	return newNode(kind, f.keywordExpressionPool.New(), f.hooks)
 }
 
 func (node *KeywordExpression) Clone(f *NodeFactory) *Node {
@@ -4613,7 +4618,7 @@ type NumericLiteral struct {
 }
 
 func (f *NodeFactory) NewNumericLiteral(text string) *Node {
-	data := &NumericLiteral{}
+	data := f.numericLiteralPool.New()
 	data.Text = text
 	return newNode(KindNumericLiteral, data, f.hooks)
 }
@@ -5908,7 +5913,7 @@ func (f *NodeFactory) UpdateUnionTypeNode(node *UnionTypeNode, types *TypeList) 
 }
 
 func (f *NodeFactory) NewUnionTypeNode(types *NodeList) *Node {
-	data := &UnionTypeNode{}
+	data := f.unionTypeNodePool.New()
 	data.Types = types
 	return newNode(KindUnionType, data, f.hooks)
 }
