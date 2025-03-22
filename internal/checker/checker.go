@@ -6,7 +6,6 @@ import (
 	"maps"
 	"math"
 
-	// "runtime"
 	"slices"
 	"strconv"
 	"strings"
@@ -23169,9 +23168,6 @@ func (c *Checker) setStructuredTypeMembers(t *Type, members ast.SymbolTable, cal
 	t.objectFlags |= ObjectFlagsMembersResolved
 	data := t.AsStructuredType()
 	data.members = members
-	// if t.id == 167 {
-	// 	runtime.Breakpoint()
-	// }
 	data.properties = c.getNamedMembers(members)
 	if len(callSignatures) != 0 {
 		if len(constructSignatures) != 0 {
