@@ -188,6 +188,13 @@ func (p *Printer) printTypeNoAlias(t *Type) {
 	case t.flags&TypeFlagsStringMapping != 0:
 		p.printStringMappingType(t)
 	case t.flags&TypeFlagsSubstitution != 0:
+		if p.c.isNoInferType(t) {
+			if noInferSymbol := p.c.getGlobalNoInferSymbolOrNil(); noInferSymbol != nil {
+				p.printQualifiedName(noInferSymbol)
+				p.printTypeArguments([]*Type{t.AsSubstitutionType().baseType})
+				break
+			}
+		}
 		p.printType(t.AsSubstitutionType().baseType)
 	}
 	p.depth--
@@ -239,7 +246,7 @@ func (p *Printer) printBooleanLiteral(b bool) {
 }
 
 func (p *Printer) printBigIntLiteral(b jsnum.PseudoBigInt) {
-	p.print(b.String())
+	p.print(b.String() + "n")
 }
 
 func (p *Printer) printUniqueESSymbolType(t *Type) {
@@ -311,7 +318,7 @@ func (p *Printer) printTypeReference(t *Type) {
 func (p *Printer) printTypeArguments(typeArguments []*Type) {
 	if len(typeArguments) != 0 {
 		p.print("<")
-		tail := false
+		var tail bool
 		for _, t := range typeArguments {
 			if tail {
 				p.print(", ")
@@ -333,10 +340,13 @@ func (p *Printer) printArrayType(t *Type) {
 }
 
 func (p *Printer) printTupleType(t *Type) {
-	tail := false
+	if t.TargetTupleType().readonly {
+		p.print("readonly ")
+	}
 	p.print("[")
 	elementInfos := t.TargetTupleType().elementInfos
 	typeArguments := p.c.getTypeArguments(t)
+	var tail bool
 	for i, info := range elementInfos {
 		t := typeArguments[i]
 		if tail {
@@ -348,18 +358,20 @@ func (p *Printer) printTupleType(t *Type) {
 		if info.labeledDeclaration != nil {
 			p.print(info.labeledDeclaration.Name().Text())
 			if info.flags&ElementFlagsOptional != 0 {
-				p.print("?")
-			}
-			p.print(": ")
-			if info.flags&ElementFlagsRest != 0 {
-				p.printTypeEx(t, ast.TypePrecedencePostfix)
-				p.print("[]")
+				p.print("?: ")
+				p.printType(p.c.removeMissingType(t, true))
 			} else {
-				p.printType(t)
+				p.print(": ")
+				if info.flags&ElementFlagsRest != 0 {
+					p.printTypeEx(t, ast.TypePrecedencePostfix)
+					p.print("[]")
+				} else {
+					p.printType(t)
+				}
 			}
 		} else {
 			if info.flags&ElementFlagsOptional != 0 {
-				p.printTypeEx(t, ast.TypePrecedencePostfix)
+				p.printTypeEx(p.c.removeMissingType(t, true), ast.TypePrecedencePostfix)
 				p.print("?")
 			} else if info.flags&ElementFlagsRest != 0 {
 				p.printTypeEx(t, ast.TypePrecedencePostfix)
@@ -434,7 +446,7 @@ func (p *Printer) printAnonymousType(t *Type) {
 			p.print("?")
 		}
 		p.print(": ")
-		p.printType(p.c.getTypeOfSymbol(prop))
+		p.printType(p.c.getNonMissingTypeOfSymbol(prop))
 		p.print(";")
 		hasMembers = true
 	}
@@ -459,6 +471,11 @@ func (p *Printer) printSignature(sig *Signature, returnSeparator string) {
 	}
 	p.print("(")
 	var tail bool
+	if sig.thisParameter != nil {
+		p.print("this: ")
+		p.printType(p.c.getTypeOfSymbol(sig.thisParameter))
+		tail = true
+	}
 	for i, param := range sig.parameters {
 		if tail {
 			p.print(", ")

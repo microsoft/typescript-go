@@ -1,14 +1,6 @@
 --- old.jsxChildrenIndividualErrorElaborations.types
 +++ new.jsxChildrenIndividualErrorElaborations.types
-@@= skipped -0, +0 lines =@@
- //// [tests/cases/compiler/jsxChildrenIndividualErrorElaborations.tsx] ////
- 
--=== Performance Stats ===
--Assignability cache: 2,500
--Type Count: 10,000
--Instantiation count: 100,000
--Symbol count: 50,000
--
+@@= skipped -2, +2 lines =@@
  === index.tsx ===
  /// <reference path="react16.d.ts" />
  import * as React from "react";
@@ -16,11 +8,8 @@
 +>React : any
  
  interface Props {
-+>Props : Props
-+
    children: (x: number) => string;
- >children : (x: number) => string
- >x : number
+@@= skipped -9, +9 lines =@@
  }
  
  export function Blah(props: Props) {
@@ -102,8 +91,6 @@
 +>Blah : (props: Props) => any
  
  interface PropsArr {
-+>PropsArr : PropsArr
-+
    children: ((x: number) => string)[];
 ->children : ((x: number) => string)[]
 +>children : (x: number) => string[]
@@ -131,7 +118,7 @@
  
    {x => x}
  >x => x : (x: any) => any
-@@= skipped -97, +95 lines =@@
+@@= skipped -80, +80 lines =@@
  >x : any
  
  </Blah2>
@@ -183,11 +170,9 @@
  
  type Cb = (x: number) => string;
  >Cb : Cb
- >x : number
+@@= skipped -37, +37 lines =@@
  
  interface PropsMixed {
-+>PropsMixed : PropsMixed
-+
    children: Cb | Cb[];
 ->children : Cb | Cb[]
 +>children : Cb[] | Cb

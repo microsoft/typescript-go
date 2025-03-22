@@ -1,12 +1,6 @@
 --- old.esNextWeakRefs_IterableWeakMap.types
 +++ new.esNextWeakRefs_IterableWeakMap.types
-@@= skipped -0, +0 lines =@@
- //// [tests/cases/compiler/esNextWeakRefs_IterableWeakMap.ts] ////
- 
--=== Performance Stats ===
--Type Count: 1,000
--Instantiation count: 2,500
--
+@@= skipped -2, +2 lines =@@
  === esNextWeakRefs_IterableWeakMap.ts ===
  /** `static #cleanup` */
  const IterableWeakMap_cleanup = ({ ref, set }: {
@@ -17,16 +11,7 @@
  >ref : WeakRef<object>
  >set : Set<WeakRef<object>>
  
-@@= skipped -30, +26 lines =@@
- // Based on: https://github.com/tc39/proposal-weakrefs/blob/master/README.md#iterable-weakmaps
- export class IterableWeakMap<K extends object, V> implements WeakMap<K, V> {
- >IterableWeakMap : IterableWeakMap<K, V>
-+>K : K
-+>V : V
- 
-     declare readonly [Symbol.toStringTag]: "IterableWeakMap";
- >[Symbol.toStringTag] : "IterableWeakMap"
-@@= skipped -23, +25 lines =@@
+@@= skipped -47, +47 lines =@@
  >#finalizationGroup : FinalizationRegistry<{ readonly ref: WeakRef<object>; readonly set: Set<WeakRef<object>>; }>
  >new FinalizationRegistry(IterableWeakMap_cleanup) : FinalizationRegistry<{ readonly ref: WeakRef<object>; readonly set: Set<WeakRef<object>>; }>
  >FinalizationRegistry : FinalizationRegistryConstructor

@@ -2368,24 +2368,28 @@ module TypeScript {
 
 //// [typescript.js]
 //// [parserRealSource11.js]
+// Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
+// See LICENSE.txt in the project root for complete license information.
+///<reference path='typescript.ts' />
 var TypeScript;
 (function (TypeScript) {
     class ASTSpan {
-        minChar = -1;
-        limChar = -1;
+        minChar = -1; // -1 = "undefined" or "compiler generated"
+        limChar = -1; // -1 = "undefined" or "compiler generated"   
     }
     TypeScript.ASTSpan = ASTSpan;
     class AST extends ASTSpan {
         nodeType;
         type = null;
         flags = ASTFlags.Writeable;
+        // REVIEW: for diagnostic purposes
         passCreated = CompilerDiagnostics.analysisPass;
         preComments = null;
         postComments = null;
         isParenthesized = false;
         constructor(nodeType) {
-            this.nodeType = nodeType;
             super();
+            this.nodeType = nodeType;
         }
         isExpression() { return false; }
         isStatementOrExpression() { return false; }
@@ -2496,6 +2500,7 @@ var TypeScript;
             }
         }
         addToControlFlow(context) {
+            // by default, AST adds itself to current basic block and does not check its children
             context.walker.options.goChildren = false;
             context.addContent(this);
         }
@@ -2511,6 +2516,7 @@ var TypeScript;
             var start = 0;
             var i = 0;
             while (i <= name.length - 6) {
+                // Look for escape sequence \uxxxx
                 if (name.charAt(i) == '\\' && name.charAt(i + 1) == 'u') {
                     var charCode = parseInt(name.substr(i + 2, 4), 16);
                     resolved += name.substr(start, i - start);
@@ -2521,6 +2527,7 @@ var TypeScript;
                 }
                 i++;
             }
+            // Append remaining string
             resolved += name.substring(start);
             return resolved;
         }
@@ -2593,10 +2600,22 @@ var TypeScript;
         sym = null;
         cloId = -1;
         text;
+        // 'actualText' is the text that the user has entered for the identifier. the text might 
+        // include any Unicode escape sequences (e.g.: \u0041 for 'A'). 'text', however, contains 
+        // the resolved value of any escape sequences in the actual text; so in the previous 
+        // example, actualText = '\u0041', text = 'A'.
+        //
+        // For purposes of finding a symbol, use text, as this will allow you to match all 
+        // variations of the variable text. For full-fidelity translation of the user input, such
+        // as emitting, use the actualText field.
+        // 
+        // Note: 
+        //    To change text, and to avoid running into a situation where 'actualText' does not 
+        //    match 'text', always use setText.
         constructor(actualText, hasEscapeSequence) {
+            super(NodeType.Name);
             this.actualText = actualText;
             this.hasEscapeSequence = hasEscapeSequence;
-            super(NodeType.Name);
             this.setText(actualText, hasEscapeSequence);
         }
         setText(actualText, hasEscapeSequence) {
@@ -2640,14 +2659,15 @@ var TypeScript;
             return true;
         }
         emit(emitter, tokenId, startLine) {
+            // Emit nothing for a missing ID
         }
     }
     TypeScript.MissingIdentifier = MissingIdentifier;
     class Label extends AST {
         id;
         constructor(id) {
-            this.id = id;
             super(NodeType.Label);
+            this.id = id;
         }
         printLabel() { return this.id.actualText + ":"; }
         typeCheck(typeFlow) {
@@ -2676,14 +2696,15 @@ var TypeScript;
     TypeScript.Expression = Expression;
     class UnaryExpression extends Expression {
         operand;
-        targetType = null;
+        targetType = null; // Target type for an object literal (null if no target type)
         castTerm = null;
         constructor(nodeType, operand) {
-            this.operand = operand;
             super(nodeType);
+            this.operand = operand;
         }
         addToControlFlow(context) {
             super.addToControlFlow(context);
+            // TODO: add successor as catch block/finally block if present
             if (this.nodeType == NodeType.Throw) {
                 context.returnStmt();
             }
@@ -2729,6 +2750,9 @@ var TypeScript;
                     this.type = this.castTerm.type;
                     return this;
                 case NodeType.Void:
+                    // REVIEW - Although this is good to do for completeness's sake,
+                    // this shouldn't be strictly necessary from the void operator's
+                    // point of view
                     this.operand = typeFlow.typeCheck(this.operand);
                     this.type = typeFlow.checker.undefinedType;
                     break;
@@ -2817,9 +2841,9 @@ var TypeScript;
         target;
         arguments;
         constructor(nodeType, target, arguments) {
+            super(nodeType);
             this.target = target;
             this.arguments = arguments;
-            super(nodeType);
             this.minChar = this.target.minChar;
         }
         signature = null;
@@ -2849,9 +2873,9 @@ var TypeScript;
         operand1;
         operand2;
         constructor(nodeType, operand1, operand2) {
+            super(nodeType);
             this.operand1 = operand1;
             this.operand2 = operand2;
-            super(nodeType);
         }
         typeCheck(typeFlow) {
             switch (this.nodeType) {
@@ -3002,10 +3026,10 @@ var TypeScript;
         operand2;
         operand3;
         constructor(operand1, operand2, operand3) {
+            super(NodeType.ConditionalExpression);
             this.operand1 = operand1;
             this.operand2 = operand2;
             this.operand3 = operand3;
-            super(NodeType.ConditionalExpression);
         }
         typeCheck(typeFlow) {
             return typeFlow.typeCheckQMark(this);
@@ -3027,9 +3051,9 @@ var TypeScript;
         value;
         hasEmptyFraction;
         constructor(value, hasEmptyFraction) {
+            super(NodeType.NumberLit);
             this.value = value;
             this.hasEmptyFraction = hasEmptyFraction;
-            super(NodeType.NumberLit);
         }
         isNegativeZero = false;
         typeCheck(typeFlow) {
@@ -3067,8 +3091,8 @@ var TypeScript;
     class RegexLiteral extends Expression {
         regex;
         constructor(regex) {
-            this.regex = regex;
             super(NodeType.Regex);
+            this.regex = regex;
         }
         typeCheck(typeFlow) {
             this.type = typeFlow.regexType;
@@ -3086,8 +3110,8 @@ var TypeScript;
     class StringLiteral extends Expression {
         text;
         constructor(text) {
-            this.text = text;
             super(NodeType.QString);
+            this.text = text;
         }
         emit(emitter, tokenId, startLine) {
             emitter.emitParensAndCommentsInPlace(this, true);
@@ -3121,12 +3145,14 @@ var TypeScript;
         varFlags = VarFlags.None;
         isDynamicImport = false;
         constructor(id, alias) {
+            super(NodeType.ImportDeclaration);
             this.id = id;
             this.alias = alias;
-            super(NodeType.ImportDeclaration);
         }
         emit(emitter, tokenId, startLine) {
             var mod = this.alias.type;
+            // REVIEW: Only modules may be aliased for now, though there's no real
+            // restriction on what the type symbol may be
             if (!this.isDynamicImport || (this.id.sym && !this.id.sym.onlyReferencedAsTypeRef)) {
                 var prevModAliasId = emitter.modAliasId;
                 var prevFirstModAlias = emitter.firstModAlias;
@@ -3136,6 +3162,7 @@ var TypeScript;
                 emitter.modAliasId = this.id.actualText;
                 emitter.firstModAlias = this.firstAliasedModToString();
                 emitter.emitJavascript(this.alias, TokenID.Tilde, false);
+                // the dynamic import case will insert the semi-colon automatically
                 if (!this.isDynamicImport) {
                     emitter.writeToOutput(";");
                 }
@@ -3177,9 +3204,9 @@ var TypeScript;
         varFlags = VarFlags.None;
         sym = null;
         constructor(id, nodeType, nestingLevel) {
+            super(nodeType);
             this.id = id;
             this.nestingLevel = nestingLevel;
-            super(nodeType);
         }
         isStatementOrExpression() { return true; }
         isPrivate() { return hasFlag(this.varFlags, VarFlags.Private); }
@@ -3259,9 +3286,10 @@ var TypeScript;
         leftCurlyCount = 0;
         rightCurlyCount = 0;
         returnStatementsWithExpressions = [];
-        scopeType = null;
+        scopeType = null; // Type of the FuncDecl, before target typing
         endingToken = null;
         constructor(name, bod, isConstructor, arguments, vars, scopes, statics, nodeType) {
+            super(nodeType);
             this.name = name;
             this.bod = bod;
             this.isConstructor = isConstructor;
@@ -3269,7 +3297,6 @@ var TypeScript;
             this.vars = vars;
             this.scopes = scopes;
             this.statics = statics;
-            super(nodeType);
         }
         internalName() {
             if (this.internalNameCache == null) {
@@ -3391,6 +3418,7 @@ var TypeScript;
         rightCurlyCount = 0;
         vars;
         scopes;
+        // Remember if the script contains Unicode chars, that is needed when generating code for this script object to decide the output file correct encoding.
         containsUnicodeChar = false;
         containsUnicodeCharInComment = false;
         constructor(vars, scopes) {
@@ -3452,9 +3480,9 @@ var TypeScript;
         leftCurlyCount = 0;
         rightCurlyCount = 0;
         constructor(nodeType, name, members) {
+            super(nodeType);
             this.name = name;
             this.members = members;
-            super(nodeType);
         }
     }
     TypeScript.NamedDeclaration = NamedDeclaration;
@@ -3466,11 +3494,12 @@ var TypeScript;
         amdDependencies = [];
         vars;
         scopes;
+        // Remember if the module contains Unicode chars, that is needed for dynamic module as we will generate a file for each.
         containsUnicodeChar = false;
         containsUnicodeCharInComment = false;
         constructor(name, members, vars, scopes, endingToken) {
-            this.endingToken = endingToken;
             super(NodeType.ModuleDeclaration, name, members);
+            this.endingToken = endingToken;
             this.vars = vars;
             this.scopes = scopes;
             this.prettyName = this.name.actualText;
@@ -3500,9 +3529,9 @@ var TypeScript;
         implementsList;
         varFlags = VarFlags.None;
         constructor(nodeType, name, extendsList, implementsList, members) {
+            super(nodeType, name, members);
             this.extendsList = extendsList;
             this.implementsList = implementsList;
-            super(nodeType, name, members);
         }
         isExported() {
             return hasFlag(this.varFlags, VarFlags.Exported);
@@ -3557,9 +3586,9 @@ var TypeScript;
         labels;
         stmt;
         constructor(labels, stmt) {
+            super(NodeType.LabeledStatement);
             this.labels = labels;
             this.stmt = stmt;
-            super(NodeType.LabeledStatement);
         }
         emit(emitter, tokenId, startLine) {
             emitter.emitParensAndCommentsInPlace(this, true);
@@ -3591,9 +3620,9 @@ var TypeScript;
         statements;
         isStatementBlock;
         constructor(statements, isStatementBlock) {
+            super(NodeType.Block);
             this.statements = statements;
             this.isStatementBlock = isStatementBlock;
-            super(NodeType.Block);
         }
         emit(emitter, tokenId, startLine) {
             emitter.emitParensAndCommentsInPlace(this, true);
@@ -3695,8 +3724,8 @@ var TypeScript;
         cond;
         body = null;
         constructor(cond) {
-            this.cond = cond;
             super(NodeType.While);
+            this.cond = cond;
         }
         isLoop() { return true; }
         emit(emitter, tokenId, startLine) {
@@ -3736,6 +3765,7 @@ var TypeScript;
             }
             context.current = afterLoop;
             condBlock.addSuccessor(afterLoop);
+            // TODO: check for while (true) and then only continue if afterLoop has predecessors
             context.noContinuation = false;
             context.walker.options.goChildren = false;
         }
@@ -3784,6 +3814,7 @@ var TypeScript;
                 var loopEnd = context.current;
                 loopEnd.addSuccessor(loopStart);
                 context.addContent(this.cond);
+                // TODO: check for while (true) 
                 context.current = afterLoop;
                 loopEnd.addSuccessor(afterLoop);
             }
@@ -3800,8 +3831,8 @@ var TypeScript;
         elseBod = null;
         statement = new ASTSpan();
         constructor(cond) {
-            this.cond = cond;
             super(NodeType.If);
+            this.cond = cond;
         }
         isCompoundStatement() { return true; }
         emit(emitter, tokenId, startLine) {
@@ -3839,6 +3870,7 @@ var TypeScript;
                 context.current.addSuccessor(afterIf);
             }
             if (this.elseBod) {
+                // current block will be thenBod
                 context.current = new BasicBlock();
                 context.noContinuation = false;
                 beforeIf.addSuccessor(context.current);
@@ -3848,6 +3880,7 @@ var TypeScript;
                     context.current.addSuccessor(afterIf);
                 }
                 else {
+                    // thenBod created continuation for if statement
                     if (hasContinuation) {
                         context.noContinuation = false;
                     }
@@ -3909,9 +3942,9 @@ var TypeScript;
         lval;
         obj;
         constructor(lval, obj) {
+            super(NodeType.ForIn);
             this.lval = lval;
             this.obj = obj;
-            super(NodeType.ForIn);
             if (this.lval && (this.lval.nodeType == NodeType.VarDecl)) {
                 this.lval.varFlags |= VarFlags.AutoInit;
             }
@@ -3931,6 +3964,7 @@ var TypeScript;
                 else {
                     singleItem = this.body;
                 }
+                // match template for filtering 'own' properties from obj
                 if (singleItem !== null) {
                     if (singleItem.nodeType == NodeType.Block) {
                         var block = singleItem;
@@ -4026,8 +4060,8 @@ var TypeScript;
         body;
         incr;
         constructor(init) {
-            this.init = init;
             super(NodeType.For);
+            this.init = init;
         }
         isLoop() { return true; }
         emit(emitter, tokenId, startLine) {
@@ -4119,8 +4153,8 @@ var TypeScript;
         isCompoundStatement() { return true; }
         withSym = null;
         constructor(expr) {
-            this.expr = expr;
             super(NodeType.With);
+            this.expr = expr;
         }
         emit(emitter, tokenId, startLine) {
             emitter.emitParensAndCommentsInPlace(this, true);
@@ -4145,8 +4179,8 @@ var TypeScript;
         defaultCase = null;
         statement = new ASTSpan();
         constructor(val) {
-            this.val = val;
             super(NodeType.Switch);
+            this.val = val;
         }
         isCompoundStatement() { return true; }
         emit(emitter, tokenId, startLine) {
@@ -4183,6 +4217,7 @@ var TypeScript;
             this.type = typeFlow.voidType;
             return this;
         }
+        // if there are break statements that match this switch, then just link cond block with block after switch
         addToControlFlow(context) {
             var condBlock = context.current;
             context.addContent(this.val);
@@ -4237,9 +4272,12 @@ var TypeScript;
             this.type = typeFlow.voidType;
             return this;
         }
+        // TODO: more reasoning about unreachable cases (such as duplicate literals as case expressions)
+        // for now, assume all cases are reachable, regardless of whether some cases fall through
         addToControlFlow(context) {
             var execBlock = new BasicBlock();
             var sw = context.currentSwitch[context.currentSwitch.length - 1];
+            // TODO: fall-through from previous (+ to end of switch)
             if (this.expr) {
                 var exprBlock = new BasicBlock();
                 context.current = exprBlock;
@@ -4263,9 +4301,9 @@ var TypeScript;
         term;
         arrayCount;
         constructor(term, arrayCount) {
+            super(NodeType.TypeRef);
             this.term = term;
             this.arrayCount = arrayCount;
-            super(NodeType.TypeRef);
         }
         emit(emitter, tokenId, startLine) {
             throw new Error("should not emit a type ref");
@@ -4280,6 +4318,7 @@ var TypeScript;
             }
             typeFlow.checkForVoidConstructor(typeLink.type, this);
             this.type = typeLink.type;
+            // in error recovery cases, there may not be a term
             if (this.term) {
                 this.term.type = this.type;
             }
@@ -4292,9 +4331,9 @@ var TypeScript;
         tryNode;
         finallyNode;
         constructor(tryNode, finallyNode) {
+            super(NodeType.TryFinally);
             this.tryNode = tryNode;
             this.finallyNode = finallyNode;
-            super(NodeType.TryFinally);
         }
         isCompoundStatement() { return true; }
         emit(emitter, tokenId, startLine) {
@@ -4337,9 +4376,9 @@ var TypeScript;
         tryNode;
         catchNode;
         constructor(tryNode, catchNode) {
+            super(NodeType.TryCatch);
             this.tryNode = tryNode;
             this.catchNode = catchNode;
-            super(NodeType.TryCatch);
         }
         isCompoundStatement() { return true; }
         emit(emitter, tokenId, startLine) {
@@ -4386,8 +4425,8 @@ var TypeScript;
     class Try extends Statement {
         body;
         constructor(body) {
-            this.body = body;
             super(NodeType.Try);
+            this.body = body;
         }
         emit(emitter, tokenId, startLine) {
             emitter.emitParensAndCommentsInPlace(this, true);
@@ -4414,9 +4453,9 @@ var TypeScript;
         param;
         body;
         constructor(param, body) {
+            super(NodeType.Catch);
             this.param = param;
             this.body = body;
-            super(NodeType.Catch);
             if (this.param) {
                 this.param.varFlags |= VarFlags.AutoInit;
             }
@@ -4457,6 +4496,7 @@ var TypeScript;
             var varSym = new VariableSymbol(this.param.id.text, this.param.minChar, typeFlow.checker.locationInfo.unitIndex, exceptVar);
             exceptVar.symbol = varSym;
             exceptVar.typeLink = new TypeLink();
+            // var type for now (add syntax for type annotation)
             exceptVar.typeLink.type = typeFlow.anyType;
             var thisFnc = typeFlow.thisFnc;
             if (thisFnc && thisFnc.type) {
@@ -4468,6 +4508,10 @@ var TypeScript;
             this.param.sym = exceptVar.symbol;
             typeFlow.scope.enter(exceptVar.symbol.container, this.param, exceptVar.symbol, typeFlow.checker.errorReporter, false, false, false);
             this.body = typeFlow.typeCheck(this.body);
+            // if we're in provisional typecheck mode, clean up the symbol entry
+            // REVIEW: This is obviously bad form, since we're counting on the internal
+            // layout of the symbol table, but this is also the only place where we insert
+            // symbols during typecheck
             if (typeFlow.checker.inProvisionalTypecheckMode()) {
                 var table = typeFlow.scope.getTable();
                 table.secondaryTable.table[exceptVar.symbol.name] = undefined;
@@ -4481,8 +4525,8 @@ var TypeScript;
     class Finally extends Statement {
         body;
         constructor(body) {
-            this.body = body;
             super(NodeType.Finally);
+            this.body = body;
         }
         emit(emitter, tokenId, startLine) {
             emitter.emitParensAndCommentsInPlace(this, true);
@@ -4511,10 +4555,10 @@ var TypeScript;
         endsLine;
         text = null;
         constructor(content, isBlockComment, endsLine) {
+            super(NodeType.Comment);
             this.content = content;
             this.isBlockComment = isBlockComment;
             this.endsLine = endsLine;
-            super(NodeType.Comment);
         }
         getText() {
             if (this.text == null) {

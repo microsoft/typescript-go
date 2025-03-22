@@ -79,8 +79,8 @@ class Base {
 class Derived extends Base {
     z;
     constructor(x, y, z) {
-        this.z = z;
         super(x, y);
+        this.z = z;
     }
 }
 const Printable = (superClass) => class extends superClass {
@@ -122,6 +122,7 @@ class Thing3 extends Thing2 {
         this.print();
     }
 }
+// Repro from #13805
 const Timestamped = (Base) => {
     return class extends Base {
         timestamp = new Date();

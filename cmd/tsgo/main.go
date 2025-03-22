@@ -256,7 +256,13 @@ func runMain() int {
 	var stats table
 
 	stats.add("Files", len(program.SourceFiles()))
+	stats.add("Lines", program.LineCount())
+	stats.add("Identifiers", program.IdentifierCount())
+	stats.add("Symbols", program.SymbolCount())
 	stats.add("Types", program.TypeCount())
+	stats.add("Instantiations", program.InstantiationCount())
+	stats.add("Memory used", fmt.Sprintf("%vK", memStats.Alloc/1024))
+	stats.add("Memory allocs", strconv.FormatUint(memStats.Mallocs, 10))
 	stats.add("Parse time", parseTime)
 	if bindTime != 0 {
 		stats.add("Bind time", bindTime)
@@ -268,8 +274,6 @@ func runMain() int {
 		stats.add("Emit time", emitTime)
 	}
 	stats.add("Total time", totalTime)
-	stats.add("Memory used", fmt.Sprintf("%vK", memStats.Alloc/1024))
-	stats.add("Memory allocs", strconv.FormatUint(memStats.Mallocs, 10))
 
 	stats.print()
 
@@ -307,6 +311,14 @@ func (t *table) print() {
 
 func formatDuration(d time.Duration) string {
 	return fmt.Sprintf("%.3fs", d.Seconds())
+}
+
+func identifierCount(p *ts.Program) int {
+	count := 0
+	for _, file := range p.SourceFiles() {
+		count += file.IdentifierCount
+	}
+	return count
 }
 
 func listFiles(p *ts.Program) {
