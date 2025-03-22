@@ -15566,7 +15566,7 @@ func (c *Checker) getInferredTypeParameterConstraint(t *Type, omitTypeReferences
 				// present, we form an intersection of the inferred constraint types.
 				child := declaration.Parent
 				parent := child.Parent
-				for parent != nil && ast.IsParenthesizedExpression(parent) {
+				for parent != nil && ast.IsParenthesizedTypeNode(parent) {
 					child = parent
 					parent = child.Parent
 				}
