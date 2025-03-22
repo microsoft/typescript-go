@@ -10826,7 +10826,7 @@ func (c *Checker) isPropertyAccessible(node *ast.Node, isSuper bool, isWrite boo
 }
 
 func (c *Checker) containerSeemsToBeEmptyDomElement(containingType *Type) bool {
-	if c.compilerOptions.Lib == nil || slices.Contains(c.compilerOptions.Lib, "dom") {
+	if c.compilerOptions.Lib == nil || slices.Contains(c.compilerOptions.Lib, "lib.dom.d.ts") {
 		return false
 	}
 	return everyContainedType(containingType, func(t *Type) bool {
