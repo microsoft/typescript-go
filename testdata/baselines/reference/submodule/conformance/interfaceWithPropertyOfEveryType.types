@@ -16,12 +16,10 @@ module M {
 >1 : 1
 }
 enum E { A }
->E : E.A
+>E : E
 >A : E.A
 
 interface Foo {
->Foo : Foo
-
     a: number;
 >a : number
 
@@ -49,7 +47,6 @@ interface Foo {
 
     i: <T>(x: T) => T;
 >i : <T>(x: T) => T
->T : T
 >x : T
 
     j: Foo;
@@ -60,20 +57,22 @@ interface Foo {
 
     l: typeof f1;
 >l : () => void
+>f1 : () => void
 
     m: typeof M;
 >m : typeof M
+>M : typeof M
 
     n: {};
 >n : {}
 
     o: E;
->o : E.A
+>o : E
 }
 
 var a: Foo = {
 >a : Foo
->{    a: 1,    b: '',    c: true,    d: {},    e: null ,    f: [1],    g: {},    h: (x: number) => 1,    i: <T>(x: T) => x,    j: <Foo>null,    k: new C(),    l: f1,    m: M,    n: {},    o: E.A} : { a: number; b: string; c: true; d: {}; e: null; f: number[]; g: {}; h: (x: number) => number; i: <T>(x: T) => T; j: Foo; k: C; l: () => void; m: typeof M; n: {}; o: E.A; }
+>{    a: 1,    b: '',    c: true,    d: {},    e: null ,    f: [1],    g: {},    h: (x: number) => 1,    i: <T>(x: T) => x,    j: <Foo>null,    k: new C(),    l: f1,    m: M,    n: {},    o: E.A} : { a: number; b: string; c: true; d: {}; e: null; f: number[]; g: {}; h: (x: number) => number; i: <T>(x: T) => T; j: Foo; k: C; l: () => void; m: typeof M; n: {}; o: E; }
 
     a: 1,
 >a : number
@@ -112,7 +111,6 @@ var a: Foo = {
     i: <T>(x: T) => x,
 >i : <T>(x: T) => T
 ><T>(x: T) => x : <T>(x: T) => T
->T : T
 >x : T
 >x : T
 
@@ -138,8 +136,8 @@ var a: Foo = {
 >{} : {}
 
     o: E.A
->o : E.A
->E.A : E.A
+>o : E
+>E.A : E
 >E : typeof E
->A : E.A
+>A : E
 }

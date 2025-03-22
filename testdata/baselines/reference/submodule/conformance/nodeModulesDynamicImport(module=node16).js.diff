@@ -1,0 +1,12 @@
+--- old.nodeModulesDynamicImport(module=node16).js
++++ new.nodeModulesDynamicImport(module=node16).js
+@@= skipped -35, +35 lines =@@
+ export async function main() {
+     const { readFile } = await import("fs");
+ }
+-
+-
+-//// [index.d.ts]
+-export declare function main(): Promise<void>;
+-//// [index.d.ts]
+-export declare function main(): Promise<void>;

@@ -1,0 +1,42 @@
+--- old.implicitAnyFromCircularInference.js
++++ new.implicitAnyFromCircularInference.js
+@@= skipped -65, +65 lines =@@
+     return f1();
+ };
+ // Error expected
+-var f2 = function () { return f2(); };
++var f2 = () => f2();
+ // Error expected
+ function h() {
+     return foo();
+@@= skipped -9, +9 lines =@@
+     }
+ }
+ function foo(x) { return "abc"; }
+-var C = /** @class */ (function () {
+-    function C() {
+-        this.s = foo(this);
++class C {
++    s = foo(this);
++}
++class D {
++    // Error expected
++    get x() {
++        return this.x;
+     }
+-    return C;
+-}());
+-var D = /** @class */ (function () {
+-    function D() {
+-    }
+-    Object.defineProperty(D.prototype, "x", {
+-        // Error expected
+-        get: function () {
+-            return this.x;
+-        },
+-        enumerable: false,
+-        configurable: true
+-    });
+-    return D;
+-}());
++}

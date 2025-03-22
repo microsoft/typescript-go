@@ -45,7 +45,7 @@ declare function fn4() { };
 
 // Ambient enum with non - integer literal constant member
 declare enum E1 {
->E1 : E1.y
+>E1 : E1
 
     y = 4.23
 >y : E1.y
@@ -54,7 +54,7 @@ declare enum E1 {
 
 // Ambient enum with computer member
 declare enum E2 {
->E2 : E2.x
+>E2 : E2
 
     x = 'foo'.length
 >x : E2.x
@@ -96,8 +96,6 @@ declare module M1 {
 
 // Ambient external module not in the global module
 module M2 {
->M2 : any
-
     declare module 'nope' { }
 >'nope' : typeof import("nope")
 }

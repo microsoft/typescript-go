@@ -19,14 +19,15 @@ var c: void = x;
 
 var d: typeof undefined = x;
 >d : any
+>undefined : undefined
 >x : true
 
 enum E { A }
->E : E.A
+>E : E
 >A : E.A
 
 var e: E = x;
->e : E.A
+>e : E
 >x : true
 
 class C { foo: string }
@@ -38,7 +39,6 @@ var f: C = x;
 >x : true
 
 interface I { bar: string }
->I : I
 >bar : string
 
 var g: I = x;
@@ -66,7 +66,6 @@ M = x;
 
 function i<T>(a: T) {
 >i : <T>(a: T) => void
->T : T
 >a : T
 
     a = x;

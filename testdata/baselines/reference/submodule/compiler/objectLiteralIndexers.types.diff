@@ -1,22 +1,6 @@
 --- old.objectLiteralIndexers.types
 +++ new.objectLiteralIndexers.types
-@@= skipped -1, +1 lines =@@
- 
- === objectLiteralIndexers.ts ===
- interface A {
-+>A : A
-+
-     x: number;
- >x : number
- }
- 
- interface B extends A {
-+>B : B
-+
-     y: string;
- >y : string
- }
-@@= skipped -22, +26 lines =@@
+@@= skipped -23, +23 lines =@@
  >o1 : { [s: string]: A; [n: number]: B; }
  >s : string
  >n : number

@@ -42,7 +42,7 @@ function y4() { } // error
 >y4 : () => void
 
 enum y4 { One } // error
->y4 : y4.One
+>y4 : y4
 >One : y4.One
 
 // function then internal module
@@ -50,7 +50,6 @@ function y5() { }
 >y5 : () => void
 
 module y5 { } // ok since module is not instantiated
->y5 : () => void
 
 function y5a() { }
 >y5a : typeof y5a
@@ -72,8 +71,6 @@ function y5c() { }
 >y5c : () => void
 
 module y5c { export interface I { foo(): void } } // should be an error
->y5c : () => void
->I : I
 >foo : () => void
 
 // function then import, messes with other errors

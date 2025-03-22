@@ -1,0 +1,19 @@
+--- old.declFileTypeAnnotationBuiltInType.js
++++ new.declFileTypeAnnotationBuiltInType.js
+@@= skipped -76, +76 lines =@@
+ function foo10() {
+     return undefined;
+ }
+-
+-
+-//// [declFileTypeAnnotationBuiltInType.d.ts]
+-declare function foo(): string;
+-declare function foo2(): string;
+-declare function foo3(): number;
+-declare function foo4(): number;
+-declare function foo5(): boolean;
+-declare function foo6(): boolean;
+-declare function foo7(): void;
+-declare function foo8(): void;
+-declare function foo9(): any;
+-declare function foo10(): any;

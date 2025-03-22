@@ -29,14 +29,14 @@ var c = new C(1);
 >1 : 1
 
 var d = new D(1); // error
->d : D
->new D(1) : D
+>d : any
+>new D(1) : any
 >D : typeof D
 >1 : 1
 
 var e = new E(1); // error
->e : E
->new E(1) : E
+>e : any
+>new E(1) : any
 >E : typeof E
 >1 : 1
 
@@ -45,7 +45,6 @@ module Generic {
 
     class C<T> {
 >C : C<T>
->T : T
 
         public constructor(public x: T) { }
 >x : T
@@ -53,7 +52,6 @@ module Generic {
 
     class D<T> {
 >D : D<T>
->T : T
 
         private constructor(public x: T) { }
 >x : T
@@ -61,7 +59,6 @@ module Generic {
 
     class E<T> {
 >E : E<T>
->T : T
 
         protected constructor(public x: T) { }
 >x : T
@@ -74,14 +71,14 @@ module Generic {
 >1 : 1
 
     var d = new D(1); // error
->d : D<number>
->new D(1) : D<number>
+>d : any
+>new D(1) : any
 >D : typeof D
 >1 : 1
 
     var e = new E(1); // error
->e : E<number>
->new E(1) : E<number>
+>e : any
+>new E(1) : any
 >E : typeof E
 >1 : 1
 }

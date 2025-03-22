@@ -1,29 +1,11 @@
 --- old.typeAliases.types
 +++ new.typeAliases.types
-@@= skipped -48, +48 lines =@@
- >x5 : any
- 
- interface I6 { x : string }
-+>I6 : I6
- >x : string
- 
- type T6 = I6;
-@@= skipped -63, +64 lines =@@
- >x11 : new () => boolean
- 
- interface I13 { x: string };
-+>I13 : I13
- >x : string
- 
- type T13 = I13;
-@@= skipped -12, +13 lines =@@
+@@= skipped -123, +123 lines =@@
  >x13_2 : I13
  
  declare function foo13<T1 extends I13, T2 extends T13>(t1: T1, t2: T13): void;
 ->foo13 : <T1 extends I13, T2 extends T13>(t1: T1, t2: T13) => void
 +>foo13 : <T1 extends I13, T2 extends I13>(t1: T1, t2: I13) => void
-+>T1 : T1
-+>T2 : T2
  >t1 : T1
  >t2 : I13
  
@@ -41,7 +23,7 @@
  >x13_2 : I13
  >x13_1 : I13
  
-@@= skipped -23, +25 lines =@@
+@@= skipped -23, +23 lines =@@
  >x14 : string
  
  declare function foo14_1(x: T14): void;
@@ -60,12 +42,7 @@
  >x : string
  
  type Meters = number
- >Meters : number
- 
- enum E { x = 10 }
-->E : E
-+>E : E.x
- >x : E.x
+@@= skipped -20, +20 lines =@@
  >10 : 10
  
  declare function f15(a: string): boolean;
@@ -83,12 +60,7 @@
  >f15(E.x).toLowerCase : () => string
  >f15(E.x) : string
 ->f15 : { (a: string): boolean; (a: Meters): string; }
-->E.x : E
 +>f15 : { (a: string): boolean; (a: number): string; }
-+>E.x : E.x
+ >E.x : E
  >E : typeof E
-->x : E
-+>x : E.x
- >toLowerCase : () => string
- 
- type StringAndBoolean = [string, boolean]
+ >x : E

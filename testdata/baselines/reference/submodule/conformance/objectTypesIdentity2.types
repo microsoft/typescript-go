@@ -19,15 +19,12 @@ class B {
 
 class C<T> {
 >C : C<T>
->T : T
 
     foo: T;
 >foo : T
 }
 
 interface I {
->I : I
-
     foo: Date;
 >foo : Date
 }
@@ -37,16 +34,16 @@ var a: { foo: RegExp; }
 >foo : RegExp
 
 enum E { A }
->E : E.A
+>E : E
 >A : E.A
 
 var b = { foo: E.A };
->b : { foo: E.A; }
->{ foo: E.A } : { foo: E.A; }
->foo : E.A
->E.A : E.A
+>b : { foo: E; }
+>{ foo: E.A } : { foo: E; }
+>foo : E
+>E.A : E
 >E : typeof E
->A : E.A
+>A : E
 
 function foo5(x: A);
 >foo5 : { (x: A): any; (x: B): any; }
@@ -91,6 +88,7 @@ function foo7(x: A);
 function foo7(x: typeof a); // ok
 >foo7 : { (x: A): any; (x: { foo: RegExp; }): any; }
 >x : { foo: RegExp; }
+>a : { foo: RegExp; }
 
 function foo7(x: any) { }
 >foo7 : { (x: A): any; (x: { foo: RegExp; }): any; }
@@ -127,21 +125,23 @@ function foo10(x: B);
 function foo10(x: typeof a); // ok
 >foo10 : { (x: B): any; (x: { foo: RegExp; }): any; }
 >x : { foo: RegExp; }
+>a : { foo: RegExp; }
 
 function foo10(x: any) { }
 >foo10 : { (x: B): any; (x: { foo: RegExp; }): any; }
 >x : any
 
 function foo11(x: B);
->foo11 : { (x: B): any; (x: { foo: E.A; }): any; }
+>foo11 : { (x: B): any; (x: { foo: E; }): any; }
 >x : B
 
 function foo11(x: typeof b); // ok
->foo11 : { (x: B): any; (x: { foo: E.A; }): any; }
->x : { foo: E.A; }
+>foo11 : { (x: B): any; (x: { foo: E; }): any; }
+>x : { foo: E; }
+>b : { foo: E; }
 
 function foo11(x: any) { }
->foo11 : { (x: B): any; (x: { foo: E.A; }): any; }
+>foo11 : { (x: B): any; (x: { foo: E; }): any; }
 >x : any
 
 function foo12(x: I);
@@ -163,20 +163,22 @@ function foo13(x: I);
 function foo13(x: typeof a); // ok
 >foo13 : { (x: I): any; (x: { foo: RegExp; }): any; }
 >x : { foo: RegExp; }
+>a : { foo: RegExp; }
 
 function foo13(x: any) { }
 >foo13 : { (x: I): any; (x: { foo: RegExp; }): any; }
 >x : any
 
 function foo14(x: I);
->foo14 : { (x: I): any; (x: { foo: E.A; }): any; }
+>foo14 : { (x: I): any; (x: { foo: E; }): any; }
 >x : I
 
 function foo14(x: typeof b); // ok
->foo14 : { (x: I): any; (x: { foo: E.A; }): any; }
->x : { foo: E.A; }
+>foo14 : { (x: I): any; (x: { foo: E; }): any; }
+>x : { foo: E; }
+>b : { foo: E; }
 
 function foo14(x: any) { }
->foo14 : { (x: I): any; (x: { foo: E.A; }): any; }
+>foo14 : { (x: I): any; (x: { foo: E; }): any; }
 >x : any
 

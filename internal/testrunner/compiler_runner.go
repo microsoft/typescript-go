@@ -2,6 +2,7 @@ package runner
 
 import (
 	"fmt"
+	"math/rand/v2"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -9,6 +10,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/testutil"
@@ -18,6 +20,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
+	"gotest.tools/v3/assert"
 )
 
 var (
@@ -88,8 +91,13 @@ func (r *CompilerBaselineRunner) EnumerateTestFiles() []string {
 func (r *CompilerBaselineRunner) RunTests(t *testing.T) {
 	r.cleanUpLocal(t)
 	files := r.EnumerateTestFiles()
-	skippedTests := []string{
-		"mappedTypeRecursiveInference.ts", // Needed until we have type printer with truncation limit.
+	skippedTests := map[string]string{
+		"mappedTypeRecursiveInference.ts":         "Skipped until we have type printer with truncation limit.",
+		"jsFileCompilationWithoutJsExtensions.ts": "Skipped until we have proper allowJS support (and errors when not enabled.)",
+		"fileReferencesWithNoExtensions.ts":       "Skipped until we support adding missing extensions in subtasks in fileloader.go",
+		"typeOnlyMerge2.ts":                       "Needs investigation",
+		"typeOnlyMerge3.ts":                       "Needs investigation",
+		"filesEmittingIntoSameOutput.ts":          "Output order nondeterministic due to collision on filename during parallel emit.",
 	}
 	deprecatedTests := []string{
 		// Test deprecated `importsNotUsedAsValue`
@@ -100,7 +108,8 @@ func (r *CompilerBaselineRunner) RunTests(t *testing.T) {
 		"importsNotUsedAsValues_error.ts",
 	}
 	for _, filename := range files {
-		if slices.Contains(skippedTests, tspath.GetBaseFileName(filename)) {
+		if msg, ok := skippedTests[tspath.GetBaseFileName(filename)]; ok {
+			t.Run(tspath.GetBaseFileName(filename), func(t *testing.T) { t.Skip(msg) })
 			continue
 		}
 		if slices.Contains(deprecatedTests, tspath.GetBaseFileName(filename)) {
@@ -174,8 +183,11 @@ func (r *CompilerBaselineRunner) runSingleConfigTest(t *testing.T, testName stri
 	compilerTest := newCompilerTest(t, testName, test.filename, &payload, config)
 
 	compilerTest.verifyDiagnostics(t, r.testSuitName, r.isSubmodule)
+	compilerTest.verifyJavaScriptOutput(t, r.testSuitName, r.isSubmodule)
 	compilerTest.verifyTypesAndSymbols(t, r.testSuitName, r.isSubmodule)
 	// !!! Verify all baselines
+
+	compilerTest.verifyUnionOrdering(t)
 }
 
 type compilerFileBasedTest struct {
@@ -325,8 +337,6 @@ var concurrentSkippedErrorBaselines = core.NewSetFromItems(
 	"recursiveExportAssignmentAndFindAliasedType2.ts",
 	"recursiveExportAssignmentAndFindAliasedType3.ts",
 	"superInStaticMembers1.ts target=es2015",
-	"typeOnlyMerge2.ts",
-	"typeOnlyMerge3.ts",
 )
 
 func (c *compilerTest) verifyDiagnostics(t *testing.T, suiteName string, isSubmodule bool) {
@@ -337,7 +347,38 @@ func (c *compilerTest) verifyDiagnostics(t *testing.T, suiteName string, isSubmo
 
 		defer testutil.RecoverAndFail(t, "Panic on creating error baseline for test "+c.filename)
 		files := core.Concatenate(c.tsConfigFiles, core.Concatenate(c.toBeCompiled, c.otherFiles))
-		tsbaseline.DoErrorBaseline(t, c.configuredName, files, c.result.Diagnostics, c.result.Options.Pretty.IsTrue(), baseline.Options{Subfolder: suiteName, IsSubmodule: isSubmodule})
+		tsbaseline.DoErrorBaseline(t, c.configuredName, files, c.result.Diagnostics, c.result.Options.Pretty.IsTrue(), baseline.Options{
+			Subfolder:           suiteName,
+			IsSubmodule:         isSubmodule,
+			IsSubmoduleAccepted: len(c.result.Program.UnsupportedExtensions()) != 0, // TODO(jakebailey): read submoduleAccepted.txt
+		})
+	})
+}
+
+func (c *compilerTest) verifyJavaScriptOutput(t *testing.T, suiteName string, isSubmodule bool) {
+	if !c.hasNonDtsFiles {
+		return
+	}
+
+	t.Run("output", func(t *testing.T) {
+		defer testutil.RecoverAndFail(t, "Panic on creating js output for test "+c.filename)
+		headerComponents := tspath.GetPathComponentsRelativeTo(repo.TestDataPath, c.filename, tspath.ComparePathsOptions{})
+		if isSubmodule {
+			headerComponents = headerComponents[4:] // Strip "./../_submodules/TypeScript" prefix
+		}
+		header := tspath.GetPathFromPathComponents(headerComponents)
+		tsbaseline.DoJsEmitBaseline(
+			t,
+			c.configuredName,
+			header,
+			c.options,
+			c.result,
+			c.tsConfigFiles,
+			c.toBeCompiled,
+			c.otherFiles,
+			c.harnessOptions,
+			baseline.Options{Subfolder: suiteName, IsSubmodule: isSubmodule},
+		)
 	})
 }
 
@@ -377,4 +418,28 @@ func createHarnessTestFile(unit *testUnit, currentDirectory string) *harnessutil
 		UnitName: tspath.GetNormalizedAbsolutePath(unit.name, currentDirectory),
 		Content:  unit.content,
 	}
+}
+
+func (c *compilerTest) verifyUnionOrdering(t *testing.T) {
+	t.Run("union ordering", func(t *testing.T) {
+		for _, c := range c.result.Program.GetTypeCheckers() {
+			for union := range c.UnionTypes() {
+				types := union.Types()
+
+				reversed := slices.Clone(types)
+				slices.Reverse(reversed)
+				slices.SortFunc(reversed, checker.CompareTypes)
+				assert.Assert(t, slices.Equal(reversed, types), "compareTypes does not sort union types consistently")
+
+				shuffled := slices.Clone(types)
+				rng := rand.New(rand.NewPCG(1234, 5678))
+
+				for range 10 {
+					rng.Shuffle(len(shuffled), func(i, j int) { shuffled[i], shuffled[j] = shuffled[j], shuffled[i] })
+					slices.SortFunc(shuffled, checker.CompareTypes)
+					assert.Assert(t, slices.Equal(shuffled, types), "compareTypes does not sort union types consistently")
+				}
+			}
+		}
+	})
 }

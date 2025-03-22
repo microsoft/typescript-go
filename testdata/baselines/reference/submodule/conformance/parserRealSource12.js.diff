@@ -1,0 +1,115 @@
+--- old.parserRealSource12.js
++++ new.parserRealSource12.js
+@@= skipped -531, +531 lines =@@
+     }
+ }
+ 
++//// [typescript.js]
+ //// [parserRealSource12.js]
+ // Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
+ // See LICENSE.txt in the project root for complete license information.
+ ///<reference path='typescript.ts' />
+ var TypeScript;
+ (function (TypeScript) {
+-    var AstWalkOptions = /** @class */ (function () {
+-        function AstWalkOptions() {
+-            this.goChildren = true;
+-            this.goNextSibling = true;
+-            this.reverseSiblings = false; // visit siblings in reverse execution order
+-        }
+-        AstWalkOptions.prototype.stopWalk = function (stop) {
+-            if (stop === void 0) { stop = true; }
++    class AstWalkOptions {
++        goChildren = true;
++        goNextSibling = true;
++        reverseSiblings = false; // visit siblings in reverse execution order
++        stopWalk(stop = true) {
+             this.goChildren = !stop;
+             this.goNextSibling = !stop;
+-        };
+-        return AstWalkOptions;
+-    }());
++        }
++    }
+     TypeScript.AstWalkOptions = AstWalkOptions;
+-    var AstWalker = /** @class */ (function () {
+-        function AstWalker(childrenWalkers, pre, post, options, state) {
++    class AstWalker {
++        childrenWalkers;
++        pre;
++        post;
++        options;
++        state;
++        constructor(childrenWalkers, pre, post, options, state) {
+             this.childrenWalkers = childrenWalkers;
+             this.pre = pre;
+             this.post = post;
+             this.options = options;
+             this.state = state;
+         }
+-        AstWalker.prototype.walk = function (ast, parent) {
++        walk(ast, parent) {
+             var preAst = this.pre(ast, parent, this);
+             if (preAst === undefined) {
+                 preAst = ast;
+@@= skipped -54, +56 lines =@@
+             else {
+                 return preAst;
+             }
+-        };
+-        return AstWalker;
+-    }());
+-    var AstWalkerFactory = /** @class */ (function () {
+-        function AstWalkerFactory() {
+-            this.childrenWalkers = [];
++        }
++    }
++    class AstWalkerFactory {
++        childrenWalkers = [];
++        constructor() {
+             this.initChildrenWalkers();
+         }
+-        AstWalkerFactory.prototype.walk = function (ast, pre, post, options, state) {
++        walk(ast, pre, post, options, state) {
+             return this.getWalker(pre, post, options, state).walk(ast, null);
+-        };
+-        AstWalkerFactory.prototype.getWalker = function (pre, post, options, state) {
++        }
++        getWalker(pre, post, options, state) {
+             return this.getSlowWalker(pre, post, options, state);
+-        };
+-        AstWalkerFactory.prototype.getSlowWalker = function (pre, post, options, state) {
++        }
++        getSlowWalker(pre, post, options, state) {
+             if (!options) {
+                 options = new AstWalkOptions();
+             }
+             return new AstWalker(this.childrenWalkers, pre, post, options, state);
+-        };
+-        AstWalkerFactory.prototype.initChildrenWalkers = function () {
++        }
++        initChildrenWalkers() {
+             this.childrenWalkers[NodeType.None] = ChildrenWalkers.walkNone;
+             this.childrenWalkers[NodeType.Empty] = ChildrenWalkers.walkNone;
+             this.childrenWalkers[NodeType.EmptyExpr] = ChildrenWalkers.walkNone;
+@@= skipped -134, +133 lines =@@
+                     throw new Error("initWalkers function is not up to date with enum content!");
+                 }
+             }
+-        };
+-        return AstWalkerFactory;
+-    }());
++        }
++    }
+     TypeScript.AstWalkerFactory = AstWalkerFactory;
+     var globalAstWalkerFactory;
+     function getAstWalkerFactory() {
+@@= skipped -12, +11 lines =@@
+         return globalAstWalkerFactory;
+     }
+     TypeScript.getAstWalkerFactory = getAstWalkerFactory;
+-    var ChildrenWalkers;
++    let ChildrenWalkers;
+     (function (ChildrenWalkers) {
+         function walkNone(preAst, parent, walker) {
+             // Nothing to do

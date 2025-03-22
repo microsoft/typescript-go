@@ -1,0 +1,17 @@
+--- old.simplifyingConditionalWithInteriorConditionalIsRelated.js
++++ new.simplifyingConditionalWithInteriorConditionalIsRelated.js
+@@= skipped -31, +31 lines =@@
+ 
+ 
+ //// [simplifyingConditionalWithInteriorConditionalIsRelated.js]
+-"use strict";
+ function ConditionalOrUndefined() {
+     return 0;
+ }
+@@= skipped -16, +15 lines =@@
+ }
+ // Simplified example:
+ function f() {
+-    var x = null;
++    const x = null;
+ }

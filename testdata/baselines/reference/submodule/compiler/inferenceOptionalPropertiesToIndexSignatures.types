@@ -3,7 +3,6 @@
 === inferenceOptionalPropertiesToIndexSignatures.ts ===
 declare function foo<T>(obj: { [x: string]: T }): T;
 >foo : <T>(obj: { [x: string]: T; }) => T
->T : T
 >obj : { [x: string]: T; }
 >x : string
 
@@ -77,7 +76,7 @@ const obj = {
 >param2 ? {param2} : {} : { param2: string; } | {}
 >param2 : "value2" | null
 >{param2} : { param2: string; }
->param2 : any
+>param2 : string
 >{} : {}
 
 };

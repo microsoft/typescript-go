@@ -14,8 +14,6 @@ var ac: C;
 >ac : C
 
 interface I {
->I : I
-
     foo: string;
 >foo : string
 }
@@ -23,11 +21,11 @@ var ai: I;
 >ai : I
 
 enum E { A }
->E : E.A
+>E : E
 >A : E.A
 
 var ae: E;
->ae : E.A
+>ae : E
 
 var b: number;
 >b : number
@@ -72,7 +70,6 @@ var n: { foo: string };
 
 var o: <T>(x: T) => T;
 >o : <T>(x: T) => T
->T : T
 >x : T
 
 var p: Number;
@@ -167,15 +164,12 @@ a = ai;
 >ai : I
 
 a = ae;
->a = ae : E.A
+>a = ae : E
 >a : any
->ae : E.A
+>ae : E
 
 function foo<T, U /*extends T*/, V extends Date>(x: T, y: U, z: V) {
 >foo : <T, U, V extends Date>(x: T, y: U, z: V) => void
->T : T
->U : U
->V : V
 >x : T
 >y : U
 >z : V

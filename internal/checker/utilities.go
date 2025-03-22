@@ -502,7 +502,7 @@ func getSourceFileOfModule(module *ast.Symbol) *ast.SourceFile {
 
 func getNonAugmentationDeclaration(symbol *ast.Symbol) *ast.Node {
 	return core.Find(symbol.Declarations, func(d *ast.Node) bool {
-		return !isExternalModuleAugmentation(d) && !(ast.IsModuleDeclaration(d) && ast.IsGlobalScopeAugmentation(d))
+		return !isExternalModuleAugmentation(d) && !ast.IsGlobalScopeAugmentation(d)
 	})
 }
 
@@ -523,10 +523,6 @@ func isSyntacticDefault(node *ast.Node) bool {
 
 func hasExportAssignmentSymbol(moduleSymbol *ast.Symbol) bool {
 	return moduleSymbol.Exports[ast.InternalSymbolNameExportEquals] != nil
-}
-
-func parsePseudoBigInt(stringValue string) string {
-	return stringValue // !!!
 }
 
 func isTypeAlias(node *ast.Node) bool {
@@ -681,7 +677,7 @@ func (c *Checker) compareNodes(n1, n2 *ast.Node) int {
 	return n1.Pos() - n2.Pos()
 }
 
-func compareTypes(t1, t2 *Type) int {
+func CompareTypes(t1, t2 *Type) int {
 	if t1 == t2 {
 		return 0
 	}
@@ -766,7 +762,7 @@ func compareTypes(t1, t2 *Type) int {
 		} else if o2 == nil {
 			return -1
 		} else {
-			if c := compareTypes(o1, o2); c != 0 {
+			if c := CompareTypes(o1, o2); c != 0 {
 				return c
 			}
 		}
@@ -804,17 +800,17 @@ func compareTypes(t1, t2 *Type) int {
 			return c
 		}
 	case t1.flags&TypeFlagsIndex != 0:
-		if c := compareTypes(t1.AsIndexType().target, t2.AsIndexType().target); c != 0 {
+		if c := CompareTypes(t1.AsIndexType().target, t2.AsIndexType().target); c != 0 {
 			return c
 		}
 		if c := int(t1.AsIndexType().flags) - int(t2.AsIndexType().flags); c != 0 {
 			return c
 		}
 	case t1.flags&TypeFlagsIndexedAccess != 0:
-		if c := compareTypes(t1.AsIndexedAccessType().objectType, t2.AsIndexedAccessType().objectType); c != 0 {
+		if c := CompareTypes(t1.AsIndexedAccessType().objectType, t2.AsIndexedAccessType().objectType); c != 0 {
 			return c
 		}
-		if c := compareTypes(t1.AsIndexedAccessType().indexType, t2.AsIndexedAccessType().indexType); c != 0 {
+		if c := CompareTypes(t1.AsIndexedAccessType().indexType, t2.AsIndexedAccessType().indexType); c != 0 {
 			return c
 		}
 	case t1.flags&TypeFlagsConditional != 0:
@@ -825,10 +821,10 @@ func compareTypes(t1, t2 *Type) int {
 			return c
 		}
 	case t1.flags&TypeFlagsSubstitution != 0:
-		if c := compareTypes(t1.AsSubstitutionType().baseType, t2.AsSubstitutionType().baseType); c != 0 {
+		if c := CompareTypes(t1.AsSubstitutionType().baseType, t2.AsSubstitutionType().baseType); c != 0 {
 			return c
 		}
-		if c := compareTypes(t1.AsSubstitutionType().constraint, t2.AsSubstitutionType().constraint); c != 0 {
+		if c := CompareTypes(t1.AsSubstitutionType().constraint, t2.AsSubstitutionType().constraint); c != 0 {
 			return c
 		}
 	case t1.flags&TypeFlagsTemplateLiteral != 0:
@@ -839,7 +835,7 @@ func compareTypes(t1, t2 *Type) int {
 			return c
 		}
 	case t1.flags&TypeFlagsStringMapping != 0:
-		if c := compareTypes(t1.AsStringMappingType().target, t2.AsStringMappingType().target); c != 0 {
+		if c := CompareTypes(t1.AsStringMappingType().target, t2.AsStringMappingType().target); c != 0 {
 			return c
 		}
 	}
@@ -931,7 +927,7 @@ func compareTypeLists(s1, s2 []*Type) int {
 		return len(s1) - len(s2)
 	}
 	for i, t1 := range s1 {
-		if c := compareTypes(t1, s2[i]); c != 0 {
+		if c := CompareTypes(t1, s2[i]); c != 0 {
 			return c
 		}
 	}
@@ -957,10 +953,10 @@ func compareTypeMappers(m1, m2 *TypeMapper) int {
 	case TypeMapperKindSimple:
 		m1 := m1.data.(*SimpleTypeMapper)
 		m2 := m2.data.(*SimpleTypeMapper)
-		if c := compareTypes(m1.source, m2.source); c != 0 {
+		if c := CompareTypes(m1.source, m2.source); c != 0 {
 			return c
 		}
-		return compareTypes(m1.target, m2.target)
+		return CompareTypes(m1.target, m2.target)
 	case TypeMapperKindArray:
 		m1 := m1.data.(*ArrayTypeMapper)
 		m2 := m2.data.(*ArrayTypeMapper)
@@ -1231,7 +1227,29 @@ func isValidNumberString(s string, roundTripOnly bool) bool {
 }
 
 func isValidBigIntString(s string, roundTripOnly bool) bool {
-	return false // !!!
+	if s == "" {
+		return false
+	}
+	scanner := scanner.NewScanner()
+	scanner.SetSkipTrivia(false)
+	success := true
+	scanner.SetOnError(func(diagnostic *diagnostics.Message, start, length int, args ...any) {
+		success = false
+	})
+	scanner.SetText(s + "n")
+	result := scanner.Scan()
+	negative := result == ast.KindMinusToken
+	if negative {
+		result = scanner.Scan()
+	}
+	flags := scanner.TokenFlags()
+	// validate that
+	// * scanning proceeded without error
+	// * a bigint can be scanned, and that when it is scanned, it is
+	// * the full length of the input string (so the scanner is one character beyond the augmented input length)
+	// * it does not contain a numeric separator (the `BigInt` constructor does not accept a numeric separator in its input)
+	return success && result == ast.KindBigIntLiteral && scanner.TokenEnd() == len(s)+1 && flags&ast.TokenFlagsContainsSeparator == 0 &&
+		(!roundTripOnly || s == pseudoBigIntToString(jsnum.PseudoBigInt{Negative: negative, Base10Value: jsnum.ParsePseudoBigInt(scanner.TokenValue())}))
 }
 
 func isValidESSymbolDeclaration(node *ast.Node) bool {
@@ -1260,16 +1278,11 @@ func getThisParameter(signature *ast.Node) *ast.Node {
 	// callback tags do not currently support this parameters
 	if len(signature.Parameters()) != 0 {
 		thisParameter := signature.Parameters()[0]
-		if parameterIsThisKeyword(thisParameter) {
+		if ast.IsThisParameter(thisParameter) {
 			return thisParameter
 		}
 	}
 	return nil
-}
-
-// Deprecated: use ast.IsThisParameter
-func parameterIsThisKeyword(parameter *ast.Node) bool {
-	return ast.IsThisParameter(parameter)
 }
 
 func isObjectOrArrayLiteralType(t *Type) bool {
@@ -1524,7 +1537,7 @@ func hasContextSensitiveParameters(node *ast.Node) bool {
 			// If the first parameter is not an explicit 'this' parameter, then the function has
 			// an implicit 'this' parameter which is subject to contextual typing.
 			parameter := core.FirstOrNil(node.Parameters())
-			if parameter == nil || !parameterIsThisKeyword(parameter) {
+			if parameter == nil || !ast.IsThisParameter(parameter) {
 				return true
 			}
 		}
@@ -1858,7 +1871,9 @@ func isModuleExportsAccessExpression(node *ast.Node) bool {
 func getNonModifierTokenRangeOfNode(node *ast.Node) core.TextRange {
 	pos := node.Pos()
 	if node.Modifiers() != nil {
-		pos = core.LastOrNil(node.Modifiers().Nodes).End()
+		if last := ast.FindLastVisibleNode(node.Modifiers().Nodes); last != nil {
+			pos = last.Pos()
+		}
 	}
 	return scanner.GetRangeOfTokenAtPosition(ast.GetSourceFileOfNode(node), pos)
 }
