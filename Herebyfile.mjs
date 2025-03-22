@@ -28,6 +28,7 @@ const { values: options } = parseArgs({
         tests: { type: "string", short: "t" },
         fix: { type: "boolean" },
         noembed: { type: "boolean" },
+        unsafe: { type: "boolean" },
         debug: { type: "boolean" },
         concurrentTestPrograms: { type: "boolean" },
     },
@@ -41,6 +42,7 @@ const { values: options } = parseArgs({
 
 const defaultGoBuildTags = [
     ...(options.noembed ? ["noembed"] : []),
+    ...(options.unsafe ? ["tsunsafe"] : []),
 ];
 
 /**
