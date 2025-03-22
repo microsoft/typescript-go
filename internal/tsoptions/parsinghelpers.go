@@ -24,16 +24,16 @@ func parseTristate(value any) core.Tristate {
 }
 
 func parseStringArray(value any) []string {
+	var result []string
 	if arr, ok := value.([]any); ok {
-		var result []string
+		result = make([]string, 0, len(arr))
 		for _, v := range arr {
 			if str, ok := v.(string); ok {
 				result = append(result, str)
 			}
 		}
-		return result
 	}
-	return nil
+	return result
 }
 
 func parseStringMap(value any) *collections.OrderedMap[string, []string] {
