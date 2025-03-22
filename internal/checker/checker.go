@@ -10826,14 +10826,30 @@ func (c *Checker) isPropertyAccessible(node *ast.Node, isSuper bool, isWrite boo
 }
 
 func (c *Checker) containerSeemsToBeEmptyDomElement(containingType *Type) bool {
-	if c.compilerOptions.Lib == nil || slices.Contains(c.compilerOptions.Lib, "lib.dom.d.ts") {
+	if c.compilerOptions.Lib == nil || slices.Contains(c.compilerOptions.Lib, "dom") {
 		return false
 	}
 	return everyContainedType(containingType, func(t *Type) bool {
 		if t.symbol == nil {
 			return false
 		}
-		return t.symbol.Name == "EventTarget" || t.symbol.Name == "Node" || t.symbol.Name == "Element" || (strings.HasPrefix(t.symbol.Name, "HTML") && strings.HasSuffix(t.symbol.Name, "Element"))
+		if t.symbol.Name == "EventTarget" || t.symbol.Name == "Node" || t.symbol.Name == "Element" {
+			return true
+		}
+
+		if !(strings.HasPrefix(t.symbol.Name, "HTML") && strings.HasSuffix(t.symbol.Name, "Element")) {
+			return false
+		}
+
+		isMiddleAlpha := true
+		for _, r := range t.symbol.Name[4 : len(t.symbol.Name)-7] {
+			if !('a' <= r && r <= 'z') && !('A' <= r && r <= 'Z') {
+				isMiddleAlpha = false
+				break
+			}
+		}
+
+		return isMiddleAlpha
 	}) && c.isEmptyObjectType(containingType)
 }
 
