@@ -10833,7 +10833,7 @@ func (c *Checker) containerSeemsToBeEmptyDomElement(containingType *Type) bool {
 		if t.symbol == nil {
 			return false
 		}
-		return t.symbol.Name == "EventTarget" || t.symbol.Name == "Node" || (strings.HasPrefix(t.symbol.Name, "HTML") && strings.HasSuffix(t.symbol.Name, "Element"))
+		return t.symbol.Name == "EventTarget" || t.symbol.Name == "Node" || t.symbol.Name == "Element" || (strings.HasPrefix(t.symbol.Name, "HTML") && strings.HasSuffix(t.symbol.Name, "Element"))
 	}) && c.isEmptyObjectType(containingType)
 }
 
