@@ -632,12 +632,12 @@ func (c *Checker) compareSymbolsWorker(s1, s2 *ast.Symbol) int {
 	int1, err1 := strconv.Atoi(s1.Name)
 	int2, err2 := strconv.Atoi(s2.Name)
 	if err1 == nil && err2 == nil {
-		if rv := cmp.Compare(int1, int2); rv != 0 {
-			return rv
-		}
-	} else if err1 == nil {
+		return cmp.Compare(int1, int2)
+	}
+	if err1 == nil {
 		return -1
-	} else if err2 == nil {
+	}
+	if err2 == nil {
 		return 1
 	}
 	if len(s1.Declarations) != 0 && len(s2.Declarations) != 0 {
