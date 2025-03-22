@@ -1,0 +1,20 @@
+--- old.numericIndexerConstraint5.types
++++ new.numericIndexerConstraint5.types
+@@= skipped -1, +1 lines =@@
+ 
+ === numericIndexerConstraint5.ts ===
+ var x = { name: "x", 0: new Date() };
+->x : { name: string; 0: Date; }
+->{ name: "x", 0: new Date() } : { name: string; 0: Date; }
++>x : { 0: Date; name: string; }
++>{ name: "x", 0: new Date() } : { 0: Date; name: string; }
+ >name : string
+ >"x" : "x"
+ >0 : Date
+@@= skipped -11, +11 lines =@@
+ var z: { [name: number]: string } = x;
+ >z : { [name: number]: string; }
+ >name : number
+->x : { name: string; 0: Date; }
++>x : { 0: Date; name: string; }
+ 

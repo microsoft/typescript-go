@@ -6,8 +6,8 @@
  const obj = { num: 0, str: 's', [num]: num as 0, [sym]: sym };
 ->obj : { num: number; str: string; 0: 0; [sym]: symbol; }
 ->{ num: 0, str: 's', [num]: num as 0, [sym]: sym } : { num: number; str: string; 0: 0; [sym]: symbol; }
-+>obj : { num: number; str: string; [num]: 0; [sym]: symbol; }
-+>{ num: 0, str: 's', [num]: num as 0, [sym]: sym } : { num: number; str: string; [num]: 0; [sym]: symbol; }
++>obj : { [num]: 0; num: number; str: string; [sym]: symbol; }
++>{ num: 0, str: 's', [num]: num as 0, [sym]: sym } : { [num]: 0; num: number; str: string; [sym]: symbol; }
  >num : number
  >0 : 0
  >str : string
@@ -16,7 +16,7 @@
  >set(obj, 'str', '') : string
  >set : <T extends object, K extends keyof T>(obj: T, key: K, value: T[K]) => T[K]
 ->obj : { num: number; str: string; 0: 0; [sym]: symbol; }
-+>obj : { num: number; str: string; [num]: 0; [sym]: symbol; }
++>obj : { [num]: 0; num: number; str: string; [sym]: symbol; }
  >'str' : "str"
  >'' : ""
  
@@ -25,7 +25,7 @@
  >set(obj, 'num', '') : number
  >set : <T extends object, K extends keyof T>(obj: T, key: K, value: T[K]) => T[K]
 ->obj : { num: number; str: string; 0: 0; [sym]: symbol; }
-+>obj : { num: number; str: string; [num]: 0; [sym]: symbol; }
++>obj : { [num]: 0; num: number; str: string; [sym]: symbol; }
  >'num' : "num"
  >'' : ""
  
@@ -34,7 +34,7 @@
  >set(obj, sym, sym) : symbol
  >set : <T extends object, K extends keyof T>(obj: T, key: K, value: T[K]) => T[K]
 ->obj : { num: number; str: string; 0: 0; [sym]: symbol; }
-+>obj : { num: number; str: string; [num]: 0; [sym]: symbol; }
++>obj : { [num]: 0; num: number; str: string; [sym]: symbol; }
  >sym : unique symbol
  >sym : unique symbol
  
@@ -43,7 +43,7 @@
  >set(obj, num, num) : 0
  >set : <T extends object, K extends keyof T>(obj: T, key: K, value: T[K]) => T[K]
 ->obj : { num: number; str: string; 0: 0; [sym]: symbol; }
-+>obj : { num: number; str: string; [num]: 0; [sym]: symbol; }
++>obj : { [num]: 0; num: number; str: string; [sym]: symbol; }
  >num : 0
  >num : 0
  
@@ -53,7 +53,7 @@
 ->KeyofObj : unique symbol | 0 | "str" | "num"
 ->obj : { num: number; str: string; 0: 0; [sym]: symbol; }
 +>KeyofObj : "num" | "str" | 0 | unique symbol
-+>obj : { num: number; str: string; [num]: 0; [sym]: symbol; }
++>obj : { [num]: 0; num: number; str: string; [sym]: symbol; }
  
  // "str" | "num"
  type Values<T> = T[keyof T];
@@ -62,5 +62,5 @@
  type ValuesOfObj = Values<typeof obj>;
  >ValuesOfObj : ValuesOfObj
 ->obj : { num: number; str: string; 0: 0; [sym]: symbol; }
-+>obj : { num: number; str: string; [num]: 0; [sym]: symbol; }
++>obj : { [num]: 0; num: number; str: string; [sym]: symbol; }
  
