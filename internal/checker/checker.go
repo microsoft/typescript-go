@@ -10833,23 +10833,31 @@ func (c *Checker) containerSeemsToBeEmptyDomElement(containingType *Type) bool {
 		if t.symbol == nil {
 			return false
 		}
-		if t.symbol.Name == "EventTarget" || t.symbol.Name == "Node" || t.symbol.Name == "Element" {
+
+		name := t.symbol.Name
+
+		switch name {
+		case "EventTarget", "Node", "Element":
 			return true
 		}
 
-		if !(strings.HasPrefix(t.symbol.Name, "HTML") && strings.HasSuffix(t.symbol.Name, "Element")) {
+		name, ok := strings.CutPrefix(name, "HTML")
+		if !ok {
 			return false
 		}
 
-		isMiddleAlpha := true
-		for _, r := range t.symbol.Name[4 : len(t.symbol.Name)-7] {
-			if !('a' <= r && r <= 'z') && !('A' <= r && r <= 'Z') {
-				isMiddleAlpha = false
-				break
+		name, ok = strings.CutSuffix(name, "Element")
+		if !ok {
+			return false
+		}
+
+		for _, r := range name {
+			if !stringutil.IsASCIILetter(r) {
+				return false
 			}
 		}
 
-		return isMiddleAlpha
+		return true
 	}) && c.isEmptyObjectType(containingType)
 }
 
