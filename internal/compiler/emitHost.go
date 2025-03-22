@@ -1,6 +1,8 @@
 package compiler
 
 import (
+	"sync"
+
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/printer"
@@ -33,6 +35,10 @@ var _ EmitHost = (*emitHost)(nil)
 // NOTE: emitHost operations must be thread-safe
 type emitHost struct {
 	program *Program
+
+	mu sync.RWMutex
+	// Map storing if there is emit blocking diagnostics for given input
+	hasEmitBlockingDiagnostics map[string]bool
 }
 
 func (host *emitHost) Options() *core.CompilerOptions { return host.program.Options() }
@@ -44,8 +50,19 @@ func (host *emitHost) UseCaseSensitiveFileNames() bool {
 }
 
 func (host *emitHost) IsEmitBlocked(file string) bool {
-	// !!!
-	return false
+	host.mu.RLock()
+	blocked := host.hasEmitBlockingDiagnostics[file]
+	host.mu.RUnlock()
+	return blocked
+}
+
+func (host *emitHost) SetEmitBlocked(file string, blocked bool) {
+	host.mu.Lock()
+	defer host.mu.Unlock()
+	if host.hasEmitBlockingDiagnostics == nil {
+		host.hasEmitBlockingDiagnostics = make(map[string]bool)
+	}
+	host.hasEmitBlockingDiagnostics[file] = blocked
 }
 
 func (host *emitHost) WriteFile(fileName string, text string, writeByteOrderMark bool, _ []*ast.SourceFile, _ *WriteFileData) error {
