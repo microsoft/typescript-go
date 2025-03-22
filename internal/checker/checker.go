@@ -3133,7 +3133,7 @@ func (c *Checker) checkFunctionOrMethodDeclaration(node *ast.Node) {
 	if node.Type() == nil {
 		// Report an implicit any error if there is no body, no explicit return type, and node is not a private method
 		// in an ambient context
-		if ast.NodeIsMissing(body) && isPrivateWithinAmbient(node) {
+		if ast.NodeIsMissing(body) && !isPrivateWithinAmbient(node) {
 			c.reportImplicitAny(node, c.anyType, WideningKindNormal)
 		}
 		if functionFlags&FunctionFlagsGenerator != 0 && ast.NodeIsPresent(body) {
@@ -7658,7 +7658,7 @@ func (c *Checker) checkIndexedAccessIndexType(t *Type, accessNode *ast.Node) *Ty
 }
 
 func (c *Checker) getConstituentProperty(objectType *Type, propertyName string) *ast.Symbol {
-	for _, t := range objectType.Distributed() {
+	for _, t := range c.getApparentType(objectType).Distributed() {
 		prop := c.getPropertyOfType(t, propertyName)
 		if prop != nil {
 			return prop
