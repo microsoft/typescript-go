@@ -8281,7 +8281,33 @@ func (c *Checker) resolveJsxOpeningLikeElement(node *ast.Node, candidatesOutArra
 }
 
 func (c *Checker) resolveInstanceofExpression(node *ast.Node, candidatesOutArray *[]*Signature, checkMode CheckMode) *Signature {
-	return c.unknownSignature // !!!
+	// if rightType is an object type with a custom `[Symbol.hasInstance]` method, then it is potentially
+	// valid on the right-hand side of the `instanceof` operator. This allows normal `object` types to
+	// participate in `instanceof`, as per Step 2 of https://tc39.es/ecma262/#sec-instanceofoperator.
+	right := node.AsBinaryExpression().Right
+	rightType := c.checkExpression(right)
+	if !IsTypeAny(rightType) {
+		hasInstanceMethodType := c.getSymbolHasInstanceMethodOfObjectType(rightType)
+		if hasInstanceMethodType != nil {
+			apparentType := c.getApparentType(hasInstanceMethodType)
+			if c.isErrorType(apparentType) {
+				return c.resolveErrorCall(node)
+			}
+			callSignatures := c.getSignaturesOfType(apparentType, SignatureKindCall)
+			constructSignatures := c.getSignaturesOfType(apparentType, SignatureKindConstruct)
+			if c.isUntypedFunctionCall(hasInstanceMethodType, apparentType, len(callSignatures), len(constructSignatures)) {
+				return c.resolveUntypedCall(node)
+			}
+			if len(callSignatures) != 0 {
+				return c.resolveCall(node, callSignatures, candidatesOutArray, checkMode, SignatureFlagsNone, nil)
+			}
+		} else if !(c.typeHasCallOrConstructSignatures(rightType) || c.isTypeSubtypeOf(rightType, c.globalFunctionType)) {
+			c.error(right, diagnostics.The_right_hand_side_of_an_instanceof_expression_must_be_either_of_type_any_a_class_function_or_other_type_assignable_to_the_Function_interface_type_or_an_object_type_with_a_Symbol_hasInstance_method)
+			return c.resolveErrorCall(node)
+		}
+	}
+	// fall back to a default signature
+	return c.anySignature
 }
 
 type CallState struct {
@@ -27636,6 +27662,8 @@ func (c *Checker) getEffectiveCallArguments(node *ast.Node) []*ast.Node {
 		return args
 	case ast.IsDecorator(node):
 		return c.getEffectiveDecoratorArguments(node)
+	case ast.IsBinaryExpression(node):
+		return []*ast.Node{node.AsBinaryExpression().Left}
 	case isJsxOpeningLikeElement(node):
 		// !!!
 		// if node.Attributes.Properties.length > 0 || (isJsxOpeningElement(node) && node.Parent.Children.length > 0) {
