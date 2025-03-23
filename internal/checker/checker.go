@@ -2470,7 +2470,6 @@ func (c *Checker) checkSignatureDeclaration(node *ast.Node) {
 // that in turn supplies a `resolve` function as one of its arguments and results in an
 // object with a callable `then` signature.
 func (c *Checker) checkAsyncFunctionReturnType(node *ast.Node, returnTypeNode *ast.Node) {
-	// !!! Possibly error if c.languageVersion < core.ScriptTargetES2015
 	returnType := c.getTypeFromTypeNode(returnTypeNode)
 	if c.isErrorType(returnType) {
 		return
@@ -9059,7 +9058,7 @@ func (c *Checker) reportCallResolutionErrors(s *CallState, signatures []*Signatu
 			if last.declaration != nil && len(s.candidatesForArgumentError) > 1 {
 				diagnostic.AddRelatedInfo(NewDiagnosticForNode(last.declaration, diagnostics.The_last_overload_is_declared_here))
 			}
-			// !!! addImplementationSuccessElaboration(last, d)
+			c.addImplementationSuccessElaboration(s, last, diagnostic)
 			c.diagnostics.Add(diagnostic)
 		}
 	case s.candidateForArgumentArityError != nil:
@@ -9074,6 +9073,26 @@ func (c *Checker) reportCallResolutionErrors(s *CallState, signatures []*Signatu
 			c.diagnostics.Add(c.getTypeArgumentArityError(s.node, signatures, s.typeArguments, headMessage))
 		} else {
 			c.diagnostics.Add(c.getArgumentArityError(s.node, signaturesWithCorrectTypeArgumentArity, s.args, headMessage))
+		}
+	}
+}
+
+func (c *Checker) addImplementationSuccessElaboration(s *CallState, failed *Signature, diagnostic *ast.Diagnostic) {
+	if failed.declaration != nil && failed.declaration.Symbol() != nil {
+		declarations := failed.declaration.Symbol().Declarations
+		if len(declarations) > 1 {
+			implementation := core.Find(declarations, func(d *ast.Declaration) bool {
+				return ast.IsFunctionLikeDeclaration(d) && ast.NodeIsPresent(d.Body())
+			})
+			if implementation != nil {
+				candidate := c.getSignatureFromDeclaration(implementation)
+				localState := *s
+				localState.candidates = []*Signature{candidate}
+				localState.isSingleNonGenericCandidate = candidate.typeParameters == nil
+				if c.chooseOverload(&localState, c.assignableRelation) != nil {
+					diagnostic.AddRelatedInfo(NewDiagnosticForNode(implementation, diagnostics.The_call_would_have_succeeded_against_this_implementation_but_implementation_signatures_of_overloads_are_not_externally_visible))
+				}
+			}
 		}
 	}
 }
