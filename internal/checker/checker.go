@@ -360,6 +360,7 @@ const (
 	ReferenceHintExportImportEquals
 	ReferenceHintExportSpecifier
 	ReferenceHintDecorator
+	ReferenceHintAsyncFunction
 )
 
 type TypeFacts uint32
@@ -772,6 +773,8 @@ type Checker struct {
 	getGlobalPromiseLikeType                   func() *Type
 	getGlobalPromiseConstructorSymbol          func() *ast.Symbol
 	getGlobalPromiseConstructorSymbolOrNil     func() *ast.Symbol
+	getGlobalPromiseConstructorType            func() *Type
+	getGlobalPromiseConstructorTypeChecked     func() *Type
 	getGlobalOmitSymbol                        func() *ast.Symbol
 	getGlobalNoInferSymbolOrNil                func() *ast.Symbol
 	getGlobalIteratorType                      func() *Type
@@ -794,7 +797,6 @@ type Checker struct {
 	getGlobalClassMethodDecoratorContextType   func() *Type
 	getGlobalClassGetterDecoratorContextType   func() *Type
 	getGlobalClassSetterDecoratorContextType   func() *Type
-	getGlobalClassAccessorDecoratorContxtType  func() *Type
 	getGlobalClassAccessorDecoratorContextType func() *Type
 	getGlobalClassAccessorDecoratorTargetType  func() *Type
 	getGlobalClassAccessorDecoratorResultType  func() *Type
@@ -984,6 +986,8 @@ func NewChecker(program Program) *Checker {
 	c.getGlobalPromiseLikeType = c.getGlobalTypeResolver("PromiseLike", 1 /*arity*/, true /*reportErrors*/)
 	c.getGlobalPromiseConstructorSymbol = c.getGlobalValueSymbolResolver("Promise", true /*reportErrors*/)
 	c.getGlobalPromiseConstructorSymbolOrNil = c.getGlobalValueSymbolResolver("Promise", false /*reportErrors*/)
+	c.getGlobalPromiseConstructorType = c.getGlobalTypeResolver("PromiseConstructor", 0 /*arity*/, false /*reportErrors*/)
+	c.getGlobalPromiseConstructorTypeChecked = c.getGlobalTypeResolver("PromiseConstructor", 0 /*arity*/, true /*reportErrors*/)
 	c.getGlobalOmitSymbol = c.getGlobalTypeAliasResolver("Omit", 2 /*arity*/, true /*reportErrors*/)
 	c.getGlobalNoInferSymbolOrNil = c.getGlobalTypeAliasResolver("NoInfer", 1 /*arity*/, false /*reportErrors*/)
 	c.getGlobalIteratorType = c.getGlobalTypeResolver("Iterator", 3 /*arity*/, false /*reportErrors*/)
@@ -2470,18 +2474,92 @@ func (c *Checker) checkSignatureDeclaration(node *ast.Node) {
 // that in turn supplies a `resolve` function as one of its arguments and results in an
 // object with a callable `then` signature.
 func (c *Checker) checkAsyncFunctionReturnType(node *ast.Node, returnTypeNode *ast.Node) {
-	// !!! Possibly error if c.languageVersion < core.ScriptTargetES2015
+	// As part of our emit for an async function, we will need to emit the entity name of
+	// the return type annotation as an expression. To meet the necessary runtime semantics
+	// for __awaiter, we must also check that the type of the declaration (e.g. the static
+	// side or "constructor" of the promise type) is compatible `PromiseConstructor`.
+	//
+	// An example might be (from lib.es6.d.ts):
+	//
+	//  interface Promise<T> { ... }
+	//  interface PromiseConstructor {
+	//      new <T>(...): Promise<T>;
+	//  }
+	//  declare var Promise: PromiseConstructor;
+	//
+	// When an async function declares a return type annotation of `Promise<T>`, we
+	// need to get the type of the `Promise` variable declaration above, which would
+	// be `PromiseConstructor`.
+	//
+	// The same case applies to a class:
+	//
+	//  declare class Promise<T> {
+	//      constructor(...);
+	//      then<U>(...): Promise<U>;
+	//  }
+	//
 	returnType := c.getTypeFromTypeNode(returnTypeNode)
-	if c.isErrorType(returnType) {
-		return
+	if c.languageVersion >= core.ScriptTargetES2015 {
+		if c.isErrorType(returnType) {
+			return
+		}
+		globalPromiseType := c.getGlobalPromiseTypeChecked()
+		if globalPromiseType != c.emptyGenericType && !c.isReferenceToType(returnType, globalPromiseType) {
+			// The promise type was not a valid type reference to the global promise type, so we
+			// report an error and return the unknown type.
+			c.error(returnTypeNode, diagnostics.The_return_type_of_an_async_function_or_method_must_be_the_global_Promise_T_type_Did_you_mean_to_write_Promise_0, c.TypeToString(core.OrElse(c.getAwaitedTypeNoAlias(returnType), c.voidType)))
+			return
+		}
+	} else {
+		// Always mark the type node as referenced if it points to a value
+		c.markLinkedReferences(returnTypeNode, ReferenceHintAsyncFunction, nil, nil)
+		if c.isErrorType(returnType) {
+			return
+		}
+
+		promiseConstructorName := getEntityNameFromTypeNode(returnTypeNode)
+		if promiseConstructorName == nil {
+			c.error(returnTypeNode, diagnostics.Type_0_is_not_a_valid_async_function_return_type_in_ES5_because_it_does_not_refer_to_a_Promise_compatible_constructor_value, c.TypeToString(returnType))
+			return
+		}
+
+		promiseConstructorSymbol := c.resolveEntityName(promiseConstructorName, ast.SymbolFlagsValue, true /*ignoreErrors*/, false /*dontResolveAlias*/, nil)
+		var promiseConstructorType *Type
+		if promiseConstructorSymbol != nil {
+			promiseConstructorType = c.getTypeOfSymbol(promiseConstructorSymbol)
+		} else {
+			promiseConstructorType = c.errorType
+		}
+		if c.isErrorType(promiseConstructorType) {
+			if promiseConstructorName.Kind == ast.KindIdentifier && promiseConstructorName.Text() == "Promise" && c.getTargetType(returnType) == c.getGlobalPromiseType() {
+				c.error(returnTypeNode, diagnostics.An_async_function_or_method_in_ES5_requires_the_Promise_constructor_Make_sure_you_have_a_declaration_for_the_Promise_constructor_or_include_ES2015_in_your_lib_option)
+			} else {
+				c.error(returnTypeNode, diagnostics.Type_0_is_not_a_valid_async_function_return_type_in_ES5_because_it_does_not_refer_to_a_Promise_compatible_constructor_value, entityNameToString(promiseConstructorName))
+			}
+			return
+		}
+
+		globalPromiseConstructorType := c.getGlobalPromiseConstructorTypeChecked()
+		if globalPromiseConstructorType == c.emptyObjectType {
+			// If we couldn't resolve the global PromiseConstructorLike type we cannot verify
+			// compatibility with __awaiter.
+			c.error(returnTypeNode, diagnostics.Type_0_is_not_a_valid_async_function_return_type_in_ES5_because_it_does_not_refer_to_a_Promise_compatible_constructor_value, entityNameToString(promiseConstructorName))
+			return
+		}
+		headMessage := diagnostics.Type_0_is_not_a_valid_async_function_return_type_in_ES5_because_it_does_not_refer_to_a_Promise_compatible_constructor_value
+		if !c.checkTypeAssignableTo(promiseConstructorType, globalPromiseConstructorType, returnTypeNode, headMessage) {
+			return
+		}
+
+		// Verify there is no local declaration that could collide with the promise constructor.
+		rootName := ast.GetFirstIdentifier(promiseConstructorName)
+		collidingSymbol := c.getSymbol(node.Locals(), rootName.Text(), ast.SymbolFlagsValue)
+		if collidingSymbol != nil {
+			c.error(collidingSymbol.ValueDeclaration, diagnostics.Duplicate_identifier_0_Compiler_uses_declaration_1_to_support_async_functions, rootName.Text(), entityNameToString(promiseConstructorName))
+			return
+		}
 	}
-	globalPromiseType := c.getGlobalPromiseTypeChecked()
-	if globalPromiseType != c.emptyGenericType && !c.isReferenceToType(returnType, globalPromiseType) {
-		// The promise type was not a valid type reference to the global promise type, so we
-		// report an error and return the unknown type.
-		c.error(returnTypeNode, diagnostics.The_return_type_of_an_async_function_or_method_must_be_the_global_Promise_T_type_Did_you_mean_to_write_Promise_0, c.TypeToString(core.OrElse(c.getAwaitedTypeNoAlias(returnType), c.voidType)))
-		return
-	}
+
 	c.checkAwaitedType(returnType, false /*withAlias*/, node, diagnostics.The_return_type_of_an_async_function_must_either_be_a_valid_promise_or_must_not_contain_a_callable_then_member)
 }
 
@@ -13610,14 +13688,11 @@ func (c *Checker) getTargetOfModuleDefault(moduleSymbol *ast.Symbol, node *ast.N
 }
 
 func (c *Checker) reportNonDefaultExport(moduleSymbol *ast.Symbol, node *ast.Node) {
-	if moduleSymbol.Exports != nil && moduleSymbol.Exports[node.Symbol().Name] != nil {
+	if moduleSymbol.Exports[node.Symbol().Name] != nil {
 		c.error(node, diagnostics.Module_0_has_no_default_export_Did_you_mean_to_use_import_1_from_0_instead, c.symbolToString(moduleSymbol), c.symbolToString(node.Symbol()))
 	} else {
 		diagnostic := c.error(node.Name(), diagnostics.Module_0_has_no_default_export, c.symbolToString(moduleSymbol))
-		var exportStar *ast.Symbol
-		if moduleSymbol.Exports != nil {
-			exportStar = moduleSymbol.Exports[ast.InternalSymbolNameExportStar]
-		}
+		exportStar := moduleSymbol.Exports[ast.InternalSymbolNameExportStar]
 		if exportStar != nil {
 			defaultExport := core.Find(exportStar.Declarations, func(decl *ast.Declaration) bool {
 				if !(ast.IsExportDeclaration(decl) && decl.AsExportDeclaration().ModuleSpecifier != nil) {
@@ -26107,6 +26182,8 @@ func (c *Checker) markLinkedReferences(location *ast.Node, hint ReferenceHint, p
 		c.markExportAssignmentAliasReferenced(location)
 	case ReferenceHintJsx:
 		c.markJsxAliasReferenced(location)
+	case ReferenceHintAsyncFunction:
+		c.markAsyncFunctionAliasReferenced(location)
 	case ReferenceHintExportImportEquals:
 		c.markImportEqualsAliasReferenced(location)
 	case ReferenceHintExportSpecifier:
@@ -26310,6 +26387,14 @@ func (c *Checker) markExportAssignmentAliasReferenced(location *ast.Node /*Expor
 
 func (c *Checker) markJsxAliasReferenced(node *ast.Node /*JsxOpeningLikeElement | JsxOpeningFragment*/) {
 	// !!!
+}
+
+func (c *Checker) markAsyncFunctionAliasReferenced(location *ast.Node /*FunctionLikeDeclaration*/) {
+	if c.languageVersion < core.ScriptTargetES2015 {
+		if getFunctionFlags(location)&FunctionFlagsAsync != 0 {
+			c.markTypeNodeAsReferenced(location.Type())
+		}
+	}
 }
 
 func (c *Checker) markImportEqualsAliasReferenced(location *ast.Node /*ImportEqualsDeclaration*/) {
