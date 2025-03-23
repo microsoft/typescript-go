@@ -26783,9 +26783,12 @@ func (c *Checker) getDefinitelyFalsyPartOfType(t *Type) *Type {
 
 func (c *Checker) getConstraintDeclaration(t *Type) *ast.Node {
 	if t.symbol != nil {
-		declaration := core.Find(t.symbol.Declarations, ast.IsTypeParameterDeclaration)
-		if declaration != nil {
-			return declaration.AsTypeParameter().Constraint
+		for _, d := range t.symbol.Declarations {
+			if ast.IsTypeParameterDeclaration(d) {
+				if constraint := d.AsTypeParameter().Constraint; constraint != nil {
+					return constraint
+				}
+			}
 		}
 	}
 	return nil
