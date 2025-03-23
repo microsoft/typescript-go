@@ -23,6 +23,9 @@ type fileLoader struct {
 	resolvedModulesMutex sync.Mutex
 	resolvedModules      map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule]
 
+	sourceFileMetaDatasMutex sync.RWMutex
+	sourceFileMetaDatas      map[tspath.Path]*ast.SourceFileMetaData
+
 	mu                      sync.Mutex
 	wg                      core.WorkGroup
 	tasksByFileName         map[string]*parseTask
@@ -40,7 +43,7 @@ func processAllProgramFiles(
 	resolver *module.Resolver,
 	rootFiles []string,
 	libs []string,
-) (files []*ast.SourceFile, resolvedModules map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule]) {
+) (files []*ast.SourceFile, resolvedModules map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule], sourceFileMetaDatas map[tspath.Path]*ast.SourceFileMetaData) {
 	supportedExtensions := tsoptions.GetSupportedExtensions(compilerOptions, nil /*extraFileExtensions*/)
 	loader := fileLoader{
 		host:               host,
@@ -76,7 +79,7 @@ func processAllProgramFiles(
 	}
 	loader.sortLibs(libFiles)
 
-	return append(libFiles, files...), loader.resolvedModules
+	return append(libFiles, files...), loader.resolvedModules, loader.sourceFileMetaDatas
 }
 
 func (p *fileLoader) addRootTasks(files []string, isLib bool) {
@@ -221,9 +224,33 @@ func (t *parseTask) start(loader *fileLoader) {
 	})
 }
 
+func (p *fileLoader) loadSourceFileMetaData(path tspath.Path) {
+	p.sourceFileMetaDatasMutex.RLock()
+	_, ok := p.sourceFileMetaDatas[path]
+	p.sourceFileMetaDatasMutex.RUnlock()
+	if ok {
+		return
+	}
+
+	packageJsonType := p.resolver.GetPackageJsonTypeIfApplicable(string(path))
+	impliedNodeFormat := ast.GetImpliedNodeFormatForFile(string(path), packageJsonType)
+	metadata := &ast.SourceFileMetaData{
+		PackageJsonType:   packageJsonType,
+		ImpliedNodeFormat: impliedNodeFormat,
+	}
+
+	p.sourceFileMetaDatasMutex.Lock()
+	defer p.sourceFileMetaDatasMutex.Unlock()
+	if p.sourceFileMetaDatas == nil {
+		p.sourceFileMetaDatas = make(map[tspath.Path]*ast.SourceFileMetaData)
+	}
+	p.sourceFileMetaDatas[path] = metadata
+}
+
 func (p *fileLoader) parseSourceFile(fileName string) *ast.SourceFile {
 	path := tspath.ToPath(fileName, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
 	sourceFile := p.host.GetSourceFile(fileName, path, p.compilerOptions.GetEmitScriptTarget())
+	p.loadSourceFileMetaData(path)
 	return sourceFile
 }
 
@@ -274,8 +301,13 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(file *ast.SourceFile) 
 
 			// Don't add the file if it has a bad extension (e.g. 'tsx' if we don't have '--allowJs')
 			// This may still end up being an untyped module -- the file won't be included but imports will be allowed.
-
-			shouldAddFile := resolution.IsResolved() && tspath.FileExtensionIsOneOf(resolvedFileName, []string{".ts", ".tsx", ".mts", ".cts"})
+			hasAllowedExtension := false
+			if p.compilerOptions.ResolveJsonModule.IsTrue() {
+				hasAllowedExtension = tspath.FileExtensionIsOneOf(resolvedFileName, tspath.SupportedTSExtensionsWithJsonFlat)
+			} else {
+				hasAllowedExtension = tspath.FileExtensionIsOneOf(resolvedFileName, tspath.SupportedTSExtensionsFlat)
+			}
+			shouldAddFile := resolution.IsResolved() && hasAllowedExtension
 			// TODO(ercornel): !!!: other checks on whether or not to add the file
 
 			if shouldAddFile {

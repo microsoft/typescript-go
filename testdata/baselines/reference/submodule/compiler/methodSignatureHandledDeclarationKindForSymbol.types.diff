@@ -1,0 +1,11 @@
+--- old.methodSignatureHandledDeclarationKindForSymbol.types
++++ new.methodSignatureHandledDeclarationKindForSymbol.types
+@@= skipped -7, +7 lines =@@
+ 
+ interface Foo {
+     bold: string;
+->bold : () => string
++>bold : string
+ }
+ 
+ 

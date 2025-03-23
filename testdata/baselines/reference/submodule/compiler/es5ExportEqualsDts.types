@@ -1,0 +1,25 @@
+//// [tests/cases/compiler/es5ExportEqualsDts.ts] ////
+
+=== es5ExportEqualsDts.ts ===
+class A {
+>A : A
+
+    foo() {
+>foo : () => B
+
+        var aVal: A.B;
+>aVal : B
+>A : any
+
+        return aVal;
+>aVal : B
+    }
+}
+
+module A {
+    export interface B { }
+}
+
+export = A
+>A : A
+

@@ -1,0 +1,179 @@
+--- old.exhaustiveSwitchStatements1.js
++++ new.exhaustiveSwitchStatements1.js
+@@= skipped -251, +251 lines =@@
+ }
+ 
+ //// [exhaustiveSwitchStatements1.js]
+-"use strict";
+ function f1(x) {
+     if (!!true) {
+         switch (x) {
+@@= skipped -14, +13 lines =@@
+     }
+ }
+ function f2(x) {
+-    var z;
++    let z;
+     switch (x) {
+         case 1:
+             z = 10;
+@@= skipped -41, +41 lines =@@
+         }
+ }
+ function area(s) {
+-    var area;
++    let area;
+     switch (s.kind) {
+         case "square":
+             area = s.size * s.size;
+@@= skipped -18, +18 lines =@@
+     return area;
+ }
+ function areaWrapped(s) {
+-    var area;
+-    area = (function () {
++    let area;
++    area = (() => {
+         switch (s.kind) {
+             case "square": return s.size * s.size;
+             case "rectangle": return s.width * s.height;
+@@= skipped -18, +18 lines =@@
+     MyEnum[MyEnum["B"] = 1] = "B";
+ })(MyEnum || (MyEnum = {}));
+ function thisGivesError(e) {
+-    var s;
++    let s;
+     switch (e) {
+         case MyEnum.A:
+             s = "it was A";
+@@= skipped -12, +12 lines =@@
+     return s;
+ }
+ function good1(e) {
+-    var s;
++    let s;
+     switch (e) {
+         case MyEnum.A:
+             s = "it was A";
+@@= skipped -26, +26 lines =@@
+     Level[Level["One"] = 0] = "One";
+     Level[Level["Two"] = 1] = "Two";
+ })(Level || (Level = {}));
+-var doSomethingWithLevel = function (level) {
+-    var next;
++const doSomethingWithLevel = (level) => {
++    let next;
+     switch (level) {
+         case Level.One:
+             next = Level.Two;
+@@= skipped -42, +42 lines =@@
+ }
+ // Repro from #20823
+ function test4(value) {
+-    var x;
++    let x;
+     switch (value) {
+         case 1:
+             x = "one";
+@@= skipped -18, +18 lines =@@
+     Animal[Animal["CAT"] = 1] = "CAT";
+ })(Animal || (Animal = {}));
+ function expression() {
+-    var _a;
+-    switch ((_a = zoo === null || zoo === void 0 ? void 0 : zoo.animal) !== null && _a !== void 0 ? _a : Animal.DOG) {
++    switch (zoo?.animal ?? Animal.DOG) {
+         case Animal.DOG: return Animal.DOG;
+         case Animal.CAT: return Animal.CAT;
+     }
+ }
+ // Repro from #34840
+ function foo() {
+-    var foo = 0;
++    const foo = 0;
+     while (true) {
+-        var stats = foo;
++        const stats = foo;
+         switch (stats) {
+             case 1: break;
+             case 2: break;
+@@= skipped -33, +32 lines =@@
+             a.kind; // Error expected
+     }
+ }
+-
+-
+-//// [exhaustiveSwitchStatements1.d.ts]
+-declare function f1(x: 1 | 2): string;
+-declare function f2(x: 1 | 2): void;
+-declare function f3(x: 1 | 2): 10 | 20;
+-declare enum E {
+-    A = 0,
+-    B = 1
+-}
+-declare function f(e: E): number;
+-declare function g(e: E): number;
+-interface Square {
+-    kind: "square";
+-    size: number;
+-}
+-interface Rectangle {
+-    kind: "rectangle";
+-    width: number;
+-    height: number;
+-}
+-interface Circle {
+-    kind: "circle";
+-    radius: number;
+-}
+-interface Triangle {
+-    kind: "triangle";
+-    side: number;
+-}
+-type Shape = Square | Rectangle | Circle | Triangle;
+-declare function area(s: Shape): number;
+-declare function areaWrapped(s: Shape): number;
+-declare enum MyEnum {
+-    A = 0,
+-    B = 1
+-}
+-declare function thisGivesError(e: MyEnum): string;
+-declare function good1(e: MyEnum): string;
+-declare function good2(e: MyEnum): string;
+-declare enum Level {
+-    One = 0,
+-    Two = 1
+-}
+-declare const doSomethingWithLevel: (level: Level) => Level;
+-interface Square2 {
+-    kind: "square";
+-    size: number;
+-}
+-interface Circle2 {
+-    kind: "circle";
+-    radius: number;
+-}
+-type Shape2 = Square2 | Circle2;
+-declare function withDefault(s1: Shape2, s2: Shape2): string;
+-declare function withoutDefault(s1: Shape2, s2: Shape2): string;
+-declare function test4(value: 1 | 2): string;
+-declare enum Animal {
+-    DOG = 0,
+-    CAT = 1
+-}
+-declare const zoo: {
+-    animal: Animal;
+-} | undefined;
+-declare function expression(): Animal;
+-declare function foo(): void;
+-type O = {
+-    a: number;
+-    b: number;
+-};
+-type K = keyof O | 'c';
+-declare function ff(o: O, k: K): number;
+-type A = {
+-    kind: "abc";
+-} | {
+-    kind: "def";
+-};
+-declare function f35431(a: A): void;

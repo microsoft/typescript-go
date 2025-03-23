@@ -1,0 +1,29 @@
+--- old.genericCallWithOverloadedConstructorTypedArguments.types
++++ new.genericCallWithOverloadedConstructorTypedArguments.types
+@@= skipped -17, +17 lines =@@
+     }
+ 
+     function foo4(cb: typeof a) {
+->foo4 : (cb: typeof a) => boolean
++>foo4 : (cb: { new (x: boolean): boolean; new (x: string): string; }) => boolean
+ >cb : { new (x: boolean): boolean; new (x: string): string; }
+ >a : { new (x: boolean): boolean; new (x: string): string; }
+ 
+@@= skipped -12, +12 lines =@@
+     var r = foo4(a);
+ >r : boolean
+ >foo4(a) : boolean
+->foo4 : (cb: typeof a) => boolean
++>foo4 : (cb: { new (x: boolean): boolean; new (x: string): string; }) => boolean
+ >a : { new (x: boolean): boolean; new (x: string): string; }
+ 
+     var b: { new <T>(x: T): T };
+@@= skipped -10, +10 lines =@@
+     var r2 = foo4(b);
+ >r2 : boolean
+ >foo4(b) : boolean
+->foo4 : (cb: typeof a) => boolean
++>foo4 : (cb: { new (x: boolean): boolean; new (x: string): string; }) => boolean
+ >b : new <T>(x: T) => T
+ }
+ 

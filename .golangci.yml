@@ -30,17 +30,18 @@ linters:
     - intrange
     - makezero
     - mirror
+    - misspell
     - musttag
     - nolintlint
     - paralleltest
     - perfsprint
     - predeclared
     - reassign
-    - tenv
     - testableexamples
     - tparallel
     - unconvert
     - usestdlibvars
+    - usetesting
     - whitespace
 
     - customlint
@@ -64,10 +65,6 @@ linters-settings:
     customlint:
       type: module
 
-  wrapcheck:
-    ignorePackageGlobs:
-      - encoding/*
-      - github.com/go-json-experiment/*
 #   revive:
 #     enable-all-rules: true
 #     rules:

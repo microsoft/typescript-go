@@ -1,0 +1,17 @@
+--- old.commaOperatorWithSecondOperandObjectType.js
++++ new.commaOperatorWithSecondOperandObjectType.js
+@@= skipped -46, +46 lines =@@
+ var NUMBER;
+ var STRING;
+ var OBJECT;
+-var CLASS = /** @class */ (function () {
+-    function CLASS() {
+-    }
+-    return CLASS;
+-}());
++class CLASS {
++    num;
++}
+ //The second operand type is Object
+ ANY, OBJECT;
+ BOOLEAN, OBJECT;

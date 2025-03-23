@@ -1,0 +1,253 @@
+--- old.intraExpressionInferences.types
++++ new.intraExpressionInferences.types
+@@= skipped -31, +31 lines =@@
+ >n => n.toFixed() : (n: number) => string
+ >n : number
+ >n.toFixed() : string
+->n.toFixed : (fractionDigits?: number) => string
++>n.toFixed : (fractionDigits?: number | undefined) => string
+ >n : number
+->toFixed : (fractionDigits?: number) => string
++>toFixed : (fractionDigits?: number | undefined) => string
+ 
+ });
+ 
+@@= skipped -22, +22 lines =@@
+ >n => n.toFixed() : (n: number) => string
+ >n : number
+ >n.toFixed() : string
+->n.toFixed : (fractionDigits?: number) => string
++>n.toFixed : (fractionDigits?: number | undefined) => string
+ >n : number
+->toFixed : (fractionDigits?: number) => string
++>toFixed : (fractionDigits?: number | undefined) => string
+ 
+ });
+ 
+ callIt({
+ >callIt({    produce() {        return 0;    },    consume: n => n.toFixed()}) : void
+ >callIt : <T>(obj: { produce: (n: number) => T; consume: (x: T) => void; }) => void
+->{    produce() {        return 0;    },    consume: n => n.toFixed()} : { produce(): number; consume: (n: number) => string; }
++>{    produce() {        return 0;    },    consume: n => n.toFixed()} : { produce: () => number; consume: (n: number) => string; }
+ 
+     produce() {
+ >produce : () => number
+@@= skipped -23, +23 lines =@@
+ >n => n.toFixed() : (n: number) => string
+ >n : number
+ >n.toFixed() : string
+->n.toFixed : (fractionDigits?: number) => string
++>n.toFixed : (fractionDigits?: number | undefined) => string
+ >n : number
+->toFixed : (fractionDigits?: number) => string
++>toFixed : (fractionDigits?: number | undefined) => string
+ 
+ });
+ 
+@@= skipped -21, +21 lines =@@
+ >n => n.toFixed() : (n: number) => string
+ >n : number
+ >n.toFixed() : string
+->n.toFixed : (fractionDigits?: number) => string
++>n.toFixed : (fractionDigits?: number | undefined) => string
+ >n : number
+->toFixed : (fractionDigits?: number) => string
++>toFixed : (fractionDigits?: number | undefined) => string
+ 
+ callItT([_a => 0, n => n.toFixed()]);
+ >callItT([_a => 0, n => n.toFixed()]) : void
+@@= skipped -14, +14 lines =@@
+ >n => n.toFixed() : (n: number) => string
+ >n : number
+ >n.toFixed() : string
+->n.toFixed : (fractionDigits?: number) => string
++>n.toFixed : (fractionDigits?: number | undefined) => string
+ >n : number
+->toFixed : (fractionDigits?: number) => string
++>toFixed : (fractionDigits?: number | undefined) => string
+ 
+ // Repro from #25092
+ 
+@@= skipped -39, +39 lines =@@
+ >generic => generic.toFixed() : (generic: number) => string
+ >generic : number
+ >generic.toFixed() : string
+->generic.toFixed : (fractionDigits?: number) => string
++>generic.toFixed : (fractionDigits?: number | undefined) => string
+ >generic : number
+->toFixed : (fractionDigits?: number) => string
++>toFixed : (fractionDigits?: number | undefined) => string
+ 
+ });
+ 
+@@= skipped -18, +18 lines =@@
+ make({
+ >make({   mutations: {       foo() { }   },   action: (a) => { a.foo() }}) : void
+ >make : <M>(o: { mutations: M; action: (m: M) => void; }) => void
+->{   mutations: {       foo() { }   },   action: (a) => { a.foo() }} : { mutations: { foo(): void; }; action: (a: { foo(): void; }) => void; }
++>{   mutations: {       foo() { }   },   action: (a) => { a.foo() }} : { mutations: { foo: () => void; }; action: (a: { foo: () => void; }) => void; }
+ 
+    mutations: {
+->mutations : { foo(): void; }
+->{       foo() { }   } : { foo(): void; }
++>mutations : { foo: () => void; }
++>{       foo() { }   } : { foo: () => void; }
+ 
+        foo() { }
+ >foo : () => void
+ 
+    },
+    action: (a) => { a.foo() }
+->action : (a: { foo(): void; }) => void
+->(a) => { a.foo() } : (a: { foo(): void; }) => void
+->a : { foo(): void; }
++>action : (a: { foo: () => void; }) => void
++>(a) => { a.foo() } : (a: { foo: () => void; }) => void
++>a : { foo: () => void; }
+ >a.foo() : void
+ >a.foo : () => void
+->a : { foo(): void; }
++>a : { foo: () => void; }
+ >foo : () => void
+ 
+ });
+@@= skipped -33, +33 lines =@@
+ foo({
+ >foo({    a: () => { return 42 },    b(a) {},}) : void
+ >foo : <A>(options: { a: A; b: (a: A) => void; }) => void
+->{    a: () => { return 42 },    b(a) {},} : { a: () => 42; b(a: () => 42): void; }
++>{    a: () => { return 42 },    b(a) {},} : { a: () => 42; b: (a: () => 42) => void; }
+ 
+     a: () => { return 42 },
+ >a : () => 42
+@@= skipped -16, +16 lines =@@
+ foo({
+ >foo({    a: function () { return 42 },    b(a) {},}) : void
+ >foo : <A>(options: { a: A; b: (a: A) => void; }) => void
+->{    a: function () { return 42 },    b(a) {},} : { a: () => 42; b(a: () => 42): void; }
++>{    a: function () { return 42 },    b(a) {},} : { a: () => 42; b: (a: () => 42) => void; }
+ 
+     a: function () { return 42 },
+ >a : () => 42
+@@= skipped -16, +16 lines =@@
+ foo({
+ >foo({    a() { return 42 },    b(a) {},}) : void
+ >foo : <A>(options: { a: A; b: (a: A) => void; }) => void
+->{    a() { return 42 },    b(a) {},} : { a(): 42; b(a: () => 42): void; }
++>{    a() { return 42 },    b(a) {},} : { a: () => 42; b: (a: () => 42) => void; }
+ 
+     a() { return 42 },
+ >a : () => 42
+@@= skipped -127, +127 lines =@@
+ createMappingComponent({
+ >createMappingComponent({    setup() {        return {            inputs: {                num: new Wrapper<number>(),                str: new Wrapper<string>()            },            outputs: {                bool: new Wrapper<boolean>(),                str: new Wrapper<string>()            }        };    },    map(inputs) {        return {            bool: inputs.nonexistent,            str: inputs.num,  // Causes error        }    }}) : void
+ >createMappingComponent : <I extends WrappedMap, O extends WrappedMap>(def: MappingComponent<I, O>) => void
+->{    setup() {        return {            inputs: {                num: new Wrapper<number>(),                str: new Wrapper<string>()            },            outputs: {                bool: new Wrapper<boolean>(),                str: new Wrapper<string>()            }        };    },    map(inputs) {        return {            bool: inputs.nonexistent,            str: inputs.num,  // Causes error        }    }} : { setup(): { inputs: { num: Wrapper<number>; str: Wrapper<string>; }; outputs: { bool: Wrapper<boolean>; str: Wrapper<string>; }; }; map(inputs: Unwrap<{ num: Wrapper<number>; str: Wrapper<string>; }>): { bool: any; str: number; }; }
++>{    setup() {        return {            inputs: {                num: new Wrapper<number>(),                str: new Wrapper<string>()            },            outputs: {                bool: new Wrapper<boolean>(),                str: new Wrapper<string>()            }        };    },    map(inputs) {        return {            bool: inputs.nonexistent,            str: inputs.num,  // Causes error        }    }} : { setup: () => { inputs: { num: Wrapper<number>; str: Wrapper<string>; }; outputs: { bool: Wrapper<boolean>; str: Wrapper<string>; }; }; map: (inputs: Unwrap<{ num: Wrapper<number>; str: Wrapper<string>; }>) => { bool: any; str: number; }; }
+ 
+     setup() {
+ >setup : () => { inputs: { num: Wrapper<number>; str: Wrapper<string>; }; outputs: { bool: Wrapper<boolean>; str: Wrapper<string>; }; }
+@@= skipped -106, +106 lines =@@
+ whatIWant({ generator: (bob) => bob ? 1 : 2, receiver: (t) => console.log(t + 2) })
+ >whatIWant({ generator: (bob) => bob ? 1 : 2, receiver: (t) => console.log(t + 2) }) : void
+ >whatIWant : <T>(props: { generator: (bob: any) => T; receiver: (t: T) => any; }) => void
+->{ generator: (bob) => bob ? 1 : 2, receiver: (t) => console.log(t + 2) } : { generator: (bob: any) => 2 | 1; receiver: (t: 2 | 1) => void; }
+->generator : (bob: any) => 2 | 1
+->(bob) => bob ? 1 : 2 : (bob: any) => 2 | 1
++>{ generator: (bob) => bob ? 1 : 2, receiver: (t) => console.log(t + 2) } : { generator: (bob: any) => 1 | 2; receiver: (t: 1 | 2) => void; }
++>generator : (bob: any) => 1 | 2
++>(bob) => bob ? 1 : 2 : (bob: any) => 1 | 2
+ >bob : any
+->bob ? 1 : 2 : 2 | 1
++>bob ? 1 : 2 : 1 | 2
+ >bob : any
+ >1 : 1
+ >2 : 2
+->receiver : (t: 2 | 1) => void
+->(t) => console.log(t + 2) : (t: 2 | 1) => void
+->t : 2 | 1
++>receiver : (t: 1 | 2) => void
++>(t) => console.log(t + 2) : (t: 1 | 2) => void
++>t : 1 | 2
+ >console.log(t + 2) : void
+ >console.log : (...data: any[]) => void
+ >console : Console
+ >log : (...data: any[]) => void
+ >t + 2 : number
+->t : 2 | 1
++>t : 1 | 2
+ >2 : 2
+ 
+ nonObject((bob) => bob ? 1 : 2, (t) => console.log(t + 2))
+ >nonObject((bob) => bob ? 1 : 2, (t) => console.log(t + 2)) : void
+ >nonObject : <T>(generator: (bob: any) => T, receiver: (t: T) => any) => void
+->(bob) => bob ? 1 : 2 : (bob: any) => 2 | 1
++>(bob) => bob ? 1 : 2 : (bob: any) => 1 | 2
+ >bob : any
+->bob ? 1 : 2 : 2 | 1
++>bob ? 1 : 2 : 1 | 2
+ >bob : any
+ >1 : 1
+ >2 : 2
+->(t) => console.log(t + 2) : (t: 2 | 1) => void
+->t : 2 | 1
++>(t) => console.log(t + 2) : (t: 1 | 2) => void
++>t : 1 | 2
+ >console.log(t + 2) : void
+ >console.log : (...data: any[]) => void
+ >console : Console
+ >log : (...data: any[]) => void
+ >t + 2 : number
+->t : 2 | 1
++>t : 1 | 2
+ >2 : 2
+ 
+ // Repro from #48466
+@@= skipped -229, +229 lines =@@
+ 
+       arg.toString();
+ >arg.toString() : string
+->arg.toString : (radix?: number) => string
++>arg.toString : (radix?: number | undefined) => string
+ >arg : number
+->toString : (radix?: number) => string
++>toString : (radix?: number | undefined) => string
+ 
+     },
+   },
+@@= skipped -48, +48 lines =@@
+ >(arg) => arg.join(",") : (arg: number[]) => string
+ >arg : number[]
+ >arg.join(",") : string
+->arg.join : (separator?: string) => string
++>arg.join : (separator?: string | undefined) => string
+ >arg : number[]
+->join : (separator?: string) => string
++>join : (separator?: string | undefined) => string
+ >"," : ","
+ 
+   },
+@@= skipped -211, +211 lines =@@
+ >(arg) => arg.join(",") : (arg: string[]) => string
+ >arg : string[]
+ >arg.join(",") : string
+->arg.join : (separator?: string) => string
++>arg.join : (separator?: string | undefined) => string
+ >arg : string[]
+->join : (separator?: string) => string
++>join : (separator?: string | undefined) => string
+ >"," : ","
+ 
+     nested2: {
+@@= skipped -73, +73 lines =@@
+ >(arg) => arg.join(",") : (arg: string[]) => string
+ >arg : string[]
+ >arg.join(",") : string
+->arg.join : (separator?: string) => string
++>arg.join : (separator?: string | undefined) => string
+ >arg : string[]
+->join : (separator?: string) => string
++>join : (separator?: string | undefined) => string
+ >"," : ","
+ 
+     c: (arg) => Number(arg),

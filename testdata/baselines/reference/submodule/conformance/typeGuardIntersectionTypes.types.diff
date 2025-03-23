@@ -1,0 +1,20 @@
+--- old.typeGuardIntersectionTypes.types
++++ new.typeGuardIntersectionTypes.types
+@@= skipped -93, +93 lines =@@
+ 
+ // a function that turns an A into an A & B
+ function union(a: A): A & B | null {
+->union : (a: A) => (A & B) | null
++>union : (a: A) => A & B | null
+ >a : A
+ 
+   if (isB(a)) {
+@@= skipped -40, +40 lines =@@
+ >x && typeof x.legs === 'number' : boolean
+ >x : Beast
+ >typeof x.legs === 'number' : boolean
+->typeof x.legs : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof x.legs : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >x.legs : number | undefined
+ >x : Beast
+ >legs : number | undefined

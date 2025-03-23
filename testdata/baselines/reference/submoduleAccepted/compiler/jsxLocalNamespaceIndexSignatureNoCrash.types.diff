@@ -1,0 +1,13 @@
+--- old.jsxLocalNamespaceIndexSignatureNoCrash.types
++++ new.jsxLocalNamespaceIndexSignatureNoCrash.types
+@@= skipped -31, +31 lines =@@
+ >A : () => any
+ 
+     return (<p>Hello</p>);
+->(<p>Hello</p>) : error
+-><p>Hello</p> : error
++>(<p>Hello</p>) : any
++><p>Hello</p> : any
+ >p : any
+ >p : any
+ }

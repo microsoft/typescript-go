@@ -1,0 +1,20 @@
+--- old.subclassThisTypeAssignable01.types
++++ new.subclassThisTypeAssignable01.types
+@@= skipped -38, +38 lines =@@
+ >C : C
+ 
+ 	view(v: Vnode<MyAttrs>) { return 0; }
+->view : (v: Vnode<MyAttrs>) => number
++>view : (v: Vnode<MyAttrs, Lifecycle<MyAttrs, any>>) => number
+ >v : Vnode<MyAttrs, Lifecycle<MyAttrs, any>>
+ >0 : 0
+ }
+@@= skipped -13, +13 lines =@@
+ === file1.js ===
+ /** @type {ClassComponent<any>} */
+ const test9 = new C();
+->test9 : ClassComponent<any>
++>test9 : C
+ >new C() : C
+ >C : typeof C
+ 

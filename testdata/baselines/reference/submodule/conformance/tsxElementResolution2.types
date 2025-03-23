@@ -1,0 +1,21 @@
+//// [tests/cases/conformance/jsx/tsxElementResolution2.tsx] ////
+
+=== file.tsx ===
+declare module JSX {
+	interface Element { }
+	interface IntrinsicElements {
+	    [x: string]: any;
+>x : string
+	}
+}
+
+// OK
+<div />;
+><div /> : any
+>div : any
+
+// OK
+<span />;
+><span /> : any
+>span : any
+

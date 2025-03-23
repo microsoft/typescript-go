@@ -201,7 +201,7 @@ func (c *Checker) checkGrammarModifiers(node *ast.Node /*Union[HasModifiers, Has
 	if c.reportObviousDecoratorErrors(node) || c.reportObviousModifierErrors(node) {
 		return true
 	}
-	if ast.IsParameter(node) && parameterIsThisKeyword(node) {
+	if ast.IsParameter(node) && ast.IsThisParameter(node) {
 		return c.grammarErrorOnFirstToken(node, diagnostics.Neither_decorators_nor_modifiers_may_be_applied_to_this_parameters)
 	}
 	blockScopeKind := ast.NodeFlagsNone
@@ -1217,7 +1217,8 @@ func (c *Checker) checkGrammarForInOrForOfStatement(forInOrOfStatement *ast.ForI
 					}
 					switch c.moduleKind {
 					case core.ModuleKindNode16, core.ModuleKindNodeNext:
-						if sourceFile.ImpliedNodeFormat == core.ModuleKindCommonJS {
+						sourceFileMetaData := c.program.GetSourceFileMetaData(sourceFile.Path())
+						if sourceFileMetaData != nil && sourceFileMetaData.ImpliedNodeFormat == core.ModuleKindCommonJS {
 							c.diagnostics.Add(createDiagnosticForNode(forInOrOfStatement.AwaitModifier, diagnostics.The_current_file_is_a_CommonJS_module_and_cannot_use_await_at_the_top_level))
 							break
 						}
@@ -1719,7 +1720,8 @@ func (c *Checker) checkGrammarAwaitOrAwaitUsing(node *ast.Node) bool {
 				switch c.moduleKind {
 				case core.ModuleKindNode16,
 					core.ModuleKindNodeNext:
-					if sourceFile.ImpliedNodeFormat == core.ModuleKindCommonJS {
+					sourceFileMetaData := c.program.GetSourceFileMetaData(sourceFile.Path())
+					if sourceFileMetaData != nil && sourceFileMetaData.ImpliedNodeFormat == core.ModuleKindCommonJS {
 						if !spanCalculated {
 							span = scanner.GetRangeOfTokenAtPosition(sourceFile, node.Pos())
 						}
@@ -1907,24 +1909,22 @@ func (c *Checker) checkGrammarProperty(node *ast.Node /*Union[PropertyDeclaratio
 		if ast.IsAutoAccessorPropertyDeclaration(node) && c.checkGrammarForInvalidQuestionMark(node.AsPropertyDeclaration().PostfixToken, diagnostics.An_accessor_property_cannot_be_declared_optional) {
 			return true
 		}
-	} else if node.Parent.Kind == ast.KindInterfaceDeclaration {
+	} else if ast.IsInterfaceDeclaration(node.Parent) {
 		if c.checkGrammarForInvalidDynamicName(propertyName, diagnostics.A_computed_property_name_in_an_interface_must_refer_to_an_expression_whose_type_is_a_literal_type_or_a_unique_symbol_type) {
 			return true
 		}
-
 		if !ast.IsPropertySignatureDeclaration(node) {
 			// Interfaces cannot contain property declarations
 			panic(fmt.Sprintf("Unexpected node kind %q", node.Kind))
 		}
-
 		if initializer := node.AsPropertySignatureDeclaration().Initializer; initializer != nil {
 			return c.grammarErrorOnNode(initializer, diagnostics.An_interface_property_cannot_have_an_initializer)
 		}
-	} else if ast.IsTypeAliasDeclaration(node.Parent) {
+	} else if ast.IsTypeLiteralNode(node.Parent) {
 		if c.checkGrammarForInvalidDynamicName(node.Name(), diagnostics.A_computed_property_name_in_a_type_literal_must_refer_to_an_expression_whose_type_is_a_literal_type_or_a_unique_symbol_type) {
 			return true
 		}
-		if ast.IsPropertySignatureDeclaration(node) {
+		if !ast.IsPropertySignatureDeclaration(node) {
 			// Type literals cannot contain property declarations
 			panic(fmt.Sprintf("Unexpected node kind %q", node.Kind))
 		}

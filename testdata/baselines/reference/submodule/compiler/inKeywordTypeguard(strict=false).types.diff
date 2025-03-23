@@ -1,0 +1,116 @@
+--- old.inKeywordTypeguard(strict=false).types
++++ new.inKeywordTypeguard(strict=false).types
+@@= skipped -484, +484 lines =@@
+ >x && typeof x === "object" : boolean
+ >x : unknown
+ >typeof x === "object" : boolean
+->typeof x : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof x : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >x : unknown
+ >"object" : "object"
+ >"a" in x : boolean
+@@= skipped -19, +19 lines =@@
+ >x && typeof x === "object" : boolean
+ >x : unknown
+ >typeof x === "object" : boolean
+->typeof x : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof x : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >x : unknown
+ >"object" : "object"
+ >"a" in x : boolean
+@@= skipped -105, +105 lines =@@
+ >x && typeof x === "object" : boolean
+ >x : T
+ >typeof x === "object" : boolean
+->typeof x : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof x : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >x : T
+ >"object" : "object"
+ >"a" in x : boolean
+@@= skipped -19, +19 lines =@@
+ >x && typeof x === "object" : boolean
+ >x : T
+ >typeof x === "object" : boolean
+->typeof x : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof x : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >x : T
+ >"object" : "object"
+ >"a" in x : boolean
+@@= skipped -338, +338 lines =@@
+ }
+ 
+ function f14(x: { a: string | undefined }) {
+->f14 : (x: { a: string | undefined; }) => void
+->x : { a: string | undefined; }
++>f14 : (x: { a: string; }) => void
++>x : { a: string; }
+ >a : string
+ 
+     if ("a" in x) {
+ >"a" in x : boolean
+ >"a" : "a"
+->x : { a: string | undefined; }
++>x : { a: string; }
+ 
+         x;
+->x : { a: string | undefined; }
++>x : { a: string; }
+     }
+     else {
+         x;
+@@= skipped -19, +19 lines =@@
+ }
+ 
+ function f15(x: { a?: string | undefined }) {
+->f15 : (x: { a?: string | undefined; }) => void
+->x : { a?: string | undefined; }
++>f15 : (x: { a?: string; }) => void
++>x : { a?: string; }
+ >a : string
+ 
+     if ("a" in x) {
+ >"a" in x : boolean
+ >"a" : "a"
+->x : { a?: string | undefined; }
++>x : { a?: string; }
+ 
+         x;
+->x : { a?: string | undefined; }
++>x : { a?: string; }
+     }
+     else {
+         x;
+->x : { a?: string | undefined; }
++>x : { a?: string; }
+     }
+ }
+ 
+@@= skipped -41, +41 lines =@@
+ >typeof value === "object" && value !== null && "prop" in value : boolean
+ >typeof value === "object" && value !== null : boolean
+ >typeof value === "object" : boolean
+->typeof value : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof value : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >value : A
+ >"object" : "object"
+ >value !== null : boolean
+@@= skipped -34, +34 lines =@@
+ // Repro from #51501
+ 
+ function isHTMLTable<T extends object | null>(table: T): boolean {
+->isHTMLTable : <T extends object | null>(table: T) => boolean
++>isHTMLTable : <T extends object>(table: T) => boolean
+ >table : T
+ 
+     return !!table && 'html' in table;
+@@= skipped -16, +16 lines =@@
+ // Repro from #51549
+ 
+ const f = <P extends object>(a: P & {}) => {
+->f : <P extends object>(a: P & {}) => void
+-><P extends object>(a: P & {}) => {    "foo" in a;} : <P extends object>(a: P & {}) => void
++>f : <P extends object>(a: P) => void
++><P extends object>(a: P & {}) => {    "foo" in a;} : <P extends object>(a: P) => void
+ >a : P
+ 
+     "foo" in a;

@@ -25,6 +25,7 @@ const { values: options } = parseArgs({
     args: process.argv.slice(2),
     options: {
         race: { type: "boolean" },
+        tests: { type: "string", short: "t" },
         fix: { type: "boolean" },
         noembed: { type: "boolean" },
         debug: { type: "boolean" },
@@ -44,7 +45,7 @@ const defaultGoBuildTags = [
 
 /**
  * @param  {...string} extra
- * @returns
+ * @returns {string[]}
  */
 function goBuildTags(...extra) {
     const tags = new Set(defaultGoBuildTags.concat(extra));
@@ -73,16 +74,28 @@ function memoize(fn) {
 
 const typeScriptSubmodulePath = path.join(__dirname, "_submodules", "TypeScript");
 
-function assertTypeScriptCloned() {
+const isTypeScriptSubmoduleCloned = memoize(() => {
     try {
         const stat = fs.statSync(path.join(typeScriptSubmodulePath, "package.json"));
         if (stat.isFile()) {
-            return;
+            return true;
         }
     }
     catch {}
 
-    throw new Error("_submodules/TypeScript does not exist; try running `git submodule update --init --recursive`");
+    return false;
+});
+
+const warnIfTypeScriptSubmoduleNotCloned = memoize(() => {
+    if (!isTypeScriptSubmoduleCloned()) {
+        console.warn(pc.yellow("Warning: TypeScript submodule is not cloned; some tests may be skipped."));
+    }
+});
+
+function assertTypeScriptCloned() {
+    if (!isTypeScriptSubmoduleCloned()) {
+        throw new Error("_submodules/TypeScript does not exist; try running `git submodule update --init --recursive`");
+    }
 }
 
 const tools = new Map([
@@ -203,16 +216,25 @@ export const generate = task({
 const goTestFlags = [
     ...goBuildFlags,
     ...goBuildTags(),
+    ...(options.tests ? [`-run=${options.tests}`] : []),
 ];
 
 const goTestEnv = {
     ...(options.concurrentTestPrograms ? { TS_TEST_PROGRAM_SINGLE_THREADED: "false" } : {}),
+    // Go test caching takes a long time on Windows.
+    // https://github.com/golang/go/issues/72992
+    ...(process.platform === "win32" ? { GOFLAGS: "-count=1" } : {}),
 };
+
+const goTestSumFlags = [
+    "--format-hide-empty-pkg",
+    ...(!isCI ? ["--hide-summary", "skipped"] : []),
+];
 
 const $test = $({ env: goTestEnv });
 
 const gotestsum = memoize(() => {
-    const args = isInstalled("gotestsum") ? ["gotestsum", "--format-hide-empty-pkg", "--"] : ["go", "test"];
+    const args = isInstalled("gotestsum") ? ["gotestsum", ...goTestSumFlags, "--"] : ["go", "test"];
     return args.concat(goTestFlags);
 });
 
@@ -221,6 +243,7 @@ const goTest = memoize(() => {
 });
 
 async function runTests() {
+    warnIfTypeScriptSubmoduleNotCloned();
     await $test`${gotestsum()} ./... ${isCI ? ["--timeout=45m"] : []}`;
 }
 
@@ -230,6 +253,7 @@ export const test = task({
 });
 
 async function runTestBenchmarks() {
+    warnIfTypeScriptSubmoduleNotCloned();
     // Run the benchmarks once to ensure they compile and run without errors.
     await $test`${goTest()} -run=- -bench=. -benchtime=1x ./...`;
 }
@@ -314,9 +338,12 @@ export const lint = task({
     run: async () => {
         await buildCustomLinter();
 
-        const lintArgs = ["run", "--sort-results"];
+        const lintArgs = ["run", "--sort-results", "--show-stats"];
         if (isCI) {
             lintArgs.push("--timeout=5m");
+        }
+        if (defaultGoBuildTags.length) {
+            lintArgs.push("--build-tags", defaultGoBuildTags.join(","));
         }
         if (options.fix) {
             lintArgs.push("--fix");
@@ -387,6 +414,7 @@ function baselineAcceptTask(localBaseline, refBaseline) {
         for (const p of toDelete) {
             const out = localPathToRefPath(p).replace(/\.delete$/, "");
             await rimraf(out);
+            await rimraf(p); // also delete the .delete file so that it no longer shows up in a diff tool.
         }
     };
 }

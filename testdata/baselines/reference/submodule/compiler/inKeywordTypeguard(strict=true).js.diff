@@ -1,0 +1,61 @@
+--- old.inKeywordTypeguard(strict=true).js
++++ new.inKeywordTypeguard(strict=true).js
+@@= skipped -386, +386 lines =@@
+ 
+ 
+ //// [inKeywordTypeguard.js]
+-"use strict";
+ class A {
++    a;
+ }
+ class B {
++    b;
+ }
+ function negativeClassesTest(x) {
+     if ("a" in x) {
+@@= skipped -22, +23 lines =@@
+     }
+ }
+ class AWithOptionalProp {
++    a;
+ }
+ class BWithOptionalProp {
++    b;
+ }
+ function positiveTestClassesWithOptionalProperties(x) {
+     if ("a" in x) {
+@@= skipped -36, +38 lines =@@
+     }
+ }
+ class C {
++    a;
+ }
+ class D {
++    a;
+ }
+ function negativeMultipleClassesTest(x) {
+     if ("a" in x) {
+@@= skipped -12, +14 lines =@@
+     }
+ }
+ class ClassWithUnionProp {
++    prop;
+ }
+ function negativePropTest(x) {
+     if ("a" in x.prop) {
+@@= skipped -10, +11 lines =@@
+     }
+ }
+ class NegativeClassTest {
++    prop;
+     inThis() {
+         if ("a" in this.prop) {
+             let z = this.prop.b;
+@@= skipped -10, +11 lines =@@
+     }
+ }
+ class UnreachableCodeDetection {
++    a;
+     inThis() {
+         if ("a" in this) {
+         }

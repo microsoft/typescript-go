@@ -1,0 +1,20 @@
+--- old.propertyNamesWithStringLiteral.js
++++ new.propertyNamesWithStringLiteral.js
+@@= skipped -18, +18 lines =@@
+ 
+ 
+ //// [propertyNamesWithStringLiteral.js]
+-var _Color = /** @class */ (function () {
+-    function _Color() {
+-    }
+-    return _Color;
+-}());
++class _Color {
++    a;
++    r;
++    g;
++    b;
++}
+ var Color;
+ (function (Color) {
+ })(Color || (Color = {}));

@@ -1,0 +1,50 @@
+--- old.subtypesOfTypeParameterWithConstraints2.types
++++ new.subtypesOfTypeParameterWithConstraints2.types
+@@= skipped -348, +348 lines =@@
+ >x : T
+ 
+     var r8 = true ? <T>(x: T) => { return x } : x; // ok
+->r8 : <T_1>(x: T_1) => T_1
+->true ? <T>(x: T) => { return x } : x : <T_1>(x: T_1) => T_1
++>r8 : <T>(x: T) => T
++>true ? <T>(x: T) => { return x } : x : <T>(x: T) => T
+ >true : true
+-><T>(x: T) => { return x } : <T_1>(x: T_1) => T_1
++><T>(x: T) => { return x } : <T>(x: T) => T
+ >x : T
+ >x : T
+ >x : T
+ 
+     var r8b = true ? x : <T>(x: T) => { return x }; // ok, type parameters not identical across declarations
+->r8b : <T_1>(x: T_1) => T_1
+->true ? x : <T>(x: T) => { return x } : <T_1>(x: T_1) => T_1
++>r8b : <T>(x: T) => T
++>true ? x : <T>(x: T) => { return x } : <T>(x: T) => T
+ >true : true
+ >x : T
+-><T>(x: T) => { return x } : <T_1>(x: T_1) => T_1
++><T>(x: T) => { return x } : <T>(x: T) => T
+ >x : T
+ >x : T
+ }
+@@= skipped -217, +217 lines =@@
+ >x : T
+ 
+     var r19 = true ? new Object() : x; // ok
+->r19 : Object | T
+->true ? new Object() : x : Object | T
++>r19 : T | Object
++>true ? new Object() : x : T | Object
+ >true : true
+ >new Object() : Object
+ >Object : ObjectConstructor
+ >x : T
+ 
+     var r19 = true ? x : new Object(); // ok
+->r19 : Object | T
+->true ? x : new Object() : Object | T
++>r19 : T | Object
++>true ? x : new Object() : T | Object
+ >true : true
+ >x : T
+ >new Object() : Object

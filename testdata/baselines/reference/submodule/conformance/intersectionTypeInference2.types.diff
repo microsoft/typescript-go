@@ -1,0 +1,44 @@
+--- old.intersectionTypeInference2.types
++++ new.intersectionTypeInference2.types
+@@= skipped -11, +11 lines =@@
+ >prop : number
+ 
+ declare const b: { prop: string & number };
+->b : { prop: string & number; }
++>b : { prop: never; }
+ >prop : never
+ 
+ f(a);  // never
+@@= skipped -11, +11 lines =@@
+ f(b);  // never
+ >f(b) : never
+ >f : <T>(x: { prop: T; }) => T
+->b : { prop: string & number; }
++>b : { prop: never; }
+ 
+ // Repro from #18354
+ 
+ declare function f2<T, Key extends keyof T>(obj: {[K in keyof T]: T[K]}, key: Key): T[Key];
+->f2 : <T, Key extends keyof T>(obj: { [K in keyof T]: T[K]; }, key: Key) => T[Key]
+->obj : { [K in keyof T]: T[K]; }
++>f2 : <T, Key extends keyof T>(obj: { [K in keyof T]: T[K] }, key: Key) => T[Key]
++>obj : { [K in keyof T]: T[K] }
+ >key : Key
+ 
+ declare const obj: { a: string } & { b: string };
+@@= skipped -16, +16 lines =@@
+ 
+ f2(obj, 'a');
+ >f2(obj, 'a') : string
+->f2 : <T, Key extends keyof T>(obj: { [K in keyof T]: T[K]; }, key: Key) => T[Key]
++>f2 : <T, Key extends keyof T>(obj: { [K in keyof T]: T[K] }, key: Key) => T[Key]
+ >obj : { a: string; } & { b: string; }
+ >'a' : "a"
+ 
+ f2(obj, 'b');
+ >f2(obj, 'b') : string
+->f2 : <T, Key extends keyof T>(obj: { [K in keyof T]: T[K]; }, key: Key) => T[Key]
++>f2 : <T, Key extends keyof T>(obj: { [K in keyof T]: T[K] }, key: Key) => T[Key]
+ >obj : { a: string; } & { b: string; }
+ >'b' : "b"
+ 

@@ -1,0 +1,29 @@
+--- old.observableInferenceCanBeMade.types
++++ new.observableInferenceCanBeMade.types
+@@= skipped -15, +15 lines =@@
+ 
+ interface Subscribable<T> {
+     subscribe(next?: (value: T) => void, error?: (error: any) => void, complete?: () => void): void;
+->subscribe : (next?: (value: T) => void, error?: (error: any) => void, complete?: () => void) => void
++>subscribe : (next?: ((value: T) => void) | undefined, error?: ((error: any) => void) | undefined, complete?: (() => void) | undefined) => void
+ >next : ((value: T) => void) | undefined
+ >value : T
+ >error : ((error: any) => void) | undefined
+@@= skipped -15, +15 lines =@@
+ >Observable : Observable<T>
+ 
+     subscribe(next?: (value: T) => void, error?: (error: any) => void, complete?: () => void): void;
+->subscribe : (next?: (value: T) => void, error?: (error: any) => void, complete?: () => void) => void
++>subscribe : (next?: ((value: T) => void) | undefined, error?: ((error: any) => void) | undefined, complete?: (() => void) | undefined) => void
+ >next : ((value: T) => void) | undefined
+ >value : T
+ >error : ((error: any) => void) | undefined
+@@= skipped -15, +15 lines =@@
+     return typeof input === 'string' ? of(input) : from(input)
+ >typeof input === 'string' ? of(input) : from(input) : Observable<string>
+ >typeof input === 'string' : boolean
+->typeof input : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof input : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >input : string | ObservableInput<string>
+ >'string' : "string"
+ >of(input) : Observable<string>

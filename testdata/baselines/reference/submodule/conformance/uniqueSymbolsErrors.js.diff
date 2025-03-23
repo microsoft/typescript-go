@@ -1,0 +1,19 @@
+--- old.uniqueSymbolsErrors.js
++++ new.uniqueSymbolsErrors.js
+@@= skipped -92, +92 lines =@@
+ // classes
+ class InvalidClass {
+     constructor(invalidConstructorArgType) { }
++    invalidReadonlyPropertyType;
++    invalidPropertyType;
+     invalidArgType(arg) { return; }
+     invalidRestArgType(...args) { return; }
+     invalidReturnType() { return; }
+@@= skipped -9, +11 lines =@@
+     invalidTypeParameterDefault() { return; }
+     get invalidGetter() { return; }
+     set invalidSetter(arg) { return; }
++    static invalidStaticPropertyType;
+     static invalidStaticArgType(arg) { return; }
+     static invalidStaticRestArgType(...args) { return; }
+     static invalidStaticReturnType() { return; }
