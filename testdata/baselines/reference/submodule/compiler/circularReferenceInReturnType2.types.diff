@@ -5,7 +5,7 @@
  
  declare const object: <Source>() => <
 ->object : <Source>() => <Fields extends { [Key in keyof Fields]: Field<Source, Key & string>; }>(config: { name: string; fields: Fields | (() => Fields); }) => ObjectType<Source>
-+>object : <Source>() => <Fields extends { [Key in keyof Fields]: Field<Source, Key & string> }>(config: { name: string; fields: Fields | () => Fields; }) => ObjectType<Source>
++>object : <Source>() => <Fields extends { [Key in keyof Fields]: Field<Source, Key & string>; }>(config: { name: string; fields: Fields | () => Fields; }) => ObjectType<Source>
  
    Fields extends {
      [Key in keyof Fields]: Field<Source, Key & string>;
@@ -29,8 +29,8 @@
  >object<Something>()({  name: "A",  fields: () => ({    a: field({      type: A,      resolve() {        return {          foo: 100,        };      },    }),  }),}) : ObjectType<Something>
 ->object<Something>() : <Fields extends { [Key in keyof Fields]: Field<Something, Key & string>; }>(config: { name: string; fields: Fields | (() => Fields); }) => ObjectType<Something>
 ->object : <Source>() => <Fields extends { [Key in keyof Fields]: Field<Source, Key & string>; }>(config: { name: string; fields: Fields | (() => Fields); }) => ObjectType<Source>
-+>object<Something>() : <Fields extends { [Key in keyof Fields]: Field<Something, Key & string> }>(config: { name: string; fields: Fields | () => Fields; }) => ObjectType<Something>
-+>object : <Source>() => <Fields extends { [Key in keyof Fields]: Field<Source, Key & string> }>(config: { name: string; fields: Fields | () => Fields; }) => ObjectType<Source>
++>object<Something>() : <Fields extends { [Key in keyof Fields]: Field<Something, Key & string>; }>(config: { name: string; fields: Fields | () => Fields; }) => ObjectType<Something>
++>object : <Source>() => <Fields extends { [Key in keyof Fields]: Field<Source, Key & string>; }>(config: { name: string; fields: Fields | () => Fields; }) => ObjectType<Source>
  >{  name: "A",  fields: () => ({    a: field({      type: A,      resolve() {        return {          foo: 100,        };      },    }),  }),} : { name: string; fields: () => any; }
  
    name: "A",
