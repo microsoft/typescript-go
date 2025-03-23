@@ -311,6 +311,15 @@ const (
 	DeclarationMeaningPropertyAssignmentOrMethod = DeclarationMeaningPropertyAssignment | DeclarationMeaningMethod
 )
 
+type DeclarationSpaces int32
+
+const (
+	DeclarationSpacesNone            DeclarationSpaces = 0
+	DeclarationSpacesExportValue     DeclarationSpaces = 1 << 0
+	DeclarationSpacesExportType      DeclarationSpaces = 1 << 1
+	DeclarationSpacesExportNamespace DeclarationSpaces = 1 << 2
+)
+
 // IntrinsicTypeKind
 
 type IntrinsicTypeKind int32
@@ -6348,7 +6357,96 @@ func (c *Checker) checkTypeNameIsReserved(name *ast.Node, message *diagnostics.M
 }
 
 func (c *Checker) checkExportsOnMergedDeclarations(node *ast.Node) {
-	// !!!
+	// If localSymbol is defined on node then node itself is exported - check is required.
+	symbol := node.LocalSymbol()
+	if symbol == nil {
+		// Local symbol is undefined => this declaration is non-exported.
+		// However, symbol might contain other declarations that are exported.
+		symbol = c.getSymbolOfDeclaration(node)
+		if symbol.ExportSymbol == nil {
+			// This is a pure local symbol (all declarations are non-exported) - no need to check anything.
+			return
+		}
+	}
+	// Run the check only for the first declaration in the list.
+	if ast.GetDeclarationOfKind(symbol, node.Kind) != node {
+		return
+	}
+	exportedDeclarationSpaces := DeclarationSpacesNone
+	nonExportedDeclarationSpaces := DeclarationSpacesNone
+	defaultExportedDeclarationSpaces := DeclarationSpacesNone
+	for _, d := range symbol.Declarations {
+		declarationSpaces := c.getDeclarationSpaces(d)
+		effectiveDeclarationFlags := c.getEffectiveDeclarationFlags(d, ast.ModifierFlagsExport|ast.ModifierFlagsDefault)
+		if effectiveDeclarationFlags&ast.ModifierFlagsExport != 0 {
+			if effectiveDeclarationFlags&ast.ModifierFlagsDefault != 0 {
+				defaultExportedDeclarationSpaces |= declarationSpaces
+			} else {
+				exportedDeclarationSpaces |= declarationSpaces
+			}
+		} else {
+			nonExportedDeclarationSpaces |= declarationSpaces
+		}
+	}
+	// Spaces for anything not declared a 'default export'.
+	nonDefaultExportedDeclarationSpaces := exportedDeclarationSpaces | nonExportedDeclarationSpaces
+	commonDeclarationSpacesForExportsAndLocals := exportedDeclarationSpaces & nonExportedDeclarationSpaces
+	commonDeclarationSpacesForDefaultAndNonDefault := defaultExportedDeclarationSpaces & nonDefaultExportedDeclarationSpaces
+	if commonDeclarationSpacesForExportsAndLocals != 0 || commonDeclarationSpacesForDefaultAndNonDefault != 0 {
+		// declaration spaces for exported and non-exported declarations intersect
+		for _, d := range symbol.Declarations {
+			declarationSpaces := c.getDeclarationSpaces(d)
+			name := ast.GetNameOfDeclaration(d)
+			// Only error on the declarations that contributed to the intersecting spaces.
+			if declarationSpaces&commonDeclarationSpacesForDefaultAndNonDefault != 0 {
+				c.error(name, diagnostics.Merged_declaration_0_cannot_include_a_default_export_declaration_Consider_adding_a_separate_export_default_0_declaration_instead, scanner.DeclarationNameToString(name))
+			} else if declarationSpaces&commonDeclarationSpacesForExportsAndLocals != 0 {
+				c.error(name, diagnostics.Individual_declarations_in_merged_declaration_0_must_be_all_exported_or_all_local, scanner.DeclarationNameToString(name))
+			}
+		}
+	}
+}
+
+func (c *Checker) getDeclarationSpaces(node *ast.Declaration) DeclarationSpaces {
+	switch node.Kind {
+	case ast.KindInterfaceDeclaration, ast.KindTypeAliasDeclaration, ast.KindJSDocTypedefTag, ast.KindJSDocCallbackTag:
+		return DeclarationSpacesExportType
+	case ast.KindModuleDeclaration:
+		if ast.IsAmbientModule(node) || ast.GetModuleInstanceState(node) != ast.ModuleInstanceStateNonInstantiated {
+			return DeclarationSpacesExportNamespace | DeclarationSpacesExportValue
+		}
+		return DeclarationSpacesExportNamespace
+	case ast.KindClassDeclaration, ast.KindEnumDeclaration, ast.KindEnumMember:
+		return DeclarationSpacesExportType | DeclarationSpacesExportValue
+	case ast.KindSourceFile:
+		return DeclarationSpacesExportType | DeclarationSpacesExportValue | DeclarationSpacesExportNamespace
+	case ast.KindExportAssignment, ast.KindBinaryExpression:
+		var expression *ast.Node
+		if ast.IsExportAssignment(node) {
+			expression = node.Expression()
+		} else {
+			expression = node.AsBinaryExpression().Right
+		}
+		// Export assigned entity name expressions act as aliases and should fall through, otherwise they export values.
+		if !ast.IsEntityNameExpression(expression) {
+			return DeclarationSpacesExportValue
+		}
+		node = expression
+		// The below options all declare an Alias, which is allowed to merge with other values within the importing module.
+		fallthrough
+	case ast.KindImportEqualsDeclaration, ast.KindNamespaceImport, ast.KindImportClause:
+		result := DeclarationSpacesNone
+		target := c.resolveAlias(c.getSymbolOfDeclaration(node))
+		for _, d := range target.Declarations {
+			result |= c.getDeclarationSpaces(d)
+		}
+		return result
+	case ast.KindVariableDeclaration, ast.KindBindingElement, ast.KindFunctionDeclaration, ast.KindImportSpecifier:
+		return DeclarationSpacesExportValue
+	case ast.KindMethodSignature, ast.KindPropertySignature:
+		return DeclarationSpacesExportType
+	}
+	panic("Unhandled case in getDeclarationSpaces")
 }
 
 func (c *Checker) checkTypeParameters(typeParameterDeclarations []*ast.Node) {
