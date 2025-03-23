@@ -27663,6 +27663,7 @@ func (c *Checker) getEffectiveCallArguments(node *ast.Node) []*ast.Node {
 	case ast.IsDecorator(node):
 		return c.getEffectiveDecoratorArguments(node)
 	case ast.IsBinaryExpression(node):
+		// Handles instanceof operator
 		return []*ast.Node{node.AsBinaryExpression().Left}
 	case isJsxOpeningLikeElement(node):
 		// !!!
