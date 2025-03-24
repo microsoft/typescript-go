@@ -1389,7 +1389,7 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 		b.blockScopeContainer = node
 		if containerFlags&ContainerFlagsHasLocals != 0 {
 			// localsContainer := node
-			// localsContainer.LocalsContainerData().locals = make(ast.SymbolTable)
+			// localsContainer.LocalsContainerData().locals = make(SymbolTable)
 			b.addToContainerChain(node)
 		}
 	} else if containerFlags&ContainerFlagsIsBlockScopedContainer != 0 {
