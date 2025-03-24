@@ -1606,17 +1606,14 @@ func (c *Checker) getSuggestionForSymbolNameLookup(symbols ast.SymbolTable, name
 		return symbol
 	}
 	allSymbols := slices.Collect(maps.Values(symbols))
-	c.sortSymbols(allSymbols)
 	if meaning&ast.SymbolFlagsGlobalLookup != 0 {
-		allSymbols = slices.Concat([]*ast.Symbol{
-			c.newSymbol(ast.SymbolFlagsTypeAlias, "string"),
-			c.newSymbol(ast.SymbolFlagsTypeAlias, "number"),
-			c.newSymbol(ast.SymbolFlagsTypeAlias, "boolean"),
-			c.newSymbol(ast.SymbolFlagsTypeAlias, "object"),
-			c.newSymbol(ast.SymbolFlagsTypeAlias, "bigint"),
-			c.newSymbol(ast.SymbolFlagsTypeAlias, "symbol"),
-		}, allSymbols)
+		for _, s := range []string{"stringString", "numberNumber", "booleanBoolean", "objectObject", "bigintBigInt", "symbolSymbol"} {
+			if _, ok := symbols[s[len(s)/2:]]; ok {
+				allSymbols = append(allSymbols, c.newSymbol(ast.SymbolFlagsTypeAlias, s[:len(s)/2]))
+			}
+		}
 	}
+	c.sortSymbols(allSymbols)
 	return c.getSpellingSuggestionForName(name, allSymbols, meaning)
 }
 
