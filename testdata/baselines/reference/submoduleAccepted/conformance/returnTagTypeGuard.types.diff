@@ -14,11 +14,9 @@
 +>x : any
 +>chunk.isInit(chunk) ? chunk.c : chunk.d : any
  >chunk.isInit(chunk) : boolean
-->chunk.isInit : ((x: any) => this is Entry) | ((x: any) => false)
-+>chunk.isInit : (x: any) => this is Entry | (x: any) => false
+ >chunk.isInit : ((x: any) => this is Entry) | ((x: any) => false)
  >chunk : Entry | Group
-->isInit : ((x: any) => this is Entry) | ((x: any) => false)
-+>isInit : (x: any) => this is Entry | (x: any) => false
+ >isInit : ((x: any) => this is Entry) | ((x: any) => false)
  >chunk : Entry | Group
 ->chunk.c : number
 +>chunk.c : any

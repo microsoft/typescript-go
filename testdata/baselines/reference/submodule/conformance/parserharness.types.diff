@@ -27,21 +27,7 @@
  >require : any
  >"function" : "function"
  
-@@= skipped -50, +50 lines =@@
- >global : any
- ><any>Function("return this").call(null) : any
- >Function("return this").call(null) : any
-->Function("return this").call : (this: Function, thisArg: any, ...argArray: any[]) => any
-+>Function("return this").call : (thisArg: any, ...argArray: any[]) => any
- >Function("return this") : Function
- >Function : FunctionConstructor
- >"return this" : "return this"
-->call : (this: Function, thisArg: any, ...argArray: any[]) => any
-+>call : (thisArg: any, ...argArray: any[]) => any
- 
-     export var usePull = false;
- >usePull : boolean
-@@= skipped -103, +103 lines =@@
+@@= skipped -153, +153 lines =@@
              var bugs = content.match(/\bbug (\d+)/i);
  >bugs : RegExpMatchArray
  >content.match(/\bbug (\d+)/i) : RegExpMatchArray
@@ -231,16 +217,7 @@
  >loggers[i][field] : any
  >loggers[i] : ILogger
  >loggers : ILogger[]
-@@= skipped -203, +203 lines =@@
-         }
- 
-         static errorHandlerStack: { (e: Error): void; }[] = [];
-->errorHandlerStack : ((e: Error) => void)[]
-+>errorHandlerStack : (e: Error) => void[]
- >e : Error
- >[] : undefined[]
- 
-@@= skipped -336, +336 lines =@@
+@@= skipped -539, +539 lines =@@
  >false : false
  >bugs : any
  >assert.bugIds : any
@@ -299,12 +276,7 @@
  >global['WScript'].InitializeProjection : any
  >global['WScript'] : any
  >global : any
-@@= skipped -405, +405 lines =@@
-         }
- 
-         export var benchmarks: { new (): Benchmark; }[] = [];
-->benchmarks : (new () => Benchmark)[]
-+>benchmarks : new () => Benchmark[]
+@@= skipped -409, +409 lines =@@
  >[] : undefined[]
  
          var timeFunction: (
@@ -313,7 +285,7 @@
  
              benchmark: Benchmark,
  >benchmark : Benchmark
-@@= skipped -16, +16 lines =@@
+@@= skipped -12, +12 lines =@@
  >name : string
  
              f?: (bench?: { (): void; }) => void
@@ -351,38 +323,16 @@
  >benchmark : Benchmark
  >description : string
  >name : any
-@@= skipped -9, +9 lines =@@
- 
+@@= skipped -10, +10 lines =@@
              f.call(benchmark, subBenchmark);
  >f.call(benchmark, subBenchmark) : any
-->f.call : (this: Function, thisArg: any, ...argArray: any[]) => any
+ >f.call : (this: Function, thisArg: any, ...argArray: any[]) => any
 ->f : (bench?: { (): void; }) => void
-->call : (this: Function, thisArg: any, ...argArray: any[]) => any
-+>f.call : (thisArg: any, ...argArray: any[]) => any
 +>f : (bench?: () => void) => void
-+>call : (thisArg: any, ...argArray: any[]) => any
+ >call : (this: Function, thisArg: any, ...argArray: any[]) => any
  >benchmark : Benchmark
  >subBenchmark : (name: any, f: any) => void
- 
-@@= skipped -32, +32 lines =@@
- >i < benchmarks.length : boolean
- >i : number
- >benchmarks.length : number
-->benchmarks : (new () => Benchmark)[]
-+>benchmarks : new () => Benchmark[]
- >length : number
- >i++ : number
- >i : number
-@@= skipped -9, +9 lines =@@
- >b : Benchmark
- >new benchmarks[i]() : Benchmark
- >benchmarks[i] : new () => Benchmark
-->benchmarks : (new () => Benchmark)[]
-+>benchmarks : new () => Benchmark[]
- >i : number
- 
- 
-@@= skipped -34, +34 lines =@@
+@@= skipped -74, +74 lines =@@
  
                      timeFunction(b);
  >timeFunction(b) : void
@@ -391,20 +341,7 @@
  >b : Benchmark
  
                      b.afterEach();
-@@= skipped -126, +126 lines =@@
- 
-             benchmarks.push(BenchmarkClass);
- >benchmarks.push(BenchmarkClass) : number
-->benchmarks.push : (...items: (new () => Benchmark)[]) => number
-->benchmarks : (new () => Benchmark)[]
-->push : (...items: (new () => Benchmark)[]) => number
-+>benchmarks.push : (...items: new () => Benchmark[]) => number
-+>benchmarks : new () => Benchmark[]
-+>push : (...items: new () => Benchmark[]) => number
- >BenchmarkClass : any
-         }
- 
-@@= skipped -173, +173 lines =@@
+@@= skipped -299, +299 lines =@@
  >fileExists : (s: string) => boolean
  >s : string
  >typeof this.fileCollection[s] !== 'undefined' : boolean
@@ -2687,10 +2624,10 @@
              return JSON.stringify({ usePullLanguageService: usePull });
  >JSON.stringify({ usePullLanguageService: usePull }) : string
 ->JSON.stringify : { (value: any, replacer?: (this: any, key: string, value: any) => any, space?: string | number): string; (value: any, replacer?: (number | string)[] | null, space?: string | number): string; }
-+>JSON.stringify : { (value: any, replacer?: (key: string, value: any) => any, space?: string | number): string; (value: any, replacer?: (string | number)[], space?: string | number): string; }
++>JSON.stringify : { (value: any, replacer?: (this: any, key: string, value: any) => any, space?: string | number): string; (value: any, replacer?: (string | number)[], space?: string | number): string; }
  >JSON : JSON
 ->stringify : { (value: any, replacer?: (this: any, key: string, value: any) => any, space?: string | number): string; (value: any, replacer?: (number | string)[] | null, space?: string | number): string; }
-+>stringify : { (value: any, replacer?: (key: string, value: any) => any, space?: string | number): string; (value: any, replacer?: (string | number)[], space?: string | number): string; }
++>stringify : { (value: any, replacer?: (this: any, key: string, value: any) => any, space?: string | number): string; (value: any, replacer?: (string | number)[], space?: string | number): string; }
  >{ usePullLanguageService: usePull } : { usePullLanguageService: boolean; }
  >usePullLanguageService : boolean
  >usePull : boolean

@@ -7,7 +7,7 @@
 ->f1 : import("/types").M
 ->function() {    this.test();} : (this: import("/types").Foo) => void
 +>f1 : M
-+>function() {    this.test();} : () => void
++>function() {    this.test();} : (this: Foo) => void
  
      this.test();
  >this.test() : any
@@ -34,8 +34,8 @@
  export const f3 = function() {
 ->f3 : (this: import("./types").Foo) => void
 ->function() {    this.test();} : (this: import("./types").Foo) => void
-+>f3 : () => void
-+>function() {    this.test();} : () => void
++>f3 : (this: Foo) => void
++>function() {    this.test();} : (this: Foo) => void
  
      this.test();
  >this.test() : any

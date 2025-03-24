@@ -155,9 +155,9 @@ export function Point2D(x, y) {
     }
     Vec.call(this, 2);
 >Vec.call(this, 2) : any
->Vec.call : (thisArg: any, ...argArray: any[]) => any
+>Vec.call : (this: Function, thisArg: any, ...argArray: any[]) => any
 >Vec : { (len: number): void; prototype: { dot: (other: Vec) => number; magnitude: () => number; }; }
->call : (thisArg: any, ...argArray: any[]) => any
+>call : (this: Function, thisArg: any, ...argArray: any[]) => any
 >this : any
 >2 : 2
 

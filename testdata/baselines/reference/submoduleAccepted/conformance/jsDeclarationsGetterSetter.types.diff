@@ -45,33 +45,3 @@
  
      set() {}
  >set : () => void
-@@= skipped -130, +130 lines =@@
- >L : typeof L
- >prototype : L
- >"x" : "x"
-->{    set: Math.random() ? lSetter1 : lSetter2} : { set: ((v: number) => void) | ((v: string) => void); }
-+>{    set: Math.random() ? lSetter1 : lSetter2} : { set: (v: number) => void | (v: string) => void; }
- 
-     set: Math.random() ? lSetter1 : lSetter2
-->set : ((v: number) => void) | ((v: string) => void)
-->Math.random() ? lSetter1 : lSetter2 : ((v: number) => void) | ((v: string) => void)
-+>set : (v: number) => void | (v: string) => void
-+>Math.random() ? lSetter1 : lSetter2 : (v: number) => void | (v: string) => void
- >Math.random() : number
- >Math.random : () => number
- >Math : Math
-@@= skipped -42, +42 lines =@@
- >M : typeof M
- >prototype : M
- >"x" : "x"
-->{    set: Math.random() ? mSetter1 : mSetter2} : { set: ((v: number | boolean) => void) | ((v: string | boolean) => void); }
-+>{    set: Math.random() ? mSetter1 : mSetter2} : { set: (v: number | boolean) => void | (v: string | boolean) => void; }
- 
-     set: Math.random() ? mSetter1 : mSetter2
-->set : ((v: number | boolean) => void) | ((v: string | boolean) => void)
-->Math.random() ? mSetter1 : mSetter2 : ((v: number | boolean) => void) | ((v: string | boolean) => void)
-+>set : (v: number | boolean) => void | (v: string | boolean) => void
-+>Math.random() ? mSetter1 : mSetter2 : (v: number | boolean) => void | (v: string | boolean) => void
- >Math.random() : number
- >Math.random : () => number
- >Math : Math

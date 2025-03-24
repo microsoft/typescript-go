@@ -51,24 +51,24 @@ class ELocVar extends C {
 class D extends C {
     z;
     constructor(z) {
-        this.z = z;
         super(this.z);
+        this.z = z;
     }
-}
+} // too few params
 class E extends C {
     z;
     constructor(z) {
-        this.z = z;
         super(0, this.z);
+        this.z = z;
     }
 }
 class F extends C {
     z;
     constructor(z) {
-        this.z = z;
         super("hello", this.z);
+        this.z = z;
     }
-}
+} // first param type
 function f() {
     if (x < 10) {
         x = 11;

@@ -27,7 +27,7 @@
 +}
 +class Derived extends Base {
 +    constructor() {
-+        super(this);
++        super(this); // ok
      }
 -    return Base;
 -}());
@@ -40,8 +40,8 @@
 +class Derived2 extends Base {
 +    a;
 +    constructor(a) {
++        super(this); // error
 +        this.a = a;
-+        super(this);
      }
 -    return Derived;
 -}(Base));
@@ -55,8 +55,8 @@
 +class Derived3 extends Base {
 +    a;
 +    constructor(a) {
++        super(() => this); // error
 +        this.a = a;
-+        super(() => this);
      }
 -    return Derived2;
 -}(Base));
@@ -70,8 +70,8 @@
 +class Derived4 extends Base {
 +    a;
 +    constructor(a) {
++        super(function () { return this; }); // ok
 +        this.a = a;
-+        super(function () { return this; });
      }
 -    return Derived3;
 -}(Base));
