@@ -295,10 +295,6 @@ var harnessCommandLineOptions = []*tsoptions.CommandLineOption{
 		Name: "captureSuggestions",
 		Kind: tsoptions.CommandLineOptionTypeBoolean,
 	},
-	{
-		Name: "strictBuiltinIteratorReturn",
-		Kind: tsoptions.CommandLineOptionTypeBoolean,
-	},
 }
 
 func getHarnessOption(name string) *tsoptions.CommandLineOption {
@@ -345,8 +341,6 @@ func parseHarnessOption(t *testing.T, key string, value any, options *HarnessOpt
 		options.CaptureSuggestions = value.(bool)
 	case "typescriptVersion":
 		options.TypescriptVersion = value.(string)
-	case "strictBuiltinIteratorReturn":
-		options.StrictBuiltinIteratorReturn = value.(bool)
 	default:
 		t.Fatalf("Unknown harness option '%s'.", key)
 	}
