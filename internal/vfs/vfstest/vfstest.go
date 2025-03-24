@@ -168,6 +168,29 @@ func (m *mapFS) open(p canonicalPath) (fs.File, error) {
 	return m.m.Open(string(p))
 }
 
+func (m *mapFS) remove(path string) error {
+	canonical := m.getCanonicalPath(path)
+	file, _, err := m.getFollowingSymlinks(canonical)
+	if err != nil {
+		return err
+	}
+	if file.Mode.IsDir() {
+		entries, e := m.m.ReadDir(path)
+		if e != nil {
+			return e
+		}
+		for _, entry := range entries {
+			e = m.remove(tspath.CombinePaths(path, entry.Name()))
+			if e != nil {
+				return e
+			}
+		}
+	}
+
+	delete(m.m, string(canonical))
+	return nil
+}
+
 func Symlink(target string) *fstest.MapFile {
 	return &fstest.MapFile{
 		Data: []byte(target),
@@ -462,6 +485,13 @@ func (m *mapFS) WriteFile(path string, data []byte, perm fs.FileMode) error {
 	})
 
 	return nil
+}
+
+func (m *mapFS) Remove(path string) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	return m.remove(path)
 }
 
 func must[T any](v T, err error) T {

@@ -218,6 +218,22 @@ func TestWritableFS(t *testing.T) {
 
 	err = fs.WriteFile("/foo/bar/baz/oops", "goodbye, world", false)
 	assert.ErrorContains(t, err, `mkdir "foo/bar/baz": path exists but is not a directory`)
+
+	_ = fs.WriteFile("/foo/bar/remove", "remove", false)
+	assert.Assert(t, fs.FileExists("/foo/bar/remove"))
+	err = fs.Remove("/foo/bar/remove")
+	assert.NilError(t, err)
+	assert.Assert(t, !fs.FileExists("/foo/bar/remove"))
+
+	_ = fs.WriteFile("/foo/bar/test/remove2", "remove2", false)
+	assert.Assert(t, fs.DirectoryExists("/foo/bar/test"))
+	err = fs.Remove("/foo/bar/test")
+	assert.NilError(t, err)
+	assert.Assert(t, !fs.FileExists("/foo/bar/test/remove2"))
+	assert.Assert(t, !fs.DirectoryExists("/foo/bar/test"))
+
+	err = fs.Remove("/foo/bar/test")
+	assert.ErrorContains(t, err, `file does not exist`)
 }
 
 func TestStress(t *testing.T) {
