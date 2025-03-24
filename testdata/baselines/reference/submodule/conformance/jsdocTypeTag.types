@@ -75,7 +75,7 @@ var Obj;
 
 /** @type {object} */
 var obj;
->obj : any
+>obj : object
 
 /** @type {Function} */
 var Func;
@@ -145,7 +145,7 @@ var Obj: any;
 >Obj : Object
 
 var obj: any;
->obj : any
+>obj : object
 
 var Func: Function;
 >Func : Function

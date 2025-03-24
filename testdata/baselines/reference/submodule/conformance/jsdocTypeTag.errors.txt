@@ -9,6 +9,7 @@ b.ts(1,5): error TS2403: Subsequent variable declarations must have the same typ
 b.ts(3,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'N' must be of type 'Number', but here has type 'number'.
 b.ts(5,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'B' must be of type 'Boolean', but here has type 'boolean'.
 b.ts(18,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'Obj' must be of type 'Object', but here has type 'any'.
+b.ts(19,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'obj' must be of type 'object', but here has type 'any'.
 
 
 ==== a.js (7 errors) ====
@@ -93,7 +94,7 @@ b.ts(18,5): error TS2403: Subsequent variable declarations must have the same ty
     /** @type {new (s: string) => { s: string }} */
     var ctor;
     
-==== b.ts (4 errors) ====
+==== b.ts (5 errors) ====
     var S: string;
         ~
 !!! error TS2403: Subsequent variable declarations must have the same type.  Variable 'S' must be of type 'String', but here has type 'string'.
@@ -125,6 +126,9 @@ b.ts(18,5): error TS2403: Subsequent variable declarations must have the same ty
 !!! error TS2403: Subsequent variable declarations must have the same type.  Variable 'Obj' must be of type 'Object', but here has type 'any'.
 !!! related TS6203 a.js:53:5: 'Obj' was also declared here.
     var obj: any;
+        ~~~
+!!! error TS2403: Subsequent variable declarations must have the same type.  Variable 'obj' must be of type 'object', but here has type 'any'.
+!!! related TS6203 a.js:56:5: 'obj' was also declared here.
     var Func: Function;
     var f: (s: string) => number;
     var ctor: new (s: string) => { s: string };

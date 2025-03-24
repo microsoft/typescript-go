@@ -87,6 +87,11 @@
  
  /** @type {object} */
  var obj;
+->obj : any
++>obj : object
+ 
+ /** @type {Function} */
+ var Func;
 @@= skipped -20, +20 lines =@@
  
  === b.ts ===
@@ -156,4 +161,8 @@
 +>Obj : Object
  
  var obj: any;
- >obj : any
+->obj : any
++>obj : object
+ 
+ var Func: Function;
+ >Func : Function

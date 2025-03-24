@@ -8,8 +8,8 @@ class A {
 	 * @param {object} [foo={}]
 	 */
 	m(foo = {}) {
->m : (foo?: any) => void
->foo : any
+>m : (foo?: object) => void
+>foo : object
 >{} : {}
 
 		const key = "bar";
@@ -20,17 +20,17 @@ class A {
 		 * @type object
 		 */
 		this.foo = foo;
->this.foo = foo : any
+>this.foo = foo : object
 >this.foo : any
 >this : this
 >foo : any
->foo : any
+>foo : object
 
 		/**
 		 * @type object
 		 */
 		const arguments = this.arguments;
->arguments : any
+>arguments : object
 >this.arguments : { bar: {}; }
 >this : this
 >arguments : { bar: {}; }
@@ -44,7 +44,7 @@ class A {
 >this : this
 >bar : any
 >arguments.bar : any
->arguments : any
+>arguments : object
 >bar : any
 
 		/**
@@ -56,18 +56,18 @@ class A {
 >this : this
 >baz : any
 >arguments[key] : any
->arguments : any
+>arguments : object
 >key : "bar"
 
 		/**
 		 * @type object
 		 */
 		this.options = arguments;
->this.options = arguments : any
+>this.options = arguments : object
 >this.options : any
 >this : this
 >options : any
->arguments : any
+>arguments : object
 	}
 
 	get arguments() {

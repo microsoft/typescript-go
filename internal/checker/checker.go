@@ -6347,9 +6347,6 @@ func (c *Checker) checkTypeAliasDeclaration(node *ast.Node) {
 func (c *Checker) checkTypeNameIsReserved(name *ast.Node, message *diagnostics.Message) {
 	// TS 1.0 spec (April 2014): 3.6.1
 	// The predefined type keywords are reserved and cannot be used as names of user defined types.
-	if name == nil { // TODO: Check when this happens
-		return
-	}
 	switch name.Text() {
 	case "any", "unknown", "never", "number", "bigint", "boolean", "string", "symbol", "void", "object", "undefined":
 		c.error(name, message, name.Text())

@@ -1,9 +1,9 @@
---- old.argumentsReferenceInMethod4_Js.types
-+++ new.argumentsReferenceInMethod4_Js.types
-@@= skipped -8, +8 lines =@@
+--- old.argumentsReferenceInConstructor4_Js.types
++++ new.argumentsReferenceInConstructor4_Js.types
+@@= skipped -9, +9 lines =@@
+ 	 * @param {object} [foo={}]
  	 */
- 	m(foo = {}) {
- >m : (foo?: object) => void
+ 	constructor(foo = {}) {
 ->foo : any
 +>foo : object
  >{} : {}
