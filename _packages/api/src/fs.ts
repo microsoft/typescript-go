@@ -24,7 +24,6 @@ export function createVirtualFileSystem(files: Record<string, string>): FileSyst
 
     type VNode = VDirectory | VFile;
 
-    // The root directory
     const root: VDirectory = {
         type: "directory",
         children: {},
@@ -34,12 +33,12 @@ export function createVirtualFileSystem(files: Record<string, string>): FileSyst
         createFile(filePath, fileContent);
     }
 
-    // Return the FileSystem object (with closures capturing our state)
     return {
         directoryExists,
         fileExists,
         getAccessibleEntries,
         readFile,
+        realpath: path => path,
     };
 
     function getPathSegments(path: string): string[] {
@@ -62,7 +61,6 @@ export function createVirtualFileSystem(files: Record<string, string>): FileSyst
 
         for (const segment of segments) {
             if (current.type !== "directory") {
-                // Trying to descend into a file => invalid path
                 return undefined;
             }
             const child: VNode = current.children[segment];
