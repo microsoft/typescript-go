@@ -80,6 +80,17 @@ func PositionIsSynthesized(pos int) bool {
 	return pos < 0
 }
 
+func FindLastVisibleNode(nodes []*Node) *Node {
+	fromEnd := 1
+	for fromEnd <= len(nodes) && nodes[len(nodes)-fromEnd].Flags&NodeFlagsReparsed != 0 {
+		fromEnd++
+	}
+	if fromEnd <= len(nodes) {
+		return nodes[len(nodes)-fromEnd]
+	}
+	return nil
+}
+
 func NodeKindIs(node *Node, kinds ...Kind) bool {
 	return slices.Contains(kinds, node.Kind)
 }
@@ -1476,7 +1487,7 @@ func IsExportNamespaceAsDefaultDeclaration(node *Node) bool {
 }
 
 func IsGlobalScopeAugmentation(node *Node) bool {
-	return node.Flags&NodeFlagsGlobalAugmentation != 0
+	return IsModuleDeclaration(node) && node.AsModuleDeclaration().Keyword == KindGlobalKeyword
 }
 
 func IsModuleAugmentationExternal(node *Node) bool {
@@ -2190,10 +2201,6 @@ func getModuleInstanceStateWorker(node *Node, ancestors []*Node, visited map[Nod
 		return state
 	case KindModuleDeclaration:
 		return getModuleInstanceState(node, ancestors, visited)
-	case KindIdentifier:
-		if node.Flags&NodeFlagsIdentifierIsInJSDocNamespace != 0 {
-			return ModuleInstanceStateNonInstantiated
-		}
 	}
 	return ModuleInstanceStateInstantiated
 }
@@ -2380,11 +2387,14 @@ func GetEmitModuleFormatOfFileWorker(sourceFile *SourceFile, options *core.Compi
 
 func GetImpliedNodeFormatForEmitWorker(fileName string, options *core.CompilerOptions, sourceFileMetaData *SourceFileMetaData) core.ModuleKind {
 	moduleKind := options.GetEmitModuleKind()
-	if core.ModuleKindNode16 <= moduleKind && moduleKind <= core.ModuleKindNodeNext && sourceFileMetaData != nil {
+	if core.ModuleKindNode16 <= moduleKind && moduleKind <= core.ModuleKindNodeNext {
+		if sourceFileMetaData == nil {
+			return core.ModuleKindNone
+		}
 		return sourceFileMetaData.ImpliedNodeFormat
 	}
 	if sourceFileMetaData != nil && sourceFileMetaData.ImpliedNodeFormat == core.ModuleKindCommonJS &&
-		(sourceFileMetaData.PackageJsonType != "module" ||
+		(sourceFileMetaData.PackageJsonType == "commonjs" ||
 			tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionCjs, tspath.ExtensionCts})) {
 		return core.ModuleKindCommonJS
 	}

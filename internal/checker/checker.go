@@ -773,6 +773,7 @@ type Checker struct {
 	getGlobalPromiseConstructorSymbol          func() *ast.Symbol
 	getGlobalPromiseConstructorSymbolOrNil     func() *ast.Symbol
 	getGlobalOmitSymbol                        func() *ast.Symbol
+	getGlobalNoInferSymbolOrNil                func() *ast.Symbol
 	getGlobalIteratorType                      func() *Type
 	getGlobalIterableType                      func() *Type
 	getGlobalIterableTypeChecked               func() *Type
@@ -984,6 +985,7 @@ func NewChecker(program Program) *Checker {
 	c.getGlobalPromiseConstructorSymbol = c.getGlobalValueSymbolResolver("Promise", true /*reportErrors*/)
 	c.getGlobalPromiseConstructorSymbolOrNil = c.getGlobalValueSymbolResolver("Promise", false /*reportErrors*/)
 	c.getGlobalOmitSymbol = c.getGlobalTypeAliasResolver("Omit", 2 /*arity*/, true /*reportErrors*/)
+	c.getGlobalNoInferSymbolOrNil = c.getGlobalTypeAliasResolver("NoInfer", 1 /*arity*/, false /*reportErrors*/)
 	c.getGlobalIteratorType = c.getGlobalTypeResolver("Iterator", 3 /*arity*/, false /*reportErrors*/)
 	c.getGlobalIterableType = c.getGlobalTypeResolver("Iterable", 3 /*arity*/, false /*reportErrors*/)
 	c.getGlobalIterableTypeChecked = c.getGlobalTypeResolver("Iterable", 3 /*arity*/, true /*reportErrors*/)
@@ -2870,7 +2872,7 @@ func (c *Checker) checkObjectTypeForDuplicateDeclarations(node *ast.Node, checkP
 			}
 			// When a property has multiple declarations, check that only one of those declarations is in this object
 			// type declaration (multiple merged object types are permitted to each declare the same property).
-			if ast.IsPropertyDeclaration(member) || ast.IsPropertySignatureDeclaration(member) {
+			if ast.IsPropertyDeclaration(member) && !ast.HasAccessorModifier(member) || ast.IsPropertySignatureDeclaration(member) {
 				checkProperty(symbol, isStatic)
 			}
 			// Check that each private identifier is used only for instance members or only for static members. It is an
@@ -3381,7 +3383,7 @@ func (c *Checker) getEffectiveDeclarationFlags(n *ast.Node, flagsToCheck ast.Mod
 	// because those flags have no useful semantics there.
 	if !ast.IsInterfaceDeclaration(n.Parent) && !ast.IsClassDeclaration(n.Parent) && !ast.IsClassExpression(n.Parent) && n.Flags&ast.NodeFlagsAmbient != 0 {
 		container := getEnclosingContainer(n)
-		if container != nil && container.Flags&ast.NodeFlagsExportContext != 0 && flags&ast.ModifierFlagsAmbient == 0 && !(ast.IsModuleBlock(n.Parent) && ast.IsModuleDeclaration(n.Parent.Parent) && ast.IsGlobalScopeAugmentation(n.Parent.Parent)) {
+		if container != nil && container.Flags&ast.NodeFlagsExportContext != 0 && flags&ast.ModifierFlagsAmbient == 0 && !(ast.IsModuleBlock(n.Parent) && ast.IsGlobalScopeAugmentation(n.Parent.Parent)) {
 			// It is nested in an ambient export context, which means it is automatically exported
 			flags |= ast.ModifierFlagsExport
 		}
@@ -4752,7 +4754,7 @@ func (c *Checker) checkModuleDeclaration(node *ast.Node) {
 	}
 	if ast.IsIdentifier(node.Name()) {
 		c.checkCollisionsForDeclarationName(node, node.Name())
-		if node.Flags&(ast.NodeFlagsNamespace|ast.NodeFlagsGlobalAugmentation) == 0 {
+		if node.AsModuleDeclaration().Keyword == ast.KindModuleKeyword {
 			tokenRange := getNonModifierTokenRangeOfNode(node)
 			c.suggestionDiagnostics.Add(ast.NewDiagnostic(ast.GetSourceFileOfNode(node), tokenRange, diagnostics.A_namespace_declaration_should_not_be_declared_using_the_module_keyword_Please_use_the_namespace_keyword_instead))
 		}
@@ -9959,10 +9961,10 @@ func (c *Checker) checkNewTargetMetaProperty(node *ast.Node) *Type {
 
 func (c *Checker) checkImportMetaProperty(node *ast.Node) *Type {
 	if c.moduleKind == core.ModuleKindNode16 || c.moduleKind == core.ModuleKindNodeNext {
-		// !!! Enable this once ImpliedNodeFormat is computed at program construction
-		// if ast.GetSourceFileOfNode(node).ImpliedNodeFormat != core.ModuleKindESNext {
-		// 	c.error(node, diagnostics.The_import_meta_meta_property_is_not_allowed_in_files_which_will_build_into_CommonJS_output)
-		// }
+		sourceFileMetaData := c.program.GetSourceFileMetaData(ast.GetSourceFileOfNode(node).Path())
+		if sourceFileMetaData == nil || sourceFileMetaData.ImpliedNodeFormat != core.ModuleKindESNext {
+			c.error(node, diagnostics.The_import_meta_meta_property_is_not_allowed_in_files_which_will_build_into_CommonJS_output)
+		}
 	} else if c.moduleKind < core.ModuleKindES2020 && c.moduleKind != core.ModuleKindSystem {
 		c.error(node, diagnostics.The_import_meta_meta_property_is_only_allowed_when_the_module_option_is_es2020_es2022_esnext_system_node16_or_nodenext)
 	}
@@ -10824,7 +10826,39 @@ func (c *Checker) isPropertyAccessible(node *ast.Node, isSuper bool, isWrite boo
 }
 
 func (c *Checker) containerSeemsToBeEmptyDomElement(containingType *Type) bool {
-	return false // !!!
+	if c.compilerOptions.Lib == nil || slices.Contains(c.compilerOptions.Lib, "lib.dom.d.ts") {
+		return false
+	}
+	return everyContainedType(containingType, func(t *Type) bool {
+		if t.symbol == nil {
+			return false
+		}
+
+		name := t.symbol.Name
+
+		switch name {
+		case "EventTarget", "Node", "Element":
+			return true
+		}
+
+		name, ok := strings.CutPrefix(name, "HTML")
+		if !ok {
+			return false
+		}
+
+		name, ok = strings.CutSuffix(name, "Element")
+		if !ok {
+			return false
+		}
+
+		for _, r := range name {
+			if !stringutil.IsASCIILetter(r) {
+				return false
+			}
+		}
+
+		return true
+	}) && c.isEmptyObjectType(containingType)
 }
 
 func (c *Checker) checkAndReportErrorForExtendingInterface(errorLocation *ast.Node) bool {
@@ -13576,7 +13610,27 @@ func (c *Checker) getTargetOfModuleDefault(moduleSymbol *ast.Symbol, node *ast.N
 }
 
 func (c *Checker) reportNonDefaultExport(moduleSymbol *ast.Symbol, node *ast.Node) {
-	// !!!
+	if moduleSymbol.Exports != nil && moduleSymbol.Exports[node.Symbol().Name] != nil {
+		c.error(node, diagnostics.Module_0_has_no_default_export_Did_you_mean_to_use_import_1_from_0_instead, c.symbolToString(moduleSymbol), c.symbolToString(node.Symbol()))
+	} else {
+		diagnostic := c.error(node.Name(), diagnostics.Module_0_has_no_default_export, c.symbolToString(moduleSymbol))
+		var exportStar *ast.Symbol
+		if moduleSymbol.Exports != nil {
+			exportStar = moduleSymbol.Exports[ast.InternalSymbolNameExportStar]
+		}
+		if exportStar != nil {
+			defaultExport := core.Find(exportStar.Declarations, func(decl *ast.Declaration) bool {
+				if !(ast.IsExportDeclaration(decl) && decl.AsExportDeclaration().ModuleSpecifier != nil) {
+					return false
+				}
+				resolvedExternalModuleName := c.resolveExternalModuleName(decl, decl.AsExportDeclaration().ModuleSpecifier, false /*ignoreErrors*/)
+				return resolvedExternalModuleName != nil && resolvedExternalModuleName.Exports[ast.InternalSymbolNameDefault] != nil
+			})
+			if defaultExport != nil {
+				diagnostic.AddRelatedInfo(createDiagnosticForNode(defaultExport, diagnostics.X_export_Asterisk_does_not_re_export_a_default))
+			}
+		}
+	}
 }
 
 func (c *Checker) resolveExportByName(moduleSymbol *ast.Symbol, name string, sourceNode *ast.Node, dontResolveAlias bool) *ast.Symbol {
@@ -13773,31 +13827,29 @@ func (c *Checker) isOnlyImportableAsDefault(usage *ast.Node, resolvedModule *ast
 }
 
 func (c *Checker) canHaveSyntheticDefault(file *ast.Node, moduleSymbol *ast.Symbol, dontResolveAlias bool, usage *ast.Node) bool {
-	// !!!
-	// var usageMode ResolutionMode
-	// if file != nil {
-	// 	usageMode = c.getEmitSyntaxForModuleSpecifierExpression(usage)
-	// }
-	// if file != nil && usageMode != core.ModuleKindNone {
-	// 	targetMode := host.getImpliedNodeFormatForEmit(file)
-	// 	if usageMode == core.ModuleKindESNext && targetMode == core.ModuleKindCommonJS && core.ModuleKindNode16 <= c.moduleKind && c.moduleKind <= core.ModuleKindNodeNext {
-	// 		// In Node.js, CommonJS modules always have a synthetic default when imported into ESM
-	// 		return true
-	// 	}
-	// 	if usageMode == core.ModuleKindESNext && targetMode == core.ModuleKindESNext {
-	// 		// No matter what the `module` setting is, if we're confident that both files
-	// 		// are ESM, there cannot be a synthetic default.
-	// 		return false
-	// 	}
-	// }
+	var usageMode core.ResolutionMode
+	if file != nil {
+		usageMode = c.getEmitSyntaxForModuleSpecifierExpression(usage)
+	}
+	if file != nil && usageMode != core.ModuleKindNone {
+		targetMode := c.program.GetImpliedNodeFormatForEmit(file.AsSourceFile())
+		if usageMode == core.ModuleKindESNext && targetMode == core.ModuleKindCommonJS && core.ModuleKindNode16 <= c.moduleKind && c.moduleKind <= core.ModuleKindNodeNext {
+			// In Node.js, CommonJS modules always have a synthetic default when imported into ESM
+			return true
+		}
+		if usageMode == core.ModuleKindESNext && targetMode == core.ModuleKindESNext {
+			// No matter what the `module` setting is, if we're confident that both files
+			// are ESM, there cannot be a synthetic default.
+			return false
+		}
+	}
 	if !c.allowSyntheticDefaultImports {
 		return false
 	}
 	// Declaration files (and ambient modules)
 	if file == nil || file.AsSourceFile().IsDeclarationFile {
 		// Definitely cannot have a synthetic default if they have a syntactic default member specified
-		defaultExportSymbol := c.resolveExportByName(moduleSymbol, ast.InternalSymbolNameDefault /*sourceNode*/, nil /*dontResolveAlias*/, true)
-		// Dont resolve alias because we want the immediately exported symbol's declaration
+		defaultExportSymbol := c.resolveExportByName(moduleSymbol, ast.InternalSymbolNameDefault /*sourceNode*/, nil /*dontResolveAlias*/, true) // Dont resolve alias because we want the immediately exported symbol's declaration
 		if defaultExportSymbol != nil && core.Some(defaultExportSymbol.Declarations, isSyntacticDefault) {
 			return false
 		}
@@ -13814,7 +13866,12 @@ func (c *Checker) canHaveSyntheticDefault(file *ast.Node, moduleSymbol *ast.Symb
 		return true
 	}
 	// TypeScript files never have a synthetic default (as they are always emitted with an __esModule marker) _unless_ they contain an export= statement
-	return hasExportAssignmentSymbol(moduleSymbol)
+	if !ast.IsInJSFile(file) {
+		return hasExportAssignmentSymbol(moduleSymbol)
+	}
+
+	// JS files have a synthetic default if they do not contain ES2015+ module syntax (export = is not valid in js) _and_ do not have an __esModule marker
+	return !ast.IsExternalModule(file.AsSourceFile()) && c.resolveExportByName(moduleSymbol, "__esModule", nil /*sourceNode*/, dontResolveAlias) == nil
 }
 
 func (c *Checker) getEmitSyntaxForModuleSpecifierExpression(usage *ast.Node) core.ResolutionMode {
@@ -14497,6 +14554,32 @@ func (c *Checker) getResolvedMembersOrExportsOfSymbol(symbol *ast.Symbol, resolu
 	return links[resolutionKind]
 }
 
+// Performs late-binding of a dynamic member. This performs the same function for
+// late-bound members that `declareSymbol` in binder.ts performs for early-bound
+// members.
+//
+// If a symbol is a dynamic name from a computed property, we perform an additional "late"
+// binding phase to attempt to resolve the name for the symbol from the type of the computed
+// property's expression. If the type of the expression is a string-literal, numeric-literal,
+// or unique symbol type, we can use that type as the name of the symbol.
+//
+// For example, given:
+//
+//	const x = Symbol();
+//
+//	interface I {
+//	  [x]: number;
+//	}
+//
+// The binder gives the property `[x]: number` a special symbol with the name "__computed".
+// In the late-binding phase we can type-check the expression `x` and see that it has a
+// unique symbol type which we can then use as the name of the member. This allows users
+// to define custom symbols that can be used in the members of an object type.
+//
+// @param parent The containing symbol for the member.
+// @param earlySymbols The early-bound symbols of the parent.
+// @param lateSymbols The late-bound symbols of the parent.
+// @param decl The member to bind.
 func (c *Checker) lateBindMember(parent *ast.Symbol, earlySymbols ast.SymbolTable, lateSymbols ast.SymbolTable, decl *ast.Node) *ast.Symbol {
 	// Debug.assert(decl.Symbol, "The member is expected to have a symbol.")
 	links := c.typeNodeLinks.Get(decl)
@@ -14527,8 +14610,7 @@ func (c *Checker) lateBindMember(parent *ast.Symbol, earlySymbols ast.SymbolTabl
 			}
 			// Report an error if there's a symbol declaration with the same name and conflicting flags.
 			earlySymbol := earlySymbols[memberName]
-			// Duplicate property declarations of classes are checked in checkClassForDuplicateDeclarations.
-			if parent.Flags&ast.SymbolFlagsClass == 0 && lateSymbol.Flags&getExcludedSymbolFlags(symbolFlags) != 0 {
+			if lateSymbol.Flags&getExcludedSymbolFlags(symbolFlags) != 0 {
 				// If we have an existing early-bound member, combine its declarations so that we can
 				// report an error at each declaration.
 				var declarations []*ast.Node
@@ -14542,9 +14624,12 @@ func (c *Checker) lateBindMember(parent *ast.Symbol, earlySymbols ast.SymbolTabl
 					name = scanner.DeclarationNameToString(declName)
 				}
 				for _, d := range declarations {
-					c.error(core.OrElse(ast.GetNameOfDeclaration(d), d), diagnostics.Property_0_was_also_declared_here, name)
+					c.error(core.OrElse(ast.GetNameOfDeclaration(d), d), diagnostics.Duplicate_identifier_0, name)
 				}
-				c.error(core.OrElse(declName, decl), diagnostics.Duplicate_property_0, name)
+				c.error(core.OrElse(declName, decl), diagnostics.Duplicate_identifier_0, name)
+				if lateSymbol.Flags&ast.SymbolFlagsAccessor != 0 && lateSymbol.Flags&ast.SymbolFlagsAccessor != symbolFlags&ast.SymbolFlagsAccessor {
+					lateSymbol.Flags |= ast.SymbolFlagsAccessor
+				}
 				lateSymbol = c.newSymbolEx(ast.SymbolFlagsNone, memberName, ast.CheckFlagsLate)
 			}
 			c.valueSymbolLinks.Get(lateSymbol).nameType = t
@@ -20905,8 +20990,21 @@ func (c *Checker) getTypeFromTypeNode(node *ast.Node) *Type {
 
 func (c *Checker) getTypeFromTypeNodeWorker(node *ast.Node) *Type {
 	switch node.Kind {
-	case ast.KindAnyKeyword:
+	case ast.KindAnyKeyword, ast.KindJSDocAllType:
 		return c.anyType
+	case ast.KindJSDocNonNullableType:
+		return c.getTypeFromTypeNode(node.AsJSDocNonNullableType().Type)
+	case ast.KindJSDocNullableType:
+		t := c.getTypeFromTypeNode(node.AsJSDocNullableType().Type)
+		if c.strictNullChecks {
+			return c.getNullableType(t, TypeFlagsNull)
+		} else {
+			return t
+		}
+	case ast.KindJSDocVariadicType:
+		return c.createArrayType(c.getTypeFromTypeNode(node.AsJSDocVariadicType().Type))
+	case ast.KindJSDocOptionalType:
+		return c.addOptionality(c.getTypeFromTypeNode(node.AsJSDocOptionalType().Type))
 	case ast.KindUnknownKeyword:
 		return c.unknownType
 	case ast.KindStringKeyword:
@@ -24488,6 +24586,13 @@ func someType(t *Type, f func(*Type) bool) bool {
 
 func everyType(t *Type, f func(*Type) bool) bool {
 	if t.flags&TypeFlagsUnion != 0 {
+		return core.Every(t.Types(), f)
+	}
+	return f(t)
+}
+
+func everyContainedType(t *Type, f func(*Type) bool) bool {
+	if t.flags&TypeFlagsUnionOrIntersection != 0 {
 		return core.Every(t.Types(), f)
 	}
 	return f(t)

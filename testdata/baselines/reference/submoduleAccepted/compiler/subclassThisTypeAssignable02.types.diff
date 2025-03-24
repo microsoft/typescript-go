@@ -1,32 +1,6 @@
 --- old.subclassThisTypeAssignable02.types
 +++ new.subclassThisTypeAssignable02.types
-@@= skipped -2, +2 lines =@@
- === tile1.ts ===
- interface Lifecycle<Attrs, State extends Lifecycle<Attrs, State>> {
- 	oninit?(vnode: Vnode<Attrs, State>): number;
-->oninit : ((vnode: Vnode<Attrs, State>) => number) | undefined
-+>oninit : (vnode: Vnode<Attrs, State>) => number | undefined
- >vnode : Vnode<Attrs, State>
- 
- 	[_: number]: any;
-@@= skipped -14, +14 lines =@@
- 
- interface Component<Attrs, State extends Lifecycle<Attrs, State>> {
- 	view(this: State, vnode: Vnode<Attrs, State>): number;
-->view : (this: State, vnode: Vnode<Attrs, State>) => number
-+>view : (vnode: Vnode<Attrs, State>) => number
- >this : State
- >vnode : Vnode<Attrs, State>
- }
- 
- interface ClassComponent<A> extends Lifecycle<A, ClassComponent<A>> {
- 	oninit?(vnode: Vnode<A, this>): number;
-->oninit : ((vnode: Vnode<A, this>) => number) | undefined
-+>oninit : (vnode: Vnode<A, this>) => number | undefined
- >vnode : Vnode<A, this>
- 
- 	view(vnode: Vnode<A, this>): number;
-@@= skipped -40, +40 lines =@@
+@@= skipped -56, +56 lines =@@
  === file1.js ===
  /** @type {ClassComponent<any>} */
  const test9 = new C();
