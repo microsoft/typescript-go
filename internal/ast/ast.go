@@ -7947,34 +7947,36 @@ func IsJSDocUnknownTag(node *Node) bool {
 // JSDocTemplateTag
 type JSDocTemplateTag struct {
 	JSDocTagBase
+	Constraint     *Node
 	typeParameters *TypeParameterList
 }
 
-func (f *NodeFactory) NewJSDocTemplateTag(tagName *IdentifierNode, typeParameters *TypeParameterList, comment *NodeList) *Node {
+func (f *NodeFactory) NewJSDocTemplateTag(tagName *IdentifierNode, constraint *Node, typeParameters *TypeParameterList, comment *NodeList) *Node {
 	data := &JSDocTemplateTag{}
 	data.TagName = tagName
+	data.Constraint = constraint
 	data.typeParameters = typeParameters
 	data.Comment = comment
 	return newNode(KindJSDocTemplateTag, data, f.hooks)
 }
 
-func (f *NodeFactory) UpdateJSDocTemplateTag(node *JSDocTemplateTag, tagName *IdentifierNode, typeParameters *TypeParameterList, comment *NodeList) *Node {
-	if tagName != node.TagName || typeParameters != node.typeParameters || comment != node.Comment {
-		return updateNode(f.NewJSDocTemplateTag(tagName, typeParameters, comment), node.AsNode(), f.hooks)
+func (f *NodeFactory) UpdateJSDocTemplateTag(node *JSDocTemplateTag, tagName *IdentifierNode, constraint *Node, typeParameters *TypeParameterList, comment *NodeList) *Node {
+	if tagName != node.TagName || constraint != node.Constraint || typeParameters != node.typeParameters || comment != node.Comment {
+		return updateNode(f.NewJSDocTemplateTag(tagName, constraint, typeParameters, comment), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
 
 func (node *JSDocTemplateTag) ForEachChild(v Visitor) bool {
-	return visit(v, node.TagName) || visitNodeList(v, node.typeParameters) || visitNodeList(v, node.Comment)
+	return visit(v, node.TagName) || visit(v, node.Constraint) || visitNodeList(v, node.typeParameters) || visitNodeList(v, node.Comment)
 }
 
 func (node *JSDocTemplateTag) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateJSDocTemplateTag(node, v.visitNode(node.TagName), v.visitNodes(node.typeParameters), v.visitNodes(node.Comment))
+	return v.Factory.UpdateJSDocTemplateTag(node, v.visitNode(node.TagName), v.visitNode(node.Constraint), v.visitNodes(node.typeParameters), v.visitNodes(node.Comment))
 }
 
 func (node *JSDocTemplateTag) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJSDocTemplateTag(node.TagName, node.TypeParameters(), node.Comment), node.AsNode(), f.hooks)
+	return cloneNode(f.NewJSDocTemplateTag(node.TagName, node.Constraint, node.TypeParameters(), node.Comment), node.AsNode(), f.hooks)
 }
 
 func (node *JSDocTemplateTag) TypeParameters() *TypeParameterList { return node.typeParameters }

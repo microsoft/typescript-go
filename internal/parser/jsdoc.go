@@ -203,11 +203,21 @@ func (p *Parser) gatherTypeParameters(j *ast.Node, loc core.TextRange) *ast.Node
 	for _, tag := range j.AsJSDoc().Tags.Nodes {
 		if tag.Kind == ast.KindJSDocTemplateTag {
 			template := tag.AsJSDocTemplateTag()
-			for _, typeParameter := range template.TypeParameters().Nodes {
-				clone := typeParameter.Clone(&p.factory)
-				clone.Loc = loc
-				clone.Flags |= ast.NodeFlagsReparsed
-				typeParameters = append(typeParameters, clone)
+			constraint := template.Constraint
+			for _, tp := range template.TypeParameters().Nodes {
+				typeParameter := tp.AsTypeParameter()
+				var reparse *ast.Node
+				if constraint == nil {
+					reparse = typeParameter.Clone(&p.factory)
+				} else {
+					clone := constraint.Type().Clone(&p.factory)
+					clone.Loc = loc
+					clone.Flags |= ast.NodeFlagsReparsed
+					reparse = p.factory.NewTypeParameterDeclaration(typeParameter.Modifiers(), typeParameter.Name(), clone, typeParameter.DefaultType)
+				}
+				reparse.Loc = loc
+				reparse.Flags |= ast.NodeFlagsReparsed
+				typeParameters = append(typeParameters, reparse)
 			}
 		}
 	}
@@ -1332,7 +1342,7 @@ func (p *Parser) tryParseChildTag(target propertyLikeParse, indent int) *ast.Nod
 	return p.parseParameterOrPropertyTag(start, tagName, target, indent)
 }
 
-func (p *Parser) parseTemplateTagTypeParameter(constraint *ast.Node) *ast.Node {
+func (p *Parser) parseTemplateTagTypeParameter() *ast.Node {
 	typeParameterPos := p.nodePos()
 	isBracketed := p.parseOptionalJsdoc(ast.KindOpenBracketToken)
 	if isBracketed {
@@ -1355,16 +1365,16 @@ func (p *Parser) parseTemplateTagTypeParameter(constraint *ast.Node) *ast.Node {
 	if ast.NodeIsMissing(name) {
 		return nil
 	}
-	result := p.factory.NewTypeParameterDeclaration(modifiers, name, constraint, defaultType)
+	result := p.factory.NewTypeParameterDeclaration(modifiers, name, nil /*constraint*/, defaultType)
 	p.finishNode(result, typeParameterPos)
 	return result
 }
 
-func (p *Parser) parseTemplateTagTypeParameters(constraint *ast.Node) *ast.TypeParameterList {
+func (p *Parser) parseTemplateTagTypeParameters() *ast.TypeParameterList {
 	typeParameters := ast.TypeParameterList{}
 	for ok := true; ok; ok = p.parseOptionalJsdoc(ast.KindCommaToken) { // do-while loop
 		p.skipWhitespace()
-		node := p.parseTemplateTagTypeParameter(constraint)
+		node := p.parseTemplateTagTypeParameter()
 		if node != nil {
 			typeParameters.Nodes = append(typeParameters.Nodes, node)
 		}
@@ -1388,12 +1398,9 @@ func (p *Parser) parseTemplateTag(start int, tagName *ast.IdentifierNode, indent
 	var constraint *ast.Node
 	if p.token == ast.KindOpenBraceToken {
 		constraint = p.parseJSDocTypeExpression(false)
-		if constraint != nil {
-			constraint = constraint.Type()
-		}
 	}
-	typeParameters := p.parseTemplateTagTypeParameters(constraint)
-	result := p.factory.NewJSDocTemplateTag(tagName, typeParameters, p.parseTrailingTagComments(start, p.nodePos(), indent, indentText))
+	typeParameters := p.parseTemplateTagTypeParameters()
+	result := p.factory.NewJSDocTemplateTag(tagName, constraint, typeParameters, p.parseTrailingTagComments(start, p.nodePos(), indent, indentText))
 	p.finishNode(result, start)
 	return result
 }
