@@ -5261,12 +5261,12 @@ func (c *Checker) checkExternalModuleExports(node *ast.Node) {
 		// Checks for export * conflicts
 		for id, symbol := range c.getExportsOfModule(moduleSymbol) {
 			if id == ast.InternalSymbolNameExportStar {
-				return
+				continue
 			}
 			// ECMA262: 15.2.1.1 It is a Syntax Error if the ExportedNames of ModuleItemList contains any duplicate entries.
 			// (TS Exceptions: namespaces, function overloads, enums, and interfaces)
 			if symbol.Flags&(ast.SymbolFlagsNamespace|ast.SymbolFlagsEnum) != 0 {
-				return
+				continue
 			}
 			exportedDeclarationsCount := core.CountWhere(symbol.Declarations, func(d *ast.Node) bool {
 				return isNotOverload(d) && !ast.IsAccessor(d) && !ast.IsInterfaceDeclaration(d)
@@ -5274,7 +5274,7 @@ func (c *Checker) checkExternalModuleExports(node *ast.Node) {
 			if symbol.Flags&ast.SymbolFlagsTypeAlias != 0 && exportedDeclarationsCount <= 2 {
 				// it is legal to merge type alias with other values
 				// so count should be either 1 (just type alias) or 2 (type alias + merged value)
-				return
+				continue
 			}
 			if exportedDeclarationsCount > 1 {
 				for _, declaration := range symbol.Declarations {
