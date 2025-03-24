@@ -148,6 +148,7 @@ func (vfs *ioFS) WalkDir(root string, walkFn vfs.WalkDirFunc) error {
 }
 
 func (vfs *ioFS) Remove(path string) error {
+	_ = internal.RootLength(path) // Assert path is rooted
 	return vfs.remove(path)
 }
 
