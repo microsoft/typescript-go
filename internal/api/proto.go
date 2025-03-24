@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"unsafe"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/checker"
@@ -19,10 +18,22 @@ var (
 
 type Method string
 
-type Handle[T any] uint32
+type Handle[T any] string
 
-func NewHandle[T any](v *T) Handle[T] {
-	return Handle[T](uintptr(unsafe.Pointer(v)))
+func ProjectHandle(p *project.Project) Handle[project.Project] {
+	return createHandle[project.Project]("p", p.Name())
+}
+
+func SymbolHandle(symbol *ast.Symbol) Handle[ast.Symbol] {
+	return createHandle[ast.Symbol]("s", symbol.Id.Load())
+}
+
+func TypeHandle(t *checker.Type) Handle[checker.Type] {
+	return createHandle[checker.Type]("t", t.Id())
+}
+
+func createHandle[T any](prefix string, id any) Handle[T] {
+	return Handle[T](fmt.Sprintf("%s%016x", prefix, id))
 }
 
 const (
@@ -58,15 +69,15 @@ type LoadProjectParams struct {
 }
 
 type ProjectResponse struct {
-	Id              int                   `json:"id"`
-	ConfigFileName  string                `json:"configFileName"`
-	RootFiles       []string              `json:"rootFiles"`
-	CompilerOptions *core.CompilerOptions `json:"compilerOptions"`
+	Id              Handle[project.Project] `json:"id"`
+	ConfigFileName  string                  `json:"configFileName"`
+	RootFiles       []string                `json:"rootFiles"`
+	CompilerOptions *core.CompilerOptions   `json:"compilerOptions"`
 }
 
-func NewProjectResponse(project *project.Project, id int) *ProjectResponse {
+func NewProjectResponse(project *project.Project) *ProjectResponse {
 	return &ProjectResponse{
-		Id:              id,
+		Id:              ProjectHandle(project),
 		ConfigFileName:  project.Name(),
 		RootFiles:       project.GetRootFileNames(),
 		CompilerOptions: project.GetCompilerOptions(),
@@ -74,15 +85,15 @@ func NewProjectResponse(project *project.Project, id int) *ProjectResponse {
 }
 
 type GetSymbolAtPositionParams struct {
-	Project  int    `json:"project"`
-	FileName string `json:"fileName"`
-	Position uint32 `json:"position"`
+	Project  Handle[project.Project] `json:"project"`
+	FileName string                  `json:"fileName"`
+	Position uint32                  `json:"position"`
 }
 
 type GetSymbolAtPositionsParams struct {
-	Project   int      `json:"project"`
-	FileName  string   `json:"fileName"`
-	Positions []uint32 `json:"positions"`
+	Project   Handle[project.Project] `json:"project"`
+	FileName  string                  `json:"fileName"`
+	Positions []uint32                `json:"positions"`
 }
 
 type SymbolResponse struct {
@@ -94,7 +105,7 @@ type SymbolResponse struct {
 
 func NewSymbolResponse(symbol *ast.Symbol, projectVersion int) *SymbolResponse {
 	return &SymbolResponse{
-		Id:         NewHandle(symbol),
+		Id:         SymbolHandle(symbol),
 		Name:       symbol.Name,
 		Flags:      uint32(symbol.Flags),
 		CheckFlags: uint32(symbol.CheckFlags),
@@ -102,8 +113,8 @@ func NewSymbolResponse(symbol *ast.Symbol, projectVersion int) *SymbolResponse {
 }
 
 type GetTypeOfSymbolParams struct {
-	Project int                `json:"project"`
-	Symbol  Handle[ast.Symbol] `json:"symbol"`
+	Project Handle[project.Project] `json:"project"`
+	Symbol  Handle[ast.Symbol]      `json:"symbol"`
 }
 
 type TypeResponse struct {
@@ -113,14 +124,14 @@ type TypeResponse struct {
 
 func NewTypeData(t *checker.Type) *TypeResponse {
 	return &TypeResponse{
-		Id:    NewHandle(t),
+		Id:    TypeHandle(t),
 		Flags: uint32(t.Flags()),
 	}
 }
 
 type GetSourceFileParams struct {
-	Project  int    `json:"project"`
-	FileName string `json:"fileName"`
+	Project  Handle[project.Project] `json:"project"`
+	FileName string                  `json:"fileName"`
 }
 
 func unmarshalPayload(method string, payload json.RawMessage) (any, error) {

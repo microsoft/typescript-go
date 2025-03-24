@@ -28,7 +28,7 @@ type API struct {
 	scriptInfosMu    sync.RWMutex
 	scriptInfos      map[tspath.Path]*project.ScriptInfo
 
-	projects  []*project.Project
+	projects  map[Handle[project.Project]]*project.Project
 	symbolsMu sync.Mutex
 	symbols   map[Handle[ast.Symbol]]*ast.Symbol
 }
@@ -44,6 +44,7 @@ func NewAPI(host APIHost, options APIOptions) *API {
 			CurrentDirectory:          host.GetCurrentDirectory(),
 		}),
 		scriptInfos: make(map[tspath.Path]*project.ScriptInfo),
+		projects:    make(map[Handle[project.Project]]*project.Project),
 		symbols:     make(map[Handle[ast.Symbol]]*ast.Symbol),
 	}
 }
@@ -160,21 +161,21 @@ func (api *API) ParseConfigFile(configFileName string) (*tsoptions.ParsedCommand
 func (api *API) LoadProject(configFileName string) (*ProjectResponse, error) {
 	configFileName = api.toAbsoluteFileName(configFileName)
 	configFilePath := api.toPath(configFileName)
-	project := project.NewConfiguredProject(configFileName, configFilePath, api)
-	if err := project.LoadConfig(); err != nil {
+	p := project.NewConfiguredProject(configFileName, configFilePath, api)
+	if err := p.LoadConfig(); err != nil {
 		return nil, err
 	}
-	project.GetProgram()
-	id := len(api.projects)
-	api.projects = append(api.projects, project)
-	return NewProjectResponse(project, id), nil
+	p.GetProgram()
+	data := NewProjectResponse(p)
+	api.projects[data.Id] = p
+	return data, nil
 }
 
-func (api *API) GetSymbolAtPosition(projectId int, fileName string, position int) (*SymbolResponse, error) {
-	if projectId >= len(api.projects) {
+func (api *API) GetSymbolAtPosition(projectId Handle[project.Project], fileName string, position int) (*SymbolResponse, error) {
+	project, ok := api.projects[projectId]
+	if !ok {
 		return nil, errors.New("project not found")
 	}
-	project := api.projects[projectId]
 	symbol, err := project.LanguageService().GetSymbolAtPosition(fileName, position)
 	if err != nil || symbol == nil {
 		return nil, err
@@ -186,11 +187,13 @@ func (api *API) GetSymbolAtPosition(projectId int, fileName string, position int
 	return data, nil
 }
 
-func (api *API) GetTypeOfSymbol(projectId int, symbolHandle Handle[ast.Symbol]) (*TypeResponse, error) {
-	if projectId >= len(api.projects) {
+func (api *API) GetTypeOfSymbol(projectId Handle[project.Project], symbolHandle Handle[ast.Symbol]) (*TypeResponse, error) {
+	project, ok := api.projects[projectId]
+	if !ok {
 		return nil, errors.New("project not found")
 	}
-	project := api.projects[projectId]
+	api.symbolsMu.Lock()
+	defer api.symbolsMu.Unlock()
 	symbol, ok := api.symbols[symbolHandle]
 	if !ok {
 		return nil, fmt.Errorf("symbol %q not found", symbolHandle)
@@ -202,11 +205,11 @@ func (api *API) GetTypeOfSymbol(projectId int, symbolHandle Handle[ast.Symbol]) 
 	return NewTypeData(t), nil
 }
 
-func (api *API) GetSourceFile(projectId int, fileName string) (*ast.SourceFile, error) {
-	if projectId >= len(api.projects) {
+func (api *API) GetSourceFile(projectId Handle[project.Project], fileName string) (*ast.SourceFile, error) {
+	project, ok := api.projects[projectId]
+	if !ok {
 		return nil, errors.New("project not found")
 	}
-	project := api.projects[projectId]
 	sourceFile := project.GetProgram().GetSourceFile(fileName)
 	if sourceFile == nil {
 		return nil, fmt.Errorf("source file %q not found", fileName)

@@ -4,7 +4,7 @@ export interface ConfigResponse {
 }
 
 export interface ProjectResponse {
-    id: number;
+    id: string;
     configFileName: string;
     compilerOptions: Record<string, unknown>;
     rootFiles: string[];
@@ -16,13 +16,13 @@ export interface GetSymbolAtPositionParams {
 }
 
 export interface SymbolResponse {
-    id: number;
+    id: string;
     name: string;
     flags: number;
     checkFlags: number;
 }
 
 export interface TypeResponse {
-    id: number;
+    id: string;
     flags: number;
 }

@@ -30,12 +30,12 @@ func GetNodeId(node *Node) NodeId {
 }
 
 func GetSymbolId(symbol *Symbol) SymbolId {
-	id := symbol.id.Load()
+	id := symbol.Id.Load()
 	if id == 0 {
 		// Worst case, we burn a few ids if we have to CAS.
 		id = nextSymbolId.Add(1)
-		if !symbol.id.CompareAndSwap(0, id) {
-			id = symbol.id.Load()
+		if !symbol.Id.CompareAndSwap(0, id) {
+			id = symbol.Id.Load()
 		}
 	}
 	return SymbolId(id)

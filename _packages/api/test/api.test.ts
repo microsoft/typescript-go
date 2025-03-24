@@ -11,38 +11,24 @@ import {
     test,
 } from "node:test";
 
+const defaultFiles = {
+    "/tsconfig.json": "{}",
+    "/src/index.ts": `import { foo } from './foo';`,
+    "/src/foo.ts": `export const foo = 42;`,
+};
+
 describe("SourceFile", () => {
     test("file text", () => {
-        const files = {
-            "/tsconfig.json": "{}",
-            "/src/index.ts": `import { foo } from './foo';`,
-        };
-
-        const api = new API({
-            cwd: new URL("../../../", import.meta.url).pathname,
-            tsserverPath: new URL("../../../built/local/tsgo", import.meta.url).pathname,
-            fs: createVirtualFileSystem(files),
-        });
-
+        const api = spawnAPI();
         const project = api.loadProject("/tsconfig.json");
         const sourceFile = project.getSourceFile("/src/index.ts");
 
         assert.ok(sourceFile);
-        assert.equal(sourceFile.text, files["/src/index.ts"]);
+        assert.equal(sourceFile.text, defaultFiles["/src/index.ts"]);
     });
 
     test("extended data", () => {
-        const files = {
-            "/tsconfig.json": "{}",
-            "/src/index.ts": "`head ${middle} tail`",
-        };
-
-        const api = new API({
-            cwd: new URL("../../../", import.meta.url).pathname,
-            tsserverPath: new URL("../../../built/local/tsgo", import.meta.url).pathname,
-            fs: createVirtualFileSystem(files),
-        });
-
+        const api = spawnAPI();
         const project = api.loadProject("/tsconfig.json");
         const sourceFile = project.getSourceFile("/src/index.ts");
 
@@ -70,3 +56,21 @@ describe("SourceFile", () => {
         assert.equal(nodeCount, 7);
     });
 });
+
+test("Object equality", () => {
+    const api = spawnAPI();
+    const project = api.loadProject("/tsconfig.json");
+    assert.strictEqual(project, api.loadProject("/tsconfig.json"));
+    assert.strictEqual(
+        project.getSymbolAtPosition("/src/index.ts", 9),
+        project.getSymbolAtPosition("/src/index.ts", 10),
+    );
+});
+
+function spawnAPI(files: Record<string, string> = defaultFiles) {
+    return new API({
+        cwd: new URL("../../../", import.meta.url).pathname,
+        tsserverPath: new URL("../../../built/local/tsgo", import.meta.url).pathname,
+        fs: createVirtualFileSystem(files),
+    });
+}

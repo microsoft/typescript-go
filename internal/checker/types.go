@@ -531,6 +531,10 @@ type Type struct {
 	data        TypeData // Type specific data
 }
 
+func (t *Type) Id() TypeId {
+	return t.id
+}
+
 func (t *Type) Flags() TypeFlags {
 	return t.flags
 }
