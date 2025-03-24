@@ -48,25 +48,24 @@ type NamedTestConfiguration struct {
 }
 
 type HarnessOptions struct {
-	AllowNonTsExtensions        bool
-	UseCaseSensitiveFileNames   bool
-	BaselineFile                string
-	IncludeBuiltFile            string
-	FileName                    string
-	LibFiles                    []string
-	NoErrorTruncation           bool
-	SuppressOutputPathCheck     bool
-	NoImplicitReferences        bool
-	CurrentDirectory            string
-	Symlink                     string
-	Link                        string
-	NoTypesAndSymbols           bool
-	FullEmitPaths               bool
-	NoCheck                     bool
-	ReportDiagnostics           bool
-	CaptureSuggestions          bool
-	TypescriptVersion           string
-	StrictBuiltinIteratorReturn bool
+	AllowNonTsExtensions      bool
+	UseCaseSensitiveFileNames bool
+	BaselineFile              string
+	IncludeBuiltFile          string
+	FileName                  string
+	LibFiles                  []string
+	NoErrorTruncation         bool
+	SuppressOutputPathCheck   bool
+	NoImplicitReferences      bool
+	CurrentDirectory          string
+	Symlink                   string
+	Link                      string
+	NoTypesAndSymbols         bool
+	FullEmitPaths             bool
+	NoCheck                   bool
+	ReportDiagnostics         bool
+	CaptureSuggestions        bool
+	TypescriptVersion         string
 }
 
 func CompileFiles(
