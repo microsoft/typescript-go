@@ -21034,11 +21034,7 @@ func (c *Checker) getTypeFromTypeNodeWorker(node *ast.Node) *Type {
 	case ast.KindNeverKeyword:
 		return c.neverType
 	case ast.KindObjectKeyword:
-		if node.Flags&ast.NodeFlagsJavaScriptFile != 0 && !c.noImplicitAny {
-			return c.anyType
-		} else {
-			return c.nonPrimitiveType
-		}
+		return c.nonPrimitiveType
 	case ast.KindIntrinsicKeyword:
 		return c.intrinsicMarkerType
 	case ast.KindThisType, ast.KindThisKeyword:

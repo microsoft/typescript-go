@@ -7981,8 +7981,7 @@ func (node *JSDocTemplateTag) Clone(f *NodeFactory) *Node {
 
 func (node *JSDocTemplateTag) TypeParameters() *TypeParameterList { return node.typeParameters }
 
-// JSDocParameterTag
-
+// JSDocPropertyTag
 type JSDocPropertyTag struct {
 	JSDocTagBase
 	name           *EntityName
@@ -8034,6 +8033,7 @@ func (node *JSDocPropertyTag) Clone(f *NodeFactory) *Node {
 
 func (node *JSDocPropertyTag) Name() *EntityName { return node.name }
 
+// JSDocParameterTag
 type JSDocParameterTag struct {
 	JSDocTagBase
 	name           *EntityName
