@@ -245,9 +245,19 @@ async function runTestTools() {
     await $test({ cwd: path.join(__dirname, "_tools") })`${gotestsum()} ./...`;
 }
 
+async function runTestJS() {
+    await $`pnpm --filter ./_packages/* test`;
+}
+
 export const testTools = task({
     name: "test:tools",
     run: runTestTools,
+});
+
+export const testJS = task({
+    name: "test:js",
+    dependencies: [tsgo],
+    run: runTestJS,
 });
 
 export const testAll = task({
@@ -257,6 +267,7 @@ export const testAll = task({
         await runTests();
         await runTestBenchmarks();
         await runTestTools();
+        await runTestJS();
     },
 });
 
