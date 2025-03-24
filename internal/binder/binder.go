@@ -279,6 +279,13 @@ func (b *Binder) declareSymbolEx(symbolTable ast.SymbolTable, parent *ast.Symbol
 					}
 				}
 				b.addDiagnostic(diag)
+				// When get or set accessor conflicts with a non-accessor or an accessor of a different kind, we mark
+				// the symbol as a full accessor such that all subsequent declarations are considered conflicting. This
+				// for example ensures that a get accessor followed by a non-accessor followed by a set accessor with the
+				// same name are all marked as duplicates.
+				if symbol.Flags&ast.SymbolFlagsAccessor != 0 && symbol.Flags&ast.SymbolFlagsAccessor != includes&ast.SymbolFlagsAccessor {
+					symbol.Flags |= ast.SymbolFlagsAccessor
+				}
 				symbol = b.newSymbol(ast.SymbolFlagsNone, name)
 			}
 		}
@@ -1038,7 +1045,7 @@ func (b *Binder) bindParameter(node *ast.Node) {
 	// 	return
 	// }
 	decl := node.AsParameterDeclaration()
-	if b.inStrictMode && node.Flags&ast.NodeFlagsAmbient == 9 {
+	if b.inStrictMode && node.Flags&ast.NodeFlagsAmbient == 0 {
 		// It is a SyntaxError if the identifier eval or arguments appears within a FormalParameterList of a
 		// strict mode FunctionLikeDeclaration or FunctionExpression(13.1)
 		b.checkStrictModeEvalOrArguments(node, decl.Name())

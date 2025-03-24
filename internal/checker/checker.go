@@ -2874,7 +2874,7 @@ func (c *Checker) checkObjectTypeForDuplicateDeclarations(node *ast.Node, checkP
 			}
 			// When a property has multiple declarations, check that only one of those declarations is in this object
 			// type declaration (multiple merged object types are permitted to each declare the same property).
-			if ast.IsPropertyDeclaration(member) || ast.IsPropertySignatureDeclaration(member) {
+			if ast.IsPropertyDeclaration(member) && !ast.HasAccessorModifier(member) || ast.IsPropertySignatureDeclaration(member) {
 				checkProperty(symbol, isStatic)
 			}
 			// Check that each private identifier is used only for instance members or only for static members. It is an
@@ -9963,10 +9963,10 @@ func (c *Checker) checkNewTargetMetaProperty(node *ast.Node) *Type {
 
 func (c *Checker) checkImportMetaProperty(node *ast.Node) *Type {
 	if c.moduleKind == core.ModuleKindNode16 || c.moduleKind == core.ModuleKindNodeNext {
-		// !!! Enable this once ImpliedNodeFormat is computed at program construction
-		// if ast.GetSourceFileOfNode(node).ImpliedNodeFormat != core.ModuleKindESNext {
-		// 	c.error(node, diagnostics.The_import_meta_meta_property_is_not_allowed_in_files_which_will_build_into_CommonJS_output)
-		// }
+		sourceFileMetaData := c.program.GetSourceFileMetaData(ast.GetSourceFileOfNode(node).Path())
+		if sourceFileMetaData == nil || sourceFileMetaData.ImpliedNodeFormat != core.ModuleKindESNext {
+			c.error(node, diagnostics.The_import_meta_meta_property_is_not_allowed_in_files_which_will_build_into_CommonJS_output)
+		}
 	} else if c.moduleKind < core.ModuleKindES2020 && c.moduleKind != core.ModuleKindSystem {
 		c.error(node, diagnostics.The_import_meta_meta_property_is_only_allowed_when_the_module_option_is_es2020_es2022_esnext_system_node16_or_nodenext)
 	}
@@ -10828,7 +10828,39 @@ func (c *Checker) isPropertyAccessible(node *ast.Node, isSuper bool, isWrite boo
 }
 
 func (c *Checker) containerSeemsToBeEmptyDomElement(containingType *Type) bool {
-	return false // !!!
+	if c.compilerOptions.Lib == nil || slices.Contains(c.compilerOptions.Lib, "lib.dom.d.ts") {
+		return false
+	}
+	return everyContainedType(containingType, func(t *Type) bool {
+		if t.symbol == nil {
+			return false
+		}
+
+		name := t.symbol.Name
+
+		switch name {
+		case "EventTarget", "Node", "Element":
+			return true
+		}
+
+		name, ok := strings.CutPrefix(name, "HTML")
+		if !ok {
+			return false
+		}
+
+		name, ok = strings.CutSuffix(name, "Element")
+		if !ok {
+			return false
+		}
+
+		for _, r := range name {
+			if !stringutil.IsASCIILetter(r) {
+				return false
+			}
+		}
+
+		return true
+	}) && c.isEmptyObjectType(containingType)
 }
 
 func (c *Checker) checkAndReportErrorForExtendingInterface(errorLocation *ast.Node) bool {
@@ -14524,6 +14556,32 @@ func (c *Checker) getResolvedMembersOrExportsOfSymbol(symbol *ast.Symbol, resolu
 	return links[resolutionKind]
 }
 
+// Performs late-binding of a dynamic member. This performs the same function for
+// late-bound members that `declareSymbol` in binder.ts performs for early-bound
+// members.
+//
+// If a symbol is a dynamic name from a computed property, we perform an additional "late"
+// binding phase to attempt to resolve the name for the symbol from the type of the computed
+// property's expression. If the type of the expression is a string-literal, numeric-literal,
+// or unique symbol type, we can use that type as the name of the symbol.
+//
+// For example, given:
+//
+//	const x = Symbol();
+//
+//	interface I {
+//	  [x]: number;
+//	}
+//
+// The binder gives the property `[x]: number` a special symbol with the name "__computed".
+// In the late-binding phase we can type-check the expression `x` and see that it has a
+// unique symbol type which we can then use as the name of the member. This allows users
+// to define custom symbols that can be used in the members of an object type.
+//
+// @param parent The containing symbol for the member.
+// @param earlySymbols The early-bound symbols of the parent.
+// @param lateSymbols The late-bound symbols of the parent.
+// @param decl The member to bind.
 func (c *Checker) lateBindMember(parent *ast.Symbol, earlySymbols ast.SymbolTable, lateSymbols ast.SymbolTable, decl *ast.Node) *ast.Symbol {
 	// Debug.assert(decl.Symbol, "The member is expected to have a symbol.")
 	links := c.typeNodeLinks.Get(decl)
@@ -14554,8 +14612,7 @@ func (c *Checker) lateBindMember(parent *ast.Symbol, earlySymbols ast.SymbolTabl
 			}
 			// Report an error if there's a symbol declaration with the same name and conflicting flags.
 			earlySymbol := earlySymbols[memberName]
-			// Duplicate property declarations of classes are checked in checkClassForDuplicateDeclarations.
-			if parent.Flags&ast.SymbolFlagsClass == 0 && lateSymbol.Flags&getExcludedSymbolFlags(symbolFlags) != 0 {
+			if lateSymbol.Flags&getExcludedSymbolFlags(symbolFlags) != 0 {
 				// If we have an existing early-bound member, combine its declarations so that we can
 				// report an error at each declaration.
 				var declarations []*ast.Node
@@ -14569,9 +14626,12 @@ func (c *Checker) lateBindMember(parent *ast.Symbol, earlySymbols ast.SymbolTabl
 					name = scanner.DeclarationNameToString(declName)
 				}
 				for _, d := range declarations {
-					c.error(core.OrElse(ast.GetNameOfDeclaration(d), d), diagnostics.Property_0_was_also_declared_here, name)
+					c.error(core.OrElse(ast.GetNameOfDeclaration(d), d), diagnostics.Duplicate_identifier_0, name)
 				}
-				c.error(core.OrElse(declName, decl), diagnostics.Duplicate_property_0, name)
+				c.error(core.OrElse(declName, decl), diagnostics.Duplicate_identifier_0, name)
+				if lateSymbol.Flags&ast.SymbolFlagsAccessor != 0 && lateSymbol.Flags&ast.SymbolFlagsAccessor != symbolFlags&ast.SymbolFlagsAccessor {
+					lateSymbol.Flags |= ast.SymbolFlagsAccessor
+				}
 				lateSymbol = c.newSymbolEx(ast.SymbolFlagsNone, memberName, ast.CheckFlagsLate)
 			}
 			c.valueSymbolLinks.Get(lateSymbol).nameType = t
@@ -24528,6 +24588,13 @@ func someType(t *Type, f func(*Type) bool) bool {
 
 func everyType(t *Type, f func(*Type) bool) bool {
 	if t.flags&TypeFlagsUnion != 0 {
+		return core.Every(t.Types(), f)
+	}
+	return f(t)
+}
+
+func everyContainedType(t *Type, f func(*Type) bool) bool {
+	if t.flags&TypeFlagsUnionOrIntersection != 0 {
 		return core.Every(t.Types(), f)
 	}
 	return f(t)
