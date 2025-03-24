@@ -73,9 +73,8 @@ type NodeFactory struct {
 	variableDeclarationPool          core.Pool[VariableDeclaration]
 	variableStatementPool            core.Pool[VariableStatement]
 
-	nodeCount  int
-	textLength int
-	textCount  int
+	nodeCount int
+	textCount int
 }
 
 type NodeFactoryHooks struct {
@@ -106,10 +105,6 @@ func (f *NodeFactory) newNode(kind Kind, data nodeData) *Node {
 
 func (f *NodeFactory) NodeCount() int {
 	return f.nodeCount
-}
-
-func (f *NodeFactory) TextLength() int {
-	return f.textLength
 }
 
 func (f *NodeFactory) TextCount() int {
@@ -1796,7 +1791,6 @@ func (f *NodeFactory) NewIdentifier(text string) *Node {
 	data := f.identifierPool.New()
 	data.Text = text
 	f.textCount++
-	f.textLength += len(text)
 	return f.newNode(KindIdentifier, data)
 }
 
@@ -1819,7 +1813,6 @@ func (f *NodeFactory) NewPrivateIdentifier(text string) *Node {
 	data := &PrivateIdentifier{}
 	data.Text = text
 	f.textCount++
-	f.textLength += len(text)
 	return f.newNode(KindPrivateIdentifier, data)
 }
 
@@ -4620,7 +4613,6 @@ func (f *NodeFactory) NewStringLiteral(text string) *Node {
 	data := f.stringLiteralPool.New()
 	data.Text = text
 	f.textCount++
-	f.textLength += len(text)
 	return f.newNode(KindStringLiteral, data)
 }
 
@@ -4643,7 +4635,6 @@ func (f *NodeFactory) NewNumericLiteral(text string) *Node {
 	data := &NumericLiteral{}
 	data.Text = text
 	f.textCount++
-	f.textLength += len(text)
 	return f.newNode(KindNumericLiteral, data)
 }
 
@@ -4666,7 +4657,6 @@ func (f *NodeFactory) NewBigIntLiteral(text string) *Node {
 	data := &BigIntLiteral{}
 	data.Text = text
 	f.textCount++
-	f.textLength += len(text)
 	return f.newNode(KindBigIntLiteral, data)
 }
 
@@ -4689,7 +4679,6 @@ func (f *NodeFactory) NewRegularExpressionLiteral(text string) *Node {
 	data := &RegularExpressionLiteral{}
 	data.Text = text
 	f.textCount++
-	f.textLength += len(text)
 	return f.newNode(KindRegularExpressionLiteral, data)
 }
 
@@ -4708,7 +4697,6 @@ func (f *NodeFactory) NewNoSubstitutionTemplateLiteral(text string) *Node {
 	data := &NoSubstitutionTemplateLiteral{}
 	data.Text = text
 	f.textCount++
-	f.textLength += len(text)
 	return f.newNode(KindNoSubstitutionTemplateLiteral, data)
 }
 
@@ -6881,7 +6869,6 @@ func (f *NodeFactory) NewTemplateHead(text string, rawText string, templateFlags
 	data.RawText = rawText
 	data.TemplateFlags = templateFlags
 	f.textCount++
-	f.textLength += len(text) + len(rawText)
 	return f.newNode(KindTemplateHead, data)
 }
 
@@ -6902,7 +6889,6 @@ func (f *NodeFactory) NewTemplateMiddle(text string, rawText string, templateFla
 	data.RawText = rawText
 	data.TemplateFlags = templateFlags
 	f.textCount++
-	f.textLength += len(text) + len(rawText)
 	return f.newNode(KindTemplateMiddle, data)
 }
 
@@ -6923,7 +6909,6 @@ func (f *NodeFactory) NewTemplateTail(text string, rawText string, templateFlags
 	data.RawText = rawText
 	data.TemplateFlags = templateFlags
 	f.textCount++
-	f.textLength += len(text) + len(rawText)
 	return f.newNode(KindTemplateTail, data)
 }
 
@@ -7484,7 +7469,6 @@ func (f *NodeFactory) NewJsxText(text string, containsOnlyTriviaWhiteSpace bool)
 	data.Text = text
 	data.ContainsOnlyTriviaWhiteSpaces = containsOnlyTriviaWhiteSpace
 	f.textCount++
-	f.textLength += len(text)
 	return f.newNode(KindJsxText, data)
 }
 
@@ -7567,7 +7551,6 @@ func (f *NodeFactory) NewJSDocText(text string) *Node {
 	data := f.jsdocTextPool.New()
 	data.Text = text
 	f.textCount++
-	f.textLength += len(text)
 	return f.newNode(KindJSDocText, data)
 }
 
@@ -7585,7 +7568,6 @@ func (f *NodeFactory) NewJSDocLink(name *Node, text string) *Node {
 	data.name = name
 	data.Text = text
 	f.textCount++
-	f.textLength += len(text)
 	return f.newNode(KindJSDocLink, data)
 }
 
@@ -7622,7 +7604,6 @@ func (f *NodeFactory) NewJSDocLinkPlain(name *Node, text string) *Node {
 	data.name = name
 	data.Text = text
 	f.textCount++
-	f.textLength += len(text)
 	return f.newNode(KindJSDocLinkPlain, data)
 }
 
@@ -7659,7 +7640,6 @@ func (f *NodeFactory) NewJSDocLinkCode(name *Node, text string) *Node {
 	data.name = name
 	data.Text = text
 	f.textCount++
-	f.textLength += len(text)
 	return f.newNode(KindJSDocLinkCode, data)
 }
 
