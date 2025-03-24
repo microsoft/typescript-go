@@ -2044,6 +2044,7 @@ func (c *Checker) checkSourceFile(sourceFile *ast.SourceFile) {
 		c.checkDeferredNodes(sourceFile)
 		c.checkJSDocNodes(sourceFile)
 		if ast.IsExternalOrCommonJsModule(sourceFile) {
+			c.checkExternalModuleExports(sourceFile.AsNode())
 			c.registerForUnusedIdentifiersCheck(sourceFile.AsNode())
 		}
 		// This relies on the results of other lazy diagnostics, so must be computed after them
