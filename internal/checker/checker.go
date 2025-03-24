@@ -10967,7 +10967,7 @@ func (c *Checker) isPropertyAccessible(node *ast.Node, isSuper bool, isWrite boo
 }
 
 func (c *Checker) containerSeemsToBeEmptyDomElement(containingType *Type) bool {
-	return !slices.Contains(c.compilerOptions.Lib, "dom") && everyContainedType(containingType, hasCommonDomTypeName) && c.isEmptyObjectType(containingType)
+	return !slices.Contains(c.compilerOptions.Lib, "lib.dom.d.ts") && everyContainedType(containingType, hasCommonDomTypeName) && c.isEmptyObjectType(containingType)
 }
 
 func hasCommonDomTypeName(t *Type) bool {
