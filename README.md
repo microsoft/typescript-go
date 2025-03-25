@@ -1,9 +1,10 @@
 # TypeScript 7
 
 > [!NOTE]
-> **Does this project mean I can emit native code from my TypeScript code?**
->
-> No. This repo is a change in the implementation language of TypeScript itself, and isn't a tool that would allow a TypeScript input file to be converted to Go or any other native/native-like target. Such a transform (if even possible?) is outside the scope of the project.
+> **Got Questions? We’ve Got Answers!**  
+> Dive into our FAQ discussions to uncover the technical insights behind TypeScript-go. Discover why we chose to port rather than rewrite, why Go was the optimal choice, and what native code emission means for TypeScript. Whether you're curious about API design or the future of the TypeScript/JavaScript codebase, our FAQs have you covered.  
+>  
+> Explore them now: [FAQs on TypeScript-go](https://github.com/microsoft/typescript-go/discussions/categories/faqs)
 
 [Not sure what this is? Read the announcement post!](https://devblogs.microsoft.com/typescript/typescript-native-port/)
 
