@@ -167,8 +167,6 @@ func (vfs *osFS) WriteFile(path string, content string, writeByteOrderMark bool)
 }
 
 func (vfs *osFS) Remove(path string) error {
-	if err := os.Remove(path); err != nil {
-		return nil
-	}
+	// todo: #701 add retry mechanism?
 	return os.RemoveAll(path)
 }

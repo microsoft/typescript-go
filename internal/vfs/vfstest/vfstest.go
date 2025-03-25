@@ -21,7 +21,9 @@ type mapFS struct {
 	// mu protects m.
 	// A single mutex is sufficient as we only use fstest.Map's Open method.
 	mu sync.RWMutex
-	m  fstest.MapFS
+
+	// keys in m are canonicalPaths
+	m fstest.MapFS
 
 	useCaseSensitiveFileNames bool
 
@@ -171,20 +173,19 @@ func (m *mapFS) open(p canonicalPath) (fs.File, error) {
 func (m *mapFS) remove(path string) error {
 	canonical := m.getCanonicalPath(path)
 	canonicalString := string(canonical)
-	fileInfo, e := m.m.Stat(canonicalString)
-
-	if e != nil {
-		return e
+	fileInfo, err := m.m.Stat(canonicalString)
+	if err != nil {
+		// file not found
+		return nil
 	}
 	delete(m.m, canonicalString)
 	delete(m.symlinks, canonical)
 
 	if fileInfo.IsDir() {
 		for path := range m.m {
-			canonicalPath := m.getCanonicalPath(path)
-			if strings.HasPrefix(string(canonicalPath), canonicalString) {
+			if strings.HasPrefix(path, canonicalString) {
 				delete(m.m, path)
-				delete(m.symlinks, canonicalPath)
+				delete(m.symlinks, canonicalPath(path))
 			}
 		}
 	}
