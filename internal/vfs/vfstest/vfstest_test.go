@@ -242,6 +242,10 @@ func TestWritableFSDelete(t *testing.T) {
 	assert.NilError(t, err)
 	err = fs.Remove("/foo/bar/file.ts")
 	assert.NilError(t, err)
+
+	_ = fs.WriteFile("/foo/barbar", "remove2", false)
+	_ = fs.Remove("/foo/bar")
+	assert.Assert(t, fs.FileExists("/foo/barbar"))
 }
 
 func TestStress(t *testing.T) {

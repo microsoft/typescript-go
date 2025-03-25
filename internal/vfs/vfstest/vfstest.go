@@ -173,15 +173,16 @@ func (m *mapFS) open(p canonicalPath) (fs.File, error) {
 func (m *mapFS) remove(path string) error {
 	canonical := m.getCanonicalPath(path)
 	canonicalString := string(canonical)
-	fileInfo, err := m.m.Stat(canonicalString)
-	if err != nil {
-		// file not found
+	fileInfo := m.m[canonicalString]
+	if fileInfo == nil {
+		// file does not exist
 		return nil
 	}
 	delete(m.m, canonicalString)
 	delete(m.symlinks, canonical)
 
-	if fileInfo.IsDir() {
+	if fileInfo.Mode.IsDir() {
+		canonicalString += "/"
 		for path := range m.m {
 			if strings.HasPrefix(path, canonicalString) {
 				delete(m.m, path)
