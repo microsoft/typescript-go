@@ -1779,14 +1779,17 @@ func (node *Node) JSDoc(file *SourceFile) []*Node {
 // A composite node is a node that contains a complex subtree. This struct is intended to be
 // embedded in a node that requires caching for its subtree facts.
 type compositeNodeBase struct {
-	facts SubtreeFacts // caches the SubtreeFacts for this node and its subtree
+	facts atomic.Uint32 // caches the SubtreeFacts for this node and its subtree
 }
 
 func (node *compositeNodeBase) subtreeFactsWorker(self nodeData) SubtreeFacts {
-	if node.facts&SubtreeFactsComputed == 0 {
-		node.facts |= self.computeSubtreeFacts() | SubtreeFactsComputed
+	// computeSubtreeFacts() is expected to be idempotent, so races will only impact time, not correctness.
+	facts := SubtreeFacts(node.facts.Load())
+	if facts&SubtreeFactsComputed == 0 {
+		facts |= self.computeSubtreeFacts() | SubtreeFactsComputed
+		node.facts.Store(uint32(facts))
 	}
-	return node.facts &^ SubtreeFactsComputed
+	return facts &^ SubtreeFactsComputed
 }
 
 func (node *compositeNodeBase) computeSubtreeFacts() SubtreeFacts {
