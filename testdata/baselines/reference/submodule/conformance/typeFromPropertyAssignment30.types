@@ -9,7 +9,7 @@ interface Combo {
 }
 const c: Combo = () => 1
 >c : Combo
->() => 1 : { (): number; p: {}; }
+>() => 1 : { (): number; p: { [s: string]: number; }; }
 >1 : 1
 
 // should not be an expando object, but contextually typed by Combo.p

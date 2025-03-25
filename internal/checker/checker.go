@@ -13399,6 +13399,20 @@ func (c *Checker) getParentOfSymbol(symbol *ast.Symbol) *ast.Symbol {
 	return nil
 }
 
+func (c *Checker) getFunctionExpressionParentSymbolOrSymbol(symbol *ast.Symbol) *ast.Symbol {
+	declaration := symbol.ValueDeclaration
+	if declaration == nil {
+		return symbol
+	}
+	if declaration.Kind == ast.KindArrowFunction || declaration.Kind == ast.KindFunctionExpression {
+		parentSymbol := c.getSymbolOfNode(declaration.Parent)
+		if parentSymbol != nil {
+			return parentSymbol
+		}
+	}
+	return symbol
+}
+
 func (c *Checker) recordMergedSymbol(target *ast.Symbol, source *ast.Symbol) {
 	c.mergedSymbols[source] = target
 }
@@ -14516,7 +14530,7 @@ func (c *Checker) getResolvedMembersOrExportsOfSymbol(symbol *ast.Symbol, resolu
 			}
 		}
 		if isStatic {
-			for member := range symbol.AssignmentDeclarationMembers.Keys() {
+			for member := range c.getFunctionExpressionParentSymbolOrSymbol(symbol).AssignmentDeclarationMembers.Keys() {
 				if c.hasLateBindableName(member) {
 					if lateSymbols == nil {
 						lateSymbols = make(ast.SymbolTable)
@@ -15389,8 +15403,33 @@ func (c *Checker) widenTypeInferredFromInitializer(declaration *ast.Node, t *Typ
 
 func (c *Checker) getTypeOfFuncClassEnumModule(symbol *ast.Symbol) *Type {
 	links := c.valueSymbolLinks.Get(symbol)
+	originalLinks := links
 	if links.resolvedType == nil {
+		expando := c.getSymbolOfExpando(symbol.ValueDeclaration)
+		if expando != nil {
+			target := symbol
+			source := expando
+			inferred := core.IfElse(target.Flags&ast.SymbolFlagsTransient != 0, target, nil)
+			if inferred == nil {
+				inferred = c.cloneSymbol(target)
+			}
+			if len(source.Exports) != 0 {
+				if inferred.Exports == nil {
+					inferred.Exports = make(ast.SymbolTable)
+				}
+				c.mergeSymbolTable(inferred.Exports, source.Exports, false, nil)
+			}
+			if len(source.Members) != 0 {
+				if inferred.Members == nil {
+					inferred.Members = make(ast.SymbolTable)
+				}
+				c.mergeSymbolTable(inferred.Members, source.Members, false, nil)
+			}
+			symbol = inferred
+			links = c.valueSymbolLinks.Get(inferred)
+		}
 		links.resolvedType = c.getTypeOfFuncClassEnumModuleWorker(symbol)
+		originalLinks.resolvedType = links.resolvedType
 	}
 	return links.resolvedType
 }
@@ -16541,13 +16580,21 @@ func (c *Checker) getTypeOfPrototypeProperty(prototype *ast.Symbol) *Type {
 }
 
 func (c *Checker) getWidenedTypeForAssignmentDeclaration(symbol *ast.Symbol) *Type {
+	var annotatedType *Type
 	var types []*Type
 	for _, declaration := range symbol.Declarations {
 		if ast.IsBinaryExpression(declaration) {
-			types = core.AppendIfUnique(types, c.checkExpressionForMutableLocation(declaration.AsBinaryExpression().Right, CheckModeNormal))
+			annotatedType = c.getAnnotatedTypeForAssignmentDeclaration(symbol)
+			if annotatedType == nil {
+				types = core.AppendIfUnique(types, c.checkExpressionForMutableLocation(declaration.AsBinaryExpression().Right, CheckModeNormal))
+			}
 		}
 	}
-	return c.getWidenedType(c.getUnionType(types))
+	t := annotatedType
+	if t == nil {
+		t = c.getUnionType(types)
+	}
+	return c.getWidenedType(t)
 }
 
 func (c *Checker) widenTypeForVariableLikeDeclaration(t *Type, declaration *ast.Node, reportErrors bool) *Type {
@@ -29589,4 +29636,34 @@ func (c *Checker) GetEmitResolver(file *ast.SourceFile, skipDiagnostics bool) pr
 		c.checkSourceFile(file)
 	}
 	return c.emitResolver
+}
+
+func (c *Checker) getSymbolOfExpando(node *ast.Node) *ast.Symbol {
+	if node == nil || node.Parent == nil {
+		return nil
+	}
+	if ast.IsVariableDeclaration(node.Parent) && node.Parent.AsVariableDeclaration().Initializer == node {
+		if !ast.IsInJSFile(node) && !(ast.IsVarConstLike(node.Parent) && ast.IsFunctionLikeDeclaration(node)) {
+			return nil
+		}
+		return c.getSymbolOfDeclaration(node.Parent)
+
+	}
+	return nil
+}
+
+func (c *Checker) getAnnotatedTypeForAssignmentDeclaration(symbol *ast.Symbol) *Type {
+	if symbol.Parent != nil && symbol.Parent.ValueDeclaration != nil {
+		possiblyAnnotatedSymbol := c.getFunctionExpressionParentSymbolOrSymbol(symbol.Parent)
+		if possiblyAnnotatedSymbol != nil && possiblyAnnotatedSymbol.ValueDeclaration != nil && possiblyAnnotatedSymbol.ValueDeclaration.Kind != ast.KindFunctionDeclaration {
+			typeNode := possiblyAnnotatedSymbol.ValueDeclaration.Type()
+			if typeNode != nil {
+				annotationSymbol := c.getPropertyOfType(c.getTypeFromTypeNode(typeNode), symbol.Name)
+				if annotationSymbol != nil {
+					return c.getNonMissingTypeOfSymbol(annotationSymbol)
+				}
+			}
+		}
+	}
+	return nil
 }

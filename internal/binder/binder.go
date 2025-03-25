@@ -987,9 +987,13 @@ func (b *Binder) bindFunctionPropertyAssignment(node *ast.Node) {
 		case ast.IsFunctionDeclaration(symbol.ValueDeclaration):
 			funcSymbol = symbol
 		case ast.IsVariableDeclaration(symbol.ValueDeclaration) && symbol.ValueDeclaration.Parent.Flags&ast.NodeFlagsConst != 0:
-			initializer := symbol.ValueDeclaration.Initializer()
-			if initializer != nil && ast.IsFunctionExpressionOrArrowFunction(initializer) {
-				funcSymbol = initializer.Symbol()
+			if symbol.ValueDeclaration.Type() != nil {
+				funcSymbol = symbol
+			} else {
+				initializer := symbol.ValueDeclaration.Initializer()
+				if initializer != nil && ast.IsFunctionExpressionOrArrowFunction(initializer) {
+					funcSymbol = initializer.Parent.Symbol()
+				}
 			}
 		}
 		if funcSymbol != nil {
