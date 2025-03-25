@@ -13,6 +13,7 @@ Fs::
 configFileName:: tsconfig.json
 CompilerOptions::
 {
+  "types": [],
   "configFilePath": "/tsconfig.json"
 }
 
