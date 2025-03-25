@@ -170,24 +170,24 @@ func (m *mapFS) open(p canonicalPath) (fs.File, error) {
 
 func (m *mapFS) remove(path string) error {
 	canonical := m.getCanonicalPath(path)
-	file, _, err := m.getFollowingSymlinks(canonical)
-	if err != nil {
-		return err
+	canonicalString := string(canonical)
+	fileInfo, e := m.m.Stat(canonicalString)
+
+	if e != nil {
+		return e
 	}
-	if file.Mode.IsDir() {
-		entries, e := m.m.ReadDir(path)
-		if e != nil {
-			return e
-		}
-		for _, entry := range entries {
-			e = m.remove(tspath.CombinePaths(path, entry.Name()))
-			if e != nil {
-				return e
+	delete(m.m, canonicalString)
+	delete(m.symlinks, canonical)
+
+	if fileInfo.IsDir() {
+		for path := range m.m {
+			canonicalPath := m.getCanonicalPath(path)
+			if strings.HasPrefix(string(canonicalPath), canonicalString) {
+				delete(m.m, path)
+				delete(m.symlinks, canonicalPath)
 			}
 		}
 	}
-
-	delete(m.m, string(canonical))
 	return nil
 }
 
