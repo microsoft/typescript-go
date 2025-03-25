@@ -232,10 +232,13 @@ func runMain() int {
 	totalTime := time.Since(startTime)
 
 	var memStats runtime.MemStats
-	// GC must be called twice to allow things to settle.
-	runtime.GC()
-	runtime.GC()
-	runtime.ReadMemStats(&memStats)
+
+	if !opts.devel.quiet {
+		// GC must be called twice to allow things to settle.
+		runtime.GC()
+		runtime.GC()
+		runtime.ReadMemStats(&memStats)
+	}
 
 	exitCode := 0
 	if len(diagnostics) != 0 {
@@ -253,29 +256,31 @@ func runMain() int {
 		listFiles(program)
 	}
 
-	var stats table
+	if !opts.devel.quiet {
+		var stats table
 
-	stats.add("Files", len(program.SourceFiles()))
-	stats.add("Lines", program.LineCount())
-	stats.add("Identifiers", program.IdentifierCount())
-	stats.add("Symbols", program.SymbolCount())
-	stats.add("Types", program.TypeCount())
-	stats.add("Instantiations", program.InstantiationCount())
-	stats.add("Memory used", fmt.Sprintf("%vK", memStats.Alloc/1024))
-	stats.add("Memory allocs", strconv.FormatUint(memStats.Mallocs, 10))
-	stats.add("Parse time", parseTime)
-	if bindTime != 0 {
-		stats.add("Bind time", bindTime)
-	}
-	if checkTime != 0 {
-		stats.add("Check time", checkTime)
-	}
-	if emitTime != 0 {
-		stats.add("Emit time", emitTime)
-	}
-	stats.add("Total time", totalTime)
+		stats.add("Files", len(program.SourceFiles()))
+		stats.add("Lines", program.LineCount())
+		stats.add("Identifiers", program.IdentifierCount())
+		stats.add("Symbols", program.SymbolCount())
+		stats.add("Types", program.TypeCount())
+		stats.add("Instantiations", program.InstantiationCount())
+		stats.add("Memory used", fmt.Sprintf("%vK", memStats.Alloc/1024))
+		stats.add("Memory allocs", strconv.FormatUint(memStats.Mallocs, 10))
+		stats.add("Parse time", parseTime)
+		if bindTime != 0 {
+			stats.add("Bind time", bindTime)
+		}
+		if checkTime != 0 {
+			stats.add("Check time", checkTime)
+		}
+		if emitTime != 0 {
+			stats.add("Emit time", emitTime)
+		}
+		stats.add("Total time", totalTime)
 
-	stats.print()
+		stats.print()
+	}
 
 	return exitCode
 }
