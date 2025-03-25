@@ -36,7 +36,7 @@ let tsFile: ts.SourceFile;
 
 const SMALL_STRING = "ping";
 const LARGE_STRING = "a".repeat(1_000_000);
-const SMALL_UINT8_ARRAY = new Uint8Array([1, 2, 3, 4, 5]);
+const SMALL_UINT8_ARRAY = new Uint8Array([1, 2, 3, 4]);
 const LARGE_UINT8_ARRAY = new Uint8Array(1_000_000);
 
 bench

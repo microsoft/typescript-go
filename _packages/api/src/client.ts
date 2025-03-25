@@ -1,5 +1,5 @@
 import { SyncRpcChannel } from "libsyncrpc";
-import type { FileSystem } from "../base/fs.ts";
+import type { FileSystem } from "./fs.ts";
 
 export interface ClientOptions {
     tsserverPath: string;
@@ -31,8 +31,8 @@ export class Client {
         if (options.fs) {
             for (const [key, callback] of Object.entries(options.fs)) {
                 this.channel.registerCallback(key, (_, arg) => {
-                    const result = callback(JSON.parse(this.decoder.decode(arg)));
-                    return this.encoder.encode(JSON.stringify(result));
+                    const result = callback(JSON.parse(arg));
+                    return JSON.stringify(result) ?? "";
                 });
             }
         }
@@ -58,6 +58,6 @@ export class Client {
     }
 
     close(): void {
-        this.channel.murderInColdBlood();
+        this.channel.close();
     }
 }

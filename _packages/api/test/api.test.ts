@@ -17,6 +17,15 @@ const defaultFiles = {
     "/src/foo.ts": `export const foo = 42;`,
 };
 
+describe("API", () => {
+    test("parseConfigFile", () => {
+        const api = spawnAPI();
+        const config = api.parseConfigFile("/tsconfig.json");
+        assert.deepEqual(config.fileNames, ["/src/index.ts", "/src/foo.ts"]);
+        assert.deepEqual(config.options, { configFilePath: "/tsconfig.json" });
+    });
+});
+
 describe("SourceFile", () => {
     test("file text", () => {
         const api = spawnAPI();

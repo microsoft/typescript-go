@@ -64,6 +64,11 @@ type ParseConfigFileParams struct {
 	FileName string `json:"fileName"`
 }
 
+type ConfigFileResponse struct {
+	FileNames []string              `json:"fileNames"`
+	Options   *core.CompilerOptions `json:"options"`
+}
+
 type LoadProjectParams struct {
 	ConfigFileName string `json:"configFileName"`
 }

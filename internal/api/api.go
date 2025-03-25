@@ -138,24 +138,28 @@ func (api *API) Close() {
 	api.options.Logger.Close()
 }
 
-func (api *API) ParseConfigFile(configFileName string) (*tsoptions.ParsedCommandLine, error) {
+func (api *API) ParseConfigFile(configFileName string) (*ConfigFileResponse, error) {
 	configFileName = api.toAbsoluteFileName(configFileName)
-	if configFileContent, ok := api.host.FS().ReadFile(configFileName); ok {
-		configDir := tspath.GetDirectoryPath(configFileName)
-		tsConfigSourceFile := tsoptions.NewTsconfigSourceFileFromFilePath(configFileName, api.toPath(configFileName), configFileContent)
-		parsedCommandLine := tsoptions.ParseJsonSourceFileConfigFileContent(
-			tsConfigSourceFile,
-			api.host,
-			configDir,
-			nil, /*existingOptions*/
-			configFileName,
-			nil, /*resolutionStack*/
-			nil, /*extraFileExtensions*/
-			nil, /*extendedConfigCache*/
-		)
-		return parsedCommandLine, nil
+	configFileContent, ok := api.host.FS().ReadFile(configFileName)
+	if !ok {
+		return nil, fmt.Errorf("could not read file %q", configFileName)
 	}
-	return nil, fmt.Errorf("could not read file %q", configFileName)
+	configDir := tspath.GetDirectoryPath(configFileName)
+	tsConfigSourceFile := tsoptions.NewTsconfigSourceFileFromFilePath(configFileName, api.toPath(configFileName), configFileContent)
+	parsedCommandLine := tsoptions.ParseJsonSourceFileConfigFileContent(
+		tsConfigSourceFile,
+		api.host,
+		configDir,
+		nil, /*existingOptions*/
+		configFileName,
+		nil, /*resolutionStack*/
+		nil, /*extraFileExtensions*/
+		nil, /*extendedConfigCache*/
+	)
+	return &ConfigFileResponse{
+		FileNames: parsedCommandLine.FileNames(),
+		Options:   parsedCommandLine.CompilerOptions(),
+	}, nil
 }
 
 func (api *API) LoadProject(configFileName string) (*ProjectResponse, error) {
