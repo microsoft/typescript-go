@@ -66,8 +66,6 @@ linters:
   exclusions:
     presets:
       - comments
-      - common-false-positives
-      - legacy
       - std-error-handling
 
 issues:
