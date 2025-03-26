@@ -33,30 +33,60 @@
  >Math.random() > 0.5 : boolean
  >Math.random() : number
  >Math.random : () => number
-@@= skipped -52, +52 lines =@@
+@@= skipped -31, +31 lines =@@
+ // Repro from #4212
+ 
+ function isVoid<a>(value: void | a): value is void {
+->isVoid : <a>(value: void | a) => value is void
++>isVoid : <a>(value?: void | a) => value is void
+ >value : void | a
+ 
+     return undefined;
+@@= skipped -8, +8 lines =@@
+ }
+ 
+ function isNonVoid<a>(value: void | a) : value is a {
+->isNonVoid : <a>(value: void | a) => value is a
++>isNonVoid : <a>(value?: void | a) => value is a
+ >value : void | a
+ 
+     return undefined;
+@@= skipped -8, +8 lines =@@
+ }
+ 
+ function foo1<a>(value: void|a): void {
+->foo1 : <a>(value: void | a) => void
++>foo1 : <a>(value?: void | a) => void
+ >value : void | a
  
      if (isVoid(value)) {
  >isVoid(value) : boolean
 ->isVoid : <a_1>(value: void | a_1) => value is void
-+>isVoid : <a>(value: void | a) => value is void
++>isVoid : <a>(value?: void | a) => value is void
  >value : void | a
  
          value; // value is void
 @@= skipped -18, +18 lines =@@
+ }
+ 
+ function baz1<a>(value: void|a): void {
+->baz1 : <a>(value: void | a) => void
++>baz1 : <a>(value?: void | a) => void
+ >value : void | a
  
        if (isNonVoid(value)) {
  >isNonVoid(value) : boolean
 ->isNonVoid : <a_1>(value: void | a_1) => value is a_1
-+>isNonVoid : <a>(value: void | a) => value is a
++>isNonVoid : <a>(value?: void | a) => value is a
  >value : void | a
  
            value; // value is a
-@@= skipped -18, +18 lines =@@
+@@= skipped -23, +23 lines =@@
  >Maybe : Maybe<T>
  
  function get<U>(x: U | void): U {
 ->get : <U>(x: U | void) => U
-+>get : <U>(x: void | U) => U
++>get : <U>(x?: void | U) => U
  >x : void | U
  
     return null; // just an example
@@ -65,7 +95,7 @@
  >get(foo).toUpperCase : () => string
  >get(foo) : string
 ->get : <U>(x: U | void) => U
-+>get : <U>(x: void | U) => U
++>get : <U>(x?: void | U) => U
  >foo : Maybe<string>
  >toUpperCase : () => string
  
@@ -74,13 +104,13 @@
  >(): Promise<ITest> => Promise.resolve().then(() => ({ name: 'test' })) : () => Promise<ITest>
  >Promise.resolve().then(() => ({ name: 'test' })) : Promise<ITest | { name: "test"; }>
 ->Promise.resolve().then : <TResult1 = void, TResult2 = never>(onfulfilled?: (value: void) => TResult1 | PromiseLike<TResult1>, onrejected?: (reason: any) => TResult2 | PromiseLike<TResult2>) => Promise<TResult1 | TResult2>
-+>Promise.resolve().then : <TResult1, TResult2>(onfulfilled?: (value: void) => TResult1 | PromiseLike<TResult1>, onrejected?: (reason: any) => TResult2 | PromiseLike<TResult2>) => Promise<TResult1 | TResult2>
++>Promise.resolve().then : <TResult1, TResult2>(onfulfilled?: (value?: void) => TResult1 | PromiseLike<TResult1>, onrejected?: (reason: any) => TResult2 | PromiseLike<TResult2>) => Promise<TResult1 | TResult2>
  >Promise.resolve() : Promise<void>
  >Promise.resolve : { (): Promise<void>; <T>(value: T): Promise<Awaited<T>>; <T>(value: T | PromiseLike<T>): Promise<Awaited<T>>; }
  >Promise : PromiseConstructor
  >resolve : { (): Promise<void>; <T>(value: T): Promise<Awaited<T>>; <T>(value: T | PromiseLike<T>): Promise<Awaited<T>>; }
 ->then : <TResult1 = void, TResult2 = never>(onfulfilled?: (value: void) => TResult1 | PromiseLike<TResult1>, onrejected?: (reason: any) => TResult2 | PromiseLike<TResult2>) => Promise<TResult1 | TResult2>
-+>then : <TResult1, TResult2>(onfulfilled?: (value: void) => TResult1 | PromiseLike<TResult1>, onrejected?: (reason: any) => TResult2 | PromiseLike<TResult2>) => Promise<TResult1 | TResult2>
++>then : <TResult1, TResult2>(onfulfilled?: (value?: void) => TResult1 | PromiseLike<TResult1>, onrejected?: (reason: any) => TResult2 | PromiseLike<TResult2>) => Promise<TResult1 | TResult2>
  >() => ({ name: 'test' }) : () => { name: "test"; }
  >({ name: 'test' }) : { name: "test"; }
  >{ name: 'test' } : { name: "test"; }

@@ -1,6 +1,123 @@
 --- old.variadicTuples2.types
 +++ new.variadicTuples2.types
-@@= skipped -342, +342 lines =@@
+@@= skipped -124, +124 lines =@@
+ >6 : 6
+ 
+ declare function ft1(...args: [...strs: string[], num: number]): void;
+->ft1 : (...args: [...strs: string[], num: number]) => void
++>ft1 : (...strs: string[], num?: number) => void
+ >args : [...strs: string[], num: number]
+ 
+ ft1(5);
+ >ft1(5) : void
+->ft1 : (...args: [...strs: string[], num: number]) => void
++>ft1 : (...strs: string[], num?: number) => void
+ >5 : 5
+ 
+ ft1('abc', 5);
+ >ft1('abc', 5) : void
+->ft1 : (...args: [...strs: string[], num: number]) => void
++>ft1 : (...strs: string[], num?: number) => void
+ >'abc' : "abc"
+ >5 : 5
+ 
+ ft1('abc', 'def', 5);
+ >ft1('abc', 'def', 5) : void
+->ft1 : (...args: [...strs: string[], num: number]) => void
++>ft1 : (...strs: string[], num?: number) => void
+ >'abc' : "abc"
+ >'def' : "def"
+ >5 : 5
+ 
+ ft1('abc', 'def', 5, 6);  // Error
+ >ft1('abc', 'def', 5, 6) : void
+->ft1 : (...args: [...strs: string[], num: number]) => void
++>ft1 : (...strs: string[], num?: number) => void
+ >'abc' : "abc"
+ >'def' : "def"
+ >5 : 5
+@@= skipped -98, +98 lines =@@
+ >true : true
+ 
+ declare function ft2(n1: number, ...rest: [...strs: string[], n2: number]): void;
+->ft2 : (n1: number, ...rest: [...strs: string[], n2: number]) => void
++>ft2 : (n1: number, ...strs: string[], n2?: number) => void
+ >n1 : number
+ >rest : [...strs: string[], n2: number]
+ 
+ ft2(0);  // Error
+ >ft2(0) : void
+->ft2 : (n1: number, ...rest: [...strs: string[], n2: number]) => void
++>ft2 : (n1: number, ...strs: string[], n2?: number) => void
+ >0 : 0
+ 
+ ft2(0, 1);
+ >ft2(0, 1) : void
+->ft2 : (n1: number, ...rest: [...strs: string[], n2: number]) => void
++>ft2 : (n1: number, ...strs: string[], n2?: number) => void
+ >0 : 0
+ >1 : 1
+ 
+ ft2(0, 1, 2);  // Error
+ >ft2(0, 1, 2) : void
+->ft2 : (n1: number, ...rest: [...strs: string[], n2: number]) => void
++>ft2 : (n1: number, ...strs: string[], n2?: number) => void
+ >0 : 0
+ >1 : 1
+ >2 : 2
+ 
+ ft2(0, 'abc', 1);
+ >ft2(0, 'abc', 1) : void
+->ft2 : (n1: number, ...rest: [...strs: string[], n2: number]) => void
++>ft2 : (n1: number, ...strs: string[], n2?: number) => void
+ >0 : 0
+ >'abc' : "abc"
+ >1 : 1
+ 
+ ft2(0, 'abc', 'def', 1);
+ >ft2(0, 'abc', 'def', 1) : void
+->ft2 : (n1: number, ...rest: [...strs: string[], n2: number]) => void
++>ft2 : (n1: number, ...strs: string[], n2?: number) => void
+ >0 : 0
+ >'abc' : "abc"
+ >'def' : "def"
+@@= skipped -39, +39 lines =@@
+ 
+ ft2(0, 'abc', 1, 'def');  // Error
+ >ft2(0, 'abc', 1, 'def') : void
+->ft2 : (n1: number, ...rest: [...strs: string[], n2: number]) => void
++>ft2 : (n1: number, ...strs: string[], n2?: number) => void
+ >0 : 0
+ >'abc' : "abc"
+ >1 : 1
+@@= skipped -8, +8 lines =@@
+ 
+ ft2(true, 'abc', 'def', 1);  // Error
+ >ft2(true, 'abc', 'def', 1) : void
+->ft2 : (n1: number, ...rest: [...strs: string[], n2: number]) => void
++>ft2 : (n1: number, ...strs: string[], n2?: number) => void
+ >true : true
+ >'abc' : "abc"
+ >'def' : "def"
+@@= skipped -8, +8 lines =@@
+ 
+ ft2(0, 'abc', 'def', true);  // Error
+ >ft2(0, 'abc', 'def', true) : void
+->ft2 : (n1: number, ...rest: [...strs: string[], n2: number]) => void
++>ft2 : (n1: number, ...strs: string[], n2?: number) => void
+ >0 : 0
+ >'abc' : "abc"
+ >'def' : "def"
+@@= skipped -44, +44 lines =@@
+ // Inference
+ 
+ function pipe<T extends readonly unknown[]>(...args: [...T, (...values: T) => void]) {
+->pipe : <T extends readonly unknown[]>(...args: [...T, (...values: T) => void]) => void
++>pipe : <T extends readonly unknown[]>(...args: T, args_1?: (...values: T) => void) => void
+ >args : [...T, (...values: T) => void]
+ >values : T
+ 
+@@= skipped -21, +21 lines =@@
  >args.slice(0, -1) as unknown as T : T
  >args.slice(0, -1) as unknown : unknown
  >args.slice(0, -1) : (((...values: T) => void) | T[number])[]
@@ -12,12 +129,111 @@
  >0 : 0
  >-1 : -1
  >1 : 1
-@@= skipped -42, +42 lines =@@
+@@= skipped -16, +16 lines =@@
+ 
+ pipe("foo", 123, true, (a, b, c) => {
+ >pipe("foo", 123, true, (a, b, c) => {    a;  // string    b;  // number    c;  // boolean}) : void
+->pipe : <T extends readonly unknown[]>(...args: [...T, (...values: T) => void]) => void
++>pipe : <T extends readonly unknown[]>(...args: T, args_1?: (...values: T) => void) => void
  >"foo" : "foo"
  >123 : 123
  >true : true
-->(...x) => {    x;  // [string, number, boolean]} : (x_0: string, x_1: number, x_2: boolean) => void
-+>(...x) => {    x;  // [string, number, boolean]} : (...x: [string, number, boolean]) => void
- >x : [string, number, boolean]
+@@= skipped -22, +22 lines =@@
  
-     x;  // [string, number, boolean]
+ pipe("foo", 123, true, (...x) => {
+ >pipe("foo", 123, true, (...x) => {    x;  // [string, number, boolean]}) : void
+->pipe : <T extends readonly unknown[]>(...args: [...T, (...values: T) => void]) => void
++>pipe : <T extends readonly unknown[]>(...args: T, args_1?: (...values: T) => void) => void
+ >"foo" : "foo"
+ >123 : 123
+ >true : true
+@@= skipped -17, +17 lines =@@
+ 
+ pipe(...sa, (...x) => {
+ >pipe(...sa, (...x) => {    x;  // string[]}) : void
+->pipe : <T extends readonly unknown[]>(...args: [...T, (...values: T) => void]) => void
++>pipe : <T extends readonly unknown[]>(...args: T, args_1?: (...values: T) => void) => void
+ >...sa : string
+ >sa : string[]
+ >(...x) => {    x;  // string[]} : (...x: string[]) => void
+@@= skipped -13, +13 lines =@@
+ 
+ pipe(1, ...sa, 2, (...x) => {
+ >pipe(1, ...sa, 2, (...x) => {    x;  // [number, ...string[], number]    let qq = x[x.length - 1];    let ww = x[0]}) : void
+->pipe : <T extends readonly unknown[]>(...args: [...T, (...values: T) => void]) => void
++>pipe : <T extends readonly unknown[]>(...args: T, args_1?: (...values: T) => void) => void
+ >1 : 1
+ >...sa : string
+ >sa : string[]
+ >2 : 2
+->(...x) => {    x;  // [number, ...string[], number]    let qq = x[x.length - 1];    let ww = x[0]} : (...x: [number, ...string[], number]) => void
++>(...x) => {    x;  // [number, ...string[], number]    let qq = x[x.length - 1];    let ww = x[0]} : (x_0: number, ...x: string[], x_2?: number) => void
+ >x : [number, ...string[], number]
+ 
+     x;  // [number, ...string[], number]
+@@= skipped -31, +31 lines =@@
+ 
+ pipe<number[]>(1, 2, 3, 4);  // Error
+ >pipe<number[]>(1, 2, 3, 4) : void
+->pipe : <T extends readonly unknown[]>(...args: [...T, (...values: T) => void]) => void
++>pipe : <T extends readonly unknown[]>(...args: T, args_1?: (...values: T) => void) => void
+ >1 : 1
+ >2 : 2
+ >3 : 3
+@@= skipped -8, +8 lines =@@
+ 
+ pipe(...sa);  // Error
+ >pipe(...sa) : void
+->pipe : <T extends readonly unknown[]>(...args: [...T, (...values: T) => void]) => void
++>pipe : <T extends readonly unknown[]>(...args: T, args_1?: (...values: T) => void) => void
+ >...sa : string
+ >sa : string[]
+ 
+@@= skipped -67, +67 lines =@@
+ // Repro from #39595
+ 
+ declare function foo<S extends readonly [string, ...string[]]>(...stringsAndNumber: readonly [...S, number]): [...S, number];
+->foo : <S extends readonly [string, ...string[]]>(...stringsAndNumber: readonly [...S, number]) => [...S, number]
++>foo : <S extends readonly [string, ...string[]]>(...stringsAndNumber: S, stringsAndNumber_1?: number) => [...S, number]
+ >stringsAndNumber : readonly [...S, number]
+ 
+ const a1 = foo('blah1', 1);
+ >a1 : ["blah1", number]
+ >foo('blah1', 1) : ["blah1", number]
+->foo : <S extends readonly [string, ...string[]]>(...stringsAndNumber: readonly [...S, number]) => [...S, number]
++>foo : <S extends readonly [string, ...string[]]>(...stringsAndNumber: S, stringsAndNumber_1?: number) => [...S, number]
+ >'blah1' : "blah1"
+ >1 : 1
+ 
+ const b1 = foo('blah1', 'blah2', 1);
+ >b1 : ["blah1", "blah2", number]
+ >foo('blah1', 'blah2', 1) : ["blah1", "blah2", number]
+->foo : <S extends readonly [string, ...string[]]>(...stringsAndNumber: readonly [...S, number]) => [...S, number]
++>foo : <S extends readonly [string, ...string[]]>(...stringsAndNumber: S, stringsAndNumber_1?: number) => [...S, number]
+ >'blah1' : "blah1"
+ >'blah2' : "blah2"
+ >1 : 1
+@@= skipped -21, +21 lines =@@
+ const c1 = foo(1);  // Error
+ >c1 : [string, ...string[], number]
+ >foo(1) : [string, ...string[], number]
+->foo : <S extends readonly [string, ...string[]]>(...stringsAndNumber: readonly [...S, number]) => [...S, number]
++>foo : <S extends readonly [string, ...string[]]>(...stringsAndNumber: S, stringsAndNumber_1?: number) => [...S, number]
+ >1 : 1
+ 
+ const d1 = foo(1, 2);  // Error
+ >d1 : [string, ...string[], number]
+ >foo(1, 2) : [string, ...string[], number]
+->foo : <S extends readonly [string, ...string[]]>(...stringsAndNumber: readonly [...S, number]) => [...S, number]
++>foo : <S extends readonly [string, ...string[]]>(...stringsAndNumber: S, stringsAndNumber_1?: number) => [...S, number]
+ >1 : 1
+ >2 : 2
+ 
+ const e1 = foo('blah1', 'blah2', 1, 2, 3);  // Error
+ >e1 : [string, ...string[], number]
+ >foo('blah1', 'blah2', 1, 2, 3) : [string, ...string[], number]
+->foo : <S extends readonly [string, ...string[]]>(...stringsAndNumber: readonly [...S, number]) => [...S, number]
++>foo : <S extends readonly [string, ...string[]]>(...stringsAndNumber: S, stringsAndNumber_1?: number) => [...S, number]
+ >'blah1' : "blah1"
+ >'blah2' : "blah2"
+ >1 : 1

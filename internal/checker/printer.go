@@ -478,16 +478,16 @@ func (p *Printer) printSignature(sig *Signature, returnSeparator string) {
 		p.printType(p.c.getTypeOfSymbol(sig.thisParameter))
 		tail = true
 	}
-	for i, param := range sig.parameters {
+	for i, param := range p.c.GetExpandedParameters(sig) {
 		if tail {
 			p.print(", ")
 		}
-		if sig.flags&SignatureFlagsHasRestParameter != 0 && i == len(sig.parameters)-1 {
+		if param.ValueDeclaration != nil && isRestParameter(param.ValueDeclaration) || param.CheckFlags&ast.CheckFlagsRestParameter != 0 {
 			p.print("...")
 			p.printName(param)
 		} else {
 			p.printName(param)
-			if i >= int(sig.minArgumentCount) {
+			if i >= p.c.getMinArgumentCount(sig) {
 				p.print("?")
 			}
 		}

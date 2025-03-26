@@ -30,7 +30,18 @@
  
  // based on: https://github.com/graphql/graphql-js/blob/e15c3ec4dc21d9fd1df34fe9798cadf3bf02c6ea/src/execution/__tests__/mapAsyncIterable-test.ts#L175
  async function* source() { yield 1; yield 2; yield 3; }
-@@= skipped -33, +33 lines =@@
+@@= skipped -24, +24 lines =@@
+ 
+ doubles.return();
+ >doubles.return() : Promise<IteratorResult<1 | 2 | 3, void>>
+->doubles.return : (value: void | PromiseLike<void>) => Promise<IteratorResult<1 | 2 | 3, void>>
++>doubles.return : (value?: void | PromiseLike<void>) => Promise<IteratorResult<1 | 2 | 3, void>>
+ >doubles : AsyncGenerator<1 | 2 | 3, void, unknown>
+->return : (value: void | PromiseLike<void>) => Promise<IteratorResult<1 | 2 | 3, void>>
++>return : (value?: void | PromiseLike<void>) => Promise<IteratorResult<1 | 2 | 3, void>>
+ 
+ // based on: https://github.com/backstage/backstage/blob/85d9346ef11c1c20e4405102b4f5d93afb1292c1/packages/core-app-api/src/routing/RouteTracker.tsx#L62
+ const r3: number | undefined = set.values().next().value;
  >r3 : number | undefined
  >set.values().next().value : any
  >set.values().next() : IteratorResult<number, any>
