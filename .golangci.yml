@@ -64,16 +64,11 @@ linters:
         type: module
 
   exclusions:
-    generated: lax
     presets:
       - comments
       - common-false-positives
       - legacy
       - std-error-handling
-    paths:
-      - third_party$
-      - builtin$
-      - examples$
 
 issues:
   max-issues-per-linter: 0
