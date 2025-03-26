@@ -11,6 +11,14 @@
       },
       "types": "./dist/symbolFlags.enum.d.ts",
       "default": "./dist/symbolFlags.js"
+    },
+    "#typeFlags": {
+      "@typescript/source": {
+        "types": "./src/typeFlags.enum.ts",
+        "default": "./src/typeFlags.ts"
+      },
+      "types": "./dist/typeFlags.enum.d.ts",
+      "default": "./dist/typeFlags.js"
     }
   },
   "exports": {

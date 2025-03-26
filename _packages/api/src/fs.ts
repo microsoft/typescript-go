@@ -1,3 +1,5 @@
+import { getPathComponents } from "./path.ts";
+
 export interface FileSystemEntries {
     files: string[];
     directories: string[];
@@ -41,13 +43,6 @@ export function createVirtualFileSystem(files: Record<string, string>): FileSyst
         realpath: path => path,
     };
 
-    function getPathSegments(path: string): string[] {
-        return path
-            .replace(/^\/+|\/+$/g, "")
-            .split("/")
-            .filter(Boolean);
-    }
-
     /**
      * Traverse the tree from the root according to path segments.
      * Returns the node if found, or null if any segment doesn't exist.
@@ -56,7 +51,7 @@ export function createVirtualFileSystem(files: Record<string, string>): FileSyst
         if (!path || path === "/") {
             return root;
         }
-        const segments = getPathSegments(path);
+        const segments = getPathComponents(path);
         let current: VNode = root;
 
         for (const segment of segments) {
@@ -98,7 +93,7 @@ export function createVirtualFileSystem(files: Record<string, string>): FileSyst
      * Automatically creates parent directories if needed.
      */
     function createFile(path: string, content: string) {
-        const segments = getPathSegments(path);
+        const segments = getPathComponents(path);
         if (segments.length === 0) {
             throw new Error(`Invalid file path: "${path}"`);
         }

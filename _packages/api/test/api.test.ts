@@ -1,4 +1,8 @@
-import { API } from "@typescript/api";
+import {
+    API,
+    SymbolFlags,
+    TypeFlags,
+} from "@typescript/api";
 import { createVirtualFileSystem } from "@typescript/api/fs";
 import {
     isTemplateHead,
@@ -23,6 +27,27 @@ describe("API", () => {
         const config = api.parseConfigFile("/tsconfig.json");
         assert.deepEqual(config.fileNames, ["/src/index.ts", "/src/foo.ts"]);
         assert.deepEqual(config.options, { configFilePath: "/tsconfig.json" });
+    });
+});
+
+describe("Project", () => {
+    test("getSymbolAtPosition", () => {
+        const api = spawnAPI();
+        const project = api.loadProject("/tsconfig.json");
+        const symbol = project.getSymbolAtPosition("/src/index.ts", 9);
+        assert.ok(symbol);
+        assert.equal(symbol.name, "foo");
+        assert.ok(symbol.flags & SymbolFlags.Alias);
+    });
+
+    test("getTypeOfSymbol", () => {
+        const api = spawnAPI();
+        const project = api.loadProject("/tsconfig.json");
+        const symbol = project.getSymbolAtPosition("/src/index.ts", 9);
+        assert.ok(symbol);
+        const type = project.getTypeOfSymbol(symbol);
+        assert.ok(type);
+        assert.ok(type.flags & TypeFlags.NumberLiteral);
     });
 });
 

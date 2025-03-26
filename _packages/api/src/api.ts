@@ -1,4 +1,5 @@
 import { SymbolFlags } from "#symbolFlags";
+import { TypeFlags } from "#typeFlags";
 import type { SourceFile } from "@typescript/ast";
 import { Client } from "./client.ts";
 import type { FileSystem } from "./fs.ts";
@@ -12,7 +13,7 @@ import type {
     TypeResponse,
 } from "./proto.ts";
 
-export { SymbolFlags };
+export { SymbolFlags, TypeFlags };
 
 export interface APIOptions {
     tsserverPath: string;
@@ -99,7 +100,7 @@ export class Project {
     }
 
     getTypeOfSymbol(symbol: Symbol): Type | undefined {
-        const data = this.client.request("getTypeOfSymbol", { project: this.id, symbolId: symbol.id });
+        const data = this.client.request("getTypeOfSymbol", { project: this.id, symbol: symbol.id });
         return data ? this.objectRegistry.getType(data) : undefined;
     }
 }
@@ -123,7 +124,7 @@ export class Symbol {
 export class Type {
     private client: Client;
     id: string;
-    flags: number;
+    flags: TypeFlags;
     constructor(client: Client, data: TypeResponse) {
         this.client = client;
         this.id = data.id;
