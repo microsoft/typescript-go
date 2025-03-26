@@ -15,6 +15,34 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
 )
 
+//go:generate go tool golang.org/x/tools/cmd/stringer -type=MessageType -output=stringer_generated.go
+
+type MessageType uint8
+
+const (
+	MessageTypeUnknown MessageType = iota
+	MessageTypeRequest
+	MessageTypeCallResponse
+	MessageTypeCallError
+	MessageTypeResponse
+	MessageTypeError
+	MessageTypeCall
+)
+
+func (m MessageType) IsValid() bool {
+	return m >= MessageTypeRequest && m <= MessageTypeCall
+}
+
+type MessagePackType uint8
+
+const (
+	MessagePackTypeFixedArray3 MessagePackType = 0x93
+	MessagePackTypeBin8        MessagePackType = 0xC4
+	MessagePackTypeBin16       MessagePackType = 0xC5
+	MessagePackTypeBin32       MessagePackType = 0xC6
+	MessagePackTypeU8          MessagePackType = 0xCC
+)
+
 type Callback int
 
 const (
@@ -106,7 +134,7 @@ func (s *Server) Run() error {
 		}
 
 		switch messageType {
-		case "request":
+		case MessageTypeRequest:
 			now := time.Now()
 			result, err := s.handleRequest(method, payload)
 
@@ -123,38 +151,84 @@ func (s *Server) Run() error {
 				s.logger.PerfTrace(fmt.Sprintf("%s sent - %s", method, time.Since(now)))
 			}
 		default:
-			return fmt.Errorf("%w: expected request, received: %s", ErrInvalidRequest, messageType)
+			return fmt.Errorf("%w: expected request, received: %s", ErrInvalidRequest, messageType.String())
 		}
 	}
 }
 
-func (s *Server) readRequest(expectedMethod string) (messageType string, method string, payload []byte, err error) {
-	messageType, err = s.r.ReadString('\t')
+func (s *Server) readRequest(expectedMethod string) (messageType MessageType, method string, payload []byte, err error) {
+	t, err := s.r.ReadByte()
 	if err != nil {
-		return "", "", nil, err
+		return messageType, method, payload, err
 	}
-	messageType = messageType[:len(messageType)-1]
-	method, err = s.r.ReadString('\t')
+	if MessagePackType(t) != MessagePackTypeFixedArray3 {
+		return messageType, method, payload, fmt.Errorf("%w: expected message to be encoded as fixed 3-element array (0x93), received: 0x%2x", ErrInvalidRequest, t)
+	}
+	t, err = s.r.ReadByte()
 	if err != nil {
-		return "", "", nil, err
+		return messageType, method, payload, err
 	}
-	method = method[:len(method)-1]
+	if MessagePackType(t) != MessagePackTypeU8 {
+		return messageType, method, payload, fmt.Errorf("%w: expected first element of message tuple to be encoded as unsigned 8-bit int (0xcc), received: 0x%2x", ErrInvalidRequest, t)
+	}
+	rawMessageType, err := s.r.ReadByte()
+	if err != nil {
+		return messageType, method, payload, err
+	}
+	messageType = MessageType(rawMessageType)
+	if !messageType.IsValid() {
+		return messageType, method, payload, fmt.Errorf("%w: unknown message type: %d", ErrInvalidRequest, messageType)
+	}
+	rawMethod, err := s.readBin()
+	if err != nil {
+		return messageType, method, payload, err
+	}
+	method = string(rawMethod)
 	if expectedMethod != "" && method != expectedMethod {
-		return "", "", nil, fmt.Errorf("%w: expected method %q, received %q", ErrInvalidRequest, expectedMethod, method)
+		return messageType, method, payload, fmt.Errorf("%w: expected method %q, received %q", ErrInvalidRequest, expectedMethod, method)
 	}
-	var size uint32
-	if err = binary.Read(s.r, binary.LittleEndian, &size); err != nil {
-		return "", "", nil, fmt.Errorf("%w: expected payload size: %w", ErrInvalidRequest, err)
+	payload, err = s.readBin()
+	return messageType, method, payload, err
+}
+
+func (s *Server) readBin() ([]byte, error) {
+	// https://github.com/msgpack/msgpack/blob/master/spec.md#bin-format-family
+	t, err := s.r.ReadByte()
+	if err != nil {
+		return nil, err
 	}
-	payload = make([]byte, size)
+	var size uint
+	switch MessagePackType(t) {
+	case MessagePackTypeBin8:
+		var size8 uint8
+		if err = binary.Read(s.r, binary.BigEndian, &size8); err != nil {
+			return nil, err
+		}
+		size = uint(size8)
+	case MessagePackTypeBin16:
+		var size16 uint16
+		if err = binary.Read(s.r, binary.BigEndian, &size16); err != nil {
+			return nil, err
+		}
+		size = uint(size16)
+	case MessagePackTypeBin32:
+		var size32 uint32
+		if err = binary.Read(s.r, binary.BigEndian, &size32); err != nil {
+			return nil, err
+		}
+		size = uint(size32)
+	default:
+		return nil, fmt.Errorf("%w: expected binary data length (0xc4-0xc6), received: 0x%2x", ErrInvalidRequest, t)
+	}
+	payload := make([]byte, size)
 	bytesRead, err := io.ReadFull(s.r, payload)
 	if err != nil {
-		return "", "", nil, err
+		return nil, err
 	}
 	if bytesRead != int(size) {
-		return "", "", nil, fmt.Errorf("%w: expected %d bytes, read %d", ErrInvalidRequest, size, bytesRead)
+		return nil, fmt.Errorf("%w: expected %d bytes, read %d", ErrInvalidRequest, size, bytesRead)
 	}
-	return messageType, method, payload, nil
+	return payload, nil
 }
 
 func (s *Server) enableCallback(callback string) error {
@@ -206,7 +280,7 @@ func (s *Server) handleConfigure(payload []byte) error {
 }
 
 func (s *Server) sendResponse(method string, result []byte) error {
-	return s.write("response", method, result)
+	return s.writeMessage(MessageTypeResponse, method, result)
 }
 
 func (s *Server) sendError(method string, err error) error {
@@ -214,29 +288,54 @@ func (s *Server) sendError(method string, err error) error {
 	if err != nil {
 		return err
 	}
-	return s.write("error", method, payload)
+	return s.writeMessage(MessageTypeError, method, payload)
 }
 
-func (s *Server) write(messageType, method string, payload []byte) error {
-	if _, err := s.w.WriteString(messageType); err != nil {
+func (s *Server) writeMessage(messageType MessageType, method string, payload []byte) error {
+	if err := s.w.WriteByte(byte(MessagePackTypeFixedArray3)); err != nil {
 		return err
 	}
-	if _, err := s.w.WriteString("\t"); err != nil {
+	if err := s.w.WriteByte(byte(MessagePackTypeU8)); err != nil {
 		return err
 	}
-	if _, err := s.w.WriteString(method); err != nil {
+	if err := s.w.WriteByte(byte(messageType)); err != nil {
 		return err
 	}
-	if err := s.w.WriteByte('\t'); err != nil {
+	if err := s.writeBin([]byte(method)); err != nil {
 		return err
 	}
-	if err := binary.Write(s.w, binary.LittleEndian, uint32(len(payload))); err != nil {
-		return err
-	}
-	if _, err := s.w.Write(payload); err != nil {
+	if err := s.writeBin(payload); err != nil {
 		return err
 	}
 	return s.w.Flush()
+}
+
+func (s *Server) writeBin(payload []byte) error {
+	length := len(payload)
+	if length < 256 {
+		if err := s.w.WriteByte(byte(MessagePackTypeBin8)); err != nil {
+			return err
+		}
+		if err := s.w.WriteByte(byte(length)); err != nil {
+			return err
+		}
+	} else if length < 1<<16 {
+		if err := s.w.WriteByte(byte(MessagePackTypeBin16)); err != nil {
+			return err
+		}
+		if err := binary.Write(s.w, binary.BigEndian, uint16(length)); err != nil {
+			return err
+		}
+	} else {
+		if err := s.w.WriteByte(byte(MessagePackTypeBin32)); err != nil {
+			return err
+		}
+		if err := binary.Write(s.w, binary.BigEndian, uint32(length)); err != nil {
+			return err
+		}
+	}
+	_, err := s.w.Write(payload)
+	return err
 }
 
 func (s *Server) call(method string, payload any) ([]byte, error) {
@@ -246,7 +345,7 @@ func (s *Server) call(method string, payload any) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	if err = s.write("call", method, jsonPayload); err != nil {
+	if err = s.writeMessage(MessageTypeCall, method, jsonPayload); err != nil {
 		return nil, err
 	}
 
@@ -255,11 +354,11 @@ func (s *Server) call(method string, payload any) ([]byte, error) {
 		return nil, err
 	}
 
-	if messageType != "call-response" && messageType != "call-error" {
-		return nil, fmt.Errorf("%w: expected call-response or call-error, received: %s", ErrInvalidRequest, messageType)
+	if messageType != MessageTypeCallResponse && messageType != MessageTypeCallError {
+		return nil, fmt.Errorf("%w: expected call-response or call-error, received: %s", ErrInvalidRequest, messageType.String())
 	}
 
-	if messageType == "call-error" {
+	if messageType == MessageTypeCallError {
 		return nil, fmt.Errorf("%w: %s", ErrClientError, responsePayload)
 	}
 

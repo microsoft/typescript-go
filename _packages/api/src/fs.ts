@@ -51,7 +51,7 @@ export function createVirtualFileSystem(files: Record<string, string>): FileSyst
         if (!path || path === "/") {
             return root;
         }
-        const segments = getPathComponents(path);
+        const segments = getPathComponents(path).slice(1);
         let current: VNode = root;
 
         for (const segment of segments) {
@@ -93,7 +93,7 @@ export function createVirtualFileSystem(files: Record<string, string>): FileSyst
      * Automatically creates parent directories if needed.
      */
     function createFile(path: string, content: string) {
-        const segments = getPathComponents(path);
+        const segments = getPathComponents(path).slice(1);
         if (segments.length === 0) {
             throw new Error(`Invalid file path: "${path}"`);
         }
