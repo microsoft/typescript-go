@@ -260,6 +260,16 @@ func (p *Parser) lookAhead(callback func(p *Parser) bool) bool {
 }
 
 func (p *Parser) nextToken() ast.Kind {
+	// if the keyword had an escape
+	if isKeyword(p.token) && (p.scanner.HasUnicodeEscape() || p.scanner.HasExtendedUnicodeEscape()) {
+		// issue a parse error for the escape
+		p.parseErrorAtCurrentToken(diagnostics.Keywords_cannot_contain_escape_characters)
+	}
+	p.token = p.scanner.Scan()
+	return p.token
+}
+
+func (p *Parser) nextTokenWithoutCheck() ast.Kind {
 	p.token = p.scanner.Scan()
 	return p.token
 }
@@ -5781,7 +5791,7 @@ func (p *Parser) createIdentifierWithDiagnostic(isIdentifier bool, diagnosticMes
 			pos = p.nodePos()
 		}
 		text := p.scanner.TokenValue()
-		p.nextToken()
+		p.nextTokenWithoutCheck()
 		result := p.newIdentifier(p.internIdentifier(text))
 		p.finishNode(result, pos)
 		return result
