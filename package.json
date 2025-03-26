@@ -28,7 +28,6 @@
         "glob": "^10.4.5",
         "hereby": "^1.10.0",
         "json-schema-to-typescript-lite": "^14.1.0",
-        "mitata": "^1.0.34",
         "picocolors": "^1.1.1",
         "typescript": "^5.7.3",
         "which": "^5.0.0"
@@ -38,14 +37,18 @@
         "build": "hereby build",
         "build:watch": "hereby build:watch",
         "test": "hereby test",
-        "api:build": "pnpm --filter ./_packages/api run build",
-        "extension:build": "pnpm --filter ./_extension build",
-        "extension:watch": "pnpm --filter ./_extension watch",
+        "api:build": "npm run -w @typescript/api build",
+        "extension:build": "npm run -w typescript-lsp build",
+        "extension:watch": "npm run -w typescript-lsp watch",
         "node": "node --no-warnings --conditions @typescript/source"
     },
-    "packageManager": "pnpm@9.15.5",
+    "workspaces": [
+        "./_extension",
+        "./_packages/*"
+    ],
+    "packageManager": "npm@8.19.4",
     "volta": {
         "node": "20.5.1",
-        "pnpm": "*"
+        "npm": "8.19.4"
     }
 }

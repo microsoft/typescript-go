@@ -268,7 +268,7 @@ async function runTestTools() {
 }
 
 async function runTestJS() {
-    await $`pnpm --filter ./_packages/* test`;
+    await $`npm run -w @typescript/api test`;
 }
 
 export const testTools = task({
