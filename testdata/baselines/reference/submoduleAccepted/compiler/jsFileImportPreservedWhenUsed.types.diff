@@ -1,15 +1,6 @@
 --- old.jsFileImportPreservedWhenUsed.types
 +++ new.jsFileImportPreservedWhenUsed.types
-@@= skipped -8, +8 lines =@@
- 
- interface LoDashStatic {
-     mapValues<T extends object, TResult>(obj: T | null | undefined, callback: ObjectIterator<T, TResult>): { [P in keyof T]: TResult };
-->mapValues : <T extends object, TResult>(obj: T | null | undefined, callback: ObjectIterator<T, TResult>) => { [P in keyof T]: TResult; }
-+>mapValues : <T extends object, TResult>(obj: T | null | undefined, callback: ObjectIterator<T, TResult>) => { [P in keyof T]: TResult }
- >obj : T | null | undefined
- >callback : ObjectIterator<T, TResult>
- }
-@@= skipped -40, +40 lines =@@
+@@= skipped -48, +48 lines =@@
  
          vm.objects = _.mapValues(
  >vm.objects = _.mapValues(            obj,            object => ({ ...object, [INDEX_FIELD]: index++ }),        ) : object
@@ -19,10 +10,10 @@
  >objects : any
  >_.mapValues(            obj,            object => ({ ...object, [INDEX_FIELD]: index++ }),        ) : object
 ->_.mapValues : <T extends object, TResult>(obj: T | null | undefined, callback: (value: T[keyof T], key: string, collection: T) => TResult) => { [P in keyof T]: TResult; }
-+>_.mapValues : <T extends object, TResult>(obj: T | null | undefined, callback: ObjectIterator<T, TResult>) => { [P in keyof T]: TResult }
++>_.mapValues : <T extends object, TResult>(obj: T | null | undefined, callback: ObjectIterator<T, TResult>) => { [P in keyof T]: TResult; }
  >_ : LoDashStatic
 ->mapValues : <T extends object, TResult>(obj: T | null | undefined, callback: (value: T[keyof T], key: string, collection: T) => TResult) => { [P in keyof T]: TResult; }
-+>mapValues : <T extends object, TResult>(obj: T | null | undefined, callback: ObjectIterator<T, TResult>) => { [P in keyof T]: TResult }
++>mapValues : <T extends object, TResult>(obj: T | null | undefined, callback: ObjectIterator<T, TResult>) => { [P in keyof T]: TResult; }
  
              obj,
  >obj : object

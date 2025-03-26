@@ -4,7 +4,7 @@
 /** @type {{ (): boolean; nuo: 789 }} */
 export const inlined = () => true
 >inlined : { (): boolean; nuo: 789; }
->() => true : { (): true; nuo: number; }
+>() => true : { (): true; nuo: 789; }
 >true : true
 
 inlined.nuo = 789
@@ -17,7 +17,7 @@ inlined.nuo = 789
 /** @type {{ (): boolean; nuo: 789 }} */
 export const duplicated = () => true
 >duplicated : { (): boolean; nuo: 789; }
->() => true : { (): true; nuo: number; }
+>() => true : { (): true; nuo: 789; }
 >true : true
 
 /** @type {789} */
@@ -31,7 +31,7 @@ duplicated.nuo = 789
 /** @type {{ (): boolean; nuo: 789 }} */
 export const conflictingDuplicated = () => true
 >conflictingDuplicated : { (): boolean; nuo: 789; }
->() => true : { (): true; nuo: number; }
+>() => true : { (): true; nuo: 789; }
 >true : true
 
 /** @type {1000} */
