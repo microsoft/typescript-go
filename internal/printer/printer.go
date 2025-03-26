@@ -1725,7 +1725,7 @@ func (p *Printer) emitClassElement(node *ast.ClassElement) {
 	case ast.KindNotEmittedStatement:
 		p.emitNotEmittedStatement(node.AsNotEmittedStatement())
 	case ast.KindJSTypeAliasDeclaration:
-		p.emitJSTypeAliasDeclaration(node.AsJSTypeAliasDeclaration())
+		p.emitTypeAliasDeclaration(node.AsTypeAliasDeclaration())
 	default:
 		panic(fmt.Sprintf("unexpected ClassElement: %v", node.Kind))
 	}
@@ -3485,21 +3485,6 @@ func (p *Printer) emitTypeAliasDeclaration(node *ast.TypeAliasDeclaration) {
 	p.exitNode(node.AsNode(), state)
 }
 
-func (p *Printer) emitJSTypeAliasDeclaration(node *ast.JSTypeAliasDeclaration) {
-	state := p.enterNode(node.AsNode())
-	p.emitModifierList(node.AsNode(), node.Modifiers(), false /*allowDecorators*/)
-	p.writeKeyword("jstype")
-	p.writeSpace()
-	p.emitBindingIdentifier(node.Name().AsIdentifier())
-	p.emitTypeParameters(node.AsNode(), node.TypeParameters)
-	p.writeSpace()
-	p.writePunctuation("=")
-	p.writeSpace()
-	p.emitTypeNodeOutsideExtends(node.Type)
-	p.writeTrailingSemicolon()
-	p.exitNode(node.AsNode(), state)
-}
-
 func (p *Printer) emitEnumDeclaration(node *ast.EnumDeclaration) {
 	state := p.enterNode(node.AsNode())
 	p.emitModifierList(node.AsNode(), node.Modifiers(), false /*allowDecorators*/)
@@ -3885,10 +3870,8 @@ func (p *Printer) emitStatement(node *ast.Statement) {
 		p.emitClassDeclaration(node.AsClassDeclaration())
 	case ast.KindInterfaceDeclaration:
 		p.emitInterfaceDeclaration(node.AsInterfaceDeclaration())
-	case ast.KindTypeAliasDeclaration:
+	case ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration:
 		p.emitTypeAliasDeclaration(node.AsTypeAliasDeclaration())
-	case ast.KindJSTypeAliasDeclaration:
-		p.emitJSTypeAliasDeclaration(node.AsJSTypeAliasDeclaration())
 	case ast.KindEnumDeclaration:
 		p.emitEnumDeclaration(node.AsEnumDeclaration())
 	case ast.KindModuleDeclaration:
@@ -4507,7 +4490,7 @@ func (p *Printer) hasTrailingComma(parentNode *ast.Node, children *ast.NodeList)
 		case parentNode.ParameterList():
 			originalList = originalParent.ParameterList()
 		}
-	case ast.KindClassDeclaration, ast.KindClassExpression, ast.KindInterfaceDeclaration, ast.KindTypeAliasDeclaration:
+	case ast.KindClassDeclaration, ast.KindClassExpression, ast.KindInterfaceDeclaration, ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration:
 		switch children {
 		case parentNode.TypeParameterList():
 			originalList = originalParent.TypeParameterList()

@@ -342,7 +342,7 @@ func (walker *typeWriterWalker) writeTypeOrSymbol(node *ast.Node, isSymbolWalk b
 		if ast.IsPartOfTypeNode(node) ||
 			ast.IsIdentifier(node) &&
 				(ast.GetMeaningFromDeclaration(node.Parent)&ast.SemanticMeaningValue) == 0 &&
-				!(ast.IsEitherTypeAliasDeclaration(node.Parent) && node == node.Parent.Name()) {
+				!(ast.IsTypeOrJSTypeAliasDeclaration(node.Parent) && node == node.Parent.Name()) {
 			return nil
 		}
 

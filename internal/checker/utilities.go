@@ -524,7 +524,7 @@ func hasExportAssignmentSymbol(moduleSymbol *ast.Symbol) bool {
 }
 
 func isTypeAlias(node *ast.Node) bool {
-	return ast.IsEitherTypeAliasDeclaration(node)
+	return ast.IsTypeOrJSTypeAliasDeclaration(node)
 }
 
 func hasOnlyExpressionInitializer(node *ast.Node) bool {
@@ -1444,7 +1444,7 @@ func (c *Checker) isMutableLocalVariableDeclaration(declaration *ast.Node) bool 
 
 func isInAmbientOrTypeNode(node *ast.Node) bool {
 	return node.Flags&ast.NodeFlagsAmbient != 0 || ast.FindAncestor(node, func(n *ast.Node) bool {
-		return ast.IsInterfaceDeclaration(n) || ast.IsTypeAliasDeclaration(n) || ast.IsJSTypeAliasDeclaration(n) || ast.IsTypeLiteralNode(n)
+		return ast.IsInterfaceDeclaration(n) || ast.IsTypeOrJSTypeAliasDeclaration(n) || ast.IsTypeLiteralNode(n)
 	}) != nil
 }
 

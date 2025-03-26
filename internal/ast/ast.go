@@ -392,10 +392,8 @@ func (n *Node) TypeParameterList() *NodeList {
 		return n.AsClassExpression().TypeParameters
 	case KindInterfaceDeclaration:
 		return n.AsInterfaceDeclaration().TypeParameters
-	case KindTypeAliasDeclaration:
+	case KindTypeAliasDeclaration, KindJSTypeAliasDeclaration:
 		return n.AsTypeAliasDeclaration().TypeParameters
-	case KindJSTypeAliasDeclaration:
-		return n.AsJSTypeAliasDeclaration().TypeParameters
 	default:
 		funcLike := n.FunctionLikeData()
 		if funcLike != nil {
@@ -479,10 +477,8 @@ func (n *Node) Type() *Node {
 		return n.AsAsExpression().Type
 	case KindSatisfiesExpression:
 		return n.AsSatisfiesExpression().Type
-	case KindTypeAliasDeclaration:
+	case KindTypeAliasDeclaration, KindJSTypeAliasDeclaration:
 		return n.AsTypeAliasDeclaration().Type
-	case KindJSTypeAliasDeclaration:
-		return n.AsJSTypeAliasDeclaration().Type
 	case KindNamedTupleMember:
 		return n.AsNamedTupleMember().Type
 	case KindOptionalType:
@@ -1058,10 +1054,6 @@ func (n *Node) AsInterfaceDeclaration() *InterfaceDeclaration {
 
 func (n *Node) AsTypeAliasDeclaration() *TypeAliasDeclaration {
 	return n.data.(*TypeAliasDeclaration)
-}
-
-func (n *Node) AsJSTypeAliasDeclaration() *JSTypeAliasDeclaration {
-	return n.data.(*JSTypeAliasDeclaration)
 }
 
 func (n *Node) AsJsxAttribute() *JsxAttribute {
@@ -3249,13 +3241,17 @@ type TypeAliasDeclaration struct {
 	Type           *TypeNode       // TypeNode
 }
 
-func (f *NodeFactory) NewTypeAliasDeclaration(modifiers *ModifierList, name *IdentifierNode, typeParameters *NodeList, typeNode *TypeNode) *Node {
+func (f *NodeFactory) newTypeOrJSTypeAliasDeclaration(kind Kind, modifiers *ModifierList, name *IdentifierNode, typeParameters *NodeList, typeNode *TypeNode) *Node {
 	data := &TypeAliasDeclaration{}
 	data.modifiers = modifiers
 	data.name = name
 	data.TypeParameters = typeParameters
 	data.Type = typeNode
-	return newNode(KindTypeAliasDeclaration, data, f.hooks)
+	return newNode(kind, data, f.hooks)
+}
+
+func (f *NodeFactory) NewTypeAliasDeclaration(modifiers *ModifierList, name *IdentifierNode, typeParameters *NodeList, typeNode *TypeNode) *Node {
+	return f.newTypeOrJSTypeAliasDeclaration(KindTypeAliasDeclaration, modifiers, name, typeParameters, typeNode)
 }
 
 func (f *NodeFactory) UpdateTypeAliasDeclaration(node *TypeAliasDeclaration, modifiers *ModifierList, name *IdentifierNode, typeParameters *TypeParameterList, typeNode *TypeNode) *Node {
@@ -3270,6 +3266,9 @@ func (node *TypeAliasDeclaration) ForEachChild(v Visitor) bool {
 }
 
 func (node *TypeAliasDeclaration) VisitEachChild(v *NodeVisitor) *Node {
+	if node.Kind == KindJSTypeAliasDeclaration {
+		return v.Factory.UpdateJSTypeAliasDeclaration(node, v.visitModifiers(node.modifiers), v.visitNode(node.name), v.visitNodes(node.TypeParameters), v.visitNode(node.Type))
+	}
 	return v.Factory.UpdateTypeAliasDeclaration(node, v.visitModifiers(node.modifiers), v.visitNode(node.name), v.visitNodes(node.TypeParameters), v.visitNode(node.Type))
 }
 
@@ -3282,51 +3281,21 @@ func (node *TypeAliasDeclaration) Name() *DeclarationName { return node.name }
 func IsTypeAliasDeclaration(node *Node) bool {
 	return node.Kind == KindTypeAliasDeclaration
 }
-
-func IsEitherTypeAliasDeclaration(node *Node) bool {
+// TODO: See if this is still necessary
+func IsTypeOrJSTypeAliasDeclaration(node *Node) bool {
 	return node.Kind == KindTypeAliasDeclaration || node.Kind == KindJSTypeAliasDeclaration
 }
 
-type JSTypeAliasDeclaration struct {
-	StatementBase
-	DeclarationBase
-	ExportableBase
-	ModifiersBase
-	LocalsContainerBase
-	name           *IdentifierNode // IdentifierNode
-	TypeParameters *NodeList       // NodeList[*TypeParameterDeclarationNode]. Optional
-	Type           *TypeNode       // TypeNode
-}
-
 func (f *NodeFactory) NewJSTypeAliasDeclaration(modifiers *ModifierList, name *IdentifierNode, typeParameters *NodeList, typeNode *TypeNode) *Node {
-	data := &JSTypeAliasDeclaration{}
-	data.modifiers = modifiers
-	data.name = name
-	data.TypeParameters = typeParameters
-	data.Type = typeNode
-	return newNode(KindJSTypeAliasDeclaration, data, f.hooks)
+	return f.newTypeOrJSTypeAliasDeclaration(KindJSTypeAliasDeclaration, modifiers, name, typeParameters, typeNode)
 }
 
-func (f *NodeFactory) UpdateJSTypeAliasDeclaration(node *JSTypeAliasDeclaration, modifiers *ModifierList, name *IdentifierNode, typeParameters *TypeParameterList, typeNode *TypeNode) *Node {
+func (f *NodeFactory) UpdateJSTypeAliasDeclaration(node *TypeAliasDeclaration, modifiers *ModifierList, name *IdentifierNode, typeParameters *TypeParameterList, typeNode *TypeNode) *Node {
 	if modifiers != node.modifiers || name != node.name || typeParameters != node.TypeParameters || typeNode != node.Type {
 		return updateNode(f.NewJSTypeAliasDeclaration(modifiers, name, typeParameters, typeNode), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
-
-func (node *JSTypeAliasDeclaration) ForEachChild(v Visitor) bool {
-	return visitModifiers(v, node.modifiers) || visit(v, node.name) || visitNodeList(v, node.TypeParameters) || visit(v, node.Type)
-}
-
-func (node *JSTypeAliasDeclaration) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateJSTypeAliasDeclaration(node, v.visitModifiers(node.modifiers), v.visitNode(node.name), v.visitNodes(node.TypeParameters), v.visitNode(node.Type))
-}
-
-func (node *JSTypeAliasDeclaration) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJSTypeAliasDeclaration(node.Modifiers(), node.Name(), node.TypeParameters, node.Type), node.AsNode(), f.hooks)
-}
-
-func (node *JSTypeAliasDeclaration) Name() *DeclarationName { return node.name }
 
 func IsJSTypeAliasDeclaration(node *Node) bool {
 	return node.Kind == KindJSTypeAliasDeclaration

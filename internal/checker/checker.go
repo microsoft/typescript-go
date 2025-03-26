@@ -2344,12 +2344,12 @@ func (c *Checker) checkTypeParameter(node *ast.Node) {
 }
 
 func (c *Checker) checkTypeParameterDeferred(node *ast.Node) {
-	if ast.IsInterfaceDeclaration(node.Parent) || ast.IsClassLike(node.Parent) || ast.IsTypeAliasDeclaration(node.Parent) || ast.IsJSTypeAliasDeclaration(node.Parent) {
+	if ast.IsInterfaceDeclaration(node.Parent) || ast.IsClassLike(node.Parent) || ast.IsTypeOrJSTypeAliasDeclaration(node.Parent) {
 		typeParameter := c.getDeclaredTypeOfTypeParameter(c.getSymbolOfDeclaration(node))
 		modifiers := c.getTypeParameterModifiers(typeParameter) & (ast.ModifierFlagsIn | ast.ModifierFlagsOut)
 		if modifiers != 0 {
 			symbol := c.getSymbolOfDeclaration(node.Parent)
-			if (ast.IsTypeAliasDeclaration(node.Parent) || ast.IsJSTypeAliasDeclaration(node.Parent)) && c.getDeclaredTypeOfSymbol(symbol).objectFlags&(ObjectFlagsAnonymous|ObjectFlagsMapped) == 0 {
+			if ast.IsTypeOrJSTypeAliasDeclaration(node.Parent) && c.getDeclaredTypeOfSymbol(symbol).objectFlags&(ObjectFlagsAnonymous|ObjectFlagsMapped) == 0 {
 				c.error(node, diagnostics.Variance_annotations_are_only_supported_in_type_aliases_for_object_function_constructor_and_mapped_types)
 			} else if modifiers == ast.ModifierFlagsIn || modifiers == ast.ModifierFlagsOut {
 				source := c.createMarkerType(symbol, typeParameter, core.IfElse(modifiers == ast.ModifierFlagsOut, c.markerSubTypeForCheck, c.markerSuperTypeForCheck))
@@ -6331,12 +6331,7 @@ func (c *Checker) checkTypeAliasDeclaration(node *ast.Node) {
 	c.checkTypeNameIsReserved(node.Name(), diagnostics.Type_alias_name_cannot_be_0)
 	c.checkExportsOnMergedDeclarations(node)
 
-	var typeNode *ast.Node
-	if node.Kind == ast.KindTypeAliasDeclaration {
-		typeNode = node.AsTypeAliasDeclaration().Type
-	} else if node.Kind == ast.KindJSTypeAliasDeclaration {
-		typeNode = node.AsJSTypeAliasDeclaration().Type
-	}
+	typeNode := node.AsTypeAliasDeclaration().Type
 	typeParameters := node.TypeParameters()
 	c.checkTypeParameters(typeParameters)
 	if typeNode != nil && typeNode.Kind == ast.KindIntrinsicKeyword {
@@ -22059,8 +22054,8 @@ func (c *Checker) getDeclaredTypeOfTypeAlias(symbol *ast.Symbol) *Type {
 		if !c.pushTypeResolution(symbol, TypeSystemPropertyNameDeclaredType) {
 			return c.errorType
 		}
-		declaration := core.Find(symbol.Declarations, ast.IsEitherTypeAliasDeclaration)
-		typeNode := declaration.Type()
+		declaration := core.Find(symbol.Declarations, ast.IsTypeOrJSTypeAliasDeclaration)
+		typeNode := declaration.AsTypeAliasDeclaration().Type
 		t := c.getTypeFromTypeNode(typeNode)
 		if c.popTypeResolution() {
 			typeParameters := c.getLocalTypeParametersOfClassOrInterfaceOrTypeAlias(symbol)
