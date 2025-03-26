@@ -15,6 +15,7 @@ export interface SourceFile extends Node {
     readonly kind: SyntaxKind.SourceFile;
     readonly statements: NodeArray<Statement>;
     readonly text: string;
+    readonly fileName: string;
 }
 
 export type TriviaSyntaxKind =

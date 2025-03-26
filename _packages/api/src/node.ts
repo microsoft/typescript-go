@@ -765,6 +765,7 @@ export class RemoteNode extends RemoteNodeBase implements Node {
                 const stringIndex = this.data & NODE_STRING_INDEX_MASK;
                 return this.getString(stringIndex);
             }
+            case SyntaxKind.SourceFile:
             case SyntaxKind.TemplateHead:
             case SyntaxKind.TemplateMiddle:
             case SyntaxKind.TemplateTail: {
@@ -780,6 +781,15 @@ export class RemoteNode extends RemoteNodeBase implements Node {
             case SyntaxKind.TemplateHead:
             case SyntaxKind.TemplateMiddle:
             case SyntaxKind.TemplateTail:
+                const extendedDataOffset = this.offsetExtendedData + (this.data & NODE_EXTENDED_DATA_MASK);
+                const stringIndex = this.view.getUint32(extendedDataOffset + 4, true);
+                return this.getString(stringIndex);
+        }
+    }
+
+    get fileName(): string | undefined {
+        switch (this.kind) {
+            case SyntaxKind.SourceFile:
                 const extendedDataOffset = this.offsetExtendedData + (this.data & NODE_EXTENDED_DATA_MASK);
                 const stringIndex = this.view.getUint32(extendedDataOffset + 4, true);
                 return this.getString(stringIndex);
@@ -821,9 +831,5 @@ export class RemoteSourceFile extends RemoteNode {
     constructor(data: Uint8Array, decoder: TextDecoder) {
         const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
         super(view, decoder, 1, undefined!);
-    }
-
-    get text(): string {
-        return this.getFileText(0, this.end);
     }
 }

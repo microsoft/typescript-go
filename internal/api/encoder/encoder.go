@@ -101,14 +101,21 @@ const (
 // The extended node data section contains additional data for specific node types. The length and meaning of each entry
 // is defined by the node type.
 //
-// Currently, the only node types that use this section are `TemplateHead`, `TemplateMiddle`, and `TemplateTail`. The
-// extended data format for these nodes is:
+// Currently, the only node types that use this section are `TemplateHead`, `TemplateMiddle`, `TemplateTail`, and
+// `SourceFile`. The extended data format for the first three is:
 //
 // | Byte offset | Type   | Field                                            |
 // | ----------- | ------ | ------------------------------------------------ |
 // | 0-4         | uint32 | Index of `text` in the string offsets section    |
 // | 4-8         | uint32 | Index of `rawText` in the string offsets section |
 // | 8-12        | uint32 | Value of `templateFlags`                         |
+//
+// and for `SourceFile` is:
+//
+// | Byte offset | Type   | Field                                             |
+// | ----------- | ------ | ------------------------------------------------- |
+// | 0-4         | uint32 | Index of `text` in the string offsets section     |
+// | 4-8         | uint32 | Index of `fileName` in the string offsets section |
 //
 // Nodes (24 bytes per node)
 // -------------------------
@@ -283,7 +290,7 @@ func EncodeSourceFile(sourceFile *ast.SourceFile) ([]byte, error) {
 
 	nodeCount++
 	parentIndex++
-	nodes = appendUint32s(nodes, uint32(sourceFile.Kind), uint32(sourceFile.Pos()), uint32(sourceFile.End()), 0, 0, 0)
+	nodes = appendUint32s(nodes, uint32(sourceFile.Kind), uint32(sourceFile.Pos()), uint32(sourceFile.End()), 0, 0, getNodeData(sourceFile.AsNode(), strs, &extendedData))
 
 	visitor.VisitEachChild(sourceFile.AsNode())
 
@@ -353,7 +360,8 @@ func getNodeDataType(node *ast.Node) uint32 {
 		return NodeDataTypeString
 	case ast.KindTemplateHead,
 		ast.KindTemplateMiddle,
-		ast.KindTemplateTail:
+		ast.KindTemplateTail,
+		ast.KindSourceFile:
 		return NodeDataTypeExtendedData
 	default:
 		return NodeDataTypeChildren
@@ -772,6 +780,14 @@ func recordNodeStrings(node *ast.Node, strs *stringTable) uint32 {
 
 func recordExtendedData(node *ast.Node, strs *stringTable, extendedData *[]byte) uint32 {
 	offset := uint32(len(*extendedData))
+	if node.Kind == ast.KindSourceFile {
+		n := node.AsSourceFile()
+		textIndex := strs.add(n.Text, node.Kind, node.Pos(), node.End())
+		fileNameIndex := strs.add(n.FileName(), 0, 0, 0)
+		*extendedData = appendUint32s(*extendedData, textIndex, fileNameIndex)
+		return offset
+	}
+
 	var text, rawText string
 	var templateFlags uint32
 	switch node.Kind {

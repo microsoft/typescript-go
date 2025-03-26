@@ -52,13 +52,14 @@ describe("Project", () => {
 });
 
 describe("SourceFile", () => {
-    test("file text", () => {
+    test("file properties", () => {
         const api = spawnAPI();
         const project = api.loadProject("/tsconfig.json");
         const sourceFile = project.getSourceFile("/src/index.ts");
 
         assert.ok(sourceFile);
         assert.equal(sourceFile.text, defaultFiles["/src/index.ts"]);
+        assert.equal(sourceFile.fileName, "/src/index.ts");
     });
 
     test("extended data", () => {
