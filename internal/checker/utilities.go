@@ -89,20 +89,16 @@ func hasDecorators(node *ast.Node) bool {
 	return ast.HasSyntacticModifier(node, ast.ModifierFlagsDecorator)
 }
 
-func getEffectiveModifierFlags(node *ast.Node) ast.ModifierFlags {
-	return node.ModifierFlags() // !!! Handle JSDoc
+func getSelectedModifierFlags(node *ast.Node, flags ast.ModifierFlags) ast.ModifierFlags {
+	return node.ModifierFlags() & flags
 }
 
-func getSelectedEffectiveModifierFlags(node *ast.Node, flags ast.ModifierFlags) ast.ModifierFlags {
-	return getEffectiveModifierFlags(node) & flags
+func hasModifier(node *ast.Node, flags ast.ModifierFlags) bool {
+	return node.ModifierFlags()&flags != 0
 }
 
-func hasEffectiveModifier(node *ast.Node, flags ast.ModifierFlags) bool {
-	return getEffectiveModifierFlags(node)&flags != 0
-}
-
-func hasEffectiveReadonlyModifier(node *ast.Node) bool {
-	return hasEffectiveModifier(node, ast.ModifierFlagsReadonly)
+func hasReadonlyModifier(node *ast.Node) bool {
+	return hasModifier(node, ast.ModifierFlagsReadonly)
 }
 
 func isBindingElementOfBareOrAccessedRequire(node *ast.Node) bool {
@@ -595,7 +591,7 @@ func declarationBelongsToPrivateAmbientMember(declaration *ast.Node) bool {
 }
 
 func isPrivateWithinAmbient(node *ast.Node) bool {
-	return (hasEffectiveModifier(node, ast.ModifierFlagsPrivate) || ast.IsPrivateIdentifierClassElementDeclaration(node)) && node.Flags&ast.NodeFlagsAmbient != 0
+	return (hasModifier(node, ast.ModifierFlagsPrivate) || ast.IsPrivateIdentifierClassElementDeclaration(node)) && node.Flags&ast.NodeFlagsAmbient != 0
 }
 
 func isTypeAssertion(node *ast.Node) bool {
@@ -1244,9 +1240,9 @@ func isValidESSymbolDeclaration(node *ast.Node) bool {
 		return ast.IsVarConst(node) && ast.IsIdentifier(node.AsVariableDeclaration().Name()) && isVariableDeclarationInVariableStatement(node)
 	}
 	if ast.IsPropertyDeclaration(node) {
-		return hasEffectiveReadonlyModifier(node) && ast.HasStaticModifier(node)
+		return hasReadonlyModifier(node) && ast.HasStaticModifier(node)
 	}
-	return ast.IsPropertySignatureDeclaration(node) && hasEffectiveReadonlyModifier(node)
+	return ast.IsPropertySignatureDeclaration(node) && hasReadonlyModifier(node)
 }
 
 func isVariableDeclarationInVariableStatement(node *ast.Node) bool {

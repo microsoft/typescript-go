@@ -2659,8 +2659,8 @@ func (c *Checker) checkAccessorDeclaration(node *ast.Node) {
 		setter := ast.GetDeclarationOfKind(symbol, ast.KindSetAccessor)
 		if getter != nil && setter != nil && c.nodeLinks.Get(getter).flags&NodeCheckFlagsTypeChecked == 0 {
 			c.nodeLinks.Get(getter).flags |= NodeCheckFlagsTypeChecked
-			getterFlags := getEffectiveModifierFlags(getter)
-			setterFlags := getEffectiveModifierFlags(setter)
+			getterFlags := getter.ModifierFlags()
+			setterFlags := setter.ModifierFlags()
 			if (getterFlags & ast.ModifierFlagsAbstract) != (setterFlags & ast.ModifierFlagsAbstract) {
 				c.error(getter.Name(), diagnostics.Accessors_must_both_be_abstract_or_non_abstract)
 				c.error(setter.Name(), diagnostics.Accessors_must_both_be_abstract_or_non_abstract)
@@ -4100,7 +4100,7 @@ func (c *Checker) checkBaseTypeAccessibility(t *Type, node *ast.Node) {
 	signatures := c.getSignaturesOfType(t, SignatureKindConstruct)
 	if len(signatures) != 0 {
 		declaration := signatures[0].declaration
-		if declaration != nil && hasEffectiveModifier(declaration, ast.ModifierFlagsPrivate) {
+		if declaration != nil && hasModifier(declaration, ast.ModifierFlagsPrivate) {
 			typeClassDeclaration := getClassLikeDeclarationOfSymbol(t.symbol)
 			if !c.isNodeWithinClass(node, typeClassDeclaration) {
 				c.error(node, diagnostics.Cannot_extend_a_class_0_Class_constructor_is_marked_as_private, c.getFullyQualifiedName(t.symbol, nil))
@@ -4550,7 +4550,7 @@ func (c *Checker) checkPropertyInitialization(node *ast.Node) {
 	}
 	constructor := ast.FindConstructorDeclaration(node)
 	for _, member := range node.Members() {
-		if getEffectiveModifierFlags(member)&ast.ModifierFlagsAmbient != 0 {
+		if member.ModifierFlags()&ast.ModifierFlagsAmbient != 0 {
 			continue
 		}
 		if !ast.IsStatic(member) && c.isPropertyWithoutInitializer(member) {
@@ -6268,7 +6268,7 @@ func (c *Checker) checkAliasSymbol(node *ast.Node) {
 					name := node.PropertyNameOrName().Text()
 					c.addTypeOnlyDeclarationRelatedInfo(c.error(node, message, name), core.IfElse(isType, nil, typeOnlyAlias), name)
 				}
-				if isType && node.Kind == ast.KindImportEqualsDeclaration && hasEffectiveModifier(node, ast.ModifierFlagsExport) {
+				if isType && node.Kind == ast.KindImportEqualsDeclaration && hasModifier(node, ast.ModifierFlagsExport) {
 					c.error(node, diagnostics.Cannot_use_export_import_on_a_type_or_type_only_namespace_when_0_is_enabled, c.getIsolatedModulesLikeFlagName())
 				}
 			case ast.KindExportSpecifier:
@@ -6322,7 +6322,7 @@ func (c *Checker) areDeclarationFlagsIdentical(left *ast.Declaration, right *ast
 		return false
 	}
 	interestingFlags := ast.ModifierFlagsPrivate | ast.ModifierFlagsProtected | ast.ModifierFlagsAsync | ast.ModifierFlagsAbstract | ast.ModifierFlagsReadonly | ast.ModifierFlagsStatic
-	return getSelectedEffectiveModifierFlags(left, interestingFlags) == getSelectedEffectiveModifierFlags(right, interestingFlags)
+	return getSelectedModifierFlags(left, interestingFlags) == getSelectedModifierFlags(right, interestingFlags)
 }
 
 func (c *Checker) checkTypeAliasDeclaration(node *ast.Node) {
@@ -6552,7 +6552,7 @@ func (c *Checker) checkUnusedClassMembers(node *ast.Node) {
 				break // Already would have reported an error on the getter.
 			}
 			symbol := c.getSymbolOfDeclaration(member)
-			if !c.isReferenced(symbol) && (hasEffectiveModifier(member, ast.ModifierFlagsPrivate) || member.Name() != nil && ast.IsPrivateIdentifier(member.Name())) && member.Flags&ast.NodeFlagsAmbient == 0 {
+			if !c.isReferenced(symbol) && (hasModifier(member, ast.ModifierFlagsPrivate) || member.Name() != nil && ast.IsPrivateIdentifier(member.Name())) && member.Flags&ast.NodeFlagsAmbient == 0 {
 				c.reportUnused(member, UnusedKindLocal, NewDiagnosticForNode(member.Name(), diagnostics.X_0_is_declared_but_its_value_is_never_read, c.symbolToString(symbol)))
 			}
 		case ast.KindConstructor:
@@ -8098,7 +8098,7 @@ func (c *Checker) resolveNewExpression(node *ast.Node, candidatesOutArray *[]*Si
 		}
 		if expressionType.symbol != nil {
 			valueDecl := getClassLikeDeclarationOfSymbol(expressionType.symbol)
-			if valueDecl != nil && hasEffectiveModifier(valueDecl, ast.ModifierFlagsAbstract) {
+			if valueDecl != nil && hasModifier(valueDecl, ast.ModifierFlagsAbstract) {
 				c.error(node, diagnostics.Cannot_create_an_instance_of_an_abstract_class)
 				return c.resolveErrorCall(node)
 			}
@@ -8131,7 +8131,7 @@ func (c *Checker) isConstructorAccessible(node *ast.Node, signature *Signature) 
 		return true
 	}
 	declaration := signature.declaration
-	modifiers := getSelectedEffectiveModifierFlags(declaration, ast.ModifierFlagsNonPublicAccessibilityModifier)
+	modifiers := getSelectedModifierFlags(declaration, ast.ModifierFlagsNonPublicAccessibilityModifier)
 	// (1) Public constructors and (2) constructor functions are always accessible.
 	if modifiers == 0 || !ast.IsConstructorDeclaration(declaration) {
 		return true
@@ -10769,7 +10769,7 @@ func (c *Checker) getControlFlowContainer(node *ast.Node) *ast.Node {
 
 func (c *Checker) getFlowTypeOfProperty(reference *ast.Node, prop *ast.Symbol) *Type {
 	initialType := c.undefinedType
-	if prop != nil && prop.ValueDeclaration != nil && (!c.isAutoTypedProperty(prop) || getEffectiveModifierFlags(prop.ValueDeclaration)&ast.ModifierFlagsAmbient != 0) {
+	if prop != nil && prop.ValueDeclaration != nil && (!c.isAutoTypedProperty(prop) || prop.ValueDeclaration.ModifierFlags()&ast.ModifierFlagsAmbient != 0) {
 		initialType = c.getTypeOfPropertyInBaseClass(prop)
 	}
 	return c.getFlowTypeOfReferenceEx(reference, c.autoType, initialType, nil, nil)
@@ -15294,7 +15294,7 @@ func (c *Checker) getTypeForVariableLikeDeclaration(declaration *ast.Node, inclu
 	isProperty := ast.IsPropertyDeclaration(declaration) && !ast.HasAccessorModifier(declaration) || ast.IsPropertySignatureDeclaration(declaration)
 	isOptional := includeOptionality && isOptionalDeclaration(declaration)
 	// Use type from type annotation if one is present
-	declaredType := c.tryGetTypeFromEffectiveTypeNode(declaration)
+	declaredType := c.tryGetTypeFromTypeNode(declaration)
 	if ast.IsCatchClauseVariableDeclarationOrBindingElement(declaration) {
 		if declaredType != nil {
 			// If the catch clause is explicitly annotated with any or unknown, accept it, otherwise error.
@@ -17022,7 +17022,7 @@ func (c *Checker) getExportAssignmentType(symbol *ast.Symbol) *Type {
 	if symbol != nil {
 		for _, d := range symbol.Declarations {
 			if ast.IsExportAssignment(d) {
-				t := c.tryGetTypeFromEffectiveTypeNode(d)
+				t := c.tryGetTypeFromTypeNode(d)
 				if t != nil {
 					return t
 				}
@@ -18047,7 +18047,7 @@ func (c *Checker) getIndexInfosOfIndexSymbol(indexSymbol *ast.Symbol, siblingSym
 					}
 					forEachType(c.getTypeFromTypeNode(typeNode), func(keyType *Type) {
 						if c.isValidIndexKeyType(keyType) && findIndexInfo(indexInfos, keyType) == nil {
-							indexInfo := c.newIndexInfo(keyType, valueType, hasEffectiveModifier(declaration, ast.ModifierFlagsReadonly), declaration)
+							indexInfo := c.newIndexInfo(keyType, valueType, hasModifier(declaration, ast.ModifierFlagsReadonly), declaration)
 							indexInfos = append(indexInfos, indexInfo)
 						}
 					})
@@ -18073,17 +18073,17 @@ func (c *Checker) getIndexInfosOfIndexSymbol(indexSymbol *ast.Symbol, siblingSym
 			if c.isTypeAssignableTo(keyType, c.stringNumberSymbolType) {
 				if c.isTypeAssignableTo(keyType, c.numberType) {
 					hasComputedNumberProperty = true
-					if !hasEffectiveReadonlyModifier(declaration) {
+					if !hasReadonlyModifier(declaration) {
 						readonlyComputedNumberProperty = false
 					}
 				} else if c.isTypeAssignableTo(keyType, c.esSymbolType) {
 					hasComputedSymbolProperty = true
-					if !hasEffectiveReadonlyModifier(declaration) {
+					if !hasReadonlyModifier(declaration) {
 						readonlyComputedSymbolProperty = false
 					}
 				} else {
 					hasComputedStringProperty = true
-					if !hasEffectiveReadonlyModifier(declaration) {
+					if !hasReadonlyModifier(declaration) {
 						readonlyComputedStringProperty = false
 					}
 				}
@@ -21091,7 +21091,7 @@ func instantiateList[T comparable](c *Checker, values []T, m *TypeMapper, instan
 	return values
 }
 
-func (c *Checker) tryGetTypeFromEffectiveTypeNode(node *ast.Node) *Type {
+func (c *Checker) tryGetTypeFromTypeNode(node *ast.Node) *Type {
 	typeNode := node.Type()
 	if typeNode != nil {
 		return c.getTypeFromTypeNode(typeNode)
@@ -25810,7 +25810,7 @@ func (c *Checker) markPropertyAsReferenced(prop *ast.Symbol, nodeForCheckWriteOn
 	if prop.Flags&ast.SymbolFlagsClassMember == 0 || prop.ValueDeclaration == nil {
 		return
 	}
-	hasPrivateModifier := hasEffectiveModifier(prop.ValueDeclaration, ast.ModifierFlagsPrivate)
+	hasPrivateModifier := hasModifier(prop.ValueDeclaration, ast.ModifierFlagsPrivate)
 	hasPrivateIdentifier := prop.ValueDeclaration.Name() != nil && ast.IsPrivateIdentifier(prop.ValueDeclaration.Name())
 	if !hasPrivateModifier && !hasPrivateIdentifier {
 		return
@@ -27044,7 +27044,7 @@ func (c *Checker) getContextualType(node *ast.Node, contextFlags ContextFlags) *
 	case ast.KindSatisfiesExpression:
 		return c.getTypeFromTypeNode(parent.AsSatisfiesExpression().Type)
 	case ast.KindExportAssignment:
-		return c.tryGetTypeFromEffectiveTypeNode(parent)
+		return c.tryGetTypeFromTypeNode(parent)
 	case ast.KindJsxExpression:
 		return c.getContextualTypeForJsxExpression(parent, contextFlags)
 	case ast.KindJsxAttribute, ast.KindJsxSpreadAttribute:
