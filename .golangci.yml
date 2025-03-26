@@ -1,17 +1,15 @@
 # yaml-language-server: $schema=https://golangci-lint.run/jsonschema/golangci.jsonschema.json
 
+version: '2'
+
 run:
   allow-parallel-runners: true
-  timeout: 180s
 
 linters:
-  disable-all: true
+  default: none
   enable:
     # Enabled
     - asasalint
-    - inamedparam
-    - nakedret
-    - govet
     - bidichk
     - bodyclose
     - canonicalheader
@@ -24,14 +22,16 @@ linters:
     - fatcontext
     - gocheckcompilerdirectives
     - goprintffuncname
-    - gosimple
+    - govet
     - grouper
+    - inamedparam
     - ineffassign
     - intrange
     - makezero
     - mirror
     - misspell
     - musttag
+    - nakedret
     - nolintlint
     - paralleltest
     - perfsprint
@@ -55,27 +55,26 @@ linters:
     # - gosec
     # - revive
     # - staticcheck
-    # - stylecheck
     # - testifylint
     # - unparam
     # - unused
+  settings:
+    custom:
+      customlint:
+        type: module
 
-linters-settings:
-  custom:
-    customlint:
-      type: module
-
-#   revive:
-#     enable-all-rules: true
-#     rules:
-#       - name: unused-parameter
-#         disabled: true
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
 
 issues:
   max-issues-per-linter: 0
   max-same-issues: 0
-
-  exclude:
-    - '^could not import'
-    - '^: #'
-    - 'imported and not used$'
