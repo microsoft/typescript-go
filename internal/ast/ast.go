@@ -1503,8 +1503,6 @@ type nodeData interface {
 	LiteralLikeData() *LiteralLikeBase
 	TemplateLiteralLikeData() *TemplateLiteralLikeBase
 	SubtreeFacts() SubtreeFacts
-	computeSubtreeFacts() SubtreeFacts
-	subtreeFactsWorker(self nodeData) SubtreeFacts
 	propagateSubtreeFacts() SubtreeFacts
 }
 
@@ -1529,22 +1527,7 @@ func (node *NodeDefault) ClassLikeData() *ClassLikeBase                     { re
 func (node *NodeDefault) BodyData() *BodyBase                               { return nil }
 func (node *NodeDefault) LiteralLikeData() *LiteralLikeBase                 { return nil }
 func (node *NodeDefault) TemplateLiteralLikeData() *TemplateLiteralLikeBase { return nil }
-func (node *NodeDefault) SubtreeFacts() SubtreeFacts {
-	return node.data.subtreeFactsWorker(node.data)
-}
-
-func (node *NodeDefault) subtreeFactsWorker(self nodeData) SubtreeFacts {
-	// To avoid excessive conditonal checks, the default implementation of subtreeFactsWorker directly invokes
-	// computeSubtreeFacts. More complex nodes should implement CompositeNodeBase, which overrides this
-	// method to cache the result. `self` is passed along to ensure we lookup `computeSubtreeFacts` on the
-	// correct type, as `CompositeNodeBase` does not, itself, inherit from `Node`.
-	return self.computeSubtreeFacts()
-}
-
-func (node *NodeDefault) computeSubtreeFacts() SubtreeFacts {
-	return SubtreeFactsNone
-}
-
+func (node *NodeDefault) SubtreeFacts() SubtreeFacts                        { return SubtreeFactsNone }
 func (node *NodeDefault) propagateSubtreeFacts() SubtreeFacts {
 	return node.data.SubtreeFacts() & ^SubtreeExclusionsNode
 }
@@ -1782,17 +1765,7 @@ type compositeNodeBase struct {
 	facts SubtreeFacts // caches the SubtreeFacts for this node and its subtree
 }
 
-func (node *compositeNodeBase) subtreeFactsWorker(self nodeData) SubtreeFacts {
-	if node.facts&SubtreeFactsComputed == 0 {
-		node.facts |= self.computeSubtreeFacts() | SubtreeFactsComputed
-	}
-	return node.facts &^ SubtreeFactsComputed
-}
-
-func (node *compositeNodeBase) computeSubtreeFacts() SubtreeFacts {
-	// This method must be implemented by the concrete node type.
-	panic("not implemented")
-}
+func (node *compositeNodeBase) SubtreeFacts() SubtreeFacts { return node.facts }
 
 // typeSyntaxBase
 
@@ -1800,8 +1773,7 @@ func (node *compositeNodeBase) computeSubtreeFacts() SubtreeFacts {
 // embedded in a node that only ever returns `SubtreeContainsTypeScript` for its subtree facts.
 type typeSyntaxBase struct{}
 
-func (node *typeSyntaxBase) computeSubtreeFacts() SubtreeFacts   { return SubtreeContainsTypeScript }
-func (node *typeSyntaxBase) propagateSubtreeFacts() SubtreeFacts { return SubtreeContainsTypeScript }
+func (node *typeSyntaxBase) SubtreeFacts() SubtreeFacts { return SubtreeContainsTypeScript }
 
 // Token
 
@@ -1817,7 +1789,7 @@ func (node *Token) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewToken(node.Kind), node.AsNode(), f.hooks)
 }
 
-func (node *Token) computeSubtreeFacts() SubtreeFacts {
+func (node *Token) SubtreeFacts() SubtreeFacts {
 	switch node.Kind {
 	case KindAsyncKeyword:
 		return SubtreeContainsES2017 | SubtreeContainsES2018
@@ -1901,7 +1873,7 @@ func (node *PrivateIdentifier) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewPrivateIdentifier(node.Text), node.AsNode(), f.hooks)
 }
 
-func (node *PrivateIdentifier) computeSubtreeFacts() SubtreeFacts {
+func (node *PrivateIdentifier) SubtreeFacts() SubtreeFacts {
 	return SubtreeContainsClassFields
 }
 
@@ -1923,6 +1895,7 @@ func (f *NodeFactory) NewQualifiedName(left *EntityName, right *IdentifierNode) 
 	data := &QualifiedName{}
 	data.Left = left
 	data.Right = right
+	data.facts = propagateSubtreeFacts(left) | propagateSubtreeFacts(right)
 	return newNode(KindQualifiedName, data, f.hooks)
 }
 
@@ -1947,11 +1920,6 @@ func (node *QualifiedName) Clone(f *NodeFactory) *Node {
 
 func IsQualifiedName(node *Node) bool {
 	return node.Kind == KindQualifiedName
-}
-
-func (node *QualifiedName) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Left) |
-		propagateSubtreeFacts(node.Right)
 }
 
 // TypeParameterDeclaration
@@ -2007,7 +1975,6 @@ func IsTypeParameterDeclaration(node *Node) bool {
 
 type ComputedPropertyName struct {
 	NodeBase
-	compositeNodeBase
 	Expression *Expression // Expression
 }
 
@@ -2036,7 +2003,7 @@ func (node *ComputedPropertyName) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewComputedPropertyName(node.Expression), node.AsNode(), f.hooks)
 }
 
-func (node *ComputedPropertyName) computeSubtreeFacts() SubtreeFacts {
+func (node *ComputedPropertyName) SubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Expression)
 }
 
@@ -2054,7 +2021,6 @@ func (f *NodeFactory) NewModifier(kind Kind) *Node {
 
 type Decorator struct {
 	NodeBase
-	compositeNodeBase
 	Expression *LeftHandSideExpression // LeftHandSideExpression
 }
 
@@ -2083,7 +2049,7 @@ func (node *Decorator) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewDecorator(node.Expression), node.AsNode(), f.hooks)
 }
 
-func (node *Decorator) computeSubtreeFacts() SubtreeFacts {
+func (node *Decorator) SubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Expression) |
 		SubtreeContainsTypeScript | // Decorator metadata
 		SubtreeContainsDecorators // legacy or ES decorators
@@ -2133,6 +2099,9 @@ func (f *NodeFactory) NewIfStatement(expression *Expression, thenStatement *Stat
 	data.Expression = expression
 	data.ThenStatement = thenStatement
 	data.ElseStatement = elseStatement
+	data.facts = propagateSubtreeFacts(expression) |
+		propagateSubtreeFacts(thenStatement) |
+		propagateSubtreeFacts(elseStatement)
 	return newNode(KindIfStatement, data, f.hooks)
 }
 
@@ -2155,12 +2124,6 @@ func (node *IfStatement) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewIfStatement(node.Expression, node.ThenStatement, node.ElseStatement), node.AsNode(), f.hooks)
 }
 
-func (node *IfStatement) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Expression) |
-		propagateSubtreeFacts(node.ThenStatement) |
-		propagateSubtreeFacts(node.ElseStatement)
-}
-
 // DoStatement
 
 type DoStatement struct {
@@ -2174,6 +2137,8 @@ func (f *NodeFactory) NewDoStatement(statement *Statement, expression *Expressio
 	data := &DoStatement{}
 	data.Statement = statement
 	data.Expression = expression
+	data.facts = propagateSubtreeFacts(statement) |
+		propagateSubtreeFacts(expression)
 	return newNode(KindDoStatement, data, f.hooks)
 }
 
@@ -2196,11 +2161,6 @@ func (node *DoStatement) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewDoStatement(node.Statement, node.Expression), node.AsNode(), f.hooks)
 }
 
-func (node *DoStatement) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Statement) |
-		propagateSubtreeFacts(node.Expression)
-}
-
 // WhileStatement
 
 type WhileStatement struct {
@@ -2214,6 +2174,8 @@ func (f *NodeFactory) NewWhileStatement(expression *Expression, statement *State
 	data := &WhileStatement{}
 	data.Expression = expression
 	data.Statement = statement
+	data.facts = propagateSubtreeFacts(expression) |
+		propagateSubtreeFacts(statement)
 	return newNode(KindWhileStatement, data, f.hooks)
 }
 
@@ -2236,10 +2198,6 @@ func (node *WhileStatement) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewWhileStatement(node.Expression, node.Statement), node.AsNode(), f.hooks)
 }
 
-func (node *WhileStatement) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Expression) | propagateSubtreeFacts(node.Statement)
-}
-
 // ForStatement
 
 type ForStatement struct {
@@ -2258,6 +2216,10 @@ func (f *NodeFactory) NewForStatement(initializer *ForInitializer, condition *Ex
 	data.Condition = condition
 	data.Incrementor = incrementor
 	data.Statement = statement
+	data.facts = propagateSubtreeFacts(initializer) |
+		propagateSubtreeFacts(condition) |
+		propagateSubtreeFacts(incrementor) |
+		propagateSubtreeFacts(statement)
 	return newNode(KindForStatement, data, f.hooks)
 }
 
@@ -2278,13 +2240,6 @@ func (node *ForStatement) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *ForStatement) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewForStatement(node.Initializer, node.Expression(), node.Incrementor, node.Statement), node.AsNode(), f.hooks)
-}
-
-func (node *ForStatement) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Initializer) |
-		propagateSubtreeFacts(node.Condition) |
-		propagateSubtreeFacts(node.Incrementor) |
-		propagateSubtreeFacts(node.Statement)
 }
 
 func IsForStatement(node *Node) bool {
@@ -2309,6 +2264,10 @@ func (f *NodeFactory) NewForInOrOfStatement(kind Kind, awaitModifier *TokenNode,
 	data.Initializer = initializer
 	data.Expression = expression
 	data.Statement = statement
+	data.facts = propagateSubtreeFacts(initializer) |
+		propagateSubtreeFacts(expression) |
+		propagateSubtreeFacts(statement) |
+		core.IfElse(awaitModifier != nil, SubtreeContainsES2018, SubtreeFactsNone)
 	return newNode(kind, data, f.hooks)
 }
 
@@ -2329,13 +2288,6 @@ func (node *ForInOrOfStatement) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *ForInOrOfStatement) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewForInOrOfStatement(node.Kind, node.AwaitModifier, node.Initializer, node.Expression, node.Statement), node.AsNode(), f.hooks)
-}
-
-func (node *ForInOrOfStatement) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Initializer) |
-		propagateSubtreeFacts(node.Expression) |
-		propagateSubtreeFacts(node.Statement) |
-		core.IfElse(node.AwaitModifier != nil, SubtreeContainsES2018, SubtreeFactsNone)
 }
 
 func IsForInStatement(node *Node) bool {
@@ -2418,7 +2370,6 @@ func (node *ContinueStatement) Clone(f *NodeFactory) *Node {
 
 type ReturnStatement struct {
 	StatementBase
-	compositeNodeBase
 	Expression *Expression // Expression. Optional
 }
 
@@ -2447,7 +2398,7 @@ func (node *ReturnStatement) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewReturnStatement(node.Expression), node.AsNode(), f.hooks)
 }
 
-func (node *ReturnStatement) computeSubtreeFacts() SubtreeFacts {
+func (node *ReturnStatement) SubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Expression)
 }
 
@@ -2468,6 +2419,8 @@ func (f *NodeFactory) NewWithStatement(expression *Expression, statement *Statem
 	data := &WithStatement{}
 	data.Expression = expression
 	data.Statement = statement
+	data.facts = propagateSubtreeFacts(expression) |
+		propagateSubtreeFacts(statement)
 	return newNode(KindWithStatement, data, f.hooks)
 }
 
@@ -2490,10 +2443,6 @@ func (node *WithStatement) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewWithStatement(node.Expression, node.Statement), node.AsNode(), f.hooks)
 }
 
-func (node *WithStatement) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Expression) | propagateSubtreeFacts(node.Statement)
-}
-
 // SwitchStatement
 
 type SwitchStatement struct {
@@ -2507,6 +2456,8 @@ func (f *NodeFactory) NewSwitchStatement(expression *Expression, caseBlock *Case
 	data := &SwitchStatement{}
 	data.Expression = expression
 	data.CaseBlock = caseBlock
+	data.facts = propagateSubtreeFacts(expression) |
+		propagateSubtreeFacts(caseBlock)
 	return newNode(KindSwitchStatement, data, f.hooks)
 }
 
@@ -2529,11 +2480,6 @@ func (node *SwitchStatement) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewSwitchStatement(node.Expression, node.CaseBlock), node.AsNode(), f.hooks)
 }
 
-func (node *SwitchStatement) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Expression) |
-		propagateSubtreeFacts(node.CaseBlock)
-}
-
 // CaseBlock
 
 type CaseBlock struct {
@@ -2546,6 +2492,7 @@ type CaseBlock struct {
 func (f *NodeFactory) NewCaseBlock(clauses *NodeList) *Node {
 	data := &CaseBlock{}
 	data.Clauses = clauses
+	data.facts = propagateNodeListSubtreeFacts(clauses, propagateSubtreeFacts)
 	return newNode(KindCaseBlock, data, f.hooks)
 }
 
@@ -2568,10 +2515,6 @@ func (node *CaseBlock) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewCaseBlock(node.Clauses), node.AsNode(), f.hooks)
 }
 
-func (node *CaseBlock) computeSubtreeFacts() SubtreeFacts {
-	return propagateNodeListSubtreeFacts(node.Clauses, propagateSubtreeFacts)
-}
-
 // CaseOrDefaultClause
 
 type CaseOrDefaultClause struct {
@@ -2586,6 +2529,8 @@ func (f *NodeFactory) NewCaseOrDefaultClause(kind Kind, expression *Expression, 
 	data := &CaseOrDefaultClause{}
 	data.Expression = expression
 	data.Statements = statements
+	data.facts = propagateSubtreeFacts(expression) |
+		propagateNodeListSubtreeFacts(statements, propagateSubtreeFacts)
 	return newNode(kind, data, f.hooks)
 }
 
@@ -2608,10 +2553,6 @@ func (node *CaseOrDefaultClause) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewCaseOrDefaultClause(node.Kind, node.Expression, node.Statements), node.AsNode(), f.hooks)
 }
 
-func (node *CaseOrDefaultClause) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Expression) | propagateNodeListSubtreeFacts(node.Statements, propagateSubtreeFacts)
-}
-
 func IsCaseClause(node *Node) bool {
 	return node.Kind == KindCaseClause
 }
@@ -2624,7 +2565,6 @@ func IsDefaultClause(node *Node) bool {
 
 type ThrowStatement struct {
 	StatementBase
-	compositeNodeBase
 	Expression *Expression // Expression
 }
 
@@ -2653,7 +2593,7 @@ func (node *ThrowStatement) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewThrowStatement(node.Expression), node.AsNode(), f.hooks)
 }
 
-func (node *ThrowStatement) computeSubtreeFacts() SubtreeFacts {
+func (node *ThrowStatement) SubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Expression)
 }
 
@@ -2672,6 +2612,9 @@ func (f *NodeFactory) NewTryStatement(tryBlock *BlockNode, catchClause *CatchCla
 	data.TryBlock = tryBlock
 	data.CatchClause = catchClause
 	data.FinallyBlock = finallyBlock
+	data.facts = propagateSubtreeFacts(tryBlock) |
+		propagateSubtreeFacts(catchClause) |
+		propagateSubtreeFacts(finallyBlock)
 	return newNode(KindTryStatement, data, f.hooks)
 }
 
@@ -2694,12 +2637,6 @@ func (node *TryStatement) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewTryStatement(node.TryBlock, node.CatchClause, node.FinallyBlock), node.AsNode(), f.hooks)
 }
 
-func (node *TryStatement) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.TryBlock) |
-		propagateSubtreeFacts(node.CatchClause) |
-		propagateSubtreeFacts(node.FinallyBlock)
-}
-
 func IsTryStatement(node *Node) bool {
 	return node.Kind == KindTryStatement
 }
@@ -2718,6 +2655,8 @@ func (f *NodeFactory) NewCatchClause(variableDeclaration *VariableDeclarationNod
 	data := &CatchClause{}
 	data.VariableDeclaration = variableDeclaration
 	data.Block = block
+	data.facts = propagateSubtreeFacts(variableDeclaration) |
+		propagateSubtreeFacts(block)
 	return newNode(KindCatchClause, data, f.hooks)
 }
 
@@ -2738,11 +2677,6 @@ func (node *CatchClause) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *CatchClause) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewCatchClause(node.VariableDeclaration, node.Block), node.AsNode(), f.hooks)
-}
-
-func (node *CatchClause) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.VariableDeclaration) |
-		propagateSubtreeFacts(node.Block)
 }
 
 func (node *CatchClause) propagateSubtreeFacts() SubtreeFacts {
@@ -2801,7 +2735,7 @@ func (node *LabeledStatement) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewLabeledStatement(node.Label, node.Statement), node.AsNode(), f.hooks)
 }
 
-func (node *LabeledStatement) computeSubtreeFacts() SubtreeFacts {
+func (node *LabeledStatement) SubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Statement)
 }
 
@@ -2841,7 +2775,7 @@ func (node *ExpressionStatement) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewExpressionStatement(node.Expression), node.AsNode(), f.hooks)
 }
 
-func (node *ExpressionStatement) computeSubtreeFacts() SubtreeFacts {
+func (node *ExpressionStatement) SubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Expression)
 }
 
@@ -2863,6 +2797,7 @@ func (f *NodeFactory) NewBlock(statements *NodeList, multiline bool) *Node {
 	data := f.blockPool.New()
 	data.Statements = statements
 	data.Multiline = multiline
+	data.facts = propagateNodeListSubtreeFacts(statements, propagateSubtreeFacts)
 	return newNode(KindBlock, data, f.hooks)
 }
 
@@ -2885,10 +2820,6 @@ func (node *Block) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewBlock(node.Statements, node.Multiline), node.AsNode(), f.hooks)
 }
 
-func (node *Block) computeSubtreeFacts() SubtreeFacts {
-	return propagateNodeListSubtreeFacts(node.Statements, propagateSubtreeFacts)
-}
-
 func IsBlock(node *Node) bool {
 	return node.Kind == KindBlock
 }
@@ -2906,6 +2837,12 @@ func (f *NodeFactory) NewVariableStatement(modifiers *ModifierList, declarationL
 	data := f.variableStatementPool.New()
 	data.modifiers = modifiers
 	data.DeclarationList = declarationList
+	if modifiers != nil && modifiers.ModifierFlags&ModifierFlagsAmbient != 0 {
+		data.facts = SubtreeContainsTypeScript
+	} else {
+		data.facts = propagateModifierListSubtreeFacts(modifiers) |
+			propagateSubtreeFacts(declarationList)
+	}
 	return newNode(KindVariableStatement, data, f.hooks)
 }
 
@@ -2926,15 +2863,6 @@ func (node *VariableStatement) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *VariableStatement) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewVariableStatement(node.Modifiers(), node.DeclarationList), node.AsNode(), f.hooks)
-}
-
-func (node *VariableStatement) computeSubtreeFacts() SubtreeFacts {
-	if node.modifiers != nil && node.modifiers.ModifierFlags&ModifierFlagsAmbient != 0 {
-		return SubtreeContainsTypeScript
-	} else {
-		return propagateModifierListSubtreeFacts(node.modifiers) |
-			propagateSubtreeFacts(node.DeclarationList)
-	}
 }
 
 func IsVariableStatement(node *Node) bool {
@@ -2960,6 +2888,10 @@ func (f *NodeFactory) NewVariableDeclaration(name *BindingName, exclamationToken
 	data.ExclamationToken = exclamationToken
 	data.Type = typeNode
 	data.Initializer = initializer
+	data.facts = propagateSubtreeFacts(name) |
+		propagateEraseableSyntaxSubtreeFacts(exclamationToken) |
+		propagateEraseableSyntaxSubtreeFacts(typeNode) |
+		propagateSubtreeFacts(initializer)
 	return newNode(KindVariableDeclaration, data, f.hooks)
 }
 
@@ -2986,13 +2918,6 @@ func (node *VariableDeclaration) Name() *DeclarationName {
 	return node.name
 }
 
-func (node *VariableDeclaration) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.name) |
-		propagateEraseableSyntaxSubtreeFacts(node.ExclamationToken) |
-		propagateEraseableSyntaxSubtreeFacts(node.Type) |
-		propagateSubtreeFacts(node.Initializer)
-}
-
 func IsVariableDeclaration(node *Node) bool {
 	return node.Kind == KindVariableDeclaration
 }
@@ -3008,6 +2933,8 @@ type VariableDeclarationList struct {
 func (f *NodeFactory) NewVariableDeclarationList(flags NodeFlags, declarations *NodeList) *Node {
 	data := f.variableDeclarationListPool.New()
 	data.Declarations = declarations
+	data.facts = propagateNodeListSubtreeFacts(declarations, propagateSubtreeFacts) |
+		core.IfElse(flags&NodeFlagsUsing != 0, SubtreeContainsESNext, SubtreeFactsNone)
 	node := newNode(KindVariableDeclarationList, data, f.hooks)
 	node.Flags |= flags
 	return node
@@ -3032,11 +2959,6 @@ func (node *VariableDeclarationList) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewVariableDeclarationList(node.Flags, node.Declarations), node.AsNode(), f.hooks)
 }
 
-func (node *VariableDeclarationList) computeSubtreeFacts() SubtreeFacts {
-	return propagateNodeListSubtreeFacts(node.Declarations, propagateSubtreeFacts) |
-		core.IfElse(node.Flags&NodeFlagsUsing != 0, SubtreeContainsESNext, SubtreeFactsNone)
-}
-
 func (node *VariableDeclarationList) propagateSubtreeFacts() SubtreeFacts {
 	return node.SubtreeFacts() & ^SubtreeExclusionsVariableDeclarationList
 }
@@ -3056,6 +2978,12 @@ type BindingPattern struct {
 func (f *NodeFactory) NewBindingPattern(kind Kind, elements *NodeList) *Node {
 	data := &BindingPattern{}
 	data.Elements = elements
+	switch kind {
+	case KindObjectBindingPattern:
+		data.facts = propagateNodeListSubtreeFacts(elements, propagateObjectBindingElementSubtreeFacts)
+	case KindArrayBindingPattern:
+		data.facts = propagateNodeListSubtreeFacts(elements, propagateBindingElementSubtreeFacts)
+	}
 	return newNode(kind, data, f.hooks)
 }
 
@@ -3076,17 +3004,6 @@ func (node *BindingPattern) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *BindingPattern) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewBindingPattern(node.Kind, node.Elements), node.AsNode(), f.hooks)
-}
-
-func (node *BindingPattern) computeSubtreeFacts() SubtreeFacts {
-	switch node.Kind {
-	case KindObjectBindingPattern:
-		return propagateNodeListSubtreeFacts(node.Elements, propagateObjectBindingElementSubtreeFacts)
-	case KindArrayBindingPattern:
-		return propagateNodeListSubtreeFacts(node.Elements, propagateBindingElementSubtreeFacts)
-	default:
-		return SubtreeFactsNone
-	}
 }
 
 func (node *BindingPattern) propagateSubtreeFacts() SubtreeFacts {
@@ -3127,6 +3044,15 @@ func (f *NodeFactory) NewParameterDeclaration(modifiers *ModifierList, dotDotDot
 	data.QuestionToken = questionToken
 	data.Type = typeNode
 	data.Initializer = initializer
+	if name != nil && IsThisIdentifier(name) {
+		data.facts = SubtreeContainsTypeScript
+	} else {
+		data.facts = propagateModifierListSubtreeFacts(modifiers) |
+			propagateSubtreeFacts(name) |
+			propagateEraseableSyntaxSubtreeFacts(questionToken) |
+			propagateEraseableSyntaxSubtreeFacts(typeNode) |
+			propagateSubtreeFacts(initializer)
+	}
 	return newNode(KindParameter, data, f.hooks)
 }
 
@@ -3148,18 +3074,6 @@ func (node *ParameterDeclaration) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *ParameterDeclaration) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewParameterDeclaration(node.Modifiers(), node.DotDotDotToken, node.Name(), node.QuestionToken, node.Type, node.Initializer), node.AsNode(), f.hooks)
-}
-
-func (node *ParameterDeclaration) computeSubtreeFacts() SubtreeFacts {
-	if node.name != nil && IsThisIdentifier(node.name) {
-		return SubtreeContainsTypeScript
-	} else {
-		return propagateModifierListSubtreeFacts(node.modifiers) |
-			propagateSubtreeFacts(node.name) |
-			propagateEraseableSyntaxSubtreeFacts(node.QuestionToken) |
-			propagateEraseableSyntaxSubtreeFacts(node.Type) |
-			propagateSubtreeFacts(node.Initializer)
-	}
 }
 
 func (node *ParameterDeclaration) propagateSubtreeFacts() SubtreeFacts {
@@ -3194,6 +3108,10 @@ func (f *NodeFactory) NewBindingElement(dotDotDotToken *TokenNode, propertyName 
 	data.PropertyName = propertyName
 	data.name = name
 	data.Initializer = initializer
+	data.facts = propagateSubtreeFacts(propertyName) |
+		propagateSubtreeFacts(name) |
+		propagateSubtreeFacts(initializer) |
+		SubtreeContainsRest
 	return newNode(KindBindingElement, data, f.hooks)
 }
 
@@ -3218,13 +3136,6 @@ func (node *BindingElement) Clone(f *NodeFactory) *Node {
 
 func (node *BindingElement) Name() *DeclarationName {
 	return node.name
-}
-
-func (node *BindingElement) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.PropertyName) |
-		propagateSubtreeFacts(node.name) |
-		propagateSubtreeFacts(node.Initializer) |
-		SubtreeContainsRest
 }
 
 func IsBindingElement(node *Node) bool {
@@ -3286,6 +3197,21 @@ func (f *NodeFactory) NewFunctionDeclaration(modifiers *ModifierList, asteriskTo
 	data.Parameters = parameters
 	data.Type = returnType
 	data.Body = body
+	if body == nil || modifiers != nil && modifiers.ModifierFlags&ModifierFlagsAmbient != 0 {
+		data.facts = SubtreeContainsTypeScript
+	} else {
+		isAsync := modifiers != nil && modifiers.ModifierFlags&ModifierFlagsAsync != 0
+		isGenerator := asteriskToken != nil
+		data.facts = propagateModifierListSubtreeFacts(modifiers) |
+			propagateSubtreeFacts(asteriskToken) |
+			propagateSubtreeFacts(name) |
+			propagateEraseableSyntaxListSubtreeFacts(typeParameters) |
+			propagateNodeListSubtreeFacts(parameters, propagateSubtreeFacts) |
+			propagateEraseableSyntaxSubtreeFacts(returnType) |
+			propagateSubtreeFacts(body) |
+			core.IfElse(isAsync && isGenerator, SubtreeContainsES2018, SubtreeFactsNone) |
+			core.IfElse(isAsync && !isGenerator, SubtreeContainsES2017, SubtreeFactsNone)
+	}
 	return newNode(KindFunctionDeclaration, data, f.hooks)
 }
 
@@ -3311,24 +3237,6 @@ func (node *FunctionDeclaration) Clone(f *NodeFactory) *Node {
 
 func (node *FunctionDeclaration) Name() *DeclarationName {
 	return node.name
-}
-
-func (node *FunctionDeclaration) computeSubtreeFacts() SubtreeFacts {
-	if node.Body == nil || node.ModifierFlags()&ModifierFlagsAmbient != 0 {
-		return SubtreeContainsTypeScript
-	} else {
-		isAsync := node.ModifierFlags()&ModifierFlagsAsync != 0
-		isGenerator := node.AsteriskToken != nil
-		return propagateModifierListSubtreeFacts(node.modifiers) |
-			propagateSubtreeFacts(node.AsteriskToken) |
-			propagateSubtreeFacts(node.name) |
-			propagateEraseableSyntaxListSubtreeFacts(node.TypeParameters) |
-			propagateNodeListSubtreeFacts(node.Parameters, propagateSubtreeFacts) |
-			propagateEraseableSyntaxSubtreeFacts(node.Type) |
-			propagateSubtreeFacts(node.Body) |
-			core.IfElse(isAsync && isGenerator, SubtreeContainsES2018, SubtreeFactsNone) |
-			core.IfElse(isAsync && !isGenerator, SubtreeContainsES2017, SubtreeFactsNone)
-	}
 }
 
 func (node *FunctionDeclaration) propagateSubtreeFacts() SubtreeFacts {
@@ -3360,18 +3268,6 @@ func (node *ClassLikeBase) ForEachChild(v Visitor) bool {
 func (node *ClassLikeBase) Name() *DeclarationName        { return node.name }
 func (node *ClassLikeBase) ClassLikeData() *ClassLikeBase { return node }
 
-func (node *ClassLikeBase) computeSubtreeFacts() SubtreeFacts {
-	if node.modifiers != nil && node.modifiers.ModifierFlags&ModifierFlagsAmbient != 0 {
-		return SubtreeContainsTypeScript
-	} else {
-		return propagateModifierListSubtreeFacts(node.modifiers) |
-			propagateSubtreeFacts(node.name) |
-			propagateEraseableSyntaxListSubtreeFacts(node.TypeParameters) |
-			propagateNodeListSubtreeFacts(node.HeritageClauses, propagateSubtreeFacts) |
-			propagateNodeListSubtreeFacts(node.Members, propagateSubtreeFacts)
-	}
-}
-
 // ClassDeclaration
 
 type ClassDeclaration struct {
@@ -3386,6 +3282,15 @@ func (f *NodeFactory) NewClassDeclaration(modifiers *ModifierList, name *Identif
 	data.TypeParameters = typeParameters
 	data.HeritageClauses = heritageClauses
 	data.Members = members
+	if modifiers != nil && modifiers.ModifierFlags&ModifierFlagsAmbient != 0 {
+		data.facts = SubtreeContainsTypeScript
+	} else {
+		data.facts = propagateModifierListSubtreeFacts(modifiers) |
+			propagateSubtreeFacts(name) |
+			propagateEraseableSyntaxListSubtreeFacts(typeParameters) |
+			propagateNodeListSubtreeFacts(heritageClauses, propagateSubtreeFacts) |
+			propagateNodeListSubtreeFacts(members, propagateSubtreeFacts)
+	}
 	return newNode(KindClassDeclaration, data, f.hooks)
 }
 
@@ -3434,6 +3339,15 @@ func (f *NodeFactory) NewClassExpression(modifiers *ModifierList, name *Identifi
 	data.TypeParameters = typeParameters
 	data.HeritageClauses = heritageClauses
 	data.Members = members
+	if modifiers != nil && modifiers.ModifierFlags&ModifierFlagsAmbient != 0 {
+		data.facts = SubtreeContainsTypeScript
+	} else {
+		data.facts = propagateModifierListSubtreeFacts(modifiers) |
+			propagateSubtreeFacts(name) |
+			propagateEraseableSyntaxListSubtreeFacts(typeParameters) |
+			propagateNodeListSubtreeFacts(heritageClauses, propagateSubtreeFacts) |
+			propagateNodeListSubtreeFacts(members, propagateSubtreeFacts)
+	}
 	return newNode(KindClassExpression, data, f.hooks)
 }
 
@@ -3481,6 +3395,12 @@ func (f *NodeFactory) NewHeritageClause(token Kind, types *NodeList) *Node {
 	data := &HeritageClause{}
 	data.Token = token
 	data.Types = types
+	switch token {
+	case KindExtendsKeyword:
+		data.facts = propagateNodeListSubtreeFacts(types, propagateSubtreeFacts)
+	case KindImplementsKeyword:
+		data.facts = SubtreeContainsTypeScript
+	}
 	return newNode(KindHeritageClause, data, f.hooks)
 }
 
@@ -3501,17 +3421,6 @@ func (node *HeritageClause) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *HeritageClause) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewHeritageClause(node.Kind, node.Types), node.AsNode(), f.hooks)
-}
-
-func (node *HeritageClause) computeSubtreeFacts() SubtreeFacts {
-	switch node.Token {
-	case KindExtendsKeyword:
-		return propagateNodeListSubtreeFacts(node.Types, propagateSubtreeFacts)
-	case KindImplementsKeyword:
-		return SubtreeContainsTypeScript
-	default:
-		return SubtreeFactsNone
-	}
 }
 
 func IsHeritageClause(node *Node) bool {
@@ -3629,6 +3538,9 @@ func (f *NodeFactory) NewEnumMember(name *PropertyName, initializer *Expression)
 	data := &EnumMember{}
 	data.name = name
 	data.Initializer = initializer
+	data.facts = propagateSubtreeFacts(name) |
+		propagateSubtreeFacts(initializer) |
+		SubtreeContainsTypeScript
 	return newNode(KindEnumMember, data, f.hooks)
 }
 
@@ -3655,12 +3567,6 @@ func (node *EnumMember) Name() *DeclarationName {
 	return node.name
 }
 
-func (node *EnumMember) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.name) |
-		propagateSubtreeFacts(node.Initializer) |
-		SubtreeContainsTypeScript
-}
-
 func IsEnumMember(node *Node) bool {
 	return node.Kind == KindEnumMember
 }
@@ -3682,6 +3588,14 @@ func (f *NodeFactory) NewEnumDeclaration(modifiers *ModifierList, name *Identifi
 	data.modifiers = modifiers
 	data.name = name
 	data.Members = members
+	if modifiers != nil && modifiers.ModifierFlags&ModifierFlagsAmbient != 0 {
+		data.facts = SubtreeContainsTypeScript
+	} else {
+		data.facts = propagateModifierListSubtreeFacts(modifiers) |
+			propagateSubtreeFacts(name) |
+			propagateNodeListSubtreeFacts(members, propagateSubtreeFacts) |
+			SubtreeContainsTypeScript
+	}
 	return newNode(KindEnumDeclaration, data, f.hooks)
 }
 
@@ -3708,17 +3622,6 @@ func (node *EnumDeclaration) Name() *DeclarationName {
 	return node.name
 }
 
-func (node *EnumDeclaration) computeSubtreeFacts() SubtreeFacts {
-	if node.modifiers != nil && node.modifiers.ModifierFlags&ModifierFlagsAmbient != 0 {
-		return SubtreeContainsTypeScript
-	} else {
-		return propagateModifierListSubtreeFacts(node.modifiers) |
-			propagateSubtreeFacts(node.name) |
-			propagateNodeListSubtreeFacts(node.Members, propagateSubtreeFacts) |
-			SubtreeContainsTypeScript
-	}
-}
-
 func IsEnumDeclaration(node *Node) bool {
 	return node.Kind == KindEnumDeclaration
 }
@@ -3734,6 +3637,7 @@ type ModuleBlock struct {
 func (f *NodeFactory) NewModuleBlock(statements *NodeList) *Node {
 	data := &ModuleBlock{}
 	data.Statements = statements
+	data.facts = propagateNodeListSubtreeFacts(statements, propagateSubtreeFacts)
 	return newNode(KindModuleBlock, data, f.hooks)
 }
 
@@ -3754,10 +3658,6 @@ func (node *ModuleBlock) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *ModuleBlock) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewModuleBlock(node.Statements), node.AsNode(), f.hooks)
-}
-
-func (node *ModuleBlock) computeSubtreeFacts() SubtreeFacts {
-	return propagateNodeListSubtreeFacts(node.Statements, propagateSubtreeFacts)
 }
 
 func IsModuleBlock(node *Node) bool {
@@ -3784,6 +3684,14 @@ func (f *NodeFactory) NewModuleDeclaration(modifiers *ModifierList, keyword Kind
 	data.Keyword = keyword
 	data.name = name
 	data.Body = body
+	if modifiers != nil && modifiers.ModifierFlags&ModifierFlagsAmbient != 0 {
+		data.facts = SubtreeContainsTypeScript
+	} else {
+		data.facts = propagateModifierListSubtreeFacts(modifiers) |
+			propagateSubtreeFacts(name) |
+			propagateSubtreeFacts(body) |
+			SubtreeContainsTypeScript
+	}
 	node := newNode(KindModuleDeclaration, data, f.hooks)
 	return node
 }
@@ -3809,17 +3717,6 @@ func (node *ModuleDeclaration) Clone(f *NodeFactory) *Node {
 
 func (node *ModuleDeclaration) Name() *DeclarationName {
 	return node.name
-}
-
-func (node *ModuleDeclaration) computeSubtreeFacts() SubtreeFacts {
-	if node.ModifierFlags()&ModifierFlagsAmbient != 0 {
-		return SubtreeContainsTypeScript
-	} else {
-		return propagateModifierListSubtreeFacts(node.modifiers) |
-			propagateSubtreeFacts(node.name) |
-			propagateSubtreeFacts(node.Body) |
-			SubtreeContainsTypeScript
-	}
 }
 
 func (node *ModuleDeclaration) propagateSubtreeFacts() SubtreeFacts {
@@ -3872,6 +3769,13 @@ func (f *NodeFactory) NewImportEqualsDeclaration(modifiers *ModifierList, isType
 	data.IsTypeOnly = isTypeOnly
 	data.name = name
 	data.ModuleReference = moduleReference
+	if isTypeOnly || !IsExternalModuleReference(moduleReference) {
+		data.facts = SubtreeContainsTypeScript
+	} else {
+		data.facts = propagateModifierListSubtreeFacts(modifiers) |
+			propagateSubtreeFacts(name) |
+			propagateSubtreeFacts(moduleReference)
+	}
 	return newNode(KindImportEqualsDeclaration, data, f.hooks)
 }
 
@@ -3898,16 +3802,6 @@ func (node *ImportEqualsDeclaration) Name() *DeclarationName {
 	return node.name
 }
 
-func (node *ImportEqualsDeclaration) computeSubtreeFacts() SubtreeFacts {
-	if node.IsTypeOnly || !IsExternalModuleReference(node.ModuleReference) {
-		return SubtreeContainsTypeScript
-	} else {
-		return propagateModifierListSubtreeFacts(node.modifiers) |
-			propagateSubtreeFacts(node.name) |
-			propagateSubtreeFacts(node.ModuleReference)
-	}
-}
-
 func IsImportEqualsDeclaration(node *Node) bool {
 	return node.Kind == KindImportEqualsDeclaration
 }
@@ -3929,6 +3823,10 @@ func (f *NodeFactory) NewImportDeclaration(modifiers *ModifierList, importClause
 	data.ImportClause = importClause
 	data.ModuleSpecifier = moduleSpecifier
 	data.Attributes = attributes
+	data.facts = propagateModifierListSubtreeFacts(modifiers) |
+		propagateSubtreeFacts(importClause) |
+		propagateSubtreeFacts(moduleSpecifier) |
+		propagateSubtreeFacts(attributes)
 	return newNode(KindImportDeclaration, data, f.hooks)
 }
 
@@ -3949,13 +3847,6 @@ func (node *ImportDeclaration) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *ImportDeclaration) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewImportDeclaration(node.Modifiers(), node.ImportClause, node.ModuleSpecifier, node.Attributes), node.AsNode(), f.hooks)
-}
-
-func (node *ImportDeclaration) computeSubtreeFacts() SubtreeFacts {
-	return propagateModifierListSubtreeFacts(node.modifiers) |
-		propagateSubtreeFacts(node.ImportClause) |
-		propagateSubtreeFacts(node.ModuleSpecifier) |
-		propagateSubtreeFacts(node.Attributes)
 }
 
 func IsImportDeclaration(node *Node) bool {
@@ -3979,6 +3870,12 @@ func (f *NodeFactory) NewImportSpecifier(isTypeOnly bool, propertyName *ModuleEx
 	data.IsTypeOnly = isTypeOnly
 	data.PropertyName = propertyName
 	data.name = name
+	if isTypeOnly {
+		data.facts = SubtreeContainsTypeScript
+	} else {
+		data.facts = propagateSubtreeFacts(propertyName) |
+			propagateSubtreeFacts(name)
+	}
 	return newNode(KindImportSpecifier, data, f.hooks)
 }
 
@@ -4003,15 +3900,6 @@ func (node *ImportSpecifier) Clone(f *NodeFactory) *Node {
 
 func (node *ImportSpecifier) Name() *DeclarationName {
 	return node.name
-}
-
-func (node *ImportSpecifier) computeSubtreeFacts() SubtreeFacts {
-	if node.IsTypeOnly {
-		return SubtreeContainsTypeScript
-	} else {
-		return propagateSubtreeFacts(node.PropertyName) |
-			propagateSubtreeFacts(node.name)
-	}
 }
 
 func IsImportSpecifier(node *Node) bool {
@@ -4050,7 +3938,7 @@ func (node *ExternalModuleReference) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewExternalModuleReference(node.Expression), node.AsNode(), f.hooks)
 }
 
-func (node *ExternalModuleReference) computeSubtreeFacts() SubtreeFacts {
+func (node *ExternalModuleReference) SubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Expression)
 }
 
@@ -4075,6 +3963,12 @@ func (f *NodeFactory) NewImportClause(isTypeOnly bool, name *IdentifierNode, nam
 	data.IsTypeOnly = isTypeOnly
 	data.name = name
 	data.NamedBindings = namedBindings
+	if isTypeOnly {
+		data.facts = SubtreeContainsTypeScript
+	} else {
+		data.facts = propagateSubtreeFacts(name) |
+			propagateSubtreeFacts(namedBindings)
+	}
 	return newNode(KindImportClause, data, f.hooks)
 }
 
@@ -4099,15 +3993,6 @@ func (node *ImportClause) Clone(f *NodeFactory) *Node {
 
 func (node *ImportClause) Name() *DeclarationName {
 	return node.name
-}
-
-func (node *ImportClause) computeSubtreeFacts() SubtreeFacts {
-	if node.IsTypeOnly {
-		return SubtreeContainsTypeScript
-	} else {
-		return propagateSubtreeFacts(node.name) |
-			propagateSubtreeFacts(node.NamedBindings)
-	}
 }
 
 func IsImportClause(node *Node) bool {
@@ -4152,7 +4037,7 @@ func (node *NamespaceImport) Name() *DeclarationName {
 	return node.name
 }
 
-func (node *NamespaceImport) computeSubtreeFacts() SubtreeFacts {
+func (node *NamespaceImport) SubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.name)
 }
 
@@ -4171,6 +4056,7 @@ type NamedImports struct {
 func (f *NodeFactory) NewNamedImports(elements *ImportSpecifierList) *Node {
 	data := &NamedImports{}
 	data.Elements = elements
+	data.facts = propagateNodeListSubtreeFacts(elements, propagateSubtreeFacts)
 	return newNode(KindNamedImports, data, f.hooks)
 }
 
@@ -4191,10 +4077,6 @@ func (node *NamedImports) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *NamedImports) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewNamedImports(node.Elements), node.AsNode(), f.hooks)
-}
-
-func (node *NamedImports) computeSubtreeFacts() SubtreeFacts {
-	return propagateNodeListSubtreeFacts(node.Elements, propagateSubtreeFacts)
 }
 
 func IsNamedImports(node *Node) bool {
@@ -4219,6 +4101,8 @@ func (f *NodeFactory) NewExportAssignment(modifiers *ModifierList, isExportEqual
 	data.modifiers = modifiers
 	data.IsExportEquals = isExportEquals
 	data.Expression = expression
+	data.facts = propagateModifierListSubtreeFacts(modifiers) |
+		propagateSubtreeFacts(expression)
 	return newNode(KindExportAssignment, data, f.hooks)
 }
 
@@ -4239,10 +4123,6 @@ func (node *ExportAssignment) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *ExportAssignment) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewExportAssignment(node.Modifiers(), node.IsExportEquals, node.Expression), node.AsNode(), f.hooks)
-}
-
-func (node *ExportAssignment) computeSubtreeFacts() SubtreeFacts {
-	return propagateModifierListSubtreeFacts(node.modifiers) | propagateSubtreeFacts(node.Expression)
 }
 
 func IsExportAssignment(node *Node) bool {
@@ -4313,6 +4193,14 @@ func (f *NodeFactory) NewExportDeclaration(modifiers *ModifierList, isTypeOnly b
 	data.ExportClause = exportClause
 	data.ModuleSpecifier = moduleSpecifier
 	data.Attributes = attributes
+	if isTypeOnly {
+		data.facts = SubtreeContainsTypeScript
+	} else {
+		data.facts = propagateModifierListSubtreeFacts(modifiers) |
+			propagateSubtreeFacts(exportClause) |
+			propagateSubtreeFacts(moduleSpecifier) |
+			propagateSubtreeFacts(attributes)
+	}
 	return newNode(KindExportDeclaration, data, f.hooks)
 }
 
@@ -4333,14 +4221,6 @@ func (node *ExportDeclaration) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *ExportDeclaration) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewExportDeclaration(node.Modifiers(), node.IsTypeOnly, node.ExportClause, node.ModuleSpecifier, node.Attributes), node.AsNode(), f.hooks)
-}
-
-func (node *ExportDeclaration) computeSubtreeFacts() SubtreeFacts {
-	return propagateModifierListSubtreeFacts(node.modifiers) |
-		propagateSubtreeFacts(node.ExportClause) |
-		propagateSubtreeFacts(node.ModuleSpecifier) |
-		propagateSubtreeFacts(node.Attributes) |
-		core.IfElse(node.IsTypeOnly, SubtreeContainsTypeScript, SubtreeFactsNone)
 }
 
 func IsExportDeclaration(node *Node) bool {
@@ -4384,7 +4264,7 @@ func (node *NamespaceExport) Name() *DeclarationName {
 	return node.name
 }
 
-func (node *NamespaceExport) computeSubtreeFacts() SubtreeFacts {
+func (node *NamespaceExport) SubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.name)
 }
 
@@ -4403,6 +4283,7 @@ type NamedExports struct {
 func (f *NodeFactory) NewNamedExports(elements *NodeList) *Node {
 	data := &NamedExports{}
 	data.Elements = elements
+	data.facts = propagateNodeListSubtreeFacts(elements, propagateSubtreeFacts)
 	return newNode(KindNamedExports, data, f.hooks)
 }
 
@@ -4423,10 +4304,6 @@ func (node *NamedExports) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *NamedExports) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewNamedExports(node.Elements), node.AsNode(), f.hooks)
-}
-
-func (node *NamedExports) computeSubtreeFacts() SubtreeFacts {
-	return propagateNodeListSubtreeFacts(node.Elements, propagateSubtreeFacts)
 }
 
 func IsNamedExports(node *Node) bool {
@@ -4450,6 +4327,12 @@ func (f *NodeFactory) NewExportSpecifier(isTypeOnly bool, propertyName *ModuleEx
 	data.IsTypeOnly = isTypeOnly
 	data.PropertyName = propertyName
 	data.name = name
+	if isTypeOnly {
+		data.facts = SubtreeContainsTypeScript
+	} else {
+		data.facts = propagateSubtreeFacts(propertyName) |
+			propagateSubtreeFacts(name)
+	}
 	return newNode(KindExportSpecifier, data, f.hooks)
 }
 
@@ -4474,15 +4357,6 @@ func (node *ExportSpecifier) Clone(f *NodeFactory) *Node {
 
 func (node *ExportSpecifier) Name() *DeclarationName {
 	return node.name
-}
-
-func (node *ExportSpecifier) computeSubtreeFacts() SubtreeFacts {
-	if node.IsTypeOnly {
-		return SubtreeContainsTypeScript
-	} else {
-		return propagateSubtreeFacts(node.PropertyName) |
-			propagateSubtreeFacts(node.name)
-	}
 }
 
 func IsExportSpecifier(node *Node) bool {
@@ -4611,6 +4485,15 @@ func (f *NodeFactory) NewConstructorDeclaration(modifiers *ModifierList, typePar
 	data.Parameters = parameters
 	data.Type = returnType
 	data.Body = body
+	if body == nil {
+		data.facts = SubtreeContainsTypeScript
+	} else {
+		data.facts = propagateModifierListSubtreeFacts(modifiers) |
+			propagateEraseableSyntaxListSubtreeFacts(typeParameters) |
+			propagateNodeListSubtreeFacts(parameters, propagateSubtreeFacts) |
+			propagateEraseableSyntaxSubtreeFacts(returnType) |
+			propagateSubtreeFacts(body)
+	}
 	return newNode(KindConstructor, data, f.hooks)
 }
 
@@ -4631,18 +4514,6 @@ func (node *ConstructorDeclaration) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *ConstructorDeclaration) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewConstructorDeclaration(node.Modifiers(), node.TypeParameters, node.Parameters, node.Type, node.Body), node.AsNode(), f.hooks)
-}
-
-func (node *ConstructorDeclaration) computeSubtreeFacts() SubtreeFacts {
-	if node.Body == nil {
-		return SubtreeContainsTypeScript
-	} else {
-		return propagateModifierListSubtreeFacts(node.modifiers) |
-			propagateEraseableSyntaxListSubtreeFacts(node.TypeParameters) |
-			propagateNodeListSubtreeFacts(node.Parameters, propagateSubtreeFacts) |
-			propagateEraseableSyntaxSubtreeFacts(node.Type) |
-			propagateSubtreeFacts(node.Body)
-	}
 }
 
 func (node *ConstructorDeclaration) propagateSubtreeFacts() SubtreeFacts {
@@ -4673,19 +4544,6 @@ func (node *AccessorDeclarationBase) ForEachChild(v Visitor) bool {
 
 func (node *AccessorDeclarationBase) IsAccessorDeclaration() {}
 
-func (node *AccessorDeclarationBase) computeSubtreeFacts() SubtreeFacts {
-	if node.Body == nil {
-		return SubtreeContainsTypeScript
-	} else {
-		return propagateModifierListSubtreeFacts(node.modifiers) |
-			propagateSubtreeFacts(node.name) |
-			propagateEraseableSyntaxListSubtreeFacts(node.TypeParameters) |
-			propagateNodeListSubtreeFacts(node.Parameters, propagateSubtreeFacts) |
-			propagateEraseableSyntaxSubtreeFacts(node.Type) |
-			propagateSubtreeFacts(node.Body)
-	}
-}
-
 func (node *AccessorDeclarationBase) propagateSubtreeFacts() SubtreeFacts {
 	return node.SubtreeFacts() & ^SubtreeExclusionsAccessor |
 		propagateSubtreeFacts(node.name)
@@ -4705,6 +4563,16 @@ func (f *NodeFactory) NewGetAccessorDeclaration(modifiers *ModifierList, name *P
 	data.Parameters = parameters
 	data.Type = returnType
 	data.Body = body
+	if body == nil {
+		data.facts = SubtreeContainsTypeScript
+	} else {
+		data.facts = propagateModifierListSubtreeFacts(modifiers) |
+			propagateSubtreeFacts(name) |
+			propagateEraseableSyntaxListSubtreeFacts(typeParameters) |
+			propagateNodeListSubtreeFacts(parameters, propagateSubtreeFacts) |
+			propagateEraseableSyntaxSubtreeFacts(returnType) |
+			propagateSubtreeFacts(body)
+	}
 	return newNode(KindGetAccessor, data, f.hooks)
 }
 
@@ -4741,6 +4609,16 @@ func (f *NodeFactory) NewSetAccessorDeclaration(modifiers *ModifierList, name *P
 	data.Parameters = parameters
 	data.Type = returnType
 	data.Body = body
+	if body == nil {
+		data.facts = SubtreeContainsTypeScript
+	} else {
+		data.facts = propagateModifierListSubtreeFacts(modifiers) |
+			propagateSubtreeFacts(name) |
+			propagateEraseableSyntaxListSubtreeFacts(typeParameters) |
+			propagateNodeListSubtreeFacts(parameters, propagateSubtreeFacts) |
+			propagateEraseableSyntaxSubtreeFacts(returnType) |
+			propagateSubtreeFacts(body)
+	}
 	return newNode(KindSetAccessor, data, f.hooks)
 }
 
@@ -4873,6 +4751,22 @@ func (f *NodeFactory) NewMethodDeclaration(modifiers *ModifierList, asteriskToke
 	data.Parameters = parameters
 	data.Type = returnType
 	data.Body = body
+	if body == nil {
+		data.facts = SubtreeContainsTypeScript
+	} else {
+		isAsync := modifiers != nil && modifiers.ModifierFlags&ModifierFlagsAsync != 0
+		isGenerator := asteriskToken != nil
+		data.facts = propagateModifierListSubtreeFacts(modifiers) |
+			propagateSubtreeFacts(asteriskToken) |
+			propagateSubtreeFacts(name) |
+			propagateEraseableSyntaxSubtreeFacts(postfixToken) |
+			propagateEraseableSyntaxListSubtreeFacts(typeParameters) |
+			propagateNodeListSubtreeFacts(parameters, propagateSubtreeFacts) |
+			propagateSubtreeFacts(body) |
+			propagateEraseableSyntaxSubtreeFacts(returnType) |
+			core.IfElse(isAsync && isGenerator, SubtreeContainsES2018, SubtreeFactsNone) |
+			core.IfElse(isAsync && !isGenerator, SubtreeContainsES2017, SubtreeFactsNone)
+	}
 	return newNode(KindMethodDeclaration, data, f.hooks)
 }
 
@@ -4894,25 +4788,6 @@ func (node *MethodDeclaration) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *MethodDeclaration) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewMethodDeclaration(node.Modifiers(), node.AsteriskToken, node.Name(), node.PostfixToken, node.TypeParameters, node.Parameters, node.Type, node.Body), node.AsNode(), f.hooks)
-}
-
-func (node *MethodDeclaration) computeSubtreeFacts() SubtreeFacts {
-	if node.Body == nil {
-		return SubtreeContainsTypeScript
-	} else {
-		isAsync := node.modifiers != nil && node.modifiers.ModifierFlags&ModifierFlagsAsync != 0
-		isGenerator := node.AsteriskToken != nil
-		return propagateModifierListSubtreeFacts(node.modifiers) |
-			propagateSubtreeFacts(node.AsteriskToken) |
-			propagateSubtreeFacts(node.name) |
-			propagateEraseableSyntaxSubtreeFacts(node.PostfixToken) |
-			propagateEraseableSyntaxListSubtreeFacts(node.TypeParameters) |
-			propagateNodeListSubtreeFacts(node.Parameters, propagateSubtreeFacts) |
-			propagateSubtreeFacts(node.Body) |
-			propagateEraseableSyntaxSubtreeFacts(node.Type) |
-			core.IfElse(isAsync && isGenerator, SubtreeContainsES2018, SubtreeFactsNone) |
-			core.IfElse(isAsync && !isGenerator, SubtreeContainsES2017, SubtreeFactsNone)
-	}
 }
 
 func (node *MethodDeclaration) propagateSubtreeFacts() SubtreeFacts {
@@ -4986,6 +4861,12 @@ func (f *NodeFactory) NewPropertyDeclaration(modifiers *ModifierList, name *Prop
 	data.PostfixToken = postfixToken
 	data.Type = typeNode
 	data.Initializer = initializer
+	data.facts = propagateModifierListSubtreeFacts(modifiers) |
+		propagateSubtreeFacts(name) |
+		propagateEraseableSyntaxSubtreeFacts(postfixToken) |
+		propagateEraseableSyntaxSubtreeFacts(typeNode) |
+		propagateSubtreeFacts(initializer) |
+		SubtreeContainsClassFields
 	return newNode(KindPropertyDeclaration, data, f.hooks)
 }
 
@@ -5006,15 +4887,6 @@ func (node *PropertyDeclaration) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *PropertyDeclaration) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewPropertyDeclaration(node.Modifiers(), node.Name(), node.PostfixToken, node.Type, node.Initializer), node.AsNode(), f.hooks)
-}
-
-func (node *PropertyDeclaration) computeSubtreeFacts() SubtreeFacts {
-	return propagateModifierListSubtreeFacts(node.modifiers) |
-		propagateSubtreeFacts(node.name) |
-		propagateEraseableSyntaxSubtreeFacts(node.PostfixToken) |
-		propagateEraseableSyntaxSubtreeFacts(node.Type) |
-		propagateSubtreeFacts(node.Initializer) |
-		SubtreeContainsClassFields
 }
 
 func (node *PropertyDeclaration) propagateSubtreeFacts() SubtreeFacts {
@@ -5059,6 +4931,9 @@ func (f *NodeFactory) NewClassStaticBlockDeclaration(modifiers *ModifierList, bo
 	data := &ClassStaticBlockDeclaration{}
 	data.modifiers = modifiers
 	data.Body = body
+	data.facts = propagateModifierListSubtreeFacts(modifiers) |
+		propagateSubtreeFacts(body) |
+		SubtreeContainsClassFields
 	return newNode(KindClassStaticBlockDeclaration, data, f.hooks)
 }
 
@@ -5082,12 +4957,6 @@ func (node *ClassStaticBlockDeclaration) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *ClassStaticBlockDeclaration) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewClassStaticBlockDeclaration(node.Modifiers(), node.Body), node.AsNode(), f.hooks)
-}
-
-func (node *ClassStaticBlockDeclaration) computeSubtreeFacts() SubtreeFacts {
-	return propagateModifierListSubtreeFacts(node.modifiers) |
-		propagateSubtreeFacts(node.Body) |
-		SubtreeContainsClassFields
 }
 
 func IsClassStaticBlockDeclaration(node *Node) bool {
@@ -5133,7 +5002,7 @@ func (node *KeywordExpression) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewKeywordExpression(node.Kind), node.AsNode(), f.hooks)
 }
 
-func (node *KeywordExpression) computeSubtreeFacts() SubtreeFacts {
+func (node *KeywordExpression) SubtreeFacts() SubtreeFacts {
 	switch node.Kind {
 	case KindThisKeyword:
 		return SubtreeContainsLexicalThis
@@ -5211,7 +5080,7 @@ func (node *BigIntLiteral) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewBigIntLiteral(node.Text), node.AsNode(), f.hooks)
 }
 
-func (node *BigIntLiteral) computeSubtreeFacts() SubtreeFacts {
+func (node *BigIntLiteral) SubtreeFacts() SubtreeFacts {
 	return SubtreeContainsES2020
 }
 
@@ -5272,6 +5141,10 @@ func (f *NodeFactory) NewBinaryExpression(left *Expression, operatorToken *Token
 	data.Left = left
 	data.OperatorToken = operatorToken
 	data.Right = right
+	data.facts = propagateSubtreeFacts(left) |
+		propagateSubtreeFacts(operatorToken) |
+		propagateSubtreeFacts(right) |
+		core.IfElse(operatorToken.Kind == KindInKeyword && IsPrivateIdentifier(left), SubtreeContainsClassFields, SubtreeFactsNone)
 	return newNode(KindBinaryExpression, data, f.hooks)
 }
 
@@ -5292,13 +5165,6 @@ func (node *BinaryExpression) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *BinaryExpression) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewBinaryExpression(node.Left, node.OperatorToken, node.Right), node.AsNode(), f.hooks)
-}
-
-func (node *BinaryExpression) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Left) |
-		propagateSubtreeFacts(node.OperatorToken) |
-		propagateSubtreeFacts(node.Right) |
-		core.IfElse(node.OperatorToken.Kind == KindInKeyword && IsPrivateIdentifier(node.Left), SubtreeContainsClassFields, SubtreeFactsNone)
 }
 
 func IsBinaryExpression(node *Node) bool {
@@ -5339,7 +5205,7 @@ func (node *PrefixUnaryExpression) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewPrefixUnaryExpression(node.Operator, node.Operand), node.AsNode(), f.hooks)
 }
 
-func (node *PrefixUnaryExpression) computeSubtreeFacts() SubtreeFacts {
+func (node *PrefixUnaryExpression) SubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Operand)
 }
 
@@ -5381,7 +5247,7 @@ func (node *PostfixUnaryExpression) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewPostfixUnaryExpression(node.Operand, node.Operator), node.AsNode(), f.hooks)
 }
 
-func (node *PostfixUnaryExpression) computeSubtreeFacts() SubtreeFacts {
+func (node *PostfixUnaryExpression) SubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Operand)
 }
 
@@ -5419,7 +5285,7 @@ func (node *YieldExpression) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewYieldExpression(node.AsteriskToken, node.Expression), node.AsNode(), f.hooks)
 }
 
-func (node *YieldExpression) computeSubtreeFacts() SubtreeFacts {
+func (node *YieldExpression) SubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Expression) | SubtreeContainsES2018
 }
 
@@ -5443,6 +5309,12 @@ func (f *NodeFactory) NewArrowFunction(modifiers *ModifierList, typeParameters *
 	data.Type = returnType
 	data.EqualsGreaterThanToken = equalsGreaterThanToken
 	data.Body = body
+	data.facts = propagateModifierListSubtreeFacts(modifiers) |
+		propagateEraseableSyntaxListSubtreeFacts(typeParameters) |
+		propagateNodeListSubtreeFacts(parameters, propagateSubtreeFacts) |
+		propagateEraseableSyntaxSubtreeFacts(returnType) |
+		propagateSubtreeFacts(body) |
+		core.IfElse(modifiers != nil && modifiers.ModifierFlags&ModifierFlagsAsync != 0, SubtreeContainsES2017, SubtreeFactsNone)
 	return newNode(KindArrowFunction, data, f.hooks)
 }
 
@@ -5468,15 +5340,6 @@ func (node *ArrowFunction) Clone(f *NodeFactory) *Node {
 
 func (node *ArrowFunction) Name() *DeclarationName {
 	return nil
-}
-
-func (node *ArrowFunction) computeSubtreeFacts() SubtreeFacts {
-	return propagateModifierListSubtreeFacts(node.modifiers) |
-		propagateEraseableSyntaxListSubtreeFacts(node.TypeParameters) |
-		propagateNodeListSubtreeFacts(node.Parameters, propagateSubtreeFacts) |
-		propagateEraseableSyntaxSubtreeFacts(node.Type) |
-		propagateSubtreeFacts(node.Body) |
-		core.IfElse(node.ModifierFlags()&ModifierFlagsAsync != 0, SubtreeContainsES2017, SubtreeFactsNone)
 }
 
 func (node *ArrowFunction) propagateSubtreeFacts() SubtreeFacts {
@@ -5509,6 +5372,17 @@ func (f *NodeFactory) NewFunctionExpression(modifiers *ModifierList, asteriskTok
 	data.Parameters = parameters
 	data.Type = returnType
 	data.Body = body
+	isAsync := modifiers != nil && modifiers.ModifierFlags&ModifierFlagsAsync != 0
+	isGenerator := asteriskToken != nil
+	data.facts = propagateModifierListSubtreeFacts(modifiers) |
+		propagateSubtreeFacts(asteriskToken) |
+		propagateSubtreeFacts(name) |
+		propagateEraseableSyntaxListSubtreeFacts(typeParameters) |
+		propagateNodeListSubtreeFacts(parameters, propagateSubtreeFacts) |
+		propagateEraseableSyntaxSubtreeFacts(returnType) |
+		propagateSubtreeFacts(body) |
+		core.IfElse(isAsync && isGenerator, SubtreeContainsES2018, SubtreeFactsNone) |
+		core.IfElse(isAsync && !isGenerator, SubtreeContainsES2017, SubtreeFactsNone)
 	return newNode(KindFunctionExpression, data, f.hooks)
 }
 
@@ -5534,20 +5408,6 @@ func (node *FunctionExpression) Clone(f *NodeFactory) *Node {
 
 func (node *FunctionExpression) Name() *DeclarationName {
 	return node.name
-}
-
-func (node *FunctionExpression) computeSubtreeFacts() SubtreeFacts {
-	isAsync := node.modifiers != nil && node.modifiers.ModifierFlags&ModifierFlagsAsync != 0
-	isGenerator := node.AsteriskToken != nil
-	return propagateModifierListSubtreeFacts(node.modifiers) |
-		propagateSubtreeFacts(node.AsteriskToken) |
-		propagateSubtreeFacts(node.name) |
-		propagateEraseableSyntaxListSubtreeFacts(node.TypeParameters) |
-		propagateNodeListSubtreeFacts(node.Parameters, propagateSubtreeFacts) |
-		propagateEraseableSyntaxSubtreeFacts(node.Type) |
-		propagateSubtreeFacts(node.Body) |
-		core.IfElse(isAsync && isGenerator, SubtreeContainsES2018, SubtreeFactsNone) |
-		core.IfElse(isAsync && !isGenerator, SubtreeContainsES2017, SubtreeFactsNone)
 }
 
 func (node *FunctionExpression) propagateSubtreeFacts() SubtreeFacts {
@@ -5592,7 +5452,7 @@ func (node *AsExpression) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewAsExpression(node.Expression, node.Type), node.AsNode(), f.hooks)
 }
 
-func (node *AsExpression) computeSubtreeFacts() SubtreeFacts {
+func (node *AsExpression) SubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Expression) | SubtreeContainsTypeScript
 }
 
@@ -5634,7 +5494,7 @@ func (node *SatisfiesExpression) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewSatisfiesExpression(node.Expression, node.Type), node.AsNode(), f.hooks)
 }
 
-func (node *SatisfiesExpression) computeSubtreeFacts() SubtreeFacts {
+func (node *SatisfiesExpression) SubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Expression) | SubtreeContainsTypeScript
 }
 
@@ -5665,6 +5525,9 @@ func (f *NodeFactory) NewConditionalExpression(condition *Expression, questionTo
 	data.WhenTrue = whenTrue
 	data.ColonToken = colonToken
 	data.WhenFalse = whenFalse
+	data.facts = propagateSubtreeFacts(condition) |
+		propagateSubtreeFacts(whenTrue) |
+		propagateSubtreeFacts(whenFalse)
 	return newNode(KindConditionalExpression, data, f.hooks)
 }
 
@@ -5688,12 +5551,6 @@ func (node *ConditionalExpression) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewConditionalExpression(node.Condition, node.QuestionToken, node.WhenTrue, node.ColonToken, node.WhenFalse), node.AsNode(), f.hooks)
 }
 
-func (node *ConditionalExpression) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Condition) |
-		propagateSubtreeFacts(node.WhenTrue) |
-		propagateSubtreeFacts(node.WhenFalse)
-}
-
 // PropertyAccessExpression
 
 type PropertyAccessExpression struct {
@@ -5710,6 +5567,9 @@ func (f *NodeFactory) NewPropertyAccessExpression(expression *Expression, questi
 	data.Expression = expression
 	data.QuestionDotToken = questionDotToken
 	data.name = name
+	data.facts = propagateSubtreeFacts(expression) |
+		propagateSubtreeFacts(questionDotToken) |
+		propagateSubtreeFacts(name)
 	node := newNode(KindPropertyAccessExpression, data, f.hooks)
 	node.Flags |= flags & NodeFlagsOptionalChain
 	return node
@@ -5736,12 +5596,6 @@ func (node *PropertyAccessExpression) Clone(f *NodeFactory) *Node {
 
 func (node *PropertyAccessExpression) Name() *DeclarationName { return node.name }
 
-func (node *PropertyAccessExpression) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Expression) |
-		propagateSubtreeFacts(node.QuestionDotToken) |
-		propagateSubtreeFacts(node.name)
-}
-
 func (node *PropertyAccessExpression) propagateSubtreeFacts() SubtreeFacts {
 	return node.SubtreeFacts() & ^SubtreeExclusionsPropertyAccess
 }
@@ -5766,6 +5620,9 @@ func (f *NodeFactory) NewElementAccessExpression(expression *Expression, questio
 	data.Expression = expression
 	data.QuestionDotToken = questionDotToken
 	data.ArgumentExpression = argumentExpression
+	data.facts = propagateSubtreeFacts(expression) |
+		propagateSubtreeFacts(questionDotToken) |
+		propagateSubtreeFacts(argumentExpression)
 	node := newNode(KindElementAccessExpression, data, f.hooks)
 	node.Flags |= flags & NodeFlagsOptionalChain
 	return node
@@ -5788,12 +5645,6 @@ func (node *ElementAccessExpression) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *ElementAccessExpression) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewElementAccessExpression(node.Expression, node.QuestionDotToken, node.ArgumentExpression, node.Flags), node.AsNode(), f.hooks)
-}
-
-func (node *ElementAccessExpression) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Expression) |
-		propagateSubtreeFacts(node.QuestionDotToken) |
-		propagateSubtreeFacts(node.ArgumentExpression)
 }
 
 func (node *ElementAccessExpression) propagateSubtreeFacts() SubtreeFacts {
@@ -5821,6 +5672,11 @@ func (f *NodeFactory) NewCallExpression(expression *Expression, questionDotToken
 	data.QuestionDotToken = questionDotToken
 	data.TypeArguments = typeArguments
 	data.Arguments = arguments
+	data.facts = propagateSubtreeFacts(expression) |
+		propagateSubtreeFacts(questionDotToken) |
+		propagateEraseableSyntaxListSubtreeFacts(typeArguments) |
+		propagateNodeListSubtreeFacts(arguments, propagateSubtreeFacts) |
+		core.IfElse(expression.Kind == KindImportKeyword, SubtreeContainsDynamicImport, SubtreeFactsNone)
 	node := newNode(KindCallExpression, data, f.hooks)
 	node.Flags |= flags & NodeFlagsOptionalChain
 	return node
@@ -5843,14 +5699,6 @@ func (node *CallExpression) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *CallExpression) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewCallExpression(node.Expression, node.QuestionDotToken, node.TypeArguments, node.Arguments, node.Flags), node.AsNode(), f.hooks)
-}
-
-func (node *CallExpression) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Expression) |
-		propagateSubtreeFacts(node.QuestionDotToken) |
-		propagateEraseableSyntaxListSubtreeFacts(node.TypeArguments) |
-		propagateNodeListSubtreeFacts(node.Arguments, propagateSubtreeFacts) |
-		core.IfElse(node.Expression.Kind == KindImportKeyword, SubtreeContainsDynamicImport, SubtreeFactsNone)
 }
 
 func (node *CallExpression) propagateSubtreeFacts() SubtreeFacts {
@@ -5876,6 +5724,9 @@ func (f *NodeFactory) NewNewExpression(expression *Expression, typeArguments *No
 	data.Expression = expression
 	data.TypeArguments = typeArguments
 	data.Arguments = arguments
+	data.facts = propagateSubtreeFacts(expression) |
+		propagateEraseableSyntaxListSubtreeFacts(typeArguments) |
+		propagateNodeListSubtreeFacts(arguments, propagateSubtreeFacts)
 	return newNode(KindNewExpression, data, f.hooks)
 }
 
@@ -5896,12 +5747,6 @@ func (node *NewExpression) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *NewExpression) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewNewExpression(node.Expression, node.TypeArguments, node.Arguments), node.AsNode(), f.hooks)
-}
-
-func (node *NewExpression) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Expression) |
-		propagateEraseableSyntaxListSubtreeFacts(node.TypeArguments) |
-		propagateNodeListSubtreeFacts(node.Arguments, propagateSubtreeFacts)
 }
 
 func (node *NewExpression) propagateSubtreeFacts() SubtreeFacts {
@@ -5926,6 +5771,8 @@ func (f *NodeFactory) NewMetaProperty(keywordToken Kind, name *IdentifierNode) *
 	data := &MetaProperty{}
 	data.KeywordToken = keywordToken
 	data.name = name
+	data.facts = propagateSubtreeFacts(name) |
+		core.IfElse(keywordToken == KindImportKeyword, SubtreeContainsES2020, SubtreeFactsNone)
 	return newNode(KindMetaProperty, data, f.hooks)
 }
 
@@ -5950,11 +5797,6 @@ func (node *MetaProperty) Clone(f *NodeFactory) *Node {
 
 func (node *MetaProperty) Name() *DeclarationName {
 	return node.name
-}
-
-func (node *MetaProperty) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.name) |
-		core.IfElse(node.KeywordToken == KindImportKeyword, SubtreeContainsES2020, SubtreeFactsNone)
 }
 
 func IsMetaProperty(node *Node) bool {
@@ -5994,7 +5836,7 @@ func (node *NonNullExpression) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewNonNullExpression(node.Expression, node.Flags), node.AsNode(), f.hooks)
 }
 
-func (node *NonNullExpression) computeSubtreeFacts() SubtreeFacts {
+func (node *NonNullExpression) SubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Expression) | SubtreeContainsTypeScript
 }
 
@@ -6034,7 +5876,7 @@ func (node *SpreadElement) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewSpreadElement(node.Expression), node.AsNode(), f.hooks)
 }
 
-func (node *SpreadElement) computeSubtreeFacts() SubtreeFacts {
+func (node *SpreadElement) SubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Expression)
 }
 
@@ -6055,6 +5897,8 @@ func (f *NodeFactory) NewTemplateExpression(head *TemplateHeadNode, templateSpan
 	data := &TemplateExpression{}
 	data.Head = head
 	data.TemplateSpans = templateSpans
+	data.facts = propagateSubtreeFacts(head) |
+		propagateNodeListSubtreeFacts(templateSpans, propagateSubtreeFacts)
 	return newNode(KindTemplateExpression, data, f.hooks)
 }
 
@@ -6075,11 +5919,6 @@ func (node *TemplateExpression) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *TemplateExpression) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewTemplateExpression(node.Head, node.TemplateSpans), node.AsNode(), f.hooks)
-}
-
-func (node *TemplateExpression) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Head) |
-		propagateNodeListSubtreeFacts(node.TemplateSpans, propagateSubtreeFacts)
 }
 
 func IsTemplateExpression(node *Node) bool {
@@ -6120,7 +5959,7 @@ func (node *TemplateSpan) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewTemplateSpan(node.Expression, node.Literal), node.AsNode(), f.hooks)
 }
 
-func (node *TemplateSpan) computeSubtreeFacts() SubtreeFacts {
+func (node *TemplateSpan) SubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Expression)
 }
 
@@ -6145,6 +5984,10 @@ func (f *NodeFactory) NewTaggedTemplateExpression(tag *Expression, questionDotTo
 	data.QuestionDotToken = questionDotToken
 	data.TypeArguments = typeArguments
 	data.Template = template
+	data.facts = propagateSubtreeFacts(tag) |
+		propagateSubtreeFacts(questionDotToken) |
+		propagateEraseableSyntaxListSubtreeFacts(typeArguments) |
+		propagateSubtreeFacts(template)
 	node := newNode(KindTaggedTemplateExpression, data, f.hooks)
 	node.Flags |= flags & NodeFlagsOptionalChain
 	return node
@@ -6167,13 +6010,6 @@ func (node *TaggedTemplateExpression) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *TaggedTemplateExpression) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewTaggedTemplateExpression(node.Tag, node.QuestionDotToken, node.TypeArguments, node.Template, node.Flags), node.AsNode(), f.hooks)
-}
-
-func (node *TaggedTemplateExpression) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Tag) |
-		propagateSubtreeFacts(node.QuestionDotToken) |
-		propagateEraseableSyntaxListSubtreeFacts(node.TypeArguments) |
-		propagateSubtreeFacts(node.Template)
 }
 
 func IsTaggedTemplateExpression(node *Node) bool {
@@ -6212,7 +6048,7 @@ func (node *ParenthesizedExpression) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewParenthesizedExpression(node.Expression), node.AsNode(), f.hooks)
 }
 
-func (node *ParenthesizedExpression) computeSubtreeFacts() SubtreeFacts {
+func (node *ParenthesizedExpression) SubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Expression)
 }
 
@@ -6237,6 +6073,7 @@ func (f *NodeFactory) NewArrayLiteralExpression(elements *NodeList, multiLine bo
 	data := &ArrayLiteralExpression{}
 	data.Elements = elements
 	data.MultiLine = multiLine
+	data.facts = propagateNodeListSubtreeFacts(elements, propagateSubtreeFacts)
 	return newNode(KindArrayLiteralExpression, data, f.hooks)
 }
 
@@ -6257,10 +6094,6 @@ func (node *ArrayLiteralExpression) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *ArrayLiteralExpression) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewArrayLiteralExpression(node.Elements, node.MultiLine), node.AsNode(), f.hooks)
-}
-
-func (node *ArrayLiteralExpression) computeSubtreeFacts() SubtreeFacts {
-	return propagateNodeListSubtreeFacts(node.Elements, propagateSubtreeFacts)
 }
 
 func (node *ArrayLiteralExpression) propagateSubtreeFacts() SubtreeFacts {
@@ -6285,6 +6118,7 @@ func (f *NodeFactory) NewObjectLiteralExpression(properties *NodeList, multiLine
 	data := &ObjectLiteralExpression{}
 	data.Properties = properties
 	data.MultiLine = multiLine
+	data.facts = propagateNodeListSubtreeFacts(properties, propagateSubtreeFacts)
 	return newNode(KindObjectLiteralExpression, data, f.hooks)
 }
 
@@ -6305,10 +6139,6 @@ func (node *ObjectLiteralExpression) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *ObjectLiteralExpression) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewObjectLiteralExpression(node.Properties, node.MultiLine), node.AsNode(), f.hooks)
-}
-
-func (node *ObjectLiteralExpression) computeSubtreeFacts() SubtreeFacts {
-	return propagateNodeListSubtreeFacts(node.Properties, propagateSubtreeFacts)
 }
 
 func (node *ObjectLiteralExpression) propagateSubtreeFacts() SubtreeFacts {
@@ -6357,7 +6187,7 @@ func (node *SpreadAssignment) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewSpreadAssignment(node.Expression), node.AsNode(), f.hooks)
 }
 
-func (node *SpreadAssignment) computeSubtreeFacts() SubtreeFacts {
+func (node *SpreadAssignment) SubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Expression) | SubtreeContainsES2018 | SubtreeContainsObjectRestOrSpread
 }
 
@@ -6381,6 +6211,8 @@ func (f *NodeFactory) NewPropertyAssignment(modifiers *ModifierList, name *Prope
 	data.name = name
 	data.PostfixToken = postfixToken
 	data.Initializer = initializer
+	data.facts = propagateSubtreeFacts(name) |
+		propagateSubtreeFacts(initializer)
 	return newNode(KindPropertyAssignment, data, f.hooks)
 }
 
@@ -6401,11 +6233,6 @@ func (node *PropertyAssignment) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *PropertyAssignment) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewPropertyAssignment(node.Modifiers(), node.Name(), node.PostfixToken, node.Initializer), node.AsNode(), f.hooks)
-}
-
-func (node *PropertyAssignment) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.name) |
-		propagateSubtreeFacts(node.Initializer)
 }
 
 func IsPropertyAssignment(node *Node) bool {
@@ -6430,6 +6257,9 @@ func (f *NodeFactory) NewShorthandPropertyAssignment(modifiers *ModifierList, na
 	data.PostfixToken = postfixToken
 	data.EqualsToken = equalsToken
 	data.ObjectAssignmentInitializer = objectAssignmentInitializer
+	data.facts = propagateSubtreeFacts(name) | // we do not use propagateSubtreeFacts here because this is an IdentifierReference
+		propagateSubtreeFacts(objectAssignmentInitializer) |
+		SubtreeContainsTypeScript // may require rewriting in a TypeScript namespace
 	return newNode(KindShorthandPropertyAssignment, data, f.hooks)
 }
 
@@ -6450,12 +6280,6 @@ func (node *ShorthandPropertyAssignment) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *ShorthandPropertyAssignment) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewShorthandPropertyAssignment(node.Modifiers(), node.Name(), node.PostfixToken, node.EqualsToken, node.ObjectAssignmentInitializer), node.AsNode(), f.hooks)
-}
-
-func (node *ShorthandPropertyAssignment) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.name) | // we do not use propagateSubtreeFacts here because this is an IdentifierReference
-		propagateSubtreeFacts(node.ObjectAssignmentInitializer) |
-		SubtreeContainsTypeScript // may require rewriting in a TypeScript namespace
 }
 
 func IsShorthandPropertyAssignment(node *Node) bool {
@@ -6494,7 +6318,7 @@ func (node *DeleteExpression) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewDeleteExpression(node.Expression), node.AsNode(), f.hooks)
 }
 
-func (node *DeleteExpression) computeSubtreeFacts() SubtreeFacts {
+func (node *DeleteExpression) SubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Expression)
 }
 
@@ -6530,7 +6354,7 @@ func (node *TypeOfExpression) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewTypeOfExpression(node.Expression), node.AsNode(), f.hooks)
 }
 
-func (node *TypeOfExpression) computeSubtreeFacts() SubtreeFacts {
+func (node *TypeOfExpression) SubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Expression)
 }
 
@@ -6570,7 +6394,7 @@ func (node *VoidExpression) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewVoidExpression(node.Expression), node.AsNode(), f.hooks)
 }
 
-func (node *VoidExpression) computeSubtreeFacts() SubtreeFacts {
+func (node *VoidExpression) SubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Expression)
 }
 
@@ -6606,7 +6430,7 @@ func (node *AwaitExpression) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewAwaitExpression(node.Expression), node.AsNode(), f.hooks)
 }
 
-func (node *AwaitExpression) computeSubtreeFacts() SubtreeFacts {
+func (node *AwaitExpression) SubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Expression) | SubtreeContainsES2017 | SubtreeContainsES2018 | SubtreeContainsAwait
 }
 
@@ -6648,7 +6472,7 @@ func (node *TypeAssertion) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewTypeAssertion(node.Type, node.Expression), node.AsNode(), f.hooks)
 }
 
-func (node *TypeAssertion) computeSubtreeFacts() SubtreeFacts {
+func (node *TypeAssertion) SubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Expression) | SubtreeContainsTypeScript
 }
 
@@ -6980,6 +6804,8 @@ func (f *NodeFactory) NewExpressionWithTypeArguments(expression *Expression, typ
 	data := &ExpressionWithTypeArguments{}
 	data.Expression = expression
 	data.TypeArguments = typeArguments
+	data.facts = propagateSubtreeFacts(expression) |
+		propagateEraseableSyntaxListSubtreeFacts(typeArguments)
 	return newNode(KindExpressionWithTypeArguments, data, f.hooks)
 }
 
@@ -7000,11 +6826,6 @@ func (node *ExpressionWithTypeArguments) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *ExpressionWithTypeArguments) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewExpressionWithTypeArguments(node.Expression, node.TypeArguments), node.AsNode(), f.hooks)
-}
-
-func (node *ExpressionWithTypeArguments) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Expression) |
-		propagateEraseableSyntaxListSubtreeFacts(node.TypeArguments)
 }
 
 func IsExpressionWithTypeArguments(node *Node) bool {
@@ -7162,6 +6983,8 @@ func (f *NodeFactory) NewImportAttribute(name *ImportAttributeName, value *Expre
 	data := &ImportAttribute{}
 	data.name = name
 	data.Value = value
+	data.facts = propagateSubtreeFacts(name) |
+		propagateSubtreeFacts(value)
 	return newNode(KindImportAttribute, data, f.hooks)
 }
 
@@ -7184,11 +7007,6 @@ func (node *ImportAttribute) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewImportAttribute(node.Name(), node.Value), node.AsNode(), f.hooks)
 }
 
-func (node *ImportAttribute) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.name) |
-		propagateSubtreeFacts(node.Value)
-}
-
 func (node *ImportAttribute) Name() *ImportAttributeName {
 	return node.name
 }
@@ -7208,6 +7026,7 @@ func (f *NodeFactory) NewImportAttributes(token Kind, attributes *NodeList, mult
 	data.Token = token
 	data.Attributes = attributes
 	data.MultiLine = multiLine
+	data.facts = propagateNodeListSubtreeFacts(attributes, propagateSubtreeFacts)
 	return newNode(KindImportAttributes, data, f.hooks)
 }
 
@@ -7228,10 +7047,6 @@ func (node *ImportAttributes) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *ImportAttributes) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewImportAttributes(node.Token, node.Attributes, node.MultiLine), node.AsNode(), f.hooks)
-}
-
-func (node *ImportAttributes) computeSubtreeFacts() SubtreeFacts {
-	return propagateNodeListSubtreeFacts(node.Attributes, propagateSubtreeFacts)
 }
 
 func IsImportAttributes(node *Node) bool {
@@ -7831,7 +7646,7 @@ func (node *PartiallyEmittedExpression) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewPartiallyEmittedExpression(node.Expression), node.AsNode(), f.hooks)
 }
 
-func (node *PartiallyEmittedExpression) computeSubtreeFacts() SubtreeFacts {
+func (node *PartiallyEmittedExpression) SubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Expression)
 }
 
@@ -7858,6 +7673,10 @@ func (f *NodeFactory) NewJsxElement(openingElement *JsxOpeningElementNode, child
 	data.OpeningElement = openingElement
 	data.Children = children
 	data.ClosingElement = closingElement
+	data.facts = propagateSubtreeFacts(openingElement) |
+		propagateNodeListSubtreeFacts(children, propagateSubtreeFacts) |
+		propagateSubtreeFacts(closingElement) |
+		SubtreeContainsJsx
 	return newNode(KindJsxElement, data, f.hooks)
 }
 
@@ -7880,13 +7699,6 @@ func (node *JsxElement) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewJsxElement(node.OpeningElement, node.Children, node.ClosingElement), node.AsNode(), f.hooks)
 }
 
-func (node *JsxElement) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.OpeningElement) |
-		propagateNodeListSubtreeFacts(node.Children, propagateSubtreeFacts) |
-		propagateSubtreeFacts(node.ClosingElement) |
-		SubtreeContainsJsx
-}
-
 // JsxAttributes
 type JsxAttributes struct {
 	ExpressionBase
@@ -7898,6 +7710,8 @@ type JsxAttributes struct {
 func (f *NodeFactory) NewJsxAttributes(properties *NodeList) *Node {
 	data := &JsxAttributes{}
 	data.Properties = properties
+	data.facts = propagateNodeListSubtreeFacts(properties, propagateSubtreeFacts) |
+		SubtreeContainsJsx
 	return newNode(KindJsxAttributes, data, f.hooks)
 }
 
@@ -7920,11 +7734,6 @@ func (node *JsxAttributes) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewJsxAttributes(node.Properties), node.AsNode(), f.hooks)
 }
 
-func (node *JsxAttributes) computeSubtreeFacts() SubtreeFacts {
-	return propagateNodeListSubtreeFacts(node.Properties, propagateSubtreeFacts) |
-		SubtreeContainsJsx
-}
-
 func IsJsxAttributes(node *Node) bool {
 	return node.Kind == KindJsxAttributes
 }
@@ -7942,6 +7751,9 @@ func (f *NodeFactory) NewJsxNamespacedName(namespace *IdentifierNode, name *Iden
 	data := &JsxNamespacedName{}
 	data.Namespace = namespace
 	data.name = name
+	data.facts = propagateSubtreeFacts(namespace) |
+		propagateSubtreeFacts(name) |
+		SubtreeContainsJsx
 	return newNode(KindJsxNamespacedName, data, f.hooks)
 }
 
@@ -7968,12 +7780,6 @@ func (node *JsxNamespacedName) Name() *DeclarationName {
 	return node.name
 }
 
-func (node *JsxNamespacedName) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Namespace) |
-		propagateSubtreeFacts(node.name) |
-		SubtreeContainsJsx
-}
-
 func IsJsxNamespacedName(node *Node) bool {
 	return node.Kind == KindJsxNamespacedName
 }
@@ -7993,6 +7799,10 @@ func (f *NodeFactory) NewJsxOpeningElement(tagName *JsxTagNameExpression, typeAr
 	data.TagName = tagName
 	data.TypeArguments = typeArguments
 	data.Attributes = attributes
+	data.facts = propagateSubtreeFacts(tagName) |
+		propagateEraseableSyntaxListSubtreeFacts(typeArguments) |
+		propagateSubtreeFacts(attributes) |
+		SubtreeContainsJsx
 	return newNode(KindJsxOpeningElement, data, f.hooks)
 }
 
@@ -8015,13 +7825,6 @@ func (node *JsxOpeningElement) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewJsxOpeningElement(node.TagName, node.TypeArguments, node.Attributes), node.AsNode(), f.hooks)
 }
 
-func (node *JsxOpeningElement) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.TagName) |
-		propagateEraseableSyntaxListSubtreeFacts(node.TypeArguments) |
-		propagateSubtreeFacts(node.Attributes) |
-		SubtreeContainsJsx
-}
-
 func IsJsxOpeningElement(node *Node) bool {
 	return node.Kind == KindJsxOpeningElement
 }
@@ -8041,6 +7844,10 @@ func (f *NodeFactory) NewJsxSelfClosingElement(tagName *JsxTagNameExpression, ty
 	data.TagName = tagName
 	data.TypeArguments = typeArguments
 	data.Attributes = attributes
+	data.facts = propagateSubtreeFacts(tagName) |
+		propagateEraseableSyntaxListSubtreeFacts(typeArguments) |
+		propagateSubtreeFacts(attributes) |
+		SubtreeContainsJsx
 	return newNode(KindJsxSelfClosingElement, data, f.hooks)
 }
 
@@ -8063,13 +7870,6 @@ func (node *JsxSelfClosingElement) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewJsxSelfClosingElement(node.TagName, node.TypeArguments, node.Attributes), node.AsNode(), f.hooks)
 }
 
-func (node *JsxSelfClosingElement) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.TagName) |
-		propagateEraseableSyntaxListSubtreeFacts(node.TypeArguments) |
-		propagateSubtreeFacts(node.Attributes) |
-		SubtreeContainsJsx
-}
-
 func IsJsxSelfClosingElement(node *Node) bool {
 	return node.Kind == KindJsxSelfClosingElement
 }
@@ -8089,6 +7889,8 @@ func (f *NodeFactory) NewJsxFragment(openingFragment *JsxOpeningFragmentNode, ch
 	data.OpeningFragment = openingFragment
 	data.Children = children
 	data.ClosingFragment = closingFragment
+	data.facts = propagateNodeListSubtreeFacts(children, propagateSubtreeFacts) |
+		SubtreeContainsJsx
 	return newNode(KindJsxFragment, data, f.hooks)
 }
 
@@ -8111,11 +7913,6 @@ func (node *JsxFragment) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewJsxFragment(node.OpeningFragment, node.Children, node.ClosingFragment), node.AsNode(), f.hooks)
 }
 
-func (node *JsxFragment) computeSubtreeFacts() SubtreeFacts {
-	return propagateNodeListSubtreeFacts(node.Children, propagateSubtreeFacts) |
-		SubtreeContainsJsx
-}
-
 /// The opening element of a <>...</> JsxFragment
 
 type JsxOpeningFragment struct {
@@ -8130,7 +7927,7 @@ func (node *JsxOpeningFragment) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewJsxOpeningFragment(), node.AsNode(), f.hooks)
 }
 
-func (node *JsxOpeningFragment) computeSubtreeFacts() SubtreeFacts {
+func (node *JsxOpeningFragment) SubtreeFacts() SubtreeFacts {
 	return SubtreeContainsJsx
 }
 
@@ -8152,7 +7949,7 @@ func (node *JsxClosingFragment) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewJsxClosingFragment(), node.AsNode(), f.hooks)
 }
 
-func (node *JsxClosingFragment) computeSubtreeFacts() SubtreeFacts {
+func (node *JsxClosingFragment) SubtreeFacts() SubtreeFacts {
 	return SubtreeContainsJsx
 }
 
@@ -8170,6 +7967,9 @@ func (f *NodeFactory) NewJsxAttribute(name *JsxAttributeName, initializer *JsxAt
 	data := &JsxAttribute{}
 	data.name = name
 	data.Initializer = initializer
+	data.facts = propagateSubtreeFacts(name) |
+		propagateSubtreeFacts(initializer) |
+		SubtreeContainsJsx
 	return newNode(KindJsxAttribute, data, f.hooks)
 }
 
@@ -8194,12 +7994,6 @@ func (node *JsxAttribute) Clone(f *NodeFactory) *Node {
 
 func (node *JsxAttribute) Name() *JsxAttributeName {
 	return node.name
-}
-
-func (node *JsxAttribute) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.name) |
-		propagateSubtreeFacts(node.Initializer) |
-		SubtreeContainsJsx
 }
 
 func IsJsxAttribute(node *Node) bool {
@@ -8238,7 +8032,7 @@ func (node *JsxSpreadAttribute) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewJsxSpreadAttribute(node.Expression), node.AsNode(), f.hooks)
 }
 
-func (node *JsxSpreadAttribute) computeSubtreeFacts() SubtreeFacts {
+func (node *JsxSpreadAttribute) SubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Expression) | SubtreeContainsJsx
 }
 
@@ -8274,7 +8068,7 @@ func (node *JsxClosingElement) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewJsxClosingElement(node.TagName), node.AsNode(), f.hooks)
 }
 
-func (node *JsxClosingElement) computeSubtreeFacts() SubtreeFacts {
+func (node *JsxClosingElement) SubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.TagName) | SubtreeContainsJsx
 }
 
@@ -8316,7 +8110,7 @@ func (node *JsxExpression) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewJsxExpression(node.DotDotDotToken, node.Expression), node.AsNode(), f.hooks)
 }
 
-func (node *JsxExpression) computeSubtreeFacts() SubtreeFacts {
+func (node *JsxExpression) SubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Expression) | SubtreeContainsJsx
 }
 
@@ -8339,7 +8133,7 @@ func (node *JsxText) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewJsxText(node.Text, node.ContainsOnlyTriviaWhiteSpaces), node.AsNode(), f.hooks)
 }
 
-func (node *JsxText) computeSubtreeFacts() SubtreeFacts {
+func (node *JsxText) SubtreeFacts() SubtreeFacts {
 	return SubtreeContainsJsx
 }
 
@@ -9666,6 +9460,7 @@ func (f *NodeFactory) NewSourceFile(text string, fileName string, path tspath.Pa
 	data.path = path
 	data.Statements = statements
 	data.LanguageVersion = core.ScriptTargetLatest
+	data.facts = propagateNodeListSubtreeFacts(statements, propagateSubtreeFacts)
 	return newNode(KindSourceFile, data, f.hooks)
 }
 
@@ -9745,10 +9540,6 @@ func (node *SourceFile) Clone(f *NodeFactory) *Node {
 	newFile := updated.AsSourceFile()
 	newFile.copyFrom(node)
 	return cloneNode(updated, node.AsNode(), f.hooks)
-}
-
-func (node *SourceFile) computeSubtreeFacts() SubtreeFacts {
-	return propagateNodeListSubtreeFacts(node.Statements, propagateSubtreeFacts)
 }
 
 func (f *NodeFactory) UpdateSourceFile(node *SourceFile, statements *StatementList) *Node {
