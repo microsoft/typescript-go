@@ -8616,12 +8616,12 @@ func (c *Checker) hasCorrectArity(node *ast.Node, args []*ast.Node, signature *S
 			// Specifically, a template only can end in a TemplateTail or a Missing literal.
 			lastSpan := core.LastOrNil(template.AsTemplateExpression().TemplateSpans.Nodes)
 			// we should always have at least one span.
-			callIsIncomplete = ast.NodeIsMissing(lastSpan.AsTemplateSpan().Literal) // !!! || lastSpan.AsTemplateSpan().Literal.IsUnterminated
+			callIsIncomplete = ast.NodeIsMissing(lastSpan.AsTemplateSpan().Literal) || ast.IsUnterminatedLiteral(lastSpan.AsTemplateSpan().Literal)
 		} else {
 			// If the template didn't end in a backtick, or its beginning occurred right prior to EOF,
 			// then this might actually turn out to be a TemplateHead in the future;
 			// so we consider the call to be incomplete.
-			callIsIncomplete = false // !!! template.AsNoSubstitutionTemplateLiteral().IsUnterminated
+			callIsIncomplete = ast.IsUnterminatedLiteral(template)
 		}
 	case ast.IsDecorator(node):
 		argCount = c.getDecoratorArgumentCount(node, signature)

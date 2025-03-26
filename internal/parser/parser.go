@@ -5733,6 +5733,7 @@ func (p *Parser) parseLiteralExpression(intern bool) *ast.Node {
 		result.AsBigIntLiteral().TokenFlags |= tokenFlags & ast.TokenFlagsNumericLiteralFlags
 	case ast.KindRegularExpressionLiteral:
 		result = p.factory.NewRegularExpressionLiteral(text)
+		result.AsRegularExpressionLiteral().TokenFlags |= tokenFlags & ast.TokenFlagsRegularExpressionLiteralFlags
 	case ast.KindNoSubstitutionTemplateLiteral:
 		result = p.factory.NewNoSubstitutionTemplateLiteral(text)
 		result.AsNoSubstitutionTemplateLiteral().TokenFlags |= tokenFlags & ast.TokenFlagsTemplateLiteralLikeFlags

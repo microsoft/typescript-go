@@ -2569,3 +2569,7 @@ func IsRequireCall(node *Node, requireStringLiteralLikeArgument bool) bool {
 	}
 	return !requireStringLiteralLikeArgument || IsStringLiteralLike(call.Arguments.Nodes[0])
 }
+
+func IsUnterminatedLiteral(node *Node) bool {
+	return node.LiteralLikeData().TokenFlags&TokenFlagsUnterminated != 0
+}
