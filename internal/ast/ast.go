@@ -3281,7 +3281,7 @@ func (node *TypeAliasDeclaration) Name() *DeclarationName { return node.name }
 func IsTypeAliasDeclaration(node *Node) bool {
 	return node.Kind == KindTypeAliasDeclaration
 }
-// TODO: See if this is still necessary
+
 func IsTypeOrJSTypeAliasDeclaration(node *Node) bool {
 	return node.Kind == KindTypeAliasDeclaration || node.Kind == KindJSTypeAliasDeclaration
 }
