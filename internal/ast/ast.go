@@ -328,6 +328,8 @@ func (n *Node) Expression() *Node {
 		return n.AsExternalModuleReference().Expression
 	case KindExportAssignment:
 		return n.AsExportAssignment().Expression
+	case KindJSExportAssignment:
+		return n.AsJSExportAssignment().Expression
 	case KindDecorator:
 		return n.AsDecorator().Expression
 	}
@@ -495,7 +497,7 @@ func (n *Node) Type() *Node {
 		return n.AsJSDocNonNullableType().Type
 	case KindJSDocOptionalType:
 		return n.AsJSDocOptionalType().Type
-	case KindEnumMember, KindBindingElement, KindExportAssignment, KindBinaryExpression:
+	case KindEnumMember, KindBindingElement, KindExportAssignment, KindJSExportAssignment, KindBinaryExpression:
 		return nil
 	default:
 		funcLike := n.FunctionLikeData()
@@ -610,6 +612,8 @@ func (n *Node) IsTypeOnly() bool {
 	switch n.Kind {
 	case KindImportEqualsDeclaration:
 		return n.AsImportEqualsDeclaration().IsTypeOnly
+	case KindJSImportEqualsDeclaration:
+		return false
 	case KindImportSpecifier:
 		return n.AsImportSpecifier().IsTypeOnly
 	case KindImportClause:
@@ -838,6 +842,10 @@ func (n *Node) AsExportAssignment() *ExportAssignment {
 	return n.data.(*ExportAssignment)
 }
 
+func (n *Node) AsJSExportAssignment() *JSExportAssignment {
+	return n.data.(*JSExportAssignment)
+}
+
 func (n *Node) AsObjectLiteralExpression() *ObjectLiteralExpression {
 	return n.data.(*ObjectLiteralExpression)
 }
@@ -956,6 +964,10 @@ func (n *Node) AsImportClause() *ImportClause {
 
 func (n *Node) AsImportEqualsDeclaration() *ImportEqualsDeclaration {
 	return n.data.(*ImportEqualsDeclaration)
+}
+
+func (n *Node) AsJSImportEqualsDeclaration() *JSImportEqualsDeclaration {
+	return n.data.(*JSImportEqualsDeclaration)
 }
 
 func (n *Node) AsNamespaceImport() *NamespaceImport {
@@ -3517,6 +3529,53 @@ func IsImportEqualsDeclaration(node *Node) bool {
 	return node.Kind == KindImportEqualsDeclaration
 }
 
+// JSImportEqualsDeclaration
+
+type JSImportEqualsDeclaration struct {
+	StatementBase
+	DeclarationBase
+	ExportableBase
+	ModifiersBase
+	name       *IdentifierNode // IdentifierNode
+	// 'ExternalModuleReference' for an external module reference.
+	ModuleReference *ModuleReference // ModuleReference
+}
+
+func (f *NodeFactory) NewJSImportEqualsDeclaration(modifiers *ModifierList, name *IdentifierNode, moduleReference *ModuleReference) *Node {
+	data := &JSImportEqualsDeclaration{}
+	data.modifiers = modifiers
+	data.name = name
+	data.ModuleReference = moduleReference
+	return newNode(KindJSImportEqualsDeclaration, data, f.hooks)
+}
+
+func (f *NodeFactory) UpdateJSImportEqualsDeclaration(node *JSImportEqualsDeclaration, modifiers *ModifierList, name *IdentifierNode, moduleReference *ModuleReference) *Node {
+	if modifiers != node.modifiers || name != node.name || moduleReference != node.ModuleReference {
+		return updateNode(f.NewJSImportEqualsDeclaration(modifiers, name, moduleReference), node.AsNode(), f.hooks)
+	}
+	return node.AsNode()
+}
+
+func (node *JSImportEqualsDeclaration) ForEachChild(v Visitor) bool {
+	return visitModifiers(v, node.modifiers) || visit(v, node.name) || visit(v, node.ModuleReference)
+}
+
+func (node *JSImportEqualsDeclaration) VisitEachChild(v *NodeVisitor) *Node {
+	return v.Factory.UpdateJSImportEqualsDeclaration(node, v.visitModifiers(node.modifiers), v.visitNode(node.name), v.visitNode(node.ModuleReference))
+}
+
+func (node *JSImportEqualsDeclaration) Clone(f *NodeFactory) *Node {
+	return cloneNode(f.NewJSImportEqualsDeclaration(node.Modifiers(), node.Name(), node.ModuleReference), node.AsNode(), f.hooks)
+}
+
+func (node *JSImportEqualsDeclaration) Name() *DeclarationName {
+	return node.name
+}
+
+func IsJSImportEqualsDeclaration(node *Node) bool {
+	return node.Kind == KindJSImportEqualsDeclaration
+}
+
 // ImportDeclaration
 
 type ImportDeclaration struct {
@@ -3806,6 +3865,46 @@ func (node *ExportAssignment) Clone(f *NodeFactory) *Node {
 
 func IsExportAssignment(node *Node) bool {
 	return node.Kind == KindExportAssignment
+}
+
+// JSExportAssignment
+
+// This is either a synthetic declaration for `module.exports =`
+type JSExportAssignment struct {
+	StatementBase
+	DeclarationBase
+	ModifiersBase
+	Expression *Expression // Expression
+}
+
+func (f *NodeFactory) NewJSExportAssignment(modifiers *ModifierList, expression *Expression) *Node {
+	data := &JSExportAssignment{}
+	data.modifiers = modifiers
+	data.Expression = expression
+	return newNode(KindJSExportAssignment, data, f.hooks)
+}
+
+func (f *NodeFactory) UpdateJSExportAssignment(node *JSExportAssignment, modifiers *ModifierList, expression *Expression) *Node {
+	if modifiers != node.modifiers || expression != node.Expression {
+		return updateNode(f.NewJSExportAssignment(modifiers, expression), node.AsNode(), f.hooks)
+	}
+	return node.AsNode()
+}
+
+func (node *JSExportAssignment) ForEachChild(v Visitor) bool {
+	return visitModifiers(v, node.modifiers) || visit(v, node.Expression)
+}
+
+func (node *JSExportAssignment) VisitEachChild(v *NodeVisitor) *Node {
+	return v.Factory.UpdateJSExportAssignment(node, v.visitModifiers(node.modifiers), v.visitNode(node.Expression))
+}
+
+func (node *JSExportAssignment) Clone(f *NodeFactory) *Node {
+	return cloneNode(f.NewJSExportAssignment(node.Modifiers(), node.Expression), node.AsNode(), f.hooks)
+}
+
+func IsJSExportAssignment(node *Node) bool {
+	return node.Kind == KindJSExportAssignment
 }
 
 // NamespaceExportDeclaration

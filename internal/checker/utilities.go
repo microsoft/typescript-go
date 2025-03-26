@@ -296,6 +296,8 @@ func getNameFromImportDeclaration(node *ast.Node) *ast.Node {
 		return node.AsImportClause().Name()
 	case ast.KindImportEqualsDeclaration:
 		return node.AsImportEqualsDeclaration().Name()
+	case ast.KindJSImportEqualsDeclaration:
+		return node.AsJSImportEqualsDeclaration().Name()
 	}
 	return nil
 }
@@ -388,9 +390,9 @@ func canHaveSymbol(node *ast.Node) bool {
 	switch node.Kind {
 	case ast.KindArrowFunction, ast.KindBinaryExpression, ast.KindBindingElement, ast.KindCallExpression, ast.KindCallSignature,
 		ast.KindClassDeclaration, ast.KindClassExpression, ast.KindClassStaticBlockDeclaration, ast.KindConstructor, ast.KindConstructorType,
-		ast.KindConstructSignature, ast.KindElementAccessExpression, ast.KindEnumDeclaration, ast.KindEnumMember, ast.KindExportAssignment,
+		ast.KindConstructSignature, ast.KindElementAccessExpression, ast.KindEnumDeclaration, ast.KindEnumMember, ast.KindExportAssignment, ast.KindJSExportAssignment,
 		ast.KindExportDeclaration, ast.KindExportSpecifier, ast.KindFunctionDeclaration, ast.KindFunctionExpression, ast.KindFunctionType,
-		ast.KindGetAccessor, ast.KindIdentifier, ast.KindImportClause, ast.KindImportEqualsDeclaration, ast.KindImportSpecifier,
+		ast.KindGetAccessor, ast.KindIdentifier, ast.KindImportClause, ast.KindImportEqualsDeclaration, ast.KindJSImportEqualsDeclaration, ast.KindImportSpecifier,
 		ast.KindIndexSignature, ast.KindInterfaceDeclaration, ast.KindJSDocCallbackTag,
 		ast.KindJSDocParameterTag, ast.KindJSDocPropertyTag, ast.KindJSDocSignature, ast.KindJSDocTypedefTag, ast.KindJSDocTypeLiteral,
 		ast.KindJsxAttribute, ast.KindJsxAttributes, ast.KindJsxSpreadAttribute, ast.KindMappedType, ast.KindMethodDeclaration,
@@ -429,8 +431,8 @@ func isShorthandAmbientModule(node *ast.Node) bool {
 
 func getAliasDeclarationFromName(node *ast.Node) *ast.Node {
 	switch node.Parent.Kind {
-	case ast.KindImportClause, ast.KindImportSpecifier, ast.KindNamespaceImport, ast.KindExportSpecifier, ast.KindExportAssignment,
-		ast.KindImportEqualsDeclaration, ast.KindNamespaceExport:
+	case ast.KindImportClause, ast.KindImportSpecifier, ast.KindNamespaceImport, ast.KindExportSpecifier, ast.KindExportAssignment, ast.KindJSExportAssignment,
+		ast.KindImportEqualsDeclaration, ast.KindJSImportEqualsDeclaration, ast.KindNamespaceExport:
 		return node.Parent
 	case ast.KindQualifiedName:
 		return getAliasDeclarationFromName(node.Parent)
@@ -1606,30 +1608,15 @@ func getFunctionFlags(node *ast.Node) FunctionFlags {
 	return flags
 }
 
-func getLeftSideOfImportEqualsOrExportAssignment(nodeOnRightSide *ast.EntityName) *ast.Node {
-	for nodeOnRightSide.Parent.Kind == ast.KindQualifiedName {
-		nodeOnRightSide = nodeOnRightSide.Parent
-	}
-
-	if nodeOnRightSide.Parent.Kind == ast.KindImportEqualsDeclaration {
-		if nodeOnRightSide.Parent.AsImportEqualsDeclaration().ModuleReference == nodeOnRightSide {
-			return nodeOnRightSide.Parent
-		}
-		return nil
-	}
-
-	if nodeOnRightSide.Parent.Kind == ast.KindExportAssignment {
-		if nodeOnRightSide.Parent.AsExportAssignment().Expression == nodeOnRightSide {
-			return nodeOnRightSide.Parent
-		}
-		return nil
-	}
-
-	return nil
-}
-
 func isInRightSideOfImportOrExportAssignment(node *ast.EntityName) bool {
-	return getLeftSideOfImportEqualsOrExportAssignment(node) != nil
+	for node.Parent.Kind == ast.KindQualifiedName {
+		node = node.Parent
+	}
+
+	return node.Parent.Kind == ast.KindImportEqualsDeclaration && node.Parent.AsImportEqualsDeclaration().ModuleReference == node ||
+		node.Parent.Kind == ast.KindJSImportEqualsDeclaration && node.Parent.AsJSImportEqualsDeclaration().ModuleReference == node ||
+		node.Parent.Kind == ast.KindExportAssignment && node.Parent.AsExportAssignment().Expression == node ||
+		node.Parent.Kind == ast.KindJSExportAssignment && node.Parent.AsJSExportAssignment().Expression == node
 }
 
 func isJsxIntrinsicTagName(tagName *ast.Node) bool {
@@ -1667,12 +1654,6 @@ func isInNameOfExpressionWithTypeArguments(node *ast.Node) bool {
 	}
 
 	return node.Parent.Kind == ast.KindExpressionWithTypeArguments
-}
-
-func getTypeParameterFromJsDoc(node *ast.Node) *ast.Node {
-	name := node.Name().Text()
-	typeParameters := node.Parent.Parent.Parent.TypeParameters()
-	return core.Find(typeParameters, func(p *ast.Node) bool { return p.Name().Text() == name })
 }
 
 func isTypeDeclarationName(name *ast.Node) bool {

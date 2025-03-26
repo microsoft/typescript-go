@@ -92,6 +92,9 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 		ast.KindIndexSignature:
 		return nil
 
+	case ast.KindJSImportEqualsDeclaration, ast.KindJSExportAssignment:
+		// JS synthetic commonjs are elided
+		return nil
 	case ast.KindTypeAliasDeclaration,
 		ast.KindInterfaceDeclaration:
 		// TypeScript type-only declarations are elided.

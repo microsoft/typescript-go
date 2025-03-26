@@ -304,6 +304,8 @@ func (b *Binder) declareSymbolEx(symbolTable ast.SymbolTable, parent *ast.Symbol
 func (b *Binder) getDeclarationName(node *ast.Node) string {
 	if ast.IsExportAssignment(node) {
 		return core.IfElse(node.AsExportAssignment().IsExportEquals, ast.InternalSymbolNameExportEquals, ast.InternalSymbolNameDefault)
+	} else if ast.IsJSExportAssignment(node) {
+		return ast.InternalSymbolNameExportEquals
 	}
 	name := ast.GetNameOfDeclaration(node)
 	if name != nil {
@@ -684,7 +686,7 @@ func (b *Binder) bind(node *ast.Node) bool {
 		b.bindEnumDeclaration(node)
 	case ast.KindModuleDeclaration:
 		b.bindModuleDeclaration(node)
-	case ast.KindImportEqualsDeclaration, ast.KindNamespaceImport, ast.KindImportSpecifier, ast.KindExportSpecifier:
+	case ast.KindImportEqualsDeclaration, ast.KindJSImportEqualsDeclaration, ast.KindNamespaceImport, ast.KindImportSpecifier, ast.KindExportSpecifier:
 		b.declareSymbolAndAddToSymbolTable(node, ast.SymbolFlagsAlias, ast.SymbolFlagsAliasExcludes)
 	case ast.KindNamespaceExportDeclaration:
 		b.bindNamespaceExportDeclaration(node)
@@ -692,7 +694,7 @@ func (b *Binder) bind(node *ast.Node) bool {
 		b.bindImportClause(node)
 	case ast.KindExportDeclaration:
 		b.bindExportDeclaration(node)
-	case ast.KindExportAssignment:
+	case ast.KindExportAssignment, ast.KindJSExportAssignment:
 		b.bindExportAssignment(node)
 	case ast.KindSourceFile:
 		b.updateStrictModeStatementList(node.AsSourceFile().Statements)
@@ -857,7 +859,7 @@ func (b *Binder) bindExportAssignment(node *ast.Node) {
 		// If there is an `export default x;` alias declaration, can't `export default` anything else.
 		// (In contrast, you can still have `export default function f() {}` and `export default interface I {}`.)
 		symbol := b.declareSymbol(ast.GetExports(b.container.Symbol()), b.container.Symbol(), node, flags, ast.SymbolFlagsAll)
-		if node.AsExportAssignment().IsExportEquals {
+		if ast.IsJSExportAssignment(node) || node.AsExportAssignment().IsExportEquals {
 			// Will be an error later, since the module already has other exports. Just make sure this has a valueDeclaration set.
 			SetValueDeclaration(symbol, node)
 		}
@@ -894,7 +896,7 @@ func (b *Binder) hasExportDeclarations(node *ast.Node) bool {
 		}
 	}
 	return core.Some(statements, func(s *ast.Node) bool {
-		return ast.IsExportDeclaration(s) || ast.IsExportAssignment(s)
+		return ast.IsExportDeclaration(s) || ast.IsExportAssignment(s) || ast.IsJSExportAssignment(s)
 	})
 }
 

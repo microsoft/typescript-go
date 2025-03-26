@@ -64,7 +64,7 @@ func (r *emitResolver) isValueAliasDeclarationWorker(node *ast.Node) bool {
 	c := r.checker
 
 	switch node.Kind {
-	case ast.KindImportEqualsDeclaration:
+	case ast.KindImportEqualsDeclaration, ast.KindJSImportEqualsDeclaration:
 		return r.isAliasResolvedToValue(c.getSymbolOfDeclaration(node), false /*excludeTypeOnlyValues*/)
 	case ast.KindImportClause,
 		ast.KindNamespaceImport,
@@ -79,8 +79,8 @@ func (r *emitResolver) isValueAliasDeclarationWorker(node *ast.Node) bool {
 		}
 		return exportClause != nil && (ast.IsNamespaceExport(exportClause) ||
 			core.Some(exportClause.AsNamedExports().Elements.Nodes, r.isValueAliasDeclaration))
-	case ast.KindExportAssignment:
-		if node.AsExportAssignment().Expression != nil && node.AsExportAssignment().Expression.Kind == ast.KindIdentifier {
+	case ast.KindExportAssignment, ast.KindJSExportAssignment:
+		if node.Expression() != nil && node.Expression().Kind == ast.KindIdentifier {
 			return r.isAliasResolvedToValue(c.getSymbolOfDeclaration(node), true /*excludeTypeOnlyValues*/)
 		}
 		return true
@@ -118,11 +118,13 @@ func (r *emitResolver) IsTopLevelValueImportEqualsWithEntityName(node *ast.Node)
 	if !c.canCollectSymbolAliasAccessibilityData {
 		return true
 	}
-	if !ast.IsParseTreeNode(node) || node.Kind != ast.KindImportEqualsDeclaration || node.Parent.Kind != ast.KindSourceFile {
+	if !ast.IsParseTreeNode(node) || (node.Kind != ast.KindImportEqualsDeclaration && node.Kind != ast.KindJSImportEqualsDeclaration) || node.Parent.Kind != ast.KindSourceFile {
 		return false
 	}
-	n := node.AsImportEqualsDeclaration()
-	if ast.NodeIsMissing(n.ModuleReference) || n.ModuleReference.Kind != ast.KindExternalModuleReference {
+	if ast.IsImportEqualsDeclaration(node) && (ast.NodeIsMissing(node.AsImportEqualsDeclaration().ModuleReference) || node.AsImportEqualsDeclaration().ModuleReference.Kind != ast.KindExternalModuleReference) {
+		return false
+	}
+	if ast.IsJSImportEqualsDeclaration(node) && ast.NodeIsMissing(node.AsJSImportEqualsDeclaration().ModuleReference) {
 		return false
 	}
 
@@ -141,6 +143,9 @@ func (r *emitResolver) MarkLinkedReferencesRecursively(file *ast.SourceFile) {
 		visit = func(n *ast.Node) bool {
 			if ast.IsImportEqualsDeclaration(n) && n.ModifierFlags()&ast.ModifierFlagsExport == 0 {
 				return false // These are deferred and marked in a chain when referenced
+			}
+			if ast.IsJSExportAssignment(n) {
+				return false
 			}
 			if ast.IsImportDeclaration(n) {
 				return false // likewise, these are ultimately what get marked by calls on other nodes - we want to skip them

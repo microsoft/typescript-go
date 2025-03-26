@@ -69,6 +69,8 @@ func (tx *CommonJSModuleTransformer) visitTopLevel(node *ast.Node) *ast.Node {
 		node = tx.visitTopLevelExportDeclaration(node.AsExportDeclaration())
 	case ast.KindExportAssignment:
 		node = tx.visitTopLevelExportAssignment(node.AsExportAssignment())
+	case ast.KindJSExportAssignment:
+		node = nil
 	case ast.KindFunctionDeclaration:
 		node = tx.visitTopLevelFunctionDeclaration(node.AsFunctionDeclaration())
 	case ast.KindClassDeclaration:
@@ -384,7 +386,7 @@ func (tx *CommonJSModuleTransformer) transformCommonJSModule(node *ast.SourceFil
 // - The `statements` parameter is a statement list to which the down-level export statements are to be appended.
 func (tx *CommonJSModuleTransformer) appendExportEqualsIfNeeded(statements []*ast.Statement) []*ast.Statement {
 	if tx.currentModuleInfo.exportEquals != nil {
-		expressionResult := tx.visitor.VisitNode(tx.currentModuleInfo.exportEquals.Expression)
+		expressionResult := tx.visitor.VisitNode(tx.currentModuleInfo.exportEquals.Expression())
 		if expressionResult != nil {
 			statement := tx.factory.NewExpressionStatement(
 				tx.factory.NewBinaryExpression(
@@ -399,7 +401,7 @@ func (tx *CommonJSModuleTransformer) appendExportEqualsIfNeeded(statements []*as
 				),
 			)
 
-			tx.emitContext.AssignCommentAndSourceMapRanges(statement, tx.currentModuleInfo.exportEquals.AsNode())
+			tx.emitContext.AssignCommentAndSourceMapRanges(statement, tx.currentModuleInfo.exportEquals)
 			tx.emitContext.AddEmitFlags(statement, printer.EFNoComments)
 			statements = append(statements, statement)
 		}

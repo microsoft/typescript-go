@@ -436,7 +436,7 @@ func isImportStatementName(node *ast.Node) bool {
 	if ast.IsImportClause(node.Parent) && node == node.Parent.Name() {
 		return true
 	}
-	if ast.IsImportEqualsDeclaration(node.Parent) && node == node.Parent.Name() {
+	if (ast.IsImportEqualsDeclaration(node.Parent) || ast.IsJSImportEqualsDeclaration(node.Parent)) && node == node.Parent.Name() {
 		return true
 	}
 	return false

@@ -17,7 +17,7 @@ type externalModuleInfo struct {
 	exportedBindings             core.MultiMap[*ast.Declaration, *ast.ModuleExportName] // Maps local declarations to their associated export aliases
 	exportedNames                []*ast.ModuleExportName                                // all exported names in the module, both local and re-exported, excluding the names of locally exported function declarations
 	exportedFunctions            collections.OrderedSet[*ast.FunctionDeclarationNode]   // all of the top-level exported function declarations
-	exportEquals                 *ast.ExportAssignment                                  // an export= declaration if one was present
+	exportEquals                 *ast.Node                                              // an export=/module.exports= declaration if one was present
 	hasExportStarsToExportValues bool                                                   // whether this module contains export*
 }
 
@@ -67,7 +67,9 @@ func (c *externalModuleInfoCollector) collect() *externalModuleInfo {
 				// import x = require("mod")
 				c.addExternalImport(node)
 			}
-
+		case ast.KindJSImportEqualsDeclaration:
+			// const x = require("mod")
+			c.addExternalImport(node)
 		case ast.KindExportDeclaration:
 			n := node.AsExportDeclaration()
 			if n.ModuleSpecifier != nil {
@@ -101,10 +103,14 @@ func (c *externalModuleInfoCollector) collect() *externalModuleInfo {
 			}
 
 		case ast.KindExportAssignment:
-			n := node.AsExportAssignment()
-			if n.IsExportEquals && c.output.exportEquals == nil {
+			if node.AsExportAssignment().IsExportEquals && c.output.exportEquals == nil {
 				// export = x
-				c.output.exportEquals = n
+				c.output.exportEquals = node
+			}
+		case ast.KindJSExportAssignment:
+			if c.output.exportEquals == nil {
+				// module.exports = x
+				c.output.exportEquals = node
 			}
 
 		case ast.KindVariableStatement:
