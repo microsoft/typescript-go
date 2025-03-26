@@ -6433,9 +6433,9 @@ func (c *Checker) getDeclarationSpaces(node *ast.Declaration) DeclarationSpaces 
 		return DeclarationSpacesExportType | DeclarationSpacesExportValue
 	case ast.KindSourceFile:
 		return DeclarationSpacesExportType | DeclarationSpacesExportValue | DeclarationSpacesExportNamespace
-	case ast.KindExportAssignment, ast.KindBinaryExpression:
+	case ast.KindExportAssignment, ast.KindJSExportAssignment, ast.KindBinaryExpression:
 		var expression *ast.Node
-		if ast.IsExportAssignment(node) {
+		if ast.IsExportAssignment(node) || ast.IsJSExportAssignment(node) {
 			expression = node.Expression()
 		} else {
 			expression = node.AsBinaryExpression().Right
@@ -6447,7 +6447,7 @@ func (c *Checker) getDeclarationSpaces(node *ast.Declaration) DeclarationSpaces 
 		node = expression
 		// The below options all declare an Alias, which is allowed to merge with other values within the importing module.
 		fallthrough
-	case ast.KindImportEqualsDeclaration, ast.KindNamespaceImport, ast.KindImportClause:
+	case ast.KindImportEqualsDeclaration, ast.KindJSImportEqualsDeclaration, ast.KindNamespaceImport, ast.KindImportClause:
 		result := DeclarationSpacesNone
 		target := c.resolveAlias(c.getSymbolOfDeclaration(node))
 		for _, d := range target.Declarations {
@@ -6459,7 +6459,7 @@ func (c *Checker) getDeclarationSpaces(node *ast.Declaration) DeclarationSpaces 
 	case ast.KindMethodSignature, ast.KindPropertySignature:
 		return DeclarationSpacesExportType
 	}
-	panic("Unhandled case in getDeclarationSpaces")
+	panic("Unhandled case in getDeclarationSpaces: " + node.Kind.String())
 }
 
 func (c *Checker) checkTypeParameters(typeParameterDeclarations []*ast.Node) {
