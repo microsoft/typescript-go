@@ -14,6 +14,7 @@ linters:
     - bodyclose
     - canonicalheader
     - copyloopvar
+    - customlint
     - durationcheck
     - errcheck
     - errchkjson
@@ -42,9 +43,6 @@ linters:
     - unconvert
     - usestdlibvars
     - usetesting
-    - whitespace
-
-    - customlint
 
     # Need to add headers
     # - goheader
@@ -58,6 +56,7 @@ linters:
     # - testifylint
     # - unparam
     # - unused
+
   settings:
     custom:
       customlint:
