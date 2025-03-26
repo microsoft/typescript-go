@@ -1,7 +1,12 @@
 --- old.checkJsdocSatisfiesTag5.types
 +++ new.checkJsdocSatisfiesTag5.types
-@@= skipped -3, +3 lines =@@
+@@= skipped -1, +1 lines =@@
+ 
+ === /a.js ===
  /** @typedef {{ move(distance: number): void }} Movable */
++>Movable : any
++>move : (distance: number) => void
++>distance : number
  
  const car = /** @satisfies {Movable & Record<string, unknown>} */ ({
 ->car : { start(): void; move(d: number): void; stop(): void; }

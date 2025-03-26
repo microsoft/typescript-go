@@ -3,6 +3,10 @@
 === test.js ===
 /**
  * @typedef {(a: string, b: number) => void} Foo
+>Foo : any
+>a : string
+>b : number
+
  */
 
 class C {

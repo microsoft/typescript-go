@@ -18,6 +18,8 @@ stringSet.addAll(stringSet);
 // Comment out this JSDoc, and note that the errors index.js go away.
 /**
  * @typedef {Object} SomeObject
+>Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
  */
 class LazySet {
 >LazySet : Symbol(LazySet, Decl(LazySet.js, 0, 0))
@@ -37,5 +39,5 @@ class LazySet {
 }
 
 module.exports = LazySet;
->LazySet : Symbol(LazySet, Decl(index.js, 0, 5))
+>LazySet : Symbol(LazySet, Decl(LazySet.js, 0, 0))
 

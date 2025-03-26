@@ -1,7 +1,11 @@
 --- old.jsdocImportType.types
 +++ new.jsdocImportType.types
-@@= skipped -4, +4 lines =@@
+@@= skipped -2, +2 lines =@@
+ === use.js ===
+ /// <reference path='./types.d.ts'/>
  /** @typedef {import("./mod1")} C
++>C : any
++
   * @type {C} */
  var c;
 ->c : D
@@ -23,22 +27,19 @@
  >require : (name: string) => any
  >"./mod1" : "./mod1"
  
- /** @type {D} */
- var d;
-->d : D
-+>d : any
+@@= skipped -20, +22 lines =@@
+ >d : D
  
  d.chunk;
 ->d.chunk : number
-->d : D
-->chunk : number
 +>d.chunk : any
-+>d : any
+ >d : D
+->chunk : number
 +>chunk : any
  
  === types.d.ts ===
  declare function require(name: string): any;
-@@= skipped -34, +34 lines =@@
+@@= skipped -16, +16 lines =@@
  >module : { exports: any; }
  >exports : any
  

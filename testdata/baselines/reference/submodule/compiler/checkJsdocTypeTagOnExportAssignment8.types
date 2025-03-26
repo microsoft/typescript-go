@@ -5,12 +5,19 @@
 === a.js ===
 /**
  * @typedef Foo
+>Foo : any
+
  * @property {string} a
+>a : any
+
  * @property {'b'} b
+>b : any
+
  */
 
 /** @type {Foo} */
 export default {
+>{    a: 'a',    b: 'b'} : Foo
 >{    a: 'a',    b: 'b'} : { a: string; b: string; }
 
     a: 'a',

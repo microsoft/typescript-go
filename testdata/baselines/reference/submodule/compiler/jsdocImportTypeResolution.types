@@ -8,9 +8,13 @@ export class MyClass {
 === usage.js ===
 /**
  * @typedef {Object} options
+>options : any
+
  * @property {import("./module").MyClass} option
+>option : any
+
  */
 /** @type {options} */
 let v;
->v : any
+>v : options
 

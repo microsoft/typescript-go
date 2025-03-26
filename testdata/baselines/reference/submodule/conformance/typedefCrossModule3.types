@@ -2,6 +2,8 @@
 
 === mod2.js ===
 /** @typedef {number} Foo */
+>Foo : any
+
 const ns = {};
 >ns : {}
 >{} : {}

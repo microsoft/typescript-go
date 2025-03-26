@@ -1,19 +1,25 @@
 --- old.linkTagEmit1.types
 +++ new.linkTagEmit1.types
-@@= skipped -18, +18 lines =@@
-  * @param {number} integer {@link Z}
-  */
- function computeCommonSourceDirectoryOfFilenames(integer) {
-->computeCommonSourceDirectoryOfFilenames : (integer: number) => number
-->integer : number
-+>computeCommonSourceDirectoryOfFilenames : (integer: any) => any
-+>integer : any
- 
-     return integer + 1 // pls pls pls
-->integer + 1 : number
-->integer : number
-+>integer + 1 : any
-+>integer : any
- >1 : 1
+@@= skipped -6, +6 lines =@@
  }
+ === linkTagEmit1.js ===
+ /** @typedef {number} N */
++>N : number
++
+ /**
+  * @typedef {Object} D1
++>D1 : D1
++
+  * @property {1} e Just link to {@link NS.R} this time
++>e : any
++
+  * @property {1} m Wyatt Earp loved {@link N integers} I bet.
++>m : any
++
+  */
  
+ /** @typedef {number} Z @see N {@link N} */
++>Z : number
+ 
+ /**
+  * @param {number} integer {@link Z}

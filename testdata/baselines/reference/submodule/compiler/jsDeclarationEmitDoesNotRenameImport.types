@@ -22,7 +22,12 @@ import Test from './test/Test.js'
 
 /**
  * @typedef {Object} Options
+>Options : any
+
  * @property {typeof import("./Test.js").default} [test]
+>test : any
+>default : any
+
  */
 
 class X extends Test {
@@ -33,7 +38,7 @@ class X extends Test {
      * @param {Options} options
      */
     constructor(options) {
->options : any
+>options : Options
 
         super();
 >super() : void
@@ -41,7 +46,7 @@ class X extends Test {
 
         if (options.test) {
 >options.test : any
->options : any
+>options : Options
 >test : any
 
             this.test = new options.test();
@@ -51,7 +56,7 @@ class X extends Test {
 >test : any
 >new options.test() : any
 >options.test : any
->options : any
+>options : Options
 >test : any
         }
     }

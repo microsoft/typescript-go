@@ -1,6 +1,13 @@
 --- old.typedefTagExtraneousProperty.symbols
 +++ new.typedefTagExtraneousProperty.symbols
-@@= skipped -6, +6 lines =@@
+@@= skipped -1, +1 lines =@@
+ 
+ === typedefTagExtraneousProperty.js ===
+ /** @typedef {Object.<string,string>} Mmap
++>Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
++
+  * @property {string} ignoreMe - should be ignored
+  */
  
  /** @type {Mmap} */
  var y = { bye: "no" };

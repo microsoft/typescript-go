@@ -1,18 +1,27 @@
 --- old.strictOptionalProperties4.symbols
 +++ new.strictOptionalProperties4.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -7, +7 lines =@@
+ 
+ const x = /** @type {Foo} */ ({});
  >x : Symbol(x, Decl(a.js, 5, 5))
++>Foo : Symbol(Foo, Decl(a.js, 5, 34))
  
  x.foo; // number | undefined
 ->x.foo : Symbol(foo, Decl(a.js, 2, 3))
++>x.foo : Symbol(foo, Decl(a.js, 5, 34))
  >x : Symbol(x, Decl(a.js, 5, 5))
 ->foo : Symbol(foo, Decl(a.js, 2, 3))
++>foo : Symbol(foo, Decl(a.js, 5, 34))
  
  const y = /** @type {Required<Foo>} */ ({});
  >y : Symbol(y, Decl(a.js, 8, 5))
++>Required : Symbol(Required, Decl(lib.es5.d.ts, --, --))
++>Foo : Symbol(Foo, Decl(a.js, 5, 34))
  
  y.foo; // number
 ->y.foo : Symbol(foo, Decl(a.js, 2, 3))
++>y.foo : Symbol(foo, Decl(a.js, 5, 34))
  >y : Symbol(y, Decl(a.js, 8, 5))
 ->foo : Symbol(foo, Decl(a.js, 2, 3))
++>foo : Symbol(foo, Decl(a.js, 5, 34))
  

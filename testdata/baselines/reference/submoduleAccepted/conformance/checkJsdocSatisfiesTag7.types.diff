@@ -1,0 +1,10 @@
+--- old.checkJsdocSatisfiesTag7.types
++++ new.checkJsdocSatisfiesTag7.types
+@@= skipped -1, +1 lines =@@
+ 
+ === /a.js ===
+ /** @typedef {"a" | "b" | "c" | "d"} Keys */
++>Keys : any
+ 
+ const p = /** @satisfies {Record<Keys, unknown>} */ ({
+ >p : { a: number; b: string; x: number; }

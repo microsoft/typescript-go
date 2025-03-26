@@ -16,7 +16,12 @@
  >C : Symbol(C, Decl(mod1.js, 0, 0))
  
  === test.js ===
-@@= skipped -18, +13 lines =@@
+ /** @typedef {import('./mod1').C} X */
++>X : Symbol(X, Decl(test.js, 4, 1))
++
+ /** @param {X} c */
+ function demo(c) {
+ >demo : Symbol(demo, Decl(test.js, 0, 0))
  >c : Symbol(c, Decl(test.js, 2, 14))
  
      c.s

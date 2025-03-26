@@ -2,6 +2,10 @@
 
 === a.js ===
 /** @typedef {{ endTime: number, screenshots: number}} A.<b>*/
+>A : any
+>endTime : number
+>screenshots : number
+
 Animation.AnimationModel.ScreenshotCapture.Request;
 >Animation.AnimationModel.ScreenshotCapture.Request : any
 >Animation.AnimationModel.ScreenshotCapture : any
@@ -12,6 +16,10 @@ Animation.AnimationModel.ScreenshotCapture.Request;
 >Request : any
 
 /** @typedef {{ endTime: number, screenshots: !B.<string>}} */
+> : any
+>endTime : number
+>screenshots : B<string>
+
 Animation.AnimationModel.ScreenshotCapture.Request;
 >Animation.AnimationModel.ScreenshotCapture.Request : any
 >Animation.AnimationModel.ScreenshotCapture : any

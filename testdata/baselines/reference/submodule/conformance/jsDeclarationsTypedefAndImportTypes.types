@@ -3,6 +3,8 @@
 === conn.js ===
 /**
  * @typedef {string | number} Whatever
+>Whatever : any
+
  */
 
 class Conn {
@@ -27,6 +29,8 @@ module.exports = Conn;
 === usage.js ===
 /**
  * @typedef {import("./conn")} Conn
+>Conn : any
+
  */
 
 class Wrap {

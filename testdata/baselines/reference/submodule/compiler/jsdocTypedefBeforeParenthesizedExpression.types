@@ -3,6 +3,7 @@
 === test.js ===
 // @ts-check
 /** @typedef {number} NotADuplicateIdentifier */
+>NotADuplicateIdentifier : any
 
 (2 * 2);
 >(2 * 2) : number
@@ -11,6 +12,7 @@
 >2 : 2
 
 /** @typedef {number} AlsoNotADuplicate */
+>AlsoNotADuplicate : any
 
 (2 * 2) + 1;
 >(2 * 2) + 1 : number
@@ -27,7 +29,7 @@
  * @param b {AlsoNotADuplicate}
  */
 function makeSureTypedefsAreStillRecognized(a, b) {}
->makeSureTypedefsAreStillRecognized : (a: any, b: any) => void
->a : any
->b : any
+>makeSureTypedefsAreStillRecognized : (a: number, b: number) => void
+>a : number
+>b : number
 

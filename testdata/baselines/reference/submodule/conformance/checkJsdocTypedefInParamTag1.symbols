@@ -4,10 +4,20 @@
 // @ts-check
 /**
  * @typedef {Object} Opts
+>Opts : Symbol(Opts, Decl(0.js, 12, 1))
+
  * @property {string} x
+>x : Symbol(x, Decl(0.js, 12, 1))
+
  * @property {string=} y
+>y : Symbol(y, Decl(0.js, 12, 1))
+
  * @property {string} [z]
+>z : Symbol(z, Decl(0.js, 12, 1))
+
  * @property {string} [w="hi"]
+>w : Symbol(w, Decl(0.js, 12, 1))
+
  *
  * @param {Opts} opts
  */
@@ -16,7 +26,9 @@ function foo(opts) {
 >opts : Symbol(opts, Decl(0.js, 10, 13))
 
     opts.x;
+>opts.x : Symbol(x, Decl(0.js, 12, 1))
 >opts : Symbol(opts, Decl(0.js, 10, 13))
+>x : Symbol(x, Decl(0.js, 12, 1))
 }
 
 foo({x: 'abc'});
@@ -25,8 +37,14 @@ foo({x: 'abc'});
 
 /**
  * @typedef {Object} AnotherOpts
+>AnotherOpts : Symbol(AnotherOpts, Decl(0.js, 25, 1))
+
  * @property anotherX {string}
+>anotherX : Symbol(anotherX, Decl(0.js, 25, 1))
+
  * @property anotherY {string=}
+>anotherY : Symbol(anotherY, Decl(0.js, 25, 1))
+
  * 
  * @param {AnotherOpts} opts
  */
@@ -35,7 +53,9 @@ function foo1(opts) {
 >opts : Symbol(opts, Decl(0.js, 23, 14))
 
     opts.anotherX;
+>opts.anotherX : Symbol(anotherX, Decl(0.js, 25, 1))
 >opts : Symbol(opts, Decl(0.js, 23, 14))
+>anotherX : Symbol(anotherX, Decl(0.js, 25, 1))
 }
 
 foo1({anotherX: "world"});
@@ -44,10 +64,20 @@ foo1({anotherX: "world"});
 
 /**
  * @typedef {object} Opts1
+>Opts1 : Symbol(Opts1, Decl(0.js, 40, 1))
+
  * @property {string} x
+>x : Symbol(x, Decl(0.js, 40, 1))
+
  * @property {string=} y
+>y : Symbol(y, Decl(0.js, 40, 1))
+
  * @property {string} [z]
+>z : Symbol(z, Decl(0.js, 40, 1))
+
  * @property {string} [w="hi"]
+>w : Symbol(w, Decl(0.js, 40, 1))
+
  *
  * @param {Opts1} opts
  */
@@ -56,7 +86,9 @@ function foo2(opts) {
 >opts : Symbol(opts, Decl(0.js, 38, 14))
 
     opts.x;
+>opts.x : Symbol(x, Decl(0.js, 40, 1))
 >opts : Symbol(opts, Decl(0.js, 38, 14))
+>x : Symbol(x, Decl(0.js, 40, 1))
 }
 foo2({x: 'abc'});
 >foo2 : Symbol(foo2, Decl(0.js, 27, 26))

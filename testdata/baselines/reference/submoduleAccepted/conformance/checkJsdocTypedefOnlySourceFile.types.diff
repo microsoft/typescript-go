@@ -1,10 +1,19 @@
 --- old.checkJsdocTypedefOnlySourceFile.types
 +++ new.checkJsdocTypedefOnlySourceFile.types
-@@= skipped -16, +16 lines =@@
+@@= skipped -9, +9 lines =@@
+ /**
+  * @typedef {string}
+  */
++> : any
++
+ exports.SomeName;
+ >exports.SomeName : any
+ >exports : {}
+@@= skipped -7, +9 lines =@@
  
  /** @type {exports.SomeName} */
  const myString = 'str';
 ->myString : exports.SomeName
-+>myString : "str"
++>myString : SomeName
  >'str' : "str"
  

@@ -8,6 +8,7 @@ const MW = require("./MW");
 >"./MW" : "./MW"
 
 /** @typedef {number} Meyerhauser */
+>Meyerhauser : any
 
 /** @class */
 module.exports = function MC() {
@@ -20,13 +21,13 @@ module.exports = function MC() {
 
     /** @type {any} */
     var x = {}
->x : {}
+>x : any
 >{} : {}
 
     return new MW(x);
 >new MW(x) : any
 >MW : any
->x : {}
+>x : any
 
 };
 

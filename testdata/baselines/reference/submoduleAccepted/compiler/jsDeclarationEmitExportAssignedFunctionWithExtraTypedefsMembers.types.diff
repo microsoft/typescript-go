@@ -1,6 +1,17 @@
 --- old.jsDeclarationEmitExportAssignedFunctionWithExtraTypedefsMembers.types
 +++ new.jsDeclarationEmitExportAssignedFunctionWithExtraTypedefsMembers.types
-@@= skipped -9, +9 lines =@@
+@@= skipped -2, +2 lines =@@
+ === index.js ===
+ /**
+  * @typedef Options
++>Options : any
++
+  * @property {string} opt
++>opt : any
++
+  */
+ 
+ /**
   * @param {Options} options
   */
  module.exports = function loader(options) {}

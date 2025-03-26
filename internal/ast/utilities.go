@@ -634,6 +634,7 @@ func isDeclarationStatementKind(kind Kind) bool {
 		KindClassDeclaration,
 		KindInterfaceDeclaration,
 		KindTypeAliasDeclaration,
+		KindJSTypeAliasDeclaration,
 		KindEnumDeclaration,
 		KindModuleDeclaration,
 		KindImportDeclaration,
@@ -2027,6 +2028,7 @@ func GetMeaningFromDeclaration(node *Node) SemanticMeaning {
 	case KindTypeParameter,
 		KindInterfaceDeclaration,
 		KindTypeAliasDeclaration,
+		KindJSTypeAliasDeclaration,
 		KindTypeLiteral:
 		return SemanticMeaningType
 	case KindEnumMember, KindClassDeclaration:
@@ -2154,7 +2156,7 @@ func getModuleInstanceStateCached(node *Node, ancestors []*Node, visited map[Nod
 func getModuleInstanceStateWorker(node *Node, ancestors []*Node, visited map[NodeId]ModuleInstanceState) ModuleInstanceState {
 	// A module is uninstantiated if it contains only
 	switch node.Kind {
-	case KindInterfaceDeclaration, KindTypeAliasDeclaration:
+	case KindInterfaceDeclaration, KindTypeAliasDeclaration, KindJSTypeAliasDeclaration:
 		return ModuleInstanceStateNonInstantiated
 	case KindEnumDeclaration:
 		if IsEnumConst(node) {
@@ -2291,9 +2293,9 @@ func IsGlobalSourceFile(node *Node) bool {
 	return node.Kind == KindSourceFile && !IsExternalOrCommonJsModule(node.AsSourceFile())
 }
 
-func IsParameterLikeOrReturnTag(node *Node) bool {
+func IsParameterLike(node *Node) bool {
 	switch node.Kind {
-	case KindParameter, KindTypeParameter, KindJSDocParameterTag, KindJSDocReturnTag:
+	case KindParameter, KindTypeParameter:
 		return true
 	}
 	return false

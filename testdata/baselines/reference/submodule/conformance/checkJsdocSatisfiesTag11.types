@@ -3,12 +3,20 @@
 === /a.js ===
 /**
  * @typedef {Object} T1
+>T1 : any
+
  * @property {number} a
+>a : any
+
  */
 
 /**
  * @typedef {Object} T2
+>T2 : any
+
  * @property {number} a
+>a : any
+
  */
 
 /**

@@ -13,14 +13,38 @@
  >require : any
  >'./module.js' : "./module.js"
  
-@@= skipped -24, +24 lines =@@
+ /** @typedef {import('./module.js').TaskGroup} TaskGroup */
++>TaskGroup : any
+ 
+ /**
+  * @typedef TaskNode
++>TaskNode : any
++
+  * @prop {TaskNode[]} children
++>children : any
++
+  * @prop {TaskNode|undefined} parent
++>parent : any
++
+  * @prop {TaskGroup} group
++>group : any
++
+  */
+ 
+ /** @typedef {{timers: Map<string, TaskNode>}} PriorTaskData */
++>PriorTaskData : any
++>timers : Map<string, TaskNode>
++
+ class MainThreadTasks {
+ >MainThreadTasks : MainThreadTasks
+ 
+@@= skipped -24, +36 lines =@@
       * @param {TaskNode} y
       */
      constructor(x, y){}
 ->x : import("module").TaskGroup
-->y : TaskNode
 +>x : any
-+>y : any
+ >y : TaskNode
  }
  
  module.exports = MainThreadTasks;
