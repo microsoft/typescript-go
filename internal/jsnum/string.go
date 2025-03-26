@@ -1,7 +1,6 @@
 package jsnum
 
 import (
-	"encoding/json"
 	"errors"
 	"math"
 	"math/big"
@@ -32,9 +31,11 @@ func (n Number) String() string {
 		}
 	}
 
+	return strconv.FormatFloat(float64(n), 'g', -1, 64)
+
 	// Otherwise, the Go json package handles this correctly.
-	b, _ := json.Marshal(float64(n)) //nolint:errchkjson
-	return string(b)
+	// b, _ := json.Marshal(float64(n)) //nolint:errchkjson
+	// return string(b)
 }
 
 // https://tc39.es/ecma262/2024/multipage/abstract-operations.html#sec-stringtonumber

@@ -1416,8 +1416,9 @@ func (r *resolutionState) getPackageJsonInfo(packageDirectory string, onlyRecord
 	directoryExists := r.resolver.host.FS().DirectoryExists(packageDirectory)
 	if directoryExists && r.resolver.host.FS().FileExists(packageJsonPath) {
 		// Ignore error
-		contents, _ := r.resolver.host.FS().ReadFile(packageJsonPath)
-		packageJsonContent, _ := packagejson.Parse([]byte(contents))
+		// contents, _ := r.resolver.host.FS().ReadFile(packageJsonPath)
+		// packageJsonContent, _ := packagejson.Parse([]byte(contents))
+		var packageJsonContent packagejson.Fields
 		if r.resolver.traceEnabled() {
 			r.resolver.host.Trace(diagnostics.Found_package_json_at_0.Format(packageJsonPath))
 		}
