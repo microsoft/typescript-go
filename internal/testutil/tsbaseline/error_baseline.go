@@ -208,7 +208,7 @@ func iterateErrorBaseline(t *testing.T, inputFiles []*harnessutil.TestFile, inpu
 					outputLines.WriteString("    ")
 					outputLines.WriteString(nonWhitespace.ReplaceAllString(line[:squiggleStart], " "))
 					// This was `new Array(count).join("~")`; which maps 0 to "", 1 to "", 2 to "~", 3 to "~~", etc.
-					squiggleEnd := max(0, min(squiggleStart+length, len(line)))
+					squiggleEnd := max(squiggleStart, min(squiggleStart+length, len(line)))
 					outputLines.WriteString(strings.Repeat("~", utf8.RuneCountInString(line[squiggleStart:squiggleEnd])))
 					// If the error ended here, or we're at the end of the file, emit its message
 					if lineIndex == len(lines)-1 || nextLineStart > end {
