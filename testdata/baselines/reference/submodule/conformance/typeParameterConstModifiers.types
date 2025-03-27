@@ -345,13 +345,13 @@ set(obj, ['a', 'b', 'c'], value);
 // Repro from #52007
 
 declare function inners<const T extends readonly any[]>(...args: readonly [unknown, ...T, unknown]): T;
->inners : <T extends readonly any[]>(args_0: unknown, ...args: T, args_2?: unknown) => T
+>inners : <T extends readonly any[]>(...args: readonly [unknown, ...T, unknown]) => T
 >args : readonly [unknown, ...T, unknown]
 
 const test = inners(1,2,3,4,5);
 >test : [2, 3, 4]
 >inners(1,2,3,4,5) : [2, 3, 4]
->inners : <T extends readonly any[]>(args_0: unknown, ...args: T, args_2?: unknown) => T
+>inners : <T extends readonly any[]>(...args: readonly [unknown, ...T, unknown]) => T
 >1 : 1
 >2 : 2
 >3 : 3

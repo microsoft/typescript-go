@@ -478,7 +478,12 @@ func (p *Printer) printSignature(sig *Signature, returnSeparator string) {
 		p.printType(p.c.getTypeOfSymbol(sig.thisParameter))
 		tail = true
 	}
-	for i, param := range p.c.GetExpandedParameters(sig) {
+	expandedParameters := p.c.GetExpandedParameters(sig)
+	// If the expanded parameter list had a variadic in a non-trailing position, don't expand it
+	parameters := core.IfElse(core.Some(expandedParameters, func(s *ast.Symbol) bool {
+		return s != expandedParameters[len(expandedParameters)-1] && s.CheckFlags&ast.CheckFlagsRestParameter != 0
+	}), sig.parameters, expandedParameters)
+	for i, param := range parameters {
 		if tail {
 			p.print(", ")
 		}
