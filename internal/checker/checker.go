@@ -6683,7 +6683,7 @@ func (c *Checker) reportUnusedImports(node *ast.Node, unuseds []*ast.Node) {
 		c.reportUnused(node, UnusedKindLocal, NewDiagnosticForNode(node.Parent, diagnostics.All_imports_in_import_declaration_are_unused))
 	} else {
 		for _, unused := range unuseds {
-			c.reportUnusedLocal(unused, unused.Name().Text())
+			c.reportUnusedLocal(unused.Name(), unused.Name().Text())
 		}
 	}
 }
