@@ -6611,7 +6611,7 @@ func (c *Checker) checkUnusedLocalsAndParameters(node *ast.Node) {
 
 func (c *Checker) reportUnusedLocal(node *ast.Node, name string) {
 	message := core.IfElse(isTypeDeclaration(node), diagnostics.X_0_is_declared_but_never_used, diagnostics.X_0_is_declared_but_its_value_is_never_read)
-	c.reportUnused(node, UnusedKindLocal, NewDiagnosticForNode(node, message, name))
+	c.reportUnused(node, UnusedKindLocal, NewDiagnosticForNode(core.OrElse(node.Name(), node), message, name))
 }
 
 func (c *Checker) reportUnusedVariables(node *ast.Node) {
@@ -6683,7 +6683,7 @@ func (c *Checker) reportUnusedImports(node *ast.Node, unuseds []*ast.Node) {
 		c.reportUnused(node, UnusedKindLocal, NewDiagnosticForNode(node.Parent, diagnostics.All_imports_in_import_declaration_are_unused))
 	} else {
 		for _, unused := range unuseds {
-			c.reportUnusedLocal(unused.Name(), unused.Name().Text())
+			c.reportUnusedLocal(unused, unused.Name().Text())
 		}
 	}
 }
