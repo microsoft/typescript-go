@@ -221,7 +221,7 @@ func (p *Parser) parseErrorAtCurrentToken(message *diagnostics.Message, args ...
 
 func (p *Parser) parseErrorAtRange(loc core.TextRange, message *diagnostics.Message, args ...any) *ast.Diagnostic {
 	// Don't report another error if it would just be at the same location as the last error
-	if len(p.diagnostics) == 0 || p.diagnostics[len(p.diagnostics)-1].Loc() != loc {
+	if len(p.diagnostics) == 0 || p.diagnostics[len(p.diagnostics)-1].Loc().Pos() != loc.Pos() {
 		result := ast.NewDiagnostic(nil, loc, message, args...)
 		p.diagnostics = append(p.diagnostics, result)
 		return result
@@ -5307,9 +5307,12 @@ func (p *Parser) parsePropertyAccessExpressionRest(pos int, expression *ast.Expr
 	if isOptionalChain && ast.IsPrivateIdentifier(name) {
 		p.parseErrorAtRange(p.skipRangeTrivia(name.Loc), diagnostics.An_optional_chain_cannot_contain_private_identifiers)
 	}
-	if ast.IsExpressionWithTypeArguments(expression) && expression.AsExpressionWithTypeArguments().TypeArguments != nil {
-		loc := p.skipRangeTrivia(expression.AsExpressionWithTypeArguments().TypeArguments.Loc)
-		p.parseErrorAtRange(loc, diagnostics.An_instantiation_expression_cannot_be_followed_by_a_property_access)
+	if ast.IsExpressionWithTypeArguments(expression) {
+		typeArguments := expression.AsExpressionWithTypeArguments().TypeArguments
+		if typeArguments != nil {
+			loc := core.NewTextRange(typeArguments.Pos()-1, scanner.SkipTrivia(p.sourceText, typeArguments.End())+1)
+			p.parseErrorAtRange(loc, diagnostics.An_instantiation_expression_cannot_be_followed_by_a_property_access)
+		}
 	}
 	p.finishNode(propertyAccess, pos)
 	return propertyAccess
