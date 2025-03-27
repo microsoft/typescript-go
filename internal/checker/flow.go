@@ -201,9 +201,7 @@ func (c *Checker) getTypeAtFlowNode(f *FlowState, flow *ast.FlowNode) FlowType {
 }
 
 func getBranchLabelAntecedents(flow *ast.FlowNode, reduceLabels []*ast.FlowReduceLabelData) *ast.FlowList {
-	i := len(reduceLabels)
-	for i != 0 {
-		i--
+	for i := len(reduceLabels) - 1; i >= 0; i-- {
 		data := reduceLabels[i]
 		if data.Target == flow {
 			return data.Antecedents

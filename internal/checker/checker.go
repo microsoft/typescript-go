@@ -23993,9 +23993,7 @@ func (c *Checker) addNamedUnions(namedUnions []*Type, types []*Type) []*Type {
 }
 
 func (c *Checker) removeRedundantLiteralTypes(types []*Type, includes TypeFlags, reduceVoidUndefined bool) []*Type {
-	i := len(types)
-	for i > 0 {
-		i--
+	for i := len(types) - 1; i >= 0; i-- {
 		t := types[i]
 		flags := t.flags
 		remove := flags&(TypeFlagsStringLiteral|TypeFlagsTemplateLiteral|TypeFlagsStringMapping) != 0 && includes&TypeFlagsString != 0 ||
@@ -24014,9 +24012,7 @@ func (c *Checker) removeRedundantLiteralTypes(types []*Type, includes TypeFlags,
 func (c *Checker) removeStringLiteralsMatchedByTemplateLiterals(types []*Type) []*Type {
 	templates := core.Filter(types, c.isPatternLiteralType)
 	if len(templates) != 0 {
-		i := len(types)
-		for i > 0 {
-			i--
+		for i := len(types) - 1; i >= 0; i-- {
 			t := types[i]
 			if t.flags&TypeFlagsStringLiteral != 0 && core.Some(templates, func(template *Type) bool {
 				return c.isTypeMatchedByTemplateLiteralOrStringMapping(t, template)
@@ -24068,9 +24064,7 @@ func (c *Checker) removeConstrainedTypeVariables(types []*Type) []*Type {
 		// variable and that constituent, remove those intersections and substitute the type variable.
 		constraint := c.getBaseConstraintOfType(typeVariable)
 		if everyType(constraint, func(t *Type) bool { return containsType(primitives, t) }) {
-			i := len(types)
-			for i > 0 {
-				i--
+			for i := len(types) - 1; i >= 0; i-- {
 				t := types[i]
 				if t.flags&TypeFlagsIntersection != 0 && t.objectFlags&ObjectFlagsIsConstrainedTypeVariable != 0 {
 					index := 0
@@ -24104,10 +24098,8 @@ func (c *Checker) removeSubtypes(types []*Type, hasObjectTypes bool) []*Type {
 		return t.flags&TypeFlagsObject != 0 && !c.isGenericMappedType(t) && c.isEmptyResolvedType(c.resolveStructuredTypeMembers(t))
 	})
 	length := len(types)
-	i := length
 	count := 0
-	for i > 0 {
-		i--
+	for i := length - 1; i >= 0; i-- {
 		source := types[i]
 		if hasEmptyObject || source.flags&TypeFlagsStructuredOrInstantiable != 0 {
 			// A type parameter with a union constraint may be a subtype of some union, but not a subtype of the
@@ -24445,9 +24437,7 @@ func (c *Checker) addTypeToIntersection(typeSet *orderedSet[*Type], includes Typ
 }
 
 func (c *Checker) removeRedundantSupertypes(types []*Type, includes TypeFlags) []*Type {
-	i := len(types)
-	for i > 0 {
-		i--
+	for i := len(types) - 1; i >= 0; i-- {
 		t := types[i]
 		remove := t.flags&TypeFlagsString != 0 && includes&(TypeFlagsStringLiteral|TypeFlagsTemplateLiteral|TypeFlagsStringMapping) != 0 ||
 			t.flags&TypeFlagsNumber != 0 && includes&TypeFlagsNumberLiteral != 0 ||
@@ -24468,9 +24458,8 @@ func (c *Checker) removeRedundantSupertypes(types []*Type, includes TypeFlags) [
  */
 func (c *Checker) extractRedundantTemplateLiterals(types []*Type) ([]*Type, bool) {
 	literals := core.Filter(types, func(t *Type) bool { return t.flags&TypeFlagsStringLiteral != 0 })
-	i := len(types)
-	for i > 0 {
-		i--
+
+	for i := len(types) - 1; i >= 0; i-- {
 		t := types[i]
 		if t.flags&(TypeFlagsTemplateLiteral|TypeFlagsStringMapping) == 0 {
 			continue
