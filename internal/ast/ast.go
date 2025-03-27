@@ -3187,7 +3187,7 @@ type BindingElement struct {
 	compositeNodeBase
 	DotDotDotToken *TokenNode    // TokenNode. Present on rest element (in object binding pattern)
 	PropertyName   *PropertyName // PropertyName. Optional binding property name in object binding pattern
-	name           *BindingName  // BindingName. Optional (nil for missing element)
+	name           *BindingName  // BindingName.
 	Initializer    *Expression   // Expression. Optional
 }
 
