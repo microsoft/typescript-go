@@ -52,10 +52,32 @@ export class API {
     }
 }
 
-export class Project {
+export class DisposableObject {
+    private disposed: boolean = false;
+    protected objectRegistry: ObjectRegistry;
+    constructor(objectRegistry: ObjectRegistry) {
+        this.objectRegistry = objectRegistry;
+    }
+    [globalThis.Symbol.dispose](): void {
+        this.objectRegistry.release(this);
+        this.disposed = true;
+    }
+    dispose(): void {
+        this[globalThis.Symbol.dispose]();
+    }
+    isDisposed(): boolean {
+        return this.disposed;
+    }
+    ensureNotDisposed(): void {
+        if (this.disposed) {
+            throw new Error(`${this.constructor.name} is disposed`);
+        }
+    }
+}
+
+export class Project extends DisposableObject {
     private decoder = new TextDecoder();
     private client: Client;
-    private objectRegistry: ObjectRegistry;
 
     id: string;
     configFileName!: string;
@@ -63,9 +85,9 @@ export class Project {
     rootFiles!: readonly string[];
 
     constructor(client: Client, objectRegistry: ObjectRegistry, data: ProjectResponse) {
+        super(objectRegistry);
         this.id = data.id;
         this.client = client;
-        this.objectRegistry = objectRegistry;
         this.loadData(data);
     }
 
@@ -76,10 +98,12 @@ export class Project {
     }
 
     reload(): void {
+        this.ensureNotDisposed();
         this.loadData(this.client.request("loadProject", { configFileName: this.configFileName }));
     }
 
     getSourceFile(fileName: string): SourceFile | undefined {
+        this.ensureNotDisposed();
         const data = this.client.requestBinary("getSourceFile", { project: this.id, fileName });
         return data ? new RemoteSourceFile(data, this.decoder) as unknown as SourceFile : undefined;
     }
@@ -87,6 +111,7 @@ export class Project {
     getSymbolAtPosition(requests: readonly GetSymbolAtPositionParams[]): (Symbol | undefined)[];
     getSymbolAtPosition(fileName: string, position: number | number[]): Symbol | undefined;
     getSymbolAtPosition(...params: [fileName: string, position: number | number[]] | [readonly GetSymbolAtPositionParams[]]): Symbol | undefined | (Symbol | undefined)[] {
+        this.ensureNotDisposed();
         if (params.length === 2) {
             if (typeof params[1] === "number") {
                 const data = this.client.request("getSymbolAtPosition", { project: this.id, fileName: params[0], position: params[1] });
@@ -100,19 +125,22 @@ export class Project {
     }
 
     getTypeOfSymbol(symbol: Symbol): Type | undefined {
+        this.ensureNotDisposed();
+        symbol.ensureNotDisposed();
         const data = this.client.request("getTypeOfSymbol", { project: this.id, symbol: symbol.id });
         return data ? this.objectRegistry.getType(data) : undefined;
     }
 }
 
-export class Symbol {
+export class Symbol extends DisposableObject {
     private client: Client;
     id: string;
     name: string;
     flags: SymbolFlags;
     checkFlags: number;
 
-    constructor(client: Client, data: SymbolResponse) {
+    constructor(client: Client, objectRegistry: ObjectRegistry, data: SymbolResponse) {
+        super(objectRegistry);
         this.client = client;
         this.id = data.id;
         this.name = data.name;
@@ -121,11 +149,12 @@ export class Symbol {
     }
 }
 
-export class Type {
+export class Type extends DisposableObject {
     private client: Client;
     id: string;
     flags: TypeFlags;
-    constructor(client: Client, data: TypeResponse) {
+    constructor(client: Client, objectRegistry: ObjectRegistry, data: TypeResponse) {
+        super(objectRegistry);
         this.client = client;
         this.id = data.id;
         this.flags = data.flags;

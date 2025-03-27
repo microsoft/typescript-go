@@ -284,11 +284,7 @@ func (s *Server) sendResponse(method string, result []byte) error {
 }
 
 func (s *Server) sendError(method string, err error) error {
-	payload, err := json.Marshal(err.Error())
-	if err != nil {
-		return err
-	}
-	return s.writeMessage(MessageTypeError, method, payload)
+	return s.writeMessage(MessageTypeError, method, []byte(err.Error()))
 }
 
 func (s *Server) writeMessage(messageType MessageType, method string, payload []byte) error {

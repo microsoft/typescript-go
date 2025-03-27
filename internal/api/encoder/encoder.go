@@ -153,24 +153,24 @@ const (
 //
 // In all node data types, the remaining 6 bits of the first byte are used to encode booleans specific to the node type:
 //
-// | Node type                 | Bit 1         | Bit 0                           |
-// | ------------------------- | ------------- | ------------------------------- |
-// | `ImportSpecifier`         |               | `isTypeOnly`                    |
-// | `ImportClause`            |               | `isTypeOnly`                    |
-// | `ExportSpecifier`         |               | `isTypeOnly`                    |
-// | `ImportEqualsDeclaration` |               | `isTypeOnly`                    |
-// | `ExportDeclaration`       |               | `isTypeOnly`                    |
-// | `ImportTypeNode`          |               | `isTypeOf`                      |
-// | `ExportAssignment`        |               | `isExportEquals`                |
-// | `Block`                   |               | `multiline`                     |
-// | `ArrayLiteralExpression`  |               | `multiline`                     |
-// | `ObjectLiteralExpression` |               | `multiline`                     |
-// | `JsxText`                 |               | `containsOnlyTriviaWhiteSpaces` |
-// | `JSDocTypeLiteral`        |               | `isArrayType`                   |
-// | `JsDocPropertyTag`        | `isNameFirst` | `isBracketed`                   |
-// | `JsDocParameterTag`       | `isNameFirst` | `isBracketed`                   |
-// | `VariableDeclarationList` | is `const`    | is `let`                        |
-// | `ImportAttributes`        | is `assert`   | `multiline`                     |
+// | Node type                 | Bits 2-5 | Bit 1         | Bit 0                           |
+// | ------------------------- | -------- | ------------- | ------------------------------- |
+// | `ImportSpecifier`         |          |               | `isTypeOnly`                    |
+// | `ImportClause`            |          |               | `isTypeOnly`                    |
+// | `ExportSpecifier`         |          |               | `isTypeOnly`                    |
+// | `ImportEqualsDeclaration` |          |               | `isTypeOnly`                    |
+// | `ExportDeclaration`       |          |               | `isTypeOnly`                    |
+// | `ImportTypeNode`          |          |               | `isTypeOf`                      |
+// | `ExportAssignment`        |          |               | `isExportEquals`                |
+// | `Block`                   |          |               | `multiline`                     |
+// | `ArrayLiteralExpression`  |          |               | `multiline`                     |
+// | `ObjectLiteralExpression` |          |               | `multiline`                     |
+// | `JsxText`                 |          |               | `containsOnlyTriviaWhiteSpaces` |
+// | `JSDocTypeLiteral`        |          |               | `isArrayType`                   |
+// | `JsDocPropertyTag`        |          | `isNameFirst` | `isBracketed`                   |
+// | `JsDocParameterTag`       |          | `isNameFirst` | `isBracketed`                   |
+// | `VariableDeclarationList` |          | is `const`    | is `let`                        |
+// | `ImportAttributes`        |          | is `assert`   | `multiline`                     |
 //
 // The remaining 3 bytes of the node data field vary by data type:
 //

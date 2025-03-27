@@ -9,6 +9,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/api/encoder"
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
@@ -31,6 +32,8 @@ type API struct {
 	projects  map[Handle[project.Project]]*project.Project
 	symbolsMu sync.Mutex
 	symbols   map[Handle[ast.Symbol]]*ast.Symbol
+	typesMu   sync.Mutex
+	types     map[Handle[checker.Type]]*checker.Type
 }
 
 var _ project.ProjectHost = (*API)(nil)
@@ -46,6 +49,7 @@ func NewAPI(host APIHost, options APIOptions) *API {
 		scriptInfos: make(map[tspath.Path]*project.ScriptInfo),
 		projects:    make(map[Handle[project.Project]]*project.Project),
 		symbols:     make(map[Handle[ast.Symbol]]*ast.Symbol),
+		types:       make(map[Handle[checker.Type]]*checker.Type),
 	}
 }
 
@@ -105,6 +109,10 @@ func (api *API) HandleRequest(id int, method string, payload []byte) ([]byte, er
 	api.options.Logger.PerfTrace(fmt.Sprintf("%s unmarshal - %s", method, time.Since(now)))
 
 	switch Method(method) {
+	case MethodRelease:
+		return encodeJSON(handleBatchableRequest(params, func(id *string) (any, error) {
+			return nil, api.releaseHandle(*id)
+		}))
 	case MethodGetSourceFile:
 		params := params.(*GetSourceFileParams)
 		sourceFile, err := api.GetSourceFile(params.Project, params.FileName)
@@ -219,6 +227,40 @@ func (api *API) GetSourceFile(projectId Handle[project.Project], fileName string
 		return nil, fmt.Errorf("source file %q not found", fileName)
 	}
 	return sourceFile, nil
+}
+
+func (api *API) releaseHandle(handle string) error {
+	switch handle[0] {
+	case 'p':
+		projectId := Handle[project.Project](handle)
+		project, ok := api.projects[projectId]
+		if !ok {
+			return fmt.Errorf("project %q not found", handle)
+		}
+		delete(api.projects, projectId)
+		project.Close()
+	case 's':
+		symbolId := Handle[ast.Symbol](handle)
+		api.symbolsMu.Lock()
+		defer api.symbolsMu.Unlock()
+		_, ok := api.symbols[symbolId]
+		if !ok {
+			return fmt.Errorf("symbol %q not found", handle)
+		}
+		delete(api.symbols, symbolId)
+	case 't':
+		typeId := Handle[checker.Type](handle)
+		api.typesMu.Lock()
+		defer api.typesMu.Unlock()
+		_, ok := api.types[typeId]
+		if !ok {
+			return fmt.Errorf("type %q not found", handle)
+		}
+		delete(api.types, typeId)
+	default:
+		return fmt.Errorf("unhandled handle type %q", handle[0])
+	}
+	return nil
 }
 
 func (api *API) getOrCreateScriptInfo(fileName string, path tspath.Path, scriptKind core.ScriptKind) *project.ScriptInfo {

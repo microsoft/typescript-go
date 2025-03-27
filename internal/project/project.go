@@ -450,3 +450,7 @@ func (p *Project) log(s string) {
 func (p *Project) logf(format string, args ...interface{}) {
 	p.log(fmt.Sprintf(format, args...))
 }
+
+func (p *Project) Close() {
+	// !!!
+}

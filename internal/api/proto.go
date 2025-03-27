@@ -37,7 +37,9 @@ func createHandle[T any](prefix string, id any) Handle[T] {
 }
 
 const (
-	MethodConfigure            Method = "configure"
+	MethodConfigure Method = "configure"
+	MethodRelease   Method = "release"
+
 	MethodParseConfigFile      Method = "parseConfigFile"
 	MethodLoadProject          Method = "loadProject"
 	MethodGetSymbolAtPosition  Method = "getSymbolAtPosition"
@@ -48,6 +50,7 @@ const (
 
 var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodParseConfigFile:      unmarshallerFor[ParseConfigFileParams],
+	MethodRelease:              batchEnabledUnmarshallerFor[string],
 	MethodLoadProject:          unmarshallerFor[LoadProjectParams],
 	MethodGetSourceFile:        unmarshallerFor[GetSourceFileParams],
 	MethodGetSymbolAtPosition:  batchEnabledUnmarshallerFor[GetSymbolAtPositionParams],

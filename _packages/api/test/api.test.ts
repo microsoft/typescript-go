@@ -102,6 +102,34 @@ test("Object equality", () => {
     );
 });
 
+test("Dispose", () => {
+    const api = spawnAPI();
+    const project = api.loadProject("/tsconfig.json");
+    const symbol = project.getSymbolAtPosition("/src/index.ts", 9);
+    assert.ok(symbol);
+    assert.ok(symbol.isDisposed() === false);
+    symbol.dispose();
+    assert.ok(symbol.isDisposed() === true);
+    assert.throws(() => {
+        project.getTypeOfSymbol(symbol);
+    }, {
+        name: "Error",
+        message: "Symbol is disposed",
+    });
+
+    const symbol2 = project.getSymbolAtPosition("/src/index.ts", 9);
+    assert.ok(symbol2);
+    assert.notStrictEqual(symbol, symbol2);
+    // @ts-ignore private API
+    api.client.request("release", symbol2.id);
+    assert.throws(() => {
+        project.getTypeOfSymbol(symbol2);
+    }, {
+        name: "Error",
+        message: `symbol "${symbol.id}" not found`,
+    });
+});
+
 function spawnAPI(files: Record<string, string> = defaultFiles) {
     return new API({
         cwd: new URL("../../../", import.meta.url).pathname,
