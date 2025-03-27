@@ -542,6 +542,8 @@ export const { a } = { a: 1 };
 >1 : 1
 
 export const [, , b = 1]: [number, number, number | undefined] = [0, 1, 2];
+> : undefined
+> : undefined
 >b : number
 >1 : 1
 >[0, 1, 2] : [number, number, number]
@@ -551,6 +553,8 @@ export const [, , b = 1]: [number, number, number | undefined] = [0, 1, 2];
 
 export function foo([, , b]: [
 >foo : (__0?: [number, number, number]) => void
+> : undefined
+> : undefined
 >b : number
 
     number,

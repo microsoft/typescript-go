@@ -6,7 +6,9 @@ var results: string[];
 
 {
     let [, b, , a] = results;
+> : undefined
 >b : string
+> : undefined
 >a : string
 >results : string[]
 
@@ -25,9 +27,16 @@ var results: string[];
 
 function f([, a, , b, , , , s, , , ] = results) {
 >f : (__0?: string[]) => void
+> : undefined
 >a : string
+> : undefined
 >b : string
+> : undefined
+> : undefined
+> : undefined
 >s : string
+> : undefined
+> : undefined
 >results : string[]
 
     a = s[1];

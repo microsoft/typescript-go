@@ -2,6 +2,7 @@
 
 === initializedDestructuringAssignmentTypes.ts ===
 const [, a = ''] = ''.match('') || [];
+> : undefined
 >a : string
 >'' : ""
 >''.match('') || [] : RegExpMatchArray | []

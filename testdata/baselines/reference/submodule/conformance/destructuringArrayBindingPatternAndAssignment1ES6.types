@@ -117,6 +117,7 @@ var [[c5], c6]: [[string|number], boolean] = [[1], true];
 >true : true
 
 var [, c7] = [1, 2, 3];
+> : undefined
 >c7 : number
 >[1, 2, 3] : [number, number, number]
 >1 : 1
@@ -124,6 +125,9 @@ var [, c7] = [1, 2, 3];
 >3 : 3
 
 var [,,, c8] = [1, 2, 3, 4];
+> : undefined
+> : undefined
+> : undefined
 >c8 : number
 >[1, 2, 3, 4] : [number, number, number, number]
 >1 : 1
@@ -132,6 +136,9 @@ var [,,, c8] = [1, 2, 3, 4];
 >4 : 4
 
 var [,,, c9] = [1, 2, 3, 4];
+> : undefined
+> : undefined
+> : undefined
 >c9 : number
 >[1, 2, 3, 4] : [number, number, number, number]
 >1 : 1
@@ -140,6 +147,9 @@ var [,,, c9] = [1, 2, 3, 4];
 >4 : 4
 
 var [,,,...c10] = [1, 2, 3, 4, "hello"];
+> : undefined
+> : undefined
+> : undefined
 >c10 : [number, string]
 >[1, 2, 3, 4, "hello"] : [number, number, number, number, string]
 >1 : 1

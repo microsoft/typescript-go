@@ -28,6 +28,7 @@ var multiRobotB: MultiSkilledRobot = ["trimmer", ["trimming", "edging"]];
 >"edging" : "edging"
 
 let [, skillA] = multiRobotA;
+> : undefined
 >skillA : [string, string]
 >multiRobotA : MultiSkilledRobot
 

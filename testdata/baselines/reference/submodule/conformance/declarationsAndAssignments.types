@@ -31,6 +31,8 @@ function f0() {
 >"hello" : "hello"
 
     var [,, x] = [0, 1, 2];
+> : undefined
+> : undefined
 >x : number
 >[0, 1, 2] : [number, number, number]
 >0 : 0

@@ -34,6 +34,8 @@ s2.push(undefined); // Should error, 'undefined' not part of s2's element type
 
 // Destructuring a rest element -> do not include undefined
 const [, , ...s3] = strArray;
+> : undefined
+> : undefined
 >s3 : string[]
 >strArray : string[]
 

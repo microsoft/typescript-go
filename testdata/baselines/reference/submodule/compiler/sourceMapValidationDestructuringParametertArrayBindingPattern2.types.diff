@@ -14,8 +14,8 @@
  
  function foo1([, skillA]: Robot) {
 ->foo1 : ([, skillA]: Robot) => void
--> : undefined
 +>foo1 : (__0: Robot) => void
+ > : undefined
  >skillA : [string, string]
  
      console.log(skillA);
@@ -47,7 +47,7 @@
  >nameMA : string
  >primarySkillA : string
  >secondarySkillA : string
-@@= skipped -33, +32 lines =@@
+@@= skipped -33, +33 lines =@@
      console.log(nameMA);
  >console.log(nameMA) : void
  >console.log : (msg: any) => void

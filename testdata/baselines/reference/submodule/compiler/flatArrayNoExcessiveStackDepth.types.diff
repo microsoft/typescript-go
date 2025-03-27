@@ -38,7 +38,7 @@
  >[] : []
  
      const [, extracted] = match;
--> : undefined
+ > : undefined
  >extracted : string
 ->match : [] | RegExpMatchArray
 +>match : RegExpMatchArray | []

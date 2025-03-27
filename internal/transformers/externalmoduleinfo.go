@@ -228,6 +228,9 @@ func (c *externalModuleInfoCollector) addExportedFunctionDeclaration(node *ast.F
 func (c *externalModuleInfoCollector) collectExportedVariableInfo(decl *ast.Node /*VariableDeclaration | BindingElement*/) {
 	if ast.IsBindingPattern(decl.Name()) {
 		for _, element := range decl.Name().AsBindingPattern().Elements.Nodes {
+			if ast.IsOmittedExpression(element) {
+				continue
+			}
 			e := element.AsBindingElement()
 			if e.Name() != nil {
 				c.collectExportedVariableInfo(element)

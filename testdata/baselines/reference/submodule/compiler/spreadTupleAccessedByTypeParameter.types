@@ -13,6 +13,7 @@ export function test<N extends number>(singletons: ["a"][], i: N) {
 >i : N
 
   const [, ...rest] = singleton;
+> : undefined
 >rest : []
 >singleton : ["a"][][N]
 

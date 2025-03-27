@@ -1653,6 +1653,9 @@ func (c *Checker) checkGrammarNameInLetOrConstDeclarations(name *ast.Node /*Unio
 	} else {
 		elements := name.AsBindingPattern().Elements.Nodes
 		for _, element := range elements {
+			if ast.IsOmittedExpression(element) {
+				continue
+			}
 			bindingElement := element.AsBindingElement()
 			if bindingElement.Name() != nil {
 				c.checkGrammarNameInLetOrConstDeclarations(bindingElement.Name())

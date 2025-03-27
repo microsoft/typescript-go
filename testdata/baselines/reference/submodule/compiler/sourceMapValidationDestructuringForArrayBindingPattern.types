@@ -52,6 +52,7 @@ function getMultiRobot() {
 }
 
 for (let [, nameA] = robotA, i = 0; i < 1; i++) {
+> : undefined
 >nameA : string
 >robotA : Robot
 >i : number
@@ -70,6 +71,7 @@ for (let [, nameA] = robotA, i = 0; i < 1; i++) {
 >nameA : string
 }
 for (let [, nameA] = getRobot(), i = 0; i < 1; i++) {
+> : undefined
 >nameA : string
 >getRobot() : Robot
 >getRobot : () => Robot
@@ -89,6 +91,7 @@ for (let [, nameA] = getRobot(), i = 0; i < 1; i++) {
 >nameA : string
 }
 for (let [, nameA] = [2, "trimmer", "trimming"], i = 0; i < 1; i++) {
+> : undefined
 >nameA : string
 >[2, "trimmer", "trimming"] : [number, string, string]
 >2 : 2
@@ -110,6 +113,7 @@ for (let [, nameA] = [2, "trimmer", "trimming"], i = 0; i < 1; i++) {
 >nameA : string
 }
 for (let [, [primarySkillA, secondarySkillA]] = multiRobotA, i = 0; i < 1; i++) {
+> : undefined
 >primarySkillA : string
 >secondarySkillA : string
 >multiRobotA : MultiSkilledRobot
@@ -129,6 +133,7 @@ for (let [, [primarySkillA, secondarySkillA]] = multiRobotA, i = 0; i < 1; i++) 
 >primarySkillA : string
 }
 for (let [, [primarySkillA, secondarySkillA]] = getMultiRobot(), i = 0; i < 1; i++) {
+> : undefined
 >primarySkillA : string
 >secondarySkillA : string
 >getMultiRobot() : MultiSkilledRobot
@@ -149,6 +154,7 @@ for (let [, [primarySkillA, secondarySkillA]] = getMultiRobot(), i = 0; i < 1; i
 >primarySkillA : string
 }
 for (let [, [primarySkillA, secondarySkillA]] = ["trimmer", ["trimming", "edging"]], i = 0; i < 1; i++) {
+> : undefined
 >primarySkillA : string
 >secondarySkillA : string
 >["trimmer", ["trimming", "edging"]] : [string, [string, string]]

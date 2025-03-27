@@ -260,28 +260,29 @@ func inlineExpressions(expressions []*ast.Expression, factory *ast.NodeFactory) 
 	return expression
 }
 
-func convertBindingElementToArrayAssignmentElement(emitContext *printer.EmitContext, element *ast.BindingElement) *ast.Expression {
-	if element.Name() == nil {
+func convertBindingElementToArrayAssignmentElement(emitContext *printer.EmitContext, element *ast.BindingElementNode) *ast.Expression {
+	if ast.IsOmittedExpression(element) {
 		elision := emitContext.Factory.NewOmittedExpression()
 		emitContext.SetOriginal(elision, element.AsNode())
 		emitContext.AssignCommentAndSourceMapRanges(elision, element.AsNode())
 		return elision
 	}
-	if element.DotDotDotToken != nil {
-		spread := emitContext.Factory.NewSpreadElement(element.Name())
-		emitContext.SetOriginal(spread, element.AsNode())
-		emitContext.AssignCommentAndSourceMapRanges(spread, element.AsNode())
+	bindingElement := element.AsBindingElement()
+	if bindingElement.DotDotDotToken != nil {
+		spread := emitContext.Factory.NewSpreadElement(bindingElement.Name())
+		emitContext.SetOriginal(spread, bindingElement.AsNode())
+		emitContext.AssignCommentAndSourceMapRanges(spread, bindingElement.AsNode())
 		return spread
 	}
-	expression := convertBindingNameToAssignmentElementTarget(emitContext, element.Name())
-	if element.Initializer != nil {
+	expression := convertBindingNameToAssignmentElementTarget(emitContext, bindingElement.Name())
+	if bindingElement.Initializer != nil {
 		assignment := emitContext.Factory.NewBinaryExpression(
 			expression,
 			emitContext.Factory.NewToken(ast.KindEqualsToken),
-			element.Initializer,
+			bindingElement.Initializer,
 		)
-		emitContext.SetOriginal(assignment, element.AsNode())
-		emitContext.AssignCommentAndSourceMapRanges(assignment, element.AsNode())
+		emitContext.SetOriginal(assignment, bindingElement.AsNode())
+		emitContext.AssignCommentAndSourceMapRanges(assignment, bindingElement.AsNode())
 		return assignment
 	}
 	return expression
@@ -351,7 +352,7 @@ func convertBindingElementToObjectAssignmentPattern(emitContext *printer.EmitCon
 func convertBindingElementToArrayAssignmentPattern(emitContext *printer.EmitContext, element *ast.BindingPattern) *ast.Expression {
 	var elements []*ast.Expression
 	for _, element := range element.Elements.Nodes {
-		elements = append(elements, convertBindingElementToArrayAssignmentElement(emitContext, element.AsBindingElement()))
+		elements = append(elements, convertBindingElementToArrayAssignmentElement(emitContext, element))
 	}
 	elementList := emitContext.Factory.NewNodeList(elements)
 	elementList.Loc = element.Elements.Loc

@@ -2309,6 +2309,10 @@ func (p *Printer) emitBindingElement(node *ast.BindingElement) {
 }
 
 func (p *Printer) emitBindingElementNode(node *ast.BindingElementNode) {
+	if ast.IsOmittedExpression(node) {
+		p.emitOmittedExpression(node)
+		return
+	}
 	p.emitBindingElement(node.AsBindingElement())
 }
 

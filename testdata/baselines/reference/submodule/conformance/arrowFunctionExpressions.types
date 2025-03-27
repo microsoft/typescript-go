@@ -69,11 +69,13 @@ var p2 = ([...a]) => { };
 var p3 = ([, a]) => { };
 >p3 : (__0: [any, any]) => void
 >([, a]) => { } : (__0: [any, any]) => void
+> : undefined
 >a : any
 
 var p4 = ([, ...a]) => { };
 >p4 : (__0: [any?, ...any[]]) => void
 >([, ...a]) => { } : (__0: [any?, ...any[]]) => void
+> : undefined
 >a : any[]
 
 var p5 = ([a = 1]) => { };

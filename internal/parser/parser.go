@@ -1488,16 +1488,15 @@ func (p *Parser) parseArrayBindingPattern() *ast.Node {
 
 func (p *Parser) parseArrayBindingElement() *ast.Node {
 	pos := p.nodePos()
-	var dotDotDotToken *ast.Node
-	var name *ast.Node
-	var initializer *ast.Expression
-	if p.token != ast.KindCommaToken {
-		// These are all nil for a missing element
-		dotDotDotToken = p.parseOptionalToken(ast.KindDotDotDotToken)
-		name = p.parseIdentifierOrPattern()
-		initializer = p.parseInitializer()
+	var result *ast.Node
+	if p.token == ast.KindCommaToken {
+		result = p.factory.NewOmittedExpression()
+	} else {
+		dotDotDotToken := p.parseOptionalToken(ast.KindDotDotDotToken)
+		name := p.parseIdentifierOrPattern()
+		initializer := p.parseInitializer()
+		result = p.factory.NewBindingElement(dotDotDotToken, nil /*propertyName*/, name, initializer)
 	}
-	result := p.factory.NewBindingElement(dotDotDotToken, nil /*propertyName*/, name, initializer)
 	p.finishNode(result, pos)
 	return result
 }

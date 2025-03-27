@@ -22,6 +22,7 @@ function f2({_a, __b}) {
 function f3([_a, ,__b]) {
 >f3 : (__0: [any, any, any]) => void
 >_a : any
+> : undefined
 >__b : any
 }
 
