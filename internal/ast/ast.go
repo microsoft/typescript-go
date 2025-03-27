@@ -2032,6 +2032,10 @@ func (node *IfStatement) Clone(f *NodeFactory) *Node {
 	return cloneNode(f.NewIfStatement(node.Expression, node.ThenStatement, node.ElseStatement), node.AsNode(), f.hooks)
 }
 
+func IsIfStatement(node *Node) bool {
+	return node.Kind == KindIfStatement
+}
+
 // DoStatement
 
 type DoStatement struct {

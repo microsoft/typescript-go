@@ -11629,8 +11629,21 @@ func (c *Checker) checkBinaryLikeExpression(left *ast.Node, operatorToken *ast.N
 	}
 	leftType := c.checkExpressionEx(left, checkMode)
 	rightType := c.checkExpressionEx(right, checkMode)
-	if ast.IsLogicalBinaryOperator(operator) {
-		c.checkTruthinessOfType(leftType, left)
+	if ast.IsLogicalOrCoalescingBinaryOperator(operator) {
+		parent := left.Parent.Parent
+		for ast.IsParenthesizedExpression(parent) || ast.IsLogicalOrCoalescingBinaryExpression(parent) {
+			parent = parent.Parent
+		}
+		if operator == ast.KindAmpersandAmpersandToken || ast.IsIfStatement(parent) {
+			var body *ast.Node
+			if ast.IsIfStatement(parent) {
+				body = parent.AsIfStatement().ThenStatement
+			}
+			c.checkTestingKnownTruthyCallableOrAwaitableOrEnumMemberType(left, leftType, body)
+		}
+		if ast.IsLogicalBinaryOperator(operator) {
+			c.checkTruthinessOfType(leftType, left)
+		}
 	}
 	switch operator {
 	case ast.KindAsteriskToken, ast.KindAsteriskAsteriskToken, ast.KindAsteriskEqualsToken, ast.KindAsteriskAsteriskEqualsToken,
