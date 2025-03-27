@@ -69,10 +69,12 @@ func NewService(host ServiceHost, options ServiceOptions) *Service {
 
 		configuredProjects: make(map[tspath.Path]*Project),
 
-		documentRegistry: NewDocumentRegistry(tspath.ComparePathsOptions{
-			UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
-			CurrentDirectory:          host.GetCurrentDirectory(),
-		}),
+		documentRegistry: &DocumentRegistry{
+			Options: tspath.ComparePathsOptions{
+				UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
+				CurrentDirectory:          host.GetCurrentDirectory(),
+			},
+		},
 		scriptInfos:                 make(map[tspath.Path]*ScriptInfo),
 		openFiles:                   make(map[tspath.Path]string),
 		filenameToScriptInfoVersion: make(map[tspath.Path]int),

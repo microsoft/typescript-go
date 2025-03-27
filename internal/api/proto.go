@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strconv"
+	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/checker"
@@ -32,6 +34,33 @@ func TypeHandle(t *checker.Type) Handle[checker.Type] {
 	return createHandle[checker.Type]("t", t.Id())
 }
 
+func FileHandle(file *ast.SourceFile) Handle[ast.SourceFile] {
+	return createHandle[ast.SourceFile]("f", file.AsNode().Id.Load())
+}
+
+func NodeHandle(node *ast.Node) Handle[ast.Node] {
+	fileHandle := FileHandle(ast.GetSourceFileOfNode(node))
+	return Handle[ast.Node](fmt.Sprintf("%s.%d.%d", fileHandle, node.Pos(), node.Kind))
+}
+
+func parseNodeHandle(handle Handle[ast.Node]) (Handle[ast.SourceFile], int, ast.Kind, error) {
+	parts := strings.SplitN(string(handle), ".", 3)
+	if len(parts) != 3 {
+		return "", 0, 0, fmt.Errorf("invalid node handle %q", handle)
+	}
+
+	fileHandle := Handle[ast.SourceFile](parts[0])
+	pos, err := strconv.ParseInt(parts[1], 10, 32)
+	if err != nil {
+		return "", 0, 0, fmt.Errorf("invalid node handle %q: %w", handle, err)
+	}
+	kind, err := strconv.ParseInt(parts[2], 10, 32)
+	if err != nil {
+		return "", 0, 0, fmt.Errorf("invalid node handle %q: %w", handle, err)
+	}
+	return fileHandle, int(pos), ast.Kind(kind), nil
+}
+
 func createHandle[T any](prefix string, id any) Handle[T] {
 	return Handle[T](fmt.Sprintf("%s%016x", prefix, id))
 }
@@ -40,22 +69,28 @@ const (
 	MethodConfigure Method = "configure"
 	MethodRelease   Method = "release"
 
-	MethodParseConfigFile      Method = "parseConfigFile"
-	MethodLoadProject          Method = "loadProject"
-	MethodGetSymbolAtPosition  Method = "getSymbolAtPosition"
-	MethodGetSymbolAtPositions Method = "getSymbolAtPositions"
-	MethodGetTypeOfSymbol      Method = "getTypeOfSymbol"
-	MethodGetSourceFile        Method = "getSourceFile"
+	MethodParseConfigFile       Method = "parseConfigFile"
+	MethodLoadProject           Method = "loadProject"
+	MethodGetSymbolAtPosition   Method = "getSymbolAtPosition"
+	MethodGetSymbolsAtPositions Method = "getSymbolsAtPositions"
+	MethodGetSymbolAtLocation   Method = "getSymbolAtLocation"
+	MethodGetSymbolsAtLocations Method = "getSymbolsAtLocations"
+	MethodGetTypeOfSymbol       Method = "getTypeOfSymbol"
+	MethodGetTypesOfSymbols     Method = "getTypesOfSymbols"
+	MethodGetSourceFile         Method = "getSourceFile"
 )
 
 var unmarshalers = map[Method]func([]byte) (any, error){
-	MethodParseConfigFile:      unmarshallerFor[ParseConfigFileParams],
-	MethodRelease:              batchEnabledUnmarshallerFor[string],
-	MethodLoadProject:          unmarshallerFor[LoadProjectParams],
-	MethodGetSourceFile:        unmarshallerFor[GetSourceFileParams],
-	MethodGetSymbolAtPosition:  batchEnabledUnmarshallerFor[GetSymbolAtPositionParams],
-	MethodGetSymbolAtPositions: unmarshallerFor[GetSymbolAtPositionsParams],
-	MethodGetTypeOfSymbol:      batchEnabledUnmarshallerFor[GetTypeOfSymbolParams],
+	MethodRelease:               unmarshallerFor[string],
+	MethodParseConfigFile:       unmarshallerFor[ParseConfigFileParams],
+	MethodLoadProject:           unmarshallerFor[LoadProjectParams],
+	MethodGetSourceFile:         unmarshallerFor[GetSourceFileParams],
+	MethodGetSymbolAtPosition:   unmarshallerFor[GetSymbolAtPositionParams],
+	MethodGetSymbolsAtPositions: unmarshallerFor[GetSymbolsAtPositionsParams],
+	MethodGetSymbolAtLocation:   unmarshallerFor[GetSymbolAtLocationParams],
+	MethodGetSymbolsAtLocations: unmarshallerFor[GetSymbolsAtLocationsParams],
+	MethodGetTypeOfSymbol:       unmarshallerFor[GetTypeOfSymbolParams],
+	MethodGetTypesOfSymbols:     unmarshallerFor[GetTypesOfSymbolsParams],
 }
 
 type ConfigureParams struct {
@@ -98,10 +133,20 @@ type GetSymbolAtPositionParams struct {
 	Position uint32                  `json:"position"`
 }
 
-type GetSymbolAtPositionsParams struct {
+type GetSymbolsAtPositionsParams struct {
 	Project   Handle[project.Project] `json:"project"`
 	FileName  string                  `json:"fileName"`
 	Positions []uint32                `json:"positions"`
+}
+
+type GetSymbolAtLocationParams struct {
+	Project  Handle[project.Project] `json:"project"`
+	Location Handle[ast.Node]        `json:"location"`
+}
+
+type GetSymbolsAtLocationsParams struct {
+	Project   Handle[project.Project] `json:"project"`
+	Locations []Handle[ast.Node]      `json:"locations"`
 }
 
 type SymbolResponse struct {
@@ -111,7 +156,7 @@ type SymbolResponse struct {
 	CheckFlags uint32             `json:"checkFlags"`
 }
 
-func NewSymbolResponse(symbol *ast.Symbol, projectVersion int) *SymbolResponse {
+func NewSymbolResponse(symbol *ast.Symbol) *SymbolResponse {
 	return &SymbolResponse{
 		Id:         SymbolHandle(symbol),
 		Name:       symbol.Name,
@@ -123,6 +168,11 @@ func NewSymbolResponse(symbol *ast.Symbol, projectVersion int) *SymbolResponse {
 type GetTypeOfSymbolParams struct {
 	Project Handle[project.Project] `json:"project"`
 	Symbol  Handle[ast.Symbol]      `json:"symbol"`
+}
+
+type GetTypesOfSymbolsParams struct {
+	Project Handle[project.Project] `json:"project"`
+	Symbols []Handle[ast.Symbol]    `json:"symbols"`
 }
 
 type TypeResponse struct {
@@ -148,17 +198,6 @@ func unmarshalPayload(method string, payload json.RawMessage) (any, error) {
 		return nil, fmt.Errorf("unknown API method %q", method)
 	}
 	return unmarshaler(payload)
-}
-
-func batchEnabledUnmarshallerFor[T any](data []byte) (any, error) {
-	if data[0] != '[' {
-		return unmarshallerFor[T](data)
-	}
-	var v []*T
-	if err := json.Unmarshal(data, &v); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal %T: %w", (*T)(nil), err)
-	}
-	return &v, nil
 }
 
 func unmarshallerFor[T any](data []byte) (any, error) {

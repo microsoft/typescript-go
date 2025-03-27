@@ -9,6 +9,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/api/encoder"
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/project"
@@ -16,6 +17,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
+
+type handleMap[T any] map[Handle[T]]*T
 
 type APIOptions struct {
 	Logger *project.Logger
@@ -29,28 +32,39 @@ type API struct {
 	scriptInfosMu    sync.RWMutex
 	scriptInfos      map[tspath.Path]*project.ScriptInfo
 
-	projects  map[Handle[project.Project]]*project.Project
+	projects  handleMap[project.Project]
+	filesMu   sync.Mutex
+	files     handleMap[ast.SourceFile]
 	symbolsMu sync.Mutex
-	symbols   map[Handle[ast.Symbol]]*ast.Symbol
+	symbols   handleMap[ast.Symbol]
 	typesMu   sync.Mutex
-	types     map[Handle[checker.Type]]*checker.Type
+	types     handleMap[checker.Type]
 }
 
 var _ project.ProjectHost = (*API)(nil)
 
 func NewAPI(host APIHost, options APIOptions) *API {
-	return &API{
-		host:    host,
-		options: options,
-		documentRegistry: project.NewDocumentRegistry(tspath.ComparePathsOptions{
+	api := &API{
+		host:        host,
+		options:     options,
+		scriptInfos: make(map[tspath.Path]*project.ScriptInfo),
+		projects:    make(handleMap[project.Project]),
+		files:       make(handleMap[ast.SourceFile]),
+		symbols:     make(handleMap[ast.Symbol]),
+		types:       make(handleMap[checker.Type]),
+	}
+	api.documentRegistry = &project.DocumentRegistry{
+		Options: tspath.ComparePathsOptions{
 			UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
 			CurrentDirectory:          host.GetCurrentDirectory(),
-		}),
-		scriptInfos: make(map[tspath.Path]*project.ScriptInfo),
-		projects:    make(map[Handle[project.Project]]*project.Project),
-		symbols:     make(map[Handle[ast.Symbol]]*ast.Symbol),
-		types:       make(map[Handle[checker.Type]]*checker.Type),
+		},
+		Hooks: project.DocumentRegistryHooks{
+			OnReleaseDocument: func(file *ast.SourceFile) {
+				api.releaseHandle(string(FileHandle(file)))
+			},
+		},
 	}
+	return api
 }
 
 // DefaultLibraryPath implements ProjectHost.
@@ -110,9 +124,11 @@ func (api *API) HandleRequest(id int, method string, payload []byte) ([]byte, er
 
 	switch Method(method) {
 	case MethodRelease:
-		return encodeJSON(handleBatchableRequest(params, func(id *string) (any, error) {
+		if id, ok := params.(*string); ok {
 			return nil, api.releaseHandle(*id)
-		}))
+		} else {
+			return nil, fmt.Errorf("expected string for release handle, got %T", params)
+		}
 	case MethodGetSourceFile:
 		params := params.(*GetSourceFileParams)
 		sourceFile, err := api.GetSourceFile(params.Project, params.FileName)
@@ -125,17 +141,28 @@ func (api *API) HandleRequest(id int, method string, payload []byte) ([]byte, er
 	case MethodLoadProject:
 		return encodeJSON(api.LoadProject(params.(*LoadProjectParams).ConfigFileName))
 	case MethodGetSymbolAtPosition:
-		return encodeJSON(handleBatchableRequest(params, func(params *GetSymbolAtPositionParams) (any, error) {
-			return api.GetSymbolAtPosition(params.Project, params.FileName, int(params.Position))
-		}))
-	case MethodGetSymbolAtPositions:
-		params := params.(*GetSymbolAtPositionsParams)
-		return encodeJSON(handleBatchableRequest(&params.Positions, func(position uint32) (any, error) {
+		params := params.(*GetSymbolAtPositionParams)
+		return encodeJSON(api.GetSymbolAtPosition(params.Project, params.FileName, int(params.Position)))
+	case MethodGetSymbolsAtPositions:
+		params := params.(*GetSymbolsAtPositionsParams)
+		return encodeJSON(core.TryMap(params.Positions, func(position uint32) (any, error) {
 			return api.GetSymbolAtPosition(params.Project, params.FileName, int(position))
 		}))
+	case MethodGetSymbolAtLocation:
+		params := params.(*GetSymbolAtLocationParams)
+		return encodeJSON(api.GetSymbolAtLocation(params.Project, params.Location))
+	case MethodGetSymbolsAtLocations:
+		params := params.(*GetSymbolsAtLocationsParams)
+		return encodeJSON(core.TryMap(params.Locations, func(location Handle[ast.Node]) (any, error) {
+			return api.GetSymbolAtLocation(params.Project, location)
+		}))
 	case MethodGetTypeOfSymbol:
-		return encodeJSON(handleBatchableRequest(params, func(params *GetTypeOfSymbolParams) (any, error) {
-			return api.GetTypeOfSymbol(params.Project, params.Symbol)
+		params := params.(*GetTypeOfSymbolParams)
+		return encodeJSON(api.GetTypeOfSymbol(params.Project, params.Symbol))
+	case MethodGetTypesOfSymbols:
+		params := params.(*GetTypesOfSymbolsParams)
+		return encodeJSON(core.TryMap(params.Symbols, func(symbol Handle[ast.Symbol]) (any, error) {
+			return api.GetTypeOfSymbol(params.Project, Handle[ast.Symbol](symbol))
 		}))
 	default:
 		return nil, fmt.Errorf("unhandled API method %q", method)
@@ -192,7 +219,41 @@ func (api *API) GetSymbolAtPosition(projectId Handle[project.Project], fileName 
 	if err != nil || symbol == nil {
 		return nil, err
 	}
-	data := NewSymbolResponse(symbol, project.Version())
+	data := NewSymbolResponse(symbol)
+	api.symbolsMu.Lock()
+	defer api.symbolsMu.Unlock()
+	api.symbols[data.Id] = symbol
+	return data, nil
+}
+
+func (api *API) GetSymbolAtLocation(projectId Handle[project.Project], location Handle[ast.Node]) (*SymbolResponse, error) {
+	project, ok := api.projects[projectId]
+	if !ok {
+		return nil, errors.New("project not found")
+	}
+	fileHandle, pos, kind, err := parseNodeHandle(location)
+	if err != nil {
+		return nil, err
+	}
+	api.filesMu.Lock()
+	defer api.filesMu.Unlock()
+	sourceFile, ok := api.files[fileHandle]
+	if !ok {
+		return nil, fmt.Errorf("file %q not found", fileHandle)
+	}
+	token := astnav.GetTokenAtPosition(sourceFile, pos)
+	if token == nil {
+		return nil, fmt.Errorf("token not found at position %d in file %q", pos, sourceFile.FileName())
+	}
+	node := ast.FindAncestorKind(token, kind)
+	if node == nil {
+		return nil, fmt.Errorf("node of kind %s not found at position %d in file %q", kind.String(), pos, sourceFile.FileName())
+	}
+	symbol := project.LanguageService().GetSymbolAtLocation(node)
+	if symbol == nil {
+		return nil, nil
+	}
+	data := NewSymbolResponse(symbol)
 	api.symbolsMu.Lock()
 	defer api.symbolsMu.Unlock()
 	api.symbols[data.Id] = symbol
@@ -226,6 +287,9 @@ func (api *API) GetSourceFile(projectId Handle[project.Project], fileName string
 	if sourceFile == nil {
 		return nil, fmt.Errorf("source file %q not found", fileName)
 	}
+	api.filesMu.Lock()
+	defer api.filesMu.Unlock()
+	api.files[FileHandle(sourceFile)] = sourceFile
 	return sourceFile, nil
 }
 
@@ -239,6 +303,15 @@ func (api *API) releaseHandle(handle string) error {
 		}
 		delete(api.projects, projectId)
 		project.Close()
+	case 'f':
+		fileId := Handle[ast.SourceFile](handle)
+		api.filesMu.Lock()
+		defer api.filesMu.Unlock()
+		_, ok := api.files[fileId]
+		if !ok {
+			return fmt.Errorf("file %q not found", handle)
+		}
+		delete(api.files, fileId)
 	case 's':
 		symbolId := Handle[ast.Symbol](handle)
 		api.symbolsMu.Lock()
@@ -289,23 +362,6 @@ func (api *API) toAbsoluteFileName(fileName string) string {
 
 func (api *API) toPath(fileName string) tspath.Path {
 	return tspath.ToPath(fileName, api.host.GetCurrentDirectory(), api.host.FS().UseCaseSensitiveFileNames())
-}
-
-func handleBatchableRequest[T any](params any, executeRequest func(T) (any, error)) (any, error) {
-	if batchParams, ok := params.(*[]T); !ok {
-		return executeRequest(params.(T))
-	} else {
-		batchParams := *batchParams
-		results := make([]any, len(batchParams))
-		for i, params := range batchParams {
-			result, err := executeRequest(params)
-			if err != nil {
-				return nil, err
-			}
-			results[i] = result
-		}
-		return results, nil
-	}
 }
 
 func encodeJSON(v any, err error) ([]byte, error) {

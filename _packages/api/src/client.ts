@@ -41,8 +41,10 @@ export class Client {
     request(method: string, payload: any): any {
         const encodedPayload = JSON.stringify(payload);
         const result = this.channel.requestSync(method, encodedPayload);
-        const decodedResult = JSON.parse(result);
-        return decodedResult;
+        if (result.length) {
+            const decodedResult = JSON.parse(result);
+            return decodedResult;
+        }
     }
 
     requestBinary(method: string, payload: any): Uint8Array {

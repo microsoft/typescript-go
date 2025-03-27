@@ -30,17 +30,16 @@ type registryEntry struct {
 	mu         sync.Mutex
 }
 
+type DocumentRegistryHooks struct {
+	OnReleaseDocument func(file *ast.SourceFile)
+}
+
 // The document registry represents a store of SourceFile objects that can be shared between
 // multiple LanguageService instances.
 type DocumentRegistry struct {
-	options   tspath.ComparePathsOptions
+	Options   tspath.ComparePathsOptions
+	Hooks     DocumentRegistryHooks
 	documents sync.Map
-}
-
-func NewDocumentRegistry(options tspath.ComparePathsOptions) *DocumentRegistry {
-	return &DocumentRegistry{
-		options: options,
-	}
 }
 
 // AcquireDocument gets a SourceFile from the registry if it exists as the same version tracked
@@ -77,6 +76,9 @@ func (r *DocumentRegistry) releaseDocumentWithKey(key registryKey) {
 		entry.refCount--
 		if entry.refCount == 0 {
 			r.documents.Delete(key)
+			if r.Hooks.OnReleaseDocument != nil {
+				r.Hooks.OnReleaseDocument(entry.sourceFile)
+			}
 		}
 	}
 }

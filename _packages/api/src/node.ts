@@ -1,12 +1,15 @@
 import {
     type Node,
     type NodeArray,
+    type SourceFile,
     SyntaxKind,
 } from "@typescript/ast";
 
 declare module "@typescript/ast" {
     export interface Node {
+        readonly id: string;
         forEachChild<T>(visitor: (node: Node) => T): T | undefined;
+        getSourceFile(): SourceFile;
     }
 
     export interface NodeArray<T> {
@@ -319,6 +322,21 @@ export class RemoteNodeList extends Array<RemoteNode> implements NodeArray<Remot
 
 export class RemoteNode extends RemoteNodeBase implements Node {
     protected static NODE_LEN: number = NODE_LEN;
+    private sourceFile: SourceFile;
+    id: string;
+
+    constructor(view: DataView, decoder: TextDecoder, index: number, parent: RemoteNode) {
+        super(view, decoder, index, parent);
+        let sourceFile: RemoteNode = this;
+        while (sourceFile && sourceFile.kind !== SyntaxKind.SourceFile) {
+            sourceFile = sourceFile.parent;
+        }
+        if (!sourceFile) {
+            throw new Error("SourceFile not found");
+        }
+        this.sourceFile = sourceFile as unknown as SourceFile;
+        this.id = `${sourceFile.id}.${this.pos}.${this.kind}`;
+    }
 
     forEachChild<T>(visitor: (node: Node) => T): T | undefined {
         if (this.hasChildren()) {
@@ -343,6 +361,10 @@ export class RemoteNode extends RemoteNodeBase implements Node {
             }
             while (next);
         }
+    }
+
+    getSourceFile(): SourceFile {
+        return this.sourceFile;
     }
 
     private getString(index: number): string {

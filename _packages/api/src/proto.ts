@@ -10,11 +10,6 @@ export interface ProjectResponse {
     rootFiles: string[];
 }
 
-export interface GetSymbolAtPositionParams {
-    fileName: string;
-    position: number;
-}
-
 export interface SymbolResponse {
     id: string;
     name: string;

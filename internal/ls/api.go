@@ -27,6 +27,12 @@ func (l *LanguageService) GetSymbolAtPosition(fileName string, position int) (*a
 	return checker.GetSymbolAtLocation(node), nil
 }
 
+func (l *LanguageService) GetSymbolAtLocation(node *ast.Node) *ast.Symbol {
+	program := l.GetProgram()
+	checker := program.GetTypeChecker()
+	return checker.GetSymbolAtLocation(node)
+}
+
 func (l *LanguageService) GetTypeOfSymbol(symbol *ast.Symbol) *checker.Type {
 	checker := l.GetProgram().GetTypeChecker()
 	return checker.GetTypeOfSymbolAtLocation(symbol, nil)

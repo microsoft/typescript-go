@@ -1,13 +1,15 @@
 import { SymbolFlags } from "#symbolFlags";
 import { TypeFlags } from "#typeFlags";
-import type { SourceFile } from "@typescript/ast";
+import type {
+    Node,
+    SourceFile,
+} from "@typescript/ast";
 import { Client } from "./client.ts";
 import type { FileSystem } from "./fs.ts";
 import { RemoteSourceFile } from "./node.ts";
 import { ObjectRegistry } from "./objectRegistry.ts";
 import type {
     ConfigResponse,
-    GetSymbolAtPositionParams,
     ProjectResponse,
     SymbolResponse,
     TypeResponse,
@@ -68,10 +70,11 @@ export class DisposableObject {
     isDisposed(): boolean {
         return this.disposed;
     }
-    ensureNotDisposed(): void {
+    ensureNotDisposed(): this {
         if (this.disposed) {
             throw new Error(`${this.constructor.name} is disposed`);
         }
+        return this;
     }
 }
 
@@ -108,26 +111,39 @@ export class Project extends DisposableObject {
         return data ? new RemoteSourceFile(data, this.decoder) as unknown as SourceFile : undefined;
     }
 
-    getSymbolAtPosition(requests: readonly GetSymbolAtPositionParams[]): (Symbol | undefined)[];
-    getSymbolAtPosition(fileName: string, position: number | number[]): Symbol | undefined;
-    getSymbolAtPosition(...params: [fileName: string, position: number | number[]] | [readonly GetSymbolAtPositionParams[]]): Symbol | undefined | (Symbol | undefined)[] {
+    getSymbolAtLocation(node: Node): Symbol | undefined;
+    getSymbolAtLocation(nodes: readonly Node[]): Symbol | undefined;
+    getSymbolAtLocation(nodeOrNodes: Node | readonly Node[]): Symbol | undefined {
         this.ensureNotDisposed();
-        if (params.length === 2) {
-            if (typeof params[1] === "number") {
-                const data = this.client.request("getSymbolAtPosition", { project: this.id, fileName: params[0], position: params[1] });
-                return data ? this.objectRegistry.getSymbol(data) : undefined;
-            }
-            const data = this.client.request("getSymbolAtPositions", { project: this.id, fileName: params[0], positions: params[1] });
+        if (Array.isArray(nodeOrNodes)) {
+            const data = this.client.request("getSymbolsAtLocations", { project: this.id, nodes: nodeOrNodes.map(node => node.id) });
             return data.map((d: SymbolResponse | null) => d ? this.objectRegistry.getSymbol(d) : undefined);
         }
-        const data = this.client.request("getSymbolAtPosition", params[0].map(({ fileName, position }) => ({ project: this.id, fileName, position })));
+        const data = this.client.request("getSymbolAtLocation", { project: this.id, node: (nodeOrNodes as Node).id });
+        return data ? this.objectRegistry.getSymbol(data) : undefined;
+    }
+
+    getSymbolAtPosition(fileName: string, position: number): Symbol | undefined;
+    getSymbolAtPosition(fileName: string, positions: readonly number[]): (Symbol | undefined)[];
+    getSymbolAtPosition(fileName: string, positionOrPositions: number | readonly number[]): Symbol | (Symbol | undefined)[] | undefined {
+        this.ensureNotDisposed();
+        if (typeof positionOrPositions === "number") {
+            const data = this.client.request("getSymbolAtPosition", { project: this.id, fileName, position: positionOrPositions });
+            return data ? this.objectRegistry.getSymbol(data) : undefined;
+        }
+        const data = this.client.request("getSymbolsAtPositions", { project: this.id, fileName, positions: positionOrPositions });
         return data.map((d: SymbolResponse | null) => d ? this.objectRegistry.getSymbol(d) : undefined);
     }
 
-    getTypeOfSymbol(symbol: Symbol): Type | undefined {
+    getTypeOfSymbol(symbol: Symbol): Type | undefined;
+    getTypeOfSymbol(symbols: readonly Symbol[]): (Type | undefined)[];
+    getTypeOfSymbol(symbolOrSymbols: Symbol | readonly Symbol[]): Type | (Type | undefined)[] | undefined {
         this.ensureNotDisposed();
-        symbol.ensureNotDisposed();
-        const data = this.client.request("getTypeOfSymbol", { project: this.id, symbol: symbol.id });
+        if (Array.isArray(symbolOrSymbols)) {
+            const data = this.client.request("getTypesOfSymbols", { project: this.id, symbols: symbolOrSymbols.map(symbol => symbol.ensureNotDisposed().id) });
+            return data.map((d: TypeResponse | null) => d ? this.objectRegistry.getType(d) : undefined);
+        }
+        const data = this.client.request("getTypeOfSymbol", { project: this.id, symbol: (symbolOrSymbols as Symbol).ensureNotDisposed().id });
         return data ? this.objectRegistry.getType(data) : undefined;
     }
 }
