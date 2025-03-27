@@ -1973,12 +1973,12 @@ var getFeatureMap = sync.OnceValue(func() map[string][]FeatureMapEntry {
 			{lib: "es2015", props: []string{"entries", "keys", "values"}},
 			{lib: "esnext", props: []string{
 				"union",
-                "intersection",
-                "difference",
-                "symmetricDifference",
-                "isSubsetOf",
-                "isSupersetOf",
-                "isDisjointFrom",
+				"intersection",
+				"difference",
+				"symmetricDifference",
+				"isSubsetOf",
+				"isSupersetOf",
+				"isDisjointFrom",
 			}},
 		},
 		"PromiseConstructor": {
@@ -2032,8 +2032,8 @@ var getFeatureMap = sync.OnceValue(func() map[string][]FeatureMapEntry {
 			{lib: "es2020", props: []string{"matchAll"}},
 			{lib: "esnext", props: []string{
 				"metadata",
-                "dispose",
-                "asyncDispose",
+				"dispose",
+				"asyncDispose",
 			}},
 		},
 		"DataView": {
