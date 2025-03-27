@@ -2,7 +2,7 @@
 
 === defs.d.ts ===
 declare function f1(p: void): void;
->f1 : (p?: void) => void
+>f1 : (p: void) => void
 >p : void
 
 declare function f2(p: undefined): void;
@@ -37,13 +37,13 @@ declare const o4: I<any>;
 // current behavior: treat trailing `void` as optional
 f1();
 >f1() : void
->f1 : (p?: void) => void
+>f1 : (p: void) => void
 
 o1.m();
 >o1.m() : void
->o1.m : (p?: void) => void
+>o1.m : (p: void) => void
 >o1 : I<void>
->m : (p?: void) => void
+>m : (p: void) => void
 
 // new behavior: treat 'undefined', 'unknown', and 'any' as optional in non-strict mode
 f2();
@@ -80,13 +80,13 @@ o4.m();
 // current behavior: treat trailing `void` as optional
 f1();
 >f1() : void
->f1 : (p?: void) => void
+>f1 : (p: void) => void
 
 o1.m();
 >o1.m() : void
->o1.m : (p?: void) => void
+>o1.m : (p: void) => void
 >o1 : I<void>
->m : (p?: void) => void
+>m : (p: void) => void
 
 // no change in behavior
 f2();

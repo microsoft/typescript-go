@@ -492,7 +492,7 @@ func (p *Printer) printSignature(sig *Signature, returnSeparator string) {
 			p.printName(param)
 		} else {
 			p.printName(param)
-			if i >= p.c.getMinArgumentCount(sig) {
+			if i >= p.c.getMinArgumentCountEx(sig, MinArgumentCountFlagsVoidIsNonOptional) {
 				p.print("?")
 			}
 		}

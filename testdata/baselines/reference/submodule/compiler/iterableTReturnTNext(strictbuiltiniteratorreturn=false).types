@@ -57,9 +57,9 @@ const doubles = source();
 
 doubles.return();
 >doubles.return() : Promise<IteratorResult<1 | 2 | 3, void>>
->doubles.return : (value?: void | PromiseLike<void>) => Promise<IteratorResult<1 | 2 | 3, void>>
+>doubles.return : (value: void | PromiseLike<void>) => Promise<IteratorResult<1 | 2 | 3, void>>
 >doubles : AsyncGenerator<1 | 2 | 3, void, unknown>
->return : (value?: void | PromiseLike<void>) => Promise<IteratorResult<1 | 2 | 3, void>>
+>return : (value: void | PromiseLike<void>) => Promise<IteratorResult<1 | 2 | 3, void>>
 
 // based on: https://github.com/backstage/backstage/blob/85d9346ef11c1c20e4405102b4f5d93afb1292c1/packages/core-app-api/src/routing/RouteTracker.tsx#L62
 const r3: number | undefined = set.values().next().value;
