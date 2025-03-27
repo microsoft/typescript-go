@@ -267,7 +267,7 @@ func generateOptionOutput(
 	valueCandidates := getValueCandidate(option)
 
 	var defaultValueDescription string
-	if msg, ok := option.DefaultValueDescription.(*diagnostics.Message); ok {
+	if msg, ok := option.DefaultValueDescription.(*diagnostics.Message); ok && msg != nil {
 		defaultValueDescription = msg.Format()
 	} else {
 		defaultValueDescription = formatDefaultValue(
@@ -280,7 +280,7 @@ func generateOptionOutput(
 	}
 
 	var terminalWidth int
-	// const terminalWidth = sys.getWidthOfTerminal?.() ?? 0;
+	// !!! const terminalWidth = sys.getWidthOfTerminal?.() ?? 0;
 
 	// Note: child_process might return `terminalWidth` as undefined.
 	if terminalWidth >= 80 {
@@ -324,7 +324,7 @@ func generateOptionOutput(
 }
 
 func formatDefaultValue(defaultValue any, option *tsoptions.CommandLineOption) string {
-	if defaultValue == core.TSUnknown {
+	if defaultValue == nil || defaultValue == core.TSUnknown {
 		return "undefined"
 	}
 
@@ -372,7 +372,11 @@ func getValueCandidate(option *tsoptions.CommandLineOption) *valueCandidate {
 	}
 
 	res := &valueCandidate{}
-	// !!! Debug.assert(option.type !== "listOrElement");
+	if option.Kind == tsoptions.CommandLineOptionTypeListOrElement {
+		// assert(option.type !== "listOrElement")
+		panic("no value candidate for list or element")
+	}
+
 	switch option.Kind {
 	case tsoptions.CommandLineOptionTypeString,
 		tsoptions.CommandLineOptionTypeNumber,
