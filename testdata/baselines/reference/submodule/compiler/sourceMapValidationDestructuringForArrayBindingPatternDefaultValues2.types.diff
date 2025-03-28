@@ -9,7 +9,15 @@
  
      log(msg: any): void;
  >log : (msg: any) => void
-@@= skipped -93, +93 lines =@@
+@@= skipped -76, +76 lines =@@
+ >[, nameA = "name"] = robotA, i = 0 : 0
+ >[, nameA = "name"] = robotA : Robot
+ >[, nameA = "name"] : [undefined, string]
+-> : undefined
+ >nameA = "name" : "name"
+ >nameA : string
+ >"name" : "name"
+@@= skipped -17, +16 lines =@@
      console.log(nameA);
  >console.log(nameA) : void
  >console.log : (msg: any) => void
@@ -18,7 +26,15 @@
  >log : (msg: any) => void
  >nameA : string
  }
-@@= skipped -26, +26 lines =@@
+@@= skipped -8, +8 lines =@@
+ >[, nameA = "name"] = getRobot(), i = 0 : 0
+ >[, nameA = "name"] = getRobot() : Robot
+ >[, nameA = "name"] : [undefined, string]
+-> : undefined
+ >nameA = "name" : "name"
+ >nameA : string
+ >"name" : "name"
+@@= skipped -18, +17 lines =@@
      console.log(nameA);
  >console.log(nameA) : void
  >console.log : (msg: any) => void
@@ -27,7 +43,15 @@
  >log : (msg: any) => void
  >nameA : string
  }
-@@= skipped -28, +28 lines =@@
+@@= skipped -8, +8 lines =@@
+ >[, nameA = "name"] = [2, "trimmer", "trimming"], i = 0 : 0
+ >[, nameA = "name"] = [2, "trimmer", "trimming"] : [number, string, string]
+ >[, nameA = "name"] : [undefined, string]
+-> : undefined
+ >nameA = "name" : "name"
+ >nameA : string
+ >"name" : "name"
+@@= skipped -20, +19 lines =@@
      console.log(nameA);
  >console.log(nameA) : void
  >console.log : (msg: any) => void
@@ -36,7 +60,15 @@
  >log : (msg: any) => void
  >nameA : string
  }
-@@= skipped -39, +39 lines =@@
+@@= skipped -8, +8 lines =@@
+ >[, [    primarySkillA = "primary",    secondarySkillA = "secondary"] = ["none", "none"]] = multiRobotA, i = 0 : 0
+ >[, [    primarySkillA = "primary",    secondarySkillA = "secondary"] = ["none", "none"]] = multiRobotA : MultiSkilledRobot
+ >[, [    primarySkillA = "primary",    secondarySkillA = "secondary"] = ["none", "none"]] : [undefined, [string, string]]
+-> : undefined
+ >[    primarySkillA = "primary",    secondarySkillA = "secondary"] = ["none", "none"] : [string, string]
+ >[    primarySkillA = "primary",    secondarySkillA = "secondary"] : [string, string]
+ 
+@@= skipped -31, +30 lines =@@
      console.log(primarySkillA);
  >console.log(primarySkillA) : void
  >console.log : (msg: any) => void
@@ -45,7 +77,15 @@
  >log : (msg: any) => void
  >primarySkillA : string
  }
-@@= skipped -40, +40 lines =@@
+@@= skipped -8, +8 lines =@@
+ >[, [    primarySkillA = "primary",    secondarySkillA = "secondary"] = ["none", "none"]] = getMultiRobot(), i = 0 : 0
+ >[, [    primarySkillA = "primary",    secondarySkillA = "secondary"] = ["none", "none"]] = getMultiRobot() : MultiSkilledRobot
+ >[, [    primarySkillA = "primary",    secondarySkillA = "secondary"] = ["none", "none"]] : [undefined, [string, string]]
+-> : undefined
+ >[    primarySkillA = "primary",    secondarySkillA = "secondary"] = ["none", "none"] : [string, string]
+ >[    primarySkillA = "primary",    secondarySkillA = "secondary"] : [string, string]
+ 
+@@= skipped -32, +31 lines =@@
      console.log(primarySkillA);
  >console.log(primarySkillA) : void
  >console.log : (msg: any) => void
@@ -54,7 +94,15 @@
  >log : (msg: any) => void
  >primarySkillA : string
  }
-@@= skipped -43, +43 lines =@@
+@@= skipped -8, +8 lines =@@
+ >[, [    primarySkillA = "primary",    secondarySkillA = "secondary"] = ["none", "none"]] = ["trimmer", ["trimming", "edging"]], i = 0 : 0
+ >[, [    primarySkillA = "primary",    secondarySkillA = "secondary"] = ["none", "none"]] = ["trimmer", ["trimming", "edging"]] : [string, [string, string]]
+ >[, [    primarySkillA = "primary",    secondarySkillA = "secondary"] = ["none", "none"]] : [undefined, [string, string]]
+-> : undefined
+ >[    primarySkillA = "primary",    secondarySkillA = "secondary"] = ["none", "none"] : [string, string]
+ >[    primarySkillA = "primary",    secondarySkillA = "secondary"] : [string, string]
+ 
+@@= skipped -35, +34 lines =@@
      console.log(primarySkillA);
  >console.log(primarySkillA) : void
  >console.log : (msg: any) => void

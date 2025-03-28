@@ -9,7 +9,15 @@
  
      log(msg: any): void;
  >log : (msg: any) => void
-@@= skipped -99, +99 lines =@@
+@@= skipped -90, +90 lines =@@
+ 
+ for ([, nameA = "noName"] of robots) {
+ >[, nameA = "noName"] : [undefined, string]
+-> : undefined
+ >nameA = "noName" : "noName"
+ >nameA : string
+ >"noName" : "noName"
+@@= skipped -9, +8 lines =@@
      console.log(nameA);
  >console.log(nameA) : void
  >console.log : (msg: any) => void
@@ -18,7 +26,13 @@
  >log : (msg: any) => void
  >nameA : string
  }
-@@= skipped -16, +16 lines =@@
+ for ([, nameA = "noName"] of getRobots()) {
+ >[, nameA = "noName"] : [undefined, string]
+-> : undefined
+ >nameA = "noName" : "noName"
+ >nameA : string
+ >"noName" : "noName"
+@@= skipped -16, +15 lines =@@
      console.log(nameA);
  >console.log(nameA) : void
  >console.log : (msg: any) => void
@@ -27,7 +41,13 @@
  >log : (msg: any) => void
  >nameA : string
  }
-@@= skipped -17, +17 lines =@@
+ for ([, nameA = "noName"] of [robotA, robotB]) {
+ >[, nameA = "noName"] : [undefined, string]
+-> : undefined
+ >nameA = "noName" : "noName"
+ >nameA : string
+ >"noName" : "noName"
+@@= skipped -17, +16 lines =@@
      console.log(nameA);
  >console.log(nameA) : void
  >console.log : (msg: any) => void
@@ -36,7 +56,13 @@
  >log : (msg: any) => void
  >nameA : string
  }
-@@= skipped -29, +29 lines =@@
+ for ([, [
+ >[, [    primarySkillA = "primary",    secondarySkillA = "secondary"] = ["skill1", "skill2"]] : [undefined, [string, string]]
+-> : undefined
+ >[    primarySkillA = "primary",    secondarySkillA = "secondary"] = ["skill1", "skill2"] : [string, string]
+ >[    primarySkillA = "primary",    secondarySkillA = "secondary"] : [string, string]
+ 
+@@= skipped -29, +28 lines =@@
      console.log(primarySkillA);
  >console.log(primarySkillA) : void
  >console.log : (msg: any) => void
@@ -45,7 +71,13 @@
  >log : (msg: any) => void
  >primarySkillA : string
  }
-@@= skipped -30, +30 lines =@@
+ for ([, [
+ >[, [    primarySkillA = "primary",    secondarySkillA = "secondary"] = ["skill1", "skill2"]] : [undefined, [string, string]]
+-> : undefined
+ >[    primarySkillA = "primary",    secondarySkillA = "secondary"] = ["skill1", "skill2"] : [string, string]
+ >[    primarySkillA = "primary",    secondarySkillA = "secondary"] : [string, string]
+ 
+@@= skipped -30, +29 lines =@@
      console.log(primarySkillA);
  >console.log(primarySkillA) : void
  >console.log : (msg: any) => void
@@ -54,7 +86,13 @@
  >log : (msg: any) => void
  >primarySkillA : string
  }
-@@= skipped -31, +31 lines =@@
+ for ([, [
+ >[, [    primarySkillA = "primary",    secondarySkillA = "secondary"] = ["skill1", "skill2"]] : [undefined, [string, string]]
+-> : undefined
+ >[    primarySkillA = "primary",    secondarySkillA = "secondary"] = ["skill1", "skill2"] : [string, string]
+ >[    primarySkillA = "primary",    secondarySkillA = "secondary"] : [string, string]
+ 
+@@= skipped -31, +30 lines =@@
      console.log(primarySkillA);
  >console.log(primarySkillA) : void
  >console.log : (msg: any) => void
