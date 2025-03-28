@@ -2703,7 +2703,7 @@ func (c *Checker) checkTypeReferenceOrImport(node *ast.Node) {
 				c.checkTypeArgumentConstraints(node, typeParameters)
 			}
 		}
-		symbol := c.typeNodeLinks.Get(node).resolvedSymbol
+		symbol := c.getResolvedSymbolOrNil(node)
 		if symbol != nil {
 			if core.Some(symbol.Declarations, func(d *ast.Node) bool { return isTypeDeclaration(d) && d.Flags&ast.NodeFlagsDeprecated != 0 }) {
 				c.addDeprecatedSuggestion(c.getDeprecatedSuggestionNode(node), symbol.Declarations, symbol.Name)
@@ -3520,9 +3520,9 @@ func (c *Checker) checkTestingKnownTruthyType(condExpr *ast.Node, condType *Type
 	if location != condExpr {
 		t = c.checkExpression(location)
 	}
-	if t.flags&TypeFlagsEnumLiteral != 0 && ast.IsPropertyAccessExpression(location) && core.OrElse(c.typeNodeLinks.Get(location.Expression()).resolvedSymbol, c.unknownSymbol).Flags&ast.SymbolFlagsEnum != 0 {
+	if t.flags&TypeFlagsEnumLiteral != 0 && ast.IsPropertyAccessExpression(location) && core.OrElse(c.getResolvedSymbolOrNil(location.Expression()), c.unknownSymbol).Flags&ast.SymbolFlagsEnum != 0 {
 		// EnumLiteral type at condition with known value is always truthy or always falsy, likely an error
-		c.error(location, diagnostics.This_condition_will_always_return_0, evaluator.AnyToString(t.AsLiteralType().value))
+		c.error(location, diagnostics.This_condition_will_always_return_0, core.IfElse(evaluator.IsTruthy(t.AsLiteralType().value), "true", "false"))
 		return
 	}
 	isPropertyExpressionCast := ast.IsPropertyAccessExpression(location) && isTypeAssertion(location.Expression())
@@ -7676,7 +7676,7 @@ func (c *Checker) checkElementAccessExpression(node *ast.Node, exprType *Type, c
 			core.IfElse(c.isGenericObjectType(objectType) && !isThisTypeParameter(objectType), AccessFlagsNoIndexSignatures, 0)
 	}
 	indexedAccessType := core.OrElse(c.getIndexedAccessTypeOrUndefined(objectType, effectiveIndexType, accessFlags, node, nil), c.errorType)
-	return c.checkIndexedAccessIndexType(c.getFlowTypeOfAccessExpression(node, c.typeNodeLinks.Get(node).resolvedSymbol, indexedAccessType, indexExpression, checkMode), node)
+	return c.checkIndexedAccessIndexType(c.getFlowTypeOfAccessExpression(node, c.getResolvedSymbolOrNil(node), indexedAccessType, indexExpression, checkMode), node)
 }
 
 // Return true if given node is an expression consisting of an identifier (possibly parenthesized)
@@ -9484,7 +9484,7 @@ func (c *Checker) invocationErrorDetails(errorTarget *ast.Node, apparentType *Ty
 	headMessage := core.IfElse(isCall, diagnostics.This_expression_is_not_callable, diagnostics.This_expression_is_not_constructable)
 	// Diagnose get accessors incorrectly called as functions
 	if ast.IsCallExpression(errorTarget.Parent) && len(errorTarget.Parent.Arguments()) == 0 {
-		resolvedSymbol := c.typeNodeLinks.Get(errorTarget).resolvedSymbol
+		resolvedSymbol := c.getResolvedSymbolOrNil(errorTarget)
 		if resolvedSymbol != nil && resolvedSymbol.Flags&ast.SymbolFlagsGetAccessor != 0 {
 			headMessage = diagnostics.This_expression_is_not_callable_because_it_is_a_get_accessor_Did_you_mean_to_use_it_without
 		}
@@ -10137,8 +10137,7 @@ func (c *Checker) checkDeleteExpression(node *ast.Node) *Type {
 	if ast.IsPropertyAccessExpression(expr) && ast.IsPrivateIdentifier(expr.Name()) {
 		c.error(expr, diagnostics.The_operand_of_a_delete_operator_cannot_be_a_private_identifier)
 	}
-	links := c.typeNodeLinks.Get(expr)
-	symbol := c.getExportSymbolOfValueSymbolIfExported(links.resolvedSymbol)
+	symbol := c.getExportSymbolOfValueSymbolIfExported(c.getResolvedSymbolOrNil(expr))
 	if symbol != nil {
 		if c.isReadonlySymbol(symbol) {
 			c.error(expr, diagnostics.The_operand_of_a_delete_operator_cannot_be_a_read_only_property)
@@ -10608,7 +10607,7 @@ func (c *Checker) checkPropertyAccessChain(node *ast.Node, checkMode CheckMode) 
 }
 
 func (c *Checker) checkPropertyAccessExpressionOrQualifiedName(node *ast.Node, left *ast.Node, leftType *Type, right *ast.Node, checkMode CheckMode, writeOnly bool) *Type {
-	parentSymbol := c.typeNodeLinks.Get(left).resolvedSymbol
+	parentSymbol := c.getResolvedSymbolOrNil(left)
 	assignmentKind := getAssignmentTargetKind(node)
 	widenedType := leftType
 	if assignmentKind != AssignmentKindNone || c.isMethodAccessForCall(node) {
@@ -13089,6 +13088,13 @@ func (c *Checker) getResolvedSymbol(node *ast.Node) *ast.Symbol {
 	return symbol
 }
 
+func (c *Checker) getResolvedSymbolOrNil(node *ast.Node) *ast.Symbol {
+	if !ast.IsIdentifier(node) {
+		return c.typeNodeLinks.Get(node).resolvedSymbol
+	}
+	return c.identifierSymbols[node]
+}
+
 func (c *Checker) getCannotFindNameDiagnosticForName(node *ast.Node) *diagnostics.Message {
 	switch node.AsIdentifier().Text {
 	case "document", "console":
@@ -14131,7 +14137,7 @@ func (c *Checker) getTargetOfAliasLikeExpression(expression *ast.Node, dontResol
 		return aliasLike
 	}
 	c.checkExpressionCached(expression)
-	return c.typeNodeLinks.Get(expression).resolvedSymbol
+	return c.getResolvedSymbolOrNil(expression)
 }
 
 func (c *Checker) getTargetOfNamespaceExportDeclaration(node *ast.Node, dontResolveAlias bool) *ast.Symbol {
@@ -15795,7 +15801,7 @@ func (c *Checker) getInferredTypeParameterConstraint(t *Type, omitTypeReferences
 func (c *Checker) getTypeParametersForTypeReferenceOrImport(node *ast.Node) []*Type {
 	t := c.getTypeFromTypeNode(node)
 	if !c.isErrorType(t) {
-		symbol := c.typeNodeLinks.Get(node).resolvedSymbol
+		symbol := c.getResolvedSymbolOrNil(node)
 		if symbol != nil {
 			return c.getTypeParametersForTypeAndSymbol(t, symbol)
 		}
@@ -29398,7 +29404,7 @@ func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast
 		possibleImportNode := isImportTypeQualifierPart(name)
 		if possibleImportNode != nil {
 			c.getTypeFromTypeNode(possibleImportNode)
-			sym := c.typeNodeLinks.Get(name).resolvedSymbol
+			sym := c.getResolvedSymbolOrNil(name)
 			return core.IfElse(sym == c.unknownSymbol, nil, sym)
 		}
 	}
