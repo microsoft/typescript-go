@@ -29,14 +29,8 @@ var (
 	referencesRegex       = regexp.MustCompile(`reference\spath`)
 )
 
-var (
-	// Posix-style path to sources under test
-	srcFolder = "/.src"
-	// Posix-style path to the TypeScript compiler build outputs (including tsc.js, lib.d.ts, etc.)
-	builtFolder = "/.ts"
-	// Posix-style path to additional test libraries
-	testLibFolder = "/.lib"
-)
+// Posix-style path to sources under test
+var srcFolder = "/.src"
 
 type CompilerTestType int
 
