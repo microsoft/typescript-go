@@ -6660,6 +6660,13 @@ func (c *Checker) isUnreferencedVariableDeclaration(node *ast.Node) bool {
 	if c.symbolReferenceLinks.Get(c.getSymbolOfDeclaration(node)).referenceKinds&ast.SymbolFlagsVariable != 0 {
 		return false
 	}
+	if ast.IsBindingElement(node) && ast.IsObjectBindingPattern(node.Parent) {
+		// In `{ a, ...b }, `a` is considered used since it removes a property from `b`. `b` may still be unused though.
+		lastElement := core.LastOrNil(node.Parent.AsBindingPattern().Elements.Nodes)
+		if node != lastElement && hasDotDotDotToken(lastElement) {
+			return false
+		}
+	}
 	if (ast.IsParameter(node) ||
 		ast.IsVariableDeclaration(node) && (ast.IsForInOrOfStatement(node.Parent.Parent) || c.getCombinedNodeFlagsCached(node)&ast.NodeFlagsUsing != 0) ||
 		ast.IsBindingElement(node) && !(ast.IsObjectBindingPattern(node.Parent) && node.PropertyName() == nil)) &&
