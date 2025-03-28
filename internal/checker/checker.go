@@ -25833,7 +25833,7 @@ func (c *Checker) markPropertyAsReferenced(prop *ast.Symbol, nodeForCheckWriteOn
 	c.symbolReferenceLinks.Get(target).referenceKinds |= ast.SymbolFlagsAll
 }
 
-func (c *Checker) GetExpandedParameters(signature *Signature) []*ast.Symbol {
+func (c *Checker) GetExpandedParameters(signature *Signature /* !!! skipUnionExpanding */) []*ast.Symbol {
 	if signatureHasRestParameter(signature) {
 		restIndex := len(signature.parameters) - 1
 		restSymbol := signature.parameters[restIndex]
