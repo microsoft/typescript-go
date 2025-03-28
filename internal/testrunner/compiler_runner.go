@@ -254,10 +254,7 @@ func newCompilerTest(
 	}
 
 	harnessConfig := testCaseContentWithConfig.configuration
-	currentDirectory := harnessConfig["currentDirectory"]
-	if currentDirectory == "" {
-		currentDirectory = srcFolder
-	}
+	currentDirectory := tspath.GetNormalizedAbsolutePath(harnessConfig["currentdirectory"], srcFolder)
 
 	units := testCaseContentWithConfig.testUnitData
 	var toBeCompiled []*harnessutil.TestFile
@@ -283,9 +280,9 @@ func newCompilerTest(
 			}
 		}
 	} else {
-		baseUrl, ok := harnessConfig["baseUrl"]
+		baseUrl, ok := harnessConfig["baseurl"]
 		if ok && !tspath.IsRootedDiskPath(baseUrl) {
-			harnessConfig["baseUrl"] = tspath.GetNormalizedAbsolutePath(baseUrl, currentDirectory)
+			harnessConfig["baseurl"] = tspath.GetNormalizedAbsolutePath(baseUrl, currentDirectory)
 		}
 
 		lastUnit := units[len(units)-1]
