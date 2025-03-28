@@ -351,9 +351,10 @@ func showAdditionalInfoOutput(valueCandidates *valueCandidate, option *tsoptions
 	if option.Category == diagnostics.Command_line_Options {
 		return false
 	}
-	if valueCandidates.possibleValues == "string" && (option.DefaultValueDescription == nil ||
-		option.DefaultValueDescription == "false" ||
-		option.DefaultValueDescription == "n/a") {
+	if valueCandidates != nil && valueCandidates.possibleValues == "string" &&
+		(option.DefaultValueDescription == nil ||
+			option.DefaultValueDescription == "false" ||
+			option.DefaultValueDescription == "n/a") {
 		return false
 	}
 	return true
