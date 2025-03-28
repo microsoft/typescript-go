@@ -30,20 +30,19 @@ type registryEntry struct {
 	mu         sync.Mutex
 }
 
+type DocumentRegistryHooks struct {
+	OnReleaseDocument func(file *ast.SourceFile)
+}
+
 // The document registry represents a store of SourceFile objects that can be shared between
 // multiple LanguageService instances.
-type documentRegistry struct {
-	options   tspath.ComparePathsOptions
+type DocumentRegistry struct {
+	Options   tspath.ComparePathsOptions
+	Hooks     DocumentRegistryHooks
 	documents sync.Map
 }
 
-func newDocumentRegistry(options tspath.ComparePathsOptions) *documentRegistry {
-	return &documentRegistry{
-		options: options,
-	}
-}
-
-// acquireDocument gets a SourceFile from the registry if it exists as the same version tracked
+// AcquireDocument gets a SourceFile from the registry if it exists as the same version tracked
 // by the ScriptInfo. If it does not exist, or is out of date, it creates a new SourceFile and
 // stores it, tracking that the caller has referenced it. If an oldSourceFile is passed, the registry
 // will decrement its reference count and remove it from the registry if the count reaches 0.
@@ -54,7 +53,7 @@ func newDocumentRegistry(options tspath.ComparePathsOptions) *documentRegistry {
 // LanguageService instance over time, as well as across multiple instances. Here, we still
 // reuse files across multiple LanguageServices, but we only reuse them across Program updates
 // when the files haven't changed.
-func (r *documentRegistry) acquireDocument(scriptInfo *ScriptInfo, compilerOptions *core.CompilerOptions, oldSourceFile *ast.SourceFile, oldCompilerOptions *core.CompilerOptions) *ast.SourceFile {
+func (r *DocumentRegistry) AcquireDocument(scriptInfo *ScriptInfo, compilerOptions *core.CompilerOptions, oldSourceFile *ast.SourceFile, oldCompilerOptions *core.CompilerOptions) *ast.SourceFile {
 	key := newRegistryKey(compilerOptions, scriptInfo.path, scriptInfo.scriptKind)
 	document := r.getDocumentWorker(scriptInfo, compilerOptions, key)
 	if oldSourceFile != nil && oldCompilerOptions != nil {
@@ -64,12 +63,12 @@ func (r *documentRegistry) acquireDocument(scriptInfo *ScriptInfo, compilerOptio
 	return document
 }
 
-func (r *documentRegistry) releaseDocument(file *ast.SourceFile, compilerOptions *core.CompilerOptions) {
+func (r *DocumentRegistry) ReleaseDocument(file *ast.SourceFile, compilerOptions *core.CompilerOptions) {
 	key := newRegistryKey(compilerOptions, file.Path(), file.ScriptKind)
 	r.releaseDocumentWithKey(key)
 }
 
-func (r *documentRegistry) releaseDocumentWithKey(key registryKey) {
+func (r *DocumentRegistry) releaseDocumentWithKey(key registryKey) {
 	if entryAny, ok := r.documents.Load(key); ok {
 		entry := entryAny.(*registryEntry)
 		entry.mu.Lock()
@@ -77,11 +76,14 @@ func (r *documentRegistry) releaseDocumentWithKey(key registryKey) {
 		entry.refCount--
 		if entry.refCount == 0 {
 			r.documents.Delete(key)
+			if r.Hooks.OnReleaseDocument != nil {
+				r.Hooks.OnReleaseDocument(entry.sourceFile)
+			}
 		}
 	}
 }
 
-func (r *documentRegistry) getDocumentWorker(
+func (r *DocumentRegistry) getDocumentWorker(
 	scriptInfo *ScriptInfo,
 	compilerOptions *core.CompilerOptions,
 	key registryKey,
@@ -117,7 +119,7 @@ func (r *documentRegistry) getDocumentWorker(
 }
 
 // size should only be used for testing.
-func (r *documentRegistry) size() int {
+func (r *DocumentRegistry) size() int {
 	count := 0
 	r.documents.Range(func(_, _ any) bool {
 		count++

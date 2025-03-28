@@ -18,24 +18,24 @@ var (
 )
 
 func GetNodeId(node *Node) NodeId {
-	id := node.id.Load()
+	id := node.Id.Load()
 	if id == 0 {
 		// Worst case, we burn a few ids if we have to CAS.
 		id = nextNodeId.Add(1)
-		if !node.id.CompareAndSwap(0, id) {
-			id = node.id.Load()
+		if !node.Id.CompareAndSwap(0, id) {
+			id = node.Id.Load()
 		}
 	}
 	return NodeId(id)
 }
 
 func GetSymbolId(symbol *Symbol) SymbolId {
-	id := symbol.id.Load()
+	id := symbol.Id.Load()
 	if id == 0 {
 		// Worst case, we burn a few ids if we have to CAS.
 		id = nextSymbolId.Add(1)
-		if !symbol.id.CompareAndSwap(0, id) {
-			id = symbol.id.Load()
+		if !symbol.Id.CompareAndSwap(0, id) {
+			id = symbol.Id.Load()
 		}
 	}
 	return SymbolId(id)
@@ -896,6 +896,17 @@ func SetParentInChildren(node *Node) {
 func FindAncestor(node *Node, callback func(*Node) bool) *Node {
 	for node != nil {
 		if callback(node) {
+			return node
+		}
+		node = node.Parent
+	}
+	return nil
+}
+
+// Walks up the parents of a node to find the ancestor that matches the kind
+func FindAncestorKind(node *Node, kind Kind) *Node {
+	for node != nil {
+		if node.Kind == kind {
 			return node
 		}
 		node = node.Parent

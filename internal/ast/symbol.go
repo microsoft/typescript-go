@@ -16,7 +16,7 @@ type Symbol struct {
 	ValueDeclaration             *Node
 	Members                      SymbolTable
 	Exports                      SymbolTable
-	id                           atomic.Uint64
+	Id                           atomic.Uint64
 	Parent                       *Symbol
 	ExportSymbol                 *Symbol
 	AssignmentDeclarationMembers core.Set[*Node] // Set of detected assignment declarations
