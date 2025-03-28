@@ -1,24 +1,10 @@
 --- old.callChainWithSuper(target=es2024).js
 +++ new.callChainWithSuper(target=es2024).js
-@@= skipped -0, +-1 lines =@@
--<no content>
-@@= skipped --1, +1 lines =@@
-+//// [tests/cases/conformance/expressions/optionalChaining/callChain/callChainWithSuper.ts] ////
-+
-+//// [callChainWithSuper.ts]
-+// GH#34952
-+class Base { method?() {} }
-+class Derived extends Base {
-+    method1() { return super.method?.(); }
-+    method2() { return super["method"]?.(); }
-+}
-+
-+//// [callChainWithSuper.js]
-+// GH#34952
-+class Base {
-+    method() { }
-+}
-+class Derived extends Base {
-+    method1() { return super.method?.(); }
-+    method2() { return super["method"]?.(); }
-+}
+@@= skipped -8, +8 lines =@@
+ }
+ 
+ //// [callChainWithSuper.js]
+-"use strict";
+ // GH#34952
+ class Base {
+     method() { }

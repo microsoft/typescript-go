@@ -9,55 +9,7 @@
  
      log(msg: any): void;
  >log : (msg: any) => void
-@@= skipped -63, +63 lines =@@
- [, nameA = "helloNoName"] = robotA;
- >[, nameA = "helloNoName"] = robotA : Robot
- >[, nameA = "helloNoName"] : [undefined, string]
--> : undefined
- >nameA = "helloNoName" : "helloNoName"
- >nameA : string
- >"helloNoName" : "helloNoName"
-@@= skipped -9, +8 lines =@@
- [, nameB = "helloNoName"] = getRobotB();
- >[, nameB = "helloNoName"] = getRobotB() : Robot
- >[, nameB = "helloNoName"] : [undefined, string]
--> : undefined
- >nameB = "helloNoName" : "helloNoName"
- >nameB : string
- >"helloNoName" : "helloNoName"
-@@= skipped -10, +9 lines =@@
- [, nameB = "helloNoName"] = [2, "trimmer", "trimming"];
- >[, nameB = "helloNoName"] = [2, "trimmer", "trimming"] : [number, string, string]
- >[, nameB = "helloNoName"] : [undefined, string]
--> : undefined
- >nameB = "helloNoName" : "helloNoName"
- >nameB : string
- >"helloNoName" : "helloNoName"
-@@= skipped -12, +11 lines =@@
- [, multiSkillB = []] = multiRobotB;
- >[, multiSkillB = []] = multiRobotB : MultiSkilledRobot
- >[, multiSkillB = []] : [undefined, undefined[]]
--> : undefined
- >multiSkillB = [] : undefined[]
- >multiSkillB : string[]
- >[] : undefined[]
-@@= skipped -9, +8 lines =@@
- [, multiSkillB = []] = getMultiRobotB();
- >[, multiSkillB = []] = getMultiRobotB() : MultiSkilledRobot
- >[, multiSkillB = []] : [undefined, undefined[]]
--> : undefined
- >multiSkillB = [] : undefined[]
- >multiSkillB : string[]
- >[] : undefined[]
-@@= skipped -10, +9 lines =@@
- [, multiSkillB = []] = ["roomba", ["vacuum", "mopping"]];
- >[, multiSkillB = []] = ["roomba", ["vacuum", "mopping"]] : [string, string[]]
- >[, multiSkillB = []] : [undefined, undefined[]]
--> : undefined
- >multiSkillB = [] : undefined[]
- >multiSkillB : string[]
- >[] : undefined[]
-@@= skipped -223, +222 lines =@@
+@@= skipped -330, +330 lines =@@
      console.log(skillB);
  >console.log(skillB) : void
  >console.log : (msg: any) => void
