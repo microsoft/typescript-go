@@ -25847,11 +25847,11 @@ func (c *Checker) GetExpandedParameters(signature *Signature /* !!! skipUnionExp
 
 func (c *Checker) expandSignatureParametersWithTupleMembers(signature *Signature, restType *TypeReference, restIndex int, restSymbol *ast.Symbol) []*ast.Symbol {
 	elementTypes := c.getTypeArguments(restType.AsType())
+	elementInfos := restType.TargetTupleType().elementInfos
 	associatedNames := c.getUniqAssociatedNamesFromTupleType(restType, restSymbol)
-	expanded := make([]*ast.Symbol, len(signature.parameters)-1+len(elementTypes))
-	copy(expanded, signature.parameters[:restIndex])
+	expanded := append(make([]*ast.Symbol, 0, restIndex+len(elementTypes)), signature.parameters[:restIndex]...)
 	for i, t := range elementTypes {
-		flags := restType.TargetTupleType().elementInfos[i].flags
+		flags := elementInfos[i].flags
 		checkFlags := ast.CheckFlagsNone
 		switch {
 		case flags&ElementFlagsVariable != 0:
@@ -25866,7 +25866,7 @@ func (c *Checker) expandSignatureParametersWithTupleMembers(signature *Signature
 		} else {
 			links.resolvedType = t
 		}
-		expanded[restIndex+i] = symbol
+		expanded = append(expanded, symbol)
 	}
 	return expanded
 }
