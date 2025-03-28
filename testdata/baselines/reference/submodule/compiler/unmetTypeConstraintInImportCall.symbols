@@ -11,6 +11,5 @@ export type Foo<T extends string> = { foo: T }
 type Bar<T> = import('./file1').Foo<T>;
 >Bar : Symbol(Bar, Decl(file2.ts, 0, 0))
 >T : Symbol(T, Decl(file2.ts, 0, 9))
->Foo : Symbol(Foo, Decl(file1.ts, 0, 0))
 >T : Symbol(T, Decl(file2.ts, 0, 9))
 

@@ -10,7 +10,6 @@ export class Foo {
     copy(other: import("./b").Foo) {
 >copy : Symbol(copy, Decl(a.ts, 1, 7))
 >other : Symbol(other, Decl(a.ts, 2, 9))
->Foo : Symbol(Foo, Decl(b.ts, 0, 0))
 
         other.#x; // error
 >other : Symbol(other, Decl(a.ts, 2, 9))

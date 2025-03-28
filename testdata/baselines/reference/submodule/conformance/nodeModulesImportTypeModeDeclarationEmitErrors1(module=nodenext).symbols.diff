@@ -1,14 +1,17 @@
 --- old.nodeModulesImportTypeModeDeclarationEmitErrors1(module=nodenext).symbols
 +++ new.nodeModulesImportTypeModeDeclarationEmitErrors1(module=nodenext).symbols
-@@= skipped -15, +15 lines =@@
- >RequireInterface : Symbol(RequireInterface, Decl(require.d.ts, 0, 0))
+@@= skipped -12, +12 lines =@@
+ >LocalInterface : Symbol(LocalInterface, Decl(index.ts, 0, 0))
  
+     & import("pkg", { assert: {"resolution-mode": "foobar"} }).RequireInterface
+->RequireInterface : Symbol(RequireInterface, Decl(require.d.ts, 0, 0))
+-
      & import("pkg", { assert: {"resolution-mode": "import"} }).ImportInterface;
 ->ImportInterface : Symbol(ImportInterface, Decl(import.d.ts, 0, 0))
  
  export const a = (null as any as import("pkg", { assert: {"resolution-mode": "foobar"} }).RequireInterface);
  >a : Symbol(a, Decl(index.ts, 4, 12))
-@@= skipped -8, +7 lines =@@
+->RequireInterface : Symbol(RequireInterface, Decl(require.d.ts, 0, 0))
  
  export const b = (null as any as import("pkg", { assert: {"resolution-mode": "import"} }).ImportInterface);
  >b : Symbol(b, Decl(index.ts, 5, 12))
@@ -16,7 +19,7 @@
  
  === /other.ts ===
  // missing assert:
-@@= skipped -9, +8 lines =@@
+@@= skipped -20, +15 lines =@@
  
      & import("pkg", {"resolution-mode": "require"}).RequireInterface
      & import("pkg", {"resolution-mode": "import"}).ImportInterface;
@@ -24,7 +27,21 @@
  >"resolution-mode" : Symbol("resolution-mode", Decl(other.ts, 3, 21))
  
  export const a = (null as any as import("pkg", {"resolution-mode": "require"}).RequireInterface);
-@@= skipped -35, +34 lines =@@
+@@= skipped -15, +14 lines =@@
+ >LocalInterface : Symbol(LocalInterface, Decl(other2.ts, 0, 0))
+ 
+     & import("pkg", { assert: {"bad": "require"} }).RequireInterface
+->RequireInterface : Symbol(RequireInterface, Decl(require.d.ts, 0, 0))
+-
+     & import("pkg", { assert: {"bad": "import"} }).ImportInterface;
+ 
+ export const a = (null as any as import("pkg", { assert: {"bad": "require"} }).RequireInterface);
+ >a : Symbol(a, Decl(other2.ts, 5, 12))
+->RequireInterface : Symbol(RequireInterface, Decl(require.d.ts, 0, 0))
+ 
+ export const b = (null as any as import("pkg", { assert: {"bad": "import"} }).ImportInterface);
+ >b : Symbol(b, Decl(other2.ts, 6, 12))
+@@= skipped -20, +17 lines =@@
  >"resolution-mode" : Symbol("resolution-mode", Decl(other3.ts, 2, 23))
  
      & import("pkg", [ {"resolution-mode": "import"} ]).ImportInterface;
@@ -40,3 +57,17 @@
  >Asserts2 : Symbol(Asserts2, Decl(other4.ts, 9, 46))
  
  export const a = (null as any as import("pkg", Asserts1).RequireInterface);
+@@= skipped -18, +17 lines =@@
+ >LocalInterface : Symbol(LocalInterface, Decl(other5.ts, 0, 0))
+ 
+     & import("pkg", { assert: {} }).RequireInterface
+->RequireInterface : Symbol(RequireInterface, Decl(require.d.ts, 0, 0))
+-
+     & import("pkg", { assert: {} }).ImportInterface;
+ 
+ export const a = (null as any as import("pkg", { assert: {} }).RequireInterface);
+ >a : Symbol(a, Decl(other5.ts, 4, 12))
+->RequireInterface : Symbol(RequireInterface, Decl(require.d.ts, 0, 0))
+ 
+ export const b = (null as any as import("pkg", { assert: {} }).ImportInterface);
+ >b : Symbol(b, Decl(other5.ts, 5, 12))

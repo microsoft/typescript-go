@@ -11,9 +11,11 @@
 ->copy : Symbol(Foo.copy, Decl(a.ts, 1, 7))
 +>copy : Symbol(copy, Decl(a.ts, 1, 7))
  >other : Symbol(other, Decl(a.ts, 2, 9))
- >Foo : Symbol(Foo, Decl(b.ts, 0, 0))
+->Foo : Symbol(Foo, Decl(b.ts, 0, 0))
  
-@@= skipped -17, +17 lines =@@
+         other.#x; // error
+ >other : Symbol(other, Decl(a.ts, 2, 9))
+@@= skipped -17, +16 lines =@@
  >Foo : Symbol(Foo, Decl(b.ts, 0, 0))
  
      #x;

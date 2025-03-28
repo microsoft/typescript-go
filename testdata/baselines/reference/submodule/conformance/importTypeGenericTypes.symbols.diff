@@ -70,16 +70,16 @@
  >T : Symbol(T, Decl(foo2.ts, 16, 10))
  }
  export { Bar }
-@@= skipped -26, +26 lines =@@
+@@= skipped -25, +25 lines =@@
+ 
  export let y: import("./foo2").Bar.I<{x: number}> = { a: "", b: 0, data: {x: 12} };
  >y : Symbol(y, Decl(usage.ts, 1, 10))
- >Bar : Symbol(Bar, Decl(foo2.ts, 20, 8))
+->Bar : Symbol(Bar, Decl(foo2.ts, 20, 8))
 ->I : Symbol(Bar.I, Decl(foo2.ts, 0, 15))
-+>I : Symbol(I, Decl(foo2.ts, 0, 15))
  >x : Symbol(x, Decl(usage.ts, 1, 38))
  >a : Symbol(a, Decl(usage.ts, 1, 53))
  >b : Symbol(b, Decl(usage.ts, 1, 60))
-@@= skipped -12, +12 lines =@@
+@@= skipped -13, +11 lines =@@
  >T : Symbol(T, Decl(usage.ts, 3, 18))
  
      item: {a: string, b: number, c: object, data: T};

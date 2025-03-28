@@ -1,6 +1,13 @@
 --- old.jsDocDeclarationEmitDoesNotUseNodeModulesPathWithoutError.symbols
 +++ new.jsDocDeclarationEmitDoesNotUseNodeModulesPathWithoutError.symbols
-@@= skipped -9, +9 lines =@@
+@@= skipped -2, +2 lines =@@
+ === node_modules/@lion/ajax/dist-types/src/index.d.ts ===
+ export type LionRequestInit = import('../types/types.js').LionRequestInit;
+ >LionRequestInit : Symbol(LionRequestInit, Decl(index.d.ts, 0, 0))
+->LionRequestInit : Symbol(LionRequestInit, Decl(types.d.ts, 0, 0))
+ 
+ === node_modules/@lion/ajax/dist-types/types/types.d.ts ===
+ export interface LionRequestInit {
  >LionRequestInit : Symbol(LionRequestInit, Decl(types.d.ts, 0, 0))
  
      body?: null | Object;
@@ -9,7 +16,7 @@
  >Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  } 
  === index.js ===
-@@= skipped -15, +15 lines =@@
+@@= skipped -22, +21 lines =@@
       * @param {LionRequestInit} [init]
       */
      case5_unexpectedlyResolvesPathToNodeModules(init) {}

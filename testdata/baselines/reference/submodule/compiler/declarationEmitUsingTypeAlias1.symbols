@@ -13,11 +13,9 @@ export declare type SomeType = { arg: Other };
 === node_modules/some-dep/dist/index.d.ts ===
 export type OtherType = import('./inner').Other;
 >OtherType : Symbol(OtherType, Decl(index.d.ts, 0, 0))
->Other : Symbol(Other, Decl(inner.d.ts, 0, 0))
 
 export type SomeType = import('./inner').SomeType;
 >SomeType : Symbol(SomeType, Decl(index.d.ts, 0, 48))
->SomeType : Symbol(SomeType, Decl(inner.d.ts, 0, 46))
 
 === src/index.ts ===
 import { SomeType } from "some-dep";

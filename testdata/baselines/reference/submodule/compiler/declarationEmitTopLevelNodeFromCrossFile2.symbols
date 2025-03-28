@@ -16,11 +16,9 @@ export const _ = boxedBox;
 === boxedBox.d.ts ===
 export declare const boxedBox: import("./box").Box<{
 >boxedBox : Symbol(boxedBox, Decl(boxedBox.d.ts, 0, 20))
->Box : Symbol(Box, Decl(box.d.ts, 0, 0))
 
     boxed: import("./box").Box<number>;
 >boxed : Symbol(boxed, Decl(boxedBox.d.ts, 0, 52))
->Box : Symbol(Box, Decl(box.d.ts, 0, 0))
 
 }>;                        // ^This is index 83 in this file
 

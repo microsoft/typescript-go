@@ -13,13 +13,10 @@ export type LocalInterface =
 >LocalInterface : Symbol(LocalInterface, Decl(index.ts, 0, 0))
 
     & import("pkg", { with: {"resolution-mode": "foobar"} }).RequireInterface
->RequireInterface : Symbol(RequireInterface, Decl(require.d.ts, 0, 0))
-
     & import("pkg", { with: {"resolution-mode": "import"} }).ImportInterface;
 
 export const a = (null as any as import("pkg", { with: {"resolution-mode": "foobar"} }).RequireInterface);
 >a : Symbol(a, Decl(index.ts, 4, 12))
->RequireInterface : Symbol(RequireInterface, Decl(require.d.ts, 0, 0))
 
 export const b = (null as any as import("pkg", { with: {"resolution-mode": "import"} }).ImportInterface);
 >b : Symbol(b, Decl(index.ts, 5, 12))
@@ -45,13 +42,10 @@ export type LocalInterface =
 >LocalInterface : Symbol(LocalInterface, Decl(other2.ts, 0, 0))
 
     & import("pkg", { with: {"bad": "require"} }).RequireInterface
->RequireInterface : Symbol(RequireInterface, Decl(require.d.ts, 0, 0))
-
     & import("pkg", { with: {"bad": "import"} }).ImportInterface;
 
 export const a = (null as any as import("pkg", { with: {"bad": "require"} }).RequireInterface);
 >a : Symbol(a, Decl(other2.ts, 5, 12))
->RequireInterface : Symbol(RequireInterface, Decl(require.d.ts, 0, 0))
 
 export const b = (null as any as import("pkg", { with: {"bad": "import"} }).ImportInterface);
 >b : Symbol(b, Decl(other2.ts, 6, 12))
@@ -112,13 +106,10 @@ export type LocalInterface =
 >LocalInterface : Symbol(LocalInterface, Decl(other5.ts, 0, 0))
 
     & import("pkg", { with: {} }).RequireInterface
->RequireInterface : Symbol(RequireInterface, Decl(require.d.ts, 0, 0))
-
     & import("pkg", { with: {} }).ImportInterface;
 
 export const a = (null as any as import("pkg", { with: {} }).RequireInterface);
 >a : Symbol(a, Decl(other5.ts, 4, 12))
->RequireInterface : Symbol(RequireInterface, Decl(require.d.ts, 0, 0))
 
 export const b = (null as any as import("pkg", { with: {} }).ImportInterface);
 >b : Symbol(b, Decl(other5.ts, 5, 12))

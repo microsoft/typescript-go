@@ -1,0 +1,10 @@
+--- old.declarationEmitUsingTypeAlias2.symbols
++++ new.declarationEmitUsingTypeAlias2.symbols
+@@= skipped -55, +55 lines =@@
+   /** Specifier should come from module, local path should not be reused */ 
+   shouldLookupName: typeof import('./other').shouldLookupName,
+ >shouldLookupName : Symbol(shouldLookupName, Decl(index.d.ts, 6, 66))
+->shouldLookupName : Symbol(shouldLookupName, Decl(other.d.ts, 0, 20))
+ 
+   /** This is imported in index so local name should be reused */ 
+   shouldReuseLocalName: typeof shouldReuseLocalName

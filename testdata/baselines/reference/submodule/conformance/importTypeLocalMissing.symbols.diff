@@ -57,7 +57,15 @@
  }
  export { Bar }
  >Bar : Symbol(Bar, Decl(foo2.ts, 18, 8))
-@@= skipped -33, +33 lines =@@
+@@= skipped -25, +25 lines =@@
+ 
+ export let z: import("./foo2").Bar.Q = { a: "", b: 0 };
+ >z : Symbol(z, Decl(usage.ts, 2, 10))
+->Bar : Symbol(Bar, Decl(foo2.ts, 18, 8))
+ >a : Symbol(a, Decl(usage.ts, 2, 40))
+ >b : Symbol(b, Decl(usage.ts, 2, 47))
+ 
+@@= skipped -8, +7 lines =@@
  >Bar2 : Symbol(Bar2, Decl(usage.ts, 2, 55))
  
      item: {a: string, b: number, c: object};
