@@ -205,7 +205,7 @@ func CompileFilesEx(
 
 // Creates a test file as specified by "@libFiles".
 func createLibFile(libFile string) *TestFile {
-	libPath := filepath.Join(repo.TestDataPath, "lib")
+	libPath := filepath.Join(repo.TypeScriptSubmodulePath, "tests", "lib")
 	libFilePath := filepath.Join(libPath, libFile)
 	content, err := os.ReadFile(libFilePath)
 	if err != nil {
