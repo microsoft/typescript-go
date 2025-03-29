@@ -321,8 +321,8 @@ type NodeLinks struct {
 }
 
 type TypeNodeLinks struct {
-	resolvedType        *Type       // Cached type of type node
-	resolvedSymbol      *ast.Symbol // Cached name resolution result
+	resolvedType        *Type       // Resolved type associated with node
+	resolvedSymbol      *ast.Symbol // Resolved symbol associated with node
 	outerTypeParameters []*Type     // Outer type parameters of anonymous object type
 }
 

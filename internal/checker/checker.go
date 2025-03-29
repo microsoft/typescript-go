@@ -590,7 +590,6 @@ type Checker struct {
 	reverseHomomorphicMappedCache              map[ReverseMappedTypeKey]*Type
 	iterationTypesCache                        map[IterationTypesKey]IterationTypes
 	markerTypes                                core.Set[*Type]
-	identifierSymbols                          map[*ast.Node]*ast.Symbol
 	undefinedSymbol                            *ast.Symbol
 	argumentsSymbol                            *ast.Symbol
 	requireSymbol                              *ast.Symbol
@@ -863,7 +862,6 @@ func NewChecker(program Program) *Checker {
 	c.discriminatedContextualTypes = make(map[DiscriminatedContextualTypeKey]*Type)
 	c.instantiationExpressionTypes = make(map[InstantiationExpressionKey]*Type)
 	c.substitutionTypes = make(map[SubstitutionTypeKey]*Type)
-	c.identifierSymbols = make(map[*ast.Node]*ast.Symbol)
 	c.reverseMappedCache = make(map[ReverseMappedTypeKey]*Type)
 	c.reverseHomomorphicMappedCache = make(map[ReverseMappedTypeKey]*Type)
 	c.iterationTypesCache = make(map[IterationTypesKey]IterationTypes)
@@ -7269,12 +7267,11 @@ func (c *Checker) checkPrivateIdentifierExpression(node *ast.Node) *Type {
 }
 
 func (c *Checker) getSymbolForPrivateIdentifierExpression(node *ast.Node) *ast.Symbol {
-	if symbol := c.identifierSymbols[node]; symbol != nil {
-		return symbol
+	links := c.typeNodeLinks.Get(node)
+	if links.resolvedSymbol == nil {
+		links.resolvedSymbol = c.lookupSymbolForPrivateIdentifierDeclaration(node.Text(), node)
 	}
-	symbol := c.lookupSymbolForPrivateIdentifierDeclaration(node.Text(), node)
-	c.identifierSymbols[node] = symbol
-	return symbol
+	return links.resolvedSymbol
 }
 
 func (c *Checker) checkSuperExpression(node *ast.Node) *Type {
@@ -12337,7 +12334,7 @@ func (c *Checker) checkInExpression(left *ast.Expression, right *ast.Expression,
 	if ast.IsPrivateIdentifier(left) {
 		// Unlike in 'checkPrivateIdentifierExpression' we now have access to the RHS type
 		// which provides us with the opportunity to emit more detailed errors
-		if c.identifierSymbols[left] == nil && ast.GetContainingClass(left) != nil {
+		if c.typeNodeLinks.Get(left).resolvedSymbol == nil && ast.GetContainingClass(left) != nil {
 			c.reportNonexistentProperty(left, rightType)
 		}
 	} else {
@@ -13073,26 +13070,20 @@ func (c *Checker) checkExpressionForMutableLocation(node *ast.Node, checkMode Ch
 }
 
 func (c *Checker) getResolvedSymbol(node *ast.Node) *ast.Symbol {
-	if symbol := c.identifierSymbols[node]; symbol != nil {
-		return symbol
+	links := c.typeNodeLinks.Get(node)
+	if links.resolvedSymbol == nil {
+		var symbol *ast.Symbol
+		if !ast.NodeIsMissing(node) {
+			symbol = c.resolveName(node, node.AsIdentifier().Text, ast.SymbolFlagsValue|ast.SymbolFlagsExportValue,
+				c.getCannotFindNameDiagnosticForName(node), !isWriteOnlyAccess(node), false /*excludeGlobals*/)
+		}
+		links.resolvedSymbol = core.OrElse(symbol, c.unknownSymbol)
 	}
-	var symbol *ast.Symbol
-	if !ast.NodeIsMissing(node) {
-		symbol = c.resolveName(node, node.AsIdentifier().Text, ast.SymbolFlagsValue|ast.SymbolFlagsExportValue,
-			c.getCannotFindNameDiagnosticForName(node), !isWriteOnlyAccess(node), false /*excludeGlobals*/)
-	}
-	if symbol == nil {
-		symbol = c.unknownSymbol
-	}
-	c.identifierSymbols[node] = symbol
-	return symbol
+	return links.resolvedSymbol
 }
 
 func (c *Checker) getResolvedSymbolOrNil(node *ast.Node) *ast.Symbol {
-	if !ast.IsIdentifier(node) {
-		return c.typeNodeLinks.Get(node).resolvedSymbol
-	}
-	return c.identifierSymbols[node]
+	return c.typeNodeLinks.Get(node).resolvedSymbol
 }
 
 func (c *Checker) getCannotFindNameDiagnosticForName(node *ast.Node) *diagnostics.Message {
