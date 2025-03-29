@@ -613,6 +613,7 @@ type Checker struct {
 	factory                                    ast.NodeFactory
 	nodeLinks                                  core.LinkStore[*ast.Node, NodeLinks]
 	signatureLinks                             core.LinkStore[*ast.Node, SignatureLinks]
+	symbolNodeLinks                            core.LinkStore[*ast.Node, SymbolNodeLinks]
 	typeNodeLinks                              core.LinkStore[*ast.Node, TypeNodeLinks]
 	enumMemberLinks                            core.LinkStore[*ast.Node, EnumMemberLinks]
 	assertionLinks                             core.LinkStore[*ast.Node, AssertionLinks]
@@ -7267,7 +7268,7 @@ func (c *Checker) checkPrivateIdentifierExpression(node *ast.Node) *Type {
 }
 
 func (c *Checker) getSymbolForPrivateIdentifierExpression(node *ast.Node) *ast.Symbol {
-	links := c.typeNodeLinks.Get(node)
+	links := c.symbolNodeLinks.Get(node)
 	if links.resolvedSymbol == nil {
 		links.resolvedSymbol = c.lookupSymbolForPrivateIdentifierDeclaration(node.Text(), node)
 	}
@@ -10703,7 +10704,7 @@ func (c *Checker) checkPropertyAccessExpressionOrQualifiedName(node *ast.Node, l
 		}
 		c.checkPropertyNotUsedBeforeDeclaration(prop, node, right)
 		c.markPropertyAsReferenced(prop, node, c.isSelfTypeAccess(left, parentSymbol))
-		c.typeNodeLinks.Get(node).resolvedSymbol = prop
+		c.symbolNodeLinks.Get(node).resolvedSymbol = prop
 		c.checkPropertyAccessibility(node, left.Kind == ast.KindSuperKeyword, isWriteAccess(node), apparentType, prop)
 		if c.isAssignmentToReadonlyEntity(node, prop, assignmentKind) {
 			c.error(right, diagnostics.Cannot_assign_to_0_because_it_is_a_read_only_property, right.Text())
@@ -12334,7 +12335,7 @@ func (c *Checker) checkInExpression(left *ast.Expression, right *ast.Expression,
 	if ast.IsPrivateIdentifier(left) {
 		// Unlike in 'checkPrivateIdentifierExpression' we now have access to the RHS type
 		// which provides us with the opportunity to emit more detailed errors
-		if c.typeNodeLinks.Get(left).resolvedSymbol == nil && ast.GetContainingClass(left) != nil {
+		if c.symbolNodeLinks.Get(left).resolvedSymbol == nil && ast.GetContainingClass(left) != nil {
 			c.reportNonexistentProperty(left, rightType)
 		}
 	} else {
@@ -13070,7 +13071,7 @@ func (c *Checker) checkExpressionForMutableLocation(node *ast.Node, checkMode Ch
 }
 
 func (c *Checker) getResolvedSymbol(node *ast.Node) *ast.Symbol {
-	links := c.typeNodeLinks.Get(node)
+	links := c.symbolNodeLinks.Get(node)
 	if links.resolvedSymbol == nil {
 		var symbol *ast.Symbol
 		if !ast.NodeIsMissing(node) {
@@ -13083,7 +13084,7 @@ func (c *Checker) getResolvedSymbol(node *ast.Node) *ast.Symbol {
 }
 
 func (c *Checker) getResolvedSymbolOrNil(node *ast.Node) *ast.Symbol {
-	return c.typeNodeLinks.Get(node).resolvedSymbol
+	return c.symbolNodeLinks.Get(node).resolvedSymbol
 }
 
 func (c *Checker) getCannotFindNameDiagnosticForName(node *ast.Node) *diagnostics.Message {
@@ -14711,7 +14712,7 @@ func (c *Checker) getResolvedMembersOrExportsOfSymbol(symbol *ast.Symbol, resolu
 // @param decl The member to bind.
 func (c *Checker) lateBindMember(parent *ast.Symbol, earlySymbols ast.SymbolTable, lateSymbols ast.SymbolTable, decl *ast.Node) *ast.Symbol {
 	// Debug.assert(decl.Symbol, "The member is expected to have a symbol.")
-	links := c.typeNodeLinks.Get(decl)
+	links := c.symbolNodeLinks.Get(decl)
 	if links.resolvedSymbol == nil {
 		// In the event we attempt to resolve the late-bound name of this member recursively,
 		// fall back to the early-bound name of this member.
@@ -21330,7 +21331,7 @@ func (c *Checker) getTypeFromTypeReference(node *ast.Node) *Type {
 }
 
 func (c *Checker) getSymbolFromTypeReference(node *ast.Node) *ast.Symbol {
-	links := c.typeNodeLinks.Get(node)
+	links := c.symbolNodeLinks.Get(node)
 	if links.resolvedSymbol == nil {
 		if isConstTypeReference(node) && ast.IsAssertionExpression(node.Parent) {
 			links.resolvedSymbol = c.unknownSymbol
@@ -22802,7 +22803,7 @@ func (c *Checker) getTypeFromImportTypeNode(node *ast.Node) *Type {
 		n := node.AsImportTypeNode()
 		if !ast.IsLiteralImportTypeNode(node) {
 			c.error(n.Argument, diagnostics.String_literal_expected)
-			links.resolvedSymbol = c.unknownSymbol
+			c.symbolNodeLinks.Get(node).resolvedSymbol = c.unknownSymbol
 			links.resolvedType = c.errorType
 			return links.resolvedType
 		}
@@ -22810,7 +22811,7 @@ func (c *Checker) getTypeFromImportTypeNode(node *ast.Node) *Type {
 		// TODO: Future work: support unions/generics/whatever via a deferred import-type
 		innerModuleSymbol := c.resolveExternalModuleName(node, n.Argument.AsLiteralTypeNode().Literal, false /*ignoreErrors*/)
 		if innerModuleSymbol == nil {
-			links.resolvedSymbol = c.unknownSymbol
+			c.symbolNodeLinks.Get(node).resolvedSymbol = c.unknownSymbol
 			links.resolvedType = c.errorType
 			return links.resolvedType
 		}
@@ -22840,20 +22841,20 @@ func (c *Checker) getTypeFromImportTypeNode(node *ast.Node) *Type {
 					links.resolvedType = c.errorType
 					return links.resolvedType
 				}
-				c.typeNodeLinks.Get(current).resolvedSymbol = next
-				c.typeNodeLinks.Get(current.Parent).resolvedSymbol = next
+				c.symbolNodeLinks.Get(current).resolvedSymbol = next
+				c.symbolNodeLinks.Get(current.Parent).resolvedSymbol = next
 				currentNamespace = next
 			}
-			links.resolvedType = c.resolveImportSymbolType(node, links, currentNamespace, targetMeaning)
+			links.resolvedType = c.resolveImportSymbolType(node, currentNamespace, targetMeaning)
 		} else {
 			if moduleSymbol.Flags&targetMeaning != 0 {
-				links.resolvedType = c.resolveImportSymbolType(node, links, moduleSymbol, targetMeaning)
+				links.resolvedType = c.resolveImportSymbolType(node, moduleSymbol, targetMeaning)
 			} else {
 				message := core.IfElse(targetMeaning == ast.SymbolFlagsValue,
 					diagnostics.Module_0_does_not_refer_to_a_value_but_is_used_as_a_value_here,
 					diagnostics.Module_0_does_not_refer_to_a_type_but_is_used_as_a_type_here_Did_you_mean_typeof_import_0)
 				c.error(node, message, n.Argument.AsLiteralTypeNode().Literal.Text())
-				links.resolvedSymbol = c.unknownSymbol
+				c.symbolNodeLinks.Get(node).resolvedSymbol = c.unknownSymbol
 				links.resolvedType = c.errorType
 			}
 		}
@@ -22868,9 +22869,9 @@ func (c *Checker) getIdentifierChain(node *ast.Node) []*ast.Node {
 	return append(c.getIdentifierChain(node.AsQualifiedName().Left), node.AsQualifiedName().Right)
 }
 
-func (c *Checker) resolveImportSymbolType(node *ast.Node, links *TypeNodeLinks, symbol *ast.Symbol, meaning ast.SymbolFlags) *Type {
+func (c *Checker) resolveImportSymbolType(node *ast.Node, symbol *ast.Symbol, meaning ast.SymbolFlags) *Type {
 	resolvedSymbol := c.resolveSymbol(symbol)
-	links.resolvedSymbol = resolvedSymbol
+	c.symbolNodeLinks.Get(node).resolvedSymbol = resolvedSymbol
 	if meaning == ast.SymbolFlagsValue {
 		// intentionally doesn't use resolved symbol so type is cached as expected on the alias
 		return c.getInstantiationExpressionType(c.getTypeOfSymbol(symbol), node)
@@ -25189,7 +25190,7 @@ func (c *Checker) getPropertyTypeForIndexType(originalObjectType *Type, objectTy
 					return nil
 				}
 				if accessFlags&AccessFlagsCacheSymbol != 0 {
-					c.typeNodeLinks.Get(accessNode).resolvedSymbol = prop
+					c.symbolNodeLinks.Get(accessNode).resolvedSymbol = prop
 				}
 				if c.isThisPropertyAccessInConstructor(accessExpression, prop) {
 					return c.autoType
@@ -29450,7 +29451,7 @@ func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast
 		} else if ast.IsPrivateIdentifier(name) {
 			return c.getSymbolForPrivateIdentifierExpression(name)
 		} else if name.Kind == ast.KindPropertyAccessExpression || name.Kind == ast.KindQualifiedName {
-			links := c.typeNodeLinks.Get(name)
+			links := c.symbolNodeLinks.Get(name)
 			if links.resolvedSymbol != nil {
 				return links.resolvedSymbol
 			}
