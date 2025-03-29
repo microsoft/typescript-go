@@ -2165,11 +2165,3 @@ func allDeclarationsInSameSourceFile(symbol *ast.Symbol) bool {
 	}
 	return true
 }
-
-func classDeclarationNameToString(declaration *ast.Node) string {
-	name := ast.GetNameOfDeclaration(declaration)
-	if name == nil {
-		return "(Anonymous class)"
-	}
-	return scanner.DeclarationNameToString(name)
-}

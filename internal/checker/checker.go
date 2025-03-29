@@ -10845,7 +10845,7 @@ func (c *Checker) checkPrivateIdentifierPropertyAccess(leftType *Type, right *as
 				return true
 			}
 		}
-		c.error(right, diagnostics.Property_0_is_not_accessible_outside_class_1_because_it_has_a_private_identifier, diagName, classDeclarationNameToString(typeClass.Symbol().ValueDeclaration))
+		c.error(right, diagnostics.Property_0_is_not_accessible_outside_class_1_because_it_has_a_private_identifier, diagName, c.SymbolToString(typeClass.Symbol()))
 		return true
 	}
 	return false
