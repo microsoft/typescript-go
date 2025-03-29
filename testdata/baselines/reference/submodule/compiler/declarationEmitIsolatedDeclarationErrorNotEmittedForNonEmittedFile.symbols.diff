@@ -63,23 +63,7 @@
  >TOptions : Symbol(TOptions, Decl(index.d.ts, 3, 11))
  >Record : Symbol(Record, Decl(lib.es5.d.ts, --, --))
  
-@@= skipped -12, +12 lines =@@
- >TNewParams : Symbol(TNewParams, Decl(index.d.ts, 5, 21))
- >Record : Symbol(Record, Decl(lib.es5.d.ts, --, --))
- >fn : Symbol(fn, Decl(index.d.ts, 5, 61))
-->MiddlewareFunction : Symbol(MiddlewareFunction, Decl(middleware.d.ts, 0, 0))
- 
-             _config: RootConfig<{
- >_config : Symbol(_config, Decl(index.d.ts, 5, 108))
-@@= skipped -19, +18 lines =@@
-             }>;
-         }, TNewParams>) => import("./middleware").MiddlewareBuilder<{
- >TNewParams : Symbol(TNewParams, Decl(index.d.ts, 5, 21))
-->MiddlewareBuilder : Symbol(MiddlewareBuilder, Decl(middleware.d.ts, 2, 1))
- 
-             _config: RootConfig<{
- >_config : Symbol(_config, Decl(index.d.ts, 9, 69))
-@@= skipped -37, +36 lines =@@
+@@= skipped -68, +68 lines =@@
  
  const trpc = initTRPC.create();
  >trpc : Symbol(trpc, Decl(index.ts, 2, 5))

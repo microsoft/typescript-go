@@ -59,12 +59,13 @@
  
  let y: import("foo2").Bar.I = { a: "", b: 0 };
  >y : Symbol(y, Decl(importTypeAmbient.ts, 30, 3))
-->Bar : Symbol(Bar, Decl(importTypeAmbient.ts, 9, 23), Decl(importTypeAmbient.ts, 22, 5))
+ >Bar : Symbol(Bar, Decl(importTypeAmbient.ts, 9, 23), Decl(importTypeAmbient.ts, 22, 5))
 ->I : Symbol(Bar.I, Decl(importTypeAmbient.ts, 10, 19))
++>I : Symbol(I, Decl(importTypeAmbient.ts, 10, 19))
  >a : Symbol(a, Decl(importTypeAmbient.ts, 30, 31))
  >b : Symbol(b, Decl(importTypeAmbient.ts, 30, 38))
  
-@@= skipped -22, +20 lines =@@
+@@= skipped -22, +22 lines =@@
  >Bar2 : Symbol(Bar2, Decl(importTypeAmbient.ts, 30, 46))
  
      item: {a: string, b: number, c: object};
