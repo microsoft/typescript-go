@@ -10,7 +10,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/jsnum"
-	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
 type SignatureCheckMode uint32
@@ -4272,8 +4271,8 @@ func (r *Relater) reportUnmatchedProperty(source *Type, target *Type, unmatchedP
 		privateIdentifierDescription := unmatchedProperty.ValueDeclaration.Name().Text()
 		symbolTableKey := binder.GetSymbolNameForPrivateIdentifier(source.symbol, privateIdentifierDescription)
 		if r.c.getPropertyOfType(source, symbolTableKey) != nil {
-			sourceName := scanner.DeclarationNameToString(ast.GetNameOfDeclaration(source.symbol.ValueDeclaration))
-			targetName := scanner.DeclarationNameToString(ast.GetNameOfDeclaration(target.symbol.ValueDeclaration))
+			sourceName := classDeclarationNameToString(source.symbol.ValueDeclaration)
+			targetName := classDeclarationNameToString(target.symbol.ValueDeclaration)
 			r.reportError(diagnostics.Property_0_in_type_1_refers_to_a_different_member_that_cannot_be_accessed_from_within_type_2, privateIdentifierDescription, sourceName, targetName)
 			return
 		}
