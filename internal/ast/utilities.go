@@ -1670,6 +1670,10 @@ func IsJsonSourceFile(file *SourceFile) bool {
 	return file.ScriptKind == core.ScriptKindJSON
 }
 
+func IsInJsonFile(node *Node) bool {
+	return node.Flags&NodeFlagsJsonFile != 0
+}
+
 func GetExternalModuleName(node *Node) *Expression {
 	switch node.Kind {
 	case KindImportDeclaration:
