@@ -613,7 +613,7 @@ func (p *Printer) writeCommentRange(comment ast.CommentRange) {
 		return
 	}
 
-	text := p.currentSourceFile.Text
+	text := p.currentSourceFile.Text()
 	if comment.Kind == ast.KindMultiLineCommentTrivia {
 		lineMap := p.currentSourceFile.LineMap()
 		indentSize := len(getIndentString(1))
@@ -708,8 +708,8 @@ func (p *Printer) shouldEmitComments(node *ast.Node) bool {
 
 func (p *Printer) shouldWriteComment(comment ast.CommentRange) bool {
 	return !p.Options.OnlyPrintJsDocStyle ||
-		p.currentSourceFile != nil && isJSDocLikeText(p.currentSourceFile.Text, comment) ||
-		p.currentSourceFile != nil && isPinnedComment(p.currentSourceFile.Text, comment)
+		p.currentSourceFile != nil && isJSDocLikeText(p.currentSourceFile.Text(), comment) ||
+		p.currentSourceFile != nil && isPinnedComment(p.currentSourceFile.Text(), comment)
 }
 
 func (p *Printer) shouldEmitIndented(node *ast.Node) bool {
@@ -5070,7 +5070,7 @@ func (p *Printer) emitLeadingComments(pos int, elided bool) bool {
 	}
 
 	var comments []ast.CommentRange
-	for comment := range scanner.GetLeadingCommentRanges(p.emitContext.Factory, p.currentSourceFile.Text, pos) {
+	for comment := range scanner.GetLeadingCommentRanges(p.emitContext.Factory, p.currentSourceFile.Text(), pos) {
 		if p.shouldWriteComment(comment) && p.shouldEmitCommentIfTripleSlash(comment, tripleSlash) {
 			comments = append(comments, comment)
 		}
@@ -5109,7 +5109,7 @@ func (p *Printer) emitTrailingComments(pos int, commentSeparator commentSeparato
 	}
 
 	var comments []ast.CommentRange
-	for comment := range scanner.GetTrailingCommentRanges(p.emitContext.Factory, p.currentSourceFile.Text, pos) {
+	for comment := range scanner.GetTrailingCommentRanges(p.emitContext.Factory, p.currentSourceFile.Text(), pos) {
 		if p.shouldWriteComment(comment) {
 			comments = append(comments, comment)
 		}
@@ -5133,7 +5133,7 @@ func (p *Printer) emitDetachedComments(textRange core.TextRange) (result detache
 		return result, hasResult
 	}
 
-	text := p.currentSourceFile.Text
+	text := p.currentSourceFile.Text()
 	lineMap := p.currentSourceFile.LineMap()
 
 	var leadingComments []ast.CommentRange
@@ -5248,7 +5248,7 @@ func (p *Printer) emitComment(comment ast.CommentRange) {
 
 func (p *Printer) isTripleSlashComment(comment ast.CommentRange) bool {
 	return p.currentSourceFile != nil &&
-		isRecognizedTripleSlashComment(p.currentSourceFile.Text, comment)
+		isRecognizedTripleSlashComment(p.currentSourceFile.Text(), comment)
 }
 
 //

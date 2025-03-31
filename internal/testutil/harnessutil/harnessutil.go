@@ -589,7 +589,7 @@ func newCompilationResult(
 		} else {
 			// using the order from the inputs, populate the outputs
 			for _, sourceFile := range program.GetSourceFiles() {
-				input := &TestFile{UnitName: sourceFile.FileName(), Content: sourceFile.Text}
+				input := &TestFile{UnitName: sourceFile.FileName(), Content: sourceFile.Text()}
 				c.inputs = append(c.inputs, input)
 				if !tspath.IsDeclarationFileName(sourceFile.FileName()) {
 					extname := core.GetOutputExtension(sourceFile.FileName(), options.Jsx)

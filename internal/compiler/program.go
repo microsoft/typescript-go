@@ -353,7 +353,7 @@ func (p *Program) getSemanticDiagnosticsForFile(sourceFile *ast.SourceFile) []*a
 				break
 			}
 			// Stop searching backwards when we encounter a line that isn't blank or a comment.
-			if !isCommentOrBlankLine(sourceFile.Text, int(lineStarts[line])) {
+			if !isCommentOrBlankLine(sourceFile.Text(), int(lineStarts[line])) {
 				break
 			}
 		}

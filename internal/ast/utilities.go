@@ -2528,7 +2528,7 @@ func ForEachDynamicImportOrRequireCall(
 	cb func(node *Node, argument *Expression) bool,
 ) bool {
 	isJavaScriptFile := IsInJSFile(file.AsNode())
-	lastIndex, size := findImportOrRequire(file.Text, 0)
+	lastIndex, size := findImportOrRequire(file.Text(), 0)
 	for lastIndex >= 0 {
 		node := GetNodeAtPosition(file, lastIndex, isJavaScriptFile && includeTypeSpaceImports)
 		if isJavaScriptFile && IsRequireCall(node, requireStringLiteralLikeArgument) {
@@ -2553,7 +2553,7 @@ func ForEachDynamicImportOrRequireCall(
 		}
 		// skip past import/require
 		lastIndex += size
-		lastIndex, size = findImportOrRequire(file.Text, lastIndex)
+		lastIndex, size = findImportOrRequire(file.Text(), lastIndex)
 	}
 	return false
 }
