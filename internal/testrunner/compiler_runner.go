@@ -341,7 +341,7 @@ func (c *compilerTest) verifyDiagnostics(t *testing.T, suiteName string, isSubmo
 		tsbaseline.DoErrorBaseline(t, c.configuredName, files, c.result.Diagnostics, c.result.Options.Pretty.IsTrue(), baseline.Options{
 			Subfolder:           suiteName,
 			IsSubmodule:         isSubmodule,
-			IsSubmoduleAccepted: c.containsUnsupportedOptions(), // TODO(jakebailey): read submoduleAccepted.txt
+			IsSubmoduleAccepted: c.containsUnsupportedOptions(),
 		})
 	})
 }
