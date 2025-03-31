@@ -240,6 +240,9 @@ jobs:
           git restore 'testdata/baselines/reference/module/resolver/*.trace.json'
           git add testdata/baselines/reference
 
+      - name: Run tests
+        run: npx hereby test
+
       - name: Check baselines
         id: check-baselines
         run: |
