@@ -318,6 +318,15 @@ export class RemoteNodeList extends Array<RemoteNode> implements NodeArray<Remot
         }
         return child;
     }
+
+    __print(): string {
+        const result = [];
+        result.push(`kind: NodeList`);
+        result.push(`index: ${this.index}`);
+        result.push(`byteIndex: ${this.byteIndex}`);
+        result.push(`length: ${this.length}`);
+        return result.join("\n");
+    }
 }
 
 export class RemoteNode extends RemoteNodeBase implements Node {
@@ -338,21 +347,27 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         this.id = `${sourceFile.id}.${this.pos}.${this.kind}`;
     }
 
-    forEachChild<T>(visitor: (node: Node) => T): T | undefined {
+    forEachChild<T>(visitNode: (node: Node) => T, visitList?: (list: NodeArray<Node>) => T): T | undefined {
         if (this.hasChildren()) {
             let next = this.index + 1;
             do {
                 const child = this.getOrCreateChildAtNodeIndex(next);
                 if (child instanceof RemoteNodeList) {
+                    if (visitList) {
+                        const result = visitList(child);
+                        if (result) {
+                            return result;
+                        }
+                    }
                     for (const node of child) {
-                        const result = visitor(node);
+                        const result = visitNode(node);
                         if (result) {
                             return result;
                         }
                     }
                 }
                 else {
-                    const result = visitor(child);
+                    const result = visitNode(child);
                     if (result) {
                         return result;
                     }
@@ -367,7 +382,7 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         return this.sourceFile;
     }
 
-    private getString(index: number): string {
+    protected getString(index: number): string {
         const start = this.view.getUint32(this.offsetStringTableOffsets + index * 4, true);
         const end = this.view.getUint32(this.offsetStringTableOffsets + (index + 1) * 4, true);
         const text = new Uint8Array(this.view.buffer, this.offsetStringTable + start, end - start);
@@ -442,8 +457,79 @@ export class RemoteNode extends RemoteNodeBase implements Node {
             return undefined;
         }
 
-        const propertyIndex = order - popcount8[mask & ((1 << order) - 1)];
+        // The property index is `order`, minus the number of zeros in the mask that are in bit positions less
+        // than the `order`th bit. Example:
+        //
+        // This is a MethodDeclaration with mask 0b01110101. The possible properties are
+        // ["modifiers", "asteriskToken", "name", "postfixToken", "typeParameters", "parameters", "type", "body"]
+        // (it has modifiers, name, typeParameters, parameters, and type).
+        //
+        // | Bit   | 7    | 6    | 5          | 4              | 3            | 2    | 1             | 0         |
+        // | ----- | ---- | ---- | ---------- | -------------- | ------------ | ---- | ------------- | --------- |
+        // | Value | 0    | 1    | 1          | 1              | 0            | 1    | 0             | 1         |
+        // | Name  | body | type | parameters | typeParameters | postfixToken | name | asteriskToken | modifiers |
+        //
+        // We are trying to get the index of "parameters" (bit = 5).
+        // First, set all the more significant bits to 1:
+        //
+        // | Bit   | 7    | 6    | 5          | 4              | 3            | 2    | 1             | 0         |
+        // | ----- | ---- | ---- | ---------- | -------------- | ------------ | ---- | ------------- | --------- |
+        // | Value | 1    | 1    | 1          | 1              | 0            | 1    | 0             | 1         |
+        //
+        // Then, flip the bits:
+        //
+        // | Bit   | 7    | 6    | 5          | 4              | 3            | 2    | 1             | 0         |
+        // | ----- | ---- | ---- | ---------- | -------------- | ------------ | ---- | ------------- | --------- |
+        // | Value | 0    | 0    | 0          | 0              | 1            | 0    | 1             | 0         |
+        //
+        // Counting the 1s gives us the number of *missing properties* before the `order`th property. If every property
+        // were present, we would have `parameters = children[5]`, but since `postfixToken` and `astersiskToken` are
+        // missing, we have `parameters = children[5 - 2]`.
+        const propertyIndex = order - popcount8[~(mask | ((0xff << order) & 0xff)) & 0xff];
         return this.getOrCreateChildAtNodeIndex(this.index + 1 + propertyIndex);
+    }
+
+    __print(): string {
+        const result = [];
+        result.push(`index: ${this.index}`);
+        result.push(`byteIndex: ${this.byteIndex}`);
+        result.push(`kind: ${SyntaxKind[this.kind]}`);
+        result.push(`pos: ${this.pos}`);
+        result.push(`end: ${this.end}`);
+        result.push(`next: ${this.next}`);
+        result.push(`parent: ${this.parentIndex}`);
+        result.push(`data: ${this.data.toString(2).padStart(32, "0")}`);
+        const dataType = this.dataType === NODE_DATA_TYPE_CHILDREN ? "children" :
+            this.dataType === NODE_DATA_TYPE_STRING ? "string" :
+            "extended";
+        result.push(`dataType: ${dataType}`);
+        if (this.dataType === NODE_DATA_TYPE_CHILDREN) {
+            result.push(`childMask: ${this.childMask.toString(2).padStart(8, "0")}`);
+            result.push(`childProperties: ${childProperties[this.kind]?.join(", ")}`);
+        }
+        return result.join("\n");
+    }
+
+    __printChildren(): string {
+        const result = [];
+        let next = this.index + 1;
+        while (next) {
+            const child = this.getOrCreateChildAtNodeIndex(next);
+            next = child.next;
+            result.push(child.__print());
+        }
+        return result.join("\n\n");
+    }
+
+    __printSubtree(): string {
+        const result = [this.__print()];
+        this.forEachChild(function visitNode(node) {
+            result.push((node as RemoteNode).__print());
+            node.forEachChild(visitNode);
+        }, visitList => {
+            result.push((visitList as RemoteNodeList).__print());
+        });
+        return result.join("\n\n");
     }
 
     // Boolean properties
@@ -581,6 +667,9 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     }
     get dotDotDotToken(): RemoteNode | undefined {
         return this.getNamedChild("dotDotDotToken") as RemoteNode;
+    }
+    get elements(): RemoteNodeList | undefined {
+        return this.getNamedChild("elements") as RemoteNodeList;
     }
     get elseStatement(): RemoteNode | undefined {
         return this.getNamedChild("elseStatement") as RemoteNode;
@@ -853,5 +942,6 @@ export class RemoteSourceFile extends RemoteNode {
     constructor(data: Uint8Array, decoder: TextDecoder) {
         const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
         super(view, decoder, 1, undefined!);
+        this.id = this.getString(this.view.getUint32(this.offsetExtendedData + 8, true));
     }
 }

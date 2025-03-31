@@ -5,6 +5,9 @@ import {
 } from "@typescript/api";
 import { createVirtualFileSystem } from "@typescript/api/fs";
 import {
+    cast,
+    isImportDeclaration,
+    isNamedImports,
     isTemplateHead,
     isTemplateMiddle,
     isTemplateTail,
@@ -35,6 +38,22 @@ describe("Project", () => {
         const api = spawnAPI();
         const project = api.loadProject("/tsconfig.json");
         const symbol = project.getSymbolAtPosition("/src/index.ts", 9);
+        assert.ok(symbol);
+        assert.equal(symbol.name, "foo");
+        assert.ok(symbol.flags & SymbolFlags.Alias);
+    });
+
+    test("getSymbolAtLocation", () => {
+        const api = spawnAPI();
+        const project = api.loadProject("/tsconfig.json");
+        const sourceFile = project.getSourceFile("/src/index.ts");
+        assert.ok(sourceFile);
+        const node = cast(
+            cast(sourceFile.statements[0], isImportDeclaration).importClause?.namedBindings,
+            isNamedImports,
+        ).elements[0].name;
+        assert.ok(node);
+        const symbol = project.getSymbolAtLocation(node);
         assert.ok(symbol);
         assert.equal(symbol.name, "foo");
         assert.ok(symbol.flags & SymbolFlags.Alias);

@@ -116,6 +116,7 @@ const (
 // | ----------- | ------ | ------------------------------------------------- |
 // | 0-4         | uint32 | Index of `text` in the string offsets section     |
 // | 4-8         | uint32 | Index of `fileName` in the string offsets section |
+// | 8-12        | uint32 | Index of `id` in the string offsets section       |
 //
 // Nodes (24 bytes per node)
 // -------------------------
@@ -218,7 +219,7 @@ const (
 // meaning of the data at that offset is defined by the node type. See the **Extended node data** section for details on
 // the format of the extended data for specific node types.
 
-func EncodeSourceFile(sourceFile *ast.SourceFile) ([]byte, error) {
+func EncodeSourceFile(sourceFile *ast.SourceFile, id string) ([]byte, error) {
 	var parentIndex, nodeCount, prevIndex uint32
 	var extendedData []byte
 	strs := newStringTable(sourceFile.Text, sourceFile.TextCount)
@@ -290,7 +291,7 @@ func EncodeSourceFile(sourceFile *ast.SourceFile) ([]byte, error) {
 
 	nodeCount++
 	parentIndex++
-	nodes = appendUint32s(nodes, uint32(sourceFile.Kind), uint32(sourceFile.Pos()), uint32(sourceFile.End()), 0, 0, getNodeData(sourceFile.AsNode(), strs, &extendedData))
+	nodes = appendUint32s(nodes, uint32(sourceFile.Kind), uint32(sourceFile.Pos()), uint32(sourceFile.End()), 0, 0, getSourceFileData(sourceFile, id, strs, &extendedData))
 
 	visitor.VisitEachChild(sourceFile.AsNode())
 
@@ -330,6 +331,16 @@ func appendUint32s(buf []byte, values ...uint32) []byte {
 		}
 	}
 	return buf
+}
+
+func getSourceFileData(sourceFile *ast.SourceFile, id string, strs *stringTable, extendedData *[]byte) uint32 {
+	t := NodeDataTypeExtendedData
+	extendedDataOffset := len(*extendedData)
+	textIndex := strs.add(sourceFile.Text, sourceFile.Kind, sourceFile.Pos(), sourceFile.End())
+	fileNameIndex := strs.add(sourceFile.FileName(), 0, 0, 0)
+	idIndex := strs.add(id, 0, 0, 0)
+	*extendedData = appendUint32s(*extendedData, textIndex, fileNameIndex, idIndex)
+	return t | uint32(extendedDataOffset)
 }
 
 func getNodeData(node *ast.Node, strs *stringTable, extendedData *[]byte) uint32 {
@@ -780,14 +791,6 @@ func recordNodeStrings(node *ast.Node, strs *stringTable) uint32 {
 
 func recordExtendedData(node *ast.Node, strs *stringTable, extendedData *[]byte) uint32 {
 	offset := uint32(len(*extendedData))
-	if node.Kind == ast.KindSourceFile {
-		n := node.AsSourceFile()
-		textIndex := strs.add(n.Text, node.Kind, node.Pos(), node.End())
-		fileNameIndex := strs.add(n.FileName(), 0, 0, 0)
-		*extendedData = appendUint32s(*extendedData, textIndex, fileNameIndex)
-		return offset
-	}
-
 	var text, rawText string
 	var templateFlags uint32
 	switch node.Kind {

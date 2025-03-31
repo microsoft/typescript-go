@@ -116,10 +116,10 @@ export class Project extends DisposableObject {
     getSymbolAtLocation(nodeOrNodes: Node | readonly Node[]): Symbol | undefined {
         this.ensureNotDisposed();
         if (Array.isArray(nodeOrNodes)) {
-            const data = this.client.request("getSymbolsAtLocations", { project: this.id, nodes: nodeOrNodes.map(node => node.id) });
+            const data = this.client.request("getSymbolsAtLocations", { project: this.id, locations: nodeOrNodes.map(node => node.id) });
             return data.map((d: SymbolResponse | null) => d ? this.objectRegistry.getSymbol(d) : undefined);
         }
-        const data = this.client.request("getSymbolAtLocation", { project: this.id, node: (nodeOrNodes as Node).id });
+        const data = this.client.request("getSymbolAtLocation", { project: this.id, location: (nodeOrNodes as Node).id });
         return data ? this.objectRegistry.getSymbol(data) : undefined;
     }
 

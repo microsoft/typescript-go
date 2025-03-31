@@ -135,7 +135,7 @@ func (api *API) HandleRequest(id int, method string, payload []byte) ([]byte, er
 		if err != nil {
 			return nil, err
 		}
-		return encoder.EncodeSourceFile(sourceFile)
+		return encoder.EncodeSourceFile(sourceFile, string(FileHandle(sourceFile)))
 	case MethodParseConfigFile:
 		return encodeJSON(api.ParseConfigFile(params.(*ParseConfigFileParams).FileName))
 	case MethodLoadProject:

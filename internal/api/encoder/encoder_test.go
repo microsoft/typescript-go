@@ -20,10 +20,10 @@ import (
 
 func TestEncodeSourceFile(t *testing.T) {
 	t.Parallel()
-	sourceFile := parser.ParseSourceFile("/test.ts", "/test.ts", "export function foo<T, U>(a: string, b: string): any {}\nfoo();", core.ScriptTargetESNext, scanner.JSDocParsingModeParseAll)
+	sourceFile := parser.ParseSourceFile("/test.ts", "/test.ts", "import { bar } from \"bar\";\nexport function foo<T, U>(a: string, b: string): any {}\nfoo();", core.ScriptTargetESNext, scanner.JSDocParsingModeParseAll)
 	t.Run("baseline", func(t *testing.T) {
 		t.Parallel()
-		buf, err := encoder.EncodeSourceFile(sourceFile)
+		buf, err := encoder.EncodeSourceFile(sourceFile, "")
 		assert.NilError(t, err)
 
 		str := formatEncodedSourceFile(buf)
@@ -47,7 +47,7 @@ func BenchmarkEncodeSourceFile(b *testing.B) {
 	)
 
 	for b.Loop() {
-		_, err := encoder.EncodeSourceFile(sourceFile)
+		_, err := encoder.EncodeSourceFile(sourceFile, "")
 		assert.NilError(b, err)
 	}
 }
