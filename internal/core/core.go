@@ -48,7 +48,7 @@ func FilterIndex[T any](slice []T, f func(T, int, []T) bool) []T {
 }
 
 func Map[T, U any](slice []T, f func(T) U) []U {
-	if len(slice) == 0 {
+	if slice == nil {
 		return nil
 	}
 	result := make([]U, len(slice))
@@ -74,7 +74,7 @@ func TryMap[T, U any](slice []T, f func(T) (U, error)) ([]U, error) {
 }
 
 func MapIndex[T, U any](slice []T, f func(T, int) U) []U {
-	if len(slice) == 0 {
+	if slice == nil {
 		return nil
 	}
 	result := make([]U, len(slice))
