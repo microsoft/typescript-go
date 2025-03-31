@@ -236,8 +236,6 @@ jobs:
       - name: Accept baselines
         run: |
           npx hereby baseline-accept
-          # TODO: remove this once trace baselines are enabled
-          git restore 'testdata/baselines/reference/module/resolver/*.trace.json'
           git add testdata/baselines/reference
 
       - name: Run tests
