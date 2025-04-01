@@ -291,6 +291,7 @@ export const testJS = task({
 
 export const testAll = task({
     name: "test:all",
+    dependencies: [tsgo, buildJSTest],
     run: async () => {
         // Prevent interleaving by running these directly instead of in parallel.
         await runTests();
