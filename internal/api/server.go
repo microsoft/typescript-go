@@ -475,3 +475,8 @@ func (s *Server) WalkDir(root string, walkFn vfs.WalkDirFunc) error {
 func (s *Server) Stat(path string) vfs.FileInfo {
 	panic("unimplemented")
 }
+
+// Remove implements vfs.FS.
+func (s *Server) Remove(path string) error {
+	panic("unimplemented")
+}
