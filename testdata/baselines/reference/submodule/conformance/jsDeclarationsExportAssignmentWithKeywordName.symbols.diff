@@ -11,3 +11,10 @@
      extends: 'base',
  >extends : Symbol(extends, Decl(index.js, 1, 18))
  
+@@= skipped -16, +12 lines =@@
+     },
+     x
+ >x : Symbol(x, Decl(index.js, 5, 6))
++>x : Symbol(x, Decl(index.js, 5, 6))
+ 
+ };

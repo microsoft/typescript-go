@@ -1,7 +1,7 @@
 --- old.nestedDestructuringOfRequire.errors.txt
 +++ new.nestedDestructuringOfRequire.errors.txt
 @@= skipped -0, +0 lines =@@
-+main.js(3,5): error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
++main.js(3,13): error TS2307: Cannot find module './mod1' or its corresponding type declarations.
  main.js(5,1): error TS2304: Cannot find name 'chalk'.
  
  
@@ -10,8 +10,8 @@
      const {
          chalk: { grey }
      } = require('./mod1');
-+        ~~~~~~~
-+!!! error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
++                ~~~~~~~~
++!!! error TS2307: Cannot find module './mod1' or its corresponding type declarations.
      grey
      chalk
      ~~~~~

@@ -3,6 +3,7 @@
 === use.js ===
 var ex = require('./ex')
 >ex : Symbol(ex, Decl(use.js, 0, 3))
+>require : Symbol(require)
 
 // values work
 var crunch = new ex.Crunch(1);

@@ -2,52 +2,52 @@
 
 === jsdocTypeReferenceToImport.js ===
 const C = require('./ex').C;
->C : any
->require('./ex').C : any
->require('./ex') : any
+>C : typeof C
+>require('./ex').C : typeof C
+>require('./ex') : typeof import("ex")
 >require : any
 >'./ex' : "./ex"
->C : any
+>C : typeof C
 
 const D = require('./ex')?.C;
->D : any
->require('./ex')?.C : any
->require('./ex') : any
+>D : typeof C
+>require('./ex')?.C : typeof C
+>require('./ex') : typeof import("ex")
 >require : any
 >'./ex' : "./ex"
->C : any
+>C : typeof C
 
 /** @type {C} c */
 var c = new C()
->c : any
->new C() : any
->C : any
+>c : C
+>new C() : C
+>C : typeof C
 
 c.start
->c.start : any
->c : any
->start : any
+>c.start : number
+>c : C
+>start : number
 
 c.end
->c.end : any
->c : any
->end : any
+>c.end : number
+>c : C
+>end : number
 
 /** @type {D} c */
 var d = new D()
->d : any
->new D() : any
->D : any
+>d : C
+>new D() : C
+>D : typeof C
 
 d.start
->d.start : any
->d : any
->start : any
+>d.start : number
+>d : C
+>start : number
 
 d.end
->d.end : any
->d : any
->end : any
+>d.end : number
+>d : C
+>end : number
 
 === ex.d.ts ===
 export class C {

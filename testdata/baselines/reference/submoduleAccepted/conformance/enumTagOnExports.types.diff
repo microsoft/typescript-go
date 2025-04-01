@@ -14,6 +14,8 @@
  
  /** @enum {string} */
  module.exports.b = {};
++>b : any
++>{} : {}
  >module.exports.b = {} : {}
 ->module.exports.b : typeof b
 ->module.exports : typeof module.exports

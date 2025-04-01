@@ -11,6 +11,8 @@ exports.a = {};
 
 /** @enum {string} */
 module.exports.b = {};
+>b : any
+>{} : {}
 >module.exports.b = {} : {}
 >module.exports.b : any
 >module.exports : any

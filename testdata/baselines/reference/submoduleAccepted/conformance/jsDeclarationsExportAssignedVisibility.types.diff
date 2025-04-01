@@ -28,6 +28,7 @@
  }
  
  module.exports = Container;
++>Container : typeof Container
  >module.exports = Container : typeof Container
 ->module.exports : typeof Container
 ->module : { exports: typeof Container; }

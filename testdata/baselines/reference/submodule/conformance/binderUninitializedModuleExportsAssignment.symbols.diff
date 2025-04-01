@@ -8,4 +8,5 @@
 ->module : Symbol(export=, Decl(loop.js, 1, 18))
 ->exports : Symbol(export=, Decl(loop.js, 1, 18))
  >loop2 : Symbol(loop2, Decl(loop.js, 1, 3))
++>loop2 : Symbol(loop2, Decl(loop.js, 1, 3))
  

@@ -14,5 +14,6 @@
 ->module : Symbol(export=, Decl(a.js, 2, 51))
 ->exports : Symbol(export=, Decl(a.js, 2, 51))
  >fn : Symbol(fn, Decl(a.js, 0, 0))
++>fn : Symbol(fn, Decl(a.js, 0, 0))
  }
  

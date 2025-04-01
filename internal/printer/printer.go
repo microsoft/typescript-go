@@ -3557,19 +3557,6 @@ func (p *Printer) emitImportEqualsDeclaration(node *ast.ImportEqualsDeclaration)
 	p.exitNode(node.AsNode(), state)
 }
 
-func (p *Printer) emitJSImportEqualsDeclaration(node *ast.JSImportEqualsDeclaration) {
-	state := p.enterNode(node.AsNode())
-	p.emitModifierList(node.AsNode(), node.Modifiers(), false /*allowDecorators*/)
-	p.writeSpace()
-	p.emitBindingIdentifier(node.Name().AsIdentifier())
-	p.writeSpace()
-	p.emitTokenWithComment(ast.KindEqualsToken, node.Name().End(), WriteKindPunctuation, node.AsNode())
-	p.writeSpace()
-	p.emitModuleReference(node.ModuleReference)
-	p.writeTrailingSemicolon()
-	p.exitNode(node.AsNode(), state)
-}
-
 func (p *Printer) emitModuleReference(node *ast.ModuleReference) {
 	switch node.Kind {
 	case ast.KindIdentifier:
@@ -3697,13 +3684,15 @@ func (p *Printer) emitExportAssignment(node *ast.ExportAssignment) {
 	p.exitNode(node.AsNode(), state)
 }
 
-func (p *Printer) emitJSExportAssignment(node *ast.JSExportAssignment) {
+// export declare var <name> = <initialiser>;
+func (p *Printer) emitCommonJSExport(node *ast.CommonJSExport) {
 	state := p.enterNode(node.AsNode())
-	nextPos := p.emitTokenWithComment(ast.KindExportKeyword, node.Pos(), WriteKindKeyword, node.AsNode())
+	p.emitTokenWithComment(ast.KindExportKeyword, node.Pos(), WriteKindKeyword, node.AsNode())
 	p.writeSpace()
-	p.emitTokenWithComment(ast.KindEqualsToken, nextPos, WriteKindOperator, node.AsNode())
+	p.writeKeyword("var")
 	p.writeSpace()
-	p.emitExpression(node.Expression, ast.OperatorPrecedenceAssignment)
+	p.emitBindingName(node.Name())
+	p.emitInitializer(node.Initializer, node.Name().End(), node.AsNode())
 	p.writeTrailingSemicolon()
 	p.exitNode(node.AsNode(), state)
 }
@@ -3903,16 +3892,14 @@ func (p *Printer) emitStatement(node *ast.Statement) {
 		p.emitNamespaceExportDeclaration(node.AsNamespaceExportDeclaration())
 	case ast.KindImportEqualsDeclaration:
 		p.emitImportEqualsDeclaration(node.AsImportEqualsDeclaration())
-	case ast.KindJSImportEqualsDeclaration:
-		p.emitJSImportEqualsDeclaration(node.AsJSImportEqualsDeclaration())
 	case ast.KindImportDeclaration:
 		p.emitImportDeclaration(node.AsImportDeclaration())
-	case ast.KindExportAssignment:
+	case ast.KindExportAssignment, ast.KindJSExportAssignment:
 		p.emitExportAssignment(node.AsExportAssignment())
-	case ast.KindJSExportAssignment:
-		p.emitJSExportAssignment(node.AsJSExportAssignment())
 	case ast.KindExportDeclaration:
 		p.emitExportDeclaration(node.AsExportDeclaration())
+	case ast.KindCommonJSExport:
+		p.emitCommonJSExport(node.AsCommonJSExport())
 
 	default:
 		panic(fmt.Sprintf("unhandled statement: %v", node.Kind))

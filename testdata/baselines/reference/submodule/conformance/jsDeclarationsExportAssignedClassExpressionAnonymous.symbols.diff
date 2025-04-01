@@ -19,5 +19,7 @@
  >this : Symbol(exports, Decl(index.js, 0, 16))
 ->t : Symbol(exports.t, Decl(index.js, 4, 20))
  >p : Symbol(p, Decl(index.js, 4, 16))
++>this : Symbol(exports, Decl(index.js, 0, 16))
++>p : Symbol(p, Decl(index.js, 4, 16))
      }
  }

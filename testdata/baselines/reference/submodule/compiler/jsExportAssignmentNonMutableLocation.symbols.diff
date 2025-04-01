@@ -10,6 +10,7 @@
 -
      customSymbol,
  >customSymbol : Symbol(customSymbol, Decl(file.js, 3, 18))
++>customSymbol : Symbol(customSymbol, Decl(file.js, 3, 18))
  
  };
  

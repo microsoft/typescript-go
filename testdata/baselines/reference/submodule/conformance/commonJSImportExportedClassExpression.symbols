@@ -3,6 +3,7 @@
 === main.js ===
 const { K } = require("./mod1");
 >K : Symbol(K, Decl(main.js, 0, 7))
+>require : Symbol(require)
 
 /** @param {K} k */
 function f(k) {

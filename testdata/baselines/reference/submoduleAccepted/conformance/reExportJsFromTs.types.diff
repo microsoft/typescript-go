@@ -1,26 +1,20 @@
 --- old.reExportJsFromTs.types
 +++ new.reExportJsFromTs.types
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
+ 
  === /lib/constants.js ===
  module.exports = {
- >module.exports = {  str: 'x',} : { str: string; }
+->module.exports = {  str: 'x',} : { str: string; }
 ->module.exports : { str: string; }
 ->module : { exports: { str: string; }; }
 ->exports : { str: string; }
-+>module.exports : any
-+>module : any
-+>exports : any
  >{  str: 'x',} : { str: string; }
  
    str: 'x',
-@@= skipped -13, +13 lines =@@
+ >str : string
+ >'x' : "x"
++>str : string
++>'x' : "x"
  
- === /src/constants.ts ===
- import * as tsConstants from "../lib/constants";
-->tsConstants : { str: string; }
-+>tsConstants : any
- 
- export { tsConstants };
-->tsConstants : { str: string; }
-+>tsConstants : any
+ };
  

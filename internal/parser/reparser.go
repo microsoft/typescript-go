@@ -2,6 +2,7 @@ package parser
 
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/core"
 )
 
 type jsDeclarationKind int
@@ -22,18 +23,7 @@ const (
 )
 
 func (p *Parser) withCommonJS(node *ast.Node) {
-	if node.Kind == ast.KindVariableStatement && node.AsVariableStatement().DeclarationList != nil {
-		for _, declaration := range node.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes {
-			if isRequireCall(declaration.Initializer()) {
-				ref := p.factory.NewExternalModuleReference(declaration.Initializer())
-				ref.Flags = ast.NodeFlagsReparsed
-				ref.Loc = declaration.Initializer().Loc
-				importeq := p.factory.NewJSImportEqualsDeclaration(nil /*modifiers*/, declaration.Name(), ref)
-				importeq.Flags = ast.NodeFlagsReparsed
-				importeq.Loc = declaration.Loc
-				p.reparseList = append(p.reparseList, importeq)
-			}
-		}
+	if p.scriptKind != core.ScriptKindJS && p.scriptKind != core.ScriptKindJSX {
 		return
 	}
 	if node.Kind != ast.KindExpressionStatement || node.AsExpressionStatement().Expression.Kind != ast.KindBinaryExpression {
@@ -43,15 +33,23 @@ func (p *Parser) withCommonJS(node *ast.Node) {
 	kind := getAssignmentDeclarationKind(bin)
 	switch kind {
 	case jsDeclarationKindModuleExports:
-		export := p.factory.NewJSExportAssignment(nil /*modifiers*/, bin.Right)
+		export := p.factory.NewJSExportAssignment(bin.Right)
+		export.Flags = ast.NodeFlagsReparsed
+		export.Loc = bin.Loc
+		p.reparseList = append(p.reparseList, export)
+	case jsDeclarationKindExportsProperty:
+		nodes := p.nodeSlicePool.NewSlice(1)
+		nodes[0] = p.factory.NewModifier(ast.KindExportKeyword)
+		nodes[0].Flags = ast.NodeFlagsReparsed
+		nodes[0].Loc = bin.Loc
+		// TODO: Name can sometimes be a string literal, so downstream code needs to handle this
+		export := p.factory.NewCommonJSExport(p.newModifierList(bin.Loc, nodes), ast.GetElementOrPropertyAccessArgumentExpressionOrName(bin.Left), bin.Right, node.AsExpressionStatement().Expression)
 		export.Flags = ast.NodeFlagsReparsed
 		export.Loc = bin.Loc
 		p.reparseList = append(p.reparseList, export)
 	}
 
-	// TODO: Duplicate all the places that reference either kind, or either predicate, or .. check the others too.
 	// TODO: mark the file as a (commonjs) module if either is found
-	// TODO: maybe remove modifiers, isTypeOnly, isExportEquals, since they're not used (but makes identical handling way easier)
 }
 
 func getAssignmentDeclarationKind(bin *ast.BinaryExpression) jsDeclarationKind {
@@ -60,6 +58,10 @@ func getAssignmentDeclarationKind(bin *ast.BinaryExpression) jsDeclarationKind {
 	}
 	if isModuleExportsAccessExpression(bin.Left) {
 		return jsDeclarationKindModuleExports
+	} else if ast.IsAccessExpression(bin.Left) &&
+		isModuleExportsAccessExpression(bin.Left.Expression()) &&
+		(ast.IsIdentifier(bin.Left.Name()) || ast.IsStringLiteralLike(bin.Left.Name())) {
+		return jsDeclarationKindExportsProperty
 	}
 	// !!! module.exports property, this.property, expando.property
 	return jsDeclarationKindNone
@@ -77,14 +79,4 @@ func isModuleIdentifier(node *ast.Node) bool {
 
 func isLiteralLikeElementAccess(node *ast.Node) bool {
 	return node.Kind == ast.KindElementAccessExpression && ast.IsStringOrNumericLiteralLike(node.AsElementAccessExpression().ArgumentExpression)
-}
-
-func isRequireCall(node *ast.Node) bool {
-	if node.Kind != ast.KindCallExpression {
-		return false
-	}
-	expr := node.AsCallExpression().Expression
-	args := node.AsCallExpression().Arguments
-	return expr.Name().Kind == ast.KindIdentifier && expr.Name().AsIdentifier().Text == "require" &&
-		len(args.Nodes) == 1 && ast.IsStringLiteralLike(args.Nodes[0])
 }

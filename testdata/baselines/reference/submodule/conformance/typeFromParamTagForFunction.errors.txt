@@ -1,4 +1,6 @@
+a.js(1,23): error TS2306: File 'a-ext.js' is not a module.
 b-ext.js(3,14): error TS2339: Property 'x' does not exist on type 'B'.
+b.js(1,23): error TS2306: File 'b-ext.js' is not a module.
 e-ext.js(3,14): error TS2339: Property 'x' does not exist on type 'E'.
 h.js(3,14): error TS2339: Property 'x' does not exist on type 'H'.
 
@@ -12,8 +14,10 @@ h.js(3,14): error TS2339: Property 'x' does not exist on type 'H'.
         this.x = 1;
     };
     
-==== a.js (0 errors) ====
+==== a.js (1 errors) ====
     const { A } = require("./a-ext");
+                          ~~~~~~~~~
+!!! error TS2306: File 'a-ext.js' is not a module.
     
     /** @param {A} p */
     function a(p) { p.x; }
@@ -27,8 +31,10 @@ h.js(3,14): error TS2339: Property 'x' does not exist on type 'H'.
         }
     };
     
-==== b.js (0 errors) ====
+==== b.js (1 errors) ====
     const { B } = require("./b-ext");
+                          ~~~~~~~~~
+!!! error TS2306: File 'b-ext.js' is not a module.
     
     /** @param {B} p */
     function b(p) { p.x; }

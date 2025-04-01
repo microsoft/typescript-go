@@ -64,7 +64,7 @@ func (r *emitResolver) isValueAliasDeclarationWorker(node *ast.Node) bool {
 	c := r.checker
 
 	switch node.Kind {
-	case ast.KindImportEqualsDeclaration, ast.KindJSImportEqualsDeclaration:
+	case ast.KindImportEqualsDeclaration:
 		return r.isAliasResolvedToValue(c.getSymbolOfDeclaration(node), false /*excludeTypeOnlyValues*/)
 	case ast.KindImportClause,
 		ast.KindNamespaceImport,
@@ -118,13 +118,10 @@ func (r *emitResolver) IsTopLevelValueImportEqualsWithEntityName(node *ast.Node)
 	if !c.canCollectSymbolAliasAccessibilityData {
 		return true
 	}
-	if !ast.IsParseTreeNode(node) || (node.Kind != ast.KindImportEqualsDeclaration && node.Kind != ast.KindJSImportEqualsDeclaration) || node.Parent.Kind != ast.KindSourceFile {
+	if !ast.IsParseTreeNode(node) || node.Kind != ast.KindImportEqualsDeclaration || node.Parent.Kind != ast.KindSourceFile {
 		return false
 	}
 	if ast.IsImportEqualsDeclaration(node) && (ast.NodeIsMissing(node.AsImportEqualsDeclaration().ModuleReference) || node.AsImportEqualsDeclaration().ModuleReference.Kind != ast.KindExternalModuleReference) {
-		return false
-	}
-	if ast.IsJSImportEqualsDeclaration(node) && ast.NodeIsMissing(node.AsJSImportEqualsDeclaration().ModuleReference) {
 		return false
 	}
 

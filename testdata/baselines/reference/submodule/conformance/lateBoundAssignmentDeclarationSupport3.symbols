@@ -3,6 +3,7 @@
 === usage.js ===
 const x = require("./lateBoundAssignmentDeclarationSupport3.js");
 >x : Symbol(x, Decl(usage.js, 0, 5))
+>require : Symbol(require)
 
 const y = x["my-fake-sym"];
 >y : Symbol(y, Decl(usage.js, 1, 5))

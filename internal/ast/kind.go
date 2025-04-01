@@ -378,8 +378,8 @@ const (
 	// Synthesized list
 	KindSyntaxList
 	// Synthesized JS nodes
-	KindJSImportEqualsDeclaration
-	KindJSExportAssignment
+	KindJSExportAssignment // TODO: KindCommonJSExportAssignment?
+	KindCommonJSExport
 	// Transformation nodes
 	KindNotEmittedStatement
 	KindPartiallyEmittedExpression

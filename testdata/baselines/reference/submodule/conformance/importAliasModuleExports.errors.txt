@@ -1,4 +1,4 @@
-main.js(1,15): error TS2306: File 'mod1.js' is not a module.
+main.js(1,8): error TS1192: Module '"mod1"' has no default export.
 mod1.js(4,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 
 
@@ -12,8 +12,8 @@ mod1.js(4,1): error TS2580: Cannot find name 'module'. Do you need to install ty
     
 ==== main.js (1 errors) ====
     import A from './mod1'
-                  ~~~~~~~~
-!!! error TS2306: File 'mod1.js' is not a module.
+           ~
+!!! error TS1192: Module '"mod1"' has no default export.
     A.prototype.foo = 0
     A.prototype.func = function() { this._func = 0; }
     Object.defineProperty(A.prototype, "def", { value: 0 });

@@ -10,4 +10,7 @@
 -
      C
  >C : Symbol(C, Decl(bug24062.js, 3, 18))
++>C : Symbol(C, Decl(bug24062.js, 3, 18))
+ 
+ };
  

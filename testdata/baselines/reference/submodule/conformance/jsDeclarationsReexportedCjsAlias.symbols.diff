@@ -6,7 +6,7 @@
  >SomeClass : Symbol(SomeClass, Decl(main.js, 0, 7))
 ->SomeClass : Symbol(SomeClass, Decl(lib.js, 14, 8))
  >Another : Symbol(Another, Decl(main.js, 0, 18))
-->require : Symbol(require)
+ >require : Symbol(require)
 ->'./lib' : Symbol("lib", Decl(lib.js, 0, 0))
  
  module.exports = {
@@ -19,6 +19,7 @@
  
      Another
  >Another : Symbol(Another, Decl(main.js, 3, 14))
++>Another : Symbol(Another, Decl(main.js, 3, 14))
  }
 -=== lib.js ===
 -/**

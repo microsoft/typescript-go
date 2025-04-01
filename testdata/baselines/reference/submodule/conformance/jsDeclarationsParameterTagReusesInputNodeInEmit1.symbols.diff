@@ -27,10 +27,11 @@
 ->exports : Symbol(export=, Decl(base.js, 8, 24))
 ->BaseFactory : Symbol(BaseFactory, Decl(base.js, 4, 5), Decl(base.js, 6, 2))
 +>BaseFactory : Symbol(BaseFactory, Decl(base.js, 4, 5))
++>BaseFactory : Symbol(BaseFactory, Decl(base.js, 4, 5))
  
  === file.js ===
  /** @typedef {import('./base')} BaseFactory */
-@@= skipped -19, +16 lines =@@
+@@= skipped -19, +17 lines =@@
   */
  /** @enum {import('./base')} */
  const couldntThinkOfAny = {}

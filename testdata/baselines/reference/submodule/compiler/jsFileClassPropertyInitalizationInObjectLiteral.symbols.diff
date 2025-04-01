@@ -11,3 +11,12 @@
    class A { }
  >A : Symbol(A, Decl(foo.js, 0, 30))
  
+@@= skipped -11, +7 lines =@@
+     c: A.b = 1,
+ >c : Symbol(c, Decl(foo.js, 2, 10))
+ >A : Symbol(A, Decl(foo.js, 0, 30))
++>c : Symbol(c, Decl(foo.js, 2, 10))
++>A : Symbol(A, Decl(foo.js, 0, 30))
+   }
+ };
+ 

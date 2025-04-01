@@ -9,13 +9,10 @@ const errors = require("./errors");
 >"./errors" : "./errors"
 
 module.exports = {
->module.exports = {    errors} : { errors: any; }
->module.exports : any
->module : any
->exports : any
 >{    errors} : { errors: any; }
 
     errors
+>errors : any
 >errors : any
 
 };

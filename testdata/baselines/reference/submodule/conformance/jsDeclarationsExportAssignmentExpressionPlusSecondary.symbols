@@ -23,8 +23,10 @@ module.exports = {
 
         item: "ok"
 >item : Symbol(item, Decl(index.js, 7, 11))
+>item : Symbol(item, Decl(index.js, 7, 11))
     }
 };
 module.exports.Strings = Strings;
+>Strings : Symbol(Strings, Decl(index.js, 0, 5))
 >Strings : Symbol(Strings, Decl(index.js, 0, 5))
 

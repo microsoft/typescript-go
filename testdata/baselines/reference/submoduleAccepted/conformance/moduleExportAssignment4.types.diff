@@ -7,9 +7,13 @@
 ->module.exports = exports['default'] : error
 ->module.exports : error
 ->module : { exports: any; }
++>exports['default'] : any
+ >exports : any
++>'default' : "default"
 +>module.exports = exports['default'] : any
 +>module.exports : any
 +>module : any
- >exports : any
++>exports : any
  >exports['default'] : any
  >exports : any
+ >'default' : "default"

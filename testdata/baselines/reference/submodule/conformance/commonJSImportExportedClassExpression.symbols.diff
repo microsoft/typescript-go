@@ -1,15 +1,14 @@
 --- old.commonJSImportExportedClassExpression.symbols
 +++ new.commonJSImportExportedClassExpression.symbols
-@@= skipped -2, +2 lines =@@
- === main.js ===
+@@= skipped -3, +3 lines =@@
  const { K } = require("./mod1");
  >K : Symbol(K, Decl(main.js, 0, 7))
-->require : Symbol(require)
+ >require : Symbol(require)
 ->"./mod1" : Symbol("mod1", Decl(mod1.js, 0, 0))
  
  /** @param {K} k */
  function f(k) {
-@@= skipped -9, +7 lines =@@
+@@= skipped -8, +7 lines =@@
  >k : Symbol(k, Decl(main.js, 2, 11))
  
      k.values()

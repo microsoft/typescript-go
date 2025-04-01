@@ -8,6 +8,7 @@ const _item = require("./namespacer");
 >"./namespacer" : "./namespacer"
 
 module.exports = 12;
+>12 : 12
 >module.exports = 12 : 12
 >module.exports : any
 >module : any

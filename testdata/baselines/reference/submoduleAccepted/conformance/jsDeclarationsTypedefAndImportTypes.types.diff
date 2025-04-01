@@ -1,8 +1,10 @@
 --- old.jsDeclarationsTypedefAndImportTypes.types
 +++ new.jsDeclarationsTypedefAndImportTypes.types
-@@= skipped -18, +18 lines =@@
+@@= skipped -17, +17 lines =@@
+ }
  
  module.exports = Conn;
++>Conn : typeof Conn
  >module.exports = Conn : typeof Conn
 ->module.exports : typeof Conn
 ->module : { exports: typeof Conn; }
@@ -13,7 +15,7 @@
  >Conn : typeof Conn
  
  === usage.js ===
-@@= skipped -17, +17 lines =@@
+@@= skipped -18, +19 lines =@@
       * @param {Conn} c
       */
      constructor(c) {
@@ -50,10 +52,11 @@
 ->module.exports : typeof module.exports
 ->module : { exports: typeof module.exports; }
 ->exports : typeof module.exports
-+>module.exports = {    Wrap} : { Wrap: typeof Wrap; }
-+>module.exports : any
-+>module : any
-+>exports : any
  >{    Wrap} : { Wrap: typeof Wrap; }
  
      Wrap
+ >Wrap : typeof Wrap
++>Wrap : typeof Wrap
+ 
+ };
+ 

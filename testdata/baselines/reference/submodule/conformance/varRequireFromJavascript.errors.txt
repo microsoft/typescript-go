@@ -1,11 +1,11 @@
-use.js(1,10): error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+use.js(1,18): error TS2307: Cannot find module './ex' or its corresponding type declarations.
 use.js(12,12): error TS7006: Parameter 'wrap' implicitly has an 'any' type.
 
 
 ==== use.js (2 errors) ====
     var ex = require('./ex')
-             ~~~~~~~
-!!! error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+                     ~~~~~~
+!!! error TS2307: Cannot find module './ex' or its corresponding type declarations.
     
     // values work
     var crunch = new ex.Crunch(1);

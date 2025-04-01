@@ -6,6 +6,8 @@ const {
 >grey : Symbol(grey, Decl(main.js, 1, 12))
 
 } = require('./mod1');
+>require : Symbol(require)
+
 grey
 >grey : Symbol(grey, Decl(main.js, 1, 12))
 

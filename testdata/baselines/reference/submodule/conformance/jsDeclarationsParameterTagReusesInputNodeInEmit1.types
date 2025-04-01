@@ -25,6 +25,7 @@ BaseFactory.Base = Base;
 >Base : typeof Base
 
 module.exports = BaseFactory;
+>BaseFactory : { (): Base; Base: typeof Base; }
 >module.exports = BaseFactory : { (): Base; Base: typeof Base; }
 >module.exports : any
 >module : any

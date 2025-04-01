@@ -9,6 +9,7 @@
 ->module : { exports: typeof C; }
 ->exports : typeof C
 ->C : typeof C
++>C : () => void
 +>module.exports = C : () => void
 +>module.exports : any
 +>module : { exports: any; }
@@ -27,7 +28,7 @@
  >p : any
  >1 : 1
  }
-@@= skipped -24, +24 lines =@@
+@@= skipped -24, +25 lines =@@
  /** @typedef {A | B} Both */
  
  export function C() {

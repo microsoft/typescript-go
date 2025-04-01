@@ -20,10 +20,6 @@
 ->module : { exports: typeof module.exports; }
 ->exports : typeof module.exports
 ->{    SomeClass,    Another} : { SomeClass: typeof SomeClass; Another: typeof SomeClass; }
-+>module.exports = {    SomeClass,    Another} : { SomeClass: any; Another: any; }
-+>module.exports : any
-+>module : any
-+>exports : any
 +>{    SomeClass,    Another} : { SomeClass: any; Another: any; }
  
      SomeClass,
@@ -32,6 +28,7 @@
  
      Another
 ->Another : typeof SomeClass
++>Another : any
 +>Another : any
  }
 -=== lib.js ===

@@ -1,16 +1,19 @@
 jsDeclarationsExportAssignedConstructorFunctionWithSub.js(4,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+jsDeclarationsExportAssignedConstructorFunctionWithSub.js(4,28): error TS2300: Duplicate identifier 'p'.
 jsDeclarationsExportAssignedConstructorFunctionWithSub.js(7,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 jsDeclarationsExportAssignedConstructorFunctionWithSub.js(8,25): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 jsDeclarationsExportAssignedConstructorFunctionWithSub.js(10,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 
 
-==== jsDeclarationsExportAssignedConstructorFunctionWithSub.js (4 errors) ====
+==== jsDeclarationsExportAssignedConstructorFunctionWithSub.js (5 errors) ====
     /**
      * @param {number} p
      */
     module.exports = function (p) {
     ~~~~~~
 !!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+                               ~
+!!! error TS2300: Duplicate identifier 'p'.
         this.t = 12 + p;
     }
     module.exports.Sub = function() {

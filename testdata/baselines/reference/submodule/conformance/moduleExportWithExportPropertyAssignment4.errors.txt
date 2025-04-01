@@ -1,0 +1,29 @@
+a.js(2,20): error TS2307: Cannot find module './mod1' or its corresponding type declarations.
+
+
+==== a.js (1 errors) ====
+    /// <reference path='./requires.d.ts' />
+    var mod1 = require('./mod1')
+                       ~~~~~~~~
+!!! error TS2307: Cannot find module './mod1' or its corresponding type declarations.
+    mod1.justExport.toFixed()
+    mod1.bothBefore.toFixed() // error
+    mod1.bothAfter.toFixed()
+    mod1.justProperty.length
+    
+==== requires.d.ts (0 errors) ====
+    declare var module: { exports: any };
+    declare function require(name: string): any;
+==== mod1.js (0 errors) ====
+    /// <reference path='./requires.d.ts' />
+    module.exports.bothBefore = 'string'
+    A.justExport = 4
+    A.bothBefore = 2
+    A.bothAfter = 3
+    module.exports = A
+    function A() {
+        this.p = 1
+    }
+    module.exports.bothAfter = 'string'
+    module.exports.justProperty = 'string'
+    

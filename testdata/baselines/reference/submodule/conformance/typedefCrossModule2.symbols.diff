@@ -1,15 +1,14 @@
 --- old.typedefCrossModule2.symbols
 +++ new.typedefCrossModule2.symbols
-@@= skipped -2, +2 lines =@@
- === use.js ===
+@@= skipped -3, +3 lines =@@
  var mod = require('./mod1.js');
  >mod : Symbol(mod, Decl(use.js, 0, 3))
-->require : Symbol(require)
+ >require : Symbol(require)
 ->'./mod1.js' : Symbol("mod1", Decl(mod1.js, 0, 0))
  
  /** @type {import("./mod1.js").Baz} */
  var b;
-@@= skipped -13, +11 lines =@@
+@@= skipped -12, +11 lines =@@
  
  var bbb = new mod.Baz();
  >bbb : Symbol(bbb, Decl(use.js, 5, 3))

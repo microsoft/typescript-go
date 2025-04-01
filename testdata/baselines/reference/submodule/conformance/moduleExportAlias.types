@@ -2,106 +2,106 @@
 
 === a.ts ===
 import b = require("./b.js");
->b : any
+>b : {}
 
 b.func1;
 >b.func1 : any
->b : any
+>b : {}
 >func1 : any
 
 b.func2;
 >b.func2 : any
->b : any
+>b : {}
 >func2 : any
 
 b.func3;
 >b.func3 : any
->b : any
+>b : {}
 >func3 : any
 
 b.func4;
 >b.func4 : any
->b : any
+>b : {}
 >func4 : any
 
 b.func5;
 >b.func5 : any
->b : any
+>b : {}
 >func5 : any
 
 b.func6;
 >b.func6 : any
->b : any
+>b : {}
 >func6 : any
 
 b.func7;
 >b.func7 : any
->b : any
+>b : {}
 >func7 : any
 
 b.func8;
 >b.func8 : any
->b : any
+>b : {}
 >func8 : any
 
 b.func9;
 >b.func9 : any
->b : any
+>b : {}
 >func9 : any
 
 b.func10;
 >b.func10 : any
->b : any
+>b : {}
 >func10 : any
 
 b.func11;
 >b.func11 : any
->b : any
+>b : {}
 >func11 : any
 
 b.func12;
 >b.func12 : any
->b : any
+>b : {}
 >func12 : any
 
 b.func13;
 >b.func13 : any
->b : any
+>b : {}
 >func13 : any
 
 b.func14;
 >b.func14 : any
->b : any
+>b : {}
 >func14 : any
 
 b.func15;
 >b.func15 : any
->b : any
+>b : {}
 >func15 : any
 
 b.func16;
 >b.func16 : any
->b : any
+>b : {}
 >func16 : any
 
 b.func17;
 >b.func17 : any
->b : any
+>b : {}
 >func17 : any
 
 b.func18;
 >b.func18 : any
->b : any
+>b : {}
 >func18 : any
 
 b.func19;
 >b.func19 : any
->b : any
+>b : {}
 >func19 : any
 
 b.func20;
 >b.func20 : any
->b : any
+>b : {}
 >func20 : any
 
 
@@ -138,6 +138,8 @@ moduleExportsAlias.func3 = function () { };
 >function () { } : () => void
 
 module.exports.func4 = function () { };
+>func4 : any
+>function () { } : () => void
 >module.exports.func4 = function () { } : () => void
 >module.exports.func4 : any
 >module.exports : any
@@ -260,6 +262,8 @@ exports.func11 = function () { };
 >function () { } : () => void
 
 module.exports.func12 = function () { };
+>func12 : any
+>function () { } : () => void
 >module.exports.func12 = function () { } : () => void
 >module.exports.func12 : any
 >module.exports : any
@@ -287,6 +291,8 @@ exports.func11 = function () { };
 >function () { } : () => void
 
 module.exports.func12 = function () { };
+>func12 : any
+>function () { } : () => void
 >module.exports.func12 = function () { } : () => void
 >module.exports.func12 : any
 >module.exports : any
@@ -312,6 +318,8 @@ exports.func13 = function () { };
 >function () { } : () => void
 
 module.exports.func14 = function () { };
+>func14 : any
+>function () { } : () => void
 >module.exports.func14 = function () { } : () => void
 >module.exports.func14 : any
 >module.exports : any
@@ -337,6 +345,8 @@ exports.func15 = function () { };
 >function () { } : () => void
 
 module.exports.func16 = function () { };
+>func16 : any
+>function () { } : () => void
 >module.exports.func16 = function () { } : () => void
 >module.exports.func16 : any
 >module.exports : any
@@ -346,6 +356,9 @@ module.exports.func16 = function () { };
 >function () { } : () => void
 
 module.exports = exports = {};
+>exports = {} : {}
+>exports : any
+>{} : {}
 >module.exports = exports = {} : {}
 >module.exports : any
 >module : any
@@ -362,6 +375,8 @@ exports.func17 = function () { };
 >function () { } : () => void
 
 module.exports.func18 = function () { };
+>func18 : any
+>function () { } : () => void
 >module.exports.func18 = function () { } : () => void
 >module.exports.func18 : any
 >module.exports : any
@@ -371,6 +386,7 @@ module.exports.func18 = function () { };
 >function () { } : () => void
 
 module.exports = {};
+>{} : {}
 >module.exports = {} : {}
 >module.exports : any
 >module : any
@@ -385,6 +401,8 @@ exports.func19 = function () { };
 >function () { } : () => void
 
 module.exports.func20 = function () { };
+>func20 : any
+>function () { } : () => void
 >module.exports.func20 = function () { } : () => void
 >module.exports.func20 : any
 >module.exports : any

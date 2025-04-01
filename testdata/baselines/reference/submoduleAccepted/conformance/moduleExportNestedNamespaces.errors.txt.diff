@@ -7,7 +7,8 @@
 +mod.js(2,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +mod.js(5,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +mod.js(7,14): error TS2339: Property 'p' does not exist on type 'Classic'.
-+use.js(1,20): error TS2306: File 'mod.js' is not a module.
++use.js(3,15): error TS2339: Property 'n' does not exist on type 'typeof import("mod")'.
++use.js(5,21): error TS2339: Property 'Classic' does not exist on type 'typeof import("mod")'.
 +
 +
 +==== mod.js (4 errors) ====
@@ -29,14 +30,16 @@
 +        }
 +    }
 +    
-+==== use.js (1 errors) ====
++==== use.js (2 errors) ====
 +    import * as s from './mod'
-+                       ~~~~~~~
-+!!! error TS2306: File 'mod.js' is not a module.
 +    
 +    var k = new s.n.K()
++                  ~
++!!! error TS2339: Property 'n' does not exist on type 'typeof import("mod")'.
 +    k.x
 +    var classic = new s.Classic()
++                        ~~~~~~~
++!!! error TS2339: Property 'Classic' does not exist on type 'typeof import("mod")'.
 +    
 +    
 +    /** @param {s.n.K} c

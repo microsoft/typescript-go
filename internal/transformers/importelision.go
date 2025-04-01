@@ -28,8 +28,6 @@ func (tx *ImportElisionTransformer) visit(node *ast.Node) *ast.Node {
 			return nil
 		}
 		return tx.visitor.VisitEachChild(node)
-	case ast.KindJSImportEqualsDeclaration:
-		return tx.visitor.VisitEachChild(node)
 	case ast.KindImportDeclaration:
 		if !tx.isElisionBlocked(node) {
 			n := node.AsImportDeclaration()

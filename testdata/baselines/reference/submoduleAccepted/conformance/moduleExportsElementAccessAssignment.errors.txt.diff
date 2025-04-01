@@ -3,13 +3,13 @@
 @@= skipped -0, +-1 lines =@@
 -<no content>
 @@= skipped --1, +1 lines =@@
-+mod2.js(1,14): error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
++mod2.js(1,22): error TS2307: Cannot find module './mod1' or its corresponding type declarations.
 +
 +
 +==== mod2.js (1 errors) ====
 +    const mod1 = require("./mod1");
-+                 ~~~~~~~
-+!!! error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
++                         ~~~~~~~~
++!!! error TS2307: Cannot find module './mod1' or its corresponding type declarations.
 +    mod1.a;
 +    mod1.b;
 +    mod1.c;

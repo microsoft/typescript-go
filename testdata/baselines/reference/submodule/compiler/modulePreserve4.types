@@ -6,6 +6,8 @@ export const x = 0;
 >0 : 0
 
 module.exports.y = 0; // Error
+>y : any
+>0 : 0
 >module.exports.y = 0 : 0
 >module.exports.y : any
 >module.exports : any
@@ -238,8 +240,8 @@ import a1 = require("./a"); // Error in JS
 >a1 : typeof import("/a")
 
 const a2 = require("./a"); // { x: 0 }
->a2 : any
->require("./a") : any
+>a2 : typeof import("/a")
+>require("./a") : typeof import("/a")
 >require : any
 >"./a" : "./a"
 
@@ -247,8 +249,8 @@ import b1 from "./b"; // 0
 >b1 : 0
 
 const b2 = require("./b"); // { default: 0 }
->b2 : any
->require("./b") : any
+>b2 : typeof import("/b")
+>require("./b") : typeof import("/b")
 >require : any
 >"./b" : "./b"
 
@@ -256,8 +258,8 @@ import c1 from "./c"; // { default: [Function: default] }
 >c1 : { default: () => void; }
 
 const c2 = require("./c"); // { default: [Function: default] }
->c2 : any
->require("./c") : any
+>c2 : { default: () => void; }
+>require("./c") : { default: () => void; }
 >require : any
 >"./c" : "./c"
 
@@ -265,8 +267,8 @@ import d1 from "./d"; // [Function: default]
 >d1 : () => void
 
 const d2 = require("./d"); // [Function: default]
->d2 : any
->require("./d") : any
+>d2 : () => void
+>require("./d") : () => void
 >require : any
 >"./d" : "./d"
 
@@ -274,8 +276,8 @@ import e1 from "./e.mjs"; // 0
 >e1 : 0
 
 const e2 = require("./e.mjs"); // 0
->e2 : any
->require("./e.mjs") : any
+>e2 : 0
+>require("./e.mjs") : 0
 >require : any
 >"./e.mjs" : "./e.mjs"
 
@@ -283,8 +285,8 @@ import f1 from "./f.cjs"; // 0
 >f1 : 0
 
 const f2 = require("./f.cjs"); // { default: 0 }
->f2 : any
->require("./f.cjs") : any
+>f2 : typeof import("/f")
+>require("./f.cjs") : typeof import("/f")
 >require : any
 >"./f.cjs" : "./f.cjs"
 
@@ -301,7 +303,7 @@ const g2 = require("./g"); // { default: 0 }
 exports.x = require("./g");
 >exports.x = require("./g") : any
 >exports.x : any
->exports : any
+>exports : typeof import("/main4")
 >x : any
 >require("./g") : any
 >require : any

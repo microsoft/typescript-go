@@ -37,6 +37,7 @@
 ->module : { exports: typeof foo; }
 ->exports : typeof foo
 ->foo : typeof foo
++>foo : { (): void; foo: ???; default: ???; }
 +>module.exports = foo : { (): void; foo: ???; default: ???; }
 +>module.exports : any
 +>module : any

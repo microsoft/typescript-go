@@ -1,5 +1,5 @@
 /a.js(2,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-/b.js(1,15): error TS2306: File '/a.js' is not a module.
+/b.js(1,8): error TS1192: Module '"/a"' has no default export.
 
 
 ==== /a.js (1 errors) ====
@@ -10,6 +10,6 @@
     
 ==== /b.js (1 errors) ====
     import a from "./a";
-                  ~~~~~
-!!! error TS2306: File '/a.js' is not a module.
+           ~
+!!! error TS1192: Module '"/a"' has no default export.
     

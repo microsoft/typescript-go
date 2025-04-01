@@ -37,10 +37,11 @@
 ->this.p : Symbol(Classic.p, Decl(mod.js, 5, 19))
  >this : Symbol(Classic, Decl(mod.js, 4, 24))
 ->p : Symbol(Classic.p, Decl(mod.js, 5, 19))
++>this : Symbol(Classic, Decl(mod.js, 4, 24))
      }
  }
  
-@@= skipped -42, +18 lines =@@
+@@= skipped -42, +19 lines =@@
  
  var k = new s.n.K()
  >k : Symbol(k, Decl(use.js, 2, 3))

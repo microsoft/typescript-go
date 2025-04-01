@@ -1,6 +1,15 @@
 --- old.modulePreserve4.types
 +++ new.modulePreserve4.types
-@@= skipped -42, +42 lines =@@
+@@= skipped -5, +5 lines =@@
+ >0 : 0
+ 
+ module.exports.y = 0; // Error
++>y : any
++>0 : 0
+ >module.exports.y = 0 : 0
+ >module.exports.y : any
+ >module.exports : any
+@@= skipped -37, +39 lines =@@
  === /g.js ===
  exports.default = 0;
  >exports.default = 0 : 0
@@ -183,8 +192,8 @@
  const a2 = require("./a"); // { x: 0 }
 ->a2 : typeof a1
 ->require("./a") : typeof a1
-+>a2 : any
-+>require("./a") : any
++>a2 : typeof import("/a")
++>require("./a") : typeof import("/a")
  >require : any
  >"./a" : "./a"
  
@@ -194,52 +203,19 @@
  const b2 = require("./b"); // { default: 0 }
 ->b2 : typeof b2
 ->require("./b") : typeof b2
-+>b2 : any
-+>require("./b") : any
++>b2 : typeof import("/b")
++>require("./b") : typeof import("/b")
  >require : any
  >"./b" : "./b"
  
-@@= skipped -9, +9 lines =@@
- >c1 : { default: () => void; }
- 
- const c2 = require("./c"); // { default: [Function: default] }
-->c2 : { default: () => void; }
-->require("./c") : { default: () => void; }
-+>c2 : any
-+>require("./c") : any
- >require : any
- >"./c" : "./c"
- 
-@@= skipped -9, +9 lines =@@
- >d1 : () => void
- 
- const d2 = require("./d"); // [Function: default]
-->d2 : () => void
-->require("./d") : () => void
-+>d2 : any
-+>require("./d") : any
- >require : any
- >"./d" : "./d"
- 
-@@= skipped -9, +9 lines =@@
- >e1 : 0
- 
- const e2 = require("./e.mjs"); // 0
-->e2 : 0
-->require("./e.mjs") : 0
-+>e2 : any
-+>require("./e.mjs") : any
- >require : any
- >"./e.mjs" : "./e.mjs"
- 
-@@= skipped -9, +9 lines =@@
+@@= skipped -36, +36 lines =@@
  >f1 : 0
  
  const f2 = require("./f.cjs"); // { default: 0 }
 ->f2 : typeof f2
 ->require("./f.cjs") : typeof f2
-+>f2 : any
-+>require("./f.cjs") : any
++>f2 : typeof import("/f")
++>require("./f.cjs") : typeof import("/f")
  >require : any
  >"./f.cjs" : "./f.cjs"
  
@@ -259,12 +235,11 @@
  exports.x = require("./g");
 ->exports.x = require("./g") : typeof import("/g")
 ->exports.x : typeof import("/g")
-->exports : typeof import("/main4")
-->x : typeof import("/g")
-->require("./g") : typeof import("/g")
 +>exports.x = require("./g") : any
 +>exports.x : any
-+>exports : any
+ >exports : typeof import("/main4")
+->x : typeof import("/g")
+->require("./g") : typeof import("/g")
 +>x : any
 +>require("./g") : any
  >require : any

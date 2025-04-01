@@ -11,7 +11,16 @@
  >o : Symbol(o, Decl(index.js, 2, 41))
  
          return (o == null) ? create(base) : defineProperties(Object(o), descriptors);
-@@= skipped -18, +14 lines =@@
+ >o : Symbol(o, Decl(index.js, 2, 41))
+ >Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >o : Symbol(o, Decl(index.js, 2, 41))
++>o : Symbol(o, Decl(index.js, 2, 41))
++>Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
++>o : Symbol(o, Decl(index.js, 2, 41))
+ 
+     };
+     const m = function () {
+@@= skipped -18, +17 lines =@@
          // I have no idea what to put here
      }
      exports.methods = m;

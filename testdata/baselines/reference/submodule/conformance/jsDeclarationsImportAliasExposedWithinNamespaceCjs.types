@@ -48,6 +48,9 @@ function testFn(input) {
 }
 
 module.exports = {testFn, testFnTypes};
+>{testFn, testFnTypes} : { testFn: (input: any) => number; testFnTypes: {}; }
+>testFn : (input: any) => number
+>testFnTypes : {}
 >module.exports = {testFn, testFnTypes} : { testFn: (input: any) => number; testFnTypes: {}; }
 >module.exports : any
 >module : any

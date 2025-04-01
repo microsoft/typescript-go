@@ -3,6 +3,7 @@
 === usage.js ===
 const x = require("./lateBoundAssignmentDeclarationSupport4.js");
 >x : Symbol(x, Decl(usage.js, 0, 5))
+>require : Symbol(require)
 
 const inst =  new x.F();
 >inst : Symbol(inst, Decl(usage.js, 1, 5))

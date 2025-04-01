@@ -13,6 +13,7 @@ function Timer(timeout) {
 }
 module.exports = Timer;
 >Timer : Symbol(Timer, Decl(timer.js, 0, 0))
+>Timer : Symbol(Timer, Decl(timer.js, 0, 0))
 
 === hook.js ===
 /**
@@ -29,6 +30,7 @@ function Hook(handle) {
 >handle : Symbol(handle, Decl(hook.js, 6, 14))
 }
 module.exports = Hook;
+>Hook : Symbol(Hook, Decl(hook.js, 0, 0))
 >Hook : Symbol(Hook, Decl(hook.js, 0, 0))
 
 === context.js ===
@@ -97,5 +99,6 @@ Context.prototype = {
     }
 }
 module.exports = Context;
+>Context : Symbol(Context, Decl(context.js, 0, 0))
 >Context : Symbol(Context, Decl(context.js, 0, 0))
 

@@ -3,6 +3,7 @@
 === use.js ===
 var npmlog = require('./npmlog')
 >npmlog : Symbol(npmlog, Decl(use.js, 0, 3))
+>require : Symbol(require)
 
 npmlog.x
 >npmlog : Symbol(npmlog, Decl(use.js, 0, 3))

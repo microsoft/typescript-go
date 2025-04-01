@@ -6,6 +6,7 @@
  * @return {any} I don't even know what this should return
  */
 module.exports = C
+>C : () => void
 >module.exports = C : () => void
 >module.exports : any
 >module : any

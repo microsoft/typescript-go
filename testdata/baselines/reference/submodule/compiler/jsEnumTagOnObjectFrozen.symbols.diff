@@ -1,10 +1,9 @@
 --- old.jsEnumTagOnObjectFrozen.symbols
 +++ new.jsEnumTagOnObjectFrozen.symbols
-@@= skipped -4, +4 lines =@@
- >Thing : Symbol(Thing, Decl(usage.js, 0, 7))
+@@= skipped -5, +5 lines =@@
  >useThing : Symbol(useThing, Decl(usage.js, 0, 14))
  >cbThing : Symbol(cbThing, Decl(usage.js, 0, 24))
-->require : Symbol(require)
+ >require : Symbol(require)
 ->"./index" : Symbol("index", Decl(index.js, 0, 0))
  
  useThing(Thing.a);
@@ -15,7 +14,7 @@
  
  /**
   * @typedef {Object} LogEntry
-@@= skipped -25, +21 lines =@@
+@@= skipped -24, +21 lines =@@
  
          time: Date.now(),
  >time : Symbol(time, Decl(usage.js, 12, 22))

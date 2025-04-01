@@ -11,6 +11,7 @@ declare var module: { exports: any};
 /** @typedef {{ type: "b", y: 1 }} B */
 /** @typedef {A | B} Both */
 module.exports = C
+>C : () => void
 >module.exports = C : () => void
 >module.exports : any
 >module : { exports: any; }

@@ -1,12 +1,12 @@
-index.js(1,13): error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+index.js(1,21): error TS2307: Cannot find module './obj' or its corresponding type declarations.
 index.js(5,14): error TS2339: Property 'usage' does not exist on type 'Container'.
 index.js(9,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 
 
 ==== index.js (3 errors) ====
     const Obj = require("./obj");
-                ~~~~~~~
-!!! error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+                        ~~~~~~~
+!!! error TS2307: Cannot find module './obj' or its corresponding type declarations.
     
     class Container {
         constructor() {

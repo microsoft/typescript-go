@@ -1,11 +1,11 @@
-main.js(1,43): error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+main.js(1,51): error TS2307: Cannot find module './lib' or its corresponding type declarations.
 main.js(3,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 
 
 ==== main.js (2 errors) ====
     const { SomeClass, SomeClass: Another } = require('./lib');
-                                              ~~~~~~~
-!!! error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+                                                      ~~~~~~~
+!!! error TS2307: Cannot find module './lib' or its corresponding type declarations.
     
     module.exports = {
     ~~~~~~

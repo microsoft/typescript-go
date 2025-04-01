@@ -12,6 +12,9 @@ function foo() {
 >o : Symbol(o, Decl(index.js, 2, 41))
 >Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
 >o : Symbol(o, Decl(index.js, 2, 41))
+>o : Symbol(o, Decl(index.js, 2, 41))
+>Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+>o : Symbol(o, Decl(index.js, 2, 41))
 
     };
     const m = function () {

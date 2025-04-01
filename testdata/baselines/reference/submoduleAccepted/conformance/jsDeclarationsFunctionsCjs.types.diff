@@ -1,14 +1,18 @@
 --- old.jsDeclarationsFunctionsCjs.types
 +++ new.jsDeclarationsFunctionsCjs.types
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
+ 
  === index.js ===
  module.exports.a = function a() {}
- >module.exports.a = function a() {} : () => void
+->module.exports.a = function a() {} : () => void
 ->module.exports.a : () => void
 ->module.exports : typeof module.exports
 ->module : { exports: typeof module.exports; }
 ->exports : typeof module.exports
-->a : () => void
++>a : any
++>function a() {} : () => void
+ >a : () => void
++>module.exports.a = function a() {} : () => void
 +>module.exports.a : any
 +>module.exports : any
 +>module : any
@@ -26,6 +30,9 @@
 ->b : { (): void; cat: string; }
 ->function b() {} : { (): void; cat: string; }
 ->b : { (): void; cat: string; }
++>b : any
++>function b() {} : () => void
++>b : () => void
 +>module.exports.b = function b() {} : () => void
 +>module.exports.b : any
 +>module.exports : any
@@ -62,6 +69,9 @@
 ->c : { (): void; Cls: typeof Cls; }
 ->function c() {} : { (): void; Cls: typeof Cls; }
 ->c : { (): void; Cls: typeof Cls; }
++>c : any
++>function c() {} : () => void
++>c : () => void
 +>module.exports.c = function c() {} : () => void
 +>module.exports.c : any
 +>module.exports : any
@@ -90,7 +100,7 @@
  >class {} : typeof Cls
  
  /**
-@@= skipped -56, +56 lines =@@
+@@= skipped -57, +66 lines =@@
   * @return {string} 
   */
  module.exports.d = function d(a, b) { return /** @type {*} */(null); }
@@ -105,6 +115,12 @@
 ->a : number
 ->b : number
 ->(null) : any
++>d : any
++>function d(a, b) { return /** @type {*} */(null); } : (a: any, b: any) => any
++>d : (a: any, b: any) => any
++>a : any
++>b : any
++>(null) : null
 +>module.exports.d = function d(a, b) { return /** @type {*} */(null); } : (a: any, b: any) => any
 +>module.exports.d : any
 +>module.exports : any
@@ -119,7 +135,7 @@
  
  /**
   * @template T,U
-@@= skipped -19, +19 lines =@@
+@@= skipped -19, +25 lines =@@
   * @return {T & U} 
   */
  module.exports.e = function e(a, b) { return /** @type {*} */(null); }
@@ -134,6 +150,12 @@
 ->a : T
 ->b : U
 ->(null) : any
++>e : any
++>function e(a, b) { return /** @type {*} */(null); } : (a: any, b: any) => any
++>e : (a: any, b: any) => any
++>a : any
++>b : any
++>(null) : null
 +>module.exports.e = function e(a, b) { return /** @type {*} */(null); } : (a: any, b: any) => any
 +>module.exports.e : any
 +>module.exports : any
@@ -160,11 +182,6 @@
 ->function f(a) {    return a;} : { <T>(a: T): T; self: any; }
 ->f : { <T>(a: T): T; self: any; }
 ->a : T
-+>module.exports.f = function f(a) {    return a;} : (a: any) => any
-+>module.exports.f : any
-+>module.exports : any
-+>module : any
-+>exports : any
 +>f : any
 +>function f(a) {    return a;} : (a: any) => any
 +>f : (a: any) => any
@@ -172,6 +189,7 @@
  
      return a;
 ->a : T
++>a : any
 +>a : any
  }
  module.exports.f.self = module.exports.f;
@@ -241,6 +259,8 @@
 ->exports : typeof module.exports
 ->g : (a: { x: string; }, b: { y: { (): void; cat: string; }; }) => void
 ->g : (a: { x: string; }, b: { y: { (): void; cat: string; }; }) => void
++>g : any
++>g : (a: any, b: any) => any
 +>module.exports.g = g : (a: any, b: any) => any
 +>module.exports.g : any
 +>module.exports : any
@@ -288,6 +308,8 @@
 ->exports : typeof module.exports
 ->h : (a: { x: string; }, b: { y: { (): void; cat: string; }; }) => void
 ->hh : (a: { x: string; }, b: { y: { (): void; cat: string; }; }) => void
++>h : any
++>hh : (a: any, b: any) => any
 +>module.exports.h = hh : (a: any, b: any) => any
 +>module.exports.h : any
 +>module.exports : any
@@ -297,12 +319,15 @@
 +>hh : (a: any, b: any) => any
  
  module.exports.i = function i() {}
- >module.exports.i = function i() {} : () => void
+->module.exports.i = function i() {} : () => void
 ->module.exports.i : () => void
 ->module.exports : typeof module.exports
 ->module : { exports: typeof module.exports; }
 ->exports : typeof module.exports
-->i : () => void
++>i : any
++>function i() {} : () => void
+ >i : () => void
++>module.exports.i = function i() {} : () => void
 +>module.exports.i : any
 +>module.exports : any
 +>module : any
@@ -323,6 +348,12 @@
 ->module : { exports: typeof module.exports; }
 ->exports : typeof module.exports
 ->i : () => void
++>ii : any
++>module.exports.i : any
++>module.exports : any
++>module : any
++>exports : any
++>i : any
 +>module.exports.ii = module.exports.i : any
 +>module.exports.ii : any
 +>module.exports : any
@@ -348,6 +379,12 @@
 ->module : { exports: typeof module.exports; }
 ->exports : typeof module.exports
 ->j : () => void
++>jj : any
++>module.exports.j : any
++>module.exports : any
++>module : any
++>exports : any
++>j : any
 +>module.exports.jj = module.exports.j : any
 +>module.exports.jj : any
 +>module.exports : any
@@ -361,12 +398,15 @@
 +>j : any
  
  module.exports.j = function j() {}
- >module.exports.j = function j() {} : () => void
+->module.exports.j = function j() {} : () => void
 ->module.exports.j : () => void
 ->module.exports : typeof module.exports
 ->module : { exports: typeof module.exports; }
 ->exports : typeof module.exports
-->j : () => void
++>j : any
++>function j() {} : () => void
+ >j : () => void
++>module.exports.j = function j() {} : () => void
 +>module.exports.j : any
 +>module.exports : any
 +>module : any

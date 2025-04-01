@@ -3,6 +3,7 @@
 === main.js ===
 var f = require('./first');
 >f : Symbol(f, Decl(main.js, 0, 3))
+>require : Symbol(require)
 
 f(1, n => { })
 >f : Symbol(f, Decl(main.js, 0, 3))

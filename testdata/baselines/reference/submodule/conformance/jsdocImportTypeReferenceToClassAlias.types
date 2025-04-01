@@ -8,6 +8,8 @@ class C {
 >s : () => void
 }
 module.exports.C = C
+>C : any
+>C : typeof C
 >module.exports.C = C : typeof C
 >module.exports.C : any
 >module.exports : any

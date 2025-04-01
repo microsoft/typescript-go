@@ -14,6 +14,7 @@ ns.Foo = class {}
 >class {} : typeof Foo
 
 module.exports = ns;
+>ns : {}
 >module.exports = ns : {}
 >module.exports : any
 >module : any

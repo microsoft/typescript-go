@@ -15,6 +15,7 @@ if (typeof module === 'object' && module.exports) {
 >exports : any
 
     module.exports = fn;
+>fn : () => void
 >module.exports = fn : () => void
 >module.exports : any
 >module : any

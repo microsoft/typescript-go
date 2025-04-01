@@ -2,6 +2,7 @@
 
 === bug27342.js ===
 module.exports = {}
+>{} : {}
 >module.exports = {} : {}
 >module.exports : any
 >module : any

@@ -3,9 +3,11 @@
 === eslint.config.js ===
 const eslintReact = require('./eslint-plugin-react.js');
 >eslintReact : Symbol(eslintReact, Decl(eslint.config.js, 0, 5))
+>require : Symbol(require)
 
 const tseslint = require('./typescript-eslint.js');
 >tseslint : Symbol(tseslint, Decl(eslint.config.js, 1, 5))
+>require : Symbol(require)
 
 tseslint.config(eslintReact)
 >tseslint : Symbol(tseslint, Decl(eslint.config.js, 1, 5))

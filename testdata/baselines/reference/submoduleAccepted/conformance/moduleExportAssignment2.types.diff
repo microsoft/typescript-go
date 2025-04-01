@@ -18,16 +18,12 @@
  >tree : any
  }
  module.exports.asReadInstalled = function (tree) {
- >module.exports.asReadInstalled = function (tree) {    npm(tree) // both references should be callable    module.exports(tree)} : (tree: any) => void
+->module.exports.asReadInstalled = function (tree) {    npm(tree) // both references should be callable    module.exports(tree)} : (tree: any) => void
 ->module.exports.asReadInstalled : (tree: any) => void
 ->module.exports : { (tree: any): void; asReadInstalled: (tree: any) => void; }
 ->module : { exports: { (tree: any): void; asReadInstalled: (tree: any) => void; }; }
 ->exports : { (tree: any): void; asReadInstalled: (tree: any) => void; }
 ->asReadInstalled : (tree: any) => void
-+>module.exports.asReadInstalled : any
-+>module.exports : any
-+>module : any
-+>exports : any
 +>asReadInstalled : any
  >function (tree) {    npm(tree) // both references should be callable    module.exports(tree)} : (tree: any) => void
  >tree : any
@@ -48,5 +44,10 @@
 +>module : any
 +>exports : any
  >tree : any
++>module.exports(tree) : any
++>module.exports : any
++>module : any
++>exports : any
++>tree : any
  }
  

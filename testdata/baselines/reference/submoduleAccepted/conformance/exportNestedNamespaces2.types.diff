@@ -23,16 +23,7 @@
  >require : any
  >'./mod' : "./mod"
  
-@@= skipped -17, +17 lines =@@
- >exports.formatters.j = function (v) {    return v} : (v: any) => any
- >exports.formatters.j : any
- >exports.formatters : any
-->exports : typeof import("first")
-+>exports : any
- >formatters : any
- >j : any
- >function (v) {    return v} : (v: any) => any
-@@= skipped -11, +11 lines =@@
+@@= skipped -28, +28 lines =@@
  }
  === second.js ===
  exports = require('./mod')
@@ -45,16 +36,7 @@
  >require : any
  >'./mod' : "./mod"
  
-@@= skipped -10, +10 lines =@@
- >exports.formatters.o = function (v) {    return v} : (v: any) => any
- >exports.formatters.o : any
- >exports.formatters : any
-->exports : typeof import("second")
-+>exports : any
- >formatters : any
- >o : any
- >function (v) {    return v} : (v: any) => any
-@@= skipped -12, +12 lines =@@
+@@= skipped -22, +22 lines =@@
  
  === use.js ===
  import * as debug from './mod'

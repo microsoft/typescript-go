@@ -1,0 +1,20 @@
+a.js(2,20): error TS2307: Cannot find module './mod1' or its corresponding type declarations.
+
+
+==== a.js (1 errors) ====
+    /// <reference path='./requires.d.ts' />
+    var mod1 = require('./mod1')
+                       ~~~~~~~~
+!!! error TS2307: Cannot find module './mod1' or its corresponding type declarations.
+    mod1()
+    mod1.f() // error, not enough arguments
+    
+==== requires.d.ts (0 errors) ====
+    declare var module: { exports: any };
+    declare function require(name: string): any;
+==== mod1.js (0 errors) ====
+    /// <reference path='./requires.d.ts' />
+    module.exports = function () { }
+    /** @param {number} a */
+    module.exports.f = function (a) { }
+    

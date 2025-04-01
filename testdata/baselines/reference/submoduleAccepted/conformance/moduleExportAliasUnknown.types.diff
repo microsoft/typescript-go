@@ -1,7 +1,12 @@
 --- old.moduleExportAliasUnknown.types
 +++ new.moduleExportAliasUnknown.types
-@@= skipped -3, +3 lines =@@
+@@= skipped -1, +1 lines =@@
+ 
+ === bug27025.js ===
  module.exports = window.nonprop;
++>window.nonprop : any
++>window : Window & typeof globalThis
++>nonprop : any
  >module.exports = window.nonprop : any
  >module.exports : any
 ->module : { exports: any; }

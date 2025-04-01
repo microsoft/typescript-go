@@ -12,6 +12,7 @@ function alias() { }
 >alias : () => void
 
 module.exports = alias
+>alias : () => void
 >module.exports = alias : () => void
 >module.exports : any
 >module : any
@@ -20,6 +21,6 @@ module.exports = alias
 
 === importer.js ===
 import('./bug28014')
->import('./bug28014') : Promise<any>
+>import('./bug28014') : Promise<() => void>
 >'./bug28014' : "./bug28014"
 

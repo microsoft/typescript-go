@@ -8,11 +8,12 @@
 ->module.exports : { (): void; blah: any; }
 ->module : { exports: { (): void; blah: any; }; }
 ->exports : { (): void; blah: any; }
+ >function () {} : () => void
 +>module.exports = function () {} : () => void
 +>module.exports : any
 +>module : any
 +>exports : any
- >function () {} : () => void
++>function () {} : () => void
  
  exports.blah = exports.someProp;
  >exports.blah = exports.someProp : any

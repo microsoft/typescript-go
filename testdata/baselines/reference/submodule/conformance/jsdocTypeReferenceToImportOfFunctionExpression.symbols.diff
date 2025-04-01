@@ -1,10 +1,9 @@
 --- old.jsdocTypeReferenceToImportOfFunctionExpression.symbols
 +++ new.jsdocTypeReferenceToImportOfFunctionExpression.symbols
-@@= skipped -2, +2 lines =@@
- === MC.js ===
+@@= skipped -3, +3 lines =@@
  const MW = require("./MW");
  >MW : Symbol(MW, Decl(MC.js, 0, 5))
-->require : Symbol(require)
+ >require : Symbol(require)
 ->"./MW" : Symbol("MW", Decl(MW.js, 0, 0))
  
  /** @typedef {number} Meyerhauser */
@@ -17,7 +16,12 @@
  >MC : Symbol(MC, Decl(MC.js, 5, 16))
  
      /** @type {any} */
-@@= skipped -22, +17 lines =@@
+@@= skipped -18, +14 lines =@@
+     return new MW(x);
+ >MW : Symbol(MW, Decl(MC.js, 0, 5))
+ >x : Symbol(x, Decl(MC.js, 7, 7))
++>MW : Symbol(MW, Decl(MC.js, 0, 5))
++>x : Symbol(x, Decl(MC.js, 7, 7))
  
  };
  

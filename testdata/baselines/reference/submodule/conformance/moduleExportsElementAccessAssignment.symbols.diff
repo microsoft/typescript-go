@@ -1,10 +1,9 @@
 --- old.moduleExportsElementAccessAssignment.symbols
 +++ new.moduleExportsElementAccessAssignment.symbols
-@@= skipped -2, +2 lines =@@
- === mod2.js ===
+@@= skipped -3, +3 lines =@@
  const mod1 = require("./mod1");
  >mod1 : Symbol(mod1, Decl(mod2.js, 0, 5))
-->require : Symbol(require)
+ >require : Symbol(require)
 ->"./mod1" : Symbol(mod1, Decl(mod1.js, 0, 0))
  
  mod1.a;

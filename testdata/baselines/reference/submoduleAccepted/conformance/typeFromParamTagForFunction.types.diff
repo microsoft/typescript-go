@@ -100,9 +100,8 @@
  === c.js ===
  const { C } = require("./c-ext");
 ->C : typeof C
-->require("./c-ext") : typeof import("c-ext")
-+>C : any
-+>require("./c-ext") : any
++>C : () => void
+ >require("./c-ext") : typeof import("c-ext")
  >require : (id: string) => any
  >"./c-ext" : "./c-ext"
  
@@ -139,9 +138,8 @@
  === d.js ===
  const { D } = require("./d-ext");
 ->D : typeof D
-->require("./d-ext") : typeof import("d-ext")
-+>D : any
-+>require("./d-ext") : any
++>D : () => void
+ >require("./d-ext") : typeof import("d-ext")
  >require : (id: string) => any
  >"./d-ext" : "./d-ext"
  
@@ -160,16 +158,7 @@
  
  === e-ext.js ===
  export class E {
-@@= skipped -29, +29 lines =@@
- 
- === e.js ===
- const { E } = require("./e-ext");
-->E : typeof E
-->require("./e-ext") : typeof import("e-ext")
-+>E : any
-+>require("./e-ext") : any
- >require : (id: string) => any
- >"./e-ext" : "./e-ext"
+@@= skipped -36, +36 lines =@@
  
  /** @param {E} p */
  function e(p) { p.x; }
@@ -199,7 +188,7 @@
  >x : any
  >1 : 1
  
-@@= skipped -29, +29 lines =@@
+@@= skipped -22, +22 lines =@@
  
  /** @param {F} p */
  function f(p) { p.x; }

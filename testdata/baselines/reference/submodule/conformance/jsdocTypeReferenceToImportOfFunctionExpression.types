@@ -11,10 +11,6 @@ const MW = require("./MW");
 
 /** @class */
 module.exports = function MC() {
->module.exports = function MC() {    /** @type {any} */    var x = {}    return new MW(x);} : () => any
->module.exports : any
->module : any
->exports : any
 >function MC() {    /** @type {any} */    var x = {}    return new MW(x);} : () => any
 >MC : () => any
 
@@ -24,6 +20,9 @@ module.exports = function MC() {
 >{} : {}
 
     return new MW(x);
+>new MW(x) : any
+>MW : any
+>x : {}
 >new MW(x) : any
 >MW : any
 >x : {}

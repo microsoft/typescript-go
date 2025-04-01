@@ -22,6 +22,7 @@ axios.m()
 >m : () => void
 
 module.exports = axios;
+>axios : Axios
 >module.exports = axios : Axios
 >module.exports : any
 >module : any
@@ -29,6 +30,8 @@ module.exports = axios;
 >axios : Axios
 
 module.exports.default = axios;
+>default : any
+>axios : Axios
 >module.exports.default = axios : Axios
 >module.exports.default : any
 >module.exports : any

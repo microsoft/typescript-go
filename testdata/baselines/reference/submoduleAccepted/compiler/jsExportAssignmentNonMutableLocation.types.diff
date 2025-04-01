@@ -8,14 +8,12 @@
 ->module.exports : typeof module.exports
 ->module : { exports: typeof module.exports; }
 ->exports : typeof module.exports
-+>module.exports = {    customSymbol,} : { customSymbol: symbol; }
-+>module.exports : any
-+>module : any
-+>exports : any
  >{    customSymbol,} : { customSymbol: symbol; }
  
      customSymbol,
-@@= skipped -12, +12 lines =@@
+ >customSymbol : symbol
++>customSymbol : symbol
+ 
  };
  
  exports.customSymbol2 = Symbol("custom");

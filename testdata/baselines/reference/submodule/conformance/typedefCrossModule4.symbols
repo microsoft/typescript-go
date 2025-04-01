@@ -8,5 +8,7 @@ class Bar { }
 module.exports = { Foo: Bar };
 >Foo : Symbol(Foo, Decl(mod3.js, 2, 18))
 >Bar : Symbol(Bar, Decl(mod3.js, 0, 0))
+>Foo : Symbol(Foo, Decl(mod3.js, 2, 18))
+>Bar : Symbol(Bar, Decl(mod3.js, 0, 0))
 
 

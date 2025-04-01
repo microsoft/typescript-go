@@ -2,6 +2,7 @@
 
 === bar.js ===
 module.exports = function () {};
+>function () {} : () => void
 >module.exports = function () {} : () => void
 >module.exports : any
 >module : any

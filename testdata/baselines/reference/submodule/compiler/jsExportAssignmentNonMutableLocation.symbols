@@ -9,6 +9,7 @@ const customSymbol = Symbol("custom");
 module.exports = {
     customSymbol,
 >customSymbol : Symbol(customSymbol, Decl(file.js, 3, 18))
+>customSymbol : Symbol(customSymbol, Decl(file.js, 3, 18))
 
 };
 

@@ -16,11 +16,12 @@
 ->module.exports : number
 ->module : typeof module
 ->exports : number
+ >12 : 12
 +>module.exports = 12 : 12
 +>module.exports : any
 +>module : any
 +>exports : any
- >12 : 12
++>12 : 12
  
  Object.defineProperty(module, "exports", { value: "oh no" });
 ->Object.defineProperty(module, "exports", { value: "oh no" }) : typeof module

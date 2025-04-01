@@ -1,20 +1,17 @@
 --- old.jsDeclarationsTypeReassignmentFromDeclaration2.symbols
 +++ new.jsDeclarationsTypeReassignmentFromDeclaration2.symbols
-@@= skipped -2, +2 lines =@@
- === index.js ===
- const items = require("./some-mod")();
- >items : Symbol(items, Decl(index.js, 0, 5))
-->require : Symbol(require)
-->"./some-mod" : Symbol("some-mod", Decl(some-mod.d.ts, 0, 0))
+@@= skipped -6, +6 lines =@@
+ >"./some-mod" : Symbol("some-mod", Decl(some-mod.d.ts, 0, 0))
  
  module.exports = items;
 ->module.exports : Symbol(module.exports, Decl(index.js, 0, 0))
 ->module : Symbol(export=, Decl(index.js, 0, 38))
 ->exports : Symbol(export=, Decl(index.js, 0, 38))
  >items : Symbol(items, Decl(index.js, 0, 5))
++>items : Symbol(items, Decl(index.js, 0, 5))
  
  === some-mod.d.ts ===
-@@= skipped -14, +9 lines =@@
+ interface Item {
  >Item : Symbol(Item, Decl(some-mod.d.ts, 0, 0))
  
      x: string;

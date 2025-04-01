@@ -9,6 +9,7 @@
 ->module : { exports: typeof MyClass; }
 ->exports : typeof MyClass
 ->MyClass : typeof MyClass
++>MyClass : { (): void; staticMethod: () => void; staticProperty: number; }
 +>module.exports = MyClass : { (): void; staticMethod: () => void; staticProperty: number; }
 +>module.exports : any
 +>module : any
@@ -27,7 +28,7 @@
  >staticMethod : () => void
  >function() {} : () => void
  
-@@= skipped -20, +20 lines =@@
+@@= skipped -20, +21 lines =@@
  >MyClass.prototype.method = function() {} : () => void
  >MyClass.prototype.method : any
  >MyClass.prototype : any

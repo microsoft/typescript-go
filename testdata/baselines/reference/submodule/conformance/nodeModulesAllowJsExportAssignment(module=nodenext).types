@@ -16,6 +16,7 @@ const a = {};
 >{} : {}
 
 module.exports = a;
+>a : {}
 >module.exports = a : {}
 >module.exports : any
 >module : any
@@ -39,6 +40,7 @@ const a = {};
 >{} : {}
 
 module.exports = a;
+>a : {}
 >module.exports = a : {}
 >module.exports : any
 >module : any

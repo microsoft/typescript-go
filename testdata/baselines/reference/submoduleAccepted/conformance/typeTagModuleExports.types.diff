@@ -8,9 +8,10 @@
 ->module.exports : string
 ->module : { exports: string; }
 ->exports : string
+ >0 : 0
 +>module.exports = 0 : 0
 +>module.exports : any
 +>module : any
 +>exports : any
- >0 : 0
++>0 : 0
  

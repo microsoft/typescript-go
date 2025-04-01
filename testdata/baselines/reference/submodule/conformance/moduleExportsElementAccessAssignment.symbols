@@ -3,6 +3,7 @@
 === mod2.js ===
 const mod1 = require("./mod1");
 >mod1 : Symbol(mod1, Decl(mod2.js, 0, 5))
+>require : Symbol(require)
 
 mod1.a;
 >mod1 : Symbol(mod1, Decl(mod2.js, 0, 5))

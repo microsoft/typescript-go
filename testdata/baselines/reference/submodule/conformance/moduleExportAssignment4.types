@@ -13,6 +13,9 @@ exports.default = { m: 1, a: 1 }
 >1 : 1
 
 module.exports = exports['default'];
+>exports['default'] : any
+>exports : any
+>'default' : "default"
 >module.exports = exports['default'] : any
 >module.exports : any
 >module : any

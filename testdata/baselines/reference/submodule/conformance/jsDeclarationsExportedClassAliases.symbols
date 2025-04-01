@@ -4,9 +4,11 @@
 // issue arises here on compilation
 const errors = require("./errors");
 >errors : Symbol(errors, Decl(index.js, 1, 5))
+>require : Symbol(require)
 
 module.exports = {
     errors
+>errors : Symbol(errors, Decl(index.js, 3, 18))
 >errors : Symbol(errors, Decl(index.js, 3, 18))
 
 };

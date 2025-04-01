@@ -6,18 +6,17 @@
 -=== ./test.js ===
 +=== test.js ===
  module.exports = {
- >module.exports = {   message: ""} : { message: string; }
+->module.exports = {   message: ""} : { message: string; }
 ->module.exports : { message: string; }
 ->module : { exports: { message: string; }; }
 ->exports : { message: string; }
-+>module.exports : any
-+>module : any
-+>exports : any
  >{   message: ""} : { message: string; }
  
     message: ""
-@@= skipped -12, +12 lines =@@
+ >message : string
  >"" : ""
++>message : string
++>"" : ""
  }
  
 -=== ./types1.ts ===

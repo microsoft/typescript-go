@@ -1,10 +1,9 @@
 --- old.ensureNoCrashExportAssignmentDefineProperrtyPotentialMerge.symbols
 +++ new.ensureNoCrashExportAssignmentDefineProperrtyPotentialMerge.symbols
-@@= skipped -2, +2 lines =@@
- === index.js ===
+@@= skipped -3, +3 lines =@@
  const _item = require("./namespacer");
  >_item : Symbol(_item, Decl(index.js, 0, 5))
-->require : Symbol(require)
+ >require : Symbol(require)
 ->"./namespacer" : Symbol("namespacer", Decl(namespacer.js, 0, 0))
  
  module.exports = 12;

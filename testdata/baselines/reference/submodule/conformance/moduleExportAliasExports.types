@@ -4,8 +4,8 @@
 // bug #27365, crashes from github.com/marijnh/Eloquent-JavaScript
 (function() {
 >(function() {exports.bigOak = 1exports.everywhere = 2module.exports = exports})() : void
->(function() {exports.bigOak = 1exports.everywhere = 2module.exports = exports}) : () => void
->function() {exports.bigOak = 1exports.everywhere = 2module.exports = exports} : () => void
+>(function() {exports.bigOak = 1exports.everywhere = 2module.exports = exports}) : { (): void; exports: any; }
+>function() {exports.bigOak = 1exports.everywhere = 2module.exports = exports} : { (): void; exports: any; }
 
 exports.bigOak = 1
 >exports.bigOak = 1 : 1
@@ -22,6 +22,7 @@ exports.everywhere = 2
 >2 : 2
 
 module.exports = exports
+>exports : any
 >module.exports = exports : any
 >module.exports : any
 >module : any

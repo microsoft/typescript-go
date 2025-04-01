@@ -9,13 +9,10 @@ const customSymbol = Symbol("custom");
 
 // This is a common pattern in Node’s built-in modules:
 module.exports = {
->module.exports = {    customSymbol,} : { customSymbol: symbol; }
->module.exports : any
->module : any
->exports : any
 >{    customSymbol,} : { customSymbol: symbol; }
 
     customSymbol,
+>customSymbol : symbol
 >customSymbol : symbol
 
 };

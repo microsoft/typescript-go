@@ -10,15 +10,12 @@ const { SomeClass, SomeClass: Another } = require('./lib');
 >'./lib' : "./lib"
 
 module.exports = {
->module.exports = {    SomeClass,    Another} : { SomeClass: any; Another: any; }
->module.exports : any
->module : any
->exports : any
 >{    SomeClass,    Another} : { SomeClass: any; Another: any; }
 
     SomeClass,
 >SomeClass : any
 
     Another
+>Another : any
 >Another : any
 }

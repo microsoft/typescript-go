@@ -3,15 +3,15 @@
 @@= skipped -0, +-1 lines =@@
 -<no content>
 @@= skipped --1, +1 lines =@@
-+cls.js(1,13): error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
++cls.js(1,21): error TS2307: Cannot find module './bar' or its corresponding type declarations.
 +cls.js(7,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +cls.js(8,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +
 +
 +==== cls.js (3 errors) ====
 +    const Bar = require("./bar");
-+                ~~~~~~~
-+!!! error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
++                        ~~~~~~~
++!!! error TS2307: Cannot find module './bar' or its corresponding type declarations.
 +    const Strings = {
 +        a: "A",
 +        b: "B"

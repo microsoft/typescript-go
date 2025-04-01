@@ -1,15 +1,14 @@
 --- old.lateBoundAssignmentDeclarationSupport3.symbols
 +++ new.lateBoundAssignmentDeclarationSupport3.symbols
-@@= skipped -2, +2 lines =@@
- === usage.js ===
+@@= skipped -3, +3 lines =@@
  const x = require("./lateBoundAssignmentDeclarationSupport3.js");
  >x : Symbol(x, Decl(usage.js, 0, 5))
-->require : Symbol(require)
+ >require : Symbol(require)
 ->"./lateBoundAssignmentDeclarationSupport3.js" : Symbol(x, Decl(lateBoundAssignmentDeclarationSupport3.js, 0, 0))
  
  const y = x["my-fake-sym"];
  >y : Symbol(y, Decl(usage.js, 1, 5))
-@@= skipped -10, +8 lines =@@
+@@= skipped -9, +8 lines =@@
  const z = x[x.S];
  >z : Symbol(z, Decl(usage.js, 2, 5))
  >x : Symbol(x, Decl(usage.js, 0, 5))

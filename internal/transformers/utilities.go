@@ -182,8 +182,6 @@ func isIdentifierReference(name *ast.IdentifierNode, parent *ast.Node) bool {
 			parent.AsForInOrOfStatement().Expression == name
 	case ast.KindImportEqualsDeclaration:
 		return parent.AsImportEqualsDeclaration().ModuleReference == name
-	case ast.KindJSImportEqualsDeclaration:
-		return parent.AsJSImportEqualsDeclaration().ModuleReference == name
 	case ast.KindArrowFunction:
 		return parent.AsArrowFunction().Body == name
 	case ast.KindConditionalExpression:

@@ -1,0 +1,33 @@
+use.js(2,19): error TS2307: Cannot find module './mod' or its corresponding type declarations.
+
+
+==== use.js (1 errors) ====
+    /// <reference path='./types.d.ts'/>
+    var mod = require('./mod');
+                      ~~~~~~~
+!!! error TS2307: Cannot find module './mod' or its corresponding type declarations.
+    var a = new mod.A()
+    var b = new mod.B()
+    a.m('nope')
+    b.m('not really')
+    
+==== types.d.ts (0 errors) ====
+    declare function require(name: string): any;
+    declare var exports: any;
+==== mod.js (0 errors) ====
+    /// <reference path='./types.d.ts'/>
+    var A = function A() {
+        this.a = 1
+    }
+    var B = function B() {
+        this.b = 2
+    }
+    exports.A = A
+    exports.B = B
+    A.prototype = B.prototype = {
+        /** @param {number} n */
+        m(n) {
+            return n + 1
+        }
+    }
+    

@@ -3,6 +3,7 @@
 === index.js ===
 const Obj = require("./obj");
 >Obj : Symbol(Obj, Decl(index.js, 0, 5))
+>require : Symbol(require)
 
 class Container {
 >Container : Symbol(Container, Decl(index.js, 0, 29))
@@ -15,5 +16,6 @@ class Container {
 }
 
 module.exports = Container;
+>Container : Symbol(Container, Decl(index.js, 0, 29))
 >Container : Symbol(Container, Decl(index.js, 0, 29))
 

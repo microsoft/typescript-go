@@ -1,9 +1,10 @@
 npm.js(1,11): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 npm.js(3,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+npm.js(3,44): error TS2300: Duplicate identifier 'tree'.
 npm.js(5,5): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 
 
-==== npm.js (3 errors) ====
+==== npm.js (4 errors) ====
     var npm = module.exports = function (tree) {
               ~~~~~~
 !!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
@@ -11,6 +12,8 @@ npm.js(5,5): error TS2580: Cannot find name 'module'. Do you need to install typ
     module.exports.asReadInstalled = function (tree) {
     ~~~~~~
 !!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+                                               ~~~~
+!!! error TS2300: Duplicate identifier 'tree'.
         npm(tree) // both references should be callable
         module.exports(tree)
         ~~~~~~

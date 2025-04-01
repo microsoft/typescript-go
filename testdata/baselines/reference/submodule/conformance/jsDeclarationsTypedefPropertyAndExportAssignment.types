@@ -31,6 +31,7 @@ class MainThreadTasks {
 }
 
 module.exports = MainThreadTasks;
+>MainThreadTasks : typeof MainThreadTasks
 >module.exports = MainThreadTasks : typeof MainThreadTasks
 >module.exports : any
 >module : any

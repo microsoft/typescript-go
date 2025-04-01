@@ -3,6 +3,7 @@
 === importer.js ===
 const mod = require("./mod1");
 >mod : Symbol(mod, Decl(importer.js, 0, 5))
+>require : Symbol(require)
 
 mod.thing;
 >mod : Symbol(mod, Decl(importer.js, 0, 5))

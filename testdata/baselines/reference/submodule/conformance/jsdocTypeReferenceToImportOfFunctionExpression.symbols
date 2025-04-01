@@ -3,6 +3,7 @@
 === MC.js ===
 const MW = require("./MW");
 >MW : Symbol(MW, Decl(MC.js, 0, 5))
+>require : Symbol(require)
 
 /** @typedef {number} Meyerhauser */
 
@@ -15,6 +16,8 @@ module.exports = function MC() {
 >x : Symbol(x, Decl(MC.js, 7, 7))
 
     return new MW(x);
+>MW : Symbol(MW, Decl(MC.js, 0, 5))
+>x : Symbol(x, Decl(MC.js, 7, 7))
 >MW : Symbol(MW, Decl(MC.js, 0, 5))
 >x : Symbol(x, Decl(MC.js, 7, 7))
 

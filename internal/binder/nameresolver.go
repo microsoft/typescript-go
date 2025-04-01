@@ -12,6 +12,7 @@ type NameResolver struct {
 	Error                            func(location *ast.Node, message *diagnostics.Message, args ...any) *ast.Diagnostic
 	Globals                          ast.SymbolTable
 	ArgumentsSymbol                  *ast.Symbol
+	RequireSymbol                    *ast.Symbol
 	Lookup                           func(symbols ast.SymbolTable, name string, meaning ast.SymbolFlags) *ast.Symbol
 	SymbolReferenced                 func(symbol *ast.Symbol, meaning ast.SymbolFlags)
 	SetRequiresScopeChangeCache      func(node *ast.Node, value core.Tristate)
@@ -315,8 +316,21 @@ loop:
 		}
 	}
 	if result == nil {
+		if lastLocation != nil &&
+			lastLocation.Kind == ast.KindSourceFile &&
+			lastLocation.AsSourceFile().CommonJsModuleIndicator != nil &&
+			name == "exports" &&
+			meaning&lastLocation.Symbol().Flags != 0 {
+			return lastLocation.Symbol()
+		}
 		if !excludeGlobals {
 			result = r.lookup(r.Globals, name, meaning|ast.SymbolFlagsGlobalLookup)
+		}
+	}
+	if result == nil {
+		if originalLocation != nil && ast.IsInJSFile(originalLocation) && originalLocation.Parent != nil &&
+			ast.IsRequireCall(originalLocation.Parent, false /*requireStringLiteralLikeArgument*/) {
+			return r.RequireSymbol
 		}
 	}
 	if nameNotFoundMessage != nil {

@@ -10,4 +10,7 @@
 -
    str: 'x',
  >str : Symbol(str, Decl(constants.js, 0, 18))
++>str : Symbol(str, Decl(constants.js, 0, 18))
+ 
+ };
  

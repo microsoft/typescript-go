@@ -24,6 +24,9 @@ export = Foo;
 /** @typedef {(foo: Foo) => string} FooFun */
 
 module.exports = /** @type {FooFun} */(void 0);
+>(void 0) : undefined
+>void 0 : undefined
+>0 : 0
 >module.exports = /** @type {FooFun} */(void 0) : undefined
 >module.exports : any
 >module : any

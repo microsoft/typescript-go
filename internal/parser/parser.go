@@ -1374,6 +1374,7 @@ func (p *Parser) parseExpressionOrLabeledStatement() *ast.Statement {
 	result := p.factory.NewExpressionStatement(expression)
 	p.finishNode(result, pos)
 	p.withJSDoc(result, hasJSDoc && !hasParen)
+	p.withCommonJS(result)
 	return result
 }
 

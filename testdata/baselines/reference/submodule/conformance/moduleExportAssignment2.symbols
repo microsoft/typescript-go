@@ -14,5 +14,6 @@ module.exports.asReadInstalled = function (tree) {
 
     module.exports(tree)
 >tree : Symbol(tree, Decl(npm.js, 2, 43))
+>tree : Symbol(tree, Decl(npm.js, 2, 43))
 }
 

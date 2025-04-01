@@ -1,10 +1,10 @@
-importer.js(1,13): error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+importer.js(1,21): error TS2307: Cannot find module './mod1' or its corresponding type declarations.
 
 
 ==== importer.js (1 errors) ====
     const mod = require("./mod1");
-                ~~~~~~~
-!!! error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+                        ~~~~~~~~
+!!! error TS2307: Cannot find module './mod1' or its corresponding type declarations.
     mod.thing;
     mod.other;
     mod.prop;
