@@ -10,8 +10,8 @@
                 "types": "./src/syntaxKind.enum.ts",
                 "default": "./src/syntaxKind.ts"
             },
-            "types": "./dist/kind.enum.d.ts",
-            "default": "./dist/kind.js"
+            "types": "./dist/syntaxKind.enum.d.ts",
+            "default": "./dist/syntaxKind.js"
         },
         "#tokenFlags": {
             "@typescript/source": {
