@@ -1433,13 +1433,6 @@ func getFileNamesFromConfigSpecs(
 	extraFileExtensions []fileExtensionInfo,
 ) []string {
 	extraFileExtensions = []fileExtensionInfo{}
-
-	if basePath == "" {
-		basePath = host.Realpath(".")
-	} else {
-		basePath = tspath.GetNormalizedAbsolutePath(basePath, host.Realpath("."))
-	}
-
 	basePath = tspath.NormalizePath(basePath)
 	keyMapper := func(value string) string { return tspath.GetCanonicalFileName(value, host.UseCaseSensitiveFileNames()) }
 
