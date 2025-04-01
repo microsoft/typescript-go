@@ -8,9 +8,8 @@
 +>getTypeName : () => string
  
      return typeof this.value;
-->typeof this.value : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
+ >typeof this.value : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
 ->this.value : T
-+>typeof this.value : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
 +>this.value : any
  >this : this
 ->value : T

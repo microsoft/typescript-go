@@ -60,7 +60,7 @@
  /** @type {Argle} */
  function blargle(s) {
 ->blargle : (x: "hi" | "bye") => 0 | 1 | 2
-->s : "hi" | "bye"
+->s : "bye" | "hi"
 +>blargle : (s: any) => number
 +>s : any
  
@@ -83,12 +83,3 @@
  
  /** @type {Gioconda} */
  function monaLisa(sb) {
-@@= skipped -14, +17 lines =@@
-     return typeof sb === 'string' ? 1 : 2;
- >typeof sb === 'string' ? 1 : 2 : 1 | 2
- >typeof sb === 'string' : boolean
-->typeof sb : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
-+>typeof sb : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
- >sb : any
- >'string' : "string"
- >1 : 1

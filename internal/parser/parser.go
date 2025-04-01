@@ -66,6 +66,7 @@ type Parser struct {
 	parsingContexts             ParsingContexts
 	statementHasAwaitIdentifier bool
 	hasDeprecatedTag            bool
+	hasParseError               bool
 
 	identifiers             map[string]string
 	identifierCount         int
@@ -200,6 +201,7 @@ func (p *Parser) initializeState(fileName string, path tspath.Path, sourceText s
 	default:
 		p.contextFlags = ast.NodeFlagsNone
 	}
+	p.hasParseError = false
 	p.scanner.SetText(p.sourceText)
 	p.scanner.SetOnError(p.scanError)
 	p.scanner.SetScriptTarget(p.languageVersion)
@@ -222,12 +224,13 @@ func (p *Parser) parseErrorAtCurrentToken(message *diagnostics.Message, args ...
 
 func (p *Parser) parseErrorAtRange(loc core.TextRange, message *diagnostics.Message, args ...any) *ast.Diagnostic {
 	// Don't report another error if it would just be at the same location as the last error
-	if len(p.diagnostics) == 0 || p.diagnostics[len(p.diagnostics)-1].Loc() != loc {
-		result := ast.NewDiagnostic(nil, loc, message, args...)
+	var result *ast.Diagnostic
+	if len(p.diagnostics) == 0 || p.diagnostics[len(p.diagnostics)-1].Pos() != loc.Pos() {
+		result = ast.NewDiagnostic(nil, loc, message, args...)
 		p.diagnostics = append(p.diagnostics, result)
-		return result
 	}
-	return nil
+	p.hasParseError = true
+	return result
 }
 
 type ParserState struct {
@@ -235,6 +238,7 @@ type ParserState struct {
 	contextFlags                ast.NodeFlags
 	diagnosticsLen              int
 	statementHasAwaitIdentifier bool
+	hasParseError               bool
 }
 
 func (p *Parser) mark() ParserState {
@@ -243,6 +247,7 @@ func (p *Parser) mark() ParserState {
 		contextFlags:                p.contextFlags,
 		diagnosticsLen:              len(p.diagnostics),
 		statementHasAwaitIdentifier: p.statementHasAwaitIdentifier,
+		hasParseError:               p.hasParseError,
 	}
 }
 
@@ -251,6 +256,8 @@ func (p *Parser) rewind(state ParserState) {
 	p.token = p.scanner.Token()
 	p.contextFlags = state.contextFlags
 	p.diagnostics = p.diagnostics[0:state.diagnosticsLen]
+	p.statementHasAwaitIdentifier = state.statementHasAwaitIdentifier
+	p.hasParseError = state.hasParseError
 }
 
 func (p *Parser) lookAhead(callback func(p *Parser) bool) bool {
@@ -261,6 +268,16 @@ func (p *Parser) lookAhead(callback func(p *Parser) bool) bool {
 }
 
 func (p *Parser) nextToken() ast.Kind {
+	// if the keyword had an escape
+	if isKeyword(p.token) && (p.scanner.HasUnicodeEscape() || p.scanner.HasExtendedUnicodeEscape()) {
+		// issue a parse error for the escape
+		p.parseErrorAtCurrentToken(diagnostics.Keywords_cannot_contain_escape_characters)
+	}
+	p.token = p.scanner.Scan()
+	return p.token
+}
+
+func (p *Parser) nextTokenWithoutCheck() ast.Kind {
 	p.token = p.scanner.Scan()
 	return p.token
 }
@@ -5729,6 +5746,7 @@ func (p *Parser) parseLiteralExpression(intern bool) *ast.Node {
 		result.AsBigIntLiteral().TokenFlags |= tokenFlags & ast.TokenFlagsNumericLiteralFlags
 	case ast.KindRegularExpressionLiteral:
 		result = p.factory.NewRegularExpressionLiteral(text)
+		result.AsRegularExpressionLiteral().TokenFlags |= tokenFlags & ast.TokenFlagsRegularExpressionLiteralFlags
 	case ast.KindNoSubstitutionTemplateLiteral:
 		result = p.factory.NewNoSubstitutionTemplateLiteral(text)
 		result.AsNoSubstitutionTemplateLiteral().TokenFlags |= tokenFlags & ast.TokenFlagsTemplateLiteralLikeFlags
@@ -5787,7 +5805,7 @@ func (p *Parser) createIdentifierWithDiagnostic(isIdentifier bool, diagnosticMes
 			pos = p.nodePos()
 		}
 		text := p.scanner.TokenValue()
-		p.nextToken()
+		p.nextTokenWithoutCheck()
 		result := p.newIdentifier(p.internIdentifier(text))
 		p.finishNode(result, pos)
 		return result
@@ -5841,6 +5859,10 @@ func (p *Parser) finishNode(node *ast.Node, pos int) {
 func (p *Parser) finishNodeWithEnd(node *ast.Node, pos int, end int) {
 	node.Loc = core.NewTextRange(pos, end)
 	node.Flags |= p.contextFlags
+	if p.hasParseError {
+		node.Flags |= ast.NodeFlagsThisNodeHasError
+		p.hasParseError = false
+	}
 }
 
 func (p *Parser) nextTokenIsSlash() bool {

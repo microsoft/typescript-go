@@ -30,24 +30,20 @@
  >v.c : boolean
  >v : V
  >c : boolean
-@@= skipped -20, +20 lines =@@
- }
+@@= skipped -21, +21 lines =@@
  
  f({ a: 12, b: 'hi', c: null }, undefined, { c: false, d: 12, b: undefined }, 101, 'nope');
-->f({ a: 12, b: 'hi', c: null }, undefined, { c: false, d: 12, b: undefined }, 101, 'nope') : 101 | "nope"
+ >f({ a: 12, b: 'hi', c: null }, undefined, { c: false, d: 12, b: undefined }, 101, 'nope') : "nope" | 101
 ->f : <T extends { a: number; b: string; }, U, V extends { c: boolean; }, W, X>(t: T, u: U, v: V, w: W, x: X) => W | X
-+>f({ a: 12, b: 'hi', c: null }, undefined, { c: false, d: 12, b: undefined }, 101, 'nope') : "nope" | 101
 +>f : <T extends { a: number; b: string; }, U extends { a: number; b: string; }, V extends { c: boolean; }, W, X>(t: T, u: U, v: V, w: W, x: X) => W | X
  >{ a: 12, b: 'hi', c: null } : { a: number; b: string; c: null; }
  >a : number
  >12 : 12
 @@= skipped -20, +20 lines =@@
- >'nope' : "nope"
  
  f({ a: 12  }, undefined, undefined, 101, 'nope');
-->f({ a: 12  }, undefined, undefined, 101, 'nope') : 101 | "nope"
+ >f({ a: 12  }, undefined, undefined, 101, 'nope') : "nope" | 101
 ->f : <T extends { a: number; b: string; }, U, V extends { c: boolean; }, W, X>(t: T, u: U, v: V, w: W, x: X) => W | X
-+>f({ a: 12  }, undefined, undefined, 101, 'nope') : "nope" | 101
 +>f : <T extends { a: number; b: string; }, U extends { a: number; b: string; }, V extends { c: boolean; }, W, X>(t: T, u: U, v: V, w: W, x: X) => W | X
  >{ a: 12  } : { a: number; }
  >a : number

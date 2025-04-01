@@ -341,6 +341,7 @@ func (p *Parser) parseJSDocComment(parent *ast.Node, start int, end int, fullSta
 	saveParsingMode := p.scanner.JSDocParsingMode
 	saveScannerState := p.scanner.Mark()
 	saveDiagnosticsLength := len(p.diagnostics)
+	saveHasParseError := p.hasParseError
 
 	// initial indent is start+4 to account for leading `/** `
 	// + 1 because \n is one character before the first character in the line and,
@@ -369,6 +370,7 @@ func (p *Parser) parseJSDocComment(parent *ast.Node, start int, end int, fullSta
 	p.scanner.JSDocParsingMode = saveParsingMode
 	p.scanner.Rewind(saveScannerState)
 	p.token = saveToken
+	p.hasParseError = saveHasParseError
 
 	return comment
 }
