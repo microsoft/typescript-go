@@ -281,7 +281,7 @@ export class RemoteNodeList extends Array<RemoteNode> implements NodeArray<Remot
         }
     }
 
-    *[Symbol.iterator](): IterableIterator<RemoteNode> {
+    *[Symbol.iterator](): ArrayIterator<RemoteNode> {
         let next = this.index + 1;
         while (next) {
             const child = this.getOrCreateChildAtNodeIndex(next);

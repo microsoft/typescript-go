@@ -276,9 +276,16 @@ export const testTools = task({
     run: runTestTools,
 });
 
+export const buildJSTest = task({
+    name: "build:js:test",
+    run: async () => {
+        await $`npm run -w @typescript/api build:test`;
+    },
+});
+
 export const testJS = task({
     name: "test:js",
-    dependencies: [tsgo],
+    dependencies: [tsgo, buildJSTest],
     run: runTestJS,
 });
 

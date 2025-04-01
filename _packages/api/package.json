@@ -37,8 +37,9 @@
     },
     "scripts": {
         "build": "tsc -b",
-        "bench": "node --no-warnings --conditions @typescript/source bench/api.bench.ts",
-        "test": "node --test --no-warnings --conditions @typescript/source ./test/**/*.test.ts"
+        "build:test": "tsc -b test",
+        "bench": "node --experimental-strip-types --no-warnings --conditions @typescript/source bench/api.bench.ts",
+        "test": "node --test --experimental-strip-types --no-warnings --conditions @typescript/source ./test/**/*.test.ts"
     },
     "devDependencies": {
         "tinybench": "^3.1.1"

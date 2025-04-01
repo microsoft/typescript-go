@@ -1,3 +1,4 @@
+/// <reference path="./node.ts" preserve="true" />
 import { SymbolFlags } from "#symbolFlags";
 import { TypeFlags } from "#typeFlags";
 import type {
