@@ -60,7 +60,7 @@ func NewAPI(host APIHost, options APIOptions) *API {
 		},
 		Hooks: project.DocumentRegistryHooks{
 			OnReleaseDocument: func(file *ast.SourceFile) {
-				api.releaseHandle(string(FileHandle(file)))
+				_ = api.releaseHandle(string(FileHandle(file)))
 			},
 		},
 	}
@@ -162,7 +162,7 @@ func (api *API) HandleRequest(id int, method string, payload []byte) ([]byte, er
 	case MethodGetTypesOfSymbols:
 		params := params.(*GetTypesOfSymbolsParams)
 		return encodeJSON(core.TryMap(params.Symbols, func(symbol Handle[ast.Symbol]) (any, error) {
-			return api.GetTypeOfSymbol(params.Project, Handle[ast.Symbol](symbol))
+			return api.GetTypeOfSymbol(params.Project, symbol)
 		}))
 	default:
 		return nil, fmt.Errorf("unhandled API method %q", method)
